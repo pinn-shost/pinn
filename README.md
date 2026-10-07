@@ -1,183 +1,72 @@
 <p align="center">
-  <img src=".github/assets/banner.png" alt="pinn. – the family organizer that lives on your own NAS" width="880">
+  <img src="pinn-logo.png" alt="pinn." width="120">
 </p>
 
-<p align="center">
-  <a href="https://github.com/pinn-shost/pinn/releases/latest"><img src="https://img.shields.io/github/v/release/pinn-shost/pinn?style=flat-square&color=2F4B41&label=release" alt="Latest release"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/pinn-shost/pinn?style=flat-square&color=2F4B41" alt="MIT license"></a>
-  <img src="https://img.shields.io/badge/runs%20on-Docker-2F4B41?style=flat-square&logo=docker&logoColor=white" alt="Runs on Docker">
-  <img src="https://img.shields.io/badge/backend-PocketBase-2F4B41?style=flat-square" alt="PocketBase">
-  <img src="https://img.shields.io/badge/iPhone%20%7C%20iPad%20%7C%20Android-installable%20web%20app-2F4B41?style=flat-square" alt="iPhone, iPad and Android">
-  <a href="https://ko-fi.com/pinnapp"><img src="https://img.shields.io/badge/Ko--fi-support-C28A33?style=flat-square&logo=kofi&logoColor=white" alt="Support on Ko-fi"></a>
-</p>
+<h1 align="center">pinn.</h1>
 
 <p align="center">
-  <a href="#screenshots">Screenshots</a> ·
-  <a href="#what-pinn-does">Features</a> ·
-  <a href="#installation">Installation</a> ·
-  <a href="#privacy">Privacy</a> ·
-  <a href="#faq">FAQ</a> ·
-  <a href="README.de.md">🇩🇪 Deutsch</a>
+  The self-hosted family organizer for your NAS – calendar, meals, lists, tasks and finances in one app.<br>
+  <a href="#deutsch">🇩🇪 Deutsch weiter unten</a>
 </p>
 
 ---
 
-pinn. is one app for everything that keeps a household running: the shared calendar, this week's meals, the shopping list, who takes out the bins, the pocket money and the insurance that needs cancelling in March. It runs on **your own NAS** with Docker and installs like a native app on every iPhone, iPad and Android phone in the family.
+## What is pinn.?
 
-No cloud account. No subscription. No ads, no tracking. Your family's data never leaves your home.
+pinn. is a web app for families and flatshares that runs entirely on your own NAS. Install it once with Docker, add it to the home screen of every phone and tablet (iPhone, iPad and Android), and everyone shares one calendar, one shopping list and one place for everything that keeps a household running. No cloud account, no ads, no tracking – your data never leaves your home.
 
-## Screenshots
+**Highlights**
 
-<table>
-  <tr>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/home.png" alt="Home screen with weather, today's tasks and upcoming events" width="230"><br><sub><b>Home</b> – your day at a glance</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/calendar.png" alt="Family calendar in week view" width="230"><br><sub><b>Calendar</b> – iCloud and Google in one view</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/meals.png" alt="Weekly meal plan with recipes" width="230"><br><sub><b>Meals</b> – plan the week, shop in one tap</sub></td>
-  </tr>
-  <tr>
-    <td align="center"><img src=".github/assets/screenshots/lists.png" alt="Shopping list sorted by shop" width="230"><br><sub><b>Lists</b> – shopping, pantry, packing</sub></td>
-    <td align="center"><img src=".github/assets/screenshots/finance.png" alt="Budget overview with spending by category" width="230"><br><sub><b>Finance</b> – budget, savings, pocket money</sub></td>
-    <td align="center"><img src=".github/assets/screenshots/kids.png" alt="Kids' page with daily routine" width="230"><br><sub><b>Kids</b> – a playful daily routine</sub></td>
-  </tr>
-</table>
-
-## What pinn. does
-
-| | |
-|---|---|
-| 📅 **Calendar** | iCloud and Google calendars per person, private or shared with the family. Public and school holidays, waste collection dates and birthdays from your contacts appear automatically. |
-| 🍝 **Meals & recipes** | Plan the week, then send the ingredients straight to the shopping list. Import recipes from text, PDF, photos or a link – optionally with AI. Share favourite recipes with other families on your server. |
-| 🛒 **Lists** | Shopping lists per shop, a pantry that refills the list when stock runs low, packing lists from templates (holiday, hospital bag, party), gift and wish lists. |
-| ✅ **Tasks & household** | Tasks with push reminders, cleaning plans and bins – plus a kids' page with animated routines that only shows what fits the time of day. |
-| 💶 **Finance** | Shared or private funds, a household budget, savings and depots with ETFs and shares, pocket money, recurring payments and contracts with cancellation reminders. Flatshares can split costs and see who owes whom. |
-| 📄 **Documents & vehicles** | Receipts and warranties, IDs with expiry reminders. Cars and bikes with inspection dates, tyre changes, fuel use and total cost. |
-| 📍 **Family & location** | Live location via the free Traccar Client app, a "way home" mode, an SOS alert with position and emergency numbers, emergency cards and arrival notifications for places. |
-| 🏠 **Smart home** | Start Apple Shortcuts or Home Assistant actions from a task – the robot vacuum cleans the kitchen when the chore is due. |
-| 🔔 **Notifications** | Personal push messages on iPhone, iPad and Android, plus a notification bell that collects every change in the family. |
-| 🧩 **Everything else** | Family board with movable notes, global search, offline mode with automatic sync, dark mode, iPad dashboard with profile PINs, guest account, child lock. |
-
-pinn. speaks **English, Deutsch, Français and Español**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
-
-## How it works
-
-```mermaid
-flowchart LR
-  subgraph Home["Your home network"]
-    direction LR
-    P["📱 Phones & tablets<br/>pinn. on the home screen"] -->|HTTPS| C["Caddy<br/>certificate via DuckDNS"]
-    C --> PB["PocketBase<br/>pinn. app + database"]
-    PB --- T["Traccar<br/>location"]
-    PB --- HA["Home Assistant<br/>optional"]
-    PB --- B["Nightly backup"]
-  end
-  R["📱 On the go"] -.->|"WireGuard or Tailscale VPN"| C
-```
-
-Everything runs as Docker containers on one machine. HTTPS works **without port forwarding** – the certificate is issued via a DNS check. From outside, pinn. is only reachable through your own VPN.
+- **Calendar** – iCloud and Google calendars per profile (private or shared with the family), public and school holidays, waste collection calendar, birthdays from your contacts
+- **Meals & recipes** – meal plan, recipes from text, PDF, photo or link (optional AI), shared public recipes, ingredients straight to the shopping list
+- **Lists** – shopping lists per shop, pantry with minimum stock, packing lists from templates, gift and wish lists, checklists
+- **Tasks & household** – tasks with push reminders, cleaning plans, bins, a playful kids' page with daily routines
+- **Finance** – shared or private funds, budget, savings and depots (ETFs, shares), pocket money, contracts with cancellation reminders, split expenses for flatshares
+- **Documents & vehicles** – receipts and warranties, IDs with expiry reminders, cars and bikes with MOT, service and costs
+- **Family** – live location via Traccar (way home, SOS), emergency cards, places with arrival notifications
+- **Smart home** – Apple Shortcuts and Home Assistant (e.g. start the robot vacuum from a task)
+- **Push notifications** – on iPhone, iPad and Android: reminders, daily summary, assignments, board notes, arrivals and SOS – personal for each profile
+- **Family board, notification bell, global search, offline mode, dark mode**
+- **Backups & updates** – nightly rotating backups, restore and updates at the push of a button, no SSH needed
+- **Languages** – English, Deutsch, Français, Español; family or flatshare mode
 
 ## Requirements
 
-- A NAS or server with **Docker** and **Docker Compose 2.17+** – developed on a UGREEN NAS with UGOS, runs on any Linux Docker host (amd64, arm64, armv7)
-- SSH access to it
-- Optional but recommended: a free [DuckDNS](https://www.duckdns.org) subdomain for HTTPS – required for push notifications and installing pinn. as an app
+- A NAS or server with **Docker** and **Docker Compose 2.17+** (developed on a UGREEN NAS with UGOS, works on any Linux Docker host)
+- SSH access to the NAS
+- Optional: a free [DuckDNS](https://www.duckdns.org) subdomain for HTTPS (needed for push notifications on iPhone and Android)
 
 ## Installation
 
-1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.22.1` or `pinn-main`) into it as it is.
+1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) (or **Code → Download ZIP**) and unzip it.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. **`pinn-1.22.1`** or **`pinn-main`**) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
-   The script sorts every file into place, downloads the libraries for PDF import and photo text recognition, and starts pinn.
-4. Open `http://<NAS-IP>:8090` → **Log in as main admin** → password `Admin` → choose your own password.
-5. The **setup assistant** walks you through the rest – HTTPS, remote access via WireGuard or Tailscale, Google, AI, location and Home Assistant – step by step, in four languages.
-6. Open pinn. via its HTTPS address on each phone and add it to the home screen:
+   The script sorts all files into place, downloads the libraries for PDF import and photo text recognition, and starts pinn.
+4. Open `http://<NAS-IP>:8090` in the browser → **Log in as main admin** → password `Admin` → set your own password.
+5. The **setup assistant** guides you through everything else (HTTPS, remote access via WireGuard or Tailscale, Google, AI, location, Home Assistant) – step by step, in four languages.
+6. Open pinn. via its HTTPS address on every phone and add it to the home screen:
    - **iPhone/iPad (Safari):** Share → *Add to Home Screen* (iOS 16.4 or later for notifications)
    - **Android (Chrome):** Settings → Notifications → *Install pinn. as an app*, or Chrome menu ⋮ → *Install app*
 
-   Then turn on notifications on each device under **Settings → Notifications → Activate on this device**.
+   Then turn on notifications per device under **Settings → Notifications → Activate on this device**.
 
-**Updating:** download the new ZIP, put the unzipped folder into the same folder and run `sudo sh pinn-*/pinn-setup.sh` again. Replaced files are kept in `_alt/`, your data stays untouched.
+**Updating:** in pinn. go to **Settings → System → Check for update** (main admin: **🛟 Backups & updates**) – pinn. finds the new release on GitHub, shows the release notes and installs it with one tap, including a backup beforehand. No SSH needed. The manual way still works: download the new ZIP, put the unzipped folder into the same folder again and run `sudo sh pinn-*/pinn-setup.sh`. Replaced files are backed up in `_alt/`. Your data stays untouched.
 
-**Backups** run every night into `./backups` and are kept for 14 days.
-
-## Privacy
-
-pinn. was built for data you would never hand to a cloud service: bank statements, health documents, where your children are. That's why:
-
-- **All data lives on your NAS** in a single PocketBase database. There is no pinn. server and no telemetry.
-- **No scripts from third-party servers.** All code and libraries are served from your NAS.
-- **Push notifications carry no content.** Apple, Google and Mozilla only deliver an empty wake-up signal; the device then fetches the message from your NAS.
-- **Passwords for iCloud and Google** are stored encrypted in a locked collection.
-- **Not reachable from the internet.** Remote access goes through your own VPN.
-
-pinn. only contacts outside services for features that need them:
-
-| Service | Used for | When |
-|---|---|---|
-| [Open-Meteo](https://open-meteo.com) | Weather forecast | when a home address is set |
-| [OpenStreetMap Nominatim](https://nominatim.openstreetmap.org) | Turning addresses into map positions | when entering addresses |
-| [OpenStreetMap tiles](https://www.openstreetmap.org) | Map background | on the location page, loaded through your NAS |
-| [Google Fonts](https://fonts.google.com) | Typefaces | when the app loads |
-| [OpenHolidays API](https://www.openholidaysapi.org) | Public and school holidays | when a home address is set |
-| [DuckDNS](https://www.duckdns.org) | HTTPS certificate and address | if configured |
-| iCloud / Google | Calendars and contacts | only for accounts you connect |
-| Google Gemini | Reading recipes and documents | only if you add an API key |
-| jsDelivr | One-time download of pdf.js and Tesseract | during installation only |
-
-## FAQ
-
-<details>
-<summary><b>Do I need to open ports on my router?</b></summary>
-<br>
-No. The HTTPS certificate is issued via a DNS check, and remote access runs through a VPN – WireGuard on a FRITZ!Box, or Tailscale for any other router.
-</details>
-
-<details>
-<summary><b>Does it work without a NAS?</b></summary>
-<br>
-Any always-on machine with Docker works: a mini PC, a Raspberry Pi 4/5 or a Linux server.
-</details>
-
-<details>
-<summary><b>Is pinn. a "real" app from the App Store?</b></summary>
-<br>
-pinn. is a web app that you add to the home screen. It then opens full-screen like a native app, works offline, shows a badge with open tasks and receives push notifications – without any app store.
-</details>
-
-<details>
-<summary><b>Can several families use one installation?</b></summary>
-<br>
-Yes. The main admin creates families, each family gets its own admins, calendars and data. Recipes can optionally be shared between families.
-</details>
-
-<details>
-<summary><b>What about children?</b></summary>
-<br>
-Profiles with child lock only see their own tasks and can't delete or change anything. Finance, documents and vehicles stay hidden. Younger children get their own playful page with daily routines.
-</details>
-
-<details>
-<summary><b>What does it cost?</b></summary>
-<br>
-Nothing – pinn. is free and open source under the MIT license. Optional services like the Gemini AI have free tiers.
-</details>
-
-## Contributing
-
-Bug reports, ideas and translations are very welcome – see [CONTRIBUTING.md](.github/CONTRIBUTING.md). Please report security issues privately as described in [SECURITY.md](.github/SECURITY.md).
+**Backups** are created automatically every night in `./backups` – all backups of the last 7 days, then one per week for 4 weeks, plus one before every update and restore. Restore any of them with one tap under **Settings → System → Backups & restore** (data only or everything).
 
 ## Support pinn.
 
 pinn. is free and stays free – completely, for everyone. It's built in my spare time. If it makes your everyday life a little easier, a small contribution is very welcome, but entirely voluntary:
 
-<p>
-  <a href="https://ko-fi.com/pinnapp"><img src="https://img.shields.io/badge/Ko--fi-Buy%20me%20a%20coffee-C28A33?style=for-the-badge&logo=kofi&logoColor=white" alt="Ko-fi"></a>
-  <a href="https://buymeacoffee.com/pinn"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-2F4B41?style=for-the-badge&logo=buymeacoffee&logoColor=white" alt="Buy Me a Coffee"></a>
-</p>
+- ☕ [Ko-fi](https://ko-fi.com/pinnapp)
+- ☕ [Buy Me a Coffee](https://buymeacoffee.com/pinn)
 
-A ⭐ helps too – it makes pinn. easier to find for other families.
+A ⭐ on GitHub helps too – it makes pinn. easier to find for other families.
+
+Found a bug or have an idea? [Open an issue](https://github.com/pinn-shost/pinn/issues).
 
 ## Built with
 
@@ -186,3 +75,37 @@ A ⭐ helps too – it makes pinn. easier to find for other families.
 ## License
 
 [MIT](LICENSE) – use it, change it, share it.
+
+---
+
+<a id="deutsch"></a>
+
+## 🇩🇪 Deutsch
+
+pinn. ist eine Familien-App, die komplett auf dem eigenen NAS läuft: Kalender, Essensplanung, Rezepte, Einkaufs- und Packlisten, Aufgaben, Finanzen, Dokumente, Fahrzeuge, Ortung, Smarthome und eine Pinnwand – für Familien und WGs, mit persönlichen Push-Benachrichtigungen auf iPhone, iPad und Android. Kein Cloud-Konto, keine Werbung, keine Weitergabe von Daten.
+
+### Installation
+
+1. Die ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunterladen (oder **Code → Download ZIP**) und entpacken.
+2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. **`pinn-1.22.1`** oder **`pinn-main`**) so, wie er ist, hineinlegen.
+3. Per SSH anmelden und ausführen:
+   ```sh
+   cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
+   ```
+4. Im Browser `http://<NAS-IP>:8090` öffnen → **Als Hauptadmin anmelden** → Passwort `Admin` → eigenes Passwort festlegen.
+5. Der **Einrichtungs-Assistent** führt Schritt für Schritt durch alles Weitere.
+6. pinn. auf jedem Handy über die HTTPS-Adresse öffnen und auf den Home-Bildschirm legen:
+   - **iPhone/iPad (Safari):** Teilen → *Zum Home-Bildschirm* (für Benachrichtigungen ab iOS 16.4)
+   - **Android (Chrome):** Einstellungen → Benachrichtigungen → *pinn. als App installieren* oder Chrome-Menü ⋮ → *App installieren*
+
+   Danach je Gerät unter **Einstellungen → Benachrichtigungen → Auf diesem Gerät aktivieren** die Mitteilungen einschalten.
+
+**Update:** in pinn. unter **Einstellungen → System → Auf Update prüfen** (Hauptadmin: **🛟 Sicherungen & Updates**) – pinn. findet die neue Version auf GitHub, zeigt die Release-Notizen und spielt sie mit einem Tipp ein, vorher wird automatisch gesichert. Ohne SSH. Von Hand geht es weiterhin: neue ZIP herunterladen, den entpackten Ordner wieder in denselben Ordner legen, `sudo sh pinn-*/pinn-setup.sh` ausführen. Ersetzte Dateien landen in `_alt/`, eure Daten bleiben unverändert.
+
+**Sicherungen** entstehen jede Nacht automatisch in `./backups` – alle der letzten 7 Tage, danach 4 Wochen lang eine pro Woche, dazu je eine vor jedem Update und jeder Wiederherstellung. Zurückholen per Knopf unter **Einstellungen → System → Sicherungen & Wiederherstellung** (nur Daten oder alles).
+
+### pinn. unterstützen
+
+pinn. ist kostenlos und bleibt es – vollständig, für alle. Wenn es euch den Alltag leichter macht, freue ich mich über eine kleine Unterstützung, ganz freiwillig: [Ko-fi](https://ko-fi.com/pinnapp) · [Buy Me a Coffee](https://buymeacoffee.com/pinn). Auch ein ⭐ hier auf GitHub hilft.
+
+Fehler gefunden oder eine Idee? [Hier melden](https://github.com/pinn-shost/pinn/issues).

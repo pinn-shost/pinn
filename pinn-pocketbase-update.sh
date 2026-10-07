@@ -7,7 +7,7 @@
 #
 #  Ablauf:
 #   1. Prüft Docker Compose
-#   2. Erstellt sofort ein Backup (Container „backup“)
+#   2. Erstellt sofort ein Backup (Container „wartung“)
 #   3. Repariert Hook-Dateinamen in pb_hooks (z. B. kurse_pb.js -> kurse.pb.js)
 #   4. Prüft, ob alle per require() eingebundenen Hilfsdateien vorhanden sind
 #   5. Baut PocketBase in der Version aus der docker-compose.yaml und startet neu
@@ -43,7 +43,16 @@ PB_IST=$(docker exec pocketbase pocketbase --version 2>/dev/null | grep -oE '[0-
 echo "  PocketBase jetzt: ${PB_IST:-unbekannt / läuft nicht}   →   Ziel: ${PB_SOLL:-?}"
 
 # ── 2. Backup ───────────────────────────────────────────────
-if docker ps --format '{{.Names}}' | grep -qx backup; then
+if docker ps --format '{{.Names}}' | grep -qx wartung; then
+  echo "  Backup läuft …"
+  if docker exec wartung sh /projekt/pinn-wartung.sh sichern vor-update >/tmp/pinn-backup.log 2>&1; then
+    ok "Backup erstellt: $(ls -t backups/pinn_*.tar.gz 2>/dev/null | head -1)"
+  else
+    fehler "Backup fehlgeschlagen – Abbruch, es wurde nichts verändert."
+    cat /tmp/pinn-backup.log
+    exit 1
+  fi
+elif docker ps --format '{{.Names}}' | grep -qx backup; then
   echo "  Backup läuft …"
   if docker exec backup /usr/local/bin/pinn-backup >/tmp/pinn-backup.log 2>&1; then
     ok "Backup erstellt: $(ls -t backups/pinn_*.tar.gz 2>/dev/null | head -1)"
@@ -53,11 +62,11 @@ if docker ps --format '{{.Names}}' | grep -qx backup; then
     exit 1
   fi
 else
-  warn "Container „backup“ läuft nicht – erstelle Sicherung von pb_data direkt …"
+  warn "Container „wartung“ läuft nicht – erstelle Sicherung von pb_data direkt …"
   TS=$(date +%Y-%m-%d_%H%M); mkdir -p backups
   docker stop pocketbase >/dev/null 2>&1
-  if tar -czf "backups/pinn_vor-update_$TS.tar.gz" pb_data pb_hooks pb_public docker-compose.yaml .env 2>/dev/null; then
-    ok "Sicherung: backups/pinn_vor-update_$TS.tar.gz"
+  if tar -czf "backups/pinn_${TS}_vor-update.tar.gz" pb_data pb_hooks pb_public docker-compose.yaml .env 2>/dev/null; then
+    ok "Sicherung: backups/pinn_${TS}_vor-update.tar.gz"
   else
     fehler "Sicherung fehlgeschlagen – Abbruch."
     docker start pocketbase >/dev/null 2>&1

@@ -18,6 +18,8 @@
 #  Sprache der Ausgabe: automatisch (Deutsch, Englisch, Französisch, Spanisch),
 #  fest wählbar mit z. B.:  sudo sh pinn-setup.sh --lang en
 #  Ersetzte Dateien landen zur Sicherheit in _alt/<Datum>/.
+#  Ist pinn. einmal installiert, gehen Updates auch per Knopf in der App (Einstellungen → System →
+#  Sicherungen & Updates) – der Container „wartung“ ruft dafür genau dieses Skript auf.
 # ─────────────────────────────────────────────────────────────
 
 cd "$(dirname "$0")" || exit 1
@@ -166,7 +168,7 @@ normname() {
 ziel() {
   case "$1" in
     *.pb.js)                         echo "pb_hooks/$1" ;;
-    pinn-setup.sh|pinn-pocketbase-update.sh|docker-compose.yaml|docker-compose.yml|env.txt|.env) echo "" ;;
+    pinn-setup.sh|pinn-pocketbase-update.sh|pinn-wartung.sh|docker-compose.yaml|docker-compose.yml|env.txt|.env) echo "" ;;
     pinn-*.js|calendar-sync.js)      echo "pb_hooks/$1" ;;
     index.html|manifest.json|einrichtung.js|*.png|*.ico|*.svg|*.webmanifest) echo "pb_public/$1" ;;
     [a-z][a-z].js)                   echo "pb_public/lang/$1" ;;
@@ -225,8 +227,8 @@ if [ ! -f docker-compose.yaml ] && [ ! -f docker-compose.yml ]; then fehler "$(m
 
 # ── 3. Ordner und Grunddateien ──────────────────────────────
 mkdir -p pb_data pb_public/lang pb_public/vendor/pocketbase pb_public/vendor/pdfjs pb_public/vendor/tesseract pb_hooks \
-         caddy/data caddy/config konfig backups traccar/data traccar/logs tailscale
-chmod 700 konfig backups 2>/dev/null
+         caddy/data caddy/config konfig backups wartung traccar/data traccar/logs tailscale
+chmod 700 konfig backups wartung 2>/dev/null
 ok "$(m dirs)"
 
 if [ ! -f .env ]; then
@@ -300,8 +302,15 @@ if [ -n "$FEHLT" ]; then
 fi
 
 # ── 4. Starten ──────────────────────────────────────────────
+# Der frühere Container „backup“ ist im Container „wartung“ aufgegangen – den alten entfernen,
+# sonst würde er weiter sichern und ältere Wochensicherungen löschen.
+if ! grep -q 'container_name: backup' docker-compose.yaml 2>/dev/null; then
+  docker rm -f backup >/dev/null 2>&1
+fi
 echo "  $(m start)"
 if ! docker compose up -d --build; then fehler "$(m startfail)"; exit 1; fi
+# PocketBase liest pb_hooks nur beim Start: nach neuen Dateien einmal neu starten
+if [ "$ANZ" -gt 0 ]; then docker restart pocketbase >/dev/null 2>&1; fi
 
 echo "  $(m wait)"
 LAEUFT=0

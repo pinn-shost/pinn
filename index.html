@@ -574,7 +574,7 @@ window.PINN_LANGUAGES = [
     start(data);
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.23.0" onerror="PINN_I18N.fail()"><\/script>');
+  if (DICT) document.write('<script src="' + lang.file + '?v=1.24.0" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // Deutsch als WG: kein Wörterbuch, nur die WG-Bezeichnungen
 })();
 </script>
@@ -1548,6 +1548,72 @@ window.PINN_LANGUAGES = [
   .set-hint-btn { flex-shrink: 0; margin-left: auto; align-self: center; padding: 0.35rem 0.65rem; border-radius: 9px; background: var(--c-pine); color: #fff; font-size: 0.72rem; font-weight: 500; white-space: nowrap; }
   .set-hint-btn:hover { opacity: 0.9; }
   .set-disabled { opacity: 0.45; pointer-events: none; }
+  /* ---------- Sicherungen & Updates (Modal #sysMaintModal) ---------- */
+  #sysMaintModal { padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)); }
+  .sm-box { position: relative; max-width: 30rem; max-height: min(88vh, 46rem); display: flex; flex-direction: column; overflow: hidden; }
+  .sm-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 1rem 1.1rem 0.6rem; }
+  .sm-x { width: 2rem; height: 2rem; border-radius: 999px; display: grid; place-items: center; font-size: 1.25rem; line-height: 1; opacity: 0.45; transition: background .15s, opacity .15s; }
+  .sm-x:hover { opacity: 0.9; background: rgba(37,35,31,0.06); }
+  .sm-scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0.2rem 1.1rem 1.2rem; overscroll-behavior: contain; }
+  .sm-sec { border: 1px solid rgba(37,35,31,0.1); background: #fff; border-radius: 16px; padding: 0.85rem 0.9rem; margin-bottom: 0.75rem; }
+  .sm-sec-head { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; margin-bottom: 0.5rem; }
+  .sm-sec-title { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.5; font-weight: 600; }
+  .sm-mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 0.72rem; opacity: 0.6; }
+  .sm-btn { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.42rem 0.8rem; border-radius: 10px; border: 1px solid rgba(37,35,31,0.15); font-size: 0.82rem; color: rgba(37,35,31,0.7); background: transparent; transition: border-color .15s, color .15s, background .15s, opacity .15s; white-space: nowrap; }
+  .sm-btn:hover { border-color: var(--c-pine); color: var(--c-pine); }
+  .sm-btn:disabled { opacity: 0.45; pointer-events: none; }
+  .sm-btn.sm-small { padding: 0.28rem 0.6rem; font-size: 0.74rem; border-radius: 9px; }
+  .sm-btn.sm-primary { background: var(--c-pine); border-color: var(--c-pine); color: #fff; font-weight: 500; }
+  .sm-btn.sm-primary:hover { opacity: 0.92; color: #fff; }
+  .sm-btn.sm-danger { background: #dc2626; border-color: #dc2626; color: #fff; font-weight: 500; }
+  .sm-btn.sm-danger:hover { opacity: 0.92; color: #fff; }
+  .sm-release { margin-top: 0.7rem; border-radius: 12px; padding: 0.7rem 0.8rem; background: color-mix(in srgb, var(--c-pine) 6%, transparent); border: 1px solid color-mix(in srgb, var(--c-pine) 18%, transparent); }
+  .sm-rel-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.2rem 0.6rem; margin-bottom: 0.35rem; }
+  .sm-notes { max-height: 11rem; overflow-y: auto; font-size: 0.76rem; line-height: 1.45; opacity: 0.85; margin-bottom: 0.45rem; overflow-wrap: anywhere; }
+  .sm-notes h5 { font-weight: 600; font-size: 0.78rem; margin: 0.45rem 0 0.15rem; }
+  .sm-notes ul { padding-left: 1.05rem; list-style: disc; margin: 0.1rem 0 0.3rem; }
+  .sm-notes p { margin: 0.15rem 0; }
+  .sm-list { display: flex; flex-direction: column; gap: 0.4rem; }
+  .sm-row { display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.55rem; border-radius: 12px; background: rgba(37,35,31,0.035); }
+  .sm-row-ico { flex-shrink: 0; width: 2rem; height: 2rem; border-radius: 10px; display: grid; place-items: center; font-size: 1rem; background: color-mix(in srgb, var(--c-pine) 10%, transparent); }
+  .sm-row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .sm-row-title { font-size: 0.82rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sm-row-sub { font-size: 0.68rem; opacity: 0.55; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sm-more { margin-top: 0.5rem; font-size: 0.74rem; color: var(--c-pine); }
+  .sm-empty { font-size: 0.78rem; opacity: 0.55; padding: 0.4rem 0; }
+  .sm-opt { display: flex; gap: 0.6rem; align-items: flex-start; padding: 0.65rem 0.75rem; border-radius: 12px; border: 1px solid rgba(37,35,31,0.12); margin-bottom: 0.5rem; cursor: pointer; }
+  .sm-opt:has(input:checked) { border-color: var(--c-pine); background: color-mix(in srgb, var(--c-pine) 6%, transparent); }
+  .sm-opt input { margin-top: 0.2rem; accent-color: var(--c-pine); flex-shrink: 0; }
+  .sm-opt-title { display: block; font-size: 0.85rem; font-weight: 600; }
+  .sm-opt small { display: block; font-size: 0.72rem; opacity: 0.6; line-height: 1.35; margin-top: 0.1rem; }
+  .sm-tag { display: inline-block; font-size: 0.62rem; font-weight: 600; padding: 0.05rem 0.4rem; border-radius: 999px; margin-left: 0.3rem; background: color-mix(in srgb, var(--c-pine) 15%, transparent); color: var(--c-pine); vertical-align: middle; }
+  .sm-check { display: flex; gap: 0.55rem; align-items: flex-start; font-size: 0.8rem; margin-top: 0.75rem; cursor: pointer; }
+  .sm-check input { margin-top: 0.15rem; accent-color: #dc2626; flex-shrink: 0; }
+  .sm-progress { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.8rem; padding: 1.5rem 1.3rem; background: inherit; overflow-y: auto; }
+  .sm-progress.hidden { display: none; }
+  .sm-spin { width: 2.6rem; height: 2.6rem; border-radius: 999px; border: 3px solid color-mix(in srgb, var(--c-pine) 18%, transparent); border-top-color: var(--c-pine); animation: smSpin 0.9s linear infinite; }
+  .sm-spin.ok { animation: none; border-color: var(--c-pine); background: var(--c-pine); position: relative; }
+  .sm-spin.ok::after { content: "✓"; position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-size: 1.3rem; font-weight: 700; }
+  .sm-spin.err { animation: none; border-color: #dc2626; background: #dc2626; position: relative; }
+  .sm-spin.err::after { content: "!"; position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-size: 1.3rem; font-weight: 700; }
+  @keyframes smSpin { to { transform: rotate(360deg); } }
+  .sm-steps { width: 100%; max-width: 19rem; display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.8rem; }
+  .sm-steps li { display: flex; align-items: center; gap: 0.55rem; opacity: 0.4; }
+  .sm-steps li::before { content: ""; flex-shrink: 0; width: 0.95rem; height: 0.95rem; border-radius: 999px; border: 2px solid currentColor; }
+  .sm-steps li.on { opacity: 1; font-weight: 500; color: var(--c-pine); }
+  .sm-steps li.on::before { border-color: color-mix(in srgb, var(--c-pine) 25%, transparent); border-top-color: var(--c-pine); animation: smSpin 0.9s linear infinite; }
+  .sm-steps li.done { opacity: 0.75; }
+  .sm-steps li.done::before { background: var(--c-pine); border-color: var(--c-pine); }
+  .sm-steps li.err { opacity: 1; color: #dc2626; }
+  .sm-steps li.err::before { background: #dc2626; border-color: #dc2626; }
+  .sm-log { width: 100%; max-height: 9rem; overflow: auto; font-size: 0.66rem; line-height: 1.4; padding: 0.55rem 0.65rem; border-radius: 10px; background: rgba(37,35,31,0.06); white-space: pre-wrap; overflow-wrap: anywhere; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  html.dark .sm-sec { background-color: #2E2C28; border-color: rgba(255,255,255,0.12); }
+  html.dark .sm-btn { border-color: rgba(255,255,255,0.18); color: rgba(255,255,255,0.75); }
+  html.dark .sm-btn.sm-primary, html.dark .sm-btn.sm-danger { color: #fff; }
+  html.dark .sm-row { background: rgba(255,255,255,0.05); }
+  html.dark .sm-opt { border-color: rgba(255,255,255,0.14); }
+  html.dark .sm-log { background: rgba(255,255,255,0.06); }
+  html.dark .sm-x:hover { background: rgba(255,255,255,0.08); }
   .settings-accordion > summary { list-style: none; }
   .settings-accordion > summary::-webkit-details-marker,
   .settings-accordion > summary::marker { display: none; content: ''; }
@@ -3139,6 +3205,7 @@ window.PINN_LANGUAGES = [
         <button type="button" id="mainAdminLogoutBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-red-500 hover:border-red-500 transition">Abmelden</button>
         <button type="button" id="mainAdminPasswordBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Passwort ändern</button>
         <button type="button" id="mainAdminSetupBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition" data-no-i18n>⚙︎ Einrichtung</button>
+        <button type="button" id="mainAdminSystemBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">🛟 Sicherungen &amp; Updates</button>
       </div>
     </div>
 
@@ -4809,7 +4876,7 @@ window.PINN_LANGUAGES = [
     <details class="settings-accordion set-card" id="settingsSystemAccordion">
       <summary class="set-sum">
         <span class="set-ico">🔄</span>
-        <span class="set-head"><span class="sa-title">System</span><small>Synchronisierung, Updates, Daten</small></span>
+        <span class="set-head"><span class="sa-title">System</span><small>Synchronisierung, Updates, Sicherungen, Daten</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
@@ -4819,11 +4886,23 @@ window.PINN_LANGUAGES = [
         <div class="set-sub">
           <p class="set-sub-title">Updates</p>
           <p class="text-xs text-ink/40 mb-2">Installierte Version: <span id="settingsVersionDisplay" class="font-mono text-ink/60"></span></p>
+          <div id="sysUpdateHint" class="set-hint ok hidden mb-2">
+            <span>✨</span>
+            <span id="sysUpdateHintText" class="flex-1 min-w-0"></span>
+            <button id="sysUpdateHintBtn" type="button" class="set-hint-btn">Ansehen</button>
+          </div>
           <div class="flex flex-wrap items-center gap-2">
             <button id="checkUpdateBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Auf Update prüfen</button>
             <button id="openChangelogBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition inline-flex items-center gap-1.5"><span class="font-mono text-xs">&gt;_</span><span>Versions-Log</span></button>
           </div>
           <p id="versionCheckStatus" class="text-xs text-ink/40 mt-2"></p>
+        </div>
+
+        <!-- Sicherungen (nur für Admins sichtbar) – Container „wartung“, pb_hooks/system.pb.js -->
+        <div id="sysBackupSub" class="set-sub hidden">
+          <p class="set-sub-title">Sicherungen</p>
+          <p id="sysBackupSummary" class="text-xs text-ink/50 mb-2 leading-snug">Wird geladen …</p>
+          <button id="openSysMaintBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">🛟 Sicherungen &amp; Wiederherstellung</button>
         </div>
 
         <div class="set-sub">
@@ -4867,6 +4946,69 @@ window.PINN_LANGUAGES = [
     <div class="bg-paper rounded-2xl shadow-xl max-w-sm w-full p-5">
       <p id="infoPopupText" class="text-sm text-ink/80 leading-relaxed"></p>
       <button id="closeInfoPopupBtn" class="mt-4 px-3 py-1.5 rounded-lg border border-ink/15 text-sm hover:bg-ink/5 transition">Schließen</button>
+    </div>
+  </div>
+
+  <!-- Sicherungen & Updates (Einstellungen → System, Hauptadmin) – pb_hooks/system.pb.js, Container „wartung“ -->
+  <div id="sysMaintModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[400] grid place-items-center" role="dialog" aria-modal="true" aria-labelledby="sysMaintTitle" data-no-term>
+    <div class="sm-box bg-paper rounded-2xl shadow-xl w-full fade-in">
+      <div class="sm-head">
+        <h3 id="sysMaintTitle" class="font-serif text-lg">Sicherungen &amp; Updates</h3>
+        <button id="sysMaintClose" type="button" class="sm-x" aria-label="Schließen">×</button>
+      </div>
+      <div class="sm-scroll">
+        <div id="sysMaintNotice" class="set-hint hidden mb-3"><span>⚠️</span><span id="sysMaintNoticeText" class="flex-1 min-w-0"></span></div>
+
+        <div id="sysMaintMain">
+          <section class="sm-sec">
+            <div class="sm-sec-head"><span class="sm-sec-title">Updates</span><span class="sm-mono" data-no-i18n>v<span id="sysMaintVersion"></span></span></div>
+            <p id="sysUpdState" class="text-sm text-ink/70 leading-snug" data-no-i18n></p>
+            <div id="sysUpdRelease" class="sm-release hidden">
+              <div class="sm-rel-head"><span id="sysUpdRelTitle" class="font-medium text-sm" data-no-i18n></span><span id="sysUpdRelDate" class="text-[11px] text-ink/45" data-no-i18n></span></div>
+              <div id="sysUpdRelNotes" class="sm-notes" data-no-i18n></div>
+              <a id="sysUpdRelLink" href="https://github.com/pinn-shost/pinn/releases" target="_blank" rel="noopener" class="text-xs text-pine">Auf GitHub ansehen ↗</a>
+            </div>
+            <div class="flex flex-wrap gap-2 mt-3">
+              <button id="sysUpdCheckBtn" type="button" class="sm-btn">Nach Updates suchen</button>
+              <button id="sysUpdInstallBtn" type="button" class="sm-btn sm-primary hidden">Jetzt installieren</button>
+            </div>
+            <p class="text-[11px] text-ink/45 mt-2 leading-snug">Vor jedem Update legt pinn. automatisch eine Sicherung an. Während des Updates ist pinn. ein paar Minuten nicht erreichbar.</p>
+          </section>
+
+          <section class="sm-sec">
+            <div class="sm-sec-head"><span class="sm-sec-title">Sicherungen</span><button id="sysBackupNowBtn" type="button" class="sm-btn sm-small">Jetzt sichern</button></div>
+            <p id="sysBackupInfo" class="text-xs text-ink/55 leading-snug mb-3"></p>
+            <div id="sysBackupList" class="sm-list"></div>
+            <button id="sysBackupMore" type="button" class="sm-more hidden"></button>
+          </section>
+        </div>
+
+        <div id="sysRestorePanel" class="hidden">
+          <button id="sysRestoreBack" type="button" class="text-xs text-ink/50 hover:text-pine transition mb-3">‹ Zurück</button>
+          <section class="sm-sec">
+            <span class="sm-sec-title">Sicherung wiederherstellen</span>
+            <p id="sysRestoreWhen" class="text-sm font-medium mt-1.5" data-no-i18n></p>
+            <p id="sysRestoreMeta" class="text-[11px] text-ink/45 mb-3"></p>
+            <label class="sm-opt"><input type="radio" name="sysRestoreScope" value="daten" checked><span><span class="sm-opt-title"><span>Nur Daten</span><span class="sm-tag">empfohlen</span></span><small>Termine, Listen, Rezepte, Finanzen, Dokumente, Fotos und Profile – die App bleibt in der jetzigen Version.</small></span></label>
+            <label class="sm-opt"><input type="radio" name="sysRestoreScope" value="alles"><span><span class="sm-opt-title">Alles</span><small>Zusätzlich App-Dateien und Einrichtung genau wie zur Zeit der Sicherung – z. B. nach einem missglückten Update.</small></span></label>
+            <div class="set-hint mt-2"><span>⚠️</span><span>Alles, was seit dieser Sicherung eingetragen wurde, geht verloren – für alle Familien auf diesem Server. Der jetzige Stand wird vorher automatisch gesichert, du kannst also jederzeit zurück. pinn. ist dabei etwa eine Minute nicht erreichbar.</span></div>
+            <label class="sm-check"><input type="checkbox" id="sysRestoreConfirm"><span>Ja, ich möchte diesen Stand zurückholen.</span></label>
+            <div class="flex flex-wrap gap-2 mt-3">
+              <button id="sysRestoreCancel" type="button" class="sm-btn">Abbrechen</button>
+              <button id="sysRestoreGo" type="button" class="sm-btn sm-danger" disabled>Wiederherstellen</button>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div id="sysMaintProgress" class="sm-progress bg-paper hidden" aria-live="polite">
+        <div id="sysProgSpin" class="sm-spin"></div>
+        <h4 id="sysProgTitle" class="font-serif text-lg text-center"></h4>
+        <ol id="sysProgSteps" class="sm-steps"></ol>
+        <p id="sysProgMsg" class="text-xs text-ink/55 text-center leading-snug"></p>
+        <pre id="sysProgLog" class="sm-log hidden" data-no-i18n></pre>
+        <button id="sysProgDone" type="button" class="sm-btn sm-primary hidden">Schließen</button>
+      </div>
     </div>
   </div>
 
@@ -22636,7 +22778,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.23.0';
+const APP_VERSION = '1.24.0';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -22685,6 +22827,455 @@ document.addEventListener('visibilitychange', () => {
 });
 setInterval(() => checkForAppUpdate(true), 3 * 60 * 1000); // alle 3 Minuten im Hintergrund prüfen
 
+/* ==========================================================
+   Sicherungen & Updates per Knopf (Einstellungen → System, Hauptadmin)
+   ----------------------------------------------------------
+   Server: pb_hooks/system.pb.js + pinn-system.js; die Arbeit macht der Container „wartung“
+   (pinn-wartung.sh im Projektordner). Sicherungen ansehen und „Jetzt sichern“: Admins.
+   Wiederherstellen und Updates: Hauptadmin bzw. Admin, solange es nur eine Familie gibt.
+   Während Wiederherstellung/Update ist pinn. kurz weg – der Fortschritt kommt dann über
+   /api/pinn/system/status (ohne Anmeldung, nur der Zustand des Auftrags).
+   ========================================================== */
+let sysInfo = null;          // letzte Antwort von /api/pinn/system
+let sysShowAll = false;      // alle Sicherungen zeigen
+let sysRestoreFile = '';     // gewählte Sicherung
+let sysPolling = false;
+const SYS_ROWS = 8;
+
+function sysCanUse() {
+  return isCurrentUserAdmin() || isCurrentUserMainAdmin();
+}
+function sysLocale() {
+  return (window.PINN_I18N && PINN_I18N.language && PINN_I18N.language.locale) || 'de-DE';
+}
+function sysT(s) {
+  try { return (window.PINN_I18N && PINN_I18N.t) ? PINN_I18N.t(s) : s; } catch (e) { return s; }
+}
+function sysFmtWhen(sec) {
+  if (!sec) return '';
+  const d = new Date(sec * 1000);
+  try {
+    return d.toLocaleDateString(sysLocale(), { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })
+      + ' · ' + d.toLocaleTimeString(sysLocale(), { hour: '2-digit', minute: '2-digit' });
+  } catch (e) { return d.toLocaleString(); }
+}
+function sysFmtSize(b) {
+  const nf = (v, f) => { try { return new Intl.NumberFormat(sysLocale(), { maximumFractionDigits: f }).format(v); } catch (e) { return v.toFixed(f); } };
+  if (b >= 1073741824) return nf(b / 1073741824, 1) + ' GB';
+  if (b >= 1048576) return nf(b / 1048576, b >= 104857600 ? 0 : 1) + ' MB';
+  return nf(Math.max(1, Math.round(b / 1024)), 0) + ' KB';
+}
+function sysSleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// Art einer Sicherung → Symbol + Beschriftung (Tägliche Sicherungen älter als die Aufbewahrungstage sind Wochensicherungen)
+function sysBackupKind(b) {
+  if (b.art === 'manuell') return { ico: '✋', label: 'Von Hand' };
+  if (b.art === 'vor-update') return { ico: '⬆️', label: 'Vor einem Update' };
+  if (b.art === 'vor-wiederherstellung') return { ico: '↩️', label: 'Vor einer Wiederherstellung' };
+  const tage = (sysInfo && sysInfo.wartung && sysInfo.wartung.tage) || 7;
+  const alt = (Date.now() / 1000 - b.zeit) > (tage + 0.5) * 86400;
+  return alt ? { ico: '📅', label: 'Wochensicherung' } : { ico: '🌙', label: 'Tägliche Sicherung' };
+}
+
+async function sysFetch(pruefen) {
+  const res = await apiFetch('/api/pinn/system' + (pruefen ? '?pruefen=1' : ''), { cache: 'no-store' });
+  if (res.status === 404) { const e = new Error('Auf dem Server fehlt noch pb_hooks/system.pb.js (und pinn-system.js).'); e.code = 'alt'; throw e; }
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error || 'Das hat nicht geklappt.');
+  return body;
+}
+
+/* ---------- Einstellungen → System: Kurzfassung ---------- */
+async function sysRefreshSummary() {
+  const sub = document.getElementById('sysBackupSub');
+  const hint = document.getElementById('sysUpdateHint');
+  if (!sub) return;
+  const show = sysCanUse() && !(typeof childLockActive === 'function' && childLockActive());
+  sub.classList.toggle('hidden', !show);
+  if (!show) { hint.classList.add('hidden'); return; }
+  const sum = document.getElementById('sysBackupSummary');
+  if (!navigator.onLine) { sum.textContent = 'Keine Verbindung zum Server.'; return; }
+  try {
+    sysInfo = await sysFetch(false);
+  } catch (e) {
+    sum.textContent = e.message;
+    hint.classList.add('hidden');
+    return;
+  }
+  sum.textContent = sysSummaryText(sysInfo);
+  const u = sysInfo.update || {};
+  if (u.neuer && u.version) {
+    document.getElementById('sysUpdateHintText').textContent = sysT('Version {0} ist verfügbar.').replace('{0}', u.version);
+    hint.classList.remove('hidden');
+  } else {
+    hint.classList.add('hidden');
+  }
+}
+function sysSummaryText(info) {
+  const w = info.wartung || {};
+  if (!w.eingerichtet || !w.aktiv) return 'Der Container „wartung“ läuft noch nicht – Einrichtung siehe „Sicherungen & Wiederherstellung“.';
+  const list = info.backups || [];
+  if (!list.length) return 'Noch keine Sicherung vorhanden – die erste entsteht heute Nacht oder mit „Jetzt sichern“.';
+  return sysT('Letzte Sicherung: {0} · {1} Sicherungen auf dem NAS').replace('{0}', sysFmtWhen(list[0].zeit)).replace('{1}', String(list.length));
+}
+
+/* ---------- Modal ---------- */
+function sysModalOpen() {
+  return !document.getElementById('sysMaintModal').classList.contains('hidden');
+}
+async function openSysMaint(opts = {}) {
+  const modal = document.getElementById('sysMaintModal');
+  modal.classList.remove('hidden');
+  document.getElementById('sysMaintProgress').classList.add('hidden');
+  sysShowView('main');
+  document.getElementById('sysMaintVersion').textContent = APP_VERSION;
+  document.getElementById('sysUpdState').textContent = sysT(opts.pruefen ? 'Suche nach Updates …' : 'Wird geladen …');
+  document.getElementById('sysBackupList').innerHTML = '';
+  document.getElementById('sysBackupInfo').textContent = '';
+  await sysLoad(!!opts.pruefen);
+}
+function closeSysMaint() {
+  if (sysPolling) return; // während eines Vorgangs nicht schließen
+  document.getElementById('sysMaintModal').classList.add('hidden');
+  sysRefreshSummary();
+}
+function sysShowView(v) {
+  document.getElementById('sysMaintMain').classList.toggle('hidden', v !== 'main');
+  document.getElementById('sysRestorePanel').classList.toggle('hidden', v !== 'restore');
+  const sc = document.querySelector('#sysMaintModal .sm-scroll');
+  if (sc) sc.scrollTop = 0;
+}
+function sysNotice(text) {
+  const n = document.getElementById('sysMaintNotice');
+  n.classList.toggle('hidden', !text);
+  document.getElementById('sysMaintNoticeText').textContent = text || '';
+}
+
+async function sysLoad(pruefen) {
+  if (!navigator.onLine) { sysNotice('Keine Verbindung zum Server.'); document.getElementById('sysUpdState').textContent = ''; return; }
+  try {
+    sysInfo = await sysFetch(pruefen);
+  } catch (e) {
+    sysNotice(e.message);
+    document.getElementById('sysUpdState').textContent = '';
+    document.getElementById('sysBackupNowBtn').disabled = true;
+    return;
+  }
+  sysRender();
+  // Läuft gerade ein Vorgang (z. B. auf einem anderen Gerät gestartet)? Dann direkt den Fortschritt zeigen.
+  const j = sysInfo.job;
+  if (j && (j.zustand === 'laeuft' || j.zustand === 'wartet') && !sysPolling) sysFollow(j.id, j.art, j.version);
+}
+
+function sysRender() {
+  const info = sysInfo || {};
+  const w = info.wartung || {};
+  document.getElementById('sysMaintVersion').textContent = info.version || APP_VERSION;
+
+  // Hinweise zur Einrichtung bzw. zu den Rechten
+  let notice = '';
+  if (!w.eingerichtet || !w.aktiv) notice = 'Der Container „wartung“ läuft noch nicht. Einmalig per SSH im pinn.-Ordner „sudo sh pinn-setup.sh“ ausführen – danach gehen Sicherungen, Wiederherstellung und Updates hier per Knopf.';
+  else if (!w.docker) notice = 'Der Container „wartung“ hat keinen Zugriff auf Docker – Wiederherstellen und Updates sind deshalb aus. Sichern geht weiterhin.';
+  else if (!info.darf) notice = 'Wiederherstellen und Updates betreffen alle Familien auf diesem Server – das kann nur der Hauptadmin.';
+  sysNotice(notice);
+  const kannAktion = !!(info.darf && w.aktiv && w.docker);
+
+  // Updates
+  const u = info.update || {};
+  const st = document.getElementById('sysUpdState');
+  const rel = document.getElementById('sysUpdRelease');
+  const inst = document.getElementById('sysUpdInstallBtn');
+  let text = '';
+  if (u.neuer) text = sysT('Version {0} ist verfügbar.').replace('{0}', u.version);
+  else if (u.keine) text = 'Auf GitHub gibt es noch keine veröffentlichte Version.';
+  else if (u.fehler === 'limit') text = 'GitHub hat gerade zu viele Anfragen gezählt – bitte in einer Stunde noch einmal versuchen.';
+  else if (u.fehler && !u.tag) text = 'GitHub ist gerade nicht erreichbar – bitte später noch einmal versuchen.';
+  else if (u.tag) text = 'pinn. ist auf dem neuesten Stand.';
+  const teile = [];
+  if (text) teile.push(sysT(text));
+  if (u.geprueft) teile.push(sysT('Zuletzt geprüft: {0}').replace('{0}', sysFmtWhen(Math.floor(u.geprueft / 1000))));
+  st.textContent = teile.join(' ');
+  if (u.neuer) {
+    rel.classList.remove('hidden');
+    document.getElementById('sysUpdRelTitle').textContent = u.titel || ('pinn. ' + u.version);
+    let datum = '';
+    try { datum = u.datum ? new Date(u.datum).toLocaleDateString(sysLocale(), { day: 'numeric', month: 'long', year: 'numeric' }) : ''; } catch (e) { datum = ''; }
+    document.getElementById('sysUpdRelDate').textContent = datum;
+    document.getElementById('sysUpdRelNotes').innerHTML = sysMarkdown(u.notizen || '');
+    document.getElementById('sysUpdRelLink').href = u.url || ('https://github.com/' + (info.repo || 'pinn-shost/pinn') + '/releases');
+  } else {
+    rel.classList.add('hidden');
+  }
+  inst.classList.toggle('hidden', !u.neuer);
+  inst.disabled = !kannAktion;
+  if (u.neuer) inst.textContent = sysT('Version {0} installieren').replace('{0}', u.version);
+
+  // Sicherungen
+  document.getElementById('sysBackupNowBtn').disabled = !w.aktiv;
+  document.getElementById('sysBackupInfo').textContent = w.aktiv
+    ? sysT('Jeden Tag um {0} – aufbewahrt werden alle Sicherungen der letzten {1} Tage und danach {2} Wochen lang eine pro Woche. Sie liegen auf dem NAS im pinn.-Ordner unter „backups“.')
+        .replace('{0}', w.uhrzeit || '03:30').replace('{1}', String(w.tage || 7)).replace('{2}', String(w.wochen || 4))
+    : '';
+  const list = info.backups || [];
+  const box = document.getElementById('sysBackupList');
+  if (!list.length) {
+    box.innerHTML = `<p class="sm-empty">${escapeHtml(sysT(w.aktiv ? 'Noch keine Sicherung vorhanden – die erste entsteht heute Nacht oder mit „Jetzt sichern“.' : 'Noch keine Sicherungen.'))}</p>`;
+  } else {
+    const rows = sysShowAll ? list : list.slice(0, SYS_ROWS);
+    box.innerHTML = rows.map(b => {
+      const k = sysBackupKind(b);
+      return `<div class="sm-row">
+        <span class="sm-row-ico">${k.ico}</span>
+        <span class="sm-row-main"><span class="sm-row-title" data-no-i18n>${escapeHtml(sysFmtWhen(b.zeit))}</span><span class="sm-row-sub">${escapeHtml(sysT(k.label))} · ${escapeHtml(sysFmtSize(b.groesse))}</span></span>
+        ${kannAktion ? `<button type="button" class="sm-btn sm-small" data-sys-restore="${escapeHtml(b.datei)}">${escapeHtml(sysT('Wiederherstellen'))}</button>` : ''}
+      </div>`;
+    }).join('');
+  }
+  const more = document.getElementById('sysBackupMore');
+  more.classList.toggle('hidden', list.length <= SYS_ROWS);
+  more.textContent = sysShowAll ? sysT('Weniger anzeigen') : sysT('Alle {0} Sicherungen zeigen').replace('{0}', String(list.length));
+}
+
+// Release-Notizen (Markdown von GitHub) schlicht darstellen – ohne fremdes HTML
+function sysMarkdown(md) {
+  const inline = (t) => escapeHtml(t).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>').replace(/`([^`]+)`/g, '<code>$1</code>');
+  let html = '', inList = false;
+  String(md).replace(/\r/g, '').split('\n').forEach(line => {
+    const l = line.trim();
+    const li = l.match(/^[-*•]\s+(.*)$/);
+    if (li) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + inline(li[1]) + '</li>'; return; }
+    if (inList) { html += '</ul>'; inList = false; }
+    if (!l || /^(-{3,}|<\/?[a-z][^>]*>)$/i.test(l)) return;
+    const h = l.match(/^#{1,6}\s+(.*)$/);
+    html += h ? '<h5>' + inline(h[1]) + '</h5>' : '<p>' + inline(l) + '</p>';
+  });
+  if (inList) html += '</ul>';
+  return html || '<p>–</p>';
+}
+
+/* ---------- Wiederherstellen ---------- */
+function sysOpenRestore(file) {
+  const b = ((sysInfo && sysInfo.backups) || []).find(x => x.datei === file);
+  if (!b) return;
+  sysRestoreFile = file;
+  document.getElementById('sysRestoreWhen').textContent = sysFmtWhen(b.zeit);
+  document.getElementById('sysRestoreMeta').textContent = sysT(sysBackupKind(b).label) + ' · ' + sysFmtSize(b.groesse);
+  document.querySelector('input[name="sysRestoreScope"][value="daten"]').checked = true;
+  const cb = document.getElementById('sysRestoreConfirm');
+  cb.checked = false;
+  document.getElementById('sysRestoreGo').disabled = true;
+  sysShowView('restore');
+}
+async function sysStartRestore() {
+  const umfang = (document.querySelector('input[name="sysRestoreScope"]:checked') || {}).value === 'alles' ? 'alles' : 'daten';
+  const btn = document.getElementById('sysRestoreGo');
+  btn.disabled = true;
+  try {
+    const r = await postJson('/api/pinn/system/wiederherstellen', { datei: sysRestoreFile, umfang });
+    sysShowView('main');
+    sysFollow(r.id, 'wiederherstellen', '');
+  } catch (e) {
+    alert(e.message);
+    btn.disabled = false;
+  }
+}
+
+/* ---------- Sichern & Update ---------- */
+async function sysStartBackup() {
+  const btn = document.getElementById('sysBackupNowBtn');
+  btn.disabled = true;
+  try {
+    const r = await postJson('/api/pinn/system/sichern', {});
+    sysFollow(r.id, 'sichern', '');
+  } catch (e) {
+    alert(e.message);
+    btn.disabled = false;
+  }
+}
+async function sysStartUpdate() {
+  const u = (sysInfo && sysInfo.update) || {};
+  if (!u.neuer) return;
+  if (!confirm(sysT('pinn. jetzt auf Version {0} aktualisieren? Vorher wird automatisch gesichert. pinn. ist dabei ein paar Minuten nicht erreichbar – auf allen Geräten.').replace('{0}', u.version))) return;
+  const btn = document.getElementById('sysUpdInstallBtn');
+  btn.disabled = true;
+  try {
+    const r = await postJson('/api/pinn/system/update', {});
+    sysFollow(r.id, 'update', r.version || u.version);
+  } catch (e) {
+    alert(e.message);
+    btn.disabled = false;
+  }
+}
+
+/* ---------- Fortschritt ---------- */
+const SYS_STEPS = {
+  sichern: [['sichern', 'Sicherung erstellen']],
+  wiederherstellen: [['sichern', 'Jetzigen Stand sichern'], ['entpacken', 'Sicherung prüfen'], ['stoppen', 'pinn. anhalten'], ['einspielen', 'Daten zurückspielen'], ['starten', 'pinn. starten']],
+  update: [['sichern', 'Jetzigen Stand sichern'], ['laden', 'Update von GitHub laden'], ['entpacken', 'Paket prüfen'], ['installieren', 'Update einspielen'], ['neustart', 'pinn. neu starten']],
+};
+const SYS_FEHLER = {
+  sichern: 'Die Sicherung ist fehlgeschlagen – ist auf dem NAS noch genug Speicherplatz frei?',
+  datei: 'Diese Sicherung wurde nicht gefunden.',
+  docker: 'Der Container „wartung“ hat keinen Zugriff auf Docker.',
+  entpacken: 'Die Sicherung ließ sich nicht entpacken – es wurde nichts verändert.',
+  defekt: 'Die Datenbank in dieser Sicherung ist beschädigt – es wurde nichts verändert.',
+  start: 'pinn. startete mit der Sicherung nicht – der vorherige Stand ist wieder aktiv.',
+  laden: 'Das Update ließ sich nicht von GitHub laden – bitte die Internetverbindung des NAS prüfen. Es wurde nichts verändert.',
+  paket: 'Das heruntergeladene Paket ist unvollständig – es wurde nichts verändert.',
+  setup: 'Beim Einspielen meldete pinn-setup.sh einen Fehler (Einzelheiten unten). Die Sicherung von vorher liegt bereit.',
+  abbruch: 'Der Vorgang wurde unterbrochen, weil der Container neu gestartet ist.',
+  beschaeftigt: 'Es lief gerade schon ein anderer Vorgang – bitte gleich noch einmal versuchen.',
+  wartung: 'Der Container „wartung“ reagiert nicht – läuft er? (docker logs wartung)',
+};
+function sysRenderProgress(art, version, step, state) {
+  const titles = {
+    sichern: ['Sicherung läuft …', 'Sicherung erstellt', 'Sicherung fehlgeschlagen'],
+    wiederherstellen: ['Wiederherstellung läuft …', 'Wiederhergestellt', 'Wiederherstellung fehlgeschlagen'],
+    update: [sysT('Update auf {0} läuft …').replace('{0}', version || ''), 'Update installiert', 'Update fehlgeschlagen'],
+  }[art] || ['…', 'Fertig', 'Fehler'];
+  const spin = document.getElementById('sysProgSpin');
+  spin.classList.toggle('ok', state === 'fertig');
+  spin.classList.toggle('err', state === 'fehler');
+  document.getElementById('sysProgTitle').textContent = state === 'fertig' ? titles[1] : state === 'fehler' ? titles[2] : titles[0];
+  const steps = SYS_STEPS[art] || [];
+  const idx = steps.findIndex(s => s[0] === step);
+  document.getElementById('sysProgSteps').innerHTML = steps.map((s, i) => {
+    let cls = '';
+    if (state === 'fertig' || (idx >= 0 && i < idx)) cls = 'done';
+    else if (i === idx) cls = state === 'fehler' ? 'err' : 'on';
+    return `<li class="${cls}">${escapeHtml(sysT(s[1]))}</li>`;
+  }).join('');
+}
+function sysProgMsg(text) {
+  document.getElementById('sysProgMsg').textContent = text || '';
+}
+
+// Verfolgt einen Auftrag bis zum Ende – auch über den Neustart von pinn. hinweg
+async function sysFollow(id, art, version) {
+  if (sysPolling) return;
+  sysPolling = true;
+  const prog = document.getElementById('sysMaintProgress');
+  prog.classList.remove('hidden');
+  document.getElementById('sysMaintClose').classList.add('hidden');
+  document.getElementById('sysProgDone').classList.add('hidden');
+  document.getElementById('sysProgLog').classList.add('hidden');
+  sysRenderProgress(art, version, art === 'sichern' ? 'sichern' : '', 'laeuft');
+  sysProgMsg('Wartet auf den Container „wartung“ …');
+  const t0 = Date.now();
+  let warWeg = false, gesehen = false, ende = null;
+  while (Date.now() - t0 < 45 * 60 * 1000) {
+    let st = null, alt = false;
+    try {
+      const r = await fetch('/api/pinn/system/status', { cache: 'no-store' });
+      if (r.ok) st = await r.json();
+      else if (r.status === 404) alt = true; // nach „Alles“ aus einer älteren Sicherung ohne system.pb.js
+    } catch (e) { st = null; }
+    const j = st && st.job;
+    if (alt && warWeg) { ende = { zustand: 'fertig', schritt: 'fertig' }; break; }
+    if (!st && !alt) {
+      warWeg = true;
+      sysProgMsg(art === 'update' ? 'pinn. wird gerade erneuert und startet neu – einen Moment …' : 'pinn. startet neu – einen Moment …');
+    } else if (j && j.id === id) {
+      gesehen = true;
+      if (j.version) version = j.version;
+      if (j.zustand === 'fertig' || j.zustand === 'fehler') { ende = j; break; }
+      sysRenderProgress(art, version, j.schritt, 'laeuft');
+      sysProgMsg(j.zustand === 'wartet' ? 'Wartet auf den Container „wartung“ …'
+        : (art === 'sichern' ? 'Das kann je nach Menge an Fotos und Dokumenten ein paar Minuten dauern.' : 'Bitte die App geöffnet lassen.'));
+    } else if (!gesehen && Date.now() - t0 > 20 * 60 * 1000) {
+      ende = { zustand: 'fehler', fehler: 'wartung' };
+      break;
+    } else if (!gesehen && Date.now() - t0 > 30 * 1000) {
+      // z. B. läuft gerade die nächtliche Sicherung – der Auftrag startet direkt danach
+      sysProgMsg('Der Container „wartung“ ist noch beschäftigt – der Auftrag startet direkt danach.');
+    }
+    await sysSleep(2500);
+  }
+  if (!ende) ende = { zustand: 'fehler', fehler: 'abbruch' };
+  sysRenderProgress(art, version, ende.schritt, ende.zustand === 'fertig' ? 'fertig' : 'fehler');
+
+  if (ende.zustand === 'fertig' && (art === 'wiederherstellen' || art === 'update')) {
+    // pinn. muss wieder antworten, dann frisch laden
+    for (let i = 0; i < 60; i++) {
+      try { const h = await fetch('/api/health', { cache: 'no-store' }); if (h.ok) break; } catch (e) { /* startet noch */ }
+      await sysSleep(1500);
+    }
+    if (art === 'wiederherstellen') sysClearLocalData();
+    sysProgMsg(art === 'update' ? sysT('pinn. {0} ist installiert – die App lädt neu …').replace('{0}', version || '') : 'Der gewählte Stand ist zurück – die App lädt neu …');
+    await sysSleep(2500);
+    sysPolling = false;
+    hardReload();
+    return;
+  }
+
+  sysPolling = false;
+  document.getElementById('sysMaintClose').classList.remove('hidden');
+  const done = document.getElementById('sysProgDone');
+  done.classList.remove('hidden');
+  if (ende.zustand === 'fertig') {
+    sysProgMsg('Die Sicherung liegt auf dem NAS im pinn.-Ordner unter „backups“.');
+  } else {
+    let msg = sysT(SYS_FEHLER[ende.fehler] || 'Das hat nicht geklappt.');
+    if (ende.meldung && ende.fehler !== 'setup') msg += ' (' + ende.meldung + ')';
+    sysProgMsg(msg);
+    if (art === 'update') {
+      try {
+        const info = await sysFetch(false);
+        if (info.updateLog && info.updateLog.length) {
+          const log = document.getElementById('sysProgLog');
+          log.textContent = info.updateLog.join('\n');
+          log.classList.remove('hidden');
+        }
+      } catch (e) { /* egal */ }
+    }
+  }
+}
+// Nach einer Wiederherstellung: Zwischenspeicher dieses Geräts leeren, damit der zurückgeholte Stand
+// geladen und nicht von alten, lokal gemerkten Änderungen überschrieben wird.
+function sysClearLocalData() {
+  [LS_CACHE_KEY, LS_PENDING_KEY, LS_OUTBOX, LS_AUFGABEN_CACHE, LS_ICS_CACHE, LS_PROFILE_CACHE,
+   LS_FIN_QUEUE, LS_FIN_CACHE, LS_KASSEN, LS_KASSEN_PENDING, LS_FIN_DOCS, LS_DOCS].forEach(k => {
+    try { localStorage.removeItem(k); } catch (e) { /* egal */ }
+  });
+}
+
+/* ---------- Bedienung ---------- */
+document.getElementById('sysMaintClose').addEventListener('click', closeSysMaint);
+document.getElementById('sysMaintModal').addEventListener('click', (e) => { if (e.target.id === 'sysMaintModal') closeSysMaint(); });
+document.getElementById('sysProgDone').addEventListener('click', () => {
+  document.getElementById('sysMaintProgress').classList.add('hidden');
+  sysLoad(false);
+});
+document.getElementById('sysUpdCheckBtn').addEventListener('click', async () => {
+  const b = document.getElementById('sysUpdCheckBtn');
+  b.disabled = true;
+  document.getElementById('sysUpdState').textContent = sysT('Suche nach Updates …');
+  await sysLoad(true);
+  b.disabled = false;
+});
+document.getElementById('sysUpdInstallBtn').addEventListener('click', sysStartUpdate);
+document.getElementById('sysBackupNowBtn').addEventListener('click', sysStartBackup);
+document.getElementById('sysBackupMore').addEventListener('click', () => { sysShowAll = !sysShowAll; sysRender(); });
+document.getElementById('sysBackupList').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-sys-restore]');
+  if (b) sysOpenRestore(b.dataset.sysRestore);
+});
+document.getElementById('sysRestoreBack').addEventListener('click', () => sysShowView('main'));
+document.getElementById('sysRestoreCancel').addEventListener('click', () => sysShowView('main'));
+document.getElementById('sysRestoreConfirm').addEventListener('change', (e) => {
+  document.getElementById('sysRestoreGo').disabled = !e.target.checked;
+});
+document.getElementById('sysRestoreGo').addEventListener('click', sysStartRestore);
+document.getElementById('openSysMaintBtn').addEventListener('click', () => openSysMaint());
+document.getElementById('sysUpdateHintBtn').addEventListener('click', () => openSysMaint());
+document.getElementById('mainAdminSystemBtn').addEventListener('click', () => openSysMaint());
+(function () {
+  const acc = document.getElementById('settingsSystemAccordion');
+  if (acc) acc.addEventListener('toggle', () => { if (acc.open) sysRefreshSummary(); });
+})();
+
+// „Auf Update prüfen“: Admins sehen die neue Version auf GitHub samt Installieren-Knopf,
+// alle anderen prüfen wie bisher, ob der Server schon eine neuere App-Datei hat.
 document.getElementById('checkUpdateBtn').addEventListener('click', async () => {
   const statusEl = document.getElementById('versionCheckStatus');
   statusEl.textContent = 'Prüfe …';
@@ -22692,10 +23283,15 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
   if (hasUpdate) {
     statusEl.textContent = 'Neue Version gefunden – wird aktualisiert …';
     hardReload();
-  } else {
-    statusEl.textContent = `Du nutzt bereits die aktuelle Version (${APP_VERSION}).`;
-    setTimeout(() => { statusEl.textContent = ''; }, 4000);
+    return;
   }
+  if (sysCanUse() && navigator.onLine) {
+    statusEl.textContent = '';
+    openSysMaint({ pruefen: true });
+    return;
+  }
+  statusEl.textContent = `Du nutzt bereits die aktuelle Version (${APP_VERSION}).`;
+  setTimeout(() => { statusEl.textContent = ''; }, 4000);
 });
 
 /* ==========================================================
@@ -22709,6 +23305,16 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
    - rueckblick: true = Einträge vor dem Versions-Log, aus der Projekthistorie zusammengefasst.
    ========================================================== */
 const PINN_CHANGELOG = [
+  {
+    v: '1.24', datum: '07.10.2026', titel: 'Sicherungen & Updates per Knopf',
+    punkte: [
+      ['neu', 'Automatische Sicherung jede Nacht um 03:30 Uhr auf dem NAS – rotierend: alle Sicherungen der letzten 7 Tage, danach 4 Wochen lang eine pro Woche; vor jedem Update und jeder Wiederherstellung zusätzlich automatisch'],
+      ['neu', 'Einstellungen → System → „Sicherungen & Wiederherstellung“ (als Hauptadmin „🛟 Sicherungen & Updates“): alle Sicherungen mit Datum und Größe, „Jetzt sichern“ und Wiederherstellen per Knopf – nur die Daten oder alles. Der jetzige Stand wird vorher gesichert; startet pinn. mit der Sicherung nicht, kommt der alte Stand von selbst zurück'],
+      ['neu', 'Updates per Knopf: pinn. sucht auf GitHub nach neuen Versionen, zeigt die Release-Notizen und spielt das Update samt Sicherung ein – ganz ohne SSH. Eine neue Version erscheint als Hinweis unter Einstellungen → System'],
+      ['info', 'Wiederherstellen und Updates betreffen den ganzen Server: das darf der Hauptadmin, bei nur einer Familie auch deren Admins. Der Fortschritt bleibt sichtbar, während pinn. neu startet'],
+      ['info', 'Server: neuer Container „wartung“ (ersetzt „backup“, Skript pinn-wartung.sh), neu system.pb.js und pinn-system.js; docker-compose.yaml (Ordner wartung), pinn-setup.sh (lädt neue Hooks mit einem Neustart) und pinn-pocketbase-update.sh angepasst – einmalig sudo sh pinn-setup.sh ausführen'],
+    ],
+  },
   {
     v: '1.23', datum: '07.10.2026', titel: 'Einkaufsliste neu sortiert',
     punkte: [
@@ -26861,10 +27467,11 @@ function renderFinanceTrend() {
     const overLine = (c.budget && c.total > c.budget) ? `<span class="fin-trend-budgetline" style="bottom:${c.budget / maxVal * H}px"></span>` : '';
     const selected = c.off === finOffset;
     let label = c.range.short;
-    if (finPeriod === 'month' && (c.range.start.getMonth() === 0 || c.off === endOff - n + 1)) label += `<span class="block text-[9px] text-ink/35">${c.range.start.getFullYear()}</span>`;
+    // Jahreszeile immer reservieren, damit alle Balken auf gleicher Höhe stehen
+    if (finPeriod === 'month') label += `<span class="block text-[9px] leading-tight text-ink/35">${(c.range.start.getMonth() === 0 || c.off === endOff - n + 1) ? c.range.start.getFullYear() : '&nbsp;'}</span>`;
     return `
       <button type="button" class="fin-trend-col flex-1 min-w-0 flex flex-col items-center gap-1 select-none" data-off="${c.off}" title="${escapeHtml(c.range.label + ': ' + fmtEur(c.total))}">
-        <span class="text-[10px] ${selected ? 'font-semibold text-ink' : 'text-ink/45'} whitespace-nowrap">${c.total > 0 ? curPlain0(c.total) : ''}</span>
+        <span class="text-[10px] ${selected ? 'font-semibold text-ink' : 'text-ink/45'} whitespace-nowrap leading-none h-3">${c.total > 0 ? curPlain0(c.total) : ''}</span>
         <span class="fin-trend-track ${selected ? 'selected' : ''}" style="height:${H}px">
           <span class="fin-trend-stack">
             <span style="height:${greenH}px;background:${FIN_GREEN};opacity:${selected ? 1 : 0.55}"></span>
@@ -26882,7 +27489,7 @@ function renderFinanceTrend() {
         <h3 class="font-serif text-base">Verlauf</h3>
         <span class="text-xs text-ink/45">${avg ? 'Ø ' + fmtEur0(avg) + ' pro ' + finPeriodWord(finPeriod) : ''}</span>
       </div>
-      <div class="flex items-end gap-1 sm:gap-2">${bars}</div>
+      <div class="flex items-start gap-1 sm:gap-2">${bars}</div>
       <div class="flex items-center gap-4 mt-3 text-[11px] text-ink/50">
         <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="background:${FIN_RED}"></span>Ausgaben</span>
         ${cols.some(c => c.budget) ? `<span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="background:${FIN_GREEN}"></span>Rest vom Budget</span>` : ''}
@@ -31170,10 +31777,11 @@ function finSavingsBars(ov) {
     const color = m.net >= 0 ? FIN_GREEN : FIN_RED;
     const cur = m.off === 0;
     let label = m.range.short;
-    if (m.range.start.getMonth() === 0 || m.off === -11) label += `<span class="block text-[9px] text-ink/35">${m.range.start.getFullYear()}</span>`;
+    // Jahreszeile immer reservieren, damit alle Balken auf gleicher Höhe stehen
+    label += `<span class="block text-[9px] leading-tight text-ink/35">${(m.range.start.getMonth() === 0 || m.off === -11) ? m.range.start.getFullYear() : '&nbsp;'}</span>`;
     return `
       <div class="flex-1 min-w-0 flex flex-col items-center gap-1" title="${escapeHtml(m.range.label + ': ' + finSignedEur(m.net))}">
-        <span class="text-[10px] ${cur ? 'font-semibold text-ink' : 'text-ink/45'} whitespace-nowrap">${m.net ? (m.net < 0 ? '−' : '') + curPlain0(Math.abs(m.net)) : ''}</span>
+        <span class="text-[10px] ${cur ? 'font-semibold text-ink' : 'text-ink/45'} whitespace-nowrap leading-none h-3">${m.net ? (m.net < 0 ? '−' : '') + curPlain0(Math.abs(m.net)) : ''}</span>
         <span class="w-full flex items-end justify-center" style="height:${H}px">
           <span class="block rounded-t-md" style="width:68%;max-width:26px;height:${h}px;background:${color};opacity:${cur ? 1 : 0.7}"></span>
         </span>
@@ -31189,7 +31797,7 @@ function finSavingsBarsCard(bars) {
         <h3 class="font-serif text-base">Verlauf</h3>
         <span class="text-xs text-ink/45">netto pro Monat</span>
       </div>
-      <div class="flex items-end gap-1 sm:gap-2">${bars.html}</div>
+      <div class="flex items-start gap-1 sm:gap-2">${bars.html}</div>
       <div class="flex items-center gap-4 mt-3 text-[11px] text-ink/50">
         <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="background:${FIN_GREEN}"></span>mehr eingezahlt</span>
         <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="background:${FIN_RED}"></span>mehr entnommen</span>

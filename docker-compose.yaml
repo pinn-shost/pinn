@@ -1,6 +1,6 @@
 # ─────────────────────────────────────────────────────────────
 #  pinn. – Docker-Projekt (PocketBase + HTTPS über Caddy/DuckDNS + Traccar für die Ortung
-#  + Umweg zur Home-Assistant-VM + optional Tailscale + tägliches Backup)
+#  + Umweg zur Home-Assistant-VM + optional Tailscale + Wartung: Backups & Updates per Knopf)
 #  Keine Portfreigabe nötig – Zertifikat per DNS-Prüfung.
 #
 #  EINRICHTUNG: Alles Nötige (DuckDNS, Google, KI, Home Assistant, Tailscale …) trägst du in pinn.
@@ -9,7 +9,8 @@
 #  hier und in der .env muss dafür nichts mehr geändert werden.
 #
 #  Die Werte unten und in der .env sind nur noch Vorgaben: Was im Assistenten gespeichert ist, gilt.
-#  Erstinstallation und Updates: sudo sh pinn-setup.sh (sortiert alle Dateien und startet pinn.)
+#  Erstinstallation: sudo sh pinn-setup.sh (sortiert alle Dateien und startet pinn.)
+#  Updates danach per Knopf in pinn. (Einstellungen → System) oder wie bisher mit pinn-setup.sh.
 #  Projekt & Anleitung: https://github.com/pinn-shost/pinn
 # ─────────────────────────────────────────────────────────────
 x-pinn-config: &pinn-config
@@ -29,14 +30,16 @@ x-ha-netz-config: &ha-netz-config
 x-pocketbase-version: &pb-version "0.40.3"
 
 x-backup-config: &backup-config
-  BACKUP_ZEIT: "30 3 * * *"                 # Cron-Zeit: täglich um 03:30 Uhr
-  BACKUP_TAGE: "14"                         # Backups älter als so viele Tage werden gelöscht
+  BACKUP_UHRZEIT: "03:30"                   # tägliche Sicherung um diese Uhrzeit
+  BACKUP_TAGE: "7"                          # alle Sicherungen der letzten 7 Tage bleiben …
+  BACKUP_WOCHEN: "4"                        # … danach je Woche eine, 4 Wochen lang
   TZ: "Europe/Berlin"
 # ─────────────────────────────────────────────────────────────
-#  Backups landen als pinn_JJJJ-MM-TT_HHMM.tar.gz im Ordner ./backups
+#  Sicherungen landen als pinn_JJJJ-MM-TT_HHMM.tar.gz im Ordner ./backups
 #  (enthält Datenbank, hochgeladene Dateien, pb_public, pb_hooks, Caddy, Traccar, konfig, Tailscale,
 #   .env und diese Datei – nur für root lesbar, nicht weitergeben).
-#  Wiederherstellen: docker compose down → Archiv im Projektordner entpacken
+#  Wiederherstellen: in pinn. unter Einstellungen → System → Sicherungen & Updates (oder als Hauptadmin
+#  „🛟 Sicherungen & Updates“). Ohne App: docker compose down → Archiv im Projektordner entpacken
 #  (tar -xzf backups/pinn_….tar.gz) → docker compose up -d
 # ─────────────────────────────────────────────────────────────
 
@@ -96,6 +99,7 @@ services:
       - ./pb_public:/pb_public
       - ./pb_hooks:/pb_hooks
       - ./konfig:/pinn_konfig            # Werte aus der Einrichtung (pinn.env, einrichtung.json)
+      - ./wartung:/pinn_wartung          # Austausch mit dem Container „wartung“ (Sicherungen, Updates)
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:80/api/health >/dev/null 2>&1 || exit 1"]
       interval: 60s
@@ -338,63 +342,27 @@ services:
         done
         exit 1
 
-  # Tägliches Backup im laufenden Betrieb. Die Datenbanken werden über SQLite selbst
-  # gesichert (konsistent, kein Stoppen von pinn. nötig), läuft mit niedrigster Priorität.
-  # Beim Start wird sofort ein Backup erstellt, falls es heute noch keins gibt.
-  # Log ansehen: docker logs backup
-  backup:
-    image: alpine:3.20
-    container_name: backup
+  # Wartung: tägliche Sicherung im laufenden Betrieb (rotierend: 7 Tage + 4 Wochen, siehe oben),
+  # Wiederherstellen und Updates per Knopf in pinn. (Einstellungen → System → Sicherungen & Updates).
+  # Die Arbeit macht das Skript pinn-wartung.sh im Projektordner. Für Wiederherstellen und Updates
+  # braucht der Container Zugriff auf Docker (pinn. kurz anhalten, Update einspielen) – deshalb ist
+  # /var/run/docker.sock eingebunden. Aufträge kommen nur aus pinn. über den Ordner ./wartung;
+  # Updates nur aus dem offiziellen GitHub-Repository (PINN_REPO).
+  # Log ansehen: docker logs wartung · Sicherung von Hand: docker exec wartung sh /projekt/pinn-wartung.sh sichern
+  wartung:
+    image: docker:cli
+    container_name: wartung
     restart: unless-stopped
-    environment: *backup-config
+    environment:
+      <<: *backup-config
+      PINN_REPO: "pinn-shost/pinn"
     volumes:
-      - ./:/src:ro                  # Projektordner nur lesend
-      - ./pb_data:/src/pb_data      # für die SQLite-Sicherung (liest nur, braucht aber Sperrdateien)
-      - ./backups:/backup
+      - ./:/projekt
+      - /var/run/docker.sock:/var/run/docker.sock
     entrypoint: ["/bin/sh", "-c"]
     command:
       - |
-        until apk add --no-cache sqlite tar tzdata >/dev/null; do
-          echo "Pakete nicht ladbar – neuer Versuch in 60 s"; sleep 60
-        done
-        cat > /usr/local/bin/pinn-backup <<'SKRIPT'
-        #!/bin/sh
-        umask 077                     # Backups enthalten .env und Schlüssel – nur für root lesbar
-        TS=$$(date +%Y-%m-%d_%H%M)
-        ZIEL=/backup/pinn_$$TS.tar
-        TMP=/tmp/pinn_db
-        echo "$$(date '+%d.%m.%Y %H:%M') Backup startet"
-        rm -rf "$$TMP" /backup/*.part /backup/*.part.gz
-        mkdir -p "$$TMP/pb_data"
-        for DB in /src/pb_data/*.db; do
-          [ -f "$$DB" ] || continue
-          if ! nice -n 19 sqlite3 "$$DB" ".timeout 30000" ".backup '$$TMP/pb_data/$$(basename "$$DB")'"; then
-            echo "FEHLER: $$DB konnte nicht gesichert werden"; rm -rf "$$TMP"; exit 1
-          fi
-        done
-        LISTE=""
-        for P in pb_data pb_public pb_hooks caddy traccar/data konfig tailscale docker-compose.yaml .env; do
-          [ -e "/src/$$P" ] && LISTE="$$LISTE $$P"
-        done
-        if nice -n 19 tar -cf "$$ZIEL.part" -C /src \
-             --exclude='pb_data/*.db' --exclude='pb_data/*.db-wal' --exclude='pb_data/*.db-shm' \
-             --exclude='pb_data/backups' $$LISTE \
-           && nice -n 19 tar -rf "$$ZIEL.part" -C "$$TMP" pb_data \
-           && nice -n 19 gzip -6 "$$ZIEL.part" \
-           && mv "$$ZIEL.part.gz" "$$ZIEL.gz"; then
-          rm -rf "$$TMP"
-          find /backup -maxdepth 1 -name 'pinn_*.tar.gz' -mtime +"$$BACKUP_TAGE" -delete
-          echo "$$(date '+%d.%m.%Y %H:%M') Backup fertig: $$(basename "$$ZIEL.gz") ($$(du -h "$$ZIEL.gz" | cut -f1))"
-        else
-          echo "FEHLER: Backup fehlgeschlagen"
-          rm -rf "$$TMP" "$$ZIEL.part" "$$ZIEL.part.gz"
-          exit 1
-        fi
-        SKRIPT
-        chmod +x /usr/local/bin/pinn-backup
-        chmod 700 /backup 2>/dev/null
-        find /backup -maxdepth 1 -name 'pinn_*.tar.gz' -exec chmod 600 {} + 2>/dev/null
-        ls /backup/pinn_$$(date +%Y-%m-%d)_*.tar.gz >/dev/null 2>&1 || /usr/local/bin/pinn-backup
-        echo "$$BACKUP_ZEIT /usr/local/bin/pinn-backup > /proc/1/fd/1 2>&1" > /etc/crontabs/root
-        echo "Backup geplant: $$BACKUP_ZEIT (aufbewahrt: $$BACKUP_TAGE Tage)"
-        exec crond -f -l 8
+        if [ -f /projekt/pinn-wartung.sh ]; then exec sh /projekt/pinn-wartung.sh; fi
+        echo "pinn-wartung.sh fehlt im Projektordner – bitte sudo sh pinn-setup.sh ausführen"
+        sleep 300
+        exit 1
