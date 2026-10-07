@@ -13,7 +13,7 @@
 
 ## What is pinn.?
 
-pinn. is a web app for families and flatshares that runs entirely on your own NAS. Install it once with Docker, add it to the home screen of every phone and tablet, and everyone shares one calendar, one shopping list and one place for everything that keeps a household running. No cloud account, no ads, no tracking – your data never leaves your home.
+pinn. is a web app for families and flatshares that runs entirely on your own NAS. Install it once with Docker, add it to the home screen of every phone and tablet (iPhone, iPad and Android), and everyone shares one calendar, one shopping list and one place for everything that keeps a household running. No cloud account, no ads, no tracking – your data never leaves your home.
 
 **Highlights**
 
@@ -25,14 +25,15 @@ pinn. is a web app for families and flatshares that runs entirely on your own NA
 - **Documents & vehicles** – receipts and warranties, IDs with expiry reminders, cars and bikes with MOT, service and costs
 - **Family** – live location via Traccar (way home, SOS), emergency cards, places with arrival notifications
 - **Smart home** – Apple Shortcuts and Home Assistant (e.g. start the robot vacuum from a task)
-- **Family board, notifications, global search, offline mode, dark mode**
+- **Push notifications** – on iPhone, iPad and Android: reminders, daily summary, assignments, board notes, arrivals and SOS – personal for each profile
+- **Family board, notification bell, global search, offline mode, dark mode**
 - **Languages** – English, Deutsch, Français, Español; family or flatshare mode
 
 ## Requirements
 
 - A NAS or server with **Docker** and **Docker Compose 2.17+** (developed on a UGREEN NAS with UGOS, works on any Linux Docker host)
 - SSH access to the NAS
-- Optional: a free [DuckDNS](https://www.duckdns.org) subdomain for HTTPS (needed for push notifications on iPhone)
+- Optional: a free [DuckDNS](https://www.duckdns.org) subdomain for HTTPS (needed for push notifications on iPhone and Android)
 
 ## Installation
 
@@ -45,6 +46,11 @@ pinn. is a web app for families and flatshares that runs entirely on your own NA
    The script sorts all files into place, downloads the libraries for PDF import and photo text recognition, and starts pinn.
 4. Open `http://<NAS-IP>:8090` in the browser → **Log in as main admin** → password `Admin` → set your own password.
 5. The **setup assistant** guides you through everything else (HTTPS, remote access via WireGuard or Tailscale, Google, AI, location, Home Assistant) – step by step, in four languages.
+6. Open pinn. via its HTTPS address on every phone and add it to the home screen:
+   - **iPhone/iPad (Safari):** Share → *Add to Home Screen* (iOS 16.4 or later for notifications)
+   - **Android (Chrome):** Settings → Notifications → *Install pinn. as an app*, or Chrome menu ⋮ → *Install app*
+
+   Then turn on notifications per device under **Settings → Notifications → Activate on this device**.
 
 **Updating:** download the new ZIP, put `pinn-main` into the same folder again and run `sudo sh pinn-setup.sh`. Replaced files are backed up in `_alt/`. Your data stays untouched.
 
@@ -75,7 +81,7 @@ Found a bug or have an idea? [Open an issue](https://github.com/pinn-shost/pinn/
 
 ## 🇩🇪 Deutsch
 
-pinn. ist eine Familien-App, die komplett auf dem eigenen NAS läuft: Kalender, Essensplanung, Rezepte, Einkaufs- und Packlisten, Aufgaben, Finanzen, Dokumente, Fahrzeuge, Ortung, Smarthome und eine Pinnwand – für Familien und WGs. Kein Cloud-Konto, keine Werbung, keine Weitergabe von Daten.
+pinn. ist eine Familien-App, die komplett auf dem eigenen NAS läuft: Kalender, Essensplanung, Rezepte, Einkaufs- und Packlisten, Aufgaben, Finanzen, Dokumente, Fahrzeuge, Ortung, Smarthome und eine Pinnwand – für Familien und WGs, mit persönlichen Push-Benachrichtigungen auf iPhone, iPad und Android. Kein Cloud-Konto, keine Werbung, keine Weitergabe von Daten.
 
 ### Installation
 
@@ -87,6 +93,11 @@ pinn. ist eine Familien-App, die komplett auf dem eigenen NAS läuft: Kalender, 
    ```
 4. Im Browser `http://<NAS-IP>:8090` öffnen → **Als Hauptadmin anmelden** → Passwort `Admin` → eigenes Passwort festlegen.
 5. Der **Einrichtungs-Assistent** führt Schritt für Schritt durch alles Weitere.
+6. pinn. auf jedem Handy über die HTTPS-Adresse öffnen und auf den Home-Bildschirm legen:
+   - **iPhone/iPad (Safari):** Teilen → *Zum Home-Bildschirm* (für Benachrichtigungen ab iOS 16.4)
+   - **Android (Chrome):** Einstellungen → Benachrichtigungen → *pinn. als App installieren* oder Chrome-Menü ⋮ → *App installieren*
+
+   Danach je Gerät unter **Einstellungen → Benachrichtigungen → Auf diesem Gerät aktivieren** die Mitteilungen einschalten.
 
 **Update:** neue ZIP herunterladen, `pinn-main` wieder in denselben Ordner legen, `sudo sh pinn-setup.sh` ausführen. Ersetzte Dateien landen in `_alt/`, eure Daten bleiben unverändert.
 

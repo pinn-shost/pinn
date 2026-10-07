@@ -17,6 +17,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.json">
 <!-- Kein Code von fremden Servern (Bankdaten!): Tailwind als fertig gebaute CSS und der PocketBase-
      Client liegen selbst gehostet auf dem NAS:
@@ -573,7 +574,7 @@ window.PINN_LANGUAGES = [
     start(data);
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.20.0" onerror="PINN_I18N.fail()"><\/script>');
+  if (DICT) document.write('<script src="' + lang.file + '?v=1.22.0" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // Deutsch als WG: kein Wörterbuch, nur die WG-Bezeichnungen
 })();
 </script>
@@ -4020,6 +4021,14 @@ window.PINN_LANGUAGES = [
         <p id="pushWhoText" class="text-sm text-ink/70 mb-1"></p>
         <p id="pushStatus" class="text-xs text-ink/50 mb-3"></p>
         <p id="pushIosHint" class="hidden text-xs text-mustard mb-3">Auf iPhone und iPad klappen Benachrichtigungen nur, wenn pinn. über „Teilen → Zum Home-Bildschirm“ hinzugefügt und von dort geöffnet wird (ab iOS 16.4).</p>
+        <!-- Android: Hinweise zu Browser, App-Installation und Energiesparen -->
+        <p id="pushAndroidBrowserHint" class="hidden text-xs text-mustard mb-3">Auf Android-Handys klappen Benachrichtigungen in Chrome, Samsung Internet, Edge oder Firefox – nicht im eingebauten Browser anderer Apps (z. B. WhatsApp, Mail). Bitte die pinn.-Adresse dort öffnen.</p>
+        <div id="pushAndroidInstallBox" class="hidden mb-3">
+          <p class="text-xs text-ink/60 mb-2">Tipp für Android: pinn. als App auf den Startbildschirm legen – dann öffnet es sich ohne Adressleiste und Mitteilungen kommen mit dem pinn.-Symbol.</p>
+          <button type="button" id="pushAndroidInstallBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">📲 pinn. als App installieren</button>
+          <p id="pushAndroidInstallManual" class="hidden text-xs text-ink/50">In Chrome oben rechts auf ⋮ tippen → „App installieren“ bzw. „Zum Startbildschirm hinzufügen“.</p>
+        </div>
+        <p id="pushAndroidBatteryHint" class="hidden text-xs text-ink/50 mb-3">Kommen Mitteilungen auf Android verspätet oder gar nicht, wenn das Handy länger liegt? Unter Einstellungen → Apps → Chrome (bzw. pinn.) → Akku „Nicht eingeschränkt“ wählen und prüfen, ob unter Benachrichtigungen alles erlaubt ist.</p>
         <div class="flex flex-wrap items-center gap-2 mb-5">
           <button type="button" id="pushEnableBtn" class="hidden px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition">Auf diesem Gerät aktivieren</button>
           <button type="button" id="pushDisableBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-red-500 hover:border-red-500 transition">Auf diesem Gerät deaktivieren</button>
@@ -7272,6 +7281,30 @@ function isStandaloneApp() {
 function isAppleMobile() {
   return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 }
+function isAndroidDevice() {
+  return /Android/i.test(navigator.userAgent || '');
+}
+// Android/Chrome: Installation als App anbieten. Chrome meldet „beforeinstallprompt“, sobald pinn.
+// installierbar ist (Manifest mit Symbolen, Service Worker, HTTPS) – das Ereignis wird gemerkt und
+// erst auf Tipp in den Einstellungen → Benachrichtigungen ausgelöst.
+let pwaInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  pwaInstallPrompt = e;
+  updateAndroidInstallUi();
+});
+window.addEventListener('appinstalled', () => {
+  pwaInstallPrompt = null;
+  updateAndroidInstallUi();
+});
+function updateAndroidInstallUi() {
+  const box = document.getElementById('pushAndroidInstallBox');
+  if (!box) return;
+  const show = isAndroidDevice() && !isStandaloneApp() && pushSupported();
+  box.classList.toggle('hidden', !show);
+  document.getElementById('pushAndroidInstallBtn').classList.toggle('hidden', !show || !pwaInstallPrompt);
+  document.getElementById('pushAndroidInstallManual').classList.toggle('hidden', !show || !!pwaInstallPrompt);
+}
 function base64UrlToUint8Array(b64) {
   const padded = (b64 + '='.repeat((4 - b64.length % 4) % 4)).replace(/-/g, '+').replace(/_/g, '/');
   const raw = atob(padded);
@@ -7363,9 +7396,9 @@ function pushSubscribeErrorText(e) {
   const name = (e && e.name) || '';
   const msg = (e && e.message) || String(e || '');
   if (name === 'NotAllowedError') {
-    return isAppleMobile()
-      ? 'iOS hat die Anmeldung abgelehnt. Bitte in den iPhone-Einstellungen → Mitteilungen → pinn. „Mitteilungen erlauben“ einschalten und erneut tippen.'
-      : 'Benachrichtigungen wurden nicht erlaubt.';
+    if (isAppleMobile()) return 'iOS hat die Anmeldung abgelehnt. Bitte in den iPhone-Einstellungen → Mitteilungen → pinn. „Mitteilungen erlauben“ einschalten und erneut tippen.';
+    if (isAndroidDevice()) return 'Android hat die Anmeldung abgelehnt. Bitte in Chrome auf das Symbol links neben der Adresse tippen → Berechtigungen → Benachrichtigungen erlauben und erneut tippen.';
+    return 'Benachrichtigungen wurden nicht erlaubt.';
   }
   if (name === 'InvalidStateError' || name === 'AbortError') {
     return 'Die Anmeldung beim Push-Dienst ist fehlgeschlagen (' + name + ': ' + msg + '). Bitte pinn. komplett schließen, neu öffnen und erneut tippen.';
@@ -7379,7 +7412,9 @@ async function enablePushOnThisDevice() {
   if (permission === 'denied') {
     throw new Error(isAppleMobile()
       ? 'Benachrichtigungen sind für pinn. blockiert. Bitte in den iPhone-Einstellungen → Mitteilungen → pinn. „Mitteilungen erlauben“ einschalten.'
-      : 'Benachrichtigungen sind für pinn. blockiert. Bitte in den Browser-Einstellungen erlauben.');
+      : (isAndroidDevice()
+        ? 'Benachrichtigungen sind für pinn. blockiert. Bitte in Chrome auf das Symbol links neben der Adresse tippen → Berechtigungen → Benachrichtigungen erlauben (installierte App: Android-Einstellungen → Apps → pinn. → Benachrichtigungen).'
+        : 'Benachrichtigungen sind für pinn. blockiert. Bitte in den Browser-Einstellungen erlauben.'));
   }
   if (permission !== 'granted') throw new Error('Die Abfrage wurde geschlossen, ohne zu erlauben. Bitte erneut tippen und „Erlauben“ wählen.');
 
@@ -7515,8 +7550,12 @@ async function renderPushSettings(knownSub) {
   const testBtn = document.getElementById('pushTestBtn');
   const box = document.getElementById('pushSettingsBox');
   const iosHint = document.getElementById('pushIosHint');
+  const androidBrowserHint = document.getElementById('pushAndroidBrowserHint');
+  const androidBatteryHint = document.getElementById('pushAndroidBatteryHint');
   [enableBtn, disableBtn, testBtn].forEach(b => b.classList.add('hidden'));
+  [androidBrowserHint, androidBatteryHint].forEach(el => el.classList.add('hidden'));
   status.classList.remove('text-red-500');
+  updateAndroidInstallUi();
 
   const me = currentMember();
   who.textContent = me
@@ -7542,12 +7581,14 @@ async function renderPushSettings(knownSub) {
   if (!pushSupported()) {
     const needsHomeScreen = isAppleMobile() && !isStandaloneApp();
     iosHint.classList.toggle('hidden', !needsHomeScreen);
+    androidBrowserHint.classList.toggle('hidden', !isAndroidDevice());
     status.textContent = needsHomeScreen
       ? 'Auf diesem Gerät noch nicht möglich.'
       : (isAppleMobile() ? 'Dieses iPhone/iPad unterstützt noch keine Benachrichtigungen für Web-Apps – bitte auf iOS 16.4 oder neuer aktualisieren.' : 'Dieser Browser unterstützt keine Push-Benachrichtigungen.');
     return;
   }
   iosHint.classList.add('hidden');
+  androidBatteryHint.classList.toggle('hidden', !isAndroidDevice());
 
   // Abo unabhängig von Notification.permission prüfen - iOS meldet die Erlaubnis in Web-Apps
   // nicht immer zuverlässig.
@@ -7592,7 +7633,9 @@ async function renderPushSettings(knownSub) {
   if (Notification.permission === 'denied') {
     status.textContent = isAppleMobile()
       ? 'Benachrichtigungen sind für pinn. blockiert. Bitte in den iPhone-Einstellungen → Mitteilungen → pinn. „Mitteilungen erlauben“ einschalten und pinn. neu öffnen.'
-      : 'Benachrichtigungen sind für pinn. auf diesem Gerät blockiert. Bitte in den Browser-Einstellungen erlauben.';
+      : (isAndroidDevice()
+        ? 'Benachrichtigungen sind für pinn. blockiert. Bitte in Chrome auf das Symbol links neben der Adresse tippen → Berechtigungen → Benachrichtigungen erlauben (installierte App: Android-Einstellungen → Apps → pinn. → Benachrichtigungen) und pinn. neu öffnen.'
+        : 'Benachrichtigungen sind für pinn. auf diesem Gerät blockiert. Bitte in den Browser-Einstellungen erlauben.');
     status.classList.add('text-red-500');
     return;
   }
@@ -7628,6 +7671,16 @@ document.getElementById('pushEnableBtn').addEventListener('click', async () => {
   } finally {
     btn.disabled = false;
   }
+});
+document.getElementById('pushAndroidInstallBtn').addEventListener('click', async () => {
+  if (!pwaInstallPrompt) { updateAndroidInstallUi(); return; }
+  const p = pwaInstallPrompt;
+  pwaInstallPrompt = null;
+  try {
+    p.prompt();
+    await p.userChoice;
+  } catch (e) { /* abgebrochen */ }
+  updateAndroidInstallUi();
 });
 document.getElementById('pushDisableBtn').addEventListener('click', async () => {
   pushLastError = '';
@@ -22295,7 +22348,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.21.0';
+const APP_VERSION = '1.22.0';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -22368,6 +22421,14 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
    - rueckblick: true = Einträge vor dem Versions-Log, aus der Projekthistorie zusammengefasst.
    ========================================================== */
 const PINN_CHANGELOG = [
+  {
+    v: '1.22', datum: '07.10.2026', titel: 'Push für Android',
+    punkte: [
+      ['neu', 'Push-Benachrichtigungen auf Android-Handys (Chrome, Samsung Internet, Edge, Firefox): wie am iPhone unter Einstellungen → Benachrichtigungen „Auf diesem Gerät aktivieren“ – mit allen Erinnerungen, Pinnwand, SOS und Glocke'],
+      ['neu', 'pinn. lässt sich auf Android als App installieren („📲 pinn. als App installieren“ bzw. Chrome-Menü ⋮) – mit eigenen App-Symbolen und einfarbigem Symbol in der Statusleiste'],
+      ['info', 'Weckrufe an Android gehen mit hoher Priorität raus, damit Erinnerungen auch im Energiesparmodus pünktlich kommen; Meldungen mit gleichem Thema melden sich erneut statt still ersetzt zu werden; Android-spezifische Hinweise bei blockierten Mitteilungen, In-App-Browsern und Akku-Einschränkungen'],
+    ],
+  },
   {
     v: '1.21', datum: '07.10.2026', titel: 'pinn. auf GitHub',
     punkte: [

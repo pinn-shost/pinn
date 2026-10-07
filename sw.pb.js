@@ -22,6 +22,9 @@
 //     zeigt; ein Tipp auf die Mitteilung öffnet in einem offenen Fenster direkt die passende Stelle.
 //     Die Texte kommen schon in der Sprache des Profils (pinn-pushtext.js); ist keine Nachricht
 //     abholbar, zeigt der Worker einen allgemeinen Hinweis in dieser Sprache.
+//     Android (Chrome, Samsung Internet, Firefox): einfarbiges Statusleisten-Symbol (badge-96.png),
+//     Mitteilungen mit gleichem Tag melden sich erneut (renotify) statt still ersetzt zu werden,
+//     Vibration bei jeder Meldung.
 //  3. App-Badge: Beim Abholen einer Meldung liefert der Server die Zahl der offenen, fälligen
 //     Aufgaben des Profils mit ("badge"); der Worker setzt sie am App-Symbol.
 // Tauscht der Browser die Push-Adresse aus, meldet der Worker das Gerät selbst neu an
@@ -39,7 +42,8 @@ const SHELL_CACHE = 'pinn-app-v1';
 const IMG_CACHE = 'pinn-bilder-v1';
 const OWN_CACHES = [SHELL_CACHE, IMG_CACHE, META_CACHE, 'pinn-daten'];
 const SHELL_URL = '/';
-const STATIC_FILES = ['/manifest.json', '/apple-touch-icon.png', '/favicon-32x32.png', '/favicon-16x16.png', '/pinn-logo.png'];
+const STATIC_FILES = ['/manifest.json', '/apple-touch-icon.png', '/favicon-32x32.png', '/favicon-16x16.png', '/pinn-logo.png',
+  '/icon-192.png', '/icon-512.png', '/icon-maskable-512.png', '/badge-96.png'];
 const CDN_SCRIPTS = ['https://cdn.tailwindcss.com', 'https://cdn.jsdelivr.net/npm/pocketbase@0.21.5/dist/pocketbase.umd.js'];
 const CDN_HOSTS = ['cdn.tailwindcss.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com'];
 const MAX_IMAGES = 400;
@@ -239,6 +243,9 @@ async function applyBadge(n) {
   } catch (e) { /* egal */ }
 }
 
+// Android-Gerät? (Statusleisten-Symbol, Vibration)
+const ANDROID = /Android/i.test(String((self.navigator && self.navigator.userAgent) || ''));
+
 async function showNextNotification(event) {
   let msg = null;
   try { if (event.data) msg = event.data.json(); } catch (e) { msg = null; }
@@ -250,19 +257,30 @@ async function showNextNotification(event) {
   const opts = {
     body: msg.text || '',
     tag: msg.tag || undefined,
-    icon: '/apple-touch-icon.png',
-    badge: '/favicon-32x32.png',
+    // Android zeigt das Symbol neben dem Text, das Badge einfarbig in der Statusleiste
+    icon: ANDROID ? '/icon-192.png' : '/apple-touch-icon.png',
+    badge: '/badge-96.png',
+    lang: (self.navigator && self.navigator.language) || undefined,
+    timestamp: Date.now(),
     data: { url: msg.url || '/' },
   };
+  // Gleiches Tag: Android ersetzt die alte Mitteilung sonst lautlos - so meldet sie sich erneut
+  if (opts.tag) opts.renotify = true;
+  if (ANDROID) opts.vibrate = [200, 100, 200];
   if (sos) {
     // Hilferuf: bleibt stehen, bis jemand reagiert, vibriert lang und meldet sich erneut
     opts.requireInteraction = true;
     opts.renotify = true;
     opts.silent = false;
     opts.vibrate = [600, 200, 600, 200, 600, 200, 1200, 300, 600, 200, 600];
-    opts.timestamp = Date.now();
   }
-  await self.registration.showNotification(msg.titel || 'pinn.', opts);
+  if (!opts.tag) delete opts.tag;
+  try {
+    await self.registration.showNotification(msg.titel || 'pinn.', opts);
+  } catch (e) {
+    // Ältere Browser kennen einzelne Optionen nicht - dann schlicht anzeigen
+    await self.registration.showNotification(msg.titel || 'pinn.', { body: opts.body, tag: opts.tag, icon: opts.icon, badge: opts.badge, data: opts.data });
+  }
   if (sos) await tellWindows({ type: 'pinn-sos', url: msg.url || '/' });
   // Offene pinn.-Fenster: Glocke sofort neu laden (die Nachricht steht dort jetzt auch)
   await tellWindows({ type: 'pinn-push', url: msg.url || '/' });

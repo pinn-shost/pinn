@@ -562,7 +562,12 @@ function vapidAuthHeader(endpoint) {
 
 // Schickt einen (inhaltslosen) Weckruf an ein Gerät. Den eigentlichen Text holt sich der Service
 // Worker danach selbst über /api/pinn/push/abholen - so ist keine Payload-Verschlüsselung nötig.
+// Android (Google/FCM): Weckrufe mit „normal“ hält Android im Energiesparmodus (Doze) oft bis zum
+// nächsten Wartungsfenster zurück - Erinnerungen kämen dann viel zu spät. Da pinn. jeden Weckruf
+// sichtbar anzeigt, gehen sie dort mit „high“ raus (verbraucht keinen zusätzlichen Akku).
+function isGoogleEndpoint(endpoint) { return /googleapis\.com|fcm\./i.test(String(endpoint || "")); }
 function sendWakeup(endpoint, urgency) {
+    if (isGoogleEndpoint(endpoint) && urgency !== "very-low" && urgency !== "low") urgency = "high";
     const res = $http.send({
         url: endpoint,
         method: "POST",
@@ -591,7 +596,8 @@ function describeFailure(endpoint, status, body) {
     try { reason = (JSON.parse(body) || {}).reason || ""; } catch (e) { reason = String(body || "").trim(); }
     let text = pushServiceName(endpoint) + " lehnt ab (Status " + status + (reason ? ", " + reason : "") + ")";
     if (/BadJwtToken/i.test(reason)) text += " - Absender der Anmeldung wird nicht akzeptiert (aktuell: " + vapidSubject(loadVapid(true)) + ")";
-    else if (/VapidPkHashMismatch|BadWebPushTopic/i.test(reason) || status === 403) text += " - bitte auf dem Gerät deaktivieren und neu aktivieren";
+    else if (/VapidPkHashMismatch|BadWebPushTopic|UnauthorizedRegistration|authorization header|sender id/i.test(reason) || status === 403) text += " - bitte auf dem Gerät deaktivieren und neu aktivieren";
+    else if (status === 429) text += " - zu viele Nachrichten in kurzer Zeit, bitte später erneut versuchen";
     return text;
 }
 
