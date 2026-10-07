@@ -1,0 +1,400 @@
+# ─────────────────────────────────────────────────────────────
+#  pinn. – Docker-Projekt (PocketBase + HTTPS über Caddy/DuckDNS + Traccar für die Ortung
+#  + Umweg zur Home-Assistant-VM + optional Tailscale + tägliches Backup)
+#  Keine Portfreigabe nötig – Zertifikat per DNS-Prüfung.
+#
+#  EINRICHTUNG: Alles Nötige (DuckDNS, Google, KI, Home Assistant, Tailscale …) trägst du in pinn.
+#  selbst ein: http://<NAS-IP>:8090 öffnen → „Als Hauptadmin anmelden“ → der Einrichtungs-Assistent
+#  startet. Die Werte landen im Ordner ./konfig (pinn.env) und werden von allen Containern gelesen –
+#  hier und in der .env muss dafür nichts mehr geändert werden.
+#
+#  Die Werte unten und in der .env sind nur noch Vorgaben: Was im Assistenten gespeichert ist, gilt.
+#  Erstinstallation und Updates: sudo sh pinn-setup.sh (sortiert alle Dateien und startet pinn.)
+#  Projekt & Anleitung: https://github.com/pinn-shost/pinn
+# ─────────────────────────────────────────────────────────────
+x-pinn-config: &pinn-config
+  DUCKDNS_SUBDOMAIN: ""                     # Vorgabe – kommt aus der Einrichtung in pinn.
+  DUCKDNS_TOKEN: "${DUCKDNS_TOKEN:-}"       # Vorgabe aus der .env (optional)
+  NAS_IP: ""                                # Vorgabe – lokale IP des NAS (leer = Einrichtung erkennt sie)
+
+x-ha-netz-config: &ha-netz-config
+  NAS_NETZWERKKARTE: "auto"                 # Vorgabe – „auto“ = selbst erkennen
+  HA_IP: ""                                 # Vorgabe – Home Assistant (VM auf dem NAS), leer = kein Umweg
+  HILFS_IP: ""                              # Vorgabe – freie Adresse im Heimnetz, außerhalb des DHCP-Bereichs
+
+# PocketBase-Version: wird beim Start direkt aus den offiziellen GitHub-Releases gebaut
+# (Prüfsumme wird kontrolliert). Neue Version = Zahl ändern + "docker compose up -d".
+# Vor jedem Versionssprung läuft am besten das Skript ./pinn-pocketbase-update.sh
+# (sichert vorher, prüft die Hooks und zeigt Fehler an).
+x-pocketbase-version: &pb-version "0.40.3"
+
+x-backup-config: &backup-config
+  BACKUP_ZEIT: "30 3 * * *"                 # Cron-Zeit: täglich um 03:30 Uhr
+  BACKUP_TAGE: "14"                         # Backups älter als so viele Tage werden gelöscht
+  TZ: "Europe/Berlin"
+# ─────────────────────────────────────────────────────────────
+#  Backups landen als pinn_JJJJ-MM-TT_HHMM.tar.gz im Ordner ./backups
+#  (enthält Datenbank, hochgeladene Dateien, pb_public, pb_hooks, Caddy, Traccar, konfig, Tailscale,
+#   .env und diese Datei – nur für root lesbar, nicht weitergeben).
+#  Wiederherstellen: docker compose down → Archiv im Projektordner entpacken
+#  (tar -xzf backups/pinn_….tar.gz) → docker compose up -d
+# ─────────────────────────────────────────────────────────────
+
+services:
+
+  pocketbase:
+    # Eigenes, schlankes Image aus der offiziellen PocketBase-Datei (kein fremdes Docker-Image mehr).
+    # Wird nur neu gebaut, wenn sich oben die Version ändert – sonst kommt es sofort aus dem Cache.
+    build:
+      context: ./pb_hooks          # nur als Platzhalter nötig, es wird nichts daraus kopiert
+      dockerfile_inline: |
+        FROM alpine:3.20
+        ARG PB_VERSION
+        RUN set -e; \
+            apk add --no-cache ca-certificates tzdata wget; \
+            case "$$(uname -m)" in \
+              x86_64) A=amd64 ;; aarch64) A=arm64 ;; armv7l) A=armv7 ;; \
+              *) echo "Unbekannte Architektur: $$(uname -m)"; exit 1 ;; \
+            esac; \
+            Z="pocketbase_$${PB_VERSION}_linux_$${A}.zip"; \
+            U="https://github.com/pocketbase/pocketbase/releases/download/v$${PB_VERSION}"; \
+            cd /tmp; \
+            wget -q "$$U/$$Z"; \
+            wget -q "$$U/checksums.txt"; \
+            grep " $$Z" checksums.txt > pruefsumme.txt; \
+            sha256sum -c pruefsumme.txt; \
+            unzip -o "$$Z" pocketbase -d /usr/local/bin; \
+            chmod +x /usr/local/bin/pocketbase; \
+            rm -f /tmp/*; \
+            apk del wget; \
+            /usr/local/bin/pocketbase --version
+      args:
+        PB_VERSION: *pb-version
+    image: pinn-pocketbase:aktuell
+    pull_policy: build
+    container_name: pocketbase
+    restart: unless-stopped
+    # Liest beim Start die Werte aus der Einrichtung (konfig/pinn.env) – sie gelten vor .env und Vorgaben.
+    # Nach dem Speichern im Assistenten startet sich pinn. selbst neu, Docker holt es sofort zurück.
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        K=/pinn_konfig/pinn.env
+        if [ -f "$$K" ]; then
+          if ( . "$$K" ) >/dev/null 2>&1; then set -a; . "$$K"; set +a
+          else echo "Einrichtung: $$K ist fehlerhaft und wird ignoriert"; fi
+        fi
+        exec pocketbase serve --http=0.0.0.0:80 --dir=/pb_data --publicDir=/pb_public --hooksDir=/pb_hooks --hooksWatch=false
+    env_file:
+      - .env               # optionale Vorgaben (Schlüssel, Google, KI, Traccar) – die Einrichtung in pinn. hat Vorrang
+    environment:
+      <<: [*pinn-config, *ha-netz-config]   # Vorgaben, damit der Assistent sie anzeigen kann
+    ports:
+      - "8090:80"          # nur im Heimnetz: http://<NAS-IP>:8090 (Ersteinrichtung, Notzugang)
+    volumes:
+      - ./pb_data:/pb_data
+      - ./pb_public:/pb_public
+      - ./pb_hooks:/pb_hooks
+      - ./konfig:/pinn_konfig            # Werte aus der Einrichtung (pinn.env, einrichtung.json)
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:80/api/health >/dev/null 2>&1 || exit 1"]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      - traccar
+
+  caddy:
+    image: serfriz/caddy-duckdns:latest   # fertiges Caddy mit DuckDNS-Modul, kein Build nötig
+    container_name: caddy
+    restart: unless-stopped
+    environment: *pinn-config
+    ports:
+      - "8443:443"
+      - "8443:443/udp"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy/data:/data        # Zertifikate – nicht löschen
+      - ./caddy/config:/config
+      - ./konfig:/pinn_konfig:ro
+    # Startet Caddy erst, wenn DuckDNS eingerichtet ist, und startet es neu, sobald sich Subdomain
+    # oder Token in der Einrichtung ändern. Log ansehen: docker logs caddy
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        K=/pinn_konfig/pinn.env
+        lade() { if [ -f "$$K" ] && ( . "$$K" ) >/dev/null 2>&1; then set -a; . "$$K"; set +a; fi; }
+        stand() { grep -E '^export (DUCKDNS_SUBDOMAIN|DUCKDNS_TOKEN)=' "$$K" 2>/dev/null | md5sum | cut -d' ' -f1; }
+        PID=""; ALT="-"
+        trap '[ -n "$$PID" ] && kill "$$PID" 2>/dev/null; exit 0' TERM INT
+        while true; do
+          NEU=$$(stand)
+          if [ "$$NEU" != "$$ALT" ]; then
+            ALT=$$NEU
+            if [ -n "$$PID" ]; then kill "$$PID" 2>/dev/null; wait "$$PID" 2>/dev/null; PID=""; fi
+            if ( lade; [ -n "$$DUCKDNS_SUBDOMAIN" ] && [ -n "$$DUCKDNS_TOKEN" ] ); then
+              ( lade; exec caddy run --config /etc/caddy/Caddyfile --adapter caddyfile ) &
+              PID=$$!
+              echo "$$(date '+%d.%m.%Y %H:%M') Caddy gestartet für $$(lade; echo "$$DUCKDNS_SUBDOMAIN").duckdns.org"
+            else
+              echo "$$(date '+%d.%m.%Y %H:%M') Caddy wartet auf die Einrichtung in pinn. (DuckDNS fehlt)"
+            fi
+          elif [ -n "$$PID" ] && ! kill -0 "$$PID" 2>/dev/null; then
+            echo "$$(date '+%d.%m.%Y %H:%M') Caddy wurde beendet – Container startet neu"
+            exit 1
+          fi
+          sleep 15 &
+          wait $$!
+        done
+    depends_on:
+      - pocketbase
+
+  # Ortung (Familie → Live-Standorte). Handys senden mit der App „Traccar Client“ über pinn.
+  # (https://<pinn.>/api/pinn/ortung/osmand) – dafür ist keine weitere Freigabe nötig.
+  # GPS-Tracker mit SIM-Karte (z. B. am Halsband) senden direkt an einen der Ports unten.
+  # Traccar-Weboberfläche: nur auf dem NAS (siehe Ports unten), für pinn. nicht gebraucht.
+  traccar:
+    image: traccar/traccar:latest
+    container_name: traccar
+    restart: unless-stopped
+    ports:
+      # Weboberfläche und OsmAnd nur auf dem NAS selbst (pinn. spricht intern über das Docker-Netz).
+      # Handys senden über pinn. (https://<pinn.>/api/pinn/ortung/osmand) – mit SOS-Erkennung.
+      # Weboberfläche bei Bedarf per SSH-Tunnel: ssh -L 8082:127.0.0.1:8082 <NAS> → http://localhost:8082
+      - "127.0.0.1:8082:8082" # Weboberfläche / API
+      - "127.0.0.1:5055:5055" # OsmAnd
+      - "5023:5023"           # GT06 (viele Hunde-/Auto-GPS-Tracker)
+      - "5013:5013"           # H02
+      - "5093:5093"           # Watch (Kinder-/Tier-Uhren, 3G/4G-Tracker)
+      - "5027:5027"           # Teltonika
+    volumes:
+      - ./traccar/data:/opt/traccar/data
+      - ./traccar/logs:/opt/traccar/logs
+
+  # Hält die DuckDNS-Adresse aktuell (zeigt auf die Heimnetz-IP des NAS). Liest Subdomain, Token und
+  # NAS-IP aus der Einrichtung, meldet stündlich und sofort nach jeder Änderung. Log: docker logs duckdns
+  duckdns:
+    image: curlimages/curl:latest
+    container_name: duckdns
+    restart: unless-stopped
+    user: "0:0"            # darf konfig/pinn.env lesen (nur für root lesbar, enthält den Token)
+    environment: *pinn-config
+    volumes:
+      - ./konfig:/pinn_konfig:ro
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        K=/pinn_konfig/pinn.env
+        lade() { if [ -f "$$K" ] && ( . "$$K" ) >/dev/null 2>&1; then set -a; . "$$K"; set +a; fi; }
+        stand() { grep -E '^export (DUCKDNS_SUBDOMAIN|DUCKDNS_TOKEN|NAS_IP)=' "$$K" 2>/dev/null | md5sum | cut -d' ' -f1; }
+        ALT="-"; LETZTES=0
+        while true; do
+          NEU=$$(stand); JETZT=$$(date +%s)
+          if [ "$$NEU" != "$$ALT" ] || [ $$((JETZT - LETZTES)) -ge 3600 ]; then
+            ALT=$$NEU; LETZTES=$$JETZT
+            (
+              lade
+              if [ -n "$$DUCKDNS_SUBDOMAIN" ] && [ -n "$$DUCKDNS_TOKEN" ] && [ -n "$$NAS_IP" ]; then
+                echo "$$(date) DuckDNS: $$(curl -fsS "https://www.duckdns.org/update?domains=$${DUCKDNS_SUBDOMAIN}&token=$${DUCKDNS_TOKEN}&ip=$${NAS_IP}")"
+              else
+                echo "$$(date) DuckDNS wartet auf die Einrichtung in pinn."
+              fi
+            )
+          fi
+          sleep 30
+        done
+
+  # Umweg zur Home-Assistant-VM: Die VM hängt per macvtap direkt an der Netzwerkkarte – dabei
+  # blockt Linux den Verkehr zwischen NAS (und damit allen Containern) und der VM. Dieser Container
+  # legt beim Start eine zweite virtuelle Netzwerkkarte (ha-shim, macvlan im Bridge-Modus) mit der
+  # Hilfs-IP an und leitet den Verkehr zur VM darüber. Beim Beenden wird alles wieder entfernt.
+  # Werte aus der Einrichtung in pinn. (Smarthome: Home Assistant), sonst aus „x-ha-netz-config“ oben.
+  # Ohne HA_IP wartet der Container nur. Der Zustand steht für pinn. in konfig/ha-netz.status.
+  # Log ansehen: docker logs ha-netz
+  # Test: docker exec pocketbase wget -qO- http://<HA_IP>:8123/api/   -> „401 Unauthorized“ = erreichbar
+  ha-netz:
+    image: alpine:3.20
+    container_name: ha-netz
+    restart: unless-stopped
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+    environment: *ha-netz-config
+    volumes:
+      - ./konfig:/pinn_konfig
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        K=/pinn_konfig/pinn.env
+        S=/pinn_konfig/ha-netz.status
+        lade() { if [ -f "$$K" ] && ( . "$$K" ) >/dev/null 2>&1; then set -a; . "$$K"; set +a; fi; }
+        stand() { grep -E '^export (HA_IP|HILFS_IP|NAS_NETZWERKKARTE|NAS_IP)=' "$$K" 2>/dev/null | md5sum | cut -d' ' -f1; }
+        status() { echo "$$1|$$2|$${HA_IP}|$${HILFS_IP}|$$(date '+%d.%m.%Y %H:%M')" > "$$S" 2>/dev/null; }
+        ALT=$$(stand)
+        lade
+        if [ -z "$$HA_IP" ] || [ -z "$$HILFS_IP" ]; then
+          status wartet ""
+          echo "$$(date '+%d.%m.%Y %H:%M') Kein Home Assistant als VM eingerichtet – Umweg aus"
+          while [ "$$(stand)" = "$$ALT" ]; do sleep 30; done
+          exit 0
+        fi
+        until apk add --no-cache iproute2 >/dev/null; do
+          echo "Pakete nicht ladbar – neuer Versuch in 60 s"; sleep 60
+        done
+        KARTE="$$NAS_NETZWERKKARTE"
+        if [ -z "$$KARTE" ] || [ "$$KARTE" = "auto" ]; then
+          [ -n "$$NAS_IP" ] && KARTE=$$(ip -o -4 addr show | awk -v ip="$$NAS_IP" '{split($$4,a,"/"); if (a[1]==ip) {print $$2; exit}}')
+          [ -z "$$KARTE" ] && KARTE=$$(ip route show default | awk '{for(i=1;i<=NF;i++) if($$i=="dev"){print $$(i+1); exit}}')
+          echo "Netzwerkkarte erkannt: $${KARTE:-keine}"
+        fi
+        N=0
+        until ip link show "$$KARTE" >/dev/null 2>&1; do
+          N=$$((N + 1)); status fehler "$$KARTE"
+          echo "Warte auf Netzwerkkarte $$KARTE …"; sleep 10
+          if [ "$$(stand)" != "$$ALT" ]; then exit 0; fi
+        done
+        aufraeumen() {
+          ip route del "$${HA_IP}/32" dev ha-shim 2>/dev/null
+          ip link del ha-shim 2>/dev/null
+          echo "$$(date '+%d.%m.%Y %H:%M') Umweg zu $${HA_IP} entfernt"
+          exit 0
+        }
+        trap aufraeumen TERM INT
+        einrichten() {
+          ip link show ha-shim >/dev/null 2>&1 || ip link add ha-shim link "$$KARTE" type macvlan mode bridge
+          ip addr flush dev ha-shim 2>/dev/null
+          ip addr replace "$${HILFS_IP}/32" dev ha-shim
+          ip link set ha-shim up
+          ip route replace "$${HA_IP}/32" dev ha-shim
+        }
+        if einrichten; then
+          status aktiv "$$KARTE"
+          echo "$$(date '+%d.%m.%Y %H:%M') Umweg aktiv: NAS -> ha-shim ($${HILFS_IP}) -> Home Assistant $${HA_IP}"
+        else
+          status fehler "$$KARTE"
+        fi
+        # Läuft weiter: prüft alle 30 s, ob sich die Einrichtung geändert hat (dann Neustart des
+        # Containers mit den neuen Werten), und alle 5 Minuten, ob der Umweg noch steht.
+        T=0
+        while true; do
+          sleep 30 &
+          wait $$!
+          if [ "$$(stand)" != "$$ALT" ]; then
+            echo "$$(date '+%d.%m.%Y %H:%M') Einrichtung geändert – Umweg wird neu aufgebaut"
+            aufraeumen
+          fi
+          T=$$((T + 30))
+          if [ "$$T" -ge 300 ]; then
+            T=0
+            if ! ip route show "$${HA_IP}/32" | grep -q ha-shim; then
+              einrichten && status aktiv "$$KARTE"
+              echo "$$(date '+%d.%m.%Y %H:%M') Umweg wiederhergestellt"
+            fi
+          fi
+        done
+
+  # Optional: Tailscale – Alternative zum WireGuard-VPN der FRITZ!Box (z. B. bei anderen Routern oder
+  # DS-Lite). Bleibt aus, bis in pinn. unter Einrichtung → „Unterwegs nutzen“ ein Tailscale-Schlüssel
+  # eingetragen ist. Gibt im Tailscale-Netz nur die NAS-Adresse frei (Subnet-Route <NAS_IP>/32),
+  # läuft ohne Zusatzrechte (userspace). Log: docker logs tailscale
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: tailscale
+    restart: unless-stopped
+    environment:
+      <<: *pinn-config
+      TS_STATE_DIR: /var/lib/tailscale
+      TS_USERSPACE: "true"
+      TS_HOSTNAME: pinn
+    volumes:
+      - ./tailscale:/var/lib/tailscale
+      - ./konfig:/pinn_konfig:ro
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        K=/pinn_konfig/pinn.env
+        lade() { if [ -f "$$K" ] && ( . "$$K" ) >/dev/null 2>&1; then set -a; . "$$K"; set +a; fi; }
+        stand() { grep -E '^export (TS_AUTHKEY|NAS_IP)=' "$$K" 2>/dev/null | md5sum | cut -d' ' -f1; }
+        ALT=$$(stand)
+        lade
+        if [ -z "$$TS_AUTHKEY" ]; then
+          echo "$$(date '+%d.%m.%Y %H:%M') Tailscale aus – wartet auf einen Schlüssel aus der Einrichtung in pinn."
+          while [ "$$(stand)" = "$$ALT" ]; do sleep 30; done
+          exit 0
+        fi
+        export TS_ROUTES="$${NAS_IP}/32"
+        echo "$$(date '+%d.%m.%Y %H:%M') Tailscale startet (Route $${TS_ROUTES})"
+        /usr/local/bin/containerboot &
+        PID=$$!
+        trap 'kill "$$PID" 2>/dev/null; exit 0' TERM INT
+        while kill -0 "$$PID" 2>/dev/null; do
+          sleep 30
+          if [ "$$(stand)" != "$$ALT" ]; then
+            echo "Einrichtung geändert – Tailscale startet neu"
+            kill "$$PID" 2>/dev/null; wait "$$PID" 2>/dev/null
+            exit 0
+          fi
+        done
+        exit 1
+
+  # Tägliches Backup im laufenden Betrieb. Die Datenbanken werden über SQLite selbst
+  # gesichert (konsistent, kein Stoppen von pinn. nötig), läuft mit niedrigster Priorität.
+  # Beim Start wird sofort ein Backup erstellt, falls es heute noch keins gibt.
+  # Log ansehen: docker logs backup
+  backup:
+    image: alpine:3.20
+    container_name: backup
+    restart: unless-stopped
+    environment: *backup-config
+    volumes:
+      - ./:/src:ro                  # Projektordner nur lesend
+      - ./pb_data:/src/pb_data      # für die SQLite-Sicherung (liest nur, braucht aber Sperrdateien)
+      - ./backups:/backup
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        until apk add --no-cache sqlite tar tzdata >/dev/null; do
+          echo "Pakete nicht ladbar – neuer Versuch in 60 s"; sleep 60
+        done
+        cat > /usr/local/bin/pinn-backup <<'SKRIPT'
+        #!/bin/sh
+        umask 077                     # Backups enthalten .env und Schlüssel – nur für root lesbar
+        TS=$$(date +%Y-%m-%d_%H%M)
+        ZIEL=/backup/pinn_$$TS.tar
+        TMP=/tmp/pinn_db
+        echo "$$(date '+%d.%m.%Y %H:%M') Backup startet"
+        rm -rf "$$TMP" /backup/*.part /backup/*.part.gz
+        mkdir -p "$$TMP/pb_data"
+        for DB in /src/pb_data/*.db; do
+          [ -f "$$DB" ] || continue
+          if ! nice -n 19 sqlite3 "$$DB" ".timeout 30000" ".backup '$$TMP/pb_data/$$(basename "$$DB")'"; then
+            echo "FEHLER: $$DB konnte nicht gesichert werden"; rm -rf "$$TMP"; exit 1
+          fi
+        done
+        LISTE=""
+        for P in pb_data pb_public pb_hooks caddy traccar/data konfig tailscale docker-compose.yaml .env; do
+          [ -e "/src/$$P" ] && LISTE="$$LISTE $$P"
+        done
+        if nice -n 19 tar -cf "$$ZIEL.part" -C /src \
+             --exclude='pb_data/*.db' --exclude='pb_data/*.db-wal' --exclude='pb_data/*.db-shm' \
+             --exclude='pb_data/backups' $$LISTE \
+           && nice -n 19 tar -rf "$$ZIEL.part" -C "$$TMP" pb_data \
+           && nice -n 19 gzip -6 "$$ZIEL.part" \
+           && mv "$$ZIEL.part.gz" "$$ZIEL.gz"; then
+          rm -rf "$$TMP"
+          find /backup -maxdepth 1 -name 'pinn_*.tar.gz' -mtime +"$$BACKUP_TAGE" -delete
+          echo "$$(date '+%d.%m.%Y %H:%M') Backup fertig: $$(basename "$$ZIEL.gz") ($$(du -h "$$ZIEL.gz" | cut -f1))"
+        else
+          echo "FEHLER: Backup fehlgeschlagen"
+          rm -rf "$$TMP" "$$ZIEL.part" "$$ZIEL.part.gz"
+          exit 1
+        fi
+        SKRIPT
+        chmod +x /usr/local/bin/pinn-backup
+        chmod 700 /backup 2>/dev/null
+        find /backup -maxdepth 1 -name 'pinn_*.tar.gz' -exec chmod 600 {} + 2>/dev/null
+        ls /backup/pinn_$$(date +%Y-%m-%d)_*.tar.gz >/dev/null 2>&1 || /usr/local/bin/pinn-backup
+        echo "$$BACKUP_ZEIT /usr/local/bin/pinn-backup > /proc/1/fd/1 2>&1" > /etc/crontabs/root
+        echo "Backup geplant: $$BACKUP_ZEIT (aufbewahrt: $$BACKUP_TAGE Tage)"
+        exec crond -f -l 8
