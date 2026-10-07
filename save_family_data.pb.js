@@ -19,6 +19,9 @@
 // in den Kassen. Ein mitgeschicktes "finance" (z. B. von einem noch nicht aktualisierten Gerät) wird
 // dann verworfen und nie mehr im Familien-Datensatz gespeichert - sonst sähe jedes Profil sie wieder.
 //
+// Familienmitglieder: Die früheren Beispiel-Mitglieder (Anna/Jonas/Mia) werden beim Speichern
+// verworfen, solange kein Profil mit ihnen verknüpft ist (pinn-benutzer.js).
+//
 // Gastkonten (Rolle "gast", nur über das Familien-Dashboard):
 // - sehen die Finanz-Einstellungen (Schlüssel "finance": Budget, Kategorien, regelmäßige Ausgaben)
 //   nicht - sie werden beim Abruf der Familiendaten entfernt (onRecordEnrich unten)
@@ -44,6 +47,9 @@ routerAdd("POST", "/api/pinn/save", (e) => {
         try { require(`${__hooks}/pinn-kassen.js`).rescueFinance(e.auth.getString("familie"), incoming.finance, { quelle: "Familiendaten eines älteren Geräts" }); } catch (err) { /* egal */ }
         delete incoming.finance;
     }
+
+    // Beispiel-Mitglieder (Anna/Jonas/Mia) von älteren Geräten nie wieder speichern
+    try { require(`${__hooks}/pinn-benutzer.js`).stripExampleMembers(e.auth.getString("familie"), incoming); } catch (err) { /* egal */ }
 
     let result = null;
     let savedFamily = "";

@@ -520,10 +520,136 @@ function ensureReady() {
     return p + (errs.length ? " Ursache: " + errs.join(" | ") : "");
 }
 
+// ---------------------------------------------------------------------------------------------
+// Familienmitglieder <-> Profile
+// Jedes Profil (außer Gast und Hauptadmin) ist genau ein Familienmitglied. Fehlt das Mitglied,
+// wird es mit dem Profilnamen angelegt und verknüpft. Die früheren Beispiel-Mitglieder
+// (Anna/Jonas/Mia) werden entfernt, solange kein Profil mit ihnen verknüpft ist.
+// ---------------------------------------------------------------------------------------------
+const MEMBER_COLORS = ["#2F4B41", "#B9842E", "#7A5C8E", "#B85C5C", "#3E7CA6", "#5C8A3E"];
+const EXAMPLE_MEMBERS = {
+    m1: { name: "Anna", role: "Mama" },
+    m2: { name: "Jonas", role: "Papa" },
+    m3: { name: "Mia", role: "Kind" },
+};
+function isExampleMember(m) {
+    if (!m || typeof m !== "object") return false;
+    const ex = EXAMPLE_MEMBERS[String(m.id || "")];
+    return !!ex && m.name === ex.name && (m.role || "") === ex.role && !m.photo && !m.avatar;
+}
+function familyMemberProfiles(familyId) {
+    if (!familyId) return [];
+    try {
+        // Ohne Sortierung: Die Profil-Sammlung hat (je nach Installation) kein Feld "created" - eine
+        // Sortierung danach lässt die Abfrage scheitern und es würden keine Mitglieder angelegt.
+        return $app.findRecordsByFilter(USERS, "familie = {:f}", "", 0, 0, { f: String(familyId) })
+            .filter(r => r.getString("rolle") !== "gast" && r.getString("rolle") !== "hauptadmin");
+    } catch (e) { return []; }
+}
+// Entfernt Beispiel-Mitglieder ohne Profil aus data.members. true = geändert.
+function stripExampleMembers(familyId, data) {
+    if (!data || !Array.isArray(data.members) || !data.members.some(isExampleMember)) return false;
+    const linked = {};
+    familyMemberProfiles(familyId).forEach(p => { const m = p.getString("mitglied"); if (m) linked[m] = true; });
+    const before = data.members.length;
+    data.members = data.members.filter(m => !isExampleMember(m) || linked[m.id]);
+    return data.members.length !== before;
+}
+// Familienname ohne vorangestelltes "Familie" bzw. "WG" (für die Überschrift "Familie <Name>")
+function lastNameFromFamily(name) {
+    return String(name || "").replace(/^(familie|family|famille|familia|wg)\s+/i, "").trim();
+}
+function newMemberId(taken) {
+    let id = "";
+    let n = Date.now();
+    do { id = "m" + n; n++; } while (taken[id]);
+    taken[id] = true;
+    return id;
+}
+// Gleicht die Familienmitglieder einer Familie mit ihren Profilen ab. true = etwas geändert.
+function syncFamilyMembers(familyId) {
+    if (!familyId) return false;
+    try {
+        let fam = null;
+        try { fam = $app.findRecordById(FAMILIEN, String(familyId)); } catch (e) { return false; }
+        let rec = familyDataRecord(familyId);
+        let isNew = false;
+        if (!rec) {
+            const col = findCol("familien_daten");
+            if (!col) return false;
+            rec = new Record(col);
+            rec.set("familie", fam.id);
+            isNew = true;
+        }
+        let data = {};
+        if (!isNew) {
+            try { data = require(`${__hooks}/calendar-sync.js`).parseRecordData(rec.get("data")) || {}; } catch (e) { data = {}; }
+        }
+        let changed = isNew || !Array.isArray(data.members);
+        if (!Array.isArray(data.members)) data.members = [];
+        if (stripExampleMembers(familyId, data)) changed = true;
+        const ids = {};
+        data.members.forEach(m => { if (m && m.id) ids[String(m.id)] = true; });
+        const used = Object.assign({}, ids);
+        familyMemberProfiles(familyId).forEach(p => {
+            let mid = p.getString("mitglied");
+            if (mid && ids[mid]) return;
+            if (!mid) {
+                mid = newMemberId(used);
+                p.set("mitglied", mid);
+                $app.save(p);
+            }
+            data.members.push({
+                id: mid,
+                name: p.getString("username"),
+                role: "",
+                color: MEMBER_COLORS[data.members.length % MEMBER_COLORS.length],
+                displayMode: "name",
+            });
+            ids[mid] = true;
+            used[mid] = true;
+            changed = true;
+        });
+        if (data.lastName === undefined || data.lastName === "Mustermann") {
+            data.lastName = lastNameFromFamily(fam.getString("name"));
+            changed = true;
+        }
+        if (!changed) return false;
+        rec.set("data", data);
+        $app.save(rec);
+        return true;
+    } catch (err) {
+        console.log("[Familien] Abgleich der Familienmitglieder fehlgeschlagen: " + err.message);
+        return false;
+    }
+}
+function syncAllFamilyMembers() {
+    allFamilies().forEach(f => syncFamilyMembers(f.id));
+}
+// Mitglied (samt Notfallpass) aus den Familiendaten entfernen, z. B. wenn sein Profil gelöscht wurde
+function removeFamilyMember(familyId, memberId) {
+    if (!familyId || !memberId) return false;
+    try {
+        const rec = familyDataRecord(familyId);
+        if (!rec) return false;
+        const data = require(`${__hooks}/calendar-sync.js`).parseRecordData(rec.get("data")) || {};
+        if (!Array.isArray(data.members) || !data.members.some(m => m && m.id === memberId)) return false;
+        data.members = data.members.filter(m => !m || m.id !== memberId);
+        if (data.emergencyPasses && typeof data.emergencyPasses === "object") delete data.emergencyPasses[memberId];
+        rec.set("data", data);
+        $app.save(rec);
+        return true;
+    } catch (err) {
+        console.log("[Familien] Mitglied konnte nicht entfernt werden: " + err.message);
+        return false;
+    }
+}
+
 module.exports = {
     USERS, FAMILIEN, AUTH_RULE, CALENDAR_OTHER_FAMILY,
     isMainAdmin, isAdmin, isGuest, isGuestRecord, ensureGuestRole, familyOf, canManage, adminCount, cleanUsername, cleanMemberId, cleanFamilyName,
     profileLinkedTo, allFamilies, findFamily, calendarFamilyId, isCalendarUser, calendarDenied,
     familyDataRecord, loadFamilyDataFor, familyDataStamp, ensureSchema, ensureReady, migrateOrphans,
     setupErrors, findCol, hasField, makeField, createCollection,
+    MEMBER_COLORS, isExampleMember, stripExampleMembers, lastNameFromFamily, syncFamilyMembers, syncAllFamilyMembers, removeFamilyMember,
 };

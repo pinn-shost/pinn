@@ -11,6 +11,11 @@
 // das Google-Konto (Android-Kalender) je Familie google_credentials.pb.js (pinn-google.js).
 // Familien-Dashboard (Profilauswahl, PIN): dashboard.pb.js / pinn-dashboard.js.
 //
+// Familienmitglieder: Jedes Profil (außer Gast/Hauptadmin) ist genau ein Familienmitglied. Legt der
+// Hauptadmin eine Familie oder Profile an, entstehen die Mitglieder mit den Profilnamen sofort mit
+// (syncFamilyMembers in pinn-benutzer.js) - es gibt keine Beispiel-Mitglieder mehr. Wird ein Profil
+// gelöscht, verschwindet auch sein Mitglied.
+//
 // Gastkonten (Rolle "gast"): legt ein Admin an (/api/pinn/users/create-gast). Sie haben ein
 // zufälliges, niemandem bekanntes Passwort, erscheinen nicht in der Anmeldemaske und kommen nur
 // über das Familien-Dashboard in die App - ohne Zugriff auf die Finanzen.
@@ -23,6 +28,12 @@ onBootstrap((e) => {
         require(`${__hooks}/pinn-benutzer.js`).ensureSchema();
     } catch (err) {
         console.log("[Anmeldung] Einrichtung fehlgeschlagen: " + err.message);
+    }
+    // Jedes Profil ist ein Familienmitglied: fehlende Mitglieder anlegen, Beispiel-Mitglieder entfernen
+    try {
+        require(`${__hooks}/pinn-benutzer.js`).syncAllFamilyMembers();
+    } catch (err) {
+        console.log("[Familien] Abgleich der Familienmitglieder fehlgeschlagen: " + err.message);
     }
 });
 
@@ -104,7 +115,15 @@ routerAdd("POST", "/api/pinn/login", (e) => {
         return e.json(400, { error: "Anmeldung fehlgeschlagen. Bitte Profil und Passwort prüfen." });
     }
     dash.clearFails(lockId);
-    return $apis.recordAuthResponse(e, rec);
+    // Mitglieder der Familie mit ihren Profilen abgleichen (legt z. B. das eigene Mitglied an)
+    let authRec = rec;
+    const famId = rec.getString("familie");
+    if (famId) {
+        try {
+            if (lib.syncFamilyMembers(famId)) authRec = $app.findRecordById(lib.USERS, rec.id);
+        } catch (err) { authRec = rec; }
+    }
+    return $apis.recordAuthResponse(e, authRec);
 });
 
 // ---------------------------------------------------------------------------------------------
@@ -162,6 +181,9 @@ routerAdd("POST", "/api/pinn/users/create", (e) => {
         rec.set("mitglied", mitglied);
         rec.setPassword(password);
         $app.save(rec);
+        // Ohne mitgeschicktes Mitglied (z. B. vom Hauptadmin angelegt): Mitglied mit dem Profilnamen
+        // sofort anlegen und verknüpfen. Mit Mitglied legt es die App selbst an.
+        if (!mitglied) lib.syncFamilyMembers(familyId);
         return e.json(200, { success: true, id: rec.id });
     } catch (err) {
         return e.json(400, { error: "Profil konnte nicht angelegt werden (Name in dieser Familie schon vergeben?)." });
@@ -263,7 +285,11 @@ routerAdd("POST", "/api/pinn/users/delete", (e) => {
     if (!lib.isMainAdmin(e) && rec.getString("rolle") === "admin" && lib.adminCount(rec.getString("familie")) <= 1) {
         return e.json(400, { error: "Es muss mindestens ein Admin in der Familie bestehen bleiben." });
     }
+    const recFamily = rec.getString("familie");
+    const recMember = rec.getString("mitglied");
     $app.delete(rec);
+    // Das zugehörige Familienmitglied verschwindet mit dem Profil
+    if (recFamily && recMember) lib.removeFamilyMember(recFamily, recMember);
     return e.json(200, { success: true });
 }, $apis.requireAuth("benutzer"));
 
@@ -277,7 +303,10 @@ routerAdd("GET", "/api/pinn/familien", (e) => {
     e.response.header().set("Cache-Control", "no-store");
     // Einrichtung ggf. nachholen und bestehende Profile/Daten ohne Familie übernehmen
     const problem = lib.ensureReady();
-    if (!problem) lib.migrateOrphans();
+    if (!problem) {
+        lib.migrateOrphans();
+        lib.syncAllFamilyMembers();
+    }
     const result = lib.allFamilies().map(f => {
         let profiles = [];
         try {
@@ -318,6 +347,7 @@ routerAdd("POST", "/api/pinn/familien/create", (e) => {
     if (problem) return e.json(400, { error: problem });
     let familyId = "";
     let step = "";
+    const adminMember = "m" + Date.now();
     try {
         $app.runInTransaction((tx) => {
             step = "Familie speichern";
@@ -328,7 +358,13 @@ routerAdd("POST", "/api/pinn/familien/create", (e) => {
             step = "Familiendaten anlegen";
             const fd = new Record(tx.findCollectionByNameOrId("familien_daten"));
             fd.set("familie", fam.id);
-            fd.set("data", wohnform === "wg" ? { wohnform: "wg" } : {});
+            // Keine Beispiel-Mitglieder: Die Familie startet nur mit ihrem Admin als Mitglied
+            const startData = {
+                members: [{ id: adminMember, name: adminName, role: "", color: lib.MEMBER_COLORS[0], displayMode: "name" }],
+                lastName: lib.lastNameFromFamily(name),
+            };
+            if (wohnform === "wg") startData.wohnform = "wg";
+            fd.set("data", startData);
             tx.save(fd);
             step = "Familien-Admin anlegen";
             const u = new Record(tx.findCollectionByNameOrId(lib.USERS));
@@ -336,7 +372,7 @@ routerAdd("POST", "/api/pinn/familien/create", (e) => {
             u.set("rolle", "admin");
             u.set("familie", fam.id);
             u.set("mustChangePassword", true);
-            u.set("mitglied", "");
+            u.set("mitglied", adminMember);
             u.setPassword(adminPassword);
             tx.save(u);
         });

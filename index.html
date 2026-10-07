@@ -10191,13 +10191,17 @@ const AVATARS = {
   female: [['👶🏼','Baby'],['👧🏼','Mädchen'],['👩🏼','Frau'],['👵🏼','Oma']],
 };
 
+// Frühere Beispiel-Mitglieder (Anna/Jonas/Mia) - werden nie angezeigt, solange kein Profil mit
+// ihnen verknüpft ist (der Server entfernt sie ebenfalls, siehe pb_hooks/pinn-benutzer.js).
+const EXAMPLE_MEMBERS = { m1: ['Anna', 'Mama'], m2: ['Jonas', 'Papa'], m3: ['Mia', 'Kind'] };
+function isExampleMember(m) {
+  const ex = m && EXAMPLE_MEMBERS[String(m.id || '')];
+  return !!ex && m.name === ex[0] && (m.role || '') === ex[1] && !m.photo && !m.avatar;
+}
+
 function defaultFamilyData() {
   return {
-    members: [
-      { id: 'm1', name: 'Anna', role: 'Mama', color: '#2F4B41', displayMode: 'role' },
-      { id: 'm2', name: 'Jonas', role: 'Papa', color: '#B9842E', displayMode: 'role' },
-      { id: 'm3', name: 'Mia', role: 'Kind', color: '#3E7CA6', displayMode: 'name' },
-    ],
+    members: [], // keine Beispiel-Mitglieder: jedes Profil ist ein Mitglied (legt der Server mit an)
     mealPlan: [],
     recipes: [],
     recipeFavorites: [], // Favoriten der Familie: { id: <Rezept-ID bzw. 'pub:<ID>' bei fremden öffentlichen Rezepten>, at }
@@ -10218,7 +10222,7 @@ function defaultFamilyData() {
     documentCategories: [],  // Dokumente: eigene Kategorien (leer = Standard)
     emergencyPasses: {},     // Familie: Notfallpass je Mitglied-ID
     tasks: [],
-    lastName: 'Mustermann',
+    lastName: '',
     wohnform: 'familie',     // 'familie' oder 'wg' (Einstellungen → Familienmitglieder → Wohnform)
     darkMode: false,
     themeColors: { paper: '#FFFBFB', pine: '#00374A', mustard: '#A67B01' },
@@ -10286,7 +10290,7 @@ let familyLists = [];      // Listen außer Einkauf: { id, type, name, icon, dat
 let listTemplates = [];    // eigene Listen-Vorlagen { id, type, icon, name, sections }
 let documentCategories = []; // Dokumente: { id, label, icon, fields: '' | 'kauf' | 'ablauf' }
 let tasks = [];
-let lastName = 'Mustermann';
+let lastName = '';
 let householdType = 'familie'; // Wohnform: 'familie' oder 'wg' – steuert die Bezeichnungen (siehe Sprachen/i18n)
 let themeColors = { paper: '#FFFBFB', pine: '#00374A', mustard: '#A67B01' };
 let categoryActive = Object.fromEntries(CATEGORIES.map(c => [c, true]));
@@ -10624,7 +10628,7 @@ function setSyncStatus(state) {
 
 // Übernimmt einen Datenstand in die App-Variablen (ohne zu speichern).
 function applyFamilyData(data) {
-  members = data.members || [];
+  members = (Array.isArray(data.members) ? data.members : []).filter(m => m && !(isExampleMember(m) && !profileForMember(m.id)));
   mealPlan = data.mealPlan || [];
   recipes = data.recipes || [];
   // Migration: Rezepte, die noch das alte einzelne "category"-Feld haben (vor der Umstellung auf
@@ -10651,7 +10655,7 @@ function applyFamilyData(data) {
   listTemplates = normalizeListTemplates(data.listTemplates);
   documentCategories = Array.isArray(data.documentCategories) ? data.documentCategories.filter(x => x && x.id && x.label) : [];
   emergencyPasses = (data.emergencyPasses && typeof data.emergencyPasses === 'object' && !Array.isArray(data.emergencyPasses)) ? data.emergencyPasses : {};
-  lastName = data.lastName || 'Mustermann';
+  lastName = (data.lastName && data.lastName !== 'Mustermann') ? data.lastName : '';
   householdType = data.wohnform === 'wg' ? 'wg' : 'familie';
   applyHouseholdType(true);
   themeColors = { ...defaultFamilyData().themeColors, ...(data.themeColors || {}) };
@@ -13074,8 +13078,24 @@ new MutationObserver((mutations) => {
   });
 }).observe(document.body, { attributes: true, attributeFilter: ['class'], attributeOldValue: true, subtree: true, childList: true });
 
+// Wer darf ein Familienmitglied bearbeiten? Admins alle, jeder sich selbst - Kinder (Kindersicherung)
+// nur der Admin. Gäste niemanden.
+function canEditMember(m) {
+  if (!m || isCurrentUserGuest()) return false;
+  if (isCurrentUserAdmin()) return true;
+  const me = currentMember();
+  return !!(me && me.id === m.id && !m.childLock);
+}
+
 function openMemberModal(existingId = null) {
   if (isCurrentUserGuest()) return; // Gäste bearbeiten keine Familienmitglieder
+  if (existingId && !canEditMember(memberById(existingId))) {
+    const target = memberById(existingId);
+    alert(target && target.childLock && currentMember() && currentMember().id === target.id
+      ? 'Dein Profil kann nur ein Admin bearbeiten.'
+      : 'Du kannst nur dein eigenes Familienmitglied bearbeiten – alle anderen bearbeitet ein Admin.');
+    return;
+  }
   if (!existingId && !isCurrentUserAdmin()) {
     alert('Neue Familienmitglieder kann nur ein Admin anlegen, weil dabei auch ein Profil zum Anmelden erstellt wird.');
     return;
@@ -13230,6 +13250,10 @@ document.getElementById('saveMember').addEventListener('click', async () => {
   const existing = editingMemberId ? memberById(editingMemberId) : null;
   if (!existing && !isCurrentUserAdmin()) {
     status.textContent = 'Neue Familienmitglieder kann nur ein Admin anlegen.';
+    return;
+  }
+  if (existing && !canEditMember(existing)) {
+    status.textContent = 'Dieses Familienmitglied kann nur ein Admin bearbeiten.';
     return;
   }
   const memberId = existing ? existing.id : 'm' + Date.now();
@@ -22348,7 +22372,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.22.1';
+const APP_VERSION = '1.22.3';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -22428,6 +22452,7 @@ const PINN_CHANGELOG = [
       ['neu', 'pinn. lässt sich auf Android als App installieren („📲 pinn. als App installieren“ bzw. Chrome-Menü ⋮) – mit eigenen App-Symbolen und einfarbigem Symbol in der Statusleiste'],
       ['info', 'Weckrufe an Android gehen mit hoher Priorität raus, damit Erinnerungen auch im Energiesparmodus pünktlich kommen; Meldungen mit gleichem Thema melden sich erneut statt still ersetzt zu werden; Android-spezifische Hinweise bei blockierten Mitteilungen, In-App-Browsern und Akku-Einschränkungen'],
       ['fix', 'pinn-setup.sh nimmt jetzt auch den Ordner aus der Release-ZIP (z. B. pinn-1.22.1) an und lässt sich direkt aus dem entpackten Ordner starten (sudo sh pinn-*/pinn-setup.sh) – vorher fehlte das Skript bei einer Neuinstallation im Projektordner'],
+      ['fix', 'Neue Familien starten ohne Beispiel-Mitglieder: Jedes vom Hauptadmin angelegte Profil (auch der Familien-Admin) erscheint sofort als Familienmitglied mit seinem Namen und ist verknüpft; gelöschte Profile verschwinden mit ihrem Mitglied, bereits angelegte Familien werden automatisch repariert (auch die weiteren Profile, nicht nur der Familien-Admin); neue Mitglieder starten mit den Standard-Einstellungen, jeder bearbeitet sich selbst, der Admin alle, Kinder nur der Admin'],
     ],
   },
   {
@@ -23576,7 +23601,7 @@ function renderSettingsMemberList() {
           </label>`;
         })() : ''}
       </div>
-      <button class="edit-settings-member text-ink/30 hover:text-pine text-xs shrink-0" data-id="${m.id}">Bearbeiten</button>
+      ${canEditMember(m) ? `<button class="edit-settings-member text-ink/30 hover:text-pine text-xs shrink-0" data-id="${m.id}">Bearbeiten</button>` : ''}
       ${admin ? `<button class="del-settings-member text-ink/30 hover:text-red-500 text-xs shrink-0" data-id="${m.id}">Entfernen</button>` : ''}
     `;
     list.appendChild(row);
@@ -23981,10 +24006,10 @@ function setDarkMode(on) {
 document.getElementById('darkModeToggle').addEventListener('change', (e) => setDarkMode(e.target.checked));
 
 document.getElementById('resetDataBtn').addEventListener('click', async () => {
-  if (!confirm('Wirklich alle Termine, Rezepte und Familienmitglieder löschen? Dies betrifft die gesamte Familie.')) return;
+  if (!confirm('Wirklich alle Termine, Rezepte und Daten löschen? Dies betrifft die gesamte Familie. Familienmitglieder mit Profil bleiben erhalten.')) return;
   const fresh = defaultFamilyData();
-  members = fresh.members; events = fresh.events; mealPlan = fresh.mealPlan;
-  recipes = fresh.recipes; lastName = fresh.lastName; categoryActive = fresh.categoryActive;
+  members = members.filter(m => profileForMember(m.id)); events = fresh.events; mealPlan = fresh.mealPlan;
+  recipes = fresh.recipes; categoryActive = fresh.categoryActive;
   // die Wohnform bleibt beim Zurücksetzen erhalten
   appleCalendar = fresh.appleCalendar;
   tasks = fresh.tasks;
