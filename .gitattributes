@@ -1,0 +1,12 @@
+# Was nur für die GitHub-Seite gebraucht wird (Bilder, Vorlagen, deutsche Projektbeschreibung),
+# landet nicht im ZIP-Download der Releases – auf dem NAS bleibt so nichts davon liegen.
+.github        export-ignore
+.gitattributes export-ignore
+README.de.md   export-ignore
+
+# Einheitliche Zeilenenden, damit Shell-Skripte auf dem NAS laufen
+*.sh   text eol=lf
+*.yaml text eol=lf
+*.js   text eol=lf
+*.html text eol=lf
+*.png  binary
