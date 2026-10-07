@@ -37,11 +37,11 @@ pinn. is a web app for families and flatshares that runs entirely on your own NA
 
 ## Installation
 
-1. On GitHub click **Code → Download ZIP** and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder **`pinn-main`** into it as it is.
+1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) (or **Code → Download ZIP**) and unzip it.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. **`pinn-1.22.1`** or **`pinn-main`**) into it as it is.
 3. Log in via SSH and run:
    ```sh
-   cd /volume1/docker/Pocketbase && sudo sh pinn-setup.sh
+   cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    The script sorts all files into place, downloads the libraries for PDF import and photo text recognition, and starts pinn.
 4. Open `http://<NAS-IP>:8090` in the browser → **Log in as main admin** → password `Admin` → set your own password.
@@ -52,7 +52,7 @@ pinn. is a web app for families and flatshares that runs entirely on your own NA
 
    Then turn on notifications per device under **Settings → Notifications → Activate on this device**.
 
-**Updating:** download the new ZIP, put `pinn-main` into the same folder again and run `sudo sh pinn-setup.sh`. Replaced files are backed up in `_alt/`. Your data stays untouched.
+**Updating:** download the new ZIP, put the unzipped folder into the same folder again and run `sudo sh pinn-*/pinn-setup.sh`. Replaced files are backed up in `_alt/`. Your data stays untouched.
 
 **Backups** are created automatically every night in `./backups` (14 days).
 
@@ -85,11 +85,11 @@ pinn. ist eine Familien-App, die komplett auf dem eigenen NAS läuft: Kalender, 
 
 ### Installation
 
-1. Auf GitHub **Code → Download ZIP** wählen und entpacken.
-2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner **`pinn-main`** so, wie er ist, hineinlegen.
+1. Die ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunterladen (oder **Code → Download ZIP**) und entpacken.
+2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. **`pinn-1.22.1`** oder **`pinn-main`**) so, wie er ist, hineinlegen.
 3. Per SSH anmelden und ausführen:
    ```sh
-   cd /volume1/docker/Pocketbase && sudo sh pinn-setup.sh
+   cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
 4. Im Browser `http://<NAS-IP>:8090` öffnen → **Als Hauptadmin anmelden** → Passwort `Admin` → eigenes Passwort festlegen.
 5. Der **Einrichtungs-Assistent** führt Schritt für Schritt durch alles Weitere.
@@ -99,7 +99,7 @@ pinn. ist eine Familien-App, die komplett auf dem eigenen NAS läuft: Kalender, 
 
    Danach je Gerät unter **Einstellungen → Benachrichtigungen → Auf diesem Gerät aktivieren** die Mitteilungen einschalten.
 
-**Update:** neue ZIP herunterladen, `pinn-main` wieder in denselben Ordner legen, `sudo sh pinn-setup.sh` ausführen. Ersetzte Dateien landen in `_alt/`, eure Daten bleiben unverändert.
+**Update:** neue ZIP herunterladen, den entpackten Ordner wieder in denselben Ordner legen, `sudo sh pinn-*/pinn-setup.sh` ausführen. Ersetzte Dateien landen in `_alt/`, eure Daten bleiben unverändert.
 
 ### pinn. unterstützen
 

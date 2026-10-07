@@ -22348,7 +22348,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.22.0';
+const APP_VERSION = '1.22.1';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -22427,6 +22427,7 @@ const PINN_CHANGELOG = [
       ['neu', 'Push-Benachrichtigungen auf Android-Handys (Chrome, Samsung Internet, Edge, Firefox): wie am iPhone unter Einstellungen → Benachrichtigungen „Auf diesem Gerät aktivieren“ – mit allen Erinnerungen, Pinnwand, SOS und Glocke'],
       ['neu', 'pinn. lässt sich auf Android als App installieren („📲 pinn. als App installieren“ bzw. Chrome-Menü ⋮) – mit eigenen App-Symbolen und einfarbigem Symbol in der Statusleiste'],
       ['info', 'Weckrufe an Android gehen mit hoher Priorität raus, damit Erinnerungen auch im Energiesparmodus pünktlich kommen; Meldungen mit gleichem Thema melden sich erneut statt still ersetzt zu werden; Android-spezifische Hinweise bei blockierten Mitteilungen, In-App-Browsern und Akku-Einschränkungen'],
+      ['fix', 'pinn-setup.sh nimmt jetzt auch den Ordner aus der Release-ZIP (z. B. pinn-1.22.1) an und lässt sich direkt aus dem entpackten Ordner starten (sudo sh pinn-*/pinn-setup.sh) – vorher fehlte das Skript bei einer Neuinstallation im Projektordner'],
     ],
   },
   {

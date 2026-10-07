@@ -7,10 +7,11 @@
 #      (bei einem Update: der bestehende Projektordner).
 #   2. ALLE heruntergeladenen pinn.-Dateien einfach in diesen Ordner legen – oder in einen
 #      Unterordner „neu“ darin. Die Reihenfolge und Namen wie „datei (1).js“ sind egal.
-#      Von GitHub („Code → Download ZIP“): den entpackten Ordner „pinn-main“ einfach so, wie er
-#      ist, in diesen Ordner legen.
+#      Von GitHub („Code → Download ZIP“ oder ZIP eines Releases): den entpackten Ordner
+#      („pinn-main“ bzw. z. B. „pinn-1.22.1“) einfach so, wie er ist, in diesen Ordner legen.
 #   3. Per SSH anmelden und ausführen:
-#        cd /volume1/docker/Pocketbase && sudo sh pinn-setup.sh
+#        cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
+#      (liegen die Dateien lose im Ordner:  sudo sh pinn-setup.sh)
 #   4. Das Skript sortiert alles an die richtige Stelle, legt fehlende Ordner an, startet pinn.
 #      und zeigt die Adresse, unter der die Einrichtung im Browser weitergeht.
 #
@@ -20,6 +21,11 @@
 # ─────────────────────────────────────────────────────────────
 
 cd "$(dirname "$0")" || exit 1
+# Aus dem entpackten GitHub-Ordner gestartet (pinn-main/pinn-setup.sh, pinn-1.22.1/pinn-setup.sh …)?
+# Dann ist der Projektordner eine Ebene höher.
+case "$(basename "$(pwd)")" in
+  pinn-main|pinn-master|pinn-[0-9]*|pinn-v[0-9]*) cd .. || exit 1 ;;
+esac
 PROJEKT=$(pwd)
 
 # ── Sprache ─────────────────────────────────────────────────
@@ -193,13 +199,13 @@ einsortieren() {
   echo "    $BASIS → $ZIEL"
   ANZ=$((ANZ + 1))
 }
-for f in ./* ./neu/* ./pinn-main/* ./pinn-master/*; do
+for f in ./* ./neu/* ./pinn-main/* ./pinn-master/* ./pinn-[0-9]*/* ./pinn-v[0-9]*/*; do
   [ -f "$f" ] || continue
   einsortieren "$f"
 done
 rmdir neu 2>/dev/null
 # Entpackter GitHub-Ordner: Repository-Reste (.github, .gitignore) entfernen, dann den Ordner selbst
-for d in pinn-main pinn-master; do
+for d in pinn-main pinn-master pinn-[0-9]* pinn-v[0-9]*; do
   [ -d "$d" ] || continue
   rm -rf "$d/.github" "$d/.gitignore" "$d/.gitattributes"
   rmdir "$d" 2>/dev/null
