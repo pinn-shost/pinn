@@ -574,7 +574,7 @@ window.PINN_LANGUAGES = [
     start(data);
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.22.0" onerror="PINN_I18N.fail()"><\/script>');
+  if (DICT) document.write('<script src="' + lang.file + '?v=1.23.0" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // Deutsch als WG: kein Wörterbuch, nur die WG-Bezeichnungen
 })();
 </script>
@@ -1510,12 +1510,10 @@ window.PINN_LANGUAGES = [
   html.dark .member-lock-row { color: rgba(237,234,226,0.7); }
   /* Einkaufszettel auf dem Handy erkennbar schmaler als der Bildschirm halten, statt einfach die
      ganze verfügbare Breite auszufüllen - soll wie ein einzelnes Blatt Papier wirken. */
-  body.mobile-mode #shoppingListPaper { max-width: calc(100vw - 3rem); }
-  body.mobile-mode .shopping-paper { max-width: calc(100vw - 3rem); }
   /* Geplanter Einkauf: mehrere Listen zusammengefügt - jede Liste als eigener, farbig markierter Zettel */
   .shopping-combined-section { position: relative; }
   .shopping-combined-head { display:flex; align-items:center; gap:.6rem; padding:.55rem .75rem .55rem .9rem; border-radius: .9rem .9rem 0 0; background: color-mix(in srgb, var(--list-color) 12%, transparent); border: 1px solid color-mix(in srgb, var(--list-color) 35%, transparent); border-bottom: 0; }
-  .shopping-combined-paper { border-top: 4px solid var(--list-color) !important; border-left: 1px solid color-mix(in srgb, var(--list-color) 35%, transparent) !important; border-right: 1px solid color-mix(in srgb, var(--list-color) 35%, transparent) !important; }
+  .shopping-combined-paper { border-top: 4px solid var(--list-color) !important; border-left: 1px solid color-mix(in srgb, var(--list-color) 35%, transparent) !important; border-right: 1px solid color-mix(in srgb, var(--list-color) 35%, transparent) !important; border-bottom: 1px solid color-mix(in srgb, var(--list-color) 35%, transparent) !important; border-radius: 0 0 .9rem .9rem; background: color-mix(in srgb, var(--list-color) 4%, transparent); }
   .shopping-combined-logos { display:flex; align-items:center; }
   .shopping-combined-logos > * + * { margin-left: -10px; }
   .shopping-combined-logos > * { box-shadow: 0 0 0 2px #fff; border-radius: 9px; }
@@ -1660,6 +1658,43 @@ window.PINN_LANGUAGES = [
   .pantry-low-bar { background: #D64545; }
   .pantry-tag { display:inline-flex; align-items:center; gap:2px; font-size:10px; line-height:1; padding:2px 6px; border-radius:999px; background: color-mix(in srgb, var(--c-mustard) 16%, transparent); color: var(--c-mustard); font-family: Inter, system-ui, sans-serif; white-space:nowrap; }
   .plan-item-row .plan-item-dot { transition: background .15s, border-color .15s; }
+  /* Einkaufsliste: Karten wie im Vorrat, nach Kategorien gruppiert, Abgehaktes unten */
+  .shop-list-body { display: flex; flex-direction: column; gap: 1.1rem; }
+  .shop-group-head { font-size: 0.75rem; text-transform: uppercase; letter-spacing: .04em; color: rgba(37,35,31,0.45); margin: 0 0 .5rem .15rem; display: flex; align-items: center; gap: .4rem; }
+  .shop-group-done { opacity: .85; }
+  .shop-row { display: flex; align-items: stretch; min-height: 3.4rem; border-radius: .9rem; border: 1px solid rgba(37,35,31,0.1); background: #fff; overflow: hidden; transition: background .2s, border-color .2s, opacity .2s; }
+  .shop-row-main { padding: .7rem .4rem .7rem .85rem; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  .shop-row-main:active { background: rgba(37,35,31,0.04); }
+  .shop-check { flex-shrink: 0; width: 1.6rem; height: 1.6rem; border-radius: 999px; border: 2px solid rgba(37,35,31,0.28); display: grid; place-items: center; color: #fff; font-size: .8rem; font-weight: 700; line-height: 1; transition: background .15s, border-color .15s; }
+  .shop-name { font-size: 0.975rem; font-weight: 500; color: rgba(37,35,31,0.88); }
+  .shop-note { font-size: 0.72rem; color: rgba(37,35,31,0.45); margin-top: 1px; }
+  .shop-qty-btn { width: 2.1rem; height: 2.1rem; border-radius: 999px; border: 1px solid rgba(37,35,31,0.15); color: rgba(37,35,31,0.6); display: grid; place-items: center; font-size: 1.15rem; line-height: 1; -webkit-tap-highlight-color: transparent; touch-action: manipulation; transition: color .15s, border-color .15s, background .15s; }
+  .shop-qty-btn:hover, .shop-qty-btn:active { color: var(--c-pine); border-color: var(--c-pine); }
+  .shop-qty-btn:active { background: color-mix(in srgb, var(--c-pine) 10%, transparent); }
+  .shop-qty-val { min-width: 2.6rem; max-width: 5.5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .shop-row.is-done { background: rgba(37,35,31,0.025); border-style: dashed; }
+  .shop-row.is-done .shop-check { background: var(--c-pine); border-color: var(--c-pine); }
+  .shop-row.is-done .shop-name { text-decoration: line-through; color: rgba(37,35,31,0.35); font-weight: 400; }
+  .shop-row.is-done .shop-note { color: rgba(37,35,31,0.25); }
+  .shop-row-fresh { animation: shopRowIn .35s ease-out; }
+  @keyframes shopRowIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+  html.dark .shop-group-head { color: rgba(237,234,226,0.5); }
+  html.dark .shop-row { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.14); }
+  html.dark .shop-row.is-done { background: transparent; }
+  html.dark .shop-name { color: #EDEAE2; }
+  html.dark .shop-row.is-done .shop-name { color: rgba(237,234,226,0.35); }
+  html.dark .shop-note { color: rgba(237,234,226,0.5); }
+  html.dark .shop-check { border-color: rgba(255,255,255,0.4); }
+  html.dark .shop-row.is-done .shop-check { box-shadow: 0 0 0 1px rgba(255,255,255,0.5); }
+  html.dark .shop-qty-btn { border-color: rgba(255,255,255,0.25); color: rgba(237,234,226,0.75); }
+  html.dark .shop-row-main:active { background: rgba(255,255,255,0.05); }
+  .shop-cat-row { display: flex; align-items: center; gap: .6rem; border: 1px solid rgba(37,35,31,0.1); background: #fff; border-radius: .75rem; padding: .45rem .5rem .45rem .75rem; }
+  html.dark .shop-cat-row { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.14); }
+  .shop-cat-row.shop-cat-fresh { animation: shopRowIn .3s ease-out; }
+  .shop-cat-move { width: 2rem; height: 2rem; border-radius: .55rem; border: 1px solid rgba(37,35,31,0.15); color: rgba(37,35,31,0.6); display: grid; place-items: center; font-size: .85rem; -webkit-tap-highlight-color: transparent; }
+  .shop-cat-move:disabled { opacity: .3; }
+  .shop-cat-move:not(:disabled):hover { color: var(--c-pine); border-color: var(--c-pine); }
+  html.dark .shop-cat-move { border-color: rgba(255,255,255,0.25); color: rgba(237,234,226,0.75); }
   .fin-cat-chip.active { border-color: var(--cat) !important; box-shadow: 0 0 0 1.5px var(--cat) inset; background: color-mix(in srgb, var(--cat) 14%, transparent); }
   .fin-entry, .fin-cat-row, .fin-rec-row, .fin-trend-col { -webkit-tap-highlight-color: transparent; }
   .fin-amount-field input:focus { outline: none; }
@@ -3308,7 +3343,6 @@ window.PINN_LANGUAGES = [
         <div class="flex items-center gap-2 flex-wrap">
           <span class="text-xs uppercase tracking-wide text-ink/40 mr-1">Familie</span>
           <div id="memberChips" class="flex items-center gap-2 flex-wrap"></div>
-          <button id="addMemberBtn" class="w-7 h-7 rounded-full border border-dashed border-ink/30 text-ink/50 hover:text-pine hover:border-pine grid place-items-center text-sm" aria-label="Familienmitglied hinzufügen">+</button>
         </div>
       </div>
 
@@ -4660,7 +4694,7 @@ window.PINN_LANGUAGES = [
     <details class="settings-accordion set-card" id="settingsShoppingAccordion">
       <summary class="set-sum">
         <span class="set-ico">🛒</span>
-        <span class="set-head"><span class="sa-title">Einkauf</span><small>Stammladen und Sonderlisten</small></span>
+        <span class="set-head"><span class="sa-title">Einkauf</span><small>Stammladen, Sonderlisten und Kategorien</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
@@ -4684,6 +4718,13 @@ window.PINN_LANGUAGES = [
           <button id="settingsAddMeatRuleBtn" type="button" class="px-3 py-2 rounded-lg border border-dashed border-ink/30 text-sm text-ink/60 hover:text-pine hover:border-pine transition">+ 🥩 Metzgerei (Fleisch &amp; Wurst)</button>
           <button id="settingsAddCustomRuleBtn" type="button" class="px-3 py-2 rounded-lg border border-dashed border-ink/30 text-sm text-ink/60 hover:text-pine hover:border-pine transition">+ Eigene Sonderliste</button>
         </div>
+
+        <div class="flex items-center justify-between gap-2 mt-6 mb-1">
+          <label class="block text-xs uppercase tracking-wide text-ink/40">Kategorien auf den Einkaufslisten</label>
+          <button id="settingsShopCatReset" type="button" class="shrink-0 px-2.5 py-1 rounded-lg border border-ink/15 text-[11px] text-ink/60 hover:text-pine hover:border-pine transition">Zurücksetzen</button>
+        </div>
+        <p class="text-[11px] text-ink/45 mb-2.5 leading-snug">Die Artikel werden automatisch nach Kategorien sortiert. Bring die Kategorien in die Reihenfolge, in der du durch deinen Laden gehst – gilt für alle Listen und Geräte der Familie. Eine falsch erkannte Kategorie änderst du, indem du den Artikel lange drückst.</p>
+        <div id="settingsShopCategories" class="flex flex-col gap-1.5"></div>
       </div>
     </details>
     <details class="settings-accordion set-card">
@@ -4848,8 +4889,17 @@ window.PINN_LANGUAGES = [
       <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Notiz</label>
       <input id="shoppingNoteInput" type="text" autocomplete="off" placeholder="z. B. Bio, die große Packung …" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
 
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Liste</label>
-      <select id="shoppingItemListSelect" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-5 bg-white"></select>
+      <div class="grid grid-cols-2 gap-3 mb-5">
+        <div class="min-w-0">
+          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="shoppingItemCategorySelect">Kategorie</label>
+          <select id="shoppingItemCategorySelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-base bg-white"></select>
+        </div>
+        <div class="min-w-0">
+          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="shoppingItemListSelect">Liste</label>
+          <select id="shoppingItemListSelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-base bg-white"></select>
+        </div>
+      </div>
+
 
       <div class="flex items-center gap-2">
         <button id="deleteShoppingItemBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Löschen</button>
@@ -8361,7 +8411,7 @@ document.addEventListener('click', (e) => {
 // Abhaken (Aufgaben, Listen, Kinderseite), Ansehen, Favoriten, Heimweg und SOS bleiben möglich.
 const CHILD_LOCK_EDIT_SELECTOR = [
   // Kalender & Familie
-  '#openAddEventModalBtn', '#addMemberBtn', '#eventDetailEditBtn', '#memberKidEdit', '#kidRoutineApply', '#kidRoutineDefaults',
+  '#openAddEventModalBtn', '#eventDetailEditBtn', '#memberKidEdit', '#kidRoutineApply', '#kidRoutineDefaults',
   '.kid-add-task',
   // Essen & Rezepte
   '#addMealOverviewBtn', '.add-meal-btn', '#dayAddMealBtn', '.meal-cooked-btn', '#openRecipeSettingsBtn', '#openRecipeModalBtn',
@@ -8374,7 +8424,7 @@ const CHILD_LOCK_EDIT_SELECTOR = [
   '[data-pw-act="edit"]', '[data-pw-act="pin"]', '[data-pw-act="archive"]', '[data-pw-act="unarchive"]', '[data-pw-act="cleanup"]',
   // Listen & Einkauf
   '#openShoppingPlanBtn', '#openNewShoppingListBtn', '#openShoppingMoveBtn', '#editShoppingListBtn', '#clearDoneShoppingItemsBtn',
-  '#finishShoppingPlanBtn', '#shoppingAddBar', '#shoppingAddInput', '#shoppingAddBtn', '#listsNewBtn', '#listsEditBtn',
+  '#finishShoppingPlanBtn', '.shop-qty-btn', '#shoppingAddBar', '#shoppingAddInput', '#shoppingAddBtn', '#listsNewBtn', '#listsEditBtn',
   'div:has(> div > #listsAddInput)', '#listsAddInput', '#listsAddBtn',
   // Vorrat
   '#openPantrySettingsBtn', '#openPantryItemBtn', '.pantry-step', '.pantry-add-btn',
@@ -10213,6 +10263,7 @@ function defaultFamilyData() {
     shoppingListOrder: [],   // Reihenfolge der Einkaufslisten in der Übersicht (per Drag & Drop)
     shoppingMealTarget: { listId: '', mode: 'mirror' }, // Stammladen: wohin die Zutaten der Essensplanung gehen
     shoppingIngredientRules: [], // Sonderlisten: { id, preset, name, icon, listId, keywords, exclude, active }
+    shoppingCategoryOrder: [],   // Einkaufslisten: Reihenfolge der Kategorien (IDs, leer = Standard)
     pantryItems: [],         // Vorrat: { id, name, qty, unit, minQty, category, location, stores, note, updatedAt }
     pantryCategories: [],    // Vorrat: eigene Kategorien (leer = Standard)
     pantryLocations: [],     // Vorrat: eigene Lagerorte (leer = Standard)
@@ -10282,6 +10333,7 @@ let shoppingListOrder = []; // Reihenfolge der Einkaufslisten-Karten (IDs, inkl.
 let shoppingMealTarget = { listId: '', mode: 'mirror' };
 // Sonderlisten: Rezept-Zutaten mit passenden Stichwörtern (z. B. "hack") gehen auf eine andere Liste
 let shoppingIngredientRules = []; // { id, preset, name, icon, listId, keywords:[..], exclude:[..], active }
+let shoppingCategoryOrder = [];   // Reihenfolge der Kategorien auf den Einkaufslisten (IDs)
 let shoppingPlans = [];  // { id: <Aufgaben-ID>, listIds: [...], createdAt, bookedAt } - "Einkauf planen": Aufgabe mit Einkaufslisten verknüpft
 let pantryItems = [];      // Vorrat-Artikel { id, name, qty, unit, minQty, category, location, stores:[listIds], note, updatedAt }
 let pantryCategories = []; // { id, label, icon }
@@ -10647,6 +10699,7 @@ function applyFamilyData(data) {
   shoppingListOrder = Array.isArray(data.shoppingListOrder) ? data.shoppingListOrder.filter(x => typeof x === 'string' && x) : [];
   shoppingMealTarget = normalizeShoppingMealTarget(data.shoppingMealTarget);
   shoppingIngredientRules = normalizeShoppingIngredientRules(data.shoppingIngredientRules);
+  shoppingCategoryOrder = Array.isArray(data.shoppingCategoryOrder) ? data.shoppingCategoryOrder.filter(x => typeof x === 'string' && x) : [];
   pantryItems = Array.isArray(data.pantryItems) ? data.pantryItems.filter(x => x && x.id && x.name) : [];
   pantryCategories = (Array.isArray(data.pantryCategories) && data.pantryCategories.length) ? data.pantryCategories.filter(x => x && x.id) : PANTRY_DEFAULT_CATEGORIES.map(c => ({ ...c }));
   pantryLocations = (Array.isArray(data.pantryLocations) && data.pantryLocations.length) ? data.pantryLocations.filter(x => x && x.id) : PANTRY_DEFAULT_LOCATIONS.map(c => ({ ...c }));
@@ -11638,7 +11691,7 @@ document.getElementById('refreshBirthdaysBtn').addEventListener('click', async (
 
 function buildFamilyPayload() {
   const payload = {
-    members, mealPlan, recipes, recipeFavorites, shoppingItems, shoppingHistory, shoppingLists, shoppingTransferred, shoppingPlans, shoppingListOrder, shoppingMealTarget, shoppingIngredientRules, pantryItems, pantryCategories, pantryLocations, pinboard, familyLists, listTemplates, documentCategories, emergencyPasses, tasks, lastName, wohnform: householdType, themeColors, categoryActive, recipeCategories, appleCalendar, weatherLocation, rooms, roomSchedules, trashBins, smartDevices, cleaningCategories, kitchenTools, favoriteTabs, guestHiddenViews, doneTaskCleanupDays, finance,
+    members, mealPlan, recipes, recipeFavorites, shoppingItems, shoppingHistory, shoppingLists, shoppingTransferred, shoppingPlans, shoppingListOrder, shoppingMealTarget, shoppingIngredientRules, shoppingCategoryOrder, pantryItems, pantryCategories, pantryLocations, pinboard, familyLists, listTemplates, documentCategories, emergencyPasses, tasks, lastName, wohnform: householdType, themeColors, categoryActive, recipeCategories, appleCalendar, weatherLocation, rooms, roomSchedules, trashBins, smartDevices, cleaningCategories, kitchenTools, favoriteTabs, guestHiddenViews, doneTaskCleanupDays, finance,
     defaultViewModeDesktop, defaultViewScopeDesktop, defaultViewModeMobile, defaultViewScopeMobile,
     darkMode: document.documentElement.classList.contains('dark'),
   };
@@ -13233,7 +13286,6 @@ document.querySelectorAll('.display-mode-btn').forEach(btn => {
   });
 });
 
-document.getElementById('addMemberBtn').addEventListener('click', () => openMemberModal(null));
 document.getElementById('settingsAddMember').addEventListener('click', () => openMemberModal(null));
 function closeMemberModal() { document.getElementById('memberModal').classList.add('hidden'); }
 document.getElementById('cancelMember').addEventListener('click', () => attemptCloseModal('memberModal', closeMemberModal));
@@ -15526,6 +15578,99 @@ function manualItemQtyNote(it) {
   return { qty: (it.qty || '').trim(), note: (it.note || '').trim() };
 }
 
+/* ---------- Kategorien auf den Einkaufslisten ----------
+   Jeder Artikel landet automatisch in einer Kategorie (gleiche Kategorien wie im Vorrat). Erkannt
+   wird über Stichwörter im Namen - der längste Treffer gewinnt ("Erdbeerjoghurt" -> Milch, nicht
+   Obst; "Paprikapulver" -> Gewürze). "=wort" passt nur als ganzes Wort ("=ei" erfasst "Eier" nicht
+   in "Eiernudeln"). Ein Vorrats-Artikel bringt seine Kategorie mit, eine im Artikel-Popup selbst
+   gewählte Kategorie hat immer Vorrang und wird für den nächsten Einkauf gemerkt. Die Reihenfolge
+   (z. B. wie der Laden aufgebaut ist) legt die Familie unter Einstellungen → Einkauf fest. */
+const SHOPPING_CATEGORIES = PANTRY_DEFAULT_CATEGORIES;
+const SHOPPING_CATEGORY_KEYWORDS = {
+  tiefkuehl: ['tiefkühl', 'tk-', 'gefrier', 'tiefgefroren', 'tiefgekühlt', '=tk', '=eis', 'eiscreme', 'speiseeis', 'pommes', 'fischstäbchen', 'rahmspinat', 'kroketten', 'tiefkühlpizza', 'eiswürfel'],
+  drogerie: ['shampoo', 'duschgel', 'seife', 'zahnpasta', 'zahncreme', 'zahnbürste', 'zahnseide', 'mundspülung', '=deo', 'deodorant', 'creme', 'bodylotion', 'lotion', 'windel', 'toilettenpapier', 'klopapier', 'taschentücher', 'taschentuch', 'tampon', 'binden', 'slipeinlagen', 'rasier', 'spülung', 'pflaster', 'watte', 'wattepads', 'wattestäbchen', 'sonnencreme', 'haargel', 'haarspray', 'feuchttücher', 'kosmetik', 'make-up', 'nagellack', 'schnuller', 'vitamin', 'tabletten', 'medikament', 'kondome', 'handcreme', 'lippenpflege', 'babypuder', 'ohrstäbchen'],
+  haushalt: ['spülmittel', 'waschmittel', 'weichspüler', 'müllbeutel', 'mülltüte', 'mülltüten', 'schwamm', 'schwämme', 'putzmittel', 'reiniger', 'spültabs', 'spülmaschinentabs', 'klarspüler', 'regeneriersalz', 'alufolie', 'frischhaltefolie', 'backpapier', 'küchenrolle', 'küchenpapier', 'batterie', 'glühbirne', 'leuchtmittel', 'kerze', 'teelicht', 'servietten', 'gefrierbeutel', 'entkalker', 'lappen', 'wc-', 'toilettenreiniger', 'essigreiniger', 'allzweck', 'feuerzeug', 'streichhölzer', 'katzenstreu', 'hundefutter', 'katzenfutter', 'tierfutter', 'grillkohle', 'blumenerde'],
+  getraenke: ['wasser', 'mineralwasser', 'sprudel', 'saft', '=cola', 'limo', 'limonade', 'bier', '=wein', 'rotwein', 'weißwein', 'rosé', 'sekt', 'prosecco', 'schorle', 'eistee', 'energy', 'smoothie', 'tonic', 'spezi', 'fanta', 'sprite', '=pils', 'radler', 'apfelschorle', 'getränk', 'sirup', '=gin', 'wodka', '=rum', 'likör', 'alkoholfrei', 'malzbier', 'kombucha'],
+  konserven: ['dose', 'dosen', 'konserve', 'passierte tomaten', 'gehackte tomaten', 'pizzatomaten', 'tomatenmark', 'kidneybohnen', 'kichererbsen in', 'kokosmilch', 'sardine', 'ölsardinen', 'thunfisch in', 'eingelegt', 'gewürzgurken', 'cornichons', 'oliven', 'kapern', 'sauerkraut', 'rotkohl im glas', 'apfelmus', 'fertigsuppe', 'ravioli', 'mais aus der dose'],
+  fleisch_fisch: ['fleisch', 'hack', 'hackfleisch', 'schnitzel', 'steak', 'wurst', 'würstchen', 'wiener', 'schinken', 'salami', 'speck', 'bacon', 'huhn', 'hähnchen', 'hühnchen', 'hühnerbrust', 'pute', 'puten', 'truthahn', 'rind', 'rinder', 'schwein', 'lamm', 'gulasch', 'filet', 'bratwurst', 'lachs', 'thunfisch', 'fisch', 'garnele', 'garnelen', 'shrimps', 'krabben', 'kassler', 'leberkäse', 'fleischkäse', 'frikadelle', 'mett', 'chorizo', 'geflügel', '=ente', 'entenbrust', 'forelle', 'kabeljau', 'seelachs', 'hering', 'muscheln', 'aufschnitt', 'roastbeef', 'kotelett', 'braten', 'rouladen', 'mortadella', 'cevapcici'],
+  milch: ['milch', 'joghurt', 'jogurt', 'quark', 'käse', 'sahne', 'schlagsahne', 'butter', '=ei', '=eier', 'schmand', 'crème fraîche', 'creme fraiche', 'saure sahne', 'mozzarella', 'parmesan', 'feta', 'frischkäse', 'hüttenkäse', 'kefir', 'buttermilch', 'margarine', 'skyr', 'gouda', 'emmentaler', 'camembert', 'mascarpone', 'ricotta', 'pudding', 'halloumi', 'schmelzkäse', 'kondensmilch', 'grießbrei', 'milchreis', 'kochsahne', 'ayran'],
+  brot: ['brot', 'brötchen', 'semmel', 'toast', 'toastbrot', 'baguette', 'croissant', 'brezel', 'laugen', 'ciabatta', 'wraps', 'tortilla', 'tortillas', 'knäckebrot', 'zwieback', 'fladenbrot', 'kuchen', 'berliner', 'muffin', 'bagel', 'burger buns', 'burgerbrötchen', '=buns', 'pita', 'naan', 'aufbackbrötchen', 'vollkornbrot', 'roggenbrot'],
+  backen: ['mehl', 'zucker', 'puderzucker', 'vanillezucker', 'backpulver', 'hefe', 'trockenhefe', 'vanille', 'speisestärke', 'stärke', 'kakaopulver', 'backkakao', 'kuvertüre', 'streusel', 'marzipan', 'gelatine', 'natron', 'backmischung', 'mandeln', 'gemahlene mandeln', 'haselnüsse', 'walnüsse', 'nüsse', 'rosinen', 'kokosraspel', 'zuckerguss', 'tortenguss', 'schokotropfen', 'backaroma', 'paniermehl', 'semmelbrösel'],
+  fruehstueck: ['müsli', 'cornflakes', 'haferflocken', 'marmelade', 'konfitüre', 'honig', 'nutella', 'aufstrich', 'brotaufstrich', 'nussnougatcreme', 'erdnussbutter', 'kaffee', 'kaffeebohnen', '=tee', 'früchtetee', 'pfefferminztee', 'kräutertee', 'espresso', 'granola', 'porridge', 'cappuccino', 'kaffeepads', 'kaffeekapseln', 'kapseln', 'kakao', 'trinkschokolade', 'cerealien', 'frühstück'],
+  suesses: ['schokolade', 'schoko', 'chips', 'keks', 'kekse', 'butterkeks', 'butterkekse', 'gummibär', 'gummibärchen', 'fruchtgummi', 'süßigkeit', 'süßigkeiten', 'bonbon', 'bonbons', 'popcorn', 'salzstangen', 'cracker', 'riegel', 'müsliriegel', 'praline', 'pralinen', 'lakritz', 'erdnüsse', 'flips', 'waffeln', 'kaugummi', 'nachos', 'studentenfutter', 'snack', 'snacks', 'naschen', 'brownie', 'tortillachips'],
+  gewuerze: ['salz', 'pfeffer', 'gewürz', 'paprikapulver', 'paprika edelsüß', 'curry', 'currypulver', 'zimt', 'muskat', 'oregano', '=öl', 'olivenöl', 'rapsöl', 'sonnenblumenöl', 'sesamöl', 'essig', 'balsamico', 'senf', 'ketchup', 'mayo', 'mayonnaise', 'soße', 'sauce', 'brühe', 'gemüsebrühe', 'hühnerbrühe', 'rinderbrühe', 'fond', 'sojasoße', 'sojasauce', 'kräuter der provence', 'getrocknete', 'chiliflocken', 'kreuzkümmel', 'kurkuma', 'lorbeer', 'tabasco', 'pesto', 'würze', 'maggi', 'bratensoße', 'grillsoße', 'dressing', 'remoulade', 'sriracha', 'gewürzmischung', 'knoblauchpulver', 'zwiebelpulver', 'vanilleschote'],
+  nudeln_reis: ['nudel', 'nudeln', 'spaghetti', 'penne', 'fusilli', 'farfalle', 'tagliatelle', 'lasagne', 'lasagneplatten', 'pasta', 'makkaroni', 'reis', 'basmati', 'risotto', 'couscous', 'bulgur', 'quinoa', 'linsen', 'kichererbsen', 'gnocchi', 'spätzle', 'tortellini', 'glasnudeln', 'mie-nudeln', 'polenta', 'hirse', 'graupen', 'kartoffelpüree', 'püree'],
+  obst_gemuese: ['apfel', 'äpfel', 'birne', 'birnen', 'banane', 'bananen', 'orange', 'orangen', 'zitrone', 'zitronen', 'limette', 'limetten', 'mandarine', 'clementine', 'clementinen', 'trauben', 'weintrauben', 'erdbeer', 'erdbeeren', 'himbeer', 'himbeeren', 'heidelbeer', 'heidelbeeren', 'blaubeer', 'blaubeeren', 'kirsche', 'kirschen', 'pfirsich', 'nektarine', 'melone', 'wassermelone', 'ananas', 'mango', 'kiwi', 'avocado', 'beeren', 'obst', 'pflaume', 'pflaumen', 'aprikose', 'granatapfel', 'feigen', 'tomate', 'tomaten', 'cherrytomaten', 'gurke', 'gurken', 'salatgurke', 'paprika', 'salat', 'eisbergsalat', 'karotte', 'karotten', 'möhre', 'möhren', 'zwiebel', 'zwiebeln', 'rote zwiebeln', 'knoblauch', 'kartoffel', 'kartoffeln', 'süßkartoffel', 'zucchini', 'aubergine', 'brokkoli', 'blumenkohl', 'spinat', 'babyspinat', 'kohl', 'weißkohl', 'rotkohl', 'wirsing', 'lauch', 'porree', 'sellerie', 'staudensellerie', 'pilze', 'champignons', 'champignon', 'radieschen', 'rucola', 'kürbis', 'spargel', 'bohnen', 'grüne bohnen', 'erbsen', 'zuckerschoten', 'mais', 'maiskolben', 'ingwer', 'petersilie', 'schnittlauch', 'basilikum', 'koriander', '=dill', 'minze', 'rosmarin', 'thymian', 'gemüse', 'frühlingszwiebel', 'frühlingszwiebeln', 'lauchzwiebeln', 'fenchel', 'rote bete', 'chili', 'chilischote', 'pak choi', 'mangold', 'rosenkohl', 'kohlrabi', 'schalotte', 'schalotten', 'feldsalat', 'kräuter', 'sprossen', 'rhabarber', 'grapefruit'],
+};
+// Bei gleich langem Treffer gewinnt die frühere Kategorie in dieser Liste
+const SHOPPING_CATEGORY_PRIORITY = ['tiefkuehl', 'drogerie', 'haushalt', 'getraenke', 'konserven', 'fleisch_fisch', 'milch', 'brot', 'backen', 'fruehstueck', 'suesses', 'gewuerze', 'nudeln_reis', 'obst_gemuese'];
+function shoppingCategoryById(id) { return SHOPPING_CATEGORIES.find(c => c.id === id) || null; }
+function shoppingAutoCategory(name) {
+  const text = String(name || '').toLowerCase().replace(/\s+/g, ' ').trim();
+  if (!text) return 'sonstiges';
+  const words = new Set(text.split(/[^a-zäöüß0-9]+/).filter(Boolean));
+  let best = 'sonstiges', bestLen = 0;
+  SHOPPING_CATEGORY_PRIORITY.forEach(cat => {
+    (SHOPPING_CATEGORY_KEYWORDS[cat] || []).forEach(kw => {
+      const whole = kw.charAt(0) === '=';
+      const k = whole ? kw.slice(1) : kw;
+      const hit = whole ? words.has(k) : text.includes(k);
+      if (hit && k.length > bestLen) { best = cat; bestLen = k.length; }
+    });
+  });
+  return best;
+}
+// Kategorie eines eigenen Eintrags: selbst gewählt > Vorrats-Artikel > automatisch erkannt
+function shoppingItemCategory(it) {
+  if (it && it.cat && shoppingCategoryById(it.cat)) return it.cat;
+  const p = it && it.pantryId && typeof pantryItems !== 'undefined' ? pantryItems.find(x => x.id === it.pantryId) : null;
+  if (p && p.category && shoppingCategoryById(p.category)) return p.category;
+  return shoppingAutoCategory(it ? it.name : '');
+}
+// Kategorien in der Reihenfolge der Familie (neu hinzugekommene hinten, „Sonstiges“ ohne eigene Wahl zuletzt)
+function shoppingCategoriesOrdered() {
+  const ids = SHOPPING_CATEGORIES.map(c => c.id);
+  const order = (shoppingCategoryOrder || []).filter((id, i, arr) => ids.includes(id) && arr.indexOf(id) === i);
+  ids.forEach(id => { if (!order.includes(id)) order.push(id); });
+  return order.map(shoppingCategoryById);
+}
+
+// Plus/Minus an einer Mengenangabe: verändert die führende Zahl und lässt die Einheit stehen
+// ("500 g" -> "550 g"). Bei g/ml in 50er-Schritten, bei kg/l in 0,5er-Schritten, sonst ganze
+// Schritte. Kleiner als ein Schritt geht es nicht. Leere Menge zählt als 1.
+function shoppingQtyStepSize(unitText) {
+  const unit = String(unitText || '').trim().toLowerCase();
+  if (/^(g|gr|gramm|ml)\b/.test(unit)) return 50;
+  if (/^(kg|l|liter)\b/.test(unit)) return 0.5;
+  return 1;
+}
+function shoppingStepQtyText(raw, direction) {
+  raw = String(raw || '').trim();
+  const m = raw.match(/^(\d+(?:[.,]\d+)?)\s*(.*)$/);
+  let value = m ? parseFloat(m[1].replace(',', '.')) : (raw ? 0 : 1);
+  const rest = m ? m[2].trim() : raw;
+  const step = shoppingQtyStepSize(rest);
+  value = direction > 0 ? value + step : Math.max(step, value - step);
+  value = Math.round(value * 100) / 100;
+  const numText = numDec(String(value));
+  return rest ? `${numText} ${rest}` : numText;
+}
+// Rezept-Zutat: Anzeige-Name und Menge - inkl. selbst per Plus/Minus angepasster Menge
+function shoppingRecipeLabelQty(item) {
+  if (!item.hasQuantity) return { label: item.text, qtyText: '', unit: '' };
+  const unit = extractUnitFromRest(item.unitName);
+  const label = unit ? item.unitName.slice(unit.length).trim() : item.unitName;
+  const step = shoppingQtyStepSize(unit);
+  const delta = Number(getShoppingItemAdjustment(item.key).delta) || 0;
+  let min = item.minValue, max = item.maxValue;
+  if (delta) {
+    const d = Math.max(delta * step, step - min); // nicht unter einen Schritt
+    min = Math.round((min + d) * 100) / 100;
+    max = Math.round((max + d) * 100) / 100;
+  }
+  return { label, qtyText: formatQuantityRange(min, max) + (unit ? ' ' + unit : ''), unit };
+}
+
 /* ---------- Einkauf: mehrere Listen (je Laden eine) ----------
    Die Liste "Essensplanung" ist fest eingebaut und nicht löschbar: Sie enthält die Zutaten der im
    gewählten Zeitraum geplanten Rezepte plus eigene Einträge. Alle weiteren Listen (Rewe, dm ...)
@@ -15793,9 +15938,9 @@ function recipeShoppingEntries(from, to) {
     .filter(item => !getShoppingItemAdjustment(item.key).excluded)
     .map(item => {
       if (!item.hasQuantity) return { name: item.text.trim(), qty: '', route: item.route || '' };
-      const unit = extractUnitFromRest(item.unitName);
-      const name = (unit ? item.unitName.slice(unit.length) : item.unitName).trim() || item.unitName.trim();
-      return { name, qty: formatQuantityRange(item.minValue, item.maxValue) + (unit ? ' ' + unit : ''), route: item.route || '' };
+      const { label, qtyText } = shoppingRecipeLabelQty(item);
+      const name = String(label || '').trim() || item.unitName.trim();
+      return { name, qty: qtyText, route: item.route || '' };
     });
 }
 
@@ -16283,52 +16428,91 @@ const SHOPPING_DRAG_ANIM_MS = 230;
 })();
 
 /* ---------- Zeilen eines Einkaufszettels (einzelne Liste und zusammengefügte Ansicht) ---------- */
+/* ---------- Zeilen der Einkaufsliste ----------
+   Gestaltet wie die übrigen Listen der App (Vorrat): Karten mit Rand, nach Kategorien gruppiert.
+   Antippen des Artikels streicht ihn durch (eigene Einträge: im Wagen, Rezept-Zutaten: hab ich noch)
+   und schiebt ihn nach unten zu „Abgehakt“. Plus/Minus neben der Menge ändert sie direkt,
+   langes Drücken öffnet wie bisher Bearbeiten bzw. die Aufschlüsselung. */
+let shoppingJustToggledKey = '';
+function shoppingQtyControlsHtml(kind, id, qtyText, muted) {
+  const shown = qtyText || '1';
+  if (muted) return qtyText ? `<span class="shop-qty-val shrink-0 text-sm text-ink/30 line-through px-2">${escapeHtml(qtyText)}</span>` : '';
+  return `
+        <div class="shop-qty flex items-center gap-1 pr-2 shrink-0">
+          <button type="button" class="shop-qty-btn shop-qty-minus" data-kind="${kind}" data-id="${escapeHtml(id)}" data-dir="-1" aria-label="Einen weniger">−</button>
+          <span class="shop-qty-val text-center text-sm font-semibold ${qtyText ? '' : 'text-ink/35 font-normal'}">${escapeHtml(shown)}</span>
+          <button type="button" class="shop-qty-btn shop-qty-plus" data-kind="${kind}" data-id="${escapeHtml(id)}" data-dir="1" aria-label="Einen mehr">+</button>
+        </div>`;
+}
 function shoppingManualRowHtml(it) {
   const { qty, note } = manualItemQtyNote(it);
   const muted = !!it.done;
   const pItem = pantryItemForShopping(it);
+  const fresh = shoppingJustToggledKey === 'm:' + it.id;
   return `
-      <button type="button" class="shopping-manual-row w-full flex items-center gap-2.5 py-1.5 border-b border-dashed border-ink/10 last:border-0 text-left select-none" data-manual-id="${escapeHtml(it.id)}">
+    <div class="shop-row ${muted ? 'is-done' : ''} ${fresh ? 'shop-row-fresh' : ''}">
+      <button type="button" class="shopping-manual-row shop-row-main flex-1 min-w-0 flex items-center gap-3 text-left select-none" data-manual-id="${escapeHtml(it.id)}">
+        <span class="shop-check" aria-hidden="true">${muted ? '✓' : ''}</span>
         <span class="flex-1 min-w-0">
-          <span class="flex items-center gap-1.5 min-w-0"><span class="truncate text-sm ${muted ? 'line-through text-ink/30' : 'text-ink/80'}">${escapeHtml(truncateTitle(it.name || '', 28))}</span>${pItem ? `<span class="pantry-tag shrink-0 ${muted ? 'opacity-40' : ''}" title="Vorrat: ${escapeHtml(pantryStockText(pItem))} da">🥫 Vorrat</span>` : ''}</span>
-          ${note ? `<span class="block truncate text-xs ${muted ? 'text-ink/20 line-through' : 'text-ink/40'}">${escapeHtml(note)}</span>` : ''}
+          <span class="flex items-center gap-1.5 min-w-0"><span class="shop-name truncate">${escapeHtml(truncateTitle(it.name || '', 40))}</span>${pItem ? `<span class="pantry-tag shrink-0 ${muted ? 'opacity-40' : ''}" title="Vorrat: ${escapeHtml(pantryStockText(pItem))} da">🥫 Vorrat</span>` : ''}</span>
+          ${note ? `<span class="shop-note block truncate">${escapeHtml(note)}</span>` : ''}
         </span>
-        ${qty ? `<span class="shrink-0 text-sm ${muted ? 'text-ink/20 line-through' : 'text-ink/50'}">${escapeHtml(qty)}</span>` : ''}
-        <span class="shrink-0 w-4 h-4 rounded-full border-2 grid place-items-center ${muted ? 'bg-pine border-pine' : 'border-ink/30'}">${muted ? '<span class="block w-1.5 h-1.5 rounded-full bg-white"></span>' : ''}</span>
       </button>
-    `;
+      ${shoppingQtyControlsHtml('m', it.id, qty, muted)}
+    </div>`;
 }
 function shoppingRecipeRouteTagHtml(item, muted) {
   if (!item.route) return '';
   const list = getShoppingList(item.route);
   const rule = shoppingActiveRules().find(r => r.listId === item.route);
   if (!list) return '';
-  return `<span class="shrink-0 max-w-[40%] truncate text-[10px] font-sans px-1.5 py-0.5 rounded-full bg-mustard/15 text-mustard ${muted ? 'opacity-40' : ''}" title="Steht auf der Liste ${escapeHtml(list.name || '')}">${rule ? rule.icon : '➜'} ${escapeHtml(list.name || '')}</span>`;
+  return `<span class="shrink-0 max-w-[45%] truncate text-[10px] font-sans px-1.5 py-0.5 rounded-full bg-mustard/15 text-mustard ${muted ? 'opacity-40' : ''}" title="Steht auf der Liste ${escapeHtml(list.name || '')}">${rule ? rule.icon : '➜'} ${escapeHtml(list.name || '')}</span>`;
 }
 function shoppingRecipeRowHtml(item, showRoute = false) {
   const adj = getShoppingItemAdjustment(item.key);
   const muted = adj.excluded;
-  let label, qtyText;
-  if (item.hasQuantity) {
-    const unit = extractUnitFromRest(item.unitName);
-    label = unit ? item.unitName.slice(unit.length).trim() : item.unitName;
-    qtyText = formatQuantityRange(item.minValue, item.maxValue) + (unit ? ' ' + unit : '');
-  } else {
-    label = item.text;
-    qtyText = '';
-  }
-  label = truncateTitle(label, 28);
+  const { label, qtyText } = shoppingRecipeLabelQty(item);
+  const fresh = shoppingJustToggledKey === 'r:' + item.key;
+  const qtyHtml = item.hasQuantity
+    ? shoppingQtyControlsHtml('r', item.key, qtyText, muted)
+    : '';
   return `
-      <button type="button" class="shopping-item-row w-full flex items-center gap-2.5 py-1.5 border-b border-dashed border-ink/10 last:border-0 text-left select-none" data-item-key="${escapeHtml(item.key)}">
-        <span class="flex-1 min-w-0 truncate text-sm ${muted ? 'line-through text-ink/30' : 'text-ink/80'}">${escapeHtml(label)}</span>
-        ${showRoute ? shoppingRecipeRouteTagHtml(item, muted) : ''}
-        ${qtyText ? `<span class="shrink-0 text-sm ${muted ? 'text-ink/20 line-through' : 'text-ink/50'}">${escapeHtml(qtyText)}</span>` : ''}
-        <span class="shrink-0 w-4 h-4 rounded-full border-2 grid place-items-center ${muted ? 'bg-pine border-pine' : 'border-ink/30'}">${muted ? '<span class="block w-1.5 h-1.5 rounded-full bg-white"></span>' : ''}</span>
+    <div class="shop-row ${muted ? 'is-done' : ''} ${fresh ? 'shop-row-fresh' : ''}">
+      <button type="button" class="shopping-item-row shop-row-main flex-1 min-w-0 flex items-center gap-3 text-left select-none" data-item-key="${escapeHtml(item.key)}">
+        <span class="shop-check" aria-hidden="true">${muted ? '✓' : ''}</span>
+        <span class="flex-1 min-w-0">
+          <span class="flex items-center gap-1.5 min-w-0"><span class="shop-name truncate">${escapeHtml(truncateTitle(label, 40))}</span>${showRoute ? shoppingRecipeRouteTagHtml(item, muted) : ''}</span>
+          <span class="shop-note block truncate">🍽️ <span>${escapeHtml(muted ? 'Hab ich noch zu Hause' : 'aus der Essensplanung')}</span></span>
+        </span>
       </button>
-    `;
+      ${qtyHtml}
+    </div>`;
 }
-function shoppingSeparatorHtml() {
-  return `<div class="my-2 overflow-hidden whitespace-nowrap text-ink/30 select-none leading-none" aria-hidden="true">${SHOPPING_SEPARATOR_TEXT.repeat(20)}</div>`;
+// Inhalt einer Liste: offene Artikel nach Kategorien (Reihenfolge aus den Einstellungen), darunter
+// alles Abgehakte. Eigene Einträge stehen in ihrer Kategorie vor den Rezept-Zutaten.
+function shoppingGroupedBodyHtml(manual, recipeItems, showRoute) {
+  const openManual = manual.filter(it => !it.done);
+  const doneManual = manual.filter(it => it.done);
+  const openRecipe = [], doneRecipe = [];
+  (recipeItems || []).forEach(i => (getShoppingItemAdjustment(i.key).excluded ? doneRecipe : openRecipe).push(i));
+  const groups = shoppingCategoriesOrdered().map(c => ({
+    cat: c,
+    manual: openManual.filter(it => shoppingItemCategory(it) === c.id),
+    recipe: openRecipe.filter(i => shoppingAutoCategory(shoppingRecipeLabelQty(i).label) === c.id),
+  })).filter(g => g.manual.length || g.recipe.length);
+  const groupHtml = groups.map(g => `
+    <div class="shop-group">
+      <h3 class="shop-group-head"><span class="text-sm">${escapeHtml(g.cat.icon || '')}</span>${escapeHtml(g.cat.label)}<span class="text-ink/30 normal-case tracking-normal">· ${g.manual.length + g.recipe.length}</span></h3>
+      <div class="flex flex-col gap-1.5">${g.manual.map(shoppingManualRowHtml).join('')}${g.recipe.map(i => shoppingRecipeRowHtml(i, showRoute)).join('')}</div>
+    </div>`).join('');
+  const doneCount = doneManual.length + doneRecipe.length;
+  const doneHtml = doneCount ? `
+    <div class="shop-group shop-group-done">
+      <h3 class="shop-group-head"><span class="text-sm">✓</span>Abgehakt<span class="text-ink/30 normal-case tracking-normal">· ${doneCount}</span></h3>
+      <div class="flex flex-col gap-1.5">${doneManual.map(shoppingManualRowHtml).join('')}${doneRecipe.map(i => shoppingRecipeRowHtml(i, showRoute)).join('')}</div>
+    </div>` : '';
+  if (!groupHtml && doneCount) return `<p class="text-sm text-pine text-center py-1">Alles abgehakt 🎉</p>` + doneHtml;
+  return groupHtml + doneHtml;
 }
 // Alle eigenen Einträge einer Liste abhaken bzw. wieder öffnen
 function toggleAllShoppingItemsOfList(listId) {
@@ -16344,6 +16528,7 @@ function toggleAllShoppingItemsOfList(listId) {
 }
 // Eigene Einträge: Antippen = abhaken (im Einkaufswagen), langes Drücken = bearbeiten/löschen.
 // Rezept-Zutaten: Antippen = "Hab ich noch zu Hause", langes Drücken = Aufschlüsselung.
+// Plus/Minus: Menge direkt ändern (Rezept-Zutaten nur für diesen Einkauf).
 function wireShoppingRows(rootEl, recipeItems, from, to) {
   rootEl.querySelectorAll('.shopping-manual-row').forEach(row => {
     const id = row.dataset.manualId;
@@ -16361,6 +16546,7 @@ function wireShoppingRows(rootEl, recipeItems, from, to) {
       shoppingItems = shoppingItems.map(x => x.id === id ? { ...x, done: !x.done } : x);
       if (!it.done && it.pantryId) removePantrySiblings([it]); // abgehakt: von den anderen Listen nehmen
       else if (it.done && it.pantryId) syncPantryToShopping(); // wieder offen: ggf. auf die anderen Listen zurück
+      shoppingJustToggledKey = 'm:' + id;
       persistState();
       renderShoppingList();
     });
@@ -16368,13 +16554,43 @@ function wireShoppingRows(rootEl, recipeItems, from, to) {
   rootEl.querySelectorAll('.shopping-item-row').forEach(row => {
     const item = (recipeItems || []).find(i => i.key === row.dataset.itemKey);
     if (!item) return;
-    attachIngredientLongPress(row, () => showIngredientBreakdown(item, from, to));
+    let suppressClick = false;
+    attachIngredientLongPress(row, () => { suppressClick = true; showIngredientBreakdown(item, from, to); });
+    row.addEventListener('pointerdown', () => { suppressClick = false; });
     row.addEventListener('click', () => {
+      if (suppressClick) { suppressClick = false; return; }
       const adj = getShoppingItemAdjustment(item.key);
-      shoppingListAdjustments.set(item.key, { excluded: !adj.excluded });
+      shoppingListAdjustments.set(item.key, { ...adj, excluded: !adj.excluded });
+      shoppingJustToggledKey = 'r:' + item.key;
       renderShoppingList();
     });
   });
+  rootEl.querySelectorAll('.shop-qty-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const dir = Number(btn.dataset.dir) || 1;
+      const id = btn.dataset.id;
+      shoppingJustToggledKey = '';
+      if (btn.dataset.kind === 'm') {
+        const it = shoppingItems.find(x => x.id === id);
+        if (!it) return;
+        const next = shoppingStepQtyText(it.qty, dir);
+        if (next === String(it.qty || '').trim()) return;
+        shoppingItems = shoppingItems.map(x => x.id === id ? { ...x, qty: next } : x);
+        persistState();
+      } else {
+        const item = (recipeItems || []).find(i => i.key === id);
+        if (!item) return;
+        const adj = getShoppingItemAdjustment(id);
+        const before = shoppingRecipeLabelQty(item).qtyText;
+        const delta = (Number(adj.delta) || 0) + dir;
+        shoppingListAdjustments.set(id, { ...adj, delta });
+        if (shoppingRecipeLabelQty(item).qtyText === before) { shoppingListAdjustments.set(id, adj); return; }
+      }
+      renderShoppingList();
+    });
+  });
+  shoppingJustToggledKey = '';
 }
 
 // Aufgabe (inkl. gerade abgehaktem, noch nicht bestätigtem Zustand) zum geplanten Einkauf
@@ -16427,12 +16643,10 @@ function renderShoppingCombinedDetail() {
     const color = shoppingListColor(list);
     const allDone = manual.length > 0 && manual.every(it => it.done);
     const body = (manual.length || items.length)
-      ? `${manual.length ? `<div>${manual.map(shoppingManualRowHtml).join('')}</div>` : ''}
-         ${manual.length && items.length ? shoppingSeparatorHtml() : ''}
-         ${items.length ? `<div>${items.map(i => shoppingRecipeRowHtml(i, showRoute)).join('')}</div>` : ''}`
-      : `<p class="text-sm text-ink/35 italic text-center py-2 font-sans">${isMeal ? 'Für diesen Zeitraum nichts geplant.' : 'Diese Liste ist leer.'}</p>`;
+      ? shoppingGroupedBodyHtml(manual, items, showRoute)
+      : `<p class="text-sm text-ink/35 italic text-center py-2">${isMeal ? 'Für diesen Zeitraum nichts geplant.' : 'Diese Liste ist leer.'}</p>`;
     return `
-      <section class="shopping-combined-section mx-auto w-full max-w-md shopping-paper" style="--list-color:${color}">
+      <section class="shopping-combined-section mx-auto w-full max-w-xl" style="--list-color:${color}">
         <div class="shopping-combined-head">
           ${shoppingListLogoHtml(list, 30)}
           <div class="flex-1 min-w-0">
@@ -16442,7 +16656,7 @@ function renderShoppingCombinedDetail() {
           ${manual.length ? `<button type="button" class="shopping-section-all shrink-0 px-2.5 py-1 rounded-lg border border-ink/15 bg-white text-[11px] text-ink/60 hover:text-pine hover:border-pine transition" data-list-id="${escapeHtml(list.id)}">${allDone ? '○ Keine' : '✓ Alle'}</button>` : ''}
           <button type="button" class="shopping-section-open shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-medium hover:bg-white/60 transition" style="color:${color}" data-list-id="${escapeHtml(list.id)}">Öffnen ›</button>
         </div>
-        <div class="shopping-combined-paper bg-white shadow-lg border border-ink/5 px-5 py-4 font-mono">
+        <div class="shopping-combined-paper shop-list-body px-3 py-3">
           ${body}
         </div>
       </section>`;
@@ -16568,20 +16782,14 @@ function renderShoppingDetail() {
 
   if (!hasAny) { contentEl.innerHTML = ''; return; }
 
-  const manualHtml = manual.map(shoppingManualRowHtml).join('');
-  const recipeHtml = items.map(i => shoppingRecipeRowHtml(i, isMeal)).join('');
-  const separatorHtml = (manual.length && items.length) ? shoppingSeparatorHtml() : '';
-
   const allManualDone = manual.length > 0 && manual.every(it => it.done);
   const selectAllHtml = manual.length ? `
-    <div class="mx-auto w-full max-w-md flex justify-end mb-2">
+    <div class="mx-auto w-full max-w-xl flex justify-end mb-2">
       <button type="button" id="shoppingSelectAllBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 bg-white text-xs text-ink/60 hover:text-pine hover:border-pine transition">${allManualDone ? '○ Keine abhaken' : '✓ Alle abhaken'}</button>
     </div>` : '';
   contentEl.innerHTML = selectAllHtml + `
-    <div id="shoppingListPaper" class="mx-auto w-full max-w-md bg-white shadow-lg border border-ink/5 px-5 py-6 font-mono">
-      ${manual.length ? `<div>${manualHtml}</div>` : ''}
-      ${separatorHtml}
-      ${items.length ? `<div>${recipeHtml}</div>` : ''}
+    <div id="shoppingListPaper" class="shop-list-body mx-auto w-full max-w-xl">
+      ${shoppingGroupedBodyHtml(manual, items, isMeal)}
     </div>
   `;
 
@@ -16826,7 +17034,45 @@ function readShoppingLogoFile(file) {
 }
 
 /* ---------- Einstellungen → Einkauf: Stammladen & Sonderlisten ---------- */
+// Reihenfolge der Kategorien auf den Einkaufslisten (Einstellungen → Einkauf)
+let shopCatFreshId = '';
+function renderShoppingCategorySettings() {
+  const wrap = document.getElementById('settingsShopCategories');
+  if (!wrap) return;
+  const cats = shoppingCategoriesOrdered();
+  wrap.innerHTML = cats.map((c, i) => `
+    <div class="shop-cat-row ${c.id === shopCatFreshId ? 'shop-cat-fresh' : ''}" data-cat="${escapeHtml(c.id)}">
+      <span class="w-6 text-center text-[11px] text-ink/35 shrink-0">${i + 1}.</span>
+      <span class="text-base shrink-0">${escapeHtml(c.icon || '')}</span>
+      <span class="flex-1 min-w-0 text-sm truncate">${escapeHtml(c.label)}</span>
+      <button type="button" class="shop-cat-move" data-move="-1" ${i === 0 ? 'disabled' : ''} aria-label="Nach oben">▲</button>
+      <button type="button" class="shop-cat-move" data-move="1" ${i === cats.length - 1 ? 'disabled' : ''} aria-label="Nach unten">▼</button>
+    </div>`).join('');
+  shopCatFreshId = '';
+  wrap.querySelectorAll('.shop-cat-move').forEach(btn => btn.addEventListener('click', () => {
+    const id = btn.closest('.shop-cat-row').dataset.cat;
+    const order = shoppingCategoriesOrdered().map(c => c.id);
+    const i = order.indexOf(id);
+    const j = i + Number(btn.dataset.move);
+    if (i < 0 || j < 0 || j >= order.length) return;
+    [order[i], order[j]] = [order[j], order[i]];
+    shoppingCategoryOrder = order;
+    shopCatFreshId = id;
+    persistState();
+    renderShoppingCategorySettings();
+    if (currentView === 'einkauf') renderShoppingList();
+  }));
+}
+function resetShoppingCategoryOrder() {
+  if (!shoppingCategoryOrder.length) return;
+  shoppingCategoryOrder = [];
+  persistState();
+  renderShoppingCategorySettings();
+  if (currentView === 'einkauf') renderShoppingList();
+}
+
 function renderShoppingSettings() {
+  renderShoppingCategorySettings();
   const wrap = document.getElementById('settingsIngredientRules');
   if (!wrap) return;
   // Stammladen
@@ -16931,6 +17177,7 @@ function addShoppingIngredientRule(presetKey) {
 document.getElementById('settingsStammBtn').addEventListener('click', openShoppingStammModal);
 document.getElementById('settingsAddMeatRuleBtn').addEventListener('click', () => addShoppingIngredientRule('metzger'));
 document.getElementById('settingsAddCustomRuleBtn').addEventListener('click', () => addShoppingIngredientRule(''));
+document.getElementById('settingsShopCatReset').addEventListener('click', resetShoppingCategoryOrder);
 
 /* ---------- Popup: Stammladen festlegen (aus der Essensplanung) ---------- */
 let shoppingStammModalListId = '';
@@ -17154,6 +17401,12 @@ function openShoppingItemModal({ name = '', editId = null } = {}) {
     noteInput.value = '';
   }
 
+  // Kategorie: automatisch erkannt oder selbst gewählt (wird für den nächsten Einkauf gemerkt)
+  const histCat = (() => { const h = shoppingHistory.find(x => x.id === shoppingHistoryKey(nameInput.value)); return h && h.cat && shoppingCategoryById(h.cat) ? h.cat : ''; })();
+  const catSel = document.getElementById('shoppingItemCategorySelect');
+  catSel.dataset.cat = existing ? (existing.cat && shoppingCategoryById(existing.cat) ? existing.cat : '') : histCat;
+  renderShoppingItemCategorySelect();
+
   // Liste wählbar - so lässt sich ein einzelner Eintrag auch auf eine andere Liste umsetzen.
   listSelect.innerHTML = allShoppingLists().map(l => `<option value="${escapeHtml(l.id)}">${escapeHtml(l.name || '')}</option>`).join('');
   listSelect.value = existing ? itemListId(existing) : activeListId;
@@ -17165,6 +17418,19 @@ function openShoppingItemModal({ name = '', editId = null } = {}) {
 
   modal.classList.remove('hidden');
   document.getElementById('shoppingAddInput').blur();
+}
+
+// Auswahl „Automatisch (erkannte Kategorie)“ + alle Kategorien in der Reihenfolge der Familie
+function renderShoppingItemCategorySelect() {
+  const sel = document.getElementById('shoppingItemCategorySelect');
+  if (!sel) return;
+  const chosen = sel.dataset.cat || '';
+  const it = shoppingModalEditId ? shoppingItems.find(x => x.id === shoppingModalEditId) : null;
+  const auto = shoppingItemCategory({ name: document.getElementById('shoppingItemNameInput').value, pantryId: it ? it.pantryId : '' });
+  const autoCat = shoppingCategoryById(auto);
+  sel.innerHTML = `<option value="">✨ ${escapeHtml(i18nT('Automatisch'))}${autoCat ? ' · ' + escapeHtml(i18nT(autoCat.label)) : ''}</option>` +
+    shoppingCategoriesOrdered().map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml((c.icon ? c.icon + ' ' : '') + i18nT(c.label))}</option>`).join('');
+  sel.value = chosen;
 }
 
 function closeShoppingItemModal() {
@@ -17232,21 +17498,24 @@ if (window.visualViewport) {
   window.visualViewport.addEventListener('scroll', syncShoppingKeyboardLayout);
 }
 window.addEventListener('resize', syncShoppingKeyboardLayout);
+document.getElementById('shoppingItemNameInput').addEventListener('input', renderShoppingItemCategorySelect);
+document.getElementById('shoppingItemCategorySelect').addEventListener('change', (e) => { e.target.dataset.cat = e.target.value; });
 ['shoppingItemNameInput', 'shoppingQtyInput', 'shoppingNoteInput'].forEach(id => {
   const el = document.getElementById(id);
   el.addEventListener('focus', () => [0, 100, 300, 600].forEach(ms => setTimeout(syncShoppingKeyboardLayout, ms)));
   el.addEventListener('blur', () => setTimeout(syncShoppingKeyboardLayout, 150));
 });
 
-function rememberShoppingInput(name, qty) {
+function rememberShoppingInput(name, qty, cat) {
   const id = shoppingHistoryKey(name);
   const existing = shoppingHistory.find(x => x.id === id);
+  const catPart = cat === undefined ? {} : { cat: cat || '' };
   if (existing) {
     shoppingHistory = shoppingHistory.map(x => x.id === id
-      ? { ...x, name, count: (x.count || 0) + 1, lastUsed: Date.now(), lastQty: qty }
+      ? { ...x, name, count: (x.count || 0) + 1, lastUsed: Date.now(), lastQty: qty, ...catPart }
       : x);
   } else {
-    shoppingHistory = [...shoppingHistory, { id, name, count: 1, lastUsed: Date.now(), lastQty: qty }];
+    shoppingHistory = [...shoppingHistory, { id, name, count: 1, lastUsed: Date.now(), lastQty: qty, ...catPart }];
   }
   // Verlauf begrenzen, damit der Familien-Datensatz nicht unnötig wächst: die am seltensten und
   // am längsten nicht mehr genutzten Einträge fallen zuerst heraus.
@@ -17267,15 +17536,18 @@ function confirmShoppingItem() {
   if (!name) { document.getElementById('shoppingItemNameInput').focus(); return; }
   const selectedListId = document.getElementById('shoppingItemListSelect').value;
   const listId = getShoppingList(selectedListId) ? selectedListId : activeShoppingListId();
+  const catVal = document.getElementById('shoppingItemCategorySelect').value;
+  const cat = shoppingCategoryById(catVal) ? catVal : '';
 
   if (shoppingModalEditId) {
     const editId = shoppingModalEditId;
-    shoppingItems = shoppingItems.map(x => x.id === editId ? { ...x, name, qty, note, done: false, listId } : x);
+    shoppingItems = shoppingItems.map(x => x.id === editId ? { ...x, name, qty, note, cat, done: false, listId } : x);
   } else {
     // Neue eigene Einträge oben anfügen, damit das zuletzt Hinzugefügte sofort sichtbar ist.
-    shoppingItems = [{ id: 'si' + Date.now() + Math.random().toString(36).slice(2, 6), name, qty, note, done: false, createdAt: Date.now(), listId }, ...shoppingItems];
+    shoppingItems = [{ id: 'si' + Date.now() + Math.random().toString(36).slice(2, 6), name, qty, note, cat, done: false, createdAt: Date.now(), listId }, ...shoppingItems];
   }
-  rememberShoppingInput(name, qty);
+  rememberShoppingInput(name, qty, cat);
+
   persistState();
 
   closeShoppingItemModal();
@@ -17299,18 +17571,7 @@ function deleteShoppingItemFromModal() {
 // sonst in ganzen Schritten. Kleiner als ein Schritt geht es nicht.
 function stepShoppingQty(direction) {
   const input = document.getElementById('shoppingQtyInput');
-  const raw = input.value.trim();
-  const m = raw.match(/^(\d+(?:[.,]\d+)?)\s*(.*)$/);
-  let value = m ? parseFloat(m[1].replace(',', '.')) : 0;
-  const rest = m ? m[2] : raw;
-  const unit = rest.trim().toLowerCase();
-  let step = 1;
-  if (/^(g|gramm|ml)\b/.test(unit)) step = 50;
-  else if (/^(kg|l|liter)\b/.test(unit)) step = 0.5;
-  value = direction > 0 ? value + step : Math.max(step, value - step);
-  value = Math.round(value * 100) / 100;
-  const numText = numDec(String(value));
-  input.value = rest ? `${numText} ${rest.trim()}` : numText;
+  input.value = shoppingStepQtyText(input.value, direction);
 }
 
 function submitShoppingAddInput() {
@@ -17420,7 +17681,7 @@ function buildShoppingListTextFor(listId, from, to) {
   const recipeLines = (listHasRecipeItems(listId) && from && to && from <= to)
     ? recipeItemsForList(listId, computeShoppingList(from, to).items)
         .filter(item => !getShoppingItemAdjustment(item.key).excluded)
-        .map(item => '- ' + displayTextFor(item))
+        .map(item => { const lq = shoppingRecipeLabelQty(item); return '- ' + (item.hasQuantity ? lq.qtyText + ' ' + lq.label : item.text); })
     : [];
   const parts = [];
   if (manualLines.length) parts.push(manualLines.join('\n'));
@@ -22097,11 +22358,14 @@ function setView(view) {
     calendarModeToggle.classList.add('hidden');
     calendarModeToggle.classList.remove('flex');
     initShoppingListDatesIfEmpty();
-    // Beim Öffnen des Einkaufs immer mit der Übersicht aller Listen starten.
-    currentShoppingListId = null;
-    currentShoppingPlanTaskId = null;
-    shoppingBackToPlanTaskId = null;
-    listsDetailId = null;
+    // Beim Öffnen des Einkaufs immer mit der Übersicht aller Listen starten - nicht aber, wenn nur neu
+    // aufgebaut wird (z. B. beim Drehen des Handys): dann bleibt die geöffnete Liste offen.
+    if (isNavigatingToNewView) {
+      currentShoppingListId = null;
+      currentShoppingPlanTaskId = null;
+      shoppingBackToPlanTaskId = null;
+      listsDetailId = null;
+    }
     renderShoppingList();
   } else if (view === 'vorrat') {
     mainGrid.classList.remove('lg:grid-cols-[1.1fr_0.8fr_0.8fr]', 'grid-cols-[1.1fr_0.8fr_0.8fr]', 'grid-cols-[1.3fr_1fr]', 'grid-cols-[1.3fr_minmax(0,1fr)]');
@@ -22372,7 +22636,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.22.3';
+const APP_VERSION = '1.23.0';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -22445,6 +22709,17 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
    - rueckblick: true = Einträge vor dem Versions-Log, aus der Projekthistorie zusammengefasst.
    ========================================================== */
 const PINN_CHANGELOG = [
+  {
+    v: '1.23', datum: '07.10.2026', titel: 'Einkaufsliste neu sortiert',
+    punkte: [
+      ['neu', 'Einkaufsliste nach Kategorien (Obst & Gemüse, Milch & Käse, Tiefkühl …): Artikel werden automatisch zugeordnet, eine falsch erkannte Kategorie lässt sich im Artikel-Popup ändern und wird fürs nächste Mal gemerkt'],
+      ['neu', 'Einstellungen → Einkauf: Reihenfolge der Kategorien mit ▲/▼ festlegen – z. B. so, wie man durch den Laden geht'],
+      ['neu', 'Plus/Minus direkt neben der Menge jedes Artikels; Antippen streicht den Artikel durch und schiebt ihn nach unten zu „Abgehakt“'],
+      ['info', 'Einkaufslisten im Stil der übrigen Listen: größere Zeilen wie Knöpfe, Karten statt Kassenzettel'],
+      ['neu', 'Finanzen: bei einer bestehenden einmaligen Ausgabe lässt sich nachträglich eine Wiederholung einrichten – die Buchung bleibt die erste, danach wird regelmäßig weitergebucht'],
+      ['fix', 'Beim Drehen des Handys bleibt die geöffnete Liste offen; das „+“ zum Hinzufügen von Familienmitgliedern im Kalender ist entfallen (Mitglieder legt man unter Einstellungen an)'],
+    ],
+  },
   {
     v: '1.22', datum: '07.10.2026', titel: 'Push für Android',
     punkte: [
@@ -24019,6 +24294,7 @@ document.getElementById('resetDataBtn').addEventListener('click', async () => {
   shoppingListOrder = [];
   shoppingMealTarget = fresh.shoppingMealTarget;
   shoppingIngredientRules = [];
+  shoppingCategoryOrder = [];
   pantryItems = fresh.pantryItems; pantryCategories = []; pantryLocations = [];
   familyLists = []; listTemplates = [];
   documentCategories = [];
@@ -26871,7 +27147,9 @@ function openExpenseModal({ expense = null, recurring = null, asRecurring = fals
   const onceOpt = repeatSel.querySelector('option[value=""]');
   onceOpt.disabled = !!recurring;
   onceOpt.hidden = !!recurring;
-  document.getElementById('expenseRepeatWrap').classList.toggle('hidden', !!expense);
+  // Bestehende einmalige Buchung: Wiederholung nachträglich einrichtbar - die Buchung bleibt die erste,
+  // die regelmäßige Buchung läuft ab dem nächsten Termin weiter (Ausgleiche nicht)
+  document.getElementById('expenseRepeatWrap').classList.toggle('hidden', !!expense && (expense.category === FIN_SETTLE_CATEGORY || !!expense.recurringId));
   updateExpenseSignUi();
   document.getElementById('expenseStoreBlock').classList.toggle('hidden', isRec);
   updateExpenseRecurringUi();
@@ -26992,9 +27270,15 @@ function toggleExpenseSign() {
   inp.value = /^[-−–—]/.test(raw) ? raw.replace(/^[-−–—]\s*/, '') : '-' + raw;
   updateExpenseSignUi();
 }
+// Erster Termin der Wiederholung, wenn eine bestehende Buchung regelmäßig wird: der nächste nach ihr
+function finExpenseSeriesStart(dateIso, interval) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateIso || '')) return '';
+  return finRecDates({ start: dateIso, interval: interval || 'monthly' }, finIsoAddDays(dateIso, 1), finIsoAddDays(dateIso, 400))[0] || '';
+}
 function updateExpenseRecurringUi() {
   const interval = document.getElementById('expenseRepeatSelect').value;
-  const isRec = !!editingRecurringId || !!interval;
+  const converting = !!editingExpenseId && !!interval; // bestehende Buchung wird regelmäßig
+  const isRec = !!editingRecurringId || (!!interval && !editingExpenseId);
   if (expenseModalMode && !expenseModalMode.recurring && !expenseModalMode.existing) updateExpenseSignUi();
   document.getElementById('expenseDateLabel').textContent = isRec ? 'Erste Buchung am' : 'Datum';
   document.getElementById('expenseStoreBlock').classList.toggle('hidden', isRec);
@@ -27002,6 +27286,16 @@ function updateExpenseRecurringUi() {
   if (docsWrap) docsWrap.classList.toggle('hidden', isRec || isCurrentUserGuest());
   const info = document.getElementById('expenseRecurringInfo');
   const dateVal = document.getElementById('expenseDateInput').value;
+  if (converting) {
+    const next = finExpenseSeriesStart(dateVal, interval);
+    if (next) {
+      info.textContent = `Diese Buchung bleibt wie sie ist (mit Laden und Belegen). Ab ${finDayLabel(next)} wird sie ${finRecDescribe({ start: next, interval })} automatisch weitergebucht.`;
+      info.classList.remove('hidden');
+    } else {
+      info.classList.add('hidden');
+    }
+    return;
+  }
   if (isRec && /^\d{4}-\d{2}-\d{2}$/.test(dateVal)) {
     const r = editingRecurringId ? finance.recurring.find(x => x.id === editingRecurringId) : null;
     const probe = { start: dateVal, interval: interval || 'monthly' };
@@ -27188,7 +27482,8 @@ async function saveExpenseFromModal() {
   const category = expenseModalCategory;
   const link = finLinkParse(expenseModalLink) ? expenseModalLink : '';
   const interval = document.getElementById('expenseRepeatSelect').value || (editingRecurringId ? 'monthly' : '');
-  const isRec = !!editingRecurringId || !!interval;
+  const convertToRecurring = !!editingExpenseId && !!interval && !editingRecurringId;
+  const isRec = !!editingRecurringId || (!!interval && !editingExpenseId);
 
   if (isRec) {
     let applyFrom = null;
@@ -27230,10 +27525,25 @@ async function saveExpenseFromModal() {
   };
   const pendingDocs = expenseDocPending.slice();
   finQueueSave(data);
+  // Wiederholung nachträglich eingerichtet: diese Buchung bleibt die erste, die regelmäßige Buchung
+  // beginnt mit dem nächsten Termin (gleicher Betrag, Kategorie, Beschreibung und Aufteilung)
+  let seriesStart = '';
+  if (convertToRecurring) {
+    seriesStart = finExpenseSeriesStart(date, interval);
+    if (seriesStart) {
+      finUpsertRecurring(null, { title: title || data.store || '', amount, category, paidBy, note, link, interval, start: seriesStart, split: data.split });
+      persistState();
+    }
+  }
   closeExpenseModal();
   if (pendingDocs.length) finUploadMany(pendingDocs, 'ausgabe:' + data.id, 'beleg');
   finJumpToDate(date);
   renderFinance();
+  if (seriesStart) {
+    renderFinRecurringEditor();
+    finShowToast(`Wiederholung eingerichtet – nächste Buchung am ${finDayLabel(seriesStart)}.`);
+    return;
+  }
   if (category === FIN_SAVINGS_CATEGORY) finShowToast(isIncome ? `${fmtEur(-amount)} vom Ersparten entnommen.` : `${fmtEur(amount)} aufs Ersparte gebucht.`);
   else if (existing) finShowToast(isIncome ? 'Einnahme gespeichert.' : 'Ausgabe gespeichert.');
   else if (isIncome) finShowToast(`+ ${fmtEur(-amount)} als Einnahme unter ${finCategory(category).label} gebucht.`);
@@ -39243,7 +39553,6 @@ async function bootApp() {
   }
 
   await loadFamilyProfiles();
-  document.getElementById('addMemberBtn').classList.toggle('hidden', !isCurrentUserAdmin());
   // Persönliche Benachrichtigungen nicht auf dem Familien-Dashboard (geteiltes Gerät) und nicht für Gäste
   const dashSession = isDashboardSession();
   const guest = isCurrentUserGuest();
