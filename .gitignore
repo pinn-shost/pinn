@@ -1,0 +1,13 @@
+.env
+konfig/
+pb_data/
+backups/
+caddy/data/
+caddy/config/
+traccar/
+tailscale/
+_alt/
+neu/
+*.part
+.DS_Store
+Thumbs.db
