@@ -27,16 +27,18 @@ Kein Cloud-Konto. Kein Abo. Keine Werbung, kein Tracking. Die Daten eurer Famili
 
 ## Bilder
 
+<p align="center">
+  <img src=".github/assets/screenshots/dashboard.png" alt="iPad-Dashboard mit Familienprofilen, Uhrzeit und Wetter" width="760"><br>
+  <sub><b>iPad-Dashboard</b> – jeder tippt auf sein Bild, Kinder landen direkt bei ihren Aufgaben</sub>
+</p>
+
 <table>
   <tr>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/home.png" alt="Übersicht mit Wetter, Aufgaben und Terminen" width="230"><br><sub><b>Übersicht</b> – der Tag auf einen Blick</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/calendar.png" alt="Familienkalender in der Wochenansicht" width="230"><br><sub><b>Kalender</b> – iCloud und Google in einer Ansicht</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/meals.png" alt="Essensplan der Woche mit Rezepten" width="230"><br><sub><b>Essen</b> – Woche planen, mit einem Tipp einkaufen</sub></td>
-  </tr>
-  <tr>
-    <td align="center"><img src=".github/assets/screenshots/lists.png" alt="Einkaufsliste nach Läden" width="230"><br><sub><b>Listen</b> – Einkauf, Vorrat, Packen</sub></td>
-    <td align="center"><img src=".github/assets/screenshots/finance.png" alt="Budget mit Ausgaben nach Kategorien" width="230"><br><sub><b>Finanzen</b> – Budget, Sparen, Taschengeld</sub></td>
-    <td align="center"><img src=".github/assets/screenshots/kids.png" alt="Kinderseite mit Tagesablauf" width="230"><br><sub><b>Kinder</b> – der Tagesablauf zum Abhaken</sub></td>
+    <td align="center" width="20%"><img src=".github/assets/screenshots/calendar.png" alt="Familienkalender in der Tagesansicht mit Essen" width="170"><br><sub><b>Kalender</b><br>iCloud und Google in einer Ansicht</sub></td>
+    <td align="center" width="20%"><img src=".github/assets/screenshots/meals.png" alt="Rezepte mit dem Essensplan der Woche" width="170"><br><sub><b>Essen</b><br>Woche planen, mit einem Tipp einkaufen</sub></td>
+    <td align="center" width="20%"><img src=".github/assets/screenshots/lists.png" alt="Einkaufsliste nach Kategorien mit Zutaten aus dem Essensplan" width="170"><br><sub><b>Listen</b><br>Zutaten landen von selbst hier</sub></td>
+    <td align="center" width="20%"><img src=".github/assets/screenshots/finance.png" alt="Monatsbudget mit Verlauf der Ausgaben" width="170"><br><sub><b>Finanzen</b><br>Budget, Sparen, Taschengeld</sub></td>
+    <td align="center" width="20%"><img src=".github/assets/screenshots/kids.png" alt="Kinderseite mit den nächsten Schritten des Tagesablaufs" width="170"><br><sub><b>Kinder</b><br>der Tagesablauf zum Abhaken</sub></td>
   </tr>
 </table>
 
