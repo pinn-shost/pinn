@@ -16,6 +16,16 @@
 //  - Ein Gerät meldet sich mit einer zufälligen Geräte-Kennung (X-Pinn-Geraet-Id) und einem
 //    lesbaren Namen (X-Pinn-Geraet, z. B. „iPhone · App“). Meldet sich dasselbe Gerät mit demselben
 //    Profil erneut an (z. B. am Familien-Dashboard), wird die vorhandene Sitzung weiterverwendet.
+//  - Wiedererkennen eines Geräts (ohne Netzwerk-Adresse – die wechselt ständig), in dieser Reihenfolge:
+//      1. Sitzungs-ID im bisherigen Token
+//      2. Geräte-Cookie „pinn_geraet“ – setzt der Server selbst (HttpOnly, 400 Tage). Es übersteht
+//         App-Updates und das Leeren des App-Speichers, weil die App es weder lesen noch löschen kann.
+//      3. Geräte-Kennung der App (X-Pinn-Geraet-Id)
+//      4. Gerätemerkmale: Profil + Art (App/Dashboard) + Gerätename + Gerätetyp/Browser (ohne
+//         Versionsnummern, damit auch ein iOS- oder Browser-Update nichts ändert)
+//    Damit legt ein Update der App kein neues Gerät mehr an.
+//  - Doppelte Einträge von früher (gleiche Gerätemerkmale, das ältere seitdem nicht mehr benutzt)
+//    werden beim Serverstart und nachts zusammengeführt – die Push-Adresse wandert dabei mit.
 //  - Push: Die Push-Adresse eines Geräts wird seiner Sitzung zugeordnet. Wird das Gerät abgemeldet,
 //    bekommt es auch keine Benachrichtigungen mehr.
 //  - „Überall abmelden“ erneuert zusätzlich den Token-Schlüssel des Profils – damit sind auch ältere
@@ -43,6 +53,14 @@ const IP_MAX = 20;
 const IP_FENSTER_MS = 30 * 60 * 1000;
 const IP_MAX_SPERRE_S = 30 * 60;
 const MELDUNG_PREFIX = "pinnSperrMeldung:";
+const FELDER_KEY = "pinnSitzFelder2";
+const COOKIE = "pinn_geraet";
+const COOKIE_TAGE = 400;
+// Felder, die nach der ersten Version dazugekommen sind (werden bei Bedarf ergänzt)
+const NEUE_FELDER = [
+    { name: "kennung", max: 64 },   // Geräte-Cookie
+    { name: "merkmal", max: 64 },   // Gerätemerkmale (Prüfsumme)
+];
 
 function findCol(name) {
     try { return $app.findCollectionByNameOrId(name); } catch (e) { return null; }
@@ -58,8 +76,29 @@ function schemaReady() {
     if (ok) { try { $app.store().set(SCHEMA_KEY, "1"); } catch (e) { /* egal */ } }
     return ok;
 }
+function hasField(col, name) {
+    try { return !!col.fields.getByName(name); } catch (e) { return false; }
+}
+// Fehlende neuere Felder ergänzen (einmal je Serverstart)
+function ensureFelder() {
+    try { if ($app.store().get(FELDER_KEY) === "1") return true; } catch (e) { /* prüfen */ }
+    const col = findCol(COL);
+    if (!col) return false;
+    let changed = false;
+    NEUE_FELDER.forEach(f => {
+        if (hasField(col, f.name)) return;
+        try { col.fields.add(new TextField({ name: f.name, max: f.max })); changed = true; }
+        catch (err) { console.log("[Geräte] Feld \"" + f.name + "\" nicht ergänzbar: " + err.message); }
+    });
+    if (changed) {
+        try { $app.save(col); console.log("[Geräte] Sammlung \"" + COL + "\" um Geräte-Erkennung ergänzt."); }
+        catch (err) { console.log("[Geräte] Felder nicht gespeichert: " + err.message); return false; }
+    }
+    try { $app.store().set(FELDER_KEY, "1"); } catch (e) { /* egal */ }
+    return true;
+}
 function ensureSchema() {
-    if (schemaReady()) return true;
+    if (schemaReady()) { ensureFelder(); return true; }
     const users = findCol(USERS);
     if (!users) return false;
     try {
@@ -73,6 +112,8 @@ function ensureSchema() {
                 { name: "agent", type: "text", max: 400 },
                 { name: "ip", type: "text", max: 60 },
                 { name: "geraet_id", type: "text", max: 64 },
+                { name: "kennung", type: "text", max: 64 },
+                { name: "merkmal", type: "text", max: 64 },
                 { name: "art", type: "text", max: 20 },
                 { name: "push", type: "text", max: 2000 },
                 { name: "gebunden", type: "bool" },
@@ -88,6 +129,7 @@ function ensureSchema() {
         }));
         console.log("[Geräte] Sammlung \"" + COL + "\" angelegt.");
         try { $app.store().set(SCHEMA_KEY, "1"); } catch (e) { /* egal */ }
+        try { $app.store().set(FELDER_KEY, "1"); } catch (e) { /* egal */ }
         return true;
     } catch (err) {
         console.log("[Geräte] Sammlung \"" + COL + "\" nicht anlegbar: " + err.message);
@@ -165,6 +207,64 @@ function nameFromAgent(ua) {
     else if (/Chrome|CriOS/.test(s)) br = "Chrome";
     else if (/Safari/.test(s)) br = "Safari";
     return br ? dev + " · " + br : dev;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Geräte-Cookie und Gerätemerkmale (Wiedererkennen ohne Netzwerk-Adresse)
+// ---------------------------------------------------------------------------------------------
+function cookieValue(e, name) {
+    const raw = header(e, "Cookie");
+    if (!raw) return "";
+    const parts = raw.split(";");
+    for (let i = 0; i < parts.length; i++) {
+        const p = parts[i].trim();
+        const at = p.indexOf("=");
+        if (at > 0 && p.slice(0, at) === name) return p.slice(at + 1).trim();
+    }
+    return "";
+}
+function isHttps(e) {
+    if (/^https$/i.test(header(e, "X-Forwarded-Proto").split(",")[0].trim())) return true;
+    try { return !!e.request.tls; } catch (err) { return false; }
+}
+function setzeCookie(e, id) {
+    const parts = [COOKIE + "=" + id, "Path=/", "Max-Age=" + (COOKIE_TAGE * 86400), "HttpOnly", "SameSite=Lax"];
+    if (isHttps(e)) parts.push("Secure");
+    try { e.response.header().add("Set-Cookie", parts.join("; ")); } catch (err) { /* egal */ }
+}
+// Geräte-Cookie lesen bzw. neu vergeben. Rückgabe { id, neu }.
+// Das Cookie wird bei jeder Anmeldung erneuert, damit es nicht abläuft.
+function geraetKennung(e) {
+    let id = cleanDeviceId(cookieValue(e, COOKIE));
+    let neu = false;
+    if (!id) {
+        try { id = $security.randomString(32); } catch (err) { id = ""; }
+        neu = true;
+    }
+    if (id) setzeCookie(e, id);
+    return { id: id, neu: neu };
+}
+// Browser-Kennzeichen ohne Versionsnummern (ein iOS-/Browser-Update ändert damit nichts)
+function agentOhneVersion(ua) {
+    return String(ua || "").replace(/\d+(?:[._]\d+)*/g, "#").replace(/\s+/g, " ").trim().slice(0, 400);
+}
+// Prüfsumme der Gerätemerkmale: Art + Gerätename + Browser-Kennzeichen (ohne Versionen)
+function merkmalOf(art, name, agent) {
+    const key = String(art || "app") + "|" + String(name || "").toLowerCase() + "|" + agentOhneVersion(agent);
+    try { return String($security.sha256("pinn-geraet:" + key)).slice(0, 48); } catch (err) { return ""; }
+}
+function merkmalVon(rec) {
+    return rec.getString("merkmal") || merkmalOf(rec.getString("art") || "app", rec.getString("name") || nameFromAgent(rec.getString("agent")), rec.getString("agent"));
+}
+// PocketBase-Datum ("2026-10-08 10:00:00.000Z") oder ISO-Text -> Millisekunden (0 = unbekannt)
+function msOf(v) {
+    const s = String(v || "").trim();
+    if (!s) return 0;
+    const t = Date.parse(s.replace(" ", "T"));
+    return isFinite(t) ? t : 0;
+}
+function aktivMs(rec) {
+    return Math.max(msOf(rec.getString("zuletzt")), msOf(rec.getString("created")));
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -279,17 +379,42 @@ function beimAnmelden(e) {
         sess = findSession(oldSid);
         if (sess && sess.getString("benutzer") !== userId) sess = null;
     }
-    // 2) Dasselbe Gerät mit demselben Profil (z. B. Familien-Dashboard, erneute Anmeldung)
+    const felder = ensureFelder();
+    const kennung = geraetKennung(e);
+    const agent = header(e, "User-Agent").slice(0, 400);
+    const headerName = cleanName(header(e, "X-Pinn-Geraet"));
+    const art = isDashboard ? "dashboard" : "app";
+    // 2) Geräte-Cookie – übersteht App-Updates und das Leeren des App-Speichers
+    if (!sess && felder && kennung.id && !kennung.neu) {
+        try { sess = $app.findFirstRecordByFilter(COL, "benutzer = {:u} && kennung = {:k}", { u: userId, k: kennung.id }); } catch (err) { sess = null; }
+    }
+    // 3) Geräte-Kennung der App (z. B. Familien-Dashboard, erneute Anmeldung)
     const deviceId = cleanDeviceId(header(e, "X-Pinn-Geraet-Id"));
     if (!sess && deviceId) {
         try { sess = $app.findFirstRecordByFilter(COL, "benutzer = {:u} && geraet_id = {:d}", { u: userId, d: deviceId }); } catch (err) { sess = null; }
+    }
+    // 4) Gerätemerkmale: gleiches Profil, gleiche Art, gleicher Gerätename und Browser
+    //    (ohne Versionsnummern). Hat das Gerät schon ein eigenes Cookie, zählen nur Einträge
+    //    ohne bzw. mit genau diesem Cookie – ein zweites, baugleiches Gerät bleibt so getrennt.
+    if (!sess && felder) {
+        const m = merkmalOf(art, headerName || nameFromAgent(agent), agent);
+        let kandidaten = [];
+        try { kandidaten = $app.findRecordsByFilter(COL, "benutzer = {:u}", "-zuletzt", 200, 0, { u: userId }); } catch (err) { kandidaten = []; }
+        for (let i = 0; i < kandidaten.length; i++) {
+            const k = kandidaten[i];
+            if ((k.getString("art") || "app") !== art) continue;
+            if (merkmalVon(k) !== m) continue;
+            const kk = k.getString("kennung");
+            if (!kennung.neu && kk && kk !== kennung.id) continue;
+            sess = k;
+            break;
+        }
     }
     if (!sess) {
         sess = new Record($app.findCollectionByNameOrId(COL));
         sess.set("benutzer", userId);
     }
-    const agent = header(e, "User-Agent").slice(0, 400);
-    const name = cleanName(header(e, "X-Pinn-Geraet")) || sess.getString("name") || nameFromAgent(agent);
+    const name = headerName || sess.getString("name") || nameFromAgent(agent);
     sess.set("familie", rec.getString("familie"));
     sess.set("name", name);
     if (agent) sess.set("agent", agent);
@@ -298,6 +423,10 @@ function beimAnmelden(e) {
     if (deviceId) sess.set("geraet_id", deviceId);
     if (isDashboard) sess.set("art", "dashboard");
     else if (!sess.getString("art")) sess.set("art", "app");
+    if (felder) {
+        if (kennung.id) sess.set("kennung", kennung.id);
+        sess.set("merkmal", merkmalOf(sess.getString("art") || art, name, agent));
+    }
     sess.set("zuletzt", nowIso());
     $app.save(sess);
 
@@ -636,8 +765,55 @@ function meldeSperre(familyId, username, seconds) {
 // ---------------------------------------------------------------------------------------------
 // Aufräumen (nachts): Sitzungen, deren Anmeldung sicher abgelaufen ist
 // ---------------------------------------------------------------------------------------------
+// Doppelte Einträge zusammenführen: gleiches Profil + gleiche Gerätemerkmale. Der zuletzt benutzte
+// Eintrag bleibt; ältere werden nur entfernt, wenn sie seit dem Anlegen des neueren nicht mehr
+// benutzt wurden (zwei wirklich gleichzeitig genutzte, baugleiche Geräte bleiben also getrennt).
+// Die Push-Adresse wandert zum bleibenden Eintrag, wenn der noch keine hat.
+function doppelteZusammenfuehren() {
+    if (!schemaReady()) return 0;
+    ensureFelder();
+    let recs = [];
+    try { recs = $app.findRecordsByFilter(COL, "id != ''", "", 0, 0); } catch (err) { recs = []; }
+    if (recs.length < 2) return 0;
+    const gruppen = {};
+    recs.forEach(r => {
+        const key = r.getString("benutzer") + "|" + (r.getString("art") || "app") + "|" + merkmalVon(r);
+        (gruppen[key] = gruppen[key] || []).push(r);
+    });
+    let n = 0;
+    Object.keys(gruppen).forEach(key => {
+        const g = gruppen[key];
+        if (g.length < 2) return;
+        g.sort((a, b) => aktivMs(b) - aktivMs(a));
+        const keep = g[0];
+        const keepSeit = msOf(keep.getString("created"));
+        let keepChanged = false;
+        for (let i = 1; i < g.length; i++) {
+            const alt = g[i];
+            if (!keepSeit || aktivMs(alt) >= keepSeit) continue; // wird noch parallel benutzt
+            const altPush = alt.getString("push");
+            let pushUebernommen = false;
+            if (altPush && !keep.getString("push")) {
+                keep.set("push", altPush);
+                keepChanged = true;
+                pushUebernommen = true;
+            }
+            if (!keep.getString("kennung") && alt.getString("kennung")) { keep.set("kennung", alt.getString("kennung")); keepChanged = true; }
+            if (!keep.getString("geraet_id") && alt.getString("geraet_id")) { keep.set("geraet_id", alt.getString("geraet_id")); keepChanged = true; }
+            if (!pushUebernommen && altPush && altPush !== keep.getString("push")) removePushOf(alt);
+            markRevoked(alt.id);
+            try { $app.delete(alt); n++; } catch (err) { /* schon weg */ }
+        }
+        if (!keep.getString("merkmal")) { keep.set("merkmal", merkmalVon(keep)); keepChanged = true; }
+        if (keepChanged) { try { $app.save(keep); } catch (err) { /* egal */ } }
+    });
+    if (n) console.log("[Geräte] " + n + " doppelte Geräte-Einträge zusammengeführt.");
+    return n;
+}
+
 function aufraeumen() {
     if (!schemaReady()) return;
+    try { doppelteZusammenfuehren(); } catch (err) { console.log("[Geräte] Zusammenführen fehlgeschlagen: " + err.message); }
     let dauer = 0;
     try { dauer = Number(findCol(USERS).authToken.duration) || 0; } catch (e) { dauer = 0; }
     if (!(dauer > 0)) dauer = 30 * 86400;
@@ -652,6 +828,7 @@ function aufraeumen() {
 module.exports = {
     COL,
     ensureSchema, pruefe, beimAnmelden, sidOf, clientIp,
+    geraetKennung, merkmalOf, agentOhneVersion, msOf, doppelteZusammenfuehren,
     liste, uebersicht, abmelden, alleAbmelden, entferneAndere, entsperren, lockStatus,
     merkePush, vergissPush, erneuerePush,
     ipGesperrt, ipFehlversuch, meldeSperre, waitText,

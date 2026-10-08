@@ -19,6 +19,18 @@
 //        bild weglassen = Bild bleibt, bild "" = Bild entfernen, sonst neue Bild-Daten (data:image/…)
 //
 // Kein Zeitplan - es läuft nur etwas, wenn jemand das Dashboard benutzt.
+// Beim Serverstart werden einmal doppelte Dashboard-Geräte zusammengeführt (frühere App-Updates
+// hatten beim erneuten Einrichten jeweils ein neues Gerät angelegt).
+
+onBootstrap((e) => {
+    e.next();
+    try {
+        const dash = require(`${__hooks}/pinn-dashboard.js`);
+        if (dash.ensureSchema()) dash.doppelteZusammenfuehren();
+    } catch (err) {
+        console.log("[Dashboard] Zusammenführen fehlgeschlagen: " + err.message);
+    }
+});
 
 // ---------------------------------------------------------------------------------------------
 // Dashboard-Gerät (ohne Anmeldung)
@@ -102,7 +114,17 @@ routerAdd("POST", "/api/pinn/dashboard/aktivieren", (e) => {
     if (!lib.isAdmin(e) || !familyId) return e.json(403, { error: "Nur ein Admin der Familie kann ein Dashboard einrichten." });
     const body = e.requestInfo().body;
     try {
-        const d = dash.newDevice(familyId, body.name, e.auth.id);
+        // Dasselbe Gerät erneut eingerichtet? Dann wird der vorhandene Eintrag weiterverwendet
+        // (Geräte-Cookie bzw. Gerätetyp/Browser, nicht die Netzwerk-Adresse)
+        let opts = {};
+        try {
+            const sitz = require(`${__hooks}/pinn-sitzungen.js`);
+            const k = sitz.geraetKennung(e);
+            let agent = "";
+            try { agent = String(e.request.header.get("User-Agent") || ""); } catch (err2) { agent = ""; }
+            opts = { kennung: k.id, kennungNeu: k.neu, merkmal: sitz.merkmalOf("dashboard-geraet", "", agent) };
+        } catch (err2) { opts = {}; }
+        const d = dash.newDevice(familyId, body.name, e.auth.id, opts);
         let famName = "";
         try { famName = $app.findRecordById(lib.FAMILIEN, familyId).getString("name"); } catch (err) { famName = ""; }
         return e.json(200, { success: true, id: d.id, key: d.key, name: d.name, familie: { id: familyId, name: famName } });

@@ -1,7 +1,9 @@
 // pb_hooks/sitzungen.pb.js
 // Geräteverwaltung: angemeldete Geräte je Profil mit „Abmelden“. Die Logik steckt in pinn-sitzungen.js.
 //
-// Beim Start: legt die gesperrte Sammlung "sitzungen" an (ein Datensatz je Gerät und Profil).
+// Beim Start: legt die gesperrte Sammlung "sitzungen" an (ein Datensatz je Gerät und Profil),
+//   ergänzt bei Bedarf die Felder für die Geräte-Erkennung und führt doppelte Geräte zusammen
+//   (z. B. von früheren App-Updates, die jeweils ein neues Gerät angelegt hatten).
 //
 // Bei jeder Anmeldung eines Profils (Passwort, Familien-Dashboard, Verlängern beim App-Start):
 //   Sitzung anlegen bzw. weiterverwenden und das Token mit der Sitzungs-ID ausstellen.
@@ -17,12 +19,14 @@
 //                                               anderes Profil: überall abmelden
 //   POST /api/pinn/sitzungen/entsperren         { benutzer }  (Admins) Sperre nach Fehlversuchen aufheben
 //
-// Zeitplan: nachts 03:52 Uhr – Sitzungen löschen, deren Anmeldung längst abgelaufen ist.
+// Zeitplan: nachts 03:52 Uhr – doppelte Geräte zusammenführen und Sitzungen löschen, deren
+//   Anmeldung längst abgelaufen ist.
 
 onBootstrap((e) => {
     e.next();
     try {
-        require(`${__hooks}/pinn-sitzungen.js`).ensureSchema();
+        const sitz = require(`${__hooks}/pinn-sitzungen.js`);
+        if (sitz.ensureSchema()) sitz.doppelteZusammenfuehren();
     } catch (err) {
         console.log("[Geräte] Einrichtung fehlgeschlagen: " + err.message);
     }

@@ -6,6 +6,11 @@
 //  - Ein Admin der Familie richtet ein Gerät als Dashboard ein. Das Gerät bekommt dabei einen
 //    zufälligen Schlüssel. Der Server speichert davon nur den SHA-256-Wert in der gesperrten
 //    Sammlung "dashboard_geraete" (nur über die Routen erreichbar, Löschen der Familie löscht mit).
+//  - Wird dasselbe Gerät erneut als Dashboard eingerichtet (z. B. weil nach einem App-Update der
+//    Schlüssel auf dem Gerät fehlte), bekommt der vorhandene Eintrag nur einen neuen Schlüssel –
+//    es entsteht kein zweites Gerät. Erkannt wird es am Geräte-Cookie (pinn-sitzungen.js), sonst an
+//    gleichem Namen + gleichem Gerätetyp/Browser (ohne Versionsnummern), nie an der Netzwerk-Adresse.
+//    Doppelte Dashboard-Geräte von früher werden beim Serverstart zusammengeführt.
 //  - Mit diesem Schlüssel zeigt das Gerät ohne Anmeldung die Profile seiner Familie und öffnet ein
 //    Profil per Tipp - bzw. erst nach Eingabe der PIN, wenn das Profil eine hat.
 //  - PIN: freiwillig, 4 oder 6 Ziffern. Gespeichert im Profil im versteckten Feld "dashboard_pin"
@@ -36,6 +41,11 @@ const HINTERGRUND = "dashboard_hintergruende";
 const BG_CACHE_PREFIX = "pinnDashBg:";
 const BG_MAX_CHARS = 2600000;          // Bild-Daten (Base64) höchstens ca. 1,9 MB
 const BG_ARTEN = ["standard", "farbe", "verlauf", "bild"];
+const FELDER_KEY = "pinnDashFelder2";
+const NEUE_FELDER = [
+    { name: "kennung", max: 64 },   // Geräte-Cookie
+    { name: "merkmal", max: 64 },   // Gerätetyp/Browser (Prüfsumme)
+];
 
 function base() {
     return require(`${__hooks}/pinn-benutzer.js`);
@@ -52,9 +62,31 @@ function ensureSchema() {
     return devices && bg;
 }
 
+function hasField(col, name) {
+    try { return !!col.fields.getByName(name); } catch (e) { return false; }
+}
+// Fehlende neuere Felder ergänzen (einmal je Serverstart)
+function ensureDeviceFields() {
+    try { if ($app.store().get(FELDER_KEY) === "1") return true; } catch (e) { /* prüfen */ }
+    const col = base().findCol(GERAETE);
+    if (!col) return false;
+    let changed = false;
+    NEUE_FELDER.forEach(f => {
+        if (hasField(col, f.name)) return;
+        try { col.fields.add(new TextField({ name: f.name, max: f.max })); changed = true; }
+        catch (err) { console.log("[Dashboard] Feld \"" + f.name + "\" nicht ergänzbar: " + err.message); }
+    });
+    if (changed) {
+        try { $app.save(col); console.log("[Dashboard] Sammlung \"" + GERAETE + "\" um Geräte-Erkennung ergänzt."); }
+        catch (err) { console.log("[Dashboard] Felder nicht gespeichert: " + err.message); return false; }
+    }
+    try { $app.store().set(FELDER_KEY, "1"); } catch (e) { /* egal */ }
+    return true;
+}
+
 function ensureDeviceSchema() {
     const lib = base();
-    if (lib.findCol(GERAETE)) return true;
+    if (lib.findCol(GERAETE)) { ensureDeviceFields(); return true; }
     const fam = lib.findCol(lib.FAMILIEN);
     if (!fam) return false; // Familien-Sammlung fehlt noch - beim nächsten Aufruf erneut
     try {
@@ -67,6 +99,8 @@ function ensureDeviceSchema() {
                 { name: "schluessel", type: "text", max: 128 },
                 { name: "erstellt_von", type: "text", max: 30 },
                 { name: "zuletzt", type: "text", max: 30 },
+                { name: "kennung", type: "text", max: 64 },
+                { name: "merkmal", type: "text", max: 64 },
                 { name: "created", type: "autodate", onCreate: true, onUpdate: false },
                 { name: "updated", type: "autodate", onCreate: true, onUpdate: true },
             ],
@@ -74,6 +108,7 @@ function ensureDeviceSchema() {
             listRule: null, viewRule: null, createRule: null, updateRule: null, deleteRule: null,
         });
         console.log("[Dashboard] Sammlung \"" + GERAETE + "\" angelegt.");
+        try { $app.store().set(FELDER_KEY, "1"); } catch (e) { /* egal */ }
         return true;
     } catch (err) {
         console.log("[Dashboard] Sammlung \"" + GERAETE + "\" nicht anlegbar: " + err.message);
@@ -120,19 +155,89 @@ function cleanDeviceName(v) {
     return String(v || "").replace(/\s+/g, " ").trim().slice(0, 60);
 }
 
-// Neues Dashboard-Gerät. Der Schlüssel wird nur hier einmal im Klartext zurückgegeben.
-function newDevice(familyId, name, userId) {
+// Vorhandenes Dashboard-Gerät derselben Familie finden: zuerst am Geräte-Cookie, sonst an
+// gleichem Namen + gleichem Gerätetyp/Browser. Ein Eintrag mit einem anderen Cookie ist ein
+// anderes Gerät und wird nur genommen, wenn dieses Gerät gerade erst ein neues Cookie bekommen hat.
+function findSameDevice(familyId, name, opts) {
+    const o = opts || {};
+    if (!ensureDeviceFields()) return null;
+    if (o.kennung && !o.kennungNeu) {
+        try { return $app.findFirstRecordByFilter(GERAETE, "familie = {:f} && kennung = {:k}", { f: familyId, k: o.kennung }); } catch (e) { /* weiter */ }
+    }
+    if (!o.merkmal) return null;
+    let recs = [];
+    try { recs = $app.findRecordsByFilter(GERAETE, "familie = {:f} && merkmal = {:m}", "-zuletzt", 50, 0, { f: familyId, m: o.merkmal }); } catch (e) { recs = []; }
+    const n = name.toLowerCase();
+    for (let i = 0; i < recs.length; i++) {
+        const r = recs[i];
+        if (r.getString("name").toLowerCase() !== n) continue;
+        const k = r.getString("kennung");
+        if (k && o.kennung && k !== o.kennung && !o.kennungNeu) continue;
+        return r;
+    }
+    return null;
+}
+
+// Dashboard-Gerät einrichten. Ist dasselbe Gerät schon eingetragen, bekommt es nur einen neuen
+// Schlüssel (kein zweites Gerät). Der Schlüssel wird nur hier einmal im Klartext zurückgegeben.
+// opts: { kennung, kennungNeu, merkmal } aus pinn-sitzungen.js (optional)
+function newDevice(familyId, name, userId, opts) {
     if (!familyId) throw new Error("Dein Profil gehört zu keiner Familie.");
     if (!ensureDeviceSchema()) throw new Error("Die Sammlung \"" + GERAETE + "\" fehlt.");
+    const o = opts || {};
+    const cleanName = cleanDeviceName(name) || "Dashboard";
     const key = $security.randomString(48);
-    const rec = new Record($app.findCollectionByNameOrId(GERAETE));
-    rec.set("familie", familyId);
-    rec.set("name", cleanDeviceName(name) || "Dashboard");
+    let rec = findSameDevice(String(familyId), cleanName, o);
+    if (!rec) {
+        rec = new Record($app.findCollectionByNameOrId(GERAETE));
+        rec.set("familie", familyId);
+    }
+    rec.set("name", cleanName);
     rec.set("schluessel", hashKey(key));
     rec.set("erstellt_von", String(userId || ""));
     rec.set("zuletzt", new Date().toISOString());
+    if (o.kennung) rec.set("kennung", String(o.kennung));
+    if (o.merkmal) rec.set("merkmal", String(o.merkmal));
     $app.save(rec);
     return { id: rec.id, key: key, name: rec.getString("name") };
+}
+
+// Doppelte Dashboard-Geräte von früher zusammenführen: gleiche Familie + gleicher Name. Es bleibt der
+// zuletzt benutzte Eintrag; ältere werden nur entfernt, wenn sie seit dem Anlegen des neueren nicht
+// mehr benutzt wurden (zwei gleichzeitig genutzte Geräte mit gleichem Namen bleiben bestehen).
+function msOf(v) {
+    const s = String(v || "").trim();
+    if (!s) return 0;
+    const t = Date.parse(s.replace(" ", "T"));
+    return isFinite(t) ? t : 0;
+}
+function aktivMs(r) {
+    return Math.max(msOf(r.getString("zuletzt")), msOf(r.getString("created")));
+}
+function doppelteZusammenfuehren() {
+    if (!base().findCol(GERAETE)) return 0;
+    ensureDeviceFields();
+    let recs = [];
+    try { recs = $app.findRecordsByFilter(GERAETE, "id != ''", "", 0, 0); } catch (e) { recs = []; }
+    if (recs.length < 2) return 0;
+    const gruppen = {};
+    recs.forEach(r => {
+        const key = r.getString("familie") + "|" + r.getString("name").toLowerCase();
+        (gruppen[key] = gruppen[key] || []).push(r);
+    });
+    let n = 0;
+    Object.keys(gruppen).forEach(key => {
+        const g = gruppen[key];
+        if (g.length < 2) return;
+        g.sort((a, b) => aktivMs(b) - aktivMs(a));
+        const keepSeit = msOf(g[0].getString("created"));
+        for (let i = 1; i < g.length; i++) {
+            if (!keepSeit || aktivMs(g[i]) >= keepSeit) continue; // wird noch parallel benutzt
+            try { $app.delete(g[i]); n++; } catch (e) { /* schon weg */ }
+        }
+    });
+    if (n) console.log("[Dashboard] " + n + " doppelte Dashboard-Geräte zusammengeführt.");
+    return n;
 }
 
 // Gerät zu einem Schlüssel oder null
@@ -395,7 +500,7 @@ function waitText(seconds) {
 
 module.exports = {
     GERAETE, PIN_FIELD, HINTERGRUND,
-    ensureSchema, newDevice, findDevice, touchDevice, listDevices, removeDevice, cleanDeviceName,
+    ensureSchema, newDevice, findDevice, doppelteZusammenfuehren, touchDevice, listDevices, removeDevice, cleanDeviceName,
     profilesFor, pinLength, setPin, checkPin, validPinFormat,
     lockedFor, registerFail, clearFails, waitText,
     backgroundMeta, backgroundFull, saveBackground,
