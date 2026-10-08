@@ -345,6 +345,7 @@ function ensureSchema() {
         console.log("[Müll] Sammlung \"" + COL + "\" angelegt.");
     } catch (err) {
         console.log("[Müll] Konnte Sammlung nicht anlegen: " + err.message);
+        plog("fehler", "muell", "Müllkalender: Sammlung konnte nicht angelegt werden.", { details: err.message });
     }
 }
 function loadRec(familyId) {
@@ -507,6 +508,11 @@ function aktualisieren(e) {
     return out;
 }
 
+// Admin-Fehlerprotokoll (pinn-protokoll.js) – fehlt die Datei, bleibt es beim Docker-Log
+function plog(art, bereich, meldung, opts) {
+    try { require(`${__hooks}/pinn-protokoll.js`)[art](bereich, meldung, opts || {}); } catch (e) { /* Protokoll nicht verfügbar */ }
+}
+
 // Wöchentlich: alle Kalender mit Link nacheinander prüfen
 function runCron() {
     if (!findCol(COL)) return;
@@ -520,8 +526,10 @@ function runCron() {
         try {
             const r = neuLaden(fam);
             console.log("[Müll] Familie " + fam + " geprüft" + (r.geaendert ? " – neue Termine übernommen." : " – unverändert."));
+            plog("behoben", "muell", fam);
         } catch (err) {
             console.log("[Müll] Familie " + fam + ": " + err.message);
+            plog("fehler", "muell", "Müllkalender konnte nicht neu geladen werden: " + err.message, { familie: fam });
         }
         pause(1500);
     });

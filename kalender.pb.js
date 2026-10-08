@@ -73,7 +73,10 @@ routerAdd("POST", "/api/pinn/kalender/eigene/loeschen", (e) => {
 
 // Verknüpfte Kalender (iCloud/Google) aller Profile abgleichen – versetzt zum Familien-Cron (*/15)
 cronAdd("pinnEigeneKalenderSync", "7,22,37,52 * * * *", () => {
-    try { require(`${__hooks}/pinn-kalender.js`).syncAllLinked(); } catch (err) { console.log("[Kalender] Abgleich verknüpfter Kalender fehlgeschlagen: " + err.message); }
+    try { require(`${__hooks}/pinn-kalender.js`).syncAllLinked(); } catch (err) {
+        console.log("[Kalender] Abgleich verknüpfter Kalender fehlgeschlagen: " + err.message);
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("sync", "Abgleich verknüpfter Kalender fehlgeschlagen: " + err.message); } catch (e2) { /* egal */ }
+    }
 });
 
 routerAdd("GET", "/api/pinn/kalender/konten", (e) => {

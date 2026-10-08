@@ -20,6 +20,11 @@
 // zufälliges, niemandem bekanntes Passwort, erscheinen nicht in der Anmeldemaske und kommen nur
 // über das Familien-Dashboard in die App - ohne Zugriff auf die Finanzen.
 //
+// Geräteverwaltung (sitzungen.pb.js / pinn-sitzungen.js): Jede Anmeldung bekommt eine Sitzung je
+// Gerät. Fehlversuche zählen zusätzlich je Netzwerk-Adresse (auch unbekannte Familien und Profile);
+// wird ein Profil gesperrt, bekommen die Admins eine Push-Nachricht und es steht im Fehlerprotokoll.
+// Passwort ändern bzw. zurücksetzen meldet alle anderen Geräte des Profils ab.
+//
 // Alles ist defensiv gebaut: Ein Fehler hier wird nur geloggt und verhindert nie den Serverstart.
 
 onBootstrap((e) => {
@@ -45,12 +50,19 @@ onBootstrap((e) => {
 // Wohnform ('familie' oder 'wg') heraus - die Anmeldemaske zeigt damit „Familie“ bzw. „WG“.
 routerAdd("GET", "/api/pinn/familie", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
+    const sitz = sitzungenLib();
     e.response.header().set("Cache-Control", "no-store");
+    const ipWait = sitz ? sitz.ipGesperrt(e) : 0;
+    if (ipWait) {
+        sleep(300);
+        return e.json(429, { error: "Zu viele Fehlversuche von diesem Gerät bzw. Netzwerk. Bitte in " + sitz.waitText(ipWait) + " erneut versuchen.", sperre: ipWait });
+    }
     let name = "";
     try { name = String(e.request.url.query().get("name") || ""); } catch (err) { name = ""; }
     const fam = lib.findFamily(name);
     if (!fam) {
         sleep(300);
+        if (sitz) sitz.ipFehlversuch(e); // Durchprobieren von Familiennamen bremsen
         return e.json(404, { error: "Diese Familie gibt es nicht. Bitte den Namen prüfen." });
     }
     let names = [];
@@ -65,19 +77,33 @@ routerAdd("GET", "/api/pinn/familie", (e) => {
     return e.json(200, { name: fam.getString("name"), profiles: names, wohnform: wohnform });
 });
 
+// Geräteverwaltung (pinn-sitzungen.js) – fehlt die Datei, läuft die Anmeldung wie bisher
+function sitzungenLib() {
+    try { return require(`${__hooks}/pinn-sitzungen.js`); } catch (err) { return null; }
+}
+
 // Anmelden: {familie, username, password} oder {hauptadmin: true, password}
 // Schutz gegen Durchprobieren: nach 5 Fehlversuchen für dasselbe Profil wird es gesperrt
 // (30 s, danach jeweils doppelt so lang, höchstens 15 Minuten) – gleiche Regel wie bei der
 // Dashboard-PIN. Die Sperre liegt nur im Arbeitsspeicher und gilt nur für existierende Profile.
+// Zusätzlich zählen alle Fehlversuche (auch für unbekannte Profile) je Netzwerk-Adresse – ab 20
+// innerhalb von 30 Minuten ist die Adresse gesperrt (1 Minute, dann länger, höchstens 30 Minuten).
 routerAdd("POST", "/api/pinn/login", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const dash = require(`${__hooks}/pinn-dashboard.js`);
+    const sitz = sitzungenLib();
     e.response.header().set("Cache-Control", "no-store");
+    const ipWait = sitz ? sitz.ipGesperrt(e) : 0;
+    if (ipWait) {
+        sleep(300);
+        return e.json(429, { error: "Zu viele Fehlversuche von diesem Gerät bzw. Netzwerk. Bitte in " + sitz.waitText(ipWait) + " erneut versuchen.", sperre: ipWait });
+    }
     const body = e.requestInfo().body;
     const password = String(body.password || "");
     const username = lib.cleanUsername(body.username);
     let candidates = [];
     let lockId = "";
+    let lockFamily = "";
     try {
         if (body.hauptadmin) {
             candidates = $app.findRecordsByFilter(lib.USERS, "rolle = 'hauptadmin'", "", 0, 0);
@@ -88,6 +114,7 @@ routerAdd("POST", "/api/pinn/login", (e) => {
             if (fam && username) {
                 candidates = $app.findRecordsByFilter(lib.USERS, "familie = {:f} && username = {:u}", "", 1, 0, { f: fam.id, u: username });
                 lockId = "login:" + fam.id + ":" + username;
+                lockFamily = fam.id;
             }
         }
     } catch (err) { candidates = []; }
@@ -105,12 +132,19 @@ routerAdd("POST", "/api/pinn/login", (e) => {
     const rec = password ? (candidates.find(r => r.validatePassword(password)) || null) : null;
     if (!rec) {
         sleep(700); // bremst Durchprobieren von Passwörtern
+        const ipLock = sitz ? sitz.ipFehlversuch(e) : 0;
         if (known) {
             const lock = dash.registerFail(lockId);
             if (lock) {
                 console.log("[Anmeldung] Zu viele Fehlversuche – Profil für " + dash.waitText(lock) + " gesperrt.");
+                if (sitz) {
+                    try { sitz.meldeSperre(lockFamily, candidates[0].getString("username"), lock); } catch (err) { /* egal */ }
+                }
                 return e.json(429, { error: "Anmeldung fehlgeschlagen. Zu viele Fehlversuche – bitte in " + dash.waitText(lock) + " erneut versuchen.", sperre: lock });
             }
+        }
+        if (ipLock) {
+            return e.json(429, { error: "Anmeldung fehlgeschlagen. Zu viele Fehlversuche von diesem Gerät bzw. Netzwerk – bitte in " + sitz.waitText(ipLock) + " erneut versuchen.", sperre: ipLock });
         }
         return e.json(400, { error: "Anmeldung fehlgeschlagen. Bitte Profil und Passwort prüfen." });
     }
@@ -131,7 +165,8 @@ routerAdd("POST", "/api/pinn/login", (e) => {
 // ---------------------------------------------------------------------------------------------
 
 // Eigenes Passwort ändern. Gibt eine neue Anmeldung zurück, weil PocketBase alte Anmeldungen
-// beim Passwortwechsel ungültig macht.
+// beim Passwortwechsel ungültig macht. Alle anderen Geräte des Profils sind danach abgemeldet
+// (auch ihre Push-Benachrichtigungen) – dieses Gerät bleibt angemeldet.
 routerAdd("POST", "/api/pinn/password", (e) => {
     if (e.auth.getString("rolle") === "gast") return e.json(403, { error: "Gastkonten haben kein Passwort." });
     const body = e.requestInfo().body;
@@ -143,7 +178,10 @@ routerAdd("POST", "/api/pinn/password", (e) => {
     if (!rec.validatePassword(oldPassword)) return e.json(400, { error: "Das aktuelle Passwort ist nicht korrekt." });
     rec.setPassword(newPassword);
     rec.set("mustChangePassword", false);
+    try { rec.refreshTokenKey(); } catch (err) { /* setPassword erneuert ihn ohnehin */ }
     $app.save(rec);
+    const sitz = sitzungenLib();
+    if (sitz) { try { sitz.entferneAndere(rec.id, sitz.sidOf(e)); } catch (err) { /* egal */ } }
     return $apis.recordAuthResponse(e, rec);
 }, $apis.requireAuth("benutzer"));
 
@@ -250,7 +288,12 @@ routerAdd("POST", "/api/pinn/users/reset-password", (e) => {
     if (rec.getString("rolle") === "gast") return e.json(400, { error: "Gastkonten haben kein Passwort – sie werden nur über das Familien-Dashboard geöffnet." });
     rec.setPassword(password);
     rec.set("mustChangePassword", true);
+    try { rec.refreshTokenKey(); } catch (err) { /* setPassword erneuert ihn ohnehin */ }
     $app.save(rec);
+    // Neues Passwort: das Profil ist auf allen Geräten abgemeldet (samt Push)
+    const sitz = sitzungenLib();
+    if (sitz) { try { sitz.entferneAndere(rec.id, ""); } catch (err) { /* egal */ } }
+    try { require(`${__hooks}/pinn-dashboard.js`).clearFails("login:" + rec.getString("familie") + ":" + rec.getString("username")); } catch (err) { /* egal */ }
     return e.json(200, { success: true });
 }, $apis.requireAuth("benutzer"));
 

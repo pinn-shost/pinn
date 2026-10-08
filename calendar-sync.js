@@ -995,6 +995,11 @@ function maskEmail(email) {
 // ausgewählt ist), bzw. leeren, wenn nichts verbunden oder keine Kalender ausgewählt sind.
 // Schlägt der Abruf fehl, bleibt die bisherige Datei stehen. Die Haushalts-Erkennung läuft nicht
 // hier (siehe pinn-aufgaben.js).
+// Admin-Fehlerprotokoll (pinn-protokoll.js) – fehlt die Datei, bleibt es beim Docker-Log
+function plog(art, bereich, meldung, opts) {
+    try { require(`${__hooks}/pinn-protokoll.js`)[art](bereich, meldung, opts || {}); } catch (e) { /* Protokoll nicht verfügbar */ }
+}
+
 function syncFamily(familyId) {
     const path = kalenderPfad(familyId);
     if (!path) return;
@@ -1040,6 +1045,8 @@ function syncFamily(familyId) {
         setLastSync(familyId, true, msg);
         if (googleConnected && googleNames.length) { try { google.clearError(familyId); } catch (e) { /* egal */ } }
         console.log("[Kalender-Sync] Familie " + familyId + " erfolgreich: " + result.synced.join(", ") + " (" + result.blocks.length + " Termine)");
+        plog("behoben", "sync", familyId);
+        if (result.skipped.length) plog("warnung", "sync", "Kalender-Sync: nicht lesbar und übersprungen: " + result.skipped.join(", "), { familie: familyId });
 
         /* ===== AUSGEKLAMMERT: Haushalts-Erkennung über den Aufgaben-Kalender (jetzt pinn-aufgaben.js) =====
         try {
@@ -1093,6 +1100,7 @@ function syncFamily(familyId) {
     } catch (e) {
         setLastSync(familyId, false, e.message);
         console.log("[Kalender-Sync] Familie " + familyId + " - Fehler: " + e.message);
+        plog("fehler", "sync", "Kalender-Sync fehlgeschlagen: " + e.message, { familie: familyId, details: e.body ? String(e.body).slice(0, 1500) : "" });
     }
 }
 

@@ -25,6 +25,10 @@
 //   POST /api/pinn/push/abo-erneuern   (ohne Anmeldung) der Service Worker meldet eine neue Push-
 //                                      Adresse seines Geräts - nur mit der alten, geheimen Adresse.
 //
+// Geräteverwaltung: Die Push-Adresse eines Geräts wird seiner Sitzung zugeordnet (pinn-sitzungen.js) –
+// wird das Gerät abgemeldet, bekommt es keine Benachrichtigungen mehr. Fehler landen zusätzlich im
+// Admin-Fehlerprotokoll (pinn-protokoll.js).
+//
 // Nach einem Neustart oder Update bleiben alle Geräte angemeldet: Geräte stehen in der Datenbank,
 // der Schlüssel in pb_data. Vorgemerkte Meldungen und Sperren werden beim Start wiederhergestellt.
 
@@ -34,6 +38,7 @@ onBootstrap((e) => {
         require(`${__hooks}/pinn-push.js`).ensurePushCollections();
     } catch (err) {
         console.log("[Push] " + err.message);
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("push", "Push-Sammlungen konnten nicht eingerichtet werden: " + err.message); } catch (e2) { /* egal */ }
     }
     try {
         const push = require(`${__hooks}/pinn-push.js`);
@@ -41,14 +46,17 @@ onBootstrap((e) => {
         if (r.verzoegert) console.log("[Push] " + r.verzoegert + " vorgemerkte Meldung(en) nach dem Neustart wiederhergestellt.");
     } catch (err) {
         console.log("[Push] Wiederherstellen fehlgeschlagen: " + err.message);
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("push", "Vorgemerkte Meldungen nach dem Neustart nicht wiederhergestellt: " + err.message); } catch (e2) { /* egal */ }
     }
     try {
         const push = require(`${__hooks}/pinn-push.js`);
         const t = push.selfTest();
         try { $app.store().set("pinnPushSelfTest", t); } catch (err) { /* egal */ }
         console.log("[Push] " + (t.ok ? "Bereit - " + push.countSubscriptions() + " Gerät(e) angemeldet." : "Nicht verfügbar: " + t.message));
+        if (!t.ok) try { require(`${__hooks}/pinn-protokoll.js`).fehler("push", "Push ist auf dem Server nicht verfügbar: " + t.message); } catch (e2) { /* egal */ }
     } catch (err) {
         console.log("[Push] Selbsttest fehlgeschlagen: " + err.message);
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("push", "Push-Selbsttest fehlgeschlagen: " + err.message); } catch (e2) { /* egal */ }
     }
 });
 
@@ -58,6 +66,7 @@ cronAdd("pinnPushVerzoegert", "* * * * *", () => {
         require(`${__hooks}/pinn-push.js`).runDelayed("");
     } catch (err) {
         console.log("[Push] Verzögerte Meldungen: " + err.message);
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("push", "Verzögerte Meldungen: " + err.message); } catch (e2) { /* egal */ }
     }
 });
 
@@ -66,6 +75,7 @@ cronAdd("pinnPush", "*/5 * * * *", () => {
         require(`${__hooks}/pinn-push.js`).runPushCron();
     } catch (err) {
         console.log("[Push] Zeitplan-Fehler: " + err.message);
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("push", "Push-Zeitplan fehlgeschlagen: " + err.message); } catch (e2) { /* egal */ }
     }
 });
 
@@ -105,6 +115,8 @@ routerAdd("POST", "/api/pinn/push/abo", (e) => {
         rec.set("geraet", String(body.geraet || "").slice(0, 200));
         $app.save(rec);
         push.rememberSubjectFromRequest(e);
+        // Geräteverwaltung: Push-Adresse der Sitzung dieses Geräts zuordnen
+        try { require(`${__hooks}/pinn-sitzungen.js`).merkePush(e, endpoint); } catch (err2) { /* egal */ }
         return e.json(200, { success: true });
     } catch (err) {
         return e.json(500, { error: "Gerät konnte nicht angemeldet werden: " + err.message });
@@ -118,6 +130,7 @@ routerAdd("POST", "/api/pinn/push/abo-loeschen", (e) => {
         const rec = $app.findFirstRecordByFilter(push.PUSH_ABOS, "endpoint = {:e}", { e: String(body.endpoint || "") });
         if (rec.getString("benutzer") === e.auth.id) $app.delete(rec);
     } catch (err) { /* nicht vorhanden */ }
+    try { require(`${__hooks}/pinn-sitzungen.js`).vergissPush(String(body.endpoint || "")); } catch (err) { /* egal */ }
     return e.json(200, { success: true });
 }, $apis.requireAuth("benutzer"));
 
@@ -230,6 +243,7 @@ routerAdd("POST", "/api/pinn/push/abo-erneuern", (e) => {
     const body = e.requestInfo().body;
     try {
         const r = push.renewSubscription(body.alt, body.neu);
+        if (r.ok) { try { require(`${__hooks}/pinn-sitzungen.js`).erneuerePush(String(body.alt || ""), String(body.neu || "")); } catch (err2) { /* egal */ } }
         return e.json(200, r.ok ? { success: true } : { success: false, error: r.grund });
     } catch (err) {
         console.log("[Push] Adresse erneuern: " + err.message);

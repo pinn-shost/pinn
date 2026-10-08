@@ -328,6 +328,15 @@ const GROUPS = [
         [/^Der Vertrag endet am (\S+) \((.+?)\)\.$/, { en: "The contract ends on {1} ({2}).", fr: "Le contrat prend fin le {1} ({2}).", es: "El contrato termina el {1} ({2})." }],
         [/^Erinnerung zu diesem Vertrag$/, { en: "Reminder for this contract", fr: "Rappel pour ce contrat", es: "Recordatorio de este contrato" }],
     ] },
+    // --- Sicherheit: Profil nach zu vielen falschen Passwörtern gesperrt (pinn-sitzungen.js) ---
+    { tag: /^sicherheit-/, rules: [
+        [/^🔒 Anmeldung gesperrt$/, { en: "🔒 Login locked", fr: "🔒 Connexion bloquée", es: "🔒 Inicio de sesión bloqueado" }],
+        [/^Zu viele falsche Passwörter für „(.+)“\. Das Profil ist vorübergehend gesperrt – die Sperre lässt sich unter Konto → Profile verwalten aufheben\.$/, {
+            en: "Too many wrong passwords for „<1>“. The profile is temporarily locked – you can unlock it under Account → Manage profiles.",
+            fr: "Trop de mots de passe erronés pour „<1>“. Le profil est temporairement bloqué – tu peux le débloquer sous Compte → Gérer les profils.",
+            es: "Demasiadas contraseñas incorrectas para „<1>“. El perfil está bloqueado temporalmente – puedes desbloquearlo en Cuenta → Gestionar perfiles.",
+        }],
+    ] },
     // --- Kassen: Ausgleich eingetragen / zur Kasse hinzugefügt ---
     { tag: /^ausgleich-/, rules: [
         [/^Ausgleich: (.+)$/, { en: "Settlement: <1>", fr: "Règlement : <1>", es: "Liquidación: <1>" }],

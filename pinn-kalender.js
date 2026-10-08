@@ -603,13 +603,21 @@ function linkedCalendars(filter, params) {
     if (!ready()) return [];
     try { return $app.findRecordsByFilter(COL_KAL, filter, "created", 0, 0, params || {}); } catch (e) { return []; }
 }
+// Admin-Fehlerprotokoll (pinn-protokoll.js) – fehlt die Datei, bleibt es beim Docker-Log
+function plog(art, bereich, meldung, opts) {
+    try { require(`${__hooks}/pinn-protokoll.js`)[art](bereich, meldung, opts || {}); } catch (e) { /* Protokoll nicht verfügbar */ }
+}
 function syncList(cals) {
     cals.forEach(c => {
         try {
             const n = syncLinkedCalendar(c);
             console.log("[Kalender] Verknüpfter Kalender " + c.id + " (" + c.getString("quelle") + "): " + n + " Termine.");
+            plog("behoben", "sync", c.getString("familie"));
         } catch (err) {
             console.log("[Kalender] Verknüpfter Kalender " + c.id + " – Fehler: " + err.message);
+            const label = c.getString("extern_name") || c.getString("name") || c.id;
+            plog("fehler", "sync", "Verknüpfter Kalender „" + label + "“ (" + (c.getString("quelle") === "google" ? "Google" : "iCloud") + "): " + err.message,
+                { familie: c.getString("familie"), benutzer: c.getString("besitzer") });
         }
     });
 }

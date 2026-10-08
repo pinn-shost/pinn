@@ -15,6 +15,7 @@
 //   POST /api/pinn/muell/aktualisieren       Link sofort neu laden (höchstens alle 2 Minuten)
 //   POST /api/pinn/muell/entfernen
 //
+// Fehler stehen zusätzlich im Admin-Fehlerprotokoll (pinn-protokoll.js).
 // Zeitplan: montags 5:15 Uhr – Kalender mit Link, die älter als 6 Tage geprüft sind, neu laden.
 
 onBootstrap((e) => {
@@ -23,6 +24,7 @@ onBootstrap((e) => {
         require(`${__hooks}/pinn-muell.js`).ensureSchema();
     } catch (err) {
         console.log("[Müll] Einrichtung fehlgeschlagen: " + err.message);
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("muell", "Müllkalender-Einrichtung fehlgeschlagen: " + err.message); } catch (e2) { /* egal */ }
     }
 });
 
@@ -31,6 +33,7 @@ cronAdd("pinnMuellCron", "15 5 * * 1", () => {
         require(`${__hooks}/pinn-muell.js`).runCron();
     } catch (err) {
         console.log("[Müll] Zeitplan fehlgeschlagen: " + err.message);
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("muell", "Müllkalender-Zeitplan fehlgeschlagen: " + err.message); } catch (e2) { /* egal */ }
     }
 });
 
@@ -55,6 +58,7 @@ routerAdd("POST", "/api/pinn/muell/suche", (e) => {
         return e.json(200, require(`${__hooks}/pinn-muell.js`).suche(e, e.requestInfo().body || {}));
     } catch (err) {
         console.log("[Müll] Suche fehlgeschlagen: " + err.message);
+        try { require(`${__hooks}/pinn-protokoll.js`).warnung("muell", "Müllkalender-Suche fehlgeschlagen: " + err.message, { familie: e.auth.getString("familie") }); } catch (e2) { /* egal */ }
         return e.json(422, { error: err.message });
     }
 }, $apis.requireAuth("benutzer"));

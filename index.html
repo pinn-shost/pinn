@@ -574,7 +574,7 @@ window.PINN_LANGUAGES = [
     start(data);
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.24.0" onerror="PINN_I18N.fail()"><\/script>');
+  if (DICT) document.write('<script src="' + lang.file + '?v=1.25.0" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // Deutsch als WG: kein Wörterbuch, nur die WG-Bezeichnungen
 })();
 </script>
@@ -1614,6 +1614,27 @@ window.PINN_LANGUAGES = [
   html.dark .sm-opt { border-color: rgba(255,255,255,0.14); }
   html.dark .sm-log { background: rgba(255,255,255,0.06); }
   html.dark .sm-x:hover { background: rgba(255,255,255,0.08); }
+  /* ---------- Geräteverwaltung (#devModal, Konto) und Fehlerprotokoll (#errLogModal) ---------- */
+  #devModal, #errLogModal { padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)); }
+  .el-box { max-width: 34rem; }
+  .dev-row .sm-row-title, .dev-row .sm-row-sub { white-space: normal; overflow-wrap: anywhere; }
+  .el-filter { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.7rem; }
+  .el-chip { padding: 0.28rem 0.65rem; border-radius: 999px; border: 1px solid rgba(37,35,31,0.15); font-size: 0.74rem; color: rgba(37,35,31,0.7); transition: background .15s, color .15s, border-color .15s; }
+  .el-chip.on { background: var(--c-pine); border-color: var(--c-pine); color: #fff; }
+  .el-chip small { opacity: 0.7; margin-left: 0.25rem; font-size: 0.68rem; }
+  .el-row { align-items: flex-start; cursor: pointer; }
+  .el-row .sm-row-title { white-space: normal; overflow-wrap: anywhere; line-height: 1.35; }
+  .el-row .sm-row-sub { white-space: normal; margin-top: 0.15rem; }
+  .el-row.done .sm-row-title { opacity: 0.55; }
+  .el-ico-fehler { background: color-mix(in srgb, #dc2626 14%, transparent) !important; }
+  .el-ico-warnung { background: color-mix(in srgb, var(--c-mustard) 20%, transparent) !important; }
+  .el-ok { color: var(--c-pine); font-weight: 600; }
+  .el-details { margin-top: 0.45rem; font-size: 0.68rem; line-height: 1.4; padding: 0.45rem 0.55rem; border-radius: 9px; background: rgba(37,35,31,0.06); white-space: pre-wrap; overflow-wrap: anywhere; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  .el-badge { display: inline-grid; place-items: center; min-width: 1.1rem; height: 1.1rem; padding: 0 0.3rem; border-radius: 999px; background: #dc2626; color: #fff; font-size: 0.62rem; font-weight: 600; margin-left: 0.3rem; vertical-align: middle; }
+  .el-badge.hidden { display: none; }
+  html.dark .el-chip { border-color: rgba(255,255,255,0.18); color: rgba(255,255,255,0.75); }
+  html.dark .el-chip.on { color: #fff; }
+  html.dark .el-details { background: rgba(255,255,255,0.06); }
   .settings-accordion > summary { list-style: none; }
   .settings-accordion > summary::-webkit-details-marker,
   .settings-accordion > summary::marker { display: none; content: ''; }
@@ -3206,6 +3227,8 @@ window.PINN_LANGUAGES = [
         <button type="button" id="mainAdminPasswordBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Passwort ändern</button>
         <button type="button" id="mainAdminSetupBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition" data-no-i18n>⚙︎ Einrichtung</button>
         <button type="button" id="mainAdminSystemBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">🛟 Sicherungen &amp; Updates</button>
+        <button type="button" id="mainAdminErrLogBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition"><span>🧾 Fehlerprotokoll</span><span id="mainAdminErrLogBadge" class="el-badge hidden" data-no-i18n></span></button>
+        <button type="button" id="mainAdminDevicesBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">📱 Meine Geräte</button>
       </div>
     </div>
 
@@ -4114,6 +4137,19 @@ window.PINN_LANGUAGES = [
         <p id="accountGuestHint" class="hidden text-xs text-ink/40 px-4 pb-4 -mt-1">Du nutzt ein Gastkonto. Es hat kein Passwort und öffnet sich nur über das Familien-Dashboard – die Finanzen, Dokumente und Einstellungen sind für Gäste nicht verfügbar.</p>
       </div>
 
+      <!-- Angemeldete Geräte (eigenes Profil) – pb_hooks/sitzungen.pb.js -->
+      <div id="devicesSection" class="set-card">
+        <div class="set-head-row"><span class="set-ico">📱</span><div class="set-head"><h3 class="sa-title">Angemeldete Geräte</h3><small>Wo dein Profil gerade angemeldet ist</small></div></div>
+        <div class="set-body">
+          <div id="devicesList" class="sm-list"><p class="sm-empty">Wird geladen …</p></div>
+          <div class="flex flex-wrap items-center gap-2 mt-3">
+            <button type="button" id="devicesLogoutOthersBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-red-500 hover:border-red-500 transition">Alle anderen Geräte abmelden</button>
+          </div>
+          <p id="devicesStatus" class="text-xs text-ink/50 mt-2"></p>
+          <p class="text-[11px] text-ink/40 mt-2">Ein abgemeldetes Gerät verliert sofort den Zugriff, bekommt keine Benachrichtigungen mehr und löscht beim nächsten Öffnen die pinn.-Daten auf dem Gerät – praktisch, wenn ein Handy verloren geht. Auch „Passwort ändern“ meldet alle anderen Geräte ab.</p>
+        </div>
+      </div>
+
       <!-- Push-Benachrichtigungen (persönlich je Profil) -->
       <div id="pushSection" class="set-card">
         <div class="set-head-row"><span class="set-ico">🔔</span><div class="set-head"><h3 class="sa-title">Benachrichtigungen</h3><small>Push auf diesem Gerät, Erinnerungen, Pinnwand</small></div></div>
@@ -4428,6 +4464,7 @@ window.PINN_LANGUAGES = [
         <button type="button" id="profileManageResetBtn" class="w-full px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition mb-2">Passwort zurücksetzen</button>
       </div>
       <button type="button" id="profileManagePinBtn" class="hidden w-full px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition mb-2">Dashboard-PIN entfernen</button>
+      <button type="button" id="profileManageDevicesBtn" class="w-full px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition mb-2">📱 Geräte &amp; Anmeldung</button>
       <button type="button" id="profileManageDeleteBtn" class="w-full px-3 py-2 rounded-lg border border-ink/15 text-sm text-red-500 hover:border-red-500 transition">Profil löschen</button>
 
       <p id="profileManageStatus" class="text-xs text-ink/50 mt-3"></p>
@@ -4905,6 +4942,13 @@ window.PINN_LANGUAGES = [
           <button id="openSysMaintBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">🛟 Sicherungen &amp; Wiederherstellung</button>
         </div>
 
+        <!-- Fehlerprotokoll (nur für Admins sichtbar) – pb_hooks/protokoll.pb.js -->
+        <div id="errLogSub" class="set-sub hidden">
+          <p class="set-sub-title">Fehlerprotokoll</p>
+          <p id="errLogSummary" class="text-xs text-ink/50 mb-2 leading-snug">Wird geladen …</p>
+          <button id="openErrLogBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition"><span>🧾 Fehlerprotokoll</span><span id="errLogBadge" class="el-badge hidden" data-no-i18n></span></button>
+        </div>
+
         <div class="set-sub">
           <p class="set-sub-title">Daten</p>
           <p class="text-xs text-ink/40 mb-2">Setzt die auf diesem Gerät gespeicherten pinn.-Daten auf den Anfangszustand zurück.</p>
@@ -5008,6 +5052,52 @@ window.PINN_LANGUAGES = [
         <p id="sysProgMsg" class="text-xs text-ink/55 text-center leading-snug"></p>
         <pre id="sysProgLog" class="sm-log hidden" data-no-i18n></pre>
         <button id="sysProgDone" type="button" class="sm-btn sm-primary hidden">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Geräte & Anmeldung eines Profils (Admins, Hauptadmin) – pb_hooks/sitzungen.pb.js -->
+  <div id="devModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[400] grid place-items-center" role="dialog" aria-modal="true" aria-labelledby="devModalTitle">
+    <div class="sm-box bg-paper rounded-2xl shadow-xl w-full fade-in">
+      <div class="sm-head">
+        <div class="min-w-0">
+          <h3 id="devModalTitle" class="font-serif text-lg">Geräte &amp; Anmeldung</h3>
+          <p id="devModalName" class="text-xs text-ink/50 truncate" data-no-i18n></p>
+        </div>
+        <button id="devModalClose" type="button" class="sm-x" aria-label="Schließen">×</button>
+      </div>
+      <div class="sm-scroll">
+        <div id="devModalLock" class="set-hint hidden"><span>🔒</span><span id="devModalLockText" class="flex-1 min-w-0"></span><button id="devModalUnlockBtn" type="button" class="set-hint-btn hidden">Sperre aufheben</button></div>
+        <section class="sm-sec">
+          <div class="sm-sec-head"><span class="sm-sec-title">Angemeldete Geräte</span><button id="devModalReload" type="button" class="sm-btn sm-small">Aktualisieren</button></div>
+          <div id="devModalList" class="sm-list"></div>
+          <div class="flex flex-wrap gap-2 mt-3">
+            <button id="devModalAllBtn" type="button" class="sm-btn">Überall abmelden</button>
+          </div>
+          <p id="devModalStatus" class="text-xs text-ink/55 mt-2"></p>
+          <p class="text-[11px] text-ink/45 mt-2 leading-snug">Ein abgemeldetes Gerät verliert sofort den Zugriff, bekommt keine Benachrichtigungen mehr und löscht beim nächsten Öffnen die pinn.-Daten auf dem Gerät.</p>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fehlerprotokoll (Admins, Hauptadmin) – pb_hooks/protokoll.pb.js -->
+  <div id="errLogModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[400] grid place-items-center" role="dialog" aria-modal="true" aria-labelledby="errLogTitle">
+    <div class="sm-box el-box bg-paper rounded-2xl shadow-xl w-full fade-in">
+      <div class="sm-head">
+        <h3 id="errLogTitle" class="font-serif text-lg">Fehlerprotokoll</h3>
+        <button id="errLogClose" type="button" class="sm-x" aria-label="Schließen">×</button>
+      </div>
+      <div class="sm-scroll">
+        <p class="text-[11px] text-ink/50 leading-snug mb-3">Fehler der Server-Abläufe – Kalender-Sync, Push, Müllkalender und Anmeldung. Gleiche Meldungen werden zusammengefasst; klappt es wieder, steht „wieder ok“ dabei. Einträge bleiben 30 Tage.</p>
+        <div id="errLogFilter" class="el-filter"></div>
+        <div id="errLogList" class="sm-list"></div>
+        <div class="flex flex-wrap gap-2 mt-3">
+          <button id="errLogReload" type="button" class="sm-btn sm-small">Aktualisieren</button>
+          <button id="errLogClearDone" type="button" class="sm-btn sm-small">Erledigte löschen</button>
+          <button id="errLogClearAll" type="button" class="sm-btn sm-small">Alles löschen</button>
+        </div>
+        <p id="errLogStatus" class="text-xs text-ink/55 mt-2"></p>
       </div>
     </div>
   </div>
@@ -7372,6 +7462,103 @@ const PB_URL = (location.protocol === 'http:' || location.protocol === 'https:')
   : 'http://localhost:8090'; // <- hier ggf. deine eigene PocketBase-Adresse eintragen
 const pb = new PocketBase(PB_URL);
 
+/* ---------- Geräteverwaltung: Kennung und Name dieses Geräts (pb_hooks/sitzungen.pb.js) ----------
+   Bei jeder Anmeldung (Passwort, Familien-Dashboard, Verlängern beim Start, Passwort ändern) schickt
+   die App eine zufällige Geräte-Kennung und einen lesbaren Namen mit (z. B. „iPhone · App“). Meldet
+   sich dasselbe Gerät erneut an, führt der Server die vorhandene Sitzung fort.
+   Wurde das Gerät abgemeldet (Konto → Angemeldete Geräte bzw. durch einen Admin), antwortet der
+   Server mit 401 und „X-Pinn-Abgemeldet: 1“ – dann löscht die App ihre Daten auf dem Gerät. */
+const LS_DEVICE_ID = 'pinn.geraetId';
+function pinnDeviceId() {
+  try {
+    let id = localStorage.getItem(LS_DEVICE_ID) || '';
+    if (!/^[A-Za-z0-9_-]{8,64}$/.test(id)) {
+      const b = new Uint8Array(18);
+      window.crypto.getRandomValues(b);
+      id = Array.from(b, x => ('0' + x.toString(16)).slice(-2)).join('');
+      localStorage.setItem(LS_DEVICE_ID, id);
+    }
+    return id;
+  } catch (e) { return ''; }
+}
+function pinnDeviceName() {
+  const ua = navigator.userAgent || '';
+  let dev = 'Browser';
+  if (/iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) dev = 'iPad';
+  else if (/iPhone|iPod/.test(ua)) dev = 'iPhone';
+  else if (/Android/.test(ua)) dev = /Mobile/.test(ua) ? 'Android-Handy' : 'Android-Tablet';
+  else if (/Macintosh|Mac OS X/.test(ua)) dev = 'Mac';
+  else if (/Windows/.test(ua)) dev = 'Windows-PC';
+  else if (/CrOS/.test(ua)) dev = 'Chromebook';
+  else if (/Linux/.test(ua)) dev = 'Linux-PC';
+  let br = '';
+  if (/EdgA?\/|EdgiOS/.test(ua)) br = 'Edge';
+  else if (/SamsungBrowser/.test(ua)) br = 'Samsung Internet';
+  else if (/Firefox|FxiOS/.test(ua)) br = 'Firefox';
+  else if (/OPR\//.test(ua)) br = 'Opera';
+  else if (/Chrome|CriOS/.test(ua)) br = 'Chrome';
+  else if (/Safari/.test(ua)) br = 'Safari';
+  let standalone = false;
+  try { standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; } catch (e) { standalone = false; }
+  let name = dev + (standalone ? ' · App' : (br ? ' · ' + br : ''));
+  try {
+    const d = JSON.parse(localStorage.getItem('pinn.dashboard') || 'null');
+    if (d && d.key) name = 'Familien-Dashboard' + (d.name ? ' „' + String(d.name).slice(0, 40) + '“' : '') + ' · ' + dev;
+  } catch (e) { /* egal */ }
+  return name.slice(0, 100);
+}
+// Anmelde-Anfragen bekommen Kennung und Name des Geräts mit (auch die des PocketBase-SDK)
+const PINN_AUTH_URL = /\/api\/(pinn\/(login|password|dashboard\/login|sitzungen\/alle-abmelden)|collections\/benutzer\/auth-)/;
+(function () {
+  if (!window.fetch) return;
+  const origFetch = window.fetch.bind(window);
+  window.fetch = function (input, init) {
+    try {
+      const url = typeof input === 'string' ? input : ((input && input.url) || '');
+      if (PINN_AUTH_URL.test(url)) {
+        const opts = Object.assign({}, init || {});
+        const h = new Headers(opts.headers || (typeof input !== 'string' && input && input.headers) || undefined);
+        const id = pinnDeviceId();
+        if (id) h.set('X-Pinn-Geraet-Id', id);
+        h.set('X-Pinn-Geraet', encodeURIComponent(pinnDeviceName()));
+        opts.headers = h;
+        return origFetch(input, opts);
+      }
+    } catch (e) { /* normal weiter */ }
+    return origFetch(input, init);
+  };
+})();
+// Antworten des SDK: abgemeldetes Gerät erkennen
+pb.afterSend = function (response, data) {
+  try {
+    if (response && response.status === 401 && response.headers.get('X-Pinn-Abgemeldet') === '1') handleRemoteLogout();
+  } catch (e) { /* egal */ }
+  return data;
+};
+// Dieses Gerät wurde aus der Ferne abgemeldet: Anmeldung, Daten, Push und Zwischenspeicher auf dem
+// Gerät löschen. Am Familien-Dashboard geht es einfach zurück zur Profilauswahl.
+let remoteLogoutDone = false;
+async function handleRemoteLogout() {
+  if (remoteLogoutDone) return;
+  remoteLogoutDone = true;
+  try { if (typeof isDashboardDevice === 'function' && isDashboardDevice()) { returnToDashboard(); return; } } catch (e) { /* weiter */ }
+  try { localStorage.removeItem('pinn.pushGewuenscht'); } catch (e) { /* egal */ }
+  try {
+    const reg = navigator.serviceWorker ? await navigator.serviceWorker.getRegistration('/') : null;
+    const sub = reg && reg.pushManager ? await reg.pushManager.getSubscription() : null;
+    if (sub) await sub.unsubscribe();
+  } catch (e) { /* egal */ }
+  try { if (typeof clearAppBadgeNow === 'function') clearAppBadgeNow(); } catch (e) { /* egal */ }
+  pb.authStore.clear();
+  try {
+    ['pinn.cache', 'pinn.pendingSync', 'pinn.outbox', 'pinn.aufgabenCache', 'pinn.icsCache', 'pinn.profileCache', 'pinn.sessionOnly'].forEach(k => localStorage.removeItem(k));
+    sessionStorage.removeItem('pinn.sessionAlive');
+  } catch (e) { /* egal */ }
+  try { if (window.caches) await caches.delete('pinn-daten'); } catch (e) { /* egal */ }
+  alert('Dieses Gerät wurde in pinn. abgemeldet. Die pinn.-Daten auf diesem Gerät wurden gelöscht – bitte melde dich erneut an.');
+  location.reload();
+}
+
 /* ==========================================================
    Anmeldung (Profile aus der Sammlung "benutzer", siehe pb_hooks/benutzer.pb.js)
    ========================================================== */
@@ -7940,6 +8127,7 @@ async function apiFetch(url, opts = {}) {
   const headers = { ...(opts.headers || {}) };
   if (pb.authStore.token) headers['Authorization'] = pb.authStore.token;
   const res = await fetch(url, { ...opts, headers });
+  if (res.status === 401 && res.headers.get('X-Pinn-Abgemeldet') === '1') { handleRemoteLogout(); return res; }
   if (res.status === 401 && !authExpiredHandled) {
     authExpiredHandled = true;
     if (isDashboardDevice()) { returnToDashboard(); return res; } // Dashboard: einfach zurück zur Profilauswahl
@@ -9723,6 +9911,7 @@ async function loadMainAdminFamilies() {
           <option value="admin"${p.rolle === 'admin' ? ' selected' : ''}>Admin</option>
           <option value="mitglied"${p.rolle !== 'admin' ? ' selected' : ''}>Mitglied</option>
         </select>
+        <button type="button" class="ma-dev shrink-0 px-2 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition" data-id="${p.id}" data-name="${escapeHtml(p.username)}" title="Geräte &amp; Anmeldung" aria-label="Geräte &amp; Anmeldung">📱</button>
         <button type="button" class="ma-reset shrink-0 px-2 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition" data-id="${p.id}" data-name="${escapeHtml(p.username)}">Passwort</button>
         <button type="button" class="ma-del-user shrink-0 px-2 py-1 rounded-lg border border-ink/15 text-xs text-ink/50 hover:text-red-500 hover:border-red-500 transition" data-id="${p.id}" data-name="${escapeHtml(p.username)}">✕</button>
       </div>`).join('');
@@ -9753,6 +9942,7 @@ async function loadMainAdminFamilies() {
     }
     loadMainAdminFamilies();
   };
+  list.querySelectorAll('.ma-dev').forEach(el => el.addEventListener('click', () => openDevModal(el.dataset.id, el.dataset.name)));
   list.querySelectorAll('.ma-role').forEach(el => el.addEventListener('change', () =>
     run('/api/pinn/users/set-role', { id: el.dataset.id, rolle: el.value }, 'Rolle geändert.')));
   list.querySelectorAll('.ma-reset').forEach(el => el.addEventListener('click', () => {
@@ -9919,6 +10109,9 @@ function showMainAdminScreen() {
   setupBtn.textContent = pinnSetupText('btn');
   setupBtn.onclick = () => openPinnSetup();
   refreshMainAdminSetupBanner(true);
+  document.getElementById('mainAdminDevicesBtn').onclick = () => { const me = currentUser(); if (me) openDevModal(me.id, me.username); };
+  document.getElementById('mainAdminErrLogBtn').onclick = () => openErrLog();
+  errLogRefreshSummary();
   document.getElementById('mainAdminPasswordBtn').onclick = async () => {
     const oldPw = prompt('Aktuelles Passwort:');
     if (!oldPw) return;
@@ -10058,6 +10251,15 @@ async function logout() {
   clearAppBadgeNow(); // abgemeldet: keine Zahl mehr am App-Symbol
   // Dieses Gerät soll nach dem Abmelden keine persönlichen Benachrichtigungen mehr bekommen
   try { await Promise.race([disablePushOnThisDevice(), new Promise(r => setTimeout(r, 3000))]); } catch (e) { /* egal */ }
+  // Geräteverwaltung: die Sitzung dieses Geräts auf dem Server beenden
+  remoteLogoutDone = true;
+  authExpiredHandled = true;
+  try {
+    await Promise.race([
+      apiFetch('/api/pinn/sitzungen/abmelden', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: 'dieses' }) }),
+      new Promise(r => setTimeout(r, 3000)),
+    ]);
+  } catch (e) { /* egal */ }
   pb.authStore.clear();
   try {
     ['pinn.cache', 'pinn.pendingSync', 'pinn.outbox', 'pinn.aufgabenCache', 'pinn.icsCache', 'pinn.profileCache', LS_SESSION_ONLY].forEach(k => localStorage.removeItem(k));
@@ -10098,6 +10300,7 @@ async function renderAccountSettings() {
   document.getElementById('pushSection').classList.toggle('hidden', noPush);
   renderDashDeviceSection();
   renderDashPinSection();
+  renderDevicesSection();
   const pinsLoaded = guest ? Promise.resolve(dashPinInfo) : loadDashboardPins().then(info => { renderDashPinSection(); return info; });
   const famEl = document.getElementById('accountFamily');
   if (famEl && u && u.familie) {
@@ -10127,12 +10330,13 @@ async function renderAccountSettings() {
       <div class="flex items-center gap-2 px-3 py-2 rounded-lg border border-ink/10 bg-white">
         <div class="flex-1 min-w-0">
           <p class="text-sm truncate">${escapeHtml(x.username)}${x.id === u.id ? ' <span class="text-xs text-ink/40">(du)</span>' : ''}${x.mustChangePassword ? ' <span class="text-xs text-mustard">Passwort ausstehend</span>' : ''}</p>
-          <p class="text-xs text-ink/40">${roleLabel(x.rolle)}${memberText}${pinText}</p>
+          <p class="text-xs text-ink/40">${roleLabel(x.rolle)}${memberText}${pinText}<span class="pdev-info" data-id="${x.id}"></span></p>
         </div>
         <button type="button" class="profile-manage-btn px-2 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition" data-id="${x.id}">Verwalten</button>
       </div>`;
     }).join('');
   list.querySelectorAll('.profile-manage-btn').forEach(b => b.addEventListener('click', () => openProfileManageModal(b.dataset.id)));
+  renderProfileDeviceInfo();
   renderGuestMenuSettings();
   renderDashBgSettings();
   renderDashDeviceList();
@@ -10191,6 +10395,10 @@ function openProfileManageModal(id) {
 }
 function closeProfileManageModal() { document.getElementById('profileManageModal').classList.add('hidden'); profileManageId = null; }
 document.getElementById('cancelProfileManage').addEventListener('click', closeProfileManageModal);
+document.getElementById('profileManageDevicesBtn').addEventListener('click', () => {
+  if (!profileManageId) return;
+  openDevModal(profileManageId, document.getElementById('profileManageName').textContent);
+});
 wireModalOutsideClick('profileManageModal', closeProfileManageModal);
 
 async function profileManageCall(url, payload, okText) {
@@ -22778,7 +22986,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.24.0';
+const APP_VERSION = '1.25.0';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -23269,9 +23477,411 @@ document.getElementById('sysRestoreGo').addEventListener('click', sysStartRestor
 document.getElementById('openSysMaintBtn').addEventListener('click', () => openSysMaint());
 document.getElementById('sysUpdateHintBtn').addEventListener('click', () => openSysMaint());
 document.getElementById('mainAdminSystemBtn').addEventListener('click', () => openSysMaint());
+
+/* ==========================================================
+   Geräteverwaltung – angemeldete Geräte je Profil (pb_hooks/sitzungen.pb.js)
+   ----------------------------------------------------------
+   - Konto → „Angemeldete Geräte“: eigene Geräte, einzeln abmelden oder „Alle anderen Geräte abmelden“
+   - Profile verwalten → „📱 Geräte & Anmeldung“ (Admins) bzw. 📱 beim Hauptadmin: Geräte eines Profils,
+     „Überall abmelden“ und – nach zu vielen falschen Passwörtern – „Sperre aufheben“
+   - Ein abgemeldetes Gerät löscht seine pinn.-Daten (handleRemoteLogout oben bei der PocketBase-Verbindung)
+   ========================================================== */
+function devFmtDate(iso) {
+  const t = Date.parse(iso || '');
+  if (!isFinite(t)) return '';
+  try { return new Date(t).toLocaleDateString(sysLocale(), { day: 'numeric', month: 'short', year: 'numeric' }); }
+  catch (e) { return new Date(t).toLocaleDateString(); }
+}
+function devFmtWhen(iso) {
+  const t = Date.parse(iso || '');
+  if (!isFinite(t)) return '';
+  const diff = Date.now() - t;
+  if (diff < 2 * 60000) return 'gerade eben';
+  if (diff < 60 * 60000) return 'vor ' + Math.round(diff / 60000) + ' Min.';
+  const d = new Date(t), now = new Date();
+  let time = '';
+  try { time = d.toLocaleTimeString(sysLocale(), { hour: '2-digit', minute: '2-digit' }); } catch (e) { time = d.toLocaleTimeString(); }
+  const day = x => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const days = Math.round((day(now) - day(d)) / 86400000);
+  if (days === 0) return 'heute, ' + time;
+  if (days === 1) return 'gestern, ' + time;
+  return devFmtDate(iso) + ', ' + time;
+}
+function devWait(sec) {
+  const s = Math.max(1, Math.round(Number(sec) || 0));
+  return s < 60 ? s + ' Sek.' : Math.ceil(s / 60) + ' Min.';
+}
+function devIcon(s) {
+  const n = String(s.name || '');
+  if (s.art === 'dashboard' || /^Familien-Dashboard/.test(n)) return '🖥️';
+  if (/iPhone|Android-Handy/.test(n)) return '📱';
+  if (/iPad|Tablet/.test(n)) return '📲';
+  return '💻';
+}
+function devRowsHtml(list) {
+  if (!list.length) return '<p class="sm-empty">Keine angemeldeten Geräte.</p>';
+  return list.map(s => {
+    const sub = ['Zuletzt aktiv: ' + devFmtWhen(s.zuletzt)];
+    if (s.seit) sub.push('angemeldet seit ' + devFmtDate(s.seit));
+    if (s.push) sub.push('🔔 Push');
+    if (s.ip) sub.push(s.ip);
+    return `<div class="sm-row dev-row">
+      <div class="sm-row-ico">${devIcon(s)}</div>
+      <div class="sm-row-main">
+        <span class="sm-row-title">${escapeHtml(s.name || 'Gerät')}${s.dieses ? ' <span class="sm-tag">Dieses Gerät</span>' : ''}</span>
+        <span class="sm-row-sub">${escapeHtml(sub.join(' · '))}</span>
+      </div>
+      <button type="button" class="sm-btn sm-small dev-out shrink-0" data-id="${escapeHtml(s.id)}" data-name="${escapeHtml(s.name || '')}" data-dieses="${s.dieses ? '1' : ''}">Abmelden</button>
+    </div>`;
+  }).join('');
+}
+async function devFetchList(userId) {
+  const res = await apiFetch('/api/pinn/sitzungen' + (userId ? '?benutzer=' + encodeURIComponent(userId) : ''), { cache: 'no-store' });
+  if (res.status === 404) { const e = new Error('Auf dem Server fehlt noch pb_hooks/sitzungen.pb.js (und pinn-sitzungen.js).'); e.code = 'alt'; throw e; }
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error || 'Geräte konnten nicht geladen werden.');
+  return body;
+}
+// Ein Gerät abmelden; „Dieses Gerät“ = ganz normal abmelden
+async function devLogoutOne(btn, statusEl, after) {
+  const name = btn.dataset.name || 'Gerät';
+  if (btn.dataset.dieses === '1') {
+    if (confirm('Dieses Gerät abmelden?')) logout();
+    return;
+  }
+  if (!confirm(`„${name}“ abmelden? Das Gerät verliert sofort den Zugriff auf pinn.`)) return;
+  btn.disabled = true;
+  statusEl.textContent = '';
+  try {
+    await postJson('/api/pinn/sitzungen/abmelden', { id: btn.dataset.id });
+    statusEl.textContent = 'Gerät abgemeldet.';
+  } catch (e) {
+    statusEl.textContent = e.message;
+  }
+  after();
+}
+// Eigenes Profil: alle anderen Geräte abmelden – dieses Gerät bekommt eine neue Anmeldung
+async function devLogoutOthers(statusEl, after) {
+  if (!confirm('Alle anderen Geräte abmelden? Nur dieses Gerät bleibt angemeldet.')) return;
+  statusEl.textContent = '';
+  try {
+    const res = await apiFetch('/api/pinn/sitzungen/alle-abmelden', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok || !body.token) throw new Error(body.error || 'Das hat nicht geklappt.');
+    pb.authStore.save(body.token, body.record);
+    statusEl.textContent = 'Alle anderen Geräte sind abgemeldet.';
+    // Push dieses Geräts gleich wieder zuordnen (falls es nicht schon zur Sitzung gehörte)
+    try { if (pushAutoSyncEnabled) { pushLastAutoSync = 0; syncPushSubscription(); } } catch (e) { /* egal */ }
+  } catch (e) {
+    statusEl.textContent = e.message;
+  }
+  after();
+}
+
+/* ---------- Konto: eigene Geräte ---------- */
+let devSectionLoading = false;
+async function renderDevicesSection() {
+  const sec = document.getElementById('devicesSection');
+  if (!sec) return;
+  const hide = isCurrentUserGuest() || isCurrentUserMainAdmin();
+  sec.classList.toggle('hidden', hide);
+  if (hide || devSectionLoading) return;
+  const list = document.getElementById('devicesList');
+  const btn = document.getElementById('devicesLogoutOthersBtn');
+  if (!navigator.onLine) { list.innerHTML = '<p class="sm-empty">Keine Verbindung zum Server.</p>'; btn.classList.add('hidden'); return; }
+  devSectionLoading = true;
+  let data = null;
+  try {
+    data = await devFetchList('');
+  } catch (e) {
+    devSectionLoading = false;
+    if (e.code === 'alt') { sec.classList.add('hidden'); return; }
+    list.innerHTML = `<p class="text-xs text-red-500">${escapeHtml(e.message)}</p>`;
+    return;
+  }
+  devSectionLoading = false;
+  const ses = data.sitzungen || [];
+  list.innerHTML = devRowsHtml(ses);
+  btn.classList.toggle('hidden', !ses.some(s => !s.dieses) && !data.aktuellOhneSitzung);
+  const status = document.getElementById('devicesStatus');
+  list.querySelectorAll('.dev-out').forEach(b => b.addEventListener('click', () => devLogoutOne(b, status, renderDevicesSection)));
+}
+document.getElementById('devicesLogoutOthersBtn').addEventListener('click', () =>
+  devLogoutOthers(document.getElementById('devicesStatus'), renderDevicesSection));
+
+/* ---------- Profile verwalten: Anzahl Geräte und Sperre je Profil ---------- */
+async function renderProfileDeviceInfo() {
+  if (!isCurrentUserAdmin() || !navigator.onLine) return;
+  let data = null;
+  try {
+    const res = await apiFetch('/api/pinn/sitzungen/uebersicht', { cache: 'no-store' });
+    if (!res.ok) return;
+    data = await res.json();
+  } catch (e) { return; }
+  const map = (data && data.profile) || {};
+  document.querySelectorAll('#profileList .pdev-info').forEach(el => {
+    const x = map[el.dataset.id];
+    if (!x) { el.textContent = ''; return; }
+    const parts = [];
+    if (x.geraete) parts.push(' · 📱 ' + x.geraete);
+    const locked = x.sperre && (x.sperre.sekunden > 0 || x.sperre.pin > 0);
+    el.innerHTML = escapeHtml(parts.join('')) + (locked ? ' · <span class="text-red-500">🔒 gesperrt</span>' : '');
+  });
+}
+
+/* ---------- Popup: Geräte & Anmeldung eines Profils ---------- */
+let devModalUser = null; // { id, name, own }
+function openDevModal(userId, name) {
+  devModalUser = { id: String(userId || ''), name: String(name || ''), own: false };
+  document.getElementById('devModalName').textContent = devModalUser.name;
+  document.getElementById('devModalStatus').textContent = '';
+  document.getElementById('devModalLock').classList.add('hidden');
+  document.getElementById('devModalList').innerHTML = '<p class="sm-empty">Wird geladen …</p>';
+  document.getElementById('devModal').classList.remove('hidden');
+  loadDevModal();
+}
+function closeDevModal() {
+  document.getElementById('devModal').classList.add('hidden');
+  devModalUser = null;
+  if (typeof currentView !== 'undefined' && currentView === 'konto') { renderProfileDeviceInfo(); renderDevicesSection(); }
+}
+async function loadDevModal() {
+  const u = devModalUser;
+  if (!u) return;
+  const list = document.getElementById('devModalList');
+  const allBtn = document.getElementById('devModalAllBtn');
+  if (!navigator.onLine) { list.innerHTML = '<p class="sm-empty">Keine Verbindung zum Server.</p>'; return; }
+  let data = null;
+  try {
+    data = await devFetchList(u.id);
+  } catch (e) {
+    if (devModalUser !== u) return;
+    list.innerHTML = `<p class="text-xs text-red-500">${escapeHtml(e.message)}</p>`;
+    allBtn.classList.add('hidden');
+    return;
+  }
+  if (devModalUser !== u) return;
+  u.own = !!data.eigenes;
+  if (data.benutzer && data.benutzer.username) u.name = data.benutzer.username;
+  document.getElementById('devModalName').textContent = u.name;
+  // Sperre nach Fehlversuchen
+  const lock = data.sperre || null;
+  const parts = [];
+  if (lock) {
+    if (lock.sekunden > 0) parts.push('Anmeldung gesperrt – noch ' + devWait(lock.sekunden) + '.');
+    else if (lock.fehlversuche > 0) parts.push(lock.fehlversuche + ' falsche Passwörter seit der letzten Anmeldung.');
+    if (lock.pin > 0) parts.push('Dashboard-PIN gesperrt – noch ' + devWait(lock.pin) + '.');
+  }
+  document.getElementById('devModalLock').classList.toggle('hidden', !parts.length);
+  document.getElementById('devModalLockText').textContent = parts.join(' ');
+  document.getElementById('devModalUnlockBtn').classList.toggle('hidden', !(lock && (lock.sekunden > 0 || lock.pin > 0 || lock.fehlversuche > 0)));
+  // Geräte
+  const ses = data.sitzungen || [];
+  list.innerHTML = devRowsHtml(ses);
+  const status = document.getElementById('devModalStatus');
+  list.querySelectorAll('.dev-out').forEach(b => b.addEventListener('click', () => devLogoutOne(b, status, loadDevModal)));
+  allBtn.textContent = u.own ? 'Alle anderen Geräte abmelden' : 'Überall abmelden';
+  allBtn.classList.toggle('hidden', u.own ? (!ses.some(s => !s.dieses) && !data.aktuellOhneSitzung) : false);
+}
+document.getElementById('devModalClose').addEventListener('click', closeDevModal);
+document.getElementById('devModal').addEventListener('click', (e) => { if (e.target.id === 'devModal') closeDevModal(); });
+document.getElementById('devModalReload').addEventListener('click', () => { document.getElementById('devModalStatus').textContent = ''; loadDevModal(); });
+document.getElementById('devModalAllBtn').addEventListener('click', async () => {
+  const u = devModalUser;
+  if (!u) return;
+  const status = document.getElementById('devModalStatus');
+  if (u.own) { await devLogoutOthers(status, loadDevModal); return; }
+  if (!confirm(`„${u.name}“ auf allen Geräten abmelden? Benachrichtigungen auf diesen Geräten enden ebenfalls.`)) return;
+  status.textContent = '';
+  try {
+    await postJson('/api/pinn/sitzungen/alle-abmelden', { benutzer: u.id });
+    status.textContent = 'Auf allen Geräten abgemeldet.';
+  } catch (e) {
+    status.textContent = e.message;
+  }
+  loadDevModal();
+});
+document.getElementById('devModalUnlockBtn').addEventListener('click', async () => {
+  const u = devModalUser;
+  if (!u) return;
+  const status = document.getElementById('devModalStatus');
+  status.textContent = '';
+  try {
+    await postJson('/api/pinn/sitzungen/entsperren', { benutzer: u.id });
+    status.textContent = 'Sperre aufgehoben – die Anmeldung ist wieder möglich.';
+  } catch (e) {
+    status.textContent = e.message;
+  }
+  loadDevModal();
+});
+
+/* ==========================================================
+   Fehlerprotokoll (Admins) – pb_hooks/protokoll.pb.js
+   ----------------------------------------------------------
+   Fehler der Server-Hooks (Kalender-Sync, Push, Müllkalender, Anmeldung) in der App statt im
+   Docker-Log. Einstellungen → System → „Fehlerprotokoll“ bzw. beim Hauptadmin „🧾 Fehlerprotokoll“.
+   Neue offene Fehler seit dem letzten Ansehen zeigen eine rote Zahl am Knopf (gemerkt auf dem Gerät).
+   ========================================================== */
+const ERRLOG_BEREICHE = [
+  { id: 'sync', label: 'Kalender-Sync', ico: '🔄' },
+  { id: 'push', label: 'Push', ico: '🔔' },
+  { id: 'muell', label: 'Müllkalender', ico: '🗑️' },
+  { id: 'anmeldung', label: 'Anmeldung', ico: '🔒' },
+  { id: 'system', label: 'System', ico: '⚙️' },
+];
+const LS_ERRLOG_SEEN = 'pinn.protokollGesehen';
+let errLogData = null;
+let errLogFilter = '';
+let errLogOpenId = '';
+function errLogCanUse() {
+  return (isCurrentUserAdmin() || isCurrentUserMainAdmin()) && !isCurrentUserGuest();
+}
+function errLogSeen() {
+  try { return localStorage.getItem(LS_ERRLOG_SEEN) || ''; } catch (e) { return ''; }
+}
+function errLogBereich(id) {
+  return ERRLOG_BEREICHE.find(b => b.id === id) || { id: id, label: id || 'System', ico: '⚙️' };
+}
+// Kurzfassung unter Einstellungen → System und die rote Zahl an den Knöpfen
+async function errLogRefreshSummary() {
+  const sub = document.getElementById('errLogSub');
+  const show = errLogCanUse() && !(typeof childLockActive === 'function' && childLockActive());
+  if (sub) sub.classList.toggle('hidden', !show);
+  if (!show || !navigator.onLine) return;
+  let k = null;
+  try {
+    const res = await apiFetch('/api/pinn/protokoll/kurz', { cache: 'no-store' });
+    if (res.ok) k = await res.json();
+  } catch (e) { k = null; }
+  if (!k || !k.darf) { if (sub) sub.classList.add('hidden'); return; }
+  const parts = [];
+  if (k.offen === 1) parts.push('1 offener Fehler in den letzten 7 Tagen');
+  else if (k.offen > 1) parts.push(k.offen + ' offene Fehler in den letzten 7 Tagen');
+  else parts.push('Keine offenen Fehler in den letzten 7 Tagen');
+  if (k.warnungen === 1) parts.push('1 Warnung');
+  else if (k.warnungen > 1) parts.push(k.warnungen + ' Warnungen');
+  if (k.neueste) parts.push('zuletzt ' + devFmtWhen(k.neueste));
+  const sum = document.getElementById('errLogSummary');
+  if (sum) sum.textContent = parts.join(' · ');
+  const fresh = k.offen > 0 && k.neueste && k.neueste > errLogSeen();
+  ['errLogBadge', 'mainAdminErrLogBadge'].forEach(id => {
+    const b = document.getElementById(id);
+    if (!b) return;
+    b.textContent = String(k.offen > 9 ? '9+' : k.offen);
+    b.classList.toggle('hidden', !fresh);
+  });
+}
+async function openErrLog() {
+  document.getElementById('errLogModal').classList.remove('hidden');
+  errLogOpenId = '';
+  await errLogLoad();
+}
+function closeErrLog() {
+  document.getElementById('errLogModal').classList.add('hidden');
+  errLogRefreshSummary();
+}
+async function errLogLoad() {
+  const list = document.getElementById('errLogList');
+  document.getElementById('errLogStatus').textContent = '';
+  if (!navigator.onLine) { list.innerHTML = '<p class="sm-empty">Keine Verbindung zum Server.</p>'; return; }
+  if (!errLogData) list.innerHTML = '<p class="sm-empty">Wird geladen …</p>';
+  try {
+    const res = await apiFetch('/api/pinn/protokoll?limit=300', { cache: 'no-store' });
+    if (res.status === 404) throw new Error('Auf dem Server fehlt noch pb_hooks/protokoll.pb.js (und pinn-protokoll.js).');
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(body.error || 'Das Protokoll konnte nicht geladen werden.');
+    errLogData = body;
+  } catch (e) {
+    list.innerHTML = `<p class="text-xs text-red-500">${escapeHtml(e.message)}</p>`;
+    document.getElementById('errLogFilter').innerHTML = '';
+    return;
+  }
+  const items = errLogData.eintraege || [];
+  if (items.length) { try { localStorage.setItem(LS_ERRLOG_SEEN, items[0].zuletzt || ''); } catch (e) { /* egal */ } }
+  errLogRender();
+}
+function errLogRender() {
+  const items = (errLogData && errLogData.eintraege) || [];
+  const counts = {};
+  items.forEach(x => { counts[x.bereich] = (counts[x.bereich] || 0) + 1; });
+  if (errLogFilter && !counts[errLogFilter]) errLogFilter = '';
+  const chips = [{ id: '', label: 'Alle', n: items.length }].concat(
+    ERRLOG_BEREICHE.filter(b => counts[b.id]).map(b => ({ id: b.id, label: b.ico + ' ' + b.label, n: counts[b.id] })));
+  const filterEl = document.getElementById('errLogFilter');
+  filterEl.innerHTML = items.length ? chips.map(c =>
+    `<button type="button" class="el-chip${c.id === errLogFilter ? ' on' : ''}" data-f="${c.id}">${escapeHtml(c.label)}<small data-no-i18n>${c.n}</small></button>`).join('') : '';
+  filterEl.querySelectorAll('.el-chip').forEach(b => b.addEventListener('click', () => { errLogFilter = b.dataset.f; errLogRender(); }));
+
+  const list = document.getElementById('errLogList');
+  const shown = errLogFilter ? items.filter(x => x.bereich === errLogFilter) : items;
+  if (!shown.length) {
+    list.innerHTML = '<p class="sm-empty">Keine Einträge – alles läuft rund. 🎉</p>';
+  } else {
+    const hauptadmin = !!errLogData.hauptadmin;
+    list.innerHTML = shown.map(x => {
+      const b = errLogBereich(x.bereich);
+      const ico = x.stufe === 'fehler' ? '⛔' : (x.stufe === 'warnung' ? '⚠️' : 'ℹ️');
+      const sub = [b.label];
+      if (hauptadmin) sub.push(x.familie ? (x.familienName || 'gelöschte Familie') : 'Server');
+      sub.push(devFmtWhen(x.zuletzt));
+      if (x.anzahl > 1) sub.push(x.anzahl + '× seit ' + devFmtWhen(x.erstes));
+      const open = x.id === errLogOpenId;
+      return `<div class="sm-row el-row${x.behoben ? ' done' : ''}" data-id="${escapeHtml(x.id)}">
+        <div class="sm-row-ico el-ico-${escapeHtml(x.stufe)}">${ico}</div>
+        <div class="sm-row-main">
+          <span class="sm-row-title" data-no-i18n>${escapeHtml(x.meldung)}</span>
+          <span class="sm-row-sub">${escapeHtml(sub.join(' · '))}${x.behoben ? ' · <span class="el-ok">✓ wieder ok</span>' : ''}</span>
+          ${open ? `${x.details ? `<pre class="el-details" data-no-i18n>${escapeHtml(x.details)}</pre>` : ''}
+          <div class="flex flex-wrap gap-2 mt-2"><button type="button" class="sm-btn sm-small el-copy" data-id="${escapeHtml(x.id)}">Kopieren</button><button type="button" class="sm-btn sm-small el-del" data-id="${escapeHtml(x.id)}">Löschen</button></div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+  list.querySelectorAll('.el-row').forEach(r => r.addEventListener('click', (ev) => {
+    if (ev.target.closest('button')) return;
+    errLogOpenId = errLogOpenId === r.dataset.id ? '' : r.dataset.id;
+    errLogRender();
+  }));
+  list.querySelectorAll('.el-del').forEach(btn => btn.addEventListener('click', async () => {
+    try {
+      await postJson('/api/pinn/protokoll/leeren', { id: btn.dataset.id });
+      errLogOpenId = '';
+      await errLogLoad();
+    } catch (e) { document.getElementById('errLogStatus').textContent = e.message; }
+  }));
+  list.querySelectorAll('.el-copy').forEach(btn => btn.addEventListener('click', async () => {
+    const x = items.find(i => i.id === btn.dataset.id);
+    if (!x) return;
+    const text = '[' + x.bereich + '/' + x.stufe + '] ' + x.zuletzt + (x.anzahl > 1 ? ' (' + x.anzahl + '×)' : '') + '\n' + x.meldung + (x.details ? '\n' + x.details : '');
+    try { await navigator.clipboard.writeText(text); document.getElementById('errLogStatus').textContent = 'Kopiert.'; }
+    catch (e) { document.getElementById('errLogStatus').textContent = 'Kopieren ist hier nicht möglich.'; }
+  }));
+  document.getElementById('errLogClearDone').disabled = !items.some(x => x.behoben || x.stufe !== 'fehler');
+  document.getElementById('errLogClearAll').disabled = !items.length;
+}
+async function errLogClear(art) {
+  const q = art === 'alle'
+    ? 'Alle Einträge im Fehlerprotokoll löschen?'
+    : 'Alle Warnungen, Hinweise und wieder behobenen Fehler löschen? Offene Fehler bleiben stehen.';
+  if (!confirm(q)) return;
+  try {
+    const r = await postJson('/api/pinn/protokoll/leeren', { art });
+    errLogOpenId = '';
+    await errLogLoad();
+    document.getElementById('errLogStatus').textContent = r.geloescht === 1 ? '1 Eintrag gelöscht.' : (r.geloescht || 0) + ' Einträge gelöscht.';
+  } catch (e) {
+    document.getElementById('errLogStatus').textContent = e.message;
+  }
+}
+document.getElementById('openErrLogBtn').addEventListener('click', () => openErrLog());
+document.getElementById('errLogClose').addEventListener('click', closeErrLog);
+document.getElementById('errLogModal').addEventListener('click', (e) => { if (e.target.id === 'errLogModal') closeErrLog(); });
+document.getElementById('errLogReload').addEventListener('click', () => errLogLoad());
+document.getElementById('errLogClearDone').addEventListener('click', () => errLogClear('behoben'));
+document.getElementById('errLogClearAll').addEventListener('click', () => errLogClear('alle'));
 (function () {
   const acc = document.getElementById('settingsSystemAccordion');
-  if (acc) acc.addEventListener('toggle', () => { if (acc.open) sysRefreshSummary(); });
+  if (acc) acc.addEventListener('toggle', () => { if (acc.open) { sysRefreshSummary(); errLogRefreshSummary(); } });
 })();
 
 // „Auf Update prüfen“: Admins sehen die neue Version auf GitHub samt Installieren-Knopf,
@@ -23305,6 +23915,18 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
    - rueckblick: true = Einträge vor dem Versions-Log, aus der Projekthistorie zusammengefasst.
    ========================================================== */
 const PINN_CHANGELOG = [
+  {
+    v: '1.25', datum: '08.10.2026', titel: 'Geräte & Fehlerprotokoll',
+    punkte: [
+      ['neu', 'Konto → „Angemeldete Geräte“: alle Geräte, auf denen dein Profil angemeldet ist – mit Name (z. B. „iPhone · App“), zuletzt aktiv, seit wann und ob Push ankommt. Jedes Gerät lässt sich einzeln abmelden, oder alle anderen auf einmal'],
+      ['neu', 'Ein abgemeldetes Gerät verliert sofort den Zugriff, bekommt keine Benachrichtigungen mehr und löscht beim nächsten Öffnen die pinn.-Daten auf dem Gerät – praktisch, wenn ein Handy verloren geht'],
+      ['neu', 'Admins: Profile verwalten → „📱 Geräte & Anmeldung“ zeigt die Geräte jedes Profils mit „Überall abmelden“; die Profilliste zeigt Geräteanzahl und gesperrte Profile. Der Hauptadmin hat 📱 bei jedem Profil und „📱 Meine Geräte“'],
+      ['neu', 'Mehr Schutz bei der Anmeldung: Fehlversuche zählen jetzt auch je Netzwerk-Adresse – auch für unbekannte Familien und Profile (ab 20 in 30 Minuten kurz gesperrt). Wird ein Profil wegen falscher Passwörter gesperrt, bekommen die Admins eine Push-Nachricht und können die Sperre aufheben'],
+      ['neu', 'Fehlerprotokoll für Admins (Einstellungen → System, als Hauptadmin „🧾 Fehlerprotokoll“): Fehler von Kalender-Sync, Push, Müllkalender und Anmeldung erscheinen in der App statt nur im Docker-Log – gleiche Meldungen zusammengefasst mit Zähler, „wieder ok“, sobald es wieder klappt, Filter, Details zum Kopieren; neue Fehler zeigen eine rote Zahl'],
+      ['info', 'Passwort ändern bzw. ein Zurücksetzen durch einen Admin meldet alle anderen Geräte des Profils ab – samt Push'],
+      ['info', 'Server: neu sitzungen.pb.js, pinn-sitzungen.js, protokoll.pb.js und pinn-protokoll.js; angepasst benutzer.pb.js, push.pb.js, muell.pb.js, kalender.pb.js, cron_calendar.pb.js, calendar-sync.js, pinn-kalender.js, pinn-push.js, pinn-pushtext.js und pinn-muell.js; Sprachdateien en/fr/es ergänzt. Bisherige Anmeldungen bleiben gültig und erscheinen beim nächsten Öffnen der App in der Geräteliste'],
+    ],
+  },
   {
     v: '1.24', datum: '07.10.2026', titel: 'Sicherungen & Updates per Knopf',
     punkte: [
@@ -47238,6 +47860,7 @@ function ntOpenLink(url) {
       else setView(isViewAllowed('fahrzeuge') ? 'fahrzeuge' : 'finanzen');
       return true;
     }
+    if (g('konto')) { if (isViewAllowed('konto')) setView('konto'); return true; }
     if (g('vertrag')) {
       if (isCurrentUserGuest()) return true;
       ntSwitchKasse(g('kasse'));
@@ -47296,7 +47919,7 @@ function ntOpenLink(url) {
 }
 // Diese Adressen öffnet die Glocke beim Start selbst (die übrigen - ?sos, ?heimweg, ?kasse, ?vertrag,
 // ?dokument, ?pinnwand, ?familie - erledigen die jeweiligen Bereiche schon beim Hochfahren)
-var NT_START_LINKS = ['ausgabe', 'fahrzeug', 'mitglied', 'aufgabe', 'termin', 'rezept', 'essen', 'vorrat', 'listen', 'einkauf'];
+var NT_START_LINKS = ['ausgabe', 'fahrzeug', 'mitglied', 'aufgabe', 'termin', 'rezept', 'essen', 'vorrat', 'listen', 'einkauf', 'konto'];
 
 // Zahl an der Glocke: offene Ausgaben, laufende Heimwege, ungelesene Neuerungen und neue Familien-Hinweise
 function ntUpdateBadge() {

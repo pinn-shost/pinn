@@ -365,6 +365,11 @@ function ensurePushCollections() {
     return abos;
 }
 
+// Admin-Fehlerprotokoll (pinn-protokoll.js) – fehlt die Datei, bleibt es beim Docker-Log
+function plog(art, bereich, meldung, opts) {
+    try { require(`${__hooks}/pinn-protokoll.js`)[art](bereich, meldung, opts || {}); } catch (e) { /* Protokoll nicht verfügbar */ }
+}
+
 const STATUS_FILE = "/pb_data/pinn_push_status.json";
 function loadPushStatus() {
     try {
@@ -373,7 +378,7 @@ function loadPushStatus() {
     } catch (e) { return {}; }
 }
 function savePushStatus(s) {
-    try { $os.writeFile(STATUS_FILE, JSON.stringify(s)); } catch (e) { console.log("[Push] Status nicht speicherbar: " + e.message); }
+    try { $os.writeFile(STATUS_FILE, JSON.stringify(s)); } catch (e) { console.log("[Push] Status nicht speicherbar: " + e.message); plog("fehler", "push", "Push-Status konnte nicht gespeichert werden (pb_data).", { details: e.message }); }
 }
 
 // --- Dauerhafte Sicherung (übersteht Neustarts und Updates) ---
@@ -389,7 +394,7 @@ function readJsonFile(path) {
     } catch (e) { return null; }
 }
 function writeJsonFile(path, obj) {
-    try { $os.writeFile(path, JSON.stringify(obj), 420); } catch (e) { console.log("[Push] " + path + " nicht speicherbar: " + e.message); }
+    try { $os.writeFile(path, JSON.stringify(obj), 420); } catch (e) { console.log("[Push] " + path + " nicht speicherbar: " + e.message); plog("fehler", "push", "Push: Datei " + path + " nicht speicherbar.", { details: e.message }); }
 }
 function pruneSent(map) {
     const cutoff = Date.now() - SENT_MAX_AGE;
@@ -562,12 +567,7 @@ function vapidAuthHeader(endpoint) {
 
 // Schickt einen (inhaltslosen) Weckruf an ein Gerät. Den eigentlichen Text holt sich der Service
 // Worker danach selbst über /api/pinn/push/abholen - so ist keine Payload-Verschlüsselung nötig.
-// Android (Google/FCM): Weckrufe mit „normal“ hält Android im Energiesparmodus (Doze) oft bis zum
-// nächsten Wartungsfenster zurück - Erinnerungen kämen dann viel zu spät. Da pinn. jeden Weckruf
-// sichtbar anzeigt, gehen sie dort mit „high“ raus (verbraucht keinen zusätzlichen Akku).
-function isGoogleEndpoint(endpoint) { return /googleapis\.com|fcm\./i.test(String(endpoint || "")); }
 function sendWakeup(endpoint, urgency) {
-    if (isGoogleEndpoint(endpoint) && urgency !== "very-low" && urgency !== "low") urgency = "high";
     const res = $http.send({
         url: endpoint,
         method: "POST",
@@ -596,8 +596,7 @@ function describeFailure(endpoint, status, body) {
     try { reason = (JSON.parse(body) || {}).reason || ""; } catch (e) { reason = String(body || "").trim(); }
     let text = pushServiceName(endpoint) + " lehnt ab (Status " + status + (reason ? ", " + reason : "") + ")";
     if (/BadJwtToken/i.test(reason)) text += " - Absender der Anmeldung wird nicht akzeptiert (aktuell: " + vapidSubject(loadVapid(true)) + ")";
-    else if (/VapidPkHashMismatch|BadWebPushTopic|UnauthorizedRegistration|authorization header|sender id/i.test(reason) || status === 403) text += " - bitte auf dem Gerät deaktivieren und neu aktivieren";
-    else if (status === 429) text += " - zu viele Nachrichten in kurzer Zeit, bitte später erneut versuchen";
+    else if (/VapidPkHashMismatch|BadWebPushTopic/i.test(reason) || status === 403) text += " - bitte auf dem Gerät deaktivieren und neu aktivieren";
     return text;
 }
 
@@ -642,6 +641,7 @@ function notifyUserDetailed(userId, msg) {
             } else if (status < 200 || status >= 300) {
                 const text = describeFailure(endpoint, status, r.body);
                 console.log("[Push] Versand fehlgeschlagen: " + text + " | Antwort: " + r.body);
+                plog("fehler", "push", "Push-Versand fehlgeschlagen: " + text, { benutzer: userId, details: r.body });
                 result.fehler.push(text);
                 try { $app.delete(rec); } catch (e2) { /* egal */ }
             } else {
@@ -649,6 +649,7 @@ function notifyUserDetailed(userId, msg) {
             }
         } catch (e) {
             console.log("[Push] Fehler beim Versand: " + e.message);
+            plog("fehler", "push", "Push-Dienst nicht erreichbar: " + e.message, { benutzer: userId });
             result.fehler.push("Server erreicht den Push-Dienst nicht: " + e.message);
             if (rec) { try { $app.delete(rec); } catch (e3) { /* egal */ } }
         }
@@ -915,6 +916,7 @@ function runPushCron() {
             if (runFamilyReminders(ctx, people, events, last, until, now, status)) statusChanged = true;
         } catch (e) {
             console.log("[Push] Fehler bei einer Familie: " + e.message);
+            plog("fehler", "push", "Erinnerungen konnten nicht geprüft werden: " + e.message, { familie: familyId });
         }
     });
     if (statusChanged) savePushStatus(status);
@@ -959,6 +961,7 @@ function runFamilyReminders(ctx, people, events, last, until, now, status) {
         });
     } catch (e) {
         console.log("[Push] Terminerinnerungen fehlgeschlagen: " + e.message);
+        plog("fehler", "push", "Terminerinnerungen fehlgeschlagen: " + e.message, { familie: ctx && ctx.familyId ? ctx.familyId : "" });
     }
 
     // --- Tagesübersicht ---
@@ -985,10 +988,12 @@ function runFamilyReminders(ctx, people, events, last, until, now, status) {
                 console.log("[Push] Tagesübersicht für " + p.name + " an " + r.sent + " Gerät(e) gesendet.");
             } else {
                 console.log("[Push] Tagesübersicht für " + p.name + " nicht zugestellt: " + r.fehler.join(" | "));
+                plog("warnung", "push", "Tagesübersicht für „" + p.name + "“ nicht zugestellt: " + r.fehler.filter((x, i, a) => a.indexOf(x) === i).join(" | "), { benutzer: p.userId });
             }
         });
     } catch (e) {
         console.log("[Push] Tagesübersicht fehlgeschlagen: " + e.message);
+        plog("fehler", "push", "Tagesübersicht fehlgeschlagen: " + e.message, { familie: ctx && ctx.familyId ? ctx.familyId : "" });
     }
     return changed;
 }
@@ -1107,6 +1112,7 @@ function notifyAssignment(body, actorUserId, previousMemberIds) {
         });
     } catch (e) {
         console.log("[Push] Zuweisungs-Benachrichtigung fehlgeschlagen: " + e.message);
+        plog("fehler", "push", "Benachrichtigung über eine Zuweisung fehlgeschlagen: " + e.message);
     }
 }
 
@@ -1257,6 +1263,7 @@ function notifyTaskDone(ctx) {
         console.log("[Push] " + actor.name + " hat alle Aufgaben erledigt -> " + sent + " Gerät(e) benachrichtigt.");
     } catch (e) {
         console.log("[Push] Hinweis \"Aufgabe erledigt\" fehlgeschlagen: " + e.message);
+        plog("fehler", "push", "Hinweis „Aufgabe erledigt“ fehlgeschlagen: " + e.message);
     }
 }
 
@@ -1357,6 +1364,7 @@ function runDelayed(familyId) {
             }
         } catch (err) {
             console.log("[Push] Verzögerte Meldung fehlgeschlagen: " + err.message);
+            plog("fehler", "push", "Verzögerte Meldung fehlgeschlagen: " + err.message, { familie: e && e.familyId ? e.familyId : "" });
         }
     });
     return processed;
