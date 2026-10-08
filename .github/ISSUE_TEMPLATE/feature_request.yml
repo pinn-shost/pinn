@@ -1,0 +1,43 @@
+name: 💡 Idea / Idee
+description: Suggest a new feature or an improvement. / Neue Funktion oder Verbesserung vorschlagen.
+labels: ["idea"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ideas from everyday family life are the best ones. English or German – both are fine.
+        Die besten Ideen kommen aus dem Familienalltag. Gerne auf Deutsch oder Englisch.
+  - type: textarea
+    id: situation
+    attributes:
+      label: Which situation is it about? / Um welche Situation geht es?
+      placeholder: Every Sunday we … and today that means … / Jeden Sonntag planen wir … und dafür müssen wir bisher …
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: How could pinn. help? / Wie könnte pinn. helfen?
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area / Bereich
+      options:
+        - Calendar / Kalender
+        - Meals & recipes / Essen & Rezepte
+        - Lists / Listen
+        - Tasks & household / Aufgaben & Haushalt
+        - Finance / Finanzen
+        - Documents & vehicles / Dokumente & Fahrzeuge
+        - Family & location / Familie & Ortung
+        - Smart home / Smarthome
+        - Notifications / Benachrichtigungen
+        - Setup & installation / Einrichtung
+        - Other / Sonstiges
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else? / Sonst noch etwas?
+      description: Sketches, screenshots or examples from other apps. / Skizzen, Bilder oder Beispiele aus anderen Apps.

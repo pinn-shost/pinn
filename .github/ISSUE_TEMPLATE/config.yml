@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔒 Security issue / Sicherheitslücke
+    url: https://github.com/pinn-shost/pinn/security/advisories/new
+    about: Please report security issues privately. / Bitte vertraulich melden.
+  - name: 📖 Installation guide / Anleitung
+    url: https://github.com/pinn-shost/pinn#installation
+    about: Most setup questions are answered here. / Die meisten Fragen zur Einrichtung beantwortet die Anleitung.

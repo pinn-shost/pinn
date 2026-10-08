@@ -1,0 +1,72 @@
+name: 🐞 Bug report / Fehler melden
+description: Something doesn't work as expected. / Etwas funktioniert nicht wie erwartet.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping to make pinn. better! English or German – both are fine.
+        Danke, dass du pinn. besser machst! Gerne auf Deutsch oder Englisch.
+
+        **Please remove passwords, tokens, addresses and personal data from logs and screenshots.**
+        **Bitte Passwörter, Tokens, Adressen und persönliche Daten aus Logs und Bildern entfernen.**
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened? / Was ist passiert?
+      placeholder: When I tap … on the … page, … / Wenn ich auf der Seite … auf … tippe, …
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect? / Was hast du erwartet?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce / So lässt es sich nachstellen
+      placeholder: |
+        1. Open …
+        2. Tap …
+        3. …
+  - type: input
+    id: version
+    attributes:
+      label: pinn. version / Version
+      description: Settings → Sync, data & updates / Einstellungen → Synchronisierung, Daten & Updates
+      placeholder: e.g. 1.22.1
+    validations:
+      required: true
+  - type: dropdown
+    id: device
+    attributes:
+      label: Device / Gerät
+      multiple: true
+      options:
+        - iPhone
+        - iPad
+        - Android
+        - Desktop browser
+  - type: input
+    id: system
+    attributes:
+      label: OS and browser / System und Browser
+      placeholder: e.g. iOS 18.6, added to home screen / z. B. Android 15, Chrome
+  - type: input
+    id: server
+    attributes:
+      label: Server
+      placeholder: e.g. UGREEN DXP4800 Plus, UGOS / Synology / Raspberry Pi 5
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs (optional)
+      description: "Output of / Ausgabe von: docker logs pocketbase --tail 100"
+      render: text
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots (optional)
+      description: Drag images here. / Bilder einfach hierher ziehen.
