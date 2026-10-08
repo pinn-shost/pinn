@@ -358,6 +358,7 @@ routerAdd("GET", "/api/pinn/familien", (e) => {
                 username: r.getString("username"),
                 rolle: r.getString("rolle"),
                 mustChangePassword: r.getBool("mustChangePassword"),
+                systemrechte: r.getString("rolle") === "admin" && r.getBool("systemrechte"),
             })).sort((a, b) => a.username.localeCompare(b.username));
         } catch (err) { profiles = []; }
         let apple = false;

@@ -574,7 +574,7 @@ window.PINN_LANGUAGES = [
     start(data);
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.25.0" onerror="PINN_I18N.fail()"><\/script>');
+  if (DICT) document.write('<script src="' + lang.file + '?v=1.26.0" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // Deutsch als WG: kein Wörterbuch, nur die WG-Bezeichnungen
 })();
 </script>
@@ -2360,6 +2360,90 @@ window.PINN_LANGUAGES = [
   .kid-money-bal b { color: #1F9D55; }
   .kid-empty .kid-money { margin-top: 28px; text-align: left; }
 
+  /* ---------- Sterne & Belohnungen (Kinderseite) ---------- */
+  .kid-bank {
+    display: flex; align-items: center; gap: 8px; margin: .9rem auto 0; padding: 8px 10px 8px 14px; border: 0; cursor: pointer;
+    background: rgba(255,255,255,.85); color: #2B2340; border-radius: 999px; font-family: inherit;
+    box-shadow: 0 5px 0 rgba(0,0,0,.09); transition: transform .15s ease;
+  }
+  .kid-bank:active { transform: translateY(3px) scale(.98); box-shadow: 0 2px 0 rgba(0,0,0,.09); }
+  .kid-bank.bump { animation: kidPop .6s cubic-bezier(.3,1.6,.5,1); }
+  .kid-bank-star { font-size: 30px; line-height: 1; animation: kidTwinkle 2.4s ease-in-out infinite; }
+  .kid-bank-num { font-size: 30px; font-weight: 800; line-height: 1; }
+  .kid-bank-label { font-size: 18px; font-weight: 700; opacity: .7; }
+  .kid-bank-shop { display: inline-flex; align-items: center; gap: 6px; margin-left: 6px; padding: 7px 13px; border-radius: 999px; background: #FFD166; font-size: 17px; font-weight: 800; }
+  .kid-bank-pend { min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #E5484D; color: #fff; font-size: 13px; display: grid; place-items: center; }
+  .kid-bank-plus { position: fixed; z-index: 360; pointer-events: none; transform: translate(-50%, 0); font-family: 'Baloo 2', 'Inter', system-ui, sans-serif; font-size: 30px; font-weight: 800; color: #F5A300; text-shadow: 0 2px 0 #fff; animation: kidPlusFly 1.1s ease-out forwards; }
+  @keyframes kidPlusFly { 0% { opacity: 0; transform: translate(-50%, 0) scale(.6); } 20% { opacity: 1; transform: translate(-50%, -14px) scale(1.15); } 100% { opacity: 0; transform: translate(-50%, -70px) scale(1); } }
+  .kid-shop {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 4; display: grid; place-items: center; padding: 1rem;
+    padding-top: calc(env(safe-area-inset-top, 0px) + 1rem); padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+    background: rgba(43,35,64,.35); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); animation: fadeIn .25s ease;
+  }
+  .kid-shop-box {
+    position: relative; width: 100%; max-width: 620px; max-height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    background: #FFF8E7; color: #2B2340; border-radius: 32px; padding: 22px 18px 20px; box-shadow: 0 20px 50px rgba(0,0,0,.25);
+    animation: kidPop .55s cubic-bezier(.3,1.6,.5,1);
+  }
+  .kid-shop-x { position: absolute; top: 12px; right: 12px; width: 42px; height: 42px; border-radius: 50%; border: 0; background: rgba(43,35,64,.08); color: #2B2340; font-size: 18px; font-weight: 800; cursor: pointer; }
+  .kid-shop-head { text-align: center; margin-bottom: 14px; }
+  .kid-shop-title { font-size: clamp(26px, 6.5vw, 34px); font-weight: 800; line-height: 1.1; }
+  .kid-shop-bal { font-size: clamp(18px, 4.6vw, 22px); font-weight: 700; margin-top: 4px; }
+  .kid-shop-bal b { font-size: 1.3em; color: #E08E00; }
+  .kid-rewards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  @media (min-width: 560px) { .kid-rewards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .kid-reward {
+    position: relative; border: 0; border-radius: 24px; padding: 16px 8px 14px; background: #fff; color: #2B2340; font-family: inherit; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 4px; box-shadow: 0 5px 0 rgba(0,0,0,.08); opacity: .62;
+    transition: transform .15s ease;
+  }
+  .kid-reward.can { opacity: 1; background: #FFE9A8; box-shadow: 0 5px 0 #F0C24B; }
+  .kid-reward:active { transform: translateY(3px) scale(.97); }
+  .kid-reward.wiggle { animation: kidWiggle .4s ease; }
+  .kid-reward-emoji { font-size: clamp(44px, 12vw, 58px); line-height: 1.05; }
+  .kid-reward-title { font-size: clamp(16px, 4.2vw, 19px); font-weight: 800; line-height: 1.15; text-align: center; }
+  .kid-reward-cost { font-size: 18px; font-weight: 800; color: #B87400; }
+  .kid-reward-miss { font-size: 13px; font-weight: 700; opacity: .7; }
+  .kid-shop-empty { text-align: center; font-size: 18px; font-weight: 700; opacity: .7; padding: 1rem 0; }
+  .kid-pend { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .kid-pend-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 20px; background: #fff; box-shadow: 0 3px 0 rgba(0,0,0,.06); }
+  .kid-pend-emoji { font-size: 34px; line-height: 1; flex-shrink: 0; }
+  .kid-pend-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .kid-pend-title { font-size: 18px; font-weight: 800; line-height: 1.15; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .kid-pend-sub { font-size: 14px; font-weight: 600; opacity: .65; }
+  .kid-pend-btn { flex-shrink: 0; border: 0; border-radius: 14px; height: 40px; min-width: 40px; padding: 0 12px; font-family: inherit; font-size: 16px; font-weight: 800; cursor: pointer; }
+  .kid-pend-btn.ok { background: #28B955; color: #fff; }
+  .kid-pend-btn.no { background: rgba(43,35,64,.08); color: #2B2340; }
+  .kid-shop-confirm { text-align: center; padding: 10px 0 4px; }
+  .kid-shop-big { font-size: 96px; line-height: 1.1; animation: kidBob 3.2s ease-in-out infinite; }
+  .kid-shop-q { font-size: clamp(24px, 6vw, 30px); font-weight: 800; line-height: 1.15; margin-top: 6px; }
+  .kid-shop-cost { font-size: 24px; font-weight: 800; color: #B87400; margin-top: 4px; }
+  .kid-shop-ask { font-size: 20px; font-weight: 700; opacity: .75; margin-top: 10px; }
+  .kid-shop-actions { display: flex; gap: 12px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
+  .kid-shop-btn { border: 0; border-radius: 20px; padding: 14px 22px; font-family: inherit; font-size: 20px; font-weight: 800; cursor: pointer; box-shadow: 0 5px 0 rgba(0,0,0,.12); }
+  .kid-shop-btn.yes { background: #28B955; color: #fff; }
+  .kid-shop-btn.no { background: #fff; color: #2B2340; }
+  .kid-shop-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,.12); }
+  .kid-fin-stars { background: rgba(255, 209, 102, .22); }
+  html.dark .kid-fin-stars { background: rgba(255, 209, 102, .12); }
+  .kid-rw-row + .kid-rw-row { padding-top: 8px; }
+  /* ---------- Haushalt: Wer macht wie viel? ---------- */
+  .hh-fair { background: rgba(255,255,255,.7); }
+  html.dark .hh-fair { background: rgba(255,255,255,.04); }
+  .hh-fair-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; }
+  .hh-fair-bar { height: 6px; border-radius: 99px; background: rgba(37,35,31,.07); overflow: hidden; margin-top: 4px; }
+  html.dark .hh-fair-bar { background: rgba(255,255,255,.08); }
+  .hh-fair-bar > span { display: block; height: 100%; border-radius: 99px; transition: width .4s ease; }
+  .hh-fair-chip { padding: 3px 9px; border-radius: 999px; border: 1px solid rgba(37,35,31,.12); font-size: 11px; color: rgba(37,35,31,.6); background: transparent; cursor: pointer; }
+  html.dark .hh-fair-chip { border-color: rgba(255,255,255,.12); color: rgba(255,255,255,.6); }
+  .hh-fair-chip.active { background: var(--c-pine); border-color: var(--c-pine); color: #fff; }
+  .hh-fair-rules { margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(37,35,31,.1); display: flex; flex-direction: column; gap: 4px; }
+  .hh-fair-rule { display: flex; align-items: baseline; gap: 8px; font-size: 12px; }
+  .hh-rotate { border-radius: 10px; background: rgba(37,35,31,.04); padding: 10px 12px; }
+  html.dark .hh-rotate { background: rgba(255,255,255,.05); }
+  /* Ergänzung zu vendor/pinn.css: feste Höhe der Werte-Zeile über den Diagramm-Balken */
+  .h-3 { height: 0.75rem; }
+
   /* ---------- Kinderseite (bunte Aufgaben-Seite für Kinder) ---------- */
   #kidPage {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 350;
@@ -3657,6 +3741,7 @@ window.PINN_LANGUAGES = [
         </div>
       </div>
       <div class="flex-1 min-h-0 overflow-y-auto px-6 py-4">
+        <div id="hhFairCard" class="mb-3"></div>
         <div id="roomList" class="flex flex-col gap-3"></div>
         <p id="emptyRooms" class="hidden text-sm text-ink/40 italic">Noch keine Räume – füge einen hinzu.</p>
       </div>
@@ -3989,6 +4074,18 @@ window.PINN_LANGUAGES = [
       <div id="trashBinMemberPicker" class="flex gap-2 flex-wrap mb-1"></div>
       <p class="text-[11px] text-ink/40 mb-4">Niemand ausgewählt = alle. So verschwindet die Aufgabe nicht aus dem Blick, wenn nach einer Person gefiltert wird.</p>
 
+      <div id="trashBinRotateWrap" class="hh-rotate hidden mb-4">
+        <label class="flex items-center gap-2 text-sm cursor-pointer select-none">
+          <input id="trashBinRotate" type="checkbox" class="w-4 h-4" />
+          <span>🔄 Reihum verteilen</span>
+        </label>
+        <select id="trashBinRotateMode" class="hidden mt-2 w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white">
+          <option value="reihum">Der Reihe nach</option>
+          <option value="fair">Fair – wer zuletzt am wenigsten gemacht hat</option>
+        </select>
+        <p class="text-[11px] text-ink/40 mt-1">Jedes Mal ist nur eine Person dran. Wer seine Aufgabe verpasst, bleibt dran. Wer wie viel erledigt, zeigt „⚖️ Wer macht wie viel?“ auf der Haushalt-Seite.</p>
+      </div>
+
       <div class="flex items-center gap-1.5 mb-2">
         <label class="block text-xs uppercase tracking-wide text-ink/40">Smarthome</label>
         <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Start-Knöpfe erscheinen direkt an der Aufgabe und starten die Aktion – über Apple-Kurzbefehle oder Home Assistant (z. B. Saugen, Wischen oder beides). „Beim Abhaken“ startet zusätzlich eine Aktion, sobald die Aufgabe erledigt ist – z. B. eine Erinnerungs-LED wieder ausschalten. „Automatisch starten“ läuft am Fälligkeitstag ab der Uhrzeit. Geräte richtest du unter Einstellungen → Smarthome oder über das Haus-Symbol oben auf der Haushalt-Seite ein.">i</button>
@@ -4093,6 +4190,18 @@ window.PINN_LANGUAGES = [
       <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Zuständig</label>
       <div id="roomScheduleMemberPicker" class="flex gap-2 flex-wrap mb-1"></div>
       <p class="text-[11px] text-ink/40 mb-3">Niemand ausgewählt = alle. So verschwindet die Aufgabe nicht aus dem Blick, wenn nach einer Person gefiltert wird.</p>
+
+      <div id="roomScheduleRotateWrap" class="hh-rotate hidden mb-4">
+        <label class="flex items-center gap-2 text-sm cursor-pointer select-none">
+          <input id="roomScheduleRotate" type="checkbox" class="w-4 h-4" />
+          <span>🔄 Reihum verteilen</span>
+        </label>
+        <select id="roomScheduleRotateMode" class="hidden mt-2 w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white">
+          <option value="reihum">Der Reihe nach</option>
+          <option value="fair">Fair – wer zuletzt am wenigsten gemacht hat</option>
+        </select>
+        <p class="text-[11px] text-ink/40 mt-1">Jedes Mal ist nur eine Person dran. Wer seine Aufgabe verpasst, bleibt dran. Wer wie viel erledigt, zeigt „⚖️ Wer macht wie viel?“ auf der Haushalt-Seite.</p>
+      </div>
 
       <div class="flex items-center gap-1.5 mb-2">
         <label class="block text-xs uppercase tracking-wide text-ink/40">Smarthome</label>
@@ -7014,6 +7123,15 @@ window.PINN_LANGUAGES = [
           <span>Taschengeld auf der Kinderseite anzeigen 🐷</span>
         </label>
         <p class="text-xs text-ink/40 mt-1">Zeigt den Betrag, die nächste Auszahlung und – falls mitgeführt – das Guthaben. Festgelegt wird das Taschengeld unter Finanzen → Taschengeld.</p>
+        <label class="flex items-center gap-2 text-sm cursor-pointer select-none mt-3">
+          <input id="memberKidStars" type="checkbox" class="w-4 h-4" />
+          <span>Sterne sammeln &amp; eintauschen ⭐</span>
+        </label>
+        <p class="text-xs text-ink/40 mt-1">Jede erledigte Aufgabe bringt Sterne. Auf der Kinderseite tauscht das Kind sie gegen Belohnungen ein – Taschengeld, Medienzeit oder Wünsche. Ihr bestätigt mit einem Tipp.</p>
+        <div id="memberKidStarsOpts" class="hidden mt-2">
+          <p id="memberKidStarsSummary" class="text-xs text-ink/60 mb-2"></p>
+          <button type="button" id="memberKidRewardsEdit" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">Belohnungen bearbeiten</button>
+        </div>
       </div>
       <input id="memberKidConfigState" type="hidden" value="" />
     </div>
@@ -7078,6 +7196,35 @@ window.PINN_LANGUAGES = [
       <div class="flex gap-2">
         <button type="button" id="kidRoutineCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
         <button type="button" id="kidRoutineApply" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Übernehmen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Kinderseite: Belohnungen für Sterne bearbeiten -->
+<div id="kidRewardsModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[210] grid place-items-center p-6">
+  <div class="bg-white rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto fade-in">
+    <h3 id="kidRewardsTitle" class="font-serif text-lg mb-1">Belohnungen</h3>
+    <p class="text-xs text-ink/50 mb-4">Legt fest, was es für wie viele Sterne gibt. Wünscht sich das Kind etwas, bekommt ihr eine Benachrichtigung und bestätigt auf der Kinderseite oder unter Finanzen → Taschengeld. Taschengeld-Belohnungen kommen danach ins Guthaben und als Ausgabe unter „Kinder“.</p>
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="kidRewardsBonus">Extra-Sterne für „Alles geschafft“</label>
+    <select id="kidRewardsBonus" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white mb-4">
+      <option value="0">Keine</option>
+      <option value="1">1 ⭐</option>
+      <option value="2">2 ⭐</option>
+      <option value="3">3 ⭐</option>
+      <option value="4">4 ⭐</option>
+      <option value="5">5 ⭐</option>
+    </select>
+    <p class="text-xs uppercase tracking-wide text-ink/40 mb-2">Belohnungen</p>
+    <div id="kidRewardsList" class="flex flex-col gap-2 mb-2"></div>
+    <button type="button" id="kidRewardsAdd" class="text-xs text-pine font-medium px-2 py-1 rounded-lg hover:bg-ink/5 mb-3">+ Belohnung</button>
+    <p class="text-[11px] text-ink/40 mb-3">Wie viele Sterne eine Aufgabe bringt (1–3), stellst du unter „Aufgaben &amp; Tageszeiten bearbeiten“ ein.</p>
+    <p id="kidRewardsStatus" class="text-xs text-red-500 mb-2"></p>
+    <div class="flex items-center justify-between gap-2">
+      <button type="button" id="kidRewardsDefaults" class="px-2 py-2 rounded-lg text-xs text-ink/50 hover:text-pine transition">Vorschläge laden</button>
+      <div class="flex gap-2">
+        <button type="button" id="kidRewardsCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
+        <button type="button" id="kidRewardsApply" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Übernehmen</button>
       </div>
     </div>
   </div>
@@ -9906,6 +10053,7 @@ async function loadMainAdminFamilies() {
       <div class="flex items-center gap-2 py-1.5 border-t border-ink/5">
         <div class="flex-1 min-w-0">
           <p class="text-sm truncate">${escapeHtml(p.username)}${p.mustChangePassword ? ' <span class="text-xs text-mustard">Passwort ausstehend</span>' : ''}</p>
+          ${p.rolle === 'admin' ? `<label class="flex items-center gap-1.5 text-[11px] text-ink/50 mt-0.5 cursor-pointer select-none"><input type="checkbox" class="ma-sys" data-id="${p.id}"${p.systemrechte ? ' checked' : ''} /><span>🛟 darf Updates &amp; Wiederherstellung</span></label>` : ''}
         </div>
         <select class="ma-role shrink-0 rounded-lg border border-ink/15 px-2 py-1 text-xs bg-white" data-id="${p.id}">
           <option value="admin"${p.rolle === 'admin' ? ' selected' : ''}>Admin</option>
@@ -9943,6 +10091,8 @@ async function loadMainAdminFamilies() {
     loadMainAdminFamilies();
   };
   list.querySelectorAll('.ma-dev').forEach(el => el.addEventListener('click', () => openDevModal(el.dataset.id, el.dataset.name)));
+  list.querySelectorAll('.ma-sys').forEach(el => el.addEventListener('change', () =>
+    run('/api/pinn/system/rechte', { id: el.dataset.id, an: el.checked }, el.checked ? 'Darf jetzt Updates einspielen und Sicherungen zurückholen.' : 'Recht für Updates und Wiederherstellung entzogen.')));
   list.querySelectorAll('.ma-role').forEach(el => el.addEventListener('change', () =>
     run('/api/pinn/users/set-role', { id: el.dataset.id, rolle: el.value }, 'Rolle geändert.')));
   list.querySelectorAll('.ma-reset').forEach(el => el.addEventListener('click', () => {
@@ -13779,9 +13929,10 @@ function normalizeKidConfig(kid) {
   const tasks = Array.isArray(k.tasks)
     ? k.tasks.filter(t => t && t.id && t.title).map(t => ({
         id: String(t.id), emoji: t.emoji || '⭐', title: String(t.title), period: valid.has(t.period) ? t.period : 'ganztags',
+        stars: Math.max(1, Math.min(3, Number(t.stars) || 1)),
       }))
     : [];
-  return { enabled: !!k.enabled, showAllowance: !!k.showAllowance, sonne: !!k.sonne, times, tasks };
+  return { enabled: !!k.enabled, showAllowance: !!k.showAllowance, sonne: !!k.sonne, times, tasks, stars: normalizeKidStars(k.stars) };
 }
 // Tageszeiten für heute: „Abends“ auf Wunsch schon ab Sonnenuntergang (Zuhause), wenn der früher ist
 function kidMinToTime(min) { return String(Math.floor(min / 60)).padStart(2, '0') + ':' + String(min % 60).padStart(2, '0'); }
@@ -13828,6 +13979,11 @@ function updateMemberKidSection() {
   const count = cfg.tasks.length;
   document.getElementById('memberKidSummary').textContent =
     `${count} ${count === 1 ? 'Aufgabe' : 'Aufgaben'} · Morgens ab ${cfg.times.morgens} · Abends ab ${cfg.times.abends} · Schlafenszeit ab ${cfg.times.nacht}`;
+  // Sterne & Belohnungen
+  const st = normalizeKidStars(cfg.stars);
+  document.getElementById('memberKidStars').checked = st.on;
+  document.getElementById('memberKidStarsOpts').classList.toggle('hidden', !st.on);
+  document.getElementById('memberKidStarsSummary').textContent = `Belohnungen: ${st.rewards.length} · Extra-Sterne für „Alles geschafft“: ${st.bonus}`;
   // Verstecktes Feld, damit "Abbrechen" ungespeicherte Änderungen an der Kinderseite erkennt
   document.getElementById('memberKidConfigState').value = JSON.stringify(cfg);
 }
@@ -13886,6 +14042,7 @@ function kidRoutineRowHtml(t, list) {
     </div>
     <div class="flex items-center gap-1 mt-1 pl-[46px]">
       <select class="kid-edit-period rounded-lg border border-ink/15 px-2 py-1 text-xs bg-white">${options}</select>
+      ${pendingKidConfig && pendingKidConfig.stars && pendingKidConfig.stars.on ? `<select class="kid-edit-stars rounded-lg border border-ink/15 px-1.5 py-1 text-xs bg-white" title="Sterne für diese Aufgabe" aria-label="Sterne für diese Aufgabe" data-no-i18n>${[1, 2, 3].map(n => `<option value="${n}"${(Number(t.stars) || 1) === n ? ' selected' : ''}>${'⭐'.repeat(n)}</option>`).join('')}</select>` : ''}
       <button type="button" class="kid-edit-up w-7 h-7 rounded-lg text-ink/40 hover:text-pine transition${idx === 0 ? ' invisible' : ''}" title="Nach oben" aria-label="Nach oben">↑</button>
       <button type="button" class="kid-edit-down w-7 h-7 rounded-lg text-ink/40 hover:text-pine transition${idx === list.length - 1 ? ' invisible' : ''}" title="Nach unten" aria-label="Nach unten">↓</button>
     </div>
@@ -13942,7 +14099,7 @@ document.getElementById('kidTaskGroups').addEventListener('click', (e) => {
   const btn = e.target.closest('button');
   if (!btn) return;
   if (btn.classList.contains('kid-add-task')) {
-    const task = { id: kidUid(), emoji: '⭐', title: '', period: btn.dataset.period };
+    const task = { id: kidUid(), emoji: '⭐', title: '', period: btn.dataset.period, stars: 1 };
     kidEditTasks.push(task);
     kidEmojiOpenFor = null;
     renderKidRoutineTasks();
@@ -14104,6 +14261,7 @@ function renderKidPage() {
   const page = document.getElementById('kidPage');
   const m = kidPageMemberId ? memberById(kidPageMemberId) : null;
   if (!m || !isKidPageEnabled(m)) { closeKidPage(); return; }
+  if (kidShopView) setTimeout(kidRenderShop, 0); // offene Belohnungen mit neuem Stand zeichnen
   const cfg = normalizeKidConfig(m.kid);
   const now = new Date();
   const today = isoDate(now);
@@ -14121,6 +14279,7 @@ function renderKidPage() {
       <div class="kid-hello">Schlaf gut, ${name}!</div>
       <div class="kid-sub">Morgen früh geht's weiter.</div>
       <div class="kid-empty-emoji">😴</div>
+      ${kidBankHtml(m)}
       ${kidAllowanceHtml(m)}
     </div>`;
     return;
@@ -14142,6 +14301,7 @@ function renderKidPage() {
       <div class="kid-hello">${hello}, ${name}!</div>
       <div class="kid-sub">Gerade gibt es nichts zu tun – spiel schön!${next && period !== 'abends' ? `<br>Ab ${escapeHtml(next)} Uhr geht's weiter.` : ''}</div>
       <div class="kid-empty-emoji">🎈</div>
+      ${kidBankHtml(m)}
       ${kidAllowanceHtml(m)}
     </div>`;
     return;
@@ -14152,6 +14312,7 @@ function renderKidPage() {
     ${kidAvatarHtml(m)}
     <div class="kid-hello">${hello}, ${name}!</div>
     <div class="kid-sub">${sub}</div>
+    ${kidBankHtml(m)}
     <div class="kid-stars">${list.map(t => `<span class="kid-star${kidIsDone(m, t.id, today) ? ' on' : ''}" data-star="${kidAttr(t.id)}">⭐</span>`).join('')}</div>
     <div id="kidDoneBanner" class="kid-done-banner${allDone ? ' show' : ''}">🏆 Alles geschafft! Super, ${name}!</div>
     <div class="kid-grid">
@@ -14207,6 +14368,10 @@ function kidToggleTask(taskId, card) {
   const nowDone = done[taskId] !== today;
   if (nowDone) done[taskId] = today; else delete done[taskId];
   m.kidDone = done;
+  const starPeriod = kidCurrentPeriod(cfg, new Date());
+  const starList = kidTasksForPeriod(cfg, starPeriod);
+  const starAll = starList.length > 0 && starList.every(t => done[t.id] === today);
+  const starsGained = kidStarsOnToggle(m, cfg.tasks.find(t => t.id === taskId), nowDone, starPeriod, starAll);
   saveMembers();
 
   card.classList.toggle('done', nowDone);
@@ -14224,6 +14389,7 @@ function kidToggleTask(taskId, card) {
   const allDone = cards.length > 0 && cards.every(c => c.classList.contains('done'));
   const banner = document.getElementById('kidDoneBanner');
   if (banner) banner.classList.toggle('show', allDone);
+  kidRefreshBank(m, starsGained);
 
   // Hinweis an die anderen Familienmitglieder: der Server merkt ihn vor und schickt ihn nach
   // 10 Sekunden - wird das Häkchen vorher entfernt, entfällt er.
@@ -14273,10 +14439,12 @@ function closeKidPage() {
   kidPageTimer = null;
   const page = document.getElementById('kidPage');
   page.className = 'hidden';
+  kidCloseShop();
   const celebrate = page.querySelector('.kid-celebrate');
   if (celebrate) celebrate.remove();
 }
 document.getElementById('kidContent').addEventListener('click', (e) => {
+  if (e.target.closest('#kidBankBtn')) { kidOpenShop(); return; }
   const card = e.target.closest('.kid-card');
   if (card) kidToggleTask(card.dataset.task, card);
 });
@@ -14286,8 +14454,523 @@ document.getElementById('kidPageSound').addEventListener('click', () => {
   kidUpdateSoundButton();
   kidPlaySound('done');
 });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && kidPageMemberId) closeKidPage(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && kidPageMemberId) { if (kidShopView) kidCloseShop(); else closeKidPage(); } });
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') kidTick(); });
+
+/* ==========================================================
+   Sterne & Belohnungen (Kinderseite)
+   ----------------------------------------------------------
+   - m.kid.stars = { on, bonus, rewards: [{ id, emoji, title, cost, type: 'geld'|'medien'|'wunsch', value }] }
+     Jede Aufgabe der Kinderseite bringt t.stars Sterne (1–3, Standard 1); bonus = Extra-Sterne, wenn alle
+     Aufgaben der aktuellen Tageszeit geschafft sind.
+   - m.kidStarLog = [{ id, d, n, k: 'task'|'bonus'|'extra'|'tausch', t, e, r, typ, val, s, ts }]
+     Liste mit festen IDs (z. B. 't-<Aufgabe>-<Tag>'), damit sich Änderungen mehrerer Geräte sauber
+     zusammenführen (pinnMergeIdList). Einträge älter als ca. 4 Monate wandern in m.kidStarBase = { n, bis }.
+   - Eintauschen: Das Kind wählt eine Belohnung, die Sterne sind sofort reserviert (s = 'offen').
+     Eltern bestätigen auf der Kinderseite oder unter Finanzen → Taschengeld; tippt ein Elternteil selbst
+     auf der Kinderseite, gilt das als bestätigt. Taschengeld-Belohnungen landen im Guthaben des Kindes
+     (falls mitgeführt) und als Ausgabe unter „Kinder“ – in der Kasse, in der das Taschengeld steht.
+     Abgelehnt (s = 'nein') = die Sterne zählen wieder.
+   ========================================================== */
+const KID_REWARD_TYPES = [
+  { id: 'geld', label: 'Taschengeld', icon: '💶' },
+  { id: 'medien', label: 'Medienzeit', icon: '📺' },
+  { id: 'wunsch', label: 'Wunsch', icon: '🎁' },
+];
+const KID_REWARD_EMOJIS = ['💶', '🪙', '🐷', '📺', '🎮', '📱', '🎧', '🍦', '🍫', '🍕', '🍿', '🎬', '🎡', '🏊', '⚽', '🧸', '📚', '🎨', '🛝', '🐴', '🎁', '⭐', '🌙', '🚲'];
+let kidShopView = null;       // offene Belohnungs-Ansicht auf der Kinderseite: { confirm: Belohnungs-ID }
+let kidRewardsEdit = [];      // Arbeitskopie im Popup „Belohnungen bearbeiten“
+let kidRewardsEmojiFor = null;
+
+function kidRid(p) { return (p || 'r') + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function kidDefaultRewards() {
+  return [
+    ['📺', '30 Min. Medienzeit', 'medien', 30, 8],
+    ['🎮', '1 Std. Medienzeit', 'medien', 60, 15],
+    ['💶', '1 € extra', 'geld', 1, 10],
+    ['🍦', 'Eis essen gehen', 'wunsch', 0, 20],
+    ['🎬', 'Kinoabend', 'wunsch', 0, 60],
+  ].map(([emoji, title, type, value, cost]) => {
+    // Vorschläge in der eingestellten Sprache (die Titel werden gespeichert und nicht mehr übersetzt)
+    let t = title;
+    try { if (window.PINN_I18N && PINN_I18N.t) t = PINN_I18N.t(title) || title; } catch (e) { t = title; }
+    if (type === 'geld') t = t.replace('€', kidCurSymbol());
+    return { id: kidRid(), emoji, title: t, type, value, cost };
+  });
+}
+function normalizeKidStars(s) {
+  const x = (s && typeof s === 'object') ? s : {};
+  const types = new Set(KID_REWARD_TYPES.map(t => t.id));
+  const rewards = Array.isArray(x.rewards) ? x.rewards.filter(r => r && r.id && r.title).map(r => ({
+    id: String(r.id),
+    emoji: r.emoji || '🎁',
+    title: String(r.title).slice(0, 60),
+    type: types.has(r.type) ? r.type : 'wunsch',
+    value: Math.max(0, Math.min(100000, Number(r.value) || 0)),
+    cost: Math.max(1, Math.min(9999, Math.round(Number(r.cost) || 1))),
+  })) : [];
+  return { on: !!x.on, bonus: Math.max(0, Math.min(5, Math.round(Number(x.bonus) || 0))), rewards };
+}
+function kidStarsOn(m) { return !!(m && m.kid && m.kid.enabled && m.kid.stars && m.kid.stars.on); }
+function kidStarLog(m) { return Array.isArray(m && m.kidStarLog) ? m.kidStarLog.filter(e => e && e.id) : []; }
+function kidStarBalance(m) {
+  const base = (m && m.kidStarBase && Number(m.kidStarBase.n)) || 0;
+  return base + kidStarLog(m).reduce((s, e) => s + (e.s === 'nein' ? 0 : (Number(e.n) || 0)), 0);
+}
+function kidStarPending(m) { return kidStarLog(m).filter(e => e.k === 'tausch' && e.s === 'offen'); }
+// Alte Einträge zusammenfassen – mit festem Stichtag (Monatsanfang), damit zwei Geräte dasselbe Ergebnis haben
+function kidStarCompact(m) {
+  const cutoff = isoDate(new Date(Date.now() - 120 * 86400000)).slice(0, 7) + '-01';
+  const log = kidStarLog(m);
+  const old = log.filter(e => (e.d || '') < cutoff && !(e.k === 'tausch' && e.s === 'offen'));
+  if (!old.length) return;
+  const base = (m.kidStarBase && typeof m.kidStarBase === 'object') ? m.kidStarBase : { n: 0, bis: '' };
+  m.kidStarBase = { n: (Number(base.n) || 0) + old.reduce((s, e) => s + (e.s === 'nein' ? 0 : (Number(e.n) || 0)), 0), bis: cutoff };
+  const drop = new Set(old.map(e => e.id));
+  m.kidStarLog = log.filter(e => !drop.has(e.id));
+}
+// Beim Abhaken/Zurücknehmen auf der Kinderseite: Sterne gutschreiben bzw. wieder abziehen
+function kidStarsOnToggle(m, task, nowDone, period, allDone) {
+  if (!kidStarsOn(m) || !task) return 0;
+  const today = isoDate(new Date());
+  const st = normalizeKidStars(m.kid.stars);
+  const tid = 't-' + task.id + '-' + today;
+  const bid = 'b-' + period + '-' + today;
+  let log = kidStarLog(m).filter(e => e.id !== tid);
+  let gained = 0;
+  if (nowDone) {
+    const n = Math.max(1, Math.min(3, Number(task.stars) || 1));
+    log.push({ id: tid, d: today, n, k: 'task', t: task.title, ts: Date.now() });
+    gained += n;
+  }
+  const hadBonus = log.some(e => e.id === bid);
+  if (allDone && st.bonus > 0 && !hadBonus) {
+    log.push({ id: bid, d: today, n: st.bonus, k: 'bonus', t: 'Alles geschafft', ts: Date.now() });
+    gained += st.bonus;
+  }
+  if (!allDone && hadBonus) log = log.filter(e => e.id !== bid);
+  m.kidStarLog = log;
+  kidStarCompact(m);
+  return gained;
+}
+// Darf das angemeldete Profil Wünsche bestätigen? (nicht das Kind selbst, keine Kindersicherung, keine Gäste)
+function kidCanApprove(m) {
+  try {
+    if (!m || childLockActive() || isCurrentUserGuest()) return false;
+    if (typeof isDashboardKidSession === 'function' && isDashboardKidSession()) return false;
+    const me = currentMember();
+    return !!me && me.id !== m.id;
+  } catch (e) { return false; }
+}
+
+/* ---------- Kinderseite: Sterne-Zähler und Belohnungen ---------- */
+function kidBankHtml(m) {
+  if (!kidStarsOn(m)) return '';
+  const pend = kidStarPending(m).length;
+  return `<button type="button" class="kid-bank" id="kidBankBtn">
+    <span class="kid-bank-star" aria-hidden="true">⭐</span>
+    <span class="kid-bank-num" id="kidBankNum" data-no-i18n>${kidStarBalance(m)}</span>
+    <span class="kid-bank-label">Sterne</span>
+    <span class="kid-bank-shop"><span>🎁 Belohnungen</span>${pend ? `<span class="kid-bank-pend" data-no-i18n>${pend}</span>` : ''}</span>
+  </button>`;
+}
+function kidRefreshBank(m, gained) {
+  const btn = document.getElementById('kidBankBtn');
+  if (!btn || !m) return;
+  const tmp = document.createElement('div');
+  tmp.innerHTML = kidBankHtml(m);
+  const fresh = tmp.firstElementChild;
+  if (!fresh) { btn.remove(); return; }
+  btn.replaceWith(fresh);
+  if (gained > 0) {
+    fresh.classList.add('bump');
+    const r = fresh.getBoundingClientRect();
+    const fly = document.createElement('span');
+    fly.className = 'kid-bank-plus';
+    fly.textContent = '+' + gained;
+    fly.style.left = (r.left + r.width / 2) + 'px';
+    fly.style.top = (r.top) + 'px';
+    document.body.appendChild(fly);
+    setTimeout(() => fly.remove(), 1200);
+  }
+}
+function kidOpenShop(confirmId) {
+  const m = memberById(kidPageMemberId);
+  if (!m || !kidStarsOn(m)) return;
+  kidShopView = { confirm: confirmId || '' };
+  kidRenderShop();
+}
+function kidCloseShop() {
+  kidShopView = null;
+  const el = document.querySelector('#kidPage .kid-shop');
+  if (el) el.remove();
+}
+function kidRenderShop() {
+  const page = document.getElementById('kidPage');
+  const m = memberById(kidPageMemberId);
+  if (!m || !kidShopView || !kidStarsOn(m)) { kidCloseShop(); return; }
+  let box = page.querySelector('.kid-shop');
+  if (!box) {
+    box = document.createElement('div');
+    box.className = 'kid-shop';
+    box.addEventListener('click', kidShopClick);
+    page.appendChild(box);
+  }
+  const st = normalizeKidStars(m.kid.stars);
+  const bal = kidStarBalance(m);
+  const parent = kidCanApprove(m);
+  const conf = kidShopView.confirm ? st.rewards.find(r => r.id === kidShopView.confirm) : null;
+  let inner;
+  if (conf) {
+    inner = `<div class="kid-shop-confirm">
+      <div class="kid-shop-big">${escapeHtml(conf.emoji)}</div>
+      <div class="kid-shop-q">${escapeHtml(conf.title)}</div>
+      <div class="kid-shop-cost"><span data-no-i18n>${conf.cost}</span> ⭐</div>
+      <div class="kid-shop-ask">Eintauschen?</div>
+      <div class="kid-shop-actions">
+        <button type="button" class="kid-shop-btn no" data-shop="back">Doch nicht</button>
+        <button type="button" class="kid-shop-btn yes" data-shop="buy" data-id="${kidAttr(conf.id)}">Ja, bitte! 🎉</button>
+      </div>
+    </div>`;
+  } else {
+    const cards = st.rewards.map(r => {
+      const can = bal >= r.cost;
+      return `<button type="button" class="kid-reward${can ? ' can' : ''}" data-shop="pick" data-id="${kidAttr(r.id)}">
+        <span class="kid-reward-emoji">${escapeHtml(r.emoji)}</span>
+        <span class="kid-reward-title">${escapeHtml(r.title)}</span>
+        <span class="kid-reward-cost"><span data-no-i18n>${r.cost}</span> ⭐</span>
+        ${can ? '' : `<span class="kid-reward-miss">noch ${r.cost - bal} ⭐</span>`}
+      </button>`;
+    }).join('');
+    const pend = kidStarPending(m).map(e => `<div class="kid-pend-row">
+        <span class="kid-pend-emoji">${escapeHtml(e.e || '🎁')}</span>
+        <span class="kid-pend-main"><span class="kid-pend-title">${escapeHtml(e.t || '')}</span><span class="kid-pend-sub">⏳ wartet auf OK</span></span>
+        ${parent ? `<button type="button" class="kid-pend-btn no" data-shop="nein" data-id="${kidAttr(e.id)}" aria-label="Ablehnen">✕</button><button type="button" class="kid-pend-btn ok" data-shop="ok" data-id="${kidAttr(e.id)}">OK</button>` : ''}
+      </div>`).join('');
+    inner = `<div class="kid-shop-head">
+        <div class="kid-shop-title">🎁 Belohnungen</div>
+        <div class="kid-shop-bal"><span>Du hast</span> <b data-no-i18n>${bal}</b> ⭐</div>
+      </div>
+      ${pend ? `<div class="kid-pend">${pend}</div>` : ''}
+      ${cards ? `<div class="kid-rewards">${cards}</div>` : '<p class="kid-shop-empty">Noch keine Belohnungen – frag deine Eltern! 😊</p>'}`;
+  }
+  box.innerHTML = `<div class="kid-shop-box">
+    <button type="button" class="kid-shop-x" data-shop="close" aria-label="Schließen">✕</button>
+    ${inner}
+  </div>`;
+}
+function kidShopClick(ev) {
+  if (ev.target.classList && ev.target.classList.contains('kid-shop')) { kidCloseShop(); return; }
+  const b = ev.target.closest('[data-shop]');
+  if (!b) return;
+  const act = b.dataset.shop;
+  const id = b.dataset.id;
+  const m = memberById(kidPageMemberId);
+  if (!m) return;
+  if (act === 'close') kidCloseShop();
+  else if (act === 'back') { kidShopView.confirm = ''; kidRenderShop(); }
+  else if (act === 'pick') {
+    const r = normalizeKidStars(m.kid.stars).rewards.find(x => x.id === id);
+    if (!r) return;
+    if (kidStarBalance(m) < r.cost) {
+      b.classList.remove('wiggle');
+      void b.offsetWidth;
+      b.classList.add('wiggle');
+      kidPlaySound('undo');
+      return;
+    }
+    kidShopView.confirm = id;
+    kidRenderShop();
+    kidPlaySound('done');
+  } else if (act === 'buy') kidRedeem(m, id);
+  else if (act === 'ok' || act === 'nein') kidDecide(m, id, act === 'ok');
+}
+function kidRedeem(m, rewardId) {
+  const r = normalizeKidStars(m.kid.stars).rewards.find(x => x.id === rewardId);
+  if (!r || kidStarBalance(m) < r.cost) { kidShopView.confirm = ''; kidRenderShop(); return; }
+  const entry = { id: kidRid('x'), d: isoDate(new Date()), n: -r.cost, k: 'tausch', t: r.title, e: r.emoji, r: r.id, typ: r.type, val: r.value, s: 'offen', ts: Date.now() };
+  m.kidStarLog = [...kidStarLog(m), entry];
+  const parent = kidCanApprove(m);
+  if (parent) kidApply(m, entry, true); // ein Elternteil tippt selbst: gleich bestätigt
+  saveMembers();
+  if (!parent) {
+    apiFetch('/api/pinn/aufgaben/belohnung', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ memberId: m.id, titel: r.title, sterne: r.cost }),
+    }).catch(() => { /* ohne Benachrichtigung weiter */ });
+  }
+  kidShopView.confirm = '';
+  kidRenderShop();
+  kidRefreshBank(m, 0);
+  kidConfettiRain();
+  kidPlaySound('win');
+}
+function kidApply(m, e, ok) {
+  const me = currentMember();
+  m.kidStarLog = kidStarLog(m).map(x => x.id === e.id ? { ...x, s: ok ? 'ok' : 'nein', by: me ? me.id : '' } : x);
+  if (ok && e.typ === 'geld' && Number(e.val) > 0) {
+    try { kidRewardPayout(m, e); } catch (err) { console.warn('Belohnung: Buchung fehlgeschlagen', err); }
+  }
+}
+function kidDecide(m, entryId, ok) {
+  const e = kidStarLog(m).find(x => x.id === entryId && x.s === 'offen');
+  if (!e) return;
+  kidApply(m, e, ok);
+  saveMembers();
+  if (kidShopView) kidRenderShop();
+  if (kidPageMemberId === m.id) kidRefreshBank(m, 0);
+  if (typeof currentView !== 'undefined' && currentView === 'finanzen') renderFinance();
+  if (typeof finShowToast === 'function') finShowToast(ok ? `Belohnung für ${memberLabel(m)} bestätigt.` : `Abgelehnt – ${memberLabel(m)} bekommt die Sterne zurück.`);
+}
+// Buchung in der Kasse, in der das Taschengeld des Kindes steht (sonst in der Standard- bzw. aktiven Kasse)
+function kidWithAllowanceFinance(m, fn) {
+  if (typeof kassenActiveMode !== 'function' || !kassenActiveMode()) { if (finance) fn(); return; }
+  const order = [activeKasse(), ...kassenSorted().filter(k => k.id !== activeKasseId)].filter(Boolean);
+  let target = order.find(k => {
+    const f = k.id === activeKasseId ? finance : normalizeFinance(kasseWorkingData(k));
+    return f && (f.recurring.some(r => r.allowanceFor === m.id) || f.pocketMoney.some(p => p.id === m.id));
+  });
+  if (!target) target = kasseById(kasseDefaultId()) || activeKasse();
+  if (!target || target.id === activeKasseId) { if (finance) fn(); return; }
+  kassenCapture();
+  const prev = { id: activeKasseId, fin: finance, json: kasseWorkingJson };
+  activeKasseId = target.id;
+  finance = normalizeFinance(kasseWorkingData(target));
+  kasseWorkingJson = JSON.stringify(finance);
+  try {
+    fn();
+    kassenCapture();
+  } finally {
+    activeKasseId = prev.id;
+    finance = prev.fin;
+    kasseWorkingJson = prev.json;
+    try { rebuildAusgaben(); } catch (e) { /* egal */ }
+  }
+}
+function kidRewardPayout(m, e) {
+  if (isCurrentUserGuest()) return;
+  const amount = finRound(Number(e.val) || 0);
+  if (!(amount > 0)) return;
+  kidWithAllowanceFinance(m, () => {
+    const date = finTodayIso();
+    const expId = newRecordId();
+    finQueueSave({
+      id: expId, amount, date, category: FIN_KIDS_CATEGORY, title: '⭐ ' + (e.t || 'Belohnung'),
+      note: '', paidBy: currentMember() ? currentMember().id : '', link: 'kind:' + m.id,
+      store: '', listId: '', items: [], createdBy: (currentUser() && currentUser().id) || '', created: new Date().toISOString(),
+    });
+    const pocket = finPocket(m.id);
+    if (pocket && pocket.track) {
+      finance.pocketLedger = [...finance.pocketLedger, { id: 'p' + newRecordId(), kid: m.id, date, amount, note: '⭐ ' + (e.t || ''), expenseId: expId }].slice(-1500);
+    }
+  });
+}
+// Push-Link „/?sterne=<Mitglied>“: Kinderseite mit den Belohnungen öffnen
+function kidStarsHandleUrl() {
+  try {
+    const params = new URLSearchParams(location.search);
+    const id = params.get('sterne');
+    if (!id) return;
+    params.delete('sterne');
+    const q = params.toString();
+    history.replaceState(null, '', location.pathname + (q ? '?' + q : '') + location.hash);
+    const m = memberById(id);
+    if (m && isKidPageEnabled(m)) {
+      openKidPage(m.id);
+      if (kidStarsOn(m)) kidOpenShop();
+    }
+  } catch (e) { /* egal */ }
+}
+
+/* ---------- Finanzen → Taschengeld: Sterne je Kind ---------- */
+function kidStarsFinHtml(m) {
+  if (!kidStarsOn(m)) return '';
+  const rows = kidStarPending(m).map(e => `
+    <div class="flex items-center gap-2 text-xs py-1">
+      <span class="text-base shrink-0">${escapeHtml(e.e || '🎁')}</span>
+      <span class="flex-1 min-w-0 truncate"><span data-no-i18n>${escapeHtml(e.t || '')}</span> · <span data-no-i18n>${-(Number(e.n) || 0)}</span> ⭐${e.typ === 'geld' && Number(e.val) > 0 ? ` · <span data-no-i18n>${escapeHtml(fmtEur(e.val))}</span>` : ''}</span>
+      <button type="button" data-star-act="nein" data-id="${escapeHtml(e.id)}" class="shrink-0 px-2 py-1 rounded-lg border border-ink/15 bg-white text-ink/60 hover:text-red-500 transition">Ablehnen</button>
+      <button type="button" data-star-act="ok" data-id="${escapeHtml(e.id)}" class="shrink-0 px-2.5 py-1 rounded-lg bg-pine text-white hover:bg-pine/90 transition">OK</button>
+    </div>`).join('');
+  return `
+    <div class="mt-3 rounded-xl p-3 kid-fin-stars">
+      <div class="flex items-center justify-between gap-3 flex-wrap">
+        <div>
+          <div class="text-[10px] uppercase tracking-wide text-ink/40">⭐ Sterne</div>
+          <div class="text-xl font-semibold" data-no-i18n>${kidStarBalance(m)}</div>
+        </div>
+        <button type="button" data-star-act="extra" class="px-2.5 py-1.5 rounded-lg border border-ink/15 bg-white text-xs text-ink/70 hover:text-pine hover:border-pine transition">+ Sterne</button>
+      </div>
+      ${rows ? `<div class="mt-2"><div class="text-[11px] text-ink/50 mb-1">Wartet auf euer OK</div>${rows}</div>` : ''}
+    </div>`;
+}
+function kidStarFinAction(kidId, act, id) {
+  const m = memberById(kidId);
+  if (!m) return;
+  if (act !== 'extra') { kidDecide(m, id, act === 'ok'); return; }
+  const raw = prompt('Wie viele Sterne? (Minus zum Abziehen, z. B. -2)', '1');
+  if (raw === null) return;
+  const n = Math.round(Number(String(raw).replace(',', '.').trim()));
+  if (!n || !isFinite(n) || Math.abs(n) > 999) { finShowToast('Bitte eine ganze Zahl eingeben, z. B. 2 oder -1.', true); return; }
+  const why = prompt('Wofür? (optional)', n > 0 ? 'Extra-Sterne' : 'Korrektur');
+  if (why === null) return;
+  m.kidStarLog = [...kidStarLog(m), { id: kidRid('e'), d: isoDate(new Date()), n, k: 'extra', t: String(why).trim().slice(0, 60) || 'Extra-Sterne', ts: Date.now() }];
+  kidStarCompact(m);
+  saveMembers();
+  renderFinance();
+  if (kidPageMemberId === m.id) renderKidPage();
+}
+
+/* ---------- Mitglied-Popup: Belohnungen bearbeiten ---------- */
+function kidCurSymbol() {
+  try { const s = fmtEur(0).replace(/[\d\s.,\u00a0\u202f-]/g, ''); return s || '€'; } catch (e) { return '€'; }
+}
+function openKidRewardsEditor() {
+  if (!pendingKidConfig) pendingKidConfig = normalizeKidConfig(null);
+  const st = normalizeKidStars(pendingKidConfig.stars);
+  kidRewardsEdit = st.rewards.map(r => ({ ...r }));
+  kidRewardsEmojiFor = null;
+  const name = document.getElementById('newMemberName').value.trim();
+  document.getElementById('kidRewardsTitle').textContent = name ? `Belohnungen für ${name}` : 'Belohnungen';
+  document.getElementById('kidRewardsBonus').value = String(st.bonus);
+  document.getElementById('kidRewardsStatus').textContent = '';
+  renderKidRewardsList();
+  document.getElementById('kidRewardsModal').classList.remove('hidden');
+  armModalSnapshot('kidRewardsModal');
+}
+function closeKidRewardsModal() { document.getElementById('kidRewardsModal').classList.add('hidden'); }
+function renderKidRewardsList() {
+  const list = document.getElementById('kidRewardsList');
+  if (!kidRewardsEdit.length) { list.innerHTML = '<p class="text-xs text-ink/30 italic">Noch keine Belohnungen</p>'; return; }
+  const cur = kidCurSymbol();
+  list.innerHTML = kidRewardsEdit.map(r => {
+    const types = KID_REWARD_TYPES.map(t => `<option value="${t.id}"${t.id === r.type ? ' selected' : ''}>${t.icon} ${t.label}</option>`).join('');
+    const picker = kidRewardsEmojiFor === r.id
+      ? `<div class="flex flex-wrap gap-1 mt-1.5 p-2 rounded-lg bg-ink/5">${KID_REWARD_EMOJIS.map(e =>
+          `<button type="button" class="kid-rw-pick w-9 h-9 rounded-lg text-xl grid place-items-center hover:bg-white" data-emoji="${kidAttr(e)}">${e}</button>`).join('')}</div>`
+      : '';
+    const unit = r.type === 'geld' ? cur : r.type === 'medien' ? 'Min.' : '';
+    return `<div class="kid-edit-row kid-rw-row" data-id="${kidAttr(r.id)}">
+      <div class="flex items-center gap-1.5">
+        <button type="button" class="kid-rw-emoji w-10 h-10 shrink-0 rounded-lg bg-ink/5 text-xl grid place-items-center" title="Bild wählen">${escapeHtml(r.emoji || '🎁')}</button>
+        <input type="text" class="kid-rw-title flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-2 text-sm" maxlength="40" placeholder="z. B. Eis essen gehen" value="${kidAttr(r.title)}" />
+        <button type="button" class="kid-rw-del w-8 h-8 shrink-0 rounded-lg text-ink/40 hover:text-red-500 transition" title="Entfernen" aria-label="Belohnung entfernen">✕</button>
+      </div>
+      <div class="flex items-center gap-1.5 mt-1 pl-[46px] flex-wrap">
+        <select class="kid-rw-type rounded-lg border border-ink/15 px-2 py-1 text-xs bg-white">${types}</select>
+        <span class="kid-rw-valwrap inline-flex items-center gap-1${r.type === 'wunsch' ? ' hidden' : ''}">
+          <input type="text" inputmode="decimal" class="kid-rw-value w-16 rounded-lg border border-ink/15 px-2 py-1 text-xs" value="${kidAttr(r.valueRaw !== undefined ? r.valueRaw : (r.value ? (r.type === 'geld' ? euroInputValue(r.value) : String(r.value)) : ''))}" />
+          <span class="text-xs text-ink/50"${r.type === 'geld' ? ' data-no-i18n' : ''}>${escapeHtml(unit)}</span>
+        </span>
+        <span class="inline-flex items-center gap-1 ml-auto">
+          <span class="text-xs text-ink/50">kostet</span>
+          <input type="text" inputmode="numeric" class="kid-rw-cost w-16 rounded-lg border border-ink/15 px-2 py-1 text-xs" value="${kidAttr(r.costRaw !== undefined ? r.costRaw : String(r.cost || ''))}" />
+          <span class="text-xs">⭐</span>
+        </span>
+      </div>
+      ${picker}
+    </div>`;
+  }).join('');
+}
+function kidRewardsRow(el) {
+  const row = el.closest('.kid-rw-row');
+  return row ? kidRewardsEdit.find(r => r.id === row.dataset.id) : null;
+}
+(function initKidRewardsUi() {
+  const list = document.getElementById('kidRewardsList');
+  list.addEventListener('input', (e) => {
+    const r = kidRewardsRow(e.target);
+    if (!r) return;
+    if (e.target.classList.contains('kid-rw-title')) r.title = e.target.value;
+    else if (e.target.classList.contains('kid-rw-value')) r.valueRaw = e.target.value;
+    else if (e.target.classList.contains('kid-rw-cost')) r.costRaw = e.target.value;
+  });
+  list.addEventListener('change', (e) => {
+    if (!e.target.classList.contains('kid-rw-type')) return;
+    const r = kidRewardsRow(e.target);
+    if (!r) return;
+    const old = r.type;
+    r.type = e.target.value;
+    const icons = KID_REWARD_TYPES.map(t => t.icon);
+    if (icons.includes(r.emoji) || !r.emoji) r.emoji = (KID_REWARD_TYPES.find(t => t.id === r.type) || {}).icon || '🎁';
+    if (old !== r.type) { r.value = 0; delete r.valueRaw; }
+    renderKidRewardsList();
+  });
+  list.addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    if (btn.classList.contains('kid-rw-pick')) {
+      const r = kidRewardsEdit.find(x => x.id === kidRewardsEmojiFor);
+      if (r) r.emoji = btn.dataset.emoji;
+      kidRewardsEmojiFor = null;
+      renderKidRewardsList();
+      return;
+    }
+    const r = kidRewardsRow(btn);
+    if (!r) return;
+    if (btn.classList.contains('kid-rw-emoji')) {
+      kidRewardsEmojiFor = kidRewardsEmojiFor === r.id ? null : r.id;
+      renderKidRewardsList();
+    } else if (btn.classList.contains('kid-rw-del')) {
+      kidRewardsEdit = kidRewardsEdit.filter(x => x !== r);
+      renderKidRewardsList();
+    }
+  });
+  document.getElementById('kidRewardsAdd').addEventListener('click', () => {
+    const r = { id: kidRid(), emoji: '🎁', title: '', type: 'wunsch', value: 0, cost: 10 };
+    kidRewardsEdit.push(r);
+    kidRewardsEmojiFor = null;
+    renderKidRewardsList();
+    const input = document.querySelector(`#kidRewardsList .kid-rw-row[data-id="${r.id}"] .kid-rw-title`);
+    if (input) input.focus();
+  });
+  document.getElementById('kidRewardsDefaults').addEventListener('click', () => {
+    if (kidRewardsEdit.length && !confirm('Alle Belohnungen durch die Vorschläge ersetzen?')) return;
+    kidRewardsEdit = kidDefaultRewards();
+    kidRewardsEmojiFor = null;
+    renderKidRewardsList();
+  });
+  document.getElementById('kidRewardsApply').addEventListener('click', () => {
+    const status = document.getElementById('kidRewardsStatus');
+    status.textContent = '';
+    const out = [];
+    for (const r of kidRewardsEdit) {
+      const title = String(r.title || '').trim();
+      if (!title) continue;
+      const cost = Math.round(Number(String(r.costRaw !== undefined ? r.costRaw : r.cost).replace(',', '.')));
+      if (!(cost >= 1 && cost <= 9999)) { status.textContent = `Bitte bei „${title}“ angeben, wie viele Sterne es kostet.`; return; }
+      let value = 0;
+      if (r.type !== 'wunsch') {
+        const raw = r.valueRaw !== undefined ? r.valueRaw : String(r.value || '');
+        value = r.type === 'geld' ? parseEuro(raw) : Math.round(Number(String(raw).replace(',', '.')));
+        if (!(value > 0)) { status.textContent = r.type === 'geld' ? `Bitte bei „${title}“ den Betrag eingeben.` : `Bitte bei „${title}“ die Minuten eingeben.`; return; }
+      }
+      out.push({ id: r.id, emoji: r.emoji || '🎁', title: title.slice(0, 60), type: r.type, value: r.type === 'geld' ? finRound(value) : value, cost });
+    }
+    if (!pendingKidConfig) pendingKidConfig = normalizeKidConfig(null);
+    const st = normalizeKidStars(pendingKidConfig.stars);
+    pendingKidConfig = { ...pendingKidConfig, stars: { ...st, bonus: Number(document.getElementById('kidRewardsBonus').value) || 0, rewards: out } };
+    updateMemberKidSection();
+    closeKidRewardsModal();
+  });
+  document.getElementById('kidRewardsCancel').addEventListener('click', () => attemptCloseModal('kidRewardsModal', closeKidRewardsModal));
+  wireModalOutsideClick('kidRewardsModal', closeKidRewardsModal);
+  document.getElementById('memberKidStars').addEventListener('change', (e) => {
+    if (!pendingKidConfig) pendingKidConfig = normalizeKidConfig(null);
+    const st = normalizeKidStars(pendingKidConfig.stars);
+    st.on = e.target.checked;
+    if (st.on && !st.rewards.length) { st.rewards = kidDefaultRewards(); st.bonus = st.bonus || 1; }
+    pendingKidConfig = { ...pendingKidConfig, stars: st };
+    updateMemberKidSection();
+  });
+  document.getElementById('memberKidRewardsEdit').addEventListener('click', openKidRewardsEditor);
+  document.getElementById('kidTaskGroups').addEventListener('change', (e) => {
+    if (!e.target.classList.contains('kid-edit-stars')) return;
+    const row = e.target.closest('.kid-edit-row');
+    const task = row && kidEditTasks.find(t => t.id === row.dataset.id);
+    if (task) task.stars = Math.max(1, Math.min(3, Number(e.target.value) || 1));
+  });
+})();
 
 /* ==========================================================
    Calendar rendering (day + week + month + year)
@@ -19587,6 +20270,7 @@ function fmtDateTime(dateStr, timeStr) {
    ========================================================== */
 function renderHousehold() {
   renderRoomList();
+  renderHouseholdFairness();
   // Einmaliges Aufräumen: falls noch Räume mit einer alten, unendlich wiederkehrenden
   // Reinigungs-Serie existieren (aus einer früheren Version), jetzt automatisch entfernen.
   rooms.filter(r => r.cleaningTaskHref).forEach(r => cleanupLegacyCleaningSeries(r).then(() => persistState()));
@@ -19659,14 +20343,14 @@ function renderRoomList() {
         <div class="pl-4 flex flex-col gap-1.5">
           ${schedules.map(s => `
             <button class="edit-schedule-btn flex items-center justify-between gap-2 text-xs px-2 py-1.5 rounded-lg bg-white/70 hover:bg-white transition text-left w-full" data-id="${s.id}">
-              <span>🧹 ${escapeHtml((cleaningCategoryById(s.category) || {}).label || s.category)} · ${escapeHtml(scheduleSummary(s))}</span>
+              <span>🧹 ${escapeHtml((cleaningCategoryById(s.category) || {}).label || s.category)} · ${escapeHtml(scheduleSummary(s))}${s.rotate ? ' · 🔄' : ''}</span>
               <span class="text-ink/30">›</span>
             </button>`).join('')}
           ${bins.map(b => {
             const waste = wasteTypeById(b.wasteType);
             const scheduleLabel = b.schedule ? ' · ' + scheduleSummary(b.schedule) : '';
             return `<button class="edit-bin-btn flex items-center justify-between gap-2 text-xs px-2 py-1.5 rounded-lg bg-white/70 hover:bg-white transition text-left w-full" data-id="${b.id}">
-              <span>${waste ? waste.icon : '🗑️'} ${waste ? escapeHtml(waste.label) : 'Unbekannt'}${escapeHtml(scheduleLabel)}</span>
+              <span>${waste ? waste.icon : '🗑️'} ${waste ? escapeHtml(waste.label) : 'Unbekannt'}${escapeHtml(scheduleLabel)}${b.rotate ? ' · 🔄' : ''}</span>
               <span class="text-ink/30">›</span>
             </button>`;
           }).join('')}
@@ -19854,6 +20538,7 @@ function renderHouseholdMemberPicker(containerId) {
     wrap.appendChild(chip);
   });
   if (!members.length) wrap.innerHTML = '<p class="text-xs text-ink/30 italic">Keine Familienmitglieder angelegt.</p>';
+  if (typeof hhRotateUi === 'function') hhRotateUi(containerId);
 }
 
 function openTrashBinModal(existingId, roomId) {
@@ -19867,6 +20552,7 @@ function openTrashBinModal(existingId, roomId) {
   document.getElementById('deleteTrashBinBtn').classList.toggle('hidden', !bin);
   pendingHouseholdAssignedIds = bin ? [...(bin.assignedMemberIds || [])] : [];
   renderHouseholdMemberPicker('trashBinMemberPicker');
+  hhRotateLoad('trashBinMemberPicker', bin ? bin.rotate : '');
   smartPickerLoad(bin ? bin.smart : null, 'trashBinSmartPicker');
 
   const schedule = bin ? bin.schedule : null;
@@ -19934,7 +20620,8 @@ document.getElementById('saveTrashBin').addEventListener('click', async () => {
   let oldBaseTitleToClean = null;
   if (editingTrashBinId) {
     const existing = trashBins.find(b => b.id === editingTrashBinId);
-    const assignedChanged = JSON.stringify([...(existing.assignedMemberIds || [])].sort()) !== JSON.stringify([...pendingHouseholdAssignedIds].sort());
+    const assignedChanged = JSON.stringify([...(existing.assignedMemberIds || [])].sort()) !== JSON.stringify([...pendingHouseholdAssignedIds].sort())
+      || (existing.rotate || '') !== hhRotateValue('trashBinMemberPicker');
     if (existing && existing.wasteType !== wasteType) {
       const room = rooms.find(r => r.id === existing.roomId);
       const oldWt = WASTE_TYPES.find(w => w.id === existing.wasteType);
@@ -19948,9 +20635,9 @@ document.getElementById('saveTrashBin').addEventListener('click', async () => {
 
   if (editingTrashBinId) {
     const bin = trashBins.find(b => b.id === editingTrashBinId);
-    Object.assign(bin, { wasteType, schedule, assignedMemberIds: [...pendingHouseholdAssignedIds], smart: smartPickerValue() });
+    Object.assign(bin, { wasteType, schedule, assignedMemberIds: [...pendingHouseholdAssignedIds], smart: smartPickerValue(), rotate: hhRotateValue('trashBinMemberPicker') });
   } else {
-    trashBins.push({ id: 'bin' + Date.now(), roomId: pendingTrashBinRoomId, wasteType, schedule, assignedMemberIds: [...pendingHouseholdAssignedIds], smart: smartPickerValue() });
+    trashBins.push({ id: 'bin' + Date.now(), roomId: pendingTrashBinRoomId, wasteType, schedule, assignedMemberIds: [...pendingHouseholdAssignedIds], smart: smartPickerValue(), rotate: hhRotateValue('trashBinMemberPicker') });
   }
   await persistState();
   document.getElementById('trashBinModal').classList.add('hidden');
@@ -20028,6 +20715,7 @@ function openRoomScheduleModal(existingId, roomId) {
   renderCleaningCategorySelect(schedule ? schedule.category : (cleaningCategories[0] ? cleaningCategories[0].id : ''));
   pendingHouseholdAssignedIds = schedule ? [...(schedule.assignedMemberIds || [])] : [];
   renderHouseholdMemberPicker('roomScheduleMemberPicker');
+  hhRotateLoad('roomScheduleMemberPicker', schedule ? schedule.rotate : '');
   smartPickerLoad(schedule ? schedule.smart : null, 'roomScheduleSmartPicker');
 
   setScheduleTypeChoice(schedule ? schedule.scheduleType : 'weekdays');
@@ -20109,7 +20797,8 @@ document.getElementById('saveRoomSchedule').addEventListener('click', async () =
   let oldBaseTitleToClean = null;
   if (editingScheduleId) {
     const existing = roomSchedules.find(s => s.id === editingScheduleId);
-    const assignedChanged = JSON.stringify([...(existing.assignedMemberIds || [])].sort()) !== JSON.stringify([...pendingHouseholdAssignedIds].sort());
+    const assignedChanged = JSON.stringify([...(existing.assignedMemberIds || [])].sort()) !== JSON.stringify([...pendingHouseholdAssignedIds].sort())
+      || (existing.rotate || '') !== hhRotateValue('roomScheduleMemberPicker');
     const room = rooms.find(r => r.id === existing.roomId);
     if (existing && existing.category !== category) {
       const oldCategory = cleaningCategories.find(c => c.id === existing.category);
@@ -20122,11 +20811,11 @@ document.getElementById('saveRoomSchedule').addEventListener('click', async () =
 
   if (editingScheduleId) {
     const schedule = roomSchedules.find(s => s.id === editingScheduleId);
-    Object.assign(schedule, { category, scheduleType, weekdays, intervalDays, createdDate, assignedMemberIds: [...pendingHouseholdAssignedIds], smart: smartPickerValue() });
+    Object.assign(schedule, { category, scheduleType, weekdays, intervalDays, createdDate, assignedMemberIds: [...pendingHouseholdAssignedIds], smart: smartPickerValue(), rotate: hhRotateValue('roomScheduleMemberPicker') });
   } else {
     roomSchedules.push({
       id: 'sched' + Date.now(), roomId: pendingScheduleRoomId, category, scheduleType, weekdays, intervalDays,
-      createdDate, assignedMemberIds: [...pendingHouseholdAssignedIds], smart: smartPickerValue(),
+      createdDate, assignedMemberIds: [...pendingHouseholdAssignedIds], smart: smartPickerValue(), rotate: hhRotateValue('roomScheduleMemberPicker'),
     });
   }
   await persistState();
@@ -20156,6 +20845,121 @@ document.getElementById('deleteRoomScheduleBtn').addEventListener('click', async
   }
 });
 
+/* ==========================================================
+   Haushalt: Reihum verteilen & „Wer macht wie viel?“
+   ----------------------------------------------------------
+   - Reinigungen (roomSchedules) und Mülleimer (trashBins) mit mindestens zwei Zuständigen können
+     rotate = 'reihum' (der Reihe nach) oder 'fair' (wer in den letzten 30 Tagen am wenigsten erledigt
+     hat) bekommen. Der Server (pinn-aufgaben.js) weist dann jede neue Aufgabe genau einer Person zu;
+     wer eine Aufgabe verpasst, bleibt dran.
+   - Die Statistik kommt vom Server (/api/pinn/aufgaben/statistik, Sammlung „haushalt_verlauf“), weil
+     erledigte Aufgaben nach spätestens 2 Tagen gelöscht werden. Abgefragt wird nur beim Öffnen der
+     Haushalt-Seite (höchstens einmal pro Minute).
+   ========================================================== */
+function hhRotateEls(containerId) {
+  const p = containerId === 'trashBinMemberPicker' ? 'trashBin' : 'roomSchedule';
+  return { wrap: document.getElementById(p + 'RotateWrap'), box: document.getElementById(p + 'Rotate'), mode: document.getElementById(p + 'RotateMode') };
+}
+function hhRotateUi(containerId) {
+  const el = hhRotateEls(containerId);
+  if (!el.wrap) return;
+  el.wrap.classList.toggle('hidden', pendingHouseholdAssignedIds.length < 2);
+  el.mode.classList.toggle('hidden', !el.box.checked);
+}
+function hhRotateLoad(containerId, val) {
+  const el = hhRotateEls(containerId);
+  if (!el.wrap) return;
+  el.box.checked = val === 'reihum' || val === 'fair';
+  el.mode.value = val === 'fair' ? 'fair' : 'reihum';
+  hhRotateUi(containerId);
+}
+function hhRotateValue(containerId) {
+  const el = hhRotateEls(containerId);
+  if (!el.wrap || pendingHouseholdAssignedIds.length < 2 || !el.box.checked) return '';
+  return el.mode.value === 'fair' ? 'fair' : 'reihum';
+}
+['trashBinMemberPicker', 'roomScheduleMemberPicker'].forEach(id => {
+  const el = hhRotateEls(id);
+  if (el.box) el.box.addEventListener('change', () => hhRotateUi(id));
+});
+
+const HH_FAIR_DAYS = [[30, '30 Tage'], [90, '90 Tage'], [365, '1 Jahr']];
+let hhFairDays = 30;
+let hhFairCache = null;     // { days, at, data }
+let hhFairLoading = false;
+let hhFairFailed = false;   // Server ohne Statistik (ältere pinn-aufgaben.js) – Karte bleibt weg
+async function renderHouseholdFairness(force) {
+  const el = document.getElementById('hhFairCard');
+  if (!el) return;
+  if ((!roomSchedules.length && !trashBins.length) || hhFairFailed || isCurrentUserGuest()) { el.innerHTML = ''; return; }
+  const have = hhFairCache && hhFairCache.days === hhFairDays;
+  if (have) hhFairRender(hhFairCache.data);
+  if (have && !force && Date.now() - hhFairCache.at < 60000) return;
+  if (hhFairLoading || !navigator.onLine) return;
+  hhFairLoading = true;
+  try {
+    const res = await apiFetch('/api/pinn/aufgaben/statistik?tage=' + hhFairDays, { cache: 'no-store' });
+    if (res.status === 404) { hhFairFailed = true; el.innerHTML = ''; return; }
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok || body.error || !body.mitglieder) { if (!have) el.innerHTML = ''; return; }
+    hhFairCache = { days: hhFairDays, at: Date.now(), data: body };
+    hhFairRender(body);
+  } catch (e) {
+    if (!have) el.innerHTML = '';
+  } finally {
+    hhFairLoading = false;
+  }
+}
+function hhFairRender(d) {
+  const el = document.getElementById('hhFairCard');
+  if (!el) return;
+  const per = d.mitglieder || {};
+  const inRule = new Set();
+  [...roomSchedules, ...trashBins].forEach(r => (r.assignedMemberIds || []).forEach(id => inRule.add(id)));
+  const rows = members.map(m => ({ m, s: per[m.id] || {} }))
+    .filter(x => (x.s.erledigt || x.s.verpasst || x.s.offen) || inRule.has(x.m.id));
+  const total = rows.reduce((s, r) => s + (r.s.erledigt || 0), 0);
+  const max = Math.max(1, ...rows.map(r => r.s.erledigt || 0));
+  rows.sort((a, b) => (b.s.erledigt || 0) - (a.s.erledigt || 0) || memberLabel(a.m).localeCompare(memberLabel(b.m)));
+  const rowsHtml = rows.map(r => {
+    const done = r.s.erledigt || 0;
+    const share = total ? Math.round(done / total * 100) : 0;
+    const color = (!r.m.color || r.m.color === 'transparent') ? 'var(--c-pine)' : r.m.color;
+    return `<div class="hh-fair-row">
+      <span class="w-8 h-8 rounded-full overflow-hidden border-2 shrink-0" style="border-color:${memberBorderColor(r.m)}">${memberAvatarInnerHTML(r.m)}</span>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-baseline justify-between gap-2">
+          <span class="text-sm truncate" data-no-i18n>${escapeHtml(memberLabel(r.m))}</span>
+          <span class="text-xs text-ink/50 shrink-0"><b class="text-ink" data-no-i18n>${done}</b> <span>erledigt</span>${r.s.verpasst ? ` · <span data-no-i18n>${r.s.verpasst}</span> <span>verpasst</span>` : ''}${total ? ` · <span data-no-i18n>${share} %</span>` : ''}</span>
+        </div>
+        <div class="hh-fair-bar"><span style="width:${done / max * 100}%;background:${escapeHtml(color)}"></span></div>
+      </div>
+    </div>`;
+  }).join('');
+  const rules = (d.regeln || []).map(r => {
+    const now = r.jetzt ? memberById(r.jetzt) : null;
+    const next = r.naechster ? memberById(r.naechster) : null;
+    if (!now && !next) return '';
+    return `<div class="hh-fair-rule">
+      <span class="flex-1 min-w-0 truncate" data-no-i18n>🔄 ${escapeHtml(r.titel || '')}</span>
+      <span class="shrink-0 text-ink/55">${now ? `<span>dran:</span> <b class="text-ink" data-no-i18n>${escapeHtml(memberLabel(now))}</b>` : ''}${now && next ? ' · ' : ''}${next ? `<span>danach:</span> <b class="text-ink" data-no-i18n>${escapeHtml(memberLabel(next))}</b>` : ''}</span>
+    </div>`;
+  }).join('');
+  const chips = HH_FAIR_DAYS.map(([n, label]) => `<button type="button" class="hh-fair-chip${n === hhFairDays ? ' active' : ''}" data-days="${n}">${label}</button>`).join('');
+  el.innerHTML = `<div class="hh-fair rounded-xl border border-ink/10 p-3">
+    <div class="flex items-center justify-between gap-2 flex-wrap mb-2">
+      <span class="font-serif text-base">⚖️ Wer macht wie viel?</span>
+      <span class="flex gap-1">${chips}</span>
+    </div>
+    ${total || rows.some(r => r.s.verpasst) ? rowsHtml : '<p class="text-xs text-ink/40 italic">In diesem Zeitraum wurde noch keine Haushaltsaufgabe erledigt.</p>'}
+    ${rules ? `<div class="hh-fair-rules">${rules}</div>` : ''}
+  </div>`;
+  el.querySelectorAll('.hh-fair-chip').forEach(b => b.addEventListener('click', () => {
+    hhFairDays = Number(b.dataset.days) || 30;
+    renderHouseholdFairness(true);
+  }));
+}
+
 // Nach dem Anlegen/Bearbeiten einer Haushalts-Regel sofort einen Sync samt Erkennung anstoßen,
 // statt bis zu 15 Minuten auf den nächsten regulären Takt zu warten. Falls sich der Titel einer
 // bearbeiteten Regel geändert hat, wird zuerst die dadurch verwaiste alte Aufgabe von heute entfernt.
@@ -20166,6 +20970,8 @@ async function triggerHouseholdResync(oldBaseTitleToClean) {
     }
     await apiFetch('/api/pinn/aufgaben/haushalt-jetzt', { method: 'POST' });
     await loadAufgaben();
+    hhFairCache = null;
+    renderHouseholdFairness(true);
   } catch (err) {
     // Stiller Fehlschlag hier ist ok - spätestens der nächste stündliche Durchlauf holt es nach.
   }
@@ -22986,7 +23792,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.25.0';
+const APP_VERSION = '1.26.0';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -23050,6 +23856,13 @@ let sysRestoreFile = '';     // gewählte Sicherung
 let sysPolling = false;
 const SYS_ROWS = 8;
 
+// Popups im fest positionierten #appRoot liegen immer unter dem Hauptadmin-Bildschirm (eigene
+// Stapelebene) – beim Öffnen deshalb direkt an <body> hängen.
+function pinnModalToTop(id) {
+  const el = document.getElementById(id);
+  if (el && el.parentElement !== document.body) document.body.appendChild(el);
+  return el;
+}
 function sysCanUse() {
   return isCurrentUserAdmin() || isCurrentUserMainAdmin();
 }
@@ -23132,7 +23945,7 @@ function sysModalOpen() {
   return !document.getElementById('sysMaintModal').classList.contains('hidden');
 }
 async function openSysMaint(opts = {}) {
-  const modal = document.getElementById('sysMaintModal');
+  const modal = pinnModalToTop('sysMaintModal');
   modal.classList.remove('hidden');
   document.getElementById('sysMaintProgress').classList.add('hidden');
   sysShowView('main');
@@ -23184,7 +23997,7 @@ function sysRender() {
   let notice = '';
   if (!w.eingerichtet || !w.aktiv) notice = 'Der Container „wartung“ läuft noch nicht. Einmalig per SSH im pinn.-Ordner „sudo sh pinn-setup.sh“ ausführen – danach gehen Sicherungen, Wiederherstellung und Updates hier per Knopf.';
   else if (!w.docker) notice = 'Der Container „wartung“ hat keinen Zugriff auf Docker – Wiederherstellen und Updates sind deshalb aus. Sichern geht weiterhin.';
-  else if (!info.darf) notice = 'Wiederherstellen und Updates betreffen alle Familien auf diesem Server – das kann nur der Hauptadmin.';
+  else if (!info.darf) notice = 'Wiederherstellen und Updates betreffen alle Familien auf diesem Server – das kann der Hauptadmin oder ein Admin, dem er es erlaubt hat.';
   sysNotice(notice);
   const kannAktion = !!(info.darf && w.aktiv && w.docker);
 
@@ -23637,7 +24450,7 @@ function openDevModal(userId, name) {
   document.getElementById('devModalStatus').textContent = '';
   document.getElementById('devModalLock').classList.add('hidden');
   document.getElementById('devModalList').innerHTML = '<p class="sm-empty">Wird geladen …</p>';
-  document.getElementById('devModal').classList.remove('hidden');
+  pinnModalToTop('devModal').classList.remove('hidden');
   loadDevModal();
 }
 function closeDevModal() {
@@ -23772,7 +24585,7 @@ async function errLogRefreshSummary() {
   });
 }
 async function openErrLog() {
-  document.getElementById('errLogModal').classList.remove('hidden');
+  pinnModalToTop('errLogModal').classList.remove('hidden');
   errLogOpenId = '';
   await errLogLoad();
 }
@@ -23915,6 +24728,19 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
    - rueckblick: true = Einträge vor dem Versions-Log, aus der Projekthistorie zusammengefasst.
    ========================================================== */
 const PINN_CHANGELOG = [
+  {
+    v: '1.26', datum: '08.10.2026', titel: 'Sterne & faire Haushaltsverteilung',
+    punkte: [
+      ['neu', 'Kinderseite: Sterne für jede erledigte Aufgabe (je Aufgabe 1–3 ⭐, auf Wunsch Extra-Sterne für „Alles geschafft“). Ein Tipp auf den Sterne-Zähler öffnet die Belohnungen'],
+      ['neu', 'Sterne eintauschen gegen Taschengeld, Medienzeit oder Wünsche – festgelegt in den Einstellungen des Kindes unter „Belohnungen bearbeiten“. Die Eltern bekommen eine Benachrichtigung und bestätigen auf der Kinderseite oder unter Finanzen → Taschengeld; Taschengeld-Belohnungen landen im Guthaben und als Ausgabe unter „Kinder“, bei „Ablehnen“ gibt es die Sterne zurück'],
+      ['neu', 'Finanzen → Taschengeld: Sterne-Stand je Kind, offene Wünsche mit OK/Ablehnen und „+ Sterne“ für Extra-Lob oder Korrekturen'],
+      ['neu', 'Haushalt: Reinigungen und Mülleimer mit mehreren Zuständigen lassen sich „🔄 Reihum“ verteilen – der Reihe nach oder fair (wer zuletzt am wenigsten gemacht hat). Wer eine Aufgabe verpasst, bleibt dran'],
+      ['neu', 'Haushalt: Karte „⚖️ Wer macht wie viel?“ mit erledigten und verpassten Aufgaben je Person (30 Tage, 90 Tage, 1 Jahr) und wer bei den Reihum-Aufgaben gerade dran ist und danach'],
+      ['neu', 'Hauptadmin: einzelnen Familien-Admins das Recht für Updates und Wiederherstellung geben („🛟 darf Updates & Wiederherstellung“)'],
+      ['fix', 'Verlauf-Diagramme unter Finanzen (Ausgaben und Sparen) springen nicht mehr; Sicherungen & Updates, Geräte und Fehlerprotokoll öffnen sich beim Hauptadmin wieder sichtbar'],
+      ['info', 'Server: angepasst aufgaben.pb.js, pinn-aufgaben.js (neue Sammlung „haushalt_verlauf“), system.pb.js, pinn-system.js und benutzer.pb.js; Sprachdateien en/fr/es ergänzt'],
+    ],
+  },
   {
     v: '1.25', datum: '08.10.2026', titel: 'Geräte & Fehlerprotokoll',
     punkte: [
@@ -28093,7 +28919,7 @@ function renderFinanceTrend() {
     if (finPeriod === 'month') label += `<span class="block text-[9px] leading-tight text-ink/35">${(c.range.start.getMonth() === 0 || c.off === endOff - n + 1) ? c.range.start.getFullYear() : '&nbsp;'}</span>`;
     return `
       <button type="button" class="fin-trend-col flex-1 min-w-0 flex flex-col items-center gap-1 select-none" data-off="${c.off}" title="${escapeHtml(c.range.label + ': ' + fmtEur(c.total))}">
-        <span class="text-[10px] ${selected ? 'font-semibold text-ink' : 'text-ink/45'} whitespace-nowrap leading-none h-3">${c.total > 0 ? curPlain0(c.total) : ''}</span>
+        <span class="text-[10px] ${selected ? 'font-semibold text-ink' : 'text-ink/45'} whitespace-nowrap leading-none h-3" style="display:block;height:12px">${c.total > 0 ? curPlain0(c.total) : ''}</span>
         <span class="fin-trend-track ${selected ? 'selected' : ''}" style="height:${H}px">
           <span class="fin-trend-stack">
             <span style="height:${greenH}px;background:${FIN_GREEN};opacity:${selected ? 1 : 0.55}"></span>
@@ -32403,7 +33229,7 @@ function finSavingsBars(ov) {
     label += `<span class="block text-[9px] leading-tight text-ink/35">${(m.range.start.getMonth() === 0 || m.off === -11) ? m.range.start.getFullYear() : '&nbsp;'}</span>`;
     return `
       <div class="flex-1 min-w-0 flex flex-col items-center gap-1" title="${escapeHtml(m.range.label + ': ' + finSignedEur(m.net))}">
-        <span class="text-[10px] ${cur ? 'font-semibold text-ink' : 'text-ink/45'} whitespace-nowrap leading-none h-3">${m.net ? (m.net < 0 ? '−' : '') + curPlain0(Math.abs(m.net)) : ''}</span>
+        <span class="text-[10px] ${cur ? 'font-semibold text-ink' : 'text-ink/45'} whitespace-nowrap leading-none h-3" style="display:block;height:12px">${m.net ? (m.net < 0 ? '−' : '') + curPlain0(Math.abs(m.net)) : ''}</span>
         <span class="w-full flex items-end justify-center" style="height:${H}px">
           <span class="block rounded-t-md" style="width:68%;max-width:26px;height:${h}px;background:${color};opacity:${cur ? 1 : 0.7}"></span>
         </span>
@@ -33244,6 +34070,7 @@ function renderAllowances() {
         </div>
         ${tiles}
         ${pocketHtml}
+        ${kidStarsFinHtml(m)}
         ${others > 0 ? `<p class="text-xs text-ink/50 mt-3">Weitere Ausgaben für ${name} ${year}: <b>${fmtEur(finRound(others))}</b></p>` : ''}
         <p class="text-[11px] text-ink/45 mt-3">${visText}</p>
       </div>`;
@@ -33272,6 +34099,7 @@ function renderAllowances() {
       else openPocketModal(kidId, b.dataset.act);
     }));
     card.querySelectorAll('[data-move]').forEach(b => b.addEventListener('click', () => deletePocketMove(b.dataset.move)));
+    card.querySelectorAll('[data-star-act]').forEach(b => b.addEventListener('click', () => kidStarFinAction(kidId, b.dataset.starAct, b.dataset.id)));
     const det = card.querySelector('.fin-kid-moves');
     if (det) det.addEventListener('toggle', () => { if (det.open) finOpenKidMoves.add(kidId); else finOpenKidMoves.delete(kidId); });
   });
@@ -40783,6 +41611,7 @@ async function bootApp() {
   }
 
   await loadFamilyProfiles();
+  setTimeout(() => { try { kidStarsHandleUrl(); } catch (e) { /* egal */ } }, 0);
   // Persönliche Benachrichtigungen nicht auf dem Familien-Dashboard (geteiltes Gerät) und nicht für Gäste
   const dashSession = isDashboardSession();
   const guest = isCurrentUserGuest();

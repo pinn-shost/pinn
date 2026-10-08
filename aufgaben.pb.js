@@ -13,6 +13,9 @@
 //                                            Familie sieht es unter der Glocke (pinn-hinweise.js)
 //   POST /api/pinn/aufgaben/loeschen         {id}
 //   POST /api/pinn/aufgaben/haushalt-jetzt   Haushalts-Aufgaben sofort prüfen/anlegen
+//   GET  /api/pinn/aufgaben/statistik?tage=30|90|365   „Wer macht wie viel?“ (Haushalt, inkl. Reihum)
+//   POST /api/pinn/aufgaben/belohnung        {memberId, titel, sterne} Kind möchte Sterne eintauschen ->
+//                                            Benachrichtigung an die Eltern (Kinderseite)
 //
 // Zeitplan: einmal pro Stunde (Minute 7) für alle Familien Haushalts-Aufgaben prüfen und erledigte aufräumen.
 
@@ -90,5 +93,26 @@ routerAdd("POST", "/api/pinn/aufgaben/haushalt-jetzt", (e) => {
         return e.json(200, { success: true, created: r.created, busy: !!r.busy });
     } catch (err) {
         return e.json(200, { error: err.message });
+    }
+}, $apis.requireAuth("benutzer"));
+
+routerAdd("GET", "/api/pinn/aufgaben/statistik", (e) => {
+    e.response.header().set("Cache-Control", "no-store");
+    let tage = 30;
+    try { tage = Number(e.request.url.query().get("tage")) || 30; } catch (err) { tage = 30; }
+    try {
+        return e.json(200, require(`${__hooks}/pinn-aufgaben.js`).statistik(e.auth.getString("familie"), tage));
+    } catch (err) {
+        return e.json(200, { error: err.message });
+    }
+}, $apis.requireAuth("benutzer"));
+
+routerAdd("POST", "/api/pinn/aufgaben/belohnung", (e) => {
+    try {
+        const n = require(`${__hooks}/pinn-aufgaben.js`).notifyReward(e.auth.getString("familie"), e.auth.id, e.requestInfo().body || {});
+        return e.json(200, { success: true, verschickt: n });
+    } catch (err) {
+        console.log("[Push] Belohnung: " + err.message);
+        return e.json(200, { success: false, error: err.message });
     }
 }, $apis.requireAuth("benutzer"));

@@ -14,8 +14,9 @@
 //    Status währenddessen über /api/pinn/system/status ab (ohne Anmeldung, nur Zustand ohne Details).
 //
 // Rechte: Sicherungen ansehen und „Jetzt sichern“ dürfen Admins. Wiederherstellen und Updates
-// betreffen den ganzen Server – das darf der Hauptadmin, und ein Familien-Admin nur, solange es auf
-// dem Server genau eine Familie gibt.
+// betreffen den ganzen Server – das darf der Hauptadmin, ein Familien-Admin, solange es auf dem Server
+// genau eine Familie gibt, und jeder Familien-Admin, dem der Hauptadmin das Recht gegeben hat
+// (Feld „systemrechte“ im Profil, verborgen; Hauptadmin → Familien → „🛟 darf Updates & Wiederherstellung“).
 //
 // Neue Versionen: GitHub-API (releases/latest) des Repositorys pinn-shost/pinn, höchstens alle
 // 6 Stunden (oder auf Knopfdruck), Ergebnis im Speicher von PocketBase – kein Zeitplan, keine Last.
@@ -177,6 +178,9 @@ function rechte(e) {
     if (!admin) return { admin: false, darf: false, grund: "admin" };
     if (b.isMainAdmin(e)) return { admin: true, darf: true, grund: "" };
     if (familienAnzahl() <= 1) return { admin: true, darf: true, grund: "" };
+    let erlaubt = false;
+    try { erlaubt = e.auth.getBool("systemrechte"); } catch (err) { erlaubt = false; }
+    if (erlaubt) return { admin: true, darf: true, grund: "" };
     return { admin: true, darf: false, grund: "hauptadmin" };
 }
 
@@ -303,6 +307,33 @@ function update() {
     return r;
 }
 
+// ---------------------------------------------------------------------------------------------
+// Systemrechte für Familien-Admins (vergibt der Hauptadmin)
+// ---------------------------------------------------------------------------------------------
+function ensureSchema() {
+    try {
+        const b = require(`${__hooks}/pinn-benutzer.js`);
+        const col = b.findCol(b.USERS);
+        if (!col || b.hasField(col, "systemrechte")) return;
+        col.fields.add(b.makeField({ name: "systemrechte", type: "bool", hidden: true }));
+        $app.save(col);
+        console.log("[System] Feld \"systemrechte\" im Profil ergänzt.");
+    } catch (err) {
+        console.log("[System] Feld \"systemrechte\" nicht anlegbar: " + err.message);
+    }
+}
+function setzeRechte(userId, an) {
+    ensureSchema();
+    const b = require(`${__hooks}/pinn-benutzer.js`);
+    let rec = null;
+    try { rec = $app.findRecordById(b.USERS, String(userId || "")); } catch (err) { throw fehler("profil", "Profil nicht gefunden."); }
+    if (rec.getString("rolle") !== "admin") throw fehler("rolle", "Das geht nur bei Admins einer Familie.");
+    rec.set("systemrechte", !!an);
+    $app.save(rec);
+    return { success: true, id: rec.id, systemrechte: !!an };
+}
+
 module.exports = {
+    ensureSchema, setzeRechte,
     status, kurzStatus, rechte, sichern, wiederherstellen, update, installierteVersion, vergleiche, releasePruefen,
 };

@@ -21,11 +21,21 @@
 //   verpasst (wie oft die Haushalts-Aufgabe vorher nicht erledigt wurde),
 //   familie (zu welcher Familie die Aufgabe gehört - jede Familie sieht nur ihre eigenen)
 // Zugriff nur über die angemeldeten Routen in aufgaben.pb.js (Sammlungs-API gesperrt).
+//
+// Reihum & Statistik (ab 1.26): Sammlung "haushalt_verlauf" – je erzeugter Haushalts-Aufgabe ein kleiner
+// Eintrag (regel, titel, aufgabe, faellig, zustaendig, erledigt_von, status: offen|erledigt|verpasst).
+// Er bleibt, auch wenn die Aufgabe selbst nach dem Abhaken gelöscht wird (Einträge älter als 400 Tage
+// räumt der stündliche Lauf weg). Daraus ergeben sich:
+//  - Reihum (Regel mit rotate = 'reihum' | 'fair' und mindestens zwei Zuständigen): jede neue Aufgabe
+//    geht an genau eine Person – der Reihe nach bzw. an die, die in den letzten 30 Tagen am wenigsten
+//    erledigt hat. Wurde die vorige Aufgabe verpasst, bleibt dieselbe Person dran.
+//  - Statistik „Wer macht wie viel?“ (GET /api/pinn/aufgaben/statistik).
 
 const AUFGABEN = "aufgaben";
 const HOUR_MS = 3600000, DAY_MS = 86400000;
 const FAMILY_CACHE_KEY = "pinnAufgabenFamilie:"; // + Familien-ID
 const LOCK_KEY = "pinnAufgabenLock";
+const VERLAUF = "haushalt_verlauf";
 
 // --- Zeit (Mitteleuropa, feste EU-Sommerzeitregel - unabhängig von der Zeitzone des Containers) ---
 function lastSundayUtc(year, month) {
@@ -54,6 +64,7 @@ function familyCollection() {
 // pinn-benutzer.js. Angelegt wird im Format new Collection({...}) - das funktioniert in dieser
 // PocketBase-Version zuverlässig.
 function ensureSchema() {
+    ensureVerlauf();
     let col = null;
     try { col = $app.findCollectionByNameOrId(AUFGABEN); } catch (err) { col = null; }
     if (col) return;
@@ -88,6 +99,81 @@ function ensureSchema() {
     } catch (err) {
         console.log("[Aufgaben] Konnte Sammlung nicht anlegen: " + err.message);
     }
+}
+
+// Verlauf der Haushalts-Aufgaben (Reihum & Statistik) – nur anlegen, wenn er fehlt
+function ensureVerlauf() {
+    try { if ($app.findCollectionByNameOrId(VERLAUF)) return true; } catch (err) { /* fehlt */ }
+    try {
+        const fam = familyCollection();
+        const fields = [
+            { name: "regel", type: "text", max: 100 },
+            { name: "titel", type: "text", max: 300 },
+            { name: "aufgabe", type: "text", max: 30 },
+            { name: "faellig", type: "text", max: 10 },
+            { name: "zustaendig", type: "text", max: 100 },
+            { name: "erledigt_von", type: "text", max: 100 },
+            { name: "status", type: "text", max: 20 },
+            { name: "created", type: "autodate", onCreate: true, onUpdate: false },
+            { name: "updated", type: "autodate", onCreate: true, onUpdate: true },
+        ];
+        if (fam) fields.push({ name: "familie", type: "relation", collectionId: fam.id, cascadeDelete: true, maxSelect: 1, minSelect: 0, required: false });
+        $app.save(new Collection({
+            type: "base",
+            name: VERLAUF,
+            fields: fields,
+            indexes: [
+                "CREATE INDEX `idx_hhverlauf_regel` ON `" + VERLAUF + "` (`regel`, `faellig`)",
+                "CREATE INDEX `idx_hhverlauf_aufgabe` ON `" + VERLAUF + "` (`aufgabe`)",
+                "CREATE INDEX `idx_hhverlauf_faellig` ON `" + VERLAUF + "` (`faellig`)",
+            ],
+            listRule: null, viewRule: null, createRule: null, updateRule: null, deleteRule: null,
+        }));
+        console.log("[Aufgaben] Sammlung \"" + VERLAUF + "\" angelegt.");
+        return true;
+    } catch (err) {
+        console.log("[Aufgaben] Konnte Sammlung \"" + VERLAUF + "\" nicht anlegen: " + err.message);
+        return false;
+    }
+}
+function verlaufOk() {
+    try { return !!$app.findCollectionByNameOrId(VERLAUF); } catch (e) { return false; }
+}
+function verlaufFor(familyId, taskId) {
+    if (!taskId || !verlaufOk()) return null;
+    try {
+        const r = $app.findRecordsByFilter(VERLAUF, "familie = {:f} && aufgabe = {:a}", "-created", 1, 0, { f: familyId, a: String(taskId) });
+        return r.length ? r[0] : null;
+    } catch (e) { return null; }
+}
+function verlaufAdd(familyId, data) {
+    if (!verlaufOk()) return null;
+    try {
+        const rec = new Record($app.findCollectionByNameOrId(VERLAUF));
+        rec.set("familie", familyId);
+        rec.set("regel", String(data.regel || "").slice(0, 100));
+        rec.set("titel", String(data.titel || "").slice(0, 300));
+        rec.set("aufgabe", String(data.aufgabe || ""));
+        rec.set("faellig", String(data.faellig || ""));
+        rec.set("zustaendig", String(data.zustaendig || ""));
+        rec.set("erledigt_von", String(data.erledigt_von || ""));
+        rec.set("status", data.status || "offen");
+        $app.save(rec);
+        return rec;
+    } catch (e) {
+        console.log("[Haushalt-Verlauf] " + e.message);
+        return null;
+    }
+}
+// Offene Verlaufs-Einträge gelöschter Aufgaben entfernen (erledigte bleiben für die Statistik)
+function verlaufDropOpen(familyId, taskId) {
+    const v = verlaufFor(familyId, taskId);
+    if (v && v.getString("status") === "offen") { try { $app.delete(v); } catch (e) { /* egal */ } }
+}
+// Mitglied hinter einem Profil
+function memberOfUser(userId) {
+    if (!userId) return "";
+    try { return $app.findRecordById("benutzer", userId).getString("mitglied"); } catch (e) { return ""; }
 }
 
 // =============================================================================================
@@ -197,6 +283,9 @@ function setDone(familyId, id, done, actorUserId) {
     rec.set("erledigt", !!done);
     rec.set("erledigt_am", done ? new Date().toISOString() : "");
     $app.save(rec);
+    if (rec.getString("haushalt")) {
+        try { verlaufDone(familyId, rec, !!done, actorUserId); } catch (err) { console.log("[Haushalt-Verlauf] " + err.message); }
+    }
     const out = toClient(rec);
     out.alleErledigt = false;
     let push = null;
@@ -225,6 +314,23 @@ function setDone(familyId, id, done, actorUserId) {
         console.log("[Push] Meldung konnte nicht vorgemerkt werden: " + err.message);
     }
     return out;
+}
+
+// Haushalts-Aufgabe abgehakt: im Verlauf vermerken, wer es war (ohne verknüpftes Mitglied: wer dran war)
+function verlaufDone(familyId, rec, done, actorUserId) {
+    if (!verlaufOk()) return;
+    let v = verlaufFor(familyId, rec.id);
+    const members = loadHouseholdData(familyId).members || [];
+    let von = memberOfUser(actorUserId);
+    if (!members.some(m => m.id === von)) von = "";
+    if (!v) {
+        if (!done) return;
+        v = verlaufAdd(familyId, { regel: "", titel: rec.getString("haushalt"), aufgabe: rec.id, faellig: rec.getString("faellig"), zustaendig: "", status: "offen" });
+        if (!v) return;
+    }
+    v.set("status", done ? "erledigt" : "offen");
+    v.set("erledigt_von", done ? (von || v.getString("zustaendig")) : "");
+    $app.save(v);
 }
 
 // Wer hat abgehakt, gehört die Aufgabe ihm/ihr, sind damit alle fälligen Aufgaben erledigt
@@ -310,7 +416,9 @@ function familyMembers(familyId) {
 
 function removeTask(familyId, id) {
     try {
-        $app.delete(findOwn(familyId, id));
+        const rec = findOwn(familyId, id);
+        if (rec.getString("haushalt")) verlaufDropOpen(familyId, rec.id);
+        $app.delete(rec);
     } catch (e) { /* schon weg */ }
     return true;
 }
@@ -321,7 +429,7 @@ function deleteHouseholdTasks(familyId) {
     let recs = [];
     try { recs = $app.findRecordsByFilter(AUFGABEN, "familie = {:f} && haushalt != ''", "", 0, 0, { f: familyId }); } catch (e) { recs = []; }
     let count = 0;
-    recs.forEach(r => { try { $app.delete(r); count++; } catch (e) { /* egal */ } });
+    recs.forEach(r => { try { verlaufDropOpen(familyId, r.id); $app.delete(r); count++; } catch (e) { /* egal */ } });
     return count;
 }
 
@@ -331,7 +439,7 @@ function deleteTodayHouseholdTask(familyId, baseTitle) {
     if (!key || !familyId) return false;
     let recs = [];
     try { recs = $app.findRecordsByFilter(AUFGABEN, "familie = {:f} && haushalt = {:k} && faellig = {:d}", "", 0, 0, { f: familyId, k: key, d: wallIso(wallNow()) }); } catch (e) { recs = []; }
-    recs.forEach(r => { try { $app.delete(r); } catch (e) { /* egal */ } });
+    recs.forEach(r => { try { verlaufDropOpen(familyId, r.id); $app.delete(r); } catch (e) { /* egal */ } });
     return recs.length > 0;
 }
 
@@ -434,18 +542,73 @@ function pickupTypesFor(dateIso, familyId) {
     return found;
 }
 
+// Reihum: Wer ist als Nächstes dran? ids = Zuständige in ihrer Reihenfolge, mode 'reihum' | 'fair'.
+// 'fair' nimmt die Person mit den wenigsten erledigten Haushalts-Aufgaben der letzten 30 Tage (bei
+// Gleichstand der Reihe nach).
+function lastAssignee(familyId, ruleId) {
+    if (!ruleId || !verlaufOk()) return null;
+    try {
+        const r = $app.findRecordsByFilter(VERLAUF, "familie = {:f} && regel = {:r} && zustaendig != ''", "-faellig,-created", 1, 0, { f: familyId, r: ruleId });
+        return r.length ? r[0] : null;
+    } catch (e) { return null; }
+}
+function doneCounts(familyId, days) {
+    const out = {};
+    if (!verlaufOk()) return out;
+    const from = wallIso(wallNow() - days * DAY_MS);
+    let recs = [];
+    try { recs = $app.findRecordsByFilter(VERLAUF, "familie = {:f} && status = 'erledigt' && faellig >= {:d}", "", 0, 0, { f: familyId, d: from }); } catch (e) { recs = []; }
+    recs.forEach(r => { const id = r.getString("erledigt_von"); if (id) out[id] = (out[id] || 0) + 1; });
+    return out;
+}
+function pickNext(familyId, rule, members, counts) {
+    const ids = (rule.ids || []).filter(id => (members || []).some(m => m.id === id));
+    if (!ids.length) return "";
+    const last = lastAssignee(familyId, rule.id);
+    const lastId = last ? last.getString("zustaendig") : "";
+    const start = ids.indexOf(lastId) + 1; // -1 + 1 = 0: Beginn bei der ersten Person
+    const order = i => ids[(start + i) % ids.length];
+    if (rule.rotate !== "fair") return order(0);
+    const c = counts || doneCounts(familyId, 30);
+    let best = order(0);
+    for (let i = 1; i < ids.length; i++) {
+        const id = order(i);
+        if ((c[id] || 0) < (c[best] || 0)) best = id;
+    }
+    return best;
+}
+function isRotating(rule) {
+    return !!(rule && (rule.rotate === "reihum" || rule.rotate === "fair") && (rule.ids || []).length >= 2);
+}
+
 // Genau EINE Aufgabe pro Regel und Zyklus. Wurde die vorige bis zur Frist (Fälligkeitstag + 1 Tag,
 // 4 Uhr morgens) nicht erledigt, wird sie ersetzt und der Zähler "verpasst" erhöht.
-function processRule(byKey, key, notes, todayIso, nowWall, col, familyId) {
+// Reihum: die neue Aufgabe bekommt genau eine zuständige Person; nach einer verpassten Aufgabe dieselbe.
+function processRule(byKey, rule, todayIso, nowWall, col, familyId, members) {
+    const key = rule.key;
     const list = byKey[key] || [];
     if (list.some(r => r.getString("faellig") === todayIso)) return 0;
     const last = list[0]; // absteigend nach Fälligkeit sortiert
     let missed = 0;
+    let stay = "";
     if (last && !last.getBool("erledigt")) {
         const lastDue = last.getString("faellig");
         if (isIsoDate(lastDue) && nowWall < isoToWall(lastDue) + DAY_MS + 4 * HOUR_MS) return 0; // Frist läuft noch
         missed = last.getInt("verpasst") + 1;
+        const v = verlaufFor(familyId, last.id);
+        if (v) {
+            stay = v.getString("zustaendig");
+            try { v.set("status", "verpasst"); $app.save(v); } catch (e) { /* egal */ }
+        }
         try { $app.delete(last); } catch (e) { /* egal */ }
+    }
+    let zust = "";
+    let notes = rule.notes;
+    if (isRotating(rule)) {
+        zust = (stay && rule.ids.indexOf(stay) !== -1) ? stay : pickNext(familyId, rule, members);
+        if (zust) notes = buildAssignedNotes([zust], members);
+    } else if ((rule.ids || []).length === 1) {
+        zust = rule.ids[0];
     }
     const rec = new Record(col);
     rec.set("titel", key);
@@ -459,6 +622,7 @@ function processRule(byKey, key, notes, todayIso, nowWall, col, familyId) {
     rec.set("verpasst", missed);
     rec.set("familie", familyId);
     $app.save(rec);
+    verlaufAdd(familyId, { regel: rule.id || "", titel: key, aufgabe: rec.id, faellig: todayIso, zustaendig: zust, status: "offen" });
     byKey[key] = [rec].concat(list);
     console.log("[Haushalt-Aufgabe] Angelegt: " + key + (missed ? " (" + missed + "x nicht erledigt)" : ""));
     return 1;
@@ -474,22 +638,22 @@ function runHousehold(familyId, data) {
     // Fällige Regeln sammeln (Schlüssel = Aufgabentitel wie bisher)
     const rules = [];
     const seen = {};
-    const add = (key, ids) => {
+    const add = (key, ids, src) => {
         if (seen[key]) return;
         seen[key] = true;
-        rules.push({ key: key, notes: buildAssignedNotes(ids, data.members) });
+        rules.push({ key: key, notes: buildAssignedNotes(ids, data.members), ids: (ids || []).slice(), id: String((src && src.id) || ""), rotate: (src && src.rotate) || "" });
     };
     (data.roomSchedules || []).forEach(s => {
-        if (isScheduleDue(s, todayIso, weekday)) add(cleaningTitle(s, data.rooms, data.cleaningCategories), s.assignedMemberIds);
+        if (isScheduleDue(s, todayIso, weekday)) add(cleaningTitle(s, data.rooms, data.cleaningCategories), s.assignedMemberIds, s);
     });
     const bins = data.trashBins || [];
     bins.forEach(b => {
-        if (b.schedule && isScheduleDue(b.schedule, todayIso, weekday)) add(binTitle(b, data.rooms), b.assignedMemberIds);
+        if (b.schedule && isScheduleDue(b.schedule, todayIso, weekday)) add(binTitle(b, data.rooms), b.assignedMemberIds, b);
     });
     // Abholtermine stehen im Apple-Kalender der jeweiligen Familie (eigene Kalenderdatei)
     if (bins.length) {
         const pickups = pickupTypesFor(tomorrowIso, familyId);
-        bins.forEach(b => { if (pickups[b.wasteType]) add(binTitle(b, data.rooms), b.assignedMemberIds); });
+        bins.forEach(b => { if (pickups[b.wasteType]) add(binTitle(b, data.rooms), b.assignedMemberIds, b); });
     }
     if (!rules.length) return 0;
 
@@ -501,7 +665,7 @@ function runHousehold(familyId, data) {
     const col = $app.findCollectionByNameOrId(AUFGABEN);
     let created = 0;
     rules.forEach(rule => {
-        try { created += processRule(byKey, rule.key, rule.notes, todayIso, nowWall, col, familyId); }
+        try { created += processRule(byKey, rule, todayIso, nowWall, col, familyId, data.members || []); }
         catch (e) { console.log("[Haushalt-Aufgabe] Fehler bei \"" + rule.key + "\": " + e.message); }
     });
     return created;
@@ -562,6 +726,13 @@ function runCron() {
             console.log("[Aufgaben] Fehler bei Familie \"" + f.getString("name") + "\": " + e.message);
         }
     });
+    // Verlauf älter als 400 Tage aufräumen (höchstens 500 je Lauf)
+    if (verlaufOk()) {
+        try {
+            const cut = wallIso(wallNow() - 400 * DAY_MS);
+            $app.findRecordsByFilter(VERLAUF, "faellig != '' && faellig < {:d}", "", 500, 0, { d: cut }).forEach(r => { try { $app.delete(r); } catch (e) { /* egal */ } });
+        } catch (e) { /* egal */ }
+    }
     // Ältere Aufgaben ohne Familie (sollten nach dem Umzug nicht mehr vorkommen) aufräumen
     try {
         $app.findRecordsByFilter(AUFGABEN, "familie = '' && erledigt = true", "", 200, 0).forEach(r => { try { $app.delete(r); } catch (e) { /* egal */ } });
@@ -575,7 +746,91 @@ function runHouseholdNow(familyId) {
     return r || { created: 0, busy: true };
 }
 
+// =============================================================================================
+// Statistik „Wer macht wie viel?“ (Haushalt-Seite)
+// =============================================================================================
+function statistik(familyId, tage) {
+    const days = [30, 90, 365].indexOf(Number(tage)) !== -1 ? Number(tage) : 30;
+    const out = { tage: days, mitglieder: {}, regeln: [], bereit: verlaufOk() };
+    if (!familyId || !out.bereit) return out;
+    const from = wallIso(wallNow() - days * DAY_MS);
+    let recs = [];
+    try { recs = $app.findRecordsByFilter(VERLAUF, "familie = {:f} && faellig >= {:d}", "", 0, 0, { f: familyId, d: from }); } catch (e) { recs = []; }
+    const per = out.mitglieder;
+    const slot = id => (per[id] = per[id] || { erledigt: 0, verpasst: 0, offen: 0 });
+    recs.forEach(r => {
+        const st = r.getString("status");
+        const z = r.getString("zustaendig");
+        if (st === "erledigt") { const v = r.getString("erledigt_von") || z; if (v) slot(v).erledigt++; }
+        else if (st === "verpasst") { if (z) slot(z).verpasst++; }
+        else if (st === "offen") { if (z) slot(z).offen++; }
+    });
+    const data = loadHouseholdData(familyId);
+    const members = data.members || [];
+    const counts = doneCounts(familyId, 30);
+    const rules = [];
+    (data.roomSchedules || []).forEach(s => rules.push({ id: String(s.id || ""), ids: (s.assignedMemberIds || []).slice(), rotate: s.rotate || "", titel: cleaningTitle(s, data.rooms, data.cleaningCategories) }));
+    (data.trashBins || []).forEach(b => rules.push({ id: String(b.id || ""), ids: (b.assignedMemberIds || []).slice(), rotate: b.rotate || "", titel: binTitle(b, data.rooms) }));
+    rules.filter(isRotating).forEach(rule => {
+        const last = lastAssignee(familyId, rule.id);
+        const lastSt = last ? last.getString("status") : "";
+        const jetzt = last && (lastSt === "offen" || lastSt === "verpasst") ? last.getString("zustaendig") : "";
+        // Nach einer verpassten Aufgabe bleibt dieselbe Person dran – „danach“ zeigt dann die übernächste
+        const naechster = pickNext(familyId, rule, members, counts);
+        out.regeln.push({ id: rule.id, titel: rule.titel, jetzt: jetzt, naechster: naechster !== jetzt ? naechster : "", art: rule.rotate });
+    });
+    return out;
+}
+
+// =============================================================================================
+// Kinderseite: Kind möchte Sterne eintauschen -> Benachrichtigung an die Eltern
+// (alle Profile der Familie außer dem Kind selbst, Kindern, Kindersicherung und Gästen)
+// =============================================================================================
+const REWARD_TEXT = {
+    de: { t: "⭐ Belohnung angefragt", b: "{k} möchte „{w}“ für {n} Sterne eintauschen." },
+    en: { t: "⭐ Reward requested", b: "{k} would like to trade {n} stars for “{w}”." },
+    fr: { t: "⭐ Récompense demandée", b: "{k} aimerait échanger {n} étoiles contre « {w} »." },
+    es: { t: "⭐ Recompensa solicitada", b: "{k} quiere canjear {n} estrellas por «{w}»." },
+};
+function notifyReward(familyId, actorUserId, body) {
+    if (!familyId) return 0;
+    const members = loadHouseholdData(familyId).members || [];
+    const kid = members.find(m => m.id === String((body && body.memberId) || ""));
+    if (!kid) return 0;
+    const wish = String((body && body.titel) || "").replace(/\s+/g, " ").trim().slice(0, 60);
+    const stars = Math.max(1, Math.min(9999, Math.round(Number(body && body.sterne) || 0)));
+    if (!wish) return 0;
+    const push = require(`${__hooks}/pinn-push.js`);
+    let pt = null;
+    try { pt = require(`${__hooks}/pinn-pushtext.js`); } catch (e) { pt = null; }
+    let users = [];
+    try { users = $app.findRecordsByFilter("benutzer", "familie = {:f}", "", 0, 0, { f: familyId }); } catch (e) { users = []; }
+    let sent = 0;
+    users.forEach(u => {
+        if (u.id === actorUserId) return;
+        const rolle = u.getString("rolle");
+        if (rolle === "gast" || rolle === "hauptadmin") return;
+        const mid = u.getString("mitglied");
+        if (mid === kid.id) return;
+        const m = members.find(x => x.id === mid);
+        if (m && (push.isChildMember(m) || m.childLock) && rolle !== "admin") return;
+        let lang = "de";
+        try { if (pt && typeof pt.langOfUser === "function") lang = pt.langOfUser(u); } catch (e) { lang = "de"; }
+        const tx = REWARD_TEXT[lang] || REWARD_TEXT.de;
+        try {
+            sent += push.notifyUser(u.id, {
+                titel: tx.t,
+                text: tx.b.replace("{k}", memberLabel(kid)).replace("{w}", wish).replace("{n}", String(stars)),
+                url: "/?sterne=" + encodeURIComponent(kid.id),
+                tag: "belohnung-" + kid.id,
+            }) ? 1 : 0;
+        } catch (e) { console.log("[Push] Belohnung: " + e.message); }
+    });
+    return sent;
+}
+
 module.exports = {
+    statistik, notifyReward, ensureVerlauf,
     AUFGABEN, ensureSchema, listAll, saveTask, setDone, notifyDoneDelayed, removeTask, familyMembers,
     deleteHouseholdTasks, deleteTodayHouseholdTask, runCron, runHouseholdNow,
 };

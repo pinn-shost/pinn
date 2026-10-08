@@ -11,6 +11,13 @@
 //  POST /api/pinn/system/wiederherstellen   { datei, umfang: "daten" | "alles" } – Hauptadmin bzw. Admin
 //                                           bei nur einer Familie auf dem Server
 //  POST /api/pinn/system/update             neueste Version von GitHub einspielen – wie oben
+//  POST /api/pinn/system/rechte             { id, an } nur Hauptadmin: Familien-Admin darf Updates und
+//                                           Wiederherstellung (auch bei mehreren Familien)
+
+onBootstrap((e) => {
+    e.next();
+    try { require(`${__hooks}/pinn-system.js`).ensureSchema(); } catch (err) { console.log("[System] Einrichtung: " + err.message); }
+});
 
 function pinnSystemFehler(e, err) {
     const code = err.pinnCode || "fehler";
@@ -55,7 +62,7 @@ routerAdd("POST", "/api/pinn/system/sichern", (e) => {
 routerAdd("POST", "/api/pinn/system/wiederherstellen", (e) => {
     e.response.header().set("Cache-Control", "no-store");
     const lib = require(`${__hooks}/pinn-system.js`);
-    if (!lib.rechte(e).darf) return e.json(403, { error: "Wiederherstellen betrifft alle Familien auf diesem Server – das kann nur der Hauptadmin." });
+    if (!lib.rechte(e).darf) return e.json(403, { error: "Wiederherstellen betrifft alle Familien auf diesem Server – das kann nur der Hauptadmin oder ein von ihm berechtigter Admin." });
     const body = e.requestInfo().body || {};
     try {
         const out = lib.wiederherstellen(body.datei, body.umfang);
@@ -69,12 +76,26 @@ routerAdd("POST", "/api/pinn/system/wiederherstellen", (e) => {
 routerAdd("POST", "/api/pinn/system/update", (e) => {
     e.response.header().set("Cache-Control", "no-store");
     const lib = require(`${__hooks}/pinn-system.js`);
-    if (!lib.rechte(e).darf) return e.json(403, { error: "Updates betreffen alle Familien auf diesem Server – das kann nur der Hauptadmin." });
+    if (!lib.rechte(e).darf) return e.json(403, { error: "Updates betreffen alle Familien auf diesem Server – das kann nur der Hauptadmin oder ein von ihm berechtigter Admin." });
     try {
         const out = lib.update();
         console.log("[System] Update auf " + out.version + " angestoßen von " + e.auth.getString("username"));
         return e.json(200, out);
     } catch (err) {
         return pinnSystemFehler(e, err);
+    }
+}, $apis.requireAuth("benutzer"));
+
+routerAdd("POST", "/api/pinn/system/rechte", (e) => {
+    e.response.header().set("Cache-Control", "no-store");
+    const b = require(`${__hooks}/pinn-benutzer.js`);
+    if (!b.isMainAdmin(e)) return e.json(403, { error: "Nur der Hauptadmin kann dieses Recht vergeben." });
+    const body = e.requestInfo().body || {};
+    try {
+        const out = require(`${__hooks}/pinn-system.js`).setzeRechte(body.id, !!body.an);
+        console.log("[System] Recht für Updates/Wiederherstellung " + (out.systemrechte ? "erteilt" : "entzogen") + " (Profil " + out.id + ")");
+        return e.json(200, out);
+    } catch (err) {
+        return e.json(400, { error: err.message });
     }
 }, $apis.requireAuth("benutzer"));
