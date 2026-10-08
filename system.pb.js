@@ -19,11 +19,8 @@ onBootstrap((e) => {
     try { require(`${__hooks}/pinn-system.js`).ensureSchema(); } catch (err) { console.log("[System] Einrichtung: " + err.message); }
 });
 
-function pinnSystemFehler(e, err) {
-    const code = err.pinnCode || "fehler";
-    const http = code === "beschaeftigt" ? 409 : 400;
-    return e.json(http, { error: err.message, code });
-}
+// Fehlerantwort: steht direkt in jedem Handler (Hilfsfunktionen auf Dateiebene sind in den
+// abgeschotteten Handlern von PocketBase nicht sichtbar).
 
 routerAdd("GET", "/api/pinn/system", (e) => {
     e.response.header().set("Cache-Control", "no-store");
@@ -55,7 +52,7 @@ routerAdd("POST", "/api/pinn/system/sichern", (e) => {
     try {
         return e.json(200, lib.sichern());
     } catch (err) {
-        return pinnSystemFehler(e, err);
+        return e.json((err.pinnCode || "fehler") === "beschaeftigt" ? 409 : 400, { error: err.message, code: err.pinnCode || "fehler" });
     }
 }, $apis.requireAuth("benutzer"));
 
@@ -69,7 +66,7 @@ routerAdd("POST", "/api/pinn/system/wiederherstellen", (e) => {
         console.log("[System] Wiederherstellung angestoßen: " + String(body.datei) + " (" + (body.umfang === "alles" ? "alles" : "daten") + ") von " + e.auth.getString("username"));
         return e.json(200, out);
     } catch (err) {
-        return pinnSystemFehler(e, err);
+        return e.json((err.pinnCode || "fehler") === "beschaeftigt" ? 409 : 400, { error: err.message, code: err.pinnCode || "fehler" });
     }
 }, $apis.requireAuth("benutzer"));
 
@@ -82,7 +79,7 @@ routerAdd("POST", "/api/pinn/system/update", (e) => {
         console.log("[System] Update auf " + out.version + " angestoßen von " + e.auth.getString("username"));
         return e.json(200, out);
     } catch (err) {
-        return pinnSystemFehler(e, err);
+        return e.json((err.pinnCode || "fehler") === "beschaeftigt" ? 409 : 400, { error: err.message, code: err.pinnCode || "fehler" });
     }
 }, $apis.requireAuth("benutzer"));
 

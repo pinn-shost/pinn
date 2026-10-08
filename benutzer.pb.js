@@ -50,7 +50,8 @@ onBootstrap((e) => {
 // Wohnform ('familie' oder 'wg') heraus - die Anmeldemaske zeigt damit „Familie“ bzw. „WG“.
 routerAdd("GET", "/api/pinn/familie", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
-    const sitz = sitzungenLib();
+    let sitz = null;
+    try { sitz = require(`${__hooks}/pinn-sitzungen.js`); } catch (err) { sitz = null; }
     e.response.header().set("Cache-Control", "no-store");
     const ipWait = sitz ? sitz.ipGesperrt(e) : 0;
     if (ipWait) {
@@ -77,10 +78,9 @@ routerAdd("GET", "/api/pinn/familie", (e) => {
     return e.json(200, { name: fam.getString("name"), profiles: names, wohnform: wohnform });
 });
 
-// Geräteverwaltung (pinn-sitzungen.js) – fehlt die Datei, läuft die Anmeldung wie bisher
-function sitzungenLib() {
-    try { return require(`${__hooks}/pinn-sitzungen.js`); } catch (err) { return null; }
-}
+// Geräteverwaltung (pinn-sitzungen.js) – fehlt die Datei, läuft die Anmeldung wie bisher.
+// WICHTIG: Jeder Handler läuft in PocketBase abgeschottet – Hilfsfunktionen oben in dieser Datei
+// sind darin NICHT sichtbar. Deshalb wird pinn-sitzungen.js in jedem Handler direkt geholt.
 
 // Anmelden: {familie, username, password} oder {hauptadmin: true, password}
 // Schutz gegen Durchprobieren: nach 5 Fehlversuchen für dasselbe Profil wird es gesperrt
@@ -91,7 +91,8 @@ function sitzungenLib() {
 routerAdd("POST", "/api/pinn/login", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const dash = require(`${__hooks}/pinn-dashboard.js`);
-    const sitz = sitzungenLib();
+    let sitz = null;
+    try { sitz = require(`${__hooks}/pinn-sitzungen.js`); } catch (err) { sitz = null; }
     e.response.header().set("Cache-Control", "no-store");
     const ipWait = sitz ? sitz.ipGesperrt(e) : 0;
     if (ipWait) {
@@ -180,7 +181,8 @@ routerAdd("POST", "/api/pinn/password", (e) => {
     rec.set("mustChangePassword", false);
     try { rec.refreshTokenKey(); } catch (err) { /* setPassword erneuert ihn ohnehin */ }
     $app.save(rec);
-    const sitz = sitzungenLib();
+    let sitz = null;
+    try { sitz = require(`${__hooks}/pinn-sitzungen.js`); } catch (err) { sitz = null; }
     if (sitz) { try { sitz.entferneAndere(rec.id, sitz.sidOf(e)); } catch (err) { /* egal */ } }
     return $apis.recordAuthResponse(e, rec);
 }, $apis.requireAuth("benutzer"));
@@ -291,7 +293,8 @@ routerAdd("POST", "/api/pinn/users/reset-password", (e) => {
     try { rec.refreshTokenKey(); } catch (err) { /* setPassword erneuert ihn ohnehin */ }
     $app.save(rec);
     // Neues Passwort: das Profil ist auf allen Geräten abgemeldet (samt Push)
-    const sitz = sitzungenLib();
+    let sitz = null;
+    try { sitz = require(`${__hooks}/pinn-sitzungen.js`); } catch (err) { sitz = null; }
     if (sitz) { try { sitz.entferneAndere(rec.id, ""); } catch (err) { /* egal */ } }
     try { require(`${__hooks}/pinn-dashboard.js`).clearFails("login:" + rec.getString("familie") + ":" + rec.getString("username")); } catch (err) { /* egal */ }
     return e.json(200, { success: true });

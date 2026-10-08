@@ -35,9 +35,8 @@ cronAdd("pinnEinrichtungNeustart", "* * * * *", () => {
     } catch (err) { /* egal */ }
 });
 
-function pinnEinrichtungFehler(e, err) {
-    return e.json(400, { error: err.message, code: err.pinnCode || "fehler", feld: err.pinnFeld || "" });
-}
+// Fehlerantwort: steht direkt in jedem Handler (Hilfsfunktionen auf Dateiebene sind in den
+// abgeschotteten Handlern von PocketBase nicht sichtbar).
 
 routerAdd("GET", "/api/pinn/einrichtung/offen", (e) => {
     e.response.header().set("Cache-Control", "no-store");
@@ -68,7 +67,7 @@ routerAdd("POST", "/api/pinn/einrichtung/speichern", (e) => {
         lib.save(st);
         return e.json(200, lib.status());
     } catch (err) {
-        return pinnEinrichtungFehler(e, err);
+        return e.json(400, { error: err.message, code: err.pinnCode || "fehler", feld: err.pinnFeld || "" });
     }
 }, $apis.requireAuth("benutzer"));
 
@@ -97,7 +96,7 @@ routerAdd("POST", "/api/pinn/einrichtung/abschliessen", (e) => {
         out.neustart = out.neustartNoetig ? lib.neustart() : false;
         return e.json(200, out);
     } catch (err) {
-        return pinnEinrichtungFehler(e, err);
+        return e.json(400, { error: err.message, code: err.pinnCode || "fehler", feld: err.pinnFeld || "" });
     }
 }, $apis.requireAuth("benutzer"));
 
