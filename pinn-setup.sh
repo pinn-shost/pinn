@@ -170,7 +170,7 @@ ziel() {
     *.pb.js)                         echo "pb_hooks/$1" ;;
     pinn-setup.sh|pinn-pocketbase-update.sh|pinn-wartung.sh|docker-compose.yaml|docker-compose.yml|env.txt|.env) echo "" ;;
     pinn-*.js|calendar-sync.js)      echo "pb_hooks/$1" ;;
-    index.html|manifest.json|einrichtung.js|*.png|*.ico|*.svg|*.webmanifest) echo "pb_public/$1" ;;
+    index.html|manifest.json|einrichtung.js|datenexport.js|*.png|*.ico|*.svg|*.webmanifest) echo "pb_public/$1" ;;
     [a-z][a-z].js)                   echo "pb_public/lang/$1" ;;
     pinn.css)                        echo "pb_public/vendor/pinn.css" ;;
     pocketbase_umd.js|pocketbase.umd.js|pocketbase.umd.min.js) echo "pb_public/vendor/pocketbase/pocketbase.umd.js" ;;

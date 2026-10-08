@@ -5060,6 +5060,11 @@ window.PINN_LANGUAGES = [
 
         <div class="set-sub">
           <p class="set-sub-title">Daten</p>
+          <!-- Datenexport (nur für Admins sichtbar) – pb_public/datenexport.js, pb_hooks/export.pb.js -->
+          <div id="dataExportSub" class="hidden mb-4" data-no-i18n data-no-term>
+            <p id="dataExportText" class="text-xs text-ink/50 mb-2 leading-snug"></p>
+            <button id="dataExportBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition"></button>
+          </div>
           <p class="text-xs text-ink/40 mb-2">Setzt die auf diesem Gerät gespeicherten pinn.-Daten auf den Anfangszustand zurück.</p>
           <button id="resetDataBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-white hover:bg-red-500 hover:border-red-500 transition">Alle Daten zurücksetzen</button>
         </div>
@@ -10076,6 +10081,7 @@ async function loadMainAdminFamilies() {
         <div class="mb-3">${profiles}</div>
         <div class="flex flex-wrap gap-2">
           <button type="button" class="ma-add-user px-3 py-1.5 rounded-lg bg-pine text-white text-xs hover:bg-pine/90 transition" data-id="${f.id}" data-name="${escapeHtml(f.name)}">+ Profil</button>
+          <button type="button" class="ma-export px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition" data-id="${f.id}" data-no-i18n>${escapeHtml(pinnExportText('kurz'))}</button>
           <button type="button" class="ma-del-family ml-auto px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-red-500 hover:border-red-500 transition" data-id="${f.id}" data-name="${escapeHtml(f.name)}">Familie löschen</button>
         </div>
       </div>`;
@@ -10091,6 +10097,7 @@ async function loadMainAdminFamilies() {
     loadMainAdminFamilies();
   };
   list.querySelectorAll('.ma-dev').forEach(el => el.addEventListener('click', () => openDevModal(el.dataset.id, el.dataset.name)));
+  list.querySelectorAll('.ma-export').forEach(el => el.addEventListener('click', () => openPinnExport(el.dataset.id)));
   list.querySelectorAll('.ma-sys').forEach(el => el.addEventListener('change', () =>
     run('/api/pinn/system/rechte', { id: el.dataset.id, an: el.checked }, el.checked ? 'Darf jetzt Updates einspielen und Sicherungen zurückholen.' : 'Recht für Updates und Wiederherstellung entzogen.')));
   list.querySelectorAll('.ma-role').forEach(el => el.addEventListener('change', () =>
@@ -10209,6 +10216,63 @@ async function openPinnSetup() {
     alert(pinnSetupText('laden'));
   }
 }
+/* ==========================================================
+   Datenexport (komplette Familie als ZIP – Daten + Dokumente)
+   ----------------------------------------------------------
+   Das Modul liegt in pb_public/datenexport.js und wird erst beim ersten Öffnen geladen
+   (eigene Texte in vier Sprachen). Das ZIP baut der Browser; der Server liefert nur Sammlungen
+   und Dateien (pb_hooks/export.pb.js + pinn-export.js).
+   - Einstellungen → System → Daten: „Familie exportieren“ (Admins, nicht mit Kindersicherung)
+   - Hauptadmin → Familien: „📦 Export“ je Familie (vollständig, z. B. für den Umzug)
+   ========================================================== */
+const PINN_EXPORT_TEXTE = {
+  de: { btn: '📦 {F} exportieren', kurz: '📦 Export', text: 'Alle Daten {Fd} als ZIP-Datei – mit Dokumenten, Belegen und Bildern. Zum Beispiel für den Umzug auf ein anderes NAS oder als eigene Sicherung.', laden: 'Der Export konnte nicht geladen werden (pb_public/datenexport.js fehlt?).', F: 'Familie', FW: 'WG', Fd: 'der Familie', FWd: 'der WG' },
+  en: { btn: '📦 Export {F}', kurz: '📦 Export', text: 'All data {Fd} as a ZIP file – including documents, receipts and pictures. For example to move to another NAS or as your own backup.', laden: 'The export could not be loaded (pb_public/datenexport.js missing?).', F: 'family', FW: 'flatshare', Fd: 'of your family', FWd: 'of your flatshare' },
+  fr: { btn: '📦 Exporter la {F}', kurz: '📦 Export', text: 'Toutes les données {Fd} dans un fichier ZIP – avec documents, justificatifs et images. Par exemple pour déménager sur un autre NAS ou comme sauvegarde personnelle.', laden: 'L\'export n\'a pas pu être chargé (pb_public/datenexport.js manquant ?).', F: 'famille', FW: 'colocation', Fd: 'de la famille', FWd: 'de la colocation' },
+  es: { btn: '📦 Exportar {F}', kurz: '📦 Exportar', text: 'Todos los datos {Fd} en un archivo ZIP – con documentos, recibos e imágenes. Por ejemplo para mudarse a otro NAS o como copia de seguridad propia.', laden: 'No se pudo cargar la exportación (¿falta pb_public/datenexport.js?).', F: 'familia', FW: 'piso compartido', Fd: 'de la familia', FWd: 'del piso compartido' },
+};
+function pinnExportText(key) {
+  const l = (window.PINN_I18N && window.PINN_I18N.current) || 'en';
+  const d = PINN_EXPORT_TEXTE[l] || PINN_EXPORT_TEXTE.en;
+  const wg = typeof householdType !== 'undefined' && householdType === 'wg';
+  return String(d[key] || PINN_EXPORT_TEXTE.en[key] || key)
+    .replace(/\{Fd\}/g, wg ? d.FWd : d.Fd).replace(/\{F\}/g, wg ? d.FW : d.F);
+}
+let pinnExportLoading = null;
+function loadPinnExportScript() {
+  if (window.PinnExport) return Promise.resolve(window.PinnExport);
+  if (pinnExportLoading) return pinnExportLoading;
+  pinnExportLoading = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'datenexport.js?v=' + APP_VERSION;
+    s.onload = () => (window.PinnExport ? resolve(window.PinnExport) : reject(new Error('PinnExport fehlt')));
+    s.onerror = () => { pinnExportLoading = null; s.remove(); reject(new Error('datenexport.js fehlt')); };
+    document.head.appendChild(s);
+  });
+  return pinnExportLoading;
+}
+async function openPinnExport(familieId) {
+  try {
+    const px = await loadPinnExportScript();
+    px.open({ apiFetch, familie: familieId || '', wg: typeof householdType !== 'undefined' && householdType === 'wg' });
+  } catch (e) {
+    alert(pinnExportText('laden'));
+  }
+}
+// Einstellungen → System → Daten: Export nur für Admins (nicht für Gäste und Kindersicherung)
+function exportRefreshSub() {
+  const sub = document.getElementById('dataExportSub');
+  if (!sub) return;
+  const show = (isCurrentUserAdmin() || isCurrentUserMainAdmin()) && !isCurrentUserGuest()
+    && !(typeof childLockActive === 'function' && childLockActive());
+  sub.classList.toggle('hidden', !show);
+  if (!show) return;
+  document.getElementById('dataExportText').textContent = pinnExportText('text');
+  const b = document.getElementById('dataExportBtn');
+  b.textContent = pinnExportText('btn');
+  b.onclick = () => openPinnExport('');
+}
+
 // Hinweis beim Hauptadmin: Einrichtung offen bzw. gespeicherte Werte warten auf einen Neustart.
 // autoOpen: nach der Anmeldung den Assistenten von selbst öffnen, solange die Einrichtung offen ist.
 async function refreshMainAdminSetupBanner(autoOpen) {
@@ -23792,7 +23856,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.26.0';
+const APP_VERSION = '1.27.0';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -24694,7 +24758,7 @@ document.getElementById('errLogClearDone').addEventListener('click', () => errLo
 document.getElementById('errLogClearAll').addEventListener('click', () => errLogClear('alle'));
 (function () {
   const acc = document.getElementById('settingsSystemAccordion');
-  if (acc) acc.addEventListener('toggle', () => { if (acc.open) { sysRefreshSummary(); errLogRefreshSummary(); } });
+  if (acc) acc.addEventListener('toggle', () => { if (acc.open) { sysRefreshSummary(); errLogRefreshSummary(); exportRefreshSub(); } });
 })();
 
 // „Auf Update prüfen“: Admins sehen die neue Version auf GitHub samt Installieren-Knopf,
@@ -24728,6 +24792,16 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
    - rueckblick: true = Einträge vor dem Versions-Log, aus der Projekthistorie zusammengefasst.
    ========================================================== */
 const PINN_CHANGELOG = [
+  {
+    v: '1.27', datum: '08.10.2026', titel: 'Datenexport',
+    punkte: [
+      ['neu', 'Einstellungen → System → Daten: „📦 Familie exportieren“ (bzw. „WG exportieren“) – alle Daten als ZIP-Datei mit Dokumenten, Belegen, Rezept- und Pinnwand-Bildern. Vorher zeigt pinn., was enthalten ist und wie groß das ZIP wird; am iPhone über „Teilen → In Dateien sichern“, am Computer direkt in den Download-Ordner'],
+      ['neu', 'Hauptadmin → Familien: „📦 Export“ je Familie – vollständig inklusive privater Kassen und „Nur für mich“-Kalender, z. B. für den Umzug auf ein anderes NAS'],
+      ['info', 'Familien-Admins exportieren nur, was sie auch in der App sehen: Kassen ohne sie als Mitglied und private Kalender anderer bleiben draußen. Nie im Export: Passwörter, PINs, Zugangsdaten zu iCloud, Google und Home Assistant, angemeldete Geräte und Push-Abos'],
+      ['info', 'Das ZIP entsteht im Browser – auf dem NAS bleiben keine Zwischendateien. Aufbau: pinn-export.json (Beschreibung), daten/ (JSON je Sammlung), dateien/ (Dokumente und Bilder), dazu eine LIESMICH-Datei'],
+      ['info', 'Server: neu export.pb.js und pinn-export.js, neu pb_public/datenexport.js; pinn-setup.sh sortiert datenexport.js ein'],
+    ],
+  },
   {
     v: '1.26', datum: '08.10.2026', titel: 'Sterne & faire Haushaltsverteilung',
     punkte: [
