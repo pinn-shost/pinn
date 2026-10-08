@@ -132,6 +132,8 @@ function applyTerms(s, lang) {
 // Regel: [Muster (deutscher Text), { en, fr, es }]
 // In den Vorlagen: {n} = Teil n, ebenfalls übersetzt · <n> = Teil n unverändert (Namen, Titel …)
 //                  [n] = Namensliste („A, B und C“ → „A, B and C“) · Funktion (g, h) für Sonderfälle
+//                  #n  = Teil n unverändert – außer er ist genau ein Ersatzname der App („Zettel“,
+//                        „Foto“, „Dokument“ …, siehe WORDS); frei eingegebene Titel bleiben also stehen
 // „…“ in den Vorlagen werden am Ende in die Anführungszeichen der Sprache umgewandelt.
 // ---------------------------------------------------------------------------------------------
 const WD = {
@@ -161,6 +163,19 @@ const EXACT = {
     "Ein Ausgleich": { en: "A settlement", fr: "Un règlement", es: "Una liquidación" },
     "Neue Umfrage": { en: "New poll", fr: "Nouveau sondage", es: "Nueva encuesta" },
     "Countdown": { en: "Countdown", fr: "Compte à rebours", es: "Cuenta atrás" },
+};
+
+// Ersatznamen, die die Module einsetzen, wenn ein Titel fehlt (nur bei genau diesem Wort übersetzt: #n)
+const WORDS = {
+    "Zettel": { en: "Note", fr: "Note", es: "Nota" },
+    "Foto": { en: "Photo", fr: "Photo", es: "Foto" },
+    "Liste": { en: "List", fr: "Liste", es: "Lista" },
+    "Umfrage": { en: "Poll", fr: "Sondage", es: "Encuesta" },
+    "Countdown": { en: "Countdown", fr: "Compte à rebours", es: "Cuenta atrás" },
+    "Dokument": { en: "Document", fr: "Document", es: "Documento" },
+    "Vertrag": { en: "Contract", fr: "Contrat", es: "Contrato" },
+    "Ohne Titel": { en: "Untitled", fr: "Sans titre", es: "Sin título" },
+    "Buchung": { en: "Transaction", fr: "Opération", es: "Movimiento" },
 };
 
 // Muster, die überall gelten (Datum, Uhrzeit, Dauer …)
@@ -269,7 +284,7 @@ const GROUPS = [
     // --- Ortung: Einkauf beim Laden automatisch abgehakt ---
     { tag: /^einkauf-/, rules: [
         [/^Einkauf abgehakt$/, { en: "Shopping checked off", fr: "Courses cochées", es: "Compra marcada" }],
-        [/^(.+) ist erledigt \((\d+) Min\. bei (.+)\)\. Tippe hier, um den Betrag einzutragen\.$/, { en: "{1} is done (<2> min at <3>). Tap here to enter the amount.", fr: "{1} – terminé (<2> min chez <3>). Touche ici pour saisir le montant.", es: "{1}: hecho (<2> min en <3>). Toca aquí para anotar el importe." }],
+        [/^(.+) ist erledigt \((\d+) Min\. bei (.+)\)\. Tippe hier, um den Betrag einzutragen\.$/, { en: "{1} is done (<2> min at [3]). Tap here to enter the amount.", fr: "{1} – terminé (<2> min chez [3]). Touche ici pour saisir le montant.", es: "{1}: hecho (<2> min en [3]). Toca aquí para anotar el importe." }],
     ] },
     // --- Ortung: im Laden angekommen ---
     { tag: /^laden-/, rules: [
@@ -280,21 +295,23 @@ const GROUPS = [
     // --- Pinnwand: Reaktion / Stimmen / Antwort / Erinnerung / neuer Zettel ---
     { tag: /^pinnwand-reaktion-/, rules: [
         [/^Reaktion auf deinen Zettel$/, { en: "Reaction to your note", fr: "Réaction à ta note", es: "Reacción a tu nota" }],
-        [/^([\s\S]+) – „([\s\S]*)“$/, { en: "[1] – „<2>“", fr: "[1] – „<2>“", es: "[1] – „<2>“" }],
+        [/^([\s\S]+) – „([\s\S]*)“$/, { en: "[1] – „#2“", fr: "[1] – „#2“", es: "[1] – „#2“" }],
     ] },
     { tag: /^pinnwand-stimme-/, rules: [
         [/^Neue Stimmen$/, { en: "New votes", fr: "Nouveaux votes", es: "Nuevos votos" }],
-        [/^(.+) hat abgestimmt – „([\s\S]*)“$/, { en: "<1> voted – „<2>“", fr: "<1> a voté – „<2>“", es: "<1> ha votado – „<2>“" }],
-        [/^(.+) haben abgestimmt – „([\s\S]*)“$/, { en: "[1] voted – „<2>“", fr: "[1] ont voté – „<2>“", es: "[1] han votado – „<2>“" }],
+        [/^(.+) hat abgestimmt – „([\s\S]*)“$/, { en: "<1> voted – „#2“", fr: "<1> a voté – „#2“", es: "<1> ha votado – „#2“" }],
+        [/^(.+) haben abgestimmt – „([\s\S]*)“$/, { en: "[1] voted – „#2“", fr: "[1] ont voté – „#2“", es: "[1] han votado – „#2“" }],
     ] },
     { tag: /^pinnwand-antwort-/, rules: [
         [/^(.+) hat geantwortet$/, { en: "<1> replied", fr: "<1> a répondu", es: "<1> ha respondido" }],
+        [/^„([^„“]*)“ – ([\s\S]*)$/, { en: "„#1“ – <2>", fr: "„#1“ – <2>", es: "„#1“ – <2>" }],
     ] },
     { tag: /^pinnwand-erinnerung-/, rules: [
         [/^Erinnerung von der Pinnwand$/, { en: "Reminder from the board", fr: "Rappel du tableau", es: "Recordatorio del tablón" }],
     ] },
     { tag: /^pinnwand-/, rules: [
         [/^(.+) \(für ([^()]+)\)$/, { en: "{1} (for [2])", fr: "{1} (pour [2])", es: "{1} (para [2])" }],
+        [/^Liste$|^Umfrage$|^Foto$|^Zettel$/, { en: g => WORDS[g[0]].en, fr: g => WORDS[g[0]].fr, es: g => WORDS[g[0]].es }],
         [/^(.+) sagt Danke$/, { en: "<1> says thanks", fr: "<1> dit merci", es: "<1> da las gracias" }],
         [/^(.+): neue Liste$/, { en: "<1>: new list", fr: "<1> : nouvelle liste", es: "<1>: nueva lista" }],
         [/^(.+) hat ein Foto angepinnt$/, { en: "<1> pinned a photo", fr: "<1> a épinglé une photo", es: "<1> ha fijado una foto" }],
@@ -311,18 +328,19 @@ const GROUPS = [
     ] },
     // --- Dokumente: Ablauf, Garantie, Gewährleistung ---
     { tag: /^dokument-/, rules: [
-        [/^Läuft ab: (.+)$/, { en: "Expires: <1>", fr: "Expire : <1>", es: "Caduca: <1>" }],
-        [/^Garantie endet: (.+)$/, { en: "Warranty ends: <1>", fr: "Fin de garantie : <1>", es: "Fin de la garantía: <1>" }],
-        [/^Gewährleistung endet: (.+)$/, { en: "Statutory warranty ends: <1>", fr: "Fin de la garantie légale : <1>", es: "Fin de la garantía legal: <1>" }],
+        [/^Läuft ab: (.+)$/, { en: "Expires: #1", fr: "Expire : #1", es: "Caduca: #1" }],
+        [/^Garantie endet: (.+)$/, { en: "Warranty ends: #1", fr: "Fin de garantie : #1", es: "Fin de la garantía: #1" }],
+        [/^Gewährleistung endet: (.+)$/, { en: "Statutory warranty ends: #1", fr: "Fin de la garantie légale : #1", es: "Fin de la garantía legal: #1" }],
         [/^Gültig bis (\S+) \((.+?)\) – rechtzeitig verlängern oder erneuern\.$/, { en: "Valid until {1} ({2}) – renew or replace in good time.", fr: "Valable jusqu’au {1} ({2}) – à prolonger ou renouveler à temps.", es: "Válido hasta el {1} ({2}) – renuévalo a tiempo." }],
         [/^Die Herstellergarantie endet am (\S+) \((.+?)\)\. Mängel am besten vorher melden\.$/, { en: "The manufacturer’s warranty ends on {1} ({2}). Best report any defects before then.", fr: "La garantie du fabricant prend fin le {1} ({2}). Mieux vaut signaler les défauts avant.", es: "La garantía del fabricante termina el {1} ({2}). Mejor comunica los defectos antes." }],
         [/^Die gesetzliche Gewährleistung endet am (\S+) \((.+?)\)\. Mängel vorher beim Händler reklamieren\.$/, { en: "The statutory warranty ends on {1} ({2}). Report defects to the retailer before then.", fr: "La garantie légale prend fin le {1} ({2}). Réclame les défauts auprès du vendeur avant.", es: "La garantía legal termina el {1} ({2}). Reclama los defectos al vendedor antes." }],
     ] },
     // --- Verträge: Kündigungsfrist, Vertragsende, eigene Erinnerung ---
     { tag: /^vertrag-/, rules: [
-        [/^Letzte Chance: (.+) kündigen$/, { en: "Last chance: cancel <1>", fr: "Dernière chance : résilier <1>", es: "Última oportunidad: cancelar <1>" }],
-        [/^Kündigungsfrist: (.+)$/, { en: "Notice period: <1>", fr: "Préavis : <1>", es: "Plazo de preaviso: <1>" }],
-        [/^Vertrag endet: (.+)$/, { en: "Contract ends: <1>", fr: "Fin du contrat : <1>", es: "Fin del contrato: <1>" }],
+        [/^Letzte Chance: (.+) kündigen$/, { en: "Last chance: cancel #1", fr: "Dernière chance : résilier #1", es: "Última oportunidad: cancelar #1" }],
+        [/^Kündigungsfrist: (.+)$/, { en: "Notice period: #1", fr: "Préavis : #1", es: "Plazo de preaviso: #1" }],
+        [/^Vertrag endet: (.+)$/, { en: "Contract ends: #1", fr: "Fin du contrat : #1", es: "Fin del contrato: #1" }],
+        [/^Vertrag$/, { en: "Contract", fr: "Contrat", es: "Contrato" }],
         [/^Kündigung bis (\S+) \((.+?)\) zum (\S+) – sonst verlängert er sich um einen Monat\.$/, { en: "Cancel by {1} ({2}) to end on {3} – otherwise it renews for one month.", fr: "Résiliation avant le {1} ({2}) pour le {3} – sinon il est prolongé d’un mois.", es: "Cancela antes del {1} ({2}) para el {3}; si no, se prorroga un mes." }],
         [/^Kündigung bis (\S+) \((.+?)\) zum (\S+) – sonst verlängert er sich um (\d+) Monate\.$/, { en: "Cancel by {1} ({2}) to end on {3} – otherwise it renews for <4> months.", fr: "Résiliation avant le {1} ({2}) pour le {3} – sinon il est prolongé de <4> mois.", es: "Cancela antes del {1} ({2}) para el {3}; si no, se prorroga <4> meses." }],
         [/^Der Vertrag endet am (\S+) \((.+?)\)\.$/, { en: "The contract ends on {1} ({2}).", fr: "Le contrat prend fin le {1} ({2}).", es: "El contrato termina el {1} ({2})." }],
@@ -374,16 +392,18 @@ function groupFor(tag) {
 
 function makeTranslator(lang, group) {
     const rules = (group ? group.rules : []).concat(SHARED);
+    const word = s => (WORDS[s] && WORDS[s][lang] !== undefined) ? WORDS[s][lang] : s;
     const names = s => {
         const i = s.lastIndexOf(" und ");
         return i < 0 ? s : s.slice(0, i) + AND[lang] + s.slice(i + 5);
     };
     function fill(out, g, depth) {
-        const h = { t: v => valueOf(v, depth), names: names };
+        const h = { t: v => valueOf(v, depth), names: names, w: word };
         if (typeof out === "function") return out(g, h);
-        return out.replace(/\{(\d)\}|<(\d)>|\[(\d)\]/g, (m, a, b, c) => {
+        return out.replace(/\{(\d)\}|<(\d)>|\[(\d)\]|#(\d)/g, (m, a, b, c, d) => {
             if (a) return h.t(g[+a] || "");
             if (b) return g[+b] || "";
+            if (d) return word(g[+d] || "");
             return names(g[+c] || "");
         });
     }

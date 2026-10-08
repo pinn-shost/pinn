@@ -574,7 +574,7 @@ window.PINN_LANGUAGES = [
     start(data);
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.26.0" onerror="PINN_I18N.fail()"><\/script>');
+  if (DICT) document.write('<script src="' + lang.file + '?v=1.27.1" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // Deutsch als WG: kein Wörterbuch, nur die WG-Bezeichnungen
 })();
 </script>
@@ -23856,7 +23856,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.27.0';
+const APP_VERSION = '1.27.1';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -24800,6 +24800,7 @@ const PINN_CHANGELOG = [
       ['info', 'Familien-Admins exportieren nur, was sie auch in der App sehen: Kassen ohne sie als Mitglied und private Kalender anderer bleiben draußen. Nie im Export: Passwörter, PINs, Zugangsdaten zu iCloud, Google und Home Assistant, angemeldete Geräte und Push-Abos'],
       ['info', 'Das ZIP entsteht im Browser – auf dem NAS bleiben keine Zwischendateien. Aufbau: pinn-export.json (Beschreibung), daten/ (JSON je Sammlung), dateien/ (Dokumente und Bilder), dazu eine LIESMICH-Datei'],
       ['info', 'Server: neu export.pb.js und pinn-export.js, neu pb_public/datenexport.js; pinn-setup.sh sortiert datenexport.js ein'],
+      ['fix', '1.27.1: Glocke vollständig übersetzt (Englisch, Französisch, Spanisch) – Sätze wie „… hat … angelegt“, Heimwege, „automatisch abgehakt“, Wer schuldet wem, Uhrzeiten und Termin-Daten erscheinen jetzt in der gewählten Sprache; frei eingegebene Namen und Titel bleiben unverändert. Push-Mitteilungen übersetzen jetzt auch mehrere Läden und Ersatznamen wie „Zettel“ oder „Dokument“ (pinn-pushtext.js, Sprachdateien en/fr/es)'],
     ],
   },
   {
@@ -47904,9 +47905,52 @@ function ntWhen(iso) {
   const today = new Date();
   const yest = new Date(); yest.setDate(yest.getDate() - 1);
   const hm = d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-  if (d.toDateString() === today.toDateString()) return 'heute ' + hm + ' Uhr';
-  if (d.toDateString() === yest.toDateString()) return 'gestern ' + hm + ' Uhr';
-  return d.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' }) + ', ' + hm + ' Uhr';
+  if (d.toDateString() === today.toDateString()) return ntTx('heute {0} Uhr', hm);
+  if (d.toDateString() === yest.toDateString()) return ntTx('gestern {0} Uhr', hm);
+  return ntTx('{0}, {1} Uhr', d.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' }), hm);
+}
+/* ---------- Glocke: Texte in der gewählten Sprache ----------
+   Die Sätze der Glocke bestehen aus Text und hervorgehobenen Namen (<b>…</b>). Die automatische
+   Übersetzung sieht davon nur Bruchstücke („hat … angelegt“) und erkennt sie nicht. Deshalb wird hier
+   die ganze Vorlage mit {0}, {1} … übersetzt (Sprachdatei, Einträge „nt|…“) und erst danach werden die
+   Werte eingesetzt. Die fertigen Karten tragen data-no-i18n – frei eingegebene Namen und Titel bleiben so
+   unverändert. Ohne Eintrag in der Sprachdatei bleibt die deutsche Vorlage stehen. */
+function ntTpl(tpl) {
+  try { if (window.PINN_I18N && PINN_I18N.active) return PINN_I18N.t(tpl, 'nt') || tpl; } catch (e) { /* Deutsch */ }
+  return tpl;
+}
+// Werte als fertiges HTML (schon escaped)
+function ntT(tpl, ...vals) {
+  return escapeHtml(ntTpl(tpl)).replace(/\{(\d)\}/g, (m, i) => (vals[+i] != null ? String(vals[+i]) : ''));
+}
+// Reiner Text (Werte unverändert, kein HTML)
+function ntTx(tpl, ...vals) {
+  return ntTpl(tpl).replace(/\{(\d)\}/g, (m, i) => (vals[+i] != null ? String(vals[+i]) : ''));
+}
+// Ersatznamen, die der Server einsetzt, wenn ein Titel fehlt – nur genau diese Wörter übersetzen
+var NT_WORDS = ['Jemand', 'Foto', 'Zettel', 'Liste', 'Umfrage', 'Countdown', 'Dokument', 'Vertrag', 'Fahrzeug', 'Buchung', 'Einkaufsliste', 'Kasse', 'Einkauf'];
+function ntW(s) { return NT_WORDS.indexOf(String(s || '')) >= 0 ? ntTx(String(s)) : String(s || ''); }
+function ntLangCode() { return (window.PINN_I18N && PINN_I18N.active && PINN_I18N.current) || 'de'; }
+// Uhrzeit wie sosClock, aber übersetzt
+function ntClock(ms) {
+  if (!ms) return '';
+  const d = new Date(ms);
+  const t = ntTx('{0} Uhr', d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }));
+  return d.toDateString() === new Date().toDateString() ? t : d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }) + ', ' + t;
+}
+function ntDur(min) {
+  const n = Math.max(1, Math.round(Number(min) || 0));
+  return n >= 60 ? ntTx('{0} Std. {1} Min.', Math.floor(n / 60), n % 60) : ntTx('{0} Min.', n);
+}
+// Termin-Zusatz vom Server („Di 06.10., 14:00 Uhr“) in der gewählten Sprache
+function ntTerminZ(e) {
+  const z = String((e && e.z) || '');
+  if (!z || ntLangCode() === 'de') return z;
+  const m = String((e && e.d) || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return z;
+  const day = new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' });
+  const tm = z.match(/(\d\d:\d\d) Uhr/);
+  return tm ? day + ', ' + ntTx('{0} Uhr', tm[1]) : day;
 }
 
 /* ==========================================================
@@ -48440,7 +48484,7 @@ async function ntActFetch(force) {
 }
 function ntActWho(a) {
   const m = a.mitglied && typeof memberById === 'function' ? memberById(a.mitglied) : null;
-  return { m, name: m ? memberLabel(m) : (a.name || 'Jemand') };
+  return { m, name: m ? memberLabel(m) : (a.name || ntTx('Jemand')) };
 }
 function ntActDate(ymd) {
   const m = String(ymd || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
@@ -48448,11 +48492,16 @@ function ntActDate(ymd) {
   const d = new Date(+m[1], +m[2] - 1, +m[3]);
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const diff = Math.round((d - today) / 86400000);
-  if (diff === 0) return 'heute';
-  if (diff === 1) return 'morgen';
+  if (diff === 0) return ntTx('heute');
+  if (diff === 1) return ntTx('morgen');
   return d.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' });
 }
-function ntActQuote(t) { return '„' + escapeHtml(t) + '“'; }
+// Anführungszeichen der gewählten Sprache
+function ntActQuote(t) {
+  const c = ntLangCode();
+  const q = c === 'fr' ? ['« ', ' »'] : c === 'es' ? ['«', '»'] : c === 'de' ? ['„', '“'] : ['“', '”'];
+  return q[0] + escapeHtml(ntW(t)) + q[1];
+}
 // Symbol einer persönlichen Push-Nachricht (nach ihrem „tag“)
 var NT_PUSH_ICONS = {
   termin: '⏰', tagesuebersicht: '☀️', zuweisung: '📌', kind: '⭐', alle: '🎉', dokument: '📄',
@@ -48462,7 +48511,7 @@ var NT_PUSH_ICONS = {
 function ntEuro(v) { return typeof fmtEur === 'function' ? fmtEur(v) : (Math.round((v || 0) * 100) / 100).toFixed(2).replace('.', ',') + ' €'; }
 function ntKasseName(a) {
   const k = typeof kasseById === 'function' ? kasseById(a.ziel) : null;
-  return k ? kasseDisplayName(k) : (a.titel || 'Kasse');
+  return k ? i18nT(kasseDisplayName(k)) : ntW(a.titel || 'Kasse');
 }
 // Wer schuldet wem – aus Sicht dieses Profils (nur für geteilte Kassen; gerechnet wird wie unter
 // Finanzen → „Wer schuldet wem“ mit allen Buchungen der Kasse bis heute)
@@ -48477,27 +48526,32 @@ function ntKasseBalanceHtml(kasseId) {
     if (!me || !(me in bal)) return '';
     const nm = id => { const m = kassePartById(id); return escapeHtml(m ? memberLabel(m) : '?'); };
     const mine = transfers.filter(t => t.from === me || t.to === me).map(t => t.from === me
-      ? `Du schuldest ${nm(t.to)} <b>${escapeHtml(ntEuro(t.amount))}</b>`
-      : `${nm(t.from)} schuldet dir <b>${escapeHtml(ntEuro(t.amount))}</b>`);
+      ? ntT('Du schuldest {0} {1}', nm(t.to), `<b>${escapeHtml(ntEuro(t.amount))}</b>`)
+      : ntT('{0} schuldet dir {1}', nm(t.from), `<b>${escapeHtml(ntEuro(t.amount))}</b>`));
     if (mine.length) return '⚖️ ' + mine.join(' · ');
-    return Math.abs(bal[me] || 0) < 0.005 ? '⚖️ Bei dir ist alles ausgeglichen' : '';
+    return Math.abs(bal[me] || 0) < 0.005 ? '⚖️ ' + ntT('Bei dir ist alles ausgeglichen') : '';
   } catch (e) { return ''; }
 }
-// Text, Symbol und Unterzeile eines Hinweises
+// Text, Symbol und Unterzeile eines Hinweises (Sätze über ntT – siehe „Glocke: Texte in der gewählten Sprache“)
 function ntActText(a) {
   const who = ntActWho(a);
   const nm = `<b>${escapeHtml(who.name)}</b>`;
   const n = a.anzahl;
   const first = a.eintraege[0] || { t: '' };
-  const names = a.eintraege.map(e => e.t);
+  const names = a.eintraege.map(e => ntW(e.t));
   const listNames = () => {
     const shown = escapeHtml(names.slice(0, 6).join(', '));
     return shown + (n > Math.min(6, names.length) ? ` … (${n})` : '');
   };
+  const q = ntActQuote;
   const t = lsTypeSafe(a.typ);
   const shopList = () => {
     const l = getShoppingList(a.ziel);
-    return { l, name: escapeHtml((l && l.name) || a.titel || 'Einkaufsliste') };
+    return { l, name: `<b>${escapeHtml((l && l.name) || ntW(a.titel || 'Einkaufsliste'))}</b>` };
+  };
+  const artikel = z => {
+    const m = String(z || '').match(/^(\d+) Artikel$/);
+    return m ? ntTx('{0} Artikel', m[1]) : String(z || '');
   };
   switch (a.art) {
     case 'push': {
@@ -48513,7 +48567,7 @@ function ntActText(a) {
       const { l, name } = shopList();
       return {
         ico: l ? shoppingListLogoHtml(l, 30) : '🛒',
-        main: n === 1 ? `${nm} hat ${ntActQuote(first.t)} auf <b>${name}</b> gesetzt` : `${nm} hat ${n} Artikel auf <b>${name}</b> gesetzt`,
+        main: n === 1 ? ntT('{0} hat {1} auf {2} gesetzt', nm, q(first.t), name) : ntT('{0} hat {1} Artikel auf {2} gesetzt', nm, n, name),
         sub: n === 1 ? '' : listNames(),
       };
     }
@@ -48521,7 +48575,7 @@ function ntActText(a) {
       const { l, name } = shopList();
       return {
         ico: l ? shoppingListLogoHtml(l, 30) : '🛒',
-        main: n === 1 ? `${nm} hat ${ntActQuote(first.t)} auf <b>${name}</b> abgehakt` : `${nm} hat ${n} Artikel auf <b>${name}</b> abgehakt`,
+        main: n === 1 ? ntT('{0} hat {1} auf {2} abgehakt', nm, q(first.t), name) : ntT('{0} hat {1} Artikel auf {2} abgehakt', nm, n, name),
         sub: n === 1 ? '' : listNames(),
       };
     }
@@ -48529,126 +48583,132 @@ function ntActText(a) {
       const { l, name } = shopList();
       return {
         ico: l ? shoppingListLogoHtml(l, 30) : '🛒',
-        main: n === 1 ? `${nm} hat ${ntActQuote(first.t)} von <b>${name}</b> entfernt` : `${nm} hat ${n} Artikel von <b>${name}</b> entfernt`,
+        main: n === 1 ? ntT('{0} hat {1} von {2} entfernt', nm, q(first.t), name) : ntT('{0} hat {1} Artikel von {2} entfernt', nm, n, name),
         sub: n === 1 ? '' : listNames(),
       };
     }
     case 'einkaufsliste':
-      return { ico: '🛒', main: `${nm} hat die Einkaufsliste ${ntActQuote(a.titel || first.t)} angelegt`, sub: '' };
+      return { ico: '🛒', main: ntT('{0} hat die Einkaufsliste {1} angelegt', nm, q(a.titel || first.t)), sub: '' };
     case 'einkaufsliste-um':
-      return { ico: '🛒', main: `${nm} hat die Einkaufsliste ${ntActQuote(first.z || '…')} in ${ntActQuote(first.t)} umbenannt`, sub: '' };
+      return { ico: '🛒', main: ntT('{0} hat die Einkaufsliste {1} in {2} umbenannt', nm, q(first.z || '…'), q(first.t)), sub: '' };
     case 'einkaufsliste-weg':
-      return { ico: '🗑️', main: `${nm} hat die Einkaufsliste ${ntActQuote(a.titel || first.t)} gelöscht`, sub: '' };
+      return { ico: '🗑️', main: ntT('{0} hat die Einkaufsliste {1} gelöscht', nm, q(a.titel || first.t)), sub: '' };
     case 'liste-neu':
-      return { ico: t.icon, main: `${nm} hat ${t.article} ${escapeHtml(t.one)} ${ntActQuote(a.titel || first.t)} angelegt`, sub: '' };
+      return { ico: t.icon, main: ntT('{0} hat {2} {1} angelegt', nm, q(a.titel || first.t), escapeHtml(t.withArticle)), sub: '' };
     case 'liste-um':
-      return { ico: t.icon, main: `${nm} hat ${t.article} ${escapeHtml(t.one)} ${ntActQuote(first.z || '…')} in ${ntActQuote(first.t)} umbenannt`, sub: '' };
+      return { ico: t.icon, main: ntT('{0} hat {2} {1} in {3} umbenannt', nm, q(first.z || '…'), escapeHtml(t.withArticle), q(first.t)), sub: '' };
     case 'liste-weg':
-      return { ico: '🗑️', main: `${nm} hat ${t.article} ${escapeHtml(t.one)} ${ntActQuote(a.titel || first.t)} gelöscht`, sub: '' };
+      return { ico: '🗑️', main: ntT('{0} hat {2} {1} gelöscht', nm, q(a.titel || first.t), escapeHtml(t.withArticle)), sub: '' };
     case 'liste': {
       if (a.typ === 'wish') {
-        return { ico: t.icon, main: n === 1 ? `${nm} wünscht sich ${ntActQuote(first.t)}` : `${nm} hat ${n} neue Wünsche auf dem Wunschzettel`, sub: n === 1 ? escapeHtml(a.titel) : listNames() };
+        return { ico: t.icon, main: n === 1 ? ntT('{0} wünscht sich {1}', nm, q(first.t)) : ntT('{0} hat {1} neue Wünsche auf dem Wunschzettel', nm, n), sub: n === 1 ? escapeHtml(ntW(a.titel)) : listNames() };
       }
       return {
         ico: t.icon,
-        main: n === 1 ? `${nm} hat ${ntActQuote(first.t)} zu ${ntActQuote(a.titel)} hinzugefügt` : `${nm} hat ${n} Einträge zu ${ntActQuote(a.titel)} hinzugefügt`,
-        sub: n === 1 ? escapeHtml(t.one) : listNames(),
+        main: n === 1 ? ntT('{0} hat {1} zu {2} hinzugefügt', nm, q(first.t), q(a.titel)) : ntT('{0} hat {1} Einträge zu {2} hinzugefügt', nm, n, q(a.titel)),
+        sub: n === 1 ? escapeHtml(t.label) : listNames(),
       };
     }
     case 'liste-ab':
       return {
         ico: t.icon,
-        main: n === 1 ? `${nm} hat ${ntActQuote(first.t)} in ${ntActQuote(a.titel)} abgehakt` : `${nm} hat ${n} Einträge in ${ntActQuote(a.titel)} abgehakt`,
-        sub: n === 1 ? escapeHtml(t.one) : listNames(),
+        main: n === 1 ? ntT('{0} hat {1} in {2} abgehakt', nm, q(first.t), q(a.titel)) : ntT('{0} hat {1} Einträge in {2} abgehakt', nm, n, q(a.titel)),
+        sub: n === 1 ? escapeHtml(t.label) : listNames(),
       };
     case 'essen':
       return {
         ico: '🍽️',
-        main: n === 1 ? `${nm} hat ${ntActQuote(first.t)} für ${escapeHtml(ntActDate(first.d) || 'die Woche')} geplant` : `${nm} hat ${n} Essen geplant`,
+        main: n === 1 ? ntT('{0} hat {1} für {2} geplant', nm, q(first.t), escapeHtml(ntActDate(first.d) || ntTx('die Woche'))) : ntT('{0} hat {1} Essen geplant', nm, n),
         sub: n === 1 ? '' : a.eintraege.slice(0, 6).map(e => escapeHtml(e.t) + (e.d ? ' (' + escapeHtml(ntActDate(e.d)) + ')' : '')).join(', '),
       };
     case 'rezept':
-      return { ico: '📖', main: n === 1 ? `${nm} hat das Rezept ${ntActQuote(first.t)} angelegt` : `${nm} hat ${n} neue Rezepte angelegt`, sub: n === 1 ? '' : listNames() };
+      return { ico: '📖', main: n === 1 ? ntT('{0} hat das Rezept {1} angelegt', nm, q(first.t)) : ntT('{0} hat {1} neue Rezepte angelegt', nm, n), sub: n === 1 ? '' : listNames() };
     case 'aufgabe':
       return {
         ico: '✅',
-        main: n === 1 ? `${nm} hat die Aufgabe ${ntActQuote(first.t)} angelegt` : `${nm} hat ${n} Aufgaben angelegt`,
-        sub: n === 1 ? (first.d ? 'fällig ' + escapeHtml(ntActDate(first.d)) : '') : listNames(),
+        main: n === 1 ? ntT('{0} hat die Aufgabe {1} angelegt', nm, q(first.t)) : ntT('{0} hat {1} Aufgaben angelegt', nm, n),
+        sub: n === 1 ? (first.d ? ntT('fällig {0}', escapeHtml(ntActDate(first.d))) : '') : listNames(),
       };
     case 'aufgabe-ab':
       return {
         ico: '✔️',
-        main: n === 1 ? `${nm} hat ${ntActQuote(first.t)} erledigt` : `${nm} hat ${n} Aufgaben erledigt`,
-        sub: n === 1 ? (a.typ === 'haushalt' ? 'Haushalt' : '') : listNames(),
+        main: n === 1 ? ntT('{0} hat {1} erledigt', nm, q(first.t)) : ntT('{0} hat {1} Aufgaben erledigt', nm, n),
+        sub: n === 1 ? (a.typ === 'haushalt' ? ntT('Haushalt') : '') : listNames(),
       };
     case 'termin':
       return {
         ico: '📅',
-        main: n === 1 ? `${nm} hat den Termin ${ntActQuote(first.t)} eingetragen` : `${nm} hat ${n} Termine eingetragen`,
-        sub: n === 1 ? escapeHtml(first.z || '') : a.eintraege.slice(0, 4).map(e => escapeHtml(e.t) + (e.z ? ' (' + escapeHtml(e.z) + ')' : '')).join(', '),
+        main: n === 1 ? ntT('{0} hat den Termin {1} eingetragen', nm, q(first.t)) : ntT('{0} hat {1} Termine eingetragen', nm, n),
+        sub: n === 1 ? escapeHtml(ntTerminZ(first)) : a.eintraege.slice(0, 4).map(e => escapeHtml(e.t) + (e.z ? ' (' + escapeHtml(ntTerminZ(e)) + ')' : '')).join(', '),
       };
     case 'vorrat':
-      return { ico: '🥫', main: n === 1 ? `${nm} hat ${ntActQuote(first.t)} in den Vorrat aufgenommen` : `${nm} hat ${n} Artikel in den Vorrat aufgenommen`, sub: n === 1 ? '' : listNames() };
+      return { ico: '🥫', main: n === 1 ? ntT('{0} hat {1} in den Vorrat aufgenommen', nm, q(first.t)) : ntT('{0} hat {1} Artikel in den Vorrat aufgenommen', nm, n), sub: n === 1 ? '' : listNames() };
     case 'mitglied': {
       const m = first.id && typeof memberById === 'function' ? memberById(first.id) : null;
       return {
         ico: m ? `<span class="nt-act-ico nt-ava" style="border-color:${escapeHtml(memberBorderColor(m))}">${memberAvatarInnerHTML(m)}</span>` : '👋',
-        main: n === 1 ? `${nm} hat <b>${escapeHtml(first.t)}</b> zur Familie hinzugefügt` : `${nm} hat ${n} Familienmitglieder hinzugefügt`,
-        sub: n === 1 ? escapeHtml(first.z || '') : listNames(),
+        main: n === 1 ? ntT('{0} hat {1} zur Familie hinzugefügt', nm, `<b>${escapeHtml(first.t)}</b>`) : ntT('{0} hat {1} Familienmitglieder hinzugefügt', nm, n),
+        sub: n === 1 ? escapeHtml(first.z ? i18nT(first.z) : '') : listNames(),
       };
     }
     case 'notfallpass':
-      return { ico: '🩺', main: `${nm} hat den Notfallpass von <b>${escapeHtml(a.titel || first.t)}</b> aktualisiert`, sub: '' };
+      return { ico: '🩺', main: ntT('{0} hat den Notfallpass von {1} aktualisiert', nm, `<b>${escapeHtml(a.titel || first.t)}</b>`), sub: '' };
     case 'pinnwand':
-      return { ico: '🧷', main: n === 1 ? `${nm} hat ${ntActQuote(first.t)} an die Pinnwand gehängt` : `${nm} hat ${n} Zettel an die Pinnwand gehängt`, sub: n === 1 ? '' : listNames() };
+      return { ico: '🧷', main: n === 1 ? ntT('{0} hat {1} an die Pinnwand gehängt', nm, q(first.t)) : ntT('{0} hat {1} Zettel an die Pinnwand gehängt', nm, n), sub: n === 1 ? '' : listNames() };
     case 'pinnwand-antwort':
-      return { ico: '💬', main: n === 1 ? `${nm} hat auf ${ntActQuote(a.titel)} geantwortet` : `${nm} hat ${n}× auf ${ntActQuote(a.titel)} geantwortet`, sub: escapeHtml(first.t) };
+      return { ico: '💬', main: n === 1 ? ntT('{0} hat auf {1} geantwortet', nm, q(a.titel)) : ntT('{0} hat {1}× auf {2} geantwortet', nm, n, q(a.titel)), sub: escapeHtml(first.t) };
     case 'ausgabe': {
       const sum = a.eintraege.reduce((x, e) => x + (Number(e.b) || 0), 0);
       const bal = ntKasseBalanceHtml(a.ziel);
       const kname = escapeHtml(ntKasseName(a));
+      const isArt = z => /^\d+ Artikel$/.test(String(z || ''));
       let main;
-      if (n === 1 && Number(first.b) < 0) main = `${nm} hat eine Einnahme gebucht: ${ntActQuote(first.t)} · <b>${escapeHtml(ntEuro(-first.b))}</b>`;
-      else if (n === 1 && first.z && !/Artikel$/.test(first.z)) main = `${nm} war bei <b>${escapeHtml(first.z)}</b> einkaufen · <b>${escapeHtml(ntEuro(first.b))}</b>`;
-      else if (n === 1) main = `${nm} hat ${ntActQuote(first.t)} gebucht · <b>${escapeHtml(ntEuro(first.b))}</b>`;
-      else main = `${nm} hat ${n} Ausgaben eingetragen · <b>${escapeHtml(ntEuro(sum))}</b>`;
-      const details = n === 1 ? (first.z && /Artikel$/.test(first.z) ? escapeHtml(first.z) : '') : a.eintraege.slice(0, 4).map(e => escapeHtml(e.z || e.t) + ' ' + escapeHtml(ntEuro(e.b))).join(', ');
+      if (n === 1 && Number(first.b) < 0) main = ntT('{0} hat eine Einnahme gebucht: {1} · {2}', nm, q(first.t), `<b>${escapeHtml(ntEuro(-first.b))}</b>`);
+      else if (n === 1 && first.z && !isArt(first.z)) main = ntT('{0} war bei {1} einkaufen · {2}', nm, `<b>${escapeHtml(first.z)}</b>`, `<b>${escapeHtml(ntEuro(first.b))}</b>`);
+      else if (n === 1) main = ntT('{0} hat {1} gebucht · {2}', nm, q(first.t), `<b>${escapeHtml(ntEuro(first.b))}</b>`);
+      else main = ntT('{0} hat {1} Ausgaben eingetragen · {2}', nm, n, `<b>${escapeHtml(ntEuro(sum))}</b>`);
+      const details = n === 1 ? (isArt(first.z) ? escapeHtml(artikel(first.z)) : '') : a.eintraege.slice(0, 4).map(e => escapeHtml(isArt(e.z) ? ntW(e.t) : (e.z || ntW(e.t))) + ' ' + escapeHtml(ntEuro(e.b))).join(', ');
       return { ico: '💶', main, sub: [details, kname].filter(Boolean).join(' · '), extra: bal };
     }
     case 'ausgleich': {
-      return { ico: '💸', main: `${nm} hat einen Ausgleich über <b>${escapeHtml(ntEuro(first.b))}</b> eingetragen`, sub: escapeHtml(ntKasseName(a)), extra: ntKasseBalanceHtml(a.ziel) };
+      return { ico: '💸', main: ntT('{0} hat einen Ausgleich über {1} eingetragen', nm, `<b>${escapeHtml(ntEuro(first.b))}</b>`), sub: escapeHtml(ntKasseName(a)), extra: ntKasseBalanceHtml(a.ziel) };
     }
     case 'fahrzeug-log': {
       const v = first.f && typeof fzVehicle === 'function' ? fzVehicle(first.f) : null;
       return {
         ico: '⛽',
-        main: n === 1 ? `${nm} hat ${ntActQuote(first.t)} eingetragen · <b>${escapeHtml(ntEuro(first.b))}</b>` : `${nm} hat ${n} Fahrzeug-Einträge gemacht`,
-        sub: [v ? escapeHtml(fzName(v)) : '', escapeHtml(ntKasseName(a))].filter(Boolean).join(' · '),
+        main: n === 1 ? ntT('{0} hat {1} eingetragen · {2}', nm, q(first.t), `<b>${escapeHtml(ntEuro(first.b))}</b>`) : ntT('{0} hat {1} Fahrzeug-Einträge gemacht', nm, n),
+        sub: [v ? escapeHtml(ntW(fzName(v))) : '', escapeHtml(ntKasseName(a))].filter(Boolean).join(' · '),
         extra: ntKasseBalanceHtml(a.ziel),
       };
     }
     case 'vertrag':
-      return { ico: '📝', main: n === 1 ? `${nm} hat den Vertrag ${ntActQuote(first.t)} angelegt` : `${nm} hat ${n} Verträge angelegt`, sub: [n === 1 ? escapeHtml(first.z || '') : listNames(), escapeHtml(ntKasseName(a))].filter(Boolean).join(' · ') };
+      return { ico: '📝', main: n === 1 ? ntT('{0} hat den Vertrag {1} angelegt', nm, q(first.t)) : ntT('{0} hat {1} Verträge angelegt', nm, n), sub: [n === 1 ? escapeHtml(first.z || '') : listNames(), escapeHtml(ntKasseName(a))].filter(Boolean).join(' · ') };
     case 'fahrzeug':
-      return { ico: '🚗', main: n === 1 ? `${nm} hat das Fahrzeug ${ntActQuote(first.t)} hinzugefügt` : `${nm} hat ${n} Fahrzeuge hinzugefügt`, sub: n === 1 ? escapeHtml(first.z || '') : listNames() };
+      return { ico: '🚗', main: n === 1 ? ntT('{0} hat das Fahrzeug {1} hinzugefügt', nm, q(first.t)) : ntT('{0} hat {1} Fahrzeuge hinzugefügt', nm, n), sub: n === 1 ? escapeHtml(first.z || '') : listNames() };
     case 'dokument': {
       const cat = first.z && typeof docCategory === 'function' ? docCategory(first.z) : null;
       return {
         ico: (cat && cat.icon) || '📄',
-        main: n === 1 ? `${nm} hat das Dokument ${ntActQuote(first.t)} abgelegt` : `${nm} hat ${n} Dokumente abgelegt`,
-        sub: n === 1 ? escapeHtml((cat && cat.label) || '') : listNames(),
+        main: n === 1 ? ntT('{0} hat das Dokument {1} abgelegt', nm, q(first.t)) : ntT('{0} hat {1} Dokumente abgelegt', nm, n),
+        sub: n === 1 ? escapeHtml(cat && cat.label ? i18nT(cat.label) : '') : listNames(),
       };
     }
     default:
       return { ico: '🔔', main: nm, sub: '' };
   }
 }
-// Listen-Art mit Artikel („die Packliste“, „den Wunschzettel“)
+// Listen-Art: Symbol, Name („Packliste“) und – für die Sätze – mit Artikel („die Packliste“, „den
+// Wunschzettel“). In anderen Sprachen steht dort der übersetzte Name klein geschrieben (die Vorlagen
+// der Sprachdateien setzen ihn passend ein, ohne deutschen Artikel).
 function lsTypeSafe(id) {
   const t = (typeof lsType === 'function' && id) ? lsType(id) : null;
   const one = (t && t.one) || 'Liste';
-  const article = /zettel$/i.test(one) ? 'den' : 'die';
-  return { icon: (t && t.icon) || '📋', one, article };
+  const label = ntLangCode() === 'de' ? one : i18nT(one);
+  let withArticle;
+  if (ntLangCode() === 'de') withArticle = (/zettel$/i.test(one) ? 'den ' : 'die ') + one;
+  else withArticle = label.charAt(0).toLowerCase() + label.slice(1);
+  return { icon: (t && t.icon) || '📋', one, label, withArticle };
 }
 function ntActCardHtml(a) {
   const x = ntActText(a);
@@ -48658,8 +48718,8 @@ function ntActCardHtml(a) {
     <button type="button" class="nt-del" data-ntact="del" aria-label="Hinweis entfernen" title="Entfernen">×</button>
     <div class="nt-act-row">
       ${ico}
-      <div class="min-w-0 flex-1">
-        <div class="nt-act-main">${isNew ? '<span class="nt-dot" aria-label="neu"></span>' : ''}${x.main}</div>
+      <div class="min-w-0 flex-1"${a.art === 'push' ? '' : ' data-no-i18n'}>
+        <div class="nt-act-main">${isNew ? `<span class="nt-dot" aria-label="${escapeHtml(ntTx('neu'))}"></span>` : ''}${x.main}</div>
         ${x.sub ? `<div class="nt-act-sub${x.long ? ' long' : ''}">${x.sub}</div>` : ''}
         ${x.extra ? `<div class="nt-act-bal">${x.extra}</div>` : ''}
         <div class="nt-act-time">${escapeHtml(ntWhen(a.zeit))}</div>
@@ -48916,7 +48976,7 @@ function ntClosePanel() {
 function ntBuyCardHtml(b) {
   const a = b.plan.auto;
   const shops = b.lists.map(l => l.name || '').filter(Boolean).join(', ');
-  const autoTxt = a ? `automatisch abgehakt${a.minuten ? ' nach ' + a.minuten + ' Min.' : ''}${a.wer ? ' · ' + escapeHtml(a.wer) : ''}` : '';
+  const autoTxt = a ? (a.minuten ? ntT('automatisch abgehakt nach {0}', escapeHtml(ntDur(a.minuten))) : ntT('automatisch abgehakt')) + (a.wer ? ' · ' + escapeHtml(a.wer) : '') : '';
   return `<div class="nt-card buy" data-ntplan="${escapeHtml(b.plan.id)}" data-ntkey="buy:${escapeHtml(b.plan.id)}">
     <button type="button" class="nt-del" data-ntact="del" aria-label="Hinweis entfernen" title="Entfernen">×</button>
     <div class="flex items-center gap-2.5">
@@ -48924,7 +48984,7 @@ function ntBuyCardHtml(b) {
       <div class="min-w-0 flex-1">
         <div class="text-sm font-medium leading-snug truncate">${escapeHtml(b.task.title || 'Einkauf')}</div>
         <div class="text-[11px] text-ink/55 leading-snug">${escapeHtml(shops)}${b.task.doneAt || a ? ' · ' + escapeHtml(ntWhen(b.task.doneAt || (a && a.zeit))) : ''}</div>
-        ${autoTxt ? `<div class="text-[11px] text-ink/55 leading-snug">📍 ${autoTxt}</div>` : ''}
+        ${autoTxt ? `<div class="text-[11px] text-ink/55 leading-snug" data-no-i18n>📍 ${autoTxt}</div>` : ''}
       </div>
     </div>
     <div class="flex gap-2 mt-2.5">
@@ -48974,28 +49034,30 @@ function ntHwCardHtml(g) {
   const h = g.main;
   const m = hwMember(h);
   const mine = hwIsMine(h);
-  const name = mine ? 'Du' : hwName(h);
+  const nm = escapeHtml(hwName(h));
   let t, sub;
   if (h.aktiv) {
-    t = `${escapeHtml(name)} ${mine ? 'bist' : 'ist'} unterwegs nach Hause`;
-    sub = ['seit ' + sosClock(h.seit), h.entfernung != null ? 'noch ' + hwKm(h.entfernung) : '', h.aktuell && h.aktuell.adresse ? h.aktuell.adresse : ''].filter(Boolean).join(' · ');
+    t = mine ? ntT('Du bist unterwegs nach Hause') : ntT('{0} ist unterwegs nach Hause', nm);
+    sub = [ntTx('seit {0}', ntClock(h.seit)), h.entfernung != null ? ntTx('noch {0}', hwKm(h.entfernung)) : '', h.aktuell && h.aktuell.adresse ? h.aktuell.adresse : ''].filter(Boolean).join(' · ');
   } else {
-    t = h.grund === 'angekommen' ? `${escapeHtml(name)} ${mine ? 'bist' : 'ist'} zu Hause angekommen` : `${escapeHtml(name)} ${mine ? 'hast' : 'hat'} den Heimweg beendet`;
-    sub = sosClock(h.ende) + (h.minuten ? ' · ' + hwDur(h.minuten) + ' unterwegs' : '');
+    t = h.grund === 'angekommen'
+      ? (mine ? ntT('Du bist zu Hause angekommen') : ntT('{0} ist zu Hause angekommen', nm))
+      : (mine ? ntT('Du hast den Heimweg beendet') : ntT('{0} hat den Heimweg beendet', nm));
+    sub = ntClock(h.ende) + (h.minuten ? ' · ' + ntTx('{0} unterwegs', ntDur(h.minuten)) : '');
   }
   // Weitere Heimwege desselben Tages: Anzahl und Uhrzeiten
   let more = '';
   if (g.all.length > 1) {
-    const day = new Date(ntHwTime(h)).toDateString() === new Date().toDateString() ? 'heute' : 'an diesem Tag';
-    const times = g.all.slice(1).sort((a, b) => ntHwTime(a) - ntHwTime(b)).map(x => sosClock(ntHwTime(x))).filter(Boolean);
-    more = `${g.all.length} Heimwege ${day}${times.length ? ' · außerdem ' + times.join(', ') : ''}`;
+    const today = new Date(ntHwTime(h)).toDateString() === new Date().toDateString();
+    const times = g.all.slice(1).sort((a, b) => ntHwTime(a) - ntHwTime(b)).map(x => ntClock(ntHwTime(x))).filter(Boolean);
+    more = ntTx(today ? '{0} Heimwege heute' : '{0} Heimwege an diesem Tag', g.all.length) + (times.length ? ' · ' + ntTx('außerdem {0}', times.join(', ')) : '');
   }
   const key = g.all.map(ntHwKey).join(',');
   return `<div class="nt-card hw${h.aktiv ? '' : ' done'}" style="--hw:${famAttr(h.aktiv ? famColor(m) : '#2F7D4F')}" data-ntact="hw" data-hwid="${famAttr(h.id)}" data-ntkey="hw:${famAttr(key)}" role="button" tabindex="0">
     <button type="button" class="nt-del" data-ntact="del" aria-label="Hinweis entfernen" title="Entfernen">×</button>
     <div class="flex items-center gap-2.5">
       <span class="fam-ava sm" style="--fam:${famAttr(famColor(m))}">${m ? famAvatarInner(m) : '<span class="fam-ava-in">🚶</span>'}</span>
-      <div class="min-w-0 flex-1">
+      <div class="min-w-0 flex-1" data-no-i18n>
         <div class="text-sm font-medium leading-snug">${h.aktiv ? '🚶 ' : (h.grund === 'angekommen' ? '🏠 ' : '🏁 ')}${t}</div>
         <div class="text-[11px] text-ink/55 leading-snug truncate">${escapeHtml(sub)}</div>
         ${more ? `<div class="text-[11px] text-ink/45 leading-snug">${escapeHtml(more)}</div>` : ''}
