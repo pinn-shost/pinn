@@ -748,8 +748,9 @@ function cleanupOldMessages() {
 // pwMich:       Pinnwand - Zettel an mich, Dankeschöns an mich und wichtige Zettel
 // pwAntworten:  Pinnwand - Antworten, Reaktionen und Stimmen zu meinen Zetteln
 // pwErinnerung: Pinnwand - Erinnerungen, die an einem Zettel hängen
-const DEFAULT_SETTINGS = { termine: true, vorlauf: 30, ohneZuweisung: true, tagesuebersicht: true, uhrzeit: "07:00", zuweisungen: true, alleErledigt: true, kindAufgabe: true, kindAlle: true, animation: true, pwAlle: true, pwMich: true, pwAntworten: true, pwErinnerung: true };
-const BOOL_SETTINGS = ["termine", "ohneZuweisung", "tagesuebersicht", "zuweisungen", "alleErledigt", "kindAufgabe", "kindAlle", "animation", "pwAlle", "pwMich", "pwAntworten", "pwErinnerung"];
+// vorrat:       Vorrat - Artikel laufen bald ab (Mindesthaltbarkeit, pinn-vorrat.js)
+const DEFAULT_SETTINGS = { termine: true, vorlauf: 30, ohneZuweisung: true, tagesuebersicht: true, uhrzeit: "07:00", zuweisungen: true, alleErledigt: true, kindAufgabe: true, kindAlle: true, animation: true, pwAlle: true, pwMich: true, pwAntworten: true, pwErinnerung: true, vorrat: true };
+const BOOL_SETTINGS = ["termine", "ohneZuweisung", "tagesuebersicht", "zuweisungen", "alleErledigt", "kindAufgabe", "kindAlle", "animation", "pwAlle", "pwMich", "pwAntworten", "pwErinnerung", "vorrat"];
 function normalizeSettings(raw) {
     const s = Object.assign({}, DEFAULT_SETTINGS, (raw && typeof raw === "object") ? raw : {});
     const lead = parseInt(s.vorlauf, 10);
@@ -760,6 +761,7 @@ function normalizeSettings(raw) {
         termine: s.termine, vorlauf: s.vorlauf, ohneZuweisung: s.ohneZuweisung, tagesuebersicht: s.tagesuebersicht, uhrzeit: s.uhrzeit, zuweisungen: s.zuweisungen,
         alleErledigt: s.alleErledigt, kindAufgabe: s.kindAufgabe, kindAlle: s.kindAlle, animation: s.animation,
         pwAlle: s.pwAlle, pwMich: s.pwMich, pwAntworten: s.pwAntworten, pwErinnerung: s.pwErinnerung,
+        vorrat: s.vorrat,
     };
 }
 function readSettings(userRec) {
