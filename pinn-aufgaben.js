@@ -38,6 +38,12 @@
 //   Fälligkeit zählt ab dem Erledigt-Tag (+ Intervall in Monaten). Verlauf-Einträge mit regel „w:<ID>“;
 //   wird eine Wartungsaufgabe gelöscht, gilt sie als übersprungen (status „uebersprungen“) – sie kommt dann
 //   erst im nächsten Zyklus wieder.
+//
+// Müllabfuhr (ab 1.31): Abholtermine kommen aus dem Müllkalender der Familie (pinn-muell.js) UND wie
+// bisher aus der Kalenderdatei. Für jeden Mülleimer, dessen Müllart morgen abgeholt wird, entsteht heute
+// (am Vortag) die Aufgabe „… rausbringen“. Ist die Abholung vorbei (Abholtag ab 12 Uhr), wird die noch
+// offene Aufgabe automatisch abgehakt – sie gilt dann nicht als verpasst (im Verlauf: erledigt von der
+// zuständigen Person). Die Erinnerung am Vortag verschickt pinn-push.js (muellInfo).
 
 const AUFGABEN = "aufgaben";
 const HOUR_MS = 3600000, DAY_MS = 86400000;
@@ -492,11 +498,11 @@ function loadHouseholdData(familyId) {
 // Haushalts-Aufgaben (gleiche Regeln wie bisher im Kalender)
 // =============================================================================================
 const WASTE_TYPES = [
-    { id: 'restmuell', icon: '\ud83d\uddd1\ufe0f', taskLabel: 'Restmüll', keywords: ['restmüll', 'restabfall', 'restmülltonne', 'hausmüll'] },
-    { id: 'biomuell', icon: '\ud83c\udf42', taskLabel: 'Biomüll', keywords: ['biomüll', 'bioabfall', 'biotonne'] },
-    { id: 'papier', icon: '\ud83d\udce6', taskLabel: 'Papiermüll', keywords: ['papier', 'pappe', 'papiertonne'] },
-    { id: 'gelbersack', icon: '\u267b\ufe0f', taskLabel: 'Gelber Sack', keywords: ['gelber sack', 'gelbe tonne', 'verpackung', 'wertstoff'] },
-    { id: 'glas', icon: '\ud83c\udf7e', taskLabel: 'Altglas', keywords: ['glas', 'altglas'] },
+    { id: 'restmuell', icon: '\ud83d\uddd1\ufe0f', taskLabel: 'Restmüll', keywords: ['restmüll', 'restabfall', 'restmülltonne', 'hausmüll', 'graue tonne', 'schwarze tonne', 'rest-'] },
+    { id: 'biomuell', icon: '\ud83c\udf42', taskLabel: 'Biomüll', keywords: ['biomüll', 'bioabfall', 'biotonne', 'bio-tonne', 'braune tonne', 'grünabfall', 'kompost'] },
+    { id: 'papier', icon: '\ud83d\udce6', taskLabel: 'Papiermüll', keywords: ['papier', 'pappe', 'papiertonne', 'blaue tonne', 'altpapier', 'ppk'] },
+    { id: 'gelbersack', icon: '\u267b\ufe0f', taskLabel: 'Gelber Sack', keywords: ['gelber sack', 'gelbe tonne', 'gelbe säcke', 'verpackung', 'wertstoff', 'leichtverpackung', 'lvp'] },
+    { id: 'glas', icon: '\ud83c\udf7e', taskLabel: 'Altglas', keywords: ['altglas', 'glas'] },
 ];
 const WEEKDAY_IDS = ["so", "mo", "di", "mi", "do", "fr", "sa"]; // Index = getUTCDay() der Wandzeit
 
@@ -529,6 +535,30 @@ function cleaningTitle(sched, rooms, categories) {
     return (cat ? cat.label : "Reinigung") + ": " + roomName(rooms, sched.roomId);
 }
 
+// Müllarten zu einem Titel ("Gelbe Tonne" -> gelbersack)
+function wasteTypesOf(title) {
+    const t = String(title || "").toLowerCase();
+    return WASTE_TYPES.filter(wt => wt.keywords.some(kw => t.indexOf(kw) !== -1)).map(wt => wt.id);
+}
+// Abholungen an einem Tag: { types: { <Müllart>: true }, names: ["Restmüll", …] }
+// Quellen: Müllkalender der Familie (Einstellungen → Kalender) und die Kalenderdatei (iCloud/Google).
+function pickupsFor(dateIso, familyId) {
+    const out = { types: {}, names: [] };
+    try {
+        require(`${__hooks}/pinn-muell.js`).termineAm(familyId, dateIso).forEach(name => {
+            if (out.names.indexOf(name) === -1) out.names.push(name);
+            wasteTypesOf(name).forEach(id => { out.types[id] = true; });
+        });
+    } catch (e) { /* kein Müllkalender */ }
+    const cal = pickupTypesFor(dateIso, familyId);
+    Object.keys(cal).forEach(id => {
+        if (out.types[id]) return;
+        out.types[id] = true;
+        const wt = WASTE_TYPES.find(w => w.id === id);
+        if (wt && out.names.indexOf(wt.taskLabel) === -1) out.names.push(wt.taskLabel);
+    });
+    return out;
+}
 // Müllarten, für die laut Kalenderdatei der Familie MORGEN eine Abholung ansteht. Liest nur die
 // ohnehin vorhandene Datei (kein iCloud-Zugriff) und zerlegt sie nur, wenn das Datum überhaupt vorkommt.
 function pickupTypesFor(dateIso, familyId) {
@@ -665,18 +695,24 @@ function runHousehold(familyId, data) {
     bins.forEach(b => {
         if (b.schedule && isScheduleDue(b.schedule, todayIso, weekday)) add(binTitle(b, data.rooms), b.assignedMemberIds, b);
     });
-    // Abholtermine stehen im Apple-Kalender der jeweiligen Familie (eigene Kalenderdatei)
+    // Abholtermine: Müllkalender der Familie und Kalenderdatei (iCloud/Google)
     if (bins.length) {
-        const pickups = pickupTypesFor(tomorrowIso, familyId);
+        const pickups = pickupsFor(tomorrowIso, familyId).types;
         bins.forEach(b => { if (pickups[b.wasteType]) add(binTitle(b, data.rooms), b.assignedMemberIds, b); });
     }
     const maint = (data.houseMaintenance || []).filter(maintActive);
-    if (!rules.length && !maint.length) return 0;
 
     let existing = [];
-    try { existing = $app.findRecordsByFilter(AUFGABEN, "familie = {:f} && haushalt != ''", "-faellig", 0, 0, { f: familyId }); } catch (e) { existing = []; }
+    if (rules.length || maint.length || bins.length) {
+        try { existing = $app.findRecordsByFilter(AUFGABEN, "familie = {:f} && haushalt != ''", "-faellig", 0, 0, { f: familyId }); } catch (e) { existing = []; }
+    }
     const byKey = {};
     existing.forEach(r => { const k = r.getString("haushalt"); (byKey[k] = byKey[k] || []).push(r); });
+    // Vorbei: offene Müll-Aufgaben nach der Abholung abhaken (bevor neue angelegt werden)
+    if (bins.length) {
+        try { closePassedBinTasks(familyId, data, byKey, nowWall, seen); } catch (e) { console.log("[Haushalt-Aufgabe] Müll abhaken: " + e.message); }
+    }
+    if (!rules.length && !maint.length) return 0;
 
     const col = $app.findCollectionByNameOrId(AUFGABEN);
     let created = 0;
@@ -689,6 +725,66 @@ function runHousehold(familyId, data) {
         catch (e) { console.log("[Wartung] Fehler bei \"" + maintKey(item) + "\": " + e.message); }
     });
     return created;
+}
+
+// Offene Müll-Aufgabe (fällig D) ist vorbei, wenn an D+1 laut Kalender ihre Müllart abgeholt wurde und
+// es Abholtag 12 Uhr ist – oder wenn für denselben Eimer heute schon die nächste Aufgabe fällig wird.
+const BIN_CLOSE_HOUR = 12;
+function closePassedBinTasks(familyId, data, byKey, nowWall, dueKeys) {
+    const todayIso = wallIso(nowWall);
+    const keyTypes = {};
+    (data.trashBins || []).forEach(b => { const k = binTitle(b, data.rooms); (keyTypes[k] = keyTypes[k] || []).push(b.wasteType); });
+    const pickCache = {};
+    const pick = iso => (pickCache[iso] = pickCache[iso] || pickupsFor(iso, familyId).types);
+    let closed = 0;
+    Object.keys(keyTypes).forEach(key => {
+        (byKey[key] || []).forEach(rec => {
+            if (rec.getBool("erledigt")) return;
+            const due = rec.getString("faellig");
+            if (!isIsoDate(due) || due >= todayIso) return; // frühestens am Abholtag
+            const pickupDay = wallIso(isoToWall(due) + DAY_MS);
+            const passed = nowWall >= isoToWall(pickupDay) + BIN_CLOSE_HOUR * HOUR_MS || !!(dueKeys && dueKeys[key]);
+            if (!passed) return;
+            const types = pick(pickupDay);
+            if (!keyTypes[key].some(t => types[t])) return; // keine Abholung -> normale Regel (verpasst)
+            rec.set("erledigt", true);
+            rec.set("erledigt_am", new Date().toISOString());
+            $app.save(rec);
+            const v = verlaufFor(familyId, rec.id);
+            if (v) {
+                try { v.set("status", "erledigt"); v.set("erledigt_von", v.getString("zustaendig")); $app.save(v); } catch (e) { /* egal */ }
+            }
+            closed++;
+            console.log("[Haushalt-Aufgabe] Nach der Abholung abgehakt: " + key);
+        });
+    });
+    return closed;
+}
+
+// Für die Erinnerung am Vortag (pinn-push.js): Was wird morgen abgeholt und welche Müll-Aufgaben sind
+// heute fällig? -> { morgen, namen: [..], aufgaben: [{ id, titel, typ, notizen, erledigt }] }
+function muellInfo(familyId, data) {
+    const nowWall = wallNow();
+    const todayIso = wallIso(nowWall);
+    const morgen = wallIso(nowWall + DAY_MS);
+    const p = pickupsFor(morgen, familyId);
+    const out = { morgen: morgen, namen: p.names, aufgaben: [] };
+    if (!p.names.length) return out;
+    const bins = (data && data.trashBins) || [];
+    const rooms = (data && data.rooms) || [];
+    const byKey = {};
+    bins.forEach(b => { if (p.types[b.wasteType]) byKey[binTitle(b, rooms)] = b; });
+    const keys = Object.keys(byKey);
+    if (!keys.length) return out;
+    let recs = [];
+    try { recs = $app.findRecordsByFilter(AUFGABEN, "familie = {:f} && faellig = {:d} && haushalt != ''", "", 0, 0, { f: familyId, d: todayIso }); } catch (e) { recs = []; }
+    recs.forEach(r => {
+        const b = byKey[r.getString("haushalt")];
+        if (!b) return;
+        const wt = WASTE_TYPES.find(w => w.id === b.wasteType);
+        out.aufgaben.push({ id: r.id, titel: r.getString("titel"), typ: wt ? wt.taskLabel : "Müll", notizen: r.getString("notizen"), erledigt: r.getBool("erledigt") });
+    });
+    return out;
 }
 
 // =============================================================================================
@@ -935,7 +1031,7 @@ function notifyReward(familyId, actorUserId, body) {
 }
 
 module.exports = {
-    statistik, notifyReward, ensureVerlauf,
+    statistik, notifyReward, ensureVerlauf, muellInfo, pickupsFor, loadHouseholdData,
     AUFGABEN, ensureSchema, listAll, saveTask, setDone, notifyDoneDelayed, removeTask, familyMembers,
     deleteHouseholdTasks, deleteTodayHouseholdTask, runCron, runHouseholdNow,
 };

@@ -342,6 +342,12 @@ const GROUPS = [
         [/^([^·]+) \(seit (\d+) Tagen abgelaufen\)$/, { en: "<1> (expired <2> days ago)", fr: "<1> (périmé depuis <2> jours)", es: "<1> (caducado hace <2> días)" }],
         [/^Tippe hier für Rezeptideen mit dem, was da ist\.$/, { en: "Tap here for recipe ideas with what you have.", fr: "Touche ici pour des idées de recettes avec ce que tu as.", es: "Toca aquí para ver ideas de recetas con lo que tienes." }],
     ] },
+    // --- Müllabfuhr am Vortag (pinn-push.js, ab 1.31) – die Müllarten selbst bleiben wie im Kalender ---
+    { tag: /^muell-/, rules: [
+        [/^Morgen ist Müllabfuhr$/, { en: "Bin collection tomorrow", fr: "Collecte des déchets demain", es: "Mañana pasa la recogida de basura" }],
+        [/^Du bist dran: (.+)$/, { en: "Your turn: <1>", fr: "C’est ton tour : <1>", es: "Te toca: <1>" }],
+        [/^Dran: (.+)$/, { en: "Taking the bins out: <1>", fr: "Sort les poubelles : <1>", es: "Saca la basura: <1>" }],
+    ] },
     // --- Sicherheit: Profil nach zu vielen falschen Passwörtern gesperrt (pinn-sitzungen.js) ---
     { tag: /^sicherheit-/, rules: [
         [/^🔒 Anmeldung gesperrt$/, { en: "🔒 Login locked", fr: "🔒 Connexion bloquée", es: "🔒 Inicio de sesión bloqueado" }],

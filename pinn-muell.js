@@ -388,6 +388,21 @@ function forFamily(familyId, stand) {
     return { kalender: publicInfo(d), termine: (d.termine || []).filter(x => x.d >= von), stand: Number(d.stand) || 0 };
 }
 
+// Abholungen an einem Tag (JJJJ-MM-TT) -> ["Restmüll", "Gelber Sack"]; ausgeblendete Müllarten zählen nicht.
+// Für die Haushalts-Aufgaben am Vortag (pinn-aufgaben.js) und die Erinnerung (pinn-push.js).
+function termineAm(familyId, iso) {
+    const d = readData(loadRec(familyId));
+    if (!d || !Array.isArray(d.termine)) return [];
+    const hidden = Array.isArray(d.ausgeblendet) ? d.ausgeblendet : [];
+    const out = [];
+    d.termine.forEach(x => { if (x && x.d === iso && x.t && hidden.indexOf(x.t) === -1 && out.indexOf(x.t) === -1) out.push(x.t); });
+    return out;
+}
+// Nach einer Änderung sofort die Haushalts-Aufgaben prüfen (sonst erst beim nächsten Stundenlauf)
+function aufgabenAnstossen(familyId) {
+    try { require(`${__hooks}/pinn-aufgaben.js`).runHouseholdNow(familyId); } catch (e) { /* egal */ }
+}
+
 function requireAdmin(e) {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const familyId = lib.familyOf(e);
@@ -409,6 +424,7 @@ function speichern(familyId, quelle, termine, vonId) {
         stand: Date.now(), geprueft: Date.now(), fehler: "", von: vonId || "",
     };
     writeData(familyId, d);
+    aufgabenAnstossen(familyId);
     return d;
 }
 
@@ -743,5 +759,5 @@ function status() {
 }
 
 module.exports = {
-    COL, ensureSchema, forFamily, uebernehmen, datei, optionen, entfernen, aktualisieren, runCron, suche, status, parseIcs,
+    COL, ensureSchema, forFamily, uebernehmen, datei, optionen, entfernen, aktualisieren, runCron, suche, status, parseIcs, termineAm,
 };

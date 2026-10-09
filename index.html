@@ -1762,7 +1762,13 @@ window.PINN_LANGUAGES = [
   .pantry-bc-rm:hover { color:#D64545; background:#FDE8E8; }
   .pscan-stage { position:relative; width:100%; aspect-ratio: 4 / 3; border-radius: 1rem; overflow:hidden; background:#111; transition: box-shadow .2s; }
   .pscan-stage video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
-  .pscan-frame { position:absolute; left:8%; right:8%; top:28%; bottom:28%; border:2px solid rgba(255,255,255,.85); border-radius:.75rem; box-shadow: 0 0 0 9999px rgba(0,0,0,.28); pointer-events:none; }
+  /* Abgedunkelt wird nur der Rand um den Rahmen (vier Flächen) – das Viereck selbst bleibt hell */
+  .pscan-shade { position:absolute; background: rgba(0,0,0,.55); pointer-events:none; }
+  .pscan-shade.t { left:0; right:0; top:0; height:28%; }
+  .pscan-shade.b { left:0; right:0; bottom:0; height:28%; }
+  .pscan-shade.l { left:0; top:28%; bottom:28%; width:8%; }
+  .pscan-shade.r { right:0; top:28%; bottom:28%; width:8%; }
+  .pscan-frame { position:absolute; left:8%; right:8%; top:28%; bottom:28%; border:2px solid rgba(255,255,255,.9); border-radius:.3rem; pointer-events:none; }
   .pscan-line { position:absolute; left:6%; right:6%; top:50%; height:2px; background:#ff4d4d; box-shadow:0 0 8px #ff4d4d; animation: pscanLine 1.8s ease-in-out infinite alternate; }
   @keyframes pscanLine { from { transform: translateY(-34px); } to { transform: translateY(34px); } }
   @media (prefers-reduced-motion: reduce) { .pscan-line { animation: none; } }
@@ -2926,6 +2932,25 @@ window.PINN_LANGUAGES = [
   html.dark .ov-weather-day { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
   html.dark .ov-weather-day.is-today { background: color-mix(in srgb, var(--c-pine) 28%, transparent); border-color: color-mix(in srgb, var(--c-pine) 60%, transparent); }
 
+  /* Übersicht-Kachel: Familienmitglieder */
+  .ov-fam-row { display: flex; gap: 0.9rem; overflow-x: auto; padding: 2px 2px 4px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .ov-fam-row::-webkit-scrollbar { display: none; }
+  .ov-fam-item { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; flex-shrink: 0; min-width: 3.6rem; background: none; padding: 0; }
+  .ov-fam-ava-wrap { position: relative; display: block; }
+  .ov-fam-ava { display: block; width: 3.1rem; height: 3.1rem; border-radius: 9999px; overflow: hidden; border: 2px solid; background: rgba(37,35,31,0.05); }
+  .ov-fam-ava > span { font-size: 1.45rem !important; }
+  .ov-fam-star { position: absolute; right: -2px; bottom: -2px; font-size: 13px; line-height: 1; pointer-events: none; }
+  .ov-fam-name { font-size: 11px; line-height: 1.2; color: rgba(37,35,31,0.6); max-width: 4.4rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  html.dark .ov-fam-name { color: rgba(255,255,255,0.6); }
+  button.ov-fam-item { cursor: pointer; transition: transform .12s; }
+  button.ov-fam-item:active { transform: scale(0.94); }
+  button.ov-fam-item:hover .ov-fam-name { color: var(--c-pine); }
+
+  .fin-planned { opacity: 0.62; }
+  .fin-plan-chip { display: inline-block; font-size: 10px; line-height: 1; padding: 2px 6px; border-radius: 999px; border: 1px dashed rgba(37,35,31,0.35); color: rgba(37,35,31,0.6); }
+  html.dark .fin-plan-chip { border-color: rgba(255,255,255,0.35); color: rgba(255,255,255,0.65); }
+  .fin-trend-future .fin-trend-stack { opacity: 0.45; }
+
   .ov-bday-list { display: flex; flex-direction: column; gap: 0.45rem; }
   .ov-bday-row {
     display: flex; align-items: center; gap: 0.7rem; padding: 0.5rem 0.7rem; border-radius: 14px;
@@ -3789,6 +3814,16 @@ window.PINN_LANGUAGES = [
       </div>
     </section>
 
+    <!-- Übersicht-Kachel: Familienmitglieder (Tipp auf ein Kind öffnet die Kinderseite) -->
+    <section id="familyTileSection" class="hidden min-h-0 flex flex-col bg-white/40 border-ink/10">
+      <div class="px-6 pt-4 pb-4 min-h-0">
+        <div class="flex items-center justify-between gap-3 mb-3">
+          <h2 class="font-serif text-lg">Familienmitglieder</h2>
+        </div>
+        <div id="familyTileBody"></div>
+      </div>
+    </section>
+
     <!-- Übersicht-Kachel: anstehende Kündigungsfristen (Finanzen → Verträge) -->
     <section id="contractTileSection" class="hidden min-h-0 flex flex-col bg-white/40 border-ink/10">
       <div class="px-6 pt-4 pb-4 min-h-0 overflow-y-auto">
@@ -4257,7 +4292,7 @@ window.PINN_LANGUAGES = [
         <input id="trashBinManualScheduleCheckbox" type="checkbox" class="w-4 h-4" />
         Zusätzlich manuellen Rausbring-Rhythmus festlegen
       </label>
-      <p class="text-[11px] text-ink/40 mb-3 -mt-2">Unabhängig davon wird automatisch eine Aufgabe erzeugt, sobald im Kalender eine erkannte Abholung für morgen steht.</p>
+      <p class="text-[11px] text-ink/40 mb-3 -mt-2">Unabhängig davon entsteht am Vortag automatisch eine Aufgabe, sobald im Müllkalender oder im Kalender eine passende Abholung für morgen steht – nach der Abholung wird sie von selbst abgehakt.</p>
 
       <div id="trashBinScheduleFields" class="hidden">
         <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-3">
@@ -4561,6 +4596,19 @@ window.PINN_LANGUAGES = [
             <span class="text-sm">Vorrat läuft ab (Mindesthaltbarkeit)</span>
           </label>
           <p class="text-[11px] text-ink/40 -mt-2">Morgens eine Sammel-Nachricht, wenn Artikel im Vorrat bald ablaufen – wie viele Tage vorher, stellst du auf der Vorrat-Seite (Regler-Symbol) ein.</p>
+          <h4 class="text-xs uppercase tracking-wide text-ink/40 mt-2 -mb-1">Müllabfuhr</h4>
+          <div class="flex flex-wrap items-center gap-3">
+            <label class="flex items-center gap-3 cursor-pointer w-fit">
+              <span class="relative inline-block w-11 h-6 shrink-0">
+                <input id="pushOptMuell" type="checkbox" class="push-opt peer sr-only" />
+                <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
+                <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+              </span>
+              <span class="text-sm">Am Vortag erinnern um</span>
+            </label>
+            <input id="pushOptMuellZeit" type="time" step="300" class="push-opt rounded-lg border border-ink/15 px-2 py-1.5 text-sm bg-white" />
+          </div>
+          <p class="text-[11px] text-ink/40 -mt-2">Kommt nur, wenn laut Müllkalender (Einstellungen → Kalender) am nächsten Tag etwas abgeholt wird – mit den Tonnen und wer mit Rausbringen dran ist. Kinder bekommen sie nur, wenn sie selbst dran sind.</p>
           <p id="pushSettingsStatus" class="text-xs text-ink/40"></p>
         </div>
         </div>
@@ -5008,6 +5056,7 @@ window.PINN_LANGUAGES = [
             <p class="set-sub-title">Müllkalender</p>
             <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0 -mt-2" data-info="Die Abfuhrtermine eures Entsorgers (Restmüll, Bio, Papier, Gelber Sack …) erscheinen im Kalender – je Familie genau ein Müllkalender; ein neuer ersetzt den bisherigen. Die KI sucht mit eurer Adresse nach der iCal-Datei, der pinn.-Server lädt sie selbst herunter und prüft sie. Kalender mit Link aktualisiert der Server jede Woche von selbst. Alternativ: Link zur .ics-Datei einfügen oder die Datei hochladen.">i</button>
           </div>
+          <p class="text-[11px] text-ink/45 mb-2">Für jede Abholung legt pinn. am Vortag eine Aufgabe für den passenden Mülleimer an (Aufgaben → Haushalt) und hakt sie nach der Abholung von selbst ab. Die Erinnerung am Vortag stellt jeder unter Benachrichtigungen ein.</p>
           <div id="muellHint" class="set-hint hidden"></div>
           <div id="muellCard" class="home-card hidden"></div>
           <div id="muellOptions" class="hidden">
@@ -6713,6 +6762,7 @@ window.PINN_LANGUAGES = [
     </div>
     <div id="pantryScanStage" class="pscan-stage">
       <video id="pantryScanVideo" playsinline muted autoplay></video>
+      <div class="pscan-shade t"></div><div class="pscan-shade b"></div><div class="pscan-shade l"></div><div class="pscan-shade r"></div>
       <div class="pscan-frame"><span class="pscan-line"></span></div>
       <button id="pantryScanTorch" type="button" class="hidden pscan-torch" aria-label="Taschenlampe" title="Taschenlampe">🔦</button>
       <div id="pantryScanCamMsg" class="hidden pscan-cam-msg"></div>
@@ -7363,7 +7413,7 @@ window.PINN_LANGUAGES = [
         <input id="memberKidMode" type="checkbox" class="w-4 h-4" />
         <span>Kinderseite aktivieren ⭐</span>
       </label>
-      <p class="text-xs text-ink/40 mt-1">Ein Tipp auf das Bild in der Familienleiste öffnet eine bunte Seite mit den Aufgaben, die gerade dran sind (z. B. morgens Zähne putzen, abends Schlafanzug anziehen). Jeden Tag beginnt alles von vorne.</p>
+      <p class="text-xs text-ink/40 mt-1">Ein Tipp auf das Kind in der Kachel „Familienmitglieder“ auf der Übersicht öffnet eine bunte Seite mit den Aufgaben, die gerade dran sind (z. B. morgens Zähne putzen, abends Schlafanzug anziehen). Jeden Tag beginnt alles von vorne.</p>
       <div id="memberKidOptions" class="hidden mt-3">
         <p id="memberKidSummary" class="text-xs text-ink/60 mb-2"></p>
         <button type="button" id="memberKidEdit" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">Aufgaben &amp; Tageszeiten bearbeiten</button>
@@ -8296,6 +8346,9 @@ function fillPushSettingsForm(st) {
   document.getElementById('pushOptPwAntworten').checked = st.pwAntworten !== false;
   document.getElementById('pushOptPwErinnerung').checked = st.pwErinnerung !== false;
   document.getElementById('pushOptVorrat').checked = st.vorrat !== false;
+  document.getElementById('pushOptMuell').checked = st.muell !== false;
+  document.getElementById('pushOptMuellZeit').value = st.muellZeit || '18:00';
+  document.getElementById('pushOptMuellZeit').disabled = st.muell === false;
   document.getElementById('pushOptVorlauf').disabled = !st.termine;
   document.getElementById('pushOptUhrzeit').disabled = !st.tagesuebersicht;
 }
@@ -8316,6 +8369,8 @@ function readPushSettingsForm() {
     pwAntworten: document.getElementById('pushOptPwAntworten').checked,
     pwErinnerung: document.getElementById('pushOptPwErinnerung').checked,
     vorrat: document.getElementById('pushOptVorrat').checked,
+    muell: document.getElementById('pushOptMuell').checked,
+    muellZeit: document.getElementById('pushOptMuellZeit').value || '18:00',
   };
 }
 
@@ -10941,11 +10996,11 @@ const ROOM_ICONS = ['🛏️', '🛁', '🍳', '🛋️', '🚪', '📚', '🧸'
 // (bereits synchronisierten) Kalender zu erkennen (z.B. ein Titel wie "Gelbe Tonne" aus einer
 // kommunalen Abfuhrkalender-Abo-Datei).
 const WASTE_TYPES = [
-  { id: 'restmuell', label: 'Restmüll', icon: '🗑️', taskLabel: 'Restmüll', keywords: ['restmüll', 'restabfall', 'restmülltonne', 'hausmüll'] },
-  { id: 'biomuell', label: 'Biomüll', icon: '🍂', taskLabel: 'Biomüll', keywords: ['biomüll', 'bioabfall', 'biotonne'] },
-  { id: 'papier', label: 'Papier/Pappe', icon: '📦', taskLabel: 'Papiermüll', keywords: ['papier', 'pappe', 'papiertonne'] },
-  { id: 'gelbersack', label: 'Gelber Sack / Verpackungen', icon: '♻️', taskLabel: 'Gelber Sack', keywords: ['gelber sack', 'gelbe tonne', 'verpackung', 'wertstoff'] },
-  { id: 'glas', label: 'Glas', icon: '🍾', taskLabel: 'Altglas', keywords: ['glas', 'altglas'] },
+  { id: 'restmuell', label: 'Restmüll', icon: '🗑️', taskLabel: 'Restmüll', keywords: ['restmüll', 'restabfall', 'restmülltonne', 'hausmüll', 'graue tonne', 'schwarze tonne', 'rest-'] },
+  { id: 'biomuell', label: 'Biomüll', icon: '🍂', taskLabel: 'Biomüll', keywords: ['biomüll', 'bioabfall', 'biotonne', 'bio-tonne', 'braune tonne', 'grünabfall', 'kompost'] },
+  { id: 'papier', label: 'Papier/Pappe', icon: '📦', taskLabel: 'Papiermüll', keywords: ['papier', 'pappe', 'papiertonne', 'blaue tonne', 'altpapier', 'ppk'] },
+  { id: 'gelbersack', label: 'Gelber Sack / Verpackungen', icon: '♻️', taskLabel: 'Gelber Sack', keywords: ['gelber sack', 'gelbe tonne', 'gelbe säcke', 'verpackung', 'wertstoff', 'leichtverpackung', 'lvp'] },
+  { id: 'glas', label: 'Glas', icon: '🍾', taskLabel: 'Altglas', keywords: ['altglas', 'glas'] },
 ];
 function wasteTypeById(id) { return WASTE_TYPES.find(w => w.id === id); }
 const WEEKDAYS = [
@@ -11004,6 +11059,7 @@ const VT_DEFAULT_CATEGORIES = [
   { id: 'freizeit', label: 'Sport & Freizeit', icon: '🏋️', color: '#D4A017', finCat: 'freizeit' },
   { id: 'kredit', label: 'Kredite & Finanzierung', icon: '🏦', color: '#B5543C', finCat: 'sonstiges' },
   { id: 'zeitung', label: 'Zeitung & Magazine', icon: '📰', color: '#8E6BBF', finCat: 'abos' },
+  { id: 'abgaben', label: 'Steuern & Abgaben', icon: '🏛️', color: '#7A6F5A', finCat: 'sonstiges' },
   { id: 'sonstiges', label: 'Sonstige', icon: '📄', color: '#9A9A9A', finCat: 'sonstiges' },
 ];
 // Kategorie, die automatisch gewählt wird, wenn ein Betrag mit Minus (= Einnahme) eingegeben wird
@@ -11924,6 +11980,7 @@ window.addEventListener('online', () => {
 const OVERVIEW_TILES = [
   { id: 'wetter', icon: '🌤️', label: 'Wetter', hint: 'Vorschau: am Handy 3 Tage, am iPad und Computer die ganze Woche', big: false },
   { id: 'geburtstage', icon: '🎂', label: 'Geburtstage', hint: 'Anstehende Geburtstage aus den iCloud- und Google-Kontakten', big: false },
+  { id: 'familie', icon: '👨‍👩‍👧', label: 'Familienmitglieder', hint: 'Alle Familienmitglieder – ein Tipp auf ein Kind öffnet seine Kinderseite', big: false },
   { id: 'vertraege', icon: '📄', label: 'Kündigungsfristen', hint: 'Anstehende Kündigungsfristen und Erinnerungen – nur sichtbar, wenn etwas ansteht', big: false },
   { id: 'pinnwand', icon: '📌', label: 'Pinnwand', hint: 'Zettel für dich, Wichtiges und Neues – nur sichtbar, wenn etwas angepinnt ist', big: false },
   { id: 'kalender', icon: '📅', label: 'Termine', hint: 'Kalender mit Tages- bzw. Wochenansicht', big: true },
@@ -11934,7 +11991,7 @@ const OVERVIEW_DEFAULT_ORDER = OVERVIEW_TILES.map(t => t.id);
 const OVERVIEW_SECTION_IDS = {
   kalender: 'calendarSection', essen: 'recipeSection', aufgaben: 'taskSection',
   wetter: 'weatherTileSection', geburtstage: 'birthdayTileSection', vertraege: 'contractTileSection',
-  pinnwand: 'boardTileSection',
+  pinnwand: 'boardTileSection', familie: 'familyTileSection',
 };
 const OVERVIEW_BDAY_DAY_OPTIONS = [7, 14, 30, 60];
 let overviewOrder = OVERVIEW_DEFAULT_ORDER.slice();
@@ -11976,6 +12033,7 @@ function overviewTileAvailable(id) {
     // Nur wenn gerade eine Kündigungsfrist oder Erinnerung ansteht
     try { return !isCurrentUserGuest() && isViewAllowed('finanzen') && !!finance && vtDueList().length > 0; } catch (e) { return false; }
   }
+  if (id === 'familie') return !isCurrentUserGuest() && members.length > 0;
   if (id === 'pinnwand') {
     // Nur wenn etwas angepinnt ist (und die Pinnwand für Gäste nicht ausgeblendet ist)
     try { return isViewAllowed('pinnwand') && pwTileNotes().length > 0; } catch (e) { return false; }
@@ -12078,6 +12136,7 @@ function refreshOverviewTiles() {
   try {
     renderWeatherTile();
     renderBirthdayTile();
+    renderFamilyTile();
     renderContractTile();
     renderBoardTile();
     if (currentView !== 'uebersicht' || !familyRecordId || recipeDetailOpenedFromUebersicht) return;
@@ -12087,6 +12146,24 @@ function refreshOverviewTiles() {
     applyMealCardLayout();
     if (calendarMode !== prevMode) renderCalendar();
   } catch (e) { /* App noch nicht fertig aufgebaut */ }
+}
+
+/* ---------- Kachel: Familienmitglieder ----------
+   Alle Mitglieder nebeneinander, darunter klein die Namen. Ein Tipp auf ein Kind mit Kinderseite
+   öffnet sie (früher über das Bild in der Familienleiste). Später soll hier auch das Familien-Menü
+   verlinkt werden (Live-Standort, „unterwegs zu …“ je Person). */
+function renderFamilyTile() {
+  const body = document.getElementById('familyTileBody');
+  if (!body) return;
+  if (!members.length) { body.innerHTML = ''; return; }
+  body.innerHTML = `<div class="ov-fam-row">${members.map(m => {
+    const kid = isKidPageEnabled(m);
+    const inner = `<span class="ov-fam-ava-wrap"><span class="ov-fam-ava" style="border-color:${memberBorderColor(m)}">${memberAvatarInnerHTML(m)}</span>${kid ? '<span class="ov-fam-star">⭐</span>' : ''}</span><span class="ov-fam-name">${escapeHtml(memberLabel(m))}</span>`;
+    return kid
+      ? `<button type="button" class="ov-fam-item is-kid" data-mid="${escapeHtml(m.id)}" title="Kinderseite öffnen" aria-label="Kinderseite öffnen: ${escapeHtml(memberLabel(m))}">${inner}</button>`
+      : `<div class="ov-fam-item">${inner}</div>`;
+  }).join('')}</div>`;
+  body.querySelectorAll('.ov-fam-item.is-kid').forEach(b => b.addEventListener('click', () => openKidPage(b.dataset.mid)));
 }
 
 /* ---------- Kachel: Wetter (Daten aus fetchWeather, Open-Meteo) ---------- */
@@ -13796,19 +13873,9 @@ function renderMemberChips() {
       chip.type = 'button';
       chip.className = 'inline-flex items-center gap-1.5 pl-0.5 pr-2.5 py-0.5 rounded-full text-xs font-medium bg-ink/5 transition ' + (isDimmed ? 'opacity-35' : '') + (isActive ? ' ring-2 ring-offset-1 ring-ink/70' : '');
       const avatarHtml = `<span class="w-6 h-6 rounded-full overflow-hidden border-2 shrink-0" style="border-color:${memberBorderColor(m)}">${memberAvatarInnerHTML(m)}</span>`;
-      const kidOn = isKidPageEnabled(m);
-      chip.innerHTML = kidOn
-        ? `<span class="kid-chip-hit" title="Kinderseite öffnen">${avatarHtml}<span class="kid-chip-badge">⭐</span></span><span>${escapeHtml(memberLabel(m))}</span>`
-        : `${avatarHtml}<span>${escapeHtml(memberLabel(m))}</span>`;
-      chip.title = kidOn
-        ? 'Auf das Bild tippen öffnet die Kinderseite, auf den Namen tippen hebt Termine/Aufgaben dieser Person hervor'
-        : 'Klicken, um nur Termine/Aufgaben dieser Person hervorzuheben';
-      if (kidOn) {
-        chip.querySelector('.kid-chip-hit').addEventListener('click', (ev) => {
-          ev.stopPropagation();
-          openKidPage(m.id);
-        });
-      }
+      // Die Kinderseite öffnet jetzt die Übersicht-Kachel „Familienmitglieder“ (renderFamilyTile)
+      chip.innerHTML = `${avatarHtml}<span>${escapeHtml(memberLabel(m))}</span>`;
+      chip.title = 'Klicken, um nur Termine/Aufgaben dieser Person hervorzuheben';
       chip.addEventListener('click', () => {
         if (activeMemberFilter.has(m.id)) activeMemberFilter.delete(m.id);
         else activeMemberFilter.add(m.id);
@@ -13819,6 +13886,7 @@ function renderMemberChips() {
       wrap.appendChild(chip);
     });
   });
+  try { renderFamilyTile(); } catch (e) { /* Übersicht noch nicht aufgebaut */ }
 }
 
 function passesMemberFilter(memberId) {
@@ -14665,7 +14733,6 @@ function renderKidPage() {
         </button>`).join('')}
     </div>
     ${kidHomeworkHtml(m)}
-    ${homeSunLine(now) ? `<div class="kid-sun">${homeSunLine(now)}</div>` : ''}
     ${kidAllowanceHtml(m)}`;
 }
 function kidShowCelebration(m) {
@@ -19742,7 +19809,7 @@ function openRecipeDetailPage(recipeId, publicEntry = null) {
   // Breite ein. Wird beim Zurückgehen in closeRecipeDetailPage() wieder rückgängig gemacht.
   recipeDetailOpenedFromUebersicht = currentView === 'uebersicht';
   if (recipeDetailOpenedFromUebersicht) {
-    ['calendarSection', 'taskSection', 'weatherTileSection', 'birthdayTileSection', 'contractTileSection'].forEach(id => document.getElementById(id).classList.add('hidden'));
+    ['calendarSection', 'taskSection', 'weatherTileSection', 'birthdayTileSection', 'contractTileSection', 'familyTileSection'].forEach(id => document.getElementById(id).classList.add('hidden'));
     const mainGrid = document.getElementById('mainGrid');
     const recipeSection = document.getElementById('recipeSection');
     mainGrid.classList.remove('grid-cols-[1.3fr_1fr]', 'grid-cols-[1.3fr_minmax(0,1fr)]');
@@ -23809,7 +23876,7 @@ function setView(view) {
     sec.classList.remove('shrink-0', 'border-t', 'border-l');
   });
   // Kacheln der Übersicht (Wetter, Geburtstage, Kündigungsfristen) gibt es nur dort
-  ['weatherTileSection', 'birthdayTileSection', 'contractTileSection', 'boardTileSection'].forEach(id => {
+  ['weatherTileSection', 'birthdayTileSection', 'contractTileSection', 'boardTileSection', 'familyTileSection'].forEach(id => {
     const sec = document.getElementById(id);
     sec.classList.add('hidden');
     sec.style.order = '';
@@ -23976,6 +24043,7 @@ function setView(view) {
     applyOverviewLayout();
     renderWeatherTile();
     renderBirthdayTile();
+    renderFamilyTile();
     renderContractTile();
     renderBoardTile();
   }
@@ -24161,7 +24229,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.30.1';
+const APP_VERSION = '1.31.0';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -25086,6 +25154,29 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
   setTimeout(() => { statusEl.textContent = ''; }, 4000);
 });
 
+/* ---------- Einstellungen: immer nur ein Abschnitt offen ----------
+   Öffnet man einen Abschnitt, klappt der zuletzt offene zu. Rutscht der neue dadurch nach oben aus
+   dem Bild, wird er wieder sichtbar gescrollt. */
+(function settingsAccordionExclusive() {
+  const root = document.getElementById('settingsView');
+  if (!root) return;
+  const all = () => [...root.querySelectorAll('details.settings-accordion')];
+  all().forEach(det => det.addEventListener('toggle', () => {
+    if (!det.open) return;
+    let closedAbove = false;
+    all().forEach(o => {
+      if (o === det || !o.open) return;
+      if (o.compareDocumentPosition(det) & Node.DOCUMENT_POSITION_FOLLOWING) closedAbove = true;
+      o.open = false;
+    });
+    if (!closedAbove) return;
+    requestAnimationFrame(() => {
+      const r = det.getBoundingClientRect();
+      if (r.top < 0 || r.top > window.innerHeight * 0.6) det.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    });
+  }));
+})();
+
 /* ==========================================================
    Versions-Log (Changelog) - Anzeige als Terminal
    ----------------------------------------------------------
@@ -25097,6 +25188,18 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
    - rueckblick: true = Einträge vor dem Versions-Log, aus der Projekthistorie zusammengefasst.
    ========================================================== */
 const PINN_CHANGELOG = [
+  {
+    v: '1.31', datum: '09.10.2026', titel: 'Müllabfuhr, geplante Ausgaben & Fixkosten',
+    punkte: [
+      ['neu', 'Müllkalender und Mülleimer sind verknüpft: Steht morgen eine Abholung im Müllkalender, gibt es heute die Aufgabe „… rausbringen“ für den passenden Mülleimer. Nach der Abholung (Abholtag ab 12 Uhr) wird sie automatisch abgehakt und wandert nach unten'],
+      ['neu', 'Erinnerung am Vortag der Müllabfuhr mit eigener Uhrzeit (Einstellungen → Benachrichtigungen): welche Tonnen und wer dran ist – Kinder bekommen sie nur, wenn sie selbst dran sind'],
+      ['neu', 'Finanzen: regelmäßige Buchungen ohne Ende werden mindestens zwei Jahre im Voraus als „geplant“ angezeigt – in künftigen Monaten und Jahren und als „noch geplant“ im laufenden Zeitraum. Sie zählen nicht als ausgegeben'],
+      ['neu', 'Verträge: Miete, Nebenkosten und Heizkosten aus „Haus“ hängen an einem Mietvertrag (Wohnen), Kredit, Gebäudeversicherung und Hausgeld an eigenen Verträgen. Kfz-Steuer, Grundsteuer, Rundfunkbeitrag & Co. landen in der neuen Kategorie „Steuern & Abgaben“ als laufende Fixkosten – ohne Kündigen'],
+      ['neu', 'Übersicht-Kachel „Familienmitglieder“: alle Avatare nebeneinander, ein Tipp aufs Kind öffnet die Kinderseite (statt übers Bild in der Familienleiste)'],
+      ['fix', 'Barcode-Scanner: nur der Rand um den Rahmen ist abgedunkelt, Piepton beim Treffer, der Bildschirm bleibt beim Scannen an · Einstellungen: es bleibt immer nur ein Abschnitt aufgeklappt · Kinderseite ohne Sonnenauf- und -untergang'],
+      ['info', 'Server: angepasst pinn-aufgaben.js, pinn-muell.js, pinn-push.js und pinn-pushtext.js; Sprachdateien en/fr/es ergänzt'],
+    ],
+  },
   {
     v: '1.30', datum: '09.10.2026', titel: 'Vorrat 2.0',
     punkte: [
@@ -28527,6 +28630,7 @@ function defaultFinance() {
     homeProjects: [],   // Haus: Sanierungs- / Renovierungsplan
     homeMeters: [],     // Haus: Zähler (Strom, Gas, Wasser …)
     homeReadings: [],   // Haus: Zählerstände
+    contractAutoSkip: [], // Verträge: automatisch angelegte, die gelöscht wurden (nicht neu anlegen)
   };
 }
 function normalizeFinance(f) {
@@ -28571,6 +28675,7 @@ function normalizeFinance(f) {
     homeProjects: Array.isArray(f.homeProjects) ? f.homeProjects.filter(p => p && typeof p.id === 'string' && p.id && p.home) : [],
     homeMeters: Array.isArray(f.homeMeters) ? f.homeMeters.filter(m => m && typeof m.id === 'string' && m.id && m.home) : [],
     homeReadings: Array.isArray(f.homeReadings) ? f.homeReadings.filter(r => r && typeof r.id === 'string' && r.id && r.meter) : [],
+    contractAutoSkip: Array.isArray(f.contractAutoSkip) ? f.contractAutoSkip.filter(k => typeof k === 'string').slice(-300) : [],
   };
 }
 function finCategory(id) {
@@ -28896,6 +29001,28 @@ function finRecurringEntries(startIso, endIso) {
   });
   return out;
 }
+// Geplante Buchungen: regelmäßige Buchungen NACH heute, bis zum Ende des übernächsten Jahres (also
+// immer mindestens zwei Jahre voraus). Beendete oder gekündigte Buchungen enden mit ihrem until.
+// Sie zählen nie als ausgegeben – nur in zukünftigen Zeiträumen und als „noch geplant“.
+function finPlanHorizon() { return (new Date().getFullYear() + 2) + '-12-31'; }
+function finPlannedEntries(startIso, endIso) {
+  const tomorrow = finIsoAddDays(finTodayIso(), 1);
+  const from = startIso > tomorrow ? startIso : tomorrow;
+  const hz = finPlanHorizon();
+  const to = endIso < hz ? endIso : hz;
+  const out = [];
+  if (!finance || to < from) return out;
+  finance.recurring.forEach(r => {
+    finRecDates(r, from, to).forEach(date => {
+      out.push({
+        id: 'plan_' + r.id + '_' + date, recurringId: r.id, amount: finRecurringAmountFor(r, date), date, planned: true,
+        category: r.category, title: r.title || '', paidBy: r.paidBy || '', note: r.note || '', items: [], store: '',
+        link: r.link || '', contract: r.contract || '', split: Array.isArray(r.split) ? r.split : [],
+      });
+    });
+  });
+  return out;
+}
 function finEntriesInRange(startIso, endIso) {
   const real = ausgaben.filter(e => e.category !== FIN_SETTLE_CATEGORY && e.date >= startIso && e.date <= endIso);
   return real.concat(finRecurringEntries(startIso, endIso));
@@ -28929,7 +29056,12 @@ function finPeriodRange(period, offset) {
   return { start, end, startIso: isoDate(start), endIso: isoDate(end), label, short, longShort, days: Math.round((end - start) / 86400000) + 1 };
 }
 function finStats(range) {
-  const entries = finEntriesInRange(range.startIso, range.endIso);
+  // Zukünftiger Zeitraum: alles, was regelmäßig ansteht (geplant). Laufender Zeitraum: gebucht bis
+  // heute, dazu getrennt „noch geplant“ bis zum Ende des Zeitraums.
+  const future = range.startIso > finTodayIso();
+  const planned = finPlannedEntries(range.startIso, range.endIso);
+  const entries = future ? planned : finEntriesInRange(range.startIso, range.endIso);
+  const plannedOut = Math.round(planned.reduce((s, e) => s + Math.max(0, Number(e.amount) || 0), 0) * 100) / 100;
   let total = 0;       // Ausgaben (positiv)
   let income = 0;      // Einnahmen (als positiver Wert)
   let expenseCount = 0;
@@ -28960,6 +29092,7 @@ function finStats(range) {
   total = Math.round(total * 100) / 100;
   income = Math.round(income * 100) / 100;
   return {
+    future, planned, plannedOut,
     entries, total, income, expenseCount, balance: Math.round((income - total) * 100) / 100,
     byCat: [...byCat.values()].sort((a, b) => b.total - a.total),
     byIncomeCat: [...byIncomeCat.values()].sort((a, b) => b.total - a.total),
@@ -29073,6 +29206,7 @@ document.getElementById('financeScroll').addEventListener('click', (ev) => {
 });
 
 function renderFinance() {
+  try { if (vtAutoLink()) Promise.resolve(persistState()).then(vtScheduleServerCheck).catch(() => { /* wird nachgereicht */ }); } catch (e) { /* egal */ }
   const section = document.getElementById('financeSection');
   if (!section) return;
   // Ausgaben und Sparen: Familien-Gruppe ist keine Kasse -> zur ersten echten Kasse wechseln
@@ -29162,7 +29296,7 @@ function renderFinanceBudgetCard(range, stats) {
     } else if (isCurrent) {
       infoLine = `${bText} · ${pctUsed} % verbraucht`;
     } else if (isFuture) {
-      infoLine = `${bText} · dieser Zeitraum liegt in der Zukunft`;
+      infoLine = `${bText} · geplant aus regelmäßigen Buchungen`;
     } else {
       infoLine = rest >= 0 ? `${bText} eingehalten ✓ · ${pctUsed} % verbraucht` : `${bText} um ${fmtEur(-rest)} überschritten`;
     }
@@ -29185,8 +29319,9 @@ function renderFinanceBudgetCard(range, stats) {
     <div class="rounded-2xl bg-white border border-ink/10 shadow-sm p-4 sm:p-5">
       <div class="flex items-start justify-between gap-3 mb-3">
         <div>
-          <div class="text-[11px] uppercase tracking-wide text-ink/40">Ausgegeben</div>
+          <div class="text-[11px] uppercase tracking-wide text-ink/40">${stats.future ? 'Geplant' : 'Ausgegeben'}</div>
           <div class="font-serif text-2xl" style="color:${total > 0 ? FIN_RED : 'inherit'}">${fmtEur(total)}</div>
+          ${!stats.future && stats.plannedOut > 0 ? `<div class="text-xs mt-0.5 text-ink/50">+ ${fmtEur(stats.plannedOut)} noch geplant</div>` : ''}
           ${stats.income > 0 ? `<div class="text-xs mt-0.5"><span style="color:${FIN_GREEN}">+ ${fmtEur(stats.income)} Einnahmen</span> <span class="text-ink/45">· Bilanz <b style="color:${stats.balance >= 0 ? FIN_GREEN : FIN_RED}">${stats.balance >= 0 ? '+' : '−'} ${fmtEur(Math.abs(stats.balance))}</b></span></div>` : ''}
         </div>
         ${headRight}
@@ -29334,7 +29469,9 @@ function renderFinanceTrend() {
     cols.push({ off, range, total: stats.total, budget });
   }
   const maxVal = Math.max(1, ...cols.map(c => Math.max(c.total, c.budget || 0)));
-  const withData = cols.filter(c => c.total > 0);
+  const todayIsoT = finTodayIso();
+  cols.forEach(c => { c.future = c.range.startIso > todayIsoT; });
+  const withData = cols.filter(c => c.total > 0 && !c.future);
   const avg = withData.length ? withData.reduce((s, c) => s + c.total, 0) / withData.length : 0;
   const H = 128;
   const bars = cols.map(c => {
@@ -29346,7 +29483,7 @@ function renderFinanceTrend() {
     // Jahreszeile immer reservieren, damit alle Balken auf gleicher Höhe stehen
     if (finPeriod === 'month') label += `<span class="block text-[9px] leading-tight text-ink/35">${(c.range.start.getMonth() === 0 || c.off === endOff - n + 1) ? c.range.start.getFullYear() : '&nbsp;'}</span>`;
     return `
-      <button type="button" class="fin-trend-col flex-1 min-w-0 flex flex-col items-center gap-1 select-none" data-off="${c.off}" title="${escapeHtml(c.range.label + ': ' + fmtEur(c.total))}">
+      <button type="button" class="fin-trend-col flex-1 min-w-0 flex flex-col items-center gap-1 select-none${c.future ? ' fin-trend-future' : ''}" data-off="${c.off}" title="${escapeHtml(c.range.label + ': ' + fmtEur(c.total) + (c.future ? ' (geplant)' : ''))}">
         <span class="text-[10px] ${selected ? 'font-semibold text-ink' : 'text-ink/45'} whitespace-nowrap leading-none h-3" style="display:block;height:12px">${c.total > 0 ? curPlain0(c.total) : ''}</span>
         <span class="fin-trend-track ${selected ? 'selected' : ''}" style="height:${H}px">
           <span class="fin-trend-stack">
@@ -29391,7 +29528,7 @@ function finDayLabel(iso) {
 
 function renderFinanceList(range, stats) {
   const el = document.getElementById('finExpenseListCard');
-  let entries = stats.entries.slice();
+  let entries = stats.future ? stats.entries.slice() : stats.entries.concat(stats.planned);
   const filterCat = finCategoryFilter ? finCategory(finCategoryFilter) : null;
   if (filterCat) entries = entries.filter(e => finCategory(e.category).id === filterCat.id);
   entries.sort((a, b) => (a.date === b.date ? String(b.created || '').localeCompare(String(a.created || '')) : (a.date < b.date ? 1 : -1)));
@@ -29423,8 +29560,9 @@ function renderFinanceList(range, stats) {
         if (member) subParts.push(escapeHtml(memberLabel(member)));
         const kSplit = kasseSplitLabel(e);
         if (kSplit) subParts.push(kSplit);
+        if (e.planned) subParts.unshift('<span class="fin-plan-chip">geplant</span>');
         return `
-          <button type="button" class="fin-entry w-full flex items-center gap-3 px-1 py-2 rounded-xl hover:bg-ink/5 transition text-left" data-id="${escapeHtml(e.id)}" data-rec="${escapeHtml(e.recurringId || '')}">
+          <button type="button" class="fin-entry w-full flex items-center gap-3 px-1 py-2 rounded-xl hover:bg-ink/5 transition text-left${e.planned ? ' fin-planned' : ''}" data-id="${escapeHtml(e.id)}" data-rec="${escapeHtml(e.recurringId || '')}">
             <span class="shrink-0 w-10 h-10 rounded-full grid place-items-center text-lg" style="background:${cat.color}22">${escapeHtml(cat.icon || '')}</span>
             <span class="flex-1 min-w-0">
               <span class="block text-sm font-medium truncate">${e.recurringId ? (e.contract && vtContract(e.contract) ? '📄 ' : '🔁 ') : ''}${escapeHtml(finEntryTitle(e))}${!e.recurringId && finDocsFor('ausgabe:' + e.id).length ? ' <span class="text-xs text-ink/45" title="Beleg vorhanden">📎</span>' : ''}</span>
@@ -31923,8 +32061,50 @@ const PinnEan = (() => {
 const pantryScan = {
   stream: null, track: null, timer: 0, idleTimer: 0, detector: null, detectorTried: false,
   mode: 'in', paused: false, busy: false, last: '', lastAt: 0, canvas: null, ctx: null,
-  torch: false, current: null, lookupCache: new Map(),
+  torch: false, current: null, lookupCache: new Map(), audio: null, wake: null,
 };
+// Kurzer Piepton beim Treffer (Web Audio, ohne Tondatei). Der Ton wird beim Öffnen des Scanners
+// freigeschaltet, weil iPhone und Android Töne nur nach einem Tipp erlauben.
+function pantryScanAudioUnlock() {
+  try {
+    const C = window.AudioContext || window.webkitAudioContext;
+    if (!C) return;
+    if (!pantryScan.audio) pantryScan.audio = new C();
+    if (pantryScan.audio.state === 'suspended') pantryScan.audio.resume();
+  } catch (e) { /* ohne Ton */ }
+}
+function pantryScanBeep() {
+  try {
+    const ctx = pantryScan.audio;
+    if (!ctx) return;
+    if (ctx.state === 'suspended') ctx.resume();
+    const t = ctx.currentTime;
+    [[1568, 0], [2093, 0.09]].forEach(([f, d]) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'sine';
+      o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, t + d);
+      g.gain.exponentialRampToValueAtTime(0.3, t + d + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + d + 0.12);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(t + d); o.stop(t + d + 0.13);
+    });
+  } catch (e) { /* ohne Ton */ }
+}
+// Bildschirm bleibt an, solange die Kamera läuft (die Helligkeit selbst darf eine Web-App nicht ändern)
+async function pantryScanWake(on) {
+  try {
+    if (on) {
+      if (pantryScan.wake || !('wakeLock' in navigator)) return;
+      pantryScan.wake = await navigator.wakeLock.request('screen');
+      pantryScan.wake.addEventListener('release', () => { pantryScan.wake = null; });
+    } else if (pantryScan.wake) {
+      const w = pantryScan.wake;
+      pantryScan.wake = null;
+      await w.release();
+    }
+  } catch (e) { pantryScan.wake = null; }
+}
 function pantryScanSetStatus(text, isError = false) {
   const el = document.getElementById('pantryScanStatus');
   el.textContent = text;
@@ -31957,6 +32137,7 @@ function openPantryScan() {
   document.getElementById('pantryScanResult').innerHTML = '';
   document.getElementById('pantryScanCodeInput').value = '';
   pantryScanRenderMode();
+  pantryScanAudioUnlock();
   pantryScanSetStatus('Barcode in den Rahmen halten – waagerecht oder senkrecht.');
   document.getElementById('pantryScanModal').classList.remove('hidden');
   pantryScanStartCamera();
@@ -32015,10 +32196,12 @@ async function pantryScanStartCamera() {
       }
     } catch (e) { pantryScan.detector = null; }
   }
+  pantryScanWake(true);
   pantryScanArmIdle();
   pantryScanLoop();
 }
 function pantryScanStopCamera() {
+  pantryScanWake(false);
   clearTimeout(pantryScan.timer);
   clearTimeout(pantryScan.idleTimer);
   pantryScan.timer = 0;
@@ -32087,6 +32270,7 @@ function pantryScanAccept(code) {
   pantryScan.paused = true;
   clearTimeout(pantryScan.idleTimer);
   try { if (navigator.vibrate) navigator.vibrate(60); } catch (e) { /* egal */ }
+  pantryScanBeep();
   const stage = document.getElementById('pantryScanStage');
   stage.classList.add('pscan-hit');
   setTimeout(() => stage.classList.remove('pscan-hit'), 500);
@@ -36052,6 +36236,11 @@ function vtNormalizeCategories(list) {
     ? list.filter(c => c && typeof c.id === 'string' && c.id).map(c => ({ ...c }))
     : VT_DEFAULT_CATEGORIES.map(c => ({ ...c }));
   if (!cats.some(c => c.id === 'sonstiges')) cats.push({ ...VT_DEFAULT_CATEGORIES[VT_DEFAULT_CATEGORIES.length - 1] });
+  if (!cats.some(c => c.id === 'abgaben')) {
+    const ab = VT_DEFAULT_CATEGORIES.find(c => c.id === 'abgaben');
+    const idx = cats.findIndex(c => c.id === 'sonstiges');
+    if (idx >= 0) cats.splice(idx, 0, { ...ab }); else cats.push({ ...ab });
+  }
   return cats;
 }
 function vtCategories() { return (finance && Array.isArray(finance.contractCategories) && finance.contractCategories.length) ? finance.contractCategories : VT_DEFAULT_CATEGORIES; }
@@ -36069,12 +36258,25 @@ function vtCost(c, today = finTodayIso()) {
   const r = vtRec(c);
   if (!r) return null;
   const running = finRecIsRunning(r, today) && !!finRecStart(r);
-  return { r, running, amount: finRecurringAmountFor(r, today), interval: finRecInterval(r), monthly: running ? finRecMonthly(r, today) : 0, next: running ? finRecNext(r, today) : '' };
+  const out = { r, running, amount: finRecurringAmountFor(r, today), interval: finRecInterval(r), monthly: running ? finRecMonthly(r, today) : 0, next: running ? finRecNext(r, today) : '', parts: [r] };
+  // Weitere Buchungen am selben Vertrag (z. B. Mietvertrag: Kaltmiete, Nebenkosten, Heizkosten)
+  const extra = finance.recurring.filter(x => x.id !== r.id && x.contract === c.id);
+  if (!extra.length) return out;
+  out.parts = [r, ...extra];
+  const run = out.parts.filter(x => finRecIsRunning(x, today) && !!finRecStart(x));
+  out.running = run.length > 0;
+  out.monthly = run.reduce((s, x) => s + finRecMonthly(x, today), 0);
+  const sameIv = run.length && run.every(x => finRecInterval(x) === finRecInterval(run[0]));
+  out.interval = sameIv ? finRecInterval(run[0]) : 'monthly';
+  out.amount = sameIv ? run.reduce((s, x) => s + finRecurringAmountFor(x, today), 0) : Math.round(out.monthly * 100) / 100;
+  out.next = run.map(x => finRecNext(x, today)).filter(Boolean).sort()[0] || '';
+  return out;
 }
 function vtStatusView(c, today = finTodayIso()) {
   const s = vtStatus(c, today);
   const rem = vtReminder(c);
   const out = { s, tone: 'ok', label: '', sub: '', sortKey: '9999' };
+  if (c && c.fixkosten && s.state === 'aktiv') { out.label = 'Laufende Fixkosten'; out.sub = 'nicht kündbar'; out.sortKey = '9999'; return out; }
   if (s.state === 'beendet') { out.tone = 'muted'; out.label = 'Beendet am ' + vtFmt(s.end); out.sortKey = 'z' + s.end; return out; }
   if (s.state === 'gekuendigt') {
     const conf = !!(c.cancel && c.cancel.confirmed);
@@ -36139,7 +36341,7 @@ function vtApplyCancelToRecurring(c) {
   if (!c || !c.recurringId) return;
   const eff = c.cancel && vtIsIso(c.cancel.effective) ? c.cancel.effective : '';
   finance.recurring = finance.recurring.map(r => {
-    if (r.id !== c.recurringId) return r;
+    if (r.id !== c.recurringId && r.contract !== c.id) return r;
     if (eff) return { ...r, until: eff, untilByContract: true, contract: c.id };
     if (r.untilByContract) return { ...r, until: '', untilByContract: false };
     return r;
@@ -36514,6 +36716,108 @@ function renderExpenseDocs() {
 }
 
 /* ---------- Seite: Verträge ---------- */
+/* ---------- Automatisch verknüpfen ----------
+   Regelmäßige Ausgaben aus anderen Bereichen bekommen ihren passenden Vertrag mit Kategorie:
+   - Haus (Miete): Kaltmiete, Nebenkosten, Heizkosten und Stellplatz -> ein Mietvertrag (Wohnen),
+     unbefristet mit der Kündigungsfrist aus Haus, Vermieter als Kontakt
+   - Haus (Eigentum): Kreditrate -> Kreditvertrag (endet mit der Zinsbindung), Wohngebäudeversicherung
+     -> Versicherungen, Hausgeld -> Wohnen, Grundsteuer und Müll/Abwasser -> Steuern & Abgaben
+   - Fahrzeuge: Kfz-Steuer -> Steuern & Abgaben (beim Fahrzeug)
+   - Sonstige regelmäßige Ausgaben mit Steuer/Rundfunkbeitrag/Abgabe im Namen -> Steuern & Abgaben
+   Steuern, Abgaben und Beiträge sind „Laufende Fixkosten“ (fixkosten: true): kein Kündigen, keine
+   Frist-Erinnerung. Gelöschte automatische Verträge kommen nicht wieder (finance.contractAutoSkip).
+   Läuft idempotent beim Öffnen von Finanzen und nach dem Speichern in Haus. */
+const VT_ABGABE_RE = /(kfz[- ]?steuer|grundsteuer|hundesteuer|zweitwohnungssteuer|rundfunk|beitragsservice|\bgez\b|kurtaxe|straßenreinigung|abwassergebühr|müllgebühr|abfallgebühr|kirchensteuer)/i;
+function vtAutoLink() {
+  if (!finance || !Array.isArray(finance.recurring) || isCurrentUserGuest()) return false;
+  try { if (typeof childLockActive === 'function' && childLockActive()) return false; } catch (e) { /* egal */ }
+  // Namen in der Sprache der App anlegen (es sind danach normale, änderbare Einträge)
+  const tr = x => { try { return (window.PINN_I18N && PINN_I18N.t) ? PINN_I18N.t(x) : x; } catch (e) { return x; } };
+  const today = finTodayIso();
+  const skip = new Set(finance.contractAutoSkip || []);
+  let contracts = vtContracts().slice();
+  let recurring = finance.recurring.slice();
+  let changed = false;
+  const free = r => r && !r.allowanceFor && !(r.contract && contracts.some(c => c.id === r.contract)) && finRecIsRunning(r, today);
+  const recById = id => (id ? recurring.find(r => r.id === id) : null) || null;
+  const base = (key, f) => ({
+    id: 'v' + newRecordId().slice(0, 14), auto: key, name: f.name, provider: f.provider || '', category: f.category,
+    holder: '', customerNo: '', contractNo: '', start: vtIsIso(f.start) ? f.start : '',
+    termType: f.termType || 'open', minMonths: 0, firstEnd: vtIsIso(f.firstEnd) ? f.firstEnd : '', renewMonths: 12,
+    notice: f.notice || { value: 0, unit: 'months' }, noticeMonthEnd: false,
+    reminder: { on: !!f.remind, days: f.remindDays || 30, last: !!f.remind, to: [] },
+    extraReminder: f.extra && vtIsIso(f.extra.date) && f.extra.date > today ? f.extra : { date: '', text: '' },
+    contact: f.contact || { phone: '', email: '', web: '', address: '' }, note: '', vehicle: f.vehicle || '',
+    home: f.home || '', fixkosten: !!f.fixkosten, cancel: null, recurringId: '', created: today, updated: today,
+  });
+  // Vertrag zum Schlüssel holen oder anlegen und die Buchungen daran hängen
+  const attach = (key, recs, make) => {
+    recs = recs.filter(free);
+    if (!recs.length) return;
+    let c = contracts.find(x => x.auto === key);
+    if (!c) {
+      if (skip.has(key)) return;
+      c = base(key, make());
+      contracts.push(c);
+    }
+    const ids = new Set(recs.map(r => r.id));
+    recurring = recurring.map(r => ids.has(r.id) ? { ...r, contract: c.id } : r);
+    if (!c.recurringId || !recurring.some(r => r.id === c.recurringId)) {
+      const main = recs[0].id;
+      contracts = contracts.map(x => x.id === c.id ? { ...x, recurringId: main } : x);
+    }
+    changed = true;
+  };
+  // Haus
+  (typeof hsHomes === 'function' ? hsHomes() : []).forEach(h => {
+    const fix = h.fix || {};
+    const rec = k => recById(fix[k] && fix[k].recId);
+    const name = hsName(h);
+    const ll = h.landlord || {};
+    const contact = { phone: ll.phone || '', email: ll.email || '', web: '', address: ll.address || '' };
+    if (h.mode !== 'eigentum') {
+      attach('haus-miete:' + h.id, ['rent', 'nk', 'heat', 'stellplatz'].map(rec).filter(Boolean), () => ({
+        name: tr('Mietvertrag') + ' · ' + name, provider: ll.name || '', category: 'wohnen', termType: 'open',
+        notice: { value: Math.max(0, Math.min(24, Number(h.rent && h.rent.notice) || 3)), unit: 'months' },
+        start: h.moveIn, contact, home: h.id,
+      }));
+    } else {
+      const loan = (h.own && h.own.loan) || {};
+      attach('haus-kredit:' + h.id, [rec('loan')].filter(Boolean), () => {
+        const f = { name: tr('Kredit') + ' · ' + name, provider: loan.bank || '', category: 'kredit', fixkosten: true, start: loan.start, home: h.id };
+        // Erinnerung ein halbes Jahr vor Ende der Zinsbindung (Anschlussfinanzierung vergleichen)
+        if (vtIsIso(loan.fixedUntil)) f.extra = { date: vtAddDays(loan.fixedUntil, -180), text: tr('Zinsbindung endet') + ': ' + vtFmt(loan.fixedUntil) + ' – ' + tr('Anschlussfinanzierung vergleichen') };
+        return f;
+      });
+      attach('haus-gebaeude:' + h.id, [rec('gebaeude')].filter(Boolean), () => ({
+        name: tr('Wohngebäudeversicherung') + ' · ' + name, category: 'versicherung', termType: 'fixed', notice: { value: 3, unit: 'months' }, remind: true, home: h.id,
+      }));
+      attach('haus-hausgeld:' + h.id, [rec('hausgeld')].filter(Boolean), () => ({
+        name: tr('Hausgeld') + ' · ' + name, provider: ll.name || '', category: 'wohnen', fixkosten: true, contact, home: h.id,
+      }));
+      attach('haus-grundsteuer:' + h.id, [rec('grundsteuer')].filter(Boolean), () => ({
+        name: tr('Grundsteuer') + ' · ' + name, category: 'abgaben', fixkosten: true, home: h.id,
+      }));
+      attach('haus-abgaben:' + h.id, [rec('abgaben')].filter(Boolean), () => ({
+        name: tr('Müll, Abwasser & Straßenreinigung') + ' · ' + name, category: 'abgaben', fixkosten: true, home: h.id,
+      }));
+    }
+  });
+  // Fahrzeuge: Kfz-Steuer
+  (typeof fzVehicles === 'function' ? fzVehicles() : []).forEach(v => {
+    const r = recById(v.taxRecId);
+    if (!r) return;
+    attach('fz-steuer:' + v.id, [r], () => ({ name: tr('Kfz-Steuer') + ' · ' + fzName(v), provider: tr('Hauptzollamt'), category: 'abgaben', fixkosten: true, vehicle: v.id }));
+  });
+  // Übrige regelmäßige Ausgaben, die eindeutig Steuern oder Abgaben sind
+  recurring.filter(r => free(r) && r.category !== FIN_SAVINGS_CATEGORY && finRecurringAmountFor(r, today) > 0 && VT_ABGABE_RE.test(String(r.title || '')))
+    .forEach(r => attach('rec:' + r.id, [r], () => ({ name: r.title, category: 'abgaben', fixkosten: true })));
+  if (!changed) return false;
+  finance.contracts = contracts;
+  finance.recurring = recurring;
+  return true;
+}
+
 function renderContracts() {
   const pane = document.getElementById('finPaneVertraege');
   if (!pane || !finance) return;
@@ -36715,7 +37019,8 @@ function renderContractDetail() {
         ${finTile('Bezahlt', fmtEur(paid), 'davon ' + fmtEur(paidYear) + ' ' + today.slice(0, 4))}
       </div>
       <p class="text-xs text-ink/50 mt-2">${cost.next ? `Nächste Abbuchung: <b>${escapeHtml(finDayLabel(cost.next))}</b> · ` : (cost.running ? '' : 'Abbuchung beendet · ')}Ausgaben-Kategorie ${escapeHtml((fcat.icon ? fcat.icon + ' ' : '') + fcat.label)}${cost.r.paidBy && memberById(cost.r.paidBy) ? ' · bezahlt von ' + escapeHtml(memberLabel(memberById(cost.r.paidBy))) : ''}</p>
-      ${histHtml}`;
+      ${histHtml}
+      ${cost.parts && cost.parts.length > 1 ? `<div class="mt-2">${cost.parts.map(p => `<div class="vt-row"><span>${escapeHtml(p.title || finCategory(p.category).label)}</span><span>${fmtEur(finRecurringAmountFor(p, today))} <span class="text-ink/45">${escapeHtml(vtIntervalLabel(finRecInterval(p)))}${finRecIsRunning(p, today) ? '' : ' · beendet'}</span></span></div>`).join('')}</div>` : ''}`;
   }
 
   const rows = [];
@@ -36726,6 +37031,8 @@ function renderContractDetail() {
     rows.push(['Laufzeit', (mm ? vtMonthsText(mm) + ' Mindestlaufzeit, dann ' : '') + '+' + vtMonthsText(vtRenew(c)) + ' je Verlängerung']);
     rows.push(['Kündigungsfrist', vtNoticeText(c) + ' zum Laufzeitende']);
     if (s.state === 'aktiv' && s.termEnd) rows.push(['Aktuelles Laufzeitende', vtFmt(s.termEnd)]);
+  } else if (c.fixkosten) {
+    rows.push(['Art', 'Laufende Fixkosten (Steuer, Abgabe oder Beitrag) – nicht kündbar']);
   } else if (kind === 'open') {
     rows.push(['Laufzeit', 'unbefristet – jederzeit kündbar']);
     rows.push(['Kündigungsfrist', vtNoticeText(c) + (c.noticeMonthEnd ? ' zum Monatsende' : '')]);
@@ -36762,7 +37069,7 @@ function renderContractDetail() {
   const docTypeOpts = FIN_DOC_TYPES.filter(t => t.id !== 'beleg' && !t.fz).map(t => `<option value="${t.id}"${t.id === defType ? ' selected' : ''}>${escapeHtml(t.icon + ' ' + t.label)}</option>`).join('');
   const docRows = finDocRowsHtml(docs, bezug);
 
-  const canCancel = s.state === 'aktiv' && kind !== 'once';
+  const canCancel = s.state === 'aktiv' && kind !== 'once' && !c.fixkosten;
   const isCancelled = !!(c.cancel && vtIsIso(c.cancel.effective));
 
   body.innerHTML = `
@@ -36982,6 +37289,7 @@ function closeContractModal() {
 function vtGuessCategory(r) {
   const t = String((r && r.title) || '').toLowerCase();
   const rules = [
+    [/steuer|rundfunk|beitragsservice|\bgez\b|abgabe|gebühr|kurtaxe/, 'abgaben'],
     [/versicher|haftpflicht|hausrat|kasko|allianz|huk|debeka|ergo|axa|generali|r\+v|devk|lebensvers|rechtsschutz/, 'versicherung'],
     [/strom|gas|energie|stadtwerke|eon|e\.on|vattenfall|enbw|rwe|fernwärme|wasser/, 'energie'],
     [/internet|dsl|glasfaser|telekom|vodafone|1&1|o2|kabel|festnetz/, 'internet'],
@@ -37255,6 +37563,8 @@ async function deleteContractFromModal() {
     finance.recurring = finance.recurring.map(r => r.id === rec.id ? { ...r, contract: '', untilByContract: false } : r);
   }
   finance.contracts = finance.contracts.filter(x => x.id !== c.id);
+  finance.recurring = finance.recurring.map(r => r.contract === c.id ? { ...r, contract: '', untilByContract: false } : r);
+  if (c.auto) finance.contractAutoSkip = [...new Set([...(finance.contractAutoSkip || []), c.auto])];
   closeContractModal();
   closeContractDetail();
   vtAfterChange();
@@ -41482,6 +41792,7 @@ function hsSaveHome() {
   });
   home.fix = fix;
   hsUpsert('homes', home);
+  try { vtAutoLink(); } catch (e) { /* egal */ }
   hsHomeId = id;
   hsCloseModal();
   hsAfterChange();

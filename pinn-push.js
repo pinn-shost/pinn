@@ -749,19 +749,21 @@ function cleanupOldMessages() {
 // pwAntworten:  Pinnwand - Antworten, Reaktionen und Stimmen zu meinen Zetteln
 // pwErinnerung: Pinnwand - Erinnerungen, die an einem Zettel hängen
 // vorrat:       Vorrat - Artikel laufen bald ab (Mindesthaltbarkeit, pinn-vorrat.js)
-const DEFAULT_SETTINGS = { termine: true, vorlauf: 30, ohneZuweisung: true, tagesuebersicht: true, uhrzeit: "07:00", zuweisungen: true, alleErledigt: true, kindAufgabe: true, kindAlle: true, animation: true, pwAlle: true, pwMich: true, pwAntworten: true, pwErinnerung: true, vorrat: true };
-const BOOL_SETTINGS = ["termine", "ohneZuweisung", "tagesuebersicht", "zuweisungen", "alleErledigt", "kindAufgabe", "kindAlle", "animation", "pwAlle", "pwMich", "pwAntworten", "pwErinnerung", "vorrat"];
+// muell:        Müllabfuhr - Erinnerung am Vortag zur Uhrzeit muellZeit (Müllkalender, ab 1.31)
+const DEFAULT_SETTINGS = { termine: true, vorlauf: 30, ohneZuweisung: true, tagesuebersicht: true, uhrzeit: "07:00", zuweisungen: true, alleErledigt: true, kindAufgabe: true, kindAlle: true, animation: true, pwAlle: true, pwMich: true, pwAntworten: true, pwErinnerung: true, vorrat: true, muell: true, muellZeit: "18:00" };
+const BOOL_SETTINGS = ["termine", "ohneZuweisung", "tagesuebersicht", "zuweisungen", "alleErledigt", "kindAufgabe", "kindAlle", "animation", "pwAlle", "pwMich", "pwAntworten", "pwErinnerung", "vorrat", "muell"];
 function normalizeSettings(raw) {
     const s = Object.assign({}, DEFAULT_SETTINGS, (raw && typeof raw === "object") ? raw : {});
     const lead = parseInt(s.vorlauf, 10);
     s.vorlauf = [5, 10, 15, 30, 60, 120, 1440].indexOf(lead) !== -1 ? lead : DEFAULT_SETTINGS.vorlauf;
     s.uhrzeit = /^([01]\d|2[0-3]):[0-5]\d$/.test(String(s.uhrzeit)) ? String(s.uhrzeit) : DEFAULT_SETTINGS.uhrzeit;
+    s.muellZeit = /^([01]\d|2[0-3]):[0-5]\d$/.test(String(s.muellZeit)) ? String(s.muellZeit) : DEFAULT_SETTINGS.muellZeit;
     BOOL_SETTINGS.forEach(k => { s[k] = !!s[k]; });
     return {
         termine: s.termine, vorlauf: s.vorlauf, ohneZuweisung: s.ohneZuweisung, tagesuebersicht: s.tagesuebersicht, uhrzeit: s.uhrzeit, zuweisungen: s.zuweisungen,
         alleErledigt: s.alleErledigt, kindAufgabe: s.kindAufgabe, kindAlle: s.kindAlle, animation: s.animation,
         pwAlle: s.pwAlle, pwMich: s.pwMich, pwAntworten: s.pwAntworten, pwErinnerung: s.pwErinnerung,
-        vorrat: s.vorrat,
+        vorrat: s.vorrat, muell: s.muell, muellZeit: s.muellZeit,
     };
 }
 function readSettings(userRec) {
@@ -997,6 +999,71 @@ function runFamilyReminders(ctx, people, events, last, until, now, status) {
         console.log("[Push] Tagesübersicht fehlgeschlagen: " + e.message);
         plog("fehler", "push", "Tagesübersicht fehlgeschlagen: " + e.message, { familie: ctx && ctx.familyId ? ctx.familyId : "" });
     }
+    // --- Müllabfuhr am Vortag ---
+    try {
+        if (runMuellReminder(ctx, people, now, status)) changed = true;
+    } catch (e) {
+        console.log("[Push] Müll-Erinnerung fehlgeschlagen: " + e.message);
+        plog("fehler", "push", "Müll-Erinnerung fehlgeschlagen: " + e.message, { familie: ctx && ctx.familyId ? ctx.familyId : "" });
+    }
+    return changed;
+}
+
+// Erinnerung am Vortag der Müllabfuhr zur eigenen Uhrzeit (Einstellung muellZeit). Erwachsene bekommen
+// sie immer (wenn eingeschaltet), Kinder nur, wenn sie mit Rausbringen dran sind. Je Profil und Tag einmal
+// (status.muell); nachgeholt wird bis zu 3 Stunden. Steht morgen nichts an, gilt der Tag als erledigt.
+function runMuellReminder(ctx, people, now, status) {
+    const list = people.filter(p => p.settings.muell);
+    if (!list.length) return false;
+    status.muell = status.muell || {};
+    const nowWall = utcToWall(now);
+    const todayIso = wallIsoDate(nowWall);
+    const tp = todayIso.split("-");
+    const dayWall = Date.UTC(+tp[0], +tp[1] - 1, +tp[2]);
+    const due = list.filter(p => {
+        if (status.muell[p.userId] === todayIso) return false;
+        const hm = p.settings.muellZeit.split(":");
+        const fireWall = dayWall + (+hm[0]) * HOUR_MS + (+hm[1]) * MIN_MS;
+        return nowWall + HALF_STEP >= fireWall && nowWall - fireWall <= 3 * HOUR_MS;
+    });
+    if (!due.length) return false;
+    const info = require(`${__hooks}/pinn-aufgaben.js`).muellInfo(ctx.familyId, ctx.data);
+    let changed = false;
+    due.forEach(p => {
+        if (!info.namen.length) { status.muell[p.userId] = todayIso; changed = true; return; }
+        const member = p.memberId ? ctx.members.find(m => m.id === p.memberId) : null;
+        const isChild = !!(member && (isChildMember(member) || member.childLock));
+        // Wer ist dran? (offene Müll-Aufgaben von heute, ausdrücklich zugewiesen)
+        const mine = [], others = [];
+        info.aufgaben.filter(a => !a.erledigt).forEach(a => {
+            const as = assigneesFromText(a.notizen, ctx.members);
+            if (!as.line || as.all) return;
+            if (p.memberId && as.memberIds.indexOf(p.memberId) !== -1) mine.push(a);
+            as.memberIds.filter(id => id !== p.memberId).forEach(id => {
+                const m = ctx.members.find(x => x.id === id);
+                if (m) others.push(memberLabelServer(m) + " (" + a.typ + ")");
+            });
+        });
+        if (isChild && !mine.length) { status.muell[p.userId] = todayIso; changed = true; return; }
+        const lines = [info.namen.join(" · ")];
+        if (mine.length) lines.push("Du bist dran: " + mine.map(a => a.typ).filter((x, i, arr) => arr.indexOf(x) === i).join(", "));
+        if (others.length) lines.push("Dran: " + others.filter((x, i, arr) => arr.indexOf(x) === i).join(", "));
+        const mw = info.morgen.split("-");
+        const morgenWall = Date.UTC(+mw[0], +mw[1] - 1, +mw[2]);
+        const r = notifyUserDetailed(p.userId, {
+            titel: "🗑️ Morgen ist Müllabfuhr",
+            text: lines.join("\n"),
+            url: mine.length ? "/?aufgabe=" + encodeURIComponent(mine[0].id) : "/?termin=" + info.morgen,
+            tag: "muell-" + info.morgen,
+            bis: wallToUtc(morgenWall + 12 * HOUR_MS), // in der Glocke bis zur Abholung
+        });
+        if (r.sent > 0 || !r.geraete) {
+            status.muell[p.userId] = todayIso;
+            changed = true;
+        } else {
+            plog("warnung", "push", "Müll-Erinnerung für „" + p.name + "“ nicht zugestellt: " + r.fehler.filter((x, i, a) => a.indexOf(x) === i).join(" | "), { benutzer: p.userId });
+        }
+    });
     return changed;
 }
 
