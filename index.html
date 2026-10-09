@@ -1642,6 +1642,7 @@ window.PINN_LANGUAGES = [
   html.dark .el-chip.on { color: #fff; }
   html.dark .el-details { background: rgba(255,255,255,0.06); }
   .settings-accordion > summary { list-style: none; }
+  .settings-accordion { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 8px); }
   .settings-accordion > summary::-webkit-details-marker,
   .settings-accordion > summary::marker { display: none; content: ''; }
   .settings-accordion > summary .accordion-chevron { transition: transform 0.18s ease; }
@@ -1760,10 +1761,11 @@ window.PINN_LANGUAGES = [
   .pantry-bc-chip { display:inline-flex; align-items:center; gap:4px; font-size:11px; padding:3px 4px 3px 8px; border-radius:8px; border:1px solid rgba(37,35,31,0.15); color: rgba(37,35,31,0.65); }
   .pantry-bc-rm { width:18px; height:18px; border-radius:999px; display:grid; place-items:center; color: rgba(37,35,31,0.4); font-size:14px; line-height:1; }
   .pantry-bc-rm:hover { color:#D64545; background:#FDE8E8; }
-  .pscan-stage { position:relative; width:100%; aspect-ratio: 4 / 3; border-radius: 1rem; overflow:hidden; background:#111; transition: box-shadow .2s; }
-  .pscan-stage video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .pscan-stage { position:relative; width:100%; aspect-ratio: 4 / 3; border-radius: 1rem; overflow:hidden; background:#111; transition: box-shadow .2s; isolation: isolate; transform: translateZ(0); -webkit-transform: translateZ(0); }
+  .pscan-stage video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
+  .pscan-stage > :not(video) { z-index:1; }
   /* Abgedunkelt wird nur der Rand um den Rahmen (vier Flächen) – das Viereck selbst bleibt hell */
-  .pscan-shade { position:absolute; background: rgba(0,0,0,.55); pointer-events:none; }
+  .pscan-shade { position:absolute; background: rgba(0,0,0,.45); pointer-events:none; }
   .pscan-shade.t { left:0; right:0; top:0; height:28%; }
   .pscan-shade.b { left:0; right:0; bottom:0; height:28%; }
   .pscan-shade.l { left:0; top:28%; bottom:28%; width:8%; }
@@ -1774,8 +1776,9 @@ window.PINN_LANGUAGES = [
   @media (prefers-reduced-motion: reduce) { .pscan-line { animation: none; } }
   .pscan-hit { box-shadow: 0 0 0 4px var(--c-pine); }
   .pscan-hit .pscan-frame { border-color: #4ade80; }
-  .pscan-torch { position:absolute; right:.6rem; bottom:.6rem; width:2.4rem; height:2.4rem; border-radius:999px; background:rgba(0,0,0,.45); color:#fff; font-size:1.1rem; display:grid; place-items:center; }
-  .pscan-torch.on { background: var(--c-mustard); }
+  .pscan-torch { position:absolute; right:.6rem; bottom:.6rem; width:2.75rem; height:2.75rem; border-radius:999px; background:rgba(255,255,255,.92); color:#25231F; display:grid; place-items:center; box-shadow: 0 2px 8px rgba(0,0,0,.35); }
+  .pscan-torch svg { width:1.35rem; height:1.35rem; }
+  .pscan-torch.on { background: #FFD54A; color:#25231F; box-shadow: 0 0 0 3px rgba(255,213,74,.45), 0 2px 8px rgba(0,0,0,.35); }
   .pscan-cam-msg { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1.25rem; text-align:center; color:#fff; font-size:.85rem; background: rgba(0,0,0,.6); }
   .pscan-card { border:1px solid rgba(37,35,31,0.12); border-radius: .9rem; padding: .85rem; background:#fff; }
   .pcook-card { border:1px solid rgba(37,35,31,0.1); border-radius: .9rem; padding: .8rem .85rem; background:#fff; }
@@ -4080,11 +4083,11 @@ window.PINN_LANGUAGES = [
             <button type="button" data-period="month" class="fin-period-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">Monat</button>
             <button type="button" data-period="year" class="fin-period-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">Jahr</button>
           </div>
-          <div class="flex items-center gap-1 ml-auto min-w-0">
-            <button id="finPrevBtn" type="button" class="shrink-0 w-8 h-8 rounded-full text-ink/60 hover:text-pine hover:bg-ink/5 grid place-items-center text-xl leading-none select-none" aria-label="Vorheriger Zeitraum">‹</button>
-            <span id="finPeriodLabel" class="text-sm font-medium truncate text-center min-w-[6rem]"></span>
-            <button id="finNextBtn" type="button" class="shrink-0 w-8 h-8 rounded-full text-ink/60 hover:text-pine hover:bg-ink/5 grid place-items-center text-xl leading-none select-none" aria-label="Nächster Zeitraum">›</button>
-            <button id="finTodayBtn" type="button" class="shrink-0 px-2 py-1 rounded-lg border border-ink/15 text-[11px] text-ink/60 hover:text-pine hover:border-pine transition">Heute</button>
+          <button id="finTodayBtn" type="button" class="shrink-0 ml-auto sm:order-last sm:ml-0 px-2 py-1 rounded-lg border border-ink/15 text-[11px] text-ink/60 hover:text-pine hover:border-pine transition">Heute</button>
+          <div class="fin-period-nav flex items-center gap-1 w-full sm:w-auto sm:ml-auto min-w-0">
+            <button id="finPrevBtn" type="button" class="shrink-0 w-9 h-9 rounded-full text-ink/60 hover:text-pine hover:bg-ink/5 grid place-items-center text-xl leading-none select-none" aria-label="Vorheriger Zeitraum">‹</button>
+            <span id="finPeriodLabel" class="flex-1 sm:flex-none sm:w-56 text-sm font-medium truncate text-center"></span>
+            <button id="finNextBtn" type="button" class="shrink-0 w-9 h-9 rounded-full text-ink/60 hover:text-pine hover:bg-ink/5 grid place-items-center text-xl leading-none select-none" aria-label="Nächster Zeitraum">›</button>
           </div>
         </div>
         <!-- Verträge: Suche, Status, Kategorie, Sortierung -->
@@ -6752,7 +6755,7 @@ window.PINN_LANGUAGES = [
 </div>
 
 <!-- Vorrat: Barcode scannen (Kamera) -->
-<div id="pantryScanModal" class="hidden fixed inset-0 bg-ink/40 backdrop-blur-sm z-[320] grid place-items-center p-3 sm:p-6">
+<div id="pantryScanModal" class="hidden fixed inset-0 bg-ink/40 z-[320] grid place-items-center p-3 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-4 max-h-[94vh] overflow-y-auto fade-in">
     <button id="pantryScanClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
     <h3 class="font-serif text-lg mb-3 pr-6">Scannen</h3>
@@ -6764,7 +6767,7 @@ window.PINN_LANGUAGES = [
       <video id="pantryScanVideo" playsinline muted autoplay></video>
       <div class="pscan-shade t"></div><div class="pscan-shade b"></div><div class="pscan-shade l"></div><div class="pscan-shade r"></div>
       <div class="pscan-frame"><span class="pscan-line"></span></div>
-      <button id="pantryScanTorch" type="button" class="hidden pscan-torch" aria-label="Taschenlampe" title="Taschenlampe">🔦</button>
+      <button id="pantryScanTorch" type="button" class="hidden pscan-torch" aria-label="Taschenlampe" title="Taschenlampe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2h8v4l-2 4v11a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V10L8 6z"/><path d="M8 6h8"/><path d="M12 13v2"/></svg></button>
       <div id="pantryScanCamMsg" class="hidden pscan-cam-msg"></div>
     </div>
     <p id="pantryScanStatus" class="text-xs text-ink/50 mt-2 text-center"></p>
@@ -24229,7 +24232,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.31.0';
+const APP_VERSION = '1.31.1';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -25169,11 +25172,13 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
       if (o.compareDocumentPosition(det) & Node.DOCUMENT_POSITION_FOLLOWING) closedAbove = true;
       o.open = false;
     });
-    if (!closedAbove) return;
-    requestAnimationFrame(() => {
+    const mobile = (typeof isMobile === 'function' && isMobile()) || window.matchMedia('(max-width: 767px)').matches;
+    if (!mobile && !closedAbove) return;
+    // zwei Frames warten, bis das Zuklappen des vorigen Abschnitts im Layout angekommen ist
+    requestAnimationFrame(() => requestAnimationFrame(() => {
       const r = det.getBoundingClientRect();
-      if (r.top < 0 || r.top > window.innerHeight * 0.6) det.scrollIntoView({ block: 'start', behavior: 'smooth' });
-    });
+      if (mobile || r.top < 0 || r.top > window.innerHeight * 0.6) det.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    }));
   }));
 })();
 
@@ -25198,6 +25203,7 @@ const PINN_CHANGELOG = [
       ['neu', 'Übersicht-Kachel „Familienmitglieder“: alle Avatare nebeneinander, ein Tipp aufs Kind öffnet die Kinderseite (statt übers Bild in der Familienleiste)'],
       ['fix', 'Barcode-Scanner: nur der Rand um den Rahmen ist abgedunkelt, Piepton beim Treffer, der Bildschirm bleibt beim Scannen an · Einstellungen: es bleibt immer nur ein Abschnitt aufgeklappt · Kinderseite ohne Sonnenauf- und -untergang'],
       ['info', 'Server: angepasst pinn-aufgaben.js, pinn-muell.js, pinn-push.js und pinn-pushtext.js; Sprachdateien en/fr/es ergänzt'],
+      ['fix', '1.31.1: Scanner ohne dunklen Schleier über dem Kamerabild am iPhone, Taschenlampe gut sichtbar und mit Rückmeldung, wenn das Gerät sie nicht freigibt · Einstellungen am Handy: der geöffnete Abschnitt rutscht mit der Überschrift an den oberen Rand · Finanzen: Zeitraum-Leiste sauber ausgerichtet (am Handy ‹ Zeitraum › über die volle Breite)'],
     ],
   },
   {
@@ -32181,6 +32187,7 @@ async function pantryScanStartCamera() {
   pantryScan.torch = false;
   if (pantryScan.track) {
     try { await pantryScan.track.applyConstraints({ advanced: [{ focusMode: 'continuous' }] }); } catch (e) { /* egal */ }
+    try { await pantryScan.track.applyConstraints({ advanced: [{ exposureMode: 'continuous' }, { whiteBalanceMode: 'continuous' }] }); } catch (e) { /* egal */ }
     try {
       const caps = pantryScan.track.getCapabilities ? pantryScan.track.getCapabilities() : {};
       if (caps && caps.torch) torchBtn.classList.remove('hidden');
@@ -32779,12 +32786,28 @@ document.querySelectorAll('.pscan-mode').forEach(b => b.addEventListener('click'
   else if (cur && cur.kind === 'new') pantryScanHandleCode(cur.code);
 }));
 document.getElementById('pantryScanTorch').addEventListener('click', async () => {
-  if (!pantryScan.track) return;
-  try {
-    pantryScan.torch = !pantryScan.torch;
-    await pantryScan.track.applyConstraints({ advanced: [{ torch: pantryScan.torch }] });
-    document.getElementById('pantryScanTorch').classList.toggle('on', pantryScan.torch);
-  } catch (e) { pantryScan.torch = false; }
+  const track = pantryScan.track;
+  const btn = document.getElementById('pantryScanTorch');
+  if (!track) return;
+  const want = !pantryScan.torch;
+  const isOn = () => { try { const s = track.getSettings ? track.getSettings() : {}; return typeof s.torch === 'boolean' ? s.torch : null; } catch (e) { return null; } };
+  let ok = false;
+  for (const c of [{ advanced: [{ torch: want }] }, { torch: want }, { advanced: [{ fillLightMode: want ? 'flash' : 'off' }] }]) {
+    try {
+      await track.applyConstraints(c);
+      const s = isOn();
+      if (s === null || s === want) { ok = true; break; }
+    } catch (e) { /* nächste Schreibweise */ }
+  }
+  if (ok) {
+    pantryScan.torch = want;
+    btn.classList.toggle('on', want);
+    btn.setAttribute('aria-pressed', want ? 'true' : 'false');
+  } else {
+    pantryScan.torch = false;
+    btn.classList.remove('on');
+    pantryScanSetStatus('Die Taschenlampe lässt sich in pinn. auf diesem Gerät nicht einschalten – bitte die Taschenlampe im Kontrollzentrum nutzen.', true);
+  }
 });
 document.getElementById('pantryScanCodeBtn').addEventListener('click', pantryScanManualLookup);
 document.getElementById('pantryScanCodeInput').addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); pantryScanManualLookup(); } });
