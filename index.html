@@ -94,7 +94,9 @@
   html.pinn-ruhe .fm-mk.live .fm-mk-ava::after, html.pinn-ruhe .fm-mk.live .fm-mk-ava::before,
   html.pinn-ruhe .kid-money-pig, html.pinn-ruhe .kid-deco span, html.pinn-ruhe .kid-avatar,
   html.pinn-ruhe .kid-empty-emoji, html.pinn-ruhe .kid-chip-badge, html.pinn-ruhe .pw-kudos-heart,
-  html.pinn-ruhe .term-window::after, html.pinn-ruhe .t-cursor { animation-play-state: paused !important; }
+  html.pinn-ruhe .term-window::after, html.pinn-ruhe .t-cursor,
+  html.pinn-ruhe .ov-fam-live, html.pinn-ruhe .ov-fam-live::after, html.pinn-ruhe .ov-fam-item.is-bday .ov-fam-badge,
+  html.pinn-ruhe .ofs-bday-ic, html.pinn-ruhe .ov-fam-item.is-soon .ov-fam-ava { animation-play-state: paused !important; }
   @media (prefers-reduced-motion: reduce) {
     .fin-goal-reached, .fin-piggy, .fz-hero-band::after, .fz-hero-icon > span, .fz-empty-car,
     .hw-head::before, .hw-walk i, .fam-ecg path, .kid-money-pig, .kid-deco span, .kid-avatar,
@@ -580,7 +582,7 @@ window.PINN_LANGUAGES = [
     start(data);
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.32.0" onerror="PINN_I18N.fail()"><\/script>');
+  if (DICT) document.write('<script src="' + lang.file + '?v=1.35.0" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // Deutsch als WG: kein Wörterbuch, nur die WG-Bezeichnungen
 })();
 </script>
@@ -3083,6 +3085,104 @@ window.PINN_LANGUAGES = [
   button.ov-fam-item { cursor: pointer; transition: transform .12s; }
   button.ov-fam-item:active { transform: scale(0.94); }
   button.ov-fam-item:hover .ov-fam-name { color: var(--c-pine); }
+
+  /* Übersicht-Kachel Familienmitglieder: Live-Standort, Geburtstag, Heimweg, SOS, Kinder-Fortschritt */
+  .ov-fam-ring { position: absolute; inset: -4px; border-radius: 9999px; pointer-events: none;
+    background: conic-gradient(var(--c-pine) calc(var(--p, 0) * 1%), rgba(37,35,31,0.1) 0);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+            mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px)); }
+  html.dark .ov-fam-ring { background: conic-gradient(var(--c-pine) calc(var(--p, 0) * 1%), rgba(255,255,255,0.14) 0); }
+  .ov-fam-live { position: absolute; right: -1px; top: -1px; width: 13px; height: 13px; border-radius: 9999px; background: #E0322B; border: 2px solid #fff; animation: famBlink 1.1s ease-in-out infinite; z-index: 2; }
+  .ov-fam-live::after { content: ''; position: absolute; inset: -3px; border-radius: 9999px; border: 2px solid #E0322B; animation: famRipple 1.6s ease-out infinite; }
+  html.dark .ov-fam-live { border-color: #2E2C28; }
+  .ov-fam-place { position: absolute; left: -4px; top: -4px; width: 19px; height: 19px; border-radius: 9999px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.18); display: grid; place-items: center; font-size: 11px; line-height: 1; z-index: 2; pointer-events: none; }
+  html.dark .ov-fam-place { background: #3a3833; }
+  .ov-fam-badge { position: absolute; right: -4px; bottom: -3px; min-width: 19px; height: 19px; padding: 0 2px; border-radius: 9999px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.18); display: grid; place-items: center; font-size: 12px; line-height: 1; z-index: 2; pointer-events: none; }
+  html.dark .ov-fam-badge { background: #3a3833; }
+  .ov-fam-item.is-bday .ov-fam-badge { animation: ovFamHop 1.8s ease-in-out infinite; }
+  .ov-fam-item.is-bday .ov-fam-ava { box-shadow: 0 0 0 3px #F4C430, 0 0 14px 2px rgba(244,196,48,0.55); }
+  .ov-fam-item.is-sos .ov-fam-ava { box-shadow: 0 0 0 3px #E0322B; animation: ovFamSos 1s ease-in-out infinite; }
+  .ov-fam-item.is-hw .ov-fam-ava { box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-pine) 70%, transparent); }
+  .ov-fam-sub { font-size: 10px; line-height: 1.15; color: rgba(37,35,31,0.5); max-width: 4.6rem; min-height: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: -0.15rem; }
+  html.dark .ov-fam-sub { color: rgba(255,255,255,0.5); }
+  .ov-fam-sub.sos { color: #E0322B; font-weight: 600; }
+  .ov-fam-sub.bday { color: #B8860B; font-weight: 600; }
+  .ov-fam-sub.live { color: #C0392B; }
+  @keyframes ovFamHop { 0%, 100% { transform: translateY(0) rotate(0); } 25% { transform: translateY(-3px) rotate(-8deg); } 50% { transform: translateY(0) rotate(0); } 75% { transform: translateY(-2px) rotate(8deg); } }
+  @keyframes ovFamSos { 0%, 100% { box-shadow: 0 0 0 3px #E0322B; } 50% { box-shadow: 0 0 0 6px rgba(224,50,43,0.35); } }
+  .ov-fam-item { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+  .ov-fam-school { position: absolute; left: -5px; bottom: -3px; min-width: 19px; height: 19px; padding: 0 3px; border-radius: 9999px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.18); display: flex; align-items: center; justify-content: center; gap: 1px; font-size: 10px; font-weight: 700; line-height: 1; z-index: 2; pointer-events: none; }
+  .ov-fam-school.urgent { background: #FFE3E0; color: #C0392B; }
+  html.dark .ov-fam-school { background: #3a3833; }
+  html.dark .ov-fam-school.urgent { background: #5a2a26; color: #FFB4AC; }
+  .ov-fam-badge.stars { font-size: 10px; font-weight: 700; padding: 0 4px; gap: 1px; display: flex; align-items: center; color: #9A6B00; }
+  html.dark .ov-fam-badge.stars { color: #F4C430; }
+  .ov-fam-item.is-soon .ov-fam-ava { box-shadow: 0 0 0 3px #2E9C7A; animation: ovFamSoon 1.4s ease-in-out infinite; }
+  .ov-fam-sub.soon { color: #2E9C7A; font-weight: 600; }
+  @keyframes ovFamSoon { 0%, 100% { box-shadow: 0 0 0 3px #2E9C7A; } 50% { box-shadow: 0 0 0 6px rgba(46,156,122,0.3); } }
+  .ofs-stars { font-size: 26px; font-weight: 800; line-height: 1; color: #B8860B; }
+  html.dark .ofs-stars { color: #F4C430; }
+  .ofs-chk { width: 22px; height: 22px; flex-shrink: 0; border-radius: 7px; border: 2px solid rgba(37,35,31,0.25); display: grid; place-items: center; font-size: 12px; }
+  html.dark .ofs-chk { border-color: rgba(255,255,255,0.3); }
+  .ofs-due { flex-shrink: 0; font-size: 11px; color: rgba(37,35,31,0.5); }
+  .ofs-due.late { color: #C0392B; font-weight: 600; }
+  html.dark .ofs-due { color: rgba(255,255,255,0.5); }
+  .wb-quick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .wb-quick button { padding: 11px 8px; border-radius: 14px; border: 1px solid rgba(37,35,31,0.12); background: #fff; font-size: 13px; text-align: center; }
+  .wb-quick button:hover { border-color: var(--c-pine); }
+  html.dark .wb-quick button { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); }
+  .wb-big { width: 100%; padding: 14px; border-radius: 16px; background: var(--c-pine); color: #fff; font-size: 15px; font-weight: 600; }
+  .wb-big:disabled { opacity: 0.6; }
+  .wb-map { height: 230px; border-radius: 16px; overflow: hidden; position: relative; }
+  .wb-bubble { border-radius: 18px; padding: 14px 16px; background: color-mix(in srgb, var(--c-pine) 10%, #fff); font-size: 17px; font-weight: 600; text-align: center; }
+  html.dark .wb-bubble { background: color-mix(in srgb, var(--c-pine) 30%, #2a2925); }
+
+  /* Schnellaktionen einer Person (Popup aus der Kachel) */
+  .ofs { display: flex; flex-direction: column; gap: 12px; }
+  .ofs-head { display: flex; align-items: center; gap: 14px; padding-right: 26px; }
+  .ofs-head .fam-ava { flex-shrink: 0; }
+  .ofs-acts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .ofs-acts .fz-act-btn { padding: 10px 2px; }
+  .ofs-acts .fz-act-btn span:last-child { overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .ofs-bday { border-radius: 16px; padding: 12px 14px; display: flex; align-items: center; gap: 12px;
+    background: linear-gradient(120deg, #FFF4C2, #FFE0EC 55%, #E3F1FF); border: 1px solid rgba(244,196,48,0.45); }
+  html.dark .ofs-bday { background: linear-gradient(120deg, #4a4220, #4a2a36 55%, #23364a); border-color: rgba(244,196,48,0.35); }
+  .ofs-bday-ic { font-size: 30px; line-height: 1; animation: ovFamHop 1.8s ease-in-out infinite; }
+  .ofs-row { width: 100%; display: flex; align-items: center; gap: 10px; padding: 7px 2px; text-align: left; border-top: 1px solid rgba(37,35,31,0.06); }
+  .ofs-row:first-of-type { border-top: 0; }
+  html.dark .ofs-row { border-top-color: rgba(255,255,255,0.07); }
+  .ofs-time { width: 3.2rem; flex-shrink: 0; font-size: 12px; font-variant-numeric: tabular-nums; color: rgba(37,35,31,0.55); }
+  html.dark .ofs-time { color: rgba(255,255,255,0.55); }
+  .ofs-bar { height: 6px; border-radius: 999px; background: rgba(37,35,31,0.08); overflow: hidden; margin-top: 6px; }
+  .ofs-bar > i { display: block; height: 100%; background: var(--c-pine); border-radius: 999px; }
+  html.dark .ofs-bar { background: rgba(255,255,255,0.1); }
+
+  /* Geburtstags-Animation (einmal am Tag beim ersten Öffnen) */
+  #bdayOverlay { position: fixed; inset: 0; z-index: 355; display: grid; place-items: center; padding: 24px;
+    background: radial-gradient(circle at 50% 40%, rgba(255,236,170,0.92), rgba(255,182,206,0.88) 45%, rgba(120,170,230,0.9));
+    animation: bdayFade .35s ease-out; overflow: hidden; }
+  html.dark #bdayOverlay { background: radial-gradient(circle at 50% 40%, rgba(110,92,30,0.95), rgba(96,40,64,0.93) 45%, rgba(26,46,82,0.95)); }
+  .bday-card { position: relative; z-index: 2; text-align: center; max-width: 22rem; width: 100%; padding: 26px 22px 22px; border-radius: 28px;
+    background: rgba(255,255,255,0.86); box-shadow: 0 18px 50px rgba(0,0,0,0.22); animation: bdayPop .7s cubic-bezier(.2,1.4,.4,1) .1s both; }
+  html.dark .bday-card { background: rgba(40,38,34,0.88); }
+  .bday-cake { font-size: 84px; line-height: 1; display: inline-block; animation: bdayCake 1.6s ease-in-out infinite; }
+  .bday-hb { font-family: 'Inter', system-ui, sans-serif; font-weight: 800; font-size: 30px; line-height: 1.1; margin-top: 10px; letter-spacing: -0.01em;
+    background: linear-gradient(90deg, #E0322B, #F39C12, #2E9C7A, #4F7CAC, #8E5BB5, #E0322B); background-size: 200% 100%;
+    -webkit-background-clip: text; background-clip: text; color: transparent; animation: bdayShine 3s linear infinite; }
+  .bday-name { font-weight: 700; font-size: 26px; margin-top: 6px; }
+  .bday-sub { font-size: 15px; opacity: 0.7; margin-top: 6px; }
+  .bday-btn { margin-top: 18px; padding: 11px 26px; border-radius: 999px; background: var(--c-pine); color: #fff; font-size: 15px; font-weight: 600; box-shadow: 0 6px 18px rgba(0,0,0,0.18); }
+  .bday-btn:active { transform: scale(0.96); }
+  .bday-balloon { position: absolute; bottom: -120px; font-size: 54px; line-height: 1; z-index: 1; pointer-events: none; will-change: transform; }
+  @keyframes bdayFade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes bdayPop { from { opacity: 0; transform: scale(.6) translateY(30px); } to { opacity: 1; transform: none; } }
+  @keyframes bdayCake { 0%, 100% { transform: rotate(-6deg) scale(1); } 50% { transform: rotate(6deg) scale(1.08); } }
+  @keyframes bdayShine { from { background-position: 0 0; } to { background-position: 200% 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .ov-fam-live, .ov-fam-live::after, .ov-fam-item.is-bday .ov-fam-badge, .ov-fam-item.is-sos .ov-fam-ava, .ofs-bday-ic, .ov-fam-item.is-soon .ov-fam-ava,
+    .bday-cake, .bday-hb, .bday-card, #bdayOverlay { animation: none !important; }
+  }
+
 
   .fin-planned { opacity: 0.62; }
   .fin-plan-chip { display: inline-block; font-size: 10px; line-height: 1; padding: 2px 6px; border-radius: 999px; border: 1px dashed rgba(37,35,31,0.35); color: rgba(37,35,31,0.6); }
@@ -12163,7 +12263,7 @@ window.addEventListener('online', () => {
 const OVERVIEW_TILES = [
   { id: 'wetter', icon: '🌤️', label: 'Wetter', hint: 'Vorschau: am Handy 3 Tage, am iPad und Computer die ganze Woche', big: false },
   { id: 'geburtstage', icon: '🎂', label: 'Geburtstage', hint: 'Anstehende Geburtstage aus den iCloud- und Google-Kontakten', big: false },
-  { id: 'familie', icon: '👨‍👩‍👧', label: 'Familienmitglieder', hint: 'Alle Familienmitglieder – ein Tipp auf ein Kind öffnet seine Kinderseite', big: false },
+  { id: 'familie', icon: '👨‍👩‍👧', label: 'Familienmitglieder', hint: 'Alle Familienmitglieder mit Live-Standort, Geburtstag und Heimweg – Tipp aufs Kind öffnet die Kinderseite, auf die anderen ihre Schnellaktionen', big: false },
   { id: 'vertraege', icon: '📄', label: 'Kündigungsfristen', hint: 'Anstehende Kündigungsfristen und Erinnerungen – nur sichtbar, wenn etwas ansteht', big: false },
   { id: 'pinnwand', icon: '📌', label: 'Pinnwand', hint: 'Zettel für dich, Wichtiges und Neues – nur sichtbar, wenn etwas angepinnt ist', big: false },
   { id: 'kalender', icon: '📅', label: 'Termine', hint: 'Kalender mit Tages- bzw. Wochenansicht', big: true },
@@ -12332,21 +12432,805 @@ function refreshOverviewTiles() {
 }
 
 /* ---------- Kachel: Familienmitglieder ----------
-   Alle Mitglieder nebeneinander, darunter klein die Namen. Ein Tipp auf ein Kind mit Kinderseite
-   öffnet sie (früher über das Bild in der Familienleiste). Später soll hier auch das Familien-Menü
-   verlinkt werden (Live-Standort, „unterwegs zu …“ je Person). */
+   Alle Mitglieder nebeneinander, darunter klein Name und Status. Markierungen am Bild:
+   - roter blinkender Punkt: Live-Standort (jünger als 15 Min., verschwindet von selbst, sobald er
+     älter wird oder die Person nicht mehr teilt), links oben das Symbol des bekannten Orts (🏠, 🏫 …)
+   - 🎂 + goldener Ring: hat heute Geburtstag (Geburtsdatum aus dem Notfallpass), 🎁 bis 7 Tage vorher
+   - 🚶 + Ring: „Ich bin unterwegs“ (mit Entfernung bis Zuhause), roter pulsierender Ring: SOS läuft
+   - 🪫: Akku des Handys fast leer (≤ 15 %, nicht am Laden)
+   - Kinder mit Kinderseite: Fortschrittsring der gerade fälligen Kinder-Aufgaben, ⭐ bzw. ✅
+   Tipp: Kind → Kinderseite, SOS → SOS-Popup, sonst Schnellaktionen (ofsOpen). Gedrückt halten öffnet
+   immer die Schnellaktionen (auch bei Kindern).
+   Standorte: auf der Übersicht höchstens einmal pro Minute (Ruhemodus alle 5 Min.) und nur, solange die
+   Kachel sichtbar und die App im Vordergrund ist – SOS und Heimwege kommen ohnehin mit der SOS-Abfrage. */
+var OFS_POLL_MS = 60 * 1000;
+var OFS_POLL_RUHE_MS = 5 * 60 * 1000;
+var ofsPollTimer = null;
+var ofsTicking = false;
+var ofsNoServer = false;
+var ofsOpenId = '';
+var ofsPressTimer = null;
+var ofsPressFired = false;
+
+function ofsTileVisible() {
+  const s = document.getElementById('familyTileSection');
+  return currentView === 'uebersicht' && !!s && !s.classList.contains('hidden');
+}
+// Ohne frische Daten: zuletzt gemerkte Standorte dieses Geräts (Live-Markierungen laufen über die Zeit ab)
+function ofsEnsureStatus() {
+  if (famStatus || !famOrtungAllowed()) return;
+  try {
+    const c = JSON.parse(localStorage.getItem(LS_FAM_STATUS) || 'null');
+    if (c && c.familie === ((currentUser() && currentUser().familie) || '')) famStatus = c.data;
+  } catch (e) { /* egal */ }
+}
+function ofsBirthday(m) {
+  const p = m ? famPass(m.id) : null;
+  const mm = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String((p && p.birth) || ''));
+  if (!mm) return null;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  let next = birthdayInYear(today.getFullYear(), Number(mm[2]), Number(mm[3]));
+  if (next < today) next = birthdayInYear(today.getFullYear() + 1, Number(mm[2]), Number(mm[3]));
+  const diff = Math.round((next - today) / 86400000);
+  const age = next.getFullYear() - Number(mm[1]);
+  return { diff, today: diff === 0, age: age > 0 && age < 130 ? age : null };
+}
+function ofsKidProgress(m) {
+  if (!isKidPageEnabled(m)) return null;
+  try {
+    const cfg = normalizeKidConfig(m.kid);
+    const now = new Date();
+    const list = kidTasksForPeriod(cfg, kidCurrentPeriod(cfg, now));
+    if (!list.length) return { total: 0, done: 0 };
+    const today = isoDate(now);
+    return { total: list.length, done: list.filter(t => kidIsDone(m, t.id, today)).length };
+  } catch (e) { return null; }
+}
+// Heimweg: „gleich zu Hause“ – höchstens 600 m Luftlinie oder nach Tempo höchstens 5 Minuten
+function ofsSoon(h) {
+  if (!h || !h.aktiv || h.entfernung == null || !isFinite(h.entfernung)) return null;
+  const tempo = h.aktuell && Number(h.aktuell.tempo) >= 4 ? Number(h.aktuell.tempo) : 4.5; // km/h, sonst zu Fuß
+  const eta = Math.max(1, Math.round(Number(h.entfernung) / 1000 / tempo * 60));
+  return (Number(h.entfernung) <= 600 || eta <= 5) ? { eta } : null;
+}
+// Sterne der Kinderseite: Kontostand, heute verdient, wartende Wünsche
+function ofsStars(m) {
+  try {
+    if (!kidStarsOn(m)) return null;
+    const today = isoDate(new Date());
+    const heute = kidStarLog(m).filter(e => e.d === today && e.k !== 'tausch' && e.s !== 'nein').reduce((s, e) => s + (Number(e.n) || 0), 0);
+    return { stand: kidStarBalance(m), heute, offen: kidStarPending(m).length };
+  } catch (e) { return null; }
+}
+// Schule & Kita: offene Hausaufgaben und Elternbriefe mit Frist
+function ofsSchool(m) {
+  try {
+    const today = isoDate(new Date());
+    const soon = addDaysToDateStr(today, 2);
+    const hw = skHomeworkOf(m.id).filter(h => !h.done).sort((a, b) => String(a.due || '9999').localeCompare(String(b.due || '9999')));
+    const letters = skLettersOf(m.id).filter(l => !l.done).sort((a, b) => String(a.deadline || '9999').localeCompare(String(b.deadline || '9999')));
+    const urgentLetters = letters.filter(l => skIso(l.deadline) && l.deadline <= soon);
+    const lateHw = hw.filter(h => skIso(h.due) && h.due <= addDaysToDateStr(today, 1));
+    if (!hw.length && !letters.length) return null;
+    return { hw, letters, urgentLetters, lateHw };
+  } catch (e) { return null; }
+}
+function ofsState(m) {
+  const st = { g: null, live: false, place: null, low: false, sos: null, hw: null, soon: null, bday: ofsBirthday(m), kid: ofsKidProgress(m), stars: ofsStars(m), school: ofsSchool(m) };
+  try { st.sos = sosActiveFor(m.id); } catch (e) { st.sos = null; }
+  try { st.hw = (Array.isArray(hwList) ? hwList : []).find(h => h.aktiv && h.memberId === m.id) || null; } catch (e) { st.hw = null; }
+  st.soon = ofsSoon(st.hw);
+  if (famOrtungAllowed()) {
+    const g = famDeviceForMember(m.id);
+    if (g) {
+      st.g = g;
+      st.live = famIsLive(g);
+      if (st.live) {
+        st.place = famPlace(g.position.ort);
+        const a = g.position.akku;
+        st.low = a != null && Number(a) <= 15 && !g.position.laedt;
+      }
+    }
+  }
+  return st;
+}
+function ofsSubLine(st) {
+  if (st.sos) return { cls: 'sos', t: '🆘 SOS' };
+  if (st.soon) return { cls: 'soon', t: '🏠 gleich da' };
+  if (st.hw) return { cls: '', t: '🚶 ' + (st.hw.entfernung != null ? 'noch ' + hwKm(st.hw.entfernung) : 'Heimweg') };
+  if (st.bday && st.bday.today) return { cls: 'bday', t: '🎉 Geburtstag' };
+  if (st.live) return { cls: 'live', t: st.place ? st.place.name : 'unterwegs' };
+  if (st.bday && st.bday.diff === 1) return { cls: '', t: '🎁 morgen' };
+  if (st.bday && st.bday.diff <= 7) return { cls: '', t: '🎁 in ' + st.bday.diff + ' Tagen' };
+  if (st.kid && st.kid.total) return { cls: '', t: st.kid.done + '/' + st.kid.total + ' ✓' };
+  return null;
+}
 function renderFamilyTile() {
   const body = document.getElementById('familyTileBody');
   if (!body) return;
   if (!members.length) { body.innerHTML = ''; return; }
-  body.innerHTML = `<div class="ov-fam-row">${members.map(m => {
+  ofsEnsureStatus();
+  const rows = members.map(m => ({ m, st: ofsState(m) }));
+  const anySub = rows.some(r => ofsSubLine(r.st));
+  body.innerHTML = `<div class="ov-fam-row">${rows.map(({ m, st }) => {
     const kid = isKidPageEnabled(m);
-    const inner = `<span class="ov-fam-ava-wrap"><span class="ov-fam-ava" style="border-color:${memberBorderColor(m)}">${memberAvatarInnerHTML(m)}</span>${kid ? '<span class="ov-fam-star">⭐</span>' : ''}</span><span class="ov-fam-name">${escapeHtml(memberLabel(m))}</span>`;
-    return kid
-      ? `<button type="button" class="ov-fam-item is-kid" data-mid="${escapeHtml(m.id)}" title="Kinderseite öffnen" aria-label="Kinderseite öffnen: ${escapeHtml(memberLabel(m))}">${inner}</button>`
-      : `<div class="ov-fam-item">${inner}</div>`;
+    const sub = ofsSubLine(st);
+    const cls = ['ov-fam-item', kid ? 'is-kid' : '', st.sos ? 'is-sos' : '', st.bday && st.bday.today ? 'is-bday' : '', st.soon ? 'is-soon' : (st.hw ? 'is-hw' : '')].filter(Boolean).join(' ');
+    let badge = '', badgeCls = '';
+    if (st.bday && st.bday.today) badge = '🎂';
+    else if (st.soon) badge = '🏠';
+    else if (st.hw) badge = '🚶';
+    else if (st.low) badge = '🪫';
+    else if (st.stars) { badge = '⭐' + st.stars.stand; badgeCls = ' stars'; }
+    else if (kid) badge = st.kid && st.kid.total && st.kid.done >= st.kid.total ? '✅' : '⭐';
+    let school = '';
+    if (st.school && st.school.urgentLetters.length) school = `<span class="ov-fam-school urgent" title="Elternbrief mit Frist">✉️</span>`;
+    else if (st.school && st.school.hw.length) school = `<span class="ov-fam-school${st.school.lateHw.length ? ' urgent' : ''}" title="Offene Hausaufgaben">📚${st.school.hw.length}</span>`;
+    else if (st.school && st.school.letters.length) school = `<span class="ov-fam-school" title="Offene Elternbriefe">✉️</span>`;
+    const ring = kid && st.kid && st.kid.total ? `<span class="ov-fam-ring" style="--p:${Math.round(st.kid.done / st.kid.total * 100)}"></span>` : '';
+    const title = st.sos ? 'SOS öffnen' : (kid ? 'Kinderseite öffnen' : 'Schnellaktionen');
+    return `<button type="button" class="${cls}" data-mid="${escapeHtml(m.id)}" title="${title}" aria-label="${escapeHtml(memberLabel(m))}">
+      <span class="ov-fam-ava-wrap">${ring}<span class="ov-fam-ava" style="border-color:${memberBorderColor(m)}">${memberAvatarInnerHTML(m)}</span>${st.live ? '<span class="ov-fam-live" title="Live-Standort"></span>' : ''}${st.place && st.place.emoji ? `<span class="ov-fam-place">${escapeHtml(st.place.emoji)}</span>` : ''}${badge ? `<span class="ov-fam-badge${badgeCls}">${badge}</span>` : ''}${school}</span>
+      <span class="ov-fam-name">${escapeHtml(memberLabel(m))}</span>${anySub ? `<span class="ov-fam-sub${sub && sub.cls ? ' ' + sub.cls : ''}">${sub ? escapeHtml(sub.t) : ''}</span>` : ''}
+    </button>`;
   }).join('')}</div>`;
-  body.querySelectorAll('.ov-fam-item.is-kid').forEach(b => b.addEventListener('click', () => openKidPage(b.dataset.mid)));
+  body.querySelectorAll('.ov-fam-item').forEach(b => {
+    const id = b.dataset.mid;
+    const startPress = () => {
+      clearTimeout(ofsPressTimer);
+      ofsPressFired = false;
+      ofsPressTimer = setTimeout(() => {
+        ofsPressFired = true;
+        try { if (navigator.vibrate) navigator.vibrate(12); } catch (e) { /* egal */ }
+        ofsOpen(id);
+      }, 550);
+    };
+    const cancelPress = () => clearTimeout(ofsPressTimer);
+    b.addEventListener('pointerdown', startPress);
+    b.addEventListener('pointerup', cancelPress);
+    b.addEventListener('pointerleave', cancelPress);
+    b.addEventListener('pointercancel', cancelPress);
+    b.addEventListener('contextmenu', (e) => e.preventDefault());
+    b.addEventListener('click', () => {
+      if (ofsPressFired) { ofsPressFired = false; return; }
+      const m = memberById(id);
+      if (!m) return;
+      const a = sosActiveFor(id);
+      if (a) { sosOpen(a.id); return; }
+      if (isKidPageEnabled(m)) { openKidPage(id); return; }
+      ofsOpen(id);
+    });
+  });
+  ofsEnsurePolling();
+}
+
+/* ---------- Standorte für die Kachel nachladen (sparsam) ---------- */
+function ofsEnsurePolling() {
+  if (ofsPollTimer || ofsTicking) return;
+  if (!ofsTileVisible() && !ofsOpenId) return;
+  const fresh = famStatus && famStatus.jetzt && Date.now() - (Number(famStatus.jetzt) - famSkew) < 30 * 1000;
+  ofsSchedule(famOrtungAllowed() && !ofsNoServer && !fresh ? 400 : OFS_POLL_MS);
+}
+function ofsSchedule(ms) {
+  clearTimeout(ofsPollTimer);
+  ofsPollTimer = setTimeout(ofsTick, ms);
+}
+async function ofsTick() {
+  ofsPollTimer = null;
+  if (!ofsTileVisible() && !ofsOpenId) return; // neu gestartet von renderFamilyTile bzw. ofsOpen
+  ofsTicking = true;
+  try {
+    if (document.visibilityState === 'visible' && famOrtungAllowed() && !ofsNoServer && currentView !== 'familie') {
+      await famLoadStatus();
+      if (famStatusErr && /nicht eingespielt/.test(famStatusErr)) ofsNoServer = true;
+    }
+  } catch (e) { /* nächster Versuch */ }
+  ofsTicking = false;
+  if (ofsOpenId && wbWaiting()) { try { await wbLoad(); } catch (e) { /* egal */ } }
+  if (ofsTileVisible()) renderFamilyTile(); // auch ohne neue Daten: abgelaufene Live-Punkte verschwinden
+  ofsRefreshSheet();
+  if (!ofsTileVisible() && !ofsOpenId) return;
+  const ruhe = window.pinnRuhe && window.pinnRuhe();
+  ofsSchedule(ruhe || !famOrtungAllowed() || ofsNoServer ? OFS_POLL_RUHE_MS : OFS_POLL_MS);
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible') return;
+  try { if (ofsTileVisible() || ofsOpenId) { clearTimeout(ofsPollTimer); ofsPollTimer = null; ofsSchedule(500); } } catch (e) { /* App noch nicht fertig */ }
+  try { bdayCheck(); } catch (e) { /* App noch nicht fertig */ }
+  try { wbCheckIncoming(); } catch (e) { /* App noch nicht fertig */ }
+});
+window.addEventListener('pinn-wach', () => {
+  try { if (ofsTileVisible()) { clearTimeout(ofsPollTimer); ofsPollTimer = null; ofsSchedule(300); } } catch (e) { /* egal */ }
+});
+
+/* ---------- Schnellaktionen einer Person ---------- */
+function ofsTodayItems(m) {
+  const today = isoDate(new Date());
+  let evs = [];
+  try {
+    evs = (Array.isArray(events) ? events : []).filter(ev => ev && ev.date === today && !ev.pinnHoliday
+      && getAssignedMembersForEvent(ev).some(x => x.id === m.id));
+  } catch (e) { evs = []; }
+  const seen = new Set();
+  evs = evs.filter(ev => { const k = (ev.time || '') + '|' + ev.title; if (seen.has(k)) return false; seen.add(k); return true; })
+    .sort((a, b) => String(a.time || '').localeCompare(String(b.time || '')));
+  let tasks = [];
+  try {
+    tasks = deriveTasks().filter(t => {
+      const done = taskDoneOverrides.has(t.id) ? taskDoneOverrides.get(t.id) : t.done;
+      if (done || !t.dueDate || t.dueDate > today) return false;
+      if (!childLockTaskVisible({ description: t.description })) return false;
+      return assigneesForTask(t).some(x => x.id === m.id);
+    });
+  } catch (e) { tasks = []; }
+  return { evs, tasks };
+}
+function ofsCanAdd() { return !childLockActive(); }
+function ofsSheetHtml(m) {
+  const st = ofsState(m);
+  const p = famPass(m.id) || {};
+  const pet = famIsPet(m);
+  const color = famColor(m);
+  const isMe = m.id === famMyMemberId();
+  const kid = isKidPageEnabled(m);
+  const age = famAge(p.birth);
+  const sub = [m.role && memberLabel(m) !== m.role ? m.role : '', age != null ? age + (age === 1 ? ' Jahr' : ' Jahre') : '', pet && p.species ? p.species : ''].filter(Boolean).join(' · ');
+  const phone = String(p.phone || '').trim();
+  const out = [];
+
+  out.push(`<div class="ofs-head">
+    <span class="fam-ava big" style="--fam:${famAttr(color)}">${famAvatarInner(m)}${st.live ? '<span class="fam-ping"></span>' : ''}</span>
+    <div class="min-w-0">
+      <div class="font-serif text-xl truncate">${escapeHtml(memberLabel(m))}</div>
+      ${sub ? `<div class="text-xs text-ink/50 mt-0.5">${escapeHtml(sub)}</div>` : ''}
+    </div>
+  </div>`);
+
+  // Geburtstag
+  if (st.bday && st.bday.today) {
+    const canNote = !isMe && isViewAllowed('pinnwand') && ofsCanAdd();
+    out.push(`<div class="ofs-bday">
+      <span class="ofs-bday-ic">🎂</span>
+      <div class="min-w-0 flex-1">
+        <div class="text-sm font-semibold">${isMe ? 'Alles Gute zum Geburtstag!' : 'Hat heute Geburtstag!'}</div>
+        ${st.bday.age ? `<div class="text-xs text-ink/60">${isMe ? 'Heute wirst du ' + st.bday.age : 'wird ' + st.bday.age}</div>` : ''}
+      </div>
+      ${isMe ? '<button type="button" class="fz-mini-btn" data-ofs="replay">🎉</button>' : (canNote ? '<button type="button" class="fz-mini-btn primary" data-ofs="gratulieren">Gratulieren</button>' : '')}
+    </div>`);
+  } else if (st.bday && st.bday.diff <= 14) {
+    out.push(`<div class="text-xs text-ink/55 -mt-1">🎁 ${st.bday.diff === 1 ? 'Geburtstag morgen' : 'Geburtstag in ' + st.bday.diff + ' Tagen'}${st.bday.age ? ' · ' + 'wird ' + st.bday.age : ''}</div>`);
+  }
+
+  // SOS / Heimweg / Standort
+  if (st.sos) {
+    out.push(`<button type="button" class="fz-note-box urgent w-full text-left" data-ofs="sos"><span>🆘</span><span class="text-sm font-medium">SOS aktiv – antippen</span></button>`);
+  }
+  if (famOrtungAllowed() && st.g) {
+    const g = st.g;
+    const pos = g.teilen ? g.position : null;
+    let line;
+    if (!g.teilen) line = 'Standort wird nicht geteilt.';
+    else if (!pos) line = 'Noch kein Standort empfangen.';
+    else {
+      line = [st.place ? st.place.emoji + ' ' + st.place.name : (st.live ? 'unterwegs' : 'zuletzt'), famAgo(pos.zeit),
+        pos.akku != null ? (st.low ? '🪫 ' : '🔋 ') + pos.akku + ' %' : ''].filter(Boolean).join(' · ');
+    }
+    out.push(`<div class="fam-card">
+      <div class="text-sm">${st.live ? '<span class="fam-dot"></span><span class="text-red-600 font-medium">live</span> · ' : ''}${escapeHtml(line)}</div>
+      ${st.soon ? `<div class="text-xs mt-1" style="color:#2E9C7A;font-weight:600">🏠 <span>gleich zu Hause</span> · ${escapeHtml('ca. ' + st.soon.eta + ' Min.')}</div>`
+        : (st.hw ? `<div class="text-xs text-ink/60 mt-1">🚶 unterwegs nach Hause${st.hw.entfernung != null ? ' · ' + escapeHtml('noch ' + hwKm(st.hw.entfernung)) : ''}</div>` : '')}
+      ${st.low ? '<div class="text-xs text-red-600 mt-1">🪫 Akku fast leer</div>' : ''}
+    </div>`);
+  }
+
+  // „Wo bist du?“: letzte Frage von mir an diese Person
+  const wb = isMe ? null : wbLastAskTo(m.id);
+  if (wb) {
+    const a = wb.antwort;
+    out.push(`<div class="fam-card flex items-center gap-3">
+      <span class="text-2xl leading-none">${a ? (a.lat != null ? '📍' : '💬') : '⏳'}</span>
+      <div class="min-w-0 flex-1">
+        <div class="text-sm font-medium truncate">${a ? (a.lat != null ? '<span>Standort geschickt</span>' : escapeHtml(wbAnswerText(a.text))) : '<span>Gefragt: Wo bist du?</span>'}</div>
+        <div class="text-[11px] text-ink/50">${escapeHtml(a ? 'Antwort ' + famAgo(a.zeit) : 'Noch keine Antwort · ' + famAgo(wb.zeit))}</div>
+      </div>
+      ${a ? `<button type="button" class="fz-mini-btn${a.lat != null ? ' primary' : ''}" data-ofs="wbview" data-id="${famAttr(wb.id)}">Ansehen</button>` : ''}
+    </div>`);
+  }
+
+  // Sterne
+  if (kid && st.stars) {
+    out.push(`<div class="fam-card flex items-center gap-3">
+      <span class="ofs-stars">⭐ ${st.stars.stand}</span>
+      <div class="min-w-0 flex-1">
+        <div class="text-sm font-medium">${st.stars.stand === 1 ? 'Stern gesammelt' : 'Sterne gesammelt'}</div>
+        <div class="text-[11px] text-ink/50">${escapeHtml('heute +' + st.stars.heute)}${st.stars.offen ? ' · ' + escapeHtml(st.stars.offen === 1 ? '1 Wunsch wartet auf Freigabe' : st.stars.offen + ' Wünsche warten auf Freigabe') : ''}</div>
+      </div>
+      ${st.stars.offen ? '<button type="button" class="fz-mini-btn primary" data-ofs="kid">Ansehen</button>' : ''}
+    </div>`);
+  }
+
+  // Schule & Kita
+  if (st.school) {
+    const today = isoDate(new Date());
+    const rows = [];
+    st.school.letters.slice(0, 3).forEach(l => {
+      const late = skIso(l.deadline) && l.deadline <= addDaysToDateStr(today, 2);
+      rows.push(`<button type="button" class="ofs-row" data-ofs="letter" data-id="${famAttr(l.id)}"><span class="ofs-chk">✉️</span><span class="min-w-0 flex-1 truncate text-sm">${escapeHtml(l.title || 'Elternbrief')}</span>${skIso(l.deadline) ? `<span class="ofs-due${late ? ' late' : ''}">${escapeHtml(ofsDueLabel(l.deadline))}</span>` : ''}</button>`);
+    });
+    st.school.hw.slice(0, 4).forEach(h => {
+      const late = skIso(h.due) && h.due <= addDaysToDateStr(today, 1);
+      rows.push(`<div class="ofs-row">${skCanTick() ? `<button type="button" class="ofs-chk" data-ofs="hwtoggle" data-id="${famAttr(h.id)}" aria-label="Erledigt"></button>` : '<span class="ofs-chk">📚</span>'}<button type="button" class="min-w-0 flex-1 truncate text-sm text-left" data-ofs="school">${escapeHtml([h.subject, h.text].filter(Boolean).join(': ') || 'Hausaufgabe')}</button>${skIso(h.due) ? `<span class="ofs-due${late ? ' late' : ''}">${escapeHtml(ofsDueLabel(h.due))}</span>` : ''}</div>`);
+    });
+    const more = Math.max(0, st.school.letters.length - 3) + Math.max(0, st.school.hw.length - 4);
+    out.push(`<div class="fam-card">
+      <div class="flex items-center justify-between gap-2 mb-1"><div class="fz-h" style="margin-bottom:0">🎒 Schule & Kita</div><button type="button" class="fz-mini-btn" data-ofs="school">Öffnen ›</button></div>
+      ${rows.join('')}
+      ${more ? `<p class="text-[11px] text-ink/45 mt-1">+ ${more} weitere</p>` : ''}
+    </div>`);
+  }
+
+  // Kinder-Aufgaben
+  if (kid && st.kid && st.kid.total) {
+    out.push(`<div class="fam-card">
+      <div class="flex items-center justify-between gap-2 text-sm"><span>⭐ Kinder-Aufgaben</span><span class="text-xs text-ink/55">${st.kid.done} von ${st.kid.total} erledigt</span></div>
+      <div class="ofs-bar"><i style="width:${Math.round(st.kid.done / st.kid.total * 100)}%"></i></div>
+    </div>`);
+  }
+
+  // Heute
+  const today = ofsTodayItems(m);
+  if (!pet) {
+    const rows = [];
+    today.evs.slice(0, 4).forEach(ev => rows.push(`<button type="button" class="ofs-row" data-ofs="termine"><span class="ofs-time">${escapeHtml(ev.time || 'ganztags')}</span><span class="min-w-0 flex-1 truncate text-sm">${escapeHtml(ev.title)}</span></button>`));
+    today.tasks.slice(0, 4).forEach(t => rows.push(`<button type="button" class="ofs-row" data-ofs="aufgabe" data-id="${famAttr(t.id)}"><span class="ofs-time">☐</span><span class="min-w-0 flex-1 truncate text-sm">${escapeHtml(t.title)}</span></button>`));
+    const more = Math.max(0, today.evs.length - 4) + Math.max(0, today.tasks.length - 4);
+    out.push(`<div class="fam-card">
+      <div class="fz-h">📅 Heute</div>
+      ${rows.length ? rows.join('') : '<p class="text-sm text-ink/45">Keine Termine und Aufgaben für heute.</p>'}
+      ${more ? `<p class="text-[11px] text-ink/45 mt-1">+ ${more} weitere</p>` : ''}
+    </div>`);
+  }
+
+  // Aktionen
+  const acts = [];
+  const act = (key, ic, label, extra) => acts.push(`<button type="button" class="fz-act-btn" data-ofs="${key}"${extra || ''}><span class="fz-ti">${ic}</span><span>${label}</span></button>`);
+  if (kid) act('kid', '⭐', 'Kinderseite');
+  if (phone && !isMe) {
+    acts.push(`<a class="fz-act-btn" href="${famAttr(famTel(phone))}"><span class="fz-ti">📞</span><span>Anrufen</span></a>`);
+    acts.push(`<a class="fz-act-btn" href="${famAttr('sms:' + phone.replace(/[^\d+]/g, ''))}"><span class="fz-ti">💬</span><span>Nachricht</span></a>`);
+  }
+  if (st.g && st.g.teilen && st.g.position && isViewAllowed('familie')) act('karte', '🗺', 'Karte');
+  if (wbCanAsk(m, st)) act('wobistdu', '📍', 'Wo bist du?');
+  if (st.hw) act('heimweg', '🚶', 'Heimweg');
+  if (!pet && ofsCanAdd() && isViewAllowed('aufgaben')) act('task', '✅', 'Aufgabe');
+  if (!pet && ofsCanAdd() && isViewAllowed('pinnwand')) {
+    act('zettel', '📝', 'Zettel');
+    if (!isMe) act('danke', '💛', 'Danke');
+  }
+  if (isViewAllowed('familie')) {
+    act('profil', '👤', 'Profil');
+    act('pass', '🩺', 'Notfallpass');
+  }
+  if (acts.length) out.push(`<div class="ofs-acts">${acts.join('')}</div>`);
+
+  // Eigenes Handy: Heimweg und Teilen direkt hier
+  if (isMe && famOrtungAllowed()) {
+    const g = famMyDevice();
+    if (g) {
+      const unterwegs = famUnterwegs(g);
+      out.push(`<div class="fam-card">
+        <label class="fz-check" style="margin-bottom:8px"><input type="checkbox" data-ofs-share="${famAttr(g.id)}"${g.teilen ? ' checked' : ''} /><span>Standort mit der Familie teilen</span></label>
+        <button type="button" class="fz-mini-btn${unterwegs ? ' primary' : ''}" data-ofs="unterwegs" data-an="${unterwegs ? '0' : '1'}">${unterwegs ? '🏁 Heimweg beenden' : '🚶 Ich bin unterwegs nach Hause'}</button>
+      </div>`);
+    }
+  }
+  if (kid) out.push('<p class="text-[11px] text-ink/40 text-center">Tipp: In der Kachel öffnet ein kurzer Tipp aufs Kind die Kinderseite, gedrückt halten diese Schnellaktionen.</p>');
+  return `<div class="ofs" data-ofs-root="${famAttr(m.id)}">${out.join('')}</div>`;
+}
+function ofsOpen(memberId) {
+  const m = memberById(memberId);
+  if (!m) return;
+  ofsOpenId = memberId;
+  ofsEnsureStatus();
+  famOpenModal(ofsSheetHtml(m), ofsWire);
+  ofsEnsurePolling();
+  wbLoad().then(() => ofsRefreshSheet());
+}
+function ofsRefreshSheet() {
+  if (!ofsOpenId) return;
+  const modal = document.getElementById('famModal');
+  const root = document.querySelector('#famModalBody [data-ofs-root]');
+  if (!modal || modal.classList.contains('hidden') || !root || root.dataset.ofsRoot !== ofsOpenId) { ofsOpenId = ''; return; }
+  const m = memberById(ofsOpenId);
+  if (!m) { famCloseModal(); ofsOpenId = ''; return; }
+  const body = document.getElementById('famModalBody');
+  const ae = document.activeElement;
+  if (ae && body.contains(ae) && ae.matches('input')) return; // gerade am Schalter
+  body.innerHTML = ofsSheetHtml(m);
+  ofsWire(body);
+  try { armModalSnapshot('famModal'); } catch (e) { /* egal */ }
+}
+function ofsClose() {
+  ofsOpenId = '';
+  famCloseModal();
+}
+function ofsWire(body) {
+  const root = body.querySelector('[data-ofs-root]');
+  if (!root) return;
+  const id = root.dataset.ofsRoot;
+  root.querySelectorAll('[data-ofs-share]').forEach(cb => cb.addEventListener('change', async () => {
+    await famSetSharing(cb.dataset.ofsShare, cb.checked, cb);
+    ofsRefreshSheet();
+    renderFamilyTile();
+  }));
+  root.addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-ofs]');
+    if (!b) return;
+    const m = memberById(id);
+    if (!m) return;
+    const k = b.dataset.ofs;
+    const st = ofsState(m);
+    if (k === 'kid') { ofsClose(); openKidPage(id); }
+    else if (k === 'sos') { ofsClose(); if (st.sos) sosOpen(st.sos.id); }
+    else if (k === 'heimweg') { ofsClose(); if (st.hw) hwOpen(st.hw.id); }
+    else if (k === 'karte') { ofsClose(); if (st.g) famShowOnMap(st.g.id); }
+    else if (k === 'profil') { ofsClose(); famOpenMember(id); }
+    else if (k === 'pass') { ofsClose(); famOpenPass(id); }
+    else if (k === 'termine') { ofsClose(); setView('termine'); }
+    else if (k === 'aufgabe') {
+      ofsClose();
+      setView('aufgaben');
+      const tid = b.dataset.id;
+      if (tid && aufgaben.some(t => t.id === tid)) openEditTaskModal({ id: tid });
+    }
+    else if (k === 'task') {
+      ofsClose();
+      openTaskModal();
+      pendingTaskAssignees = [id];
+      renderTaskAssigneeOptions();
+      armModalSnapshot('taskModal');
+    }
+    else if (k === 'zettel' || k === 'danke' || k === 'gratulieren') {
+      ofsClose();
+      const t = (s) => (window.PINN_I18N && PINN_I18N.t) ? PINN_I18N.t(s) : s;
+      const preset = k === 'gratulieren' ? t('Alles Gute zum Geburtstag!') + ' 🎂🎉' : '';
+      openPinboardEditor(null, k === 'danke' ? 'kudos' : 'note', preset);
+      if (pwDraft) {
+        pwDraft.to = [id];
+        if (k === 'gratulieren') { pwDraft.color = 'rosa'; pwDraft.colorTouched = true; }
+        pwRenderEditor();
+      }
+      armModalSnapshot('pinboardEditModal');
+    }
+    else if (k === 'unterwegs') {
+      await famSetUnterwegs(b.dataset.an === '1', b);
+      ofsRefreshSheet();
+      renderFamilyTile();
+    }
+    else if (k === 'replay') { ofsClose(); bdayShow(m, ofsBirthday(m)); }
+    else if (k === 'wobistdu') { await wbAsk(id, b); }
+    else if (k === 'wbview') { wbOpen(b.dataset.id); }
+    else if (k === 'school') { ofsClose(); skKid = id; famDetailId = null; if (currentView !== 'familie') setView('familie'); famSetTab('schule'); }
+    else if (k === 'letter') {
+      ofsClose();
+      skKid = id; famDetailId = null;
+      if (currentView !== 'familie') setView('familie');
+      famSetTab('schule');
+      if (skCanEdit()) skOpenLetter(b.dataset.id);
+    }
+    else if (k === 'hwtoggle') { skToggleHomework(b.dataset.id); setTimeout(() => { ofsRefreshSheet(); renderFamilyTile(); }, 60); }
+  });
+}
+
+function ofsDueLabel(iso) {
+  const today = isoDate(new Date());
+  if (iso < today) return 'überfällig';
+  if (iso === today) return 'heute';
+  if (iso === addDaysToDateStr(today, 1)) return 'morgen';
+  const d = new Date(iso + 'T12:00:00');
+  return isNaN(d) ? iso : d.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'numeric' });
+}
+
+/* ---------- Heimweg: „gleich zu Hause“ ----------
+   Kommt jemand auf dem Heimweg in die Nähe (≤ 600 m oder ≤ 5 Min.), zeigt pinn. einmal je Heimweg einen
+   kurzen Hinweis – Daten aus der SOS-Abfrage, die ohnehin läuft. */
+var hwSoonSeen = new Set();
+function hwSoonCheck() {
+  (Array.isArray(hwList) ? hwList : []).forEach(h => {
+    if (!h.aktiv || hwIsMine(h) || hwSoonSeen.has(h.id)) return;
+    const s = ofsSoon(h);
+    if (!s) return;
+    hwSoonSeen.add(h.id);
+    try { finShowToast('🏠 ' + hwName(h) + ' ist gleich zu Hause (ca. ' + s.eta + ' Min.)'); } catch (e) { /* egal */ }
+  });
+}
+
+/* ---------- „Wo bist du?“ ----------
+   Fragen: Schnellaktionen einer Person, die gerade keinen Live-Standort teilt. Die Person bekommt eine
+   Push-Nachricht (/?wobistdu=<ID>) und antwortet mit ihrem Standort (einmalig aus dem Browser, es wird
+   nichts dauerhaft geteilt) oder kurz per Knopf. Die Antwort kommt als Push zurück und erscheint mit
+   Karte und Adresse. Offene Fragen an mich öffnen sich auch beim nächsten Öffnen von pinn. (≤ 30 Min.).
+   Server: pb_hooks/wobistdu.pb.js + pinn-wobistdu.js. */
+var WB_CODES = [
+  ['zuhause', '🏠', 'Bin zu Hause'], ['unterwegs', '🚶', 'Bin unterwegs'], ['gleich', '⏱️', 'Bin gleich da'],
+  ['gut', '👍', 'Alles gut'], ['anrufen', '📞', 'Ruf mich an'],
+];
+var LS_WB_DONE = 'pinn.wobistduErledigt';
+var wbItems = [];
+var wbLoadedAt = 0;
+var wbNoServer = false;
+var wbBusy = false;
+function wbAnswerText(code) {
+  const c = WB_CODES.find(x => x[0] === code);
+  return c ? c[1] + ' ' + c[2] : '„' + String(code || '') + '“';
+}
+function wbHasProfile(memberId) {
+  if (!Array.isArray(familyProfiles) || !familyProfiles.length) return true; // unbekannt: der Server prüft
+  return familyProfiles.some(p => p && p.mitglied === memberId && p.rolle !== 'gast');
+}
+function wbCanAsk(m, st) {
+  if (!m || wbNoServer || famIsPet(m) || m.id === famMyMemberId()) return false;
+  if (isCurrentUserGuest() || !currentMember()) return false;
+  if (st && st.live) return false; // live auf der Karte – fragen unnötig
+  return wbHasProfile(m.id);
+}
+function wbLastAskTo(memberId) {
+  return wbItems.filter(x => x.meine && x.an === memberId && Date.now() - Number(x.zeit) < 6 * 3600 * 1000)
+    .sort((a, b) => Number(b.zeit) - Number(a.zeit))[0] || null;
+}
+function wbWaiting() { return wbItems.some(x => x.meine && !x.antwort && Date.now() - Number(x.zeit) < 15 * 60 * 1000); }
+async function wbLoad() {
+  if (wbNoServer || isCurrentUserGuest() || !familyRecordId) return wbItems;
+  try {
+    const res = await apiFetch('/api/pinn/wobistdu', { cache: 'no-store' });
+    if (res.status === 404) { wbNoServer = true; return wbItems; }
+    const body = await res.json().catch(() => null);
+    if (body && Array.isArray(body.anfragen)) {
+      if (body.jetzt) famSkew = Number(body.jetzt) - Date.now();
+      wbItems = body.anfragen;
+      wbLoadedAt = Date.now();
+    }
+  } catch (e) { /* offline */ }
+  return wbItems;
+}
+async function wbAsk(memberId, btn) {
+  const m = memberById(memberId);
+  const me = currentMember();
+  if (!m) return;
+  if (btn) btn.disabled = true;
+  try {
+    const r = await postJson('/api/pinn/wobistdu', { an: memberId, name: me ? (me.name || memberLabel(me)) : '', anName: m.name || memberLabel(m) });
+    finShowToast(r.schon ? 'Schon gefragt – warte kurz auf die Antwort.' : 'Gefragt – ' + (m.name || memberLabel(m)) + ' bekommt eine Nachricht.');
+    await wbLoad();
+  } catch (e) {
+    finShowToast(e.message || 'Keine Verbindung.', true);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+  ofsRefreshSheet();
+}
+function wbDoneMap() { try { const o = JSON.parse(localStorage.getItem(LS_WB_DONE) || '{}'); return (o && typeof o === 'object') ? o : {}; } catch (e) { return {}; } }
+function wbMarkDone(id) {
+  const o = wbDoneMap();
+  o[id] = Date.now();
+  Object.keys(o).forEach(k => { if (Date.now() - Number(o[k]) > 2 * 86400000) delete o[k]; });
+  try { localStorage.setItem(LS_WB_DONE, JSON.stringify(o)); } catch (e) { /* egal */ }
+}
+// Beim Öffnen von pinn.: noch offene Frage an mich (≤ 30 Min.) direkt zeigen
+async function wbCheckIncoming() {
+  if (wbNoServer || isCurrentUserGuest() || !currentMember() || !familyRecordId) return;
+  await wbLoad();
+  const done = wbDoneMap();
+  const open = wbItems.filter(x => x.anMich && !x.antwort && !done[x.id] && Date.now() - Number(x.zeit) < 30 * 60 * 1000)
+    .sort((a, b) => Number(b.zeit) - Number(a.zeit))[0];
+  const modal = document.getElementById('famModal');
+  if (open && modal && modal.classList.contains('hidden')) wbOpen(open.id);
+}
+function wbName(x, which) {
+  const id = which === 'von' ? x.vonMitglied : x.an;
+  const m = id ? memberById(id) : null;
+  return m ? (m.name || memberLabel(m)) : (which === 'von' ? x.vonName : x.anName) || 'Jemand';
+}
+async function wbOpen(id) {
+  let x = wbItems.find(i => i.id === id);
+  if (!x || Date.now() - wbLoadedAt > 5000) { await wbLoad(); x = wbItems.find(i => i.id === id); }
+  if (!x) { finShowToast('Diese Frage ist nicht mehr da.', true); return; }
+  ofsOpenId = '';
+  if (x.anMich) wbRenderAsk(x); else wbRenderAnswer(x);
+}
+// Ansicht für die gefragte Person
+function wbRenderAsk(x) {
+  const name = wbName(x, 'von');
+  const vm = x.vonMitglied ? memberById(x.vonMitglied) : null;
+  const html = `<div class="ofs">
+    <div class="ofs-head">
+      ${vm ? `<span class="fam-ava big" style="--fam:${famAttr(famColor(vm))}">${famAvatarInner(vm)}</span>` : '<span class="text-4xl">📍</span>'}
+      <div class="min-w-0"><div class="font-serif text-xl">${escapeHtml(name)}</div><div class="text-sm text-ink/60">fragt: Wo bist du?</div><div class="text-[11px] text-ink/40">${escapeHtml(famAgo(x.zeit))}</div></div>
+    </div>
+    ${x.antwort ? `<p class="text-xs text-ink/50">${escapeHtml('Schon geantwortet: ' + (x.antwort.lat != null ? 'Standort' : wbAnswerText(x.antwort.text)))}</p>` : ''}
+    <button type="button" class="wb-big" data-wb="ort">📍 <span>Standort senden</span></button>
+    <p class="text-[11px] text-ink/45 -mt-1">Einmalig dein aktueller Standort – es wird nichts dauerhaft geteilt.</p>
+    <p id="wbErr" class="text-xs text-red-600 hidden"></p>
+    <div class="text-xs text-ink/50">Oder kurz antworten:</div>
+    <div class="wb-quick">${WB_CODES.map(c => `<button type="button" data-wb="${c[0]}">${c[1]} <span>${escapeHtml(c[2])}</span></button>`).join('')}</div>
+  </div>`;
+  famOpenModal(html, body => {
+    body.querySelectorAll('[data-wb]').forEach(b => b.addEventListener('click', () => wbReply(x, b.dataset.wb, b)));
+  });
+}
+function wbErr(text) {
+  const el = document.getElementById('wbErr');
+  if (!el) return;
+  el.textContent = text;
+  el.classList.toggle('hidden', !text);
+}
+async function wbReply(x, what, btn) {
+  if (wbBusy) return;
+  const me = currentMember();
+  const name = me ? (me.name || memberLabel(me)) : '';
+  wbBusy = true;
+  if (btn) btn.disabled = true;
+  try {
+    let payload;
+    if (what === 'ort') {
+      if (!navigator.geolocation) throw new Error('Dieses Gerät kann keinen Standort bestimmen.');
+      wbErr('');
+      if (btn) btn.querySelector('span').textContent = 'Standort wird bestimmt …';
+      const pos = await new Promise((resolve, reject) => navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 20000, maximumAge: 30000 }))
+        .catch(err => { throw new Error(err && err.code === 1 ? 'Standort nicht erlaubt – bitte in den Einstellungen des Handys für pinn. bzw. den Browser freigeben.' : 'Standort konnte nicht bestimmt werden.'); });
+      payload = { id: x.id, lat: pos.coords.latitude, lon: pos.coords.longitude, genau: pos.coords.accuracy, name };
+    } else {
+      payload = { id: x.id, text: what, name };
+    }
+    await postJson('/api/pinn/wobistdu/antwort', payload);
+    wbMarkDone(x.id);
+    famCloseModal();
+    finShowToast('Antwort geschickt ✓');
+    wbLoad();
+  } catch (e) {
+    wbErr(e.message || 'Keine Verbindung.');
+    if (btn && what === 'ort') btn.querySelector('span').textContent = 'Standort senden';
+  } finally {
+    wbBusy = false;
+    if (btn) btn.disabled = false;
+  }
+}
+// Ansicht für die fragende Person
+function wbRenderAnswer(x) {
+  const name = wbName(x, 'an');
+  const m = memberById(x.an);
+  const a = x.antwort;
+  let main;
+  if (!a) main = `<div class="wb-bubble">⏳ <span>Noch keine Antwort</span></div><p class="text-[11px] text-ink/45 text-center">${escapeHtml('Gefragt ' + famAgo(x.zeit))}</p>`;
+  else if (a.lat == null) main = `<div class="wb-bubble">${escapeHtml(wbAnswerText(a.text))}</div><p class="text-[11px] text-ink/45 text-center">${escapeHtml(famAgo(a.zeit))}</p>`;
+  else {
+    const maps = isAppleMobile() ? `https://maps.apple.com/?q=${a.lat},${a.lon}` : (isAndroidDevice() ? `geo:${a.lat},${a.lon}?q=${a.lat},${a.lon}` : `https://www.openstreetmap.org/?mlat=${a.lat}&mlon=${a.lon}#map=17/${a.lat}/${a.lon}`);
+    main = `<div id="wbMapHost" class="wb-map"></div>
+      <div class="text-sm"><span id="wbAddr" class="font-medium">Adresse wird gesucht …</span></div>
+      <div class="text-[11px] text-ink/50">${escapeHtml(famAgo(a.zeit) + (a.genau ? ' (± ' + a.genau + ' m)' : ''))}</div>
+      <a class="fz-mini-btn self-start" href="${famAttr(maps)}" target="_blank" rel="noopener">🧭 In Karten-App öffnen</a>`;
+  }
+  const phone = String(((famPass(x.an) || {}).phone) || '').trim();
+  const html = `<div class="ofs">
+    <div class="ofs-head">
+      ${m ? `<span class="fam-ava big" style="--fam:${famAttr(famColor(m))}">${famAvatarInner(m)}</span>` : '<span class="text-4xl">📍</span>'}
+      <div class="min-w-0"><div class="font-serif text-xl">${escapeHtml(name)}</div><div class="text-sm text-ink/60">${a ? 'hat geantwortet' : 'wurde gefragt: Wo bist du?'}</div></div>
+    </div>
+    ${main}
+    ${phone ? `<div class="flex gap-2"><a class="fz-act-btn" href="${famAttr(famTel(phone))}"><span class="fz-ti">📞</span><span>Anrufen</span></a><a class="fz-act-btn" href="${famAttr('sms:' + phone.replace(/[^\d+]/g, ''))}"><span class="fz-ti">💬</span><span>Nachricht</span></a></div>` : ''}
+  </div>`;
+  famOpenModal(html, body => {
+    if (!a || a.lat == null) return;
+    const host = body.querySelector('#wbMapHost');
+    try {
+      if (famPickMap) { famPickMap.destroy(); famPickMap = null; }
+      famPickMap = famCreateMap(host, {}); // wird mit dem Popup wieder entfernt (famCloseModal)
+      requestAnimationFrame(() => {
+        if (!famPickMap) return;
+        famPickMap.setView(Number(a.lat), Number(a.lon), a.genau && a.genau > 300 ? 14 : 16);
+        famPickMap.setMarkers([{ id: 'wb', lat: Number(a.lat), lon: Number(a.lon), html: `<div class="fm-mk" style="--fam:${famAttr(famColor(m))}"><div class="fm-mk-ava">${m ? famAvatarInner(m) : '📍'}</div><div class="fm-mk-lbl">${escapeHtml(name)}</div></div>` }]);
+        if (a.genau) famPickMap.setCircles([{ lat: Number(a.lat), lon: Number(a.lon), r: Math.max(5, Number(a.genau)), color: famColor(m) }]);
+      });
+    } catch (e) { host.classList.add('hidden'); }
+    apiFetch(`/api/pinn/ortung/suche?lat=${a.lat}&lon=${a.lon}`).then(r => r.json()).then(b => {
+      const t = Array.isArray(b.treffer) && b.treffer[0];
+      const el = document.getElementById('wbAddr');
+      if (el) el.textContent = t ? t.name : (Number(a.lat).toFixed(5) + ', ' + Number(a.lon).toFixed(5));
+    }).catch(() => {
+      const el = document.getElementById('wbAddr');
+      if (el) el.textContent = Number(a.lat).toFixed(5) + ', ' + Number(a.lon).toFixed(5);
+    });
+  });
+}
+
+/* ---------- Geburtstags-Animation ----------
+   Wer Geburtstag hat (Geburtsdatum im Notfallpass), bekommt am Tag einmalig beim ersten Öffnen eine
+   Happy-Birthday-Animation – auf allen Geräten nur einmal (Merker auf dem Server, Route
+   /api/pinn/geburtstag, zusätzlich auf dem Gerät). Kinder am Familien-Dashboard sehen sie beim Öffnen
+   ihrer Kinderseite. Die anderen bekommen morgens zur Tagesübersicht eine Push-Nachricht
+   (pb_hooks/familie-geburtstag.pb.js). */
+var LS_BDAY_SHOWN = 'pinn.geburtstagGezeigt';
+var bdayChecking = false;
+function bdayLocalSeen(mid, day) {
+  try { const o = JSON.parse(localStorage.getItem(LS_BDAY_SHOWN) || '{}'); return !!o && o[mid] === day; } catch (e) { return false; }
+}
+function bdaySetLocal(mid, day) {
+  let o = {};
+  try { o = JSON.parse(localStorage.getItem(LS_BDAY_SHOWN) || '{}') || {}; } catch (e) { o = {}; }
+  Object.keys(o).forEach(k => { if (o[k] !== day) delete o[k]; });
+  o[mid] = day;
+  try { localStorage.setItem(LS_BDAY_SHOWN, JSON.stringify(o)); } catch (e) { /* egal */ }
+}
+async function bdayCheck(memberId) {
+  if (!familyRecordId) return;
+  if (!memberId && isCurrentUserGuest()) return;
+  const m = memberId ? memberById(memberId) : currentMember();
+  if (!m || famIsPet(m)) return;
+  const b = ofsBirthday(m);
+  if (!b || !b.today) return;
+  const day = isoDate(new Date());
+  if (bdayChecking || bdayLocalSeen(m.id, day) || document.getElementById('bdayOverlay')) return;
+  bdayChecking = true;
+  let seen = false;
+  try {
+    const res = await apiFetch('/api/pinn/geburtstag', { cache: 'no-store' });
+    if (res.ok) {
+      const body = await res.json().catch(() => null);
+      if (body && body.heute === day && Array.isArray(body.gesehen)) seen = body.gesehen.includes(m.id);
+    }
+  } catch (e) { /* offline: auf diesem Gerät zeigen */ }
+  bdayChecking = false;
+  bdaySetLocal(m.id, day);
+  if (seen) return;
+  bdayShow(m, b);
+  try { await postJson('/api/pinn/geburtstag/gesehen', { mitglied: m.id }); } catch (e) { /* egal */ }
+}
+function bdayShow(m, b) {
+  if (!m || document.getElementById('bdayOverlay')) return;
+  const ov = document.createElement('div');
+  ov.id = 'bdayOverlay';
+  ov.setAttribute('role', 'dialog');
+  ov.innerHTML = `<div class="bday-card">
+      <div class="bday-cake">🎂</div>
+      <div class="bday-hb"><span>Alles Gute zum Geburtstag!</span></div>
+      <div class="bday-name">${escapeHtml(m.name || memberLabel(m))}</div>
+      <div class="bday-sub"><span>${b && b.age ? 'Heute wirst du ' + b.age : 'Hab einen wunderschönen Tag!'}</span> 🎉</div>
+      <button type="button" class="bday-btn"><span>Danke!</span> 🥳</button>
+    </div>`;
+  document.body.appendChild(ov);
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const timers = [];
+  if (!reduce) {
+    const colors = [0, 40, 120, 200, 260, 310];
+    const h = window.innerHeight;
+    for (let i = 0; i < 9; i++) {
+      const el = document.createElement('span');
+      el.className = 'bday-balloon';
+      el.textContent = '🎈';
+      el.style.left = (5 + Math.random() * 85) + '%';
+      el.style.filter = `hue-rotate(${colors[i % colors.length]}deg)`;
+      ov.appendChild(el);
+      if (el.animate) {
+        el.animate([
+          { transform: 'translate(0, 0) rotate(-6deg)' },
+          { transform: `translate(${(Math.random() - 0.5) * 80}px, ${-(h * 0.55)}px) rotate(6deg)` },
+          { transform: `translate(${(Math.random() - 0.5) * 120}px, ${-(h + 200)}px) rotate(-4deg)` },
+        ], { duration: 5200 + Math.random() * 2600, delay: Math.random() * 1400, easing: 'ease-in', fill: 'both' });
+      }
+    }
+    try { kidConfettiRain(); } catch (e) { /* egal */ }
+    timers.push(setTimeout(() => { try { kidConfettiRain(); } catch (e) { /* egal */ } }, 1900));
+    timers.push(setTimeout(() => { try { kidConfettiRain(); } catch (e) { /* egal */ } }, 3800));
+  }
+  const close = () => {
+    timers.forEach(clearTimeout);
+    try { kidPlaySound('win'); } catch (e) { /* egal */ }
+    if (!reduce) { try { kidConfettiBurst(window.innerWidth / 2, window.innerHeight / 2, 40); } catch (e) { /* egal */ } }
+    ov.style.transition = 'opacity .35s';
+    ov.style.opacity = '0';
+    setTimeout(() => ov.remove(), 380);
+  };
+  ov.querySelector('.bday-btn').addEventListener('click', close);
 }
 
 /* ---------- Kachel: Wetter (Daten aus fetchWeather, Open-Meteo) ---------- */
@@ -15110,6 +15994,7 @@ function openKidPage(memberId) {
   kidPageMemberId = memberId;
   renderKidPage();
   document.getElementById('kidPage').scrollTop = 0;
+  setTimeout(() => { try { bdayCheck(memberId); } catch (e) { /* egal */ } }, 700); // Geburtstag: einmal Happy Birthday
   clearInterval(kidPageTimer);
   kidPageTimer = setInterval(kidTick, 20 * 1000);
 }
@@ -24491,7 +25376,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.33.0';
+const APP_VERSION = '1.35.0';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -25449,6 +26334,25 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
    - rueckblick: true = Einträge vor dem Versions-Log, aus der Projekthistorie zusammengefasst.
    ========================================================== */
 const PINN_CHANGELOG = [
+  {
+    v: '1.35', datum: '09.10.2026', titel: 'Wo bist du? & mehr in der Familienkachel',
+    punkte: [
+      ['neu', '„Wo bist du?“ in den Schnellaktionen einer Person (wenn sie gerade keinen Live-Standort teilt): Sie bekommt eine Push-Nachricht und antwortet mit einem Tipp – einmalig mit ihrem Standort oder kurz („Bin zu Hause“, „Bin gleich da“, „Ruf mich an“ …). Die Antwort kommt als Push zurück und zeigt Karte und Adresse. Offene Fragen erscheinen auch beim nächsten Öffnen von pinn.'],
+      ['neu', 'Kinder: Sternestand direkt am Bild (⭐ 12), in den Schnellaktionen dazu die Sterne von heute und wartende Wünsche zum Freigeben'],
+      ['neu', 'Schule & Kita in der Kachel: 📚 mit der Zahl offener Hausaufgaben (rot, wenn bis morgen fällig), ✉️ bei Elternbriefen mit Frist in den nächsten zwei Tagen. In den Schnellaktionen Hausaufgaben direkt abhaken und Elternbriefe öffnen'],
+      ['neu', 'Heimweg „gleich zu Hause“: Ist jemand höchstens 600 m bzw. etwa 5 Minuten entfernt, leuchtet sein Bild grün mit 🏠 „gleich da“ und pinn. zeigt einmal einen kurzen Hinweis'],
+      ['info', 'Server: neu wobistdu.pb.js und pinn-wobistdu.js; Sprachdateien en/fr/es ergänzt'],
+    ],
+  },
+  {
+    v: '1.34', datum: '09.10.2026', titel: 'Familienmitglieder zum Antippen & Geburtstage',
+    punkte: [
+      ['neu', 'Kachel „Familienmitglieder“ zeigt live, was los ist: roter blinkender Punkt bei Live-Standort (verschwindet von selbst, wenn der Standort weg ist), Symbol des Orts (🏠, 🏫 …), 🎂 und goldener Ring am Geburtstag, 🎁 eine Woche vorher, 🚶 mit Entfernung beim Heimweg, roter Ring bei SOS, 🪫 bei fast leerem Akku und bei Kindern ein Fortschrittsring der Kinder-Aufgaben'],
+      ['neu', 'Tipp auf eine Person öffnet Schnellaktionen: Status und Standort, Termine und Aufgaben von heute, Anrufen, Nachricht, Karte, Heimweg, Aufgabe geben, Zettel oder Danke an die Pinnwand, Profil und Notfallpass. Am eigenen Bild: Standort teilen und „Ich bin unterwegs“. Kinder: Tipp = Kinderseite, gedrückt halten = Schnellaktionen'],
+      ['neu', 'Geburtstag: Das Geburtstagskind bekommt beim ersten Öffnen am Tag eine Happy-Birthday-Animation (auf allen Geräten nur einmal, Kinder auch auf ihrer Kinderseite). Alle anderen bekommen morgens zur Tagesübersicht eine Push-Nachricht – mit „Gratulieren“ als Zettel an die Pinnwand'],
+      ['info', 'Server: neu familie-geburtstag.pb.js und pinn-familie-geburtstag.js (Geburtsdatum aus dem Notfallpass); Sprachdateien en/fr/es ergänzt'],
+    ],
+  },
   {
     v: '1.33', datum: '09.10.2026', titel: 'Einkaufen in der Nähe',
     punkte: [
@@ -45760,6 +46664,8 @@ async function bootApp() {
   checkForAppUpdate(false); // Basiswert für die Update-Erkennung setzen
   setView('uebersicht');
   openDashboardKidPageIfNeeded(); // Kinderprofil am Dashboard: direkt die Kinderseite
+  setTimeout(() => { try { bdayCheck(); } catch (e) { /* egal */ } }, 1500); // Geburtstag: einmal Happy Birthday
+  setTimeout(() => { try { if (!new URLSearchParams(location.search).get('wobistdu')) wbCheckIncoming(); } catch (e) { /* egal */ } }, 2500); // offene „Wo bist du?“-Frage
   vtOpenFromUrl(); // aus einer Push-Erinnerung: Vertrag direkt öffnen
   if (!guest) kasseOpenFromUrl(); // aus einer Push-Nachricht: Kasse öffnen
   pwAfterBoot(); // Pinnwand: Archiv aufräumen, vorgemerkte Fotos hochladen, aus einer Push-Nachricht den Zettel öffnen
@@ -49386,6 +50292,7 @@ async function famLoadStatus() {
   }
   if (famFollow && famTrailHours) famLoadTrail(false);
   famRefreshLive();
+  try { if (currentView === 'uebersicht') renderFamilyTile(); ofsRefreshSheet(); } catch (e) { /* Übersicht noch nicht aufgebaut */ }
 }
 function famStartPolling() {
   famStopPolling();
@@ -50732,7 +51639,12 @@ async function sosCheck() {
     }
   } catch (e) { /* offline: nächster Versuch */ }
   sosLoading = false;
-  if (ok) { sosApply(); hwApply(); try { lpRenderBanner(); } catch (e) { /* egal */ } }
+  if (ok) {
+    sosApply(); hwApply();
+    try { lpRenderBanner(); } catch (e) { /* egal */ }
+    try { if (currentView === 'uebersicht') renderFamilyTile(); ofsRefreshSheet(); } catch (e) { /* egal */ }
+    try { hwSoonCheck(); } catch (e) { /* egal */ }
+  }
   sosSchedule();
 }
 function sosSchedule() {
@@ -54384,6 +55296,15 @@ function ntOpenLink(url) {
   const real = v => v && v !== '1';
   try {
     if (g('ausblick')) { abOpen(g('ausblick') === 'monat' ? 'monat' : 'woche'); return true; }
+    if (g('wobistdu')) {
+      if (!isCurrentUserGuest()) setTimeout(() => wbOpen(g('wobistdu')), 150);
+      return true;
+    }
+    if (g('geburtstag')) {
+      setView('uebersicht');
+      if (memberById(g('geburtstag'))) setTimeout(() => ofsOpen(g('geburtstag')), 120);
+      return true;
+    }
     if (g('sos')) {
       if (sosEnabled()) { sosStarted = true; sosForceId = g('sos'); sosCheck(); }
       return true;
@@ -54486,7 +55407,7 @@ function ntOpenLink(url) {
 }
 // Diese Adressen öffnet die Glocke beim Start selbst (die übrigen - ?sos, ?heimweg, ?kasse, ?vertrag,
 // ?dokument, ?pinnwand, ?familie - erledigen die jeweiligen Bereiche schon beim Hochfahren)
-var NT_START_LINKS = ['ausblick', 'ausgabe', 'fahrzeug', 'mitglied', 'aufgabe', 'termin', 'rezept', 'essen', 'vorrat', 'listen', 'einkauf', 'konto'];
+var NT_START_LINKS = ['wobistdu', 'geburtstag', 'ausblick', 'ausgabe', 'fahrzeug', 'mitglied', 'aufgabe', 'termin', 'rezept', 'essen', 'vorrat', 'listen', 'einkauf', 'konto'];
 
 // Zahl an der Glocke: offene Ausgaben, laufende Heimwege, ungelesene Neuerungen und neue Familien-Hinweise
 function ntUpdateBadge() {
