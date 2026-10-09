@@ -24,12 +24,13 @@ const STATUS_FILE = "/pb_data/pinn_vorrat_erinnert.json";
 const CACHE_FILE = "/pb_data/pinn_barcodes.json";
 const CACHE_STORE_KEY = "pinnBarcodeCache";
 const CACHE_MAX = 3000;
+const CACHE_VERSION = 2; // 2: Kategorien von der genauesten Angabe her (1.30.1) – ältere Einträge werden neu abgefragt
 const HIT_TTL_MS = 60 * 24 * 3600 * 1000;
 const MISS_TTL_MS = 3 * 24 * 3600 * 1000;
 const SEND_FROM_HOUR = 9;
 const SEND_UNTIL_HOUR = 21;
 const MHD_DAYS = [1, 2, 3, 5, 7, 14];
-const UA = "pinn/1.30 (self-hosted family organizer; https://github.com/pinn-shost/pinn)";
+const UA = "pinn/1.30.1 (self-hosted family organizer; https://github.com/pinn-shost/pinn)";
 
 // ---------------------------------------------------------------------------------------------
 // Zeit (Mitteleuropa, feste EU-Sommerzeitregel - wie pinn-push.js / pinn-vertraege.js)
@@ -214,25 +215,40 @@ const SOURCES = [
 const FIELDS = "product_name,product_name_de,product_name_en,generic_name,generic_name_de,abbreviated_product_name,brands,quantity,categories_tags";
 
 // Kategorie-Hinweis (IDs der Standard-Kategorien in der App, index.html → PANTRY_DEFAULT_CATEGORIES)
+// Die Datenbanken liefern Kategorien vom Allgemeinen zum Genauen, z. B. für Cornflakes:
+// plant-based-foods-and-beverages → … → breakfast-cereals → corn-flakes. Ausgewertet wird deshalb
+// von hinten (die genaueste Angabe zuerst); reine Oberbegriffe wie „Pflanzliche Lebensmittel und
+// Getränke“ werden übersprungen – sonst landeten Cornflakes, Nudeln & Co. bei den Getränken.
+const GENERIC_TAGS = [
+    "plant-based-foods-and-beverages", "plant-based-foods", "foods", "food", "groceries",
+    "non-food-products", "open-beauty-facts", "products", "animal-foods", "fresh-foods",
+    "dried-products", "dried-products-to-be-rehydrated", "unsweetened-products", "sweetened-products",
+    "organic-products", "vegan-products", "vegetarian-products",
+];
 const CATEGORY_RULES = [
-    [/frozen|surgel|tiefk/, "tiefkuehl"],
-    [/beverage|drink|water|juice|soda|coffee|tea|beer|wine|spirit|milk-drink|getraenk/, "getraenke"],
-    [/dair|milk|cheese|yogurt|yoghurt|cream|butter|quark|kaese/, "milch"],
-    [/meat|fish|seafood|sausage|ham|poultry|chicken|beef|pork|salmon|tuna/, "fleisch_fisch"],
-    [/bread|bakery|baked|toast|roll|brioche|croissant/, "brot"],
-    [/pasta|rice|noodle|cereal-grain|grain|couscous|quinoa|potato|lentil|legume|bulgur/, "nudeln_reis"],
-    [/canned|preserv|tinned|conserve/, "konserven"],
-    [/flour|sugar|baking|yeast|cake-mix|dessert-mix/, "backen"],
-    [/spice|condiment|sauce|oil|vinegar|salt|pepper|herb|ketchup|mustard|mayonnaise|dressing|stock|broth/, "gewuerze"],
-    [/breakfast|muesli|cereal|jam|spread|honey|cornflake|oat/, "fruehstueck"],
-    [/snack|sweet|chocolate|candy|confection|biscuit|cookie|chip|crisp|candies|gum/, "suesses"],
-    [/fruit|vegetable|salad|plant-based-foods-and-beverages/, "obst_gemuese"],
-    [/clean|detergent|dishwash|laundry|washing|household|paper-towel|toilet-paper|trash|bin-bag/, "haushalt"],
+    [/\bfrozen\b|surgel|tiefk/, "tiefkuehl"],
+    [/\b(beverages?|drinks?|waters?|juices?|sodas?|coffees?|teas?|beers?|wines?|spirits|nectars?|lemonades?|syrups?|smoothies?)\b/, "getraenke"],
+    [/breakfast|corn ?flakes?|flakes|muesli|granola|porridge|oat|cereal bars?|breakfast cereals?|cereals? with|puffed|extruded cereals?|jams?\b|marmalade|honeys?\b|spreads?\b|nut butters?|hazelnut spreads?/, "fruehstueck"],
+    [/snacks?\b|sweets?\b|chocolates?|candies|candy|confection|biscuits?|cookies?|crisps?|chips\b|gums?\b|cakes?\b|pastr|wafers?|gummies|bonbons?/, "suesses"],
+    [/dair|\bmilks?\b|cheeses?|yogh?urts?|creams?\b|butters?\b|quark|kaese|eggs?\b/, "milch"],
+    [/meats?\b|fish|seafood|sausages?|\bhams?\b|poultry|chicken|beef|pork|salmon|tuna/, "fleisch_fisch"],
+    [/breads?\b|bakery|baked goods|toast|rolls?\b|brioche|croissants?/, "brot"],
+    [/pastas?\b|\brices?\b|noodles?|couscous|quinoa|potato|lentils?|legumes?|bulgur|cereal grains?|grains?\b/, "nudeln_reis"],
+    [/canned|preserv|tinned|conserve|tomato pastes?|tomato concentrates?/, "konserven"],
+    [/flours?\b|sugars?\b|baking|yeasts?|cake mix|dessert mix/, "backen"],
+    [/spices?\b|condiments?|sauces?\b|\boils?\b|vinegars?|\bsalts?\b|peppers?\b|herbs?\b|ketchup|mustards?|mayonnaise|dressings?|stocks?\b|broths?/, "gewuerze"],
+    [/fruits?\b|vegetables?|salads?\b/, "obst_gemuese"],
+    [/clean|detergent|dishwash|laundry|washing|household|paper towel|toilet paper|trash|bin bag/, "haushalt"],
 ];
 function categoryHint(source, tags) {
-    const t = (Array.isArray(tags) ? tags : []).join(" ").toLowerCase();
     if (source === "obf") return "drogerie";
-    for (let i = 0; i < CATEGORY_RULES.length; i++) if (CATEGORY_RULES[i][0].test(t)) return CATEGORY_RULES[i][1];
+    const list = (Array.isArray(tags) ? tags : [])
+        .map(x => String(x || "").toLowerCase().replace(/^[a-z]{2}:/, ""))
+        .filter(x => x && GENERIC_TAGS.indexOf(x) < 0)
+        .map(x => x.replace(/-/g, " "));
+    for (let i = list.length - 1; i >= 0; i--) {
+        for (let k = 0; k < CATEGORY_RULES.length; k++) if (CATEGORY_RULES[k][0].test(list[i])) return CATEGORY_RULES[k][1];
+    }
     if (source === "opf") return "haushalt";
     return "sonstiges";
 }
@@ -308,13 +324,13 @@ function lookupBarcode(rawCode) {
     if (!validCode(code)) return { gefunden: false, error: "Ungültiger Barcode." };
     const cache = loadCache();
     const hit = cache[code];
-    if (hit && hit.ts && Date.now() - hit.ts < (hit.d && hit.d.gefunden ? HIT_TTL_MS : MISS_TTL_MS)) return hit.d;
+    if (hit && hit.v === CACHE_VERSION && hit.ts && Date.now() - hit.ts < (hit.d && hit.d.gefunden ? HIT_TTL_MS : MISS_TTL_MS)) return hit.d;
     let failures = 0;
     for (let i = 0; i < SOURCES.length; i++) {
         try {
             const r = queryOne(SOURCES[i], code);
             if (r) {
-                cache[code] = { ts: Date.now(), d: r };
+                cache[code] = { v: CACHE_VERSION, ts: Date.now(), d: r };
                 saveCache(cache);
                 return r;
             }
@@ -326,7 +342,7 @@ function lookupBarcode(rawCode) {
     const miss = { gefunden: false };
     // Nur merken, wenn wirklich alle geantwortet haben (sonst später noch einmal versuchen)
     if (!failures) {
-        cache[code] = { ts: Date.now(), d: miss };
+        cache[code] = { v: CACHE_VERSION, ts: Date.now(), d: miss };
         saveCache(cache);
     } else if (failures === SOURCES.length) {
         return { gefunden: false, netz: true };
@@ -334,4 +350,4 @@ function lookupBarcode(rawCode) {
     return miss;
 }
 
-module.exports = { runReminders, lookupBarcode, messageFor, dueItems };
+module.exports = { runReminders, lookupBarcode, messageFor, dueItems, categoryHint };

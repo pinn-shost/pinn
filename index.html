@@ -24161,7 +24161,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.30.0';
+const APP_VERSION = '1.30.1';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -25103,6 +25103,7 @@ const PINN_CHANGELOG = [
       ['neu', 'Mindesthaltbarkeit je Vorrats-Artikel: Plakette „läuft morgen ab“, Filter „⏳ Läuft ab“, Sortierung „MHD“ und ein Hinweis oben auf der Vorrat-Seite. Morgens kommt eine Push-Nachricht – einmal vorher (Tage im Regler-Symbol einstellbar) und einmal am Tag selbst; abschaltbar unter Einstellungen → Benachrichtigungen'],
       ['neu', 'Barcode-Scan mit der Kamera (📷 auf der Vorrat-Seite) zum Einräumen und Verbrauchen – für Lebensmittel, Drogerie, Haushalts- und Putzmittel und Tierfutter. Produktnamen holt der NAS aus Open Food / Beauty / Products / Pet Food Facts; Unbekanntes benennst du einmal, pinn. merkt sich den Barcode für die ganze Familie. Auch einem vorhandenen Artikel zuordnen, Nummer eintippen und Taschenlampe (Android) gehen'],
       ['neu', '„🍳 Was kann ich kochen?“ (Vorrat und Rezepte): gleicht die eigenen Rezepte mit dem Vorrat ab – „Alles da“ und „Fast alles da“, Rezepte mit Ablaufendem zuerst, Mengen werden verglichen. Fehlendes mit einem Tipp auf eine Einkaufsliste, Rezept direkt einplanen'],
+      ['fix', '1.30.1: Gescannte Produkte landen in der richtigen Kategorie – Cornflakes, Nudeln & Co. wurden wegen des Oberbegriffs „Pflanzliche Lebensmittel und Getränke“ als Getränke eingestuft. Server: angepasst pinn-vorrat.js'],
       ['info', 'Die Scan-Erkennung steckt direkt in pinn. (kein fremder Code) und die Kamera geht nach 90 Sekunden ohne Treffer und im Hintergrund aus. Server: neu vorrat.pb.js und pinn-vorrat.js, angepasst pinn-push.js und pinn-pushtext.js; Sprachdateien en/fr/es ergänzt'],
     ],
   },
