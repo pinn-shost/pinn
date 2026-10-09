@@ -574,7 +574,7 @@ window.PINN_LANGUAGES = [
     start(data);
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.28.0" onerror="PINN_I18N.fail()"><\/script>');
+  if (DICT) document.write('<script src="' + lang.file + '?v=1.29.0" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // Deutsch als WG: kein Wörterbuch, nur die WG-Bezeichnungen
 })();
 </script>
@@ -2273,6 +2273,85 @@ window.PINN_LANGUAGES = [
   html.dark .fam-copy, html.dark .fam-contact-row { background: rgba(255,255,255,0.06); }
   html.dark .fam-info { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); }
   html.dark .fam-blood { color: #F08A85; }
+
+  /* ---------- Familie: Reiter, Profil, Schule & Kita ---------- */
+  .fam-tab-btn { -webkit-tap-highlight-color: transparent; white-space: nowrap; }
+  .fam-tab-btn.active { background: var(--c-pine); color: #fff; }
+  .fam-quick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .fam-quick { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 12px 14px; border-radius: 18px; background: #fff; border: 1px solid rgba(37,35,31,0.1); box-shadow: 0 1px 2px rgba(0,0,0,0.04); text-align: left; -webkit-tap-highlight-color: transparent; transition: border-color .15s, transform .1s; }
+  .fam-quick:hover { border-color: color-mix(in srgb, var(--c-pine) 50%, transparent); }
+  .fam-quick:active { transform: scale(0.98); }
+  .fam-quick-ic { font-size: 22px; line-height: 1; margin-bottom: 4px; }
+  .fam-quick-t { font-size: 0.875rem; font-weight: 600; }
+  .fam-quick-s { font-size: 11px; color: rgba(37,35,31,0.5); line-height: 1.3; }
+  .fam-pass-row { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 2px; text-align: left; -webkit-tap-highlight-color: transparent; }
+  .fam-pass-row + .fam-pass-row { border-top: 1px solid rgba(37,35,31,0.08); }
+  .sk-today-row { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 2px; text-align: left; -webkit-tap-highlight-color: transparent; }
+  .sk-today-row + .sk-today-row { border-top: 1px solid rgba(37,35,31,0.08); }
+  .sk-alert { display: flex; align-items: center; gap: 8px; width: 100%; padding: 7px 10px; border-radius: 12px; background: rgba(37,35,31,0.04); font-size: 0.8125rem; text-align: left; }
+  .sk-badge { display: inline-block; flex-shrink: 0; padding: 1px 8px; border-radius: 9999px; font-size: 10.5px; font-weight: 600; white-space: nowrap; background: rgba(37,35,31,0.07); color: rgba(37,35,31,0.7); vertical-align: 1px; }
+  .sk-badge.urgent { background: rgba(214,69,69,0.14); color: #B3302B; }
+  .sk-badge.warn { background: color-mix(in srgb, var(--c-mustard) 22%, transparent); color: #7A5A00; }
+  .sk-badge.ok { background: color-mix(in srgb, var(--c-pine) 12%, transparent); color: var(--c-pine); }
+  .sk-kid-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 3px; }
+  .sk-kid-chip .fam-ava.sm { width: 24px; height: 24px; box-shadow: none; }
+  .sk-kid-chip .fam-ava.sm .fam-ava-in { font-size: 14px; }
+  .sk-kid-chip .fam-ava.sm .fam-ava-in.ini { font-size: 11px; }
+  .sk-hero-ic { flex-shrink: 0; width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; font-size: 28px; line-height: 1; background: color-mix(in srgb, var(--sk) 14%, #fff); }
+  .sk-daygrid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 8px; }
+  .sk-daygrid > div { border-radius: 12px; padding: 8px 10px; background: rgba(37,35,31,0.04); font-size: 0.8125rem; line-height: 1.35; min-width: 0; }
+  .sk-k { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em; color: rgba(37,35,31,0.45); margin-bottom: 2px; }
+  .sk-tt-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -4px; }
+  .sk-tt { width: 100%; min-width: 380px; border-collapse: separate; border-spacing: 3px; table-layout: fixed; }
+  .sk-tt th { font-size: 11px; font-weight: 600; color: rgba(37,35,31,0.5); text-align: center; padding: 2px 0 4px; }
+  .sk-tt th:first-child { width: 46px; }
+  .sk-tt th.today { color: var(--c-pine); }
+  .sk-slot { font-size: 9.5px; line-height: 1.2; color: rgba(37,35,31,0.5); text-align: right; padding-right: 4px; white-space: nowrap; vertical-align: middle; }
+  .sk-slot b { font-size: 11px; color: rgba(37,35,31,0.7); }
+  .sk-cell { width: 100%; min-height: 44px; border-radius: 9px; padding: 3px 2px; font-size: 11px; line-height: 1.15; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; background: rgba(37,35,31,0.035); border: 1px dashed transparent; overflow: hidden; word-break: break-word; text-align: center; -webkit-tap-highlight-color: transparent; }
+  .sk-cell.can:not(.has):hover { border-color: rgba(37,35,31,0.2); }
+  .sk-cell.has { background: color-mix(in srgb, var(--sk) 16%, #fff); color: color-mix(in srgb, var(--sk) 80%, #000); font-weight: 600; }
+  .sk-cell small { font-weight: 400; opacity: .75; font-size: 9.5px; }
+  .sk-tt td.today .sk-cell { box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--c-pine) 45%, transparent) inset; }
+  .sk-dayrow { display: grid; grid-template-columns: 6.5rem 6.5rem minmax(0,1fr); gap: 6px; align-items: center; padding: 6px 0; font-size: 0.8125rem; }
+  .sk-dayrow + .sk-dayrow { border-top: 1px solid rgba(37,35,31,0.07); }
+  .sk-dayname { color: rgba(37,35,31,0.6); }
+  .sk-daytime { font-variant-numeric: tabular-nums; }
+  .sk-daywho { font-size: 12px; color: rgba(37,35,31,0.7); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  @media (max-width: 420px) { .sk-dayrow { grid-template-columns: 5.6rem 5.8rem minmax(0,1fr); } }
+  .sk-dayedit { padding-bottom: 6px; margin-bottom: 10px; border-bottom: 1px solid rgba(37,35,31,0.08); }
+  .sk-row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; }
+  .sk-row + .sk-row { border-top: 1px solid rgba(37,35,31,0.08); }
+  .sk-chk { flex-shrink: 0; width: 24px; height: 24px; border-radius: 8px; border: 2px solid rgba(37,35,31,0.25); display: grid; place-items: center; font-size: 13px; font-weight: 700; color: transparent; margin-top: 1px; -webkit-tap-highlight-color: transparent; }
+  .sk-chk.on { background: var(--c-pine); border-color: var(--c-pine); color: #fff; }
+  .sk-chk.sk-cal { border: 0; font-size: 17px; color: inherit; }
+  .sk-main { flex: 1 1 auto; min-width: 0; text-align: left; }
+  .sk-t { font-size: 0.875rem; word-break: break-word; }
+  .sk-s { font-size: 11px; color: rgba(37,35,31,0.55); margin-top: 2px; }
+  .sk-row.done .sk-t { opacity: .5; text-decoration: line-through; }
+  .sk-subj { display: inline-block; width: 8px; height: 8px; border-radius: 9999px; background: var(--sk); margin-right: 5px; vertical-align: 1px; }
+  .sk-time-row .fz-in { padding: 0.4rem 0.5rem; }
+  .sk-time-n { width: 1.6rem; flex-shrink: 0; font-size: 12px; color: rgba(37,35,31,0.5); text-align: right; }
+  .kid-hw { margin: 14px auto 4px; width: 100%; max-width: 460px; border-radius: 22px; padding: 12px 14px; background: rgba(255,255,255,0.82); color: #25231F; box-shadow: 0 4px 16px rgba(0,0,0,0.08); text-align: left; }
+  .kid-hw-h { font-weight: 800; font-size: 17px; margin-bottom: 6px; }
+  .kid-hw-row { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 2px; text-align: left; -webkit-tap-highlight-color: transparent; }
+  .kid-hw-row + .kid-hw-row { border-top: 1px solid rgba(37,35,31,0.08); }
+  .kid-hw-chk { flex-shrink: 0; width: 30px; height: 30px; border-radius: 10px; border: 3px solid rgba(37,35,31,0.25); display: grid; place-items: center; font-weight: 800; color: #fff; }
+  .kid-hw-row.done .kid-hw-chk { background: #2F9E5B; border-color: #2F9E5B; }
+  .kid-hw-t { font-size: 16px; line-height: 1.3; }
+  .kid-hw-row.done .kid-hw-t { text-decoration: line-through; opacity: .55; }
+  html.dark .fam-quick { background-color: #2E2C28; border-color: rgba(255,255,255,0.12); }
+  html.dark .fam-quick-s, html.dark .sk-k, html.dark .sk-s, html.dark .sk-dayname, html.dark .sk-slot, html.dark .sk-tt th { color: rgba(237,234,226,0.55); }
+  html.dark .sk-slot b, html.dark .sk-daywho { color: rgba(237,234,226,0.75); }
+  html.dark .fam-pass-row + .fam-pass-row, html.dark .sk-today-row + .sk-today-row, html.dark .sk-row + .sk-row, html.dark .sk-dayrow + .sk-dayrow, html.dark .sk-dayedit { border-color: rgba(255,255,255,0.1); }
+  html.dark .sk-alert, html.dark .sk-daygrid > div, html.dark .sk-cell { background: rgba(255,255,255,0.06); }
+  html.dark .sk-cell.has { background: color-mix(in srgb, var(--sk) 30%, #2E2C28); color: #F3F0E8; }
+  html.dark .sk-hero-ic { background: color-mix(in srgb, var(--sk) 25%, #2E2C28); }
+  html.dark .sk-chk:not(.on):not(.sk-cal) { border-color: rgba(255,255,255,0.3); }
+  html.dark .sk-badge { background: rgba(255,255,255,0.1); color: rgba(237,234,226,0.8); }
+  html.dark .sk-badge.urgent { background: rgba(214,69,69,0.25); color: #F4A39E; }
+  html.dark .sk-badge.warn { color: #E9C46A; }
+  html.dark .sk-badge.ok { color: #9FD3BE; }
   html.dark .fm-tile { filter: brightness(0.82) contrast(1.05); }
   /* ---------- Dokumente ---------- */
   .doc-group-btn, .doc-row, .doc-tile, .doc-due-row, .doc-cat-row { -webkit-tap-highlight-color: transparent; }
@@ -4056,6 +4135,13 @@ window.PINN_LANGUAGES = [
             <button id="famPlacesBtn" type="button" class="hidden px-3 py-1.5 rounded-lg border border-ink/15 text-xs font-medium hover:bg-ink/5 transition whitespace-nowrap">📍 Orte</button>
             <button id="famSetupBtn" type="button" class="hidden px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">⚙︎ Ortung</button>
           </div>
+        </div>
+        <!-- Umschalter: Übersicht / Schule & Kita / Ortung / Notfall -->
+        <div id="famTabs" class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs mt-3 w-full sm:w-fit overflow-x-auto" role="tablist" aria-label="Familienbereich">
+          <button type="button" data-famtab="uebersicht" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Übersicht</button>
+          <button type="button" data-famtab="schule" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Schule & Kita</button>
+          <button type="button" data-famtab="ortung" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Ortung</button>
+          <button type="button" data-famtab="notfall" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Notfall</button>
         </div>
       </div>
       <div id="famScroll" class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">
@@ -10866,6 +10952,10 @@ function defaultFamilyData() {
     listTemplates: [],       // Listen: eigene Vorlagen
     documentCategories: [],  // Dokumente: eigene Kategorien (leer = Standard)
     emergencyPasses: {},     // Familie: Notfallpass je Mitglied-ID
+    schoolProfiles: [],      // Familie → Schule & Kita: je Kind Einrichtung, Stundenplan, Bringen & Abholen
+    schoolHomework: [],      // Familie → Schule & Kita: Hausaufgaben
+    schoolLetters: [],       // Familie → Schule & Kita: Elternbriefe mit Fristen
+    schoolClosures: [],      // Familie → Schule & Kita: Schließtage (erscheinen im Kalender)
     tasks: [],
     lastName: '',
     wohnform: 'familie',     // 'familie' oder 'wg' (Einstellungen → Familienmitglieder → Wohnform)
@@ -10907,6 +10997,10 @@ function defaultFamilyData() {
 let members = [];
 let houseMaintenance = []; // Haus → Wartungsplan (Familiendaten, siehe Abschnitt „Haus“)
 let emergencyPasses = {}; // Familie → Notfallpässe { <Mitglied-ID>: {...} }
+let schoolProfiles = [];  // Familie → Schule & Kita (siehe Abschnitt „Schule & Kita“)
+let schoolHomework = [];
+let schoolLetters = [];
+let schoolClosures = [];
 let events = []; // wird ausschließlich aus dem Apple-Kalender (kalender.ics) befüllt, s. syncAppleCalendarFile()
 let mealPlan = [];
 let recipes = [];
@@ -11304,6 +11398,11 @@ function applyFamilyData(data) {
   listTemplates = normalizeListTemplates(data.listTemplates);
   documentCategories = Array.isArray(data.documentCategories) ? data.documentCategories.filter(x => x && x.id && x.label) : [];
   emergencyPasses = (data.emergencyPasses && typeof data.emergencyPasses === 'object' && !Array.isArray(data.emergencyPasses)) ? data.emergencyPasses : {};
+  const skList = (v) => Array.isArray(v) ? v.filter(x => x && typeof x.id === 'string' && x.id) : [];
+  schoolProfiles = skList(data.schoolProfiles);
+  schoolHomework = skList(data.schoolHomework);
+  schoolLetters = skList(data.schoolLetters).filter(x => Array.isArray(x.memberIds));
+  schoolClosures = skList(data.schoolClosures).filter(x => Array.isArray(x.memberIds));
   lastName = (data.lastName && data.lastName !== 'Mustermann') ? data.lastName : '';
   householdType = data.wohnform === 'wg' ? 'wg' : 'familie';
   applyHouseholdType(true);
@@ -12288,7 +12387,7 @@ document.getElementById('refreshBirthdaysBtn').addEventListener('click', async (
 
 function buildFamilyPayload() {
   const payload = {
-    members, mealPlan, recipes, recipeFavorites, shoppingItems, shoppingHistory, shoppingLists, shoppingTransferred, shoppingPlans, shoppingListOrder, shoppingMealTarget, shoppingIngredientRules, shoppingCategoryOrder, pantryItems, pantryCategories, pantryLocations, pinboard, familyLists, listTemplates, documentCategories, emergencyPasses, tasks, lastName, wohnform: householdType, themeColors, categoryActive, recipeCategories, appleCalendar, weatherLocation, rooms, roomSchedules, trashBins, smartDevices, houseMaintenance, cleaningCategories, kitchenTools, favoriteTabs, guestHiddenViews, doneTaskCleanupDays, finance,
+    members, mealPlan, recipes, recipeFavorites, shoppingItems, shoppingHistory, shoppingLists, shoppingTransferred, shoppingPlans, shoppingListOrder, shoppingMealTarget, shoppingIngredientRules, shoppingCategoryOrder, pantryItems, pantryCategories, pantryLocations, pinboard, familyLists, listTemplates, documentCategories, emergencyPasses, schoolProfiles, schoolHomework, schoolLetters, schoolClosures, tasks, lastName, wohnform: householdType, themeColors, categoryActive, recipeCategories, appleCalendar, weatherLocation, rooms, roomSchedules, trashBins, smartDevices, houseMaintenance, cleaningCategories, kitchenTools, favoriteTabs, guestHiddenViews, doneTaskCleanupDays, finance,
     defaultViewModeDesktop, defaultViewScopeDesktop, defaultViewModeMobile, defaultViewScopeMobile,
     darkMode: document.documentElement.classList.contains('dark'),
   };
@@ -12313,6 +12412,7 @@ function rerenderAfterRemoteChange() {
     applyRoleRestrictions(); renderBottomTabBar(); // Gäste-Menüs und Kindersicherung
     renderLastName();
     renderMemberChips();
+    try { rebuildEvents(); } catch (e) { /* egal */ } // Schließtage & Fristen (Schule & Kita) von anderen Geräten
     renderCalendar();
     renderTasks();
     if (kidPageMemberId) renderKidPage();
@@ -12564,13 +12664,14 @@ function calendarLabel(name) {
 }
 function calendarCount() { return appleCalendar.selectedCalendars.length + pinnCals.length; }
 // Schulferien und Müllabfuhr: kleiner dargestellt und hinter den normalen Terminen
-function isMinorCalEvent(ev) { return !!(ev && (ev.pinnHoliday === 'ferien' || ev.pinnHoliday === 'muell')); }
+function isMinorCalEvent(ev) { return !!(ev && (ev.pinnHoliday === 'ferien' || ev.pinnHoliday === 'muell' || ev.pinnHoliday === 'schule')); }
 function minorSortWeight(a, b) { return (isMinorCalEvent(a) ? 1 : 0) - (isMinorCalEvent(b) ? 1 : 0); }
 
 // Liefert die dem Termin zugeordnete Kalenderfarbe (aus den Einstellungen fest zugewiesen), oder
 // die neutrale Fallback-Farbe, falls (noch) keine Farbe für diesen Kalender hinterlegt ist.
 function colorForCalendarEvent(ev) {
   if (ev && ev.pinnHoliday === 'muell') return ev.pinnColor || '#7A6F5A'; // Müllkalender (Farbe je Müllart)
+  if (ev && ev.pinnHoliday === 'schule') return ev.pinnColor || '#8E5BB5'; // Schule & Kita (Farbe des Kindes)
   if (ev && ev.pinnHoliday) return ev.pinnHoliday === 'ferien' ? '#2E9C7A' : '#C0392B'; // Schulferien / Feiertage (Zuhause)
   const pc = ev && pinnCalByName(ev.pinnCalName); // eigener Kalender
   if (pc) return pc.farbe || ICS_EVENT_COLOR;
@@ -12938,7 +13039,7 @@ function showEventDetail(ev, anchorEl) {
   // Feiertage und Schulferien (aus dem Bundesland unter Einstellungen → Zuhause) sind nur zum Lesen
   const isHoliday = !!ev.pinnHoliday;
   if (isHoliday) {
-    calNameEl.textContent = ev.pinnHoliday === 'muell' ? '🗑️ Müllabfuhr' : ev.pinnHoliday === 'ferien' ? '🎒 Schulferien' : '🎉 Feiertag';
+    calNameEl.textContent = ev.pinnHoliday === 'muell' ? '🗑️ Müllabfuhr' : ev.pinnHoliday === 'ferien' ? '🎒 Schulferien' : ev.pinnHoliday === 'schule' ? '🏫 Schule & Kita' : '🎉 Feiertag';
     calNameEl.classList.remove('hidden');
   }
   const linkedApple = !!(pinnCalByName(ev.pinnCalName) && pinnCalByName(ev.pinnCalName).quelle === 'apple');
@@ -14401,6 +14502,7 @@ function renderKidPage() {
       <div class="kid-sub">Gerade gibt es nichts zu tun – spiel schön!${next && period !== 'abends' ? `<br>Ab ${escapeHtml(next)} Uhr geht's weiter.` : ''}</div>
       <div class="kid-empty-emoji">🎈</div>
       ${kidBankHtml(m)}
+      ${kidHomeworkHtml(m)}
       ${kidAllowanceHtml(m)}
     </div>`;
     return;
@@ -14422,6 +14524,7 @@ function renderKidPage() {
           <span class="kid-card-title">${escapeHtml(t.title)}</span>
         </button>`).join('')}
     </div>
+    ${kidHomeworkHtml(m)}
     ${homeSunLine(now) ? `<div class="kid-sun">${homeSunLine(now)}</div>` : ''}
     ${kidAllowanceHtml(m)}`;
 }
@@ -14544,6 +14647,14 @@ function closeKidPage() {
 }
 document.getElementById('kidContent').addEventListener('click', (e) => {
   if (e.target.closest('#kidBankBtn')) { kidOpenShop(); return; }
+  const hw = e.target.closest('[data-khw]');
+  if (hw) {
+    const item = skHomeworkOf('').find(x => x.id === hw.dataset.khw);
+    skToggleHomework(hw.dataset.khw);
+    try { if (item && !item.done) kidPlaySound('done'); } catch (err) { /* egal */ }
+    renderKidPage();
+    return;
+  }
   const card = e.target.closest('.kid-card');
   if (card) kidToggleTask(card.dataset.task, card);
 });
@@ -20080,7 +20191,9 @@ function pendingEventsFromPayload(payload, uid, href) {
 
 // Serverstand + noch ausstehende eigene Aktionen = angezeigte Termine
 function rebuildEvents() {
-  const extra = homeCalendarEvents().concat(muellCalendarEvents()); // Feiertage & Schulferien (Zuhause), Müllkalender
+  let school = [];
+  try { school = schoolCalendarEvents(); } catch (e) { school = []; }
+  const extra = homeCalendarEvents().concat(muellCalendarEvents(), school); // Feiertage & Schulferien (Zuhause), Müllkalender, Schule & Kita
   const ops = outboxRead().filter(op => op.kind === 'event-create' || op.kind === 'event-update' || op.kind === 'event-delete');
   if (!ops.length) { events = extra.length ? eventsServer.concat(extra) : eventsServer; return; }
   const replaced = new Set(ops.filter(op => op.kind !== 'event-create').map(op => op.href));
@@ -23715,7 +23828,7 @@ function setView(view) {
     calendarModeToggle.classList.remove('flex');
     if (isNavigatingToNewView) famFitted = false;
     renderFamily();
-    famStartPolling();
+    if (famPollWanted()) famStartPolling(); else famStopPolling();
   } else {
     // Übersicht: Kacheln in der persönlich eingestellten Reihenfolge (Einstellungen → Übersicht).
     // Ist der Kalender für Gäste ausgeblendet, fehlt er hier ebenfalls.
@@ -23908,7 +24021,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.28.0';
+const APP_VERSION = '1.29.0';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -24844,6 +24957,18 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
    - rueckblick: true = Einträge vor dem Versions-Log, aus der Projekthistorie zusammengefasst.
    ========================================================== */
 const PINN_CHANGELOG = [
+  {
+    v: '1.29', datum: '09.10.2026', titel: 'Schule & Kita',
+    punkte: [
+      ['neu', 'Familie neu aufgebaut mit den Reitern Übersicht, Schule & Kita, Ortung und Notfall. Ein Tipp auf eine Person öffnet jetzt ihr Profil (Standort, Schule bzw. Kita, Notfallpass als Kachel) statt direkt den Notfallpass – aus dem SOS-Popup und dem Reiter „Notfall“ geht der Notfallpass weiterhin sofort auf'],
+      ['neu', 'Schule & Kita je Kind: Einrichtung, Klasse oder Gruppe, Lehrkraft bzw. Erzieher:in mit Anruf- und Mail-Knopf; Übersicht für heute und morgen'],
+      ['neu', 'Stundenplan als Raster mit eigenen Stundenzeiten, farbigen Fächern, Räumen und Doppelstunden – oder einfach fotografieren, die KI trägt ihn ein. Für die Kita Betreuungszeiten; für beide, wer an welchem Tag bringt und abholt'],
+      ['neu', 'Hausaufgaben mit Fach und Frist (automatisch die nächste Stunde des Fachs) – auch auf der Kinderseite zum Abhaken'],
+      ['neu', 'Elternbriefe mit Frist („unterschreiben bis Freitag“), Betrag und Notiz – auf Wunsch als Aufgabe mit Erinnerung für die Eltern; abgehakt ist abgehakt, in beide Richtungen. Brief fotografieren oder als PDF wählen: die KI liest Titel, Frist, Betrag und enthaltene Schließtage aus'],
+      ['neu', 'Schließtage (auch mehrtägig) und offene Brief-Fristen erscheinen direkt im Kalender in der Farbe des Kindes'],
+      ['info', 'Standorte werden nur noch auf „Übersicht“, „Ortung“ und im Profil laufend abgefragt – das schont Akku und Server. Server: angepasst pinn-ki.js und ki.pb.js (Stundenplan und Elternbrief vom Foto); Sprachdateien en/fr/es ergänzt'],
+    ],
+  },
   {
     v: '1.28', datum: '08.10.2026', titel: 'Haus',
     punkte: [
@@ -46963,7 +47088,7 @@ function gsCollect(q) {
     members.forEach(m => {
       const label = memberLabel(m);
       add('member', {
-        icon: '🧑', typeLabel: 'Familie', sub: (m.role && label !== m.role ? m.role + ' · ' : '') + 'Notfallpass',
+        icon: '🧑', typeLabel: 'Familie', sub: (m.role && label !== m.role ? m.role + ' · ' : '') + 'Profil · Notfallpass',
         run: () => { if (allowed('familie')) famOpenMember(m.id); else openMemberModal(m.id); },
       }, label, [m.name, m.role].join(' '));
     });
@@ -47526,7 +47651,7 @@ function famStartPolling() {
   famStopPolling();
   if (!famOrtungAllowed()) return;
   const tick = async () => {
-    if (currentView !== 'familie') { famStopPolling(); return; }
+    if (currentView !== 'familie' || !famPollWanted()) { famStopPolling(); return; }
     if (document.visibilityState === 'visible') await famLoadStatus();
     if (currentView !== 'familie') return;
     const ms = (window.pinnRuhe && window.pinnRuhe()) ? 60 * 1000 : (famFollow ? FAM_POLL_FOLLOW_MS : FAM_POLL_MS);
@@ -47803,42 +47928,33 @@ function famCreateMap(host, opts) {
 function renderFamily() {
   const pane = document.getElementById('famPane');
   if (!pane) return;
+  if (famTab === 'ortung' && !famOrtungAllowed()) famTab = 'uebersicht';
+  if (famDetailId && !memberById(famDetailId)) famDetailId = null;
+  document.querySelectorAll('.fam-tab-btn').forEach(b => {
+    b.classList.toggle('active', !famDetailId && b.dataset.famtab === famTab);
+    if (b.dataset.famtab === 'ortung') b.classList.toggle('hidden', !famOrtungAllowed());
+  });
+  const inOrtung = famTab === 'ortung' && !famDetailId;
   const placesBtn = document.getElementById('famPlacesBtn');
   const setupBtn = document.getElementById('famSetupBtn');
-  if (placesBtn) placesBtn.classList.toggle('hidden', !famOrtungAllowed() || !famCanEdit());
-  if (setupBtn) setupBtn.classList.toggle('hidden', !isCurrentUserAdmin());
-  if (famDetailId && memberById(famDetailId)) {
-    pane.innerHTML = famDetailHtml(memberById(famDetailId));
-  } else {
-    famDetailId = null;
-    pane.innerHTML = famOverviewHtml();
+  if (placesBtn) placesBtn.classList.toggle('hidden', !inOrtung || !famOrtungAllowed() || !famCanEdit());
+  if (setupBtn) setupBtn.classList.toggle('hidden', !inOrtung || !isCurrentUserAdmin());
+  try { skSyncFromTasks(); } catch (e) { /* egal */ }
+  if (famDetailId) {
+    const m = memberById(famDetailId);
+    pane.innerHTML = famDetailMode === 'pass' ? famDetailHtml(m) : famProfileHtml(m);
+  } else if (famTab === 'schule') {
+    pane.innerHTML = skPaneHtml();
+    skKiCheck();
+  } else if (famTab === 'notfall') {
+    pane.innerHTML = famNotfallHtml();
+  } else if (famTab === 'ortung') {
+    pane.innerHTML = famOrtungHtml();
     famAttachMap();
+  } else {
+    pane.innerHTML = famHomeHtml();
   }
   famRefreshLive();
-}
-
-function famOverviewHtml() {
-  const list = members.slice();
-  const grid = list.length
-    ? `<div id="famGrid" class="fam-grid"></div>`
-    : `<div class="fam-card text-center py-6"><div class="text-4xl mb-2">👨‍👩‍👧‍👦</div><div class="font-serif text-lg mb-1">Noch keine Familienmitglieder</div><p class="text-sm text-ink/50">Mitglieder legt ein Admin unter Einstellungen → Familienmitglieder an.</p></div>`;
-  if (!famOrtungAllowed()) {
-    return `${grid}<p class="text-[11px] text-ink/40 text-center">Tippe auf eine Person, um ihren Notfallpass zu öffnen.</p>`;
-  }
-  return `
-    ${grid}
-    <div id="famMine"></div>
-    <div class="fam-card">
-      <div class="flex items-center justify-between gap-2 mb-2">
-        <div class="fz-h" style="margin-bottom:0">📍 Live-Standorte</div>
-        <span id="famStamp" class="text-[11px] text-ink/40"></span>
-      </div>
-      <div id="famChips" class="fam-chip-row"></div>
-      <div id="famMapSlot" class="fam-map-slot"></div>
-      <div id="famInfo"></div>
-      <div id="famNote"></div>
-    </div>
-    <p class="text-[11px] text-ink/40 text-center">Tippe auf eine Person, um ihren Notfallpass zu öffnen.</p>`;
 }
 
 function famPersonHtml(m) {
@@ -47990,7 +48106,7 @@ function famRenderInfo() {
       <button type="button" class="fz-mini-btn${famFollow === g.id ? ' primary' : ''}" data-famact="follow" data-id="${famAttr(g.id)}">👁 ${famFollow === g.id ? 'Verfolgen beenden' : 'Verfolgen'}</button>
       ${addr ? '' : `<button type="button" class="fz-mini-btn" data-famact="address" data-id="${famAttr(g.id)}">📮 Adresse</button>`}
       <a class="fz-mini-btn" href="${famAttr(nav)}" target="_blank" rel="noopener">🧭 Navigation</a>
-      ${memberById(g.memberId) ? `<button type="button" class="fz-mini-btn" data-famopen="${famAttr(g.memberId)}">🩺 Notfallpass</button>` : ''}
+      ${memberById(g.memberId) ? `<button type="button" class="fz-mini-btn" data-famopen="${famAttr(g.memberId)}">👤 Profil</button><button type="button" class="fz-mini-btn" data-fampass="${famAttr(g.memberId)}">🩺 Notfallpass</button>` : ''}
     </div>
   </div>`;
 }
@@ -48128,7 +48244,7 @@ function famDetailHtml(m) {
   const contactsHtml = contacts.map(c => `<div class="fam-row"><div class="fam-v"><b>${escapeHtml(c.name || '')}</b>${c.relation ? `<span class="text-ink/50"> · ${escapeHtml(c.relation)}</span>` : ''}${c.phone ? `<div class="text-xs text-ink/50">${escapeHtml(c.phone)}</div>` : ''}</div>${famCallBtn(c.phone)}</div>`).join('');
   const by = p.updatedBy ? (familyProfiles.find(x => x.id === p.updatedBy) || {}).username || '' : '';
   return `
-    <button type="button" class="self-start text-sm text-ink/55 hover:text-pine -mb-1" data-famact="back">‹ Alle</button>
+    <button type="button" class="self-start text-sm text-ink/55 hover:text-pine -mb-1" data-famact="back">‹ ${famPassFrom === 'profil' ? escapeHtml(memberLabel(m)) : 'Zurück'}</button>
     <div class="fz-hero" style="--fz:${famAttr(color)}">
       <div class="fam-band"><svg class="fam-ecg" viewBox="0 0 300 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 22 H105 L114 10 L124 34 L134 4 L146 30 L154 22 H300"></path></svg></div>
       <div class="fam-hero-ava"><span class="fam-ava big" style="--fam:${famAttr(color)}">${famAvatarInner(m)}<span id="famDetailPing" class="fam-ping${famIsLive(famDeviceForMember(m.id)) ? '' : ' hidden'}"></span></span></div>
@@ -48742,12 +48858,15 @@ async function famLoadAddress(id) {
 }
 function famOpenMember(memberId) {
   famDetailId = memberById(memberId) ? memberId : null;
+  famDetailMode = 'profil';
+  famPassFrom = '';
   if (currentView !== 'familie') setView('familie'); else renderFamily();
   const sc = document.getElementById('famScroll');
   if (sc) sc.scrollTop = 0;
 }
 function famShowOnMap(deviceId) {
   famDetailId = null;
+  famTab = 'ortung';
   famHidden.delete(deviceId);
   famFollow = deviceId;
   famSelected = deviceId;
@@ -49125,7 +49244,7 @@ function sosStart() {
         if (!a) break;
         const mid = a.memberId;
         sosClose(true);
-        famOpenMember(mid);
+        famOpenPass(mid);
         break;
       }
     }
@@ -49155,10 +49274,1387 @@ function sosStart() {
   } catch (e) { /* egal */ }
 })();
 
+/* ==========================================================
+   Familie: Reiter (Übersicht · Schule & Kita · Ortung · Notfall) und Profil je Person
+   ----------------------------------------------------------
+   - Ein Tipp auf eine Person öffnet ihr Profil (Standort, Schule & Kita, Notfallpass als Kachel).
+     Der Notfallpass selbst öffnet sich direkt aus dem SOS-Popup, dem Reiter „Notfall“ und der Karte.
+   - Standorte werden nur auf „Übersicht“, „Ortung“ und im Profil laufend abgefragt.
+   ========================================================== */
+var famTab = 'uebersicht';      // 'uebersicht' | 'schule' | 'ortung' | 'notfall'
+var famDetailMode = 'profil';   // 'profil' | 'pass'
+var famPassFrom = '';           // 'profil' = zurück ins Profil, sonst zur Liste
+function famPollWanted() { return !!famDetailId || famTab === 'uebersicht' || famTab === 'ortung'; }
+function famSetTab(tab) {
+  famTab = ['uebersicht', 'schule', 'ortung', 'notfall'].includes(tab) ? tab : 'uebersicht';
+  famDetailId = null;
+  if (famTab === 'ortung') famFitted = false;
+  renderFamily();
+  if (famPollWanted()) famStartPolling(); else famStopPolling();
+  const sc = document.getElementById('famScroll');
+  if (sc) sc.scrollTop = 0;
+}
+function famOpenPass(memberId) {
+  famDetailId = memberById(memberId) ? memberId : null;
+  famDetailMode = 'pass';
+  famPassFrom = '';
+  if (currentView !== 'familie') setView('familie'); else renderFamily();
+  const sc = document.getElementById('famScroll');
+  if (sc) sc.scrollTop = 0;
+}
+function famPassFilled(p) {
+  return !!p && Object.keys(p).some(k => !['updated', 'updatedBy'].includes(k) && (Array.isArray(p[k]) ? p[k].some(x => x && Object.values(x).some(Boolean)) : String(p[k] || '').trim()));
+}
+
+function famHomeHtml() {
+  const grid = members.length
+    ? `<div id="famGrid" class="fam-grid"></div>`
+    : `<div class="fam-card text-center py-6"><div class="text-4xl mb-2">👨‍👩‍👧‍👦</div><div class="font-serif text-lg mb-1">Noch keine Familienmitglieder</div><p class="text-sm text-ink/50">Mitglieder legt ein Admin unter Einstellungen → Familienmitglieder an.</p></div>`;
+  return `${grid}
+    ${skTodayCardHtml()}
+    ${famQuickCardsHtml()}
+    ${members.length ? '<p class="text-[11px] text-ink/40 text-center">Tippe auf eine Person, um ihr Profil zu öffnen.</p>' : ''}`;
+}
+function famQuickCardsHtml() {
+  const people = members.filter(m => !famIsPet(m));
+  const filled = members.filter(m => famPassFilled(famPass(m.id))).length;
+  const cards = [];
+  cards.push(`<button type="button" class="fam-quick" data-famtabgo="notfall">
+      <span class="fam-quick-ic">🩺</span>
+      <span class="fam-quick-t">Notfall</span>
+      <span class="fam-quick-s">${filled ? `${filled} von ${members.length} Notfallpässen` : 'Noch kein Notfallpass'}</span>
+    </button>`);
+  if (famOrtungAllowed()) {
+    const sharing = famDevices().filter(g => g.teilen && g.position).length;
+    cards.push(`<button type="button" class="fam-quick" data-famtabgo="ortung">
+      <span class="fam-quick-ic">📍</span>
+      <span class="fam-quick-t">Ortung</span>
+      <span class="fam-quick-s">${sharing ? `${sharing} teilen ihren Standort` : 'Karte & Orte'}</span>
+    </button>`);
+  }
+  if (!skProfiles().length && people.length) {
+    cards.push(`<button type="button" class="fam-quick" data-famtabgo="schule">
+      <span class="fam-quick-ic">🎒</span>
+      <span class="fam-quick-t">Schule & Kita</span>
+      <span class="fam-quick-s">Stundenplan, Elternbriefe, Schließtage</span>
+    </button>`);
+  }
+  return `<div class="fam-quick-grid">${cards.join('')}</div>`;
+}
+function famOrtungHtml() {
+  if (!famOrtungAllowed()) return '';
+  return `
+    <div id="famMine"></div>
+    <div class="fam-card">
+      <div class="flex items-center justify-between gap-2 mb-2">
+        <div class="fz-h" style="margin-bottom:0">📍 Live-Standorte</div>
+        <span id="famStamp" class="text-[11px] text-ink/40"></span>
+      </div>
+      <div id="famChips" class="fam-chip-row"></div>
+      <div id="famMapSlot" class="fam-map-slot"></div>
+      <div id="famInfo"></div>
+      <div id="famNote"></div>
+    </div>`;
+}
+function famNotfallHtml() {
+  const n = regionNotruf();
+  const calls = [`<a class="fz-act-btn fam-sos" href="tel:${escapeHtml(n.rettung)}"><span class="fz-ti">🚑</span>${escapeHtml(n.rettung)} anrufen</a>`];
+  if (n.polizei && n.polizei !== n.rettung) calls.push(`<a class="fz-act-btn" href="tel:${escapeHtml(n.polizei)}"><span class="fz-ti">🚓</span>${escapeHtml(n.polizei)} anrufen</a>`);
+  const rows = members.map(m => {
+    const p = famPass(m.id) || {};
+    const has = famPassFilled(p);
+    const contacts = (Array.isArray(p.contacts) ? p.contacts : []).filter(x => x && (x.name || x.phone)).length;
+    const meds = (Array.isArray(p.meds) ? p.meds : []).filter(x => x && (x.name || x.dose)).length;
+    const facts = has ? [
+      !famIsPet(m) && p.blood ? '🩸 ' + p.blood : '',
+      p.allergies ? '⚠️ ' + String(p.allergies).split(/[,;\n]/)[0].trim() : '',
+      meds ? `💊 ${meds}` : '',
+      contacts ? `📞 ${contacts}` : '',
+    ].filter(Boolean).join(' · ') : '';
+    return `<button type="button" class="fam-pass-row" data-fampass="${famAttr(m.id)}" style="--fam:${famAttr(famColor(m))}">
+      <span class="fam-ava sm">${famAvatarInner(m)}</span>
+      <span class="min-w-0 flex-1 text-left">
+        <span class="block text-sm font-medium truncate">${escapeHtml(memberLabel(m))}</span>
+        <span class="block text-[11px] ${has ? 'text-ink/55' : 'text-mustard'} truncate">${has ? escapeHtml(facts || 'Notfallpass') : 'Noch kein Notfallpass'}</span>
+      </span>
+      <span class="text-ink/30 text-lg leading-none">›</span>
+    </button>`;
+  }).join('');
+  return `
+    <div class="fam-card">
+      <div class="fz-h">🆘 Notruf</div>
+      <div class="flex gap-2">${calls.join('')}</div>
+    </div>
+    ${members.length ? `<div class="fam-card"><div class="fz-h">🩺 Notfallpässe</div><div class="flex flex-col">${rows}</div></div>` : ''}
+    <p class="text-[11px] text-ink/40 text-center">Notfallpässe sind auch offline griffbereit.</p>`;
+}
+function famProfileHtml(m) {
+  const p = famPass(m.id) || {};
+  const pet = famIsPet(m);
+  const age = famAge(p.birth);
+  const color = famColor(m);
+  const sp = skProfile(m.id);
+  const g = famOrtungAllowed() ? famDeviceForMember(m.id) : null;
+  const sub = [m.role && memberLabel(m) !== m.role ? m.role : '', age != null ? age + (age === 1 ? ' Jahr' : ' Jahre') : '', pet && p.species ? p.species : ''].filter(Boolean).join(' · ');
+  const btns = [
+    p.phone ? `<a class="fz-act-btn" href="${famAttr(famTel(p.phone))}"><span class="fz-ti">📞</span>Anrufen</a>` : '',
+    `<button type="button" class="fz-act-btn" data-famact="pass"><span class="fz-ti">🩺</span>Notfallpass</button>`,
+    sp ? `<button type="button" class="fz-act-btn" data-sk="open" data-id="${famAttr(m.id)}"><span class="fz-ti">${skIcon(sp)}</span>${skTypeLabel(sp)}</button>` : '',
+    g && g.teilen && g.position ? `<button type="button" class="fz-act-btn" data-famact="showmap" data-id="${famAttr(g.id)}"><span class="fz-ti">🗺</span>Karte</button>` : '',
+  ].filter(Boolean).join('');
+  const school = sp ? skMemberCardHtml(m, sp)
+    : (!pet && famCanEdit() ? `<div class="fam-card flex items-center gap-3">
+        <span class="text-3xl leading-none">🎒</span>
+        <div class="min-w-0 flex-1"><div class="text-sm font-medium">Schule oder Kita</div><div class="text-[11px] text-ink/50">Stundenplan, Hausaufgaben, Elternbriefe und Schließtage</div></div>
+        <button type="button" class="fz-mini-btn" data-sk="addkid" data-id="${famAttr(m.id)}">Einrichten</button>
+      </div>` : '');
+  return `
+    <button type="button" class="self-start text-sm text-ink/55 hover:text-pine -mb-1" data-famact="back">‹ Familie</button>
+    <div class="fz-hero" style="--fz:${famAttr(color)}">
+      <div class="fam-band"></div>
+      <div class="fam-hero-ava"><span class="fam-ava big" style="--fam:${famAttr(color)}">${famAvatarInner(m)}<span id="famDetailPing" class="fam-ping${famIsLive(g) ? '' : ' hidden'}"></span></span></div>
+      <div class="fam-hero-body">
+        <div class="flex items-center gap-2 flex-wrap">
+          <div class="font-serif text-xl">${escapeHtml(memberLabel(m))}</div>
+          ${!pet && p.blood ? `<span class="fam-blood">🩸 ${escapeHtml(p.blood)}</span>` : ''}
+        </div>
+        ${sub ? `<div class="text-xs text-ink/50 mt-0.5">${escapeHtml(sub)}</div>` : ''}
+        <div class="flex gap-2 mt-3">${btns}</div>
+      </div>
+    </div>
+    <div id="famDetailLoc">${famDetailLocHtml(m)}</div>
+    ${school}
+    ${famPassSummaryHtml(m)}`;
+}
+function famPassSummaryHtml(m) {
+  const p = famPass(m.id) || {};
+  const pet = famIsPet(m);
+  const head = `<div class="flex items-center justify-between gap-2 mb-1"><div class="fz-h" style="margin-bottom:0">🩺 Notfallpass</div><button type="button" class="fz-mini-btn" data-famact="pass">Öffnen ›</button></div>`;
+  if (!famPassFilled(p)) {
+    return `<div class="fam-card">${head}<p class="text-sm text-ink/50">${pet ? 'Chipnummer, Tierarzt, Medikamente und Notfallkontakte – alles auf einen Blick.' : 'Blutgruppe, Allergien, Medikamente, Krankenkasse und Notfallkontakte – griffbereit, auch offline.'}</p></div>`;
+  }
+  const contacts = (Array.isArray(p.contacts) ? p.contacts : []).filter(x => x && (x.name || x.phone)).map(x => x.name || x.phone);
+  const meds = (Array.isArray(p.meds) ? p.meds : []).filter(x => x && x.name).map(x => x.name);
+  return `<div class="fam-card">${head}
+    ${famRow('Blutgruppe', pet ? '' : p.blood)}
+    ${famRow(pet ? 'Allergien & Unverträglichkeiten' : 'Allergien', p.allergies)}
+    ${famRow('Medikamente', meds.join(', '))}
+    ${famRow('Notfallkontakte', contacts.join(', '))}
+  </div>`;
+}
+
+/* ==========================================================
+   Schule & Kita
+   ----------------------------------------------------------
+   Familiendaten (ID-Listen – Änderungen mehrerer Geräte werden sauber zusammengeführt):
+   - schoolProfiles: [{ id (= Mitglied-ID), memberId, type: 'schule'|'kita', name, group, contact, phone, email,
+       note, times: [{ id, from, to }] (Stundenzeiten), lessons: [{ id, day 1–5, slot (ID aus times), subject, room }],
+       days: { '1'…'5': { from, to, bring, pick } } (Kita: Betreuungszeiten · Schule: Bringen & Abholen), updated }]
+   - schoolHomework: [{ id, memberId, subject, text, due, done, doneAt, created }]
+   - schoolLetters: [{ id, memberIds[], title, sender, action, deadline, amount, note, done, doneAt,
+       taskOn, taskFor[], taskId, created }] – auf Wunsch mit Aufgabe für die Eltern (Push, Badge, Glocke).
+       Wird die Aufgabe abgehakt, gilt der Brief als erledigt – und umgekehrt.
+   - schoolClosures: [{ id, memberIds[], from, to, reason, created }]
+   Schließtage und offene Brief-Fristen erscheinen im Kalender (schoolCalendarEvents).
+   KI (pb_hooks/pinn-ki.js): Stundenplan und Elternbrief vom Foto.
+   ========================================================== */
+var SK_DAYS = [[1, 'Mo', 'Montag'], [2, 'Di', 'Dienstag'], [3, 'Mi', 'Mittwoch'], [4, 'Do', 'Donnerstag'], [5, 'Fr', 'Freitag']];
+var SK_ACTIONS = [
+  { id: 'unterschreiben', icon: '✍️', label: 'Unterschreiben' },
+  { id: 'bezahlen', icon: '💶', label: 'Bezahlen' },
+  { id: 'mitbringen', icon: '🎒', label: 'Mitbringen' },
+  { id: 'anmelden', icon: '📝', label: 'Rückmelden' },
+  { id: 'lesen', icon: '📖', label: 'Lesen' },
+];
+var SK_SUBJECTS = ['Deutsch', 'Mathe', 'Englisch', 'Sachunterricht', 'Sport', 'Musik', 'Kunst', 'Religion', 'Ethik', 'Biologie',
+  'Geschichte', 'Erdkunde', 'Physik', 'Chemie', 'Französisch', 'Spanisch', 'Latein', 'Informatik', 'Politik', 'Werken', 'Förderunterricht', 'AG'];
+var SK_COLORS = ['#4F7CAC', '#C0392B', '#2E9C7A', '#B07A00', '#8E5BB5', '#D2691E', '#00838F', '#AD1457', '#558B2F', '#6D4C41', '#3949AB', '#7B8D00'];
+var skKid = '';
+var skShowDone = false;
+var skModal = null;
+var skKiBusy = '';
+var skKiMsg = null;          // { memberId, text, bad }
+var skCalSig = '', skCalList = [];
+
+function skProfiles() { return (Array.isArray(schoolProfiles) ? schoolProfiles : []).filter(p => p && memberById(p.memberId)); }
+function skProfile(mid) { return mid ? (skProfiles().find(p => p.memberId === mid) || null) : null; }
+function skHomeworkOf(mid) { return (Array.isArray(schoolHomework) ? schoolHomework : []).filter(h => h && (!mid || h.memberId === mid)); }
+function skLettersOf(mid) { return (Array.isArray(schoolLetters) ? schoolLetters : []).filter(l => l && Array.isArray(l.memberIds) && (!mid || l.memberIds.includes(mid))); }
+function skClosuresOf(mid) { return (Array.isArray(schoolClosures) ? schoolClosures : []).filter(c => c && Array.isArray(c.memberIds) && (!mid || c.memberIds.includes(mid))); }
+function skIsKita(p) { return !!(p && p.type === 'kita'); }
+function skIcon(p) { return skIsKita(p) ? '🧸' : '🏫'; }
+function skTypeLabel(p) { return skIsKita(p) ? 'Kita' : 'Schule'; }
+function skName(p) { return (p && String(p.name || '').trim()) || skTypeLabel(p); }
+function skIso(s) { return /^\d{4}-\d{2}-\d{2}$/.test(String(s || '')); }
+function skTimeOk(s) { return /^([01]\d|2[0-3]):[0-5]\d$/.test(String(s || '')); }
+function skToday() { return isoDate(new Date()); }
+function skAddDays(iso, n) { return addDaysToDateStr(iso, n); }
+function skWeekday(iso) { return new Date(iso + 'T12:00:00').getDay(); }
+function skDaysBetween(a, b) { return Math.round((new Date(b + 'T12:00:00') - new Date(a + 'T12:00:00')) / 86400000); }
+function skLocale() { return document.documentElement.lang || 'de'; }
+function skFmtDay(iso) {
+  if (!skIso(iso)) return '';
+  try { return new Date(iso + 'T12:00:00').toLocaleDateString(skLocale(), { weekday: 'short', day: '2-digit', month: '2-digit' }); } catch (e) { return famFmtDate(iso); }
+}
+function skRange(a, b) { return !b || b === a ? skFmtDay(a) : skFmtDay(a) + ' – ' + skFmtDay(b); }
+function skCanEdit() { return famCanEdit(); }
+function skCanTick() { return !isCurrentUserGuest(); }
+function skMin(t) { const p = String(t || '').split(':'); return p.length === 2 ? Number(p[0]) * 60 + Number(p[1]) : NaN; }
+function skHm(min) { min = ((min % 1440) + 1440) % 1440; return pad2(Math.floor(min / 60)) + ':' + pad2(min % 60); }
+function skAction(id) { return SK_ACTIONS.find(a => a.id === id) || SK_ACTIONS[0]; }
+function skColor(subject) {
+  const s = String(subject || '').trim().toLowerCase();
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return SK_COLORS[h % SK_COLORS.length];
+}
+function skNames(ids) { return (ids || []).map(id => memberById(id)).filter(Boolean).map(memberLabel).join(', '); }
+function skKidColor(ids) { const m = memberById((ids || [])[0]); return m ? famColor(m) : '#8E5BB5'; }
+function skAvatar(m) { return `<span class="fam-ava sm" style="--fam:${famAttr(famColor(m))}">${famAvatarInner(m)}</span>`; }
+function skSubjects(p) {
+  const own = [];
+  ((p && p.lessons) || []).forEach(l => { const s = String(l.subject || '').trim(); if (s && !own.includes(s)) own.push(s); });
+  return own;
+}
+function skTimes(p) { return ((p && Array.isArray(p.times)) ? p.times : []).filter(t => t && skTimeOk(t.from) && skTimeOk(t.to)).slice().sort((a, b) => a.from.localeCompare(b.from)); }
+function skLessonsOn(p, wd) {
+  const times = skTimes(p);
+  return ((p && p.lessons) || []).filter(l => l && Number(l.day) === wd && times.some(t => t.id === l.slot) && String(l.subject || '').trim())
+    .map(l => ({ ...l, idx: times.findIndex(t => t.id === l.slot), time: times.find(t => t.id === l.slot) }))
+    .sort((a, b) => a.idx - b.idx);
+}
+function skDayPlan(p, wd) { const d = p && p.days && p.days[String(wd)]; return (d && typeof d === 'object') ? d : {}; }
+function skClosureOn(mid, iso) { return skClosuresOf(mid).find(c => skIso(c.from) && c.from <= iso && (skIso(c.to) ? c.to : c.from) >= iso) || null; }
+function skHolidayOn(p, iso) {
+  try {
+    const list = homeCalendarEvents().filter(e => e.date === iso);
+    const f = list.find(e => e.pinnHoliday === 'feiertag');
+    if (f) return f.title;
+    if (!skIsKita(p)) { const s = list.find(e => e.pinnHoliday === 'ferien'); if (s) return s.title; }
+  } catch (e) { /* Zuhause noch nicht eingerichtet */ }
+  return '';
+}
+// Tagesinfo je Kind: geschlossen, Ferien, Wochenende oder Zeiten mit Bringen/Abholen
+function skDayInfo(p, iso) {
+  const wd = skWeekday(iso);
+  const out = { wd, closed: null, holiday: '', weekend: wd === 0 || wd === 6, from: '', to: '', lessons: [], bring: '', pick: '' };
+  out.closed = skClosureOn(p.memberId, iso);
+  if (out.closed || out.weekend) return out;
+  out.holiday = skHolidayOn(p, iso);
+  if (out.holiday) return out;
+  const d = skDayPlan(p, wd);
+  out.lessons = skIsKita(p) ? [] : skLessonsOn(p, wd);
+  const lf = out.lessons.length ? out.lessons[0].time.from : '', lt = out.lessons.length ? out.lessons[out.lessons.length - 1].time.to : '';
+  out.from = skTimeOk(d.from) ? d.from : lf;
+  out.to = skTimeOk(d.to) ? d.to : lt;
+  out.bring = d.bring && memberById(d.bring) ? d.bring : '';
+  out.pick = d.pick && memberById(d.pick) ? d.pick : '';
+  return out;
+}
+function skDayLine(p, info) {
+  if (info.closed) return '🚫 ' + (info.closed.reason ? 'Geschlossen: ' + info.closed.reason : 'Geschlossen');
+  if (info.weekend) return 'Wochenende';
+  if (info.holiday) return '🌴 ' + info.holiday;
+  const parts = [];
+  if (info.from && info.to) parts.push(info.from + '–' + info.to);
+  if (info.lessons.length) parts.push(`${info.lessons.length} Std.`);
+  if (info.bring) parts.push('bringt ' + memberLabel(memberById(info.bring)));
+  if (info.pick) parts.push('holt ' + memberLabel(memberById(info.pick)));
+  if (!parts.length) return skIsKita(p) ? 'Keine Betreuungszeit eingetragen' : 'Kein Unterricht eingetragen';
+  return parts.join(' · ');
+}
+function skDueBadge(iso, done) {
+  if (!skIso(iso)) return '';
+  if (done) return `<span class="sk-badge ok">✓ erledigt</span>`;
+  const d = skDaysBetween(skToday(), iso);
+  if (d < 0) return `<span class="sk-badge urgent">überfällig</span>`;
+  if (d === 0) return `<span class="sk-badge urgent">bis heute</span>`;
+  if (d === 1) return `<span class="sk-badge warn">bis morgen</span>`;
+  return `<span class="sk-badge${d <= 6 ? ' warn' : ''}">bis ${escapeHtml(skFmtDay(iso))}</span>`;
+}
+function skCardHead(title, btns) {
+  return `<div class="flex items-center justify-between gap-2 mb-2"><div class="fz-h" style="margin-bottom:0">${title}</div><div class="flex items-center gap-1.5">${btns || ''}</div></div>`;
+}
+function skKiOn() { return !!(typeof recipeKiStatus !== 'undefined' && recipeKiStatus && recipeKiStatus.aktiv); }
+function skKiCheck() {
+  if (skKiOn() || typeof recipeKiLoadStatus !== 'function') return;
+  Promise.resolve(recipeKiLoadStatus()).then(() => { if (skKiOn() && currentView === 'familie' && famTab === 'schule' && !famDetailId) renderFamily(); }).catch(() => { /* offline */ });
+}
+
+/* ---------- Übersicht: heute / morgen ---------- */
+function skTodayCardHtml() {
+  const profs = skProfiles();
+  if (!profs.length) return '';
+  const now = new Date();
+  const tomorrow = now.getHours() >= 17;
+  const iso = tomorrow ? skAddDays(skToday(), 1) : skToday();
+  const today = skToday();
+  const rows = profs.map(p => {
+    const m = memberById(p.memberId);
+    const info = skDayInfo(p, iso);
+    return `<button type="button" class="sk-today-row" data-sk="open" data-id="${famAttr(p.memberId)}">
+      ${skAvatar(m)}
+      <span class="min-w-0 flex-1 text-left">
+        <span class="block text-sm font-medium truncate">${escapeHtml(memberLabel(m))} <span class="text-ink/40 font-normal">· ${skIcon(p)} ${escapeHtml(skName(p))}</span></span>
+        <span class="block text-[11px] ${info.closed ? 'text-red-600' : 'text-ink/55'}">${escapeHtml(skDayLine(p, info))}</span>
+      </span>
+      <span class="text-ink/30 text-lg leading-none">›</span>
+    </button>`;
+  }).join('');
+  const kidIds = profs.map(p => p.memberId);
+  const alerts = [];
+  const letters = skLettersOf('').filter(l => !l.done && skIso(l.deadline) && skDaysBetween(today, l.deadline) <= 7 && l.memberIds.some(id => kidIds.includes(id)))
+    .sort((a, b) => a.deadline.localeCompare(b.deadline));
+  letters.slice(0, 4).forEach(l => {
+    const a = skAction(l.action);
+    alerts.push(`<button type="button" class="sk-alert" data-sk="openletter" data-id="${famAttr(l.id)}"><span>${a.icon}</span><span class="min-w-0 flex-1 text-left truncate">${escapeHtml(l.title)}</span>${skDueBadge(l.deadline, false)}</button>`);
+  });
+  const hwDue = skHomeworkOf('').filter(h => !h.done && skIso(h.due) && h.due <= skAddDays(today, 1) && kidIds.includes(h.memberId));
+  if (hwDue.length) {
+    const byKid = {};
+    hwDue.forEach(h => { byKid[h.memberId] = (byKid[h.memberId] || 0) + 1; });
+    Object.keys(byKid).forEach(mid => {
+      alerts.push(`<button type="button" class="sk-alert" data-sk="open" data-id="${famAttr(mid)}"><span>📚</span><span class="min-w-0 flex-1 text-left truncate">${escapeHtml(memberLabel(memberById(mid)))}: ${byKid[mid]} Hausaufgaben offen</span></button>`);
+    });
+  }
+  const seenClosure = new Set();
+  skClosuresOf('').filter(c => skIso(c.from) && (c.to || c.from) >= today && skDaysBetween(today, c.from) <= 14 && c.memberIds.some(id => kidIds.includes(id)))
+    .sort((a, b) => a.from.localeCompare(b.from)).forEach(c => {
+      if (seenClosure.has(c.id)) return;
+      seenClosure.add(c.id);
+      alerts.push(`<button type="button" class="sk-alert" data-sk="open" data-id="${famAttr(c.memberIds[0])}"><span>🚫</span><span class="min-w-0 flex-1 text-left truncate">${escapeHtml(c.reason || 'Schließtag')} · ${escapeHtml(skNames(c.memberIds))}</span><span class="sk-badge warn">${escapeHtml(skRange(c.from, c.to))}</span></button>`);
+    });
+  return `<div class="fam-card">
+    ${skCardHead(`🎒 Schule & Kita · ${tomorrow ? 'Morgen' : 'Heute'}`, `<button type="button" class="fz-mini-btn" data-famtabgo="schule">Alle ›</button>`)}
+    <div class="flex flex-col">${rows}</div>
+    ${alerts.length ? `<div class="flex flex-col gap-1.5 mt-2">${alerts.join('')}</div>` : ''}
+  </div>`;
+}
+// Profil einer Person: Kurzfassung
+function skMemberCardHtml(m, p) {
+  const today = skToday();
+  const info = skDayInfo(p, today);
+  const hw = skHomeworkOf(m.id).filter(h => !h.done).sort((a, b) => String(a.due || '9').localeCompare(String(b.due || '9'))).slice(0, 3);
+  const letters = skLettersOf(m.id).filter(l => !l.done).sort((a, b) => String(a.deadline || '9').localeCompare(String(b.deadline || '9'))).slice(0, 3);
+  const next = skClosuresOf(m.id).filter(c => skIso(c.from) && (c.to || c.from) >= today).sort((a, b) => a.from.localeCompare(b.from))[0];
+  return `<div class="fam-card">
+    ${skCardHead(`${skIcon(p)} ${escapeHtml(skName(p))}`, `<button type="button" class="fz-mini-btn" data-sk="open" data-id="${famAttr(m.id)}">Öffnen ›</button>`)}
+    <div class="text-sm ${info.closed ? 'text-red-600' : ''}">${escapeHtml(skDayLine(p, info))}</div>
+    ${hw.length ? `<div class="mt-2">${hw.map(h => skHwRowHtml(h, true)).join('')}</div>` : ''}
+    ${letters.length ? `<div class="mt-1">${letters.map(l => skLetterRowHtml(l, true)).join('')}</div>` : ''}
+    ${next ? `<div class="text-[11px] text-ink/55 mt-2">🚫 ${escapeHtml(next.reason || 'Schließtag')} · ${escapeHtml(skRange(next.from, next.to))}</div>` : ''}
+  </div>`;
+}
+
+/* ---------- Reiter „Schule & Kita“ ---------- */
+function skPaneHtml() {
+  const profs = skProfiles();
+  const can = skCanEdit();
+  if (!profs.length) {
+    return `<div class="fam-card text-center py-7 px-4">
+      <div class="text-5xl mb-2">🎒</div>
+      <div class="font-serif text-lg mb-1">Schule & Kita</div>
+      <p class="text-sm text-ink/55 mb-4">Stundenplan, Hausaufgaben, Elternbriefe mit Fristen und Schließtage – je Kind an einem Ort. Schließtage und Fristen erscheinen automatisch im Kalender.</p>
+      ${can ? '<button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-sk="addkid">Kind einrichten</button>' : '<p class="text-xs text-ink/40">Einrichten kann ein Erwachsener der Familie.</p>'}
+    </div>`;
+  }
+  if (!skProfile(skKid)) skKid = profs[0].memberId;
+  const p = skProfile(skKid);
+  const m = memberById(skKid);
+  const free = members.filter(x => !famIsPet(x) && !skProfile(x.id));
+  const chips = profs.map(x => {
+    const mm = memberById(x.memberId);
+    return `<button type="button" class="fz-filter-chip sk-kid-chip${x.memberId === skKid ? ' active' : ''}" data-sk="kid" data-id="${famAttr(x.memberId)}">${skAvatar(mm)}<span>${escapeHtml(memberLabel(mm))}</span></button>`;
+  }).join('') + (can && free.length ? `<button type="button" class="fz-filter-chip sk-kid-chip" data-sk="addkid">＋ Kind</button>` : '');
+  return `
+    <div class="fam-chip-row" style="padding-bottom:2px">${chips}</div>
+    ${skHeroHtml(p, m)}
+    ${skIsKita(p) ? '' : skTimetableHtml(p)}
+    ${skDaysCardHtml(p)}
+    ${skIsKita(p) ? '' : skHomeworkCardHtml(p)}
+    ${skLettersCardHtml(p)}
+    ${skClosuresCardHtml(p)}`;
+}
+function skHeroHtml(p, m) {
+  const sub = [p.group, p.contact].filter(x => String(x || '').trim()).join(' · ');
+  const today = skToday();
+  const info = skDayInfo(p, today);
+  const tm = skDayInfo(p, skAddDays(today, 1));
+  return `<div class="fam-card">
+    <div class="flex items-start gap-3">
+      <span class="sk-hero-ic" style="--sk:${famAttr(famColor(m))}">${skIcon(p)}</span>
+      <div class="min-w-0 flex-1">
+        <div class="font-serif text-lg leading-tight">${escapeHtml(skName(p))}</div>
+        ${sub ? `<div class="text-xs text-ink/55 mt-0.5">${escapeHtml(sub)}</div>` : ''}
+      </div>
+      ${skCanEdit() ? `<button type="button" class="fz-mini-btn" data-sk="editprofile" data-id="${famAttr(p.memberId)}">Bearbeiten</button>` : ''}
+    </div>
+    <div class="sk-daygrid mt-3">
+      <div><span class="sk-k">Heute</span><span class="${info.closed ? 'text-red-600' : ''}">${escapeHtml(skDayLine(p, info))}</span></div>
+      <div><span class="sk-k">Morgen</span><span class="${tm.closed ? 'text-red-600' : ''}">${escapeHtml(skDayLine(p, tm))}</span></div>
+    </div>
+    ${(p.phone || p.email) ? `<div class="flex flex-wrap gap-2 mt-3">
+      ${p.phone ? `<a class="fz-mini-btn" href="${famAttr(famTel(p.phone))}">📞 Anrufen</a>` : ''}
+      ${p.email ? `<a class="fz-mini-btn" href="mailto:${famAttr(p.email)}">✉️ E-Mail</a>` : ''}
+    </div>` : ''}
+    ${p.note ? `<div class="text-xs text-ink/60 mt-3" style="white-space:pre-wrap">${escapeHtml(p.note)}</div>` : ''}
+  </div>`;
+}
+function skTimetableHtml(p) {
+  const can = skCanEdit();
+  const times = skTimes(p);
+  const ki = skKiOn() && can;
+  const busy = skKiBusy === p.memberId;
+  const btns = [
+    ki ? `<button type="button" class="fz-mini-btn" data-sk="kiplan" data-id="${famAttr(p.memberId)}"${busy ? ' disabled' : ''}>📷 Foto</button>` : '',
+    can ? `<button type="button" class="fz-mini-btn" data-sk="times" data-id="${famAttr(p.memberId)}">⏱ Zeiten</button>` : '',
+  ].join('');
+  const msg = skKiMsg && skKiMsg.memberId === p.memberId ? `<p class="text-xs mb-2 ${skKiMsg.bad ? 'text-red-500' : 'text-ink/55'}">${escapeHtml(skKiMsg.text)}</p>` : '';
+  if (!times.length) {
+    return `<div class="fam-card">${skCardHead('📅 Stundenplan', btns)}${msg}
+      <p class="text-sm text-ink/50">${ki ? 'Noch kein Stundenplan. Lege die Stundenzeiten fest – oder fotografiere den Stundenplan, die KI trägt ihn ein.' : 'Noch kein Stundenplan. Lege zuerst die Stundenzeiten fest.'}</p>
+      ${can ? `<button type="button" class="fz-mini-btn primary mt-3" data-sk="times" data-id="${famAttr(p.memberId)}">Stundenzeiten festlegen</button>` : ''}
+    </div>`;
+  }
+  const wdToday = new Date().getDay();
+  const lessons = (p.lessons || []).filter(l => l && String(l.subject || '').trim());
+  const head = `<tr><th></th>${SK_DAYS.map(([n, s]) => `<th class="${n === wdToday ? 'today' : ''}">${s}</th>`).join('')}</tr>`;
+  const body = times.map((t, i) => `<tr>
+      <td class="sk-slot"><b>${i + 1}.</b><br>${escapeHtml(t.from)}<br>${escapeHtml(t.to)}</td>
+      ${SK_DAYS.map(([n]) => {
+        const l = lessons.find(x => Number(x.day) === n && x.slot === t.id);
+        const inner = l ? `<span>${escapeHtml(l.subject)}</span>${l.room ? `<small>${escapeHtml(l.room)}</small>` : ''}` : '';
+        const cls = `sk-cell${l ? ' has' : ''}${can ? ' can' : ''}`;
+        const attrs = can ? ` data-sk="lesson" data-id="${famAttr(p.memberId)}" data-day="${n}" data-slot="${famAttr(t.id)}"` : '';
+        return `<td class="${n === wdToday ? 'today' : ''}"><${can ? 'button type="button"' : 'div'} class="${cls}"${l ? ` style="--sk:${skColor(l.subject)}"` : ''}${attrs}>${inner}</${can ? 'button' : 'div'}></td>`;
+      }).join('')}
+    </tr>`).join('');
+  return `<div class="fam-card">${skCardHead('📅 Stundenplan', btns)}${msg}
+    ${busy ? '<p class="text-xs text-ink/55 mb-2">✨ KI liest den Stundenplan …</p>' : ''}
+    <div class="sk-tt-wrap"><table class="sk-tt">${head}${body}</table></div>
+    ${can && !lessons.length ? '<p class="text-[11px] text-ink/45 mt-2">Tippe auf ein Feld, um das Fach einzutragen.</p>' : ''}
+  </div>`;
+}
+function skDaysCardHtml(p) {
+  const kita = skIsKita(p);
+  const rows = SK_DAYS.map(([n, , long]) => {
+    const d = skDayPlan(p, n);
+    const ls = kita ? [] : skLessonsOn(p, n);
+    const from = skTimeOk(d.from) ? d.from : (ls.length ? ls[0].time.from : '');
+    const to = skTimeOk(d.to) ? d.to : (ls.length ? ls[ls.length - 1].time.to : '');
+    const who = [d.bring && memberById(d.bring) ? '→ ' + memberLabel(memberById(d.bring)) : '', d.pick && memberById(d.pick) ? '← ' + memberLabel(memberById(d.pick)) : ''].filter(Boolean).join('  ');
+    return `<div class="sk-dayrow">
+      <span class="sk-dayname">${long}</span>
+      <span class="sk-daytime">${from && to ? escapeHtml(from + '–' + to) : '–'}</span>
+      <span class="sk-daywho">${escapeHtml(who)}</span>
+    </div>`;
+  }).join('');
+  const any = SK_DAYS.some(([n]) => { const d = skDayPlan(p, n); return d.from || d.to || d.bring || d.pick; });
+  return `<div class="fam-card">
+    ${skCardHead(kita ? '🕒 Betreuungszeiten' : '🚸 Bringen & Abholen', skCanEdit() ? `<button type="button" class="fz-mini-btn" data-sk="days" data-id="${famAttr(p.memberId)}">Bearbeiten</button>` : '')}
+    ${rows}
+    ${!any ? `<p class="text-[11px] text-ink/45 mt-2">${kita ? 'Trage die Betreuungszeiten ein und wer bringt bzw. abholt.' : 'Wer bringt und wer holt ab? Trage es für jeden Tag ein.'}</p>` : '<p class="text-[11px] text-ink/40 mt-2">→ bringt · ← holt ab</p>'}
+  </div>`;
+}
+function skHwRowHtml(h, compact) {
+  const subj = String(h.subject || '').trim();
+  return `<div class="sk-row${h.done ? ' done' : ''}">
+    <button type="button" class="sk-chk${h.done ? ' on' : ''}" data-sk="hwtoggle" data-id="${famAttr(h.id)}"${skCanTick() ? '' : ' disabled'} aria-label="Erledigt">✓</button>
+    <${skCanEdit() ? 'button type="button"' : 'div'} class="sk-main"${skCanEdit() ? ` data-sk="hw" data-id="${famAttr(h.id)}"` : ''}>
+      <div class="sk-t">${subj ? `<span class="sk-subj" style="--sk:${skColor(subj)}"></span><b>${escapeHtml(subj)}</b>${h.text ? ': ' : ''}` : ''}${escapeHtml(h.text || '')}</div>
+      ${compact ? '' : (h.due ? `<div class="sk-s">${skDueBadge(h.due, h.done)}</div>` : '')}
+    </${skCanEdit() ? 'button' : 'div'}>
+    ${compact && h.due ? skDueBadge(h.due, h.done) : ''}
+  </div>`;
+}
+function skHomeworkCardHtml(p) {
+  const all = skHomeworkOf(p.memberId);
+  const open = all.filter(h => !h.done).sort((a, b) => String(a.due || '9').localeCompare(String(b.due || '9')));
+  const done = all.filter(h => h.done).sort((a, b) => String(b.doneAt || '').localeCompare(String(a.doneAt || '')));
+  return `<div class="fam-card">
+    ${skCardHead('📚 Hausaufgaben', skCanEdit() ? `<button type="button" class="fz-mini-btn primary" data-sk="hwnew" data-id="${famAttr(p.memberId)}">+ Neu</button>` : '')}
+    ${open.length ? open.map(h => skHwRowHtml(h)).join('') : '<p class="text-sm text-ink/45">Keine offenen Hausaufgaben 🎉</p>'}
+    ${done.length ? `<button type="button" class="text-[11px] text-ink/50 hover:text-pine mt-2" data-sk="showdone">${skShowDone ? 'Erledigte ausblenden' : `Erledigte anzeigen (${done.length})`}</button>
+      ${skShowDone ? `<div class="mt-1">${done.slice(0, 20).map(h => skHwRowHtml(h)).join('')}</div>` : ''}` : ''}
+  </div>`;
+}
+function skLetterRowHtml(l, compact) {
+  const a = skAction(l.action);
+  const facts = [l.sender, l.amount !== '' && l.amount != null && isFinite(Number(l.amount)) && Number(l.amount) > 0 ? fmtEur(Number(l.amount)) : '', compact ? '' : (l.memberIds.length > 1 ? skNames(l.memberIds) : '')].filter(Boolean).join(' · ');
+  const task = l.taskId && !l.done && typeof aufgaben !== 'undefined' && aufgaben.some(t => t.id === l.taskId) ? ' · 🔔' : '';
+  return `<div class="sk-row${l.done ? ' done' : ''}">
+    <button type="button" class="sk-chk${l.done ? ' on' : ''}" data-sk="letterdone" data-id="${famAttr(l.id)}"${skCanEdit() ? '' : ' disabled'} aria-label="Erledigt">✓</button>
+    <${skCanEdit() ? 'button type="button"' : 'div'} class="sk-main"${skCanEdit() ? ` data-sk="letter" data-id="${famAttr(l.id)}"` : ''}>
+      <div class="sk-t">${a.icon} ${escapeHtml(l.title)}</div>
+      ${!compact && (facts || l.deadline || task) ? `<div class="sk-s">${l.deadline ? skDueBadge(l.deadline, l.done) + ' ' : ''}${escapeHtml(facts)}${task}</div>` : ''}
+    </${skCanEdit() ? 'button' : 'div'}>
+    ${compact && l.deadline ? skDueBadge(l.deadline, l.done) : ''}
+  </div>`;
+}
+function skLettersCardHtml(p) {
+  const all = skLettersOf(p.memberId);
+  const open = all.filter(l => !l.done).sort((a, b) => String(a.deadline || '9').localeCompare(String(b.deadline || '9')));
+  const done = all.filter(l => l.done).sort((a, b) => String(b.doneAt || '').localeCompare(String(a.doneAt || '')));
+  const can = skCanEdit();
+  return `<div class="fam-card">
+    ${skCardHead('✉️ Elternbriefe', can ? `${skKiOn() ? `<button type="button" class="fz-mini-btn" data-sk="letterki" data-id="${famAttr(p.memberId)}">📷 Foto</button>` : ''}<button type="button" class="fz-mini-btn primary" data-sk="letternew" data-id="${famAttr(p.memberId)}">+ Neu</button>` : '')}
+    ${open.length ? open.map(l => skLetterRowHtml(l)).join('') : '<p class="text-sm text-ink/45">Keine offenen Elternbriefe.</p>'}
+    ${done.length ? `<button type="button" class="text-[11px] text-ink/50 hover:text-pine mt-2" data-sk="showdone">${skShowDone ? 'Erledigte ausblenden' : `Erledigte anzeigen (${done.length})`}</button>
+      ${skShowDone ? `<div class="mt-1">${done.slice(0, 20).map(l => skLetterRowHtml(l)).join('')}</div>` : ''}` : ''}
+  </div>`;
+}
+function skClosuresCardHtml(p) {
+  const today = skToday();
+  const list = skClosuresOf(p.memberId).filter(c => skIso(c.from) && (skIso(c.to) ? c.to : c.from) >= today).sort((a, b) => a.from.localeCompare(b.from));
+  const can = skCanEdit();
+  return `<div class="fam-card">
+    ${skCardHead('🚫 Schließtage', can ? `<button type="button" class="fz-mini-btn primary" data-sk="closurenew" data-id="${famAttr(p.memberId)}">+ Neu</button>` : '')}
+    ${list.length ? list.map(c => {
+      const days = skDaysBetween(c.from, skIso(c.to) ? c.to : c.from) + 1;
+      return `<div class="sk-row">
+        <span class="sk-chk sk-cal">📅</span>
+        <${can ? 'button type="button"' : 'div'} class="sk-main"${can ? ` data-sk="closure" data-id="${famAttr(c.id)}"` : ''}>
+          <div class="sk-t">${escapeHtml(c.reason || 'Schließtag')}</div>
+          <div class="sk-s">${escapeHtml(skRange(c.from, c.to))}${days > 1 ? ` · ${days} Tage` : ''}${c.memberIds.length > 1 ? ' · ' + escapeHtml(skNames(c.memberIds)) : ''}</div>
+        </${can ? 'button' : 'div'}>
+      </div>`;
+    }).join('') : '<p class="text-sm text-ink/45">Keine anstehenden Schließtage.</p>'}
+    <p class="text-[11px] text-ink/40 mt-2">Schließtage und Fristen von Elternbriefen erscheinen automatisch im Kalender.</p>
+  </div>`;
+}
+
+/* ---------- Speichern ---------- */
+function skPrune() {
+  const today = skToday();
+  const old = skAddDays(today, -30);
+  schoolHomework = (schoolHomework || []).filter(h => !(h.done && String(h.doneAt || '').slice(0, 10) < old));
+  const oldL = skAddDays(today, -180);
+  schoolLetters = (schoolLetters || []).filter(l => !(l.done && String(l.doneAt || '').slice(0, 10) < oldL));
+  const oldC = skAddDays(today, -60);
+  schoolClosures = (schoolClosures || []).filter(c => (skIso(c.to) ? c.to : c.from) >= oldC);
+}
+function skCommit(calendar) {
+  skPrune();
+  persistState();
+  if (calendar) { skCalSig = ''; try { rebuildEvents(); renderCalendar(); } catch (e) { /* Kalender noch nicht aufgebaut */ } }
+  try { if (kidPageMemberId) renderKidPage(); } catch (e) { /* egal */ }
+  renderFamily();
+}
+function skUpsert(listName, item) {
+  const list = (listName === 'profiles' ? schoolProfiles : listName === 'hw' ? schoolHomework : listName === 'letters' ? schoolLetters : schoolClosures) || [];
+  const next = list.some(x => x.id === item.id) ? list.map(x => x.id === item.id ? item : x) : [...list, item];
+  if (listName === 'profiles') schoolProfiles = next;
+  else if (listName === 'hw') schoolHomework = next;
+  else if (listName === 'letters') schoolLetters = next;
+  else schoolClosures = next;
+}
+function skToggleHomework(id) {
+  if (!skCanTick()) return;
+  const h = skHomeworkOf('').find(x => x.id === id);
+  if (!h) return;
+  const done = !h.done;
+  skUpsert('hw', { ...h, done, doneAt: done ? new Date().toISOString() : '' });
+  skCommit(false);
+}
+function skTaskOf(l) { return l && l.taskId && typeof aufgaben !== 'undefined' ? (aufgaben.find(t => t.id === l.taskId) || null) : null; }
+function skTaskTitle(l) {
+  const a = skAction(l.action);
+  const names = skNames(l.memberIds);
+  return (a.icon + ' ' + (a.id === 'lesen' ? 'Elternbrief lesen' : a.label) + ': ' + l.title + (names ? ' (' + names + ')' : '')).slice(0, 200);
+}
+// Aufgabe zum Elternbrief anlegen, ändern, abhaken oder entfernen
+function skSyncLetterTask(l, prev) {
+  if (typeof queueTaskSave !== 'function') return l;
+  const task = skTaskOf(prev || l);
+  const want = !!(l.taskOn && skIso(l.deadline) && Array.isArray(l.taskFor) && l.taskFor.length && !l.done);
+  let changed = false;
+  if (want) {
+    const notes = buildAssignedNotes([l.sender ? 'Von: ' + l.sender : '', l.note || ''].filter(Boolean).join('\n'), l.taskFor);
+    const payload = { id: task ? task.id : newRecordId(), title: skTaskTitle(l), notes, dueDate: l.deadline, fromTime: '', toTime: '' };
+    const same = task && task.title === payload.title && task.dueDate === payload.dueDate && String(task.notes || '') === payload.notes;
+    if (!same) { queueTaskSave(payload, !task); changed = true; }
+    if (task && task.done) { queueTaskDone(task.id, false); changed = true; }
+    l = { ...l, taskId: payload.id };
+  } else if (task) {
+    if (l.done) { if (!task.done) { queueTaskDone(task.id, true); changed = true; } }
+    else { queueTaskDelete(task.id); changed = true; l = { ...l, taskId: '' }; }
+  }
+  if (changed) { try { rebuildAufgaben(); renderTasks(); flushOutbox(); } catch (e) { /* egal */ } }
+  return l;
+}
+// Aufgabe abgehakt (auch auf einem anderen Gerät) → Brief erledigt
+function skSyncFromTasks() {
+  if (isCurrentUserGuest() || typeof aufgabenLoaded === 'undefined' || !aufgabenLoaded) return;
+  let changed = false;
+  schoolLetters = (schoolLetters || []).map(l => {
+    if (l.done || !l.taskId) return l;
+    const t = skTaskOf(l);
+    if (!t || !t.done) return l;
+    changed = true;
+    return { ...l, done: true, doneAt: t.doneAt || new Date().toISOString() };
+  });
+  if (changed) { persistState(); skCalSig = ''; try { rebuildEvents(); renderCalendar(); } catch (e) { /* egal */ } }
+}
+function skToggleLetter(id) {
+  if (!skCanEdit()) return;
+  const l = skLettersOf('').find(x => x.id === id);
+  if (!l) return;
+  const done = !l.done;
+  let next = { ...l, done, doneAt: done ? new Date().toISOString() : '' };
+  const task = skTaskOf(l);
+  if (task && typeof queueTaskDone === 'function') {
+    queueTaskDone(task.id, done);
+    try { rebuildAufgaben(); renderTasks(); flushOutbox(); } catch (e) { /* egal */ }
+  } else if (!done) {
+    next = skSyncLetterTask(next, l);
+  }
+  skUpsert('letters', next);
+  skCommit(true);
+}
+
+/* ---------- Kalender: Schließtage und Fristen ---------- */
+function schoolCalendarEvents() {
+  const sig = JSON.stringify([schoolClosures, (schoolLetters || []).map(l => [l.id, l.deadline, l.done, l.title, l.action, l.memberIds]), skProfiles().map(p => [p.memberId, p.name, p.type]), members.map(m => [m.id, m.name, m.color, m.role, m.displayMode])]);
+  if (sig === skCalSig) return skCalList;
+  const out = [];
+  const mk = (id, date, title, desc, color) => ({
+    id, date, time: '', endTime: null, title, memberId: null, location: '', description: desc,
+    fullDayFiller: false, pinnHref: '', pinnCalName: '', isRecurring: false, pinnHoliday: 'schule', pinnColor: color,
+  });
+  (schoolClosures || []).forEach(c => {
+    if (!c || !skIso(c.from) || !Array.isArray(c.memberIds)) return;
+    const ids = c.memberIds.filter(id => memberById(id));
+    if (!ids.length) return;
+    const to = skIso(c.to) && c.to >= c.from ? c.to : c.from;
+    const places = [...new Set(ids.map(id => skProfile(id)).filter(Boolean).map(skName))].join(', ');
+    const title = (c.reason || 'Schließtag') + ' · ' + skNames(ids);
+    const desc = 'Schließtag' + (places ? ' – ' + places : '') + ': ' + famFmtDate(c.from) + (to !== c.from ? ' – ' + famFmtDate(to) : '');
+    let d = c.from, guard = 0;
+    while (d <= to && guard++ < 120) {
+      const wd = skWeekday(d);
+      if (wd !== 0 && wd !== 6) out.push(mk('pinn-sk-' + c.id + '-' + d, d, '🚫 ' + title, desc, skKidColor(ids)));
+      d = skAddDays(d, 1);
+    }
+  });
+  (schoolLetters || []).forEach(l => {
+    if (!l || l.done || !skIso(l.deadline) || !Array.isArray(l.memberIds)) return;
+    const a = skAction(l.action);
+    out.push(mk('pinn-sb-' + l.id, l.deadline, a.icon + ' ' + l.title + (l.memberIds.length ? ' · ' + skNames(l.memberIds) : ''),
+      'Elternbrief' + (l.sender ? ' – ' + l.sender : '') + ': ' + a.label + ' bis ' + famFmtDate(l.deadline), skKidColor(l.memberIds)));
+  });
+  skCalSig = sig;
+  skCalList = out;
+  return out;
+}
+
+/* ---------- Kinderseite: Hausaufgaben ---------- */
+function kidHomeworkHtml(m) {
+  if (!m || !skProfile(m.id) || skIsKita(skProfile(m.id))) return '';
+  const today = skToday();
+  const tomorrow = skAddDays(today, 1);
+  const list = skHomeworkOf(m.id).filter(h => (!h.done && (!h.due || h.due <= tomorrow)) || (h.done && String(h.doneAt || '').slice(0, 10) === today))
+    .sort((a, b) => (a.done - b.done) || String(a.due || '').localeCompare(String(b.due || '')));
+  if (!list.length) return '';
+  return `<div class="kid-hw">
+    <div class="kid-hw-h">📚 Hausaufgaben</div>
+    ${list.map(h => `<button type="button" class="kid-hw-row${h.done ? ' done' : ''}" data-khw="${kidAttr(h.id)}">
+      <span class="kid-hw-chk">${h.done ? '✓' : ''}</span>
+      <span class="kid-hw-t">${h.subject ? `<b>${escapeHtml(h.subject)}</b> ` : ''}${escapeHtml(h.text || '')}</span>
+    </button>`).join('')}
+  </div>`;
+}
+
+/* ---------- Popups ---------- */
+function skErr(msg) { fzShowErr('skErr', msg); }
+function skFooter(canDelete, delLabel) {
+  return `<p id="skErr" class="hidden text-xs text-red-500 mt-1 mb-2"></p>
+    <div class="flex items-center justify-between gap-2 mt-4">
+      ${canDelete ? `<button type="button" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50" data-skm="del">${delLabel || 'Löschen'}</button>` : '<span></span>'}
+      <div class="flex gap-2">
+        <button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-skm="cancel">Abbrechen</button>
+        <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-skm="save">Speichern</button>
+      </div>
+    </div>`;
+}
+function skKidChips(selected, field) {
+  const profs = skProfiles();
+  if (profs.length < 2) return '';
+  return `<label class="fz-lbl">Für</label><div class="flex flex-wrap gap-1.5 mb-3">${profs.map(p => {
+    const m = memberById(p.memberId);
+    return `<button type="button" class="fz-filter-chip sk-kid-chip${selected.includes(p.memberId) ? ' active' : ''}" data-skm="${field}" data-id="${famAttr(p.memberId)}">${skAvatar(m)}<span>${escapeHtml(memberLabel(m))}</span></button>`;
+  }).join('')}</div>`;
+}
+function skMemberSelect(id, label, value) {
+  const opts = members.filter(m => !famIsPet(m)).map(m => `<option value="${famAttr(m.id)}"${value === m.id ? ' selected' : ''}>${escapeHtml(memberLabel(m))}</option>`).join('');
+  return `<div class="fz-field"><label class="fz-lbl" for="${id}">${escapeHtml(label)}</label><select id="${id}" class="fz-in"><option value="">–</option>${opts}</select></div>`;
+}
+function skOpen(html, state, onReady) {
+  skModal = state;
+  famOpenModal(html, onReady);
+}
+function skClose() { famCloseModal(); skModal = null; }
+
+// Schule bzw. Kita eines Kindes
+function skOpenProfile(mid, preset) {
+  if (!skCanEdit()) return;
+  const p = skProfile(mid);
+  const free = members.filter(x => !famIsPet(x) && (!skProfile(x.id) || x.id === mid));
+  if (!p && !free.length) { finShowToast('Alle haben schon Schule oder Kita', true); return; }
+  const pick = p ? p.memberId : (preset && free.some(x => x.id === preset) ? preset : free[0].id);
+  const type = p ? p.type : 'schule';
+  const html = `
+    <h3 class="font-serif text-lg mb-1">${p ? 'Schule & Kita · ' + escapeHtml(memberLabel(memberById(p.memberId))) : 'Schule oder Kita einrichten'}</h3>
+    <p class="text-xs text-ink/50 mb-4">Stundenplan, Hausaufgaben und Elternbriefe gibt es je Kind. Leere Felder werden nicht angezeigt.</p>
+    ${p ? '' : `<div class="fz-field"><label class="fz-lbl" for="skP_member">Kind</label><select id="skP_member" class="fz-in">${free.map(x => `<option value="${famAttr(x.id)}"${x.id === pick ? ' selected' : ''}>${escapeHtml(memberLabel(x))}</option>`).join('')}</select></div>`}
+    <div class="fz-type-row mb-3">
+      <button type="button" class="fz-type-chip${type !== 'kita' ? ' active' : ''}" data-skm="type" data-v="schule"><span class="fz-ti">🏫</span>Schule</button>
+      <button type="button" class="fz-type-chip${type === 'kita' ? ' active' : ''}" data-skm="type" data-v="kita"><span class="fz-ti">🧸</span>Kita</button>
+    </div>
+    ${fzIn('skP_name', 'Name der Einrichtung', p ? p.name : '', { ph: 'z. B. Grundschule am Park', max: 120 })}
+    <div class="fz-grid2">
+      ${fzIn('skP_group', 'Klasse / Gruppe', p ? p.group : '', { ph: 'z. B. 3b', max: 60 })}
+      ${fzIn('skP_contact', 'Lehrkraft / Erzieher:in', p ? p.contact : '', { ph: 'z. B. Frau Müller', max: 80 })}
+    </div>
+    <div class="fz-grid2">
+      ${fzIn('skP_phone', 'Telefon', p ? p.phone : '', { type: 'tel', mode: 'tel', max: 40 })}
+      ${fzIn('skP_email', 'E-Mail', p ? p.email : '', { type: 'email', mode: 'email', max: 120 })}
+    </div>
+    ${famTa('skP_note', 'Notizen', p ? p.note : '', 'z. B. Krankmeldung bis 7:45 Uhr im Sekretariat')}
+    ${skFooter(!!p, 'Entfernen')}`;
+  skOpen(html, { kind: 'profile', memberId: p ? p.memberId : '', type });
+}
+function skSaveProfile() {
+  const st = skModal;
+  const mid = st.memberId || famVal('skP_member');
+  if (!memberById(mid)) return skErr('Bitte ein Kind wählen.');
+  const old = skProfile(mid);
+  skUpsert('profiles', {
+    ...(old || {}),
+    id: mid, memberId: mid, type: st.type === 'kita' ? 'kita' : 'schule',
+    name: famVal('skP_name'), group: famVal('skP_group'), contact: famVal('skP_contact'),
+    phone: famVal('skP_phone'), email: famVal('skP_email'), note: famVal('skP_note'),
+    times: old && Array.isArray(old.times) ? old.times : [],
+    lessons: old && Array.isArray(old.lessons) ? old.lessons : [],
+    days: old && old.days && typeof old.days === 'object' ? old.days : {},
+    updated: new Date().toISOString(),
+  });
+  skKid = mid;
+  skClose();
+  if (currentView === 'familie' && !famDetailId) famTab = 'schule';
+  skCommit(true);
+  finShowToast('Gespeichert');
+}
+function skDeleteProfile() {
+  const mid = skModal.memberId;
+  const m = memberById(mid);
+  if (!m || !confirm(`Schule & Kita für ${memberLabel(m)} entfernen? Stundenplan und Hausaufgaben werden gelöscht.`)) return;
+  schoolProfiles = (schoolProfiles || []).filter(p => p.memberId !== mid);
+  schoolHomework = (schoolHomework || []).filter(h => h.memberId !== mid);
+  const letters = [];
+  (schoolLetters || []).forEach(l => {
+    const ids = (l.memberIds || []).filter(x => x !== mid);
+    if (ids.length) letters.push({ ...l, memberIds: ids });
+    else { const t = skTaskOf(l); if (t && !t.done && typeof queueTaskDelete === 'function') queueTaskDelete(t.id); }
+  });
+  schoolLetters = letters;
+  schoolClosures = (schoolClosures || []).map(c => ({ ...c, memberIds: (c.memberIds || []).filter(x => x !== mid) })).filter(c => c.memberIds.length);
+  try { rebuildAufgaben(); renderTasks(); flushOutbox(); } catch (e) { /* egal */ }
+  skKid = '';
+  skClose();
+  skCommit(true);
+}
+
+// Stundenzeiten
+function skPresetTimes() {
+  return [['08:00', '08:45'], ['08:50', '09:35'], ['09:55', '10:40'], ['10:45', '11:30'], ['11:50', '12:35'], ['12:40', '13:25']]
+    .map(([from, to]) => ({ id: newRecordId(), from, to }));
+}
+function skTimesRowsHtml() {
+  const rows = skModal.rows;
+  if (!rows.length) return '<p class="text-xs text-ink/45">Noch keine Stunden.</p>';
+  return rows.map((r, i) => `<div class="fam-list-row sk-time-row">
+      <span class="sk-time-n">${i + 1}.</span>
+      <input type="time" class="fz-in" data-skfrom="${i}" value="${famAttr(r.from)}" aria-label="Beginn" />
+      <span class="text-ink/40">–</span>
+      <input type="time" class="fz-in" data-skto="${i}" value="${famAttr(r.to)}" aria-label="Ende" />
+      <button type="button" class="fam-x" data-skm="rmtime" data-i="${i}" aria-label="Entfernen">×</button>
+    </div>`).join('');
+}
+function skSyncTimes() {
+  if (!skModal || skModal.kind !== 'times') return;
+  skModal.rows = skModal.rows.map((r, i) => ({
+    ...r,
+    from: (document.querySelector(`[data-skfrom="${i}"]`) || {}).value || r.from,
+    to: (document.querySelector(`[data-skto="${i}"]`) || {}).value || r.to,
+  }));
+}
+function skRenderTimes() { const el = document.getElementById('skTimesList'); if (el) el.innerHTML = skTimesRowsHtml(); }
+function skOpenTimes(mid) {
+  const p = skProfile(mid);
+  if (!p || !skCanEdit()) return;
+  const rows = skTimes(p).map(t => ({ ...t }));
+  const html = `
+    <h3 class="font-serif text-lg mb-1">Stundenzeiten</h3>
+    <p class="text-xs text-ink/50 mb-4">Beginn und Ende jeder Stunde – Pausen einfach auslassen.</p>
+    <div id="skTimesList" class="flex flex-col gap-2 mb-3"></div>
+    <div class="flex flex-wrap gap-2">
+      <button type="button" class="fz-mini-btn" data-skm="addtime">+ Stunde</button>
+      <button type="button" class="fz-mini-btn" data-skm="preset">Vorlage: 6 × 45 Min.</button>
+    </div>
+    ${skFooter(false)}`;
+  skOpen(html, { kind: 'times', memberId: mid, rows }, () => skRenderTimes());
+}
+function skSaveTimes() {
+  skSyncTimes();
+  const st = skModal;
+  const p = skProfile(st.memberId);
+  if (!p) { skClose(); return; }
+  const rows = st.rows.filter(r => r.from || r.to);
+  for (const r of rows) {
+    if (!skTimeOk(r.from) || !skTimeOk(r.to)) return skErr('Bitte bei jeder Stunde Beginn und Ende angeben.');
+    if (r.to <= r.from) return skErr('Das Ende einer Stunde muss nach dem Beginn liegen.');
+  }
+  rows.sort((a, b) => a.from.localeCompare(b.from));
+  const ids = new Set(rows.map(r => r.id));
+  const lost = (p.lessons || []).filter(l => !ids.has(l.slot) && String(l.subject || '').trim());
+  if (lost.length && !confirm(`${lost.length} eingetragene Fächer liegen in entfernten Stunden und werden gelöscht. Fortfahren?`)) return;
+  skUpsert('profiles', { ...p, times: rows.map(r => ({ id: r.id, from: r.from, to: r.to })), lessons: (p.lessons || []).filter(l => ids.has(l.slot)), updated: new Date().toISOString() });
+  skClose();
+  skCommit(false);
+}
+
+// Fach in einer Stunde
+function skOpenLesson(mid, day, slot) {
+  const p = skProfile(mid);
+  if (!p || !skCanEdit()) return;
+  const times = skTimes(p);
+  const idx = times.findIndex(t => t.id === slot);
+  if (idx < 0) return;
+  const l = (p.lessons || []).find(x => Number(x.day) === day && x.slot === slot) || null;
+  const dayName = (SK_DAYS.find(d => d[0] === day) || [0, '', ''])[2];
+  const subjects = [...new Set([...skSubjects(p), ...SK_SUBJECTS])];
+  const html = `
+    <h3 class="font-serif text-lg mb-0.5">${dayName}</h3>
+    <p class="text-xs text-ink/50 mb-4">${idx + 1}. Stunde · ${escapeHtml(times[idx].from)}–${escapeHtml(times[idx].to)}</p>
+    <div class="fz-field"><label class="fz-lbl" for="skL_subject">Fach</label>
+      <input id="skL_subject" class="fz-in" list="skSubjectList" autocomplete="off" maxlength="60" value="${famAttr(l ? l.subject : '')}" placeholder="z. B. Mathe" />
+      <datalist id="skSubjectList">${subjects.map(s => `<option value="${famAttr(s)}"></option>`).join('')}</datalist>
+    </div>
+    <div class="flex flex-wrap gap-1.5 mb-3">${skSubjects(p).slice(0, 12).map(s => `<button type="button" class="fz-filter-chip" data-skm="subj" data-v="${famAttr(s)}"><span class="sk-subj" style="--sk:${skColor(s)}"></span>${escapeHtml(s)}</button>`).join('')}</div>
+    ${fzIn('skL_room', 'Raum', l ? l.room : '', { ph: 'optional', max: 30 })}
+    <label class="fz-check"><input type="checkbox" id="skL_double" /><span>Auch die nächste Stunde (Doppelstunde)</span></label>
+    ${skFooter(!!l, 'Leeren')}`;
+  skOpen(html, { kind: 'lesson', memberId: mid, day, slot });
+}
+function skSaveLesson(clear) {
+  const st = skModal;
+  const p = skProfile(st.memberId);
+  if (!p) { skClose(); return; }
+  const times = skTimes(p);
+  const subject = clear ? '' : famVal('skL_subject');
+  const room = clear ? '' : famVal('skL_room');
+  const slots = [st.slot];
+  if (!clear && fzChecked('skL_double')) { const i = times.findIndex(t => t.id === st.slot); if (times[i + 1]) slots.push(times[i + 1].id); }
+  let lessons = (p.lessons || []).filter(l => !(Number(l.day) === st.day && slots.includes(l.slot)));
+  if (subject) slots.forEach(slot => lessons.push({ id: newRecordId(), day: st.day, slot, subject, room }));
+  skUpsert('profiles', { ...p, lessons, updated: new Date().toISOString() });
+  skClose();
+  skCommit(false);
+}
+
+// Betreuungszeiten bzw. Bringen & Abholen
+function skOpenDays(mid) {
+  const p = skProfile(mid);
+  if (!p || !skCanEdit()) return;
+  const kita = skIsKita(p);
+  const html = `
+    <h3 class="font-serif text-lg mb-1">${kita ? 'Betreuungszeiten' : 'Bringen & Abholen'}</h3>
+    <p class="text-xs text-ink/50 mb-4">${kita ? 'Von wann bis wann, wer bringt und wer holt ab.' : 'Zeiten leer lassen = Beginn und Ende aus dem Stundenplan. Mit Hort oder Ganztag einfach die Abholzeit eintragen.'}</p>
+    ${SK_DAYS.map(([n, , long]) => {
+      const d = skDayPlan(p, n);
+      return `<div class="sk-dayedit">
+        <div class="text-sm font-medium mb-1.5">${long}</div>
+        <div class="fz-grid2">
+          ${fzIn('skD_from' + n, kita ? 'Von' : 'Beginn', d.from || '', { type: 'time' })}
+          ${fzIn('skD_to' + n, kita ? 'Bis' : 'Abholen um', d.to || '', { type: 'time' })}
+        </div>
+        <div class="fz-grid2">
+          ${skMemberSelect('skD_bring' + n, 'Bringt', d.bring || '')}
+          ${skMemberSelect('skD_pick' + n, 'Holt ab', d.pick || '')}
+        </div>
+        ${n === 1 ? '<button type="button" class="fz-mini-btn -mt-1 mb-1" data-skm="copymon">Montag für alle Tage übernehmen</button>' : ''}
+      </div>`;
+    }).join('')}
+    ${skFooter(false)}`;
+  skOpen(html, { kind: 'days', memberId: mid });
+}
+function skCopyMonday() {
+  const v = k => famVal('skD_' + k + '1');
+  [2, 3, 4, 5].forEach(n => ['from', 'to', 'bring', 'pick'].forEach(k => { const el = document.getElementById('skD_' + k + n); if (el) el.value = v(k); }));
+}
+function skSaveDays() {
+  const p = skProfile(skModal.memberId);
+  if (!p) { skClose(); return; }
+  const days = {};
+  for (const [n] of SK_DAYS) {
+    const d = { from: famVal('skD_from' + n), to: famVal('skD_to' + n), bring: famVal('skD_bring' + n), pick: famVal('skD_pick' + n) };
+    if (d.from && d.to && d.to <= d.from) return skErr('Bitte prüfen: Das Ende liegt vor dem Beginn.');
+    Object.keys(d).forEach(k => { if (!d[k]) delete d[k]; });
+    if (Object.keys(d).length) days[String(n)] = d;
+  }
+  skUpsert('profiles', { ...p, days, updated: new Date().toISOString() });
+  skClose();
+  skCommit(false);
+}
+
+// Hausaufgabe
+function skNextLessonDay(p, subject) {
+  const s = String(subject || '').trim().toLowerCase();
+  const today = skToday();
+  for (let i = 1; i <= 14; i++) {
+    const iso = skAddDays(today, i);
+    const wd = skWeekday(iso);
+    if (wd === 0 || wd === 6 || skClosureOn(p.memberId, iso)) continue;
+    if (!s || skLessonsOn(p, wd).some(l => String(l.subject).trim().toLowerCase() === s)) return iso;
+  }
+  return '';
+}
+function skNextSchoolDay(p) { return skNextLessonDay(p, '') || skAddDays(skToday(), 1); }
+function skOpenHomework(id, mid) {
+  if (!skCanEdit()) return;
+  const h = id ? skHomeworkOf('').find(x => x.id === id) : null;
+  const kid = h ? h.memberId : mid;
+  const p = skProfile(kid);
+  if (!p) return;
+  const subjects = skSubjects(p);
+  const html = `
+    <h3 class="font-serif text-lg mb-1">Hausaufgabe · ${escapeHtml(memberLabel(memberById(kid)))}</h3>
+    <p class="text-xs text-ink/50 mb-4">Erscheint auch auf der Kinderseite zum Abhaken.</p>
+    <div class="fz-field"><label class="fz-lbl" for="skH_subject">Fach</label>
+      <input id="skH_subject" class="fz-in" list="skHwSubjects" autocomplete="off" maxlength="60" value="${famAttr(h ? h.subject : '')}" placeholder="z. B. Mathe" />
+      <datalist id="skHwSubjects">${[...new Set([...subjects, ...SK_SUBJECTS])].map(s => `<option value="${famAttr(s)}"></option>`).join('')}</datalist>
+    </div>
+    ${subjects.length ? `<div class="flex flex-wrap gap-1.5 mb-3">${subjects.slice(0, 12).map(s => `<button type="button" class="fz-filter-chip" data-skm="hwsubj" data-v="${famAttr(s)}"><span class="sk-subj" style="--sk:${skColor(s)}"></span>${escapeHtml(s)}</button>`).join('')}</div>` : ''}
+    ${famTa('skH_text', 'Aufgabe', h ? h.text : '', 'z. B. Buch S. 34, Nr. 2–4')}
+    ${fzIn('skH_due', 'Bis wann?', h ? h.due : skNextSchoolDay(p), { type: 'date' })}
+    <p id="skH_hint" class="text-[11px] text-ink/45 -mt-2 mb-2"></p>
+    ${skFooter(!!h)}`;
+  skOpen(html, { kind: 'hw', id: h ? h.id : '', memberId: kid, dueTouched: !!h }, body => {
+    const due = document.getElementById('skH_due');
+    const subj = document.getElementById('skH_subject');
+    due.addEventListener('input', () => { if (skModal) skModal.dueTouched = true; });
+    subj.addEventListener('change', () => skHwSubjectChanged());
+  });
+}
+function skHwSubjectChanged() {
+  const st = skModal;
+  if (!st || st.kind !== 'hw' || st.dueTouched) return;
+  const p = skProfile(st.memberId);
+  const iso = skNextLessonDay(p, famVal('skH_subject'));
+  const hint = document.getElementById('skH_hint');
+  if (iso) {
+    document.getElementById('skH_due').value = iso;
+    if (hint) hint.textContent = 'Nächste Stunde: ' + skFmtDay(iso);
+  } else if (hint) hint.textContent = '';
+}
+function skSaveHomework() {
+  const st = skModal;
+  const subject = famVal('skH_subject');
+  const text = famVal('skH_text');
+  const due = famVal('skH_due');
+  if (!subject && !text) return skErr('Bitte Fach oder Aufgabe eintragen.');
+  const old = st.id ? skHomeworkOf('').find(x => x.id === st.id) : null;
+  skUpsert('hw', {
+    ...(old || { done: false, doneAt: '', created: new Date().toISOString() }),
+    id: old ? old.id : newRecordId(), memberId: st.memberId, subject: subject.slice(0, 60), text: text.slice(0, 1000), due: skIso(due) ? due : '',
+  });
+  skClose();
+  skCommit(false);
+}
+function skDeleteHomework() {
+  schoolHomework = (schoolHomework || []).filter(h => h.id !== skModal.id);
+  skClose();
+  skCommit(false);
+}
+
+// Elternbrief
+function skParents() { return members.filter(m => !famIsPet(m) && !skProfile(m.id)); }
+function skLetterTaskHtml() {
+  const st = skModal;
+  const people = skParents();
+  return `<label class="fz-check"><input type="checkbox" id="skB_task"${st.taskOn ? ' checked' : ''} /><span>Als Aufgabe anlegen – mit Erinnerung<span class="block text-[11px] text-ink/45">Wer die Aufgabe abhakt, erledigt auch den Brief. Braucht eine Frist.</span></span></label>
+    <div id="skB_taskFor" class="flex flex-wrap gap-1.5 mb-3${st.taskOn ? '' : ' hidden'}">${people.map(m => `<button type="button" class="fz-filter-chip sk-kid-chip${st.taskFor.includes(m.id) ? ' active' : ''}" data-skm="taskfor" data-id="${famAttr(m.id)}">${skAvatar(m)}<span>${escapeHtml(memberLabel(m))}</span></button>`).join('')}</div>`;
+}
+function skKiClosuresHtml() {
+  const list = (skModal && skModal.kiClosures) || [];
+  if (!list.length) return '';
+  return `<div class="fz-note-box ok mb-3"><span>🚫</span><div class="min-w-0 flex-1">
+    <div class="text-xs font-medium mb-1">Schließtage im Brief gefunden – übernehmen?</div>
+    ${list.map((c, i) => `<label class="fz-check" style="margin-bottom:0.3rem"><input type="checkbox" data-skkic="${i}"${c.on ? ' checked' : ''} /><span class="text-xs">${escapeHtml(skRange(c.from, c.to))}${c.reason ? ' · ' + escapeHtml(c.reason) : ''}</span></label>`).join('')}
+  </div></div>`;
+}
+function skOpenLetter(id, mid, autoKi) {
+  if (!skCanEdit()) return;
+  const l = id ? skLettersOf('').find(x => x.id === id) : null;
+  const kids = l ? l.memberIds.slice() : [mid].filter(Boolean);
+  const me = currentMember();
+  const taskFor = l && Array.isArray(l.taskFor) ? l.taskFor.slice() : (me && skParents().some(x => x.id === me.id) ? [me.id] : skParents().slice(0, 1).map(x => x.id));
+  const action = l ? l.action : 'unterschreiben';
+  const ki = skKiOn();
+  const html = `
+    <h3 class="font-serif text-lg mb-3">Elternbrief</h3>
+    ${ki ? `<button type="button" id="skB_ki" class="w-full mb-2 px-3 py-2.5 rounded-xl border border-dashed border-pine/50 text-sm text-pine hover:bg-pine/5 transition" data-skm="ki">📷 Brief fotografieren – KI liest aus</button>
+      <p id="skB_kiInfo" class="hidden text-xs mb-3"></p>` : ''}
+    ${skKidChips(kids, 'kid')}
+    ${fzIn('skB_title', 'Worum geht es?', l ? l.title : '', { ph: 'z. B. Ausflug in den Zoo', max: 150 })}
+    ${fzIn('skB_sender', 'Von', l ? l.sender : '', { ph: 'z. B. Klassenlehrerin, Kita-Leitung', max: 100 })}
+    <label class="fz-lbl">Was ist zu tun?</label>
+    <div class="fz-type-row mb-3">${SK_ACTIONS.map(a => `<button type="button" class="fz-type-chip${a.id === action ? ' active' : ''}" data-skm="action" data-v="${a.id}"><span class="fz-ti">${a.icon}</span>${a.label}</button>`).join('')}</div>
+    <div class="fz-grid2">
+      ${fzIn('skB_deadline', 'Frist', l ? l.deadline : '', { type: 'date' })}
+      ${fzIn('skB_amount', 'Betrag', l && l.amount !== '' && l.amount != null ? hsDecInput(l.amount, 2) : '', { mode: 'decimal', unit: curSym(), ph: 'optional' })}
+    </div>
+    ${famTa('skB_note', 'Notiz', l ? l.note : '', 'z. B. Lunchpaket und Regenjacke mitgeben')}
+    <div id="skB_kiClosures"></div>
+    <div id="skB_taskBox"></div>
+    ${skFooter(!!l)}`;
+  skOpen(html, { kind: 'letter', id: l ? l.id : '', kids, action, taskOn: l ? !!l.taskOn : true, taskFor, kiClosures: [] }, () => {
+    document.getElementById('skB_taskBox').innerHTML = skLetterTaskHtml();
+    if (autoKi && ki) setTimeout(() => skPickFile('image/*,application/pdf', skKiLetter), 50);
+  });
+}
+function skSaveLetter() {
+  const st = skModal;
+  const title = famVal('skB_title');
+  if (!title) return skErr('Bitte eintragen, worum es geht.');
+  if (!st.kids.length) return skErr('Bitte mindestens ein Kind wählen.');
+  const deadline = famVal('skB_deadline');
+  const amountRaw = famVal('skB_amount');
+  const amount = amountRaw ? hsDec(amountRaw) : '';
+  if (amountRaw && !(amount >= 0)) return skErr('Bitte den Betrag als Zahl eingeben.');
+  const taskOn = fzChecked('skB_task');
+  if (taskOn && !skIso(deadline)) return skErr('Für die Aufgabe braucht der Brief eine Frist.');
+  if (taskOn && !st.taskFor.length) return skErr('Bitte wählen, wer die Aufgabe bekommt.');
+  const old = st.id ? skLettersOf('').find(x => x.id === st.id) : null;
+  let l = {
+    ...(old || { done: false, doneAt: '', taskId: '', created: new Date().toISOString() }),
+    id: old ? old.id : newRecordId(), memberIds: st.kids.slice(), title: title.slice(0, 150), sender: famVal('skB_sender').slice(0, 100),
+    action: st.action, deadline: skIso(deadline) ? deadline : '', amount: amountRaw ? Math.round(amount * 100) / 100 : '',
+    note: famVal('skB_note').slice(0, 2000), taskOn, taskFor: st.taskFor.slice(),
+  };
+  l = skSyncLetterTask(l, old);
+  skUpsert('letters', l);
+  (st.kiClosures || []).filter(c => c.on && skIso(c.from)).forEach(c => {
+    const dup = skClosuresOf('').some(x => x.from === c.from && (x.to || x.from) === (c.to || c.from) && st.kids.every(k => x.memberIds.includes(k)));
+    if (!dup) skUpsert('closures', { id: newRecordId(), memberIds: st.kids.slice(), from: c.from, to: skIso(c.to) && c.to >= c.from ? c.to : c.from, reason: (c.reason || '').slice(0, 100), created: new Date().toISOString() });
+  });
+  skClose();
+  skCommit(true);
+  finShowToast(l.taskId && l.taskOn ? 'Gespeichert – Aufgabe angelegt' : 'Gespeichert');
+}
+function skDeleteLetter() {
+  const l = skLettersOf('').find(x => x.id === skModal.id);
+  if (!l || !confirm('Elternbrief löschen?')) return;
+  const t = skTaskOf(l);
+  if (t && !t.done && typeof queueTaskDelete === 'function') { queueTaskDelete(t.id); try { rebuildAufgaben(); renderTasks(); flushOutbox(); } catch (e) { /* egal */ } }
+  schoolLetters = (schoolLetters || []).filter(x => x.id !== l.id);
+  skClose();
+  skCommit(true);
+}
+
+// Schließtag
+function skOpenClosure(id, mid) {
+  if (!skCanEdit()) return;
+  const c = id ? skClosuresOf('').find(x => x.id === id) : null;
+  let kids = c ? c.memberIds.slice() : [mid].filter(Boolean);
+  if (!c && mid && skProfile(mid)) {
+    const same = String(skProfile(mid).name || '').trim().toLowerCase();
+    if (same) skProfiles().forEach(p => { if (p.memberId !== mid && String(p.name || '').trim().toLowerCase() === same) kids.push(p.memberId); });
+  }
+  const html = `
+    <h3 class="font-serif text-lg mb-1">Schließtag</h3>
+    <p class="text-xs text-ink/50 mb-4">Erscheint im Kalender – auch über mehrere Tage, z. B. Sommerschließzeit.</p>
+    ${skKidChips(kids, 'kid')}
+    <div class="fz-grid2">
+      ${fzIn('skC_from', 'Von', c ? c.from : '', { type: 'date' })}
+      ${fzIn('skC_to', 'Bis', c ? (c.to || c.from) : '', { type: 'date' })}
+    </div>
+    ${fzIn('skC_reason', 'Grund', c ? c.reason : '', { ph: 'z. B. Teamtag, Brückentag, Schließzeit', max: 100 })}
+    ${skFooter(!!c)}`;
+  skOpen(html, { kind: 'closure', id: c ? c.id : '', kids }, () => {
+    const from = document.getElementById('skC_from'), to = document.getElementById('skC_to');
+    from.addEventListener('change', () => { if (!to.value || to.value < from.value) to.value = from.value; });
+  });
+}
+function skSaveClosure() {
+  const st = skModal;
+  const from = famVal('skC_from');
+  let to = famVal('skC_to');
+  if (!skIso(from)) return skErr('Bitte ein Datum wählen.');
+  if (!skIso(to)) to = from;
+  if (to < from) return skErr('„Bis“ liegt vor „Von“.');
+  if (skDaysBetween(from, to) > 120) return skErr('Höchstens 120 Tage am Stück.');
+  if (!st.kids.length) return skErr('Bitte mindestens ein Kind wählen.');
+  const old = st.id ? skClosuresOf('').find(x => x.id === st.id) : null;
+  skUpsert('closures', { ...(old || { created: new Date().toISOString() }), id: old ? old.id : newRecordId(), memberIds: st.kids.slice(), from, to, reason: famVal('skC_reason').slice(0, 100) });
+  skClose();
+  skCommit(true);
+}
+function skDeleteClosure() {
+  schoolClosures = (schoolClosures || []).filter(c => c.id !== skModal.id);
+  skClose();
+  skCommit(true);
+}
+
+/* ---------- KI: Stundenplan und Elternbrief vom Foto ---------- */
+function skPickFile(accept, cb) {
+  let inp = document.getElementById('skFileInput');
+  if (!inp) {
+    inp = document.createElement('input');
+    inp.type = 'file';
+    inp.id = 'skFileInput';
+    inp.setAttribute('aria-hidden', 'true');
+    inp.tabIndex = -1;
+    inp.style.cssText = 'position:fixed;opacity:0;width:1px;height:1px;left:-100px;top:0;pointer-events:none';
+    document.body.appendChild(inp);
+  }
+  inp.accept = accept;
+  inp.value = '';
+  inp.onchange = () => { const f = inp.files && inp.files[0]; inp.value = ''; if (f) cb(f); };
+  inp.click();
+}
+async function skFilePart(file) {
+  const t = String(file.type || '').toLowerCase();
+  if (t === 'application/pdf' || /\.pdf$/i.test(file.name || '')) {
+    if (file.size > 12 * 1024 * 1024) throw new Error('Die PDF-Datei ist zu groß (max. 12 MB).');
+    return recipeKiFilePart(file, 'application/pdf');
+  }
+  return recipeKiImagePart(file);
+}
+async function skKiPost(path, body) {
+  if (!navigator.onLine) throw new Error('Keine Verbindung.');
+  const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  const timer = ctrl ? setTimeout(() => ctrl.abort(), 150000) : null;
+  let res;
+  try {
+    res = await apiFetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctrl ? ctrl.signal : undefined });
+  } catch (err) {
+    throw new Error(err && err.name === 'AbortError' ? 'Die KI hat zu lange gebraucht.' : 'Keine Verbindung zum Server.');
+  } finally { if (timer) clearTimeout(timer); }
+  let data = {};
+  try { data = await res.json(); } catch (e) { data = {}; }
+  if (res.status === 404) throw new Error('Auf dem Server fehlen noch die neuen Dateien ki.pb.js und pinn-ki.js.');
+  if (!res.ok) throw new Error(data.error || ('Server-Fehler ' + res.status));
+  return data;
+}
+async function skKiTimetable(mid, file) {
+  const p = skProfile(mid);
+  if (!p) return;
+  skKiBusy = mid;
+  skKiMsg = null;
+  renderFamily();
+  try {
+    const part = await skFilePart(file);
+    const data = await skKiPost('/api/pinn/ki/stundenplan', { dateien: [part], kind: memberLabel(memberById(mid)), klasse: p.group || '' });
+    const r = data.stundenplan || {};
+    const stunden = Array.isArray(r.stunden) ? r.stunden : [];
+    if (!stunden.length) throw new Error('Kein Stundenplan erkannt.');
+    const cur = skProfile(mid);
+    if ((cur.lessons || []).some(l => String(l.subject || '').trim()) && !confirm('Den bisherigen Stundenplan durch den erkannten ersetzen?')) { skKiMsg = null; return; }
+    let times = (Array.isArray(r.zeiten) ? r.zeiten : []).filter(z => skTimeOk(z.von) && skTimeOk(z.bis) && z.bis > z.von).map(z => ({ id: newRecordId(), from: z.von, to: z.bis }));
+    const maxN = stunden.reduce((mx, s) => Math.max(mx, Number(s.stunde) || 0), 0);
+    if (times.length < maxN) {
+      const keep = skTimes(cur);
+      if (keep.length >= maxN) times = keep.map(t => ({ ...t }));
+      else {
+        const base = times.length ? times : (keep.length ? keep.map(t => ({ ...t })) : skPresetTimes());
+        while (base.length < maxN) { const last = base[base.length - 1]; const s = skMin(last.to) + 5; base.push({ id: newRecordId(), from: skHm(s), to: skHm(s + 45) }); }
+        times = base;
+      }
+    }
+    const lessons = [];
+    const seen = new Set();
+    stunden.forEach(s => {
+      const day = Number(s.tag), n = Number(s.stunde);
+      const subject = String(s.fach || '').trim().slice(0, 60);
+      if (!(day >= 1 && day <= 5) || !(n >= 1 && n <= times.length) || !subject) return;
+      const key = day + '|' + n;
+      if (seen.has(key)) return;
+      seen.add(key);
+      lessons.push({ id: newRecordId(), day, slot: times[n - 1].id, subject, room: String(s.raum || '').trim().slice(0, 30) });
+    });
+    if (!lessons.length) throw new Error('Kein Stundenplan erkannt.');
+    skUpsert('profiles', { ...cur, times, lessons, updated: new Date().toISOString() });
+    skKiMsg = { memberId: mid, text: `✨ ${lessons.length} Stunden übernommen – bitte kurz prüfen.${r.hinweis ? ' ' + r.hinweis : ''}`, bad: false };
+    persistState();
+  } catch (err) {
+    skKiMsg = { memberId: mid, text: 'KI: ' + (err && err.message ? err.message : 'Unbekannter Fehler'), bad: true };
+  } finally {
+    skKiBusy = '';
+    if (currentView === 'familie') renderFamily();
+  }
+}
+async function skKiLetter(file) {
+  const st = skModal;
+  if (!st || st.kind !== 'letter') return;
+  const info = document.getElementById('skB_kiInfo');
+  const btn = document.getElementById('skB_ki');
+  const show = (txt, bad) => { if (!info) return; info.textContent = txt; info.classList.remove('hidden'); info.classList.toggle('text-red-500', !!bad); info.classList.toggle('text-ink/55', !bad); };
+  if (btn) btn.disabled = true;
+  show('✨ KI liest den Brief …');
+  try {
+    const part = await skFilePart(file);
+    const data = await skKiPost('/api/pinn/ki/elternbrief', {
+      dateien: [part], heute: skToday(),
+      kinder: st.kids.map(id => memberLabel(memberById(id))),
+      einrichtungen: st.kids.map(id => skProfile(id)).filter(Boolean).map(skName),
+    });
+    const b = data.brief || {};
+    if (!skModal || skModal !== st) return;
+    const set = (id, v) => { const el = document.getElementById(id); if (el && v !== undefined && v !== null && v !== '') el.value = v; };
+    set('skB_title', b.titel);
+    set('skB_sender', b.absender);
+    if (skIso(b.frist)) set('skB_deadline', b.frist);
+    if (Number(b.betrag) > 0) set('skB_amount', hsDecInput(Number(b.betrag), 2));
+    const note = document.getElementById('skB_note');
+    if (note && b.zusammenfassung && !note.value.trim()) note.value = b.zusammenfassung;
+    if (SK_ACTIONS.some(a => a.id === b.aktion)) {
+      st.action = b.aktion;
+      document.querySelectorAll('#famModalBody [data-skm="action"]').forEach(x => x.classList.toggle('active', x.dataset.v === st.action));
+    }
+    st.kiClosures = (Array.isArray(b.schliesstage) ? b.schliesstage : []).filter(c => skIso(c.von)).map(c => ({ from: c.von, to: skIso(c.bis) ? c.bis : c.von, reason: c.grund || '', on: true }));
+    document.getElementById('skB_kiClosures').innerHTML = skKiClosuresHtml();
+    if (!skIso(b.frist) && b.aktion === 'lesen') {
+      const box = document.getElementById('skB_task');
+      if (box) { box.checked = false; st.taskOn = false; document.getElementById('skB_taskFor').classList.add('hidden'); }
+    }
+    show('✨ Ausgelesen – bitte kurz prüfen.' + (b.hinweis ? ' ' + b.hinweis : ''), false);
+  } catch (err) {
+    show('KI: ' + (err && err.message ? err.message : 'Unbekannter Fehler') + ' – bitte selbst eintragen.', true);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+/* ---------- Verdrahtung ---------- */
+function skPaneClick(e) {
+  const go = e.target.closest('[data-famtabgo]');
+  if (go) { famSetTab(go.dataset.famtabgo); return true; }
+  const pass = e.target.closest('[data-fampass]');
+  if (pass) { famOpenPass(pass.dataset.fampass); return true; }
+  const b = e.target.closest('[data-sk]');
+  if (!b || b.disabled) return false;
+  const id = b.dataset.id || '';
+  switch (b.dataset.sk) {
+    case 'open': skKid = id; famDetailId = null; famSetTab('schule'); break;
+    case 'openletter': {
+      const l = skLettersOf('').find(x => x.id === id);
+      if (l) { skKid = l.memberIds[0]; famDetailId = null; famSetTab('schule'); if (skCanEdit()) skOpenLetter(id); }
+      break;
+    }
+    case 'kid': skKid = id; skKiMsg = null; renderFamily(); break;
+    case 'addkid': skOpenProfile('', id); break;
+    case 'editprofile': skOpenProfile(id); break;
+    case 'times': skOpenTimes(id); break;
+    case 'lesson': skOpenLesson(id, Number(b.dataset.day), b.dataset.slot); break;
+    case 'days': skOpenDays(id); break;
+    case 'kiplan': if (!skKiBusy) skPickFile('image/*,application/pdf', f => skKiTimetable(id, f)); break;
+    case 'hwnew': skOpenHomework('', id); break;
+    case 'hw': skOpenHomework(id); break;
+    case 'hwtoggle': skToggleHomework(id); break;
+    case 'letternew': skOpenLetter('', id); break;
+    case 'letterki': skOpenLetter('', id, true); break;
+    case 'letter': skOpenLetter(id); break;
+    case 'letterdone': skToggleLetter(id); break;
+    case 'closurenew': skOpenClosure('', id); break;
+    case 'closure': skOpenClosure(id); break;
+    case 'showdone': skShowDone = !skShowDone; renderFamily(); break;
+    default: return false;
+  }
+  return true;
+}
+function skModalClick(e) {
+  if (!skModal) return;
+  const b = e.target.closest('[data-skm]');
+  if (!b) return;
+  const st = skModal;
+  const body = document.getElementById('famModalBody');
+  switch (b.dataset.skm) {
+    case 'cancel': attemptCloseModal('famModal', skClose); break;
+    case 'save':
+      if (st.kind === 'profile') skSaveProfile();
+      else if (st.kind === 'times') skSaveTimes();
+      else if (st.kind === 'lesson') skSaveLesson(false);
+      else if (st.kind === 'days') skSaveDays();
+      else if (st.kind === 'hw') skSaveHomework();
+      else if (st.kind === 'letter') skSaveLetter();
+      else if (st.kind === 'closure') skSaveClosure();
+      break;
+    case 'del':
+      if (st.kind === 'profile') skDeleteProfile();
+      else if (st.kind === 'lesson') skSaveLesson(true);
+      else if (st.kind === 'hw') skDeleteHomework();
+      else if (st.kind === 'letter') skDeleteLetter();
+      else if (st.kind === 'closure') skDeleteClosure();
+      break;
+    case 'type':
+      st.type = b.dataset.v;
+      body.querySelectorAll('[data-skm="type"]').forEach(x => x.classList.toggle('active', x === b));
+      break;
+    case 'action':
+      st.action = b.dataset.v;
+      body.querySelectorAll('[data-skm="action"]').forEach(x => x.classList.toggle('active', x === b));
+      break;
+    case 'kid': {
+      const id = b.dataset.id;
+      st.kids = st.kids.includes(id) ? st.kids.filter(x => x !== id) : st.kids.concat(id);
+      b.classList.toggle('active', st.kids.includes(id));
+      break;
+    }
+    case 'taskfor': {
+      const id = b.dataset.id;
+      st.taskFor = st.taskFor.includes(id) ? st.taskFor.filter(x => x !== id) : st.taskFor.concat(id);
+      b.classList.toggle('active', st.taskFor.includes(id));
+      break;
+    }
+    case 'addtime': {
+      skSyncTimes();
+      const last = st.rows[st.rows.length - 1];
+      const s = last && skTimeOk(last.to) ? skMin(last.to) + 5 : 8 * 60;
+      st.rows.push({ id: newRecordId(), from: skHm(s), to: skHm(s + 45) });
+      skRenderTimes();
+      break;
+    }
+    case 'rmtime': skSyncTimes(); st.rows.splice(Number(b.dataset.i), 1); skRenderTimes(); break;
+    case 'preset':
+      skSyncTimes();
+      if (st.rows.length && !confirm('Die Stundenzeiten durch die Vorlage ersetzen?')) break;
+      st.rows = skPresetTimes().map((t, i) => st.rows[i] ? { ...t, id: st.rows[i].id } : t);
+      skRenderTimes();
+      break;
+    case 'subj': { const el = document.getElementById('skL_subject'); if (el) el.value = b.dataset.v; break; }
+    case 'hwsubj': { const el = document.getElementById('skH_subject'); if (el) { el.value = b.dataset.v; skHwSubjectChanged(); } break; }
+    case 'copymon': skCopyMonday(); break;
+    case 'ki': skPickFile('image/*,application/pdf', skKiLetter); break;
+  }
+}
+function skModalChange(e) {
+  if (!skModal) return;
+  if (e.target.id === 'skB_task') {
+    skModal.taskOn = e.target.checked;
+    const box = document.getElementById('skB_taskFor');
+    if (box) box.classList.toggle('hidden', !e.target.checked);
+    return;
+  }
+  const kic = e.target.closest('[data-skkic]');
+  if (kic && skModal.kiClosures) { const c = skModal.kiClosures[Number(kic.dataset.skkic)]; if (c) c.on = kic.checked; }
+}
+
 /* ---------- Verdrahtung ---------- */
 (function wireFamily() {
   const pane = document.getElementById('famPane');
   pane.addEventListener('click', (e) => {
+    if (skPaneClick(e)) return;
     const sosBtn = e.target.closest('[data-sosopen]');
     if (sosBtn) { sosOpen(sosBtn.dataset.sosopen); return; }
     const open = e.target.closest('[data-famopen]');
@@ -49176,7 +50672,14 @@ function sosStart() {
     if (!act) return;
     const id = act.dataset.id;
     switch (act.dataset.famact) {
-      case 'back': famDetailId = null; renderFamily(); break;
+      case 'back':
+        if (famDetailId && famDetailMode === 'pass' && famPassFrom === 'profil') famDetailMode = 'profil';
+        else famDetailId = null;
+        renderFamily();
+        if (famPollWanted()) famStartPolling();
+        { const sc = document.getElementById('famScroll'); if (sc) sc.scrollTop = 0; }
+        break;
+      case 'pass': famDetailMode = 'pass'; famPassFrom = 'profil'; renderFamily(); { const sc = document.getElementById('famScroll'); if (sc) sc.scrollTop = 0; } break;
       case 'edit': famOpenEdit(famDetailId); break;
       case 'showmap': famShowOnMap(id); break;
       case 'follow':
@@ -49295,6 +50798,12 @@ function sosStart() {
   };
   body.addEventListener('click', onModalClick);
   body2.addEventListener('click', onModalClick);
+  body.addEventListener('click', skModalClick);
+  body.addEventListener('change', skModalChange);
+  document.getElementById('famTabs').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-famtab]');
+    if (b) famSetTab(b.dataset.famtab);
+  });
 
   document.getElementById('famPlacesBtn').addEventListener('click', famOpenPlaces);
   document.getElementById('famSetupBtn').addEventListener('click', async () => {
@@ -51029,7 +52538,7 @@ function ntOpenLink(url) {
     if (g('pinnwand')) { ntUseQuery('pinnwand', g('pinnwand')); pwOpenFromUrl(); return true; }
     if (g('familie')) { ntUseQuery('familie', g('familie')); famOpenFromUrl(); return true; }
     if (g('mitglied')) {
-      if (isViewAllowed('familie')) famOpenMember(g('mitglied'));
+      if (isViewAllowed('familie')) famOpenPass(g('mitglied'));
       return true;
     }
     if (g('aufgabe')) {

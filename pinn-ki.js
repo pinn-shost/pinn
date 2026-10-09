@@ -1,7 +1,8 @@
 // pb_hooks/pinn-ki.js
 // Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden.
 //
-// KI-Auswertung mit Google Gemini: Rezepte (Rezept-Popup) und Zählerstände (Menü „Haus“ → Zähler).
+// KI-Auswertung mit Google Gemini: Rezepte (Rezept-Popup), Zählerstände (Menü „Haus“ → Zähler),
+// Stundenpläne und Elternbriefe (Familie → Schule & Kita).
 // Die App spricht NIE direkt mit Google: Text, Fotos, PDFs oder ein Rezept-Link gehen an den
 // eigenen Server (ki.pb.js), der sie mit dem Gemini-Schlüssel aus der .env an Google schickt und
 // nur das fertig sortierte Rezept zurückgibt. Der Schlüssel verlässt den Server nicht.
@@ -666,8 +667,143 @@ function analyzeMeter(input) {
     };
 }
 
+// ---------------------------------------------------------------------------------------------
+// Schule & Kita: gemeinsame Dateiprüfung (Fotos und PDF)
+// ---------------------------------------------------------------------------------------------
+function schoolParts(data, maxFiles) {
+    const files = Array.isArray(data.dateien) ? data.dateien.slice(0, maxFiles) : [];
+    const parts = [];
+    let total = 0;
+    files.forEach(f => {
+        if (!f || typeof f !== "object") return;
+        let mime = String(f.mime || "").toLowerCase();
+        if (mime === "image/jpg") mime = "image/jpeg";
+        const b64 = String(f.daten || "").replace(/^data:[^,]*,/, "").replace(/\s+/g, "");
+        if (ALLOWED_MIME.indexOf(mime) < 0 || !b64 || !/^[A-Za-z0-9+\/=]+$/.test(b64)) return;
+        total += b64.length;
+        if (total > MAX_TOTAL_BASE64) throw new Error("Die Datei ist zu groß für die KI.");
+        parts.push({ inline_data: { mime_type: mime, data: b64 } });
+    });
+    if (!parts.length) throw new Error("Kein Foto übergeben.");
+    return parts;
+}
+function hm(v) { const t = cleanText(v, 5).replace(".", ":"); return t.length === 4 ? "0" + t : t; }
+function isHm(s) { return /^([01]\d|2[0-3]):[0-5]\d$/.test(String(s || "")); }
+function isIso(s) { return /^\d{4}-\d{2}-\d{2}$/.test(String(s || "")); }
+
+// ---------------------------------------------------------------------------------------------
+// Stundenplan vom Foto (Familie → Schule & Kita)
+// ---------------------------------------------------------------------------------------------
+// input: { dateien: [{ mime, daten }], kind, klasse }
+// -> { zeiten: [{ von, bis }], stunden: [{ tag 1–5, stunde ab 1, fach, raum }], hinweis }
+function timetableInstructions(kind, klasse) {
+    return [
+        "Du liest Stundenpläne für die Familien-App pinn. von einem Foto oder PDF ab.",
+        kind ? "Kind: " + kind + (klasse ? ", Klasse " + klasse : "") + ". Stehen mehrere Klassen auf dem Blatt, nur diese nehmen." : "",
+        "Regeln:",
+        "- zeiten: Beginn und Ende jeder Unterrichtsstunde (HH:MM, 24 Stunden) in der Reihenfolge der Stunden. Pausen sind KEINE Stunde. Stehen keine Uhrzeiten auf dem Plan, zeiten leer lassen.",
+        "- stunden: jede belegte Stunde als eigener Eintrag. tag: 1 = Montag bis 5 = Freitag (Samstag und Sonntag weglassen). stunde: Nummer der Stunde ab 1, passend zur Reihenfolge in zeiten.",
+        "- Doppelstunden als zwei Einträge. Leere Felder weglassen.",
+        "- fach: ausgeschrieben auf Deutsch, Abkürzungen auflösen (D = Deutsch, M/Ma = Mathe, E/En = Englisch, SU/Sach = Sachunterricht, Sp = Sport, Mu = Musik, Ku/BK = Kunst, Rel/ev/kath = Religion, Eth = Ethik, Bio = Biologie, Ge = Geschichte, Ek/Erd = Erdkunde, Ph = Physik, Ch = Chemie, F/Fr = Französisch, L = Latein, Inf = Informatik). Unbekannte Abkürzungen so lassen.",
+        "- raum: Raum, falls angegeben, sonst leer. Kürzel von Lehrkräften NICHT als Raum nehmen.",
+        "- ist_stundenplan: false, wenn kein Stundenplan zu sehen ist.",
+        "- hinweis: kurzer deutscher Hinweis, falls etwas unklar ist (z. B. A/B-Wochen), sonst leer.",
+    ].filter(Boolean).join("\n");
+}
+const TIMETABLE_SCHEMA = {
+    type: "OBJECT",
+    properties: {
+        ist_stundenplan: { type: "BOOLEAN" },
+        zeiten: { type: "ARRAY", items: { type: "OBJECT", properties: { von: { type: "STRING" }, bis: { type: "STRING" } }, required: ["von", "bis"] } },
+        stunden: { type: "ARRAY", items: { type: "OBJECT", properties: { tag: { type: "INTEGER" }, stunde: { type: "INTEGER" }, fach: { type: "STRING" }, raum: { type: "STRING" } }, required: ["tag", "stunde", "fach"] } },
+        hinweis: { type: "STRING" },
+    },
+    required: ["ist_stundenplan", "zeiten", "stunden", "hinweis"],
+    propertyOrdering: ["ist_stundenplan", "zeiten", "stunden", "hinweis"],
+};
+function analyzeTimetable(input) {
+    const data = input && typeof input === "object" ? input : {};
+    const parts = schoolParts(data, 2);
+    parts.unshift({ text: "Bitte diesen Stundenplan auslesen." });
+    const r = callGemini(parts, [], [], { system: timetableInstructions(cleanText(data.kind, 60), cleanText(data.klasse, 30)), schema: TIMETABLE_SCHEMA });
+    if (r.ist_stundenplan === false) throw new Error("Auf dem Foto war kein Stundenplan zu erkennen.");
+    const zeiten = (Array.isArray(r.zeiten) ? r.zeiten : []).slice(0, 14)
+        .map(z => ({ von: hm(z && z.von), bis: hm(z && z.bis) }))
+        .filter(z => isHm(z.von) && isHm(z.bis) && z.bis > z.von);
+    const stunden = (Array.isArray(r.stunden) ? r.stunden : []).slice(0, 80)
+        .map(x => ({ tag: Math.round(Number(x && x.tag)), stunde: Math.round(Number(x && x.stunde)), fach: cleanText(x && x.fach, 60), raum: cleanText(x && x.raum, 30) }))
+        .filter(x => x.tag >= 1 && x.tag <= 5 && x.stunde >= 1 && x.stunde <= 14 && x.fach);
+    if (!stunden.length) throw new Error("Auf dem Foto war kein Stundenplan zu erkennen.");
+    return { zeiten: zeiten, stunden: stunden, hinweis: cleanText(r.hinweis, 200), modell: String(r.__modell || "") };
+}
+
+// ---------------------------------------------------------------------------------------------
+// Elternbrief vom Foto oder PDF (Familie → Schule & Kita)
+// ---------------------------------------------------------------------------------------------
+// input: { dateien: [{ mime, daten }], heute (JJJJ-MM-TT), kinder[], einrichtungen[] }
+// -> { titel, absender, aktion, frist, betrag, zusammenfassung, schliesstage: [{ von, bis, grund }], hinweis }
+const LETTER_ACTIONS = ["unterschreiben", "bezahlen", "mitbringen", "anmelden", "lesen"];
+function letterInstructions(today, kids, places) {
+    return [
+        "Du liest Elternbriefe von Schule oder Kita für die Familien-App pinn. aus (Foto oder PDF).",
+        "Heute ist " + today + ". Relative Angaben wie „bis Freitag“ oder „bis nächste Woche“ von heute aus in ein Datum umrechnen. Jahreszahlen ohne Angabe: das nächste passende Datum ab heute.",
+        kids.length ? "Kinder der Familie: " + kids.join(", ") + "." : "",
+        places.length ? "Einrichtungen: " + places.join(", ") + "." : "",
+        "Regeln:",
+        "- titel: worum es geht, kurz (max. 60 Zeichen), z. B. „Ausflug in den Zoo“ oder „Elternabend“.",
+        "- absender: wer den Brief schreibt (z. B. Klassenlehrerin Frau Müller, Kita-Leitung), sonst leer.",
+        "- aktion: was die Eltern tun müssen – unterschreiben (Abschnitt/Einverständnis zurückgeben), bezahlen (Geld mitgeben oder überweisen), mitbringen (Dinge mitgeben), anmelden (zurückmelden, anmelden, Termin zusagen) oder lesen (nur zur Information).",
+        "- frist: bis wann (JJJJ-MM-TT), sonst leer. Bei einer Veranstaltung ohne Rückgabefrist: das Datum der Veranstaltung.",
+        "- betrag: Betrag in Euro als Zahl, sonst 0.",
+        "- zusammenfassung: die wichtigsten Punkte in 1–3 kurzen deutschen Sätzen (Datum, Uhrzeit, was mitbringen).",
+        "- schliesstage: alle im Brief genannten Tage, an denen Schule oder Kita geschlossen ist bzw. kein Unterricht/keine Betreuung stattfindet (Schließtage, Teamtage, Brückentage, Schließzeiten), je Zeitraum von/bis (JJJJ-MM-TT) und grund. Normale Schulferien nur, wenn sie ausdrücklich als Schließzeit genannt werden. Sonst leer.",
+        "- ist_brief: false, wenn kein Brief oder Schreiben zu sehen ist.",
+        "- hinweis: kurzer deutscher Hinweis, falls etwas unklar ist, sonst leer.",
+    ].filter(Boolean).join("\n");
+}
+const LETTER_SCHEMA = {
+    type: "OBJECT",
+    properties: {
+        ist_brief: { type: "BOOLEAN" },
+        titel: { type: "STRING" },
+        absender: { type: "STRING" },
+        aktion: { type: "STRING", enum: LETTER_ACTIONS },
+        frist: { type: "STRING" },
+        betrag: { type: "NUMBER" },
+        zusammenfassung: { type: "STRING" },
+        schliesstage: { type: "ARRAY", items: { type: "OBJECT", properties: { von: { type: "STRING" }, bis: { type: "STRING" }, grund: { type: "STRING" } }, required: ["von", "bis", "grund"] } },
+        hinweis: { type: "STRING" },
+    },
+    required: ["ist_brief", "titel", "absender", "aktion", "frist", "betrag", "zusammenfassung", "schliesstage", "hinweis"],
+    propertyOrdering: ["ist_brief", "titel", "absender", "aktion", "frist", "betrag", "zusammenfassung", "schliesstage", "hinweis"],
+};
+function analyzeLetter(input) {
+    const data = input && typeof input === "object" ? input : {};
+    const parts = schoolParts(data, 4);
+    if (parts.length > 1) parts.unshift({ text: "Die folgenden " + parts.length + " Dateien gehören zu EINEM Brief (mehrere Seiten)." });
+    parts.unshift({ text: "Bitte diesen Elternbrief auslesen." });
+    const today = isIso(data.heute) ? data.heute : new Date().toISOString().slice(0, 10);
+    const r = callGemini(parts, [], [], { system: letterInstructions(today, cleanList(data.kinder, 8, 60), cleanList(data.einrichtungen, 8, 120)), schema: LETTER_SCHEMA });
+    if (r.ist_brief === false) throw new Error("Darin war kein Elternbrief zu erkennen.");
+    const betrag = Number(r.betrag);
+    const schliesstage = (Array.isArray(r.schliesstage) ? r.schliesstage : []).slice(0, 20)
+        .map(c => ({ von: cleanText(c && c.von, 10), bis: cleanText(c && c.bis, 10), grund: cleanText(c && c.grund, 100) }))
+        .filter(c => isIso(c.von)).map(c => ({ von: c.von, bis: isIso(c.bis) && c.bis >= c.von ? c.bis : c.von, grund: c.grund }));
+    return {
+        titel: cleanText(r.titel, 150),
+        absender: cleanText(r.absender, 100),
+        aktion: LETTER_ACTIONS.indexOf(r.aktion) >= 0 ? r.aktion : "lesen",
+        frist: isIso(r.frist) ? r.frist : "",
+        betrag: isFinite(betrag) && betrag > 0 ? Math.round(betrag * 100) / 100 : 0,
+        zusammenfassung: cleanText(r.zusammenfassung, 600),
+        schliesstage: schliesstage,
+        hinweis: cleanText(r.hinweis, 200),
+        modell: String(r.__modell || ""),
+    };
+}
+
 function status() {
     return { aktiv: isAvailable(), modell: readEnv(MODEL_ENV) || DEFAULT_MODELS[0] };
 }
 
-module.exports = { isAvailable, status, analyzeRecipe, analyzeMeter };
+module.exports = { isAvailable, status, analyzeRecipe, analyzeMeter, analyzeTimetable, analyzeLetter };
