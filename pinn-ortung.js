@@ -29,7 +29,8 @@
 //     heimwege: [{ id, geraet, memberId, name, seit, ende, grund: 'angekommen'|'beendet'|'abgelaufen', minuten }]
 //                // beendete Heimwege (für Hinweis „angekommen“ in der App, höchstens 6 Std. gemerkt),
 //     plaene:   [{ aufgabe, titel, listen: [], besucht: { <Listen-ID>: ms }, erinnert: {}, besucher, minuten, versuche }],
-//     erledigt: [{ aufgabe, titel, zeit, memberId, wer, listen, minuten }] }
+//     erledigt: [{ aufgabe, titel, zeit, memberId, wer, listen, minuten }],
+//     offen:    { <Listen-ID>: Anzahl offener Artikel } }   // aus der App, für die Erinnerung im Laden
 //
 // Läden & geplante Einkäufe:
 //  - Die App meldet ihre offenen „Einkauf planen“-Aufgaben samt Läden (Route /einkaeufe) – so muss der
@@ -38,8 +39,12 @@
 //    Filiale) auf, gilt der Laden als besucht. Sind alle Läden eines Plans (die eine Adresse haben) besucht, hakt der Server die
 //    Aufgabe ab (pinn-aufgaben.js → setDone) und schickt auf Wunsch eine Push-Nachricht „Betrag eintragen“.
 //    Die App zeigt den offenen Betrag danach unter der Glocke oben neben dem Familiennamen.
-//  - Optional: Erinnerung beim Ankommen („Du bist bei Rewe – Einkaufsliste öffnen“), solange ein Einkauf
-//    dort geplant ist.
+//  - Erinnerung beim Ankommen („Du bist bei Rewe – gehst du einkaufen?“), sobald auf der Liste des Ladens
+//    etwas steht oder dort ein Einkauf geplant ist (Schalter „erinnern“ am Laden). Wie viele Artikel offen
+//    sind, meldet die App mit derselben Route (/einkaeufe → offen: { <Listen-ID>: Anzahl }). Sind
+//    mehrere Läden gleichzeitig in der Nähe, kommt eine gemeinsame Push-Nachricht.
+//  - Solange das eigene Handy im Umkreis eines Ladens ist, liefert /sos die Läden unter „laeden“ –
+//    die App zeigt daraus oben den Einkaufs-Hinweis (Banner) mit Link zur Liste.
 //  Bewusst NICHT in familien_daten: der Zeitplan läuft jede Minute und soll nie die großen
 //  Familiendaten lesen müssen.
 //
@@ -103,6 +108,9 @@ const CRON_LOCK = "pinnOrtungZeitplanLaeuft";
 const CRON_LOCK_MS = 5 * 60 * 1000;          // hängt ein Durchgang länger, darf der nächste trotzdem starten
 const HEIMWEG_ZEIGEN_MS = 60 * 60 * 1000;     // beendete Heimwege zeigt die App noch so lange an
 const HEIMWEG_BEHALTEN_MS = 6 * 60 * 60 * 1000;
+const LADEN_PUSH_PAUSE_MS = 45 * 60 * 1000;   // „Gehst du einkaufen?“ je Laden frühestens dann wieder
+const LADEN_HIER_MAX_MS = 60 * 60 * 1000;     // so lange gilt die letzte Position im Laden für den Hinweis oben
+const MAX_OFFEN = 80;                         // Listen in „offen“
 const EMOJI_ORT = ["🏠", "🏫", "🏢", "🌳", "🐕", "🏥", "🛒", "⚽", "👵", "🏊", "🎵", "⛪", "🚉", "📍"];
 
 // ---------------------------------------------------------------------------------------------
@@ -212,7 +220,18 @@ function ensureSchema() {
     try { $os.mkdirAll(TILE_DIR, 493); } catch (e) { /* egal */ }
 }
 
-function emptyCfg() { return { geraete: [], orte: [], unterwegs: {}, heimwege: [], plaene: [], erledigt: [], sos: [] }; }
+function emptyCfg() { return { geraete: [], orte: [], unterwegs: {}, heimwege: [], plaene: [], erledigt: [], sos: [], offen: {} }; }
+// Offene Artikel je Einkaufsliste (aus der App)
+function cleanOffen(v) {
+    const out = {};
+    if (!v || typeof v !== "object" || Array.isArray(v)) return out;
+    Object.keys(v).slice(0, MAX_OFFEN).forEach(k => {
+        const id = cleanId(k);
+        const n = Math.round(Number(v[k]));
+        if (id && isFinite(n) && n > 0) out[id] = Math.min(n, 999);
+    });
+    return out;
+}
 function normalizeCfg(c) {
     const out = emptyCfg();
     if (!c || typeof c !== "object") return out;
@@ -232,6 +251,7 @@ function normalizeCfg(c) {
         const grenze = Date.now() - SOS_BEHALTEN_MS;
         out.sos = c.sos.filter(x => x && x.id && x.geraet && Number(x.zeit || 0) > grenze).slice(-20);
     }
+    out.offen = cleanOffen(c.offen);
     return out;
 }
 function loadRec(familyId) {
@@ -865,11 +885,14 @@ function syncPlans(e, body) {
             erstellt: vorher.erstellt || Date.now(),
         });
     });
-    const changed = JSON.stringify(neu) !== JSON.stringify(cfg.plaene);
-    if (changed) {
-        cfg.plaene = neu;
-        saveCfg(familyId, cfg);
+    let changed = JSON.stringify(neu) !== JSON.stringify(cfg.plaene);
+    if (changed) cfg.plaene = neu;
+    // Offene Artikel je Liste (ältere App-Stände schicken nichts mit -> alten Stand behalten)
+    if (body && body.offen !== undefined) {
+        const offen = cleanOffen(body.offen);
+        if (JSON.stringify(offen) !== JSON.stringify(cfg.offen || {})) { cfg.offen = offen; changed = true; }
     }
+    if (changed) saveCfg(familyId, cfg);
     return { ok: true, erledigt: cfg.erledigt };
 }
 
@@ -1457,6 +1480,7 @@ function sosList(e) {
         return u && now - Number(u.seit || 0) < UNTERWEGS_MAX_MS && cfg.geraete.some(g => g.id === k);
     });
     const hwEnde = (cfg.heimwege || []).filter(h => h.grund !== "abgelaufen" && now - Number(h.ende || 0) < HEIMWEG_ZEIGEN_MS && !hwAktiv.some(k => heimwegId(k, cfg.unterwegs[k].seit) === h.id));
+    try { out.laeden = laedenHier(familyId, cfg, memberOf(e), now); } catch (err) { out.laeden = []; }
     if (!zeigen.length && !hwAktiv.length && !hwEnde.length) return out;
     let positions = [];
     if (zeigen.some(sosAktiv) || hwAktiv.length) { try { positions = positionsAll(false); } catch (err) { positions = []; } }
@@ -1498,6 +1522,27 @@ function sosList(e) {
         id: h.id, geraet: h.geraet, memberId: h.memberId, name: h.name || "",
         seit: h.seit, ende: h.ende, grund: h.grund, minuten: h.minuten, aktiv: false,
     }));
+    return out;
+}
+// Läden, in deren Umkreis das eigene Handy gerade ist (Stand des Minuten-Zeitplans) – für den
+// Einkaufs-Hinweis oben in der App. Nur, solange die letzte Position frisch genug ist.
+function laedenHier(familyId, cfg, me, now) {
+    if (!me) return [];
+    const shops = cfg.orte.filter(o => o.laden && o.erinnern !== false);
+    if (!shops.length) return [];
+    const mine = cfg.geraete.filter(g => g.memberId === me && g.teilen !== false);
+    if (!mine.length) return [];
+    const st = readJsonFile(STATUS_FILE) || {};
+    const out = [];
+    mine.forEach(g => {
+        const pz = Number(st["pos|" + familyId + "|" + g.id] || 0);
+        if (!pz || now - pz > LADEN_HIER_MAX_MS) return;
+        shops.forEach(o => {
+            if (st["in|" + familyId + "|" + g.id + "|" + o.id] !== 1) return;
+            if (out.some(x => x.laden === o.laden)) return;
+            out.push({ laden: o.laden, ort: o.id, name: o.name || "", seit: Number(st["seit|" + familyId + "|" + g.id + "|" + o.id] || 0) });
+        });
+    });
     return out;
 }
 // Adresse des aktuellen Standorts: nur neu nachschlagen, wenn sich die Person bewegt hat (schont Nominatim)
@@ -1584,6 +1629,55 @@ function sosEnde(e, body) {
 // ---------------------------------------------------------------------------------------------
 // Läuft der vorige Durchgang noch (langsamer Push-Versand, Traccar, Adresssuche), wird dieser
 // ausgelassen. Sonst sehen zwei Durchgänge dieselbe Ankunft und schicken die Nachricht doppelt.
+// ---------------------------------------------------------------------------------------------
+// „Gehst du einkaufen?“ – Push beim Ankommen im Laden (in der Sprache des Profils)
+// ---------------------------------------------------------------------------------------------
+function langOfUser(userId) {
+    let w = {};
+    try { w = require(`${__hooks}/pinn-design.js`).readDesign($app.findRecordById(USERS, userId)).werte || {}; } catch (e) { w = {}; }
+    const s = String(w.sprache || "");
+    if (["de", "en", "fr", "es"].indexOf(s) >= 0) return s;
+    const land = String(w.land || "").toUpperCase();
+    if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
+    if (["FR", "BE", "MC"].indexOf(land) >= 0) return "fr";
+    if (["ES", "MX", "AR", "CO", "CL", "PE"].indexOf(land) >= 0) return "es";
+    return "en";
+}
+const LADEN_TEXT = {
+    de: { bei: "Du bist bei {laden}", frage: "gehst du einkaufen?", artikel1: "1 Artikel auf der Liste", artikel: "{n} Artikel auf der Liste",
+          geplant: "Geplant: {titel}", tipp1: "Tippe hier für die Einkaufsliste.", tippN: "Tippe hier für die Einkaufslisten.", und: " und " },
+    en: { bei: "You're at {laden}", frage: "going shopping?", artikel1: "1 item on the list", artikel: "{n} items on the list",
+          geplant: "Planned: {titel}", tipp1: "Tap here for the shopping list.", tippN: "Tap here for the shopping lists.", und: " and " },
+    fr: { bei: "Tu es chez {laden}", frage: "tu fais les courses ?", artikel1: "1 article sur la liste", artikel: "{n} articles sur la liste",
+          geplant: "Prévu : {titel}", tipp1: "Touche ici pour la liste de courses.", tippN: "Touche ici pour les listes de courses.", und: " et " },
+    es: { bei: "Estás en {laden}", frage: "¿vas a hacer la compra?", artikel1: "1 artículo en la lista", artikel: "{n} artículos en la lista",
+          geplant: "Planeado: {titel}", tipp1: "Toca aquí para la lista de la compra.", tippN: "Toca aquí para las listas de la compra.", und: " y " },
+};
+function ladenPushText(lang, items, geraetId) {
+    const T = LADEN_TEXT[lang] || LADEN_TEXT.en;
+    const fill = (s, v) => s.replace(/\{(\w+)\}/g, (m, k) => (v[k] != null ? String(v[k]) : ""));
+    const namen = items.map(x => x.o.name || "");
+    const nameText = namen.length > 1 ? namen.slice(0, -1).join(", ") + T.und + namen[namen.length - 1] : namen[0];
+    const titel = "🛒 " + fill(T.bei, { laden: nameText }) + " – " + T.frage;
+    if (items.length === 1) {
+        const x = items[0];
+        const teile = [];
+        if (x.anzahl > 0) teile.push(x.anzahl === 1 ? T.artikel1 : fill(T.artikel, { n: x.anzahl }));
+        if (x.plan && x.plan.titel) teile.push(fill(T.geplant, { titel: x.plan.titel }));
+        return {
+            titel: titel,
+            text: (teile.length ? teile.join(" · ") + ". " : "") + T.tipp1,
+            url: "/?liste=" + encodeURIComponent(x.o.laden), tag: "laden-" + geraetId,
+        };
+    }
+    const teile = items.filter(x => x.anzahl > 0).map(x => (x.o.name || "") + " " + x.anzahl);
+    return {
+        titel: titel,
+        text: (teile.length ? teile.join(" · ") + ". " : "") + T.tippN,
+        url: "/?einkauf=1", tag: "laden-" + geraetId,
+    };
+}
+
 function runCron() {
     let store = null;
     try { store = $app.store(); } catch (e) { store = null; }
@@ -1676,6 +1770,7 @@ function runCronInner() {
                 st[posKey] = p.zeit;
                 stChanged = true;
                 const unterwegs = cfg.unterwegs && cfg.unterwegs[g.id];
+                const imLaden = []; // gerade angekommen: Läden mit offener Liste oder geplantem Einkauf
                 cfg.orte.forEach(o => {
                     const key = "in|" + familyId + "|" + g.id + "|" + o.id;
                     const seitKey = "seit|" + familyId + "|" + g.id + "|" + o.id;
@@ -1698,18 +1793,22 @@ function runCronInner() {
                         else { delete st[seitKey]; delete st[dwKey]; }
                     }
                     if (prev === undefined) return; // erste Beobachtung: nur merken
-                    // Laden: an die Einkaufsliste erinnern, solange dort ein Einkauf geplant ist
-                    if (inside === 1 && o.laden && o.erinnern !== false) {
+                    // Laden: „Gehst du einkaufen?“, sobald auf der Liste etwas steht oder dort ein Einkauf
+                    // geplant ist (gesammelt – mehrere Läden in der Nähe = eine Nachricht, siehe unten)
+                    if (inside === 1 && o.laden && o.erinnern !== false && !imLaden.some(x => x.o.laden === o.laden)) {
                         const plan = cfg.plaene.find(x => x.listen.indexOf(o.laden) >= 0 && !(x.besucht && x.besucht[o.laden]));
-                        if (plan && !(plan.erinnert && plan.erinnert[o.laden])) {
-                            if (!plan.erinnert) plan.erinnert = {};
-                            plan.erinnert[o.laden] = now;
-                            cfgChanged = true;
-                            getUsers().filter(u => u.mitglied === g.memberId).forEach(u => sendPush(u.id, {
-                                titel: "🛒 Du bist bei " + o.name,
-                                text: (plan.titel ? "Geplant: " + plan.titel + ". " : "") + "Tippe hier für die Einkaufsliste.",
-                                url: "/?liste=" + encodeURIComponent(o.laden), tag: "laden-" + o.id,
-                            }));
+                        const anzahl = Number((cfg.offen || {})[o.laden] || 0);
+                        const planNeu = !!plan && !(plan.erinnert && plan.erinnert[o.laden]);
+                        const lpKey = "lp|" + familyId + "|" + g.id + "|" + o.laden;
+                        if ((anzahl > 0 || planNeu) && now - Number(st[lpKey] || 0) >= LADEN_PUSH_PAUSE_MS) {
+                            st[lpKey] = now;
+                            stChanged = true;
+                            if (plan) {
+                                if (!plan.erinnert) plan.erinnert = {};
+                                plan.erinnert[o.laden] = now;
+                                cfgChanged = true;
+                            }
+                            imLaden.push({ o: o, anzahl: anzahl, plan: plan || null });
                         }
                     }
                     const watched = !Array.isArray(o.geraete) || !o.geraete.length || o.geraete.indexOf(g.id) >= 0;
@@ -1759,6 +1858,11 @@ function runCronInner() {
                             url: "/?familie=" + encodeURIComponent(g.memberId), tag: "ortung-" + g.id + "-" + o.id,
                         }));
                 });
+                if (imLaden.length) {
+                    getUsers().filter(u => u.mitglied === g.memberId).forEach(u => {
+                        try { sendPush(u.id, ladenPushText(langOfUser(u.id), imLaden, g.id)); } catch (err) { console.log("[Ortung] Einkaufs-Push: " + err.message); }
+                    });
+                }
             }
             // Verweilen im Laden (auch ohne neue Position: das Handy meldet sich im Stehen selten)
             cfg.orte.forEach(o => {

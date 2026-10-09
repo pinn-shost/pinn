@@ -2268,6 +2268,29 @@ window.PINN_LANGUAGES = [
   html.dark .hw-dist { color: #8BD3A6; background: rgba(76,163,111,0.18); }
   html.dark .nt-card.hw { background: color-mix(in srgb, var(--hw, var(--c-pine)) 14%, #2E2C28); }
   @media (prefers-reduced-motion: reduce) { .hw-walk i, .hw-head::before, .hw-sos::after, .hw-sos.counting { animation: none; } }
+  /* ---------- Einkaufs-Hinweis: im Umkreis eines Ladens mit offener Liste (Banner, geteilt bei zwei Läden) ---------- */
+  #lpBanner { position: fixed; z-index: 286; left: 50%; transform: translateX(-50%); width: min(520px, calc(100vw - 16px)); display: flex; flex-direction: column; gap: 6px; padding: 7px 6px 8px 14px; border-radius: 16px; overflow: hidden;
+    background: #fff; color: #25231F; text-align: left; border: 1px solid rgba(47,125,79,0.35); box-shadow: 0 12px 30px rgba(20,20,15,0.16); animation: ntHintIn .28s ease-out; -webkit-tap-highlight-color: transparent; }
+  #lpBanner.hidden { display: none; }
+  #lpBanner::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: #2F7D4F; }
+  .lp-head { display: flex; align-items: center; gap: 6px; min-width: 0; }
+  .lp-q { flex: 1 1 auto; min-width: 0; font-size: 12px; font-weight: 700; letter-spacing: .01em; color: #256B42; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lp-x { flex-shrink: 0; width: 26px; height: 26px; margin: -3px 0; border-radius: 9999px; font-size: 19px; line-height: 1; color: rgba(37,35,31,0.4); }
+  .lp-x:hover { background: rgba(37,35,31,0.06); color: rgba(37,35,31,0.85); }
+  .lp-tiles { display: flex; gap: 6px; padding-right: 2px; }
+  .lp-tile { flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 8px; padding: 7px 8px 7px 10px; border-radius: 12px; background: rgba(47,125,79,0.08); border: 1px solid rgba(47,125,79,0.16); text-align: left; cursor: pointer; transition: transform .12s ease, background .12s ease; }
+  .lp-tile:hover { background: rgba(47,125,79,0.13); }
+  .lp-tile:active { transform: scale(0.98); }
+  .lp-ic { flex-shrink: 0; font-size: 20px; line-height: 1; }
+  .lp-txt { min-width: 0; flex: 1 1 auto; display: flex; flex-direction: column; }
+  .lp-t { font-size: 13.5px; line-height: 1.3; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lp-s { font-size: 11.5px; line-height: 1.35; color: rgba(37,35,31,0.6); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lp-chev { flex-shrink: 0; font-size: 20px; line-height: 1; color: rgba(37,35,31,0.3); }
+  html.dark #lpBanner { background: #2E2C28; color: #EDEAE2; }
+  html.dark .lp-q { color: #8BD3A6; }
+  html.dark .lp-tile { background: rgba(76,163,111,0.14); border-color: rgba(76,163,111,0.25); }
+  html.dark .lp-s, html.dark .lp-chev, html.dark .lp-x { color: rgba(237,234,226,0.55); }
+  @media (prefers-reduced-motion: reduce) { #lpBanner { animation: none; } }
   /* ---------- Ausblick: Wochenvorschau & Monatsausblick (Banner + Seite) ---------- */
   #abBanner { position: fixed; z-index: 285; left: 50%; transform: translateX(-50%); width: min(520px, calc(100vw - 16px)); display: flex; align-items: center; gap: 10px; padding: 8px 6px 8px 10px; border-radius: 16px; overflow: hidden;
     background: #fff; color: #25231F; text-align: left; border: 1px solid color-mix(in srgb, var(--ab, var(--c-pine)) 35%, transparent); box-shadow: 0 12px 30px rgba(20,20,15,0.16); animation: ntHintIn .28s ease-out; cursor: pointer; -webkit-tap-highlight-color: transparent; }
@@ -2418,6 +2441,8 @@ window.PINN_LANGUAGES = [
   .fm-pick { position: absolute; left: 0; bottom: 0; transform: translateX(-50%); font-size: 32px; line-height: 1; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.35)); }
   .fm-ctrl { position: absolute; right: 8px; top: 8px; display: flex; flex-direction: column; gap: 5px; z-index: 2; }
   .fm-ctrl button { width: 34px; height: 34px; border-radius: 10px; background: rgba(255,255,255,0.95); color: #25231F; box-shadow: 0 1px 4px rgba(0,0,0,0.22); font-size: 18px; line-height: 1; display: grid; place-items: center; }
+  .fm-ctrl button.fm-me { background: var(--c-pine, #2F4B41); color: #fff; font-size: 17px; }
+  .fm-ctrl button.fm-me.hidden { display: none; }
   .fm-attr { position: absolute; right: 4px; bottom: 2px; font-size: 9px; background: rgba(255,255,255,0.75); color: #333; padding: 0 4px; border-radius: 3px; z-index: 2; pointer-events: none; }
   html.dark .fam-person, html.dark .fam-card, html.dark .fam-sel { background-color: #2E2C28; border-color: rgba(255,255,255,0.12); color: inherit; }
   html.dark .fam-ava { box-shadow: 0 0 0 3px #2E2C28, 0 0 0 5px var(--fam, transparent); background: rgba(255,255,255,0.08); }
@@ -5679,7 +5704,7 @@ window.PINN_LANGUAGES = [
           </select>
           <label class="fz-check"><input type="checkbox" id="shoppingListAddrDone" /><span>Geplanten Einkauf automatisch abhaken<span class="block text-[11px] text-ink/45">Bei mehreren Läden, sobald alle besucht sind – je Laden reicht eine seiner Filialen.</span></span></label>
           <label class="fz-check"><input type="checkbox" id="shoppingListAddrDonePush" /><span>Push „Betrag eintragen“, wenn abgehakt</span></label>
-          <label class="fz-check"><input type="checkbox" id="shoppingListAddrRemind" /><span>Beim Ankommen an die Einkaufsliste erinnern<span class="block text-[11px] text-ink/45">Nur, wenn hier ein Einkauf geplant ist.</span></span></label>
+          <label class="fz-check"><input type="checkbox" id="shoppingListAddrRemind" /><span>Beim Ankommen an die Einkaufsliste erinnern<span class="block text-[11px] text-ink/45">Push „Gehst du einkaufen?“ und Hinweis oben, solange du hier bist und etwas auf der Liste steht – auch ohne geplanten Einkauf.</span></span></label>
           <label class="fz-check"><input type="checkbox" id="shoppingListAddrArrive" /><span>Familie bei Ankunft benachrichtigen</span></label>
           <p class="text-[11px] text-ink/45 leading-snug">Umkreis, Personen und Empfänger lassen sich unter Familie → 📍 Orte genauer einstellen. Funktioniert mit der Ortung (Traccar Client) und geteiltem Standort.</p>
         </div>
@@ -6084,6 +6109,9 @@ window.PINN_LANGUAGES = [
   <div id="hwCard" class="sos-card"></div>
 </div>
 <div id="hwBanner" class="hidden" role="status"></div>
+
+<!-- Einkaufs-Hinweis: „Gehst du einkaufen?“ – solange das eigene Handy im Umkreis eines Ladens mit offener Liste ist (Inhalt aus dem Skript, eigene Texte in vier Sprachen) -->
+<div id="lpBanner" class="hidden" role="status" data-no-i18n></div>
 
 <!-- Ausblick: Wochenvorschau & Monatsausblick Finanzen – Hinweis oben und ganze Seite (Inhalt aus dem Skript, eigene Texte in vier Sprachen) -->
 <div id="abBanner" class="hidden" role="status" data-no-i18n></div>
@@ -12870,6 +12898,8 @@ async function persistState() {
   if (!familyRecordId) return;
   kassenCapture(); // geänderte Finanzdaten der gezeigten Kasse vormerken
   writePending({ seq: ++pendingSeq, recordId: familyRecordId, base: syncBase, baseUpdated: syncBaseUpdated, local: buildFamilyPayload() });
+  // Läden: offene Artikel je Liste an den Server melden (verzögert, nur bei Änderung)
+  try { if (typeof ladenPlansSync === 'function') ladenPlansSync(false); } catch (e) { /* egal */ }
   await flushSync();
 }
 
@@ -13037,9 +13067,9 @@ function calendarLabel(name) {
   return isPinnCalName(name) ? 'Eigener Kalender' : (name || '');
 }
 function calendarCount() { return appleCalendar.selectedCalendars.length + pinnCals.length; }
-// Schulferien und Müllabfuhr: kleiner dargestellt und hinter den normalen Terminen
+// Schulferien, Müllabfuhr, Schule & Kita (Systemkalender): kleiner dargestellt und immer ganz oben
 function isMinorCalEvent(ev) { return !!(ev && (ev.pinnHoliday === 'ferien' || ev.pinnHoliday === 'muell' || ev.pinnHoliday === 'schule')); }
-function minorSortWeight(a, b) { return (isMinorCalEvent(a) ? 1 : 0) - (isMinorCalEvent(b) ? 1 : 0); }
+function minorSortWeight(a, b) { return (isMinorCalEvent(b) ? 1 : 0) - (isMinorCalEvent(a) ? 1 : 0); }
 // Startzeit in Minuten (-1 = ganztägig). Robust gegen Schreibweisen wie „9:05“, „09:05“ oder „0905“.
 function calEventStartMin(ev) {
   if (!ev || ev.fullDayFiller || !ev.time) return -1;
@@ -13051,13 +13081,14 @@ function calEventEndMin(ev) {
   const m = String(ev.endTime).match(/(\d{1,2})\D?(\d{2})/);
   return m ? (+m[1]) * 60 + (+m[2]) : 24 * 60;
 }
-// Gemeinsame Reihenfolge für alle Kalender-Listen: alle aktiven Kalender zusammen nach Uhrzeit –
-// zuerst Ganztägiges (Ferien/Müll/Schule darunter), dann nach Beginn, Ende und Titel. Personen-Filter
-// dimmen nur, sie sortieren nicht um.
+// Gemeinsame Reihenfolge für alle Kalender-Listen: Systemkalender (Ferien/Müll/Schule) immer ganz oben,
+// danach alle aktiven Kalender zusammen nach Uhrzeit – zuerst Ganztägiges, dann nach Beginn, Ende und
+// Titel. Personen-Filter dimmen nur, sie sortieren nicht um.
 function calListCompare(a, b) {
+  const w = minorSortWeight(a, b);
+  if (w) return w;
   const sa = calEventStartMin(a), sb = calEventStartMin(b);
   if (sa !== sb) return sa - sb;
-  if (sa === -1) { const w = minorSortWeight(a, b); if (w) return w; }
   const ea = calEventEndMin(a), eb = calEventEndMin(b);
   if (ea !== eb) return ea - eb;
   return String(a.title || '').localeCompare(String(b.title || ''));
@@ -24020,6 +24051,7 @@ function setView(view) {
     weekSliderNeedsAutoScroll = true;
   }
   currentView = view;
+  try { lpRenderBanner(); } catch (e) { /* Einkaufs-Hinweis: auf der Listen-Seite ausblenden */ }
   if (view !== 'uebersicht') { expandedMealCardId = null; }
   applyMealCardLayout();
   const mainGrid = document.getElementById('mainGrid');
@@ -24459,7 +24491,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.32.0';
+const APP_VERSION = '1.33.0';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -25417,6 +25449,16 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
    - rueckblick: true = Einträge vor dem Versions-Log, aus der Projekthistorie zusammengefasst.
    ========================================================== */
 const PINN_CHANGELOG = [
+  {
+    v: '1.33', datum: '09.10.2026', titel: 'Einkaufen in der Nähe',
+    punkte: [
+      ['neu', 'Im Laden angekommen: Steht auf der Liste des Ladens etwas, kommt die Push-Nachricht „Du bist bei … – gehst du einkaufen?“ mit Link zur Liste – auch ohne geplanten Einkauf. Mehrere Läden in der Nähe kommen in einer gemeinsamen Nachricht'],
+      ['neu', 'Einkaufs-Hinweis oben (wie beim Heimweg), solange du im Umkreis eines Ladens bist: Antippen öffnet die Liste. Bei zwei Läden teilt sich der Hinweis und zeigt beide, ab drei geht es zur Seite „Listen“. Wer früher am Tag dort war, sieht nichts mehr; × blendet ihn für diesen Besuch aus'],
+      ['info', 'Kalender: Ferien, Müllabfuhr und Schule & Kita stehen an jedem Tag ganz oben – in Tag, Woche, Monat und Liste'],
+      ['fix', 'Familie → Ortung: Karte verschieben oder zoomen beendet Verfolgen und Spur nicht mehr und springt nicht zur Person zurück – der Knopf ◎ holt sie wieder in die Mitte'],
+      ['info', 'Server: angepasst pinn-ortung.js (offene Artikel je Liste, Push in der Sprache des Profils, Läden in der Nähe für den Hinweis)'],
+    ],
+  },
   {
     v: '1.32', datum: '09.10.2026', titel: 'Wochenvorschau & Monatsausblick',
     punkte: [
@@ -49222,6 +49264,7 @@ var famHidden = new Set();     // auf der Karte ausgeblendete Geräte
 var famFollow = '';            // verfolgtes Gerät
 var famTrailHours = 0;
 var famTrail = null;           // { geraet, punkte, at }
+var famFollowFree = false;     // beim Verfolgen von Hand verschoben/gezoomt: Spur bleibt, Karte springt nicht zurück
 var famSelected = '';          // angetipptes Gerät (Infozeile unter der Karte)
 var famAddress = {};           // Geräte-ID -> { lat, lon, name }
 var famMap = null;
@@ -49388,6 +49431,7 @@ function famCreateMap(host, opts) {
       <button type="button" data-fm="in" aria-label="Vergrößern">+</button>
       <button type="button" data-fm="out" aria-label="Verkleinern">−</button>
       ${opts.fitBtn ? '<button type="button" data-fm="fit" aria-label="Alle zeigen" title="Alle zeigen">⤢</button>' : ''}
+      ${opts.centerBtn ? '<button type="button" data-fm="me" class="fm-me hidden" aria-label="Zur verfolgten Person" title="Zur verfolgten Person">◎</button>' : ''}
     </div>
     <div class="fm-attr">© OpenStreetMap</div>`;
   host.appendChild(el);
@@ -49607,12 +49651,14 @@ function famCreateMap(host, opts) {
     if (b.dataset.fm === 'in') zoomAt(st.w / 2, st.h / 2, 1);
     else if (b.dataset.fm === 'out') zoomAt(st.w / 2, st.h / 2, -1);
     else if (b.dataset.fm === 'fit' && opts.onFit) opts.onFit();
+    else if (b.dataset.fm === 'me' && opts.onCenter) opts.onCenter();
   });
   let ro = null;
   try { ro = new ResizeObserver(() => render()); ro.observe(el); } catch (e) { window.addEventListener('resize', render); }
   measure();
   return {
     el, setView, fit, setMarkers, setCircles, setLine, render, zoomAt,
+    showCenter(on) { const b = el.querySelector('[data-fm="me"]'); if (b) b.classList.toggle('hidden', !on); },
     center() { return unproj(st.cx, st.cy, st.z); },
     zoom() { return st.z; },
     destroy() { try { if (ro) ro.disconnect(); } catch (e) { /* egal */ } el.remove(); },
@@ -49682,10 +49728,14 @@ function famAttachMap() {
     famMapHost.className = 'fam-map-host';
     famMap = famCreateMap(famMapHost, {
       fitBtn: true,
+      centerBtn: true,
       onMarker: (id) => { famSelected = famSelected === id ? '' : id; famDrawMap(); famRenderInfo(); },
       onTap: () => { if (famSelected) { famSelected = ''; famDrawMap(); famRenderInfo(); } },
-      onUserMove: () => { if (famFollow) { famFollow = ''; famTrail = null; famTrailHours = 0; famRenderChips(); famDrawMap(); } },
-      onFit: () => { famFollow = ''; famTrail = null; famTrailHours = 0; famRenderChips(); famFitAll(); famDrawMap(); },
+      // Beim Verfolgen von Hand verschoben/gezoomt: Verfolgen und Spur bleiben an, die Karte springt aber
+      // nicht mehr zur Person zurück – ◎ holt sie wieder in die Mitte
+      onUserMove: () => { if (famFollow && !famFollowFree) { famFollowFree = true; if (famMap) famMap.showCenter(true); } },
+      onFit: () => { famFollowFree = !!famFollow; famFitAll(); famDrawMap(); },
+      onCenter: () => { famFollowFree = false; if (famMap) famMap.showCenter(false); famDrawMap(); },
     });
   }
   slot.appendChild(famMapHost);
@@ -49747,7 +49797,9 @@ function famDrawMap() {
   const linePts = tr.map(p => [p[0], p[1]]);
   if (g && g.position && linePts.length) linePts.push([g.position.lat, g.position.lon]);
   famMap.setLine(linePts);
-  if (g && g.position) famMap.setView(g.position.lat, g.position.lon, Math.max(famMap.zoom(), 15));
+  if (!g) famFollowFree = false;
+  famMap.showCenter(!!g && famFollowFree);
+  if (g && g.position) { if (!famFollowFree) famMap.setView(g.position.lat, g.position.lon, Math.max(famMap.zoom(), 15)); }
   else if (!famFitted && famStatus) { famFitted = true; famStartView(); }
 }
 
@@ -50566,6 +50618,7 @@ function famShowOnMap(deviceId) {
   famTab = 'ortung';
   famHidden.delete(deviceId);
   famFollow = deviceId;
+  famFollowFree = false;
   famSelected = deviceId;
   if (currentView !== 'familie') setView('familie'); else renderFamily();
   requestAnimationFrame(() => {
@@ -50590,7 +50643,7 @@ function famOpenFromUrl() {
       if (!famStatus) return;
       clearInterval(wait);
       const d = famDevices().find(x => x.memberId === id);
-      if (d && currentView === 'familie' && !famDetailId) { famFollow = d.id; famSelected = d.id; famRefreshLive(); }
+      if (d && currentView === 'familie' && !famDetailId) { famFollow = d.id; famFollowFree = false; famSelected = d.id; famRefreshLive(); }
     }, 400);
     setTimeout(() => clearInterval(wait), 15000);
   }
@@ -50673,12 +50726,13 @@ async function sosCheck() {
         if (body.jetzt) famSkew = Number(body.jetzt) - Date.now();
         sosAlarms = body.sos;
         hwTake(body); // Heimwege kommen mit derselben Abfrage
+        try { lpTake(body); } catch (e) { /* egal */ } // ebenso die Läden in der Nähe
         ok = true;
       }
     }
   } catch (e) { /* offline: nächster Versuch */ }
   sosLoading = false;
-  if (ok) { sosApply(); hwApply(); }
+  if (ok) { sosApply(); hwApply(); try { lpRenderBanner(); } catch (e) { /* egal */ } }
   sosSchedule();
 }
 function sosSchedule() {
@@ -52381,6 +52435,7 @@ function skModalChange(e) {
       case 'showmap': famShowOnMap(id); break;
       case 'follow':
         famFollow = famFollow === id ? '' : id;
+        famFollowFree = false;
         if (!famFollow) { famTrail = null; famTrailHours = 0; }
         famRenderChips(); famDrawMap(); famRenderInfo();
         if (famFollow) famStartPolling();
@@ -52395,6 +52450,7 @@ function skModalChange(e) {
     if (share) { famSetSharing(share.dataset.famshare, share.checked, share); return; }
     if (e.target.id === 'famFollowSel') {
       famFollow = e.target.value;
+      famFollowFree = false;
       famSelected = famFollow || famSelected;
       famTrail = null;
       if (!famFollow) famTrailHours = 0;
@@ -52515,6 +52571,115 @@ function skModalChange(e) {
     if (document.visibilityState === 'visible' && currentView === 'familie' && familyRecordId) famLoadStatus();
   });
   window.addEventListener('online', () => { if (currentView === 'familie') famLoadStatus(); });
+})();
+
+/* ==========================================================
+   Einkaufs-Hinweis – „Gehst du einkaufen?“
+   ----------------------------------------------------------
+   - Die Läden kommen mit der SOS-Abfrage (/api/pinn/ortung/sos → laeden): alle Läden (Einkaufslisten mit
+     Adresse, Schalter „Beim Ankommen erinnern“ an), in deren Umkreis das EIGENE Handy gerade ist.
+     Nur solange man dort ist – nicht, wenn man früher am Tag mal da war.
+   - Angezeigt wird ein Laden nur, wenn auf seiner Liste etwas steht – egal, ob ein Einkauf geplant ist.
+   - Ein Laden: Kachel über die ganze Breite. Zwei Läden: das Banner teilt sich, je Laden eine Kachel mit
+     Link zur Liste. Drei und mehr: eine Kachel mit Link zur Seite „Listen“.
+   - × blendet den Hinweis für diesen Besuch aus (Schlüssel: Laden + Ankunftszeit). Auf der Seite
+     „Listen“ ist er ausgeblendet. Die Push-Nachricht beim Ankommen schickt der Server (pinn-ortung.js).
+   ========================================================== */
+var LS_LP_DISMISS = 'pinn.ladenHinweisAus';
+var lpHere = [];
+const LP_T = {
+  de: { q: 'Gehst du einkaufen?', bei: 'Du bist bei {laden}', n1: '1 Artikel auf der Liste', n: '{n} Artikel auf der Liste', n1k: '1 Artikel', nk: '{n} Artikel',
+        mehr: '{n} Läden in deiner Nähe', alle: 'Zu den Einkaufslisten', x: 'Hinweis entfernen' },
+  en: { q: 'Going shopping?', bei: "You're at {laden}", n1: '1 item on the list', n: '{n} items on the list', n1k: '1 item', nk: '{n} items',
+        mehr: '{n} shops nearby', alle: 'Open the shopping lists', x: 'Dismiss' },
+  fr: { q: 'Tu fais les courses ?', bei: 'Tu es chez {laden}', n1: '1 article sur la liste', n: '{n} articles sur la liste', n1k: '1 article', nk: '{n} articles',
+        mehr: '{n} magasins à proximité', alle: 'Voir les listes de courses', x: 'Masquer' },
+  es: { q: '¿Vas a hacer la compra?', bei: 'Estás en {laden}', n1: '1 artículo en la lista', n: '{n} artículos en la lista', n1k: '1 artículo', nk: '{n} artículos',
+        mehr: '{n} tiendas cerca', alle: 'Ver las listas de la compra', x: 'Ocultar' },
+};
+function lpT(k, vars) {
+  const l = (window.PINN_I18N && PINN_I18N.current) || 'en';
+  const d = LP_T[l] || LP_T.en;
+  let s = d[k] != null ? d[k] : (LP_T.en[k] != null ? LP_T.en[k] : k);
+  if (vars) s = s.replace(/\{(\w+)\}/g, (m, n) => (vars[n] != null ? String(vars[n]) : ''));
+  return s;
+}
+function lpTake(body) {
+  lpHere = Array.isArray(body && body.laeden) ? body.laeden.filter(x => x && x.laden) : [];
+}
+function lpKey(x) { return String(x.laden) + '|' + String(Number(x.seit || 0)); }
+function lpDismissed() {
+  let o = {};
+  try { o = JSON.parse(localStorage.getItem(LS_LP_DISMISS) || '{}') || {}; } catch (e) { o = {}; }
+  return (o && typeof o === 'object') ? o : {};
+}
+function lpDismiss(keys) {
+  const o = lpDismissed();
+  const now = Date.now();
+  keys.forEach(k => { o[k] = now; });
+  Object.keys(o).forEach(k => { if (now - Number(o[k] || 0) > 2 * 24 * 60 * 60 * 1000) delete o[k]; });
+  try { localStorage.setItem(LS_LP_DISMISS, JSON.stringify(o)); } catch (e) { /* egal */ }
+}
+function lpItems() {
+  if (!lpHere.length || !sosEnabled() || isCurrentUserGuest() || !isViewAllowed('einkauf')) return [];
+  if (currentView === 'einkauf') return [];
+  const hidden = lpDismissed();
+  return lpHere
+    .filter(x => getShoppingList(x.laden) && !hidden[lpKey(x)])
+    .map(x => ({ ...x, list: getShoppingList(x.laden), count: ladenOpenCount(x.laden) }))
+    .filter(x => x.count > 0);
+}
+function lpName(x) { return (x.list && x.list.name) || x.name || ''; }
+function lpRenderBanner() {
+  const b = document.getElementById('lpBanner');
+  if (!b) return;
+  const items = lpItems();
+  if (!items.length) {
+    if (!b.classList.contains('hidden')) { b.classList.add('hidden'); b.innerHTML = ''; try { hwLayout(); } catch (e) { /* egal */ } }
+    return;
+  }
+  const tile = (attr, title, sub, ic) => `<button type="button" class="lp-tile" ${attr}>
+      <span class="lp-ic" aria-hidden="true">${ic}</span>
+      <span class="lp-txt"><span class="lp-t">${title}</span><span class="lp-s">${escapeHtml(sub)}</span></span>
+      <span class="lp-chev" aria-hidden="true">›</span>
+    </button>`;
+  let tiles;
+  if (items.length === 1) {
+    const x = items[0];
+    tiles = tile(`data-lplist="${escapeHtml(x.laden)}"`, escapeHtml(lpT('bei', { laden: lpName(x) })), x.count === 1 ? lpT('n1') : lpT('n', { n: x.count }), '🛒');
+  } else if (items.length === 2) {
+    tiles = items.map(x => tile(`data-lplist="${escapeHtml(x.laden)}"`, escapeHtml(lpName(x)), x.count === 1 ? lpT('n1k') : lpT('nk', { n: x.count }), '🛒')).join('');
+  } else {
+    tiles = tile('data-lpall="1"', escapeHtml(lpT('mehr', { n: items.length })), lpT('alle') + ' · ' + items.map(lpName).join(', '), '🛍️');
+  }
+  const html = `<div class="lp-head"><span class="lp-q">${escapeHtml(lpT('q'))}</span><button type="button" class="lp-x" data-lpx="1" aria-label="${escapeHtml(lpT('x'))}">×</button></div>
+    <div class="lp-tiles">${tiles}</div>`;
+  b.dataset.keys = items.map(lpKey).join(',');
+  const wasHidden = b.classList.contains('hidden');
+  if (b.innerHTML !== html) b.innerHTML = html;
+  b.classList.remove('hidden');
+  if (wasHidden) { try { if (navigator.vibrate) navigator.vibrate(60); } catch (e) { /* egal */ } }
+  try { hwLayout(); } catch (e) { /* egal */ }
+}
+(function lpWire() {
+  const b = document.getElementById('lpBanner');
+  if (!b) return;
+  b.addEventListener('click', (e) => {
+    if (e.target.closest('[data-lpx]')) {
+      e.stopPropagation();
+      lpDismiss(String(b.dataset.keys || '').split(',').filter(Boolean));
+      lpRenderBanner();
+      return;
+    }
+    const one = e.target.closest('[data-lplist]');
+    if (one) { ntOpenLink('/?liste=' + encodeURIComponent(one.dataset.lplist)); return; }
+    if (e.target.closest('[data-lpall]')) {
+      if (!isViewAllowed('einkauf')) return;
+      setView('einkauf');
+      try { if (currentShoppingListId || currentShoppingPlanTaskId) showShoppingOverview(); } catch (err) { /* egal */ }
+    }
+  });
+  window.addEventListener('resize', () => { if (!b.classList.contains('hidden')) { try { hwLayout(); } catch (e) { /* egal */ } } });
 })();
 
 /* ==========================================================
@@ -52679,6 +52844,12 @@ function hwLayout() {
     b.style.top = top + 'px';
     next = top + b.offsetHeight + 8;
   }
+  // Einkaufs-Hinweis („Gehst du einkaufen?“) unter dem Heimweg-Hinweis
+  const lp = document.getElementById('lpBanner');
+  if (lp && !lp.classList.contains('hidden')) {
+    lp.style.top = next + 'px';
+    next = next + lp.offsetHeight + 8;
+  }
   // Ausblick (Wochenvorschau / Monatsausblick) unter dem Heimweg-Hinweis
   const ab = document.getElementById('abBanner');
   if (ab && !ab.classList.contains('hidden')) {
@@ -52691,9 +52862,11 @@ function hwLayout() {
 function hwBannerOffset() {
   const b = document.getElementById('hwBanner');
   const hw = b && !b.classList.contains('hidden') ? b.offsetHeight + 8 : 0;
+  const lpb = document.getElementById('lpBanner');
+  const lp = lpb && !lpb.classList.contains('hidden') ? lpb.offsetHeight + 8 : 0;
   let ab = 0;
   try { ab = abBannerOffset(); } catch (e) { ab = 0; }
-  return hw + ab;
+  return hw + lp + ab;
 }
 
 /* ---------- Popup ---------- */
@@ -53639,22 +53812,44 @@ function ladenPlansPayload() {
     .filter(Boolean)
     .sort((a, b) => (a.aufgabe < b.aufgabe ? -1 : 1));
 }
+// Offene Artikel je Einkaufsliste mit Laden-Adresse – für „Gehst du einkaufen?“ beim Ankommen.
+// Die Essensplanung zählt beim Stammladen mit, wenn sie nicht ohnehin dort angezeigt wird.
+function ladenOpenCount(listId) {
+  let n = 0;
+  try { n = shoppingListSummary(listId).count; } catch (e) { n = 0; }
+  try {
+    if (listId === shoppingStammladenId() && !listHasRecipeItems(listId)) n += shoppingListSummary(SHOPPING_MEAL_LIST_ID).count;
+  } catch (e) { /* egal */ }
+  return n;
+}
+function ladenOffenPayload() {
+  const withAddr = new Set(ladenCachedPlaces().map(o => o && o.laden).filter(Boolean));
+  const out = {};
+  shoppingLists.forEach(l => {
+    if (!l || !l.id || l.id === SHOPPING_MEAL_LIST_ID || !withAddr.has(l.id)) return;
+    const n = ladenOpenCount(l.id);
+    if (n > 0) out[l.id] = n;
+  });
+  return out;
+}
 function ladenPlansSync(force) {
   clearTimeout(ladenSyncTimer);
   ladenSyncTimer = setTimeout(() => ladenPlansSyncNow(!!force), force ? 50 : 1200);
 }
 async function ladenPlansSyncNow(force) {
+  try { lpRenderBanner(); } catch (e) { /* Liste geändert: Einkaufs-Hinweis oben anpassen */ }
   if (ladenSyncBusy || isCurrentUserGuest() || !ntFamily() || !pb.authStore.isValid) return;
   const plaene = ladenPlansPayload();
-  const json = JSON.stringify(plaene);
+  const offen = ladenOffenPayload();
+  const json = JSON.stringify({ plaene, offen });
   const last = ntReadLs(LS_LADEN_SENT);
   if (!force) {
     if (last && last.json === json && Date.now() - (last.at || 0) < 30 * 60 * 1000) return;
-    if (!last && !plaene.length) return;
+    if (!last && !plaene.length && !Object.keys(offen).length) return;
   }
   ladenSyncBusy = true;
   try {
-    const res = await apiFetch('/api/pinn/ortung/einkaeufe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ plaene }) });
+    const res = await apiFetch('/api/pinn/ortung/einkaeufe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ plaene, offen }) });
     if (!res.ok) return;
     const body = await res.json().catch(() => ({}));
     ntWriteLs(LS_LADEN_SENT, { json, at: Date.now() });
