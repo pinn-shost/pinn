@@ -24,6 +24,10 @@
 //      4. Gerätemerkmale: Profil + Art (App/Dashboard) + Gerätename + Gerätetyp/Browser (ohne
 //         Versionsnummern, damit auch ein iOS- oder Browser-Update nichts ändert)
 //    Damit legt ein Update der App kein neues Gerät mehr an.
+//  - Die Netzwerk-Adresse (IP) wird für Geräte weder gespeichert noch angezeigt – sie spielt für die
+//    Erkennung keine Rolle. Alte gespeicherte Adressen werden beim Serverstart geleert.
+//  - Meldet sich dieselbe Push-Adresse für eine weitere Sitzung desselben Profils, ist es dasselbe
+//    Gerät: der ältere Eintrag wird mit dem aktuellen zusammengeführt (statt doppelt zu bleiben).
 //  - Doppelte Einträge von früher (gleiche Gerätemerkmale, das ältere seitdem nicht mehr benutzt)
 //    werden beim Serverstart und nachts zusammengeführt – die Push-Adresse wandert dabei mit.
 //  - Push: Die Push-Adresse eines Geräts wird seiner Sitzung zugeordnet. Wird das Gerät abgemeldet,
@@ -34,7 +38,8 @@
 //    nächsten Öffnen der App (die App verlängert die Anmeldung bei jedem Start).
 //
 // Schutz gegen Durchprobieren (zusätzlich zur Sperre je Profil in pinn-dashboard.js):
-//  - Zählt fehlgeschlagene Anmeldungen und unbekannte Familiennamen je Netzwerk-Adresse (IP).
+//  - Einzige Stelle, an der die Netzwerk-Adresse noch zählt (nur im Arbeitsspeicher):
+//    Zählt fehlgeschlagene Anmeldungen und unbekannte Familiennamen je Netzwerk-Adresse (IP).
 //    Ab 20 Fehlversuchen innerhalb von 30 Minuten wird die Adresse gesperrt: 1 Minute, danach jeweils
 //    doppelt so lang, höchstens 30 Minuten. Nur im Arbeitsspeicher, nach einem Neustart wieder bei 0.
 //  - Wird ein Profil wegen zu vieler falscher Passwörter gesperrt, bekommen die Admins der Familie
@@ -326,8 +331,7 @@ function pruefe(e) {
 function saveTouch(rec, e, now) {
     try {
         rec.set("zuletzt", new Date(now).toISOString());
-        const ip = clientIp(e);
-        if (ip) rec.set("ip", ip);
+        if (rec.getString("ip")) rec.set("ip", "");
         $app.save(rec);
     } catch (err) { /* nächstes Mal */ }
 }
@@ -418,8 +422,7 @@ function beimAnmelden(e) {
     sess.set("familie", rec.getString("familie"));
     sess.set("name", name);
     if (agent) sess.set("agent", agent);
-    const ip = clientIp(e);
-    if (ip) sess.set("ip", ip);
+    if (sess.getString("ip")) sess.set("ip", "");
     if (deviceId) sess.set("geraet_id", deviceId);
     if (isDashboard) sess.set("art", "dashboard");
     else if (!sess.getString("art")) sess.set("art", "app");
@@ -504,7 +507,7 @@ function rowOf(r, currentSid) {
         id: r.id,
         name: r.getString("name") || nameFromAgent(r.getString("agent")),
         art: r.getString("art") || "app",
-        ip: r.getString("ip"),
+        ip: "",
         zuletzt: r.getString("zuletzt"),
         seit: r.getString("created"),
         push: !!r.getString("push"),
@@ -657,16 +660,25 @@ function merkePush(e, endpoint) {
     if (!sid || !endpoint) return;
     const sess = findSession(sid);
     if (!sess || sess.getString("benutzer") !== e.auth.id) return;
-    // Dieselbe Adresse gehörte vorher evtl. zu einer anderen Sitzung (anderes Profil auf dem Gerät)
+    // Dieselbe Push-Adresse bei einer anderen Sitzung:
+    //  - gleiches Profil -> dasselbe Gerät (z. B. Eintrag von vor einem App-Update): zusammenführen
+    //  - anderes Profil auf demselben Gerät -> dort nur die Push-Adresse entfernen
+    let changed = false;
     try {
         $app.findRecordsByFilter(COL, "push = {:p} && id != {:id}", "", 20, 0, { p: endpoint, id: sid }).forEach(s => {
+            if (s.getString("benutzer") === sess.getString("benutzer") && (s.getString("art") || "app") === (sess.getString("art") || "app")) {
+                if (!sess.getString("kennung") && s.getString("kennung")) { sess.set("kennung", s.getString("kennung")); changed = true; }
+                if (!sess.getString("geraet_id") && s.getString("geraet_id")) { sess.set("geraet_id", s.getString("geraet_id")); changed = true; }
+                markRevoked(s.id);
+                try { $app.delete(s); } catch (err) { /* schon weg */ }
+                return;
+            }
             s.set("push", "");
             try { $app.save(s); } catch (err) { /* egal */ }
         });
     } catch (err) { /* egal */ }
-    if (sess.getString("push") === endpoint) return;
-    sess.set("push", endpoint);
-    try { $app.save(sess); } catch (err) { /* egal */ }
+    if (sess.getString("push") !== endpoint) { sess.set("push", endpoint); changed = true; }
+    if (changed) { try { $app.save(sess); } catch (err) { /* egal */ } }
 }
 function vergissPush(endpoint) {
     if (!endpoint || !schemaReady()) return;
@@ -769,9 +781,17 @@ function meldeSperre(familyId, username, seconds) {
 // Eintrag bleibt; ältere werden nur entfernt, wenn sie seit dem Anlegen des neueren nicht mehr
 // benutzt wurden (zwei wirklich gleichzeitig genutzte, baugleiche Geräte bleiben also getrennt).
 // Die Push-Adresse wandert zum bleibenden Eintrag, wenn der noch keine hat.
+// Früher gespeicherte Netzwerk-Adressen entfernen (ein einziger, schneller Datenbankbefehl)
+function ipsLeeren() {
+    if (!schemaReady()) return;
+    try { $app.db().newQuery("UPDATE `" + COL + "` SET ip = '' WHERE ip != ''").execute(); }
+    catch (err) { /* Feld fehlt o. Ä. – egal */ }
+}
+
 function doppelteZusammenfuehren() {
     if (!schemaReady()) return 0;
     ensureFelder();
+    ipsLeeren();
     let recs = [];
     try { recs = $app.findRecordsByFilter(COL, "id != ''", "", 0, 0); } catch (err) { recs = []; }
     if (recs.length < 2) return 0;

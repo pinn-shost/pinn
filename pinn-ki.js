@@ -1,7 +1,7 @@
 // pb_hooks/pinn-ki.js
 // Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden.
 //
-// KI-Auswertung von Rezepten mit Google Gemini.
+// KI-Auswertung mit Google Gemini: Rezepte (Rezept-Popup) und Zählerstände (Menü „Haus“ → Zähler).
 // Die App spricht NIE direkt mit Google: Text, Fotos, PDFs oder ein Rezept-Link gehen an den
 // eigenen Server (ki.pb.js), der sie mit dem Gemini-Schlüssel aus der .env an Google schickt und
 // nur das fertig sortierte Rezept zurückgibt. Der Schlüssel verlässt den Server nicht.
@@ -410,16 +410,17 @@ function schema(categories, tools) {
     };
 }
 
-function callGemini(parts, categories, tools) {
+// custom = { system, schema } für andere Auswertungen als Rezepte (z. B. Zählerstände)
+function callGemini(parts, categories, tools, custom) {
     const key = apiKey();
     if (!key) throw new Error("Die KI ist auf dem Server nicht eingerichtet (PINN_GEMINI_KEY fehlt in der .env).");
     const payload = JSON.stringify({
-        systemInstruction: { parts: [{ text: instructions(categories, tools) }] },
+        systemInstruction: { parts: [{ text: custom ? custom.system : instructions(categories, tools) }] },
         contents: [{ role: "user", parts: parts }],
         generationConfig: {
-            temperature: 0.2,
+            temperature: custom ? 0 : 0.2,
             responseMimeType: "application/json",
-            responseSchema: schema(categories, tools),
+            responseSchema: custom ? custom.schema : schema(categories, tools),
         },
     });
     const list = models();
@@ -597,8 +598,76 @@ function analyzeRecipe(input) {
     };
 }
 
+// ---------------------------------------------------------------------------------------------
+// Zählerstand vom Foto (Menü „Haus“ → Zähler)
+// ---------------------------------------------------------------------------------------------
+// input: { dateien: [{ mime, daten }], art (z. B. "Strom"), einheit ("kWh" | "m³"), letzter (Zahl), nummer }
+// -> { stand, nummer, sicher (0..1), hinweis }
+function meterInstructions(art, unit, last, number) {
+    return [
+        "Du liest Zählerstände für die Familien-App pinn. von einem Foto ab.",
+        "Zählerart laut Nutzer: " + (art || "unbekannt") + ", Einheit: " + (unit || "unbekannt") + ".",
+        last > 0 ? "Letzter bekannter Stand: " + last + " " + unit + " (der neue Stand ist normalerweise gleich groß oder etwas größer)." : "",
+        number ? "Bekannte Zählernummer: " + number + "." : "",
+        "Regeln:",
+        "- stand: der aktuell angezeigte Zählerstand als Zahl mit Punkt als Dezimaltrenner.",
+        "- Rollenzählwerke (Gas, Wasser): schwarze/weiße Ziffern = ganze Einheiten, rote Ziffern oder Ziffern hinter dem Komma = Nachkommastellen. Halb weitergedrehte Rollen: die niedrigere Ziffer nehmen.",
+        "- Digitale Stromzähler: den Wert für Bezug (1.8.0 bzw. 1.8.x, Symbol ⇥ oder +A) nehmen, nicht Einspeisung (2.8.0) und nicht die momentane Leistung (W/kW). Bei Einspeisezählern (PV) 2.8.0 nehmen.",
+        "- Führende Nullen weglassen. Zählernummer, Eichjahr, Barcode oder Typenschild-Zahlen sind KEIN Stand.",
+        "- nummer: die Zählernummer bzw. Zähler-ID, falls lesbar, sonst leer.",
+        "- sicher: 0 bis 1 – wie sicher der Stand richtig abgelesen ist (unscharf, verdeckt, spiegelnd = niedrig).",
+        "- ist_zaehler: false, wenn kein Zähler zu sehen ist.",
+        "- hinweis: kurzer deutscher Hinweis, falls etwas unklar ist, sonst leer.",
+    ].filter(Boolean).join("\n");
+}
+const METER_SCHEMA = {
+    type: "OBJECT",
+    properties: {
+        ist_zaehler: { type: "BOOLEAN" },
+        stand: { type: "NUMBER" },
+        nummer: { type: "STRING" },
+        sicher: { type: "NUMBER" },
+        hinweis: { type: "STRING" },
+    },
+    required: ["ist_zaehler", "stand", "nummer", "sicher", "hinweis"],
+    propertyOrdering: ["ist_zaehler", "stand", "nummer", "sicher", "hinweis"],
+};
+function analyzeMeter(input) {
+    const data = input && typeof input === "object" ? input : {};
+    const files = Array.isArray(data.dateien) ? data.dateien.slice(0, 2) : [];
+    const parts = [];
+    let total = 0;
+    files.forEach(f => {
+        if (!f || typeof f !== "object") return;
+        let mime = String(f.mime || "").toLowerCase();
+        if (mime === "image/jpg") mime = "image/jpeg";
+        const b64 = String(f.daten || "").replace(/^data:[^,]*,/, "").replace(/\s+/g, "");
+        if (ALLOWED_MIME.indexOf(mime) < 0 || mime === "application/pdf" || !b64 || !/^[A-Za-z0-9+\/=]+$/.test(b64)) return;
+        total += b64.length;
+        if (total > MAX_TOTAL_BASE64) throw new Error("Das Foto ist zu groß für die KI.");
+        parts.push({ inline_data: { mime_type: mime, data: b64 } });
+    });
+    if (!parts.length) throw new Error("Kein Foto übergeben.");
+    const art = cleanText(data.art, 40);
+    const unit = cleanText(data.einheit, 10);
+    const last = Number(data.letzter) > 0 ? Number(data.letzter) : 0;
+    const number = cleanText(data.nummer, 40);
+    parts.unshift({ text: "Bitte den Zählerstand auf diesem Foto ablesen." });
+    const r = callGemini(parts, [], [], { system: meterInstructions(art, unit, last, number), schema: METER_SCHEMA });
+    const stand = Number(r.stand);
+    if (r.ist_zaehler === false || !isFinite(stand) || stand < 0) throw new Error("Auf dem Foto war kein Zählerstand zu erkennen.");
+    const sicher = Number(r.sicher);
+    return {
+        stand: Math.round(stand * 1000) / 1000,
+        nummer: cleanText(r.nummer, 40),
+        sicher: isFinite(sicher) ? Math.max(0, Math.min(1, sicher)) : 0.5,
+        hinweis: cleanText(r.hinweis, 200),
+        modell: String(r.__modell || ""),
+    };
+}
+
 function status() {
     return { aktiv: isAvailable(), modell: readEnv(MODEL_ENV) || DEFAULT_MODELS[0] };
 }
 
-module.exports = { isAvailable, status, analyzeRecipe };
+module.exports = { isAvailable, status, analyzeRecipe, analyzeMeter };

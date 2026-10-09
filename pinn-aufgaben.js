@@ -30,6 +30,14 @@
 //    geht an genau eine Person – der Reihe nach bzw. an die, die in den letzten 30 Tagen am wenigsten
 //    erledigt hat. Wurde die vorige Aufgabe verpasst, bleibt dieselbe Person dran.
 //  - Statistik „Wer macht wie viel?“ (GET /api/pinn/aufgaben/statistik).
+//
+// Wartungsplan (ab 1.28, Menü „Haus“): familien_daten → houseMaintenance
+//   [{ id, title, icon, months, next ('JJJJ-MM-TT', von Hand gesetzte nächste Fälligkeit), nextSet (wann gesetzt),
+//      last (zuletzt erledigt, pflegt die App), lead (Tage vorher anlegen), assignedMemberIds, rotate, active }]
+//   Anders als Reinigung/Müll: die Aufgabe bleibt offen, bis sie erledigt ist (kein „verpasst“). Die nächste
+//   Fälligkeit zählt ab dem Erledigt-Tag (+ Intervall in Monaten). Verlauf-Einträge mit regel „w:<ID>“;
+//   wird eine Wartungsaufgabe gelöscht, gilt sie als übersprungen (status „uebersprungen“) – sie kommt dann
+//   erst im nächsten Zyklus wieder.
 
 const AUFGABEN = "aufgaben";
 const HOUR_MS = 3600000, DAY_MS = 86400000;
@@ -417,7 +425,13 @@ function familyMembers(familyId) {
 function removeTask(familyId, id) {
     try {
         const rec = findOwn(familyId, id);
-        if (rec.getString("haushalt")) verlaufDropOpen(familyId, rec.id);
+        if (rec.getString("haushalt")) {
+            // Wartungsaufgabe gelöscht = diesen Zyklus überspringen (sonst käme sie sofort wieder)
+            const v = verlaufFor(familyId, rec.id);
+            if (v && v.getString("status") === "offen" && v.getString("regel").indexOf("w:") === 0) {
+                try { v.set("status", "uebersprungen"); $app.save(v); } catch (e) { /* egal */ }
+            } else verlaufDropOpen(familyId, rec.id);
+        }
         $app.delete(rec);
     } catch (e) { /* schon weg */ }
     return true;
@@ -466,6 +480,7 @@ function loadHouseholdData(familyId) {
         cleaningCategories: data.cleaningCategories || [],
         members: data.members || [],
         doneTaskCleanupDays: data.doneTaskCleanupDays,
+        houseMaintenance: Array.isArray(data.houseMaintenance) ? data.houseMaintenance : [],
     };
     if (stamp) {
         try { $app.store().set(key, { stamp: stamp, json: JSON.stringify(sub) }); } catch (e) { /* egal */ }
@@ -655,7 +670,8 @@ function runHousehold(familyId, data) {
         const pickups = pickupTypesFor(tomorrowIso, familyId);
         bins.forEach(b => { if (pickups[b.wasteType]) add(binTitle(b, data.rooms), b.assignedMemberIds, b); });
     }
-    if (!rules.length) return 0;
+    const maint = (data.houseMaintenance || []).filter(maintActive);
+    if (!rules.length && !maint.length) return 0;
 
     let existing = [];
     try { existing = $app.findRecordsByFilter(AUFGABEN, "familie = {:f} && haushalt != ''", "-faellig", 0, 0, { f: familyId }); } catch (e) { existing = []; }
@@ -668,7 +684,95 @@ function runHousehold(familyId, data) {
         try { created += processRule(byKey, rule, todayIso, nowWall, col, familyId, data.members || []); }
         catch (e) { console.log("[Haushalt-Aufgabe] Fehler bei \"" + rule.key + "\": " + e.message); }
     });
+    maint.forEach(item => {
+        try { created += processMaintenance(byKey, item, todayIso, col, familyId, data.members || []); }
+        catch (e) { console.log("[Wartung] Fehler bei \"" + maintKey(item) + "\": " + e.message); }
+    });
     return created;
+}
+
+// =============================================================================================
+// Wartungsplan (Menü „Haus“): wiederkehrende Haushalts-Aufgaben in Monaten
+// =============================================================================================
+function maintActive(m) {
+    return !!(m && m.id && m.active !== false && String(m.title || "").trim() && Number(m.months) > 0);
+}
+// Aufgabentitel = Schlüssel (wie bei den übrigen Haushalts-Aufgaben)
+function maintKey(m) {
+    const icon = String(m.icon || "").trim();
+    return ((icon ? icon + " " : "") + String(m.title || "").trim()).slice(0, 300);
+}
+function isoAddMonths(iso, n) {
+    const p = String(iso).split("-").map(Number);
+    const idx = p[0] * 12 + (p[1] - 1) + n;
+    const y = Math.floor(idx / 12), mo = idx - y * 12;
+    const dim = new Date(Date.UTC(y, mo + 1, 0)).getUTCDate();
+    return y + "-" + pad2(mo + 1) + "-" + pad2(Math.min(p[2], dim));
+}
+function isoAddDays(iso, n) { return wallIso(isoToWall(iso) + n * DAY_MS); }
+function isoOfStamp(s) {
+    const t = Date.parse(String(s || "").replace(" ", "T"));
+    return isFinite(t) ? wallIso(t + tzOffsetMs(t)) : "";
+}
+// Letzter Abschluss: aus dem Verlauf (erledigt = Tag des Abhakens, übersprungen = Fälligkeit),
+// aus noch vorhandenen erledigten Aufgaben und aus „last“, das die App pflegt
+function maintLastDone(familyId, item, list) {
+    let best = isIsoDate(item.last) ? item.last : "";
+    const take = d => { if (isIsoDate(d) && d > best) best = d; };
+    (list || []).forEach(r => { if (r.getBool("erledigt")) take(isoOfStamp(r.getString("erledigt_am")) || r.getString("faellig")); });
+    if (verlaufOk()) {
+        try {
+            const recs = $app.findRecordsByFilter(VERLAUF, "familie = {:f} && regel = {:r} && (status = 'erledigt' || status = 'uebersprungen')", "-updated", 3, 0, { f: familyId, r: "w:" + item.id });
+            recs.forEach(v => take(v.getString("status") === "erledigt" ? (isoOfStamp(v.getString("updated")) || v.getString("faellig")) : v.getString("faellig")));
+        } catch (e) { /* egal */ }
+    }
+    return best;
+}
+function maintNextDue(item, lastDone, todayIso) {
+    const months = Math.max(1, Math.min(120, Math.round(Number(item.months) || 12)));
+    const manual = isIsoDate(item.next) ? item.next : "";
+    const setAt = isIsoDate(item.nextSet) ? item.nextSet : "";
+    if (manual && (!lastDone || lastDone < setAt)) return manual;
+    if (lastDone) return isoAddMonths(lastDone, months);
+    return manual || todayIso;
+}
+// Höchstens EINE offene Aufgabe je Wartung; sie bleibt stehen, bis sie erledigt ist
+function processMaintenance(byKey, item, todayIso, col, familyId, members) {
+    const key = maintKey(item);
+    const list = byKey[key] || [];
+    if (list.some(r => !r.getBool("erledigt"))) return 0;
+    const next = maintNextDue(item, maintLastDone(familyId, item, list), todayIso);
+    const lead = Math.max(0, Math.min(60, Math.round(Number(item.lead) || 0)));
+    if (todayIso < isoAddDays(next, -lead)) return 0;
+    const due = next < todayIso ? todayIso : next;
+    if (list.some(r => r.getString("faellig") === due)) return 0;
+    const rule = { id: "w:" + item.id, ids: Array.isArray(item.assignedMemberIds) ? item.assignedMemberIds.slice() : [], rotate: item.rotate || "" };
+    let zust = "";
+    let notes = buildAssignedNotes(rule.ids, members);
+    if (isRotating(rule)) {
+        zust = pickNext(familyId, rule, members);
+        if (zust) notes = buildAssignedNotes([zust], members);
+    } else if (rule.ids.length === 1) {
+        zust = rule.ids[0];
+    }
+    const extra = String(item.note || "").trim();
+    if (extra) notes = notes + "\n" + extra.slice(0, 1000);
+    const rec = new Record(col);
+    rec.set("titel", key);
+    rec.set("notizen", notes);
+    rec.set("faellig", due);
+    rec.set("von", "");
+    rec.set("bis", "");
+    rec.set("erledigt", false);
+    rec.set("erledigt_am", "");
+    rec.set("haushalt", key);
+    rec.set("verpasst", 0);
+    rec.set("familie", familyId);
+    $app.save(rec);
+    verlaufAdd(familyId, { regel: rule.id, titel: key, aufgabe: rec.id, faellig: due, zustaendig: zust, status: "offen" });
+    byKey[key] = [rec].concat(list);
+    console.log("[Wartung] Angelegt: " + key + " (fällig " + due + ")");
+    return 1;
 }
 
 // Erledigte Aufgaben löschen: 0 = sofort, 1 oder 2 Tage nach dem Abhaken (Standard 2).
@@ -771,6 +875,7 @@ function statistik(familyId, tage) {
     const rules = [];
     (data.roomSchedules || []).forEach(s => rules.push({ id: String(s.id || ""), ids: (s.assignedMemberIds || []).slice(), rotate: s.rotate || "", titel: cleaningTitle(s, data.rooms, data.cleaningCategories) }));
     (data.trashBins || []).forEach(b => rules.push({ id: String(b.id || ""), ids: (b.assignedMemberIds || []).slice(), rotate: b.rotate || "", titel: binTitle(b, data.rooms) }));
+    (data.houseMaintenance || []).filter(maintActive).forEach(m => rules.push({ id: "w:" + m.id, ids: (m.assignedMemberIds || []).slice(), rotate: m.rotate || "", titel: maintKey(m) }));
     rules.filter(isRotating).forEach(rule => {
         const last = lastAssignee(familyId, rule.id);
         const lastSt = last ? last.getString("status") : "";
