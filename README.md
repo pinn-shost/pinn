@@ -28,18 +28,16 @@ No cloud account. No subscription. No ads, no tracking. Your family's data never
 
 ## Screenshots
 
-<p align="center">
-  <img src=".github/assets/screenshots/dashboard.png" alt="iPad dashboard with family profiles, time and weather" width="760"><br>
-  <sub><b>iPad dashboard</b> – everyone taps their own picture, children go straight to their tasks</sub>
-</p>
-
 <table>
   <tr>
-    <td align="center" width="20%"><img src=".github/assets/screenshots/calendar.png" alt="Family calendar in day view with meals" width="170"><br><sub><b>Calendar</b><br>iCloud and Google in one view</sub></td>
-    <td align="center" width="20%"><img src=".github/assets/screenshots/meals.png" alt="Recipes with the meals planned this week" width="170"><br><sub><b>Meals</b><br>plan the week, shop in one tap</sub></td>
-    <td align="center" width="20%"><img src=".github/assets/screenshots/lists.png" alt="Shopping list sorted by category with ingredients from the meal plan" width="170"><br><sub><b>Lists</b><br>ingredients land here by themselves</sub></td>
-    <td align="center" width="20%"><img src=".github/assets/screenshots/finance.png" alt="Monthly budget with spending history" width="170"><br><sub><b>Finance</b><br>budget, savings, pocket money</sub></td>
-    <td align="center" width="20%"><img src=".github/assets/screenshots/kids.png" alt="Kids' page with the next steps of the daily routine" width="170"><br><sub><b>Kids</b><br>a playful daily routine</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/home.png" alt="Home screen with weather, today's tasks and upcoming events" width="230"><br><sub><b>Home</b> – your day at a glance</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/calendar.png" alt="Family calendar in week view" width="230"><br><sub><b>Calendar</b> – iCloud and Google in one view</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/meals.png" alt="Weekly meal plan with recipes" width="230"><br><sub><b>Meals</b> – plan the week, shop in one tap</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src=".github/assets/screenshots/lists.png" alt="Shopping list sorted by shop" width="230"><br><sub><b>Lists</b> – shopping, pantry, packing</sub></td>
+    <td align="center"><img src=".github/assets/screenshots/finance.png" alt="Budget overview with spending by category" width="230"><br><sub><b>Finance</b> – budget, savings, pocket money</sub></td>
+    <td align="center"><img src=".github/assets/screenshots/kids.png" alt="Kids' page with daily routine" width="230"><br><sub><b>Kids</b> – a playful daily routine</sub></td>
   </tr>
 </table>
 
@@ -54,6 +52,7 @@ No cloud account. No subscription. No ads, no tracking. Your family's data never
 | 💶 **Finance** | Shared or private funds, a household budget, savings and depots with ETFs and shares, pocket money, recurring payments and contracts with cancellation reminders. Flatshares can split costs and see who owes whom. |
 | 📄 **Documents & vehicles** | Receipts and warranties, IDs with expiry reminders. Cars and bikes with inspection dates, tyre changes, fuel use and total cost. |
 | 📍 **Family & location** | Live location via the free Traccar Client app, a "way home" mode, an SOS alert with position and emergency numbers, emergency cards and arrival notifications for places. |
+| 🎒 **School & daycare** | Per child: timetable (type it in or snap a photo – the AI fills it in), drop-off and pick-up, homework on the kids' page, parent letters with deadlines that turn into reminders, and closure days straight in the calendar. |
 | 🏠 **Smart home** | Start Apple Shortcuts or Home Assistant actions from a task – the robot vacuum cleans the kitchen when the chore is due. |
 | 🔔 **Notifications** | Personal push messages on iPhone, iPad and Android, plus a notification bell that collects every change in the family. |
 | 🧩 **Everything else** | Family board with movable notes, global search, offline mode with automatic sync, dark mode, iPad dashboard with profile PINs, guest account, child lock. |
