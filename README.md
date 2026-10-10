@@ -51,47 +51,47 @@ No cloud account. No subscription. No ads, no tracking. Your family's data never
 | ✅ **Tasks & household** | Tasks with push reminders, cleaning plans and bins – plus a kids' page with animated routines that only shows what fits the time of day. |
 | 💶 **Finance** | Shared or private funds, a household budget, savings and depots with ETFs and shares, pocket money, recurring payments and contracts with cancellation reminders. Flatshares can split costs and see who owes whom. |
 | 📄 **Documents & vehicles** | Receipts and warranties, IDs with expiry reminders. Cars and bikes with inspection dates, tyre changes, fuel use and total cost. |
+| 🏡 **Home** | For tenants, owners and landlords: tenancy or purchase contract, loan, defects with photos, receipts, renovation plan, meter readings with forecast, keys, and rental income for flats, houses and garages you let out. Garden & plants with a watering plan that knows when it rained. |
 | 📍 **Family & location** | Share your location right from pinn. – once or for a chosen time – and in the background via the free Traccar Client app (sends straight to pinn., no extra server). Plus a "way home" mode, an SOS alert with position and emergency numbers, emergency cards and arrival notifications for places. |
 | 🎒 **School & daycare** | Per child: timetable (type it in or snap a photo – the AI fills it in), drop-off and pick-up, homework on the kids' page, parent letters with deadlines that turn into reminders, and closure days straight in the calendar. |
 | 🐾 **Pets** | Profiles for dogs, cats, rabbits & co. with feeding times to tick off, walks, a "whose turn is it" rota, vaccinations and deworming with push reminders, weight chart, vet and emergency vet, a pet-sitter sheet to share and a printable "missing" poster. |
 | 🌦️ **Weather & holidays** | Tap the weather tile for 14 days with details for every day. Packing lists with destination and dates show the holiday weather – forecast or typical values – and suggest what to pack. |
 | 🏠 **Smart home** | Start Apple Shortcuts or Home Assistant actions from a task – the robot vacuum cleans the kitchen when the chore is due. |
+| 🎙️ **Voice control** | "Hey Siri, pinn": add to the shopping list, read it out, create tasks and hear what's on today – also on Android. |
 | 🔔 **Notifications** | Personal push messages on iPhone, iPad and Android, plus a notification bell that collects every change in the family. |
 | 🧩 **Everything else** | Family board with movable notes, global search, offline mode with automatic sync, dark mode, iPad dashboard with profile PINs, guest account, child lock. |
 
 pinn. speaks **English, Deutsch, Français and Español**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
-## What's new in 1.37
+## What's new in 1.38
 
-**Pets, 14-day weather & holiday weather**
+**Home, letting, garden & voice control**
 
-- **Family → Pets:** a dedicated tab for dogs, cats, rabbits, birds, fish and more – photo, breed, age, microchip and pet passport number, vet and emergency vet to call.
-- **Today:** feeding times to tick off (who fed when), walks with duration and who went out, medication "given", and a weekly rota of whose turn it is – with "share out in turns".
-- **Health & prevention:** vaccinations, deworming, flea & tick protection, claws, teeth, hutch or aquarium cleaning – with suggestions per species. Push reminders 3 days before, on the day and weekly while overdue; push on the pet's birthday.
-- Weight chart, food linked to the pantry with "add to shopping list", GPS tracker from location sharing, weekly walk statistics, and a diary of the last days.
-- **For the pet sitter:** a ready-to-share profile with food, walks, medication, quirks and phone numbers · printable "missing" poster · packing list "holiday with a pet" · rainbow bridge 🌈 for pets that have passed away.
-- Pets also appear in the family members tile, the emergency tab, search and the weekly preview. Animals previously set up as family members can be moved over with one tap.
-- **Weather tile:** tap it for 14 days (days 8–14 marked as a trend). Every day shows feels-like temperature, wind and gusts with direction, UV index, hours of sunshine, rainfall, sunrise and sunset, an hourly forecast and what to wear.
-- **Holiday weather:** packing lists get a destination (with suggestions while typing) and dates – the number of days is calculated automatically. The list, the weather tile and the weather view show the weather at the destination, including the sea temperature on the coast.
-- More than 16 days ahead pinn. shows typical values (average of the same days over the last three years) and switches to the real forecast automatically. Packing tips that match the weather go onto the list with one tap.
-- **Weekly preview:** if a holiday falls in the coming week, the weather at the destination is summarised – average temperatures, rainy days, sunshine, sea temperature and every day as an icon.
-- Server: new `haustiere.pb.js` and `pinn-haustiere.js`, updated `zuhause.pb.js` and `pinn-zuhause.js`; language files en/fr/es updated.
+- **"House" is now "Home"** – with its own animated scene instead of a road: a house with garden, fence and birds, a city with train, taxi, car, bike and plane for flats, a garage with driveway. After sunset it turns to night with moon, stars and lit windows.
+- **Letting:** besides renting and owning there is now **"Let out"** – tenant with contact details, base rent, service charges and parking as recurring income in Finance, deposit, rent type, purchase and loan. Tiles for rental income, surplus and gross yield, reminders for the service charge statement and a possible rent increase, rental income in the Costs tab.
+- New types: **garage / parking space** and **apartment building**.
+- **Building blocks per home:** add or remove defects, costs, meters, maintenance, garden & plants and keys – the tabs adapt.
+- **Garden & plants:** indoor, balcony and garden plants with a watering and feeding plan, mowing in season, "💧 Watered" with one tap. Rain counts as watering outdoors, heat brings watering forward, frost warning for pots. Garden year (fruit trees, hedge, leaves, winter storage …) as tasks, plus a garden calendar of what to sow, plant and harvest this month.
+- **Keys:** which keys exist, how many and who has them.
+- **Voice control** (Settings → Voice control): "Hey Siri, pinn" – add things to the shopping list, have the list read out, create tasks and ask what's on today or tomorrow. With instructions for the Siri shortcut and for Android, in all four languages.
+- **Shopping list & pantry:** units switch between singular and plural automatically (1 can · 2 cans, Dose/Dosen, Glas/Gläser – "Dose(n)" is understood too). On phones, pantry items on the shopping list show just the number; weights and volumes (g, kg, ml, l …) stay.
+- Fixed: the icon in the header (e.g. the key) covered the first tile in Home and Vehicles.
+- Server: new `sprache.pb.js` and `pinn-sprache.js`, updated `pinn-zuhause.js` (rainfall of the last two days); language files en/fr/es updated.
 
-### Neu in 1.37 (Deutsch)
+### Neu in 1.38 (Deutsch)
 
-**Haustiere, 14-Tage-Wetter & Urlaubswetter**
+**Zuhause, Vermietung, Garten & Sprachsteuerung**
 
-- **Familie → Haustiere:** eigener Reiter für Hund, Katze, Kaninchen, Vogel, Fische und mehr – Foto, Rasse, Alter, Chip- und Heimtierausweis-Nummer, Tierarzt und Tiernotdienst zum Anrufen.
-- **Heute:** Fütterungszeiten zum Abhaken (wer hat wann gefüttert), Gassi-Runden mit Dauer und wer unterwegs war, Medikamente „gegeben“ und ein Wochenplan, wer dran ist – mit „Reihum verteilen“.
-- **Gesundheit & Vorsorge:** Impfungen, Wurmkur, Floh- & Zeckenschutz, Krallen, Zähne, Stall oder Aquarium – mit Vorschlägen je Tierart. Push-Erinnerung 3 Tage vorher, am Tag selbst und wöchentlich, solange überfällig; Push zum Geburtstag des Tiers.
-- Gewichtsverlauf als Diagramm, Futter mit Verknüpfung zum Vorrat und „Auf die Einkaufsliste“, GPS-Tracker aus der Ortung, Gassi-Wochenstatistik und Tagebuch der letzten Tage.
-- **Für den Tiersitter:** Steckbrief zum Teilen mit Futter, Gassi, Medikamenten, Eigenheiten und Telefonnummern · Vermisst-Plakat zum Drucken · Packliste „Urlaub mit Haustier“ · Regenbogenbrücke 🌈 für verstorbene Tiere.
-- Haustiere auch in der Kachel „Familienmitglieder“, im Reiter „Notfall“, in der Suche und in der Wochenvorschau. Tiere, die bisher als Familienmitglied angelegt waren, lassen sich mit einem Tipp übernehmen.
-- **Wetter-Kachel:** antippen für 14 Tage (Tag 8–14 als Tendenz markiert). Jeder Tag mit gefühlter Temperatur, Wind und Böen mit Richtung, UV-Index, Sonnenstunden, Regenmenge, Sonnenauf- und -untergang, Stundenverlauf und Anzieh-Tipps.
-- **Urlaubswetter:** Packlisten bekommen ein Reiseziel (Vorschläge beim Tippen) und einen Zeitraum – die Tageszahl rechnet sich selbst. Packliste, Wetter-Kachel und Wetter-Ansicht zeigen das Wetter am Urlaubsort, am Meer auch die Wassertemperatur.
-- Mehr als 16 Tage vorher zeigt pinn. Erfahrungswerte (Ø derselben Tage der letzten drei Jahre) und wechselt danach von selbst zur echten Vorhersage. Pack-Tipps passend zum Wetter kommen mit einem Tipp auf die Liste.
-- **Wochenvorschau:** steht in der kommenden Woche ein Urlaub an, wird das Wetter am Urlaubsort zusammengefasst – Ø Temperaturen, Regentage, Sonne, Wasser und jeder Tag als Symbol.
-- Server: neu `haustiere.pb.js` und `pinn-haustiere.js`, angepasst `zuhause.pb.js` und `pinn-zuhause.js`; Sprachdateien en/fr/es ergänzt.
+- **Aus „Haus“ wird „Zuhause“** – mit eigener bewegter Szene statt Straße: Haus mit Garten, Zaun und Vögeln, Stadt mit Bahn, Taxi, Auto, Fahrrad und Flugzeug für Wohnungen, Garage mit Einfahrt. Nach Sonnenuntergang wird es Nacht mit Mond, Sternen und Licht in den Fenstern.
+- **Vermietung:** neben Miete und Eigentum jetzt auch **„Vermietet“** – Mieter mit Kontakt, Kaltmiete, Nebenkosten und Stellplatz als regelmäßige Einnahme in Finanzen, Kaution, Mietart, Kauf und Kredit. Kacheln für Mieteinnahmen, Überschuss und Brutto-Rendite, Hinweise zur Nebenkostenabrechnung und zu einer möglichen Mieterhöhung, Mieteinnahmen im Reiter Kosten.
+- Neue Arten: **Garage / Stellplatz** und **Mehrfamilienhaus**.
+- **Bausteine je Zuhause:** Mängel, Kosten, Zähler, Wartung, Garten & Pflanzen und Schlüssel hinzufügen oder entfernen – die Reiter passen sich an.
+- **Garten & Pflanzen:** Zimmer-, Balkon- und Gartenpflanzen mit Gieß- und Düngeplan, Rasen mähen in der Saison, „💧 Gegossen“ mit einem Tipp. Regen zählt draußen als gegossen, bei Hitze kommt das Gießen früher, Frost-Warnung für Kübel. Gartenjahr (Obstbäume, Hecke, Laub, Winterquartier …) als Aufgaben und ein Gartenkalender: was jetzt gesät, gepflanzt und geerntet wird.
+- **Schlüssel:** welche Schlüssel es gibt, wie viele und wer sie hat.
+- **Sprachsteuerung** (Einstellungen → Sprachsteuerung): „Hey Siri, pinn“ – Sachen auf die Einkaufsliste setzen, die Liste vorlesen lassen, Aufgaben anlegen und fragen, was heute oder morgen ansteht. Mit Anleitung für den Kurzbefehl und für Android, in allen vier Sprachen.
+- **Einkaufsliste & Vorrat:** Einheiten automatisch in Einzahl oder Mehrzahl (1 Dose · 2 Dosen, Packung/Packungen, Glas/Gläser – auch „Dose(n)“ wird verstanden). Am Handy zeigt die Einkaufsliste bei Vorrats-Artikeln nur die Zahl, Gewicht und Menge (g, kg, ml, l …) bleiben stehen.
+- Behoben: Das Symbol im Kopf (z. B. der Schlüssel) verdeckte bei Zuhause und Fahrzeugen die erste Kachel.
+- Server: neu `sprache.pb.js` und `pinn-sprache.js`, angepasst `pinn-zuhause.js` (Regenmenge der letzten zwei Tage); Sprachdateien en/fr/es ergänzt.
 
 ## How it works
 

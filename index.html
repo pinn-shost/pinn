@@ -96,11 +96,12 @@
   html.pinn-ruhe .kid-empty-emoji, html.pinn-ruhe .kid-chip-badge, html.pinn-ruhe .pw-kudos-heart,
   html.pinn-ruhe .term-window::after, html.pinn-ruhe .t-cursor,
   html.pinn-ruhe .ov-fam-live, html.pinn-ruhe .ov-fam-live::after, html.pinn-ruhe .ov-fam-item.is-bday .ov-fam-badge,
-  html.pinn-ruhe .ofs-bday-ic, html.pinn-ruhe .ov-fam-item.is-soon .ov-fam-ava { animation-play-state: paused !important; }
+  html.pinn-ruhe .ofs-bday-ic, html.pinn-ruhe .ov-fam-item.is-soon .ov-fam-ava, html.pinn-ruhe .hs-anim, html.pinn-ruhe .hs-anim path { animation-play-state: paused !important; }
   @media (prefers-reduced-motion: reduce) {
     .fin-goal-reached, .fin-piggy, .fz-hero-band::after, .fz-hero-icon > span, .fz-empty-car,
     .hw-head::before, .hw-walk i, .fam-ecg path, .kid-money-pig, .kid-deco span, .kid-avatar,
-    .kid-empty-emoji, .kid-chip-badge, .pw-kudos-heart, .term-window::after { animation: none !important; }
+    .kid-empty-emoji, .kid-chip-badge, .pw-kudos-heart, .term-window::after, .hs-anim, .hs-anim path { animation: none !important; }
+    .hs-mover.hs-anim, .hs-cloud.hs-anim { display: none; }
   }
 </style>
 <script>
@@ -582,7 +583,7 @@ window.PINN_LANGUAGES = [
     start(data);
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.37.0" onerror="PINN_I18N.fail()"><\/script>');
+  if (DICT) document.write('<script src="' + lang.file + '?v=1.38.0" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // Deutsch als WG: kein Wörterbuch, nur die WG-Bezeichnungen
 })();
 </script>
@@ -2027,9 +2028,76 @@ window.PINN_LANGUAGES = [
   .fz-hero-band { position: relative; height: 92px; background: linear-gradient(135deg, var(--fz, var(--c-pine)) 0%, color-mix(in srgb, var(--fz, var(--c-pine)) 55%, #fff) 100%); overflow: hidden; }
   .fz-hero-band::after { content: ''; position: absolute; left: -10%; right: -10%; bottom: 18px; height: 3px; background: repeating-linear-gradient(90deg, rgba(255,255,255,.55) 0 22px, transparent 22px 40px); animation: fzRoad 1.6s linear infinite; }
   @keyframes fzRoad { from { transform: translateX(0); } to { transform: translateX(-40px); } }
-  .fz-hero-icon { position: absolute; left: 18px; bottom: -26px; width: 72px; height: 72px; border-radius: 22px; display: grid; place-items: center; font-size: 40px; line-height: 1; background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,0.12); z-index: 1; }
+  .fz-hero-icon { position: absolute; left: 18px; top: 46px; width: 72px; height: 72px; border-radius: 22px; display: grid; place-items: center; font-size: 40px; line-height: 1; background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,0.12); z-index: 1; }
   .fz-hero-icon > span { display: inline-block; animation: kidBob 3.4s ease-in-out infinite; }
   .fz-hero-body { padding: 34px 16px 16px; }
+
+  /* Zuhause: bewegte Szene im Kopf (Haus mit Garten · Stadt · Garage), Tag und Nacht */
+  .hs-scene { background: linear-gradient(180deg, #8FC9E8 0%, #CBE7F4 72%, #E6F3EA 100%); }
+  .hs-scene.is-night { background: linear-gradient(180deg, #14213D 0%, #2B3A63 70%, #3A4A72 100%); }
+  .hs-scene::after { display: none; }
+  .hs-scene > * { position: absolute; pointer-events: none; }
+  .hs-scene svg.hs-art { right: 0; bottom: 0; height: 100%; width: 100%; }
+  .hs-ground { left: 0; right: 0; bottom: 0; height: 12px; background: #79B35A; }
+  .hs-scene.is-night .hs-ground { background: #2F4A33; }
+  .hs-sun { right: 54%; top: 10px; width: 20px; height: 20px; border-radius: 50%; background: #FFD45C; box-shadow: 0 0 0 5px rgba(255,212,92,.25), 0 0 18px rgba(255,212,92,.6); }
+  .hs-stadt .hs-sun, .hs-stadt .hs-moon { right: auto; left: 26%; }
+  .hs-moon { right: 58%; top: 9px; width: 16px; height: 16px; border-radius: 50%; box-shadow: -4px 2px 0 0 #F4E9C8; }
+  .hs-star { width: 2px; height: 2px; border-radius: 50%; background: #fff; opacity: .8; }
+  .hs-star.tw { animation: hsTwinkle 3.2s ease-in-out infinite; }
+  .hs-cloud { top: 12px; left: 0; width: 100%; animation: hsCloud 46s linear infinite; }
+  .hs-cloud i { display: block; width: 42px; height: 12px; border-radius: 12px; background: rgba(255,255,255,.85); position: relative; }
+  .hs-cloud i::before, .hs-cloud i::after { content: ''; position: absolute; background: inherit; border-radius: 50%; }
+  .hs-cloud i::before { width: 18px; height: 18px; left: 7px; top: -9px; }
+  .hs-cloud i::after { width: 14px; height: 14px; left: 20px; top: -6px; }
+  .hs-cloud.c2 { top: 30px; animation-duration: 64s; animation-delay: -30s; opacity: .7; }
+  .hs-scene.is-night .hs-cloud { opacity: .18; }
+  .hs-mover { left: 0; width: 100%; line-height: 1; animation: hsMoveLeft 10s linear infinite; }
+  .hs-mover.ltr { animation-name: hsMoveRight; }
+  .hs-mover > span { display: inline-block; }
+  .hs-bird { top: 18px; animation-duration: 15s; }
+  .hs-bird svg { width: 14px; height: 8px; overflow: visible; }
+  .hs-bird path { fill: none; stroke: #2C3E50; stroke-width: 1.6; stroke-linecap: round; transform-origin: 7px 4px; animation: hsFlap .45s ease-in-out infinite alternate; }
+  .hs-bird.b2 { top: 30px; animation-duration: 19s; animation-delay: -8s; }
+  .hs-bird.b2 svg { transform: scale(.75); }
+  .hs-smoke { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.7); animation: hsSmoke 3.6s ease-out infinite; opacity: 0; }
+  .hs-road { left: 0; right: 0; bottom: 0; height: 16px; background: #59606A; }
+  .hs-road::after { content: ''; position: absolute; left: 0; right: 0; top: 7px; height: 2px; background: repeating-linear-gradient(90deg, rgba(255,255,255,.65) 0 14px, transparent 14px 28px); }
+  .hs-scene.is-night .hs-road { background: #262B33; }
+  .hs-rail { left: 0; right: 0; bottom: 22px; height: 3px; background: #6E7480; box-shadow: 0 3px 0 rgba(0,0,0,.08); }
+  .hs-scene.is-night .hs-rail { background: #4A5160; }
+  .hs-car { bottom: 2px; font-size: 15px; }
+  .hs-car.l2 { bottom: 5px; font-size: 13px; }
+  .hs-train { bottom: 25px; animation-duration: 13s; }
+  .hs-train > span { width: 84px; height: 11px; border-radius: 6px 9px 3px 3px; background: #E5E8EC; box-shadow: inset 0 -3px 0 var(--fz, #2F4B41); position: relative; }
+  .hs-train > span::after { content: ''; position: absolute; left: 6px; right: 12px; top: 2px; height: 4px; background: repeating-linear-gradient(90deg, #6D8FB0 0 8px, transparent 8px 11px); border-radius: 1px; }
+  .hs-scene.is-night .hs-train > span::after { background: repeating-linear-gradient(90deg, #FFD66B 0 8px, transparent 8px 11px); }
+  .hs-plane { top: 6px; font-size: 13px; animation: hsPlane 24s linear infinite; }
+  .hs-win-tw { animation: hsTwinkle 4.5s steps(2, jump-none) infinite; }
+  .hs-lamp { animation: hsGlow 3s ease-in-out infinite alternate; }
+  @keyframes hsMoveLeft { from { transform: translateX(100%); } to { transform: translateX(-22%); } }
+  @keyframes hsMoveRight { from { transform: translateX(-30%); } to { transform: translateX(100%); } }
+  @keyframes hsCloud { from { transform: translateX(105%); } to { transform: translateX(-20%); } }
+  @keyframes hsPlane { from { transform: translate(-15%, 14px); } to { transform: translate(100%, -2px); } }
+  @keyframes hsFlap { from { transform: scaleY(1); } to { transform: scaleY(-.6); } }
+  @keyframes hsSmoke { 0% { transform: translate(0, 0) scale(.6); opacity: 0; } 15% { opacity: .75; } 100% { transform: translate(10px, -26px) scale(1.8); opacity: 0; } }
+  @keyframes hsTwinkle { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+  @keyframes hsGlow { from { opacity: .55; } to { opacity: 1; } }
+  /* Zuhause: Bausteine, Pflanzen, Schlüssel */
+  .hs-mod-chip { display: inline-flex; align-items: center; gap: 6px; padding: 7px 11px; border-radius: 12px; border: 1px dashed rgba(37,35,31,0.22); background: #fff; font-size: 12px; color: rgba(37,35,31,0.6); transition: background .15s, border-color .15s, color .15s; }
+  .hs-mod-chip.active { border-style: solid; border-color: var(--c-pine); background: color-mix(in srgb, var(--c-pine) 12%, transparent); color: var(--c-pine); font-weight: 600; }
+  .hs-plant { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 14px; border: 1px solid rgba(37,35,31,0.1); background: #fff; }
+  .hs-plant.due { border-color: color-mix(in srgb, #3B7EA1 55%, transparent); background: color-mix(in srgb, #3B7EA1 7%, #fff); }
+  .hs-plant-ic { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; font-size: 22px; background: color-mix(in srgb, #5E8C31 14%, transparent); flex-shrink: 0; }
+  .hs-water-btn { flex-shrink: 0; padding: 7px 10px; border-radius: 11px; border: 1px solid #3B7EA1; color: #3B7EA1; background: #fff; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .hs-water-btn.done { border-color: rgba(37,35,31,0.12); color: rgba(37,35,31,0.45); font-weight: 500; }
+  .hs-water-btn.fert { border-color: #8A6D2B; color: #8A6D2B; }
+  .hs-wx-tip { border-radius: 16px; padding: 12px 14px; font-size: 13px; background: color-mix(in srgb, #3B7EA1 10%, #fff); border: 1px solid color-mix(in srgb, #3B7EA1 30%, transparent); }
+  .hs-season-col h5 { font-size: 11px; font-weight: 600; color: rgba(37,35,31,0.55); margin-bottom: 4px; }
+  html.dark .hs-mod-chip, html.dark .hs-plant, html.dark .hs-water-btn { background-color: #2E2C28; border-color: rgba(255,255,255,0.14); color: inherit; }
+  html.dark .hs-wx-tip { background: rgba(59,126,161,0.18); }
+  /* Einkaufsliste: Einheit am Handy bei Vorrats-Artikeln ausblenden (Gewicht/Menge bleibt) */
+  @media (max-width: 639px) { .sq-u-hide { display: none; } }
   .fz-plate { display: inline-flex; align-items: stretch; height: 22px; border: 1.5px solid #1b1b1b; border-radius: 4px; background: #fff; color: #111; overflow: hidden; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700; font-size: 12px; letter-spacing: .06em; white-space: nowrap; }
   .fz-plate-eu { display: grid; place-items: center; width: 14px; background: #1E4AA8; color: #fff; font-size: 8px; font-family: Inter, system-ui, sans-serif; letter-spacing: 0; }
   .fz-plate-txt { display: flex; align-items: center; padding: 0 6px; }
@@ -4090,7 +4158,7 @@ window.PINN_LANGUAGES = [
       <button data-view="dokumente" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Dokumente</button>
       <div class="nav-divider mx-6 my-3 border-t border-white/25" aria-hidden="true"></div>
       <button data-view="fahrzeuge" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Fahrzeuge</button>
-      <button data-view="haus" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Haus</button>
+      <button data-view="haus" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Zuhause</button>
       </div>
 
       <div class="sidebar-foot mt-auto flex items-center gap-2 px-6 pt-4 pb-3 border-t border-white/10">
@@ -4711,20 +4779,16 @@ window.PINN_LANGUAGES = [
       <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
         <div class="flex items-center justify-between gap-3">
           <div class="min-w-0">
-            <h2 class="font-serif text-lg leading-tight">Haus</h2>
+            <h2 class="font-serif text-lg leading-tight">Zuhause</h2>
             <button id="kassePillHs" type="button" class="kasse-sub hidden" aria-label="Kasse wechseln"></button>
           </div>
           <div class="flex items-center gap-2 shrink-0">
             <button id="hsHeaderBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">+ Zuhause</button>
           </div>
         </div>
-        <!-- Umschalter: Übersicht / Mängel / Kosten / Zähler / Wartung -->
-        <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs mt-3 w-full sm:w-fit overflow-x-auto" role="tablist" aria-label="Hausbereich">
+        <!-- Umschalter: Übersicht + gewählte Bausteine (Mängel, Kosten, Zähler, Wartung, Garten …) -->
+        <div id="hsTabs" class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs mt-3 w-full sm:w-fit overflow-x-auto" role="tablist" aria-label="Zuhause">
           <button type="button" data-hstab="uebersicht" class="hs-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Übersicht</button>
-          <button type="button" data-hstab="maengel" class="hs-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Mängel</button>
-          <button type="button" data-hstab="kosten" class="hs-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Kosten</button>
-          <button type="button" data-hstab="zaehler" class="hs-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Zähler</button>
-          <button type="button" data-hstab="wartung" class="hs-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Wartung</button>
         </div>
       </div>
       <div id="hsScroll" class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">
@@ -5797,6 +5861,16 @@ window.PINN_LANGUAGES = [
           </button>
         </div>
         <p class="text-[11px] text-ink/40 mt-3">Welche Aktion zu welcher Aufgabe gehört, stellst du auf der Haushalt-Seite in der jeweiligen Reinigung bzw. am Mülleimer ein.</p>
+      </div>
+    </details>
+    <details class="settings-accordion set-card" id="settingsVoiceAccordion">
+      <summary class="set-sum">
+        <span class="set-ico">🎙️</span>
+        <span class="set-head"><span class="sa-title">Sprachsteuerung</span><small>Siri &amp; Android: Einkaufsliste, Aufgaben, Tagesüberblick</small></span>
+        <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+      </summary>
+      <div class="set-body">
+        <div id="voiceSettingsBody" class="flex flex-col gap-3"><p class="text-xs text-ink/50">Wird geladen …</p></div>
       </div>
     </details>
     <details class="settings-accordion set-card" id="settingsSystemAccordion">
@@ -11625,7 +11699,7 @@ const ALL_MENU_TABS = [
   { id: 'finanzen', icon: '💶', label: 'Finanzen' },
   { id: 'dokumente', icon: '🗂️', label: 'Dokumente' },
   { id: 'fahrzeuge', icon: '🚗', label: 'Fahrzeuge' },
-  { id: 'haus', icon: '🏡', label: 'Haus' },
+  { id: 'haus', icon: '🏡', label: 'Zuhause' },
 ];
 // Finanzen: vorgegebene Kategorien (in den Finanz-Einstellungen änderbar/erweiterbar)
 const FIN_DEFAULT_CATEGORIES = [
@@ -14885,7 +14959,9 @@ async function fetchWeather() {
         label: data.ort || (fallback && fallback.label) || '',
         ts: Date.now(),
         days: (Array.isArray(data.tage) ? data.tage : []).map(d => ({ ...d, date: String(d.date) })),
+        past: (Array.isArray(data.vergangen) ? data.vergangen : []).map(d => ({ date: String(d.date), mm: d.mm, max: d.max, min: d.min })),
       };
+      try { if (currentView === 'haus' && (hsTab === 'garten' || hsTab === 'uebersicht')) renderHouse(); } catch (e) { /* noch nicht bereit */ }
       try { localStorage.setItem(LS_WEATHER_DAILY, JSON.stringify(weatherDaily)); } catch (e) { /* voll */ }
       weatherNoLocation = false;
     }
@@ -18903,7 +18979,7 @@ function mergeShoppingQty(a, b) {
   const pa = parseShoppingQtyParts(a), pb = parseShoppingQtyParts(b);
   if (pa && pb) {
     const ua = pa.unit.toLowerCase(), ub = pb.unit.toLowerCase();
-    if (ua === ub) {
+    if (ua === ub || unitKey(ua) === unitKey(ub)) {
       const txt = formatQuantityRange(pa.min + pb.min, pa.max + pb.max);
       return pa.unit ? `${txt} ${pa.unit}` : txt;
     }
@@ -19354,13 +19430,18 @@ const SHOPPING_DRAG_ANIM_MS = 230;
    und schiebt ihn nach unten zu „Abgehakt“. Plus/Minus neben der Menge ändert sie direkt,
    langes Drücken öffnet wie bisher Bearbeiten bzw. die Aufschlüsselung. */
 let shoppingJustToggledKey = '';
-function shoppingQtyControlsHtml(kind, id, qtyText, muted) {
-  const shown = qtyText || '1';
-  if (muted) return qtyText ? `<span class="shop-qty-val shrink-0 text-sm text-ink/30 line-through px-2">${escapeHtml(qtyText)}</span>` : '';
+function shoppingQtyControlsHtml(kind, id, qtyText, muted, pantry = false) {
+  const q = qtyPretty(qtyText);
+  // Vorrats-Artikel: am Handy nur die Zahl („2“ statt „2 Packungen“) – Gewicht & Menge („500 g“) bleiben
+  const inner = q.unit
+    ? `<span>${escapeHtml(q.num)}</span><span class="${pantry && !q.measure ? 'sq-u-hide' : ''}"> ${escapeHtml(q.unit)}</span>`
+    : escapeHtml(q.num || '1');
+  const title = q.full ? ` title="${escapeHtml(q.full)}"` : '';
+  if (muted) return qtyText ? `<span class="shop-qty-val shrink-0 text-sm text-ink/30 line-through px-2"${title}>${inner}</span>` : '';
   return `
         <div class="shop-qty flex items-center gap-1 pr-2 shrink-0">
           <button type="button" class="shop-qty-btn shop-qty-minus" data-kind="${kind}" data-id="${escapeHtml(id)}" data-dir="-1" aria-label="Einen weniger">−</button>
-          <span class="shop-qty-val text-center text-sm font-semibold ${qtyText ? '' : 'text-ink/35 font-normal'}">${escapeHtml(shown)}</span>
+          <span class="shop-qty-val text-center text-sm font-semibold ${qtyText ? '' : 'text-ink/35 font-normal'}"${title}>${inner}</span>
           <button type="button" class="shop-qty-btn shop-qty-plus" data-kind="${kind}" data-id="${escapeHtml(id)}" data-dir="1" aria-label="Einen mehr">+</button>
         </div>`;
 }
@@ -19378,7 +19459,7 @@ function shoppingManualRowHtml(it) {
           ${note ? `<span class="shop-note block truncate">${escapeHtml(note)}</span>` : ''}
         </span>
       </button>
-      ${shoppingQtyControlsHtml('m', it.id, qty, muted)}
+      ${shoppingQtyControlsHtml('m', it.id, qty, muted, !!pItem)}
     </div>`;
 }
 function shoppingRecipeRouteTagHtml(item, muted) {
@@ -23790,6 +23871,131 @@ document.getElementById('doneSmartHomeBtn').addEventListener('click', closeSmart
 document.getElementById('smartHomeModal').addEventListener('click', (e) => { if (e.target.id === 'smartHomeModal') closeSmartHomeModal(); });
 document.getElementById('addSmartDeviceBtn').addEventListener('click', () => openSmartDeviceModal(null));
 
+
+/* ==========================================================
+   Sprachsteuerung (Einstellungen → Sprachsteuerung, pb_hooks/sprache.pb.js + pinn-sprache.js)
+   ----------------------------------------------------------
+   Jedes Profil bekommt auf Wunsch einen eigenen, geheimen Link. Ein Siri-Kurzbefehl (bzw. unter
+   Android die App „HTTP Shortcuts“) schickt den gesprochenen Satz dorthin, der Server versteht ihn
+   (Deutsch, Englisch, Französisch, Spanisch) und antwortet mit einem Satz zum Vorlesen:
+   - „Milch und zwei Packungen Eier auf die Einkaufsliste (bei Rewe)“
+   - „Was steht auf der Einkaufsliste?“
+   - „Erinnere mich morgen an den Müll“ / „Aufgabe: Fenster putzen am Samstag“
+   - „Was steht heute an?“ / „Was steht morgen an?“
+   Der Link wirkt wie ein Passwort für genau diese Befehle. Gäste haben keine Sprachsteuerung;
+   Profile mit Kindersicherung können nur abfragen, nichts anlegen.
+   ========================================================== */
+let voiceState = null;
+function voiceLink(token) { return location.origin + '/api/pinn/sprache?token=' + encodeURIComponent(token); }
+async function loadVoiceSettings() {
+  const box = document.getElementById('voiceSettingsBody');
+  if (!box) return;
+  if (isCurrentUserGuest()) { box.innerHTML = '<p class="text-xs text-ink/50">Für Gastkonten nicht verfügbar.</p>'; return; }
+  try {
+    const res = await apiFetch('/api/pinn/sprache/status', { method: 'GET' });
+    if (res.status === 404) throw new Error('pb_hooks/sprache.pb.js fehlt auf dem Server');
+    voiceState = await res.json();
+  } catch (err) {
+    voiceState = { error: err.message || 'Server nicht erreichbar' };
+  }
+  renderVoiceSettings();
+}
+function renderVoiceSettings() {
+  const box = document.getElementById('voiceSettingsBody');
+  if (!box) return;
+  const st = voiceState || {};
+  if (st.error) { box.innerHTML = `<p class="text-xs text-red-500">${escapeHtml(st.error)}</p>`; return; }
+  const examples = ['„Milch und Eier auf die Einkaufsliste“', '„Zwei Packungen Nudeln auf die Liste bei Rewe“', '„Was steht auf der Einkaufsliste?“', '„Erinnere mich morgen an den Müll“', '„Was steht heute an?“'];
+  const exHtml = `<div class="rounded-xl bg-ink/5 p-3"><p class="text-xs font-medium mb-1">Das versteht pinn.</p><div class="flex flex-col gap-0.5 text-[11px] text-ink/60">${examples.map(x => `<span>${escapeHtml(x)}</span>`).join('')}</div><p class="text-[11px] text-ink/45 mt-1.5">Auch auf Englisch, Französisch und Spanisch. Die Antwort kommt in deiner Sprache.</p></div>`;
+  if (!st.aktiv) {
+    box.innerHTML = `
+      <p class="text-xs text-ink/60">Sag „Hey Siri, pinn“ und sprich einfach drauflos: Sachen auf die Einkaufsliste setzen, Aufgaben anlegen oder fragen, was heute ansteht. Dafür bekommt dein Profil einen persönlichen, geheimen Link.</p>
+      ${exHtml}
+      <button type="button" id="voiceSetupBtn" class="self-start px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">🎙️ Sprachsteuerung einrichten</button>
+      ${st.kind ? '<p class="text-[11px] text-ink/45">Mit Kindersicherung lassen sich Liste und Tagesüberblick nur abfragen.</p>' : ''}`;
+    document.getElementById('voiceSetupBtn').addEventListener('click', () => voiceSetup(false));
+    return;
+  }
+  const link = voiceLink(st.token);
+  box.innerHTML = `
+    <p class="text-xs text-ink/60">Dein persönlicher Link – er wirkt wie ein Passwort für diese Befehle, also nicht weitergeben.</p>
+    <div class="flex items-center gap-2">
+      <input id="voiceLinkInput" type="text" readonly class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-2 text-xs bg-ink/5" value="${escapeHtml(link)}" />
+      <button type="button" id="voiceCopyBtn" class="shrink-0 px-3 py-2 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">Kopieren</button>
+    </div>
+    <details class="rounded-xl border border-ink/10 bg-white p-3" open>
+      <summary class="text-sm font-medium cursor-pointer">📱 iPhone &amp; iPad: Siri-Kurzbefehl</summary>
+      <ol class="text-[12px] text-ink/70 leading-relaxed mt-2 list-decimal pl-5 flex flex-col gap-1">
+        <li>Link oben kopieren und die App <b>Kurzbefehle</b> öffnen → <b>+</b> (neuer Kurzbefehl).</li>
+        <li>Aktion <b>„Text diktieren“</b> hinzufügen.</li>
+        <li>Aktion <b>„Inhalte von URL abrufen“</b> hinzufügen, den Link als URL einfügen, auf den Pfeil tippen: Methode <b>POST</b>, Anfragetext <b>JSON</b>, neues Feld <b>Text</b> mit dem Schlüssel <b>text</b> und als Wert „Diktierter Text“.</li>
+        <li>Aktion <b>„Text sprechen“</b> mit „Inhalte der URL“ hinzufügen.</li>
+        <li>Den Kurzbefehl <b>pinn</b> nennen. Jetzt reicht „Hey Siri, pinn“ – Siri fragt nach, du sagst, was du möchtest.</li>
+      </ol>
+    </details>
+    <details class="rounded-xl border border-ink/10 bg-white p-3">
+      <summary class="text-sm font-medium cursor-pointer">🤖 Android</summary>
+      <ol class="text-[12px] text-ink/70 leading-relaxed mt-2 list-decimal pl-5 flex flex-col gap-1">
+        <li>Die kostenlose App <b>HTTP Shortcuts</b> aus dem Play Store installieren.</li>
+        <li>Neuen Shortcut anlegen: Methode <b>POST</b>, URL = Link oben, Anfragetext <b>JSON</b>: <code class="text-[11px]">{"text": "{{Eingabe}}"}</code> – dabei eine Variable „Eingabe“ vom Typ <b>Texteingabe</b> anlegen (mit dem Mikrofon der Tastatur sprechen).</li>
+        <li>Unter „Antwort“ <b>als Dialog anzeigen</b> wählen und den Shortcut auf den Startbildschirm legen.</li>
+      </ol>
+    </details>
+    ${exHtml}
+    <p class="text-[11px] text-ink/45">Unterwegs muss das Handy pinn. erreichen können – also im WLAN zu Hause oder mit eingeschaltetem VPN.${st.kind ? ' Mit Kindersicherung lassen sich Liste und Tagesüberblick nur abfragen.' : ''}</p>
+    <div class="flex flex-wrap gap-2">
+      <button type="button" id="voiceTestBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">▶ Ausprobieren</button>
+      <button type="button" id="voiceRenewBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">Neuen Link erzeugen</button>
+      <button type="button" id="voiceOffBtn" class="px-3 py-1.5 rounded-lg text-xs text-red-600 hover:bg-red-50 transition">Ausschalten</button>
+    </div>
+    <p id="voiceTestOut" class="hidden text-xs rounded-lg bg-pine/10 text-pine px-3 py-2"></p>`;
+  document.getElementById('voiceCopyBtn').addEventListener('click', async () => {
+    const ok = await copyTextRobust(link);
+    finShowToast(ok === false ? 'Kopieren nicht möglich – bitte den Link markieren.' : 'Link kopiert.');
+  });
+  document.getElementById('voiceRenewBtn').addEventListener('click', () => {
+    if (confirm('Neuen Link erzeugen? Der alte funktioniert danach nicht mehr – der Kurzbefehl muss angepasst werden.')) voiceSetup(true);
+  });
+  document.getElementById('voiceOffBtn').addEventListener('click', voiceOff);
+  document.getElementById('voiceTestBtn').addEventListener('click', voiceTest);
+}
+async function voiceSetup(renew) {
+  try {
+    const res = await apiFetch('/api/pinn/sprache/einrichten', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ neu: !!renew }) });
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || 'Fehler');
+    voiceState = data;
+    renderVoiceSettings();
+    finShowToast(renew ? 'Neuer Link erzeugt.' : 'Sprachsteuerung eingerichtet.');
+  } catch (err) { alert('Sprachsteuerung: ' + (err.message || 'Server nicht erreichbar')); }
+}
+async function voiceOff() {
+  if (!confirm('Sprachsteuerung ausschalten? Der Link funktioniert danach nicht mehr.')) return;
+  try {
+    const res = await apiFetch('/api/pinn/sprache/ausschalten', { method: 'POST' });
+    voiceState = await res.json();
+    renderVoiceSettings();
+  } catch (err) { alert('Sprachsteuerung: ' + (err.message || 'Server nicht erreichbar')); }
+}
+async function voiceTest() {
+  const text = prompt('Was möchtest du sagen?', 'Was steht heute an?');
+  if (!text) return;
+  const out = document.getElementById('voiceTestOut');
+  try {
+    const res = await fetch(voiceLink(voiceState.token) + '&json=1', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
+    const data = await res.json();
+    out.textContent = '🗣️ ' + (data.antwort || data.error || '–');
+    out.classList.remove('hidden');
+    // Änderungen (Liste, Aufgaben) kommen über den normalen Abgleich auf alle Geräte
+  } catch (err) {
+    out.textContent = '⚠️ ' + (err.message || 'Server nicht erreichbar');
+    out.classList.remove('hidden');
+  }
+}
+document.addEventListener('toggle', (e) => {
+  if (e.target && e.target.id === 'settingsVoiceAccordion' && e.target.open) loadVoiceSettings();
+}, true);
+
 /* ---------- Einstellungen → Smarthome ---------- */
 function renderSettingsSmartStatus() {
   const el = document.getElementById('settingsSmartStatus');
@@ -25700,7 +25906,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.37.0';
+const APP_VERSION = '1.38.0';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -26658,6 +26864,21 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
    - rueckblick: true = Einträge vor dem Versions-Log, aus der Projekthistorie zusammengefasst.
    ========================================================== */
 const PINN_CHANGELOG = [
+  {
+    v: '1.38', datum: '10.10.2026', titel: 'Zuhause, Vermietung, Garten & Sprachsteuerung',
+    punkte: [
+      ['neu', 'Aus „Haus“ wird „Zuhause“ – mit eigener bewegter Szene statt Straße: Haus mit Garten, Zaun und Vögeln, Stadt mit Bahn, Taxi, Auto, Fahrrad und Flugzeug für Wohnungen, Garage mit Einfahrt. Nach Sonnenuntergang Nacht mit Mond, Sternen und Licht in den Fenstern'],
+      ['neu', 'Vermietung: neben Miete und Eigentum jetzt auch „Vermietet“ – Mieter mit Kontakt, Kaltmiete, Nebenkosten und Stellplatz als regelmäßige Einnahme in Finanzen, Kaution, Mietart, Kauf & Kredit. Kacheln für Mieteinnahmen, Überschuss und Brutto-Rendite, Hinweise zu Nebenkostenabrechnung und möglicher Mieterhöhung, Mieteinnahmen im Reiter Kosten'],
+      ['neu', 'Neue Arten: Garage / Stellplatz und Mehrfamilienhaus'],
+      ['neu', 'Bausteine je Zuhause: Mängel, Kosten, Zähler, Wartung, Garten & Pflanzen und Schlüssel einzeln hinzufügen oder entfernen – die Reiter passen sich an'],
+      ['neu', 'Garten & Pflanzen: Zimmer-, Balkon- und Gartenpflanzen mit Gieß- und Düngeplan, Rasen mähen in der Saison, „💧 Gegossen“ mit einem Tipp. Regen zählt draußen als gegossen, bei Hitze kommt das Gießen öfter, Frost-Warnung für Kübel. Gartenjahr (Obstbäume, Hecke, Laub, Winterquartier …) als Aufgaben und ein Gartenkalender: was jetzt gesät, gepflanzt und geerntet wird'],
+      ['neu', 'Schlüssel: welche Schlüssel es gibt, wie viele und wer sie hat'],
+      ['neu', 'Sprachsteuerung (Einstellungen → Sprachsteuerung): „Hey Siri, pinn“ – Sachen auf die Einkaufsliste setzen, die Liste vorlesen lassen, Aufgaben anlegen und fragen, was heute oder morgen ansteht. Mit Anleitung für den Kurzbefehl und für Android, in allen vier Sprachen'],
+      ['info', 'Einkaufsliste & Vorrat: Einheiten automatisch in Einzahl oder Mehrzahl (1 Dose · 2 Dosen, Packung/Packungen, Glas/Gläser – auch „Dose(n)“ wird verstanden). Am Handy zeigt die Einkaufsliste bei Vorrats-Artikeln nur die Zahl, Gewicht und Menge (g, kg, ml, l …) bleiben stehen'],
+      ['fix', 'Das Symbol im Kopf (z. B. der Schlüssel) verdeckte bei Zuhause und Fahrzeugen die erste Kachel – sitzt jetzt am Farbband'],
+      ['info', 'Server: neu sprache.pb.js und pinn-sprache.js, angepasst pinn-zuhause.js (Regenmenge der letzten zwei Tage); Sprachdateien en/fr/es ergänzt'],
+    ],
+  },
   {
     v: '1.37', datum: '10.10.2026', titel: 'Haustiere, 14-Tage-Wetter & Urlaubswetter',
     punkte: [
@@ -30168,6 +30389,8 @@ function defaultFinance() {
     homeProjects: [],   // Haus: Sanierungs- / Renovierungsplan
     homeMeters: [],     // Haus: Zähler (Strom, Gas, Wasser …)
     homeReadings: [],   // Haus: Zählerstände
+    homePlants: [],     // Zuhause → Garten & Pflanzen
+    homeKeys: [],       // Zuhause → Schlüssel
     contractAutoSkip: [], // Verträge: automatisch angelegte, die gelöscht wurden (nicht neu anlegen)
   };
 }
@@ -30213,6 +30436,8 @@ function normalizeFinance(f) {
     homeProjects: Array.isArray(f.homeProjects) ? f.homeProjects.filter(p => p && typeof p.id === 'string' && p.id && p.home) : [],
     homeMeters: Array.isArray(f.homeMeters) ? f.homeMeters.filter(m => m && typeof m.id === 'string' && m.id && m.home) : [],
     homeReadings: Array.isArray(f.homeReadings) ? f.homeReadings.filter(r => r && typeof r.id === 'string' && r.id && r.meter) : [],
+    homePlants: Array.isArray(f.homePlants) ? f.homePlants.filter(x => x && typeof x.id === 'string' && x.id && x.home) : [],
+    homeKeys: Array.isArray(f.homeKeys) ? f.homeKeys.filter(x => x && typeof x.id === 'string' && x.id && x.home) : [],
     contractAutoSkip: Array.isArray(f.contractAutoSkip) ? f.contractAutoSkip.filter(k => typeof k === 'string').slice(-300) : [],
   };
 }
@@ -32903,6 +33128,77 @@ let pantrySearch = '';
 let pantryEditId = null;
 let pantryDraft = null;
 
+
+/* ---------- Einheiten: Einzahl/Mehrzahl automatisch (1 Dose · 2 Dosen) ----------
+   Einheiten sind freier Text. Bekannte Packungs-Einheiten (deutsch, englisch, französisch, spanisch)
+   werden je nach Menge in Einzahl oder Mehrzahl gezeigt – egal, ob „Dose“, „Dosen“ oder „Dose(n)“
+   eingetragen wurde. Unbekannte Wörter bleiben, wie sie sind (deutsche Wörter auf -e/-ung bekommen
+   die übliche Endung). Gewichts- und Mengenangaben (g, kg, ml, l, EL …) ändern sich nie. */
+const UNIT_FORMS = [
+  ['Stück', 'Stück'], ['Dose', 'Dosen'], ['Packung', 'Packungen'], ['Flasche', 'Flaschen'], ['Kiste', 'Kisten'], ['Rolle', 'Rollen'],
+  ['Tube', 'Tuben'], ['Glas', 'Gläser'], ['Tüte', 'Tüten'], ['Tafel', 'Tafeln'], ['Schachtel', 'Schachteln'], ['Beutel', 'Beutel'],
+  ['Becher', 'Becher'], ['Spray', 'Sprays'], ['Sprühflasche', 'Sprühflaschen'], ['Paket', 'Pakete'], ['Karton', 'Kartons'],
+  ['Sack', 'Säcke'], ['Netz', 'Netze'], ['Bund', 'Bund'], ['Kopf', 'Köpfe'], ['Zehe', 'Zehen'], ['Scheibe', 'Scheiben'],
+  ['Stange', 'Stangen'], ['Kanister', 'Kanister'], ['Eimer', 'Eimer'], ['Riegel', 'Riegel'], ['Kapsel', 'Kapseln'],
+  ['Tablette', 'Tabletten'], ['Portion', 'Portionen'], ['Pad', 'Pads'], ['Tab', 'Tabs'], ['Kasten', 'Kästen'], ['Box', 'Boxen'],
+  ['Topf', 'Töpfe'], ['Schale', 'Schalen'], ['Laib', 'Laibe'], ['Brot', 'Brote'], ['Sixpack', 'Sixpacks'], ['Träger', 'Träger'],
+  ['Fläschchen', 'Fläschchen'], ['Päckchen', 'Päckchen'], ['Döschen', 'Döschen'], ['Pck', 'Pck'], ['Pkg', 'Pkg'], ['Fl.', 'Fl.'], ['Stk', 'Stk'], ['Stk.', 'Stk.'],
+  ['can', 'cans'], ['tin', 'tins'], ['pack', 'packs'], ['package', 'packages'], ['packet', 'packets'], ['bottle', 'bottles'], ['jar', 'jars'],
+  ['box', 'boxes'], ['bag', 'bags'], ['roll', 'rolls'], ['tube', 'tubes'], ['piece', 'pieces'], ['carton', 'cartons'], ['crate', 'crates'],
+  ['loaf', 'loaves'], ['bar', 'bars'], ['bunch', 'bunches'], ['head', 'heads'], ['clove', 'cloves'], ['tub', 'tubs'], ['pot', 'pots'],
+  ['boîte', 'boîtes'], ['paquet', 'paquets'], ['bouteille', 'bouteilles'], ['rouleau', 'rouleaux'], ['sachet', 'sachets'], ['pièce', 'pièces'],
+  ['canette', 'canettes'], ['brique', 'briques'], ['tablette', 'tablettes'], ['barquette', 'barquettes'], ['flacon', 'flacons'],
+  ['lata', 'latas'], ['paquete', 'paquetes'], ['botella', 'botellas'], ['bote', 'botes'], ['frasco', 'frascos'], ['rollo', 'rollos'],
+  ['bolsa', 'bolsas'], ['caja', 'cajas'], ['tubo', 'tubos'], ['pieza', 'piezas'], ['tarro', 'tarros'], ['barra', 'barras'],
+];
+const UNIT_MEASURES = new Set(['g', 'gr', 'gramm', 'kg', 'kilo', 'kilogramm', 'mg', 'ml', 'cl', 'dl', 'l', 'lt', 'liter', 'litre', 'litres', 'litro', 'litros',
+  'oz', 'lb', 'lbs', 'fl oz', 'pint', 'pints', 'cup', 'cups', 'tasse', 'tasses', 'taza', 'tazas', 'el', 'tl', 'msp', 'prise', 'prisen', 'tbsp', 'tsp', 'pinch',
+  'cs', 'cc', 'cda', 'cdta', 'pizca', 'pincée', 'm', 'cm', 'mm', 'meter', 'qm', 'm²', 'kwh', 'wh', '%']);
+const UNIT_SG = new Map(), UNIT_PL = new Map();
+UNIT_FORMS.forEach(([sg, pl]) => { UNIT_SG.set(sg.toLowerCase(), [sg, pl]); UNIT_PL.set(pl.toLowerCase(), [sg, pl]); });
+function unitIsMeasure(unit) { return UNIT_MEASURES.has(String(unit || '').trim().toLowerCase().replace(/\.$/, '')); }
+// Gleiche Einheit unabhängig von Einzahl/Mehrzahl („Dose“ = „Dosen“ = „Dose(n)“)
+function unitKey(unit) {
+  const u = String(unit || '').trim().replace(/\((?:n|en|e|s|es|er|x)\)$/i, '').trim().toLowerCase();
+  const f = UNIT_SG.get(u) || UNIT_PL.get(u);
+  return f ? f[0].toLowerCase() : u;
+}
+function keepCase(src, word) {
+  const c = String(src || '').charAt(0);
+  return c && c === c.toUpperCase() && c !== c.toLowerCase() ? word.charAt(0).toUpperCase() + word.slice(1) : word.charAt(0).toLowerCase() + word.slice(1);
+}
+function unitForCount(unit, n) {
+  const raw = String(unit || '').trim();
+  if (!raw || unitIsMeasure(raw)) return raw;
+  const one = Number(n) === 1;
+  const paren = raw.match(/^(.*?)\s*\(([a-zäöüé]{1,3})\)$/i);
+  if (paren) {
+    const f = UNIT_SG.get(paren[1].trim().toLowerCase());
+    if (f) return keepCase(raw, one ? f[0] : f[1]);
+    return one ? paren[1].trim() : paren[1].trim() + paren[2];
+  }
+  const low = raw.toLowerCase();
+  const f = UNIT_SG.get(low) || UNIT_PL.get(low);
+  if (f) return keepCase(raw, one ? f[0] : f[1]);
+  // Unbekanntes deutsches Hauptwort: „Pipette“ -> „Pipetten“, „Füllung“ -> „Füllungen“
+  if (!one && /^[A-ZÄÖÜ][a-zäöüß]+$/.test(raw)) {
+    if (/e$/.test(raw)) return raw + 'n';
+    if (/(ung|heit|keit)$/.test(raw)) return raw + 'en';
+  }
+  return raw;
+}
+// „2 Dose“ -> „2 Dosen“ (nur zum Anzeigen; gespeichert bleibt, was eingetragen wurde)
+function qtyPretty(text) {
+  const t = String(text || '').trim();
+  if (!t) return { num: '', unit: '', measure: false, full: '' };
+  const p = parseShoppingQtyParts(t);
+  if (!p || !p.unit) return { num: t, unit: '', measure: false, full: t };
+  const unit = unitForCount(p.unit, p.min === p.max ? p.min : 2);
+  const num = t.slice(0, t.length - p.unit.length).trim();
+  return { num, unit, measure: unitIsMeasure(unit), full: num + ' ' + unit };
+}
+function fmtQtyUnit(n, unit) { const v = Math.round((Number(n) || 0) * 100) / 100; return fmtPantryNum(v) + (unit ? ' ' + unitForCount(unit, v) : ''); }
+
 function pantryNum(v) {
   if (v === null || v === undefined || v === '') return null;
   const n = parseFloat(String(v).replace(',', '.'));
@@ -32915,7 +33211,7 @@ function fmtPantryNum(n) {
 function pantryCategory(id) { return pantryCategories.find(c => c.id === id) || pantryCategories.find(c => c.id === 'sonstiges') || { id: 'sonstiges', label: 'Sonstiges', icon: '📦' }; }
 function pantryLocation(id) { return pantryLocations.find(c => c.id === id) || null; }
 function pantryIsLow(p) { const min = pantryNum(p.minQty); return min !== null && min > 0 && (pantryNum(p.qty) || 0) < min; }
-function pantryStockText(p) { return fmtPantryNum(pantryNum(p.qty) || 0) + (p.unit ? ' ' + p.unit : ''); }
+function pantryStockText(p) { return fmtQtyUnit(pantryNum(p.qty) || 0, p.unit); }
 function pantryNameKey(name) { return String(name || '').trim().toLowerCase(); }
 function pantryTargetLists(p) {
   const ids = (p.stores || []).filter(id => getShoppingList(id));
@@ -32925,7 +33221,7 @@ function pantryTargetLists(p) {
 function pantryNeedText(p) {
   const need = Math.max((pantryNum(p.minQty) || 0) - (pantryNum(p.qty) || 0), 0);
   const amount = need > 0 ? Math.ceil(need * 100) / 100 : 1;
-  return fmtPantryNum(amount) + (p.unit ? ' ' + p.unit : '');
+  return fmtQtyUnit(amount, p.unit);
 }
 // Einkaufs-Eintrag -> Vorrats-Artikel (über pantryId oder, bei selbst eingetragenen, über den Namen)
 function pantryItemForShopping(it) {
@@ -33040,7 +33336,7 @@ function pantryRowHtml(p) {
   const meta = [];
   if (pantryGroupMode !== 'category') meta.push(`${cat.icon || ''} ${cat.label}`);
   if (pantryGroupMode !== 'location' && loc) meta.push(`${loc.icon || ''} ${loc.label}`);
-  if (min !== null && min > 0) meta.push(`min. ${fmtPantryNum(min)}${p.unit ? ' ' + p.unit : ''}`);
+  if (min !== null && min > 0) meta.push(`min. ${fmtQtyUnit(min, p.unit)}`);
   const expD = pantryExpiryDays(p);
   if (expD !== null && expD > pantrySettings.mhdDays) meta.push(`MHD ${pantryShortDate(p.bestBefore)}`);
   const expPill = pantryExpiryPillHtml(p);
@@ -38333,7 +38629,7 @@ function vtAutoLink() {
     const name = hsName(h);
     const ll = h.landlord || {};
     const contact = { phone: ll.phone || '', email: ll.email || '', web: '', address: ll.address || '' };
-    if (h.mode !== 'eigentum') {
+    if (h.mode !== 'eigentum' && h.mode !== 'vermietet') {
       attach('haus-miete:' + h.id, ['rent', 'nk', 'heat', 'stellplatz'].map(rec).filter(Boolean), () => ({
         name: tr('Mietvertrag') + ' · ' + name, provider: ll.name || '', category: 'wohnen', termType: 'open',
         notice: { value: Math.max(0, Math.min(24, Number(h.rent && h.rent.notice) || 3)), unit: 'months' },
@@ -42152,8 +42448,9 @@ function fzHandleAct(act, ds) {
      (pb_hooks/pinn-aufgaben.js): sie bleiben offen, bis sie erledigt sind, die nächste Fälligkeit zählt ab
      dem Erledigt-Tag. Sichtbar unter Haus → Wartung und auf der Haushalt-Seite.
    ========================================================== */
-const HS_MODES = { miete: { label: 'Miete', icon: '🔑' }, eigentum: { label: 'Eigentum', icon: '🏡' } };
-const HS_TYPES = [['wohnung', 'Wohnung'], ['haus', 'Einfamilienhaus'], ['reihenhaus', 'Reihenhaus'], ['zimmer', 'Zimmer / WG']];
+const HS_MODES = { miete: { label: 'Miete', icon: '🔑' }, eigentum: { label: 'Eigentum', icon: '🏡' }, vermietet: { label: 'Vermietet', icon: '🤝' } };
+const HS_TYPES = [['wohnung', 'Wohnung'], ['haus', 'Einfamilienhaus'], ['reihenhaus', 'Reihenhaus'], ['mfh', 'Mehrfamilienhaus'], ['zimmer', 'Zimmer / WG'], ['garage', 'Garage / Stellplatz']];
+const HS_TYPE_ICONS = { wohnung: '🏢', haus: '🏡', reihenhaus: '🏘️', mfh: '🏬', zimmer: '🛏️', garage: '🅿️' };
 const HS_HEATING = [['', '–'], ['gas', 'Gas'], ['oel', 'Öl'], ['fernwaerme', 'Fernwärme'], ['waermepumpe', 'Wärmepumpe'], ['strom', 'Strom / Nachtspeicher'], ['pellets', 'Pellets / Holz'], ['sonstige', 'Sonstige']];
 const HS_COLORS = ['#2F4B41', '#3B7EA1', '#5E8C31', '#B5543C', '#8E6BBF', '#D9822B', '#546E7A', '#C0567A'];
 const HS_FIN_CATEGORY = 'haushalt';
@@ -42167,6 +42464,10 @@ const HS_FIX = [
   { key: 'grundsteuer', label: 'Grundsteuer', mode: 'eigentum', interval: 'quarterly', group: 'abgaben' },
   { key: 'abgaben', label: 'Müll, Abwasser & Straßenreinigung', mode: 'eigentum', interval: 'quarterly', group: 'abgaben' },
   { key: 'gebaeude', label: 'Wohngebäudeversicherung', mode: 'eigentum', interval: 'yearly', group: 'abgaben' },
+  // Vermietung: Einnahmen (werden als regelmäßige Einnahme gebucht); die Eigentümer-Kosten oben gelten auch hier
+  { key: 'let_rent', label: 'Kaltmiete (Einnahme)', mode: 'vermietet', interval: 'monthly', group: 'wohnkosten', income: true },
+  { key: 'let_nk', label: 'Nebenkosten-Vorauszahlung (Einnahme)', mode: 'vermietet', interval: 'monthly', group: 'wohnkosten', income: true },
+  { key: 'let_park', label: 'Stellplatz / Garage (Einnahme)', mode: 'vermietet', interval: 'monthly', group: 'wohnkosten', income: true },
 ];
 const HS_GROUPS = [
   { id: 'wohnkosten', label: 'Miete & Wohnkosten', icon: '🏠', color: '#3B7EA1' },
@@ -42253,10 +42554,62 @@ const HS_MAINT_TEMPLATES = [
   { tpl: 'fenster', icon: '🪟', title: 'Fensterdichtungen & Beschläge pflegen', months: 12, month: 4 },
   { tpl: 'feuerloescher', icon: '🧯', title: 'Feuerlöscher prüfen lassen', months: 24, month: 0 },
   { tpl: 'zaehler', icon: '📟', title: 'Zählerstände ablesen', months: 1, month: 0 },
+  // Gartenjahr (Baustein „Garten & Pflanzen“) – laufen wie der Wartungsplan als Haushalts-Aufgaben
+  { tpl: 'g_obstbaum', icon: '✂️', title: 'Obstbäume schneiden', months: 12, month: 2, garden: true },
+  { tpl: 'g_beete', icon: '🌱', title: 'Beete vorbereiten & Kompost ausbringen', months: 12, month: 3, garden: true },
+  { tpl: 'g_vertikutieren', icon: '🟩', title: 'Rasen vertikutieren & nachsäen', months: 12, month: 4, garden: true },
+  { tpl: 'g_rasenduenger', icon: '🌾', title: 'Rasen düngen', months: 6, month: 4, garden: true },
+  { tpl: 'g_teich', icon: '🐸', title: 'Teich & Pumpe pflegen', months: 12, month: 4, garden: true },
+  { tpl: 'g_balkon', icon: '🌺', title: 'Balkonkästen bepflanzen (nach den Eisheiligen)', months: 12, month: 5, garden: true },
+  { tpl: 'g_hecke', icon: '🌳', title: 'Hecke schneiden', months: 12, month: 6, garden: true },
+  { tpl: 'g_kuebel', icon: '🪴', title: 'Kübelpflanzen ins Winterquartier', months: 12, month: 10, garden: true },
+  { tpl: 'g_laub', icon: '🍂', title: 'Laub rechen', months: 12, month: 10, garden: true },
+  { tpl: 'g_moebel', icon: '🪑', title: 'Gartenmöbel & Polster einlagern', months: 12, month: 10, garden: true },
+  { tpl: 'g_maeher', icon: '🔧', title: 'Rasenmäher winterfest machen', months: 12, month: 11, garden: true },
+  { tpl: 'g_regentonne', icon: '💧', title: 'Regentonne leeren (Frostschutz)', months: 12, month: 11, garden: true },
 ];
+// Bausteine je Zuhause: was dazugehört, bestimmt die Reiter (Übersicht ist immer da)
+const HS_MODULES = [
+  { id: 'maengel', icon: '🛠️', label: 'Mängel', tab: true },
+  { id: 'kosten', icon: '🧾', label: 'Kosten', tab: true },
+  { id: 'zaehler', icon: '📟', label: 'Zähler', tab: true },
+  { id: 'wartung', icon: '🔧', label: 'Wartung', tab: true },
+  { id: 'garten', icon: '🌿', label: 'Garten & Pflanzen', tab: true, tabLabel: 'Garten' },
+  { id: 'schluessel', icon: '🗝️', label: 'Schlüssel', tab: false },
+];
+const HS_PLACES = [['innen', '🏠 Drinnen'], ['balkon', '🌇 Balkon / Terrasse'], ['garten', '🌳 Garten']];
+// Pflanzen-Vorlagen: every = gießen alle x Tage, fertEvery = düngen alle x Tage (März–September), months = Saison
+const HS_PLANT_TPL = [
+  { id: 'gruen', icon: '🪴', name: 'Grünpflanze', place: 'innen', every: 7, fertEvery: 14 },
+  { id: 'orchidee', icon: '🌸', name: 'Orchidee', place: 'innen', every: 10, fertEvery: 21 },
+  { id: 'kaktus', icon: '🌵', name: 'Kaktus & Sukkulenten', place: 'innen', every: 21, fertEvery: 42 },
+  { id: 'kraeuter', icon: '🌿', name: 'Kräuter', place: 'balkon', every: 2, fertEvery: 14 },
+  { id: 'balkon', icon: '🌺', name: 'Balkonblumen', place: 'balkon', every: 2, fertEvery: 7, months: [4, 10] },
+  { id: 'kuebel', icon: '🍋', name: 'Kübelpflanzen', place: 'balkon', every: 3, fertEvery: 14, months: [4, 10] },
+  { id: 'tomate', icon: '🍅', name: 'Tomaten', place: 'garten', every: 2, fertEvery: 7, months: [5, 9], rain: true },
+  { id: 'beet', icon: '🥕', name: 'Gemüsebeet', place: 'garten', every: 2, months: [4, 9], rain: true },
+  { id: 'jung', icon: '🌳', name: 'Junge Bäume & Hecke', place: 'garten', every: 7, months: [4, 9], rain: true },
+  { id: 'rasen', icon: '💦', name: 'Rasen sprengen', place: 'garten', every: 4, months: [5, 9], rain: true },
+  { id: 'maehen', icon: '✂️', name: 'Rasen mähen', place: 'garten', every: 7, months: [4, 10], act: 'mow' },
+];
+// Gartenkalender (Richtwerte für Mitteleuropa): s = säen, p = pflanzen, e = ernten
+const HS_GARDEN_MONTHS = {
+  1: { s: ['Paprika & Chili vorziehen'], p: [], e: ['Grünkohl', 'Rosenkohl', 'Feldsalat'] },
+  2: { s: ['Tomaten vorziehen', 'Radieschen unter Vlies'], p: ['Obstbäume'], e: ['Feldsalat', 'Lauch'] },
+  3: { s: ['Möhren', 'Radieschen', 'Spinat', 'Erbsen'], p: ['Zwiebeln & Knoblauch', 'Erdbeeren'], e: ['Feldsalat', 'Bärlauch'] },
+  4: { s: ['Salat', 'Mangold', 'Kräuter', 'Rasen'], p: ['Kartoffeln', 'Kohlrabi', 'Beerensträucher'], e: ['Radieschen', 'Spinat', 'Rhabarber'] },
+  5: { s: ['Bohnen', 'Zucchini', 'Gurken'], p: ['Tomaten & Paprika', 'Balkonblumen'], e: ['Spargel', 'Salat', 'Rhabarber'] },
+  6: { s: ['Möhren', 'Fenchel', 'Zucchini'], p: ['Kohl', 'Lauch'], e: ['Erdbeeren', 'Kirschen', 'Erbsen'] },
+  7: { s: ['Feldsalat', 'Spinat', 'Radieschen'], p: ['Grünkohl', 'Endivien'], e: ['Tomaten', 'Zucchini', 'Gurken', 'Johannisbeeren'] },
+  8: { s: ['Feldsalat', 'Rucola', 'Winterspinat'], p: ['Erdbeeren'], e: ['Tomaten', 'Bohnen', 'Pflaumen'] },
+  9: { s: ['Feldsalat', 'Gründüngung'], p: ['Blumenzwiebeln', 'Knoblauch', 'Stauden'], e: ['Äpfel', 'Birnen', 'Kürbis', 'Kartoffeln'] },
+  10: { s: ['Rasen'], p: ['Tulpen & Narzissen', 'Obstbäume', 'Hecken'], e: ['Kürbis', 'Äpfel', 'Möhren'] },
+  11: { s: [], p: ['Obstbäume', 'Rosen'], e: ['Grünkohl', 'Rosenkohl', 'Feldsalat'] },
+  12: { s: ['Kresse (drinnen)'], p: [], e: ['Grünkohl', 'Feldsalat', 'Lauch'] },
+};
 const HS_DOC_LINK_MAX = 300;
 
-let hsTab = 'uebersicht';      // 'uebersicht' | 'maengel' | 'kosten' | 'zaehler' | 'wartung'
+let hsTab = 'uebersicht';      // 'uebersicht' | 'maengel' | 'kosten' | 'zaehler' | 'wartung' | 'garten'
 let hsHomeId = '';
 let hsYear = new Date().getFullYear();
 let hsLogFilter = 'alle';
@@ -42278,8 +42631,13 @@ function hsCurrent() {
   hsHomeId = first ? first.id : '';
   return first;
 }
-function hsMode(h) { return h && h.mode === 'eigentum' ? 'eigentum' : 'miete'; }
-function hsOwn(h) { return hsMode(h) === 'eigentum'; }
+function hsMode(h) { return h && (h.mode === 'eigentum' || h.mode === 'vermietet') ? h.mode : 'miete'; }
+// Eigentum (selbst bewohnt oder vermietet): Kauf, Kredit, Grundsteuer …
+function hsOwn(h) { return hsMode(h) !== 'miete'; }
+function hsLet(h) { return hsMode(h) === 'vermietet'; }
+function hsFixMatch(def, mode) { return def.mode === mode || (def.mode === 'eigentum' && mode === 'vermietet'); }
+function hsHeroIcon(h) { const m = hsMode(h); if (m === 'eigentum') return HS_TYPE_ICONS[h && h.type] || '🏡'; return HS_MODES[m].icon; }
+function hsDocTypesFor(h) { const m = hsMode(h); return HS_DOC_TYPES.filter(t => !t.mode || t.mode === m || m === 'vermietet'); }
 function hsName(h) { return (h && String(h.name || '').trim()) || (hsOwn(h) ? 'Unser Zuhause' : 'Unsere Wohnung'); }
 function hsColor(h) { return /^#[0-9a-fA-F]{6}$/.test((h && h.color) || '') ? h.color : '#2F4B41'; }
 function hsLogs(hid) { return hsArr('homeLog').filter(l => !hid || l.home === hid); }
@@ -42318,7 +42676,27 @@ function hsDuration(iso) {
 }
 
 /* ---------- Kosten ---------- */
-function hsFixDefs(h) { return HS_FIX.filter(d => d.mode === hsMode(h)); }
+function hsFixDefs(h) { return HS_FIX.filter(d => hsFixMatch(d, hsMode(h))); }
+// Mieteinnahmen je Monat (Vermietung): laufende Buchungen bzw. eingetragene Beträge
+function hsIncomeMonthly(h) {
+  if (!hsLet(h)) return 0;
+  const today = finTodayIso();
+  let sum = 0;
+  HS_FIX.filter(d => d.income).forEach(d => {
+    const r = hsFixRec(h, d.key);
+    if (r) { if (finRecIsRunning(r, today) && finRecStart(r)) sum += Math.max(0, -finRecMonthly(r, today)); }
+    else sum += hsFixAmount(h, d.key) * finIntervalInfo(d.interval).perYear / 12;
+  });
+  return sum;
+}
+function hsIncomeIn(h, s, e) {
+  const today = finTodayIso();
+  const to = e < today ? e : today;
+  let sum = 0;
+  if (to < s) return 0;
+  hsRecurringFor(h.id).forEach(r => { finRecDates(r, s, to).forEach(d => { const a = finRecurringAmountFor(r, d); if (a < 0) sum += -a; }); });
+  return sum;
+}
 function hsFixAmount(h, key) { const f = h && h.fix && h.fix[key]; return f && Number(f.amount) > 0 ? Number(f.amount) : 0; }
 function hsFixRec(h, key) {
   const f = h && h.fix && h.fix[key];
@@ -42331,7 +42709,7 @@ function hsMonthlyCost(h) {
   let sum = 0;
   hsRecurringFor(h.id).forEach(r => { if (finRecIsRunning(r, today) && finRecStart(r)) sum += Math.max(0, finRecMonthly(r, today)); });
   hsContractsFor(h.id).forEach(c => { const cost = vtCost(c, today); if (cost && cost.monthly > 0) sum += cost.monthly; });
-  hsFixDefs(h).forEach(d => { if (!hsFixRec(h, d.key)) sum += hsFixAmount(h, d.key) * finIntervalInfo(d.interval).perYear / 12; });
+  hsFixDefs(h).forEach(d => { if (!d.income && !hsFixRec(h, d.key)) sum += hsFixAmount(h, d.key) * finIntervalInfo(d.interval).perYear / 12; });
   return sum;
 }
 function hsWarmRent(h) { return ['rent', 'nk', 'heat'].reduce((s, k) => s + hsFixAmount(h, k), 0); }
@@ -42581,10 +42959,21 @@ function renderHouse() {
   const pane = document.getElementById('hsPane');
   if (!pane || !finance) return;
   hsMaintSyncFromTasks();
-  document.querySelectorAll('.hs-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.hstab === hsTab));
   const h = hsCurrent();
+  const mods = hsModules(h);
+  const tabs = ['uebersicht', ...HS_MODULES.filter(x => x.tab && mods.includes(x.id)).map(x => x.id)];
+  if (!tabs.includes(hsTab)) hsTab = 'uebersicht';
+  const tabsEl = document.getElementById('hsTabs');
+  if (tabsEl && tabsEl.dataset.tabs !== tabs.join(',')) {
+    tabsEl.dataset.tabs = tabs.join(',');
+    tabsEl.innerHTML = tabs.map(id => {
+      const m = HS_MODULES.find(x => x.id === id);
+      return `<button type="button" data-hstab="${id}" class="hs-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">${hsEsc(m ? (m.tabLabel || m.label) : 'Übersicht')}</button>`;
+    }).join('');
+  }
+  document.querySelectorAll('.hs-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.hstab === hsTab));
   const hb = document.getElementById('hsHeaderBtn');
-  const labels = { uebersicht: h ? '✎ Bearbeiten' : '+ Zuhause', maengel: '+ Mangel', kosten: '+ Rechnung', zaehler: '+ Zählerstand', wartung: '+ Wartung' };
+  const labels = { uebersicht: h ? '✎ Bearbeiten' : '+ Zuhause', maengel: '+ Mangel', kosten: '+ Rechnung', zaehler: '+ Zählerstand', wartung: '+ Wartung', garten: '+ Pflanze' };
   hb.textContent = labels[hsTab] || '+';
   hb.classList.toggle('hidden', !hsCanEdit() || (!h && hsTab !== 'uebersicht' && hsTab !== 'wartung'));
   if (hsTab === 'wartung') { pane.innerHTML = hsMaintPageHtml(); return; }
@@ -42593,26 +42982,470 @@ function renderHouse() {
   if (hsTab === 'maengel') pane.innerHTML = switcher + hsDefectsHtml(h);
   else if (hsTab === 'kosten') pane.innerHTML = switcher + hsCostsHtml(h);
   else if (hsTab === 'zaehler') pane.innerHTML = switcher + hsMetersHtml(h);
+  else if (hsTab === 'garten') pane.innerHTML = switcher + hsGardenHtml(h);
   else pane.innerHTML = switcher + hsOverviewHtml(h);
+}
+/* ---------- Bausteine ---------- */
+function hsDefaultModules(h) {
+  const t = h && h.type;
+  if (t === 'garage') return ['maengel', 'kosten'];
+  const base = ['maengel', 'kosten', 'zaehler', 'wartung'];
+  if (t === 'haus' || t === 'reihenhaus') base.push('garten');
+  return base;
+}
+function hsModules(h) {
+  if (!h) return ['wartung'];
+  return Array.isArray(h.modules) ? h.modules.filter(id => HS_MODULES.some(m => m.id === id)) : hsDefaultModules(h);
+}
+function hsHasModule(h, id) { return hsModules(h).includes(id); }
+function hsToggleModule(id) {
+  const h = hsCurrent();
+  if (!h || !hsCanEdit() || !HS_MODULES.some(m => m.id === id)) return;
+  const cur = hsModules(h);
+  const on = !cur.includes(id);
+  const next = HS_MODULES.map(m => m.id).filter(x => x === id ? on : cur.includes(x));
+  hsUpsert('homes', { ...h, modules: next, updated: finTodayIso() });
+  hsAfterChange();
+  const m = HS_MODULES.find(x => x.id === id);
+  finShowToast((on ? 'Hinzugefügt: ' : 'Entfernt: ') + m.label);
+}
+function hsModulesCardHtml(h) {
+  if (!hsCanEdit()) return '';
+  const cur = hsModules(h);
+  return hsCard(`
+    <div class="fz-h">🧩 Bausteine</div>
+    <p class="text-xs text-ink/50 mb-2">Was zu diesem Zuhause gehört – antippen zum Hinzufügen oder Entfernen. Daten entfernter Bausteine bleiben gespeichert.</p>
+    <div class="flex flex-wrap gap-1.5">${HS_MODULES.map(m => `<button type="button" class="hs-mod-chip${cur.includes(m.id) ? ' active' : ''}" data-hsact="mod-toggle" data-id="${m.id}" aria-pressed="${cur.includes(m.id)}"><span>${m.icon}</span><span>${hsEsc(m.label)}</span></button>`).join('')}</div>`);
+}
+/* ---------- Bewegte Szene im Kopf ----------
+   Haus & Reihenhaus: Haus mit Garten, Zaun, Rauch aus dem Schornstein und Vögeln.
+   Wohnung, WG & Mehrfamilienhaus: Stadt mit Fenstern, Bahn, Taxi, Auto, Fahrrad und Flugzeug.
+   Garage: Garage mit Einfahrt. Nach Sonnenuntergang (Zuhause-Wetter) Nacht mit Mond, Sternen und Licht.
+   Nur Transform/Opacity-Animationen; im Energiesparmodus und bei „Bewegung reduzieren“ steht alles. */
+function hsSceneKind(h) {
+  const t = h && h.type;
+  if (t === 'garage') return 'garage';
+  if (t === 'haus' || t === 'reihenhaus') return 'haus';
+  return 'stadt';
+}
+function hsIsNight() {
+  const now = new Date();
+  const hm = now.getHours() * 60 + now.getMinutes();
+  try {
+    const d0 = weatherDaily && Array.isArray(weatherDaily.days) ? weatherDaily.days.find(d => d.date === isoDate(now)) : null;
+    const t = s => /^\d{2}:\d{2}$/.test(s || '') ? Number(s.slice(0, 2)) * 60 + Number(s.slice(3)) : null;
+    if (d0 && t(d0.auf) != null && t(d0.unter) != null) return hm < t(d0.auf) - 15 || hm > t(d0.unter) + 25;
+  } catch (e) { /* ohne Wetter: feste Zeiten */ }
+  return hm >= 20 * 60 || hm < 6 * 60;
+}
+function hsMover(cls, emoji, dur, delay, extra = '') {
+  return `<div class="hs-mover ${cls} hs-anim" style="animation-duration:${dur}s;animation-delay:-${delay}s${extra}"><span>${emoji}</span></div>`;
+}
+function hsSceneHouse(night) {
+  const win = night ? '#FFD66B' : '#BFE3F5';
+  let fence = '';
+  for (let x = 22; x <= 92; x += 7) fence += `<path d="M${x} 85 V75 l2 -2 l2 2 V85" fill="${night ? '#C9C2B4' : '#FFFFFF'}"/>`;
+  const flowers = [[30, '#E76F51'], [44, '#F4A261'], [58, '#E9C46A'], [72, '#C0567A'], [86, '#E76F51']].map(([x, c]) => `<circle cx="${x}" cy="86" r="2.2" fill="${night ? '#6B5F6E' : c}"/>`).join('');
+  return `
+    <svg class="hs-art" viewBox="0 0 220 92" preserveAspectRatio="xMaxYMax meet">
+      <path d="M0 86 Q60 78 120 83 T220 80 V92 H0Z" fill="${night ? '#2F4A33' : '#79B35A'}"/>
+      <rect x="18" y="77" width="78" height="2" fill="${night ? '#C9C2B4' : '#fff'}"/><rect x="18" y="81" width="78" height="2" fill="${night ? '#C9C2B4' : '#fff'}"/>
+      ${fence}${flowers}
+      <rect x="191" y="56" width="6" height="28" rx="2" fill="#7A5230"/>
+      <circle cx="194" cy="48" r="15" fill="${night ? '#22392B' : '#4F8A3C'}"/>
+      <circle cx="184" cy="55" r="9" fill="${night ? '#2A4635' : '#5E9C47'}"/><circle cx="204" cy="56" r="8" fill="${night ? '#2A4635' : '#5E9C47'}"/>
+      <rect x="146" y="24" width="8" height="16" fill="#8B5A44"/>
+      <rect x="100" y="46" width="64" height="38" fill="${night ? '#CFC2A8' : '#FFF7EA'}"/>
+      <polygon points="94,48 132,18 170,48" style="fill:var(--fz, #2F4B41)"/>
+      <rect x="125" y="63" width="14" height="21" rx="2" fill="${night ? '#5A4636' : '#8B5A44'}"/>
+      <circle cx="136" cy="74" r="1" fill="#E9C46A"/>
+      <rect x="106" y="56" width="13" height="11" rx="1.5" fill="${win}"/><rect x="145" y="56" width="13" height="11" rx="1.5" fill="${win}" ${night ? 'class="hs-win-tw hs-anim"' : ''}/>
+      <circle cx="132" cy="36" r="5" fill="${win}"/>
+    </svg>
+    <span class="hs-smoke hs-anim" style="right:66px;top:16px"></span><span class="hs-smoke hs-anim" style="right:66px;top:16px;animation-delay:1.2s"></span><span class="hs-smoke hs-anim" style="right:66px;top:16px;animation-delay:2.4s"></span>
+    ${night ? '' : `<div class="hs-mover hs-bird hs-anim"><span><svg viewBox="0 0 14 8"><path d="M0 4 Q3.5 0 7 4 Q10.5 0 14 4"/></svg></span></div><div class="hs-mover hs-bird b2 hs-anim"><span><svg viewBox="0 0 14 8"><path d="M0 4 Q3.5 0 7 4 Q10.5 0 14 4"/></svg></span></div>`}`;
+}
+function hsSceneCity(night) {
+  const shades = night ? ['#25304C', '#1E2840', '#2C3858'] : ['#AFC1D2', '#94AAC0', '#C3D0DC'];
+  const B = [[6, 22, 40, 1], [30, 18, 58, 2], [50, 26, 46, 0], [78, 16, 64, 1], [96, 30, 36, 2], [128, 20, 52, 0], [150, 24, 66, 3], [176, 18, 44, 2], [196, 28, 56, 0], [226, 16, 38, 1], [244, 16, 50, 2]];
+  let svg = `<line x1="117" y1="74" x2="117" y2="6" stroke="${night ? '#3A4668' : '#8EA2B8'}" stroke-width="2"/><circle cx="117" cy="20" r="4.5" fill="${night ? '#3A4668' : '#8EA2B8'}"/>${night ? '<circle class="hs-lamp hs-anim" cx="117" cy="5" r="1.6" fill="#FF5A5A"/>' : ''}`;
+  let tw = 0;
+  B.forEach(([x, w, hh, s], i) => {
+    const y = 74 - hh;
+    svg += s === 3 ? `<rect x="${x}" y="${y}" width="${w}" height="${hh}" style="fill:var(--fz, #2F4B41);opacity:${night ? 0.55 : 0.85}"/>` : `<rect x="${x}" y="${y}" width="${w}" height="${hh}" fill="${shades[s]}"/>`;
+    const cols = Math.floor((w - 4) / 6), rows = Math.floor((hh - 6) / 8);
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+      const hsh = (i * 7 + r * 3 + c * 5) % 10;
+      let fill = night ? (hsh < 5 ? '#FFD66B' : '#3B4766') : 'rgba(255,255,255,0.55)';
+      let cls = '';
+      if (night && hsh === 3 && tw < 6) { cls = ' class="hs-win-tw hs-anim" style="animation-delay:-' + (tw * 0.9) + 's"'; tw++; }
+      svg += `<rect x="${x + 3 + c * 6}" y="${y + 4 + r * 8}" width="3" height="4"${cls} fill="${fill}"/>`;
+    }
+  });
+  return `
+    <svg class="hs-art" viewBox="0 0 260 74" preserveAspectRatio="xMaxYMax meet" style="height:calc(100% - 16px);bottom:16px">${svg}</svg>
+    <div class="hs-rail"></div>
+    <div class="hs-mover hs-train ltr hs-anim"><span></span></div>
+    <div class="hs-road"></div>
+    ${hsMover('hs-car', '🚕', 8, 1)}${hsMover('hs-car l2', '🚗', 11, 6)}${hsMover('hs-car', '🚲', 18, 11)}${hsMover('hs-car l2', '🚌', 15, 3)}
+    <div class="hs-mover hs-plane ltr hs-anim"><span>✈️</span></div>`;
+}
+function hsSceneGarage(night) {
+  let lines = '';
+  for (let y = 54; y <= 80; y += 5) lines += `<line x1="113" y1="${y}" x2="169" y2="${y}" stroke="${night ? '#6F7783' : '#AEB4BB'}" stroke-width="1.2"/>`;
+  return `
+    <svg class="hs-art" viewBox="0 0 200 92" preserveAspectRatio="xMaxYMax meet">
+      <path d="M0 86 Q50 80 100 84 T200 82 V92 H0Z" fill="${night ? '#2F4A33' : '#79B35A'}"/>
+      <polygon points="104,92 116,84 166,84 178,92" fill="${night ? '#3F444C' : '#B9BEC4'}"/>
+      <rect x="100" y="40" width="82" height="44" fill="${night ? '#BDB4A3' : '#EFE9DE'}"/>
+      <rect x="96" y="34" width="90" height="8" rx="2" style="fill:var(--fz, #2F4B41)"/>
+      <rect x="112" y="51" width="58" height="33" rx="1.5" fill="${night ? '#59606A' : '#CDD2D8'}"/>${lines}
+      <circle cx="141" cy="46" r="2.6" fill="${night ? '#FFD66B' : '#D7D2C8'}"${night ? ' class="hs-lamp hs-anim"' : ''}/>
+      <circle cx="190" cy="80" r="7" fill="${night ? '#22392B' : '#4F8A3C'}"/><circle cx="196" cy="83" r="5" fill="${night ? '#2A4635' : '#5E9C47'}"/>
+    </svg>
+    ${hsMover('hs-car', '🚗', 9, 2)}${hsMover('hs-car l2', '🛵', 14, 8)}`;
+}
+function hsSceneHtml(h) {
+  const kind = hsSceneKind(h);
+  const night = hsIsNight();
+  const sky = night
+    ? [[8, 12], [22, 30], [35, 8], [48, 22], [62, 14], [74, 36], [86, 10], [93, 26], [15, 44], [55, 40]].map(([x, y], i) => `<span class="hs-star${i % 3 === 0 ? ' tw hs-anim' : ''}" style="left:${x}%;top:${y}px;animation-delay:-${i * 0.7}s"></span>`).join('') + '<span class="hs-moon"></span>'
+    : '<span class="hs-sun"></span><div class="hs-cloud hs-anim"><i></i></div><div class="hs-cloud c2 hs-anim"><i></i></div>';
+  const body = kind === 'haus' ? hsSceneHouse(night) : kind === 'garage' ? hsSceneGarage(night) : hsSceneCity(night);
+  return `<div class="fz-hero-band hs-scene hs-${kind}${night ? ' is-night' : ''}" aria-hidden="true">${sky}${body}</div>`;
+}
+function hsHeroActionsHtml(h) {
+  const b = [];
+  if (hsHasModule(h, 'kosten')) b.push(['log-new', '🧾', 'Rechnung']);
+  if (hsHasModule(h, 'maengel')) b.push(['defect-new', '🛠️', 'Mangel']);
+  if (hsHasModule(h, 'zaehler')) b.push(['reading-new', '📟', 'Zähler']);
+  if (hsHasModule(h, 'garten') && b.length < 3) b.push(['tab', '🌿', 'Garten', 'garten']);
+  b.push(['home-edit', '✎', 'Bearbeiten']);
+  return b.map((x, i) => `<button type="button" class="fz-act-btn${i === 0 && b.length > 1 ? ' primary' : ''}" data-hsact="${x[0]}"${x[3] ? ` data-tab="${x[3]}"` : ''}><span class="fz-ti">${x[1]}</span>${hsEsc(x[2])}</button>`).join('');
 }
 function hsEmptyHtml() {
   return `
     <div class="rounded-2xl bg-white border border-dashed border-ink/20 p-6 text-center">
       <div class="fz-empty-car mb-2">🏡</div>
       <div class="font-serif text-lg mb-1">Euer Zuhause</div>
-      <p class="text-xs text-ink/50 mb-4">Mietvertrag oder Kaufvertrag, Kaution, Mängel mit Fotos, Rechnungen für Möbel und Böden, Sanierungsplan, Nebenkosten, Zählerstände mit Prognose und ein Wartungsplan, der rechtzeitig Aufgaben verteilt – alles an einem Ort und verknüpft mit Dokumenten und Finanzen.</p>
+      <p class="text-xs text-ink/50 mb-4">Mietvertrag oder Kaufvertrag, Kaution, Mängel mit Fotos, Rechnungen für Möbel und Böden, Sanierungsplan, Nebenkosten, Zählerstände mit Prognose, Garten &amp; Pflanzen und ein Wartungsplan, der rechtzeitig Aufgaben verteilt – auch für Wohnungen, Häuser und Garagen, die ihr vermietet. Alles an einem Ort und verknüpft mit Dokumenten und Finanzen.</p>
       ${hsCanEdit() ? `<div class="flex flex-wrap justify-center gap-2">
         <button type="button" class="fz-kind-btn px-4 py-2.5 text-sm" data-hsact="home-new" data-mode="miete">🔑 Wir wohnen zur Miete</button>
         <button type="button" class="fz-kind-btn px-4 py-2.5 text-sm" data-hsact="home-new" data-mode="eigentum">🏡 Wir haben gekauft</button>
+        <button type="button" class="fz-kind-btn px-4 py-2.5 text-sm" data-hsact="home-new" data-mode="vermietet">🤝 Wir vermieten</button>
       </div>` : ''}
     </div>`;
 }
 function hsSwitcherHtml(h) {
   const list = hsHomes();
   if (list.length < 2) return '';
-  return `<div class="fz-type-row">${list.map(x => `<button type="button" class="fz-filter-chip${x.id === h.id ? ' active' : ''}" data-hsact="home-pick" data-id="${hsEsc(x.id)}">${hsEsc(HS_MODES[hsMode(x)].icon + ' ' + hsName(x))}${hsIsArchived(x) ? ' · ' + hsEsc('früher') : ''}</button>`).join('')}</div>`;
+  return `<div class="fz-type-row">${list.map(x => `<button type="button" class="fz-filter-chip${x.id === h.id ? ' active' : ''}" data-hsact="home-pick" data-id="${hsEsc(x.id)}">${hsEsc(hsHeroIcon(x) + ' ' + hsName(x))}${hsIsArchived(x) ? ' · ' + hsEsc('früher') : ''}</button>`).join('')}</div>`;
 }
 function hsRow(label, value) { return value === '' || value == null ? '' : `<div class="vt-row"><span>${hsEsc(label)}</span><span>${value}</span></div>`; }
+
+
+/* ---------- Vermietung: Mietverhältnis ---------- */
+function hsTenantCardHtml(h) {
+  const t = h.tenant || {}, r = h.rent || {};
+  const contact = [t.phone ? `<a class="hover:text-pine" href="tel:${hsEsc(String(t.phone).replace(/[^\d+]/g, ''))}">${hsEsc(t.phone)}</a>` : '', t.email ? `<a class="hover:text-pine" href="mailto:${hsEsc(t.email)}">${hsEsc(t.email)}</a>` : ''].filter(Boolean).join('<br>');
+  const rows = [
+    hsRow('Mieter', hsEsc(t.name || '')),
+    hsRow('Kontakt', contact),
+    hsRow('Mieter seit', vtIsIso(t.since) ? hsEsc(vtFmt(t.since) + ' · ' + hsDuration(t.since)) : ''),
+    ...HS_FIX.filter(d => d.income).map(d => hsRow(d.label.replace(/\s*\(Einnahme\)$/, ''), hsFixAmount(h, d.key) > 0 ? hsEsc(fmtEur(hsFixAmount(h, d.key))) : '')),
+    hsRow('Mietart', r.kind === 'staffel' ? hsEsc('Staffelmiete') : r.kind === 'index' ? hsEsc('Indexmiete') : ''),
+    hsRow('Letzte Erhöhung', vtIsIso(r.lastIncrease) ? hsEsc(vtFmt(r.lastIncrease)) : ''),
+    hsRow('Kündigungsfrist', hsEsc((Number(r.notice) || 3) + ' Monate')),
+    hsRow('Kaution', Number(r.deposit) > 0 ? hsEsc(fmtEur(r.deposit) + (r.depositWhere ? ' · ' + r.depositWhere : '')) : ''),
+  ].join('');
+  return hsCard(`
+    <div class="flex items-center justify-between gap-2 mb-1">
+      <div class="fz-h" style="margin:0">🤝 Mietverhältnis</div>
+      ${hsCanEdit() ? '<button type="button" class="fz-mini-btn" data-hsact="home-edit">✎ Bearbeiten</button>' : ''}
+    </div>
+    ${rows || '<p class="text-xs text-ink/45">Mieter, Miete und Kaution unter „Bearbeiten“ eintragen – die Miete wird als regelmäßige Einnahme in Finanzen gebucht.</p>'}
+    <p class="vt-info mt-3">Tipp: Die Nebenkostenabrechnung muss spätestens 12 Monate nach Ende des Abrechnungszeitraums beim Mieter sein. Eine Mieterhöhung bis zur Vergleichsmiete ist frühestens 15 Monate nach Einzug bzw. der letzten Erhöhung möglich.</p>`);
+}
+
+/* ---------- Baustein Schlüssel ---------- */
+function hsKeys(hid) { return hsArr('homeKeys').filter(k => k.home === hid); }
+function hsKeysCardHtml(h) {
+  if (!hsHasModule(h, 'schluessel')) return '';
+  const list = hsKeys(h.id);
+  const total = list.reduce((s, k) => s + (Number(k.count) || 0), 0);
+  const rows = list.map(k => `
+    <button type="button" class="fz-log-row" data-hsact="key-edit" data-id="${hsEsc(k.id)}">
+      <span class="fz-log-ic" style="background:#D4A01722">🗝️</span>
+      <span class="flex-1 min-w-0"><span class="block text-sm font-medium truncate">${hsEsc(k.label || 'Schlüssel')}</span>${k.holder ? `<span class="block text-xs text-ink/45 truncate">${hsEsc(k.holder)}</span>` : ''}</span>
+      <span class="shrink-0 text-sm font-semibold">${hsEsc((Number(k.count) || 1) + '×')}</span>
+    </button>`).join('');
+  return hsCard(`
+    <div class="flex items-center justify-between gap-2 mb-1">
+      <div class="fz-h" style="margin:0">🗝️ Schlüssel <span class="text-ink/40 font-normal normal-case">${total || ''}</span></div>
+      ${hsCanEdit() ? '<button type="button" class="fz-mini-btn primary" data-hsact="key-new">+ Schlüssel</button>' : ''}
+    </div>
+    ${rows ? `<div class="flex flex-col">${rows}</div>` : '<p class="text-xs text-ink/45">Haustür, Keller, Briefkasten, Garage … und wer welchen Schlüssel hat – z. B. Nachbarn, Oma oder die Hausverwaltung. Laut Übergabeprotokoll zählt beim Auszug jeder Schlüssel.</p>'}`);
+}
+function hsOpenKeyModal(id) {
+  const h = hsCurrent();
+  if (!h || !hsCanEdit()) return;
+  const k = id ? hsArr('homeKeys').find(x => x.id === id) : null;
+  const d = k || { label: '', count: 1, holder: '', note: '' };
+  hsModalState = { mode: 'key', id: k ? k.id : null };
+  const html = `
+    <h3 class="font-serif text-lg mb-3 pr-6">${k ? 'Schlüssel bearbeiten' : 'Neuer Schlüssel'}</h3>
+    <div class="grid gap-3" style="grid-template-columns:minmax(0,1fr) 5.5rem">
+      ${fzIn('hskLabel', 'Wofür?', d.label || '', { ph: 'z. B. Haustür, Keller, Briefkasten', max: 80 })}
+      ${fzIn('hskCount', 'Anzahl', String(Number(d.count) || 1), { mode: 'numeric', max: 3 })}
+    </div>
+    ${fzIn('hskHolder', 'Wer hat ihn?', d.holder || '', { ph: 'z. B. Wir · Nachbarn Müller · Oma', max: 120 })}
+    ${fzIn('hskNote', 'Notiz', d.note || '', { ph: 'optional, z. B. Schließanlage Nr. 4711', max: 300 })}
+    ${hsFooter('hsKey', !!k)}`;
+  hsOpenModal(html, () => hsWireFooter('hsKey', hsSaveKey, () => hsDeleteKey(k.id)));
+}
+function hsSaveKey() {
+  const st = hsModalState, h = hsCurrent();
+  if (!st || st.mode !== 'key' || !h) return;
+  const label = fzVal('hskLabel').slice(0, 80);
+  if (!label) return fzShowErr('hsKeyError', 'Bitte eingeben, wofür der Schlüssel ist.');
+  const count = Math.max(1, Math.min(99, Math.round(Number(fzVal('hskCount')) || 1)));
+  const existing = st.id ? hsArr('homeKeys').find(x => x.id === st.id) : null;
+  hsUpsert('homeKeys', { ...(existing || {}), id: existing ? existing.id : 'k' + newRecordId().slice(0, 12), home: h.id, label, count, holder: fzVal('hskHolder').slice(0, 120), note: fzVal('hskNote').slice(0, 300), created: (existing && existing.created) || finTodayIso() });
+  hsCloseModal();
+  hsAfterChange();
+}
+function hsDeleteKey(id) {
+  if (!confirm('Schlüssel löschen?')) return;
+  hsSet('homeKeys', hsArr('homeKeys').filter(x => x.id !== id));
+  hsCloseModal();
+  hsAfterChange();
+}
+
+/* ---------- Baustein Garten & Pflanzen ----------
+   Pflanzen (drinnen, Balkon, Garten) mit Gieß- und Düngeplan, Rasen mähen in der Saison.
+   Regen zählt draußen als gegossen (Regenmenge der letzten zwei Tage und heute, ab 4 mm – vom
+   Zuhause-Wetter), bei Hitze ab 28 °C kommt das Gießen draußen doppelt so oft. Das Gartenjahr
+   (Obstbäume schneiden, Hecke, Laub …) läuft über den Wartungsplan als Haushalts-Aufgaben.
+   Daten: finance.homePlants { id, home, tpl, name, icon, place, rain, every, act: 'water'|'mow',
+   fertEvery, months: [von, bis], last, lastFert, note, created } */
+function hsPlants(hid) { return hsArr('homePlants').filter(p => p.home === hid); }
+function hsWx() { try { return weatherDaily && Array.isArray(weatherDaily.days) && weatherDaily.days.length ? weatherDaily : null; } catch (e) { return null; } }
+function hsTodayWx() { const w = hsWx(); return w ? (w.days.find(d => d.date === finTodayIso()) || null) : null; }
+function hsRainLog() {
+  const out = {};
+  const w = hsWx();
+  if (!w) return out;
+  (Array.isArray(w.past) ? w.past : []).forEach(d => { if (d && vtIsIso(d.date) && d.mm != null) out[d.date] = Number(d.mm) || 0; });
+  const t = hsTodayWx();
+  if (t && t.mm != null && (t.rain == null || Number(t.rain) >= 60)) out[t.date] = Number(t.mm) || 0;
+  return out;
+}
+function hsPlantOutdoor(p) { return p.place === 'balkon' || p.place === 'garten'; }
+function hsPlantInSeason(p, iso) {
+  if (!Array.isArray(p.months) || p.months.length !== 2) return true;
+  const m = Number(String(iso || finTodayIso()).slice(5, 7));
+  const a = Number(p.months[0]), b = Number(p.months[1]);
+  if (!(a >= 1 && a <= 12 && b >= 1 && b <= 12)) return true;
+  return a <= b ? (m >= a && m <= b) : (m >= a || m <= b);
+}
+function hsPlantState(p, rain = hsRainLog()) {
+  const today = finTodayIso();
+  if (!hsPlantInSeason(p, today)) return { off: true };
+  const mow = p.act === 'mow';
+  let last = vtIsIso(p.last) && p.last <= today ? p.last : '';
+  let byRain = '';
+  if (!mow && p.rain && hsPlantOutdoor(p)) Object.keys(rain).sort().forEach(d => { if (rain[d] >= 4 && d <= today && (!last || d > last)) { last = d; byRain = d; } });
+  let every = Math.max(1, Number(p.every) || 7);
+  const wx = hsTodayWx();
+  const hot = !mow && hsPlantOutdoor(p) && !!wx && Number(wx.max) >= 28 && !byRain;
+  if (hot) every = Math.max(1, Math.ceil(every / 2));
+  const next = last ? vtAddDays(last, every) : today;
+  const days = vtDiffDays(today, next);
+  const m = Number(today.slice(5, 7));
+  let fertDue = false;
+  if (!mow && Number(p.fertEvery) > 0 && m >= 3 && m <= 9) fertDue = !vtIsIso(p.lastFert) || vtAddDays(p.lastFert, Number(p.fertEvery)) <= today;
+  return { off: false, last, byRain, next, days, due: days <= 0, hot, fertDue, wateredToday: vtIsIso(p.last) && p.last === today };
+}
+function hsPlantsDue(h) {
+  if (!h || !hsHasModule(h, 'garten')) return [];
+  const rain = hsRainLog();
+  return hsPlants(h.id).filter(p => { const s = hsPlantState(p, rain); return !s.off && (s.due || s.fertDue); });
+}
+function hsPlantRowHtml(p, rain) {
+  const s = hsPlantState(p, rain);
+  const mow = p.act === 'mow';
+  const place = (HS_PLACES.find(x => x[0] === p.place) || HS_PLACES[0])[1];
+  const parts = [place];
+  if (s.off) parts.push('Pause bis zur Saison');
+  else if (s.days < 0) parts.push('seit ' + (-s.days) + ' Tagen fällig');
+  else if (s.days === 0) parts.push(mow ? 'heute mähen' : 'heute gießen');
+  else if (s.days === 1) parts.push('morgen');
+  else parts.push('in ' + s.days + ' Tagen');
+  if (!s.off && s.byRain) parts.push('🌧️ Regen am ' + vtFmt(s.byRain));
+  else if (!s.off && s.last) parts.push('zuletzt ' + vtFmt(s.last));
+  if (!s.off && s.hot) parts.push('☀️ Hitze');
+  const can = hsCanEdit();
+  const btns = [];
+  if (can && !s.off && s.fertDue) btns.push(`<button type="button" class="hs-water-btn fert" data-hsact="plant-fert" data-id="${hsEsc(p.id)}">🧪 Gedüngt</button>`);
+  if (can && !s.off) btns.push(`<button type="button" class="hs-water-btn${s.due && !s.wateredToday ? '' : ' done'}" data-hsact="plant-water" data-id="${hsEsc(p.id)}">${s.wateredToday ? '✓ ' : ''}${mow ? '✂️ Gemäht' : '💧 Gegossen'}</button>`);
+  return `
+    <div class="hs-plant${!s.off && (s.due || s.fertDue) ? ' due' : ''}"${s.off ? ' style="opacity:.6"' : ''}>
+      <button type="button" class="flex items-center gap-2.5 flex-1 min-w-0 text-left" data-hsact="plant-edit" data-id="${hsEsc(p.id)}">
+        <span class="hs-plant-ic">${hsEsc(p.icon || '🪴')}</span>
+        <span class="flex-1 min-w-0">
+          <span class="block text-sm font-medium truncate">${hsEsc(p.name || 'Pflanze')}</span>
+          <span class="block text-xs text-ink/55 truncate">${parts.map(x => `<span>${hsEsc(x)}</span>`).join(' · ')}</span>
+        </span>
+      </button>
+      ${btns.length ? `<span class="flex flex-col gap-1 shrink-0">${btns.join('')}</span>` : ''}
+    </div>`;
+}
+function hsGardenTipHtml(rain) {
+  const w = hsWx();
+  if (!w) return `<div class="hs-wx-tip">🌦️ <span>Mit dem Zuhause in den Einstellungen (Ort) berücksichtigt pinn. Regen und Hitze beim Gießen.</span></div>`;
+  const today = finTodayIso();
+  const t = hsTodayWx();
+  const tips = [];
+  const rainDay = Object.keys(rain).filter(d => rain[d] >= 4).sort().pop();
+  if (rainDay) tips.push('🌧️ ' + (rainDay === today ? 'Heute regnet es ' + hsNum(rain[rainDay], 1) + ' mm – draußen fällt das Gießen aus.' : 'Es hat ' + hsNum(rain[rainDay], 1) + ' mm geregnet – draußen ist schon gegossen.'));
+  else if (t && Number(t.max) >= 28) tips.push('☀️ ' + 'Heiß – bis ' + Math.round(t.max) + '°. Draußen früh morgens oder abends gießen, Kübel und Balkonkästen eher täglich.');
+  const next3 = w.days.filter(d => d.date >= today).slice(0, 3);
+  const m = Number(today.slice(5, 7));
+  const minT = next3.length ? Math.min(...next3.map(d => Number(d.min)).filter(x => isFinite(x))) : null;
+  if (minT != null && isFinite(minT) && minT <= 1 && [3, 4, 5, 9, 10, 11].includes(m)) tips.push('❄️ ' + 'Frost möglich (bis ' + Math.round(minT) + '°) – Kübel reinholen oder empfindliche Pflanzen abdecken.');
+  if (!rainDay && next3.length === 3 && next3.reduce((s, d) => s + (Number(d.mm) || 0), 0) < 1 && m >= 4 && m <= 9) tips.push('🌤️ ' + 'Die nächsten Tage bleibt es trocken.');
+  if (!tips.length) return '';
+  return `<div class="hs-wx-tip flex flex-col gap-1">${tips.map(x => `<div>${hsEsc(x)}</div>`).join('')}</div>`;
+}
+function hsGardenHtml(h) {
+  const rain = hsRainLog();
+  const plants = hsPlants(h.id).map(p => ({ p, s: hsPlantState(p, rain) })).sort((a, b) =>
+    (a.s.off ? 1 : 0) - (b.s.off ? 1 : 0)
+    || ((b.s.due || b.s.fertDue) ? 1 : 0) - ((a.s.due || a.s.fertDue) ? 1 : 0)
+    || (a.s.days == null ? 99 : a.s.days) - (b.s.days == null ? 99 : b.s.days)
+    || String(a.p.name || '').localeCompare(String(b.p.name || '')));
+  const used = new Set(hsPlants(h.id).map(p => p.tpl).filter(Boolean));
+  const tpls = HS_PLANT_TPL.filter(t => !used.has(t.id));
+  const can = hsCanEdit();
+  const plantCard = hsCard(`
+    <div class="flex items-center justify-between gap-2 mb-2">
+      <div class="fz-h" style="margin:0">🪴 Pflanzen &amp; Rasen <span class="text-ink/40 font-normal normal-case">${plants.length || ''}</span></div>
+      ${can ? '<button type="button" class="fz-mini-btn primary" data-hsact="plant-new">+ Eigene</button>' : ''}
+    </div>
+    ${plants.length ? `<div class="flex flex-col gap-1.5">${plants.map(x => hsPlantRowHtml(x.p, rain)).join('')}</div>` : '<p class="text-xs text-ink/45">Zimmerpflanzen, Kräuter auf dem Balkon, Tomaten im Beet oder der Rasen: pinn. sagt, wann gegossen, gedüngt oder gemäht werden muss – Regen zählt draußen automatisch mit.</p>'}
+    ${can && tpls.length ? `<div class="fz-h mt-4">✨ Vorlagen</div><div class="flex flex-wrap gap-1.5">${tpls.map(t => `<button type="button" class="fz-filter-chip" data-hsact="plant-tpl" data-tpl="${t.id}">${hsEsc(t.icon + ' ' + t.name)}</button>`).join('')}</div>` : ''}`);
+  const gUsed = new Set(hsMaintItems().map(m => m.tpl).filter(Boolean));
+  const gTpls = HS_MAINT_TEMPLATES.filter(t => t.garden && !gUsed.has(t.tpl));
+  const gList = hsMaintListHtml(false, 'garden');
+  const yearCard = hsCard(`
+    <div class="flex items-center justify-between gap-2 mb-2">
+      <div class="fz-h" style="margin:0">🗓️ Gartenjahr</div>
+      ${can ? '<button type="button" class="fz-mini-btn" data-hsact="maint-new-garden">+ Eigene</button>' : ''}
+    </div>
+    ${gList ? `<div class="flex flex-col gap-1.5">${gList}</div>` : '<p class="text-xs text-ink/45">Hecke schneiden, Laub rechen, Kübel ins Winterquartier … Vorlage antippen – die Aufgabe kommt zur richtigen Zeit unter „Aufgaben“, auf Wunsch reihum.</p>'}
+    ${can && gTpls.length ? `<div class="flex flex-wrap gap-1.5 mt-3">${gTpls.map(t => `<button type="button" class="fz-filter-chip" data-hsact="maint-tpl" data-tpl="${t.tpl}">${hsEsc(t.icon + ' ' + t.title)}</button>`).join('')}</div>` : ''}`);
+  const m = Number(finTodayIso().slice(5, 7));
+  const cal = HS_GARDEN_MONTHS[m] || { s: [], p: [], e: [] };
+  const col = (title, list) => list.length ? `<div class="hs-season-col"><h5>${hsEsc(title)}</h5><div class="flex flex-wrap gap-1">${list.map(x => `<span class="vt-chip muted">${hsEsc(x)}</span>`).join('')}</div></div>` : '';
+  const monthName = new Date(2026, m - 1, 1).toLocaleDateString('de-DE', { month: 'long' });
+  const calCard = hsCard(`
+    <div class="fz-h">🌱 Im ${hsEsc(monthName)}</div>
+    <div class="flex flex-col gap-3">${col('Säen', cal.s)}${col('Pflanzen', cal.p)}${col('Ernten', cal.e)}</div>
+    <p class="text-[11px] text-ink/45 mt-2">Richtwerte für Mitteleuropa – je nach Region und Wetter ein paar Wochen früher oder später.</p>`);
+  return hsGardenTipHtml(rain) + plantCard + yearCard + calCard;
+}
+function hsOpenPlantModal(id, tplId) {
+  const h = hsCurrent();
+  if (!h || !hsCanEdit()) return;
+  const x = id ? hsArr('homePlants').find(p => p.id === id) : null;
+  const tpl = tplId ? HS_PLANT_TPL.find(t => t.id === tplId) : null;
+  const d = x || (tpl ? { tpl: tpl.id, icon: tpl.icon, name: tpl.name, place: tpl.place, every: tpl.every, fertEvery: tpl.fertEvery || 0, months: tpl.months || null, rain: !!tpl.rain, act: tpl.act || 'water' }
+    : { icon: '🪴', name: '', place: 'innen', every: 7, fertEvery: 0, months: null, rain: false, act: 'water' });
+  hsModalState = { mode: 'plant', id: x ? x.id : null, tpl: d.tpl || '' };
+  const everyOpts = [1, 2, 3, 4, 5, 7, 10, 14, 21, 30].map(n => [String(n), n === 1 ? 'Jeden Tag' : 'Alle ' + n + ' Tage']);
+  if (!everyOpts.some(o => o[0] === String(d.every))) everyOpts.push([String(d.every), 'Alle ' + d.every + ' Tage']);
+  const fertOpts = [['0', 'Nicht düngen'], ['7', 'Jede Woche'], ['14', 'Alle 2 Wochen'], ['21', 'Alle 3 Wochen'], ['30', 'Jeden Monat'], ['42', 'Alle 6 Wochen'], ['60', 'Alle 2 Monate']];
+  const monthOpts = [['', 'ganzjährig'], ...Array.from({ length: 12 }, (_, i) => [String(i + 1), new Date(2026, i, 1).toLocaleDateString('de-DE', { month: 'long' })])];
+  const mo = Array.isArray(d.months) && d.months.length === 2 ? d.months : ['', ''];
+  const html = `
+    <h3 class="font-serif text-lg mb-3 pr-6">${x ? 'Pflanze bearbeiten' : 'Neue Pflanze'}</h3>
+    <div class="grid gap-3" style="grid-template-columns:4.2rem minmax(0,1fr)">
+      ${fzIn('hsgIcon', 'Symbol', d.icon || '🪴', { max: 8 })}
+      ${fzIn('hsgName', 'Name', d.name || '', { ph: 'z. B. Monstera im Wohnzimmer', max: 60 })}
+    </div>
+    <div class="fz-grid2">
+      ${fzSel('hsgPlace', 'Wo?', HS_PLACES, d.place || 'innen')}
+      ${fzSel('hsgAct', 'Was ist zu tun?', [['water', '💧 Gießen'], ['mow', '✂️ Rasen mähen']], d.act || 'water')}
+    </div>
+    <div class="fz-grid2">
+      ${fzSel('hsgEvery', 'Wie oft?', everyOpts, String(d.every || 7))}
+      ${fzIn('hsgLast', 'Zuletzt', vtIsIso(d.last) ? d.last : '', { type: 'date' })}
+    </div>
+    <div id="hsgFertWrap">${fzSel('hsgFert', 'Düngen (März–September)', fertOpts, String(d.fertEvery || 0))}</div>
+    <label class="fz-check" id="hsgRainWrap"><input type="checkbox" id="hsgRain"${d.rain ? ' checked' : ''} /> <span>🌧️ Bekommt Regen ab – Regen zählt als gegossen</span></label>
+    <div class="fz-grid2">
+      ${fzSel('hsgFrom', 'Saison von', monthOpts, String(mo[0] || ''))}
+      ${fzSel('hsgTo', 'bis', monthOpts, String(mo[1] || ''))}
+    </div>
+    ${fzIn('hsgNote', 'Notiz', d.note || '', { ph: 'optional, z. B. nur kalkarmes Wasser', max: 300 })}
+    ${hsFooter('hsPlant', !!x)}`;
+  hsOpenModal(html, body => {
+    const ui = () => {
+      const out = ['balkon', 'garten'].includes(fzVal('hsgPlace'));
+      const mow = fzVal('hsgAct') === 'mow';
+      document.getElementById('hsgRainWrap').classList.toggle('hidden', !out || mow);
+      document.getElementById('hsgFertWrap').classList.toggle('hidden', mow);
+    };
+    ['hsgPlace', 'hsgAct'].forEach(i => document.getElementById(i).addEventListener('change', ui));
+    ui();
+    hsWireFooter('hsPlant', hsSavePlant, () => hsDeletePlant(x.id));
+  });
+}
+function hsSavePlant() {
+  const st = hsModalState, h = hsCurrent();
+  if (!st || st.mode !== 'plant' || !h) return;
+  const name = fzVal('hsgName').slice(0, 60);
+  if (!name) return fzShowErr('hsPlantError', 'Bitte einen Namen eingeben.');
+  const existing = st.id ? hsArr('homePlants').find(p => p.id === st.id) : null;
+  const from = Number(fzVal('hsgFrom')) || 0, to = Number(fzVal('hsgTo')) || 0;
+  const act = fzVal('hsgAct') === 'mow' ? 'mow' : 'water';
+  const place = HS_PLACES.some(x => x[0] === fzVal('hsgPlace')) ? fzVal('hsgPlace') : 'innen';
+  hsUpsert('homePlants', {
+    ...(existing || {}),
+    id: existing ? existing.id : 'pl' + newRecordId().slice(0, 12), home: existing ? existing.home : h.id, tpl: st.tpl || '',
+    name, icon: (fzVal('hsgIcon') || '🪴').slice(0, 8), place, act,
+    every: Math.max(1, Number(fzVal('hsgEvery')) || 7), fertEvery: act === 'mow' ? 0 : (Number(fzVal('hsgFert')) || 0),
+    rain: act !== 'mow' && place !== 'innen' && fzChecked('hsgRain'),
+    months: from && to ? [from, to] : null,
+    last: vtIsIso(fzVal('hsgLast')) ? fzVal('hsgLast') : '', lastFert: (existing && existing.lastFert) || '',
+    note: fzVal('hsgNote').slice(0, 300), created: (existing && existing.created) || finTodayIso(),
+  });
+  hsCloseModal();
+  hsAfterChange();
+}
+function hsDeletePlant(id) {
+  const x = hsArr('homePlants').find(p => p.id === id);
+  if (!x || !confirm('„' + (x.name || 'Pflanze') + '“ löschen?')) return;
+  hsSet('homePlants', hsArr('homePlants').filter(p => p.id !== id));
+  hsCloseModal();
+  hsAfterChange();
+}
+function hsPlantTick(id, fert) {
+  if (!hsCanEdit()) return;
+  const x = hsArr('homePlants').find(p => p.id === id);
+  if (!x) return;
+  const today = finTodayIso();
+  if (!fert && x.last === today) {
+    if (!confirm(x.act === 'mow' ? 'Heute doch nicht gemäht?' : 'Heute doch nicht gegossen?')) return;
+    hsUpsert('homePlants', { ...x, last: x.prevLast || '', prevLast: '' });
+  } else if (fert) {
+    hsUpsert('homePlants', { ...x, lastFert: today });
+  } else {
+    hsUpsert('homePlants', { ...x, prevLast: x.last || '', last: today });
+  }
+  hsAfterChange();
+  finShowToast(fert ? 'Gedüngt ✓' : (x.last === today ? 'Zurückgenommen.' : (x.act === 'mow' ? 'Gemäht ✓' : 'Gegossen ✓')));
+}
 
 /* ---------- Übersicht ---------- */
 function hsDueItems(h) {
@@ -42644,6 +43477,16 @@ function hsDueItems(h) {
       if (days >= 0 && days <= 730) out.push({ tone: days <= 365 ? 'warn' : 'muted', icon: '🏦', title: 'Zinsbindung endet', sub: 'Anschlussfinanzierung rechtzeitig vergleichen', when: vtFmt(loan.l.fixedUntil), act: 'home-edit' });
     }
   }
+  if (hsLet(h) && !hsIsArchived(h)) {
+    const t = h.tenant || {}, r = h.rent || {};
+    const since = vtIsIso(t.since) ? t.since : '';
+    const base = [r.lastIncrease, since].filter(vtIsIso).sort().pop();
+    if (base && r.kind !== 'staffel' && r.kind !== 'index' && vtDiffDays(base, today) >= 456) out.push({ tone: 'muted', icon: '📈', title: 'Mieterhöhung möglich', sub: 'letzte Änderung vor mehr als 15 Monaten', when: '', act: 'home-edit' });
+    const nk = hsLogs(h.id).filter(l => l.type === 'nebenkosten').map(l => l.date).sort().pop();
+    if (since && vtDiffDays(since, today) > 400 && (!nk || vtDiffDays(nk, today) > 400)) out.push({ tone: 'warn', icon: '🧾', title: 'Nebenkostenabrechnung an den Mieter', sub: 'spätestens 12 Monate nach Ende des Abrechnungszeitraums', when: '', act: 'log-new', type: 'nebenkosten' });
+  }
+  const pd = hsPlantsDue(h);
+  if (pd.length) out.unshift({ tone: 'warn', icon: pd.length === 1 ? (pd[0].icon || '🪴') : '💧', title: pd.length === 1 ? pd[0].name : pd.length + ' Pflanzen & Rasen', sub: 'Gießen, Mähen oder Düngen ist dran', when: '', act: 'tab', tab: 'garten' });
   return out.slice(0, 12);
 }
 function hsDueRowHtml(it) {
@@ -42665,8 +43508,8 @@ function hsOverviewHtml(h) {
   const heat = (HS_HEATING.find(t => t[0] === h.heating) || ['', ''])[1];
   const hero = `
     <div class="fz-hero" style="--fz:${hsColor(h)}">
-      <div class="fz-hero-band"></div>
-      <div class="fz-hero-icon"><span>${HS_MODES[hsMode(h)].icon}</span></div>
+      ${hsSceneHtml(h)}
+      <div class="fz-hero-icon"><span>${hsEsc(hsHeroIcon(h))}</span></div>
       <div class="fz-hero-body">
         <h3 class="font-serif text-xl leading-tight truncate">${hsEsc(hsName(h))}</h3>
         <div class="text-xs text-ink/50 truncate">${hsEsc(h.address || type)}</div>
@@ -42678,12 +43521,7 @@ function hsOverviewHtml(h) {
           ${heat && heat !== '–' ? `<span class="vt-chip muted">♨️ ${hsEsc(heat)}</span>` : ''}
           ${arch ? `<span class="vt-chip warn">${hsEsc('ausgezogen am ' + vtFmt(h.moveOut))}</span>` : ''}
         </div>
-        ${hsCanEdit() ? `<div class="flex gap-2 mt-3">
-          <button type="button" class="fz-act-btn primary" data-hsact="log-new"><span class="fz-ti">🧾</span>Rechnung</button>
-          <button type="button" class="fz-act-btn" data-hsact="defect-new"><span class="fz-ti">🛠️</span>Mangel</button>
-          <button type="button" class="fz-act-btn" data-hsact="reading-new"><span class="fz-ti">📟</span>Zähler</button>
-          <button type="button" class="fz-act-btn" data-hsact="home-edit"><span class="fz-ti">✎</span>Bearbeiten</button>
-        </div>` : ''}
+        ${hsCanEdit() ? `<div class="flex gap-2 mt-3">${hsHeroActionsHtml(h)}</div>` : ''}
       </div>
     </div>`;
 
@@ -42698,6 +43536,17 @@ function hsOverviewHtml(h) {
   const monthly = hsMonthlyCost(h);
   const area = Number(h.area) || 0;
   const tiles = [];
+  if (hsLet(h)) {
+    const inc = hsIncomeMonthly(h);
+    const loan = hsLoan(h);
+    const price = (Number(h.own && h.own.price) || 0) + hsBuySideCosts(h);
+    const cold = hsFixAmount(h, 'let_rent') * 12;
+    const net = inc - monthly;
+    tiles.push(fzTile('Mieteinnahmen / Monat', inc > 0 ? fmtEur(inc) : '–', hsFixAmount(h, 'let_rent') > 0 ? 'kalt ' + fmtEur(hsFixAmount(h, 'let_rent')) : (inc > 0 ? '' : 'Miete unter „Bearbeiten“')));
+    tiles.push(fzTile('Überschuss / Monat', inc > 0 || monthly > 0 ? (net < 0 ? '− ' : '') + fmtEur(Math.abs(net)) : '–', 'Einnahmen minus laufende Kosten'));
+    tiles.push(fzTile('Brutto-Rendite', price > 0 && cold > 0 ? hsNum(cold / price * 100, 1) + ' %' : '–', price > 0 ? 'Jahreskaltmiete / Kaufpreis' : 'Kaufpreis eintragen'));
+    tiles.push(fzTile('Restschuld', loan ? fmtEur0(loan.rest) : '–', loan && loan.M > 0 ? 'Rate ' + fmtEur(loan.M) + ' / Monat' : 'Kredit unter „Bearbeiten“'));
+  } else {
   tiles.push(fzTile('Wohnkosten / Monat', monthly > 0 ? fmtEur(monthly) : '–', monthly > 0 ? 'laufende Fixkosten & Verträge' : 'Fixkosten unter „Bearbeiten“'));
   if (own) {
     const loan = hsLoan(h);
@@ -42711,6 +43560,7 @@ function hsOverviewHtml(h) {
     tiles.push(fzTile('Warmmiete', warm > 0 ? fmtEur(warm) : '–', hsFixAmount(h, 'rent') > 0 ? 'kalt ' + fmtEur(hsFixAmount(h, 'rent')) : ''));
     tiles.push(fzTile('Pro m²', area > 0 && hsFixAmount(h, 'rent') > 0 ? fmtEur(hsFixAmount(h, 'rent') / area) : '–', area > 0 ? 'kalt · ' + hsNum(area, 0) + ' m²' : 'Wohnfläche eintragen'));
     tiles.push(fzTile('Kaution', dep > 0 ? fmtEur(dep) : '–', dep > 0 ? (vtIsIso(h.rent.depositBack) ? 'zurück am ' + vtFmt(h.rent.depositBack) : (vtIsIso(h.rent.depositPaid) ? 'gezahlt am ' + vtFmt(h.rent.depositPaid) : 'Zahlung eintragen')) : ''));
+  }
   }
   const tilesHtml = `<div class="grid grid-cols-2 gap-2">${tiles.join('')}</div>`;
 
@@ -42783,7 +43633,7 @@ function hsOverviewHtml(h) {
   const docKey = x => (vtIsIso(x.datum) ? x.datum : String(x.created || '').slice(0, 10)) || '';
   const linked = (Array.isArray(h.docLinks) ? h.docLinks : []).map(id => docById(id)).filter(Boolean)
     .sort((a, b) => docKey(b).localeCompare(docKey(a)));
-  const docTypes = HS_DOC_TYPES.filter(t => !t.mode || t.mode === hsMode(h));
+  const docTypes = hsDocTypesFor(h);
   const dokumente = hsCard(`
     <div class="flex items-center justify-between gap-2 mb-2">
       <div class="fz-h" style="margin:0">📎 Dokumente <span class="text-ink/40 font-normal normal-case">${linked.length || ''}</span></div>
@@ -42798,7 +43648,7 @@ function hsOverviewHtml(h) {
   // Daten
   const drows = [];
   drows.push(hsRow('Adresse', hsEsc(h.address || '')));
-  drows.push(hsRow('Wohnfläche', Number(h.area) > 0 ? hsEsc(hsNum(h.area, 1) + ' m²') : ''));
+  drows.push(hsRow(h.type === 'garage' ? 'Fläche' : 'Wohnfläche', Number(h.area) > 0 ? hsEsc(hsNum(h.area, 1) + ' m²') : ''));
   drows.push(hsRow('Zimmer', Number(h.rooms) > 0 ? hsEsc(hsNum(h.rooms, 1)) : ''));
   drows.push(hsRow('Personen im Haushalt', Number(h.persons) > 0 ? hsEsc(String(h.persons)) : ''));
   drows.push(hsRow('Baujahr', Number(h.built) > 0 ? hsEsc(String(h.built)) : ''));
@@ -42809,10 +43659,10 @@ function hsOverviewHtml(h) {
     ${h.note ? `<p class="text-sm text-ink/70 mt-3" style="white-space:pre-line">${hsEsc(h.note)}</p>` : ''}
     ${hsCanEdit() ? `<div class="flex flex-wrap gap-2 mt-4">
       <button type="button" class="fz-mini-btn" data-hsact="home-edit">✎ Bearbeiten</button>
-      <button type="button" class="fz-mini-btn" data-hsact="home-new" data-mode="${hsOwn(h) ? 'miete' : 'eigentum'}">+ Weiteres Zuhause</button>
+      <button type="button" class="fz-mini-btn" data-hsact="home-new" data-mode="${hsLet(h) ? 'vermietet' : hsOwn(h) ? 'miete' : 'eigentum'}">+ Weiteres Zuhause</button>
     </div>` : ''}`);
 
-  return hero + dueHtml + tilesHtml + vertrag + vertraege + dokumente + daten;
+  return hero + dueHtml + tilesHtml + (hsLet(h) ? hsTenantCardHtml(h) : '') + vertrag + vertraege + hsKeysCardHtml(h) + dokumente + daten + hsModulesCardHtml(h);
 }
 function hsDocRowHtml(x) {
   const today = finTodayIso();
@@ -42988,7 +43838,17 @@ function hsCostsHtml(h) {
     ${logs.length ? `<div class="fz-type-row mb-2">${filters.map(f => `<button type="button" class="fz-filter-chip${hsLogFilter === f[0] ? ' active' : ''}" data-hsact="log-filter" data-f="${f[0]}">${hsEsc(f[1])}</button>`).join('')}</div>` : ''}
     ${logRows ? `<div class="flex flex-col">${logRows}</div>` : `<p class="text-xs text-ink/45">${logs.length ? 'Keine Einträge für diesen Filter.' : 'Möbel, Böden, Material, Handwerker, Reparaturen, Nebenkostenabrechnung, Grundsteuer … – mit Beleg unter „Dokumente“ und auf Wunsch gleich als Ausgabe in Finanzen.'}</p>`}
     ${flt.length > hsLogLimit ? `<button type="button" class="w-full mt-2 text-xs text-ink/55 hover:text-pine py-1.5" data-hsact="log-more">${hsEsc('Weitere ' + (flt.length - hsLogLimit) + ' anzeigen')}</button>` : ''}`);
-  return overview + tax + plan + verlauf;
+  let income = '';
+  if (hsLet(h)) {
+    const inc = hsIncomeIn(h, s, e);
+    income = hsCard(`
+    <div class="fz-h">🤝 Mieteinnahmen ${hsEsc(String(y))}</div>
+    <div class="vt-row"><span>Einnahmen</span><span style="color:#2F9E5B">${hsEsc('+ ' + fmtEur(inc))}</span></div>
+    <div class="vt-row"><span>Kosten</span><span>${hsEsc('− ' + fmtEur(total))}</span></div>
+    <div class="vt-row"><span><b>Überschuss</b></span><span><b>${hsEsc((inc - total < 0 ? '− ' : '+ ') + fmtEur(Math.abs(inc - total)))}</b></span></div>
+    <p class="text-[11px] text-ink/45 mt-2">Für die Steuererklärung (Anlage V in Deutschland): Kosten wie Zinsen, Grundsteuer, Versicherung, Reparaturen und Hausgeld sind meist Werbungskosten. Abschreibung (AfA) und Kredit-Tilgung sind hier nicht enthalten.</p>`);
+  }
+  return overview + income + (hsLet(h) ? '' : tax) + plan + verlauf;
 }
 
 /* ---------- Zähler ---------- */
@@ -43078,8 +43938,9 @@ function hsMeterCardHtml(m) {
 function h_area() { const h = hsCurrent(); return h ? Number(h.area) || 0 : 0; }
 
 /* ---------- Wartung ---------- */
-function hsMaintListHtml(compact) {
-  const items = hsMaintItems().slice().sort((a, b) => (a.active === false) - (b.active === false) || hsMaintNext(a).localeCompare(hsMaintNext(b)));
+function hsMaintIsGarden(m) { return !!m.garden || HS_MAINT_TEMPLATES.some(t => t.garden && t.tpl === m.tpl); }
+function hsMaintListHtml(compact, which = 'all') {
+  const items = hsMaintItems().filter(m => which === 'all' || (which === 'garden') === hsMaintIsGarden(m)).slice().sort((a, b) => (a.active === false) - (b.active === false) || hsMaintNext(a).localeCompare(hsMaintNext(b)));
   if (!items.length) return '';
   return items.map(m => {
     const next = hsMaintNext(m);
@@ -43100,10 +43961,11 @@ function hsMaintListHtml(compact) {
   }).join('');
 }
 function hsMaintPageHtml() {
-  const list = hsMaintListHtml(false);
-  const used = new Set(hsMaintItems().map(m => m.tpl).filter(Boolean));
   const h = hsCurrent();
-  const tpls = HS_MAINT_TEMPLATES.filter(t => !used.has(t.tpl) && (!t.own || !h || hsOwn(h)));
+  const gardenTab = !!h && hsHasModule(h, 'garten');
+  const list = hsMaintListHtml(false, gardenTab ? 'house' : 'all');
+  const used = new Set(hsMaintItems().map(m => m.tpl).filter(Boolean));
+  const tpls = HS_MAINT_TEMPLATES.filter(t => !used.has(t.tpl) && !t.garden && (!t.own || !h || hsOwn(h)));
   return hsCard(`
     <div class="flex items-center justify-between gap-2 mb-2">
       <div class="fz-h" style="margin:0">🔧 Wartungsplan</div>
@@ -43176,25 +44038,30 @@ function hsOpenModal(html, onReady) { fzOpenModal(html, onReady); }
 function hsCloseModal() { fzCloseModal(); hsModalState = null; }
 function hsNextMonthFirst() { const t = finTodayIso(); return vtAddMonths(t.slice(0, 8) + '01', 1, false); }
 
-/* ---------- Popup: Zuhause ---------- */
+/* ---------- Popup: Zuhause ----------
+   Drei Arten: Miete (wir wohnen zur Miete), Eigentum (selbst bewohnt), Vermietet (Eigentum, das wir
+   vermieten – Haus, Wohnung, Garage). Abschnitte mit data-sec gelten für die genannten Arten. */
 function hsOpenHomeModal(id, modePreset) {
   if (!hsCanEdit()) return;
   const h = id ? hsHomeById(id) : null;
-  const d = h ? JSON.parse(JSON.stringify(h)) : { mode: modePreset === 'eigentum' ? 'eigentum' : 'miete', type: 'wohnung', color: HS_COLORS[hsHomes().length % HS_COLORS.length], rent: { notice: 3 }, own: { loan: {} }, landlord: {}, fix: {} };
-  d.rent = d.rent || {}; d.own = d.own || {}; d.own.loan = d.own.loan || {}; d.landlord = d.landlord || {}; d.fix = d.fix || {};
+  const preset = ['eigentum', 'vermietet'].includes(modePreset) ? modePreset : 'miete';
+  const d = h ? JSON.parse(JSON.stringify(h)) : { mode: preset, type: 'wohnung', color: HS_COLORS[hsHomes().length % HS_COLORS.length], rent: { notice: 3 }, own: { loan: {} }, landlord: {}, tenant: {}, fix: {} };
+  d.mode = hsMode(d);
+  d.rent = d.rent || {}; d.own = d.own || {}; d.own.loan = d.own.loan || {}; d.landlord = d.landlord || {}; d.tenant = d.tenant || {}; d.fix = d.fix || {};
   hsModalState = { mode: 'home', id: h ? h.id : null, draft: d };
-  const own = d.mode === 'eigentum';
-  const r = d.rent, o = d.own, l = o.loan, lord = d.landlord;
+  const r = d.rent, o = d.own, l = o.loan, lord = d.landlord, ten = d.tenant;
   const eur = v => Number(v) > 0 ? euroInputValue(v) : '';
-  const fixRows = HS_FIX.map(f => `<div data-fixmode="${f.mode}">${fzIn('hsf_' + f.key, f.label + (f.interval === 'monthly' ? '' : ' (' + vtIntervalLabel(f.interval) + ')'), eur(d.fix[f.key] && d.fix[f.key].amount), { mode: 'decimal', unit: curSym() })}</div>`).join('');
+  const fixModes = f => f.mode === 'eigentum' ? 'eigentum vermietet' : f.mode;
+  const fixRows = HS_FIX.map(f => `<div data-sec="${fixModes(f)}">${fzIn('hsf_' + f.key, f.label + (f.interval === 'monthly' ? '' : ' (' + vtIntervalLabel(f.interval) + ')'), eur(d.fix[f.key] && d.fix[f.key].amount), { mode: 'decimal', unit: curSym() })}</div>`).join('');
   const anyRec = HS_FIX.some(f => d.fix[f.key] && d.fix[f.key].recId);
   const html = `
     <h3 class="font-serif text-lg mb-3 pr-6">${h ? 'Zuhause bearbeiten' : 'Neues Zuhause'}</h3>
     <div class="flex gap-2 mb-3" id="hsMode">
-      <button type="button" class="fz-kind-btn flex-1 px-3 py-2 text-sm${!own ? ' active' : ''}" data-mode="miete">🔑 Miete</button>
-      <button type="button" class="fz-kind-btn flex-1 px-3 py-2 text-sm${own ? ' active' : ''}" data-mode="eigentum">🏡 Eigentum</button>
+      <button type="button" class="fz-kind-btn flex-1 px-2 py-2 text-sm${d.mode === 'miete' ? ' active' : ''}" data-mode="miete">🔑 Miete</button>
+      <button type="button" class="fz-kind-btn flex-1 px-2 py-2 text-sm${d.mode === 'eigentum' ? ' active' : ''}" data-mode="eigentum">🏡 Eigentum</button>
+      <button type="button" class="fz-kind-btn flex-1 px-2 py-2 text-sm${d.mode === 'vermietet' ? ' active' : ''}" data-mode="vermietet">🤝 Vermietet</button>
     </div>
-    ${fzIn('hsName', 'Name', d.name || '', { ph: own ? 'z. B. Unser Haus' : 'z. B. Wohnung Lindenstraße', max: 60 })}
+    ${fzIn('hsName', 'Name', d.name || '', { ph: 'z. B. Unser Haus, Wohnung Lindenstraße, Garage', max: 60 })}
     <div class="fz-grid2">
       ${fzSel('hsType', 'Art', HS_TYPES, d.type || 'wohnung')}
       ${fzIn('hsMoveIn', 'Eingezogen am', d.moveIn || '', { type: 'date' })}
@@ -43210,11 +44077,19 @@ function hsOpenHomeModal(id, modePreset) {
       ${fzSel('hsHeating', 'Heizung', HS_HEATING, d.heating || '')}
     </div>
 
-    <div class="fz-h mt-2" data-own="0">🔑 Mietvertrag</div>
-    <div data-own="0">
+    <div class="fz-h mt-2" data-sec="miete">🔑 Mietvertrag</div>
+    <div data-sec="miete">
       ${fzIn('hsLordName', 'Vermieter', lord.name || '', { max: 120 })}
       <div class="fz-grid2">${fzIn('hsLordPhone', 'Telefon', lord.phone || '', { type: 'tel', max: 60 })}${fzIn('hsLordMail', 'E-Mail', lord.email || '', { type: 'email', max: 120 })}</div>
       ${fzIn('hsLordAddr', 'Anschrift Vermieter', lord.address || '', { ph: 'für die Mängelanzeige', max: 200 })}
+    </div>
+    <div class="fz-h mt-2" data-sec="vermietet">🤝 Mieter</div>
+    <div data-sec="vermietet">
+      ${fzIn('hsTenName', 'Mieter', ten.name || '', { ph: 'Name, bei Leerstand frei lassen', max: 120 })}
+      <div class="fz-grid2">${fzIn('hsTenPhone', 'Telefon', ten.phone || '', { type: 'tel', max: 60 })}${fzIn('hsTenMail', 'E-Mail', ten.email || '', { type: 'email', max: 120 })}</div>
+      ${fzIn('hsTenSince', 'Mieter seit', ten.since || '', { type: 'date' })}
+    </div>
+    <div data-sec="miete vermietet">
       <div class="fz-grid2">
         ${fzSel('hsRentKind', 'Mietart', [['normal', 'Normal'], ['staffel', 'Staffelmiete'], ['index', 'Indexmiete']], r.kind || 'normal')}
         ${fzIn('hsLastInc', 'Letzte Mieterhöhung', r.lastIncrease || '', { type: 'date' })}
@@ -43229,8 +44104,8 @@ function hsOpenHomeModal(id, modePreset) {
       </div>
     </div>
 
-    <div class="fz-h mt-2" data-own="1">📜 Kauf &amp; Finanzierung</div>
-    <div data-own="1">
+    <div class="fz-h mt-2" data-sec="eigentum vermietet">📜 Kauf &amp; Finanzierung</div>
+    <div data-sec="eigentum vermietet">
       <div class="fz-grid2">${fzIn('hsBuyDate', 'Kaufdatum', o.date || '', { type: 'date' })}${fzIn('hsPrice', 'Kaufpreis', eur(o.price), { mode: 'decimal', unit: curSym() })}</div>
       <div class="fz-grid3">${fzIn('hsLandTax', 'Grunderwerbsteuer', eur(o.landTax), { mode: 'decimal', unit: curSym() })}${fzIn('hsNotary', 'Notar & Grundbuch', eur(o.notary), { mode: 'decimal', unit: curSym() })}${fzIn('hsBroker', 'Makler', eur(o.broker), { mode: 'decimal', unit: curSym() })}</div>
       <div class="fz-grid2">${fzIn('hsLoanBank', 'Bank', l.bank || '', { max: 80 })}${fzIn('hsLoanAmount', 'Darlehen', eur(l.amount), { mode: 'decimal', unit: curSym() })}</div>
@@ -43242,26 +44117,36 @@ function hsOpenHomeModal(id, modePreset) {
 
     <div class="fz-h mt-2">💶 Fixkosten</div>
     <p class="text-[11px] text-ink/45 mb-2">Werden als regelmäßige Buchungen in Finanzen angelegt (Kategorie „Haushalt &amp; Wohnen“) und zählen so im Budget. Strom, Gas &amp; Internet besser als Vertrag zuordnen.</p>
+    <p class="text-[11px] text-ink/45 mb-2" data-sec="vermietet">Mieteinnahmen werden als regelmäßige Einnahme gebucht (Kategorie „Einnahmen“).</p>
     ${fixRows}
     <label class="fz-check"><input type="checkbox" id="hsFixBook"${(!h || anyRec) ? ' checked' : ''} /> <span>In Finanzen buchen</span></label>
     ${fzIn('hsFixStart', anyRec ? 'Neue Fixkosten buchen ab' : 'Buchen ab', vtIsIso(d.fixStart) && d.fixStart > finTodayIso() ? d.fixStart : hsNextMonthFirst(), { type: 'date' })}
 
-    <div class="fz-h mt-2">🚚 Auszug</div>
+    <div class="fz-h mt-2" id="hsEndHead">🚚 Auszug</div>
     ${fzIn('hsMoveOut', 'Ausgezogen am', d.moveOut || '', { type: 'date' })}
-    <div class="fz-grid2" data-own="0">${fzIn('hsDepBack', 'Kaution zurück am', r.depositBack || '', { type: 'date' })}${fzIn('hsDepBackAmt', 'Betrag zurück', eur(r.depositBackAmount), { mode: 'decimal', unit: curSym() })}</div>
+    <div class="fz-grid2" data-sec="miete vermietet">${fzIn('hsDepBack', 'Kaution zurück am', r.depositBack || '', { type: 'date' })}${fzIn('hsDepBackAmt', 'Betrag zurück', eur(r.depositBackAmount), { mode: 'decimal', unit: curSym() })}</div>
     <div class="fz-field"><label class="fz-lbl" for="hsNote">Notiz</label><textarea id="hsNote" rows="2" maxlength="2000" class="fz-in">${hsEsc(d.note || '')}</textarea></div>
     ${hsFooter('hsHome', !!h)}`;
   hsOpenModal(html, body => {
+    const setLbl = (forId, text) => { const el = body.querySelector('label[for="' + forId + '"]'); if (el) el.textContent = text; };
     const ui = () => {
-      const isOwn = hsModalState.draft.mode === 'eigentum';
-      body.querySelectorAll('[data-own]').forEach(el => el.classList.toggle('hidden', (el.dataset.own === '1') !== isOwn));
-      body.querySelectorAll('[data-fixmode]').forEach(el => el.classList.toggle('hidden', el.dataset.fixmode !== (isOwn ? 'eigentum' : 'miete')));
+      const mode = hsModalState.draft.mode;
+      body.querySelectorAll('[data-sec]').forEach(el => el.classList.toggle('hidden', !el.dataset.sec.split(' ').includes(mode)));
+      const garage = fzVal('hsType') === 'garage';
+      setLbl('hsMoveIn', mode === 'vermietet' ? 'Im Besitz seit' : (garage ? 'Gemietet / gekauft am' : 'Eingezogen am'));
+      setLbl('hsMoveOut', mode === 'vermietet' ? 'Verkauft am' : (garage ? 'Abgegeben am' : 'Ausgezogen am'));
+      setLbl('hsArea', garage ? 'Fläche' : 'Wohnfläche');
+      setLbl('hsDepPaid', mode === 'vermietet' ? 'Kaution erhalten am' : 'Kaution gezahlt am');
+      setLbl('hsDepBack', mode === 'vermietet' ? 'Kaution zurückgezahlt am' : 'Kaution zurück am');
+      const eh = document.getElementById('hsEndHead');
+      if (eh) eh.textContent = mode === 'vermietet' ? '🏁 Verkauf' : '🚚 Auszug';
     };
     body.querySelectorAll('#hsMode [data-mode]').forEach(b => b.addEventListener('click', () => {
       hsModalState.draft.mode = b.dataset.mode;
       body.querySelectorAll('#hsMode [data-mode]').forEach(x => x.classList.toggle('active', x === b));
       ui();
     }));
+    document.getElementById('hsType').addEventListener('change', ui);
     ui();
     hsWireFooter('hsHome', hsSaveHome, () => hsDeleteHome(h.id));
   });
@@ -43271,7 +44156,9 @@ function hsSaveHome() {
   if (!st || st.mode !== 'home') return;
   const err = msg => fzShowErr('hsHomeError', msg);
   const existing = st.id ? hsHomeById(st.id) : null;
-  const own = st.draft.mode === 'eigentum';
+  const mode = ['eigentum', 'vermietet'].includes(st.draft.mode) ? st.draft.mode : 'miete';
+  const own = mode !== 'miete';
+  const letting = mode === 'vermietet';
   const today = finTodayIso();
   const num = (id, max) => { const raw = fzVal(id); if (!raw) return ''; const v = hsDec(raw); return isFinite(v) && v >= 0 && v <= max ? v : NaN; };
   const vals = { area: num('hsArea', 100000), rooms: num('hsRooms', 1000), persons: num('hsPersons', 100), built: num('hsBuilt', 2200) };
@@ -43285,20 +44172,24 @@ function hsSaveHome() {
   if (vtIsIso(moveIn) && vtIsIso(moveOut) && moveOut < moveIn) return err('Das Auszugsdatum liegt vor dem Einzug.');
   const fixStart = vtIsIso(fzVal('hsFixStart')) ? fzVal('hsFixStart') : hsNextMonthFirst();
   const id = existing ? existing.id : 'h' + newRecordId().slice(0, 14);
-  const lordName = own ? fzVal('hsLordName2') : fzVal('hsLordName');
+  const prevTen = (existing && existing.tenant) || {};
   const home = {
     ...(existing || {}),
-    id, mode: own ? 'eigentum' : 'miete',
+    id, mode,
     name: fzVal('hsName').slice(0, 60), type: fzVal('hsType') || 'wohnung', address: fzVal('hsAddress').slice(0, 200),
     moveIn: vtIsIso(moveIn) ? moveIn : '', moveOut: vtIsIso(moveOut) ? moveOut : '',
     area: vals.area, rooms: vals.rooms, persons: vals.persons === '' ? '' : Math.round(vals.persons), built: vals.built === '' ? '' : Math.round(vals.built),
     heating: fzVal('hsHeating'), color: st.draft.color || HS_COLORS[0],
     landlord: {
-      name: lordName.slice(0, 120),
+      name: (own ? fzVal('hsLordName2') : fzVal('hsLordName')).slice(0, 120),
       phone: (own ? fzVal('hsLordPhone2') : fzVal('hsLordPhone')).slice(0, 60),
       email: (own ? fzVal('hsLordMail2') : fzVal('hsLordMail')).slice(0, 120),
       address: own ? ((existing && existing.landlord && existing.landlord.address) || '') : fzVal('hsLordAddr').slice(0, 200),
     },
+    tenant: letting ? {
+      name: fzVal('hsTenName').slice(0, 120), phone: fzVal('hsTenPhone').slice(0, 60), email: fzVal('hsTenMail').slice(0, 120),
+      since: vtIsIso(fzVal('hsTenSince')) ? fzVal('hsTenSince') : '',
+    } : prevTen,
     rent: {
       kind: fzVal('hsRentKind') || 'normal', lastIncrease: vtIsIso(fzVal('hsLastInc')) ? fzVal('hsLastInc') : '',
       notice: Number(fzVal('hsNotice')) || 3, deposit: money.hsDeposit, depositPaid: vtIsIso(fzVal('hsDepPaid')) ? fzVal('hsDepPaid') : '',
@@ -43314,17 +44205,17 @@ function hsSaveHome() {
     created: (existing && existing.created) || today, updated: today,
   };
   // Kreditrate aus dem Kredit übernehmen, wenn keine eigene Fixkosten-Rate eingetragen ist
-  if (own && money.hsf_loan === '' ) {
+  if (own && money.hsf_loan === '') {
     const ln = hsLoan(home);
     if (ln && ln.M > 0) money.hsf_loan = Math.round(ln.M * 100) / 100;
   }
-  // Fixkosten als regelmäßige Buchungen
+  // Fixkosten (und bei Vermietung die Mieteinnahmen) als regelmäßige Buchungen
   const book = fzChecked('hsFixBook');
   const fix = {};
   const ended = vtIsIso(home.moveOut);
   HS_FIX.forEach(f => {
     const prev = (existing && existing.fix && existing.fix[f.key]) || {};
-    const active = f.mode === home.mode;
+    const active = hsFixMatch(f, mode);
     const amount = active && money['hsf_' + f.key] !== '' ? money['hsf_' + f.key] : 0;
     let recId = prev.recId && finance.recurring.some(x => x.id === prev.recId) ? prev.recId : '';
     if (book && amount > 0 && !ended) {
@@ -43334,14 +44225,15 @@ function hsSaveHome() {
         const y = Number(fixStart.slice(0, 4));
         start = [y + '-02-15', y + '-05-15', y + '-08-15', y + '-11-15', (y + 1) + '-02-15'].find(x => x >= fixStart);
       }
-      const fields = { title: f.label + ' · ' + hsName(home), amount, category: HS_FIN_CATEGORY, paidBy: '', note: '', link: 'haus:' + id, interval: f.interval, start };
+      const cat = f.income ? FIN_INCOME_CATEGORY : HS_FIN_CATEGORY;
+      const fields = { title: f.label.replace(/\s*\(Einnahme\)$/, '') + ' · ' + hsName(home), amount: f.income ? -amount : amount, category: cat, paidBy: '', note: '', link: 'haus:' + id, interval: f.interval, start };
       if (recId) {
         const rr = finance.recurring.find(x => x.id === recId);
-        finUpsertRecurring(recId, { ...fields, note: rr.note || '', paidBy: rr.paidBy || '', category: rr.category || HS_FIN_CATEGORY, start: finRecStart(rr) || start, interval: finRecInterval(rr) }, null);
+        finUpsertRecurring(recId, { ...fields, note: rr.note || '', paidBy: rr.paidBy || '', category: rr.category || cat, start: finRecStart(rr) || start, interval: finRecInterval(rr) }, null);
       } else recId = finUpsertRecurring(null, fields).id;
       finance.recurring = finance.recurring.map(x => x.id === recId ? { ...x, home: id, homeFix: f.key } : x);
     } else if (recId && (amount === 0 || ended)) {
-      // Auszug: endet mit dem Auszugsmonat
+      // Auszug bzw. Verkauf: endet mit dem Monat
       if (ended) finance.recurring = finance.recurring.map(x => x.id === recId ? { ...x, until: home.moveOut } : x);
       else finEndRecurring(recId);
       if (!finance.recurring.some(x => x.id === recId)) recId = '';
@@ -43359,7 +44251,7 @@ function hsSaveHome() {
 function hsDeleteHome(id) {
   const h = hsHomeById(id);
   if (!h) return;
-  if (!confirm('„' + hsName(h) + '“ mit allen Rechnungen, Mängeln, Projekten und Zählerständen löschen? Gebuchte Ausgaben und Dokumente bleiben erhalten, regelmäßige Buchungen enden.')) return;
+  if (!confirm('„' + hsName(h) + '“ mit allen Rechnungen, Mängeln, Projekten, Zählerständen, Pflanzen und Schlüsseln löschen? Gebuchte Ausgaben und Dokumente bleiben erhalten, regelmäßige Buchungen enden.')) return;
   HS_FIX.forEach(f => { const rid = h.fix && h.fix[f.key] && h.fix[f.key].recId; if (rid) finEndRecurring(rid); });
   const meterIds = new Set(hsMeters(id).map(m => m.id));
   hsSet('homes', hsHomes().filter(x => x.id !== id));
@@ -43368,6 +44260,8 @@ function hsDeleteHome(id) {
   hsSet('homeProjects', hsArr('homeProjects').filter(x => x.home !== id));
   hsSet('homeMeters', hsArr('homeMeters').filter(x => x.home !== id));
   hsSet('homeReadings', hsArr('homeReadings').filter(x => !meterIds.has(x.meter)));
+  hsSet('homePlants', hsArr('homePlants').filter(x => x.home !== id));
+  hsSet('homeKeys', hsArr('homeKeys').filter(x => x.home !== id));
   finance.contracts = vtContracts().map(c => c.home === id ? { ...c, home: '' } : c);
   hsHomeId = '';
   hsCloseModal();
@@ -43915,7 +44809,7 @@ function hsDeleteReading(id) {
 }
 
 /* ---------- Popup: Wartung ---------- */
-function hsOpenMaintModal(id, tplId) {
+function hsOpenMaintModal(id, tplId, garden = false) {
   if (!hsCanEdit()) return;
   const x = id ? hsMaintItems().find(m => m.id === id) : null;
   const tpl = tplId ? HS_MAINT_TEMPLATES.find(t => t.tpl === tplId) : null;
@@ -43928,14 +44822,14 @@ function hsOpenMaintModal(id, tplId) {
   }
   const d = x || { icon: tpl ? tpl.icon : '🔧', title: tpl ? tpl.title : '', months: tpl ? tpl.months : 12, lead: 0, active: true, assignedMemberIds: [], rotate: '', tpl: tpl ? tpl.tpl : '' };
   const next = x ? hsMaintNext(x) : firstDue;
-  hsModalState = { mode: 'maint', id: x ? x.id : null, tpl: d.tpl || '', nextStart: next, oldKey: x ? hsMaintKey(x) : '' };
+  hsModalState = { mode: 'maint', id: x ? x.id : null, tpl: d.tpl || '', nextStart: next, oldKey: x ? hsMaintKey(x) : '', garden: !!(garden || (tpl && tpl.garden) || (x && x.garden)) };
   const monthsOpts = [[1, 'Monatlich'], [2, 'Alle 2 Monate'], [3, 'Vierteljährlich'], [6, 'Halbjährlich'], [12, 'Jährlich'], [24, 'Alle 2 Jahre'], [36, 'Alle 3 Jahre'], [60, 'Alle 5 Jahre']];
   if (!monthsOpts.some(o => o[0] === Number(d.months))) monthsOpts.push([Number(d.months), 'Alle ' + d.months + ' Monate']);
   const html = `
     <h3 class="font-serif text-lg mb-3 pr-6">${x ? 'Wartung bearbeiten' : 'Neue Wartung'}</h3>
     <div class="grid gap-3" style="grid-template-columns:4.2rem minmax(0,1fr)">
       ${fzIn('hswIcon', 'Symbol', d.icon || '🔧', { max: 8 })}
-      ${fzIn('hswTitle', 'Was ist zu tun?', d.title || '', { ph: 'z. B. Regenrinne säubern', max: 100 })}
+      ${fzIn('hswTitle', 'Was ist zu tun?', d.title || '', { ph: hsModalState.garden ? 'z. B. Rosen zurückschneiden' : 'z. B. Regenrinne säubern', max: 100 })}
     </div>
     <div class="fz-grid2">
       ${fzSel('hswMonths', 'Wie oft?', monthsOpts.map(o => [String(o[0]), o[1]]), String(d.months || 12))}
@@ -43972,6 +44866,7 @@ function hsSaveMaint() {
     assignedMemberIds: who, rotate: who.length > 1 && fzChecked('hswRotate') ? 'fair' : '',
     note: fzVal('hswNote').slice(0, 300), active: fzChecked('hswActive'),
   };
+  if (st.garden) item.garden = true;
   if (!existing || next !== st.nextStart) { item.next = next; item.nextSet = finTodayIso(); }
   const titleChanged = existing && hsMaintKey(existing) !== hsMaintKey(item);
   // Offene Aufgabe passt nicht mehr (anderer Titel, neue Fälligkeit, pausiert): entfernen – der Server legt sie passend neu an
@@ -44175,6 +45070,7 @@ document.addEventListener('click', (e) => {
     else if (hsTab === 'kosten') hsOpenLogModal(null);
     else if (hsTab === 'zaehler') hsOpenReadingModal({});
     else if (hsTab === 'wartung') hsOpenMaintModal(null);
+    else if (hsTab === 'garten') hsOpenPlantModal(null);
     else if (h) hsOpenHomeModal(h.id); else hsOpenHomeModal(null, 'miete');
     return;
   }
@@ -44205,6 +45101,15 @@ document.addEventListener('click', (e) => {
     case 'maint-tpl': hsOpenMaintModal(null, el.dataset.tpl); break;
     case 'maint-edit': if (hsCanEdit()) hsOpenMaintModal(id); break;
     case 'maint-open': hsOpen('wartung'); break;
+    case 'maint-new-garden': hsOpenMaintModal(null, null, true); break;
+    case 'mod-toggle': hsToggleModule(id); break;
+    case 'key-new': hsOpenKeyModal(null); break;
+    case 'key-edit': if (hsCanEdit()) hsOpenKeyModal(id); break;
+    case 'plant-new': hsOpenPlantModal(null); break;
+    case 'plant-tpl': hsOpenPlantModal(null, el.dataset.tpl); break;
+    case 'plant-edit': if (hsCanEdit()) hsOpenPlantModal(id); break;
+    case 'plant-water': hsPlantTick(id, false); break;
+    case 'plant-fert': hsPlantTick(id, true); break;
     case 'contract': openContractDetail(id); break;
     case 'contract-assign': hsOpenContractAssign(); break;
     case 'contract-new': hsNewContract(); break;

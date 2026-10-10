@@ -395,6 +395,7 @@ const DAILY_FIELDS = "weather_code,temperature_2m_max,temperature_2m_min,apparen
     "precipitation_probability_max,precipitation_sum,precipitation_hours,wind_speed_10m_max,wind_gusts_10m_max," +
     "wind_direction_10m_dominant,uv_index_max,sunshine_duration,sunrise,sunset";
 const FORECAST_DAYS = 16;
+const PAST_DAYS = 2;       // Zuhause → Garten & Pflanzen: hat es gestern/vorgestern geregnet?
 const DAY_MS = 24 * 60 * 60 * 1000;
 function numAt(arr, i, digits) {
     if (!Array.isArray(arr) || arr[i] == null || !isFinite(arr[i])) return null;
@@ -447,12 +448,12 @@ function weather(familyId, fallbackLat, fallbackLon) {
     if (!pl) return { keinOrt: true };
     // auf ~1 km runden: gleicher Zwischenspeicher für alle, und das Wetter braucht es nicht genauer
     const rl = Math.round(pl.lat * 100) / 100, ro = Math.round(pl.lon * 100) / 100;
-    const key = "pinnWetter16:" + rl + "," + ro;
+    const key = "pinnWetter16p:" + rl + "," + ro;
     let data = cacheGet(key, WETTER_TTL_MS);
     if (!data) {
         const url = "https://api.open-meteo.com/v1/forecast?latitude=" + rl + "&longitude=" + ro +
             "&current=temperature_2m,apparent_temperature,weather_code,uv_index,wind_speed_10m,relative_humidity_2m" +
-            "&daily=" + DAILY_FIELDS + "&forecast_days=" + FORECAST_DAYS + "&timezone=auto";
+            "&daily=" + DAILY_FIELDS + "&forecast_days=" + FORECAST_DAYS + "&past_days=" + PAST_DAYS + "&timezone=auto";
         const res = httpGet(url, 15);
         if (res.statusCode !== 200) throw new Error("Wetterdienst gerade nicht erreichbar (Status " + res.statusCode + ").");
         const j = parseJson(res) || {};
@@ -466,7 +467,9 @@ function weather(familyId, fallbackLat, fallbackLon) {
                 wind: isFinite(cur.wind_speed_10m) ? Math.round(cur.wind_speed_10m) : null,
                 feuchte: isFinite(cur.relative_humidity_2m) ? Math.round(cur.relative_humidity_2m) : null,
             },
-            tage: dailyRows(j.daily || {}, FORECAST_DAYS),
+            // die ersten PAST_DAYS Zeilen sind vergangene Tage (Regenmenge für Garten & Pflanzen)
+            tage: dailyRows(j.daily || {}).slice(PAST_DAYS, PAST_DAYS + FORECAST_DAYS),
+            vergangen: dailyRows(j.daily || {}).slice(0, PAST_DAYS).map(r => ({ date: r.date, mm: r.mm, max: r.max, min: r.min })),
         };
         cacheSet(key, data);
     }
