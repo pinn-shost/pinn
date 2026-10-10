@@ -14,7 +14,9 @@
 //     zuerst frisch vom Server geholt (Updates kommen sofort an) - nur ohne Verbindung bzw. wenn der
 //     Server nicht antwortet, startet pinn. mit der zuletzt geladenen Version.
 //     Rezeptbilder (/api/files/...) werden nach dem ersten Anzeigen ebenfalls vorgehalten, ebenso die
-//     gewählte Sprachdatei (/lang/<code>.js). pdf.js (groß, nur beim PDF-Import gebraucht) wird erst
+//     gewählte Sprachdatei (/lang/<code>.js). Die App-Dateien unter /js/ (ab 1.40 aus der index.html
+//     ausgelagert) werden mit jeder frisch geladenen App-Seite gleich mit vorgehalten, alte Fassungen
+//     danach aus dem Speicher entfernt. pdf.js (groß, nur beim PDF-Import gebraucht) wird erst
 //     beim ersten Benutzen vorgehalten, nicht schon bei der Installation.
 //     Alle anderen Server-Aufrufe (/api/...) laufen unverändert direkt zum Server - Daten, die offline
 //     angelegt werden, sichert die App selbst und trägt sie nach.
@@ -58,6 +60,27 @@ async function precache() {
   const own = [SHELL_URL].concat(STATIC_FILES, VENDOR_FILES).map(u => fetch(u, { cache: 'no-store', credentials: 'same-origin' })
     .then(r => (r && r.ok ? cache.put(u, r) : null)).catch(() => null));
   await Promise.all(own);
+  const shell = await cache.match(SHELL_URL);
+  if (shell) await cacheAppScripts(shell);
+}
+
+// App-Dateien unter /js/ (in der App-Seite als <script src="js/…?v=…">): alle, die die frisch
+// geladene Seite nennt, gleich mit vorhalten – damit startet pinn. auch offline vollständig.
+// Fassungen, die die aktuelle Seite nicht mehr nennt, werden aus dem Speicher entfernt.
+async function cacheAppScripts(res) {
+  try {
+    const html = await res.text();
+    const urls = html.split('src="js/').slice(1).map(part => new URL('js/' + part.split('"')[0], self.location.origin + '/').href);
+    if (!urls.length) return;
+    const cache = await caches.open(SHELL_CACHE);
+    await Promise.all(urls.map(async (u) => {
+      if (await cache.match(u)) return;
+      const r = await fetch(u, { cache: 'no-store', credentials: 'same-origin' });
+      if (r && r.ok) await cache.put(u, r);
+    }));
+    const keys = await cache.keys();
+    await Promise.all(keys.filter(k => new URL(k.url).pathname.indexOf('/js/') === 0 && urls.indexOf(k.url) === -1).map(k => cache.delete(k)));
+  } catch (e) { /* beim nächsten Laden erneut */ }
 }
 
 self.addEventListener('install', (event) => {
@@ -89,6 +112,7 @@ async function appShell(req) {
   const network = fetch(req.url, { cache: 'no-store', credentials: 'same-origin' }).then(res => {
     if (!res || !res.ok) throw new Error('HTTP ' + (res ? res.status : 0));
     cache.put(SHELL_URL, res.clone()).catch(() => { /* egal */ });
+    cacheAppScripts(res.clone());
     return res;
   });
   network.catch(() => { /* wird unten behandelt */ });
@@ -154,6 +178,8 @@ self.addEventListener('fetch', (event) => {
     if (url.pathname.indexOf('/vendor/') === 0) { event.respondWith(staleWhileRevalidate(event, url.search ? req.url : url.pathname)); return; }
     // Sprachdateien (pb_public/lang/…): je Version (?v=…) einmal geladen, danach auch offline da
     if (url.pathname.indexOf('/lang/') === 0) { event.respondWith(staleWhileRevalidate(event, req.url)); return; }
+    // App-Dateien (pb_public/js/…): je Version (?v=…) gespeichert, sofort aus dem Speicher
+    if (url.pathname.indexOf('/js/') === 0) { event.respondWith(staleWhileRevalidate(event, req.url)); return; }
     return; // alles andere (v. a. /api/...) direkt zum Server
   }
   if (FONT_HOSTS.indexOf(url.hostname) !== -1) event.respondWith(staleWhileRevalidate(event, req.url));
