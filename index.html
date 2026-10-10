@@ -25906,7 +25906,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.38.0';
+const APP_VERSION = '1.38.1';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -26877,6 +26877,7 @@ const PINN_CHANGELOG = [
       ['info', 'Einkaufsliste & Vorrat: Einheiten automatisch in Einzahl oder Mehrzahl (1 Dose · 2 Dosen, Packung/Packungen, Glas/Gläser – auch „Dose(n)“ wird verstanden). Am Handy zeigt die Einkaufsliste bei Vorrats-Artikeln nur die Zahl, Gewicht und Menge (g, kg, ml, l …) bleiben stehen'],
       ['fix', 'Das Symbol im Kopf (z. B. der Schlüssel) verdeckte bei Zuhause und Fahrzeugen die erste Kachel – sitzt jetzt am Farbband'],
       ['info', 'Server: neu sprache.pb.js und pinn-sprache.js, angepasst pinn-zuhause.js (Regenmenge der letzten zwei Tage); Sprachdateien en/fr/es ergänzt'],
+      ['fix', '1.38.1: Mehr Sicherheit bei der Installation – die Bibliotheken für PDF-Import und Foto-Texterkennung werden nur noch in fest eingetragenen Versionen geladen (pdf.js 4.10.38, Tesseract 5.1.1) statt „neueste 4.x/5.x“. Ihre Prüfsummen werden auf dem NAS festgehalten und bei jedem Update geprüft; verändert sich eine Datei unbemerkt, warnt das Setup (pinn-setup.sh)'],
     ],
   },
   {

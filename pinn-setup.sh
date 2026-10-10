@@ -130,6 +130,18 @@ m() {
     en:libsfail) echo "Not all libraries could be downloaded – PDF import or “Read photo” will be missing. pinn. still works; the script tries again next time." ;;
     fr:libsfail) echo "Toutes les bibliothèques n'ont pas pu être téléchargées – l'import PDF ou la lecture de photo manqueront. pinn. fonctionne quand même ; le script réessaiera la prochaine fois." ;;
     es:libsfail) echo "No se pudieron descargar todas las bibliotecas – faltará importar PDF o «Leer foto». pinn. funciona igualmente; el script lo volverá a intentar la próxima vez." ;;
+    de:sumsneu) echo "Prüfsummen der Bibliotheken gespeichert (pb_public/vendor/SHA256SUMS)" ;;
+    en:sumsneu) echo "Library checksums saved (pb_public/vendor/SHA256SUMS)" ;;
+    fr:sumsneu) echo "Sommes de contrôle des bibliothèques enregistrées (pb_public/vendor/SHA256SUMS)" ;;
+    es:sumsneu) echo "Sumas de verificación de las bibliotecas guardadas (pb_public/vendor/SHA256SUMS)" ;;
+    de:sumsok) echo "Bibliotheken unverändert (Prüfsummen stimmen)" ;;
+    en:sumsok) echo "Libraries unchanged (checksums match)" ;;
+    fr:sumsok) echo "Bibliothèques inchangées (sommes de contrôle correctes)" ;;
+    es:sumsok) echo "Bibliotecas sin cambios (sumas de verificación correctas)" ;;
+    de:sumsfail) echo "ACHTUNG: Diese Bibliotheken wurden seit der Installation verändert. Wenn du das nicht selbst warst, die genannten Dateien löschen und das Skript erneut starten – sie werden dann frisch in der festen Version geladen:" ;;
+    en:sumsfail) echo "WARNING: These libraries have changed since installation. If you didn't do this yourself, delete the listed files and run the script again – they will be downloaded fresh in the pinned version:" ;;
+    fr:sumsfail) echo "ATTENTION : ces bibliothèques ont été modifiées depuis l'installation. Si ce n'est pas vous, supprimez les fichiers indiqués et relancez le script – ils seront retéléchargés dans la version fixée :" ;;
+    es:sumsfail) echo "ATENCIÓN: estas bibliotecas han cambiado desde la instalación. Si no has sido tú, borra los archivos indicados y vuelve a ejecutar el script; se descargarán de nuevo en la versión fijada:" ;;
     de:backup) echo "Ersetzte Dateien gesichert in" ;;
     en:backup) echo "Replaced files backed up in" ;;
     fr:backup) echo "Fichiers remplacés sauvegardés dans" ;;
@@ -159,6 +171,7 @@ echo "  $(m sort)"
 TS=$(date +%Y-%m-%d_%H%M%S)
 ALT="_alt/$TS"
 ANZ=0
+NEU_GELADEN=""   # in diesem Lauf neu hinzugekommene Bibliotheksdateien (für die Prüfsummen)
 
 # Download-Zusätze entfernen: „datei (1).js“ → „datei.js“, „x_pb.js“ → „x.pb.js“, „x.pb.js.txt“ → „x.pb.js“
 normname() {
@@ -198,6 +211,7 @@ einsortieren() {
     mv "$ZIEL" "$ALT/$ZIEL"
   fi
   mv "$QUELLE" "$ZIEL"
+  case "$ZIEL" in pb_public/vendor/pdfjs/*|pb_public/vendor/tesseract/*) NEU_GELADEN="$NEU_GELADEN $ZIEL" ;; esac
   echo "    $BASIS → $ZIEL"
   ANZ=$((ANZ + 1))
 }
@@ -258,36 +272,77 @@ fi
 # Bibliotheken für PDF-Import (pdf.js) und „Foto einlesen“ (Tesseract) – liegen selbst gehostet auf
 # dem NAS, damit pinn. keinen Code von fremden Servern lädt. Fehlen sie (Neuinstallation), lädt das
 # Skript sie einmalig herunter. Schon vorhandene Dateien bleiben unangetastet.
+# Feste Versionen (ab 1.38.1): npm-Versionen sind unveränderlich – es wird immer genau diese Datei
+# geladen, nie automatisch eine neuere. Neue Versionen nur hier bewusst eintragen.
+PDFJS_VERSION=4.10.38
+TESSERACT_VERSION=5.1.1
+TESSERACT_CORE_VERSION=5.1.1
+TESSERACT_DEU_VERSION=1.0.0
 hole() {  # hole <URL> <Ziel>
   [ -s "$2" ] && return 0
   mkdir -p "$(dirname "$2")"
   if command -v curl >/dev/null 2>&1; then
-    curl -fsSL --retry 2 --connect-timeout 15 -o "$2.part" "$1" 2>/dev/null
+    curl -fsSL --proto '=https' --retry 2 --connect-timeout 15 -o "$2.part" "$1" 2>/dev/null
   else
     wget -q -T 30 -O "$2.part" "$1" 2>/dev/null
   fi
-  if [ -s "$2.part" ]; then mv "$2.part" "$2"; return 0; fi
+  if [ -s "$2.part" ]; then mv "$2.part" "$2"; NEU_GELADEN="$NEU_GELADEN $2"; return 0; fi
   rm -f "$2.part"; return 1
 }
 V=pb_public/vendor
 CDN=https://cdn.jsdelivr.net/npm
-if [ ! -s "$V/pdfjs/pdf.min.mjs" ] || [ ! -s "$V/tesseract/tesseract.min.js" ] || [ ! -s "$V/tesseract/lang/deu.traineddata.gz" ]; then
+if [ ! -s "$V/pdfjs/pdf.min.mjs" ] || [ ! -s "$V/pdfjs/pdf.worker.min.mjs" ] || [ ! -s "$V/tesseract/tesseract.min.js" ] \
+   || [ ! -s "$V/tesseract/worker.min.js" ] || [ ! -s "$V/tesseract/lang/deu.traineddata.gz" ]; then
   echo "  $(m libs)"
   LF=0
-  hole "$CDN/pdfjs-dist@4/build/pdf.min.mjs"        "$V/pdfjs/pdf.min.mjs"        || LF=1
-  hole "$CDN/pdfjs-dist@4/build/pdf.worker.min.mjs" "$V/pdfjs/pdf.worker.min.mjs" || LF=1
-  hole "$CDN/tesseract.js@5/dist/tesseract.min.js"  "$V/tesseract/tesseract.min.js" || LF=1
-  hole "$CDN/tesseract.js@5/dist/worker.min.js"     "$V/tesseract/worker.min.js"    || LF=1
+  hole "$CDN/pdfjs-dist@$PDFJS_VERSION/build/pdf.min.mjs"        "$V/pdfjs/pdf.min.mjs"        || LF=1
+  hole "$CDN/pdfjs-dist@$PDFJS_VERSION/build/pdf.worker.min.mjs" "$V/pdfjs/pdf.worker.min.mjs" || LF=1
+  hole "$CDN/tesseract.js@$TESSERACT_VERSION/dist/tesseract.min.js" "$V/tesseract/tesseract.min.js" || LF=1
+  hole "$CDN/tesseract.js@$TESSERACT_VERSION/dist/worker.min.js"    "$V/tesseract/worker.min.js"    || LF=1
   for c in tesseract-core tesseract-core-simd tesseract-core-lstm tesseract-core-simd-lstm; do
-    hole "$CDN/tesseract.js-core@5/$c.wasm.js" "$V/tesseract/core/$c.wasm.js" || LF=1
+    hole "$CDN/tesseract.js-core@$TESSERACT_CORE_VERSION/$c.wasm.js" "$V/tesseract/core/$c.wasm.js" || LF=1
   done
   for c in tesseract-core-relaxedsimd tesseract-core-relaxedsimd-lstm; do   # nur neuere Versionen
-    hole "$CDN/tesseract.js-core@5/$c.wasm.js" "$V/tesseract/core/$c.wasm.js" || true
+    hole "$CDN/tesseract.js-core@$TESSERACT_CORE_VERSION/$c.wasm.js" "$V/tesseract/core/$c.wasm.js" || true
   done
-  hole "$CDN/@tesseract.js-data/deu/4.0.0_best_int/deu.traineddata.gz" "$V/tesseract/lang/deu.traineddata.gz" || LF=1
+  hole "$CDN/@tesseract.js-data/deu@$TESSERACT_DEU_VERSION/4.0.0_best_int/deu.traineddata.gz" "$V/tesseract/lang/deu.traineddata.gz" || LF=1
   if [ "$LF" -eq 0 ]; then ok "$(m libsok)"; else warn "$(m libsfail)"; fi
 else
   ok "$(m libsok)"
+fi
+
+# Prüfsummen der Bibliotheken (pb_public/vendor/SHA256SUMS): Beim ersten Lauf wird festgehalten, wie
+# jede Datei aussieht; neu geladene Dateien werden eingetragen. Bei jedem weiteren Lauf (auch bei
+# Updates per Knopf) wird geprüft, ob sich seitdem etwas verändert hat – dann gibt es eine Warnung.
+SUMS="$V/SHA256SUMS"
+if command -v sha256sum >/dev/null 2>&1; then
+  touch "$SUMS"; chmod 644 "$SUMS" 2>/dev/null
+  NEU_EINTRAG=0
+  # neu geladene oder neu einsortierte Dateien: alten Eintrag ersetzen
+  for f in $NEU_GELADEN; do
+    [ -s "$f" ] || continue
+    awk -v p="$f" '$2 != p' "$SUMS" > "$SUMS.tmp" && mv "$SUMS.tmp" "$SUMS"
+    sha256sum "$f" >> "$SUMS"; NEU_EINTRAG=1
+  done
+  # vorhandene Dateien, die noch keinen Eintrag haben (bestehende Installationen beim ersten Lauf)
+  for f in $(find "$V/pdfjs" "$V/tesseract" -type f ! -name '*.part' 2>/dev/null | sort); do
+    awk -v p="$f" '$2 == p { gef=1 } END { exit gef ? 0 : 1 }' "$SUMS" && continue
+    sha256sum "$f" >> "$SUMS"; NEU_EINTRAG=1
+  done
+  # Einträge zu Dateien, die es nicht mehr gibt, entfernen
+  awk '{ print $2 }' "$SUMS" | while read -r f; do
+    [ -f "$f" ] || { awk -v p="$f" '$2 != p' "$SUMS" > "$SUMS.tmp" && mv "$SUMS.tmp" "$SUMS"; }
+  done
+  [ "$NEU_EINTRAG" -eq 1 ] && ok "$(m sumsneu)"
+  if [ -s "$SUMS" ]; then
+    GEAENDERT=$(sha256sum -c "$SUMS" 2>/dev/null | grep -v ': OK$' | sed 's/: .*$//')
+    if [ -z "$GEAENDERT" ]; then
+      ok "$(m sumsok)"
+    else
+      warn "$(m sumsfail)"
+      for f in $GEAENDERT; do echo "    $f"; done
+    fi
+  fi
 fi
 
 # Fehlende Hilfsdateien (per require() eingebunden) melden
