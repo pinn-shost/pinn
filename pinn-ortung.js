@@ -3,15 +3,21 @@
 //
 // Familie → Ortung (Live-Standorte, bekannte Orte, „Ich bin unterwegs“)
 //
-// Technik:
-//  - Traccar (eigener Container „traccar“ in der docker-compose.yaml) sammelt die Positionen.
-//    Handys senden mit der App „Traccar Client“ (iOS/Android, auch im Hintergrund), GPS-Tracker
-//    (z. B. für den Hund) direkt per GT06/H02/Watch-Protokoll an die Ports des Traccar-Containers.
-//  - Handys müssen dafür nichts Neues erreichen: Die Adresse <pinn.>/api/pinn/ortung/osmand nimmt die
-//    Positionen an und reicht sie unverändert an Traccar (Port 5055, OsmAnd-Protokoll) weiter.
-//  - pinn. liest die Positionen nur hier auf dem Server über die Traccar-API. Zugangsdaten zu Traccar
-//    kommen nie in die App. Ohne Eintrag in der .env legt pinn. beim ersten Zugriff selbst ein
-//    Traccar-Konto an (Zugang in pb_data/pinn_traccar.json).
+// Technik (ab 1.34 ohne Traccar-Container für Handys):
+//  - pinn. speichert die Positionen der Handys SELBST (pb_data/pinn_positionen.json, Spur der letzten
+//    48 Std. je Gerät in pb_data/pinn_spuren/). Zwei Wege:
+//      1. App „Traccar Client“ (iOS/Android, auch im Hintergrund) sendet an <pinn.>/api/pinn/ortung/osmand
+//         (OsmAnd-Protokoll, alte und neue App-Version). Für den Akku genügt alle paar Minuten ein Standort.
+//      2. pinn. selbst (Web-App): „Standort teilen“ schickt einmalig den Standort und – solange pinn.
+//         offen ist – unterwegs neue Standorte (Route /standort, /standort-teilen).
+//  - Der Container „traccar“ ist nur noch für GPS-Tracker mit SIM-Karte (z. B. Hund) nötig – sie senden
+//    per GT06/H02/Watch-Protokoll direkt an dessen Ports. Läuft er, liest pinn. deren Positionen über die
+//    Traccar-API (Zugangsdaten nie in der App; ohne .env-Eintrag legt pinn. selbst ein Konto an,
+//    pb_data/pinn_traccar.json) und reicht Handy-Meldungen zusätzlich an ihn weiter. Läuft er nicht,
+//    merkt pinn. sich das 2 Minuten lang und fragt so lange nicht nach (keine Wartezeiten).
+//  - PINN_TRACCAR=aus in der .env schaltet Traccar ganz ab.
+//  - Standort teilen mit Dauer: je Gerät „bis“ (Zeitpunkt, 0 = bis man es beendet) und „endeZuhause“
+//    (endet beim Ankommen zu Hause). Der Minuten-Zeitplan beendet abgelaufene Freigaben.
 //  - Kartenkacheln (OpenStreetMap) und die Adresssuche laufen ebenfalls über den Server, damit die
 //    App nur mit dem NAS spricht. Kacheln werden in pb_data/pinn_kacheln zwischengespeichert.
 //  - Zuhause: Ist unter Einstellungen → Zuhause eine Adresse festgelegt (pinn-zuhause.js), gibt es den
@@ -19,7 +25,8 @@
 //    den Einstellungen; Name, Umkreis und Push-Einstellungen bleiben hier änderbar (syncHome).
 //
 // Daten je Familie: Sammlung „ortung“ (gesperrt, nur über die Routen in ortung.pb.js), Feld „daten“:
-//   { geraete: [{ id, memberId, name, emoji, typ: 'handy'|'tracker', uniqueId, traccarId, teilen, erstellt }],
+//   { geraete: [{ id, memberId, name, emoji, typ: 'handy'|'tracker', uniqueId, traccarId (0 = ohne Traccar), teilen,
+//                 bis (ms, 0 = ohne Ablauf), endeZuhause, geteiltSeit, erstellt, auto (aus „Standort teilen“ angelegt) }],
 //     orte:    [{ id, name, emoji, lat, lon, radius, zuhause, ankunft, verlassen, geraete: [], empfaenger: [],
 //                // nur Läden (Adresse einer Einkaufsliste, angelegt aus Listen → Liste bearbeiten):
 //                laden: <Listen-ID>, adresse, verweil (Min.), abhaken, erinnern, erledigtPush }],
@@ -86,6 +93,12 @@ const USERS = "benutzer";
 const STATUS_FILE = "/pb_data/pinn_ortung_status.json";
 const ZUGANG_FILE = "/pb_data/pinn_traccar.json";
 const TILE_DIR = "/pb_data/pinn_kacheln";
+const POS_FILE = "/pb_data/pinn_positionen.json";   // neueste Position je Geräte-ID (selbst gespeichert)
+const SPUR_DIR = "/pb_data/pinn_spuren";            // Verlauf je Gerät (für „Spur“ auf der Karte)
+const SPUR_MAX_MS = 48 * 60 * 60 * 1000;
+const SPUR_MAX_PUNKTE = 1500;
+const TRACCAR_AUS_MS = 2 * 60 * 1000;               // Traccar nicht erreichbar -> so lange nicht mehr fragen
+const TEILEN_MAX_MIN = 7 * 24 * 60;                 // längste wählbare Freigabe (Minuten)
 const UA = "pinn-familienapp/1.0 (selbst gehostet)";
 const POS_TTL_MS = 5000;
 const LIVE_MS = 15 * 60 * 1000;          // so lange gilt ein Standort als „live“
@@ -353,6 +366,18 @@ function syncHome(familyId, home) {
 // Traccar
 // ---------------------------------------------------------------------------------------------
 function traccarUrl() { return (env("PINN_TRACCAR_URL") || "http://traccar:8082").replace(/\/+$/, ""); }
+// Traccar ist optional: aus per .env (PINN_TRACCAR=aus) oder gerade nicht erreichbar (dann 2 Min. Pause)
+function traccarAus() { return /^(aus|off|0|nein|false)$/i.test(env("PINN_TRACCAR")); }
+function traccarAn() {
+    if (traccarAus()) return false;
+    try { const t = Number($app.store().get("pinnTraccarAus") || 0); if (t && Date.now() - t < TRACCAR_AUS_MS) return false; } catch (e) { /* egal */ }
+    return true;
+}
+function traccarWeg() { try { $app.store().set("pinnTraccarAus", Date.now()); } catch (e) { /* egal */ } }
+function traccarDa() { try { $app.store().remove("pinnTraccarAus"); } catch (e) { /* egal */ } }
+function traccarGestoert() {
+    try { const t = Number($app.store().get("pinnTraccarAus") || 0); return !!t && Date.now() - t < TRACCAR_AUS_MS; } catch (e) { return false; }
+}
 function osmandUrl() { return (env("PINN_TRACCAR_OSMAND_URL") || "http://traccar:5055").replace(/\/+$/, ""); }
 
 function zugang() {
@@ -410,13 +435,15 @@ function ensureTraccarUser() {
 }
 
 function api(method, path, body) {
+    if (!traccarAn()) throw new Error(traccarAus() ? "Traccar ist ausgeschaltet (PINN_TRACCAR=aus)." : "Traccar ist nicht erreichbar (Container „traccar“ gestartet?).");
     let res;
-    try { res = rawApi(method, path, body); } catch (e) { throw new Error("Traccar ist nicht erreichbar (Container „traccar“ gestartet?)."); }
+    try { res = rawApi(method, path, body); } catch (e) { traccarWeg(); throw new Error("Traccar ist nicht erreichbar (Container „traccar“ gestartet?)."); }
     if (res.statusCode === 401) {
         ensureTraccarUser();
         res = rawApi(method, path, body);
     }
-    if (res.statusCode === 0) throw new Error("Traccar ist nicht erreichbar (Container „traccar“ gestartet?).");
+    if (res.statusCode === 0) { traccarWeg(); throw new Error("Traccar ist nicht erreichbar (Container „traccar“ gestartet?)."); }
+    traccarDa();
     if (res.statusCode >= 400) {
         const t = bodyText(res).slice(0, 200);
         const err = new Error("Traccar: " + (t || ("Status " + res.statusCode)));
@@ -426,7 +453,93 @@ function api(method, path, body) {
     return parseJson(res);
 }
 
-// Neueste Positionen aller Geräte (für alle Familien zusammen, 5 Sekunden zwischengespeichert)
+// ---------------------------------------------------------------------------------------------
+// Eigener Positionsspeicher (Handys: App „Traccar Client“ oder pinn. selbst) – ohne Traccar-Container
+// ---------------------------------------------------------------------------------------------
+function uidKey(uid) { return String(uid == null ? "" : uid).replace(/\s+/g, "").toLowerCase().slice(0, 64); }
+function spurPath(uid) { return SPUR_DIR + "/" + uidKey(uid).replace(/[^a-z0-9._-]/g, "_") + ".json"; }
+function ownPositions() {
+    try {
+        const c = $app.store().get("pinnEigenePos");
+        if (c && c.map) return c.map;
+    } catch (e) { /* weiter */ }
+    const map = readJsonFile(POS_FILE) || {};
+    try { $app.store().set("pinnEigenePos", { map: map }); } catch (e) { /* egal */ }
+    return map;
+}
+// Speichert eine Position (nur, wenn sie neuer ist als die gespeicherte) und hängt sie an die Spur an.
+// p: { lat, lon, zeit, genau, tempo, kurs, akku, laedt }, quelle: "app" | "pinn"
+// mitSpur = false: nur die neueste Position merken (z. B. wenn die Person gerade nicht teilt – für SOS),
+// aber keinen Verlauf aufzeichnen.
+function saveOwnPosition(uid, p, quelle, mitSpur) {
+    const key = uidKey(uid);
+    if (!key || !p || !isFinite(p.lat) || !isFinite(p.lon) || (p.lat === 0 && p.lon === 0)) return false;
+    if (Math.abs(p.lat) > 90 || Math.abs(p.lon) > 180) return false;
+    const now = Date.now();
+    let zeit = Number(p.zeit || 0);
+    if (!zeit || zeit > now + 60 * 1000) zeit = now; // Uhr des Handys geht vor -> Eingangszeit
+    const fin = (v) => v !== null && v !== undefined && v !== "" && isFinite(Number(v));
+    const row = {
+        lat: Math.round(Number(p.lat) * 1e6) / 1e6, lon: Math.round(Number(p.lon) * 1e6) / 1e6, zeit: zeit, server: now,
+        genau: fin(p.genau) && Number(p.genau) > 0 ? Math.round(Number(p.genau)) : null,
+        tempo: fin(p.tempo) && Number(p.tempo) >= 0 ? Math.round(Number(p.tempo)) : null,
+        kurs: fin(p.kurs) && Number(p.kurs) >= 0 ? Math.round(Number(p.kurs)) : null,
+        akku: fin(p.akku) && Number(p.akku) >= 0 && Number(p.akku) <= 100 ? Math.round(Number(p.akku)) : null,
+        laedt: !!p.laedt, quelle: quelle || "app",
+    };
+    let gespeichert = false;
+    withLock("pinnOrtungPosDatei", () => {
+        const map = readJsonFile(POS_FILE) || {};
+        const alt = map[key];
+        if (alt && Number(alt.zeit || 0) > row.zeit) return; // ältere, nachgereichte Meldung: nur in die Spur
+        if (alt && row.akku === null && alt.akku !== null && now - Number(alt.server || 0) < 30 * 60 * 1000) { row.akku = alt.akku; row.laedt = alt.laedt; }
+        map[key] = row;
+        writeJsonFile(POS_FILE, map);
+        try { $app.store().set("pinnEigenePos", { map: map }); } catch (e) { /* egal */ }
+        gespeichert = true;
+    });
+    // Spur (auch nachgereichte Punkte – Traccar Client puffert ohne Netz)
+    if (mitSpur !== false && !(row.genau !== null && row.genau > 300)) {
+        try {
+            withLock("pinnOrtungSpur:" + key, () => {
+                const path = spurPath(key);
+                let pts = [];
+                try { pts = JSON.parse(readText(path) || "[]"); } catch (e) { pts = []; }
+                if (!Array.isArray(pts)) pts = [];
+                const grenze = now - SPUR_MAX_MS;
+                const pt = [Math.round(row.lat * 1e5) / 1e5, Math.round(row.lon * 1e5) / 1e5, row.zeit];
+                if (!pts.some(x => x[2] === pt[2])) pts.push(pt);
+                pts = pts.filter(x => Array.isArray(x) && Number(x[2]) > grenze).sort((a, b) => a[2] - b[2]);
+                if (pts.length > SPUR_MAX_PUNKTE) pts = pts.slice(-SPUR_MAX_PUNKTE);
+                try { $os.mkdirAll(SPUR_DIR, 493); } catch (e) { /* egal */ }
+                writeJsonFile(path, pts);
+            });
+        } catch (e) { console.log("[Ortung] Spur nicht speicherbar: " + e.message); }
+    }
+    try { $app.store().remove("pinnOrtungPos"); } catch (e) { /* egal */ }
+    return gespeichert;
+}
+function deleteOwnPosition(uid) {
+    const key = uidKey(uid);
+    if (!key) return;
+    withLock("pinnOrtungPosDatei", () => {
+        const map = readJsonFile(POS_FILE) || {};
+        if (!map[key]) return;
+        delete map[key];
+        writeJsonFile(POS_FILE, map);
+        try { $app.store().set("pinnEigenePos", { map: map }); } catch (e) { /* egal */ }
+    });
+    try { $os.remove(spurPath(key)); } catch (e) { /* gab keine */ }
+    try { $app.store().remove("pinnOrtungPos"); } catch (e) { /* egal */ }
+}
+function ownTrack(uid, from) {
+    let pts = [];
+    try { pts = JSON.parse(readText(spurPath(uid)) || "[]"); } catch (e) { pts = []; }
+    return (Array.isArray(pts) ? pts : []).filter(x => Array.isArray(x) && Number(x[2]) >= from);
+}
+
+// Neueste Positionen aller Geräte (für alle Familien zusammen, 5 Sekunden zwischengespeichert):
+// eigene (Handys, Feld uid) und – falls Traccar läuft – die aus Traccar (GPS-Tracker, Feld traccarId)
 function positionsAll(fresh) {
     const store = $app.store();
     if (!fresh) {
@@ -435,27 +548,51 @@ function positionsAll(fresh) {
             if (c && Date.now() - c.ts < POS_TTL_MS) return c.list;
         } catch (e) { /* weiter */ }
     }
-    const list = api("GET", "/api/positions") || [];
-    const slim = (Array.isArray(list) ? list : []).map(p => {
-        const a = p.attributes || {};
-        let akku = null;
-        if (isFinite(a.batteryLevel)) akku = Math.round(Number(a.batteryLevel));
-        else if (isFinite(a.battery) && Number(a.battery) <= 100 && Number(a.battery) > 5) akku = Math.round(Number(a.battery));
+    const own = ownPositions();
+    const out = Object.keys(own).map(k => {
+        const p = own[k] || {};
         return {
-            traccarId: p.deviceId,
-            lat: Number(p.latitude), lon: Number(p.longitude),
-            zeit: Date.parse(p.fixTime || p.deviceTime || p.serverTime) || 0,
-            server: Date.parse(p.serverTime || "") || 0, // Eingang bei Traccar (GPS-Zeit kann alt sein)
-            genau: isFinite(p.accuracy) ? Math.round(Number(p.accuracy)) : null,
-            tempo: isFinite(p.speed) ? Math.round(Number(p.speed) * 1.852) : null, // Knoten -> km/h
-            kurs: isFinite(p.course) ? Math.round(Number(p.course)) : null,
-            akku: akku,
-            laedt: !!a.charge,
-            alarm: a.alarm ? String(a.alarm) : "",
+            uid: k, traccarId: 0, lat: Number(p.lat), lon: Number(p.lon), zeit: Number(p.zeit || 0), server: Number(p.server || 0),
+            genau: p.genau, tempo: p.tempo, kurs: p.kurs, akku: p.akku, laedt: !!p.laedt, alarm: "", quelle: p.quelle || "app",
         };
-    }).filter(p => isFinite(p.lat) && isFinite(p.lon) && !(p.lat === 0 && p.lon === 0));
-    try { store.set("pinnOrtungPos", { ts: Date.now(), list: slim }); } catch (e) { /* egal */ }
-    return slim;
+    }).filter(p => isFinite(p.lat) && isFinite(p.lon));
+    if (traccarAn()) {
+        let list = [];
+        try { list = api("GET", "/api/positions") || []; } catch (e) { list = []; }
+        (Array.isArray(list) ? list : []).forEach(p => {
+            const a = p.attributes || {};
+            let akku = null;
+            if (isFinite(a.batteryLevel)) akku = Math.round(Number(a.batteryLevel));
+            else if (isFinite(a.battery) && Number(a.battery) <= 100 && Number(a.battery) > 5) akku = Math.round(Number(a.battery));
+            const row = {
+                uid: "", traccarId: p.deviceId,
+                lat: Number(p.latitude), lon: Number(p.longitude),
+                zeit: Date.parse(p.fixTime || p.deviceTime || p.serverTime) || 0,
+                server: Date.parse(p.serverTime || "") || 0, // Eingang bei Traccar (GPS-Zeit kann alt sein)
+                genau: isFinite(p.accuracy) ? Math.round(Number(p.accuracy)) : null,
+                tempo: isFinite(p.speed) ? Math.round(Number(p.speed) * 1.852) : null, // Knoten -> km/h
+                kurs: isFinite(p.course) ? Math.round(Number(p.course)) : null,
+                akku: akku,
+                laedt: !!a.charge,
+                alarm: a.alarm ? String(a.alarm) : "",
+                quelle: "traccar",
+            };
+            if (isFinite(row.lat) && isFinite(row.lon) && !(row.lat === 0 && row.lon === 0)) out.push(row);
+        });
+    }
+    try { store.set("pinnOrtungPos", { ts: Date.now(), list: out }); } catch (e) { /* egal */ }
+    return out;
+}
+// Neueste Position eines Geräts – eigene (über die Geräte-ID) oder aus Traccar, je nachdem was neuer ist
+function posOf(positions, g) {
+    if (!g || !Array.isArray(positions)) return null;
+    const key = uidKey(g.uniqueId);
+    let best = null;
+    positions.forEach(p => {
+        const hit = (p.uid && key && p.uid === key) || (!p.uid && g.traccarId && p.traccarId === g.traccarId);
+        if (hit && (!best || Number(p.zeit || 0) > Number(best.zeit || 0))) best = p;
+    });
+    return best;
 }
 
 function traccarDeviceByUnique(uniqueId) {
@@ -506,13 +643,19 @@ function status(e) {
         zuhause: home ? { lat: home.lat, lon: home.lon, label: home.ort || home.titel || "Zuhause", adresse: home.adresse || "" } : null,
         unterwegs: {}, jetzt: Date.now(),
         traccarAuto: !zugang().ausEnv,
+        traccar: traccarAus() ? "aus" : (traccarGestoert() ? "weg" : "an"),
         sos: cfg.sos.filter(a => sosAktiv(a) && !a.test).map(a => ({ id: a.id, geraet: a.geraet, memberId: a.memberId, zeit: a.zeit })),
     };
     let positions = [];
     if (cfg.geraete.length) {
-        try { positions = positionsAll(false); } catch (err) { out.verbunden = false; out.fehler = err.message; }
-    } else if (admin) {
-        try { rawApi("GET", "/api/server", null, false); } catch (err) { out.verbunden = false; out.fehler = "Traccar ist nicht erreichbar (Container „traccar“ gestartet?)."; }
+        try { positions = positionsAll(false); } catch (err) { positions = []; }
+    }
+    // Ohne Traccar laufen nur GPS-Tracker nicht – Handys senden direkt an pinn.
+    if (cfg.geraete.some(g => g.typ === "tracker") && !traccarAn()) {
+        out.fehler = traccarAus()
+            ? "GPS-Tracker brauchen den Container „traccar“ – er ist ausgeschaltet (PINN_TRACCAR=aus)."
+            : "GPS-Tracker brauchen den Container „traccar“ – er ist gerade nicht erreichbar. Handys sind davon nicht betroffen.";
+        out.traccar = traccarAus() ? "aus" : "weg";
     }
     const now = Date.now();
     cfg.geraete.forEach(g => {
@@ -520,11 +663,27 @@ function status(e) {
         const row = { id: g.id, memberId: g.memberId, name: g.name, emoji: g.emoji || "", typ: g.typ, teilen: g.teilen !== false };
         if (admin || own) row.uniqueId = g.uniqueId;
         if (row.teilen) {
-            const p = positions.find(x => x.traccarId === g.traccarId);
+            row.bis = Number(g.bis || 0);
+            row.endeZuhause = !!g.endeZuhause;
+            if (own) row.seit = Number(g.geteiltSeit || 0);
+            const p = posOf(positions, g);
             if (p) {
-                row.position = { lat: p.lat, lon: p.lon, zeit: p.zeit, genau: p.genau, tempo: p.tempo, kurs: p.kurs, akku: p.akku, laedt: p.laedt, ort: placeAt(cfg, p) };
+                row.position = { lat: p.lat, lon: p.lon, zeit: p.zeit, genau: p.genau, tempo: p.tempo, kurs: p.kurs, akku: p.akku, laedt: p.laedt, ort: placeAt(cfg, p), quelle: p.quelle || "" };
                 row.live = now - p.zeit < LIVE_MS;
             }
+        } else if (g.einmal && Number(g.einmal.bis || 0) > now && isFinite(g.einmal.lat)) {
+            // „Einmalig senden“: nur dieser eine Standort, bis er abläuft (spätere Meldungen bleiben verborgen)
+            const x = g.einmal;
+            row.teilen = true;
+            row.nurEinmal = true;
+            row.bis = Number(x.bis);
+            row.position = { lat: Number(x.lat), lon: Number(x.lon), zeit: Number(x.zeit), genau: x.genau || null, tempo: null, kurs: null, akku: null, laedt: false, ort: placeAt(cfg, { lat: Number(x.lat), lon: Number(x.lon) }), quelle: "einmal" };
+            row.live = now - Number(x.zeit) < LIVE_MS;
+        }
+        if (own && g.teilen === false) {
+            // eigene letzte Meldung auch bei ausgeschalteter Freigabe (nur für mich: „sendet die App?“)
+            const p = posOf(positions, g);
+            if (p) row.zuletzt = { zeit: p.zeit, quelle: p.quelle || "" };
         }
         out.geraete.push(row);
     });
@@ -561,13 +720,21 @@ function saveDevice(e, body) {
         g = { id: newId(), erstellt: Date.now(), teilen: true };
         cfg.geraete.push(g);
     }
-    if (g.uniqueId && g.uniqueId !== uniqueId) { deleteTraccarDevice(g.traccarId); g.traccarId = 0; }
+    if (g.uniqueId && g.uniqueId !== uniqueId) {
+        if (g.traccarId && traccarAn()) deleteTraccarDevice(g.traccarId);
+        g.traccarId = 0;
+        deleteOwnPosition(g.uniqueId);
+    }
     g.memberId = memberId;
     g.name = name;
     g.emoji = cleanText(body.emoji, 8);
     g.typ = typ;
     g.uniqueId = uniqueId;
-    if (!g.traccarId) g.traccarId = createTraccarDevice(name + " · " + familyId.slice(0, 6), uniqueId);
+    // Nur GPS-Tracker brauchen Traccar (sie senden direkt an dessen Ports). Handys senden an pinn.
+    if (typ === "tracker" && !g.traccarId) {
+        if (!traccarAn()) throw new Error("GPS-Tracker brauchen den Container „traccar“ auf dem NAS – er ist gerade nicht erreichbar (bzw. per PINN_TRACCAR=aus abgeschaltet). Handys gehen auch ohne.");
+        g.traccarId = createTraccarDevice(name + " · " + familyId.slice(0, 6), uniqueId);
+    }
     saveCfg(familyId, cfg);
     try { $app.store().remove("pinnOrtungPos"); } catch (err) { /* egal */ }
     return { id: g.id };
@@ -579,7 +746,8 @@ function deleteDevice(e, body) {
     const cfg = loadCfg(familyId);
     const g = cfg.geraete.find(x => x.id === cleanId(body.id));
     if (!g) return { ok: true };
-    deleteTraccarDevice(g.traccarId);
+    if (g.traccarId && traccarAn()) deleteTraccarDevice(g.traccarId);
+    deleteOwnPosition(g.uniqueId);
     cfg.geraete = cfg.geraete.filter(x => x.id !== g.id);
     delete cfg.unterwegs[g.id];
     cfg.heimwege = cfg.heimwege.filter(h => h.geraet !== g.id);
@@ -600,6 +768,10 @@ function setSharing(e, body) {
     const own = !!me && me === g.memberId;
     if (!own && !lib.isAdmin(e)) throw new Error("Nur die Person selbst oder ein Admin kann das ändern.");
     g.teilen = !!body.an;
+    delete g.einmal;
+    g.bis = 0;               // von Hand geschaltet: ohne Ablauf
+    g.endeZuhause = false;
+    g.geteiltSeit = 0;       // kein „Standort teilen“ aus pinn. (die App sendet dann nicht live mit)
     if (!g.teilen) heimwegEnde(cfg, g.id, "beendet", Date.now());
     saveCfg(familyId, cfg);
     if (!own) {
@@ -613,6 +785,174 @@ function setSharing(e, body) {
         });
     }
     return { ok: true };
+}
+
+// ---------------------------------------------------------------------------------------------
+// Standort aus pinn. selbst (Web-App, ohne weitere App): einmalig teilen, mit Dauer, live solange offen
+// ---------------------------------------------------------------------------------------------
+// Eigenes Handy der Person – fehlt es, wird es angelegt (ohne Traccar, Geräte-ID „pinn-…“). Die ID lässt
+// sich später in „Traccar Client“ eintragen, dann kommt der Standort auch im Hintergrund.
+function ownDevice(cfg, familyId, me, anlegen) {
+    let g = cfg.geraete.find(x => x.memberId === me && x.typ === "handy") || null;
+    if (g || !anlegen) return { g: g, neu: false };
+    if (cfg.geraete.length >= MAX_GERAETE) throw new Error("Es sind schon " + MAX_GERAETE + " Geräte eingerichtet.");
+    let uid = "";
+    const vergeben = {};
+    allCfgs().forEach(x => x.cfg.geraete.forEach(d => { vergeben[uidKey(d.uniqueId)] = true; }));
+    for (let i = 0; i < 10 && (!uid || vergeben[uid]); i++) uid = "pinn-" + $security.randomStringWithAlphabet(8, "abcdefghjkmnpqrstuvwxyz23456789");
+    g = { id: newId(), erstellt: Date.now(), teilen: false, memberId: me, name: memberName(familyId, me, "Handy"), emoji: "", typ: "handy", uniqueId: uid, traccarId: 0, auto: true };
+    cfg.geraete.push(g);
+    return { g: g, neu: true };
+}
+function bodyPos(body) {
+    const lat = Number(body && body.lat), lon = Number(body && body.lon);
+    if (!isFinite(lat) || !isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180 || (lat === 0 && lon === 0)) return null;
+    const n = (v) => (v === undefined || v === null || v === "" || !isFinite(Number(v))) ? null : Number(v);
+    const tempo = n(body.tempo), kurs = n(body.kurs), genau = n(body.genau), akku = n(body.akku);
+    return {
+        lat: lat, lon: lon, zeit: Date.now(), genau: genau,
+        tempo: tempo !== null && tempo >= 0 ? tempo : null, kurs: kurs !== null && kurs >= 0 ? kurs : null,
+        akku: akku !== null && akku >= 0 && akku <= 100 ? akku : null, laedt: !!(body && body.laedt),
+    };
+}
+// „in/draußen“ eines Geräts neu beginnen (nach dem Einschalten der Freigabe: kein alter Stand von früher)
+function clearDeviceState(familyId, geraetId) {
+    const st = readJsonFile(STATUS_FILE);
+    if (!st) return;
+    const pre = "in|" + familyId + "|" + geraetId + "|";
+    let changed = false;
+    Object.keys(st).forEach(k => { if (k.indexOf(pre) === 0) { delete st[k]; changed = true; } });
+    if (changed) writeJsonFile(STATUS_FILE, st);
+}
+function bisText(bis, endeZuhause) {
+    if (endeZuhause) return "bis zur Ankunft zu Hause";
+    if (bis) {
+        const heute = new Date(Date.now() + tzOffset(Date.now())).toISOString().slice(0, 10);
+        const tag = new Date(bis + tzOffset(bis)).toISOString().slice(0, 10);
+        return "bis " + (tag === heute ? "" : (tag.slice(8, 10) + "." + tag.slice(5, 7) + ". ")) + hhmm(bis) + " Uhr";
+    }
+    return "bis auf Weiteres";
+}
+// Freigabe starten/beenden. body: { an, minuten (0 = bis ich beende), zuhause (endet beim Ankommen), push, lat, lon, genau, … }
+function shareStart(e, body) {
+    const lib = require(`${__hooks}/pinn-benutzer.js`);
+    const familyId = lib.familyOf(e);
+    const me = memberOf(e);
+    if (!familyId || !me) throw new Error("Dein Profil ist mit keinem Familienmitglied verknüpft.");
+    const now = Date.now();
+    const pos = bodyPos(body);
+    const an = !!(body && body.an);
+    const r = withLock(lockKey(familyId), () => {
+        const cfg = loadCfg(familyId);
+        const d = ownDevice(cfg, familyId, me, an);
+        const g = d.g;
+        if (!g) return { ok: true };
+        if (an) {
+            const zuhause = !!body.zuhause && cfg.orte.some(o => o.zuhause);
+            if (body.zuhause && !zuhause) throw new Error("Lege zuerst unter Einstellungen → Zuhause eure Adresse fest.");
+            const min = Math.round(num(body.minuten, 0, TEILEN_MAX_MIN, 0));
+            const warAn = g.teilen !== false && !d.neu;
+            g.teilen = true;
+            delete g.einmal;
+            g.bis = zuhause ? 0 : (min ? now + min * 60000 : 0);
+            g.endeZuhause = zuhause;
+            g.geteiltSeit = now;
+            saveCfg(familyId, cfg);
+            return { ok: true, id: g.id, uid: g.uniqueId, neu: d.neu, warAn: warAn, bis: g.bis, endeZuhause: g.endeZuhause, name: memberName(familyId, me, g.name) };
+        }
+        if (cfg.unterwegs && cfg.unterwegs[g.id]) heimwegEnde(cfg, g.id, "beendet", now);
+        g.teilen = false;
+        g.bis = 0;
+        g.endeZuhause = false;
+        g.geteiltSeit = 0;
+        delete g.einmal;
+        saveCfg(familyId, cfg);
+        return { ok: true, id: g.id };
+    });
+    if (an && r.uid) {
+        if (pos) saveOwnPosition(r.uid, pos, "pinn");
+        clearDeviceState(familyId, r.id);
+        if (body.push) {
+            const wann = bisText(r.bis, r.endeZuhause);
+            usersOfFamily(familyId).filter(u => u.mitglied !== me).forEach(u => sendPush(u.id, {
+                titel: "📍 " + r.name + " teilt den Standort",
+                text: (pos ? "Aktueller Standort " : "Standort ") + wann + ". Antippen für die Karte.",
+                url: "/?familie=" + encodeURIComponent(me), tag: "ortung-teilen-" + r.id,
+            }));
+        }
+    }
+    return { ok: true, id: r.id || "", bis: r.bis || 0, endeZuhause: !!r.endeZuhause, neu: !!r.neu };
+}
+// „Einmalig senden“: genau diesen Standort für eine Stunde zeigen – ohne dauerhaft zu teilen.
+// Teilt die Person ohnehin dauerhaft, ist es einfach ein neuer Standort. body: { lat, lon, genau, push }
+const EINMAL_MS = 60 * 60 * 1000;
+function shareOnce(e, body) {
+    const lib = require(`${__hooks}/pinn-benutzer.js`);
+    const familyId = lib.familyOf(e);
+    const me = memberOf(e);
+    if (!familyId || !me) throw new Error("Dein Profil ist mit keinem Familienmitglied verknüpft.");
+    const pos = bodyPos(body);
+    if (!pos) throw new Error("Dein Standort war gerade nicht verfügbar – ist der Standortzugriff für pinn. erlaubt?");
+    const now = Date.now();
+    const r = withLock(lockKey(familyId), () => {
+        const cfg = loadCfg(familyId);
+        const g = ownDevice(cfg, familyId, me, true).g;
+        if (g.teilen === false) {
+            g.einmal = { lat: Math.round(pos.lat * 1e6) / 1e6, lon: Math.round(pos.lon * 1e6) / 1e6, genau: pos.genau ? Math.round(pos.genau) : null, zeit: now, bis: now + EINMAL_MS };
+        }
+        saveCfg(familyId, cfg);
+        return { id: g.id, uid: g.uniqueId, dauerhaft: g.teilen !== false, name: memberName(familyId, me, g.name) };
+    });
+    saveOwnPosition(r.uid, pos, "pinn", r.dauerhaft);
+    if (body.push) {
+        const adr = shortAddress(pos.lat, pos.lon);
+        usersOfFamily(familyId).filter(u => u.mitglied !== me).forEach(u => sendPush(u.id, {
+            titel: "📍 " + r.name + " hat den Standort geschickt",
+            text: (adr ? adr + " · " : "") + hhmm(now) + " Uhr. Antippen für die Karte.",
+            url: "/?familie=" + encodeURIComponent(me), tag: "ortung-einmal-" + r.id,
+        }));
+    }
+    return { ok: true, id: r.id, bis: r.dauerhaft ? 0 : now + EINMAL_MS, dauerhaft: r.dauerhaft };
+}
+// Neuer Standort aus der geöffneten pinn.-App (live, solange die Freigabe läuft). Ändert die
+// Familiendaten nicht – nur den Positionsspeicher.
+function sharePosition(e, body) {
+    const lib = require(`${__hooks}/pinn-benutzer.js`);
+    const familyId = lib.familyOf(e);
+    const me = memberOf(e);
+    if (!familyId || !me) return { ok: false };
+    const pos = bodyPos(body);
+    if (!pos) throw new Error("Ungültiger Standort.");
+    const cfg = loadCfg(familyId);
+    const g = cfg.geraete.find(x => x.memberId === me && x.typ === "handy");
+    if (!g || g.teilen === false) return { ok: false, teilen: false };
+    // Kommt vom Handy über „Traccar Client“ gerade ein genauerer Standort, nicht überschreiben
+    const alt = ownPositions()[uidKey(g.uniqueId)];
+    if (alt && alt.quelle === "app" && Date.now() - Number(alt.zeit || 0) < 60 * 1000 && alt.genau && pos.genau && pos.genau > alt.genau * 2) return { ok: true, teilen: true };
+    saveOwnPosition(g.uniqueId, pos, "pinn");
+    return { ok: true, teilen: true, bis: Number(g.bis || 0) };
+}
+// Abgelaufene Freigaben beenden (Zeitplan). Läuft für alle Familien – auch ohne Orte.
+function expireShares(list, now) {
+    list.forEach(f => {
+        const ab = f.cfg.geraete.filter(g => g.teilen !== false && Number(g.bis || 0) > 0 && Number(g.bis) <= now && !(f.cfg.unterwegs && f.cfg.unterwegs[g.id]));
+        if (!ab.length) return;
+        try {
+            withLock(lockKey(f.familyId), () => {
+                const cur = loadCfg(f.familyId);
+                let changed = false;
+                cur.geraete.forEach(g => {
+                    if (g.teilen === false || !(Number(g.bis || 0) > 0) || Number(g.bis) > now || (cur.unterwegs && cur.unterwegs[g.id])) return;
+                    g.teilen = false; g.bis = 0; g.endeZuhause = false; g.geteiltSeit = 0;
+                    changed = true;
+                    // auch in der Liste des Zeitplans, damit er dieses Gerät jetzt nicht mehr auswertet
+                    const x = f.cfg.geraete.find(y => y.id === g.id);
+                    if (x) { x.teilen = false; x.bis = 0; x.endeZuhause = false; }
+                });
+                if (changed) saveCfg(f.familyId, cur);
+            });
+        } catch (err) { console.log("[Ortung] Freigabe beenden: " + err.message); }
+    });
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -804,6 +1144,7 @@ function heimwegEnde(cfg, geraetId, grund, now) {
     if (!u) return null;
     const g = cfg.geraete.find(x => x.id === geraetId);
     if (g && u.teilenVorher === false) g.teilen = false;
+    if (g && u.seitVorher !== undefined) g.geteiltSeit = Number(u.seitVorher || 0);
     delete cfg.unterwegs[geraetId];
     const h = {
         id: heimwegId(geraetId, u.seit), geraet: geraetId, memberId: g ? g.memberId : "", name: u.name || (g ? g.name : ""),
@@ -823,16 +1164,18 @@ function setUnterwegs(e, body) {
     const now = Date.now();
     const r = withLock(lockKey(familyId), () => {
         const cfg = loadCfg(familyId);
-        const g = cfg.geraete.find(x => x.memberId === me && x.typ === "handy") || cfg.geraete.find(x => x.memberId === me);
-        if (!g) throw new Error("Für dich ist noch kein Gerät für die Ortung eingerichtet.");
+        let g = cfg.geraete.find(x => x.memberId === me && x.typ === "handy") || cfg.geraete.find(x => x.memberId === me);
+        if (!g && body.an) g = ownDevice(cfg, familyId, me, true).g; // ohne eingerichtetes Handy: Standort kommt aus pinn.
+        if (!g) return { ok: true };
         const home = cfg.orte.find(o => o.zuhause);
         if (body.an) {
             if (!home) throw new Error("Lege zuerst unter Einstellungen → Zuhause eure Adresse fest.");
             const alt = cfg.unterwegs[g.id];
             if (alt && now - Number(alt.seit || 0) < UNTERWEGS_MAX_MS) return { ok: true, id: heimwegId(g.id, alt.seit) };
             const name = memberName(familyId, me, g.name);
-            cfg.unterwegs[g.id] = { seit: now, von: e.auth.id, teilenVorher: g.teilen !== false, name: name };
+            cfg.unterwegs[g.id] = { seit: now, von: e.auth.id, teilenVorher: g.teilen !== false, seitVorher: Number(g.geteiltSeit || 0), name: name };
             g.teilen = true;
+            if (!g.geteiltSeit) g.geteiltSeit = now; // die offene pinn.-App sendet unterwegs live mit
             saveCfg(familyId, cfg);
             return { ok: true, id: heimwegId(g.id, now), push: { name: name, geraet: g.id } };
         }
@@ -964,13 +1307,20 @@ function track(e, body) {
     const familyId = lib.familyOf(e);
     const cfg = loadCfg(familyId);
     const g = cfg.geraete.find(x => x.id === cleanId(body.geraet));
-    if (!g || g.teilen === false || !g.traccarId) return { punkte: [] };
+    if (!g || g.teilen === false) return { punkte: [] };
     const hours = num(body.stunden, 1, 48, 6);
     const to = new Date(), from = new Date(Date.now() - hours * 3600 * 1000);
-    const list = api("GET", "/api/positions?deviceId=" + Number(g.traccarId) + "&from=" + encodeURIComponent(from.toISOString()) + "&to=" + encodeURIComponent(to.toISOString())) || [];
-    let pts = (Array.isArray(list) ? list : [])
-        .filter(p => isFinite(p.latitude) && isFinite(p.longitude) && !(p.latitude === 0 && p.longitude === 0) && !(isFinite(p.accuracy) && p.accuracy > 300))
-        .map(p => [Math.round(p.latitude * 1e5) / 1e5, Math.round(p.longitude * 1e5) / 1e5, Date.parse(p.fixTime) || 0]);
+    // Freigabe mit Dauer: nur den Weg seit dem Einschalten zeigen
+    const ab = Math.max(from.getTime(), Number(g.geteiltSeit || 0) && (g.bis || g.endeZuhause) ? Number(g.geteiltSeit) : 0);
+    let pts = ownTrack(g.uniqueId, ab).map(p => [p[0], p[1], p[2]]);
+    if (g.traccarId && traccarAn()) {
+        let list = [];
+        try { list = api("GET", "/api/positions?deviceId=" + Number(g.traccarId) + "&from=" + encodeURIComponent(new Date(ab).toISOString()) + "&to=" + encodeURIComponent(to.toISOString())) || []; } catch (err) { list = []; }
+        pts = pts.concat((Array.isArray(list) ? list : [])
+            .filter(p => isFinite(p.latitude) && isFinite(p.longitude) && !(p.latitude === 0 && p.longitude === 0) && !(isFinite(p.accuracy) && p.accuracy > 300))
+            .map(p => [Math.round(p.latitude * 1e5) / 1e5, Math.round(p.longitude * 1e5) / 1e5, Date.parse(p.fixTime) || 0]));
+        pts.sort((a, b) => a[2] - b[2]);
+    }
     if (pts.length > 600) {
         const step = pts.length / 600;
         const slim = [];
@@ -1025,8 +1375,50 @@ function tile(z, x, y) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Positionen der Handys an Traccar weiterreichen (OsmAnd-Protokoll)
+// Meldungen der App „Traccar Client“ (OsmAnd-Protokoll): selbst speichern, SOS erkennen und – falls
+// der Container läuft – zusätzlich an Traccar weiterreichen
 // ---------------------------------------------------------------------------------------------
+// Alte App: ?id=…&lat=…&lon=…&timestamp=…&speed=<Knoten>&bearing=…&accuracy=…&batt=…&charge=true
+// Neue App (JSON): { device_id, location: { timestamp, coords: { latitude, longitude, accuracy,
+//                    speed <m/s>, heading }, battery: { level 0–1, is_charging } } }
+function osmandPosition(m, raw) {
+    let loc = unpack(m.location);
+    if (Array.isArray(loc)) loc = loc[loc.length - 1];
+    if (!loc || typeof loc !== "object") loc = {};
+    const coords = (loc.coords && typeof loc.coords === "object") ? loc.coords : {};
+    const bat = (loc.battery && typeof loc.battery === "object") ? loc.battery : {};
+    let uid = String(m.id || m.deviceid || m.device_id || m.deviceId || loc.device_id || "").trim();
+    if (!uid) {
+        const r = /["']?(device_id|deviceid|id)["']?\s*[:=]\s*["']?([A-Za-z0-9._:-]{3,64})/i.exec(String(raw || ""));
+        if (r) uid = r[2];
+    }
+    const lat = firstNum(m.lat, m.latitude, coords.latitude);
+    const lon = firstNum(m.lon, m.lng, m.longitude, coords.longitude);
+    if (!uid || !isFinite(lat) || !isFinite(lon)) return { uid: uid, pos: null };
+    let tempo = NaN;
+    if (isFinite(firstNum(coords.speed))) tempo = Number(coords.speed) * 3.6;           // m/s
+    else if (isFinite(firstNum(m.speed))) tempo = Number(m.speed) * 1.852;               // Knoten
+    let akku = NaN;
+    if (isFinite(firstNum(bat.level))) akku = Number(bat.level) <= 1 ? Number(bat.level) * 100 : Number(bat.level);
+    else akku = firstNum(m.batt, m.battery, m.batteryLevel);
+    const laedt = bat.is_charging === true || /^(true|1)$/i.test(String(m.charge || ""));
+    return {
+        uid: uid,
+        pos: {
+            lat: lat, lon: lon, zeit: parseTime(m.timestamp || loc.timestamp),
+            genau: firstNum(m.accuracy, coords.accuracy, m.hdop && Number(m.hdop) * 5),
+            tempo: isFinite(tempo) && tempo >= 0 ? tempo : NaN,
+            kurs: firstNum(m.bearing, m.heading, coords.heading),
+            akku: isFinite(akku) && akku >= 0 ? akku : NaN, laedt: laedt,
+        },
+    };
+}
+function knownDevice(uid) {
+    const key = uidKey(uid);
+    if (!key) return null;
+    const fam = allCfgs().find(f => f.cfg.geraete.some(g => uidKey(g.uniqueId) === key));
+    return fam ? { familyId: fam.familyId, g: fam.cfg.geraete.find(g => uidKey(g.uniqueId) === key) } : null;
+}
 function forwardOsmand(e) {
     const info = e.requestInfo();
     const params = [];
@@ -1054,12 +1446,28 @@ function forwardOsmand(e) {
         });
     }
 
-    // 1. Hilferuf? Zuerst auslösen – unabhängig davon, ob Traccar gerade antwortet.
-    //    Beispiel (Traccar Client): /?id=123456&lat=49.8728&lon=8.6512&timestamp=1711800000&batt=85&alarm=sos
-    let merged = {}, raw = "", sos = false, sosFehler = "";
+    // 0. Position selbst speichern (nur für Geräte, die in pinn. eingerichtet sind)
+    let merged = {}, raw = "", sos = false, sosFehler = "", gespeichert = false, bekannt = false;
     try {
         merged = Object.assign({}, flat, (body && typeof body === "object") ? body : {});
         raw = rawRequestText(e, flat, body);
+        const op = osmandPosition(merged, raw);
+        const dev = op.uid ? knownDevice(op.uid) : null;
+        bekannt = !!dev;
+        if (dev && op.pos) {
+            const n = (v) => isFinite(v) ? v : null;
+            // Teilt die Person gerade nicht („Dauerhaft senden“ aus), sendet die App trotzdem weiter – pinn. merkt
+            // sich dann nur den neuesten Standort (für SOS), zeigt ihn niemandem und zeichnet keine Spur auf.
+            saveOwnPosition(dev.g.uniqueId, { lat: op.pos.lat, lon: op.pos.lon, zeit: op.pos.zeit, genau: n(op.pos.genau), tempo: n(op.pos.tempo), kurs: n(op.pos.kurs), akku: n(op.pos.akku), laedt: op.pos.laedt }, "app", dev.g.teilen !== false);
+            gespeichert = true;
+        }
+    } catch (err) {
+        console.log("[Ortung] Meldung speichern: " + err.message);
+    }
+
+    // 1. Hilferuf? Zuerst auslösen – unabhängig davon, ob Traccar gerade antwortet.
+    //    Beispiel (Traccar Client): /?id=123456&lat=49.8728&lon=8.6512&timestamp=1711800000&batt=85&alarm=sos
+    try {
         sos = String(flat.alarm || "").trim().toLowerCase() === "sos" || textHasSos(raw) ||
             (() => { try { return hasSos(merged); } catch (err) { return false; } })();
         if (sos) {
@@ -1073,17 +1481,25 @@ function forwardOsmand(e) {
         console.log("[Ortung] SOS aus Traccar Client: " + err.message);
     }
 
-    // 2. Position unverändert an Traccar (OsmAnd, Port 5055) weiterreichen
-    const url = osmandUrl() + "/" + (params.length ? "?" + params.join("&") : "");
-    let status = 502;
-    try {
-        const res = $http.send({ url: url, method: (send || e.request.method === "POST") ? "POST" : "GET", headers: headers, body: send, timeout: 10 });
-        status = res.statusCode || 502;
-    } catch (err) {
-        status = 502;
+    // 2. Zusätzlich unverändert an Traccar (OsmAnd, Port 5055) weiterreichen – nur, wenn er läuft
+    let status = gespeichert ? 200 : 502;
+    let weiter = 0;
+    if (traccarAn()) {
+        const url = osmandUrl() + "/" + (params.length ? "?" + params.join("&") : "");
+        try {
+            const res = $http.send({ url: url, method: (send || e.request.method === "POST") ? "POST" : "GET", headers: headers, body: send, timeout: 5 });
+            weiter = res.statusCode || 0;
+            if (!weiter) traccarWeg();
+        } catch (err) {
+            traccarWeg();
+            weiter = 0;
+        }
+        if (!gespeichert && weiter) status = weiter;
     }
-    if (sos && !sosFehler && status >= 400) status = 200; // die App soll den Hilferuf nicht endlos wiederholen
-    logOsmand(merged, raw, sos, status, sosFehler);
+    // Gespeichert (oder Hilferuf erkannt) = angekommen. Unbekannte Geräte: trotzdem 200, sonst puffert
+    // die App die Meldung und schickt sie endlos erneut (kostet Akku) – Hinweis steht im Protokoll.
+    if (status >= 400 && ((sos && !sosFehler) || !bekannt || !traccarAn())) status = 200;
+    logOsmand(merged, raw, sos, status, sosFehler || (!bekannt ? "Geräte-ID ist in pinn. nicht eingerichtet" : ""));
     return status;
 }
 
@@ -1235,9 +1651,9 @@ function sosFromOsmand(m, raw) {
 }
 
 function livePos(g) {
-    if (!g || !g.traccarId) return null;
+    if (!g) return null;
     try {
-        const p = positionsAll(true).find(x => x.traccarId === g.traccarId);
+        const p = posOf(positionsAll(true), g);
         return p ? { lat: p.lat, lon: p.lon, genau: p.genau, zeit: p.zeit, akku: p.akku } : null;
     } catch (e) { return null; }
 }
@@ -1380,6 +1796,7 @@ function sendSosPush(userId, msg) {
 
 // Sicherheitsnetz: Alarm-Ereignisse „sos“ aus Traccar (direkt gesendet oder GPS-Tracker)
 function checkSosEvents() {
+    if (!traccarAn()) return;
     const fams = allCfgs().filter(f => f.cfg.geraete.some(g => g.traccarId));
     if (!fams.length) return;
     const byTraccar = {};
@@ -1448,8 +1865,20 @@ function sosAusloesen(e, body) {
     const me = memberOf(e);
     const nr = e.auth ? notrufFuer(e.auth.id).text : "110/112";
     if (!familyId || !me) throw new Error("Dein Profil ist mit keinem Familienmitglied verknüpft – bitte direkt anrufen (" + nr + ").");
-    const cfg = loadCfg(familyId);
-    const g = cfg.geraete.find(x => x.memberId === me && x.typ === "handy") || cfg.geraete.find(x => x.memberId === me);
+    let cfg = loadCfg(familyId);
+    let g = cfg.geraete.find(x => x.memberId === me && x.typ === "handy") || cfg.geraete.find(x => x.memberId === me);
+    if (!g) {
+        // noch kein Handy eingerichtet: jetzt anlegen (ohne Traccar) – der Alarm darf daran nicht scheitern
+        try {
+            g = withLock(lockKey(familyId), () => {
+                const c = loadCfg(familyId);
+                const d = ownDevice(c, familyId, me, true);
+                if (d.neu) saveCfg(familyId, c);
+                return d.g;
+            });
+            cfg = loadCfg(familyId);
+        } catch (err) { g = null; }
+    }
     if (!g) throw new Error("Für dich ist noch kein Gerät für die Ortung eingerichtet – bitte direkt anrufen (" + nr + ").");
     const now = Date.now();
     let pos = livePos(g);
@@ -1491,8 +1920,8 @@ function sosList(e) {
             zeit: a.zeit, letzte: a.letzte || a.zeit, anzahl: a.anzahl || 1, quelle: a.quelle,
             pos: a.pos || null, adresse: a.adresse || "", ende: a.ende || null, aktiv: sosAktiv(a),
         };
-        if (row.aktiv && g && g.traccarId) {
-            const p = positions.find(x => x.traccarId === g.traccarId);
+        if (row.aktiv && g) {
+            const p = posOf(positions, g);
             if (p && (!a.pos || p.zeit > Number(a.pos.zeit || 0))) {
                 const akt = { lat: p.lat, lon: p.lon, genau: p.genau, zeit: p.zeit, akku: p.akku, tempo: p.tempo, adresse: "" };
                 if (a.pos && distM(p.lat, p.lon, Number(a.pos.lat), Number(a.pos.lon)) < 25) akt.adresse = a.adresse || "";
@@ -1511,7 +1940,7 @@ function sosList(e) {
             id: heimwegId(k, u.seit), geraet: k, memberId: g.memberId, name: u.name || g.name,
             seit: Number(u.seit), aktiv: true, aktuell: null, entfernung: null,
         };
-        const p = g.traccarId ? positions.find(x => x.traccarId === g.traccarId) : null;
+        const p = posOf(positions, g);
         if (p && Number(p.zeit || 0) > Number(u.seit) - 30 * 60 * 1000) {
             row.aktuell = { lat: p.lat, lon: p.lon, genau: p.genau, zeit: p.zeit, akku: p.akku, laedt: p.laedt, tempo: p.tempo, adresse: currentAddress("hw-" + k, p.lat, p.lon) };
             if (home) row.entfernung = Math.round(distM(p.lat, p.lon, Number(home.lat), Number(home.lon)));
@@ -1697,9 +2126,15 @@ function runCron() {
 // Speichert, was der Zeitplan geändert hat, auf dem AKTUELLEN Stand. Der Zeitplan hat die Daten zu
 // Beginn gelesen; ein Hilferuf, ein gerade gestarteter oder beendeter Heimweg, neue Orte oder Pläne
 // aus der Zwischenzeit dürfen dabei nicht überschrieben werden.
-function saveCronCfg(familyId, cfg, beendet, planIdsVorher) {
+function saveCronCfg(familyId, cfg, beendet, planIdsVorher, freigabeEnde) {
     withLock(lockKey(familyId), () => {
         const cur = loadCfg(familyId);
+        // Freigabe „bis ich zu Hause bin“ beendet (nur, wenn inzwischen nicht neu eingeschaltet)
+        (freigabeEnde || []).forEach(b => {
+            const g = cur.geraete.find(x => x.id === b.k);
+            if (!g || !g.endeZuhause || Number(g.geteiltSeit || 0) !== b.seit) return;
+            g.teilen = false; g.bis = 0; g.endeZuhause = false; g.geteiltSeit = 0;
+        });
         // vom Zeitplan beendete Heimwege (nur, wenn inzwischen nicht neu gestartet)
         beendet.forEach(b => {
             const u = cur.unterwegs[b.k];
@@ -1707,6 +2142,7 @@ function saveCronCfg(familyId, cfg, beendet, planIdsVorher) {
             if (b.seit !== null && Number(u.seit) !== b.seit) return;
             const g = cur.geraete.find(x => x.id === b.k);
             if (g && u.teilenVorher === false) g.teilen = false;
+            if (g && u.seitVorher !== undefined) g.geteiltSeit = Number(u.seitVorher || 0);
             delete cur.unterwegs[b.k];
         });
         const curIds = {};
@@ -1732,7 +2168,9 @@ function saveCronCfg(familyId, cfg, beendet, planIdsVorher) {
 
 function runCronInner() {
     try { checkSosEvents(); } catch (e) { console.log("[Ortung] SOS-Prüfung: " + e.message); }
-    const fams = allCfgs().filter(f => f.cfg.geraete.length && (f.cfg.orte.length || Object.keys(f.cfg.unterwegs || {}).length));
+    const alle = allCfgs();
+    try { expireShares(alle, Date.now()); } catch (e) { console.log("[Ortung] Freigaben: " + e.message); }
+    const fams = alle.filter(f => f.cfg.geraete.length && (f.cfg.orte.length || Object.keys(f.cfg.unterwegs || {}).length));
     if (!fams.length) return;
     let positions;
     try { positions = positionsAll(true); } catch (e) { return; }
@@ -1745,6 +2183,7 @@ function runCronInner() {
         let cfgChanged = false;
         const planIdsVorher = cfg.plaene.map(p => p.aufgabe);
         const beendet = []; // { k: Geräte-ID, seit } – vom Zeitplan beendete Heimwege
+        const freigabeEnde = []; // { k: Geräte-ID, seit } – Freigabe „bis ich zu Hause bin“ beendet
         let users = null;
         const getUsers = () => users || (users = usersOfFamily(familyId));
 
@@ -1760,8 +2199,8 @@ function runCronInner() {
         });
 
         cfg.geraete.forEach(g => {
-            if (g.teilen === false || !g.traccarId) return;
-            const p = positions.find(x => x.traccarId === g.traccarId);
+            if (g.teilen === false) return;
+            const p = posOf(positions, g);
             if (!p || now - p.zeit > EVENT_MAX_AGE_MS) return;
             if (p.genau !== null && p.genau > 500) return;
             const posKey = "pos|" + familyId + "|" + g.id;
@@ -1793,6 +2232,18 @@ function runCronInner() {
                         else { delete st[seitKey]; delete st[dwKey]; }
                     }
                     if (prev === undefined) return; // erste Beobachtung: nur merken
+                    // Freigabe „bis ich zu Hause bin“: endet beim Ankommen (nicht während eines Heimwegs –
+                    // der endet dort selbst und stellt die Freigabe wieder her)
+                    if (inside === 1 && o.zuhause && g.endeZuhause && g.teilen !== false && !(cfg.unterwegs && cfg.unterwegs[g.id])) {
+                        freigabeEnde.push({ k: g.id, seit: Number(g.geteiltSeit || 0) });
+                        g.endeZuhause = false;
+                        cfgChanged = true;
+                        getUsers().filter(u => u.mitglied === g.memberId).forEach(u => sendPush(u.id, {
+                            titel: "🏠 Willkommen zu Hause",
+                            text: "Deine Standortfreigabe ist beendet.",
+                            url: "/?familie=" + encodeURIComponent(g.memberId), tag: "ortung-teilen-" + g.id,
+                        }));
+                    }
                     // Laden: „Gehst du einkaufen?“, sobald auf der Liste etwas steht oder dort ein Einkauf
                     // geplant ist (gesammelt – mehrere Läden in der Nähe = eine Nachricht, siehe unten)
                     if (inside === 1 && o.laden && o.erinnern !== false && !imLaden.some(x => x.o.laden === o.laden)) {
@@ -1881,7 +2332,7 @@ function runCronInner() {
         });
         // Alle Läden eines geplanten Einkaufs besucht -> Aufgabe abhaken
         if (cfg.plaene.length && completePlans(familyId, cfg, getUsers, now)) cfgChanged = true;
-        if (cfgChanged) { try { saveCronCfg(familyId, cfg, beendet, planIdsVorher); } catch (e) { console.log("[Ortung] Speichern fehlgeschlagen: " + e.message); } }
+        if (cfgChanged) { try { saveCronCfg(familyId, cfg, beendet, planIdsVorher, freigabeEnde); } catch (e) { console.log("[Ortung] Speichern fehlgeschlagen: " + e.message); } }
     });
 
     // Alte Einträge (gelöschte Geräte/Orte) gelegentlich entfernen
@@ -1913,5 +2364,5 @@ function tzOffset(utcMs) {
 module.exports = {
     COL, ensureSchema, status, saveDevice, deleteDevice, setSharing, savePlace, saveShop, deletePlace,
     setUnterwegs, track, search, tile, forwardOsmand, isOsmandRequest, runCron, syncHome, syncPlans,
-    sosList, sosEnde, sosTest, sosAusloesen, osmandLog,
+    sosList, sosEnde, sosTest, sosAusloesen, osmandLog, shareStart, sharePosition, shareOnce,
 };

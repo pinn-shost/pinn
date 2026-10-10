@@ -2136,6 +2136,9 @@ window.PINN_LANGUAGES = [
   @keyframes famRipple { 0% { transform: scale(1); opacity: .85; } 100% { transform: scale(2.6); opacity: 0; } }
   .fam-dot { display: inline-block; width: 7px; height: 7px; border-radius: 9999px; background: #E0322B; margin-right: 5px; vertical-align: 1px; animation: famBlink 1.1s ease-in-out infinite; }
   .fam-card { border-radius: 18px; background: #fff; border: 1px solid rgba(37,35,31,0.1); box-shadow: 0 1px 2px rgba(0,0,0,0.04); padding: 14px; }
+  .fam-sos-btn { display: block; width: 100%; margin-top: 10px; padding: 10px 12px; border-radius: 12px; border: 0; color: #fff; font-size: 14px; font-weight: 600; text-align: center; background: linear-gradient(135deg, #B8261E 0%, #E5483D 100%); box-shadow: 0 4px 12px rgba(214,59,50,0.28); -webkit-tap-highlight-color: transparent; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+  .fam-sos-btn.counting { background: #7A1712; }
+  .fam-sos-btn:disabled { opacity: .7; }
   .fam-chip-row { display: flex; align-items: center; gap: 6px; overflow-x: auto; padding-bottom: 8px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
   .fam-chip-row::-webkit-scrollbar { display: none; }
   .fam-sel { flex-shrink: 0; border: 1px solid rgba(37,35,31,0.15); border-radius: 9999px; padding: 4px 8px; font-size: 12px; background: #fff; color: inherit; max-width: 11rem; }
@@ -25376,7 +25379,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.35.0';
+const APP_VERSION = '1.36.0';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -26334,6 +26337,17 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
    - rueckblick: true = Einträge vor dem Versions-Log, aus der Projekthistorie zusammengefasst.
    ========================================================== */
 const PINN_CHANGELOG = [
+  {
+    v: '1.36', datum: '10.10.2026', titel: 'Standort teilen direkt in pinn.',
+    punkte: [
+      ['neu', 'Familie → Ortung → „Mein Standort“: alles in pinn. steuern – Schalter „Dauerhaft senden“ (Dauer wählbar: 30 Min. bis 24 Std., bis ich zu Hause bin, bis ich es beende; endet von selbst), „Einmalig senden“ (genau dieser Standort, 1 Stunde sichtbar) und ein SOS-Knopf mit 3-Sekunden-Countdown'],
+      ['neu', 'Geht ohne weitere App und ohne Einrichtung durch einen Admin. Push an die Familie wählbar, bei SOS immer'],
+      ['neu', 'Live, solange pinn. offen ist: Bei „Dauerhaft senden“ und beim Heimweg schickt pinn. bei Bewegung neue Standorte (ab 50 m, höchstens etwa jede Minute) – im Stehen nichts. pinn. fragt nie von selbst nach dem Standort und sendet nichts zusätzlich, wenn „Traccar Client“ schon liefert'],
+      ['info', '„Traccar Client“ nur noch einmal einrichten (Genauigkeit Mittel, Distanz 50 m, Dienst immer an) – sendet direkt an pinn., gesteuert wird in pinn. Ist „Dauerhaft senden“ aus, sieht niemand den Standort und pinn. zeichnet keinen Weg auf'],
+      ['info', 'Kein Traccar-Container mehr für Handys: pinn. speichert Standorte und Spur (48 Std.) selbst. Der Container „traccar“ ist nur noch für GPS-Tracker mit SIM-Karte nötig und startet nicht mehr automatisch (COMPOSE_PROFILES=tracker in der .env)'],
+      ['info', 'Server: angepasst pinn-ortung.js und ortung.pb.js (neue Routen /standort, /standort-teilen, /standort-einmal), docker-compose.yaml; Einrichtungs-Assistent ohne Traccar-Prüfung'],
+    ],
+  },
   {
     v: '1.35', datum: '09.10.2026', titel: 'Wo bist du? & mehr in der Familienkachel',
     punkte: [
@@ -50150,7 +50164,8 @@ function closeGlobalSearch() {
      Verfolgen (Karte folgt der Person) und Spur der letzten Stunden.
      Bekannte Orte (Zuhause, Schule …) mit Push bei Ankunft/Verlassen, „Ich bin unterwegs“ mit
      automatischem Ende beim Ankommen zu Hause. Geräte verwalten die Admins der Familie.
-     Server: pb_hooks/ortung.pb.js + pinn-ortung.js (Traccar-Container).
+     Server: pb_hooks/ortung.pb.js + pinn-ortung.js. Handys senden direkt an pinn. (pinn. selbst bzw.
+     „Traccar Client“ im Hintergrund); der Traccar-Container nur noch für GPS-Tracker.
    - Die Karte zeichnet pinn. selbst (OpenStreetMap-Kacheln über den eigenen Server) – es wird kein
      fremder Programmcode geladen.
    ========================================================== */
@@ -50276,6 +50291,7 @@ async function famLoadStatus() {
       famStatus = body;
       famStatusErr = '';
       ladenCacheFromStatus(body); // Läden mit Adresse auch für Listen merken
+      try { pinnTeilenAusStatus(); } catch (e) { /* egal */ }
       if (body.jetzt) famSkew = Number(body.jetzt) - Date.now();
       try { localStorage.setItem(LS_FAM_STATUS, JSON.stringify({ familie: (currentUser() && currentUser().familie) || '', data: body })); } catch (e) { /* egal */ }
     }
@@ -50776,12 +50792,10 @@ function famRenderNote() {
   if (famStatusErr && famStatusErr !== 'offline') notes.push(['urgent', '⚠️', escapeHtml(famStatusErr)]);
   else if (famStatusErr === 'offline') notes.push(['warn', '📴', 'Keine Verbindung zum Server – angezeigt wird der letzte bekannte Stand.']);
   if (famStatus && famStatus.verbunden === false && famStatus.fehler && !famStatusErr) notes.push(['urgent', '⚠️', escapeHtml(famStatus.fehler)]);
-  if (famStatus && !famDevices().length) {
-    notes.push(['', '🛰️', isCurrentUserAdmin()
-      ? 'Noch keine Geräte eingerichtet. Unter <b>⚙︎ Ortung</b> fügst du Handys (App „Traccar Client“) oder GPS-Tracker hinzu.'
-      : 'Die Ortung ist noch nicht eingerichtet – Geräte fügt ein Admin der Familie hinzu.']);
-  } else if (famStatus && !famDevices().some(g => g.teilen && g.position)) {
-    notes.push(['', '⏳', 'Noch keine Standorte. Sobald ein Gerät sendet und den Standort teilt, erscheint es hier.']);
+  else if (famStatus && famStatus.fehler && !famStatusErr && isCurrentUserAdmin()) notes.push(['warn', '🛰️', escapeHtml(famStatus.fehler)]);
+  if (famStatus && !famDevices().some(g => g.teilen && g.position)) {
+    notes.push(['', '⏳', 'Noch keine Standorte. Tippe oben auf <b>📍 Standort teilen</b> – sobald jemand teilt, erscheint er hier.' +
+      (isCurrentUserAdmin() ? ' GPS-Tracker und die App für den Hintergrund richtest du unter <b>⚙︎ Ortung</b> ein.' : '')]);
   }
   if (famStatus && famDevices().length && !famPlaces().length && famCanEdit()) {
     notes.push(['', '🏠', 'Tipp: Lege unter <b>📍 Orte</b> euer Zuhause an – dann gibt es Meldungen beim Ankommen und „Ich bin unterwegs“ funktioniert.']);
@@ -50789,26 +50803,64 @@ function famRenderNote() {
   box.innerHTML = notes.length ? `<div class="flex flex-col gap-2 mt-3">${notes.map(([cls, ic, t]) => `<div class="fz-note-box ${cls}"><span>${ic}</span><span class="text-xs leading-relaxed">${t}</span></div>`).join('')}</div>` : '';
 }
 
+// „bis 18:30 Uhr“ / „bis du zu Hause bist“ / „bis du es beendest“ – Dauer einer Freigabe
+function famShareUntil(g, du) {
+  if (!g || !g.teilen) return '';
+  if (g.endeZuhause) return du ? 'bis du zu Hause bist' : 'bis zur Ankunft zu Hause';
+  if (g.bis) {
+    const d = new Date(g.bis);
+    const heute = new Date().toDateString() === d.toDateString();
+    return 'bis ' + (heute ? '' : d.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'numeric' }) + ' ') + d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + ' Uhr';
+  }
+  return du ? 'bis du es beendest' : '';
+}
+function famMyPhone() {
+  const mid = famMyMemberId();
+  return mid ? (famDevices().find(g => g.memberId === mid && g.typ === 'handy') || null) : null;
+}
 function famRenderMine() {
   const box = document.getElementById('famMine');
   if (!box) return;
-  const g = famMyDevice();
-  if (!g) { box.innerHTML = ''; return; }
+  const mid = famMyMemberId();
+  if (!mid || !famStatus || isCurrentUserGuest()) { box.innerHTML = ''; return; }
+  const g = famMyPhone();
   const unterwegs = famUnterwegs(g);
-  const live = famIsLive(g);
-  const stale = g.teilen && !live;
+  const dauerhaft = !!(g && g.teilen && !g.nurEinmal);
+  const einmal = !!(g && g.nurEinmal);
+  const p = g ? g.position : null;
+  const appFresh = !!(p && p.quelle === 'app' && famNow() - p.zeit < 30 * 60 * 1000);
+  const quelle = p ? (p.quelle === 'app' ? ' · aus „Traccar Client“' : (p.quelle === 'pinn' || p.quelle === 'einmal') ? ' · aus pinn.' : '') : '';
+  const bis = famShareUntil(g, true);
+  let head;
+  if (dauerhaft) {
+    head = `<div class="flex items-start gap-2 mb-2"><span class="fam-dot" style="margin-top:6px"></span><div class="min-w-0">
+        <div class="text-sm font-medium">Du sendest dauerhaft${bis ? ' · ' + escapeHtml(bis) : ''}</div>
+        <div class="text-[11px] text-ink/50 mt-0.5">${p ? 'Zuletzt ' + escapeHtml(famAgo(p.zeit)) + escapeHtml(quelle) : 'Noch kein Standort angekommen.'} · im Stehen wird nichts gesendet</div>
+      </div></div>`;
+  } else if (einmal) {
+    head = `<p class="text-xs text-ink/60 mb-2">📍 Einmalig gesendet ${escapeHtml(famAgo(p.zeit))} – die Familie sieht diesen Standort ${escapeHtml(bis)}.</p>`;
+  } else {
+    head = `<p class="text-xs text-ink/55 mb-2">Deine Familie sieht dich gerade nicht auf der Karte.${g && g.zuletzt && g.zuletzt.quelle === 'app' && famNow() - g.zuletzt.zeit < 24 * 3600 * 1000 ? ' „Traccar Client“ ist eingerichtet – angezeigt wird erst, wenn du dauerhaft sendest.' : ''}</p>`;
+  }
+  const bg = dauerhaft && !appFresh
+    ? `<div class="fz-note-box mb-2"><span>💤</span><span class="text-xs">Solange pinn. offen ist, schickt es bei Bewegung neue Standorte mit. Ist pinn. geschlossen, kommt dein Standort nur mit der einmal eingerichteten App „Traccar Client“.</span></div>`
+    : '';
   box.innerHTML = `<div class="fam-card">
     <div class="fz-h">📱 Mein Standort</div>
-    <label class="fz-check"><input type="checkbox" data-famshare="${famAttr(g.id)}"${g.teilen ? ' checked' : ''} /><span>Standort mit der Familie teilen<span class="block text-[11px] text-ink/45">Aus = niemand sieht dich in pinn. auf der Karte, Orte melden nichts.</span></span></label>
-    ${stale ? `<div class="fz-note-box warn mb-2"><span>⏳</span><span class="text-xs">${g.position ? 'Letzter Standort ' + escapeHtml(famAgo(g.position.zeit)) + '.' : 'Von deinem Handy kam noch kein Standort.'} Läuft „Traccar Client“ und ist der Dienst eingeschaltet?</span></div>` : ''}
+    ${head}
+    ${bg}
+    <label class="fz-check"><input type="checkbox" data-famact="dauerhaft"${dauerhaft ? ' checked' : ''} /><span>Dauerhaft senden<span class="block text-[11px] text-ink/45">Die Familie sieht dich live auf der Karte – mit Dauer, endet von selbst.</span></span></label>
+    <label class="fz-check"><input type="checkbox" id="famMinePush"${famSharePushPref() ? ' checked' : ''} /><span>🔔 Familie per Push benachrichtigen<span class="block text-[11px] text-ink/45">Beim Einschalten und beim einmaligen Senden. SOS benachrichtigt immer.</span></span></label>
     <div class="flex flex-wrap gap-2">
+      <button type="button" class="fz-mini-btn primary" data-famact="einmal">📍 Einmalig senden</button>
+      ${dauerhaft ? '<button type="button" class="fz-mini-btn" data-famact="share">⏱ Dauer ändern</button>' : ''}
       <button type="button" class="fz-mini-btn${unterwegs ? ' primary' : ''}" data-famact="unterwegs" data-an="${unterwegs ? '0' : '1'}">${unterwegs ? '🏁 Heimweg beenden' : '🚶 Ich bin unterwegs nach Hause'}</button>
-      <button type="button" class="fz-mini-btn" data-famact="guide" data-id="${famAttr(g.id)}">⚙︎ Einrichtung auf dem Handy</button>
+      ${g ? `<button type="button" class="fz-mini-btn" data-famact="guide" data-id="${famAttr(g.id)}">⚙︎ App für den Hintergrund</button>` : ''}
     </div>
+    <button type="button" id="famSosBtn" class="fam-sos-btn${famSosUntil ? ' counting' : ''}" data-famact="sos">${famSosLabel()}</button>
     ${unterwegs ? `<p class="text-[11px] text-ink/45 mt-2">Die Familie wurde benachrichtigt und sieht deinen Live-Standort. Beim Ankommen zu Hause endet der Heimweg automatisch.</p>` : ''}
   </div>`;
 }
-
 // Teile der Seite, die sich mit neuen Standorten ändern (ohne die Karte neu aufzubauen)
 function famRefreshLive() {
   if (currentView !== 'familie') return;
@@ -50846,9 +50898,10 @@ function famDetailLocHtml(m) {
     <div class="fz-h">📍 Standort</div>
     <div class="text-sm">${!g.teilen ? 'Standort wird nicht geteilt.' : p ? `${live ? '<span class="text-red-600 font-medium">● live</span> · ' : ''}${pl ? escapeHtml(pl.emoji + ' ' + pl.name) + ' · ' : ''}${escapeHtml(famAgo(p.zeit))}${p.akku != null ? ' · 🔋 ' + p.akku + ' %' : ''}` : 'Noch kein Standort empfangen.'}</div>
     ${famUnterwegs(g) ? '<div class="text-xs text-ink/60 mt-1">🚶 unterwegs nach Hause</div>' : ''}
+    ${g.teilen && famShareUntil(g) ? `<div class="text-xs text-ink/60 mt-1">⏱ ${g.nurEinmal ? 'einmalig gesendet, sichtbar' : 'geteilt'} ${escapeHtml(famShareUntil(g))}</div>` : ''}
     <div class="flex flex-wrap gap-2 mt-2">
       ${p ? `<button type="button" class="fz-mini-btn primary" data-famact="showmap" data-id="${famAttr(g.id)}">🗺 Auf der Karte zeigen</button>` : ''}
-      ${canToggle ? `<label class="fz-check" style="margin:0;align-items:center"><input type="checkbox" data-famshare="${famAttr(g.id)}"${g.teilen ? ' checked' : ''} /><span>Standort teilen</span></label>` : ''}
+      ${canToggle ? `<label class="fz-check" style="margin:0;align-items:center"><input type="checkbox" data-famshare="${famAttr(g.id)}"${g.teilen && !g.nurEinmal ? ' checked' : ''} /><span>Dauerhaft senden</span></label>` : ''}
     </div>
   </div>`;
 }
@@ -51101,7 +51154,8 @@ function famClearPass() {
 function famOpenSetup() {
   if (!isCurrentUserAdmin()) return;
   const devs = famDevices();
-  const ok = famStatus && famStatus.verbunden !== false && !famStatusErr;
+  const trackerWeg = devs.some(g => g.typ === 'tracker') && famStatus && famStatus.traccar && famStatus.traccar !== 'an';
+  const ok = famStatus && !famStatusErr && !trackerWeg;
   const rows = devs.map(g => {
     const m = memberById(g.memberId);
     const p = g.position;
@@ -51117,8 +51171,8 @@ function famOpenSetup() {
   }).join('');
   famOpenModal(`
     <h3 class="font-serif text-lg mb-1">Ortung einrichten</h3>
-    <p class="text-xs text-ink/50 mb-3">Jedes Familienmitglied bekommt ein Gerät: ein Handy mit der kostenlosen App „Traccar Client“ (iPhone und Android) oder einen GPS-Tracker, z. B. am Halsband. Die Standorte bleiben auf eurem NAS.</p>
-    <div class="fz-note-box ${ok ? 'ok' : 'urgent'} mb-4"><span>${ok ? '✅' : '⚠️'}</span><span class="text-xs">${ok ? 'Traccar ist verbunden.' : escapeHtml(famStatusErr || (famStatus && famStatus.fehler) || 'Traccar ist nicht erreichbar.')}</span></div>
+    <p class="text-xs text-ink/50 mb-3">Handys brauchen nichts weiter: Jeder kann unter „Mein Standort“ direkt in pinn. teilen. Im Hintergrund (pinn. geschlossen) sendet das Handy mit der kostenlosen App „Traccar Client“ (iPhone und Android) – direkt an pinn., ein Traccar-Server ist dafür nicht nötig. Nur GPS-Tracker mit SIM-Karte (z. B. am Halsband) brauchen den Container „traccar“. Die Standorte bleiben auf eurem NAS.</p>
+    <div class="fz-note-box ${ok ? 'ok' : 'warn'} mb-4"><span>${ok ? '✅' : '⚠️'}</span><span class="text-xs">${ok ? 'Ortung bereit – Handys senden direkt an pinn.' : escapeHtml(famStatusErr || (famStatus && famStatus.fehler) || 'GPS-Tracker brauchen den Container „traccar“.')}</span></div>
     <div class="fz-h">Geräte</div>
     <div class="flex flex-col gap-2 mb-3">${rows || '<p class="text-xs text-ink/40">Noch keine Geräte.</p>'}</div>
     <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-famact="adddevice">+ Gerät hinzufügen</button>
@@ -51138,9 +51192,9 @@ function famOpenSetup() {
     <details class="fz-tool mt-5">
       <summary class="text-sm font-medium py-1">Server-Daten</summary>
       <div class="text-xs text-ink/60 mt-2 leading-relaxed">
-        <div class="mb-1">Handys (Traccar Client):</div>
+        <div class="mb-1">Handys (Traccar Client, sendet direkt an pinn.):</div>
         <div class="fam-copy"><code>${escapeHtml(famOsmandUrl())}</code><button type="button" class="fz-mini-btn" data-famcopy="${famAttr(famOsmandUrl())}">Kopieren</button></div>
-        <div class="mt-3 mb-1">GPS-Tracker: Adresse eures Internet-Anschlusses und Port je Protokoll – GT06 5023 · H02 5013 · Watch 5093 · Teltonika 5027 (Geräte-ID = IMEI).</div>
+        <div class="mt-3 mb-1">GPS-Tracker (nur mit Container „traccar“): Adresse eures Internet-Anschlusses und Port je Protokoll – GT06 5023 · H02 5013 · Watch 5093 · Teltonika 5027 (Geräte-ID = IMEI).</div>
       </div>
     </details>
     <div class="flex justify-end mt-4"><button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-famact="cancel">Schließen</button></div>`);
@@ -51171,12 +51225,12 @@ async function famLoadOsmandLog() {
     if (res.status === 404) { box.innerHTML = '<span class="text-red-600">Server noch ohne diese Funktion – pinn-ortung.js und ortung.pb.js einspielen und pocketbase neu starten.</span>'; return; }
     if (!res.ok) throw new Error(body.error || 'nicht abrufbar');
     const list = Array.isArray(body.meldungen) ? body.meldungen : [];
-    if (!list.length) { box.innerHTML = '<span class="text-ink/45">Seit dem letzten Neustart von pinn. kam noch keine Meldung über pinn. an. Sendet das Handy evtl. direkt an Traccar (Port 5055)? Dann bitte die Server-URL aus der Anleitung eintragen.</span>'; return; }
+    if (!list.length) { box.innerHTML = '<span class="text-ink/45">Seit dem letzten Neustart von pinn. kam noch keine Meldung aus „Traccar Client“ an. Bitte Server-URL und Geräte-ID aus der Anleitung prüfen und in der App den Dienst einschalten.</span>'; return; }
     box.innerHTML = list.map(x => {
       const t = new Date(x.zeit).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       const tag = x.sos ? (x.fehler ? '<span class="text-red-600 font-semibold">🆘 erkannt, Fehler</span>' : '<span class="text-red-600 font-semibold">🆘 erkannt</span>') : (x.alarm ? '<span class="text-mustard font-semibold">Alarm ohne SOS</span>' : '<span class="text-ink/45">Standort</span>');
       return `<div class="fz-note-box ${x.sos ? 'urgent' : ''}" style="padding:6px 9px"><span class="flex-1 min-w-0">
-        <span class="font-medium">${escapeHtml(t)}</span> · ${escapeHtml(x.name || x.uid || 'unbekannt')} · ${tag}${x.status ? ' · Traccar ' + escapeHtml(String(x.status)) : ''}
+        <span class="font-medium">${escapeHtml(t)}</span> · ${escapeHtml(x.name || x.uid || 'unbekannt')} · ${tag}${x.status ? ' · Antwort ' + escapeHtml(String(x.status)) : ''}
         ${x.alarm ? `<span class="block text-ink/55">${escapeHtml(x.alarm)}</span>` : ''}
         ${x.fehler ? `<span class="block text-red-600">${escapeHtml(x.fehler)}</span>` : ''}
         <span class="block text-ink/40 break-all">Felder: ${escapeHtml(x.felder || '–')}</span>
@@ -51200,8 +51254,8 @@ function famOpenDeviceForm(preset) {
       <select id="famD_member" class="fz-in">${members.map(m => `<option value="${famAttr(m.id)}"${m.id === mid ? ' selected' : ''}>${escapeHtml((m.avatar ? m.avatar + ' ' : '') + memberLabel(m))}</option>`).join('')}</select></div>
     <label class="fz-lbl">Gerät</label>
     <div class="fz-grid2 mb-3">
-      <button type="button" class="fz-kind-btn py-2 text-sm${typ === 'handy' ? ' active' : ''}" data-famtyp="handy">📱 Handy<br><span class="text-[11px] text-ink/50">App „Traccar Client“</span></button>
-      <button type="button" class="fz-kind-btn py-2 text-sm${typ === 'tracker' ? ' active' : ''}" data-famtyp="tracker">🛰️ GPS-Tracker<br><span class="text-[11px] text-ink/50">mit SIM-Karte</span></button>
+      <button type="button" class="fz-kind-btn py-2 text-sm${typ === 'handy' ? ' active' : ''}" data-famtyp="handy">📱 Handy<br><span class="text-[11px] text-ink/50">pinn. bzw. „Traccar Client“</span></button>
+      <button type="button" class="fz-kind-btn py-2 text-sm${typ === 'tracker' ? ' active' : ''}" data-famtyp="tracker">🛰️ GPS-Tracker<br><span class="text-[11px] text-ink/50">SIM-Karte · Container „traccar“</span></button>
     </div>
     <div class="fz-field"><label class="fz-lbl" for="famD_uid">${typ === 'tracker' ? 'Geräte-ID (IMEI des Trackers)' : 'Geräte-ID (wird in der App eingetragen)'}</label>
       <div class="flex gap-2"><input id="famD_uid" class="fz-in" value="${famAttr(typ === 'handy' ? famNewUniqueId() : '')}" ${typ === 'tracker' ? 'inputmode="numeric" placeholder="15-stellige IMEI"' : ''} autocapitalize="off" autocorrect="off" spellcheck="false" />
@@ -51250,7 +51304,7 @@ function famOpenGuide(id) {
   const copy = (v) => `<div class="fam-copy"><code>${escapeHtml(v)}</code><button type="button" class="fz-mini-btn" data-famcopy="${famAttr(v)}">Kopieren</button></div>`;
   const last = g.position ? 'Letzter Standort empfangen: ' + famAgo(g.position.zeit) : 'Von diesem Gerät kam noch kein Standort.';
   const body = g.typ === 'tracker' ? `
-    <p class="text-xs text-ink/60 mb-3">Der Tracker sendet über seine SIM-Karte direkt an Traccar auf eurem NAS.</p>
+    <p class="text-xs text-ink/60 mb-3">Der Tracker sendet über seine SIM-Karte direkt an Traccar auf eurem NAS – dafür muss der Container „traccar“ laufen (für Handys ist er nicht nötig).</p>
     <ol class="fam-steps">
       <li>SIM-Karte mit mobilen Daten einlegen und den Tracker einschalten.</li>
       <li>Als Server die Adresse eures Internet-Anschlusses eintragen (z. B. eure MyFRITZ!-Adresse) – meist per SMS-Befehl laut Anleitung des Trackers.</li>
@@ -51259,14 +51313,14 @@ function famOpenGuide(id) {
       <li>Sendeintervall z. B. auf 60 Sekunden stellen.</li>
     </ol>
     <div class="fz-note-box urgent mt-3"><span>🆘</span><span class="text-xs">Hat der Tracker einen SOS-Knopf, alarmiert pinn. die ganze Familie per Push (innerhalb einer Minute), sobald Traccar den Alarm des Trackers erkennt.</span></div>` : `
-    <p class="text-xs text-ink/60 mb-3">Gilt für iPhone und Android gleich. Die App sendet auch im Hintergrund und bei gesperrtem Bildschirm.</p>
+    <p class="text-xs text-ink/60 mb-2">Ohne weitere App geht „📍 Standort teilen“ direkt in pinn. – dann aber nur, solange pinn. offen ist. Damit der Standort auch bei geschlossenem pinn. und gesperrtem Bildschirm kommt, sendet die kostenlose App „Traccar Client“ ihn direkt an pinn. (ein Traccar-Server ist nicht nötig). Gilt für iPhone und Android gleich.</p>
     <ol class="fam-steps">
       <li>App <b>„Traccar Client“</b> installieren (App Store bzw. Google Play, kostenlos).</li>
       <li>In der App bei <b>Geräte-ID</b> (Device identifier) eintragen:${copy(uid)}</li>
       <li>Bei <b>Server-URL</b> eintragen:${copy(url)}</li>
-      <li>Genauigkeit <b>Hoch</b>, Intervall z. B. <b>60 Sekunden</b>, Distanz z. B. <b>50 m</b>.</li>
+      <li>Genauigkeit <b>Mittel</b>, Distanz <b>50 m</b>. Die App sendet dann nur, wenn du dich bewegst – im Stehen nichts. Gibt es bei dir weitere Felder (Intervall, Heartbeat), Heartbeat aus bzw. 0.</li>
       <li>Standortzugriff erlauben: <b>Immer</b> und <b>Genauer Standort</b> an.<br><span class="text-ink/50">iPhone: Einstellungen → Traccar Client → Standort → Immer. Android: Standort → „Immer zulassen“, zusätzlich Akku → „Nicht eingeschränkt“.</span></li>
-      <li>Den Schalter <b>Dienst / Tracking</b> einschalten – fertig.</li>
+      <li>Den Schalter <b>Dienst / Tracking</b> einschalten und <b>immer an lassen</b> – fertig. Ab jetzt steuerst du alles in pinn.: „Dauerhaft senden“ an oder aus, „Einmalig senden“ und SOS. Solange „Dauerhaft senden“ aus ist, sieht niemand deinen Standort und pinn. zeichnet keinen Weg auf.</li>
     </ol>
     <p class="text-[11px] text-ink/45 mt-2">Das Handy muss pinn. unter dieser Adresse erreichen – unterwegs also genauso verbunden sein wie für die pinn.-App selbst.</p>
     <div class="fz-note-box urgent mt-3"><span>🆘</span><span class="text-xs"><b>SOS:</b> In „Traccar Client“ „SOS senden“ wählen (je nach Version in der App oder lange auf das App-Symbol drücken). pinn. alarmiert sofort alle Familienmitglieder per Push – mit Standort, Adresse, Uhrzeit und Knöpfen für Anruf und Notruf ${escapeHtml(regionNotrufText())}. Tipp: die eigene Handynummer im Notfallpass eintragen.</span></div>`;
@@ -51484,11 +51538,295 @@ async function famSetSharing(id, on, input) {
     if (input) input.disabled = false;
   }
 }
+/* ---------- Standort teilen (direkt aus pinn., ohne weitere App) ----------
+   - Einmalig: pinn. fragt beim Antippen einmal den Standort ab und schickt ihn an den Server.
+   - Dauer wählbar (30 Min. … 24 Std., bis ich zu Hause bin, bis ich es beende); der Server beendet
+     die Freigabe selbst. Push an die Familie wählbar – bei SOS kommt sie immer.
+   - Live: Solange pinn. offen ist und die Freigabe läuft, schickt pinn. neue Standorte mit
+     (nur bei Bewegung ab 50 m, höchstens etwa jede Minute – im Stehen nichts). Fragt dafür nie von sich
+     aus nach dem Standort: nur, wenn er schon erlaubt ist oder in dieser Sitzung selbst geteilt wurde.
+   - Kommt der Standort gerade von „Traccar Client“, sendet pinn. nichts zusätzlich (spart Akku). */
+var famShareMin = 0;    // gewählte Dauer in Minuten, -1 = bis ich zu Hause bin, 0 = bis ich es beende
+function famSharePushPref() { try { return localStorage.getItem('pinn.teilenPush') !== '0'; } catch (e) { return true; } }
+function famPosPayload(p) {
+  const c = p.coords;
+  const out = { lat: c.latitude, lon: c.longitude, genau: Math.round(c.accuracy || 0) || null };
+  if (c.speed != null && isFinite(c.speed) && c.speed >= 0) out.tempo = Math.round(c.speed * 3.6);
+  if (c.heading != null && isFinite(c.heading) && c.heading >= 0) out.kurs = Math.round(c.heading);
+  return out;
+}
+function famGetPosition() {
+  return new Promise((resolve) => {
+    if (!navigator.geolocation) { resolve(null); return; }
+    navigator.geolocation.getCurrentPosition(
+      (p) => resolve(famPosPayload(p)),
+      () => resolve(null),
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 30000 });
+  });
+}
+function famOpenShare() {
+  const home = !!famHome();
+  const g = famMyPhone();
+  if (g && g.teilen) famShareMin = g.endeZuhause ? -1 : (g.bis ? famShareMin : 0);
+  if (famShareMin === -1 && !home) famShareMin = 60;
+  const opts = [[30, '30 Min.'], [60, '1 Std.'], [240, '4 Std.'], [480, '8 Std.'], [1440, '24 Std.']];
+  if (home) opts.push([-1, '🏠 Bis ich zu Hause bin']);
+  opts.push([0, '∞ Bis ich es beende']);
+  famOpenModal(`
+    <h3 class="font-serif text-lg mb-1">📍 Dauerhaft senden</h3>
+    <p class="text-xs text-ink/50 mb-3">Deine Familie sieht dich live auf der Karte. Gesendet wird nur, wenn du dich bewegst – im Stehen nichts. Ist pinn. geschlossen, sendet die einmal eingerichtete App „Traccar Client“.</p>
+    <label class="fz-lbl">Wie lange?</label>
+    <div class="flex flex-wrap gap-2 mb-3">${opts.map(([v, l]) => `<button type="button" class="fz-filter-chip px-3 py-1.5 text-sm${famShareMin === v ? ' active' : ''}" data-famact="sharedur" data-min="${v}">${escapeHtml(l)}</button>`).join('')}</div>
+    <label class="fz-check"><input type="checkbox" id="famSharePush"${famSharePushPref() ? ' checked' : ''} /><span>Familie per Push benachrichtigen<span class="block text-[11px] text-ink/45">Bei einem Notfall (SOS) bekommt die Familie immer eine Push-Nachricht.</span></span></label>
+    <p id="famShareErr" class="text-xs text-red-600 mb-2 hidden"></p>
+    <div class="flex justify-end gap-2 mt-3">
+      <button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-famact="cancel">Abbrechen</button>
+      <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-famact="sharego">📍 Senden starten</button>
+    </div>`);
+}
+function famShareDur(btn) {
+  famShareMin = Number(btn.dataset.min) || 0;
+  btn.parentElement.querySelectorAll('[data-famact="sharedur"]').forEach(b => b.classList.toggle('active', b === btn));
+}
+async function famShareGo(btn) {
+  const pushEl = document.getElementById('famSharePush');
+  const push = !!(pushEl && pushEl.checked);
+  const err = document.getElementById('famShareErr');
+  try { localStorage.setItem('pinn.teilenPush', push ? '1' : '0'); } catch (e) { /* egal */ }
+  const label = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Standort wird ermittelt …';
+  try {
+    const pos = await famGetPosition();
+    const r = await famPost('standort-teilen', Object.assign({ an: true, minuten: famShareMin > 0 ? famShareMin : 0, zuhause: famShareMin === -1, push }, pos || {}));
+    pinnTeilenMerken({ an: true, bis: r.bis || 0, seit: Date.now() });
+    famCloseModal();
+    await famLoadStatus();
+    finShowToast(pos ? 'Du sendest jetzt dauerhaft' : 'Läuft – dein Standort war gerade nicht verfügbar (Standortzugriff erlaubt?)', !pos);
+    pinnTeilenLiveCheck(true);
+  } catch (e) {
+    if (err) { err.textContent = e.message || 'Teilen nicht möglich'; err.classList.remove('hidden'); }
+  } finally {
+    btn.disabled = false;
+    btn.textContent = label;
+  }
+}
+async function famShareEnd(btn) {
+  if (btn) btn.disabled = true;
+  try {
+    await famPost('standort-teilen', { an: false });
+    pinnTeilenMerken(null);
+    pinnTeilenStop();
+    await famLoadStatus();
+    finShowToast('Dauerhaft senden ist aus');
+  } catch (e) {
+    finShowToast(e.message, true);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+async function famShareNow(btn) {
+  if (btn) btn.disabled = true;
+  try {
+    const pos = await famGetPosition();
+    if (!pos) throw new Error('Standort nicht verfügbar – ist der Standortzugriff für pinn. erlaubt?');
+    const r = await famPost('standort', pos);
+    if (r && r.teilen === false) { pinnTeilenMerken(null); throw new Error('Deine Freigabe ist schon beendet.'); }
+    pinnTeilenLast = { t: Date.now(), lat: pos.lat, lon: pos.lon };
+    await famLoadStatus();
+    finShowToast('Standort gesendet');
+    pinnTeilenLiveCheck(true);
+  } catch (e) {
+    finShowToast(e.message, true);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+// „Einmalig senden“: genau diesen Standort für eine Stunde zeigen (ohne dauerhaft zu senden).
+// Läuft „Dauerhaft senden“, ist es einfach ein aktueller Standort.
+async function famSendOnce(btn) {
+  const pushEl = document.getElementById('famMinePush');
+  const push = !!(pushEl && pushEl.checked);
+  const label = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = 'Standort wird ermittelt …'; }
+  try {
+    const pos = await famGetPosition();
+    if (!pos) throw new Error('Standort nicht verfügbar – ist der Standortzugriff für pinn. erlaubt?');
+    const r = await famPost('standort-einmal', Object.assign({ push }, pos));
+    pinnTeilenLast = { t: Date.now(), lat: pos.lat, lon: pos.lon };
+    await famLoadStatus();
+    finShowToast(r && r.dauerhaft ? 'Standort gesendet' : 'Standort einmalig gesendet – 1 Stunde sichtbar');
+  } catch (e) {
+    finShowToast(e.message || 'Senden nicht möglich', true);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = label; }
+  }
+}
+// Schalter „Dauerhaft senden“: an -> Dauer wählen, aus -> sofort beenden
+function famToggleDauerhaft(input) {
+  const on = !!input.checked;
+  input.checked = !on; // Anzeige folgt erst dem Server
+  if (on) famOpenShare(); else famShareEnd(input);
+}
+// SOS-Knopf unter „Mein Standort“: 3 Sekunden Countdown (nochmal tippen bricht ab), dann derselbe
+// Alarm wie aus dem Heimweg-Popup bzw. „Traccar Client“ – Push an die ganze Familie, immer
+var FAM_SOS_SEC = 3;
+var famSosUntil = 0, famSosTimer = null, famSosSending = false;
+function famSosLabel() {
+  if (famSosSending) return '📡 Alarm wird gesendet …';
+  if (famSosUntil) return '🆘 Alarm in ' + Math.max(1, Math.ceil((famSosUntil - Date.now()) / 1000)) + ' s … nochmal tippen bricht ab';
+  return '🆘 SOS – Familie sofort alarmieren';
+}
+function famSosPaint() {
+  const b = document.getElementById('famSosBtn');
+  if (!b) return;
+  b.textContent = famSosLabel();
+  b.classList.toggle('counting', !!famSosUntil);
+  b.disabled = famSosSending;
+}
+function famSosPress() {
+  if (famSosSending) return;
+  if (famSosUntil) {
+    famSosUntil = 0; clearInterval(famSosTimer); famSosTimer = null;
+    hwSosVibrate(60); famSosPaint(); finShowToast('SOS abgebrochen');
+    return;
+  }
+  famSosUntil = Date.now() + FAM_SOS_SEC * 1000;
+  hwSosVibrate(200);
+  famSosPaint();
+  clearInterval(famSosTimer);
+  famSosTimer = setInterval(() => {
+    if (!famSosUntil) return;
+    if (Date.now() >= famSosUntil) {
+      clearInterval(famSosTimer); famSosTimer = null; famSosUntil = 0;
+      famSosSend();
+      return;
+    }
+    famSosPaint();
+  }, 200);
+}
+async function famSosSend() {
+  famSosSending = true;
+  famSosPaint();
+  let failed = '', id = '';
+  if (navigator.onLine === false) failed = 'Keine Verbindung zu pinn. – der Alarm konnte nicht gesendet werden.';
+  else {
+    const pos = await hwSosBrowserPos();
+    try { const r = await famPost('sos-ausloesen', pos || {}); id = (r && r.id) || ''; }
+    catch (e) { failed = e.message || 'Der Alarm konnte nicht gesendet werden.'; }
+  }
+  famSosSending = false;
+  famSosPaint();
+  if (failed) {
+    hwSosVibrate([400, 120, 400]);
+    const pol = regionNotruf().polizei;
+    if (confirm(failed + '\n\nJetzt den Polizei-Notruf ' + pol + ' anrufen?')) location.href = 'tel:' + pol;
+    return;
+  }
+  hwSosVibrate([300, 100, 300]);
+  finShowToast('🆘 Alarm gesendet – deine Familie ist informiert');
+  sosStarted = true;
+  if (id) sosForceId = id;
+  await sosCheck();
+}
+
+/* Live-Standort, solange pinn. offen ist (auf jeder Seite, nicht nur unter Familie) */
+var LS_TEILEN = 'pinn.meinTeilen';
+var pinnTeilenWatch = null;
+var pinnTeilenLast = null;     // { t, lat, lon } zuletzt gesendet
+var pinnTeilenGeste = false;   // in dieser Sitzung selbst geteilt -> Standort darf ohne Rückfrage
+var pinnTeilenSendet = false;
+function pinnTeilenStand() { try { return JSON.parse(localStorage.getItem(LS_TEILEN) || 'null'); } catch (e) { return null; } }
+function pinnTeilenMerken(s) {
+  try {
+    if (s && s.an) localStorage.setItem(LS_TEILEN, JSON.stringify(Object.assign({}, s, { user: (currentUser() && currentUser().id) || '' })));
+    else localStorage.removeItem(LS_TEILEN);
+  } catch (e) { /* egal */ }
+}
+function pinnTeilenAktiv() {
+  const s = pinnTeilenStand();
+  if (!s || !s.an || s.app) return false;
+  const u = currentUser();
+  if (!u || (s.user && s.user !== u.id)) return false;
+  if (s.bis && Date.now() > s.bis) { pinnTeilenMerken(null); return false; }
+  return true;
+}
+// Nach jedem Laden der Standorte: eigenen Stand merken (Freigabe aus pinn. gestartet, „Traccar Client“ aktiv?)
+function pinnTeilenAusStatus() {
+  const g = famMyPhone();
+  if (!g || !g.teilen || !g.seit) { pinnTeilenMerken(null); pinnTeilenStop(); return; }
+  const app = !!(g.position && g.position.quelle === 'app' && famNow() - g.position.zeit < 10 * 60 * 1000);
+  pinnTeilenMerken({ an: true, bis: g.bis || 0, seit: g.seit, app: app });
+  pinnTeilenLiveCheck(false);
+}
+async function pinnTeilenErlaubt() {
+  if (!navigator.geolocation) return false;
+  if (pinnTeilenGeste) return true;
+  try {
+    if (navigator.permissions && navigator.permissions.query) {
+      const st = await navigator.permissions.query({ name: 'geolocation' });
+      return !!st && st.state === 'granted';
+    }
+  } catch (e) { /* nicht abfragbar */ }
+  return false;
+}
+function pinnTeilenStop() {
+  if (pinnTeilenWatch === null) return;
+  try { navigator.geolocation.clearWatch(pinnTeilenWatch); } catch (e) { /* egal */ }
+  pinnTeilenWatch = null;
+}
+async function pinnTeilenLiveCheck(geste) {
+  if (geste) pinnTeilenGeste = true;
+  const ok = document.visibilityState === 'visible' && navigator.onLine !== false && pinnTeilenAktiv() &&
+    !(typeof isCurrentUserGuest === 'function' && isCurrentUserGuest());
+  if (!ok) { pinnTeilenStop(); return; }
+  if (pinnTeilenWatch !== null) return;
+  if (!(await pinnTeilenErlaubt()) || pinnTeilenWatch !== null) return;
+  try {
+    pinnTeilenWatch = navigator.geolocation.watchPosition(pinnTeilenNeu, (err) => { if (err && err.code === 1) pinnTeilenStop(); },
+      { enableHighAccuracy: false, maximumAge: 30000, timeout: 120000 });
+  } catch (e) { pinnTeilenWatch = null; }
+}
+async function pinnTeilenNeu(p) {
+  if (!pinnTeilenAktiv()) { pinnTeilenStop(); return; }
+  const c = p.coords;
+  const now = Date.now();
+  const last = pinnTeilenLast;
+  if (last) {
+    const dt = now - last.t;
+    const d = famDistM(last.lat, last.lon, c.latitude, c.longitude);
+    // nur bei Bewegung (wie „Traccar Client“: 50 m), höchstens etwa jede Minute – im Stehen nichts
+    if (!(dt >= 50 * 1000 && d >= Math.max(50, (c.accuracy || 0) / 2))) return;
+  }
+  if (pinnTeilenSendet) return;
+  pinnTeilenSendet = true;
+  try {
+    const r = await postJson('/api/pinn/ortung/standort', famPosPayload(p));
+    pinnTeilenLast = { t: now, lat: c.latitude, lon: c.longitude };
+    if (r && r.teilen === false) { pinnTeilenMerken(null); pinnTeilenStop(); }
+  } catch (e) {
+    /* nächster Versuch mit dem nächsten Standort */
+  } finally {
+    pinnTeilenSendet = false;
+  }
+}
+document.addEventListener('visibilitychange', () => pinnTeilenLiveCheck(false));
+window.addEventListener('online', () => pinnTeilenLiveCheck(false));
+setInterval(() => { if (document.visibilityState === 'visible') pinnTeilenLiveCheck(false); }, 60 * 1000);
+setTimeout(() => pinnTeilenLiveCheck(false), 3000);
+
 async function famSetUnterwegs(on, btn) {
   if (on && !confirm('Die Familie bekommt eine Nachricht und sieht deinen Live-Standort, bis du zu Hause ankommst. Los?')) return;
   if (btn) btn.disabled = true;
   try {
     await famPost('unterwegs', { an: !!on });
+    if (on) {
+      // gleich einen aktuellen Standort mitschicken – unterwegs sendet die offene pinn.-App dann bei Bewegung mit
+      const pos = await famGetPosition();
+      if (pos) { try { await famPost('standort', pos); pinnTeilenLast = { t: Date.now(), lat: pos.lat, lon: pos.lon }; } catch (e) { /* egal */ } }
+      pinnTeilenGeste = true;
+    }
     await famLoadStatus();
     finShowToast(on ? 'Gute Fahrt! Die Familie ist informiert.' : 'Heimweg beendet');
     sosStarted = true;
@@ -53355,9 +53693,16 @@ function skModalChange(e) {
       case 'address': famLoadAddress(id); break;
       case 'unterwegs': famSetUnterwegs(act.dataset.an === '1', act); break;
       case 'guide': famOpenGuide(id); break;
+      case 'share': famOpenShare(); break;
+      case 'shareend': famShareEnd(act); break;
+      case 'sharenow': famShareNow(act); break;
+      case 'einmal': famSendOnce(act); break;
+      case 'dauerhaft': famToggleDauerhaft(act); break;
+      case 'sos': famSosPress(); break;
     }
   });
   pane.addEventListener('change', (e) => {
+    if (e.target.id === 'famMinePush') { try { localStorage.setItem('pinn.teilenPush', e.target.checked ? '1' : '0'); } catch (err) { /* egal */ } return; }
     const share = e.target.closest('[data-famshare]');
     if (share) { famSetSharing(share.dataset.famshare, share.checked, share); return; }
     if (e.target.id === 'famFollowSel') {
@@ -53441,6 +53786,8 @@ function skModalChange(e) {
       case 'clearpass': famClearPass(); break;
       case 'adddevice': famOpenDeviceForm(null); break;
       case 'sostest': famSosTest(act); break;
+      case 'sharedur': famShareDur(act); break;
+      case 'sharego': famShareGo(act); break;
       case 'reloadlog': famLoadOsmandLog(); break;
       case 'savedevice': famSaveDevice(act); break;
       case 'deldevice': famDeleteDevice(act.dataset.id); break;
@@ -53910,7 +54257,7 @@ function hwMineHtml(h) {
   calls.push(`<a class="sos-call police" href="tel:${escapeHtml(pol)}"><span class="ic">🚓</span><b>${escapeHtml(pol)}</b><span>Polizei-Notruf</span></a>`);
   const pos = h.aktuell;
   return `<div class="hw-mine">
-      <div class="hw-mine-h">${pos ? `📍 ${escapeHtml(pos.adresse || (Number(pos.lat).toFixed(5) + ', ' + Number(pos.lon).toFixed(5)))}` : '📍 Noch kein aktueller Standort – läuft „Traccar Client“?'}</div>
+      <div class="hw-mine-h">${pos ? `📍 ${escapeHtml(pos.adresse || (Number(pos.lat).toFixed(5) + ', ' + Number(pos.lon).toFixed(5)))}` : '📍 Noch kein aktueller Standort – pinn. offen lassen oder „Traccar Client“ einschalten'}</div>
       ${pos ? `<div class="sos-when">🕒 ${escapeHtml(sosClock(pos.zeit))}${pos.genau ? ` <span class="acc">(± ${escapeHtml(String(pos.genau))} m)</span>` : ''}${h.entfernung != null ? ' · 🏠 noch ' + escapeHtml(hwKm(h.entfernung)) : ''}</div>` : ''}
       <button type="button" id="hwSosBtn" class="hw-sos" data-hwact="sos" aria-live="assertive">
         <span class="hw-sos-fill"></span>

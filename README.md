@@ -1,5 +1,5 @@
 <p align="center">
-  <img src=".github/assets/banner.png" alt="pinn. – the family organizer that lives on your own NAS, shown on an iPad family dashboard and an iPhone" width="880">
+  <img src=".github/assets/banner.png" alt="pinn. – the family organizer that lives on your own NAS" width="880">
 </p>
 
 <p align="center">
@@ -30,7 +30,7 @@ No cloud account. No subscription. No ads, no tracking. Your family's data never
 
 <table>
   <tr>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/home.png" alt="Overview with weather, today's tasks and upcoming events" width="230"><br><sub><b>Overview</b> – your day at a glance</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/home.png" alt="Home screen with weather, today's tasks and upcoming events" width="230"><br><sub><b>Home</b> – your day at a glance</sub></td>
     <td align="center" width="33%"><img src=".github/assets/screenshots/calendar.png" alt="Family calendar in week view" width="230"><br><sub><b>Calendar</b> – iCloud and Google in one view</sub></td>
     <td align="center" width="33%"><img src=".github/assets/screenshots/meals.png" alt="Weekly meal plan with recipes" width="230"><br><sub><b>Meals</b> – plan the week, shop in one tap</sub></td>
   </tr>
@@ -51,7 +51,7 @@ No cloud account. No subscription. No ads, no tracking. Your family's data never
 | ✅ **Tasks & household** | Tasks with push reminders, cleaning plans and bins – plus a kids' page with animated routines that only shows what fits the time of day. |
 | 💶 **Finance** | Shared or private funds, a household budget, savings and depots with ETFs and shares, pocket money, recurring payments and contracts with cancellation reminders. Flatshares can split costs and see who owes whom. |
 | 📄 **Documents & vehicles** | Receipts and warranties, IDs with expiry reminders. Cars and bikes with inspection dates, tyre changes, fuel use and total cost. |
-| 📍 **Family & location** | Live location via the free Traccar Client app, a "way home" mode, an SOS alert with position and emergency numbers, emergency cards and arrival notifications for places. |
+| 📍 **Family & location** | Share your location right from pinn. – once or for a chosen time – and in the background via the free Traccar Client app (sends straight to pinn., no extra server). Plus a "way home" mode, an SOS alert with position and emergency numbers, emergency cards and arrival notifications for places. |
 | 🎒 **School & daycare** | Per child: timetable (type it in or snap a photo – the AI fills it in), drop-off and pick-up, homework on the kids' page, parent letters with deadlines that turn into reminders, and closure days straight in the calendar. |
 | 🏠 **Smart home** | Start Apple Shortcuts or Home Assistant actions from a task – the robot vacuum cleans the kitchen when the chore is due. |
 | 🔔 **Notifications** | Personal push messages on iPhone, iPad and Android, plus a notification bell that collects every change in the family. |
@@ -67,7 +67,7 @@ flowchart LR
     direction LR
     P["📱 Phones & tablets<br/>pinn. on the home screen"] -->|HTTPS| C["Caddy<br/>certificate via DuckDNS"]
     C --> PB["PocketBase<br/>pinn. app + database"]
-    PB --- T["Traccar<br/>location"]
+    PB --- T["Traccar<br/>optional, GPS trackers"]
     PB --- HA["Home Assistant<br/>optional"]
     PB --- B["Nightly backup"]
   end

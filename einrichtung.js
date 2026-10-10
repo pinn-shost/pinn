@@ -159,9 +159,9 @@
     test_gemini_fehlt: "Bitte den Schlüssel eintragen.",
 
     t_ortung: "Ortung (Familie → Live-Standorte)",
-    i_ortung: "Optional. Die Ortung läuft über den Traccar-Container auf dem NAS – pinn. richtet ihn beim ersten Benutzen selbst ein. Hier musst du nichts eintragen.",
+    i_ortung: "Optional. Handys teilen ihren Standort direkt in pinn. – dafür musst du hier nichts eintragen. Den Container „traccar“ braucht es nur für GPS-Tracker mit SIM-Karte.",
     l_ortung: [
-      "Wer geortet werden möchte, installiert die App „Traccar Client“.",
+      "Standort teilen geht direkt in pinn. (Familie → Ortung). Damit er auch bei geschlossenem pinn. kommt, installiert man die App „Traccar Client“ – sie sendet direkt an pinn.",
       "Server-Adresse und Geräte-ID zeigt pinn. später je Person unter Familie → ⚙︎ Ortung an.",
       "Unterwegs braucht das Handy dafür das VPN aus dem Schritt „Unterwegs nutzen“.",
       "GPS-Tracker mit SIM-Karte (z. B. am Hundehalsband) senden aus dem Mobilfunknetz – dafür braucht es eine Portfreigabe im Router. Die Anleitung zeigt pinn. beim Hinzufügen des Trackers.",
@@ -170,7 +170,7 @@
     h_traccar: "Nur ausfüllen, wenn du in Traccar schon selbst ein Konto angelegt hast. Leer = pinn. legt selbst eins an.",
     L_PINN_TRACCAR_EMAIL: "Traccar-E-Mail", L_PINN_TRACCAR_PASSWORT: "Traccar-Passwort",
     test_traccar_ok: "Traccar läuft ✓",
-    test_traccar_aus: "Traccar ist nicht erreichbar – läuft der Container „traccar“?",
+    test_traccar_aus: "Der Container „traccar“ läuft nicht – für Handys nicht nötig. Nur für GPS-Tracker: in der .env COMPOSE_PROFILES=tracker eintragen.",
 
     t_ha: "Smarthome: Home Assistant",
     i_ha: "Optional. Wo läuft euer Home Assistant?",
@@ -369,9 +369,9 @@
     test_gemini_fehlt: "Please enter the key.",
 
     t_ortung: "Location (Family → live locations)",
-    i_ortung: "Optional. Location tracking runs via the Traccar container on the NAS – pinn. sets it up itself the first time it's used. Nothing to enter here.",
+    i_ortung: "Optional. Phones share their location directly in pinn. – nothing to enter here. The “traccar” container is only needed for GPS trackers with a SIM card.",
     l_ortung: [
-      "Anyone who wants to be located installs the “Traccar Client” app.",
+      "Location sharing works directly in pinn. (Family → Location). To keep sending while pinn. is closed, install the “Traccar Client” app – it sends straight to pinn.",
       "pinn. later shows the server address and device ID for each person under Family → ⚙︎ Location.",
       "On the go, the phone needs the VPN from the “Use on the go” step.",
       "GPS trackers with a SIM card (e.g. on a dog collar) send from the mobile network – this requires port forwarding in the router. pinn. shows the instructions when you add the tracker.",
@@ -380,7 +380,7 @@
     h_traccar: "Only fill in if you already created an account in Traccar yourself. Empty = pinn. creates one itself.",
     L_PINN_TRACCAR_EMAIL: "Traccar email", L_PINN_TRACCAR_PASSWORT: "Traccar password",
     test_traccar_ok: "Traccar is running ✓",
-    test_traccar_aus: "Traccar cannot be reached – is the “traccar” container running?",
+    test_traccar_aus: "The “traccar” container is not running – not needed for phones. Only for GPS trackers: add COMPOSE_PROFILES=tracker to the .env file.",
 
     t_ha: "Smart home: Home Assistant",
     i_ha: "Optional. Where does your Home Assistant run?",
@@ -579,9 +579,9 @@
     test_gemini_fehlt: "Veuillez saisir la clé.",
 
     t_ortung: "Localisation (Famille → positions en direct)",
-    i_ortung: "Facultatif. La localisation passe par le conteneur Traccar du NAS – pinn. le configure lui-même à la première utilisation. Rien à saisir ici.",
+    i_ortung: "Facultatif. Les téléphones partagent leur position directement dans pinn. – rien à saisir ici. Le conteneur « traccar » n'est nécessaire que pour les traceurs GPS avec carte SIM.",
     l_ortung: [
-      "Toute personne souhaitant être localisée installe l'app « Traccar Client ».",
+      "Le partage de position se fait directement dans pinn. (Famille → Localisation). Pour continuer à envoyer quand pinn. est fermé, installez l'app « Traccar Client » – elle envoie directement à pinn.",
       "pinn. affichera plus tard l'adresse du serveur et l'ID de l'appareil pour chaque personne sous Famille → ⚙︎ Localisation.",
       "En déplacement, le téléphone a besoin du VPN de l'étape « Utiliser en déplacement ».",
       "Les traceurs GPS avec carte SIM (p. ex. sur un collier de chien) émettent depuis le réseau mobile – il faut alors une redirection de port dans le routeur. pinn. affiche le guide lors de l'ajout du traceur.",
@@ -590,7 +590,7 @@
     h_traccar: "À remplir uniquement si vous avez déjà créé vous-même un compte dans Traccar. Vide = pinn. en crée un.",
     L_PINN_TRACCAR_EMAIL: "E-mail Traccar", L_PINN_TRACCAR_PASSWORT: "Mot de passe Traccar",
     test_traccar_ok: "Traccar fonctionne ✓",
-    test_traccar_aus: "Traccar est injoignable – le conteneur « traccar » est-il démarré ?",
+    test_traccar_aus: "Le conteneur « traccar » ne tourne pas – inutile pour les téléphones. Seulement pour les traceurs GPS : ajoutez COMPOSE_PROFILES=tracker dans le fichier .env.",
 
     t_ha: "Maison connectée : Home Assistant",
     i_ha: "Facultatif. Où fonctionne votre Home Assistant ?",
@@ -789,9 +789,9 @@
     test_gemini_fehlt: "Introduce la clave.",
 
     t_ortung: "Localización (Familia → ubicaciones en directo)",
-    i_ortung: "Opcional. La localización funciona con el contenedor Traccar del NAS – pinn. lo configura solo la primera vez que se usa. Aquí no hay que introducir nada.",
+    i_ortung: "Opcional. Los móviles comparten su ubicación directamente en pinn. – aquí no hay que introducir nada. El contenedor «traccar» solo hace falta para localizadores GPS con tarjeta SIM.",
     l_ortung: [
-      "Quien quiera ser localizado instala la app «Traccar Client».",
+      "Compartir la ubicación funciona directamente en pinn. (Familia → Localización). Para seguir enviando con pinn. cerrado, instala la app «Traccar Client»: envía directamente a pinn.",
       "pinn. mostrará más adelante la dirección del servidor y el ID del dispositivo de cada persona en Familia → ⚙︎ Localización.",
       "Fuera de casa, el móvil necesita la VPN del paso «Usar fuera de casa».",
       "Los localizadores GPS con tarjeta SIM (p. ej. en el collar del perro) envían desde la red móvil – para eso hace falta abrir un puerto en el router. pinn. muestra la guía al añadir el localizador.",
@@ -800,7 +800,7 @@
     h_traccar: "Rellénalo solo si ya creaste tú mismo una cuenta en Traccar. Vacío = pinn. crea una.",
     L_PINN_TRACCAR_EMAIL: "Correo de Traccar", L_PINN_TRACCAR_PASSWORT: "Contraseña de Traccar",
     test_traccar_ok: "Traccar funciona ✓",
-    test_traccar_aus: "No se puede acceder a Traccar – ¿está en marcha el contenedor «traccar»?",
+    test_traccar_aus: "El contenedor «traccar» no está en marcha – no hace falta para los móviles. Solo para localizadores GPS: añade COMPOSE_PROFILES=tracker al archivo .env.",
 
     t_ha: "Hogar inteligente: Home Assistant",
     i_ha: "Opcional. ¿Dónde funciona vuestro Home Assistant?",
@@ -1229,7 +1229,7 @@
     var r = S.tests.traccar;
     if (!r) { setTimeout(function () { runTest('traccar'); }, 50); h += msg('info', esc(t('pruefe'))); }
     else if (r === 'laeuft') h += msg('info', esc(t('pruefe')));
-    else h += testMsg('traccar', r);
+    else h += r.ok ? testMsg('traccar', r) : msg('info', esc(t('test_traccar_aus')));
     h += '<ul class="ps-ul">' + list('l_ortung').map(function (s) { return '<li>' + rich(s) + '</li>'; }).join('') + '</ul>';
     h += '<p class="ps-hint">' + esc(t('appTraccar')) + ' ' + storeLinks('traccar') + '</p>';
     h += '<details class="ps-adv"><summary>' + esc(t('erweitert')) + '</summary><p class="ps-hint">' + esc(t('h_traccar')) + '</p>' +
@@ -1468,7 +1468,6 @@
       var jobs = [];
       if (feld('PINN_GOOGLE_CLIENT_ID').wert) jobs.push(['google', 'Google']);
       if (feld('PINN_GEMINI_KEY').gesetzt) jobs.push(['gemini', t('S_KI')]);
-      jobs.push(['traccar', t('S_ORTUNG')]);
       if (S.meta.homeassistant === 'vm' && feld('HA_IP').wert) jobs.push(['homeassistant', 'Home Assistant']);
       var chain = Promise.resolve();
       jobs.forEach(function (j) {

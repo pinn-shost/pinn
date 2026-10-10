@@ -8,6 +8,13 @@
 //   POST /api/pinn/ortung/geraet          { id?, memberId, name, emoji, typ, uniqueId }   (nur Admins)
 //   POST /api/pinn/ortung/geraet-loeschen { id }                                          (nur Admins)
 //   POST /api/pinn/ortung/teilen          { id, an }      Standort teilen (die Person selbst oder Admins)
+//   POST /api/pinn/ortung/standort-teilen { an, minuten, zuhause, push, lat?, lon?, genau? }
+//                                         eigene Freigabe mit Dauer starten/beenden (legt bei Bedarf das
+//                                         eigene Handy an – ohne Traccar) -> { ok, id, bis, endeZuhause }
+//   POST /api/pinn/ortung/standort-einmal { lat, lon, genau?, push }  „Einmalig senden“: genau dieser Standort,
+//                                         1 Std. sichtbar, ohne dauerhaft zu teilen -> { ok, id, bis }
+//   POST /api/pinn/ortung/standort        { lat, lon, genau?, tempo?, kurs? }  neuer Standort aus der offenen
+//                                         pinn.-App (nur bei laufender Freigabe)
 //   POST /api/pinn/ortung/ort             { ort: {...} }  bekannten Ort anlegen/ändern
 //   POST /api/pinn/ortung/ort-loeschen    { id } bzw. { laden: <Listen-ID> } (alle Filialen des Ladens)
 //   POST /api/pinn/ortung/laden           { laden: <Listen-ID>, name, filialen: [{ id, lat, lon, adresse }],
@@ -28,7 +35,8 @@
 //
 // Ohne Anmeldung:
 //   GET  /api/pinn/ortung/kachel/{z}/{x}/{y}   Kartenkachel (OpenStreetMap, zwischengespeichert)
-//   GET|POST /api/pinn/ortung/osmand           Positionen der App „Traccar Client“ -> Traccar (Port 5055)
+//   GET|POST /api/pinn/ortung/osmand           Positionen der App „Traccar Client“ -> speichert pinn. selbst
+//                                              (zusätzlich an Traccar, Port 5055, falls der Container läuft)
 //                                              alarm=sos (SOS-Knopf) -> sofort Push an die ganze Familie
 //   GET|POST /?id=...&lat=...&alarm=sos         dasselbe, wenn in Traccar Client nur die pinn.-Adresse steht
 //
@@ -101,6 +109,36 @@ routerAdd("POST", "/api/pinn/ortung/teilen", (e) => {
     if (require(`${__hooks}/pinn-benutzer.js`).isGuest(e)) return e.json(403, { error: "Nicht erlaubt." });
     try {
         return e.json(200, require(`${__hooks}/pinn-ortung.js`).setSharing(e, e.requestInfo().body || {}));
+    } catch (err) {
+        return e.json(400, { error: err.message });
+    }
+}, $apis.requireAuth("benutzer"));
+
+routerAdd("POST", "/api/pinn/ortung/standort-teilen", (e) => {
+    e.response.header().set("Cache-Control", "no-store");
+    if (require(`${__hooks}/pinn-benutzer.js`).isGuest(e)) return e.json(403, { error: "Nicht erlaubt." });
+    try {
+        return e.json(200, require(`${__hooks}/pinn-ortung.js`).shareStart(e, e.requestInfo().body || {}));
+    } catch (err) {
+        return e.json(400, { error: err.message });
+    }
+}, $apis.requireAuth("benutzer"));
+
+routerAdd("POST", "/api/pinn/ortung/standort-einmal", (e) => {
+    e.response.header().set("Cache-Control", "no-store");
+    if (require(`${__hooks}/pinn-benutzer.js`).isGuest(e)) return e.json(403, { error: "Nicht erlaubt." });
+    try {
+        return e.json(200, require(`${__hooks}/pinn-ortung.js`).shareOnce(e, e.requestInfo().body || {}));
+    } catch (err) {
+        return e.json(400, { error: err.message });
+    }
+}, $apis.requireAuth("benutzer"));
+
+routerAdd("POST", "/api/pinn/ortung/standort", (e) => {
+    e.response.header().set("Cache-Control", "no-store");
+    if (require(`${__hooks}/pinn-benutzer.js`).isGuest(e)) return e.json(403, { error: "Nicht erlaubt." });
+    try {
+        return e.json(200, require(`${__hooks}/pinn-ortung.js`).sharePosition(e, e.requestInfo().body || {}));
     } catch (err) {
         return e.json(400, { error: err.message });
     }

@@ -1,6 +1,6 @@
 # ─────────────────────────────────────────────────────────────
-#  pinn. – Docker-Projekt (PocketBase + HTTPS über Caddy/DuckDNS + Traccar für die Ortung
-#  + Umweg zur Home-Assistant-VM + optional Tailscale + Wartung: Backups & Updates per Knopf)
+#  pinn. – Docker-Projekt (PocketBase + HTTPS über Caddy/DuckDNS + Umweg zur Home-Assistant-VM
+#  + optional Tailscale + optional Traccar für GPS-Tracker + Wartung: Backups & Updates per Knopf)
 #  Keine Portfreigabe nötig – Zertifikat per DNS-Prüfung.
 #
 #  EINRICHTUNG: Alles Nötige (DuckDNS, Google, KI, Home Assistant, Tailscale …) trägst du in pinn.
@@ -106,8 +106,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 30s
-    depends_on:
-      - traccar
 
   caddy:
     image: serfriz/caddy-duckdns:latest   # fertiges Caddy mit DuckDNS-Modul, kein Build nötig
@@ -154,14 +152,19 @@ services:
     depends_on:
       - pocketbase
 
-  # Ortung (Familie → Live-Standorte). Handys senden mit der App „Traccar Client“ über pinn.
-  # (https://<pinn.>/api/pinn/ortung/osmand) – dafür ist keine weitere Freigabe nötig.
-  # GPS-Tracker mit SIM-Karte (z. B. am Halsband) senden direkt an einen der Ports unten.
+  # OPTIONAL – nur für GPS-Tracker mit SIM-Karte (z. B. am Hundehalsband).
+  # Handys brauchen diesen Container NICHT: Sie teilen ihren Standort direkt in pinn. bzw. senden mit
+  # der App „Traccar Client“ an pinn. (https://<pinn.>/api/pinn/ortung/osmand) – pinn. speichert selbst.
+  # Startet deshalb nicht mehr automatisch. Einschalten: in der .env die Zeile
+  #   COMPOSE_PROFILES=tracker
+  # ergänzen und „docker compose up -d“ ausführen. Ausschalten: Zeile entfernen und
+  # „docker rm -f traccar“. Die Daten in ./traccar bleiben erhalten.
   # Traccar-Weboberfläche: nur auf dem NAS (siehe Ports unten), für pinn. nicht gebraucht.
   traccar:
     image: traccar/traccar:latest
     container_name: traccar
     restart: unless-stopped
+    profiles: ["tracker"]
     ports:
       # Weboberfläche und OsmAnd nur auf dem NAS selbst (pinn. spricht intern über das Docker-Netz).
       # Handys senden über pinn. (https://<pinn.>/api/pinn/ortung/osmand) – mit SOS-Erkennung.
