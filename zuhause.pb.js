@@ -8,14 +8,17 @@
 //   POST /api/pinn/zuhause                       Adresse (Treffer aus der Suche) speichern       (nur Admins)
 //   POST /api/pinn/zuhause/optionen              { feiertage?, ferien?, bundesland? }            (nur Admins)
 //   POST /api/pinn/zuhause/entfernen                                                              (nur Admins)
-//   GET  /api/pinn/zuhause/suche?q=...           Adressvorschläge beim Tippen                    (keine Gäste)
+//   GET  /api/pinn/zuhause/suche?q=...(&weit=1)  Adressvorschläge beim Tippen (weit: Reiseziele)  (keine Gäste)
 //   GET  /api/pinn/zuhause/adresse?lat=&lon=     Adresse zum aktuellen Standort                  (keine Gäste)
 //   GET  /api/pinn/zuhause/ferien?jahr=2026      Schulferien des Bundeslands der Familie
+//   POST /api/pinn/zuhause/wetter-tag            { datum, lat?, lon? }  Stundenverlauf eines Tages (ohne lat/lon: Zuhause)
+//   POST /api/pinn/zuhause/reisewetter           { lat, lon, von, bis } Urlaubswetter: Vorhersage + Erfahrungswerte
 //
 // Angemeldet ODER mit dem Schlüssel des Familien-Dashboards (Wetter schon vor der Profilauswahl):
 //   POST /api/pinn/zuhause/wetter                { key?, lat?, lon? }  lat/lon nur, solange kein Zuhause festgelegt ist
 //
-// Kein Zeitplan - es läuft nur etwas, wenn die App fragt (Wetter 15 Min., Ferien 14 Tage zwischengespeichert).
+// Kein Zeitplan - es läuft nur etwas, wenn die App fragt (Wetter 15 Min., Stundenverlauf und Reisewetter 30 Min.,
+// Erfahrungswerte 7 Tage, Ferien 14 Tage zwischengespeichert).
 
 onBootstrap((e) => {
     e.next();
@@ -77,7 +80,8 @@ routerAdd("GET", "/api/pinn/zuhause/suche", (e) => {
     e.response.header().set("Cache-Control", "no-store");
     if (require(`${__hooks}/pinn-benutzer.js`).isGuest(e)) return e.json(403, { error: "Nicht erlaubt." });
     try {
-        return e.json(200, require(`${__hooks}/pinn-zuhause.js`).suggest(e, e.request.url.query().get("q") || ""));
+        const q = e.request.url.query();
+        return e.json(200, require(`${__hooks}/pinn-zuhause.js`).suggest(e, q.get("q") || "", q.get("weit") === "1"));
     } catch (err) {
         return e.json(200, { treffer: [], error: err.message });
     }
@@ -133,3 +137,24 @@ routerAdd("POST", "/api/pinn/zuhause/wetter", (e) => {
         return e.json(200, { error: err.message });
     }
 });
+
+routerAdd("POST", "/api/pinn/zuhause/wetter-tag", (e) => {
+    e.response.header().set("Cache-Control", "no-store");
+    const lib = require(`${__hooks}/pinn-benutzer.js`);
+    const body = e.requestInfo().body || {};
+    try {
+        return e.json(200, require(`${__hooks}/pinn-zuhause.js`).weatherDay(lib.familyOf(e), body.datum, body.lat, body.lon));
+    } catch (err) {
+        return e.json(200, { stunden: [], error: err.message });
+    }
+}, $apis.requireAuth("benutzer"));
+
+routerAdd("POST", "/api/pinn/zuhause/reisewetter", (e) => {
+    e.response.header().set("Cache-Control", "no-store");
+    const body = e.requestInfo().body || {};
+    try {
+        return e.json(200, require(`${__hooks}/pinn-zuhause.js`).tripWeather(Number(body.lat), Number(body.lon), body.von, body.bis));
+    } catch (err) {
+        return e.json(200, { tage: [], error: err.message });
+    }
+}, $apis.requireAuth("benutzer"));

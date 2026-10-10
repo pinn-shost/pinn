@@ -582,7 +582,7 @@ window.PINN_LANGUAGES = [
     start(data);
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.35.0" onerror="PINN_I18N.fail()"><\/script>');
+  if (DICT) document.write('<script src="' + lang.file + '?v=1.37.0" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // Deutsch als WG: kein Wörterbuch, nur die WG-Bezeichnungen
 })();
 </script>
@@ -3580,6 +3580,290 @@ window.PINN_LANGUAGES = [
   #pinboardLightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 6px; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
   #pinboardLightboxClose { position: absolute; z-index: 2; top: max(0.8rem, env(safe-area-inset-top)); right: 0.8rem; }
 </style>
+<style>
+  /* ==========================================================
+     Familie → Haustiere · Wetter-Ansicht · Urlaubswetter (ab 1.37)
+     Eigene Regeln (unabhängig vom Tailwind-Build)
+     ========================================================== */
+  .pt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.2rem, 1fr)); gap: 10px; }
+  .pt-card { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 0 10px 12px; border-radius: 18px; background: #fff; border: 1px solid rgba(37,35,31,0.1); box-shadow: 0 1px 2px rgba(0,0,0,0.04); overflow: hidden; text-align: center; transition: transform .12s, border-color .15s; -webkit-tap-highlight-color: transparent; }
+  .pt-card:active { transform: scale(0.97); }
+  .pt-card:hover { border-color: var(--pt, var(--c-pine)); }
+  .pt-card-band { align-self: stretch; height: 34px; margin: 0 -10px; background: linear-gradient(135deg, var(--pt, var(--c-pine)) 0%, color-mix(in srgb, var(--pt, var(--c-pine)) 50%, #fff) 100%); }
+  .pt-card .pt-ava { margin-top: -26px; width: 62px; height: 62px; }
+  .pt-card .pt-ava .fam-ava-in { font-size: 32px; }
+  .pt-card-name { font-weight: 600; font-size: 0.9rem; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 4px; }
+  .pt-card-sub { font-size: 11px; color: rgba(37,35,31,0.5); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pt-card.gone { filter: grayscale(0.55); opacity: 0.85; }
+  .pt-stats { display: flex; gap: 5px; justify-content: center; flex-wrap: wrap; margin-top: 4px; }
+  .pt-stat { font-size: 11px; padding: 2px 7px; border-radius: 9999px; background: rgba(37,35,31,0.06); white-space: nowrap; }
+  .pt-stat.ok { background: color-mix(in srgb, var(--c-pine) 14%, transparent); color: var(--c-pine); }
+  .pt-badge { position: absolute; right: -4px; bottom: -2px; min-width: 21px; height: 21px; padding: 0 4px; border-radius: 9999px; display: grid; place-items: center; font-size: 11px; font-weight: 700; z-index: 2; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  .pt-badge.warn { background: #D9822B; color: #fff; }
+  .pt-badge.bday { font-size: 13px; animation: ptWiggle 1.6s ease-in-out infinite; }
+  .pt-add { justify-content: center; min-height: 9rem; border-style: dashed; color: rgba(37,35,31,0.55); background: transparent; box-shadow: none; padding-top: 12px; }
+  .pt-add-ic { font-size: 28px; line-height: 1; color: var(--c-pine); }
+  .pt-empty { text-align: center; padding: 22px 16px; }
+  .pt-empty-paws { display: flex; justify-content: center; gap: 8px; font-size: 26px; margin-bottom: 8px; }
+  .pt-empty-paws span { display: inline-block; animation: ptHop 2.4s ease-in-out infinite; }
+  .pt-empty-paws span:nth-child(2) { animation-delay: .2s; } .pt-empty-paws span:nth-child(3) { animation-delay: .4s; } .pt-empty-paws span:nth-child(4) { animation-delay: .6s; } .pt-empty-paws span:nth-child(5) { animation-delay: .8s; }
+  @keyframes ptHop { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-7px); } }
+  @keyframes ptWiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
+  .pt-gone-h { display: flex; align-items: center; gap: 8px; width: 100%; font-size: 0.875rem; font-weight: 500; text-align: left; }
+  .pt-gone-h b { font-size: 11px; padding: 1px 7px; border-radius: 9999px; background: rgba(37,35,31,0.07); }
+  .pt-band { position: relative; }
+  .pt-trail { position: absolute; left: 0; right: 0; bottom: 10px; font-size: 14px; letter-spacing: 18px; white-space: nowrap; opacity: .35; filter: grayscale(1) brightness(3); transform: rotate(-4deg); animation: ptTrail 9s linear infinite; }
+  @keyframes ptTrail { from { transform: translateX(-20px) rotate(-4deg); } to { transform: translateX(20px) rotate(-4deg); } }
+  .pt-pill { display: inline-flex; align-items: center; gap: 3px; padding: 2px 9px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: rgba(37,35,31,0.07); }
+  .pt-pill.bday { background: #FDE7EF; color: #B0285D; }
+  .pt-pill.warn { background: color-mix(in srgb, var(--c-mustard) 22%, transparent); color: #8A5A00; }
+  .pt-bday-card { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 18px; color: #fff; background: linear-gradient(135deg, #E0567F 0%, #F2A65A 100%); box-shadow: 0 6px 18px rgba(224,86,127,0.3); }
+  .pt-bday-ic { font-size: 30px; animation: ptWiggle 1.8s ease-in-out infinite; }
+  .pt-memorial { text-align: center; background: linear-gradient(180deg, #fff 0%, #F4F0FA 100%); }
+  .pt-today .pt-slots { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pt-slot { flex: 1 1 5.5rem; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 8px 6px; border-radius: 14px; border: 1.5px dashed rgba(37,35,31,0.2); background: #fff; min-width: 0; -webkit-tap-highlight-color: transparent; transition: transform .1s; }
+  .pt-slot:active { transform: scale(0.96); }
+  .pt-slot-ic { font-size: 20px; line-height: 1.1; }
+  .pt-slot-t { font-weight: 600; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+  .pt-slot small { font-size: 10.5px; color: rgba(37,35,31,0.55); min-height: 1em; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pt-slot.done { border-style: solid; border-color: var(--c-pine); background: color-mix(in srgb, var(--c-pine) 10%, #fff); }
+  .pt-slot.done .pt-slot-ic { color: var(--c-pine); font-weight: 800; }
+  .pt-slot.late { border-color: #D9822B; }
+  .pt-walks { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+  .pt-dots { display: flex; gap: 5px; }
+  .pt-dot { width: 26px; height: 26px; border-radius: 9999px; border: 2px dashed rgba(37,35,31,0.2); display: grid; place-items: center; font-size: 13px; }
+  .pt-dot.on { border: 0; background: color-mix(in srgb, var(--c-pine) 16%, transparent); }
+  .pt-walks .fz-mini-btn { margin-left: auto; }
+  .pt-duty { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: rgba(37,35,31,0.6); min-width: 0; }
+  .pt-duty-ava { display: inline-block; width: 22px; height: 22px; border-radius: 9999px; overflow: hidden; border: 2px solid #fff; background: rgba(37,35,31,0.06); flex-shrink: 0; vertical-align: middle; }
+  .pt-duty-ava > * { font-size: 12px !important; }
+  .pt-mchip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 4px; font-size: 0.82rem; border-radius: 9999px; }
+  .pt-care-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; }
+  .pt-care-row + .pt-care-row { border-top: 1px solid rgba(37,35,31,0.07); }
+  .pt-care-main { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: 10px; background: none; text-align: left; }
+  .pt-care-ic { flex-shrink: 0; width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; font-size: 18px; background: rgba(37,35,31,0.06); }
+  .pt-care-when { display: block; font-size: 11px; color: rgba(37,35,31,0.55); margin-top: 1px; }
+  .pt-care-row.over .pt-care-ic { background: rgba(214,69,69,0.14); }
+  .pt-care-row.over .pt-care-when { color: #C0392B; font-weight: 600; }
+  .pt-care-row.today .pt-care-ic, .pt-care-row.soon .pt-care-ic { background: color-mix(in srgb, var(--c-mustard) 22%, transparent); }
+  .pt-care-row.today .pt-care-when { color: #9A6A00; font-weight: 600; }
+  .pt-done-btn { flex-shrink: 0; width: 34px; height: 34px; border-radius: 9999px; border: 1.5px solid var(--c-pine); color: var(--c-pine); font-weight: 800; font-size: 15px; background: #fff; transition: background .15s, color .15s; }
+  .pt-done-btn:hover, .pt-done-btn:active { background: var(--c-pine); color: #fff; }
+  .pt-suggest { display: block; width: 100%; margin-top: 8px; padding: 8px 10px; border-radius: 12px; font-size: 0.8rem; text-align: left; background: color-mix(in srgb, var(--c-pine) 6%, transparent); border: 1px dashed color-mix(in srgb, var(--c-pine) 35%, transparent); }
+  .pt-med-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; }
+  .pt-med-row + .pt-med-row { border-top: 1px solid rgba(37,35,31,0.07); }
+  .pt-roster { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+  .pt-roster-d { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 2px; border-radius: 12px; background: rgba(37,35,31,0.035); }
+  .pt-roster-d small { font-size: 10.5px; font-weight: 600; color: rgba(37,35,31,0.5); }
+  .pt-roster-d.today { background: color-mix(in srgb, var(--c-pine) 12%, transparent); box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--c-pine) 45%, transparent) inset; }
+  .pt-roster-d.today small { color: var(--c-pine); }
+  .pt-roster-avas { display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 22px; }
+  .pt-rost-edit { padding: 7px 0; }
+  .pt-rost-edit + .pt-rost-edit { border-top: 1px solid rgba(37,35,31,0.07); }
+  .pt-wnow { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; margin: 2px 0 6px; }
+  .pt-wnow > b { font-size: 1.6rem; font-weight: 700; line-height: 1; }
+  .pt-wnow small { margin-left: auto; font-size: 11px; color: rgba(37,35,31,0.5); }
+  .pt-wdiff { font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 9999px; background: rgba(37,35,31,0.06); }
+  .pt-wdiff.up { color: #B5651D; } .pt-wdiff.down { color: #2F7D4F; }
+  .pt-wchart { width: 100%; height: 90px; display: block; }
+  .pt-wchart .l { fill: none; stroke: var(--c-pine); stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+  .pt-wchart .a { fill: color-mix(in srgb, var(--c-pine) 12%, transparent); stroke: none; }
+  .pt-wchart circle { fill: #fff; stroke: var(--c-pine); stroke-width: 1.6; vector-effect: non-scaling-stroke; }
+  .pt-wscale { display: flex; justify-content: space-between; font-size: 10.5px; color: rgba(37,35,31,0.45); margin-top: 2px; }
+  .pt-bars { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; height: 86px; align-items: end; }
+  .pt-bar { display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; }
+  .pt-bar-col { flex: 1 1 auto; width: 100%; max-width: 26px; display: flex; align-items: flex-end; border-radius: 8px; background: rgba(37,35,31,0.05); overflow: hidden; }
+  .pt-bar-col span { display: block; width: 100%; border-radius: 8px; background: color-mix(in srgb, var(--c-pine) 55%, #fff); min-height: 2px; transition: height .4s; }
+  .pt-bar.today .pt-bar-col span { background: var(--c-pine); }
+  .pt-bar small { font-size: 10px; color: rgba(37,35,31,0.5); }
+  .pt-walk-sum { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: rgba(37,35,31,0.65); margin-top: 8px; }
+  .pt-tools { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr)); gap: 8px; }
+  .pt-tool { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 11px 12px; border-radius: 16px; background: #fff; border: 1px solid rgba(37,35,31,0.1); text-align: left; transition: border-color .15s, transform .1s; }
+  .pt-tool:hover { border-color: var(--c-pine); }
+  .pt-tool:active { transform: scale(0.97); }
+  .pt-tool > span { font-size: 22px; line-height: 1.1; margin-bottom: 3px; }
+  .pt-tool b { font-size: 0.85rem; }
+  .pt-tool small { font-size: 10.5px; color: rgba(37,35,31,0.5); }
+  .pt-log-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; }
+  .pt-log-row + .pt-log-row { border-top: 1px solid rgba(37,35,31,0.06); }
+  .pt-log-ic { flex-shrink: 0; width: 32px; height: 32px; border-radius: 9999px; display: grid; place-items: center; font-size: 15px; background: rgba(37,35,31,0.05); }
+  .pt-sitter { white-space: pre-wrap; word-break: break-word; font-family: inherit; font-size: 0.85rem; line-height: 1.5; padding: 12px 14px; border-radius: 14px; background: rgba(37,35,31,0.04); border: 1px solid rgba(37,35,31,0.08); max-height: 50vh; overflow-y: auto; }
+  .pt-poster-wrap { border-radius: 14px; overflow: hidden; border: 1px solid rgba(37,35,31,0.12); background: #fff; }
+  .pt-poster { background: #fff; color: #111; text-align: center; padding: 18px 16px 14px; font-family: Inter, system-ui, sans-serif; }
+  .pt-poster-h { font-size: 2.6rem; font-weight: 900; letter-spacing: .12em; color: #C62828; line-height: 1; }
+  .pt-poster-img { margin: 12px auto; width: 100%; max-width: 360px; aspect-ratio: 1 / 1; border-radius: 12px; overflow: hidden; background: #f3f0ea; display: grid; place-items: center; }
+  .pt-poster-img img { width: 100%; height: 100%; object-fit: cover; max-width: none; }
+  .pt-poster-img span { font-size: 120px; line-height: 1; }
+  .pt-poster-name { font-size: 2rem; font-weight: 800; line-height: 1.1; }
+  .pt-poster-sub { font-size: 1rem; color: #555; margin-top: 2px; }
+  .pt-poster-note { font-size: 0.95rem; margin: 10px auto 0; max-width: 30rem; white-space: pre-wrap; }
+  .pt-poster-chip { font-size: 0.85rem; color: #555; margin-top: 6px; }
+  .pt-poster-call { margin: 14px auto 0; padding: 10px; border-radius: 12px; background: #FFF4E5; border: 2px solid #F0A040; display: flex; flex-direction: column; align-items: center; gap: 2px; max-width: 26rem; font-size: 0.9rem; }
+  .pt-poster-call b { font-size: 1.6rem; letter-spacing: .03em; }
+  .pt-poster-call small { font-size: 0.8rem; color: #666; margin-bottom: 4px; }
+  .pt-poster-foot { font-size: 0.75rem; color: #777; margin-top: 10px; }
+  #ptPrint { display: none; }
+  @media print {
+    html.pt-printing body > *:not(#ptPrint) { display: none !important; }
+    html.pt-printing #ptPrint { display: block !important; }
+    html.pt-printing, html.pt-printing body { background: #fff !important; }
+    html.pt-printing .pt-poster { padding: 0; }
+    html.pt-printing .pt-poster-h { font-size: 4.5rem; }
+    html.pt-printing .pt-poster-img { max-width: 120mm; }
+    html.pt-printing .pt-poster-name { font-size: 3rem; }
+    @page { margin: 12mm; }
+  }
+  html.dark .pt-card, html.dark .pt-tool, html.dark .pt-slot { background-color: #2E2C28; border-color: rgba(255,255,255,0.12); }
+  html.dark .pt-add { background: transparent; color: rgba(237,234,226,0.6); }
+  html.dark .pt-card-sub, html.dark .pt-care-when, html.dark .pt-slot small, html.dark .pt-duty, html.dark .pt-tool small, html.dark .pt-bar small, html.dark .pt-wscale, html.dark .pt-wnow small, html.dark .pt-walk-sum, html.dark .pt-roster-d small { color: rgba(237,234,226,0.55); }
+  html.dark .pt-stat, html.dark .pt-care-ic, html.dark .pt-log-ic, html.dark .pt-roster-d, html.dark .pt-pill, html.dark .pt-wdiff, html.dark .pt-bar-col, html.dark .pt-sitter { background: rgba(255,255,255,0.07); }
+  html.dark .pt-care-row + .pt-care-row, html.dark .pt-med-row + .pt-med-row, html.dark .pt-log-row + .pt-log-row, html.dark .pt-rost-edit + .pt-rost-edit { border-color: rgba(255,255,255,0.08); }
+  html.dark .pt-done-btn { background: #2E2C28; }
+  html.dark .pt-memorial { background: linear-gradient(180deg, #2E2C28 0%, #34303D 100%); }
+  html.dark .pt-wchart circle { fill: #2E2C28; }
+  html.dark .pt-duty-ava { border-color: #2E2C28; }
+  .ov-fam-item.is-pet .ov-fam-sub.warn { color: #B5651D; font-weight: 600; }
+
+  /* ---------- Wetter-Kachel: antippbar + Urlaub ---------- */
+  #weatherTileSection { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  #weatherTileSection:active .ov-weather-days { transform: scale(0.99); }
+  #weatherTileSection h2::after { content: '›'; margin-left: 0.35rem; opacity: 0.35; font-family: Inter, system-ui, sans-serif; }
+  .ov-wx-trips { display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.5rem; }
+  .ov-wx-trip { display: flex; align-items: center; gap: 0.55rem; width: 100%; padding: 0.4rem 0.6rem; border-radius: 11px; text-align: left; background: color-mix(in srgb, #2F86C9 8%, #fff); border: 1px solid color-mix(in srgb, #2F86C9 22%, transparent); }
+  .ov-wx-trip.now { background: color-mix(in srgb, #F2A65A 14%, #fff); border-color: color-mix(in srgb, #F2A65A 40%, transparent); }
+  .ov-wx-trip-ic { font-size: 1.05rem; }
+  .ov-wx-trip-t { min-width: 0; flex: 1 1 auto; display: flex; flex-direction: column; }
+  .ov-wx-trip-t b { font-size: 0.78rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ov-wx-trip-t small { font-size: 0.66rem; opacity: 0.6; }
+  .ov-wx-trip-w { flex-shrink: 0; font-size: 0.78rem; white-space: nowrap; }
+  html.dark .ov-wx-trip { background: rgba(47,134,201,0.16); border-color: rgba(47,134,201,0.35); }
+  html.dark .ov-wx-trip.now { background: rgba(242,166,90,0.16); border-color: rgba(242,166,90,0.4); }
+
+  /* ---------- Wetter-Ansicht ---------- */
+  #wxOverlay { position: fixed; inset: 0; z-index: 306; background: rgba(37,35,31,0.32); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); display: grid; place-items: center; padding: 0; }
+  #wxOverlay.hidden { display: none; }
+  .wx-sheet { position: relative; width: 100%; height: 100%; max-height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; background: var(--c-paper, #FFFBFB); color: #25231F; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px); }
+  @media (min-width: 640px) { #wxOverlay { padding: 24px; } .wx-sheet { max-width: 640px; height: auto; max-height: calc(100vh - 48px); border-radius: 22px; box-shadow: 0 24px 60px rgba(20,20,15,0.25); } }
+  .wx-x { position: absolute; z-index: 3; right: 12px; top: calc(env(safe-area-inset-top, 0px) + 12px); width: 34px; height: 34px; border-radius: 9999px; background: rgba(255,255,255,0.25); color: #fff; font-size: 22px; line-height: 1; display: grid; place-items: center; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  .wx-hero { position: relative; overflow: hidden; color: #fff; padding: calc(env(safe-area-inset-top, 0px) + 22px) 20px 22px; background: linear-gradient(160deg, #4A90D9 0%, #2C5F9E 100%); }
+  .wx-hero.sky-sun { background: linear-gradient(160deg, #F6B53F 0%, #E07B39 55%, #3D7CC9 140%); }
+  .wx-hero.sky-part { background: linear-gradient(160deg, #6FB1E8 0%, #3E78B8 100%); }
+  .wx-hero.sky-cloud { background: linear-gradient(160deg, #8C9AA8 0%, #56636F 100%); }
+  .wx-hero.sky-fog { background: linear-gradient(160deg, #A9B2B8 0%, #737E86 100%); }
+  .wx-hero.sky-rain { background: linear-gradient(160deg, #5B7590 0%, #2E4257 100%); }
+  .wx-hero.sky-snow { background: linear-gradient(160deg, #A8C7E0 0%, #6D8FAD 100%); }
+  .wx-hero.sky-storm { background: linear-gradient(160deg, #4B4E6D 0%, #23243A 100%); }
+  .wx-hero-deco { position: absolute; right: -14px; top: calc(env(safe-area-inset-top, 0px) + 6px); font-size: 120px; line-height: 1; opacity: 0.32; transform: rotate(-8deg); animation: wxFloat 7s ease-in-out infinite; pointer-events: none; }
+  @keyframes wxFloat { 0%, 100% { transform: translateY(0) rotate(-8deg); } 50% { transform: translateY(8px) rotate(-4deg); } }
+  .wx-kicker { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; opacity: .9; }
+  .wx-place { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 1.6rem; line-height: 1.15; margin-top: 4px; padding-right: 40px; }
+  .wx-place-sub { font-size: 12px; opacity: .85; margin-top: 2px; }
+  .wx-now { display: flex; align-items: baseline; gap: 10px; margin-top: 8px; }
+  .wx-now b { font-size: 3.4rem; font-weight: 300; line-height: 1; }
+  .wx-now span { font-size: 0.95rem; opacity: .95; }
+  .wx-hero-sub { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 10px; font-size: 12.5px; opacity: .95; }
+  .wx-tabs { display: flex; gap: 6px; overflow-x: auto; padding: 12px 16px 0; scrollbar-width: none; }
+  .wx-tabs::-webkit-scrollbar { display: none; }
+  .wx-tab { flex-shrink: 0; padding: 6px 12px; border-radius: 9999px; font-size: 12.5px; border: 1px solid rgba(37,35,31,0.14); background: #fff; white-space: nowrap; }
+  .wx-tab.active { background: var(--c-pine); border-color: var(--c-pine); color: #fff; }
+  .wx-wrap { padding: 12px 14px 0; display: flex; flex-direction: column; gap: 12px; }
+  .wx-card { background: #fff; border: 1px solid rgba(37,35,31,0.08); border-radius: 16px; padding: 12px 12px; }
+  .wx-h { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: rgba(37,35,31,0.5); margin-bottom: 8px; }
+  .wx-tips .wx-tip { display: flex; align-items: center; gap: 10px; font-size: 0.875rem; padding: 3px 0; }
+  .wx-tips .wx-tip > span:first-child { font-size: 1.15rem; width: 1.6rem; text-align: center; }
+  .wx-row { display: grid; grid-template-columns: minmax(5.4rem, 1.4fr) 1.8rem 3rem 2.2rem minmax(3rem, 2fr) 2.2rem; align-items: center; gap: 6px; width: 100%; padding: 9px 4px; border-radius: 12px; text-align: left; -webkit-tap-highlight-color: transparent; }
+  .wx-row + .wx-row, .wx-detail + .wx-row { border-top: 1px solid rgba(37,35,31,0.06); }
+  .wx-row:hover { background: rgba(37,35,31,0.03); }
+  .wx-row.open { background: color-mix(in srgb, var(--c-pine) 7%, transparent); }
+  .wx-row.tendenz, .wx-row.klima { opacity: 0.88; }
+  .wx-d { display: flex; flex-direction: column; min-width: 0; }
+  .wx-d b { font-size: 0.86rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wx-d small { font-size: 10.5px; color: rgba(37,35,31,0.45); }
+  .wx-ic { font-size: 1.25rem; text-align: center; }
+  .wx-rain { font-size: 11px; color: #2F78B5; white-space: nowrap; }
+  .wx-mn { font-size: 0.82rem; color: rgba(37,35,31,0.5); text-align: right; }
+  .wx-mx { font-size: 0.88rem; font-weight: 600; }
+  .wx-range { position: relative; height: 6px; border-radius: 9999px; background: rgba(37,35,31,0.07); }
+  .wx-range i { position: absolute; top: 0; bottom: 0; border-radius: 9999px; background: linear-gradient(90deg, #6FB1E8 0%, #F6C24B 60%, #E57A3A 100%); min-width: 6px; }
+  .wx-sep { font-size: 11px; font-weight: 600; color: rgba(37,35,31,0.5); padding: 12px 4px 4px; }
+  .wx-detail { padding: 6px 4px 12px; animation: wxIn .2s ease-out; }
+  @keyframes wxIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  .wx-dd { font-size: 0.85rem; margin: 2px 0 8px; }
+  .wx-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); gap: 6px; }
+  .wx-tile { display: flex; flex-direction: column; gap: 1px; padding: 8px 10px; border-radius: 12px; background: rgba(37,35,31,0.04); min-width: 0; }
+  .wx-tile-ic { font-size: 15px; line-height: 1.2; }
+  .wx-tile-l { font-size: 10.5px; color: rgba(37,35,31,0.5); }
+  .wx-tile > b { font-size: 0.95rem; font-weight: 600; white-space: nowrap; }
+  .wx-tile > small { font-size: 10.5px; color: rgba(37,35,31,0.6); }
+  .wx-arrow { display: inline-block; margin-right: 4px; font-weight: 700; color: var(--c-pine); }
+  .wx-hours { display: flex; gap: 4px; overflow-x: auto; padding: 2px 0 8px; margin-bottom: 6px; scrollbar-width: thin; -webkit-overflow-scrolling: touch; }
+  .wx-hour { flex: 0 0 auto; width: 2.7rem; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px; border-radius: 12px; background: rgba(37,35,31,0.035); }
+  .wx-hour.night { background: rgba(44,60,100,0.08); }
+  .wx-hour small { font-size: 10px; color: rgba(37,35,31,0.5); }
+  .wx-hour span { font-size: 15px; line-height: 1.1; }
+  .wx-hour b { font-size: 0.8rem; font-weight: 600; }
+  .wx-hbar { display: flex; align-items: flex-end; width: 6px; height: 22px; border-radius: 4px; background: rgba(47,120,181,0.12); overflow: hidden; }
+  .wx-hbar em { display: block; width: 100%; background: #2F78B5; border-radius: 4px; }
+  .wx-hour .wx-hr { color: #2F78B5; min-height: 1em; }
+  .wx-hours-load { font-size: 12px; color: rgba(37,35,31,0.5); padding: 4px 0 8px; }
+  .wx-tips-in { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .wx-chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 9999px; font-size: 12px; background: rgba(37,35,31,0.05); }
+  .wx-empty { text-align: center; padding: 18px 8px; font-size: 0.875rem; color: rgba(37,35,31,0.55); }
+  .wx-note { font-size: 11px; color: rgba(37,35,31,0.45); text-align: center; margin: 4px 0; }
+  .wx-note2 { font-size: 11.5px; color: rgba(37,35,31,0.6); margin-top: 10px; line-height: 1.4; }
+  .wx-sum-main { display: flex; align-items: center; gap: 12px; }
+  .wx-sum-ic { font-size: 2.6rem; line-height: 1; }
+  .wx-sum-main b { font-size: 2rem; font-weight: 600; line-height: 1; }
+  .wx-sum-min { font-size: 1.2rem; color: rgba(37,35,31,0.5); margin-left: 6px; }
+  .wx-sum-l { font-size: 11px; color: rgba(37,35,31,0.5); margin-top: 3px; }
+  .wx-sum-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .wx-pack { display: flex; flex-wrap: wrap; gap: 6px; }
+  .wx-pack-chip { padding: 6px 11px; border-radius: 9999px; font-size: 12.5px; border: 1px dashed color-mix(in srgb, var(--c-pine) 50%, transparent); color: var(--c-pine); background: color-mix(in srgb, var(--c-pine) 5%, #fff); }
+  .wx-btn { display: block; width: 100%; margin-top: 10px; padding: 10px 12px; border-radius: 12px; font-size: 0.875rem; font-weight: 600; background: var(--c-pine); color: #fff; text-align: center; }
+  .wx-btn.ghost { background: #fff; color: var(--c-pine); border: 1px solid color-mix(in srgb, var(--c-pine) 35%, transparent); margin-top: 0; }
+  html.wx-open { overflow: hidden; }
+  html.dark .wx-sheet { background: #24221F; color: #EDEAE2; }
+  html.dark .wx-card, html.dark .wx-tab:not(.active), html.dark .wx-btn.ghost { background: #2E2C28; border-color: rgba(255,255,255,0.1); }
+  html.dark .wx-h, html.dark .wx-d small, html.dark .wx-mn, html.dark .wx-sep, html.dark .wx-tile-l, html.dark .wx-hour small, html.dark .wx-note, html.dark .wx-note2, html.dark .wx-empty, html.dark .wx-sum-l, html.dark .wx-sum-min, html.dark .wx-hours-load, html.dark .wx-tile > small { color: rgba(237,234,226,0.55); }
+  html.dark .wx-tile, html.dark .wx-hour, html.dark .wx-chip, html.dark .wx-range { background: rgba(255,255,255,0.07); }
+  html.dark .wx-row + .wx-row, html.dark .wx-detail + .wx-row { border-color: rgba(255,255,255,0.07); }
+  html.dark .wx-pack-chip { background: rgba(255,255,255,0.05); }
+  html.dark .wx-rain, html.dark .wx-hour .wx-hr { color: #7DB8E8; }
+
+  /* ---------- Packliste: Reiseziel & Zeitraum ---------- */
+  .ls-trip-dates { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0.5rem; margin-top: 0.5rem; }
+  .ls-trip-chosen { display: flex; align-items: center; gap: 0.55rem; padding: 0.5rem 0.65rem; border-radius: 10px; background: color-mix(in srgb, var(--c-pine) 7%, transparent); border: 1px solid color-mix(in srgb, var(--c-pine) 25%, transparent); }
+  .ls-trip-chosen b { display: block; font-size: 0.875rem; font-weight: 600; }
+  .ls-trip-chosen small { display: block; font-size: 0.7rem; opacity: 0.6; }
+  .ls-trip-wx { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.55rem; padding: 0.55rem 0.7rem; border-radius: 12px; font-size: 0.82rem; background: linear-gradient(135deg, color-mix(in srgb, #4A90D9 10%, #fff), color-mix(in srgb, #F6B53F 10%, #fff)); border: 1px solid rgba(37,35,31,0.08); }
+  .ls-trip-wx small { display: block; font-size: 0.68rem; opacity: 0.6; }
+  .ls-trip-wx-ic { font-size: 1.5rem; }
+  .ls-trip-card { display: flex; align-items: center; gap: 0.7rem; width: 100%; padding: 0.65rem 0.8rem; border-radius: 14px; text-align: left; color: #fff; background: linear-gradient(135deg, #4A90D9 0%, #2C5F9E 100%); box-shadow: 0 4px 14px rgba(44,95,158,0.22); }
+  .ls-trip-card.sky-sun { background: linear-gradient(135deg, #F6B53F 0%, #E07B39 100%); box-shadow: 0 4px 14px rgba(224,123,57,0.25); }
+  .ls-trip-card.sky-cloud, .ls-trip-card.sky-fog { background: linear-gradient(135deg, #8C9AA8 0%, #56636F 100%); }
+  .ls-trip-card.sky-rain, .ls-trip-card.sky-storm { background: linear-gradient(135deg, #5B7590 0%, #2E4257 100%); }
+  .ls-trip-card.sky-snow { background: linear-gradient(135deg, #A8C7E0 0%, #6D8FAD 100%); }
+  .ls-trip-card b { display: block; font-size: 0.9rem; }
+  .ls-trip-card small { display: block; font-size: 0.72rem; opacity: 0.92; }
+  .ls-trip-card .ls-trip-card-w { margin-top: 2px; font-size: 0.78rem; opacity: 1; }
+  .ls-trip-card .ls-trip-card-w b { display: inline; font-size: inherit; }
+  .ls-trip-card-ic { font-size: 1.9rem; line-height: 1; }
+  .ls-trip-card-go { display: flex; align-items: center; gap: 0.4rem; font-size: 1.3rem; opacity: 0.85; }
+  .ls-trip-badge { font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 9999px; background: rgba(255,255,255,0.25); }
+  html.dark .ls-trip-wx { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); }
+
+  /* ---------- Wochenvorschau: Urlaub ---------- */
+  .ab-trip { background: linear-gradient(160deg, color-mix(in srgb, #4A90D9 9%, #fff) 0%, #fff 70%); }
+  .ab-trip-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .ab-trip-head b { display: block; font-size: 0.95rem; }
+  .ab-trip-head small { display: block; font-size: 11px; opacity: .6; }
+  .ab-trip-ic { font-size: 1.9rem; line-height: 1; }
+  .ab-trip-line { font-size: 0.85rem; margin: 4px 0 8px; }
+  html.dark .ab-trip { background: linear-gradient(160deg, rgba(74,144,217,0.16) 0%, #2E2C28 70%); }
+
+  html.pinn-ruhe .pt-badge.bday, html.pinn-ruhe .pt-empty-paws span, html.pinn-ruhe .pt-trail, html.pinn-ruhe .pt-bday-ic, html.pinn-ruhe .wx-hero-deco { animation-play-state: paused !important; }
+  @media (prefers-reduced-motion: reduce) { .pt-badge.bday, .pt-empty-paws span, .pt-trail, .pt-bday-ic, .wx-hero-deco, .wx-detail { animation: none !important; } }
+</style>
 </head>
 <body class="font-sans text-ink antialiased">
 
@@ -4031,7 +4315,7 @@ window.PINN_LANGUAGES = [
       </div>
     </section>
 
-    <!-- Übersicht-Kachel: Wetter der nächsten drei Tage -->
+    <!-- Übersicht-Kachel: Wetter der nächsten Tage (antippen = 14 Tage & Urlaubswetter) -->
     <section id="weatherTileSection" class="hidden min-h-0 flex flex-col bg-white/40 border-ink/10">
       <div class="px-6 pt-4 pb-4">
         <div class="flex items-center justify-between gap-3 mb-3">
@@ -4457,10 +4741,11 @@ window.PINN_LANGUAGES = [
             <button id="famSetupBtn" type="button" class="hidden px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">⚙︎ Ortung</button>
           </div>
         </div>
-        <!-- Umschalter: Übersicht / Schule & Kita / Ortung / Notfall -->
+        <!-- Umschalter: Übersicht / Schule & Kita / Haustiere / Ortung / Notfall -->
         <div id="famTabs" class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs mt-3 w-full sm:w-fit overflow-x-auto" role="tablist" aria-label="Familienbereich">
           <button type="button" data-famtab="uebersicht" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Übersicht</button>
           <button type="button" data-famtab="schule" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Schule & Kita</button>
+          <button type="button" data-famtab="tiere" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Haustiere</button>
           <button type="button" data-famtab="ortung" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Ortung</button>
           <button type="button" data-famtab="notfall" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Notfall</button>
         </div>
@@ -6232,6 +6517,20 @@ window.PINN_LANGUAGES = [
     <div id="famModalBody"></div>
   </div>
 </div>
+<!-- Familie → Haustiere: Popups (Inhalt kommt aus dem Skript) -->
+<div id="ptModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
+  <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+    <button id="ptModalClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <div id="ptModalBody"></div>
+  </div>
+</div>
+<!-- Wetter: 14 Tage & Urlaubswetter (Tipp auf die Wetter-Kachel) -->
+<div id="wxOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="Wetter">
+  <div class="wx-sheet fade-in">
+    <button id="wxClose" type="button" class="wx-x" aria-label="Schließen">×</button>
+    <div id="wxBody"></div>
+  </div>
+</div>
 <div id="famModal2" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="famModal2Close" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -6693,6 +6992,20 @@ window.PINN_LANGUAGES = [
       <div id="lsListDateWrap" class="hidden mb-3">
         <label id="lsListDateLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsListDate">Datum</label>
         <input id="lsListDate" type="date" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
+      </div>
+
+      <!-- Packliste: Reiseziel & Zeitraum (löst das Urlaubswetter aus) -->
+      <div id="lsTripWrap" class="hidden mb-3">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsTripPlace">Reiseziel</label>
+        <div id="lsTripChosen" class="hidden ls-trip-chosen"></div>
+        <div id="lsTripSug" class="home-sug"></div>
+        <input id="lsTripPlace" type="text" autocomplete="off" maxlength="120" enterkeyhint="search" placeholder="z. B. Mallorca, Sylt, Rom" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
+        <div class="ls-trip-dates">
+          <div><label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsTripFrom">Abreise</label><input id="lsTripFrom" type="date" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" /></div>
+          <div><label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsTripTo">Rückreise</label><input id="lsTripTo" type="date" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" /></div>
+        </div>
+        <div id="lsTripWx" class="hidden ls-trip-wx"></div>
+        <label id="lsTripTipsWrap" class="hidden items-center gap-2 mt-2 text-sm cursor-pointer select-none"><input id="lsTripTips" type="checkbox" class="w-4 h-4" checked /><span>🌦️ Passend zum Wetter: Regenjacke, Sonnencreme &amp; Co. auf die Liste</span></label>
       </div>
 
       <div id="lsListPersonsWrap" class="hidden mb-3">
@@ -11436,6 +11749,8 @@ function defaultFamilyData() {
     schoolHomework: [],      // Familie → Schule & Kita: Hausaufgaben
     schoolLetters: [],       // Familie → Schule & Kita: Elternbriefe mit Fristen
     schoolClosures: [],      // Familie → Schule & Kita: Schließtage (erscheinen im Kalender)
+    pets: [],                // Familie → Haustiere (siehe Abschnitt „Haustiere“)
+    petLog: [],              // Familie → Haustiere: Gassi, Füttern, Medikamente (letzte 60 Tage)
     tasks: [],
     lastName: '',
     wohnform: 'familie',     // 'familie' oder 'wg' (Einstellungen → Familienmitglieder → Wohnform)
@@ -11481,6 +11796,8 @@ let schoolProfiles = [];  // Familie → Schule & Kita (siehe Abschnitt „Schul
 let schoolHomework = [];
 let schoolLetters = [];
 let schoolClosures = [];
+let pets = [];            // Familie → Haustiere
+let petLog = [];
 let events = []; // wird ausschließlich aus dem Apple-Kalender (kalender.ics) befüllt, s. syncAppleCalendarFile()
 let mealPlan = [];
 let recipes = [];
@@ -11885,6 +12202,8 @@ function applyFamilyData(data) {
   schoolHomework = skList(data.schoolHomework);
   schoolLetters = skList(data.schoolLetters).filter(x => Array.isArray(x.memberIds));
   schoolClosures = skList(data.schoolClosures).filter(x => Array.isArray(x.memberIds));
+  pets = skList(data.pets).filter(x => typeof x.name === 'string' && x.name);
+  petLog = skList(data.petLog).filter(x => x.pet && x.day);
   lastName = (data.lastName && data.lastName !== 'Mustermann') ? data.lastName : '';
   householdType = data.wohnform === 'wg' ? 'wg' : 'familie';
   applyHouseholdType(true);
@@ -12576,8 +12895,9 @@ function renderFamilyTile() {
       <span class="ov-fam-ava-wrap">${ring}<span class="ov-fam-ava" style="border-color:${memberBorderColor(m)}">${memberAvatarInnerHTML(m)}</span>${st.live ? '<span class="ov-fam-live" title="Live-Standort"></span>' : ''}${st.place && st.place.emoji ? `<span class="ov-fam-place">${escapeHtml(st.place.emoji)}</span>` : ''}${badge ? `<span class="ov-fam-badge${badgeCls}">${badge}</span>` : ''}${school}</span>
       <span class="ov-fam-name">${escapeHtml(memberLabel(m))}</span>${anySub ? `<span class="ov-fam-sub${sub && sub.cls ? ' ' + sub.cls : ''}">${sub ? escapeHtml(sub.t) : ''}</span>` : ''}
     </button>`;
-  }).join('')}</div>`;
-  body.querySelectorAll('.ov-fam-item').forEach(b => {
+  }).join('')}${ptTileHtml(anySub)}</div>`;
+  ptTileWire(body);
+  body.querySelectorAll('.ov-fam-item:not(.is-pet)').forEach(b => {
     const id = b.dataset.mid;
     const startPress = () => {
       clearTimeout(ofsPressTimer);
@@ -13272,7 +13592,7 @@ function renderWeatherTileNow() {
     place.textContent = '';
     body.innerHTML = `<p class="text-sm text-ink/40 italic">${weatherNoLocation
       ? 'Noch kein Zuhause festgelegt – Einstellungen → Zuhause.'
-      : 'Wetter wird geladen …'}</p>`;
+      : 'Wetter wird geladen …'}</p>${wxTileTripsHtml()}`;
     return;
   }
   const now = weatherData && weatherData.temp != null ? `jetzt ${weatherData.temp}°` : '';
@@ -13284,7 +13604,7 @@ function renderWeatherTileNow() {
         <div class="ov-weather-icon">${weatherIconForCode(d.code)}</div>
         <div class="ov-weather-temp">${d.max != null ? d.max + '°' : '–'}<span class="ov-weather-min">${d.min != null ? d.min + '°' : ''}</span></div>
         <div class="ov-weather-rain">${d.rain != null ? '💧 ' + d.rain + ' %' : ''}</div>
-      </div>`).join('')}</div>${homeSunLine() ? `<p class="ov-weather-sun">${homeSunLine()}</p>` : ''}${old ? `<p class="ov-weather-stale">Stand: ${new Date(weatherDaily.ts).toLocaleString('de-DE', { weekday: 'short', hour: '2-digit', minute: '2-digit' })}</p>` : ''}`;
+      </div>`).join('')}</div>${homeSunLine() ? `<p class="ov-weather-sun">${homeSunLine()}</p>` : ''}${wxTileTripsHtml()}${old ? `<p class="ov-weather-stale">Stand: ${new Date(weatherDaily.ts).toLocaleString('de-DE', { weekday: 'short', hour: '2-digit', minute: '2-digit' })}</p>` : ''}`;
 }
 
 /* ---------- Kachel: Geburtstage (iCloud- und Google-Kontakte der Familie) ---------- */
@@ -13674,7 +13994,7 @@ document.getElementById('refreshBirthdaysBtn').addEventListener('click', async (
 
 function buildFamilyPayload() {
   const payload = {
-    members, mealPlan, recipes, recipeFavorites, shoppingItems, shoppingHistory, shoppingLists, shoppingTransferred, shoppingPlans, shoppingListOrder, shoppingMealTarget, shoppingIngredientRules, shoppingCategoryOrder, pantryItems, pantryCategories, pantryLocations, pantrySettings, pinboard, familyLists, listTemplates, documentCategories, emergencyPasses, schoolProfiles, schoolHomework, schoolLetters, schoolClosures, tasks, lastName, wohnform: householdType, themeColors, categoryActive, recipeCategories, appleCalendar, weatherLocation, rooms, roomSchedules, trashBins, smartDevices, houseMaintenance, cleaningCategories, kitchenTools, favoriteTabs, guestHiddenViews, doneTaskCleanupDays, finance,
+    members, mealPlan, recipes, recipeFavorites, shoppingItems, shoppingHistory, shoppingLists, shoppingTransferred, shoppingPlans, shoppingListOrder, shoppingMealTarget, shoppingIngredientRules, shoppingCategoryOrder, pantryItems, pantryCategories, pantryLocations, pantrySettings, pinboard, familyLists, listTemplates, documentCategories, emergencyPasses, schoolProfiles, schoolHomework, schoolLetters, schoolClosures, pets, petLog, tasks, lastName, wohnform: householdType, themeColors, categoryActive, recipeCategories, appleCalendar, weatherLocation, rooms, roomSchedules, trashBins, smartDevices, houseMaintenance, cleaningCategories, kitchenTools, favoriteTabs, guestHiddenViews, doneTaskCleanupDays, finance,
     defaultViewModeDesktop, defaultViewScopeDesktop, defaultViewModeMobile, defaultViewScopeMobile,
     darkMode: document.documentElement.classList.contains('dark'),
   };
@@ -14559,12 +14879,12 @@ async function fetchWeather() {
     } else if (data.error || !data.jetzt) {
       throw new Error(data.error || 'keine Wetterdaten');
     } else {
-      weatherData = data.jetzt.temp != null ? { temp: data.jetzt.temp, code: data.jetzt.code, uv: data.jetzt.uv } : null;
+      weatherData = data.jetzt.temp != null ? { temp: data.jetzt.temp, code: data.jetzt.code, uv: data.jetzt.uv, gef: data.jetzt.gef, wind: data.jetzt.wind, feuchte: data.jetzt.feuchte } : null;
       // Vorschau für die Übersicht (auf dem Gerät gemerkt, damit sie auch offline da ist)
       weatherDaily = {
         label: data.ort || (fallback && fallback.label) || '',
         ts: Date.now(),
-        days: (Array.isArray(data.tage) ? data.tage : []).map(d => ({ date: String(d.date), code: d.code, max: d.max, min: d.min, rain: d.rain })),
+        days: (Array.isArray(data.tage) ? data.tage : []).map(d => ({ ...d, date: String(d.date) })),
       };
       try { localStorage.setItem(LS_WEATHER_DAILY, JSON.stringify(weatherDaily)); } catch (e) { /* voll */ }
       weatherNoLocation = false;
@@ -14577,6 +14897,7 @@ async function fetchWeather() {
   tickClock();
   if (dashClockTimer) tickDashboardClock();
   renderWeatherTile();
+  try { const ov = document.getElementById('wxOverlay'); if (ov && !ov.classList.contains('hidden') && wxState.place === 'home') wxRender(); } catch (e) { /* noch nicht bereit */ }
 }
 
 // Kein automatischer Standortzugriff mehr - nur das gespeicherte Zuhause der Familie.
@@ -25379,7 +25700,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.36.0';
+const APP_VERSION = '1.37.0';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -26337,6 +26658,22 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
    - rueckblick: true = Einträge vor dem Versions-Log, aus der Projekthistorie zusammengefasst.
    ========================================================== */
 const PINN_CHANGELOG = [
+  {
+    v: '1.37', datum: '10.10.2026', titel: 'Haustiere, 14-Tage-Wetter & Urlaubswetter',
+    punkte: [
+      ['neu', 'Familie → Haustiere: eigener Reiter für Hund, Katze, Kaninchen & Co. – Steckbrief mit Foto, Rasse, Alter, Chip- und Heimtierausweis-Nummer, Tierarzt und Tiernotdienst zum Anrufen'],
+      ['neu', 'Heute: Fütterungszeiten zum Abhaken (wer hat wann gefüttert), Gassi-Runden mit Dauer und wer unterwegs war, Medikamente „gegeben“, Dienstplan „Wer ist dran?“ für jeden Wochentag – mit „Reihum verteilen“'],
+      ['neu', 'Gesundheit & Vorsorge: Impfungen, Wurmkur, Floh- & Zeckenschutz, Krallen, Zähne, Stall/Aquarium – mit Vorschlägen je Tierart, Fälligkeit und „✓ Erledigt“. Push-Erinnerung 3 Tage vorher, am Tag selbst und wöchentlich, solange überfällig; Geburtstag des Tiers mit Push'],
+      ['neu', 'Gewichtsverlauf als Diagramm, Futter mit Verknüpfung zum Vorrat und „Auf die Einkaufsliste“, GPS-Tracker aus der Ortung, Gassi-Wochenstatistik mit 🏆, Tagebuch der letzten Tage'],
+      ['neu', 'Für den Tiersitter: Steckbrief mit Futter, Gassi, Medikamenten, Eigenheiten und Telefonnummern zum Kopieren oder Teilen · Vermisst-Plakat zum Drucken · Packliste „Urlaub mit Haustier“ · Regenbogenbrücke 🌈 für verstorbene Tiere'],
+      ['neu', 'Haustiere auch in der Kachel „Familienmitglieder“, im Reiter „Notfall“, in der Suche und in der Wochenvorschau (fällige Vorsorge, Geburtstage). Tiere, die bisher als Familienmitglied angelegt waren, lassen sich mit einem Tipp übernehmen'],
+      ['neu', 'Wetter-Kachel antippen: 14 Tage Vorschau (ab Tag 8 als Tendenz markiert). Jeder Tag mit Details – gefühlte Temperatur, Wind & Böen mit Richtung, UV-Index, Sonnenstunden, Regenmenge, Sonnenauf- und -untergang, Stundenverlauf und Tipps, was man anzieht'],
+      ['neu', 'Urlaubswetter: Packlisten bekommen Reiseziel (Vorschläge beim Tippen) und Zeitraum – die Tageszahl rechnet sich daraus. Die Packliste zeigt das Wetter am Urlaubsort, die Wetter-Kachel die anstehende Reise, die Wetter-Ansicht einen eigenen Reiter je Urlaub mit Wassertemperatur am Meer'],
+      ['neu', 'Mehr als 16 Tage vorher: Erfahrungswerte (Ø derselben Tage der letzten drei Jahre), danach automatisch die echte Vorhersage. Pack-Tipps passend zum Wetter (Regenjacke, Sonnencreme, Badesachen …) mit einem Tipp auf die Liste'],
+      ['neu', 'Wochenvorschau: steht in der Woche ein Urlaub an, kommt das Wetter am Urlaubsort zusammengefasst dazu – Ø Temperaturen, Regentage, Sonne, Wasser und jeder Tag als Symbol'],
+      ['info', 'Server: neu haustiere.pb.js und pinn-haustiere.js, angepasst zuhause.pb.js und pinn-zuhause.js (16-Tage-Vorhersage, Stundenverlauf, Urlaubswetter, Erfahrungswerte); Sprachdateien en/fr/es ergänzt'],
+    ],
+  },
   {
     v: '1.36', datum: '10.10.2026', titel: 'Standort teilen direkt in pinn.',
     punkte: [
@@ -48405,7 +48742,7 @@ const LS_GIFT_STATUS = [
   { id: 'verschenkt', icon: '✅', label: 'Verschenkt' },
 ];
 const LS_ICONS = {
-  pack: ['🧳', '🏖️', '⛷️', '🏙️', '⛺', '🏥', '👶', '🎉', '🎈', '👜', '🥾', '🏊', '💼', '🚗', '✈️', '🚆'],
+  pack: ['🧳', '🏖️', '⛷️', '🏙️', '⛺', '🏥', '👶', '🎉', '🎈', '👜', '🥾', '🏊', '💼', '🚗', '✈️', '🚆', '🐾', '🏝️', '⛵'],
   gift: ['🎁', '🎄', '🎂', '🐣', '💐', '👔', '💍', '🎓', '🎅', '🧸'],
   wish: ['⭐', '🎄', '🎂', '🧸', '🎮', '📚', '👗', '⚽', '🎨', '🎧'],
   check: ['☑️', '🚚', '🍼', '🎒', '🏠', '🎄', '📋', '🛠️', '💒', '🐶'],
@@ -48454,6 +48791,13 @@ const LIST_TEMPLATES = {
       ['Kleidung', ['@Wetterfeste Jacke', '@Warmer Pullover', '@Unterwäsche ({t}×)', '@Socken ({t}×)', '@T-Shirts', '@Lange Hose', '@Wanderschuhe', '@Badeschlappen', '@Mütze für abends', '@Schlafanzug']],
       ['Hygiene', ['Kulturbeutel', 'Handtücher', 'Toilettenpapier', 'Sonnencreme', 'Mückenschutz']],
       ['Apotheke', LS_T_MEDS],
+    ] },
+    { id: 'haustier', icon: '🐾', name: 'Urlaub mit Haustier', days: true, sections: [
+      ['Futter & Wasser', ['Futter (für alle Tage + Reserve)', 'Leckerlis', 'Futter- & Wassernapf', 'Trinkflasche für unterwegs']],
+      ['Unterwegs', ['Leine & Halsband / Geschirr', 'Kotbeutel', 'Transportbox / Sicherheitsgurt', 'Decke / Körbchen', 'Lieblingsspielzeug', 'Handtuch']],
+      ['Gesundheit & Papiere', ['EU-Heimtierausweis', 'Impfnachweis (Tollwut)', 'Medikamente', 'Floh- & Zeckenschutz', 'Zeckenzange', 'Adresse Tierarzt am Urlaubsort']],
+      ['Kleidung', ['@Unterwäsche ({t}×)', '@Socken ({t}×)', '@T-Shirts', '@Hose', '@Pullover', '@Wetterfeste Jacke', '@Feste Schuhe', '@Schlafanzug']],
+      ['Vor der Abfahrt', LS_T_HOUSE],
     ] },
     { id: 'krankenhaus', icon: '🏥', name: 'Krankenhaus', sections: [
       ['Unterlagen', ['Versichertenkarte', 'Personalausweis', 'Einweisungsschein', 'Medikamentenplan', 'Befunde & Arztbriefe', 'Allergie- & Impfpass', 'Notfallkontakte']],
@@ -48897,7 +49241,8 @@ function lsRenderDetail(l) {
 
   // Kopfzeile: Datum, Fortschritt, Summen, Hinweise
   const meta = [];
-  if (l.date) meta.push(`<div class="ls-sum"><span>🗓️ ${escapeHtml(t.date || 'Datum')}: ${escapeHtml(lsDateText(l.date))}</span></div>`);
+  if (tripValid(l)) meta.push(lsTripCardHtml(l));
+  else if (l.date) meta.push(`<div class="ls-sum"><span>🗓️ ${escapeHtml(t.date || 'Datum')}: ${escapeHtml(lsDateText(l.date))}</span></div>`);
   if (t.progress && items.length) {
     const done = items.filter(i => i.done).length;
     const pct = Math.round(done / items.length * 100);
@@ -49296,6 +49641,7 @@ function lsShowListForm(l) {
   document.getElementById('lsListDeleteBtn').classList.toggle('hidden', isNew);
   document.getElementById('lsListBackBtn').classList.toggle('hidden', !isNew);
   document.getElementById('lsListSaveBtn').textContent = isNew ? 'Anlegen' : 'Speichern';
+  lsTripInit(l);
   if (isNew && !isMobile() && !t.wish) setTimeout(() => { nameEl.focus(); nameEl.select(); }, 50);
   armModalSnapshot('lsListModal');
 }
@@ -49337,7 +49683,10 @@ function lsSaveListFromModal() {
     if (t.wish) { const m = memberById(ctx.owner); name = 'Wunschzettel von ' + (m ? memberLabel(m) : ''); }
     else { err.textContent = 'Bitte einen Namen eingeben.'; err.classList.remove('hidden'); return; }
   }
-  const date = t.date ? (document.getElementById('lsListDate').value || '') : '';
+  let date = t.date ? (document.getElementById('lsListDate').value || '') : '';
+  const trip = lsTripData();
+  if (t.id === 'pack') date = trip ? (trip.dateOnly || trip.from) : '';
+  const tripTips = trip && !trip.dateOnly && ctx.mode === 'new' && document.getElementById('lsTripTips').checked ? (ctx.tripTips || []) : [];
   const priv = !t.wish && document.getElementById('lsListPrivate').checked;
   const data = { name, icon: ctx.icon || t.icon };
   if (date) data.date = date;
@@ -49346,6 +49695,7 @@ function lsSaveListFromModal() {
     lsUpdateList(ctx.listId, l => {
       const c = { ...l, ...data };
       if (!date) delete c.date;
+      if (t.id === 'pack') { if (trip && !trip.dateOnly) c.trip = trip; else delete c.trip; }
       if (priv) c.privateTo = lsMyUserId(); else delete c.privateTo;
       return c;
     });
@@ -49359,6 +49709,12 @@ function lsSaveListFromModal() {
   const l = { id: lsId('fl'), type: ctx.type, ...data, createdAt: Date.now(), createdBy: lsMyUserId(), items: lsBuildItems(tpl, persons, days) };
   if (tpl.forName) l.forName = tpl.forName;
   if (priv) l.privateTo = lsMyUserId();
+  if (trip && !trip.dateOnly) l.trip = trip;
+  if (tripTips.length) {
+    const have = new Set(l.items.map(i => normalizeForGrouping(i.text || '')));
+    const now = Date.now();
+    tripTips.filter(x => !have.has(normalizeForGrouping(x))).forEach((text, i) => l.items.push({ id: lsId('fi'), text, done: false, section: 'Wetter-Tipps', createdAt: now + 1000 + i }));
+  }
   familyLists = [...familyLists, l];
   lsCloseListModal();
   persistState();
@@ -49615,7 +49971,7 @@ const GS_MENU_KEYWORDS = {
   finanzen: 'ausgaben budget sparen depot etf verträge taschengeld geld',
   dokumente: 'unterlagen belege rechnungen',
   fahrzeuge: 'auto fahrrad tanken tüv hu',
-  familie: 'notfall notfallpass ortung standort karte live gps tracker hund unterwegs heimweg zuhause blutgruppe allergien medikamente',
+  familie: 'notfall notfallpass ortung standort karte live gps tracker hund katze haustiere tiere tierarzt impfung gassi füttern unterwegs heimweg zuhause blutgruppe allergien medikamente',
 };
 // Höchstzahl Treffer je Art, damit eine Art die Liste nicht allein füllt
 const GS_TYPE_CAP = { menu: 4, settings: 4, account: 3, event: 6, task: 5, recipe: 6, precipe: 3, list: 4, item: 5, pantry: 5, pin: 4, doc: 5, contract: 4, recurring: 3, expense: 5, vehicle: 3, room: 3, member: 3, birthday: 3 };
@@ -49750,6 +50106,12 @@ function gsCollect(q) {
         icon: '🧑', typeLabel: 'Familie', sub: (m.role && label !== m.role ? m.role + ' · ' : '') + 'Profil · Notfallpass',
         run: () => { if (allowed('familie')) famOpenMember(m.id); else openMemberModal(m.id); },
       }, label, [m.name, m.role].join(' '));
+    });
+    if (allowed('familie')) (Array.isArray(pets) ? pets : []).filter(p => p && p.name).forEach(p => {
+      add('member', {
+        icon: p.emoji || '🐾', typeLabel: 'Haustier', sub: [p.breed || ptSpecies(p.species).label, p.chip ? 'Chip ' + p.chip : ''].filter(Boolean).join(' · '),
+        run: () => ptOpen(p.id),
+      }, p.name, [p.name, p.breed, ptSpecies(p.species).label, 'haustier tier', p.chip].join(' '));
     });
   });
 
@@ -50612,6 +50974,8 @@ function renderFamily() {
   } else if (famTab === 'schule') {
     pane.innerHTML = skPaneHtml();
     skKiCheck();
+  } else if (famTab === 'tiere') {
+    pane.innerHTML = ptPaneHtml();
   } else if (famTab === 'notfall') {
     pane.innerHTML = famNotfallHtml();
   } else if (famTab === 'ortung') {
@@ -52282,13 +52646,14 @@ function sosStart() {
      Der Notfallpass selbst öffnet sich direkt aus dem SOS-Popup, dem Reiter „Notfall“ und der Karte.
    - Standorte werden nur auf „Übersicht“, „Ortung“ und im Profil laufend abgefragt.
    ========================================================== */
-var famTab = 'uebersicht';      // 'uebersicht' | 'schule' | 'ortung' | 'notfall'
+var famTab = 'uebersicht';      // 'uebersicht' | 'schule' | 'tiere' | 'ortung' | 'notfall'
 var famDetailMode = 'profil';   // 'profil' | 'pass'
 var famPassFrom = '';           // 'profil' = zurück ins Profil, sonst zur Liste
-function famPollWanted() { return !!famDetailId || famTab === 'uebersicht' || famTab === 'ortung'; }
+function famPollWanted() { return !!famDetailId || famTab === 'uebersicht' || famTab === 'ortung' || (famTab === 'tiere' && !!ptDetailId && !!(ptById(ptDetailId) || {}).trackerId); }
 function famSetTab(tab) {
-  famTab = ['uebersicht', 'schule', 'ortung', 'notfall'].includes(tab) ? tab : 'uebersicht';
+  famTab = ['uebersicht', 'schule', 'tiere', 'ortung', 'notfall'].includes(tab) ? tab : 'uebersicht';
   famDetailId = null;
+  ptDetailId = null;
   if (famTab === 'ortung') famFitted = false;
   renderFamily();
   if (famPollWanted()) famStartPolling(); else famStopPolling();
@@ -52340,6 +52705,7 @@ function famQuickCardsHtml() {
       <span class="fam-quick-s">Stundenplan, Elternbriefe, Schließtage</span>
     </button>`);
   }
+  cards.push(ptQuickCardHtml());
   return `<div class="fam-quick-grid">${cards.join('')}</div>`;
 }
 function famOrtungHtml() {
@@ -52387,6 +52753,7 @@ function famNotfallHtml() {
       <div class="flex gap-2">${calls.join('')}</div>
     </div>
     ${members.length ? `<div class="fam-card"><div class="fz-h">🩺 Notfallpässe</div><div class="flex flex-col">${rows}</div></div>` : ''}
+    ${ptNotfallHtml()}
     <p class="text-[11px] text-ink/40 text-center">Notfallpässe sind auch offline griffbereit.</p>`;
 }
 function famProfileHtml(m) {
@@ -53651,10 +54018,1859 @@ function skModalChange(e) {
   if (kic && skModal.kiClosures) { const c = skModal.kiClosures[Number(kic.dataset.skkic)]; if (c) c.on = kic.checked; }
 }
 
+/* ==========================================================
+   Familie → Haustiere
+   ----------------------------------------------------------
+   Haustiere sind keine Familienmitglieder mit Profil, sondern stehen für sich in den Familiendaten –
+   damit offline änderbar und ohne gegenseitiges Überschreiben zusammengeführt (Listen mit IDs):
+   - pets: [{ id, name, species, emoji, photo, color, breed, sex ('m'|'w'), neutered, birth, since,
+       chip, passNo, insurance, insuranceNo, vet, vetPhone, vetAddress, emergencyVet, emergencyVetPhone,
+       allergies, conditions, notes (Wesen & Eigenheiten), sitter (für den Tiersitter),
+       feed: { brand, amount, times: ['07:00', …], pantryId }, walks (Gassi-Ziel je Tag),
+       roster: { '1'…'7': [Mitglied-IDs] } (wer ist an welchem Wochentag dran), owners: [Mitglied-IDs],
+       trackerId (Gerät aus der Ortung), push (Erinnerungen), meds: [{ id, name, dose, times }],
+       care: [{ id, type, title, last, every (Tage, 0 = einmalig), next, note }],
+       weights: [{ id, date, kg }], gone (Datum, Regenbogenbrücke), created, updated }]
+   - petLog: [{ id, pet, kind: 'gassi'|'futter'|'med'|'notiz', day, at, by (Mitglied-ID), min, slot, note }]
+     (nur die letzten 60 Tage werden behalten)
+   Erinnerungen per Push (Vorsorge fällig, Geburtstag): pb_hooks/haustiere.pb.js + pinn-haustiere.js.
+   ========================================================== */
+var PT_SPECIES = [
+  { id: 'hund', emoji: '🐶', label: 'Hund', walks: 3, feed: ['07:00', '18:00'], emojis: ['🐶', '🐕', '🦮', '🐕‍🦺', '🐩'] },
+  { id: 'katze', emoji: '🐱', label: 'Katze', walks: 0, feed: ['07:00', '18:00'], emojis: ['🐱', '🐈', '🐈‍⬛'] },
+  { id: 'kaninchen', emoji: '🐰', label: 'Kaninchen', walks: 0, feed: ['08:00', '18:00'], emojis: ['🐰', '🐇'] },
+  { id: 'meerschweinchen', emoji: '🐹', label: 'Meerschweinchen', walks: 0, feed: ['08:00', '18:00'], emojis: ['🐹'] },
+  { id: 'hamster', emoji: '🐹', label: 'Hamster & Maus', walks: 0, feed: ['19:00'], emojis: ['🐹', '🐭', '🐁'] },
+  { id: 'vogel', emoji: '🐦', label: 'Vogel', walks: 0, feed: ['08:00'], emojis: ['🐦', '🦜', '🐤'] },
+  { id: 'fisch', emoji: '🐠', label: 'Fische', walks: 0, feed: ['08:00'], emojis: ['🐠', '🐟', '🐡'] },
+  { id: 'reptil', emoji: '🦎', label: 'Reptil', walks: 0, feed: [], emojis: ['🦎', '🐢', '🐍'] },
+  { id: 'pferd', emoji: '🐴', label: 'Pferd', walks: 0, feed: ['07:00', '18:00'], emojis: ['🐴', '🐎'] },
+  { id: 'sonstiges', emoji: '🐾', label: 'Anderes Tier', walks: 0, feed: [], emojis: ['🐾', '🐿️', '🦔', '🐓', '🐐'] },
+];
+var PT_CARE_TYPES = [
+  { id: 'impfung', icon: '💉', label: 'Impfung' },
+  { id: 'wurmkur', icon: '🪱', label: 'Wurmkur' },
+  { id: 'parasiten', icon: '🛡️', label: 'Floh- & Zeckenschutz' },
+  { id: 'tierarzt', icon: '🩺', label: 'Tierarzt' },
+  { id: 'medikament', icon: '💊', label: 'Medikament' },
+  { id: 'zahn', icon: '🦷', label: 'Zähne' },
+  { id: 'krallen', icon: '✂️', label: 'Krallen & Hufe' },
+  { id: 'pflege', icon: '🛁', label: 'Fellpflege' },
+  { id: 'reinigung', icon: '🧽', label: 'Reinigung' },
+  { id: 'sonstiges', icon: '📌', label: 'Sonstiges' },
+];
+// Vorschläge je Tierart: [Art, Titel, alle x Tage]
+var PT_CARE_PRESETS = {
+  hund: [['impfung', 'Tollwut-Impfung', 1095], ['impfung', 'Kombi-Impfung (SHPPi + L)', 365], ['wurmkur', 'Wurmkur', 90], ['parasiten', 'Floh- & Zeckenschutz', 30], ['tierarzt', 'Jahres-Check beim Tierarzt', 365], ['krallen', 'Krallen kürzen', 42]],
+  katze: [['impfung', 'Katzenschnupfen & -seuche (RCP)', 365], ['impfung', 'Tollwut-Impfung (Freigänger)', 1095], ['wurmkur', 'Wurmkur', 90], ['parasiten', 'Floh- & Zeckenschutz', 30], ['tierarzt', 'Jahres-Check beim Tierarzt', 365]],
+  kaninchen: [['impfung', 'RHD-Impfung', 365], ['impfung', 'Myxomatose-Impfung', 365], ['krallen', 'Krallen kürzen', 42], ['zahn', 'Zähne kontrollieren', 180], ['reinigung', 'Stall gründlich reinigen', 14]],
+  meerschweinchen: [['krallen', 'Krallen kürzen', 42], ['zahn', 'Zähne kontrollieren', 180], ['reinigung', 'Stall gründlich reinigen', 14], ['tierarzt', 'Gesundheits-Check', 365]],
+  hamster: [['reinigung', 'Käfig gründlich reinigen', 30], ['tierarzt', 'Gesundheits-Check', 365]],
+  vogel: [['reinigung', 'Käfig gründlich reinigen', 14], ['krallen', 'Krallen & Schnabel prüfen', 90], ['tierarzt', 'Gesundheits-Check', 365]],
+  fisch: [['reinigung', 'Teilwasserwechsel', 7], ['reinigung', 'Filter reinigen', 30], ['sonstiges', 'Wasserwerte testen', 14]],
+  reptil: [['reinigung', 'Terrarium reinigen', 30], ['sonstiges', 'UV-Lampe tauschen', 365], ['tierarzt', 'Gesundheits-Check', 365]],
+  pferd: [['krallen', 'Hufschmied', 49], ['wurmkur', 'Wurmkur', 90], ['impfung', 'Influenza- & Tetanus-Impfung', 180], ['zahn', 'Zahnkontrolle', 365]],
+  sonstiges: [['tierarzt', 'Gesundheits-Check', 365]],
+};
+var PT_LOG_DAYS = 60;
+var PT_COLORS = ['#B5651D', '#8D6E63', '#C0567A', '#3B7EA1', '#2A9D8F', '#5E8C31', '#9C4DCC', '#D4A017', '#546E7A', '#D9822B'];
+var ptDetailId = null;   // geöffnetes Haustier (Reiter „Haustiere“)
+var ptModalState = null; // { kind, … }
+var ptShowGone = false;
+
+function ptList() { return (Array.isArray(pets) ? pets : []).filter(p => p && p.id && p.name); }
+function ptActive() { return ptList().filter(p => !p.gone); }
+function ptById(id) { return ptList().find(p => p.id === id) || null; }
+function ptSpecies(id) { return PT_SPECIES.find(s => s.id === id) || PT_SPECIES[PT_SPECIES.length - 1]; }
+function ptCareType(id) { return PT_CARE_TYPES.find(t => t.id === id) || PT_CARE_TYPES[PT_CARE_TYPES.length - 1]; }
+function ptId(prefix) { return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function ptToday() { return isoDate(new Date()); }
+function ptIso(v) { return /^\d{4}-\d{2}-\d{2}$/.test(String(v || '')); }
+function ptCanEdit() { return !isCurrentUserGuest() && !childLockActive(); }
+function ptColor(p) { return (p && p.color) || '#B5651D'; }
+function ptAvatarInner(p) {
+  if (p && p.photo) return `<span class="fam-ava-in"><img src="${famAttr(p.photo)}" alt="" /></span>`;
+  return `<span class="fam-ava-in">${escapeHtml((p && p.emoji) || ptSpecies(p && p.species).emoji)}</span>`;
+}
+function ptAge(p) {
+  if (!p || !ptIso(p.birth)) return null;
+  const [y, m, d] = p.birth.split('-').map(Number);
+  const end = ptIso(p.gone) ? new Date(p.gone + 'T12:00:00') : new Date();
+  let months = (end.getFullYear() - y) * 12 + (end.getMonth() + 1 - m);
+  if (end.getDate() < d) months--;
+  if (months < 0) return null;
+  return { years: Math.floor(months / 12), months };
+}
+function ptAgeText(p) {
+  const a = ptAge(p);
+  if (!a) return '';
+  if (a.years >= 1) return a.years === 1 ? '1 Jahr' : a.years + ' Jahre';
+  return a.months === 1 ? '1 Monat' : a.months + ' Monate';
+}
+function ptSubLine(p) {
+  const sp = ptSpecies(p.species);
+  const sex = p.sex === 'm' ? '♂' : p.sex === 'w' ? '♀' : '';
+  return [p.breed || sp.label, ptAgeText(p), sex ? sex + (p.neutered ? ' kastriert' : '') : ''].filter(Boolean).join(' · ');
+}
+// Geburtstag: Tage bis zum nächsten (0 = heute), null ohne Datum
+function ptBirthdayIn(p) {
+  if (!p || !ptIso(p.birth) || p.gone) return null;
+  const [, m, d] = p.birth.split('-').map(Number);
+  const now = new Date(); now.setHours(0, 0, 0, 0);
+  let next = birthdayInYear(now.getFullYear(), m, d);
+  if (next < now) next = birthdayInYear(now.getFullYear() + 1, m, d);
+  return Math.round((next - now) / 86400000);
+}
+
+/* ---------- Vorsorge ---------- */
+function ptCareNext(c) {
+  if (!c) return '';
+  if (ptIso(c.next)) return c.next;
+  const every = Number(c.every) || 0;
+  if (ptIso(c.last) && every > 0) return addDaysToDateStr(c.last, every);
+  return '';
+}
+function ptCareDays(c) {
+  const n = ptCareNext(c);
+  return n ? daysBetweenDateStrs(ptToday(), n) : null;
+}
+function ptCareState(c) {
+  const d = ptCareDays(c);
+  if (d === null) return 'none';
+  if (d < 0) return 'over';
+  if (d === 0) return 'today';
+  if (d <= 14) return 'soon';
+  return 'ok';
+}
+function ptCareSorted(p) {
+  const rank = { over: 0, today: 1, soon: 2, ok: 3, none: 4 };
+  return (Array.isArray(p.care) ? p.care : []).slice().sort((a, b) => {
+    const ra = rank[ptCareState(a)], rb = rank[ptCareState(b)];
+    if (ra !== rb) return ra - rb;
+    return String(ptCareNext(a) || '9999').localeCompare(String(ptCareNext(b) || '9999'));
+  });
+}
+function ptCareDueText(c) {
+  const d = ptCareDays(c);
+  if (d === null) return c.last ? 'zuletzt am ' + famFmtDate(c.last) : 'noch kein Datum';
+  if (d < 0) return d === -1 ? 'seit gestern fällig' : 'seit ' + (-d) + ' Tagen fällig';
+  if (d === 0) return 'heute fällig';
+  if (d === 1) return 'morgen fällig';
+  if (d <= 60) return 'in ' + d + ' Tagen';
+  return 'am ' + famFmtDate(ptCareNext(c));
+}
+function ptOverdue(p) { return p.gone ? [] : (Array.isArray(p.care) ? p.care : []).filter(c => ['over', 'today'].includes(ptCareState(c))); }
+function ptSoon(p, days) { return p.gone ? [] : (Array.isArray(p.care) ? p.care : []).filter(c => { const d = ptCareDays(c); return d !== null && d >= 0 && d <= days; }); }
+
+/* ---------- Tagebuch (Gassi, Füttern, Medikamente) ---------- */
+function ptLog() { return Array.isArray(petLog) ? petLog : []; }
+function ptLogOf(petId, kind, day) { return ptLog().filter(x => x && x.pet === petId && (!kind || x.kind === kind) && (!day || x.day === day)); }
+function ptTrimLog(list) {
+  const old = addDaysToDateStr(ptToday(), -PT_LOG_DAYS);
+  return list.filter(x => x && x.day && x.day >= old);
+}
+function ptAddLog(entry) {
+  const me = currentMember();
+  const now = new Date();
+  const e = { id: ptId('pl'), day: isoDate(now), at: now.getTime(), by: me ? me.id : '', ...entry };
+  Object.keys(e).forEach(k => { if (e[k] === '' || e[k] === undefined || e[k] === null) delete e[k]; });
+  petLog = ptTrimLog([...ptLog(), e]);
+  persistState();
+  return e;
+}
+function ptRemoveLog(id) {
+  petLog = ptLog().filter(x => x.id !== id);
+  persistState();
+}
+function ptFeedTimes(p) { return (p.feed && Array.isArray(p.feed.times) ? p.feed.times : []).filter(t => /^\d{2}:\d{2}$/.test(t)).sort(); }
+function ptFedSlot(p, t, day) { return ptLogOf(p.id, 'futter', day || ptToday()).find(x => x.slot === t) || null; }
+function ptWalksToday(p) { return ptLogOf(p.id, 'gassi', ptToday()); }
+function ptOnDuty(p, day) {
+  const d = day ? new Date(day + 'T12:00:00') : new Date();
+  const wd = String(((d.getDay() + 6) % 7) + 1); // 1 = Montag
+  const ids = (p.roster && Array.isArray(p.roster[wd])) ? p.roster[wd] : [];
+  return ids.map(id => memberById(id)).filter(Boolean);
+}
+function ptWhoName(id) { const m = id ? memberById(id) : null; return m ? memberLabel(m) : ''; }
+function ptTimeOf(ms) { return new Date(ms).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }); }
+
+/* ---------- Speichern ---------- */
+function ptUpdate(id, fn) {
+  pets = ptList().map(p => (p.id === id ? { ...fn(p), updated: Date.now() } : p));
+  persistState();
+}
+function ptRefresh() {
+  if (currentView === 'familie') renderFamily();
+  try { if (currentView === 'uebersicht') renderFamilyTile(); } catch (e) { /* egal */ }
+}
+
+/* ---------- Reiter „Haustiere“ ---------- */
+function ptLegacyMembers() {
+  const taken = new Set(ptList().map(p => p.fromMember).filter(Boolean));
+  return members.filter(m => famIsPet(m) && !taken.has(m.id));
+}
+function ptPaneHtml() {
+  if (ptDetailId && ptById(ptDetailId)) return ptProfileHtml(ptById(ptDetailId));
+  ptDetailId = null;
+  const act = ptActive();
+  const gone = ptList().filter(p => p.gone);
+  const can = ptCanEdit();
+  const out = [];
+  if (!act.length && !gone.length) {
+    out.push(`<div class="fam-card pt-empty">
+      <div class="pt-empty-paws" aria-hidden="true"><span>🐾</span><span>🐶</span><span>🐱</span><span>🐰</span><span>🐾</span></div>
+      <div class="font-serif text-lg mb-1">Eure Haustiere</div>
+      <p class="text-sm text-ink/55 mb-3">Füttern, Gassi, Impfungen, Tierarzt und Gewicht – alles an einem Ort. pinn. erinnert an Wurmkur &amp; Co. und hilft, wenn der Tiersitter kommt.</p>
+      ${can ? '<button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-pt="new">+ Haustier hinzufügen</button>' : ''}
+    </div>`);
+  } else {
+    out.push(`<div class="pt-grid">${act.map(ptCardHtml).join('')}${can ? `<button type="button" class="pt-card pt-add" data-pt="new"><span class="pt-add-ic">＋</span><span class="text-sm font-medium">Haustier</span></button>` : ''}</div>`);
+    const due = [];
+    act.forEach(p => ptSoon(p, 7).concat(ptOverdue(p)).forEach(c => { if (!due.some(x => x.c.id === c.id)) due.push({ p, c }); }));
+    due.sort((a, b) => String(ptCareNext(a.c)).localeCompare(String(ptCareNext(b.c))));
+    if (due.length) {
+      out.push(`<div class="fam-card"><div class="fz-h">🗓️ Steht an</div>${due.slice(0, 8).map(({ p, c }) => ptCareRowHtml(p, c, true)).join('')}</div>`);
+    }
+    const walkers = ptActive().filter(p => (Number(p.walks) || 0) > 0);
+    if (walkers.length) out.push(ptWalkWeekHtml(walkers));
+  }
+  const legacy = ptLegacyMembers();
+  if (legacy.length && can) {
+    out.push(`<div class="fam-card pt-legacy"><div class="fz-h">🔁 Als Haustier übernehmen</div>
+      <p class="text-xs text-ink/55 mb-2">Diese Tiere stehen noch als Familienmitglied in pinn. Übernimm sie in die Haustiere – Chipnummer, Tierarzt und Geburtsdatum aus dem Notfallpass kommen mit.</p>
+      <div class="flex flex-wrap gap-2">${legacy.map(m => `<button type="button" class="fz-mini-btn" data-pt="adopt" data-id="${famAttr(m.id)}">${escapeHtml(m.avatar || '🐾')} <span>${escapeHtml(memberLabel(m))}</span></button>`).join('')}</div></div>`);
+  }
+  if (gone.length) {
+    out.push(`<div class="fam-card pt-gone-card"><button type="button" class="pt-gone-h" data-pt="togglegone"><span>🌈 In Erinnerung</span><b>${gone.length}</b><span class="ml-auto text-ink/40">${ptShowGone ? '▾' : '▸'}</span></button>
+      ${ptShowGone ? `<div class="pt-grid mt-2">${gone.map(ptCardHtml).join('')}</div>` : ''}</div>`);
+  }
+  return out.join('');
+}
+function ptCardHtml(p) {
+  const color = ptColor(p);
+  const over = ptOverdue(p);
+  const bd = ptBirthdayIn(p);
+  const feed = ptFeedTimes(p);
+  const fed = feed.filter(t => ptFedSlot(p, t)).length;
+  const walks = Number(p.walks) || 0;
+  const w = ptWalksToday(p).length;
+  const stats = [];
+  if (!p.gone && feed.length) stats.push(`<span class="pt-stat${fed >= feed.length ? ' ok' : ''}">🍖 <b>${fed}/${feed.length}</b></span>`);
+  if (!p.gone && walks) stats.push(`<span class="pt-stat${w >= walks ? ' ok' : ''}">🦮 <b>${w}/${walks}</b></span>`);
+  let badge = '';
+  if (bd === 0) badge = '<span class="pt-badge bday">🎂</span>';
+  else if (over.length) badge = `<span class="pt-badge warn" title="Fällig">${over.length}</span>`;
+  return `<button type="button" class="pt-card${p.gone ? ' gone' : ''}" data-pt="open" data-id="${famAttr(p.id)}" style="--pt:${famAttr(color)}">
+    <span class="pt-card-band"></span>
+    <span class="fam-ava pt-ava" style="--fam:${famAttr(color)}">${ptAvatarInner(p)}${badge}</span>
+    <span class="pt-card-name">${escapeHtml(p.name)}</span>
+    <span class="pt-card-sub">${escapeHtml(p.gone ? '🌈' : (p.breed || ptSpecies(p.species).label))}</span>
+    ${stats.length ? `<span class="pt-stats">${stats.join('')}</span>` : ''}
+  </button>`;
+}
+function ptCareRowHtml(p, c, withName) {
+  const st = ptCareState(c);
+  const t = ptCareType(c.type);
+  const can = ptCanEdit() && !p.gone;
+  return `<div class="pt-care-row ${st}">
+    <button type="button" class="pt-care-main" data-pt="care" data-id="${famAttr(p.id)}" data-cid="${famAttr(c.id)}"${can ? '' : ' disabled'}>
+      <span class="pt-care-ic">${t.icon}</span>
+      <span class="min-w-0 flex-1 text-left">
+        <span class="block text-sm truncate">${withName ? `<b>${escapeHtml(p.name)}</b> · ` : ''}<span>${escapeHtml(c.title || t.label)}</span></span>
+        <span class="pt-care-when">${escapeHtml(ptCareDueText(c))}</span>
+      </span>
+    </button>
+    ${can && st !== 'none' ? `<button type="button" class="pt-done-btn" data-pt="caredone" data-id="${famAttr(p.id)}" data-cid="${famAttr(c.id)}" title="Erledigt">✓</button>` : ''}
+  </div>`;
+}
+// Gassi der letzten 7 Tage (Minuten je Tag, wer am meisten unterwegs war)
+function ptWalkWeekHtml(list) {
+  const days = [...Array(7)].map((_, i) => addDaysToDateStr(ptToday(), i - 6));
+  const per = days.map(d => list.reduce((s, p) => s + ptLogOf(p.id, 'gassi', d).reduce((a, x) => a + (Number(x.min) || 20), 0), 0));
+  const max = Math.max(30, ...per);
+  const by = {};
+  list.forEach(p => ptLog().filter(x => x.pet === p.id && x.kind === 'gassi' && x.day >= days[0]).forEach(x => { if (x.by) by[x.by] = (by[x.by] || 0) + (Number(x.min) || 20); }));
+  const top = Object.keys(by).sort((a, b) => by[b] - by[a]).filter(id => memberById(id));
+  const total = per.reduce((a, b) => a + b, 0);
+  return `<div class="fam-card"><div class="fz-h">🦮 Gassi · 7 Tage</div>
+    <div class="pt-bars">${days.map((d, i) => `<div class="pt-bar${d === ptToday() ? ' today' : ''}"><span class="pt-bar-col"><span style="height:${Math.round(per[i] / max * 100)}%"></span></span><small>${escapeHtml(new Date(d + 'T12:00:00').toLocaleDateString('de-DE', { weekday: 'narrow' }))}</small></div>`).join('')}</div>
+    <div class="pt-walk-sum"><span><b>${Math.round(total / 60 * 10) / 10}</b> <span>Std. unterwegs</span></span>${top.length ? `<span>🏆 <b>${escapeHtml(ptWhoName(top[0]))}</b></span>` : ''}</div>
+  </div>`;
+}
+
+/* ---------- Profil eines Haustiers ---------- */
+function ptProfileHtml(p) {
+  const color = ptColor(p);
+  const sp = ptSpecies(p.species);
+  const can = ptCanEdit() && !p.gone;
+  const bd = ptBirthdayIn(p);
+  const age = ptAge(p);
+  const btns = [];
+  if (!p.gone && (Number(p.walks) || 0) > 0 && can) btns.push(`<button type="button" class="fz-act-btn primary" data-pt="walk" data-id="${famAttr(p.id)}"><span class="fz-ti">🦮</span>Gassi</button>`);
+  if (!p.gone && ptFeedTimes(p).length && can) btns.push(`<button type="button" class="fz-act-btn" data-pt="feednext" data-id="${famAttr(p.id)}"><span class="fz-ti">🍖</span>Gefüttert</button>`);
+  if (p.vetPhone) btns.push(`<a class="fz-act-btn" href="${famAttr(famTel(p.vetPhone))}"><span class="fz-ti">🩺</span>Tierarzt</a>`);
+  if (ptCanEdit()) btns.push(`<button type="button" class="fz-act-btn" data-pt="edit" data-id="${famAttr(p.id)}"><span class="fz-ti">✏️</span>Bearbeiten</button>`);
+  const out = [];
+  out.push(`<button type="button" class="self-start text-sm text-ink/55 hover:text-pine -mb-1" data-pt="back">‹ Haustiere</button>`);
+  out.push(`<div class="fz-hero pt-hero" style="--fz:${famAttr(color)}">
+    <div class="fam-band pt-band"><span class="pt-trail" aria-hidden="true">🐾 🐾 🐾 🐾 🐾 🐾</span></div>
+    <div class="fam-hero-ava"><span class="fam-ava big" style="--fam:${famAttr(color)}">${ptAvatarInner(p)}</span></div>
+    <div class="fam-hero-body">
+      <div class="flex items-center gap-2 flex-wrap">
+        <div class="font-serif text-xl">${escapeHtml(p.name)}</div>
+        ${bd === 0 ? '<span class="pt-pill bday">🎂 <span>Geburtstag!</span></span>' : bd !== null && bd <= 14 ? `<span class="pt-pill">🎂 <span>${escapeHtml(bd === 1 ? 'morgen' : 'in ' + bd + ' Tagen')}</span></span>` : ''}
+      </div>
+      <div class="text-xs text-ink/50 mt-0.5">${escapeHtml(ptSubLine(p))}</div>
+      ${btns.length ? `<div class="flex gap-2 mt-3">${btns.join('')}</div>` : ''}
+    </div>
+  </div>`);
+  if (bd === 0) out.push(`<div class="pt-bday-card"><span class="pt-bday-ic">🎂</span><div><div class="text-sm font-semibold">${escapeHtml(p.name)} <span>hat heute Geburtstag!</span></div>${age && age.years ? `<div class="text-xs" style="opacity:.8">${escapeHtml(age.years === 1 ? '1 Jahr' : age.years + ' Jahre')} 🐾</div>` : ''}</div></div>`);
+  if (p.gone) out.push(`<div class="fam-card pt-memorial"><div class="text-3xl mb-1">🌈</div><div class="font-serif text-lg">In Erinnerung</div><p class="text-sm text-ink/55">${escapeHtml([ptIso(p.birth) ? famFmtDate(p.birth) : '', famFmtDate(p.gone)].filter(Boolean).join(' – '))}</p></div>`);
+
+  if (!p.gone) {
+    out.push(ptTodayHtml(p));
+    // Vorsorge
+    const care = ptCareSorted(p);
+    const presets = (PT_CARE_PRESETS[p.species] || []).filter(([, title]) => !(p.care || []).some(c => c.title === title));
+    out.push(`<div class="fam-card"><div class="flex items-center justify-between gap-2 mb-1"><div class="fz-h" style="margin-bottom:0">🩺 Gesundheit &amp; Vorsorge</div>${can ? `<button type="button" class="fz-mini-btn" data-pt="careadd" data-id="${famAttr(p.id)}">+ Vorsorge</button>` : ''}</div>
+      ${care.length ? care.map(c => ptCareRowHtml(p, c, false)).join('') : '<p class="text-sm text-ink/50 py-1">Impfungen, Wurmkur, Floh- und Zeckenschutz – pinn. erinnert rechtzeitig per Push.</p>'}
+      ${can && presets.length ? `<button type="button" class="pt-suggest" data-pt="presets" data-id="${famAttr(p.id)}">✨ <span>Vorschläge für</span> <b>${escapeHtml(sp.label)}</b> <span class="text-ink/45">(${presets.length})</span></button>` : ''}
+    </div>`);
+    // Medikamente
+    const meds = (Array.isArray(p.meds) ? p.meds : []).filter(m => m && m.name);
+    if (meds.length) {
+      out.push(`<div class="fam-card"><div class="fz-h">💊 Medikamente</div>${meds.map(m => {
+        const todayN = ptLogOf(p.id, 'med', ptToday()).filter(x => x.note === m.name).length;
+        return `<div class="pt-med-row"><span class="min-w-0 flex-1"><span class="block text-sm font-medium">${escapeHtml(m.name)}</span>${m.dose || m.times ? `<span class="block text-[11px] text-ink/50">${escapeHtml([m.dose, m.times].filter(Boolean).join(' · '))}</span>` : ''}</span>
+          ${can ? `<button type="button" class="fz-mini-btn${todayN ? ' primary' : ''}" data-pt="medgiven" data-id="${famAttr(p.id)}" data-name="${famAttr(m.name)}">${todayN ? '✓ ' + todayN + '×' : '<span>Gegeben</span>'}</button>` : ''}</div>`;
+      }).join('')}</div>`);
+    }
+  }
+  // Gewicht
+  out.push(ptWeightHtml(p));
+  // Futter
+  if (!p.gone) {
+    const f = p.feed || {};
+    const times = ptFeedTimes(p);
+    const pi = f.pantryId ? (pantryItems || []).find(x => x.id === f.pantryId) : null;
+    if (f.brand || f.amount || times.length || pi) {
+      const low = pi && Number(pi.minQty) > 0 && Number(pi.qty) <= Number(pi.minQty);
+      out.push(`<div class="fam-card"><div class="fz-h">🥣 Futter</div>
+        ${famRow('Futter', f.brand)}${famRow('Menge je Mahlzeit', f.amount)}${famRow('Fütterungszeiten', times.join(' · '))}
+        ${pi ? `<div class="fam-row"><div class="fam-k">Im Vorrat</div><div class="fam-v"><b>${escapeHtml(String(pi.qty != null ? pi.qty : '–'))}</b> ${escapeHtml(pi.unit || '')} <span class="text-ink/50">· ${escapeHtml(pi.name)}</span>${low ? ' <span class="pt-pill warn">knapp</span>' : ''}</div></div>` : ''}
+        ${can ? `<div class="flex gap-2 mt-2 flex-wrap"><button type="button" class="fz-mini-btn" data-pt="foodshop" data-id="${famAttr(p.id)}">🛒 <span>Auf die Einkaufsliste</span></button>${pi && isViewAllowed('vorrat') ? '<button type="button" class="fz-mini-btn" data-pt="pantry">🥫 <span>Vorrat</span></button>' : ''}</div>` : ''}
+      </div>`);
+    }
+    if (Object.values(p.roster || {}).some(a => Array.isArray(a) && a.length) || can) out.push(ptRosterHtml(p));
+  }
+  // Tracker
+  const g = p.trackerId && famOrtungAllowed() ? famDevice(p.trackerId) : null;
+  if (g) {
+    const pos = g.teilen ? g.position : null;
+    const pl = pos ? famPlace(pos.ort) : null;
+    out.push(`<div class="fam-card"><div class="fz-h">📍 Tracker</div>
+      <div class="flex items-center gap-3"><span class="text-2xl">${famIsLive(g) ? '<span class="fam-dot"></span>' : ''}${escapeHtml(g.emoji || '📡')}</span>
+        <div class="min-w-0 flex-1"><div class="text-sm font-medium">${escapeHtml(pl ? pl.emoji + ' ' + pl.name : (pos ? (famIsLive(g) ? 'unterwegs' : 'zuletzt') : 'Kein Standort'))}</div>${pos ? `<div class="text-[11px] text-ink/50">${escapeHtml(famAgo(pos.zeit))}</div>` : ''}</div>
+        ${pos ? `<button type="button" class="fz-mini-btn" data-pt="map" data-id="${famAttr(g.id)}">🗺 <span>Karte</span></button>` : ''}</div></div>`);
+  }
+  // Steckbrief
+  const facts = [
+    famRow('Tierart', ptSpecies(p.species).label), famRow('Rasse', p.breed), famRow('Geburtsdatum', famFmtDate(p.birth)), famRow('Bei uns seit', famFmtDate(p.since)),
+    famRow('Chipnummer', p.chip), famRow('Heimtierausweis', p.passNo),
+    famRow('Allergien & Unverträglichkeiten', p.allergies), famRow('Erkrankungen', p.conditions),
+    famRow('Versicherung', [p.insurance, p.insuranceNo].filter(Boolean).join(' · ')),
+    famRow('Bezugspersonen', (p.owners || []).map(ptWhoName).filter(Boolean).join(', ')),
+  ].join('');
+  out.push(`<div class="fam-card"><div class="fz-h">🐾 Steckbrief</div>${facts}${p.notes ? `<div class="fam-row"><div class="fam-k">Wesen &amp; Eigenheiten</div><div class="fam-v">${escapeHtml(p.notes)}</div></div>` : ''}</div>`);
+  const vets = [famRow('Tierarzt', [p.vet, p.vetAddress].filter(Boolean).join('\n') || p.vetPhone, famCallBtn(p.vetPhone)), famRow('Tiernotdienst', p.emergencyVet || p.emergencyVetPhone, famCallBtn(p.emergencyVetPhone))].join('');
+  if (vets) out.push(`<div class="fam-card"><div class="fz-h">🏥 Tierarzt &amp; Notdienst</div>${vets}</div>`);
+  // Werkzeuge
+  const tools = [];
+  tools.push(`<button type="button" class="pt-tool" data-pt="sitter" data-id="${famAttr(p.id)}"><span>🧑‍🍼</span><b>Tiersitter</b><small>Steckbrief teilen</small></button>`);
+  if (!p.gone) tools.push(`<button type="button" class="pt-tool" data-pt="poster" data-id="${famAttr(p.id)}"><span>🔎</span><b>Vermisst</b><small>Plakat drucken</small></button>`);
+  if (isViewAllowed('dokumente')) tools.push(`<button type="button" class="pt-tool" data-pt="docs"><span>📄</span><b>Dokumente</b><small>Impfpass, Rechnungen</small></button>`);
+  if (isViewAllowed('einkauf') && !p.gone) tools.push(`<button type="button" class="pt-tool" data-pt="packlist" data-id="${famAttr(p.id)}"><span>🧳</span><b>Packliste</b><small>Urlaub mit Tier</small></button>`);
+  out.push(`<div class="pt-tools">${tools.join('')}</div>`);
+  // Tagebuch
+  const recent = ptLog().filter(x => x.pet === p.id && x.day >= addDaysToDateStr(ptToday(), -6)).sort((a, b) => b.at - a.at).slice(0, 12);
+  if (recent.length) {
+    out.push(`<div class="fam-card"><div class="fz-h">📖 Tagebuch</div>${recent.map(x => ptLogRowHtml(p, x)).join('')}</div>`);
+  }
+  if (p.updated) out.push(`<p class="text-[11px] text-ink/40 text-center"><span>Zuletzt geändert am</span> ${escapeHtml(new Date(p.updated).toLocaleDateString('de-DE'))}</p>`);
+  return out.join('');
+}
+function ptLogRowHtml(p, x) {
+  const ic = { gassi: '🦮', futter: '🍖', med: '💊', notiz: '📝' }[x.kind] || '•';
+  const label = x.kind === 'gassi' ? 'Gassi' : x.kind === 'futter' ? 'Gefüttert' : x.kind === 'med' ? (x.note || 'Medikament') : (x.note || 'Notiz');
+  const day = x.day === ptToday() ? 'heute' : x.day === addDaysToDateStr(ptToday(), -1) ? 'gestern' : new Date(x.day + 'T12:00:00').toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' });
+  const can = ptCanEdit();
+  return `<div class="pt-log-row"><span class="pt-log-ic">${ic}</span><span class="min-w-0 flex-1"><span class="block text-sm"><span>${escapeHtml(label)}</span>${x.kind === 'gassi' && x.min ? ` <span class="text-ink/50">· ${escapeHtml(String(x.min))} Min.</span>` : ''}${x.kind === 'gassi' && x.note ? ` <span class="text-ink/50">· ${escapeHtml(x.note)}</span>` : ''}</span>
+    <span class="block text-[11px] text-ink/45"><span>${escapeHtml(day)}</span> · ${escapeHtml(ptTimeOf(x.at))}${x.by ? ' · ' + escapeHtml(ptWhoName(x.by)) : ''}</span></span>
+    ${can ? `<button type="button" class="fam-x" data-pt="logdel" data-id="${famAttr(x.id)}" aria-label="Entfernen">×</button>` : ''}</div>`;
+}
+function ptTodayHtml(p) {
+  const can = ptCanEdit();
+  const times = ptFeedTimes(p);
+  const walks = Number(p.walks) || 0;
+  const duty = ptOnDuty(p);
+  if (!times.length && !walks && !duty.length) return '';
+  const now = new Date();
+  const hm = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  const feed = times.map(t => {
+    const x = ptFedSlot(p, t);
+    const late = !x && t < hm;
+    return `<button type="button" class="pt-slot${x ? ' done' : ''}${late ? ' late' : ''}" data-pt="feed" data-id="${famAttr(p.id)}" data-slot="${famAttr(t)}"${can ? '' : ' disabled'}>
+      <span class="pt-slot-ic">${x ? '✓' : '🍖'}</span><span class="pt-slot-t">${escapeHtml(t)}</span><small>${x ? escapeHtml(ptWhoName(x.by) || ptTimeOf(x.at)) : ''}</small></button>`;
+  }).join('');
+  const done = ptWalksToday(p);
+  const dots = walks ? [...Array(Math.max(walks, done.length))].map((_, i) => `<span class="pt-dot${i < done.length ? ' on' : ''}">${i < done.length ? '🐾' : ''}</span>`).join('') : '';
+  const mins = done.reduce((s, x) => s + (Number(x.min) || 0), 0);
+  return `<div class="fam-card pt-today"><div class="flex items-center justify-between gap-2 mb-2"><div class="fz-h" style="margin-bottom:0">☀️ Heute</div>
+      ${duty.length ? `<span class="pt-duty">${duty.map(m => `<span class="pt-duty-ava" style="border-color:${memberBorderColor(m) === 'transparent' ? '#fff' : memberBorderColor(m)}">${memberAvatarInnerHTML(m)}</span>`).join('')}<span><span>dran:</span> ${escapeHtml(duty.map(memberLabel).join(', '))}</span></span>` : ''}</div>
+    ${times.length ? `<div class="pt-slots">${feed}</div>` : ''}
+    ${walks ? `<div class="pt-walks"><div class="pt-dots">${dots}</div><div class="text-[11px] text-ink/55"><b>${done.length}</b> <span>von</span> <b>${walks}</b> <span>Runden</span>${mins ? ` · <b>${mins}</b> <span>Min.</span>` : ''}</div>${can ? `<button type="button" class="fz-mini-btn primary" data-pt="walk" data-id="${famAttr(p.id)}">+ <span>Gassi</span></button>` : ''}</div>` : ''}
+  </div>`;
+}
+function ptRosterHtml(p) {
+  const wd = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+  const today = String(((new Date().getDay() + 6) % 7) + 1);
+  const can = ptCanEdit();
+  return `<div class="fam-card"><div class="flex items-center justify-between gap-2 mb-2"><div class="fz-h" style="margin-bottom:0">📋 Wer ist dran?</div>${can ? `<button type="button" class="fz-mini-btn" data-pt="roster" data-id="${famAttr(p.id)}">Bearbeiten</button>` : ''}</div>
+    <div class="pt-roster">${wd.map((d, i) => {
+      const k = String(i + 1);
+      const ms = ((p.roster && p.roster[k]) || []).map(id => memberById(id)).filter(Boolean);
+      return `<div class="pt-roster-d${k === today ? ' today' : ''}"><small>${d}</small><span class="pt-roster-avas">${ms.length ? ms.slice(0, 3).map(m => `<span class="pt-duty-ava" title="${famAttr(memberLabel(m))}" style="border-color:${memberBorderColor(m) === 'transparent' ? '#fff' : memberBorderColor(m)}">${memberAvatarInnerHTML(m)}</span>`).join('') : '<span class="text-ink/40">–</span>'}</span></div>`;
+    }).join('')}</div></div>`;
+}
+function ptWeightHtml(p) {
+  const ws = (Array.isArray(p.weights) ? p.weights : []).filter(w => w && ptIso(w.date) && Number(w.kg) > 0).sort((a, b) => a.date.localeCompare(b.date));
+  const can = ptCanEdit() && !p.gone;
+  if (!ws.length && !can) return '';
+  const head = `<div class="flex items-center justify-between gap-2 mb-1"><div class="fz-h" style="margin-bottom:0">⚖️ Gewicht</div>${can ? `<button type="button" class="fz-mini-btn" data-pt="weight" data-id="${famAttr(p.id)}">+ <span>Gewicht</span></button>` : ''}</div>`;
+  if (!ws.length) return `<div class="fam-card">${head}<p class="text-sm text-ink/50">Regelmäßig wiegen hilft, Veränderungen früh zu bemerken.</p></div>`;
+  const last = ws[ws.length - 1];
+  const prev = ws.length > 1 ? ws[ws.length - 2] : null;
+  const diff = prev ? Math.round((last.kg - prev.kg) * 100) / 100 : 0;
+  const fmt = n => Number(n).toLocaleString('de-DE', { maximumFractionDigits: 2 });
+  let chart = '';
+  if (ws.length > 1) {
+    const W = 300, H = 90, pad = 8;
+    const t0 = new Date(ws[0].date).getTime(), t1 = new Date(last.date).getTime();
+    const kMin = Math.min(...ws.map(w => w.kg)), kMax = Math.max(...ws.map(w => w.kg));
+    const span = Math.max(0.5, kMax - kMin);
+    const pts = ws.map(w => {
+      const x = pad + (t1 > t0 ? (new Date(w.date).getTime() - t0) / (t1 - t0) : 0.5) * (W - 2 * pad);
+      const y = H - pad - ((w.kg - kMin) / span) * (H - 2 * pad);
+      return [Math.round(x * 10) / 10, Math.round(y * 10) / 10];
+    });
+    const line = pts.map((q, i) => (i ? 'L' : 'M') + q[0] + ' ' + q[1]).join(' ');
+    const area = line + ` L${pts[pts.length - 1][0]} ${H} L${pts[0][0]} ${H} Z`;
+    chart = `<svg class="pt-wchart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path class="a" d="${area}"/><path class="l" d="${line}"/>${pts.map(q => `<circle cx="${q[0]}" cy="${q[1]}" r="2.6"/>`).join('')}</svg>
+      <div class="pt-wscale"><span>${escapeHtml(famFmtDate(ws[0].date))}</span><span>${escapeHtml(fmt(kMin))}–${escapeHtml(fmt(kMax))} kg</span><span>${escapeHtml(famFmtDate(last.date))}</span></div>`;
+  }
+  return `<div class="fam-card">${head}
+    <div class="pt-wnow"><b>${escapeHtml(fmt(last.kg))}</b> <span>kg</span>${prev ? `<span class="pt-wdiff ${diff > 0 ? 'up' : diff < 0 ? 'down' : ''}">${diff > 0 ? '▲' : diff < 0 ? '▼' : '='} ${escapeHtml(fmt(Math.abs(diff)))} kg</span>` : ''}<small>${escapeHtml(famFmtDate(last.date))}</small></div>
+    ${chart}
+    ${can && ws.length ? `<button type="button" class="pt-suggest" data-pt="weights" data-id="${famAttr(p.id)}"><span>Alle Werte</span> (${ws.length})</button>` : ''}
+  </div>`;
+}
+
+/* ---------- Notfall-Reiter & Übersicht ---------- */
+function ptNotfallHtml() {
+  const list = ptActive();
+  if (!list.length) return '';
+  return `<div class="fam-card"><div class="fz-h">🐾 Haustiere</div><div class="flex flex-col">${list.map(p => {
+    const facts = [p.chip ? '🔖 ' + p.chip : '', p.allergies ? '⚠️ ' + String(p.allergies).split(/[,;\n]/)[0].trim() : '', p.vetPhone ? '🩺 ' + (p.vet || 'Tierarzt') : ''].filter(Boolean).join(' · ');
+    return `<button type="button" class="fam-pass-row" data-pt="open" data-id="${famAttr(p.id)}" style="--fam:${famAttr(ptColor(p))}">
+      <span class="fam-ava sm">${ptAvatarInner(p)}</span>
+      <span class="min-w-0 flex-1 text-left"><span class="block text-sm font-medium truncate">${escapeHtml(p.name)}</span><span class="block text-[11px] text-ink/55 truncate">${escapeHtml(facts || ptSpecies(p.species).label)}</span></span>
+      ${p.emergencyVetPhone ? `<a class="fz-mini-btn" href="${famAttr(famTel(p.emergencyVetPhone))}" onclick="event.stopPropagation()">🚨 <span>Notdienst</span></a>` : '<span class="text-ink/30 text-lg leading-none">›</span>'}
+    </button>`;
+  }).join('')}</div></div>`;
+}
+function ptQuickCardHtml() {
+  const list = ptActive();
+  const over = list.reduce((s, p) => s + ptOverdue(p).length, 0);
+  return `<button type="button" class="fam-quick" data-famtabgo="tiere">
+      <span class="fam-quick-ic">🐾</span>
+      <span class="fam-quick-t">Haustiere</span>
+      <span class="fam-quick-s">${list.length ? (over ? `<b>${over}</b> <span>fällig</span>` : escapeHtml(list.map(p => p.name).join(', '))) : 'Füttern, Gassi, Impfungen'}</span>
+    </button>`;
+}
+function ptOpen(id) {
+  if (!ptById(id)) id = null;
+  famTab = 'tiere';
+  famDetailId = null;
+  ptDetailId = id;
+  if (currentView !== 'familie') setView('familie'); else renderFamily();
+  famStopPolling();
+  if (famPollWanted()) famStartPolling();
+  const sc = document.getElementById('famScroll');
+  if (sc) sc.scrollTop = 0;
+}
+
+/* ---------- Popups ---------- */
+function ptOpenModal(html, state) {
+  ptModalState = state || null;
+  document.getElementById('ptModalBody').innerHTML = html;
+  document.getElementById('ptModal').classList.remove('hidden');
+  armModalSnapshot('ptModal');
+}
+function ptCloseModal() {
+  document.getElementById('ptModal').classList.add('hidden');
+  document.getElementById('ptModalBody').innerHTML = '';
+  ptModalState = null;
+}
+function ptVal(id) { const el = document.getElementById(id); return el ? String(el.value || '').trim() : ''; }
+function ptChecked(id) { const el = document.getElementById(id); return !!(el && el.checked); }
+function ptPeople() { return members.filter(m => !famIsPet(m)); }
+function ptMemberChips(attr, selected) {
+  return ptPeople().map(m => `<button type="button" class="fz-member-chip pt-mchip${selected.includes(m.id) ? ' active' : ''}" data-${attr}="${famAttr(m.id)}"><span class="pt-duty-ava">${memberAvatarInnerHTML(m)}</span><span>${escapeHtml(memberLabel(m))}</span></button>`).join('');
+}
+var PT_EVERY = [[0, 'einmalig'], [7, 'jede Woche'], [14, 'alle 2 Wochen'], [30, 'jeden Monat'], [42, 'alle 6 Wochen'], [60, 'alle 2 Monate'], [90, 'alle 3 Monate'], [180, 'alle 6 Monate'], [365, 'jedes Jahr'], [730, 'alle 2 Jahre'], [1095, 'alle 3 Jahre']];
+
+/* Haustier anlegen / bearbeiten */
+function ptOpenEdit(id) {
+  if (!ptCanEdit()) return;
+  const p = id ? ptById(id) : null;
+  const sp = ptSpecies(p ? p.species : 'hund');
+  const st = {
+    kind: 'pet', id: p ? p.id : '', species: sp.id, emoji: p ? (p.emoji || sp.emoji) : sp.emoji, photo: p ? (p.photo || '') : '',
+    color: p ? ptColor(p) : PT_COLORS[ptList().length % PT_COLORS.length], sex: p ? (p.sex || '') : '',
+    owners: p && Array.isArray(p.owners) ? p.owners.slice() : [],
+    meds: p && Array.isArray(p.meds) ? p.meds.map(x => ({ ...x })) : [],
+  };
+  const f = (p && p.feed) || {};
+  const trackers = famOrtungAllowed() ? famDevices().filter(g => g.typ === 'tracker') : [];
+  const pantry = (pantryItems || []).slice().sort((a, b) => String(a.name).localeCompare(String(b.name), 'de'));
+  const html = `
+    <h3 class="font-serif text-lg mb-3">${p ? '<span>Haustier bearbeiten</span>' : '<span>Neues Haustier</span>'}</h3>
+    <label class="fz-lbl">Tierart</label>
+    <div class="fz-type-row mb-3" id="ptF_species">${PT_SPECIES.map(x => `<button type="button" class="fz-type-chip${x.id === st.species ? ' active' : ''}" data-ptm="species" data-v="${x.id}"><span class="fz-ti">${x.emoji}</span><span>${escapeHtml(x.label)}</span></button>`).join('')}</div>
+    <div class="flex items-center gap-3 mb-3">
+      <span id="ptF_preview" class="fam-ava big" style="--fam:${famAttr(st.color)}"></span>
+      <div class="flex flex-col gap-1.5 min-w-0">
+        <label class="fz-mini-btn text-center cursor-pointer">📷 <span>Foto wählen</span><input id="ptF_photo" type="file" accept="image/*" class="hidden" /></label>
+        <button type="button" class="fz-mini-btn" data-ptm="nophoto"><span>Foto entfernen</span></button>
+      </div>
+    </div>
+    <div id="ptF_emojis" class="flex flex-wrap gap-1.5 mb-3"></div>
+    <div class="flex flex-wrap gap-2 mb-3" id="ptF_colors">${PT_COLORS.map(c => `<button type="button" class="fz-color-btn${c === st.color ? ' active' : ''}" style="background:${c}" data-ptm="color" data-v="${c}" aria-label="Farbe"></button>`).join('')}</div>
+    <div class="fz-grid2">${famIn('ptF_name', 'Name', p ? p.name : '', 'maxlength="40" autocomplete="off" placeholder="z. B. Bello"')}${famIn('ptF_breed', 'Rasse', p ? p.breed : '', 'maxlength="60" autocomplete="off" placeholder="z. B. Labrador"')}</div>
+    <label class="fz-lbl">Geschlecht</label>
+    <div class="flex items-center gap-2 mb-3 flex-wrap">
+      ${[['m', '♂ männlich'], ['w', '♀ weiblich'], ['', '–']].map(([v, l]) => `<button type="button" class="fz-filter-chip px-3 py-1.5 text-sm${st.sex === v ? ' active' : ''}" data-ptm="sex" data-v="${v}">${escapeHtml(l)}</button>`).join('')}
+      <label class="fz-check ml-1" style="margin-bottom:0"><input id="ptF_neutered" type="checkbox"${p && p.neutered ? ' checked' : ''} /><span>kastriert</span></label>
+    </div>
+    <div class="fz-grid2">${famIn('ptF_birth', 'Geburtsdatum', p ? p.birth : '', 'type="date"')}${famIn('ptF_since', 'Bei uns seit', p ? p.since : '', 'type="date"')}</div>
+    <label class="fz-lbl">Bezugspersonen</label>
+    <div class="flex flex-wrap gap-1.5 mb-1" id="ptF_owners">${ptMemberChips('ptowner', st.owners)}</div>
+    <p class="text-[11px] text-ink/45 mb-3">Bekommen die Erinnerungen. Ohne Auswahl: alle außer Kindern.</p>
+
+    <div class="fz-h mt-2">🥣 Füttern &amp; Gassi</div>
+    <div class="fz-grid2">${famIn('ptF_food', 'Futter', f.brand, 'maxlength="80" autocomplete="off" placeholder="z. B. Trockenfutter Adult"')}${famIn('ptF_amount', 'Menge je Mahlzeit', f.amount, 'maxlength="40" autocomplete="off" placeholder="z. B. 150 g"')}</div>
+    <div class="fz-grid2">${famIn('ptF_times', 'Fütterungszeiten', (f.times || (p ? [] : sp.feed)).join(', '), 'autocomplete="off" inputmode="numeric" placeholder="07:00, 18:00"')}${famIn('ptF_walks', 'Gassi-Runden am Tag', p ? (p.walks || '') : (sp.walks || ''), 'inputmode="numeric" maxlength="2" placeholder="0"')}</div>
+    ${pantry.length ? `<div class="fz-field"><label class="fz-lbl" for="ptF_pantry">Futter im Vorrat</label><select id="ptF_pantry" class="fz-in"><option value="">– nicht verknüpft –</option>${pantry.map(x => `<option value="${famAttr(x.id)}"${f.pantryId === x.id ? ' selected' : ''}>${escapeHtml(x.name)}</option>`).join('')}</select></div>` : ''}
+
+    <div class="fz-h mt-2">🩺 Gesundheit</div>
+    ${famTa('ptF_allergies', 'Allergien & Unverträglichkeiten', p ? p.allergies : '', 'z. B. Huhn, Getreide')}
+    ${famTa('ptF_conditions', 'Erkrankungen', p ? p.conditions : '', 'z. B. Arthrose, Epilepsie')}
+    <label class="fz-lbl">Medikamente</label>
+    <div id="ptF_meds" class="flex flex-col gap-2 mb-2"></div>
+    <button type="button" class="fz-mini-btn mb-4" data-ptm="addmed">+ <span>Medikament</span></button>
+
+    <div class="fz-h mt-2">🏥 Tierarzt &amp; Ausweise</div>
+    <div class="fz-grid2">${famIn('ptF_vet', 'Tierarzt', p ? p.vet : '', 'maxlength="80" autocomplete="off"')}${famIn('ptF_vetPhone', 'Telefon Tierarzt', p ? p.vetPhone : '', 'type="tel" inputmode="tel" maxlength="40"')}</div>
+    ${famIn('ptF_vetAddress', 'Adresse Tierarzt', p ? p.vetAddress : '', 'maxlength="160" autocomplete="off"')}
+    <div class="fz-grid2">${famIn('ptF_eVet', 'Tiernotdienst / Tierklinik', p ? p.emergencyVet : '', 'maxlength="80" autocomplete="off"')}${famIn('ptF_eVetPhone', 'Telefon Notdienst', p ? p.emergencyVetPhone : '', 'type="tel" inputmode="tel" maxlength="40"')}</div>
+    <div class="fz-grid2">${famIn('ptF_chip', 'Chipnummer', p ? p.chip : '', 'inputmode="numeric" maxlength="20" autocomplete="off"')}${famIn('ptF_pass', 'Heimtierausweis-Nr.', p ? p.passNo : '', 'maxlength="30" autocomplete="off"')}</div>
+    <div class="fz-grid2">${famIn('ptF_ins', 'Versicherung', p ? p.insurance : '', 'maxlength="80" autocomplete="off" placeholder="z. B. Hundehaftpflicht"')}${famIn('ptF_insNo', 'Versicherungsnr.', p ? p.insuranceNo : '', 'maxlength="40" autocomplete="off"')}</div>
+    ${trackers.length ? `<div class="fz-field"><label class="fz-lbl" for="ptF_tracker">GPS-Tracker (Ortung)</label><select id="ptF_tracker" class="fz-in"><option value="">– keiner –</option>${trackers.map(g => `<option value="${famAttr(g.id)}"${p && p.trackerId === g.id ? ' selected' : ''}>${escapeHtml((g.emoji ? g.emoji + ' ' : '') + g.name)}</option>`).join('')}</select></div>` : ''}
+
+    <div class="fz-h mt-2">📝 Wesen &amp; Tiersitter</div>
+    ${famTa('ptF_notes', 'Wesen & Eigenheiten', p ? p.notes : '', 'z. B. verträglich mit Kindern, ängstlich bei Gewitter')}
+    ${famTa('ptF_sitter', 'Hinweise für den Tiersitter', p ? p.sitter : '', 'z. B. Leine hängt an der Garderobe, nicht an der Hauptstraße ableinen')}
+    <label class="fz-check"><input id="ptF_push" type="checkbox"${!p || p.push !== false ? ' checked' : ''} /><span>Erinnerungen per Push (Vorsorge &amp; Geburtstag)</span></label>
+    ${!p ? '<label class="fz-check"><input id="ptF_presets" type="checkbox" checked /><span>Passende Vorsorge vorschlagen (Impfungen, Wurmkur …)</span></label>' : ''}
+
+    <p id="ptF_err" class="text-xs text-red-600 min-h-[1em] mt-2"></p>
+    <div class="flex items-center justify-between gap-2 mt-2 flex-wrap">
+      <div class="flex gap-2">
+        ${p ? `<button type="button" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50" data-ptm="delete">Löschen</button>` : ''}
+        ${p ? `<button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:bg-ink/5" data-ptm="gone">${p.gone ? '↺ <span>Zurückholen</span>' : '🌈 <span>Verstorben</span>'}</button>` : ''}
+      </div>
+      <div class="flex gap-2 ml-auto">
+        <button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-ptm="cancel">Abbrechen</button>
+        <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="savepet">${p ? 'Speichern' : 'Anlegen'}</button>
+      </div>
+    </div>`;
+  ptOpenModal(html, st);
+  ptDrawEditBits();
+  armModalSnapshot('ptModal');
+}
+function ptDrawEditBits() {
+  const st = ptModalState;
+  if (!st || st.kind !== 'pet') return;
+  const prev = document.getElementById('ptF_preview');
+  if (prev) {
+    prev.style.setProperty('--fam', st.color);
+    prev.innerHTML = st.photo ? `<span class="fam-ava-in"><img src="${famAttr(st.photo)}" alt="" /></span>` : `<span class="fam-ava-in">${escapeHtml(st.emoji)}</span>`;
+  }
+  const em = document.getElementById('ptF_emojis');
+  if (em) em.innerHTML = [...new Set([st.emoji, ...ptSpecies(st.species).emojis])].map(e => `<button type="button" class="ls-pick emoji${!st.photo && e === st.emoji ? ' active' : ''}" data-ptm="emoji" data-v="${famAttr(e)}">${escapeHtml(e)}</button>`).join('');
+  ptDrawMeds();
+}
+function ptSyncMeds() {
+  const st = ptModalState;
+  if (!st || !st.meds) return;
+  st.meds = st.meds.map((x, i) => ({
+    id: x.id || ptId('pm'),
+    name: (document.querySelector(`[data-ptmedname="${i}"]`) || {}).value || '',
+    dose: (document.querySelector(`[data-ptmeddose="${i}"]`) || {}).value || '',
+    times: (document.querySelector(`[data-ptmedtimes="${i}"]`) || {}).value || '',
+  }));
+}
+function ptDrawMeds() {
+  const st = ptModalState;
+  const box = document.getElementById('ptF_meds');
+  if (!box || !st) return;
+  box.innerHTML = st.meds.length ? st.meds.map((x, i) => `<div class="fam-contact-row">
+      <div class="fam-list-row"><input class="fz-in" data-ptmedname="${i}" value="${famAttr(x.name || '')}" placeholder="Medikament" maxlength="60" />
+        <button type="button" class="fam-x" data-ptm="rmmed" data-i="${i}" aria-label="Entfernen">×</button></div>
+      <div class="fam-list-row mt-1"><input class="fz-in" data-ptmeddose="${i}" value="${famAttr(x.dose || '')}" placeholder="Dosis, z. B. ½ Tablette" maxlength="40" />
+        <input class="fz-in" data-ptmedtimes="${i}" value="${famAttr(x.times || '')}" placeholder="z. B. morgens & abends" maxlength="40" /></div>
+    </div>`).join('') : '<p class="text-xs text-ink/40">Keine Medikamente eingetragen.</p>';
+}
+function ptParseTimes(v) {
+  return [...new Set(String(v || '').split(/[,;\s]+/).map(t => {
+    const m = /^(\d{1,2})(?:[:.](\d{2}))?$/.exec(t.trim());
+    if (!m) return '';
+    const h = Number(m[1]), mi = Number(m[2] || 0);
+    return h < 24 && mi < 60 ? `${String(h).padStart(2, '0')}:${String(mi).padStart(2, '0')}` : '';
+  }).filter(Boolean))].sort().slice(0, 6);
+}
+function ptPresetCare(species) {
+  const today = ptToday();
+  return (PT_CARE_PRESETS[species] || []).map(([type, title, every]) => ({ id: ptId('pc'), type, title, every, last: '', next: addDaysToDateStr(today, Math.min(every, 14)) }));
+}
+function ptSavePet() {
+  const st = ptModalState;
+  if (!st || st.kind !== 'pet') return;
+  ptSyncMeds();
+  const name = ptVal('ptF_name');
+  const err = document.getElementById('ptF_err');
+  if (!name) { err.textContent = 'Bitte einen Namen eingeben.'; return; }
+  const old = st.id ? ptById(st.id) : null;
+  const walks = Math.max(0, Math.min(12, parseInt(ptVal('ptF_walks'), 10) || 0));
+  const p = {
+    ...(old || {}),
+    id: old ? old.id : ptId('pt'),
+    name, species: st.species, emoji: st.emoji, photo: st.photo || '', color: st.color, breed: ptVal('ptF_breed'),
+    sex: st.sex, neutered: ptChecked('ptF_neutered'), birth: ptVal('ptF_birth'), since: ptVal('ptF_since'),
+    owners: st.owners.filter(id => memberById(id)),
+    feed: { brand: ptVal('ptF_food'), amount: ptVal('ptF_amount'), times: ptParseTimes(ptVal('ptF_times')), pantryId: ptVal('ptF_pantry') },
+    walks,
+    allergies: ptVal('ptF_allergies'), conditions: ptVal('ptF_conditions'),
+    meds: st.meds.map(x => ({ id: x.id || ptId('pm'), name: String(x.name || '').trim(), dose: String(x.dose || '').trim(), times: String(x.times || '').trim() })).filter(x => x.name),
+    vet: ptVal('ptF_vet'), vetPhone: ptVal('ptF_vetPhone'), vetAddress: ptVal('ptF_vetAddress'),
+    emergencyVet: ptVal('ptF_eVet'), emergencyVetPhone: ptVal('ptF_eVetPhone'),
+    chip: ptVal('ptF_chip'), passNo: ptVal('ptF_pass'), insurance: ptVal('ptF_ins'), insuranceNo: ptVal('ptF_insNo'),
+    trackerId: ptVal('ptF_tracker') || (document.getElementById('ptF_tracker') ? '' : (old && old.trackerId) || ''),
+    notes: ptVal('ptF_notes'), sitter: ptVal('ptF_sitter'),
+    push: ptChecked('ptF_push'),
+    updated: Date.now(),
+  };
+  if (!old) {
+    p.created = Date.now();
+    p.care = ptChecked('ptF_presets') ? ptPresetCare(p.species) : [];
+    p.weights = [];
+    p.roster = {};
+  }
+  Object.keys(p).forEach(k => { if (p[k] === '') delete p[k]; });
+  pets = old ? ptList().map(x => (x.id === p.id ? p : x)) : [...ptList(), p];
+  persistState();
+  ptCloseModal();
+  ptDetailId = p.id;
+  ptRefresh();
+  finShowToast(old ? 'Gespeichert' : `${p.name} ist jetzt dabei 🐾`);
+}
+function ptDeletePet() {
+  const st = ptModalState;
+  const p = st && ptById(st.id);
+  if (!p) return;
+  if (!confirm(`${p.name} mit Vorsorge, Gewicht und Tagebuch wirklich löschen?`)) return;
+  pets = ptList().filter(x => x.id !== p.id);
+  petLog = ptLog().filter(x => x.pet !== p.id);
+  persistState();
+  ptCloseModal();
+  ptDetailId = null;
+  ptRefresh();
+}
+function ptToggleGone() {
+  const st = ptModalState;
+  const p = st && ptById(st.id);
+  if (!p) return;
+  if (p.gone) {
+    ptUpdate(p.id, x => { const c = { ...x }; delete c.gone; return c; });
+  } else {
+    const d = prompt(`Wann ist ${p.name} gestorben? (TT.MM.JJJJ)`, famFmtDate(ptToday()));
+    if (d === null) return;
+    const m = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/.exec(d.trim());
+    const iso = m ? `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}` : ptToday();
+    ptUpdate(p.id, x => ({ ...x, gone: iso, push: false }));
+  }
+  ptCloseModal();
+  ptRefresh();
+}
+function ptAdoptMember(mid) {
+  const m = memberById(mid);
+  if (!m || !ptCanEdit()) return;
+  const pass = famPass(mid) || {};
+  const sp = PT_SPECIES.find(x => x.emojis.includes(m.avatar)) || ptSpecies('sonstiges');
+  const p = {
+    id: ptId('pt'), fromMember: m.id, name: m.name || memberLabel(m), species: sp.id, emoji: m.avatar || sp.emoji,
+    photo: m.photo || '', color: (m.color && m.color !== 'transparent') ? m.color : PT_COLORS[0],
+    breed: pass.species || '', birth: pass.birth || '', chip: pass.chip || '', vet: pass.vet || '', vetPhone: pass.vetPhone || '',
+    insurance: pass.insurance || '', insuranceNo: pass.insuranceNo || '', allergies: pass.allergies || '', conditions: pass.conditions || '',
+    notes: pass.notes || '', meds: (pass.meds || []).filter(x => x && x.name).map(x => ({ id: ptId('pm'), name: x.name, dose: x.dose || '' })),
+    weights: Number(pass.weight) > 0 ? [{ id: ptId('pw'), date: ptToday(), kg: Number(String(pass.weight).replace(',', '.')) }] : [],
+    care: ptPresetCare(sp.id), walks: sp.walks, feed: { times: sp.feed.slice() }, roster: {}, push: true, created: Date.now(), updated: Date.now(),
+  };
+  Object.keys(p).forEach(k => { if (p[k] === '') delete p[k]; });
+  pets = [...ptList(), p];
+  persistState();
+  ptDetailId = p.id;
+  ptRefresh();
+  finShowToast(`${p.name} ist jetzt bei den Haustieren 🐾`);
+}
+
+/* Vorsorge */
+function ptOpenCare(petId, careId, presetType) {
+  const p = ptById(petId);
+  if (!p || !ptCanEdit()) return;
+  const c = careId ? (p.care || []).find(x => x.id === careId) : null;
+  const st = { kind: 'care', petId, careId: c ? c.id : '', type: c ? c.type : (presetType || 'impfung') };
+  const every = c ? (Number(c.every) || 0) : 365;
+  const html = `
+    <h3 class="font-serif text-lg mb-1">${c ? '<span>Vorsorge bearbeiten</span>' : '<span>Neue Vorsorge</span>'}</h3>
+    <p class="text-xs text-ink/50 mb-3">${escapeHtml(p.name)}</p>
+    <div class="fz-type-row mb-3">${PT_CARE_TYPES.map(t => `<button type="button" class="fz-type-chip${t.id === st.type ? ' active' : ''}" data-ptm="ctype" data-v="${t.id}"><span class="fz-ti">${t.icon}</span><span>${escapeHtml(t.label)}</span></button>`).join('')}</div>
+    ${famIn('ptC_title', 'Bezeichnung', c ? c.title : '', 'maxlength="60" autocomplete="off" placeholder="z. B. Tollwut-Impfung"')}
+    <div class="fz-grid2">${famIn('ptC_last', 'Zuletzt erledigt', c ? c.last : '', 'type="date"')}
+      <div class="fz-field"><label class="fz-lbl" for="ptC_every">Wiederholen</label><select id="ptC_every" class="fz-in">${PT_EVERY.map(([v, l]) => `<option value="${v}"${v === every ? ' selected' : ''}>${escapeHtml(l)}</option>`).join('')}${PT_EVERY.some(([v]) => v === every) ? '' : `<option value="${every}" selected>${every}</option>`}</select></div></div>
+    ${famIn('ptC_next', 'Nächstes Mal (optional)', c && ptIso(c.next) ? c.next : '', 'type="date"')}
+    <p id="ptC_hint" class="text-[11px] text-ink/50 -mt-1 mb-3"></p>
+    ${famTa('ptC_note', 'Notiz', c ? c.note : '', 'z. B. Impfstoff, Charge, Präparat')}
+    <div class="flex items-center justify-between gap-2 mt-3">
+      ${c ? '<button type="button" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50" data-ptm="caredel">Löschen</button>' : '<span></span>'}
+      <div class="flex gap-2"><button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-ptm="cancel">Abbrechen</button>
+      <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="savecare">Speichern</button></div>
+    </div>`;
+  ptOpenModal(html, st);
+  ptCareHint();
+}
+function ptCareHint() {
+  const el = document.getElementById('ptC_hint');
+  if (!el) return;
+  const next = ptVal('ptC_next');
+  const last = ptVal('ptC_last');
+  const every = Number(ptVal('ptC_every')) || 0;
+  const n = ptIso(next) ? next : (ptIso(last) && every ? addDaysToDateStr(last, every) : '');
+  el.textContent = n ? 'Fällig am ' + famFmtDate(n) : (every ? 'Ohne Datum: einfach „Zuletzt erledigt“ eintragen.' : '');
+}
+function ptSaveCare() {
+  const st = ptModalState;
+  if (!st || st.kind !== 'care') return;
+  const title = ptVal('ptC_title') || ptCareType(st.type).label;
+  const every = Number(ptVal('ptC_every')) || 0;
+  const c = { id: st.careId || ptId('pc'), type: st.type, title, last: ptVal('ptC_last'), every, next: ptVal('ptC_next'), note: ptVal('ptC_note') };
+  // „Nächstes Mal“ nur behalten, wenn es vom berechneten Datum abweicht
+  if (c.next && ptIso(c.last) && every && addDaysToDateStr(c.last, every) === c.next) c.next = '';
+  Object.keys(c).forEach(k => { if (c[k] === '') delete c[k]; });
+  ptUpdate(st.petId, p => {
+    const list = Array.isArray(p.care) ? p.care.slice() : [];
+    const i = list.findIndex(x => x.id === c.id);
+    if (i >= 0) list[i] = c; else list.push(c);
+    return { ...p, care: list };
+  });
+  ptCloseModal();
+  ptRefresh();
+}
+function ptDeleteCare() {
+  const st = ptModalState;
+  if (!st || !st.careId || !confirm('Diese Vorsorge löschen?')) return;
+  ptUpdate(st.petId, p => ({ ...p, care: (p.care || []).filter(x => x.id !== st.careId) }));
+  ptCloseModal();
+  ptRefresh();
+}
+function ptCareDone(petId, careId) {
+  const p = ptById(petId);
+  const c = p && (p.care || []).find(x => x.id === careId);
+  if (!c || !ptCanEdit()) return;
+  const today = ptToday();
+  const every = Number(c.every) || 0;
+  ptUpdate(petId, x => ({ ...x, care: (x.care || []).map(y => {
+    if (y.id !== careId) return y;
+    const n = { ...y, last: today };
+    delete n.next;
+    return n;
+  }) }));
+  ptRefresh();
+  finShowToast(every ? 'Erledigt ✓ – nächstes Mal am ' + famFmtDate(addDaysToDateStr(today, every)) : 'Erledigt ✓');
+}
+function ptAddPresets(petId) {
+  const p = ptById(petId);
+  if (!p) return;
+  const have = new Set((p.care || []).map(c => c.title));
+  const add = ptPresetCare(p.species).filter(c => !have.has(c.title));
+  if (!add.length) return;
+  ptUpdate(petId, x => ({ ...x, care: [...(x.care || []), ...add] }));
+  ptRefresh();
+  finShowToast('Vorschläge übernommen – Daten bei Bedarf anpassen.');
+}
+
+/* Gewicht */
+function ptOpenWeight(petId) {
+  const p = ptById(petId);
+  if (!p) return;
+  const html = `<h3 class="font-serif text-lg mb-1"><span>Gewicht eintragen</span></h3><p class="text-xs text-ink/50 mb-3">${escapeHtml(p.name)}</p>
+    <div class="fz-grid2">${famIn('ptW_date', 'Datum', ptToday(), 'type="date"')}<div class="fz-field"><label class="fz-lbl" for="ptW_kg">Gewicht</label><div class="fz-unit"><input id="ptW_kg" class="fz-in" inputmode="decimal" autocomplete="off" maxlength="7" placeholder="z. B. 24,5" /><span>kg</span></div></div></div>
+    <p id="ptW_err" class="text-xs text-red-600 min-h-[1em]"></p>
+    <div class="flex justify-end gap-2 mt-2"><button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-ptm="cancel">Abbrechen</button>
+    <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="saveweight">Speichern</button></div>`;
+  ptOpenModal(html, { kind: 'weight', petId });
+  if (!isMobile()) setTimeout(() => { const el = document.getElementById('ptW_kg'); if (el) el.focus(); }, 60);
+}
+function ptSaveWeight() {
+  const st = ptModalState;
+  const kg = Number(ptVal('ptW_kg').replace(',', '.'));
+  const date = ptVal('ptW_date') || ptToday();
+  if (!(kg > 0 && kg < 2000)) { document.getElementById('ptW_err').textContent = 'Bitte ein Gewicht eingeben.'; return; }
+  ptUpdate(st.petId, p => ({ ...p, weights: [...(p.weights || []).filter(w => w.date !== date), { id: ptId('pw'), date, kg: Math.round(kg * 100) / 100 }].sort((a, b) => a.date.localeCompare(b.date)) }));
+  ptCloseModal();
+  ptRefresh();
+}
+function ptOpenWeights(petId) {
+  const p = ptById(petId);
+  if (!p) return;
+  const ws = (p.weights || []).slice().sort((a, b) => b.date.localeCompare(a.date));
+  const html = `<h3 class="font-serif text-lg mb-3"><span>Gewicht</span> · ${escapeHtml(p.name)}</h3>
+    <div class="flex flex-col">${ws.map(w => `<div class="fam-row"><div class="fam-v">${escapeHtml(famFmtDate(w.date))}</div><b class="text-sm">${escapeHtml(Number(w.kg).toLocaleString('de-DE'))} kg</b>${ptCanEdit() ? `<button type="button" class="fam-x" data-ptm="wdel" data-v="${famAttr(w.id)}" aria-label="Entfernen">×</button>` : ''}</div>`).join('')}</div>
+    <div class="flex justify-end mt-3"><button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="cancel">Fertig</button></div>`;
+  ptOpenModal(html, { kind: 'weights', petId });
+}
+
+/* Gassi */
+function ptOpenWalk(petId) {
+  const p = ptById(petId);
+  if (!p || !ptCanEdit()) return;
+  const me = currentMember();
+  const st = { kind: 'walk', petId, min: 30, by: me ? me.id : '' };
+  const html = `<h3 class="font-serif text-lg mb-1">🦮 <span>Gassi eintragen</span></h3><p class="text-xs text-ink/50 mb-3">${escapeHtml(p.name)}</p>
+    <label class="fz-lbl">Wie lange?</label>
+    <div class="flex flex-wrap gap-1.5 mb-3">${[10, 20, 30, 45, 60, 90, 120].map(n => `<button type="button" class="fz-filter-chip px-3 py-1.5 text-sm${n === st.min ? ' active' : ''}" data-ptm="wmin" data-v="${n}"><b>${n}</b> <span>Min.</span></button>`).join('')}</div>
+    <label class="fz-lbl">Wer war unterwegs?</label>
+    <div class="flex flex-wrap gap-1.5 mb-3">${ptMemberChips('ptwho', st.by ? [st.by] : [])}</div>
+    ${famIn('ptK_note', 'Notiz (optional)', '', 'maxlength="80" autocomplete="off" placeholder="z. B. Hundewiese, großes Geschäft ✓"')}
+    <div class="flex justify-end gap-2 mt-2"><button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-ptm="cancel">Abbrechen</button>
+    <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="savewalk">Eintragen</button></div>`;
+  ptOpenModal(html, st);
+}
+function ptSaveWalk() {
+  const st = ptModalState;
+  if (!st) return;
+  const p = ptById(st.petId);
+  ptAddLog({ pet: st.petId, kind: 'gassi', min: st.min, by: st.by, note: ptVal('ptK_note') });
+  ptCloseModal();
+  ptRefresh();
+  const n = p ? ptWalksToday(p).length : 0;
+  const goal = p ? Number(p.walks) || 0 : 0;
+  finShowToast(goal && n >= goal ? 'Alle Runden für heute geschafft 🐾🎉' : 'Gassi eingetragen 🐾');
+}
+
+/* Füttern & Medikamente */
+function ptToggleFeed(petId, slot) {
+  const p = ptById(petId);
+  if (!p || !ptCanEdit()) return;
+  const x = ptFedSlot(p, slot);
+  if (x) {
+    if (!confirm(`Fütterung um ${slot} wieder offen setzen?`)) return;
+    ptRemoveLog(x.id);
+  } else {
+    ptAddLog({ pet: petId, kind: 'futter', slot });
+    try { if (navigator.vibrate) navigator.vibrate(10); } catch (e) { /* egal */ }
+  }
+  ptRefresh();
+}
+function ptFeedNext(petId) {
+  const p = ptById(petId);
+  if (!p) return;
+  const open = ptFeedTimes(p).filter(t => !ptFedSlot(p, t));
+  if (!open.length) { finShowToast('Heute schon alles gefüttert ✓'); return; }
+  const now = new Date();
+  const hm = `${String(now.getHours() + 1).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  const slot = open.filter(t => t <= hm).pop() || open[0];
+  ptAddLog({ pet: petId, kind: 'futter', slot });
+  ptRefresh();
+  finShowToast(`${p.name}: ${slot} gefüttert 🍖`);
+}
+function ptMedGiven(petId, name) {
+  ptAddLog({ pet: petId, kind: 'med', note: name });
+  ptRefresh();
+  finShowToast(`${name} ✓`);
+}
+
+/* Dienstplan */
+function ptOpenRoster(petId) {
+  const p = ptById(petId);
+  if (!p || !ptCanEdit()) return;
+  const st = { kind: 'roster', petId, roster: JSON.parse(JSON.stringify(p.roster || {})) };
+  const wd = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+  const html = `<h3 class="font-serif text-lg mb-1">📋 <span>Wer ist dran?</span></h3><p class="text-xs text-ink/50 mb-3">${escapeHtml(p.name)} · <span>Füttern, Gassi, Sauber machen</span></p>
+    ${wd.map((d, i) => { const k = String(i + 1); return `<div class="pt-rost-edit"><div class="text-xs font-semibold text-ink/60 mb-1">${escapeHtml(d)}</div><div class="flex flex-wrap gap-1.5">${ptMemberChips('ptrost-' + k, st.roster[k] || [])}</div></div>`; }).join('')}
+    <div class="flex items-center justify-between gap-2 mt-3 flex-wrap">
+      <button type="button" class="fz-mini-btn" data-ptm="rostauto">🔄 <span>Reihum verteilen</span></button>
+      <div class="flex gap-2"><button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-ptm="cancel">Abbrechen</button>
+      <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="saveroster">Speichern</button></div>
+    </div>`;
+  ptOpenModal(html, st);
+}
+function ptRosterAuto() {
+  const st = ptModalState;
+  const p = ptById(st.petId);
+  const pool = (p && p.owners && p.owners.length ? p.owners.map(id => memberById(id)).filter(Boolean) : ptPeople().filter(m => !m.childLock || isKidPageEnabled(m)));
+  if (!pool.length) return;
+  for (let i = 1; i <= 7; i++) st.roster[String(i)] = [pool[(i - 1) % pool.length].id];
+  for (let i = 1; i <= 7; i++) {
+    document.querySelectorAll(`#ptModalBody [data-ptrost-${i}]`).forEach(b => b.classList.toggle('active', st.roster[String(i)].includes(b.getAttribute('data-ptrost-' + i))));
+  }
+}
+function ptSaveRoster() {
+  const st = ptModalState;
+  ptUpdate(st.petId, p => ({ ...p, roster: st.roster }));
+  ptCloseModal();
+  ptRefresh();
+}
+
+/* Tiersitter-Steckbrief */
+function ptSitterText(p) {
+  const T = x => ((window.PINN_I18N && PINN_I18N.active) ? PINN_I18N.t(x) : x);
+  const L = [];
+  const sp = ptSpecies(p.species);
+  L.push(`🐾 ${p.name} – ${[p.breed || T(sp.label), T(ptAgeText(p))].filter(Boolean).join(', ')}`);
+  const f = p.feed || {};
+  const times = ptFeedTimes(p);
+  if (f.brand || f.amount || times.length) L.push('', '🥣 ' + T('Futter') + ': ' + [f.brand, f.amount ? f.amount + ' ' + T('je Mahlzeit') : '', times.length ? times.join(' & ') : ''].filter(Boolean).join(', '));
+  if (Number(p.walks) > 0) L.push('🦮 ' + T('Gassi') + ': ' + p.walks + '× ' + T('am Tag'));
+  const meds = (p.meds || []).filter(m => m.name);
+  if (meds.length) L.push('💊 ' + T('Medikamente') + ': ' + meds.map(m => [m.name, m.dose, m.times].filter(Boolean).join(' – ')).join('; '));
+  if (p.allergies) L.push('⚠️ ' + T('Allergien') + ': ' + p.allergies);
+  if (p.conditions) L.push('🩺 ' + T('Erkrankungen') + ': ' + p.conditions);
+  if (p.notes) L.push('', '💬 ' + p.notes);
+  if (p.sitter) L.push('', '📝 ' + p.sitter);
+  L.push('');
+  if (p.vet || p.vetPhone) L.push('🏥 ' + T('Tierarzt') + ': ' + [p.vet, p.vetPhone, p.vetAddress].filter(Boolean).join(', '));
+  if (p.emergencyVet || p.emergencyVetPhone) L.push('🚨 ' + T('Tiernotdienst') + ': ' + [p.emergencyVet, p.emergencyVetPhone].filter(Boolean).join(', '));
+  if (p.chip) L.push('🔖 ' + T('Chipnummer') + ': ' + p.chip);
+  const owners = (p.owners && p.owners.length ? p.owners : []).map(id => memberById(id)).filter(Boolean);
+  const phones = owners.map(m => { const ph = (famPass(m.id) || {}).phone; return ph ? memberLabel(m) + ' ' + ph : ''; }).filter(Boolean);
+  if (phones.length) L.push('📞 ' + phones.join(' · '));
+  return L.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+}
+function ptOpenSitter(petId) {
+  const p = ptById(petId);
+  if (!p) return;
+  const txt = ptSitterText(p);
+  const html = `<h3 class="font-serif text-lg mb-1">🧑‍🍼 <span>Für den Tiersitter</span></h3><p class="text-xs text-ink/50 mb-3">Alles Wichtige zu ${escapeHtml(p.name)} – zum Kopieren oder Teilen.</p>
+    <pre class="pt-sitter" data-no-i18n>${escapeHtml(txt)}</pre>
+    <div class="flex justify-end gap-2 mt-3 flex-wrap">
+      <button type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm" data-ptm="sittercopy">📋 <span>Kopieren</span></button>
+      ${navigator.share ? '<button type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm" data-ptm="sittershare"><span>Teilen</span></button>' : ''}
+      <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="cancel">Fertig</button>
+    </div>`;
+  ptOpenModal(html, { kind: 'sitter', petId, text: txt });
+}
+
+/* Vermisst-Plakat */
+function ptPosterHtml(p) {
+  const owners = (p.owners && p.owners.length ? p.owners.map(id => memberById(id)).filter(Boolean) : ptPeople());
+  const phones = owners.map(m => (famPass(m.id) || {}).phone ? { n: memberLabel(m), ph: famPass(m.id).phone } : null).filter(Boolean).slice(0, 3);
+  const sex = p.sex === 'm' ? '♂' : p.sex === 'w' ? '♀' : '';
+  return `<div class="pt-poster">
+    <div class="pt-poster-h">VERMISST</div>
+    <div class="pt-poster-img">${p.photo ? `<img src="${famAttr(p.photo)}" alt="" />` : `<span>${escapeHtml(p.emoji || '🐾')}</span>`}</div>
+    <div class="pt-poster-name">${escapeHtml(p.name)}</div>
+    <div class="pt-poster-sub">${escapeHtml([p.breed || ptSpecies(p.species).label, sex, ptAgeText(p)].filter(Boolean).join(' · '))}</div>
+    ${p.notes ? `<div class="pt-poster-note">${escapeHtml(p.notes)}</div>` : ''}
+    ${p.chip ? `<div class="pt-poster-chip"><span>Gechippt</span>: ${escapeHtml(p.chip)}</div>` : ''}
+    <div class="pt-poster-call"><span>Bitte melden unter</span>${phones.length ? phones.map(x => `<b>${escapeHtml(x.ph)}</b><small>${escapeHtml(x.n)}</small>`).join('') : '<b>__________________</b>'}</div>
+    <div class="pt-poster-foot"><span>Bitte nicht verfolgen – ruhig ansprechen und anrufen. Danke!</span></div>
+  </div>`;
+}
+function ptOpenPoster(petId) {
+  const p = ptById(petId);
+  if (!p) return;
+  const html = `<h3 class="font-serif text-lg mb-1">🔎 <span>Vermisst-Plakat</span></h3><p class="text-xs text-ink/50 mb-3">Drucken oder als PDF sichern – Telefonnummern kommen aus den Notfallpässen der Bezugspersonen.</p>
+    <div class="pt-poster-wrap">${ptPosterHtml(p)}</div>
+    <div class="flex justify-end gap-2 mt-3"><button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-ptm="cancel">Schließen</button>
+    <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="print">🖨️ <span>Drucken</span></button></div>`;
+  ptOpenModal(html, { kind: 'poster', petId });
+}
+function ptPrintPoster() {
+  const st = ptModalState;
+  const p = st && ptById(st.petId);
+  if (!p) return;
+  let host = document.getElementById('ptPrint');
+  if (!host) { host = document.createElement('div'); host.id = 'ptPrint'; document.body.appendChild(host); }
+  host.innerHTML = ptPosterHtml(p);
+  document.documentElement.classList.add('pt-printing');
+  const done = () => { document.documentElement.classList.remove('pt-printing'); window.removeEventListener('afterprint', done); };
+  window.addEventListener('afterprint', done);
+  setTimeout(() => { try { window.print(); } catch (e) { done(); } setTimeout(done, 60000); }, 120);
+}
+
+/* Futter auf die Einkaufsliste, Packliste */
+function ptFoodToShopping(petId) {
+  const p = ptById(petId);
+  if (!p) return;
+  const f = p.feed || {};
+  const pi = f.pantryId ? (pantryItems || []).find(x => x.id === f.pantryId) : null;
+  const name = pi ? pi.name : (f.brand || 'Tierfutter');
+  const listId = (typeof shoppingStammladenId === 'function' && shoppingStammladenId()) || '';
+  const target = listId === SHOPPING_MEAL_LIST_ID ? '' : listId;
+  const exists = shoppingItems.some(it => !it.done && (it.listId || '') === target && normalizeForGrouping(it.name || '') === normalizeForGrouping(name));
+  if (exists) { finShowToast('Steht schon auf der Einkaufsliste.'); return; }
+  shoppingItems = [...shoppingItems, { id: 'si' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), name, qty: '', note: 'für ' + p.name, done: false, createdAt: Date.now(), listId: target }];
+  persistState();
+  const l = getShoppingList(listId);
+  finShowToast(`${name} → ${l ? l.name : 'Einkaufsliste'} ✓`);
+}
+var PT_PACK = {
+  hund: [['Futter & Wasser', ['Futter (für alle Tage + Reserve)', 'Leckerlis & Kauknochen', 'Futter- & Wassernapf', 'Trinkflasche für unterwegs']], ['Unterwegs', ['Leine & Halsband / Geschirr', 'Schleppleine', 'Kotbeutel', 'Maulkorb (falls Pflicht)', 'Hundedecke / Körbchen', 'Transportbox / Sicherheitsgurt', 'Lieblingsspielzeug', 'Handtuch']], ['Gesundheit & Papiere', ['EU-Heimtierausweis', 'Impfnachweis (Tollwut)', 'Medikamente', 'Floh- & Zeckenschutz', 'Zeckenzange', 'Adresse Tierarzt am Urlaubsort']]],
+  katze: [['Futter & Wasser', ['Futter (für alle Tage + Reserve)', 'Leckerlis', 'Futter- & Wassernapf']], ['Unterwegs', ['Transportbox', 'Katzenklo & Streu', 'Kuscheldecke', 'Kratzbrett', 'Spielzeug', 'Geschirr & Leine']], ['Gesundheit & Papiere', ['EU-Heimtierausweis', 'Impfnachweis', 'Medikamente', 'Flohschutz']]],
+  default: [['Futter & Wasser', ['Futter (für alle Tage + Reserve)', 'Napf / Tränke']], ['Unterwegs', ['Transportbox / Käfig', 'Einstreu', 'Decke', 'Spielzeug']], ['Gesundheit & Papiere', ['Heimtierausweis', 'Medikamente', 'Adresse Tierarzt am Urlaubsort']]],
+};
+function ptMakePackList(petId) {
+  const p = ptById(petId);
+  if (!p || !isViewAllowed('einkauf')) return;
+  const secs = PT_PACK[p.species] || PT_PACK.default;
+  const now = Date.now();
+  let n = 0;
+  const items = [];
+  secs.forEach(([sec, arr]) => arr.forEach(text => items.push({ id: lsId('fi'), text, done: false, section: sec, createdAt: now + (n++) })));
+  (p.meds || []).filter(m => m.name).forEach(m => items.push({ id: lsId('fi'), text: m.name + (m.dose ? ' (' + m.dose + ')' : ''), done: false, section: 'Gesundheit & Papiere', createdAt: now + (n++) }));
+  const l = { id: lsId('fl'), type: 'pack', name: 'Urlaub mit ' + p.name, icon: p.emoji || '🐾', createdAt: now, createdBy: lsMyUserId(), items };
+  familyLists = [...familyLists, l];
+  persistState();
+  setView('einkauf');
+  lsOpenList(l.id);
+  finShowToast('Packliste angelegt – Reiseziel & Zeitraum über ✏️ ergänzen.');
+}
+
+/* ---------- Verdrahtung ---------- */
+function ptPaneClick(e) {
+  const b = e.target.closest('[data-pt]');
+  if (!b || b.disabled) return false;
+  const id = b.dataset.id || '';
+  switch (b.dataset.pt) {
+    case 'new': ptOpenEdit(''); break;
+    case 'open': ptOpen(id); break;
+    case 'back': ptDetailId = null; renderFamily(); { const sc = document.getElementById('famScroll'); if (sc) sc.scrollTop = 0; } break;
+    case 'edit': ptOpenEdit(id); break;
+    case 'adopt': ptAdoptMember(id); break;
+    case 'togglegone': ptShowGone = !ptShowGone; renderFamily(); break;
+    case 'care': ptOpenCare(id, b.dataset.cid); break;
+    case 'caredone': ptCareDone(id, b.dataset.cid); break;
+    case 'careadd': ptOpenCare(id, ''); break;
+    case 'presets': ptAddPresets(id); break;
+    case 'weight': ptOpenWeight(id); break;
+    case 'weights': ptOpenWeights(id); break;
+    case 'walk': ptOpenWalk(id); break;
+    case 'feed': ptToggleFeed(id, b.dataset.slot); break;
+    case 'feednext': ptFeedNext(id); break;
+    case 'medgiven': ptMedGiven(id, b.dataset.name); break;
+    case 'roster': ptOpenRoster(id); break;
+    case 'logdel': if (confirm('Eintrag entfernen?')) { ptRemoveLog(id); ptRefresh(); } break;
+    case 'sitter': ptOpenSitter(id); break;
+    case 'poster': ptOpenPoster(id); break;
+    case 'docs': docFilterCategory = 'haustiere'; setView('dokumente'); break;
+    case 'pantry': setView('vorrat'); break;
+    case 'foodshop': ptFoodToShopping(id); break;
+    case 'packlist': ptMakePackList(id); break;
+    case 'map': famShowOnMap(id); break;
+    default: return false;
+  }
+  return true;
+}
+(function ptWire() {
+  const modal = document.getElementById('ptModal');
+  if (!modal) return;
+  const body = document.getElementById('ptModalBody');
+  document.getElementById('ptModalClose').addEventListener('click', () => attemptCloseModal('ptModal', ptCloseModal));
+  wireModalOutsideClick('ptModal', ptCloseModal);
+  body.addEventListener('click', (e) => {
+    const st = ptModalState;
+    const own = e.target.closest('[data-ptowner]');
+    if (own && st) { const id = own.dataset.ptowner; st.owners = st.owners.includes(id) ? st.owners.filter(x => x !== id) : st.owners.concat(id); own.classList.toggle('active', st.owners.includes(id)); return; }
+    const who = e.target.closest('[data-ptwho]');
+    if (who && st) { st.by = st.by === who.dataset.ptwho ? '' : who.dataset.ptwho; body.querySelectorAll('[data-ptwho]').forEach(x => x.classList.toggle('active', x.dataset.ptwho === st.by)); return; }
+    for (let i = 1; i <= 7; i++) {
+      const r = e.target.closest(`[data-ptrost-${i}]`);
+      if (r && st && st.roster) {
+        const k = String(i), id = r.getAttribute('data-ptrost-' + i);
+        const cur = st.roster[k] || [];
+        st.roster[k] = cur.includes(id) ? cur.filter(x => x !== id) : cur.concat(id);
+        r.classList.toggle('active', st.roster[k].includes(id));
+        return;
+      }
+    }
+    const b = e.target.closest('[data-ptm]');
+    if (!b) return;
+    const v = b.dataset.v;
+    switch (b.dataset.ptm) {
+      case 'cancel': attemptCloseModal('ptModal', ptCloseModal); break;
+      case 'species': {
+        const old = ptSpecies(st.species);
+        st.species = v;
+        const sp = ptSpecies(v);
+        if (old.emojis.includes(st.emoji)) st.emoji = sp.emoji;
+        body.querySelectorAll('[data-ptm="species"]').forEach(x => x.classList.toggle('active', x === b));
+        if (!st.id) {
+          const w = document.getElementById('ptF_walks'); if (w && (!w.value || w.value === String(old.walks))) w.value = sp.walks ? String(sp.walks) : '';
+          const t = document.getElementById('ptF_times'); if (t && (!t.value || t.value === old.feed.join(', '))) t.value = sp.feed.join(', ');
+        }
+        ptDrawEditBits();
+        break;
+      }
+      case 'emoji': st.emoji = v; st.photo = ''; ptDrawEditBits(); break;
+      case 'nophoto': st.photo = ''; ptDrawEditBits(); break;
+      case 'color': st.color = v; body.querySelectorAll('[data-ptm="color"]').forEach(x => x.classList.toggle('active', x === b)); ptDrawEditBits(); break;
+      case 'sex': st.sex = v; body.querySelectorAll('[data-ptm="sex"]').forEach(x => x.classList.toggle('active', x === b)); break;
+      case 'addmed': ptSyncMeds(); st.meds.push({ id: ptId('pm'), name: '', dose: '', times: '' }); ptDrawMeds(); break;
+      case 'rmmed': ptSyncMeds(); st.meds.splice(Number(b.dataset.i), 1); ptDrawMeds(); break;
+      case 'savepet': ptSavePet(); break;
+      case 'delete': ptDeletePet(); break;
+      case 'gone': ptToggleGone(); break;
+      case 'ctype': {
+        st.type = v;
+        body.querySelectorAll('[data-ptm="ctype"]').forEach(x => x.classList.toggle('active', x === b));
+        const t = document.getElementById('ptC_title');
+        if (t && !t.value.trim()) t.placeholder = ptCareType(v).label;
+        break;
+      }
+      case 'savecare': ptSaveCare(); break;
+      case 'caredel': ptDeleteCare(); break;
+      case 'saveweight': ptSaveWeight(); break;
+      case 'wdel':
+        ptUpdate(st.petId, p => ({ ...p, weights: (p.weights || []).filter(w => w.id !== v) }));
+        ptOpenWeights(st.petId); ptRefresh();
+        break;
+      case 'wmin': st.min = Number(v) || 30; body.querySelectorAll('[data-ptm="wmin"]').forEach(x => x.classList.toggle('active', x === b)); break;
+      case 'savewalk': ptSaveWalk(); break;
+      case 'rostauto': ptRosterAuto(); break;
+      case 'saveroster': ptSaveRoster(); break;
+      case 'sittercopy': famCopy(st.text); break;
+      case 'sittershare': try { navigator.share({ text: st.text }).catch(() => {}); } catch (err) { /* egal */ } break;
+      case 'print': ptPrintPoster(); break;
+    }
+  });
+  body.addEventListener('change', async (e) => {
+    const st = ptModalState;
+    if (!st) return;
+    if (e.target.id === 'ptF_photo' && e.target.files && e.target.files[0]) {
+      try { st.photo = await readAvatarPhotoFile(e.target.files[0]); ptDrawEditBits(); }
+      catch (err) { finShowToast(err.message, true); }
+      e.target.value = '';
+    }
+    if (['ptC_last', 'ptC_every', 'ptC_next'].includes(e.target.id)) ptCareHint();
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.classList.contains('hidden')) attemptCloseModal('ptModal', ptCloseModal); });
+})();
+
+/* ==========================================================
+   Wetter-Ansicht (Tipp auf die Wetter-Kachel) & Urlaubswetter
+   ----------------------------------------------------------
+   - 14 Tage für Zuhause aus der 16-Tage-Vorhersage (pb_hooks/pinn-zuhause.js). Ab Tag 8 als „Tendenz“
+     markiert. Tipp auf einen Tag klappt Details auf: gefühlt, Wind & Böen, UV, Sonnenstunden,
+     Regenmenge, Sonnenauf-/-untergang, Stundenverlauf (erst beim Aufklappen geladen) und ein Tipp,
+     was man anzieht.
+   - Urlaub: Packlisten mit Reiseziel und Zeitraum (l.trip = { place: { titel, zusatz, lat, lon, land },
+     from, to }). Bis 16 Tage im Voraus Vorhersage, danach Erfahrungswerte (Ø derselben Tage der letzten
+     drei Jahre). Am Meer auch die Wassertemperatur. Dazu Pack-Tipps passend zum Wetter.
+   - Auf dem Gerät zwischengespeichert (3 Std.), damit Kachel, Packliste und Wochenvorschau nicht
+     jedes Mal neu fragen.
+   ========================================================== */
+var WX_DESC = {
+  0: 'Klar', 1: 'Überwiegend sonnig', 2: 'Teils bewölkt', 3: 'Bedeckt', 45: 'Nebel', 48: 'Nebel mit Reif',
+  51: 'Leichter Nieselregen', 53: 'Nieselregen', 55: 'Starker Nieselregen', 56: 'Gefrierender Nieselregen', 57: 'Gefrierender Nieselregen',
+  61: 'Leichter Regen', 63: 'Regen', 65: 'Starker Regen', 66: 'Gefrierender Regen', 67: 'Gefrierender Regen',
+  71: 'Leichter Schneefall', 73: 'Schneefall', 75: 'Starker Schneefall', 77: 'Schneegriesel',
+  80: 'Regenschauer', 81: 'Regenschauer', 82: 'Heftige Regenschauer', 85: 'Schneeschauer', 86: 'Schneeschauer',
+  95: 'Gewitter', 96: 'Gewitter mit Hagel', 99: 'Gewitter mit Hagel',
+};
+var LS_TRIP_WX = 'pinn.reisewetter';
+var TRIP_WX_TTL = 3 * 60 * 60 * 1000;
+var wxState = { place: 'home', sel: '' };
+var wxHours = {};          // 'ort|datum' -> { stunden, ts, err }
+var tripWxMem = null;      // { sig: { ts, data } }
+var tripWxLoading = {};
+
+function wxDesc(code) { return WX_DESC[code] || ''; }
+function wxSky(code) {
+  if (code === 0 || code === 1) return 'sun';
+  if (code === 2) return 'part';
+  if (code === 45 || code === 48) return 'fog';
+  if ([71, 73, 75, 77, 85, 86].includes(code)) return 'snow';
+  if ([95, 96, 99].includes(code)) return 'storm';
+  if (code >= 51) return 'rain';
+  return 'cloud';
+}
+function wxUvLabel(uv) {
+  if (uv == null) return '';
+  if (uv < 3) return 'niedrig';
+  if (uv < 6) return 'mäßig';
+  if (uv < 8) return 'hoch';
+  if (uv < 11) return 'sehr hoch';
+  return 'extrem';
+}
+function wxRainy(d) { return !!d && ((d.rain != null && d.rain >= 50) || (d.mm != null && d.mm >= 1)); }
+function wxDayName(iso, i) {
+  const today = isoDate(new Date());
+  if (iso === today) return 'Heute';
+  if (iso === addDaysToDateStr(today, 1)) return 'Morgen';
+  return new Date(iso + 'T12:00:00').toLocaleDateString('de-DE', { weekday: 'long' });
+}
+function wxShortDate(iso) { return new Date(iso + 'T12:00:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'numeric' }); }
+// Was ziehen wir an? Kurze Tipps für einen Tag
+function wxTips(d) {
+  if (!d) return [];
+  const t = [];
+  const code = d.code;
+  if ([95, 96, 99].includes(code)) t.push(['⛈️', 'Gewitter möglich – draußen aufpassen']);
+  if ([71, 73, 75, 77, 85, 86, 56, 57, 66, 67].includes(code) || (d.min != null && d.min <= 0)) t.push(['❄️', 'Glatt möglich – feste Schuhe']);
+  if ((d.rain != null && d.rain >= 60) || (d.mm != null && d.mm >= 2)) t.push(['☔', 'Regenjacke & Schirm mitnehmen']);
+  if (d.max != null && d.max <= 5) t.push(['🧤', 'Mütze, Schal & Handschuhe']);
+  else if (d.max != null && d.max <= 13) t.push(['🧥', 'Warme Jacke anziehen']);
+  else if (d.max != null && d.max >= 26) t.push(['🩳', 'Luftig anziehen & viel trinken']);
+  if (d.uv != null && d.uv >= 6) t.push(['🧴', 'Sonnencreme & Kappe']);
+  if ((d.boeen != null && d.boeen >= 60) || (d.wind != null && d.wind >= 40)) t.push(['💨', 'Sehr windig – Kapuze statt Schirm']);
+  if (!t.length && d.max != null && d.max >= 18 && !wxRainy(d)) t.push(['😎', 'Perfekt für draußen']);
+  return t.slice(0, 3);
+}
+
+/* ---------- Urlaube (Packlisten mit Ziel & Zeitraum) ---------- */
+function tripValid(l) {
+  const tp = l && l.trip;
+  return !!(tp && tp.place && isFinite(Number(tp.place.lat)) && isFinite(Number(tp.place.lon)) && /^\d{4}-\d{2}-\d{2}$/.test(tp.from || ''));
+}
+function tripTo(l) { return (l.trip.to && l.trip.to >= l.trip.from) ? l.trip.to : l.trip.from; }
+function tripList() {
+  const today = isoDate(new Date());
+  let lists = [];
+  try { lists = (familyLists || []).filter(l => l && l.type === 'pack' && lsVisible(l) && tripValid(l) && tripTo(l) >= today); } catch (e) { lists = []; }
+  return lists.sort((a, b) => a.trip.from.localeCompare(b.trip.from));
+}
+function tripById(id) { return tripList().find(l => l.id === id) || null; }
+function tripName(l) { return (l.trip.place.titel || l.name || 'Urlaub'); }
+function tripDaysUntil(l) { return daysBetweenDateStrs(isoDate(new Date()), l.trip.from); }
+function tripWhenText(l) {
+  const n = tripDaysUntil(l);
+  if (n > 1) return 'in ' + n + ' Tagen';
+  if (n === 1) return 'morgen';
+  if (n === 0) return 'heute geht’s los';
+  return 'läuft gerade';
+}
+function tripRangeText(l) {
+  const a = new Date(l.trip.from + 'T12:00:00'), b = new Date(tripTo(l) + 'T12:00:00');
+  const o = { day: 'numeric', month: 'short' };
+  return a.getTime() === b.getTime() ? a.toLocaleDateString('de-DE', o) : a.toLocaleDateString('de-DE', o) + ' – ' + b.toLocaleDateString('de-DE', o);
+}
+function tripSig(place, from, to) { return [Math.round(Number(place.lat) * 100) / 100, Math.round(Number(place.lon) * 100) / 100, from, to || from].join('|'); }
+function tripCacheRead() {
+  if (tripWxMem) return tripWxMem;
+  try { tripWxMem = JSON.parse(localStorage.getItem(LS_TRIP_WX) || '{}') || {}; } catch (e) { tripWxMem = {}; }
+  return tripWxMem;
+}
+function tripCacheWrite() {
+  const c = tripCacheRead();
+  const now = Date.now();
+  Object.keys(c).forEach(k => { if (!c[k] || now - c[k].ts > 3 * 24 * 60 * 60 * 1000) delete c[k]; });
+  try { localStorage.setItem(LS_TRIP_WX, JSON.stringify(c)); } catch (e) { /* voll */ }
+}
+function tripCached(place, from, to) {
+  const c = tripCacheRead()[tripSig(place, from, to)];
+  return c ? c.data : null;
+}
+async function tripWeatherFetch(place, from, to, force) {
+  const sig = tripSig(place, from, to);
+  const c = tripCacheRead()[sig];
+  if (c && !force && Date.now() - c.ts < TRIP_WX_TTL) return c.data;
+  if (tripWxLoading[sig]) return tripWxLoading[sig];
+  const job = (async () => {
+    try {
+      const res = await apiFetch('/api/pinn/zuhause/reisewetter', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lat: place.lat, lon: place.lon, von: from, bis: to || from }) });
+      if (res.status === 404) throw new Error('Der Server-Teil für das Urlaubswetter fehlt noch (pb_hooks/zuhause.pb.js).');
+      const body = await res.json().catch(() => ({}));
+      if (body.error && !(Array.isArray(body.tage) && body.tage.length)) throw new Error(body.error);
+      tripCacheRead()[sig] = { ts: Date.now(), data: body };
+      tripCacheWrite();
+      return body;
+    } catch (e) {
+      if (c) return c.data; // offline: letzter Stand
+      throw e;
+    } finally { delete tripWxLoading[sig]; }
+  })();
+  tripWxLoading[sig] = job;
+  return job;
+}
+function tripWeather(l, force) { return tripWeatherFetch(l.trip.place, l.trip.from, tripTo(l), force); }
+// Zusammenfassung: Ø Höchst-/Tiefstwert, Regentage, Sonne, Wasser, häufigstes Wetter
+function tripSummary(data, from, to) {
+  const days = (data && Array.isArray(data.tage) ? data.tage : []).filter(d => d && (!from || d.date >= from) && (!to || d.date <= to) && d.max != null);
+  if (!days.length) return null;
+  const avg = k => { const v = days.map(d => d[k]).filter(x => x != null); return v.length ? Math.round(v.reduce((a, b) => a + b, 0) / v.length) : null; };
+  const counts = {};
+  days.forEach(d => { const s = wxSky(d.code); counts[s] = (counts[s] || 0) + 1; });
+  const sky = Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0];
+  const skyCode = { sun: 0, part: 2, cloud: 3, fog: 45, rain: 61, snow: 71, storm: 95 }[sky];
+  const water = days.map(d => d.wasser).filter(x => x != null);
+  const sonne = days.map(d => d.sonne).filter(x => x != null);
+  return {
+    n: days.length, max: avg('max'), min: avg('min'),
+    hot: Math.max(...days.map(d => d.max)), cold: Math.min(...days.map(d => d.min != null ? d.min : d.max)),
+    rainDays: days.filter(wxRainy).length, code: skyCode, sky,
+    water: water.length ? Math.max(...water) : null,
+    sun: sonne.length ? Math.round(sonne.reduce((a, b) => a + b, 0) / sonne.length * 10) / 10 : null,
+    uv: Math.max(0, ...days.map(d => d.uv || 0)),
+    climate: days.every(d => d.quelle === 'klima'), someClimate: days.some(d => d.quelle === 'klima'),
+  };
+}
+// Pack-Tipps passend zum Wetter: [Text, Bereich]
+function tripPackTips(sum) {
+  if (!sum) return [];
+  const t = [];
+  if (sum.rainDays >= 1) t.push('Regenjacke', 'Regenschirm');
+  if (sum.rainDays >= 3) t.push('Wasserfeste Schuhe');
+  if (sum.hot >= 25 || sum.uv >= 6) t.push('Sonnencreme', 'Sonnenbrille', 'Sonnenhut / Kappe');
+  if (sum.uv >= 7) t.push('After-Sun');
+  if (sum.hot >= 22 || (sum.water != null && sum.water >= 19)) t.push('Badesachen');
+  if (sum.cold <= 10) t.push('Warmer Pullover', 'Lange Hose');
+  if (sum.cold <= 3) t.push('Mütze & Handschuhe', 'Winterjacke');
+  if (sum.code === 71 || sum.cold <= -2) t.push('Winterstiefel');
+  return [...new Set(t)];
+}
+function tripMissingTips(l, sum) {
+  const have = new Set((l.items || []).map(i => normalizeForGrouping(i.text || '')));
+  return tripPackTips(sum).filter(x => !have.has(normalizeForGrouping(x)));
+}
+function tripAddTips(l, tips) {
+  if (!tips.length) return 0;
+  const now = Date.now();
+  const add = tips.map((text, i) => ({ id: lsId('fi'), text, done: false, section: 'Wetter-Tipps', createdAt: now + i }));
+  lsUpdateList(l.id, x => ({ ...x, items: [...x.items, ...add] }));
+  lsCommit();
+  return add.length;
+}
+
+/* ---------- Kachel ---------- */
+function wxTileTripsHtml() {
+  const trips = tripList().filter(l => tripDaysUntil(l) <= 21).slice(0, 2);
+  if (!trips.length) return '';
+  return `<div class="ov-wx-trips">${trips.map(l => {
+    const data = tripCached(l.trip.place, l.trip.from, tripTo(l));
+    if (!data && tripDaysUntil(l) <= 60) tripWeather(l).then(() => renderWeatherTile()).catch(() => { /* später */ });
+    const sum = tripSummary(data);
+    const going = tripDaysUntil(l) <= 0;
+    return `<button type="button" class="ov-wx-trip${going ? ' now' : ''}" data-wxtrip="${escapeHtml(l.id)}">
+      <span class="ov-wx-trip-ic">${escapeHtml(l.icon || '🧳')}</span>
+      <span class="ov-wx-trip-t"><b>${escapeHtml(tripName(l))}</b><small>${escapeHtml(tripWhenText(l))}</small></span>
+      ${sum ? `<span class="ov-wx-trip-w">${weatherIconForCode(sum.code)} <b>${sum.max}°</b><span class="ov-weather-min">${sum.min}°</span></span>` : '<span class="ov-wx-trip-w">…</span>'}
+    </button>`;
+  }).join('')}</div>`;
+}
+
+/* ---------- Ansicht ---------- */
+function wxOpen(place) {
+  const ov = document.getElementById('wxOverlay');
+  if (!ov) return;
+  wxState.place = place && place !== 'home' && tripById(place) ? place : 'home';
+  wxState.sel = '';
+  ov.classList.remove('hidden');
+  document.documentElement.classList.add('wx-open');
+  wxRender();
+  const sh = ov.querySelector('.wx-sheet');
+  if (sh) sh.scrollTop = 0;
+  if (wxState.place === 'home') {
+    if (!weatherDaily || Date.now() - (Number(weatherDaily.ts) || 0) > 30 * 60 * 1000 || !(weatherDaily.days || []).some(d => d.wind != null)) {
+      Promise.resolve(fetchWeather()).then(() => { if (!ov.classList.contains('hidden') && wxState.place === 'home') wxRender(); });
+    }
+  } else {
+    const l = tripById(wxState.place);
+    tripWeather(l).then(() => wxRender()).catch(e => { wxState.err = e.message; wxRender(); });
+  }
+}
+function wxClose() {
+  const ov = document.getElementById('wxOverlay');
+  if (ov) ov.classList.add('hidden');
+  document.documentElement.classList.remove('wx-open');
+}
+function wxPlaceTabs() {
+  const trips = tripList();
+  if (!trips.length) return '';
+  return `<div class="wx-tabs">${[`<button type="button" class="wx-tab${wxState.place === 'home' ? ' active' : ''}" data-wxplace="home">🏠 <span>Zuhause</span></button>`]
+    .concat(trips.map(l => `<button type="button" class="wx-tab${wxState.place === l.id ? ' active' : ''}" data-wxplace="${escapeHtml(l.id)}">${escapeHtml(l.icon || '🧳')} ${escapeHtml(tripName(l))}</button>`)).join('')}</div>`;
+}
+function wxRender() {
+  const body = document.getElementById('wxBody');
+  if (!body) return;
+  if (wxState.place !== 'home') { const l = tripById(wxState.place); if (l) { body.innerHTML = wxTripHtml(l); wxAfterRender(); return; } wxState.place = 'home'; }
+  readWeatherDailyCache();
+  const today = isoDate(new Date());
+  const days = weatherDaily && Array.isArray(weatherDaily.days) ? weatherDaily.days.filter(d => d && d.date >= today).slice(0, 14) : [];
+  const t0 = days[0];
+  const sky = wxSky(weatherData && weatherData.code != null ? weatherData.code : (t0 ? t0.code : 3));
+  const hero = `<div class="wx-hero sky-${sky}">
+    <div class="wx-hero-deco" aria-hidden="true">${weatherIconForCode(weatherData && weatherData.code != null ? weatherData.code : (t0 ? t0.code : 3))}</div>
+    <div class="wx-kicker">🏠 <span>Zuhause</span></div>
+    <div class="wx-place">${escapeHtml((weatherDaily && weatherDaily.label) || 'Wetter')}</div>
+    ${weatherData && weatherData.temp != null ? `<div class="wx-now"><b>${weatherData.temp}°</b><span>${escapeHtml(wxDesc(weatherData.code))}</span></div>` : ''}
+    <div class="wx-hero-sub">${t0 ? `<span>↑ <b>${t0.max}°</b></span><span>↓ <b>${t0.min}°</b></span>` : ''}${weatherData && weatherData.gef != null ? `<span><span>gefühlt</span> <b>${weatherData.gef}°</b></span>` : ''}${weatherData && weatherData.wind != null ? `<span>💨 <b>${weatherData.wind}</b> km/h</span>` : ''}</div>
+  </div>`;
+  let list = '';
+  if (!days.length) {
+    list = `<div class="wx-empty">${weatherNoLocation ? '<span>Noch kein Zuhause festgelegt – Einstellungen → Zuhause.</span>' : '<span>Wetter wird geladen …</span>'}</div>`;
+  } else {
+    list = wxDaysHtml(days, 'home');
+  }
+  const tips = t0 ? wxTips(t0) : [];
+  body.innerHTML = `${hero}${wxPlaceTabs()}<div class="wx-wrap">
+    ${tips.length ? `<div class="wx-card wx-tips"><div class="wx-h">👕 <span>Heute anziehen</span></div>${tips.map(([i, t]) => `<div class="wx-tip"><span>${i}</span><span>${escapeHtml(t)}</span></div>`).join('')}</div>` : ''}
+    <div class="wx-card"><div class="wx-h">📅 <span>14 Tage</span></div>${list}</div>
+    ${weatherDaily && weatherDaily.ts ? `<p class="wx-note"><span>Stand</span> ${escapeHtml(new Date(weatherDaily.ts).toLocaleString('de-DE', { weekday: 'short', hour: '2-digit', minute: '2-digit' }))} · Open-Meteo</p>` : ''}
+  </div>`;
+  wxAfterRender();
+}
+function wxDaysHtml(days, placeKey) {
+  const lo = Math.min(...days.map(d => d.min != null ? d.min : d.max));
+  const hi = Math.max(...days.map(d => d.max));
+  const span = Math.max(1, hi - lo);
+  const today = isoDate(new Date());
+  let html = '';
+  let lastKind = '';
+  days.forEach((d, i) => {
+    const idx = daysBetweenDateStrs(today, d.date);
+    const kind = d.quelle === 'klima' ? 'klima' : (idx >= 7 ? 'tendenz' : 'nah');
+    if (kind !== lastKind && (kind !== 'nah' || lastKind)) {
+      html += `<div class="wx-sep">${kind === 'klima' ? '📊 <span>Erfahrungswerte – Ø der letzten 3 Jahre</span>' : kind === 'tendenz' ? '〰️ <span>Tendenz – noch unsicher</span>' : '🔭 <span>Vorhersage</span>'}</div>`;
+    }
+    lastKind = kind;
+    const mn = d.min != null ? d.min : d.max;
+    const left = Math.round((mn - lo) / span * 100), right = Math.round((hi - d.max) / span * 100);
+    const open = wxState.sel === d.date;
+    html += `<button type="button" class="wx-row${open ? ' open' : ''} ${kind}" data-wxday="${d.date}" aria-expanded="${open ? 'true' : 'false'}">
+      <span class="wx-d"><b>${escapeHtml(wxDayName(d.date, i))}</b><small>${escapeHtml(wxShortDate(d.date))}</small></span>
+      <span class="wx-ic">${weatherIconForCode(d.code)}</span>
+      <span class="wx-rain">${d.rain != null && d.rain >= 10 ? `💧<b>${d.rain}</b>%` : ''}</span>
+      <span class="wx-mn">${mn != null ? mn + '°' : ''}</span>
+      <span class="wx-range"><i style="left:${left}%;right:${right}%"></i></span>
+      <span class="wx-mx">${d.max}°</span>
+    </button>
+    ${open ? `<div class="wx-detail">${wxDetailHtml(d, placeKey, kind)}</div>` : ''}`;
+  });
+  return html;
+}
+function wxTile(ic, label, value, sub) {
+  if (value == null || value === '') return '';
+  return `<div class="wx-tile"><span class="wx-tile-ic">${ic}</span><span class="wx-tile-l">${escapeHtml(label)}</span><b>${value}</b>${sub ? `<small>${sub}</small>` : ''}</div>`;
+}
+function wxDetailHtml(d, placeKey, kind) {
+  const desc = wxDesc(d.code);
+  if (kind === 'klima') {
+    return `<p class="wx-dd"><span>Erfahrungswert</span> – <span>so war es an diesem Tag im Schnitt</span>${d.jahre ? ` (<b>${d.jahre}</b> <span>Jahre</span>)` : ''}.</p>
+      <div class="wx-tiles">${wxTile('🌡️', 'Ø Höchstwert', d.max + '°')}${wxTile('🌙', 'Ø Tiefstwert', d.min != null ? d.min + '°' : null)}
+      ${wxTile('💧', 'Regen', d.mm != null ? escapeHtml(String(d.mm).replace('.', ',')) + ' mm' : null, d.rain != null ? `<b>${d.rain}</b> % <span>Regentage</span>` : '')}
+      ${wxTile('☀️', 'Sonne', d.sonne != null ? escapeHtml(String(d.sonne).replace('.', ',')) + ' h' : null)}</div>`;
+  }
+  const arrow = d.richtung != null ? `<span class="wx-arrow" style="transform:rotate(${(d.richtung + 180) % 360}deg)">↑</span>` : '';
+  const tiles = [
+    wxTile('🌡️', 'Gefühlt', d.gefMax != null ? (d.gefMin != null ? d.gefMin + '° / ' : '') + d.gefMax + '°' : null),
+    wxTile('💧', 'Regen', d.mm != null ? escapeHtml(String(d.mm).replace('.', ',')) + ' mm' : null, d.regenStd ? `<b>${d.regenStd}</b> <span>Std.</span>` : (d.rain != null ? `<b>${d.rain}</b> %` : '')),
+    wxTile('💨', 'Wind', d.wind != null ? `${arrow}${d.wind} km/h` : null, d.boeen != null ? `<span>Böen</span> <b>${d.boeen}</b>` : ''),
+    wxTile('🕶️', 'UV-Index', d.uv != null ? String(Math.round(d.uv)) : null, d.uv != null ? escapeHtml(wxUvLabel(d.uv)) : ''),
+    wxTile('☀️', 'Sonne', d.sonne != null ? escapeHtml(String(d.sonne).replace('.', ',')) + ' h' : null),
+    wxTile('🌅', 'Sonnenauf- & -untergang', d.auf ? d.auf + ' · ' + (d.unter || '') : null),
+    wxTile('🌊', 'Wasser', d.wasser != null ? d.wasser + '°' : null),
+  ].join('');
+  const tips = wxTips(d);
+  const key = (placeKey || 'home') + '|' + d.date;
+  const h = wxHours[key];
+  let hours = '';
+  if (h && Array.isArray(h.stunden) && h.stunden.length) {
+    const now = new Date().getHours();
+    const rows = h.stunden.filter(x => d.date !== isoDate(new Date()) || Number(x.h) >= now);
+    hours = `<div class="wx-hours">${rows.map(x => `<div class="wx-hour${x.tag ? '' : ' night'}"><small>${escapeHtml(x.h)}</small><span>${x.tag ? weatherIconForCode(x.code) : (x.code <= 2 ? '🌙' : weatherIconForCode(x.code))}</span><b>${x.temp != null ? Math.round(x.temp) + '°' : ''}</b><i class="wx-hbar"><em style="height:${Math.min(100, x.rain || 0)}%"></em></i><small class="wx-hr">${x.rain ? x.rain + '%' : ''}</small></div>`).join('')}</div>`;
+  } else if (h && h.err) {
+    hours = '';
+  } else if (kind !== 'klima' && daysBetweenDateStrs(isoDate(new Date()), d.date) <= 15) {
+    hours = `<div class="wx-hours-load">⏳ <span>Stundenverlauf wird geladen …</span></div>`;
+  }
+  return `${desc ? `<p class="wx-dd"><b>${escapeHtml(desc)}</b>${d.unsicher || kind === 'tendenz' ? ' · <span>Tendenz</span>' : ''}</p>` : ''}
+    ${hours}
+    <div class="wx-tiles">${tiles}</div>
+    ${tips.length ? `<div class="wx-tips-in">${tips.map(([i, t]) => `<span class="wx-chip">${i} <span>${escapeHtml(t)}</span></span>`).join('')}</div>` : ''}`;
+}
+async function wxLoadHours(placeKey, date) {
+  const key = placeKey + '|' + date;
+  const c = wxHours[key];
+  if (c && (c.loading || (Date.now() - c.ts < 30 * 60 * 1000))) return;
+  wxHours[key] = { loading: true, ts: Date.now() };
+  const payload = { datum: date };
+  if (placeKey !== 'home') { const l = tripById(placeKey); if (!l) return; payload.lat = l.trip.place.lat; payload.lon = l.trip.place.lon; }
+  try {
+    const res = await apiFetch('/api/pinn/zuhause/wetter-tag', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    const body = await res.json().catch(() => ({}));
+    wxHours[key] = { stunden: Array.isArray(body.stunden) ? body.stunden : [], ts: Date.now(), err: res.ok && !body.error ? '' : (body.error || 'Fehler') };
+  } catch (e) {
+    wxHours[key] = { stunden: [], ts: Date.now() - 25 * 60 * 1000, err: 'offline' };
+  }
+  if (wxState.sel === date && wxState.place === placeKey) wxRender();
+}
+function wxAfterRender() {
+  if (!wxState.sel) return;
+  const today = isoDate(new Date());
+  const diff = daysBetweenDateStrs(today, wxState.sel);
+  if (diff < 0 || diff > 15) return;
+  const key = wxState.place + '|' + wxState.sel;
+  if (!wxHours[key]) wxLoadHours(wxState.place, wxState.sel);
+}
+function wxTripHtml(l) {
+  const data = tripCached(l.trip.place, l.trip.from, tripTo(l));
+  const sum = tripSummary(data);
+  const sky = sum ? sum.sky : 'part';
+  const when = tripWhenText(l);
+  const hero = `<div class="wx-hero sky-${sky} trip">
+    <div class="wx-hero-deco" aria-hidden="true">${escapeHtml(l.icon || '🧳')}</div>
+    <div class="wx-kicker">🧳 <span>Urlaubswetter</span></div>
+    <div class="wx-place">${escapeHtml(tripName(l))}</div>
+    ${l.trip.place.zusatz ? `<div class="wx-place-sub">${escapeHtml(l.trip.place.zusatz)}</div>` : ''}
+    <div class="wx-hero-sub"><span>📅 ${escapeHtml(tripRangeText(l))}</span><span>${escapeHtml(when)}</span></div>
+  </div>`;
+  let content = '';
+  if (!data) {
+    content = `<div class="wx-card"><div class="wx-empty">${wxState.err ? escapeHtml(wxState.err) : '<span>Urlaubswetter wird geladen …</span>'}</div></div>`;
+  } else if (data.vorbei) {
+    content = `<div class="wx-card"><div class="wx-empty"><span>Dieser Urlaub ist schon vorbei.</span></div></div>`;
+  } else {
+    const days = (data.tage || []).filter(d => d && d.max != null);
+    const tips = tripMissingTips(l, sum);
+    content = `${sum ? `<div class="wx-card wx-sum">
+        <div class="wx-sum-main"><span class="wx-sum-ic">${weatherIconForCode(sum.code)}</span><div><b>${sum.max}°</b><span class="wx-sum-min">${sum.min}°</span><div class="wx-sum-l"><span>Ø am Tag / in der Nacht</span></div></div></div>
+        <div class="wx-sum-chips">
+          <span class="wx-chip">${sum.rainDays ? '🌧️' : '🌤️'} ${sum.rainDays ? `<b>${sum.rainDays}</b> <span>${sum.rainDays === 1 ? 'Regentag' : 'Regentage'}</span>` : '<span>trocken</span>'}</span>
+          ${sum.sun != null ? `<span class="wx-chip">☀️ <b>${String(sum.sun).replace('.', ',')}</b> <span>Std. Sonne/Tag</span></span>` : ''}
+          ${sum.water != null ? `<span class="wx-chip">🌊 <span>Wasser</span> <b>${sum.water}°</b></span>` : ''}
+          <span class="wx-chip">🌡️ <b>${sum.cold}°</b> – <b>${sum.hot}°</b></span>
+        </div>
+        ${sum.climate ? '<p class="wx-note2">📊 <span>Noch zu weit weg für eine Vorhersage – das sind Erfahrungswerte der letzten drei Jahre. Ab 16 Tagen vorher kommt die echte Vorhersage.</span></p>' : sum.someClimate ? '<p class="wx-note2">📊 <span>Hintere Tage noch als Erfahrungswerte – die Vorhersage reicht 16 Tage.</span></p>' : ''}
+      </div>` : ''}
+      ${tips.length ? `<div class="wx-card"><div class="wx-h">🎒 <span>Passend zum Wetter einpacken</span></div><div class="wx-pack">${tips.map(t => `<button type="button" class="wx-pack-chip" data-wxtip="${escapeHtml(t)}">＋ <span>${escapeHtml(t)}</span></button>`).join('')}</div>
+        <button type="button" class="wx-btn" data-wxtipall="1">✓ <span>Alle auf die Packliste</span></button></div>` : ''}
+      <div class="wx-card"><div class="wx-h">📅 <span>Tag für Tag</span></div>${days.length ? wxDaysHtml(days, l.id) : '<div class="wx-empty"><span>Noch keine Daten.</span></div>'}</div>
+      ${data.fehler ? `<p class="wx-note">${escapeHtml(data.fehler)}</p>` : ''}`;
+  }
+  return `${hero}${wxPlaceTabs()}<div class="wx-wrap">${content}
+    <button type="button" class="wx-btn ghost" data-wxlist="${escapeHtml(l.id)}">🧳 <span>Zur Packliste</span> ›</button>
+    <p class="wx-note">Open-Meteo</p></div>`;
+}
+(function wxWire() {
+  const ov = document.getElementById('wxOverlay');
+  if (!ov) return;
+  document.getElementById('wxClose').addEventListener('click', wxClose);
+  ov.addEventListener('click', (e) => {
+    if (e.target === ov) { wxClose(); return; }
+    const pl = e.target.closest('[data-wxplace]');
+    if (pl) { wxOpen(pl.dataset.wxplace); return; }
+    const day = e.target.closest('[data-wxday]');
+    if (day) { wxState.sel = wxState.sel === day.dataset.wxday ? '' : day.dataset.wxday; wxRender(); return; }
+    const tip = e.target.closest('[data-wxtip]');
+    const all = e.target.closest('[data-wxtipall]');
+    if (tip || all) {
+      const l = tripById(wxState.place);
+      if (!l) return;
+      const sum = tripSummary(tripCached(l.trip.place, l.trip.from, tripTo(l)));
+      const list = tip ? [tip.dataset.wxtip] : tripMissingTips(l, sum);
+      const n = tripAddTips(lsGetList(l.id) || l, list);
+      finShowToast(n === 1 ? 'Auf die Packliste gesetzt ✓' : `${n} Sachen auf die Packliste gesetzt ✓`);
+      wxRender();
+      return;
+    }
+    const go = e.target.closest('[data-wxlist]');
+    if (go) { wxClose(); setView('einkauf'); lsOpenList(go.dataset.wxlist); }
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !ov.classList.contains('hidden')) wxClose(); });
+  const tile = document.getElementById('weatherTileSection');
+  if (tile) tile.addEventListener('click', (e) => {
+    const t = e.target.closest('[data-wxtrip]');
+    wxOpen(t ? t.dataset.wxtrip : 'home');
+  });
+})();
+
+/* ---------- Packliste: Reiseziel & Zeitraum ---------- */
+var lsTripSugSeq = 0;
+var lsTripSugTimer = null;
+var lsTripHits = [];
+var lsTripWxSeq = 0;
+function lsTripInit(l) {
+  const ctx = lsListCtx;
+  const wrap = document.getElementById('lsTripWrap');
+  if (!wrap || !ctx) return;
+  const isPack = ctx.type === 'pack';
+  wrap.classList.toggle('hidden', !isPack);
+  if (!isPack) return;
+  document.getElementById('lsListDateWrap').classList.add('hidden');
+  const tp = l && l.trip ? l.trip : null;
+  ctx.trip = { place: tp && tp.place ? { ...tp.place } : null, from: tp ? tp.from : (l && l.date) || '', to: tp ? (tp.to || '') : '' };
+  document.getElementById('lsTripPlace').value = '';
+  document.getElementById('lsTripFrom').value = ctx.trip.from || '';
+  document.getElementById('lsTripTo').value = ctx.trip.to || '';
+  document.getElementById('lsTripSug').innerHTML = '';
+  lsTripHits = [];
+  const tips = document.getElementById('lsTripTipsWrap');
+  tips.classList.add('hidden'); tips.classList.remove('flex');
+  document.getElementById('lsTripTips').checked = true;
+  lsTripDrawChosen();
+  lsTripDays();
+  lsTripPreview();
+}
+function lsTripDrawChosen() {
+  const ctx = lsListCtx;
+  const box = document.getElementById('lsTripChosen');
+  const input = document.getElementById('lsTripPlace');
+  if (!ctx || !box) return;
+  const pl = ctx.trip && ctx.trip.place;
+  box.classList.toggle('hidden', !pl);
+  input.classList.toggle('hidden', !!pl);
+  box.innerHTML = pl ? `<span class="ls-trip-pin">📍</span><span class="min-w-0 flex-1"><b>${escapeHtml(pl.titel)}</b>${pl.zusatz ? `<small>${escapeHtml(pl.zusatz)}</small>` : ''}</span><button type="button" class="fam-x" data-tripclear="1" aria-label="Reiseziel ändern">×</button>` : '';
+}
+function lsTripDays() {
+  const ctx = lsListCtx;
+  if (!ctx || !ctx.trip) return;
+  const a = ctx.trip.from, b = ctx.trip.to;
+  const el = document.getElementById('lsListDays');
+  if (a && b && b >= a && el && !document.getElementById('lsListDaysWrap').classList.contains('hidden')) el.value = String(Math.min(99, daysBetweenDateStrs(a, b) + 1));
+}
+async function lsTripSearch(q) {
+  const seq = ++lsTripSugSeq;
+  const box = document.getElementById('lsTripSug');
+  try {
+    const res = await apiFetch('/api/pinn/zuhause/suche?weit=1&q=' + encodeURIComponent(q), { cache: 'no-store' });
+    const body = await res.json().catch(() => ({}));
+    if (seq !== lsTripSugSeq) return;
+    lsTripHits = Array.isArray(body.treffer) ? body.treffer : [];
+    box.innerHTML = lsTripHits.length ? lsTripHits.map((h, i) => `<button type="button" class="home-sug-row" data-triphit="${i}"><span>📍</span><span class="min-w-0"><b>${escapeHtml(h.titel)}</b><span class="home-sug-z">${escapeHtml(h.zusatz || '')}</span></span></button>`).join('')
+      : `<p class="home-sug-msg">${escapeHtml(body.error || 'Kein passender Ort gefunden.')}</p>`;
+  } catch (e) {
+    if (seq === lsTripSugSeq) box.innerHTML = '<p class="home-sug-msg">Ortssuche nicht möglich – keine Verbindung zum NAS.</p>';
+  }
+}
+async function lsTripPreview() {
+  const ctx = lsListCtx;
+  const box = document.getElementById('lsTripWx');
+  if (!ctx || !box || !ctx.trip) return;
+  const tp = ctx.trip;
+  const tipsWrap = document.getElementById('lsTripTipsWrap');
+  if (!tp.place || !tp.from) { box.classList.add('hidden'); box.innerHTML = ''; tipsWrap.classList.add('hidden'); tipsWrap.classList.remove('flex'); return; }
+  const to = tp.to && tp.to >= tp.from ? tp.to : tp.from;
+  const seq = ++lsTripWxSeq;
+  box.classList.remove('hidden');
+  const cached = tripCached(tp.place, tp.from, to);
+  const draw = (data, err) => {
+    if (seq !== lsTripWxSeq) return;
+    const sum = tripSummary(data);
+    if (!sum) { box.innerHTML = `<span class="text-ink/50">${escapeHtml(err || (data && data.vorbei ? 'Der Zeitraum liegt in der Vergangenheit.' : 'Urlaubswetter wird geladen …'))}</span>`; return; }
+    box.innerHTML = `<span class="ls-trip-wx-ic">${weatherIconForCode(sum.code)}</span><span class="min-w-0 flex-1"><b>${sum.max}°</b> / ${sum.min}° · <span>${sum.rainDays ? sum.rainDays + (sum.rainDays === 1 ? ' Regentag' : ' Regentage') : 'trocken'}</span>${sum.water != null ? ` · 🌊 ${sum.water}°` : ''}<small>${sum.climate ? 'Erfahrungswerte der letzten Jahre' : 'Vorhersage für die Reisezeit'}</small></span>`;
+    const tips = tripPackTips(sum);
+    const show = ctx.mode === 'new' && tips.length > 0;
+    tipsWrap.classList.toggle('hidden', !show);
+    tipsWrap.classList.toggle('flex', show);
+    ctx.tripTips = tips;
+  };
+  draw(cached);
+  try { draw(await tripWeatherFetch(tp.place, tp.from, to)); }
+  catch (e) { draw(cached, e.message); }
+}
+(function lsTripWire() {
+  const input = document.getElementById('lsTripPlace');
+  if (!input) return;
+  input.addEventListener('input', () => {
+    clearTimeout(lsTripSugTimer);
+    const q = input.value.trim();
+    if (q.length < 3) { document.getElementById('lsTripSug').innerHTML = ''; return; }
+    lsTripSugTimer = setTimeout(() => lsTripSearch(q), 320);
+  });
+  document.getElementById('lsTripSug').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-triphit]');
+    const ctx = lsListCtx;
+    if (!b || !ctx || !ctx.trip) return;
+    const h = lsTripHits[Number(b.dataset.triphit)];
+    if (!h) return;
+    ctx.trip.place = { titel: h.ort && h.titel !== h.ort && !/\d/.test(h.titel) ? h.titel : (h.titel || h.ort), zusatz: h.zusatz || '', lat: h.lat, lon: h.lon, land: h.land || '' };
+    document.getElementById('lsTripSug').innerHTML = '';
+    input.value = '';
+    lsTripDrawChosen();
+    const nameEl = document.getElementById('lsListName');
+    if (ctx.mode === 'new' && nameEl && (ctx.nameAuto || !nameEl.value.trim())) {
+      const y = (ctx.trip.from || isoDate(new Date())).slice(0, 4);
+      nameEl.value = ctx.trip.place.titel + ' ' + y;
+    }
+    lsTripPreview();
+  });
+  document.getElementById('lsTripChosen').addEventListener('click', (e) => {
+    if (!e.target.closest('[data-tripclear]') || !lsListCtx || !lsListCtx.trip) return;
+    lsListCtx.trip.place = null;
+    lsTripDrawChosen();
+    lsTripPreview();
+    setTimeout(() => input.focus(), 30);
+  });
+  ['lsTripFrom', 'lsTripTo'].forEach(id => document.getElementById(id).addEventListener('change', () => {
+    const ctx = lsListCtx;
+    if (!ctx || !ctx.trip) return;
+    ctx.trip.from = document.getElementById('lsTripFrom').value || '';
+    ctx.trip.to = document.getElementById('lsTripTo').value || '';
+    if (ctx.trip.from && ctx.trip.to && ctx.trip.to < ctx.trip.from) { ctx.trip.to = ctx.trip.from; document.getElementById('lsTripTo').value = ctx.trip.from; }
+    if (id === 'lsTripFrom' && ctx.trip.from && !ctx.trip.to) document.getElementById('lsTripTo').min = ctx.trip.from;
+    lsTripDays();
+    lsTripPreview();
+  }));
+})();
+// Beim Speichern einer Packliste: Ziel & Zeitraum übernehmen
+function lsTripData() {
+  const ctx = lsListCtx;
+  if (!ctx || ctx.type !== 'pack' || !ctx.trip) return null;
+  const tp = ctx.trip;
+  if (!tp.place || !tp.from) return tp.from ? { dateOnly: tp.from } : null;
+  return { place: { titel: tp.place.titel, zusatz: tp.place.zusatz || '', lat: Number(tp.place.lat), lon: Number(tp.place.lon), land: tp.place.land || '' }, from: tp.from, to: tp.to && tp.to >= tp.from ? tp.to : tp.from };
+}
+// Karte in der Packliste
+function lsTripCardHtml(l) {
+  if (!tripValid(l)) return '';
+  const data = tripCached(l.trip.place, l.trip.from, tripTo(l));
+  const sum = tripSummary(data);
+  const past = tripTo(l) < isoDate(new Date());
+  if (!data && !past) tripWeather(l).then(() => { if (listsDetailId === l.id) { const x = lsGetList(l.id); if (x) lsRenderDetail(x); } }).catch(() => { /* offline */ });
+  const tips = sum ? tripMissingTips(l, sum) : [];
+  return `<button type="button" class="ls-trip-card sky-${sum ? sum.sky : 'part'}" data-tripwx="${escapeHtml(l.id)}">
+    <span class="ls-trip-card-ic">${sum ? weatherIconForCode(sum.code) : '🧳'}</span>
+    <span class="min-w-0 flex-1"><b>📍 ${escapeHtml(tripName(l))}</b><small>${escapeHtml(tripRangeText(l))} · ${escapeHtml(past ? 'vorbei' : tripWhenText(l))}</small>
+      ${sum ? `<small class="ls-trip-card-w"><b>${sum.max}°</b> / ${sum.min}° · <span>${sum.rainDays ? sum.rainDays + (sum.rainDays === 1 ? ' Regentag' : ' Regentage') : 'trocken'}</span>${sum.water != null ? ' · 🌊 ' + sum.water + '°' : ''}${sum.climate ? ' · <span>Erfahrungswerte</span>' : ''}</small>` : ''}</span>
+    <span class="ls-trip-card-go">${tips.length ? `<span class="ls-trip-badge">🎒 ${tips.length}</span>` : ''}›</span>
+  </button>`;
+}
+(function lsTripCardWire() {
+  const meta = document.getElementById('listsDetailMeta');
+  if (!meta) return;
+  meta.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-tripwx]');
+    if (b) wxOpen(b.dataset.tripwx);
+  });
+})();
+
+/* ---------- Haustiere in der Kachel „Familienmitglieder“ ---------- */
+function ptTileHtml(anySub) {
+  if (!isViewAllowed('familie')) return '';
+  return ptActive().map(p => {
+    const over = ptOverdue(p);
+    const bd = ptBirthdayIn(p);
+    const walks = Number(p.walks) || 0;
+    const w = ptWalksToday(p).length;
+    let badge = '';
+    if (bd === 0) badge = '🎂';
+    else if (over.length) badge = ptCareType(over[0].type).icon;
+    let sub = '';
+    if (over.length) sub = 'fällig';
+    else if (walks) sub = `🦮 ${w}/${walks}`;
+    else if (ptFeedTimes(p).length) { const f = ptFeedTimes(p).filter(t => ptFedSlot(p, t)).length; sub = `🍖 ${f}/${ptFeedTimes(p).length}`; }
+    const color = ptColor(p);
+    return `<button type="button" class="ov-fam-item is-pet${bd === 0 ? ' is-bday' : ''}" data-pet="${escapeHtml(p.id)}" aria-label="${escapeHtml(p.name)}">
+      <span class="ov-fam-ava-wrap"><span class="ov-fam-ava" style="border-color:${escapeHtml(color)}">${memberAvatarInnerHTML({ photo: p.photo || '', avatar: p.emoji || ptSpecies(p.species).emoji, name: p.name, color })}</span>${badge ? `<span class="ov-fam-badge">${badge}</span>` : ''}</span>
+      <span class="ov-fam-name">${escapeHtml(p.name)}</span>${anySub ? `<span class="ov-fam-sub${over.length ? ' warn' : ''}">${escapeHtml(sub)}</span>` : ''}
+    </button>`;
+  }).join('');
+}
+function ptTileWire(body) {
+  body.querySelectorAll('.ov-fam-item.is-pet').forEach(b => b.addEventListener('click', () => ptOpen(b.dataset.pet)));
+}
+
+/* ---------- Wochenvorschau: Urlaub & Haustiere ---------- */
+async function abTripCardsHtml(mondayIso, endIso) {
+  let trips = [];
+  try { trips = tripList().filter(l => l.trip.from <= endIso && tripTo(l) >= mondayIso); } catch (e) { trips = []; }
+  if (!trips.length) return '';
+  const out = [];
+  for (const l of trips) {
+    let data = tripCached(l.trip.place, l.trip.from, tripTo(l));
+    try {
+      data = await Promise.race([tripWeather(l), new Promise(res => setTimeout(() => res(data), 6000))]);
+    } catch (e) { /* offline: letzter Stand */ }
+    const sum = tripSummary(data);
+    const from = l.trip.from < mondayIso ? mondayIso : l.trip.from;
+    const to = tripTo(l) > endIso ? endIso : tripTo(l);
+    const days = data && Array.isArray(data.tage) ? data.tage.filter(d => d.date >= from && d.date <= to && d.max != null) : [];
+    const range = abFmt(l.trip.from, { day: 'numeric', month: 'short' }) + (tripTo(l) !== l.trip.from ? ' – ' + abFmt(tripTo(l), { day: 'numeric', month: 'short' }) : '');
+    let line = '';
+    if (sum) {
+      const bits = [`Ø ${sum.max}° / ${sum.min}°`, sum.rainDays ? abT(sum.rainDays === 1 ? 'u_regen1' : 'u_regen', { n: sum.rainDays }) : abT('u_trocken')];
+      if (sum.water != null) bits.push(abT('u_wasser', { t: sum.water }));
+      if (sum.sun != null) bits.push(abT('u_sonne', { h: String(sum.sun).replace('.', ',') }));
+      line = bits.join(' · ');
+    }
+    out.push(`<div class="ab-card ab-trip"><div class="ab-h2">🧳 ${abEsc(abT('s_urlaub'))}<small>${abEsc(range)}</small></div>
+      <div class="ab-trip-head"><span class="ab-trip-ic">${sum ? weatherIconForCode(sum.code) : escapeHtml(l.icon || '🧳')}</span><span><b>${abEsc(tripName(l))}</b>${l.trip.place.zusatz ? `<small>${abEsc(l.trip.place.zusatz)}</small>` : ''}</span></div>
+      ${line ? `<p class="ab-trip-line">${abEsc(line)}</p>` : `<p class="ab-note">${abEsc(abT('u_keine'))}</p>`}
+      ${days.length ? `<div class="ab-wx">${days.map(d => `<div class="ab-wx-d${wxRainy(d) ? ' rain' : ''}"><span>${abEsc(abFmt(d.date, { weekday: 'short' }))}</span><span class="i">${weatherIconForCode(d.code)}</span><b>${Math.round(d.max)}°</b> <span>${d.min != null ? Math.round(d.min) + '°' : ''}</span></div>`).join('')}</div>` : ''}
+      ${sum && sum.someClimate ? `<p class="ab-note">📊 ${abEsc(abT('u_klima'))}</p>` : ''}
+      <div class="ab-foot" style="padding:6px 0 0"><button type="button" class="ab-btn ghost" data-abtrip="${abEsc(l.id)}">🌦️ ${abEsc(abT('u_mehr'))}</button></div>
+    </div>`);
+  }
+  return out.join('');
+}
+function abPetHighlights(mondayIso, endIso) {
+  const hl = [];
+  let list = [];
+  try { list = ptActive(); } catch (e) { list = []; }
+  list.forEach(p => {
+    (p.care || []).forEach(c => {
+      const n = ptCareNext(c);
+      if (!n || n > endIso) return;
+      const over = n < mondayIso;
+      hl.push({ date: n, html: `<div class="ab-hl" style="--ab-tone:${over ? '#C0392B' : '#8D6E63'}"><span class="i">${ptCareType(c.type).icon}</span><span>${abEsc(p.name)}: ${abEsc(abTx(c.title || ''))}<small>${abEsc(over ? abT('tier_ueber') : abT('tier_faellig'))}</small></span><span class="when">${abEsc(abShort(n))}</span></div>` });
+    });
+    if (ptIso(p.birth)) {
+      const [, m, d] = p.birth.split('-').map(Number);
+      [Number(mondayIso.slice(0, 4)), Number(endIso.slice(0, 4))].forEach(y => {
+        const iso = isoDate(birthdayInYear(y, m, d));
+        if (iso >= mondayIso && iso <= endIso && !hl.some(x => x.bday === p.id)) hl.push({ date: iso, bday: p.id, html: `<div class="ab-hl" style="--ab-tone:#D6336C"><span class="i">🎂</span><span>${abEsc(p.name)}<small>${abEsc(abT('tier_geb'))}</small></span><span class="when">${abEsc(abShort(iso))}</span></div>` });
+      });
+    }
+  });
+  return hl.sort((a, b) => a.date.localeCompare(b.date)).map(x => x.html);
+}
+(function abTripWire() {
+  const ov = document.getElementById('abOverlay');
+  if (!ov) return;
+  ov.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-abtrip]');
+    if (!b) return;
+    abClose();
+    wxOpen(b.dataset.abtrip);
+  });
+})();
+
 /* ---------- Verdrahtung ---------- */
 (function wireFamily() {
   const pane = document.getElementById('famPane');
   pane.addEventListener('click', (e) => {
+    if (ptPaneClick(e)) return;
     if (skPaneClick(e)) return;
     const sosBtn = e.target.closest('[data-sosopen]');
     if (sosBtn) { sosOpen(sosBtn.dataset.sosopen); return; }
@@ -55711,6 +57927,12 @@ function ntOpenLink(url) {
       if (isViewAllowed('familie')) famOpenPass(g('mitglied'));
       return true;
     }
+    if (g('haustier')) {
+      if (isViewAllowed('familie') && !isCurrentUserGuest()) ptOpen(real(g('haustier')) ? g('haustier') : '');
+      return true;
+    }
+    if (g('urlaub')) { setTimeout(() => wxOpen(g('urlaub')), 120); return true; }
+    if (g('wetter')) { setTimeout(() => wxOpen('home'), 120); return true; }
     if (g('aufgabe')) {
       if (!isViewAllowed('aufgaben')) return true;
       const id = g('aufgabe');
@@ -55754,7 +57976,7 @@ function ntOpenLink(url) {
 }
 // Diese Adressen öffnet die Glocke beim Start selbst (die übrigen - ?sos, ?heimweg, ?kasse, ?vertrag,
 // ?dokument, ?pinnwand, ?familie - erledigen die jeweiligen Bereiche schon beim Hochfahren)
-var NT_START_LINKS = ['wobistdu', 'geburtstag', 'ausblick', 'ausgabe', 'fahrzeug', 'mitglied', 'aufgabe', 'termin', 'rezept', 'essen', 'vorrat', 'listen', 'einkauf', 'konto'];
+var NT_START_LINKS = ['wobistdu', 'geburtstag', 'haustier', 'urlaub', 'wetter', 'ausblick', 'ausgabe', 'fahrzeug', 'mitglied', 'aufgabe', 'termin', 'rezept', 'essen', 'vorrat', 'listen', 'einkauf', 'konto'];
 
 // Zahl an der Glocke: offene Ausgaben, laufende Heimwege, ungelesene Neuerungen und neue Familien-Hinweise
 function ntUpdateBadge() {
@@ -56356,6 +58578,7 @@ const AB_T = {
     m_selten: 'Nicht monatlich – rechtzeitig einplanen', m_fristen: 'Kündigungsfristen', m_liste: 'Geplante Buchungen', m_weitere: '+ {n} weitere',
     m_leer: 'Für diesen Monat ist noch nichts geplant – regelmäßige Buchungen erscheinen hier automatisch.', m_keine: 'Der Monatsausblick braucht Zugriff auf die Finanzen und mindestens eine Kasse.',
     zu_fin: 'Zu den Finanzen', schliessen: 'Schließen', laden: 'Wird geladen …', bis: 'bis {d}',
+    s_urlaub: 'Urlaub', u_regen: '{n} Regentage', u_regen1: '1 Regentag', u_trocken: 'trocken', u_wasser: 'Wasser {t}°', u_sonne: '{h} Std. Sonne', u_klima: 'Teils Erfahrungswerte der letzten drei Jahre – die Vorhersage reicht 16 Tage.', u_keine: 'Wetter für den Urlaubsort kommt, sobald pinn. wieder Verbindung hat.', u_mehr: 'Urlaubswetter Tag für Tag', tier_faellig: 'Haustier: fällig', tier_ueber: 'Haustier: überfällig', tier_geb: 'hat Geburtstag 🐾',
   },
   en: {
     w_kicker: 'Weekly preview', w_title: 'Your week', w_sub: 'Week {kw} · {range}', b_w: 'Your weekly preview is here', b_w_s: 'Events, tasks & meals · {range}',
@@ -56376,6 +58599,7 @@ const AB_T = {
     m_selten: 'Not monthly – plan ahead', m_fristen: 'Cancellation deadlines', m_liste: 'Planned payments', m_weitere: '+ {n} more',
     m_leer: 'Nothing planned for this month yet – recurring payments show up here automatically.', m_keine: 'The monthly outlook needs access to finances and at least one fund.',
     zu_fin: 'Open finances', schliessen: 'Close', laden: 'Loading …', bis: 'until {d}',
+    s_urlaub: 'Holiday', u_regen: '{n} rainy days', u_regen1: '1 rainy day', u_trocken: 'dry', u_wasser: 'water {t}°', u_sonne: '{h} h of sun', u_klima: 'Partly typical values from the last three years – the forecast covers 16 days.', u_keine: 'Weather for the destination will appear once pinn. is back online.', u_mehr: 'Holiday weather day by day', tier_faellig: 'Pet: due', tier_ueber: 'Pet: overdue', tier_geb: 'has a birthday 🐾',
   },
   fr: {
     w_kicker: 'Aperçu de la semaine', w_title: 'Votre semaine', w_sub: 'Semaine {kw} · {range}', b_w: 'Votre aperçu de la semaine est prêt', b_w_s: 'Rendez-vous, tâches et repas · {range}',
@@ -56396,6 +58620,7 @@ const AB_T = {
     m_selten: 'Pas mensuel – à anticiper', m_fristen: 'Délais de résiliation', m_liste: 'Opérations prévues', m_weitere: '+ {n} autres',
     m_leer: "Rien n'est encore prévu ce mois-ci – les opérations récurrentes apparaissent ici automatiquement.", m_keine: "Les perspectives du mois nécessitent l'accès aux finances et au moins une caisse.",
     zu_fin: 'Ouvrir les finances', schliessen: 'Fermer', laden: 'Chargement …', bis: "jusqu'au {d}",
+    s_urlaub: 'Vacances', u_regen: '{n} jours de pluie', u_regen1: '1 jour de pluie', u_trocken: 'sec', u_wasser: 'eau {t}°', u_sonne: '{h} h de soleil', u_klima: 'En partie des moyennes des trois dernières années – les prévisions couvrent 16 jours.', u_keine: 'La météo du lieu de vacances s’affichera dès que pinn. sera de nouveau connecté.', u_mehr: 'Météo des vacances jour par jour', tier_faellig: 'Animal : à faire', tier_ueber: 'Animal : en retard', tier_geb: 'fête son anniversaire 🐾',
   },
   es: {
     w_kicker: 'Resumen semanal', w_title: 'Vuestra semana', w_sub: 'Semana {kw} · {range}', b_w: 'Ya está aquí vuestro resumen semanal', b_w_s: 'Citas, tareas y comidas · {range}',
@@ -56416,6 +58641,7 @@ const AB_T = {
     m_selten: 'No mensual: planifícalo a tiempo', m_fristen: 'Plazos de cancelación', m_liste: 'Movimientos previstos', m_weitere: '+ {n} más',
     m_leer: 'Aún no hay nada previsto este mes: los movimientos periódicos aparecen aquí automáticamente.', m_keine: 'La previsión mensual necesita acceso a las finanzas y al menos una caja.',
     zu_fin: 'Abrir finanzas', schliessen: 'Cerrar', laden: 'Cargando …', bis: 'hasta el {d}',
+    s_urlaub: 'Vacaciones', u_regen: '{n} días de lluvia', u_regen1: '1 día de lluvia', u_trocken: 'seco', u_wasser: 'agua {t}°', u_sonne: '{h} h de sol', u_klima: 'En parte valores típicos de los últimos tres años: la previsión abarca 16 días.', u_keine: 'El tiempo del destino aparecerá cuando pinn. vuelva a tener conexión.', u_mehr: 'Tiempo de las vacaciones día a día', tier_faellig: 'Mascota: toca', tier_ueber: 'Mascota: con retraso', tier_geb: 'cumple años 🐾',
   },
 };
 function abLang() { const l = (window.PINN_I18N && PINN_I18N.current) || 'en'; return AB_T[l] ? l : 'en'; }
@@ -56816,7 +59042,10 @@ async function abRenderWeek(body, mondayIso) {
     }).join('')}</div></div>`;
   }
 
-  // Nicht vergessen: Ferien, Fristen, Vorrat, Überfälliges
+  // Urlaub in dieser Woche: Wetter am Urlaubsort (Vorhersage bzw. Erfahrungswerte)
+  html += await abTripCardsHtml(mondayIso, endIso);
+
+  // Nicht vergessen: Ferien, Fristen, Vorrat, Haustiere, Überfälliges
   const hl = [];
   ferien.forEach(f => {
     const txt = f.from < mondayIso ? abT('ferien_bis', { d: abShort(f.to) }) : abT('ferien_ab', { d: abShort(f.from) }) + (f.to > f.from ? ' · ' + abT('bis', { d: abShort(f.to) }) : '');
@@ -56831,6 +59060,7 @@ async function abRenderWeek(body, mondayIso) {
     hl.push(`<div class="ab-hl" style="--ab-tone:${d < 0 ? '#C0392B' : '#9A6A00'}"><span class="i">⏳</span><span>${abEsc(p.name)}<small>${abEsc(d < 0 ? abT('mhd_ab') : abT('mhd', { d: abShort(p.bestBefore) }))}</small></span><span class="when">${abEsc(abShort(p.bestBefore))}</span></div>`);
   });
   if (pantry.length > 6) hl.push(`<div class="ab-hl"><span class="i"></span><span class="ab-note" style="margin:0">${abEsc(abT('m_weitere', { n: pantry.length - 6 }))}</span></div>`);
+  if (!guest && isViewAllowed('familie')) abPetHighlights(mondayIso, endIso).forEach(x => hl.push(x));
   if (hl.length) html += `<div class="ab-card"><div class="ab-h2">📌 ${abEsc(abT('s_merken'))}</div>${hl.join('')}</div>`;
   if (overdue.length) {
     html += `<div class="ab-card"><div class="ab-h2">⏰ ${abEsc(abT('s_offen'))}<small>${overdue.length}</small></div>${overdue.slice(0, 6).map(a => {

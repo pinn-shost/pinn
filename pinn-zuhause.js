@@ -15,7 +15,12 @@
 // Fremde Server spricht nur dieser Server an, nie die App:
 //  - Adressvorschläge beim Tippen: Photon (photon.komoot.io, OpenStreetMap, für Suche-beim-Tippen gemacht),
 //    ersatzweise Nominatim.
-//  - Wetter: Open-Meteo (ohne Schlüssel), 15 Minuten zwischengespeichert je Ort.
+//  - Wetter: Open-Meteo (ohne Schlüssel), 15 Minuten zwischengespeichert je Ort. 16 Tage Vorschau mit
+//    Details (gefühlt, Wind, Böen, UV, Sonnenstunden, Regenmenge); Stundenverlauf eines Tages nur auf
+//    Abruf (Tipp auf den Tag, 30 Min. zwischengespeichert).
+//  - Urlaubswetter (Packliste mit Ziel und Zeitraum): bis 16 Tage im Voraus die Vorhersage, danach
+//    Erfahrungswerte – Durchschnitt derselben Tage der letzten drei Jahre (Open-Meteo-Archiv,
+//    7 Tage zwischengespeichert). Am Meer zusätzlich die Wassertemperatur (Open-Meteo Marine).
 //  - Schulferien: OpenHolidays API (openholidaysapi.org), je Bundesland und Jahr in pb_data/pinn_ferien
 //    zwischengespeichert (14 Tage, ohne Verbindung bleibt der letzte Stand).
 //
@@ -312,12 +317,12 @@ function uniqueHits(list) {
     });
 }
 
-function suggest(e, q) {
+function suggest(e, q, weit) {
     const text = cleanText(q, 160);
     if (text.length < 3) return { treffer: [] };
-    // Zur Gewichtung: vorhandenes Zuhause der Familie (Treffer in der Nähe zuerst)
+    // Zur Gewichtung: vorhandenes Zuhause der Familie (Treffer in der Nähe zuerst) – nicht bei Reisezielen
     let bias = "";
-    try {
+    if (!weit) try {
         const home = get(require(`${__hooks}/pinn-benutzer.js`).familyOf(e));
         if (home) bias = "&lat=" + home.lat + "&lon=" + home.lon;
     } catch (err) { bias = ""; }
@@ -386,50 +391,262 @@ function reverse(lat, lon) {
 // ---------------------------------------------------------------------------------------------
 // Wetter (Open-Meteo, über den Server)
 // ---------------------------------------------------------------------------------------------
-function weather(familyId, fallbackLat, fallbackLon) {
+const DAILY_FIELDS = "weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min," +
+    "precipitation_probability_max,precipitation_sum,precipitation_hours,wind_speed_10m_max,wind_gusts_10m_max," +
+    "wind_direction_10m_dominant,uv_index_max,sunshine_duration,sunrise,sunset";
+const FORECAST_DAYS = 16;
+const DAY_MS = 24 * 60 * 60 * 1000;
+function numAt(arr, i, digits) {
+    if (!Array.isArray(arr) || arr[i] == null || !isFinite(arr[i])) return null;
+    const f = Math.pow(10, digits || 0);
+    return Math.round(Number(arr[i]) * f) / f;
+}
+function isoDay(v) { return /^\d{4}-\d{2}-\d{2}$/.test(String(v || "")) ? String(v) : ""; }
+function addDays(iso, n) {
+    const p = iso.split("-").map(Number);
+    const d = new Date(Date.UTC(p[0], p[1] - 1, p[2]) + n * DAY_MS);
+    return d.toISOString().slice(0, 10);
+}
+function daysBetween(a, b) {
+    const pa = a.split("-").map(Number), pb = b.split("-").map(Number);
+    return Math.round((Date.UTC(pb[0], pb[1] - 1, pb[2]) - Date.UTC(pa[0], pa[1] - 1, pa[2])) / DAY_MS);
+}
+// Heutiges Datum (Europa) – reicht für die Grenze zwischen Vorhersage und Erfahrungswerten
+function todayIso() { return new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString().slice(0, 10); }
+// Tageswerte aus einer Open-Meteo-Antwort (daily)
+function dailyRows(dly, limit) {
+    const time = Array.isArray(dly && dly.time) ? dly.time : [];
+    return time.slice(0, limit || time.length).map((t, i) => ({
+        date: String(t),
+        code: Array.isArray(dly.weather_code) && dly.weather_code[i] != null ? Number(dly.weather_code[i]) : null,
+        max: numAt(dly.temperature_2m_max, i),
+        min: numAt(dly.temperature_2m_min, i),
+        gefMax: numAt(dly.apparent_temperature_max, i),
+        gefMin: numAt(dly.apparent_temperature_min, i),
+        rain: numAt(dly.precipitation_probability_max, i),
+        mm: numAt(dly.precipitation_sum, i, 1),
+        regenStd: numAt(dly.precipitation_hours, i),
+        wind: numAt(dly.wind_speed_10m_max, i),
+        boeen: numAt(dly.wind_gusts_10m_max, i),
+        richtung: numAt(dly.wind_direction_10m_dominant, i),
+        uv: numAt(dly.uv_index_max, i),
+        sonne: Array.isArray(dly.sunshine_duration) && isFinite(dly.sunshine_duration[i]) ? Math.round(dly.sunshine_duration[i] / 360) / 10 : null,
+        auf: Array.isArray(dly.sunrise) ? String(dly.sunrise[i] || "").slice(11, 16) : "",
+        unter: Array.isArray(dly.sunset) ? String(dly.sunset[i] || "").slice(11, 16) : "",
+    }));
+}
+function placeOf(familyId, fallbackLat, fallbackLon) {
     const home = familyId ? get(familyId) : null;
-    let lat, lon, label;
-    if (home) {
-        lat = home.lat; lon = home.lon; label = home.ort || home.titel || "Zuhause";
-    } else if (validCoords(fallbackLat, fallbackLon)) {
-        lat = Number(fallbackLat); lon = Number(fallbackLon); label = "";
-    } else {
-        return { keinOrt: true };
-    }
+    if (home) return { lat: home.lat, lon: home.lon, label: home.ort || home.titel || "Zuhause", home: true };
+    if (validCoords(fallbackLat, fallbackLon)) return { lat: Number(fallbackLat), lon: Number(fallbackLon), label: "", home: false };
+    return null;
+}
+
+function weather(familyId, fallbackLat, fallbackLon) {
+    const pl = placeOf(familyId, fallbackLat, fallbackLon);
+    if (!pl) return { keinOrt: true };
     // auf ~1 km runden: gleicher Zwischenspeicher für alle, und das Wetter braucht es nicht genauer
-    const rl = Math.round(lat * 100) / 100, ro = Math.round(lon * 100) / 100;
-    const key = "pinnWetter:" + rl + "," + ro;
+    const rl = Math.round(pl.lat * 100) / 100, ro = Math.round(pl.lon * 100) / 100;
+    const key = "pinnWetter16:" + rl + "," + ro;
     let data = cacheGet(key, WETTER_TTL_MS);
     if (!data) {
         const url = "https://api.open-meteo.com/v1/forecast?latitude=" + rl + "&longitude=" + ro +
-            "&current=temperature_2m,weather_code,uv_index" +
-            "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset" +
-            "&forecast_days=7&timezone=auto";
-        const res = httpGet(url, 12);
+            "&current=temperature_2m,apparent_temperature,weather_code,uv_index,wind_speed_10m,relative_humidity_2m" +
+            "&daily=" + DAILY_FIELDS + "&forecast_days=" + FORECAST_DAYS + "&timezone=auto";
+        const res = httpGet(url, 15);
         if (res.statusCode !== 200) throw new Error("Wetterdienst gerade nicht erreichbar (Status " + res.statusCode + ").");
         const j = parseJson(res) || {};
-        const num = (arr, i) => (Array.isArray(arr) && arr[i] != null && isFinite(arr[i])) ? Math.round(arr[i]) : null;
         const cur = j.current || {};
-        const dly = j.daily || {};
         data = {
             jetzt: {
                 temp: isFinite(cur.temperature_2m) ? Math.round(cur.temperature_2m) : null,
+                gef: isFinite(cur.apparent_temperature) ? Math.round(cur.apparent_temperature) : null,
                 code: isFinite(cur.weather_code) ? Number(cur.weather_code) : null,
                 uv: isFinite(cur.uv_index) ? Math.round(cur.uv_index) : null,
+                wind: isFinite(cur.wind_speed_10m) ? Math.round(cur.wind_speed_10m) : null,
+                feuchte: isFinite(cur.relative_humidity_2m) ? Math.round(cur.relative_humidity_2m) : null,
             },
-            tage: (Array.isArray(dly.time) ? dly.time : []).slice(0, 7).map((t, i) => ({
-                date: String(t),
-                code: Array.isArray(dly.weather_code) ? dly.weather_code[i] : null,
-                max: num(dly.temperature_2m_max, i),
-                min: num(dly.temperature_2m_min, i),
-                rain: num(dly.precipitation_probability_max, i),
-                auf: Array.isArray(dly.sunrise) ? String(dly.sunrise[i] || "").slice(11, 16) : "",
-                unter: Array.isArray(dly.sunset) ? String(dly.sunset[i] || "").slice(11, 16) : "",
-            })),
+            tage: dailyRows(j.daily || {}, FORECAST_DAYS),
         };
         cacheSet(key, data);
     }
-    return Object.assign({ ort: label, zuhause: !!home }, data);
+    return Object.assign({ ort: pl.label, zuhause: pl.home }, data);
+}
+
+// Stundenverlauf eines Tages (nur auf Abruf: Tipp auf einen Tag in der Wetter-Ansicht)
+function weatherDay(familyId, datum, lat, lon) {
+    const day = isoDay(datum);
+    if (!day) throw new Error("Ungültiges Datum.");
+    let pl = null;
+    if (validCoords(lat, lon)) pl = { lat: Number(lat), lon: Number(lon) };
+    else pl = placeOf(familyId);
+    if (!pl) return { keinOrt: true, stunden: [] };
+    const today = todayIso();
+    const diff = daysBetween(today, day);
+    if (diff < -1 || diff > FORECAST_DAYS) return { stunden: [], ausserhalb: true };
+    const rl = Math.round(pl.lat * 100) / 100, ro = Math.round(pl.lon * 100) / 100;
+    const key = "pinnWetterTag:" + rl + "," + ro + ":" + day;
+    const cached = cacheGet(key, 30 * 60 * 1000);
+    if (cached) return cached;
+    const url = "https://api.open-meteo.com/v1/forecast?latitude=" + rl + "&longitude=" + ro +
+        "&hourly=temperature_2m,apparent_temperature,precipitation_probability,precipitation,weather_code,wind_speed_10m,is_day" +
+        "&start_date=" + day + "&end_date=" + day + "&timezone=auto";
+    const res = httpGet(url, 15);
+    if (res.statusCode !== 200) throw new Error("Wetterdienst gerade nicht erreichbar (Status " + res.statusCode + ").");
+    const j = parseJson(res) || {};
+    const h = j.hourly || {};
+    const time = Array.isArray(h.time) ? h.time : [];
+    const data = {
+        datum: day,
+        stunden: time.map((t, i) => ({
+            h: String(t).slice(11, 13),
+            temp: numAt(h.temperature_2m, i),
+            gef: numAt(h.apparent_temperature, i),
+            rain: numAt(h.precipitation_probability, i),
+            mm: numAt(h.precipitation, i, 1),
+            code: Array.isArray(h.weather_code) && h.weather_code[i] != null ? Number(h.weather_code[i]) : null,
+            wind: numAt(h.wind_speed_10m, i),
+            tag: Array.isArray(h.is_day) ? !!h.is_day[i] : true,
+        })),
+    };
+    cacheSet(key, data);
+    return data;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Urlaubswetter: Vorhersage (bis 16 Tage) + Erfahrungswerte (Ø der letzten drei Jahre)
+// ---------------------------------------------------------------------------------------------
+function shiftYear(iso, years) {
+    const y = Number(iso.slice(0, 4)) + years;
+    let md = iso.slice(5);
+    if (md === "02-29" && !((y % 4 === 0 && y % 100 !== 0) || y % 400 === 0)) md = "02-28";
+    return y + "-" + md;
+}
+function modeOf(list) {
+    const c = {};
+    let best = null, n = 0;
+    list.forEach(v => { if (v == null) return; c[v] = (c[v] || 0) + 1; if (c[v] > n) { n = c[v]; best = v; } });
+    return best == null ? null : Number(best);
+}
+// typischer Wetter-Code aus Regenmenge und Sonnenstunden (das Archiv kennt nur gemessene Werte)
+function codeFromClimate(mm, sonne, max) {
+    if (mm != null && mm >= 4) return (max != null && max <= 1) ? 73 : 63;
+    if (mm != null && mm >= 1) return (max != null && max <= 1) ? 71 : 61;
+    if (sonne != null && sonne >= 9) return 0;
+    if (sonne != null && sonne >= 5) return 2;
+    return 3;
+}
+function climateDays(lat, lon, from, to) {
+    const rl = Math.round(lat * 10) / 10, ro = Math.round(lon * 10) / 10;
+    const key = "pinnKlima:" + rl + "," + ro + ":" + from + ":" + to;
+    const cached = cacheGet(key, 7 * DAY_MS);
+    if (cached) return cached;
+    const perDay = {}; // MM-DD -> { max:[], min:[], mm:[], sonne:[] }
+    let ok = 0;
+    for (let back = 1; back <= 3; back++) {
+        const a = shiftYear(from, -back), b = shiftYear(to, -back);
+        try {
+            const url = "https://archive-api.open-meteo.com/v1/archive?latitude=" + rl + "&longitude=" + ro +
+                "&start_date=" + a + "&end_date=" + b +
+                "&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&timezone=auto";
+            const res = httpGet(url, 20);
+            if (res.statusCode !== 200) continue;
+            const j = parseJson(res) || {};
+            const d = j.daily || {};
+            (Array.isArray(d.time) ? d.time : []).forEach((t, i) => {
+                const md = String(t).slice(5);
+                const o = perDay[md] = perDay[md] || { max: [], min: [], mm: [], sonne: [] };
+                if (isFinite(d.temperature_2m_max[i])) o.max.push(Number(d.temperature_2m_max[i]));
+                if (isFinite(d.temperature_2m_min[i])) o.min.push(Number(d.temperature_2m_min[i]));
+                if (isFinite(d.precipitation_sum[i])) o.mm.push(Number(d.precipitation_sum[i]));
+                if (Array.isArray(d.sunshine_duration) && isFinite(d.sunshine_duration[i])) o.sonne.push(Number(d.sunshine_duration[i]) / 3600);
+            });
+            ok++;
+        } catch (e) { /* nächstes Jahr */ }
+    }
+    if (!ok) throw new Error("Erfahrungswerte gerade nicht abrufbar.");
+    const avg = a => a.length ? a.reduce((s, v) => s + v, 0) / a.length : null;
+    const out = [];
+    const n = daysBetween(from, to);
+    for (let i = 0; i <= n; i++) {
+        const date = addDays(from, i);
+        let o = perDay[date.slice(5)];
+        if (!o && date.slice(5) === "02-29") o = perDay["02-28"];
+        if (!o) { out.push({ date: date, quelle: "klima", code: null, max: null, min: null }); continue; }
+        const max = avg(o.max), min = avg(o.min), mm = avg(o.mm), sonne = avg(o.sonne);
+        const regenAnteil = o.mm.length ? Math.round(o.mm.filter(v => v >= 1).length / o.mm.length * 100) : null;
+        out.push({
+            date: date, quelle: "klima",
+            max: max == null ? null : Math.round(max), min: min == null ? null : Math.round(min),
+            mm: mm == null ? null : Math.round(mm * 10) / 10,
+            sonne: sonne == null ? null : Math.round(sonne * 10) / 10,
+            rain: regenAnteil, jahre: o.max.length,
+            code: codeFromClimate(mm, sonne, max),
+        });
+    }
+    cacheSet(key, out);
+    return out;
+}
+function seaTemps(lat, lon, from, to) {
+    const rl = Math.round(lat * 100) / 100, ro = Math.round(lon * 100) / 100;
+    const key = "pinnMeer:" + rl + "," + ro + ":" + from + ":" + to;
+    const cached = cacheGet(key, 3 * 60 * 60 * 1000);
+    if (cached) return cached;
+    const out = {};
+    try {
+        const url = "https://marine-api.open-meteo.com/v1/marine?latitude=" + rl + "&longitude=" + ro +
+            "&hourly=sea_surface_temperature&start_date=" + from + "&end_date=" + to + "&timezone=auto";
+        const res = httpGet(url, 12);
+        if (res.statusCode === 200) {
+            const j = parseJson(res) || {};
+            const h = j.hourly || {};
+            (Array.isArray(h.time) ? h.time : []).forEach((t, i) => {
+                const v = Array.isArray(h.sea_surface_temperature) ? h.sea_surface_temperature[i] : null;
+                if (v == null || !isFinite(v)) return;
+                const d = String(t).slice(0, 10);
+                if (out[d] == null || v > out[d]) out[d] = v;
+            });
+            Object.keys(out).forEach(k => { out[k] = Math.round(out[k]); });
+        }
+    } catch (e) { /* kein Meer oder Dienst nicht erreichbar */ }
+    cacheSet(key, out);
+    return out;
+}
+function tripWeather(lat, lon, von, bis) {
+    if (!validCoords(lat, lon)) throw new Error("Für das Reiseziel fehlen die Koordinaten.");
+    const from = isoDay(von), to = isoDay(bis) || isoDay(von);
+    if (!from || !to || to < from) throw new Error("Bitte einen gültigen Zeitraum wählen.");
+    if (daysBetween(from, to) > 60) throw new Error("Der Zeitraum ist zu lang (höchstens 60 Tage).");
+    const today = todayIso();
+    if (to < today) return { von: from, bis: to, tage: [], vorbei: true };
+    const last = addDays(today, FORECAST_DAYS - 1);
+    const start = from < today ? today : from;
+    let tage = [];
+    let fehler = "";
+    if (start <= last) {
+        const fEnd = to < last ? to : last;
+        const rl = Math.round(lat * 100) / 100, ro = Math.round(lon * 100) / 100;
+        const key = "pinnReise:" + rl + "," + ro + ":" + start + ":" + fEnd;
+        let rows = cacheGet(key, 30 * 60 * 1000);
+        if (!rows) {
+            try {
+                const url = "https://api.open-meteo.com/v1/forecast?latitude=" + rl + "&longitude=" + ro +
+                    "&daily=" + DAILY_FIELDS + "&start_date=" + start + "&end_date=" + fEnd + "&timezone=auto";
+                const res = httpGet(url, 15);
+                if (res.statusCode !== 200) throw new Error("Status " + res.statusCode);
+                rows = dailyRows((parseJson(res) || {}).daily || {}).map(r => Object.assign(r, { quelle: "prognose", unsicher: daysBetween(today, r.date) >= 7 }));
+                cacheSet(key, rows);
+            } catch (e) { rows = []; fehler = "Vorhersage gerade nicht abrufbar."; }
+        }
+        const sea = seaTemps(lat, lon, start, fEnd);
+        tage = rows.map(r => (sea[r.date] != null ? Object.assign({}, r, { wasser: sea[r.date] }) : r));
+    }
+    const cStart = start > last ? start : addDays(last, 1);
+    if (cStart <= to) {
+        try { tage = tage.concat(climateDays(lat, lon, cStart, to)); }
+        catch (e) { fehler = fehler || e.message; }
+    }
+    return { von: from, bis: to, tage: tage, fehler: fehler, bisVorhersage: last };
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -481,5 +698,5 @@ function schoolHolidays(bundesland, jahr) {
 }
 
 module.exports = {
-    COL, LAENDER, ensureSchema, get, optionsOf, info, save, setOptions, remove, suggest, reverse, weather, schoolHolidays, stateCode,
+    COL, LAENDER, ensureSchema, get, optionsOf, info, save, setOptions, remove, suggest, reverse, weather, weatherDay, tripWeather, schoolHolidays, stateCode,
 };

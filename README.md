@@ -53,11 +53,45 @@ No cloud account. No subscription. No ads, no tracking. Your family's data never
 | 📄 **Documents & vehicles** | Receipts and warranties, IDs with expiry reminders. Cars and bikes with inspection dates, tyre changes, fuel use and total cost. |
 | 📍 **Family & location** | Share your location right from pinn. – once or for a chosen time – and in the background via the free Traccar Client app (sends straight to pinn., no extra server). Plus a "way home" mode, an SOS alert with position and emergency numbers, emergency cards and arrival notifications for places. |
 | 🎒 **School & daycare** | Per child: timetable (type it in or snap a photo – the AI fills it in), drop-off and pick-up, homework on the kids' page, parent letters with deadlines that turn into reminders, and closure days straight in the calendar. |
+| 🐾 **Pets** | Profiles for dogs, cats, rabbits & co. with feeding times to tick off, walks, a "whose turn is it" rota, vaccinations and deworming with push reminders, weight chart, vet and emergency vet, a pet-sitter sheet to share and a printable "missing" poster. |
+| 🌦️ **Weather & holidays** | Tap the weather tile for 14 days with details for every day. Packing lists with destination and dates show the holiday weather – forecast or typical values – and suggest what to pack. |
 | 🏠 **Smart home** | Start Apple Shortcuts or Home Assistant actions from a task – the robot vacuum cleans the kitchen when the chore is due. |
 | 🔔 **Notifications** | Personal push messages on iPhone, iPad and Android, plus a notification bell that collects every change in the family. |
 | 🧩 **Everything else** | Family board with movable notes, global search, offline mode with automatic sync, dark mode, iPad dashboard with profile PINs, guest account, child lock. |
 
 pinn. speaks **English, Deutsch, Français and Español**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
+
+## What's new in 1.37
+
+**Pets, 14-day weather & holiday weather**
+
+- **Family → Pets:** a dedicated tab for dogs, cats, rabbits, birds, fish and more – photo, breed, age, microchip and pet passport number, vet and emergency vet to call.
+- **Today:** feeding times to tick off (who fed when), walks with duration and who went out, medication "given", and a weekly rota of whose turn it is – with "share out in turns".
+- **Health & prevention:** vaccinations, deworming, flea & tick protection, claws, teeth, hutch or aquarium cleaning – with suggestions per species. Push reminders 3 days before, on the day and weekly while overdue; push on the pet's birthday.
+- Weight chart, food linked to the pantry with "add to shopping list", GPS tracker from location sharing, weekly walk statistics, and a diary of the last days.
+- **For the pet sitter:** a ready-to-share profile with food, walks, medication, quirks and phone numbers · printable "missing" poster · packing list "holiday with a pet" · rainbow bridge 🌈 for pets that have passed away.
+- Pets also appear in the family members tile, the emergency tab, search and the weekly preview. Animals previously set up as family members can be moved over with one tap.
+- **Weather tile:** tap it for 14 days (days 8–14 marked as a trend). Every day shows feels-like temperature, wind and gusts with direction, UV index, hours of sunshine, rainfall, sunrise and sunset, an hourly forecast and what to wear.
+- **Holiday weather:** packing lists get a destination (with suggestions while typing) and dates – the number of days is calculated automatically. The list, the weather tile and the weather view show the weather at the destination, including the sea temperature on the coast.
+- More than 16 days ahead pinn. shows typical values (average of the same days over the last three years) and switches to the real forecast automatically. Packing tips that match the weather go onto the list with one tap.
+- **Weekly preview:** if a holiday falls in the coming week, the weather at the destination is summarised – average temperatures, rainy days, sunshine, sea temperature and every day as an icon.
+- Server: new `haustiere.pb.js` and `pinn-haustiere.js`, updated `zuhause.pb.js` and `pinn-zuhause.js`; language files en/fr/es updated.
+
+### Neu in 1.37 (Deutsch)
+
+**Haustiere, 14-Tage-Wetter & Urlaubswetter**
+
+- **Familie → Haustiere:** eigener Reiter für Hund, Katze, Kaninchen, Vogel, Fische und mehr – Foto, Rasse, Alter, Chip- und Heimtierausweis-Nummer, Tierarzt und Tiernotdienst zum Anrufen.
+- **Heute:** Fütterungszeiten zum Abhaken (wer hat wann gefüttert), Gassi-Runden mit Dauer und wer unterwegs war, Medikamente „gegeben“ und ein Wochenplan, wer dran ist – mit „Reihum verteilen“.
+- **Gesundheit & Vorsorge:** Impfungen, Wurmkur, Floh- & Zeckenschutz, Krallen, Zähne, Stall oder Aquarium – mit Vorschlägen je Tierart. Push-Erinnerung 3 Tage vorher, am Tag selbst und wöchentlich, solange überfällig; Push zum Geburtstag des Tiers.
+- Gewichtsverlauf als Diagramm, Futter mit Verknüpfung zum Vorrat und „Auf die Einkaufsliste“, GPS-Tracker aus der Ortung, Gassi-Wochenstatistik und Tagebuch der letzten Tage.
+- **Für den Tiersitter:** Steckbrief zum Teilen mit Futter, Gassi, Medikamenten, Eigenheiten und Telefonnummern · Vermisst-Plakat zum Drucken · Packliste „Urlaub mit Haustier“ · Regenbogenbrücke 🌈 für verstorbene Tiere.
+- Haustiere auch in der Kachel „Familienmitglieder“, im Reiter „Notfall“, in der Suche und in der Wochenvorschau. Tiere, die bisher als Familienmitglied angelegt waren, lassen sich mit einem Tipp übernehmen.
+- **Wetter-Kachel:** antippen für 14 Tage (Tag 8–14 als Tendenz markiert). Jeder Tag mit gefühlter Temperatur, Wind und Böen mit Richtung, UV-Index, Sonnenstunden, Regenmenge, Sonnenauf- und -untergang, Stundenverlauf und Anzieh-Tipps.
+- **Urlaubswetter:** Packlisten bekommen ein Reiseziel (Vorschläge beim Tippen) und einen Zeitraum – die Tageszahl rechnet sich selbst. Packliste, Wetter-Kachel und Wetter-Ansicht zeigen das Wetter am Urlaubsort, am Meer auch die Wassertemperatur.
+- Mehr als 16 Tage vorher zeigt pinn. Erfahrungswerte (Ø derselben Tage der letzten drei Jahre) und wechselt danach von selbst zur echten Vorhersage. Pack-Tipps passend zum Wetter kommen mit einem Tipp auf die Liste.
+- **Wochenvorschau:** steht in der kommenden Woche ein Urlaub an, wird das Wetter am Urlaubsort zusammengefasst – Ø Temperaturen, Regentage, Sonne, Wasser und jeder Tag als Symbol.
+- Server: neu `haustiere.pb.js` und `pinn-haustiere.js`, angepasst `zuhause.pb.js` und `pinn-zuhause.js`; Sprachdateien en/fr/es ergänzt.
 
 ## How it works
 
