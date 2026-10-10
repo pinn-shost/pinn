@@ -1,0 +1,19 @@
+# Data and settings of a running installation (the repository can be used as the project folder)
+.env
+konfig/
+pb_data/
+backups/
+wartung/
+caddy/data/
+caddy/config/
+traccar/
+tailscale/
+_alt/
+neu/
+# Libraries that pinn-setup.sh downloads on the NAS (pinned versions, see pinn-setup.sh)
+pb_public/vendor/pdfjs/
+pb_public/vendor/tesseract/
+pb_public/vendor/SHA256SUMS
+*.part
+.DS_Store
+Thumbs.db

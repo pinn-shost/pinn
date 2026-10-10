@@ -335,7 +335,10 @@ job_update() {
   status laeuft entpacken
   if ! tar -xzf "$U/pinn.tar.gz" -C "$U"; then rm -rf "$U"; status fehler entpacken entpacken; return; fi
   Q=$(find "$U" -mindepth 1 -maxdepth 1 -type d | head -1)
-  if [ -z "$Q" ] || [ ! -f "$Q/pinn-setup.sh" ] || [ ! -f "$Q/docker-compose.yaml" ] || [ ! -f "$Q/index.html" ]; then
+  # Ab 1.39.0 liegt die App im Release unter pb_public/index.html (Aufbau wie auf dem NAS);
+  # ältere Releases haben sie noch ganz oben.
+  if [ -z "$Q" ] || [ ! -f "$Q/pinn-setup.sh" ] || [ ! -f "$Q/docker-compose.yaml" ] \
+     || { [ ! -f "$Q/pb_public/index.html" ] && [ ! -f "$Q/index.html" ]; }; then
     rm -rf "$U"; status fehler entpacken paket; return
   fi
   ORDNER="pinn-$AUFTRAG_VERSION"

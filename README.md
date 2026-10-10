@@ -63,35 +63,21 @@ No cloud account. No subscription. No ads, no tracking. Your family's data never
 
 pinn. speaks **English, Deutsch, Français and Español**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
-## What's new in 1.38
+## What's new in 1.39
 
-**Home, letting, garden & voice control**
+**A new project structure for contributors**
 
-- **"House" is now "Home"** – with its own animated scene instead of a road: a house with garden, fence and birds, a city with train, taxi, car, bike and plane for flats, a garage with driveway. After sunset it turns to night with moon, stars and lit windows.
-- **Letting:** besides renting and owning there is now **"Let out"** – tenant with contact details, base rent, service charges and parking as recurring income in Finance, deposit, rent type, purchase and loan. Tiles for rental income, surplus and gross yield, reminders for the service charge statement and a possible rent increase, rental income in the Costs tab.
-- New types: **garage / parking space** and **apartment building**.
-- **Building blocks per home:** add or remove defects, costs, meters, maintenance, garden & plants and keys – the tabs adapt.
-- **Garden & plants:** indoor, balcony and garden plants with a watering and feeding plan, mowing in season, "💧 Watered" with one tap. Rain counts as watering outdoors, heat brings watering forward, frost warning for pots. Garden year (fruit trees, hedge, leaves, winter storage …) as tasks, plus a garden calendar of what to sow, plant and harvest this month.
-- **Keys:** which keys exist, how many and who has them.
-- **Voice control** (Settings → Voice control): "Hey Siri, pinn" – add things to the shopping list, have the list read out, create tasks and ask what's on today or tomorrow. With instructions for the Siri shortcut and for Android, in all four languages.
-- **Shopping list & pantry:** units switch between singular and plural automatically (1 can · 2 cans, Dose/Dosen, Glas/Gläser – "Dose(n)" is understood too). On phones, pantry items on the shopping list show just the number; weights and volumes (g, kg, ml, l …) stay.
-- Fixed: the icon in the header (e.g. the key) covered the first tile in Home and Vehicles.
-- Server: new `sprache.pb.js` and `pinn-sprache.js`, updated `pinn-zuhause.js` (rainfall of the last two days); language files en/fr/es updated.
+- **The repository now looks exactly like an installation:** server hooks in `pb_hooks/`, the web app in `pb_public/`, the Caddy configuration in `caddy/`, scripts and `docker-compose.yaml` at the top. Every file lies at the same path as on the NAS – nothing gets shuffled around during installation any more. The app itself doesn't change.
+- **Installing and updating work as before:** `sudo sh pinn-*/pinn-setup.sh` or the update button in pinn. `pinn-setup.sh` copies the folders from the release 1:1 into place, replaced files are kept in `_alt/`, your data stays untouched. Single loose files are still sorted in.
+- The update button recognises the new package layout (`pinn-wartung.sh`). The `index.html` at the top of the repository is only a placeholder so that installations on 1.38 can still update with the button – it is never installed.
 
-### Neu in 1.38 (Deutsch)
+### Neu in 1.39 (Deutsch)
 
-**Zuhause, Vermietung, Garten & Sprachsteuerung**
+**Neue Projektstruktur für Mitwirkende**
 
-- **Aus „Haus“ wird „Zuhause“** – mit eigener bewegter Szene statt Straße: Haus mit Garten, Zaun und Vögeln, Stadt mit Bahn, Taxi, Auto, Fahrrad und Flugzeug für Wohnungen, Garage mit Einfahrt. Nach Sonnenuntergang wird es Nacht mit Mond, Sternen und Licht in den Fenstern.
-- **Vermietung:** neben Miete und Eigentum jetzt auch **„Vermietet“** – Mieter mit Kontakt, Kaltmiete, Nebenkosten und Stellplatz als regelmäßige Einnahme in Finanzen, Kaution, Mietart, Kauf und Kredit. Kacheln für Mieteinnahmen, Überschuss und Brutto-Rendite, Hinweise zur Nebenkostenabrechnung und zu einer möglichen Mieterhöhung, Mieteinnahmen im Reiter Kosten.
-- Neue Arten: **Garage / Stellplatz** und **Mehrfamilienhaus**.
-- **Bausteine je Zuhause:** Mängel, Kosten, Zähler, Wartung, Garten & Pflanzen und Schlüssel hinzufügen oder entfernen – die Reiter passen sich an.
-- **Garten & Pflanzen:** Zimmer-, Balkon- und Gartenpflanzen mit Gieß- und Düngeplan, Rasen mähen in der Saison, „💧 Gegossen“ mit einem Tipp. Regen zählt draußen als gegossen, bei Hitze kommt das Gießen früher, Frost-Warnung für Kübel. Gartenjahr (Obstbäume, Hecke, Laub, Winterquartier …) als Aufgaben und ein Gartenkalender: was jetzt gesät, gepflanzt und geerntet wird.
-- **Schlüssel:** welche Schlüssel es gibt, wie viele und wer sie hat.
-- **Sprachsteuerung** (Einstellungen → Sprachsteuerung): „Hey Siri, pinn“ – Sachen auf die Einkaufsliste setzen, die Liste vorlesen lassen, Aufgaben anlegen und fragen, was heute oder morgen ansteht. Mit Anleitung für den Kurzbefehl und für Android, in allen vier Sprachen.
-- **Einkaufsliste & Vorrat:** Einheiten automatisch in Einzahl oder Mehrzahl (1 Dose · 2 Dosen, Packung/Packungen, Glas/Gläser – auch „Dose(n)“ wird verstanden). Am Handy zeigt die Einkaufsliste bei Vorrats-Artikeln nur die Zahl, Gewicht und Menge (g, kg, ml, l …) bleiben stehen.
-- Behoben: Das Symbol im Kopf (z. B. der Schlüssel) verdeckte bei Zuhause und Fahrzeugen die erste Kachel.
-- Server: neu `sprache.pb.js` und `pinn-sprache.js`, angepasst `pinn-zuhause.js` (Regenmenge der letzten zwei Tage); Sprachdateien en/fr/es ergänzt.
+- **Das Repository sieht jetzt genau so aus wie eine Installation:** Server-Hooks in `pb_hooks/`, die Web-App in `pb_public/`, die Caddy-Konfiguration in `caddy/`, Skripte und `docker-compose.yaml` oben. Jede Datei liegt am selben Ort wie auf dem NAS – bei der Installation wird nichts mehr umsortiert. An der App selbst ändert sich nichts.
+- **Installieren und Aktualisieren wie gewohnt:** `sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf in pinn. `pinn-setup.sh` übernimmt die Ordner aus dem Release eins zu eins, ersetzte Dateien landen in `_alt/`, deine Daten bleiben unberührt. Einzelne lose Dateien werden weiterhin einsortiert.
+- Der Update-Knopf erkennt den neuen Aufbau des Pakets (`pinn-wartung.sh`). Die `index.html` ganz oben im Repository ist nur ein Platzhalter, damit sich Installationen mit 1.38 noch per Knopf aktualisieren lassen – sie wird nie installiert.
 
 ## How it works
 
@@ -119,12 +105,12 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.22.1` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.39.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
-   The script sorts every file into place, downloads the libraries for PDF import and photo text recognition, and starts pinn.
+   The script copies every file into place, downloads the libraries for PDF import and photo text recognition, and starts pinn.
 4. Open `http://<NAS-IP>:8090` → **Log in as main admin** → password `Admin` → choose your own password.
 5. The **setup assistant** walks you through the rest – HTTPS, remote access via WireGuard or Tailscale, Google, AI, location and Home Assistant – step by step, in four languages.
 6. Open pinn. via its HTTPS address on each phone and add it to the home screen:
@@ -198,6 +184,29 @@ Profiles with child lock only see their own tasks and can't delete or change any
 <br>
 Nothing – pinn. is free and open source under the MIT license. Optional services like the Gemini AI have free tiers.
 </details>
+
+## Repository layout
+
+The repository has the same layout as an installation on the NAS – every file lies where it ends up:
+
+```
+pinn/
+├── pb_hooks/            server: *.pb.js hooks and their helper modules (pinn-*.js, calendar-sync.js)
+├── pb_public/           web app served by PocketBase
+│   ├── index.html       the app
+│   ├── einrichtung.js   setup assistant · datenexport.js  data export
+│   ├── lang/            translations (en, fr, es)
+│   └── vendor/          pinn.css, pocketbase/ (pdf.js and Tesseract are downloaded by the setup)
+├── caddy/Caddyfile      HTTPS reverse proxy
+├── docker-compose.yaml  all containers
+├── env.txt              template for .env
+├── pinn-setup.sh        install & update
+├── pinn-wartung.sh      backups & updates (container "wartung")
+├── pinn-pocketbase-update.sh
+└── index.html           placeholder only, never installed (keeps the update button of 1.38 working)
+```
+
+`pinn-setup.sh` copies `pb_hooks/`, `pb_public/` and `caddy/Caddyfile` 1:1 into the project folder; data folders (`pb_data/`, `konfig/`, `backups/`, `caddy/data/` …) are never touched.
 
 ## Contributing
 

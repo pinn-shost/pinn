@@ -1,36 +1,46 @@
 #!/bin/sh
 # ─────────────────────────────────────────────────────────────
-#  pinn. – Installation und Update in einem Schritt („setup.exe“ für das NAS)
+#  pinn. – installation and update in one step ("setup.exe" for the NAS)
 #
-#  So geht's:
-#   1. Im UGREEN-Dateimanager einen Ordner anlegen, z. B. /volume1/docker/Pocketbase
-#      (bei einem Update: der bestehende Projektordner).
-#   2. ALLE heruntergeladenen pinn.-Dateien einfach in diesen Ordner legen – oder in einen
-#      Unterordner „neu“ darin. Die Reihenfolge und Namen wie „datei (1).js“ sind egal.
-#      Von GitHub („Code → Download ZIP“ oder ZIP eines Releases): den entpackten Ordner
-#      („pinn-main“ bzw. z. B. „pinn-1.22.1“) einfach so, wie er ist, in diesen Ordner legen.
-#   3. Per SSH anmelden und ausführen:
+#  How to use:
+#   1. In the UGREEN file manager, create a folder, e.g. /volume1/docker/Pocketbase
+#      (for an update: the existing project folder).
+#   2. Put the unzipped release folder from GitHub ("pinn-main" or e.g. "pinn-1.39.0") into this
+#      folder as it is. Single loose pinn. files (also in a subfolder "neu") still work as well;
+#      download suffixes like "file (1).js" don't matter.
+#   3. Log in via SSH and run:
 #        cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
-#      (liegen die Dateien lose im Ordner:  sudo sh pinn-setup.sh)
-#   4. Das Skript sortiert alles an die richtige Stelle, legt fehlende Ordner an, startet pinn.
-#      und zeigt die Adresse, unter der die Einrichtung im Browser weitergeht.
+#      (if pinn. is already installed, this works too:  sudo sh pinn-setup.sh)
+#   4. The script copies everything into place, creates missing folders, starts pinn. and shows
+#      the address where the setup continues in the browser.
 #
-#  Sprache der Ausgabe: automatisch (Deutsch, Englisch, Französisch, Spanisch),
-#  fest wählbar mit z. B.:  sudo sh pinn-setup.sh --lang en
-#  Ersetzte Dateien landen zur Sicherheit in _alt/<Datum>/.
-#  Ist pinn. einmal installiert, gehen Updates auch per Knopf in der App (Einstellungen → System →
-#  Sicherungen & Updates) – der Container „wartung“ ruft dafür genau dieses Skript auf.
+#  Repository layout = installation layout (since 1.39.0): every file in the release lies at the
+#  same relative path at which it ends up in the project folder:
+#     pb_hooks/      server hooks and their helper modules  → ./pb_hooks
+#     pb_public/     the web app (index.html, icons, lang/, vendor/)  → ./pb_public
+#     caddy/         Caddyfile  → ./caddy/Caddyfile
+#     *.sh, docker-compose.yaml, env.txt, README, LICENSE  → project folder
+#  The index.html at the top of the repository is only a placeholder (the update button of
+#  pinn. 1.38 and older checks for it) and is never installed.
+#
+#  Output language: automatic (German, English, French, Spanish), can be fixed with e.g.
+#  sudo sh pinn-setup.sh --lang en
+#  Replaced files are kept in _alt/<date>/ just in case. Your data (pb_data, konfig, backups,
+#  caddy/data …) is never touched.
+#  Once pinn. is installed, updates also work with a button in the app (Settings → System →
+#  Backups & updates) – the container "wartung" runs exactly this script for that.
 # ─────────────────────────────────────────────────────────────
 
 cd "$(dirname "$0")" || exit 1
-# Aus dem entpackten GitHub-Ordner gestartet (pinn-main/pinn-setup.sh, pinn-1.22.1/pinn-setup.sh …)?
-# Dann ist der Projektordner eine Ebene höher.
+EIGENER_ORDNER=""   # release folder this script was started from (empty = project folder)
+# Started from the unzipped GitHub folder (pinn-main/pinn-setup.sh, pinn-1.39.0/pinn-setup.sh …)?
+# Then the project folder is one level up.
 case "$(basename "$(pwd)")" in
-  pinn-main|pinn-master|pinn-[0-9]*|pinn-v[0-9]*) cd .. || exit 1 ;;
+  pinn-main|pinn-master|pinn-[0-9]*|pinn-v[0-9]*) EIGENER_ORDNER=$(basename "$(pwd)"); cd .. || exit 1 ;;
 esac
 PROJEKT=$(pwd)
 
-# ── Sprache ─────────────────────────────────────────────────
+# ── Language ────────────────────────────────────────────────
 L=""
 if [ "$1" = "--lang" ] && [ -n "$2" ]; then L=$(echo "$2" | cut -c1-2); fi
 [ -z "$L" ] && L=$(echo "${LC_ALL:-${LC_MESSAGES:-${LANG:-en}}}" | cut -c1-2)
@@ -145,7 +155,10 @@ m() {
     de:backup) echo "Ersetzte Dateien gesichert in" ;;
     en:backup) echo "Replaced files backed up in" ;;
     fr:backup) echo "Fichiers remplacés sauvegardés dans" ;;
-    es:backup) echo "Archivos sustituidos guardados en" ;;
+    de:platzhalter) echo "pb_public/index.html ist nur der Platzhalter aus dem Repository – das Update ist nicht vollständig. Bitte den entpackten Release-Ordner (z. B. pinn-1.39.0) in den Projektordner legen und  sudo sh pinn-*/pinn-setup.sh  ausführen." ;;
+    en:platzhalter) echo "pb_public/index.html is only the placeholder from the repository – the update is incomplete. Please put the unzipped release folder (e.g. pinn-1.39.0) into the project folder and run  sudo sh pinn-*/pinn-setup.sh" ;;
+    fr:platzhalter) echo "pb_public/index.html n'est que le fichier de remplacement du dépôt – la mise à jour est incomplète. Placez le dossier de la version décompressé (p. ex. pinn-1.39.0) dans le dossier du projet et lancez  sudo sh pinn-*/pinn-setup.sh" ;;
+    es:platzhalter) echo "pb_public/index.html es solo el marcador del repositorio – la actualización está incompleta. Coloca la carpeta descomprimida de la versión (p. ej. pinn-1.39.0) en la carpeta del proyecto y ejecuta  sudo sh pinn-*/pinn-setup.sh" ;;
   esac
 }
 
@@ -157,7 +170,7 @@ fehler() { printf "${ROT}✘ %s${NORMAL}\n" "$1"; }
 echo
 printf "${FETT}pinn. – Setup${NORMAL}  ($PROJEKT)\n\n"
 
-# ── 1. Voraussetzungen ──────────────────────────────────────
+# ── 1. Requirements ─────────────────────────────────────────
 if [ "$(id -u)" -ne 0 ]; then fehler "$(m root)"; exit 1; fi
 if ! command -v docker >/dev/null 2>&1; then fehler "$(m docker)"; exit 1; fi
 CV=$(docker compose version --short 2>/dev/null | sed 's/^v//')
@@ -166,18 +179,19 @@ CMAJ=$(echo "$CV" | cut -d. -f1); CMIN=$(echo "$CV" | cut -d. -f2)
 if [ "$CMAJ" -lt 2 ] || { [ "$CMAJ" -eq 2 ] && [ "$CMIN" -lt 17 ]; }; then fehler "$(m compose) ($CV)"; exit 1; fi
 ok "Docker Compose $CV"
 
-# ── 2. Dateien einsortieren ─────────────────────────────────
+# ── 2. Put files into place ─────────────────────────────────
 echo "  $(m sort)"
 TS=$(date +%Y-%m-%d_%H%M%S)
 ALT="_alt/$TS"
 ANZ=0
-NEU_GELADEN=""   # in diesem Lauf neu hinzugekommene Bibliotheksdateien (für die Prüfsummen)
+NEU_GELADEN=""   # library files added in this run (for the checksums)
+LISTE=$(mktemp 2>/dev/null || echo "/tmp/pinn-setup.$$")
 
-# Download-Zusätze entfernen: „datei (1).js“ → „datei.js“, „x_pb.js“ → „x.pb.js“, „x.pb.js.txt“ → „x.pb.js“
+# Strip download suffixes: "file (1).js" → "file.js", "x_pb.js" → "x.pb.js", "x.pb.js.txt" → "x.pb.js"
 normname() {
   echo "$1" | sed -e 's/ ([0-9]*)\././' -e 's/ ([0-9]*)$//' -e 's/\.pb\.js\.txt$/.pb.js/' -e 's/_pb\.js$/.pb.js/'
 }
-# Zielordner (relativ zum Projekt) und Zielname für eine Datei – leer = bleibt, wo sie ist
+# Target path (relative to the project) for a single loose file – empty = stays where it is
 ziel() {
   case "$1" in
     *.pb.js)                         echo "pb_hooks/$1" ;;
@@ -192,17 +206,12 @@ ziel() {
     *) echo "" ;;
   esac
 }
-einsortieren() {
-  QUELLE="$1"
-  [ -f "$QUELLE" ] || return 0
-  BASIS=$(basename "$QUELLE")
-  NAME=$(normname "$BASIS")
-  ZIEL=$(ziel "$NAME")
-  if [ -z "$ZIEL" ]; then
-    # gehört in den Projektordner selbst (z. B. docker-compose.yaml aus „neu“)
-    [ "$(dirname "$QUELLE")" = "." ] && [ "$BASIS" = "$NAME" ] && return 0
-    ZIEL="$NAME"
-  fi
+# The index.html at the top of the repository is only a placeholder – recognised by its marker
+platzhalter() { grep -q 'pinn-repo-placeholder' "$1" 2>/dev/null; }
+
+# Move one file to its target (relative to the project); an existing different file goes to _alt/
+uebernehmen() {   # uebernehmen <source> <target> <name shown in the output>
+  QUELLE="$1"; ZIEL="$2"
   [ "$QUELLE" = "./$ZIEL" ] && return 0
   mkdir -p "$(dirname "$ZIEL")"
   if [ -f "$ZIEL" ]; then
@@ -212,21 +221,74 @@ einsortieren() {
   fi
   mv "$QUELLE" "$ZIEL"
   case "$ZIEL" in pb_public/vendor/pdfjs/*|pb_public/vendor/tesseract/*) NEU_GELADEN="$NEU_GELADEN $ZIEL" ;; esac
-  echo "    $BASIS → $ZIEL"
+  echo "    $3 → $ZIEL"
   ANZ=$((ANZ + 1))
 }
-for f in ./* ./neu/* ./pinn-main/* ./pinn-master/* ./pinn-[0-9]*/* ./pinn-v[0-9]*/*; do
+
+# A single loose file (project folder, "neu", or the top level of a release folder)
+einsortieren() {
+  QUELLE="$1"
+  [ -f "$QUELLE" ] || return 0
+  BASIS=$(basename "$QUELLE")
+  NAME=$(normname "$BASIS")
+  if [ "$NAME" = "index.html" ] && platzhalter "$QUELLE"; then
+    # placeholder: never install it; remove it from release folders, leave it in a git checkout
+    [ "$(dirname "$QUELLE")" = "." ] || rm -f "$QUELLE"
+    return 0
+  fi
+  ZIEL=$(ziel "$NAME")
+  if [ -z "$ZIEL" ]; then
+    # belongs into the project folder itself (e.g. docker-compose.yaml from "neu")
+    [ "$(dirname "$QUELLE")" = "." ] && [ "$BASIS" = "$NAME" ] && return 0
+    ZIEL="$NAME"
+  fi
+  uebernehmen "$QUELLE" "$ZIEL" "$BASIS"
+}
+
+# A whole release folder: loose top-level files as above, then the folders pb_hooks/, pb_public/
+# and caddy/Caddyfile 1:1 at the same relative path. Anything else (.github, tests …) is not installed.
+paket_einsortieren() {   # paket_einsortieren <folder>
+  PK="$1"
+  [ -d "$PK" ] || return 0
+  for f in "$PK"/*; do
+    [ -f "$f" ] || continue
+    einsortieren "$f"
+  done
+  : > "$LISTE"
+  [ -d "$PK/pb_hooks" ]  && find "$PK/pb_hooks"  -type f >> "$LISTE"
+  [ -d "$PK/pb_public" ] && find "$PK/pb_public" -type f >> "$LISTE"
+  [ -f "$PK/caddy/Caddyfile" ] && echo "$PK/caddy/Caddyfile" >> "$LISTE"
+  sort -o "$LISTE" "$LISTE"
+  while IFS= read -r f; do
+    [ -f "$f" ] || continue
+    REL=${f#"$PK"/}
+    B=$(basename "$REL"); D=$(dirname "$REL")
+    case "$B" in .DS_Store|._*|Thumbs.db|*.part) rm -f "$f"; continue ;; esac
+    N=$(normname "$B")
+    uebernehmen "$f" "$D/$N" "$REL"
+  done < "$LISTE"
+  # Repository leftovers that don't belong on the NAS, then the (now empty) folders
+  rm -rf "$PK/.github" "$PK/.gitignore" "$PK/.gitattributes" "$PK/__MACOSX"
+  find "$PK" -depth -type d 2>/dev/null | while IFS= read -r d; do rmdir "$d" 2>/dev/null; done
+}
+
+# Loose files in the project folder and in "neu"
+for f in ./* ./neu/*; do
   [ -f "$f" ] || continue
   einsortieren "$f"
 done
 rmdir neu 2>/dev/null
-# Entpackter GitHub-Ordner: Repository-Reste (.github, .gitignore) entfernen, dann den Ordner selbst
-for d in pinn-main pinn-master pinn-[0-9]* pinn-v[0-9]*; do
-  [ -d "$d" ] || continue
-  rm -rf "$d/.github" "$d/.gitignore" "$d/.gitattributes"
-  rmdir "$d" 2>/dev/null
-done
-# Hook-Dateien, die schon in pb_hooks liegen, aber einen Download-Zusatz tragen
+# Release folders: if started from one, only that one; otherwise every release folder found
+if [ -n "$EIGENER_ORDNER" ]; then
+  paket_einsortieren "./$EIGENER_ORDNER"
+else
+  for d in ./pinn-main ./pinn-master ./pinn-[0-9]* ./pinn-v[0-9]*; do
+    [ -d "$d" ] || continue
+    paket_einsortieren "$d"
+  done
+fi
+rm -f "$LISTE"
+# Hook files already in pb_hooks, but with a download suffix
 for f in pb_hooks/*; do
   [ -f "$f" ] || continue
   B=$(basename "$f"); N=$(normname "$B")
@@ -238,8 +300,10 @@ if [ "$ANZ" -gt 0 ]; then ok "$ANZ $(m sorted)"; else ok "$(m nothing)"; fi
 [ -d "$ALT" ] && echo "  $(m backup) $ALT"
 
 if [ ! -f docker-compose.yaml ] && [ ! -f docker-compose.yml ]; then fehler "$(m nocompose)"; exit 1; fi
+# The placeholder must never be the installed app
+if platzhalter pb_public/index.html; then fehler "$(m platzhalter)"; exit 1; fi
 
-# ── 3. Ordner und Grunddateien ──────────────────────────────
+# ── 3. Folders and basic files ──────────────────────────────
 mkdir -p pb_data pb_public/lang pb_public/vendor/pocketbase pb_public/vendor/pdfjs pb_public/vendor/tesseract pb_hooks \
          caddy/data caddy/config konfig backups wartung traccar/data traccar/logs tailscale
 chmod 700 konfig backups wartung 2>/dev/null
@@ -253,7 +317,7 @@ fi
 
 if [ ! -f caddy/Caddyfile ]; then
   cat > caddy/Caddyfile <<'CADDY'
-# pinn. – Caddy (HTTPS über DuckDNS). Subdomain und Token kommen aus der Einrichtung in pinn.
+# pinn. – Caddy (HTTPS via DuckDNS). Subdomain and token come from the setup in pinn.
 {
 	auto_https disable_redirects
 }
@@ -269,16 +333,16 @@ if [ ! -f caddy/Caddyfile ]; then
 CADDY
 fi
 
-# Bibliotheken für PDF-Import (pdf.js) und „Foto einlesen“ (Tesseract) – liegen selbst gehostet auf
-# dem NAS, damit pinn. keinen Code von fremden Servern lädt. Fehlen sie (Neuinstallation), lädt das
-# Skript sie einmalig herunter. Schon vorhandene Dateien bleiben unangetastet.
-# Feste Versionen (ab 1.38.1): npm-Versionen sind unveränderlich – es wird immer genau diese Datei
-# geladen, nie automatisch eine neuere. Neue Versionen nur hier bewusst eintragen.
+# Libraries for PDF import (pdf.js) and "read photo" (Tesseract) – self-hosted on the NAS so that
+# pinn. never loads code from third-party servers. If they are missing (new installation), the
+# script downloads them once. Files that are already there are left untouched.
+# Pinned versions (since 1.38.1): npm versions are immutable – exactly this file is always
+# downloaded, never a newer one automatically. Only enter new versions here on purpose.
 PDFJS_VERSION=4.10.38
 TESSERACT_VERSION=5.1.1
 TESSERACT_CORE_VERSION=5.1.1
 TESSERACT_DEU_VERSION=1.0.0
-hole() {  # hole <URL> <Ziel>
+hole() {  # hole <URL> <target>
   [ -s "$2" ] && return 0
   mkdir -p "$(dirname "$2")"
   if command -v curl >/dev/null 2>&1; then
@@ -311,25 +375,25 @@ else
   ok "$(m libsok)"
 fi
 
-# Prüfsummen der Bibliotheken (pb_public/vendor/SHA256SUMS): Beim ersten Lauf wird festgehalten, wie
-# jede Datei aussieht; neu geladene Dateien werden eingetragen. Bei jedem weiteren Lauf (auch bei
-# Updates per Knopf) wird geprüft, ob sich seitdem etwas verändert hat – dann gibt es eine Warnung.
+# Library checksums (pb_public/vendor/SHA256SUMS): the first run records what every file looks
+# like; newly downloaded files are added. Every later run (including updates via the button)
+# checks whether anything has changed since – if so, a warning is shown.
 SUMS="$V/SHA256SUMS"
 if command -v sha256sum >/dev/null 2>&1; then
   touch "$SUMS"; chmod 644 "$SUMS" 2>/dev/null
   NEU_EINTRAG=0
-  # neu geladene oder neu einsortierte Dateien: alten Eintrag ersetzen
+  # newly downloaded or newly installed files: replace the old entry
   for f in $NEU_GELADEN; do
     [ -s "$f" ] || continue
     awk -v p="$f" '$2 != p' "$SUMS" > "$SUMS.tmp" && mv "$SUMS.tmp" "$SUMS"
     sha256sum "$f" >> "$SUMS"; NEU_EINTRAG=1
   done
-  # vorhandene Dateien, die noch keinen Eintrag haben (bestehende Installationen beim ersten Lauf)
+  # existing files without an entry yet (existing installations on their first run)
   for f in $(find "$V/pdfjs" "$V/tesseract" -type f ! -name '*.part' 2>/dev/null | sort); do
     awk -v p="$f" '$2 == p { gef=1 } END { exit gef ? 0 : 1 }' "$SUMS" && continue
     sha256sum "$f" >> "$SUMS"; NEU_EINTRAG=1
   done
-  # Einträge zu Dateien, die es nicht mehr gibt, entfernen
+  # remove entries for files that no longer exist
   awk '{ print $2 }' "$SUMS" | while read -r f; do
     [ -f "$f" ] || { awk -v p="$f" '$2 != p' "$SUMS" > "$SUMS.tmp" && mv "$SUMS.tmp" "$SUMS"; }
   done
@@ -345,7 +409,7 @@ if command -v sha256sum >/dev/null 2>&1; then
   fi
 fi
 
-# Fehlende Hilfsdateien (per require() eingebunden) melden
+# Report missing helper modules (loaded via require())
 FEHLT=""
 for mod in $(grep -ho 'require(`${__hooks}/[^`]*`)' pb_hooks/*.pb.js pb_hooks/*.js 2>/dev/null \
            | sed 's/.*__hooks}\/\([^`]*\)`)/\1/' | sort -u); do
@@ -356,15 +420,15 @@ if [ -n "$FEHLT" ]; then
   for mod in $FEHLT; do echo "    $mod"; done
 fi
 
-# ── 4. Starten ──────────────────────────────────────────────
-# Der frühere Container „backup“ ist im Container „wartung“ aufgegangen – den alten entfernen,
-# sonst würde er weiter sichern und ältere Wochensicherungen löschen.
+# ── 4. Start ────────────────────────────────────────────────
+# The former container "backup" has been merged into the container "wartung" – remove the old one,
+# otherwise it would keep backing up and delete older weekly backups.
 if ! grep -q 'container_name: backup' docker-compose.yaml 2>/dev/null; then
   docker rm -f backup >/dev/null 2>&1
 fi
 echo "  $(m start)"
 if ! docker compose up -d --build; then fehler "$(m startfail)"; exit 1; fi
-# PocketBase liest pb_hooks nur beim Start: nach neuen Dateien einmal neu starten
+# PocketBase reads pb_hooks only at startup: restart once after new files
 if [ "$ANZ" -gt 0 ]; then docker restart pocketbase >/dev/null 2>&1; fi
 
 echo "  $(m wait)"
@@ -376,7 +440,7 @@ done
 if [ "$LAEUFT" -ne 1 ]; then fehler "$(m noresp)"; exit 1; fi
 ok "$(m running)"
 
-# ── 5. Wie geht's weiter? ───────────────────────────────────
+# ── 5. What's next? ─────────────────────────────────────────
 IP=$(ip -4 route get 1.1.1.1 2>/dev/null | sed -n 's/.* src \([0-9.]*\).*/\1/p' | head -1)
 [ -z "$IP" ] && IP=$(hostname -I 2>/dev/null | awk '{print $1}')
 [ -z "$IP" ] && IP="<NAS-IP>"
