@@ -17,7 +17,7 @@
 #  Repository layout = installation layout (since 1.39.0): every file in the release lies at the
 #  same relative path at which it ends up in the project folder:
 #     pb_hooks/      server hooks and their helper modules  → ./pb_hooks
-#     pb_public/     the web app (index.html, icons, lang/, vendor/)  → ./pb_public
+#     pb_public/     the web app (index.html, icons, js/, lang/, vendor/)  → ./pb_public
 #     caddy/         Caddyfile  → ./caddy/Caddyfile
 #     *.sh, docker-compose.yaml, env.txt, README, LICENSE  → project folder
 #  The index.html at the top of the repository is only a placeholder (the update button of
@@ -202,6 +202,7 @@ ziel() {
     pinn.css)                        echo "pb_public/vendor/pinn.css" ;;
     pocketbase_umd.js|pocketbase.umd.js|pocketbase.umd.min.js) echo "pb_public/vendor/pocketbase/pocketbase.umd.js" ;;
     pdf.min.mjs|pdf.worker.min.mjs)  echo "pb_public/vendor/pdfjs/$1" ;;
+    ausblick.js)                     echo "pb_public/js/$1" ;;   # app parts split out of index.html
     Caddyfile)                       echo "caddy/Caddyfile" ;;
     *) echo "" ;;
   esac

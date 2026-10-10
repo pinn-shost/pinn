@@ -63,21 +63,25 @@ No cloud account. No subscription. No ads, no tracking. Your family's data never
 
 pinn. speaks **English, Deutsch, Français and Español**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
-## What's new in 1.39
+## What's new in 1.40
 
-**A new project structure for contributors**
+**The app code is being split into separate files (part 1)**
 
-- **The repository now looks exactly like an installation:** server hooks in `pb_hooks/`, the web app in `pb_public/`, the Caddy configuration in `caddy/`, scripts and `docker-compose.yaml` at the top. Every file lies at the same path as on the NAS – nothing gets shuffled around during installation any more. The app itself doesn't change.
-- **Installing and updating work as before:** `sudo sh pinn-*/pinn-setup.sh` or the update button in pinn. `pinn-setup.sh` copies the folders from the release 1:1 into place, replaced files are kept in `_alt/`, your data stays untouched. Single loose files are still sorted in.
-- The update button recognises the new package layout (`pinn-wartung.sh`). The `index.html` at the top of the repository is only a placeholder so that installations on 1.38 can still update with the button – it is never installed.
+- **First step towards smaller files:** the web app used to be one huge `index.html` with more than 50,000 lines of JavaScript. It is now being moved step by step into plain script files under `pb_public/js/` – no build step, no framework, just `<script src>`. The app looks and works exactly as before.
+- **First file: `js/ausblick.js`** – the weekly preview and the monthly finance outlook. It is loaded last and starts the app.
+- **Works offline as before:** the service worker (`sw.pb.js`) now keeps the files in `js/` on the device and removes old versions automatically.
+- **Clear start check:** if a file in `pb_public/js/` is missing on the NAS, pinn. shows which one instead of an empty page.
+- Installing and updating work as before (`sudo sh pinn-*/pinn-setup.sh` or the update button). Your data is not touched.
 
-### Neu in 1.39 (Deutsch)
+### Neu in 1.40 (Deutsch)
 
-**Neue Projektstruktur für Mitwirkende**
+**Der App-Code wird in einzelne Dateien aufgeteilt (Teil 1)**
 
-- **Das Repository sieht jetzt genau so aus wie eine Installation:** Server-Hooks in `pb_hooks/`, die Web-App in `pb_public/`, die Caddy-Konfiguration in `caddy/`, Skripte und `docker-compose.yaml` oben. Jede Datei liegt am selben Ort wie auf dem NAS – bei der Installation wird nichts mehr umsortiert. An der App selbst ändert sich nichts.
-- **Installieren und Aktualisieren wie gewohnt:** `sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf in pinn. `pinn-setup.sh` übernimmt die Ordner aus dem Release eins zu eins, ersetzte Dateien landen in `_alt/`, deine Daten bleiben unberührt. Einzelne lose Dateien werden weiterhin einsortiert.
-- Der Update-Knopf erkennt den neuen Aufbau des Pakets (`pinn-wartung.sh`). Die `index.html` ganz oben im Repository ist nur ein Platzhalter, damit sich Installationen mit 1.38 noch per Knopf aktualisieren lassen – sie wird nie installiert.
+- **Erster Schritt zu kleineren Dateien:** Die Web-App war bisher eine riesige `index.html` mit über 50.000 Zeilen JavaScript. Sie wird jetzt Schritt für Schritt in einfache Skriptdateien unter `pb_public/js/` verschoben – ohne Build-Schritt, ohne Framework, nur `<script src>`. Aussehen und Bedienung bleiben genau gleich.
+- **Erste Datei: `js/ausblick.js`** – die Wochenvorschau und der Monatsausblick Finanzen. Sie wird als letzte geladen und startet die App.
+- **Offline wie gewohnt:** Der Service Worker (`sw.pb.js`) hält die Dateien aus `js/` jetzt auf dem Gerät vor und räumt alte Fassungen selbst auf.
+- **Klare Startprüfung:** Fehlt auf dem NAS eine Datei in `pb_public/js/`, zeigt pinn. welche – statt einer leeren Seite.
+- Installieren und Aktualisieren wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf). Deine Daten bleiben unberührt.
 
 ## How it works
 
@@ -193,7 +197,8 @@ The repository has the same layout as an installation on the NAS – every file 
 pinn/
 ├── pb_hooks/            server: *.pb.js hooks and their helper modules (pinn-*.js, calendar-sync.js)
 ├── pb_public/           web app served by PocketBase
-│   ├── index.html       the app
+│   ├── index.html       the app (HTML, styles and most of the code)
+│   ├── js/              app code split out of index.html, plain <script> files without a build step
 │   ├── einrichtung.js   setup assistant · datenexport.js  data export
 │   ├── lang/            translations (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js and Tesseract are downloaded by the setup)
