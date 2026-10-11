@@ -114,7 +114,7 @@ function abT(k, vars) {
   const d = AB_T[abLang()];
   let s = (d && d[k] != null) ? d[k] : (AB_T.en[k] != null ? AB_T.en[k] : k);
   if (vars) s = s.replace(/\{(\w+)\}/g, (m, n) => (vars[n] != null ? String(vars[n]) : ''));
-  try { if (window.PINN_I18N && PINN_I18N.term) s = PINN_I18N.term(s); } catch (e) { /* egal */ }
+  try { if (window.PINN_I18N && PINN_I18N.term) s = PINN_I18N.term(s); } catch (e) { /* ignore */ }
   return s;
 }
 // Translate labels from the app (categories, waste types …) via the dictionary
@@ -170,10 +170,10 @@ let abOpenArt = '';
 let abTimer = null;
 function abLsKey() { const u = currentUser(); return u ? 'pinn.ausblick.' + u.id : ''; }
 function abLocal() {
-  try { const o = JSON.parse(localStorage.getItem(abLsKey()) || 'null'); if (o && typeof o === 'object') return o; } catch (e) { /* egal */ }
+  try { const o = JSON.parse(localStorage.getItem(abLsKey()) || 'null'); if (o && typeof o === 'object') return o; } catch (e) { /* ignore */ }
   return { woche: '', monat: '', offen: {} };
 }
-function abLocalWrite(o) { try { if (abLsKey()) localStorage.setItem(abLsKey(), JSON.stringify(o)); } catch (e) { /* egal */ } }
+function abLocalWrite(o) { try { if (abLsKey()) localStorage.setItem(abLsKey(), JSON.stringify(o)); } catch (e) { /* ignore */ } }
 function abSeen(art, key) {
   const l = abLocal();
   const s = abServer && abServer.gesehen ? abServer.gesehen[art] || '' : '';
@@ -232,7 +232,7 @@ function abRenderBanner() {
   if (!b) return;
   const it = abOpenArt ? null : abBannerItem();
   if (!it) {
-    if (!b.classList.contains('hidden')) { b.classList.add('hidden'); try { hwLayout(); } catch (e) { /* egal */ } }
+    if (!b.classList.contains('hidden')) { b.classList.add('hidden'); try { hwLayout(); } catch (e) { /* ignore */ } }
     return;
   }
   let title, sub, icon;
@@ -250,7 +250,7 @@ function abRenderBanner() {
     <span class="hw-chev" aria-hidden="true">›</span>
     <button type="button" class="ab-b-x" data-abx="1" aria-label="${abEsc(abT('schliessen'))}">×</button>`;
   b.classList.remove('hidden');
-  try { hwLayout(); } catch (e) { /* egal */ }
+  try { hwLayout(); } catch (e) { /* ignore */ }
 }
 function abBannerOffset() {
   const b = document.getElementById('abBanner');
@@ -332,7 +332,7 @@ function abClose() {
       const kid = go.slice(4);
       if (kid && typeof kassenSetActive === 'function' && kasseById(kid)) kassenSetActive(kid);
       setView('finanzen');
-      try { finSetTab('ausgaben'); } catch (err) { /* egal */ }
+      try { finSetTab('ausgaben'); } catch (err) { /* ignore */ }
     }
   });
 })();
