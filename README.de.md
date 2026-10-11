@@ -72,15 +72,14 @@ Dein Tag auf einen Blick: Wetter, Termine, Aufgaben, Essen und die Familie – s
 
 pinn. spricht **English, Deutsch, Français und Español**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
-## Neu in 1.42
+## Neu in 1.43
 
-**Der App-Code wird in einzelne Dateien aufgeteilt (Teil 3)**
+**Der App-Code wird in einzelne Dateien aufgeteilt (Teil 4)**
 
-- **Dritte Datei: `js/familie.js`** – der ganze Bereich „Familie“ liegt jetzt in einer eigenen Datei unter `pb_public/js/`: Notfallpässe, Ortung mit Karte, SOS, Schule & Kita, Haustiere und die Wetter-Ansicht mit Urlaubswetter. Der Code wurde unverändert verschoben, nur die Kommentare sind jetzt auf Englisch.
-- **Ladereihenfolge:** `familie.js` wird direkt nach dem App-Code in der `index.html` geladen, vor `js/hinweise.js` und `js/ausblick.js`. `ausblick.js` bleibt die letzte Datei und startet die App.
-- **Für dich ändert sich nichts:** Aussehen und Bedienung bleiben genau gleich, auch offline. Die Startprüfung meldet auch `js/familie.js`, falls sie auf dem NAS fehlt.
-- **Diese Seite in vier Sprachen:** English, Deutsch, Español und Français – dazu neue Screenshots vom Dashboard und der iPad-Übersicht.
-- Installieren und Aktualisieren wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf). Eine lose `familie.js` wird automatisch nach `pb_public/js/` einsortiert. Deine Daten bleiben unberührt.
+- **Vierte Datei: `js/listen.js`** – die Listen (Packen, Geschenke, Wünsche, Checklisten und Ideen) und die globale Suche liegen jetzt in einer eigenen Datei unter `pb_public/js/`. Der Code wurde unverändert verschoben, nur die Kommentare sind jetzt auf Englisch.
+- **Ladereihenfolge:** `listen.js` wird direkt nach dem App-Code in der `index.html` geladen, vor `js/familie.js`, `js/hinweise.js` und `js/ausblick.js`. `ausblick.js` bleibt die letzte Datei und startet die App.
+- **Für dich ändert sich nichts:** Aussehen und Bedienung bleiben genau gleich, auch offline. Die Startprüfung meldet auch `js/listen.js`, falls sie auf dem NAS fehlt.
+- Installieren und Aktualisieren wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf). Eine lose `listen.js` wird automatisch nach `pb_public/js/` einsortiert. Deine Daten bleiben unberührt.
 
 ## So funktioniert es
 
@@ -108,7 +107,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade die ZIP der [neuesten Version](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke sie.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und lege den entpackten Ordner (z. B. `pinn-1.42.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und lege den entpackten Ordner (z. B. `pinn-1.43.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und starte:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -198,7 +197,7 @@ pinn/
 ├── pb_public/           Web-App, ausgeliefert von PocketBase
 │   ├── index.html       die App (HTML, Styles und der größte Teil des Codes)
 │   ├── js/              aus der index.html ausgelagerter App-Code, einfache <script>-Dateien ohne Build-Schritt
-│   │                    (familie.js, hinweise.js, ausblick.js – ausblick.js kommt immer zuletzt)
+│   │                    (listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js kommt immer zuletzt)
 │   ├── einrichtung.js   Einrichtungs-Assistent · datenexport.js  Datenexport
 │   ├── lang/            Übersetzungen (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js und Tesseract lädt das Setup herunter)
