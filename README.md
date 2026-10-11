@@ -12,12 +12,18 @@
 </p>
 
 <p align="center">
+  <b>🇬🇧 English</b> ·
+  <a href="README.de.md">🇩🇪 Deutsch</a> ·
+  <a href="README.es.md">🇪🇸 Español</a> ·
+  <a href="README.fr.md">🇫🇷 Français</a>
+</p>
+
+<p align="center">
   <a href="#screenshots">Screenshots</a> ·
   <a href="#what-pinn-does">Features</a> ·
   <a href="#installation">Installation</a> ·
   <a href="#privacy">Privacy</a> ·
-  <a href="#faq">FAQ</a> ·
-  <a href="README.de.md">🇩🇪 Deutsch</a>
+  <a href="#faq">FAQ</a>
 </p>
 
 ---
@@ -28,18 +34,21 @@ No cloud account. No subscription. No ads, no tracking. Your family's data never
 
 ## Screenshots
 
-<table>
-  <tr>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/home.png" alt="Home screen with weather, today's tasks and upcoming events" width="230"><br><sub><b>Home</b> – your day at a glance</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/calendar.png" alt="Family calendar in week view" width="230"><br><sub><b>Calendar</b> – iCloud and Google in one view</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/meals.png" alt="Weekly meal plan with recipes" width="230"><br><sub><b>Meals</b> – plan the week, shop in one tap</sub></td>
-  </tr>
-  <tr>
-    <td align="center"><img src=".github/assets/screenshots/lists.png" alt="Shopping list sorted by shop" width="230"><br><sub><b>Lists</b> – shopping, pantry, packing</sub></td>
-    <td align="center"><img src=".github/assets/screenshots/finance.png" alt="Budget overview with spending by category" width="230"><br><sub><b>Finance</b> – budget, savings, pocket money</sub></td>
-    <td align="center"><img src=".github/assets/screenshots/kids.png" alt="Kids' page with daily routine" width="230"><br><sub><b>Kids</b> – a playful daily routine</sub></td>
-  </tr>
-</table>
+### Dashboard
+
+The start page on a shared iPad: everyone in the family taps their own picture – with an optional PIN, children go straight to their own page.
+
+<p align="center">
+  <img src=".github/assets/screenshots/dashboard.png" alt="pinn. dashboard: the family's profiles to choose from" width="760">
+</p>
+
+### iPad overview
+
+Your day at a glance: weather, appointments, tasks, meals and the family – arranged the way you like.
+
+<p align="center">
+  <img src=".github/assets/screenshots/ipad-overview.png" alt="pinn. overview on the iPad with tiles for weather, calendar, tasks and family" width="760">
+</p>
 
 ## What pinn. does
 
@@ -63,23 +72,15 @@ No cloud account. No subscription. No ads, no tracking. Your family's data never
 
 pinn. speaks **English, Deutsch, Français and Español**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
-## What's new in 1.41
+## What's new in 1.42
 
-**The app code is being split into separate files (part 2)**
+**The app code is being split into separate files (part 3)**
 
-- **Second file: `js/hinweise.js`** – the notification bell, the "way home" banner, the "Going shopping?" notice and the shop addresses now live in their own file under `pb_public/js/`. The code was moved unchanged; only its comments are now in English.
-- **Load order:** `hinweise.js` is loaded right before `js/ausblick.js`, which stays last and starts the app.
-- **Nothing changes for you:** the app looks and works exactly as before, offline included. The start check also reports `js/hinweise.js` if it is missing on the NAS.
-- Installing and updating work as before (`sudo sh pinn-*/pinn-setup.sh` or the update button). A loose `hinweise.js` is sorted into `pb_public/js/` automatically. Your data is not touched.
-
-### Neu in 1.41 (Deutsch)
-
-**Der App-Code wird in einzelne Dateien aufgeteilt (Teil 2)**
-
-- **Zweite Datei: `js/hinweise.js`** – die Glocke, das Heimweg-Banner, der Hinweis „Gehst du einkaufen?“ und die Läden mit Adresse liegen jetzt in einer eigenen Datei unter `pb_public/js/`. Der Code wurde unverändert verschoben, nur die Kommentare sind jetzt auf Englisch.
-- **Ladereihenfolge:** `hinweise.js` wird direkt vor `js/ausblick.js` geladen; `ausblick.js` bleibt die letzte Datei und startet die App.
-- **Für dich ändert sich nichts:** Aussehen und Bedienung bleiben genau gleich, auch offline. Die Startprüfung meldet auch `js/hinweise.js`, falls sie auf dem NAS fehlt.
-- Installieren und Aktualisieren wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf). Eine lose `hinweise.js` wird automatisch nach `pb_public/js/` einsortiert. Deine Daten bleiben unberührt.
+- **Third file: `js/familie.js`** – the whole "Family" area now lives in its own file under `pb_public/js/`: emergency cards, location with the map, SOS, school & daycare, pets and the weather view with holiday weather. The code was moved unchanged; only its comments are now in English.
+- **Load order:** `familie.js` is loaded right after the app code in `index.html`, before `js/hinweise.js` and `js/ausblick.js`. `ausblick.js` stays last and starts the app.
+- **Nothing changes for you:** the app looks and works exactly as before, offline included. The start check also reports `js/familie.js` if it is missing on the NAS.
+- **This page in four languages:** English, Deutsch, Español and Français – plus new screenshots of the dashboard and the iPad overview.
+- Installing and updating work as before (`sudo sh pinn-*/pinn-setup.sh` or the update button). A loose `familie.js` is sorted into `pb_public/js/` automatically. Your data is not touched.
 
 ## How it works
 
@@ -107,7 +108,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.39.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.42.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -197,6 +198,7 @@ pinn/
 ├── pb_public/           web app served by PocketBase
 │   ├── index.html       the app (HTML, styles and most of the code)
 │   ├── js/              app code split out of index.html, plain <script> files without a build step
+│   │                    (familie.js, hinweise.js, ausblick.js – ausblick.js always comes last)
 │   ├── einrichtung.js   setup assistant · datenexport.js  data export
 │   ├── lang/            translations (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js and Tesseract are downloaded by the setup)
@@ -206,7 +208,8 @@ pinn/
 ├── pinn-setup.sh        install & update
 ├── pinn-wartung.sh      backups & updates (container "wartung")
 ├── pinn-pocketbase-update.sh
-└── index.html           placeholder only, never installed (keeps the update button of 1.38 working)
+├── index.html           placeholder only, never installed (keeps the update button of 1.38 working)
+└── README.md            this page · README.de.md · README.es.md · README.fr.md
 ```
 
 `pinn-setup.sh` copies `pb_hooks/`, `pb_public/` and `caddy/Caddyfile` 1:1 into the project folder; data folders (`pb_data/`, `konfig/`, `backups/`, `caddy/data/` …) are never touched.
