@@ -34,39 +34,21 @@ No cloud account. No subscription. No ads, no tracking. Your family's data never
 
 ## Screenshots
 
-### On the iPad
+### Dashboard
 
-Hung on the wall or lying on the kitchen table: the shared iPad shows the whole family at once.
+The start page on a shared iPad: everyone in the family taps their own picture – with an optional PIN, children go straight to their own page.
 
-<table>
-  <tr>
-    <td align="center" width="50%">
-      <img src=".github/assets/screenshots/dashboard.png" alt="pinn. dashboard: the family's profiles to choose from" width="400"><br>
-      <sub><b>Dashboard</b> – everyone taps their own picture, with an optional PIN</sub>
-    </td>
-    <td align="center" width="50%">
-      <img src=".github/assets/screenshots/ipad-overview.png" alt="pinn. overview on the iPad with tiles for weather, calendar, tasks and family" width="400"><br>
-      <sub><b>Overview</b> – weather, appointments, tasks, meals and the family at a glance</sub>
-    </td>
-  </tr>
-</table>
+<p align="center">
+  <img src=".github/assets/screenshots/dashboard.png" alt="pinn. dashboard: the family's profiles to choose from" width="760">
+</p>
 
-### On the phone
+### iPad overview
 
-Always with you: pinn. installs on every iPhone and Android phone like a native app.
+Your day at a glance: weather, appointments, tasks, meals and the family – arranged the way you like.
 
-<table>
-  <tr>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/home.png" alt="Home page with weather, today's tasks and appointments" width="240"><br><sub><b>Overview</b> – your day at a glance</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/calendar.png" alt="Family calendar in week view" width="240"><br><sub><b>Calendar</b> – iCloud and Google in one view</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/meals.png" alt="Weekly meal plan with recipes" width="240"><br><sub><b>Meals</b> – plan the week, shop with one tap</sub></td>
-  </tr>
-  <tr>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/lists.png" alt="Shopping list sorted by shop" width="240"><br><sub><b>Lists</b> – shopping, pantry, packing</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/finance.png" alt="Budget overview with spending by category" width="240"><br><sub><b>Finance</b> – budget, savings, pocket money</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/kids.png" alt="Kids' page with the daily routine" width="240"><br><sub><b>Kids</b> – a playful daily routine</sub></td>
-  </tr>
-</table>
+<p align="center">
+  <img src=".github/assets/screenshots/ipad-overview.png" alt="pinn. overview on the iPad with tiles for weather, calendar, tasks and family" width="760">
+</p>
 
 ## What pinn. does
 
