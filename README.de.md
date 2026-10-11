@@ -34,21 +34,39 @@ Kein Cloud-Konto. Kein Abo. Keine Werbung, kein Tracking. Die Daten deiner Famil
 
 ## Screenshots
 
-### Dashboard
+### Auf dem iPad
 
-Die Startseite auf dem gemeinsamen iPad: Jeder in der Familie tippt auf sein eigenes Bild – auf Wunsch mit PIN, Kinder landen direkt auf ihrer eigenen Seite.
+An der Wand oder auf dem Küchentisch: Das gemeinsame iPad zeigt die ganze Familie auf einmal.
 
-<p align="center">
-  <img src=".github/assets/screenshots/dashboard.png" alt="pinn.-Dashboard: die Profile der Familie zur Auswahl" width="760">
-</p>
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src=".github/assets/screenshots/dashboard.png" alt="pinn.-Dashboard: die Profile der Familie zur Auswahl" width="400"><br>
+      <sub><b>Dashboard</b> – jeder tippt auf sein eigenes Bild, auf Wunsch mit PIN</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src=".github/assets/screenshots/ipad-overview.png" alt="pinn.-Übersicht auf dem iPad mit Kacheln für Wetter, Kalender, Aufgaben und Familie" width="400"><br>
+      <sub><b>Übersicht</b> – Wetter, Termine, Aufgaben, Essen und die Familie auf einen Blick</sub>
+    </td>
+  </tr>
+</table>
 
-### iPad-Übersicht
+### Auf dem Handy
 
-Dein Tag auf einen Blick: Wetter, Termine, Aufgaben, Essen und die Familie – so angeordnet, wie du es magst.
+Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte App installieren.
 
-<p align="center">
-  <img src=".github/assets/screenshots/ipad-overview.png" alt="pinn.-Übersicht auf dem iPad mit Kacheln für Wetter, Kalender, Aufgaben und Familie" width="760">
-</p>
+<table>
+  <tr>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/home.png" alt="Startseite mit Wetter, heutigen Aufgaben und Terminen" width="240"><br><sub><b>Übersicht</b> – dein Tag auf einen Blick</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/calendar.png" alt="Familienkalender in der Wochenansicht" width="240"><br><sub><b>Kalender</b> – iCloud und Google in einer Ansicht</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/meals.png" alt="Wochenplan für die Mahlzeiten mit Rezepten" width="240"><br><sub><b>Essen</b> – Woche planen, mit einem Tipp einkaufen</sub></td>
+  </tr>
+  <tr>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/lists.png" alt="Einkaufsliste nach Laden sortiert" width="240"><br><sub><b>Listen</b> – Einkauf, Vorrat, Packen</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/finance.png" alt="Budgetübersicht mit Ausgaben nach Kategorie" width="240"><br><sub><b>Finanzen</b> – Budget, Sparen, Taschengeld</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/kids.png" alt="Kinderseite mit der täglichen Routine" width="240"><br><sub><b>Kinder</b> – eine spielerische Tagesroutine</sub></td>
+  </tr>
+</table>
 
 ## Was pinn. kann
 

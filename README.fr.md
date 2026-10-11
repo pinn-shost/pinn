@@ -34,21 +34,39 @@ Pas de compte cloud. Pas d’abonnement. Ni publicité ni pistage. Les données 
 
 ## Captures d’écran
 
-### Dashboard
+### Sur l’iPad
 
-La page d’accueil sur l’iPad commun : chacun dans la famille touche sa propre photo – avec un code PIN facultatif, les enfants arrivent directement sur leur propre page.
+Accroché au mur ou posé sur la table de la cuisine : l’iPad commun montre toute la famille d’un coup.
 
-<p align="center">
-  <img src=".github/assets/screenshots/dashboard.png" alt="Dashboard de pinn. : les profils de la famille au choix" width="760">
-</p>
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src=".github/assets/screenshots/dashboard.png" alt="Dashboard de pinn. : les profils de la famille au choix" width="400"><br>
+      <sub><b>Dashboard</b> – chacun touche sa propre photo, avec un code PIN facultatif</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src=".github/assets/screenshots/ipad-overview.png" alt="Vue d’ensemble de pinn. sur l’iPad avec des tuiles météo, calendrier, tâches et famille" width="400"><br>
+      <sub><b>Vue d’ensemble</b> – météo, rendez-vous, tâches, repas et la famille en un coup d’œil</sub>
+    </td>
+  </tr>
+</table>
 
-### Vue d’ensemble sur l’iPad
+### Sur le téléphone
 
-Ta journée en un coup d’œil : météo, rendez-vous, tâches, repas et la famille – organisés comme tu le souhaites.
+Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android comme une vraie app.
 
-<p align="center">
-  <img src=".github/assets/screenshots/ipad-overview.png" alt="Vue d’ensemble de pinn. sur l’iPad avec des tuiles météo, calendrier, tâches et famille" width="760">
-</p>
+<table>
+  <tr>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/home.png" alt="Page d’accueil avec la météo, les tâches et rendez-vous du jour" width="240"><br><sub><b>Vue d’ensemble</b> – ta journée en un coup d’œil</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/calendar.png" alt="Calendrier familial en vue semaine" width="240"><br><sub><b>Calendrier</b> – iCloud et Google dans une seule vue</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/meals.png" alt="Planning hebdomadaire des repas avec recettes" width="240"><br><sub><b>Repas</b> – planifier la semaine, faire les courses en un geste</sub></td>
+  </tr>
+  <tr>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/lists.png" alt="Liste de courses triée par magasin" width="240"><br><sub><b>Listes</b> – courses, réserves, bagages</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/finance.png" alt="Vue du budget avec dépenses par catégorie" width="240"><br><sub><b>Finances</b> – budget, épargne, argent de poche</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/kids.png" alt="Page enfants avec la routine quotidienne" width="240"><br><sub><b>Enfants</b> – une routine quotidienne ludique</sub></td>
+  </tr>
+</table>
 
 ## Ce que fait pinn.
 

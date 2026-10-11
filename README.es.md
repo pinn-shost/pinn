@@ -34,21 +34,39 @@ Sin cuenta en la nube. Sin suscripción. Sin anuncios ni rastreo. Los datos de t
 
 ## Capturas de pantalla
 
-### Dashboard
+### En el iPad
 
-La página de inicio en el iPad compartido: cada miembro de la familia toca su propia foto – con PIN opcional; los niños van directamente a su propia página.
+Colgado en la pared o sobre la mesa de la cocina: el iPad compartido muestra a toda la familia a la vez.
 
-<p align="center">
-  <img src=".github/assets/screenshots/dashboard.png" alt="Dashboard de pinn.: los perfiles de la familia para elegir" width="760">
-</p>
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src=".github/assets/screenshots/dashboard.png" alt="Dashboard de pinn.: los perfiles de la familia para elegir" width="400"><br>
+      <sub><b>Dashboard</b> – cada uno toca su propia foto, con PIN opcional</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src=".github/assets/screenshots/ipad-overview.png" alt="Vista general de pinn. en el iPad con tarjetas de tiempo, calendario, tareas y familia" width="400"><br>
+      <sub><b>Vista general</b> – el tiempo, citas, tareas, comidas y la familia de un vistazo</sub>
+    </td>
+  </tr>
+</table>
 
-### Vista general en el iPad
+### En el móvil
 
-Tu día de un vistazo: el tiempo, citas, tareas, comidas y la familia – organizado a tu gusto.
+Siempre contigo: pinn. se instala en cualquier iPhone o móvil Android como una app nativa.
 
-<p align="center">
-  <img src=".github/assets/screenshots/ipad-overview.png" alt="Vista general de pinn. en el iPad con tarjetas de tiempo, calendario, tareas y familia" width="760">
-</p>
+<table>
+  <tr>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/home.png" alt="Página de inicio con el tiempo, las tareas y citas de hoy" width="240"><br><sub><b>Vista general</b> – tu día de un vistazo</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/calendar.png" alt="Calendario familiar en vista semanal" width="240"><br><sub><b>Calendario</b> – iCloud y Google en una sola vista</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/meals.png" alt="Plan semanal de comidas con recetas" width="240"><br><sub><b>Comidas</b> – planifica la semana, compra con un toque</sub></td>
+  </tr>
+  <tr>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/lists.png" alt="Lista de la compra ordenada por tienda" width="240"><br><sub><b>Listas</b> – compra, despensa, equipaje</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/finance.png" alt="Resumen del presupuesto con gastos por categoría" width="240"><br><sub><b>Finanzas</b> – presupuesto, ahorro, paga</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/kids.png" alt="Página infantil con la rutina diaria" width="240"><br><sub><b>Niños</b> – una rutina diaria divertida</sub></td>
+  </tr>
+</table>
 
 ## Qué hace pinn.
 
