@@ -90,15 +90,14 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **English, Deutsch, Français and Español**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
-## What's new in 1.46
+## What's new in 1.47
 
-**The app code is being split into separate files (part 6)**
+**The app code is being split into separate files (part 7)**
 
-- **Sixth file: `js/appstart.js`** – the app start (`bootApp`: check the login, load the family data, open the first view, pick up links from push messages and start the background updates) now lives in its own file under `pb_public/js/`. The code was moved unchanged; only its comments are now in English.
-- **Load order:** `appstart.js` is loaded right after the app code in `index.html`, before `js/pinnwand.js`, `js/listen.js`, `js/familie.js`, `js/hinweise.js` and `js/ausblick.js`. `ausblick.js` stays last and calls `bootApp()`, so the app only starts once every other file is loaded. The child lock (see 1.44) still protects all six editors.
-- **Nothing changes for you:** the app looks and works exactly as before, offline included. The start check also reports `js/appstart.js` if it is missing on the NAS.
-- **Phone screenshots:** this page now also shows the app on the phone – overview, calendar, meals, lists, finance and kids.
-- Installing and updating work as before (`sudo sh pinn-*/pinn-setup.sh` or the update button). A loose `appstart.js` is sorted into `pb_public/js/` automatically. Your data is not touched.
+- **Seventh file: `js/pdflesen.js`** – reading PDFs and photos (invoices and receipts for documents and expenses, recipes from a PDF, from photos with text recognition and with AI) now lives in its own file under `pb_public/js/`. The code was moved unchanged; only its comments are now in English.
+- **Load order:** `pdflesen.js` is the first of the app files and is loaded right after the app code in `index.html`, before `js/appstart.js`, `js/pinnwand.js`, `js/listen.js`, `js/familie.js`, `js/hinweise.js` and `js/ausblick.js`. `ausblick.js` stays last and starts the app. The child lock (see 1.44) still protects all six editors.
+- **Nothing changes for you:** the app looks and works exactly as before, offline included. The start check also reports `js/pdflesen.js` if it is missing on the NAS.
+- Installing and updating work as before (`sudo sh pinn-*/pinn-setup.sh` or the update button). A loose `pdflesen.js` is sorted into `pb_public/js/` automatically. Your data is not touched.
 
 ## How it works
 
@@ -126,7 +125,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.46.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.47.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -216,7 +215,7 @@ pinn/
 ├── pb_public/           web app served by PocketBase
 │   ├── index.html       the app (HTML, styles and most of the code)
 │   ├── js/              app code split out of index.html, plain <script> files without a build step
-│   │                    (appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js always comes last)
+│   │                    (pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js always comes last)
 │   ├── einrichtung.js   setup assistant · datenexport.js  data export
 │   ├── lang/            translations (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js and Tesseract are downloaded by the setup)
