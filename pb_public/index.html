@@ -909,7 +909,7 @@ window.PINN_LANGUAGES = [
   // Startprüfung: fehlt eine selbst gehostete Datei, erscheint ein klarer Hinweis statt einer
   // leeren Seite ohne funktionierende Buttons.
   // Teile der App unter pb_public/js/ – jede Datei meldet sich am Ende in window.PINN_PARTS an
-  var PINN_APP_PARTS = ['pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
+  var PINN_APP_PARTS = ['appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
   window.addEventListener('DOMContentLoaded', function () {
     var missing = [];
     if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – der PocketBase-Client (ohne ihn funktioniert nichts)');
@@ -25916,7 +25916,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.45.0';
+const APP_VERSION = '1.46.0';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -26874,6 +26874,13 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
    - rueckblick: true = Einträge vor dem Versions-Log, aus der Projekthistorie zusammengefasst.
    ========================================================== */
 const PINN_CHANGELOG = [
+  {
+    v: '1.46', datum: '11.10.2026', titel: 'App-Code wird aufgeteilt (Teil 6)',
+    punkte: [
+      ['info', 'Für Mitwirkende: Der App-Start (bootApp) – Anmeldung prüfen, Familiendaten laden, erste Ansicht öffnen und die Hintergrund-Abfragen starten – liegt jetzt in einer eigenen Datei (pb_public/js/appstart.js). An der Bedienung ändert sich nichts'],
+      ['info', 'GitHub: Die Projektseite zeigt jetzt auch Screenshots vom Handy (Übersicht, Kalender, Essen, Listen, Finanzen, Kinder)'],
+    ],
+  },
   {
     v: '1.45', datum: '11.10.2026', titel: 'App-Code wird aufgeteilt (Teil 5)',
     punkte: [
@@ -47928,94 +47935,6 @@ async function importRecipeFromPhotos(files) {
 })();
 
 /* ==========================================================
-   App-Start (nach der Anmeldung: Daten der eigenen Familie)
-   ========================================================== */
-async function bootApp() {
-  registerOfflineWorker(); // App auf dem Gerät vorhalten, damit sie auch offline startet
-  await ensureAuthenticated();
-  if (isCurrentUserMainAdmin()) {
-    showMainAdminScreen(); // der Hauptadmin verwaltet nur die Familien
-    return;
-  }
-  if (!currentUser() || !currentUser().familie) {
-    hideDashboardScreen();
-    alert('Dein Profil gehört zu keiner Familie. Bitte wende dich an den Hauptadmin.');
-    pb.authStore.clear();
-    location.reload();
-    return;
-  }
-  try {
-    await loadFamilyData();
-  } catch (err) {
-    console.error('Konnte Familiendaten nicht laden', err);
-    hideDashboardScreen();
-    alert('Verbindung zum PocketBase-Server (' + PB_URL + ') fehlgeschlagen. Bitte NAS/Netzwerk prüfen und Seite neu laden.');
-    return;
-  }
-
-  await loadFamilyProfiles();
-  setTimeout(() => { try { kidStarsHandleUrl(); } catch (e) { /* egal */ } }, 0);
-  // Persönliche Benachrichtigungen nicht auf dem Familien-Dashboard (geteiltes Gerät) und nicht für Gäste
-  const dashSession = isDashboardSession();
-  const guest = isCurrentUserGuest();
-  pushAutoSyncEnabled = !dashSession && !isDashboardDevice() && !guest;
-  if (pushAutoSyncEnabled) {
-    syncPushSubscription().then(() => { if (!pushConfig) loadPushConfig().catch(() => { /* Einstellungen später */ }); });
-  }
-  applyRoleRestrictions();
-  applyDashboardChrome();
-
-  document.querySelector('.mode-btn[data-mode="week"]').classList.add('active');
-  document.querySelector('.recipe-input-mode-btn[data-mode="freitext"]').classList.add('active');
-  document.querySelector('.display-mode-btn[data-display="name"]').classList.add('active');
-  renderBottomTabBar();
-  renderLastName();
-  renderMemberChips();
-  document.body.classList.toggle('mobile-mode', isMobile());
-  attachSwipeNavigation(document.getElementById('calendarBody'));
-  checkForAppUpdate(false); // Basiswert für die Update-Erkennung setzen
-  setView('uebersicht');
-  openDashboardKidPageIfNeeded(); // Kinderprofil am Dashboard: direkt die Kinderseite
-  setTimeout(() => { try { bdayCheck(); } catch (e) { /* egal */ } }, 1500); // Geburtstag: einmal Happy Birthday
-  setTimeout(() => { try { if (!new URLSearchParams(location.search).get('wobistdu')) wbCheckIncoming(); } catch (e) { /* egal */ } }, 2500); // offene „Wo bist du?“-Frage
-  vtOpenFromUrl(); // aus einer Push-Erinnerung: Vertrag direkt öffnen
-  if (!guest) kasseOpenFromUrl(); // aus einer Push-Nachricht: Kasse öffnen
-  pwAfterBoot(); // Pinnwand: Archiv aufräumen, vorgemerkte Fotos hochladen, aus einer Push-Nachricht den Zettel öffnen
-  docOpenFromUrl(); // aus einer Push-Erinnerung: Dokument direkt öffnen
-  famOpenFromUrl(); // aus einer Ortungs-Nachricht: Familie mit der Person auf der Karte öffnen
-  sosStart(); // SOS aus Traccar Client: laufende Hilferufe prüfen, ?sos=<ID> aus der Push-Nachricht öffnen
-  googleReturnFromUrl(); // Rückkehr von der Google-Anmeldung (Android-Kalender): Kalender-Einstellungen öffnen
-  hideDashboardScreen();
-  if (dashSession) startDashboardIdleWatch();
-
-  await syncAppleCalendarFile(true);
-  await loadAufgaben(); // trägt dabei auch offline angelegte Aufgaben/Termine nach
-  ntStart(); // Glocke: offene Ausgaben geplanter Einkäufe, Neuerungen; Läden-Adressen nachreichen
-  if (!guest) loadAusgaben(); // Finanzen im Hintergrund laden (und evtl. offline Gebuchtes nachreichen)
-  if (!guest) docStart(); // Dokumente: offline Abgelegtes nachreichen
-  if (!guest) fzStart(); // Fahrzeuge: fällige HU, Inspektion, Reifenwechsel … als Aufgabe anlegen
-  setInterval(() => syncAppleCalendarFile(false), 60 * 1000); // alle 60s auf Änderungen prüfen
-  setInterval(() => { if (document.visibilityState === 'visible') loadAufgaben(); }, 60 * 1000); // Aufgaben anderer Geräte
-  setInterval(pullRemoteChanges, 60 * 1000); // Änderungen anderer Geräte abholen
-  setInterval(() => { if (document.visibilityState === 'visible' && currentView === 'finanzen') loadAusgaben(); }, 60 * 1000); // Ausgaben anderer Geräte
-  document.getElementById('refreshCalendarBtn').addEventListener('click', () => triggerFullCalendarResync());
-
-  // Zuhause (Wetter, Feiertage/Schulferien, Sonnenzeiten): erst der Stand vom Gerät, dann vom Server
-  homeLoadCache(outboxFamily());
-  hcInvalidate();
-  rebuildEvents();
-  renderCalendar();
-  initWeather();
-  loadHome().then(() => hcLoadSchoolHolidays(false));
-  muellLoadCache(outboxFamily());
-  if (muellData) { rebuildEvents(); renderCalendar(); }
-  loadMuell(false);
-  setInterval(() => { initWeather(); loadHome(); hcLoadSchoolHolidays(false); loadMuell(false); }, 30 * 60 * 1000); // alle 30 Minuten neu abrufen
-
-  migrateEmbeddedRecipeImages(); // alte eingebettete Rezeptbilder im Hintergrund auslagern
-}
-
-/* ==========================================================
    Einstellungen & Konto: zwei gleich hohe Spalten (Querformat ab Tablet-Breite)
    ----------------------------------------------------------
    Die Karten werden in ihrer Reihenfolge so auf links/rechts aufgeteilt, dass beide Spalten im
@@ -48141,11 +48060,12 @@ async function bootApp() {
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/pinnwand.js?v=1.45.0"></script>
-<script src="js/listen.js?v=1.45.0"></script>
-<script src="js/familie.js?v=1.45.0"></script>
-<script src="js/hinweise.js?v=1.45.0"></script>
-<script src="js/ausblick.js?v=1.45.0"></script>
+<script src="js/appstart.js?v=1.46.0"></script>
+<script src="js/pinnwand.js?v=1.46.0"></script>
+<script src="js/listen.js?v=1.46.0"></script>
+<script src="js/familie.js?v=1.46.0"></script>
+<script src="js/hinweise.js?v=1.46.0"></script>
+<script src="js/ausblick.js?v=1.46.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)
