@@ -34,21 +34,39 @@ Pas de compte cloud. Pas d’abonnement. Ni publicité ni pistage. Les données 
 
 ## Captures d’écran
 
-### Dashboard
+### Sur l’iPad
 
-La page d’accueil sur l’iPad commun : chacun dans la famille touche sa propre photo – avec un code PIN facultatif, les enfants arrivent directement sur leur propre page.
+Accroché au mur ou posé sur la table de la cuisine : l’iPad commun montre toute la famille d’un seul coup.
 
-<p align="center">
-  <img src=".github/assets/screenshots/dashboard.png" alt="Dashboard de pinn. : les profils de la famille au choix" width="760">
-</p>
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src=".github/assets/screenshots/dashboard.png" alt="Dashboard de pinn. : les profils de la famille au choix" width="400"><br>
+      <sub><b>Dashboard</b> – chacun touche sa propre photo, avec un code PIN facultatif</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src=".github/assets/screenshots/ipad-overview.png" alt="Vue d’ensemble de pinn. sur l’iPad avec des tuiles météo, calendrier, tâches et famille" width="400"><br>
+      <sub><b>Vue d’ensemble</b> – météo, rendez-vous, tâches, repas et la famille en un coup d’œil</sub>
+    </td>
+  </tr>
+</table>
 
-### Vue d’ensemble sur l’iPad
+### Sur le téléphone
 
-Ta journée en un coup d’œil : météo, rendez-vous, tâches, repas et la famille – organisés comme tu le souhaites.
+Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android comme une vraie app.
 
-<p align="center">
-  <img src=".github/assets/screenshots/ipad-overview.png" alt="Vue d’ensemble de pinn. sur l’iPad avec des tuiles météo, calendrier, tâches et famille" width="760">
-</p>
+<table>
+  <tr>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/home.png" alt="Page d’accueil avec la météo, les tâches du jour et les rendez-vous" width="240"><br><sub><b>Vue d’ensemble</b> – ta journée en un coup d’œil</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/calendar.png" alt="Calendrier familial en vue semaine" width="240"><br><sub><b>Calendrier</b> – iCloud et Google dans une seule vue</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/meals.png" alt="Plan de repas de la semaine avec recettes" width="240"><br><sub><b>Repas</b> – planifie la semaine, fais tes courses d’un geste</sub></td>
+  </tr>
+  <tr>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/lists.png" alt="Liste de courses triée par magasin" width="240"><br><sub><b>Listes</b> – courses, garde-manger, bagages</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/finance.png" alt="Aperçu du budget avec les dépenses par catégorie" width="240"><br><sub><b>Finances</b> – budget, épargne, argent de poche</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/kids.png" alt="Page enfants avec la routine quotidienne" width="240"><br><sub><b>Enfants</b> – une routine quotidienne ludique</sub></td>
+  </tr>
+</table>
 
 ## Ce que fait pinn.
 
@@ -72,14 +90,15 @@ Ta journée en un coup d’œil : météo, rendez-vous, tâches, repas et la fam
 
 pinn. parle **English, Deutsch, Français et Español**, adapte la devise et les numéros d’urgence à ta région et bascule entre les textes **famille** et **colocation**. Un serveur peut accueillir plusieurs familles, chacune avec ses propres administrateurs.
 
-## Nouveautés de la 1.45
+## Nouveautés de la 1.46
 
-**Le code de l’app est découpé en fichiers séparés (partie 5)**
+**Le code de l’app est découpé en fichiers séparés (partie 6)**
 
-- **Cinquième fichier : `js/pinnwand.js`** – le tableau d’affichage (notes, listes, photos, sondages, mots de remerciement, comptes à rebours, archive et déplacement des notes) se trouve désormais dans son propre fichier sous `pb_public/js/`. Le code a été déplacé sans changement ; seuls ses commentaires sont maintenant en anglais.
-- **Ordre de chargement :** `pinnwand.js` est chargé juste après le code de l’app dans `index.html`, avant `js/listen.js`, `js/familie.js`, `js/hinweise.js` et `js/ausblick.js`. `ausblick.js` reste le dernier et démarre l’app. Le contrôle parental (voir 1.44) protège toujours l’éditeur du tableau.
-- **Rien ne change pour toi :** l’app a exactement le même aspect et fonctionne comme avant, hors ligne aussi. Le contrôle au démarrage signale aussi `js/pinnwand.js` s’il manque sur le NAS.
-- L’installation et la mise à jour fonctionnent comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour). Un `pinnwand.js` isolé est rangé automatiquement dans `pb_public/js/`. Tes données ne sont pas touchées.
+- **Sixième fichier : `js/appstart.js`** – le démarrage de l’app (`bootApp` : vérifier la connexion, charger les données de la famille, ouvrir la première vue, reprendre les liens des messages push et lancer les mises à jour en arrière-plan) se trouve désormais dans son propre fichier sous `pb_public/js/`. Le code a été déplacé sans changement ; seuls ses commentaires sont maintenant en anglais.
+- **Ordre de chargement :** `appstart.js` est chargé juste après le code de l’app dans `index.html`, avant `js/pinnwand.js`, `js/listen.js`, `js/familie.js`, `js/hinweise.js` et `js/ausblick.js`. `ausblick.js` reste le dernier et appelle `bootApp()` – l’app ne démarre donc qu’une fois tous les autres fichiers chargés. Le contrôle parental (voir 1.44) protège toujours les six éditeurs.
+- **Rien ne change pour toi :** l’app a exactement le même aspect et fonctionne comme avant, hors ligne aussi. Le contrôle au démarrage signale aussi `js/appstart.js` s’il manque sur le NAS.
+- **Captures du téléphone :** cette page montre maintenant aussi l’app sur le téléphone – vue d’ensemble, calendrier, repas, listes, finances et enfants.
+- L’installation et la mise à jour fonctionnent comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour). Un `appstart.js` isolé est rangé automatiquement dans `pb_public/js/`. Tes données ne sont pas touchées.
 
 ## Comment ça marche
 
@@ -107,7 +126,7 @@ Tout tourne sous forme de conteneurs Docker sur une seule machine. HTTPS fonctio
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et places-y le dossier décompressé (p. ex. `pinn-1.45.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et places-y le dossier décompressé (p. ex. `pinn-1.46.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et lance :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -197,7 +216,7 @@ pinn/
 ├── pb_public/           app web servie par PocketBase
 │   ├── index.html       l’app (HTML, styles et la plus grande partie du code)
 │   ├── js/              code de l’app sorti d’index.html, simples fichiers <script> sans étape de build
-│   │                    (pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js vient toujours en dernier)
+│   │                    (appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js vient toujours en dernier)
 │   ├── einrichtung.js   assistant de configuration · datenexport.js  export des données
 │   ├── lang/            traductions (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js et Tesseract sont téléchargés par le script d’installation)
