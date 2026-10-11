@@ -90,14 +90,14 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **English, Deutsch, Français et Español**, adapte la devise et les numéros d’urgence à ta région et bascule entre les textes **famille** et **colocation**. Un serveur peut accueillir plusieurs familles, chacune avec ses propres administrateurs.
 
-## Nouveautés de la 1.48
+## Nouveautés de la 1.49
 
-**Le code de l’app est découpé en fichiers séparés (partie 8)**
+**Le code de l’app est découpé en fichiers séparés (partie 9)**
 
-- **Huitième fichier : `js/dokumente.js`** – les documents (liste avec filtres et « échéances en un coup d’œil », vue détaillée, visionneuse de fichiers et d’images, fenêtre de création et de modification, catégories, visibilité et la boîte d’envoi qui conserve sur l’appareil les nouveaux documents, les modifications et les suppressions hors ligne) se trouvent désormais dans leur propre fichier sous `pb_public/js/`. Le code a été déplacé sans changement ; seuls ses commentaires sont maintenant en anglais.
-- **Ordre de chargement :** `dokumente.js` est le premier des fichiers de l’app et est chargé juste après le code de l’app dans `index.html`, avant `js/pdflesen.js`, `js/appstart.js`, `js/pinnwand.js`, `js/listen.js`, `js/familie.js`, `js/hinweise.js` et `js/ausblick.js`. `ausblick.js` reste le dernier et démarre l’app. Le contrôle parental (voir 1.44) protège toujours les six éditeurs.
-- **Rien ne change pour toi :** l’app a exactement le même aspect et fonctionne comme avant, hors ligne aussi. Le contrôle au démarrage signale aussi `js/dokumente.js` s’il manque sur le NAS.
-- L’installation et la mise à jour fonctionnent comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour). Un `dokumente.js` isolé est rangé automatiquement dans `pb_public/js/`. Tes données ne sont pas touchées.
+- **Neuvième fichier : `js/zuhause.js`** – la maison (logements loués, en propriété et mis en location, avec aperçu, défauts, coûts et rénovation, compteurs avec prévision, plan d’entretien, jardin et plantes, et toutes leurs fenêtres) se trouve désormais dans son propre fichier sous `pb_public/js/`. Le code a été déplacé sans changement ; seuls ses commentaires sont maintenant en anglais.
+- **Ordre de chargement :** `zuhause.js` est le premier des fichiers de l’app et est chargé juste après le code de l’app dans `index.html`, avant `js/dokumente.js`, `js/pdflesen.js`, `js/appstart.js`, `js/pinnwand.js`, `js/listen.js`, `js/familie.js`, `js/hinweise.js` et `js/ausblick.js`. `ausblick.js` reste le dernier et démarre l’app. Le contrôle parental (voir 1.44) protège toujours les six éditeurs.
+- **Rien ne change pour toi :** l’app a exactement le même aspect et fonctionne comme avant, hors ligne aussi. Le contrôle au démarrage signale aussi `js/zuhause.js` s’il manque sur le NAS.
+- L’installation et la mise à jour fonctionnent comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour). Un `zuhause.js` isolé est rangé automatiquement dans `pb_public/js/`. Tes données ne sont pas touchées.
 
 ## Comment ça marche
 
@@ -125,7 +125,7 @@ Tout tourne sous forme de conteneurs Docker sur une seule machine. HTTPS fonctio
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et places-y le dossier décompressé (p. ex. `pinn-1.48.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et places-y le dossier décompressé (p. ex. `pinn-1.49.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et lance :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -215,7 +215,7 @@ pinn/
 ├── pb_public/           app web servie par PocketBase
 │   ├── index.html       l’app (HTML, styles et la plus grande partie du code)
 │   ├── js/              code de l’app sorti d’index.html, simples fichiers <script> sans étape de build
-│   │                    (dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js vient toujours en dernier)
+│   │                    (zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js vient toujours en dernier)
 │   ├── einrichtung.js   assistant de configuration · datenexport.js  export des données
 │   ├── lang/            traductions (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js et Tesseract sont téléchargés par le script d’installation)
