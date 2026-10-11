@@ -72,13 +72,14 @@ Your day at a glance: weather, appointments, tasks, meals and the family – arr
 
 pinn. speaks **English, Deutsch, Français and Español**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
-## What's new in 1.44
+## What's new in 1.45
 
-**The app code is being split into separate files (part 4b)**
+**The app code is being split into separate files (part 5)**
 
-- **Child lock made ready for the split:** the child lock blocks six editing windows (new and edit task, appointment, meal, pinboard note and kids' routine). It now sets up this protection only after all app files have loaded. That way it stays complete even when one of these windows later moves into its own file under `pb_public/js/`.
-- **Nothing changes for you:** with the child lock on, adding and editing is still blocked with the same notice; without it, everything opens as before.
-- Installing and updating work as before (`sudo sh pinn-*/pinn-setup.sh` or the update button). Your data is not touched.
+- **Fifth file: `js/pinnwand.js`** – the pinboard (notes, lists, photos, polls, thank-you notes, countdowns, the archive and moving notes around) now lives in its own file under `pb_public/js/`. The code was moved unchanged; only its comments are now in English.
+- **Load order:** `pinnwand.js` is loaded right after the app code in `index.html`, before `js/listen.js`, `js/familie.js`, `js/hinweise.js` and `js/ausblick.js`. `ausblick.js` stays last and starts the app. The child lock (see 1.44) still protects the pinboard editor.
+- **Nothing changes for you:** the app looks and works exactly as before, offline included. The start check also reports `js/pinnwand.js` if it is missing on the NAS.
+- Installing and updating work as before (`sudo sh pinn-*/pinn-setup.sh` or the update button). A loose `pinnwand.js` is sorted into `pb_public/js/` automatically. Your data is not touched.
 
 ## How it works
 
@@ -106,7 +107,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.44.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.45.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -196,7 +197,7 @@ pinn/
 ├── pb_public/           web app served by PocketBase
 │   ├── index.html       the app (HTML, styles and most of the code)
 │   ├── js/              app code split out of index.html, plain <script> files without a build step
-│   │                    (listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js always comes last)
+│   │                    (pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js always comes last)
 │   ├── einrichtung.js   setup assistant · datenexport.js  data export
 │   ├── lang/            translations (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js and Tesseract are downloaded by the setup)

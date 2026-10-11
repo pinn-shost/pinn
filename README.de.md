@@ -72,13 +72,14 @@ Dein Tag auf einen Blick: Wetter, Termine, Aufgaben, Essen und die Familie – s
 
 pinn. spricht **English, Deutsch, Français und Español**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
-## Neu in 1.44
+## Neu in 1.45
 
-**Der App-Code wird in einzelne Dateien aufgeteilt (Teil 4b)**
+**Der App-Code wird in einzelne Dateien aufgeteilt (Teil 5)**
 
-- **Kindersicherung für die Aufteilung vorbereitet:** Die Kindersicherung sperrt sechs Bearbeiten-Fenster (Aufgabe anlegen und bearbeiten, Termin, Essen, Pinnwand-Zettel und Kinder-Routine). Diese Absicherung wird jetzt erst eingerichtet, wenn alle App-Dateien geladen sind. So bleibt sie auch dann lückenlos, wenn eines dieser Fenster später in eine eigene Datei unter `pb_public/js/` wandert.
-- **Für dich ändert sich nichts:** Mit Kindersicherung ist Hinzufügen und Bearbeiten weiter gesperrt, mit demselben Hinweis; ohne Kindersicherung öffnet sich alles wie bisher.
-- Installieren und Aktualisieren funktionieren wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf). Deine Daten werden nicht angefasst.
+- **Fünfte Datei: `js/pinnwand.js`** – die Pinnwand (Zettel, Listen, Fotos, Umfragen, Danke-Zettel, Countdowns, das Archiv und das Verschieben der Zettel) liegt jetzt in einer eigenen Datei unter `pb_public/js/`. Der Code wurde unverändert verschoben; nur seine Kommentare sind jetzt auf Englisch.
+- **Ladereihenfolge:** `pinnwand.js` wird direkt nach dem App-Code in der `index.html` geladen, vor `js/listen.js`, `js/familie.js`, `js/hinweise.js` und `js/ausblick.js`. `ausblick.js` bleibt die letzte Datei und startet die App. Die Kindersicherung (siehe 1.44) schützt den Pinnwand-Editor weiterhin.
+- **Für dich ändert sich nichts:** Die App sieht aus und funktioniert genau wie vorher, auch offline. Die Startprüfung meldet außerdem `js/pinnwand.js`, falls sie auf dem NAS fehlt.
+- Installieren und Aktualisieren funktionieren wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf). Eine lose `pinnwand.js` wird automatisch nach `pb_public/js/` einsortiert. Deine Daten werden nicht angefasst.
 
 ## So funktioniert es
 
@@ -106,7 +107,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade die ZIP der [neuesten Version](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke sie.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und lege den entpackten Ordner (z. B. `pinn-1.44.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und lege den entpackten Ordner (z. B. `pinn-1.45.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und starte:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -196,7 +197,7 @@ pinn/
 ├── pb_public/           Web-App, ausgeliefert von PocketBase
 │   ├── index.html       die App (HTML, Styles und der größte Teil des Codes)
 │   ├── js/              aus der index.html ausgelagerter App-Code, einfache <script>-Dateien ohne Build-Schritt
-│   │                    (listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js kommt immer zuletzt)
+│   │                    (pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js kommt immer zuletzt)
 │   ├── einrichtung.js   Einrichtungs-Assistent · datenexport.js  Datenexport
 │   ├── lang/            Übersetzungen (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js und Tesseract lädt das Setup herunter)
