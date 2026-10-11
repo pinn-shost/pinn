@@ -63,25 +63,23 @@ No cloud account. No subscription. No ads, no tracking. Your family's data never
 
 pinn. speaks **English, Deutsch, Français and Español**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
-## What's new in 1.40
+## What's new in 1.41
 
-**The app code is being split into separate files (part 1)**
+**The app code is being split into separate files (part 2)**
 
-- **First step towards smaller files:** the web app used to be one huge `index.html` with more than 50,000 lines of JavaScript. It is now being moved step by step into plain script files under `pb_public/js/` – no build step, no framework, just `<script src>`. The app looks and works exactly as before.
-- **First file: `js/ausblick.js`** – the weekly preview and the monthly finance outlook. It is loaded last and starts the app.
-- **Works offline as before:** the service worker (`sw.pb.js`) now keeps the files in `js/` on the device and removes old versions automatically.
-- **Clear start check:** if a file in `pb_public/js/` is missing on the NAS, pinn. shows which one instead of an empty page.
-- Installing and updating work as before (`sudo sh pinn-*/pinn-setup.sh` or the update button). Your data is not touched.
+- **Second file: `js/hinweise.js`** – the notification bell, the "way home" banner, the "Going shopping?" notice and the shop addresses now live in their own file under `pb_public/js/`. The code was moved unchanged; only its comments are now in English.
+- **Load order:** `hinweise.js` is loaded right before `js/ausblick.js`, which stays last and starts the app.
+- **Nothing changes for you:** the app looks and works exactly as before, offline included. The start check also reports `js/hinweise.js` if it is missing on the NAS.
+- Installing and updating work as before (`sudo sh pinn-*/pinn-setup.sh` or the update button). A loose `hinweise.js` is sorted into `pb_public/js/` automatically. Your data is not touched.
 
-### Neu in 1.40 (Deutsch)
+### Neu in 1.41 (Deutsch)
 
-**Der App-Code wird in einzelne Dateien aufgeteilt (Teil 1)**
+**Der App-Code wird in einzelne Dateien aufgeteilt (Teil 2)**
 
-- **Erster Schritt zu kleineren Dateien:** Die Web-App war bisher eine riesige `index.html` mit über 50.000 Zeilen JavaScript. Sie wird jetzt Schritt für Schritt in einfache Skriptdateien unter `pb_public/js/` verschoben – ohne Build-Schritt, ohne Framework, nur `<script src>`. Aussehen und Bedienung bleiben genau gleich.
-- **Erste Datei: `js/ausblick.js`** – die Wochenvorschau und der Monatsausblick Finanzen. Sie wird als letzte geladen und startet die App.
-- **Offline wie gewohnt:** Der Service Worker (`sw.pb.js`) hält die Dateien aus `js/` jetzt auf dem Gerät vor und räumt alte Fassungen selbst auf.
-- **Klare Startprüfung:** Fehlt auf dem NAS eine Datei in `pb_public/js/`, zeigt pinn. welche – statt einer leeren Seite.
-- Installieren und Aktualisieren wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf). Deine Daten bleiben unberührt.
+- **Zweite Datei: `js/hinweise.js`** – die Glocke, das Heimweg-Banner, der Hinweis „Gehst du einkaufen?“ und die Läden mit Adresse liegen jetzt in einer eigenen Datei unter `pb_public/js/`. Der Code wurde unverändert verschoben, nur die Kommentare sind jetzt auf Englisch.
+- **Ladereihenfolge:** `hinweise.js` wird direkt vor `js/ausblick.js` geladen; `ausblick.js` bleibt die letzte Datei und startet die App.
+- **Für dich ändert sich nichts:** Aussehen und Bedienung bleiben genau gleich, auch offline. Die Startprüfung meldet auch `js/hinweise.js`, falls sie auf dem NAS fehlt.
+- Installieren und Aktualisieren wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf). Eine lose `hinweise.js` wird automatisch nach `pb_public/js/` einsortiert. Deine Daten bleiben unberührt.
 
 ## How it works
 
