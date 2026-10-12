@@ -90,14 +90,14 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **English, Deutsch, Français und Español**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
-## Neu in 1.51
+## Neu in 1.52
 
-**Der App-Code wird in einzelne Dateien aufgeteilt (Teil 11)**
+**Der App-Code wird in einzelne Dateien aufgeteilt (Teil 12)**
 
-- **Elfte Datei: `js/vertraege.js`** – die Verträge (Liste mit Kündigungsfristen, Kündigen, Kategorien, automatische Verknüpfung mit Haus und Fahrzeugen, Dokumente und Belege sowie die Verdrahtung der Finanzen-Seite, samt aller Fenster) liegen jetzt in einer eigenen Datei unter `pb_public/js/`. Der Code wurde unverändert verschoben, nur die Kommentare sind jetzt auf Englisch.
-- **Ladereihenfolge:** `vertraege.js` ist die erste der App-Dateien und wird direkt nach dem App-Code in der `index.html` geladen, vor `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `js/pdflesen.js`, `js/appstart.js`, `js/pinnwand.js`, `js/listen.js`, `js/familie.js`, `js/hinweise.js` und `js/ausblick.js`. `ausblick.js` bleibt die letzte Datei und startet die App. Die Kindersicherung (siehe 1.44) schützt weiterhin alle sechs Bearbeiten-Fenster.
-- **Für dich ändert sich nichts:** Aussehen und Bedienung bleiben genau gleich, auch offline. Die Startprüfung meldet auch `js/vertraege.js`, falls sie auf dem NAS fehlt.
-- Installieren und Aktualisieren wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf). Eine lose `vertraege.js` wird automatisch nach `pb_public/js/` einsortiert. Deine Daten bleiben unberührt.
+- **Zwölfte Datei: `js/sparen.js`** – Sparen und Taschengeld (Depots und Junior-Depots, Sparziele und ETFs mit Kursen, Import von Depot-Umsätzen aus CSV und PDF, Taschengeld und Guthaben der Kinder, samt aller Fenster) liegen jetzt in einer eigenen Datei unter `pb_public/js/`. Der Code wurde unverändert verschoben, nur die Kommentare sind jetzt auf Englisch.
+- **Ladereihenfolge:** `sparen.js` ist die erste der App-Dateien und wird direkt nach dem App-Code in der `index.html` geladen, vor `js/vertraege.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `js/pdflesen.js`, `js/appstart.js`, `js/pinnwand.js`, `js/listen.js`, `js/familie.js`, `js/hinweise.js` und `js/ausblick.js`. `ausblick.js` bleibt die letzte Datei und startet die App. Die Kindersicherung (siehe 1.44) schützt weiterhin alle sechs Bearbeiten-Fenster.
+- **Für dich ändert sich nichts:** Aussehen und Bedienung bleiben genau gleich, auch offline. Die Startprüfung meldet auch `js/sparen.js`, falls sie auf dem NAS fehlt.
+- Installieren und Aktualisieren wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf). Eine lose `sparen.js` wird automatisch nach `pb_public/js/` einsortiert. Deine Daten bleiben unberührt.
 
 ## So funktioniert es
 
@@ -125,7 +125,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade die ZIP der [neuesten Version](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke sie.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und lege den entpackten Ordner (z. B. `pinn-1.51.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und lege den entpackten Ordner (z. B. `pinn-1.52.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und starte:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -215,7 +215,7 @@ pinn/
 ├── pb_public/           Web-App, ausgeliefert von PocketBase
 │   ├── index.html       die App (HTML, Styles und der größte Teil des Codes)
 │   ├── js/              aus der index.html ausgelagerter App-Code, einfache <script>-Dateien ohne Build-Schritt
-│   │                    (vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js kommt immer zuletzt)
+│   │                    (sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js kommt immer zuletzt)
 │   ├── einrichtung.js   Einrichtungs-Assistent · datenexport.js  Datenexport
 │   ├── lang/            Übersetzungen (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js und Tesseract lädt das Setup herunter)
