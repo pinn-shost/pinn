@@ -90,14 +90,14 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **English, Deutsch, Français and Español**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
-## What's new in 1.52
+## What's new in 1.53
 
-**The app code is being split into separate files (part 12)**
+**The app code is being split into separate files (part 13)**
 
-- **Twelfth file: `js/sparen.js`** – savings and pocket money (depots and junior depots, savings goals and ETFs with prices, import of depot transactions from CSV and PDF, pocket money and balances of the children, plus all their popups) now live in their own file under `pb_public/js/`. The code was moved unchanged; only its comments are now in English.
-- **Load order:** `sparen.js` is the first of the app files and is loaded right after the app code in `index.html`, before `js/vertraege.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `js/pdflesen.js`, `js/appstart.js`, `js/pinnwand.js`, `js/listen.js`, `js/familie.js`, `js/hinweise.js` and `js/ausblick.js`. `ausblick.js` stays last and starts the app. The child lock (see 1.44) still protects all six editors.
-- **Nothing changes for you:** the app looks and works exactly as before, offline included. The start check also reports `js/sparen.js` if it is missing on the NAS.
-- Installing and updating work as before (`sudo sh pinn-*/pinn-setup.sh` or the update button). A loose `sparen.js` is sorted into `pb_public/js/` automatically. Your data is not touched.
+- **Thirteenth file: `js/vorrat2.js`** – Pantry 2.0 (best-before dates with badge, filter and notice bar, the barcode scanner with product lookup, "What can I cook?", planning a shopping trip and booking the amounts per store, the "Set up finances" popup and the CSV export) now lives in its own file under `pb_public/js/`. The code was moved unchanged; only its comments are now in English.
+- **Load order:** `vorrat2.js` is the first of the app files and is loaded right after the app code in `index.html`, before `js/sparen.js`, `js/vertraege.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `js/pdflesen.js`, `js/appstart.js`, `js/pinnwand.js`, `js/listen.js`, `js/familie.js`, `js/hinweise.js` and `js/ausblick.js`. `ausblick.js` stays last and starts the app. The child lock (see 1.44) still protects all six editors.
+- **Nothing changes for you:** the app looks and works exactly as before, offline included. The start check also reports `js/vorrat2.js` if it is missing on the NAS.
+- Installing and updating work as before (`sudo sh pinn-*/pinn-setup.sh` or the update button). A loose `vorrat2.js` is sorted into `pb_public/js/` automatically. Your data is not touched.
 
 ## How it works
 
@@ -125,7 +125,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.52.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.53.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -215,7 +215,7 @@ pinn/
 ├── pb_public/           web app served by PocketBase
 │   ├── index.html       the app (HTML, styles and most of the code)
 │   ├── js/              app code split out of index.html, plain <script> files without a build step
-│   │                    (sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js always comes last)
+│   │                    (vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js always comes last)
 │   ├── einrichtung.js   setup assistant · datenexport.js  data export
 │   ├── lang/            translations (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js and Tesseract are downloaded by the setup)
