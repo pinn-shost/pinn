@@ -202,7 +202,7 @@ ziel() {
     pinn.css)                        echo "pb_public/vendor/pinn.css" ;;
     pocketbase_umd.js|pocketbase.umd.js|pocketbase.umd.min.js) echo "pb_public/vendor/pocketbase/pocketbase.umd.js" ;;
     pdf.min.mjs|pdf.worker.min.mjs)  echo "pb_public/vendor/pdfjs/$1" ;;
-    ausblick.js|hinweise.js|familie.js|listen.js|pinnwand.js|appstart.js|pdflesen.js|dokumente.js|zuhause.js|fahrzeuge.js|vertraege.js|sparen.js|vorrat2.js) echo "pb_public/js/$1" ;;   # app parts split out of index.html
+    ausblick.js|hinweise.js|familie.js|listen.js|pinnwand.js|appstart.js|pdflesen.js|dokumente.js|zuhause.js|fahrzeuge.js|vertraege.js|sparen.js|vorrat2.js|vorrat.js) echo "pb_public/js/$1" ;;   # app parts split out of index.html
     Caddyfile)                       echo "caddy/Caddyfile" ;;
     *) echo "" ;;
   esac
