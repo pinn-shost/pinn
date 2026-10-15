@@ -4940,6 +4940,7 @@ window.PINN_LANGUAGES = [
 
       <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Kategorie</label>
       <select id="roomScheduleCategorySelect" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-1"></select>
+      <p id="roomScheduleCategoryHint" class="hidden text-[11px] text-ink/50 mb-1">Lege hier deine erste Kategorie an, z. B. „Reinigung“ oder „Aufräumen“.</p>
       <div class="flex gap-2 mb-3">
         <input id="roomScheduleNewCategoryInput" class="flex-1 rounded-lg border border-ink/15 px-3 py-1.5 text-xs" placeholder="Eigene Kategorie…" />
         <button id="addRoomScheduleCategoryBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition whitespace-nowrap">Hinzufügen</button>
@@ -8296,6 +8297,7 @@ window.PINN_LANGUAGES = [
 
     <p id="taskFormStatus" class="text-xs text-ink/40 mb-2"></p>
     <div class="flex justify-end gap-2">
+      <button id="taskDoneBtn" type="button" class="hidden mr-auto px-3 py-2 rounded-lg border border-pine/30 text-sm text-pine hover:bg-pine/5">✓ Erledigt</button>
       <button id="cancelTask" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
       <button id="saveTask" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Speichern</button>
     </div>
@@ -11849,10 +11851,7 @@ function defaultFamilyData() {
     trashBins: [], // { id, roomId, wasteType }
     smartDevices: [], // Smarthome: { id, name, icon, type, actions: [{ id, label, shortcut }] } (siehe Abschnitt „Smarthome“)
     houseMaintenance: [], // Haus → Wartungsplan (Aufgaben legt der Server an, siehe Abschnitt „Haus“)
-    cleaningCategories: [
-      { id: 'reinigung', label: 'Reinigung', active: true },
-      { id: 'aufraeumen', label: 'Aufräumen', active: true },
-    ],
+    cleaningCategories: [], // ab 1.55.1 keine festen Kategorien mehr - jede Familie legt ihre eigenen an
     kitchenTools: [
       { id: 'ofen', label: 'Backofen', active: true },
       { id: 'mixer', label: 'Mixer', active: true },
@@ -12306,7 +12305,13 @@ function applyFamilyData(data) {
   trashBins = data.trashBins || [];
   smartDevices = normalizeSmartDevices(data.smartDevices);
   houseMaintenance = Array.isArray(data.houseMaintenance) ? data.houseMaintenance.filter(m => m && typeof m.id === 'string' && m.id) : [];
-  cleaningCategories = (data.cleaningCategories && data.cleaningCategories.length) ? data.cleaningCategories : defaultFamilyData().cleaningCategories;
+  cleaningCategories = Array.isArray(data.cleaningCategories) ? data.cleaningCategories.filter(c => c && c.id) : [];
+  // ab 1.55.1: die früheren Standard-Kategorien verschwinden, wenn keine Reinigung sie nutzt (benutzte bleiben)
+  (function () {
+    const usedIds = new Set(roomSchedules.map(x => x.category));
+    const oldDefaults = { reinigung: 'Reinigung', aufraeumen: 'Aufräumen' };
+    cleaningCategories = cleaningCategories.filter(c => !(oldDefaults[c.id] === c.label && !usedIds.has(c.id)));
+  })();
   kitchenTools = (data.kitchenTools && data.kitchenTools.length) ? data.kitchenTools : defaultFamilyData().kitchenTools;
   // Nur bekannte Tab-IDs übernehmen (falls sich das Angebot seither geändert hat) und auf genau 4 kappen
   // „Haushalt“ ist jetzt Teil von „Aufgaben“ - alte Favoriten umschreiben und auf 4 auffüllen
@@ -12458,6 +12463,11 @@ function regionProfileOutdated(w) {
   if (!window.PINN_REGION || !w) return false;
   const r = PINN_REGION.werte();
   return Object.keys(r).some(k => JSON.stringify(w[k]) !== JSON.stringify(r[k]));
+}
+// Steht im Profil keine (gültige) Sprache? Dann kennt der Server sie nicht und schickt Mitteilungen auf Deutsch.
+function languageProfileOutdated(w) {
+  if (!window.PINN_I18N || !w) return false;
+  return !(typeof w.sprache === 'string' && PINN_I18N.find(w.sprache));
 }
 let regionReloading = false;
 /* ---------- Sprache & Region (Einstellungen → Sprache & Region) ----------
@@ -12645,7 +12655,7 @@ async function loadPersonalDesign(localPending) {
       applyPersonalDesign();
       // Region im Profil fehlt oder ist veraltet (z. B. vor Version 1.17 gespeichert): nachtragen,
       // damit der Server die Notrufnummern und das Währungsformat dieses Profils kennt
-      if (!regionReloading && regionProfileOutdated(remote.werte)) savePersonalDesign();
+      if (!regionReloading && (regionProfileOutdated(remote.werte) || languageProfileOutdated(remote.werte))) savePersonalDesign();
     } else {
       pushPersonalDesign();
     }
@@ -22649,8 +22659,12 @@ document.getElementById('deleteTrashBinBtn').addEventListener('click', async () 
 function renderCleaningCategorySelect(selected) {
   const sel = document.getElementById('roomScheduleCategorySelect');
   const visible = cleaningCategories.filter(c => c.active !== false || c.id === selected);
-  sel.innerHTML = visible.map(c => `<option value="${c.id}">${escapeHtml(c.label)}</option>`).join('');
+  sel.innerHTML = visible.length
+    ? visible.map(c => `<option value="${c.id}">${escapeHtml(c.label)}</option>`).join('')
+    : '<option value="">– Noch keine Kategorie –</option>';
   if (selected) sel.value = selected;
+  const hint = document.getElementById('roomScheduleCategoryHint');
+  if (hint) hint.classList.toggle('hidden', visible.length > 0);
 }
 
 let pendingScheduleWeekdays = [];
@@ -22746,9 +22760,19 @@ document.getElementById('addRoomScheduleCategoryBtn').addEventListener('click', 
 });
 
 document.getElementById('saveRoomSchedule').addEventListener('click', async () => {
-  const category = document.getElementById('roomScheduleCategorySelect').value;
+  let category = document.getElementById('roomScheduleCategorySelect').value;
   const scheduleType = pendingScheduleType;
   const statusEl = document.getElementById('roomScheduleFormStatus');
+  if (!category && !cleaningCategories.length) {
+    // erste Reinigung der Familie: den eingetippten Namen direkt als Kategorie anlegen
+    const typed = document.getElementById('roomScheduleNewCategoryInput').value.trim();
+    if (typed) {
+      category = 'cat' + Date.now();
+      cleaningCategories.push({ id: category, label: typed, active: true });
+      renderCleaningCategorySelect(category);
+      document.getElementById('roomScheduleNewCategoryInput').value = '';
+    } else { statusEl.textContent = 'Bitte eine Kategorie eingeben, z. B. „Reinigung“.'; return; }
+  }
   if (!category) { statusEl.textContent = 'Bitte eine Kategorie wählen.'; return; }
   // AUSGEKLAMMERT (Aufgaben-Kalender): if (!appleCalendar.taskCalendarName) { statusEl.textContent = 'Bitte zuerst einen Aufgaben-Kalender in den Einstellungen festlegen.'; return; }
 
@@ -24843,6 +24867,7 @@ function renderTaskAssigneeOptions() {
 
 function openTaskModal() {
   editingTaskId = null;
+  document.getElementById('taskDoneBtn').classList.add('hidden');
   setTaskShoppingMode(false);
   document.getElementById('taskModalTitle').textContent = 'Neue Aufgabe';
   document.getElementById('saveTask').textContent = 'Speichern';
@@ -24890,6 +24915,7 @@ function openEditTaskModal(task) {
     return;
   }
   editingTaskId = a.id;
+  document.getElementById('taskDoneBtn').classList.toggle('hidden', !!a.done);
   document.getElementById('taskModalTitle').textContent = 'Aufgabe bearbeiten';
   document.getElementById('saveTask').textContent = 'Änderungen speichern';
   document.getElementById('taskTitleInput').value = a.title;
@@ -24912,6 +24938,13 @@ function openEditTaskModal(task) {
   document.getElementById('taskModal').classList.remove('hidden');
   armModalSnapshot('taskModal');
 }
+
+document.getElementById('taskDoneBtn').addEventListener('click', async () => {
+  const t = aufgaben.find(x => x.id === editingTaskId);
+  if (!t || t.done) return;
+  closeTaskModal();
+  await toggleTaskDone(t);
+});
 
 document.getElementById('saveTask').addEventListener('click', async () => {
   const title = document.getElementById('taskTitleInput').value.trim();
@@ -25916,7 +25949,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.55.0';
+const APP_VERSION = '1.55.1';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -26878,6 +26911,10 @@ const PINN_CHANGELOG = [
     v: '1.55', datum: '13.10.2026', titel: 'App-Code wird aufgeteilt (Teil 15)',
     punkte: [
       ['info', 'Für Mitwirkende: Kassen – Haushaltskasse, eigene Kasse, gemeinsame Kassen, Aufteilen & „Wer schuldet wem“, Ausgleich, Einkauf in eine Kasse buchen und der Umschalter in Finanzen und Fahrzeuge – liegt jetzt in einer eigenen Datei (pb_public/js/kassen.js). An der Bedienung ändert sich nichts'],
+      ['fix', '1.55.1: Mitteilungen kommen jetzt zuverlässig in der eingestellten Sprache an – pinn. trägt die Sprache dieses Geräts im Profil nach, falls dort noch keine steht. Dadurch werden auch „Morgen ist Müllabfuhr“, Tagesübersicht, Wochenvorschau, Geburtstage und Co. in Push und Glocke übersetzt; bereits gespeicherte Müll-Hinweise in der Glocke werden ebenfalls übersetzt'],
+      ['fix', '1.55.1: „Morgen ist Müllabfuhr“ öffnet die Aufgabe – im Bearbeiten-Fenster gibt es jetzt den Knopf „✓ Erledigt“ zum direkten Abhaken'],
+      ['fix', '1.55.1: Haushalt – „Reinigung“ und „Aufräumen“ sind nicht mehr fest vorgegeben. Neue Familien legen ihre Kategorien beim ersten Anlegen einer Reinigung selbst an (Namen eintippen und speichern genügt). Bestehende Kategorien bleiben erhalten, nur ungenutzte Standard-Kategorien verschwinden von selbst'],
+      ['info', 'Nur App-Dateien geändert (index.html und Sprachdateien en/fr/es) – am Server ändert sich nichts'],
     ],
   },
   {
@@ -32230,21 +32267,21 @@ function finBudgetToastSuffix(iso) {
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/kassen.js?v=1.55.0"></script>
-<script src="js/vorrat.js?v=1.55.0"></script>
-<script src="js/vorrat2.js?v=1.55.0"></script>
-<script src="js/sparen.js?v=1.55.0"></script>
-<script src="js/vertraege.js?v=1.55.0"></script>
-<script src="js/fahrzeuge.js?v=1.55.0"></script>
-<script src="js/zuhause.js?v=1.55.0"></script>
-<script src="js/dokumente.js?v=1.55.0"></script>
-<script src="js/pdflesen.js?v=1.55.0"></script>
-<script src="js/appstart.js?v=1.55.0"></script>
-<script src="js/pinnwand.js?v=1.55.0"></script>
-<script src="js/listen.js?v=1.55.0"></script>
-<script src="js/familie.js?v=1.55.0"></script>
-<script src="js/hinweise.js?v=1.55.0"></script>
-<script src="js/ausblick.js?v=1.55.0"></script>
+<script src="js/kassen.js?v=1.55.1"></script>
+<script src="js/vorrat.js?v=1.55.1"></script>
+<script src="js/vorrat2.js?v=1.55.1"></script>
+<script src="js/sparen.js?v=1.55.1"></script>
+<script src="js/vertraege.js?v=1.55.1"></script>
+<script src="js/fahrzeuge.js?v=1.55.1"></script>
+<script src="js/zuhause.js?v=1.55.1"></script>
+<script src="js/dokumente.js?v=1.55.1"></script>
+<script src="js/pdflesen.js?v=1.55.1"></script>
+<script src="js/appstart.js?v=1.55.1"></script>
+<script src="js/pinnwand.js?v=1.55.1"></script>
+<script src="js/listen.js?v=1.55.1"></script>
+<script src="js/familie.js?v=1.55.1"></script>
+<script src="js/hinweise.js?v=1.55.1"></script>
+<script src="js/ausblick.js?v=1.55.1"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)
