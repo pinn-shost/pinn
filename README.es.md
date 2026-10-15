@@ -90,19 +90,19 @@ Siempre contigo: pinn. se instala en cada iPhone y móvil Android como una app n
 
 pinn. habla **English, Deutsch, Français y Español**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.60
+
+**El código de la app se divide, parte 18 – para ti no cambia nada**
+
+- **Para colaboradores:** Ajustes – familia o piso compartido, miembros de la familia, categorías directamente en las páginas, vista predeterminada, colores, modo oscuro y restablecer – están ahora en un archivo propio (`pb_public/js/einstellungen.js`). No cambia nada en el uso de la app.
+- Solo cambian archivos de la app (`index.html` y `js/einstellungen.js`), nada cambia en el servidor. Instala como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualizar).
+
 ## Novedades de la 1.59
 
 **El código de la app se divide, parte 17 – para ti no cambia nada**
 
 - **Para colaboradores:** Ajustes → Casa, el calendario de basura, la cuenta de calendario de Google y Apple y *Añadir calendario* están ahora en un archivo propio (`pb_public/js/kalenderkonto.js`). No cambia nada en el uso de la app.
 - Solo cambian archivos de la app (`index.html` y `js/kalenderkonto.js`), nada cambia en el servidor. Instala como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualizar).
-
-## Novedades de la 1.58
-
-**El código de la app se divide, parte 16 – para ti no cambia nada**
-
-- **Para colaboradores:** Finanzas – gastos e ingresos, presupuesto del hogar, categorías, movimientos periódicos y la ventana de gastos – están ahora en un archivo propio (`pb_public/js/finanzen.js`). No cambia nada en el uso de la app.
-- Solo cambian archivos de la app (`index.html` y `js/finanzen.js`), nada cambia en el servidor. Instala como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualizar).
 
 ## Cómo funciona
 
@@ -130,7 +130,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.59.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.60.0` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -220,7 +220,7 @@ pinn/
 ├── pb_public/           app web servida por PocketBase
 │   ├── index.html       la app (HTML, estilos y la mayor parte del código)
 │   ├── js/              código de la app separado de index.html, archivos <script> simples sin paso de compilación
-│   │                    (kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js siempre va al final)
+│   │                    (einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js siempre va al final)
 │   ├── einrichtung.js   asistente de configuración · datenexport.js  exportación de datos
 │   ├── lang/            traducciones (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js y Tesseract los descarga la instalación)
