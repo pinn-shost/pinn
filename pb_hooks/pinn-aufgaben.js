@@ -44,6 +44,11 @@
 // (am Vortag) die Aufgabe „… rausbringen“. Ist die Abholung vorbei (Abholtag ab 12 Uhr), wird die noch
 // offene Aufgabe automatisch abgehakt – sie gilt dann nicht als verpasst (im Verlauf: erledigt von der
 // zuständigen Person). Die Erinnerung am Vortag verschickt pinn-push.js (muellInfo).
+//
+// Extra-Erinnerung (ab 1.57): Feld „erinnerung“ (HH:MM, leer = aus). Am Fälligkeitstag schickt
+// pinn-push.js (runTaskReminders) zu dieser Uhrzeit eine Push an die Zuständigen. Automatisch erzeugte
+// Aufgaben übernehmen die Uhrzeit beim Anlegen aus ihrer Regel (remindAt bei Reinigung, Mülleimer und
+// Wartung); Fahrzeug-Aufgaben bringen sie von der App mit. Danach lässt sie sich je Aufgabe ändern.
 
 const AUFGABEN = "aufgaben";
 const HOUR_MS = 3600000, DAY_MS = 86400000;
@@ -81,7 +86,7 @@ function ensureSchema() {
     ensureVerlauf();
     let col = null;
     try { col = $app.findCollectionByNameOrId(AUFGABEN); } catch (err) { col = null; }
-    if (col) return;
+    if (col) { ensureReminderField(col); return; }
     try {
         const fam = familyCollection();
         const fields = [
@@ -94,6 +99,7 @@ function ensureSchema() {
             { name: "erledigt_am", type: "text", max: 30 },
             { name: "haushalt", type: "text", max: 300 },
             { name: "verpasst", type: "number", onlyInt: true },
+            { name: "erinnerung", type: "text", max: 5 },
             { name: "created", type: "autodate", onCreate: true, onUpdate: false },
             { name: "updated", type: "autodate", onCreate: true, onUpdate: true },
         ];
@@ -113,6 +119,28 @@ function ensureSchema() {
     } catch (err) {
         console.log("[Aufgaben] Konnte Sammlung nicht anlegen: " + err.message);
     }
+}
+
+// Feld „erinnerung“ (ab 1.57) bei einer schon bestehenden Sammlung ergänzen
+function ensureReminderField(col) {
+    try {
+        try { if (col.fields.getByName("erinnerung")) return; } catch (e) { /* fehlt */ }
+        let field = null;
+        try { if (typeof TextField === "function") field = new TextField({ name: "erinnerung", max: 5 }); } catch (e) { field = null; }
+        if (!field) {
+            const tmp = new Collection({ type: "base", name: "pinn_tmp_erinnerung", fields: [{ name: "erinnerung", type: "text", max: 5 }] });
+            field = tmp.fields.getByName("erinnerung");
+        }
+        col.fields.add(field);
+        $app.save(col);
+        console.log("[Aufgaben] Feld \"erinnerung\" ergänzt.");
+    } catch (err) {
+        console.log("[Aufgaben] Feld \"erinnerung\" nicht anlegbar: " + err.message);
+    }
+}
+function remindOf(v) { return isTime(v) ? String(v) : ""; }
+function hasReminderField(rec) {
+    try { return !!rec.collection().fields.getByName("erinnerung"); } catch (e) { return false; }
 }
 
 // Verlauf der Haushalts-Aufgaben (Reihum & Statistik) – nur anlegen, wenn er fehlt
@@ -205,6 +233,7 @@ function toClient(r) {
         doneAt: r.getString("erledigt_am"),
         household: r.getString("haushalt"),
         missed: r.getInt("verpasst"),
+        remindAt: remindOf(r.getString("erinnerung")),
     };
 }
 
@@ -265,6 +294,8 @@ function saveTask(body, actorUserId, familyId) {
     rec.set("faellig", dueDate);
     rec.set("von", hasWindow ? fromTime : "");
     rec.set("bis", hasWindow ? toTime : "");
+    // Extra-Erinnerung: nur ändern, wenn die App sie mitschickt (ältere Geräte lassen sie stehen)
+    if (body.remindAt !== undefined && body.remindAt !== null && hasReminderField(rec)) rec.set("erinnerung", remindOf(body.remindAt));
     $app.save(rec);
 
     try {
@@ -666,6 +697,7 @@ function processRule(byKey, rule, todayIso, nowWall, col, familyId, members) {
     rec.set("haushalt", key);
     rec.set("verpasst", missed);
     rec.set("familie", familyId);
+    if (rule.remindAt && hasReminderField(rec)) rec.set("erinnerung", rule.remindAt);
     $app.save(rec);
     verlaufAdd(familyId, { regel: rule.id || "", titel: key, aufgabe: rec.id, faellig: todayIso, zustaendig: zust, status: "offen" });
     byKey[key] = [rec].concat(list);
@@ -686,7 +718,7 @@ function runHousehold(familyId, data) {
     const add = (key, ids, src) => {
         if (seen[key]) return;
         seen[key] = true;
-        rules.push({ key: key, notes: buildAssignedNotes(ids, data.members), ids: (ids || []).slice(), id: String((src && src.id) || ""), rotate: (src && src.rotate) || "" });
+        rules.push({ key: key, notes: buildAssignedNotes(ids, data.members), ids: (ids || []).slice(), id: String((src && src.id) || ""), rotate: (src && src.rotate) || "", remindAt: remindOf(src && src.remindAt) });
     };
     (data.roomSchedules || []).forEach(s => {
         if (isScheduleDue(s, todayIso, weekday)) add(cleaningTitle(s, data.rooms, data.cleaningCategories), s.assignedMemberIds, s);
@@ -700,7 +732,15 @@ function runHousehold(familyId, data) {
         const pickups = pickupsFor(tomorrowIso, familyId).types;
         bins.forEach(b => { if (pickups[b.wasteType]) add(binTitle(b, data.rooms), b.assignedMemberIds, b); });
     }
-    const maint = (data.houseMaintenance || []).filter(maintActive);
+    // Gleich benannte Wartungen hätten denselben Schlüssel und teilten sich ihre Aufgabe – nur die erste zählt
+    // (die App benennt doppelte Einträge seit 1.57 selbst um, z. B. „Rasen düngen (2)“)
+    const maintSeen = {};
+    const maint = (data.houseMaintenance || []).filter(maintActive).filter(m => {
+        const k = maintKey(m).toLowerCase();
+        if (maintSeen[k]) return false;
+        maintSeen[k] = true;
+        return true;
+    });
 
     let existing = [];
     if (rules.length || maint.length || bins.length) {
@@ -787,6 +827,17 @@ function muellInfo(familyId, data) {
     return out;
 }
 
+// Für die Extra-Erinnerung (pinn-push.js): offene Aufgaben mit Erinnerung, die heute fällig sind
+// -> [{ id, titel, notizen, erinnerung }]
+function remindersDue(familyId, todayIso) {
+    if (!familyId) return [];
+    let recs = [];
+    try {
+        recs = $app.findRecordsByFilter(AUFGABEN, "familie = {:f} && erledigt = false && faellig = {:d} && erinnerung != ''", "", 200, 0, { f: familyId, d: todayIso });
+    } catch (e) { return []; } // Feld fehlt noch (vor dem ersten Start mit 1.57)
+    return recs.map(r => ({ id: r.id, titel: r.getString("titel"), notizen: r.getString("notizen"), erinnerung: remindOf(r.getString("erinnerung")) })).filter(x => x.erinnerung);
+}
+
 // =============================================================================================
 // Wartungsplan (Menü „Haus“): wiederkehrende Haushalts-Aufgaben in Monaten
 // =============================================================================================
@@ -864,6 +915,7 @@ function processMaintenance(byKey, item, todayIso, col, familyId, members) {
     rec.set("haushalt", key);
     rec.set("verpasst", 0);
     rec.set("familie", familyId);
+    if (remindOf(item.remindAt) && hasReminderField(rec)) rec.set("erinnerung", remindOf(item.remindAt));
     $app.save(rec);
     verlaufAdd(familyId, { regel: rule.id, titel: key, aufgabe: rec.id, faellig: due, zustaendig: zust, status: "offen" });
     byKey[key] = [rec].concat(list);
@@ -1031,7 +1083,7 @@ function notifyReward(familyId, actorUserId, body) {
 }
 
 module.exports = {
-    statistik, notifyReward, ensureVerlauf, muellInfo, pickupsFor, loadHouseholdData,
+    statistik, notifyReward, ensureVerlauf, muellInfo, pickupsFor, loadHouseholdData, remindersDue,
     AUFGABEN, ensureSchema, listAll, saveTask, setDone, notifyDoneDelayed, removeTask, familyMembers,
     deleteHouseholdTasks, deleteTodayHouseholdTask, runCron, runHouseholdNow,
 };

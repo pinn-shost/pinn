@@ -716,7 +716,7 @@ function fzTaskId(seed) {
 }
 function fzAutoSettings(v) {
   const a = (v && v.autoTasks && typeof v.autoTasks === 'object') ? v.autoTasks : {};
-  return { on: a.on !== false, days: fzLead(v), to: Array.isArray(a.to) ? a.to.filter(id => memberById(id)) : [], made: (a.made && typeof a.made === 'object') ? a.made : {} };
+  return { on: a.on !== false, days: fzLead(v), to: Array.isArray(a.to) ? a.to.filter(id => memberById(id)) : [], made: (a.made && typeof a.made === 'object') ? a.made : {}, remindAt: taskRemindValid(a.remindAt) ? a.remindAt : '' };
 }
 function fzTaskTargets(v) {
   const a = fzAutoSettings(v);
@@ -746,7 +746,7 @@ function fzRunAutoTasks() {
         if (!it.task || made[it.key] || created >= 12) return;
         if (it.task.createAfter && today < it.task.createAfter) return;
         const id = fzTaskId('fz|' + fam + '|' + v.id + '|' + it.key);
-        queueTaskSave({ id, title: String(it.task.title).slice(0, 200), notes: buildAssignedNotes(it.task.notes || '', fzTaskTargets(v)), dueDate: it.task.due, fromTime: '', toTime: '' }, true);
+        queueTaskSave({ id, title: String(it.task.title).slice(0, 200), notes: buildAssignedNotes(it.task.notes || '', fzTaskTargets(v)), dueDate: it.task.due, fromTime: '', toTime: '', remindAt: a.remindAt }, true);
         made[it.key] = { id, at: today };
         changed = true;
         created++;
@@ -754,7 +754,7 @@ function fzRunAutoTasks() {
       if (!changed) return v;
       const keys = Object.keys(made).sort((x, y) => String((made[y] && made[y].at) || '').localeCompare(String((made[x] && made[x].at) || '')));
       keys.slice(40).forEach(key => { delete made[key]; });
-      return { ...v, autoTasks: { ...(v.autoTasks || {}), on: a.on, days: a.days, to: a.to, made } };
+      return { ...v, autoTasks: { ...(v.autoTasks || {}), on: a.on, days: a.days, to: a.to, made, remindAt: a.remindAt } };
     });
     if (created) {
       finance.vehicles = next;
@@ -784,6 +784,21 @@ function fzCompleteTask(v, key) {
   rebuildAufgaben();
   renderTasks();
   flushOutbox();
+}
+// Since 1.57: tapping a vehicle task opens the matching entry (HU, inspection, tyres …); saving it ticks the task off
+const FZ_TASK_ACT_LABELS = { hu: '🔍 HU eintragen', service: '🔧 Inspektion eintragen', reifen: '🛞 Reifenwechsel eintragen', vk: '🪪 Kennzeichen eintragen', frist: '✓ Frist erledigt' };
+function fzTaskAction(task) {
+  if (!task || task.done || task.household || !finance || isCurrentUserGuest()) return null;
+  for (const v of fzVehicles()) {
+    if (fzIsArchived(v)) continue;
+    const made = fzAutoSettings(v).made;
+    const key = Object.keys(made).find(k => made[k] && made[k].id === task.id);
+    if (!key) continue;
+    const it = fzDueItems(v, finTodayIso(), true).find(x => x.key === key);
+    if (!it || !FZ_TASK_ACT_LABELS[it.act]) return null;
+    return { label: FZ_TASK_ACT_LABELS[it.act], run: () => fzDueDone(v.id, key) };
+  }
+  return null;
 }
 // Start after the app has loaded: check once, then every 30 minutes (only while visible)
 function fzStart() {
@@ -1707,6 +1722,7 @@ function fzOpenVehicleModal(id, kindPreset) {
       <span class="fz-lbl">Zuständig</span>
       <div class="flex flex-wrap gap-1.5 mb-1" id="fzvAutoTo">${members.map(m => `<button type="button" class="fz-member-chip px-2.5 py-1.5 text-xs${a.to.includes(m.id) ? ' active' : ''}" data-m="${escapeHtml(m.id)}">${escapeHtml(memberLabel(m))}</button>`).join('')}</div>
       <p class="text-[11px] text-ink/45 mb-2">Niemand gewählt: die Aufgabe geht an den Halter.</p>
+      <div class="fz-field">${taskRemindHtml('fzv', a.remindAt, { label: '🔔 Extra-Erinnerung per Push', def: '09:00' })}</div>
     </div>
 
     <details class="vt-more mt-3 rounded-xl border border-ink/10 px-3 py-2"${draft.vin || draft.hsn || draft.tsn || draft.note ? ' open' : ''}>
@@ -1739,6 +1755,7 @@ function fzOpenVehicleModal(id, kindPreset) {
       body.querySelectorAll('#fzvColors .fz-color-btn').forEach(x => x.classList.toggle('active', x === b));
     }));
     body.querySelectorAll('#fzvAutoTo .fz-member-chip').forEach(b => b.addEventListener('click', () => b.classList.toggle('active')));
+    taskRemindWire('fzv');
     ['fzvTireMode', 'fzvAutoOn'].forEach(id => document.getElementById(id).addEventListener('change', fzVehicleFormUi));
     document.getElementById('fzvCancel').addEventListener('click', () => attemptCloseModal('fzModal', fzCloseModal));
     document.getElementById('fzvSave').addEventListener('click', fzSaveVehicle);
@@ -1839,7 +1856,7 @@ function fzSaveVehicle() {
     odoStart, firstReg,
     value: value === '' ? '' : value,
     valueDate: value === '' ? '' : (valueChanged ? today : ((existing && existing.valueDate) || today)),
-    autoTasks: { on: fzChecked('fzvAutoOn'), days: parseInt(fzVal('fzvAutoDays'), 10) || 30, to: autoTo, made: prevAuto.made },
+    autoTasks: { on: fzChecked('fzvAutoOn'), days: parseInt(fzVal('fzvAutoDays'), 10) || 30, to: autoTo, made: prevAuto.made, remindAt: taskRemindValue('fzv') },
     vin: fzVal('fzvVin').toUpperCase().slice(0, 40), hsn: fzVal('fzvHsn').slice(0, 4), tsn: fzVal('fzvTsn').toUpperCase().slice(0, 10),
     note: (document.getElementById('fzvNote').value || '').trim().slice(0, 2000),
     deadlines: (existing && Array.isArray(existing.deadlines)) ? existing.deadlines : [],
@@ -1871,6 +1888,9 @@ function fzSaveVehicle() {
   }
   vehicle.taxRecId = taxRecId;
   finance.vehicles = existing ? fzVehicles().map(x => x.id === id ? vehicle : x) : [...fzVehicles(), vehicle];
+  // Open tasks of this vehicle take over the reminder time right away
+  const madeIds = new Set(Object.values(prevAuto.made || {}).map(x => x && x.id).filter(Boolean));
+  if (madeIds.size) taskRemindApplyOpen(t => madeIds.has(t.id), vehicle.autoTasks.remindAt);
   fzCloseModal();
   fzDetailId = id;
   fzTab = 'liste';

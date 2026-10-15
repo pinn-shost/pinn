@@ -90,16 +90,16 @@ Siempre contigo: pinn. se instala en cualquier iPhone y móvil Android como una 
 
 pinn. habla **English, Deutsch, Français y Español**, adapta la moneda y los números de emergencia a tu región y cambia entre los textos de **familia** y de **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
-## Novedades en 1.56
+## Novedades en 1.57
 
-**Nuevos gráficos y recorte de la foto de perfil**
+**Tareas: recordatorios y anotación directa**
 
-- **Recortar la foto de perfil:** justo después de elegir una foto se abre un círculo con el recorte, alrededor blanco translúcido. Arrastra para moverla, haz zoom con el control o con dos dedos (en el Mac también con el trackpad, las flechas y +/−) y acepta. Sirve para miembros de la familia y mascotas. Se guarda exactamente este círculo, así la imagen se ve igual en todo pinn.
-- **Escena de carretera para vehículos:** la cabecera de un vehículo muestra ahora una carretera en movimiento – colinas del color del vehículo, árboles y farolas, tráfico en sentido contrario y adelantamientos. De día sol y nubes, de noche luna, estrellas y farolas encendidas. Bicicletas, e-bikes y patinetes eléctricos comparten la carretera con otras bicis.
-- **Miembros de la familia:** el anillo de progreso de los niños y el brillo de SOS y cumpleaños ya no se cortan por arriba.
-- **Cuenta:** la foto de perfil de la tarjeta superior muestra ahora el mismo recorte que en el resto.
-- **Icono de la app:** creado de nuevo. En la pestaña del navegador y en la pantalla de inicio el logo llena todo el icono – sin borde ni esquinas blancas. En iPhone y iPad, quita pinn. una vez de la pantalla de inicio y vuelve a añadirlo (Compartir → *Añadir a pantalla de inicio*) para ver el icono nuevo. Tus datos no se ven afectados.
-- Solo cambian archivos de la app; en el servidor no cambia nada. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualizar).
+- **Recordatorio push adicional:** al crear o editar una tarea – y en todas las reglas que crean tareas automáticamente (limpieza, cubos, mantenimiento, año del jardín, vehículos) – marca *Recordatorio push adicional* y elige una hora. El día de vencimiento los responsables reciben un push a esa hora.
+- **Lecturas de contadores de una vez:** al tocar la tarea *Leer contadores* se abre directamente la anotación – con varios contadores, uno tras otro. Cuando todos tienen lectura, la tarea se marca sola, también si las anotas en *Hogar*.
+- **Tareas de vehículos:** ITV, revisión, cambio de neumáticos, placa del seguro y plazos propios abren la anotación adecuada al tocarlos y se marcan solos al guardar.
+- **Hogar:** el mantenimiento atrasado en el resumen lleva ahora a la anotación o a la tarea con *✓ Hecho* en lugar del plan de mantenimiento. El plan tiene su propio botón para ello.
+- **Corrección:** dos mantenimientos con el mismo nombre (p. ej. en el año del jardín) compartían su tarea y al editar se mezclaban las fechas. Los nombres iguales reciben ahora un número automáticamente, p. ej. «Rasen düngen (2)»; los duplicados existentes se reparan una vez.
+- Cambian archivos de la app y del servidor. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización) – el servidor añade solo el nuevo campo del recordatorio.
 
 ## Cómo funciona
 
@@ -127,7 +127,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.56.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.57.0` o `pinn-main`) tal cual.
 3. Conéctate por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -530,10 +530,47 @@ function hsMaintEvery(months) {
   if (n % 12 === 0) return 'alle ' + (n / 12) + ' Jahre';
   return 'alle ' + n + ' Monate';
 }
+// The task key is icon + title: two entries with the same name would share one task (editing one
+// changed the due date of the other). Since 1.57 names are kept unique, e.g. "Rasen düngen (2)".
+function hsMaintUniqueTitle(icon, title, exceptId) {
+  const taken = new Set(hsMaintItems().filter(m => m.id !== exceptId).map(m => hsMaintKey(m).toLowerCase()));
+  const keyOf = t => hsMaintKey({ icon, title: t }).toLowerCase();
+  if (!taken.has(keyOf(title))) return title;
+  const base = String(title).replace(/\s*\(\d+\)$/, '').slice(0, 94);
+  for (let n = 2; n < 100; n++) {
+    const t = base + ' (' + n + ')';
+    if (!taken.has(keyOf(t))) return t;
+  }
+  return title;
+}
+// Repair duplicates saved before 1.57: later entries get a number, the server then creates their own task
+function hsMaintFixDuplicates() {
+  if (!Array.isArray(houseMaintenance) || houseMaintenance.length < 2) return false;
+  const all = new Set(houseMaintenance.map(m => hsMaintKey(m).toLowerCase()));
+  const seen = new Set();
+  let changed = false;
+  houseMaintenance = houseMaintenance.map(m => {
+    const k = hsMaintKey(m).toLowerCase();
+    if (!seen.has(k)) { seen.add(k); return m; }
+    const base = String(m.title || '').replace(/\s*\(\d+\)$/, '').slice(0, 94);
+    let n = 2, t = base + ' (2)';
+    while (all.has(hsMaintKey({ icon: m.icon, title: t }).toLowerCase()) && n < 100) { n++; t = base + ' (' + n + ')'; }
+    const next = { ...m, title: t };
+    const nk = hsMaintKey(next).toLowerCase();
+    all.add(nk); seen.add(nk);
+    changed = true;
+    return next;
+  });
+  return changed;
+}
 // Note completed tasks at the maintenance point (the history on the server only keeps ~400 days)
 function hsMaintSyncFromTasks() {
   if (!Array.isArray(houseMaintenance) || !houseMaintenance.length || isCurrentUserGuest() || childLockActive()) return false;
   let changed = false;
+  if (hsMaintFixDuplicates()) {
+    changed = true;
+    setTimeout(() => { if (typeof triggerHouseholdResync === 'function') triggerHouseholdResync(); }, 1500);
+  }
   houseMaintenance = houseMaintenance.map(m => {
     const d = hsMaintLastDone(m);
     if (d && d !== m.last) { changed = true; return { ...m, last: d }; }
@@ -541,6 +578,124 @@ function hsMaintSyncFromTasks() {
   });
   if (changed) persistState();
   return changed;
+}
+/* ---------- Tasks with their own input (since 1.57) ----------
+   "Zählerstände ablesen" (read meters): tapping the task opens the reading popup, one meter after the other.
+   As soon as every active meter has a recent reading, the task ticks itself off – also when the readings
+   are entered on the Zuhause (home) page. index.html → taskActionFor asks hsTaskAction for the button. */
+let hsMeterRun = null; // { taskId, cutoff } while working through the meters
+function hsMaintIsMeter(m) { return !!m && (m.tpl === 'zaehler' || /zählerst/i.test(String(m.title || ''))); }
+function hsMeterMaintForTask(task) {
+  if (!task || !task.household) return null;
+  return hsMaintItems().find(m => hsMaintIsMeter(m) && hsMaintKey(m) === task.household) || null;
+}
+function hsAllActiveMeters() {
+  const homes = new Set(hsActiveHomes().map(h => h.id));
+  return hsMeters('').filter(m => m.active !== false && homes.has(m.home));
+}
+// Readings from this day on count for the task (also when entered a little early)
+function hsMeterCutoff(task, m) {
+  const lead = Math.max(0, Number(m && m.lead) || 0);
+  const base = task && vtIsIso(task.dueDate) ? task.dueDate : finTodayIso();
+  return vtAddDays(base, -Math.max(10, lead + 5));
+}
+function hsMeterPending(cutoff) {
+  return hsAllActiveMeters().filter(m => {
+    const rs = hsReadings(m.id);
+    const last = rs.length ? rs[rs.length - 1].date : '';
+    return !(last && last >= cutoff);
+  });
+}
+function hsMeterLabel(m) { return m.name || hsMeterType(m.type).label; }
+function hsTaskAction(task) {
+  if (!task || task.done || !hsCanEdit() || !finance) return null;
+  const m = hsMeterMaintForTask(task);
+  if (!m) return null;
+  return { label: '📟 Zählerstände eintragen', run: () => hsMeterTaskRun(task.id) };
+}
+function hsCompleteTask(task) {
+  if (!task || task.done || typeof queueTaskDone !== 'function') return;
+  queueTaskDone(task.id, true);
+  rebuildAufgaben();
+  try { renderTasks(); } catch (e) { /* ignore */ }
+  flushOutbox();
+}
+function hsOpenMeterReadingFor(meter) {
+  hsHomeId = meter.home;
+  hsOpenReadingModal({ meterId: meter.id, fromRun: true });
+}
+// taskId empty = from the overview without a task yet
+function hsMeterTaskRun(taskId) {
+  if (!hsCanEdit() || !finance) return;
+  const task = taskId ? aufgaben.find(t => t.id === taskId) : null;
+  const m = task ? hsMeterMaintForTask(task) : null;
+  if (taskId && !m) return;
+  if (!hsAllActiveMeters().length) {
+    finShowToast('Lege zuerst deine Zähler an – danach öffnet die Aufgabe direkt das Eintragen.');
+    hsOpen('zaehler');
+    setTimeout(() => hsOpenMeterModal(null), 250);
+    return;
+  }
+  const cutoff = task ? hsMeterCutoff(task, m) : vtAddDays(finTodayIso(), -10);
+  const pending = hsMeterPending(cutoff);
+  if (!pending.length) {
+    if (task && confirm('Alle Zählerstände sind schon eingetragen. Aufgabe „' + task.title + '“ abhaken?')) {
+      hsCompleteTask(task);
+      finShowToast('Erledigt ✓');
+    } else if (!task) {
+      hsOpenReadingModal({});
+    }
+    return;
+  }
+  hsMeterRun = { taskId: task ? task.id : '', cutoff };
+  hsOpenMeterReadingFor(pending[0]);
+}
+// After saving a reading: tick off meter tasks that are complete, otherwise go on with the next meter
+function hsMeterAfterReading() {
+  const run = hsMeterRun;
+  hsMeterRun = null;
+  if (typeof aufgaben === 'undefined' || !hsAllActiveMeters().length) return false;
+  let closed = 0;
+  aufgaben.filter(t => !t.done).forEach(t => {
+    const m = hsMeterMaintForTask(t);
+    if (!m || hsMeterPending(hsMeterCutoff(t, m)).length) return;
+    hsCompleteTask(t);
+    closed++;
+  });
+  if (closed) {
+    finShowToast('Alle Zählerstände eingetragen – Aufgabe erledigt ✓');
+    if (currentView === 'haus') renderHouse();
+    return true;
+  }
+  if (run) {
+    const pending = hsMeterPending(run.cutoff);
+    if (pending.length) {
+      hsMeterRun = run;
+      finShowToast('Gespeichert – weiter mit ' + hsMeterLabel(pending[0]) + '.');
+      setTimeout(() => hsOpenMeterReadingFor(pending[0]), 350);
+      return true;
+    }
+  }
+  return false;
+}
+// "Überfällig" (overdue) in the overview: open the input or the task itself, not the maintenance plan
+function hsMaintDueOpen(id) {
+  const m = hsMaintItems().find(x => x.id === id);
+  if (!m) return;
+  const open = hsMaintOpen(m);
+  if (hsMaintIsMeter(m)) { hsMeterTaskRun(open ? open.id : ''); return; }
+  if (open) { openEditTaskModal({ id: open.id }); return; }
+  if (hsCanEdit()) hsOpenMaintModal(id);
+}
+// Button in the maintenance list: enter readings or tick off the open task
+function hsMaintAct(id) {
+  const m = hsMaintItems().find(x => x.id === id);
+  const open = m ? hsMaintOpen(m) : null;
+  if (!open || !hsCanEdit()) return;
+  if (hsMaintIsMeter(m)) { hsMeterTaskRun(open.id); return; }
+  hsCompleteTask(open);
+  finShowToast('Erledigt ✓');
+  if (currentView === 'haus') renderHouse();
 }
 function hsMaintDueTone(iso) {
   const days = vtDiffDays(finTodayIso(), iso);
@@ -1058,7 +1213,7 @@ function hsDueItems(h) {
   hsMaintItems().filter(m => m.active !== false).forEach(m => {
     const next = hsMaintNext(m);
     const days = vtDiffDays(today, next);
-    if (days <= 14) { const t = hsMaintDueTone(next); out.push({ tone: t.tone || 'warn', icon: m.icon || '🔧', title: m.title, sub: 'Wartung', when: t.label, act: 'tab', tab: 'wartung' }); }
+    if (days <= 14) { const t = hsMaintDueTone(next); out.push({ tone: t.tone || 'warn', icon: m.icon || '🔧', title: m.title, sub: hsMaintIsMeter(m) ? 'Antippen zum Eintragen' : 'Wartung', when: t.label, act: 'maint-due', id: m.id }); }
   });
   hsMeters(h.id).filter(m => m.active !== false).forEach(m => {
     const rs = hsReadings(m.id);
@@ -1554,7 +1709,7 @@ function hsMaintListHtml(compact, which = 'all') {
         <span class="flex-1 min-w-0">
           <span class="block text-sm font-medium truncate">${hsEsc(m.title)}</span>
           <span class="block text-xs text-ink/55 truncate">${hsEsc(sub)}</span>
-          ${open && !compact ? '<span class="flex gap-1 mt-1"><span class="vt-chip muted">✅ Aufgabe angelegt</span></span>' : ''}
+          ${open && !compact ? `<span class="flex gap-1 mt-1 flex-wrap"><span class="vt-chip muted">✅ Aufgabe angelegt</span>${hsCanEdit() ? `<span role="button" tabindex="0" class="fz-mini-btn primary" data-hsact="maint-act" data-id="${hsEsc(m.id)}">${hsMaintIsMeter(m) ? '📟 Eintragen' : '✓ Erledigt'}</span>` : ''}</span>` : ''}
         </span>
         <span class="vt-chip ${m.active === false ? 'muted' : hsEsc(t.tone)}">${m.active === false ? hsEsc('pausiert') : hsEsc(t.label)}</span>
       </div>`;
@@ -2277,7 +2432,8 @@ function hsDeleteMeter(id) {
 }
 
 /* ---------- Popup: meter reading (by hand or from a photo with AI) ---------- */
-function hsOpenReadingModal({ meterId = '', id = '' } = {}) {
+function hsOpenReadingModal({ meterId = '', id = '', fromRun = false } = {}) {
+  if (!fromRun) hsMeterRun = null;
   const h = hsCurrent();
   if (!h || !hsCanEdit()) return;
   const r = id ? hsReadingById(id) : null;
@@ -2289,6 +2445,7 @@ function hsOpenReadingModal({ meterId = '', id = '' } = {}) {
   recipeKiLoadStatus();
   const html = `
     <h3 class="font-serif text-lg mb-3 pr-6">${r ? 'Zählerstand bearbeiten' : 'Zählerstand'}</h3>
+    ${hsMeterRun && !r ? `<p class="text-xs text-ink/55 -mt-2 mb-3">📟 ${hsEsc('Noch ' + hsMeterPending(hsMeterRun.cutoff).length + ' von ' + hsAllActiveMeters().length + ' Zählern offen')}</p>` : ''}
     <div class="fz-type-row mb-3" id="hsrMeters">${meters.map(m => { const t = hsMeterType(m.type); return `<button type="button" class="fz-type-chip${m.id === mid ? ' active' : ''}" data-m="${hsEsc(m.id)}"><span class="fz-ti">${t.icon}</span>${hsEsc(m.name || t.label)}</button>`; }).join('')}</div>
     <button type="button" id="hsrKi" class="w-full mb-3 px-3 py-2.5 rounded-xl border border-dashed border-pine/50 text-sm text-pine hover:bg-pine/5 transition">📷 Foto vom Zähler – KI liest ab</button>
     <input type="file" id="hsrFile" accept="image/*" capture="environment" class="hidden" />
@@ -2400,6 +2557,8 @@ function hsSaveReading() {
   const m = hsMeterById(st.meter);
   const fc = hsForecast(m);
   finShowToast(fc.diff != null ? (fc.diff > 0 ? 'Gespeichert – voraussichtlich Nachzahlung.' : 'Gespeichert – voraussichtlich Guthaben.') : 'Gespeichert.');
+  // Since 1.57: completes "Zählerstände ablesen" or continues with the next meter
+  if (!existing) hsMeterAfterReading();
 }
 function hsDeleteReading(id) {
   if (!confirm('Diesen Zählerstand löschen?')) return;
@@ -2439,10 +2598,12 @@ function hsOpenMaintModal(id, tplId, garden = false) {
     <div class="fz-field"><span class="fz-lbl">Wer kümmert sich?</span>${hsMemberChips('hswWho', d.assignedMemberIds || [])}<p class="text-[11px] text-ink/45 mt-1">Niemand gewählt = Aufgabe für alle.</p></div>
     <label class="fz-check" id="hswRotateWrap"><input type="checkbox" id="hswRotate"${d.rotate ? ' checked' : ''} /> <span>🔄 Reihum verteilen <span class="text-ink/45">(wer zuletzt am wenigsten gemacht hat)</span></span></label>
     ${fzIn('hswNote', 'Hinweis in der Aufgabe', d.note || '', { ph: 'optional, z. B. Entlüftungsschlüssel liegt im Keller', max: 300 })}
+    <div class="fz-field">${taskRemindHtml('hsw', d.remindAt, { label: '🔔 Extra-Erinnerung per Push', def: '09:00' })}</div>
     <label class="fz-check"><input type="checkbox" id="hswActive"${d.active !== false ? ' checked' : ''} /> <span>Aktiv <span class="text-ink/45">(aus = pausiert, keine Aufgaben)</span></span></label>
     ${hsFooter('hsMaint', !!x)}`;
   hsOpenModal(html, body => {
     hsWireChips(body, '#hswWho');
+    taskRemindWire('hsw');
     const ui = () => { document.getElementById('hswRotateWrap').classList.toggle('hidden', hsChipVals('#hswWho').length < 2); };
     body.querySelectorAll('#hswWho .fz-member-chip').forEach(b => b.addEventListener('click', ui));
     ui();
@@ -2452,11 +2613,12 @@ function hsOpenMaintModal(id, tplId, garden = false) {
 function hsSaveMaint() {
   const st = hsModalState;
   if (!st || st.mode !== 'maint') return;
-  const title = fzVal('hswTitle').replace(/\s+/g, ' ').slice(0, 100);
-  if (!title) return fzShowErr('hsMaintError', 'Bitte eingeben, was zu tun ist.');
+  const wanted = fzVal('hswTitle').replace(/\s+/g, ' ').slice(0, 100);
+  if (!wanted) return fzShowErr('hsMaintError', 'Bitte eingeben, was zu tun ist.');
   const next = fzVal('hswNext');
   if (!vtIsIso(next)) return fzShowErr('hsMaintError', 'Bitte ein Datum für die nächste Fälligkeit wählen.');
   const existing = st.id ? hsMaintItems().find(m => m.id === st.id) : null;
+  const title = hsMaintUniqueTitle((fzVal('hswIcon') || '🔧').slice(0, 8), wanted, existing ? existing.id : '');
   const who = hsChipVals('#hswWho').filter(id => memberById(id));
   const item = {
     ...(existing || {}),
@@ -2465,6 +2627,7 @@ function hsSaveMaint() {
     months: Number(fzVal('hswMonths')) || 12, lead: Number(fzVal('hswLead')) || 0,
     assignedMemberIds: who, rotate: who.length > 1 && fzChecked('hswRotate') ? 'fair' : '',
     note: fzVal('hswNote').slice(0, 300), active: fzChecked('hswActive'),
+    remindAt: taskRemindValue('hsw'),
   };
   if (st.garden) item.garden = true;
   if (!existing || next !== st.nextStart) { item.next = next; item.nextSet = finTodayIso(); }
@@ -2482,7 +2645,11 @@ function hsSaveMaint() {
   houseMaintenance = existing ? hsMaintItems().map(m => m.id === item.id ? item : m) : [...hsMaintItems(), item];
   hsCloseModal();
   hsMaintChanged();
-  finShowToast(item.active ? 'Gespeichert – die Aufgabe kommt rechtzeitig unter „Aufgaben“.' : 'Gespeichert.');
+  // An open task of this entry takes over the reminder time right away
+  const newKey = hsMaintKey(item);
+  taskRemindApplyOpen(t => t.household === newKey, item.remindAt);
+  if (title !== wanted) finShowToast('Gespeichert als „' + title + '“ – den Namen gab es schon.');
+  else finShowToast(item.active ? 'Gespeichert – die Aufgabe kommt rechtzeitig unter „Aufgaben“.' : 'Gespeichert.');
 }
 function hsDeleteMaint(id) {
   const x = hsMaintItems().find(m => m.id === id);
@@ -2701,6 +2868,8 @@ document.addEventListener('click', (e) => {
     case 'maint-tpl': hsOpenMaintModal(null, el.dataset.tpl); break;
     case 'maint-edit': if (hsCanEdit()) hsOpenMaintModal(id); break;
     case 'maint-open': hsOpen('wartung'); break;
+    case 'maint-due': hsMaintDueOpen(id); break;
+    case 'maint-act': hsMaintAct(id); break;
     case 'maint-new-garden': hsOpenMaintModal(null, null, true); break;
     case 'mod-toggle': hsToggleModule(id); break;
     case 'key-new': hsOpenKeyModal(null); break;

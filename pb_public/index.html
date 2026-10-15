@@ -16,11 +16,11 @@
 <meta http-equiv="Expires" content="0">
 <!-- App-Symbole: ?v= sorgt dafür, dass Browser nach einem Update das neue Symbol laden.
      Das Home-Bildschirm-Symbol ist randlos (iOS rundet die Ecken selbst ab). -->
-<link rel="icon" href="favicon.ico?v=1.56.0" sizes="16x16 32x32 48x48">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=1.56.0">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=1.56.0">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=1.56.0">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=1.56.0">
+<link rel="icon" href="favicon.ico?v=1.57.0" sizes="16x16 32x32 48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=1.57.0">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=1.57.0">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=1.57.0">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=1.57.0">
 <link rel="manifest" href="manifest.json">
 <!-- Kein Code von fremden Servern (Bankdaten!): Tailwind als fertig gebaute CSS und der PocketBase-
      Client liegen selbst gehostet auf dem NAS:
@@ -587,7 +587,7 @@ window.PINN_LANGUAGES = [
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
   // Versionsnummer bei jeder Änderung an den Sprachdateien erhöhen, sonst nutzen Geräte die alte Datei weiter
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.56.0" onerror="PINN_I18N.fail()"><\/script>');
+  if (DICT) document.write('<script src="' + lang.file + '?v=1.57.0" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // Deutsch als WG: kein Wörterbuch, nur die WG-Bezeichnungen
 })();
 </script>
@@ -4919,6 +4919,7 @@ window.PINN_LANGUAGES = [
         <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Start-Knöpfe erscheinen direkt an der Aufgabe und starten die Aktion – über Apple-Kurzbefehle oder Home Assistant (z. B. Saugen, Wischen oder beides). „Beim Abhaken“ startet zusätzlich eine Aktion, sobald die Aufgabe erledigt ist – z. B. eine Erinnerungs-LED wieder ausschalten. „Automatisch starten“ läuft am Fälligkeitstag ab der Uhrzeit. Geräte richtest du unter Einstellungen → Smarthome oder über das Haus-Symbol oben auf der Haushalt-Seite ein.">i</button>
       </div>
       <div id="trashBinSmartPicker" class="mb-4"></div>
+      <div id="trashBinRemindPicker" class="mb-4"></div>
       <label class="flex items-center gap-2 text-sm mb-3 cursor-pointer">
         <input id="trashBinManualScheduleCheckbox" type="checkbox" class="w-4 h-4" />
         Zusätzlich manuellen Rausbring-Rhythmus festlegen
@@ -5037,6 +5038,7 @@ window.PINN_LANGUAGES = [
         <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Start-Knöpfe erscheinen direkt an der Aufgabe und starten die Aktion – über Apple-Kurzbefehle oder Home Assistant (z. B. Saugen, Wischen oder beides). „Beim Abhaken“ startet zusätzlich eine Aktion, sobald die Aufgabe erledigt ist – z. B. eine Erinnerungs-LED wieder ausschalten. „Automatisch starten“ läuft am Fälligkeitstag ab der Uhrzeit. Geräte richtest du unter Einstellungen → Smarthome oder über das Haus-Symbol oben auf der Haushalt-Seite ein.">i</button>
       </div>
       <div id="roomScheduleSmartPicker" class="mb-4"></div>
+      <div id="roomScheduleRemindPicker" class="mb-4"></div>
       <p id="roomScheduleFormStatus" class="text-xs text-ink/40 mb-2"></p>
       <div class="flex items-center justify-between gap-2 mt-2">
         <button id="deleteRoomScheduleBtn" class="hidden px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Löschen</button>
@@ -8331,6 +8333,8 @@ window.PINN_LANGUAGES = [
         <input id="taskToTime" type="time" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm" />
       </div>
     </div>
+
+    <div id="taskRemindPicker" class="mb-3"></div>
 
     <p id="taskFormStatus" class="text-xs text-ink/40 mb-2"></p>
     <div class="flex justify-end gap-2">
@@ -13335,7 +13339,7 @@ function ofsWire(body) {
       ofsClose();
       setView('aufgaben');
       const tid = b.dataset.id;
-      if (tid && aufgaben.some(t => t.id === tid)) openEditTaskModal({ id: tid });
+      if (tid && aufgaben.some(t => t.id === tid)) openTaskFromLink(tid);
     }
     else if (k === 'task') {
       ofsClose();
@@ -22016,6 +22020,82 @@ function queueTaskDelete(id) {
   outboxReplaceOwn(list);
 }
 
+/* ---------- Extra-Erinnerung per Push (ab 1.57) ----------
+   Häkchen + Uhrzeit, gespeichert als remindAt ('HH:MM', leer = aus). An Aufgaben direkt, an Regeln
+   (Reinigung, Mülleimer, Wartung, Fahrzeuge) für alle künftig erzeugten Aufgaben. Die Push schickt der
+   Server am Fälligkeitstag zur Uhrzeit (pb_hooks/pinn-push.js → runTaskReminders). */
+function taskRemindValid(v) { return /^([01]\d|2[0-3]):[0-5]\d$/.test(String(v || '')); }
+function taskRemindHtml(prefix, value, opts = {}) {
+  const on = taskRemindValid(value);
+  const time = on ? value : (opts.def || '09:00');
+  const label = opts.label || '🔔 Erinnerung per Push';
+  return `<div class="task-remind">
+    <label class="flex items-center gap-2 text-sm cursor-pointer select-none">
+      <input id="${prefix}RemindOn" type="checkbox" class="w-4 h-4"${on ? ' checked' : ''} />
+      <span>${escapeHtml(label)}</span>
+    </label>
+    <div id="${prefix}RemindWrap" class="${on ? '' : 'hidden '}flex items-center gap-2 mt-2 pl-6 flex-wrap">
+      <span class="text-xs text-ink/50">am Fälligkeitstag um</span>
+      <input id="${prefix}RemindTime" type="time" value="${escapeHtml(time)}" class="rounded-lg border border-ink/15 px-2 py-1.5 text-sm" />
+    </div>
+    ${opts.hint ? `<p class="text-[11px] text-ink/40 mt-1">${escapeHtml(opts.hint)}</p>` : ''}
+  </div>`;
+}
+function taskRemindWire(prefix) {
+  const cb = document.getElementById(prefix + 'RemindOn');
+  if (!cb) return;
+  cb.addEventListener('change', () => {
+    document.getElementById(prefix + 'RemindWrap').classList.toggle('hidden', !cb.checked);
+  });
+}
+// In einen festen Platzhalter (Aufgabe, Mülleimer, Reinigung) einsetzen
+function taskRemindLoad(containerId, prefix, value, opts) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = taskRemindHtml(prefix, value, opts);
+  taskRemindWire(prefix);
+}
+function taskRemindValue(prefix) {
+  const cb = document.getElementById(prefix + 'RemindOn');
+  if (!cb || !cb.checked) return '';
+  const t = (document.getElementById(prefix + 'RemindTime') || {}).value || '';
+  return taskRemindValid(t) ? t : '09:00';
+}
+// Geänderte Regel: noch offene Aufgaben dieser Regel bekommen die neue Uhrzeit gleich mit
+function taskRemindApplyOpen(match, remindAt) {
+  if (typeof aufgaben === 'undefined' || isCurrentUserGuest()) return 0;
+  const want = taskRemindValid(remindAt) ? remindAt : '';
+  let n = 0;
+  aufgaben.filter(t => !t.done && match(t) && (t.remindAt || '') !== want).forEach(t => {
+    queueTaskSave({ id: t.id, title: t.title, notes: t.notes || '', dueDate: t.dueDate, fromTime: t.fromTime || '', toTime: t.toTime || '', remindAt: want }, false);
+    n++;
+  });
+  if (n) { rebuildAufgaben(); try { renderTasks(); } catch (e) { /* noch nicht bereit */ } flushOutbox(); }
+  return n;
+}
+
+/* ---------- Aufgaben mit eigener Eingabe (ab 1.57) ----------
+   Manche Aufgaben werden durch eine Eingabe erledigt: „Zählerstände ablesen“ (Zuhause) öffnet direkt
+   das Zählerstand-Fenster, Fahrzeug-Aufgaben (HU, Inspektion, Reifen …) das passende Eintragen.
+   Nach dem Speichern hakt sich die Aufgabe selbst ab. Die Bereiche liefern die Aktion
+   (js/zuhause.js → hsTaskAction, js/fahrzeuge.js → fzTaskAction). */
+function taskActionFor(task) {
+  if (!task || task.done || isCurrentUserGuest() || childLockActive()) return null;
+  try {
+    if (typeof hsTaskAction === 'function') { const a = hsTaskAction(task); if (a) return a; }
+    if (typeof fzTaskAction === 'function') { const a = fzTaskAction(task); if (a) return a; }
+  } catch (e) { /* Bereich nicht bereit */ }
+  return null;
+}
+// Aus einer Push, der Glocke oder der Familien-Übersicht: Eingabe öffnen, sonst Bearbeiten
+function openTaskFromLink(id) {
+  const t = aufgaben.find(x => x.id === id);
+  if (!t) return;
+  const a = taskActionFor(t);
+  if (a) { a.run(); return; }
+  openEditTaskModal({ id });
+}
+
 // Serverstand + noch ausstehende eigene Aktionen = angezeigte Aufgaben
 function rebuildAufgaben() {
   const map = new Map(aufgabenServer.map(a => [a.id, { ...a }]));
@@ -22027,6 +22107,7 @@ function rebuildAufgaben() {
       map.set(d.id, {
         ...(old || { done: false, doneAt: '', household: '', missed: 0 }),
         id: d.id, title: d.title, notes: d.notes, dueDate: d.dueDate, fromTime: d.fromTime || '', toTime: d.toTime || '',
+        remindAt: d.remindAt !== undefined ? (d.remindAt || '') : ((old && old.remindAt) || ''),
         pending: true,
       });
     } else if (op.kind === 'task-done') {
@@ -22441,6 +22522,7 @@ function deriveTasks() {
     done: !!a.done,
     household: a.household || '',
     missed: a.missed || 0,
+    remindAt: a.remindAt || '',
     pending: !!a.pending,
   }));
 }
@@ -22771,6 +22853,7 @@ function openTrashBinModal(existingId, roomId) {
   renderHouseholdMemberPicker('trashBinMemberPicker');
   hhRotateLoad('trashBinMemberPicker', bin ? bin.rotate : '');
   smartPickerLoad(bin ? bin.smart : null, 'trashBinSmartPicker');
+  taskRemindLoad('trashBinRemindPicker', 'trashBin', bin ? bin.remindAt : '', { label: '🔔 Extra-Erinnerung per Push', def: '18:00', hint: 'Gilt für jede Aufgabe dieses Mülleimers – zusätzlich zur Müll-Erinnerung am Vortag.' });
 
   const schedule = bin ? bin.schedule : null;
   document.getElementById('trashBinManualScheduleCheckbox').checked = !!schedule;
@@ -22852,9 +22935,13 @@ document.getElementById('saveTrashBin').addEventListener('click', async () => {
 
   if (editingTrashBinId) {
     const bin = trashBins.find(b => b.id === editingTrashBinId);
-    Object.assign(bin, { wasteType, schedule, assignedMemberIds: [...pendingHouseholdAssignedIds], smart: smartPickerValue(), rotate: hhRotateValue('trashBinMemberPicker') });
+    Object.assign(bin, { wasteType, schedule, assignedMemberIds: [...pendingHouseholdAssignedIds], smart: smartPickerValue(), rotate: hhRotateValue('trashBinMemberPicker'), remindAt: taskRemindValue('trashBin') });
   } else {
-    trashBins.push({ id: 'bin' + Date.now(), roomId: pendingTrashBinRoomId, wasteType, schedule, assignedMemberIds: [...pendingHouseholdAssignedIds], smart: smartPickerValue(), rotate: hhRotateValue('trashBinMemberPicker') });
+    trashBins.push({ id: 'bin' + Date.now(), roomId: pendingTrashBinRoomId, wasteType, schedule, assignedMemberIds: [...pendingHouseholdAssignedIds], smart: smartPickerValue(), rotate: hhRotateValue('trashBinMemberPicker'), remindAt: taskRemindValue('trashBin') });
+  }
+  if (!oldBaseTitleToClean) {
+    const savedBin = editingTrashBinId ? trashBins.find(b => b.id === editingTrashBinId) : trashBins[trashBins.length - 1];
+    taskRemindApplyOpen(t => { const hit = householdRuleForTask(t); return !!(hit && hit.rule === savedBin); }, savedBin.remindAt);
   }
   await persistState();
   document.getElementById('trashBinModal').classList.add('hidden');
@@ -22938,6 +23025,7 @@ function openRoomScheduleModal(existingId, roomId) {
   renderHouseholdMemberPicker('roomScheduleMemberPicker');
   hhRotateLoad('roomScheduleMemberPicker', schedule ? schedule.rotate : '');
   smartPickerLoad(schedule ? schedule.smart : null, 'roomScheduleSmartPicker');
+  taskRemindLoad('roomScheduleRemindPicker', 'roomSchedule', schedule ? schedule.remindAt : '', { label: '🔔 Extra-Erinnerung per Push', def: '10:00', hint: 'Gilt für jede Aufgabe dieser Reinigung.' });
 
   setScheduleTypeChoice(schedule ? schedule.scheduleType : 'weekdays');
 
@@ -23042,12 +23130,17 @@ document.getElementById('saveRoomSchedule').addEventListener('click', async () =
 
   if (editingScheduleId) {
     const schedule = roomSchedules.find(s => s.id === editingScheduleId);
-    Object.assign(schedule, { category, scheduleType, weekdays, intervalDays, createdDate, assignedMemberIds: [...pendingHouseholdAssignedIds], smart: smartPickerValue(), rotate: hhRotateValue('roomScheduleMemberPicker') });
+    Object.assign(schedule, { category, scheduleType, weekdays, intervalDays, createdDate, assignedMemberIds: [...pendingHouseholdAssignedIds], smart: smartPickerValue(), rotate: hhRotateValue('roomScheduleMemberPicker'), remindAt: taskRemindValue('roomSchedule') });
   } else {
     roomSchedules.push({
       id: 'sched' + Date.now(), roomId: pendingScheduleRoomId, category, scheduleType, weekdays, intervalDays,
       createdDate, assignedMemberIds: [...pendingHouseholdAssignedIds], smart: smartPickerValue(), rotate: hhRotateValue('roomScheduleMemberPicker'),
+      remindAt: taskRemindValue('roomSchedule'),
     });
+  }
+  if (!oldBaseTitleToClean) {
+    const savedSched = editingScheduleId ? roomSchedules.find(x => x.id === editingScheduleId) : roomSchedules[roomSchedules.length - 1];
+    taskRemindApplyOpen(t => { const hit = householdRuleForTask(t); return !!(hit && hit.rule === savedSched); }, savedSched.remindAt);
   }
   await persistState();
   document.getElementById('roomScheduleModal').classList.add('hidden');
@@ -24853,12 +24946,14 @@ function renderTasks() {
     // Smarthome: Start-Knöpfe der verknüpften Reinigung bzw. des Mülleimers
     const smartStart = task.done ? [] : smartStartActionsForTask(task);
     const smartAuto = task.done ? null : smartAutoForTask(task);
+    // Aufgabe mit eigener Eingabe (z. B. Zählerstände ablesen): Antippen öffnet die Eingabe
+    const taskAct = taskActionFor(task);
 
     // Einkaufs-Aufgabe: Antippen öffnet die Einkaufsliste(n)
     const taskPlan = shoppingPlanForTask(task.id);
-    const opensShopping = !!(taskPlan && taskPlan.listIds.some(id => getShoppingList(id)) && isViewAllowed('einkauf'));
+    const opensShopping = !taskAct && !!(taskPlan && taskPlan.listIds.some(id => getShoppingList(id)) && isViewAllowed('einkauf'));
     const card = document.createElement('div');
-    card.className = 'rounded-xl border border-ink/10 bg-white overflow-hidden fade-in flex' + (opensShopping ? ' task-card-shopping' : '') + (task.done ? ' opacity-50' : '') + (matchesActiveMemberFilter(task) ? '' : ' opacity-30');
+    card.className = 'rounded-xl border border-ink/10 bg-white overflow-hidden fade-in flex' + (opensShopping || taskAct ? ' task-card-shopping' : '') + (task.done ? ' opacity-50' : '') + (matchesActiveMemberFilter(task) ? '' : ' opacity-30');
     card.innerHTML = `
       <div class="w-1.5 shrink-0 flex flex-col">${barSegments}</div>
       <div class="flex-1 min-w-0 px-3 py-2.5">
@@ -24869,11 +24964,13 @@ function renderTasks() {
             ${notesDisplay ? `<div class="text-xs text-ink/60 mt-0.5 whitespace-pre-line">${escapeHtml(notesDisplay)}</div>` : ''}
             ${shoppingPlanBadgeHtml(task)}
             ${smartAuto ? `<div class="text-[11px] text-ink/50 mt-1.5">⏱ ${escapeHtml(smartAuto.device.icon)} ${escapeHtml(smartAuto.action.label)} startet automatisch um ${escapeHtml(smartAuto.time)} Uhr</div>` : ''}
+            ${taskAct ? `<div class="flex flex-wrap gap-1.5 mt-2"><button type="button" class="task-act-btn sh-run">${escapeHtml(taskAct.label)}</button></div>` : ''}
             ${smartStart.length ? `<div class="flex flex-wrap gap-1.5 mt-2">${smartStart.map(x => `<button type="button" class="smart-run-btn sh-run" data-action="${escapeHtml(x.action.id)}">▶ ${escapeHtml(x.device.icon)} ${escapeHtml(x.action.label)}</button>`).join('')}</div>` : ''}
             <div class="text-[11px] text-ink/40 mt-1.5">
               ${assignees.map(m => escapeHtml(memberLabel(m))).join(', ') || 'Niemandem zugewiesen'}
             </div>
             ${task.dueDate ? `<div class="text-[11px] text-ink/50 font-medium">Fällig: ${task.hasTimeWindow ? fmtDateTime(task.dueDate, null) + ', ' + task.fromTime + '–' + task.toTime + ' Uhr' : fmtDateTime(task.dueDate, null)}</div>` : ''}
+            ${task.remindAt && !task.done ? `<div class="text-[11px] text-ink/45">🔔 Erinnerung um ${escapeHtml(task.remindAt)} Uhr</div>` : ''}
             ${task.pending && outboxBlocked ? `<div class="text-[10px] text-mustard font-medium mt-0.5">${PENDING_MARK}wird nachgetragen, sobald wieder Verbindung besteht</div>` : ''}
           </div>
           <div class="flex items-center gap-2 shrink-0">
@@ -24893,6 +24990,12 @@ function renderTasks() {
       const hit = smartStart.find(x => x.action.id === btn.dataset.action);
       if (hit) runSmartActionForTask(task, hit);
     }));
+    if (taskAct) {
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('button') && !e.target.closest('.task-act-btn')) return; // Abhaken, Bearbeiten, Löschen behalten ihre Aktion
+        taskAct.run();
+      });
+    }
     if (opensShopping) {
       card.addEventListener('click', (e) => {
         if (e.target.closest('button')) return; // Abhaken, Bearbeiten, Löschen behalten ihre Aktion
@@ -25108,6 +25211,7 @@ function openTaskModal() {
   pendingTaskAssignees = [];
   if (childLockActive() && currentMember()) pendingTaskAssignees = [currentMember().id];
   renderTaskAssigneeOptions();
+  taskRemindLoad('taskRemindPicker', 'task', '');
 
   // AUSGEKLAMMERT (Aufgaben-Kalender): Hinweis "kein Aufgaben-Kalender" wird nicht mehr gebraucht.
   document.getElementById('taskNoListHint').classList.add('hidden');
@@ -25155,6 +25259,7 @@ function openEditTaskModal(task) {
   document.getElementById('taskFormStatus').textContent = '';
   pendingTaskAssignees = assigneeIdsFromNotes(a.notes);
   renderTaskAssigneeOptions();
+  taskRemindLoad('taskRemindPicker', 'task', a.remindAt || '');
   // Geplanter Einkauf: Auswahl der Einkaufslisten mit anzeigen und änderbar machen
   const plan = shoppingPlanForTask(a.id);
   setTaskShoppingMode(!!plan, plan ? plan.listIds.filter(id => getShoppingList(id)) : []);
@@ -25202,6 +25307,7 @@ document.getElementById('saveTask').addEventListener('click', async () => {
     dueDate,
     fromTime: hasTimeWindow ? fromTime : '',
     toTime: hasTimeWindow ? toTime : '',
+    remindAt: taskRemindValue('task'),
   };
 
   queueTaskSave(payload, isNew);
@@ -26175,7 +26281,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.56.0';
+const APP_VERSION = '1.57.0';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -27133,6 +27239,17 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
    - rueckblick: true = Einträge vor dem Versions-Log, aus der Projekthistorie zusammengefasst.
    ========================================================== */
 const PINN_CHANGELOG = [
+  {
+    v: '1.57', datum: '15.10.2026', titel: 'Aufgaben: Erinnerungen & direkte Eingabe',
+    punkte: [
+      ['neu', 'Extra-Erinnerung per Push: beim Anlegen oder Bearbeiten einer Aufgabe und bei allen Regeln, die Aufgaben automatisch anlegen (Reinigung, Mülleimer, Wartung, Gartenjahr, Fahrzeuge), gibt es einen Haken mit Uhrzeit – am Fälligkeitstag kommt dann eine Push an die Zuständigen'],
+      ['neu', '„Zählerstände ablesen“: Antippen der Aufgabe öffnet direkt das Eintragen, bei mehreren Zählern einer nach dem anderen. Sind alle Stände eingetragen, hakt sich die Aufgabe selbst ab – auch wenn sie unter Zuhause eingetragen werden'],
+      ['neu', 'Fahrzeug-Aufgaben (HU, Inspektion, Reifenwechsel, Versicherungskennzeichen, Fristen) öffnen beim Antippen direkt das passende Eintragen und haken sich nach dem Speichern selbst ab'],
+      ['fix', 'Zuhause: Überfällige Wartungen in der Übersicht führen jetzt zur Eingabe bzw. zur Aufgabe mit „✓ Erledigt“ statt zum Wartungsplan; im Wartungsplan gibt es dafür einen eigenen Knopf'],
+      ['fix', 'Zwei gleich benannte Wartungen (z. B. im Gartenjahr) teilten sich ihre Aufgabe – beim Bearbeiten ging dadurch u. a. die Fälligkeit durcheinander. Gleiche Namen bekommen jetzt automatisch eine Nummer, z. B. „Rasen düngen (2)“; vorhandene Doppelte werden einmalig repariert'],
+      ['info', 'App- und Server-Dateien geändert – das neue Feld für die Erinnerung legt der Server beim Start selbst an'],
+    ],
+  },
   {
     v: '1.56', datum: '15.10.2026', titel: 'Neue Grafiken & Profilbild zuschneiden',
     punkte: [
@@ -32505,21 +32622,21 @@ function finBudgetToastSuffix(iso) {
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/kassen.js?v=1.56.0"></script>
-<script src="js/vorrat.js?v=1.56.0"></script>
-<script src="js/vorrat2.js?v=1.56.0"></script>
-<script src="js/sparen.js?v=1.56.0"></script>
-<script src="js/vertraege.js?v=1.56.0"></script>
-<script src="js/fahrzeuge.js?v=1.56.0"></script>
-<script src="js/zuhause.js?v=1.56.0"></script>
-<script src="js/dokumente.js?v=1.56.0"></script>
-<script src="js/pdflesen.js?v=1.56.0"></script>
-<script src="js/appstart.js?v=1.56.0"></script>
-<script src="js/pinnwand.js?v=1.56.0"></script>
-<script src="js/listen.js?v=1.56.0"></script>
-<script src="js/familie.js?v=1.56.0"></script>
-<script src="js/hinweise.js?v=1.56.0"></script>
-<script src="js/ausblick.js?v=1.56.0"></script>
+<script src="js/kassen.js?v=1.57.0"></script>
+<script src="js/vorrat.js?v=1.57.0"></script>
+<script src="js/vorrat2.js?v=1.57.0"></script>
+<script src="js/sparen.js?v=1.57.0"></script>
+<script src="js/vertraege.js?v=1.57.0"></script>
+<script src="js/fahrzeuge.js?v=1.57.0"></script>
+<script src="js/zuhause.js?v=1.57.0"></script>
+<script src="js/dokumente.js?v=1.57.0"></script>
+<script src="js/pdflesen.js?v=1.57.0"></script>
+<script src="js/appstart.js?v=1.57.0"></script>
+<script src="js/pinnwand.js?v=1.57.0"></script>
+<script src="js/listen.js?v=1.57.0"></script>
+<script src="js/familie.js?v=1.57.0"></script>
+<script src="js/hinweise.js?v=1.57.0"></script>
+<script src="js/ausblick.js?v=1.57.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)

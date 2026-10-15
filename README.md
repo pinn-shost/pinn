@@ -90,16 +90,16 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **English, Deutsch, Français and Español**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
-## What's new in 1.56
+## What's new in 1.57
 
-**New graphics and profile picture cropping**
+**Tasks: reminders and direct entry**
 
-- **Crop the profile picture:** right after choosing a photo, a circle with the crop opens – white-transparent around it. Drag to move, zoom with the slider or two fingers (on a Mac also the trackpad, arrow keys and +/−), then apply. Works for family members and pets. Exactly this circle is saved, so the picture looks the same everywhere in pinn.
-- **Street scene for vehicles:** the header of a vehicle now shows a road that passes by – hills in the vehicle colour, trees and street lamps, oncoming and overtaking traffic. Sun and clouds by day, moon, stars and glowing lamps at night. Bicycles, e-bikes and e-scooters share the road with other bikes.
-- **Family members:** the children's progress ring and the glow for SOS and birthdays are no longer cut off at the top.
-- **Account:** the profile picture in the header card now shows the same crop as everywhere else.
-- **App icon:** recreated. In the browser tab and on the home screen the logo fills the whole icon – no white border, no white corners. On iPhone and iPad, remove pinn. from the home screen once and add it again (Share → *Add to Home Screen*) to get the new icon. Your data is not affected.
-- Only app files changed – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+- **Extra push reminder:** when you create or edit a task – and in every rule that creates tasks automatically (cleaning, bins, maintenance, garden year, vehicles) – tick *Extra push reminder* and pick a time. On the due date the people responsible get a push at that time.
+- **Read meters in one go:** tapping the task *Read meters* opens the reading popup directly – with several meters one after the other. Once every meter has a reading, the task ticks itself off, also when you enter the readings under *Home*.
+- **Vehicle tasks:** HU/MOT, service, tyre change, insurance plate and own deadlines open the matching entry when tapped and tick themselves off after saving.
+- **Home:** overdue maintenance in the overview now leads to the entry or to the task with *✓ Done* instead of the maintenance plan. The maintenance plan has its own button for it.
+- **Fix:** two maintenance items with the same name (e.g. in the garden year) shared one task, which mixed up due dates when editing. Identical names now get a number automatically, e.g. “Rasen düngen (2)”; existing duplicates are repaired once.
+- App and server files changed. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button) – the server adds the new reminder field by itself.
 
 ## How it works
 
@@ -127,7 +127,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.56.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.57.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

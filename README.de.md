@@ -90,16 +90,16 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **English, Deutsch, Français und Español**, passt Währung und Notrufnummern an eure Region an und wechselt zwischen den Bezeichnungen für **Familie** und **WG**. Ein Server kann mehrere Familien aufnehmen, jede mit eigenen Admins.
 
-## Neu in 1.56
+## Neu in 1.57
 
-**Neue Grafiken und Profilbild zuschneiden**
+**Aufgaben: Erinnerungen und direkte Eingabe**
 
-- **Profilbild zuschneiden:** Direkt nach der Fotoauswahl öffnet sich ein Kreis mit dem Ausschnitt, außen herum weiß-durchsichtig. Ziehen verschiebt, mit dem Regler oder zwei Fingern zoomen (am Mac auch Trackpad, Pfeiltasten und +/−), dann übernehmen. Gilt für Familienmitglieder und Haustiere. Gespeichert wird genau dieser Kreis – darum sieht das Bild überall in pinn. gleich aus.
-- **Straßenszene bei Fahrzeugen:** Im Kopf eines Fahrzeugs fährt jetzt eine Straße vorbei – Hügel in der Fahrzeugfarbe, Bäume und Laternen, Gegenverkehr und Überholer. Tagsüber Sonne und Wolken, nachts Mond, Sterne und leuchtende Laternen. Fahrräder, E-Bikes und E-Scooter teilen sich die Straße mit anderen Rädern.
-- **Familienmitglieder:** Der Fortschrittsring der Kinder und das Leuchten bei SOS und Geburtstag werden oben nicht mehr abgeschnitten.
-- **Konto:** Das Profilbild in der Kopfkarte zeigt jetzt denselben Ausschnitt wie überall sonst.
-- **App-Symbol:** neu erstellt. Im Browser-Tab und auf dem Home-Bildschirm füllt das Logo das ganze Symbol aus – ohne weißen Rand und ohne weiße Ecken. Auf iPhone und iPad pinn. einmal vom Home-Bildschirm entfernen und neu hinzufügen (Teilen → *Zum Home-Bildschirm*), dann erscheint das neue Symbol. Eure Daten bleiben erhalten.
-- Nur App-Dateien geändert – am Server ändert sich nichts. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
+- **Extra-Erinnerung per Push:** Beim Anlegen oder Bearbeiten einer Aufgabe – und bei allen Regeln, die Aufgaben automatisch anlegen (Reinigung, Mülleimer, Wartung, Gartenjahr, Fahrzeuge) – *Extra-Erinnerung per Push* anhaken und eine Uhrzeit wählen. Am Fälligkeitstag bekommen die Zuständigen dann zu dieser Zeit eine Push.
+- **Zählerstände in einem Rutsch:** Antippen der Aufgabe *Zählerstände ablesen* öffnet direkt das Eintragen – bei mehreren Zählern einer nach dem anderen. Sind alle Stände eingetragen, hakt sich die Aufgabe selbst ab, auch wenn du sie unter *Zuhause* einträgst.
+- **Fahrzeug-Aufgaben:** HU/TÜV, Inspektion, Reifenwechsel, Versicherungskennzeichen und eigene Fristen öffnen beim Antippen direkt das passende Eintragen und haken sich nach dem Speichern selbst ab.
+- **Zuhause:** Überfällige Wartungen in der Übersicht führen jetzt zur Eingabe bzw. zur Aufgabe mit *✓ Erledigt* statt zum Wartungsplan. Im Wartungsplan gibt es dafür einen eigenen Knopf.
+- **Korrektur:** Zwei gleich benannte Wartungen (z. B. im Gartenjahr) teilten sich ihre Aufgabe – beim Bearbeiten geriet dadurch die Fälligkeit durcheinander. Gleiche Namen bekommen jetzt automatisch eine Nummer, z. B. „Rasen düngen (2)“; vorhandene Doppelte werden einmalig repariert.
+- App- und Server-Dateien geändert. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf) – das neue Feld für die Erinnerung legt der Server selbst an.
 
 ## So funktioniert es
 
@@ -127,7 +127,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Die ZIP der [neuesten Version](https://github.com/pinn-shost/pinn/releases/latest) herunterladen und entpacken.
-2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.56.0` oder `pinn-main`) so, wie er ist, hineinlegen.
+2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.57.0` oder `pinn-main`) so, wie er ist, hineinlegen.
 3. Per SSH anmelden und ausführen:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

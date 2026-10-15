@@ -342,6 +342,11 @@ const GROUPS = [
         [/^([^·]+) \(seit (\d+) Tagen abgelaufen\)$/, { en: "<1> (expired <2> days ago)", fr: "<1> (périmé depuis <2> jours)", es: "<1> (caducado hace <2> días)" }],
         [/^Tippe hier für Rezeptideen mit dem, was da ist\.$/, { en: "Tap here for recipe ideas with what you have.", fr: "Touche ici pour des idées de recettes avec ce que tu as.", es: "Toca aquí para ver ideas de recetas con lo que tienes." }],
     ] },
+    // --- Extra-Erinnerung an Aufgaben (pinn-push.js, ab 1.57) – der Aufgabentitel bleibt unverändert ---
+    { tag: /^aufgabe-erinnerung-/, rules: [
+        [/^Heute fällig – du bist dran\.$/, { en: "Due today – it’s your turn.", fr: "À faire aujourd’hui – c’est ton tour.", es: "Vence hoy – te toca." }],
+        [/^Heute fällig\.$/, { en: "Due today.", fr: "À faire aujourd’hui.", es: "Vence hoy." }],
+    ] },
     // --- Müllabfuhr am Vortag (pinn-push.js, ab 1.31) – die Müllarten selbst bleiben wie im Kalender ---
     { tag: /^muell-/, rules: [
         [/^Morgen ist Müllabfuhr$/, { en: "Bin collection tomorrow", fr: "Collecte des déchets demain", es: "Mañana pasa la recogida de basura" }],

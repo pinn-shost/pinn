@@ -1781,7 +1781,8 @@ function ntOpenLink(url) {
       if (!isViewAllowed('aufgaben')) return true;
       const id = g('aufgabe');
       setView('aufgaben');
-      if (real(id) && aufgaben.some(t => t.id === id)) openEditTaskModal({ id });
+      // Since 1.57: tasks with their own input (e.g. meter readings) open that input directly
+      if (real(id) && aufgaben.some(t => t.id === id)) openTaskFromLink(id);
       return true;
     }
     if (g('termin')) {

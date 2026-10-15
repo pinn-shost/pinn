@@ -999,6 +999,13 @@ function runFamilyReminders(ctx, people, events, last, until, now, status) {
         console.log("[Push] Tagesübersicht fehlgeschlagen: " + e.message);
         plog("fehler", "push", "Tagesübersicht fehlgeschlagen: " + e.message, { familie: ctx && ctx.familyId ? ctx.familyId : "" });
     }
+    // --- Extra-Erinnerung an Aufgaben (ab 1.57) ---
+    try {
+        if (runTaskReminders(ctx, people, now, status)) changed = true;
+    } catch (e) {
+        console.log("[Push] Aufgaben-Erinnerung fehlgeschlagen: " + e.message);
+        plog("fehler", "push", "Aufgaben-Erinnerung fehlgeschlagen: " + e.message, { familie: ctx && ctx.familyId ? ctx.familyId : "" });
+    }
     // --- Müllabfuhr am Vortag ---
     try {
         if (runMuellReminder(ctx, people, now, status)) changed = true;
@@ -1006,6 +1013,47 @@ function runFamilyReminders(ctx, people, events, last, until, now, status) {
         console.log("[Push] Müll-Erinnerung fehlgeschlagen: " + e.message);
         plog("fehler", "push", "Müll-Erinnerung fehlgeschlagen: " + e.message, { familie: ctx && ctx.familyId ? ctx.familyId : "" });
     }
+    return changed;
+}
+
+// Extra-Erinnerung (ab 1.57): offene Aufgaben mit Uhrzeit im Feld „erinnerung“, die heute fällig sind.
+// Empfänger: die Zugewiesenen; bei „Alle“ bzw. ohne Zuweisung alle Erwachsenen (Kinder nur, wenn sie
+// ausdrücklich zugewiesen sind). Je Aufgabe, Profil und Tag einmal (status.aufgabenErinnerung);
+// nachgeholt wird bis zu 3 Stunden, z. B. nach einem Neustart.
+function runTaskReminders(ctx, people, now, status) {
+    if (!people.length) return false;
+    const nowWall = utcToWall(now);
+    const todayIso = wallIsoDate(nowWall);
+    const tp = todayIso.split("-");
+    const dayWall = Date.UTC(+tp[0], +tp[1] - 1, +tp[2]);
+    const st = status.aufgabenErinnerung = status.aufgabenErinnerung || {};
+    let changed = false;
+    Object.keys(st).forEach(k => { if (st[k] !== todayIso) { delete st[k]; changed = true; } });
+    const list = require(`${__hooks}/pinn-aufgaben.js`).remindersDue(ctx.familyId, todayIso);
+    list.forEach(t => {
+        const hm = t.erinnerung.split(":");
+        const fireWall = dayWall + (+hm[0]) * HOUR_MS + (+hm[1]) * MIN_MS;
+        if (nowWall + HALF_STEP < fireWall || nowWall - fireWall > 3 * HOUR_MS) return;
+        const assign = assigneesFromText(t.notizen, ctx.members);
+        const explicit = assign.line && !assign.all;
+        people.forEach(p => {
+            const key = t.id + "|" + p.userId;
+            if (st[key]) return;
+            const member = p.memberId ? ctx.members.find(m => m.id === p.memberId) : null;
+            const isChild = !!(member && (isChildMember(member) || member.childLock));
+            const mine = explicit && !!p.memberId && assign.memberIds.indexOf(p.memberId) !== -1;
+            if (explicit ? !mine : isChild) { st[key] = todayIso; changed = true; return; }
+            const r = notifyUserDetailed(p.userId, {
+                titel: "🔔 " + t.titel,
+                text: mine ? "Heute fällig – du bist dran." : "Heute fällig.",
+                url: "/?aufgabe=" + encodeURIComponent(t.id),
+                tag: "aufgabe-erinnerung-" + t.id,
+                bis: wallToUtc(dayWall + DAY_MS),
+            });
+            if (r.sent > 0 || !r.geraete) { st[key] = todayIso; changed = true; }
+            else plog("warnung", "push", "Aufgaben-Erinnerung für „" + p.name + "“ nicht zugestellt: " + r.fehler.filter((x, i, a) => a.indexOf(x) === i).join(" | "), { benutzer: p.userId });
+        });
+    });
     return changed;
 }
 

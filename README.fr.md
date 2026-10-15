@@ -90,16 +90,16 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **English, Deutsch, Français et Español**, adapte la devise et les numéros d’urgence à ta région et bascule entre les textes **famille** et **colocation**. Un serveur peut accueillir plusieurs familles, chacune avec ses propres administrateurs.
 
-## Nouveautés de la 1.56
+## Nouveautés de la 1.57
 
-**Nouveaux graphismes et recadrage de la photo de profil**
+**Tâches : rappels et saisie directe**
 
-- **Recadrer la photo de profil :** juste après le choix d’une photo, un cercle avec le cadrage s’ouvre, blanc translucide autour. Fais glisser pour déplacer, zoome avec le curseur ou deux doigts (sur Mac aussi avec le trackpad, les flèches et +/−), puis valide. Valable pour les membres de la famille et les animaux. C’est exactement ce cercle qui est enregistré : l’image est la même partout dans pinn.
-- **Scène de route pour les véhicules :** l’en-tête d’un véhicule montre maintenant une route qui défile – collines aux couleurs du véhicule, arbres et lampadaires, circulation en sens inverse et dépassements. Soleil et nuages le jour, lune, étoiles et lampadaires allumés la nuit. Vélos, VAE et trottinettes électriques partagent la route avec d’autres vélos.
-- **Membres de la famille :** l’anneau de progression des enfants et la lueur SOS et anniversaire ne sont plus coupés en haut.
-- **Compte :** la photo de profil de la carte d’en-tête affiche désormais le même cadrage que partout ailleurs.
-- **Icône de l’app :** refaite. Dans l’onglet du navigateur et sur l’écran d’accueil, le logo remplit toute l’icône – sans bord ni coins blancs. Sur iPhone et iPad, retire une fois pinn. de l’écran d’accueil puis rajoute-le (Partager → *Sur l’écran d’accueil*) pour obtenir la nouvelle icône. Tes données ne sont pas touchées.
-- Seuls des fichiers de l’app ont changé – rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
+- **Rappel supplémentaire par notification :** en créant ou modifiant une tâche – et dans toutes les règles qui créent des tâches automatiquement (nettoyage, poubelles, entretien, année du jardin, véhicules) – coche *Rappel supplémentaire par notification* et choisis une heure. Le jour d’échéance, les responsables reçoivent une notification à cette heure.
+- **Relevés en une fois :** toucher la tâche *Relever les compteurs* ouvre directement la saisie – avec plusieurs compteurs, l’un après l’autre. Une fois tous les relevés saisis, la tâche se coche toute seule, même si tu les saisis sous *Maison*.
+- **Tâches des véhicules :** contrôle technique, révision, changement de pneus, plaque d’assurance et échéances propres ouvrent directement la bonne saisie et se cochent toutes seules après l’enregistrement.
+- **Maison :** les entretiens en retard dans l’aperçu mènent maintenant à la saisie ou à la tâche avec *✓ Fait* au lieu du plan d’entretien. Le plan d’entretien a son propre bouton pour cela.
+- **Correction :** deux entretiens du même nom (p. ex. dans l’année du jardin) partageaient leur tâche, ce qui mélangeait les échéances lors de la modification. Les noms identiques reçoivent maintenant automatiquement un numéro, p. ex. « Rasen düngen (2) » ; les doublons existants sont réparés une fois.
+- Fichiers de l’app et du serveur modifiés. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour) – le serveur ajoute lui-même le nouveau champ de rappel.
 
 ## Comment ça marche
 
@@ -127,7 +127,7 @@ Tout tourne sous forme de conteneurs Docker sur une seule machine. HTTPS fonctio
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et places-y le dossier décompressé (p. ex. `pinn-1.56.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et places-y le dossier décompressé (p. ex. `pinn-1.57.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et lance :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
