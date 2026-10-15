@@ -13,6 +13,7 @@
      automatic tasks (fzStart) and the assignment of contracts
    - Link between vehicles and documents (both directions), takeover of older vehicle documents from Finanzen
    - Popups for vehicle, entry, deadline, sale, contracts and documents, and the wiring of the buttons
+   - Since 1.56.0: the animated street scene in the header of the detail view (fzSceneHtml)
    131 functions and 30 variables. index.html only calls these functions later (when the user acts or from
    bootApp), never while it is still loading – that is why this file may come after the inline script.
    One statement runs while this file loads (initVehiclesUi); it only registers listeners on the vehicles
@@ -141,6 +142,65 @@ let fzLogPending = [];       // receipts for a new entry (uploaded after saving)
 let fzAutoTimer = null;
 let fzLastAutoRun = 0;
 let fzRunningAuto = false;
+
+/* ---------- Animated street scene in the detail header ----------
+   Sky (sun & clouds by day, moon & stars at night – same rule as the home scene), hills in the vehicle
+   colour, a row of trees and street lamps that slowly passes by, a road with moving lane markings and
+   other traffic in both lanes (oncoming traffic on the far lane, overtaking vehicles on the near lane).
+   Only transform/opacity animations; the classes hs-anim / hs-mover make sure everything stands still in
+   power-saving mode and is hidden with "reduce motion". */
+function fzSceneIsNight() {
+  if (typeof hsIsNight === 'function') { try { return hsIsNight(); } catch (e) { /* fall back to fixed times */ } }
+  const h = new Date().getHours();
+  return h >= 20 || h < 6;
+}
+function fzSceneTrees(night) {
+  const leaf = night ? ['#22392B', '#2A4635', '#1D3226'] : ['#4F8A3C', '#5E9C47', '#3F7A33'];
+  const trunk = night ? '#4A3A2A' : '#7A5230';
+  const pole = night ? '#59606A' : '#8A929C';
+  // [x, type, shade] – r = round tree, p = pine, b = bush, l = street lamp; one tile is 400 px wide and repeats
+  const items = [[16, 'r', 0], [44, 'p', 1], [70, 'b', 2], [96, 'r', 1], [128, 'l'], [158, 'p', 0], [184, 'r', 2], [212, 'b', 0],
+    [238, 'r', 0], [266, 'p', 2], [296, 'l'], [326, 'r', 1], [352, 'b', 1], [378, 'p', 0]];
+  let g = '';
+  items.forEach(([x, t, c]) => {
+    if (t === 'r') {
+      g += `<rect x="${x - 1.5}" y="25" width="3" height="15" rx="1" fill="${trunk}"/>`
+        + `<circle cx="${x}" cy="18" r="10" fill="${leaf[c]}"/><circle cx="${x - 6}" cy="23" r="6" fill="${leaf[(c + 1) % 3]}"/><circle cx="${x + 6}" cy="22" r="6.5" fill="${leaf[(c + 1) % 3]}"/>`;
+    } else if (t === 'p') {
+      g += `<rect x="${x - 1.2}" y="31" width="2.4" height="9" fill="${trunk}"/>`
+        + `<polygon points="${x - 8},33 ${x},14 ${x + 8},33" fill="${leaf[c]}"/><polygon points="${x - 6},24 ${x},6 ${x + 6},24" fill="${leaf[c]}"/>`;
+    } else if (t === 'b') {
+      g += `<circle cx="${x - 4}" cy="36" r="5" fill="${leaf[c]}"/><circle cx="${x + 3}" cy="35" r="6" fill="${leaf[(c + 2) % 3]}"/>`;
+    } else {
+      g += `<rect x="${x - 1}" y="8" width="2" height="32" fill="${pole}"/><path d="M${x} 9 q0 -3 6 -3" stroke="${pole}" stroke-width="2" fill="none"/>`
+        + `<ellipse cx="${x + 7}" cy="7" rx="3.4" ry="1.8" fill="${night ? '#FFD66B' : '#D7D2C8'}"${night ? ' class="hs-lamp hs-anim"' : ''}/>`
+        + (night ? `<circle cx="${x + 7}" cy="9" r="7" fill="#FFD66B" opacity=".18"/>` : '');
+    }
+  });
+  const tile = `<svg viewBox="0 0 400 40" width="400" height="40" aria-hidden="true">${g}</svg>`;
+  return `<div class="fz-trees hs-anim">${tile}${tile}${tile}${tile}</div>`;
+}
+function fzSceneHtml(v) {
+  const night = fzSceneIsNight();
+  const k = fzKind(v && v.kind);
+  const sky = night
+    ? [[8, 12], [22, 30], [35, 8], [48, 22], [62, 14], [74, 36], [86, 10], [93, 26], [15, 40], [55, 38]].map(([x, y], i) => `<span class="hs-star${i % 3 === 0 ? ' tw hs-anim' : ''}" style="left:${x}%;top:${y}px;animation-delay:-${i * 0.7}s"></span>`).join('') + '<span class="hs-moon"></span>'
+    : '<span class="hs-sun"></span><div class="hs-cloud hs-anim"><i></i></div><div class="hs-cloud c2 hs-anim"><i></i></div>';
+  const hills = `<svg class="fz-hills" viewBox="0 0 400 34" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 34 V20 Q40 6 90 16 T190 12 T300 18 T400 10 V34Z" class="fz-hill-far"/>
+      <path d="M0 34 V26 Q60 16 130 24 T260 22 T400 24 V34Z" class="fz-hill-near"/></svg>`;
+  // [emoji, duration s, delay s]; far lane = oncoming traffic (to the right), near lane = overtaking (to the left)
+  const bikes = !!(k.bike || k.id === 'escooter');
+  const far = bikes ? [['🚗', 9, 2], ['🚲', 16, 9], ['🚌', 13, 5]] : [['🚚', 11, 3], ['🚗', 8, 7], ['🚌', 14, 11], ['🏍️', 7, 1]];
+  const near = bikes ? [['🚲', 12, 4], ['🛴', 15, 10]] : [['🚙', 10, 6], ['🚕', 13, 1], ['🚐', 16, 12]];
+  const mover = (lane, [emoji, dur, delay]) => `<div class="hs-mover fz-car ${lane} hs-anim${lane === 'far' ? ' ltr' : ''}" style="animation-duration:${dur}s;animation-delay:-${delay}s"><span>${emoji}</span></div>`;
+  return `<div class="fz-hero-band hs-scene fz-scene${night ? ' is-night' : ''}" aria-hidden="true">
+      ${sky}${hills}${fzSceneTrees(night)}
+      <div class="fz-verge"></div>
+      <div class="fz-road"><div class="fz-lane hs-anim"></div></div>
+      ${far.map(x => mover('far', x)).join('')}${near.map(x => mover('near', x)).join('')}
+    </div>`;
+}
 
 /* ---------- Basics ---------- */
 function fzVehicles() { return (finance && Array.isArray(finance.vehicles)) ? finance.vehicles : []; }
@@ -949,7 +1009,7 @@ function renderVehicleDetail(pane, v) {
       <button type="button" class="fz-act-btn" data-fzact="edit" data-v="${escapeHtml(v.id)}"><span class="fz-ti">✎</span>Bearbeiten</button>`;
   const hero = `
     <div class="fz-hero" style="--fz:${fzColor(v)}">
-      <div class="fz-hero-band"></div>
+      ${fzSceneHtml(v)}
       <div class="fz-hero-icon"><span>${escapeHtml(k.icon)}</span></div>
       <div class="fz-hero-body">
         <div class="flex items-start justify-between gap-3">

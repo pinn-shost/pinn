@@ -90,14 +90,16 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **English, Deutsch, Français and Español**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
-## What's new in 1.55
+## What's new in 1.56
 
-**The app code is being split into separate files (part 15)**
+**New graphics and profile picture cropping**
 
-- **Fifteenth file: `js/kassen.js`** – the cash boxes (household box, personal box and shared boxes with members and guests, loading, switching and saving with offline queue, the switcher in Finanzen and Fahrzeuge, splitting expenses with „Wer schuldet wem“ and settlements, booking a shopping trip into a box, and the popups for boxes and settlements) now live in their own file under `pb_public/js/`. The code was moved unchanged; only its comments are now in English.
-- **Load order:** `kassen.js` is the first of the app files and is loaded right after the app code in `index.html`, before `js/vorrat.js`, `js/vorrat2.js`, `js/sparen.js`, `js/vertraege.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `js/pdflesen.js`, `js/appstart.js`, `js/pinnwand.js`, `js/listen.js`, `js/familie.js`, `js/hinweise.js` and `js/ausblick.js`. `ausblick.js` stays last and starts the app. The child lock (see 1.44) still protects all six editors.
-- **Nothing changes for you:** the app looks and works exactly as before, offline included. The start check also reports `js/kassen.js` if it is missing on the NAS.
-- Installing and updating work as before (`sudo sh pinn-*/pinn-setup.sh` or the update button). A loose `kassen.js` is sorted into `pb_public/js/` automatically. Your data is not touched.
+- **Crop the profile picture:** right after choosing a photo, a circle with the crop opens – white-transparent around it. Drag to move, zoom with the slider or two fingers (on a Mac also the trackpad, arrow keys and +/−), then apply. Works for family members and pets. Exactly this circle is saved, so the picture looks the same everywhere in pinn.
+- **Street scene for vehicles:** the header of a vehicle now shows a road that passes by – hills in the vehicle colour, trees and street lamps, oncoming and overtaking traffic. Sun and clouds by day, moon, stars and glowing lamps at night. Bicycles, e-bikes and e-scooters share the road with other bikes.
+- **Family members:** the children's progress ring and the glow for SOS and birthdays are no longer cut off at the top.
+- **Account:** the profile picture in the header card now shows the same crop as everywhere else.
+- **App icon:** recreated. In the browser tab and on the home screen the logo fills the whole icon – no white border, no white corners. On iPhone and iPad, remove pinn. from the home screen once and add it again (Share → *Add to Home Screen*) to get the new icon. Your data is not affected.
+- Only app files changed – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 ## How it works
 
@@ -125,7 +127,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.55.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.56.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

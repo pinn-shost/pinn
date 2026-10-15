@@ -90,14 +90,16 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **English, Deutsch, Français et Español**, adapte la devise et les numéros d’urgence à ta région et bascule entre les textes **famille** et **colocation**. Un serveur peut accueillir plusieurs familles, chacune avec ses propres administrateurs.
 
-## Nouveautés de la 1.55
+## Nouveautés de la 1.56
 
-**Le code de l’app est réparti en fichiers distincts (partie 15)**
+**Nouveaux graphismes et recadrage de la photo de profil**
 
-- **Quinzième fichier : `js/kassen.js`** – les caisses (caisse du foyer, caisse personnelle et caisses partagées avec membres et invités, chargement, changement et enregistrement avec file d’attente hors ligne, le sélecteur dans Finanzen et Fahrzeuge, répartition des dépenses avec « Wer schuldet wem » et remboursements, saisie d’un achat dans une caisse et les fenêtres des caisses et des remboursements) se trouvent désormais dans leur propre fichier sous `pb_public/js/`. Le code a été déplacé tel quel ; seuls ses commentaires sont maintenant en anglais.
-- **Ordre de chargement :** `kassen.js` est le premier des fichiers de l’app et est chargé juste après le code de l’app dans `index.html`, avant `js/vorrat.js`, `js/vorrat2.js`, `js/sparen.js`, `js/vertraege.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `js/pdflesen.js`, `js/appstart.js`, `js/pinnwand.js`, `js/listen.js`, `js/familie.js`, `js/hinweise.js` et `js/ausblick.js`. `ausblick.js` reste le dernier et démarre l’app. Le verrou enfant (voir 1.44) protège toujours les six éditeurs.
-- **Rien ne change pour toi :** l’app a exactement le même aspect et fonctionne comme avant, hors ligne aussi. Le contrôle au démarrage signale aussi `js/kassen.js` s’il manque sur le NAS.
-- L’installation et la mise à jour fonctionnent comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour). Un `kassen.js` isolé est rangé automatiquement dans `pb_public/js/`. Tes données ne sont pas touchées.
+- **Recadrer la photo de profil :** juste après le choix d’une photo, un cercle avec le cadrage s’ouvre, blanc translucide autour. Fais glisser pour déplacer, zoome avec le curseur ou deux doigts (sur Mac aussi avec le trackpad, les flèches et +/−), puis valide. Valable pour les membres de la famille et les animaux. C’est exactement ce cercle qui est enregistré : l’image est la même partout dans pinn.
+- **Scène de route pour les véhicules :** l’en-tête d’un véhicule montre maintenant une route qui défile – collines aux couleurs du véhicule, arbres et lampadaires, circulation en sens inverse et dépassements. Soleil et nuages le jour, lune, étoiles et lampadaires allumés la nuit. Vélos, VAE et trottinettes électriques partagent la route avec d’autres vélos.
+- **Membres de la famille :** l’anneau de progression des enfants et la lueur SOS et anniversaire ne sont plus coupés en haut.
+- **Compte :** la photo de profil de la carte d’en-tête affiche désormais le même cadrage que partout ailleurs.
+- **Icône de l’app :** refaite. Dans l’onglet du navigateur et sur l’écran d’accueil, le logo remplit toute l’icône – sans bord ni coins blancs. Sur iPhone et iPad, retire une fois pinn. de l’écran d’accueil puis rajoute-le (Partager → *Sur l’écran d’accueil*) pour obtenir la nouvelle icône. Tes données ne sont pas touchées.
+- Seuls des fichiers de l’app ont changé – rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
 ## Comment ça marche
 
@@ -125,7 +127,7 @@ Tout tourne sous forme de conteneurs Docker sur une seule machine. HTTPS fonctio
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et places-y le dossier décompressé (p. ex. `pinn-1.55.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et places-y le dossier décompressé (p. ex. `pinn-1.56.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et lance :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

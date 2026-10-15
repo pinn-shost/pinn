@@ -14,10 +14,13 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<!-- App-Symbole: ?v= sorgt dafür, dass Browser nach einem Update das neue Symbol laden.
+     Das Home-Bildschirm-Symbol ist randlos (iOS rundet die Ecken selbst ab). -->
+<link rel="icon" href="favicon.ico?v=1.56.0" sizes="16x16 32x32 48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=1.56.0">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=1.56.0">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=1.56.0">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=1.56.0">
 <link rel="manifest" href="manifest.json">
 <!-- Kein Code von fremden Servern (Bankdaten!): Tailwind als fertig gebaute CSS und der PocketBase-
      Client liegen selbst gehostet auf dem NAS:
@@ -584,7 +587,7 @@ window.PINN_LANGUAGES = [
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
   // Versionsnummer bei jeder Änderung an den Sprachdateien erhöhen, sonst nutzen Geräte die alte Datei weiter
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.55.2" onerror="PINN_I18N.fail()"><\/script>');
+  if (DICT) document.write('<script src="' + lang.file + '?v=1.56.0" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // Deutsch als WG: kein Wörterbuch, nur die WG-Bezeichnungen
 })();
 </script>
@@ -1662,6 +1665,16 @@ window.PINN_LANGUAGES = [
   .acc-hero-row { display: flex; align-items: center; gap: 0.9rem; padding: 1rem 1rem 0.85rem; }
   .acc-avatar { flex-shrink: 0; width: 56px; height: 56px; border-radius: 999px; overflow: hidden; background: var(--c-pine); display: grid; place-items: center; color: #fff; font-weight: 600; font-size: 1.35rem; }
   .acc-avatar span { font-size: 1.35rem !important; }
+  /* Profilbild in der Konto-Kopfkarte: genau wie in allen anderen runden Bildern füllen (sonst verschob das Raster den Ausschnitt) */
+  .acc-avatar { position: relative; }
+  .acc-avatar > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+  /* Profilbild zuschneiden: runder Ausschnitt, außen herum weiß-durchsichtig */
+  .avc-stage { position: relative; width: 100%; max-width: 320px; aspect-ratio: 1 / 1; margin: 0 auto; border-radius: 18px; overflow: hidden; background: #2E2C28; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; outline: none; }
+  .avc-stage.is-dragging { cursor: grabbing; }
+  .avc-stage:focus-visible { box-shadow: 0 0 0 2px var(--c-pine); }
+  .avc-stage canvas { position: absolute; left: 0; top: 0; transform-origin: 0 0; pointer-events: none; }
+  .avc-ring { position: absolute; left: 8%; top: 8%; width: 84%; height: 84%; border-radius: 9999px; pointer-events: none; box-shadow: 0 0 0 999px rgba(255,255,255,0.72); border: 2px solid #fff; }
+  html.dark .avc-ring { box-shadow: 0 0 0 999px rgba(255,255,255,0.6); }
   .acc-hero-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.45; }
   .acc-hero-name { font-size: 1.05rem; font-weight: 600; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; }
   .acc-hero-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0 1rem 1rem; }
@@ -2038,6 +2051,27 @@ window.PINN_LANGUAGES = [
   .fz-hero-icon { position: absolute; left: 18px; top: 46px; width: 72px; height: 72px; border-radius: 22px; display: grid; place-items: center; font-size: 40px; line-height: 1; background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,0.12); z-index: 1; }
   .fz-hero-icon > span { display: inline-block; animation: kidBob 3.4s ease-in-out infinite; }
   .fz-hero-body { padding: 34px 16px 16px; }
+  /* Fahrzeug: bewegte Straßenszene im Kopf (Hügel in Fahrzeugfarbe, Bäume & Laternen, Straße mit Verkehr), Tag und Nacht */
+  .fz-scene .fz-hills { left: 0; bottom: 24px; width: 100%; height: 34px; }
+  .fz-scene .fz-hill-far { fill: color-mix(in srgb, var(--fz, #2F4B41) 35%, #A9CFA0); }
+  .fz-scene .fz-hill-near { fill: color-mix(in srgb, var(--fz, #2F4B41) 18%, #8CC07A); }
+  .fz-scene.is-night .fz-hill-far { fill: color-mix(in srgb, var(--fz, #2F4B41) 30%, #1F3328); }
+  .fz-scene.is-night .fz-hill-near { fill: color-mix(in srgb, var(--fz, #2F4B41) 15%, #263E2E); }
+  .fz-trees { left: -400px; bottom: 25px; width: 1600px; height: 40px; display: flex; animation: fzScroll 30s linear infinite; }
+  .fz-trees svg { flex-shrink: 0; display: block; }
+  .fz-verge { left: 0; right: 0; bottom: 22px; height: 4px; background: #79B35A; }
+  .fz-scene.is-night .fz-verge { background: #2F4A33; }
+  .fz-road { left: 0; right: 0; bottom: 0; height: 23px; background: #59606A; overflow: hidden; border-top: 1.5px solid rgba(255,255,255,.55); }
+  .fz-road::after { content: ''; position: absolute; left: 0; right: 0; bottom: 1px; height: 1.5px; background: rgba(255,255,255,.45); }
+  .fz-scene.is-night .fz-road { background: #262B33; border-top-color: rgba(255,255,255,.3); }
+  .fz-lane { position: absolute; left: -40px; right: -40px; top: 10px; height: 2px; background: repeating-linear-gradient(90deg, rgba(255,255,255,.75) 0 16px, transparent 16px 32px); animation: fzLane 1.1s linear infinite; }
+  .fz-car { line-height: 1; }
+  .fz-car.far { bottom: 11px; font-size: 13px; }
+  .fz-car.near { bottom: 0; font-size: 17px; }
+  .fz-car.ltr > span { transform: scaleX(-1); }
+  .fz-scene.is-night .fz-car > span { filter: drop-shadow(0 0 3px rgba(255,214,107,.85)); }
+  @keyframes fzScroll { from { transform: translateX(0); } to { transform: translateX(400px); } }
+  @keyframes fzLane { from { transform: translateX(0); } to { transform: translateX(32px); } }
 
   /* Zuhause: bewegte Szene im Kopf (Haus mit Garten · Stadt · Garage), Tag und Nacht */
   .hs-scene { background: linear-gradient(180deg, #8FC9E8 0%, #CBE7F4 72%, #E6F3EA 100%); }
@@ -3151,7 +3185,9 @@ window.PINN_LANGUAGES = [
   html.dark .ov-weather-day.is-today { background: color-mix(in srgb, var(--c-pine) 28%, transparent); border-color: color-mix(in srgb, var(--c-pine) 60%, transparent); }
 
   /* Übersicht-Kachel: Familienmitglieder */
-  .ov-fam-row { display: flex; gap: 0.9rem; overflow-x: auto; padding: 2px 2px 4px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  /* Genug Luft rundherum: Fortschrittsring (-4px), SOS-/Geburtstags-Leuchten (bis 6px) und Plaketten ragen über das Bild
+     hinaus. overflow-x: auto schneidet sonst auch oben und unten ab – der negative Rand gleicht die Polsterung wieder aus. */
+  .ov-fam-row { display: flex; gap: 0.9rem; overflow-x: auto; padding: 8px 8px 6px; margin: -6px -6px -2px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
   .ov-fam-row::-webkit-scrollbar { display: none; }
   .ov-fam-item { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; flex-shrink: 0; min-width: 3.6rem; background: none; padding: 0; }
   .ov-fam-ava-wrap { position: relative; display: block; }
@@ -15492,10 +15528,199 @@ function shrinkAvatarImage(src) {
     img.src = src;
   });
 }
+// Nach dem Auswählen öffnet sich direkt das Zuschneiden: Kreis mit dem Ausschnitt, außen herum weiß-durchsichtig.
+// Gespeichert wird nur der runde Ausschnitt als Quadrat – so sieht das Bild überall gleich aus.
+// Abbrechen lehnt mit err.cancelled = true ab (die Aufrufer zeigen dann keine Meldung).
 function readAvatarPhotoFile(file) {
   if (!file || !/^image\//.test(file.type || 'image/')) return Promise.reject(new Error('Bitte eine Bilddatei auswählen.'));
   const url = URL.createObjectURL(file);
-  return shrinkAvatarImage(url).finally(() => URL.revokeObjectURL(url));
+  return openAvatarCropper(url).then(data => shrinkAvatarImage(data)).finally(() => URL.revokeObjectURL(url));
+}
+
+/* ---------- Profilbild zuschneiden ----------
+   Ziehen verschiebt, Regler / zwei Finger / Mausrad / Trackpad zoomen, am Mac auch Pfeiltasten und +/−.
+   Der Kreis bleibt immer ganz mit Bild gefüllt. Sehr große Fotos werden vorher auf AVATAR_CROP_SRC_PX
+   verkleinert (schont den Speicher am iPhone). Ergebnis: AVATAR_MAX_PX × AVATAR_MAX_PX als JPEG. */
+const AVATAR_CROP_SRC_PX = 1600;
+const AVATAR_CROP_CIRCLE = 0.84; // Anteil des Kreises an der Bühne (passt zu .avc-ring: 8 % Rand je Seite)
+let avatarCropOpen = false;
+function openAvatarCropper(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onerror = () => reject(new Error('Das Bild konnte nicht gelesen werden.'));
+    img.onload = () => {
+      const w0 = img.naturalWidth || img.width, h0 = img.naturalHeight || img.height;
+      if (!w0 || !h0) { reject(new Error('Das Bild konnte nicht gelesen werden.')); return; }
+      const k = Math.min(1, AVATAR_CROP_SRC_PX / Math.max(w0, h0));
+      const W = Math.max(1, Math.round(w0 * k)), H = Math.max(1, Math.round(h0 * k));
+      const srcCanvas = document.createElement('canvas');
+      srcCanvas.width = W; srcCanvas.height = H;
+      const sctx = srcCanvas.getContext('2d');
+      sctx.fillStyle = '#ffffff';
+      sctx.fillRect(0, 0, W, H);
+      sctx.drawImage(img, 0, 0, W, H);
+      avatarCropUi(srcCanvas, resolve, reject);
+    };
+    img.src = src;
+  });
+}
+function avatarCropUi(srcCanvas, resolve, reject) {
+  const W = srcCanvas.width, H = srcCanvas.height;
+  const wrap = document.createElement('div');
+  wrap.id = 'avatarCropModal';
+  wrap.className = 'fixed inset-0 bg-ink/30 backdrop-blur-sm grid place-items-center p-4';
+  wrap.style.zIndex = '600'; // über allen Fenstern (Familienmitglied z-[200], Haustier z-[300])
+  wrap.setAttribute('role', 'dialog');
+  wrap.setAttribute('aria-modal', 'true');
+  wrap.innerHTML = `
+    <div class="bg-white rounded-2xl p-5 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
+      <div class="flex items-center justify-between gap-2 mb-3">
+        <h3 class="font-serif text-lg">Ausschnitt anpassen</h3>
+        <button type="button" data-avc="reset" class="text-xs text-ink/40 hover:text-pine transition">Zurücksetzen</button>
+      </div>
+      <div class="avc-stage" tabindex="0" aria-label="Bildausschnitt: ziehen zum Verschieben, Pfeiltasten verschieben, Plus und Minus zoomen"><div class="avc-ring" aria-hidden="true"></div></div>
+      <div class="flex items-center gap-3 mt-3">
+        <span class="text-xs text-ink/40" aria-hidden="true">−</span>
+        <input data-avc="zoom" type="range" min="100" max="500" step="1" value="100" class="flex-1" style="accent-color: var(--c-pine);" aria-label="Zoom" />
+        <span class="text-sm text-ink/40" aria-hidden="true">+</span>
+      </div>
+      <p class="text-[11px] text-ink/40 mt-1.5">Bild ziehen zum Verschieben, mit dem Regler oder zwei Fingern zoomen. Genau dieser Kreis erscheint überall in pinn.</p>
+      <div class="flex justify-end gap-2 mt-4">
+        <button type="button" data-avc="cancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
+        <button type="button" data-avc="ok" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium transition">Übernehmen</button>
+      </div>
+    </div>`;
+  const stage = wrap.querySelector('.avc-stage');
+  stage.insertBefore(srcCanvas, stage.firstChild);
+  const zoomEl = wrap.querySelector('[data-avc="zoom"]');
+  document.body.appendChild(wrap);
+  avatarCropOpen = true;
+
+  // Zustand im Bild-Maßstab: Mittelpunkt des Kreises im Bild (cx, cy) und Zoom (1 = Kreis gerade ganz gefüllt)
+  let cx = W / 2, cy = H / 2, zoom = 1;
+  const ZMIN = 1, ZMAX = 5;
+  const stageSize = () => stage.clientWidth || 280;
+  const scale = () => (stageSize() * AVATAR_CROP_CIRCLE / Math.min(W, H)) * zoom; // Bildschirm-px je Bild-px
+  function clamp() {
+    const half = (stageSize() * AVATAR_CROP_CIRCLE / 2) / scale(); // halber Kreis in Bild-px
+    cx = Math.min(W - half, Math.max(half, cx));
+    cy = Math.min(H - half, Math.max(half, cy));
+  }
+  function draw() {
+    clamp();
+    const s = scale(), size = stageSize();
+    const left = size / 2 - cx * s, top = size / 2 - cy * s;
+    srcCanvas.style.width = W + 'px';
+    srcCanvas.style.height = H + 'px';
+    srcCanvas.style.transform = `translate(${left}px, ${top}px) scale(${s})`;
+    zoomEl.value = String(Math.round(zoom * 100));
+  }
+  function setZoom(z) { zoom = Math.min(ZMAX, Math.max(ZMIN, z)); draw(); }
+  function moveBy(dx, dy) { const s = scale(); cx -= dx / s; cy -= dy / s; draw(); }
+
+  // Ziehen und mit zwei Fingern zoomen (Pointer Events: Finger, Maus und Stift)
+  const pts = new Map();
+  let pinch = null;
+  stage.addEventListener('pointerdown', (e) => {
+    stage.setPointerCapture && stage.setPointerCapture(e.pointerId);
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    stage.classList.add('is-dragging');
+    if (pts.size === 2) {
+      const [a, b] = Array.from(pts.values());
+      pinch = { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, z: zoom };
+    }
+    e.preventDefault();
+  });
+  stage.addEventListener('pointermove', (e) => {
+    const prev = pts.get(e.pointerId);
+    if (!prev) return;
+    const cur = { x: e.clientX, y: e.clientY };
+    pts.set(e.pointerId, cur);
+    if (pts.size >= 2 && pinch) {
+      const [a, b] = Array.from(pts.values());
+      setZoom(pinch.z * (Math.hypot(a.x - b.x, a.y - b.y) || 1) / pinch.d);
+      moveBy((cur.x - prev.x) / 2, (cur.y - prev.y) / 2);
+    } else if (pts.size === 1) {
+      moveBy(cur.x - prev.x, cur.y - prev.y);
+    }
+    e.preventDefault();
+  });
+  const up = (e) => {
+    pts.delete(e.pointerId);
+    if (pts.size < 2) pinch = null;
+    if (!pts.size) stage.classList.remove('is-dragging');
+  };
+  stage.addEventListener('pointerup', up);
+  stage.addEventListener('pointercancel', up);
+  stage.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    setZoom(zoom * Math.exp(-(e.deltaY || 0) * (e.ctrlKey ? 0.01 : 0.002)));
+  }, { passive: false });
+  // Safari am Mac: Zwei-Finger-Zoom auf dem Trackpad
+  let gz = 1;
+  stage.addEventListener('gesturestart', (e) => { e.preventDefault(); gz = zoom; });
+  stage.addEventListener('gesturechange', (e) => { e.preventDefault(); setZoom(gz * (e.scale || 1)); });
+  stage.addEventListener('keydown', (e) => {
+    const step = e.shiftKey ? 30 : 10;
+    if (e.key === 'ArrowLeft') moveBy(step, 0);
+    else if (e.key === 'ArrowRight') moveBy(-step, 0);
+    else if (e.key === 'ArrowUp') moveBy(0, step);
+    else if (e.key === 'ArrowDown') moveBy(0, -step);
+    else if (e.key === '+' || e.key === '=') setZoom(zoom * 1.1);
+    else if (e.key === '-' || e.key === '_') setZoom(zoom / 1.1);
+    else return;
+    e.preventDefault();
+  });
+  zoomEl.addEventListener('input', () => setZoom((Number(zoomEl.value) || 100) / 100));
+
+  function close() {
+    avatarCropOpen = false;
+    window.removeEventListener('keydown', onKey, true);
+    window.removeEventListener('resize', draw);
+    wrap.remove();
+  }
+  function cancel() {
+    close();
+    srcCanvas.width = 0; srcCanvas.height = 0; // Speicher am iPhone sofort freigeben
+    const err = new Error('');
+    err.cancelled = true;
+    reject(err);
+  }
+  function finish() {
+    clamp();
+    const side = (stageSize() * AVATAR_CROP_CIRCLE) / scale();
+    const out = document.createElement('canvas');
+    out.width = AVATAR_MAX_PX; out.height = AVATAR_MAX_PX;
+    const octx = out.getContext('2d');
+    octx.fillStyle = '#ffffff';
+    octx.fillRect(0, 0, out.width, out.height);
+    octx.imageSmoothingQuality = 'high';
+    octx.drawImage(srcCanvas, cx - side / 2, cy - side / 2, side, side, 0, 0, out.width, out.height);
+    const data = out.toDataURL('image/jpeg', 0.88);
+    out.width = 0; out.height = 0;
+    close();
+    srcCanvas.width = 0; srcCanvas.height = 0;
+    if (/^data:image\/jpeg;base64,/.test(data)) resolve(data);
+    else reject(new Error('Das Bild konnte nicht gelesen werden.'));
+  }
+  // Escape schließt nur das Zuschneiden, nicht das Fenster darunter
+  function onKey(e) {
+    if (e.key !== 'Escape') return;
+    e.stopImmediatePropagation();
+    e.preventDefault();
+    cancel();
+  }
+  window.addEventListener('keydown', onKey, true);
+  window.addEventListener('resize', draw);
+  wrap.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-avc]');
+    if (e.target === wrap) { cancel(); return; }
+    if (!b) return;
+    if (b.dataset.avc === 'cancel') cancel();
+    else if (b.dataset.avc === 'ok') finish();
+    else if (b.dataset.avc === 'reset') { cx = W / 2; cy = H / 2; setZoom(1); }
+  });
+  requestAnimationFrame(() => { draw(); try { stage.focus({ preventScroll: true }); } catch (e) { /* egal */ } });
 }
 // Ältere, zu große Profilbilder (vor 1.31.2 ungekürzt gespeichert) einmalig verkleinern und speichern
 let avatarShrinkRunning = false;
@@ -15529,7 +15754,7 @@ document.getElementById('memberPhotoFile').addEventListener('change', async (e) 
     pendingMemberAvatar = null;
     document.querySelectorAll('.avatar-option').forEach(b => b.classList.remove('border-pine'));
   } catch (err) {
-    alert(err && err.message ? err.message : 'Das Bild konnte nicht gelesen werden.');
+    if (!(err && err.cancelled)) alert(err && err.message ? err.message : 'Das Bild konnte nicht gelesen werden.');
   } finally {
     preview.style.opacity = '';
     input.value = '';
@@ -25950,7 +26175,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.55.2';
+const APP_VERSION = '1.56.0';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -26908,6 +27133,17 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
    - rueckblick: true = Einträge vor dem Versions-Log, aus der Projekthistorie zusammengefasst.
    ========================================================== */
 const PINN_CHANGELOG = [
+  {
+    v: '1.56', datum: '15.10.2026', titel: 'Neue Grafiken & Profilbild zuschneiden',
+    punkte: [
+      ['neu', 'Profilbild zuschneiden: direkt nach der Fotoauswahl öffnet sich ein Kreis mit dem Ausschnitt (außen herum weiß-durchsichtig) – verschieben, mit Regler oder zwei Fingern zoomen und übernehmen. Gilt für Familienmitglieder und Haustiere; gespeichert wird genau dieser Kreis, darum sieht das Bild überall gleich aus'],
+      ['neu', 'Fahrzeuge: im Kopf der Fahrzeugseite fährt jetzt eine Straßenszene vorbei – Hügel in der Fahrzeugfarbe, Bäume und Laternen, Gegenverkehr und Überholer, tagsüber mit Sonne und Wolken, nachts mit Mond, Sternen und leuchtenden Laternen. Bei Fahrrad, E-Bike und E-Scooter sind auch Räder unterwegs'],
+      ['fix', 'Familienmitglieder: der Fortschrittsring der Kinder und das Leuchten bei SOS und Geburtstag werden oben nicht mehr abgeschnitten'],
+      ['fix', 'Konto: das Profilbild in der Kopfkarte zeigt jetzt denselben Ausschnitt wie überall sonst'],
+      ['fix', 'App-Symbol: neu erstellt – im Browser-Tab und auf dem Home-Bildschirm füllt das Logo jetzt das ganze Symbol aus, ohne weißen Rand oder weiße Ecken. Auf iPhone und iPad erscheint es nach dem erneuten Hinzufügen zum Home-Bildschirm'],
+      ['info', 'Nur App-Dateien geändert (index.html, js/fahrzeuge.js, js/familie.js, Symbole und Sprachdateien en/fr/es) – am Server ändert sich nichts'],
+    ],
+  },
   {
     v: '1.55', datum: '13.10.2026', titel: 'App-Code wird aufgeteilt (Teil 15)',
     punkte: [
@@ -32269,21 +32505,21 @@ function finBudgetToastSuffix(iso) {
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/kassen.js?v=1.55.2"></script>
-<script src="js/vorrat.js?v=1.55.2"></script>
-<script src="js/vorrat2.js?v=1.55.2"></script>
-<script src="js/sparen.js?v=1.55.2"></script>
-<script src="js/vertraege.js?v=1.55.2"></script>
-<script src="js/fahrzeuge.js?v=1.55.2"></script>
-<script src="js/zuhause.js?v=1.55.2"></script>
-<script src="js/dokumente.js?v=1.55.2"></script>
-<script src="js/pdflesen.js?v=1.55.2"></script>
-<script src="js/appstart.js?v=1.55.2"></script>
-<script src="js/pinnwand.js?v=1.55.2"></script>
-<script src="js/listen.js?v=1.55.2"></script>
-<script src="js/familie.js?v=1.55.2"></script>
-<script src="js/hinweise.js?v=1.55.2"></script>
-<script src="js/ausblick.js?v=1.55.2"></script>
+<script src="js/kassen.js?v=1.56.0"></script>
+<script src="js/vorrat.js?v=1.56.0"></script>
+<script src="js/vorrat2.js?v=1.56.0"></script>
+<script src="js/sparen.js?v=1.56.0"></script>
+<script src="js/vertraege.js?v=1.56.0"></script>
+<script src="js/fahrzeuge.js?v=1.56.0"></script>
+<script src="js/zuhause.js?v=1.56.0"></script>
+<script src="js/dokumente.js?v=1.56.0"></script>
+<script src="js/pdflesen.js?v=1.56.0"></script>
+<script src="js/appstart.js?v=1.56.0"></script>
+<script src="js/pinnwand.js?v=1.56.0"></script>
+<script src="js/listen.js?v=1.56.0"></script>
+<script src="js/familie.js?v=1.56.0"></script>
+<script src="js/hinweise.js?v=1.56.0"></script>
+<script src="js/ausblick.js?v=1.56.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)

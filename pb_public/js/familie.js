@@ -4684,7 +4684,7 @@ function ptPaneClick(e) {
     if (!st) return;
     if (e.target.id === 'ptF_photo' && e.target.files && e.target.files[0]) {
       try { st.photo = await readAvatarPhotoFile(e.target.files[0]); ptDrawEditBits(); }
-      catch (err) { finShowToast(err.message, true); }
+      catch (err) { if (!(err && err.cancelled)) finShowToast(err.message, true); } // cancelled crop: no message
       e.target.value = '';
     }
     if (['ptC_last', 'ptC_every', 'ptC_next'].includes(e.target.id)) ptCareHint();
