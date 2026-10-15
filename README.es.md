@@ -90,6 +90,13 @@ Siempre contigo: pinn. se instala en cualquier iPhone y móvil Android como una 
 
 pinn. habla **English, Deutsch, Français y Español**, adapta la moneda y los números de emergencia a tu región y cambia entre los textos de **familia** y de **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades en 1.58
+
+**Código de la app dividido, parte 16 – para ti no cambia nada**
+
+- **Para colaboradores:** Finanzas – gastos e ingresos, presupuesto del hogar, categorías, movimientos periódicos y la ventana de gastos – está ahora en su propio archivo (`pb_public/js/finanzen.js`). El manejo de la app no cambia.
+- Solo cambian archivos de la app (`index.html` y `js/finanzen.js`), en el servidor no cambia nada. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
+
 ## Novedades en 1.57
 
 **Tareas: recordatorios y anotación directa**
@@ -127,7 +134,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.57.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.58.0` o `pinn-main`) tal cual.
 3. Conéctate por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -217,7 +224,7 @@ pinn/
 ├── pb_public/           app web servida por PocketBase
 │   ├── index.html       la app (HTML, estilos y la mayor parte del código)
 │   ├── js/              código de la app separado de index.html, archivos <script> simples sin paso de compilación
-│   │                    (kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js siempre va el último)
+│   │                    (finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js siempre va el último)
 │   ├── einrichtung.js   asistente de configuración · datenexport.js  exportación de datos
 │   ├── lang/            traducciones (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js y Tesseract los descarga el script de instalación)
