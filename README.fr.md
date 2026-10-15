@@ -90,14 +90,14 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **English, Deutsch, Français et Español**, adapte la devise et les numéros d’urgence à ta région et bascule entre les textes **famille** et **colocation**. Un serveur peut accueillir plusieurs familles, chacune avec ses propres administrateurs.
 
-## Nouveautés de la 1.54
+## Nouveautés de la 1.55
 
-**Le code de l’app est réparti en fichiers distincts (partie 14)**
+**Le code de l’app est réparti en fichiers distincts (partie 15)**
 
-- **Quatorzième fichier : `js/vorrat.js`** – le stock (articles avec quantité, unité, stock minimal, catégorie, lieu de stockage et magasins, filtre et recherche, singulier/pluriel des unités, rapprochement avec les listes de courses et les fenêtres des articles, lieux et catégories) se trouve désormais dans son propre fichier sous `pb_public/js/`. Le code a été déplacé sans modification ; seuls ses commentaires sont maintenant en anglais.
-- **Ordre de chargement :** `vorrat.js` est le premier des fichiers de l’app et est chargé juste après le code de l’app dans `index.html`, avant `js/vorrat2.js`, `js/sparen.js`, `js/vertraege.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `js/pdflesen.js`, `js/appstart.js`, `js/pinnwand.js`, `js/listen.js`, `js/familie.js`, `js/hinweise.js` et `js/ausblick.js`. `ausblick.js` reste le dernier et démarre l’app. Le verrou enfant (voir 1.44) protège toujours les six éditeurs.
-- **Rien ne change pour toi :** l’app a exactement le même aspect et fonctionne comme avant, hors ligne aussi. Le contrôle au démarrage signale aussi `js/vorrat.js` s’il manque sur le NAS.
-- L’installation et la mise à jour fonctionnent comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour). Un `vorrat.js` isolé est rangé automatiquement dans `pb_public/js/`. Tes données ne sont pas touchées.
+- **Quinzième fichier : `js/kassen.js`** – les caisses (caisse du foyer, caisse personnelle et caisses partagées avec membres et invités, chargement, changement et enregistrement avec file d’attente hors ligne, le sélecteur dans Finanzen et Fahrzeuge, répartition des dépenses avec « Wer schuldet wem » et remboursements, saisie d’un achat dans une caisse et les fenêtres des caisses et des remboursements) se trouvent désormais dans leur propre fichier sous `pb_public/js/`. Le code a été déplacé tel quel ; seuls ses commentaires sont maintenant en anglais.
+- **Ordre de chargement :** `kassen.js` est le premier des fichiers de l’app et est chargé juste après le code de l’app dans `index.html`, avant `js/vorrat.js`, `js/vorrat2.js`, `js/sparen.js`, `js/vertraege.js`, `js/fahrzeuge.js`, `js/zuhause.js`, `js/dokumente.js`, `js/pdflesen.js`, `js/appstart.js`, `js/pinnwand.js`, `js/listen.js`, `js/familie.js`, `js/hinweise.js` et `js/ausblick.js`. `ausblick.js` reste le dernier et démarre l’app. Le verrou enfant (voir 1.44) protège toujours les six éditeurs.
+- **Rien ne change pour toi :** l’app a exactement le même aspect et fonctionne comme avant, hors ligne aussi. Le contrôle au démarrage signale aussi `js/kassen.js` s’il manque sur le NAS.
+- L’installation et la mise à jour fonctionnent comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour). Un `kassen.js` isolé est rangé automatiquement dans `pb_public/js/`. Tes données ne sont pas touchées.
 
 ## Comment ça marche
 
@@ -125,7 +125,7 @@ Tout tourne sous forme de conteneurs Docker sur une seule machine. HTTPS fonctio
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et places-y le dossier décompressé (p. ex. `pinn-1.54.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et places-y le dossier décompressé (p. ex. `pinn-1.55.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et lance :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -215,7 +215,7 @@ pinn/
 ├── pb_public/           app web servie par PocketBase
 │   ├── index.html       l’app (HTML, styles et la plus grande partie du code)
 │   ├── js/              code de l’app sorti d’index.html, simples fichiers <script> sans étape de build
-│   │                    (vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js vient toujours en dernier)
+│   │                    (kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js vient toujours en dernier)
 │   ├── einrichtung.js   assistant de configuration · datenexport.js  export des données
 │   ├── lang/            traductions (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js et Tesseract sont téléchargés par le script d’installation)
