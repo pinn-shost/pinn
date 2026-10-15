@@ -583,7 +583,8 @@ window.PINN_LANGUAGES = [
     start(data);
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.38.0" onerror="PINN_I18N.fail()"><\/script>');
+  // Versionsnummer bei jeder Änderung an den Sprachdateien erhöhen, sonst nutzen Geräte die alte Datei weiter
+  if (DICT) document.write('<script src="' + lang.file + '?v=1.55.2" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // Deutsch als WG: kein Wörterbuch, nur die WG-Bezeichnungen
 })();
 </script>
@@ -25949,7 +25950,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.55.1';
+const APP_VERSION = '1.55.2';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -26915,6 +26916,7 @@ const PINN_CHANGELOG = [
       ['fix', '1.55.1: „Morgen ist Müllabfuhr“ öffnet die Aufgabe – im Bearbeiten-Fenster gibt es jetzt den Knopf „✓ Erledigt“ zum direkten Abhaken'],
       ['fix', '1.55.1: Haushalt – „Reinigung“ und „Aufräumen“ sind nicht mehr fest vorgegeben. Neue Familien legen ihre Kategorien beim ersten Anlegen einer Reinigung selbst an (Namen eintippen und speichern genügt). Bestehende Kategorien bleiben erhalten, nur ungenutzte Standard-Kategorien verschwinden von selbst'],
       ['info', 'Nur App-Dateien geändert (index.html und Sprachdateien en/fr/es) – am Server ändert sich nichts'],
+      ['fix', '1.55.2: Geänderte Sprachdateien kommen nach einem Update jetzt sofort auf allen Geräten an – vorher nutzten Geräte noch die alte, zwischengespeicherte Datei, dadurch fehlten z. B. die Übersetzungen der Müll-Hinweise in der Glocke'],
     ],
   },
   {
@@ -32267,21 +32269,21 @@ function finBudgetToastSuffix(iso) {
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/kassen.js?v=1.55.1"></script>
-<script src="js/vorrat.js?v=1.55.1"></script>
-<script src="js/vorrat2.js?v=1.55.1"></script>
-<script src="js/sparen.js?v=1.55.1"></script>
-<script src="js/vertraege.js?v=1.55.1"></script>
-<script src="js/fahrzeuge.js?v=1.55.1"></script>
-<script src="js/zuhause.js?v=1.55.1"></script>
-<script src="js/dokumente.js?v=1.55.1"></script>
-<script src="js/pdflesen.js?v=1.55.1"></script>
-<script src="js/appstart.js?v=1.55.1"></script>
-<script src="js/pinnwand.js?v=1.55.1"></script>
-<script src="js/listen.js?v=1.55.1"></script>
-<script src="js/familie.js?v=1.55.1"></script>
-<script src="js/hinweise.js?v=1.55.1"></script>
-<script src="js/ausblick.js?v=1.55.1"></script>
+<script src="js/kassen.js?v=1.55.2"></script>
+<script src="js/vorrat.js?v=1.55.2"></script>
+<script src="js/vorrat2.js?v=1.55.2"></script>
+<script src="js/sparen.js?v=1.55.2"></script>
+<script src="js/vertraege.js?v=1.55.2"></script>
+<script src="js/fahrzeuge.js?v=1.55.2"></script>
+<script src="js/zuhause.js?v=1.55.2"></script>
+<script src="js/dokumente.js?v=1.55.2"></script>
+<script src="js/pdflesen.js?v=1.55.2"></script>
+<script src="js/appstart.js?v=1.55.2"></script>
+<script src="js/pinnwand.js?v=1.55.2"></script>
+<script src="js/listen.js?v=1.55.2"></script>
+<script src="js/familie.js?v=1.55.2"></script>
+<script src="js/hinweise.js?v=1.55.2"></script>
+<script src="js/ausblick.js?v=1.55.2"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)
