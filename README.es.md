@@ -3,12 +3,12 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/pinn-shost/pinn/releases/latest"><img src="https://img.shields.io/github/v/release/pinn-shost/pinn?style=flat-square&color=2F4B41&label=release" alt="Última versión"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/pinn-shost/pinn?style=flat-square&color=2F4B41" alt="Licencia MIT"></a>
-  <img src="https://img.shields.io/badge/runs%20on-Docker-2F4B41?style=flat-square&logo=docker&logoColor=white" alt="Funciona con Docker">
+  <a href="https://github.com/pinn-shost/pinn/releases/latest"><img src="https://img.shields.io/github/v/release/pinn-shost/pinn?style=flat-square&color=2F4B41&label=release" alt="Latest release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/pinn-shost/pinn?style=flat-square&color=2F4B41" alt="MIT license"></a>
+  <img src="https://img.shields.io/badge/runs%20on-Docker-2F4B41?style=flat-square&logo=docker&logoColor=white" alt="Runs on Docker">
   <img src="https://img.shields.io/badge/backend-PocketBase-2F4B41?style=flat-square" alt="PocketBase">
-  <img src="https://img.shields.io/badge/iPhone%20%7C%20iPad%20%7C%20Android-installable%20web%20app-2F4B41?style=flat-square" alt="iPhone, iPad y Android">
-  <a href="https://ko-fi.com/pinnapp"><img src="https://img.shields.io/badge/Ko--fi-support-C28A33?style=flat-square&logo=kofi&logoColor=white" alt="Apoyar en Ko-fi"></a>
+  <img src="https://img.shields.io/badge/iPhone%20%7C%20iPad%20%7C%20Android-installable%20web%20app-2F4B41?style=flat-square" alt="iPhone, iPad and Android">
+  <a href="https://ko-fi.com/pinnapp"><img src="https://img.shields.io/badge/Ko--fi-support-C28A33?style=flat-square&logo=kofi&logoColor=white" alt="Support on Ko-fi"></a>
 </p>
 
 <p align="center">
@@ -28,7 +28,7 @@
 
 ---
 
-pinn. es una sola app para todo lo que mantiene un hogar en marcha: el calendario compartido, las comidas de esta semana, la lista de la compra, a quién le toca sacar la basura, la paga de los niños y el seguro que hay que cancelar en marzo. Funciona en **tu propio NAS** con Docker y se instala como una app nativa en cada iPhone, iPad y móvil Android de la familia.
+pinn. es una sola app para todo lo que hace funcionar un hogar: el calendario compartido, las comidas de la semana, la lista de la compra, a quién le toca sacar la basura, la paga de los niños y el seguro que hay que cancelar en marzo. Funciona en **tu propio NAS** con Docker y se instala como una app nativa en cada iPhone, iPad y móvil Android de la familia.
 
 Sin cuenta en la nube. Sin suscripción. Sin anuncios ni rastreo. Los datos de tu familia nunca salen de casa.
 
@@ -36,35 +36,35 @@ Sin cuenta en la nube. Sin suscripción. Sin anuncios ni rastreo. Los datos de t
 
 ### En el iPad
 
-Colgado en la pared o sobre la mesa de la cocina: el iPad compartido muestra a toda la familia a la vez.
+Colgado en la pared o sobre la mesa de la cocina: el iPad compartido muestra a toda la familia de un vistazo.
 
 <table>
   <tr>
     <td align="center" width="50%">
-      <img src=".github/assets/screenshots/dashboard.png" alt="Dashboard de pinn.: los perfiles de la familia para elegir" width="400"><br>
-      <sub><b>Dashboard</b> – cada uno toca su propia foto, con PIN opcional</sub>
+      <img src=".github/assets/screenshots/dashboard.png" alt="Panel de pinn.: los perfiles de la familia para elegir" width="400"><br>
+      <sub><b>Panel</b> – cada uno toca su propia foto, con PIN opcional</sub>
     </td>
     <td align="center" width="50%">
-      <img src=".github/assets/screenshots/ipad-overview.png" alt="Vista general de pinn. en el iPad con tarjetas de tiempo, calendario, tareas y familia" width="400"><br>
-      <sub><b>Vista general</b> – el tiempo, citas, tareas, comidas y la familia de un vistazo</sub>
+      <img src=".github/assets/screenshots/ipad-overview.png" alt="Resumen de pinn. en el iPad con tarjetas de tiempo, calendario, tareas y familia" width="400"><br>
+      <sub><b>Resumen</b> – tiempo, citas, tareas, comidas y la familia de un vistazo</sub>
     </td>
   </tr>
 </table>
 
 ### En el móvil
 
-Siempre contigo: pinn. se instala en cualquier iPhone y móvil Android como una app de verdad.
+Siempre contigo: pinn. se instala en cada iPhone y móvil Android como una app nativa.
 
 <table>
   <tr>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/home.png" alt="Página de inicio con el tiempo, las tareas de hoy y las citas" width="240"><br><sub><b>Vista general</b> – tu día de un vistazo</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/home.png" alt="Página de inicio con el tiempo, las tareas y las citas de hoy" width="240"><br><sub><b>Resumen</b> – tu día de un vistazo</sub></td>
     <td align="center" width="33%"><img src=".github/assets/screenshots/calendar.png" alt="Calendario familiar en vista semanal" width="240"><br><sub><b>Calendario</b> – iCloud y Google en una sola vista</sub></td>
     <td align="center" width="33%"><img src=".github/assets/screenshots/meals.png" alt="Plan semanal de comidas con recetas" width="240"><br><sub><b>Comidas</b> – planifica la semana, compra con un toque</sub></td>
   </tr>
   <tr>
     <td align="center" width="33%"><img src=".github/assets/screenshots/lists.png" alt="Lista de la compra ordenada por tienda" width="240"><br><sub><b>Listas</b> – compra, despensa, equipaje</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/finance.png" alt="Resumen del presupuesto con gastos por categoría" width="240"><br><sub><b>Finanzas</b> – presupuesto, ahorros, paga de los niños</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/kids.png" alt="Página infantil con la rutina diaria" width="240"><br><sub><b>Niños</b> – una rutina diaria muy divertida</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/finance.png" alt="Resumen del presupuesto con gastos por categoría" width="240"><br><sub><b>Finanzas</b> – presupuesto, ahorro, paga</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/kids.png" alt="Página infantil con la rutina diaria" width="240"><br><sub><b>Niños</b> – una rutina diaria divertida</sub></td>
   </tr>
 </table>
 
@@ -72,41 +72,37 @@ Siempre contigo: pinn. se instala en cualquier iPhone y móvil Android como una 
 
 | | |
 |---|---|
-| 📅 **Calendario** | Calendarios de iCloud y Google por persona, privados o compartidos con la familia. Los festivos, las vacaciones escolares, los días de recogida de basura y los cumpleaños de tus contactos aparecen automáticamente. |
-| 🍝 **Comidas y recetas** | Planifica la semana y envía los ingredientes directamente a la lista de la compra. Importa recetas desde texto, PDF, fotos o un enlace – con IA si quieres. Comparte tus recetas favoritas con otras familias de tu servidor. |
-| 🛒 **Listas** | Listas de la compra por tienda, una despensa que rellena la lista cuando algo se acaba, listas de equipaje a partir de plantillas (vacaciones, bolsa para el hospital, fiesta), listas de regalos y de deseos. |
+| 📅 **Calendario** | Calendarios de iCloud y Google por persona, privados o compartidos con la familia. Festivos, vacaciones escolares, días de recogida de basura y cumpleaños de tus contactos aparecen automáticamente. |
+| 🍝 **Comidas y recetas** | Planifica la semana y manda los ingredientes directamente a la lista de la compra. Importa recetas desde texto, PDF, fotos o un enlace – opcionalmente con IA. Comparte tus recetas favoritas con otras familias de tu servidor. |
+| 🛒 **Listas** | Listas de la compra por tienda, una despensa que rellena la lista cuando algo se acaba, listas de equipaje a partir de plantillas (vacaciones, bolsa del hospital, fiesta), listas de regalos y de deseos. |
 | ✅ **Tareas y hogar** | Tareas con recordatorios push, planes de limpieza y cubos de basura – y una página infantil con rutinas animadas que solo muestra lo que toca a esa hora del día. |
-| 💶 **Finanzas** | Cajas compartidas o privadas, un presupuesto familiar, ahorros y carteras de valores con ETF y acciones, paga de los niños, pagos periódicos y contratos con recordatorio de cancelación. Los pisos compartidos pueden repartir gastos y ver quién debe qué a quién. |
-| 📄 **Documentos y vehículos** | Recibos y garantías, documentos de identidad con aviso antes de que caduquen. Coches y bicicletas con fechas de inspección, cambio de neumáticos, consumo y coste total. |
-| 🏡 **Hogar** | Para inquilinos, propietarios y arrendadores: contrato de alquiler o de compra, préstamo, desperfectos con fotos, facturas, plan de reformas, lecturas de contadores con previsión, llaves e ingresos por alquiler de pisos, casas y garajes que alquilas. Jardín y plantas con un plan de riego que sabe cuándo ha llovido. |
-| 📍 **Familia y ubicación** | Comparte tu ubicación directamente desde pinn. – una vez o durante el tiempo que elijas – y en segundo plano con la app gratuita Traccar Client (envía directamente a pinn., sin servidor adicional). Además, un modo «de camino a casa», una alerta SOS con posición y números de emergencia, fichas de emergencia y avisos al llegar a lugares. |
-| 🎒 **Colegio y guardería** | Por cada niño: horario (escríbelo o hazle una foto – la IA lo rellena), horas de llevar y recoger, deberes en la página infantil, circulares con plazos que se convierten en recordatorios y días de cierre directamente en el calendario. |
-| 🐾 **Mascotas** | Fichas para perros, gatos, conejos y compañía con horarios de comida para marcar, paseos, un turno de «¿a quién le toca?», vacunas y desparasitación con recordatorios push, gráfico de peso, veterinario y urgencias veterinarias, una ficha para el cuidador para compartir y un cartel de «se busca» para imprimir. |
-| 🌦️ **Tiempo y vacaciones** | Toca la tarjeta del tiempo para ver 14 días con detalles de cada día. Las listas de equipaje con destino y fechas muestran el tiempo de las vacaciones – previsión o valores habituales – y sugieren qué llevar. |
-| 🏠 **Hogar inteligente** | Lanza Atajos de Apple o acciones de Home Assistant desde una tarea – el robot aspirador limpia la cocina cuando toca. |
-| 🎙️ **Control por voz** | «Oye Siri, pinn»: añade cosas a la lista de la compra, haz que te la lea, crea tareas y escucha lo que hay hoy – también en Android. |
+| 💶 **Finanzas** | Cajas compartidas o privadas, presupuesto del hogar, ahorro y depósitos con ETF y acciones, paga, pagos periódicos y contratos con recordatorio de cancelación. Los pisos compartidos reparten gastos y ven quién debe a quién. |
+| 📄 **Documentos y vehículos** | Tiques y garantías, documentos de identidad con aviso de caducidad. Coches y bicis con fechas de ITV, cambio de neumáticos, consumo y coste total. |
+| 🏡 **Casa** | Para inquilinos, propietarios y arrendadores: contrato de alquiler o de compra, préstamo, desperfectos con fotos, tiques, plan de reformas, lecturas de contadores con previsión, llaves e ingresos de alquiler de pisos, casas y garajes alquilados. Jardín y plantas con un plan de riego que sabe cuándo ha llovido. |
+| 📍 **Familia y ubicación** | Comparte tu ubicación directamente desde pinn. – una vez o durante un tiempo elegido – y en segundo plano con la app gratuita Traccar Client (envía directamente a pinn., sin servidor adicional). Además, un modo «de camino a casa», una alerta SOS con posición y números de emergencia, fichas de emergencia y avisos de llegada a lugares. |
+| 🎒 **Colegio y guardería** | Por niño: horario (escríbelo o hazle una foto – la IA lo rellena), llevar y recoger, deberes en la página infantil, circulares con plazos que se convierten en recordatorios y días de cierre directamente en el calendario. |
+| 🐾 **Mascotas** | Perfiles para perros, gatos, conejos y demás, con horas de comida para marcar, paseos, turnos de «a quién le toca», vacunas y desparasitaciones con recordatorio push, gráfica de peso, veterinario y urgencias veterinarias, una ficha para cuidadores para compartir y un cartel imprimible de «se busca». |
+| 🌦️ **Tiempo y vacaciones** | Toca la tarjeta del tiempo para ver 14 días con detalles de cada día. Las listas de equipaje con destino y fechas muestran el tiempo de las vacaciones – previsión o valores típicos – y sugieren qué llevar. |
+| 🏠 **Casa inteligente** | Lanza Atajos de Apple o acciones de Home Assistant desde una tarea – el robot aspirador limpia la cocina cuando toca la tarea. |
+| 🎙️ **Control por voz** | «Oye Siri, pinn»: añade a la lista de la compra, que te la lea, crea tareas y escucha lo que hay hoy – también en Android. |
 | 🔔 **Notificaciones** | Mensajes push personales en iPhone, iPad y Android, y una campana que recoge todos los cambios de la familia. |
-| 🧩 **Todo lo demás** | Tablón familiar con notas que se pueden mover, búsqueda global, modo sin conexión con sincronización automática, modo oscuro, dashboard para iPad con PIN por perfil, cuenta de invitado, control parental. |
+| 🧩 **Todo lo demás** | Tablón familiar con notas movibles, búsqueda global, modo sin conexión con sincronización automática, modo oscuro, panel para iPad con PIN por perfil, cuenta de invitado, control parental. |
 
-pinn. habla **English, Deutsch, Français y Español**, adapta la moneda y los números de emergencia a tu región y cambia entre los textos de **familia** y de **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
+pinn. habla **English, Deutsch, Français y Español**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
-## Novedades en 1.58
+## Novedades de la 1.59
 
-**Código de la app dividido, parte 16 – para ti no cambia nada**
+**El código de la app se divide, parte 17 – para ti no cambia nada**
 
-- **Para colaboradores:** Finanzas – gastos e ingresos, presupuesto del hogar, categorías, movimientos periódicos y la ventana de gastos – está ahora en su propio archivo (`pb_public/js/finanzen.js`). El manejo de la app no cambia.
-- Solo cambian archivos de la app (`index.html` y `js/finanzen.js`), en el servidor no cambia nada. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
+- **Para colaboradores:** Ajustes → Casa, el calendario de basura, la cuenta de calendario de Google y Apple y *Añadir calendario* están ahora en un archivo propio (`pb_public/js/kalenderkonto.js`). No cambia nada en el uso de la app.
+- Solo cambian archivos de la app (`index.html` y `js/kalenderkonto.js`), nada cambia en el servidor. Instala como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualizar).
 
-## Novedades en 1.57
+## Novedades de la 1.58
 
-**Tareas: recordatorios y anotación directa**
+**El código de la app se divide, parte 16 – para ti no cambia nada**
 
-- **Recordatorio push adicional:** al crear o editar una tarea – y en todas las reglas que crean tareas automáticamente (limpieza, cubos, mantenimiento, año del jardín, vehículos) – marca *Recordatorio push adicional* y elige una hora. El día de vencimiento los responsables reciben un push a esa hora.
-- **Lecturas de contadores de una vez:** al tocar la tarea *Leer contadores* se abre directamente la anotación – con varios contadores, uno tras otro. Cuando todos tienen lectura, la tarea se marca sola, también si las anotas en *Hogar*.
-- **Tareas de vehículos:** ITV, revisión, cambio de neumáticos, placa del seguro y plazos propios abren la anotación adecuada al tocarlos y se marcan solos al guardar.
-- **Hogar:** el mantenimiento atrasado en el resumen lleva ahora a la anotación o a la tarea con *✓ Hecho* en lugar del plan de mantenimiento. El plan tiene su propio botón para ello.
-- **Corrección:** dos mantenimientos con el mismo nombre (p. ej. en el año del jardín) compartían su tarea y al editar se mezclaban las fechas. Los nombres iguales reciben ahora un número automáticamente, p. ej. «Rasen düngen (2)»; los duplicados existentes se reparan una vez.
-- Cambian archivos de la app y del servidor. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización) – el servidor añade solo el nuevo campo del recordatorio.
+- **Para colaboradores:** Finanzas – gastos e ingresos, presupuesto del hogar, categorías, movimientos periódicos y la ventana de gastos – están ahora en un archivo propio (`pb_public/js/finanzen.js`). No cambia nada en el uso de la app.
+- Solo cambian archivos de la app (`index.html` y `js/finanzen.js`), nada cambia en el servidor. Instala como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualizar).
 
 ## Cómo funciona
 
@@ -134,33 +130,33 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.58.0` o `pinn-main`) tal cual.
-3. Conéctate por SSH y ejecuta:
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.59.0` o `pinn-main`) tal cual.
+3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
-   El script coloca cada archivo en su sitio, descarga las bibliotecas para la importación de PDF y el reconocimiento de texto en fotos, y arranca pinn.
-4. Abre `http://<IP-del-NAS>:8090` → **Iniciar sesión como administrador principal** → contraseña `Admin` → elige tu propia contraseña.
-5. El **asistente de configuración** te guía por el resto – HTTPS, acceso remoto con WireGuard o Tailscale, Google, IA, ubicación y Home Assistant – paso a paso, en cuatro idiomas.
+   El script coloca cada archivo en su sitio, descarga las bibliotecas para importar PDF y reconocer texto en fotos, e inicia pinn.
+4. Abre `http://<IP-del-NAS>:8090` → **Iniciar sesión como admin principal** → contraseña `Admin` → elige tu propia contraseña.
+5. El **asistente de configuración** te guía en el resto – HTTPS, acceso remoto con WireGuard o Tailscale, Google, IA, ubicación y Home Assistant – paso a paso, en cuatro idiomas.
 6. Abre pinn. en cada móvil con su dirección HTTPS y añádelo a la pantalla de inicio:
    - **iPhone/iPad (Safari):** Compartir → *Añadir a pantalla de inicio* (iOS 16.4 o posterior para las notificaciones)
    - **Android (Chrome):** Ajustes → Notificaciones → *Instalar pinn. como app*, o menú de Chrome ⋮ → *Instalar app*
 
    Después activa las notificaciones en cada dispositivo en **Ajustes → Notificaciones → Activar en este dispositivo**.
 
-**Actualizar:** descarga el nuevo ZIP, coloca la carpeta descomprimida en la misma carpeta y vuelve a ejecutar `sudo sh pinn-*/pinn-setup.sh`. Los archivos sustituidos se guardan en `_alt/`; tus datos no se tocan.
+**Actualizar:** descarga el nuevo ZIP, coloca la carpeta descomprimida en la misma carpeta y vuelve a ejecutar `sudo sh pinn-*/pinn-setup.sh`. Los archivos sustituidos se guardan en `_alt/`, tus datos no se tocan.
 
 **Las copias de seguridad** se hacen cada noche en `./backups` y se conservan 14 días.
 
 ## Privacidad
 
-pinn. está hecho para datos que nunca darías a un servicio en la nube: extractos bancarios, documentos médicos, dónde están tus hijos. Por eso:
+pinn. se creó para datos que nunca darías a un servicio en la nube: extractos bancarios, documentos médicos, dónde están tus hijos. Por eso:
 
-- **Todos los datos están en tu NAS**, en una única base de datos PocketBase. No existe ningún servidor de pinn. ni telemetría.
-- **Ningún script de servidores ajenos.** Todo el código y todas las bibliotecas se sirven desde tu NAS.
-- **Las notificaciones push no llevan contenido.** Apple, Google y Mozilla solo entregan una señal vacía para despertar el dispositivo; este recoge después el mensaje de tu NAS.
+- **Todos los datos están en tu NAS** en una única base de datos PocketBase. No existe un servidor de pinn. ni telemetría.
+- **Ningún script de servidores de terceros.** Todo el código y las bibliotecas se sirven desde tu NAS.
+- **Las notificaciones push no llevan contenido.** Apple, Google y Mozilla solo entregan una señal vacía para despertar el dispositivo; este recoge el mensaje de tu NAS.
 - **Las contraseñas de iCloud y Google** se guardan cifradas en una colección bloqueada.
-- **No accesible desde internet.** El acceso remoto pasa por tu propia VPN.
+- **No es accesible desde internet.** El acceso remoto pasa por tu propia VPN.
 
 pinn. solo contacta con servicios externos para las funciones que los necesitan:
 
@@ -168,7 +164,7 @@ pinn. solo contacta con servicios externos para las funciones que los necesitan:
 |---|---|---|
 | [Open-Meteo](https://open-meteo.com) | Previsión del tiempo | cuando hay una dirección de casa |
 | [OpenStreetMap Nominatim](https://nominatim.openstreetmap.org) | Convertir direcciones en posiciones del mapa | al introducir direcciones |
-| [Teselas de OpenStreetMap](https://www.openstreetmap.org) | Fondo del mapa | en la página de ubicación, cargadas a través de tu NAS |
+| [Teselas de OpenStreetMap](https://www.openstreetmap.org) | Fondo del mapa | en la página de ubicación, cargado a través de tu NAS |
 | [Google Fonts](https://fonts.google.com) | Tipografías | al cargar la app |
 | [OpenHolidays API](https://www.openholidaysapi.org) | Festivos y vacaciones escolares | cuando hay una dirección de casa |
 | [DuckDNS](https://www.duckdns.org) | Certificado HTTPS y dirección | si está configurado |
@@ -181,42 +177,42 @@ pinn. solo contacta con servicios externos para las funciones que los necesitan:
 <details>
 <summary><b>¿Tengo que abrir puertos en el router?</b></summary>
 <br>
-No. El certificado HTTPS se emite mediante una comprobación DNS y el acceso remoto va por VPN – WireGuard en un FRITZ!Box o Tailscale con cualquier otro router.
+No. El certificado HTTPS se emite mediante una comprobación DNS y el acceso remoto va por VPN – WireGuard en una FRITZ!Box o Tailscale en cualquier otro router.
 </details>
 
 <details>
-<summary><b>¿Funciona sin un NAS?</b></summary>
+<summary><b>¿Funciona sin NAS?</b></summary>
 <br>
-Sirve cualquier equipo encendido permanentemente con Docker: un mini PC, una Raspberry Pi 4/5 o un servidor Linux.
+Sirve cualquier equipo siempre encendido con Docker: un mini PC, una Raspberry Pi 4/5 o un servidor Linux.
 </details>
 
 <details>
 <summary><b>¿Es pinn. una app «de verdad» de la App Store?</b></summary>
 <br>
-pinn. es una app web que añades a la pantalla de inicio. Se abre a pantalla completa como una app nativa, funciona sin conexión, muestra un globo con las tareas pendientes y recibe notificaciones push – sin ninguna tienda de apps.
+pinn. es una app web que añades a la pantalla de inicio. Después se abre a pantalla completa como una app nativa, funciona sin conexión, muestra un globo con las tareas pendientes y recibe notificaciones push – sin ninguna tienda de apps.
 </details>
 
 <details>
 <summary><b>¿Pueden varias familias usar una misma instalación?</b></summary>
 <br>
-Sí. El administrador principal crea las familias y cada una tiene sus propios administradores, calendarios y datos. Las recetas se pueden compartir entre familias si se desea.
+Sí. El administrador principal crea familias y cada una tiene sus propios administradores, calendarios y datos. Las recetas se pueden compartir entre familias si se quiere.
 </details>
 
 <details>
 <summary><b>¿Y los niños?</b></summary>
 <br>
-Los perfiles con control parental solo ven sus propias tareas y no pueden borrar ni cambiar nada. Finanzas, documentos y vehículos quedan ocultos. Los más pequeños tienen su propia página divertida con sus rutinas diarias.
+Los perfiles con control parental solo ven sus propias tareas y no pueden borrar ni cambiar nada. Finanzas, documentos y vehículos quedan ocultos. Los más pequeños tienen su propia página divertida con rutinas diarias.
 </details>
 
 <details>
 <summary><b>¿Cuánto cuesta?</b></summary>
 <br>
-Nada – pinn. es gratuito y de código abierto bajo la licencia MIT. Los servicios opcionales como la IA Gemini tienen planes gratuitos.
+Nada – pinn. es gratuito y de código abierto con licencia MIT. Los servicios opcionales como la IA Gemini tienen planes gratuitos.
 </details>
 
 ## Estructura del repositorio
 
-El repositorio tiene la misma estructura que una instalación en el NAS – cada archivo está donde acabará:
+El repositorio tiene la misma estructura que una instalación en el NAS – cada archivo está donde terminará:
 
 ```
 pinn/
@@ -224,29 +220,29 @@ pinn/
 ├── pb_public/           app web servida por PocketBase
 │   ├── index.html       la app (HTML, estilos y la mayor parte del código)
 │   ├── js/              código de la app separado de index.html, archivos <script> simples sin paso de compilación
-│   │                    (finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js siempre va el último)
+│   │                    (kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js siempre va al final)
 │   ├── einrichtung.js   asistente de configuración · datenexport.js  exportación de datos
 │   ├── lang/            traducciones (en, fr, es)
-│   └── vendor/          pinn.css, pocketbase/ (pdf.js y Tesseract los descarga el script de instalación)
+│   └── vendor/          pinn.css, pocketbase/ (pdf.js y Tesseract los descarga la instalación)
 ├── caddy/Caddyfile      proxy inverso HTTPS
 ├── docker-compose.yaml  todos los contenedores
 ├── env.txt              plantilla para .env
-├── pinn-setup.sh        instalación y actualización
+├── pinn-setup.sh        instalar y actualizar
 ├── pinn-wartung.sh      copias de seguridad y actualizaciones (contenedor «wartung»)
 ├── pinn-pocketbase-update.sh
 ├── index.html           solo un marcador, nunca se instala (mantiene funcionando el botón de actualizar de la 1.38)
-└── README.md            página de inicio (inglés) · README.de.md · README.es.md · README.fr.md
+└── README.md            página en inglés · README.de.md · README.es.md (esta página) · README.fr.md
 ```
 
 `pinn-setup.sh` copia `pb_hooks/`, `pb_public/` y `caddy/Caddyfile` tal cual en la carpeta del proyecto; las carpetas de datos (`pb_data/`, `konfig/`, `backups/`, `caddy/data/` …) nunca se tocan.
 
-## Contribuir
+## Colaborar
 
-Los informes de errores, las ideas y las traducciones son muy bienvenidos – consulta [CONTRIBUTING.md](.github/CONTRIBUTING.md). Por favor, comunica los problemas de seguridad de forma privada como se describe en [SECURITY.md](.github/SECURITY.md).
+Los informes de errores, ideas y traducciones son muy bienvenidos – consulta [CONTRIBUTING.md](.github/CONTRIBUTING.md). Informa de los problemas de seguridad de forma privada como se describe en [SECURITY.md](.github/SECURITY.md).
 
 ## Apoya pinn.
 
-pinn. es gratuito y lo seguirá siendo – por completo y para todos. Lo desarrollo en mi tiempo libre. Si te hace el día a día un poco más fácil, una pequeña aportación es muy bienvenida, pero totalmente voluntaria:
+pinn. es gratuito y seguirá siéndolo – completo, para todos. Lo desarrollo en mi tiempo libre. Si te hace el día a día un poco más fácil, una pequeña aportación es muy bienvenida, pero totalmente voluntaria:
 
 <p>
   <a href="https://ko-fi.com/pinnapp"><img src="https://img.shields.io/badge/Ko--fi-Buy%20me%20a%20coffee-C28A33?style=for-the-badge&logo=kofi&logoColor=white" alt="Ko-fi"></a>
@@ -261,4 +257,4 @@ Una ⭐ también ayuda – así otras familias encuentran pinn. más fácilmente
 
 ## Licencia
 
-[MIT](LICENSE) – úsalo, modifícalo, compártelo.
+[MIT](LICENSE) – úsalo, cámbialo, compártelo.

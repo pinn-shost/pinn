@@ -90,23 +90,19 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **English, Deutsch, Français and Español**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.59
+
+**App code split, part 17 – nothing changes for you**
+
+- **For contributors:** Settings → Home, the waste calendar, the Google and Apple calendar account and *Add calendar* now live in their own file (`pb_public/js/kalenderkonto.js`). Nothing changes in how the app works.
+- Only app files changed (`index.html` and `js/kalenderkonto.js`), nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.58
 
 **App code split, part 16 – nothing changes for you**
 
 - **For contributors:** Finance – expenses & income, household budget, categories, recurring entries and the expense popup – now lives in its own file (`pb_public/js/finanzen.js`). Nothing changes in how the app works.
 - Only app files changed (`index.html` and `js/finanzen.js`), nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
-## What's new in 1.57
-
-**Tasks: reminders and direct entry**
-
-- **Extra push reminder:** when you create or edit a task – and in every rule that creates tasks automatically (cleaning, bins, maintenance, garden year, vehicles) – tick *Extra push reminder* and pick a time. On the due date the people responsible get a push at that time.
-- **Read meters in one go:** tapping the task *Read meters* opens the reading popup directly – with several meters one after the other. Once every meter has a reading, the task ticks itself off, also when you enter the readings under *Home*.
-- **Vehicle tasks:** HU/MOT, service, tyre change, insurance plate and own deadlines open the matching entry when tapped and tick themselves off after saving.
-- **Home:** overdue maintenance in the overview now leads to the entry or to the task with *✓ Done* instead of the maintenance plan. The maintenance plan has its own button for it.
-- **Fix:** two maintenance items with the same name (e.g. in the garden year) shared one task, which mixed up due dates when editing. Identical names now get a number automatically, e.g. “Rasen düngen (2)”; existing duplicates are repaired once.
-- App and server files changed. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button) – the server adds the new reminder field by itself.
 
 ## How it works
 
@@ -134,7 +130,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.58.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.59.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -224,7 +220,7 @@ pinn/
 ├── pb_public/           web app served by PocketBase
 │   ├── index.html       the app (HTML, styles and most of the code)
 │   ├── js/              app code split out of index.html, plain <script> files without a build step
-│   │                    (finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js always comes last)
+│   │                    (kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js always comes last)
 │   ├── einrichtung.js   setup assistant · datenexport.js  data export
 │   ├── lang/            translations (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js and Tesseract are downloaded by the setup)
