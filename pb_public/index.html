@@ -587,7 +587,7 @@ window.PINN_LANGUAGES = [
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
   // Versionsnummer bei jeder Änderung an den Sprachdateien erhöhen, sonst nutzen Geräte die alte Datei weiter
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.61.1" onerror="PINN_I18N.fail()"><\/script>');
+  if (DICT) document.write('<script src="' + lang.file + '?v=1.61.2" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // Deutsch als WG: kein Wörterbuch, nur die WG-Bezeichnungen
 })();
 </script>
@@ -26374,7 +26374,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.61.1';
+const APP_VERSION = '1.61.2';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -27340,6 +27340,7 @@ const PINN_CHANGELOG = [
       ['neu', 'Essen: neue Mahlzeit Frühstück. Im Kalender steht statt „Mittag“ oder „Abend“ nur noch ein Symbol vor dem Essen (🌅 Frühstück, ☀️ Mittag, 🌙 Abend) – das spart Platz'],
       ['info', 'Aufgaben: Der Zähler zeigt jetzt erledigte und alle angezeigten Aufgaben, z. B. 3/8. Am iPad und Computer steht er klein direkt neben der Überschrift'],
       ['fix', 'Kalender: „+ Essen hinzufügen“ heißt jetzt kurz „+ Essen“, und „Ganztägig“ ragt nicht mehr in die Termine'],
+      ['fix', '1.61.2: Sprachsteuerung – der Kurzbefehl meldete immer „Fehler 400: Something went wrong while processing your request“. Behoben: Siri bzw. „HTTP Shortcuts“ bekommen jetzt wieder die Antwort zum Vorlesen (Server: sprache.pb.js)'],
     ],
   },
   {
