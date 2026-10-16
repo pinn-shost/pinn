@@ -95,10 +95,10 @@ pinn. spricht **Englisch, Deutsch, Französisch und Spanisch**, passt Währung u
 
 **Mehr Platz in der Übersicht**
 
-- **iPad und Computer:** Das Wetter steht jetzt oben neben Datum und Uhrzeit – heute, morgen und übermorgen. Ein Tipp darauf öffnet wie bisher die Wetter-Ansicht. So haben Kalender, Essen und Aufgaben mehr Platz.
+- **iPad und Computer:** Das Wetter steht jetzt oben rechts neben Datum und Uhrzeit – das aktuelle Wetter mit UV-Wert, dazu heute, morgen und übermorgen. Links daneben stehen nur noch Datum und Uhrzeit. Ein Tipp darauf öffnet wie bisher die Wetter-Ansicht. So haben Kalender, Essen und Aufgaben mehr Platz.
 - **iPad und Computer:** Die geplanten Mahlzeiten in der Übersicht sind etwas kleiner, das Bild etwa so groß wie ein Tag beim Wetter.
 - **Neue Mahlzeit: Frühstück.** Im Kalender steht statt „Mittag“ oder „Abend“ nur noch ein Symbol vor dem Essen (🌅 Frühstück, ☀️ Mittag, 🌙 Abend) – das spart Platz. Auch die Wochenvorschau kennt das Frühstück.
-- **Aufgaben:** Der Zähler zeigt jetzt erledigte und alle angezeigten Aufgaben, z. B. *3/8*. Am iPad und Computer steht er direkt neben der Überschrift.
+- **Aufgaben:** Der Zähler zeigt jetzt erledigte und alle angezeigten Aufgaben, z. B. *3/8*. Am iPad und Computer steht er klein direkt neben der Überschrift.
 - **Kalender:** „+ Essen hinzufügen“ heißt jetzt kurz „+ Essen“, und „Ganztägig“ ragt nicht mehr in die Termine. Alle Änderungen sind auf Englisch, Deutsch, Französisch und Spanisch übersetzt.
 - Nur App-Dateien geändert (`index.html`, `js/ausblick.js`, `js/vorrat2.js` und die Sprachdateien in `lang/`), am Server ändert sich nichts. Installiere wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
 
@@ -135,7 +135,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade die ZIP-Datei des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke sie.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.61.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.61.1` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

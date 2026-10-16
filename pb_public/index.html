@@ -587,7 +587,7 @@ window.PINN_LANGUAGES = [
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
   // Versionsnummer bei jeder Änderung an den Sprachdateien erhöhen, sonst nutzen Geräte die alte Datei weiter
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.61.0" onerror="PINN_I18N.fail()"><\/script>');
+  if (DICT) document.write('<script src="' + lang.file + '?v=1.61.1" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // Deutsch als WG: kein Wörterbuch, nur die WG-Bezeichnungen
 })();
 </script>
@@ -3070,6 +3070,7 @@ window.PINN_LANGUAGES = [
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     background: rgba(255,255,255,0.75); border: 1px solid rgba(37,35,31,0.08); transition: transform .12s ease;
   }
+  .hw-day.is-now { border-style: dashed; }
   .hw-day.is-today { background: color-mix(in srgb, var(--c-pine) 7%, #fff); border-color: color-mix(in srgb, var(--c-pine) 30%, transparent); }
   .hw-label { max-width: 100%; font-size: 0.55rem; line-height: 1.25; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.55; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .hw-main { display: flex; align-items: center; gap: 0.2rem; white-space: nowrap; line-height: 1.2; }
@@ -3089,9 +3090,9 @@ window.PINN_LANGUAGES = [
   .week-slider-card.is-compact .meal-cooked-btn svg { width: 11px; height: 11px; }
   .week-slider-card.is-compact .recipe-fav-badge { width: 18px; height: 18px; }
   .week-slider-card.is-compact .recipe-fav-badge svg { width: 10px; height: 10px; }
-  /* Task counter (done/total): next to the heading on iPad & computer, small below it on the phone */
+  /* Task counter (done/total): small, next to the heading on iPad & computer, below it on the phone */
   #taskCount { font-variant-numeric: tabular-nums; }
-  body.mobile-mode #taskCount { flex-basis: 100%; font-family: Inter, system-ui, sans-serif; font-size: 0.75rem; line-height: 1rem; }
+  body.mobile-mode #taskCount { flex-basis: 100%; }
 
   /* ---------- Einstellungen → Zuhause ---------- */
   .home-card { border-radius: 12px; border: 1px solid rgba(37,35,31,0.1); background: #fff; padding: 0.75rem 0.85rem; margin-bottom: 0.75rem; }
@@ -4443,7 +4444,7 @@ window.PINN_LANGUAGES = [
         <div class="flex items-center justify-between gap-3">
           <div class="flex items-baseline gap-2 flex-wrap min-w-0">
             <h2 class="font-serif text-lg">Aufgaben</h2>
-            <span id="taskCount" class="font-serif text-lg text-ink/40" title="Erledigt / gesamt"></span>
+            <span id="taskCount" class="text-xs text-ink/40" title="Erledigt / gesamt"></span>
           </div>
           <button id="openTaskModalBtn" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap shrink-0" title="Aufgabe hinzufügen">+<span class="hidden sm:inline"> Aufgabe hinzufügen</span></button>
         </div>
@@ -13807,13 +13808,21 @@ function renderHeaderWeather() {
   try { tileOff = overviewHidden.includes('wetter'); } catch (e) { tileOff = false; }
   const off = isMobile() || tileOff || !days.length;
   el.classList.toggle('hidden', off);
-  if (off) { el.innerHTML = ''; return; }
-  el.innerHTML = days.map(d => `
+  if (off) { el.innerHTML = ''; tickClock(); return; }
+  // Current conditions first, then today, tomorrow and the day after
+  const now = weatherData && weatherData.temp != null ? `
+    <span class="hw-day is-now">
+      <span class="hw-label">Jetzt</span>
+      <span class="hw-main"><span class="hw-icon">${weatherIconForCode(weatherData.code)}</span><span class="hw-temp">${weatherData.temp}°</span></span>
+      <span class="hw-rain">${weatherData.uv != null ? 'UV ' + weatherData.uv : ''}</span>
+    </span>` : '';
+  el.innerHTML = now + days.map(d => `
     <span class="hw-day${d.date === today ? ' is-today' : ''}">
       <span class="hw-label">${escapeHtml(weatherDayLabel(d.date, 0))}</span>
       <span class="hw-main"><span class="hw-icon">${weatherIconForCode(d.code)}</span><span class="hw-temp">${d.max != null ? d.max + '°' : ''}<span class="hw-min">${d.min != null ? d.min + '°' : ''}</span></span></span>
       <span class="hw-rain">${d.rain != null ? '💧 ' + d.rain + ' %' : ''}</span>
     </span>`).join('');
+  tickClock();
 }
 document.getElementById('headerWeather').addEventListener('click', () => {
   try { wxOpen('home'); } catch (e) { /* weather view not ready yet */ }
@@ -15040,7 +15049,9 @@ function monthGridDays(year, monthIndex) {
 function tickClock() {
   const now = new Date();
   let text = now.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' + now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-  if (weatherData) {
+  const hw = document.getElementById('headerWeather');
+  const headerWeatherShown = !!(hw && !hw.classList.contains('hidden'));
+  if (weatherData && !headerWeatherShown) {
     text += ` | ${weatherIconForCode(weatherData.code)} ${weatherData.temp}°`;
     if (weatherData.uv !== null) text += ` | UV ${weatherData.uv}`;
   }
@@ -26363,7 +26374,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.61.0';
+const APP_VERSION = '1.61.1';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -27324,10 +27335,10 @@ const PINN_CHANGELOG = [
   {
     v: '1.61', datum: '16.10.2026', titel: 'Mehr Platz in der Übersicht',
     punkte: [
-      ['info', 'iPad und Computer: Das Wetter steht jetzt oben neben Datum und Uhrzeit – heute, morgen und übermorgen. Ein Tipp darauf öffnet wie bisher die Wetter-Ansicht. So haben Kalender, Essen und Aufgaben in der Übersicht mehr Platz'],
+      ['info', 'iPad und Computer: Das Wetter steht jetzt oben rechts neben Datum und Uhrzeit – das aktuelle Wetter mit UV-Wert, dazu heute, morgen und übermorgen. Ein Tipp darauf öffnet wie bisher die Wetter-Ansicht. So haben Kalender, Essen und Aufgaben in der Übersicht mehr Platz'],
       ['info', 'iPad und Computer: Die geplanten Mahlzeiten in der Übersicht sind etwas kleiner, das Bild etwa so groß wie ein Tag beim Wetter'],
       ['neu', 'Essen: neue Mahlzeit Frühstück. Im Kalender steht statt „Mittag“ oder „Abend“ nur noch ein Symbol vor dem Essen (🌅 Frühstück, ☀️ Mittag, 🌙 Abend) – das spart Platz'],
-      ['info', 'Aufgaben: Der Zähler zeigt jetzt erledigte und alle angezeigten Aufgaben, z. B. 3/8. Am iPad und Computer steht er direkt neben der Überschrift'],
+      ['info', 'Aufgaben: Der Zähler zeigt jetzt erledigte und alle angezeigten Aufgaben, z. B. 3/8. Am iPad und Computer steht er klein direkt neben der Überschrift'],
       ['fix', 'Kalender: „+ Essen hinzufügen“ heißt jetzt kurz „+ Essen“, und „Ganztägig“ ragt nicht mehr in die Termine'],
     ],
   },

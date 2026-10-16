@@ -94,10 +94,10 @@ pinn. habla **English, Deutsch, Français y Español**, adapta la moneda y los n
 
 **Más espacio en el resumen**
 
-- **iPad y ordenador:** el tiempo aparece ahora arriba, junto a la fecha y la hora – hoy, mañana y pasado mañana. Al tocarlo se abre la vista del tiempo como antes. Así el calendario, las comidas y las tareas tienen más espacio.
+- **iPad y ordenador:** el tiempo aparece ahora arriba a la derecha, junto a la fecha y la hora – el tiempo actual con índice UV, más hoy, mañana y pasado mañana. A su izquierda solo quedan la fecha y la hora. Al tocarlo se abre la vista del tiempo como antes. Así el calendario, las comidas y las tareas tienen más espacio.
 - **iPad y ordenador:** las comidas planificadas en el resumen son algo más pequeñas, la imagen más o menos del tamaño de un día del tiempo.
 - **Nueva comida: desayuno.** En el calendario, un símbolo sustituye a «Comida» o «Cena» delante del plato (🌅 desayuno, ☀️ comida, 🌙 cena) – así se ahorra espacio. La vista semanal también conoce el desayuno.
-- **Tareas:** el contador muestra ahora las tareas hechas y todas las mostradas, p. ej. *3/8*. En iPad y ordenador aparece justo al lado del título.
+- **Tareas:** el contador muestra ahora las tareas hechas y todas las mostradas, p. ej. *3/8*. En iPad y ordenador aparece en letra pequeña justo al lado del título.
 - **Calendario:** «+ Añadir comida» ahora es simplemente «+ Comida», y «Todo el día» ya no se superpone a las citas. Todos los cambios están traducidos al inglés, alemán, francés y español.
 - Solo cambian archivos de la app (`index.html`, `js/ausblick.js`, `js/vorrat2.js` y los archivos de idioma en `lang/`), en el servidor no cambia nada. Instala como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
 
@@ -134,7 +134,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.61.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.61.1` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

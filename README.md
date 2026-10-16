@@ -94,10 +94,10 @@ pinn. speaks **English, Deutsch, Français and Español**, adapts currency and e
 
 **More room on the overview**
 
-- **iPad and computer:** the weather now sits at the top next to date and time – today, tomorrow and the day after. Tapping it opens the weather view as before. This gives the calendar, meals and tasks more room.
+- **iPad and computer:** the weather now sits at the top right next to date and time – the current weather with UV index, plus today, tomorrow and the day after. Only date and time remain to the left of it. Tapping it opens the weather view as before. This gives the calendar, meals and tasks more room.
 - **iPad and computer:** the planned meals on the overview are a little smaller, the picture about the size of one weather day.
 - **New meal: breakfast.** In the calendar a symbol now replaces “Lunch” or “Dinner” in front of the meal (🌅 breakfast, ☀️ lunch, 🌙 dinner) – this saves space. The weekly preview knows breakfast too.
-- **Tasks:** the counter now shows completed and all displayed tasks, e.g. *3/8*. On iPad and computer it sits right next to the heading.
+- **Tasks:** the counter now shows completed and all displayed tasks, e.g. *3/8*. On iPad and computer it sits in small type right next to the heading.
 - **Calendar:** “+ Add meal” is now simply “+ Meal”, and “All day” no longer overlaps the events. All changes are translated into English, German, French and Spanish.
 - Only app files changed (`index.html`, `js/ausblick.js`, `js/vorrat2.js` and the language files in `lang/`), nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
@@ -134,7 +134,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.61.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.61.1` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -94,10 +94,10 @@ pinn. parle **English, Deutsch, Français et Español**, adapte la devise et les
 
 **Plus de place dans l’aperçu**
 
-- **iPad et ordinateur :** la météo se trouve désormais en haut, à côté de la date et de l’heure – aujourd’hui, demain et après-demain. Un appui ouvre la vue météo comme avant. Le calendrier, les repas et les tâches ont ainsi plus de place.
+- **iPad et ordinateur :** la météo se trouve désormais en haut à droite, à côté de la date et de l’heure – la météo actuelle avec l’indice UV, plus aujourd’hui, demain et après-demain. À sa gauche ne restent que la date et l’heure. Un appui ouvre la vue météo comme avant. Le calendrier, les repas et les tâches ont ainsi plus de place.
 - **iPad et ordinateur :** les repas prévus dans l’aperçu sont un peu plus petits, l’image à peu près de la taille d’un jour de météo.
 - **Nouveau repas : petit-déjeuner.** Dans le calendrier, un symbole remplace « Midi » ou « Soir » devant le repas (🌅 petit-déjeuner, ☀️ midi, 🌙 soir) – cela fait gagner de la place. L’aperçu de la semaine connaît aussi le petit-déjeuner.
-- **Tâches :** le compteur affiche désormais les tâches terminées et toutes les tâches affichées, p. ex. *3/8*. Sur iPad et ordinateur, il se trouve juste à côté du titre.
+- **Tâches :** le compteur affiche désormais les tâches terminées et toutes les tâches affichées, p. ex. *3/8*. Sur iPad et ordinateur, il se trouve en petit juste à côté du titre.
 - **Calendrier :** « + Ajouter un repas » devient simplement « + Repas », et « Toute la journée » ne déborde plus sur les rendez-vous. Toutes les modifications sont traduites en anglais, allemand, français et espagnol.
 - Seuls des fichiers de l’app changent (`index.html`, `js/ausblick.js`, `js/vorrat2.js` et les fichiers de langue dans `lang/`), rien ne change sur le serveur. Installe comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
@@ -134,7 +134,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.61.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.61.1` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
