@@ -27,7 +27,7 @@ const AB_T = {
     m_kicker: 'Monatsausblick Finanzen', m_title: 'Ausblick {monat}', b_m: 'Finanz-Ausblick {monat}', b_m_s: 'Was ansteht – und wie der {prev} lief',
     c_termine: 'Termine', c_termin: 'Termin', c_aufgaben: 'Aufgaben', c_aufgabe: 'Aufgabe', c_essen: 'Essen geplant', c_geb: 'Geburtstag', c_gebs: 'Geburtstage', c_muell: 'Abholung', c_muells: 'Abholungen',
     s_wetter: 'Wetter', s_merken: 'Nicht vergessen', s_tage: 'Tag für Tag', s_rueck: 'Rückblick: letzte Woche', s_offen: 'Noch offen',
-    heute: 'Heute', morgen: 'Morgen', frei: 'Nichts eingetragen', ganz: 'ganztägig', mittag: 'Mittag', abend: 'Abend', alle: 'alle', reihum: 'reihum',
+    heute: 'Heute', morgen: 'Morgen', frei: 'Nichts eingetragen', ganz: 'ganztägig', fruehstueck: 'Frühstück', mittag: 'Mittag', abend: 'Abend', alle: 'alle', reihum: 'reihum',
     haushalt: 'Haushalt', raus: 'rausbringen', geb: '{name} hat Geburtstag', geb_alt: '{name} wird {age}',
     ferien_bis: 'noch bis {d}', ferien_ab: 'ab {d}', vt_frist: 'Kündigungsfrist', vt_ende: 'Vertrag endet', vt_erinn: 'Erinnerung',
     mhd: 'MHD {d}', mhd_ab: 'abgelaufen', faellig: 'fällig seit {d}', abbuch: 'Abbuchung', eingang: 'Eingang',
@@ -48,7 +48,7 @@ const AB_T = {
     m_kicker: 'Monthly finance outlook', m_title: 'Outlook: {monat}', b_m: 'Finance outlook: {monat}', b_m_s: "What's coming up – and how {prev} went",
     c_termine: 'events', c_termin: 'event', c_aufgaben: 'tasks', c_aufgabe: 'task', c_essen: 'meals planned', c_geb: 'birthday', c_gebs: 'birthdays', c_muell: 'bin day', c_muells: 'bin days',
     s_wetter: 'Weather', s_merken: "Don't forget", s_tage: 'Day by day', s_rueck: 'Last week in brief', s_offen: 'Still open',
-    heute: 'Today', morgen: 'Tomorrow', frei: 'Nothing planned', ganz: 'all day', mittag: 'Lunch', abend: 'Dinner', alle: 'everyone', reihum: 'taking turns',
+    heute: 'Today', morgen: 'Tomorrow', frei: 'Nothing planned', ganz: 'all day', fruehstueck: 'Breakfast', mittag: 'Lunch', abend: 'Dinner', alle: 'everyone', reihum: 'taking turns',
     haushalt: 'Household', raus: 'take out', geb: "{name}'s birthday", geb_alt: '{name} turns {age}',
     ferien_bis: 'until {d}', ferien_ab: 'from {d}', vt_frist: 'Cancellation deadline', vt_ende: 'Contract ends', vt_erinn: 'Reminder',
     mhd: 'Best before {d}', mhd_ab: 'expired', faellig: 'due since {d}', abbuch: 'Payment', eingang: 'Income',
@@ -69,7 +69,7 @@ const AB_T = {
     m_kicker: 'Perspectives financières du mois', m_title: 'Perspectives : {monat}', b_m: 'Perspectives financières : {monat}', b_m_s: 'Ce qui arrive – et le bilan de {prev}',
     c_termine: 'rendez-vous', c_termin: 'rendez-vous', c_aufgaben: 'tâches', c_aufgabe: 'tâche', c_essen: 'repas prévus', c_geb: 'anniversaire', c_gebs: 'anniversaires', c_muell: 'collecte', c_muells: 'collectes',
     s_wetter: 'Météo', s_merken: 'À ne pas oublier', s_tage: 'Jour par jour', s_rueck: 'La semaine dernière en bref', s_offen: 'Encore à faire',
-    heute: "Aujourd'hui", morgen: 'Demain', frei: 'Rien de prévu', ganz: 'toute la journée', mittag: 'Midi', abend: 'Soir', alle: 'tous', reihum: 'à tour de rôle',
+    heute: "Aujourd'hui", morgen: 'Demain', frei: 'Rien de prévu', ganz: 'toute la journée', fruehstueck: 'Petit-déjeuner', mittag: 'Midi', abend: 'Soir', alle: 'tous', reihum: 'à tour de rôle',
     haushalt: 'Ménage', raus: 'sortir', geb: 'Anniversaire de {name}', geb_alt: '{name} fête ses {age} ans',
     ferien_bis: "jusqu'au {d}", ferien_ab: 'à partir du {d}', vt_frist: 'Délai de résiliation', vt_ende: 'Fin du contrat', vt_erinn: 'Rappel',
     mhd: 'DDM {d}', mhd_ab: 'périmé', faellig: 'à faire depuis le {d}', abbuch: 'Prélèvement', eingang: 'Rentrée',
@@ -90,7 +90,7 @@ const AB_T = {
     m_kicker: 'Previsión financiera mensual', m_title: 'Previsión: {monat}', b_m: 'Previsión financiera: {monat}', b_m_s: 'Lo que viene y cómo ha ido {prev}',
     c_termine: 'citas', c_termin: 'cita', c_aufgaben: 'tareas', c_aufgabe: 'tarea', c_essen: 'comidas planificadas', c_geb: 'cumpleaños', c_gebs: 'cumpleaños', c_muell: 'recogida', c_muells: 'recogidas',
     s_wetter: 'Tiempo', s_merken: 'No olvidar', s_tage: 'Día a día', s_rueck: 'La semana pasada en breve', s_offen: 'Pendiente',
-    heute: 'Hoy', morgen: 'Mañana', frei: 'Nada previsto', ganz: 'todo el día', mittag: 'Comida', abend: 'Cena', alle: 'todos', reihum: 'por turnos',
+    heute: 'Hoy', morgen: 'Mañana', frei: 'Nada previsto', ganz: 'todo el día', fruehstueck: 'Desayuno', mittag: 'Comida', abend: 'Cena', alle: 'todos', reihum: 'por turnos',
     haushalt: 'Hogar', raus: 'sacar', geb: 'Cumpleaños de {name}', geb_alt: '{name} cumple {age}',
     ferien_bis: 'hasta el {d}', ferien_ab: 'desde el {d}', vt_frist: 'Plazo de cancelación', vt_ende: 'Fin del contrato', vt_erinn: 'Recordatorio',
     mhd: 'Cons. pref. {d}', mhd_ab: 'caducado', faellig: 'pendiente desde el {d}', abbuch: 'Cargo', eingang: 'Ingreso',
@@ -556,9 +556,9 @@ async function abRenderWeek(body, mondayIso) {
       const who = x.rotate ? abT('reihum') : abWhoText(x.ms);
       return `<span class="ab-mini"${x.done ? ' style="text-decoration:line-through;opacity:.6"' : ''}>${abEsc(x.title)}${who ? ' · ' + abEsc(who) : ''}</span>`;
     }).join('')}</span></div>`);
-    meals.filter(p => p.date === d).sort((a, b) => (a.mealType === b.mealType ? 0 : a.mealType === 'mittag' ? -1 : 1)).forEach(p => {
+    meals.filter(p => p.date === d).sort((a, b) => mealTypeRank(a.mealType) - mealTypeRank(b.mealType)).forEach(p => {
       const r = p.recipeId ? recipes.find(x => x.id === p.recipeId) : null;
-      items.push(`<div class="ab-it" style="--c:#C2703D"><span class="t">${abEsc(p.mealType === 'mittag' ? abT('mittag') : abT('abend'))}</span><span class="n">🍽️ ${abEsc(r ? r.title : (p.title || '—'))}</span></div>`);
+      items.push(`<div class="ab-it" style="--c:#C2703D"><span class="t">${abEsc(abT(mealTypeInfo(p.mealType).id))}</span><span class="n">${mealTypeIcon(p.mealType)} ${abEsc(r ? r.title : (p.title || '—'))}</span></div>`);
     });
     bookings.filter(x => x.date === d).forEach(x => {
       const inc = x.amount < 0;

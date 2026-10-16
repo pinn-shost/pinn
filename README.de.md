@@ -83,7 +83,7 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 | 📍 **Familie & Ortung** | Standort direkt aus pinn. teilen – einmalig oder für eine gewählte Zeit – und im Hintergrund über die kostenlose App Traccar Client (sendet direkt an pinn., kein zusätzlicher Server). Dazu ein „Heimweg“-Modus, ein SOS-Alarm mit Position und Notrufnummern, Notfallpässe und Ankunftsbenachrichtigungen für Orte. |
 | 🎒 **Schule & Kita** | Pro Kind: Stundenplan (eintippen oder fotografieren – die KI füllt ihn aus), Bringen und Abholen, Hausaufgaben auf der Kinderseite, Elternbriefe mit Fristen, die zu Erinnerungen werden, und Schließtage direkt im Kalender. |
 | 🐾 **Haustiere** | Profile für Hunde, Katzen, Kaninchen & Co. mit Fütterungszeiten zum Abhaken, Gassirunden, einem „Wer ist dran“-Plan, Impfungen und Entwurmung mit Push-Erinnerung, Gewichtsdiagramm, Tierarzt und Notdienst, einem Haustiersitter-Blatt zum Teilen und einem druckbaren „Vermisst“-Plakat. |
-| 🌦️ **Wetter & Urlaub** | Tippe auf die Wetterkachel für 14 Tage mit Details zu jedem Tag. Packlisten mit Ziel und Zeitraum zeigen das Urlaubswetter – Vorhersage oder typische Werte – und schlagen vor, was eingepackt werden sollte. |
+| 🌦️ **Wetter & Urlaub** | Tippe auf das Wetter (am Handy als Kachel, am iPad und Computer oben neben Datum und Uhrzeit) für 14 Tage mit Details zu jedem Tag. Packlisten mit Ziel und Zeitraum zeigen das Urlaubswetter – Vorhersage oder typische Werte – und schlagen vor, was eingepackt werden sollte. |
 | 🏠 **Smarthome** | Apple-Kurzbefehle oder Home-Assistant-Aktionen aus einer Aufgabe starten – der Saugroboter reinigt die Küche, wenn die Aufgabe fällig ist. |
 | 🎙️ **Sprachsteuerung** | „Hey Siri, pinn“: auf die Einkaufsliste setzen, sie vorlesen, Aufgaben anlegen und hören, was heute ansteht – auch auf Android. |
 | 🔔 **Benachrichtigungen** | Persönliche Push-Nachrichten auf iPhone, iPad und Android, dazu eine Glocke, die jede Änderung in der Familie sammelt. |
@@ -91,19 +91,23 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **Englisch, Deutsch, Französisch und Spanisch**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen **Familien-** und **WG-Begriffen**. Ein Server kann mehrere Familien hosten, jede mit eigenen Admins.
 
+## Neu in 1.61
+
+**Mehr Platz in der Übersicht**
+
+- **iPad und Computer:** Das Wetter steht jetzt oben neben Datum und Uhrzeit – heute, morgen und übermorgen. Ein Tipp darauf öffnet wie bisher die Wetter-Ansicht. So haben Kalender, Essen und Aufgaben mehr Platz.
+- **iPad und Computer:** Die geplanten Mahlzeiten in der Übersicht sind etwas kleiner, das Bild etwa so groß wie ein Tag beim Wetter.
+- **Neue Mahlzeit: Frühstück.** Im Kalender steht statt „Mittag“ oder „Abend“ nur noch ein Symbol vor dem Essen (🌅 Frühstück, ☀️ Mittag, 🌙 Abend) – das spart Platz. Auch die Wochenvorschau kennt das Frühstück.
+- **Aufgaben:** Der Zähler zeigt jetzt erledigte und alle angezeigten Aufgaben, z. B. *3/8*. Am iPad und Computer steht er direkt neben der Überschrift.
+- **Kalender:** „+ Essen hinzufügen“ heißt jetzt kurz „+ Essen“, und „Ganztägig“ ragt nicht mehr in die Termine. Alle Änderungen sind auf Englisch, Deutsch, Französisch und Spanisch übersetzt.
+- Nur App-Dateien geändert (`index.html`, `js/ausblick.js`, `js/vorrat2.js` und die Sprachdateien in `lang/`), am Server ändert sich nichts. Installiere wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
+
 ## Neu in 1.60
 
 **App-Code wird aufgeteilt, Teil 18 – für dich ändert sich nichts**
 
 - **Für Mitwirkende:** Die Einstellungen – Familie oder WG, Familienmitglieder, Kategorien direkt auf den Seiten, Standardansicht, Farben, Dunkelmodus und Zurücksetzen – liegen jetzt in einer eigenen Datei (`pb_public/js/einstellungen.js`). An der Bedienung der App ändert sich nichts.
 - Nur App-Dateien geändert (`index.html` und `js/einstellungen.js`), am Server ändert sich nichts. Installiere wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
-
-## Neu in 1.59
-
-**App-Code wird aufgeteilt, Teil 17 – für dich ändert sich nichts**
-
-- **Für Mitwirkende:** Einstellungen → Zuhause, der Müllkalender, das Google- und Apple-Kalenderkonto sowie *Kalender hinzufügen* liegen jetzt in einer eigenen Datei (`pb_public/js/kalenderkonto.js`). An der Bedienung der App ändert sich nichts.
-- Nur App-Dateien geändert (`index.html` und `js/kalenderkonto.js`), am Server ändert sich nichts. Installiere wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
 
 ## So funktioniert es
 
@@ -131,7 +135,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade die ZIP-Datei des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke sie.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.60.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.61.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

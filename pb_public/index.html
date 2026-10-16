@@ -587,7 +587,7 @@ window.PINN_LANGUAGES = [
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
   // Versionsnummer bei jeder Änderung an den Sprachdateien erhöhen, sonst nutzen Geräte die alte Datei weiter
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.57.0" onerror="PINN_I18N.fail()"><\/script>');
+  if (DICT) document.write('<script src="' + lang.file + '?v=1.61.0" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // Deutsch als WG: kein Wörterbuch, nur die WG-Bezeichnungen
 })();
 </script>
@@ -3061,6 +3061,37 @@ window.PINN_LANGUAGES = [
   .ov-weather-rain { font-size: 0.58rem; opacity: 0.6; margin-top: 0.1rem; min-height: 1em; white-space: nowrap; }
   .ov-weather-stale { font-size: 0.7rem; opacity: 0.5; margin-top: 0.5rem; }
   .ov-weather-sun { font-size: 0.7rem; opacity: 0.6; margin-top: 0.45rem; }
+  /* Header weather (iPad & computer, 1.61): today, tomorrow, the day after next to date and time – tap opens the weather view */
+  #headerWeather:not(.hidden) { display: flex; align-items: stretch; gap: 0.3rem; background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  #headerWeather:active .hw-day { transform: scale(0.97); }
+  body.mobile-mode #headerWeather { display: none !important; }
+  .hw-day {
+    width: 4rem; min-width: 0; border-radius: 10px; padding: 0.2rem 0.2rem 0.22rem; text-align: center;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.75); border: 1px solid rgba(37,35,31,0.08); transition: transform .12s ease;
+  }
+  .hw-day.is-today { background: color-mix(in srgb, var(--c-pine) 7%, #fff); border-color: color-mix(in srgb, var(--c-pine) 30%, transparent); }
+  .hw-label { max-width: 100%; font-size: 0.55rem; line-height: 1.25; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.55; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hw-main { display: flex; align-items: center; gap: 0.2rem; white-space: nowrap; line-height: 1.2; }
+  .hw-icon { font-size: 1rem; line-height: 1; }
+  .hw-temp { font-weight: 600; font-size: 0.72rem; }
+  .hw-min { font-weight: 400; opacity: 0.5; margin-left: 0.1rem; }
+  .hw-rain { font-size: 0.55rem; line-height: 1.15; opacity: 0.6; min-height: 1.15em; white-space: nowrap; }
+  html.dark .hw-day { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+  html.dark .hw-day.is-today { background: color-mix(in srgb, var(--c-pine) 28%, transparent); border-color: color-mix(in srgb, var(--c-pine) 60%, transparent); }
+  /* "All day" label in day and week view: never wider than the hour column */
+  .cal-allday-label { width: 2.5rem; flex-shrink: 0; overflow: hidden; font-size: 9px; line-height: 1.15; overflow-wrap: anywhere; -webkit-hyphens: auto; hyphens: auto; }
+  /* Planned meals slider on the overview (iPad & computer): smaller cards, picture about the size of one weather day */
+  .week-slider-card.is-compact { width: 4.75rem; padding: 0.375rem; }
+  .week-slider-card.is-compact .wsc-title { font-size: 0.72rem; margin-top: 0.3rem; min-height: 1.8rem; }
+  .week-slider-card.is-compact .wsc-meta { font-size: 10px; }
+  .week-slider-card.is-compact .meal-cooked-btn { width: 20px; height: 20px; top: 3px; left: 3px; }
+  .week-slider-card.is-compact .meal-cooked-btn svg { width: 11px; height: 11px; }
+  .week-slider-card.is-compact .recipe-fav-badge { width: 18px; height: 18px; }
+  .week-slider-card.is-compact .recipe-fav-badge svg { width: 10px; height: 10px; }
+  /* Task counter (done/total): next to the heading on iPad & computer, small below it on the phone */
+  #taskCount { font-variant-numeric: tabular-nums; }
+  body.mobile-mode #taskCount { flex-basis: 100%; font-family: Inter, system-ui, sans-serif; font-size: 0.75rem; line-height: 1rem; }
 
   /* ---------- Einstellungen → Zuhause ---------- */
   .home-card { border-radius: 12px; border: 1px solid rgba(37,35,31,0.1); background: #fff; padding: 0.75rem 0.85rem; margin-bottom: 0.75rem; }
@@ -4245,7 +4276,10 @@ window.PINN_LANGUAGES = [
         <span id="offlineBadge" class="hidden self-center ml-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-mustard/15 text-mustard border border-mustard/40" title="Keine Verbindung zum Server. Änderungen werden lokal gesichert und automatisch nachgereicht.">offline</span>
       </div>
     </div>
-    <div id="clock" class="text-sm text-ink/60 font-bold shrink-0 pl-2"></div>
+    <div class="flex items-center gap-3 shrink-0 pl-2">
+      <div id="clock" class="text-sm text-ink/60 font-bold shrink-0"></div>
+      <button id="headerWeather" type="button" class="hidden" aria-label="Wetter" title="Wetter"></button>
+    </div>
   </header>
 
   <!-- Banner: neue Version auf dem Server erkannt -->
@@ -4407,10 +4441,12 @@ window.PINN_LANGUAGES = [
 
       <div class="px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
         <div class="flex items-center justify-between gap-3">
-          <h2 class="font-serif text-lg">Aufgaben</h2>
+          <div class="flex items-baseline gap-2 flex-wrap min-w-0">
+            <h2 class="font-serif text-lg">Aufgaben</h2>
+            <span id="taskCount" class="font-serif text-lg text-ink/40" title="Erledigt / gesamt"></span>
+          </div>
           <button id="openTaskModalBtn" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap shrink-0" title="Aufgabe hinzufügen">+<span class="hidden sm:inline"> Aufgabe hinzufügen</span></button>
         </div>
-        <span id="taskCount" class="text-xs text-ink/40"></span>
         <div class="ls-tabs task-kind-tabs mt-3 is-off" role="tablist" aria-label="Aufgaben oder Haushalt" id="taskKindTabsMain">
           <button type="button" class="ls-tab" data-task-kind="aufgaben" role="tab">✅ Aufgaben</button>
           <button type="button" class="ls-tab" data-task-kind="haushalt" role="tab">🧹 Haushalt</button>
@@ -8264,8 +8300,9 @@ window.PINN_LANGUAGES = [
     <input id="mealModalDate" type="date" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-4" />
     <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Mahlzeit</label>
     <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-4">
-      <button type="button" data-meal="mittag" class="meal-type-btn px-4 py-1.5 rounded-full transition">Mittag</button>
-      <button type="button" data-meal="abend" class="meal-type-btn px-4 py-1.5 rounded-full transition">Abend</button>
+      <button type="button" data-meal="fruehstueck" class="meal-type-btn px-3 py-1.5 rounded-full transition">🌅 Frühstück</button>
+      <button type="button" data-meal="mittag" class="meal-type-btn px-3 py-1.5 rounded-full transition">☀️ Mittag</button>
+      <button type="button" data-meal="abend" class="meal-type-btn px-3 py-1.5 rounded-full transition">🌙 Abend</button>
     </div>
     <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Rezept</label>
     <div class="relative mb-3">
@@ -11999,6 +12036,16 @@ let calendarMode = 'week';
 let activeMemberFilter = new Set();
 let pendingMealDay = null;
 let pendingMealType = null;
+// Meal times (1.61: breakfast added). Older entries only know 'mittag' and 'abend'; anything else counts as dinner.
+const MEAL_TYPES = [
+  { id: 'fruehstueck', label: 'Frühstück', long: 'Frühstück', icon: '🌅' },
+  { id: 'mittag', label: 'Mittag', long: 'Mittagessen', icon: '☀️' },
+  { id: 'abend', label: 'Abend', long: 'Abendessen', icon: '🌙' },
+];
+function mealTypeInfo(type) { return MEAL_TYPES.find(t => t.id === type) || MEAL_TYPES[2]; }
+function mealTypeRank(type) { return MEAL_TYPES.indexOf(mealTypeInfo(type)); }
+function mealTypeLabel(type, long) { const t = mealTypeInfo(type); return long ? t.long : t.label; }
+function mealTypeIcon(type) { return mealTypeInfo(type).icon; }
 let selectedMemberColor = PALETTE[0];
 let selectedDisplayMode = 'name';
 let pendingMemberPhoto = null;
@@ -12718,7 +12765,7 @@ window.addEventListener('online', () => {
      Kachel vor ihm steht), alle übrigen Kacheln daneben untereinander.
    ========================================================== */
 const OVERVIEW_TILES = [
-  { id: 'wetter', icon: '🌤️', label: 'Wetter', hint: 'Vorschau: am Handy 3 Tage, am iPad und Computer die ganze Woche', big: false },
+  { id: 'wetter', icon: '🌤️', label: 'Wetter', hint: 'Vorschau auf heute, morgen und übermorgen – am Handy als Kachel, am iPad und Computer oben neben Datum und Uhrzeit', big: false },
   { id: 'geburtstage', icon: '🎂', label: 'Geburtstage', hint: 'Anstehende Geburtstage aus den iCloud- und Google-Kontakten', big: false },
   { id: 'familie', icon: '👨‍👩‍👧', label: 'Familienmitglieder', hint: 'Alle Familienmitglieder mit Live-Standort, Geburtstag und Heimweg – Tipp aufs Kind öffnet die Kinderseite, auf die anderen ihre Schnellaktionen', big: false },
   { id: 'vertraege', icon: '📄', label: 'Kündigungsfristen', hint: 'Anstehende Kündigungsfristen und Erinnerungen – nur sichtbar, wenn etwas ansteht', big: false },
@@ -12782,6 +12829,8 @@ function overviewTileAvailable(id) {
 }
 function visibleOverviewTiles() {
   let v = overviewOrder.filter(id => !overviewHidden.includes(id) && overviewTileAvailable(id));
+  // iPad & computer: the weather sits in the header next to date and time, not as a tile
+  if (!isMobile()) v = v.filter(id => id !== 'wetter');
   if (!v.length) v = ['kalender', 'essen', 'aufgaben'].filter(overviewTileAvailable);
   return v;
 }
@@ -12868,6 +12917,7 @@ function applyOverviewLayout() {
     if (hasCalendar && calendarMode !== 'day' && calendarMode !== 'week') calendarMode = 'week';
   }
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === calendarMode));
+  try { renderHeaderWeather(); } catch (e) { /* header not ready yet */ }
 }
 
 // Kacheln neu zeichnen; hat sich dadurch geändert, welche Kacheln sichtbar sind (z. B. steht jetzt ein
@@ -13715,6 +13765,7 @@ function weatherDayLabel(dateStr, index) {
 }
 function renderWeatherTile() {
   try { renderWeatherTileNow(); } catch (e) { /* App noch nicht fertig aufgebaut */ }
+  try { renderHeaderWeather(); } catch (e) { /* header not ready yet */ }
 }
 function renderWeatherTileNow() {
   const body = document.getElementById('weatherTileBody');
@@ -13741,6 +13792,37 @@ function renderWeatherTileNow() {
         <div class="ov-weather-rain">${d.rain != null ? '💧 ' + d.rain + ' %' : ''}</div>
       </div>`).join('')}</div>${homeSunLine() ? `<p class="ov-weather-sun">${homeSunLine()}</p>` : ''}${wxTileTripsHtml()}${old ? `<p class="ov-weather-stale">Stand: ${new Date(weatherDaily.ts).toLocaleString('de-DE', { weekday: 'short', hour: '2-digit', minute: '2-digit' })}</p>` : ''}`;
 }
+
+/* ---------- Header weather (iPad & computer, 1.61) ----------
+   Today, tomorrow and the day after, right of date and time. Replaces the weather tile on the
+   overview there (phone keeps the tile). Hidden when the weather tile is switched off in
+   Settings → Overview. Tap opens the weather view like the tile did. */
+function renderHeaderWeather() {
+  const el = document.getElementById('headerWeather');
+  if (!el) return;
+  readWeatherDailyCache();
+  const today = isoDate(new Date());
+  const days = weatherDaily && Array.isArray(weatherDaily.days) ? weatherDaily.days.filter(d => d && d.date >= today).slice(0, 3) : [];
+  let tileOff = false;
+  try { tileOff = overviewHidden.includes('wetter'); } catch (e) { tileOff = false; }
+  const off = isMobile() || tileOff || !days.length;
+  el.classList.toggle('hidden', off);
+  if (off) { el.innerHTML = ''; return; }
+  el.innerHTML = days.map(d => `
+    <span class="hw-day${d.date === today ? ' is-today' : ''}">
+      <span class="hw-label">${escapeHtml(weatherDayLabel(d.date, 0))}</span>
+      <span class="hw-main"><span class="hw-icon">${weatherIconForCode(d.code)}</span><span class="hw-temp">${d.max != null ? d.max + '°' : ''}<span class="hw-min">${d.min != null ? d.min + '°' : ''}</span></span></span>
+      <span class="hw-rain">${d.rain != null ? '💧 ' + d.rain + ' %' : ''}</span>
+    </span>`).join('');
+}
+document.getElementById('headerWeather').addEventListener('click', () => {
+  try { wxOpen('home'); } catch (e) { /* weather view not ready yet */ }
+});
+let headerWeatherResizeTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(headerWeatherResizeTimer);
+  headerWeatherResizeTimer = setTimeout(() => { try { renderHeaderWeather(); } catch (e) { /* not ready */ } }, 200);
+});
 
 /* ---------- Kachel: Geburtstage (iCloud- und Google-Kontakte der Familie) ---------- */
 const LS_BIRTHDAYS_PREFIX = 'pinn.geburtstage.';
@@ -17317,7 +17399,7 @@ function renderWeekGrid() {
         <div id="weekHeaderRow" class="grid grid-cols-7 flex-1 min-w-0"></div>
       </div>
       <div class="flex shrink-0 border-b border-ink/10">
-        <div class="w-10 shrink-0 text-[10px] text-ink/40 pt-1.5 pl-0.5">Ganztägig</div>
+        <div class="w-10 shrink-0 pt-1.5 pl-0.5"><div class="cal-allday-label text-ink/40">Ganztägig</div></div>
         <div id="weekAllDayRow" class="grid grid-cols-7 flex-1 min-w-0"></div>
       </div>
       <div class="flex-1 min-h-0 flex">
@@ -17343,7 +17425,7 @@ function renderWeekGrid() {
       .sort(minorSortWeight);
     const timedEvents = computeEventLayout(events.filter(e => e.date === dISO && isEventVisibleAsCalendarEntry(e)));
     const dayMeals = mealPlan.filter(p => p.date === dISO)
-      .sort((a, b) => a.mealType === b.mealType ? 0 : a.mealType === 'mittag' ? -1 : 1);
+      .sort((a, b) => mealTypeRank(a.mealType) - mealTypeRank(b.mealType));
 
     // Kopfzeile
     const header = document.createElement('div');
@@ -17410,12 +17492,11 @@ function renderWeekGrid() {
     dayMeals.forEach(p => {
       const recipe = p.recipeId ? recipes.find(r => r.id === p.recipeId) : null;
       const title = recipe ? recipe.title : (p.title || 'Ohne Titel');
-      const mealLabel = p.mealType === 'mittag' ? 'Mittag' : 'Abend';
       const chip = document.createElement('div');
       chip.className = 'group relative rounded-lg px-2 py-1.5 text-xs text-white cursor-grab active:cursor-grabbing fade-in bg-mustard';
+      chip.title = mealTypeLabel(p.mealType, true);
       chip.innerHTML = `
-        <div class="font-medium">🍽 ${mealLabel}</div>
-        <div class="leading-snug truncate">${escapeHtml(title)}</div>
+        <div class="leading-snug truncate">${mealTypeIcon(p.mealType)} ${escapeHtml(title)}</div>
         <button class="del-meal absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-white text-ink/70 text-[10px] grid place-items-center opacity-0 group-hover:opacity-100 transition" data-id="${p.id}" aria-label="Mahlzeit löschen">×</button>
       `;
       attachMealDragSource(chip, p.id);
@@ -17424,7 +17505,7 @@ function renderWeekGrid() {
     const addMealBtn = document.createElement('button');
     addMealBtn.className = 'add-meal-btn py-1.5 rounded-lg border border-dashed border-ink/20 text-ink/40 text-[10px] hover:text-mustard hover:border-mustard transition';
     addMealBtn.dataset.day = dISO;
-    addMealBtn.textContent = '+ Essen hinzufügen';
+    addMealBtn.textContent = '+ Essen';
     mealsCell.appendChild(addMealBtn);
     mealsRow.appendChild(mealsCell);
   });
@@ -17452,7 +17533,7 @@ function renderWeekAgenda(days, todayISO) {
     const items = events.filter(e => e.date === dISO && isEventVisibleAsCalendarEntry(e))
       .sort(calListCompare);
     const meals = mealPlan.filter(p => p.date === dISO)
-      .sort((a, b) => a.mealType === b.mealType ? 0 : a.mealType === 'mittag' ? -1 : 1);
+      .sort((a, b) => mealTypeRank(a.mealType) - mealTypeRank(b.mealType));
     const evHtml = items.map(ev => {
       const c = colorForCalendarEvent(ev);
       const t = (ev.fullDayFiller || !ev.time) ? 'Ganztägig' : `${ev.time}${ev.endTime ? '–' + ev.endTime : ''}`;
@@ -17462,7 +17543,7 @@ function renderWeekAgenda(days, todayISO) {
     const mealHtml = meals.map(p => {
       const recipe = p.recipeId ? recipes.find(r => r.id === p.recipeId) : null;
       const title = recipe ? recipe.title : (p.title || 'Ohne Titel');
-      return `<div class="cal-agenda-meal">🍽 ${p.mealType === 'mittag' ? 'Mittag' : 'Abend'} · ${escapeHtml(title)}</div>`;
+      return `<div class="cal-agenda-meal" title="${mealTypeLabel(p.mealType, true)}">${mealTypeIcon(p.mealType)} ${escapeHtml(title)}</div>`;
     }).join('');
     return `<div class="cal-agenda-day${isToday ? ' is-today' : ''}" data-day="${dISO}">
       <button type="button" class="cal-agenda-head" data-open-day="${dISO}">
@@ -17501,7 +17582,7 @@ function renderWeekListGrid(days, todayISO) {
       .sort((a, b) => memberFilterSortWeight(a) - memberFilterSortWeight(b));
     const dayEventsRaw = events.filter(e => e.date === dISO && isEventVisibleAsCalendarEntry(e));
     const dayMeals = mealPlan.filter(p => p.date === dISO)
-      .sort((a, b) => a.mealType === b.mealType ? 0 : a.mealType === 'mittag' ? -1 : 1);
+      .sort((a, b) => mealTypeRank(a.mealType) - mealTypeRank(b.mealType));
 
     // Kopfzeile (identisch zur Zeitleisten-Ansicht)
     const header = document.createElement('div');
@@ -17546,12 +17627,11 @@ function renderWeekListGrid(days, todayISO) {
     dayMeals.forEach(p => {
       const recipe = p.recipeId ? recipes.find(r => r.id === p.recipeId) : null;
       const title = recipe ? recipe.title : (p.title || 'Ohne Titel');
-      const mealLabel = p.mealType === 'mittag' ? 'Mittag' : 'Abend';
       const chip = document.createElement('div');
       chip.className = 'group relative rounded-lg px-2 py-1.5 text-xs text-white cursor-grab active:cursor-grabbing fade-in bg-mustard';
+      chip.title = mealTypeLabel(p.mealType, true);
       chip.innerHTML = `
-        <div class="font-medium">🍽 ${mealLabel}</div>
-        <div class="leading-snug truncate">${escapeHtml(title)}</div>
+        <div class="leading-snug truncate">${mealTypeIcon(p.mealType)} ${escapeHtml(title)}</div>
         <button class="del-meal absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-white text-ink/70 text-[10px] grid place-items-center opacity-0 group-hover:opacity-100 transition" data-id="${p.id}" aria-label="Mahlzeit löschen">×</button>
       `;
       attachMealDragSource(chip, p.id);
@@ -17560,7 +17640,7 @@ function renderWeekListGrid(days, todayISO) {
     const addMealBtn = document.createElement('button');
     addMealBtn.className = 'add-meal-btn py-1.5 rounded-lg border border-dashed border-ink/20 text-ink/40 text-[10px] hover:text-mustard hover:border-mustard transition';
     addMealBtn.dataset.day = dISO;
-    addMealBtn.textContent = '+ Essen hinzufügen';
+    addMealBtn.textContent = '+ Essen';
     mealsCell.appendChild(addMealBtn);
     mealsRow.appendChild(mealsCell);
   });
@@ -17631,7 +17711,7 @@ function renderDayView() {
   const dayEventsRaw = events.filter(e => e.date === dISO && isEventVisibleAsCalendarEntry(e));
   const timedEvents = computeEventLayout(dayEventsRaw);
   const dayMeals = mealPlan.filter(p => p.date === dISO)
-    .sort((a, b) => a.mealType === b.mealType ? 0 : a.mealType === 'mittag' ? -1 : 1);
+    .sort((a, b) => mealTypeRank(a.mealType) - mealTypeRank(b.mealType));
 
   const { start: rangeStart, end: rangeEnd } = computeTimeRange(dayEventsRaw);
   const rangeSpan = rangeEnd - rangeStart;
@@ -17647,7 +17727,7 @@ function renderDayView() {
         ${showInlineMeals ? `<div class="shrink-0 border-t border-ink/10 px-4 py-3">
           <h3 class="text-xs uppercase tracking-wide text-ink/40 mb-2">Mahlzeiten</h3>
           <div id="dayMealsWrap" class="flex flex-row gap-2 mb-2"></div>
-          <button id="dayAddMealBtn" class="w-full py-2 rounded-lg border border-dashed border-ink/20 text-ink/40 text-xs hover:text-mustard hover:border-mustard transition">+ Essen hinzufügen</button>
+          <button id="dayAddMealBtn" class="w-full py-2 rounded-lg border border-dashed border-ink/20 text-ink/40 text-xs hover:text-mustard hover:border-mustard transition">+ Essen</button>
         </div>` : ''}
       </div>
     `;
@@ -17680,7 +17760,7 @@ function renderDayView() {
   body.innerHTML = `
     <div class="flex flex-col h-full w-full">
       <div class="flex px-4 pt-3">
-        <div class="w-10 shrink-0 text-[10px] text-ink/40 pt-0.5">Ganztägig</div>
+        <div class="w-10 shrink-0 pt-0.5"><div class="cal-allday-label text-ink/40">Ganztägig</div></div>
         <div id="dayAllDayWrap" class="flex-1 min-w-0 flex flex-col gap-1.5"></div>
       </div>
       <div class="flex-1 min-h-0 px-4 py-2 flex">
@@ -17690,7 +17770,7 @@ function renderDayView() {
       ${showInlineMeals ? `<div class="shrink-0 border-t border-ink/10 px-4 py-3">
         <h3 class="text-xs uppercase tracking-wide text-ink/40 mb-2">Mahlzeiten</h3>
         <div id="dayMealsWrap" class="flex flex-row gap-2 mb-2"></div>
-        <button id="dayAddMealBtn" class="w-full py-2 rounded-lg border border-dashed border-ink/20 text-ink/40 text-xs hover:text-mustard hover:border-mustard transition">+ Essen hinzufügen</button>
+        <button id="dayAddMealBtn" class="w-full py-2 rounded-lg border border-dashed border-ink/20 text-ink/40 text-xs hover:text-mustard hover:border-mustard transition">+ Essen</button>
       </div>` : ''}
     </div>
   `;
@@ -17745,10 +17825,10 @@ function renderDayView() {
     dayMeals.forEach(p => {
       const recipe = p.recipeId ? recipes.find(r => r.id === p.recipeId) : null;
       const title = recipe ? recipe.title : (p.title || 'Ohne Titel');
-      const mealLabel = p.mealType === 'mittag' ? 'Mittagessen' : 'Abendessen';
       const row = document.createElement('div');
       row.className = 'group relative rounded-lg px-3 py-2 text-sm text-white flex flex-col items-start gap-0.5 fade-in bg-mustard cursor-grab active:cursor-grabbing flex-1 min-w-0';
-      row.innerHTML = `<span class="truncate w-full">🍽 <span class="font-medium">${mealLabel}</span></span><span class="truncate w-full text-xs text-white/85">${escapeHtml(title)}</span>
+      row.title = mealTypeLabel(p.mealType, true);
+      row.innerHTML = `<span class="truncate w-full font-medium">${mealTypeIcon(p.mealType)} ${escapeHtml(title)}</span>
         <button class="del-meal absolute top-1 right-1 w-5 h-5 rounded-full bg-white text-ink/70 text-xs grid place-items-center opacity-0 group-hover:opacity-100 transition" data-id="${p.id}">×</button>`;
       attachMealDragSource(row, p.id);
       mealsWrap.appendChild(row);
@@ -21522,12 +21602,14 @@ function renderRecipeWeekSlider() {
   // Das gilt nur in diese Richtung: der Slider selbst loest nie eine Kalender-Navigation aus.
   const refDate = new Date(); refDate.setDate(refDate.getDate() + dayOffset);
   const refISO = isoDate(refDate);
+  // Overview on iPad & computer: smaller cards
+  const compactSlider = currentView === 'uebersicht' && !isMobile();
 
   // Als "gekocht" markierte Mahlzeiten verschwinden aus dem Slider (bleiben aber im Kalender)
   const entries = mealPlan
     .filter(p => p.date >= from && p.date <= to && !p.cooked)
     .sort((a, b) => a.date === b.date
-      ? (a.mealType === b.mealType ? 0 : a.mealType === 'mittag' ? -1 : 1)
+      ? (mealTypeRank(a.mealType) - mealTypeRank(b.mealType))
       : a.date.localeCompare(b.date));
 
   if (!entries.length || (currentView === 'rezepte' && (recipeListSource !== 'eigene' || recipeIsFiltered()))) {
@@ -21544,12 +21626,11 @@ function renderRecipeWeekSlider() {
     const recipe = p.recipeId ? recipes.find(r => r.id === p.recipeId) : null;
     const title = recipe ? recipe.title : (p.title || 'Ohne Titel');
     const dayLabel = new Date(p.date).toLocaleDateString('de-DE', { weekday: 'short' });
-    const mealLabel = p.mealType === 'mittag' ? 'Mittag' : 'Abend';
     return `
-      <button type="button" class="week-slider-card shrink-0 w-32 text-left rounded-xl border border-ink/10 bg-white p-2 fade-in" data-recipe-id="${recipe ? recipe.id : ''}" data-meal-id="${escapeHtml(String(p.id))}" style="scroll-snap-align: start;">
+      <button type="button" class="week-slider-card shrink-0 ${compactSlider ? 'is-compact' : 'w-32 p-2'} text-left rounded-xl border border-ink/10 bg-white fade-in" data-recipe-id="${recipe ? recipe.id : ''}" data-meal-id="${escapeHtml(String(p.id))}" style="scroll-snap-align: start;">
         <div class="recipe-thumb w-full aspect-square rounded-lg overflow-hidden bg-ink/5">${mealCookedButtonHtml(p.id)}${recipe && isRecipeFavorite(recipe.id) ? recipeFavButtonHtml(recipe.id, 'recipe-fav-badge') : ''}${recipe && recipe.image ? `<img src="${recipeImageSrc(recipe.image, true, recipe.imageFrame)}" loading="lazy" class="w-full h-full object-cover" alt=""${recipeImgStyleAttr(recipe)} />` : recipe ? '<div class="w-full h-full grid place-items-center text-2xl opacity-30">🍽️</div>' : `<img src="${NO_RECIPE_MEAL_IMAGE}" class="w-full h-full object-cover opacity-70" alt="Ohne Rezept" />`}</div>
-        <div class="font-serif text-sm font-bold mt-1.5 line-clamp-2 leading-tight min-h-[2.25rem]">${escapeHtml(title)}</div>
-        <div class="text-[11px] text-ink/40 mt-0.5 min-h-[1rem]">${dayLabel} · ${mealLabel}</div>
+        <div class="wsc-title font-serif text-sm font-bold mt-1.5 line-clamp-2 leading-tight min-h-[2.25rem]">${escapeHtml(title)}</div>
+        <div class="wsc-meta text-[11px] text-ink/40 mt-0.5 min-h-[1rem]" title="${mealTypeLabel(p.mealType, true)}">${dayLabel} · ${mealTypeIcon(p.mealType)}</div>
       </button>
     `;
   }).join('') + edgeSpacer;
@@ -21831,7 +21912,7 @@ function renderOverviewMealList() {
 
   const entries = mealPlan
     .filter(p => p.date >= from && p.date <= to)
-    .sort((a, b) => a.date === b.date ? (a.mealType === b.mealType ? 0 : a.mealType === 'mittag' ? -1 : 1) : a.date.localeCompare(b.date));
+    .sort((a, b) => a.date === b.date ? (mealTypeRank(a.mealType) - mealTypeRank(b.mealType)) : a.date.localeCompare(b.date));
 
   count.textContent = entries.length ? `${entries.length} geplante Mahlzeit${entries.length === 1 ? '' : 'en'} · zum Verschieben ziehen, antippen für Details` : '';
   empty.classList.toggle('hidden', entries.length > 0);
@@ -21846,7 +21927,7 @@ function renderOverviewMealList() {
   entries.forEach(p => {
     const recipe = p.recipeId ? recipes.find(r => r.id === p.recipeId) : null;
     const title = recipe ? recipe.title : (p.title || 'Ohne Titel');
-    const mealLabel = p.mealType === 'mittag' ? 'Mittagessen' : 'Abendessen';
+    const mealLabel = mealTypeLabel(p.mealType, true);
     const dayLabel = new Date(p.date).toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'short' });
     const isExpanded = expandedMealCardId === p.id;
 
@@ -21867,8 +21948,7 @@ function renderOverviewMealList() {
         <div class="flex flex-wrap items-center gap-2 mb-4">
           <input type="date" class="move-day-select text-sm rounded-lg border border-ink/15 px-2 py-1.5" value="${p.date}" />
           <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs">
-            <button type="button" class="move-meal-btn px-3 py-1 rounded-full transition ${p.mealType === 'mittag' ? 'active' : ''}" data-meal="mittag">Mittag</button>
-            <button type="button" class="move-meal-btn px-3 py-1 rounded-full transition ${p.mealType === 'abend' ? 'active' : ''}" data-meal="abend">Abend</button>
+            ${MEAL_TYPES.map(t => `<button type="button" class="move-meal-btn px-3 py-1 rounded-full transition ${mealTypeInfo(p.mealType).id === t.id ? 'active' : ''}" data-meal="${t.id}">${t.icon} ${t.label}</button>`).join('')}
           </div>
           <button class="apply-move-btn px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition">Verschieben</button>
         </div>
@@ -24930,7 +25010,9 @@ function renderTasks() {
     empty.classList.remove('hidden');
     return;
   }
-  count.textContent = visibleItems.length ? `${visibleItems.length} Aufgabe${visibleItems.length === 1 ? '' : 'n'}` : '';
+  // Counter: done / all displayed tasks (e.g. 3/8)
+  const doneCount = visibleItems.filter(t => t.done).length;
+  count.textContent = visibleItems.length ? `${doneCount}/${visibleItems.length}` : '';
   empty.textContent = 'Noch keine Aufgaben - füge eine hinzu.';
   empty.classList.toggle('hidden', visibleItems.length > 0);
 
@@ -26281,7 +26363,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.60.0';
+const APP_VERSION = '1.61.0';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -27239,6 +27321,16 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
    - rueckblick: true = Einträge vor dem Versions-Log, aus der Projekthistorie zusammengefasst.
    ========================================================== */
 const PINN_CHANGELOG = [
+  {
+    v: '1.61', datum: '16.10.2026', titel: 'Mehr Platz in der Übersicht',
+    punkte: [
+      ['info', 'iPad und Computer: Das Wetter steht jetzt oben neben Datum und Uhrzeit – heute, morgen und übermorgen. Ein Tipp darauf öffnet wie bisher die Wetter-Ansicht. So haben Kalender, Essen und Aufgaben in der Übersicht mehr Platz'],
+      ['info', 'iPad und Computer: Die geplanten Mahlzeiten in der Übersicht sind etwas kleiner, das Bild etwa so groß wie ein Tag beim Wetter'],
+      ['neu', 'Essen: neue Mahlzeit Frühstück. Im Kalender steht statt „Mittag“ oder „Abend“ nur noch ein Symbol vor dem Essen (🌅 Frühstück, ☀️ Mittag, 🌙 Abend) – das spart Platz'],
+      ['info', 'Aufgaben: Der Zähler zeigt jetzt erledigte und alle angezeigten Aufgaben, z. B. 3/8. Am iPad und Computer steht er direkt neben der Überschrift'],
+      ['fix', 'Kalender: „+ Essen hinzufügen“ heißt jetzt kurz „+ Essen“, und „Ganztägig“ ragt nicht mehr in die Termine'],
+    ],
+  },
   {
     v: '1.60', datum: '15.10.2026', titel: 'App-Code wird aufgeteilt (Teil 18)',
     punkte: [
@@ -28707,24 +28799,24 @@ document.getElementById('openChangelogBtn').addEventListener('click', openChange
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/einstellungen.js?v=1.60.0"></script>
-<script src="js/kalenderkonto.js?v=1.60.0"></script>
-<script src="js/finanzen.js?v=1.60.0"></script>
-<script src="js/kassen.js?v=1.60.0"></script>
-<script src="js/vorrat.js?v=1.60.0"></script>
-<script src="js/vorrat2.js?v=1.60.0"></script>
-<script src="js/sparen.js?v=1.60.0"></script>
-<script src="js/vertraege.js?v=1.60.0"></script>
-<script src="js/fahrzeuge.js?v=1.60.0"></script>
-<script src="js/zuhause.js?v=1.60.0"></script>
-<script src="js/dokumente.js?v=1.60.0"></script>
-<script src="js/pdflesen.js?v=1.60.0"></script>
-<script src="js/appstart.js?v=1.60.0"></script>
-<script src="js/pinnwand.js?v=1.60.0"></script>
-<script src="js/listen.js?v=1.60.0"></script>
-<script src="js/familie.js?v=1.60.0"></script>
-<script src="js/hinweise.js?v=1.60.0"></script>
-<script src="js/ausblick.js?v=1.60.0"></script>
+<script src="js/einstellungen.js?v=1.61.0"></script>
+<script src="js/kalenderkonto.js?v=1.61.0"></script>
+<script src="js/finanzen.js?v=1.61.0"></script>
+<script src="js/kassen.js?v=1.61.0"></script>
+<script src="js/vorrat.js?v=1.61.0"></script>
+<script src="js/vorrat2.js?v=1.61.0"></script>
+<script src="js/sparen.js?v=1.61.0"></script>
+<script src="js/vertraege.js?v=1.61.0"></script>
+<script src="js/fahrzeuge.js?v=1.61.0"></script>
+<script src="js/zuhause.js?v=1.61.0"></script>
+<script src="js/dokumente.js?v=1.61.0"></script>
+<script src="js/pdflesen.js?v=1.61.0"></script>
+<script src="js/appstart.js?v=1.61.0"></script>
+<script src="js/pinnwand.js?v=1.61.0"></script>
+<script src="js/listen.js?v=1.61.0"></script>
+<script src="js/familie.js?v=1.61.0"></script>
+<script src="js/hinweise.js?v=1.61.0"></script>
+<script src="js/ausblick.js?v=1.61.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)

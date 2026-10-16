@@ -82,7 +82,7 @@ Siempre contigo: pinn. se instala en cada iPhone y móvil Android como una app n
 | 📍 **Familia y ubicación** | Comparte tu ubicación directamente desde pinn. – una vez o durante un tiempo elegido – y en segundo plano con la app gratuita Traccar Client (envía directamente a pinn., sin servidor adicional). Además, un modo «de camino a casa», una alerta SOS con posición y números de emergencia, fichas de emergencia y avisos de llegada a lugares. |
 | 🎒 **Colegio y guardería** | Por niño: horario (escríbelo o hazle una foto – la IA lo rellena), llevar y recoger, deberes en la página infantil, circulares con plazos que se convierten en recordatorios y días de cierre directamente en el calendario. |
 | 🐾 **Mascotas** | Perfiles para perros, gatos, conejos y demás, con horas de comida para marcar, paseos, turnos de «a quién le toca», vacunas y desparasitaciones con recordatorio push, gráfica de peso, veterinario y urgencias veterinarias, una ficha para cuidadores para compartir y un cartel imprimible de «se busca». |
-| 🌦️ **Tiempo y vacaciones** | Toca la tarjeta del tiempo para ver 14 días con detalles de cada día. Las listas de equipaje con destino y fechas muestran el tiempo de las vacaciones – previsión o valores típicos – y sugieren qué llevar. |
+| 🌦️ **Tiempo y vacaciones** | Toca el tiempo (una tarjeta en el móvil, arriba junto a la fecha y la hora en iPad y ordenador) para ver 14 días con detalles de cada día. Las listas de equipaje con destino y fechas muestran el tiempo de las vacaciones – previsión o valores típicos – y sugieren qué llevar. |
 | 🏠 **Casa inteligente** | Lanza Atajos de Apple o acciones de Home Assistant desde una tarea – el robot aspirador limpia la cocina cuando toca la tarea. |
 | 🎙️ **Control por voz** | «Oye Siri, pinn»: añade a la lista de la compra, que te la lea, crea tareas y escucha lo que hay hoy – también en Android. |
 | 🔔 **Notificaciones** | Mensajes push personales en iPhone, iPad y Android, y una campana que recoge todos los cambios de la familia. |
@@ -90,19 +90,23 @@ Siempre contigo: pinn. se instala en cada iPhone y móvil Android como una app n
 
 pinn. habla **English, Deutsch, Français y Español**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.61
+
+**Más espacio en el resumen**
+
+- **iPad y ordenador:** el tiempo aparece ahora arriba, junto a la fecha y la hora – hoy, mañana y pasado mañana. Al tocarlo se abre la vista del tiempo como antes. Así el calendario, las comidas y las tareas tienen más espacio.
+- **iPad y ordenador:** las comidas planificadas en el resumen son algo más pequeñas, la imagen más o menos del tamaño de un día del tiempo.
+- **Nueva comida: desayuno.** En el calendario, un símbolo sustituye a «Comida» o «Cena» delante del plato (🌅 desayuno, ☀️ comida, 🌙 cena) – así se ahorra espacio. La vista semanal también conoce el desayuno.
+- **Tareas:** el contador muestra ahora las tareas hechas y todas las mostradas, p. ej. *3/8*. En iPad y ordenador aparece justo al lado del título.
+- **Calendario:** «+ Añadir comida» ahora es simplemente «+ Comida», y «Todo el día» ya no se superpone a las citas. Todos los cambios están traducidos al inglés, alemán, francés y español.
+- Solo cambian archivos de la app (`index.html`, `js/ausblick.js`, `js/vorrat2.js` y los archivos de idioma en `lang/`), en el servidor no cambia nada. Instala como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
+
 ## Novedades de la 1.60
 
 **El código de la app se divide, parte 18 – para ti no cambia nada**
 
 - **Para colaboradores:** Ajustes – familia o piso compartido, miembros de la familia, categorías directamente en las páginas, vista predeterminada, colores, modo oscuro y restablecer – están ahora en un archivo propio (`pb_public/js/einstellungen.js`). No cambia nada en el uso de la app.
 - Solo cambian archivos de la app (`index.html` y `js/einstellungen.js`), nada cambia en el servidor. Instala como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualizar).
-
-## Novedades de la 1.59
-
-**El código de la app se divide, parte 17 – para ti no cambia nada**
-
-- **Para colaboradores:** Ajustes → Casa, el calendario de basura, la cuenta de calendario de Google y Apple y *Añadir calendario* están ahora en un archivo propio (`pb_public/js/kalenderkonto.js`). No cambia nada en el uso de la app.
-- Solo cambian archivos de la app (`index.html` y `js/kalenderkonto.js`), nada cambia en el servidor. Instala como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualizar).
 
 ## Cómo funciona
 
@@ -130,7 +134,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.60.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.61.0` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -82,7 +82,7 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 | 📍 **Family & location** | Share your location right from pinn. – once or for a chosen time – and in the background via the free Traccar Client app (sends straight to pinn., no extra server). Plus a "way home" mode, an SOS alert with position and emergency numbers, emergency cards and arrival notifications for places. |
 | 🎒 **School & daycare** | Per child: timetable (type it in or snap a photo – the AI fills it in), drop-off and pick-up, homework on the kids' page, parent letters with deadlines that turn into reminders, and closure days straight in the calendar. |
 | 🐾 **Pets** | Profiles for dogs, cats, rabbits & co. with feeding times to tick off, walks, a "whose turn is it" rota, vaccinations and deworming with push reminders, weight chart, vet and emergency vet, a pet-sitter sheet to share and a printable "missing" poster. |
-| 🌦️ **Weather & holidays** | Tap the weather tile for 14 days with details for every day. Packing lists with destination and dates show the holiday weather – forecast or typical values – and suggest what to pack. |
+| 🌦️ **Weather & holidays** | Tap the weather (a tile on the phone, at the top next to date and time on iPad and computer) for 14 days with details for every day. Packing lists with destination and dates show the holiday weather – forecast or typical values – and suggest what to pack. |
 | 🏠 **Smart home** | Start Apple Shortcuts or Home Assistant actions from a task – the robot vacuum cleans the kitchen when the chore is due. |
 | 🎙️ **Voice control** | "Hey Siri, pinn": add to the shopping list, read it out, create tasks and hear what's on today – also on Android. |
 | 🔔 **Notifications** | Personal push messages on iPhone, iPad and Android, plus a notification bell that collects every change in the family. |
@@ -90,19 +90,23 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **English, Deutsch, Français and Español**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.61
+
+**More room on the overview**
+
+- **iPad and computer:** the weather now sits at the top next to date and time – today, tomorrow and the day after. Tapping it opens the weather view as before. This gives the calendar, meals and tasks more room.
+- **iPad and computer:** the planned meals on the overview are a little smaller, the picture about the size of one weather day.
+- **New meal: breakfast.** In the calendar a symbol now replaces “Lunch” or “Dinner” in front of the meal (🌅 breakfast, ☀️ lunch, 🌙 dinner) – this saves space. The weekly preview knows breakfast too.
+- **Tasks:** the counter now shows completed and all displayed tasks, e.g. *3/8*. On iPad and computer it sits right next to the heading.
+- **Calendar:** “+ Add meal” is now simply “+ Meal”, and “All day” no longer overlaps the events. All changes are translated into English, German, French and Spanish.
+- Only app files changed (`index.html`, `js/ausblick.js`, `js/vorrat2.js` and the language files in `lang/`), nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.60
 
 **App code split, part 18 – nothing changes for you**
 
 - **For contributors:** Settings – family or flatshare, family members, categories right on the pages, default view, colours, dark mode and reset – now live in their own file (`pb_public/js/einstellungen.js`). Nothing changes in how the app works.
 - Only app files changed (`index.html` and `js/einstellungen.js`), nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
-## What's new in 1.59
-
-**App code split, part 17 – nothing changes for you**
-
-- **For contributors:** Settings → Home, the waste calendar, the Google and Apple calendar account and *Add calendar* now live in their own file (`pb_public/js/kalenderkonto.js`). Nothing changes in how the app works.
-- Only app files changed (`index.html` and `js/kalenderkonto.js`), nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 ## How it works
 
@@ -130,7 +134,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.60.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.61.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

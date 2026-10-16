@@ -924,7 +924,8 @@ function pcookAction(act, x, card) {
   }
   if (act === 'plan') {
     closePantryCook();
-    openMealModal(isoDate(new Date()), new Date().getHours() < 14 ? 'mittag' : 'abend', x.r.id);
+    const hour = new Date().getHours();
+    openMealModal(isoDate(new Date()), hour < 10 ? 'fruehstueck' : hour < 14 ? 'mittag' : 'abend', x.r.id);
     return;
   }
   if (act === 'shop') {
