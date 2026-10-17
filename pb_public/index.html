@@ -913,7 +913,7 @@ window.PINN_LANGUAGES = [
   // Startprüfung: fehlt eine selbst gehostete Datei, erscheint ein klarer Hinweis statt einer
   // leeren Seite ohne funktionierende Buttons.
   // Teile der App unter pb_public/js/ – jede Datei meldet sich am Ende in window.PINN_PARTS an
-  var PINN_APP_PARTS = ['sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
+  var PINN_APP_PARTS = ['versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
   window.addEventListener('DOMContentLoaded', function () {
     var missing = [];
     if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – der PocketBase-Client (ohne ihn funktioniert nichts)');
@@ -26556,54 +26556,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.66.0';
-document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
-document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
-document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
-
-/* GitHub & Unterstützen (Einstellungen → GitHub): alle Links an einer Stelle */
-const PINN_GITHUB = {
-  repo: 'https://github.com/pinn-shost/pinn',
-  kofi: 'https://ko-fi.com/pinnapp',
-  bmc: 'https://buymeacoffee.com/pinn',
-};
-[['githubRepoLink', PINN_GITHUB.repo], ['githubIssuesLink', PINN_GITHUB.repo + '/issues'],
- ['githubKofiLink', PINN_GITHUB.kofi], ['githubBmcLink', PINN_GITHUB.bmc]].forEach(([id, url]) => {
-  const a = document.getElementById(id);
-  if (a) a.href = url;
-});
-
-function hardReload() {
-  // Statt location.reload() eine neue URL mit Cache-Buster ansteuern, damit iOS die Datei
-  // garantiert frisch vom Server holt statt eine evtl. zwischengespeicherte Version zu zeigen.
-  location.href = location.pathname + '?_r=' + Date.now();
-}
-document.getElementById('updateBannerRefreshBtn').addEventListener('click', hardReload);
-document.getElementById('updateBannerDismissBtn').addEventListener('click', () => {
-  document.getElementById('updateBanner').classList.add('hidden');
-});
-
-let appLoadedVersion = null;
-async function checkForAppUpdate(showBannerIfChanged) {
-  try {
-    const res = await fetch(location.pathname, { method: 'HEAD', cache: 'no-store' });
-    const version = res.headers.get('Last-Modified') || res.headers.get('ETag');
-    if (!version) return false;
-    if (appLoadedVersion === null) { appLoadedVersion = version; return false; }
-    if (version !== appLoadedVersion) {
-      if (showBannerIfChanged) document.getElementById('updateBanner').classList.remove('hidden');
-      return true;
-    }
-    return false;
-  } catch (err) {
-    // Netzwerkprobleme sollen die App nicht stören - einfach leise nichts tun
-    return false;
-  }
-}
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') checkForAppUpdate(true);
-});
-setInterval(() => checkForAppUpdate(true), 3 * 60 * 1000); // alle 3 Minuten im Hintergrund prüfen
+const APP_VERSION = '1.67.0';
 
 /* ==========================================================
    Einstellungen & Konto: zwei gleich hohe Spalten (Querformat ab Tablet-Breite)
@@ -26731,28 +26684,29 @@ setInterval(() => checkForAppUpdate(true), 3 * 60 * 1000); // alle 3 Minuten im 
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/sicherungen.js?v=1.66.0"></script>
-<script src="js/geraete.js?v=1.66.0"></script>
-<script src="js/fehlerprotokoll.js?v=1.66.0"></script>
-<script src="js/versionslog.js?v=1.66.0"></script>
-<script src="js/einstellungen.js?v=1.66.0"></script>
-<script src="js/kalenderkonto.js?v=1.66.0"></script>
-<script src="js/finanzen.js?v=1.66.0"></script>
-<script src="js/kassen.js?v=1.66.0"></script>
-<script src="js/vorrat.js?v=1.66.0"></script>
-<script src="js/vorrat2.js?v=1.66.0"></script>
-<script src="js/sparen.js?v=1.66.0"></script>
-<script src="js/vertraege.js?v=1.66.0"></script>
-<script src="js/fahrzeuge.js?v=1.66.0"></script>
-<script src="js/zuhause.js?v=1.66.0"></script>
-<script src="js/dokumente.js?v=1.66.0"></script>
-<script src="js/pdflesen.js?v=1.66.0"></script>
-<script src="js/appstart.js?v=1.66.0"></script>
-<script src="js/pinnwand.js?v=1.66.0"></script>
-<script src="js/listen.js?v=1.66.0"></script>
-<script src="js/familie.js?v=1.66.0"></script>
-<script src="js/hinweise.js?v=1.66.0"></script>
-<script src="js/ausblick.js?v=1.66.0"></script>
+<script src="js/versionspruefung.js?v=1.67.0"></script>
+<script src="js/sicherungen.js?v=1.67.0"></script>
+<script src="js/geraete.js?v=1.67.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.67.0"></script>
+<script src="js/versionslog.js?v=1.67.0"></script>
+<script src="js/einstellungen.js?v=1.67.0"></script>
+<script src="js/kalenderkonto.js?v=1.67.0"></script>
+<script src="js/finanzen.js?v=1.67.0"></script>
+<script src="js/kassen.js?v=1.67.0"></script>
+<script src="js/vorrat.js?v=1.67.0"></script>
+<script src="js/vorrat2.js?v=1.67.0"></script>
+<script src="js/sparen.js?v=1.67.0"></script>
+<script src="js/vertraege.js?v=1.67.0"></script>
+<script src="js/fahrzeuge.js?v=1.67.0"></script>
+<script src="js/zuhause.js?v=1.67.0"></script>
+<script src="js/dokumente.js?v=1.67.0"></script>
+<script src="js/pdflesen.js?v=1.67.0"></script>
+<script src="js/appstart.js?v=1.67.0"></script>
+<script src="js/pinnwand.js?v=1.67.0"></script>
+<script src="js/listen.js?v=1.67.0"></script>
+<script src="js/familie.js?v=1.67.0"></script>
+<script src="js/hinweise.js?v=1.67.0"></script>
+<script src="js/ausblick.js?v=1.67.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)

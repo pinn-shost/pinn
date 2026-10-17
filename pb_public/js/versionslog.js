@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.67', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 23)',
+    punkte: [
+      ['info', 'Für Mitwirkende: die Update-Erkennung – Hinweis „Es gibt eine neuere Version dieser App“, Anzeige der installierten Version und die GitHub-Links in den Einstellungen – liegt jetzt in einer eigenen Datei (pb_public/js/versionspruefung.js). Die Versionsnummer selbst (APP_VERSION) bleibt in der index.html, weil der Server sie dort ausliest. An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, js/versionspruefung.js und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.66', datum: '17.10.2026', titel: 'Vorabversionen zum Testen',
     punkte: [
       ['neu', 'Einstellungen → System → Sicherungen & Updates: neuer Bereich „🧪 Entwickler: Vorabversionen testen“. Normale Updates werden wie bisher nur für fertige Versionen angezeigt; hier kann man zusätzlich gezielt nach einer Vorabversion (Pre-Release auf GitHub) suchen und sie installieren – mit Hinweisen auf das Risiko, einer Bestätigung und wie bei jedem Update einer automatischen Sicherung vorher'],
