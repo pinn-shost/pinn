@@ -90,19 +90,19 @@ Siempre contigo: pinn. se instala en cada iPhone y móvil Android como una app n
 
 pinn. habla **English, Deutsch, Français y Español**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.70
+
+**El código de la app se divide, parte 26**
+
+- **Para colaboradores:** los ajustes del control por voz – enlace personal, renovarlo, desactivarlo y probar una frase – están ahora en su propio archivo (`pb_public/js/sprachsteuerung.js`). Nada cambia en el uso de pinn.
+- Solo cambian archivos de la app (`index.html`, `js/sprachsteuerung.js` y `js/versionslog.js`), nada cambia en el servidor. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualizar).
+
 ## Novedades de la 1.69
 
 **El código de la app se divide, parte 25**
 
 - **Para colaboradores:** el formulario para crear y editar eventos – inicio/fin, todo el día, repetición, asignación, elección de calendario, recordatorio y guardado (también sin conexión) – está ahora en su propio archivo (`pb_public/js/termine.js`). Nada cambia en el uso de pinn.
 - Solo cambian archivos de la app (`index.html`, `js/termine.js` y `js/versionslog.js`), nada cambia en el servidor. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualizar).
-
-## Novedades de la 1.68
-
-**El código de la app se divide, parte 24**
-
-- **Para colaboradores:** el menú lateral, el cambio de páginas, la barra de menú del móvil con su cajón desplegable, la detección de móvil/tableta y de vertical/horizontal y el deslizamiento en el calendario están ahora en su propio archivo (`pb_public/js/ansichten.js`). Nada cambia en el uso de pinn.
-- Solo cambian archivos de la app (`index.html`, `js/ansichten.js` y `js/versionslog.js`), nada cambia en el servidor. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualizar).
 
 ## Cómo funciona
 
@@ -130,7 +130,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.69.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.70.0` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -220,7 +220,7 @@ pinn/
 ├── pb_public/           app web servida por PocketBase
 │   ├── index.html       la app (HTML, estilos y la mayor parte del código)
 │   ├── js/              código de la app separado de index.html, archivos <script> simples sin paso de compilación
-│   │                    (termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js siempre va al final)
+│   │                    (sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js siempre va al final)
 │   ├── einrichtung.js   asistente de configuración · datenexport.js  exportación de datos
 │   ├── lang/            traducciones (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js y Tesseract los descarga la instalación)

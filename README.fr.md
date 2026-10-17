@@ -90,19 +90,19 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **English, Deutsch, Français et Español**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.70
+
+**Le code de l’app est découpé, partie 26**
+
+- **Pour les contributeurs :** les réglages de la commande vocale – lien personnel, le renouveler, la désactiver et tester une phrase – se trouvent maintenant dans leur propre fichier (`pb_public/js/sprachsteuerung.js`). Rien ne change à l’utilisation de pinn.
+- Seuls des fichiers de l’app changent (`index.html`, `js/sprachsteuerung.js` et `js/versionslog.js`), rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
+
 ## Nouveautés de la 1.69
 
 **Le code de l’app est découpé, partie 25**
 
 - **Pour les contributeurs :** le formulaire de création et de modification des événements – début/fin, toute la journée, répétition, attribution, choix du calendrier, rappel et enregistrement (aussi hors ligne) – se trouve maintenant dans son propre fichier (`pb_public/js/termine.js`). Rien ne change à l’utilisation de pinn.
 - Seuls des fichiers de l’app changent (`index.html`, `js/termine.js` et `js/versionslog.js`), rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
-## Nouveautés de la 1.68
-
-**Le code de l’app est découpé, partie 24**
-
-- **Pour les contributeurs :** le menu latéral, le changement de page, la barre de menu du téléphone avec son tiroir, la détection téléphone/tablette et portrait/paysage et le balayage dans le calendrier se trouvent maintenant dans leur propre fichier (`pb_public/js/ansichten.js`). Rien ne change à l’utilisation de pinn.
-- Seuls des fichiers de l’app changent (`index.html`, `js/ansichten.js` et `js/versionslog.js`), rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
 ## Comment ça marche
 
@@ -130,7 +130,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.69.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.70.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -220,7 +220,7 @@ pinn/
 ├── pb_public/           web-app servie par PocketBase
 │   ├── index.html       l’app (HTML, styles et la plus grande partie du code)
 │   ├── js/              code de l’app sorti d’index.html, simples fichiers <script> sans étape de build
-│   │                    (termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js toujours en dernier)
+│   │                    (sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js toujours en dernier)
 │   ├── einrichtung.js   assistant de configuration · datenexport.js  export des données
 │   ├── lang/            traductions (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js et Tesseract sont téléchargés par l’installation)

@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.70', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 26)',
+    punkte: [
+      ['info', 'Für Mitwirkende: die Einstellungen zur Sprachsteuerung (persönlicher Link, erneuern, ausschalten, Testsatz) liegen jetzt in einer eigenen Datei (pb_public/js/sprachsteuerung.js). An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, js/sprachsteuerung.js und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.69', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 25)',
     punkte: [
       ['info', 'Für Mitwirkende: das Formular zum Anlegen und Bearbeiten von Terminen – Beginn/Ende, ganztägig, Wiederholung, Zuweisung, Kalenderauswahl, Erinnerung und das Speichern (auch offline) – liegt jetzt in einer eigenen Datei (pb_public/js/termine.js). An der Bedienung ändert sich nichts'],
