@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.75', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 31)',
+    punkte: [
+      ['info', 'Für Mitwirkende: das Laden der Aufgaben vom NAS (zwischengespeicherter Stand, Offline-Warteschlange, Zuweisung und Datumsanzeige) liegt jetzt in einer eigenen Datei (pb_public/js/aufgabendaten.js). An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, js/aufgabendaten.js und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.74', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 30)',
     punkte: [
       ['info', 'Für Mitwirkende: die Haushalt-Seite – Räume, Reinigungen und Mülleimer mit ihren Fenstern sowie die Pflege der Haushaltsaufgaben (neu erzeugen, löschen, aufräumen, Animation) – liegt jetzt in einer eigenen Datei (pb_public/js/haushalt.js). An der Bedienung ändert sich nichts'],

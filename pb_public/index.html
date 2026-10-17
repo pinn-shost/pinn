@@ -913,7 +913,7 @@ window.PINN_LANGUAGES = [
   // Startprüfung: fehlt eine selbst gehostete Datei, erscheint ein klarer Hinweis statt einer
   // leeren Seite ohne funktionierende Buttons.
   // Teile der App unter pb_public/js/ – jede Datei meldet sich am Ende in window.PINN_PARTS an
-  var PINN_APP_PARTS = ['haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
+  var PINN_APP_PARTS = ['aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
   window.addEventListener('DOMContentLoaded', function () {
     var missing = [];
     if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – der PocketBase-Client (ohne ihn funktioniert nichts)');
@@ -22699,110 +22699,11 @@ function registerOfflineWorker() {
 }
 
 /* ==========================================================
-   Aufgaben - liegen jetzt direkt auf dem NAS (PocketBase-Sammlung "aufgaben", Server-Logik in
-   pb_hooks/pinn-aufgaben.js). Kein iCloud-Zugriff mehr beim Anlegen, Abhaken oder Löschen.
-   Die bisherige Variante über den Apple-Aufgaben-Kalender ist unten ausgeklammert.
-   ========================================================== */
-const TASK_ALL = '__all__';
-const DONE_EMOJI = '\u2705 ';
-
-var aufgabenLastRaw = '';
-var aufgabenLastRenderAt = 0;
-async function loadAufgaben() {
-  // Beim ersten Mal sofort den zwischengespeicherten Stand zeigen (wichtig ohne Verbindung)
-  if (!aufgabenLoaded) {
-    const cached = readAufgabenCache();
-    if (cached) { aufgabenServer = cached; aufgabenLoaded = true; rebuildAufgaben(); renderTasks(); }
-  }
-  const hadPending = outboxHasPending();
-  await flushOutbox(); // offline Angelegtes/Geändertes zuerst nachtragen
-  try {
-    const res = await apiFetch('/api/pinn/aufgaben', { cache: 'no-store' });
-    if (res.ok) {
-      const result = await res.json();
-      if (Array.isArray(result.aufgaben) && !result.error) {
-        // Energiesparen: gleicher Stand wie zuletzt -> nicht neu zeichnen (spätestens alle 10 Minuten doch)
-        const raw = JSON.stringify(result.aufgaben);
-        if (aufgabenLoaded && raw === aufgabenLastRaw && !hadPending && !outboxHasPending()
-            && Date.now() - aufgabenLastRenderAt < 10 * 60 * 1000) {
-          try { if (typeof ntActFetch === 'function') ntActFetch(false); } catch (e) { /* Glocke noch nicht bereit */ }
-          return;
-        }
-        aufgabenLastRaw = raw;
-        aufgabenServer = result.aufgaben;
-        aufgabenLoaded = true;
-        writeAufgabenCache();
-        pruneShoppingPlans();
-      }
-    }
-  } catch (err) {
-    // Offline oder NAS nicht erreichbar - mit dem zwischengespeicherten Stand weiterarbeiten
-  }
-  if (!aufgabenLoaded && outboxHasPending()) aufgabenLoaded = true; // offline angelegte trotzdem zeigen
-  rebuildAufgaben();
-  renderTasks();
-  aufgabenLastRenderAt = Date.now();
-  try { if (typeof ntActFetch === 'function') ntActFetch(false); } catch (e) { /* Glocke noch nicht bereit */ }
-}
-
-function deriveTasks() {
-  return aufgaben.map(a => ({
-    id: a.id,
-    title: a.title,
-    description: a.notes,
-    dueDate: a.dueDate,
-    hasTimeWindow: !!(a.fromTime && a.toTime),
-    fromTime: a.fromTime,
-    toTime: a.toTime,
-    done: !!a.done,
-    household: a.household || '',
-    missed: a.missed || 0,
-    remindAt: a.remindAt || '',
-    pending: !!a.pending,
-  }));
-}
-
-/* ===== AUSGEKLAMMERT: Aufgaben aus dem Apple-Aufgaben-Kalender =====
-// Leitet die Aufgaben-Liste direkt aus den geladenen Kalender-Terminen ab (kein eigener
-// Sync/Speicher noetig) - nur Termine aus dem als "Aufgaben-Kalender" markierten Kalender.
-function deriveTasksFromEvents() {
-  if (!appleCalendar.taskCalendarName) return [];
-  return events
-    .filter(ev => ev.pinnCalName === appleCalendar.taskCalendarName)
-    .map(ev => {
-      const done = ev.title.startsWith(DONE_EMOJI);
-      return {
-        id: ev.id,
-        pinnHref: ev.pinnHref,
-        title: done ? ev.title.slice(DONE_EMOJI.length) : ev.title,
-        description: ev.description,
-        dueDate: ev.date,
-        hasTimeWindow: !ev.fullDayFiller && !!ev.time,
-        fromTime: ev.time,
-        toTime: ev.endTime,
-        done: done,
-      };
-    });
-}
-===== ENDE AUSGEKLAMMERT ===== */
-
-function assigneesForTask(task) {
-  return getAssignedMembersForEvent(task);
-}
-
-function fmtDateTime(dateStr, timeStr) {
-  if (!dateStr) return '';
-  const d = new Date(dateStr + 'T00:00:00');
-  const dateLabel = d.toLocaleDateString('de-DE', { day: 'numeric', month: 'short', year: 'numeric' });
-  return timeStr ? `${dateLabel}, ${timeStr} Uhr` : dateLabel;
-}
-
-/* ==========================================================
    App-Version & Update-Erkennung (wichtig für "Zum Home-Bildschirm"-Nutzung auf iOS,
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.74.0';
+const APP_VERSION = '1.75.0';
 
 /* ==========================================================
    Einstellungen & Konto: zwei gleich hohe Spalten (Querformat ab Tablet-Breite)
@@ -22930,36 +22831,37 @@ const APP_VERSION = '1.74.0';
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/haushalt.js?v=1.74.0"></script>
-<script src="js/reihum.js?v=1.74.0"></script>
-<script src="js/aufgaben.js?v=1.74.0"></script>
-<script src="js/smarthome.js?v=1.74.0"></script>
-<script src="js/sprachsteuerung.js?v=1.74.0"></script>
-<script src="js/termine.js?v=1.74.0"></script>
-<script src="js/ansichten.js?v=1.74.0"></script>
-<script src="js/versionspruefung.js?v=1.74.0"></script>
-<script src="js/sicherungen.js?v=1.74.0"></script>
-<script src="js/geraete.js?v=1.74.0"></script>
-<script src="js/fehlerprotokoll.js?v=1.74.0"></script>
-<script src="js/versionslog.js?v=1.74.0"></script>
-<script src="js/einstellungen.js?v=1.74.0"></script>
-<script src="js/kalenderkonto.js?v=1.74.0"></script>
-<script src="js/finanzen.js?v=1.74.0"></script>
-<script src="js/kassen.js?v=1.74.0"></script>
-<script src="js/vorrat.js?v=1.74.0"></script>
-<script src="js/vorrat2.js?v=1.74.0"></script>
-<script src="js/sparen.js?v=1.74.0"></script>
-<script src="js/vertraege.js?v=1.74.0"></script>
-<script src="js/fahrzeuge.js?v=1.74.0"></script>
-<script src="js/zuhause.js?v=1.74.0"></script>
-<script src="js/dokumente.js?v=1.74.0"></script>
-<script src="js/pdflesen.js?v=1.74.0"></script>
-<script src="js/appstart.js?v=1.74.0"></script>
-<script src="js/pinnwand.js?v=1.74.0"></script>
-<script src="js/listen.js?v=1.74.0"></script>
-<script src="js/familie.js?v=1.74.0"></script>
-<script src="js/hinweise.js?v=1.74.0"></script>
-<script src="js/ausblick.js?v=1.74.0"></script>
+<script src="js/aufgabendaten.js?v=1.75.0"></script>
+<script src="js/haushalt.js?v=1.75.0"></script>
+<script src="js/reihum.js?v=1.75.0"></script>
+<script src="js/aufgaben.js?v=1.75.0"></script>
+<script src="js/smarthome.js?v=1.75.0"></script>
+<script src="js/sprachsteuerung.js?v=1.75.0"></script>
+<script src="js/termine.js?v=1.75.0"></script>
+<script src="js/ansichten.js?v=1.75.0"></script>
+<script src="js/versionspruefung.js?v=1.75.0"></script>
+<script src="js/sicherungen.js?v=1.75.0"></script>
+<script src="js/geraete.js?v=1.75.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.75.0"></script>
+<script src="js/versionslog.js?v=1.75.0"></script>
+<script src="js/einstellungen.js?v=1.75.0"></script>
+<script src="js/kalenderkonto.js?v=1.75.0"></script>
+<script src="js/finanzen.js?v=1.75.0"></script>
+<script src="js/kassen.js?v=1.75.0"></script>
+<script src="js/vorrat.js?v=1.75.0"></script>
+<script src="js/vorrat2.js?v=1.75.0"></script>
+<script src="js/sparen.js?v=1.75.0"></script>
+<script src="js/vertraege.js?v=1.75.0"></script>
+<script src="js/fahrzeuge.js?v=1.75.0"></script>
+<script src="js/zuhause.js?v=1.75.0"></script>
+<script src="js/dokumente.js?v=1.75.0"></script>
+<script src="js/pdflesen.js?v=1.75.0"></script>
+<script src="js/appstart.js?v=1.75.0"></script>
+<script src="js/pinnwand.js?v=1.75.0"></script>
+<script src="js/listen.js?v=1.75.0"></script>
+<script src="js/familie.js?v=1.75.0"></script>
+<script src="js/hinweise.js?v=1.75.0"></script>
+<script src="js/ausblick.js?v=1.75.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)
