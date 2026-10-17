@@ -1,26 +1,28 @@
 // pb_hooks/system.pb.js
-// Sicherungen, Wiederherstellung und Updates per Knopf (Einstellungen → System bzw. Hauptadmin).
-// Die eigentliche Arbeit macht der Container „wartung“ (pinn-wartung.sh); hier entstehen nur Aufträge.
-// Gemeinsame Funktionen: pinn-system.js
+// Backups, restore and updates at the push of a button (Settings → System or main admin).
+// The actual work is done by the container „wartung“ (pinn-wartung.sh); here only jobs are created.
+// Shared functions: pinn-system.js
 //
-//  GET  /api/pinn/system                    Admins: Version, Sicherungen, Auftragsstatus, neue Version
-//                                           (?pruefen=1 fragt GitHub sofort statt aus dem Zwischenspeicher)
-//  GET  /api/pinn/system/status             ohne Anmeldung: nur Zustand des laufenden Auftrags
-//                                           (für die Anzeige, während pinn. neu startet)
-//  POST /api/pinn/system/sichern            Admins: Sicherung jetzt
-//  POST /api/pinn/system/wiederherstellen   { datei, umfang: "daten" | "alles" } – Hauptadmin bzw. Admin
-//                                           bei nur einer Familie auf dem Server
-//  POST /api/pinn/system/update             neueste Version von GitHub einspielen – wie oben
-//  POST /api/pinn/system/rechte             { id, an } nur Hauptadmin: Familien-Admin darf Updates und
-//                                           Wiederherstellung (auch bei mehreren Familien)
+//  GET  /api/pinn/system                    admins: version, backups, job state, new version
+//                                           (?pruefen=1 asks GitHub right away instead of the cache,
+//                                            ?vorab=1 additionally searches for a pre-release – developer area)
+//  GET  /api/pinn/system/status             without sign-in: only the state of the running job
+//                                           (for the display while pinn. restarts)
+//  POST /api/pinn/system/sichern            admins: back up now
+//  POST /api/pinn/system/wiederherstellen   { datei, umfang: "daten" | "alles" } – main admin, or an admin
+//                                           while there is only one family on the server
+//  POST /api/pinn/system/update             install the newest version from GitHub – as above;
+//                                           { vorab: true } installs the newest pre-release instead
+//  POST /api/pinn/system/rechte             { id, an } main admin only: a family admin may do updates and
+//                                           restores (also with several families)
 
 onBootstrap((e) => {
     e.next();
     try { require(`${__hooks}/pinn-system.js`).ensureSchema(); } catch (err) { console.log("[System] Einrichtung: " + err.message); }
 });
 
-// Fehlerantwort: steht direkt in jedem Handler (Hilfsfunktionen auf Dateiebene sind in den
-// abgeschotteten Handlern von PocketBase nicht sichtbar).
+// Error responses are written directly in every handler (file-level helper functions are not
+// visible inside the isolated handlers of PocketBase).
 
 routerAdd("GET", "/api/pinn/system", (e) => {
     e.response.header().set("Cache-Control", "no-store");
@@ -29,8 +31,11 @@ routerAdd("GET", "/api/pinn/system", (e) => {
     let pruefen = false;
     try { pruefen = String((e.requestInfo().query || {}).pruefen || "") === "1"; } catch (err) { pruefen = false; }
     if (!pruefen) { try { pruefen = e.request.url.query().get("pruefen") === "1"; } catch (err) { pruefen = false; } }
+    let vorab = false;
+    try { vorab = String((e.requestInfo().query || {}).vorab || "") === "1"; } catch (err) { vorab = false; }
+    if (!vorab) { try { vorab = e.request.url.query().get("vorab") === "1"; } catch (err) { vorab = false; } }
     try {
-        return e.json(200, lib.status(e, pruefen));
+        return e.json(200, lib.status(e, pruefen, vorab));
     } catch (err) {
         return e.json(500, { error: err.message });
     }
@@ -74,9 +79,11 @@ routerAdd("POST", "/api/pinn/system/update", (e) => {
     e.response.header().set("Cache-Control", "no-store");
     const lib = require(`${__hooks}/pinn-system.js`);
     if (!lib.rechte(e).darf) return e.json(403, { error: "Updates betreffen alle Familien auf diesem Server – das kann nur der Hauptadmin oder ein von ihm berechtigter Admin." });
+    let vorab = false;
+    try { vorab = (e.requestInfo().body || {}).vorab === true; } catch (err) { vorab = false; }
     try {
-        const out = lib.update();
-        console.log("[System] Update auf " + out.version + " angestoßen von " + e.auth.getString("username"));
+        const out = lib.update(vorab);
+        console.log("[System] " + (vorab ? "Vorabversion " : "Update auf ") + out.version + " angestoßen von " + e.auth.getString("username"));
         return e.json(200, out);
     } catch (err) {
         return e.json((err.pinnCode || "fehler") === "beschaeftigt" ? 409 : 400, { error: err.message, code: err.pinnCode || "fehler" });

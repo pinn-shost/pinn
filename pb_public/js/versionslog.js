@@ -18,6 +18,14 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.66', datum: '17.10.2026', titel: 'Vorabversionen zum Testen',
+    punkte: [
+      ['neu', 'Einstellungen → System → Sicherungen & Updates: neuer Bereich „🧪 Entwickler: Vorabversionen testen“. Normale Updates werden wie bisher nur für fertige Versionen angezeigt; hier kann man zusätzlich gezielt nach einer Vorabversion (Pre-Release auf GitHub) suchen und sie installieren – mit Hinweisen auf das Risiko, einer Bestätigung und wie bei jedem Update einer automatischen Sicherung vorher'],
+      ['neu', 'Läuft eine Vorabversion, steht das oben bei den Updates – mit Link, um Fehler auf GitHub zu melden. Sobald die fertige Version erscheint, wird sie ganz normal als Update angeboten'],
+      ['info', 'Für Mitwirkende: Sicherungen & Updates liegen jetzt in einer eigenen Datei (pb_public/js/sicherungen.js); Server: pinn-system.js und system.pb.js (Kommentare jetzt Englisch), pinn-wartung.sh nimmt jetzt auch Versionsnummern wie v1.67.0-beta.1 an'],
+    ],
+  },
+  {
     v: '1.65', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 21)',
     punkte: [
       ['info', 'Für Mitwirkende: die Geräteverwaltung – angemeldete Geräte, Abmelden einzeln oder überall und „Sperre aufheben“ – liegt jetzt in einer eigenen Datei (pb_public/js/geraete.js). An der Bedienung ändert sich nichts'],

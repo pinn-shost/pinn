@@ -90,19 +90,23 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **English, Deutsch, Français et Español**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.66
+
+**Versions préliminaires à tester**
+
+- **Zone développeur pour les versions préliminaires :** dans *Réglages → Système → Sauvegardes & mises à jour*, une nouvelle zone dépliable *🧪 Développeur : tester les versions préliminaires*. Les mises à jour normales ne montrent toujours que les versions finales. Ici, un admin peut chercher volontairement une version préliminaire (un release GitHub marqué *pre-release*), lire les notes et les avertissements, confirmer et l’installer.
+- **Tes données restent en sécurité :** comme pour chaque mise à jour, pinn. crée d’abord une sauvegarde (*Avant une mise à jour*). Avec *Restaurer → Tout*, tu peux revenir en arrière à tout moment. Dès que la version finale sort, elle est proposée comme mise à jour normale.
+- **Signaler un bug :** si une version préliminaire est installée, c’est indiqué dans les mises à jour – avec un lien vers un rapport de bug pré-rempli sur GitHub (version et appareil inclus).
+- **Pour les mainteneurs :** publie la version préliminaire sur GitHub en cochant *Set as a pre-release*, idéalement avec un tag comme `v1.67.0-beta.1` et le même `APP_VERSION`. `pinn-wartung.sh` accepte désormais ces tags.
+- Pour les contributeurs : sauvegardes & mises à jour se trouvent désormais dans leur propre fichier (`pb_public/js/sicherungen.js`) ; `pinn-system.js` et `system.pb.js` ont maintenant des commentaires en anglais.
+- Des fichiers de l’app et du serveur changent (`index.html`, `js/sicherungen.js`, `js/versionslog.js`, les fichiers de langue, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `pinn-wartung.sh`, `pinn-setup.sh`). Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour). Les versions préliminaires peuvent être installées depuis l’app dès que la 1.66 est installée.
+
 ## Nouveautés de la 1.65
 
 **Le code de l’app est découpé, partie 21**
 
 - **Pour les contributeurs :** la gestion des appareils – appareils connectés, déconnexion d’un appareil ou partout et levée d’un blocage de connexion – se trouve désormais dans son propre fichier (`pb_public/js/geraete.js`). Rien ne change à l’utilisation de pinn.
 - Seuls des fichiers de l’app changent (`index.html`, `js/geraete.js` et `js/versionslog.js`), rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
-## Nouveautés de la 1.64
-
-**Le code de l’app est découpé, partie 20**
-
-- **Pour les contributeurs :** le journal des erreurs pour les admins, le bouton *Rechercher une mise à jour* et les sections des réglages qui n’en gardent qu’une ouverte se trouvent désormais dans leur propre fichier (`pb_public/js/fehlerprotokoll.js`). Rien ne change à l’utilisation de pinn.
-- Seuls des fichiers de l’app changent (`index.html`, `js/fehlerprotokoll.js` et `js/versionslog.js`), rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
 ## Comment ça marche
 
@@ -130,7 +134,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.65.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.66.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -220,7 +224,7 @@ pinn/
 ├── pb_public/           web-app servie par PocketBase
 │   ├── index.html       l’app (HTML, styles et la plus grande partie du code)
 │   ├── js/              code de l’app sorti d’index.html, simples fichiers <script> sans étape de build
-│   │                    (geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js toujours en dernier)
+│   │                    (sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js toujours en dernier)
 │   ├── einrichtung.js   assistant de configuration · datenexport.js  export des données
 │   ├── lang/            traductions (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js et Tesseract sont téléchargés par l’installation)

@@ -587,7 +587,7 @@ window.PINN_LANGUAGES = [
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
   // Versionsnummer bei jeder Änderung an den Sprachdateien erhöhen, sonst nutzen Geräte die alte Datei weiter
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.62.0" onerror="PINN_I18N.fail()"><\/script>');
+  if (DICT) document.write('<script src="' + lang.file + '?v=1.66.0" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // Deutsch als WG: kein Wörterbuch, nur die WG-Bezeichnungen
 })();
 </script>
@@ -913,7 +913,7 @@ window.PINN_LANGUAGES = [
   // Startprüfung: fehlt eine selbst gehostete Datei, erscheint ein klarer Hinweis statt einer
   // leeren Seite ohne funktionierende Buttons.
   // Teile der App unter pb_public/js/ – jede Datei meldet sich am Ende in window.PINN_PARTS an
-  var PINN_APP_PARTS = ['geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
+  var PINN_APP_PARTS = ['sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
   window.addEventListener('DOMContentLoaded', function () {
     var missing = [];
     if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – der PocketBase-Client (ohne ihn funktioniert nichts)');
@@ -1633,6 +1633,15 @@ window.PINN_LANGUAGES = [
   html.dark .sm-opt { border-color: rgba(255,255,255,0.14); }
   html.dark .sm-log { background: rgba(255,255,255,0.06); }
   html.dark .sm-x:hover { background: rgba(255,255,255,0.08); }
+  .sm-dev > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; cursor: pointer; }
+  .sm-dev > summary::-webkit-details-marker { display: none; }
+  .sm-dev-title { font-size: 0.8rem; font-weight: 600; }
+  .sm-dev-chev { opacity: 0.45; transition: transform .15s; }
+  .sm-dev[open] .sm-dev-chev { transform: rotate(90deg); }
+  .sm-dev-body { margin-top: 0.6rem; }
+  .sm-dev-warn { list-style: disc; padding-left: 1rem; margin: 0; display: flex; flex-direction: column; gap: 0.2rem; }
+  .sm-pre { margin-bottom: 0.6rem; }
+  .sm-pre .set-hint-btn, .sm-dev .set-hint-btn { text-decoration: none; }
   /* ---------- Geräteverwaltung (#devModal, Konto) und Fehlerprotokoll (#errLogModal) ---------- */
   #devModal, #errLogModal { padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)); }
   .el-box { max-width: 34rem; }
@@ -6074,6 +6083,7 @@ window.PINN_LANGUAGES = [
         <div id="sysMaintMain">
           <section class="sm-sec">
             <div class="sm-sec-head"><span class="sm-sec-title">Updates</span><span class="sm-mono" data-no-i18n>v<span id="sysMaintVersion"></span></span></div>
+            <div id="sysVorabActive" class="set-hint sm-pre hidden"><span>🧪</span><span class="flex-1 min-w-0"><span id="sysVorabActiveText" data-no-i18n></span> <span>Fällt dir etwas auf? Bitte als Fehlerbericht auf GitHub melden.</span></span><a id="sysVorabActiveIssue" href="https://github.com/pinn-shost/pinn/issues/new" target="_blank" rel="noopener" class="set-hint-btn">Fehler melden ↗</a></div>
             <p id="sysUpdState" class="text-sm text-ink/70 leading-snug" data-no-i18n></p>
             <div id="sysUpdRelease" class="sm-release hidden">
               <div class="sm-rel-head"><span id="sysUpdRelTitle" class="font-medium text-sm" data-no-i18n></span><span id="sysUpdRelDate" class="text-[11px] text-ink/45" data-no-i18n></span></div>
@@ -6086,6 +6096,32 @@ window.PINN_LANGUAGES = [
             </div>
             <p class="text-[11px] text-ink/45 mt-2 leading-snug">Vor jedem Update legt pinn. automatisch eine Sicherung an. Während des Updates ist pinn. ein paar Minuten nicht erreichbar.</p>
           </section>
+
+          <details id="sysDevBox" class="sm-sec sm-dev">
+            <summary><span class="sm-dev-title">🧪 Entwickler: Vorabversionen testen</span><span class="sm-dev-chev" aria-hidden="true">›</span></summary>
+            <div class="sm-dev-body">
+              <p class="text-xs text-ink/60 leading-snug">Vorabversionen (Pre-Releases auf GitHub) sind Testversionen vor der fertigen Version. Normale Updates zeigen sie nie an – hier kannst du gezielt danach suchen.</p>
+              <div class="set-hint mt-2"><span>⚠️</span><ul class="sm-dev-warn">
+                <li>Vorabversionen können Fehler enthalten. Funktionen können sich noch ändern, unfertig sein oder wieder wegfallen.</li>
+                <li>Das Update gilt für den ganzen Server: alle Familien und alle Geräte nutzen danach die Vorabversion.</li>
+                <li>Nicht empfohlen, wenn ihr euch im Alltag auf pinn. verlasst – etwa bei Terminen, Erinnerungen oder Notfallpässen.</li>
+                <li>Während der Installation ist pinn. ein paar Minuten nicht erreichbar.</li>
+              </ul></div>
+              <div class="set-hint ok"><span>🛟</span><span>Deine Daten gehen nicht verloren: Vor der Installation legt pinn. automatisch eine Sicherung an („Vor einem Update“). Mit „Wiederherstellen“ → „Alles“ kommst du jederzeit zum Stand vorher zurück. Sobald die fertige Version erscheint, wird sie ganz normal als Update angeboten.</span></div>
+              <div class="set-hint ok"><span>🐞</span><span class="flex-1 min-w-0">Fällt dir etwas auf, melde es bitte auf GitHub – mit Version, Gerät und was du gerade gemacht hast. Hinweise aus dem Fehlerprotokoll helfen dabei.</span><a id="sysDevIssueLink" href="https://github.com/pinn-shost/pinn/issues/new" target="_blank" rel="noopener" class="set-hint-btn">Fehler melden ↗</a></div>
+              <p id="sysDevState" class="text-sm text-ink/70 leading-snug mt-1" data-no-i18n></p>
+              <div id="sysDevRelease" class="sm-release hidden">
+                <div class="sm-rel-head"><span id="sysDevRelTitle" class="font-medium text-sm" data-no-i18n></span><span id="sysDevRelDate" class="text-[11px] text-ink/45" data-no-i18n></span></div>
+                <div id="sysDevRelNotes" class="sm-notes" data-no-i18n></div>
+                <a id="sysDevRelLink" href="https://github.com/pinn-shost/pinn/releases" target="_blank" rel="noopener" class="text-xs text-pine">Auf GitHub ansehen ↗</a>
+              </div>
+              <label id="sysDevConfirmRow" class="sm-check hidden"><input type="checkbox" id="sysDevConfirm"><span>Ich habe die Hinweise gelesen und möchte die Vorabversion auf diesem Server testen.</span></label>
+              <div class="flex flex-wrap gap-2 mt-3">
+                <button id="sysDevCheckBtn" type="button" class="sm-btn">Nach Vorabversion suchen</button>
+                <button id="sysDevInstallBtn" type="button" class="sm-btn sm-danger hidden" disabled>Vorabversion installieren</button>
+              </div>
+            </div>
+          </details>
 
           <section class="sm-sec">
             <div class="sm-sec-head"><span class="sm-sec-title">Sicherungen</span><button id="sysBackupNowBtn" type="button" class="sm-btn sm-small">Jetzt sichern</button></div>
@@ -26520,7 +26556,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.65.0';
+const APP_VERSION = '1.66.0';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -26568,456 +26604,6 @@ document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') checkForAppUpdate(true);
 });
 setInterval(() => checkForAppUpdate(true), 3 * 60 * 1000); // alle 3 Minuten im Hintergrund prüfen
-
-/* ==========================================================
-   Sicherungen & Updates per Knopf (Einstellungen → System, Hauptadmin)
-   ----------------------------------------------------------
-   Server: pb_hooks/system.pb.js + pinn-system.js; die Arbeit macht der Container „wartung“
-   (pinn-wartung.sh im Projektordner). Sicherungen ansehen und „Jetzt sichern“: Admins.
-   Wiederherstellen und Updates: Hauptadmin bzw. Admin, solange es nur eine Familie gibt.
-   Während Wiederherstellung/Update ist pinn. kurz weg – der Fortschritt kommt dann über
-   /api/pinn/system/status (ohne Anmeldung, nur der Zustand des Auftrags).
-   ========================================================== */
-let sysInfo = null;          // letzte Antwort von /api/pinn/system
-let sysShowAll = false;      // alle Sicherungen zeigen
-let sysRestoreFile = '';     // gewählte Sicherung
-let sysPolling = false;
-const SYS_ROWS = 8;
-
-// Popups im fest positionierten #appRoot liegen immer unter dem Hauptadmin-Bildschirm (eigene
-// Stapelebene) – beim Öffnen deshalb direkt an <body> hängen.
-function pinnModalToTop(id) {
-  const el = document.getElementById(id);
-  if (el && el.parentElement !== document.body) document.body.appendChild(el);
-  return el;
-}
-function sysCanUse() {
-  return isCurrentUserAdmin() || isCurrentUserMainAdmin();
-}
-function sysLocale() {
-  return (window.PINN_I18N && PINN_I18N.language && PINN_I18N.language.locale) || 'de-DE';
-}
-function sysT(s) {
-  try { return (window.PINN_I18N && PINN_I18N.t) ? PINN_I18N.t(s) : s; } catch (e) { return s; }
-}
-function sysFmtWhen(sec) {
-  if (!sec) return '';
-  const d = new Date(sec * 1000);
-  try {
-    return d.toLocaleDateString(sysLocale(), { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })
-      + ' · ' + d.toLocaleTimeString(sysLocale(), { hour: '2-digit', minute: '2-digit' });
-  } catch (e) { return d.toLocaleString(); }
-}
-function sysFmtSize(b) {
-  const nf = (v, f) => { try { return new Intl.NumberFormat(sysLocale(), { maximumFractionDigits: f }).format(v); } catch (e) { return v.toFixed(f); } };
-  if (b >= 1073741824) return nf(b / 1073741824, 1) + ' GB';
-  if (b >= 1048576) return nf(b / 1048576, b >= 104857600 ? 0 : 1) + ' MB';
-  return nf(Math.max(1, Math.round(b / 1024)), 0) + ' KB';
-}
-function sysSleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-// Art einer Sicherung → Symbol + Beschriftung (Tägliche Sicherungen älter als die Aufbewahrungstage sind Wochensicherungen)
-function sysBackupKind(b) {
-  if (b.art === 'manuell') return { ico: '✋', label: 'Von Hand' };
-  if (b.art === 'vor-update') return { ico: '⬆️', label: 'Vor einem Update' };
-  if (b.art === 'vor-wiederherstellung') return { ico: '↩️', label: 'Vor einer Wiederherstellung' };
-  const tage = (sysInfo && sysInfo.wartung && sysInfo.wartung.tage) || 7;
-  const alt = (Date.now() / 1000 - b.zeit) > (tage + 0.5) * 86400;
-  return alt ? { ico: '📅', label: 'Wochensicherung' } : { ico: '🌙', label: 'Tägliche Sicherung' };
-}
-
-async function sysFetch(pruefen) {
-  const res = await apiFetch('/api/pinn/system' + (pruefen ? '?pruefen=1' : ''), { cache: 'no-store' });
-  if (res.status === 404) { const e = new Error('Auf dem Server fehlt noch pb_hooks/system.pb.js (und pinn-system.js).'); e.code = 'alt'; throw e; }
-  const body = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(body.error || 'Das hat nicht geklappt.');
-  return body;
-}
-
-/* ---------- Einstellungen → System: Kurzfassung ---------- */
-async function sysRefreshSummary() {
-  const sub = document.getElementById('sysBackupSub');
-  const hint = document.getElementById('sysUpdateHint');
-  if (!sub) return;
-  const show = sysCanUse() && !(typeof childLockActive === 'function' && childLockActive());
-  sub.classList.toggle('hidden', !show);
-  if (!show) { hint.classList.add('hidden'); return; }
-  const sum = document.getElementById('sysBackupSummary');
-  if (!navigator.onLine) { sum.textContent = 'Keine Verbindung zum Server.'; return; }
-  try {
-    sysInfo = await sysFetch(false);
-  } catch (e) {
-    sum.textContent = e.message;
-    hint.classList.add('hidden');
-    return;
-  }
-  sum.textContent = sysSummaryText(sysInfo);
-  const u = sysInfo.update || {};
-  if (u.neuer && u.version) {
-    document.getElementById('sysUpdateHintText').textContent = sysT('Version {0} ist verfügbar.').replace('{0}', u.version);
-    hint.classList.remove('hidden');
-  } else {
-    hint.classList.add('hidden');
-  }
-}
-function sysSummaryText(info) {
-  const w = info.wartung || {};
-  if (!w.eingerichtet || !w.aktiv) return 'Der Container „wartung“ läuft noch nicht – Einrichtung siehe „Sicherungen & Wiederherstellung“.';
-  const list = info.backups || [];
-  if (!list.length) return 'Noch keine Sicherung vorhanden – die erste entsteht heute Nacht oder mit „Jetzt sichern“.';
-  return sysT('Letzte Sicherung: {0} · {1} Sicherungen auf dem NAS').replace('{0}', sysFmtWhen(list[0].zeit)).replace('{1}', String(list.length));
-}
-
-/* ---------- Modal ---------- */
-function sysModalOpen() {
-  return !document.getElementById('sysMaintModal').classList.contains('hidden');
-}
-async function openSysMaint(opts = {}) {
-  const modal = pinnModalToTop('sysMaintModal');
-  modal.classList.remove('hidden');
-  document.getElementById('sysMaintProgress').classList.add('hidden');
-  sysShowView('main');
-  document.getElementById('sysMaintVersion').textContent = APP_VERSION;
-  document.getElementById('sysUpdState').textContent = sysT(opts.pruefen ? 'Suche nach Updates …' : 'Wird geladen …');
-  document.getElementById('sysBackupList').innerHTML = '';
-  document.getElementById('sysBackupInfo').textContent = '';
-  await sysLoad(!!opts.pruefen);
-}
-function closeSysMaint() {
-  if (sysPolling) return; // während eines Vorgangs nicht schließen
-  document.getElementById('sysMaintModal').classList.add('hidden');
-  sysRefreshSummary();
-}
-function sysShowView(v) {
-  document.getElementById('sysMaintMain').classList.toggle('hidden', v !== 'main');
-  document.getElementById('sysRestorePanel').classList.toggle('hidden', v !== 'restore');
-  const sc = document.querySelector('#sysMaintModal .sm-scroll');
-  if (sc) sc.scrollTop = 0;
-}
-function sysNotice(text) {
-  const n = document.getElementById('sysMaintNotice');
-  n.classList.toggle('hidden', !text);
-  document.getElementById('sysMaintNoticeText').textContent = text || '';
-}
-
-async function sysLoad(pruefen) {
-  if (!navigator.onLine) { sysNotice('Keine Verbindung zum Server.'); document.getElementById('sysUpdState').textContent = ''; return; }
-  try {
-    sysInfo = await sysFetch(pruefen);
-  } catch (e) {
-    sysNotice(e.message);
-    document.getElementById('sysUpdState').textContent = '';
-    document.getElementById('sysBackupNowBtn').disabled = true;
-    return;
-  }
-  sysRender();
-  // Läuft gerade ein Vorgang (z. B. auf einem anderen Gerät gestartet)? Dann direkt den Fortschritt zeigen.
-  const j = sysInfo.job;
-  if (j && (j.zustand === 'laeuft' || j.zustand === 'wartet') && !sysPolling) sysFollow(j.id, j.art, j.version);
-}
-
-function sysRender() {
-  const info = sysInfo || {};
-  const w = info.wartung || {};
-  document.getElementById('sysMaintVersion').textContent = info.version || APP_VERSION;
-
-  // Hinweise zur Einrichtung bzw. zu den Rechten
-  let notice = '';
-  if (!w.eingerichtet || !w.aktiv) notice = 'Der Container „wartung“ läuft noch nicht. Einmalig per SSH im pinn.-Ordner „sudo sh pinn-setup.sh“ ausführen – danach gehen Sicherungen, Wiederherstellung und Updates hier per Knopf.';
-  else if (!w.docker) notice = 'Der Container „wartung“ hat keinen Zugriff auf Docker – Wiederherstellen und Updates sind deshalb aus. Sichern geht weiterhin.';
-  else if (!info.darf) notice = 'Wiederherstellen und Updates betreffen alle Familien auf diesem Server – das kann der Hauptadmin oder ein Admin, dem er es erlaubt hat.';
-  sysNotice(notice);
-  const kannAktion = !!(info.darf && w.aktiv && w.docker);
-
-  // Updates
-  const u = info.update || {};
-  const st = document.getElementById('sysUpdState');
-  const rel = document.getElementById('sysUpdRelease');
-  const inst = document.getElementById('sysUpdInstallBtn');
-  let text = '';
-  if (u.neuer) text = sysT('Version {0} ist verfügbar.').replace('{0}', u.version);
-  else if (u.keine) text = 'Auf GitHub gibt es noch keine veröffentlichte Version.';
-  else if (u.fehler === 'limit') text = 'GitHub hat gerade zu viele Anfragen gezählt – bitte in einer Stunde noch einmal versuchen.';
-  else if (u.fehler && !u.tag) text = 'GitHub ist gerade nicht erreichbar – bitte später noch einmal versuchen.';
-  else if (u.tag) text = 'pinn. ist auf dem neuesten Stand.';
-  const teile = [];
-  if (text) teile.push(sysT(text));
-  if (u.geprueft) teile.push(sysT('Zuletzt geprüft: {0}').replace('{0}', sysFmtWhen(Math.floor(u.geprueft / 1000))));
-  st.textContent = teile.join(' ');
-  if (u.neuer) {
-    rel.classList.remove('hidden');
-    document.getElementById('sysUpdRelTitle').textContent = u.titel || ('pinn. ' + u.version);
-    let datum = '';
-    try { datum = u.datum ? new Date(u.datum).toLocaleDateString(sysLocale(), { day: 'numeric', month: 'long', year: 'numeric' }) : ''; } catch (e) { datum = ''; }
-    document.getElementById('sysUpdRelDate').textContent = datum;
-    document.getElementById('sysUpdRelNotes').innerHTML = sysMarkdown(u.notizen || '');
-    document.getElementById('sysUpdRelLink').href = u.url || ('https://github.com/' + (info.repo || 'pinn-shost/pinn') + '/releases');
-  } else {
-    rel.classList.add('hidden');
-  }
-  inst.classList.toggle('hidden', !u.neuer);
-  inst.disabled = !kannAktion;
-  if (u.neuer) inst.textContent = sysT('Version {0} installieren').replace('{0}', u.version);
-
-  // Sicherungen
-  document.getElementById('sysBackupNowBtn').disabled = !w.aktiv;
-  document.getElementById('sysBackupInfo').textContent = w.aktiv
-    ? sysT('Jeden Tag um {0} – aufbewahrt werden alle Sicherungen der letzten {1} Tage und danach {2} Wochen lang eine pro Woche. Sie liegen auf dem NAS im pinn.-Ordner unter „backups“.')
-        .replace('{0}', w.uhrzeit || '03:30').replace('{1}', String(w.tage || 7)).replace('{2}', String(w.wochen || 4))
-    : '';
-  const list = info.backups || [];
-  const box = document.getElementById('sysBackupList');
-  if (!list.length) {
-    box.innerHTML = `<p class="sm-empty">${escapeHtml(sysT(w.aktiv ? 'Noch keine Sicherung vorhanden – die erste entsteht heute Nacht oder mit „Jetzt sichern“.' : 'Noch keine Sicherungen.'))}</p>`;
-  } else {
-    const rows = sysShowAll ? list : list.slice(0, SYS_ROWS);
-    box.innerHTML = rows.map(b => {
-      const k = sysBackupKind(b);
-      return `<div class="sm-row">
-        <span class="sm-row-ico">${k.ico}</span>
-        <span class="sm-row-main"><span class="sm-row-title" data-no-i18n>${escapeHtml(sysFmtWhen(b.zeit))}</span><span class="sm-row-sub">${escapeHtml(sysT(k.label))} · ${escapeHtml(sysFmtSize(b.groesse))}</span></span>
-        ${kannAktion ? `<button type="button" class="sm-btn sm-small" data-sys-restore="${escapeHtml(b.datei)}">${escapeHtml(sysT('Wiederherstellen'))}</button>` : ''}
-      </div>`;
-    }).join('');
-  }
-  const more = document.getElementById('sysBackupMore');
-  more.classList.toggle('hidden', list.length <= SYS_ROWS);
-  more.textContent = sysShowAll ? sysT('Weniger anzeigen') : sysT('Alle {0} Sicherungen zeigen').replace('{0}', String(list.length));
-}
-
-// Release-Notizen (Markdown von GitHub) schlicht darstellen – ohne fremdes HTML
-function sysMarkdown(md) {
-  const inline = (t) => escapeHtml(t).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>').replace(/`([^`]+)`/g, '<code>$1</code>');
-  let html = '', inList = false;
-  String(md).replace(/\r/g, '').split('\n').forEach(line => {
-    const l = line.trim();
-    const li = l.match(/^[-*•]\s+(.*)$/);
-    if (li) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + inline(li[1]) + '</li>'; return; }
-    if (inList) { html += '</ul>'; inList = false; }
-    if (!l || /^(-{3,}|<\/?[a-z][^>]*>)$/i.test(l)) return;
-    const h = l.match(/^#{1,6}\s+(.*)$/);
-    html += h ? '<h5>' + inline(h[1]) + '</h5>' : '<p>' + inline(l) + '</p>';
-  });
-  if (inList) html += '</ul>';
-  return html || '<p>–</p>';
-}
-
-/* ---------- Wiederherstellen ---------- */
-function sysOpenRestore(file) {
-  const b = ((sysInfo && sysInfo.backups) || []).find(x => x.datei === file);
-  if (!b) return;
-  sysRestoreFile = file;
-  document.getElementById('sysRestoreWhen').textContent = sysFmtWhen(b.zeit);
-  document.getElementById('sysRestoreMeta').textContent = sysT(sysBackupKind(b).label) + ' · ' + sysFmtSize(b.groesse);
-  document.querySelector('input[name="sysRestoreScope"][value="daten"]').checked = true;
-  const cb = document.getElementById('sysRestoreConfirm');
-  cb.checked = false;
-  document.getElementById('sysRestoreGo').disabled = true;
-  sysShowView('restore');
-}
-async function sysStartRestore() {
-  const umfang = (document.querySelector('input[name="sysRestoreScope"]:checked') || {}).value === 'alles' ? 'alles' : 'daten';
-  const btn = document.getElementById('sysRestoreGo');
-  btn.disabled = true;
-  try {
-    const r = await postJson('/api/pinn/system/wiederherstellen', { datei: sysRestoreFile, umfang });
-    sysShowView('main');
-    sysFollow(r.id, 'wiederherstellen', '');
-  } catch (e) {
-    alert(e.message);
-    btn.disabled = false;
-  }
-}
-
-/* ---------- Sichern & Update ---------- */
-async function sysStartBackup() {
-  const btn = document.getElementById('sysBackupNowBtn');
-  btn.disabled = true;
-  try {
-    const r = await postJson('/api/pinn/system/sichern', {});
-    sysFollow(r.id, 'sichern', '');
-  } catch (e) {
-    alert(e.message);
-    btn.disabled = false;
-  }
-}
-async function sysStartUpdate() {
-  const u = (sysInfo && sysInfo.update) || {};
-  if (!u.neuer) return;
-  if (!confirm(sysT('pinn. jetzt auf Version {0} aktualisieren? Vorher wird automatisch gesichert. pinn. ist dabei ein paar Minuten nicht erreichbar – auf allen Geräten.').replace('{0}', u.version))) return;
-  const btn = document.getElementById('sysUpdInstallBtn');
-  btn.disabled = true;
-  try {
-    const r = await postJson('/api/pinn/system/update', {});
-    sysFollow(r.id, 'update', r.version || u.version);
-  } catch (e) {
-    alert(e.message);
-    btn.disabled = false;
-  }
-}
-
-/* ---------- Fortschritt ---------- */
-const SYS_STEPS = {
-  sichern: [['sichern', 'Sicherung erstellen']],
-  wiederherstellen: [['sichern', 'Jetzigen Stand sichern'], ['entpacken', 'Sicherung prüfen'], ['stoppen', 'pinn. anhalten'], ['einspielen', 'Daten zurückspielen'], ['starten', 'pinn. starten']],
-  update: [['sichern', 'Jetzigen Stand sichern'], ['laden', 'Update von GitHub laden'], ['entpacken', 'Paket prüfen'], ['installieren', 'Update einspielen'], ['neustart', 'pinn. neu starten']],
-};
-const SYS_FEHLER = {
-  sichern: 'Die Sicherung ist fehlgeschlagen – ist auf dem NAS noch genug Speicherplatz frei?',
-  datei: 'Diese Sicherung wurde nicht gefunden.',
-  docker: 'Der Container „wartung“ hat keinen Zugriff auf Docker.',
-  entpacken: 'Die Sicherung ließ sich nicht entpacken – es wurde nichts verändert.',
-  defekt: 'Die Datenbank in dieser Sicherung ist beschädigt – es wurde nichts verändert.',
-  start: 'pinn. startete mit der Sicherung nicht – der vorherige Stand ist wieder aktiv.',
-  laden: 'Das Update ließ sich nicht von GitHub laden – bitte die Internetverbindung des NAS prüfen. Es wurde nichts verändert.',
-  paket: 'Das heruntergeladene Paket ist unvollständig – es wurde nichts verändert.',
-  setup: 'Beim Einspielen meldete pinn-setup.sh einen Fehler (Einzelheiten unten). Die Sicherung von vorher liegt bereit.',
-  abbruch: 'Der Vorgang wurde unterbrochen, weil der Container neu gestartet ist.',
-  beschaeftigt: 'Es lief gerade schon ein anderer Vorgang – bitte gleich noch einmal versuchen.',
-  wartung: 'Der Container „wartung“ reagiert nicht – läuft er? (docker logs wartung)',
-};
-function sysRenderProgress(art, version, step, state) {
-  const titles = {
-    sichern: ['Sicherung läuft …', 'Sicherung erstellt', 'Sicherung fehlgeschlagen'],
-    wiederherstellen: ['Wiederherstellung läuft …', 'Wiederhergestellt', 'Wiederherstellung fehlgeschlagen'],
-    update: [sysT('Update auf {0} läuft …').replace('{0}', version || ''), 'Update installiert', 'Update fehlgeschlagen'],
-  }[art] || ['…', 'Fertig', 'Fehler'];
-  const spin = document.getElementById('sysProgSpin');
-  spin.classList.toggle('ok', state === 'fertig');
-  spin.classList.toggle('err', state === 'fehler');
-  document.getElementById('sysProgTitle').textContent = state === 'fertig' ? titles[1] : state === 'fehler' ? titles[2] : titles[0];
-  const steps = SYS_STEPS[art] || [];
-  const idx = steps.findIndex(s => s[0] === step);
-  document.getElementById('sysProgSteps').innerHTML = steps.map((s, i) => {
-    let cls = '';
-    if (state === 'fertig' || (idx >= 0 && i < idx)) cls = 'done';
-    else if (i === idx) cls = state === 'fehler' ? 'err' : 'on';
-    return `<li class="${cls}">${escapeHtml(sysT(s[1]))}</li>`;
-  }).join('');
-}
-function sysProgMsg(text) {
-  document.getElementById('sysProgMsg').textContent = text || '';
-}
-
-// Verfolgt einen Auftrag bis zum Ende – auch über den Neustart von pinn. hinweg
-async function sysFollow(id, art, version) {
-  if (sysPolling) return;
-  sysPolling = true;
-  const prog = document.getElementById('sysMaintProgress');
-  prog.classList.remove('hidden');
-  document.getElementById('sysMaintClose').classList.add('hidden');
-  document.getElementById('sysProgDone').classList.add('hidden');
-  document.getElementById('sysProgLog').classList.add('hidden');
-  sysRenderProgress(art, version, art === 'sichern' ? 'sichern' : '', 'laeuft');
-  sysProgMsg('Wartet auf den Container „wartung“ …');
-  const t0 = Date.now();
-  let warWeg = false, gesehen = false, ende = null;
-  while (Date.now() - t0 < 45 * 60 * 1000) {
-    let st = null, alt = false;
-    try {
-      const r = await fetch('/api/pinn/system/status', { cache: 'no-store' });
-      if (r.ok) st = await r.json();
-      else if (r.status === 404) alt = true; // nach „Alles“ aus einer älteren Sicherung ohne system.pb.js
-    } catch (e) { st = null; }
-    const j = st && st.job;
-    if (alt && warWeg) { ende = { zustand: 'fertig', schritt: 'fertig' }; break; }
-    if (!st && !alt) {
-      warWeg = true;
-      sysProgMsg(art === 'update' ? 'pinn. wird gerade erneuert und startet neu – einen Moment …' : 'pinn. startet neu – einen Moment …');
-    } else if (j && j.id === id) {
-      gesehen = true;
-      if (j.version) version = j.version;
-      if (j.zustand === 'fertig' || j.zustand === 'fehler') { ende = j; break; }
-      sysRenderProgress(art, version, j.schritt, 'laeuft');
-      sysProgMsg(j.zustand === 'wartet' ? 'Wartet auf den Container „wartung“ …'
-        : (art === 'sichern' ? 'Das kann je nach Menge an Fotos und Dokumenten ein paar Minuten dauern.' : 'Bitte die App geöffnet lassen.'));
-    } else if (!gesehen && Date.now() - t0 > 20 * 60 * 1000) {
-      ende = { zustand: 'fehler', fehler: 'wartung' };
-      break;
-    } else if (!gesehen && Date.now() - t0 > 30 * 1000) {
-      // z. B. läuft gerade die nächtliche Sicherung – der Auftrag startet direkt danach
-      sysProgMsg('Der Container „wartung“ ist noch beschäftigt – der Auftrag startet direkt danach.');
-    }
-    await sysSleep(2500);
-  }
-  if (!ende) ende = { zustand: 'fehler', fehler: 'abbruch' };
-  sysRenderProgress(art, version, ende.schritt, ende.zustand === 'fertig' ? 'fertig' : 'fehler');
-
-  if (ende.zustand === 'fertig' && (art === 'wiederherstellen' || art === 'update')) {
-    // pinn. muss wieder antworten, dann frisch laden
-    for (let i = 0; i < 60; i++) {
-      try { const h = await fetch('/api/health', { cache: 'no-store' }); if (h.ok) break; } catch (e) { /* startet noch */ }
-      await sysSleep(1500);
-    }
-    if (art === 'wiederherstellen') sysClearLocalData();
-    sysProgMsg(art === 'update' ? sysT('pinn. {0} ist installiert – die App lädt neu …').replace('{0}', version || '') : 'Der gewählte Stand ist zurück – die App lädt neu …');
-    await sysSleep(2500);
-    sysPolling = false;
-    hardReload();
-    return;
-  }
-
-  sysPolling = false;
-  document.getElementById('sysMaintClose').classList.remove('hidden');
-  const done = document.getElementById('sysProgDone');
-  done.classList.remove('hidden');
-  if (ende.zustand === 'fertig') {
-    sysProgMsg('Die Sicherung liegt auf dem NAS im pinn.-Ordner unter „backups“.');
-  } else {
-    let msg = sysT(SYS_FEHLER[ende.fehler] || 'Das hat nicht geklappt.');
-    if (ende.meldung && ende.fehler !== 'setup') msg += ' (' + ende.meldung + ')';
-    sysProgMsg(msg);
-    if (art === 'update') {
-      try {
-        const info = await sysFetch(false);
-        if (info.updateLog && info.updateLog.length) {
-          const log = document.getElementById('sysProgLog');
-          log.textContent = info.updateLog.join('\n');
-          log.classList.remove('hidden');
-        }
-      } catch (e) { /* egal */ }
-    }
-  }
-}
-// Nach einer Wiederherstellung: Zwischenspeicher dieses Geräts leeren, damit der zurückgeholte Stand
-// geladen und nicht von alten, lokal gemerkten Änderungen überschrieben wird.
-function sysClearLocalData() {
-  [LS_CACHE_KEY, LS_PENDING_KEY, LS_OUTBOX, LS_AUFGABEN_CACHE, LS_ICS_CACHE, LS_PROFILE_CACHE,
-   LS_FIN_QUEUE, LS_FIN_CACHE, LS_KASSEN, LS_KASSEN_PENDING, LS_FIN_DOCS, LS_DOCS].forEach(k => {
-    try { localStorage.removeItem(k); } catch (e) { /* egal */ }
-  });
-}
-
-/* ---------- Bedienung ---------- */
-document.getElementById('sysMaintClose').addEventListener('click', closeSysMaint);
-document.getElementById('sysMaintModal').addEventListener('click', (e) => { if (e.target.id === 'sysMaintModal') closeSysMaint(); });
-document.getElementById('sysProgDone').addEventListener('click', () => {
-  document.getElementById('sysMaintProgress').classList.add('hidden');
-  sysLoad(false);
-});
-document.getElementById('sysUpdCheckBtn').addEventListener('click', async () => {
-  const b = document.getElementById('sysUpdCheckBtn');
-  b.disabled = true;
-  document.getElementById('sysUpdState').textContent = sysT('Suche nach Updates …');
-  await sysLoad(true);
-  b.disabled = false;
-});
-document.getElementById('sysUpdInstallBtn').addEventListener('click', sysStartUpdate);
-document.getElementById('sysBackupNowBtn').addEventListener('click', sysStartBackup);
-document.getElementById('sysBackupMore').addEventListener('click', () => { sysShowAll = !sysShowAll; sysRender(); });
-document.getElementById('sysBackupList').addEventListener('click', (e) => {
-  const b = e.target.closest('[data-sys-restore]');
-  if (b) sysOpenRestore(b.dataset.sysRestore);
-});
-document.getElementById('sysRestoreBack').addEventListener('click', () => sysShowView('main'));
-document.getElementById('sysRestoreCancel').addEventListener('click', () => sysShowView('main'));
-document.getElementById('sysRestoreConfirm').addEventListener('change', (e) => {
-  document.getElementById('sysRestoreGo').disabled = !e.target.checked;
-});
-document.getElementById('sysRestoreGo').addEventListener('click', sysStartRestore);
-document.getElementById('openSysMaintBtn').addEventListener('click', () => openSysMaint());
-document.getElementById('sysUpdateHintBtn').addEventListener('click', () => openSysMaint());
-document.getElementById('mainAdminSystemBtn').addEventListener('click', () => openSysMaint());
 
 /* ==========================================================
    Einstellungen & Konto: zwei gleich hohe Spalten (Querformat ab Tablet-Breite)
@@ -27145,27 +26731,28 @@ document.getElementById('mainAdminSystemBtn').addEventListener('click', () => op
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/geraete.js?v=1.65.0"></script>
-<script src="js/fehlerprotokoll.js?v=1.65.0"></script>
-<script src="js/versionslog.js?v=1.65.0"></script>
-<script src="js/einstellungen.js?v=1.65.0"></script>
-<script src="js/kalenderkonto.js?v=1.65.0"></script>
-<script src="js/finanzen.js?v=1.65.0"></script>
-<script src="js/kassen.js?v=1.65.0"></script>
-<script src="js/vorrat.js?v=1.65.0"></script>
-<script src="js/vorrat2.js?v=1.65.0"></script>
-<script src="js/sparen.js?v=1.65.0"></script>
-<script src="js/vertraege.js?v=1.65.0"></script>
-<script src="js/fahrzeuge.js?v=1.65.0"></script>
-<script src="js/zuhause.js?v=1.65.0"></script>
-<script src="js/dokumente.js?v=1.65.0"></script>
-<script src="js/pdflesen.js?v=1.65.0"></script>
-<script src="js/appstart.js?v=1.65.0"></script>
-<script src="js/pinnwand.js?v=1.65.0"></script>
-<script src="js/listen.js?v=1.65.0"></script>
-<script src="js/familie.js?v=1.65.0"></script>
-<script src="js/hinweise.js?v=1.65.0"></script>
-<script src="js/ausblick.js?v=1.65.0"></script>
+<script src="js/sicherungen.js?v=1.66.0"></script>
+<script src="js/geraete.js?v=1.66.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.66.0"></script>
+<script src="js/versionslog.js?v=1.66.0"></script>
+<script src="js/einstellungen.js?v=1.66.0"></script>
+<script src="js/kalenderkonto.js?v=1.66.0"></script>
+<script src="js/finanzen.js?v=1.66.0"></script>
+<script src="js/kassen.js?v=1.66.0"></script>
+<script src="js/vorrat.js?v=1.66.0"></script>
+<script src="js/vorrat2.js?v=1.66.0"></script>
+<script src="js/sparen.js?v=1.66.0"></script>
+<script src="js/vertraege.js?v=1.66.0"></script>
+<script src="js/fahrzeuge.js?v=1.66.0"></script>
+<script src="js/zuhause.js?v=1.66.0"></script>
+<script src="js/dokumente.js?v=1.66.0"></script>
+<script src="js/pdflesen.js?v=1.66.0"></script>
+<script src="js/appstart.js?v=1.66.0"></script>
+<script src="js/pinnwand.js?v=1.66.0"></script>
+<script src="js/listen.js?v=1.66.0"></script>
+<script src="js/familie.js?v=1.66.0"></script>
+<script src="js/hinweise.js?v=1.66.0"></script>
+<script src="js/ausblick.js?v=1.66.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)

@@ -11,6 +11,7 @@
 #       sichern           – Sicherung sofort
 #       wiederherstellen  – Sicherung zurückspielen (pinn. ist dafür etwa eine Minute weg)
 #       update            – neues GitHub-Release laden und mit pinn-setup.sh einspielen
+#                           (auch Vorabversionen mit Tags wie v1.67.0-beta.1, ab 1.66.0)
 #
 #  Ablage (im Projektordner):
 #     backups/pinn_JJJJ-MM-TT_HHMM[_art].tar.gz   die Sicherungen (nur für root lesbar)
@@ -315,7 +316,7 @@ job_wiederherstellen() {
 # ── Auftrag: Update ─────────────────────────────────────────
 job_update() {
   TAG="$AUFTRAG_TAG"
-  if ! echo "$TAG" | grep -qE '^v?[0-9]+(\.[0-9]+){1,3}$'; then status fehler start tag; return; fi
+  if ! echo "$TAG" | grep -qE '^v?[0-9]+(\.[0-9]+){1,3}(-[0-9A-Za-z][0-9A-Za-z.]*)?$'; then status fehler start tag; return; fi
   AUFTRAG_VERSION=$(echo "$TAG" | sed 's/^v//')
   if ! docker_ok; then status fehler start docker; return; fi
   log "Update auf $AUFTRAG_VERSION ($REPO $TAG)"
