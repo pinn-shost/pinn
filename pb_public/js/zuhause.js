@@ -982,7 +982,11 @@ function hsDeleteKey(id) {
    home weather), in heat from 28 °C watering outdoors is needed twice as often. The garden year
    (pruning fruit trees, hedge, leaves …) runs via the maintenance plan as household tasks.
    Data: finance.homePlants { id, home, tpl, name, icon, place, rain, every, act: 'water'|'mow',
-   fertEvery, months: [from, to], last, lastFert, note, created } */
+   fertEvery, months: [from, to], last, lastFert, note, created,
+   smart: { start: action ID (button), auto: { action, time: 'HH:MM' } } }
+   Smart home (1.62): a robot mower or a watering valve can be linked – a start button at the row and an
+   automatic start at a time on the due day (pb_hooks/pinn-smarthome.js, same rain/heat rules as here).
+   What the server started comes back via /api/pinn/smart/status (pflanzen) and counts as watered/mowed. */
 function hsPlants(hid) { return hsArr('homePlants').filter(p => p.home === hid); }
 function hsWx() { try { return weatherDaily && Array.isArray(weatherDaily.days) && weatherDaily.days.length ? weatherDaily : null; } catch (e) { return null; } }
 function hsTodayWx() { const w = hsWx(); return w ? (w.days.find(d => d.date === finTodayIso()) || null) : null; }
@@ -1039,9 +1043,12 @@ function hsPlantRowHtml(p, rain) {
   if (!s.off && s.byRain) parts.push('🌧️ Regen am ' + vtFmt(s.byRain));
   else if (!s.off && s.last) parts.push('zuletzt ' + vtFmt(s.last));
   if (!s.off && s.hot) parts.push('☀️ Hitze');
+  if (!s.off && p.smart && p.smart.auto && hsPlantSmartHit(p.smart.auto.action)) parts.push('🤖 ' + p.smart.auto.time);
   const can = hsCanEdit();
   const btns = [];
   if (can && !s.off && s.fertDue) btns.push(`<button type="button" class="hs-water-btn fert" data-hsact="plant-fert" data-id="${hsEsc(p.id)}">🧪 Gedüngt</button>`);
+  const smartHit = p.smart && p.smart.start ? hsPlantSmartHit(p.smart.start) : null;
+  if (can && smartHit && !s.off) btns.push(`<button type="button" class="hs-water-btn hs-smart-btn" data-hsact="plant-smart" data-id="${hsEsc(p.id)}">${hsEsc(smartHit.device.icon)} ${hsEsc(smartHit.action.label)}</button>`);
   if (can && !s.off) btns.push(`<button type="button" class="hs-water-btn${s.due && !s.wateredToday ? '' : ' done'}" data-hsact="plant-water" data-id="${hsEsc(p.id)}">${s.wateredToday ? '✓ ' : ''}${mow ? '✂️ Gemäht' : '💧 Gegossen'}</button>`);
   return `
     <div class="hs-plant${!s.off && (s.due || s.fertDue) ? ' due' : ''}"${s.off ? ' style="opacity:.6"' : ''}>
@@ -1073,6 +1080,7 @@ function hsGardenTipHtml(rain) {
   return `<div class="hs-wx-tip flex flex-col gap-1">${tips.map(x => `<div>${hsEsc(x)}</div>`).join('')}</div>`;
 }
 function hsGardenHtml(h) {
+  hsSmartStatusRefresh(h);
   const rain = hsRainLog();
   const plants = hsPlants(h.id).map(p => ({ p, s: hsPlantState(p, rain) })).sort((a, b) =>
     (a.s.off ? 1 : 0) - (b.s.off ? 1 : 0)
@@ -1143,6 +1151,7 @@ function hsOpenPlantModal(id, tplId) {
       ${fzSel('hsgTo', 'bis', monthOpts, String(mo[1] || ''))}
     </div>
     ${fzIn('hsgNote', 'Notiz', d.note || '', { ph: 'optional, z. B. nur kalkarmes Wasser', max: 300 })}
+    ${hsPlantSmartHtml(d)}
     ${hsFooter('hsPlant', !!x)}`;
   hsOpenModal(html, body => {
     const ui = () => {
@@ -1152,6 +1161,8 @@ function hsOpenPlantModal(id, tplId) {
       document.getElementById('hsgFertWrap').classList.toggle('hidden', mow);
     };
     ['hsgPlace', 'hsgAct'].forEach(i => document.getElementById(i).addEventListener('change', ui));
+    const autoSel = document.getElementById('hsgSmartAuto');
+    if (autoSel) autoSel.addEventListener('change', () => document.getElementById('hsgSmartTimeWrap').classList.toggle('hidden', !autoSel.value));
     ui();
     hsWireFooter('hsPlant', hsSavePlant, () => hsDeletePlant(x.id));
   });
@@ -1174,6 +1185,7 @@ function hsSavePlant() {
     months: from && to ? [from, to] : null,
     last: vtIsIso(fzVal('hsgLast')) ? fzVal('hsgLast') : '', lastFert: (existing && existing.lastFert) || '',
     note: fzVal('hsgNote').slice(0, 300), created: (existing && existing.created) || finTodayIso(),
+    smart: hsPlantSmartValue(act),
   });
   hsCloseModal();
   hsAfterChange();
@@ -1200,6 +1212,117 @@ function hsPlantTick(id, fert) {
   }
   hsAfterChange();
   finShowToast(fert ? 'Gedüngt ✓' : (x.last === today ? 'Zurückgenommen.' : (x.act === 'mow' ? 'Gemäht ✓' : 'Gegossen ✓')));
+}
+
+/* ---------- Plants & smart home (1.62) ---------- */
+function hsPlantSmartHit(id) {
+  try { return id ? smartActionById(id) : null; } catch (e) { return null; }
+}
+function hsPlantSmartHtml(d) {
+  let all = [];
+  try { all = smartAllActions(); } catch (e) { all = []; }
+  if (!all.length) return '';
+  const sm = d.smart || {};
+  const auto = sm.auto || null;
+  const mow = d.act === 'mow';
+  const opts = (sel) => '<option value="">–</option>' + all.map(({ device, action }) =>
+    `<option value="${hsEsc(action.id)}"${action.id === sel ? ' selected' : ''}>${hsEsc(device.icon + ' ' + device.name + ': ' + action.label)}</option>`).join('');
+  const time = auto && /^\d{2}:\d{2}$/.test(auto.time || '') ? auto.time : (mow ? '10:00' : '06:00');
+  return `
+    <div class="fz-h mt-2">🤖 Smarthome</div>
+    <div class="fz-field"><label class="fz-lbl" for="hsgSmartStart">Start-Knopf</label><select id="hsgSmartStart" class="fz-in">${opts(sm.start || '')}</select></div>
+    <div class="fz-field"><label class="fz-lbl" for="hsgSmartAuto">Automatisch starten, wenn fällig</label>
+      <div class="flex items-center gap-2"><select id="hsgSmartAuto" class="fz-in flex-1">${opts(auto ? auto.action : '')}</select>
+      <span id="hsgSmartTimeWrap" class="${auto ? '' : 'hidden'} shrink-0"><input id="hsgSmartTime" type="time" value="${hsEsc(time)}" class="fz-in" style="width:7.5rem" aria-label="Uhrzeit" /></span></div></div>
+    <p class="text-[11px] text-ink/45 -mt-1 mb-3">Z. B. Mähroboter oder Bewässerungsventil aus Einstellungen → Smarthome. Die Automatik läuft über Home Assistant, nur am Fälligkeitstag – nach Regen wird nicht gegossen, bei Regen nicht gemäht.</p>`;
+}
+function hsPlantSmartValue(act) {
+  const start = document.getElementById('hsgSmartStart');
+  const auto = document.getElementById('hsgSmartAuto');
+  if (!start || !auto) return undefined;
+  const out = {};
+  if (start.value && hsPlantSmartHit(start.value)) out.start = start.value;
+  if (auto.value && hsPlantSmartHit(auto.value)) {
+    const t = (document.getElementById('hsgSmartTime') || {}).value || '';
+    out.auto = { action: auto.value, time: /^\d{2}:\d{2}$/.test(t) ? t : (act === 'mow' ? '10:00' : '06:00') };
+  }
+  return out.start || out.auto ? out : undefined;
+}
+// Button at the plant: start the device; afterwards the plant counts as watered/mowed today
+async function hsPlantSmartRun(id) {
+  if (!hsCanEdit()) return;
+  const p = hsArr('homePlants').find(x => x.id === id);
+  const hit = p && p.smart ? hsPlantSmartHit(p.smart.start) : null;
+  if (!hit || !smartCanRun(hit, false)) return;
+  const done = () => {
+    const today = finTodayIso();
+    const cur = hsArr('homePlants').find(x => x.id === id);
+    if (cur && cur.last !== today) hsUpsert('homePlants', { ...cur, prevLast: cur.last || '', last: today });
+    hsAfterChange();
+  };
+  if (smartSystem(hit.device) === 'ha') {
+    try {
+      const res = await apiFetch('/api/pinn/smart/ha/ausfuehren', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plantId: id, actionId: hit.action.id, art: 'start' }),
+      });
+      const r = await res.json().catch(() => ({}));
+      if (!res.ok || r.error) throw new Error(r.error || 'Server antwortet nicht.');
+      if (r.eingereiht) {
+        showSmartBar({ title: `${hit.device.icon} ${hit.action.label} eingereiht`, text: `${hit.device.name} ist noch beschäftigt – startet automatisch direkt im Anschluss.`, ms: 8000 });
+        return;
+      }
+      done();
+      finShowToast(`${hit.device.icon} ${hit.action.label} gestartet ✓`);
+    } catch (err) {
+      alert('Home Assistant: ' + err.message);
+    }
+    return;
+  }
+  done();
+  runSmartShortcut(hit.action, p.name || '');
+}
+// Plants watered/mowed automatically by the server (from /api/pinn/smart/status)
+function hsSmartMergePlants(st) {
+  const map = st && st.pflanzen && typeof st.pflanzen === 'object' ? st.pflanzen : null;
+  if (!map) return;
+  const today = finTodayIso();
+  let changed = false;
+  hsArr('homePlants').forEach(p => {
+    const d = map[p.id];
+    if (!vtIsIso(d) || d > today || (vtIsIso(p.last) && p.last >= d)) return;
+    hsUpsert('homePlants', { ...p, prevLast: p.last || '', last: d });
+    changed = true;
+  });
+  if (changed) hsAfterChange();
+}
+// Remove links to deleted smart home actions
+function hsStripSmartRefs() {
+  let changed = false;
+  const list = hsArr('homePlants').map(p => {
+    if (!p.smart) return p;
+    const start = hsPlantSmartHit(p.smart.start) ? p.smart.start : '';
+    const auto = p.smart.auto && hsPlantSmartHit(p.smart.auto.action) ? p.smart.auto : null;
+    if (start === (p.smart.start || '') && auto === (p.smart.auto || null)) return p;
+    changed = true;
+    const smart = {};
+    if (start) smart.start = start;
+    if (auto) smart.auto = auto;
+    const c = { ...p };
+    if (smart.start || smart.auto) c.smart = smart; else delete c.smart;
+    return c;
+  });
+  if (changed) hsSet('homePlants', list);
+}
+// Fetch what the server started (at most every 5 minutes, only with linked plants)
+let hsSmartStatusAt = 0;
+function hsSmartStatusRefresh(h) {
+  if (Date.now() - hsSmartStatusAt < 5 * 60 * 1000) return;
+  let has = false;
+  try { has = smartDevices.length > 0 && hsPlants(h.id).some(p => p.smart); } catch (e) { has = false; }
+  if (!has) return;
+  hsSmartStatusAt = Date.now();
+  setTimeout(() => { try { loadSmartStatus(); } catch (e) { /* ignore */ } }, 0);
 }
 
 /* ---------- Overview ---------- */
@@ -1317,7 +1440,7 @@ function hsOverviewHtml(h) {
     tiles.push(fzTile('Kaution', dep > 0 ? fmtEur(dep) : '–', dep > 0 ? (vtIsIso(h.rent.depositBack) ? 'zurück am ' + vtFmt(h.rent.depositBack) : (vtIsIso(h.rent.depositPaid) ? 'gezahlt am ' + vtFmt(h.rent.depositPaid) : 'Zahlung eintragen')) : ''));
   }
   }
-  const tilesHtml = `<div class="grid grid-cols-2 gap-2">${tiles.join('')}</div>`;
+  const tilesHtml = `<div class="vt-tiles">${tiles.join('')}</div>`; // 1.62: wraps instead of overflowing on small phones
 
   // Contract
   const rows = [];
@@ -1862,7 +1985,7 @@ function hsOpenHomeModal(id, modePreset) {
     <div class="fz-h mt-2" data-sec="eigentum vermietet">📜 Kauf &amp; Finanzierung</div>
     <div data-sec="eigentum vermietet">
       <div class="fz-grid2">${fzIn('hsBuyDate', 'Kaufdatum', o.date || '', { type: 'date' })}${fzIn('hsPrice', 'Kaufpreis', eur(o.price), { mode: 'decimal', unit: curSym() })}</div>
-      <div class="fz-grid3">${fzIn('hsLandTax', 'Grunderwerbsteuer', eur(o.landTax), { mode: 'decimal', unit: curSym() })}${fzIn('hsNotary', 'Notar & Grundbuch', eur(o.notary), { mode: 'decimal', unit: curSym() })}${fzIn('hsBroker', 'Makler', eur(o.broker), { mode: 'decimal', unit: curSym() })}</div>
+      <div class="fz-grid3 hs-buycosts">${fzIn('hsLandTax', 'Grunderwerbsteuer', eur(o.landTax), { mode: 'decimal', unit: curSym() })}${fzIn('hsNotary', 'Notar & Grundbuch', eur(o.notary), { mode: 'decimal', unit: curSym() })}${fzIn('hsBroker', 'Makler', eur(o.broker), { mode: 'decimal', unit: curSym() })}</div>
       <div class="fz-grid2">${fzIn('hsLoanBank', 'Bank', l.bank || '', { max: 80 })}${fzIn('hsLoanAmount', 'Darlehen', eur(l.amount), { mode: 'decimal', unit: curSym() })}</div>
       <div class="fz-grid3">${fzIn('hsLoanRate', 'Zins', Number(l.rate) > 0 ? hsDecInput(l.rate, 2) : '', { mode: 'decimal', unit: '%' })}${fzIn('hsLoanRepay', 'Tilgung', Number(l.repay) > 0 ? hsDecInput(l.repay, 2) : '', { mode: 'decimal', unit: '%' })}${fzIn('hsLoanMonthly', 'Rate', eur(l.monthly), { mode: 'decimal', unit: curSym(), ph: 'leer = berechnet' })}</div>
       <div class="fz-grid2">${fzIn('hsLoanStart', 'Kredit seit', l.start || '', { type: 'date' })}${fzIn('hsLoanFix', 'Zinsbindung bis', l.fixedUntil || '', { type: 'date' })}</div>
@@ -2878,6 +3001,7 @@ document.addEventListener('click', (e) => {
     case 'plant-tpl': hsOpenPlantModal(null, el.dataset.tpl); break;
     case 'plant-edit': if (hsCanEdit()) hsOpenPlantModal(id); break;
     case 'plant-water': hsPlantTick(id, false); break;
+    case 'plant-smart': hsPlantSmartRun(id); break;
     case 'plant-fert': hsPlantTick(id, true); break;
     case 'contract': openContractDetail(id); break;
     case 'contract-assign': hsOpenContractAssign(); break;

@@ -587,7 +587,7 @@ window.PINN_LANGUAGES = [
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
   // Versionsnummer bei jeder Änderung an den Sprachdateien erhöhen, sonst nutzen Geräte die alte Datei weiter
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.61.2" onerror="PINN_I18N.fail()"><\/script>');
+  if (DICT) document.write('<script src="' + lang.file + '?v=1.62.0" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // Deutsch als WG: kein Wörterbuch, nur die WG-Bezeichnungen
 })();
 </script>
@@ -2002,6 +2002,23 @@ window.PINN_LANGUAGES = [
   .vt-row > span:first-child { color: rgba(37,35,31,0.55); flex-shrink: 0; }
   .vt-row > span:last-child { text-align: right; min-width: 0; overflow-wrap: anywhere; }
   html.dark .vt-row { border-bottom-color: rgba(255,255,255,0.1); }
+  /* 1.62: long labels may wrap, amounts stay in one line (contract costs on the phone) */
+  .vt-row > span:first-child { flex: 1 1 auto; min-width: 0; overflow-wrap: break-word; }
+  .vt-row > span:last-child { flex: 0 1 auto; min-width: 6.5em; max-width: 62%; overflow-wrap: break-word; }
+  .vt-amt { white-space: nowrap; }
+  .vt-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr)); gap: 0.5rem; }
+  .vt-tile-v { font-size: 1rem; font-weight: 600; line-height: 1.2; margin-top: 2px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  /* 1.62: labels in two/three columns wrap instead of running into the next field */
+  .fz-grid2 .fz-lbl, .fz-grid3 .fz-lbl { overflow-wrap: break-word; hyphens: auto; }
+  .hs-buycosts { align-items: end; }
+  @media (max-width: 560px) {
+    .hs-buycosts { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
+    .hs-buycosts > :first-child { grid-column: 1 / -1; }
+  }
+  /* 1.62: links in the event popup (packing list, holiday weather) */
+  .ev-link-btn { padding: 5px 10px; border-radius: 9999px; font-size: 12px; border: 1px solid rgba(37,35,31,0.15); background: #fff; color: var(--c-pine); }
+  html.dark .ev-link-btn { background: transparent; border-color: rgba(255,255,255,0.2); }
+  .hs-smart-btn { white-space: nowrap; }
   html.dark .vt-row > span:first-child { color: rgba(237,234,226,0.55); }
   .vt-info { font-size: 0.75rem; line-height: 1.45; padding: 8px 10px; border-radius: 10px; background: color-mix(in srgb, var(--c-pine) 8%, transparent); color: var(--c-pine); }
   .vt-info:empty { display: none; }
@@ -8487,6 +8504,7 @@ window.PINN_LANGUAGES = [
   <div id="eventDetailLocation" class="text-xs text-ink/70 mb-1"></div>
   <div id="eventDetailCalName" class="text-xs text-ink/50 mb-1"></div>
   <div id="eventDetailDescription" class="text-xs text-ink/70 whitespace-pre-line mb-2"></div>
+  <div id="eventDetailLinks" class="hidden flex flex-wrap gap-1.5 mb-2"></div>
   <a id="eventDetailCalendarLink" href="#" class="inline-block text-xs text-pine hover:underline font-medium">📅 In der Kalender-App anzeigen</a>
   <div class="mt-2 pt-2 border-t border-ink/10 flex items-center gap-3">
     <button id="eventDetailEditBtn" class="text-xs text-pine hover:underline font-medium">Bearbeiten</button>
@@ -14502,7 +14520,9 @@ function calendarLabel(name) {
 function calendarCount() { return appleCalendar.selectedCalendars.length + pinnCals.length; }
 // Schulferien, Müllabfuhr, Schule & Kita (Systemkalender): kleiner dargestellt und immer ganz oben
 function isMinorCalEvent(ev) { return !!(ev && (ev.pinnHoliday === 'ferien' || ev.pinnHoliday === 'muell' || ev.pinnHoliday === 'schule')); }
-function minorSortWeight(a, b) { return (isMinorCalEvent(b) ? 1 : 0) - (isMinorCalEvent(a) ? 1 : 0); }
+// 1.62: trips (packing lists with destination and period) also stand at the very top, in normal size
+function calTopRank(ev) { return isMinorCalEvent(ev) || (ev && ev.pinnHoliday === 'urlaub') ? 1 : 0; }
+function minorSortWeight(a, b) { return calTopRank(b) - calTopRank(a); }
 // Startzeit in Minuten (-1 = ganztägig). Robust gegen Schreibweisen wie „9:05“, „09:05“ oder „0905“.
 function calEventStartMin(ev) {
   if (!ev || ev.fullDayFiller || !ev.time) return -1;
@@ -14532,6 +14552,7 @@ function calListCompare(a, b) {
 function colorForCalendarEvent(ev) {
   if (ev && ev.pinnHoliday === 'muell') return ev.pinnColor || '#7A6F5A'; // Müllkalender (Farbe je Müllart)
   if (ev && ev.pinnHoliday === 'schule') return ev.pinnColor || '#8E5BB5'; // Schule & Kita (Farbe des Kindes)
+  if (ev && ev.pinnHoliday === 'urlaub') return ev.pinnColor || '#D9822B'; // trip (packing list, 1.62)
   if (ev && ev.pinnHoliday) return ev.pinnHoliday === 'ferien' ? '#2E9C7A' : '#C0392B'; // Schulferien / Feiertage (Zuhause)
   const pc = ev && pinnCalByName(ev.pinnCalName); // eigener Kalender
   if (pc) return pc.farbe || ICS_EVENT_COLOR;
@@ -14838,7 +14859,7 @@ function attachLongPress(el, getEvent) {
 function outsidePopoverPointerDown(e) {
   // Der Kalender-Link und der Löschen-Button sollen den Tipp auslösen dürfen, statt dass das
   // Popover sich vorher schließt und den Klick "verschluckt".
-  if (e.target.closest('#eventDetailCalendarLink') || e.target.closest('#eventDetailDeleteBtn') || e.target.closest('#eventDetailEditBtn')) return;
+  if (e.target.closest('#eventDetailCalendarLink') || e.target.closest('#eventDetailDeleteBtn') || e.target.closest('#eventDetailEditBtn') || e.target.closest('#eventDetailLinks')) return;
   document.removeEventListener('pointerdown', outsidePopoverPointerDown, true);
   closeEventDetail();
 }
@@ -14899,9 +14920,10 @@ function showEventDetail(ev, anchorEl) {
   // Feiertage und Schulferien (aus dem Bundesland unter Einstellungen → Zuhause) sind nur zum Lesen
   const isHoliday = !!ev.pinnHoliday;
   if (isHoliday) {
-    calNameEl.textContent = ev.pinnHoliday === 'muell' ? '🗑️ Müllabfuhr' : ev.pinnHoliday === 'ferien' ? '🎒 Schulferien' : ev.pinnHoliday === 'schule' ? '🏫 Schule & Kita' : '🎉 Feiertag';
+    calNameEl.textContent = ev.pinnHoliday === 'muell' ? '🗑️ Müllabfuhr' : ev.pinnHoliday === 'ferien' ? '🎒 Schulferien' : ev.pinnHoliday === 'schule' ? '🏫 Schule & Kita' : ev.pinnHoliday === 'urlaub' ? '🧳 Urlaub' : '🎉 Feiertag';
     calNameEl.classList.remove('hidden');
   }
+  renderEventDetailLinks(ev);
   const linkedApple = !!(pinnCalByName(ev.pinnCalName) && pinnCalByName(ev.pinnCalName).quelle === 'apple');
   document.getElementById('eventDetailCalendarLink').classList.toggle('hidden', isHoliday || (isPinnCalName(ev.pinnCalName) && !linkedApple)); // eigene Kalender gibt es in Apples Kalender-App nur, wenn sie mit iCloud verknüpft sind
   const editBtn = document.getElementById('eventDetailEditBtn');
@@ -14924,6 +14946,35 @@ function showEventDetail(ev, anchorEl) {
   requestAnimationFrame(() => popover.classList.add('open'));
 }
 
+// Links in the event popup (1.62): trip → packing list and holiday weather; appointments that sound
+// like a trip → open the packing list or create one with name and period already filled in
+function renderEventDetailLinks(ev) {
+  const box = document.getElementById('eventDetailLinks');
+  if (!box) return;
+  const links = [];
+  const canLists = isViewAllowed('einkauf') && !isCurrentUserGuest();
+  if (ev.pinnHoliday === 'urlaub' && ev.pinnTripList) {
+    if (canLists) links.push(['list', '🧳 Packliste', ev.pinnTripList]);
+    links.push(['wx', '🌤️ Urlaubswetter', ev.pinnTripList]);
+  } else if (!ev.pinnHoliday && canLists && calTravelKind(ev.title)) {
+    const r = calEventRange(ev);
+    const have = calPackListForRange(r.from, r.to);
+    if (have) links.push(['list', '🧳 Packliste', have.id]);
+    else links.push(['new', '🧳 Packliste anlegen', '']);
+  }
+  box.innerHTML = links.map(([k, label, id]) => `<button type="button" class="ev-link-btn" data-evlink="${k}" data-id="${escapeHtml(id)}">${escapeHtml(label)}</button>`).join('');
+  box.classList.toggle('hidden', !links.length);
+  box.querySelectorAll('[data-evlink]').forEach(b => b.addEventListener('click', () => {
+    const k = b.dataset.evlink, id = b.dataset.id;
+    closeEventDetail();
+    if (k === 'list') { setView('einkauf'); lsOpenList(id); }
+    else if (k === 'wx') wxOpen(id);
+    else if (k === 'new') {
+      const r = calEventRange(ev);
+      lsStartPackFromEvent({ titel: ev.title, von: r.from, bis: r.to, ort: ev.location || '', art: calTravelKind(ev.title) });
+    }
+  }));
+}
 function closeEventDetail() {
   const popover = document.getElementById('eventDetailPopover');
   popover.classList.remove('open');
@@ -22366,9 +22417,66 @@ function pendingEventsFromPayload(payload, uid, href) {
 }
 
 // Serverstand + noch ausstehende eigene Aktionen = angezeigte Termine
+/* ---------- Trips in the calendar (1.62) ----------
+   Packing lists with destination and period appear as all-day entries ("Urlaub") on every day of the
+   trip – read-only. Tap opens the packing list, long press shows the links (packing list, holiday weather). */
+let tripCalSig = '';
+let tripCalList = [];
+function tripCalendarEvents() {
+  let lists = [];
+  try { lists = (familyLists || []).filter(l => l && l.type === 'pack' && lsVisible(l) && tripValid(l)); } catch (e) { return []; }
+  const sig = lists.map(l => [l.id, l.trip.from, tripTo(l), l.name, l.icon, l.trip.place.titel].join('~')).join('|');
+  if (sig === tripCalSig) return tripCalList;
+  const out = [];
+  lists.forEach(l => {
+    const to = tripTo(l);
+    const title = (l.icon || '🧳') + ' ' + (l.name || tripName(l));
+    const where = [l.trip.place.titel, l.trip.place.zusatz].filter(Boolean).join(', ');
+    let d = l.trip.from, guard = 0;
+    while (d <= to && guard++ < 60) {
+      out.push({
+        id: 'pinn-trip-' + l.id + '-' + d, date: d, time: '', endTime: null, title, memberId: null, location: where,
+        description: hcFmtDate(l.trip.from) + ' – ' + hcFmtDate(to), fullDayFiller: false, pinnHref: '', pinnCalName: '',
+        isRecurring: false, pinnHoliday: 'urlaub', pinnTripList: l.id,
+      });
+      d = addDaysToDateStr(d, 1);
+    }
+  });
+  tripCalSig = sig;
+  tripCalList = out;
+  return out;
+}
+// After changing a packing list: show the trip in the calendar right away
+function refreshTripCalendar() { try { rebuildEvents(); renderCalendar(); } catch (e) { /* calendar not built yet */ } }
+// Client copy of pb_hooks/pinn-packliste.js#travelKind: does the title sound like a trip?
+function calTravelKind(title) {
+  const t = ' ' + String(title || '').toLowerCase() + ' ';
+  if (/(bank holiday|public holiday|feiertag|urlaubsantrag|urlaubsplanung)/.test(t)) return '';
+  if (/(dienstreise|geschäftsreise|geschaeftsreise|business trip|viaje de negocios|déplacement|deplacement|voyage d'affaires)/.test(t)) return 'geschaeftsreise';
+  const words = t.match(/[a-zäöüßéèêàâçñáíóúû]+/g) || [];
+  const not = ['preise', 'preisen', 'kreise', 'kreisen', 'greise', 'reisebüro', 'reisekosten', 'reisekostenabrechnung'];
+  const travel = ['kurztrip', 'städtetrip', 'staedtetrip', 'wochenendtrip', 'klassenfahrt', 'kreuzfahrt', 'roadtrip', 'vacation', 'vacations', 'holiday', 'holidays', 'trip', 'travel', 'journey', 'cruise', 'vacances', 'voyage', 'séjour', 'sejour', 'congés', 'conges', 'croisière', 'croisiere', 'vacaciones', 'viaje', 'escapada', 'crucero'];
+  const hit = words.some(w => !not.includes(w) && (w.includes('urlaub') || /reisen?$/.test(w) || travel.includes(w)));
+  return hit || /ferien (in|auf|am|an|bei|im)\b/.test(t) ? 'urlaub' : '';
+}
+// First and last day of a (multi-day) appointment from its single days
+function calEventRange(ev) {
+  let from = ev.date, to = ev.date;
+  (events || []).forEach(e => {
+    if (e === ev || e.title !== ev.title || (e.pinnHref || '') !== (ev.pinnHref || '') || !e.date) return;
+    if (Math.abs(daysBetweenDateStrs(ev.date, e.date)) > 21) return;
+    if (e.date < from) from = e.date;
+    if (e.date > to) to = e.date;
+  });
+  return { from, to };
+}
+function calPackListForRange(from, to) {
+  try { return (familyLists || []).find(l => l && l.type === 'pack' && lsVisible(l) && (() => { const f = (l.trip && l.trip.from) || l.date || ''; return f && f >= addDaysToDateStr(from, -3) && f <= to; })()) || null; } catch (e) { return null; }
+}
 function rebuildEvents() {
   let school = [];
   try { school = schoolCalendarEvents(); } catch (e) { school = []; }
+  try { school = school.concat(tripCalendarEvents()); } catch (e) { /* lists not loaded yet */ }
   const extra = homeCalendarEvents().concat(muellCalendarEvents(), school); // Feiertage & Schulferien (Zuhause), Müllkalender, Schule & Kita
   const ops = outboxRead().filter(op => op.kind === 'event-create' || op.kind === 'event-update' || op.kind === 'event-delete');
   if (!ops.length) { events = extra.length ? eventsServer.concat(extra) : eventsServer; return; }
@@ -23577,12 +23685,15 @@ document.getElementById('deleteHouseholdTasksBtn_kalender').addEventListener('cl
    ========================================================== */
 const SMART_DEVICE_TYPES = [
   { id: 'sauger', label: 'Saugroboter', icon: '🤖', actions: ['Saugen', 'Wischen', 'Saugen & Wischen'] },
+  { id: 'maeher', label: 'Mähroboter', icon: '🌱', actions: ['Mähen', 'Zur Station'] },
+  { id: 'bewaesserung', label: 'Bewässerung', icon: '💦', actions: ['Gießen'] },
+  { id: 'futter', label: 'Futterautomat', icon: '🍽️', actions: ['Füttern'] },
   { id: 'licht', label: 'Licht / LED', icon: '💡', actions: ['Erinnerung an', 'Aus'] },
   { id: 'steckdose', label: 'Steckdose', icon: '🔌', actions: ['Ein', 'Aus'] },
   { id: 'lautsprecher', label: 'Lautsprecher', icon: '🔊', actions: ['Ansage'] },
   { id: 'sonstiges', label: 'Sonstiges', icon: '⚙️', actions: ['Starten'] },
 ];
-const SMART_ICONS = ['🤖', '🧽', '💡', '🌈', '🔌', '🔊', '🌀', '🪟', '🧺', '🍽️', '🌡️', '⚙️'];
+const SMART_ICONS = ['🤖', '🧽', '🌱', '💦', '💡', '🌈', '🔌', '🔊', '🌀', '🪟', '🧺', '🍽️', '🌡️', '⚙️'];
 const SMART_SYSTEMS = [
   { id: 'shortcut', label: 'Apple Kurzbefehle', short: 'Apple' },
   { id: 'ha', label: 'Home Assistant', short: 'Home Assistant' },
@@ -23672,8 +23783,17 @@ function normalizeSmartHa(h) {
     fan: String(h.fan || '').slice(0, 40), water: String(h.water || '').slice(0, 40), mopMode: String(h.mopMode || '').slice(0, 40),
     waterEntity: String(h.waterEntity || ''), mopModeEntity: String(h.mopModeEntity || ''),
     repeat: Math.min(3, Math.max(1, parseInt(h.repeat, 10) || 1)),
+    offAfter: !!h.offAfter, // 1.62: switch off again after the duration (watering)
   };
 }
+// Service that switches an action off again (watering: close the valve) – same as the server
+function smartOffServiceFor(svc) {
+  if (svc === 'valve.open_valve') return 'valve.close_valve';
+  const m = /^(switch|light|fan|input_boolean|humidifier|siren)\.turn_on$/.exec(String(svc || ''));
+  return m ? m[1] + '.turn_off' : '';
+}
+// Mower (1.62): default service from the action name
+function smartMowerService(label) { return /station|dock|basis|base|parken|park|zur[üu]ck/i.test(String(label || '')) ? 'lawn_mower.dock' : 'lawn_mower.start_mowing'; }
 function normalizeSmartDevices(list) {
   if (!Array.isArray(list)) return [];
   return list.filter(d => d && d.id && d.name).map(d => ({
@@ -23839,7 +23959,7 @@ async function runSmartActionForTask(task, hit) {
       if (r.eingereiht) {
         showSmartBar({
           title: `${hit.device.icon} ${hit.action.label} eingereiht`,
-          text: `${hit.device.name} ist noch beschäftigt${r.belegtMit ? ' (' + r.belegtMit + ')' : ''} – startet automatisch, sobald es fertig ist${r.ab ? ', frühestens ' + r.ab + ' Uhr' : ''}.`,
+          text: `${hit.device.name} ist noch beschäftigt${r.belegtMit ? ' (' + r.belegtMit + ')' : ''} – startet automatisch direkt im Anschluss${r.ab ? ', frühestens ' + r.ab + ' Uhr' : ''}.`,
           ms: 8000,
         });
       } else {
@@ -23981,6 +24101,7 @@ function refreshOpenSmartPicker() {
 }
 // Verweise auf gelöschte Aktionen aus Reinigungen und Mülleimern entfernen
 function stripSmartRefs() {
+  try { if (typeof hsStripSmartRefs === 'function') hsStripSmartRefs(); } catch (e) { /* ignore */ }
   [...roomSchedules, ...trashBins].forEach(r => {
     if (!r.smart) return;
     const auto = r.smart.auto && smartActionById(r.smart.auto.action) ? r.smart.auto : null;
@@ -24001,6 +24122,7 @@ async function loadSmartStatus() {
   } catch (e) {
     smartStatus = { aktiv: false, ha: { verbunden: false }, offline: true };
   }
+  try { if (typeof hsSmartMergePlants === 'function') hsSmartMergePlants(smartStatus); } catch (e) { /* ignore */ }
   return smartStatus;
 }
 function smartServerProblemHtml(st) {
@@ -24491,6 +24613,8 @@ function smartReadActionInputs() {
     const colorOn = row.querySelector('[data-field="colorOn"]');
     if (colorOn) a.ha.color = colorOn.checked ? (val('color') || '#ff0000') : '';
     if (val('brightness') !== null) a.ha.brightness = Math.min(100, smartMinutes(val('brightness')));
+    const offEl = row.querySelector('[data-field="offAfter"]');
+    if (offEl) a.ha.offAfter = offEl.checked;
     if (val('fan') !== null) a.ha.fan = val('fan');
     if (val('water') !== null) a.ha.water = val('water');
     if (val('mopMode') !== null) a.ha.mopMode = val('mopMode');
@@ -24529,10 +24653,12 @@ function smartDefaultActions(typeId, system) {
 function smartNewAction(label, typeId, system) {
   const ha = normalizeSmartHa(null);
   if (typeId === 'sauger' && system === 'ha') { ha.kind = 'segments'; ha.mode = smartVacModeOf(label); }
-  return { id: smartNewId('sa'), label: label || '', shortcut: '', minutes: 0, ha };
+  if (typeId === 'bewaesserung') ha.offAfter = true;
+  return { id: smartNewId('sa'), label: label || '', shortcut: '', minutes: typeId === 'bewaesserung' ? 15 : 0, ha };
 }
 function smartActionsConfigured() {
-  return smartEditActions.some(a => a.shortcut || (a.ha && a.ha.entity));
+  // Mower defaults filled in automatically (1.62) do not count as "set up by hand"
+  return smartEditActions.some(a => a.shortcut || (a.ha && a.ha.entity && !(a.ha.entity === smartEditStatusEntity && /^lawn_mower\./.test(a.ha.service || ''))));
 }
 function renderSmartSystemPicker() {
   const wrap = document.getElementById('smartDeviceSystemPicker');
@@ -24557,10 +24683,13 @@ function renderSmartTypePicker() {
     const prevType = SMART_DEVICE_TYPES.find(t => t.id === smartEditType);
     const type = SMART_DEVICE_TYPES.find(t => t.id === btn.dataset.type);
     smartEditType = type.id;
+    const notSetUp = !smartActionsConfigured();
+    // 1.62: a robot (vacuum/mower) as status only fits its own device type
+    if (/^(vacuum|lawn_mower)\./.test(smartEditStatusEntity) && !['sauger', 'maeher'].includes(type.id)) smartEditStatusEntity = '';
     // Symbol mitwechseln, solange es noch das Standard-Symbol der vorigen Art ist
     if (!prevType || smartEditIcon === prevType.icon) smartEditIcon = type.icon;
     // Aktionen vorschlagen, solange noch nichts eingerichtet ist
-    if (!smartActionsConfigured()) smartEditActions = smartDefaultActions(type.id, smartEditSystem);
+    if (notSetUp) smartEditActions = smartDefaultActions(type.id, smartEditSystem);
     const nameInput = document.getElementById('smartDeviceName');
     if (!nameInput.value.trim() || SMART_DEVICE_TYPES.some(t => t.label === nameInput.value.trim() || i18nT(t.label) === nameInput.value.trim())) nameInput.value = i18nT(type.label);
     renderSmartTypePicker();
@@ -24680,6 +24809,7 @@ function smartHaGenericHtml(a) {
       <input data-field="brightness" type="number" inputmode="numeric" min="0" max="100" value="${ha.brightness || ''}" placeholder="%" class="w-16 rounded-lg border border-ink/15 px-2 py-1 text-base" aria-label="Helligkeit in Prozent" />
       <span>Helligkeit</span>
     </div>` : ''}
+    ${smartOffServiceFor(service) ? `<label class="flex items-center gap-2 mt-1.5 text-xs text-ink/60 cursor-pointer"><input data-field="offAfter" type="checkbox" class="w-4 h-4" ${ha.offAfter ? 'checked' : ''} /> <span>Nach der Dauer (Min.) wieder ausschalten</span></label>` : ''}
     <details class="mt-1.5"${ha.dataText ? ' open' : ''}>
       <summary class="text-[11px] text-ink/40 cursor-pointer">Erweitert: Zusatzdaten (JSON)</summary>
       <textarea data-field="dataText" rows="2" spellcheck="false" autocapitalize="off" placeholder='z. B. {"variables": {"modus": "wischen"}}' class="w-full mt-1 rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm font-mono">${escapeHtml(ha.dataText || '')}</textarea>
@@ -24701,6 +24831,21 @@ function renderSmartActionEditor() {
       <select id="smartDeviceStatusEntity" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white mb-1">${haEntityOptions(smartEditStatusEntity, ['vacuum']).replace('– Entität wählen –', '– Saugroboter wählen –')}</select>
       <p class="text-[11px] text-ink/40 mb-2">Räume kommen aus der Karte des Roboters. Solange er reinigt oder zurückfährt, warten weitere Aktionen.</p>
       <div class="mb-4">${smartVacInfoHtml()}</div>`;
+  } else if (smartEditSystem === 'ha' && smartEditType === 'maeher') {
+    // Mower (1.62): the mower entity is the status as well – a single one is taken right away
+    if (!smartEditStatusEntity && smartHaEntities) {
+      const mowers = smartHaEntities.filter(e => e.domain === 'lawn_mower');
+      if (mowers.length === 1) smartEditStatusEntity = mowers[0].id;
+    }
+    if (/^lawn_mower\./.test(smartEditStatusEntity)) smartEditActions.forEach(a => {
+      if (!a.ha) a.ha = normalizeSmartHa(null);
+      if (!a.ha.entity) { a.ha.entity = smartEditStatusEntity; a.ha.service = smartMowerService(a.label); }
+    });
+    statusWrap.classList.remove('hidden');
+    statusWrap.innerHTML = `
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="smartDeviceStatusEntity">Mähroboter</label>
+      <select id="smartDeviceStatusEntity" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white mb-1">${haEntityOptions(smartEditStatusEntity, ['lawn_mower']).replace('– Entität wählen –', '– Mähroboter wählen –')}</select>
+      <p class="text-[11px] text-ink/40 mb-4">Solange er mäht, warten weitere Aufträge – sie starten, sobald er zurückfährt. Verknüpfen unter Zuhause → Garten beim Rasen.</p>`;
   } else if (smartEditSystem === 'ha') {
     statusWrap.classList.remove('hidden');
     statusWrap.innerHTML = `
@@ -25761,6 +25906,7 @@ function parseRawEventForEdit(icsText) {
 }
 
 async function openEditEventModal(ev) {
+  if (ev && ev.pinnHoliday === 'urlaub' && ev.pinnTripList) { setView('einkauf'); lsOpenList(ev.pinnTripList); return; } // trip: tap opens the packing list
   if (ev && ev.pinnHoliday) return; // Feiertage/Schulferien/Müllabfuhr lassen sich nicht bearbeiten
   if (!ev || !ev.pinnHref) {
     alert('Dieser Termin kann nicht bearbeitet werden (keine Kalender-Adresse bekannt).');
@@ -26374,7 +26520,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.61.2';
+const APP_VERSION = '1.62.0';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -27332,6 +27478,17 @@ document.getElementById('checkUpdateBtn').addEventListener('click', async () => 
    - rueckblick: true = Einträge vor dem Versions-Log, aus der Projekthistorie zusammengefasst.
    ========================================================== */
 const PINN_CHANGELOG = [
+  {
+    v: '1.62', datum: '16.10.2026', titel: 'Smarthome im Garten, Futterautomat & Urlaub im Kalender',
+    punkte: [
+      ['neu', 'Smarthome: neue Gerätearten Mähroboter, Bewässerung und Futterautomat (Home Assistant). Unter Zuhause → Garten lassen sich Rasen und Pflanzen mit einem Gerät verknüpfen: Start-Knopf (z. B. Extra-Mähzeit) und Automatik zur Uhrzeit – bei Regen wird nicht gegossen und nicht gemäht, die Bewässerung schaltet nach der eingestellten Dauer selbst ab'],
+      ['neu', 'Haustiere: Futterautomat mit Auffüll-Erinnerung – nach Tagen oder über einen Füllstand-Sensor aus Home Assistant (Push, sobald er fast leer ist)'],
+      ['neu', 'Kalender: Urlaube aus den Packlisten (Ziel und Zeitraum) stehen jetzt im Kalender. Antippen öffnet die Packliste, langes Drücken zeigt Packliste und Urlaubswetter'],
+      ['neu', 'Packliste anbieten: Steht ein Urlaub, eine Dienstreise o. Ä. im Kalender (auch vacation, vacances, viaje …), kommt 14 Tage vorher eine Push mit Hinweis in der Glocke – ein Tipp legt die Packliste mit Termin und Zeitraum an'],
+      ['fix', 'Saugroboter: Eingereihte Aufträge gingen verloren, wenn die Station noch wusch, absaugte oder trocknete. Jetzt startet der nächste Auftrag direkt im Anschluss – noch auf dem Rückweg, ohne Umweg über die Station – und wird wiederholt, falls der Roboter ihn nicht annimmt'],
+      ['fix', 'Handy: Zahlen in „Neues Zuhause“ (Grunderwerbsteuer, Notar & Grundbuch, Makler) und in den Kosten der Verträge passen jetzt in ihre Felder, ohne verschobene Texte oder Umbrüche mitten in der Zahl'],
+    ],
+  },
   {
     v: '1.61', datum: '16.10.2026', titel: 'Mehr Platz in der Übersicht',
     punkte: [
@@ -28811,24 +28968,24 @@ document.getElementById('openChangelogBtn').addEventListener('click', openChange
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/einstellungen.js?v=1.61.0"></script>
-<script src="js/kalenderkonto.js?v=1.61.0"></script>
-<script src="js/finanzen.js?v=1.61.0"></script>
-<script src="js/kassen.js?v=1.61.0"></script>
-<script src="js/vorrat.js?v=1.61.0"></script>
-<script src="js/vorrat2.js?v=1.61.0"></script>
-<script src="js/sparen.js?v=1.61.0"></script>
-<script src="js/vertraege.js?v=1.61.0"></script>
-<script src="js/fahrzeuge.js?v=1.61.0"></script>
-<script src="js/zuhause.js?v=1.61.0"></script>
-<script src="js/dokumente.js?v=1.61.0"></script>
-<script src="js/pdflesen.js?v=1.61.0"></script>
-<script src="js/appstart.js?v=1.61.0"></script>
-<script src="js/pinnwand.js?v=1.61.0"></script>
-<script src="js/listen.js?v=1.61.0"></script>
-<script src="js/familie.js?v=1.61.0"></script>
-<script src="js/hinweise.js?v=1.61.0"></script>
-<script src="js/ausblick.js?v=1.61.0"></script>
+<script src="js/einstellungen.js?v=1.62.0"></script>
+<script src="js/kalenderkonto.js?v=1.62.0"></script>
+<script src="js/finanzen.js?v=1.62.0"></script>
+<script src="js/kassen.js?v=1.62.0"></script>
+<script src="js/vorrat.js?v=1.62.0"></script>
+<script src="js/vorrat2.js?v=1.62.0"></script>
+<script src="js/sparen.js?v=1.62.0"></script>
+<script src="js/vertraege.js?v=1.62.0"></script>
+<script src="js/fahrzeuge.js?v=1.62.0"></script>
+<script src="js/zuhause.js?v=1.62.0"></script>
+<script src="js/dokumente.js?v=1.62.0"></script>
+<script src="js/pdflesen.js?v=1.62.0"></script>
+<script src="js/appstart.js?v=1.62.0"></script>
+<script src="js/pinnwand.js?v=1.62.0"></script>
+<script src="js/listen.js?v=1.62.0"></script>
+<script src="js/familie.js?v=1.62.0"></script>
+<script src="js/hinweise.js?v=1.62.0"></script>
+<script src="js/ausblick.js?v=1.62.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)

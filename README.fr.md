@@ -81,14 +81,25 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 | 🏡 **Domicile** | Pour locataires, propriétaires et bailleurs : bail ou contrat d’achat, prêt, défauts avec photos, justificatifs, plan de rénovation, relevés de compteurs avec prévision, clés et loyers des appartements, maisons et garages loués. Jardin & plantes avec un plan d’arrosage qui sait quand il a plu. |
 | 📍 **Famille & localisation** | Partage ta position directement depuis pinn. – une fois ou pour une durée choisie – et en arrière-plan avec l’app gratuite Traccar Client (envoie directement à pinn., sans serveur supplémentaire). Plus un mode « trajet retour », une alerte SOS avec position et numéros d’urgence, des fiches d’urgence et des avis d’arrivée sur des lieux. |
 | 🎒 **École & crèche** | Par enfant : emploi du temps (à saisir ou à photographier – l’IA le remplit), dépose et récupération, devoirs sur la page enfant, mots aux parents avec échéances qui deviennent des rappels, et jours de fermeture directement dans le calendrier. |
-| 🐾 **Animaux** | Profils pour chiens, chats, lapins & co. avec repas à cocher, promenades, tour de rôle « à qui le tour », vaccins et vermifuges avec rappel push, courbe de poids, vétérinaire et urgences vétérinaires, une fiche pour le pet-sitter à partager et une affiche « perdu » à imprimer. |
+| 🐾 **Animaux** | Profils pour chiens, chats, lapins & co. avec repas à cocher, promenades, tour de rôle « à qui le tour », vaccins et vermifuges avec rappel push, courbe de poids, vétérinaire et urgences vétérinaires, une fiche pour le pet-sitter à partager et une affiche « perdu » à imprimer et un rappel de remplissage du distributeur de croquettes. |
 | 🌦️ **Météo & vacances** | Touche la météo (une tuile sur le téléphone, en haut à côté de la date et de l’heure sur iPad et ordinateur) pour voir 14 jours avec les détails de chaque jour. Les listes de bagages avec destination et dates affichent la météo des vacances – prévision ou valeurs typiques – et suggèrent quoi emporter. |
-| 🏠 **Maison connectée** | Lance des Raccourcis Apple ou des actions Home Assistant depuis une tâche – le robot aspirateur nettoie la cuisine quand la tâche est due. |
+| 🏠 **Maison connectée** | Lance des Raccourcis Apple ou des actions Home Assistant depuis une tâche – le robot aspirateur nettoie la cuisine quand la tâche est due, le robot tondeuse et l'arrosage suivent le plan du jardin, le distributeur de croquettes prévient quand il se vide. |
 | 🎙️ **Commande vocale** | « Dis Siri, pinn » : ajouter à la liste de courses, se la faire lire, créer des tâches et entendre le programme du jour – aussi sur Android. |
 | 🔔 **Notifications** | Messages push personnels sur iPhone, iPad et Android, plus une cloche qui rassemble chaque changement dans la famille. |
 | 🧩 **Tout le reste** | Tableau familial avec notes déplaçables, recherche globale, mode hors ligne avec synchronisation automatique, mode sombre, tableau de bord iPad avec PIN par profil, compte invité, contrôle parental. |
 
 pinn. parle **English, Deutsch, Français et Español**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
+
+## Nouveautés de la 1.62
+
+**Maison connectée au jardin, distributeur de croquettes & vacances dans le calendrier**
+
+- **Robot tondeuse et arrosage :** deux nouveaux types d'appareils pour Home Assistant. Sous *Domicile → Jardin*, la pelouse et les plantes se relient à un appareil : un bouton de démarrage (p. ex. une tonte supplémentaire) et un automatisme à l'heure choisie le jour prévu. Pas d'arrosage après la pluie, pas de tonte sous la pluie, et la vanne d'arrosage se ferme seule après la durée réglée.
+- **Distributeur de croquettes :** rappel de remplissage après un nombre de jours ou via un capteur de niveau de Home Assistant – une notification dès qu'il est presque vide.
+- **Vacances dans le calendrier :** les listes de bagages avec destination et dates apparaissent maintenant dans le calendrier. Un tap ouvre la liste, un appui long affiche la liste et la météo des vacances.
+- **Liste de bagages proposée :** si des vacances ou un déplacement professionnel figurent au calendrier (aussi *vacation*, *Urlaub*, *viaje* …), pinn. propose une liste de bagages 14 jours avant – par notification et dans la cloche, dates déjà remplies.
+- **Corrigé :** les tâches en attente du robot aspirateur se perdaient pendant que la station lavait, vidait ou séchait. La tâche suivante démarre maintenant juste après la tâche en cours – encore sur le chemin du retour. Sur le téléphone, les montants dans *Nouveau domicile* et dans les coûts des contrats tiennent à nouveau dans leurs champs.
+- Fichiers de l'app et du serveur modifiés (`index.html`, `js/zuhause.js`, `js/familie.js`, `js/listen.js`, `js/hinweise.js`, `js/vertraege.js`, les fichiers de langue et dans `pb_hooks/` les hooks maison connectée, animaux et le nouveau hook des listes de bagages). Installation comme d'habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
 ## Nouveautés de la 1.61
 
@@ -100,13 +111,6 @@ pinn. parle **English, Deutsch, Français et Español**, adapte la devise et les
 - **Tâches :** le compteur affiche désormais les tâches terminées et toutes les tâches affichées, p. ex. *3/8*. Sur iPad et ordinateur, il se trouve en petit juste à côté du titre.
 - **Calendrier :** « + Ajouter un repas » devient simplement « + Repas », et « Toute la journée » ne déborde plus sur les rendez-vous. Toutes les modifications sont traduites en anglais, allemand, français et espagnol.
 - Seuls des fichiers de l’app changent (`index.html`, `js/ausblick.js`, `js/vorrat2.js` et les fichiers de langue dans `lang/`), rien ne change sur le serveur. Installe comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
-## Nouveautés de la 1.60
-
-**Le code de l’app est découpé, partie 18 – rien ne change pour toi**
-
-- **Pour les contributeurs :** Réglages – famille ou colocation, membres de la famille, catégories directement sur les pages, vue par défaut, couleurs, mode sombre et réinitialisation – se trouvent maintenant dans un fichier à part (`pb_public/js/einstellungen.js`). Rien ne change dans l’utilisation de l’app.
-- Seuls des fichiers de l’app ont changé (`index.html` et `js/einstellungen.js`), rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
 ## Comment ça marche
 
@@ -134,7 +138,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.61.1` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.62.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

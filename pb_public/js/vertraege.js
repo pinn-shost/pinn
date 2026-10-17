@@ -984,14 +984,14 @@ function renderContractDetail() {
         }).join('')}</div>
       </details>` : '';
     costHtml = `
-      <div class="grid grid-cols-3 gap-2">
-        ${finTile('Kosten', fmtEur(cost.amount), escapeHtml(vtIntervalLabel(cost.interval)))}
-        ${finTile('Pro Jahr', fmtEur(cost.running ? cost.monthly * 12 : 0), cost.running ? 'umgerechnet' : 'beendet')}
-        ${finTile('Bezahlt', fmtEur(paid), 'davon ' + fmtEur(paidYear) + ' ' + today.slice(0, 4))}
+      <div class="vt-tiles">
+        ${vtCostTile('Kosten', fmtEur(cost.amount), escapeHtml(vtIntervalLabel(cost.interval)))}
+        ${vtCostTile('Pro Jahr', fmtEur(cost.running ? cost.monthly * 12 : 0), cost.running ? 'umgerechnet' : 'beendet')}
+        ${vtCostTile('Bezahlt', fmtEur(paid), 'davon ' + fmtEur(paidYear) + ' ' + today.slice(0, 4))}
       </div>
       <p class="text-xs text-ink/50 mt-2">${cost.next ? `Nächste Abbuchung: <b>${escapeHtml(finDayLabel(cost.next))}</b> · ` : (cost.running ? '' : 'Abbuchung beendet · ')}Ausgaben-Kategorie ${escapeHtml((fcat.icon ? fcat.icon + ' ' : '') + fcat.label)}${cost.r.paidBy && memberById(cost.r.paidBy) ? ' · bezahlt von ' + escapeHtml(memberLabel(memberById(cost.r.paidBy))) : ''}</p>
       ${histHtml}
-      ${cost.parts && cost.parts.length > 1 ? `<div class="mt-2">${cost.parts.map(p => `<div class="vt-row"><span>${escapeHtml(p.title || finCategory(p.category).label)}</span><span>${fmtEur(finRecurringAmountFor(p, today))} <span class="text-ink/45">${escapeHtml(vtIntervalLabel(finRecInterval(p)))}${finRecIsRunning(p, today) ? '' : ' · beendet'}</span></span></div>`).join('')}</div>` : ''}`;
+      ${cost.parts && cost.parts.length > 1 ? `<div class="mt-2">${cost.parts.map(p => `<div class="vt-row"><span>${escapeHtml(p.title || finCategory(p.category).label)}</span><span><span class="vt-amt">${fmtEur(finRecurringAmountFor(p, today))}</span> <span class="text-ink/45">${escapeHtml(vtIntervalLabel(finRecInterval(p)))}${finRecIsRunning(p, today) ? '' : ' · beendet'}</span></span></div>`).join('')}</div>` : ''}`;
   }
 
   const rows = [];
@@ -1900,3 +1900,13 @@ function vtOpenFromUrl() {
 
 // Marks this file as loaded – the start check in index.html reports missing app files
 (window.PINN_PARTS = window.PINN_PARTS || []).push('vertraege');
+
+// Cost tile in the contract popup (1.62): the amount stays in one line, the tiles wrap on small phones
+function vtCostTile(label, value, sub) {
+  return `
+    <div class="rounded-xl bg-ink/5 px-3 py-2.5 min-w-0">
+      <div class="text-[10px] uppercase tracking-wide text-ink/40 truncate">${label}</div>
+      <div class="vt-tile-v">${value}</div>
+      ${sub ? `<div class="text-[11px] text-ink/50 leading-snug">${sub}</div>` : ''}
+    </div>`;
+}

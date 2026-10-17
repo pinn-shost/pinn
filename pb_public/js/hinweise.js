@@ -1776,6 +1776,15 @@ function ntOpenLink(url) {
       return true;
     }
     if (g('urlaub')) { setTimeout(() => wxOpen(g('urlaub')), 120); return true; }
+    // 1.62: trip in the calendar → create a packing list (push from pb_hooks/pinn-packliste.js)
+    if (g('packliste')) {
+      if (isViewAllowed('einkauf') && !isCurrentUserGuest()) {
+        const pf = { titel: g('titel'), von: g('von'), bis: g('bis'), ort: g('ort'), art: g('art'), schluessel: g('schluessel') };
+        const have = typeof calPackListForRange === 'function' && pf.von ? calPackListForRange(pf.von, pf.bis || pf.von) : null;
+        if (have) { setView('einkauf'); lsOpenList(have.id); } else setTimeout(() => lsStartPackFromEvent(pf), 120);
+      }
+      return true;
+    }
     if (g('wetter')) { setTimeout(() => wxOpen('home'), 120); return true; }
     if (g('aufgabe')) {
       if (!isViewAllowed('aufgaben')) return true;
@@ -1821,7 +1830,7 @@ function ntOpenLink(url) {
 }
 // The bell opens these addresses itself on start (the others - ?sos, ?heimweg, ?kasse, ?vertrag,
 // ?dokument, ?pinnwand, ?familie - are already handled by their own sections during start-up)
-var NT_START_LINKS = ['wobistdu', 'geburtstag', 'haustier', 'urlaub', 'wetter', 'ausblick', 'ausgabe', 'fahrzeug', 'mitglied', 'aufgabe', 'termin', 'rezept', 'essen', 'vorrat', 'listen', 'einkauf', 'konto'];
+var NT_START_LINKS = ['packliste', 'wobistdu', 'geburtstag', 'haustier', 'urlaub', 'wetter', 'ausblick', 'ausgabe', 'fahrzeug', 'mitglied', 'aufgabe', 'termin', 'rezept', 'essen', 'vorrat', 'listen', 'einkauf', 'konto'];
 
 // Number on the bell: open expenses, running trips home, unread news and new family notices
 function ntUpdateBadge() {
@@ -2325,7 +2334,7 @@ function ntStart() {
     const target = '/?' + ntUrlParams.toString();
     try {
       const q = new URLSearchParams(location.search);
-      NT_START_LINKS.concat(['kasse']).forEach(k => q.delete(k));
+      NT_START_LINKS.concat(['kasse', 'titel', 'von', 'bis', 'ort', 'art', 'schluessel']).forEach(k => q.delete(k));
       const rest = q.toString();
       history.replaceState(null, '', location.pathname + (rest ? '?' + rest : '') + location.hash);
     } catch (e) { /* ignore */ }

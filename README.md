@@ -81,14 +81,25 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 | 🏡 **Home** | For tenants, owners and landlords: tenancy or purchase contract, loan, defects with photos, receipts, renovation plan, meter readings with forecast, keys, and rental income for flats, houses and garages you let out. Garden & plants with a watering plan that knows when it rained. |
 | 📍 **Family & location** | Share your location right from pinn. – once or for a chosen time – and in the background via the free Traccar Client app (sends straight to pinn., no extra server). Plus a "way home" mode, an SOS alert with position and emergency numbers, emergency cards and arrival notifications for places. |
 | 🎒 **School & daycare** | Per child: timetable (type it in or snap a photo – the AI fills it in), drop-off and pick-up, homework on the kids' page, parent letters with deadlines that turn into reminders, and closure days straight in the calendar. |
-| 🐾 **Pets** | Profiles for dogs, cats, rabbits & co. with feeding times to tick off, walks, a "whose turn is it" rota, vaccinations and deworming with push reminders, weight chart, vet and emergency vet, a pet-sitter sheet to share and a printable "missing" poster. |
+| 🐾 **Pets** | Profiles for dogs, cats, rabbits & co. with feeding times to tick off, walks, a "whose turn is it" rota, vaccinations and deworming with push reminders, weight chart, vet and emergency vet, a pet-sitter sheet to share, a printable "missing" poster and a pet feeder refill reminder. |
 | 🌦️ **Weather & holidays** | Tap the weather (a tile on the phone, at the top next to date and time on iPad and computer) for 14 days with details for every day. Packing lists with destination and dates show the holiday weather – forecast or typical values – and suggest what to pack. |
-| 🏠 **Smart home** | Start Apple Shortcuts or Home Assistant actions from a task – the robot vacuum cleans the kitchen when the chore is due. |
+| 🏠 **Smart home** | Start Apple Shortcuts or Home Assistant actions from a task – the robot vacuum cleans the kitchen when the chore is due, the robot mower and the watering follow the garden plan, the pet feeder reports when it runs empty. |
 | 🎙️ **Voice control** | "Hey Siri, pinn": add to the shopping list, read it out, create tasks and hear what's on today – also on Android. |
 | 🔔 **Notifications** | Personal push messages on iPhone, iPad and Android, plus a notification bell that collects every change in the family. |
 | 🧩 **Everything else** | Family board with movable notes, global search, offline mode with automatic sync, dark mode, iPad dashboard with profile PINs, guest account, child lock. |
 
 pinn. speaks **English, Deutsch, Français and Español**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
+
+## What's new in 1.62
+
+**Smart home in the garden, pet feeder & holidays in the calendar**
+
+- **Robot mower and watering:** two new device types for Home Assistant. Under *Home → Garden* the lawn and your plants can be linked to a device – a start button (e.g. an extra mowing session) and automation at a set time on the due day. No watering after rain, no mowing in the rain, and the watering valve closes itself after the set duration.
+- **Pet feeder:** refill reminder after a number of days or via a fill level sensor from Home Assistant – a push as soon as it is almost empty.
+- **Holidays in the calendar:** packing lists with destination and dates now appear in the calendar. Tap opens the packing list, a long press shows the packing list and the holiday weather.
+- **Packing list offered:** if a holiday or business trip is in the calendar (also *Urlaub*, *vacances*, *viaje* …), pinn. offers a packing list 14 days before – by push and in the bell, with the dates already filled in.
+- **Fixed:** queued robot vacuum jobs got lost while the dock was washing, emptying or drying. The next job now starts right after the running one – while the robot is still on its way back. On the phone, amounts in *New home* and in contract costs fit their fields again.
+- App and server files changed (`index.html`, `js/zuhause.js`, `js/familie.js`, `js/listen.js`, `js/hinweise.js`, `js/vertraege.js`, the language files and in `pb_hooks/` the smart home, pet and new packing list hooks). Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 ## What's new in 1.61
 
@@ -100,13 +111,6 @@ pinn. speaks **English, Deutsch, Français and Español**, adapts currency and e
 - **Tasks:** the counter now shows completed and all displayed tasks, e.g. *3/8*. On iPad and computer it sits in small type right next to the heading.
 - **Calendar:** “+ Add meal” is now simply “+ Meal”, and “All day” no longer overlaps the events. All changes are translated into English, German, French and Spanish.
 - Only app files changed (`index.html`, `js/ausblick.js`, `js/vorrat2.js` and the language files in `lang/`), nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
-## What's new in 1.60
-
-**App code split, part 18 – nothing changes for you**
-
-- **For contributors:** Settings – family or flatshare, family members, categories right on the pages, default view, colours, dark mode and reset – now live in their own file (`pb_public/js/einstellungen.js`). Nothing changes in how the app works.
-- Only app files changed (`index.html` and `js/einstellungen.js`), nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 ## How it works
 
@@ -134,7 +138,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.61.1` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.62.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

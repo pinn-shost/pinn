@@ -816,7 +816,9 @@ function lsOpenListModal(listId) {
   const type = l ? l.type : listsTab;
   const t = lsType(type);
   if (t.id === 'einkauf') return;
-  lsListCtx = { mode: l ? 'edit' : 'new', type, tpl: null, listId: l ? l.id : null, icon: l ? (l.icon || t.icon) : t.icon, owner: l ? (l.memberId || '') : '', persons: [], nameAuto: !l };
+  lsListCtx = { mode: l ? 'edit' : 'new', type, tpl: null, listId: l ? l.id : null, icon: l ? (l.icon || t.icon) : t.icon, owner: l ? (l.memberId || '') : '', persons: [], nameAuto: !l,
+    prefill: !l && type === 'pack' ? lsPackPrefill : null };
+  lsPackPrefill = null;
   document.getElementById('lsListError').classList.add('hidden');
   document.getElementById('lsListModal').classList.remove('hidden');
   if (l) {
@@ -825,7 +827,7 @@ function lsOpenListModal(listId) {
     lsShowListForm(l);
   } else {
     document.getElementById('lsListTitle').textContent = t.wish ? 'Neuer Wunschzettel' : 'Neue ' + t.one;
-    document.getElementById('lsListSubtitle').textContent = t.wish ? 'Wähle eine Art – danach, für wen.' : 'Wähle eine Vorlage – alles lässt sich danach noch ändern.';
+    document.getElementById('lsListSubtitle').textContent = lsListCtx.prefill ? lsPrefillLabel(lsListCtx.prefill) : (t.wish ? 'Wähle eine Art – danach, für wen.' : 'Wähle eine Vorlage – alles lässt sich danach noch ändern.');
     lsRenderTplPane();
   }
 }
@@ -855,6 +857,9 @@ function lsRenderTplPane() {
     if (bdays.length) html += `<div class="ls-tpl-head">Bald Geburtstag</div><div class="ls-tpl-grid">${bdays.map(x => tplBtn(x, false)).join('')}</div>`;
   }
   const builtIn = LIST_TEMPLATES[ctx.type] || [];
+  const sugId = ctx.prefill ? lsPrefillTemplate(ctx.prefill) : '';
+  const sug = sugId ? builtIn.find(x => x.id === sugId) : null;
+  if (sug) html = `<div class="ls-tpl-head">Vorschlag</div><div class="ls-tpl-grid">${tplBtn(sug, false)}</div>` + html;
   if (builtIn.length) html += `<div class="ls-tpl-head">${t.wish ? 'Art' : 'Vorlagen'}</div><div class="ls-tpl-grid">${builtIn.map(x => tplBtn(x, false)).join('')}</div>`;
   const grid = document.getElementById('lsTplGrid');
   grid.innerHTML = html;
@@ -885,12 +890,13 @@ function lsShowListForm(l) {
   document.getElementById('lsTplPane').classList.add('hidden');
   document.getElementById('lsFormPane').classList.remove('hidden');
   if (isNew) document.getElementById('lsListSubtitle').textContent = tpl && tpl.id !== '__empty' && !t.wish ? `Vorlage: ${lsTplName(tpl)}` : '';
+  const pf = isNew ? ctx.prefill : null;
 
   const nameEl = document.getElementById('lsListName');
   nameEl.placeholder = t.wish ? 'z. B. Mein Wunschzettel' : t.gift ? 'z. B. Weihnachten 2026' : t.id === 'pack' ? 'z. B. Ostsee 2027' : 'Name der Liste';
   if (l) nameEl.value = l.name || '';
   else if (t.wish) nameEl.value = '';
-  else nameEl.value = tpl && tpl.id !== '__empty' ? lsTplName(tpl) : '';
+  else nameEl.value = pf && pf.titel ? pf.titel : (tpl && tpl.id !== '__empty' ? lsTplName(tpl) : '');
 
   // Icon
   const icons = [...new Set([ctx.icon, ...(LS_ICONS[ctx.type] || [])])];
@@ -962,7 +968,8 @@ function lsShowListForm(l) {
   document.getElementById('lsListBackBtn').classList.toggle('hidden', !isNew);
   document.getElementById('lsListSaveBtn').textContent = isNew ? 'Anlegen' : 'Speichern';
   lsTripInit(l);
-  if (isNew && !isMobile() && !t.wish) setTimeout(() => { nameEl.focus(); nameEl.select(); }, 50);
+  if (pf) lsApplyPrefill(pf);
+  if (isNew && !isMobile() && !t.wish && !pf) setTimeout(() => { nameEl.focus(); nameEl.select(); }, 50);
   armModalSnapshot('lsListModal');
 }
 function lsCloseListModal() {
@@ -1021,6 +1028,7 @@ function lsSaveListFromModal() {
     });
     lsCloseListModal();
     lsCommit();
+    try { refreshTripCalendar(); } catch (e) { /* ignore */ }
     return;
   }
   const tpl = ctx.tpl || { sections: [] };
@@ -1030,6 +1038,7 @@ function lsSaveListFromModal() {
   if (tpl.forName) l.forName = tpl.forName;
   if (priv) l.privateTo = lsMyUserId();
   if (trip && !trip.dateOnly) l.trip = trip;
+  if (ctx.prefill && ctx.prefill.schluessel) l.eventKey = String(ctx.prefill.schluessel).slice(0, 140);
   if (tripTips.length) {
     const have = new Set(l.items.map(i => normalizeForGrouping(i.text || '')));
     const now = Date.now();
@@ -1039,6 +1048,7 @@ function lsSaveListFromModal() {
   lsCloseListModal();
   persistState();
   lsOpenList(l.id);
+  try { refreshTripCalendar(); } catch (e) { /* ignore */ }
 }
 function lsDeleteListFromModal() {
   const ctx = lsListCtx;
@@ -1049,6 +1059,49 @@ function lsDeleteListFromModal() {
   lsCloseListModal();
   listsDetailId = null;
   lsCommit();
+  try { refreshTripCalendar(); } catch (e) { /* ignore */ }
+}
+
+/* ---------- Packing list from a calendar appointment (1.62) ----------
+   From the event popup ("Create packing list") or the push of pb_hooks/pinn-packliste.js
+   (/?packliste=1&titel=…&von=…&bis=…&ort=…&art=…&schluessel=…): opens a new packing list with a
+   suggested template; name, period and destination search are filled in already. */
+var lsPackPrefill = null; // { titel, von, bis, ort, art, schluessel }
+function lsStartPackFromEvent(pf) {
+  if (!isViewAllowed('einkauf') || isCurrentUserGuest()) return;
+  const iso = v => (/^\d{4}-\d{2}-\d{2}$/.test(String(v || '')) ? String(v) : '');
+  const von = iso(pf.von), bis = iso(pf.bis) >= von ? iso(pf.bis) : von;
+  setView('einkauf');
+  listsTab = 'pack';
+  listsDetailId = null;
+  try { renderShoppingList(); } catch (e) { /* ignore */ }
+  lsPackPrefill = { titel: String(pf.titel || '').slice(0, 80), von, bis, ort: String(pf.ort || '').slice(0, 80), art: String(pf.art || ''), schluessel: String(pf.schluessel || '') || (String(pf.titel || '') + '|' + von) };
+  lsOpenListModal(null);
+}
+function lsPrefillLabel(pf) {
+  const fmt = d => new Date(d + 'T12:00:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'short' });
+  return '🗓️ ' + (pf.titel || '') + (pf.von ? ' · ' + fmt(pf.von) + (pf.bis && pf.bis !== pf.von ? ' – ' + fmt(pf.bis) : '') : '');
+}
+function lsPrefillTemplate(pf) {
+  const t = String(pf.titel || '').toLowerCase();
+  if (pf.art === 'geschaeftsreise') return 'geschaeftsreise';
+  if (/ski|snowboard/.test(t)) return 'winter';
+  if (/camping|zelt/.test(t)) return 'camping';
+  const days = pf.von && pf.bis ? daysBetweenDateStrs(pf.von, pf.bis) + 1 : 0;
+  return days && days <= 3 ? 'kurztrip' : 'sommer';
+}
+function lsApplyPrefill(pf) {
+  const ctx = lsListCtx;
+  if (!ctx || !ctx.trip) return;
+  if (pf.von) { ctx.trip.from = pf.von; document.getElementById('lsTripFrom').value = pf.von; }
+  if (pf.bis) { ctx.trip.to = pf.bis; document.getElementById('lsTripTo').value = pf.bis; }
+  ctx.nameAuto = false;
+  try { lsTripDays(); } catch (e) { /* ignore */ }
+  const place = document.getElementById('lsTripPlace');
+  if (place && pf.ort && !ctx.trip.place) {
+    place.value = pf.ort;
+    place.dispatchEvent(new Event('input'));
+  }
 }
 
 /* ---------- Popup: edit item ---------- */

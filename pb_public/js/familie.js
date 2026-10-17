@@ -3532,13 +3532,14 @@ function skModalChange(e) {
        chip, passNo, insurance, insuranceNo, vet, vetPhone, vetAddress, emergencyVet, emergencyVetPhone,
        allergies, conditions, notes (nature & quirks), sitter (for the pet sitter),
        feed: { brand, amount, times: ['07:00', …], pantryId }, walks (walk goal per day),
+       feeder: { on, every (refill every x days), last, entity (fill level sensor in Home Assistant), below } (1.62),
        roster: { '1'…'7': [member IDs] } (who is on duty on which weekday), owners: [member IDs],
        trackerId (device from the location), push (reminders), meds: [{ id, name, dose, times }],
        care: [{ id, type, title, last, every (days, 0 = once), next, note }],
        weights: [{ id, date, kg }], gone (date, rainbow bridge), created, updated }]
    - petLog: [{ id, pet, kind: 'gassi'|'futter'|'med'|'notiz', day, at, by (member ID), min, slot, note }]
      (only the last 60 days are kept)
-   Push reminders (care due, birthday): pb_hooks/haustiere.pb.js + pinn-haustiere.js.
+   Push reminders (care due, birthday, pet feeder): pb_hooks/haustiere.pb.js + pinn-haustiere.js.
    ========================================================== */
 var PT_SPECIES = [
   { id: 'hund', emoji: '🐶', label: 'Hund', walks: 3, feed: ['07:00', '18:00'], emojis: ['🐶', '🐕', '🦮', '🐕‍🦺', '🐩'] },
@@ -3866,6 +3867,7 @@ function ptProfileHtml(p) {
         ${can ? `<div class="flex gap-2 mt-2 flex-wrap"><button type="button" class="fz-mini-btn" data-pt="foodshop" data-id="${famAttr(p.id)}">🛒 <span>Auf die Einkaufsliste</span></button>${pi && isViewAllowed('vorrat') ? '<button type="button" class="fz-mini-btn" data-pt="pantry">🥫 <span>Vorrat</span></button>' : ''}</div>` : ''}
       </div>`);
     }
+    out.push(ptFeederHtml(p));
     if (Object.values(p.roster || {}).some(a => Array.isArray(a) && a.length) || can) out.push(ptRosterHtml(p));
   }
   // Tracker
@@ -4046,6 +4048,7 @@ function ptOpenEdit(id) {
     meds: p && Array.isArray(p.meds) ? p.meds.map(x => ({ ...x })) : [],
   };
   const f = (p && p.feed) || {};
+  const fd = (p && p.feeder) || {};
   const trackers = famOrtungAllowed() ? famDevices().filter(g => g.typ === 'tracker') : [];
   const pantry = (pantryItems || []).slice().sort((a, b) => String(a.name).localeCompare(String(b.name), 'de'));
   const html = `
@@ -4076,6 +4079,13 @@ function ptOpenEdit(id) {
     <div class="fz-grid2">${famIn('ptF_food', 'Futter', f.brand, 'maxlength="80" autocomplete="off" placeholder="z. B. Trockenfutter Adult"')}${famIn('ptF_amount', 'Menge je Mahlzeit', f.amount, 'maxlength="40" autocomplete="off" placeholder="z. B. 150 g"')}</div>
     <div class="fz-grid2">${famIn('ptF_times', 'Fütterungszeiten', (f.times || (p ? [] : sp.feed)).join(', '), 'autocomplete="off" inputmode="numeric" placeholder="07:00, 18:00"')}${famIn('ptF_walks', 'Gassi-Runden am Tag', p ? (p.walks || '') : (sp.walks || ''), 'inputmode="numeric" maxlength="2" placeholder="0"')}</div>
     ${pantry.length ? `<div class="fz-field"><label class="fz-lbl" for="ptF_pantry">Futter im Vorrat</label><select id="ptF_pantry" class="fz-in"><option value="">– nicht verknüpft –</option>${pantry.map(x => `<option value="${famAttr(x.id)}"${f.pantryId === x.id ? ' selected' : ''}>${escapeHtml(x.name)}</option>`).join('')}</select></div>` : ''}
+    <label class="fz-check"><input id="ptF_feederOn" type="checkbox"${fd.on ? ' checked' : ''} /><span>🍽️ <span>Futterautomat</span></span></label>
+    <div id="ptF_feederWrap" class="${fd.on ? '' : 'hidden'}">
+      <div class="fz-grid2">${famIn('ptF_feederEvery', 'Auffüllen alle … Tage', fd.every || '', 'inputmode="numeric" maxlength="3" placeholder="z. B. 10"')}${famIn('ptF_feederLast', 'Zuletzt aufgefüllt', fd.last || '', 'type="date"')}</div>
+      <div class="fz-field"><label class="fz-lbl" for="ptF_feederEntity">Füllstand aus Home Assistant (optional)</label><select id="ptF_feederEntity" class="fz-in">${ptFeederEntityOptions(fd.entity || '')}</select><p id="ptF_feederEntityHint" class="text-[11px] text-ink/45 mt-1"></p></div>
+      <div id="ptF_feederBelowWrap" class="${fd.entity ? '' : 'hidden'}">${famIn('ptF_feederBelow', 'Erinnern ab Füllstand von höchstens', fd.below || '', 'inputmode="decimal" maxlength="6" placeholder="z. B. 20"')}</div>
+      <p class="text-[11px] text-ink/45 mb-3">pinn. erinnert per Push, wenn das Auffüllen fällig ist oder der Sensor „fast leer“ meldet.</p>
+    </div>
 
     <div class="fz-h mt-2">🩺 Gesundheit</div>
     ${famTa('ptF_allergies', 'Allergien & Unverträglichkeiten', p ? p.allergies : '', 'z. B. Huhn, Getreide')}
@@ -4111,7 +4121,89 @@ function ptOpenEdit(id) {
     </div>`;
   ptOpenModal(html, st);
   ptDrawEditBits();
+  ptFeederWire(fd.entity || '');
   armModalSnapshot('ptModal');
+}
+/* ---------- Pet feeder (1.62) ---------- */
+// Sensors from Home Assistant for the fill level (sensor.* and binary_sensor.*)
+function ptFeederEntityOptions(selected) {
+  let list = [];
+  try { list = (smartHaEntities || []).filter(e => e.domain === 'sensor' || e.domain === 'binary_sensor'); } catch (e) { list = []; }
+  if (selected && !list.some(e => e.id === selected)) list = [{ id: selected, name: selected }, ...list];
+  return '<option value="">– kein Sensor –</option>' + list.map(e => `<option value="${famAttr(e.id)}"${e.id === selected ? ' selected' : ''}>${escapeHtml(e.name + (e.state ? ' (' + e.state + ')' : ''))}</option>`).join('');
+}
+async function ptFeederWire(selected) {
+  const on = document.getElementById('ptF_feederOn');
+  const wrap = document.getElementById('ptF_feederWrap');
+  const sel = document.getElementById('ptF_feederEntity');
+  const hint = document.getElementById('ptF_feederEntityHint');
+  if (!on || !wrap || !sel) return;
+  on.addEventListener('change', () => wrap.classList.toggle('hidden', !on.checked));
+  sel.addEventListener('change', () => document.getElementById('ptF_feederBelowWrap').classList.toggle('hidden', !sel.value));
+  let st = null;
+  try { st = smartStatus || await loadSmartStatus(); } catch (e) { st = null; }
+  if (!document.getElementById('ptF_feederEntity')) return;
+  if (!st || !st.ha || !st.ha.verbunden) { hint.textContent = 'Für den Füllstand Home Assistant unter Einstellungen → Smarthome verbinden.'; return; }
+  try { if (!smartHaEntities) await loadSmartHaEntities(); } catch (e) { /* keep the list empty */ }
+  const cur = document.getElementById('ptF_feederEntity');
+  if (cur) cur.innerHTML = ptFeederEntityOptions(cur.value || selected);
+  hint.textContent = 'Zahl (z. B. Prozent oder Gramm) oder ein Zustand wie „leer“ bzw. „an“ bei „Futter knapp“.';
+}
+function ptFeederValue(old) {
+  const on = document.getElementById('ptF_feederOn');
+  if (!on) return old && old.feeder;
+  if (!on.checked) return old && old.feeder ? { ...old.feeder, on: false } : undefined;
+  const every = Math.max(0, Math.min(365, parseInt(ptVal('ptF_feederEvery'), 10) || 0));
+  const last = /^\d{4}-\d{2}-\d{2}$/.test(ptVal('ptF_feederLast')) ? ptVal('ptF_feederLast') : (old && old.feeder && old.feeder.last) || ptToday();
+  const below = parseFloat(String(ptVal('ptF_feederBelow') || '').replace(',', '.'));
+  const out = { on: true, every, last };
+  if (ptVal('ptF_feederEntity')) out.entity = ptVal('ptF_feederEntity');
+  if (out.entity && isFinite(below) && below > 0) out.below = below;
+  return out;
+}
+// Live fill level (cached for 2 minutes)
+const ptFeederLevels = {};
+function ptFeederFetch(p) {
+  const fd = p.feeder;
+  if (!fd || !fd.entity || isCurrentUserGuest()) return;
+  const c = ptFeederLevels[p.id];
+  if (c && (c.loading || Date.now() - c.at < 2 * 60 * 1000) && c.entity === fd.entity) return;
+  ptFeederLevels[p.id] = { loading: true, at: Date.now(), entity: fd.entity };
+  apiFetch('/api/pinn/smart/ha/zustand', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ entity: fd.entity }) })
+    .then(r => r.json())
+    .then(j => {
+      ptFeederLevels[p.id] = { at: Date.now(), entity: fd.entity, text: j && !j.error ? (j.state + (j.unit ? ' ' + j.unit : '')) : '' };
+      if (ptDetailId === p.id) ptRefresh();
+    })
+    .catch(() => { ptFeederLevels[p.id] = { at: Date.now(), entity: fd.entity, text: '' }; });
+}
+function ptFeederHtml(p) {
+  const fd = p.feeder;
+  if (!fd || !fd.on || p.gone) return '';
+  const can = ptCanEdit();
+  const rows = [];
+  if (Number(fd.every) > 0 && /^\d{4}-\d{2}-\d{2}$/.test(fd.last || '')) {
+    const next = addDaysToDateStr(fd.last, Number(fd.every));
+    const days = daysBetweenDateStrs(ptToday(), next);
+    const when = days < 0 ? `seit ${-days} ${-days === 1 ? 'Tag' : 'Tagen'} fällig` : days === 0 ? 'heute' : days === 1 ? 'morgen' : `in ${days} Tagen`;
+    rows.push(famRow('Nächstes Auffüllen', when + ' · ' + famFmtDate(next)));
+  }
+  if (fd.last) rows.push(famRow('Zuletzt aufgefüllt', famFmtDate(fd.last)));
+  if (fd.entity) {
+    ptFeederFetch(p);
+    const lv = ptFeederLevels[p.id];
+    rows.push(famRow('Füllstand', lv && lv.text ? lv.text : '…'));
+  }
+  const due = Number(fd.every) > 0 && fd.last && addDaysToDateStr(fd.last, Number(fd.every)) <= ptToday();
+  return `<div class="fam-card"><div class="flex items-center justify-between gap-2 mb-1"><div class="fz-h" style="margin-bottom:0">🍽️ Futterautomat</div>${can ? `<button type="button" class="fz-mini-btn${due ? ' primary' : ''}" data-pt="feederfilled" data-id="${famAttr(p.id)}">✓ <span>Aufgefüllt</span></button>` : ''}</div>${rows.join('')}</div>`;
+}
+function ptFeederFilled(id) {
+  const p = ptById(id);
+  if (!p || !p.feeder || !ptCanEdit()) return;
+  pets = ptList().map(x => (x.id === id ? { ...x, feeder: { ...x.feeder, last: ptToday() }, updated: Date.now() } : x));
+  persistState();
+  ptRefresh();
+  finShowToast('Aufgefüllt ✓');
 }
 function ptDrawEditBits() {
   const st = ptModalState;
@@ -4174,6 +4266,7 @@ function ptSavePet() {
     sex: st.sex, neutered: ptChecked('ptF_neutered'), birth: ptVal('ptF_birth'), since: ptVal('ptF_since'),
     owners: st.owners.filter(id => memberById(id)),
     feed: { brand: ptVal('ptF_food'), amount: ptVal('ptF_amount'), times: ptParseTimes(ptVal('ptF_times')), pantryId: ptVal('ptF_pantry') },
+    feeder: ptFeederValue(old),
     walks,
     allergies: ptVal('ptF_allergies'), conditions: ptVal('ptF_conditions'),
     meds: st.meds.map(x => ({ id: x.id || ptId('pm'), name: String(x.name || '').trim(), dose: String(x.dose || '').trim(), times: String(x.times || '').trim() })).filter(x => x.name),
@@ -4586,6 +4679,7 @@ function ptPaneClick(e) {
     case 'togglegone': ptShowGone = !ptShowGone; renderFamily(); break;
     case 'care': ptOpenCare(id, b.dataset.cid); break;
     case 'caredone': ptCareDone(id, b.dataset.cid); break;
+    case 'feederfilled': ptFeederFilled(id); break;
     case 'careadd': ptOpenCare(id, ''); break;
     case 'presets': ptAddPresets(id); break;
     case 'weight': ptOpenWeight(id); break;
