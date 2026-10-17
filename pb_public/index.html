@@ -913,7 +913,7 @@ window.PINN_LANGUAGES = [
   // Startprüfung: fehlt eine selbst gehostete Datei, erscheint ein klarer Hinweis statt einer
   // leeren Seite ohne funktionierende Buttons.
   // Teile der App unter pb_public/js/ – jede Datei meldet sich am Ende in window.PINN_PARTS an
-  var PINN_APP_PARTS = ['aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
+  var PINN_APP_PARTS = ['reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
   window.addEventListener('DOMContentLoaded', function () {
     var missing = [];
     if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – der PocketBase-Client (ohne ihn funktioniert nichts)');
@@ -23404,121 +23404,6 @@ document.getElementById('deleteRoomScheduleBtn').addEventListener('click', async
   }
 });
 
-/* ==========================================================
-   Haushalt: Reihum verteilen & „Wer macht wie viel?“
-   ----------------------------------------------------------
-   - Reinigungen (roomSchedules) und Mülleimer (trashBins) mit mindestens zwei Zuständigen können
-     rotate = 'reihum' (der Reihe nach) oder 'fair' (wer in den letzten 30 Tagen am wenigsten erledigt
-     hat) bekommen. Der Server (pinn-aufgaben.js) weist dann jede neue Aufgabe genau einer Person zu;
-     wer eine Aufgabe verpasst, bleibt dran.
-   - Die Statistik kommt vom Server (/api/pinn/aufgaben/statistik, Sammlung „haushalt_verlauf“), weil
-     erledigte Aufgaben nach spätestens 2 Tagen gelöscht werden. Abgefragt wird nur beim Öffnen der
-     Haushalt-Seite (höchstens einmal pro Minute).
-   ========================================================== */
-function hhRotateEls(containerId) {
-  const p = containerId === 'trashBinMemberPicker' ? 'trashBin' : 'roomSchedule';
-  return { wrap: document.getElementById(p + 'RotateWrap'), box: document.getElementById(p + 'Rotate'), mode: document.getElementById(p + 'RotateMode') };
-}
-function hhRotateUi(containerId) {
-  const el = hhRotateEls(containerId);
-  if (!el.wrap) return;
-  el.wrap.classList.toggle('hidden', pendingHouseholdAssignedIds.length < 2);
-  el.mode.classList.toggle('hidden', !el.box.checked);
-}
-function hhRotateLoad(containerId, val) {
-  const el = hhRotateEls(containerId);
-  if (!el.wrap) return;
-  el.box.checked = val === 'reihum' || val === 'fair';
-  el.mode.value = val === 'fair' ? 'fair' : 'reihum';
-  hhRotateUi(containerId);
-}
-function hhRotateValue(containerId) {
-  const el = hhRotateEls(containerId);
-  if (!el.wrap || pendingHouseholdAssignedIds.length < 2 || !el.box.checked) return '';
-  return el.mode.value === 'fair' ? 'fair' : 'reihum';
-}
-['trashBinMemberPicker', 'roomScheduleMemberPicker'].forEach(id => {
-  const el = hhRotateEls(id);
-  if (el.box) el.box.addEventListener('change', () => hhRotateUi(id));
-});
-
-const HH_FAIR_DAYS = [[30, '30 Tage'], [90, '90 Tage'], [365, '1 Jahr']];
-let hhFairDays = 30;
-let hhFairCache = null;     // { days, at, data }
-let hhFairLoading = false;
-let hhFairFailed = false;   // Server ohne Statistik (ältere pinn-aufgaben.js) – Karte bleibt weg
-async function renderHouseholdFairness(force) {
-  const el = document.getElementById('hhFairCard');
-  if (!el) return;
-  if ((!roomSchedules.length && !trashBins.length) || hhFairFailed || isCurrentUserGuest()) { el.innerHTML = ''; return; }
-  const have = hhFairCache && hhFairCache.days === hhFairDays;
-  if (have) hhFairRender(hhFairCache.data);
-  if (have && !force && Date.now() - hhFairCache.at < 60000) return;
-  if (hhFairLoading || !navigator.onLine) return;
-  hhFairLoading = true;
-  try {
-    const res = await apiFetch('/api/pinn/aufgaben/statistik?tage=' + hhFairDays, { cache: 'no-store' });
-    if (res.status === 404) { hhFairFailed = true; el.innerHTML = ''; return; }
-    const body = await res.json().catch(() => ({}));
-    if (!res.ok || body.error || !body.mitglieder) { if (!have) el.innerHTML = ''; return; }
-    hhFairCache = { days: hhFairDays, at: Date.now(), data: body };
-    hhFairRender(body);
-  } catch (e) {
-    if (!have) el.innerHTML = '';
-  } finally {
-    hhFairLoading = false;
-  }
-}
-function hhFairRender(d) {
-  const el = document.getElementById('hhFairCard');
-  if (!el) return;
-  const per = d.mitglieder || {};
-  const inRule = new Set();
-  [...roomSchedules, ...trashBins].forEach(r => (r.assignedMemberIds || []).forEach(id => inRule.add(id)));
-  const rows = members.map(m => ({ m, s: per[m.id] || {} }))
-    .filter(x => (x.s.erledigt || x.s.verpasst || x.s.offen) || inRule.has(x.m.id));
-  const total = rows.reduce((s, r) => s + (r.s.erledigt || 0), 0);
-  const max = Math.max(1, ...rows.map(r => r.s.erledigt || 0));
-  rows.sort((a, b) => (b.s.erledigt || 0) - (a.s.erledigt || 0) || memberLabel(a.m).localeCompare(memberLabel(b.m)));
-  const rowsHtml = rows.map(r => {
-    const done = r.s.erledigt || 0;
-    const share = total ? Math.round(done / total * 100) : 0;
-    const color = (!r.m.color || r.m.color === 'transparent') ? 'var(--c-pine)' : r.m.color;
-    return `<div class="hh-fair-row">
-      <span class="w-8 h-8 rounded-full overflow-hidden border-2 shrink-0" style="border-color:${memberBorderColor(r.m)}">${memberAvatarInnerHTML(r.m)}</span>
-      <div class="flex-1 min-w-0">
-        <div class="flex items-baseline justify-between gap-2">
-          <span class="text-sm truncate" data-no-i18n>${escapeHtml(memberLabel(r.m))}</span>
-          <span class="text-xs text-ink/50 shrink-0"><b class="text-ink" data-no-i18n>${done}</b> <span>erledigt</span>${r.s.verpasst ? ` · <span data-no-i18n>${r.s.verpasst}</span> <span>verpasst</span>` : ''}${total ? ` · <span data-no-i18n>${share} %</span>` : ''}</span>
-        </div>
-        <div class="hh-fair-bar"><span style="width:${done / max * 100}%;background:${escapeHtml(color)}"></span></div>
-      </div>
-    </div>`;
-  }).join('');
-  const rules = (d.regeln || []).map(r => {
-    const now = r.jetzt ? memberById(r.jetzt) : null;
-    const next = r.naechster ? memberById(r.naechster) : null;
-    if (!now && !next) return '';
-    return `<div class="hh-fair-rule">
-      <span class="flex-1 min-w-0 truncate" data-no-i18n>🔄 ${escapeHtml(r.titel || '')}</span>
-      <span class="shrink-0 text-ink/55">${now ? `<span>dran:</span> <b class="text-ink" data-no-i18n>${escapeHtml(memberLabel(now))}</b>` : ''}${now && next ? ' · ' : ''}${next ? `<span>danach:</span> <b class="text-ink" data-no-i18n>${escapeHtml(memberLabel(next))}</b>` : ''}</span>
-    </div>`;
-  }).join('');
-  const chips = HH_FAIR_DAYS.map(([n, label]) => `<button type="button" class="hh-fair-chip${n === hhFairDays ? ' active' : ''}" data-days="${n}">${label}</button>`).join('');
-  el.innerHTML = `<div class="hh-fair rounded-xl border border-ink/10 p-3">
-    <div class="flex items-center justify-between gap-2 flex-wrap mb-2">
-      <span class="font-serif text-base">⚖️ Wer macht wie viel?</span>
-      <span class="flex gap-1">${chips}</span>
-    </div>
-    ${total || rows.some(r => r.s.verpasst) ? rowsHtml : '<p class="text-xs text-ink/40 italic">In diesem Zeitraum wurde noch keine Haushaltsaufgabe erledigt.</p>'}
-    ${rules ? `<div class="hh-fair-rules">${rules}</div>` : ''}
-  </div>`;
-  el.querySelectorAll('.hh-fair-chip').forEach(b => b.addEventListener('click', () => {
-    hhFairDays = Number(b.dataset.days) || 30;
-    renderHouseholdFairness(true);
-  }));
-}
-
 // Nach dem Anlegen/Bearbeiten einer Haushalts-Regel sofort einen Sync samt Erkennung anstoßen,
 // statt bis zu 15 Minuten auf den nächsten regulären Takt zu warten. Falls sich der Titel einer
 // bearbeiteten Regel geändert hat, wird zuerst die dadurch verwaiste alte Aufgabe von heute entfernt.
@@ -23712,7 +23597,7 @@ document.getElementById('deleteHouseholdTasksBtn_kalender').addEventListener('cl
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.72.0';
+const APP_VERSION = '1.73.0';
 
 /* ==========================================================
    Einstellungen & Konto: zwei gleich hohe Spalten (Querformat ab Tablet-Breite)
@@ -23840,34 +23725,35 @@ const APP_VERSION = '1.72.0';
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/aufgaben.js?v=1.72.0"></script>
-<script src="js/smarthome.js?v=1.72.0"></script>
-<script src="js/sprachsteuerung.js?v=1.72.0"></script>
-<script src="js/termine.js?v=1.72.0"></script>
-<script src="js/ansichten.js?v=1.72.0"></script>
-<script src="js/versionspruefung.js?v=1.72.0"></script>
-<script src="js/sicherungen.js?v=1.72.0"></script>
-<script src="js/geraete.js?v=1.72.0"></script>
-<script src="js/fehlerprotokoll.js?v=1.72.0"></script>
-<script src="js/versionslog.js?v=1.72.0"></script>
-<script src="js/einstellungen.js?v=1.72.0"></script>
-<script src="js/kalenderkonto.js?v=1.72.0"></script>
-<script src="js/finanzen.js?v=1.72.0"></script>
-<script src="js/kassen.js?v=1.72.0"></script>
-<script src="js/vorrat.js?v=1.72.0"></script>
-<script src="js/vorrat2.js?v=1.72.0"></script>
-<script src="js/sparen.js?v=1.72.0"></script>
-<script src="js/vertraege.js?v=1.72.0"></script>
-<script src="js/fahrzeuge.js?v=1.72.0"></script>
-<script src="js/zuhause.js?v=1.72.0"></script>
-<script src="js/dokumente.js?v=1.72.0"></script>
-<script src="js/pdflesen.js?v=1.72.0"></script>
-<script src="js/appstart.js?v=1.72.0"></script>
-<script src="js/pinnwand.js?v=1.72.0"></script>
-<script src="js/listen.js?v=1.72.0"></script>
-<script src="js/familie.js?v=1.72.0"></script>
-<script src="js/hinweise.js?v=1.72.0"></script>
-<script src="js/ausblick.js?v=1.72.0"></script>
+<script src="js/reihum.js?v=1.73.0"></script>
+<script src="js/aufgaben.js?v=1.73.0"></script>
+<script src="js/smarthome.js?v=1.73.0"></script>
+<script src="js/sprachsteuerung.js?v=1.73.0"></script>
+<script src="js/termine.js?v=1.73.0"></script>
+<script src="js/ansichten.js?v=1.73.0"></script>
+<script src="js/versionspruefung.js?v=1.73.0"></script>
+<script src="js/sicherungen.js?v=1.73.0"></script>
+<script src="js/geraete.js?v=1.73.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.73.0"></script>
+<script src="js/versionslog.js?v=1.73.0"></script>
+<script src="js/einstellungen.js?v=1.73.0"></script>
+<script src="js/kalenderkonto.js?v=1.73.0"></script>
+<script src="js/finanzen.js?v=1.73.0"></script>
+<script src="js/kassen.js?v=1.73.0"></script>
+<script src="js/vorrat.js?v=1.73.0"></script>
+<script src="js/vorrat2.js?v=1.73.0"></script>
+<script src="js/sparen.js?v=1.73.0"></script>
+<script src="js/vertraege.js?v=1.73.0"></script>
+<script src="js/fahrzeuge.js?v=1.73.0"></script>
+<script src="js/zuhause.js?v=1.73.0"></script>
+<script src="js/dokumente.js?v=1.73.0"></script>
+<script src="js/pdflesen.js?v=1.73.0"></script>
+<script src="js/appstart.js?v=1.73.0"></script>
+<script src="js/pinnwand.js?v=1.73.0"></script>
+<script src="js/listen.js?v=1.73.0"></script>
+<script src="js/familie.js?v=1.73.0"></script>
+<script src="js/hinweise.js?v=1.73.0"></script>
+<script src="js/ausblick.js?v=1.73.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)

@@ -90,19 +90,19 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **English, Deutsch, Français und Español**, passt Währung und Notrufnummern an eure Region an und wechselt zwischen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.73
+
+**App-Code wird aufgeteilt, Teil 29**
+
+- **Für Mitwirkende:** *Reihum verteilen* bei Reinigungen und Mülleimern und die Karte *Wer macht wie viel?* auf der Haushalt-Seite liegen jetzt in einer eigenen Datei (`pb_public/js/reihum.js`). An der Bedienung ändert sich nichts.
+- Nur App-Dateien geändert (`index.html`, `js/reihum.js` und `js/versionslog.js`), am Server ändert sich nichts. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
+
 ## Neu in 1.72
 
 **App-Code wird aufgeteilt, Teil 28**
 
 - **Für Mitwirkende:** die Aufgabenliste, das Abhaken (inklusive Feier-Animation, geplantem Einkauf und Smarthome-Aktion) und das Aufgaben-Fenster zum Anlegen und Bearbeiten liegen jetzt in einer eigenen Datei (`pb_public/js/aufgaben.js`). An der Bedienung ändert sich nichts.
 - Nur App-Dateien geändert (`index.html`, `js/aufgaben.js` und `js/versionslog.js`), am Server ändert sich nichts. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
-
-## Neu in 1.71
-
-**App-Code wird aufgeteilt, Teil 27**
-
-- **Für Mitwirkende:** das Smarthome – Geräte mit Aktionen über Apple-Kurzbefehle oder Home Assistant, Start-Knöpfe an Aufgaben, Automatik, *Einstellungen → Smarthome*, Geräte-Editor und Saugroboter-Raumreinigung – liegt jetzt in einer eigenen Datei (`pb_public/js/smarthome.js`). An der Bedienung ändert sich nichts.
-- Nur App-Dateien geändert (`index.html`, `js/smarthome.js` und `js/versionslog.js`), am Server ändert sich nichts. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
 
 ## So funktioniert's
 
@@ -130,7 +130,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS klappt **ohne Portfrei
 ## Installation
 
 1. Die ZIP des [neuesten Release](https://github.com/pinn-shost/pinn/releases/latest) herunterladen und entpacken.
-2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.72.0` oder `pinn-main`) so, wie er ist, hineinlegen.
+2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.73.0` oder `pinn-main`) so, wie er ist, hineinlegen.
 3. Per SSH anmelden und ausführen:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -220,7 +220,7 @@ pinn/
 ├── pb_public/           Web-App, ausgeliefert von PocketBase
 │   ├── index.html       die App (HTML, Styles und der größte Teil des Codes)
 │   ├── js/              aus index.html ausgelagerter App-Code, einfache <script>-Dateien ohne Build-Schritt
-│   │                    (aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js kommt immer zuletzt)
+│   │                    (reihum.js, aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js kommt immer zuletzt)
 │   ├── einrichtung.js   Einrichtungsassistent · datenexport.js  Datenexport
 │   ├── lang/            Übersetzungen (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js und Tesseract lädt das Setup herunter)
