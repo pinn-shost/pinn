@@ -90,23 +90,19 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **English, Deutsch, Français und Español**, passt Währung und Notrufnummern an eure Region an und wechselt zwischen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.68
+
+**App-Code wird aufgeteilt, Teil 24**
+
+- **Für Mitwirkende:** Seitenmenü, Seitenwechsel, die Menüleiste am Handy mit ausziehbarem Fach, die Erkennung von Handy/Tablet und Hoch-/Querformat sowie das Wischen im Kalender liegen jetzt in einer eigenen Datei (`pb_public/js/ansichten.js`). An der Bedienung ändert sich nichts.
+- Nur App-Dateien geändert (`index.html`, `js/ansichten.js` und `js/versionslog.js`), am Server ändert sich nichts. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
+
 ## Neu in 1.67
 
 **App-Code wird aufgeteilt, Teil 23**
 
 - **Für Mitwirkende:** die Update-Erkennung – der Hinweis *Es gibt eine neuere Version dieser App*, die Anzeige der installierten Version in Seitenleiste und Einstellungen und die GitHub-Links unter *Einstellungen → GitHub* – liegt jetzt in einer eigenen Datei (`pb_public/js/versionspruefung.js`). Die Versionsnummer selbst (`APP_VERSION`) bleibt in der `index.html`, weil der Server sie dort ausliest. An der Bedienung ändert sich nichts.
 - Nur App-Dateien geändert (`index.html`, `js/versionspruefung.js` und `js/versionslog.js`), am Server ändert sich nichts. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
-
-## Neu in 1.66
-
-**Vorabversionen zum Testen**
-
-- **Entwickler-Bereich für Vorabversionen:** Unter *Einstellungen → System → Sicherungen & Updates* gibt es den neuen aufklappbaren Bereich *🧪 Entwickler: Vorabversionen testen*. Normale Updates zeigen weiterhin nur fertige Versionen. Hier kann ein Admin gezielt nach einer Vorabversion suchen (ein GitHub-Release mit Haken bei *Pre-Release*), die Release Notes und die Warnhinweise lesen, bestätigen und sie installieren.
-- **Deine Daten bleiben sicher:** Wie bei jedem Update legt pinn. vorher eine Sicherung an (*Vor einem Update*). Mit *Wiederherstellen → Alles* kommst du jederzeit zurück. Sobald die fertige Version erscheint, wird sie ganz normal als Update angeboten.
-- **Fehler melden:** Läuft eine Vorabversion, steht das bei den Updates – mit Link zu einem vorausgefüllten Fehlerbericht auf GitHub (Version und Gerät stehen schon drin).
-- **Für Betreuer:** Vorabversion auf GitHub mit Haken bei *Set as a pre-release* veröffentlichen, am besten mit einem Tag wie `v1.67.0-beta.1` und derselben `APP_VERSION`. `pinn-wartung.sh` nimmt solche Tags jetzt an.
-- Für Mitwirkende: Sicherungen & Updates liegen jetzt in einer eigenen Datei (`pb_public/js/sicherungen.js`); `pinn-system.js` und `system.pb.js` haben jetzt englische Kommentare.
-- App- und Server-Dateien geändert (`index.html`, `js/sicherungen.js`, `js/versionslog.js`, die Sprachdateien, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `pinn-wartung.sh`, `pinn-setup.sh`). Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf). Vorabversionen lassen sich aus der App installieren, sobald 1.66 installiert ist.
 
 ## So funktioniert's
 
@@ -134,7 +130,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS klappt **ohne Portfrei
 ## Installation
 
 1. Die ZIP des [neuesten Release](https://github.com/pinn-shost/pinn/releases/latest) herunterladen und entpacken.
-2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.67.0` oder `pinn-main`) so, wie er ist, hineinlegen.
+2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.68.0` oder `pinn-main`) so, wie er ist, hineinlegen.
 3. Per SSH anmelden und ausführen:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -224,7 +220,7 @@ pinn/
 ├── pb_public/           Web-App, ausgeliefert von PocketBase
 │   ├── index.html       die App (HTML, Styles und der größte Teil des Codes)
 │   ├── js/              aus index.html ausgelagerter App-Code, einfache <script>-Dateien ohne Build-Schritt
-│   │                    (versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js kommt immer zuletzt)
+│   │                    (ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js kommt immer zuletzt)
 │   ├── einrichtung.js   Einrichtungsassistent · datenexport.js  Datenexport
 │   ├── lang/            Übersetzungen (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js und Tesseract lädt das Setup herunter)

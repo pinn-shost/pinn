@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.68', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 24)',
+    punkte: [
+      ['info', 'Für Mitwirkende: Seitenmenü, Seitenwechsel, die Menüleiste am Handy mit ausziehbarem Fach, die Erkennung von Handy/Tablet und Hoch-/Querformat sowie das Wischen im Kalender liegen jetzt in einer eigenen Datei (pb_public/js/ansichten.js). An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, js/ansichten.js und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.67', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 23)',
     punkte: [
       ['info', 'Für Mitwirkende: die Update-Erkennung – Hinweis „Es gibt eine neuere Version dieser App“, Anzeige der installierten Version und die GitHub-Links in den Einstellungen – liegt jetzt in einer eigenen Datei (pb_public/js/versionspruefung.js). Die Versionsnummer selbst (APP_VERSION) bleibt in der index.html, weil der Server sie dort ausliest. An der Bedienung ändert sich nichts'],
