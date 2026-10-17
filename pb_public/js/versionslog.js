@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.74', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 30)',
+    punkte: [
+      ['info', 'Für Mitwirkende: die Haushalt-Seite – Räume, Reinigungen und Mülleimer mit ihren Fenstern sowie die Pflege der Haushaltsaufgaben (neu erzeugen, löschen, aufräumen, Animation) – liegt jetzt in einer eigenen Datei (pb_public/js/haushalt.js). An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, js/haushalt.js und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.73', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 29)',
     punkte: [
       ['info', 'Für Mitwirkende: „Reihum verteilen“ bei Reinigungen und Mülleimern und die Karte „Wer macht wie viel?“ auf der Haushalt-Seite liegen jetzt in einer eigenen Datei (pb_public/js/reihum.js). An der Bedienung ändert sich nichts'],
