@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.72', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 28)',
+    punkte: [
+      ['info', 'Für Mitwirkende: die Aufgabenliste, das Abhaken (inklusive Feier-Animation, geplanter Einkauf und Smarthome-Aktion) und das Aufgaben-Fenster zum Anlegen und Bearbeiten liegen jetzt in einer eigenen Datei (pb_public/js/aufgaben.js). An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, js/aufgaben.js und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.71', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 27)',
     punkte: [
       ['info', 'Für Mitwirkende: das Smarthome – Geräte mit Aktionen über Apple-Kurzbefehle oder Home Assistant, Start-Knöpfe an Aufgaben, Automatik, Einstellungen → Smarthome, Geräte-Editor und Saugroboter-Raumreinigung – liegt jetzt in einer eigenen Datei (pb_public/js/smarthome.js). An der Bedienung ändert sich nichts'],
