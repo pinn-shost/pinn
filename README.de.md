@@ -90,6 +90,13 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **English, Deutsch, Français und Español**, passt Währung und Notrufnummern an eure Region an und wechselt zwischen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.63
+
+**App-Code wird aufgeteilt, Teil 19**
+
+- **Für Mitwirkende:** das Versions-Log – alle Einträge und die Anzeige als Terminal unter *Einstellungen → Updates* – liegt jetzt in einer eigenen Datei (`pb_public/js/versionslog.js`). Neue Versionen tragen sich dort oben in `PINN_CHANGELOG` ein. An der Bedienung ändert sich nichts.
+- Nur App-Dateien geändert (`index.html` und `js/versionslog.js`), am Server ändert sich nichts. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
+
 ## Neu in 1.62
 
 **Smarthome im Garten, Futterautomat & Urlaub im Kalender**
@@ -100,17 +107,6 @@ pinn. spricht **English, Deutsch, Français und Español**, passt Währung und N
 - **Packliste anbieten:** Steht ein Urlaub oder eine Dienstreise im Kalender (auch *vacation*, *vacances*, *viaje* …), bietet pinn. 14 Tage vorher eine Packliste an – per Push und in der Glocke, mit Termin und Zeitraum schon ausgefüllt.
 - **Behoben:** Eingereihte Aufträge des Saugroboters gingen verloren, solange die Station wusch, absaugte oder trocknete. Jetzt startet der nächste Auftrag direkt nach dem laufenden – noch auf dem Rückweg. Am Handy passen die Beträge in *Neues Zuhause* und in den Kosten der Verträge wieder in ihre Felder.
 - Geändert sind App- und Server-Dateien (`index.html`, `js/zuhause.js`, `js/familie.js`, `js/listen.js`, `js/hinweise.js`, `js/vertraege.js`, die Sprachdateien und in `pb_hooks/` die Hooks für Smarthome, Haustiere und neu die Packliste). Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
-
-## Neu in 1.61
-
-**Mehr Platz in der Übersicht**
-
-- **iPad und Computer:** Das Wetter steht jetzt oben rechts neben Datum und Uhrzeit – das aktuelle Wetter mit UV-Wert, dazu heute, morgen und übermorgen. Links davon bleiben nur Datum und Uhrzeit. Ein Tipp darauf öffnet wie bisher die Wetter-Ansicht. So haben Kalender, Essen und Aufgaben mehr Platz.
-- **iPad und Computer:** Die geplanten Mahlzeiten in der Übersicht sind etwas kleiner, das Bild etwa so groß wie ein Tag beim Wetter.
-- **Neue Mahlzeit: Frühstück.** Im Kalender steht statt „Mittag“ oder „Abend“ nur noch ein Symbol vor dem Essen (🌅 Frühstück, ☀️ Mittag, 🌙 Abend) – das spart Platz. Auch die Wochenvorschau kennt das Frühstück.
-- **Aufgaben:** Der Zähler zeigt jetzt erledigte und alle angezeigten Aufgaben, z. B. *3/8*. Am iPad und Computer steht er klein direkt neben der Überschrift.
-- **Kalender:** „+ Essen hinzufügen“ heißt jetzt kurz „+ Essen“, und „Ganztägig“ ragt nicht mehr in die Termine. Alles ist auf Englisch, Deutsch, Französisch und Spanisch übersetzt.
-- Nur App-Dateien geändert (`index.html`, `js/ausblick.js`, `js/vorrat2.js` und die Sprachdateien in `lang/`), auf dem Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
 
 ## So funktioniert's
 
@@ -138,7 +134,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS klappt **ohne Portfrei
 ## Installation
 
 1. Die ZIP des [neuesten Release](https://github.com/pinn-shost/pinn/releases/latest) herunterladen und entpacken.
-2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.62.0` oder `pinn-main`) so, wie er ist, hineinlegen.
+2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.63.0` oder `pinn-main`) so, wie er ist, hineinlegen.
 3. Per SSH anmelden und ausführen:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -228,7 +224,7 @@ pinn/
 ├── pb_public/           Web-App, ausgeliefert von PocketBase
 │   ├── index.html       die App (HTML, Styles und der größte Teil des Codes)
 │   ├── js/              aus index.html ausgelagerter App-Code, einfache <script>-Dateien ohne Build-Schritt
-│   │                    (einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js kommt immer zuletzt)
+│   │                    (versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js kommt immer zuletzt)
 │   ├── einrichtung.js   Einrichtungsassistent · datenexport.js  Datenexport
 │   ├── lang/            Übersetzungen (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js und Tesseract lädt das Setup herunter)

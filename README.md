@@ -90,6 +90,13 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **English, Deutsch, Français and Español**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.63
+
+**App code split, part 19**
+
+- **For contributors:** the version log – all entries and the terminal display under *Settings → Updates* – now lives in its own file (`pb_public/js/versionslog.js`). New versions add their entry at the top of `PINN_CHANGELOG` in that file. Nothing changes in how you use pinn.
+- Only app files changed (`index.html` and `js/versionslog.js`), nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.62
 
 **Smart home in the garden, pet feeder & holidays in the calendar**
@@ -100,17 +107,6 @@ pinn. speaks **English, Deutsch, Français and Español**, adapts currency and e
 - **Packing list offered:** if a holiday or business trip is in the calendar (also *Urlaub*, *vacances*, *viaje* …), pinn. offers a packing list 14 days before – by push and in the bell, with the dates already filled in.
 - **Fixed:** queued robot vacuum jobs got lost while the dock was washing, emptying or drying. The next job now starts right after the running one – while the robot is still on its way back. On the phone, amounts in *New home* and in contract costs fit their fields again.
 - App and server files changed (`index.html`, `js/zuhause.js`, `js/familie.js`, `js/listen.js`, `js/hinweise.js`, `js/vertraege.js`, the language files and in `pb_hooks/` the smart home, pet and new packing list hooks). Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
-## What's new in 1.61
-
-**More room on the overview**
-
-- **iPad and computer:** the weather now sits at the top right next to date and time – the current weather with UV index, plus today, tomorrow and the day after. Only date and time remain to the left of it. Tapping it opens the weather view as before. This gives the calendar, meals and tasks more room.
-- **iPad and computer:** the planned meals on the overview are a little smaller, the picture about the size of one weather day.
-- **New meal: breakfast.** In the calendar a symbol now replaces “Lunch” or “Dinner” in front of the meal (🌅 breakfast, ☀️ lunch, 🌙 dinner) – this saves space. The weekly preview knows breakfast too.
-- **Tasks:** the counter now shows completed and all displayed tasks, e.g. *3/8*. On iPad and computer it sits in small type right next to the heading.
-- **Calendar:** “+ Add meal” is now simply “+ Meal”, and “All day” no longer overlaps the events. All changes are translated into English, German, French and Spanish.
-- Only app files changed (`index.html`, `js/ausblick.js`, `js/vorrat2.js` and the language files in `lang/`), nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 ## How it works
 
@@ -138,7 +134,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.62.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.63.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -228,7 +224,7 @@ pinn/
 ├── pb_public/           web app served by PocketBase
 │   ├── index.html       the app (HTML, styles and most of the code)
 │   ├── js/              app code split out of index.html, plain <script> files without a build step
-│   │                    (einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js always comes last)
+│   │                    (versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js always comes last)
 │   ├── einrichtung.js   setup assistant · datenexport.js  data export
 │   ├── lang/            translations (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js and Tesseract are downloaded by the setup)
