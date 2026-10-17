@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.64', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 20)',
+    punkte: [
+      ['info', 'Für Mitwirkende: das Fehlerprotokoll für Admins, der Knopf „Auf Update prüfen“ und das Aufklappen der Einstellungen (immer nur ein Abschnitt offen) liegen jetzt in einer eigenen Datei (pb_public/js/fehlerprotokoll.js). An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, js/fehlerprotokoll.js und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.63', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 19)',
     punkte: [
       ['info', 'Für Mitwirkende: das Versions-Log – alle Einträge und die Anzeige als Terminal – liegt jetzt in einer eigenen Datei (pb_public/js/versionslog.js). An der Bedienung ändert sich nichts'],

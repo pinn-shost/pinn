@@ -90,23 +90,19 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **English, Deutsch, Français und Español**, passt Währung und Notrufnummern an eure Region an und wechselt zwischen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.64
+
+**App-Code wird aufgeteilt, Teil 20**
+
+- **Für Mitwirkende:** das Fehlerprotokoll für Admins, der Knopf *Auf Update prüfen* und das Aufklappen der Einstellungen (immer nur ein Abschnitt offen) liegen jetzt in einer eigenen Datei (`pb_public/js/fehlerprotokoll.js`). An der Bedienung ändert sich nichts.
+- Nur App-Dateien geändert (`index.html`, `js/fehlerprotokoll.js` und `js/versionslog.js`), am Server ändert sich nichts. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
+
 ## Neu in 1.63
 
 **App-Code wird aufgeteilt, Teil 19**
 
 - **Für Mitwirkende:** das Versions-Log – alle Einträge und die Anzeige als Terminal unter *Einstellungen → Updates* – liegt jetzt in einer eigenen Datei (`pb_public/js/versionslog.js`). Neue Versionen tragen sich dort oben in `PINN_CHANGELOG` ein. An der Bedienung ändert sich nichts.
 - Nur App-Dateien geändert (`index.html` und `js/versionslog.js`), am Server ändert sich nichts. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
-
-## Neu in 1.62
-
-**Smarthome im Garten, Futterautomat & Urlaub im Kalender**
-
-- **Mähroboter und Bewässerung:** zwei neue Gerätearten für Home Assistant. Unter *Zuhause → Garten* lassen sich Rasen und Pflanzen mit einem Gerät verknüpfen – ein Start-Knopf (z. B. für eine Extra-Mähzeit) und eine Automatik zur Uhrzeit am Fälligkeitstag. Nach Regen wird nicht gegossen, bei Regen nicht gemäht, und das Bewässerungsventil schließt nach der eingestellten Dauer von selbst.
-- **Futterautomat:** Auffüll-Erinnerung nach Tagen oder über einen Füllstand-Sensor aus Home Assistant – eine Push, sobald er fast leer ist.
-- **Urlaub im Kalender:** Packlisten mit Ziel und Zeitraum stehen jetzt im Kalender. Antippen öffnet die Packliste, langes Drücken zeigt Packliste und Urlaubswetter.
-- **Packliste anbieten:** Steht ein Urlaub oder eine Dienstreise im Kalender (auch *vacation*, *vacances*, *viaje* …), bietet pinn. 14 Tage vorher eine Packliste an – per Push und in der Glocke, mit Termin und Zeitraum schon ausgefüllt.
-- **Behoben:** Eingereihte Aufträge des Saugroboters gingen verloren, solange die Station wusch, absaugte oder trocknete. Jetzt startet der nächste Auftrag direkt nach dem laufenden – noch auf dem Rückweg. Am Handy passen die Beträge in *Neues Zuhause* und in den Kosten der Verträge wieder in ihre Felder.
-- Geändert sind App- und Server-Dateien (`index.html`, `js/zuhause.js`, `js/familie.js`, `js/listen.js`, `js/hinweise.js`, `js/vertraege.js`, die Sprachdateien und in `pb_hooks/` die Hooks für Smarthome, Haustiere und neu die Packliste). Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
 
 ## So funktioniert's
 
@@ -134,7 +130,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS klappt **ohne Portfrei
 ## Installation
 
 1. Die ZIP des [neuesten Release](https://github.com/pinn-shost/pinn/releases/latest) herunterladen und entpacken.
-2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.63.0` oder `pinn-main`) so, wie er ist, hineinlegen.
+2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.64.0` oder `pinn-main`) so, wie er ist, hineinlegen.
 3. Per SSH anmelden und ausführen:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -224,7 +220,7 @@ pinn/
 ├── pb_public/           Web-App, ausgeliefert von PocketBase
 │   ├── index.html       die App (HTML, Styles und der größte Teil des Codes)
 │   ├── js/              aus index.html ausgelagerter App-Code, einfache <script>-Dateien ohne Build-Schritt
-│   │                    (versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js kommt immer zuletzt)
+│   │                    (fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js kommt immer zuletzt)
 │   ├── einrichtung.js   Einrichtungsassistent · datenexport.js  Datenexport
 │   ├── lang/            Übersetzungen (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js und Tesseract lädt das Setup herunter)

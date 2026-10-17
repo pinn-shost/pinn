@@ -90,23 +90,19 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **English, Deutsch, Français et Español**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.64
+
+**Le code de l’app est découpé, partie 20**
+
+- **Pour les contributeurs :** le journal des erreurs pour les admins, le bouton *Rechercher une mise à jour* et les sections des réglages qui n’en gardent qu’une ouverte se trouvent désormais dans leur propre fichier (`pb_public/js/fehlerprotokoll.js`). Rien ne change à l’utilisation de pinn.
+- Seuls des fichiers de l’app changent (`index.html`, `js/fehlerprotokoll.js` et `js/versionslog.js`), rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
+
 ## Nouveautés de la 1.63
 
 **Le code de l’app est découpé, partie 19**
 
 - **Pour les contributeurs :** le journal des versions – toutes les entrées et l’affichage en terminal dans *Réglages → Mises à jour* – se trouve désormais dans son propre fichier (`pb_public/js/versionslog.js`). Les nouvelles versions ajoutent leur entrée en haut de `PINN_CHANGELOG` dans ce fichier. Rien ne change à l’utilisation de pinn.
 - Seuls des fichiers de l’app changent (`index.html` et `js/versionslog.js`), rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
-## Nouveautés de la 1.62
-
-**Maison connectée au jardin, distributeur de croquettes & vacances dans le calendrier**
-
-- **Robot tondeuse et arrosage :** deux nouveaux types d'appareils pour Home Assistant. Sous *Domicile → Jardin*, la pelouse et les plantes se relient à un appareil : un bouton de démarrage (p. ex. une tonte supplémentaire) et un automatisme à l'heure choisie le jour prévu. Pas d'arrosage après la pluie, pas de tonte sous la pluie, et la vanne d'arrosage se ferme seule après la durée réglée.
-- **Distributeur de croquettes :** rappel de remplissage après un nombre de jours ou via un capteur de niveau de Home Assistant – une notification dès qu'il est presque vide.
-- **Vacances dans le calendrier :** les listes de bagages avec destination et dates apparaissent maintenant dans le calendrier. Un tap ouvre la liste, un appui long affiche la liste et la météo des vacances.
-- **Liste de bagages proposée :** si des vacances ou un déplacement professionnel figurent au calendrier (aussi *vacation*, *Urlaub*, *viaje* …), pinn. propose une liste de bagages 14 jours avant – par notification et dans la cloche, dates déjà remplies.
-- **Corrigé :** les tâches en attente du robot aspirateur se perdaient pendant que la station lavait, vidait ou séchait. La tâche suivante démarre maintenant juste après la tâche en cours – encore sur le chemin du retour. Sur le téléphone, les montants dans *Nouveau domicile* et dans les coûts des contrats tiennent à nouveau dans leurs champs.
-- Fichiers de l'app et du serveur modifiés (`index.html`, `js/zuhause.js`, `js/familie.js`, `js/listen.js`, `js/hinweise.js`, `js/vertraege.js`, les fichiers de langue et dans `pb_hooks/` les hooks maison connectée, animaux et le nouveau hook des listes de bagages). Installation comme d'habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
 ## Comment ça marche
 
@@ -134,7 +130,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.63.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.64.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -224,7 +220,7 @@ pinn/
 ├── pb_public/           web-app servie par PocketBase
 │   ├── index.html       l’app (HTML, styles et la plus grande partie du code)
 │   ├── js/              code de l’app sorti d’index.html, simples fichiers <script> sans étape de build
-│   │                    (versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js toujours en dernier)
+│   │                    (fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js toujours en dernier)
 │   ├── einrichtung.js   assistant de configuration · datenexport.js  export des données
 │   ├── lang/            traductions (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js et Tesseract sont téléchargés par l’installation)
