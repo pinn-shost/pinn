@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.71', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 27)',
+    punkte: [
+      ['info', 'Für Mitwirkende: das Smarthome – Geräte mit Aktionen über Apple-Kurzbefehle oder Home Assistant, Start-Knöpfe an Aufgaben, Automatik, Einstellungen → Smarthome, Geräte-Editor und Saugroboter-Raumreinigung – liegt jetzt in einer eigenen Datei (pb_public/js/smarthome.js). An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, js/smarthome.js und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.70', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 26)',
     punkte: [
       ['info', 'Für Mitwirkende: die Einstellungen zur Sprachsteuerung (persönlicher Link, erneuern, ausschalten, Testsatz) liegen jetzt in einer eigenen Datei (pb_public/js/sprachsteuerung.js). An der Bedienung ändert sich nichts'],
