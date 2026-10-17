@@ -913,7 +913,7 @@ window.PINN_LANGUAGES = [
   // Startprüfung: fehlt eine selbst gehostete Datei, erscheint ein klarer Hinweis statt einer
   // leeren Seite ohne funktionierende Buttons.
   // Teile der App unter pb_public/js/ – jede Datei meldet sich am Ende in window.PINN_PARTS an
-  var PINN_APP_PARTS = ['fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
+  var PINN_APP_PARTS = ['geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
   window.addEventListener('DOMContentLoaded', function () {
     var missing = [];
     if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – der PocketBase-Client (ohne ihn funktioniert nichts)');
@@ -26520,7 +26520,7 @@ function attachSwipeNavigation(el) {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.64.0';
+const APP_VERSION = '1.65.0';
 document.getElementById('sidebarVersionDisplay').textContent = APP_VERSION;
 document.getElementById('settingsVersionDisplay').textContent = APP_VERSION;
 document.getElementById('githubVersionDisplay').textContent = APP_VERSION;
@@ -27020,243 +27020,6 @@ document.getElementById('sysUpdateHintBtn').addEventListener('click', () => open
 document.getElementById('mainAdminSystemBtn').addEventListener('click', () => openSysMaint());
 
 /* ==========================================================
-   Geräteverwaltung – angemeldete Geräte je Profil (pb_hooks/sitzungen.pb.js)
-   ----------------------------------------------------------
-   - Konto → „Angemeldete Geräte“: eigene Geräte, einzeln abmelden oder „Alle anderen Geräte abmelden“
-   - Profile verwalten → „📱 Geräte & Anmeldung“ (Admins) bzw. 📱 beim Hauptadmin: Geräte eines Profils,
-     „Überall abmelden“ und – nach zu vielen falschen Passwörtern – „Sperre aufheben“
-   - Ein abgemeldetes Gerät löscht seine pinn.-Daten (handleRemoteLogout oben bei der PocketBase-Verbindung)
-   ========================================================== */
-function devFmtDate(iso) {
-  const t = Date.parse(iso || '');
-  if (!isFinite(t)) return '';
-  try { return new Date(t).toLocaleDateString(sysLocale(), { day: 'numeric', month: 'short', year: 'numeric' }); }
-  catch (e) { return new Date(t).toLocaleDateString(); }
-}
-function devFmtWhen(iso) {
-  const t = Date.parse(iso || '');
-  if (!isFinite(t)) return '';
-  const diff = Date.now() - t;
-  if (diff < 2 * 60000) return 'gerade eben';
-  if (diff < 60 * 60000) return 'vor ' + Math.round(diff / 60000) + ' Min.';
-  const d = new Date(t), now = new Date();
-  let time = '';
-  try { time = d.toLocaleTimeString(sysLocale(), { hour: '2-digit', minute: '2-digit' }); } catch (e) { time = d.toLocaleTimeString(); }
-  const day = x => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
-  const days = Math.round((day(now) - day(d)) / 86400000);
-  if (days === 0) return 'heute, ' + time;
-  if (days === 1) return 'gestern, ' + time;
-  return devFmtDate(iso) + ', ' + time;
-}
-function devWait(sec) {
-  const s = Math.max(1, Math.round(Number(sec) || 0));
-  return s < 60 ? s + ' Sek.' : Math.ceil(s / 60) + ' Min.';
-}
-function devIcon(s) {
-  const n = String(s.name || '');
-  if (s.art === 'dashboard' || /^Familien-Dashboard/.test(n)) return '🖥️';
-  if (/iPhone|Android-Handy/.test(n)) return '📱';
-  if (/iPad|Tablet/.test(n)) return '📲';
-  return '💻';
-}
-function devRowsHtml(list) {
-  if (!list.length) return '<p class="sm-empty">Keine angemeldeten Geräte.</p>';
-  return list.map(s => {
-    const sub = ['Zuletzt aktiv: ' + devFmtWhen(s.zuletzt)];
-    if (s.seit) sub.push('angemeldet seit ' + devFmtDate(s.seit));
-    if (s.push) sub.push('🔔 Push');
-    if (s.ip) sub.push(s.ip);
-    return `<div class="sm-row dev-row">
-      <div class="sm-row-ico">${devIcon(s)}</div>
-      <div class="sm-row-main">
-        <span class="sm-row-title">${escapeHtml(s.name || 'Gerät')}${s.dieses ? ' <span class="sm-tag">Dieses Gerät</span>' : ''}</span>
-        <span class="sm-row-sub">${escapeHtml(sub.join(' · '))}</span>
-      </div>
-      <button type="button" class="sm-btn sm-small dev-out shrink-0" data-id="${escapeHtml(s.id)}" data-name="${escapeHtml(s.name || '')}" data-dieses="${s.dieses ? '1' : ''}">Abmelden</button>
-    </div>`;
-  }).join('');
-}
-async function devFetchList(userId) {
-  const res = await apiFetch('/api/pinn/sitzungen' + (userId ? '?benutzer=' + encodeURIComponent(userId) : ''), { cache: 'no-store' });
-  if (res.status === 404) { const e = new Error('Auf dem Server fehlt noch pb_hooks/sitzungen.pb.js (und pinn-sitzungen.js).'); e.code = 'alt'; throw e; }
-  const body = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(body.error || 'Geräte konnten nicht geladen werden.');
-  return body;
-}
-// Ein Gerät abmelden; „Dieses Gerät“ = ganz normal abmelden
-async function devLogoutOne(btn, statusEl, after) {
-  const name = btn.dataset.name || 'Gerät';
-  if (btn.dataset.dieses === '1') {
-    if (confirm('Dieses Gerät abmelden?')) logout();
-    return;
-  }
-  if (!confirm(`„${name}“ abmelden? Das Gerät verliert sofort den Zugriff auf pinn.`)) return;
-  btn.disabled = true;
-  statusEl.textContent = '';
-  try {
-    await postJson('/api/pinn/sitzungen/abmelden', { id: btn.dataset.id });
-    statusEl.textContent = 'Gerät abgemeldet.';
-  } catch (e) {
-    statusEl.textContent = e.message;
-  }
-  after();
-}
-// Eigenes Profil: alle anderen Geräte abmelden – dieses Gerät bekommt eine neue Anmeldung
-async function devLogoutOthers(statusEl, after) {
-  if (!confirm('Alle anderen Geräte abmelden? Nur dieses Gerät bleibt angemeldet.')) return;
-  statusEl.textContent = '';
-  try {
-    const res = await apiFetch('/api/pinn/sitzungen/alle-abmelden', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
-    const body = await res.json().catch(() => ({}));
-    if (!res.ok || !body.token) throw new Error(body.error || 'Das hat nicht geklappt.');
-    pb.authStore.save(body.token, body.record);
-    statusEl.textContent = 'Alle anderen Geräte sind abgemeldet.';
-    // Push dieses Geräts gleich wieder zuordnen (falls es nicht schon zur Sitzung gehörte)
-    try { if (pushAutoSyncEnabled) { pushLastAutoSync = 0; syncPushSubscription(); } } catch (e) { /* egal */ }
-  } catch (e) {
-    statusEl.textContent = e.message;
-  }
-  after();
-}
-
-/* ---------- Konto: eigene Geräte ---------- */
-let devSectionLoading = false;
-async function renderDevicesSection() {
-  const sec = document.getElementById('devicesSection');
-  if (!sec) return;
-  const hide = isCurrentUserGuest() || isCurrentUserMainAdmin();
-  sec.classList.toggle('hidden', hide);
-  if (hide || devSectionLoading) return;
-  const list = document.getElementById('devicesList');
-  const btn = document.getElementById('devicesLogoutOthersBtn');
-  if (!navigator.onLine) { list.innerHTML = '<p class="sm-empty">Keine Verbindung zum Server.</p>'; btn.classList.add('hidden'); return; }
-  devSectionLoading = true;
-  let data = null;
-  try {
-    data = await devFetchList('');
-  } catch (e) {
-    devSectionLoading = false;
-    if (e.code === 'alt') { sec.classList.add('hidden'); return; }
-    list.innerHTML = `<p class="text-xs text-red-500">${escapeHtml(e.message)}</p>`;
-    return;
-  }
-  devSectionLoading = false;
-  const ses = data.sitzungen || [];
-  list.innerHTML = devRowsHtml(ses);
-  btn.classList.toggle('hidden', !ses.some(s => !s.dieses) && !data.aktuellOhneSitzung);
-  const status = document.getElementById('devicesStatus');
-  list.querySelectorAll('.dev-out').forEach(b => b.addEventListener('click', () => devLogoutOne(b, status, renderDevicesSection)));
-}
-document.getElementById('devicesLogoutOthersBtn').addEventListener('click', () =>
-  devLogoutOthers(document.getElementById('devicesStatus'), renderDevicesSection));
-
-/* ---------- Profile verwalten: Anzahl Geräte und Sperre je Profil ---------- */
-async function renderProfileDeviceInfo() {
-  if (!isCurrentUserAdmin() || !navigator.onLine) return;
-  let data = null;
-  try {
-    const res = await apiFetch('/api/pinn/sitzungen/uebersicht', { cache: 'no-store' });
-    if (!res.ok) return;
-    data = await res.json();
-  } catch (e) { return; }
-  const map = (data && data.profile) || {};
-  document.querySelectorAll('#profileList .pdev-info').forEach(el => {
-    const x = map[el.dataset.id];
-    if (!x) { el.textContent = ''; return; }
-    const parts = [];
-    if (x.geraete) parts.push(' · 📱 ' + x.geraete);
-    const locked = x.sperre && (x.sperre.sekunden > 0 || x.sperre.pin > 0);
-    el.innerHTML = escapeHtml(parts.join('')) + (locked ? ' · <span class="text-red-500">🔒 gesperrt</span>' : '');
-  });
-}
-
-/* ---------- Popup: Geräte & Anmeldung eines Profils ---------- */
-let devModalUser = null; // { id, name, own }
-function openDevModal(userId, name) {
-  devModalUser = { id: String(userId || ''), name: String(name || ''), own: false };
-  document.getElementById('devModalName').textContent = devModalUser.name;
-  document.getElementById('devModalStatus').textContent = '';
-  document.getElementById('devModalLock').classList.add('hidden');
-  document.getElementById('devModalList').innerHTML = '<p class="sm-empty">Wird geladen …</p>';
-  pinnModalToTop('devModal').classList.remove('hidden');
-  loadDevModal();
-}
-function closeDevModal() {
-  document.getElementById('devModal').classList.add('hidden');
-  devModalUser = null;
-  if (typeof currentView !== 'undefined' && currentView === 'konto') { renderProfileDeviceInfo(); renderDevicesSection(); }
-}
-async function loadDevModal() {
-  const u = devModalUser;
-  if (!u) return;
-  const list = document.getElementById('devModalList');
-  const allBtn = document.getElementById('devModalAllBtn');
-  if (!navigator.onLine) { list.innerHTML = '<p class="sm-empty">Keine Verbindung zum Server.</p>'; return; }
-  let data = null;
-  try {
-    data = await devFetchList(u.id);
-  } catch (e) {
-    if (devModalUser !== u) return;
-    list.innerHTML = `<p class="text-xs text-red-500">${escapeHtml(e.message)}</p>`;
-    allBtn.classList.add('hidden');
-    return;
-  }
-  if (devModalUser !== u) return;
-  u.own = !!data.eigenes;
-  if (data.benutzer && data.benutzer.username) u.name = data.benutzer.username;
-  document.getElementById('devModalName').textContent = u.name;
-  // Sperre nach Fehlversuchen
-  const lock = data.sperre || null;
-  const parts = [];
-  if (lock) {
-    if (lock.sekunden > 0) parts.push('Anmeldung gesperrt – noch ' + devWait(lock.sekunden) + '.');
-    else if (lock.fehlversuche > 0) parts.push(lock.fehlversuche + ' falsche Passwörter seit der letzten Anmeldung.');
-    if (lock.pin > 0) parts.push('Dashboard-PIN gesperrt – noch ' + devWait(lock.pin) + '.');
-  }
-  document.getElementById('devModalLock').classList.toggle('hidden', !parts.length);
-  document.getElementById('devModalLockText').textContent = parts.join(' ');
-  document.getElementById('devModalUnlockBtn').classList.toggle('hidden', !(lock && (lock.sekunden > 0 || lock.pin > 0 || lock.fehlversuche > 0)));
-  // Geräte
-  const ses = data.sitzungen || [];
-  list.innerHTML = devRowsHtml(ses);
-  const status = document.getElementById('devModalStatus');
-  list.querySelectorAll('.dev-out').forEach(b => b.addEventListener('click', () => devLogoutOne(b, status, loadDevModal)));
-  allBtn.textContent = u.own ? 'Alle anderen Geräte abmelden' : 'Überall abmelden';
-  allBtn.classList.toggle('hidden', u.own ? (!ses.some(s => !s.dieses) && !data.aktuellOhneSitzung) : false);
-}
-document.getElementById('devModalClose').addEventListener('click', closeDevModal);
-document.getElementById('devModal').addEventListener('click', (e) => { if (e.target.id === 'devModal') closeDevModal(); });
-document.getElementById('devModalReload').addEventListener('click', () => { document.getElementById('devModalStatus').textContent = ''; loadDevModal(); });
-document.getElementById('devModalAllBtn').addEventListener('click', async () => {
-  const u = devModalUser;
-  if (!u) return;
-  const status = document.getElementById('devModalStatus');
-  if (u.own) { await devLogoutOthers(status, loadDevModal); return; }
-  if (!confirm(`„${u.name}“ auf allen Geräten abmelden? Benachrichtigungen auf diesen Geräten enden ebenfalls.`)) return;
-  status.textContent = '';
-  try {
-    await postJson('/api/pinn/sitzungen/alle-abmelden', { benutzer: u.id });
-    status.textContent = 'Auf allen Geräten abgemeldet.';
-  } catch (e) {
-    status.textContent = e.message;
-  }
-  loadDevModal();
-});
-document.getElementById('devModalUnlockBtn').addEventListener('click', async () => {
-  const u = devModalUser;
-  if (!u) return;
-  const status = document.getElementById('devModalStatus');
-  status.textContent = '';
-  try {
-    await postJson('/api/pinn/sitzungen/entsperren', { benutzer: u.id });
-    status.textContent = 'Sperre aufgehoben – die Anmeldung ist wieder möglich.';
-  } catch (e) {
-    status.textContent = e.message;
-  }
-  loadDevModal();
-});
-
-/* ==========================================================
    Einstellungen & Konto: zwei gleich hohe Spalten (Querformat ab Tablet-Breite)
    ----------------------------------------------------------
    Die Karten werden in ihrer Reihenfolge so auf links/rechts aufgeteilt, dass beide Spalten im
@@ -27382,26 +27145,27 @@ document.getElementById('devModalUnlockBtn').addEventListener('click', async () 
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/fehlerprotokoll.js?v=1.64.0"></script>
-<script src="js/versionslog.js?v=1.64.0"></script>
-<script src="js/einstellungen.js?v=1.64.0"></script>
-<script src="js/kalenderkonto.js?v=1.64.0"></script>
-<script src="js/finanzen.js?v=1.64.0"></script>
-<script src="js/kassen.js?v=1.64.0"></script>
-<script src="js/vorrat.js?v=1.64.0"></script>
-<script src="js/vorrat2.js?v=1.64.0"></script>
-<script src="js/sparen.js?v=1.64.0"></script>
-<script src="js/vertraege.js?v=1.64.0"></script>
-<script src="js/fahrzeuge.js?v=1.64.0"></script>
-<script src="js/zuhause.js?v=1.64.0"></script>
-<script src="js/dokumente.js?v=1.64.0"></script>
-<script src="js/pdflesen.js?v=1.64.0"></script>
-<script src="js/appstart.js?v=1.64.0"></script>
-<script src="js/pinnwand.js?v=1.64.0"></script>
-<script src="js/listen.js?v=1.64.0"></script>
-<script src="js/familie.js?v=1.64.0"></script>
-<script src="js/hinweise.js?v=1.64.0"></script>
-<script src="js/ausblick.js?v=1.64.0"></script>
+<script src="js/geraete.js?v=1.65.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.65.0"></script>
+<script src="js/versionslog.js?v=1.65.0"></script>
+<script src="js/einstellungen.js?v=1.65.0"></script>
+<script src="js/kalenderkonto.js?v=1.65.0"></script>
+<script src="js/finanzen.js?v=1.65.0"></script>
+<script src="js/kassen.js?v=1.65.0"></script>
+<script src="js/vorrat.js?v=1.65.0"></script>
+<script src="js/vorrat2.js?v=1.65.0"></script>
+<script src="js/sparen.js?v=1.65.0"></script>
+<script src="js/vertraege.js?v=1.65.0"></script>
+<script src="js/fahrzeuge.js?v=1.65.0"></script>
+<script src="js/zuhause.js?v=1.65.0"></script>
+<script src="js/dokumente.js?v=1.65.0"></script>
+<script src="js/pdflesen.js?v=1.65.0"></script>
+<script src="js/appstart.js?v=1.65.0"></script>
+<script src="js/pinnwand.js?v=1.65.0"></script>
+<script src="js/listen.js?v=1.65.0"></script>
+<script src="js/familie.js?v=1.65.0"></script>
+<script src="js/hinweise.js?v=1.65.0"></script>
+<script src="js/ausblick.js?v=1.65.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)

@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.65', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 21)',
+    punkte: [
+      ['info', 'Für Mitwirkende: die Geräteverwaltung – angemeldete Geräte, Abmelden einzeln oder überall und „Sperre aufheben“ – liegt jetzt in einer eigenen Datei (pb_public/js/geraete.js). An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, js/geraete.js und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.64', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 20)',
     punkte: [
       ['info', 'Für Mitwirkende: das Fehlerprotokoll für Admins, der Knopf „Auf Update prüfen“ und das Aufklappen der Einstellungen (immer nur ein Abschnitt offen) liegen jetzt in einer eigenen Datei (pb_public/js/fehlerprotokoll.js). An der Bedienung ändert sich nichts'],
