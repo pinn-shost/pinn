@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.69', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 25)',
+    punkte: [
+      ['info', 'Für Mitwirkende: das Formular zum Anlegen und Bearbeiten von Terminen – Beginn/Ende, ganztägig, Wiederholung, Zuweisung, Kalenderauswahl, Erinnerung und das Speichern (auch offline) – liegt jetzt in einer eigenen Datei (pb_public/js/termine.js). An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, js/termine.js und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.68', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 24)',
     punkte: [
       ['info', 'Für Mitwirkende: Seitenmenü, Seitenwechsel, die Menüleiste am Handy mit ausziehbarem Fach, die Erkennung von Handy/Tablet und Hoch-/Querformat sowie das Wischen im Kalender liegen jetzt in einer eigenen Datei (pb_public/js/ansichten.js). An der Bedienung ändert sich nichts'],

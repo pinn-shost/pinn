@@ -90,19 +90,19 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **English, Deutsch, Français und Español**, passt Währung und Notrufnummern an eure Region an und wechselt zwischen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.69
+
+**App-Code wird aufgeteilt, Teil 25**
+
+- **Für Mitwirkende:** das Formular zum Anlegen und Bearbeiten von Terminen – Beginn/Ende, ganztägig, Wiederholung, Zuweisung, Kalenderauswahl, Erinnerung und das Speichern (auch offline) – liegt jetzt in einer eigenen Datei (`pb_public/js/termine.js`). An der Bedienung ändert sich nichts.
+- Nur App-Dateien geändert (`index.html`, `js/termine.js` und `js/versionslog.js`), am Server ändert sich nichts. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
+
 ## Neu in 1.68
 
 **App-Code wird aufgeteilt, Teil 24**
 
 - **Für Mitwirkende:** Seitenmenü, Seitenwechsel, die Menüleiste am Handy mit ausziehbarem Fach, die Erkennung von Handy/Tablet und Hoch-/Querformat sowie das Wischen im Kalender liegen jetzt in einer eigenen Datei (`pb_public/js/ansichten.js`). An der Bedienung ändert sich nichts.
 - Nur App-Dateien geändert (`index.html`, `js/ansichten.js` und `js/versionslog.js`), am Server ändert sich nichts. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
-
-## Neu in 1.67
-
-**App-Code wird aufgeteilt, Teil 23**
-
-- **Für Mitwirkende:** die Update-Erkennung – der Hinweis *Es gibt eine neuere Version dieser App*, die Anzeige der installierten Version in Seitenleiste und Einstellungen und die GitHub-Links unter *Einstellungen → GitHub* – liegt jetzt in einer eigenen Datei (`pb_public/js/versionspruefung.js`). Die Versionsnummer selbst (`APP_VERSION`) bleibt in der `index.html`, weil der Server sie dort ausliest. An der Bedienung ändert sich nichts.
-- Nur App-Dateien geändert (`index.html`, `js/versionspruefung.js` und `js/versionslog.js`), am Server ändert sich nichts. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
 
 ## So funktioniert's
 
@@ -130,7 +130,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS klappt **ohne Portfrei
 ## Installation
 
 1. Die ZIP des [neuesten Release](https://github.com/pinn-shost/pinn/releases/latest) herunterladen und entpacken.
-2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.68.0` oder `pinn-main`) so, wie er ist, hineinlegen.
+2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.69.0` oder `pinn-main`) so, wie er ist, hineinlegen.
 3. Per SSH anmelden und ausführen:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -220,7 +220,7 @@ pinn/
 ├── pb_public/           Web-App, ausgeliefert von PocketBase
 │   ├── index.html       die App (HTML, Styles und der größte Teil des Codes)
 │   ├── js/              aus index.html ausgelagerter App-Code, einfache <script>-Dateien ohne Build-Schritt
-│   │                    (ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js kommt immer zuletzt)
+│   │                    (termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js kommt immer zuletzt)
 │   ├── einrichtung.js   Einrichtungsassistent · datenexport.js  Datenexport
 │   ├── lang/            Übersetzungen (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js und Tesseract lädt das Setup herunter)

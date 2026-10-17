@@ -90,19 +90,19 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **English, Deutsch, Français and Español**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.69
+
+**App code split, part 25**
+
+- **For contributors:** the form for creating and editing events – start/end, all-day, repeat, assignees, calendar choice, reminder and saving (also offline) – now lives in its own file (`pb_public/js/termine.js`). Nothing changes in how you use pinn.
+- Only app files changed (`index.html`, `js/termine.js` and `js/versionslog.js`), nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.68
 
 **App code split, part 24**
 
 - **For contributors:** the side menu, switching pages, the phone tab bar with its pull-out drawer, phone/tablet and portrait/landscape detection and swiping in the calendar now live in their own file (`pb_public/js/ansichten.js`). Nothing changes in how you use pinn.
 - Only app files changed (`index.html`, `js/ansichten.js` and `js/versionslog.js`), nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
-## What's new in 1.67
-
-**App code split, part 23**
-
-- **For contributors:** update detection – the banner *There is a newer version of this app*, the installed version shown in the sidebar and settings, and the GitHub links under *Settings → GitHub* – now lives in its own file (`pb_public/js/versionspruefung.js`). The version number itself (`APP_VERSION`) stays in `index.html`, because the server reads it from there. Nothing changes in how you use pinn.
-- Only app files changed (`index.html`, `js/versionspruefung.js` and `js/versionslog.js`), nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 ## How it works
 
@@ -130,7 +130,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.68.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.69.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -220,7 +220,7 @@ pinn/
 ├── pb_public/           web app served by PocketBase
 │   ├── index.html       the app (HTML, styles and most of the code)
 │   ├── js/              app code split out of index.html, plain <script> files without a build step
-│   │                    (ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js always comes last)
+│   │                    (termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js always comes last)
 │   ├── einrichtung.js   setup assistant · datenexport.js  data export
 │   ├── lang/            translations (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js and Tesseract are downloaded by the setup)
