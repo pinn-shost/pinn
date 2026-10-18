@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.76', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 32)',
+    punkte: [
+      ['info', 'Für Mitwirkende: die Offline-Warteschlange für Aufgaben und Termine samt Zwischenspeicher liegt jetzt in pb_public/js/offline.js, die Extra-Erinnerung per Push und die Aufgaben mit eigener Eingabe in js/aufgabenextras.js, die Zahl am App-Symbol in js/appbadge.js und die Reisen im Kalender in js/reisen.js. An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, vier neue Dateien in js/ und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.75', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 31)',
     punkte: [
       ['info', 'Für Mitwirkende: das Laden der Aufgaben vom NAS (zwischengespeicherter Stand, Offline-Warteschlange, Zuweisung und Datumsanzeige) liegt jetzt in einer eigenen Datei (pb_public/js/aufgabendaten.js). An der Bedienung ändert sich nichts'],

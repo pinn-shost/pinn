@@ -90,19 +90,19 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **English, Deutsch, Français et Español**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.76
+
+**Le code de l’app est découpé, partie 32**
+
+- **Pour les contributeurs :** la file d’attente hors ligne pour les tâches et les rendez-vous (données en cache comprises) se trouve maintenant dans `pb_public/js/offline.js`, le rappel push supplémentaire et les tâches qui se terminent par une saisie dans `js/aufgabenextras.js`, le nombre sur l’icône de l’app dans `js/appbadge.js` et les voyages dans le calendrier dans `js/reisen.js`. Rien ne change à l’utilisation de pinn.
+- Seuls des fichiers de l’app changent (`index.html`, quatre nouveaux fichiers dans `js/` et `js/versionslog.js`), rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
+
 ## Nouveautés de la 1.75
 
 **Le code de l’app est découpé, partie 31**
 
 - **Pour les contributeurs :** le chargement des tâches depuis le NAS (état en cache d’abord, file d’attente hors ligne, attribution et affichage des dates) se trouve maintenant dans son propre fichier (`pb_public/js/aufgabendaten.js`). Rien ne change à l’utilisation de pinn.
 - Seuls des fichiers de l’app changent (`index.html`, `js/aufgabendaten.js` et `js/versionslog.js`), rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
-## Nouveautés de la 1.74
-
-**Le code de l’app est découpé, partie 30**
-
-- **Pour les contributeurs :** la page du foyer – pièces, ménages et poubelles avec leurs fenêtres, ainsi que l’entretien des tâches ménagères (régénérer, supprimer, nettoyer, animation) – se trouve maintenant dans son propre fichier (`pb_public/js/haushalt.js`). Rien ne change à l’utilisation de pinn.
-- Seuls des fichiers de l’app changent (`index.html`, `js/haushalt.js` et `js/versionslog.js`), rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
 ## Comment ça marche
 
@@ -130,7 +130,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.75.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.76.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -220,7 +220,7 @@ pinn/
 ├── pb_public/           web-app servie par PocketBase
 │   ├── index.html       l’app (HTML, styles et la plus grande partie du code)
 │   ├── js/              code de l’app sorti d’index.html, simples fichiers <script> sans étape de build
-│   │                    (aufgabendaten.js, haushalt.js, reihum.js, aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js toujours en dernier)
+│   │                    (offline.js, aufgabenextras.js, appbadge.js, reisen.js, aufgabendaten.js, haushalt.js, reihum.js, aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js toujours en dernier)
 │   ├── einrichtung.js   assistant de configuration · datenexport.js  export des données
 │   ├── lang/            traductions (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js et Tesseract sont téléchargés par l’installation)
