@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.84', datum: '18.10.2026', titel: 'App-Code wird aufgeteilt (Teil 40)',
+    punkte: [
+      ['info', 'Für Mitwirkende: das Zuhause der Familie samt Sonnenauf-/-untergang liegt jetzt in pb_public/js/wohnort.js, Feiertage und Schulferien im Kalender in js/feiertage.js, der Müllkalender in js/muellkalender.js und das Wetter (Abruf, Vorschau) in js/wetter.js. An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, vier neue Dateien in js/ und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.83', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 39)',
     punkte: [
       ['info', 'Für Mitwirkende: die Familienmitglieder (Zuweisung an Termine, Farbbalken, Mitglieder-Leiste und Filter) liegen jetzt in pb_public/js/mitglieder.js, die Profilbilder (Verkleinern, Zuschneiden, Foto wählen und entfernen) in js/profilbild.js. An der Bedienung ändert sich nichts'],

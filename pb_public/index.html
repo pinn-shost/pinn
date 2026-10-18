@@ -913,7 +913,7 @@ window.PINN_LANGUAGES = [
   // Startprüfung: fehlt eine selbst gehostete Datei, erscheint ein klarer Hinweis statt einer
   // leeren Seite ohne funktionierende Buttons.
   // Teile der App unter pb_public/js/ – jede Datei meldet sich am Ende in window.PINN_PARTS an
-  var PINN_APP_PARTS = ['mitglieder', 'profilbild', 'mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
+  var PINN_APP_PARTS = ['wetter', 'wohnort', 'feiertage', 'muellkalender', 'mitglieder', 'profilbild', 'mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
   window.addEventListener('DOMContentLoaded', function () {
     var missing = [];
     if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – der PocketBase-Client (ohne ihn funktioniert nichts)');
@@ -15166,395 +15166,6 @@ function weatherIconForCode(code) {
   return '🌡️';
 }
 
-var weatherLoading = false;
-async function fetchWeather() {
-  if (weatherLoading) return;
-  const loggedIn = !!(pb && pb.authStore && pb.authStore.token);
-  const payload = {};
-  if (!loggedIn) {
-    const dash = readDashboardConfig();
-    if (!dash) return;
-    payload.key = dash.key;
-  }
-  let fallback = null;
-  try { fallback = weatherLocation; } catch (e) { fallback = null; }
-  if (!homeInfo && fallback && fallback.lat != null && fallback.lon != null) {
-    payload.lat = fallback.lat;
-    payload.lon = fallback.lon;
-  }
-  weatherLoading = true;
-  try {
-    const opts = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) };
-    const res = loggedIn ? await apiFetch('/api/pinn/zuhause/wetter', opts) : await fetch('/api/pinn/zuhause/wetter', opts);
-    if (res.status === 404) throw new Error('pb_hooks/zuhause.pb.js fehlt auf dem Server');
-    const data = await res.json();
-    if (data.keinOrt) {
-      weatherNoLocation = true;
-      weatherData = null;
-    } else if (data.error || !data.jetzt) {
-      throw new Error(data.error || 'keine Wetterdaten');
-    } else {
-      weatherData = data.jetzt.temp != null ? { temp: data.jetzt.temp, code: data.jetzt.code, uv: data.jetzt.uv, gef: data.jetzt.gef, wind: data.jetzt.wind, feuchte: data.jetzt.feuchte } : null;
-      // Vorschau für die Übersicht (auf dem Gerät gemerkt, damit sie auch offline da ist)
-      weatherDaily = {
-        label: data.ort || (fallback && fallback.label) || '',
-        ts: Date.now(),
-        days: (Array.isArray(data.tage) ? data.tage : []).map(d => ({ ...d, date: String(d.date) })),
-        past: (Array.isArray(data.vergangen) ? data.vergangen : []).map(d => ({ date: String(d.date), mm: d.mm, max: d.max, min: d.min })),
-      };
-      try { if (currentView === 'haus' && (hsTab === 'garten' || hsTab === 'uebersicht')) renderHouse(); } catch (e) { /* noch nicht bereit */ }
-      try { localStorage.setItem(LS_WEATHER_DAILY, JSON.stringify(weatherDaily)); } catch (e) { /* voll */ }
-      weatherNoLocation = false;
-    }
-  } catch (err) {
-    console.error('Wetter-Abruf fehlgeschlagen', err);
-  } finally {
-    weatherLoading = false;
-  }
-  tickClock();
-  if (dashClockTimer) tickDashboardClock();
-  renderWeatherTile();
-  try { const ov = document.getElementById('wxOverlay'); if (ov && !ov.classList.contains('hidden') && wxState.place === 'home') wxRender(); } catch (e) { /* noch nicht bereit */ }
-}
-
-// Kein automatischer Standortzugriff mehr - nur das gespeicherte Zuhause der Familie.
-function initWeather() {
-  fetchWeather();
-}
-
-/* ==========================================================
-   Zuhause der Familie (Einstellungen → Zuhause, pb_hooks/zuhause.pb.js)
-   ----------------------------------------------------------
-   Liegt je Familie auf dem Server (gesperrte Sammlung "zuhause"), auf dem Gerät nur zwischengespeichert
-   (offline, Dashboard vor der Anmeldung). Daraus abgeleitet:
-   - Wetter (s. o.), Sonnenauf-/-untergang (hier lokal berechnet, auch offline)
-   - Feiertage (lokal berechnet) und Schulferien (Server) des Bundeslands im Kalender
-   - Ortung: Ort „Zuhause“ legt der Server automatisch an, die Karte startet dort
-   ========================================================== */
-var LS_HOME = 'pinn.zuhause';            // { familie, zuhause, optionen, darf, ts }
-var homeInfo = null;                      // { lat, lon, titel, zusatz, adresse, ort, plz, land, bundesland, bundeslandName, kalender }
-var homeOptions = null;                   // { feiertage, ferien, bundesland, bundeslandName }
-var homeCanEdit = false;
-var homeServerMissing = false;
-var homeLoading = false;
-var HOME_LAENDER = {
-  BW: 'Baden-Württemberg', BY: 'Bayern', BE: 'Berlin', BB: 'Brandenburg', HB: 'Bremen', HH: 'Hamburg',
-  HE: 'Hessen', MV: 'Mecklenburg-Vorpommern', NI: 'Niedersachsen', NW: 'Nordrhein-Westfalen',
-  RP: 'Rheinland-Pfalz', SL: 'Saarland', SN: 'Sachsen', ST: 'Sachsen-Anhalt', SH: 'Schleswig-Holstein', TH: 'Thüringen',
-};
-
-function homeLoadCache(familyId) {
-  homeInfo = null;
-  homeOptions = null;
-  if (!familyId) return;
-  try {
-    const c = JSON.parse(localStorage.getItem(LS_HOME) || 'null');
-    if (c && c.familie === familyId) {
-      homeInfo = c.zuhause || null;
-      homeOptions = c.optionen || null;
-      homeCanEdit = !!c.darf;
-    }
-  } catch (e) { /* kaputter Zwischenspeicher */ }
-}
-function homeWriteCache(familyId) {
-  try { localStorage.setItem(LS_HOME, JSON.stringify({ familie: familyId, zuhause: homeInfo, optionen: homeOptions, darf: homeCanEdit, ts: Date.now() })); } catch (e) { /* voll */ }
-}
-function homeBundesland() {
-  return (homeOptions && homeOptions.bundesland) || (homeInfo && homeInfo.bundesland) || '';
-}
-function homeApply(body, familyId) {
-  const before = JSON.stringify([homeInfo, homeOptions]);
-  homeInfo = body && body.zuhause ? body.zuhause : null;
-  homeOptions = body && body.optionen ? body.optionen : null;
-  if (body && typeof body.darfAendern === 'boolean') homeCanEdit = body.darfAendern;
-  homeWriteCache(familyId);
-  if (before !== JSON.stringify([homeInfo, homeOptions])) homeChanged();
-  else { try { renderHomeSettings(); } catch (e) { /* noch nicht aufgebaut */ } }
-}
-function homeChanged() {
-  initWeather();
-  hcInvalidate();
-  hcLoadSchoolHolidays(false);
-  try { rebuildEvents(); renderCalendar(); } catch (e) { /* Kalender noch nicht aufgebaut */ }
-  try { renderHomeSettings(); } catch (e) { /* egal */ }
-  try { renderWeatherTile(); } catch (e) { /* egal */ }
-  try { if (kidPageMemberId) renderKidPage(); } catch (e) { /* egal */ }
-  try { if (currentView === 'familie') { famFitted = false; famLoadStatus(); } } catch (e) { /* egal */ }
-}
-async function loadHome() {
-  const fam = outboxFamily();
-  if (!fam || homeLoading) return;
-  homeLoading = true;
-  try {
-    const res = await apiFetch('/api/pinn/zuhause', { cache: 'no-store' });
-    if (res.status === 404) { homeServerMissing = true; try { renderHomeSettings(); } catch (e) { /* egal */ } return; }
-    if (!res.ok) return;
-    const body = await res.json();
-    homeServerMissing = false;
-    homeApply(body, fam);
-  } catch (e) {
-    /* offline: der Zwischenspeicher bleibt */
-  } finally {
-    homeLoading = false;
-  }
-}
-
-/* ---------- Sonnenauf- und -untergang (lokal berechnet, NOAA-Näherung, auf ~1 Minute genau) ---------- */
-function sunTimesFor(date, lat, lon) {
-  const rad = Math.PI / 180;
-  const noonMs = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 12);
-  const n = Math.round(noonMs / 86400000 + 2440587.5 - 2451545.0);
-  const jStar = n - lon / 360;
-  const M = ((357.5291 + 0.98560028 * jStar) % 360 + 360) % 360;
-  const Mr = M * rad;
-  const C = 1.9148 * Math.sin(Mr) + 0.02 * Math.sin(2 * Mr) + 0.0003 * Math.sin(3 * Mr);
-  const L = (M + C + 180 + 102.9372) % 360;
-  const Lr = L * rad;
-  const jTransit = 2451545.0 + jStar + 0.0053 * Math.sin(Mr) - 0.0069 * Math.sin(2 * Lr);
-  const sinD = Math.sin(Lr) * Math.sin(23.4397 * rad);
-  const cosD = Math.cos(Math.asin(sinD));
-  const cosW = (Math.sin(-0.833 * rad) - Math.sin(lat * rad) * sinD) / (Math.cos(lat * rad) * cosD);
-  if (cosW > 1 || cosW < -1) return { auf: null, unter: null, polar: cosW > 1 ? 'nacht' : 'tag' };
-  const w = Math.acos(cosW) / rad;
-  const toDate = (J) => new Date((J - 2440587.5) * 86400000);
-  return { auf: toDate(jTransit - w / 360), unter: toDate(jTransit + w / 360) };
-}
-function homeSunTimes(date) {
-  if (!homeInfo || !isFinite(homeInfo.lat) || !isFinite(homeInfo.lon)) return null;
-  return sunTimesFor(date || new Date(), Number(homeInfo.lat), Number(homeInfo.lon));
-}
-function homeFmtTime(d) { return d ? d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : '–'; }
-function homeSunLine(date) {
-  const st = homeSunTimes(date);
-  if (!st || !st.auf) return '';
-  return `🌅 ${homeFmtTime(st.auf)} · 🌇 ${homeFmtTime(st.unter)}`;
-}
-
-/* ---------- Feiertage (lokal) und Schulferien (Server) im Kalender ---------- */
-var LS_SCHOOL_HOLIDAYS = 'pinn.schulferien'; // { 'NW|2026': { ts, liste: [{ name, von, bis }] } }
-var hcSig = '';
-var hcList = [];
-var hcLoadingSchool = false;
-function hcInvalidate() { hcSig = ''; }
-function hcEaster(y) {
-  const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4;
-  const f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30;
-  const i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451);
-  const month = Math.floor((h + l - 7 * m + 114) / 31), day = ((h + l - 7 * m + 114) % 31) + 1;
-  return new Date(y, month - 1, day);
-}
-// Gesetzliche Feiertage je Bundesland; regional = nur in Teilen des Landes
-function hcPublicHolidays(y, bl) {
-  const easter = hcEaster(y);
-  const off = (n) => { const d = new Date(easter); d.setDate(d.getDate() + n); return isoDate(d); };
-  const fix = (m, d) => `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-  const bb = (() => { const d = new Date(y, 10, 22); while (d.getDay() !== 3) d.setDate(d.getDate() - 1); return isoDate(d); })();
-  const rows = [
-    [fix(1, 1), 'Neujahr'],
-    [fix(1, 6), 'Heilige Drei Könige', ['BW', 'BY', 'ST']],
-    [fix(3, 8), 'Internationaler Frauentag', (bl === 'BE' && y >= 2019) || (bl === 'MV' && y >= 2023) ? [bl] : []],
-    [off(-2), 'Karfreitag'],
-    [off(0), 'Ostersonntag', ['BB']],
-    [off(1), 'Ostermontag'],
-    [fix(5, 1), 'Tag der Arbeit'],
-    [off(39), 'Christi Himmelfahrt'],
-    [off(49), 'Pfingstsonntag', ['BB']],
-    [off(50), 'Pfingstmontag'],
-    [off(60), 'Fronleichnam', ['BW', 'BY', 'HE', 'NW', 'RP', 'SL'], ['SN', 'TH']],
-    [fix(8, 15), 'Mariä Himmelfahrt', ['SL'], ['BY']],
-    [fix(9, 20), 'Weltkindertag', y >= 2019 ? ['TH'] : []],
-    [fix(10, 3), 'Tag der Deutschen Einheit'],
-    [fix(10, 31), 'Reformationstag', ['BB', 'HB', 'HH', 'MV', 'NI', 'SN', 'ST', 'SH', 'TH']],
-    [fix(11, 1), 'Allerheiligen', ['BW', 'BY', 'NW', 'RP', 'SL']],
-    [bb, 'Buß- und Bettag', ['SN']],
-    [fix(12, 25), '1. Weihnachtsfeiertag'],
-    [fix(12, 26), '2. Weihnachtsfeiertag'],
-  ];
-  const out = [];
-  rows.forEach(([date, name, only, regional]) => {
-    if (!only || only.includes(bl)) out.push({ date, name, regional: false });
-    else if (regional && regional.includes(bl)) out.push({ date, name, regional: true });
-  });
-  return out;
-}
-function hcSchoolStore() {
-  try {
-    const o = JSON.parse(localStorage.getItem(LS_SCHOOL_HOLIDAYS) || '{}');
-    return (o && typeof o === 'object') ? o : {};
-  } catch (e) { return {}; }
-}
-function hcFmtDate(d) { const p = String(d).split('-'); return p.length === 3 ? `${p[2]}.${p[1]}.${p[0]}` : d; }
-// Zusätzliche Kalendereinträge (nur lesen): Feiertage und Schulferien
-function homeCalendarEvents() {
-  const bl = homeBundesland();
-  if (!bl) return [];
-  const o = homeOptions || {};
-  const showHol = o.feiertage !== false, showSchool = o.ferien !== false;
-  if (!showHol && !showSchool) return [];
-  const y = new Date().getFullYear();
-  const store = showSchool ? hcSchoolStore() : {};
-  const keys = Object.keys(store).filter(k => k.indexOf(bl + '|') === 0).sort();
-  const sig = [bl, showHol, showSchool, y, keys.map(k => k + ':' + (store[k].ts || 0)).join(',')].join('|');
-  if (sig === hcSig) return hcList;
-  const land = HOME_LAENDER[bl] || bl;
-  const mk = (id, date, title, desc, kind) => ({
-    id, date, time: '', endTime: null, title, memberId: null, location: '', description: desc,
-    fullDayFiller: false, pinnHref: '', pinnCalName: '', isRecurring: false, pinnHoliday: kind,
-  });
-  const out = [];
-  if (showHol) {
-    for (let yy = y - 1; yy <= y + 2; yy++) {
-      hcPublicHolidays(yy, bl).forEach(h => out.push(mk('pinn-ft-' + h.date, h.date, h.name,
-        h.regional ? `Feiertag nur in Teilen von ${land}` : `Gesetzlicher Feiertag in ${land}`, 'feiertag')));
-    }
-  }
-  if (showSchool) {
-    const seen = new Set();
-    keys.forEach(k => (store[k].liste || []).forEach(f => {
-      const sk = f.von + '|' + f.name;
-      if (seen.has(sk) || !f.von || !f.bis) return;
-      seen.add(sk);
-      const desc = `Schulferien ${land}: ${hcFmtDate(f.von)} – ${hcFmtDate(f.bis)}`;
-      let d = f.von, guard = 0;
-      while (d <= f.bis && guard++ < 120) {
-        out.push(mk('pinn-sf-' + d + '-' + sk, d, f.name, desc, 'ferien'));
-        d = addDaysToDateStr(d, 1);
-      }
-    }));
-  }
-  hcSig = sig;
-  hcList = out;
-  return out;
-}
-async function hcLoadSchoolHolidays(force) {
-  const bl = homeBundesland();
-  const o = homeOptions || {};
-  if (!bl || o.ferien === false || hcLoadingSchool || !outboxFamily() || !pb.authStore.token) return;
-  if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
-  const y = new Date().getFullYear();
-  const store = hcSchoolStore();
-  const years = [y - 1, y, y + 1].filter(yy => {
-    const c = store[bl + '|' + yy];
-    if (force || !c) return true;
-    const maxAge = (Array.isArray(c.liste) && c.liste.length ? 7 : 1) * 86400000;
-    return Date.now() - (Number(c.ts) || 0) > maxAge;
-  });
-  if (!years.length) return;
-  hcLoadingSchool = true;
-  let changed = false;
-  try {
-    for (const yy of years) {
-      try {
-        const res = await apiFetch('/api/pinn/zuhause/ferien?jahr=' + yy, { cache: 'no-store' });
-        if (!res.ok) continue;
-        const b = await res.json();
-        if (b.error || b.bundesland !== bl || !Array.isArray(b.ferien)) continue;
-        store[bl + '|' + yy] = { ts: Date.now(), liste: b.ferien };
-        changed = true;
-      } catch (e) { break; }
-    }
-  } finally {
-    hcLoadingSchool = false;
-  }
-  if (!changed) return;
-  Object.keys(store).forEach(k => {
-    const parts = k.split('|');
-    if (parts[0] !== bl || Number(parts[1]) < y - 1) delete store[k];
-  });
-  try { localStorage.setItem(LS_SCHOOL_HOLIDAYS, JSON.stringify(store)); } catch (e) { /* voll */ }
-  hcInvalidate();
-  try { rebuildEvents(); renderCalendar(); } catch (e) { /* egal */ }
-}
-
-/* ---------- Müllkalender (Einstellungen → Kalender, pb_hooks/muell.pb.js) ----------
-   Je Familie genau ein Müllkalender auf dem Server. Auf dem Gerät nur zwischengespeichert (offline);
-   abgefragt wird mit dem bekannten Stand – unverändert liefert der Server nur eine kurze Antwort. */
-var LS_MUELL = 'pinn.muell';              // { familie, stand, kalender, termine, darf, ki }
-var muellData = null;                     // { kalender: { quelle, arten, ausgeblendet, anzeigen, anzahl, bis, … }, termine: [{ d, t }], stand }
-var muellCanEdit = false;
-var muellKi = false;
-var muellServerMissing = false;
-var muellLoading = false;
-var muellSig = '';
-var muellList = [];
-function muellLoadCache(familyId) {
-  muellData = null;
-  muellSig = '';
-  if (!familyId) return;
-  try {
-    const c = JSON.parse(localStorage.getItem(LS_MUELL) || 'null');
-    if (c && c.familie === familyId) {
-      muellData = c.kalender ? { kalender: c.kalender, termine: Array.isArray(c.termine) ? c.termine : [], stand: c.stand || 0 } : null;
-      muellCanEdit = !!c.darf;
-      muellKi = !!c.ki;
-    }
-  } catch (e) { /* kaputter Zwischenspeicher */ }
-}
-function muellWriteCache(familyId) {
-  try {
-    localStorage.setItem(LS_MUELL, JSON.stringify({
-      familie: familyId, stand: muellData ? muellData.stand : 0,
-      kalender: muellData ? muellData.kalender : null, termine: muellData ? muellData.termine : [],
-      darf: muellCanEdit, ki: muellKi,
-    }));
-  } catch (e) { /* voll */ }
-}
-function muellArtFarbe(name) {
-  const a = muellData && muellData.kalender && Array.isArray(muellData.kalender.arten) ? muellData.kalender.arten.find(x => x.name === name) : null;
-  return (a && a.farbe) || '#7A6F5A';
-}
-// Zusätzliche Kalendereinträge (nur lesen): Abfuhrtermine
-function muellCalendarEvents() {
-  if (!muellData || !muellData.kalender || muellData.kalender.anzeigen === false) return [];
-  const k = muellData.kalender;
-  const hidden = Array.isArray(k.ausgeblendet) ? k.ausgeblendet : [];
-  const sig = (muellData.stand || 0) + '|' + hidden.join(',') + '|' + (muellData.termine || []).length;
-  if (sig === muellSig) return muellList;
-  const quelle = k.quelle && k.quelle.anbieter ? ' · ' + k.quelle.anbieter : '';
-  const out = [];
-  (muellData.termine || []).forEach((x, i) => {
-    if (!x || !x.d || hidden.includes(x.t)) return;
-    out.push({
-      id: 'pinn-mk-' + x.d + '-' + i, date: x.d, time: '', endTime: null, title: x.t, memberId: null, location: '',
-      description: `Müllabfuhr: ${x.t}${quelle}`, fullDayFiller: false, pinnHref: '', pinnCalName: '', isRecurring: false,
-      pinnHoliday: 'muell', pinnColor: muellArtFarbe(x.t),
-    });
-  });
-  muellSig = sig;
-  muellList = out;
-  return out;
-}
-function muellApply(body, familyId) {
-  if (body && typeof body.darfAendern === 'boolean') muellCanEdit = body.darfAendern;
-  if (body && typeof body.ki === 'boolean') muellKi = body.ki;
-  if (!(body && body.unveraendert)) {
-    muellData = body && body.kalender ? { kalender: body.kalender, termine: Array.isArray(body.termine) ? body.termine : [], stand: body.stand || Date.now() } : null;
-    muellSig = '';
-    try { rebuildEvents(); renderCalendar(); } catch (e) { /* Kalender noch nicht aufgebaut */ }
-  }
-  muellWriteCache(familyId);
-  try { renderMuellSettings(); } catch (e) { /* noch nicht aufgebaut */ }
-}
-async function loadMuell(force) {
-  const fam = outboxFamily();
-  if (!fam || muellLoading || !pb.authStore.token) return;
-  if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
-  muellLoading = true;
-  try {
-    const stand = !force && muellData ? muellData.stand : 0;
-    const res = await apiFetch('/api/pinn/muell' + (stand ? '?stand=' + encodeURIComponent(stand) : ''), { cache: 'no-store' });
-    if (res.status === 404) { muellServerMissing = true; try { renderMuellSettings(); } catch (e) { /* egal */ } return; }
-    if (!res.ok) return;
-    const body = await res.json();
-    muellServerMissing = false;
-    if (outboxFamily() === fam) muellApply(body, fam);
-  } catch (e) {
-    /* offline: der Zwischenspeicher bleibt */
-  } finally {
-    muellLoading = false;
-  }
-}
-
 /* ==========================================================
    Generisches Popup-Verhalten: Klick außerhalb schließt das Fenster; wurde seit dem Öffnen
    etwas eingetragen/geändert, wird vorher nachgefragt ("Wirklich abbrechen?") - gilt für den
@@ -15643,7 +15254,7 @@ function actualCurrentWeekRange() {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.83.0';
+const APP_VERSION = '1.84.0';
 
 /* ==========================================================
    Einstellungen & Konto: zwei gleich hohe Spalten (Querformat ab Tablet-Breite)
@@ -15771,57 +15382,61 @@ const APP_VERSION = '1.83.0';
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/mitglieder.js?v=1.83.0"></script>
-<script src="js/profilbild.js?v=1.83.0"></script>
-<script src="js/mitglied.js?v=1.83.0"></script>
-<script src="js/kinderseite.js?v=1.83.0"></script>
-<script src="js/kinderroutine.js?v=1.83.0"></script>
-<script src="js/sterne.js?v=1.83.0"></script>
-<script src="js/kalenderansicht.js?v=1.83.0"></script>
-<script src="js/essenplanen.js?v=1.83.0"></script>
-<script src="js/rezeptparser.js?v=1.83.0"></script>
-<script src="js/rezeptdialog.js?v=1.83.0"></script>
-<script src="js/rezeptbild.js?v=1.83.0"></script>
-<script src="js/rezeptmengen.js?v=1.83.0"></script>
-<script src="js/einkauf.js?v=1.83.0"></script>
-<script src="js/einkaufslisten.js?v=1.83.0"></script>
-<script src="js/einkaufseingabe.js?v=1.83.0"></script>
-<script src="js/rezepte.js?v=1.83.0"></script>
-<script src="js/offline.js?v=1.83.0"></script>
-<script src="js/aufgabenextras.js?v=1.83.0"></script>
-<script src="js/appbadge.js?v=1.83.0"></script>
-<script src="js/reisen.js?v=1.83.0"></script>
-<script src="js/aufgabendaten.js?v=1.83.0"></script>
-<script src="js/haushalt.js?v=1.83.0"></script>
-<script src="js/reihum.js?v=1.83.0"></script>
-<script src="js/aufgaben.js?v=1.83.0"></script>
-<script src="js/smarthome.js?v=1.83.0"></script>
-<script src="js/sprachsteuerung.js?v=1.83.0"></script>
-<script src="js/termine.js?v=1.83.0"></script>
-<script src="js/ansichten.js?v=1.83.0"></script>
-<script src="js/versionspruefung.js?v=1.83.0"></script>
-<script src="js/sicherungen.js?v=1.83.0"></script>
-<script src="js/geraete.js?v=1.83.0"></script>
-<script src="js/fehlerprotokoll.js?v=1.83.0"></script>
-<script src="js/versionslog.js?v=1.83.0"></script>
-<script src="js/einstellungen.js?v=1.83.0"></script>
-<script src="js/kalenderkonto.js?v=1.83.0"></script>
-<script src="js/finanzen.js?v=1.83.0"></script>
-<script src="js/kassen.js?v=1.83.0"></script>
-<script src="js/vorrat.js?v=1.83.0"></script>
-<script src="js/vorrat2.js?v=1.83.0"></script>
-<script src="js/sparen.js?v=1.83.0"></script>
-<script src="js/vertraege.js?v=1.83.0"></script>
-<script src="js/fahrzeuge.js?v=1.83.0"></script>
-<script src="js/zuhause.js?v=1.83.0"></script>
-<script src="js/dokumente.js?v=1.83.0"></script>
-<script src="js/pdflesen.js?v=1.83.0"></script>
-<script src="js/appstart.js?v=1.83.0"></script>
-<script src="js/pinnwand.js?v=1.83.0"></script>
-<script src="js/listen.js?v=1.83.0"></script>
-<script src="js/familie.js?v=1.83.0"></script>
-<script src="js/hinweise.js?v=1.83.0"></script>
-<script src="js/ausblick.js?v=1.83.0"></script>
+<script src="js/wetter.js?v=1.84.0"></script>
+<script src="js/wohnort.js?v=1.84.0"></script>
+<script src="js/feiertage.js?v=1.84.0"></script>
+<script src="js/muellkalender.js?v=1.84.0"></script>
+<script src="js/mitglieder.js?v=1.84.0"></script>
+<script src="js/profilbild.js?v=1.84.0"></script>
+<script src="js/mitglied.js?v=1.84.0"></script>
+<script src="js/kinderseite.js?v=1.84.0"></script>
+<script src="js/kinderroutine.js?v=1.84.0"></script>
+<script src="js/sterne.js?v=1.84.0"></script>
+<script src="js/kalenderansicht.js?v=1.84.0"></script>
+<script src="js/essenplanen.js?v=1.84.0"></script>
+<script src="js/rezeptparser.js?v=1.84.0"></script>
+<script src="js/rezeptdialog.js?v=1.84.0"></script>
+<script src="js/rezeptbild.js?v=1.84.0"></script>
+<script src="js/rezeptmengen.js?v=1.84.0"></script>
+<script src="js/einkauf.js?v=1.84.0"></script>
+<script src="js/einkaufslisten.js?v=1.84.0"></script>
+<script src="js/einkaufseingabe.js?v=1.84.0"></script>
+<script src="js/rezepte.js?v=1.84.0"></script>
+<script src="js/offline.js?v=1.84.0"></script>
+<script src="js/aufgabenextras.js?v=1.84.0"></script>
+<script src="js/appbadge.js?v=1.84.0"></script>
+<script src="js/reisen.js?v=1.84.0"></script>
+<script src="js/aufgabendaten.js?v=1.84.0"></script>
+<script src="js/haushalt.js?v=1.84.0"></script>
+<script src="js/reihum.js?v=1.84.0"></script>
+<script src="js/aufgaben.js?v=1.84.0"></script>
+<script src="js/smarthome.js?v=1.84.0"></script>
+<script src="js/sprachsteuerung.js?v=1.84.0"></script>
+<script src="js/termine.js?v=1.84.0"></script>
+<script src="js/ansichten.js?v=1.84.0"></script>
+<script src="js/versionspruefung.js?v=1.84.0"></script>
+<script src="js/sicherungen.js?v=1.84.0"></script>
+<script src="js/geraete.js?v=1.84.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.84.0"></script>
+<script src="js/versionslog.js?v=1.84.0"></script>
+<script src="js/einstellungen.js?v=1.84.0"></script>
+<script src="js/kalenderkonto.js?v=1.84.0"></script>
+<script src="js/finanzen.js?v=1.84.0"></script>
+<script src="js/kassen.js?v=1.84.0"></script>
+<script src="js/vorrat.js?v=1.84.0"></script>
+<script src="js/vorrat2.js?v=1.84.0"></script>
+<script src="js/sparen.js?v=1.84.0"></script>
+<script src="js/vertraege.js?v=1.84.0"></script>
+<script src="js/fahrzeuge.js?v=1.84.0"></script>
+<script src="js/zuhause.js?v=1.84.0"></script>
+<script src="js/dokumente.js?v=1.84.0"></script>
+<script src="js/pdflesen.js?v=1.84.0"></script>
+<script src="js/appstart.js?v=1.84.0"></script>
+<script src="js/pinnwand.js?v=1.84.0"></script>
+<script src="js/listen.js?v=1.84.0"></script>
+<script src="js/familie.js?v=1.84.0"></script>
+<script src="js/hinweise.js?v=1.84.0"></script>
+<script src="js/ausblick.js?v=1.84.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)
