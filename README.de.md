@@ -90,19 +90,19 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **English, Deutsch, Français und Español**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen für **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.87
+
+**App-Code wird aufgeteilt, Teil 43**
+
+- **Für Mitwirkende:** die Übersicht liegt jetzt in acht eigenen Dateien – `pb_public/js/uebersicht.js` (Kacheln und Raster), `js/familienkachel.js` (Familienmitglieder-Kachel mit Schnellaktionen), `js/wobistdu.js` („Wo bist du?“), `js/geburtstagsfeier.js` (Geburtstags-Animation), `js/wetterkachel.js` (Wetter-Kachel und Wetter oben), `js/geburtstage.js` (Geburtstags-Kachel), `js/uebersichteinstellungen.js` (Einstellungen → Übersicht) und `js/familiensync.js` (Familiendaten laden, speichern und abgleichen). An der Bedienung ändert sich nichts.
+- Nur App-Dateien geändert (`index.html`, acht neue Dateien in `js/` und `js/versionslog.js`), am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder per Update-Knopf).
+
 ## Neu in 1.86
 
 **App-Code wird aufgeteilt, Teil 42**
 
 - **Für Mitwirkende:** der Apple-Kalender-Import liegt jetzt in drei Dateien – `pb_public/js/kalenderquellen.js` (Kalender-Quellen, Namen, Farben, Sortierung, eigene Kalender), `js/icsparser.js` (Kalenderdatei lesen, Serien und mehrtägige Termine aufklappen) und `js/zeitleiste.js` (überlappende Termine nebeneinander). An der Bedienung ändert sich nichts.
 - Nur App-Dateien geändert (`index.html`, drei neue Dateien in `js/` und `js/versionslog.js`), am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder per Update-Knopf).
-
-## Neu in 1.85
-
-**App-Code wird aufgeteilt, Teil 41**
-
-- **Für Mitwirkende:** die Termin-Details per Langdruck (Popover, Kalender-Link, Löschen) liegen jetzt in `pb_public/js/termindetails.js`, das Laden der Kalenderdatei vom Server (kalender.ics, Statuszeile) in `js/kalenderdatei.js`. An der Bedienung ändert sich nichts.
-- Nur App-Dateien geändert (`index.html`, zwei neue Dateien in `js/` und `js/versionslog.js`), am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder per Update-Knopf).
 
 ## So funktioniert es
 
@@ -130,7 +130,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Die ZIP der [neuesten Version](https://github.com/pinn-shost/pinn/releases/latest) herunterladen und entpacken.
-2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.86.0` oder `pinn-main`) unverändert hineinlegen.
+2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.87.0` oder `pinn-main`) unverändert hineinlegen.
 3. Per SSH anmelden und ausführen:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -220,7 +220,7 @@ pinn/
 ├── pb_public/           Web-App, die PocketBase ausliefert
 │   ├── index.html       die App (HTML, Gestaltung und der größte Teil des Codes)
 │   ├── js/              aus index.html ausgelagerter App-Code, einfache <script>-Dateien ohne Build-Schritt
-│   │                    (kalenderquellen.js, icsparser.js, zeitleiste.js, termindetails.js, kalenderdatei.js, wetter.js, wohnort.js, feiertage.js, muellkalender.js, mitglieder.js, profilbild.js, mitglied.js, kinderseite.js, kinderroutine.js, sterne.js, kalenderansicht.js, essenplanen.js, rezeptparser.js, rezeptdialog.js, rezeptbild.js, rezeptmengen.js, einkauf.js, einkaufslisten.js, einkaufseingabe.js, rezepte.js, offline.js, aufgabenextras.js, appbadge.js, reisen.js, aufgabendaten.js, haushalt.js, reihum.js, aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js kommt immer zuletzt)
+│   │                    (uebersicht.js, familienkachel.js, wobistdu.js, geburtstagsfeier.js, wetterkachel.js, geburtstage.js, uebersichteinstellungen.js, familiensync.js, kalenderquellen.js, icsparser.js, zeitleiste.js, termindetails.js, kalenderdatei.js, wetter.js, wohnort.js, feiertage.js, muellkalender.js, mitglieder.js, profilbild.js, mitglied.js, kinderseite.js, kinderroutine.js, sterne.js, kalenderansicht.js, essenplanen.js, rezeptparser.js, rezeptdialog.js, rezeptbild.js, rezeptmengen.js, einkauf.js, einkaufslisten.js, einkaufseingabe.js, rezepte.js, offline.js, aufgabenextras.js, appbadge.js, reisen.js, aufgabendaten.js, haushalt.js, reihum.js, aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js kommt immer zuletzt)
 │   ├── einrichtung.js   Einrichtungsassistent · datenexport.js  Datenexport
 │   ├── lang/            Übersetzungen (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js und Tesseract lädt das Setup herunter)
