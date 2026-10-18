@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.79', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 35)',
+    punkte: [
+      ['info', 'Für Mitwirkende: die Kalender-Ansichten (Tag, Woche, Monat, Jahr, Essen per Ziehen und Umschalter) liegen jetzt in pb_public/js/kalenderansicht.js, das Fenster zum Planen einer Mahlzeit in js/essenplanen.js. An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, zwei neue Dateien in js/ und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.78', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 34)',
     punkte: [
       ['info', 'Für Mitwirkende: das Rezept-Fenster liegt jetzt in eigenen Dateien – pb_public/js/rezeptparser.js (Text-Auswerter), js/rezeptdialog.js (Fenster, Analyse, Auswahl, Speichern), js/rezeptbild.js (Bildausschnitt) und js/rezeptmengen.js (Zeiten, Mengen, Umrechnung, Überschriften). An der Bedienung ändert sich nichts'],
