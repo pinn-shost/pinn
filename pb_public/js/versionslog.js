@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.89', datum: '18.10.2026', titel: 'App-Code wird aufgeteilt (Teil 45)',
+    punkte: [
+      ['info', 'Für Mitwirkende: die Grundwerte und Familiendaten-Variablen liegen jetzt in pb_public/js/zustand.js, der Bedienzustand (Ansicht, Kalender, offene Fenster) in js/bedienzustand.js, Rezeptbilder (verkleinern, hochladen, Bildausschnitt) in js/rezeptbilder.js und das Zusammenführen der Familiendaten in js/zusammenfuehren.js. An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, vier neue Dateien in js/ und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.88', datum: '18.10.2026', titel: 'App-Code wird aufgeteilt (Teil 44)',
     punkte: [
       ['info', 'Für Mitwirkende: das Speichern ohne gegenseitiges Überschreiben (ausstehende Änderungen, Zwischenspeicher, Datenstand übernehmen) liegt jetzt in pb_public/js/speichern.js, das persönliche Design je Profil in js/design.js und die Einstellungen „Sprache & Region“ in js/sprache.js. An der Bedienung ändert sich nichts'],
