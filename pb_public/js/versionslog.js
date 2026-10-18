@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.88', datum: '18.10.2026', titel: 'App-Code wird aufgeteilt (Teil 44)',
+    punkte: [
+      ['info', 'Für Mitwirkende: das Speichern ohne gegenseitiges Überschreiben (ausstehende Änderungen, Zwischenspeicher, Datenstand übernehmen) liegt jetzt in pb_public/js/speichern.js, das persönliche Design je Profil in js/design.js und die Einstellungen „Sprache & Region“ in js/sprache.js. An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, drei neue Dateien in js/ und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.87', datum: '18.10.2026', titel: 'App-Code wird aufgeteilt (Teil 43)',
     punkte: [
       ['info', 'Für Mitwirkende: die Übersicht liegt jetzt in acht eigenen Dateien – pb_public/js/uebersicht.js (Kacheln und Raster), js/familienkachel.js (Familienmitglieder-Kachel mit Schnellaktionen), js/wobistdu.js („Wo bist du?“), js/geburtstagsfeier.js (Geburtstags-Animation), js/wetterkachel.js (Wetter-Kachel und Wetter oben), js/geburtstage.js (Geburtstags-Kachel), js/uebersichteinstellungen.js (Einstellungen → Übersicht) und js/familiensync.js (Familiendaten laden, speichern und abgleichen). An der Bedienung ändert sich nichts'],

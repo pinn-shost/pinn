@@ -913,7 +913,7 @@ window.PINN_LANGUAGES = [
   // Startprüfung: fehlt eine selbst gehostete Datei, erscheint ein klarer Hinweis statt einer
   // leeren Seite ohne funktionierende Buttons.
   // Teile der App unter pb_public/js/ – jede Datei meldet sich am Ende in window.PINN_PARTS an
-  var PINN_APP_PARTS = ['uebersicht', 'familienkachel', 'wobistdu', 'geburtstagsfeier', 'wetterkachel', 'geburtstage', 'uebersichteinstellungen', 'familiensync', 'kalenderquellen', 'icsparser', 'zeitleiste', 'termindetails', 'kalenderdatei', 'wetter', 'wohnort', 'feiertage', 'muellkalender', 'mitglieder', 'profilbild', 'mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
+  var PINN_APP_PARTS = ['speichern', 'design', 'sprache', 'uebersicht', 'familienkachel', 'wobistdu', 'geburtstagsfeier', 'wetterkachel', 'geburtstage', 'uebersichteinstellungen', 'familiensync', 'kalenderquellen', 'icsparser', 'zeitleiste', 'termindetails', 'kalenderdatei', 'wetter', 'wohnort', 'feiertage', 'muellkalender', 'mitglieder', 'profilbild', 'mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
   window.addEventListener('DOMContentLoaded', function () {
     var missing = [];
     if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – der PocketBase-Client (ohne ihn funktioniert nichts)');
@@ -12332,483 +12332,6 @@ function mergeFamilyData(base, local, remote) {
   return pinnMergeValue(base || {}, local || {}, remote || {});
 }
 
-/* ==========================================================
-   Speichern & Synchronisieren (offline-fähig, ohne gegenseitiges Überschreiben)
-   ----------------------------------------------------------
-   - syncBase / syncBaseUpdated: der zuletzt vom Server bestätigte Stand und sein Zeitstempel.
-   - Jede Änderung wird zuerst lokal (localStorage) als "ausstehend" gesichert und dann an den
-     Server geschickt. Der Server speichert nur, wenn sich sein Stand seit syncBaseUpdated nicht
-     geändert hat (pb_hooks/save_family_data.pb.js). Sonst führt die App beide Stände zusammen
-     (mergeFamilyData) und versucht es erneut.
-   - Ohne Verbindung bleibt die Änderung lokal gesichert und wird automatisch nachgereicht, sobald
-     der Server wieder erreichbar ist - auch nach einem Neuladen der Seite.
-   ========================================================== */
-const LS_PENDING_KEY = 'pinn.pendingSync';
-const LS_CACHE_KEY = 'pinn.cache';
-let syncBase = null;
-let syncBaseUpdated = '';
-let syncInFlight = false;
-let syncRerun = false;
-let syncRetryTimer = null;
-let pendingMemory = null; // Rückfall, falls localStorage nicht verfügbar ist
-let pendingSeq = 0;
-
-function readPending() {
-  try {
-    const raw = localStorage.getItem(LS_PENDING_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch (e) { /* localStorage evtl. nicht verfügbar */ }
-  return pendingMemory;
-}
-function writePending(p) {
-  pendingMemory = p;
-  try { localStorage.setItem(LS_PENDING_KEY, JSON.stringify(p)); } catch (e) { /* nur im Speicher */ }
-}
-function clearPending() {
-  pendingMemory = null;
-  try { localStorage.removeItem(LS_PENDING_KEY); } catch (e) { /* egal */ }
-}
-function writeCache() {
-  try { localStorage.setItem(LS_CACHE_KEY, JSON.stringify({ recordId: familyRecordId, familie: (currentUser() && currentUser().familie) || '', updated: syncBaseUpdated, data: syncBase })); } catch (e) { /* egal */ }
-}
-function readCache() {
-  try { const raw = localStorage.getItem(LS_CACHE_KEY); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
-}
-
-let familySyncState = 'ok';
-function setSyncStatus(state) {
-  familySyncState = state;
-  const statusEl = document.getElementById('syncStatus');
-  const texts = {
-    ok: 'synchronisiert',
-    pending: 'wird synchronisiert …',
-    offline: 'offline – Änderungen werden nachgereicht, sobald wieder Verbindung besteht',
-    error: 'nicht synchronisiert – NAS/Verbindung prüfen',
-  };
-  if (statusEl) {
-    statusEl.textContent = texts[state] || '';
-    statusEl.classList.toggle('text-red-500', state === 'error' || state === 'offline');
-  }
-  refreshOfflineBadge();
-}
-
-// Übernimmt einen Datenstand in die App-Variablen (ohne zu speichern).
-function applyFamilyData(data) {
-  members = (Array.isArray(data.members) ? data.members : []).filter(m => m && !(isExampleMember(m) && !profileForMember(m.id)));
-  mealPlan = data.mealPlan || [];
-  recipes = data.recipes || [];
-  // Migration: Rezepte, die noch das alte einzelne "category"-Feld haben (vor der Umstellung auf
-  // mehrere Kategorien pro Rezept), einmalig auf "categories" (Array) überführen.
-  recipes.forEach(r => {
-    if (!r.categories) r.categories = r.category ? [r.category] : [];
-    delete r.category;
-  });
-  recipeFavorites = Array.isArray(data.recipeFavorites) ? data.recipeFavorites.filter(x => x && typeof x.id === 'string' && x.id) : [];
-  tasks = data.tasks || [];
-  shoppingItems = Array.isArray(data.shoppingItems) ? data.shoppingItems : [];
-  shoppingHistory = Array.isArray(data.shoppingHistory) ? data.shoppingHistory : [];
-  shoppingLists = Array.isArray(data.shoppingLists) ? data.shoppingLists.filter(l => l && l.id && l.id !== 'essensplanung') : [];
-  shoppingTransferred = Array.isArray(data.shoppingTransferred) ? data.shoppingTransferred.filter(x => x && x.id) : [];
-  shoppingPlans = Array.isArray(data.shoppingPlans) ? data.shoppingPlans.filter(x => x && x.id && Array.isArray(x.listIds)) : [];
-  shoppingListOrder = Array.isArray(data.shoppingListOrder) ? data.shoppingListOrder.filter(x => typeof x === 'string' && x) : [];
-  shoppingMealTarget = normalizeShoppingMealTarget(data.shoppingMealTarget);
-  shoppingIngredientRules = normalizeShoppingIngredientRules(data.shoppingIngredientRules);
-  shoppingCategoryOrder = Array.isArray(data.shoppingCategoryOrder) ? data.shoppingCategoryOrder.filter(x => typeof x === 'string' && x) : [];
-  pantryItems = Array.isArray(data.pantryItems) ? data.pantryItems.filter(x => x && x.id && x.name) : [];
-  pantryCategories = (Array.isArray(data.pantryCategories) && data.pantryCategories.length) ? data.pantryCategories.filter(x => x && x.id) : PANTRY_DEFAULT_CATEGORIES.map(c => ({ ...c }));
-  pantryLocations = (Array.isArray(data.pantryLocations) && data.pantryLocations.length) ? data.pantryLocations.filter(x => x && x.id) : PANTRY_DEFAULT_LOCATIONS.map(c => ({ ...c }));
-  pantrySettings = normalizePantrySettings(data.pantrySettings);
-  pinboard = normalizePinboard(data.pinboard);
-  familyLists = normalizeFamilyLists(data.familyLists);
-  listTemplates = normalizeListTemplates(data.listTemplates);
-  documentCategories = Array.isArray(data.documentCategories) ? data.documentCategories.filter(x => x && x.id && x.label) : [];
-  emergencyPasses = (data.emergencyPasses && typeof data.emergencyPasses === 'object' && !Array.isArray(data.emergencyPasses)) ? data.emergencyPasses : {};
-  const skList = (v) => Array.isArray(v) ? v.filter(x => x && typeof x.id === 'string' && x.id) : [];
-  schoolProfiles = skList(data.schoolProfiles);
-  schoolHomework = skList(data.schoolHomework);
-  schoolLetters = skList(data.schoolLetters).filter(x => Array.isArray(x.memberIds));
-  schoolClosures = skList(data.schoolClosures).filter(x => Array.isArray(x.memberIds));
-  pets = skList(data.pets).filter(x => typeof x.name === 'string' && x.name);
-  petLog = skList(data.petLog).filter(x => x.pet && x.day);
-  lastName = (data.lastName && data.lastName !== 'Mustermann') ? data.lastName : '';
-  householdType = data.wohnform === 'wg' ? 'wg' : 'familie';
-  applyHouseholdType(true);
-  themeColors = { ...defaultFamilyData().themeColors, ...(data.themeColors || {}) };
-  // Neue Kategorien (z.B. nachträglich hinzugefügte "Warme/Kalte Speisen") sind für bestehende
-  // Familien standardmäßig aktiv, falls noch nicht explizit gespeichert.
-  categoryActive = { ...Object.fromEntries(CATEGORIES.map(c => [c, true])), ...(data.categoryActive || {}) };
-  recipeCategories = (data.recipeCategories && data.recipeCategories.length) ? data.recipeCategories : [...CATEGORIES];
-  appleCalendar = { ...defaultFamilyData().appleCalendar, ...(data.appleCalendar || {}) };
-  // Zugangsdaten liegen nur verschlüsselt auf dem Server (Sammlung "apple_zugaenge") - evtl. alte Reste nie übernehmen.
-  delete appleCalendar.email;
-  delete appleCalendar.appPassword;
-  weatherLocation = { ...defaultFamilyData().weatherLocation, ...(data.weatherLocation || {}) };
-  rooms = data.rooms || [];
-  roomSchedules = data.roomSchedules || [];
-  trashBins = data.trashBins || [];
-  smartDevices = normalizeSmartDevices(data.smartDevices);
-  houseMaintenance = Array.isArray(data.houseMaintenance) ? data.houseMaintenance.filter(m => m && typeof m.id === 'string' && m.id) : [];
-  cleaningCategories = Array.isArray(data.cleaningCategories) ? data.cleaningCategories.filter(c => c && c.id) : [];
-  // ab 1.55.1: die früheren Standard-Kategorien verschwinden, wenn keine Reinigung sie nutzt (benutzte bleiben)
-  (function () {
-    const usedIds = new Set(roomSchedules.map(x => x.category));
-    const oldDefaults = { reinigung: 'Reinigung', aufraeumen: 'Aufräumen' };
-    cleaningCategories = cleaningCategories.filter(c => !(oldDefaults[c.id] === c.label && !usedIds.has(c.id)));
-  })();
-  kitchenTools = (data.kitchenTools && data.kitchenTools.length) ? data.kitchenTools : defaultFamilyData().kitchenTools;
-  // Nur bekannte Tab-IDs übernehmen (falls sich das Angebot seither geändert hat) und auf genau 4 kappen
-  // „Haushalt“ ist jetzt Teil von „Aufgaben“ - alte Favoriten umschreiben und auf 4 auffüllen
-  const validFavorites = (data.favoriteTabs || []).map(id => id === 'haushalt' ? 'aufgaben' : id)
-    .filter((id, i, a) => ALL_MENU_TABS.some(t => t.id === id) && a.indexOf(id) === i);
-  if (validFavorites.length) {
-    [...DEFAULT_FAVORITE_TABS, ...ALL_MENU_TABS.map(t => t.id)].forEach(id => { if (validFavorites.length < 4 && !validFavorites.includes(id)) validFavorites.push(id); });
-  }
-  favoriteTabs = validFavorites.length === 4 ? validFavorites.slice(0, 4) : [...DEFAULT_FAVORITE_TABS];
-  doneTaskCleanupDays = [2, 1, 0].includes(data.doneTaskCleanupDays) ? data.doneTaskCleanupDays : 2;
-  guestHiddenViews = Array.isArray(data.guestHiddenViews)
-    ? data.guestHiddenViews.filter(id => GUEST_SELECTABLE_VIEWS.includes(id))
-    : [];
-  kassenOnFamilyData(data); // Finanzdaten kommen aus der gezeigten Kasse (Abschnitt „Kassen“)
-  // Rückwärtskompatibel: falls noch die alte, geräteunabhängige Einstellung gespeichert ist,
-  // als Ausgangswert für BEIDE (iPad/Desktop und Handy) übernehmen.
-  defaultViewModeDesktop = data.defaultViewModeDesktop || data.defaultViewMode || 'timeline';
-  defaultViewScopeDesktop = data.defaultViewScopeDesktop || data.defaultViewScope || 'both';
-  defaultViewModeMobile = data.defaultViewModeMobile || data.defaultViewMode || 'timeline';
-  defaultViewScopeMobile = data.defaultViewScopeMobile || data.defaultViewScope || 'both';
-  // Design (Farben, Dunkelmodus, Standard-Ansichten) gilt je Profil. Die Werte aus den Familiendaten
-  // sind nur die Vorgabe für Profile, die noch nichts Eigenes eingestellt haben.
-  captureFamilyDesign(data);
-  const designUid = (currentUser() && currentUser().id) || '';
-  if (designUid !== personalDesignLoadedFor) {
-    personalDesignLoadedFor = designUid;
-    const cached = designUid ? readDesignCache() : null;
-    personalDesign = cached ? cached.design : { werte: {}, stand: 0 };
-    if (designUid) loadPersonalDesign(!!(cached && cached.pending));
-  }
-  applyPersonalDesign();
-  loadBirthdays(false);
-}
-
-/* ---------- Persönliches Design je Profil (geräteübergreifend, pb_hooks/design.pb.js) ----------
-   Gespeichert im eigenen Profil: { werte: {...}, stand: <ms> }. Der Server behält immer den neueren
-   Stand. Offline geänderte Einstellungen werden lokal gemerkt und nachgereicht. */
-const DESIGN_VIEW_MODES = ['timeline', 'list'];
-const DESIGN_VIEW_SCOPES = ['both', 'uebersicht', 'termine'];
-let familyDesign = null;
-let personalDesign = { werte: {}, stand: 0 };
-let personalDesignLoadedFor = null;
-let personalDesignSaveTimer = null;
-// Sparen: Depots, die im eigenen Profil NICHT in die Gesamtübersicht einfließen (persönlich, geräteübergreifend)
-let finDepotsOut = [];
-
-function designCacheKey() {
-  const u = currentUser();
-  return u && u.id ? 'pinn.design.' + u.id : '';
-}
-function readDesignCache() {
-  const k = designCacheKey();
-  if (!k) return null;
-  try {
-    const c = JSON.parse(localStorage.getItem(k) || 'null');
-    if (c && c.design && c.design.werte && typeof c.design.werte === 'object') return c;
-  } catch (e) { /* kaputter Cache */ }
-  return null;
-}
-function writeDesignCache(pending) {
-  const k = designCacheKey();
-  if (!k) return;
-  try { localStorage.setItem(k, JSON.stringify({ design: personalDesign, pending: !!pending })); } catch (e) { /* voll */ }
-}
-function captureFamilyDesign(data) {
-  familyDesign = {
-    themeColors: { ...defaultFamilyData().themeColors, ...(data.themeColors || {}) },
-    darkMode: !!data.darkMode,
-    defaultViewModeDesktop, defaultViewScopeDesktop, defaultViewModeMobile, defaultViewScopeMobile,
-  };
-}
-function applyPersonalDesign() {
-  const fd = familyDesign || {
-    themeColors: { ...defaultFamilyData().themeColors }, darkMode: false,
-    defaultViewModeDesktop: 'timeline', defaultViewScopeDesktop: 'both', defaultViewModeMobile: 'timeline', defaultViewScopeMobile: 'both',
-  };
-  const w = (personalDesign && personalDesign.werte) || {};
-  const col = (k, fb) => (typeof w[k] === 'string' && /^#[0-9a-fA-F]{6}$/.test(w[k])) ? w[k] : fb;
-  const pick = (k, allowed, fb) => allowed.includes(w[k]) ? w[k] : fb;
-  themeColors = {
-    paper: col('colorPaper', fd.themeColors.paper),
-    pine: col('colorPine', fd.themeColors.pine),
-    mustard: col('colorMustard', fd.themeColors.mustard),
-  };
-  defaultViewModeDesktop = pick('defaultViewModeDesktop', DESIGN_VIEW_MODES, fd.defaultViewModeDesktop);
-  defaultViewScopeDesktop = pick('defaultViewScopeDesktop', DESIGN_VIEW_SCOPES, fd.defaultViewScopeDesktop);
-  defaultViewModeMobile = pick('defaultViewModeMobile', DESIGN_VIEW_MODES, fd.defaultViewModeMobile);
-  defaultViewScopeMobile = pick('defaultViewScopeMobile', DESIGN_VIEW_SCOPES, fd.defaultViewScopeMobile);
-  document.documentElement.classList.toggle('dark', typeof w.darkMode === 'boolean' ? w.darkMode : fd.darkMode);
-  applyOverviewPrefs(w);
-  finDepotsOut = Array.isArray(w.finDepotsOut) ? w.finDepotsOut.filter(x => typeof x === 'string' && x).slice(0, 30) : [];
-  try { if (currentView === 'finanzen' && finTab === 'sparen' && finance) renderSavings(); } catch (e) { /* Finanzen noch nicht bereit */ }
-  updateThemeColorMeta();
-  applyTheme();
-  syncDesignSettingsInputs();
-  renderOverviewSettings();
-  refreshOverviewTiles();
-  // Im Profil gespeicherte Region (Land, Währung, Zahlenformat) auf dem Gerät merken
-  let regionChanged = false;
-  if (typeof w.land === 'string' && window.PINN_REGION) {
-    regionChanged = PINN_REGION.save({ land: w.land, waehrung: w.waehrung, zahlen: w.zahlen });
-  }
-  // Im Profil gespeicherte Sprache übernehmen (lädt pinn. bei einer anderen Sprache einmal neu)
-  let reloading = false;
-  if (typeof w.sprache === 'string' && window.PINN_I18N && PINN_I18N.find(w.sprache) && w.sprache !== PINN_I18N.current) {
-    reloading = PINN_I18N.switchTo(w.sprache);
-  } else if (typeof w.sprache === 'string' && window.PINN_I18N && PINN_I18N.find(w.sprache)) {
-    PINN_I18N.switchTo(w.sprache, true);
-  }
-  // Andere Region: einmal neu laden, damit Beträge, Zahlen und Notrufnummern überall stimmen
-  if (!reloading && regionChanged && PINN_REGION.reload()) reloading = true;
-  if (reloading) regionReloading = true;
-}
-function syncDesignSettingsInputs() {
-  const dm = document.getElementById('darkModeToggle');
-  if (!dm) return;
-  dm.checked = document.documentElement.classList.contains('dark');
-  document.getElementById('colorPaper').value = themeColors.paper;
-  document.getElementById('colorPine').value = themeColors.pine;
-  document.getElementById('colorMustard').value = themeColors.mustard;
-  document.querySelectorAll('.default-view-mode-btn-desktop').forEach(b => b.classList.toggle('active', b.dataset.defaultViewMode === defaultViewModeDesktop));
-  document.getElementById('defaultViewScopeSelectDesktop').value = defaultViewScopeDesktop;
-  document.querySelectorAll('.default-view-mode-btn-mobile').forEach(b => b.classList.toggle('active', b.dataset.defaultViewMode === defaultViewModeMobile));
-  document.getElementById('defaultViewScopeSelectMobile').value = defaultViewScopeMobile;
-}
-function currentDesignValues() {
-  return {
-    darkMode: document.documentElement.classList.contains('dark'),
-    colorPaper: themeColors.paper, colorPine: themeColors.pine, colorMustard: themeColors.mustard,
-    defaultViewModeDesktop, defaultViewScopeDesktop, defaultViewModeMobile, defaultViewScopeMobile,
-    // Übersicht (Kacheln)
-    ovOrder: overviewOrder.slice(), ovHidden: overviewHidden.slice(),
-    ovBdayDays: overviewBdayDays, ovBdayOnlyUpcoming: overviewBdayOnlyUpcoming, ovBdayHidden: bdayPackHidden(),
-    // Sparen: aus der Gesamtübersicht ausgeblendete Depots
-    finDepotsOut: finDepotsOut.slice(0, 30),
-    // Sprache der App (pinnLangCode: auf dem Gerät gespeichert bzw. gerade aktiv)
-    sprache: pinnLangCode(),
-    // Land, Währung, Zahlenformat und Notrufnummern (Einstellungen → Sprache & Region)
-    ...regionDesignValues(),
-  };
-}
-// Region fürs Profil – inkl. fertiger Angaben, die der Server braucht (Beträge in Push-Nachrichten,
-// Notrufnummern im SOS-Push)
-function regionDesignValues() {
-  return window.PINN_REGION ? PINN_REGION.werte() : {};
-}
-// Steht im Profil noch ein anderer (oder gar kein) Regionsstand als auf diesem Gerät?
-function regionProfileOutdated(w) {
-  if (!window.PINN_REGION || !w) return false;
-  const r = PINN_REGION.werte();
-  return Object.keys(r).some(k => JSON.stringify(w[k]) !== JSON.stringify(r[k]));
-}
-// Steht im Profil keine (gültige) Sprache? Dann kennt der Server sie nicht und schickt Mitteilungen auf Deutsch.
-function languageProfileOutdated(w) {
-  if (!window.PINN_I18N || !w) return false;
-  return !(typeof w.sprache === 'string' && PINN_I18N.find(w.sprache));
-}
-let regionReloading = false;
-/* ---------- Sprache & Region (Einstellungen → Sprache & Region) ----------
-   Die Sprachen stehen in PINN_LANGUAGES, Länder, Währungen und Notrufnummern in PINN_REGION (beide
-   oben im <head>). Auswahl in den Dropdowns, Übernahme erst mit „Speichern“: auf dem Gerät gemerkt,
-   im Profil gespeichert (gilt auf allen Geräten) und pinn. lädt neu – der Wechsel braucht die
-   Originaltexte der Seite bzw. die neu eingestellten Formatierer. Länder- und Währungsnamen kommen
-   vom Browser in der gewählten Sprache (Intl.DisplayNames), dafür gibt es keine Übersetzungsliste. */
-function pinnLangCode() {
-  return (window.PINN_I18N && PINN_I18N.stored()) || 'en';
-}
-let langPendingCode = '';
-let regionPending = null;
-function i18nT(s) { return window.PINN_I18N ? PINN_I18N.t(s) : s; }
-function renderLanguageSettings() {
-  const btn = document.getElementById('langDdBtn');
-  if (!btn || !window.PINN_LANGUAGES) return;
-  const langs = window.PINN_LANGUAGES;
-  if (!langPendingCode || !langs.some(l => l.code === langPendingCode)) langPendingCode = (window.PINN_I18N && PINN_I18N.current) || 'en';
-  const sel = langs.find(l => l.code === langPendingCode) || langs[0];
-  document.getElementById('langDdFlag').innerHTML = sel.flag;
-  document.getElementById('langDdName').textContent = sel.name;
-  const list = document.getElementById('langDdList');
-  list.innerHTML = langs.map(l => `<button type="button" role="option" class="lang-dd-opt${l.code === sel.code ? ' sel' : ''}" data-lang="${l.code}" aria-selected="${l.code === sel.code}">`
-    + `<span class="lang-flag">${l.flag}</span><span>${escapeHtml(l.name)}</span><span class="lang-dd-check">✓</span></button>`).join('');
-}
-function renderRegionSettings() {
-  const R = window.PINN_REGION;
-  const cSel = document.getElementById('regionCountrySelect');
-  if (!R || !cSel) return;
-  if (!regionPending) regionPending = R.stored();
-  const p = regionPending;
-  // Land: alphabetisch in der Sprache der App, mit Flagge
-  const countries = R.COUNTRIES.map(r => ({ code: r[0], name: R.countryName(r[0]) }))
-    .sort((a, b) => a.name.localeCompare(b.name, (window.PINN_I18N && PINN_I18N.language.locale) || undefined));
-  cSel.innerHTML = countries.map(c => `<option value="${c.code}">${escapeHtml((R.flag(c.code) + ' ' + c.name).trim())}</option>`).join('');
-  cSel.value = p.land;
-  // Währung: „Automatisch“ = Währung des Landes
-  const row = R.country(p.land);
-  const autoCur = row ? row[2] : R.currency;
-  const curLabel = c => `${c} · ${R.currencyName(c)}`;
-  const wSel = document.getElementById('regionCurrencySelect');
-  wSel.innerHTML = `<option value="auto">${escapeHtml(i18nT('Automatisch') + ' – ' + curLabel(autoCur))}</option>`
-    + R.CURRENCIES.map(c => `<option value="${c}">${escapeHtml(curLabel(c))}</option>`).join('');
-  wSel.value = p.waehrung;
-  // Zahlenformat: „Automatisch“ = wie im Land üblich
-  const fSel = document.getElementById('regionFormatSelect');
-  fSel.innerHTML = `<option value="auto">${escapeHtml(i18nT('Automatisch (wie Land)') + ' – ' + R.numSample(p.land))}</option>`
-    + Object.keys(R.FORMATS).map(k => `<option value="${k}">${escapeHtml(R.FORMATS[k].sample)}</option>`).join('');
-  fSel.value = p.zahlen;
-  renderRegionPreview();
-}
-function renderRegionPreview() {
-  const R = window.PINN_REGION;
-  const box = document.getElementById('regionPreview');
-  if (!R || !box || !regionPending) return;
-  const pv = R.preview(regionPending);
-  const n = pv.notruf;
-  const call = (ic, label, nr) => `<span class="rp-call"><span>${ic}</span>${escapeHtml(i18nT(label))} <b>${escapeHtml(nr)}</b></span>`;
-  const calls = [];
-  if (n.polizei === n.rettung && n.rettung === n.feuer) calls.push(call('🆘', 'Notruf', n.polizei));
-  else {
-    calls.push(call('🚓', 'Polizei', n.polizei));
-    if (n.rettung === n.feuer) calls.push(call('🚑', 'Rettung · Feuerwehr', n.rettung));
-    else { calls.push(call('🚑', 'Rettung', n.rettung)); calls.push(call('🚒', 'Feuerwehr', n.feuer)); }
-  }
-  if (n.allgemein && ![n.polizei, n.rettung, n.feuer].includes(n.allgemein)) calls.push(call('🆘', 'Allgemeiner Notruf', n.allgemein));
-  box.innerHTML = `
-    <div class="rp-k">${escapeHtml(i18nT('Beispiel'))}</div>
-    <div class="rp-money">${escapeHtml(pv.money)}</div>
-    <div class="rp-k mt-3">${escapeHtml(i18nT('Notrufnummern'))} · ${escapeHtml((R.flag(pv.row[0]) + ' ' + R.countryName(pv.row[0])).trim())}</div>
-    <div class="rp-calls">${calls.join('')}</div>
-    <p class="rp-note">${escapeHtml(i18nT('Gilt für den Notfallpass, das SOS-Popup und „Ich bin unterwegs“.'))}</p>`;
-}
-function setLanguageDropdown(open) {
-  const dd = document.getElementById('langDropdown');
-  if (!dd) return;
-  dd.classList.toggle('open', open);
-  document.getElementById('langDdList').classList.toggle('hidden', !open);
-  document.getElementById('langDdBtn').setAttribute('aria-expanded', open ? 'true' : 'false');
-}
-function initLanguageSettings() {
-  const btn = document.getElementById('langDdBtn');
-  if (!btn) return;
-  renderLanguageSettings();
-  renderRegionSettings();
-  btn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    setLanguageDropdown(document.getElementById('langDdList').classList.contains('hidden'));
-  });
-  document.getElementById('langDdList').addEventListener('click', (e) => {
-    const opt = e.target.closest('[data-lang]');
-    if (!opt) return;
-    e.stopPropagation();
-    langPendingCode = opt.dataset.lang;
-    document.getElementById('langStatus').textContent = '';
-    renderLanguageSettings();
-    setLanguageDropdown(false);
-  });
-  document.addEventListener('click', (e) => { if (!e.target.closest('#langDropdown')) setLanguageDropdown(false); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setLanguageDropdown(false); });
-  // Land wechseln: Währung und Zahlenformat „Automatisch“ folgen dem Land
-  document.getElementById('regionCountrySelect').addEventListener('change', (e) => {
-    if (!regionPending) regionPending = PINN_REGION.stored();
-    regionPending.land = e.target.value;
-    document.getElementById('langStatus').textContent = '';
-    renderRegionSettings();
-  });
-  document.getElementById('regionCurrencySelect').addEventListener('change', (e) => {
-    if (!regionPending) regionPending = PINN_REGION.stored();
-    regionPending.waehrung = e.target.value;
-    document.getElementById('langStatus').textContent = '';
-    renderRegionPreview();
-  });
-  document.getElementById('regionFormatSelect').addEventListener('change', (e) => {
-    if (!regionPending) regionPending = PINN_REGION.stored();
-    regionPending.zahlen = e.target.value;
-    document.getElementById('langStatus').textContent = '';
-    renderRegionPreview();
-  });
-  document.getElementById('langSaveBtn').addEventListener('click', async () => {
-    const status = document.getElementById('langStatus');
-    const code = langPendingCode;
-    if (!window.PINN_I18N || !PINN_I18N.find(code)) return;
-    const langChanged = code !== PINN_I18N.current;
-    const regionChanged = window.PINN_REGION && regionPending ? PINN_REGION.save(regionPending) : false;
-    if (!langChanged && !regionChanged) { status.textContent = 'Diese Einstellungen sind schon aktiv.'; return; }
-    PINN_I18N.switchTo(code, true); // erst merken, neu geladen wird nach dem Speichern im Profil
-    status.textContent = 'Gespeichert – pinn. wird neu geladen …';
-    if (currentUser()) {
-      personalDesign = { werte: currentDesignValues(), stand: Date.now() };
-      writeDesignCache(true);
-      clearTimeout(personalDesignSaveTimer);
-      // Offline: der Stand bleibt als „ausstehend“ gemerkt und wird nach dem Neuladen übertragen
-      try { await Promise.race([pushPersonalDesign(), new Promise(r => setTimeout(r, 3000))]); } catch (e) { /* später */ }
-    }
-    try { sessionStorage.removeItem('pinn.sprache.reload'); sessionStorage.removeItem('pinn.region.reload'); } catch (e) { /* egal */ }
-    location.reload();
-  });
-}
-
-// Nach jeder Änderung in "Darstellung": nur im eigenen Profil speichern (nicht in den Familiendaten)
-function savePersonalDesign() {
-  if (!currentUser()) return;
-  personalDesign = { werte: currentDesignValues(), stand: Date.now() };
-  writeDesignCache(true);
-  clearTimeout(personalDesignSaveTimer);
-  personalDesignSaveTimer = setTimeout(pushPersonalDesign, 600);
-}
-async function pushPersonalDesign() {
-  if (!currentUser() || !navigator.onLine) return;
-  const sent = personalDesign;
-  try {
-    const res = await apiFetch('/api/pinn/design', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(sent),
-    });
-    if (res.status === 404) return; // Server-Hook fehlt noch - lokal bleibt es gemerkt
-    const body = await res.json().catch(() => ({}));
-    if (!res.ok || body.error) return; // später erneut versuchen
-    if (body.uebernommen === false && body.design && body.design.werte) {
-      personalDesign = { werte: body.design.werte, stand: Number(body.design.stand) || 0 };
-      writeDesignCache(false);
-      applyPersonalDesign();
-      return;
-    }
-    if (personalDesign === sent) writeDesignCache(false);
-  } catch (e) { /* offline - wird nachgereicht */ }
-}
-async function loadPersonalDesign(localPending) {
-  if (!navigator.onLine) return;
-  const uid = personalDesignLoadedFor;
-  try {
-    const res = await apiFetch('/api/pinn/design', { cache: 'no-store' });
-    if (!res.ok) return;
-    const body = await res.json().catch(() => ({}));
-    const remote = body && body.design;
-    if (!remote || !remote.werte || typeof remote.werte !== 'object') return;
-    if (uid !== personalDesignLoadedFor) return; // inzwischen anderes Profil angemeldet
-    const remoteStand = Number(remote.stand) || 0;
-    const localStand = Number(personalDesign.stand) || 0;
-    if (localPending && localStand > remoteStand) { pushPersonalDesign(); return; }
-    if (remoteStand >= localStand) {
-      personalDesign = { werte: remote.werte, stand: remoteStand };
-      writeDesignCache(false);
-      applyPersonalDesign();
-      // Region im Profil fehlt oder ist veraltet (z. B. vor Version 1.17 gespeichert): nachtragen,
-      // damit der Server die Notrufnummern und das Währungsformat dieses Profils kennt
-      if (!regionReloading && (regionProfileOutdated(remote.werte) || languageProfileOutdated(remote.werte))) savePersonalDesign();
-    } else {
-      pushPersonalDesign();
-    }
-  } catch (e) { /* offline: zwischengespeichertes Design bleibt */ }
-}
-window.addEventListener('online', () => {
-  const c = readDesignCache();
-  if (c && c.pending) pushPersonalDesign();
-});
-
 function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str == null ? '' : String(str);
@@ -12962,7 +12485,7 @@ function actualCurrentWeekRange() {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.87.0';
+const APP_VERSION = '1.88.0';
 
 /* ==========================================================
    Einstellungen & Konto: zwei gleich hohe Spalten (Querformat ab Tablet-Breite)
@@ -13090,74 +12613,77 @@ const APP_VERSION = '1.87.0';
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/uebersicht.js?v=1.87.0"></script>
-<script src="js/familienkachel.js?v=1.87.0"></script>
-<script src="js/wobistdu.js?v=1.87.0"></script>
-<script src="js/geburtstagsfeier.js?v=1.87.0"></script>
-<script src="js/wetterkachel.js?v=1.87.0"></script>
-<script src="js/geburtstage.js?v=1.87.0"></script>
-<script src="js/uebersichteinstellungen.js?v=1.87.0"></script>
-<script src="js/familiensync.js?v=1.87.0"></script>
-<script src="js/kalenderquellen.js?v=1.87.0"></script>
-<script src="js/icsparser.js?v=1.87.0"></script>
-<script src="js/zeitleiste.js?v=1.87.0"></script>
-<script src="js/termindetails.js?v=1.87.0"></script>
-<script src="js/kalenderdatei.js?v=1.87.0"></script>
-<script src="js/wetter.js?v=1.87.0"></script>
-<script src="js/wohnort.js?v=1.87.0"></script>
-<script src="js/feiertage.js?v=1.87.0"></script>
-<script src="js/muellkalender.js?v=1.87.0"></script>
-<script src="js/mitglieder.js?v=1.87.0"></script>
-<script src="js/profilbild.js?v=1.87.0"></script>
-<script src="js/mitglied.js?v=1.87.0"></script>
-<script src="js/kinderseite.js?v=1.87.0"></script>
-<script src="js/kinderroutine.js?v=1.87.0"></script>
-<script src="js/sterne.js?v=1.87.0"></script>
-<script src="js/kalenderansicht.js?v=1.87.0"></script>
-<script src="js/essenplanen.js?v=1.87.0"></script>
-<script src="js/rezeptparser.js?v=1.87.0"></script>
-<script src="js/rezeptdialog.js?v=1.87.0"></script>
-<script src="js/rezeptbild.js?v=1.87.0"></script>
-<script src="js/rezeptmengen.js?v=1.87.0"></script>
-<script src="js/einkauf.js?v=1.87.0"></script>
-<script src="js/einkaufslisten.js?v=1.87.0"></script>
-<script src="js/einkaufseingabe.js?v=1.87.0"></script>
-<script src="js/rezepte.js?v=1.87.0"></script>
-<script src="js/offline.js?v=1.87.0"></script>
-<script src="js/aufgabenextras.js?v=1.87.0"></script>
-<script src="js/appbadge.js?v=1.87.0"></script>
-<script src="js/reisen.js?v=1.87.0"></script>
-<script src="js/aufgabendaten.js?v=1.87.0"></script>
-<script src="js/haushalt.js?v=1.87.0"></script>
-<script src="js/reihum.js?v=1.87.0"></script>
-<script src="js/aufgaben.js?v=1.87.0"></script>
-<script src="js/smarthome.js?v=1.87.0"></script>
-<script src="js/sprachsteuerung.js?v=1.87.0"></script>
-<script src="js/termine.js?v=1.87.0"></script>
-<script src="js/ansichten.js?v=1.87.0"></script>
-<script src="js/versionspruefung.js?v=1.87.0"></script>
-<script src="js/sicherungen.js?v=1.87.0"></script>
-<script src="js/geraete.js?v=1.87.0"></script>
-<script src="js/fehlerprotokoll.js?v=1.87.0"></script>
-<script src="js/versionslog.js?v=1.87.0"></script>
-<script src="js/einstellungen.js?v=1.87.0"></script>
-<script src="js/kalenderkonto.js?v=1.87.0"></script>
-<script src="js/finanzen.js?v=1.87.0"></script>
-<script src="js/kassen.js?v=1.87.0"></script>
-<script src="js/vorrat.js?v=1.87.0"></script>
-<script src="js/vorrat2.js?v=1.87.0"></script>
-<script src="js/sparen.js?v=1.87.0"></script>
-<script src="js/vertraege.js?v=1.87.0"></script>
-<script src="js/fahrzeuge.js?v=1.87.0"></script>
-<script src="js/zuhause.js?v=1.87.0"></script>
-<script src="js/dokumente.js?v=1.87.0"></script>
-<script src="js/pdflesen.js?v=1.87.0"></script>
-<script src="js/appstart.js?v=1.87.0"></script>
-<script src="js/pinnwand.js?v=1.87.0"></script>
-<script src="js/listen.js?v=1.87.0"></script>
-<script src="js/familie.js?v=1.87.0"></script>
-<script src="js/hinweise.js?v=1.87.0"></script>
-<script src="js/ausblick.js?v=1.87.0"></script>
+<script src="js/speichern.js?v=1.88.0"></script>
+<script src="js/design.js?v=1.88.0"></script>
+<script src="js/sprache.js?v=1.88.0"></script>
+<script src="js/uebersicht.js?v=1.88.0"></script>
+<script src="js/familienkachel.js?v=1.88.0"></script>
+<script src="js/wobistdu.js?v=1.88.0"></script>
+<script src="js/geburtstagsfeier.js?v=1.88.0"></script>
+<script src="js/wetterkachel.js?v=1.88.0"></script>
+<script src="js/geburtstage.js?v=1.88.0"></script>
+<script src="js/uebersichteinstellungen.js?v=1.88.0"></script>
+<script src="js/familiensync.js?v=1.88.0"></script>
+<script src="js/kalenderquellen.js?v=1.88.0"></script>
+<script src="js/icsparser.js?v=1.88.0"></script>
+<script src="js/zeitleiste.js?v=1.88.0"></script>
+<script src="js/termindetails.js?v=1.88.0"></script>
+<script src="js/kalenderdatei.js?v=1.88.0"></script>
+<script src="js/wetter.js?v=1.88.0"></script>
+<script src="js/wohnort.js?v=1.88.0"></script>
+<script src="js/feiertage.js?v=1.88.0"></script>
+<script src="js/muellkalender.js?v=1.88.0"></script>
+<script src="js/mitglieder.js?v=1.88.0"></script>
+<script src="js/profilbild.js?v=1.88.0"></script>
+<script src="js/mitglied.js?v=1.88.0"></script>
+<script src="js/kinderseite.js?v=1.88.0"></script>
+<script src="js/kinderroutine.js?v=1.88.0"></script>
+<script src="js/sterne.js?v=1.88.0"></script>
+<script src="js/kalenderansicht.js?v=1.88.0"></script>
+<script src="js/essenplanen.js?v=1.88.0"></script>
+<script src="js/rezeptparser.js?v=1.88.0"></script>
+<script src="js/rezeptdialog.js?v=1.88.0"></script>
+<script src="js/rezeptbild.js?v=1.88.0"></script>
+<script src="js/rezeptmengen.js?v=1.88.0"></script>
+<script src="js/einkauf.js?v=1.88.0"></script>
+<script src="js/einkaufslisten.js?v=1.88.0"></script>
+<script src="js/einkaufseingabe.js?v=1.88.0"></script>
+<script src="js/rezepte.js?v=1.88.0"></script>
+<script src="js/offline.js?v=1.88.0"></script>
+<script src="js/aufgabenextras.js?v=1.88.0"></script>
+<script src="js/appbadge.js?v=1.88.0"></script>
+<script src="js/reisen.js?v=1.88.0"></script>
+<script src="js/aufgabendaten.js?v=1.88.0"></script>
+<script src="js/haushalt.js?v=1.88.0"></script>
+<script src="js/reihum.js?v=1.88.0"></script>
+<script src="js/aufgaben.js?v=1.88.0"></script>
+<script src="js/smarthome.js?v=1.88.0"></script>
+<script src="js/sprachsteuerung.js?v=1.88.0"></script>
+<script src="js/termine.js?v=1.88.0"></script>
+<script src="js/ansichten.js?v=1.88.0"></script>
+<script src="js/versionspruefung.js?v=1.88.0"></script>
+<script src="js/sicherungen.js?v=1.88.0"></script>
+<script src="js/geraete.js?v=1.88.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.88.0"></script>
+<script src="js/versionslog.js?v=1.88.0"></script>
+<script src="js/einstellungen.js?v=1.88.0"></script>
+<script src="js/kalenderkonto.js?v=1.88.0"></script>
+<script src="js/finanzen.js?v=1.88.0"></script>
+<script src="js/kassen.js?v=1.88.0"></script>
+<script src="js/vorrat.js?v=1.88.0"></script>
+<script src="js/vorrat2.js?v=1.88.0"></script>
+<script src="js/sparen.js?v=1.88.0"></script>
+<script src="js/vertraege.js?v=1.88.0"></script>
+<script src="js/fahrzeuge.js?v=1.88.0"></script>
+<script src="js/zuhause.js?v=1.88.0"></script>
+<script src="js/dokumente.js?v=1.88.0"></script>
+<script src="js/pdflesen.js?v=1.88.0"></script>
+<script src="js/appstart.js?v=1.88.0"></script>
+<script src="js/pinnwand.js?v=1.88.0"></script>
+<script src="js/listen.js?v=1.88.0"></script>
+<script src="js/familie.js?v=1.88.0"></script>
+<script src="js/hinweise.js?v=1.88.0"></script>
+<script src="js/ausblick.js?v=1.88.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)
