@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.80', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 36)',
+    punkte: [
+      ['info', 'Für Mitwirkende: Sterne und Belohnungen der Kinderseite (Sterne-Zähler, Belohnungs-Laden, Bestätigung durch die Eltern, Sterne unter Finanzen → Taschengeld und das Fenster „Belohnungen bearbeiten“) liegen jetzt in einer eigenen Datei (pb_public/js/sterne.js). An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, js/sterne.js und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.79', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 35)',
     punkte: [
       ['info', 'Für Mitwirkende: die Kalender-Ansichten (Tag, Woche, Monat, Jahr, Essen per Ziehen und Umschalter) liegen jetzt in pb_public/js/kalenderansicht.js, das Fenster zum Planen einer Mahlzeit in js/essenplanen.js. An der Bedienung ändert sich nichts'],
