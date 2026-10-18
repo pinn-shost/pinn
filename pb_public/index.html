@@ -913,7 +913,7 @@ window.PINN_LANGUAGES = [
   // Startprüfung: fehlt eine selbst gehostete Datei, erscheint ein klarer Hinweis statt einer
   // leeren Seite ohne funktionierende Buttons.
   // Teile der App unter pb_public/js/ – jede Datei meldet sich am Ende in window.PINN_PARTS an
-  var PINN_APP_PARTS = ['einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
+  var PINN_APP_PARTS = ['rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
   window.addEventListener('DOMContentLoaded', function () {
     var missing = [];
     if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – der PocketBase-Client (ohne ihn funktioniert nichts)');
@@ -18178,600 +18178,6 @@ document.getElementById('todayBtn').addEventListener('click', () => {
 });
 
 /* ==========================================================
-   RECIPE PARSER (regelbasiert – simuliert die KI-Erkennung)
-   ========================================================== */
-function parseRecipeText(raw) {
-  const rawLines = raw.split('\n').map(l => l.trim());
-  const lines = rawLines.filter(l => l.length > 0);
-  if (lines.length === 0) return { title: '', ingredients: [], steps: [] };
-
-  const ingredientsHeaderRE = /^(zutaten)\s*:?\s*$/i;
-  const stepsHeaderRE = /^(zubereitung|zubereitungsschritte|anleitung|schritte)\s*:?\s*$/i;
-  const bulletRE = /^[-*•]\s*/;
-  const numberedRE = /^\d+[.)]\s*/;
-  const quantityRE = /^\d+([.,]\d+)?\s*(g|kg|ml|l|el|tl|stück|stk|prise|pck|dose|bund|zehe|scheibe[n]?)\b/i;
-  const clean = (l) => l.replace(bulletRE, '').replace(numberedRE, '').trim();
-
-  let title = lines[0];
-  let bodyStart = 1;
-  if (bulletRE.test(title) || numberedRE.test(title) || quantityRE.test(clean(title))) {
-    title = 'Importiertes Rezept';
-    bodyStart = 0;
-  }
-
-  const body = lines.slice(bodyStart);
-  const ingIdx = body.findIndex(l => ingredientsHeaderRE.test(l));
-  const stepIdx = body.findIndex(l => stepsHeaderRE.test(l));
-
-  let ingredients = [];
-  let steps = [];
-
-  if (ingIdx !== -1 || stepIdx !== -1) {
-    if (ingIdx !== -1 && stepIdx !== -1) {
-      const from = Math.min(ingIdx, stepIdx);
-      const to = Math.max(ingIdx, stepIdx);
-      const firstBlock = body.slice(from + 1, to).map(clean).filter(Boolean);
-      const secondBlock = body.slice(to + 1).map(clean).filter(Boolean);
-      if (ingIdx < stepIdx) { ingredients = firstBlock; steps = secondBlock; }
-      else { steps = firstBlock; ingredients = secondBlock; }
-    } else if (ingIdx !== -1) {
-      ingredients = body.slice(ingIdx + 1).map(clean).filter(Boolean);
-    } else {
-      steps = body.slice(stepIdx + 1).map(clean).filter(Boolean);
-    }
-  } else {
-    body.forEach(l => {
-      const c = clean(l);
-      if (!c) return;
-      const looksLikeIngredient = bulletRE.test(l) || numberedRE.test(l) || quantityRE.test(c) || c.split(' ').length <= 4;
-      if (looksLikeIngredient) ingredients.push(c); else steps.push(c);
-    });
-  }
-
-  return { title: title.trim(), ingredients, steps };
-}
-
-/* ==========================================================
-   Recipe modal (Freitext / Strukturiert, Bild, Kategorien)
-   ========================================================== */
-function setRecipeInputMode(mode) {
-  recipeInputMode = mode;
-  document.querySelectorAll('.recipe-input-mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
-  document.getElementById('freitextBlock').classList.toggle('hidden', mode !== 'freitext');
-  document.getElementById('structuredFieldsBlock').classList.toggle('hidden', mode !== 'strukturiert');
-}
-document.querySelectorAll('.recipe-input-mode-btn').forEach(btn => {
-  btn.addEventListener('click', () => setRecipeInputMode(btn.dataset.mode));
-});
-
-// Bildausschnitt im Rezept-Popup: gilt für das gerade gewählte Bild. Wird ein anderes Bild gewählt
-// (Mediathek, Foto, PDF/KI-Import) oder das Bild entfernt, startet der Ausschnitt wieder mittig.
-const RECIPE_FRAME_DEFAULT = { x: 50, y: 50, z: 1 };
-let pendingRecipeImageFrame = { ...RECIPE_FRAME_DEFAULT };
-let pendingRecipeImageFrameFor = null;
-
-function renderRecipeImagePreview() {
-  if (pendingRecipeImage !== pendingRecipeImageFrameFor) {
-    pendingRecipeImageFrame = { ...RECIPE_FRAME_DEFAULT };
-    pendingRecipeImageFrameFor = pendingRecipeImage;
-  }
-  const el = document.getElementById('rImagePreview');
-  const wrap = document.getElementById('rImageFrameWrap');
-  const frameImg = document.getElementById('rImageFrameImg');
-  if (pendingRecipeImage) {
-    // Volles Bild (im Rahmen ohnehin geladen) - so stimmt die kleine Vorschau genau mit dem Ausschnitt überein
-    const src = recipeImageSrc(pendingRecipeImage, false);
-    el.innerHTML = `<img id="rImagePreviewImg" src="${src}" class="w-full h-full object-cover" alt="" draggable="false" />`;
-    if (frameImg.getAttribute('src') !== src) frameImg.setAttribute('src', src);
-    wrap.classList.remove('hidden');
-  } else {
-    el.textContent = 'Kein Bild';
-    frameImg.removeAttribute('src');
-    wrap.classList.add('hidden');
-  }
-  applyRecipeFrameEditor();
-}
-
-function applyRecipeFrameEditor() {
-  const f = pendingRecipeImageFrame;
-  applyRecipeImageFrame(document.getElementById('rImageFrameImg'), f);
-  applyRecipeImageFrame(document.getElementById('rImagePreviewImg'), f);
-  document.getElementById('rImageFrameX').value = String(Math.round(f.x * 10) / 10);
-  document.getElementById('rImageFrameY').value = String(Math.round(f.y * 10) / 10);
-  document.getElementById('rImageFrameZoom').value = String(Math.round(f.z * 100));
-}
-
-// Wie weit sich das Bild im Rahmen bei aktuellem Zoom verschieben lässt (in Pixeln je Achse)
-function recipeFrameTravel() {
-  const frame = document.getElementById('rImageFrame');
-  const img = document.getElementById('rImageFrameImg');
-  const box = frame.getBoundingClientRect();
-  const nw = img.naturalWidth, nh = img.naturalHeight;
-  if (!nw || !nh || !box.width || !box.height) return null;
-  const cover = Math.max(box.width / nw, box.height / nh);
-  const z = pendingRecipeImageFrame.z;
-  return { x: z * nw * cover - box.width, y: z * nh * cover - box.height };
-}
-function panRecipeFrame(dx, dy) {
-  const t = recipeFrameTravel();
-  if (!t) return;
-  const f = pendingRecipeImageFrame;
-  if (t.x > 0.5) f.x = Math.min(100, Math.max(0, f.x - dx * 100 / t.x));
-  if (t.y > 0.5) f.y = Math.min(100, Math.max(0, f.y - dy * 100 / t.y));
-  applyRecipeFrameEditor();
-}
-function zoomRecipeFrame(z) {
-  pendingRecipeImageFrame.z = Math.min(RECIPE_FRAME_MAX_ZOOM, Math.max(1, z));
-  applyRecipeFrameEditor();
-}
-
-(function wireRecipeFrameEditor() {
-  const frame = document.getElementById('rImageFrame');
-  const pointers = new Map();
-  let pinch = null;
-  const dist = () => {
-    const p = [...pointers.values()];
-    return Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y) || 1;
-  };
-  frame.addEventListener('pointerdown', (e) => {
-    if (!pendingRecipeImage || (e.pointerType === 'mouse' && e.button !== 0)) return;
-    e.preventDefault();
-    try { frame.setPointerCapture(e.pointerId); } catch (err) { /* egal */ }
-    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    if (pointers.size === 2) pinch = { d: dist(), z: pendingRecipeImageFrame.z };
-    frame.classList.add('is-dragging');
-  });
-  frame.addEventListener('pointermove', (e) => {
-    const prev = pointers.get(e.pointerId);
-    if (!prev) return;
-    e.preventDefault();
-    const now = { x: e.clientX, y: e.clientY };
-    pointers.set(e.pointerId, now);
-    if (pointers.size === 1) panRecipeFrame(now.x - prev.x, now.y - prev.y);
-    else if (pinch) zoomRecipeFrame(pinch.z * dist() / pinch.d);
-  });
-  const end = (e) => {
-    if (!pointers.has(e.pointerId)) return;
-    pointers.delete(e.pointerId);
-    if (pointers.size < 2) pinch = null;
-    if (!pointers.size) frame.classList.remove('is-dragging');
-  };
-  frame.addEventListener('pointerup', end);
-  frame.addEventListener('pointercancel', end);
-  frame.addEventListener('lostpointercapture', end);
-  // Trackpad am Mac: Zwei-Finger-Zoom (Chrome/Firefox als Mausrad mit Strg, Safari als Geste)
-  frame.addEventListener('wheel', (e) => {
-    if (!pendingRecipeImage || !e.ctrlKey) return;
-    e.preventDefault();
-    zoomRecipeFrame(pendingRecipeImageFrame.z * Math.exp(-e.deltaY * 0.01));
-  }, { passive: false });
-  let gestureStartZ = 1;
-  frame.addEventListener('gesturestart', (e) => { e.preventDefault(); gestureStartZ = pendingRecipeImageFrame.z; });
-  frame.addEventListener('gesturechange', (e) => {
-    e.preventDefault();
-    if (pointers.size >= 2 || !pendingRecipeImage) return; // iPhone/iPad: Zoom läuft schon über die Finger
-    zoomRecipeFrame(gestureStartZ * (e.scale || 1));
-  });
-  frame.addEventListener('gestureend', (e) => e.preventDefault());
-  // Tastatur: Pfeiltasten verschieben, +/- zoomen
-  frame.addEventListener('keydown', (e) => {
-    if (!pendingRecipeImage) return;
-    const step = e.shiftKey ? 40 : 10;
-    const map = { ArrowLeft: [step, 0], ArrowRight: [-step, 0], ArrowUp: [0, step], ArrowDown: [0, -step] };
-    if (map[e.key]) { e.preventDefault(); panRecipeFrame(map[e.key][0], map[e.key][1]); }
-    else if (e.key === '+' || e.key === '=') { e.preventDefault(); zoomRecipeFrame(pendingRecipeImageFrame.z + 0.1); }
-    else if (e.key === '-') { e.preventDefault(); zoomRecipeFrame(pendingRecipeImageFrame.z - 0.1); }
-  });
-  document.getElementById('rImageFrameZoom').addEventListener('input', (e) => {
-    zoomRecipeFrame((parseInt(e.target.value, 10) || 100) / 100);
-  });
-  document.getElementById('rImageFrameReset').addEventListener('click', () => {
-    pendingRecipeImageFrame = { ...RECIPE_FRAME_DEFAULT };
-    applyRecipeFrameEditor();
-  });
-})();
-
-function totalTime(r) { return (r.prepTime || 0) + (r.cookTime || 0); }
-
-// Ab 60 Minuten wird in Stunden angezeigt, dabei auf 15-Minuten-Schritte gerundet - wurde dabei
-// tatsächlich gerundet (kein glatter Wert wie 90 oder 120 Minuten), steht ein ~ davor.
-function formatRecipeDuration(totalMinutes) {
-  if (!totalMinutes) return null;
-  if (totalMinutes < 60) return `${totalMinutes} Min.`;
-  const rounded = Math.round(totalMinutes / 15) * 15;
-  const hours = Math.floor(rounded / 60);
-  const mins = rounded % 60;
-  const timeStr = mins === 0 ? `${hours} Std.` : `${hours} Std. ${mins} Min.`;
-  return (rounded !== totalMinutes ? '~' : '') + timeStr;
-}
-
-// Erkennt eine führende Mengenangabe am Zeilenanfang einer Zutat ("200g Mehl" -> 200, "1/2 Zwiebel"
-// -> 0.5, "1,5 EL Zucker" -> 1.5). Zeilen ohne erkennbare Zahl am Anfang liefern null und bleiben
-// beim Umrechnen unverändert - Zutaten sind hier bewusst Freitext, keine strukturierten Felder.
-// Rechnet EL/TL-Angaben in ml um (1 EL = 15ml, 1 TL = 5ml), damit sie sich beim Summieren mit
-// ml-Angaben derselben Zutat zusammenfassen lassen, statt als eigene, unvereinbare Einheit stehen
-// zu bleiben.
-function applyUnitConversion(min, max, rest) {
-  let m;
-  if ((m = rest.match(/^(?:EL|Esslöffel)\b\.?\s*(.*)$/i))) {
-    return { min: min * 15, max: max * 15, rest: 'ml ' + m[1] };
-  }
-  if ((m = rest.match(/^(?:TL|Teelöffel)\b\.?\s*(.*)$/i))) {
-    return { min: min * 5, max: max * 5, rest: 'ml ' + m[1] };
-  }
-  return { min, max, rest };
-}
-
-// Erkennt die fuehrende Mengenangabe einer Zutatenzeile. Gibt {min, max, rest} zurueck - bei einer
-// festen Zahl ist min===max, bei einer Spanne ("1-2 Zwiebeln") ist min<max, damit sich Spannen beim
-// Summieren ueber mehrere Rezepte korrekt fortpflanzen (3 + (1 bis 2) = 4-5). Erkennt zusaetzlich
-// gemischte Zahlen ("2 1/2"), reine Brueche ("1/2"), Dezimalzahlen (Punkt oder Komma), ein
-// vorangestelltes "oder" (Alternativ-Zutat: "oder 200g Butter") sowie "Prise(n)" mit fester
-// g-Umrechnung.
-function parseLeadingQuantity(rawLine) {
-  // "oder 200g Butter" -> wie "200g Butter" behandeln, nur der Praefix muss weg, Menge und Name
-  // stehen ja bereits in der richtigen Reihenfolge danach.
-  let line = rawLine.replace(/^oder\s+/i, '');
-  // Verschiedene Gedankenstrich-Varianten (– — Minus) als Bereichstrenner zulassen, nicht nur den
-  // einfachen Bindestrich - kommt haeufig so aus kopierten/eingefuegten Rezepten und wurde bisher
-  // nicht als Spanne erkannt, sondern riss die zweite Zahl in den Rest-Text mit rein.
-  line = line.replace(/[\u2012\u2013\u2014\u2212]/g, '-');
-  // Unicode-Bruchzeichen ("½ Zwiebel", "1½ Tassen") in Dezimalzahlen umwandeln, bevor die übrigen
-  // Muster (die auf normale Ziffern "1/2" angewiesen sind) versuchen zu greifen - das Zeichen ist
-  // für \d unsichtbar und wurde bisher komplett übersehen (galt als "keine Menge erkannt").
-  const UNICODE_FRACTIONS = { '¼': 0.25, '½': 0.5, '¾': 0.75, '⅓': 1/3, '⅔': 2/3, '⅕': 0.2, '⅖': 0.4, '⅗': 0.6, '⅘': 0.8, '⅙': 1/6, '⅚': 5/6, '⅛': 0.125, '⅜': 0.375, '⅝': 0.625, '⅞': 0.875 };
-  line = line.replace(/(\d+)?([¼½¾⅓⅔⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞])/g, (match, whole, frac) => {
-    const value = (whole ? parseInt(whole, 10) : 0) + UNICODE_FRACTIONS[frac];
-    return String(value);
-  });
-
-  let m;
-  // "Prise"/"Prisen" hat i.d.R. keine (oder nur "eine") Zahl davor - direkt mit 1g je Prise
-  // ansetzen, bevor die generischen Zahlen-Muster (die eine fuehrende Ziffer brauchen) greifen.
-  m = line.match(/^(?:(\d+)\s+)?(?:eine\s+)?Prisen?\b\s*(.*)$/i);
-  if (m) {
-    const count = m[1] ? parseInt(m[1], 10) : 1;
-    return { min: count, max: count, rest: 'g ' + m[2] };
-  }
-  // Spanne: "1-2", "1,5-2,5" oder "1 bis 2"
-  m = line.match(/^(\d+(?:[.,]\d+)?)\s*(?:-|bis)\s*(\d+(?:[.,]\d+)?)\s*(.*)$/i);
-  if (m) {
-    let min = parseFloat(m[1].replace(',', '.'));
-    let max = parseFloat(m[2].replace(',', '.'));
-    if (!isNaN(min) && !isNaN(max)) {
-      if (min > max) { const t = min; min = max; max = t; } // vertauschte Spanne reparieren
-      return applyUnitConversion(min, max, m[3]);
-    }
-  }
-  // Gemischte Zahl: "2 1/2"
-  m = line.match(/^(\d+)\s+(\d+)\/(\d+)\s*(.*)$/);
-  if (m) {
-    const den = parseInt(m[3], 10);
-    if (den) {
-      const value = parseInt(m[1], 10) + parseInt(m[2], 10) / den;
-      return applyUnitConversion(value, value, m[4]);
-    }
-  }
-  // Reiner Bruch: "1/2"
-  m = line.match(/^(\d+)\/(\d+)\s*(.*)$/);
-  if (m) {
-    const den = parseInt(m[2], 10);
-    if (den) {
-      const value = parseInt(m[1], 10) / den;
-      return applyUnitConversion(value, value, m[3]);
-    }
-  }
-  // Dezimalzahl/Ganzzahl: "2.5", "2,5", "3"
-  m = line.match(/^(\d+(?:[.,]\d+)?)\s*(.*)$/);
-  if (m) {
-    const value = parseFloat(m[1].replace(',', '.'));
-    if (!isNaN(value)) return applyUnitConversion(value, value, m[2]);
-  }
-  return null;
-}
-
-function formatScaledNumber(n) {
-  const oneDecimal = Math.round(n * 10) / 10;
-  return Number.isInteger(oneDecimal) ? String(oneDecimal) : numDec(String(oneDecimal));
-}
-
-// Erkennt Zwischenüberschriften-Zeilen in Zutaten/Zubereitung, wie sie bei umfangreichen
-// Rezepten mit mehreren Teilkomponenten vorkommen ("A) Vorteig:", "Burgersauce:", "Patties:").
-// Kriterium: die Zeile endet mit einem Doppelpunkt und ist kurz - das erkennt zuverlässig auch
-// Zutaten-Überschriften bei Rezepten mit vielen mengenlosen Zutaten (z.B. "Salz", "Ketchup"), bei
-// denen eine mengen-basierte Erkennung fälschlich fast jede Zutat als Überschrift markieren würde.
-// Einzige bekannte Lücke: eine Überschrift ganz ohne Doppelpunkt (z.B. "Am Vortag (ca. 12h Reife)")
-// wird dann nicht separat hervorgehoben, sondern wie eine normale Zeile angezeigt.
-function isLikelyGroupHeader(line) {
-  const t = line.trim();
-  if (!t) return false;
-  if (/:\s*$/.test(t) && t.split(/\s+/).length <= 6) return true;
-  // Zwischenüberschrift ohne Doppelpunkt im Stil von Chefkoch & Co.: "Für die Marinade",
-  // "Für den Teig" - kurz, beginnt mit "Für der/die/das/den" und enthält keine Mengenangabe.
-  return /^für\s+(?:den|die|das|der|einen|eine|ein)\s+\S+(?:\s+\S+){0,3}$/i.test(t) && !/\d/.test(t);
-}
-
-// Baut Zutaten/Zubereitung als Liste, bei der Überschriftzeilen optisch abgesetzt sind und die
-// Nummerierung der Zubereitungsschritte dabei sauber durchzählt (Überschriften selbst werden nicht
-// mitgezählt) - unabhängig von der ursprünglichen Nummerierung im importierten Text.
-function renderRecipeItemsHtml(items, numbered, transformLine) {
-  if (!items.length) return `<p class="text-sm text-ink/30 italic">Keine Angaben</p>`;
-  let n = 0;
-  return `<div class="flex flex-col ${numbered ? 'gap-2' : 'gap-1'}">` + items.map(line => {
-    if (isLikelyGroupHeader(line)) {
-      return `<div class="text-xs font-semibold uppercase tracking-wide text-ink/50 mt-2 first:mt-0">${escapeHtml(line)}</div>`;
-    }
-    n++;
-    const displayText = transformLine ? transformLine(line) : line;
-    return numbered
-      ? `<div class="flex gap-2 text-sm text-ink/80"><span class="text-ink/40 shrink-0">${n}.</span><span>${escapeHtml(displayText)}</span></div>`
-      : `<div class="flex gap-2 text-sm text-ink/80"><span class="text-ink/30 shrink-0">•</span><span>${escapeHtml(displayText)}</span></div>`;
-  }).join('') + `</div>`;
-}
-
-function scaleIngredientLine(line, factor) {
-  const parsed = parseLeadingQuantity(line);
-  if (!parsed) return line;
-  const scaledMin = parsed.min * factor;
-  const scaledMax = parsed.max * factor;
-  const scaledText = scaledMin === scaledMax
-    ? formatScaledNumber(scaledMin)
-    : `${formatScaledNumber(scaledMin)}-${formatScaledNumber(scaledMax)}`;
-  return parsed.rest ? `${scaledText} ${parsed.rest}` : scaledText;
-}
-
-// Portionen-Regler im Formular: setzt direkt die gespeicherte Portionenzahl des Rezepts (kein
-// zusätzliches Zahlenfeld mehr nötig). Die Zutaten selbst live umrechnen tut die Rezept-Karte in
-// der Liste, sobald das Rezept gespeichert ist - hier im Formular gibt man Mengen für die
-// eingetragene Portionenzahl einfach direkt ein.
-function getFormServings() { return parseInt(document.getElementById('rServingsValue').textContent, 10) || 2; }
-function setFormServings(n) { document.getElementById('rServingsValue').textContent = Math.max(1, n); }
-document.getElementById('rServingsMinusBtn').addEventListener('click', () => setFormServings(getFormServings() - 1));
-document.getElementById('rServingsPlusBtn').addEventListener('click', () => setFormServings(getFormServings() + 1));
-
-// Prueft, ob mindestens eine (nicht-Ueberschrift-)Zeile ohne erkennbare Mengenangabe ist - z.B.
-// fuer die Einkaufslisten-Genauigkeit relevant, da solche Zutaten dort nicht summiert werden koennen.
-// Zutaten, die üblicherweise ohne Menge angegeben werden ("Salz", "Pfeffer", "Öl zum Braten",
-// "Petersilie nach Belieben") sind kein Fehler im Rezept und lösen deshalb keinen Hinweis aus.
-const TO_TASTE_BASICS = /^(?:(?:etwas|wenig|ein wenig|reichlich|ggf\.?|evtl\.?)\s+)?(?:(?:schwarzer|weißer|weisser|bunter|frisch(?:er)? gemahlener|gemahlener|grobes|grober|feines|jod-?)\s+)*(?:Salz|Meersalz|Jodsalz|Steinsalz|Kräutersalz|Pfeffer|Muskat(?:nuss)?|Wasser|Eiswürfel)(?:\s*(?:,|und|&|\+|\/)\s*(?:(?:schwarzer|weißer|weisser|bunter|frisch(?:er)? gemahlener|gemahlener)\s+)*(?:Salz|Pfeffer|Muskat(?:nuss)?|Zucker))*(?:\s*[,(].*)?$/i;
-const TO_TASTE_PHRASES = /(?:^|[\s,(])(?:nach\s+(?:Geschmack|Belieben|Bedarf|Wahl)|n\.\s?B\.|n\.\s?G\.|zum\s+(?:Abschmecken|Würzen|Bestreuen|Bestäuben|Braten|Anbraten|Ausbacken|Frittieren|Einfetten|Fetten|Garnieren|Servieren|Dekorieren|Verzieren|Beträufeln|Bepinseln|Bestreichen|Kochen)|für\s+die\s+(?:Form|Arbeitsfläche|Pfanne)|optional|etwas)(?=$|[\s,.)])/i;
-function isToTasteIngredient(line) {
-  const t = line.trim();
-  return TO_TASTE_BASICS.test(t) || TO_TASTE_PHRASES.test(t);
-}
-
-function hasUnquantifiedIngredients(lines) {
-  return lines.some(line => line.trim() && !isLikelyGroupHeader(line) && !parseLeadingQuantity(line) && !isToTasteIngredient(line));
-}
-
-// Markiert das Zutaten-Feld rot + zeigt den Warnhinweis, wenn mengenlose Zutaten erkannt wurden -
-// wird sowohl nach dem Analysieren als auch beim Speichern aufgerufen.
-function checkIngredientsQuantityWarning() {
-  const lines = document.getElementById('rIngredients').value.split('\n');
-  const hasWarning = hasUnquantifiedIngredients(lines);
-  const textarea = document.getElementById('rIngredients');
-  textarea.classList.toggle('border-red-500', hasWarning);
-  textarea.classList.toggle('border-ink/15', !hasWarning);
-  document.getElementById('ingredientsQuantityWarning').classList.toggle('hidden', !hasWarning);
-  return hasWarning;
-}
-
-// Eigener Auswerter (auf dem Gerät, auch offline)
-function analyzeRecipeTextLocal(raw) {
-  const parsed = parseRecipeText(raw);
-  document.getElementById('rTitle').value = parsed.title;
-  document.getElementById('rIngredients').value = parsed.ingredients.join('\n');
-  document.getElementById('rSteps').value = parsed.steps.join('\n');
-  setRecipeInputMode('strukturiert'); // direkt zum Prüfen/Ergänzen der erkannten Felder wechseln
-  checkIngredientsQuantityWarning();
-}
-// "Text analysieren": mit KI (falls eingeschaltet), sonst bzw. bei Fehlern der eigene Auswerter.
-// Gibt true zurück, wenn danach Felder befüllt sind.
-async function analyzeRecipeText() {
-  const raw = document.getElementById('importText').value;
-  if (!raw.trim()) return false;
-  const isLink = /^https?:\/\/\S+$/i.test(raw.trim());
-  // Status ggf. noch nachladen (z. B. Popup direkt nach dem Start geöffnet)
-  if (isLink && !recipeKiStatus && navigator.onLine) { try { await recipeKiLoadStatus(); } catch (e) { /* egal */ } }
-  if (recipeKiEnabled()) {
-    const ok = await recipeKiImport({ text: raw.trim() }, isLink ? 'Rezeptseite' : 'Text');
-    if (ok) return true;
-    // Bei Links bleibt die Fehlermeldung der KI stehen (mit dem echten Grund) - nicht überschreiben
-    if (isLink) return false;
-  }
-  if (isLink) {
-    let msg;
-    if (!navigator.onLine) msg = 'Keine Internetverbindung – Rezept-Links lassen sich nur online einlesen. Alternativ den Rezepttext kopieren und hier einfügen.';
-    else if (!recipeKiStatus) msg = 'Der Server ist gerade nicht erreichbar – bitte gleich noch einmal versuchen oder den Rezepttext kopieren und hier einfügen.';
-    else if (!recipeKiStatus.aktiv) msg = 'Rezept-Links lassen sich nur mit eingerichteter KI einlesen – bitte den Rezepttext kopieren und hier einfügen.';
-    else if (!recipeKiWanted()) msg = 'Für Rezept-Links bitte oben den Haken „✨ Mit KI auswerten“ setzen.';
-    else msg = 'Rezept-Links lassen sich nur mit KI einlesen – alternativ den Rezepttext kopieren und hier einfügen.';
-    recipeKiShowInfo(msg, true);
-    return false;
-  }
-  analyzeRecipeTextLocal(raw);
-  return true;
-}
-document.getElementById('analyzeBtn').addEventListener('click', () => { analyzeRecipeText(); });
-
-function handleRecipeImageFile(file) {
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => { pendingRecipeImage = reader.result; renderRecipeImagePreview(); };
-  reader.readAsDataURL(file);
-}
-document.getElementById('rImageFile').addEventListener('change', (e) => handleRecipeImageFile(e.target.files[0]));
-document.getElementById('rImageCapture').addEventListener('change', (e) => handleRecipeImageFile(e.target.files[0]));
-document.getElementById('rRemoveImage').addEventListener('click', () => {
-  pendingRecipeImage = null;
-  document.getElementById('rImageFile').value = '';
-  document.getElementById('rImageCapture').value = '';
-  renderRecipeImagePreview();
-});
-
-// Mehrfachauswahl-Picker für Küchengeräte im Rezept-Formular: Chips zum An-/Abwählen, Zustand lebt
-// in pendingRecipeTools bis zum Speichern. Bereits ausgewählte, inzwischen ausgeblendete Geräte
-// bleiben beim Bearbeiten sichtbar, damit sie nicht kommentarlos verschwinden.
-function renderRecipeToolsPicker() {
-  const wrap = document.getElementById('rToolsPicker');
-  wrap.innerHTML = '';
-  const visible = kitchenTools.filter(t => t.active !== false || pendingRecipeTools.includes(t.id));
-  if (!visible.length) {
-    wrap.innerHTML = '<p class="text-xs text-ink/30 italic">Keine Küchengeräte angelegt – über das Regler-Symbol auf der Rezepte-Seite hinzufügbar.</p>';
-    return;
-  }
-  visible.forEach(tool => {
-    const isSelected = pendingRecipeTools.includes(tool.id);
-    const chip = document.createElement('button');
-    chip.type = 'button';
-    chip.className = 'px-3 py-1.5 rounded-full text-xs font-medium border transition ' + (isSelected ? 'bg-pine text-white border-pine' : 'bg-white text-ink/60 border-ink/15 hover:border-pine hover:text-pine');
-    chip.textContent = tool.label;
-    chip.addEventListener('click', () => {
-      if (pendingRecipeTools.includes(tool.id)) pendingRecipeTools = pendingRecipeTools.filter(id => id !== tool.id);
-      else pendingRecipeTools.push(tool.id);
-      renderRecipeToolsPicker();
-    });
-    wrap.appendChild(chip);
-  });
-}
-
-// Mehrfachauswahl-Picker für Rezept-Kategorien (Chips, analog zum Küchengeräte-Picker). Kategorien
-// sind reine Strings statt {id,label}-Objekte, deshalb hier ohne .id-Zugriff.
-function renderRecipeCategoriesPicker() {
-  const wrap = document.getElementById('rCategoriesPicker');
-  wrap.innerHTML = '';
-  const visible = recipeCategories.filter(c => categoryActive[c] !== false || pendingRecipeCategories.includes(c));
-  if (!visible.length) {
-    wrap.innerHTML = '<p class="text-xs text-ink/30 italic">Keine Kategorien angelegt – über das Regler-Symbol auf der Rezepte-Seite hinzufügbar.</p>';
-    return;
-  }
-  visible.forEach(cat => {
-    const isSelected = pendingRecipeCategories.includes(cat);
-    const chip = document.createElement('button');
-    chip.type = 'button';
-    chip.className = 'px-3 py-1.5 rounded-full text-xs font-medium border transition ' + (isSelected ? 'bg-pine text-white border-pine' : 'bg-white text-ink/60 border-ink/15 hover:border-pine hover:text-pine');
-    chip.textContent = cat;
-    chip.addEventListener('click', () => {
-      if (pendingRecipeCategories.includes(cat)) pendingRecipeCategories = pendingRecipeCategories.filter(c => c !== cat);
-      else pendingRecipeCategories.push(cat);
-      renderRecipeCategoriesPicker();
-    });
-    wrap.appendChild(chip);
-  });
-}
-
-function openRecipeModal(existingId = null) {
-  const pdfInfo = document.getElementById('recipePdfInfo');
-  if (pdfInfo) pdfInfo.classList.add('hidden');
-  recipeKiLoadStatus();
-  editingRecipeId = existingId;
-  const r = existingId ? recipes.find(x => x.id === existingId) : null;
-
-  document.getElementById('recipeModalTitle').textContent = r ? 'Rezept bearbeiten' : 'Neues Rezept';
-  document.getElementById('importText').value = '';
-  document.getElementById('rTitle').value = r ? r.title : '';
-  document.getElementById('rIngredients').value = r ? r.ingredients.join('\n') : '';
-  document.getElementById('rSteps').value = r ? r.steps.join('\n') : '';
-  setFormServings(r && r.servings ? r.servings : 2);
-  document.getElementById('rPrep').value = r && r.prepTime ? r.prepTime : '';
-  document.getElementById('rCook').value = r && r.cookTime ? r.cookTime : '';
-  pendingRecipeCategories = r ? [...(r.categories || (r.category ? [r.category] : []))] : [activeCategories()[0]].filter(Boolean);
-  renderRecipeCategoriesPicker();
-  pendingRecipeImage = r ? (r.image || null) : null;
-  pendingRecipeImageFrame = { ...RECIPE_FRAME_DEFAULT, ...((r && normRecipeImageFrame(r.imageFrame)) || {}) };
-  pendingRecipeImageFrameFor = pendingRecipeImage;
-  renderRecipeImagePreview();
-  pendingRecipeTools = r ? [...(r.tools || [])] : [];
-  renderRecipeToolsPicker();
-  // Neue Rezepte sind standardmäßig öffentlich (Haken lässt sich vor dem Speichern entfernen)
-  document.getElementById('rPublic').checked = r ? !!r.oeffentlich : true;
-  // Bestehendes Rezept -> direkt die Detailfelder zeigen; neues Rezept -> erst Freitext-Einstieg
-  setRecipeInputMode(r ? 'strukturiert' : 'freitext');
-  document.getElementById('ingredientsQuantityWarning').classList.add('hidden');
-  document.getElementById('rIngredients').classList.remove('border-red-500');
-  document.getElementById('rIngredients').classList.add('border-ink/15');
-
-  document.getElementById('recipeModal').classList.remove('hidden');
-  armModalSnapshot('recipeModal');
-}
-
-document.getElementById('openRecipeModalBtn').addEventListener('click', () => openRecipeModal(null));
-function closeRecipeModal() { document.getElementById('recipeModal').classList.add('hidden'); }
-document.getElementById('cancelRecipe').addEventListener('click', () => attemptCloseModal('recipeModal', closeRecipeModal));
-wireModalOutsideClick('recipeModal', closeRecipeModal);
-
-document.getElementById('saveRecipeBtn').addEventListener('click', async () => {
-  // Wurde noch nicht analysiert (Freitext-Modus mit Text drin), erst die Analyse nachholen, bevor
-  // aus den Feldern gespeichert wird - sonst wären Titel/Zutaten/Zubereitung noch leer.
-  if (recipeInputMode === 'freitext' && document.getElementById('importText').value.trim()) {
-    if (recipeKiBusy) return;
-    const ok = await analyzeRecipeText();
-    if (!ok) return;
-  }
-
-  const title = document.getElementById('rTitle').value.trim() || 'Unbenanntes Rezept';
-  const ingredients = document.getElementById('rIngredients').value.split('\n').map(s => s.trim()).filter(Boolean);
-  const steps = document.getElementById('rSteps').value.split('\n').map(s => s.trim()).filter(Boolean);
-  const servings = getFormServings();
-  const prepTime = parseInt(document.getElementById('rPrep').value, 10) || 0;
-  const cookTime = parseInt(document.getElementById('rCook').value, 10) || 0;
-  const categories = [...pendingRecipeCategories];
-  const oeffentlich = document.getElementById('rPublic').checked;
-
-  if (checkIngredientsQuantityWarning()) {
-    if (!confirm('Mindestens eine Zutat hat keine Mengenangabe. Trotzdem speichern?')) return;
-  }
-
-  // Neu gewähltes Bild (data:...) verkleinern und als eigene Datei hochladen. Klappt das nicht (z.B.
-  // Sammlung fehlt), wird es verkleinert eingebettet gespeichert und später automatisch umgezogen.
-  const existing = editingRecipeId ? recipes.find(x => x.id === editingRecipeId) : null;
-  const oldRecordId = existing ? existing.imageRecordId : null;
-  let image = pendingRecipeImage;
-  let imageRecordId = (existing && pendingRecipeImage === existing.image) ? oldRecordId : null;
-  if (typeof image === 'string' && image.startsWith('data:')) {
-    const btn = document.getElementById('saveRecipeBtn');
-    const btnLabel = btn.textContent;
-    btn.disabled = true;
-    btn.textContent = 'Bild wird gespeichert …';
-    try {
-      const up = await uploadRecipeImage(image);
-      image = up.path;
-      imageRecordId = up.recordId;
-    } catch (err) {
-      console.warn('Bild-Upload fehlgeschlagen, speichere verkleinert eingebettet:', err);
-      try {
-        const blob = await compressImageDataUrl(image);
-        image = await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(blob); });
-      } catch (e2) { /* Originalbild behalten */ }
-      imageRecordId = null;
-    } finally {
-      btn.disabled = false;
-      btn.textContent = btnLabel;
-    }
-  }
-  // Altes Bild aufräumen, wenn es ersetzt oder entfernt wurde
-  if (oldRecordId && oldRecordId !== imageRecordId) deleteRecipeImageRecord(oldRecordId);
-  // Bildausschnitt nur speichern, wenn er von der Mitte/ohne Zoom abweicht
-  const imageFrame = image ? normRecipeImageFrame(pendingRecipeImageFrame) : null;
-
-  if (existing) {
-    Object.assign(existing, { title, ingredients, steps, servings, prepTime, cookTime, categories, image, imageRecordId, tools: [...pendingRecipeTools], oeffentlich });
-    delete existing.category;
-    if (imageFrame) existing.imageFrame = imageFrame;
-    else delete existing.imageFrame;
-  } else {
-    const fresh = { id: 'r' + Date.now(), title, ingredients, steps, servings, prepTime, cookTime, categories, image, imageRecordId, tools: [...pendingRecipeTools], createdAt: Date.now(), oeffentlich };
-    if (imageFrame) fresh.imageFrame = imageFrame;
-    recipes.unshift(fresh);
-  }
-  // Die Liste der öffentlichen Rezepte nach dem Speichern beim nächsten Anzeigen neu vom Server holen
-  publicRecipesLoadedAt = 0;
-  saveRecipes().finally(() => { publicRecipesLoadedAt = 0; });
-  document.getElementById('recipeModal').classList.add('hidden');
-  renderRecipesForCurrentView();
-});
-
-/* ==========================================================
    Recipe list rendering
    ========================================================== */
 function actualCurrentWeekRange() {
@@ -18785,7 +18191,7 @@ function actualCurrentWeekRange() {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.77.0';
+const APP_VERSION = '1.78.0';
 
 /* ==========================================================
    Einstellungen & Konto: zwei gleich hohe Spalten (Querformat ab Tablet-Breite)
@@ -18913,45 +18319,49 @@ const APP_VERSION = '1.77.0';
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/einkauf.js?v=1.77.0"></script>
-<script src="js/einkaufslisten.js?v=1.77.0"></script>
-<script src="js/einkaufseingabe.js?v=1.77.0"></script>
-<script src="js/rezepte.js?v=1.77.0"></script>
-<script src="js/offline.js?v=1.77.0"></script>
-<script src="js/aufgabenextras.js?v=1.77.0"></script>
-<script src="js/appbadge.js?v=1.77.0"></script>
-<script src="js/reisen.js?v=1.77.0"></script>
-<script src="js/aufgabendaten.js?v=1.77.0"></script>
-<script src="js/haushalt.js?v=1.77.0"></script>
-<script src="js/reihum.js?v=1.77.0"></script>
-<script src="js/aufgaben.js?v=1.77.0"></script>
-<script src="js/smarthome.js?v=1.77.0"></script>
-<script src="js/sprachsteuerung.js?v=1.77.0"></script>
-<script src="js/termine.js?v=1.77.0"></script>
-<script src="js/ansichten.js?v=1.77.0"></script>
-<script src="js/versionspruefung.js?v=1.77.0"></script>
-<script src="js/sicherungen.js?v=1.77.0"></script>
-<script src="js/geraete.js?v=1.77.0"></script>
-<script src="js/fehlerprotokoll.js?v=1.77.0"></script>
-<script src="js/versionslog.js?v=1.77.0"></script>
-<script src="js/einstellungen.js?v=1.77.0"></script>
-<script src="js/kalenderkonto.js?v=1.77.0"></script>
-<script src="js/finanzen.js?v=1.77.0"></script>
-<script src="js/kassen.js?v=1.77.0"></script>
-<script src="js/vorrat.js?v=1.77.0"></script>
-<script src="js/vorrat2.js?v=1.77.0"></script>
-<script src="js/sparen.js?v=1.77.0"></script>
-<script src="js/vertraege.js?v=1.77.0"></script>
-<script src="js/fahrzeuge.js?v=1.77.0"></script>
-<script src="js/zuhause.js?v=1.77.0"></script>
-<script src="js/dokumente.js?v=1.77.0"></script>
-<script src="js/pdflesen.js?v=1.77.0"></script>
-<script src="js/appstart.js?v=1.77.0"></script>
-<script src="js/pinnwand.js?v=1.77.0"></script>
-<script src="js/listen.js?v=1.77.0"></script>
-<script src="js/familie.js?v=1.77.0"></script>
-<script src="js/hinweise.js?v=1.77.0"></script>
-<script src="js/ausblick.js?v=1.77.0"></script>
+<script src="js/rezeptparser.js?v=1.78.0"></script>
+<script src="js/rezeptdialog.js?v=1.78.0"></script>
+<script src="js/rezeptbild.js?v=1.78.0"></script>
+<script src="js/rezeptmengen.js?v=1.78.0"></script>
+<script src="js/einkauf.js?v=1.78.0"></script>
+<script src="js/einkaufslisten.js?v=1.78.0"></script>
+<script src="js/einkaufseingabe.js?v=1.78.0"></script>
+<script src="js/rezepte.js?v=1.78.0"></script>
+<script src="js/offline.js?v=1.78.0"></script>
+<script src="js/aufgabenextras.js?v=1.78.0"></script>
+<script src="js/appbadge.js?v=1.78.0"></script>
+<script src="js/reisen.js?v=1.78.0"></script>
+<script src="js/aufgabendaten.js?v=1.78.0"></script>
+<script src="js/haushalt.js?v=1.78.0"></script>
+<script src="js/reihum.js?v=1.78.0"></script>
+<script src="js/aufgaben.js?v=1.78.0"></script>
+<script src="js/smarthome.js?v=1.78.0"></script>
+<script src="js/sprachsteuerung.js?v=1.78.0"></script>
+<script src="js/termine.js?v=1.78.0"></script>
+<script src="js/ansichten.js?v=1.78.0"></script>
+<script src="js/versionspruefung.js?v=1.78.0"></script>
+<script src="js/sicherungen.js?v=1.78.0"></script>
+<script src="js/geraete.js?v=1.78.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.78.0"></script>
+<script src="js/versionslog.js?v=1.78.0"></script>
+<script src="js/einstellungen.js?v=1.78.0"></script>
+<script src="js/kalenderkonto.js?v=1.78.0"></script>
+<script src="js/finanzen.js?v=1.78.0"></script>
+<script src="js/kassen.js?v=1.78.0"></script>
+<script src="js/vorrat.js?v=1.78.0"></script>
+<script src="js/vorrat2.js?v=1.78.0"></script>
+<script src="js/sparen.js?v=1.78.0"></script>
+<script src="js/vertraege.js?v=1.78.0"></script>
+<script src="js/fahrzeuge.js?v=1.78.0"></script>
+<script src="js/zuhause.js?v=1.78.0"></script>
+<script src="js/dokumente.js?v=1.78.0"></script>
+<script src="js/pdflesen.js?v=1.78.0"></script>
+<script src="js/appstart.js?v=1.78.0"></script>
+<script src="js/pinnwand.js?v=1.78.0"></script>
+<script src="js/listen.js?v=1.78.0"></script>
+<script src="js/familie.js?v=1.78.0"></script>
+<script src="js/hinweise.js?v=1.78.0"></script>
+<script src="js/ausblick.js?v=1.78.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)

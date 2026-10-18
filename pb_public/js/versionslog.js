@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.78', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 34)',
+    punkte: [
+      ['info', 'Für Mitwirkende: das Rezept-Fenster liegt jetzt in eigenen Dateien – pb_public/js/rezeptparser.js (Text-Auswerter), js/rezeptdialog.js (Fenster, Analyse, Auswahl, Speichern), js/rezeptbild.js (Bildausschnitt) und js/rezeptmengen.js (Zeiten, Mengen, Umrechnung, Überschriften). An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, vier neue Dateien in js/ und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.77', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 33)',
     punkte: [
       ['info', 'Für Mitwirkende: der Einkauf liegt jetzt in drei eigenen Dateien – pb_public/js/einkauf.js (Zutaten zusammenrechnen, Kategorien, Läden, Stammladen, Sonderlisten), js/einkaufslisten.js (Übersicht, Zeilen, Fenster und Einstellungen → Einkauf) und js/einkaufseingabe.js (Eingabeleiste, Vorschläge, Mengen-Fenster, Tastatur, Kopieren und Teilen) –, die Rezeptliste mit Favoriten, öffentlichen Rezepten, Wochen-Slider und Rezept-Detailseite in js/rezepte.js. An der Bedienung ändert sich nichts'],
