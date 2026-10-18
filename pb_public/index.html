@@ -913,7 +913,7 @@ window.PINN_LANGUAGES = [
   // Startprüfung: fehlt eine selbst gehostete Datei, erscheint ein klarer Hinweis statt einer
   // leeren Seite ohne funktionierende Buttons.
   // Teile der App unter pb_public/js/ – jede Datei meldet sich am Ende in window.PINN_PARTS an
-  var PINN_APP_PARTS = ['sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
+  var PINN_APP_PARTS = ['kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
   window.addEventListener('DOMContentLoaded', function () {
     var missing = [];
     if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – der PocketBase-Client (ohne ihn funktioniert nichts)');
@@ -16248,622 +16248,6 @@ document.getElementById('saveMember').addEventListener('click', async () => {
 });
 
 /* ==========================================================
-   Kinderseite
-   ----------------------------------------------------------
-   Für Familienmitglieder mit aktivierter Kinderseite öffnet ein Tipp auf ihr Bild in der
-   Familienleiste (Termine/Übersicht und Aufgaben) eine bunte, kindgerechte Vollbild-Seite mit den
-   Aufgaben, die gerade dran sind. Antippen hakt eine Aufgabe mit Animation ab, nochmal Antippen
-   nimmt das Häkchen wieder weg.
-   Daten (im Familien-Datensatz, damit alle Geräte denselben Stand sehen):
-   - m.kid = { enabled, showAllowance, times: { morgens, mittags, nachmittags, abends, nacht }, tasks: [{ id, emoji, title, period }] }
-     showAllowance: Taschengeld (aus Finanzen → Taschengeld) auf der Kinderseite anzeigen
-     period: 'ganztags' | 'morgens' | 'mittags' | 'nachmittags' | 'abends'
-   - m.kidDone = { <Aufgaben-ID>: 'YYYY-MM-DD' } - erledigt zählt nur, wenn das Datum heute ist.
-     Dadurch beginnt jeder Tag automatisch von vorne - ganz ohne Zeitplan auf dem Server.
-   Vor "Morgens" und ab der Schlafenszeit zeigt die Seite nur eine Gute-Nacht-Ansicht.
-   ========================================================== */
-const KID_PERIODS = [
-  { id: 'morgens', label: 'Morgens', icon: '🌅' },
-  { id: 'mittags', label: 'Mittags', icon: '☀️' },
-  { id: 'nachmittags', label: 'Nachmittags', icon: '🌤️' },
-  { id: 'abends', label: 'Abends', icon: '🌙' },
-];
-const KID_TASK_GROUPS = [{ id: 'ganztags', label: 'Den ganzen Tag', icon: '⭐' }, ...KID_PERIODS];
-const KID_TIME_KEYS = ['morgens', 'mittags', 'nachmittags', 'abends', 'nacht'];
-const KID_TIME_LABELS = { morgens: 'Morgens ab', mittags: 'Mittags ab', nachmittags: 'Nachmittags ab', abends: 'Abends ab', nacht: 'Schlafenszeit ab' };
-const KID_DEFAULT_TIMES = { morgens: '05:00', mittags: '11:00', nachmittags: '14:00', abends: '17:30', nacht: '21:00' };
-const KID_CARD_COLORS = ['#FFD166', '#8FD3FF', '#FFA8CB', '#B8E986', '#CDB4FF', '#FFBE8F', '#7FE0D1', '#FFE38A'];
-const KID_EMOJIS = ['🪥', '🦷', '🧼', '💧', '🚿', '🛁', '🧴', '💇‍♀️', '💇‍♂️', '🎀', '👕', '👗', '👖', '🧦', '👟', '🧥', '👚',
-  '🥣', '🍞', '🥛', '🍎', '🍌', '🥕', '🍽️', '💊', '🎒', '📚', '✏️', '🎨', '🎵', '🧸', '🧩', '🚗', '🪀', '⚽', '🚲',
-  '🧺', '🧹', '🌱', '🐶', '🐱', '🚽', '🙌', '🤗', '🛏️', '📖', '😴', '🌙', '⭐', '❤️'];
-const LS_KID_SOUND = 'pinn.kidSound';
-
-let pendingKidConfig = null;   // Kinderseiten-Einstellung im geöffneten Mitglied-Popup
-let kidEditTasks = [];         // Arbeitskopie im Bearbeiten-Popup
-let kidEditTimes = {};
-let kidEmojiOpenFor = null;
-let kidPageMemberId = null;    // Mitglied, dessen Kinderseite gerade offen ist
-let kidPageStateKey = '';      // Datum|Tageszeit der aktuellen Anzeige - ändert sich das, wird neu gezeichnet
-let kidPageTimer = null;
-let kidAudioCtx = null;
-
-function kidAttr(s) { return escapeHtml(s).replace(/"/g, '&quot;'); }
-function kidUid() { return 'k' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
-function kidToMin(hhmm) {
-  const match = /^(\d{1,2}):(\d{2})$/.exec(String(hhmm || '').trim());
-  if (!match) return null;
-  const h = Number(match[1]), m = Number(match[2]);
-  if (h > 23 || m > 59) return null;
-  return h * 60 + m;
-}
-function kidDefaultTasks() {
-  return [
-    ['morgens', '🪥', 'Zähne putzen'],
-    ['morgens', '💧', 'Gesicht waschen'],
-    ['morgens', '👕', 'Anziehen'],
-    ['morgens', '💇‍♀️', 'Haare kämmen'],
-    ['morgens', '🥣', 'Frühstücken'],
-    ['mittags', '🧼', 'Hände waschen'],
-    ['mittags', '🍽️', 'Mittagessen'],
-    ['nachmittags', '🧸', 'Spielzeug aufräumen'],
-    ['nachmittags', '🍎', 'Obst essen'],
-    ['abends', '🍽️', 'Abendessen'],
-    ['abends', '🛁', 'Waschen'],
-    ['abends', '🪥', 'Zähne putzen'],
-    ['abends', '👚', 'Schlafanzug anziehen'],
-    ['abends', '📖', 'Gute-Nacht-Geschichte'],
-    ['abends', '🛏️', 'Ins Bett gehen'],
-  ].map(([period, emoji, title]) => ({ id: kidUid(), emoji, title, period }));
-}
-function normalizeKidConfig(kid) {
-  const k = (kid && typeof kid === 'object') ? kid : {};
-  const times = { ...KID_DEFAULT_TIMES };
-  KID_TIME_KEYS.forEach(key => {
-    if (k.times && kidToMin(k.times[key]) !== null) times[key] = k.times[key];
-  });
-  const valid = new Set(KID_TASK_GROUPS.map(g => g.id));
-  const tasks = Array.isArray(k.tasks)
-    ? k.tasks.filter(t => t && t.id && t.title).map(t => ({
-        id: String(t.id), emoji: t.emoji || '⭐', title: String(t.title), period: valid.has(t.period) ? t.period : 'ganztags',
-        stars: Math.max(1, Math.min(3, Number(t.stars) || 1)),
-      }))
-    : [];
-  return { enabled: !!k.enabled, showAllowance: !!k.showAllowance, sonne: !!k.sonne, times, tasks, stars: normalizeKidStars(k.stars) };
-}
-// Tageszeiten für heute: „Abends“ auf Wunsch schon ab Sonnenuntergang (Zuhause), wenn der früher ist
-function kidMinToTime(min) { return String(Math.floor(min / 60)).padStart(2, '0') + ':' + String(min % 60).padStart(2, '0'); }
-function kidEffectiveTimes(cfg, now) {
-  const times = { ...cfg.times };
-  if (!cfg.sonne) return times;
-  const st = homeSunTimes(now || new Date());
-  if (!st || !st.unter) return times;
-  const setMin = st.unter.getHours() * 60 + st.unter.getMinutes();
-  const latest = kidToMin(times.abends), earliest = kidToMin(times.nachmittags) + 15;
-  if (latest !== null && earliest !== null && setMin < latest) times.abends = kidMinToTime(Math.max(earliest, setMin));
-  return times;
-}
-function isKidPageEnabled(m) { return !!(m && m.kid && m.kid.enabled); }
-function kidCurrentPeriod(cfg, now) {
-  const t = now.getHours() * 60 + now.getMinutes();
-  const times = kidEffectiveTimes(cfg, now);
-  const at = key => kidToMin(times[key]);
-  if (t < at('morgens') || t >= at('nacht')) return 'nacht';
-  if (t >= at('abends')) return 'abends';
-  if (t >= at('nachmittags')) return 'nachmittags';
-  if (t >= at('mittags')) return 'mittags';
-  return 'morgens';
-}
-function kidTasksForPeriod(cfg, period) {
-  if (period === 'nacht') return [];
-  return cfg.tasks.filter(t => t.period === 'ganztags' || t.period === period);
-}
-function kidIsDone(m, taskId, today) { return !!(m.kidDone && m.kidDone[taskId] === today); }
-
-/* ---------- Mitglied-Popup: Abschnitt "Kinderseite" ---------- */
-function initMemberKidSection(existing) {
-  pendingKidConfig = normalizeKidConfig(existing && existing.kid);
-  // WG: Kinderseite nur zeigen, wenn sie für dieses Mitglied schon eingeschaltet ist
-  const sec = document.getElementById('memberKidSection');
-  if (sec) sec.classList.toggle('hidden', wgHidesKids() && !pendingKidConfig.enabled);
-  updateMemberKidSection();
-}
-function updateMemberKidSection() {
-  const cfg = pendingKidConfig || normalizeKidConfig(null);
-  document.getElementById('memberKidMode').checked = cfg.enabled;
-  document.getElementById('memberKidShowAllowance').checked = !!cfg.showAllowance;
-  document.getElementById('memberKidOptions').classList.toggle('hidden', !cfg.enabled);
-  const count = cfg.tasks.length;
-  document.getElementById('memberKidSummary').textContent =
-    `${count} ${count === 1 ? 'Aufgabe' : 'Aufgaben'} · Morgens ab ${cfg.times.morgens} · Abends ab ${cfg.times.abends} · Schlafenszeit ab ${cfg.times.nacht}`;
-  // Sterne & Belohnungen
-  const st = normalizeKidStars(cfg.stars);
-  document.getElementById('memberKidStars').checked = st.on;
-  document.getElementById('memberKidStarsOpts').classList.toggle('hidden', !st.on);
-  document.getElementById('memberKidStarsSummary').textContent = `Belohnungen: ${st.rewards.length} · Extra-Sterne für „Alles geschafft“: ${st.bonus}`;
-  // Verstecktes Feld, damit "Abbrechen" ungespeicherte Änderungen an der Kinderseite erkennt
-  document.getElementById('memberKidConfigState').value = JSON.stringify(cfg);
-}
-document.getElementById('memberKidMode').addEventListener('change', (e) => {
-  if (!pendingKidConfig) pendingKidConfig = normalizeKidConfig(null);
-  pendingKidConfig.enabled = e.target.checked;
-  if (pendingKidConfig.enabled && !pendingKidConfig.tasks.length) pendingKidConfig.tasks = kidDefaultTasks();
-  updateMemberKidSection();
-});
-document.getElementById('memberKidShowAllowance').addEventListener('change', (e) => {
-  if (!pendingKidConfig) pendingKidConfig = normalizeKidConfig(null);
-  pendingKidConfig.showAllowance = e.target.checked;
-  updateMemberKidSection();
-});
-document.getElementById('memberKidEdit').addEventListener('click', () => openKidRoutineEditor());
-
-/* ---------- Popup: Aufgaben & Tageszeiten bearbeiten ---------- */
-function openKidRoutineEditor() {
-  const cfg = pendingKidConfig || normalizeKidConfig(null);
-  kidEditTasks = cfg.tasks.map(t => ({ ...t }));
-  kidEditTimes = { ...cfg.times };
-  kidEmojiOpenFor = null;
-  const name = document.getElementById('newMemberName').value.trim();
-  document.getElementById('kidRoutineTitle').textContent = name ? `Kinderseite von ${name}` : 'Kinderseite';
-  document.getElementById('kidRoutineStatus').textContent = '';
-  renderKidRoutineTimes();
-  renderKidRoutineTasks();
-  document.getElementById('kidSunEvening').checked = !!cfg.sonne;
-  const sunToday = homeSunTimes(new Date());
-  document.getElementById('kidSunHint').textContent = sunToday && sunToday.unter
-    ? `Heute geht die Sonne um ${homeFmtTime(sunToday.unter)} Uhr unter. „Abends ab“ bleibt die späteste Uhrzeit.`
-    : 'Braucht ein Zuhause (Einstellungen → Zuhause).';
-  document.getElementById('kidRoutineModal').classList.remove('hidden');
-  armModalSnapshot('kidRoutineModal');
-}
-function closeKidRoutineModal() { document.getElementById('kidRoutineModal').classList.add('hidden'); }
-function renderKidRoutineTimes() {
-  document.getElementById('kidTimesGrid').innerHTML = KID_TIME_KEYS.map(key => `
-    <label class="block">
-      <span class="block text-[11px] text-ink/50 mb-0.5">${KID_TIME_LABELS[key]}</span>
-      <input type="time" data-time-key="${key}" value="${kidAttr(kidEditTimes[key])}" class="kid-time-input w-full rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm bg-white" />
-    </label>`).join('');
-}
-function kidRoutineRowHtml(t, list) {
-  const idx = list.indexOf(t);
-  const options = KID_TASK_GROUPS.map(g => `<option value="${g.id}"${g.id === t.period ? ' selected' : ''}>${g.label}</option>`).join('');
-  const picker = kidEmojiOpenFor === t.id
-    ? `<div class="flex flex-wrap gap-1 mt-1.5 p-2 rounded-lg bg-ink/5">${KID_EMOJIS.map(e =>
-        `<button type="button" class="kid-emoji-pick w-9 h-9 rounded-lg text-xl grid place-items-center hover:bg-white" data-emoji="${kidAttr(e)}">${e}</button>`).join('')}</div>`
-    : '';
-  return `<div class="kid-edit-row" data-id="${kidAttr(t.id)}">
-    <div class="flex items-center gap-1.5">
-      <button type="button" class="kid-edit-emoji w-10 h-10 shrink-0 rounded-lg bg-ink/5 text-xl grid place-items-center" title="Bild wählen">${escapeHtml(t.emoji || '⭐')}</button>
-      <input type="text" class="kid-edit-title flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-2 text-sm" maxlength="40" placeholder="z. B. Zähne putzen" value="${kidAttr(t.title)}" />
-      <button type="button" class="kid-edit-del w-8 h-8 shrink-0 rounded-lg text-ink/40 hover:text-red-500 transition" title="Entfernen" aria-label="Aufgabe entfernen">✕</button>
-    </div>
-    <div class="flex items-center gap-1 mt-1 pl-[46px]">
-      <select class="kid-edit-period rounded-lg border border-ink/15 px-2 py-1 text-xs bg-white">${options}</select>
-      ${pendingKidConfig && pendingKidConfig.stars && pendingKidConfig.stars.on ? `<select class="kid-edit-stars rounded-lg border border-ink/15 px-1.5 py-1 text-xs bg-white" title="Sterne für diese Aufgabe" aria-label="Sterne für diese Aufgabe" data-no-i18n>${[1, 2, 3].map(n => `<option value="${n}"${(Number(t.stars) || 1) === n ? ' selected' : ''}>${'⭐'.repeat(n)}</option>`).join('')}</select>` : ''}
-      <button type="button" class="kid-edit-up w-7 h-7 rounded-lg text-ink/40 hover:text-pine transition${idx === 0 ? ' invisible' : ''}" title="Nach oben" aria-label="Nach oben">↑</button>
-      <button type="button" class="kid-edit-down w-7 h-7 rounded-lg text-ink/40 hover:text-pine transition${idx === list.length - 1 ? ' invisible' : ''}" title="Nach unten" aria-label="Nach unten">↓</button>
-    </div>
-    ${picker}
-  </div>`;
-}
-function renderKidRoutineTasks() {
-  document.getElementById('kidTaskGroups').innerHTML = KID_TASK_GROUPS.map(g => {
-    const list = kidEditTasks.filter(t => t.period === g.id);
-    return `<div>
-      <div class="flex items-center justify-between mb-1.5">
-        <p class="text-xs uppercase tracking-wide text-ink/40">${g.icon} ${g.label}</p>
-        <button type="button" class="kid-add-task text-xs text-pine font-medium px-2 py-1 rounded-lg hover:bg-ink/5" data-period="${g.id}">+ Aufgabe</button>
-      </div>
-      <div class="flex flex-col gap-1.5">
-        ${list.length ? list.map(t => kidRoutineRowHtml(t, list)).join('') : '<p class="text-xs text-ink/30 italic">Keine Aufgaben</p>'}
-      </div>
-    </div>`;
-  }).join('');
-}
-function kidMoveTask(id, dir) {
-  const task = kidEditTasks.find(t => t.id === id);
-  if (!task) return;
-  const same = kidEditTasks.filter(t => t.period === task.period);
-  const other = same[same.indexOf(task) + dir];
-  if (!other) return;
-  const a = kidEditTasks.indexOf(task), b = kidEditTasks.indexOf(other);
-  kidEditTasks[a] = other;
-  kidEditTasks[b] = task;
-  renderKidRoutineTasks();
-}
-document.getElementById('kidTimesGrid').addEventListener('input', (e) => {
-  const key = e.target.dataset && e.target.dataset.timeKey;
-  if (key) kidEditTimes[key] = e.target.value;
-});
-document.getElementById('kidTaskGroups').addEventListener('input', (e) => {
-  if (!e.target.classList.contains('kid-edit-title')) return;
-  const row = e.target.closest('.kid-edit-row');
-  const task = row && kidEditTasks.find(t => t.id === row.dataset.id);
-  if (task) task.title = e.target.value;
-});
-document.getElementById('kidTaskGroups').addEventListener('change', (e) => {
-  if (!e.target.classList.contains('kid-edit-period')) return;
-  const row = e.target.closest('.kid-edit-row');
-  const task = row && kidEditTasks.find(t => t.id === row.dataset.id);
-  if (!task) return;
-  // Beim Wechsel der Tageszeit ans Ende der neuen Gruppe hängen
-  kidEditTasks = kidEditTasks.filter(t => t !== task);
-  task.period = e.target.value;
-  kidEditTasks.push(task);
-  renderKidRoutineTasks();
-});
-document.getElementById('kidTaskGroups').addEventListener('click', (e) => {
-  const btn = e.target.closest('button');
-  if (!btn) return;
-  if (btn.classList.contains('kid-add-task')) {
-    const task = { id: kidUid(), emoji: '⭐', title: '', period: btn.dataset.period, stars: 1 };
-    kidEditTasks.push(task);
-    kidEmojiOpenFor = null;
-    renderKidRoutineTasks();
-    const input = document.querySelector(`#kidTaskGroups .kid-edit-row[data-id="${task.id}"] .kid-edit-title`);
-    if (input) input.focus();
-    return;
-  }
-  if (btn.classList.contains('kid-emoji-pick')) {
-    const task = kidEditTasks.find(t => t.id === kidEmojiOpenFor);
-    if (task) task.emoji = btn.dataset.emoji;
-    kidEmojiOpenFor = null;
-    renderKidRoutineTasks();
-    return;
-  }
-  const row = btn.closest('.kid-edit-row');
-  if (!row) return;
-  const id = row.dataset.id;
-  if (btn.classList.contains('kid-edit-emoji')) {
-    kidEmojiOpenFor = kidEmojiOpenFor === id ? null : id;
-    renderKidRoutineTasks();
-  } else if (btn.classList.contains('kid-edit-del')) {
-    kidEditTasks = kidEditTasks.filter(t => t.id !== id);
-    if (kidEmojiOpenFor === id) kidEmojiOpenFor = null;
-    renderKidRoutineTasks();
-  } else if (btn.classList.contains('kid-edit-up')) {
-    kidMoveTask(id, -1);
-  } else if (btn.classList.contains('kid-edit-down')) {
-    kidMoveTask(id, 1);
-  }
-});
-document.getElementById('kidRoutineDefaults').addEventListener('click', () => {
-  if (kidEditTasks.length && !confirm('Alle Aufgaben und Tageszeiten durch die Vorschläge ersetzen?')) return;
-  kidEditTasks = kidDefaultTasks();
-  kidEditTimes = { ...KID_DEFAULT_TIMES };
-  kidEmojiOpenFor = null;
-  renderKidRoutineTimes();
-  renderKidRoutineTasks();
-});
-document.getElementById('kidRoutineApply').addEventListener('click', () => {
-  const status = document.getElementById('kidRoutineStatus');
-  status.textContent = '';
-  const mins = KID_TIME_KEYS.map(k => kidToMin(kidEditTimes[k]));
-  if (mins.some(v => v === null)) { status.textContent = 'Bitte alle Uhrzeiten ausfüllen.'; return; }
-  for (let i = 1; i < mins.length; i++) {
-    if (mins[i] <= mins[i - 1]) {
-      status.textContent = `„${KID_TIME_LABELS[KID_TIME_KEYS[i]]}“ muss später sein als „${KID_TIME_LABELS[KID_TIME_KEYS[i - 1]]}“.`;
-      return;
-    }
-  }
-  const tasks = kidEditTasks.map(t => ({ ...t, title: (t.title || '').trim() })).filter(t => t.title);
-  if (!pendingKidConfig) pendingKidConfig = normalizeKidConfig(null);
-  pendingKidConfig = { ...pendingKidConfig, times: { ...kidEditTimes }, tasks, sonne: document.getElementById('kidSunEvening').checked };
-  updateMemberKidSection();
-  closeKidRoutineModal();
-});
-document.getElementById('kidRoutineCancel').addEventListener('click', () => attemptCloseModal('kidRoutineModal', closeKidRoutineModal));
-wireModalOutsideClick('kidRoutineModal', closeKidRoutineModal);
-
-/* ---------- Die Kinderseite selbst ---------- */
-function kidSoundOn() {
-  try { return localStorage.getItem(LS_KID_SOUND) !== 'off'; } catch (e) { return true; }
-}
-function kidUpdateSoundButton() {
-  document.getElementById('kidPageSound').textContent = kidSoundOn() ? '🔊' : '🔇';
-}
-function kidPlaySound(kind) {
-  if (!kidSoundOn()) return;
-  try {
-    const AC = window.AudioContext || window.webkitAudioContext;
-    if (!AC) return;
-    if (!kidAudioCtx) kidAudioCtx = new AC();
-    const ctx = kidAudioCtx;
-    if (ctx.state === 'suspended') ctx.resume();
-    const notes = kind === 'win' ? [523.25, 659.25, 783.99, 1046.5, 1318.5]
-      : kind === 'undo' ? [392, 311.13]
-      : [659.25, 987.77];
-    notes.forEach((freq, i) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.value = freq;
-      const t0 = ctx.currentTime + i * (kind === 'win' ? 0.11 : 0.09);
-      gain.gain.setValueAtTime(0.0001, t0);
-      gain.gain.exponentialRampToValueAtTime(0.16, t0 + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.32);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(t0);
-      osc.stop(t0 + 0.35);
-    });
-  } catch (e) { /* ohne Ton weiter */ }
-}
-function kidConfettiBurst(x, y, count) {
-  const bits = ['⭐', '✨', '🎉', '💛', '🌟', '🎈', '💚', '💜'];
-  for (let i = 0; i < count; i++) {
-    const el = document.createElement('span');
-    el.className = 'kid-confetti';
-    el.textContent = bits[i % bits.length];
-    el.style.left = x + 'px';
-    el.style.top = y + 'px';
-    document.body.appendChild(el);
-    const angle = Math.random() * Math.PI * 2;
-    const dist = 70 + Math.random() * 120;
-    const dx = Math.cos(angle) * dist, dy = Math.sin(angle) * dist - 50;
-    const rot = (Math.random() - 0.5) * 540;
-    if (!el.animate) { setTimeout(() => el.remove(), 50); continue; }
-    const anim = el.animate([
-      { transform: 'translate(0, 0) scale(.3) rotate(0deg)', opacity: 1 },
-      { transform: `translate(${dx}px, ${dy}px) scale(1.15) rotate(${rot}deg)`, opacity: 1, offset: 0.6 },
-      { transform: `translate(${dx * 1.1}px, ${dy + 90}px) scale(.8) rotate(${rot * 1.4}deg)`, opacity: 0 },
-    ], { duration: 950 + Math.random() * 450, easing: 'cubic-bezier(.2,.7,.3,1)' });
-    anim.onfinish = () => el.remove();
-  }
-}
-function kidConfettiRain() {
-  const bits = ['🎉', '⭐', '🎈', '🌟', '💖', '🏆', '✨', '🎊'];
-  const w = window.innerWidth, h = window.innerHeight;
-  for (let i = 0; i < 46; i++) {
-    const el = document.createElement('span');
-    el.className = 'kid-confetti';
-    el.textContent = bits[i % bits.length];
-    el.style.left = (Math.random() * w) + 'px';
-    el.style.top = '-30px';
-    el.style.fontSize = (20 + Math.random() * 18) + 'px';
-    document.body.appendChild(el);
-    if (!el.animate) { setTimeout(() => el.remove(), 50); continue; }
-    const drift = (Math.random() - 0.5) * 160;
-    const anim = el.animate([
-      { transform: 'translate(0, 0) rotate(0deg)', opacity: 1 },
-      { transform: `translate(${drift}px, ${h + 80}px) rotate(${(Math.random() - 0.5) * 720}deg)`, opacity: 0.9 },
-    ], { duration: 2200 + Math.random() * 1600, delay: Math.random() * 700, easing: 'cubic-bezier(.3,.2,.6,1)', fill: 'backwards' });
-    anim.onfinish = () => el.remove();
-  }
-}
-function kidDecoHtml(period) {
-  const sets = {
-    morgens: [['☀️', 7, 80, 64], ['☁️', 17, 2, 40], ['🌼', 90, 4, 30], ['🐦', 94, 84, 26]],
-    mittags: [['☀️', 5, 80, 68], ['☁️', 17, 2, 42], ['🦋', 92, 84, 28], ['🌷', 91, 4, 28]],
-    nachmittags: [['🌈', 6, 76, 60], ['☁️', 18, 2, 40], ['🌻', 91, 84, 34], ['🐝', 93, 6, 24]],
-    abends: [['🌙', 6, 80, 56], ['✨', 16, 4, 24], ['⭐', 28, 90, 18], ['✨', 92, 6, 22], ['⭐', 94, 86, 20]],
-    nacht: [['🌙', 8, 74, 72], ['⭐', 12, 8, 24], ['✨', 44, 4, 20], ['⭐', 50, 88, 18], ['✨', 78, 10, 22], ['⭐', 84, 80, 20]],
-  };
-  return (sets[period] || []).map(([e, top, left, size], i) =>
-    `<span style="top:${top}%;left:${left}%;font-size:${size}px;animation-delay:${-i * 1.3}s">${e}</span>`).join('');
-}
-function kidAvatarHtml(m) {
-  if (m.photo) return `<div class="kid-avatar"><img src="${kidAttr(m.photo)}" alt="" /></div>`;
-  if (m.avatar) return `<div class="kid-avatar"><span class="kid-avatar-fill">${escapeHtml(m.avatar)}</span></div>`;
-  const bg = (!m.color || m.color === 'transparent') ? '#9A9A92' : m.color;
-  const initial = (m.name || '?').trim().charAt(0).toUpperCase() || '?';
-  return `<div class="kid-avatar"><span class="kid-avatar-fill initial" style="background:${kidAttr(bg)}">${escapeHtml(initial)}</span></div>`;
-}
-function kidNextPeriodStart(cfg, period) {
-  const order = ['morgens', 'mittags', 'nachmittags', 'abends', 'nacht'];
-  const next = order[order.indexOf(period) + 1];
-  return next ? kidEffectiveTimes(cfg, new Date())[next] : '';
-}
-function renderKidPage() {
-  const page = document.getElementById('kidPage');
-  const m = kidPageMemberId ? memberById(kidPageMemberId) : null;
-  if (!m || !isKidPageEnabled(m)) { closeKidPage(); return; }
-  if (kidShopView) setTimeout(kidRenderShop, 0); // offene Belohnungen mit neuem Stand zeichnen
-  const cfg = normalizeKidConfig(m.kid);
-  const now = new Date();
-  const today = isoDate(now);
-  const period = kidCurrentPeriod(cfg, now);
-  kidPageStateKey = today + '|' + period;
-  page.className = 'kid-' + period;
-  document.getElementById('kidDeco').innerHTML = kidDecoHtml(period);
-  kidUpdateSoundButton();
-  const name = escapeHtml(m.name || '');
-  const content = document.getElementById('kidContent');
-
-  if (period === 'nacht') {
-    content.innerHTML = `<div class="kid-empty">
-      ${kidAvatarHtml(m)}
-      <div class="kid-hello">Schlaf gut, ${name}!</div>
-      <div class="kid-sub">Morgen früh geht's weiter.</div>
-      <div class="kid-empty-emoji">😴</div>
-      ${kidBankHtml(m)}
-      ${kidAllowanceHtml(m)}
-    </div>`;
-    return;
-  }
-
-  const greetings = {
-    morgens: ['Guten Morgen', 'Das steht heute früh an ☀️'],
-    mittags: ['Hallo', 'Das ist jetzt dran 🍽️'],
-    nachmittags: ['Hallo', 'Das ist jetzt dran 🌈'],
-    abends: ['Guten Abend', 'Bald ist Schlafenszeit 🌙'],
-  };
-  const [hello, sub] = greetings[period];
-  const list = kidTasksForPeriod(cfg, period);
-
-  if (!list.length) {
-    const next = kidNextPeriodStart(cfg, period);
-    content.innerHTML = `<div class="kid-empty">
-      ${kidAvatarHtml(m)}
-      <div class="kid-hello">${hello}, ${name}!</div>
-      <div class="kid-sub">Gerade gibt es nichts zu tun – spiel schön!${next && period !== 'abends' ? `<br>Ab ${escapeHtml(next)} Uhr geht's weiter.` : ''}</div>
-      <div class="kid-empty-emoji">🎈</div>
-      ${kidBankHtml(m)}
-      ${kidHomeworkHtml(m)}
-      ${kidAllowanceHtml(m)}
-    </div>`;
-    return;
-  }
-
-  const allDone = list.every(t => kidIsDone(m, t.id, today));
-  content.innerHTML = `
-    ${kidAvatarHtml(m)}
-    <div class="kid-hello">${hello}, ${name}!</div>
-    <div class="kid-sub">${sub}</div>
-    ${kidBankHtml(m)}
-    <div class="kid-stars">${list.map(t => `<span class="kid-star${kidIsDone(m, t.id, today) ? ' on' : ''}" data-star="${kidAttr(t.id)}">⭐</span>`).join('')}</div>
-    <div id="kidDoneBanner" class="kid-done-banner${allDone ? ' show' : ''}">🏆 Alles geschafft! Super, ${name}!</div>
-    <div class="kid-grid">
-      ${list.map((t, i) => `
-        <button type="button" class="kid-card${kidIsDone(m, t.id, today) ? ' done' : ''}" data-task="${kidAttr(t.id)}" style="--kc:${KID_CARD_COLORS[i % KID_CARD_COLORS.length]}">
-          <span class="kid-check">✓</span>
-          <span class="kid-card-emoji">${escapeHtml(t.emoji)}</span>
-          <span class="kid-card-title">${escapeHtml(t.title)}</span>
-        </button>`).join('')}
-    </div>
-    ${kidHomeworkHtml(m)}
-    ${kidAllowanceHtml(m)}`;
-}
-function kidShowCelebration(m) {
-  const page = document.getElementById('kidPage');
-  const old = page.querySelector('.kid-celebrate');
-  if (old) old.remove();
-  const box = document.createElement('div');
-  box.className = 'kid-celebrate';
-  box.innerHTML = `<div class="kid-celebrate-box">
-    <div style="font-size:84px;line-height:1.1">🏆</div>
-    <div style="font-size:clamp(26px,7vw,36px);font-weight:800;line-height:1.15;margin-top:6px">Super gemacht, ${escapeHtml(m.name || '')}!</div>
-    <div style="font-size:19px;font-weight:600;opacity:.75;margin-top:4px">Du hast alles geschafft 🎉</div>
-  </div>`;
-  const dismiss = () => { box.remove(); };
-  box.addEventListener('click', dismiss);
-  page.appendChild(box);
-  setTimeout(dismiss, 4500);
-  kidConfettiRain();
-  kidPlaySound('win');
-}
-// Erledigt-Meldungen verschickt der Server erst 10 Sekunden nach dem Abhaken. Danach fragt die App
-// einmal nach, damit sie pünktlich rausgehen (sonst spätestens nach einer Minute per Zeitplan).
-var delayedPushTimer = null;
-function scheduleDelayedPush() {
-  clearTimeout(delayedPushTimer);
-  delayedPushTimer = setTimeout(() => {
-    delayedPushTimer = null;
-    apiFetch('/api/pinn/push/faellige', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}',
-    }).catch(() => { /* Zeitplan holt es nach */ });
-  }, 10500);
-}
-function kidToggleTask(taskId, card) {
-  const m = memberById(kidPageMemberId);
-  if (!m) return;
-  const cfg = normalizeKidConfig(m.kid);
-  const today = isoDate(new Date());
-  const valid = new Set(cfg.tasks.map(t => t.id));
-  // Nur heutige Häkchen vorhandener Aufgaben behalten - alte Tage fallen dabei automatisch weg.
-  const done = {};
-  Object.entries(m.kidDone || {}).forEach(([id, day]) => { if (day === today && valid.has(id)) done[id] = day; });
-  const nowDone = done[taskId] !== today;
-  if (nowDone) done[taskId] = today; else delete done[taskId];
-  m.kidDone = done;
-  const starPeriod = kidCurrentPeriod(cfg, new Date());
-  const starList = kidTasksForPeriod(cfg, starPeriod);
-  const starAll = starList.length > 0 && starList.every(t => done[t.id] === today);
-  const starsGained = kidStarsOnToggle(m, cfg.tasks.find(t => t.id === taskId), nowDone, starPeriod, starAll);
-  saveMembers();
-
-  card.classList.toggle('done', nowDone);
-  card.classList.remove('pop', 'wiggle');
-  void card.offsetWidth; // Animation neu starten
-  card.classList.add(nowDone ? 'pop' : 'wiggle');
-  const star = [...document.querySelectorAll('#kidContent .kid-star')].find(s => s.dataset.star === taskId);
-  if (star) {
-    star.classList.toggle('on', nowDone);
-    star.classList.remove('bump');
-    void star.offsetWidth;
-    if (nowDone) star.classList.add('bump');
-  }
-  const cards = [...document.querySelectorAll('#kidContent .kid-card')];
-  const allDone = cards.length > 0 && cards.every(c => c.classList.contains('done'));
-  const banner = document.getElementById('kidDoneBanner');
-  if (banner) banner.classList.toggle('show', allDone);
-  kidRefreshBank(m, starsGained);
-
-  // Hinweis an die anderen Familienmitglieder: der Server merkt ihn vor und schickt ihn nach
-  // 10 Sekunden - wird das Häkchen vorher entfernt, entfällt er.
-  apiFetch('/api/pinn/push/kinderseite', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ memberId: m.id, taskId, allDone, done: nowDone, period: kidCurrentPeriod(cfg, new Date()) }),
-  }).then(() => { if (nowDone) scheduleDelayedPush(); }).catch(() => { /* ohne Benachrichtigung weiter */ });
-  if (nowDone) {
-    const r = card.getBoundingClientRect();
-    kidConfettiBurst(r.left + r.width / 2, r.top + r.height / 2, 16);
-    if (navigator.vibrate) { try { navigator.vibrate(30); } catch (e) { /* egal */ } }
-    if (allDone) setTimeout(() => kidShowCelebration(m), 450);
-    else kidPlaySound('done');
-  } else {
-    kidPlaySound('undo');
-  }
-}
-function kidTick() {
-  if (!kidPageMemberId) return;
-  const m = memberById(kidPageMemberId);
-  if (!m || !isKidPageEnabled(m)) { closeKidPage(); return; }
-  const now = new Date();
-  const key = isoDate(now) + '|' + kidCurrentPeriod(normalizeKidConfig(m.kid), now);
-  if (key !== kidPageStateKey) {
-    const page = document.getElementById('kidPage');
-    const celebrate = page.querySelector('.kid-celebrate');
-    if (celebrate) celebrate.remove();
-    renderKidPage();
-    page.scrollTop = 0;
-  }
-}
-function openKidPage(memberId) {
-  const m = memberById(memberId);
-  if (!m || !isKidPageEnabled(m)) return;
-  kidPageMemberId = memberId;
-  renderKidPage();
-  document.getElementById('kidPage').scrollTop = 0;
-  setTimeout(() => { try { bdayCheck(memberId); } catch (e) { /* egal */ } }, 700); // Geburtstag: einmal Happy Birthday
-  clearInterval(kidPageTimer);
-  kidPageTimer = setInterval(kidTick, 20 * 1000);
-}
-function closeKidPage() {
-  // Kinderprofil am Familien-Dashboard: Schließen führt zurück zur Profilauswahl
-  if (isDashboardKidSession()) { returnToDashboard(); return; }
-  kidPageMemberId = null;
-  kidPageStateKey = '';
-  clearInterval(kidPageTimer);
-  kidPageTimer = null;
-  const page = document.getElementById('kidPage');
-  page.className = 'hidden';
-  kidCloseShop();
-  const celebrate = page.querySelector('.kid-celebrate');
-  if (celebrate) celebrate.remove();
-}
-document.getElementById('kidContent').addEventListener('click', (e) => {
-  if (e.target.closest('#kidBankBtn')) { kidOpenShop(); return; }
-  const hw = e.target.closest('[data-khw]');
-  if (hw) {
-    const item = skHomeworkOf('').find(x => x.id === hw.dataset.khw);
-    skToggleHomework(hw.dataset.khw);
-    try { if (item && !item.done) kidPlaySound('done'); } catch (err) { /* egal */ }
-    renderKidPage();
-    return;
-  }
-  const card = e.target.closest('.kid-card');
-  if (card) kidToggleTask(card.dataset.task, card);
-});
-document.getElementById('kidPageClose').addEventListener('click', closeKidPage);
-document.getElementById('kidPageSound').addEventListener('click', () => {
-  try { localStorage.setItem(LS_KID_SOUND, kidSoundOn() ? 'off' : 'on'); } catch (e) { /* egal */ }
-  kidUpdateSoundButton();
-  kidPlaySound('done');
-});
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && kidPageMemberId) { if (kidShopView) kidCloseShop(); else closeKidPage(); } });
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') kidTick(); });
-
-/* ==========================================================
    Recipe list rendering
    ========================================================== */
 function actualCurrentWeekRange() {
@@ -16877,7 +16261,7 @@ function actualCurrentWeekRange() {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.80.0';
+const APP_VERSION = '1.81.0';
 
 /* ==========================================================
    Einstellungen & Konto: zwei gleich hohe Spalten (Querformat ab Tablet-Breite)
@@ -17005,52 +16389,54 @@ const APP_VERSION = '1.80.0';
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/sterne.js?v=1.80.0"></script>
-<script src="js/kalenderansicht.js?v=1.80.0"></script>
-<script src="js/essenplanen.js?v=1.80.0"></script>
-<script src="js/rezeptparser.js?v=1.80.0"></script>
-<script src="js/rezeptdialog.js?v=1.80.0"></script>
-<script src="js/rezeptbild.js?v=1.80.0"></script>
-<script src="js/rezeptmengen.js?v=1.80.0"></script>
-<script src="js/einkauf.js?v=1.80.0"></script>
-<script src="js/einkaufslisten.js?v=1.80.0"></script>
-<script src="js/einkaufseingabe.js?v=1.80.0"></script>
-<script src="js/rezepte.js?v=1.80.0"></script>
-<script src="js/offline.js?v=1.80.0"></script>
-<script src="js/aufgabenextras.js?v=1.80.0"></script>
-<script src="js/appbadge.js?v=1.80.0"></script>
-<script src="js/reisen.js?v=1.80.0"></script>
-<script src="js/aufgabendaten.js?v=1.80.0"></script>
-<script src="js/haushalt.js?v=1.80.0"></script>
-<script src="js/reihum.js?v=1.80.0"></script>
-<script src="js/aufgaben.js?v=1.80.0"></script>
-<script src="js/smarthome.js?v=1.80.0"></script>
-<script src="js/sprachsteuerung.js?v=1.80.0"></script>
-<script src="js/termine.js?v=1.80.0"></script>
-<script src="js/ansichten.js?v=1.80.0"></script>
-<script src="js/versionspruefung.js?v=1.80.0"></script>
-<script src="js/sicherungen.js?v=1.80.0"></script>
-<script src="js/geraete.js?v=1.80.0"></script>
-<script src="js/fehlerprotokoll.js?v=1.80.0"></script>
-<script src="js/versionslog.js?v=1.80.0"></script>
-<script src="js/einstellungen.js?v=1.80.0"></script>
-<script src="js/kalenderkonto.js?v=1.80.0"></script>
-<script src="js/finanzen.js?v=1.80.0"></script>
-<script src="js/kassen.js?v=1.80.0"></script>
-<script src="js/vorrat.js?v=1.80.0"></script>
-<script src="js/vorrat2.js?v=1.80.0"></script>
-<script src="js/sparen.js?v=1.80.0"></script>
-<script src="js/vertraege.js?v=1.80.0"></script>
-<script src="js/fahrzeuge.js?v=1.80.0"></script>
-<script src="js/zuhause.js?v=1.80.0"></script>
-<script src="js/dokumente.js?v=1.80.0"></script>
-<script src="js/pdflesen.js?v=1.80.0"></script>
-<script src="js/appstart.js?v=1.80.0"></script>
-<script src="js/pinnwand.js?v=1.80.0"></script>
-<script src="js/listen.js?v=1.80.0"></script>
-<script src="js/familie.js?v=1.80.0"></script>
-<script src="js/hinweise.js?v=1.80.0"></script>
-<script src="js/ausblick.js?v=1.80.0"></script>
+<script src="js/kinderseite.js?v=1.81.0"></script>
+<script src="js/kinderroutine.js?v=1.81.0"></script>
+<script src="js/sterne.js?v=1.81.0"></script>
+<script src="js/kalenderansicht.js?v=1.81.0"></script>
+<script src="js/essenplanen.js?v=1.81.0"></script>
+<script src="js/rezeptparser.js?v=1.81.0"></script>
+<script src="js/rezeptdialog.js?v=1.81.0"></script>
+<script src="js/rezeptbild.js?v=1.81.0"></script>
+<script src="js/rezeptmengen.js?v=1.81.0"></script>
+<script src="js/einkauf.js?v=1.81.0"></script>
+<script src="js/einkaufslisten.js?v=1.81.0"></script>
+<script src="js/einkaufseingabe.js?v=1.81.0"></script>
+<script src="js/rezepte.js?v=1.81.0"></script>
+<script src="js/offline.js?v=1.81.0"></script>
+<script src="js/aufgabenextras.js?v=1.81.0"></script>
+<script src="js/appbadge.js?v=1.81.0"></script>
+<script src="js/reisen.js?v=1.81.0"></script>
+<script src="js/aufgabendaten.js?v=1.81.0"></script>
+<script src="js/haushalt.js?v=1.81.0"></script>
+<script src="js/reihum.js?v=1.81.0"></script>
+<script src="js/aufgaben.js?v=1.81.0"></script>
+<script src="js/smarthome.js?v=1.81.0"></script>
+<script src="js/sprachsteuerung.js?v=1.81.0"></script>
+<script src="js/termine.js?v=1.81.0"></script>
+<script src="js/ansichten.js?v=1.81.0"></script>
+<script src="js/versionspruefung.js?v=1.81.0"></script>
+<script src="js/sicherungen.js?v=1.81.0"></script>
+<script src="js/geraete.js?v=1.81.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.81.0"></script>
+<script src="js/versionslog.js?v=1.81.0"></script>
+<script src="js/einstellungen.js?v=1.81.0"></script>
+<script src="js/kalenderkonto.js?v=1.81.0"></script>
+<script src="js/finanzen.js?v=1.81.0"></script>
+<script src="js/kassen.js?v=1.81.0"></script>
+<script src="js/vorrat.js?v=1.81.0"></script>
+<script src="js/vorrat2.js?v=1.81.0"></script>
+<script src="js/sparen.js?v=1.81.0"></script>
+<script src="js/vertraege.js?v=1.81.0"></script>
+<script src="js/fahrzeuge.js?v=1.81.0"></script>
+<script src="js/zuhause.js?v=1.81.0"></script>
+<script src="js/dokumente.js?v=1.81.0"></script>
+<script src="js/pdflesen.js?v=1.81.0"></script>
+<script src="js/appstart.js?v=1.81.0"></script>
+<script src="js/pinnwand.js?v=1.81.0"></script>
+<script src="js/listen.js?v=1.81.0"></script>
+<script src="js/familie.js?v=1.81.0"></script>
+<script src="js/hinweise.js?v=1.81.0"></script>
+<script src="js/ausblick.js?v=1.81.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)

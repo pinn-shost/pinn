@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.81', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 37)',
+    punkte: [
+      ['info', 'Für Mitwirkende: die Kinderseite (Einstellungen, Tageszeiten, die Seite selbst mit Ton, Konfetti und Abhaken) liegt jetzt in pb_public/js/kinderseite.js, der Abschnitt „Kinderseite“ im Mitglied-Fenster und das Fenster „Aufgaben & Tageszeiten bearbeiten“ in js/kinderroutine.js. An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, zwei neue Dateien in js/ und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.80', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 36)',
     punkte: [
       ['info', 'Für Mitwirkende: Sterne und Belohnungen der Kinderseite (Sterne-Zähler, Belohnungs-Laden, Bestätigung durch die Eltern, Sterne unter Finanzen → Taschengeld und das Fenster „Belohnungen bearbeiten“) liegen jetzt in einer eigenen Datei (pb_public/js/sterne.js). An der Bedienung ändert sich nichts'],
