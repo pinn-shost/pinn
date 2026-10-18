@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.83', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 39)',
+    punkte: [
+      ['info', 'Für Mitwirkende: die Familienmitglieder (Zuweisung an Termine, Farbbalken, Mitglieder-Leiste und Filter) liegen jetzt in pb_public/js/mitglieder.js, die Profilbilder (Verkleinern, Zuschneiden, Foto wählen und entfernen) in js/profilbild.js. An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, zwei neue Dateien in js/ und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.82', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 38)',
     punkte: [
       ['info', 'Für Mitwirkende: das Fenster für Familienmitglieder (Bearbeiten-Recht, Anmeldung mit Profil, Farbe, Anzeige und Speichern) liegt jetzt in einer eigenen Datei (pb_public/js/mitglied.js). Die allgemeinen Popup-Helfer bleiben in der index.html, weil sie dort schon beim Laden gebraucht werden. An der Bedienung ändert sich nichts'],

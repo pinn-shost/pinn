@@ -913,7 +913,7 @@ window.PINN_LANGUAGES = [
   // Startprüfung: fehlt eine selbst gehostete Datei, erscheint ein klarer Hinweis statt einer
   // leeren Seite ohne funktionierende Buttons.
   // Teile der App unter pb_public/js/ – jede Datei meldet sich am Ende in window.PINN_PARTS an
-  var PINN_APP_PARTS = ['mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
+  var PINN_APP_PARTS = ['mitglieder', 'profilbild', 'mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
   window.addEventListener('DOMContentLoaded', function () {
     var missing = [];
     if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – der PocketBase-Client (ohne ihn funktioniert nichts)');
@@ -15556,404 +15556,6 @@ async function loadMuell(force) {
 }
 
 /* ==========================================================
-   Family members
-   ========================================================== */
-function memberById(id) { return members.find(m => m.id === id); }
-
-// Liest die "Zugewiesen: Name, Name"-Zeile aus der Termin-Beschreibung aus (falls vorhanden) und
-// gibt die passenden Familienmitglieder zurück - damit lassen sich Termine, die über "+ Termin
-// hinzufügen" mit Personen-Zuweisung angelegt wurden, farblich kennzeichnen (s. eventDetailModal).
-function getAssignedMembersForEvent(ev) {
-  if (!ev || !ev.description) return [];
-  const match = ev.description.match(/Zugewiesen:\s*(.+)/);
-  if (!match) return [];
-  const names = match[1].split(',').map(n => n.trim().toLowerCase()).filter(Boolean);
-  if (names.includes('alle')) return members;
-  return members.filter(m => names.includes(memberLabel(m).toLowerCase()) || names.includes(m.name.toLowerCase()));
-}
-// Entfernt die "Zugewiesen: ..."-Zeile wieder aus einem Text (für die Anzeige/das Bearbeiten-Formular).
-function stripAssignedLine(text) {
-  return (text || '').replace(/\n*Zugewiesen:\s*.+/, '').trim();
-}
-
-// Baut einen kleinen, links angehefteten Farbbalken (wie bei den Aufgaben) für einen Termin -
-// leer, falls keine Personen zugeordnet sind. bar wird als absolut positioniertes Element in den
-// (bereits absolut positionierten) Termin-Block gelegt.
-function assignedMembersBarHtml(ev) {
-  const assigned = getAssignedMembersForEvent(ev);
-  if (!assigned.length) return '';
-  const segments = assigned.map(m => `<span class="flex-1" style="background:${m.color}"></span>`).join('');
-  return `<div class="absolute left-0 top-0 bottom-0 w-1 flex flex-col overflow-hidden">${segments}</div>`;
-}
-function memberLabel(m) { return (m.displayMode === 'role' && m.role) ? m.role : m.name; }
-
-function memberAvatarInnerHTML(m) {
-  if (m.photo) return `<img src="${m.photo}" class="w-full h-full object-cover" alt="" />`;
-  if (m.avatar) return `<span class="flex items-center justify-center w-full h-full text-base leading-none">${m.avatar}</span>`;
-  const bg = (!m.color || m.color === 'transparent') ? '#9A9A92' : m.color;
-  const initial = (m.name || '?').trim().charAt(0).toUpperCase() || '?';
-  return `<span class="flex items-center justify-center w-full h-full text-white text-xs font-semibold" style="background:${bg}">${initial}</span>`;
-}
-function memberBorderColor(m) { return (!m.color || m.color === 'transparent') ? 'transparent' : m.color; }
-
-function renderMemberChips() {
-  ['memberChips', 'memberChipsTasks'].forEach(containerId => {
-    const wrap = document.getElementById(containerId);
-    if (!wrap) return;
-    wrap.innerHTML = '';
-    members.forEach(m => {
-      const isDimmed = activeMemberFilter.size > 0 && !activeMemberFilter.has(m.id);
-      const isActive = activeMemberFilter.has(m.id);
-      const chip = document.createElement('button');
-      chip.type = 'button';
-      chip.className = 'inline-flex items-center gap-1.5 pl-0.5 pr-2.5 py-0.5 rounded-full text-xs font-medium bg-ink/5 transition ' + (isDimmed ? 'opacity-35' : '') + (isActive ? ' ring-2 ring-offset-1 ring-ink/70' : '');
-      const avatarHtml = `<span class="w-6 h-6 rounded-full overflow-hidden border-2 shrink-0" style="border-color:${memberBorderColor(m)}">${memberAvatarInnerHTML(m)}</span>`;
-      // Die Kinderseite öffnet jetzt die Übersicht-Kachel „Familienmitglieder“ (renderFamilyTile)
-      chip.innerHTML = `${avatarHtml}<span>${escapeHtml(memberLabel(m))}</span>`;
-      chip.title = 'Klicken, um nur Termine/Aufgaben dieser Person hervorzuheben';
-      chip.addEventListener('click', () => {
-        if (activeMemberFilter.has(m.id)) activeMemberFilter.delete(m.id);
-        else activeMemberFilter.add(m.id);
-        renderMemberChips();
-        renderCalendar();
-        renderTasks();
-      });
-      wrap.appendChild(chip);
-    });
-  });
-  try { renderFamilyTile(); } catch (e) { /* Übersicht noch nicht aufgebaut */ }
-}
-
-function passesMemberFilter(memberId) {
-  if (!memberId) return true; // importierte Apple-Kalender-Termine gehören keiner bestimmten Person
-  return activeMemberFilter.size === 0 || activeMemberFilter.has(memberId);
-}
-// Ersetzt passesMemberFilter für Termine/Aufgaben: prüft die ECHTE Zuweisung (die "Zugewiesen:
-// ..."-Zeile in den Notizen), statt des bei importierten Terminen ungenutzten memberId-Feldes.
-// Ist keine Person ausgewählt, betrifft (per Definition) alles die aktive Auswahl.
-function matchesActiveMemberFilter(item) {
-  if (activeMemberFilter.size === 0) return true;
-  return getAssignedMembersForEvent(item).some(m => activeMemberFilter.has(m.id));
-}
-// Sortier-Gewicht: 0 = betrifft die aktive Auswahl (soll nach oben), 1 = betrifft sie nicht.
-// Bei leerer Auswahl bekommt alles dasselbe Gewicht (keine Umsortierung).
-function memberFilterSortWeight(item) {
-  return matchesActiveMemberFilter(item) ? 0 : 1;
-}
-// Termine aus dem als "Aufgaben-Kalender" markierten Kalender erscheinen standardmäßig NUR bei den
-// Aufgaben, nicht zusätzlich als normale Kalendereinträge - außer der Haken "Auch als Termine
-// anzeigen" ist in den Einstellungen gesetzt.
-function isEventVisibleAsCalendarEntry(ev) {
-  if (appleCalendar.taskCalendarName && ev.pinnCalName === appleCalendar.taskCalendarName && !appleCalendar.showTaskCalendarAsEvents) {
-    return false;
-  }
-  return true;
-}
-
-function renderMemberAvatarPreview() {
-  const el = document.getElementById('memberAvatarPreview');
-  el.style.borderColor = memberBorderColor({ color: selectedMemberColor });
-  el.innerHTML = memberAvatarInnerHTML({ photo: pendingMemberPhoto, avatar: pendingMemberAvatar, color: selectedMemberColor, name: document.getElementById('newMemberName').value });
-}
-
-function buildAvatarGrids() {
-  Object.keys(AVATARS).forEach(group => {
-    const wrap = document.querySelector(`.avatar-group[data-group="${group}"]`);
-    wrap.innerHTML = '';
-    AVATARS[group].forEach(([emoji, label]) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.title = label;
-      btn.className = 'avatar-option w-9 h-9 rounded-full border-2 border-transparent bg-ink/5 grid place-items-center text-lg hover:border-pine transition';
-      btn.textContent = emoji;
-      btn.addEventListener('click', () => {
-        pendingMemberAvatar = emoji;
-        pendingMemberPhoto = null;
-        document.getElementById('memberPhotoFile').value = '';
-        document.querySelectorAll('.avatar-option').forEach(b => b.classList.remove('border-pine'));
-        btn.classList.add('border-pine');
-        renderMemberAvatarPreview();
-      });
-      wrap.appendChild(btn);
-    });
-  });
-}
-buildAvatarGrids();
-
-/* Profilbilder werden als kleines JPEG direkt in den Familiendaten gespeichert. Ein Handyfoto in voller
-   Größe (mehrere MB) sprengte den Speicher-Aufruf und den Gerätespeicher – die App ging dann
-   „offline“. Deshalb wird jedes Bild vorher auf höchstens AVATAR_MAX_PX verkleinert (~15–40 KB). */
-const AVATAR_MAX_PX = 320;
-const AVATAR_MAX_CHARS = 120000; // größer gespeicherte Bilder (ältere Stände) werden beim Laden verkleinert
-function shrinkAvatarImage(src) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => {
-      const w0 = img.naturalWidth || img.width, h0 = img.naturalHeight || img.height;
-      if (!w0 || !h0) { reject(new Error('Das Bild konnte nicht gelesen werden.')); return; }
-      let max = AVATAR_MAX_PX, quality = 0.82;
-      for (let i = 0; i < 6; i++) {
-        const scale = Math.min(1, max / Math.max(w0, h0));
-        const w = Math.max(1, Math.round(w0 * scale)), h = Math.max(1, Math.round(h0 * scale));
-        const canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, w, h);
-        ctx.drawImage(img, 0, 0, w, h);
-        const data = canvas.toDataURL('image/jpeg', quality);
-        canvas.width = 0; canvas.height = 0; // Speicher am iPhone sofort freigeben
-        if (/^data:image\/jpeg;base64,/.test(data) && data.length <= AVATAR_MAX_CHARS) { resolve(data); return; }
-        if (quality > 0.6) quality -= 0.1; else max = Math.round(max * 0.8);
-      }
-      reject(new Error('Das Bild konnte nicht gelesen werden.'));
-    };
-    img.onerror = () => reject(new Error('Das Bild konnte nicht gelesen werden.'));
-    img.src = src;
-  });
-}
-// Nach dem Auswählen öffnet sich direkt das Zuschneiden: Kreis mit dem Ausschnitt, außen herum weiß-durchsichtig.
-// Gespeichert wird nur der runde Ausschnitt als Quadrat – so sieht das Bild überall gleich aus.
-// Abbrechen lehnt mit err.cancelled = true ab (die Aufrufer zeigen dann keine Meldung).
-function readAvatarPhotoFile(file) {
-  if (!file || !/^image\//.test(file.type || 'image/')) return Promise.reject(new Error('Bitte eine Bilddatei auswählen.'));
-  const url = URL.createObjectURL(file);
-  return openAvatarCropper(url).then(data => shrinkAvatarImage(data)).finally(() => URL.revokeObjectURL(url));
-}
-
-/* ---------- Profilbild zuschneiden ----------
-   Ziehen verschiebt, Regler / zwei Finger / Mausrad / Trackpad zoomen, am Mac auch Pfeiltasten und +/−.
-   Der Kreis bleibt immer ganz mit Bild gefüllt. Sehr große Fotos werden vorher auf AVATAR_CROP_SRC_PX
-   verkleinert (schont den Speicher am iPhone). Ergebnis: AVATAR_MAX_PX × AVATAR_MAX_PX als JPEG. */
-const AVATAR_CROP_SRC_PX = 1600;
-const AVATAR_CROP_CIRCLE = 0.84; // Anteil des Kreises an der Bühne (passt zu .avc-ring: 8 % Rand je Seite)
-let avatarCropOpen = false;
-function openAvatarCropper(src) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onerror = () => reject(new Error('Das Bild konnte nicht gelesen werden.'));
-    img.onload = () => {
-      const w0 = img.naturalWidth || img.width, h0 = img.naturalHeight || img.height;
-      if (!w0 || !h0) { reject(new Error('Das Bild konnte nicht gelesen werden.')); return; }
-      const k = Math.min(1, AVATAR_CROP_SRC_PX / Math.max(w0, h0));
-      const W = Math.max(1, Math.round(w0 * k)), H = Math.max(1, Math.round(h0 * k));
-      const srcCanvas = document.createElement('canvas');
-      srcCanvas.width = W; srcCanvas.height = H;
-      const sctx = srcCanvas.getContext('2d');
-      sctx.fillStyle = '#ffffff';
-      sctx.fillRect(0, 0, W, H);
-      sctx.drawImage(img, 0, 0, W, H);
-      avatarCropUi(srcCanvas, resolve, reject);
-    };
-    img.src = src;
-  });
-}
-function avatarCropUi(srcCanvas, resolve, reject) {
-  const W = srcCanvas.width, H = srcCanvas.height;
-  const wrap = document.createElement('div');
-  wrap.id = 'avatarCropModal';
-  wrap.className = 'fixed inset-0 bg-ink/30 backdrop-blur-sm grid place-items-center p-4';
-  wrap.style.zIndex = '600'; // über allen Fenstern (Familienmitglied z-[200], Haustier z-[300])
-  wrap.setAttribute('role', 'dialog');
-  wrap.setAttribute('aria-modal', 'true');
-  wrap.innerHTML = `
-    <div class="bg-white rounded-2xl p-5 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
-      <div class="flex items-center justify-between gap-2 mb-3">
-        <h3 class="font-serif text-lg">Ausschnitt anpassen</h3>
-        <button type="button" data-avc="reset" class="text-xs text-ink/40 hover:text-pine transition">Zurücksetzen</button>
-      </div>
-      <div class="avc-stage" tabindex="0" aria-label="Bildausschnitt: ziehen zum Verschieben, Pfeiltasten verschieben, Plus und Minus zoomen"><div class="avc-ring" aria-hidden="true"></div></div>
-      <div class="flex items-center gap-3 mt-3">
-        <span class="text-xs text-ink/40" aria-hidden="true">−</span>
-        <input data-avc="zoom" type="range" min="100" max="500" step="1" value="100" class="flex-1" style="accent-color: var(--c-pine);" aria-label="Zoom" />
-        <span class="text-sm text-ink/40" aria-hidden="true">+</span>
-      </div>
-      <p class="text-[11px] text-ink/40 mt-1.5">Bild ziehen zum Verschieben, mit dem Regler oder zwei Fingern zoomen. Genau dieser Kreis erscheint überall in pinn.</p>
-      <div class="flex justify-end gap-2 mt-4">
-        <button type="button" data-avc="cancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-        <button type="button" data-avc="ok" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium transition">Übernehmen</button>
-      </div>
-    </div>`;
-  const stage = wrap.querySelector('.avc-stage');
-  stage.insertBefore(srcCanvas, stage.firstChild);
-  const zoomEl = wrap.querySelector('[data-avc="zoom"]');
-  document.body.appendChild(wrap);
-  avatarCropOpen = true;
-
-  // Zustand im Bild-Maßstab: Mittelpunkt des Kreises im Bild (cx, cy) und Zoom (1 = Kreis gerade ganz gefüllt)
-  let cx = W / 2, cy = H / 2, zoom = 1;
-  const ZMIN = 1, ZMAX = 5;
-  const stageSize = () => stage.clientWidth || 280;
-  const scale = () => (stageSize() * AVATAR_CROP_CIRCLE / Math.min(W, H)) * zoom; // Bildschirm-px je Bild-px
-  function clamp() {
-    const half = (stageSize() * AVATAR_CROP_CIRCLE / 2) / scale(); // halber Kreis in Bild-px
-    cx = Math.min(W - half, Math.max(half, cx));
-    cy = Math.min(H - half, Math.max(half, cy));
-  }
-  function draw() {
-    clamp();
-    const s = scale(), size = stageSize();
-    const left = size / 2 - cx * s, top = size / 2 - cy * s;
-    srcCanvas.style.width = W + 'px';
-    srcCanvas.style.height = H + 'px';
-    srcCanvas.style.transform = `translate(${left}px, ${top}px) scale(${s})`;
-    zoomEl.value = String(Math.round(zoom * 100));
-  }
-  function setZoom(z) { zoom = Math.min(ZMAX, Math.max(ZMIN, z)); draw(); }
-  function moveBy(dx, dy) { const s = scale(); cx -= dx / s; cy -= dy / s; draw(); }
-
-  // Ziehen und mit zwei Fingern zoomen (Pointer Events: Finger, Maus und Stift)
-  const pts = new Map();
-  let pinch = null;
-  stage.addEventListener('pointerdown', (e) => {
-    stage.setPointerCapture && stage.setPointerCapture(e.pointerId);
-    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    stage.classList.add('is-dragging');
-    if (pts.size === 2) {
-      const [a, b] = Array.from(pts.values());
-      pinch = { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, z: zoom };
-    }
-    e.preventDefault();
-  });
-  stage.addEventListener('pointermove', (e) => {
-    const prev = pts.get(e.pointerId);
-    if (!prev) return;
-    const cur = { x: e.clientX, y: e.clientY };
-    pts.set(e.pointerId, cur);
-    if (pts.size >= 2 && pinch) {
-      const [a, b] = Array.from(pts.values());
-      setZoom(pinch.z * (Math.hypot(a.x - b.x, a.y - b.y) || 1) / pinch.d);
-      moveBy((cur.x - prev.x) / 2, (cur.y - prev.y) / 2);
-    } else if (pts.size === 1) {
-      moveBy(cur.x - prev.x, cur.y - prev.y);
-    }
-    e.preventDefault();
-  });
-  const up = (e) => {
-    pts.delete(e.pointerId);
-    if (pts.size < 2) pinch = null;
-    if (!pts.size) stage.classList.remove('is-dragging');
-  };
-  stage.addEventListener('pointerup', up);
-  stage.addEventListener('pointercancel', up);
-  stage.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    setZoom(zoom * Math.exp(-(e.deltaY || 0) * (e.ctrlKey ? 0.01 : 0.002)));
-  }, { passive: false });
-  // Safari am Mac: Zwei-Finger-Zoom auf dem Trackpad
-  let gz = 1;
-  stage.addEventListener('gesturestart', (e) => { e.preventDefault(); gz = zoom; });
-  stage.addEventListener('gesturechange', (e) => { e.preventDefault(); setZoom(gz * (e.scale || 1)); });
-  stage.addEventListener('keydown', (e) => {
-    const step = e.shiftKey ? 30 : 10;
-    if (e.key === 'ArrowLeft') moveBy(step, 0);
-    else if (e.key === 'ArrowRight') moveBy(-step, 0);
-    else if (e.key === 'ArrowUp') moveBy(0, step);
-    else if (e.key === 'ArrowDown') moveBy(0, -step);
-    else if (e.key === '+' || e.key === '=') setZoom(zoom * 1.1);
-    else if (e.key === '-' || e.key === '_') setZoom(zoom / 1.1);
-    else return;
-    e.preventDefault();
-  });
-  zoomEl.addEventListener('input', () => setZoom((Number(zoomEl.value) || 100) / 100));
-
-  function close() {
-    avatarCropOpen = false;
-    window.removeEventListener('keydown', onKey, true);
-    window.removeEventListener('resize', draw);
-    wrap.remove();
-  }
-  function cancel() {
-    close();
-    srcCanvas.width = 0; srcCanvas.height = 0; // Speicher am iPhone sofort freigeben
-    const err = new Error('');
-    err.cancelled = true;
-    reject(err);
-  }
-  function finish() {
-    clamp();
-    const side = (stageSize() * AVATAR_CROP_CIRCLE) / scale();
-    const out = document.createElement('canvas');
-    out.width = AVATAR_MAX_PX; out.height = AVATAR_MAX_PX;
-    const octx = out.getContext('2d');
-    octx.fillStyle = '#ffffff';
-    octx.fillRect(0, 0, out.width, out.height);
-    octx.imageSmoothingQuality = 'high';
-    octx.drawImage(srcCanvas, cx - side / 2, cy - side / 2, side, side, 0, 0, out.width, out.height);
-    const data = out.toDataURL('image/jpeg', 0.88);
-    out.width = 0; out.height = 0;
-    close();
-    srcCanvas.width = 0; srcCanvas.height = 0;
-    if (/^data:image\/jpeg;base64,/.test(data)) resolve(data);
-    else reject(new Error('Das Bild konnte nicht gelesen werden.'));
-  }
-  // Escape schließt nur das Zuschneiden, nicht das Fenster darunter
-  function onKey(e) {
-    if (e.key !== 'Escape') return;
-    e.stopImmediatePropagation();
-    e.preventDefault();
-    cancel();
-  }
-  window.addEventListener('keydown', onKey, true);
-  window.addEventListener('resize', draw);
-  wrap.addEventListener('click', (e) => {
-    const b = e.target.closest('[data-avc]');
-    if (e.target === wrap) { cancel(); return; }
-    if (!b) return;
-    if (b.dataset.avc === 'cancel') cancel();
-    else if (b.dataset.avc === 'ok') finish();
-    else if (b.dataset.avc === 'reset') { cx = W / 2; cy = H / 2; setZoom(1); }
-  });
-  requestAnimationFrame(() => { draw(); try { stage.focus({ preventScroll: true }); } catch (e) { /* egal */ } });
-}
-// Ältere, zu große Profilbilder (vor 1.31.2 ungekürzt gespeichert) einmalig verkleinern und speichern
-let avatarShrinkRunning = false;
-async function shrinkOversizedMemberPhotos() {
-  if (avatarShrinkRunning || !Array.isArray(members)) return;
-  const big = members.filter(m => m && typeof m.photo === 'string' && m.photo.startsWith('data:') && m.photo.length > AVATAR_MAX_CHARS);
-  if (!big.length) return;
-  avatarShrinkRunning = true;
-  try {
-    let changed = false;
-    for (const m of big) {
-      try { m.photo = await shrinkAvatarImage(m.photo); changed = true; }
-      catch (e) { m.photo = null; changed = true; } // unlesbares Riesenbild lieber entfernen als die Synchronisierung blockieren
-    }
-    if (changed) {
-      try { renderMemberChips(); } catch (e) { /* noch nicht aufgebaut */ }
-      await saveMembers();
-    }
-  } finally { avatarShrinkRunning = false; }
-}
-
-document.getElementById('memberPhotoFile').addEventListener('change', async (e) => {
-  const input = e.target;
-  const file = input.files[0];
-  if (!file) return;
-  const preview = document.getElementById('memberAvatarPreview');
-  preview.style.opacity = '0.5';
-  try {
-    const data = await readAvatarPhotoFile(file);
-    pendingMemberPhoto = data;
-    pendingMemberAvatar = null;
-    document.querySelectorAll('.avatar-option').forEach(b => b.classList.remove('border-pine'));
-  } catch (err) {
-    if (!(err && err.cancelled)) alert(err && err.message ? err.message : 'Das Bild konnte nicht gelesen werden.');
-  } finally {
-    preview.style.opacity = '';
-    input.value = '';
-    renderMemberAvatarPreview();
-  }
-});
-document.getElementById('memberRemoveImage').addEventListener('click', () => {
-  pendingMemberPhoto = null;
-  pendingMemberAvatar = null;
-  document.getElementById('memberPhotoFile').value = '';
-  document.querySelectorAll('.avatar-option').forEach(b => b.classList.remove('border-pine'));
-  renderMemberAvatarPreview();
-});
-
-/* ==========================================================
    Generisches Popup-Verhalten: Klick außerhalb schließt das Fenster; wurde seit dem Öffnen
    etwas eingetragen/geändert, wird vorher nachgefragt ("Wirklich abbrechen?") - gilt für den
    Klick daneben genauso wie für den "Abbrechen"-Button selbst.
@@ -16041,7 +15643,7 @@ function actualCurrentWeekRange() {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.82.0';
+const APP_VERSION = '1.83.0';
 
 /* ==========================================================
    Einstellungen & Konto: zwei gleich hohe Spalten (Querformat ab Tablet-Breite)
@@ -16169,55 +15771,57 @@ const APP_VERSION = '1.82.0';
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/mitglied.js?v=1.82.0"></script>
-<script src="js/kinderseite.js?v=1.82.0"></script>
-<script src="js/kinderroutine.js?v=1.82.0"></script>
-<script src="js/sterne.js?v=1.82.0"></script>
-<script src="js/kalenderansicht.js?v=1.82.0"></script>
-<script src="js/essenplanen.js?v=1.82.0"></script>
-<script src="js/rezeptparser.js?v=1.82.0"></script>
-<script src="js/rezeptdialog.js?v=1.82.0"></script>
-<script src="js/rezeptbild.js?v=1.82.0"></script>
-<script src="js/rezeptmengen.js?v=1.82.0"></script>
-<script src="js/einkauf.js?v=1.82.0"></script>
-<script src="js/einkaufslisten.js?v=1.82.0"></script>
-<script src="js/einkaufseingabe.js?v=1.82.0"></script>
-<script src="js/rezepte.js?v=1.82.0"></script>
-<script src="js/offline.js?v=1.82.0"></script>
-<script src="js/aufgabenextras.js?v=1.82.0"></script>
-<script src="js/appbadge.js?v=1.82.0"></script>
-<script src="js/reisen.js?v=1.82.0"></script>
-<script src="js/aufgabendaten.js?v=1.82.0"></script>
-<script src="js/haushalt.js?v=1.82.0"></script>
-<script src="js/reihum.js?v=1.82.0"></script>
-<script src="js/aufgaben.js?v=1.82.0"></script>
-<script src="js/smarthome.js?v=1.82.0"></script>
-<script src="js/sprachsteuerung.js?v=1.82.0"></script>
-<script src="js/termine.js?v=1.82.0"></script>
-<script src="js/ansichten.js?v=1.82.0"></script>
-<script src="js/versionspruefung.js?v=1.82.0"></script>
-<script src="js/sicherungen.js?v=1.82.0"></script>
-<script src="js/geraete.js?v=1.82.0"></script>
-<script src="js/fehlerprotokoll.js?v=1.82.0"></script>
-<script src="js/versionslog.js?v=1.82.0"></script>
-<script src="js/einstellungen.js?v=1.82.0"></script>
-<script src="js/kalenderkonto.js?v=1.82.0"></script>
-<script src="js/finanzen.js?v=1.82.0"></script>
-<script src="js/kassen.js?v=1.82.0"></script>
-<script src="js/vorrat.js?v=1.82.0"></script>
-<script src="js/vorrat2.js?v=1.82.0"></script>
-<script src="js/sparen.js?v=1.82.0"></script>
-<script src="js/vertraege.js?v=1.82.0"></script>
-<script src="js/fahrzeuge.js?v=1.82.0"></script>
-<script src="js/zuhause.js?v=1.82.0"></script>
-<script src="js/dokumente.js?v=1.82.0"></script>
-<script src="js/pdflesen.js?v=1.82.0"></script>
-<script src="js/appstart.js?v=1.82.0"></script>
-<script src="js/pinnwand.js?v=1.82.0"></script>
-<script src="js/listen.js?v=1.82.0"></script>
-<script src="js/familie.js?v=1.82.0"></script>
-<script src="js/hinweise.js?v=1.82.0"></script>
-<script src="js/ausblick.js?v=1.82.0"></script>
+<script src="js/mitglieder.js?v=1.83.0"></script>
+<script src="js/profilbild.js?v=1.83.0"></script>
+<script src="js/mitglied.js?v=1.83.0"></script>
+<script src="js/kinderseite.js?v=1.83.0"></script>
+<script src="js/kinderroutine.js?v=1.83.0"></script>
+<script src="js/sterne.js?v=1.83.0"></script>
+<script src="js/kalenderansicht.js?v=1.83.0"></script>
+<script src="js/essenplanen.js?v=1.83.0"></script>
+<script src="js/rezeptparser.js?v=1.83.0"></script>
+<script src="js/rezeptdialog.js?v=1.83.0"></script>
+<script src="js/rezeptbild.js?v=1.83.0"></script>
+<script src="js/rezeptmengen.js?v=1.83.0"></script>
+<script src="js/einkauf.js?v=1.83.0"></script>
+<script src="js/einkaufslisten.js?v=1.83.0"></script>
+<script src="js/einkaufseingabe.js?v=1.83.0"></script>
+<script src="js/rezepte.js?v=1.83.0"></script>
+<script src="js/offline.js?v=1.83.0"></script>
+<script src="js/aufgabenextras.js?v=1.83.0"></script>
+<script src="js/appbadge.js?v=1.83.0"></script>
+<script src="js/reisen.js?v=1.83.0"></script>
+<script src="js/aufgabendaten.js?v=1.83.0"></script>
+<script src="js/haushalt.js?v=1.83.0"></script>
+<script src="js/reihum.js?v=1.83.0"></script>
+<script src="js/aufgaben.js?v=1.83.0"></script>
+<script src="js/smarthome.js?v=1.83.0"></script>
+<script src="js/sprachsteuerung.js?v=1.83.0"></script>
+<script src="js/termine.js?v=1.83.0"></script>
+<script src="js/ansichten.js?v=1.83.0"></script>
+<script src="js/versionspruefung.js?v=1.83.0"></script>
+<script src="js/sicherungen.js?v=1.83.0"></script>
+<script src="js/geraete.js?v=1.83.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.83.0"></script>
+<script src="js/versionslog.js?v=1.83.0"></script>
+<script src="js/einstellungen.js?v=1.83.0"></script>
+<script src="js/kalenderkonto.js?v=1.83.0"></script>
+<script src="js/finanzen.js?v=1.83.0"></script>
+<script src="js/kassen.js?v=1.83.0"></script>
+<script src="js/vorrat.js?v=1.83.0"></script>
+<script src="js/vorrat2.js?v=1.83.0"></script>
+<script src="js/sparen.js?v=1.83.0"></script>
+<script src="js/vertraege.js?v=1.83.0"></script>
+<script src="js/fahrzeuge.js?v=1.83.0"></script>
+<script src="js/zuhause.js?v=1.83.0"></script>
+<script src="js/dokumente.js?v=1.83.0"></script>
+<script src="js/pdflesen.js?v=1.83.0"></script>
+<script src="js/appstart.js?v=1.83.0"></script>
+<script src="js/pinnwand.js?v=1.83.0"></script>
+<script src="js/listen.js?v=1.83.0"></script>
+<script src="js/familie.js?v=1.83.0"></script>
+<script src="js/hinweise.js?v=1.83.0"></script>
+<script src="js/ausblick.js?v=1.83.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)
