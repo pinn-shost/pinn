@@ -913,7 +913,7 @@ window.PINN_LANGUAGES = [
   // Startprüfung: fehlt eine selbst gehostete Datei, erscheint ein klarer Hinweis statt einer
   // leeren Seite ohne funktionierende Buttons.
   // Teile der App unter pb_public/js/ – jede Datei meldet sich am Ende in window.PINN_PARTS an
-  var PINN_APP_PARTS = ['termindetails', 'kalenderdatei', 'wetter', 'wohnort', 'feiertage', 'muellkalender', 'mitglieder', 'profilbild', 'mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
+  var PINN_APP_PARTS = ['kalenderquellen', 'icsparser', 'zeitleiste', 'termindetails', 'kalenderdatei', 'wetter', 'wohnort', 'feiertage', 'muellkalender', 'mitglieder', 'profilbild', 'mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
   window.addEventListener('DOMContentLoaded', function () {
     var missing = [];
     if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – der PocketBase-Client (ohne ihn funktioniert nichts)');
@@ -14500,355 +14500,6 @@ async function saveMealPlan() { await persistState(); }
 async function saveRecipes() { await persistState(); }
 async function saveTasks() { await persistState(); }
 
-/* ==========================================================
-   Apple-Kalender-Import (kalender.ics, geschrieben von pb_hooks/cron_calendar.pb.js)
-   ========================================================== */
-function unfoldICS(text) {
-  if (!text) return '';
-  // ICS-Zeilen können nach 75 Zeichen umgebrochen sein (Fortsetzung beginnt mit Leerzeichen/Tab)
-  return text.replace(/\r\n/g, '\n').replace(/\n[ \t]/g, '');
-}
-function unescapeICSText(s) {
-  return (s || '').replace(/\\n/gi, ' ').replace(/\\,/g, ',').replace(/\\;/g, ';').replace(/\\\\/g, '\\');
-}
-const ICS_EVENT_COLOR = '#3E7CA6'; // Fallback-Farbe, falls einem Kalender (noch) keine eigene Farbe zugewiesen ist
-
-// Wandelt #rrggbb in ein rgba(...) mit gewünschter Deckkraft um - für den transparenten
-// (nicht deckenden) Termin-Hintergrund.
-function hexToRgba(hex, alpha) {
-  const clean = hex.replace('#', '');
-  const r = parseInt(clean.substring(0, 2), 16);
-  const g = parseInt(clean.substring(2, 4), 16);
-  const b = parseInt(clean.substring(4, 6), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
-/* ---------- Eigene Kalender (pb_hooks/kalender.pb.js + pinn-kalender.js) ----------
-   Jedes Profil kann beliebig viele eigene Kalender anlegen – „Nur für mich“ (privat) oder „Ganze Familie“
-   (geteilt). Die Termine liegen auf dem pinn.-Server. Der Server hängt sie an die Kalenderdatei
-   (/api/pinn/kalender) an – nur die, die das Profil sehen darf – und liefert die Kalenderliste als
-   X-PINN-KALENDER-Zeilen gleich mit (so auch offline aus der zwischengespeicherten Datei).
-   In der App heißen die Kalender „pinn:<id>“ (X-PINN-CALNAME), ihre Termine „pinn-termin:<id>“. */
-const PINN_CAL_PREFIX = 'pinn:';
-const PINN_CAL_COLORS = ['#2F4B41', '#3E7CA6', '#7A5C8E', '#B85C5C', '#B9842E', '#5C8A3E', '#2A9D8F', '#C0567A', '#D9822B', '#546E7A'];
-let pinnCals = [];
-function isPinnCalName(n) { return typeof n === 'string' && /^pinn:[a-z0-9]{15}$/.test(n); }
-function pinnCalByName(n) { return isPinnCalName(n) ? (pinnCals.find(c => PINN_CAL_PREFIX + c.id === n) || null) : null; }
-function readPinnCalsFromIcs(text) {
-  const list = [];
-  String(text || '').split(/\r?\n/).forEach(line => {
-    if (line.indexOf('X-PINN-KALENDER:') !== 0) return;
-    try { const c = JSON.parse(line.slice(16)); if (c && c.id) list.push(c); } catch (e) { /* kaputte Zeile */ }
-  });
-  return list;
-}
-function setPinnCals(list) {
-  const next = Array.isArray(list) ? list : [];
-  const changed = JSON.stringify(next) !== JSON.stringify(pinnCals);
-  pinnCals = next;
-  if (changed) { try { renderPinnCalSettings(); } catch (e) { /* Einstellungen noch nicht aufgebaut */ } }
-}
-// Anzeigename eines Kalenders (eigene Kalender: Name statt „pinn:<id>“)
-function calendarLabel(name) {
-  const c = pinnCalByName(name);
-  if (c) return c.name + (c.geteilt ? '' : ' 🔒') + (c.quelle === 'apple' ? ' · iCloud' : c.quelle === 'google' ? ' · Google' : '');
-  return isPinnCalName(name) ? 'Eigener Kalender' : (name || '');
-}
-function calendarCount() { return appleCalendar.selectedCalendars.length + pinnCals.length; }
-// Schulferien, Müllabfuhr, Schule & Kita (Systemkalender): kleiner dargestellt und immer ganz oben
-function isMinorCalEvent(ev) { return !!(ev && (ev.pinnHoliday === 'ferien' || ev.pinnHoliday === 'muell' || ev.pinnHoliday === 'schule')); }
-// 1.62: trips (packing lists with destination and period) also stand at the very top, in normal size
-function calTopRank(ev) { return isMinorCalEvent(ev) || (ev && ev.pinnHoliday === 'urlaub') ? 1 : 0; }
-function minorSortWeight(a, b) { return calTopRank(b) - calTopRank(a); }
-// Startzeit in Minuten (-1 = ganztägig). Robust gegen Schreibweisen wie „9:05“, „09:05“ oder „0905“.
-function calEventStartMin(ev) {
-  if (!ev || ev.fullDayFiller || !ev.time) return -1;
-  const m = String(ev.time).match(/(\d{1,2})\D?(\d{2})/);
-  return m ? (+m[1]) * 60 + (+m[2]) : -1;
-}
-function calEventEndMin(ev) {
-  if (!ev || !ev.endTime) return 24 * 60;
-  const m = String(ev.endTime).match(/(\d{1,2})\D?(\d{2})/);
-  return m ? (+m[1]) * 60 + (+m[2]) : 24 * 60;
-}
-// Gemeinsame Reihenfolge für alle Kalender-Listen: Systemkalender (Ferien/Müll/Schule) immer ganz oben,
-// danach alle aktiven Kalender zusammen nach Uhrzeit – zuerst Ganztägiges, dann nach Beginn, Ende und
-// Titel. Personen-Filter dimmen nur, sie sortieren nicht um.
-function calListCompare(a, b) {
-  const w = minorSortWeight(a, b);
-  if (w) return w;
-  const sa = calEventStartMin(a), sb = calEventStartMin(b);
-  if (sa !== sb) return sa - sb;
-  const ea = calEventEndMin(a), eb = calEventEndMin(b);
-  if (ea !== eb) return ea - eb;
-  return String(a.title || '').localeCompare(String(b.title || ''));
-}
-
-// Liefert die dem Termin zugeordnete Kalenderfarbe (aus den Einstellungen fest zugewiesen), oder
-// die neutrale Fallback-Farbe, falls (noch) keine Farbe für diesen Kalender hinterlegt ist.
-function colorForCalendarEvent(ev) {
-  if (ev && ev.pinnHoliday === 'muell') return ev.pinnColor || '#7A6F5A'; // Müllkalender (Farbe je Müllart)
-  if (ev && ev.pinnHoliday === 'schule') return ev.pinnColor || '#8E5BB5'; // Schule & Kita (Farbe des Kindes)
-  if (ev && ev.pinnHoliday === 'urlaub') return ev.pinnColor || '#D9822B'; // trip (packing list, 1.62)
-  if (ev && ev.pinnHoliday) return ev.pinnHoliday === 'ferien' ? '#2E9C7A' : '#C0392B'; // Schulferien / Feiertage (Zuhause)
-  const pc = ev && pinnCalByName(ev.pinnCalName); // eigener Kalender
-  if (pc) return pc.farbe || ICS_EVENT_COLOR;
-  if (ev && ev.pinnCalName && appleCalendar.calendarColors[ev.pinnCalName]) {
-    return appleCalendar.calendarColors[ev.pinnCalName];
-  }
-  return ICS_EVENT_COLOR;
-}
-
-function parseICSDateField(line) {
-  const idx = line.indexOf(':');
-  if (idx === -1) return null;
-  const params = line.slice(0, idx);
-  const value = line.slice(idx + 1).trim();
-  const m = value.match(/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})?(Z)?)?$/);
-  if (!m) return null;
-  const [, y, mo, d, hh, mi, ss, isUtc] = m;
-  if (hh === undefined || /VALUE=DATE(?!-TIME)/.test(params)) {
-    return { date: `${y}-${mo}-${d}`, time: null };
-  }
-  if (isUtc) {
-    // UTC-Zeit -> in die lokale Zeitzone des Browsers umrechnen
-    const dt = new Date(Date.UTC(+y, +mo - 1, +d, +hh, +mi, +(ss || 0)));
-    const pad = n => String(n).padStart(2, '0');
-    return { date: `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}`, time: `${pad(dt.getHours())}:${pad(dt.getMinutes())}` };
-  }
-  // Zeit mit TZID oder ohne Angabe: wir übernehmen die Uhrzeit unverändert (Annahme: gleiche
-  // Zeitzone wie diese Familie). Eine vollständige IANA-Zeitzonen-Umrechnung ist ohne
-  // Zusatzbibliothek im Browser nicht zuverlässig möglich.
-  return { date: `${y}-${mo}-${d}`, time: `${hh}:${mi}` };
-}
-function parseICSDuration(str) {
-  // Sehr einfache Unterstützung für z.B. "PT1H30M" oder "P1D" (reicht für die üblichen Fälle)
-  const m = (str || '').match(/^P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?)?$/);
-  if (!m) return 60;
-  const days = parseInt(m[1] || '0', 10), hours = parseInt(m[2] || '0', 10), mins = parseInt(m[3] || '0', 10);
-  return days * 1440 + hours * 60 + mins;
-}
-function toMinutes(hhmm) { const [h, m] = hhmm.split(':').map(Number); return h * 60 + m; }
-function pad2(n) { return String(n).padStart(2, '0'); }
-
-function parseRRule(str) {
-  const rule = {};
-  str.split(';').forEach(kv => { const [k, v] = kv.split('='); if (k) rule[k] = v; });
-  return rule;
-}
-
-// Erzeugt aus einem Basis-Termin mit RRULE mehrere Vorkommen innerhalb eines Zeitfensters
-// von -1 bis +2 Jahren um heute. HINWEIS/Einschränkung: unterstützt nur FREQ=DAILY/WEEKLY/
-// MONTHLY/YEARLY mit INTERVAL/COUNT/UNTIL sowie einzelne Ausnahmen (EXDATE, z.B. wenn man nur
-// einen Termin einer Serie gelöscht hat). BYDAY, BYMONTHDAY u.ä. werden nicht ausgewertet - für
-// die allermeisten einfachen wiederkehrenden Termine (z.B. "alle 3 Wochen") reicht das, für
-// komplexere Regeln (z.B. "jeden 2. Dienstag im Monat") nicht.
-function expandRecurrence(base) {
-  const rule = parseRRule(base.rrule);
-  const freq = rule.FREQ;
-  if (!['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY'].includes(freq)) return [base];
-  const interval = parseInt(rule.INTERVAL || '1', 10) || 1;
-  const count = rule.COUNT ? parseInt(rule.COUNT, 10) : null;
-  let untilDate = null;
-  if (rule.UNTIL) { const u = parseICSDateField('X:' + rule.UNTIL); if (u) untilDate = u.date; }
-
-  const windowStart = new Date(); windowStart.setFullYear(windowStart.getFullYear() - 1);
-  const windowEnd = new Date(); windowEnd.setFullYear(windowEnd.getFullYear() + 2);
-
-  const [y, mo, d] = base.startDate.split('-').map(Number);
-  let cur = new Date(y, mo - 1, d);
-  const results = [];
-  let n = 0;
-  while (cur <= windowEnd && n < 500 && (!count || n < count)) {
-    const curISO = `${cur.getFullYear()}-${pad2(cur.getMonth() + 1)}-${pad2(cur.getDate())}`;
-    if (untilDate && curISO > untilDate) break;
-    const isExcluded = base.exdates && base.exdates.has(curISO);
-    if (cur >= windowStart && !isExcluded) results.push({ ...base, startDate: curISO });
-    n++;
-    if (freq === 'DAILY') cur.setDate(cur.getDate() + interval);
-    else if (freq === 'WEEKLY') cur.setDate(cur.getDate() + 7 * interval);
-    else if (freq === 'MONTHLY') cur.setMonth(cur.getMonth() + interval);
-    else if (freq === 'YEARLY') cur.setFullYear(cur.getFullYear() + interval);
-  }
-  return results;
-}
-
-function daysBetweenDateStrs(d1, d2) {
-  const a = new Date(d1 + 'T00:00:00');
-  const b = new Date(d2 + 'T00:00:00');
-  return Math.round((b - a) / 86400000);
-}
-function addDaysToDateStr(dateStr, n) {
-  const d = new Date(dateStr + 'T00:00:00');
-  d.setDate(d.getDate() + n);
-  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
-}
-// Verteilt einen mehrtägigen Termin auf einen Eintrag pro Tag: am ersten Tag von der Start-Uhrzeit
-// bis Tagesende, an Zwischentagen ganztägig, am letzten Tag von Tagesbeginn bis zur End-Uhrzeit.
-function expandMultiDaySpan(occ, spanDays, lastDayEndTime) {
-  if (spanDays <= 0) return [occ];
-  const results = [];
-  for (let i = 0; i <= spanDays; i++) {
-    const date = addDaysToDateStr(occ.startDate, i);
-    let time, endTime, fullDayFiller = false;
-    if (i === 0) {
-      // Starttag: echte Startzeit bleibt erhalten (falls vorhanden), Ende offen ("geht in den
-      // nächsten Tag über") - das ist eine echte Information und zählt daher normal fürs Zeitfenster.
-      if (occ.time) { time = occ.time; endTime = '23:59'; }
-      else { time = '06:00'; endTime = '22:00'; fullDayFiller = true; } // ganztägiger Start ganz ohne jede Zeit-Info
-    } else if (i === spanDays) {
-      if (lastDayEndTime) { time = '00:00'; endTime = lastDayEndTime; }
-      else { time = '06:00'; endTime = '22:00'; fullDayFiller = true; } // kein echtes Ende bekannt -> wie "ganztägig" behandeln
-    } else {
-      // Zwischentag ohne jede reale Zeit-Info ("läuft über den kompletten Tag"): fürs Zeitfenster
-      // nur mit 6-22 Uhr rechnen (s. computeTimeRange), damit die Ansicht nicht unnötig auf volle
-      // 24h aufgezogen wird. Die Darstellung selbst (fullDayFiller) füllt die Spalte trotzdem
-      // randfüllend von oben bis unten, statt nur einen 6-22-Ausschnitt zu zeigen - der Termin
-      // wird also NICHT optisch gekürzt, nur das Zeitfenster drumherum.
-      time = '06:00';
-      endTime = '22:00';
-      fullDayFiller = true;
-    }
-    results.push({ ...occ, startDate: date, time, endTime, fullDayFiller });
-  }
-  return results;
-}
-
-function parseICS(icsText) {
-  const lines = unfoldICS(icsText).split('\n');
-  const bases = [];
-  let cur = null;
-  let inAlarm = false; // innerhalb eines VALARM ("Erinnerung")-Unterblocks - dessen Felder ignorieren
-  for (const rawLine of lines) {
-    const line = rawLine.trim();
-    if (line === 'BEGIN:VEVENT') { cur = {}; inAlarm = false; continue; }
-    if (line === 'BEGIN:VALARM') { inAlarm = true; continue; }
-    if (line === 'END:VALARM') { inAlarm = false; continue; }
-    if (line === 'END:VEVENT') {
-      if (cur && cur.dt) {
-        const startMin = cur.dt.time ? toMinutes(cur.dt.time) : null;
-        const startDateStr = cur.dt.date;
-        const isAllDay = !cur.dt.time;
-        let endDateStr = cur.dtend ? cur.dtend.date : startDateStr;
-        // Bei ganztägigen Terminen (VALUE=DATE) ist DTEND laut iCal-Standard EXKLUSIV - ein reiner
-        // Montags-Termin trägt als Enddatum bereits Dienstag ein ("bis ausschließlich"). Ohne diese
-        // Korrektur würde ein einzelner ganztägiger Tag fälschlich als 2-Tage-Termin erkannt.
-        if (isAllDay && cur.dtend && !cur.dtend.time && endDateStr !== startDateStr) {
-          endDateStr = addDaysToDateStr(endDateStr, -1);
-        }
-        // Sicherheitsobergrenze von 13 Tagen Spanne, falls die ICS-Daten mal fehlerhaft sein sollten
-        const spanDays = Math.max(0, Math.min(daysBetweenDateStrs(startDateStr, endDateStr), 13));
-        const lastDayEndTime = (cur.dtend && cur.dtend.time) ? cur.dtend.time : null;
-
-        let endTime = null;
-        if (spanDays === 0) {
-          if (cur.dtend && cur.dtend.time) endTime = cur.dtend.time;
-          else if (cur.durationMin != null && startMin != null) {
-            const endMin = Math.min(startMin + cur.durationMin, 1439);
-            endTime = `${pad2(Math.floor(endMin / 60))}:${pad2(endMin % 60)}`;
-          }
-        }
-
-        const base = {
-          uid: cur.uid || (startDateStr + '-' + (cur.summary || '')),
-          startDate: startDateStr,
-          time: cur.dt.time,
-          endTime,
-          title: cur.summary || 'Ohne Titel',
-          rrule: cur.rrule || null,
-          exdates: cur.exdates || null,
-          location: cur.location || '',
-          description: cur.description || '',
-          pinnHref: cur.pinnHref || '',
-          pinnCalName: cur.pinnCalName || '',
-        };
-        const recurrences = base.rrule ? expandRecurrence(base) : [base];
-        recurrences.forEach(occ => {
-          expandMultiDaySpan(occ, spanDays, lastDayEndTime).forEach(o => {
-            bases.push({
-              id: 'ics-' + o.uid + '-' + o.startDate,
-              date: o.startDate,
-              time: o.time || '',
-              endTime: o.endTime || null,
-              title: o.title,
-              memberId: null,
-              location: o.location || '',
-              description: o.description || '',
-              fullDayFiller: o.fullDayFiller || false,
-              pinnHref: o.pinnHref || '',
-              pinnCalName: o.pinnCalName || '',
-              isRecurring: !!o.rrule,
-            });
-          });
-        });
-      }
-      cur = null;
-      continue;
-    }
-    if (!cur) continue;
-    if (inAlarm) continue; // Felder innerhalb der Erinnerung (z.B. eigenes DESCRIPTION="Erinnerung") ignorieren
-    if (line.startsWith('SUMMARY')) cur.summary = unescapeICSText(line.slice(line.indexOf(':') + 1));
-    else if (line.startsWith('UID')) cur.uid = line.slice(line.indexOf(':') + 1);
-    else if (line.startsWith('DTSTART')) cur.dt = parseICSDateField(line);
-    else if (line.startsWith('DTEND')) cur.dtend = parseICSDateField(line);
-    else if (line.startsWith('DURATION')) cur.durationMin = parseICSDuration(line.slice(line.indexOf(':') + 1));
-    else if (line.startsWith('RRULE')) cur.rrule = line.slice(line.indexOf(':') + 1);
-    else if (line.startsWith('EXDATE')) {
-      const idx = line.indexOf(':');
-      if (idx !== -1) {
-        const paramsPart = line.slice(0, idx);
-        const valuesPart = line.slice(idx + 1);
-        if (!cur.exdates) cur.exdates = new Set();
-        valuesPart.split(',').forEach(v => {
-          const parsed = parseICSDateField(paramsPart + ':' + v.trim());
-          if (parsed) cur.exdates.add(parsed.date);
-        });
-      }
-    }
-    else if (line.startsWith('LOCATION')) cur.location = unescapeICSText(line.slice(line.indexOf(':') + 1));
-    else if (line.startsWith('DESCRIPTION')) cur.description = unescapeICSText(line.slice(line.indexOf(':') + 1));
-    else if (line.startsWith('X-PINN-HREF')) cur.pinnHref = line.slice(line.indexOf(':') + 1).trim();
-    else if (line.startsWith('X-PINN-CALNAME')) cur.pinnCalName = line.slice(line.indexOf(':') + 1).trim();
-  }
-  // Mehrtägige Termine werden auf einen Eintrag pro Tag verteilt (s. expandMultiDaySpan oben):
-  // Starttag ab Startzeit bis Tagesende, Zwischentage ganztägig, Endtag ab 00:00 bis Endzeit.
-  return bases;
-}
-
-/* ---------- Zeitleisten-Layout: überlappende Termine nebeneinander + Farbschattierung ---------- */
-function computeEventLayout(dayEvents) {
-  const timed = dayEvents.filter(e => e.time).map(e => ({
-    ...e, startMin: toMinutes(e.time), endMin: e.endTime ? toMinutes(e.endTime) : Math.min(toMinutes(e.time) + 60, 1439),
-  })).sort((a, b) => a.startMin - b.startMin);
-
-  const clusters = [];
-  let current = [], currentEnd = -1;
-  timed.forEach(ev => {
-    if (current.length === 0 || ev.startMin < currentEnd) {
-      current.push(ev);
-      currentEnd = Math.max(currentEnd, ev.endMin);
-    } else {
-      clusters.push(current);
-      current = [ev];
-      currentEnd = ev.endMin;
-    }
-  });
-  if (current.length) clusters.push(current);
-
-  clusters.forEach(cluster => {
-    const columnEnds = [];
-    cluster.forEach(ev => {
-      let placed = false;
-      for (let i = 0; i < columnEnds.length; i++) {
-        if (columnEnds[i] <= ev.startMin) { columnEnds[i] = ev.endMin; ev._col = i; placed = true; break; }
-      }
-      if (!placed) { ev._col = columnEnds.length; columnEnds.push(ev.endMin); }
-    });
-    cluster.forEach(ev => { ev._colCount = columnEnds.length; });
-  });
-
-  return timed;
-}
-
 function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str == null ? '' : String(str);
@@ -15002,7 +14653,7 @@ function actualCurrentWeekRange() {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.85.0';
+const APP_VERSION = '1.86.0';
 
 /* ==========================================================
    Einstellungen & Konto: zwei gleich hohe Spalten (Querformat ab Tablet-Breite)
@@ -15130,63 +14781,66 @@ const APP_VERSION = '1.85.0';
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/termindetails.js?v=1.85.0"></script>
-<script src="js/kalenderdatei.js?v=1.85.0"></script>
-<script src="js/wetter.js?v=1.85.0"></script>
-<script src="js/wohnort.js?v=1.85.0"></script>
-<script src="js/feiertage.js?v=1.85.0"></script>
-<script src="js/muellkalender.js?v=1.85.0"></script>
-<script src="js/mitglieder.js?v=1.85.0"></script>
-<script src="js/profilbild.js?v=1.85.0"></script>
-<script src="js/mitglied.js?v=1.85.0"></script>
-<script src="js/kinderseite.js?v=1.85.0"></script>
-<script src="js/kinderroutine.js?v=1.85.0"></script>
-<script src="js/sterne.js?v=1.85.0"></script>
-<script src="js/kalenderansicht.js?v=1.85.0"></script>
-<script src="js/essenplanen.js?v=1.85.0"></script>
-<script src="js/rezeptparser.js?v=1.85.0"></script>
-<script src="js/rezeptdialog.js?v=1.85.0"></script>
-<script src="js/rezeptbild.js?v=1.85.0"></script>
-<script src="js/rezeptmengen.js?v=1.85.0"></script>
-<script src="js/einkauf.js?v=1.85.0"></script>
-<script src="js/einkaufslisten.js?v=1.85.0"></script>
-<script src="js/einkaufseingabe.js?v=1.85.0"></script>
-<script src="js/rezepte.js?v=1.85.0"></script>
-<script src="js/offline.js?v=1.85.0"></script>
-<script src="js/aufgabenextras.js?v=1.85.0"></script>
-<script src="js/appbadge.js?v=1.85.0"></script>
-<script src="js/reisen.js?v=1.85.0"></script>
-<script src="js/aufgabendaten.js?v=1.85.0"></script>
-<script src="js/haushalt.js?v=1.85.0"></script>
-<script src="js/reihum.js?v=1.85.0"></script>
-<script src="js/aufgaben.js?v=1.85.0"></script>
-<script src="js/smarthome.js?v=1.85.0"></script>
-<script src="js/sprachsteuerung.js?v=1.85.0"></script>
-<script src="js/termine.js?v=1.85.0"></script>
-<script src="js/ansichten.js?v=1.85.0"></script>
-<script src="js/versionspruefung.js?v=1.85.0"></script>
-<script src="js/sicherungen.js?v=1.85.0"></script>
-<script src="js/geraete.js?v=1.85.0"></script>
-<script src="js/fehlerprotokoll.js?v=1.85.0"></script>
-<script src="js/versionslog.js?v=1.85.0"></script>
-<script src="js/einstellungen.js?v=1.85.0"></script>
-<script src="js/kalenderkonto.js?v=1.85.0"></script>
-<script src="js/finanzen.js?v=1.85.0"></script>
-<script src="js/kassen.js?v=1.85.0"></script>
-<script src="js/vorrat.js?v=1.85.0"></script>
-<script src="js/vorrat2.js?v=1.85.0"></script>
-<script src="js/sparen.js?v=1.85.0"></script>
-<script src="js/vertraege.js?v=1.85.0"></script>
-<script src="js/fahrzeuge.js?v=1.85.0"></script>
-<script src="js/zuhause.js?v=1.85.0"></script>
-<script src="js/dokumente.js?v=1.85.0"></script>
-<script src="js/pdflesen.js?v=1.85.0"></script>
-<script src="js/appstart.js?v=1.85.0"></script>
-<script src="js/pinnwand.js?v=1.85.0"></script>
-<script src="js/listen.js?v=1.85.0"></script>
-<script src="js/familie.js?v=1.85.0"></script>
-<script src="js/hinweise.js?v=1.85.0"></script>
-<script src="js/ausblick.js?v=1.85.0"></script>
+<script src="js/kalenderquellen.js?v=1.86.0"></script>
+<script src="js/icsparser.js?v=1.86.0"></script>
+<script src="js/zeitleiste.js?v=1.86.0"></script>
+<script src="js/termindetails.js?v=1.86.0"></script>
+<script src="js/kalenderdatei.js?v=1.86.0"></script>
+<script src="js/wetter.js?v=1.86.0"></script>
+<script src="js/wohnort.js?v=1.86.0"></script>
+<script src="js/feiertage.js?v=1.86.0"></script>
+<script src="js/muellkalender.js?v=1.86.0"></script>
+<script src="js/mitglieder.js?v=1.86.0"></script>
+<script src="js/profilbild.js?v=1.86.0"></script>
+<script src="js/mitglied.js?v=1.86.0"></script>
+<script src="js/kinderseite.js?v=1.86.0"></script>
+<script src="js/kinderroutine.js?v=1.86.0"></script>
+<script src="js/sterne.js?v=1.86.0"></script>
+<script src="js/kalenderansicht.js?v=1.86.0"></script>
+<script src="js/essenplanen.js?v=1.86.0"></script>
+<script src="js/rezeptparser.js?v=1.86.0"></script>
+<script src="js/rezeptdialog.js?v=1.86.0"></script>
+<script src="js/rezeptbild.js?v=1.86.0"></script>
+<script src="js/rezeptmengen.js?v=1.86.0"></script>
+<script src="js/einkauf.js?v=1.86.0"></script>
+<script src="js/einkaufslisten.js?v=1.86.0"></script>
+<script src="js/einkaufseingabe.js?v=1.86.0"></script>
+<script src="js/rezepte.js?v=1.86.0"></script>
+<script src="js/offline.js?v=1.86.0"></script>
+<script src="js/aufgabenextras.js?v=1.86.0"></script>
+<script src="js/appbadge.js?v=1.86.0"></script>
+<script src="js/reisen.js?v=1.86.0"></script>
+<script src="js/aufgabendaten.js?v=1.86.0"></script>
+<script src="js/haushalt.js?v=1.86.0"></script>
+<script src="js/reihum.js?v=1.86.0"></script>
+<script src="js/aufgaben.js?v=1.86.0"></script>
+<script src="js/smarthome.js?v=1.86.0"></script>
+<script src="js/sprachsteuerung.js?v=1.86.0"></script>
+<script src="js/termine.js?v=1.86.0"></script>
+<script src="js/ansichten.js?v=1.86.0"></script>
+<script src="js/versionspruefung.js?v=1.86.0"></script>
+<script src="js/sicherungen.js?v=1.86.0"></script>
+<script src="js/geraete.js?v=1.86.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.86.0"></script>
+<script src="js/versionslog.js?v=1.86.0"></script>
+<script src="js/einstellungen.js?v=1.86.0"></script>
+<script src="js/kalenderkonto.js?v=1.86.0"></script>
+<script src="js/finanzen.js?v=1.86.0"></script>
+<script src="js/kassen.js?v=1.86.0"></script>
+<script src="js/vorrat.js?v=1.86.0"></script>
+<script src="js/vorrat2.js?v=1.86.0"></script>
+<script src="js/sparen.js?v=1.86.0"></script>
+<script src="js/vertraege.js?v=1.86.0"></script>
+<script src="js/fahrzeuge.js?v=1.86.0"></script>
+<script src="js/zuhause.js?v=1.86.0"></script>
+<script src="js/dokumente.js?v=1.86.0"></script>
+<script src="js/pdflesen.js?v=1.86.0"></script>
+<script src="js/appstart.js?v=1.86.0"></script>
+<script src="js/pinnwand.js?v=1.86.0"></script>
+<script src="js/listen.js?v=1.86.0"></script>
+<script src="js/familie.js?v=1.86.0"></script>
+<script src="js/hinweise.js?v=1.86.0"></script>
+<script src="js/ausblick.js?v=1.86.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)

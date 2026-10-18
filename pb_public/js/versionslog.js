@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.86', datum: '18.10.2026', titel: 'App-Code wird aufgeteilt (Teil 42)',
+    punkte: [
+      ['info', 'Für Mitwirkende: der Apple-Kalender-Import liegt jetzt in drei Dateien – pb_public/js/kalenderquellen.js (Kalender-Quellen, Namen, Farben, Sortierung, eigene Kalender), js/icsparser.js (Kalenderdatei lesen, Serien und mehrtägige Termine aufklappen) und js/zeitleiste.js (überlappende Termine nebeneinander). An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, drei neue Dateien in js/ und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.85', datum: '18.10.2026', titel: 'App-Code wird aufgeteilt (Teil 41)',
     punkte: [
       ['info', 'Für Mitwirkende: die Termin-Details per Langdruck (Popover, Kalender-Link, Löschen) liegen jetzt in pb_public/js/termindetails.js, das Laden der Kalenderdatei vom Server (kalender.ics, Status) in js/kalenderdatei.js. An der Bedienung ändert sich nichts'],
