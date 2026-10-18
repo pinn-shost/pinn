@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.90', datum: '18.10.2026', titel: 'App-Code wird aufgeteilt (Teil 46)',
+    punkte: [
+      ['info', 'Für Mitwirkende: der Datenexport liegt jetzt in pb_public/js/exportieren.js, die Hauptadmin-Startseite in js/hauptadminseite.js, Anmelden und Abmelden in js/anmeldung.js, die Konto-Einstellungen mit „Passwort ändern“ in js/konto.js und „Profil verwalten“ in js/profilverwaltung.js. An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, fünf neue Dateien in js/ und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.89', datum: '18.10.2026', titel: 'App-Code wird aufgeteilt (Teil 45)',
     punkte: [
       ['info', 'Für Mitwirkende: die Grundwerte und Familiendaten-Variablen liegen jetzt in pb_public/js/zustand.js, der Bedienzustand (Ansicht, Kalender, offene Fenster) in js/bedienzustand.js, Rezeptbilder (verkleinern, hochladen, Bildausschnitt) in js/rezeptbilder.js und das Zusammenführen der Familiendaten in js/zusammenfuehren.js. An der Bedienung ändert sich nichts'],

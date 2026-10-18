@@ -1,0 +1,65 @@
+/* pinn. – Data export (js/exportieren.js)
+   Part of the app code that used to be a single block in index.html. Classic script, no build step:
+   it is loaded right after the inline script of index.html and before the other files in js/
+   (the load order is listed at the bottom of index.html and in pinn-setup.sh).
+   Contents: the data export of the whole family as a ZIP (PINN_EXPORT_TEXTE, pinnExportText, loadPinnExportScript, openPinnExport, exportRefreshSub). The export module itself lives in pb_public/datenexport.js and is only loaded when first opened. */
+
+/* ==========================================================
+   Data export (whole family as a ZIP – data + documents)
+   ----------------------------------------------------------
+   The module lives in pb_public/datenexport.js and is only loaded when first opened
+   (own texts in four languages). The browser builds the ZIP; the server only delivers collections
+   and files (pb_hooks/export.pb.js + pinn-export.js).
+   - Settings → System → Data: "Export family" (admins, not with child lock)
+   - Main admin → Families: "📦 Export" per family (complete, e.g. for moving)
+   ========================================================== */
+const PINN_EXPORT_TEXTE = {
+  de: { btn: '📦 {F} exportieren', kurz: '📦 Export', text: 'Alle Daten {Fd} als ZIP-Datei – mit Dokumenten, Belegen und Bildern. Zum Beispiel für den Umzug auf ein anderes NAS oder als eigene Sicherung.', laden: 'Der Export konnte nicht geladen werden (pb_public/datenexport.js fehlt?).', F: 'Familie', FW: 'WG', Fd: 'der Familie', FWd: 'der WG' },
+  en: { btn: '📦 Export {F}', kurz: '📦 Export', text: 'All data {Fd} as a ZIP file – including documents, receipts and pictures. For example to move to another NAS or as your own backup.', laden: 'The export could not be loaded (pb_public/datenexport.js missing?).', F: 'family', FW: 'flatshare', Fd: 'of your family', FWd: 'of your flatshare' },
+  fr: { btn: '📦 Exporter la {F}', kurz: '📦 Export', text: 'Toutes les données {Fd} dans un fichier ZIP – avec documents, justificatifs et images. Par exemple pour déménager sur un autre NAS ou comme sauvegarde personnelle.', laden: 'L\'export n\'a pas pu être chargé (pb_public/datenexport.js manquant ?).', F: 'famille', FW: 'colocation', Fd: 'de la famille', FWd: 'de la colocation' },
+  es: { btn: '📦 Exportar {F}', kurz: '📦 Exportar', text: 'Todos los datos {Fd} en un archivo ZIP – con documentos, recibos e imágenes. Por ejemplo para mudarse a otro NAS o como copia de seguridad propia.', laden: 'No se pudo cargar la exportación (¿falta pb_public/datenexport.js?).', F: 'familia', FW: 'piso compartido', Fd: 'de la familia', FWd: 'del piso compartido' },
+};
+function pinnExportText(key) {
+  const l = (window.PINN_I18N && window.PINN_I18N.current) || 'en';
+  const d = PINN_EXPORT_TEXTE[l] || PINN_EXPORT_TEXTE.en;
+  const wg = typeof householdType !== 'undefined' && householdType === 'wg';
+  return String(d[key] || PINN_EXPORT_TEXTE.en[key] || key)
+    .replace(/\{Fd\}/g, wg ? d.FWd : d.Fd).replace(/\{F\}/g, wg ? d.FW : d.F);
+}
+let pinnExportLoading = null;
+function loadPinnExportScript() {
+  if (window.PinnExport) return Promise.resolve(window.PinnExport);
+  if (pinnExportLoading) return pinnExportLoading;
+  pinnExportLoading = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'datenexport.js?v=' + APP_VERSION;
+    s.onload = () => (window.PinnExport ? resolve(window.PinnExport) : reject(new Error('PinnExport fehlt')));
+    s.onerror = () => { pinnExportLoading = null; s.remove(); reject(new Error('datenexport.js fehlt')); };
+    document.head.appendChild(s);
+  });
+  return pinnExportLoading;
+}
+async function openPinnExport(familieId) {
+  try {
+    const px = await loadPinnExportScript();
+    px.open({ apiFetch, familie: familieId || '', wg: typeof householdType !== 'undefined' && householdType === 'wg' });
+  } catch (e) {
+    alert(pinnExportText('laden'));
+  }
+}
+// Settings → System → Data: export only for admins (not for guests and child lock)
+function exportRefreshSub() {
+  const sub = document.getElementById('dataExportSub');
+  if (!sub) return;
+  const show = (isCurrentUserAdmin() || isCurrentUserMainAdmin()) && !isCurrentUserGuest()
+    && !(typeof childLockActive === 'function' && childLockActive());
+  sub.classList.toggle('hidden', !show);
+  if (!show) return;
+  document.getElementById('dataExportText').textContent = pinnExportText('text');
+  const b = document.getElementById('dataExportBtn');
+  b.textContent = pinnExportText('btn');
+  b.onclick = () => openPinnExport('');
+}
+
+// Marks this file as loaded – the start check in index.html reports missing app files
+(window.PINN_PARTS = window.PINN_PARTS || []).push('exportieren');

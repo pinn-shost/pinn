@@ -913,7 +913,7 @@ window.PINN_LANGUAGES = [
   // Startprüfung: fehlt eine selbst gehostete Datei, erscheint ein klarer Hinweis statt einer
   // leeren Seite ohne funktionierende Buttons.
   // Teile der App unter pb_public/js/ – jede Datei meldet sich am Ende in window.PINN_PARTS an
-  var PINN_APP_PARTS = ['zustand', 'bedienzustand', 'rezeptbilder', 'zusammenfuehren', 'speichern', 'design', 'sprache', 'uebersicht', 'familienkachel', 'wobistdu', 'geburtstagsfeier', 'wetterkachel', 'geburtstage', 'uebersichteinstellungen', 'familiensync', 'kalenderquellen', 'icsparser', 'zeitleiste', 'termindetails', 'kalenderdatei', 'wetter', 'wohnort', 'feiertage', 'muellkalender', 'mitglieder', 'profilbild', 'mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
+  var PINN_APP_PARTS = ['exportieren', 'hauptadminseite', 'anmeldung', 'konto', 'profilverwaltung', 'zustand', 'bedienzustand', 'rezeptbilder', 'zusammenfuehren', 'speichern', 'design', 'sprache', 'uebersicht', 'familienkachel', 'wobistdu', 'geburtstagsfeier', 'wetterkachel', 'geburtstage', 'uebersichteinstellungen', 'familiensync', 'kalenderquellen', 'icsparser', 'zeitleiste', 'termindetails', 'kalenderdatei', 'wetter', 'wohnort', 'feiertage', 'muellkalender', 'mitglieder', 'profilbild', 'mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
   window.addEventListener('DOMContentLoaded', function () {
     var missing = [];
     if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – der PocketBase-Client (ohne ihn funktioniert nichts)');
@@ -11335,471 +11335,6 @@ async function openPinnSetup() {
     alert(pinnSetupText('laden'));
   }
 }
-/* ==========================================================
-   Datenexport (komplette Familie als ZIP – Daten + Dokumente)
-   ----------------------------------------------------------
-   Das Modul liegt in pb_public/datenexport.js und wird erst beim ersten Öffnen geladen
-   (eigene Texte in vier Sprachen). Das ZIP baut der Browser; der Server liefert nur Sammlungen
-   und Dateien (pb_hooks/export.pb.js + pinn-export.js).
-   - Einstellungen → System → Daten: „Familie exportieren“ (Admins, nicht mit Kindersicherung)
-   - Hauptadmin → Familien: „📦 Export“ je Familie (vollständig, z. B. für den Umzug)
-   ========================================================== */
-const PINN_EXPORT_TEXTE = {
-  de: { btn: '📦 {F} exportieren', kurz: '📦 Export', text: 'Alle Daten {Fd} als ZIP-Datei – mit Dokumenten, Belegen und Bildern. Zum Beispiel für den Umzug auf ein anderes NAS oder als eigene Sicherung.', laden: 'Der Export konnte nicht geladen werden (pb_public/datenexport.js fehlt?).', F: 'Familie', FW: 'WG', Fd: 'der Familie', FWd: 'der WG' },
-  en: { btn: '📦 Export {F}', kurz: '📦 Export', text: 'All data {Fd} as a ZIP file – including documents, receipts and pictures. For example to move to another NAS or as your own backup.', laden: 'The export could not be loaded (pb_public/datenexport.js missing?).', F: 'family', FW: 'flatshare', Fd: 'of your family', FWd: 'of your flatshare' },
-  fr: { btn: '📦 Exporter la {F}', kurz: '📦 Export', text: 'Toutes les données {Fd} dans un fichier ZIP – avec documents, justificatifs et images. Par exemple pour déménager sur un autre NAS ou comme sauvegarde personnelle.', laden: 'L\'export n\'a pas pu être chargé (pb_public/datenexport.js manquant ?).', F: 'famille', FW: 'colocation', Fd: 'de la famille', FWd: 'de la colocation' },
-  es: { btn: '📦 Exportar {F}', kurz: '📦 Exportar', text: 'Todos los datos {Fd} en un archivo ZIP – con documentos, recibos e imágenes. Por ejemplo para mudarse a otro NAS o como copia de seguridad propia.', laden: 'No se pudo cargar la exportación (¿falta pb_public/datenexport.js?).', F: 'familia', FW: 'piso compartido', Fd: 'de la familia', FWd: 'del piso compartido' },
-};
-function pinnExportText(key) {
-  const l = (window.PINN_I18N && window.PINN_I18N.current) || 'en';
-  const d = PINN_EXPORT_TEXTE[l] || PINN_EXPORT_TEXTE.en;
-  const wg = typeof householdType !== 'undefined' && householdType === 'wg';
-  return String(d[key] || PINN_EXPORT_TEXTE.en[key] || key)
-    .replace(/\{Fd\}/g, wg ? d.FWd : d.Fd).replace(/\{F\}/g, wg ? d.FW : d.F);
-}
-let pinnExportLoading = null;
-function loadPinnExportScript() {
-  if (window.PinnExport) return Promise.resolve(window.PinnExport);
-  if (pinnExportLoading) return pinnExportLoading;
-  pinnExportLoading = new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = 'datenexport.js?v=' + APP_VERSION;
-    s.onload = () => (window.PinnExport ? resolve(window.PinnExport) : reject(new Error('PinnExport fehlt')));
-    s.onerror = () => { pinnExportLoading = null; s.remove(); reject(new Error('datenexport.js fehlt')); };
-    document.head.appendChild(s);
-  });
-  return pinnExportLoading;
-}
-async function openPinnExport(familieId) {
-  try {
-    const px = await loadPinnExportScript();
-    px.open({ apiFetch, familie: familieId || '', wg: typeof householdType !== 'undefined' && householdType === 'wg' });
-  } catch (e) {
-    alert(pinnExportText('laden'));
-  }
-}
-// Einstellungen → System → Daten: Export nur für Admins (nicht für Gäste und Kindersicherung)
-function exportRefreshSub() {
-  const sub = document.getElementById('dataExportSub');
-  if (!sub) return;
-  const show = (isCurrentUserAdmin() || isCurrentUserMainAdmin()) && !isCurrentUserGuest()
-    && !(typeof childLockActive === 'function' && childLockActive());
-  sub.classList.toggle('hidden', !show);
-  if (!show) return;
-  document.getElementById('dataExportText').textContent = pinnExportText('text');
-  const b = document.getElementById('dataExportBtn');
-  b.textContent = pinnExportText('btn');
-  b.onclick = () => openPinnExport('');
-}
-
-// Hinweis beim Hauptadmin: Einrichtung offen bzw. gespeicherte Werte warten auf einen Neustart.
-// autoOpen: nach der Anmeldung den Assistenten von selbst öffnen, solange die Einrichtung offen ist.
-async function refreshMainAdminSetupBanner(autoOpen) {
-  const banner = document.getElementById('mainAdminSetupBanner');
-  if (!banner) return;
-  let st = null;
-  try {
-    const res = await apiFetch('/api/pinn/einrichtung', { cache: 'no-store' });
-    if (res.ok) st = await res.json();
-  } catch (e) { st = null; }
-  if (!st) { banner.classList.add('hidden'); return; } // ältere Hooks oder offline: nichts anzeigen
-  const offen = !st.fertig;
-  const neustart = !offen && !!st.neustartNoetig;
-  banner.classList.toggle('hidden', !offen && !neustart);
-  document.getElementById('mainAdminSetupBannerText').textContent = pinnSetupText(offen ? 'offen' : 'neustart');
-  const b = document.getElementById('mainAdminSetupBannerBtn');
-  b.disabled = false;
-  b.textContent = pinnSetupText(offen ? 'fortsetzen' : 'neustartBtn');
-  b.onclick = offen ? () => openPinnSetup() : async () => {
-    b.disabled = true;
-    b.textContent = pinnSetupText('neustartLaeuft');
-    try {
-      await postJson('/api/pinn/einrichtung/neustart', {});
-      const start = Date.now();
-      await new Promise(r => setTimeout(r, 5000));
-      while (Date.now() - start < 90000) {
-        try { const h = await fetch('/api/health', { cache: 'no-store' }); if (h.ok) break; } catch (e) { /* startet noch */ }
-        await new Promise(r => setTimeout(r, 1500));
-      }
-      location.reload();
-    } catch (e) {
-      alert(e.message);
-      b.disabled = false;
-      b.textContent = pinnSetupText('neustartBtn');
-    }
-  };
-  let later = false;
-  try { later = sessionStorage.getItem('pinn.einrichtung.spaeter') === '1'; } catch (e) { later = false; }
-  if (autoOpen && offen && !later) openPinnSetup();
-}
-
-function showMainAdminScreen() {
-  const u = currentUser();
-  document.getElementById('mainAdminName').textContent = u ? u.username : '';
-  document.getElementById('mainAdminScreen').classList.remove('hidden');
-  document.getElementById('mainAdminLogoutBtn').onclick = logout;
-  const setupBtn = document.getElementById('mainAdminSetupBtn');
-  setupBtn.textContent = pinnSetupText('btn');
-  setupBtn.onclick = () => openPinnSetup();
-  refreshMainAdminSetupBanner(true);
-  document.getElementById('mainAdminDevicesBtn').onclick = () => { const me = currentUser(); if (me) openDevModal(me.id, me.username); };
-  document.getElementById('mainAdminErrLogBtn').onclick = () => openErrLog();
-  errLogRefreshSummary();
-  document.getElementById('mainAdminPasswordBtn').onclick = async () => {
-    const oldPw = prompt('Aktuelles Passwort:');
-    if (!oldPw) return;
-    const newPw = prompt('Neues Passwort (mind. 8 Zeichen):');
-    if (!newPw) return;
-    if (prompt('Neues Passwort wiederholen:') !== newPw) { alert('Die beiden neuen Passwörter stimmen nicht überein.'); return; }
-    try { await changeOwnPassword(oldPw, newPw); alert('Passwort geändert.'); } catch (e) { alert(e.message); }
-  };
-  let maWohnform = 'familie';
-  const maWohnformRender = () => document.querySelectorAll('.ma-wohnform-btn').forEach(b => {
-    const on = b.dataset.maWohnform === maWohnform;
-    b.classList.toggle('active', on);
-    b.setAttribute('aria-pressed', on ? 'true' : 'false');
-  });
-  document.querySelectorAll('.ma-wohnform-btn').forEach(b => {
-    b.onclick = () => { maWohnform = b.dataset.maWohnform === 'wg' ? 'wg' : 'familie'; maWohnformRender(); };
-  });
-  maWohnformRender();
-  document.getElementById('mainAdminCreateForm').onsubmit = async (ev) => {
-    ev.preventDefault();
-    const name = document.getElementById('mainAdminNewFamily').value.trim();
-    const adminName = document.getElementById('mainAdminNewAdmin').value.trim();
-    const adminPassword = document.getElementById('mainAdminNewPassword').value;
-    if (!name || !adminName || !adminPassword) { mainAdminStatus('mainAdminCreateStatus', 'Bitte alle drei Felder ausfüllen.', false); return; }
-    const btn = document.getElementById('mainAdminCreateBtn');
-    btn.disabled = true;
-    try {
-      await postJson('/api/pinn/familien/create', { name, adminName, adminPassword, wohnform: maWohnform });
-      ['mainAdminNewFamily', 'mainAdminNewAdmin', 'mainAdminNewPassword'].forEach(id => { document.getElementById(id).value = ''; });
-      try { document.activeElement && document.activeElement.blur(); } catch (e) { /* egal */ }
-      mainAdminStatus('mainAdminCreateStatus', maWohnform === 'wg'
-        ? `WG „${name}“ mit Admin „${adminName}“ angelegt.`
-        : `Familie „${name}“ mit Admin „${adminName}“ angelegt.`, true);
-      maWohnform = 'familie';
-      maWohnformRender();
-      loadMainAdminFamilies();
-    } catch (e) {
-      mainAdminStatus('mainAdminCreateStatus', e.message, false);
-    } finally {
-      btn.disabled = false;
-    }
-  };
-  loadMainAdminFamilies();
-}
-
-async function changeOwnPassword(oldPassword, newPassword) {
-  const res = await apiFetch('/api/pinn/password', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ oldPassword, newPassword }),
-  });
-  const body = await res.json().catch(() => ({}));
-  if (!res.ok || !body.token) throw new Error(body.error || body.message || 'Passwort konnte nicht geändert werden.');
-  pb.authStore.save(body.token, body.record); // Server hat die alte Anmeldung ersetzt
-}
-
-function showForcePasswordScreen() {
-  return new Promise(resolve => {
-    const screen = document.getElementById('forcePasswordScreen');
-    const oldWrap = document.getElementById('forcePasswordOldWrap');
-    const err = document.getElementById('forcePasswordError');
-    oldWrap.classList.toggle('hidden', !!lastLoginPassword);
-    screen.classList.remove('hidden');
-    document.getElementById('forcePasswordForm').onsubmit = async (ev) => {
-      ev.preventDefault();
-      const oldPw = lastLoginPassword || document.getElementById('forcePasswordOld').value;
-      const newPw = document.getElementById('forcePasswordNew').value;
-      const repeat = document.getElementById('forcePasswordRepeat').value;
-      err.classList.add('hidden');
-      if (newPw.length < 8) { err.textContent = 'Mindestens 8 Zeichen.'; err.classList.remove('hidden'); return; }
-      if (newPw !== repeat) { err.textContent = 'Die beiden neuen Passwörter stimmen nicht überein.'; err.classList.remove('hidden'); return; }
-      try {
-        await changeOwnPassword(oldPw, newPw);
-        lastLoginPassword = null;
-        screen.classList.add('hidden');
-        resolve();
-      } catch (e) {
-        err.textContent = e.message;
-        err.classList.remove('hidden');
-        if (/aktuelle Passwort/.test(e.message)) { lastLoginPassword = null; oldWrap.classList.remove('hidden'); }
-      }
-    };
-  });
-}
-
-// Vor dem Laden der Daten sicherstellen, dass ein Profil angemeldet ist.
-async function ensureAuthenticated() {
-  // Familien-Dashboard: Profilauswahl statt Anmeldung. Ein am Dashboard geöffnetes Profil gilt nur,
-  // solange die App offen ist (sessionStorage) - danach erscheint wieder die Profilauswahl.
-  const dash = readDashboardConfig();
-  if (dash) {
-    if (ssGet(SS_DASH_ACTIVE) !== '1') pb.authStore.clear();
-    if (pb.authStore.isValid) {
-      try {
-        await pb.collection(PINN_USERS).authRefresh();
-      } catch (e) {
-        if (!(e && e.status === 0)) pb.authStore.clear(); // offline: mit der Anmeldung weiterarbeiten
-      }
-    }
-    if (pb.authStore.isValid) return;
-    ssSet(SS_DASH_ACTIVE, null);
-    ssSet(SS_DASH_KID, null);
-    const result = await showDashboardScreen(dash);
-    if (result === 'ok') return; // am Dashboard keine erzwungene Passwortänderung (Zugang per Profil/PIN)
-    if (result === 'password') {
-      await showLoginScreen();
-      ssSet(SS_DASH_ACTIVE, '1'); // gilt als Dashboard-Sitzung: danach zurück zur Profilauswahl
-      const u0 = currentUser();
-      if (u0 && u0.mustChangePassword) await showForcePasswordScreen();
-      return;
-    }
-    // 'invalid': Gerät ist kein Dashboard mehr -> ganz normale Anmeldung
-  }
-  applySessionOnlyRule();
-  if (pb.authStore.isValid) {
-    try {
-      await pb.collection(PINN_USERS).authRefresh(); // verlängert die Anmeldung bei jedem Start
-    } catch (e) {
-      if (e && e.status === 0) {
-        // offline: mit der gespeicherten Anmeldung weiterarbeiten
-      } else {
-        pb.authStore.clear();
-      }
-    }
-  }
-  if (!pb.authStore.isValid) await showLoginScreen();
-  try { sessionStorage.setItem(SS_SESSION_ALIVE, '1'); } catch (e) { /* egal */ }
-  const u = currentUser();
-  if (u && u.mustChangePassword) await showForcePasswordScreen();
-}
-
-async function logout() {
-  // Am Familien-Dashboard heißt „Abmelden“: zurück zur Profilauswahl (Daten bleiben auf dem Gerät)
-  if (isDashboardSession()) { returnToDashboard(); return; }
-  let hasPending = false;
-  try { hasPending = !!localStorage.getItem('pinn.pendingSync') || !!localStorage.getItem('pinn.outbox'); } catch (e) { /* egal */ }
-  if (hasPending && !confirm('Es gibt noch nicht synchronisierte Änderungen. Beim Abmelden gehen sie verloren. Trotzdem abmelden?')) return;
-  clearAppBadgeNow(); // abgemeldet: keine Zahl mehr am App-Symbol
-  // Dieses Gerät soll nach dem Abmelden keine persönlichen Benachrichtigungen mehr bekommen
-  try { await Promise.race([disablePushOnThisDevice(), new Promise(r => setTimeout(r, 3000))]); } catch (e) { /* egal */ }
-  // Geräteverwaltung: die Sitzung dieses Geräts auf dem Server beenden
-  remoteLogoutDone = true;
-  authExpiredHandled = true;
-  try {
-    await Promise.race([
-      apiFetch('/api/pinn/sitzungen/abmelden', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: 'dieses' }) }),
-      new Promise(r => setTimeout(r, 3000)),
-    ]);
-  } catch (e) { /* egal */ }
-  pb.authStore.clear();
-  try {
-    ['pinn.cache', 'pinn.pendingSync', 'pinn.outbox', 'pinn.aufgabenCache', 'pinn.icsCache', 'pinn.profileCache', LS_SESSION_ONLY].forEach(k => localStorage.removeItem(k));
-    sessionStorage.removeItem(SS_SESSION_ALIVE);
-  } catch (e) { /* egal */ }
-  try { if (window.caches) await caches.delete('pinn-daten'); } catch (e) { /* egal */ }
-  location.reload();
-}
-
-let accountProfiles = []; // zuletzt geladene Profile, für das "Profil verwalten"-Popup
-let profileManageId = null; // Profil, das gerade im Popup bearbeitet wird
-
-// Konto-Kopfkarte: Bild des verknüpften Familienmitglieds, sonst Anfangsbuchstabe des Profils
-function renderAccountAvatar() {
-  const el = document.getElementById('accountAvatar');
-  if (!el) return;
-  const u = currentUser();
-  const m = (typeof currentMember === 'function') ? currentMember() : null;
-  if (m) {
-    el.innerHTML = memberAvatarInnerHTML(m);
-    el.style.background = (m.photo || m.avatar) ? 'color-mix(in srgb, var(--c-pine) 12%, transparent)' : '';
-    return;
-  }
-  el.style.background = '';
-  el.textContent = u && u.username ? u.username.trim().charAt(0).toUpperCase() : '?';
-}
-
-async function renderAccountSettings() {
-  const u = currentUser();
-  const guest = isCurrentUserGuest();
-  document.getElementById('accountName').textContent = u ? u.username : '';
-  document.getElementById('accountRole').textContent = u ? '(' + roleLabel(u.rolle) + ')' : '';
-  document.getElementById('openChangePasswordBtn').classList.toggle('hidden', guest);
-  document.getElementById('accountGuestHint').classList.toggle('hidden', !guest);
-  renderAccountAvatar();
-  // Auf einem Dashboard-Gerät und für Gäste keine persönlichen Benachrichtigungen
-  const noPush = guest || isDashboardDevice();
-  document.getElementById('pushSection').classList.toggle('hidden', noPush);
-  renderDashDeviceSection();
-  renderDashPinSection();
-  renderDevicesSection();
-  const pinsLoaded = guest ? Promise.resolve(dashPinInfo) : loadDashboardPins().then(info => { renderDashPinSection(); return info; });
-  const famEl = document.getElementById('accountFamily');
-  if (famEl && u && u.familie) {
-    pb.collection('familien').getOne(u.familie).then(f => { famEl.textContent = 'Familie ' + f.name; }).catch(() => { /* offline */ });
-  }
-  const adminSection = document.getElementById('profileAdminSection');
-  adminSection.classList.toggle('hidden', !isCurrentUserAdmin());
-  const loaded = await loadFamilyProfiles();
-  renderAccountAvatar();
-  renderSettingsMemberList();
-  if (!noPush) renderPushSettings();
-  if (!isCurrentUserAdmin()) return;
-  const list = document.getElementById('profileList');
-  if (!loaded) {
-    list.innerHTML = '<p class="text-xs text-red-500">Profile konnten nicht geladen werden.</p>';
-    return;
-  }
-  accountProfiles = familyProfiles;
-  const pins = await pinsLoaded;
-  list.innerHTML = accountProfiles.map(x => {
-      const linkedMember = x.mitglied ? memberById(x.mitglied) : null;
-      const memberText = x.rolle === 'gast'
-        ? ' · nur über das Dashboard'
-        : (linkedMember ? ' · ' + escapeHtml(linkedMember.name) : ' · <span class="text-mustard">ohne Familienmitglied</span>');
-      const pinText = pins.profile && pins.profile[x.id] ? ' · 🔒 PIN' : '';
-      return `
-      <div class="flex items-center gap-2 px-3 py-2 rounded-lg border border-ink/10 bg-white">
-        <div class="flex-1 min-w-0">
-          <p class="text-sm truncate">${escapeHtml(x.username)}${x.id === u.id ? ' <span class="text-xs text-ink/40">(du)</span>' : ''}${x.mustChangePassword ? ' <span class="text-xs text-mustard">Passwort ausstehend</span>' : ''}</p>
-          <p class="text-xs text-ink/40">${roleLabel(x.rolle)}${memberText}${pinText}<span class="pdev-info" data-id="${x.id}"></span></p>
-        </div>
-        <button type="button" class="profile-manage-btn px-2 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition" data-id="${x.id}">Verwalten</button>
-      </div>`;
-    }).join('');
-  list.querySelectorAll('.profile-manage-btn').forEach(b => b.addEventListener('click', () => openProfileManageModal(b.dataset.id)));
-  renderProfileDeviceInfo();
-  renderGuestMenuSettings();
-  renderDashBgSettings();
-  renderDashDeviceList();
-}
-
-/* ---------- Passwort ändern (Popup) ---------- */
-function openChangePasswordModal() {
-  ['accountOldPassword', 'accountNewPassword', 'accountRepeatPassword'].forEach(id => { document.getElementById(id).value = ''; });
-  document.getElementById('accountStatus').textContent = '';
-  document.getElementById('changePasswordModal').classList.remove('hidden');
-  armModalSnapshot('changePasswordModal');
-}
-function closeChangePasswordModal() { document.getElementById('changePasswordModal').classList.add('hidden'); }
-document.getElementById('openChangePasswordBtn').addEventListener('click', openChangePasswordModal);
-document.getElementById('cancelChangePassword').addEventListener('click', () => attemptCloseModal('changePasswordModal', closeChangePasswordModal));
-wireModalOutsideClick('changePasswordModal', closeChangePasswordModal);
-
-document.getElementById('accountChangePasswordBtn').addEventListener('click', async () => {
-  const oldPw = document.getElementById('accountOldPassword').value;
-  const newPw = document.getElementById('accountNewPassword').value;
-  const repeat = document.getElementById('accountRepeatPassword').value;
-  const status = document.getElementById('accountStatus');
-  if (newPw.length < 8) { status.textContent = 'Das neue Passwort muss mindestens 8 Zeichen lang sein.'; return; }
-  if (newPw !== repeat) { status.textContent = 'Die beiden neuen Passwörter stimmen nicht überein.'; return; }
-  try {
-    await changeOwnPassword(oldPw, newPw);
-    status.textContent = 'Passwort geändert.';
-    armModalSnapshot('changePasswordModal'); // Feldinhalt gilt jetzt wieder als "unverändert"
-    setTimeout(closeChangePasswordModal, 800);
-  } catch (e) {
-    status.textContent = e.message;
-  }
-});
-document.getElementById('logoutBtn').addEventListener('click', logout);
-
-/* ---------- Profil verwalten (Popup): Kategorie, Passwort zurücksetzen, löschen ---------- */
-function openProfileManageModal(id) {
-  const x = accountProfiles.find(p => p.id === id);
-  if (!x) return;
-  profileManageId = id;
-  document.getElementById('profileManageName').textContent = x.username;
-  document.getElementById('profileManageRole').value = x.rolle === 'admin' ? 'admin' : 'mitglied';
-  document.getElementById('profileManageStatus').textContent = '';
-  const memberSelect = document.getElementById('profileManageMember');
-  const selectable = members.filter(m => m.id === x.mitglied || !profileForMember(m.id));
-  memberSelect.innerHTML = '<option value="">— kein Familienmitglied —</option>' +
-    selectable.map(m => `<option value="${m.id}">${escapeHtml(m.name)}</option>`).join('');
-  memberSelect.value = (x.mitglied && memberById(x.mitglied)) ? x.mitglied : '';
-  const u = currentUser();
-  const guestProfile = x.rolle === 'gast';
-  document.getElementById('profileManageGuestInfo').classList.toggle('hidden', !guestProfile);
-  document.getElementById('profileManageMemberFields').classList.toggle('hidden', guestProfile);
-  document.getElementById('profileManagePinBtn').classList.toggle('hidden', guestProfile || !(dashPinInfo.profile && dashPinInfo.profile[x.id]));
-  document.getElementById('profileManageDeleteBtn').classList.toggle('hidden', u && x.id === u.id);
-  document.getElementById('profileManageModal').classList.remove('hidden');
-}
-function closeProfileManageModal() { document.getElementById('profileManageModal').classList.add('hidden'); profileManageId = null; }
-document.getElementById('cancelProfileManage').addEventListener('click', closeProfileManageModal);
-document.getElementById('profileManageDevicesBtn').addEventListener('click', () => {
-  if (!profileManageId) return;
-  openDevModal(profileManageId, document.getElementById('profileManageName').textContent);
-});
-wireModalOutsideClick('profileManageModal', closeProfileManageModal);
-
-async function profileManageCall(url, payload, okText) {
-  const status = document.getElementById('profileManageStatus');
-  status.textContent = '';
-  const res = await apiFetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-  const body = await res.json().catch(() => ({}));
-  status.textContent = res.ok ? okText : (body.error || 'Fehler');
-  renderAccountSettings();
-  return res.ok;
-}
-
-document.getElementById('profileManageRole').addEventListener('change', (e) => {
-  if (!profileManageId) return;
-  profileManageCall('/api/pinn/users/set-role', { id: profileManageId, rolle: e.target.value }, 'Kategorie geändert.');
-});
-document.getElementById('profileManageMember').addEventListener('change', async (e) => {
-  if (!profileManageId) return;
-  if (!e.target.value && !confirm('Verknüpfung wirklich lösen? Das Familienmitglied hat dann kein Profil mehr und bekommt keine persönlichen Benachrichtigungen.')) {
-    openProfileManageModal(profileManageId);
-    return;
-  }
-  const ok = await profileManageCall('/api/pinn/users/link', { id: profileManageId, mitglied: e.target.value }, 'Familienmitglied geändert.');
-  if (ok) { await loadFamilyProfiles(); openProfileManageModal(profileManageId); }
-});
-document.getElementById('profileManagePinBtn').addEventListener('click', async () => {
-  if (!profileManageId) return;
-  const id = profileManageId;
-  const name = document.getElementById('profileManageName').textContent;
-  if (!confirm(`Dashboard-PIN von „${name}“ entfernen? Das Profil öffnet sich am Dashboard dann wieder mit einem Tipp.`)) return;
-  const ok = await profileManageCall('/api/pinn/dashboard/pin-entfernen', { id }, 'PIN entfernt.');
-  if (ok) {
-    if (dashPinInfo.profile) dashPinInfo.profile[id] = 0;
-    document.getElementById('profileManagePinBtn').classList.add('hidden');
-  }
-});
-document.getElementById('profileManageResetBtn').addEventListener('click', () => {
-  if (!profileManageId) return;
-  const name = document.getElementById('profileManageName').textContent;
-  const pwNew = prompt(`Neues Start-Passwort für "${name}" (mind. 8 Zeichen). Es muss beim nächsten Anmelden geändert werden:`);
-  if (pwNew) profileManageCall('/api/pinn/users/reset-password', { id: profileManageId, password: pwNew }, 'Passwort zurückgesetzt.');
-});
-document.getElementById('profileManageDeleteBtn').addEventListener('click', async () => {
-  if (!profileManageId) return;
-  const name = document.getElementById('profileManageName').textContent;
-  const profile = accountProfiles.find(p => p.id === profileManageId);
-  const linkedMember = profile && profile.mitglied ? memberById(profile.mitglied) : null;
-  const question = linkedMember
-    ? `Profil "${name}" wirklich löschen? Das Familienmitglied „${linkedMember.name}“ wird dabei ebenfalls entfernt.`
-    : `Profil "${name}" wirklich löschen?`;
-  if (!confirm(question)) return;
-  const ok = await profileManageCall('/api/pinn/users/delete', { id: profileManageId }, 'Profil gelöscht.');
-  if (ok) {
-    if (linkedMember) {
-      members = members.filter(m => m.id !== linkedMember.id);
-      activeMemberFilter.delete(linkedMember.id);
-      saveMembers();
-      renderMemberChips();
-      renderCalendar();
-    }
-    closeProfileManageModal();
-  }
-});
-
-/* ---------- Neues Profil = neues Familienmitglied (Profil wird dabei mit angelegt) ---------- */
-document.getElementById('openAddProfileBtn').addEventListener('click', () => openMemberModal(null));
-
-
 const PB_COLLECTION = 'familien_daten';
 const ICS_URL = '/api/pinn/kalender'; // nur nach Anmeldung abrufbar (pb_hooks/benutzer.pb.js)
 let familyRecordId = null; // wird nach dem Login gesetzt
@@ -11963,7 +11498,7 @@ function actualCurrentWeekRange() {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.89.0';
+const APP_VERSION = '1.90.0';
 
 /* ==========================================================
    Einstellungen & Konto: zwei gleich hohe Spalten (Querformat ab Tablet-Breite)
@@ -12091,81 +11626,86 @@ const APP_VERSION = '1.89.0';
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/zustand.js?v=1.89.0"></script>
-<script src="js/bedienzustand.js?v=1.89.0"></script>
-<script src="js/rezeptbilder.js?v=1.89.0"></script>
-<script src="js/zusammenfuehren.js?v=1.89.0"></script>
-<script src="js/speichern.js?v=1.89.0"></script>
-<script src="js/design.js?v=1.89.0"></script>
-<script src="js/sprache.js?v=1.89.0"></script>
-<script src="js/uebersicht.js?v=1.89.0"></script>
-<script src="js/familienkachel.js?v=1.89.0"></script>
-<script src="js/wobistdu.js?v=1.89.0"></script>
-<script src="js/geburtstagsfeier.js?v=1.89.0"></script>
-<script src="js/wetterkachel.js?v=1.89.0"></script>
-<script src="js/geburtstage.js?v=1.89.0"></script>
-<script src="js/uebersichteinstellungen.js?v=1.89.0"></script>
-<script src="js/familiensync.js?v=1.89.0"></script>
-<script src="js/kalenderquellen.js?v=1.89.0"></script>
-<script src="js/icsparser.js?v=1.89.0"></script>
-<script src="js/zeitleiste.js?v=1.89.0"></script>
-<script src="js/termindetails.js?v=1.89.0"></script>
-<script src="js/kalenderdatei.js?v=1.89.0"></script>
-<script src="js/wetter.js?v=1.89.0"></script>
-<script src="js/wohnort.js?v=1.89.0"></script>
-<script src="js/feiertage.js?v=1.89.0"></script>
-<script src="js/muellkalender.js?v=1.89.0"></script>
-<script src="js/mitglieder.js?v=1.89.0"></script>
-<script src="js/profilbild.js?v=1.89.0"></script>
-<script src="js/mitglied.js?v=1.89.0"></script>
-<script src="js/kinderseite.js?v=1.89.0"></script>
-<script src="js/kinderroutine.js?v=1.89.0"></script>
-<script src="js/sterne.js?v=1.89.0"></script>
-<script src="js/kalenderansicht.js?v=1.89.0"></script>
-<script src="js/essenplanen.js?v=1.89.0"></script>
-<script src="js/rezeptparser.js?v=1.89.0"></script>
-<script src="js/rezeptdialog.js?v=1.89.0"></script>
-<script src="js/rezeptbild.js?v=1.89.0"></script>
-<script src="js/rezeptmengen.js?v=1.89.0"></script>
-<script src="js/einkauf.js?v=1.89.0"></script>
-<script src="js/einkaufslisten.js?v=1.89.0"></script>
-<script src="js/einkaufseingabe.js?v=1.89.0"></script>
-<script src="js/rezepte.js?v=1.89.0"></script>
-<script src="js/offline.js?v=1.89.0"></script>
-<script src="js/aufgabenextras.js?v=1.89.0"></script>
-<script src="js/appbadge.js?v=1.89.0"></script>
-<script src="js/reisen.js?v=1.89.0"></script>
-<script src="js/aufgabendaten.js?v=1.89.0"></script>
-<script src="js/haushalt.js?v=1.89.0"></script>
-<script src="js/reihum.js?v=1.89.0"></script>
-<script src="js/aufgaben.js?v=1.89.0"></script>
-<script src="js/smarthome.js?v=1.89.0"></script>
-<script src="js/sprachsteuerung.js?v=1.89.0"></script>
-<script src="js/termine.js?v=1.89.0"></script>
-<script src="js/ansichten.js?v=1.89.0"></script>
-<script src="js/versionspruefung.js?v=1.89.0"></script>
-<script src="js/sicherungen.js?v=1.89.0"></script>
-<script src="js/geraete.js?v=1.89.0"></script>
-<script src="js/fehlerprotokoll.js?v=1.89.0"></script>
-<script src="js/versionslog.js?v=1.89.0"></script>
-<script src="js/einstellungen.js?v=1.89.0"></script>
-<script src="js/kalenderkonto.js?v=1.89.0"></script>
-<script src="js/finanzen.js?v=1.89.0"></script>
-<script src="js/kassen.js?v=1.89.0"></script>
-<script src="js/vorrat.js?v=1.89.0"></script>
-<script src="js/vorrat2.js?v=1.89.0"></script>
-<script src="js/sparen.js?v=1.89.0"></script>
-<script src="js/vertraege.js?v=1.89.0"></script>
-<script src="js/fahrzeuge.js?v=1.89.0"></script>
-<script src="js/zuhause.js?v=1.89.0"></script>
-<script src="js/dokumente.js?v=1.89.0"></script>
-<script src="js/pdflesen.js?v=1.89.0"></script>
-<script src="js/appstart.js?v=1.89.0"></script>
-<script src="js/pinnwand.js?v=1.89.0"></script>
-<script src="js/listen.js?v=1.89.0"></script>
-<script src="js/familie.js?v=1.89.0"></script>
-<script src="js/hinweise.js?v=1.89.0"></script>
-<script src="js/ausblick.js?v=1.89.0"></script>
+<script src="js/exportieren.js?v=1.90.0"></script>
+<script src="js/hauptadminseite.js?v=1.90.0"></script>
+<script src="js/anmeldung.js?v=1.90.0"></script>
+<script src="js/konto.js?v=1.90.0"></script>
+<script src="js/profilverwaltung.js?v=1.90.0"></script>
+<script src="js/zustand.js?v=1.90.0"></script>
+<script src="js/bedienzustand.js?v=1.90.0"></script>
+<script src="js/rezeptbilder.js?v=1.90.0"></script>
+<script src="js/zusammenfuehren.js?v=1.90.0"></script>
+<script src="js/speichern.js?v=1.90.0"></script>
+<script src="js/design.js?v=1.90.0"></script>
+<script src="js/sprache.js?v=1.90.0"></script>
+<script src="js/uebersicht.js?v=1.90.0"></script>
+<script src="js/familienkachel.js?v=1.90.0"></script>
+<script src="js/wobistdu.js?v=1.90.0"></script>
+<script src="js/geburtstagsfeier.js?v=1.90.0"></script>
+<script src="js/wetterkachel.js?v=1.90.0"></script>
+<script src="js/geburtstage.js?v=1.90.0"></script>
+<script src="js/uebersichteinstellungen.js?v=1.90.0"></script>
+<script src="js/familiensync.js?v=1.90.0"></script>
+<script src="js/kalenderquellen.js?v=1.90.0"></script>
+<script src="js/icsparser.js?v=1.90.0"></script>
+<script src="js/zeitleiste.js?v=1.90.0"></script>
+<script src="js/termindetails.js?v=1.90.0"></script>
+<script src="js/kalenderdatei.js?v=1.90.0"></script>
+<script src="js/wetter.js?v=1.90.0"></script>
+<script src="js/wohnort.js?v=1.90.0"></script>
+<script src="js/feiertage.js?v=1.90.0"></script>
+<script src="js/muellkalender.js?v=1.90.0"></script>
+<script src="js/mitglieder.js?v=1.90.0"></script>
+<script src="js/profilbild.js?v=1.90.0"></script>
+<script src="js/mitglied.js?v=1.90.0"></script>
+<script src="js/kinderseite.js?v=1.90.0"></script>
+<script src="js/kinderroutine.js?v=1.90.0"></script>
+<script src="js/sterne.js?v=1.90.0"></script>
+<script src="js/kalenderansicht.js?v=1.90.0"></script>
+<script src="js/essenplanen.js?v=1.90.0"></script>
+<script src="js/rezeptparser.js?v=1.90.0"></script>
+<script src="js/rezeptdialog.js?v=1.90.0"></script>
+<script src="js/rezeptbild.js?v=1.90.0"></script>
+<script src="js/rezeptmengen.js?v=1.90.0"></script>
+<script src="js/einkauf.js?v=1.90.0"></script>
+<script src="js/einkaufslisten.js?v=1.90.0"></script>
+<script src="js/einkaufseingabe.js?v=1.90.0"></script>
+<script src="js/rezepte.js?v=1.90.0"></script>
+<script src="js/offline.js?v=1.90.0"></script>
+<script src="js/aufgabenextras.js?v=1.90.0"></script>
+<script src="js/appbadge.js?v=1.90.0"></script>
+<script src="js/reisen.js?v=1.90.0"></script>
+<script src="js/aufgabendaten.js?v=1.90.0"></script>
+<script src="js/haushalt.js?v=1.90.0"></script>
+<script src="js/reihum.js?v=1.90.0"></script>
+<script src="js/aufgaben.js?v=1.90.0"></script>
+<script src="js/smarthome.js?v=1.90.0"></script>
+<script src="js/sprachsteuerung.js?v=1.90.0"></script>
+<script src="js/termine.js?v=1.90.0"></script>
+<script src="js/ansichten.js?v=1.90.0"></script>
+<script src="js/versionspruefung.js?v=1.90.0"></script>
+<script src="js/sicherungen.js?v=1.90.0"></script>
+<script src="js/geraete.js?v=1.90.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.90.0"></script>
+<script src="js/versionslog.js?v=1.90.0"></script>
+<script src="js/einstellungen.js?v=1.90.0"></script>
+<script src="js/kalenderkonto.js?v=1.90.0"></script>
+<script src="js/finanzen.js?v=1.90.0"></script>
+<script src="js/kassen.js?v=1.90.0"></script>
+<script src="js/vorrat.js?v=1.90.0"></script>
+<script src="js/vorrat2.js?v=1.90.0"></script>
+<script src="js/sparen.js?v=1.90.0"></script>
+<script src="js/vertraege.js?v=1.90.0"></script>
+<script src="js/fahrzeuge.js?v=1.90.0"></script>
+<script src="js/zuhause.js?v=1.90.0"></script>
+<script src="js/dokumente.js?v=1.90.0"></script>
+<script src="js/pdflesen.js?v=1.90.0"></script>
+<script src="js/appstart.js?v=1.90.0"></script>
+<script src="js/pinnwand.js?v=1.90.0"></script>
+<script src="js/listen.js?v=1.90.0"></script>
+<script src="js/familie.js?v=1.90.0"></script>
+<script src="js/hinweise.js?v=1.90.0"></script>
+<script src="js/ausblick.js?v=1.90.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)
