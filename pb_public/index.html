@@ -913,7 +913,7 @@ window.PINN_LANGUAGES = [
   // Startprüfung: fehlt eine selbst gehostete Datei, erscheint ein klarer Hinweis statt einer
   // leeren Seite ohne funktionierende Buttons.
   // Teile der App unter pb_public/js/ – jede Datei meldet sich am Ende in window.PINN_PARTS an
-  var PINN_APP_PARTS = ['dashboard', 'dashboardhintergrund', 'profilauswahl', 'pineingabe', 'dashboardsitzung', 'dashboardkonto', 'familienverwalten', 'einrichten', 'exportieren', 'hauptadminseite', 'anmeldung', 'konto', 'profilverwaltung', 'zustand', 'bedienzustand', 'rezeptbilder', 'zusammenfuehren', 'speichern', 'design', 'sprache', 'uebersicht', 'familienkachel', 'wobistdu', 'geburtstagsfeier', 'wetterkachel', 'geburtstage', 'uebersichteinstellungen', 'familiensync', 'kalenderquellen', 'icsparser', 'zeitleiste', 'termindetails', 'kalenderdatei', 'wetter', 'wohnort', 'feiertage', 'muellkalender', 'mitglieder', 'profilbild', 'mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
+  var PINN_APP_PARTS = ['push', 'serverzugriff', 'tastatur', 'anmeldemaske', 'dashboard', 'dashboardhintergrund', 'profilauswahl', 'pineingabe', 'dashboardsitzung', 'dashboardkonto', 'familienverwalten', 'einrichten', 'exportieren', 'hauptadminseite', 'anmeldung', 'konto', 'profilverwaltung', 'zustand', 'bedienzustand', 'rezeptbilder', 'zusammenfuehren', 'speichern', 'design', 'sprache', 'uebersicht', 'familienkachel', 'wobistdu', 'geburtstagsfeier', 'wetterkachel', 'geburtstage', 'uebersichteinstellungen', 'familiensync', 'kalenderquellen', 'icsparser', 'zeitleiste', 'termindetails', 'kalenderdatei', 'wetter', 'wohnort', 'feiertage', 'muellkalender', 'mitglieder', 'profilbild', 'mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
   window.addEventListener('DOMContentLoaded', function () {
     var missing = [];
     if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – der PocketBase-Client (ohne ihn funktioniert nichts)');
@@ -8887,1009 +8887,6 @@ function currentMember() {
   return mid ? (memberById(mid) || null) : null;
 }
 
-/* ==========================================================
-   Push-Benachrichtigungen (persönlich je Profil, siehe pb_hooks/pinn-push.js)
-   ========================================================== */
-let pushConfig = null;
-let pushRegPromise = null;
-let pushLastError = '';
-let pushAutoSyncEnabled = false; // erst nach dem Start der App (nicht beim Hauptadmin)
-let pushLastAutoSync = 0;
-let pushSyncRunning = null;
-
-// Merkt sich auf dem Gerät, dass Benachrichtigungen gewünscht sind. Geht die Anmeldung verloren
-// (Server-Neustart, Update, neuer Server-Schlüssel, Browser tauscht die Push-Adresse), meldet die
-// App das Gerät beim nächsten Öffnen selbst wieder an. Nur „Deaktivieren“ oder Abmelden löscht das.
-const LS_PUSH_WANTED = 'pinn.pushGewuenscht';
-function pushWanted() {
-  try { return localStorage.getItem(LS_PUSH_WANTED) === '1'; } catch (e) { return false; }
-}
-function setPushWanted(on) {
-  try {
-    if (on) localStorage.setItem(LS_PUSH_WANTED, '1');
-    else localStorage.removeItem(LS_PUSH_WANTED);
-  } catch (e) { /* egal */ }
-}
-
-function pushSupported() {
-  return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
-}
-function isStandaloneApp() {
-  return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
-}
-function isAppleMobile() {
-  return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-}
-function isAndroidDevice() {
-  return /Android/i.test(navigator.userAgent || '');
-}
-// Android/Chrome: Installation als App anbieten. Chrome meldet „beforeinstallprompt“, sobald pinn.
-// installierbar ist (Manifest mit Symbolen, Service Worker, HTTPS) – das Ereignis wird gemerkt und
-// erst auf Tipp in den Einstellungen → Benachrichtigungen ausgelöst.
-let pwaInstallPrompt = null;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  pwaInstallPrompt = e;
-  updateAndroidInstallUi();
-});
-window.addEventListener('appinstalled', () => {
-  pwaInstallPrompt = null;
-  updateAndroidInstallUi();
-});
-function updateAndroidInstallUi() {
-  const box = document.getElementById('pushAndroidInstallBox');
-  if (!box) return;
-  const show = isAndroidDevice() && !isStandaloneApp() && pushSupported();
-  box.classList.toggle('hidden', !show);
-  document.getElementById('pushAndroidInstallBtn').classList.toggle('hidden', !show || !pwaInstallPrompt);
-  document.getElementById('pushAndroidInstallManual').classList.toggle('hidden', !show || !!pwaInstallPrompt);
-}
-function base64UrlToUint8Array(b64) {
-  const padded = (b64 + '='.repeat((4 - b64.length % 4) % 4)).replace(/-/g, '+').replace(/_/g, '/');
-  const raw = atob(padded);
-  const out = new Uint8Array(raw.length);
-  for (let i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
-  return out;
-}
-function deviceLabel() {
-  const ua = navigator.userAgent;
-  if (/iPhone/.test(ua)) return 'iPhone';
-  if (/iPad/.test(ua) || isAppleMobile()) return 'iPad';
-  if (/Android/.test(ua)) return 'Android';
-  if (/Macintosh/.test(ua)) return 'Mac';
-  if (/Windows/.test(ua)) return 'Windows';
-  return 'Browser';
-}
-function pushWithTimeout(promise, ms, message) {
-  let timer = null;
-  return Promise.race([
-    promise,
-    new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(message)), ms); }),
-  ]).finally(() => clearTimeout(timer));
-}
-function sameKey(a, b) {
-  if (!a || !b) return false;
-  const x = new Uint8Array(a), y = new Uint8Array(b);
-  if (x.length !== y.length) return false;
-  for (let i = 0; i < x.length; i++) if (x[i] !== y[i]) return false;
-  return true;
-}
-
-// Service Worker genau einmal registrieren und auf einen AKTIVEN Worker warten.
-// iOS lehnt pushManager.subscribe() ab, solange der Worker noch nicht aktiv ist.
-function getPushRegistration() {
-  if (!('serviceWorker' in navigator)) return Promise.reject(new Error('Dieses Gerät unterstützt keine Hintergrunddienste (Service Worker).'));
-  if (!pushRegPromise) {
-    pushRegPromise = (async () => {
-      let reg = null;
-      try { reg = await navigator.serviceWorker.getRegistration('/'); } catch (e) { reg = null; }
-      if (!reg) reg = await navigator.serviceWorker.register('/sw.js', { scope: '/', updateViaCache: 'none' });
-      if (reg.active) return reg;
-      return await pushWithTimeout(navigator.serviceWorker.ready, 15000,
-        'Der Hintergrunddienst von pinn. startet nicht. Bitte pinn. komplett schließen (vom Bildschirmrand wegwischen) und neu öffnen.');
-    })().catch(e => { pushRegPromise = null; throw e; });
-  }
-  return pushRegPromise;
-}
-async function currentPushSubscription() {
-  if (!pushSupported()) return null;
-  try {
-    const reg = await getPushRegistration();
-    if (!reg || !reg.pushManager) return null;
-    return await reg.pushManager.getSubscription();
-  } catch (e) {
-    return null;
-  }
-}
-async function sendSubscriptionToServer(sub) {
-  const j = sub.toJSON();
-  await postJson('/api/pinn/push/abo', { endpoint: j.endpoint, keys: j.keys, geraet: deviceLabel() });
-  // Dem Service Worker die aktuelle Adresse mitteilen (für einen späteren Adresswechsel)
-  try {
-    const reg = await getPushRegistration();
-    const worker = (reg && reg.active) || navigator.serviceWorker.controller;
-    if (worker) worker.postMessage({ type: 'pinn-endpoint', endpoint: j.endpoint });
-  } catch (e) { /* egal */ }
-}
-async function loadPushConfig() {
-  const res = await apiFetch('/api/pinn/push/config', { cache: 'no-store' });
-  pushConfig = await res.json();
-  return pushConfig;
-}
-
-// Funktioniert mit der Promise-Variante und der alten Callback-Variante (ältere Safari-Versionen)
-function requestNotificationPermission() {
-  return new Promise(resolve => {
-    let done = false;
-    const finish = v => { if (!done) { done = true; resolve(v || Notification.permission); } };
-    try {
-      const p = Notification.requestPermission(finish);
-      if (p && typeof p.then === 'function') p.then(finish, () => finish(Notification.permission));
-    } catch (e) {
-      finish(Notification.permission);
-    }
-  });
-}
-
-function pushSubscribeErrorText(e) {
-  const name = (e && e.name) || '';
-  const msg = (e && e.message) || String(e || '');
-  if (name === 'NotAllowedError') {
-    if (isAppleMobile()) return 'iOS hat die Anmeldung abgelehnt. Bitte in den iPhone-Einstellungen → Mitteilungen → pinn. „Mitteilungen erlauben“ einschalten und erneut tippen.';
-    if (isAndroidDevice()) return 'Android hat die Anmeldung abgelehnt. Bitte in Chrome auf das Symbol links neben der Adresse tippen → Berechtigungen → Benachrichtigungen erlauben und erneut tippen.';
-    return 'Benachrichtigungen wurden nicht erlaubt.';
-  }
-  if (name === 'InvalidStateError' || name === 'AbortError') {
-    return 'Die Anmeldung beim Push-Dienst ist fehlgeschlagen (' + name + ': ' + msg + '). Bitte pinn. komplett schließen, neu öffnen und erneut tippen.';
-  }
-  return 'Anmeldung beim Push-Dienst fehlgeschlagen' + (name ? ' (' + name + ')' : '') + ': ' + msg;
-}
-
-async function enablePushOnThisDevice() {
-  // Erlaubnis zuerst anfragen - Safari verlangt, dass das direkt auf den Tipp folgt
-  const permission = await requestNotificationPermission();
-  if (permission === 'denied') {
-    throw new Error(isAppleMobile()
-      ? 'Benachrichtigungen sind für pinn. blockiert. Bitte in den iPhone-Einstellungen → Mitteilungen → pinn. „Mitteilungen erlauben“ einschalten.'
-      : (isAndroidDevice()
-        ? 'Benachrichtigungen sind für pinn. blockiert. Bitte in Chrome auf das Symbol links neben der Adresse tippen → Berechtigungen → Benachrichtigungen erlauben (installierte App: Android-Einstellungen → Apps → pinn. → Benachrichtigungen).'
-        : 'Benachrichtigungen sind für pinn. blockiert. Bitte in den Browser-Einstellungen erlauben.'));
-  }
-  if (permission !== 'granted') throw new Error('Die Abfrage wurde geschlossen, ohne zu erlauben. Bitte erneut tippen und „Erlauben“ wählen.');
-
-  if (!pushConfig || !pushConfig.publicKey) await loadPushConfig();
-  if (!pushConfig.available || !pushConfig.publicKey) throw new Error(pushConfig.message || 'Push ist auf dem Server nicht verfügbar.');
-
-  const reg = await getPushRegistration();
-  if (!reg || !reg.pushManager) throw new Error('Dieses Gerät unterstützt keine Push-Benachrichtigungen.');
-  const key = base64UrlToUint8Array(pushConfig.publicKey);
-
-  let sub = null;
-  try { sub = await reg.pushManager.getSubscription(); } catch (e) { sub = null; }
-  if (sub && sub.options && sub.options.applicationServerKey && !sameKey(sub.options.applicationServerKey, key)) {
-    // Server-Schlüssel hat sich geändert (z. B. Schlüsseldatei neu erzeugt) -> neu anmelden
-    try { await sub.unsubscribe(); } catch (e) { /* egal */ }
-    sub = null;
-  }
-  if (!sub) {
-    try {
-      sub = await pushWithTimeout(
-        reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key }),
-        20000, 'Der Push-Dienst von Apple/Google antwortet nicht. Bitte Internetverbindung prüfen und erneut tippen.');
-    } catch (e) {
-      throw new Error(e && e.name ? pushSubscribeErrorText(e) : (e.message || String(e)));
-    }
-  }
-  if (!sub) throw new Error('Das Gerät hat keine Push-Adresse geliefert. Bitte pinn. neu öffnen und erneut tippen.');
-
-  setPushWanted(true);
-  try {
-    await sendSubscriptionToServer(sub);
-  } catch (e) {
-    throw new Error('Das Gerät konnte nicht beim pinn.-Server angemeldet werden: ' + e.message);
-  }
-  return sub;
-}
-async function disablePushOnThisDevice() {
-  setPushWanted(false);
-  const sub = await currentPushSubscription();
-  if (!sub) return;
-  try { await postJson('/api/pinn/push/abo-loeschen', { endpoint: sub.endpoint }); } catch (e) { /* egal */ }
-  try { await sub.unsubscribe(); } catch (e) { /* egal */ }
-}
-// Beim App-Start und beim Zurückkehren in die App: Service Worker aktualisieren, das Abo dem
-// angemeldeten Profil zuordnen und - falls gewünscht, aber verloren gegangen - neu anmelden.
-// Ergebnis: das aktuelle Abo oder null.
-function syncPushSubscription() {
-  if (!pushSupported() || !window.isSecureContext) return Promise.resolve(null);
-  if (pushSyncRunning) return pushSyncRunning;
-  pushSyncRunning = (async () => {
-    try {
-      const reg = await getPushRegistration();
-      if (!reg || !reg.pushManager) return null;
-      try { reg.update().catch(() => { /* egal */ }); } catch (e) { /* egal */ }
-      let sub = null;
-      try { sub = await reg.pushManager.getSubscription(); } catch (e) { sub = null; }
-      if (sub) setPushWanted(true); // bereits aktivierte Geräte merken
-      if (!pushWanted() || Notification.permission === 'denied') return sub;
-
-      let cfg = null;
-      try { cfg = await loadPushConfig(); } catch (e) { cfg = null; }
-      const serverKey = cfg && cfg.available && cfg.publicKey ? base64UrlToUint8Array(cfg.publicKey) : null;
-      if (sub && serverKey && sub.options && sub.options.applicationServerKey && !sameKey(sub.options.applicationServerKey, serverKey)) {
-        // Der Server hat einen neuen Schlüssel -> Gerät mit dem neuen Schlüssel neu anmelden
-        try { await sub.unsubscribe(); } catch (e) { /* egal */ }
-        sub = null;
-      }
-      if (!sub && serverKey && Notification.permission === 'granted') {
-        try {
-          sub = await pushWithTimeout(reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: serverKey }),
-            20000, 'Zeitüberschreitung');
-        } catch (e) { sub = null; }
-      }
-      if (sub) await sendSubscriptionToServer(sub);
-      return sub;
-    } catch (e) {
-      return null; // nächster Versuch beim nächsten Öffnen
-    }
-  })().finally(() => { pushSyncRunning = null; pushLastAutoSync = Date.now(); });
-  return pushSyncRunning;
-}
-// Beim Zurückkehren in die App / wenn das Netz wieder da ist (höchstens alle 10 Minuten)
-function syncPushSubscriptionSoon() {
-  if (!pushAutoSyncEnabled || !pb.authStore.isValid) return;
-  if (Date.now() - pushLastAutoSync < 10 * 60 * 1000) return;
-  pushLastAutoSync = Date.now();
-  syncPushSubscription();
-}
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') syncPushSubscriptionSoon(); });
-window.addEventListener('online', () => { pushLastAutoSync = 0; syncPushSubscriptionSoon(); });
-
-function fillPushSettingsForm(st) {
-  document.getElementById('pushOptTermine').checked = !!st.termine;
-  document.getElementById('pushOptVorlauf').value = String(st.vorlauf);
-  document.getElementById('pushOptTages').checked = !!st.tagesuebersicht;
-  document.getElementById('pushOptUhrzeit').value = st.uhrzeit || '07:00';
-  document.getElementById('pushOptZuweisungen').checked = !!st.zuweisungen;
-  document.getElementById('pushOptOhneZuweisung').checked = !!st.ohneZuweisung;
-  document.getElementById('pushOptAlleErledigt').checked = st.alleErledigt !== false;
-  document.getElementById('pushOptKindAufgabe').checked = st.kindAufgabe !== false;
-  document.getElementById('pushOptKindAlle').checked = st.kindAlle !== false;
-  document.getElementById('pushOptPwMich').checked = st.pwMich !== false;
-  document.getElementById('pushOptPwAlle').checked = st.pwAlle !== false;
-  document.getElementById('pushOptPwAntworten').checked = st.pwAntworten !== false;
-  document.getElementById('pushOptPwErinnerung').checked = st.pwErinnerung !== false;
-  document.getElementById('pushOptVorrat').checked = st.vorrat !== false;
-  document.getElementById('pushOptMuell').checked = st.muell !== false;
-  document.getElementById('pushOptMuellZeit').value = st.muellZeit || '18:00';
-  document.getElementById('pushOptMuellZeit').disabled = st.muell === false;
-  document.getElementById('pushOptVorlauf').disabled = !st.termine;
-  document.getElementById('pushOptUhrzeit').disabled = !st.tagesuebersicht;
-}
-function readPushSettingsForm() {
-  return {
-    termine: document.getElementById('pushOptTermine').checked,
-    vorlauf: parseInt(document.getElementById('pushOptVorlauf').value, 10),
-    tagesuebersicht: document.getElementById('pushOptTages').checked,
-    uhrzeit: document.getElementById('pushOptUhrzeit').value || '07:00',
-    zuweisungen: document.getElementById('pushOptZuweisungen').checked,
-    ohneZuweisung: document.getElementById('pushOptOhneZuweisung').checked,
-    animation: !(pushConfig && pushConfig.settings && pushConfig.settings.animation === false), // wird unter Einstellungen → Aufgaben-Animation eingestellt
-    alleErledigt: document.getElementById('pushOptAlleErledigt').checked,
-    kindAufgabe: document.getElementById('pushOptKindAufgabe').checked,
-    kindAlle: document.getElementById('pushOptKindAlle').checked,
-    pwMich: document.getElementById('pushOptPwMich').checked,
-    pwAlle: document.getElementById('pushOptPwAlle').checked,
-    pwAntworten: document.getElementById('pushOptPwAntworten').checked,
-    pwErinnerung: document.getElementById('pushOptPwErinnerung').checked,
-    vorrat: document.getElementById('pushOptVorrat').checked,
-    muell: document.getElementById('pushOptMuell').checked,
-    muellZeit: document.getElementById('pushOptMuellZeit').value || '18:00',
-  };
-}
-
-async function renderPushSettings(knownSub) {
-  const status = document.getElementById('pushStatus');
-  const who = document.getElementById('pushWhoText');
-  const enableBtn = document.getElementById('pushEnableBtn');
-  const disableBtn = document.getElementById('pushDisableBtn');
-  const testBtn = document.getElementById('pushTestBtn');
-  const box = document.getElementById('pushSettingsBox');
-  const iosHint = document.getElementById('pushIosHint');
-  const androidBrowserHint = document.getElementById('pushAndroidBrowserHint');
-  const androidBatteryHint = document.getElementById('pushAndroidBatteryHint');
-  [enableBtn, disableBtn, testBtn].forEach(b => b.classList.add('hidden'));
-  [androidBrowserHint, androidBatteryHint].forEach(el => el.classList.add('hidden'));
-  status.classList.remove('text-red-500');
-  updateAndroidInstallUi();
-
-  const me = currentMember();
-  who.textContent = me
-    ? `Persönlich für ${me.name}: deine Termine, Aufgaben und Zuweisungen.`
-    : 'Dein Profil ist mit keinem Familienmitglied verknüpft – persönliche Termine und Aufgaben können deshalb nicht zugeordnet werden.';
-
-  try {
-    await loadPushConfig();
-  } catch (e) {
-    status.textContent = 'Keine Verbindung zum Server.';
-    return;
-  }
-  fillPushSettingsForm(pushConfig.settings || {});
-  box.classList.remove('hidden');
-  if (!pushConfig.available) {
-    status.textContent = 'Auf dem Server nicht verfügbar: ' + (pushConfig.message || 'unbekannter Fehler');
-    return;
-  }
-  if (!window.isSecureContext) {
-    status.textContent = 'Nur über die HTTPS-Adresse von pinn. möglich (nicht über http://…:8090).';
-    return;
-  }
-  if (!pushSupported()) {
-    const needsHomeScreen = isAppleMobile() && !isStandaloneApp();
-    iosHint.classList.toggle('hidden', !needsHomeScreen);
-    androidBrowserHint.classList.toggle('hidden', !isAndroidDevice());
-    status.textContent = needsHomeScreen
-      ? 'Auf diesem Gerät noch nicht möglich.'
-      : (isAppleMobile() ? 'Dieses iPhone/iPad unterstützt noch keine Benachrichtigungen für Web-Apps – bitte auf iOS 16.4 oder neuer aktualisieren.' : 'Dieser Browser unterstützt keine Push-Benachrichtigungen.');
-    return;
-  }
-  iosHint.classList.add('hidden');
-  androidBatteryHint.classList.toggle('hidden', !isAndroidDevice());
-
-  // Abo unabhängig von Notification.permission prüfen - iOS meldet die Erlaubnis in Web-Apps
-  // nicht immer zuverlässig.
-  let sub = knownSub || (Notification.permission !== 'denied' ? await currentPushSubscription() : null);
-  let lostSub = false;
-  if (!sub && pushWanted() && Notification.permission === 'granted') {
-    // Gewünscht, aber die Anmeldung ist verloren gegangen -> still neu anmelden
-    sub = await syncPushSubscription();
-    if (sub) { try { await loadPushConfig(); } catch (e) { /* egal */ } }
-    else lostSub = true;
-  }
-
-  if (sub) {
-    // Das Gerät ist angemeldet - sicherstellen, dass der Server es auch kennt (wurde es dort
-    // entfernt, z. B. nach einer Absage des Push-Dienstes, wird es hier wieder eingetragen).
-    let serverErr = '';
-    try {
-      await sendSubscriptionToServer(sub);
-      await loadPushConfig();
-    } catch (e) {
-      serverErr = e.message || 'unbekannter Fehler';
-    }
-    const others = Math.max(0, (pushConfig.geraete || 0) - 1);
-    if (serverErr) {
-      status.textContent = 'Auf diesem Gerät eingeschaltet, aber nicht beim pinn.-Server angemeldet: ' + serverErr;
-      status.classList.add('text-red-500');
-      enableBtn.classList.remove('hidden');
-      disableBtn.classList.remove('hidden');
-      return;
-    }
-    if (pushLastError) {
-      status.textContent = pushLastError;
-      status.classList.add('text-red-500');
-    } else {
-      status.textContent = 'Auf diesem Gerät aktiv' + (others ? ` (und auf ${others} weiteren Gerät${others === 1 ? '' : 'en'}).` : '.');
-    }
-    disableBtn.classList.remove('hidden');
-    testBtn.classList.remove('hidden');
-    return;
-  }
-  const others = Math.max(0, pushConfig.geraete || 0);
-  if (Notification.permission === 'denied') {
-    status.textContent = isAppleMobile()
-      ? 'Benachrichtigungen sind für pinn. blockiert. Bitte in den iPhone-Einstellungen → Mitteilungen → pinn. „Mitteilungen erlauben“ einschalten und pinn. neu öffnen.'
-      : (isAndroidDevice()
-        ? 'Benachrichtigungen sind für pinn. blockiert. Bitte in Chrome auf das Symbol links neben der Adresse tippen → Berechtigungen → Benachrichtigungen erlauben (installierte App: Android-Einstellungen → Apps → pinn. → Benachrichtigungen) und pinn. neu öffnen.'
-        : 'Benachrichtigungen sind für pinn. auf diesem Gerät blockiert. Bitte in den Browser-Einstellungen erlauben.');
-    status.classList.add('text-red-500');
-    return;
-  }
-  if (pushLastError) {
-    status.textContent = pushLastError;
-    status.classList.add('text-red-500');
-  } else if (lostSub) {
-    status.textContent = 'Die Anmeldung dieses Geräts wurde vom System zurückgesetzt. Bitte einmal „Auf diesem Gerät aktivieren“ tippen.';
-    status.classList.add('text-red-500');
-  } else {
-    status.textContent = 'Auf diesem Gerät nicht aktiv' + (others ? ` (aktiv auf ${others} anderen Gerät${others === 1 ? '' : 'en'}).` : '.');
-  }
-  enableBtn.classList.remove('hidden');
-  if (others) testBtn.classList.remove('hidden');
-}
-
-document.getElementById('pushEnableBtn').addEventListener('click', async () => {
-  const status = document.getElementById('pushStatus');
-  const btn = document.getElementById('pushEnableBtn');
-  btn.disabled = true;
-  status.classList.remove('text-red-500');
-  status.textContent = 'Wird aktiviert …';
-  try {
-    const sub = await enablePushOnThisDevice();
-    pushLastError = '';
-    await renderPushSettings(sub);
-    if (!pushLastError) {
-      status.classList.remove('text-red-500');
-    }
-  } catch (e) {
-    pushLastError = (e && e.message) || 'Aktivieren fehlgeschlagen.';
-    await renderPushSettings();
-  } finally {
-    btn.disabled = false;
-  }
-});
-document.getElementById('pushAndroidInstallBtn').addEventListener('click', async () => {
-  if (!pwaInstallPrompt) { updateAndroidInstallUi(); return; }
-  const p = pwaInstallPrompt;
-  pwaInstallPrompt = null;
-  try {
-    p.prompt();
-    await p.userChoice;
-  } catch (e) { /* abgebrochen */ }
-  updateAndroidInstallUi();
-});
-document.getElementById('pushDisableBtn').addEventListener('click', async () => {
-  pushLastError = '';
-  await disablePushOnThisDevice();
-  renderPushSettings();
-});
-document.getElementById('pushTestBtn').addEventListener('click', async () => {
-  const status = document.getElementById('pushStatus');
-  const btn = document.getElementById('pushTestBtn');
-  btn.disabled = true;
-  status.classList.remove('text-red-500');
-  status.textContent = 'Test wird gesendet …';
-  try {
-    let sub = await currentPushSubscription();
-    // Gerät vor dem Test beim Server (neu) eintragen
-    if (sub) await sendSubscriptionToServer(sub);
-    let r = null;
-    try {
-      r = await postJson('/api/pinn/push/test', {});
-    } catch (e) {
-      // Push-Dienst kennt die alte Geräte-Adresse nicht mehr -> neu anmelden und nochmal senden
-      if (sub && /nicht mehr angemeldet|kein Gerät angemeldet|neu aktivieren/i.test(e.message || '')) {
-        status.textContent = 'Gerät wird neu angemeldet …';
-        try { await postJson('/api/pinn/push/abo-loeschen', { endpoint: sub.endpoint }); } catch (e2) { /* egal */ }
-        try { await sub.unsubscribe(); } catch (e2) { /* egal */ }
-        sub = await enablePushOnThisDevice();
-        status.textContent = 'Test wird gesendet …';
-        r = await postJson('/api/pinn/push/test', {});
-      } else {
-        throw e;
-      }
-    }
-    pushLastError = '';
-    status.textContent = `Test gesendet an ${r.sent} Gerät${r.sent === 1 ? '' : 'e'}.` + (r.fehler && r.fehler.length ? ' Hinweis: ' + r.fehler.join(' | ') : '');
-  } catch (e) {
-    status.textContent = e.message;
-    status.classList.add('text-red-500');
-  } finally {
-    btn.disabled = false;
-  }
-});
-let pushSettingsSaveTimer = null;
-document.querySelectorAll('.push-opt').forEach(el => el.addEventListener('change', () => {
-  const st = readPushSettingsForm();
-  fillPushSettingsForm(st);
-  if (pushConfig) pushConfig.settings = { ...(pushConfig.settings || {}), ...st };
-  const info = document.getElementById('pushSettingsStatus');
-  clearTimeout(pushSettingsSaveTimer);
-  pushSettingsSaveTimer = setTimeout(async () => {
-    try {
-      const r = await postJson('/api/pinn/push/einstellungen', { settings: st });
-      if (pushConfig) pushConfig.settings = r.settings;
-      info.textContent = 'Gespeichert.';
-      setTimeout(() => { info.textContent = ''; }, 1500);
-    } catch (e) {
-      info.textContent = e.message;
-    }
-  }, 400);
-}));
-
-// Eigene Server-Routen mit Anmeldung aufrufen. Ist die Anmeldung abgelaufen, geht es zurück zur
-// Anmeldemaske (ausstehende Änderungen bleiben lokal gesichert und werden danach nachgereicht).
-let authExpiredHandled = false;
-async function apiFetch(url, opts = {}) {
-  const headers = { ...(opts.headers || {}) };
-  if (pb.authStore.token) headers['Authorization'] = pb.authStore.token;
-  const res = await fetch(url, { ...opts, headers });
-  if (res.status === 401 && res.headers.get('X-Pinn-Abgemeldet') === '1') { handleRemoteLogout(); return res; }
-  if (res.status === 401 && !authExpiredHandled) {
-    authExpiredHandled = true;
-    if (isDashboardDevice()) { returnToDashboard(); return res; } // Dashboard: einfach zurück zur Profilauswahl
-    pb.authStore.clear();
-    alert('Deine Anmeldung ist abgelaufen. Bitte melde dich erneut an.');
-    location.reload();
-  }
-  return res;
-}
-
-// "Angemeldet bleiben" nicht gesetzt: Anmeldung gilt nur, solange die App geöffnet ist.
-function applySessionOnlyRule() {
-  try {
-    if (localStorage.getItem(LS_SESSION_ONLY) === '1' && !sessionStorage.getItem(SS_SESSION_ALIVE)) {
-      pb.authStore.clear();
-      localStorage.removeItem(LS_SESSION_ONLY);
-    }
-  } catch (e) { /* Speicher nicht verfügbar */ }
-}
-
-/* ---------- Tastatur: Anmeldebildschirme folgen dem sichtbaren Bereich ----------
-   Auf iPhone/iPad schrumpft bei geöffneter Tastatur nur der sichtbare Bereich (visualViewport), nicht
-   die Seite. Ohne Anpassung liegt das Passwortfeld dann unter der Tastatur bzw. unter der Leiste über
-   der Tastatur und lässt sich nicht antippen. Deshalb wird der Bildschirm auf den sichtbaren Bereich
-   verkleinert, rutscht nach oben und das angetippte Feld wird in die Mitte gescrollt. */
-const AUTH_SCREEN_IDS = ['loginScreen', 'forcePasswordScreen', 'mainAdminScreen', 'setupScreen'];
-function fitAuthScreensToViewport() {
-  const vv = window.visualViewport;
-  const kbOpen = !!(vv && window.innerHeight - vv.height > 120);
-  AUTH_SCREEN_IDS.forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    if (vv && kbOpen) {
-      el.style.height = vv.height + 'px';
-      el.style.top = vv.offsetTop + 'px';
-    } else {
-      el.style.height = '';
-      el.style.top = '';
-    }
-    el.classList.toggle('kb-open', kbOpen);
-  });
-}
-function scrollFocusedAuthField(target) {
-  if (!target || !target.closest || !target.closest('.pinn-auth-screen')) return;
-  if (!/^(INPUT|SELECT|TEXTAREA)$/.test(target.tagName)) return;
-  [80, 350, 700].forEach(ms => setTimeout(() => {
-    if (document.activeElement !== target) return;
-    fitAuthScreensToViewport();
-    try { target.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) { target.scrollIntoView(); }
-  }, ms));
-}
-if (window.visualViewport) {
-  window.visualViewport.addEventListener('resize', fitAuthScreensToViewport);
-  window.visualViewport.addEventListener('scroll', fitAuthScreensToViewport);
-}
-document.addEventListener('focusin', (ev) => scrollFocusedAuthField(ev.target));
-document.addEventListener('focusout', () => setTimeout(fitAuthScreensToViewport, 150));
-
-/* ---------- Tastatur (global): jedes Eingabefeld bleibt über der Tastatur sichtbar ----------
-   Das Dokument selbst darf nicht scrollen (siehe Doppeltipp-Schutz) und #appRoot ist fest
-   positioniert - iOS kann ein angetipptes Feld deshalb nicht selbst über die Tastatur schieben.
-   Für ALLE Eingabefelder gilt daher:
-   - Feld in einem Popup (.fixed.inset-0): das Popup wird auf den sichtbaren Bereich über der
-     Tastatur verkleinert, die Karte scrollt intern.
-   - Feld auf einer normalen Seite: die gesamte Seite (#appRoot) rutscht hoch bzw. wird auf den
-     sichtbaren Bereich verkleinert.
-   - Danach wird das Feld in seinem Scrollbereich in die Mitte gescrollt, falls es verdeckt ist.
-   Anmeldebildschirme, die Einkaufs-Eingabeleiste und das Einkaufs-Mengen-Popup haben eigene
-   Logik (fitAuthScreensToViewport / syncShoppingKeyboardLayout) und werden hier ausgelassen.
-   NEUE Eingabefelder brauchen keine eigene Behandlung - sie werden automatisch erfasst. */
-const KB_NO_KEYBOARD_TYPES = /^(checkbox|radio|range|color|button|submit|reset|file|hidden|image)$/i;
-function isKeyboardField(el) {
-  if (!el || !el.tagName) return false;
-  if (el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') return !el.disabled;
-  if (el.tagName === 'INPUT') return !el.disabled && !el.readOnly && !KB_NO_KEYBOARD_TYPES.test(el.type || 'text');
-  return !!el.isContentEditable;
-}
-function isKeyboardFieldHandledElsewhere(el) {
-  return !!(el.closest('.pinn-auth-screen') || el.id === 'shoppingAddInput' || el.id === 'globalSearchInput' || el.closest('#shoppingItemModal'));
-}
-function getKeyboardState() {
-  const vv = window.visualViewport;
-  const layoutHeight = Math.max(window.innerHeight, document.documentElement.clientHeight);
-  if (!vv) return { open: false, vv: null, top: 0, height: layoutHeight, bottom: layoutHeight };
-  const open = layoutHeight - (vv.height + vv.offsetTop) > 80 || layoutHeight - vv.height > 120;
-  return { open, vv, top: vv.offsetTop, height: vv.height, bottom: vv.offsetTop + vv.height };
-}
-let kbFittedOverlay = null;
-let kbFittedAppRoot = false;
-function resetKbOverlay() {
-  if (!kbFittedOverlay) return;
-  kbFittedOverlay.classList.remove('kb-fit');
-  kbFittedOverlay.style.top = '';
-  kbFittedOverlay.style.height = '';
-  kbFittedOverlay = null;
-}
-function resetKbAppRoot() {
-  if (!kbFittedAppRoot) return;
-  const root = document.getElementById('appRoot');
-  if (root) { root.style.top = ''; root.style.height = ''; }
-  kbFittedAppRoot = false;
-}
-function syncGlobalKeyboardLayout() {
-  const kb = getKeyboardState();
-  const active = document.activeElement;
-  const field = isKeyboardField(active) ? active : null;
-  document.body.classList.toggle('kb-open', !!(kb.open && field));
-
-  if (!kb.open || !field || isKeyboardFieldHandledElsewhere(field)) {
-    resetKbOverlay();
-    resetKbAppRoot();
-    return;
-  }
-  const overlay = field.closest('.fixed.inset-0');
-  if (overlay && overlay !== document.getElementById('appRoot')) {
-    resetKbAppRoot();
-    if (kbFittedOverlay && kbFittedOverlay !== overlay) resetKbOverlay();
-    overlay.classList.add('kb-fit');
-    overlay.style.top = kb.top + 'px';
-    overlay.style.height = kb.height + 'px';
-    kbFittedOverlay = overlay;
-  } else {
-    resetKbOverlay();
-    const root = document.getElementById('appRoot');
-    if (root) {
-      root.style.top = kb.top + 'px';
-      root.style.height = kb.height + 'px';
-      kbFittedAppRoot = true;
-    }
-  }
-}
-function ensureKeyboardFieldVisible(field) {
-  if (document.activeElement !== field) return;
-  const kb = getKeyboardState();
-  const rect = field.getBoundingClientRect();
-  const margin = 16;
-  const hidden = rect.bottom > kb.bottom - margin || rect.top < kb.top + margin;
-  if (!hidden) return;
-  try { field.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'smooth' }); }
-  catch (e) { field.scrollIntoView(); }
-  // Das Dokument selbst bleibt immer oben (Doppeltipp-Schutz).
-  if (window.scrollX || window.scrollY) window.scrollTo(0, 0);
-}
-document.addEventListener('focusin', (ev) => {
-  const field = ev.target;
-  if (!isKeyboardField(field) || isKeyboardFieldHandledElsewhere(field)) return;
-  // Die Tastatur fährt animiert ein - mehrfach nachmessen.
-  [0, 100, 300, 600, 900].forEach(ms => setTimeout(() => {
-    if (document.activeElement !== field) return;
-    syncGlobalKeyboardLayout();
-    ensureKeyboardFieldVisible(field);
-  }, ms));
-});
-document.addEventListener('focusout', () => setTimeout(syncGlobalKeyboardLayout, 150));
-if (window.visualViewport) {
-  window.visualViewport.addEventListener('resize', syncGlobalKeyboardLayout);
-  window.visualViewport.addEventListener('scroll', syncGlobalKeyboardLayout);
-}
-window.addEventListener('resize', syncGlobalKeyboardLayout);
-// Beim Tippen (z. B. wachsende Textfelder oder Vorschlagslisten) das Feld sichtbar halten.
-document.addEventListener('input', (ev) => {
-  const field = ev.target;
-  if (!isKeyboardField(field) || isKeyboardFieldHandledElsewhere(field)) return;
-  if (getKeyboardState().open) ensureKeyboardFieldVisible(field);
-});
-
-/* ---------- Gespeicherte Familien (nur Namen, auf diesem Gerät) ---------- */
-const LS_SAVED_FAMILIES = 'pinn.savedFamilies';
-const LS_LAST_FAMILY = 'pinn.lastFamily';
-const FAMILY_OTHER = '__andere__';
-function readSavedFamilies() {
-  try {
-    const list = JSON.parse(localStorage.getItem(LS_SAVED_FAMILIES) || '[]');
-    return Array.isArray(list) ? list.filter(n => typeof n === 'string' && n.trim()) : [];
-  } catch (e) { return []; }
-}
-function writeSavedFamilies(list) {
-  try { localStorage.setItem(LS_SAVED_FAMILIES, JSON.stringify(list.slice(0, 12))); } catch (e) { /* egal */ }
-}
-function rememberFamily(name) {
-  const list = readSavedFamilies().filter(n => n.toLowerCase() !== name.toLowerCase());
-  list.unshift(name);
-  writeSavedFamilies(list);
-}
-function forgetFamily(name) {
-  writeSavedFamilies(readSavedFamilies().filter(n => n.toLowerCase() !== String(name).toLowerCase()));
-}
-function lastProfileKey(familyName) {
-  return 'pinn.lastProfile.' + String(familyName || '').toLowerCase();
-}
-
-// Anmelden über die eigene Server-Route (Familie + Name + Passwort bzw. Hauptadmin + Passwort)
-async function loginRequest(payload) {
-  let res;
-  try {
-    res = await fetch('/api/pinn/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), cache: 'no-store' });
-  } catch (e) {
-    const err = new Error('Keine Verbindung zum Server. Bitte Netzwerk bzw. VPN prüfen.');
-    err.offline = true;
-    throw err;
-  }
-  const body = await res.json().catch(() => ({}));
-  if (!res.ok || !body.token) throw new Error(body.error || 'Anmeldung fehlgeschlagen. Bitte Name und Passwort prüfen.');
-  pb.authStore.save(body.token, body.record);
-}
-
-function showLoginScreen() {
-  return new Promise(resolve => {
-    const screen = document.getElementById('loginScreen');
-    const familyForm = document.getElementById('loginFamilyForm');
-    const familySelectWrap = document.getElementById('loginFamilySelectWrap');
-    const familySelect = document.getElementById('loginFamilySelect');
-    const familyInput = document.getElementById('loginFamilyInput');
-    const familySaveWrap = document.getElementById('loginFamilySaveWrap');
-    const familySave = document.getElementById('loginFamilySave');
-    const familyErr = document.getElementById('loginFamilyError');
-    const familyBtn = document.getElementById('loginFamilySubmit');
-    const form = document.getElementById('loginForm');
-    const familyBar = document.getElementById('loginFamilyBar');
-    const profileWrap = document.getElementById('loginProfileWrap');
-    const select = document.getElementById('loginProfileSelect');
-    const pw = document.getElementById('loginPassword');
-    const err = document.getElementById('loginError');
-    const btn = document.getElementById('loginSubmit');
-    const subtitle = document.getElementById('loginSubtitle');
-    const rememberWrap = document.getElementById('loginRememberWrap');
-    const toggleCreateBtn = document.getElementById('loginToggleCreateBtn');
-    const mainAdminBtn = document.getElementById('loginMainAdminBtn');
-    const createSection = document.getElementById('loginCreateAccountSection');
-    const headerLogo = document.querySelector('header img');
-    if (headerLogo) document.getElementById('loginLogo').src = headerLogo.src;
-    screen.classList.remove('hidden');
-
-    let mode = 'family';        // 'family' | 'profile' | 'main'
-    let familyName = '';        // Familie, wie sie auf dem Server heißt
-    let creatingAccount = false;
-    let setupOffen = false;     // neue Installation: Hinweis auf die Ersteinrichtung zeigen
-    const setupHint = document.getElementById('loginSetupHint');
-    function renderSetupHint() {
-      const show = setupOffen && (mode === 'family' || mode === 'main');
-      setupHint.classList.toggle('hidden', !show);
-      if (!show) return;
-      document.getElementById('loginSetupHintText').textContent = pinnSetupText(mode === 'main' ? 'loginMain' : 'loginHint');
-      const hb = document.getElementById('loginSetupHintBtn');
-      hb.classList.toggle('hidden', mode !== 'family');
-      hb.textContent = pinnSetupText('loginBtn');
-      hb.onclick = () => { blurActive(); creatingAccount = false; form.classList.remove('hidden'); setMode('main'); };
-    }
-    fetch('/api/pinn/einrichtung/offen', { cache: 'no-store' })
-      .then(r => (r.ok ? r.json() : null))
-      .then(o => { setupOffen = !!(o && o.offen); renderSetupHint(); })
-      .catch(() => { /* offline oder ältere Hooks: kein Hinweis */ });
-
-    function blurActive() { try { document.activeElement && document.activeElement.blur(); } catch (e) { /* egal */ } }
-
-    function renderFamilyChoice() {
-      const saved = readSavedFamilies();
-      let last = '';
-      try { last = localStorage.getItem(LS_LAST_FAMILY) || ''; } catch (e) { /* egal */ }
-      if (saved.length) {
-        familySelect.innerHTML = saved.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('') +
-          `<option value="${FAMILY_OTHER}">Andere Familie eingeben …</option>`;
-        const pick = saved.find(n => n.toLowerCase() === last.toLowerCase()) || saved[0];
-        familySelect.value = pick;
-        familySelectWrap.classList.remove('hidden');
-      } else {
-        familySelect.innerHTML = '';
-        familySelectWrap.classList.add('hidden');
-      }
-      applyFamilyInputVisibility();
-    }
-    function typingNewFamily() {
-      return familySelectWrap.classList.contains('hidden') || familySelect.value === FAMILY_OTHER;
-    }
-    function applyFamilyInputVisibility() {
-      const typing = typingNewFamily();
-      familyInput.classList.toggle('hidden', !typing);
-      familySaveWrap.classList.toggle('hidden', !typing);
-      document.getElementById('loginFamilyForgetBtn').classList.toggle('hidden', typing);
-    }
-
-    function setMode(next) {
-      mode = next;
-      err.classList.add('hidden');
-      familyErr.classList.add('hidden');
-      createSection.classList.add('hidden');
-      familyForm.classList.toggle('hidden', mode !== 'family');
-      form.classList.toggle('hidden', mode === 'family');
-      familyBar.classList.toggle('hidden', mode !== 'profile');
-      profileWrap.classList.toggle('hidden', mode !== 'profile');
-      toggleCreateBtn.classList.toggle('hidden', mode !== 'profile');
-      mainAdminBtn.textContent = mode === 'main' ? 'Zurück zur Familien-Anmeldung' : 'Als Hauptadmin anmelden';
-      if (mode === 'family') {
-        creatingAccount = false;
-        subtitle.textContent = 'Bitte Familie wählen';
-        renderFamilyChoice();
-      } else if (mode === 'main') {
-        creatingAccount = false;
-        subtitle.textContent = 'Hauptadmin-Anmeldung';
-      } else {
-        subtitle.textContent = creatingAccount ? 'Admin-Anmeldung erforderlich, um ein neues Konto anzulegen' : 'Bitte anmelden';
-      }
-      btn.textContent = creatingAccount ? 'Als Admin anmelden' : 'Anmelden';
-      rememberWrap.classList.toggle('hidden', creatingAccount);
-      toggleCreateBtn.textContent = creatingAccount ? 'Abbrechen' : 'Neues Konto anlegen';
-      pw.value = '';
-      renderSetupHint();
-    }
-
-    familySelect.onchange = () => {
-      applyFamilyInputVisibility();
-      if (typingNewFamily()) { familyInput.value = ''; familyInput.focus(); }
-    };
-    document.getElementById('loginFamilyForgetBtn').onclick = () => {
-      const name = familySelect.value;
-      if (!name || name === FAMILY_OTHER) return;
-      if (!confirm(`„${name}“ von diesem Gerät entfernen?`)) return;
-      forgetFamily(name);
-      renderFamilyChoice();
-    };
-
-    familyForm.onsubmit = async (ev) => {
-      ev.preventDefault();
-      const typed = typingNewFamily();
-      const name = (typed ? familyInput.value : familySelect.value).replace(/\s+/g, ' ').trim();
-      if (!name) { familyInput.focus(); return; }
-      familyErr.classList.add('hidden');
-      familyBtn.disabled = true;
-      familyBtn.textContent = 'Suche …';
-      try {
-        let res;
-        try {
-          res = await fetch('/api/pinn/familie?name=' + encodeURIComponent(name), { cache: 'no-store' });
-        } catch (e) {
-          throw new Error('Keine Verbindung zum Server. Bitte Netzwerk bzw. VPN prüfen.');
-        }
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(res.status === 404 ? `Die Familie „${name}“ gibt es nicht. Bitte den Namen prüfen.` : (data.error || 'Familie konnte nicht geladen werden.'));
-        familyName = data.name || name;
-        const saved = readSavedFamilies();
-        if (typed ? familySave.checked : true) {
-          // gespeicherten Eintrag ggf. an die Schreibweise auf dem Server anpassen
-          if (!typed) forgetFamily(name);
-          rememberFamily(familyName);
-        } else if (saved.some(n => n.toLowerCase() === familyName.toLowerCase())) {
-          rememberFamily(familyName);
-        }
-        try { localStorage.setItem(LS_LAST_FAMILY, familyName); } catch (e) { /* egal */ }
-        const names = data.profiles || [];
-        select.innerHTML = names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
-        let last = null;
-        try { last = localStorage.getItem(lastProfileKey(familyName)); } catch (e) { /* egal */ }
-        if (last && names.includes(last)) select.value = last;
-        document.getElementById('loginFamilyName').textContent = familyName;
-        // Wohnform kommt vom Server mit: „Familie“ oder „WG“ (die Sprach-Schicht übersetzt das Wort)
-        document.getElementById('loginFamilyLabel').textContent = data.wohnform === 'wg' ? 'WG' : 'Familie';
-        blurActive();
-        setMode('profile');
-      } catch (e) {
-        familyErr.textContent = e.message;
-        familyErr.classList.remove('hidden');
-      } finally {
-        familyBtn.disabled = false;
-        familyBtn.textContent = 'Weiter';
-      }
-    };
-
-    document.getElementById('loginFamilyChangeBtn').onclick = () => { blurActive(); setMode('family'); };
-    mainAdminBtn.onclick = () => {
-      blurActive();
-      creatingAccount = false;
-      form.classList.remove('hidden');
-      setMode(mode === 'main' ? 'family' : 'main');
-    };
-    toggleCreateBtn.onclick = () => {
-      creatingAccount = !creatingAccount;
-      setMode('profile');
-    };
-
-    form.onsubmit = async (ev) => {
-      ev.preventDefault();
-      const username = mode === 'main' ? '' : select.value;
-      const password = pw.value;
-      if ((mode === 'profile' && !username) || !password) return;
-      err.classList.add('hidden');
-      btn.disabled = true;
-      btn.textContent = 'Anmelden …';
-      try {
-        await loginRequest(mode === 'main'
-          ? { hauptadmin: true, password }
-          : { familie: familyName, username, password });
-        if (creatingAccount) {
-          if (!isCurrentUserAdmin()) {
-            pb.authStore.clear();
-            err.textContent = 'Nur Admins können neue Konten anlegen.';
-            err.classList.remove('hidden');
-            return;
-          }
-          blurActive();
-          pw.value = '';
-          form.classList.add('hidden');
-          toggleCreateBtn.classList.add('hidden');
-          mainAdminBtn.classList.add('hidden');
-          document.getElementById('loginCreateAdminName').textContent = username;
-          document.getElementById('loginNewUsername').value = '';
-          document.getElementById('loginNewPassword').value = '';
-          document.getElementById('loginCreateError').classList.add('hidden');
-          document.getElementById('loginCreateSuccess').classList.add('hidden');
-          createSection.classList.remove('hidden');
-          return;
-        }
-        const remember = document.getElementById('loginRemember').checked;
-        try {
-          if (remember) localStorage.removeItem(LS_SESSION_ONLY);
-          else localStorage.setItem(LS_SESSION_ONLY, '1');
-          sessionStorage.setItem(SS_SESSION_ALIVE, '1');
-          if (mode === 'profile') localStorage.setItem(lastProfileKey(familyName), username);
-        } catch (e) { /* egal */ }
-        lastLoginPassword = password;
-        pw.value = '';
-        blurActive();
-        screen.classList.add('hidden');
-        fitAuthScreensToViewport();
-        resolve();
-      } catch (e) {
-        err.textContent = e.message;
-        err.classList.remove('hidden');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = creatingAccount ? 'Als Admin anmelden' : 'Anmelden';
-      }
-    };
-
-    document.getElementById('loginCreateSubmit').onclick = async () => {
-      const cErr = document.getElementById('loginCreateError');
-      const cOk = document.getElementById('loginCreateSuccess');
-      const cBtn = document.getElementById('loginCreateSubmit');
-      const username = document.getElementById('loginNewUsername').value.trim();
-      const password = document.getElementById('loginNewPassword').value;
-      const rolle = document.getElementById('loginNewRole').value;
-      cErr.classList.add('hidden');
-      cOk.classList.add('hidden');
-      if (!username || !password) return;
-      cBtn.disabled = true;
-      cBtn.textContent = 'Anlegen …';
-      try {
-        const res = await apiFetch('/api/pinn/users/create', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password, rolle })
-        });
-        const body = await res.json().catch(() => ({}));
-        if (res.ok) {
-          document.getElementById('loginNewUsername').value = '';
-          document.getElementById('loginNewPassword').value = '';
-          cOk.textContent = `Konto "${username}" wurde angelegt.`;
-          cOk.classList.remove('hidden');
-        } else {
-          cErr.textContent = body.error || 'Konto konnte nicht angelegt werden.';
-          cErr.classList.remove('hidden');
-        }
-      } catch (e) {
-        cErr.textContent = 'Keine Verbindung zum Server. Bitte Netzwerk bzw. VPN prüfen.';
-        cErr.classList.remove('hidden');
-      } finally {
-        cBtn.disabled = false;
-        cBtn.textContent = 'Konto anlegen';
-      }
-    };
-
-    document.getElementById('loginCreateDone').onclick = () => {
-      pb.authStore.clear();
-      blurActive();
-      creatingAccount = false;
-      mainAdminBtn.classList.remove('hidden');
-      // Profilliste neu laden, damit das neue Konto gleich auswählbar ist
-      familyForm.classList.remove('hidden');
-      setMode('family');
-      if (familyName) {
-        const saved = readSavedFamilies();
-        if (saved.includes(familyName)) {
-          familySelect.value = familyName;
-        } else {
-          if (saved.length) familySelect.value = FAMILY_OTHER;
-          familyInput.value = familyName;
-          familySave.checked = false;
-        }
-        applyFamilyInputVisibility();
-        familyForm.requestSubmit ? familyForm.requestSubmit() : familyForm.onsubmit(new Event('submit'));
-      }
-    };
-
-    setMode('family');
-  });
-}
-
 const PB_COLLECTION = 'familien_daten';
 const ICS_URL = '/api/pinn/kalender'; // nur nach Anmeldung abrufbar (pb_hooks/benutzer.pb.js)
 let familyRecordId = null; // wird nach dem Login gesetzt
@@ -10053,7 +9050,7 @@ function actualCurrentWeekRange() {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.92.0';
+const APP_VERSION = '1.93.0';
 
 /* ==========================================================
    Einstellungen & Konto: zwei gleich hohe Spalten (Querformat ab Tablet-Breite)
@@ -10181,94 +9178,98 @@ const APP_VERSION = '1.92.0';
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/dashboard.js?v=1.92.0"></script>
-<script src="js/dashboardhintergrund.js?v=1.92.0"></script>
-<script src="js/profilauswahl.js?v=1.92.0"></script>
-<script src="js/pineingabe.js?v=1.92.0"></script>
-<script src="js/dashboardsitzung.js?v=1.92.0"></script>
-<script src="js/dashboardkonto.js?v=1.92.0"></script>
-<script src="js/familienverwalten.js?v=1.92.0"></script>
-<script src="js/einrichten.js?v=1.92.0"></script>
-<script src="js/exportieren.js?v=1.92.0"></script>
-<script src="js/hauptadminseite.js?v=1.92.0"></script>
-<script src="js/anmeldung.js?v=1.92.0"></script>
-<script src="js/konto.js?v=1.92.0"></script>
-<script src="js/profilverwaltung.js?v=1.92.0"></script>
-<script src="js/zustand.js?v=1.92.0"></script>
-<script src="js/bedienzustand.js?v=1.92.0"></script>
-<script src="js/rezeptbilder.js?v=1.92.0"></script>
-<script src="js/zusammenfuehren.js?v=1.92.0"></script>
-<script src="js/speichern.js?v=1.92.0"></script>
-<script src="js/design.js?v=1.92.0"></script>
-<script src="js/sprache.js?v=1.92.0"></script>
-<script src="js/uebersicht.js?v=1.92.0"></script>
-<script src="js/familienkachel.js?v=1.92.0"></script>
-<script src="js/wobistdu.js?v=1.92.0"></script>
-<script src="js/geburtstagsfeier.js?v=1.92.0"></script>
-<script src="js/wetterkachel.js?v=1.92.0"></script>
-<script src="js/geburtstage.js?v=1.92.0"></script>
-<script src="js/uebersichteinstellungen.js?v=1.92.0"></script>
-<script src="js/familiensync.js?v=1.92.0"></script>
-<script src="js/kalenderquellen.js?v=1.92.0"></script>
-<script src="js/icsparser.js?v=1.92.0"></script>
-<script src="js/zeitleiste.js?v=1.92.0"></script>
-<script src="js/termindetails.js?v=1.92.0"></script>
-<script src="js/kalenderdatei.js?v=1.92.0"></script>
-<script src="js/wetter.js?v=1.92.0"></script>
-<script src="js/wohnort.js?v=1.92.0"></script>
-<script src="js/feiertage.js?v=1.92.0"></script>
-<script src="js/muellkalender.js?v=1.92.0"></script>
-<script src="js/mitglieder.js?v=1.92.0"></script>
-<script src="js/profilbild.js?v=1.92.0"></script>
-<script src="js/mitglied.js?v=1.92.0"></script>
-<script src="js/kinderseite.js?v=1.92.0"></script>
-<script src="js/kinderroutine.js?v=1.92.0"></script>
-<script src="js/sterne.js?v=1.92.0"></script>
-<script src="js/kalenderansicht.js?v=1.92.0"></script>
-<script src="js/essenplanen.js?v=1.92.0"></script>
-<script src="js/rezeptparser.js?v=1.92.0"></script>
-<script src="js/rezeptdialog.js?v=1.92.0"></script>
-<script src="js/rezeptbild.js?v=1.92.0"></script>
-<script src="js/rezeptmengen.js?v=1.92.0"></script>
-<script src="js/einkauf.js?v=1.92.0"></script>
-<script src="js/einkaufslisten.js?v=1.92.0"></script>
-<script src="js/einkaufseingabe.js?v=1.92.0"></script>
-<script src="js/rezepte.js?v=1.92.0"></script>
-<script src="js/offline.js?v=1.92.0"></script>
-<script src="js/aufgabenextras.js?v=1.92.0"></script>
-<script src="js/appbadge.js?v=1.92.0"></script>
-<script src="js/reisen.js?v=1.92.0"></script>
-<script src="js/aufgabendaten.js?v=1.92.0"></script>
-<script src="js/haushalt.js?v=1.92.0"></script>
-<script src="js/reihum.js?v=1.92.0"></script>
-<script src="js/aufgaben.js?v=1.92.0"></script>
-<script src="js/smarthome.js?v=1.92.0"></script>
-<script src="js/sprachsteuerung.js?v=1.92.0"></script>
-<script src="js/termine.js?v=1.92.0"></script>
-<script src="js/ansichten.js?v=1.92.0"></script>
-<script src="js/versionspruefung.js?v=1.92.0"></script>
-<script src="js/sicherungen.js?v=1.92.0"></script>
-<script src="js/geraete.js?v=1.92.0"></script>
-<script src="js/fehlerprotokoll.js?v=1.92.0"></script>
-<script src="js/versionslog.js?v=1.92.0"></script>
-<script src="js/einstellungen.js?v=1.92.0"></script>
-<script src="js/kalenderkonto.js?v=1.92.0"></script>
-<script src="js/finanzen.js?v=1.92.0"></script>
-<script src="js/kassen.js?v=1.92.0"></script>
-<script src="js/vorrat.js?v=1.92.0"></script>
-<script src="js/vorrat2.js?v=1.92.0"></script>
-<script src="js/sparen.js?v=1.92.0"></script>
-<script src="js/vertraege.js?v=1.92.0"></script>
-<script src="js/fahrzeuge.js?v=1.92.0"></script>
-<script src="js/zuhause.js?v=1.92.0"></script>
-<script src="js/dokumente.js?v=1.92.0"></script>
-<script src="js/pdflesen.js?v=1.92.0"></script>
-<script src="js/appstart.js?v=1.92.0"></script>
-<script src="js/pinnwand.js?v=1.92.0"></script>
-<script src="js/listen.js?v=1.92.0"></script>
-<script src="js/familie.js?v=1.92.0"></script>
-<script src="js/hinweise.js?v=1.92.0"></script>
-<script src="js/ausblick.js?v=1.92.0"></script>
+<script src="js/push.js?v=1.93.0"></script>
+<script src="js/serverzugriff.js?v=1.93.0"></script>
+<script src="js/tastatur.js?v=1.93.0"></script>
+<script src="js/anmeldemaske.js?v=1.93.0"></script>
+<script src="js/dashboard.js?v=1.93.0"></script>
+<script src="js/dashboardhintergrund.js?v=1.93.0"></script>
+<script src="js/profilauswahl.js?v=1.93.0"></script>
+<script src="js/pineingabe.js?v=1.93.0"></script>
+<script src="js/dashboardsitzung.js?v=1.93.0"></script>
+<script src="js/dashboardkonto.js?v=1.93.0"></script>
+<script src="js/familienverwalten.js?v=1.93.0"></script>
+<script src="js/einrichten.js?v=1.93.0"></script>
+<script src="js/exportieren.js?v=1.93.0"></script>
+<script src="js/hauptadminseite.js?v=1.93.0"></script>
+<script src="js/anmeldung.js?v=1.93.0"></script>
+<script src="js/konto.js?v=1.93.0"></script>
+<script src="js/profilverwaltung.js?v=1.93.0"></script>
+<script src="js/zustand.js?v=1.93.0"></script>
+<script src="js/bedienzustand.js?v=1.93.0"></script>
+<script src="js/rezeptbilder.js?v=1.93.0"></script>
+<script src="js/zusammenfuehren.js?v=1.93.0"></script>
+<script src="js/speichern.js?v=1.93.0"></script>
+<script src="js/design.js?v=1.93.0"></script>
+<script src="js/sprache.js?v=1.93.0"></script>
+<script src="js/uebersicht.js?v=1.93.0"></script>
+<script src="js/familienkachel.js?v=1.93.0"></script>
+<script src="js/wobistdu.js?v=1.93.0"></script>
+<script src="js/geburtstagsfeier.js?v=1.93.0"></script>
+<script src="js/wetterkachel.js?v=1.93.0"></script>
+<script src="js/geburtstage.js?v=1.93.0"></script>
+<script src="js/uebersichteinstellungen.js?v=1.93.0"></script>
+<script src="js/familiensync.js?v=1.93.0"></script>
+<script src="js/kalenderquellen.js?v=1.93.0"></script>
+<script src="js/icsparser.js?v=1.93.0"></script>
+<script src="js/zeitleiste.js?v=1.93.0"></script>
+<script src="js/termindetails.js?v=1.93.0"></script>
+<script src="js/kalenderdatei.js?v=1.93.0"></script>
+<script src="js/wetter.js?v=1.93.0"></script>
+<script src="js/wohnort.js?v=1.93.0"></script>
+<script src="js/feiertage.js?v=1.93.0"></script>
+<script src="js/muellkalender.js?v=1.93.0"></script>
+<script src="js/mitglieder.js?v=1.93.0"></script>
+<script src="js/profilbild.js?v=1.93.0"></script>
+<script src="js/mitglied.js?v=1.93.0"></script>
+<script src="js/kinderseite.js?v=1.93.0"></script>
+<script src="js/kinderroutine.js?v=1.93.0"></script>
+<script src="js/sterne.js?v=1.93.0"></script>
+<script src="js/kalenderansicht.js?v=1.93.0"></script>
+<script src="js/essenplanen.js?v=1.93.0"></script>
+<script src="js/rezeptparser.js?v=1.93.0"></script>
+<script src="js/rezeptdialog.js?v=1.93.0"></script>
+<script src="js/rezeptbild.js?v=1.93.0"></script>
+<script src="js/rezeptmengen.js?v=1.93.0"></script>
+<script src="js/einkauf.js?v=1.93.0"></script>
+<script src="js/einkaufslisten.js?v=1.93.0"></script>
+<script src="js/einkaufseingabe.js?v=1.93.0"></script>
+<script src="js/rezepte.js?v=1.93.0"></script>
+<script src="js/offline.js?v=1.93.0"></script>
+<script src="js/aufgabenextras.js?v=1.93.0"></script>
+<script src="js/appbadge.js?v=1.93.0"></script>
+<script src="js/reisen.js?v=1.93.0"></script>
+<script src="js/aufgabendaten.js?v=1.93.0"></script>
+<script src="js/haushalt.js?v=1.93.0"></script>
+<script src="js/reihum.js?v=1.93.0"></script>
+<script src="js/aufgaben.js?v=1.93.0"></script>
+<script src="js/smarthome.js?v=1.93.0"></script>
+<script src="js/sprachsteuerung.js?v=1.93.0"></script>
+<script src="js/termine.js?v=1.93.0"></script>
+<script src="js/ansichten.js?v=1.93.0"></script>
+<script src="js/versionspruefung.js?v=1.93.0"></script>
+<script src="js/sicherungen.js?v=1.93.0"></script>
+<script src="js/geraete.js?v=1.93.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.93.0"></script>
+<script src="js/versionslog.js?v=1.93.0"></script>
+<script src="js/einstellungen.js?v=1.93.0"></script>
+<script src="js/kalenderkonto.js?v=1.93.0"></script>
+<script src="js/finanzen.js?v=1.93.0"></script>
+<script src="js/kassen.js?v=1.93.0"></script>
+<script src="js/vorrat.js?v=1.93.0"></script>
+<script src="js/vorrat2.js?v=1.93.0"></script>
+<script src="js/sparen.js?v=1.93.0"></script>
+<script src="js/vertraege.js?v=1.93.0"></script>
+<script src="js/fahrzeuge.js?v=1.93.0"></script>
+<script src="js/zuhause.js?v=1.93.0"></script>
+<script src="js/dokumente.js?v=1.93.0"></script>
+<script src="js/pdflesen.js?v=1.93.0"></script>
+<script src="js/appstart.js?v=1.93.0"></script>
+<script src="js/pinnwand.js?v=1.93.0"></script>
+<script src="js/listen.js?v=1.93.0"></script>
+<script src="js/familie.js?v=1.93.0"></script>
+<script src="js/hinweise.js?v=1.93.0"></script>
+<script src="js/ausblick.js?v=1.93.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)

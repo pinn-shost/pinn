@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.93', datum: '18.10.2026', titel: 'App-Code wird aufgeteilt (Teil 49)',
+    punkte: [
+      ['info', 'Für Mitwirkende: die Push-Benachrichtigungen liegen jetzt in pb_public/js/push.js, der Server-Zugriff mit Anmeldung (apiFetch) in js/serverzugriff.js, die Tastatur-Anpassung für Eingabefelder in js/tastatur.js und die Anmeldemaske mit den gespeicherten Familien in js/anmeldemaske.js. An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, vier neue Dateien in js/ und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.92', datum: '18.10.2026', titel: 'App-Code wird aufgeteilt (Teil 48)',
     punkte: [
       ['info', 'Für Mitwirkende: das Familien-Dashboard liegt jetzt in sechs eigenen Dateien – pb_public/js/dashboard.js (Grundlagen, Gäste und Kindersicherung), js/dashboardhintergrund.js (Hintergrund der Profilauswahl), js/profilauswahl.js (Profilauswahl mit Uhr und Wetter), js/pineingabe.js (PIN-Eingabe), js/dashboardsitzung.js (Rückkehr nach Inaktivität, Einschränkungen für Gäste und Kinder) und js/dashboardkonto.js (Dashboard-Einstellungen im Konto, Gastkonto). An der Bedienung ändert sich nichts'],
