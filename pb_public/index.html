@@ -913,7 +913,7 @@ window.PINN_LANGUAGES = [
   // Startprüfung: fehlt eine selbst gehostete Datei, erscheint ein klarer Hinweis statt einer
   // leeren Seite ohne funktionierende Buttons.
   // Teile der App unter pb_public/js/ – jede Datei meldet sich am Ende in window.PINN_PARTS an
-  var PINN_APP_PARTS = ['exportieren', 'hauptadminseite', 'anmeldung', 'konto', 'profilverwaltung', 'zustand', 'bedienzustand', 'rezeptbilder', 'zusammenfuehren', 'speichern', 'design', 'sprache', 'uebersicht', 'familienkachel', 'wobistdu', 'geburtstagsfeier', 'wetterkachel', 'geburtstage', 'uebersichteinstellungen', 'familiensync', 'kalenderquellen', 'icsparser', 'zeitleiste', 'termindetails', 'kalenderdatei', 'wetter', 'wohnort', 'feiertage', 'muellkalender', 'mitglieder', 'profilbild', 'mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
+  var PINN_APP_PARTS = ['familienverwalten', 'einrichten', 'exportieren', 'hauptadminseite', 'anmeldung', 'konto', 'profilverwaltung', 'zustand', 'bedienzustand', 'rezeptbilder', 'zusammenfuehren', 'speichern', 'design', 'sprache', 'uebersicht', 'familienkachel', 'wobistdu', 'geburtstagsfeier', 'wetterkachel', 'geburtstage', 'uebersichteinstellungen', 'familiensync', 'kalenderquellen', 'icsparser', 'zeitleiste', 'termindetails', 'kalenderdatei', 'wetter', 'wohnort', 'feiertage', 'muellkalender', 'mitglieder', 'profilbild', 'mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
   window.addEventListener('DOMContentLoaded', function () {
     var missing = [];
     if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – der PocketBase-Client (ohne ihn funktioniert nichts)');
@@ -11142,199 +11142,6 @@ document.getElementById('guestNameInput').addEventListener('keydown', (e) => {
 });
 wireModalOutsideClick('guestModal', closeGuestModal);
 
-/* ==========================================================
-   Hauptadmin: Familien verwalten
-   ========================================================== */
-let mainAdminFamilies = [];
-
-function mainAdminStatus(elId, text, ok) {
-  const el = document.getElementById(elId);
-  el.textContent = text || '';
-  el.classList.toggle('hidden', !text);
-  el.classList.toggle('text-red-500', ok === false);
-  el.classList.toggle('text-pine', ok !== false);
-}
-
-async function loadMainAdminFamilies() {
-  const list = document.getElementById('mainAdminFamilyList');
-  try {
-    const res = await apiFetch('/api/pinn/familien', { cache: 'no-store' });
-    const body = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(body.error || 'Familien konnten nicht geladen werden.');
-    mainAdminFamilies = body.familien || [];
-    if (body.warnung) mainAdminStatus('mainAdminListStatus', body.warnung, false);
-  } catch (e) {
-    list.innerHTML = `<p class="text-xs text-red-500">${escapeHtml(e.message)}</p>`;
-    return;
-  }
-  if (!mainAdminFamilies.length) {
-    list.innerHTML = '<p class="text-sm text-ink/50">Noch keine Familie angelegt.</p>';
-    return;
-  }
-  list.innerHTML = mainAdminFamilies.map(f => {
-    const admins = f.profiles.filter(p => p.rolle === 'admin').length;
-    const profiles = f.profiles.map(p => `
-      <div class="flex items-center gap-2 py-1.5 border-t border-ink/5">
-        <div class="flex-1 min-w-0">
-          <p class="text-sm truncate">${escapeHtml(p.username)}${p.mustChangePassword ? ' <span class="text-xs text-mustard">Passwort ausstehend</span>' : ''}</p>
-          ${p.rolle === 'admin' ? `<label class="flex items-center gap-1.5 text-[11px] text-ink/50 mt-0.5 cursor-pointer select-none"><input type="checkbox" class="ma-sys" data-id="${p.id}"${p.systemrechte ? ' checked' : ''} /><span>🛟 darf Updates &amp; Wiederherstellung</span></label>` : ''}
-        </div>
-        <select class="ma-role shrink-0 rounded-lg border border-ink/15 px-2 py-1 text-xs bg-white" data-id="${p.id}">
-          <option value="admin"${p.rolle === 'admin' ? ' selected' : ''}>Admin</option>
-          <option value="mitglied"${p.rolle !== 'admin' ? ' selected' : ''}>Mitglied</option>
-        </select>
-        <button type="button" class="ma-dev shrink-0 px-2 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition" data-id="${p.id}" data-name="${escapeHtml(p.username)}" title="Geräte &amp; Anmeldung" aria-label="Geräte &amp; Anmeldung">📱</button>
-        <button type="button" class="ma-reset shrink-0 px-2 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition" data-id="${p.id}" data-name="${escapeHtml(p.username)}">Passwort</button>
-        <button type="button" class="ma-del-user shrink-0 px-2 py-1 rounded-lg border border-ink/15 text-xs text-ink/50 hover:text-red-500 hover:border-red-500 transition" data-id="${p.id}" data-name="${escapeHtml(p.username)}">✕</button>
-      </div>`).join('');
-    return `
-      <div class="rounded-xl border border-ink/10 p-4 bg-white/60">
-        <div class="flex items-start justify-between gap-2 mb-2">
-          <div class="min-w-0">
-            <p class="font-medium truncate">${escapeHtml(f.name)}</p>
-            <p class="text-xs text-ink/40">${f.wohnform === 'wg' ? '🧑‍🤝‍🧑 WG' : '👨‍👩‍👧 Familie'} · ${f.profiles.length} Profil${f.profiles.length === 1 ? '' : 'e'} · ${admins} Admin${admins === 1 ? '' : 's'}${f.apple ? ' · <span class="text-pine">Apple-Kalender</span>' : ''}${f.google ? ' · <span class="text-pine">Google-Kalender</span>' : ''}</p>
-            ${admins ? '' : '<p class="text-xs text-mustard mt-1">Diese Familie hat noch keinen Admin.</p>'}
-          </div>
-          <button type="button" class="ma-rename shrink-0 px-2 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition" data-id="${f.id}" data-name="${escapeHtml(f.name)}">Umbenennen</button>
-        </div>
-        <div class="mb-3">${profiles}</div>
-        <div class="flex flex-wrap gap-2">
-          <button type="button" class="ma-add-user px-3 py-1.5 rounded-lg bg-pine text-white text-xs hover:bg-pine/90 transition" data-id="${f.id}" data-name="${escapeHtml(f.name)}">+ Profil</button>
-          <button type="button" class="ma-export px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition" data-id="${f.id}" data-no-i18n>${escapeHtml(pinnExportText('kurz'))}</button>
-          <button type="button" class="ma-del-family ml-auto px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-red-500 hover:border-red-500 transition" data-id="${f.id}" data-name="${escapeHtml(f.name)}">Familie löschen</button>
-        </div>
-      </div>`;
-  }).join('');
-
-  const run = async (url, payload, okText) => {
-    try {
-      await postJson(url, payload);
-      mainAdminStatus('mainAdminListStatus', okText, true);
-    } catch (e) {
-      mainAdminStatus('mainAdminListStatus', e.message, false);
-    }
-    loadMainAdminFamilies();
-  };
-  list.querySelectorAll('.ma-dev').forEach(el => el.addEventListener('click', () => openDevModal(el.dataset.id, el.dataset.name)));
-  list.querySelectorAll('.ma-export').forEach(el => el.addEventListener('click', () => openPinnExport(el.dataset.id)));
-  list.querySelectorAll('.ma-sys').forEach(el => el.addEventListener('change', () =>
-    run('/api/pinn/system/rechte', { id: el.dataset.id, an: el.checked }, el.checked ? 'Darf jetzt Updates einspielen und Sicherungen zurückholen.' : 'Recht für Updates und Wiederherstellung entzogen.')));
-  list.querySelectorAll('.ma-role').forEach(el => el.addEventListener('change', () =>
-    run('/api/pinn/users/set-role', { id: el.dataset.id, rolle: el.value }, 'Rolle geändert.')));
-  list.querySelectorAll('.ma-reset').forEach(el => el.addEventListener('click', () => {
-    const pwNew = prompt(`Neues Start-Passwort für „${el.dataset.name}“ (mind. 8 Zeichen). Es muss beim nächsten Anmelden geändert werden:`);
-    if (pwNew) run('/api/pinn/users/reset-password', { id: el.dataset.id, password: pwNew }, 'Passwort zurückgesetzt.');
-  }));
-  list.querySelectorAll('.ma-del-user').forEach(el => el.addEventListener('click', () => {
-    if (!confirm(`Profil „${el.dataset.name}“ wirklich löschen?`)) return;
-    run('/api/pinn/users/delete', { id: el.dataset.id }, 'Profil gelöscht.');
-  }));
-  list.querySelectorAll('.ma-rename').forEach(el => el.addEventListener('click', () => {
-    const name = prompt('Neuer Name der Familie:', el.dataset.name);
-    if (name && name.trim() && name.trim() !== el.dataset.name) run('/api/pinn/familien/rename', { id: el.dataset.id, name: name.trim() }, 'Familie umbenannt.');
-  }));
-  list.querySelectorAll('.ma-add-user').forEach(el => el.addEventListener('click', () => {
-    const username = prompt(`Name des neuen Profils in „${el.dataset.name}“:`);
-    if (!username || !username.trim()) return;
-    const password = prompt('Start-Passwort (mind. 8 Zeichen, muss beim ersten Anmelden geändert werden):');
-    if (!password) return;
-    const rolle = confirm('Soll das Profil Admin dieser Familie sein?\n\nOK = Admin, Abbrechen = Mitglied') ? 'admin' : 'mitglied';
-    run('/api/pinn/users/create', { familie: el.dataset.id, username: username.trim(), password, rolle }, 'Profil angelegt.');
-  }));
-  list.querySelectorAll('.ma-del-family').forEach(el => el.addEventListener('click', () => {
-    const typed = prompt(`Familie „${el.dataset.name}“ mit ALLEN Profilen, Terminen, Rezepten und Aufgaben endgültig löschen?\n\nÖffentlich geteilte Rezepte bleiben erhalten und wandern in die „Rezepte Familie“.\n\nZum Bestätigen den Namen der Familie eingeben:`);
-    if (typed === null) return;
-    if (typed.trim().toLowerCase() !== el.dataset.name.toLowerCase()) { mainAdminStatus('mainAdminListStatus', 'Name stimmt nicht überein – nichts gelöscht.', false); return; }
-    run('/api/pinn/familien/delete', { id: el.dataset.id }, 'Familie gelöscht.');
-  }));
-}
-
-/* ==========================================================
-   Einrichtung (Assistent für den Hauptadmin)
-   ----------------------------------------------------------
-   Der Assistent liegt in pb_public/einrichtung.js und wird erst geladen, wenn er gebraucht wird
-   (eigene Texte in Deutsch, Englisch, Französisch und Spanisch). Server: pb_hooks/einrichtung.pb.js.
-   - startet nach der Anmeldung als Hauptadmin von selbst, solange die Einrichtung offen ist
-     („Später“ gilt bis zum Schließen der App)
-   - jederzeit erreichbar über Hauptadmin → ⚙︎ Einrichtung
-   - die Anmeldemaske zeigt bei einer neuen Installation den Weg zur Hauptadmin-Anmeldung
-   ========================================================== */
-const PINN_SETUP_TEXTE = {
-  de: {
-    btn: '⚙︎ Einrichtung',
-    offen: 'Die Einrichtung von pinn. ist noch nicht abgeschlossen. Ohne sie fehlen HTTPS, Push-Nachrichten und die App auf dem Home-Bildschirm.',
-    fortsetzen: 'Einrichtung fortsetzen',
-    neustart: 'Gespeicherte Einstellungen werden erst nach einem Neustart von pinn. wirksam.',
-    neustartBtn: 'Jetzt übernehmen (kurzer Neustart)',
-    neustartLaeuft: 'pinn. startet neu …',
-    loginHint: 'Neu hier? Die Ersteinrichtung startet nach der Anmeldung als Hauptadmin.',
-    loginBtn: 'Als Hauptadmin anmelden',
-    loginMain: 'Beim ersten Mal lautet das Passwort „Admin“ – danach legst du ein eigenes fest und die Einrichtung startet.',
-    laden: 'Die Einrichtung konnte nicht geladen werden (pb_public/einrichtung.js fehlt?).',
-  },
-  en: {
-    btn: '⚙︎ Setup',
-    offen: 'The setup of pinn. is not finished yet. Without it, HTTPS, push notifications and the home screen app are missing.',
-    fortsetzen: 'Continue setup',
-    neustart: 'Saved settings only take effect after pinn. restarts.',
-    neustartBtn: 'Apply now (short restart)',
-    neustartLaeuft: 'pinn. is restarting …',
-    loginHint: 'New here? The initial setup starts after logging in as main admin.',
-    loginBtn: 'Log in as main admin',
-    loginMain: 'The first time, the password is “Admin” – then you set your own and the setup starts.',
-    laden: 'The setup could not be loaded (pb_public/einrichtung.js missing?).',
-  },
-  fr: {
-    btn: '⚙︎ Configuration',
-    offen: 'La configuration de pinn. n\'est pas encore terminée. Sans elle, HTTPS, les notifications push et l\'app sur l\'écran d\'accueil manquent.',
-    fortsetzen: 'Poursuivre la configuration',
-    neustart: 'Les réglages enregistrés ne prennent effet qu\'après un redémarrage de pinn.',
-    neustartBtn: 'Appliquer maintenant (court redémarrage)',
-    neustartLaeuft: 'pinn. redémarre …',
-    loginHint: 'Nouveau ? La configuration initiale démarre après la connexion en tant qu\'administrateur principal.',
-    loginBtn: 'Se connecter en administrateur principal',
-    loginMain: 'La première fois, le mot de passe est « Admin » – vous en définissez ensuite un vôtre et la configuration démarre.',
-    laden: 'La configuration n\'a pas pu être chargée (pb_public/einrichtung.js manquant ?).',
-  },
-  es: {
-    btn: '⚙︎ Configuración',
-    offen: 'La configuración de pinn. aún no ha terminado. Sin ella faltan HTTPS, las notificaciones push y la app en la pantalla de inicio.',
-    fortsetzen: 'Continuar la configuración',
-    neustart: 'Los ajustes guardados solo se aplican tras reiniciar pinn.',
-    neustartBtn: 'Aplicar ahora (reinicio breve)',
-    neustartLaeuft: 'pinn. se está reiniciando …',
-    loginHint: '¿Eres nuevo? La configuración inicial empieza al iniciar sesión como administrador principal.',
-    loginBtn: 'Iniciar sesión como administrador principal',
-    loginMain: 'La primera vez la contraseña es «Admin» – después eliges una propia y empieza la configuración.',
-    laden: 'No se pudo cargar la configuración (¿falta pb_public/einrichtung.js?).',
-  },
-};
-function pinnSetupText(key) {
-  const l = (window.PINN_I18N && window.PINN_I18N.current) || 'en';
-  const d = PINN_SETUP_TEXTE[l] || PINN_SETUP_TEXTE.en;
-  return d[key] || PINN_SETUP_TEXTE.en[key] || key;
-}
-let pinnSetupLoading = null;
-function loadPinnSetupScript() {
-  if (window.PinnSetup) return Promise.resolve(window.PinnSetup);
-  if (pinnSetupLoading) return pinnSetupLoading;
-  pinnSetupLoading = new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = 'einrichtung.js?v=' + APP_VERSION;
-    s.onload = () => (window.PinnSetup ? resolve(window.PinnSetup) : reject(new Error('PinnSetup fehlt')));
-    s.onerror = () => { pinnSetupLoading = null; s.remove(); reject(new Error('einrichtung.js fehlt')); };
-    document.head.appendChild(s);
-  });
-  return pinnSetupLoading;
-}
-async function openPinnSetup() {
-  try {
-    const ps = await loadPinnSetupScript();
-    ps.open({ apiFetch, onClose: () => { refreshMainAdminSetupBanner(false); loadMainAdminFamilies(); } });
-  } catch (e) {
-    alert(pinnSetupText('laden'));
-  }
-}
 const PB_COLLECTION = 'familien_daten';
 const ICS_URL = '/api/pinn/kalender'; // nur nach Anmeldung abrufbar (pb_hooks/benutzer.pb.js)
 let familyRecordId = null; // wird nach dem Login gesetzt
@@ -11498,7 +11305,7 @@ function actualCurrentWeekRange() {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.90.0';
+const APP_VERSION = '1.91.0';
 
 /* ==========================================================
    Einstellungen & Konto: zwei gleich hohe Spalten (Querformat ab Tablet-Breite)
@@ -11626,86 +11433,88 @@ const APP_VERSION = '1.90.0';
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/exportieren.js?v=1.90.0"></script>
-<script src="js/hauptadminseite.js?v=1.90.0"></script>
-<script src="js/anmeldung.js?v=1.90.0"></script>
-<script src="js/konto.js?v=1.90.0"></script>
-<script src="js/profilverwaltung.js?v=1.90.0"></script>
-<script src="js/zustand.js?v=1.90.0"></script>
-<script src="js/bedienzustand.js?v=1.90.0"></script>
-<script src="js/rezeptbilder.js?v=1.90.0"></script>
-<script src="js/zusammenfuehren.js?v=1.90.0"></script>
-<script src="js/speichern.js?v=1.90.0"></script>
-<script src="js/design.js?v=1.90.0"></script>
-<script src="js/sprache.js?v=1.90.0"></script>
-<script src="js/uebersicht.js?v=1.90.0"></script>
-<script src="js/familienkachel.js?v=1.90.0"></script>
-<script src="js/wobistdu.js?v=1.90.0"></script>
-<script src="js/geburtstagsfeier.js?v=1.90.0"></script>
-<script src="js/wetterkachel.js?v=1.90.0"></script>
-<script src="js/geburtstage.js?v=1.90.0"></script>
-<script src="js/uebersichteinstellungen.js?v=1.90.0"></script>
-<script src="js/familiensync.js?v=1.90.0"></script>
-<script src="js/kalenderquellen.js?v=1.90.0"></script>
-<script src="js/icsparser.js?v=1.90.0"></script>
-<script src="js/zeitleiste.js?v=1.90.0"></script>
-<script src="js/termindetails.js?v=1.90.0"></script>
-<script src="js/kalenderdatei.js?v=1.90.0"></script>
-<script src="js/wetter.js?v=1.90.0"></script>
-<script src="js/wohnort.js?v=1.90.0"></script>
-<script src="js/feiertage.js?v=1.90.0"></script>
-<script src="js/muellkalender.js?v=1.90.0"></script>
-<script src="js/mitglieder.js?v=1.90.0"></script>
-<script src="js/profilbild.js?v=1.90.0"></script>
-<script src="js/mitglied.js?v=1.90.0"></script>
-<script src="js/kinderseite.js?v=1.90.0"></script>
-<script src="js/kinderroutine.js?v=1.90.0"></script>
-<script src="js/sterne.js?v=1.90.0"></script>
-<script src="js/kalenderansicht.js?v=1.90.0"></script>
-<script src="js/essenplanen.js?v=1.90.0"></script>
-<script src="js/rezeptparser.js?v=1.90.0"></script>
-<script src="js/rezeptdialog.js?v=1.90.0"></script>
-<script src="js/rezeptbild.js?v=1.90.0"></script>
-<script src="js/rezeptmengen.js?v=1.90.0"></script>
-<script src="js/einkauf.js?v=1.90.0"></script>
-<script src="js/einkaufslisten.js?v=1.90.0"></script>
-<script src="js/einkaufseingabe.js?v=1.90.0"></script>
-<script src="js/rezepte.js?v=1.90.0"></script>
-<script src="js/offline.js?v=1.90.0"></script>
-<script src="js/aufgabenextras.js?v=1.90.0"></script>
-<script src="js/appbadge.js?v=1.90.0"></script>
-<script src="js/reisen.js?v=1.90.0"></script>
-<script src="js/aufgabendaten.js?v=1.90.0"></script>
-<script src="js/haushalt.js?v=1.90.0"></script>
-<script src="js/reihum.js?v=1.90.0"></script>
-<script src="js/aufgaben.js?v=1.90.0"></script>
-<script src="js/smarthome.js?v=1.90.0"></script>
-<script src="js/sprachsteuerung.js?v=1.90.0"></script>
-<script src="js/termine.js?v=1.90.0"></script>
-<script src="js/ansichten.js?v=1.90.0"></script>
-<script src="js/versionspruefung.js?v=1.90.0"></script>
-<script src="js/sicherungen.js?v=1.90.0"></script>
-<script src="js/geraete.js?v=1.90.0"></script>
-<script src="js/fehlerprotokoll.js?v=1.90.0"></script>
-<script src="js/versionslog.js?v=1.90.0"></script>
-<script src="js/einstellungen.js?v=1.90.0"></script>
-<script src="js/kalenderkonto.js?v=1.90.0"></script>
-<script src="js/finanzen.js?v=1.90.0"></script>
-<script src="js/kassen.js?v=1.90.0"></script>
-<script src="js/vorrat.js?v=1.90.0"></script>
-<script src="js/vorrat2.js?v=1.90.0"></script>
-<script src="js/sparen.js?v=1.90.0"></script>
-<script src="js/vertraege.js?v=1.90.0"></script>
-<script src="js/fahrzeuge.js?v=1.90.0"></script>
-<script src="js/zuhause.js?v=1.90.0"></script>
-<script src="js/dokumente.js?v=1.90.0"></script>
-<script src="js/pdflesen.js?v=1.90.0"></script>
-<script src="js/appstart.js?v=1.90.0"></script>
-<script src="js/pinnwand.js?v=1.90.0"></script>
-<script src="js/listen.js?v=1.90.0"></script>
-<script src="js/familie.js?v=1.90.0"></script>
-<script src="js/hinweise.js?v=1.90.0"></script>
-<script src="js/ausblick.js?v=1.90.0"></script>
+<script src="js/familienverwalten.js?v=1.91.0"></script>
+<script src="js/einrichten.js?v=1.91.0"></script>
+<script src="js/exportieren.js?v=1.91.0"></script>
+<script src="js/hauptadminseite.js?v=1.91.0"></script>
+<script src="js/anmeldung.js?v=1.91.0"></script>
+<script src="js/konto.js?v=1.91.0"></script>
+<script src="js/profilverwaltung.js?v=1.91.0"></script>
+<script src="js/zustand.js?v=1.91.0"></script>
+<script src="js/bedienzustand.js?v=1.91.0"></script>
+<script src="js/rezeptbilder.js?v=1.91.0"></script>
+<script src="js/zusammenfuehren.js?v=1.91.0"></script>
+<script src="js/speichern.js?v=1.91.0"></script>
+<script src="js/design.js?v=1.91.0"></script>
+<script src="js/sprache.js?v=1.91.0"></script>
+<script src="js/uebersicht.js?v=1.91.0"></script>
+<script src="js/familienkachel.js?v=1.91.0"></script>
+<script src="js/wobistdu.js?v=1.91.0"></script>
+<script src="js/geburtstagsfeier.js?v=1.91.0"></script>
+<script src="js/wetterkachel.js?v=1.91.0"></script>
+<script src="js/geburtstage.js?v=1.91.0"></script>
+<script src="js/uebersichteinstellungen.js?v=1.91.0"></script>
+<script src="js/familiensync.js?v=1.91.0"></script>
+<script src="js/kalenderquellen.js?v=1.91.0"></script>
+<script src="js/icsparser.js?v=1.91.0"></script>
+<script src="js/zeitleiste.js?v=1.91.0"></script>
+<script src="js/termindetails.js?v=1.91.0"></script>
+<script src="js/kalenderdatei.js?v=1.91.0"></script>
+<script src="js/wetter.js?v=1.91.0"></script>
+<script src="js/wohnort.js?v=1.91.0"></script>
+<script src="js/feiertage.js?v=1.91.0"></script>
+<script src="js/muellkalender.js?v=1.91.0"></script>
+<script src="js/mitglieder.js?v=1.91.0"></script>
+<script src="js/profilbild.js?v=1.91.0"></script>
+<script src="js/mitglied.js?v=1.91.0"></script>
+<script src="js/kinderseite.js?v=1.91.0"></script>
+<script src="js/kinderroutine.js?v=1.91.0"></script>
+<script src="js/sterne.js?v=1.91.0"></script>
+<script src="js/kalenderansicht.js?v=1.91.0"></script>
+<script src="js/essenplanen.js?v=1.91.0"></script>
+<script src="js/rezeptparser.js?v=1.91.0"></script>
+<script src="js/rezeptdialog.js?v=1.91.0"></script>
+<script src="js/rezeptbild.js?v=1.91.0"></script>
+<script src="js/rezeptmengen.js?v=1.91.0"></script>
+<script src="js/einkauf.js?v=1.91.0"></script>
+<script src="js/einkaufslisten.js?v=1.91.0"></script>
+<script src="js/einkaufseingabe.js?v=1.91.0"></script>
+<script src="js/rezepte.js?v=1.91.0"></script>
+<script src="js/offline.js?v=1.91.0"></script>
+<script src="js/aufgabenextras.js?v=1.91.0"></script>
+<script src="js/appbadge.js?v=1.91.0"></script>
+<script src="js/reisen.js?v=1.91.0"></script>
+<script src="js/aufgabendaten.js?v=1.91.0"></script>
+<script src="js/haushalt.js?v=1.91.0"></script>
+<script src="js/reihum.js?v=1.91.0"></script>
+<script src="js/aufgaben.js?v=1.91.0"></script>
+<script src="js/smarthome.js?v=1.91.0"></script>
+<script src="js/sprachsteuerung.js?v=1.91.0"></script>
+<script src="js/termine.js?v=1.91.0"></script>
+<script src="js/ansichten.js?v=1.91.0"></script>
+<script src="js/versionspruefung.js?v=1.91.0"></script>
+<script src="js/sicherungen.js?v=1.91.0"></script>
+<script src="js/geraete.js?v=1.91.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.91.0"></script>
+<script src="js/versionslog.js?v=1.91.0"></script>
+<script src="js/einstellungen.js?v=1.91.0"></script>
+<script src="js/kalenderkonto.js?v=1.91.0"></script>
+<script src="js/finanzen.js?v=1.91.0"></script>
+<script src="js/kassen.js?v=1.91.0"></script>
+<script src="js/vorrat.js?v=1.91.0"></script>
+<script src="js/vorrat2.js?v=1.91.0"></script>
+<script src="js/sparen.js?v=1.91.0"></script>
+<script src="js/vertraege.js?v=1.91.0"></script>
+<script src="js/fahrzeuge.js?v=1.91.0"></script>
+<script src="js/zuhause.js?v=1.91.0"></script>
+<script src="js/dokumente.js?v=1.91.0"></script>
+<script src="js/pdflesen.js?v=1.91.0"></script>
+<script src="js/appstart.js?v=1.91.0"></script>
+<script src="js/pinnwand.js?v=1.91.0"></script>
+<script src="js/listen.js?v=1.91.0"></script>
+<script src="js/familie.js?v=1.91.0"></script>
+<script src="js/hinweise.js?v=1.91.0"></script>
+<script src="js/ausblick.js?v=1.91.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)

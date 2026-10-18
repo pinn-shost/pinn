@@ -90,19 +90,19 @@ Siempre contigo: pinn. se instala en cada iPhone y móvil Android como una app n
 
 pinn. habla **English, Deutsch, Français y Español**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.91
+
+**El código de la app se divide, parte 47**
+
+- **Para colaboradores:** cargar y abrir el asistente de configuración está ahora en `pb_public/js/einrichten.js`, la gestión de familias del administrador principal en `js/familienverwalten.js`. Nada cambia en el uso de pinn.
+- Solo cambian archivos de la app (`index.html`, dos archivos nuevos en `js/` y `js/versionslog.js`), nada cambia en el servidor. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualizar).
+
 ## Novedades de la 1.90
 
 **El código de la app se divide, parte 46**
 
 - **Para colaboradores:** la exportación de datos está ahora en `pb_public/js/exportieren.js`, la página de inicio del administrador principal en `js/hauptadminseite.js`, iniciar y cerrar sesión en `js/anmeldung.js`, los ajustes de la cuenta con «Cambiar contraseña» en `js/konto.js` y «Gestionar perfil» en `js/profilverwaltung.js`. Nada cambia en el uso de pinn.
 - Solo cambian archivos de la app (`index.html`, cinco archivos nuevos en `js/` y `js/versionslog.js`), nada cambia en el servidor. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualizar).
-
-## Novedades de la 1.89
-
-**El código de la app se divide, parte 45**
-
-- **Para colaboradores:** los valores predeterminados y las variables de los datos de la familia están ahora en `pb_public/js/zustand.js`, el estado de la interfaz (vista actual, calendario, ventanas abiertas) en `js/bedienzustand.js`, las imágenes de recetas (reducir, subir, recorte) en `js/rezeptbilder.js` y la fusión de los datos de la familia en `js/zusammenfuehren.js`. Solo `weatherData` se queda en `index.html`, porque el reloj lo necesita al cargar. Nada cambia en el uso de pinn.
-- Solo cambian archivos de la app (`index.html`, cuatro archivos nuevos en `js/` y `js/versionslog.js`), nada cambia en el servidor. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualizar).
 
 ## Cómo funciona
 
@@ -130,7 +130,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.90.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.91.0` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -220,7 +220,7 @@ pinn/
 ├── pb_public/           app web servida por PocketBase
 │   ├── index.html       la app (HTML, estilos y la mayor parte del código)
 │   ├── js/              código de la app separado de index.html, archivos <script> simples sin paso de compilación
-│   │                    (exportieren.js, hauptadminseite.js, anmeldung.js, konto.js, profilverwaltung.js, zustand.js, bedienzustand.js, rezeptbilder.js, zusammenfuehren.js, speichern.js, design.js, sprache.js, uebersicht.js, familienkachel.js, wobistdu.js, geburtstagsfeier.js, wetterkachel.js, geburtstage.js, uebersichteinstellungen.js, familiensync.js, kalenderquellen.js, icsparser.js, zeitleiste.js, termindetails.js, kalenderdatei.js, wetter.js, wohnort.js, feiertage.js, muellkalender.js, mitglieder.js, profilbild.js, mitglied.js, kinderseite.js, kinderroutine.js, sterne.js, kalenderansicht.js, essenplanen.js, rezeptparser.js, rezeptdialog.js, rezeptbild.js, rezeptmengen.js, einkauf.js, einkaufslisten.js, einkaufseingabe.js, rezepte.js, offline.js, aufgabenextras.js, appbadge.js, reisen.js, aufgabendaten.js, haushalt.js, reihum.js, aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js siempre va al final)
+│   │                    (familienverwalten.js, einrichten.js, exportieren.js, hauptadminseite.js, anmeldung.js, konto.js, profilverwaltung.js, zustand.js, bedienzustand.js, rezeptbilder.js, zusammenfuehren.js, speichern.js, design.js, sprache.js, uebersicht.js, familienkachel.js, wobistdu.js, geburtstagsfeier.js, wetterkachel.js, geburtstage.js, uebersichteinstellungen.js, familiensync.js, kalenderquellen.js, icsparser.js, zeitleiste.js, termindetails.js, kalenderdatei.js, wetter.js, wohnort.js, feiertage.js, muellkalender.js, mitglieder.js, profilbild.js, mitglied.js, kinderseite.js, kinderroutine.js, sterne.js, kalenderansicht.js, essenplanen.js, rezeptparser.js, rezeptdialog.js, rezeptbild.js, rezeptmengen.js, einkauf.js, einkaufslisten.js, einkaufseingabe.js, rezepte.js, offline.js, aufgabenextras.js, appbadge.js, reisen.js, aufgabendaten.js, haushalt.js, reihum.js, aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js siempre va al final)
 │   ├── einrichtung.js   asistente de configuración · datenexport.js  exportación de datos
 │   ├── lang/            traducciones (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js y Tesseract los descarga la instalación)
