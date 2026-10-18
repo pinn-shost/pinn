@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.82', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 38)',
+    punkte: [
+      ['info', 'Für Mitwirkende: das Fenster für Familienmitglieder (Bearbeiten-Recht, Anmeldung mit Profil, Farbe, Anzeige und Speichern) liegt jetzt in einer eigenen Datei (pb_public/js/mitglied.js). Die allgemeinen Popup-Helfer bleiben in der index.html, weil sie dort schon beim Laden gebraucht werden. An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, js/mitglied.js und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.81', datum: '17.10.2026', titel: 'App-Code wird aufgeteilt (Teil 37)',
     punkte: [
       ['info', 'Für Mitwirkende: die Kinderseite (Einstellungen, Tageszeiten, die Seite selbst mit Ton, Konfetti und Abhaken) liegt jetzt in pb_public/js/kinderseite.js, der Abschnitt „Kinderseite“ im Mitglied-Fenster und das Fenster „Aufgaben & Tageszeiten bearbeiten“ in js/kinderroutine.js. An der Bedienung ändert sich nichts'],

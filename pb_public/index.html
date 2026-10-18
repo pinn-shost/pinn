@@ -913,7 +913,7 @@ window.PINN_LANGUAGES = [
   // Startprüfung: fehlt eine selbst gehostete Datei, erscheint ein klarer Hinweis statt einer
   // leeren Seite ohne funktionierende Buttons.
   // Teile der App unter pb_public/js/ – jede Datei meldet sich am Ende in window.PINN_PARTS an
-  var PINN_APP_PARTS = ['kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
+  var PINN_APP_PARTS = ['mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
   window.addEventListener('DOMContentLoaded', function () {
     var missing = [];
     if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – der PocketBase-Client (ohne ihn funktioniert nichts)');
@@ -16027,226 +16027,6 @@ new MutationObserver((mutations) => {
   });
 }).observe(document.body, { attributes: true, attributeFilter: ['class'], attributeOldValue: true, subtree: true, childList: true });
 
-// Wer darf ein Familienmitglied bearbeiten? Admins alle, jeder sich selbst - Kinder (Kindersicherung)
-// nur der Admin. Gäste niemanden.
-function canEditMember(m) {
-  if (!m || isCurrentUserGuest()) return false;
-  if (isCurrentUserAdmin()) return true;
-  const me = currentMember();
-  return !!(me && me.id === m.id && !m.childLock);
-}
-
-function openMemberModal(existingId = null) {
-  if (isCurrentUserGuest()) return; // Gäste bearbeiten keine Familienmitglieder
-  if (existingId && !canEditMember(memberById(existingId))) {
-    const target = memberById(existingId);
-    alert(target && target.childLock && currentMember() && currentMember().id === target.id
-      ? 'Dein Profil kann nur ein Admin bearbeiten.'
-      : 'Du kannst nur dein eigenes Familienmitglied bearbeiten – alle anderen bearbeitet ein Admin.');
-    return;
-  }
-  if (!existingId && !isCurrentUserAdmin()) {
-    alert('Neue Familienmitglieder kann nur ein Admin anlegen, weil dabei auch ein Profil zum Anmelden erstellt wird.');
-    return;
-  }
-  editingMemberId = existingId;
-  const existing = existingId ? memberById(existingId) : null;
-
-  document.getElementById('memberModalTitle').textContent = existing ? 'Familienmitglied bearbeiten' : 'Familienmitglied hinzufügen';
-  document.getElementById('saveMember').textContent = existing ? 'Speichern' : 'Hinzufügen';
-  document.getElementById('newMemberName').value = existing ? existing.name : '';
-  document.getElementById('newMemberRole').value = existing ? (existing.role || '') : '';
-  document.getElementById('memberPhotoFile').value = '';
-
-  selectedDisplayMode = existing ? existing.displayMode : 'name';
-  document.querySelectorAll('.display-mode-btn').forEach(b => b.classList.toggle('active', b.dataset.display === selectedDisplayMode));
-
-  pendingMemberPhoto = existing ? (existing.photo || null) : null;
-  pendingMemberAvatar = existing ? (existing.avatar || null) : null;
-  document.querySelectorAll('.avatar-option').forEach(b => b.classList.toggle('border-pine', pendingMemberAvatar && b.textContent === pendingMemberAvatar));
-
-  selectedMemberColor = existing ? (existing.color || PALETTE[0]) : PALETTE[members.length % PALETTE.length];
-  const picker = document.getElementById('colorPicker');
-  const customInput = document.getElementById('customColorInput');
-  picker.innerHTML = '';
-  PALETTE.forEach(c => {
-    const dot = document.createElement('button');
-    dot.type = 'button';
-    dot.className = 'w-7 h-7 rounded-full border-2';
-    dot.style.backgroundColor = c;
-    dot.style.borderColor = c === selectedMemberColor ? '#25231F' : 'transparent';
-    dot.addEventListener('click', () => {
-      selectedMemberColor = c;
-      [...picker.children].forEach(ch => ch.style.borderColor = 'transparent');
-      dot.style.borderColor = '#25231F';
-      customInput.style.borderColor = 'transparent';
-      renderMemberAvatarPreview();
-    });
-    picker.appendChild(dot);
-  });
-  const transparentDot = document.createElement('button');
-  transparentDot.type = 'button';
-  transparentDot.title = 'Transparent';
-  transparentDot.className = 'w-7 h-7 rounded-full border-2 bg-white relative overflow-hidden';
-  transparentDot.style.backgroundImage = 'linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%), linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%)';
-  transparentDot.style.backgroundSize = '8px 8px';
-  transparentDot.style.backgroundPosition = '0 0, 4px 4px';
-  transparentDot.style.borderColor = selectedMemberColor === 'transparent' ? '#25231F' : 'transparent';
-  transparentDot.addEventListener('click', () => {
-    selectedMemberColor = 'transparent';
-    [...picker.children].forEach(ch => ch.style.borderColor = 'transparent');
-    transparentDot.style.borderColor = '#25231F';
-    customInput.style.borderColor = 'transparent';
-    renderMemberAvatarPreview();
-  });
-  picker.appendChild(transparentDot);
-
-  const isCustomColor = selectedMemberColor !== 'transparent' && !PALETTE.includes(selectedMemberColor);
-  customInput.value = isCustomColor ? selectedMemberColor : selectedMemberColor === 'transparent' ? '#2F4B41' : selectedMemberColor;
-  customInput.style.borderColor = isCustomColor ? '#25231F' : 'transparent';
-
-  renderMemberAvatarPreview();
-  renderMemberLoginSection(existing);
-  initMemberKidSection(existing);
-  document.getElementById('memberModal').classList.remove('hidden');
-  document.getElementById('newMemberName').focus();
-  armModalSnapshot('memberModal');
-}
-
-/* ---------- Anmeldung im Mitglied-Popup: Profil anlegen oder vorhandenes verknüpfen ---------- */
-let memberLoginMode = 'neu';
-let memberUsernameTouched = false;
-function applyMemberLoginMode() {
-  document.querySelectorAll('.member-login-mode-btn').forEach(b => b.classList.toggle('active', b.dataset.loginMode === memberLoginMode));
-  document.getElementById('memberLoginNew').classList.toggle('hidden', memberLoginMode !== 'neu');
-  document.getElementById('memberLoginExisting').classList.toggle('hidden', memberLoginMode !== 'bestehend');
-}
-function renderMemberLoginSection(existing) {
-  const section = document.getElementById('memberLoginSection');
-  const linkedBox = document.getElementById('memberLoginLinked');
-  const setupBox = document.getElementById('memberLoginSetup');
-  const noAdmin = document.getElementById('memberLoginNoAdmin');
-  const linked = existing ? profileForMember(existing.id) : null;
-  document.getElementById('memberLoginStatus').textContent = '';
-  linkedBox.classList.add('hidden');
-  setupBox.classList.add('hidden');
-  noAdmin.classList.add('hidden');
-  section.classList.remove('hidden');
-  if (linked) {
-    document.getElementById('memberLoginLinkedName').textContent = linked.username + (linked.rolle === 'admin' ? ' (Admin)' : '');
-    linkedBox.classList.remove('hidden');
-    return;
-  }
-  if (!isCurrentUserAdmin()) {
-    noAdmin.classList.remove('hidden');
-    return;
-  }
-  setupBox.classList.remove('hidden');
-  const free = unlinkedProfiles();
-  const select = document.getElementById('memberLoginExistingSelect');
-  select.innerHTML = free.length
-    ? free.map(p => `<option value="${p.id}">${escapeHtml(p.username)}${p.rolle === 'admin' ? ' (Admin)' : ''}</option>`).join('')
-    : '<option value="">Kein freies Profil vorhanden</option>';
-  document.querySelector('.member-login-mode-btn[data-login-mode="bestehend"]').disabled = !free.length;
-  document.querySelector('.member-login-mode-btn[data-login-mode="bestehend"]').classList.toggle('opacity-40', !free.length);
-  memberUsernameTouched = false;
-  document.getElementById('memberLoginUsername').value = existing ? existing.name : '';
-  document.getElementById('memberLoginPassword').value = '';
-  document.getElementById('memberLoginRole').value = 'mitglied';
-  memberLoginMode = 'neu';
-  applyMemberLoginMode();
-}
-document.querySelectorAll('.member-login-mode-btn').forEach(btn => btn.addEventListener('click', () => {
-  if (btn.disabled) return;
-  memberLoginMode = btn.dataset.loginMode;
-  applyMemberLoginMode();
-}));
-document.getElementById('memberLoginUsername').addEventListener('input', () => { memberUsernameTouched = true; });
-document.getElementById('newMemberName').addEventListener('input', (e) => {
-  if (!memberUsernameTouched && !document.getElementById('memberLoginSetup').classList.contains('hidden')) {
-    document.getElementById('memberLoginUsername').value = e.target.value.trim();
-  }
-});
-
-document.getElementById('customColorInput').addEventListener('input', (e) => {
-  selectedMemberColor = e.target.value;
-  document.querySelectorAll('#colorPicker button').forEach(b => b.style.borderColor = 'transparent');
-  e.target.style.borderColor = '#25231F';
-  renderMemberAvatarPreview();
-});
-
-document.querySelectorAll('.display-mode-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    selectedDisplayMode = btn.dataset.display;
-    document.querySelectorAll('.display-mode-btn').forEach(b => b.classList.toggle('active', b === btn));
-  });
-});
-
-document.getElementById('settingsAddMember').addEventListener('click', () => openMemberModal(null));
-function closeMemberModal() { document.getElementById('memberModal').classList.add('hidden'); }
-document.getElementById('cancelMember').addEventListener('click', () => attemptCloseModal('memberModal', closeMemberModal));
-wireModalOutsideClick('memberModal', closeMemberModal);
-
-document.getElementById('saveMember').addEventListener('click', async () => {
-  const name = document.getElementById('newMemberName').value.trim();
-  if (!name) return;
-  const role = document.getElementById('newMemberRole').value.trim();
-  const status = document.getElementById('memberLoginStatus');
-  const btn = document.getElementById('saveMember');
-  status.textContent = '';
-
-  const existing = editingMemberId ? memberById(editingMemberId) : null;
-  if (!existing && !isCurrentUserAdmin()) {
-    status.textContent = 'Neue Familienmitglieder kann nur ein Admin anlegen.';
-    return;
-  }
-  if (existing && !canEditMember(existing)) {
-    status.textContent = 'Dieses Familienmitglied kann nur ein Admin bearbeiten.';
-    return;
-  }
-  const memberId = existing ? existing.id : 'm' + Date.now();
-
-  // Jedes Mitglied braucht ein Profil: fehlt es noch, wird es jetzt angelegt bzw. verknüpft.
-  if (isCurrentUserAdmin() && !profileForMember(memberId)) {
-    btn.disabled = true;
-    try {
-      if (memberLoginMode === 'bestehend') {
-        const profileId = document.getElementById('memberLoginExistingSelect').value;
-        if (!profileId) throw new Error('Bitte ein Profil auswählen.');
-        await postJson('/api/pinn/users/link', { id: profileId, mitglied: memberId });
-      } else {
-        const username = document.getElementById('memberLoginUsername').value.trim();
-        const password = document.getElementById('memberLoginPassword').value;
-        const rolle = document.getElementById('memberLoginRole').value;
-        if (!username) throw new Error('Bitte einen Benutzernamen für das Profil eingeben.');
-        if (password.length < 8) throw new Error('Das Start-Passwort muss mindestens 8 Zeichen lang sein.');
-        await postJson('/api/pinn/users/create', { username, password, rolle, mitglied: memberId });
-      }
-      await loadFamilyProfiles();
-    } catch (e) {
-      status.textContent = e.message;
-      btn.disabled = false;
-      return;
-    }
-    btn.disabled = false;
-  }
-
-  if (existing) {
-    Object.assign(existing, { name, role, color: selectedMemberColor, displayMode: selectedDisplayMode, photo: pendingMemberPhoto, avatar: pendingMemberAvatar });
-    if (pendingKidConfig) existing.kid = JSON.parse(JSON.stringify(pendingKidConfig));
-  } else {
-    const newMember = { id: memberId, name, role, color: selectedMemberColor, displayMode: selectedDisplayMode, photo: pendingMemberPhoto, avatar: pendingMemberAvatar };
-    if (pendingKidConfig && (pendingKidConfig.enabled || pendingKidConfig.tasks.length)) newMember.kid = JSON.parse(JSON.stringify(pendingKidConfig));
-    members.push(newMember);
-  }
-  saveMembers();
-  renderMemberChips();
-  renderCalendar();
-  if (currentView === 'einstellungen' || currentView === 'konto') renderSettings();
-  document.getElementById('memberModal').classList.add('hidden');
-  if (kidPageMemberId) renderKidPage();
-});
-
 /* ==========================================================
    Recipe list rendering
    ========================================================== */
@@ -16261,7 +16041,7 @@ function actualCurrentWeekRange() {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.81.0';
+const APP_VERSION = '1.82.0';
 
 /* ==========================================================
    Einstellungen & Konto: zwei gleich hohe Spalten (Querformat ab Tablet-Breite)
@@ -16389,54 +16169,55 @@ const APP_VERSION = '1.81.0';
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/kinderseite.js?v=1.81.0"></script>
-<script src="js/kinderroutine.js?v=1.81.0"></script>
-<script src="js/sterne.js?v=1.81.0"></script>
-<script src="js/kalenderansicht.js?v=1.81.0"></script>
-<script src="js/essenplanen.js?v=1.81.0"></script>
-<script src="js/rezeptparser.js?v=1.81.0"></script>
-<script src="js/rezeptdialog.js?v=1.81.0"></script>
-<script src="js/rezeptbild.js?v=1.81.0"></script>
-<script src="js/rezeptmengen.js?v=1.81.0"></script>
-<script src="js/einkauf.js?v=1.81.0"></script>
-<script src="js/einkaufslisten.js?v=1.81.0"></script>
-<script src="js/einkaufseingabe.js?v=1.81.0"></script>
-<script src="js/rezepte.js?v=1.81.0"></script>
-<script src="js/offline.js?v=1.81.0"></script>
-<script src="js/aufgabenextras.js?v=1.81.0"></script>
-<script src="js/appbadge.js?v=1.81.0"></script>
-<script src="js/reisen.js?v=1.81.0"></script>
-<script src="js/aufgabendaten.js?v=1.81.0"></script>
-<script src="js/haushalt.js?v=1.81.0"></script>
-<script src="js/reihum.js?v=1.81.0"></script>
-<script src="js/aufgaben.js?v=1.81.0"></script>
-<script src="js/smarthome.js?v=1.81.0"></script>
-<script src="js/sprachsteuerung.js?v=1.81.0"></script>
-<script src="js/termine.js?v=1.81.0"></script>
-<script src="js/ansichten.js?v=1.81.0"></script>
-<script src="js/versionspruefung.js?v=1.81.0"></script>
-<script src="js/sicherungen.js?v=1.81.0"></script>
-<script src="js/geraete.js?v=1.81.0"></script>
-<script src="js/fehlerprotokoll.js?v=1.81.0"></script>
-<script src="js/versionslog.js?v=1.81.0"></script>
-<script src="js/einstellungen.js?v=1.81.0"></script>
-<script src="js/kalenderkonto.js?v=1.81.0"></script>
-<script src="js/finanzen.js?v=1.81.0"></script>
-<script src="js/kassen.js?v=1.81.0"></script>
-<script src="js/vorrat.js?v=1.81.0"></script>
-<script src="js/vorrat2.js?v=1.81.0"></script>
-<script src="js/sparen.js?v=1.81.0"></script>
-<script src="js/vertraege.js?v=1.81.0"></script>
-<script src="js/fahrzeuge.js?v=1.81.0"></script>
-<script src="js/zuhause.js?v=1.81.0"></script>
-<script src="js/dokumente.js?v=1.81.0"></script>
-<script src="js/pdflesen.js?v=1.81.0"></script>
-<script src="js/appstart.js?v=1.81.0"></script>
-<script src="js/pinnwand.js?v=1.81.0"></script>
-<script src="js/listen.js?v=1.81.0"></script>
-<script src="js/familie.js?v=1.81.0"></script>
-<script src="js/hinweise.js?v=1.81.0"></script>
-<script src="js/ausblick.js?v=1.81.0"></script>
+<script src="js/mitglied.js?v=1.82.0"></script>
+<script src="js/kinderseite.js?v=1.82.0"></script>
+<script src="js/kinderroutine.js?v=1.82.0"></script>
+<script src="js/sterne.js?v=1.82.0"></script>
+<script src="js/kalenderansicht.js?v=1.82.0"></script>
+<script src="js/essenplanen.js?v=1.82.0"></script>
+<script src="js/rezeptparser.js?v=1.82.0"></script>
+<script src="js/rezeptdialog.js?v=1.82.0"></script>
+<script src="js/rezeptbild.js?v=1.82.0"></script>
+<script src="js/rezeptmengen.js?v=1.82.0"></script>
+<script src="js/einkauf.js?v=1.82.0"></script>
+<script src="js/einkaufslisten.js?v=1.82.0"></script>
+<script src="js/einkaufseingabe.js?v=1.82.0"></script>
+<script src="js/rezepte.js?v=1.82.0"></script>
+<script src="js/offline.js?v=1.82.0"></script>
+<script src="js/aufgabenextras.js?v=1.82.0"></script>
+<script src="js/appbadge.js?v=1.82.0"></script>
+<script src="js/reisen.js?v=1.82.0"></script>
+<script src="js/aufgabendaten.js?v=1.82.0"></script>
+<script src="js/haushalt.js?v=1.82.0"></script>
+<script src="js/reihum.js?v=1.82.0"></script>
+<script src="js/aufgaben.js?v=1.82.0"></script>
+<script src="js/smarthome.js?v=1.82.0"></script>
+<script src="js/sprachsteuerung.js?v=1.82.0"></script>
+<script src="js/termine.js?v=1.82.0"></script>
+<script src="js/ansichten.js?v=1.82.0"></script>
+<script src="js/versionspruefung.js?v=1.82.0"></script>
+<script src="js/sicherungen.js?v=1.82.0"></script>
+<script src="js/geraete.js?v=1.82.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.82.0"></script>
+<script src="js/versionslog.js?v=1.82.0"></script>
+<script src="js/einstellungen.js?v=1.82.0"></script>
+<script src="js/kalenderkonto.js?v=1.82.0"></script>
+<script src="js/finanzen.js?v=1.82.0"></script>
+<script src="js/kassen.js?v=1.82.0"></script>
+<script src="js/vorrat.js?v=1.82.0"></script>
+<script src="js/vorrat2.js?v=1.82.0"></script>
+<script src="js/sparen.js?v=1.82.0"></script>
+<script src="js/vertraege.js?v=1.82.0"></script>
+<script src="js/fahrzeuge.js?v=1.82.0"></script>
+<script src="js/zuhause.js?v=1.82.0"></script>
+<script src="js/dokumente.js?v=1.82.0"></script>
+<script src="js/pdflesen.js?v=1.82.0"></script>
+<script src="js/appstart.js?v=1.82.0"></script>
+<script src="js/pinnwand.js?v=1.82.0"></script>
+<script src="js/listen.js?v=1.82.0"></script>
+<script src="js/familie.js?v=1.82.0"></script>
+<script src="js/hinweise.js?v=1.82.0"></script>
+<script src="js/ausblick.js?v=1.82.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)
