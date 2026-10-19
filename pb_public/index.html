@@ -913,7 +913,7 @@ window.PINN_LANGUAGES = [
   // Startprüfung: fehlt eine selbst gehostete Datei, erscheint ein klarer Hinweis statt einer
   // leeren Seite ohne funktionierende Buttons.
   // Teile der App unter pb_public/js/ – jede Datei meldet sich am Ende in window.PINN_PARTS an
-  var PINN_APP_PARTS = ['push', 'serverzugriff', 'tastatur', 'anmeldemaske', 'dashboard', 'dashboardhintergrund', 'profilauswahl', 'pineingabe', 'dashboardsitzung', 'dashboardkonto', 'familienverwalten', 'einrichten', 'exportieren', 'hauptadminseite', 'anmeldung', 'konto', 'profilverwaltung', 'zustand', 'bedienzustand', 'rezeptbilder', 'zusammenfuehren', 'speichern', 'design', 'sprache', 'uebersicht', 'familienkachel', 'wobistdu', 'geburtstagsfeier', 'wetterkachel', 'geburtstage', 'uebersichteinstellungen', 'familiensync', 'kalenderquellen', 'icsparser', 'zeitleiste', 'termindetails', 'kalenderdatei', 'wetter', 'wohnort', 'feiertage', 'muellkalender', 'mitglieder', 'profilbild', 'mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
+  var PINN_APP_PARTS = ['verbindung', 'benutzer', 'push', 'serverzugriff', 'tastatur', 'anmeldemaske', 'dashboard', 'dashboardhintergrund', 'profilauswahl', 'pineingabe', 'dashboardsitzung', 'dashboardkonto', 'familienverwalten', 'einrichten', 'exportieren', 'hauptadminseite', 'anmeldung', 'konto', 'profilverwaltung', 'zustand', 'bedienzustand', 'rezeptbilder', 'zusammenfuehren', 'speichern', 'design', 'sprache', 'uebersicht', 'familienkachel', 'wobistdu', 'geburtstagsfeier', 'wetterkachel', 'geburtstage', 'uebersichteinstellungen', 'familiensync', 'kalenderquellen', 'icsparser', 'zeitleiste', 'termindetails', 'kalenderdatei', 'wetter', 'wohnort', 'feiertage', 'muellkalender', 'mitglieder', 'profilbild', 'mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
   window.addEventListener('DOMContentLoaded', function () {
     var missing = [];
     if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – der PocketBase-Client (ohne ihn funktioniert nichts)');
@@ -8707,186 +8707,6 @@ window.addEventListener('scroll', () => {
   }, { passive: false });
 })();
 
-/* ==========================================================
-   PocketBase-Verbindung
-   ========================================================== */
-// Die App liegt jetzt in pb_public und wird direkt von PocketBase ausgeliefert – deshalb
-// verwenden wir dieselbe Adresse, unter der die Seite selbst aufgerufen wurde
-// (window.location.origin). Das funktioniert automatisch egal ob du PocketBase direkt auf
-// Port 8090 aufrufst ODER über nginx auf einem anderen Port/Domain/HTTPS – der Port 8090
-// muss also NICHT mehr fest im Code stehen. Der Fallback greift nur, falls die Datei mal
-// nicht über http(s):// geladen wird (z. B. lokal per Doppelklick geöffnet) - dann bitte die
-// Adresse deines eigenen PocketBase-Servers unten eintragen.
-const PB_URL = (location.protocol === 'http:' || location.protocol === 'https:')
-  ? location.origin
-  : 'http://localhost:8090'; // <- hier ggf. deine eigene PocketBase-Adresse eintragen
-const pb = new PocketBase(PB_URL);
-
-/* ---------- Geräteverwaltung: Kennung und Name dieses Geräts (pb_hooks/sitzungen.pb.js) ----------
-   Bei jeder Anmeldung (Passwort, Familien-Dashboard, Verlängern beim Start, Passwort ändern) schickt
-   die App eine zufällige Geräte-Kennung und einen lesbaren Namen mit (z. B. „iPhone · App“). Meldet
-   sich dasselbe Gerät erneut an, führt der Server die vorhandene Sitzung fort.
-   Wurde das Gerät abgemeldet (Konto → Angemeldete Geräte bzw. durch einen Admin), antwortet der
-   Server mit 401 und „X-Pinn-Abgemeldet: 1“ – dann löscht die App ihre Daten auf dem Gerät. */
-const LS_DEVICE_ID = 'pinn.geraetId';
-function pinnDeviceId() {
-  try {
-    let id = localStorage.getItem(LS_DEVICE_ID) || '';
-    if (!/^[A-Za-z0-9_-]{8,64}$/.test(id)) {
-      const b = new Uint8Array(18);
-      window.crypto.getRandomValues(b);
-      id = Array.from(b, x => ('0' + x.toString(16)).slice(-2)).join('');
-      localStorage.setItem(LS_DEVICE_ID, id);
-    }
-    return id;
-  } catch (e) { return ''; }
-}
-function pinnDeviceName() {
-  const ua = navigator.userAgent || '';
-  let dev = 'Browser';
-  if (/iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) dev = 'iPad';
-  else if (/iPhone|iPod/.test(ua)) dev = 'iPhone';
-  else if (/Android/.test(ua)) dev = /Mobile/.test(ua) ? 'Android-Handy' : 'Android-Tablet';
-  else if (/Macintosh|Mac OS X/.test(ua)) dev = 'Mac';
-  else if (/Windows/.test(ua)) dev = 'Windows-PC';
-  else if (/CrOS/.test(ua)) dev = 'Chromebook';
-  else if (/Linux/.test(ua)) dev = 'Linux-PC';
-  let br = '';
-  if (/EdgA?\/|EdgiOS/.test(ua)) br = 'Edge';
-  else if (/SamsungBrowser/.test(ua)) br = 'Samsung Internet';
-  else if (/Firefox|FxiOS/.test(ua)) br = 'Firefox';
-  else if (/OPR\//.test(ua)) br = 'Opera';
-  else if (/Chrome|CriOS/.test(ua)) br = 'Chrome';
-  else if (/Safari/.test(ua)) br = 'Safari';
-  let standalone = false;
-  try { standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; } catch (e) { standalone = false; }
-  let name = dev + (standalone ? ' · App' : (br ? ' · ' + br : ''));
-  try {
-    const d = JSON.parse(localStorage.getItem('pinn.dashboard') || 'null');
-    if (d && d.key) name = 'Familien-Dashboard' + (d.name ? ' „' + String(d.name).slice(0, 40) + '“' : '') + ' · ' + dev;
-  } catch (e) { /* egal */ }
-  return name.slice(0, 100);
-}
-// Anmelde-Anfragen bekommen Kennung und Name des Geräts mit (auch die des PocketBase-SDK)
-const PINN_AUTH_URL = /\/api\/(pinn\/(login|password|dashboard\/login|sitzungen\/alle-abmelden)|collections\/benutzer\/auth-)/;
-(function () {
-  if (!window.fetch) return;
-  const origFetch = window.fetch.bind(window);
-  window.fetch = function (input, init) {
-    try {
-      const url = typeof input === 'string' ? input : ((input && input.url) || '');
-      if (PINN_AUTH_URL.test(url)) {
-        const opts = Object.assign({}, init || {});
-        const h = new Headers(opts.headers || (typeof input !== 'string' && input && input.headers) || undefined);
-        const id = pinnDeviceId();
-        if (id) h.set('X-Pinn-Geraet-Id', id);
-        h.set('X-Pinn-Geraet', encodeURIComponent(pinnDeviceName()));
-        opts.headers = h;
-        return origFetch(input, opts);
-      }
-    } catch (e) { /* normal weiter */ }
-    return origFetch(input, init);
-  };
-})();
-// Antworten des SDK: abgemeldetes Gerät erkennen
-pb.afterSend = function (response, data) {
-  try {
-    if (response && response.status === 401 && response.headers.get('X-Pinn-Abgemeldet') === '1') handleRemoteLogout();
-  } catch (e) { /* egal */ }
-  return data;
-};
-// Dieses Gerät wurde aus der Ferne abgemeldet: Anmeldung, Daten, Push und Zwischenspeicher auf dem
-// Gerät löschen. Am Familien-Dashboard geht es einfach zurück zur Profilauswahl.
-let remoteLogoutDone = false;
-async function handleRemoteLogout() {
-  if (remoteLogoutDone) return;
-  remoteLogoutDone = true;
-  try { if (typeof isDashboardDevice === 'function' && isDashboardDevice()) { returnToDashboard(); return; } } catch (e) { /* weiter */ }
-  try { localStorage.removeItem('pinn.pushGewuenscht'); } catch (e) { /* egal */ }
-  try {
-    const reg = navigator.serviceWorker ? await navigator.serviceWorker.getRegistration('/') : null;
-    const sub = reg && reg.pushManager ? await reg.pushManager.getSubscription() : null;
-    if (sub) await sub.unsubscribe();
-  } catch (e) { /* egal */ }
-  try { if (typeof clearAppBadgeNow === 'function') clearAppBadgeNow(); } catch (e) { /* egal */ }
-  pb.authStore.clear();
-  try {
-    ['pinn.cache', 'pinn.pendingSync', 'pinn.outbox', 'pinn.aufgabenCache', 'pinn.icsCache', 'pinn.profileCache', 'pinn.sessionOnly'].forEach(k => localStorage.removeItem(k));
-    sessionStorage.removeItem('pinn.sessionAlive');
-  } catch (e) { /* egal */ }
-  try { if (window.caches) await caches.delete('pinn-daten'); } catch (e) { /* egal */ }
-  alert('Dieses Gerät wurde in pinn. abgemeldet. Die pinn.-Daten auf diesem Gerät wurden gelöscht – bitte melde dich erneut an.');
-  location.reload();
-}
-
-/* ==========================================================
-   Anmeldung (Profile aus der Sammlung "benutzer", siehe pb_hooks/benutzer.pb.js)
-   ========================================================== */
-const PINN_USERS = 'benutzer';
-const LS_SESSION_ONLY = 'pinn.sessionOnly';
-const SS_SESSION_ALIVE = 'pinn.sessionAlive';
-let lastLoginPassword = null; // nur im Speicher, für die erzwungene Passwortänderung direkt nach dem Anmelden
-
-function currentUser() {
-  return pb.authStore.model || pb.authStore.record || null;
-}
-// Admin der eigenen Familie (mehrere je Familie möglich)
-function isCurrentUserAdmin() {
-  const u = currentUser();
-  return !!(u && u.rolle === 'admin' && u.familie);
-}
-// Hauptadmin (verwaltet die Familien, gehört selbst zu keiner)
-function isCurrentUserMainAdmin() {
-  const u = currentUser();
-  return !!(u && u.rolle === 'hauptadmin');
-}
-
-// JSON an eine eigene Server-Route schicken; wirft bei Fehlern eine verständliche Meldung.
-async function postJson(url, payload) {
-  const res = await apiFetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload || {}) });
-  const body = await res.json().catch(() => ({}));
-  if (!res.ok || body.error) throw new Error(body.error || body.message || 'Aktion fehlgeschlagen.');
-  return body;
-}
-
-/* ==========================================================
-   Profile <-> Familienmitglieder
-   Jedes Familienmitglied hat genau ein Profil (Feld "mitglied" im Profil = ID des Mitglieds).
-   ========================================================== */
-let familyProfiles = []; // alle Profile, zuletzt vom Server geladen
-async function loadFamilyProfiles() {
-  try {
-    familyProfiles = await pb.collection(PINN_USERS).getFullList({ sort: 'username' });
-    try { localStorage.setItem('pinn.profileCache', JSON.stringify({ familie: (currentUser() && currentUser().familie) || '', list: familyProfiles })); } catch (e2) { /* egal */ }
-    try { if (familyRecordId) { applyRoleRestrictions(); renderBottomTabBar(); } } catch (e4) { /* App noch nicht fertig aufgebaut */ }
-    return true;
-  } catch (e) {
-    // offline: letzten Stand behalten bzw. den zwischengespeicherten nehmen
-    if (!familyProfiles.length) {
-      try {
-        const c = JSON.parse(localStorage.getItem('pinn.profileCache') || 'null');
-        if (c && c.familie === ((currentUser() && currentUser().familie) || '') && Array.isArray(c.list)) familyProfiles = c.list;
-      } catch (e3) { /* egal */ }
-    }
-    return false;
-  }
-}
-function profileForMember(memberId) {
-  return memberId ? (familyProfiles.find(p => p.mitglied === memberId) || null) : null;
-}
-// Profile, die (noch) mit keinem vorhandenen Familienmitglied verknüpft sind
-function unlinkedProfiles() {
-  return familyProfiles.filter(p => p.rolle !== 'gast' && (!p.mitglied || !memberById(p.mitglied)));
-}
-// Familienmitglied des angemeldeten Profils (oder null)
-function currentMember() {
-  const u = currentUser();
-  if (!u) return null;
-  const p = familyProfiles.find(x => x.id === u.id);
-  const mid = (p && p.mitglied) || u.mitglied;
-  return mid ? (memberById(mid) || null) : null;
-}
-
 const PB_COLLECTION = 'familien_daten';
 const ICS_URL = '/api/pinn/kalender'; // nur nach Anmeldung abrufbar (pb_hooks/benutzer.pb.js)
 let familyRecordId = null; // wird nach dem Login gesetzt
@@ -9050,7 +8870,7 @@ function actualCurrentWeekRange() {
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.93.0';
+const APP_VERSION = '1.94.0';
 
 /* ==========================================================
    Einstellungen & Konto: zwei gleich hohe Spalten (Querformat ab Tablet-Breite)
@@ -9178,98 +8998,100 @@ const APP_VERSION = '1.93.0';
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/push.js?v=1.93.0"></script>
-<script src="js/serverzugriff.js?v=1.93.0"></script>
-<script src="js/tastatur.js?v=1.93.0"></script>
-<script src="js/anmeldemaske.js?v=1.93.0"></script>
-<script src="js/dashboard.js?v=1.93.0"></script>
-<script src="js/dashboardhintergrund.js?v=1.93.0"></script>
-<script src="js/profilauswahl.js?v=1.93.0"></script>
-<script src="js/pineingabe.js?v=1.93.0"></script>
-<script src="js/dashboardsitzung.js?v=1.93.0"></script>
-<script src="js/dashboardkonto.js?v=1.93.0"></script>
-<script src="js/familienverwalten.js?v=1.93.0"></script>
-<script src="js/einrichten.js?v=1.93.0"></script>
-<script src="js/exportieren.js?v=1.93.0"></script>
-<script src="js/hauptadminseite.js?v=1.93.0"></script>
-<script src="js/anmeldung.js?v=1.93.0"></script>
-<script src="js/konto.js?v=1.93.0"></script>
-<script src="js/profilverwaltung.js?v=1.93.0"></script>
-<script src="js/zustand.js?v=1.93.0"></script>
-<script src="js/bedienzustand.js?v=1.93.0"></script>
-<script src="js/rezeptbilder.js?v=1.93.0"></script>
-<script src="js/zusammenfuehren.js?v=1.93.0"></script>
-<script src="js/speichern.js?v=1.93.0"></script>
-<script src="js/design.js?v=1.93.0"></script>
-<script src="js/sprache.js?v=1.93.0"></script>
-<script src="js/uebersicht.js?v=1.93.0"></script>
-<script src="js/familienkachel.js?v=1.93.0"></script>
-<script src="js/wobistdu.js?v=1.93.0"></script>
-<script src="js/geburtstagsfeier.js?v=1.93.0"></script>
-<script src="js/wetterkachel.js?v=1.93.0"></script>
-<script src="js/geburtstage.js?v=1.93.0"></script>
-<script src="js/uebersichteinstellungen.js?v=1.93.0"></script>
-<script src="js/familiensync.js?v=1.93.0"></script>
-<script src="js/kalenderquellen.js?v=1.93.0"></script>
-<script src="js/icsparser.js?v=1.93.0"></script>
-<script src="js/zeitleiste.js?v=1.93.0"></script>
-<script src="js/termindetails.js?v=1.93.0"></script>
-<script src="js/kalenderdatei.js?v=1.93.0"></script>
-<script src="js/wetter.js?v=1.93.0"></script>
-<script src="js/wohnort.js?v=1.93.0"></script>
-<script src="js/feiertage.js?v=1.93.0"></script>
-<script src="js/muellkalender.js?v=1.93.0"></script>
-<script src="js/mitglieder.js?v=1.93.0"></script>
-<script src="js/profilbild.js?v=1.93.0"></script>
-<script src="js/mitglied.js?v=1.93.0"></script>
-<script src="js/kinderseite.js?v=1.93.0"></script>
-<script src="js/kinderroutine.js?v=1.93.0"></script>
-<script src="js/sterne.js?v=1.93.0"></script>
-<script src="js/kalenderansicht.js?v=1.93.0"></script>
-<script src="js/essenplanen.js?v=1.93.0"></script>
-<script src="js/rezeptparser.js?v=1.93.0"></script>
-<script src="js/rezeptdialog.js?v=1.93.0"></script>
-<script src="js/rezeptbild.js?v=1.93.0"></script>
-<script src="js/rezeptmengen.js?v=1.93.0"></script>
-<script src="js/einkauf.js?v=1.93.0"></script>
-<script src="js/einkaufslisten.js?v=1.93.0"></script>
-<script src="js/einkaufseingabe.js?v=1.93.0"></script>
-<script src="js/rezepte.js?v=1.93.0"></script>
-<script src="js/offline.js?v=1.93.0"></script>
-<script src="js/aufgabenextras.js?v=1.93.0"></script>
-<script src="js/appbadge.js?v=1.93.0"></script>
-<script src="js/reisen.js?v=1.93.0"></script>
-<script src="js/aufgabendaten.js?v=1.93.0"></script>
-<script src="js/haushalt.js?v=1.93.0"></script>
-<script src="js/reihum.js?v=1.93.0"></script>
-<script src="js/aufgaben.js?v=1.93.0"></script>
-<script src="js/smarthome.js?v=1.93.0"></script>
-<script src="js/sprachsteuerung.js?v=1.93.0"></script>
-<script src="js/termine.js?v=1.93.0"></script>
-<script src="js/ansichten.js?v=1.93.0"></script>
-<script src="js/versionspruefung.js?v=1.93.0"></script>
-<script src="js/sicherungen.js?v=1.93.0"></script>
-<script src="js/geraete.js?v=1.93.0"></script>
-<script src="js/fehlerprotokoll.js?v=1.93.0"></script>
-<script src="js/versionslog.js?v=1.93.0"></script>
-<script src="js/einstellungen.js?v=1.93.0"></script>
-<script src="js/kalenderkonto.js?v=1.93.0"></script>
-<script src="js/finanzen.js?v=1.93.0"></script>
-<script src="js/kassen.js?v=1.93.0"></script>
-<script src="js/vorrat.js?v=1.93.0"></script>
-<script src="js/vorrat2.js?v=1.93.0"></script>
-<script src="js/sparen.js?v=1.93.0"></script>
-<script src="js/vertraege.js?v=1.93.0"></script>
-<script src="js/fahrzeuge.js?v=1.93.0"></script>
-<script src="js/zuhause.js?v=1.93.0"></script>
-<script src="js/dokumente.js?v=1.93.0"></script>
-<script src="js/pdflesen.js?v=1.93.0"></script>
-<script src="js/appstart.js?v=1.93.0"></script>
-<script src="js/pinnwand.js?v=1.93.0"></script>
-<script src="js/listen.js?v=1.93.0"></script>
-<script src="js/familie.js?v=1.93.0"></script>
-<script src="js/hinweise.js?v=1.93.0"></script>
-<script src="js/ausblick.js?v=1.93.0"></script>
+<script src="js/verbindung.js?v=1.94.0"></script>
+<script src="js/benutzer.js?v=1.94.0"></script>
+<script src="js/push.js?v=1.94.0"></script>
+<script src="js/serverzugriff.js?v=1.94.0"></script>
+<script src="js/tastatur.js?v=1.94.0"></script>
+<script src="js/anmeldemaske.js?v=1.94.0"></script>
+<script src="js/dashboard.js?v=1.94.0"></script>
+<script src="js/dashboardhintergrund.js?v=1.94.0"></script>
+<script src="js/profilauswahl.js?v=1.94.0"></script>
+<script src="js/pineingabe.js?v=1.94.0"></script>
+<script src="js/dashboardsitzung.js?v=1.94.0"></script>
+<script src="js/dashboardkonto.js?v=1.94.0"></script>
+<script src="js/familienverwalten.js?v=1.94.0"></script>
+<script src="js/einrichten.js?v=1.94.0"></script>
+<script src="js/exportieren.js?v=1.94.0"></script>
+<script src="js/hauptadminseite.js?v=1.94.0"></script>
+<script src="js/anmeldung.js?v=1.94.0"></script>
+<script src="js/konto.js?v=1.94.0"></script>
+<script src="js/profilverwaltung.js?v=1.94.0"></script>
+<script src="js/zustand.js?v=1.94.0"></script>
+<script src="js/bedienzustand.js?v=1.94.0"></script>
+<script src="js/rezeptbilder.js?v=1.94.0"></script>
+<script src="js/zusammenfuehren.js?v=1.94.0"></script>
+<script src="js/speichern.js?v=1.94.0"></script>
+<script src="js/design.js?v=1.94.0"></script>
+<script src="js/sprache.js?v=1.94.0"></script>
+<script src="js/uebersicht.js?v=1.94.0"></script>
+<script src="js/familienkachel.js?v=1.94.0"></script>
+<script src="js/wobistdu.js?v=1.94.0"></script>
+<script src="js/geburtstagsfeier.js?v=1.94.0"></script>
+<script src="js/wetterkachel.js?v=1.94.0"></script>
+<script src="js/geburtstage.js?v=1.94.0"></script>
+<script src="js/uebersichteinstellungen.js?v=1.94.0"></script>
+<script src="js/familiensync.js?v=1.94.0"></script>
+<script src="js/kalenderquellen.js?v=1.94.0"></script>
+<script src="js/icsparser.js?v=1.94.0"></script>
+<script src="js/zeitleiste.js?v=1.94.0"></script>
+<script src="js/termindetails.js?v=1.94.0"></script>
+<script src="js/kalenderdatei.js?v=1.94.0"></script>
+<script src="js/wetter.js?v=1.94.0"></script>
+<script src="js/wohnort.js?v=1.94.0"></script>
+<script src="js/feiertage.js?v=1.94.0"></script>
+<script src="js/muellkalender.js?v=1.94.0"></script>
+<script src="js/mitglieder.js?v=1.94.0"></script>
+<script src="js/profilbild.js?v=1.94.0"></script>
+<script src="js/mitglied.js?v=1.94.0"></script>
+<script src="js/kinderseite.js?v=1.94.0"></script>
+<script src="js/kinderroutine.js?v=1.94.0"></script>
+<script src="js/sterne.js?v=1.94.0"></script>
+<script src="js/kalenderansicht.js?v=1.94.0"></script>
+<script src="js/essenplanen.js?v=1.94.0"></script>
+<script src="js/rezeptparser.js?v=1.94.0"></script>
+<script src="js/rezeptdialog.js?v=1.94.0"></script>
+<script src="js/rezeptbild.js?v=1.94.0"></script>
+<script src="js/rezeptmengen.js?v=1.94.0"></script>
+<script src="js/einkauf.js?v=1.94.0"></script>
+<script src="js/einkaufslisten.js?v=1.94.0"></script>
+<script src="js/einkaufseingabe.js?v=1.94.0"></script>
+<script src="js/rezepte.js?v=1.94.0"></script>
+<script src="js/offline.js?v=1.94.0"></script>
+<script src="js/aufgabenextras.js?v=1.94.0"></script>
+<script src="js/appbadge.js?v=1.94.0"></script>
+<script src="js/reisen.js?v=1.94.0"></script>
+<script src="js/aufgabendaten.js?v=1.94.0"></script>
+<script src="js/haushalt.js?v=1.94.0"></script>
+<script src="js/reihum.js?v=1.94.0"></script>
+<script src="js/aufgaben.js?v=1.94.0"></script>
+<script src="js/smarthome.js?v=1.94.0"></script>
+<script src="js/sprachsteuerung.js?v=1.94.0"></script>
+<script src="js/termine.js?v=1.94.0"></script>
+<script src="js/ansichten.js?v=1.94.0"></script>
+<script src="js/versionspruefung.js?v=1.94.0"></script>
+<script src="js/sicherungen.js?v=1.94.0"></script>
+<script src="js/geraete.js?v=1.94.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.94.0"></script>
+<script src="js/versionslog.js?v=1.94.0"></script>
+<script src="js/einstellungen.js?v=1.94.0"></script>
+<script src="js/kalenderkonto.js?v=1.94.0"></script>
+<script src="js/finanzen.js?v=1.94.0"></script>
+<script src="js/kassen.js?v=1.94.0"></script>
+<script src="js/vorrat.js?v=1.94.0"></script>
+<script src="js/vorrat2.js?v=1.94.0"></script>
+<script src="js/sparen.js?v=1.94.0"></script>
+<script src="js/vertraege.js?v=1.94.0"></script>
+<script src="js/fahrzeuge.js?v=1.94.0"></script>
+<script src="js/zuhause.js?v=1.94.0"></script>
+<script src="js/dokumente.js?v=1.94.0"></script>
+<script src="js/pdflesen.js?v=1.94.0"></script>
+<script src="js/appstart.js?v=1.94.0"></script>
+<script src="js/pinnwand.js?v=1.94.0"></script>
+<script src="js/listen.js?v=1.94.0"></script>
+<script src="js/familie.js?v=1.94.0"></script>
+<script src="js/hinweise.js?v=1.94.0"></script>
+<script src="js/ausblick.js?v=1.94.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)

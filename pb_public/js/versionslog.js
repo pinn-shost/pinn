@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.94', datum: '18.10.2026', titel: 'App-Code wird aufgeteilt (Teil 50)',
+    punkte: [
+      ['info', 'Für Mitwirkende: die PocketBase-Verbindung mit Geräte-Kennung und Fern-Abmeldung liegt jetzt in pb_public/js/verbindung.js, das angemeldete Profil, seine Rolle und die Profile der Familie in js/benutzer.js. An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, zwei neue Dateien in js/ und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.93', datum: '18.10.2026', titel: 'App-Code wird aufgeteilt (Teil 49)',
     punkte: [
       ['info', 'Für Mitwirkende: die Push-Benachrichtigungen liegen jetzt in pb_public/js/push.js, der Server-Zugriff mit Anmeldung (apiFetch) in js/serverzugriff.js, die Tastatur-Anpassung für Eingabefelder in js/tastatur.js und die Anmeldemaske mit den gespeicherten Familien in js/anmeldemaske.js. An der Bedienung ändert sich nichts'],
