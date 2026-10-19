@@ -18,6 +18,14 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.96', datum: '19.10.2026', titel: 'App-Code wird aufgeteilt (Schritt 3, Teil 1: Gestaltung)',
+    punkte: [
+      ['info', 'Für Mitwirkende: Die Gestaltung von Haustieren, Wetter-Ansicht und Urlaubswetter liegt jetzt in der eigenen Datei pb_public/css/haustierewetter.css. Die index.html bindet sie an derselben Stelle ein – am Aussehen ändert sich nichts'],
+      ['info', 'Offline-Start: Der Hintergrunddienst (Service Worker) hält jetzt auch die Dateien im neuen Ordner css/ auf dem Gerät vor, und die Startprüfung meldet eine fehlende CSS-Datei'],
+      ['info', 'Geändert: index.html, css/haustierewetter.css (neu), js/versionslog.js, pinn-setup.sh und am Server pb_hooks/sw.pb.js (PocketBase startet beim Update einmal neu)'],
+    ],
+  },
+  {
     v: '1.95.1', datum: '19.10.2026', titel: 'Startfehler „js/push.js“ behoben',
     punkte: [
       ['fix', 'Die Datei für die Push-Benachrichtigungen heißt jetzt js/mitteilungen.js (vorher js/push.js): Werbeblocker und DNS-Filter sperren Dateien mit „push“ im Namen häufig, dann startete pinn. nicht'],

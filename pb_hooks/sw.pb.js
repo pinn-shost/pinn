@@ -1,57 +1,57 @@
 // pb_hooks/sw.pb.js
-// Liefert den Service Worker von pinn. unter /sw.js direkt aus PocketBase aus - mit korrektem
-// JavaScript-Typ, ohne Zwischenspeicher und mit "Service-Worker-Allowed: /".
-// Damit hängt der Service Worker nicht mehr davon ab, ob pb_public/sw.js vorhanden ist bzw. vom
-// statischen Datei-Server / Reverse-Proxy richtig ausgeliefert wird (iOS meldete sonst
+// Serves the pinn. service worker at /sw.js straight from PocketBase - with the correct JavaScript
+// type, without caching and with "Service-Worker-Allowed: /".
+// This way the service worker no longer depends on pb_public/sw.js being present or being served
+// correctly by the static file server / reverse proxy (iOS otherwise reported
 // "Script https://…/sw.js load failed").
-// Diese Route hat Vorrang vor der Datei pb_public/sw.js.
+// This route takes precedence over the file pb_public/sw.js.
 //
-// Aufgaben des Service Workers:
-//  1. Offline-Start: Die App-Seite (index.html), Symbole, Manifest, Schriften und die selbst
-//     gehosteten Bibliotheken unter /vendor/ (pinn.css, PocketBase-Client, pdf.js) werden auf dem
-//     Gerät vorgehalten. Code von fremden Servern (CDNs) lädt und speichert pinn. nicht mehr –
-//     alte CDN-Einträge im Speicher werden beim Aktualisieren entfernt. Die Seite selbst wird immer
-//     zuerst frisch vom Server geholt (Updates kommen sofort an) - nur ohne Verbindung bzw. wenn der
-//     Server nicht antwortet, startet pinn. mit der zuletzt geladenen Version.
-//     Rezeptbilder (/api/files/...) werden nach dem ersten Anzeigen ebenfalls vorgehalten, ebenso die
-//     gewählte Sprachdatei (/lang/<code>.js). Die App-Dateien unter /js/ (ab 1.40 aus der index.html
-//     ausgelagert) werden mit jeder frisch geladenen App-Seite gleich mit vorgehalten, alte Fassungen
-//     danach aus dem Speicher entfernt. pdf.js (groß, nur beim PDF-Import gebraucht) wird erst
-//     beim ersten Benutzen vorgehalten, nicht schon bei der Installation.
-//     Alle anderen Server-Aufrufe (/api/...) laufen unverändert direkt zum Server - Daten, die offline
-//     angelegt werden, sichert die App selbst und trägt sie nach.
-//  2. Push-Benachrichtigungen:
-//     SOS (Tag „sos-…“): bleibt stehen bis zur Reaktion, vibriert lang, meldet sich erneut und
-//     sagt geöffneten Fenstern sofort Bescheid (Popup mit Karte und Notruf).
-//     Jede Mitteilung sagt geöffneten Fenstern Bescheid („pinn-push“), damit die 🔔 Glocke sie sofort
-//     zeigt; ein Tipp auf die Mitteilung öffnet in einem offenen Fenster direkt die passende Stelle.
-//     Die Texte kommen schon in der Sprache des Profils (pinn-pushtext.js); ist keine Nachricht
-//     abholbar, zeigt der Worker einen allgemeinen Hinweis in dieser Sprache.
-//  3. App-Badge: Beim Abholen einer Meldung liefert der Server die Zahl der offenen, fälligen
-//     Aufgaben des Profils mit ("badge"); der Worker setzt sie am App-Symbol (iPhone, Computer).
-//     Android zeigt stattdessen einen Punkt am App-Symbol, solange eine Mitteilung offen ist.
-//  4. Statusleisten-Symbol für Android: /pinn-badge.png (weiße Pinnnadel auf durchsichtigem
-//     Grund) wird ebenfalls von dieser Datei ausgeliefert. Android zeigt dort nur die Umrisse eines
-//     Bildes - ein farbiges Symbol würde als weißes Quadrat erscheinen.
-// Tauscht der Browser die Push-Adresse aus, meldet der Worker das Gerät selbst neu an
+// What the service worker does:
+//  1. Offline start: the app page (index.html), icons, manifest, fonts and the self-hosted libraries
+//     under /vendor/ (pinn.css, PocketBase client, pdf.js) are kept on the device. pinn. no longer
+//     loads or stores code from third-party servers (CDNs) - old CDN entries are removed from the
+//     cache on update. The page itself is always fetched fresh from the server first (updates arrive
+//     right away) - only without a connection, or when the server does not answer, pinn. starts with
+//     the most recently loaded version.
+//     Recipe images (/api/files/...) are kept after they were shown once, as is the chosen language
+//     file (/lang/<code>.js). The app files under /js/ (split out of index.html since 1.40) and the
+//     app styles under /css/ (since 1.96) are cached together with every freshly loaded app page;
+//     old versions are removed from the cache afterwards. pdf.js (large, only needed for the PDF
+//     import) is cached on first use, not already at installation.
+//     All other server calls (/api/...) go straight to the server - data created offline is kept by
+//     the app itself and sent later.
+//  2. Push notifications:
+//     SOS (tag "sos-…"): stays until someone reacts, vibrates long, alerts again and tells open
+//     windows right away (popup with map and emergency call).
+//     Every notification tells open windows ("pinn-push") so the 🔔 bell shows it immediately; a tap
+//     on the notification opens the matching place directly in an open window.
+//     The texts already come in the profile's language (pinn-pushtext.js); if no message can be
+//     fetched, the worker shows a general note in that language.
+//  3. App badge: when a message is fetched, the server also sends the number of open, due tasks of
+//     the profile ("badge"); the worker sets it on the app icon (iPhone, computer).
+//     Android shows a dot on the app icon instead, as long as a notification is open.
+//  4. Status bar icon for Android: /pinn-badge.png (white pin on a transparent background) is also
+//     served by this file. Android only shows the outline of an image there - a coloured icon would
+//     appear as a white square.
+// If the browser replaces the push address, the worker registers the device again by itself
 // (pushsubscriptionchange -> /api/pinn/push/abo-erneuern).
-// Der Server schickt einen inhaltslosen Weckruf; der Text wird mit der geheimen Geräte-Adresse
-// (endpoint) bei /api/pinn/push/abholen abgeholt und dann angezeigt.
+// The server sends an empty wake-up call; the text is fetched with the secret device address
+// (endpoint) from /api/pinn/push/abholen and then shown.
 
 routerAdd("GET", "/sw.js", (e) => {
-    const code = `// pinn. Service Worker (ausgeliefert von pb_hooks/sw.pb.js)
+    const code = `// pinn. service worker (served by pb_hooks/sw.pb.js)
 const META_CACHE = 'pinn-push-meta';
 const META_URL = '/__pinn-push-endpoint';
 
-// ---------- Offline-Start ----------
-const SHELL_CACHE = 'pinn-app-v3'; // v3: /vendor/ statt CDN – alter Speicher wird verworfen
+// ---------- Offline start ----------
+const SHELL_CACHE = 'pinn-app-v3'; // v3: /vendor/ instead of CDN - the old cache is dropped
 const IMG_CACHE = 'pinn-bilder-v1';
 const OWN_CACHES = [SHELL_CACHE, IMG_CACHE, META_CACHE, 'pinn-daten'];
 const SHELL_URL = '/';
 const STATIC_FILES = ['/manifest.json', '/apple-touch-icon.png', '/favicon-32x32.png', '/favicon-16x16.png', '/pinn-logo.png', '/pinn-badge.png'];
-// Selbst gehostete Bibliotheken (pb_public/vendor/) – bei der Installation vorgehalten
+// Self-hosted libraries (pb_public/vendor/) - cached at installation
 const VENDOR_FILES = ['/vendor/pinn.css', '/vendor/pocketbase/pocketbase.umd.js'];
-// Nur noch Schriften kommen von außen (kein Code)
+// Only fonts still come from outside (no code)
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 const MAX_IMAGES = 400;
 
@@ -64,13 +64,21 @@ async function precache() {
   if (shell) await cacheAppScripts(shell);
 }
 
-// App-Dateien unter /js/ (in der App-Seite als <script src="js/…?v=…">): alle, die die frisch
-// geladene Seite nennt, gleich mit vorhalten – damit startet pinn. auch offline vollständig.
-// Fassungen, die die aktuelle Seite nicht mehr nennt, werden aus dem Speicher entfernt.
+// App file (/js/) or app style (/css/) - managed by cacheAppScripts
+function isAppAsset(u) {
+  const p = new URL(u).pathname;
+  return p.indexOf('/js/') === 0 || p.indexOf('/css/') === 0;
+}
+
+// App files under /js/ (in the app page as <script src="js/…?v=…">) and app styles under /css/
+// (as <link rel="stylesheet" href="css/…?v=…">, since 1.96): cache all that the freshly loaded page
+// names - so pinn. also starts completely offline.
+// Versions the current page no longer names are removed from the cache.
 async function cacheAppScripts(res) {
   try {
     const html = await res.text();
-    const urls = html.split('src="js/').slice(1).map(part => new URL('js/' + part.split('"')[0], self.location.origin + '/').href);
+    const urls = html.split('src="js/').slice(1).map(part => new URL('js/' + part.split('"')[0], self.location.origin + '/').href)
+      .concat(html.split('href="css/').slice(1).map(part => new URL('css/' + part.split('"')[0], self.location.origin + '/').href));
     if (!urls.length) return;
     const cache = await caches.open(SHELL_CACHE);
     await Promise.all(urls.map(async (u) => {
@@ -79,24 +87,24 @@ async function cacheAppScripts(res) {
       if (r && r.ok) await cache.put(u, r);
     }));
     const keys = await cache.keys();
-    await Promise.all(keys.filter(k => new URL(k.url).pathname.indexOf('/js/') === 0 && urls.indexOf(k.url) === -1).map(k => cache.delete(k)));
-  } catch (e) { /* beim nächsten Laden erneut */ }
+    await Promise.all(keys.filter(k => isAppAsset(k.url) && urls.indexOf(k.url) === -1).map(k => cache.delete(k)));
+  } catch (e) { /* again on the next load */ }
 }
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
-  event.waitUntil(precache().catch(() => { /* beim nächsten Start erneut */ }));
+  event.waitUntil(precache().catch(() => { /* again on the next start */ }));
 });
 self.addEventListener('activate', (event) => event.waitUntil((async () => {
   try {
     const keys = await caches.keys();
     await Promise.all(keys.filter(k => k.indexOf('pinn-') === 0 && OWN_CACHES.indexOf(k) === -1).map(k => caches.delete(k)));
-  } catch (e) { /* egal */ }
+  } catch (e) { /* ignore */ }
   await self.clients.claim();
   try {
     const sub = await self.registration.pushManager.getSubscription();
     if (sub) await rememberEndpoint(sub.endpoint);
-  } catch (e) { /* egal */ }
+  } catch (e) { /* ignore */ }
 })()));
 
 function withTimeout(promise, ms) {
@@ -106,22 +114,22 @@ function withTimeout(promise, ms) {
   });
 }
 
-// App-Seite: immer zuerst frisch vom Server, ohne Verbindung die zuletzt geladene Version
+// App page: always fresh from the server first, without a connection the most recently loaded version
 async function appShell(req) {
   const cache = await caches.open(SHELL_CACHE);
   const network = fetch(req.url, { cache: 'no-store', credentials: 'same-origin' }).then(res => {
     if (!res || !res.ok) throw new Error('HTTP ' + (res ? res.status : 0));
-    cache.put(SHELL_URL, res.clone()).catch(() => { /* egal */ });
+    cache.put(SHELL_URL, res.clone()).catch(() => { /* ignore */ });
     cacheAppScripts(res.clone());
     return res;
   });
-  network.catch(() => { /* wird unten behandelt */ });
+  network.catch(() => { /* handled below */ });
   try {
     return await withTimeout(network, 8000);
   } catch (e) {
     const cached = await cache.match(SHELL_URL);
     if (cached) return cached;
-    try { return await network; } catch (e2) { /* nichts vorhanden */ }
+    try { return await network; } catch (e2) { /* nothing available */ }
     return new Response('<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>pinn.</title>' +
       '<body style="font-family:system-ui;padding:2rem;text-align:center;color:#2F4B41;background:#F6F3EC">' +
       '<h2>pinn. ist gerade nicht erreichbar</h2><p>Bitte Verbindung prüfen und erneut öffnen.</p></body>',
@@ -129,12 +137,12 @@ async function appShell(req) {
   }
 }
 
-// Symbole, Schriften, Skripte: sofort aus dem Speicher, im Hintergrund auffrischen
+// Icons, fonts, scripts, styles: right away from the cache, refreshed in the background
 async function staleWhileRevalidate(event, key) {
   const cache = await caches.open(SHELL_CACHE);
   const cached = await cache.match(key);
   const network = fetch(event.request).then(res => {
-    if (res && (res.ok || res.type === 'opaque')) cache.put(key, res.clone()).catch(() => { /* egal */ });
+    if (res && (res.ok || res.type === 'opaque')) cache.put(key, res.clone()).catch(() => { /* ignore */ });
     return res;
   }).catch(() => null);
   if (cached) {
@@ -145,7 +153,7 @@ async function staleWhileRevalidate(event, key) {
   return res || new Response('', { status: 504 });
 }
 
-// Rezeptbilder ändern sich unter derselben Adresse nie - einmal geladen, bleiben sie offline sichtbar
+// Recipe images never change under the same address - once loaded, they stay visible offline
 async function cacheFirstImage(event) {
   const cache = await caches.open(IMG_CACHE);
   const cached = await cache.match(event.request.url);
@@ -156,7 +164,7 @@ async function cacheFirstImage(event) {
       await cache.put(event.request.url, res.clone());
       const keys = await cache.keys();
       if (keys.length > MAX_IMAGES) await Promise.all(keys.slice(0, keys.length - MAX_IMAGES).map(k => cache.delete(k)));
-    })().catch(() => { /* egal */ }));
+    })().catch(() => { /* ignore */ }));
   }
   return res;
 }
@@ -173,28 +181,30 @@ self.addEventListener('fetch', (event) => {
     }
     if (url.pathname.indexOf('/api/files/') === 0) { event.respondWith(cacheFirstImage(event)); return; }
     if (STATIC_FILES.indexOf(url.pathname) !== -1) { event.respondWith(staleWhileRevalidate(event, url.pathname)); return; }
-    // Selbst gehostete Bibliotheken (pb_public/vendor/…): sofort aus dem Speicher, im Hintergrund
-    // auffrischen. Ohne Versions-Anhang unter dem Pfad gespeichert (passt zur Vorab-Speicherung).
+    // Self-hosted libraries (pb_public/vendor/…): right away from the cache, refreshed in the
+    // background. Stored under the path without version suffix (matches the precaching).
     if (url.pathname.indexOf('/vendor/') === 0) { event.respondWith(staleWhileRevalidate(event, url.search ? req.url : url.pathname)); return; }
-    // Sprachdateien (pb_public/lang/…): je Version (?v=…) einmal geladen, danach auch offline da
+    // Language files (pb_public/lang/…): loaded once per version (?v=…), then also available offline
     if (url.pathname.indexOf('/lang/') === 0) { event.respondWith(staleWhileRevalidate(event, req.url)); return; }
-    // App-Dateien (pb_public/js/…): je Version (?v=…) gespeichert, sofort aus dem Speicher
+    // App files (pb_public/js/…): stored per version (?v=…), right away from the cache
     if (url.pathname.indexOf('/js/') === 0) { event.respondWith(staleWhileRevalidate(event, req.url)); return; }
-    return; // alles andere (v. a. /api/...) direkt zum Server
+    // App styles (pb_public/css/…, since 1.96): same as the app files
+    if (url.pathname.indexOf('/css/') === 0) { event.respondWith(staleWhileRevalidate(event, req.url)); return; }
+    return; // everything else (mainly /api/...) goes straight to the server
   }
   if (FONT_HOSTS.indexOf(url.hostname) !== -1) event.respondWith(staleWhileRevalidate(event, req.url));
 });
 
-// ---------- Push-Benachrichtigungen ----------
+// ---------- Push notifications ----------
 
-// Die zuletzt bekannte Push-Adresse merken - damit kann der Server sie später zuordnen,
-// wenn der Browser die Adresse austauscht.
+// Remember the most recently known push address - so the server can match it later
+// when the browser replaces the address.
 async function rememberEndpoint(endpoint) {
   if (!endpoint) return;
   try {
     const c = await caches.open(META_CACHE);
     await c.put(META_URL, new Response(endpoint));
-  } catch (e) { /* egal */ }
+  } catch (e) { /* ignore */ }
 }
 async function lastEndpoint() {
   try {
@@ -220,8 +230,8 @@ async function fetchPendingMessage() {
   const sub = await self.registration.pushManager.getSubscription();
   if (!sub) return null;
   rememberEndpoint(sub.endpoint);
-  // Kurzes Zeitlimit: startet der Server gerade neu, wird trotzdem sofort eine Mitteilung
-  // angezeigt. iOS meldet das Gerät sonst ab, wenn nach einem Weckruf nichts erscheint.
+  // Short time limit: if the server is restarting right now, a notification is still shown right
+  // away. Otherwise iOS unsubscribes the device when nothing appears after a wake-up call.
   const res = await fetchWithTimeout('/api/pinn/push/abholen', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -235,8 +245,8 @@ async function fetchPendingMessage() {
   return data && data.nachricht ? data.nachricht : null;
 }
 
-// Allgemeiner Hinweis, wenn keine Nachricht abholbar ist - in der Sprache des Profils (vom Server,
-// zuletzt bekannt), sonst in der Sprache des Geräts.
+// General note when no message can be fetched - in the profile's language (from the server, last
+// known), otherwise in the device language.
 const FALLBACK_URL = '/__pinn-push-ersatz';
 const FALLBACK_TEXT = {
   de: 'Es gibt Neuigkeiten in pinn.',
@@ -248,7 +258,7 @@ async function rememberFallback(msg) {
   try {
     const c = await caches.open(META_CACHE);
     await c.put(FALLBACK_URL, new Response(JSON.stringify({ titel: String(msg.titel || 'pinn.'), text: String(msg.text || '') })));
-  } catch (e) { /* egal */ }
+  } catch (e) { /* ignore */ }
 }
 async function fallbackMessage() {
   let m = null;
@@ -264,7 +274,7 @@ async function fallbackMessage() {
   return { titel: m.titel || 'pinn.', text: m.text, tag: 'pinn-allgemein', url: '/' };
 }
 
-// ---------- App-Badge (Zahl am App-Symbol) ----------
+// ---------- App badge (number on the app icon) ----------
 async function applyBadge(n) {
   try {
     const nav = self.navigator;
@@ -272,7 +282,7 @@ async function applyBadge(n) {
     const v = Math.max(0, Math.floor(Number(n) || 0));
     if (v > 0) await nav.setAppBadge(v);
     else await nav.clearAppBadge();
-  } catch (e) { /* egal */ }
+  } catch (e) { /* ignore */ }
 }
 
 async function showNextNotification(event) {
@@ -287,11 +297,11 @@ async function showNextNotification(event) {
     body: msg.text || '',
     tag: msg.tag || undefined,
     icon: '/apple-touch-icon.png',
-    badge: '/pinn-badge.png', // einfarbiges Symbol für die Android-Statusleiste
+    badge: '/pinn-badge.png', // single-colour icon for the Android status bar
     data: { url: msg.url || '/' },
   };
   if (sos) {
-    // Hilferuf: bleibt stehen, bis jemand reagiert, vibriert lang und meldet sich erneut
+    // Emergency call: stays until someone reacts, vibrates long and alerts again
     opts.requireInteraction = true;
     opts.renotify = true;
     opts.silent = false;
@@ -300,31 +310,31 @@ async function showNextNotification(event) {
   }
   await self.registration.showNotification(msg.titel || 'pinn.', opts);
   if (sos) await tellWindows({ type: 'pinn-sos', url: msg.url || '/' });
-  // Offene pinn.-Fenster: Glocke sofort neu laden (die Nachricht steht dort jetzt auch)
+  // Open pinn. windows: reload the bell right away (the message is there now as well)
   await tellWindows({ type: 'pinn-push', url: msg.url || '/' });
 }
 
-// Geöffnete pinn.-Fenster benachrichtigen (z. B. SOS-Popup sofort zeigen)
+// Tell open pinn. windows (e.g. show the SOS popup right away)
 async function tellWindows(data) {
   try {
     const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-    windows.forEach(w => { try { w.postMessage(data); } catch (e) { /* egal */ } });
-  } catch (e) { /* egal */ }
+    windows.forEach(w => { try { w.postMessage(data); } catch (e) { /* ignore */ } });
+  } catch (e) { /* ignore */ }
 }
 
 self.addEventListener('push', (event) => {
   event.waitUntil(showNextNotification(event));
 });
 
-// Die App teilt die aktuelle Push-Adresse mit, sobald sie das Gerät beim Server anmeldet
+// The app reports the current push address as soon as it registers the device with the server
 self.addEventListener('message', (event) => {
   const d = event.data || {};
   if (d.type === 'pinn-endpoint' && d.endpoint) event.waitUntil(rememberEndpoint(String(d.endpoint)));
   if (d.type === 'pinn-badge' && typeof d.count === 'number') event.waitUntil(applyBadge(d.count));
 });
 
-// Der Browser hat die Push-Adresse ausgetauscht (oder verworfen): selbst neu anmelden und dem
-// Server die neue Adresse melden - ohne dass jemand die App öffnen oder neu aktivieren muss.
+// The browser replaced (or dropped) the push address: subscribe again by itself and report the new
+// address to the server - without anyone having to open the app or enable it again.
 self.addEventListener('pushsubscriptionchange', (event) => {
   event.waitUntil((async () => {
     const oldSub = event.oldSubscription || null;
@@ -353,7 +363,7 @@ self.addEventListener('pushsubscriptionchange', (event) => {
       }, 10000);
     }
     await rememberEndpoint(neu.endpoint);
-  })().catch(() => { /* beim nächsten App-Start wird das Gerät erneut abgeglichen */ }));
+  })().catch(() => { /* the device is matched again on the next app start */ }));
 });
 
 self.addEventListener('notificationclick', (event) => {
@@ -363,8 +373,8 @@ self.addEventListener('notificationclick', (event) => {
     const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
     for (const w of windows) {
       if (w.url.indexOf(self.location.origin) === 0 && 'focus' in w) {
-        // Fenster ist schon offen: Ziel mitteilen (z. B. ?sos=… öffnet das SOS-Popup)
-        try { w.postMessage({ type: 'pinn-open', url: target }); } catch (e) { /* egal */ }
+        // Window is already open: pass on the target (e.g. ?sos=… opens the SOS popup)
+        try { w.postMessage({ type: 'pinn-open', url: target }); } catch (e) { /* ignore */ }
         return w.focus();
       }
     }
@@ -380,7 +390,7 @@ self.addEventListener('notificationclick', (event) => {
     return e.string(200, code);
 });
 
-// Einfarbiges Statusleisten-Symbol für Android-Mitteilungen (96 x 96, weiß auf durchsichtig)
+// Single-colour status bar icon for Android notifications (96 x 96, white on transparent)
 routerAdd("GET", "/pinn-badge.png", (e) => {
     const bytes = [
         137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,96,0,0,0,96,8,6,0,0,0,226,152,119,56,0,0,6,166,73,68,65,

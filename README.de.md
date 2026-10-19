@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/runs%20on-Docker-2F4B41?style=flat-square&logo=docker&logoColor=white" alt="Läuft mit Docker">
   <img src="https://img.shields.io/badge/backend-PocketBase-2F4B41?style=flat-square" alt="PocketBase">
   <img src="https://img.shields.io/badge/iPhone%20%7C%20iPad%20%7C%20Android-installable%20web%20app-2F4B41?style=flat-square" alt="iPhone, iPad und Android">
-  <a href="https://ko-fi.com/pinnapp"><img src="https://img.shields.io/badge/Ko--fi-support-C28A33?style=flat-square&logo=kofi&logoColor=white" alt="Unterstützen auf Ko-fi"></a>
+  <a href="https://ko-fi.com/pinnapp"><img src="https://img.shields.io/badge/Ko--fi-support-C28A33?style=flat-square&logo=kofi&logoColor=white" alt="Auf Ko-fi unterstützen"></a>
 </p>
 
 <p align="center">
@@ -28,7 +28,7 @@
 
 ---
 
-pinn. ist eine App für alles, was einen Haushalt am Laufen hält: der gemeinsame Kalender, das Essen der Woche, die Einkaufsliste, wer den Müll rausbringt, das Taschengeld und die Versicherung, die im März gekündigt werden muss. Sie läuft auf **deinem eigenen NAS** mit Docker und lässt sich auf jedem iPhone, iPad und Android-Handy der Familie wie eine echte App installieren.
+pinn. ist eine App für alles, was einen Haushalt am Laufen hält: den gemeinsamen Kalender, das Essen dieser Woche, die Einkaufsliste, wer den Müll rausbringt, das Taschengeld und die Versicherung, die im März gekündigt werden muss. Sie läuft auf **deinem eigenen NAS** mit Docker und lässt sich auf jedem iPhone, iPad und Android-Handy der Familie wie eine echte App installieren.
 
 Kein Cloud-Konto. Kein Abo. Keine Werbung, kein Tracking. Die Daten deiner Familie verlassen nie dein Zuhause.
 
@@ -59,12 +59,12 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
   <tr>
     <td align="center" width="33%"><img src=".github/assets/screenshots/home.png" alt="Startseite mit Wetter, heutigen Aufgaben und Terminen" width="240"><br><sub><b>Übersicht</b> – dein Tag auf einen Blick</sub></td>
     <td align="center" width="33%"><img src=".github/assets/screenshots/calendar.png" alt="Familienkalender in der Wochenansicht" width="240"><br><sub><b>Kalender</b> – iCloud und Google in einer Ansicht</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/meals.png" alt="Wochenplan fürs Essen mit Rezepten" width="240"><br><sub><b>Essen</b> – Woche planen, mit einem Tipp einkaufen</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/meals.png" alt="Wochenplan fürs Essen mit Rezepten" width="240"><br><sub><b>Essen</b> – die Woche planen, mit einem Tipp einkaufen</sub></td>
   </tr>
   <tr>
     <td align="center" width="33%"><img src=".github/assets/screenshots/lists.png" alt="Einkaufsliste nach Laden sortiert" width="240"><br><sub><b>Listen</b> – Einkauf, Vorrat, Packen</sub></td>
     <td align="center" width="33%"><img src=".github/assets/screenshots/finance.png" alt="Budget-Übersicht mit Ausgaben nach Kategorie" width="240"><br><sub><b>Finanzen</b> – Budget, Sparen, Taschengeld</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/kids.png" alt="Kinderseite mit dem Tagesablauf" width="240"><br><sub><b>Kinder</b> – ein verspielter Tagesablauf</sub></td>
+    <td align="center" width="33%"><img src=".github/assets/screenshots/kids.png" alt="Kinderseite mit dem Tagesablauf" width="240"><br><sub><b>Kinder</b> – ein spielerischer Tagesablauf</sub></td>
   </tr>
 </table>
 
@@ -72,41 +72,42 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 | | |
 |---|---|
-| 📅 **Kalender** | iCloud- und Google-Kalender je Person, privat oder mit der Familie geteilt. Feiertage und Schulferien, Müllabfuhr-Termine und Geburtstage aus deinen Kontakten erscheinen automatisch. |
-| 🍝 **Essen & Rezepte** | Woche planen und die Zutaten direkt auf die Einkaufsliste schicken. Rezepte aus Text, PDF, Fotos oder per Link übernehmen – auf Wunsch mit KI. Lieblingsrezepte mit anderen Familien auf deinem Server teilen. |
-| 🛒 **Listen** | Einkaufslisten je Laden, ein Vorrat, der die Liste auffüllt, wenn etwas zur Neige geht, Packlisten aus Vorlagen (Urlaub, Kliniktasche, Party), Geschenk- und Wunschlisten. |
-| ✅ **Aufgaben & Haushalt** | Aufgaben mit Push-Erinnerungen, Putzpläne und Mülltonnen – dazu eine Kinderseite mit animierten Abläufen, die nur zeigt, was zur Tageszeit passt. |
-| 💶 **Finanzen** | Gemeinsame oder private Kassen, ein Haushaltsbudget, Sparen und Depots mit ETFs und Aktien, Taschengeld, regelmäßige Zahlungen und Verträge mit Kündigungserinnerung. WGs können Kosten aufteilen und sehen, wer wem etwas schuldet. |
+| 📅 **Kalender** | iCloud- und Google-Kalender pro Person, privat oder mit der Familie geteilt. Feiertage, Schulferien, Müllabfuhr-Termine und Geburtstage aus deinen Kontakten erscheinen automatisch. |
+| 🍝 **Essen & Rezepte** | Die Woche planen und die Zutaten direkt auf die Einkaufsliste schicken. Rezepte aus Text, PDF, Fotos oder einem Link übernehmen – auf Wunsch mit KI. Lieblingsrezepte mit anderen Familien auf deinem Server teilen. |
+| 🛒 **Listen** | Einkaufslisten pro Laden, ein Vorrat, der die Liste auffüllt, wenn etwas zur Neige geht, Packlisten aus Vorlagen (Urlaub, Kliniktasche, Party), Geschenk- und Wunschlisten. |
+| ✅ **Aufgaben & Haushalt** | Aufgaben mit Push-Erinnerungen, Putzpläne und Mülltonnen – dazu eine Kinderseite mit animierten Routinen, die nur zeigt, was zur Tageszeit passt. |
+| 💶 **Finanzen** | Gemeinsame oder private Kassen, ein Haushaltsbudget, Sparen und Depots mit ETFs und Aktien, Taschengeld, regelmäßige Zahlungen und Verträge mit Kündigungserinnerung. WGs können Kosten teilen und sehen, wer wem etwas schuldet. |
 | 📄 **Dokumente & Fahrzeuge** | Belege und Garantien, Ausweise mit Ablauf-Erinnerung. Autos und Fahrräder mit HU-Terminen, Reifenwechsel, Verbrauch und Gesamtkosten. |
-| 🏡 **Zuhause** | Für Mieter, Eigentümer und Vermieter: Miet- oder Kaufvertrag, Kredit, Mängel mit Fotos, Belege, Sanierungsplan, Zählerstände mit Prognose, Schlüssel und Mieteinnahmen für vermietete Wohnungen, Häuser und Garagen. Garten & Pflanzen mit einem Gießplan, der weiß, wann es geregnet hat. |
-| 📍 **Familie & Standort** | Den eigenen Standort direkt aus pinn. teilen – einmal oder für eine gewählte Zeit – und im Hintergrund über die kostenlose App Traccar Client (sendet direkt an pinn., kein zusätzlicher Server). Dazu ein „Heimweg“-Modus, ein SOS-Alarm mit Position und Notrufnummern, Notfallpässe und Ankunftsmeldungen für Orte. |
-| 🎒 **Schule & Kita** | Je Kind: Stundenplan (eintippen oder abfotografieren – die KI füllt ihn aus), Bringen und Abholen, Hausaufgaben auf der Kinderseite, Elternbriefe mit Fristen, die zu Erinnerungen werden, und Schließtage direkt im Kalender. |
-| 🐾 **Haustiere** | Profile für Hunde, Katzen, Kaninchen & Co. mit Fütterungszeiten zum Abhaken, Gassi-Runden, einem „Wer ist dran?“-Plan, Impfungen und Entwurmung mit Push-Erinnerung, Gewichtskurve, Tierarzt und Tiernotdienst, einem Blatt für Tiersitter zum Teilen, einem druckbaren „Vermisst“-Plakat und einer Auffüll-Erinnerung für den Futterautomaten. |
-| 🌦️ **Wetter & Urlaub** | Aufs Wetter tippen (eine Kachel am Handy, oben neben Datum und Uhrzeit auf iPad und Computer) für 14 Tage mit Details zu jedem Tag. Packlisten mit Ziel und Zeitraum zeigen das Urlaubswetter – Vorhersage oder typische Werte – und schlagen vor, was mit muss. |
-| 🏠 **Smarthome** | Apple-Kurzbefehle oder Home-Assistant-Aktionen aus einer Aufgabe starten – der Saugroboter putzt die Küche, wenn die Aufgabe fällig ist, Mähroboter und Bewässerung folgen dem Gartenplan, der Futterautomat meldet sich, wenn er leer wird. |
-| 🎙️ **Sprachsteuerung** | „Hey Siri, pinn“: auf die Einkaufsliste setzen, sie vorlesen lassen, Aufgaben anlegen und hören, was heute ansteht – auch unter Android. |
+| 🏡 **Zuhause** | Für Mieter, Eigentümer und Vermieter: Miet- oder Kaufvertrag, Kredit, Mängel mit Fotos, Belege, Renovierungsplan, Zählerstände mit Prognose, Schlüssel und Mieteinnahmen für vermietete Wohnungen, Häuser und Garagen. Garten & Pflanzen mit einem Gießplan, der weiß, wann es geregnet hat. |
+| 📍 **Familie & Standort** | Den Standort direkt aus pinn. teilen – einmal oder für eine gewählte Zeit – und im Hintergrund über die kostenlose App Traccar Client (sendet direkt an pinn., kein zusätzlicher Server). Dazu ein „Heimweg“-Modus, ein SOS-Alarm mit Position und Notrufnummern, Notfallkarten und Ankunfts-Mitteilungen für Orte. |
+| 🎒 **Schule & Kita** | Pro Kind: Stundenplan (eintippen oder abfotografieren – die KI trägt ihn ein), Bringen und Abholen, Hausaufgaben auf der Kinderseite, Elternbriefe mit Fristen, die zu Erinnerungen werden, und Schließtage direkt im Kalender. |
+| 🐾 **Haustiere** | Profile für Hunde, Katzen, Kaninchen & Co. mit Fütterungszeiten zum Abhaken, Gassi-Runden, einem „Wer ist dran“-Plan, Impfungen und Entwurmung mit Push-Erinnerung, Gewichtskurve, Tierarzt und Tiernotdienst, einem Blatt für Tiersitter zum Teilen, einem druckbaren „Vermisst“-Plakat und einer Erinnerung zum Nachfüllen des Futterautomaten. |
+| 🌦️ **Wetter & Urlaub** | Aufs Wetter tippen (eine Kachel auf dem Handy, oben neben Datum und Uhrzeit auf iPad und Computer) für 14 Tage mit Details zu jedem Tag. Packlisten mit Reiseziel und Datum zeigen das Urlaubswetter – Vorhersage oder typische Werte – und schlagen vor, was mit muss. |
+| 🏠 **Smart Home** | Apple-Kurzbefehle oder Home-Assistant-Aktionen aus einer Aufgabe starten – der Saugroboter putzt die Küche, wenn die Aufgabe fällig ist, Mähroboter und Bewässerung folgen dem Gartenplan, der Futterautomat meldet sich, wenn er leer wird. |
+| 🎙️ **Sprachsteuerung** | „Hey Siri, pinn“: auf die Einkaufsliste setzen, sie vorlesen lassen, Aufgaben anlegen und hören, was heute ansteht – auch auf Android. |
 | 🔔 **Mitteilungen** | Persönliche Push-Mitteilungen auf iPhone, iPad und Android, dazu eine Glocke, die jede Änderung in der Familie sammelt. |
-| 🧩 **Alles andere** | Pinnwand mit verschiebbaren Zetteln, globale Suche, Offline-Modus mit automatischem Abgleich, Dunkelmodus, iPad-Dashboard mit Profil-PINs, Gastkonto, Kindersicherung. |
+| 🧩 **Und sonst** | Pinnwand mit verschiebbaren Notizen, globale Suche, Offline-Modus mit automatischem Abgleich, Dunkelmodus, iPad-Dashboard mit Profil-PINs, Gastkonto, Kindersicherung. |
 
-pinn. spricht **English, Deutsch, Français und Español**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen **Familien**- und **WG**-Bezeichnungen. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
+pinn. spricht **English, Deutsch, Français und Español**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen **Familien**- und **WG**-Bezeichnungen. Ein Server kann mehrere Familien aufnehmen, jede mit eigenen Admins.
+
+## Neu in 1.96
+
+**App-Code wird aufgeteilt, Schritt 3 – Teil 1: Gestaltung**
+
+- **Für Mitwirkende:** Die ersten Stilregeln sind aus der `index.html` ausgezogen: Das Aussehen von Haustieren, Wetter-Ansicht und Urlaubswetter liegt jetzt in `pb_public/css/haustierewetter.css`. Die Datei wird an genau derselben Stelle eingebunden – pinn. sieht also genauso aus wie vorher.
+- **Offline-Start:** Der Service Worker hält jetzt auch die Dateien im neuen Ordner `css/` auf dem Gerät vor, und die Startprüfung meldet eine fehlende CSS-Datei.
+- Geändert: `index.html`, neu `css/haustierewetter.css`, `js/versionslog.js`, `pinn-setup.sh` und am Server `pb_hooks/sw.pb.js` (PocketBase startet beim Update einmal neu). Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
 
 ## Neu in 1.95
 
 **App-Code wird aufgeteilt, Teil 51**
 
-- **1.95.1 – Startfehler behoben:** die Datei für die Push-Benachrichtigungen heißt jetzt `pb_public/js/mitteilungen.js` (vorher `js/push.js`). Werbeblocker und DNS-Filter sperren Dateien mit „push“ im Namen oft, dann zeigte pinn. „pinn. kann nicht starten“. Die alte `js/push.js` darf auf dem NAS gelöscht werden.
+- **1.95.1 – Startfehler behoben:** Die Datei für die Push-Mitteilungen heißt jetzt `pb_public/js/mitteilungen.js` (vorher: `js/push.js`). Werbeblocker und DNS-Filter sperren Dateinamen mit „push“ oft, dann zeigte pinn. „pinn. kann nicht starten“. Die alte `js/push.js` kann auf dem NAS gelöscht werden.
 
-- **Für Mitwirkende:** `pb_public/js/grundlagen.js` (Uhr, Datums-Helfer und kleine Grundfunktionen) und `js/popups.js` (Nachfragen vor dem Schließen geänderter Popups, Popups öffnen immer oben) liegen jetzt in eigenen Dateien. In der `index.html` stehen nur noch wenige Zeilen Code. An der Bedienung ändert sich nichts.
-- Nur App-Dateien geändert (`index.html`, zwei neue Dateien in `js/`, `js/verbindung.js` (nur ein Kommentar) und `js/versionslog.js`), am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
+- **Für Mitwirkende:** `pb_public/js/grundlagen.js` (Uhr, Datums-Helfer und kleine Grundfunktionen) und `js/popups.js` (Nachfragen vor dem Schließen eines geänderten Fensters, Fenster öffnen immer oben) liegen jetzt in eigenen Dateien. In der `index.html` stehen nur noch wenige Zeilen Code. An der Bedienung ändert sich nichts.
+- Nur App-Dateien geändert (`index.html`, zwei neue Dateien in `js/`, `js/verbindung.js` (nur ein Kommentar) und `js/versionslog.js`), am Server ändert sich nichts. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
 
-## Neu in 1.94
-
-**App-Code wird aufgeteilt, Teil 50**
-
-- **Für Mitwirkende:** `pb_public/js/verbindung.js` (PocketBase-Verbindung, Geräte-Kennung, Fern-Abmeldung) und `js/benutzer.js` (angemeldetes Profil, seine Rolle und die Profile der Familie) liegen jetzt in eigenen Dateien. An der Bedienung ändert sich nichts.
-- Nur App-Dateien geändert (`index.html`, zwei neue Dateien in `js/` und `js/versionslog.js`), am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
-
-## So funktioniert es
+## So funktioniert's
 
 ```mermaid
 flowchart LR
@@ -132,17 +133,17 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Die ZIP der [neuesten Version](https://github.com/pinn-shost/pinn/releases/latest) herunterladen und entpacken.
-2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.95.1` oder `pinn-main`) so, wie er ist, hineinlegen.
+2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.96.0` oder `pinn-main`) so, wie er ist, hineinlegen.
 3. Per SSH anmelden und ausführen:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
-   Das Skript kopiert alle Dateien an ihren Platz, lädt die Bibliotheken für den PDF-Import und die Texterkennung auf Fotos herunter und startet pinn.
-4. `http://<NAS-IP>:8090` öffnen → **Als Hauptadmin anmelden** → Passwort `Admin` → eigenes Passwort wählen.
-5. Der **Einrichtungsassistent** führt durch den Rest – HTTPS, Fernzugriff über WireGuard oder Tailscale, Google, KI, Standort und Home Assistant – Schritt für Schritt, in vier Sprachen.
-6. pinn. auf jedem Handy über die HTTPS-Adresse öffnen und zum Home-Bildschirm hinzufügen:
-   - **iPhone/iPad (Safari):** Teilen → *Zum Home-Bildschirm* (iOS 16.4 oder neuer für Mitteilungen)
-   - **Android (Chrome):** Einstellungen → Mitteilungen → *pinn. als App installieren*, oder Chrome-Menü ⋮ → *App installieren*
+   Das Skript legt jede Datei an ihren Platz, lädt die Bibliotheken für PDF-Import und Texterkennung auf Fotos herunter und startet pinn.
+4. `http://<NAS-IP>:8090` öffnen → **Als Hauptadmin anmelden** → Passwort `Admin` → ein eigenes Passwort wählen.
+5. Der **Einrichtungsassistent** führt Schritt für Schritt durch den Rest – HTTPS, Fernzugriff über WireGuard oder Tailscale, Google, KI, Standort und Home Assistant –, in vier Sprachen.
+6. pinn. auf jedem Handy über seine HTTPS-Adresse öffnen und zum Home-Bildschirm hinzufügen:
+   - **iPhone/iPad (Safari):** Teilen → *Zum Home-Bildschirm* (für Mitteilungen iOS 16.4 oder neuer)
+   - **Android (Chrome):** Einstellungen → Mitteilungen → *pinn. als App installieren* oder Chrome-Menü ⋮ → *App installieren*
 
    Danach auf jedem Gerät unter **Einstellungen → Mitteilungen → Auf diesem Gerät aktivieren** die Mitteilungen einschalten.
 
@@ -152,40 +153,40 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 
 ## Datenschutz
 
-pinn. wurde für Daten gebaut, die man nie einem Cloud-Dienst geben würde: Kontoauszüge, Gesundheitsunterlagen, wo die Kinder gerade sind. Deshalb:
+pinn. wurde für Daten gebaut, die du nie einem Cloud-Dienst geben würdest: Kontoauszüge, Gesundheitsunterlagen, wo deine Kinder gerade sind. Deshalb:
 
 - **Alle Daten liegen auf deinem NAS** in einer einzigen PocketBase-Datenbank. Es gibt keinen pinn.-Server und keine Telemetrie.
 - **Keine Skripte von fremden Servern.** Aller Code und alle Bibliotheken kommen von deinem NAS.
 - **Push-Mitteilungen enthalten keinen Inhalt.** Apple, Google und Mozilla liefern nur ein leeres Wecksignal; das Gerät holt die Nachricht dann von deinem NAS.
-- **Passwörter für iCloud und Google** liegen verschlüsselt in einer gesperrten Sammlung.
-- **Aus dem Internet nicht erreichbar.** Der Fernzugriff läuft über dein eigenes VPN.
+- **Passwörter für iCloud und Google** werden verschlüsselt in einer gesperrten Sammlung gespeichert.
+- **Aus dem Internet nicht erreichbar.** Fernzugriff läuft über dein eigenes VPN.
 
-pinn. nimmt nur für Funktionen Kontakt nach außen auf, die das brauchen:
+pinn. nimmt nur für Funktionen Kontakt zu Diensten außerhalb auf, die sie brauchen:
 
 | Dienst | Wofür | Wann |
 |---|---|---|
-| [Open-Meteo](https://open-meteo.com) | Wettervorhersage | wenn eine Wohnadresse eingetragen ist |
+| [Open-Meteo](https://open-meteo.com) | Wettervorhersage | wenn eine Heimadresse eingetragen ist |
 | [OpenStreetMap Nominatim](https://nominatim.openstreetmap.org) | Adressen in Kartenpositionen umwandeln | beim Eingeben von Adressen |
-| [OpenStreetMap-Kacheln](https://www.openstreetmap.org) | Kartenhintergrund | auf der Standort-Seite, geladen über dein NAS |
+| [OpenStreetMap-Kacheln](https://www.openstreetmap.org) | Kartenhintergrund | auf der Standort-Seite, über dein NAS geladen |
 | [Google Fonts](https://fonts.google.com) | Schriften | beim Laden der App |
-| [OpenHolidays API](https://www.openholidaysapi.org) | Feiertage und Schulferien | wenn eine Wohnadresse eingetragen ist |
-| [DuckDNS](https://www.duckdns.org) | HTTPS-Zertifikat und Adresse | wenn eingerichtet |
+| [OpenHolidays API](https://www.openholidaysapi.org) | Feiertage und Schulferien | wenn eine Heimadresse eingetragen ist |
+| [DuckDNS](https://www.duckdns.org) | HTTPS-Zertifikat und Adresse | falls eingerichtet |
 | iCloud / Google | Kalender und Kontakte | nur für Konten, die du verbindest |
-| Google Gemini | Rezepte und Dokumente auslesen | nur wenn du einen API-Schlüssel einträgst |
+| Google Gemini | Rezepte und Dokumente einlesen | nur wenn du einen API-Schlüssel einträgst |
 | jsDelivr | Einmaliger Download von pdf.js und Tesseract | nur bei der Installation |
 
 ## Häufige Fragen
 
 <details>
-<summary><b>Muss ich Ports am Router freigeben?</b></summary>
+<summary><b>Muss ich Ports am Router öffnen?</b></summary>
 <br>
-Nein. Das HTTPS-Zertifikat wird über eine DNS-Prüfung ausgestellt, und der Fernzugriff läuft über ein VPN – WireGuard auf einer FRITZ!Box oder Tailscale bei jedem anderen Router.
+Nein. Das HTTPS-Zertifikat wird über eine DNS-Prüfung ausgestellt, und der Fernzugriff läuft über ein VPN – WireGuard auf einer FRITZ!Box oder Tailscale für jeden anderen Router.
 </details>
 
 <details>
 <summary><b>Geht es auch ohne NAS?</b></summary>
 <br>
-Jedes Gerät, das immer läuft und Docker hat, geht: ein Mini-PC, ein Raspberry Pi 4/5 oder ein Linux-Server.
+Jedes dauerhaft laufende Gerät mit Docker funktioniert: ein Mini-PC, ein Raspberry Pi 4/5 oder ein Linux-Server.
 </details>
 
 <details>
@@ -197,19 +198,19 @@ pinn. ist eine Web-App, die du zum Home-Bildschirm hinzufügst. Sie öffnet sich
 <details>
 <summary><b>Können mehrere Familien eine Installation nutzen?</b></summary>
 <br>
-Ja. Der Hauptadmin legt Familien an, jede Familie bekommt eigene Admins, Kalender und Daten. Rezepte lassen sich auf Wunsch zwischen Familien teilen.
+Ja. Der Hauptadmin legt Familien an, jede Familie bekommt eigene Admins, Kalender und Daten. Rezepte können auf Wunsch zwischen Familien geteilt werden.
 </details>
 
 <details>
 <summary><b>Und die Kinder?</b></summary>
 <br>
-Profile mit Kindersicherung sehen nur ihre eigenen Aufgaben und können nichts löschen oder ändern. Finanzen, Dokumente und Fahrzeuge bleiben ausgeblendet. Jüngere Kinder bekommen eine eigene, verspielte Seite mit Tagesabläufen.
+Profile mit Kindersicherung sehen nur ihre eigenen Aufgaben und können nichts löschen oder ändern. Finanzen, Dokumente und Fahrzeuge bleiben ausgeblendet. Jüngere Kinder bekommen eine eigene, spielerische Seite mit Tagesabläufen.
 </details>
 
 <details>
 <summary><b>Was kostet das?</b></summary>
 <br>
-Nichts – pinn. ist kostenlos und quelloffen unter der MIT-Lizenz. Optionale Dienste wie die Gemini-KI haben kostenlose Kontingente.
+Nichts – pinn. ist kostenlos und Open Source unter der MIT-Lizenz. Optionale Dienste wie die Gemini-KI haben kostenlose Kontingente.
 </details>
 
 ## Aufbau des Repositorys
@@ -219,20 +220,21 @@ Das Repository hat denselben Aufbau wie eine Installation auf dem NAS – jede D
 ```
 pinn/
 ├── pb_hooks/            Server: *.pb.js-Hooks und ihre Hilfsmodule (pinn-*.js, calendar-sync.js)
-├── pb_public/           Web-App, ausgeliefert von PocketBase
-│   ├── index.html       die App (HTML, Styles und der Großteil des Codes)
-│   ├── js/              aus index.html ausgelagerter App-Code, einfache <script>-Dateien ohne Build-Schritt
+├── pb_public/           Web-App, von PocketBase ausgeliefert
+│   ├── index.html       die App-Seite (HTML, ein Teil der Gestaltung, Startprüfung)
+│   ├── js/              App-Code aus der index.html ausgelagert, einfache <script>-Dateien ohne Bauschritt
 │   │                    (grundlagen.js, popups.js, verbindung.js, benutzer.js, mitteilungen.js, serverzugriff.js, tastatur.js, anmeldemaske.js, dashboard.js, dashboardhintergrund.js, profilauswahl.js, pineingabe.js, dashboardsitzung.js, dashboardkonto.js, familienverwalten.js, einrichten.js, exportieren.js, hauptadminseite.js, anmeldung.js, konto.js, profilverwaltung.js, zustand.js, bedienzustand.js, rezeptbilder.js, zusammenfuehren.js, speichern.js, design.js, sprache.js, uebersicht.js, familienkachel.js, wobistdu.js, geburtstagsfeier.js, wetterkachel.js, geburtstage.js, uebersichteinstellungen.js, familiensync.js, kalenderquellen.js, icsparser.js, zeitleiste.js, termindetails.js, kalenderdatei.js, wetter.js, wohnort.js, feiertage.js, muellkalender.js, mitglieder.js, profilbild.js, mitglied.js, kinderseite.js, kinderroutine.js, sterne.js, kalenderansicht.js, essenplanen.js, rezeptparser.js, rezeptdialog.js, rezeptbild.js, rezeptmengen.js, einkauf.js, einkaufslisten.js, einkaufseingabe.js, rezepte.js, offline.js, aufgabenextras.js, appbadge.js, reisen.js, aufgabendaten.js, haushalt.js, reihum.js, aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js kommt immer zuletzt)
+│   ├── css/             Gestaltung aus der index.html ausgelagert, einfaches CSS ohne Bauschritt (haustierewetter.css)
 │   ├── einrichtung.js   Einrichtungsassistent · datenexport.js  Datenexport
 │   ├── lang/            Übersetzungen (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js und Tesseract lädt das Setup herunter)
 ├── caddy/Caddyfile      HTTPS-Reverse-Proxy
 ├── docker-compose.yaml  alle Container
 ├── env.txt              Vorlage für .env
-├── pinn-setup.sh        Installieren & Aktualisieren
+├── pinn-setup.sh        Installation & Update
 ├── pinn-wartung.sh      Sicherungen & Updates (Container „wartung“)
 ├── pinn-pocketbase-update.sh
-├── index.html           nur Platzhalter, wird nie installiert (hält den Update-Knopf von 1.38 am Laufen)
+├── index.html           nur ein Platzhalter, wird nie installiert (hält den Update-Knopf von 1.38 am Laufen)
 └── README.md            englische Startseite · README.de.md (diese Seite) · README.es.md · README.fr.md
 ```
 
@@ -240,7 +242,7 @@ pinn/
 
 ## Mitmachen
 
-Fehlermeldungen, Ideen und Übersetzungen sind sehr willkommen – siehe [CONTRIBUTING.md](.github/CONTRIBUTING.md). Sicherheitsprobleme bitte vertraulich melden, wie in [SECURITY.md](.github/SECURITY.md) beschrieben.
+Fehlerberichte, Ideen und Übersetzungen sind sehr willkommen – siehe [CONTRIBUTING.md](.github/CONTRIBUTING.md). Sicherheitsprobleme bitte vertraulich melden, wie in [SECURITY.md](.github/SECURITY.md) beschrieben.
 
 ## pinn. unterstützen
 
@@ -259,4 +261,4 @@ Ein ⭐ hilft auch – so finden andere Familien pinn. leichter.
 
 ## Lizenz
 
-[MIT](LICENSE) – nutzen, ändern, weitergeben.
+[MIT](LICENSE) – nutzen, verändern, weitergeben.
