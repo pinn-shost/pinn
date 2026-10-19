@@ -2,7 +2,7 @@
    Part of the app code that used to be a single block in index.html. Classic script, no build step:
    it is loaded right after the inline script of index.html and before the other files in js/
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
-   Contents: the PocketBase client (PB_URL, pb), the device ID and name for the device management (pinnDeviceId, pinnDeviceName), the fetch wrapper that adds them to login requests (PINN_AUTH_URL), pb.afterSend and handleRemoteLogout for a device that was logged out remotely. This is the first file in js/: it must stay at the start of the load order, because every later file uses pb. */
+   Contents: the PocketBase client (PB_URL, pb), the device ID and name for the device management (pinnDeviceId, pinnDeviceName), the fetch wrapper that adds them to login requests (PINN_AUTH_URL), pb.afterSend and handleRemoteLogout for a device that was logged out remotely. It must load before every file in js/ that uses pb (only js/grundlagen.js and js/popups.js come earlier; they do not use pb). */
 
 /* ==========================================================
    PocketBase connection

@@ -18,6 +18,20 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.95.1', datum: '19.10.2026', titel: 'Startfehler „js/push.js“ behoben',
+    punkte: [
+      ['fix', 'Die Datei für die Push-Benachrichtigungen heißt jetzt js/mitteilungen.js (vorher js/push.js): Werbeblocker und DNS-Filter sperren Dateien mit „push“ im Namen häufig, dann startete pinn. nicht'],
+      ['info', 'Nur App-Dateien geändert (index.html, js/mitteilungen.js neu, js/versionslog.js, pinn-setup.sh) – am Server ändert sich nichts. Die alte Datei js/push.js darf auf dem NAS gelöscht werden'],
+    ],
+  },
+  {
+    v: '1.95', datum: '18.10.2026', titel: 'App-Code wird aufgeteilt (Teil 51)',
+    punkte: [
+      ['info', 'Für Mitwirkende: Uhr, Datums-Helfer und kleine Grundfunktionen liegen jetzt in pb_public/js/grundlagen.js, das allgemeine Verhalten der Popups (Nachfragen vor dem Schließen, öffnen immer oben) in js/popups.js. In der index.html stehen nur noch wenige Zeilen Code. An der Bedienung ändert sich nichts'],
+      ['info', 'Nur App-Dateien geändert (index.html, zwei neue Dateien in js/ und js/versionslog.js) – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.94', datum: '18.10.2026', titel: 'App-Code wird aufgeteilt (Teil 50)',
     punkte: [
       ['info', 'Für Mitwirkende: die PocketBase-Verbindung mit Geräte-Kennung und Fern-Abmeldung liegt jetzt in pb_public/js/verbindung.js, das angemeldete Profil, seine Rolle und die Profile der Familie in js/benutzer.js. An der Bedienung ändert sich nichts'],

@@ -913,7 +913,7 @@ window.PINN_LANGUAGES = [
   // Startprüfung: fehlt eine selbst gehostete Datei, erscheint ein klarer Hinweis statt einer
   // leeren Seite ohne funktionierende Buttons.
   // Teile der App unter pb_public/js/ – jede Datei meldet sich am Ende in window.PINN_PARTS an
-  var PINN_APP_PARTS = ['verbindung', 'benutzer', 'push', 'serverzugriff', 'tastatur', 'anmeldemaske', 'dashboard', 'dashboardhintergrund', 'profilauswahl', 'pineingabe', 'dashboardsitzung', 'dashboardkonto', 'familienverwalten', 'einrichten', 'exportieren', 'hauptadminseite', 'anmeldung', 'konto', 'profilverwaltung', 'zustand', 'bedienzustand', 'rezeptbilder', 'zusammenfuehren', 'speichern', 'design', 'sprache', 'uebersicht', 'familienkachel', 'wobistdu', 'geburtstagsfeier', 'wetterkachel', 'geburtstage', 'uebersichteinstellungen', 'familiensync', 'kalenderquellen', 'icsparser', 'zeitleiste', 'termindetails', 'kalenderdatei', 'wetter', 'wohnort', 'feiertage', 'muellkalender', 'mitglieder', 'profilbild', 'mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
+  var PINN_APP_PARTS = ['grundlagen', 'popups', 'verbindung', 'benutzer', 'mitteilungen', 'serverzugriff', 'tastatur', 'anmeldemaske', 'dashboard', 'dashboardhintergrund', 'profilauswahl', 'pineingabe', 'dashboardsitzung', 'dashboardkonto', 'familienverwalten', 'einrichten', 'exportieren', 'hauptadminseite', 'anmeldung', 'konto', 'profilverwaltung', 'zustand', 'bedienzustand', 'rezeptbilder', 'zusammenfuehren', 'speichern', 'design', 'sprache', 'uebersicht', 'familienkachel', 'wobistdu', 'geburtstagsfeier', 'wetterkachel', 'geburtstage', 'uebersichteinstellungen', 'familiensync', 'kalenderquellen', 'icsparser', 'zeitleiste', 'termindetails', 'kalenderdatei', 'wetter', 'wohnort', 'feiertage', 'muellkalender', 'mitglieder', 'profilbild', 'mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
   window.addEventListener('DOMContentLoaded', function () {
     var missing = [];
     if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – der PocketBase-Client (ohne ihn funktioniert nichts)');
@@ -8713,164 +8713,11 @@ let familyRecordId = null; // wird nach dem Login gesetzt
 let lastIcsSync = null;
 
 /* ==========================================================
-   State (kein localStorage mehr – alles kommt aus PocketBase)
-   ========================================================== */
-let weatherData = null; // { temp, code, uv } - wird periodisch von Open-Meteo nachgeladen
-
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str == null ? '' : String(str);
-  return div.innerHTML;
-}
-
-/* ==========================================================
-   Date helpers
-   ========================================================== */
-function startOfWeek(date) {
-  const d = new Date(date);
-  const day = (d.getDay() + 6) % 7;
-  d.setDate(d.getDate() - day);
-  d.setHours(0,0,0,0);
-  return d;
-}
-function isoDate(d) { return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`; }
-function fmtDay(d) { return d.toLocaleDateString('de-DE', { weekday: 'short' }); }
-function fmtWeekLabel(monday, sunday) {
-  const opts = { day: '2-digit', month: 'short' };
-  return monday.toLocaleDateString('de-DE', opts) + ' – ' + sunday.toLocaleDateString('de-DE', { ...opts, year: 'numeric' });
-}
-function monthGridDays(year, monthIndex) {
-  const first = new Date(year, monthIndex, 1);
-  const startOffset = (first.getDay() + 6) % 7;
-  const gridStart = new Date(year, monthIndex, 1 - startOffset);
-  return [...Array(42)].map((_, i) => { const d = new Date(gridStart); d.setDate(gridStart.getDate() + i); return d; });
-}
-
-/* ==========================================================
-   Clock
-   ========================================================== */
-function tickClock() {
-  const now = new Date();
-  let text = now.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' + now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-  const hw = document.getElementById('headerWeather');
-  const headerWeatherShown = !!(hw && !hw.classList.contains('hidden'));
-  if (weatherData && !headerWeatherShown) {
-    text += ` | ${weatherIconForCode(weatherData.code)} ${weatherData.temp}°`;
-    if (weatherData.uv !== null) text += ` | UV ${weatherData.uv}`;
-  }
-  document.getElementById('clock').textContent = text;
-}
-tickClock();
-setInterval(tickClock, 30000);
-
-/* ==========================================================
-   Wetter (Open-Meteo, aber nur über den eigenen Server: pb_hooks/zuhause.pb.js)
-   ----------------------------------------------------------
-   Grundlage ist das „Zuhause“ der Familie (Einstellungen → Zuhause). pinn. fragt beim Start NICHT
-   mehr nach dem Standort - iOS merkt sich die Freigabe für Home-Bildschirm-Apps nicht und hätte bei
-   jedem Öffnen wieder gefragt. Solange kein Zuhause festgelegt ist, dient der frühere Wetter-Ort
-   (weatherLocation in den Familiendaten) als Ersatz.
-   ========================================================== */
-function weatherIconForCode(code) {
-  if (code === 0) return '☀️';
-  if (code === 1 || code === 2) return '⛅';
-  if (code === 3) return '☁️';
-  if (code === 45 || code === 48) return '🌫️';
-  if ([51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82].includes(code)) return '🌧️';
-  if ([71, 73, 75, 77, 85, 86].includes(code)) return '❄️';
-  if ([95, 96, 99].includes(code)) return '⛈️';
-  return '🌡️';
-}
-
-/* ==========================================================
-   Generisches Popup-Verhalten: Klick außerhalb schließt das Fenster; wurde seit dem Öffnen
-   etwas eingetragen/geändert, wird vorher nachgefragt ("Wirklich abbrechen?") - gilt für den
-   Klick daneben genauso wie für den "Abbrechen"-Button selbst.
-   ========================================================== */
-const modalOpenSnapshots = {};
-
-function snapshotModalFields(modalId) {
-  const modal = document.getElementById(modalId);
-  if (!modal) return '';
-  const els = modal.querySelectorAll('input, textarea, select');
-  return Array.from(els).map(el => {
-    if (el.type === 'checkbox' || el.type === 'radio') return el.checked ? '1' : '0';
-    return el.value;
-  }).join('§');
-}
-// Am Ende jeder openXModal()-Funktion aufrufen (nachdem die Felder befüllt sind), damit wir
-// wissen, wovon aus wir Änderungen erkennen müssen.
-function armModalSnapshot(modalId) {
-  modalOpenSnapshots[modalId] = snapshotModalFields(modalId);
-}
-function isModalDirty(modalId) {
-  return snapshotModalFields(modalId) !== modalOpenSnapshots[modalId];
-}
-// Versucht ein Modal zu schließen - fragt nach, falls sich seit dem Öffnen etwas geändert hat.
-function attemptCloseModal(modalId, closeFn) {
-  if (isModalDirty(modalId)) {
-    if (!confirm('Wirklich abbrechen? Deine Eingaben gehen dabei verloren.')) return;
-  }
-  closeFn();
-}
-// Klick auf den Hintergrund (nicht auf den Inhalt) schließt das Modal genauso wie "Abbrechen".
-function wireModalOutsideClick(modalId, closeFn) {
-  document.getElementById(modalId).addEventListener('click', (e) => {
-    if (e.target.id !== modalId) return;
-    attemptCloseModal(modalId, closeFn);
-  });
-}
-
-/* ---------- Popups öffnen immer oben ----------
-   Die Popup-Elemente werden wiederverwendet und behielten deshalb ihre letzte Scroll-Position
-   (oft ganz unten, z.B. nach dem Tippen auf "Speichern"). Sobald ein Popup (.fixed.inset-0)
-   sichtbar wird, werden das Popup selbst und alle scrollbaren Bereiche darin nach oben gesetzt.
-   Weil manche Inhalte erst kurz nach dem Öffnen befüllt werden, wird das zweimal kurz danach
-   wiederholt - aber nur, solange der Nutzer im Popup noch nicht selbst gescrollt/getippt hat. */
-function isPopupOverlay(el) {
-  return el && el.nodeType === 1 && el.classList.contains('fixed') && el.classList.contains('inset-0')
-    && el.id !== 'appRoot' && !el.classList.contains('hidden');
-}
-function resetPopupScroll(overlay) {
-  if (overlay.scrollTop) overlay.scrollTop = 0;
-  overlay.querySelectorAll('*').forEach(el => { if (el.scrollTop) el.scrollTop = 0; });
-}
-function scrollPopupToTop(overlay) {
-  let userMoved = false;
-  const stop = () => { userMoved = true; };
-  const evts = ['touchstart', 'wheel', 'mousedown', 'keydown'];
-  evts.forEach(t => overlay.addEventListener(t, stop, { passive: true, once: true }));
-  resetPopupScroll(overlay);
-  requestAnimationFrame(() => { if (!userMoved) resetPopupScroll(overlay); });
-  setTimeout(() => { if (!userMoved && isPopupOverlay(overlay)) resetPopupScroll(overlay); }, 120);
-  setTimeout(() => evts.forEach(t => overlay.removeEventListener(t, stop)), 500);
-}
-new MutationObserver((mutations) => {
-  mutations.forEach(m => {
-    if (m.type === 'attributes') {
-      const wasHidden = (m.oldValue || '').split(/\s+/).includes('hidden');
-      if (wasHidden && isPopupOverlay(m.target)) scrollPopupToTop(m.target);
-    } else if (m.type === 'childList') {
-      m.addedNodes.forEach(n => { if (isPopupOverlay(n)) scrollPopupToTop(n); });
-    }
-  });
-}).observe(document.body, { attributes: true, attributeFilter: ['class'], attributeOldValue: true, subtree: true, childList: true });
-
-/* ==========================================================
-   Recipe list rendering
-   ========================================================== */
-function actualCurrentWeekRange() {
-  const monday = startOfWeek(new Date());
-  const sunday = new Date(monday);
-  sunday.setDate(monday.getDate() + 6);
-  return { monday, sunday };
-}
-/* ==========================================================
    App-Version & Update-Erkennung (wichtig für "Zum Home-Bildschirm"-Nutzung auf iOS,
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.94.0';
+const APP_VERSION = '1.95.1';
 
 /* ==========================================================
    Einstellungen & Konto: zwei gleich hohe Spalten (Querformat ab Tablet-Breite)
@@ -8998,100 +8845,102 @@ const APP_VERSION = '1.94.0';
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/verbindung.js?v=1.94.0"></script>
-<script src="js/benutzer.js?v=1.94.0"></script>
-<script src="js/push.js?v=1.94.0"></script>
-<script src="js/serverzugriff.js?v=1.94.0"></script>
-<script src="js/tastatur.js?v=1.94.0"></script>
-<script src="js/anmeldemaske.js?v=1.94.0"></script>
-<script src="js/dashboard.js?v=1.94.0"></script>
-<script src="js/dashboardhintergrund.js?v=1.94.0"></script>
-<script src="js/profilauswahl.js?v=1.94.0"></script>
-<script src="js/pineingabe.js?v=1.94.0"></script>
-<script src="js/dashboardsitzung.js?v=1.94.0"></script>
-<script src="js/dashboardkonto.js?v=1.94.0"></script>
-<script src="js/familienverwalten.js?v=1.94.0"></script>
-<script src="js/einrichten.js?v=1.94.0"></script>
-<script src="js/exportieren.js?v=1.94.0"></script>
-<script src="js/hauptadminseite.js?v=1.94.0"></script>
-<script src="js/anmeldung.js?v=1.94.0"></script>
-<script src="js/konto.js?v=1.94.0"></script>
-<script src="js/profilverwaltung.js?v=1.94.0"></script>
-<script src="js/zustand.js?v=1.94.0"></script>
-<script src="js/bedienzustand.js?v=1.94.0"></script>
-<script src="js/rezeptbilder.js?v=1.94.0"></script>
-<script src="js/zusammenfuehren.js?v=1.94.0"></script>
-<script src="js/speichern.js?v=1.94.0"></script>
-<script src="js/design.js?v=1.94.0"></script>
-<script src="js/sprache.js?v=1.94.0"></script>
-<script src="js/uebersicht.js?v=1.94.0"></script>
-<script src="js/familienkachel.js?v=1.94.0"></script>
-<script src="js/wobistdu.js?v=1.94.0"></script>
-<script src="js/geburtstagsfeier.js?v=1.94.0"></script>
-<script src="js/wetterkachel.js?v=1.94.0"></script>
-<script src="js/geburtstage.js?v=1.94.0"></script>
-<script src="js/uebersichteinstellungen.js?v=1.94.0"></script>
-<script src="js/familiensync.js?v=1.94.0"></script>
-<script src="js/kalenderquellen.js?v=1.94.0"></script>
-<script src="js/icsparser.js?v=1.94.0"></script>
-<script src="js/zeitleiste.js?v=1.94.0"></script>
-<script src="js/termindetails.js?v=1.94.0"></script>
-<script src="js/kalenderdatei.js?v=1.94.0"></script>
-<script src="js/wetter.js?v=1.94.0"></script>
-<script src="js/wohnort.js?v=1.94.0"></script>
-<script src="js/feiertage.js?v=1.94.0"></script>
-<script src="js/muellkalender.js?v=1.94.0"></script>
-<script src="js/mitglieder.js?v=1.94.0"></script>
-<script src="js/profilbild.js?v=1.94.0"></script>
-<script src="js/mitglied.js?v=1.94.0"></script>
-<script src="js/kinderseite.js?v=1.94.0"></script>
-<script src="js/kinderroutine.js?v=1.94.0"></script>
-<script src="js/sterne.js?v=1.94.0"></script>
-<script src="js/kalenderansicht.js?v=1.94.0"></script>
-<script src="js/essenplanen.js?v=1.94.0"></script>
-<script src="js/rezeptparser.js?v=1.94.0"></script>
-<script src="js/rezeptdialog.js?v=1.94.0"></script>
-<script src="js/rezeptbild.js?v=1.94.0"></script>
-<script src="js/rezeptmengen.js?v=1.94.0"></script>
-<script src="js/einkauf.js?v=1.94.0"></script>
-<script src="js/einkaufslisten.js?v=1.94.0"></script>
-<script src="js/einkaufseingabe.js?v=1.94.0"></script>
-<script src="js/rezepte.js?v=1.94.0"></script>
-<script src="js/offline.js?v=1.94.0"></script>
-<script src="js/aufgabenextras.js?v=1.94.0"></script>
-<script src="js/appbadge.js?v=1.94.0"></script>
-<script src="js/reisen.js?v=1.94.0"></script>
-<script src="js/aufgabendaten.js?v=1.94.0"></script>
-<script src="js/haushalt.js?v=1.94.0"></script>
-<script src="js/reihum.js?v=1.94.0"></script>
-<script src="js/aufgaben.js?v=1.94.0"></script>
-<script src="js/smarthome.js?v=1.94.0"></script>
-<script src="js/sprachsteuerung.js?v=1.94.0"></script>
-<script src="js/termine.js?v=1.94.0"></script>
-<script src="js/ansichten.js?v=1.94.0"></script>
-<script src="js/versionspruefung.js?v=1.94.0"></script>
-<script src="js/sicherungen.js?v=1.94.0"></script>
-<script src="js/geraete.js?v=1.94.0"></script>
-<script src="js/fehlerprotokoll.js?v=1.94.0"></script>
-<script src="js/versionslog.js?v=1.94.0"></script>
-<script src="js/einstellungen.js?v=1.94.0"></script>
-<script src="js/kalenderkonto.js?v=1.94.0"></script>
-<script src="js/finanzen.js?v=1.94.0"></script>
-<script src="js/kassen.js?v=1.94.0"></script>
-<script src="js/vorrat.js?v=1.94.0"></script>
-<script src="js/vorrat2.js?v=1.94.0"></script>
-<script src="js/sparen.js?v=1.94.0"></script>
-<script src="js/vertraege.js?v=1.94.0"></script>
-<script src="js/fahrzeuge.js?v=1.94.0"></script>
-<script src="js/zuhause.js?v=1.94.0"></script>
-<script src="js/dokumente.js?v=1.94.0"></script>
-<script src="js/pdflesen.js?v=1.94.0"></script>
-<script src="js/appstart.js?v=1.94.0"></script>
-<script src="js/pinnwand.js?v=1.94.0"></script>
-<script src="js/listen.js?v=1.94.0"></script>
-<script src="js/familie.js?v=1.94.0"></script>
-<script src="js/hinweise.js?v=1.94.0"></script>
-<script src="js/ausblick.js?v=1.94.0"></script>
+<script src="js/grundlagen.js?v=1.95.1"></script>
+<script src="js/popups.js?v=1.95.1"></script>
+<script src="js/verbindung.js?v=1.95.1"></script>
+<script src="js/benutzer.js?v=1.95.1"></script>
+<script src="js/mitteilungen.js?v=1.95.1"></script>
+<script src="js/serverzugriff.js?v=1.95.1"></script>
+<script src="js/tastatur.js?v=1.95.1"></script>
+<script src="js/anmeldemaske.js?v=1.95.1"></script>
+<script src="js/dashboard.js?v=1.95.1"></script>
+<script src="js/dashboardhintergrund.js?v=1.95.1"></script>
+<script src="js/profilauswahl.js?v=1.95.1"></script>
+<script src="js/pineingabe.js?v=1.95.1"></script>
+<script src="js/dashboardsitzung.js?v=1.95.1"></script>
+<script src="js/dashboardkonto.js?v=1.95.1"></script>
+<script src="js/familienverwalten.js?v=1.95.1"></script>
+<script src="js/einrichten.js?v=1.95.1"></script>
+<script src="js/exportieren.js?v=1.95.1"></script>
+<script src="js/hauptadminseite.js?v=1.95.1"></script>
+<script src="js/anmeldung.js?v=1.95.1"></script>
+<script src="js/konto.js?v=1.95.1"></script>
+<script src="js/profilverwaltung.js?v=1.95.1"></script>
+<script src="js/zustand.js?v=1.95.1"></script>
+<script src="js/bedienzustand.js?v=1.95.1"></script>
+<script src="js/rezeptbilder.js?v=1.95.1"></script>
+<script src="js/zusammenfuehren.js?v=1.95.1"></script>
+<script src="js/speichern.js?v=1.95.1"></script>
+<script src="js/design.js?v=1.95.1"></script>
+<script src="js/sprache.js?v=1.95.1"></script>
+<script src="js/uebersicht.js?v=1.95.1"></script>
+<script src="js/familienkachel.js?v=1.95.1"></script>
+<script src="js/wobistdu.js?v=1.95.1"></script>
+<script src="js/geburtstagsfeier.js?v=1.95.1"></script>
+<script src="js/wetterkachel.js?v=1.95.1"></script>
+<script src="js/geburtstage.js?v=1.95.1"></script>
+<script src="js/uebersichteinstellungen.js?v=1.95.1"></script>
+<script src="js/familiensync.js?v=1.95.1"></script>
+<script src="js/kalenderquellen.js?v=1.95.1"></script>
+<script src="js/icsparser.js?v=1.95.1"></script>
+<script src="js/zeitleiste.js?v=1.95.1"></script>
+<script src="js/termindetails.js?v=1.95.1"></script>
+<script src="js/kalenderdatei.js?v=1.95.1"></script>
+<script src="js/wetter.js?v=1.95.1"></script>
+<script src="js/wohnort.js?v=1.95.1"></script>
+<script src="js/feiertage.js?v=1.95.1"></script>
+<script src="js/muellkalender.js?v=1.95.1"></script>
+<script src="js/mitglieder.js?v=1.95.1"></script>
+<script src="js/profilbild.js?v=1.95.1"></script>
+<script src="js/mitglied.js?v=1.95.1"></script>
+<script src="js/kinderseite.js?v=1.95.1"></script>
+<script src="js/kinderroutine.js?v=1.95.1"></script>
+<script src="js/sterne.js?v=1.95.1"></script>
+<script src="js/kalenderansicht.js?v=1.95.1"></script>
+<script src="js/essenplanen.js?v=1.95.1"></script>
+<script src="js/rezeptparser.js?v=1.95.1"></script>
+<script src="js/rezeptdialog.js?v=1.95.1"></script>
+<script src="js/rezeptbild.js?v=1.95.1"></script>
+<script src="js/rezeptmengen.js?v=1.95.1"></script>
+<script src="js/einkauf.js?v=1.95.1"></script>
+<script src="js/einkaufslisten.js?v=1.95.1"></script>
+<script src="js/einkaufseingabe.js?v=1.95.1"></script>
+<script src="js/rezepte.js?v=1.95.1"></script>
+<script src="js/offline.js?v=1.95.1"></script>
+<script src="js/aufgabenextras.js?v=1.95.1"></script>
+<script src="js/appbadge.js?v=1.95.1"></script>
+<script src="js/reisen.js?v=1.95.1"></script>
+<script src="js/aufgabendaten.js?v=1.95.1"></script>
+<script src="js/haushalt.js?v=1.95.1"></script>
+<script src="js/reihum.js?v=1.95.1"></script>
+<script src="js/aufgaben.js?v=1.95.1"></script>
+<script src="js/smarthome.js?v=1.95.1"></script>
+<script src="js/sprachsteuerung.js?v=1.95.1"></script>
+<script src="js/termine.js?v=1.95.1"></script>
+<script src="js/ansichten.js?v=1.95.1"></script>
+<script src="js/versionspruefung.js?v=1.95.1"></script>
+<script src="js/sicherungen.js?v=1.95.1"></script>
+<script src="js/geraete.js?v=1.95.1"></script>
+<script src="js/fehlerprotokoll.js?v=1.95.1"></script>
+<script src="js/versionslog.js?v=1.95.1"></script>
+<script src="js/einstellungen.js?v=1.95.1"></script>
+<script src="js/kalenderkonto.js?v=1.95.1"></script>
+<script src="js/finanzen.js?v=1.95.1"></script>
+<script src="js/kassen.js?v=1.95.1"></script>
+<script src="js/vorrat.js?v=1.95.1"></script>
+<script src="js/vorrat2.js?v=1.95.1"></script>
+<script src="js/sparen.js?v=1.95.1"></script>
+<script src="js/vertraege.js?v=1.95.1"></script>
+<script src="js/fahrzeuge.js?v=1.95.1"></script>
+<script src="js/zuhause.js?v=1.95.1"></script>
+<script src="js/dokumente.js?v=1.95.1"></script>
+<script src="js/pdflesen.js?v=1.95.1"></script>
+<script src="js/appstart.js?v=1.95.1"></script>
+<script src="js/pinnwand.js?v=1.95.1"></script>
+<script src="js/listen.js?v=1.95.1"></script>
+<script src="js/familie.js?v=1.95.1"></script>
+<script src="js/hinweise.js?v=1.95.1"></script>
+<script src="js/ausblick.js?v=1.95.1"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)
