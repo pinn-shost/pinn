@@ -1,0 +1,100 @@
+/* pinn. – Emergency card, location and SOS (css/notfall.css)
+   Part of the styles that used to be inline in index.html (step 3 of splitting index.html). Plain CSS, no build
+   step: linked in the head of index.html at exactly the place where the <style> block stood, so the order of
+   the rules - and with it the look of the app - is unchanged.
+   Contents: Family → emergency card & location (grid, cards, map) and the SOS overlay (emergency
+   call from Traccar Client).
+   Utility classes (Tailwind) live in vendor/pinn.css, not here. */
+
+/* ---------- Family: emergency card & location ---------- */
+.fam-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; }
+.fam-person { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 8px 12px; border-radius: 18px; background: #fff; border: 1px solid rgba(37,35,31,0.1); box-shadow: 0 1px 2px rgba(0,0,0,0.04); text-align: center; min-width: 0; transition: transform .1s, border-color .15s; -webkit-tap-highlight-color: transparent; }
+.fam-person:hover { border-color: color-mix(in srgb, var(--fam, var(--c-pine)) 55%, transparent); }
+.fam-person:active { transform: scale(0.98); }
+.fam-ava { position: relative; display: inline-block; width: 64px; height: 64px; border-radius: 9999px; flex-shrink: 0; background: rgba(37,35,31,0.06); box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--fam, transparent); }
+.fam-ava.big { width: 84px; height: 84px; }
+.fam-ava.sm { width: 36px; height: 36px; box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--fam, transparent); }
+.fam-ava-in { width: 100%; height: 100%; border-radius: 9999px; overflow: hidden; display: grid; place-items: center; font-size: 32px; line-height: 1; }
+.fam-ava.big .fam-ava-in { font-size: 44px; }
+.fam-ava.sm .fam-ava-in { font-size: 19px; }
+.fam-ava-in img { width: 100%; height: 100%; object-fit: cover; max-width: none; }
+.fam-ava-in.ini { color: #fff; font-weight: 600; font-size: 24px; }
+.fam-ava.sm .fam-ava-in.ini { font-size: 14px; }
+.fam-name { font-size: 0.875rem; font-weight: 600; line-height: 1.2; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fam-sub { font-size: 11px; line-height: 1.25; color: rgba(37,35,31,0.5); min-height: 14px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.fam-ping { position: absolute; right: -1px; top: -1px; width: 17px; height: 17px; border-radius: 9999px; background: #E0322B; border: 2px solid #fff; animation: famBlink 1.1s ease-in-out infinite; z-index: 1; }
+.fam-ping::after { content: ''; position: absolute; inset: -3px; border-radius: 9999px; border: 2px solid #E0322B; animation: famRipple 1.6s ease-out infinite; }
+.fam-ava.big .fam-ping { width: 20px; height: 20px; right: 2px; top: 2px; }
+@keyframes famBlink { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+@keyframes famRipple { 0% { transform: scale(1); opacity: .85; } 100% { transform: scale(2.6); opacity: 0; } }
+.fam-dot { display: inline-block; width: 7px; height: 7px; border-radius: 9999px; background: #E0322B; margin-right: 5px; vertical-align: 1px; animation: famBlink 1.1s ease-in-out infinite; }
+.fam-card { border-radius: 18px; background: #fff; border: 1px solid rgba(37,35,31,0.1); box-shadow: 0 1px 2px rgba(0,0,0,0.04); padding: 14px; }
+.fam-sos-btn { display: block; width: 100%; margin-top: 10px; padding: 10px 12px; border-radius: 12px; border: 0; color: #fff; font-size: 14px; font-weight: 600; text-align: center; background: linear-gradient(135deg, #B8261E 0%, #E5483D 100%); box-shadow: 0 4px 12px rgba(214,59,50,0.28); -webkit-tap-highlight-color: transparent; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+.fam-sos-btn.counting { background: #7A1712; }
+.fam-sos-btn:disabled { opacity: .7; }
+.fam-chip-row { display: flex; align-items: center; gap: 6px; overflow-x: auto; padding-bottom: 8px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.fam-chip-row::-webkit-scrollbar { display: none; }
+.fam-sel { flex-shrink: 0; border: 1px solid rgba(37,35,31,0.15); border-radius: 9999px; padding: 4px 8px; font-size: 12px; background: #fff; color: inherit; max-width: 11rem; }
+.fam-map-slot { position: relative; height: 340px; border-radius: 14px; overflow: hidden; background: #E8E4DA; }
+.fam-map-host { position: absolute; inset: 0; }
+@media (max-width: 640px) { .fam-map-slot { height: 300px; } }
+.fam-info { margin-top: 10px; padding: 10px 12px; border-radius: 14px; background: color-mix(in srgb, var(--c-pine) 6%, transparent); border: 1px solid color-mix(in srgb, var(--c-pine) 18%, transparent); }
+.fam-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
+.fam-row + .fam-row { border-top: 1px solid rgba(37,35,31,0.08); }
+.fam-k { width: 38%; max-width: 10rem; flex-shrink: 0; font-size: 12px; color: rgba(37,35,31,0.5); align-self: flex-start; padding-top: 1px; }
+.fam-v { flex: 1 1 auto; min-width: 0; font-size: 0.875rem; white-space: pre-wrap; word-break: break-word; }
+.fam-blood { display: inline-flex; align-items: center; gap: 3px; padding: 2px 9px; border-radius: 9999px; background: rgba(214,59,50,0.12); color: #B3302B; font-weight: 700; font-size: 12px; }
+.fam-sos.fz-act-btn, .fam-sos { background: #D63B32; border-color: #D63B32; color: #fff; }
+/* ---------- SOS (emergency call from Traccar Client) ---------- */
+#sosOverlay { position: fixed; inset: 0; z-index: 480; display: grid; place-items: center; background: rgba(70,10,8,0.55); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+  padding: calc(env(safe-area-inset-top, 0px) + 12px) 12px calc(env(safe-area-inset-bottom, 0px) + 12px); }
+#sosOverlay.hidden { display: none; }
+.sos-card { position: relative; width: 100%; max-width: 30rem; max-height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; background: #fff; color: #25231F; border-radius: 22px; box-shadow: 0 24px 70px rgba(0,0,0,0.4); animation: sosPop .25s ease-out; }
+.sos-head { position: relative; display: flex; gap: 14px; align-items: center; padding: 18px 16px 16px; color: #fff; background: linear-gradient(135deg, #B8261E 0%, #E5483D 100%); overflow: hidden; }
+.sos-head::before { content: ''; position: absolute; right: -60px; top: -60px; width: 200px; height: 200px; border-radius: 9999px; background: rgba(255,255,255,0.16); animation: sosPulse 1.6s ease-out infinite; }
+.sos-card.ok .sos-head { background: linear-gradient(135deg, #256B42 0%, #4CA36F 100%); }
+.sos-card.ok .sos-head::before { animation: none; opacity: .5; }
+.sos-head .fam-ava { box-shadow: 0 0 0 3px rgba(255,255,255,0.95), 0 0 0 7px rgba(255,255,255,0.3); }
+.sos-kicker { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; opacity: .92; }
+.sos-title { font-size: 1.3rem; line-height: 1.2; font-weight: 700; margin-top: 2px; }
+.sos-sub { font-size: 12px; opacity: .92; margin-top: 3px; }
+.sos-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; }
+.sos-loc { border-radius: 14px; padding: 10px 12px; background: rgba(214,59,50,0.07); border: 1px solid rgba(214,59,50,0.25); }
+.sos-card.ok .sos-loc { background: rgba(47,125,79,0.06); border-color: rgba(47,125,79,0.25); }
+.sos-addr { font-weight: 600; font-size: 0.95rem; line-height: 1.35; word-break: break-word; }
+.sos-when { font-size: 12.5px; color: rgba(37,35,31,0.7); margin-top: 3px; }
+.sos-when .acc { color: rgba(37,35,31,0.55); }
+.sos-live { color: #D63B32; font-weight: 600; }
+.sos-map-slot { position: relative; height: 230px; border-radius: 14px; overflow: hidden; background: #E8E4DA; }
+@media (max-height: 700px) { .sos-map-slot { height: 180px; } }
+.sos-map-cap { position: absolute; left: 8px; bottom: 8px; z-index: 3; font-size: 11px; font-weight: 600; background: rgba(255,255,255,0.94); color: #B3302B; padding: 2px 8px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); pointer-events: none; }
+.sos-calls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.sos-calls.two, .sos-calls.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.sos-calls.one { grid-template-columns: minmax(0, 1fr); }
+.sos-call { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 11px 6px; border-radius: 16px; color: #fff; text-align: center; font-size: 11px; line-height: 1.25; text-decoration: none; transition: transform .1s; min-width: 0; }
+.sos-call:active { transform: scale(0.97); }
+.sos-call .ic { font-size: 22px; line-height: 1.1; }
+.sos-call b { font-size: 1rem; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sos-call span { opacity: .9; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sos-call.person { background: var(--c-pine); }
+.sos-call.police { background: #1F4FA3; }
+.sos-call.rescue { background: #D63B32; }
+.sos-call.fire { background: #C2571A; }
+.sos-foot { display: flex; gap: 8px; padding: 0 16px 16px; }
+.sos-foot button { flex: 1 1 0; padding: 11px 8px; border-radius: 12px; font-size: 0.875rem; font-weight: 600; }
+.sos-btn-ok { background: rgba(47,125,79,0.12); color: #256B42; border: 1px solid rgba(47,125,79,0.35); }
+.sos-btn-close { background: rgba(37,35,31,0.06); color: #25231F; }
+#sosBanner { position: fixed; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 8px); transform: translateX(-50%); z-index: 470; max-width: 92vw; padding: 8px 16px; border-radius: 9999px; background: #D63B32; color: #fff; font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: 0 6px 20px rgba(214,59,50,0.45); animation: sosBeat 1.4s ease-in-out infinite; }
+#sosBanner.hidden { display: none; }
+.fm-mk.sos .fm-mk-ava { border-color: #D63B32; }
+.fm-mk.sos .fm-mk-lbl { background: #D63B32; color: #fff; }
+.fam-person.sos { border-color: #D63B32; box-shadow: 0 0 0 2px rgba(214,59,50,0.35); }
+.fam-person.sos .fam-sub { color: #C62B22; font-weight: 600; }
+@keyframes sosPop { 0% { transform: scale(.94); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes sosPulse { 0% { transform: scale(.6); opacity: .55; } 100% { transform: scale(1.4); opacity: 0; } }
+@keyframes sosBeat { 0%, 100% { box-shadow: 0 6px 20px rgba(214,59,50,0.45); } 50% { box-shadow: 0 6px 28px rgba(214,59,50,0.85); } }
+html.dark .sos-card { background: #2E2C28; color: #EDEAE2; }
+html.dark .sos-when { color: rgba(237,234,226,0.7); }
+html.dark .sos-when .acc { color: rgba(237,234,226,0.5); }
+html.dark .sos-btn-close { background: rgba(255,255,255,0.08); color: #EDEAE2; }
+html.dark .sos-btn-ok { color: #8BD3A6; }

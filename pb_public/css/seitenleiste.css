@@ -1,0 +1,56 @@
+/* pinn. – Sidebar and keyboard (css/seitenleiste.css)
+   Part of the styles that used to be inline in index.html (step 3 of splitting index.html). Plain CSS, no build
+   step: linked in the head of index.html at exactly the place where the <style> block stood, so the order of
+   the rules - and with it the look of the app - is unchanged.
+   Contents: locked page while the sidebar is open, scrolling sidebar, more menu items on the phone,
+   login/password/main admin screens and the global keyboard handling of popups and pages.
+   Utility classes (Tailwind) live in vendor/pinn.css, not here. */
+
+/* ---------- Sidebar open: the page behind it is locked ----------
+   Buttons, fields, swiping and scrolling of the page (and the tab bar at the bottom) do not react.
+   A tap lands on #appRoot instead and pushes menu and page back to the left. */
+body.sidebar-open #appShell, body.sidebar-open #bottomTabBar { pointer-events: none !important; user-select: none; -webkit-user-select: none; }
+body.sidebar-open #appRoot { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+body.sidebar-open #sidebar { cursor: auto; }
+/* ---------- Sidebar (hamburger menu): menu items scroll when the window is too low ---------- */
+.sidebar-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.3) transparent; }
+.sidebar-scroll::-webkit-scrollbar { width: 6px; }
+.sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+.sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.28); border-radius: 999px; }
+.sidebar-scroll > * { flex-shrink: 0; }
+.sidebar-foot { flex-shrink: 0; }
+/* More menu items on the phone (pulled-up menu sheet): scrollable in case there are more */
+#bottomTabDrawerGrid { max-height: 55vh; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+
+/* Login, password and main admin screens: scrollable and aligned to the top, so input fields
+   are not covered while the keyboard is open (incl. the bar above the keyboard). Height and position
+   follow the visible area by JS (visualViewport). */
+.pinn-auth-screen {
+  position: fixed;
+  left: 0; right: 0; top: 0;
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+.pinn-auth-inner {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: calc(env(safe-area-inset-top, 0px) + 7vh) 1.5rem calc(env(safe-area-inset-bottom, 0px) + 2rem);
+  box-sizing: border-box;
+}
+.pinn-auth-screen.kb-open .pinn-auth-inner {
+  padding-top: calc(env(safe-area-inset-top, 0px) + 1.25rem);
+  padding-bottom: 45vh;
+}
+.pinn-auth-screen input, .pinn-auth-screen select { font-size: 16px; }
+
+/* ---------- Keyboard (global): popups and pages adapt to the visible area ----------
+   While the on-screen keyboard is open, a popup (.fixed.inset-0) or the whole page
+   (#appRoot) is reduced by JS to the area above the keyboard. The popup card may then
+   be at most as high as this area and scrolls internally, so the field stays visible. */
+.fixed.inset-0.kb-fit { bottom: auto !important; padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+.fixed.inset-0.kb-fit > div { max-height: 100% !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+body.kb-open #bottomTabBar, body.kb-open #bottomTabBackdrop { display: none !important; }

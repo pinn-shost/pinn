@@ -1,0 +1,128 @@
+/* pinn. – Finances and pantry (css/finanzen.css)
+   Part of the styles that used to be inline in index.html (step 3 of splitting index.html). Plain CSS, no build
+   step: linked in the head of index.html at exactly the place where the <style> block stood, so the order of
+   the rules - and with it the look of the app - is unchanged.
+   Contents: Finances (period buttons, bookings, budget, charts, change date of recurring bookings), plan
+   shopping in the task popup, pantry and pantry 2.0 (best-before dates, scanner, what can I cook?), shopping
+   list cards and the expenses/savings/pocket money switch.
+   Utility classes (Tailwind) live in vendor/pinn.css, not here. */
+
+/* ---------- Finances ---------- */
+.fin-period-btn.active { background: var(--c-pine); color: #fff; }
+.fin-bar { position: relative; display: flex; height: 44px; border-radius: 12px; overflow: hidden; background: rgba(37,35,31,0.06); }
+.fin-bar > div { height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; transition: width .35s ease; }
+.fin-over { background: repeating-linear-gradient(135deg, #A8322E 0 7px, #D94A45 7px 14px); }
+.fin-bar-marker { position: absolute; top: 0; bottom: 0; width: 3px; margin-left: -1.5px; background: #fff; opacity: .9; }
+html.dark .fin-bar { background: rgba(255,255,255,0.08); }
+.fin-trend-track { position: relative; display: flex; align-items: flex-end; justify-content: center; width: 100%; max-width: 34px; border-radius: 8px 8px 4px 4px; }
+.fin-trend-track.selected { background: rgba(37,35,31,0.05); box-shadow: 0 0 0 1.5px var(--c-pine); }
+html.dark .fin-trend-track.selected { background: rgba(255,255,255,0.06); }
+.fin-trend-stack { display: flex; flex-direction: column; width: 72%; border-radius: 6px 6px 2px 2px; overflow: hidden; }
+.fin-trend-stack > span { display: block; width: 100%; transition: height .35s ease; }
+.fin-trend-budgetline { position: absolute; left: 4%; right: 4%; border-top: 2px dashed #25231F; opacity: .45; }
+html.dark .fin-trend-budgetline { border-top-color: #EDEAE2; }
+.fin-cat-chip { -webkit-tap-highlight-color: transparent; }
+/* From when a changed amount applies (recurring bookings) */
+.fin-scope-opt { -webkit-tap-highlight-color: transparent; transition: border-color .15s, box-shadow .15s, background .15s; }
+.fin-scope-opt.active { border-color: var(--c-pine); box-shadow: 0 0 0 1.5px var(--c-pine) inset; background: color-mix(in srgb, var(--c-pine) 6%, transparent); }
+.fin-scope-opt input[type="radio"] { accent-color: var(--c-pine); }
+/* Plan shopping: choice of shopping lists in the task popup */
+.plan-list-chip { -webkit-tap-highlight-color: transparent; transition: border-color .15s, box-shadow .15s, background .15s; }
+.plan-list-chip.active { border-color: var(--c-pine) !important; box-shadow: 0 0 0 1.5px var(--c-pine) inset; background: color-mix(in srgb, var(--c-pine) 8%, transparent); }
+.plan-list-chip .plan-check { opacity: 0; transform: scale(.6); transition: opacity .15s, transform .15s; }
+.plan-list-chip.active .plan-check { opacity: 1; transform: scale(1); }
+.plan-done-card { -webkit-tap-highlight-color: transparent; }
+.plan-item-row { -webkit-tap-highlight-color: transparent; }
+/* Pantry */
+.pantry-row, .pantry-chip, .pantry-step { -webkit-tap-highlight-color: transparent; }
+.pantry-chip.active { border-color: var(--c-pine) !important; background: color-mix(in srgb, var(--c-pine) 10%, transparent); color: var(--c-pine); }
+.pantry-low-bar { background: #D64545; }
+.pantry-tag { display:inline-flex; align-items:center; gap:2px; font-size:10px; line-height:1; padding:2px 6px; border-radius:999px; background: color-mix(in srgb, var(--c-mustard) 16%, transparent); color: var(--c-mustard); font-family: Inter, system-ui, sans-serif; white-space:nowrap; }
+.plan-item-row .plan-item-dot { transition: background .15s, border-color .15s; }
+/* Pantry 2.0: best-before dates, scanner, what can I cook? */
+.pantry-exp-pill { display:inline-flex; align-items:center; gap:2px; font-size:10px; line-height:1; padding:3px 7px; border-radius:999px; white-space:nowrap; font-family: Inter, system-ui, sans-serif; }
+.pantry-exp-soon { background: color-mix(in srgb, var(--c-mustard) 18%, transparent); color: color-mix(in srgb, var(--c-mustard) 80%, #000); }
+.pantry-exp-bad { background: #FDE8E8; color: #B42318; }
+.pantry-exp-info { border-color: color-mix(in srgb, var(--c-mustard) 45%, transparent); background: color-mix(in srgb, var(--c-mustard) 12%, #fff); color: color-mix(in srgb, var(--c-mustard) 75%, #000); }
+.pantry-exp-info.bad { border-color: #F5C2C0; background: #FEF3F2; color: #B42318; }
+.pantry-bc-chip { display:inline-flex; align-items:center; gap:4px; font-size:11px; padding:3px 4px 3px 8px; border-radius:8px; border:1px solid rgba(37,35,31,0.15); color: rgba(37,35,31,0.65); }
+.pantry-bc-rm { width:18px; height:18px; border-radius:999px; display:grid; place-items:center; color: rgba(37,35,31,0.4); font-size:14px; line-height:1; }
+.pantry-bc-rm:hover { color:#D64545; background:#FDE8E8; }
+.pscan-stage { position:relative; width:100%; aspect-ratio: 4 / 3; border-radius: 1rem; overflow:hidden; background:#111; transition: box-shadow .2s; isolation: isolate; transform: translateZ(0); -webkit-transform: translateZ(0); }
+.pscan-stage video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
+.pscan-stage > :not(video) { z-index:1; }
+/* Only the margin around the frame is darkened (four areas) - the square itself stays bright */
+.pscan-shade { position:absolute; background: rgba(0,0,0,.45); pointer-events:none; }
+.pscan-shade.t { left:0; right:0; top:0; height:28%; }
+.pscan-shade.b { left:0; right:0; bottom:0; height:28%; }
+.pscan-shade.l { left:0; top:28%; bottom:28%; width:8%; }
+.pscan-shade.r { right:0; top:28%; bottom:28%; width:8%; }
+.pscan-frame { position:absolute; left:8%; right:8%; top:28%; bottom:28%; border:2px solid rgba(255,255,255,.9); border-radius:.3rem; pointer-events:none; }
+.pscan-line { position:absolute; left:6%; right:6%; top:50%; height:2px; background:#ff4d4d; box-shadow:0 0 8px #ff4d4d; animation: pscanLine 1.8s ease-in-out infinite alternate; }
+@keyframes pscanLine { from { transform: translateY(-34px); } to { transform: translateY(34px); } }
+@media (prefers-reduced-motion: reduce) { .pscan-line { animation: none; } }
+.pscan-hit { box-shadow: 0 0 0 4px var(--c-pine); }
+.pscan-hit .pscan-frame { border-color: #4ade80; }
+.pscan-torch { position:absolute; right:.6rem; bottom:.6rem; width:2.75rem; height:2.75rem; border-radius:999px; background:rgba(255,255,255,.92); color:#25231F; display:grid; place-items:center; box-shadow: 0 2px 8px rgba(0,0,0,.35); }
+.pscan-torch svg { width:1.35rem; height:1.35rem; }
+.pscan-torch.on { background: #FFD54A; color:#25231F; box-shadow: 0 0 0 3px rgba(255,213,74,.45), 0 2px 8px rgba(0,0,0,.35); }
+.pscan-cam-msg.hidden, .pscan-torch.hidden { display:none !important; }
+.pscan-cam-msg { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1.25rem; text-align:center; color:#fff; font-size:.85rem; background: rgba(0,0,0,.6); }
+.pscan-card { border:1px solid rgba(37,35,31,0.12); border-radius: .9rem; padding: .85rem; background:#fff; }
+.pcook-card { border:1px solid rgba(37,35,31,0.1); border-radius: .9rem; padding: .8rem .85rem; background:#fff; }
+.pcook-ring { width:2.6rem; height:2.6rem; border-radius:999px; display:grid; place-items:center; background: conic-gradient(var(--c-pine) calc(var(--p) * 1%), rgba(37,35,31,0.1) 0); }
+.pcook-ring span { width:2.05rem; height:2.05rem; border-radius:999px; background:#fff; display:grid; place-items:center; font-size:10px; font-weight:600; color: rgba(37,35,31,0.75); }
+.pcook-exp { font-size:11px; color: color-mix(in srgb, var(--c-mustard) 75%, #000); }
+.pcook-chip { font-size:10.5px; line-height:1; padding:3px 7px; border-radius:999px; }
+.pcook-miss { background:#FEF3F2; color:#B42318; }
+.pcook-short { background: color-mix(in srgb, var(--c-mustard) 16%, transparent); color: color-mix(in srgb, var(--c-mustard) 75%, #000); }
+html.dark .pscan-card, html.dark .pcook-card { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.12); }
+html.dark .pcook-ring span { background: #1f1d1a; color: rgba(255,255,255,0.8); }
+/* Shopping list: cards like in the pantry, grouped by category, checked items at the bottom */
+.shop-list-body { display: flex; flex-direction: column; gap: 1.1rem; }
+.shop-group-head { font-size: 0.75rem; text-transform: uppercase; letter-spacing: .04em; color: rgba(37,35,31,0.45); margin: 0 0 .5rem .15rem; display: flex; align-items: center; gap: .4rem; }
+.shop-group-done { opacity: .85; }
+.shop-row { display: flex; align-items: stretch; min-height: 3.4rem; border-radius: .9rem; border: 1px solid rgba(37,35,31,0.1); background: #fff; overflow: hidden; transition: background .2s, border-color .2s, opacity .2s; }
+.shop-row-main { padding: .7rem .4rem .7rem .85rem; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.shop-row-main:active { background: rgba(37,35,31,0.04); }
+.shop-check { flex-shrink: 0; width: 1.6rem; height: 1.6rem; border-radius: 999px; border: 2px solid rgba(37,35,31,0.28); display: grid; place-items: center; color: #fff; font-size: .8rem; font-weight: 700; line-height: 1; transition: background .15s, border-color .15s; }
+.shop-name { font-size: 0.975rem; font-weight: 500; color: rgba(37,35,31,0.88); }
+.shop-note { font-size: 0.72rem; color: rgba(37,35,31,0.45); margin-top: 1px; }
+.shop-qty-btn { width: 2.1rem; height: 2.1rem; border-radius: 999px; border: 1px solid rgba(37,35,31,0.15); color: rgba(37,35,31,0.6); display: grid; place-items: center; font-size: 1.15rem; line-height: 1; -webkit-tap-highlight-color: transparent; touch-action: manipulation; transition: color .15s, border-color .15s, background .15s; }
+.shop-qty-btn:hover, .shop-qty-btn:active { color: var(--c-pine); border-color: var(--c-pine); }
+.shop-qty-btn:active { background: color-mix(in srgb, var(--c-pine) 10%, transparent); }
+.shop-qty-val { min-width: 2.6rem; max-width: 5.5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.shop-row.is-done { background: rgba(37,35,31,0.025); border-style: dashed; }
+.shop-row.is-done .shop-check { background: var(--c-pine); border-color: var(--c-pine); }
+.shop-row.is-done .shop-name { text-decoration: line-through; color: rgba(37,35,31,0.35); font-weight: 400; }
+.shop-row.is-done .shop-note { color: rgba(37,35,31,0.25); }
+.shop-row-fresh { animation: shopRowIn .35s ease-out; }
+@keyframes shopRowIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+html.dark .shop-group-head { color: rgba(237,234,226,0.5); }
+html.dark .shop-row { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.14); }
+html.dark .shop-row.is-done { background: transparent; }
+html.dark .shop-name { color: #EDEAE2; }
+html.dark .shop-row.is-done .shop-name { color: rgba(237,234,226,0.35); }
+html.dark .shop-note { color: rgba(237,234,226,0.5); }
+html.dark .shop-check { border-color: rgba(255,255,255,0.4); }
+html.dark .shop-row.is-done .shop-check { box-shadow: 0 0 0 1px rgba(255,255,255,0.5); }
+html.dark .shop-qty-btn { border-color: rgba(255,255,255,0.25); color: rgba(237,234,226,0.75); }
+html.dark .shop-row-main:active { background: rgba(255,255,255,0.05); }
+.shop-cat-row { display: flex; align-items: center; gap: .6rem; border: 1px solid rgba(37,35,31,0.1); background: #fff; border-radius: .75rem; padding: .45rem .5rem .45rem .75rem; }
+html.dark .shop-cat-row { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.14); }
+.shop-cat-row.shop-cat-fresh { animation: shopRowIn .3s ease-out; }
+.shop-cat-move { width: 2rem; height: 2rem; border-radius: .55rem; border: 1px solid rgba(37,35,31,0.15); color: rgba(37,35,31,0.6); display: grid; place-items: center; font-size: .85rem; -webkit-tap-highlight-color: transparent; }
+.shop-cat-move:disabled { opacity: .3; }
+.shop-cat-move:not(:disabled):hover { color: var(--c-pine); border-color: var(--c-pine); }
+html.dark .shop-cat-move { border-color: rgba(255,255,255,0.25); color: rgba(237,234,226,0.75); }
+.fin-cat-chip.active { border-color: var(--cat) !important; box-shadow: 0 0 0 1.5px var(--cat) inset; background: color-mix(in srgb, var(--cat) 14%, transparent); }
+.fin-entry, .fin-cat-row, .fin-rec-row, .fin-trend-col { -webkit-tap-highlight-color: transparent; }
+.fin-amount-field input:focus { outline: none; }
+.fin-amount-field.income input { color: #2F9E5B; }
+.fin-amount-field.income #expenseSignBtn { border-color: #2F9E5B; color: #2F9E5B; background: rgba(47,158,91,0.10); }
+.fin-cat-add { border-style: dashed !important; }
+.fin-amount-field:focus-within { outline: 2px solid var(--c-pine); outline-offset: 2px; }
+html.dark .fin-amount-field { background-color: #2E2C28; }
+html.dark .fin-amount-field input { background-color: transparent !important; border-color: transparent !important; }
+#finToast { transform: translateX(-50%); }
+/* Switch expenses / savings / pocket money (like lunch/dinner for meals) */

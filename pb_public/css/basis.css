@@ -1,0 +1,328 @@
+/* pinn. – Base styles (css/basis.css)
+   Part of the styles that used to be inline in index.html (step 3 of splitting index.html). Plain CSS, no build
+   step: linked in the head of index.html at exactly the place where the <style> block stood, so the order of
+   the rules - and with it the look of the app - is unchanged.
+   Contents: theme colours, html/body (no document scrolling on iOS), recipe picture extras (favourite
+   heart, crop editor, "cooked" button), shopping input, global search, shopping list cards and drag & drop,
+   date/time fields on iOS, two-column popups, calendar text selection, event details on long press, the dark mode
+   override layer and the fixed design (formerly the "Minimal" theme).
+   Utility classes (Tailwind) live in vendor/pinn.css, not here. */
+
+:root {
+  /* Customisable theme colours (can be changed in the settings) */
+  --c-paper: #FFFBFB;
+  --c-pine: #00374A;
+  --c-mustard: #A67B01;
+}
+/* overflow: hidden + overscroll-behavior: the document itself must never scroll. Otherwise a quick
+   double tap on empty areas makes iOS shift the layout viewport, #appRoot (fixed) jumps briefly
+   and afterwards every hit area is off by that offset. Inner areas still scroll. */
+html, body { height: 100%; touch-action: manipulation; overflow: hidden; overscroll-behavior: none; }
+body {
+  background:
+    radial-gradient(1200px 500px at 100% -10%, color-mix(in srgb, var(--c-pine) 6%, transparent), transparent),
+    radial-gradient(1200px 500px at -10% 110%, color-mix(in srgb, var(--c-mustard) 7%, transparent), transparent),
+    var(--c-paper);
+  touch-action: manipulation; /* Disable double-tap zoom on the iPad, pinch zoom still works */
+}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: rgba(37,35,31,0.18); border-radius: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+.day-col { border-left: 1px solid rgba(37,35,31,0.10); }
+.day-col:first-child { border-left: none; }
+
+.recipe-card { transition: box-shadow .18s ease, transform .18s ease; }
+.recipe-card:hover { box-shadow: 0 6px 20px rgba(37,35,31,0.08); }
+
+/* Favourite heart on the recipe picture (own rules, independent of the Tailwind build) */
+.recipe-thumb { position: relative; }
+/* Picture crop editor in the recipe popup (pan/zoom, the frame always stays filled) */
+.rif-frame { position: relative; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; outline: none; }
+.rif-frame.is-dragging { cursor: grabbing; }
+.rif-frame:focus-visible { box-shadow: 0 0 0 2px var(--c-pine); }
+.rif-frame img { pointer-events: none; -webkit-user-drag: none; }
+.rif-grid { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .15s ease;
+  background-image: linear-gradient(to right, transparent calc(33.333% - 0.5px), rgba(255,255,255,0.75) calc(33.333% - 0.5px), rgba(255,255,255,0.75) calc(33.333% + 0.5px), transparent calc(33.333% + 0.5px), transparent calc(66.666% - 0.5px), rgba(255,255,255,0.75) calc(66.666% - 0.5px), rgba(255,255,255,0.75) calc(66.666% + 0.5px), transparent calc(66.666% + 0.5px)),
+    linear-gradient(to bottom, transparent calc(33.333% - 0.5px), rgba(255,255,255,0.75) calc(33.333% - 0.5px), rgba(255,255,255,0.75) calc(33.333% + 0.5px), transparent calc(33.333% + 0.5px), transparent calc(66.666% - 0.5px), rgba(255,255,255,0.75) calc(66.666% - 0.5px), rgba(255,255,255,0.75) calc(66.666% + 0.5px), transparent calc(66.666% + 0.5px)); }
+.rif-frame.is-dragging .rif-grid { opacity: 1; }
+.recipe-fav-btn {
+  position: absolute; top: 4px; right: 4px; z-index: 2;
+  width: 26px; height: 26px; border-radius: 9999px;
+  display: grid; place-items: center;
+  background: rgba(255,255,255,0.88); box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+  cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none;
+  transition: transform .15s ease;
+}
+.recipe-fav-btn svg { width: 15px; height: 15px; fill: none; stroke: rgba(37,35,31,0.55); transition: fill .15s ease, stroke .15s ease; }
+.recipe-fav-btn.is-fav svg { fill: #E0245E; stroke: #E0245E; }
+.recipe-fav-btn:active { transform: scale(0.85); }
+.recipe-fav-btn.recipe-fav-large { top: 12px; right: 12px; width: 40px; height: 40px; }
+.recipe-fav-btn.recipe-fav-large svg { width: 22px; height: 22px; }
+.recipe-fav-btn.recipe-fav-badge { cursor: default; pointer-events: none; width: 22px; height: 22px; }
+.recipe-fav-btn.recipe-fav-badge svg { width: 13px; height: 13px; }
+html.dark .recipe-fav-btn { background: rgba(30,32,34,0.8); }
+html.dark .recipe-fav-btn:not(.is-fav) svg { stroke: rgba(255,255,255,0.75); }
+
+/* "Cooked" button in the week slider (meals) - same look as the favourite heart, top left */
+.meal-cooked-btn {
+  position: absolute; top: 4px; left: 4px; z-index: 2;
+  width: 26px; height: 26px; border-radius: 9999px;
+  display: grid; place-items: center;
+  background: rgba(255,255,255,0.88); box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+  cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none;
+  transition: transform .15s ease, background .15s ease;
+}
+.meal-cooked-btn svg { width: 15px; height: 15px; fill: none; stroke: rgba(37,35,31,0.55); transition: stroke .15s ease; }
+.meal-cooked-btn:active { transform: scale(0.85); }
+.meal-cooked-btn.is-cooking { background: var(--c-pine); }
+.meal-cooked-btn.is-cooking svg { stroke: #fff; }
+html.dark .meal-cooked-btn { background: rgba(30,32,34,0.8); }
+html.dark .meal-cooked-btn svg { stroke: rgba(255,255,255,0.75); }
+.week-slider-card.is-leaving { transition: opacity .25s ease, transform .25s ease; opacity: 0; transform: scale(0.9); }
+
+.fade-in { animation: fadeIn .25s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in, .recipe-card { animation: none !important; transition: none !important; }
+}
+
+input:focus, select:focus, textarea:focus, button:focus-visible {
+  outline: 2px solid var(--c-pine);
+  outline-offset: 2px;
+}
+
+textarea { font-family: 'Inter', sans-serif; }
+
+/* Shopping input: text field and plus button look like ONE element. That is why the focus ring
+   sits on the shared wrapper instead of on the text field alone. */
+#shoppingAddInput:focus { outline: none; }
+#shoppingAddField:focus-within { outline: 2px solid var(--c-pine); outline-offset: 2px; }
+#shoppingAddBtn:focus-visible { outline: none; }
+
+/* ---------- Global search (own rules, independent of the Tailwind build) ---------- */
+.gs-backdrop { position: fixed; inset: 0; z-index: 255; display: none; background: rgba(37,35,31,0.16); -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); }
+.gs-backdrop.gs-open { display: block; animation: gsFade .15s ease; }
+.gs-wrap { position: fixed; left: 0; right: 0; bottom: 0; z-index: 260; display: none; padding: 0 1rem calc(env(safe-area-inset-bottom, 0px) + 0.75rem); pointer-events: none; }
+.gs-wrap.gs-open { display: block; }
+.gs-wrap.gs-kb { padding-bottom: 0.5rem; }
+.gs-inner { max-width: 28rem; margin: 0 auto; pointer-events: auto; animation: gsUp .18s ease; }
+.gs-results { display: none; flex-direction: column-reverse; margin-bottom: 0.5rem; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; background: #fff; border: 1px solid rgba(37,35,31,0.10); border-radius: 1rem; box-shadow: 0 12px 32px -10px rgba(0,0,0,0.28); }
+.gs-results.gs-show { display: flex; }
+.gs-row { display: flex; align-items: center; gap: 0.7rem; width: 100%; flex-shrink: 0; text-align: left; padding: 0.55rem 0.75rem; background: transparent; border: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; color: inherit; font: inherit; }
+.gs-row:not(:first-child) { border-bottom: 1px solid rgba(37,35,31,0.07); }
+.gs-row:hover, .gs-row.gs-active { background: color-mix(in srgb, var(--c-pine) 7%, transparent); }
+.gs-row:active { background: color-mix(in srgb, var(--c-pine) 12%, transparent); }
+.gs-row:focus-visible { outline: none; }
+.gs-ico { flex-shrink: 0; width: 2rem; height: 2rem; border-radius: 0.6rem; display: grid; place-items: center; font-size: 1rem; line-height: 1; background: color-mix(in srgb, var(--c-pine) 9%, transparent); }
+.gs-txt { flex: 1; min-width: 0; }
+.gs-title { display: block; font-size: 0.875rem; font-weight: 500; color: #25231F; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gs-title mark { background: color-mix(in srgb, var(--c-mustard) 26%, transparent); color: inherit; border-radius: 3px; padding: 0 1px; }
+.gs-sub { display: block; font-size: 0.72rem; color: rgba(37,35,31,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+.gs-type { font-weight: 600; color: var(--c-pine); }
+.gs-chev { flex-shrink: 0; color: rgba(37,35,31,0.25); font-size: 1.15rem; line-height: 1; }
+.gs-empty { flex-shrink: 0; padding: 0.85rem 1rem; font-size: 0.85rem; color: rgba(37,35,31,0.5); text-align: center; }
+.gs-field { display: flex; align-items: stretch; border-radius: 0.75rem; border: 1px solid rgba(37,35,31,0.15); background: #fff; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.18); overflow: hidden; }
+.gs-field:focus-within { outline: 2px solid var(--c-pine); outline-offset: 2px; }
+.gs-field-icon { display: grid; place-items: center; padding-left: 0.85rem; color: rgba(37,35,31,0.45); }
+#globalSearchInput { flex: 1; min-width: 0; border: 0; border-radius: 0; background: transparent; padding: 0.625rem 0.75rem; font-size: 16px; color: inherit; }
+#globalSearchInput:focus { outline: none; }
+.gs-close { flex-shrink: 0; width: 3rem; border: 0; background: var(--c-pine); color: #fff; font-size: 1.5rem; line-height: 1; display: grid; place-items: center; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; }
+.gs-close:focus-visible { outline: none; }
+#gsEventAnchor { position: fixed; left: 50%; top: 18%; width: 1px; height: 1px; pointer-events: none; opacity: 0; }
+@keyframes gsFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes gsUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .gs-inner, .gs-backdrop.gs-open { animation: none; } }
+html.dark .gs-backdrop { background: rgba(0,0,0,0.38); }
+html.dark .gs-results, html.dark .gs-field { background: #2E2C28 !important; border-color: rgba(255,255,255,0.13) !important; }
+html.dark #globalSearchInput { background: transparent !important; border-color: transparent !important; color: #EDEAE2; }
+html.dark .gs-title { color: #EDEAE2; }
+html.dark .gs-sub, html.dark .gs-empty, html.dark .gs-field-icon { color: rgba(237,234,226,0.5); }
+html.dark .gs-type { color: var(--c-mustard); }
+html.dark .gs-chev { color: rgba(237,234,226,0.25); }
+html.dark .gs-ico { background: rgba(255,255,255,0.07); }
+html.dark .gs-row:not(:first-child) { border-bottom-color: rgba(255,255,255,0.07); }
+html.dark .gs-row:hover, html.dark .gs-row.gs-active { background: rgba(255,255,255,0.06); }
+/* Shopping list cards: pleasant tapping on the phone */
+.shopping-list-card { -webkit-tap-highlight-color: transparent; }
+.shopping-list-card:active { transform: scale(0.98); }
+/* Reorder shopping lists by drag & drop (like app icons on the iPhone) */
+#shoppingListGrid .shopping-list-card, #shoppingNewListCard { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+#shoppingListGrid .shopping-list-card img { -webkit-user-drag: none; pointer-events: none; }
+#shoppingListGrid .shopping-list-card.shopping-drag-slot { opacity: 0 !important; transition: none !important; }
+.shopping-drag-ghost { box-shadow: 0 22px 45px -12px rgba(0,0,0,0.38) !important; cursor: grabbing !important; will-change: left, top, transform; }
+body.shopping-dragging, body.shopping-dragging * { cursor: grabbing !important; }
+#shoppingListGrid.shopping-reordering .shopping-list-card:not(.shopping-drag-slot) { animation: pinnListJiggle 0.3s ease-in-out infinite; }
+#shoppingListGrid.shopping-reordering .shopping-list-card:nth-child(2n):not(.shopping-drag-slot) { animation-delay: -0.15s; }
+#shoppingListGrid.shopping-reordering .shopping-list-card:nth-child(3n):not(.shopping-drag-slot) { animation-delay: -0.08s; }
+#shoppingListGrid.shopping-reordering .shopping-list-card:active { transform: none; }
+@keyframes pinnListJiggle { 0%, 100% { rotate: -0.8deg; } 50% { rotate: 0.8deg; } }
+@media (prefers-reduced-motion: reduce) { #shoppingListGrid.shopping-reordering .shopping-list-card { animation: none !important; } }
+html.dark #shoppingAddField { background-color: #2E2C28 !important; border-color: rgba(255,255,255,0.15) !important; }
+html.dark #shoppingAddInput { background-color: transparent !important; border-color: transparent !important; }
+
+/* iOS sometimes renders the native date field wider than its CSS width, so it sticks out
+   over the edge of its container - min-width:0 lets it really shrink,
+   max-width additionally prevents it from sticking out. */
+input[type="date"], input[type="time"], input[type="datetime-local"], input[type="month"] {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+/* iPhone/iPad only: Safari gives date and time fields their own minimum width and height
+   (native look). In two-column popups (e.g. expense: date | paid by) they were squeezed
+   or ran into the neighbouring field. Without the native look they keep to their
+   column width, the text is left-aligned like in the other fields and the height stays the same
+   even when the field is empty. Tapping still opens the usual iOS picker. */
+@supports (-webkit-touch-callout: none) {
+  input[type="date"], input[type="time"], input[type="datetime-local"], input[type="month"] {
+    -webkit-appearance: none;
+    appearance: none;
+    text-align: left;
+    line-height: 1.25rem;
+    overflow: hidden;
+    background-clip: padding-box;
+  }
+  input[type="date"]:not([class*="bg-"]), input[type="time"]:not([class*="bg-"]), input[type="datetime-local"]:not([class*="bg-"]), input[type="month"]:not([class*="bg-"]) { background-color: #fff; }
+  input[type="date"]::-webkit-date-and-time-value, input[type="time"]::-webkit-date-and-time-value,
+  input[type="datetime-local"]::-webkit-date-and-time-value, input[type="month"]::-webkit-date-and-time-value {
+    text-align: left;
+    margin: 0;
+    min-height: 1.25rem;
+    line-height: 1.25rem;
+  }
+  input[type="date"]::-webkit-datetime-edit, input[type="time"]::-webkit-datetime-edit,
+  input[type="datetime-local"]::-webkit-datetime-edit, input[type="month"]::-webkit-datetime-edit { padding: 0; }
+  /* Two columns in popups: content may shrink instead of overflowing */
+  .grid > div:has(> input[type="date"]), .grid > div:has(> input[type="time"]), .grid > div:has(> input[type="datetime-local"]),
+  .fz-grid2 > *, .fz-grid3 > * { min-width: 0; }
+}
+
+.mode-btn.active, .recipe-input-mode-btn.active, .display-mode-btn.active,
+.meal-type-btn.active, .move-meal-btn.active, .schedule-type-btn.active, .bin-schedule-type-btn.active, .default-view-mode-btn-desktop.active, .default-view-mode-btn-mobile.active, .category-scope-btn.active, .done-task-cleanup-btn.active, .member-login-mode-btn.active, .recipe-source-btn.active, .household-type-btn.active, .ma-wohnform-btn.active {
+  background: var(--c-pine);
+  color: #fff;
+}
+
+.hamburger-bar { background-color: #25231F; }
+
+/* Disable text selection in the calendar - otherwise a long press on an event on the iPad
+   first starts the native text selection instead of opening the detail popover. */
+#calendarBody, #calendarBody * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* ---------- Event details on long press ("expand") ---------- */
+.event-expanded {
+  transform: scale(1.06);
+  z-index: 40;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.28);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+#eventDetailPopover {
+  transform: scale(0.9);
+  opacity: 0;
+  transition: transform .16s ease, opacity .16s ease;
+  pointer-events: none;
+}
+#eventDetailPopover.open {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ---------- Dark mode (coarse override layer) ---------- */
+/* Without this rule iOS briefly shows the default browser background of the <html> element
+   itself (white), not the one of <body>, during elastic overscroll (rubber-band effect) - that
+   was exactly the "white rounded corners" at section borders in dark mode. */
+html {
+  background: var(--c-paper);
+  overscroll-behavior-y: none;
+}
+/* iOS also uses the colour of <html> for the strip it leaves free at the bottom outside the
+   web view when running as a home screen app - hence the same colour as the content areas, so
+   it does not stand out as a separate bar. <body> keeps its darker background. */
+html.dark {
+  background: #242320;
+}
+html.dark body {
+  background: #1B1B18;
+  color: #EDEAE2;
+}
+html.dark header,
+html.dark section,
+html.dark #settingsView,
+html.dark #accountView,
+html.dark .bg-white,
+html.dark .bg-paper,
+html.dark .bg-paper\/80,
+html.dark .bg-paper\/95,
+html.dark .bg-white\/40,
+html.dark .recipe-card,
+html.dark #memberModal > div,
+html.dark #recipeModal > div,
+html.dark #mealModal > div,
+html.dark #taskModal > div,
+html.dark #addEventModal > div,
+html.dark #categoryReassignModal > div,
+html.dark #infoPopupModal > div,
+html.dark #appleCalendarModal > div,
+html.dark #roomModal > div,
+html.dark #roomScheduleModal > div,
+html.dark #trashBinModal > div,
+html.dark #changePasswordModal > div,
+html.dark #profileManageModal > div,
+html.dark #kidRoutineModal > div,
+html.dark #guestModal > div,
+html.dark #eventDetailPopover {
+  background-color: #242320 !important;
+}
+html.dark input, html.dark textarea, html.dark select {
+  background-color: #2E2C28 !important;
+  color: #EDEAE2 !important;
+  border-color: rgba(255,255,255,0.15) !important;
+}
+html.dark .border-ink\/10, html.dark .border-ink\/15, html.dark .border-ink\/20, html.dark .day-col {
+  border-color: rgba(255,255,255,0.12) !important;
+}
+/* Circles of task checkmarks and shopping lists use /25 and /30 - a clearly more visible
+   light grey than the other, rather subtle borders, because these are interactive tap targets. */
+html.dark .border-ink\/25, html.dark .border-ink\/30 {
+  border-color: rgba(255,255,255,0.4) !important;
+}
+/* A selected/done circle (filled with the accent colour) gets a light border in dark mode,
+   so it stands out from the dark background instead of almost disappearing. */
+html.dark .task-toggle-done.bg-pine, html.dark .shopping-item-row .bg-pine {
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.5);
+}
+html.dark .text-ink, html.dark h1, html.dark h2, html.dark h3, html.dark h4, html.dark label {
+  color: #EDEAE2 !important;
+}
+html.dark .text-ink\/30, html.dark .text-ink\/35, html.dark .text-ink\/40,
+html.dark .text-ink\/50, html.dark .text-ink\/60, html.dark .text-ink\/70, html.dark .text-ink\/80 {
+  color: rgba(237,234,226,0.55) !important;
+}
+html.dark .bg-ink\/5 { background-color: rgba(255,255,255,0.08) !important; }
+html.dark ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); }
+html.dark .hamburger-bar { background-color: #EDEAE2 !important; } /* FIX: menu icon was invisible in dark mode */
+
+/* ---------- Design (formerly the "Minimal" theme, now the only, fixed design) ---------- */
+body { background: var(--c-paper); }
+.font-serif { font-family: 'Inter', system-ui, sans-serif !important; font-weight: 600; }
+.recipe-card,
+section,
+header,
+#memberModal > div,
+#recipeModal > div,
+#mealModal > div,
+#eventModal > div {
+  border-radius: 10px !important;
+  box-shadow: none !important;
+}
+.rounded-2xl, .rounded-xl { border-radius: 10px !important; }
+.rounded-full.border { border-width: 1px !important; }
+.border-ink\/10, .border-ink\/15 { border-color: rgba(37,35,31,0.08) !important; }
+html.dark .border-ink\/10, html.dark .border-ink\/15 { border-color: rgba(255,255,255,0.08) !important; }

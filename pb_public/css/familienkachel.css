@@ -1,0 +1,187 @@
+/* pinn. – Family members tile and birthdays (css/familienkachel.css)
+   Part of the styles that used to be inline in index.html (step 3 of splitting index.html). Plain CSS, no build
+   step: linked in the head of index.html at exactly the place where the <style> block stood, so the order of
+   the rules - and with it the look of the app - is unchanged.
+   Contents: overview tile family members (live location, birthday, way home, SOS, kids progress), quick
+   actions of a person, birthday animation, planned finance bookings and the birthday list on the overview.
+   Utility classes (Tailwind) live in vendor/pinn.css, not here. */
+
+/* Overview tile: family members */
+/* Enough room around it: progress ring (-4px), SOS/birthday glows (up to 6px) and badges reach beyond the picture.
+   overflow-x: auto would otherwise also clip at the top and bottom - the negative margin balances the padding again. */
+.ov-fam-row { display: flex; gap: 0.9rem; overflow-x: auto; padding: 8px 8px 6px; margin: -6px -6px -2px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.ov-fam-row::-webkit-scrollbar { display: none; }
+.ov-fam-item { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; flex-shrink: 0; min-width: 3.6rem; background: none; padding: 0; }
+.ov-fam-ava-wrap { position: relative; display: block; }
+.ov-fam-ava { display: block; width: 3.1rem; height: 3.1rem; border-radius: 9999px; overflow: hidden; border: 2px solid; background: rgba(37,35,31,0.05); }
+.ov-fam-ava > span { font-size: 1.45rem !important; }
+.ov-fam-star { position: absolute; right: -2px; bottom: -2px; font-size: 13px; line-height: 1; pointer-events: none; }
+.ov-fam-name { font-size: 11px; line-height: 1.2; color: rgba(37,35,31,0.6); max-width: 4.4rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+html.dark .ov-fam-name { color: rgba(255,255,255,0.6); }
+button.ov-fam-item { cursor: pointer; transition: transform .12s; }
+button.ov-fam-item:active { transform: scale(0.94); }
+button.ov-fam-item:hover .ov-fam-name { color: var(--c-pine); }
+
+/* Overview tile family members: live location, birthday, way home, SOS, kids progress */
+.ov-fam-ring { position: absolute; inset: -4px; border-radius: 9999px; pointer-events: none;
+  background: conic-gradient(var(--c-pine) calc(var(--p, 0) * 1%), rgba(37,35,31,0.1) 0);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+          mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px)); }
+html.dark .ov-fam-ring { background: conic-gradient(var(--c-pine) calc(var(--p, 0) * 1%), rgba(255,255,255,0.14) 0); }
+.ov-fam-live { position: absolute; right: -1px; top: -1px; width: 13px; height: 13px; border-radius: 9999px; background: #E0322B; border: 2px solid #fff; animation: famBlink 1.1s ease-in-out infinite; z-index: 2; }
+.ov-fam-live::after { content: ''; position: absolute; inset: -3px; border-radius: 9999px; border: 2px solid #E0322B; animation: famRipple 1.6s ease-out infinite; }
+html.dark .ov-fam-live { border-color: #2E2C28; }
+.ov-fam-place { position: absolute; left: -4px; top: -4px; width: 19px; height: 19px; border-radius: 9999px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.18); display: grid; place-items: center; font-size: 11px; line-height: 1; z-index: 2; pointer-events: none; }
+html.dark .ov-fam-place { background: #3a3833; }
+.ov-fam-badge { position: absolute; right: -4px; bottom: -3px; min-width: 19px; height: 19px; padding: 0 2px; border-radius: 9999px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.18); display: grid; place-items: center; font-size: 12px; line-height: 1; z-index: 2; pointer-events: none; }
+html.dark .ov-fam-badge { background: #3a3833; }
+.ov-fam-item.is-bday .ov-fam-badge { animation: ovFamHop 1.8s ease-in-out infinite; }
+.ov-fam-item.is-bday .ov-fam-ava { box-shadow: 0 0 0 3px #F4C430, 0 0 14px 2px rgba(244,196,48,0.55); }
+.ov-fam-item.is-sos .ov-fam-ava { box-shadow: 0 0 0 3px #E0322B; animation: ovFamSos 1s ease-in-out infinite; }
+.ov-fam-item.is-hw .ov-fam-ava { box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-pine) 70%, transparent); }
+.ov-fam-sub { font-size: 10px; line-height: 1.15; color: rgba(37,35,31,0.5); max-width: 4.6rem; min-height: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: -0.15rem; }
+html.dark .ov-fam-sub { color: rgba(255,255,255,0.5); }
+.ov-fam-sub.sos { color: #E0322B; font-weight: 600; }
+.ov-fam-sub.bday { color: #B8860B; font-weight: 600; }
+.ov-fam-sub.live { color: #C0392B; }
+@keyframes ovFamHop { 0%, 100% { transform: translateY(0) rotate(0); } 25% { transform: translateY(-3px) rotate(-8deg); } 50% { transform: translateY(0) rotate(0); } 75% { transform: translateY(-2px) rotate(8deg); } }
+@keyframes ovFamSos { 0%, 100% { box-shadow: 0 0 0 3px #E0322B; } 50% { box-shadow: 0 0 0 6px rgba(224,50,43,0.35); } }
+.ov-fam-item { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+.ov-fam-school { position: absolute; left: -5px; bottom: -3px; min-width: 19px; height: 19px; padding: 0 3px; border-radius: 9999px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.18); display: flex; align-items: center; justify-content: center; gap: 1px; font-size: 10px; font-weight: 700; line-height: 1; z-index: 2; pointer-events: none; }
+.ov-fam-school.urgent { background: #FFE3E0; color: #C0392B; }
+html.dark .ov-fam-school { background: #3a3833; }
+html.dark .ov-fam-school.urgent { background: #5a2a26; color: #FFB4AC; }
+.ov-fam-badge.stars { font-size: 10px; font-weight: 700; padding: 0 4px; gap: 1px; display: flex; align-items: center; color: #9A6B00; }
+html.dark .ov-fam-badge.stars { color: #F4C430; }
+.ov-fam-item.is-soon .ov-fam-ava { box-shadow: 0 0 0 3px #2E9C7A; animation: ovFamSoon 1.4s ease-in-out infinite; }
+.ov-fam-sub.soon { color: #2E9C7A; font-weight: 600; }
+@keyframes ovFamSoon { 0%, 100% { box-shadow: 0 0 0 3px #2E9C7A; } 50% { box-shadow: 0 0 0 6px rgba(46,156,122,0.3); } }
+.ofs-stars { font-size: 26px; font-weight: 800; line-height: 1; color: #B8860B; }
+html.dark .ofs-stars { color: #F4C430; }
+.ofs-chk { width: 22px; height: 22px; flex-shrink: 0; border-radius: 7px; border: 2px solid rgba(37,35,31,0.25); display: grid; place-items: center; font-size: 12px; }
+html.dark .ofs-chk { border-color: rgba(255,255,255,0.3); }
+.ofs-due { flex-shrink: 0; font-size: 11px; color: rgba(37,35,31,0.5); }
+.ofs-due.late { color: #C0392B; font-weight: 600; }
+html.dark .ofs-due { color: rgba(255,255,255,0.5); }
+.wb-quick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.wb-quick button { padding: 11px 8px; border-radius: 14px; border: 1px solid rgba(37,35,31,0.12); background: #fff; font-size: 13px; text-align: center; }
+.wb-quick button:hover { border-color: var(--c-pine); }
+html.dark .wb-quick button { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); }
+.wb-big { width: 100%; padding: 14px; border-radius: 16px; background: var(--c-pine); color: #fff; font-size: 15px; font-weight: 600; }
+.wb-big:disabled { opacity: 0.6; }
+.wb-map { height: 230px; border-radius: 16px; overflow: hidden; position: relative; }
+.wb-bubble { border-radius: 18px; padding: 14px 16px; background: color-mix(in srgb, var(--c-pine) 10%, #fff); font-size: 17px; font-weight: 600; text-align: center; }
+html.dark .wb-bubble { background: color-mix(in srgb, var(--c-pine) 30%, #2a2925); }
+
+/* Quick actions of a person (popup from the tile) */
+.ofs { display: flex; flex-direction: column; gap: 12px; }
+.ofs-head { display: flex; align-items: center; gap: 14px; padding-right: 26px; }
+.ofs-head .fam-ava { flex-shrink: 0; }
+.ofs-acts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.ofs-acts .fz-act-btn { padding: 10px 2px; }
+.ofs-acts .fz-act-btn span:last-child { overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.ofs-bday { border-radius: 16px; padding: 12px 14px; display: flex; align-items: center; gap: 12px;
+  background: linear-gradient(120deg, #FFF4C2, #FFE0EC 55%, #E3F1FF); border: 1px solid rgba(244,196,48,0.45); }
+html.dark .ofs-bday { background: linear-gradient(120deg, #4a4220, #4a2a36 55%, #23364a); border-color: rgba(244,196,48,0.35); }
+.ofs-bday-ic { font-size: 30px; line-height: 1; animation: ovFamHop 1.8s ease-in-out infinite; }
+.ofs-row { width: 100%; display: flex; align-items: center; gap: 10px; padding: 7px 2px; text-align: left; border-top: 1px solid rgba(37,35,31,0.06); }
+.ofs-row:first-of-type { border-top: 0; }
+html.dark .ofs-row { border-top-color: rgba(255,255,255,0.07); }
+.ofs-time { width: 3.2rem; flex-shrink: 0; font-size: 12px; font-variant-numeric: tabular-nums; color: rgba(37,35,31,0.55); }
+html.dark .ofs-time { color: rgba(255,255,255,0.55); }
+.ofs-bar { height: 6px; border-radius: 999px; background: rgba(37,35,31,0.08); overflow: hidden; margin-top: 6px; }
+.ofs-bar > i { display: block; height: 100%; background: var(--c-pine); border-radius: 999px; }
+html.dark .ofs-bar { background: rgba(255,255,255,0.1); }
+
+/* Birthday animation (once a day on the first opening) */
+#bdayOverlay { position: fixed; inset: 0; z-index: 355; display: grid; place-items: center; padding: 24px;
+  background: radial-gradient(circle at 50% 40%, rgba(255,236,170,0.92), rgba(255,182,206,0.88) 45%, rgba(120,170,230,0.9));
+  animation: bdayFade .35s ease-out; overflow: hidden; }
+html.dark #bdayOverlay { background: radial-gradient(circle at 50% 40%, rgba(110,92,30,0.95), rgba(96,40,64,0.93) 45%, rgba(26,46,82,0.95)); }
+.bday-card { position: relative; z-index: 2; text-align: center; max-width: 22rem; width: 100%; padding: 26px 22px 22px; border-radius: 28px;
+  background: rgba(255,255,255,0.86); box-shadow: 0 18px 50px rgba(0,0,0,0.22); animation: bdayPop .7s cubic-bezier(.2,1.4,.4,1) .1s both; }
+html.dark .bday-card { background: rgba(40,38,34,0.88); }
+.bday-cake { font-size: 84px; line-height: 1; display: inline-block; animation: bdayCake 1.6s ease-in-out infinite; }
+.bday-hb { font-family: 'Inter', system-ui, sans-serif; font-weight: 800; font-size: 30px; line-height: 1.1; margin-top: 10px; letter-spacing: -0.01em;
+  background: linear-gradient(90deg, #E0322B, #F39C12, #2E9C7A, #4F7CAC, #8E5BB5, #E0322B); background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent; animation: bdayShine 3s linear infinite; }
+.bday-name { font-weight: 700; font-size: 26px; margin-top: 6px; }
+.bday-sub { font-size: 15px; opacity: 0.7; margin-top: 6px; }
+.bday-btn { margin-top: 18px; padding: 11px 26px; border-radius: 999px; background: var(--c-pine); color: #fff; font-size: 15px; font-weight: 600; box-shadow: 0 6px 18px rgba(0,0,0,0.18); }
+.bday-btn:active { transform: scale(0.96); }
+.bday-balloon { position: absolute; bottom: -120px; font-size: 54px; line-height: 1; z-index: 1; pointer-events: none; will-change: transform; }
+@keyframes bdayFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes bdayPop { from { opacity: 0; transform: scale(.6) translateY(30px); } to { opacity: 1; transform: none; } }
+@keyframes bdayCake { 0%, 100% { transform: rotate(-6deg) scale(1); } 50% { transform: rotate(6deg) scale(1.08); } }
+@keyframes bdayShine { from { background-position: 0 0; } to { background-position: 200% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .ov-fam-live, .ov-fam-live::after, .ov-fam-item.is-bday .ov-fam-badge, .ov-fam-item.is-sos .ov-fam-ava, .ofs-bday-ic, .ov-fam-item.is-soon .ov-fam-ava,
+  .bday-cake, .bday-hb, .bday-card, #bdayOverlay { animation: none !important; }
+}
+
+
+.fin-planned { opacity: 0.62; }
+.fin-plan-chip { display: inline-block; font-size: 10px; line-height: 1; padding: 2px 6px; border-radius: 999px; border: 1px dashed rgba(37,35,31,0.35); color: rgba(37,35,31,0.6); }
+html.dark .fin-plan-chip { border-color: rgba(255,255,255,0.35); color: rgba(255,255,255,0.65); }
+.fin-trend-future .fin-trend-stack { opacity: 0.45; }
+
+.ov-bday-list { display: flex; flex-direction: column; gap: 0.45rem; }
+.ov-bday-row {
+  display: flex; align-items: center; gap: 0.7rem; padding: 0.5rem 0.7rem; border-radius: 14px;
+  background: rgba(255,255,255,0.75); border: 1px solid rgba(37,35,31,0.08);
+}
+.ov-bday-row.is-today { background: color-mix(in srgb, var(--c-mustard) 14%, #fff); border-color: color-mix(in srgb, var(--c-mustard) 45%, transparent); }
+.ov-bday-date { width: 2.5rem; flex-shrink: 0; text-align: center; line-height: 1.1; }
+.ov-bday-date b { display: block; font-size: 1.1rem; font-weight: 600; }
+.ov-bday-date span { display: block; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.55; }
+.ov-bday-text { flex: 1; min-width: 0; }
+.ov-bday-name { font-size: 0.875rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ov-bday-sub { font-size: 0.72rem; opacity: 0.55; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ov-bday-when { flex-shrink: 0; font-size: 0.72rem; font-weight: 600; color: var(--c-pine); white-space: nowrap; }
+.ov-bday-row.is-today .ov-bday-when { color: var(--c-mustard); }
+.ov-bday-swipe { position: relative; border-radius: 14px; overflow: hidden; transition: max-height .22s ease, opacity .22s ease, margin .22s ease; max-height: 6rem; }
+.ov-bday-swipe .ov-bday-row { position: relative; z-index: 1; touch-action: pan-y; transition: transform .2s ease; background-clip: padding-box; }
+html:not(.dark) .ov-bday-swipe .ov-bday-row { background: #fff; }
+html:not(.dark) .ov-bday-swipe .ov-bday-row.is-today { background: color-mix(in srgb, var(--c-mustard) 14%, #fff); }
+html.dark .ov-bday-swipe .ov-bday-row { background: #2a2925; }
+.ov-bday-action { position: absolute; top: 0; right: 0; bottom: 0; width: 100%; display: flex; align-items: center; justify-content: flex-end;
+  padding-right: 1rem; background: #E0453A; color: #fff; font-size: 0.78rem; font-weight: 600; border: 0; cursor: pointer; }
+.ov-bday-swipe.is-gone { max-height: 0; opacity: 0; margin-top: -0.45rem; }
+.ov-bday-x { display: none; flex-shrink: 0; width: 1.4rem; height: 1.4rem; border-radius: 999px; border: 0; background: rgba(37,35,31,0.06); color: rgba(37,35,31,0.5); font-size: 0.9rem; line-height: 1; cursor: pointer; }
+@media (hover: hover) and (pointer: fine) {
+  .ov-bday-x { display: grid; place-items: center; opacity: 0; transition: opacity .15s; }
+  .ov-bday-row:hover .ov-bday-x { opacity: 1; }
+  .ov-bday-x:hover { background: #E0453A; color: #fff; }
+}
+.ov-bday-more { align-self: flex-start; font-size: 0.75rem; font-weight: 500; color: var(--c-pine); background: none; border: 0; padding: 0.2rem 0; cursor: pointer; }
+html.dark .ov-bday-row { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+html.dark .ov-bday-row.is-today { background: color-mix(in srgb, var(--c-mustard) 22%, transparent); border-color: color-mix(in srgb, var(--c-mustard) 55%, transparent); }
+html.dark .ov-bday-when { color: #EDEAE2; }
+
+.ov-set-row {
+  display: flex; align-items: center; gap: 0.55rem; padding: 0.5rem 0.65rem; border-radius: 14px;
+  background: #fff; border: 1px solid rgba(37,35,31,0.1); transition: opacity .15s ease;
+}
+.ov-set-row.is-off .ov-set-icon, .ov-set-row.is-off .ov-set-text { opacity: 0.45; }
+.ov-set-icon { font-size: 1.1rem; width: 1.6rem; text-align: center; flex-shrink: 0; }
+.ov-set-text { flex: 1; min-width: 0; }
+.ov-set-label { font-size: 0.875rem; font-weight: 500; }
+.ov-set-hint { font-size: 0.7rem; opacity: 0.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ov-set-move {
+  width: 30px; height: 30px; flex-shrink: 0; border-radius: 9999px; display: grid; place-items: center;
+  border: 1px solid rgba(37,35,31,0.15); background: transparent; color: rgba(37,35,31,0.6); font-size: 0.7rem;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.ov-set-move:not(:disabled):active { transform: scale(0.9); }
+.ov-set-move:disabled { opacity: 0.25; cursor: default; }
+.ov-set-switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; cursor: pointer; }
+.ov-set-switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+.ov-set-switch .ov-track { position: absolute; inset: 0; border-radius: 9999px; background: rgba(37,35,31,0.2); transition: background .15s ease; }
+.ov-set-switch .ov-knob { position: absolute; left: 2px; top: 2px; width: 20px; height: 20px; border-radius: 9999px; background: #fff; transition: transform .15s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+.ov-set-switch input:checked ~ .ov-track { background: var(--c-pine); }
+.ov-set-switch input:checked ~ .ov-knob { transform: translateX(20px); }
+.ov-set-switch input:disabled ~ .ov-track { opacity: 0.5; }
+.ov-set-switch input:focus-visible ~ .ov-track { outline: 2px solid var(--c-pine); outline-offset: 2px; }
+html.dark .ov-set-row { background: #2E2C28; border-color: rgba(255,255,255,0.12); }
+html.dark .ov-set-move { border-color: rgba(255,255,255,0.2); color: rgba(237,234,226,0.75); }
+html.dark .ov-set-switch .ov-track { background: rgba(255,255,255,0.2); }

@@ -1,0 +1,203 @@
+/* pinn. – Kids page, stars and household fairness (css/kinderaufgaben.css)
+   Part of the styles that used to be inline in index.html (step 3 of splitting index.html). Plain CSS, no build
+   step: linked in the head of index.html at exactly the place where the <style> block stood, so the order of
+   the rules - and with it the look of the app - is unchanged.
+   Contents: stars & rewards (kids page), household "who does how much?", the kids page itself
+   (colourful task page) and the "all tasks done" celebration.
+   Utility classes (Tailwind) live in vendor/pinn.css, not here. */
+
+/* ---------- Stars & rewards (kids page) ---------- */
+.kid-bank {
+  display: flex; align-items: center; gap: 8px; margin: .9rem auto 0; padding: 8px 10px 8px 14px; border: 0; cursor: pointer;
+  background: rgba(255,255,255,.85); color: #2B2340; border-radius: 999px; font-family: inherit;
+  box-shadow: 0 5px 0 rgba(0,0,0,.09); transition: transform .15s ease;
+}
+.kid-bank:active { transform: translateY(3px) scale(.98); box-shadow: 0 2px 0 rgba(0,0,0,.09); }
+.kid-bank.bump { animation: kidPop .6s cubic-bezier(.3,1.6,.5,1); }
+.kid-bank-star { font-size: 30px; line-height: 1; animation: kidTwinkle 2.4s ease-in-out infinite; }
+.kid-bank-num { font-size: 30px; font-weight: 800; line-height: 1; }
+.kid-bank-label { font-size: 18px; font-weight: 700; opacity: .7; }
+.kid-bank-shop { display: inline-flex; align-items: center; gap: 6px; margin-left: 6px; padding: 7px 13px; border-radius: 999px; background: #FFD166; font-size: 17px; font-weight: 800; }
+.kid-bank-pend { min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #E5484D; color: #fff; font-size: 13px; display: grid; place-items: center; }
+.kid-bank-plus { position: fixed; z-index: 360; pointer-events: none; transform: translate(-50%, 0); font-family: 'Baloo 2', 'Inter', system-ui, sans-serif; font-size: 30px; font-weight: 800; color: #F5A300; text-shadow: 0 2px 0 #fff; animation: kidPlusFly 1.1s ease-out forwards; }
+@keyframes kidPlusFly { 0% { opacity: 0; transform: translate(-50%, 0) scale(.6); } 20% { opacity: 1; transform: translate(-50%, -14px) scale(1.15); } 100% { opacity: 0; transform: translate(-50%, -70px) scale(1); } }
+.kid-shop {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 4; display: grid; place-items: center; padding: 1rem;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 1rem); padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+  background: rgba(43,35,64,.35); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); animation: fadeIn .25s ease;
+}
+.kid-shop-box {
+  position: relative; width: 100%; max-width: 620px; max-height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  background: #FFF8E7; color: #2B2340; border-radius: 32px; padding: 22px 18px 20px; box-shadow: 0 20px 50px rgba(0,0,0,.25);
+  animation: kidPop .55s cubic-bezier(.3,1.6,.5,1);
+}
+.kid-shop-x { position: absolute; top: 12px; right: 12px; width: 42px; height: 42px; border-radius: 50%; border: 0; background: rgba(43,35,64,.08); color: #2B2340; font-size: 18px; font-weight: 800; cursor: pointer; }
+.kid-shop-head { text-align: center; margin-bottom: 14px; }
+.kid-shop-title { font-size: clamp(26px, 6.5vw, 34px); font-weight: 800; line-height: 1.1; }
+.kid-shop-bal { font-size: clamp(18px, 4.6vw, 22px); font-weight: 700; margin-top: 4px; }
+.kid-shop-bal b { font-size: 1.3em; color: #E08E00; }
+.kid-rewards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (min-width: 560px) { .kid-rewards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.kid-reward {
+  position: relative; border: 0; border-radius: 24px; padding: 16px 8px 14px; background: #fff; color: #2B2340; font-family: inherit; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 4px; box-shadow: 0 5px 0 rgba(0,0,0,.08); opacity: .62;
+  transition: transform .15s ease;
+}
+.kid-reward.can { opacity: 1; background: #FFE9A8; box-shadow: 0 5px 0 #F0C24B; }
+.kid-reward:active { transform: translateY(3px) scale(.97); }
+.kid-reward.wiggle { animation: kidWiggle .4s ease; }
+.kid-reward-emoji { font-size: clamp(44px, 12vw, 58px); line-height: 1.05; }
+.kid-reward-title { font-size: clamp(16px, 4.2vw, 19px); font-weight: 800; line-height: 1.15; text-align: center; }
+.kid-reward-cost { font-size: 18px; font-weight: 800; color: #B87400; }
+.kid-reward-miss { font-size: 13px; font-weight: 700; opacity: .7; }
+.kid-shop-empty { text-align: center; font-size: 18px; font-weight: 700; opacity: .7; padding: 1rem 0; }
+.kid-pend { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.kid-pend-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 20px; background: #fff; box-shadow: 0 3px 0 rgba(0,0,0,.06); }
+.kid-pend-emoji { font-size: 34px; line-height: 1; flex-shrink: 0; }
+.kid-pend-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.kid-pend-title { font-size: 18px; font-weight: 800; line-height: 1.15; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kid-pend-sub { font-size: 14px; font-weight: 600; opacity: .65; }
+.kid-pend-btn { flex-shrink: 0; border: 0; border-radius: 14px; height: 40px; min-width: 40px; padding: 0 12px; font-family: inherit; font-size: 16px; font-weight: 800; cursor: pointer; }
+.kid-pend-btn.ok { background: #28B955; color: #fff; }
+.kid-pend-btn.no { background: rgba(43,35,64,.08); color: #2B2340; }
+.kid-shop-confirm { text-align: center; padding: 10px 0 4px; }
+.kid-shop-big { font-size: 96px; line-height: 1.1; animation: kidBob 3.2s ease-in-out infinite; }
+.kid-shop-q { font-size: clamp(24px, 6vw, 30px); font-weight: 800; line-height: 1.15; margin-top: 6px; }
+.kid-shop-cost { font-size: 24px; font-weight: 800; color: #B87400; margin-top: 4px; }
+.kid-shop-ask { font-size: 20px; font-weight: 700; opacity: .75; margin-top: 10px; }
+.kid-shop-actions { display: flex; gap: 12px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
+.kid-shop-btn { border: 0; border-radius: 20px; padding: 14px 22px; font-family: inherit; font-size: 20px; font-weight: 800; cursor: pointer; box-shadow: 0 5px 0 rgba(0,0,0,.12); }
+.kid-shop-btn.yes { background: #28B955; color: #fff; }
+.kid-shop-btn.no { background: #fff; color: #2B2340; }
+.kid-shop-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,.12); }
+.kid-fin-stars { background: rgba(255, 209, 102, .22); }
+html.dark .kid-fin-stars { background: rgba(255, 209, 102, .12); }
+.kid-rw-row + .kid-rw-row { padding-top: 8px; }
+/* ---------- Household: who does how much? ---------- */
+.hh-fair { background: rgba(255,255,255,.7); }
+html.dark .hh-fair { background: rgba(255,255,255,.04); }
+.hh-fair-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; }
+.hh-fair-bar { height: 6px; border-radius: 99px; background: rgba(37,35,31,.07); overflow: hidden; margin-top: 4px; }
+html.dark .hh-fair-bar { background: rgba(255,255,255,.08); }
+.hh-fair-bar > span { display: block; height: 100%; border-radius: 99px; transition: width .4s ease; }
+.hh-fair-chip { padding: 3px 9px; border-radius: 999px; border: 1px solid rgba(37,35,31,.12); font-size: 11px; color: rgba(37,35,31,.6); background: transparent; cursor: pointer; }
+html.dark .hh-fair-chip { border-color: rgba(255,255,255,.12); color: rgba(255,255,255,.6); }
+.hh-fair-chip.active { background: var(--c-pine); border-color: var(--c-pine); color: #fff; }
+.hh-fair-rules { margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(37,35,31,.1); display: flex; flex-direction: column; gap: 4px; }
+.hh-fair-rule { display: flex; align-items: baseline; gap: 8px; font-size: 12px; }
+.hh-rotate { border-radius: 10px; background: rgba(37,35,31,.04); padding: 10px 12px; }
+html.dark .hh-rotate { background: rgba(255,255,255,.05); }
+/* Addition to vendor/pinn.css: fixed height of the value row above the chart bars */
+.h-3 { height: 0.75rem; }
+
+/* ---------- Kids page (colourful task page for children) ---------- */
+#kidPage {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 350;
+  overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+  font-family: 'Baloo 2', 'Inter', system-ui, sans-serif; color: #2B2340;
+  -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
+  transition: background .8s ease;
+}
+#kidPage.kid-morgens { background: linear-gradient(180deg, #FFE9A8 0%, #FFD1A1 55%, #FFB7B2 100%); }
+#kidPage.kid-mittags { background: linear-gradient(180deg, #A9E0FF 0%, #D6F3FF 60%, #FFF4C2 100%); }
+#kidPage.kid-nachmittags { background: linear-gradient(180deg, #BDEFC6 0%, #E6FAD2 55%, #FFE7B0 100%); }
+#kidPage.kid-abends { background: linear-gradient(180deg, #4E4291 0%, #8466C2 55%, #EFA2C0 100%); color: #fff; }
+#kidPage.kid-nacht { background: linear-gradient(180deg, #111838 0%, #262C66 70%, #463C84 100%); color: #fff; }
+.kid-deco { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; overflow: hidden; }
+.kid-deco span { position: absolute; line-height: 1; animation: kidFloat 7s ease-in-out infinite; opacity: .9; }
+.kid-inner {
+  position: relative; min-height: 100%; box-sizing: border-box; max-width: 920px; margin: 0 auto;
+  padding: calc(env(safe-area-inset-top, 0px) + 1.25rem) 1rem calc(env(safe-area-inset-bottom, 0px) + 2.5rem);
+}
+.kid-topbtn {
+  position: fixed; top: calc(env(safe-area-inset-top, 0px) + .75rem); z-index: 2;
+  width: 46px; height: 46px; border-radius: 50%; border: 0; display: grid; place-items: center;
+  background: rgba(255,255,255,.6); color: #2B2340; font-size: 20px; font-weight: 700;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); cursor: pointer;
+}
+.kid-topbtn.left { left: .75rem; }
+.kid-topbtn.right { right: .75rem; }
+.kid-avatar {
+  width: 104px; height: 104px; border-radius: 50%; overflow: hidden; margin: 0 auto;
+  border: 5px solid #fff; background: #fff; box-shadow: 0 8px 22px rgba(0,0,0,.18);
+  animation: kidBob 3.2s ease-in-out infinite;
+}
+.kid-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.kid-avatar-fill { display: grid; place-items: center; width: 100%; height: 100%; font-size: 60px; line-height: 1; }
+.kid-avatar-fill.initial { font-size: 48px; font-weight: 800; color: #fff; }
+.kid-hello { text-align: center; font-size: clamp(30px, 7.5vw, 46px); font-weight: 800; line-height: 1.1; margin-top: .8rem; }
+.kid-sub { text-align: center; font-size: clamp(18px, 4.6vw, 23px); font-weight: 600; opacity: .85; margin-top: .3rem; }
+.kid-stars { display: flex; justify-content: center; flex-wrap: wrap; gap: .2rem; margin: 1rem 0 1.2rem; font-size: 30px; line-height: 1; }
+.kid-star { display: inline-block; filter: grayscale(1) opacity(.35); transition: filter .3s; }
+.kid-star.on { filter: none; }
+.kid-star.bump { animation: kidStarPop .6s cubic-bezier(.3,1.6,.5,1); }
+.kid-done-banner {
+  display: none; text-align: center; font-size: clamp(21px, 5.6vw, 28px); font-weight: 800; color: #2B2340;
+  background: rgba(255,255,255,.8); border-radius: 24px; padding: 10px 16px; margin: 0 auto 18px; max-width: 540px;
+}
+.kid-done-banner.show { display: block; animation: kidPop .7s cubic-bezier(.3,1.6,.5,1); }
+.kid-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+@media (min-width: 640px) { .kid-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; } }
+@media (min-width: 920px) { .kid-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.kid-card {
+  position: relative; border: 0; border-radius: 28px; padding: 20px 10px 16px; min-height: 156px;
+  background: var(--kc); color: #2B2340; font-family: inherit; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  box-shadow: 0 6px 0 rgba(0,0,0,.13), 0 12px 26px rgba(0,0,0,.08);
+  transition: transform .15s ease, box-shadow .15s ease, background-color .4s ease;
+}
+.kid-card:active { transform: translateY(4px) scale(.97); box-shadow: 0 2px 0 rgba(0,0,0,.13); }
+.kid-card-emoji { font-size: clamp(56px, 15vw, 76px); line-height: 1; transition: transform .4s ease, opacity .4s ease; }
+.kid-card-title { font-size: clamp(19px, 4.9vw, 23px); font-weight: 800; line-height: 1.15; text-align: center; transition: opacity .4s ease; }
+.kid-card.done { background: #B6EEC2; }
+.kid-card.done .kid-card-emoji { transform: scale(.82); opacity: .55; }
+.kid-card.done .kid-card-title { opacity: .55; text-decoration: line-through; text-decoration-thickness: 3px; }
+.kid-check {
+  position: absolute; top: 10px; right: 10px; width: 42px; height: 42px; border-radius: 50%;
+  background: #28B955; color: #fff; font-size: 25px; font-weight: 800; display: grid; place-items: center;
+  box-shadow: 0 3px 8px rgba(0,0,0,.2); transform: scale(0) rotate(-40deg);
+  transition: transform .4s cubic-bezier(.3,1.8,.5,1);
+}
+.kid-card.done .kid-check { transform: scale(1) rotate(0); }
+.kid-card.pop { animation: kidPop .6s cubic-bezier(.3,1.6,.5,1); }
+.kid-card.wiggle { animation: kidWiggle .4s ease; }
+.kid-empty { text-align: center; padding-top: 6vh; }
+.kid-empty-emoji { font-size: 100px; line-height: 1.1; margin-top: 1.2rem; display: inline-block; animation: kidBob 3.2s ease-in-out infinite; }
+.kid-celebrate {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 3; display: grid; place-items: center; padding: 1.5rem;
+  background: rgba(255,255,255,.35); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); animation: fadeIn .3s ease;
+}
+.kid-celebrate-box {
+  background: #fff; color: #2B2340; border-radius: 34px; padding: 26px 30px; text-align: center; max-width: 420px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.22); animation: kidPop .7s cubic-bezier(.3,1.6,.5,1);
+}
+.kid-confetti { position: fixed; z-index: 360; pointer-events: none; font-size: 24px; line-height: 1; margin: -12px 0 0 -12px; will-change: transform, opacity; }
+/* Small star on the picture in the family bar: tapping opens the kids page */
+.kid-chip-hit { position: relative; display: inline-flex; padding: 6px; margin: -6px; border-radius: 9999px; cursor: pointer; }
+.kid-chip-badge { position: absolute; right: 1px; bottom: 1px; font-size: 11px; line-height: 1; pointer-events: none; animation: kidTwinkle 2.4s ease-in-out infinite; }
+.kid-edit-row + .kid-edit-row { border-top: 1px dashed rgba(37,35,31,0.08); padding-top: 6px; }
+@keyframes kidBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes kidFloat { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(12px, -10px); } }
+@keyframes kidPop { 0% { transform: scale(1); } 30% { transform: scale(1.12) rotate(-3deg); } 60% { transform: scale(.95) rotate(2deg); } 100% { transform: scale(1); } }
+@keyframes kidWiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-4deg); } 75% { transform: rotate(4deg); } }
+@keyframes kidStarPop { 0% { transform: scale(.3); } 60% { transform: scale(1.5); } 100% { transform: scale(1); } }
+@keyframes kidTwinkle { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .55; transform: scale(.8); } }
+@media (prefers-reduced-motion: reduce) {
+  .kid-deco span, .kid-avatar, .kid-empty-emoji, .kid-chip-badge { animation: none !important; }
+}
+
+/* ---------- "All tasks done" (task list) ---------- */
+.done-celebrate {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 355; display: grid; place-items: center; padding: 1.5rem;
+  background: rgba(246,243,236,.45); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  animation: fadeIn .3s ease; transition: opacity .25s ease; cursor: pointer;
+}
+.done-celebrate.out { opacity: 0; }
+.done-celebrate-box {
+  background: #fff; border-radius: 28px; padding: 26px 32px; text-align: center; max-width: 380px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.18); animation: kidPop .7s cubic-bezier(.3,1.6,.5,1);
+}
+.done-celebrate-icon { font-size: 72px; line-height: 1.1; display: inline-block; animation: doneSpin 1s cubic-bezier(.3,1.6,.5,1); }
+html.dark .done-celebrate { background: rgba(20,19,17,.5); }
+html.dark .done-celebrate-box { background: #2E2C28; color: #F1EDE4; }
+@keyframes doneSpin { 0% { transform: scale(.2) rotate(-90deg); } 70% { transform: scale(1.2) rotate(12deg); } 100% { transform: scale(1) rotate(0); } }

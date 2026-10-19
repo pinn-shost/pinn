@@ -1,0 +1,54 @@
+/* pinn. – Overview tiles (css/uebersicht.css)
+   Part of the styles that used to be inline in index.html (step 3 of splitting index.html). Plain CSS, no build
+   step: linked in the head of index.html at exactly the place where the <style> block stood, so the order of
+   the rules - and with it the look of the app - is unchanged.
+   Contents: overview weather and birthday tiles, header weather, "all day" label, planned meals slider
+   and the task counter.
+   Utility classes (Tailwind) live in vendor/pinn.css, not here. */
+
+/* ---------- Overview: weather + birthday tiles, settings (own rules, independent of the Tailwind build) ---------- */
+.ov-weather-days { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.35rem; }
+.ov-weather-day {
+  border-radius: 11px; padding: 0.35rem 0.15rem; text-align: center; min-width: 0;
+  background: rgba(255,255,255,0.75); border: 1px solid rgba(37,35,31,0.08);
+}
+.ov-weather-day.is-today { background: color-mix(in srgb, var(--c-pine) 7%, #fff); border-color: color-mix(in srgb, var(--c-pine) 30%, transparent); }
+.ov-weather-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.55; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ov-weather-icon { font-size: 1.15rem; line-height: 1; margin: 0.2rem 0 0.15rem; }
+.ov-weather-temp { font-weight: 600; font-size: 0.78rem; white-space: nowrap; }
+.ov-weather-min { font-weight: 400; opacity: 0.5; margin-left: 0.15rem; }
+.ov-weather-rain { font-size: 0.58rem; opacity: 0.6; margin-top: 0.1rem; min-height: 1em; white-space: nowrap; }
+.ov-weather-stale { font-size: 0.7rem; opacity: 0.5; margin-top: 0.5rem; }
+.ov-weather-sun { font-size: 0.7rem; opacity: 0.6; margin-top: 0.45rem; }
+/* Header weather (iPad & computer, 1.61): today, tomorrow, the day after next to date and time – tap opens the weather view */
+#headerWeather:not(.hidden) { display: flex; align-items: stretch; gap: 0.3rem; background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+#headerWeather:active .hw-day { transform: scale(0.97); }
+body.mobile-mode #headerWeather { display: none !important; }
+.hw-day {
+  width: 4rem; min-width: 0; border-radius: 10px; padding: 0.2rem 0.2rem 0.22rem; text-align: center;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.75); border: 1px solid rgba(37,35,31,0.08); transition: transform .12s ease;
+}
+.hw-day.is-now { border-style: dashed; }
+.hw-day.is-today { background: color-mix(in srgb, var(--c-pine) 7%, #fff); border-color: color-mix(in srgb, var(--c-pine) 30%, transparent); }
+.hw-label { max-width: 100%; font-size: 0.55rem; line-height: 1.25; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.55; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hw-main { display: flex; align-items: center; gap: 0.2rem; white-space: nowrap; line-height: 1.2; }
+.hw-icon { font-size: 1rem; line-height: 1; }
+.hw-temp { font-weight: 600; font-size: 0.72rem; }
+.hw-min { font-weight: 400; opacity: 0.5; margin-left: 0.1rem; }
+.hw-rain { font-size: 0.55rem; line-height: 1.15; opacity: 0.6; min-height: 1.15em; white-space: nowrap; }
+html.dark .hw-day { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+html.dark .hw-day.is-today { background: color-mix(in srgb, var(--c-pine) 28%, transparent); border-color: color-mix(in srgb, var(--c-pine) 60%, transparent); }
+/* "All day" label in day and week view: never wider than the hour column */
+.cal-allday-label { width: 2.5rem; flex-shrink: 0; overflow: hidden; font-size: 9px; line-height: 1.15; overflow-wrap: anywhere; -webkit-hyphens: auto; hyphens: auto; }
+/* Planned meals slider on the overview (iPad & computer): smaller cards, picture about the size of one weather day */
+.week-slider-card.is-compact { width: 4.75rem; padding: 0.375rem; }
+.week-slider-card.is-compact .wsc-title { font-size: 0.72rem; margin-top: 0.3rem; min-height: 1.8rem; }
+.week-slider-card.is-compact .wsc-meta { font-size: 10px; }
+.week-slider-card.is-compact .meal-cooked-btn { width: 20px; height: 20px; top: 3px; left: 3px; }
+.week-slider-card.is-compact .meal-cooked-btn svg { width: 11px; height: 11px; }
+.week-slider-card.is-compact .recipe-fav-badge { width: 18px; height: 18px; }
+.week-slider-card.is-compact .recipe-fav-badge svg { width: 10px; height: 10px; }
+/* Task counter (done/total): small, next to the heading on iPad & computer, below it on the phone */
+#taskCount { font-variant-numeric: tabular-nums; }
+body.mobile-mode #taskCount { flex-basis: 100%; }

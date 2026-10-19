@@ -18,6 +18,14 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.97', datum: '19.10.2026', titel: 'App-Code wird aufgeteilt (Schritt 3, Teil 2: Gestaltung)',
+    punkte: [
+      ['info', 'Für Mitwirkende: Die übrige Gestaltung der App liegt jetzt nach Themen in 19 Dateien im Ordner pb_public/css/ (z. B. basis.css, mobil.css, finanzen.css, pinnwand.css). Die index.html bindet sie an derselben Stelle ein – am Aussehen ändert sich nichts'],
+      ['info', 'Der Browser kann die Gestaltung jetzt getrennt zwischenspeichern; offline hält der Hintergrunddienst alle Dateien aus css/ vor, und die Startprüfung meldet eine fehlende Datei'],
+      ['info', 'Geändert: index.html, 19 neue Dateien in css/, js/versionslog.js und pinn-setup.sh – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.96', datum: '19.10.2026', titel: 'App-Code wird aufgeteilt (Schritt 3, Teil 1: Gestaltung)',
     punkte: [
       ['info', 'Für Mitwirkende: Die Gestaltung von Haustieren, Wetter-Ansicht und Urlaubswetter liegt jetzt in der eigenen Datei pb_public/css/haustierewetter.css. Die index.html bindet sie an derselben Stelle ein – am Aussehen ändert sich nichts'],

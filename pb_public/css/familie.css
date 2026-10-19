@@ -1,0 +1,86 @@
+/* pinn. – Family tabs, profile, school & daycare (css/familie.css)
+   Part of the styles that used to be inline in index.html (step 3 of splitting index.html). Plain CSS, no build
+   step: linked in the head of index.html at exactly the place where the <style> block stood, so the order of
+   the rules - and with it the look of the app - is unchanged.
+   Contents: Family → tabs, profile and school & daycare.
+   Utility classes (Tailwind) live in vendor/pinn.css, not here. */
+
+/* ---------- Family: tabs, profile, school & daycare ---------- */
+.fam-tab-btn { -webkit-tap-highlight-color: transparent; white-space: nowrap; }
+.fam-tab-btn.active { background: var(--c-pine); color: #fff; }
+.fam-quick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.fam-quick { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 12px 14px; border-radius: 18px; background: #fff; border: 1px solid rgba(37,35,31,0.1); box-shadow: 0 1px 2px rgba(0,0,0,0.04); text-align: left; -webkit-tap-highlight-color: transparent; transition: border-color .15s, transform .1s; }
+.fam-quick:hover { border-color: color-mix(in srgb, var(--c-pine) 50%, transparent); }
+.fam-quick:active { transform: scale(0.98); }
+.fam-quick-ic { font-size: 22px; line-height: 1; margin-bottom: 4px; }
+.fam-quick-t { font-size: 0.875rem; font-weight: 600; }
+.fam-quick-s { font-size: 11px; color: rgba(37,35,31,0.5); line-height: 1.3; }
+.fam-pass-row { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 2px; text-align: left; -webkit-tap-highlight-color: transparent; }
+.fam-pass-row + .fam-pass-row { border-top: 1px solid rgba(37,35,31,0.08); }
+.sk-today-row { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 2px; text-align: left; -webkit-tap-highlight-color: transparent; }
+.sk-today-row + .sk-today-row { border-top: 1px solid rgba(37,35,31,0.08); }
+.sk-alert { display: flex; align-items: center; gap: 8px; width: 100%; padding: 7px 10px; border-radius: 12px; background: rgba(37,35,31,0.04); font-size: 0.8125rem; text-align: left; }
+.sk-badge { display: inline-block; flex-shrink: 0; padding: 1px 8px; border-radius: 9999px; font-size: 10.5px; font-weight: 600; white-space: nowrap; background: rgba(37,35,31,0.07); color: rgba(37,35,31,0.7); vertical-align: 1px; }
+.sk-badge.urgent { background: rgba(214,69,69,0.14); color: #B3302B; }
+.sk-badge.warn { background: color-mix(in srgb, var(--c-mustard) 22%, transparent); color: #7A5A00; }
+.sk-badge.ok { background: color-mix(in srgb, var(--c-pine) 12%, transparent); color: var(--c-pine); }
+.sk-kid-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 3px; }
+.sk-kid-chip .fam-ava.sm { width: 24px; height: 24px; box-shadow: none; }
+.sk-kid-chip .fam-ava.sm .fam-ava-in { font-size: 14px; }
+.sk-kid-chip .fam-ava.sm .fam-ava-in.ini { font-size: 11px; }
+.sk-hero-ic { flex-shrink: 0; width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; font-size: 28px; line-height: 1; background: color-mix(in srgb, var(--sk) 14%, #fff); }
+.sk-daygrid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 8px; }
+.sk-daygrid > div { border-radius: 12px; padding: 8px 10px; background: rgba(37,35,31,0.04); font-size: 0.8125rem; line-height: 1.35; min-width: 0; }
+.sk-k { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em; color: rgba(37,35,31,0.45); margin-bottom: 2px; }
+.sk-tt-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -4px; }
+.sk-tt { width: 100%; min-width: 380px; border-collapse: separate; border-spacing: 3px; table-layout: fixed; }
+.sk-tt th { font-size: 11px; font-weight: 600; color: rgba(37,35,31,0.5); text-align: center; padding: 2px 0 4px; }
+.sk-tt th:first-child { width: 46px; }
+.sk-tt th.today { color: var(--c-pine); }
+.sk-slot { font-size: 9.5px; line-height: 1.2; color: rgba(37,35,31,0.5); text-align: right; padding-right: 4px; white-space: nowrap; vertical-align: middle; }
+.sk-slot b { font-size: 11px; color: rgba(37,35,31,0.7); }
+.sk-cell { width: 100%; min-height: 44px; border-radius: 9px; padding: 3px 2px; font-size: 11px; line-height: 1.15; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; background: rgba(37,35,31,0.035); border: 1px dashed transparent; overflow: hidden; word-break: break-word; text-align: center; -webkit-tap-highlight-color: transparent; }
+.sk-cell.can:not(.has):hover { border-color: rgba(37,35,31,0.2); }
+.sk-cell.has { background: color-mix(in srgb, var(--sk) 16%, #fff); color: color-mix(in srgb, var(--sk) 80%, #000); font-weight: 600; }
+.sk-cell small { font-weight: 400; opacity: .75; font-size: 9.5px; }
+.sk-tt td.today .sk-cell { box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--c-pine) 45%, transparent) inset; }
+.sk-dayrow { display: grid; grid-template-columns: 6.5rem 6.5rem minmax(0,1fr); gap: 6px; align-items: center; padding: 6px 0; font-size: 0.8125rem; }
+.sk-dayrow + .sk-dayrow { border-top: 1px solid rgba(37,35,31,0.07); }
+.sk-dayname { color: rgba(37,35,31,0.6); }
+.sk-daytime { font-variant-numeric: tabular-nums; }
+.sk-daywho { font-size: 12px; color: rgba(37,35,31,0.7); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 420px) { .sk-dayrow { grid-template-columns: 5.6rem 5.8rem minmax(0,1fr); } }
+.sk-dayedit { padding-bottom: 6px; margin-bottom: 10px; border-bottom: 1px solid rgba(37,35,31,0.08); }
+.sk-row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; }
+.sk-row + .sk-row { border-top: 1px solid rgba(37,35,31,0.08); }
+.sk-chk { flex-shrink: 0; width: 24px; height: 24px; border-radius: 8px; border: 2px solid rgba(37,35,31,0.25); display: grid; place-items: center; font-size: 13px; font-weight: 700; color: transparent; margin-top: 1px; -webkit-tap-highlight-color: transparent; }
+.sk-chk.on { background: var(--c-pine); border-color: var(--c-pine); color: #fff; }
+.sk-chk.sk-cal { border: 0; font-size: 17px; color: inherit; }
+.sk-main { flex: 1 1 auto; min-width: 0; text-align: left; }
+.sk-t { font-size: 0.875rem; word-break: break-word; }
+.sk-s { font-size: 11px; color: rgba(37,35,31,0.55); margin-top: 2px; }
+.sk-row.done .sk-t { opacity: .5; text-decoration: line-through; }
+.sk-subj { display: inline-block; width: 8px; height: 8px; border-radius: 9999px; background: var(--sk); margin-right: 5px; vertical-align: 1px; }
+.sk-time-row .fz-in { padding: 0.4rem 0.5rem; }
+.sk-time-n { width: 1.6rem; flex-shrink: 0; font-size: 12px; color: rgba(37,35,31,0.5); text-align: right; }
+.kid-hw { margin: 14px auto 4px; width: 100%; max-width: 460px; border-radius: 22px; padding: 12px 14px; background: rgba(255,255,255,0.82); color: #25231F; box-shadow: 0 4px 16px rgba(0,0,0,0.08); text-align: left; }
+.kid-hw-h { font-weight: 800; font-size: 17px; margin-bottom: 6px; }
+.kid-hw-row { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 2px; text-align: left; -webkit-tap-highlight-color: transparent; }
+.kid-hw-row + .kid-hw-row { border-top: 1px solid rgba(37,35,31,0.08); }
+.kid-hw-chk { flex-shrink: 0; width: 30px; height: 30px; border-radius: 10px; border: 3px solid rgba(37,35,31,0.25); display: grid; place-items: center; font-weight: 800; color: #fff; }
+.kid-hw-row.done .kid-hw-chk { background: #2F9E5B; border-color: #2F9E5B; }
+.kid-hw-t { font-size: 16px; line-height: 1.3; }
+.kid-hw-row.done .kid-hw-t { text-decoration: line-through; opacity: .55; }
+html.dark .fam-quick { background-color: #2E2C28; border-color: rgba(255,255,255,0.12); }
+html.dark .fam-quick-s, html.dark .sk-k, html.dark .sk-s, html.dark .sk-dayname, html.dark .sk-slot, html.dark .sk-tt th { color: rgba(237,234,226,0.55); }
+html.dark .sk-slot b, html.dark .sk-daywho { color: rgba(237,234,226,0.75); }
+html.dark .fam-pass-row + .fam-pass-row, html.dark .sk-today-row + .sk-today-row, html.dark .sk-row + .sk-row, html.dark .sk-dayrow + .sk-dayrow, html.dark .sk-dayedit { border-color: rgba(255,255,255,0.1); }
+html.dark .sk-alert, html.dark .sk-daygrid > div, html.dark .sk-cell { background: rgba(255,255,255,0.06); }
+html.dark .sk-cell.has { background: color-mix(in srgb, var(--sk) 30%, #2E2C28); color: #F3F0E8; }
+html.dark .sk-hero-ic { background: color-mix(in srgb, var(--sk) 25%, #2E2C28); }
+html.dark .sk-chk:not(.on):not(.sk-cal) { border-color: rgba(255,255,255,0.3); }
+html.dark .sk-badge { background: rgba(255,255,255,0.1); color: rgba(237,234,226,0.8); }
+html.dark .sk-badge.urgent { background: rgba(214,69,69,0.25); color: #F4A39E; }
+html.dark .sk-badge.warn { color: #E9C46A; }
+html.dark .sk-badge.ok { color: #9FD3BE; }
+html.dark .fm-tile { filter: brightness(0.82) contrast(1.05); }

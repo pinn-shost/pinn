@@ -1,0 +1,112 @@
+/* pinn. – Lists (css/listen.css)
+   Part of the styles that used to be inline in index.html (step 3 of splitting index.html). Plain CSS, no build
+   step: linked in the head of index.html at exactly the place where the <style> block stood, so the order of
+   the rules - and with it the look of the app - is unchanged.
+   Contents: Lists (switch shopping/packing/gifts/wishes/checklists/ideas, list cards, detail view, popups
+   with selection chips and templates).
+   Utility classes (Tailwind) live in vendor/pinn.css, not here. */
+
+/* ---------- Lists: switch shopping / packing / gifts / wishes / checklists / ideas ---------- */
+.ls-tabs { display: flex; gap: 0.25rem; padding: 0.25rem; border-radius: 999px; background: rgba(37,35,31,0.05);
+  overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; max-width: 100%; width: fit-content; }
+.ls-tabs::-webkit-scrollbar { display: none; }
+.ls-tab { flex-shrink: 0; display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.38rem 0.8rem; border-radius: 999px;
+  font-size: 0.75rem; color: rgba(37,35,31,0.65); white-space: nowrap; transition: background .15s, color .15s; -webkit-tap-highlight-color: transparent; }
+.ls-tab:hover { color: var(--c-pine); }
+.ls-tab.active { background: var(--c-pine); color: #fff; }
+.ls-tab b { font-weight: 600; font-size: 0.62rem; min-width: 1rem; height: 1rem; padding: 0 0.25rem; border-radius: 999px;
+  background: rgba(37,35,31,0.1); display: inline-flex; align-items: center; justify-content: center; }
+.ls-tab.active b { background: rgba(255,255,255,0.25); }
+html.dark .ls-tabs { background: rgba(255,255,255,0.06); }
+html.dark .ls-tab { color: rgba(237,234,226,0.7); }
+html.dark .ls-tab.active { color: #fff; }
+html.dark .ls-tab b { background: rgba(255,255,255,0.12); }
+
+.ls-icon { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; font-size: 26px; line-height: 1; flex-shrink: 0; }
+.ls-icon.sm { width: 36px; height: 36px; border-radius: 10px; font-size: 19px; }
+.ls-bar { height: 6px; border-radius: 999px; background: rgba(37,35,31,0.08); overflow: hidden; }
+.ls-bar > span { display: block; height: 100%; border-radius: 999px; background: var(--c-pine); transition: width .3s ease; }
+.ls-bar.full > span { background: #2F9E5B; }
+html.dark .ls-bar { background: rgba(255,255,255,0.1); }
+.ls-intro { font-size: 0.75rem; color: rgba(37,35,31,0.5); margin-bottom: 0.9rem; max-width: 40rem; }
+html.dark .ls-intro { color: rgba(237,234,226,0.5); }
+
+/* Detail view */
+.ls-sec { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; margin: 1.1rem 0 0.45rem;
+  font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(37,35,31,0.45); font-weight: 600; }
+.ls-sec:first-child { margin-top: 0.2rem; }
+.ls-sec b { font-weight: 600; letter-spacing: 0; text-transform: none; font-size: 0.7rem; }
+html.dark .ls-sec { color: rgba(237,234,226,0.45); }
+.ls-row { display: flex; align-items: center; gap: 0.65rem; padding: 0.5rem 0.6rem 0.5rem 0.65rem; background: #fff;
+  border: 1px solid rgba(37,35,31,0.08); border-radius: 12px; margin-bottom: 0.4rem; }
+html.dark .ls-row { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1); }
+.ls-row.done .ls-main { text-decoration: line-through; opacity: 0.45; }
+.ls-row.done .ls-sub { opacity: 0.6; }
+.ls-check { flex-shrink: 0; width: 26px; height: 26px; border-radius: 999px; border: 2px solid rgba(37,35,31,0.3);
+  display: grid; place-items: center; color: transparent; font-size: 13px; font-weight: 700; line-height: 1;
+  transition: background .15s, border-color .15s, color .15s; -webkit-tap-highlight-color: transparent; }
+.ls-check.on { background: var(--c-pine); border-color: var(--c-pine); color: #fff; }
+html.dark .ls-check { border-color: rgba(255,255,255,0.3); }
+html.dark .ls-check.on { border-color: var(--c-pine); }
+.ls-status { flex-shrink: 0; width: 34px; height: 34px; border-radius: 999px; background: rgba(37,35,31,0.05);
+  display: grid; place-items: center; font-size: 17px; line-height: 1; -webkit-tap-highlight-color: transparent; }
+html.dark .ls-status { background: rgba(255,255,255,0.08); }
+.ls-body { flex: 1; min-width: 0; text-align: left; -webkit-tap-highlight-color: transparent; }
+.ls-main { display: block; font-size: 0.9rem; line-height: 1.3; word-break: break-word; }
+.ls-sub { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.45rem; margin-top: 0.15rem; font-size: 0.68rem; color: rgba(37,35,31,0.5); }
+html.dark .ls-sub { color: rgba(237,234,226,0.5); }
+.ls-who { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.05rem 0.45rem 0.05rem 0.3rem; border-radius: 999px;
+  background: color-mix(in srgb, var(--who, #9A9A92) 14%, transparent); color: rgba(37,35,31,0.75); font-size: 0.66rem; white-space: nowrap; }
+.ls-who i { font-style: normal; width: 0.5rem; height: 0.5rem; border-radius: 999px; background: var(--who, #9A9A92); }
+html.dark .ls-who { color: rgba(237,234,226,0.8); }
+.ls-price { flex-shrink: 0; font-size: 0.78rem; font-weight: 600; color: rgba(37,35,31,0.7); white-space: nowrap; }
+html.dark .ls-price { color: rgba(237,234,226,0.75); }
+.ls-link { flex-shrink: 0; width: 30px; height: 30px; border-radius: 999px; display: grid; place-items: center; color: rgba(37,35,31,0.45); font-size: 15px; }
+.ls-link:hover { color: var(--c-pine); background: rgba(37,35,31,0.05); }
+.ls-reserve { flex-shrink: 0; padding: 0.3rem 0.65rem; border-radius: 999px; border: 1px solid rgba(37,35,31,0.18); font-size: 0.7rem;
+  color: rgba(37,35,31,0.65); white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+.ls-reserve:hover { border-color: var(--c-pine); color: var(--c-pine); }
+.ls-reserve.mine { background: var(--c-mustard); border-color: var(--c-mustard); color: #fff; }
+.ls-reserve.other { border-style: dashed; opacity: 0.6; }
+html.dark .ls-reserve { border-color: rgba(255,255,255,0.2); color: rgba(237,234,226,0.75); }
+html.dark .ls-reserve.mine { color: #fff; border-color: var(--c-mustard); }
+.ls-sum { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.9rem; font-size: 0.75rem; color: rgba(37,35,31,0.6); }
+html.dark .ls-sum { color: rgba(237,234,226,0.6); }
+.ls-note { border-radius: 12px; padding: 0.55rem 0.75rem; font-size: 0.75rem; background: color-mix(in srgb, var(--c-mustard) 10%, transparent);
+  color: rgba(37,35,31,0.7); border: 1px solid color-mix(in srgb, var(--c-mustard) 25%, transparent); }
+html.dark .ls-note { color: rgba(237,234,226,0.75); }
+.ls-add-select { flex-shrink: 0; max-width: 38%; border: 0 !important; border-right: 1px solid rgba(37,35,31,0.12) !important; border-radius: 0 !important;
+  background: rgba(37,35,31,0.03); font-size: 0.75rem; padding: 0 0.5rem; color: rgba(37,35,31,0.7); }
+html.dark .ls-add-select { border-right-color: rgba(255,255,255,0.12) !important; }
+
+/* Popups: selection chips, templates */
+.ls-pick { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.35rem 0.7rem; border-radius: 999px; font-size: 0.8rem;
+  border: 1px solid rgba(37,35,31,0.15); color: rgba(37,35,31,0.7); background: transparent; transition: all .15s; -webkit-tap-highlight-color: transparent; }
+.ls-pick.active { border-color: var(--c-pine); background: color-mix(in srgb, var(--c-pine) 10%, transparent); color: var(--c-pine); box-shadow: 0 0 0 1px var(--c-pine) inset; }
+.ls-pick.emoji { width: 2.4rem; height: 2.4rem; padding: 0; justify-content: center; font-size: 1.2rem; }
+html.dark .ls-pick { border-color: rgba(255,255,255,0.15); color: rgba(237,234,226,0.75); }
+html.dark .ls-pick.active { color: #fff; background: color-mix(in srgb, var(--c-pine) 45%, transparent); }
+.ls-tpl-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; }
+.ls-tpl { position: relative; display: flex; align-items: center; gap: 0.6rem; text-align: left; padding: 0.65rem 0.7rem; border-radius: 14px;
+  border: 1px solid rgba(37,35,31,0.12); background: #fff; transition: border-color .15s, box-shadow .15s; -webkit-tap-highlight-color: transparent; min-width: 0; }
+.ls-tpl:hover { border-color: var(--c-pine); box-shadow: 0 2px 10px rgba(37,35,31,0.08); }
+.ls-tpl .ls-tpl-ic { font-size: 1.5rem; line-height: 1; flex-shrink: 0; }
+.ls-tpl .ls-tpl-tx { min-width: 0; }
+.ls-tpl .ls-tpl-tx span { display: block; font-size: 0.82rem; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ls-tpl .ls-tpl-tx small { display: block; font-size: 0.66rem; color: rgba(37,35,31,0.45); margin-top: 0.1rem; }
+.ls-tpl-del { position: absolute; top: 2px; right: 2px; width: 22px; height: 22px; border-radius: 999px; font-size: 13px; line-height: 1;
+  color: rgba(37,35,31,0.35); display: grid; place-items: center; }
+.ls-tpl-del:hover { color: #c0392b; background: rgba(37,35,31,0.05); }
+html.dark .ls-tpl { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.12); }
+html.dark .ls-tpl .ls-tpl-tx small { color: rgba(237,234,226,0.45); }
+.ls-tpl-head { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(37,35,31,0.4); margin: 0.9rem 0 0.45rem; }
+html.dark .ls-tpl-head { color: rgba(237,234,226,0.45); }
+.ls-shop-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; }
+.ls-shop-btn { display: flex; align-items: center; gap: 0.55rem; padding: 0.5rem 0.6rem; border-radius: 12px; border: 1px solid rgba(37,35,31,0.12);
+  text-align: left; min-width: 0; font-size: 0.82rem; }
+.ls-shop-btn:hover { border-color: var(--c-pine); }
+.ls-shop-btn span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+html.dark .ls-shop-btn { border-color: rgba(255,255,255,0.12); }
+html.dark #lsListModal > div, html.dark #lsItemModal > div, html.dark #lsShopModal > div { background-color: #242320 !important; }
+.fin-tab-btn { -webkit-tap-highlight-color: transparent; white-space: nowrap; }
+.fin-tab-btn.active { background: var(--c-pine); color: #fff; }

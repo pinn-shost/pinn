@@ -1,0 +1,71 @@
+/* pinn. – Documents (css/dokumente.css)
+   Part of the styles that used to be inline in index.html (step 3 of splitting index.html). Plain CSS, no build
+   step: linked in the head of index.html at exactly the place where the <style> block stood, so the order of
+   the rules - and with it the look of the app - is unchanged.
+   Contents: Documents (groups, rows, tiles, deadlines, categories), picture viewer and file viewer.
+   Utility classes (Tailwind) live in vendor/pinn.css, not here. */
+
+/* ---------- Documents ---------- */
+.doc-group-btn, .doc-row, .doc-tile, .doc-due-row, .doc-cat-row { -webkit-tap-highlight-color: transparent; }
+.doc-group-btn.active { background: var(--c-pine); color: #fff; }
+.doc-due-toggle.active { border-color: var(--c-mustard) !important; background: color-mix(in srgb, var(--c-mustard) 16%, transparent); color: #8A6412; }
+html.dark .doc-due-toggle.active { color: #F1C96B; }
+.doc-row:hover { border-color: color-mix(in srgb, var(--c-pine) 45%, transparent); }
+.doc-row:active, .doc-due-row:active { transform: scale(0.995); }
+.doc-row.is-pending { border-style: dashed; }
+.doc-thumb { position: relative; width: 48px; height: 48px; flex-shrink: 0; border-radius: 10px; overflow: hidden; display: grid; place-items: center; font-size: 22px; line-height: 1; background: color-mix(in srgb, var(--c-pine) 10%, transparent); }
+.doc-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; max-width: none; }
+.doc-thumb-ext { position: absolute; left: 3px; bottom: 3px; font-size: 8px; font-weight: 700; letter-spacing: .05em; line-height: 1; padding: 2px 3px; border-radius: 4px; background: #B3302B; color: #fff; }
+.doc-thumb-count { position: absolute; right: 3px; bottom: 3px; font-size: 9px; font-weight: 600; line-height: 1; padding: 2px 4px; border-radius: 5px; background: rgba(0,0,0,.55); color: #fff; }
+.doc-file-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; }
+.doc-file-grid:empty { display: none; }
+.doc-tile { position: relative; aspect-ratio: 3 / 4; border-radius: 12px; overflow: hidden; border: 1px solid rgba(37,35,31,0.1); background: rgba(37,35,31,0.04); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0; cursor: pointer; width: 100%; }
+.doc-tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; max-width: none; }
+.doc-tile-icon { font-size: 28px; line-height: 1; }
+.doc-tile-ext { font-size: 10px; font-weight: 700; letter-spacing: .06em; color: #B3302B; margin-top: 5px; }
+.doc-tile-name { position: absolute; left: 0; right: 0; bottom: 0; font-size: 10px; line-height: 1.25; padding: 10px 6px 4px; background: linear-gradient(transparent, rgba(0,0,0,.6)); color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; z-index: 1; }
+.doc-tile.no-img .doc-tile-name { background: none; color: rgba(37,35,31,.6); }
+.doc-tile-del { position: absolute; top: 4px; right: 4px; width: 26px; height: 26px; border-radius: 9999px; background: rgba(0,0,0,.6); color: #fff; display: grid; place-items: center; font-size: 16px; line-height: 1; z-index: 2; }
+.doc-tile-state { position: absolute; top: 4px; left: 4px; font-size: 10px; line-height: 1; padding: 3px 5px; border-radius: 6px; background: rgba(0,0,0,.55); color: #fff; z-index: 2; }
+.doc-note { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .8125rem; line-height: 1.5; padding: 8px 10px; border-radius: 10px; background: rgba(37,35,31,0.04); }
+html.dark .doc-tile { border-color: rgba(255,255,255,0.12); background: rgba(255,255,255,0.05); }
+html.dark .doc-tile.no-img .doc-tile-name { color: rgba(237,234,226,.6); }
+html.dark .doc-note { background: rgba(255,255,255,0.05); }
+/* Picture viewer (pages of a document) */
+.doc-viewer { background: rgba(12,12,12,0.95); }
+.doc-viewer:not(.hidden) { display: flex; flex-direction: column; }
+.doc-viewer-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: calc(env(safe-area-inset-top, 0px) + 10px) 12px 10px; color: #fff; }
+.doc-viewer-title { flex: 1; min-width: 0; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: .85; }
+.doc-viewer-btn { height: 36px; min-width: 36px; padding: 0 12px; border-radius: 9999px; background: rgba(255,255,255,.14); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; white-space: nowrap; }
+.doc-viewer-btn.x { font-size: 20px; padding: 0; }
+/* Close X: dark, translucent disc with a light border - visible on photos, white PDF pages and dark backgrounds */
+.viewer-close-btn, .doc-viewer-btn.x, #pinboardLightboxClose {
+  width: 42px; height: 42px; min-width: 42px; padding: 0; border-radius: 9999px;
+  background: rgba(28,28,26,.55); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.28); box-shadow: 0 2px 10px rgba(0,0,0,.28);
+  color: #fff; font-size: 20px; line-height: 1; display: grid; place-items: center;
+  -webkit-tap-highlight-color: transparent; transition: background .15s, transform .1s;
+}
+.viewer-close-btn:hover, .doc-viewer-btn.x:hover, #pinboardLightboxClose:hover { background: rgba(28,28,26,.75); }
+.viewer-close-btn:active, .doc-viewer-btn.x:active, #pinboardLightboxClose:active { transform: scale(.94); }
+.viewer-close-btn { position: absolute; z-index: 5; top: calc(env(safe-area-inset-top, 0px) + 12px); right: calc(env(safe-area-inset-right, 0px) + 12px); }
+/* File viewer: PDFs and pictures full screen instead of in a new window */
+.file-viewer { z-index: 900; background: rgba(12,12,12,.96); }
+.file-viewer.hidden { display: none; }
+.file-viewer-stage { position: absolute; inset: 0; overflow: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: calc(env(safe-area-inset-top, 0px) + 66px) 8px calc(env(safe-area-inset-bottom, 0px) + 16px); }
+.file-viewer-stage.img-mode { justify-content: center; padding-top: calc(env(safe-area-inset-top, 0px) + 16px); }
+.file-viewer-stage canvas { max-width: 100%; height: auto; background: #fff; border-radius: 3px; box-shadow: 0 6px 24px rgba(0,0,0,.4); flex-shrink: 0; }
+.file-viewer-stage img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; }
+.file-viewer-stage iframe { width: 100%; flex: 1; min-height: 80vh; border: 0; background: #fff; border-radius: 3px; }
+.file-viewer-msg { margin: auto; color: rgba(255,255,255,.7); font-size: 13px; text-align: center; padding: 0 24px; }
+.doc-viewer-stage { position: relative; flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 8px; }
+.doc-viewer-stage img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; -webkit-user-select: none; user-select: none; -webkit-user-drag: none; }
+.doc-viewer-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 9999px; background: rgba(255,255,255,.14); color: #fff; font-size: 26px; line-height: 1; display: grid; place-items: center; z-index: 2; }
+.doc-viewer-nav.prev { left: 10px; }
+.doc-viewer-nav.next { right: 10px; }
+.doc-viewer-bottom { padding: 6px 12px calc(env(safe-area-inset-bottom, 0px) + 14px); color: rgba(255,255,255,.7); font-size: 12px; text-align: center; }
+@keyframes finSpin { to { transform: rotate(360deg); } }
+.fin-icon-pick.active { border-color: var(--c-pine) !important; background: rgba(47,75,65,0.10); }
+@media (prefers-reduced-motion: reduce) { .fin-piggy, .fin-goal-reached { animation: none !important; } }

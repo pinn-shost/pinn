@@ -1,0 +1,166 @@
+/* pinn. – Settings & account (css/einstellungen.css)
+   Part of the styles that used to be inline in index.html (step 3 of splitting index.html). Plain CSS, no build
+   step: linked in the head of index.html at exactly the place where the <style> block stood, so the order of
+   the rules - and with it the look of the app - is unchanged.
+   Contents: page layout of settings and account, backups & updates (#sysMaintModal), device management
+   (#devModal) and error log (#errLogModal), account header card, profile picture crop and the two-column
+   layout in landscape (setMasonry).
+   Utility classes (Tailwind) live in vendor/pinn.css, not here. */
+
+/* ---------- Settings & account: page layout like the other pages (header + cards) ---------- */
+.set-pane { display: flex; flex-direction: column; gap: 0.75rem; }
+.set-group:not(.hidden) { display: flex; flex-direction: column; gap: 0.75rem; }
+.set-card { border-radius: 18px; background: #fff; border: 1px solid rgba(37,35,31,0.1); box-shadow: 0 1px 2px rgba(0,0,0,0.04); overflow: hidden; }
+.set-sum, .set-head-row { display: flex; align-items: center; gap: 0.8rem; padding: 0.85rem 0.95rem; }
+.set-sum { cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; transition: background .15s; }
+.set-sum:hover { background: color-mix(in srgb, var(--c-pine) 4%, transparent); }
+.set-ico { flex-shrink: 0; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-size: 20px; line-height: 1; background: color-mix(in srgb, var(--c-pine) 12%, transparent); }
+.set-ico.danger { background: rgba(220,38,38,0.1); }
+.set-head { flex: 1; min-width: 0; }
+.set-head .sa-title { display: block; font-size: 0.9rem; font-weight: 600; line-height: 1.25; text-transform: none; letter-spacing: 0; color: inherit; margin: 0; }
+.set-head small { display: block; font-size: 0.72rem; opacity: 0.55; line-height: 1.3; margin-top: 0.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.set-body { padding: 0.9rem 0.95rem 1.05rem; border-top: 1px solid rgba(37,35,31,0.07); }
+.set-head-row + .set-body { border-top: 0; padding-top: 0.1rem; }
+.set-sub { padding-top: 1rem; margin-top: 1rem; border-top: 1px solid rgba(37,35,31,0.07); }
+.set-sub-title { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.45; margin-bottom: 0.5rem; }
+.set-hint:not(.hidden) { display: flex; }
+.set-hint { align-items: flex-start; gap: 0.6rem; border-radius: 12px; padding: 0.6rem 0.75rem; font-size: 0.75rem; line-height: 1.4; background: color-mix(in srgb, var(--c-mustard) 12%, transparent); border: 1px solid color-mix(in srgb, var(--c-mustard) 30%, transparent); margin-bottom: 0.6rem; }
+.set-hint.ok { background: color-mix(in srgb, var(--c-pine) 7%, transparent); border-color: color-mix(in srgb, var(--c-pine) 20%, transparent); }
+.set-hint-btn { flex-shrink: 0; margin-left: auto; align-self: center; padding: 0.35rem 0.65rem; border-radius: 9px; background: var(--c-pine); color: #fff; font-size: 0.72rem; font-weight: 500; white-space: nowrap; }
+.set-hint-btn:hover { opacity: 0.9; }
+.set-disabled { opacity: 0.45; pointer-events: none; }
+/* ---------- Backups & updates (modal #sysMaintModal) ---------- */
+#sysMaintModal { padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)); }
+.sm-box { position: relative; max-width: 30rem; max-height: min(88vh, 46rem); display: flex; flex-direction: column; overflow: hidden; }
+.sm-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 1rem 1.1rem 0.6rem; }
+.sm-x { width: 2rem; height: 2rem; border-radius: 999px; display: grid; place-items: center; font-size: 1.25rem; line-height: 1; opacity: 0.45; transition: background .15s, opacity .15s; }
+.sm-x:hover { opacity: 0.9; background: rgba(37,35,31,0.06); }
+.sm-scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0.2rem 1.1rem 1.2rem; overscroll-behavior: contain; }
+.sm-sec { border: 1px solid rgba(37,35,31,0.1); background: #fff; border-radius: 16px; padding: 0.85rem 0.9rem; margin-bottom: 0.75rem; }
+.sm-sec-head { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; margin-bottom: 0.5rem; }
+.sm-sec-title { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.5; font-weight: 600; }
+.sm-mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 0.72rem; opacity: 0.6; }
+.sm-btn { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.42rem 0.8rem; border-radius: 10px; border: 1px solid rgba(37,35,31,0.15); font-size: 0.82rem; color: rgba(37,35,31,0.7); background: transparent; transition: border-color .15s, color .15s, background .15s, opacity .15s; white-space: nowrap; }
+.sm-btn:hover { border-color: var(--c-pine); color: var(--c-pine); }
+.sm-btn:disabled { opacity: 0.45; pointer-events: none; }
+.sm-btn.sm-small { padding: 0.28rem 0.6rem; font-size: 0.74rem; border-radius: 9px; }
+.sm-btn.sm-primary { background: var(--c-pine); border-color: var(--c-pine); color: #fff; font-weight: 500; }
+.sm-btn.sm-primary:hover { opacity: 0.92; color: #fff; }
+.sm-btn.sm-danger { background: #dc2626; border-color: #dc2626; color: #fff; font-weight: 500; }
+.sm-btn.sm-danger:hover { opacity: 0.92; color: #fff; }
+.sm-release { margin-top: 0.7rem; border-radius: 12px; padding: 0.7rem 0.8rem; background: color-mix(in srgb, var(--c-pine) 6%, transparent); border: 1px solid color-mix(in srgb, var(--c-pine) 18%, transparent); }
+.sm-rel-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.2rem 0.6rem; margin-bottom: 0.35rem; }
+.sm-notes { max-height: 11rem; overflow-y: auto; font-size: 0.76rem; line-height: 1.45; opacity: 0.85; margin-bottom: 0.45rem; overflow-wrap: anywhere; }
+.sm-notes h5 { font-weight: 600; font-size: 0.78rem; margin: 0.45rem 0 0.15rem; }
+.sm-notes ul { padding-left: 1.05rem; list-style: disc; margin: 0.1rem 0 0.3rem; }
+.sm-notes p { margin: 0.15rem 0; }
+.sm-list { display: flex; flex-direction: column; gap: 0.4rem; }
+.sm-row { display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.55rem; border-radius: 12px; background: rgba(37,35,31,0.035); }
+.sm-row-ico { flex-shrink: 0; width: 2rem; height: 2rem; border-radius: 10px; display: grid; place-items: center; font-size: 1rem; background: color-mix(in srgb, var(--c-pine) 10%, transparent); }
+.sm-row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.sm-row-title { font-size: 0.82rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sm-row-sub { font-size: 0.68rem; opacity: 0.55; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sm-more { margin-top: 0.5rem; font-size: 0.74rem; color: var(--c-pine); }
+.sm-empty { font-size: 0.78rem; opacity: 0.55; padding: 0.4rem 0; }
+.sm-opt { display: flex; gap: 0.6rem; align-items: flex-start; padding: 0.65rem 0.75rem; border-radius: 12px; border: 1px solid rgba(37,35,31,0.12); margin-bottom: 0.5rem; cursor: pointer; }
+.sm-opt:has(input:checked) { border-color: var(--c-pine); background: color-mix(in srgb, var(--c-pine) 6%, transparent); }
+.sm-opt input { margin-top: 0.2rem; accent-color: var(--c-pine); flex-shrink: 0; }
+.sm-opt-title { display: block; font-size: 0.85rem; font-weight: 600; }
+.sm-opt small { display: block; font-size: 0.72rem; opacity: 0.6; line-height: 1.35; margin-top: 0.1rem; }
+.sm-tag { display: inline-block; font-size: 0.62rem; font-weight: 600; padding: 0.05rem 0.4rem; border-radius: 999px; margin-left: 0.3rem; background: color-mix(in srgb, var(--c-pine) 15%, transparent); color: var(--c-pine); vertical-align: middle; }
+.sm-check { display: flex; gap: 0.55rem; align-items: flex-start; font-size: 0.8rem; margin-top: 0.75rem; cursor: pointer; }
+.sm-check input { margin-top: 0.15rem; accent-color: #dc2626; flex-shrink: 0; }
+.sm-progress { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.8rem; padding: 1.5rem 1.3rem; background: inherit; overflow-y: auto; }
+.sm-progress.hidden { display: none; }
+.sm-spin { width: 2.6rem; height: 2.6rem; border-radius: 999px; border: 3px solid color-mix(in srgb, var(--c-pine) 18%, transparent); border-top-color: var(--c-pine); animation: smSpin 0.9s linear infinite; }
+.sm-spin.ok { animation: none; border-color: var(--c-pine); background: var(--c-pine); position: relative; }
+.sm-spin.ok::after { content: "✓"; position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-size: 1.3rem; font-weight: 700; }
+.sm-spin.err { animation: none; border-color: #dc2626; background: #dc2626; position: relative; }
+.sm-spin.err::after { content: "!"; position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-size: 1.3rem; font-weight: 700; }
+@keyframes smSpin { to { transform: rotate(360deg); } }
+.sm-steps { width: 100%; max-width: 19rem; display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.8rem; }
+.sm-steps li { display: flex; align-items: center; gap: 0.55rem; opacity: 0.4; }
+.sm-steps li::before { content: ""; flex-shrink: 0; width: 0.95rem; height: 0.95rem; border-radius: 999px; border: 2px solid currentColor; }
+.sm-steps li.on { opacity: 1; font-weight: 500; color: var(--c-pine); }
+.sm-steps li.on::before { border-color: color-mix(in srgb, var(--c-pine) 25%, transparent); border-top-color: var(--c-pine); animation: smSpin 0.9s linear infinite; }
+.sm-steps li.done { opacity: 0.75; }
+.sm-steps li.done::before { background: var(--c-pine); border-color: var(--c-pine); }
+.sm-steps li.err { opacity: 1; color: #dc2626; }
+.sm-steps li.err::before { background: #dc2626; border-color: #dc2626; }
+.sm-log { width: 100%; max-height: 9rem; overflow: auto; font-size: 0.66rem; line-height: 1.4; padding: 0.55rem 0.65rem; border-radius: 10px; background: rgba(37,35,31,0.06); white-space: pre-wrap; overflow-wrap: anywhere; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+html.dark .sm-sec { background-color: #2E2C28; border-color: rgba(255,255,255,0.12); }
+html.dark .sm-btn { border-color: rgba(255,255,255,0.18); color: rgba(255,255,255,0.75); }
+html.dark .sm-btn.sm-primary, html.dark .sm-btn.sm-danger { color: #fff; }
+html.dark .sm-row { background: rgba(255,255,255,0.05); }
+html.dark .sm-opt { border-color: rgba(255,255,255,0.14); }
+html.dark .sm-log { background: rgba(255,255,255,0.06); }
+html.dark .sm-x:hover { background: rgba(255,255,255,0.08); }
+.sm-dev > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; cursor: pointer; }
+.sm-dev > summary::-webkit-details-marker { display: none; }
+.sm-dev-title { font-size: 0.8rem; font-weight: 600; }
+.sm-dev-chev { opacity: 0.45; transition: transform .15s; }
+.sm-dev[open] .sm-dev-chev { transform: rotate(90deg); }
+.sm-dev-body { margin-top: 0.6rem; }
+.sm-dev-warn { list-style: disc; padding-left: 1rem; margin: 0; display: flex; flex-direction: column; gap: 0.2rem; }
+.sm-pre { margin-bottom: 0.6rem; }
+.sm-pre .set-hint-btn, .sm-dev .set-hint-btn { text-decoration: none; }
+/* ---------- Device management (#devModal, account) and error log (#errLogModal) ---------- */
+#devModal, #errLogModal { padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)); }
+.el-box { max-width: 34rem; }
+.dev-row .sm-row-title, .dev-row .sm-row-sub { white-space: normal; overflow-wrap: anywhere; }
+.el-filter { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.7rem; }
+.el-chip { padding: 0.28rem 0.65rem; border-radius: 999px; border: 1px solid rgba(37,35,31,0.15); font-size: 0.74rem; color: rgba(37,35,31,0.7); transition: background .15s, color .15s, border-color .15s; }
+.el-chip.on { background: var(--c-pine); border-color: var(--c-pine); color: #fff; }
+.el-chip small { opacity: 0.7; margin-left: 0.25rem; font-size: 0.68rem; }
+.el-row { align-items: flex-start; cursor: pointer; }
+.el-row .sm-row-title { white-space: normal; overflow-wrap: anywhere; line-height: 1.35; }
+.el-row .sm-row-sub { white-space: normal; margin-top: 0.15rem; }
+.el-row.done .sm-row-title { opacity: 0.55; }
+.el-ico-fehler { background: color-mix(in srgb, #dc2626 14%, transparent) !important; }
+.el-ico-warnung { background: color-mix(in srgb, var(--c-mustard) 20%, transparent) !important; }
+.el-ok { color: var(--c-pine); font-weight: 600; }
+.el-details { margin-top: 0.45rem; font-size: 0.68rem; line-height: 1.4; padding: 0.45rem 0.55rem; border-radius: 9px; background: rgba(37,35,31,0.06); white-space: pre-wrap; overflow-wrap: anywhere; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+.el-badge { display: inline-grid; place-items: center; min-width: 1.1rem; height: 1.1rem; padding: 0 0.3rem; border-radius: 999px; background: #dc2626; color: #fff; font-size: 0.62rem; font-weight: 600; margin-left: 0.3rem; vertical-align: middle; }
+.el-badge.hidden { display: none; }
+html.dark .el-chip { border-color: rgba(255,255,255,0.18); color: rgba(255,255,255,0.75); }
+html.dark .el-chip.on { color: #fff; }
+html.dark .el-details { background: rgba(255,255,255,0.06); }
+.settings-accordion > summary { list-style: none; }
+.settings-accordion { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 8px); }
+.settings-accordion > summary::-webkit-details-marker,
+.settings-accordion > summary::marker { display: none; content: ''; }
+.settings-accordion > summary .accordion-chevron { transition: transform 0.18s ease; }
+.settings-accordion[open] > summary .accordion-chevron { transform: rotate(90deg); }
+.settings-accordion[open] > summary { background: color-mix(in srgb, var(--c-pine) 4%, transparent); }
+/* Account: header card with picture */
+.acc-hero-row { display: flex; align-items: center; gap: 0.9rem; padding: 1rem 1rem 0.85rem; }
+.acc-avatar { flex-shrink: 0; width: 56px; height: 56px; border-radius: 999px; overflow: hidden; background: var(--c-pine); display: grid; place-items: center; color: #fff; font-weight: 600; font-size: 1.35rem; }
+.acc-avatar span { font-size: 1.35rem !important; }
+/* Profile picture in the account header card: fill exactly like all other round pictures (otherwise the grid shifted the crop) */
+.acc-avatar { position: relative; }
+.acc-avatar > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+/* Crop profile picture: round cut-out, translucent white around it */
+.avc-stage { position: relative; width: 100%; max-width: 320px; aspect-ratio: 1 / 1; margin: 0 auto; border-radius: 18px; overflow: hidden; background: #2E2C28; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; outline: none; }
+.avc-stage.is-dragging { cursor: grabbing; }
+.avc-stage:focus-visible { box-shadow: 0 0 0 2px var(--c-pine); }
+.avc-stage canvas { position: absolute; left: 0; top: 0; transform-origin: 0 0; pointer-events: none; }
+.avc-ring { position: absolute; left: 8%; top: 8%; width: 84%; height: 84%; border-radius: 9999px; pointer-events: none; box-shadow: 0 0 0 999px rgba(255,255,255,0.72); border: 2px solid #fff; }
+html.dark .avc-ring { box-shadow: 0 0 0 999px rgba(255,255,255,0.6); }
+.acc-hero-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.45; }
+.acc-hero-name { font-size: 1.05rem; font-weight: 600; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; }
+.acc-hero-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0 1rem 1rem; }
+html.dark .set-card { background-color: #2E2C28; border-color: rgba(255,255,255,0.12); }
+html.dark .set-body, html.dark .set-sub { border-top-color: rgba(255,255,255,0.08); }
+html.dark .set-hint { background: rgba(196,154,60,0.12); border-color: rgba(196,154,60,0.3); }
+html.dark .set-hint.ok { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); }
+/* In landscape (from tablet width) two columns, so the iPad/PC width is used sensibly.
+   The cards are distributed evenly to left/right once by JS (setMasonry) - measured in the
+   collapsed state. When expanding and collapsing every card stays in its column, only the cards
+   below it move. After collapsing, the distribution is therefore exactly as before. */
+#settingsView .set-pane.set-masonry, #accountView .set-pane.set-masonry { display: block; position: relative; max-width: 1100px; }
+.set-pane.set-masonry > *, .set-pane.set-masonry > #profileAdminSection > * { position: absolute; left: 0; top: 0; margin: 0; width: calc(50% - 0.375rem); box-sizing: border-box; }
+.set-pane.set-masonry > #profileAdminSection:not(.hidden) { display: contents; }
+.set-pane.set-masonry > #profileAdminSection > *:not(.hidden) { display: block; }
+.set-pane.set-masonry > #profileAdminSection.hidden, .set-pane.set-masonry > #profileAdminSection > .hidden { display: none !important; }
+.set-pane.set-masonry.set-masonry-ready > *, .set-pane.set-masonry.set-masonry-ready > #profileAdminSection > * { transition: top .18s ease; }
+@media (prefers-reduced-motion: reduce) { .set-pane.set-masonry.set-masonry-ready > *, .set-pane.set-masonry.set-masonry-ready > #profileAdminSection > * { transition: none; } }

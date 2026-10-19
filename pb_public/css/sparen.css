@@ -1,0 +1,30 @@
+/* pinn. – Savings and pocket money (css/sparen.css)
+   Part of the styles that used to be inline in index.html (step 3 of splitting index.html). Plain CSS, no build
+   step: linked in the head of index.html at exactly the place where the <style> block stood, so the order of
+   the rules - and with it the look of the app - is unchanged.
+   Contents: Savings depots (overview, depot cards, depot popup) and the pocket money card on the kids page.
+   Utility classes (Tailwind) live in vendor/pinn.css, not here. */
+
+/* Savings: depots (overview, depot cards, depot popup) */
+.fin-depot-card { -webkit-tap-highlight-color: transparent; transition: background-color .15s, border-color .15s, opacity .15s; }
+.fin-depot-card:hover { border-color: color-mix(in srgb, var(--c-pine) 40%, transparent); }
+.fin-depot-card.is-out { opacity: .62; }
+.fin-depot-tag { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; line-height: 1; padding: 3px 7px; border-radius: 999px; background: color-mix(in srgb, var(--c-mustard) 16%, transparent); white-space: nowrap; }
+.fin-depot-tag.out { background: rgba(37,35,31,0.07); color: rgba(37,35,31,0.55); }
+html.dark .fin-depot-tag.out { background: rgba(255,255,255,0.10); color: rgba(255,255,255,0.6); }
+.fin-depot-back, .fin-depot-incl-row { -webkit-tap-highlight-color: transparent; }
+.fin-depot-type-btn { -webkit-tap-highlight-color: transparent; }
+.fin-depot-type-btn.active { background: var(--c-pine); color: #fff; border-color: var(--c-pine) !important; }
+
+/* Pocket money on the kids page */
+.kid-money {
+  display: flex; align-items: center; gap: 14px; max-width: 540px; margin: 22px auto 0; padding: 14px 18px;
+  background: rgba(255,255,255,.82); color: #2B2340; border-radius: 26px; box-shadow: 0 6px 0 rgba(0,0,0,.08);
+  animation: kidPop .7s cubic-bezier(.3,1.6,.5,1);
+}
+.kid-money-pig { font-size: 54px; line-height: 1; flex-shrink: 0; animation: kidBob 3.2s ease-in-out infinite; }
+.kid-money-line { font-size: clamp(19px, 5vw, 24px); font-weight: 800; line-height: 1.15; }
+.kid-money-sub { font-size: clamp(15px, 4vw, 18px); font-weight: 600; opacity: .7; margin-top: 2px; }
+.kid-money-bal { font-size: clamp(17px, 4.6vw, 21px); font-weight: 700; margin-top: 6px; }
+.kid-money-bal b { color: #1F9D55; }
+.kid-empty .kid-money { margin-top: 28px; text-align: left; }

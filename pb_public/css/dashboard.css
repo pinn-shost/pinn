@@ -1,0 +1,122 @@
+/* pinn. – Family dashboard and PIN entry (css/dashboard.css)
+   Part of the styles that used to be inline in index.html (step 3 of splitting index.html). Plain CSS, no build
+   step: linked in the head of index.html at exactly the place where the <style> block stood, so the order of
+   the rules - and with it the look of the app - is unchanged.
+   Contents: family dashboard on the iPad (profile tiles, background per family, preview) and the PIN pad.
+   Utility classes (Tailwind) live in vendor/pinn.css, not here. */
+
+/* ---------- Family dashboard (iPad): profile selection ---------- */
+#dashboardScreen { z-index: 395; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+.dash-inner {
+  position: relative; z-index: 1;
+  min-height: 100%; max-width: 1100px; margin: 0 auto; box-sizing: border-box;
+  display: flex; flex-direction: column;
+  padding: calc(env(safe-area-inset-top, 0px) + 2rem) 2rem calc(env(safe-area-inset-bottom, 0px) + 1.5rem);
+}
+.dash-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+.dash-clock { font-family: 'Fraunces', Georgia, serif; font-size: clamp(2.2rem, 6vw, 3.4rem); line-height: 1; font-variant-numeric: tabular-nums; }
+/* Profiles always centred: tiles of fixed width, wrapping centred and vertically in the middle */
+.dash-main { flex: 1 0 auto; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; }
+.dash-grid { display: flex; flex-wrap: wrap; justify-content: center; align-items: stretch; gap: 1.25rem; width: 100%; }
+.dash-grid > p { width: 100%; text-align: center; }
+.dash-tile {
+  flex: 0 1 190px; min-width: 150px; box-sizing: border-box;
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: .7rem;
+  padding: 1.6rem 1rem 1.3rem; border-radius: 1.6rem; background: #fff; cursor: pointer;
+  border: 1px solid rgba(37,35,31,.08); box-shadow: 0 8px 24px rgba(37,35,31,.07);
+  transition: transform .15s ease, box-shadow .15s ease; font: inherit; color: inherit;
+}
+.dash-tile:active { transform: scale(.95); box-shadow: 0 3px 10px rgba(37,35,31,.08); }
+.dash-tile.kid { background: linear-gradient(160deg, #FFF3C4 0%, #FFDDE6 100%); border-color: rgba(0,0,0,0); }
+.dash-tile.guest { background: color-mix(in srgb, var(--c-pine) 6%, white); }
+.dash-avatar {
+  width: 116px; height: 116px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+  border: 4px solid #fff; background: #F1EEE8; display: grid; place-items: center;
+  box-shadow: 0 6px 16px rgba(0,0,0,.12); font-size: 60px; line-height: 1;
+}
+.dash-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.dash-avatar .dash-initial { width: 100%; height: 100%; display: grid; place-items: center; color: #fff; font-weight: 600; font-size: 46px; }
+.dash-avatar.small { width: 84px; height: 84px; font-size: 44px; }
+.dash-avatar.small .dash-initial { font-size: 34px; }
+.dash-name { font-family: 'Fraunces', Georgia, serif; font-size: 1.3rem; line-height: 1.2; text-align: center; word-break: break-word; }
+.dash-badge { font-size: 11px; font-weight: 600; letter-spacing: .02em; padding: .2rem .6rem; border-radius: 999px; background: rgba(37,35,31,.07); color: rgba(37,35,31,.6); }
+.dash-tile.kid .dash-badge { background: rgba(255,255,255,.75); color: #8A5A00; }
+.dash-lock { position: absolute; top: .8rem; right: .95rem; font-size: 15px; opacity: .45; }
+.dash-footer { padding-top: 2.5rem; display: flex; justify-content: center; }
+/* Background per family (colour, gradient or picture) - setting under account → dashboard background */
+.dash-bg { position: absolute; inset: 0; pointer-events: none; display: none; background-size: cover; background-position: center; background-repeat: no-repeat; }
+.dash-bg.on { display: block; }
+.dash-bg::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,var(--dash-dim, 0)); }
+#dashBg { position: fixed; z-index: 0; }
+#dashboardScreen.dash-on-dark .dash-head,
+#dashboardScreen.dash-on-dark #dashQuestion,
+#dashboardScreen.dash-on-dark .dash-grid > p,
+#dashboardScreen.dash-on-dark .dash-footer button { color: #fff; text-shadow: 0 1px 10px rgba(0,0,0,.4); }
+#dashboardScreen.dash-on-dark #dashDate,
+#dashboardScreen.dash-on-dark #dashQuestion,
+#dashboardScreen.dash-on-dark .dash-footer button { color: rgba(255,255,255,.88); }
+#dashboardScreen.dash-on-dark #dashStatus { color: #FFD3CB; text-shadow: 0 1px 8px rgba(0,0,0,.5); }
+/* Preview in the settings */
+.dash-bg-preview {
+  position: relative; overflow: hidden; width: 100%; max-width: 340px; aspect-ratio: 4 / 3; border-radius: 1rem;
+  border: 1px solid rgba(37,35,31,.1); background: var(--c-paper);
+}
+.dash-bg-preview-content { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; padding: .9rem 1rem; box-sizing: border-box; }
+.dash-bg-preview-title { font-family: 'Fraunces', Georgia, serif; font-size: 1rem; line-height: 1.2; }
+.dash-bg-preview-tiles { flex: 1; display: flex; align-items: center; justify-content: center; gap: .6rem; }
+.dash-bg-preview-tile { width: 54px; height: 64px; border-radius: .7rem; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,.12); display: grid; place-items: center; }
+.dash-bg-preview-tile span { width: 28px; height: 28px; border-radius: 50%; background: #E6E1D6; }
+.dash-bg-preview.dash-on-dark .dash-bg-preview-title { color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,.4); }
+.dash-bg-art-btn { font: inherit; font-size: .8rem; padding: .4rem .85rem; border-radius: 999px; border: 1px solid rgba(37,35,31,.15); background: transparent; color: inherit; cursor: pointer; }
+.dash-bg-art-btn.active { background: var(--c-pine); border-color: var(--c-pine); color: #fff; }
+.dash-bg-swatch { width: 36px; height: 36px; border-radius: 50%; border: 2px solid rgba(37,35,31,.12); cursor: pointer; padding: 0; flex-shrink: 0; }
+.dash-bg-swatch.gradient { width: 54px; border-radius: 12px; }
+.dash-bg-swatch.active { border-color: var(--c-pine); box-shadow: 0 0 0 2px var(--c-pine); }
+html.dark .dash-bg-preview { border-color: rgba(255,255,255,.1); }
+html.dark .dash-bg-preview-tile { background: #2A2825; }
+html.dark .dash-bg-preview-tile span { background: #3A3833; }
+html.dark .dash-bg-art-btn { border-color: rgba(255,255,255,.15); }
+html.dark .dash-bg-swatch { border-color: rgba(255,255,255,.15); }
+.dash-busy { position: fixed; inset: 0; z-index: 2; display: grid; place-items: center; background: color-mix(in srgb, var(--c-paper) 85%, transparent); font-size: .95rem; }
+html.dark .dash-tile { background: #2A2825; border-color: rgba(255,255,255,.07); box-shadow: none; }
+html.dark .dash-tile.kid { background: linear-gradient(160deg, #4A3F1E 0%, #4A2733 100%); }
+html.dark .dash-tile.guest { background: #25302F; }
+html.dark .dash-avatar { border-color: #3A3833; background: #34312C; }
+html.dark .dash-badge { background: rgba(255,255,255,.1); color: rgba(237,234,226,.7); }
+html.dark .dash-tile.kid .dash-badge { background: rgba(0,0,0,.25); color: #FFD98A; }
+html.dark .dash-busy { background: rgba(27,27,24,.85); }
+
+/* ---------- PIN entry (like on the iPhone) ---------- */
+#pinPadOverlay {
+  position: fixed; inset: 0; z-index: 420; display: grid; place-items: center; overflow-y: auto;
+  padding: calc(env(safe-area-inset-top, 0px) + 1rem) 1rem calc(env(safe-area-inset-bottom, 0px) + 1rem);
+  background: rgba(24,23,21,.62); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+  color: #fff; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
+}
+#pinPadOverlay.hidden, .dash-busy.hidden { display: none !important; }
+.pin-box { width: 100%; max-width: 340px; text-align: center; }
+.pin-box .dash-avatar { margin: 0 auto .75rem; border-color: rgba(255,255,255,.85); }
+.pin-title { font-family: 'Fraunces', Georgia, serif; font-size: 1.45rem; }
+.pin-sub { font-size: .95rem; opacity: .85; margin-top: .25rem; min-height: 1.3em; }
+.pin-dots { display: flex; justify-content: center; gap: 18px; margin: 1.4rem 0 .6rem; height: 16px; }
+.pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid #fff; transition: background .12s; }
+.pin-dot.on { background: #fff; }
+.pin-error { min-height: 1.3em; font-size: .85rem; color: #FFB4A8; }
+.pin-lengths { display: flex; justify-content: center; gap: .5rem; margin-top: .4rem; }
+.pin-len-btn { font: inherit; font-size: .8rem; padding: .3rem .8rem; border-radius: 999px; border: 1px solid rgba(255,255,255,.45); background: transparent; color: #fff; cursor: pointer; }
+.pin-len-btn.active { background: #fff; color: #25231F; border-color: #fff; }
+.pin-keys { display: grid; grid-template-columns: repeat(3, 78px); gap: 16px 26px; justify-content: center; margin-top: 1.3rem; }
+.pin-key {
+  width: 78px; height: 78px; border-radius: 50%; border: 0; cursor: pointer; font: inherit;
+  background: rgba(255,255,255,.18); color: #fff; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; line-height: 1; transition: background .1s;
+}
+.pin-key:active { background: rgba(255,255,255,.45); }
+.pin-key .pin-digit { font-size: 32px; font-weight: 400; }
+.pin-key .pin-letters { font-size: 9px; letter-spacing: .18em; margin-top: 3px; opacity: .8; height: 9px; }
+.pin-key.plain { background: transparent; font-size: 16px; }
+.pin-key.plain:active { background: rgba(255,255,255,.12); }
+.pin-box.shake { animation: pinShake .45s ease; }
+.pin-box.busy { opacity: .6; pointer-events: none; }
+@keyframes pinShake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-14px); } 40% { transform: translateX(12px); } 60% { transform: translateX(-8px); } 80% { transform: translateX(5px); } }
+@media (max-height: 640px) { .pin-keys { grid-template-columns: repeat(3, 66px); gap: 10px 22px; } .pin-key { width: 66px; height: 66px; } .pin-box .dash-avatar { display: none; } }
