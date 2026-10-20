@@ -18,6 +18,14 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.98', datum: '19.10.2026', titel: 'App-Code wird aufgeteilt (Schritt 3, Teil 3: letzte Gestaltungsblöcke)',
+    punkte: [
+      ['info', 'Für Mitwirkende: Die vier kleinen Gestaltungsblöcke der index.html liegen jetzt ebenfalls in pb_public/css/ – ergaenzung.css (Ergänzung zu vendor/pinn.css), energiesparen.css (Ruhemodus), terminal.css (Versions-Log) und glocke.css (Glocke mit Hinweisen). Die index.html bindet sie an derselben Stelle ein und enthält keine eigene Gestaltung mehr – am Aussehen ändert sich nichts'],
+      ['info', 'Die Startprüfung wartet bei den beiden Dateien am Seitenende, bis der Browser sie geladen hat, und meldet sie erst dann als fehlend'],
+      ['info', 'Geändert: index.html, 4 neue Dateien in css/, js/versionslog.js und pinn-setup.sh – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.97', datum: '19.10.2026', titel: 'App-Code wird aufgeteilt (Schritt 3, Teil 2: Gestaltung)',
     punkte: [
       ['info', 'Für Mitwirkende: Die übrige Gestaltung der App liegt jetzt nach Themen in 19 Dateien im Ordner pb_public/css/ (z. B. basis.css, mobil.css, finanzen.css, pinnwand.css). Die index.html bindet sie an derselben Stelle ein – am Aussehen ändert sich nichts'],

@@ -1,0 +1,52 @@
+/* pinn. – app styles (css/ergaenzung.css)
+   Supplement to vendor/pinn.css (the prebuilt Tailwind CSS): utility classes that were added after pinn.css was built.
+   Former first <style> block in the <head> of index.html, right after vendor/pinn.css; linked at exactly the same place. */
+
+/* Supplement to vendor/pinn.css: classes added after pinn.css was built.
+   Colours with opacity via color-mix, because the accent colours are CSS variables. */
+.bg-pine\/5 { background-color: color-mix(in srgb, var(--c-pine) 5%, transparent); }
+.bg-pine\/10 { background-color: color-mix(in srgb, var(--c-pine) 10%, transparent); }
+.bg-mustard\/10 { background-color: color-mix(in srgb, var(--c-mustard) 10%, transparent); }
+.bg-mustard\/15 { background-color: color-mix(in srgb, var(--c-mustard) 15%, transparent); }
+.border-mustard\/25 { border-color: color-mix(in srgb, var(--c-mustard) 25%, transparent); }
+.border-mustard\/30 { border-color: color-mix(in srgb, var(--c-mustard) 30%, transparent); }
+.border-mustard\/40 { border-color: color-mix(in srgb, var(--c-mustard) 40%, transparent); }
+.border-red-200 { border-color: rgb(254 202 202); }
+.text-red-700 { color: rgb(185 28 28); }
+.ring-pine\/40 { --tw-ring-color: color-mix(in srgb, var(--c-pine) 40%, transparent); }
+.hover\:bg-pine\/5:hover { background-color: color-mix(in srgb, var(--c-pine) 5%, transparent); }
+.hover\:bg-pine\/10:hover { background-color: color-mix(in srgb, var(--c-pine) 10%, transparent); }
+.hover\:bg-pine\/90:hover { background-color: color-mix(in srgb, var(--c-pine) 90%, transparent); }
+.hover\:bg-mustard\/10:hover { background-color: color-mix(in srgb, var(--c-mustard) 10%, transparent); }
+.hover\:bg-mustard\/90:hover { background-color: color-mix(in srgb, var(--c-mustard) 90%, transparent); }
+.hover\:bg-white\/60:hover { background-color: rgb(255 255 255 / 0.6); }
+.hover\:border-pine\/40:hover { border-color: color-mix(in srgb, var(--c-pine) 40%, transparent); }
+.hover\:border-pine\/50:hover { border-color: color-mix(in srgb, var(--c-pine) 50%, transparent); }
+.leading-6 { line-height: 1.5rem; }
+.tracking-normal { letter-spacing: 0em; }
+.max-h-60 { max-height: 15rem; }
+.max-w-\[40\%\] { max-width: 40%; }
+.max-w-\[7rem\] { max-width: 7rem; }
+.min-w-\[3\.5rem\] { min-width: 3.5rem; }
+.mb-2\.5 { margin-bottom: 0.625rem; }
+.normal-case { text-transform: none; }
+.not-italic { font-style: normal; }
+.rounded-\[9px\] { border-radius: 9px; }
+.rounded-\[10px\] { border-radius: 10px; }
+.w-\[34px\] { width: 34px; }
+.h-\[34px\] { height: 34px; }
+.grid-cols-\[1\.3fr_minmax\(0\2c 1fr\)\] { grid-template-columns: 1.3fr minmax(0, 1fr); }
+.h-11 { height: 2.75rem; }
+.left-2\.5 { left: 0.625rem; }
+.opacity-80 { opacity: 0.8; }
+.p-3\.5 { padding: 0.875rem; }
+.pl-2\.5 { padding-left: 0.625rem; }
+.pl-8 { padding-left: 2rem; }
+.pr-1 { padding-right: 0.25rem; }
+.pointer-events-none { pointer-events: none; }
+/* since 1.30 (Pantry 2.0) */
+.bg-ink\/40 { background-color: rgb(37 35 31 / 0.4); }
+.border-current { border-color: currentColor; }
+.max-h-\[94vh\] { max-height: 94vh; }
+.tabular-nums { font-variant-numeric: tabular-nums; }
+.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }

@@ -30,56 +30,7 @@
        pb_public/vendor/tesseract/tesseract.min.js + worker.min.js, core/ (tesseract-core*.wasm.js),
          lang/deu.traineddata.gz (Texterkennung für "Foto einlesen" bei Rezepten, erst bei Bedarf geladen) -->
 <link rel="stylesheet" href="vendor/pinn.css">
-<style>
-  /* Ergänzung zu vendor/pinn.css: Klassen, die erst nach dem Bau von pinn.css dazugekommen sind.
-     Farben mit Deckkraft über color-mix, weil die Akzentfarben CSS-Variablen sind. */
-  .bg-pine\/5 { background-color: color-mix(in srgb, var(--c-pine) 5%, transparent); }
-  .bg-pine\/10 { background-color: color-mix(in srgb, var(--c-pine) 10%, transparent); }
-  .bg-mustard\/10 { background-color: color-mix(in srgb, var(--c-mustard) 10%, transparent); }
-  .bg-mustard\/15 { background-color: color-mix(in srgb, var(--c-mustard) 15%, transparent); }
-  .border-mustard\/25 { border-color: color-mix(in srgb, var(--c-mustard) 25%, transparent); }
-  .border-mustard\/30 { border-color: color-mix(in srgb, var(--c-mustard) 30%, transparent); }
-  .border-mustard\/40 { border-color: color-mix(in srgb, var(--c-mustard) 40%, transparent); }
-  .border-red-200 { border-color: rgb(254 202 202); }
-  .text-red-700 { color: rgb(185 28 28); }
-  .ring-pine\/40 { --tw-ring-color: color-mix(in srgb, var(--c-pine) 40%, transparent); }
-  .hover\:bg-pine\/5:hover { background-color: color-mix(in srgb, var(--c-pine) 5%, transparent); }
-  .hover\:bg-pine\/10:hover { background-color: color-mix(in srgb, var(--c-pine) 10%, transparent); }
-  .hover\:bg-pine\/90:hover { background-color: color-mix(in srgb, var(--c-pine) 90%, transparent); }
-  .hover\:bg-mustard\/10:hover { background-color: color-mix(in srgb, var(--c-mustard) 10%, transparent); }
-  .hover\:bg-mustard\/90:hover { background-color: color-mix(in srgb, var(--c-mustard) 90%, transparent); }
-  .hover\:bg-white\/60:hover { background-color: rgb(255 255 255 / 0.6); }
-  .hover\:border-pine\/40:hover { border-color: color-mix(in srgb, var(--c-pine) 40%, transparent); }
-  .hover\:border-pine\/50:hover { border-color: color-mix(in srgb, var(--c-pine) 50%, transparent); }
-  .leading-6 { line-height: 1.5rem; }
-  .tracking-normal { letter-spacing: 0em; }
-  .max-h-60 { max-height: 15rem; }
-  .max-w-\[40\%\] { max-width: 40%; }
-  .max-w-\[7rem\] { max-width: 7rem; }
-  .min-w-\[3\.5rem\] { min-width: 3.5rem; }
-  .mb-2\.5 { margin-bottom: 0.625rem; }
-  .normal-case { text-transform: none; }
-  .not-italic { font-style: normal; }
-  .rounded-\[9px\] { border-radius: 9px; }
-  .rounded-\[10px\] { border-radius: 10px; }
-  .w-\[34px\] { width: 34px; }
-  .h-\[34px\] { height: 34px; }
-  .grid-cols-\[1\.3fr_minmax\(0\2c 1fr\)\] { grid-template-columns: 1.3fr minmax(0, 1fr); }
-  .h-11 { height: 2.75rem; }
-  .left-2\.5 { left: 0.625rem; }
-  .opacity-80 { opacity: 0.8; }
-  .p-3\.5 { padding: 0.875rem; }
-  .pl-2\.5 { padding-left: 0.625rem; }
-  .pl-8 { padding-left: 2rem; }
-  .pr-1 { padding-right: 0.25rem; }
-  .pointer-events-none { pointer-events: none; }
-  /* ab 1.30 (Vorrat 2.0) */
-  .bg-ink\/40 { background-color: rgb(37 35 31 / 0.4); }
-  .border-current { border-color: currentColor; }
-  .max-h-\[94vh\] { max-height: 94vh; }
-  .tabular-nums { font-variant-numeric: tabular-nums; }
-  .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
-</style>
+<link rel="stylesheet" href="css/ergaenzung.css?v=1.98.0">
 <!-- ==========================================================
      Energiesparen (ab 0.99)
      - Wiederkehrende Abfragen (setInterval ab 1 Sekunde) laufen nur, solange pinn. sichtbar ist;
@@ -89,24 +40,7 @@
        Jede Berührung, Maus-/Tastatureingabe weckt pinn. sofort und holt alles nach.
      - Kurze Zähler (< 1 s, z. B. SOS-Countdown) bleiben unverändert.
      ========================================================== -->
-<style>
-  html.pinn-ruhe .fin-goal-reached, html.pinn-ruhe .fin-piggy, html.pinn-ruhe .fin-etf-spin,
-  html.pinn-ruhe .fz-hero-band::after, html.pinn-ruhe .fz-hero-icon > span, html.pinn-ruhe .fz-empty-car,
-  html.pinn-ruhe .fam-ping, html.pinn-ruhe .fam-ping::after, html.pinn-ruhe .fam-dot,
-  html.pinn-ruhe .hw-head::before, html.pinn-ruhe .hw-walk i, html.pinn-ruhe .fam-ecg path,
-  html.pinn-ruhe .fm-mk.live .fm-mk-ava::after, html.pinn-ruhe .fm-mk.live .fm-mk-ava::before,
-  html.pinn-ruhe .kid-money-pig, html.pinn-ruhe .kid-deco span, html.pinn-ruhe .kid-avatar,
-  html.pinn-ruhe .kid-empty-emoji, html.pinn-ruhe .kid-chip-badge, html.pinn-ruhe .pw-kudos-heart,
-  html.pinn-ruhe .term-window::after, html.pinn-ruhe .t-cursor,
-  html.pinn-ruhe .ov-fam-live, html.pinn-ruhe .ov-fam-live::after, html.pinn-ruhe .ov-fam-item.is-bday .ov-fam-badge,
-  html.pinn-ruhe .ofs-bday-ic, html.pinn-ruhe .ov-fam-item.is-soon .ov-fam-ava, html.pinn-ruhe .hs-anim, html.pinn-ruhe .hs-anim path { animation-play-state: paused !important; }
-  @media (prefers-reduced-motion: reduce) {
-    .fin-goal-reached, .fin-piggy, .fz-hero-band::after, .fz-hero-icon > span, .fz-empty-car,
-    .hw-head::before, .hw-walk i, .fam-ecg path, .kid-money-pig, .kid-deco span, .kid-avatar,
-    .kid-empty-emoji, .kid-chip-badge, .pw-kudos-heart, .term-window::after, .hs-anim, .hs-anim path { animation: none !important; }
-    .hs-mover.hs-anim, .hs-cloud.hs-anim { display: none; }
-  }
-</style>
+<link rel="stylesheet" href="css/energiesparen.css?v=1.98.0">
 <script>
 (function () {
   var IDLE_MS = 3 * 60 * 1000;      // ohne Bedienung -> Ruhemodus
@@ -914,8 +848,9 @@ window.PINN_LANGUAGES = [
   // leeren Seite ohne funktionierende Buttons.
   // Teile der App unter pb_public/js/ – jede Datei meldet sich am Ende in window.PINN_PARTS an
   var PINN_APP_PARTS = ['grundlagen', 'popups', 'verbindung', 'benutzer', 'mitteilungen', 'serverzugriff', 'tastatur', 'anmeldemaske', 'dashboard', 'dashboardhintergrund', 'profilauswahl', 'pineingabe', 'dashboardsitzung', 'dashboardkonto', 'familienverwalten', 'einrichten', 'exportieren', 'hauptadminseite', 'anmeldung', 'konto', 'profilverwaltung', 'zustand', 'bedienzustand', 'rezeptbilder', 'zusammenfuehren', 'speichern', 'design', 'sprache', 'uebersicht', 'familienkachel', 'wobistdu', 'geburtstagsfeier', 'wetterkachel', 'geburtstage', 'uebersichteinstellungen', 'familiensync', 'kalenderquellen', 'icsparser', 'zeitleiste', 'termindetails', 'kalenderdatei', 'wetter', 'wohnort', 'feiertage', 'muellkalender', 'mitglieder', 'profilbild', 'mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
-  // Gestaltung der App unter pb_public/css/ (ab 1.96) – jede Datei steht als <link> im Kopf der index.html
-  var PINN_APP_STYLES = ['basis', 'mobil', 'einstellungen', 'seitenleiste', 'finanzen', 'listen', 'vertraege', 'fahrzeuge', 'notfall', 'hinweise', 'familie', 'dokumente', 'sparen', 'kinderaufgaben', 'dashboard', 'uebersicht', 'wohnort', 'familienkachel', 'pinnwand', 'haustierewetter'];
+  // Gestaltung der App unter pb_public/css/ (ab 1.96) – jede Datei steht als <link> an der Stelle des früheren
+  // <style>-Blocks: fast alle im Kopf der index.html, terminal und glocke (ab 1.98) am Ende der Seite
+  var PINN_APP_STYLES = ['ergaenzung', 'energiesparen', 'basis', 'mobil', 'einstellungen', 'seitenleiste', 'finanzen', 'listen', 'vertraege', 'fahrzeuge', 'notfall', 'hinweise', 'familie', 'dokumente', 'sparen', 'kinderaufgaben', 'dashboard', 'uebersicht', 'wohnort', 'familienkachel', 'pinnwand', 'haustierewetter', 'terminal', 'glocke'];
   window.addEventListener('DOMContentLoaded', function () {
     var missing = [];
     if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – der PocketBase-Client (ohne ihn funktioniert nichts)');
@@ -930,76 +865,90 @@ window.PINN_LANGUAGES = [
     });
     // Eine CSS-Datei gilt als geladen, wenn der Browser ihre Regeln übernommen hat (404 oder eine
     // ausgelieferte index.html ergeben kein Stylesheet bzw. eines ohne Regeln)
-    PINN_APP_STYLES.forEach(function (name) {
-      var link = document.querySelector('link[rel="stylesheet"][href^="css/' + name + '.css"]');
-      var ok = false;
-      try { ok = !!(link && link.sheet && link.sheet.cssRules.length); } catch (e) { ok = false; }
-      if (!ok) missing.push('<b>css/' + name + '.css</b> – ein Teil der App');
-    });
-    if (!missing.length) return;
-    // Welche Adressen liefert der Server tatsächlich? (zeigt Status je Datei, hilft bei falschem Ordner/Namen)
-    var checks = [
-      'vendor/pinn.css',
-      'vendor/pocketbase/pocketbase.umd.js',
-      'vendor/pocketbase/pocketbase_umd.js',
-      'vendor/pocketbase.umd.js',
-      'vendor/pocketbase_umd.js'
-    ].concat(PINN_APP_STYLES.map(function (name) { return 'css/' + name + '.css'; }))
-      .concat(PINN_APP_PARTS.map(function (part) { return 'js/' + part + '.js'; }));
-    var box = document.createElement('div');
-    box.setAttribute('style', 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;background:#FFFBFB;font-family:system-ui,sans-serif;color:#25231F;overflow:auto;');
-    box.innerHTML = '<div style="max-width:460px;line-height:1.5">'
-      + '<div style="font-size:20px;font-weight:700;margin-bottom:10px">pinn. kann nicht starten</div>'
-      + '<p style="margin:0 0 10px">Auf dem NAS fehlt im Ordner <code>pb_public/</code>:</p>'
-      + '<ul style="margin:0 0 14px;padding-left:20px">' + missing.map(function (m) { return '<li>' + m + '</li>'; }).join('') + '</ul>'
-      + '<p style="margin:0 0 6px;font-size:13px;font-weight:600">So antwortet der Server:</p>'
-      + '<div id="pinnStartChecks" style="font-family:ui-monospace,Menlo,monospace;font-size:12px;margin:0 0 14px;word-break:break-all">wird geprüft …</div>'
-      + '<p style="margin:0 0 16px;font-size:14px;color:#6b6760">Erwartet: <code>pb_public/vendor/pinn.css</code>, <code>pb_public/vendor/pocketbase/pocketbase.umd.js</code> und die Dateien in <code>pb_public/js/</code> – im selben <code>pb_public</code> wie diese <code>index.html</code>. Groß-/Kleinschreibung beachten.</p>'
-      + '<button type="button" onclick="location.href=location.pathname+\'?_r=\'+Date.now()" style="padding:10px 16px;border-radius:10px;border:0;background:#00374A;color:#fff;font-size:15px">Neu laden</button>'
-      + '</div>';
-    document.body.appendChild(box);
-    var out = document.getElementById('pinnStartChecks');
-    var lines = [];
-    function show() { out.innerHTML = lines.join('<br>'); }
-    checks.forEach(function (path, i) {
-      lines[i] = path + ' → …';
-      fetch(path + '?_r=' + Date.now(), { cache: 'no-store' }).then(function (res) {
-        var type = res.headers.get('Content-Type') || '';
-        var okType = /\.css$/.test(path) ? /css/.test(type) : /javascript|ecmascript/.test(type);
-        // PocketBase liefert für unbekannte Pfade ggf. die index.html aus - das zählt nicht als gefunden
-        var found = res.ok && okType;
-        lines[i] = (found ? '✅ ' : '❌ ') + path + ' → ' + res.status + (res.ok && !okType ? ' (' + (type.split(';')[0] || 'unbekannter Typ') + ', nicht die Datei)' : '');
-        show();
-      }).catch(function () {
-        lines[i] = '❌ ' + path + ' → keine Antwort';
-        show();
+    function fehlendeStyles() {
+      var out = [];
+      PINN_APP_STYLES.forEach(function (name) {
+        var link = document.querySelector('link[rel="stylesheet"][href^="css/' + name + '.css"]');
+        var ok = false;
+        try { ok = !!(link && link.sheet && link.sheet.cssRules.length); } catch (e) { ok = false; }
+        if (!ok) out.push('<b>css/' + name + '.css</b> – ein Teil der App');
       });
-    });
-    show();
+      return out;
+    }
+    // Die Dateien am Ende der Seite (nach den js/-Dateien) kann der Browser noch laden, wenn DOMContentLoaded
+    // kommt – dann erst nach dem vollständigen Laden der Seite (load) endgültig prüfen
+    if (fehlendeStyles().length && document.readyState !== 'complete') {
+      window.addEventListener('load', function () { melden(missing.concat(fehlendeStyles())); });
+      return;
+    }
+    melden(missing.concat(fehlendeStyles()));
+    // Hinweis anzeigen (nur wenn etwas fehlt)
+    function melden(missing) {
+      if (!missing.length) return;
+      // Welche Adressen liefert der Server tatsächlich? (zeigt Status je Datei, hilft bei falschem Ordner/Namen)
+      var checks = [
+        'vendor/pinn.css',
+        'vendor/pocketbase/pocketbase.umd.js',
+        'vendor/pocketbase/pocketbase_umd.js',
+        'vendor/pocketbase.umd.js',
+        'vendor/pocketbase_umd.js'
+      ].concat(PINN_APP_STYLES.map(function (name) { return 'css/' + name + '.css'; }))
+        .concat(PINN_APP_PARTS.map(function (part) { return 'js/' + part + '.js'; }));
+      var box = document.createElement('div');
+      box.setAttribute('style', 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;background:#FFFBFB;font-family:system-ui,sans-serif;color:#25231F;overflow:auto;');
+      box.innerHTML = '<div style="max-width:460px;line-height:1.5">'
+        + '<div style="font-size:20px;font-weight:700;margin-bottom:10px">pinn. kann nicht starten</div>'
+        + '<p style="margin:0 0 10px">Auf dem NAS fehlt im Ordner <code>pb_public/</code>:</p>'
+        + '<ul style="margin:0 0 14px;padding-left:20px">' + missing.map(function (m) { return '<li>' + m + '</li>'; }).join('') + '</ul>'
+        + '<p style="margin:0 0 6px;font-size:13px;font-weight:600">So antwortet der Server:</p>'
+        + '<div id="pinnStartChecks" style="font-family:ui-monospace,Menlo,monospace;font-size:12px;margin:0 0 14px;word-break:break-all">wird geprüft …</div>'
+        + '<p style="margin:0 0 16px;font-size:14px;color:#6b6760">Erwartet: <code>pb_public/vendor/pinn.css</code>, <code>pb_public/vendor/pocketbase/pocketbase.umd.js</code> und die Dateien in <code>pb_public/js/</code> – im selben <code>pb_public</code> wie diese <code>index.html</code>. Groß-/Kleinschreibung beachten.</p>'
+        + '<button type="button" onclick="location.href=location.pathname+\'?_r=\'+Date.now()" style="padding:10px 16px;border-radius:10px;border:0;background:#00374A;color:#fff;font-size:15px">Neu laden</button>'
+        + '</div>';
+      document.body.appendChild(box);
+      var out = document.getElementById('pinnStartChecks');
+      var lines = [];
+      function show() { out.innerHTML = lines.join('<br>'); }
+      checks.forEach(function (path, i) {
+        lines[i] = path + ' → …';
+        fetch(path + '?_r=' + Date.now(), { cache: 'no-store' }).then(function (res) {
+          var type = res.headers.get('Content-Type') || '';
+          var okType = /\.css$/.test(path) ? /css/.test(type) : /javascript|ecmascript/.test(type);
+          // PocketBase liefert für unbekannte Pfade ggf. die index.html aus - das zählt nicht als gefunden
+          var found = res.ok && okType;
+          lines[i] = (found ? '✅ ' : '❌ ') + path + ' → ' + res.status + (res.ok && !okType ? ' (' + (type.split(';')[0] || 'unbekannter Typ') + ', nicht die Datei)' : '');
+          show();
+        }).catch(function () {
+          lines[i] = '❌ ' + path + ' → keine Antwort';
+          show();
+        });
+      });
+      show();
+    }
   });
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/basis.css?v=1.97.0">
-<link rel="stylesheet" href="css/mobil.css?v=1.97.0">
-<link rel="stylesheet" href="css/einstellungen.css?v=1.97.0">
-<link rel="stylesheet" href="css/seitenleiste.css?v=1.97.0">
-<link rel="stylesheet" href="css/finanzen.css?v=1.97.0">
-<link rel="stylesheet" href="css/listen.css?v=1.97.0">
-<link rel="stylesheet" href="css/vertraege.css?v=1.97.0">
-<link rel="stylesheet" href="css/fahrzeuge.css?v=1.97.0">
-<link rel="stylesheet" href="css/notfall.css?v=1.97.0">
-<link rel="stylesheet" href="css/hinweise.css?v=1.97.0">
-<link rel="stylesheet" href="css/familie.css?v=1.97.0">
-<link rel="stylesheet" href="css/dokumente.css?v=1.97.0">
-<link rel="stylesheet" href="css/sparen.css?v=1.97.0">
-<link rel="stylesheet" href="css/kinderaufgaben.css?v=1.97.0">
-<link rel="stylesheet" href="css/dashboard.css?v=1.97.0">
-<link rel="stylesheet" href="css/uebersicht.css?v=1.97.0">
-<link rel="stylesheet" href="css/wohnort.css?v=1.97.0">
-<link rel="stylesheet" href="css/familienkachel.css?v=1.97.0">
-<link rel="stylesheet" href="css/pinnwand.css?v=1.97.0">
-<link rel="stylesheet" href="css/haustierewetter.css?v=1.97.0">
+<link rel="stylesheet" href="css/basis.css?v=1.98.0">
+<link rel="stylesheet" href="css/mobil.css?v=1.98.0">
+<link rel="stylesheet" href="css/einstellungen.css?v=1.98.0">
+<link rel="stylesheet" href="css/seitenleiste.css?v=1.98.0">
+<link rel="stylesheet" href="css/finanzen.css?v=1.98.0">
+<link rel="stylesheet" href="css/listen.css?v=1.98.0">
+<link rel="stylesheet" href="css/vertraege.css?v=1.98.0">
+<link rel="stylesheet" href="css/fahrzeuge.css?v=1.98.0">
+<link rel="stylesheet" href="css/notfall.css?v=1.98.0">
+<link rel="stylesheet" href="css/hinweise.css?v=1.98.0">
+<link rel="stylesheet" href="css/familie.css?v=1.98.0">
+<link rel="stylesheet" href="css/dokumente.css?v=1.98.0">
+<link rel="stylesheet" href="css/sparen.css?v=1.98.0">
+<link rel="stylesheet" href="css/kinderaufgaben.css?v=1.98.0">
+<link rel="stylesheet" href="css/dashboard.css?v=1.98.0">
+<link rel="stylesheet" href="css/uebersicht.css?v=1.98.0">
+<link rel="stylesheet" href="css/wohnort.css?v=1.98.0">
+<link rel="stylesheet" href="css/familienkachel.css?v=1.98.0">
+<link rel="stylesheet" href="css/pinnwand.css?v=1.98.0">
+<link rel="stylesheet" href="css/haustierewetter.css?v=1.98.0">
 </head>
 <body class="font-sans text-ink antialiased">
 
@@ -5684,7 +5633,7 @@ let lastIcsSync = null;
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.97.0';
+const APP_VERSION = '1.98.0';
 
 /* ==========================================================
    Einstellungen & Konto: zwei gleich hohe Spalten (Querformat ab Tablet-Breite)
@@ -5812,246 +5761,109 @@ const APP_VERSION = '1.97.0';
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/grundlagen.js?v=1.97.0"></script>
-<script src="js/popups.js?v=1.97.0"></script>
-<script src="js/verbindung.js?v=1.97.0"></script>
-<script src="js/benutzer.js?v=1.97.0"></script>
-<script src="js/mitteilungen.js?v=1.97.0"></script>
-<script src="js/serverzugriff.js?v=1.97.0"></script>
-<script src="js/tastatur.js?v=1.97.0"></script>
-<script src="js/anmeldemaske.js?v=1.97.0"></script>
-<script src="js/dashboard.js?v=1.97.0"></script>
-<script src="js/dashboardhintergrund.js?v=1.97.0"></script>
-<script src="js/profilauswahl.js?v=1.97.0"></script>
-<script src="js/pineingabe.js?v=1.97.0"></script>
-<script src="js/dashboardsitzung.js?v=1.97.0"></script>
-<script src="js/dashboardkonto.js?v=1.97.0"></script>
-<script src="js/familienverwalten.js?v=1.97.0"></script>
-<script src="js/einrichten.js?v=1.97.0"></script>
-<script src="js/exportieren.js?v=1.97.0"></script>
-<script src="js/hauptadminseite.js?v=1.97.0"></script>
-<script src="js/anmeldung.js?v=1.97.0"></script>
-<script src="js/konto.js?v=1.97.0"></script>
-<script src="js/profilverwaltung.js?v=1.97.0"></script>
-<script src="js/zustand.js?v=1.97.0"></script>
-<script src="js/bedienzustand.js?v=1.97.0"></script>
-<script src="js/rezeptbilder.js?v=1.97.0"></script>
-<script src="js/zusammenfuehren.js?v=1.97.0"></script>
-<script src="js/speichern.js?v=1.97.0"></script>
-<script src="js/design.js?v=1.97.0"></script>
-<script src="js/sprache.js?v=1.97.0"></script>
-<script src="js/uebersicht.js?v=1.97.0"></script>
-<script src="js/familienkachel.js?v=1.97.0"></script>
-<script src="js/wobistdu.js?v=1.97.0"></script>
-<script src="js/geburtstagsfeier.js?v=1.97.0"></script>
-<script src="js/wetterkachel.js?v=1.97.0"></script>
-<script src="js/geburtstage.js?v=1.97.0"></script>
-<script src="js/uebersichteinstellungen.js?v=1.97.0"></script>
-<script src="js/familiensync.js?v=1.97.0"></script>
-<script src="js/kalenderquellen.js?v=1.97.0"></script>
-<script src="js/icsparser.js?v=1.97.0"></script>
-<script src="js/zeitleiste.js?v=1.97.0"></script>
-<script src="js/termindetails.js?v=1.97.0"></script>
-<script src="js/kalenderdatei.js?v=1.97.0"></script>
-<script src="js/wetter.js?v=1.97.0"></script>
-<script src="js/wohnort.js?v=1.97.0"></script>
-<script src="js/feiertage.js?v=1.97.0"></script>
-<script src="js/muellkalender.js?v=1.97.0"></script>
-<script src="js/mitglieder.js?v=1.97.0"></script>
-<script src="js/profilbild.js?v=1.97.0"></script>
-<script src="js/mitglied.js?v=1.97.0"></script>
-<script src="js/kinderseite.js?v=1.97.0"></script>
-<script src="js/kinderroutine.js?v=1.97.0"></script>
-<script src="js/sterne.js?v=1.97.0"></script>
-<script src="js/kalenderansicht.js?v=1.97.0"></script>
-<script src="js/essenplanen.js?v=1.97.0"></script>
-<script src="js/rezeptparser.js?v=1.97.0"></script>
-<script src="js/rezeptdialog.js?v=1.97.0"></script>
-<script src="js/rezeptbild.js?v=1.97.0"></script>
-<script src="js/rezeptmengen.js?v=1.97.0"></script>
-<script src="js/einkauf.js?v=1.97.0"></script>
-<script src="js/einkaufslisten.js?v=1.97.0"></script>
-<script src="js/einkaufseingabe.js?v=1.97.0"></script>
-<script src="js/rezepte.js?v=1.97.0"></script>
-<script src="js/offline.js?v=1.97.0"></script>
-<script src="js/aufgabenextras.js?v=1.97.0"></script>
-<script src="js/appbadge.js?v=1.97.0"></script>
-<script src="js/reisen.js?v=1.97.0"></script>
-<script src="js/aufgabendaten.js?v=1.97.0"></script>
-<script src="js/haushalt.js?v=1.97.0"></script>
-<script src="js/reihum.js?v=1.97.0"></script>
-<script src="js/aufgaben.js?v=1.97.0"></script>
-<script src="js/smarthome.js?v=1.97.0"></script>
-<script src="js/sprachsteuerung.js?v=1.97.0"></script>
-<script src="js/termine.js?v=1.97.0"></script>
-<script src="js/ansichten.js?v=1.97.0"></script>
-<script src="js/versionspruefung.js?v=1.97.0"></script>
-<script src="js/sicherungen.js?v=1.97.0"></script>
-<script src="js/geraete.js?v=1.97.0"></script>
-<script src="js/fehlerprotokoll.js?v=1.97.0"></script>
-<script src="js/versionslog.js?v=1.97.0"></script>
-<script src="js/einstellungen.js?v=1.97.0"></script>
-<script src="js/kalenderkonto.js?v=1.97.0"></script>
-<script src="js/finanzen.js?v=1.97.0"></script>
-<script src="js/kassen.js?v=1.97.0"></script>
-<script src="js/vorrat.js?v=1.97.0"></script>
-<script src="js/vorrat2.js?v=1.97.0"></script>
-<script src="js/sparen.js?v=1.97.0"></script>
-<script src="js/vertraege.js?v=1.97.0"></script>
-<script src="js/fahrzeuge.js?v=1.97.0"></script>
-<script src="js/zuhause.js?v=1.97.0"></script>
-<script src="js/dokumente.js?v=1.97.0"></script>
-<script src="js/pdflesen.js?v=1.97.0"></script>
-<script src="js/appstart.js?v=1.97.0"></script>
-<script src="js/pinnwand.js?v=1.97.0"></script>
-<script src="js/listen.js?v=1.97.0"></script>
-<script src="js/familie.js?v=1.97.0"></script>
-<script src="js/hinweise.js?v=1.97.0"></script>
-<script src="js/ausblick.js?v=1.97.0"></script>
+<script src="js/grundlagen.js?v=1.98.0"></script>
+<script src="js/popups.js?v=1.98.0"></script>
+<script src="js/verbindung.js?v=1.98.0"></script>
+<script src="js/benutzer.js?v=1.98.0"></script>
+<script src="js/mitteilungen.js?v=1.98.0"></script>
+<script src="js/serverzugriff.js?v=1.98.0"></script>
+<script src="js/tastatur.js?v=1.98.0"></script>
+<script src="js/anmeldemaske.js?v=1.98.0"></script>
+<script src="js/dashboard.js?v=1.98.0"></script>
+<script src="js/dashboardhintergrund.js?v=1.98.0"></script>
+<script src="js/profilauswahl.js?v=1.98.0"></script>
+<script src="js/pineingabe.js?v=1.98.0"></script>
+<script src="js/dashboardsitzung.js?v=1.98.0"></script>
+<script src="js/dashboardkonto.js?v=1.98.0"></script>
+<script src="js/familienverwalten.js?v=1.98.0"></script>
+<script src="js/einrichten.js?v=1.98.0"></script>
+<script src="js/exportieren.js?v=1.98.0"></script>
+<script src="js/hauptadminseite.js?v=1.98.0"></script>
+<script src="js/anmeldung.js?v=1.98.0"></script>
+<script src="js/konto.js?v=1.98.0"></script>
+<script src="js/profilverwaltung.js?v=1.98.0"></script>
+<script src="js/zustand.js?v=1.98.0"></script>
+<script src="js/bedienzustand.js?v=1.98.0"></script>
+<script src="js/rezeptbilder.js?v=1.98.0"></script>
+<script src="js/zusammenfuehren.js?v=1.98.0"></script>
+<script src="js/speichern.js?v=1.98.0"></script>
+<script src="js/design.js?v=1.98.0"></script>
+<script src="js/sprache.js?v=1.98.0"></script>
+<script src="js/uebersicht.js?v=1.98.0"></script>
+<script src="js/familienkachel.js?v=1.98.0"></script>
+<script src="js/wobistdu.js?v=1.98.0"></script>
+<script src="js/geburtstagsfeier.js?v=1.98.0"></script>
+<script src="js/wetterkachel.js?v=1.98.0"></script>
+<script src="js/geburtstage.js?v=1.98.0"></script>
+<script src="js/uebersichteinstellungen.js?v=1.98.0"></script>
+<script src="js/familiensync.js?v=1.98.0"></script>
+<script src="js/kalenderquellen.js?v=1.98.0"></script>
+<script src="js/icsparser.js?v=1.98.0"></script>
+<script src="js/zeitleiste.js?v=1.98.0"></script>
+<script src="js/termindetails.js?v=1.98.0"></script>
+<script src="js/kalenderdatei.js?v=1.98.0"></script>
+<script src="js/wetter.js?v=1.98.0"></script>
+<script src="js/wohnort.js?v=1.98.0"></script>
+<script src="js/feiertage.js?v=1.98.0"></script>
+<script src="js/muellkalender.js?v=1.98.0"></script>
+<script src="js/mitglieder.js?v=1.98.0"></script>
+<script src="js/profilbild.js?v=1.98.0"></script>
+<script src="js/mitglied.js?v=1.98.0"></script>
+<script src="js/kinderseite.js?v=1.98.0"></script>
+<script src="js/kinderroutine.js?v=1.98.0"></script>
+<script src="js/sterne.js?v=1.98.0"></script>
+<script src="js/kalenderansicht.js?v=1.98.0"></script>
+<script src="js/essenplanen.js?v=1.98.0"></script>
+<script src="js/rezeptparser.js?v=1.98.0"></script>
+<script src="js/rezeptdialog.js?v=1.98.0"></script>
+<script src="js/rezeptbild.js?v=1.98.0"></script>
+<script src="js/rezeptmengen.js?v=1.98.0"></script>
+<script src="js/einkauf.js?v=1.98.0"></script>
+<script src="js/einkaufslisten.js?v=1.98.0"></script>
+<script src="js/einkaufseingabe.js?v=1.98.0"></script>
+<script src="js/rezepte.js?v=1.98.0"></script>
+<script src="js/offline.js?v=1.98.0"></script>
+<script src="js/aufgabenextras.js?v=1.98.0"></script>
+<script src="js/appbadge.js?v=1.98.0"></script>
+<script src="js/reisen.js?v=1.98.0"></script>
+<script src="js/aufgabendaten.js?v=1.98.0"></script>
+<script src="js/haushalt.js?v=1.98.0"></script>
+<script src="js/reihum.js?v=1.98.0"></script>
+<script src="js/aufgaben.js?v=1.98.0"></script>
+<script src="js/smarthome.js?v=1.98.0"></script>
+<script src="js/sprachsteuerung.js?v=1.98.0"></script>
+<script src="js/termine.js?v=1.98.0"></script>
+<script src="js/ansichten.js?v=1.98.0"></script>
+<script src="js/versionspruefung.js?v=1.98.0"></script>
+<script src="js/sicherungen.js?v=1.98.0"></script>
+<script src="js/geraete.js?v=1.98.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.98.0"></script>
+<script src="js/versionslog.js?v=1.98.0"></script>
+<script src="js/einstellungen.js?v=1.98.0"></script>
+<script src="js/kalenderkonto.js?v=1.98.0"></script>
+<script src="js/finanzen.js?v=1.98.0"></script>
+<script src="js/kassen.js?v=1.98.0"></script>
+<script src="js/vorrat.js?v=1.98.0"></script>
+<script src="js/vorrat2.js?v=1.98.0"></script>
+<script src="js/sparen.js?v=1.98.0"></script>
+<script src="js/vertraege.js?v=1.98.0"></script>
+<script src="js/fahrzeuge.js?v=1.98.0"></script>
+<script src="js/zuhause.js?v=1.98.0"></script>
+<script src="js/dokumente.js?v=1.98.0"></script>
+<script src="js/pdflesen.js?v=1.98.0"></script>
+<script src="js/appstart.js?v=1.98.0"></script>
+<script src="js/pinnwand.js?v=1.98.0"></script>
+<script src="js/listen.js?v=1.98.0"></script>
+<script src="js/familie.js?v=1.98.0"></script>
+<script src="js/hinweise.js?v=1.98.0"></script>
+<script src="js/ausblick.js?v=1.98.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)
      Klassen "fixed inset-0": die globale Tastatur-Logik passt das Overlay automatisch an den
      sichtbaren Bereich an, damit die Eingabezeile nie von der Tastatur verdeckt wird.
      ========================================================== -->
-<style>
-  #changelogTerminal {
-    z-index: 600;
-    display: flex; align-items: center; justify-content: center;
-    padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
-    background: rgba(2, 6, 4, 0.72);
-    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
-  }
-  #changelogTerminal.hidden { display: none; }
-  .term-window {
-    position: relative;
-    width: 100%; max-width: 780px; height: 100%; max-height: 860px;
-    display: flex; flex-direction: column;
-    border-radius: 14px; overflow: hidden;
-    background: radial-gradient(ellipse at 50% 35%, #0d1f15 0%, #07110b 55%, #030805 100%);
-    border: 1px solid rgba(110, 255, 170, 0.22);
-    box-shadow: 0 0 0 1px rgba(0,0,0,.6), 0 0 38px rgba(40, 255, 140, 0.16), 0 24px 60px rgba(0,0,0,.6);
-    font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-    color: #a4ffcb;
-    transform-origin: 50% 50%;
-  }
-  #changelogTerminal.term-on .term-window { animation: termOn .55s cubic-bezier(.2,.8,.2,1) both; }
-  #changelogTerminal.term-off .term-window { animation: termOff .32s ease-in both; }
-  @keyframes termOn {
-    0%   { transform: scale(1, .004); filter: brightness(3); opacity: .2; }
-    45%  { transform: scale(1, .004); filter: brightness(3); opacity: 1; }
-    75%  { transform: scale(1, 1.02); filter: brightness(1.6); }
-    100% { transform: scale(1, 1); filter: brightness(1); }
-  }
-  @keyframes termOff {
-    0%   { transform: scale(1, 1); filter: brightness(1); opacity: 1; }
-    60%  { transform: scale(1, .004); filter: brightness(3); opacity: 1; }
-    100% { transform: scale(0, .004); filter: brightness(4); opacity: 0; }
-  }
-  /* Scanlines, Vignette, leichtes Flimmern */
-  .term-window::before {
-    content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 3;
-    background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,0) 2px, rgba(0,0,0,.22) 3px, rgba(0,0,0,0) 4px);
-    mix-blend-mode: multiply;
-  }
-  .term-window::after {
-    content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 4;
-    background: radial-gradient(ellipse at center, rgba(0,0,0,0) 58%, rgba(0,0,0,.55) 100%);
-    animation: termFlicker 5s infinite steps(1);
-  }
-  @keyframes termFlicker { 0%,100% { opacity: 1; } 47% { opacity: .92; } 48% { opacity: 1; } 83% { opacity: .95; } 84% { opacity: 1; } }
-
-  .term-titlebar {
-    position: relative; z-index: 5; flex-shrink: 0;
-    display: flex; align-items: center; gap: 8px;
-    padding: 10px 12px;
-    background: linear-gradient(to bottom, rgba(255,255,255,.06), rgba(255,255,255,.015));
-    border-bottom: 1px solid rgba(110,255,170,.14);
-  }
-  .term-dot { width: 12px; height: 12px; border-radius: 50%; border: 0; padding: 0; flex-shrink: 0; -webkit-appearance: none; appearance: none; }
-  .term-dot.red { background: #ff5f57; cursor: pointer; }
-  .term-dot.yellow { background: #febc2e; }
-  .term-dot.green { background: #28c840; }
-  .term-title { flex: 1; text-align: center; font-size: 12px; color: rgba(164,255,203,.55); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 44px; }
-  .term-close-x { background: transparent; border: 0; padding: 0; -webkit-appearance: none; appearance: none; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border-radius: 8px; color: rgba(164,255,203,.6); font-size: 18px; line-height: 1; display: grid; place-items: center; }
-  .term-close-x:hover { background: rgba(110,255,170,.1); color: #d9ffe9; }
-
-  .term-screen {
-    position: relative; z-index: 2; flex: 1; min-height: 0;
-    overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
-    padding: 14px 14px 6px;
-    font-size: 12.5px; line-height: 1.55;
-    text-shadow: 0 0 6px rgba(70, 255, 150, .45);
-    word-break: break-word;
-  }
-  @media (min-width: 640px) { .term-screen { font-size: 13.5px; padding: 18px 20px 8px; } }
-  .term-screen::-webkit-scrollbar { width: 6px; }
-  .term-screen::-webkit-scrollbar-thumb { background: rgba(110,255,170,.25); border-radius: 3px; }
-
-  .t-line { white-space: pre-wrap; min-height: 1.55em; }
-  .t-dim { color: #4f9a6c; }
-  .t-white { color: #eafff3; }
-  .t-amber { color: #ffcf6b; text-shadow: 0 0 6px rgba(255, 190, 70, .45); }
-  .t-cyan { color: #7deaff; text-shadow: 0 0 6px rgba(90, 220, 255, .45); }
-  .t-red { color: #ff7b7b; text-shadow: 0 0 6px rgba(255, 90, 90, .45); }
-  .t-ok { color: #3dff8c; font-weight: 700; }
-  .t-bold { font-weight: 700; }
-  .t-prompt-user { color: #3dff8c; font-weight: 700; }
-  .t-prompt-path { color: #7deaff; }
-  .t-ascii { white-space: pre; line-height: 1.2; overflow-x: auto; }
-
-  .t-ver { display: flex; align-items: center; gap: 8px; margin-top: 14px; }
-  .t-ver:first-child { margin-top: 0; }
-  .t-ver-num { color: #0a140e; background: #7dffb4; padding: 0 6px; border-radius: 3px; font-weight: 700; text-shadow: none; box-shadow: 0 0 10px rgba(80,255,160,.5); }
-  .t-ver-num.retro { background: #4f9a6c; box-shadow: none; }
-  .t-ver-rule { flex: 1; border-bottom: 1px dashed rgba(110,255,170,.3); height: 0; }
-  .t-ver-date { color: #4f9a6c; font-size: .92em; }
-  .t-ver-title { color: #eafff3; font-weight: 700; margin: 3px 0 2px; }
-  .t-item { display: flex; gap: 8px; padding-left: 2px; }
-  .t-sym { flex-shrink: 0; width: 1ch; font-weight: 700; }
-  .t-sym.neu { color: #3dff8c; }
-  .t-sym.fix { color: #ffcf6b; }
-  .t-sym.info { color: #7deaff; }
-
-  .t-bar { display: inline-block; letter-spacing: -1px; }
-  .t-cursor { display: inline-block; width: .6em; height: 1.1em; vertical-align: -.2em; background: #a4ffcb; box-shadow: 0 0 8px rgba(80,255,160,.8); animation: termBlink 1s steps(1) infinite; }
-  @keyframes termBlink { 50% { opacity: 0; } }
-
-  .term-chips {
-    position: relative; z-index: 5; flex-shrink: 0;
-    display: flex; gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch;
-    padding: 8px 12px 0;
-    scrollbar-width: none;
-  }
-  .term-chips::-webkit-scrollbar { display: none; }
-  .term-chip {
-    flex-shrink: 0; font: inherit; font-size: 12px; color: #a4ffcb;
-    border: 1px solid rgba(110,255,170,.3); border-radius: 6px; padding: 4px 9px;
-    background: rgba(110,255,170,.05);
-  }
-  .term-chip:active, .term-chip:hover { background: rgba(110,255,170,.16); color: #eafff3; }
-
-  .term-inputbar {
-    position: relative; z-index: 5; flex-shrink: 0;
-    display: flex; align-items: center; gap: 6px;
-    padding: 8px 12px 10px;
-    font-size: 16px; /* 16px: iOS zoomt sonst beim Antippen */
-    text-shadow: 0 0 6px rgba(70, 255, 150, .45);
-  }
-  .term-inputbar .t-prompt { flex-shrink: 0; font-size: 13px; white-space: nowrap; max-width: 55%; overflow: hidden; text-overflow: ellipsis; }
-  #changelogTermInput {
-    flex: 1; min-width: 0; background: transparent; border: 0; outline: none;
-    font: inherit; font-size: 16px; color: #eafff3; caret-color: #3dff8c;
-    text-shadow: inherit; padding: 2px 0;
-  }
-  #changelogTermInput::placeholder { color: rgba(110,255,170,.3); }
-  .term-skip { position: relative; z-index: 5; flex-shrink: 0; text-align: right; padding: 4px 14px 0; font-size: 11px; color: rgba(164,255,203,.45); pointer-events: none; }
-
-  @media (prefers-reduced-motion: reduce) {
-    #changelogTerminal.term-on .term-window, #changelogTerminal.term-off .term-window { animation: none; }
-    .term-window::after, .t-cursor { animation: none; }
-  }
-</style>
+<link rel="stylesheet" href="css/terminal.css?v=1.98.0">
 
 <div id="changelogTerminal" class="hidden fixed inset-0" data-no-term role="dialog" aria-modal="true" aria-label="Versions-Log">
   <div class="term-window" id="changelogTermWindow">
@@ -6079,95 +5891,6 @@ const APP_VERSION = '1.97.0';
     </div>
   </div>
 </div>
-<style>
-  /* Kopfzeile: langer Familienname läuft hinter der Glocke weiter, die Glocke bleibt immer sichtbar.
-     Der Name reserviert rechts Platz (padding) für die Glocke, die mit negativem Abstand darüber liegt -
-     ist der Name kurz, sitzt die Glocke wie gewohnt direkt dahinter. */
-  .nt-head-left { flex: 1 1 auto; min-width: 0; }
-  .nt-head-left > * { flex-shrink: 0; }
-  .nt-head-left > .nt-head-title { flex-shrink: 1; min-width: 0; }
-  .nt-head-title > * { flex-shrink: 0; }
-  .nt-head-title > .nt-famname { flex-shrink: 1; min-width: 0; overflow: hidden; white-space: nowrap; padding-right: 36px; }
-  .nt-famname h1 { display: inline; }
-  /* Glocke (Hinweise) neben dem Familiennamen */
-  .nt-bell { position: relative; z-index: 1; flex-shrink: 0; width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; color: rgba(37,35,31,0.55); margin-left: -36px; background: color-mix(in srgb, var(--c-paper) 78%, transparent); box-shadow: -8px 0 10px -2px color-mix(in srgb, var(--c-paper) 70%, transparent); -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); transition: background .15s, color .15s; -webkit-tap-highlight-color: transparent; }
-  .nt-bell:hover { background: color-mix(in srgb, var(--c-paper) 70%, rgba(37,35,31,0.08)); color: rgba(37,35,31,0.85); }
-  .nt-bell.hidden { display: none; }
-  .nt-bell.has { color: var(--c-pine); }
-  .nt-bell.ring svg { animation: ntRing 1s ease 1; transform-origin: 50% 8%; }
-  @keyframes ntRing { 0%,100% { transform: rotate(0); } 15% { transform: rotate(16deg); } 30% { transform: rotate(-13deg); } 45% { transform: rotate(9deg); } 60% { transform: rotate(-6deg); } 75% { transform: rotate(3deg); } }
-  .nt-badge { position: absolute; top: 1px; right: 0; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 9px; background: #D64545; color: #fff; font-size: 10px; font-weight: 700; line-height: 17px; text-align: center; box-shadow: 0 0 0 2px #FFFBFB; font-family: system-ui, sans-serif; }
-  .nt-badge.soft { background: var(--c-pine); }
-  .nt-badge.hidden { display: none; }
-  .nt-panel { position: fixed; z-index: 290; max-height: min(72vh, 600px); overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; background: #fff; border-radius: 18px; border: 1px solid rgba(37,35,31,0.08); box-shadow: 0 18px 50px rgba(20,20,15,0.18); padding: 12px 14px 14px; animation: ntDrop .18s ease-out; }
-  .nt-panel.hidden { display: none; }
-  @keyframes ntDrop { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
-  .nt-x { width: 28px; height: 28px; border-radius: 9999px; font-size: 20px; line-height: 1; color: rgba(37,35,31,0.4); }
-  .nt-x:hover { background: rgba(37,35,31,0.05); color: rgba(37,35,31,0.8); }
-  .nt-sec { font-size: 12px; color: rgba(37,35,31,0.5); margin: 12px 2px 6px; }
-  .nt-link { font-size: 12px; color: var(--c-pine); padding: 2px 4px; }
-  .nt-card { position: relative; border: 1px solid rgba(37,35,31,0.1); border-radius: 14px; padding: 10px 12px; margin-bottom: 8px; background: #fff; }
-  .nt-card[data-ntkey] { touch-action: pan-y; }
-  .nt-card.nt-dragging { user-select: none; -webkit-user-select: none; cursor: grabbing; }
-  .nt-del { display: none; position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; border-radius: 9999px; place-items: center; font-size: 17px; line-height: 1; color: rgba(37,35,31,0.38); z-index: 1; }
-  .nt-del:hover { background: rgba(37,35,31,0.07); color: rgba(37,35,31,0.85); }
-  .nt-swipe-tip { text-align: center; font-size: 11px; color: rgba(37,35,31,0.4); margin-top: 4px; }
-  .nt-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
-  .nt-clear { font-size: 12px; font-weight: 600; color: #C0392B; padding: 5px 10px; border-radius: 9999px; background: rgba(192,57,43,0.08); transition: background .15s; }
-  .nt-clear:hover { background: rgba(192,57,43,0.15); }
-  .nt-clear:disabled { opacity: .45; }
-  .nt-card { will-change: auto; }
-  .nt-card.nt-dragging { will-change: transform; }
-  .nt-card.act { cursor: pointer; }
-  .nt-act-row { display: flex; align-items: flex-start; gap: 10px; }
-  .nt-act-ico { width: 30px; height: 30px; border-radius: 9999px; display: grid; place-items: center; font-size: 15px; flex-shrink: 0; background: rgba(37,35,31,0.06); }
-  .nt-act-main { font-size: 13px; line-height: 1.35; }
-  .nt-act-sub { font-size: 11px; line-height: 1.35; color: rgba(37,35,31,0.55); margin-top: 2px; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
-  .nt-act-time { font-size: 10.5px; color: rgba(37,35,31,0.4); margin-top: 3px; }
-  .nt-act-sub.long { -webkit-line-clamp: 6; }
-  .nt-act-bal { font-size: 11.5px; line-height: 1.35; color: var(--c-pine); margin-top: 3px; }
-  .nt-act-ico.nt-ava { overflow: hidden; border: 2px solid transparent; padding: 0; }
-  .nt-card.push { border-color: color-mix(in srgb, var(--c-pine) 22%, transparent); }
-  .nt-card.news { cursor: pointer; }
-  .nt-dot { display: inline-block; width: 7px; height: 7px; border-radius: 9999px; background: var(--c-pine); margin-right: 5px; vertical-align: 1px; }
-  .nt-fade { transition: opacity .25s ease, max-height .25s ease, margin .25s ease; overflow: hidden; }
-  @media (hover: hover) and (pointer: fine) {
-    .nt-del { display: grid; }
-    .nt-card[data-ntkey] { padding-right: 34px; }
-    .nt-swipe-tip { display: none; }
-  }
-  .nt-card.buy { border-color: color-mix(in srgb, var(--c-mustard) 45%, transparent); background: color-mix(in srgb, var(--c-mustard) 9%, #fff); }
-  .nt-logos { display: flex; flex-shrink: 0; }
-  .nt-logos > * + * { margin-left: -10px; }
-  .nt-pts { margin-top: 6px; display: flex; flex-direction: column; gap: 4px; }
-  .nt-pts li { display: flex; gap: 7px; font-size: 12px; line-height: 1.4; color: rgba(37,35,31,0.75); }
-  .nt-pts li > span:first-child { font-family: ui-monospace, monospace; color: var(--c-pine); width: 9px; flex-shrink: 0; }
-  .nt-pts li.t-fix > span:first-child { color: var(--c-mustard); }
-  .nt-empty { text-align: center; padding: 18px 10px 8px; color: rgba(37,35,31,0.7); }
-  .nt-hint { position: fixed; z-index: 285; left: 50%; transform: translateX(-50%); width: min(520px, calc(100vw - 16px)); display: flex; align-items: center; gap: 10px; padding: 10px 10px 10px 14px; border-radius: 16px; background: var(--c-pine); color: #fff; box-shadow: 0 14px 34px rgba(20,20,15,0.25); animation: ntHintIn .28s ease-out; }
-  .nt-hint.hidden { display: none; }
-  @keyframes ntHintIn { from { opacity: 0; transform: translate(-50%, -10px); } to { opacity: 1; transform: translate(-50%, 0); } }
-  .nt-hint-btn { flex-shrink: 0; padding: 6px 12px; border-radius: 10px; background: rgba(255,255,255,0.18); font-size: 13px; font-weight: 600; color: #fff; }
-  .nt-hint-btn:hover { background: rgba(255,255,255,0.28); }
-  .nt-hint-x { flex-shrink: 0; width: 28px; height: 28px; border-radius: 9999px; font-size: 20px; line-height: 1; color: rgba(255,255,255,0.75); }
-  .ntl-chosen { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--c-pine) 30%, transparent); background: color-mix(in srgb, var(--c-pine) 6%, #fff); }
-  .ntl-chosen.hidden { display: none; }
-  html.dark .nt-bell { color: rgba(255,255,255,0.6); background: rgba(36,35,32,0.8); box-shadow: -8px 0 10px -2px rgba(36,35,32,0.7); }
-  html.dark .nt-bell:hover { background: rgba(58,56,52,0.9); color: #fff; }
-  html.dark .nt-act-ico { background: rgba(255,255,255,0.08); }
-  html.dark .nt-act-sub { color: rgba(255,255,255,0.55); }
-  html.dark .nt-act-time { color: rgba(255,255,255,0.4); }
-  html.dark .nt-clear { color: #F08A7E; background: rgba(240,138,126,0.12); }
-  html.dark .nt-badge { box-shadow: 0 0 0 2px #1B1B18; }
-  html.dark .nt-panel { background: #24221F; border-color: rgba(255,255,255,0.1); }
-  html.dark .nt-card { background: #2E2C28; border-color: rgba(255,255,255,0.1); }
-  html.dark .nt-card.buy { background: color-mix(in srgb, var(--c-mustard) 14%, #2E2C28); }
-  html.dark .nt-sec, html.dark .nt-x { color: rgba(255,255,255,0.5); }
-  html.dark .nt-del { color: rgba(255,255,255,0.45); }
-  html.dark .nt-del:hover { background: rgba(255,255,255,0.08); color: #fff; }
-  html.dark .nt-swipe-tip { color: rgba(255,255,255,0.4); }
-  html.dark .nt-pts li, html.dark .nt-empty { color: rgba(255,255,255,0.75); }
-  html.dark .ntl-chosen { background: color-mix(in srgb, var(--c-pine) 14%, #2E2C28); }
-</style>
+<link rel="stylesheet" href="css/glocke.css?v=1.98.0">
 </body>
 </html>

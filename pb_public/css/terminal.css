@@ -1,0 +1,141 @@
+/* pinn. – app styles (css/terminal.css)
+   Version log shown as a terminal (Settings → System → Version log, #changelogTerminal, classes term-… and t-…).
+   Former first <style> block in the <body> of index.html (after the js/ files); linked at exactly the same place,
+   so the order of the rules is unchanged. */
+
+#changelogTerminal {
+  z-index: 600;
+  display: flex; align-items: center; justify-content: center;
+  padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
+  background: rgba(2, 6, 4, 0.72);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+#changelogTerminal.hidden { display: none; }
+.term-window {
+  position: relative;
+  width: 100%; max-width: 780px; height: 100%; max-height: 860px;
+  display: flex; flex-direction: column;
+  border-radius: 14px; overflow: hidden;
+  background: radial-gradient(ellipse at 50% 35%, #0d1f15 0%, #07110b 55%, #030805 100%);
+  border: 1px solid rgba(110, 255, 170, 0.22);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.6), 0 0 38px rgba(40, 255, 140, 0.16), 0 24px 60px rgba(0,0,0,.6);
+  font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  color: #a4ffcb;
+  transform-origin: 50% 50%;
+}
+#changelogTerminal.term-on .term-window { animation: termOn .55s cubic-bezier(.2,.8,.2,1) both; }
+#changelogTerminal.term-off .term-window { animation: termOff .32s ease-in both; }
+@keyframes termOn {
+  0%   { transform: scale(1, .004); filter: brightness(3); opacity: .2; }
+  45%  { transform: scale(1, .004); filter: brightness(3); opacity: 1; }
+  75%  { transform: scale(1, 1.02); filter: brightness(1.6); }
+  100% { transform: scale(1, 1); filter: brightness(1); }
+}
+@keyframes termOff {
+  0%   { transform: scale(1, 1); filter: brightness(1); opacity: 1; }
+  60%  { transform: scale(1, .004); filter: brightness(3); opacity: 1; }
+  100% { transform: scale(0, .004); filter: brightness(4); opacity: 0; }
+}
+/* Scanlines, vignette, slight flicker */
+.term-window::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 3;
+  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,0) 2px, rgba(0,0,0,.22) 3px, rgba(0,0,0,0) 4px);
+  mix-blend-mode: multiply;
+}
+.term-window::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 4;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0) 58%, rgba(0,0,0,.55) 100%);
+  animation: termFlicker 5s infinite steps(1);
+}
+@keyframes termFlicker { 0%,100% { opacity: 1; } 47% { opacity: .92; } 48% { opacity: 1; } 83% { opacity: .95; } 84% { opacity: 1; } }
+
+.term-titlebar {
+  position: relative; z-index: 5; flex-shrink: 0;
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px;
+  background: linear-gradient(to bottom, rgba(255,255,255,.06), rgba(255,255,255,.015));
+  border-bottom: 1px solid rgba(110,255,170,.14);
+}
+.term-dot { width: 12px; height: 12px; border-radius: 50%; border: 0; padding: 0; flex-shrink: 0; -webkit-appearance: none; appearance: none; }
+.term-dot.red { background: #ff5f57; cursor: pointer; }
+.term-dot.yellow { background: #febc2e; }
+.term-dot.green { background: #28c840; }
+.term-title { flex: 1; text-align: center; font-size: 12px; color: rgba(164,255,203,.55); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 44px; }
+.term-close-x { background: transparent; border: 0; padding: 0; -webkit-appearance: none; appearance: none; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border-radius: 8px; color: rgba(164,255,203,.6); font-size: 18px; line-height: 1; display: grid; place-items: center; }
+.term-close-x:hover { background: rgba(110,255,170,.1); color: #d9ffe9; }
+
+.term-screen {
+  position: relative; z-index: 2; flex: 1; min-height: 0;
+  overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+  padding: 14px 14px 6px;
+  font-size: 12.5px; line-height: 1.55;
+  text-shadow: 0 0 6px rgba(70, 255, 150, .45);
+  word-break: break-word;
+}
+@media (min-width: 640px) { .term-screen { font-size: 13.5px; padding: 18px 20px 8px; } }
+.term-screen::-webkit-scrollbar { width: 6px; }
+.term-screen::-webkit-scrollbar-thumb { background: rgba(110,255,170,.25); border-radius: 3px; }
+
+.t-line { white-space: pre-wrap; min-height: 1.55em; }
+.t-dim { color: #4f9a6c; }
+.t-white { color: #eafff3; }
+.t-amber { color: #ffcf6b; text-shadow: 0 0 6px rgba(255, 190, 70, .45); }
+.t-cyan { color: #7deaff; text-shadow: 0 0 6px rgba(90, 220, 255, .45); }
+.t-red { color: #ff7b7b; text-shadow: 0 0 6px rgba(255, 90, 90, .45); }
+.t-ok { color: #3dff8c; font-weight: 700; }
+.t-bold { font-weight: 700; }
+.t-prompt-user { color: #3dff8c; font-weight: 700; }
+.t-prompt-path { color: #7deaff; }
+.t-ascii { white-space: pre; line-height: 1.2; overflow-x: auto; }
+
+.t-ver { display: flex; align-items: center; gap: 8px; margin-top: 14px; }
+.t-ver:first-child { margin-top: 0; }
+.t-ver-num { color: #0a140e; background: #7dffb4; padding: 0 6px; border-radius: 3px; font-weight: 700; text-shadow: none; box-shadow: 0 0 10px rgba(80,255,160,.5); }
+.t-ver-num.retro { background: #4f9a6c; box-shadow: none; }
+.t-ver-rule { flex: 1; border-bottom: 1px dashed rgba(110,255,170,.3); height: 0; }
+.t-ver-date { color: #4f9a6c; font-size: .92em; }
+.t-ver-title { color: #eafff3; font-weight: 700; margin: 3px 0 2px; }
+.t-item { display: flex; gap: 8px; padding-left: 2px; }
+.t-sym { flex-shrink: 0; width: 1ch; font-weight: 700; }
+.t-sym.neu { color: #3dff8c; }
+.t-sym.fix { color: #ffcf6b; }
+.t-sym.info { color: #7deaff; }
+
+.t-bar { display: inline-block; letter-spacing: -1px; }
+.t-cursor { display: inline-block; width: .6em; height: 1.1em; vertical-align: -.2em; background: #a4ffcb; box-shadow: 0 0 8px rgba(80,255,160,.8); animation: termBlink 1s steps(1) infinite; }
+@keyframes termBlink { 50% { opacity: 0; } }
+
+.term-chips {
+  position: relative; z-index: 5; flex-shrink: 0;
+  display: flex; gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  padding: 8px 12px 0;
+  scrollbar-width: none;
+}
+.term-chips::-webkit-scrollbar { display: none; }
+.term-chip {
+  flex-shrink: 0; font: inherit; font-size: 12px; color: #a4ffcb;
+  border: 1px solid rgba(110,255,170,.3); border-radius: 6px; padding: 4px 9px;
+  background: rgba(110,255,170,.05);
+}
+.term-chip:active, .term-chip:hover { background: rgba(110,255,170,.16); color: #eafff3; }
+
+.term-inputbar {
+  position: relative; z-index: 5; flex-shrink: 0;
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 12px 10px;
+  font-size: 16px; /* 16px: otherwise iOS zooms in on tap */
+  text-shadow: 0 0 6px rgba(70, 255, 150, .45);
+}
+.term-inputbar .t-prompt { flex-shrink: 0; font-size: 13px; white-space: nowrap; max-width: 55%; overflow: hidden; text-overflow: ellipsis; }
+#changelogTermInput {
+  flex: 1; min-width: 0; background: transparent; border: 0; outline: none;
+  font: inherit; font-size: 16px; color: #eafff3; caret-color: #3dff8c;
+  text-shadow: inherit; padding: 2px 0;
+}
+#changelogTermInput::placeholder { color: rgba(110,255,170,.3); }
+.term-skip { position: relative; z-index: 5; flex-shrink: 0; text-align: right; padding: 4px 14px 0; font-size: 11px; color: rgba(164,255,203,.45); pointer-events: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  #changelogTerminal.term-on .term-window, #changelogTerminal.term-off .term-window { animation: none; }
+  .term-window::after, .t-cursor { animation: none; }
+}
