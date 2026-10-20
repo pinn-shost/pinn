@@ -30,7 +30,7 @@
        pb_public/vendor/tesseract/tesseract.min.js + worker.min.js, core/ (tesseract-core*.wasm.js),
          lang/deu.traineddata.gz (Texterkennung für "Foto einlesen" bei Rezepten, erst bei Bedarf geladen) -->
 <link rel="stylesheet" href="vendor/pinn.css">
-<link rel="stylesheet" href="css/ergaenzung.css?v=1.98.0">
+<link rel="stylesheet" href="css/ergaenzung.css?v=1.99.0">
 <!-- ==========================================================
      Energiesparen (ab 0.99)
      - Wiederkehrende Abfragen (setInterval ab 1 Sekunde) laufen nur, solange pinn. sichtbar ist;
@@ -40,83 +40,8 @@
        Jede Berührung, Maus-/Tastatureingabe weckt pinn. sofort und holt alles nach.
      - Kurze Zähler (< 1 s, z. B. SOS-Countdown) bleiben unverändert.
      ========================================================== -->
-<link rel="stylesheet" href="css/energiesparen.css?v=1.98.0">
-<script>
-(function () {
-  var IDLE_MS = 3 * 60 * 1000;      // ohne Bedienung -> Ruhemodus
-  var BLUR_IDLE_MS = 60 * 1000;     // anderes Fenster vorne (Mac/PC) -> Ruhemodus
-  var SLOW_MS = 5 * 60 * 1000;      // im Ruhemodus: Abfragen höchstens so oft
-  var nativeSI = window.setInterval, nativeCI = window.clearInterval;
-  var entries = {};
-  var lastInput = Date.now();
-  var focused = true;
-  var blurAt = 0;
-  var ruhe = false;
-
-  function hidden() { return document.visibilityState === 'hidden'; }
-  function run(e) {
-    e.missed = false;
-    e.lastRun = Date.now();
-    try { e.fn.apply(window, e.args); } catch (err) { console.error(err); }
-  }
-  window.setInterval = function (fn, delay) {
-    var d = Number(delay) || 0;
-    if (typeof fn !== 'function' || d < 1000) return nativeSI.apply(window, arguments);
-    var e = { fn: fn, args: Array.prototype.slice.call(arguments, 2), delay: d, missed: false, lastRun: Date.now() };
-    var id = nativeSI.call(window, function () {
-      if (hidden()) { e.missed = true; return; }
-      if (ruhe && d >= 60000 && Date.now() - e.lastRun < SLOW_MS) { e.missed = true; return; }
-      run(e);
-    }, d);
-    entries[id] = e;
-    return id;
-  };
-  window.clearInterval = function (id) {
-    if (id != null) delete entries[id];
-    return nativeCI.call(window, id);
-  };
-
-  function catchUp() {
-    var list = [];
-    for (var k in entries) if (entries[k].missed) list.push(entries[k]);
-    list.forEach(function (e, i) {
-      setTimeout(function () { if (e.missed && !hidden()) run(e); }, 250 + i * 200);
-    });
-  }
-  function setRuhe(on) {
-    if (on === ruhe) return;
-    ruhe = on;
-    document.documentElement.classList.toggle('pinn-ruhe', on);
-    if (!on) {
-      catchUp();
-      try { window.dispatchEvent(new Event('pinn-wach')); } catch (e) { /* alter Browser */ }
-    }
-  }
-  function check() {
-    if (hidden()) return;
-    var now = Date.now();
-    setRuhe(now - lastInput > IDLE_MS || (!focused && now - blurAt > BLUR_IDLE_MS));
-  }
-  function input() {
-    lastInput = Date.now();
-    if (ruhe) { focused = true; setRuhe(false); }
-  }
-  ['pointerdown', 'pointermove', 'keydown', 'wheel', 'touchstart'].forEach(function (t) {
-    window.addEventListener(t, input, { passive: true, capture: true });
-  });
-  window.addEventListener('focus', function () { focused = true; input(); });
-  window.addEventListener('blur', function () { focused = false; blurAt = Date.now(); });
-  document.addEventListener('visibilitychange', function () {
-    if (hidden()) return;
-    lastInput = Date.now();
-    if (ruhe) setRuhe(false); else catchUp();
-  });
-  nativeSI.call(window, check, 20 * 1000);
-
-  // Für andere Teile von pinn.: läuft gerade der Ruhemodus?
-  window.pinnRuhe = function () { return ruhe; };
-})();
-</script>
+<link rel="stylesheet" href="css/energiesparen.css?v=1.99.0">
+<script src="js/ruhemodus.js?v=1.99.0"></script>
 <script>
 /* ==========================================================
    Sprachen (i18n)
@@ -525,316 +450,7 @@ window.PINN_LANGUAGES = [
   else start({}); // Deutsch als WG: kein Wörterbuch, nur die WG-Bezeichnungen
 })();
 </script>
-<script>
-/* ==========================================================
-   Region: Land, Währung, Zahlenformat, Notrufnummern
-   ----------------------------------------------------------
-   Gilt pro Profil (Einstellungen → Sprache & Region) und wird zusätzlich auf dem Gerät gemerkt, damit
-   pinn. schon beim Start richtig formatiert. pinn. rechnet intern immer mit Punkt als Dezimaltrenner;
-   nur Anzeige und Eingabe richten sich nach dem gewählten Format.
-   - Beträge: Intl.NumberFormat mit deutschem Format (z. B. „de-DE“ + EUR) wird automatisch auf Land,
-     Währung und Zahlenformat umgestellt – Symbol davor oder dahinter, wie im Land üblich.
-   - Eingaben: PINN_REGION.parse() versteht Komma und Punkt („1.234,56“, „1,234.56“, „12.99“, „5.000“).
-   - Notrufnummern je Land: Notfallpass, SOS-Popup und „Ich bin unterwegs“.
-   Neues Land: eine Zeile in COUNTRIES (Code, Zahlen-Locale, Währung, Polizei, Rettung, Feuerwehr,
-   allgemeiner Notruf oder '').
-   ========================================================== */
-(function () {
-  var KEY = 'pinn.region';
-  var COUNTRIES = [
-    ['DE', 'de-DE', 'EUR', '110', '112', '112', '112'],
-    ['AT', 'de-AT', 'EUR', '133', '144', '122', '112'],
-    ['CH', 'de-CH', 'CHF', '117', '144', '118', '112'],
-    ['LI', 'de-LI', 'CHF', '117', '144', '118', '112'],
-    ['LU', 'fr-LU', 'EUR', '113', '112', '112', '112'],
-    ['BE', 'nl-BE', 'EUR', '101', '112', '112', '112'],
-    ['NL', 'nl-NL', 'EUR', '112', '112', '112', '112'],
-    ['FR', 'fr-FR', 'EUR', '17', '15', '18', '112'],
-    ['MC', 'fr-MC', 'EUR', '17', '18', '18', '112'],
-    ['ES', 'es-ES', 'EUR', '091', '112', '112', '112'],
-    ['AD', 'ca-AD', 'EUR', '110', '118', '118', '112'],
-    ['PT', 'pt-PT', 'EUR', '112', '112', '112', '112'],
-    ['IT', 'it-IT', 'EUR', '113', '118', '115', '112'],
-    ['MT', 'en-MT', 'EUR', '112', '112', '112', '112'],
-    ['GB', 'en-GB', 'GBP', '999', '999', '999', '999'],
-    ['IE', 'en-IE', 'EUR', '112', '112', '112', '112'],
-    ['DK', 'da-DK', 'DKK', '112', '112', '112', '112'],
-    ['NO', 'nb-NO', 'NOK', '112', '113', '110', ''],
-    ['SE', 'sv-SE', 'SEK', '112', '112', '112', '112'],
-    ['FI', 'fi-FI', 'EUR', '112', '112', '112', '112'],
-    ['IS', 'is-IS', 'ISK', '112', '112', '112', '112'],
-    ['PL', 'pl-PL', 'PLN', '997', '999', '998', '112'],
-    ['CZ', 'cs-CZ', 'CZK', '158', '155', '150', '112'],
-    ['SK', 'sk-SK', 'EUR', '158', '155', '150', '112'],
-    ['HU', 'hu-HU', 'HUF', '107', '104', '105', '112'],
-    ['SI', 'sl-SI', 'EUR', '113', '112', '112', '112'],
-    ['HR', 'hr-HR', 'EUR', '192', '194', '193', '112'],
-    ['RS', 'sr-Latn-RS', 'RSD', '192', '194', '193', ''],
-    ['BA', 'bs-BA', 'BAM', '122', '124', '123', ''],
-    ['RO', 'ro-RO', 'RON', '112', '112', '112', '112'],
-    ['BG', 'bg-BG', 'EUR', '112', '112', '112', '112'],
-    ['GR', 'el-GR', 'EUR', '100', '166', '199', '112'],
-    ['CY', 'el-CY', 'EUR', '112', '112', '112', '112'],
-    ['TR', 'tr-TR', 'TRY', '112', '112', '112', '112'],
-    ['EE', 'et-EE', 'EUR', '112', '112', '112', '112'],
-    ['LV', 'lv-LV', 'EUR', '110', '113', '112', '112'],
-    ['LT', 'lt-LT', 'EUR', '112', '112', '112', '112'],
-    ['UA', 'uk-UA', 'UAH', '102', '103', '101', '112'],
-    ['US', 'en-US', 'USD', '911', '911', '911', '911'],
-    ['CA', 'en-CA', 'CAD', '911', '911', '911', '911'],
-    ['MX', 'es-MX', 'MXN', '911', '911', '911', '911'],
-    ['BR', 'pt-BR', 'BRL', '190', '192', '193', ''],
-    ['AR', 'es-AR', 'ARS', '911', '107', '100', ''],
-    ['CL', 'es-CL', 'CLP', '133', '131', '132', ''],
-    ['CO', 'es-CO', 'COP', '123', '123', '123', '123'],
-    ['PE', 'es-PE', 'PEN', '105', '106', '116', ''],
-    ['AU', 'en-AU', 'AUD', '000', '000', '000', '000'],
-    ['NZ', 'en-NZ', 'NZD', '111', '111', '111', '111'],
-    ['ZA', 'en-ZA', 'ZAR', '10111', '10177', '10177', '112'],
-    ['IL', 'he-IL', 'ILS', '100', '101', '102', ''],
-    ['AE', 'en-AE', 'AED', '999', '998', '997', ''],
-    ['SA', 'en-SA', 'SAR', '999', '997', '998', ''],
-    ['EG', 'en-EG', 'EGP', '122', '123', '180', ''],
-    ['MA', 'fr-MA', 'MAD', '19', '15', '15', ''],
-    ['IN', 'en-IN', 'INR', '112', '108', '101', '112'],
-    ['CN', 'zh-CN', 'CNY', '110', '120', '119', ''],
-    ['JP', 'ja-JP', 'JPY', '110', '119', '119', ''],
-    ['KR', 'ko-KR', 'KRW', '112', '119', '119', ''],
-    ['TW', 'zh-TW', 'TWD', '110', '119', '119', ''],
-    ['HK', 'en-HK', 'HKD', '999', '999', '999', '999'],
-    ['SG', 'en-SG', 'SGD', '999', '995', '995', ''],
-    ['TH', 'th-TH', 'THB', '191', '1669', '199', ''],
-    ['PH', 'en-PH', 'PHP', '911', '911', '911', '911'],
-    ['ID', 'id-ID', 'IDR', '110', '118', '113', '112'],
-    ['MY', 'ms-MY', 'MYR', '999', '999', '994', '999'],
-    ['VN', 'vi-VN', 'VND', '113', '115', '114', ''],
-  ];
-  // Zusätzlich wählbare Währungen (alle Landeswährungen oben sind ohnehin dabei)
-  var EXTRA_CURRENCIES = ['RUB'];
-  // Zahlenformat: Tausender- und Dezimaltrenner (auto = wie im gewählten Land üblich)
-  var FORMATS = {
-    de: { group: '.', decimal: ',', sample: '1.234,56' },
-    en: { group: ',', decimal: '.', sample: '1,234.56' },
-    fr: { group: '\u202f', decimal: ',', sample: '1 234,56' },
-    ch: { group: '\u2019', decimal: '.', sample: '1\u2019234.56' },
-    sp: { group: ' ', decimal: '.', sample: '1 234.56' },
-  };
-  var NF = Intl.NumberFormat.__pinnOrig || Intl.NumberFormat;   // Original (falls schon umgestellt)
-
-  function findCountry(c) { for (var i = 0; i < COUNTRIES.length; i++) if (COUNTRIES[i][0] === c) return COUNTRIES[i]; return null; }
-  var CURRENCIES = (function () {
-    var seen = {}, out = [];
-    COUNTRIES.concat(EXTRA_CURRENCIES.map(function (x) { return [null, null, x]; })).forEach(function (r) { if (!seen[r[2]]) { seen[r[2]] = 1; out.push(r[2]); } });
-    return out.sort();
-  })();
-  function readStored() {
-    try { var o = JSON.parse(localStorage.getItem(KEY) || '{}'); return o && typeof o === 'object' ? o : {}; } catch (e) { return {}; }
-  }
-  // Land des Geräts: „de-AT“ → AT; nur Sprache („de“) → typisches Land dieser Sprache; sonst Deutschland
-  function deviceCountry() {
-    var list = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || ''];
-    for (var i = 0; i < list.length; i++) {
-      var m = /^[a-z]{2,3}[-_]([A-Za-z]{2})\b/.exec(String(list[i] || ''));
-      if (m && findCountry(m[1].toUpperCase())) return m[1].toUpperCase();
-    }
-    var byLang = { de: 'DE', fr: 'FR', es: 'ES', it: 'IT', nl: 'NL', pt: 'PT', pl: 'PL', da: 'DK', sv: 'SE', nb: 'NO', fi: 'FI', cs: 'CZ', hu: 'HU', el: 'GR', tr: 'TR', ja: 'JP', zh: 'CN', ko: 'KR' };
-    for (var j = 0; j < list.length; j++) { var l = String(list[j] || '').slice(0, 2).toLowerCase(); if (byLang[l]) return byLang[l]; }
-    return 'DE';
-  }
-  function cleanSettings(o) {
-    o = o || {};
-    var land = findCountry(String(o.land || '').toUpperCase()) ? String(o.land).toUpperCase() : '';
-    var w = String(o.waehrung || '').toUpperCase();
-    var waehrung = CURRENCIES.indexOf(w) >= 0 ? w : 'auto';
-    var zahlen = FORMATS[o.zahlen] ? o.zahlen : 'auto';
-    return { land: land, waehrung: waehrung, zahlen: zahlen };
-  }
-
-  // Vollständige Einstellungen eines Landes/Formats berechnen (ohne die umgestellten Formatierer)
-  function partsOf(nf, v) { try { return nf.formatToParts(v); } catch (e) { return []; } }
-  function localeOf(row) {
-    var loc = row[1] + '-u-nu-latn';
-    try { new NF(loc); } catch (e) { loc = row[1]; }
-    return loc;
-  }
-  function currencyNF(loc, cur) {
-    try { return new NF(loc, { style: 'currency', currency: cur, currencyDisplay: 'narrowSymbol' }); }
-    catch (e) { return new NF(loc, { style: 'currency', currency: cur }); }
-  }
-  function compute(set) {
-    var row = findCountry(set.land) || findCountry(deviceCountry()) || COUNTRIES[0];
-    var loc = localeOf(row);
-    var cur = set.waehrung !== 'auto' ? set.waehrung : row[2];
-    var g = '.', d = ',';
-    partsOf(new NF(loc, { minimumFractionDigits: 2, useGrouping: true }), 1234567.5).forEach(function (p) {
-      if (p.type === 'group') g = p.value;
-      if (p.type === 'decimal') d = p.value;
-    });
-    var over = FORMATS[set.zahlen] || null;
-    if (over) { g = over.group; d = over.decimal; }
-    if (d !== ',' && d !== '.') d = '.';
-    var mnf = currencyNF(loc, cur);
-    var nk = 2;
-    try { nk = mnf.resolvedOptions().maximumFractionDigits; } catch (e) { nk = 2; }
-    var sym = cur, vorne = false, sawNum = false;
-    partsOf(mnf, 1).forEach(function (p) {
-      if (p.type === 'integer') sawNum = true;
-      if (p.type === 'currency') { sym = p.value; vorne = !sawNum; }
-    });
-    return {
-      row: row, locale: loc, currency: cur, group: g, decimal: d, override: over, digits: nk, symbol: sym, before: vorne,
-      notruf: { polizei: row[3], rettung: row[4], feuer: row[5], allgemein: row[6] || '' },
-    };
-  }
-  function sameSet(a, b) { return a.land === b.land && a.waehrung === b.waehrung && a.zahlen === b.zahlen; }
-
-  var stored = cleanSettings(readStored());
-  var C = compute(stored);
-  if (!stored.land) stored.land = C.row[0];
-
-  function relabel(nf) {
-    if (!C.override) return nf;
-    var fp = nf.formatToParts.bind(nf);
-    try {
-      Object.defineProperty(nf, 'format', {
-        configurable: true,
-        value: function (v) { return fp(v).map(function (p) { return p.type === 'decimal' ? C.decimal : p.type === 'group' ? C.group : p.value; }).join(''); },
-      });
-    } catch (e) { /* bleibt beim Landesformat */ }
-    return nf;
-  }
-  function isDe(l) {
-    if (typeof l === 'string') return /^de(-|$)/i.test(l);
-    return Array.isArray(l) && typeof l[0] === 'string' && /^de(-|$)/i.test(l[0]);
-  }
-  // Formatierer im Landes- bzw. gewählten Format; EUR wird zur gewählten Währung
-  function makeNF(o) {
-    var opt = o ? Object.assign({}, o) : {};
-    if (opt.currency && String(opt.currency).toUpperCase() === 'EUR') opt.currency = C.currency;
-    if (opt.style === 'currency' && !opt.currencyDisplay) {
-      try { return relabel(new NF(C.locale, Object.assign({}, opt, { currencyDisplay: 'narrowSymbol' }))); } catch (e) { /* alter Browser */ }
-    }
-    return relabel(new NF(C.locale, opt));
-  }
-  function PinnNumberFormat(l, o) {
-    if (isDe(l)) { try { return makeNF(o); } catch (e) { /* unten normal */ } }
-    return new NF(l, o);
-  }
-  PinnNumberFormat.prototype = NF.prototype;
-  PinnNumberFormat.supportedLocalesOf = NF.supportedLocalesOf;
-  PinnNumberFormat.__pinnOrig = NF;
-  try { Intl.NumberFormat = PinnNumberFormat; } catch (e) { /* nicht überschreibbar */ }
-  var numTL = Number.prototype.toLocaleString.__pinnOrig || Number.prototype.toLocaleString;
-  Number.prototype.toLocaleString = function (l, o) {
-    if (isDe(l)) { try { return makeNF(o).format(Number(this)); } catch (e) { /* unten normal */ } }
-    return numTL.call(this, l, o);
-  };
-  Number.prototype.toLocaleString.__pinnOrig = numTL;
-
-  function inputNum(v, dec) {
-    if (v === '' || v == null || !isFinite(Number(v))) return '';
-    var x = Number(v);
-    var s = dec == null ? String(Math.round(x * 1000) / 1000) : x.toFixed(dec);
-    return s.replace('.', C.decimal);
-  }
-  // Zahl aus einer Eingabe: Komma oder Punkt, Tausendertrenner, Währungszeichen und Leerzeichen erlaubt
-  function parse(str) {
-    var s = String(str == null ? '' : str).replace(/[\u2212\u2013\u2014]/g, '-');
-    s = s.replace(/[\s\u00a0\u202f'\u2019\u00b4`]/g, '').replace(/[^\d.,\-]/g, '');
-    if (!s || !/\d/.test(s)) return NaN;
-    var neg = s.indexOf('-') >= 0;
-    s = s.replace(/-/g, '');
-    var lc = s.lastIndexOf(','), ld = s.lastIndexOf('.');
-    if (lc >= 0 && ld >= 0) {
-      var dec = lc > ld ? ',' : '.';
-      s = s.split(dec === ',' ? '.' : ',').join('').replace(dec, '.');
-      if (s.split('.').length > 2) return NaN;
-    } else if (lc >= 0 || ld >= 0) {
-      var sep = lc >= 0 ? ',' : '.';
-      var cnt = s.split(sep).length - 1;
-      if (cnt > 1) s = s.split(sep).join('');
-      else if (sep !== C.decimal && /^\d{1,3}[.,]\d{3}$/.test(s)) s = s.replace(sep, ''); // „5.000“ bzw. „5,000“ = Tausender
-      else s = s.replace(sep, '.');
-    }
-    var v = Number(s);
-    if (!isFinite(v)) return NaN;
-    return neg ? -v : v;
-  }
-  function nameOf(type, code) {
-    var loc = (window.PINN_I18N && PINN_I18N.language && PINN_I18N.language.locale) || 'en-GB';
-    try { return new Intl.DisplayNames([loc], { type: type }).of(code) || code; } catch (e) { return code; }
-  }
-  function flag(code) {
-    try { return String.fromCodePoint(0x1F1E6 + code.charCodeAt(0) - 65, 0x1F1E6 + code.charCodeAt(1) - 65); } catch (e) { return ''; }
-  }
-  function werteOf(set) {
-    var x = compute(set);
-    return {
-      land: x.row[0], waehrung: set.waehrung, zahlen: set.zahlen,
-      geldSym: x.symbol, geldVorne: x.before, geldDez: x.decimal, geldTsd: x.group, geldNk: x.digits,
-      notrufPolizei: x.notruf.polizei, notrufRettung: x.notruf.rettung, notrufFeuer: x.notruf.feuer,
-    };
-  }
-
-  window.PINN_REGION = {
-    COUNTRIES: COUNTRIES, CURRENCIES: CURRENCIES, FORMATS: FORMATS,
-    land: C.row[0], currency: C.currency, locale: C.locale,
-    decimal: C.decimal, group: C.group, symbol: C.symbol, symbolBefore: C.before, digits: C.digits,
-    notruf: C.notruf,
-    // Auf diesem Gerät gespeicherte Auswahl (land, waehrung = Code oder 'auto', zahlen = Format oder 'auto')
-    stored: function () { var s = cleanSettings(readStored()); if (!s.land) s.land = C.row[0]; return s; },
-    // Auswahl merken. true = weicht von der gerade angezeigten ab (pinn. muss neu laden)
-    save: function (o) {
-      var next = cleanSettings(o);
-      if (!next.land) next.land = C.row[0];
-      try { localStorage.setItem(KEY, JSON.stringify(next)); } catch (e) { /* privat/voll */ }
-      return !sameSet(next, stored);
-    },
-    // Neu laden, damit die neue Auswahl überall gilt (höchstens einmal je Auswahl – keine Schleife)
-    reload: function () {
-      var want = JSON.stringify(cleanSettings(readStored()));
-      try {
-        if (sessionStorage.getItem('pinn.region.reload') === want) return false;
-        sessionStorage.setItem('pinn.region.reload', want);
-      } catch (e) { return false; }
-      location.reload();
-      return true;
-    },
-    // Werte fürs Profil (der Server nutzt sie für Beträge in Push-Nachrichten und die Notrufnummern)
-    werte: function (set) { return werteOf(cleanSettings(set || readStored())); },
-    preview: function (set) {
-      var x = compute(cleanSettings(set));
-      var mnf = currencyNF(x.locale, x.currency);
-      var money = partsOf(mnf, 1234.56).map(function (p) { return p.type === 'decimal' ? x.decimal : p.type === 'group' ? x.group : p.value; }).join('');
-      return { money: money, notruf: x.notruf, currency: x.currency, row: x.row };
-    },
-    numSample: function (land) {
-      var row = findCountry(land) || C.row;
-      return partsOf(new NF(localeOf(row), { minimumFractionDigits: 2, useGrouping: true }), 1234.56).map(function (p) { return p.value; }).join('');
-    },
-    country: findCountry, flag: flag,
-    countryName: function (c) { return nameOf('region', c); },
-    currencyName: function (c) { return nameOf('currency', c); },
-    // Anzeige
-    money: function (v, dec) {
-      var o = { style: 'currency', currency: C.currency };
-      if (dec != null) { o.minimumFractionDigits = Math.min(dec, C.digits); o.maximumFractionDigits = Math.min(dec, C.digits); }
-      return makeNF(o).format(Number(v) || 0);
-    },
-    num: function (v, minD, maxD) {
-      return makeNF({ minimumFractionDigits: minD || 0, maximumFractionDigits: maxD == null ? (minD || 0) : maxD }).format(Number(v) || 0);
-    },
-    // Zahl für ein Eingabefeld (ohne Tausendertrenner)
-    input: inputNum,
-    parse: parse,
-    zero: function () { return C.digits ? '0' + C.decimal + new Array(C.digits + 1).join('0') : '0'; },
-    // Dezimalpunkt einer fertigen Zahl („1.5“) im gewählten Format („1,5“)
-    dec: function (s) { return String(s).replace('.', C.decimal); },
-  };
-  document.documentElement.classList.toggle('cur-before', C.before);
-  try { if (sessionStorage.getItem('pinn.region.reload') === JSON.stringify(cleanSettings(readStored()))) sessionStorage.removeItem('pinn.region.reload'); } catch (e) { /* egal */ }
-})();
-</script>
+<script src="js/region.js?v=1.99.0"></script>
 <script src="vendor/pocketbase/pocketbase.umd.js"></script>
 <!-- Falls die Datei auf dem NAS woanders liegt oder anders heißt: weitere Orte probieren -->
 <script>if (!window.PocketBase) document.write('<script src="vendor/pocketbase.umd.js"><\/script>');</script>
@@ -847,7 +463,7 @@ window.PINN_LANGUAGES = [
   // Startprüfung: fehlt eine selbst gehostete Datei, erscheint ein klarer Hinweis statt einer
   // leeren Seite ohne funktionierende Buttons.
   // Teile der App unter pb_public/js/ – jede Datei meldet sich am Ende in window.PINN_PARTS an
-  var PINN_APP_PARTS = ['grundlagen', 'popups', 'verbindung', 'benutzer', 'mitteilungen', 'serverzugriff', 'tastatur', 'anmeldemaske', 'dashboard', 'dashboardhintergrund', 'profilauswahl', 'pineingabe', 'dashboardsitzung', 'dashboardkonto', 'familienverwalten', 'einrichten', 'exportieren', 'hauptadminseite', 'anmeldung', 'konto', 'profilverwaltung', 'zustand', 'bedienzustand', 'rezeptbilder', 'zusammenfuehren', 'speichern', 'design', 'sprache', 'uebersicht', 'familienkachel', 'wobistdu', 'geburtstagsfeier', 'wetterkachel', 'geburtstage', 'uebersichteinstellungen', 'familiensync', 'kalenderquellen', 'icsparser', 'zeitleiste', 'termindetails', 'kalenderdatei', 'wetter', 'wohnort', 'feiertage', 'muellkalender', 'mitglieder', 'profilbild', 'mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
+  var PINN_APP_PARTS = ['ruhemodus', 'region', 'grundlagen', 'popups', 'verbindung', 'benutzer', 'mitteilungen', 'serverzugriff', 'tastatur', 'anmeldemaske', 'dashboard', 'dashboardhintergrund', 'profilauswahl', 'pineingabe', 'dashboardsitzung', 'dashboardkonto', 'familienverwalten', 'einrichten', 'exportieren', 'hauptadminseite', 'anmeldung', 'konto', 'profilverwaltung', 'zustand', 'bedienzustand', 'rezeptbilder', 'zusammenfuehren', 'speichern', 'design', 'sprache', 'uebersicht', 'familienkachel', 'wobistdu', 'geburtstagsfeier', 'wetterkachel', 'geburtstage', 'uebersichteinstellungen', 'familiensync', 'kalenderquellen', 'icsparser', 'zeitleiste', 'termindetails', 'kalenderdatei', 'wetter', 'wohnort', 'feiertage', 'muellkalender', 'mitglieder', 'profilbild', 'mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
   // Gestaltung der App unter pb_public/css/ (ab 1.96) – jede Datei steht als <link> an der Stelle des früheren
   // <style>-Blocks: fast alle im Kopf der index.html, terminal und glocke (ab 1.98) am Ende der Seite
   var PINN_APP_STYLES = ['ergaenzung', 'energiesparen', 'basis', 'mobil', 'einstellungen', 'seitenleiste', 'finanzen', 'listen', 'vertraege', 'fahrzeuge', 'notfall', 'hinweise', 'familie', 'dokumente', 'sparen', 'kinderaufgaben', 'dashboard', 'uebersicht', 'wohnort', 'familienkachel', 'pinnwand', 'haustierewetter', 'terminal', 'glocke'];
@@ -929,26 +545,26 @@ window.PINN_LANGUAGES = [
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/basis.css?v=1.98.0">
-<link rel="stylesheet" href="css/mobil.css?v=1.98.0">
-<link rel="stylesheet" href="css/einstellungen.css?v=1.98.0">
-<link rel="stylesheet" href="css/seitenleiste.css?v=1.98.0">
-<link rel="stylesheet" href="css/finanzen.css?v=1.98.0">
-<link rel="stylesheet" href="css/listen.css?v=1.98.0">
-<link rel="stylesheet" href="css/vertraege.css?v=1.98.0">
-<link rel="stylesheet" href="css/fahrzeuge.css?v=1.98.0">
-<link rel="stylesheet" href="css/notfall.css?v=1.98.0">
-<link rel="stylesheet" href="css/hinweise.css?v=1.98.0">
-<link rel="stylesheet" href="css/familie.css?v=1.98.0">
-<link rel="stylesheet" href="css/dokumente.css?v=1.98.0">
-<link rel="stylesheet" href="css/sparen.css?v=1.98.0">
-<link rel="stylesheet" href="css/kinderaufgaben.css?v=1.98.0">
-<link rel="stylesheet" href="css/dashboard.css?v=1.98.0">
-<link rel="stylesheet" href="css/uebersicht.css?v=1.98.0">
-<link rel="stylesheet" href="css/wohnort.css?v=1.98.0">
-<link rel="stylesheet" href="css/familienkachel.css?v=1.98.0">
-<link rel="stylesheet" href="css/pinnwand.css?v=1.98.0">
-<link rel="stylesheet" href="css/haustierewetter.css?v=1.98.0">
+<link rel="stylesheet" href="css/basis.css?v=1.99.0">
+<link rel="stylesheet" href="css/mobil.css?v=1.99.0">
+<link rel="stylesheet" href="css/einstellungen.css?v=1.99.0">
+<link rel="stylesheet" href="css/seitenleiste.css?v=1.99.0">
+<link rel="stylesheet" href="css/finanzen.css?v=1.99.0">
+<link rel="stylesheet" href="css/listen.css?v=1.99.0">
+<link rel="stylesheet" href="css/vertraege.css?v=1.99.0">
+<link rel="stylesheet" href="css/fahrzeuge.css?v=1.99.0">
+<link rel="stylesheet" href="css/notfall.css?v=1.99.0">
+<link rel="stylesheet" href="css/hinweise.css?v=1.99.0">
+<link rel="stylesheet" href="css/familie.css?v=1.99.0">
+<link rel="stylesheet" href="css/dokumente.css?v=1.99.0">
+<link rel="stylesheet" href="css/sparen.css?v=1.99.0">
+<link rel="stylesheet" href="css/kinderaufgaben.css?v=1.99.0">
+<link rel="stylesheet" href="css/dashboard.css?v=1.99.0">
+<link rel="stylesheet" href="css/uebersicht.css?v=1.99.0">
+<link rel="stylesheet" href="css/wohnort.css?v=1.99.0">
+<link rel="stylesheet" href="css/familienkachel.css?v=1.99.0">
+<link rel="stylesheet" href="css/pinnwand.css?v=1.99.0">
+<link rel="stylesheet" href="css/haustierewetter.css?v=1.99.0">
 </head>
 <body class="font-sans text-ink antialiased">
 
@@ -5633,7 +5249,7 @@ let lastIcsSync = null;
    da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
    ========================================================== */
 // Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.98.0';
+const APP_VERSION = '1.99.0';
 
 /* ==========================================================
    Einstellungen & Konto: zwei gleich hohe Spalten (Querformat ab Tablet-Breite)
@@ -5761,109 +5377,109 @@ const APP_VERSION = '1.98.0';
 <!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
      ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
      Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/grundlagen.js?v=1.98.0"></script>
-<script src="js/popups.js?v=1.98.0"></script>
-<script src="js/verbindung.js?v=1.98.0"></script>
-<script src="js/benutzer.js?v=1.98.0"></script>
-<script src="js/mitteilungen.js?v=1.98.0"></script>
-<script src="js/serverzugriff.js?v=1.98.0"></script>
-<script src="js/tastatur.js?v=1.98.0"></script>
-<script src="js/anmeldemaske.js?v=1.98.0"></script>
-<script src="js/dashboard.js?v=1.98.0"></script>
-<script src="js/dashboardhintergrund.js?v=1.98.0"></script>
-<script src="js/profilauswahl.js?v=1.98.0"></script>
-<script src="js/pineingabe.js?v=1.98.0"></script>
-<script src="js/dashboardsitzung.js?v=1.98.0"></script>
-<script src="js/dashboardkonto.js?v=1.98.0"></script>
-<script src="js/familienverwalten.js?v=1.98.0"></script>
-<script src="js/einrichten.js?v=1.98.0"></script>
-<script src="js/exportieren.js?v=1.98.0"></script>
-<script src="js/hauptadminseite.js?v=1.98.0"></script>
-<script src="js/anmeldung.js?v=1.98.0"></script>
-<script src="js/konto.js?v=1.98.0"></script>
-<script src="js/profilverwaltung.js?v=1.98.0"></script>
-<script src="js/zustand.js?v=1.98.0"></script>
-<script src="js/bedienzustand.js?v=1.98.0"></script>
-<script src="js/rezeptbilder.js?v=1.98.0"></script>
-<script src="js/zusammenfuehren.js?v=1.98.0"></script>
-<script src="js/speichern.js?v=1.98.0"></script>
-<script src="js/design.js?v=1.98.0"></script>
-<script src="js/sprache.js?v=1.98.0"></script>
-<script src="js/uebersicht.js?v=1.98.0"></script>
-<script src="js/familienkachel.js?v=1.98.0"></script>
-<script src="js/wobistdu.js?v=1.98.0"></script>
-<script src="js/geburtstagsfeier.js?v=1.98.0"></script>
-<script src="js/wetterkachel.js?v=1.98.0"></script>
-<script src="js/geburtstage.js?v=1.98.0"></script>
-<script src="js/uebersichteinstellungen.js?v=1.98.0"></script>
-<script src="js/familiensync.js?v=1.98.0"></script>
-<script src="js/kalenderquellen.js?v=1.98.0"></script>
-<script src="js/icsparser.js?v=1.98.0"></script>
-<script src="js/zeitleiste.js?v=1.98.0"></script>
-<script src="js/termindetails.js?v=1.98.0"></script>
-<script src="js/kalenderdatei.js?v=1.98.0"></script>
-<script src="js/wetter.js?v=1.98.0"></script>
-<script src="js/wohnort.js?v=1.98.0"></script>
-<script src="js/feiertage.js?v=1.98.0"></script>
-<script src="js/muellkalender.js?v=1.98.0"></script>
-<script src="js/mitglieder.js?v=1.98.0"></script>
-<script src="js/profilbild.js?v=1.98.0"></script>
-<script src="js/mitglied.js?v=1.98.0"></script>
-<script src="js/kinderseite.js?v=1.98.0"></script>
-<script src="js/kinderroutine.js?v=1.98.0"></script>
-<script src="js/sterne.js?v=1.98.0"></script>
-<script src="js/kalenderansicht.js?v=1.98.0"></script>
-<script src="js/essenplanen.js?v=1.98.0"></script>
-<script src="js/rezeptparser.js?v=1.98.0"></script>
-<script src="js/rezeptdialog.js?v=1.98.0"></script>
-<script src="js/rezeptbild.js?v=1.98.0"></script>
-<script src="js/rezeptmengen.js?v=1.98.0"></script>
-<script src="js/einkauf.js?v=1.98.0"></script>
-<script src="js/einkaufslisten.js?v=1.98.0"></script>
-<script src="js/einkaufseingabe.js?v=1.98.0"></script>
-<script src="js/rezepte.js?v=1.98.0"></script>
-<script src="js/offline.js?v=1.98.0"></script>
-<script src="js/aufgabenextras.js?v=1.98.0"></script>
-<script src="js/appbadge.js?v=1.98.0"></script>
-<script src="js/reisen.js?v=1.98.0"></script>
-<script src="js/aufgabendaten.js?v=1.98.0"></script>
-<script src="js/haushalt.js?v=1.98.0"></script>
-<script src="js/reihum.js?v=1.98.0"></script>
-<script src="js/aufgaben.js?v=1.98.0"></script>
-<script src="js/smarthome.js?v=1.98.0"></script>
-<script src="js/sprachsteuerung.js?v=1.98.0"></script>
-<script src="js/termine.js?v=1.98.0"></script>
-<script src="js/ansichten.js?v=1.98.0"></script>
-<script src="js/versionspruefung.js?v=1.98.0"></script>
-<script src="js/sicherungen.js?v=1.98.0"></script>
-<script src="js/geraete.js?v=1.98.0"></script>
-<script src="js/fehlerprotokoll.js?v=1.98.0"></script>
-<script src="js/versionslog.js?v=1.98.0"></script>
-<script src="js/einstellungen.js?v=1.98.0"></script>
-<script src="js/kalenderkonto.js?v=1.98.0"></script>
-<script src="js/finanzen.js?v=1.98.0"></script>
-<script src="js/kassen.js?v=1.98.0"></script>
-<script src="js/vorrat.js?v=1.98.0"></script>
-<script src="js/vorrat2.js?v=1.98.0"></script>
-<script src="js/sparen.js?v=1.98.0"></script>
-<script src="js/vertraege.js?v=1.98.0"></script>
-<script src="js/fahrzeuge.js?v=1.98.0"></script>
-<script src="js/zuhause.js?v=1.98.0"></script>
-<script src="js/dokumente.js?v=1.98.0"></script>
-<script src="js/pdflesen.js?v=1.98.0"></script>
-<script src="js/appstart.js?v=1.98.0"></script>
-<script src="js/pinnwand.js?v=1.98.0"></script>
-<script src="js/listen.js?v=1.98.0"></script>
-<script src="js/familie.js?v=1.98.0"></script>
-<script src="js/hinweise.js?v=1.98.0"></script>
-<script src="js/ausblick.js?v=1.98.0"></script>
+<script src="js/grundlagen.js?v=1.99.0"></script>
+<script src="js/popups.js?v=1.99.0"></script>
+<script src="js/verbindung.js?v=1.99.0"></script>
+<script src="js/benutzer.js?v=1.99.0"></script>
+<script src="js/mitteilungen.js?v=1.99.0"></script>
+<script src="js/serverzugriff.js?v=1.99.0"></script>
+<script src="js/tastatur.js?v=1.99.0"></script>
+<script src="js/anmeldemaske.js?v=1.99.0"></script>
+<script src="js/dashboard.js?v=1.99.0"></script>
+<script src="js/dashboardhintergrund.js?v=1.99.0"></script>
+<script src="js/profilauswahl.js?v=1.99.0"></script>
+<script src="js/pineingabe.js?v=1.99.0"></script>
+<script src="js/dashboardsitzung.js?v=1.99.0"></script>
+<script src="js/dashboardkonto.js?v=1.99.0"></script>
+<script src="js/familienverwalten.js?v=1.99.0"></script>
+<script src="js/einrichten.js?v=1.99.0"></script>
+<script src="js/exportieren.js?v=1.99.0"></script>
+<script src="js/hauptadminseite.js?v=1.99.0"></script>
+<script src="js/anmeldung.js?v=1.99.0"></script>
+<script src="js/konto.js?v=1.99.0"></script>
+<script src="js/profilverwaltung.js?v=1.99.0"></script>
+<script src="js/zustand.js?v=1.99.0"></script>
+<script src="js/bedienzustand.js?v=1.99.0"></script>
+<script src="js/rezeptbilder.js?v=1.99.0"></script>
+<script src="js/zusammenfuehren.js?v=1.99.0"></script>
+<script src="js/speichern.js?v=1.99.0"></script>
+<script src="js/design.js?v=1.99.0"></script>
+<script src="js/sprache.js?v=1.99.0"></script>
+<script src="js/uebersicht.js?v=1.99.0"></script>
+<script src="js/familienkachel.js?v=1.99.0"></script>
+<script src="js/wobistdu.js?v=1.99.0"></script>
+<script src="js/geburtstagsfeier.js?v=1.99.0"></script>
+<script src="js/wetterkachel.js?v=1.99.0"></script>
+<script src="js/geburtstage.js?v=1.99.0"></script>
+<script src="js/uebersichteinstellungen.js?v=1.99.0"></script>
+<script src="js/familiensync.js?v=1.99.0"></script>
+<script src="js/kalenderquellen.js?v=1.99.0"></script>
+<script src="js/icsparser.js?v=1.99.0"></script>
+<script src="js/zeitleiste.js?v=1.99.0"></script>
+<script src="js/termindetails.js?v=1.99.0"></script>
+<script src="js/kalenderdatei.js?v=1.99.0"></script>
+<script src="js/wetter.js?v=1.99.0"></script>
+<script src="js/wohnort.js?v=1.99.0"></script>
+<script src="js/feiertage.js?v=1.99.0"></script>
+<script src="js/muellkalender.js?v=1.99.0"></script>
+<script src="js/mitglieder.js?v=1.99.0"></script>
+<script src="js/profilbild.js?v=1.99.0"></script>
+<script src="js/mitglied.js?v=1.99.0"></script>
+<script src="js/kinderseite.js?v=1.99.0"></script>
+<script src="js/kinderroutine.js?v=1.99.0"></script>
+<script src="js/sterne.js?v=1.99.0"></script>
+<script src="js/kalenderansicht.js?v=1.99.0"></script>
+<script src="js/essenplanen.js?v=1.99.0"></script>
+<script src="js/rezeptparser.js?v=1.99.0"></script>
+<script src="js/rezeptdialog.js?v=1.99.0"></script>
+<script src="js/rezeptbild.js?v=1.99.0"></script>
+<script src="js/rezeptmengen.js?v=1.99.0"></script>
+<script src="js/einkauf.js?v=1.99.0"></script>
+<script src="js/einkaufslisten.js?v=1.99.0"></script>
+<script src="js/einkaufseingabe.js?v=1.99.0"></script>
+<script src="js/rezepte.js?v=1.99.0"></script>
+<script src="js/offline.js?v=1.99.0"></script>
+<script src="js/aufgabenextras.js?v=1.99.0"></script>
+<script src="js/appbadge.js?v=1.99.0"></script>
+<script src="js/reisen.js?v=1.99.0"></script>
+<script src="js/aufgabendaten.js?v=1.99.0"></script>
+<script src="js/haushalt.js?v=1.99.0"></script>
+<script src="js/reihum.js?v=1.99.0"></script>
+<script src="js/aufgaben.js?v=1.99.0"></script>
+<script src="js/smarthome.js?v=1.99.0"></script>
+<script src="js/sprachsteuerung.js?v=1.99.0"></script>
+<script src="js/termine.js?v=1.99.0"></script>
+<script src="js/ansichten.js?v=1.99.0"></script>
+<script src="js/versionspruefung.js?v=1.99.0"></script>
+<script src="js/sicherungen.js?v=1.99.0"></script>
+<script src="js/geraete.js?v=1.99.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.99.0"></script>
+<script src="js/versionslog.js?v=1.99.0"></script>
+<script src="js/einstellungen.js?v=1.99.0"></script>
+<script src="js/kalenderkonto.js?v=1.99.0"></script>
+<script src="js/finanzen.js?v=1.99.0"></script>
+<script src="js/kassen.js?v=1.99.0"></script>
+<script src="js/vorrat.js?v=1.99.0"></script>
+<script src="js/vorrat2.js?v=1.99.0"></script>
+<script src="js/sparen.js?v=1.99.0"></script>
+<script src="js/vertraege.js?v=1.99.0"></script>
+<script src="js/fahrzeuge.js?v=1.99.0"></script>
+<script src="js/zuhause.js?v=1.99.0"></script>
+<script src="js/dokumente.js?v=1.99.0"></script>
+<script src="js/pdflesen.js?v=1.99.0"></script>
+<script src="js/appstart.js?v=1.99.0"></script>
+<script src="js/pinnwand.js?v=1.99.0"></script>
+<script src="js/listen.js?v=1.99.0"></script>
+<script src="js/familie.js?v=1.99.0"></script>
+<script src="js/hinweise.js?v=1.99.0"></script>
+<script src="js/ausblick.js?v=1.99.0"></script>
 
 <!-- ==========================================================
      Versions-Log als Terminal (Einstellungen → System → Versions-Log)
      Klassen "fixed inset-0": die globale Tastatur-Logik passt das Overlay automatisch an den
      sichtbaren Bereich an, damit die Eingabezeile nie von der Tastatur verdeckt wird.
      ========================================================== -->
-<link rel="stylesheet" href="css/terminal.css?v=1.98.0">
+<link rel="stylesheet" href="css/terminal.css?v=1.99.0">
 
 <div id="changelogTerminal" class="hidden fixed inset-0" data-no-term role="dialog" aria-modal="true" aria-label="Versions-Log">
   <div class="term-window" id="changelogTermWindow">
@@ -5891,6 +5507,6 @@ const APP_VERSION = '1.98.0';
     </div>
   </div>
 </div>
-<link rel="stylesheet" href="css/glocke.css?v=1.98.0">
+<link rel="stylesheet" href="css/glocke.css?v=1.99.0">
 </body>
 </html>

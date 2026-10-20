@@ -90,6 +90,13 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **English, Deutsch, Français und Español**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen **Familien**- und **WG**-Bezeichnungen. Ein Server kann mehrere Familien aufnehmen, jede mit eigenen Admins.
 
+## Neu in 1.99
+
+**App-Code wird aufgeteilt, Schritt 3 – Teil 4: Ruhemodus und Region**
+
+- **Für Mitwirkende:** Der Ruhemodus (Energiesparen) und die Region (Land, Währung, Zahlenformat, Notrufnummern) liegen jetzt in den eigenen Dateien `pb_public/js/ruhemodus.js` und `pb_public/js/region.js`. Die `index.html` lädt sie an genau derselben Stelle im Kopf der Seite – sie laufen weiterhin vor allem anderen, an der Bedienung ändert sich nichts.
+- Nur App-Dateien geändert (`index.html`, 2 neue Dateien in `js/`, `js/versionslog.js`, `pinn-setup.sh`), am Server ändert sich nichts. 1.98.0 muss vorher installiert sein. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
+
 ## Neu in 1.98
 
 **App-Code wird aufgeteilt, Schritt 3 – Teil 3: die letzten Gestaltungsblöcke**
@@ -97,14 +104,6 @@ pinn. spricht **English, Deutsch, Français und Español**, passt Währung und N
 - **Für Mitwirkende:** Auch die vier kleinen Gestaltungsblöcke sind aus der `index.html` ausgezogen: `pb_public/css/ergaenzung.css` (Ergänzung zu `vendor/pinn.css`), `energiesparen.css` (Ruhemodus), `terminal.css` (Versions-Log) und `glocke.css` (Glocke mit Hinweisen). Sie werden an genau derselben Stelle eingebunden – pinn. sieht genauso aus wie vorher, die `index.html` enthält keine eigene Gestaltung mehr.
 - Die Startprüfung wartet bei den beiden Dateien am Seitenende, bis der Browser sie geladen hat, und meldet sie erst dann als fehlend.
 - Nur App-Dateien geändert (`index.html`, 4 neue Dateien in `css/`, `js/versionslog.js`, `pinn-setup.sh`), am Server ändert sich nichts. 1.97.0 muss vorher installiert sein. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
-
-## Neu in 1.97
-
-**App-Code wird aufgeteilt, Schritt 3 – Teil 2: Gestaltung**
-
-- **Für Mitwirkende:** Der große Gestaltungsblock ist aus der `index.html` ausgezogen: Das Aussehen der App liegt jetzt nach Themen in 19 Dateien in `pb_public/css/` (z. B. `basis.css`, `mobil.css`, `finanzen.css`, `pinnwand.css`). Sie werden an genau derselben Stelle eingebunden – pinn. sieht genauso aus wie vorher.
-- Der Browser kann die Gestaltung jetzt getrennt zwischenspeichern; offline hält der Service Worker (seit 1.96) alle Dateien aus `css/` auf dem Gerät vor, und die Startprüfung meldet eine fehlende Datei.
-- Nur App-Dateien geändert (`index.html`, 19 neue Dateien in `css/`, `js/versionslog.js`, `pinn-setup.sh`), am Server ändert sich nichts. 1.96.0 muss vorher installiert sein. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
 
 ## So funktioniert's
 
@@ -132,7 +131,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Die ZIP der [neuesten Version](https://github.com/pinn-shost/pinn/releases/latest) herunterladen und entpacken.
-2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.98.0` oder `pinn-main`) so, wie er ist, hineinlegen.
+2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.99.0` oder `pinn-main`) so, wie er ist, hineinlegen.
 3. Per SSH anmelden und ausführen:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

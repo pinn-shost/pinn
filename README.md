@@ -90,6 +90,13 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **English, Deutsch, Français and Español**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.99
+
+**App code split, step 3 – part 4: idle mode and region**
+
+- **For contributors:** the idle mode (power saving) and the region settings (country, currency, number format, emergency numbers) now live in their own files `pb_public/js/ruhemodus.js` and `pb_public/js/region.js`. `index.html` loads them at exactly the same place in the `<head>`, so they still run before everything else – nothing changes in use.
+- Only app files changed (`index.html`, 2 new files in `js/`, `js/versionslog.js`, `pinn-setup.sh`), nothing changes on the server. 1.98.0 must be installed first. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.98
 
 **App code split, step 3 – part 3: the last style blocks**
@@ -97,14 +104,6 @@ pinn. speaks **English, Deutsch, Français and Español**, adapts currency and e
 - **For contributors:** the four small style blocks have left `index.html` as well: `pb_public/css/ergaenzung.css` (supplement to `vendor/pinn.css`), `energiesparen.css` (idle mode), `terminal.css` (version log) and `glocke.css` (notification bell). They are linked at exactly the same place, so pinn. looks exactly the same – `index.html` no longer contains any styles of its own.
 - The start check waits for the two files at the end of the page until the browser has loaded them, and only then reports them as missing.
 - Only app files changed (`index.html`, 4 new files in `css/`, `js/versionslog.js`, `pinn-setup.sh`), nothing changes on the server. 1.97.0 must be installed first. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
-## What's new in 1.97
-
-**App code split, step 3 – part 2: styles**
-
-- **For contributors:** the big style block has left `index.html`: the look of the app now lives in 19 files sorted by topic in `pb_public/css/` (e.g. `basis.css`, `mobil.css`, `finanzen.css`, `pinnwand.css`). They are linked at exactly the same place, so pinn. looks exactly the same.
-- The browser can now keep the styles separately in its cache; offline, the service worker (since 1.96) keeps all files from `css/` on the device, and the start check reports a missing file.
-- Only app files changed (`index.html`, 19 new files in `css/`, `js/versionslog.js`, `pinn-setup.sh`), nothing changes on the server. 1.96.0 must be installed first. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 ## How it works
 
@@ -132,7 +131,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.98.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.99.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

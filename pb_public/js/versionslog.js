@@ -18,6 +18,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.99', datum: '19.10.2026', titel: 'App-Code wird aufgeteilt (Schritt 3, Teil 4: Ruhemodus und Region)',
+    punkte: [
+      ['info', 'Für Mitwirkende: Der Ruhemodus (Energiesparen) und die Region (Land, Währung, Zahlenformat, Notrufnummern) liegen jetzt in den eigenen Dateien js/ruhemodus.js und js/region.js. Die index.html lädt sie an derselben Stelle im Kopf der Seite – sie laufen weiterhin vor allem anderen, an der Bedienung ändert sich nichts'],
+      ['info', 'Geändert: index.html, 2 neue Dateien in js/, js/versionslog.js und pinn-setup.sh – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.98', datum: '19.10.2026', titel: 'App-Code wird aufgeteilt (Schritt 3, Teil 3: letzte Gestaltungsblöcke)',
     punkte: [
       ['info', 'Für Mitwirkende: Die vier kleinen Gestaltungsblöcke der index.html liegen jetzt ebenfalls in pb_public/css/ – ergaenzung.css (Ergänzung zu vendor/pinn.css), energiesparen.css (Ruhemodus), terminal.css (Versions-Log) und glocke.css (Glocke mit Hinweisen). Die index.html bindet sie an derselben Stelle ein und enthält keine eigene Gestaltung mehr – am Aussehen ändert sich nichts'],
