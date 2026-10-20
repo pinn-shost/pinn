@@ -18,6 +18,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.100', datum: '20.10.2026', titel: 'App-Code wird aufgeteilt (Schritt 3, Teil 5: Sprachen)',
+    punkte: [
+      ['info', 'Für Mitwirkende: Die Sprachumschaltung (Übersetzung der angezeigten Texte, WG-Bezeichnungen, Laden der Sprachdatei) liegt jetzt in der eigenen Datei js/sprachen.js. Die index.html lädt sie an derselben Stelle im Kopf der Seite – sie läuft weiterhin, bevor irgendetwas angezeigt wird, an der Bedienung ändert sich nichts'],
+      ['info', 'Die Sprachdateien en, fr und es verweisen in ihrem Kopf jetzt auf js/sprachen.js (Kommentare auf Englisch, Übersetzungen unverändert)'],
+      ['info', 'Erste Version mit dreistelliger Nummer: die Update-Erkennung in der App und auf dem Server erkennt 1.100.0 richtig als neuer als 1.99.0'],
+      ['info', 'Geändert: index.html, neue Datei js/sprachen.js, js/versionslog.js, lang/en.js, lang/fr.js, lang/es.js und pinn-setup.sh – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.99', datum: '19.10.2026', titel: 'App-Code wird aufgeteilt (Schritt 3, Teil 4: Ruhemodus und Region)',
     punkte: [
       ['info', 'Für Mitwirkende: Der Ruhemodus (Energiesparen) und die Region (Land, Währung, Zahlenformat, Notrufnummern) liegen jetzt in den eigenen Dateien js/ruhemodus.js und js/region.js. Die index.html lädt sie an derselben Stelle im Kopf der Seite – sie laufen weiterhin vor allem anderen, an der Bedienung ändert sich nichts'],

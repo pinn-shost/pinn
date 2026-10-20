@@ -90,20 +90,20 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **English, Deutsch, Français und Español**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen **Familien**- und **WG**-Bezeichnungen. Ein Server kann mehrere Familien aufnehmen, jede mit eigenen Admins.
 
+## Neu in 1.100
+
+**App-Code wird aufgeteilt, Schritt 3 – Teil 5: Sprachen**
+
+- **Für Mitwirkende:** Die Sprachumschaltung (Übersetzung der angezeigten Texte, WG-Bezeichnungen, Laden der Sprachdatei) liegt jetzt in der eigenen Datei `pb_public/js/sprachen.js`. Die `index.html` lädt sie an genau derselben Stelle im Kopf der Seite – sie läuft weiterhin, bevor irgendetwas angezeigt wird, an der Bedienung ändert sich nichts. Die Köpfe von `lang/en.js`, `lang/fr.js` und `lang/es.js` verweisen jetzt darauf (Kommentare auf Englisch, Übersetzungen unverändert).
+- Erste Version mit dreistelliger Nummer – die Update-Erkennung in der App und auf dem Server erkennt 1.100.0 richtig als neuer als 1.99.0.
+- Nur App-Dateien geändert (`index.html`, neue Datei `js/sprachen.js`, `js/versionslog.js`, die drei Sprachdateien, `pinn-setup.sh`), am Server ändert sich nichts. 1.99.0 muss vorher installiert sein. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
+
 ## Neu in 1.99
 
 **App-Code wird aufgeteilt, Schritt 3 – Teil 4: Ruhemodus und Region**
 
 - **Für Mitwirkende:** Der Ruhemodus (Energiesparen) und die Region (Land, Währung, Zahlenformat, Notrufnummern) liegen jetzt in den eigenen Dateien `pb_public/js/ruhemodus.js` und `pb_public/js/region.js`. Die `index.html` lädt sie an genau derselben Stelle im Kopf der Seite – sie laufen weiterhin vor allem anderen, an der Bedienung ändert sich nichts.
 - Nur App-Dateien geändert (`index.html`, 2 neue Dateien in `js/`, `js/versionslog.js`, `pinn-setup.sh`), am Server ändert sich nichts. 1.98.0 muss vorher installiert sein. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
-
-## Neu in 1.98
-
-**App-Code wird aufgeteilt, Schritt 3 – Teil 3: die letzten Gestaltungsblöcke**
-
-- **Für Mitwirkende:** Auch die vier kleinen Gestaltungsblöcke sind aus der `index.html` ausgezogen: `pb_public/css/ergaenzung.css` (Ergänzung zu `vendor/pinn.css`), `energiesparen.css` (Ruhemodus), `terminal.css` (Versions-Log) und `glocke.css` (Glocke mit Hinweisen). Sie werden an genau derselben Stelle eingebunden – pinn. sieht genauso aus wie vorher, die `index.html` enthält keine eigene Gestaltung mehr.
-- Die Startprüfung wartet bei den beiden Dateien am Seitenende, bis der Browser sie geladen hat, und meldet sie erst dann als fehlend.
-- Nur App-Dateien geändert (`index.html`, 4 neue Dateien in `css/`, `js/versionslog.js`, `pinn-setup.sh`), am Server ändert sich nichts. 1.97.0 muss vorher installiert sein. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
 
 ## So funktioniert's
 
@@ -131,7 +131,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Die ZIP der [neuesten Version](https://github.com/pinn-shost/pinn/releases/latest) herunterladen und entpacken.
-2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.99.0` oder `pinn-main`) so, wie er ist, hineinlegen.
+2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.100.0` oder `pinn-main`) so, wie er ist, hineinlegen.
 3. Per SSH anmelden und ausführen:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -221,7 +221,7 @@ pinn/
 ├── pb_public/           Web-App, von PocketBase ausgeliefert
 │   ├── index.html       die App-Seite (HTML, Startprüfung)
 │   ├── js/              App-Code aus der index.html ausgelagert, einfache <script>-Dateien ohne Bauschritt
-│   │                    (grundlagen.js, popups.js, verbindung.js, benutzer.js, mitteilungen.js, serverzugriff.js, tastatur.js, anmeldemaske.js, dashboard.js, dashboardhintergrund.js, profilauswahl.js, pineingabe.js, dashboardsitzung.js, dashboardkonto.js, familienverwalten.js, einrichten.js, exportieren.js, hauptadminseite.js, anmeldung.js, konto.js, profilverwaltung.js, zustand.js, bedienzustand.js, rezeptbilder.js, zusammenfuehren.js, speichern.js, design.js, sprache.js, uebersicht.js, familienkachel.js, wobistdu.js, geburtstagsfeier.js, wetterkachel.js, geburtstage.js, uebersichteinstellungen.js, familiensync.js, kalenderquellen.js, icsparser.js, zeitleiste.js, termindetails.js, kalenderdatei.js, wetter.js, wohnort.js, feiertage.js, muellkalender.js, mitglieder.js, profilbild.js, mitglied.js, kinderseite.js, kinderroutine.js, sterne.js, kalenderansicht.js, essenplanen.js, rezeptparser.js, rezeptdialog.js, rezeptbild.js, rezeptmengen.js, einkauf.js, einkaufslisten.js, einkaufseingabe.js, rezepte.js, offline.js, aufgabenextras.js, appbadge.js, reisen.js, aufgabendaten.js, haushalt.js, reihum.js, aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js kommt immer zuletzt)
+│   │                    (ruhemodus.js, sprachen.js, region.js, grundlagen.js, popups.js, verbindung.js, benutzer.js, mitteilungen.js, serverzugriff.js, tastatur.js, anmeldemaske.js, dashboard.js, dashboardhintergrund.js, profilauswahl.js, pineingabe.js, dashboardsitzung.js, dashboardkonto.js, familienverwalten.js, einrichten.js, exportieren.js, hauptadminseite.js, anmeldung.js, konto.js, profilverwaltung.js, zustand.js, bedienzustand.js, rezeptbilder.js, zusammenfuehren.js, speichern.js, design.js, sprache.js, uebersicht.js, familienkachel.js, wobistdu.js, geburtstagsfeier.js, wetterkachel.js, geburtstage.js, uebersichteinstellungen.js, familiensync.js, kalenderquellen.js, icsparser.js, zeitleiste.js, termindetails.js, kalenderdatei.js, wetter.js, wohnort.js, feiertage.js, muellkalender.js, mitglieder.js, profilbild.js, mitglied.js, kinderseite.js, kinderroutine.js, sterne.js, kalenderansicht.js, essenplanen.js, rezeptparser.js, rezeptdialog.js, rezeptbild.js, rezeptmengen.js, einkauf.js, einkaufslisten.js, einkaufseingabe.js, rezepte.js, offline.js, aufgabenextras.js, appbadge.js, reisen.js, aufgabendaten.js, haushalt.js, reihum.js, aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js kommt immer zuletzt)
 │   ├── css/             Gestaltung aus der index.html ausgelagert, einfaches CSS ohne Bauschritt (ergaenzung.css, energiesparen.css, basis.css … haustierewetter.css, terminal.css, glocke.css)
 │   ├── einrichtung.js   Einrichtungsassistent · datenexport.js  Datenexport
 │   ├── lang/            Übersetzungen (en, fr, es)
