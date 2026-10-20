@@ -1,51 +1,52 @@
 <!DOCTYPE html>
+<!-- Built by src/build.js from the files in src/ – please edit those, not this file. -->
 <html lang="de">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" id="themeColorMeta" content="#FFFBFB">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<!-- Nicht "black-translucent": iOS 26 lässt damit als Homescreen-App unten einen Streifen in
-     Statusleisten-Höhe AUSSERHALB der Webansicht frei, den keine Seite füllen kann.
-     "black" = schwarze Statusleiste mit weißer Schrift (passt zum Dunkelmodus), "default" = weiß.
-     iOS übernimmt diese Einstellung nur beim Hinzufügen zum Homescreen, nicht dynamisch. -->
+<!-- Not "black-translucent": with it, iOS 26 leaves a strip of status bar height OUTSIDE the
+     web view at the bottom of the home screen app, which no page can fill.
+     "black" = black status bar with white text (fits dark mode), "default" = white.
+     iOS only takes this setting when the app is added to the home screen, not dynamically. -->
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <title>pinn.</title>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<!-- App-Symbole: ?v= sorgt dafür, dass Browser nach einem Update das neue Symbol laden.
-     Das Home-Bildschirm-Symbol ist randlos (iOS rundet die Ecken selbst ab). -->
+<!-- App icons: ?v= makes browsers load the new icon after an update.
+     The home screen icon has no border (iOS rounds the corners itself). -->
 <link rel="icon" href="favicon.ico?v=1.57.0" sizes="16x16 32x32 48x48">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=1.57.0">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=1.57.0">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=1.57.0">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=1.57.0">
 <link rel="manifest" href="manifest.json">
-<!-- Kein Code von fremden Servern (Bankdaten!): Tailwind als fertig gebaute CSS und der PocketBase-
-     Client liegen selbst gehostet auf dem NAS:
+<!-- No code from other servers (bank data!): Tailwind as a ready-built CSS file and the PocketBase
+     client are self-hosted on the NAS:
        pb_public/vendor/pinn.css
        pb_public/vendor/pocketbase/pocketbase.umd.js
-       pb_public/vendor/pdfjs/pdf.min.mjs + pdf.worker.min.mjs (erst beim PDF-Import nachgeladen)
+       pb_public/vendor/pdfjs/pdf.min.mjs + pdf.worker.min.mjs (only loaded for the PDF import)
        pb_public/vendor/tesseract/tesseract.min.js + worker.min.js, core/ (tesseract-core*.wasm.js),
-         lang/deu.traineddata.gz (Texterkennung für "Foto einlesen" bei Rezepten, erst bei Bedarf geladen) -->
+         lang/deu.traineddata.gz (text recognition for "Foto einlesen" in recipes, only loaded when needed) -->
 <link rel="stylesheet" href="vendor/pinn.css">
-<link rel="stylesheet" href="css/ergaenzung.css?v=1.100.0">
+<link rel="stylesheet" href="css/ergaenzung.css?v=1.101.0">
 <!-- ==========================================================
-     Energiesparen (ab 0.99)
-     - Wiederkehrende Abfragen (setInterval ab 1 Sekunde) laufen nur, solange pinn. sichtbar ist;
-       Verpasstes wird beim Zurückkehren einmal nachgeholt (gestaffelt, keine Lastspitze).
-     - Ruhemodus: 3 Minuten ohne Bedienung (bzw. 1 Minute, wenn am Mac/PC ein anderes Fenster vorne
-       ist) - Abfragen ab 60 s Takt höchstens alle 5 Minuten, Dauer-Animationen pausieren (SOS nie).
-       Jede Berührung, Maus-/Tastatureingabe weckt pinn. sofort und holt alles nach.
-     - Kurze Zähler (< 1 s, z. B. SOS-Countdown) bleiben unverändert.
+     Power saving (since 0.99)
+     - Recurring requests (setInterval from 1 second) only run while pinn. is visible;
+       missed runs are caught up once on return (staggered, no load peak).
+     - Idle mode: 3 minutes without interaction (or 1 minute if another window is in front
+       on a Mac/PC) - requests with a 60 s interval at most every 5 minutes, endless animations pause (never SOS).
+       Every touch, mouse or keyboard input wakes pinn. at once and catches up on everything.
+     - Short timers (< 1 s, e.g. the SOS countdown) stay unchanged.
      ========================================================== -->
-<link rel="stylesheet" href="css/energiesparen.css?v=1.100.0">
-<script src="js/ruhemodus.js?v=1.100.0"></script>
-<script src="js/sprachen.js?v=1.100.0"></script>
-<script src="js/region.js?v=1.100.0"></script>
+<link rel="stylesheet" href="css/energiesparen.css?v=1.101.0">
+<script src="js/ruhemodus.js?v=1.101.0"></script>
+<script src="js/sprachen.js?v=1.101.0"></script>
+<script src="js/region.js?v=1.101.0"></script>
 <script src="vendor/pocketbase/pocketbase.umd.js"></script>
-<!-- Falls die Datei auf dem NAS woanders liegt oder anders heißt: weitere Orte probieren -->
+<!-- If the file sits somewhere else on the NAS or has another name: try further places -->
 <script>if (!window.PocketBase) document.write('<script src="vendor/pocketbase.umd.js"><\/script>');</script>
 <script>if (!window.PocketBase) document.write('<script src="vendor/pocketbase/pocketbase_umd.js"><\/script>');</script>
 <script>if (!window.PocketBase) document.write('<script src="vendor/pocketbase_umd.js"><\/script>');</script>
@@ -53,12 +54,12 @@
 <script>if (!window.PocketBase) document.write('<script src="pocketbase.umd.js"><\/script>');</script>
 <script>if (!window.PocketBase) document.write('<script src="pocketbase_umd.js"><\/script>');</script>
 <script>
-  // Startprüfung: fehlt eine selbst gehostete Datei, erscheint ein klarer Hinweis statt einer
-  // leeren Seite ohne funktionierende Buttons.
-  // Teile der App unter pb_public/js/ – jede Datei meldet sich am Ende in window.PINN_PARTS an
+  // Start check: if a self-hosted file is missing, a clear notice appears instead of an
+  // empty page with buttons that do nothing.
+  // Parts of the app under pb_public/js/ – every file registers itself in window.PINN_PARTS at its end
   var PINN_APP_PARTS = ['ruhemodus', 'sprachen', 'region', 'grundlagen', 'popups', 'verbindung', 'benutzer', 'mitteilungen', 'serverzugriff', 'tastatur', 'anmeldemaske', 'dashboard', 'dashboardhintergrund', 'profilauswahl', 'pineingabe', 'dashboardsitzung', 'dashboardkonto', 'familienverwalten', 'einrichten', 'exportieren', 'hauptadminseite', 'anmeldung', 'konto', 'profilverwaltung', 'zustand', 'bedienzustand', 'rezeptbilder', 'zusammenfuehren', 'speichern', 'design', 'sprache', 'uebersicht', 'familienkachel', 'wobistdu', 'geburtstagsfeier', 'wetterkachel', 'geburtstage', 'uebersichteinstellungen', 'familiensync', 'kalenderquellen', 'icsparser', 'zeitleiste', 'termindetails', 'kalenderdatei', 'wetter', 'wohnort', 'feiertage', 'muellkalender', 'mitglieder', 'profilbild', 'mitglied', 'kinderseite', 'kinderroutine', 'sterne', 'kalenderansicht', 'essenplanen', 'rezeptparser', 'rezeptdialog', 'rezeptbild', 'rezeptmengen', 'einkauf', 'einkaufslisten', 'einkaufseingabe', 'rezepte', 'offline', 'aufgabenextras', 'appbadge', 'reisen', 'aufgabendaten', 'haushalt', 'reihum', 'aufgaben', 'smarthome', 'sprachsteuerung', 'termine', 'ansichten', 'versionspruefung', 'sicherungen', 'geraete', 'fehlerprotokoll', 'versionslog', 'einstellungen', 'kalenderkonto', 'finanzen', 'kassen', 'vorrat', 'vorrat2', 'sparen', 'vertraege', 'fahrzeuge', 'zuhause', 'dokumente', 'pdflesen', 'appstart', 'pinnwand', 'listen', 'familie', 'hinweise', 'ausblick'];
-  // Gestaltung der App unter pb_public/css/ (ab 1.96) – jede Datei steht als <link> an der Stelle des früheren
-  // <style>-Blocks: fast alle im Kopf der index.html, terminal und glocke (ab 1.98) am Ende der Seite
+  // Styles of the app under pb_public/css/ (since 1.96) – every file is a <link> at the place of the former
+  // <style> block: almost all in the head of index.html, terminal and glocke (since 1.98) at the end of the page
   var PINN_APP_STYLES = ['ergaenzung', 'energiesparen', 'basis', 'mobil', 'einstellungen', 'seitenleiste', 'finanzen', 'listen', 'vertraege', 'fahrzeuge', 'notfall', 'hinweise', 'familie', 'dokumente', 'sparen', 'kinderaufgaben', 'dashboard', 'uebersicht', 'wohnort', 'familienkachel', 'pinnwand', 'haustierewetter', 'terminal', 'glocke'];
   window.addEventListener('DOMContentLoaded', function () {
     var missing = [];
@@ -72,8 +73,8 @@
     PINN_APP_PARTS.forEach(function (part) {
       if (loadedParts.indexOf(part) === -1) missing.push('<b>js/' + part + '.js</b> – ein Teil der App');
     });
-    // Eine CSS-Datei gilt als geladen, wenn der Browser ihre Regeln übernommen hat (404 oder eine
-    // ausgelieferte index.html ergeben kein Stylesheet bzw. eines ohne Regeln)
+    // A CSS file counts as loaded when the browser has taken over its rules (a 404 or a delivered
+    // index.html result in no stylesheet or one without rules)
     function fehlendeStyles() {
       var out = [];
       PINN_APP_STYLES.forEach(function (name) {
@@ -84,17 +85,17 @@
       });
       return out;
     }
-    // Die Dateien am Ende der Seite (nach den js/-Dateien) kann der Browser noch laden, wenn DOMContentLoaded
-    // kommt – dann erst nach dem vollständigen Laden der Seite (load) endgültig prüfen
+    // The browser may still be loading the files at the end of the page (after the js/ files) when DOMContentLoaded
+    // fires – then only check for good after the page has loaded completely (load)
     if (fehlendeStyles().length && document.readyState !== 'complete') {
       window.addEventListener('load', function () { melden(missing.concat(fehlendeStyles())); });
       return;
     }
     melden(missing.concat(fehlendeStyles()));
-    // Hinweis anzeigen (nur wenn etwas fehlt)
+    // Show the notice (only if something is missing)
     function melden(missing) {
       if (!missing.length) return;
-      // Welche Adressen liefert der Server tatsächlich? (zeigt Status je Datei, hilft bei falschem Ordner/Namen)
+      // Which addresses does the server really deliver? (shows the status of each file, helps with a wrong folder/name)
       var checks = [
         'vendor/pinn.css',
         'vendor/pocketbase/pocketbase.umd.js',
@@ -123,7 +124,7 @@
         fetch(path + '?_r=' + Date.now(), { cache: 'no-store' }).then(function (res) {
           var type = res.headers.get('Content-Type') || '';
           var okType = /\.css$/.test(path) ? /css/.test(type) : /javascript|ecmascript/.test(type);
-          // PocketBase liefert für unbekannte Pfade ggf. die index.html aus - das zählt nicht als gefunden
+          // For unknown paths PocketBase may deliver index.html - that does not count as found
           var found = res.ok && okType;
           lines[i] = (found ? '✅ ' : '❌ ') + path + ' → ' + res.status + (res.ok && !okType ? ' (' + (type.split(';')[0] || 'unbekannter Typ') + ', nicht die Datei)' : '');
           show();
@@ -138,30 +139,30 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/basis.css?v=1.100.0">
-<link rel="stylesheet" href="css/mobil.css?v=1.100.0">
-<link rel="stylesheet" href="css/einstellungen.css?v=1.100.0">
-<link rel="stylesheet" href="css/seitenleiste.css?v=1.100.0">
-<link rel="stylesheet" href="css/finanzen.css?v=1.100.0">
-<link rel="stylesheet" href="css/listen.css?v=1.100.0">
-<link rel="stylesheet" href="css/vertraege.css?v=1.100.0">
-<link rel="stylesheet" href="css/fahrzeuge.css?v=1.100.0">
-<link rel="stylesheet" href="css/notfall.css?v=1.100.0">
-<link rel="stylesheet" href="css/hinweise.css?v=1.100.0">
-<link rel="stylesheet" href="css/familie.css?v=1.100.0">
-<link rel="stylesheet" href="css/dokumente.css?v=1.100.0">
-<link rel="stylesheet" href="css/sparen.css?v=1.100.0">
-<link rel="stylesheet" href="css/kinderaufgaben.css?v=1.100.0">
-<link rel="stylesheet" href="css/dashboard.css?v=1.100.0">
-<link rel="stylesheet" href="css/uebersicht.css?v=1.100.0">
-<link rel="stylesheet" href="css/wohnort.css?v=1.100.0">
-<link rel="stylesheet" href="css/familienkachel.css?v=1.100.0">
-<link rel="stylesheet" href="css/pinnwand.css?v=1.100.0">
-<link rel="stylesheet" href="css/haustierewetter.css?v=1.100.0">
+<link rel="stylesheet" href="css/basis.css?v=1.101.0">
+<link rel="stylesheet" href="css/mobil.css?v=1.101.0">
+<link rel="stylesheet" href="css/einstellungen.css?v=1.101.0">
+<link rel="stylesheet" href="css/seitenleiste.css?v=1.101.0">
+<link rel="stylesheet" href="css/finanzen.css?v=1.101.0">
+<link rel="stylesheet" href="css/listen.css?v=1.101.0">
+<link rel="stylesheet" href="css/vertraege.css?v=1.101.0">
+<link rel="stylesheet" href="css/fahrzeuge.css?v=1.101.0">
+<link rel="stylesheet" href="css/notfall.css?v=1.101.0">
+<link rel="stylesheet" href="css/hinweise.css?v=1.101.0">
+<link rel="stylesheet" href="css/familie.css?v=1.101.0">
+<link rel="stylesheet" href="css/dokumente.css?v=1.101.0">
+<link rel="stylesheet" href="css/sparen.css?v=1.101.0">
+<link rel="stylesheet" href="css/kinderaufgaben.css?v=1.101.0">
+<link rel="stylesheet" href="css/dashboard.css?v=1.101.0">
+<link rel="stylesheet" href="css/uebersicht.css?v=1.101.0">
+<link rel="stylesheet" href="css/wohnort.css?v=1.101.0">
+<link rel="stylesheet" href="css/familienkachel.css?v=1.101.0">
+<link rel="stylesheet" href="css/pinnwand.css?v=1.101.0">
+<link rel="stylesheet" href="css/haustierewetter.css?v=1.101.0">
 </head>
 <body class="font-sans text-ink antialiased">
 
-<!-- Anmeldung: 1. Familie wählen/eingeben, 2. Profil + Passwort -->
+<!-- Sign-in: 1. choose/enter the family, 2. profile + password -->
 <div id="loginScreen" class="hidden pinn-auth-screen z-[400] bg-paper" data-no-term>
  <div class="pinn-auth-inner">
  <div class="w-full max-w-xs">
@@ -171,7 +172,7 @@
       <p id="loginSubtitle" class="text-xs text-ink/40 mt-1">Bitte anmelden</p>
     </div>
 
-  <!-- Schritt 1: Familie -->
+  <!-- Step 1: family -->
   <form id="loginFamilyForm" class="w-full" autocomplete="off">
     <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginFamilyInput">Familie</label>
     <div id="loginFamilySelectWrap" class="hidden flex items-center gap-2 mb-3">
@@ -187,7 +188,7 @@
     <button id="loginFamilySubmit" type="submit" class="w-full px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Weiter</button>
   </form>
 
-  <!-- Schritt 2: Profil + Passwort (bzw. nur Passwort bei der Hauptadmin-Anmeldung) -->
+  <!-- Step 2: profile + password (or only the password for the main admin sign-in) -->
   <form id="loginForm" class="hidden w-full" autocomplete="on">
     <div id="loginFamilyBar" class="flex items-center justify-between gap-2 mb-4 rounded-lg border border-ink/10 px-3 py-2">
       <p class="text-sm min-w-0 truncate"><span id="loginFamilyLabel" class="text-ink/40">Familie</span> <span id="loginFamilyName" class="font-medium"></span></p>
@@ -208,13 +209,13 @@
   </form>
   <button id="loginToggleCreateBtn" type="button" class="hidden w-full mt-4 text-xs text-ink/40 hover:text-pine underline decoration-dotted text-center">Neues Konto anlegen</button>
   <button id="loginMainAdminBtn" type="button" class="w-full mt-4 text-xs text-ink/40 hover:text-pine underline decoration-dotted text-center">Als Hauptadmin anmelden</button>
-  <!-- Ersteinrichtung: nur bei einer neuen Installation (Einrichtung offen, noch keine Familie) -->
+  <!-- First setup: only on a new installation (setup open, no family yet) -->
   <div id="loginSetupHint" class="hidden w-full mt-4 rounded-xl border border-ink/10 p-4 bg-pine/5" data-no-i18n data-no-term>
     <p id="loginSetupHintText" class="text-sm"></p>
     <button type="button" id="loginSetupHintBtn" class="w-full mt-4 px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition"></button>
   </div>
 
-  <!-- Neues Konto anlegen: erscheint erst, nachdem man sich oben als Admin der Familie angemeldet hat -->
+  <!-- Create a new account: only appears after signing in above as an admin of the family -->
   <div id="loginCreateAccountSection" class="hidden w-full">
     <div class="flex flex-col items-center mb-4">
       <h2 class="font-serif text-lg">Neues Konto anlegen</h2>
@@ -238,7 +239,7 @@
  </div>
 </div>
 
-<!-- Passwort ändern (erzwungen beim ersten Anmelden bzw. nach Zurücksetzen) -->
+<!-- Change password (forced on the first sign-in or after a reset) -->
 <div id="forcePasswordScreen" class="hidden pinn-auth-screen z-[410] bg-paper">
  <div class="pinn-auth-inner">
   <form id="forcePasswordForm" class="w-full max-w-xs">
@@ -258,7 +259,7 @@
  </div>
 </div>
 
-<!-- Hauptadmin: Familien verwalten (statt der App) -->
+<!-- Main admin: manage families (instead of the app) -->
 <div id="mainAdminScreen" class="hidden pinn-auth-screen z-[390] bg-paper" data-no-term>
  <div class="pinn-auth-inner">
   <div class="w-full max-w-md">
@@ -277,7 +278,7 @@
       </div>
     </div>
 
-    <!-- Einrichtung offen bzw. Neustart ausstehend (pb_public/einrichtung.js) -->
+    <!-- Setup open or restart pending (pb_public/einrichtung.js) -->
     <div id="mainAdminSetupBanner" class="hidden rounded-xl border border-ink/10 p-4 mb-6 bg-pine/5" data-no-i18n>
       <p id="mainAdminSetupBannerText" class="text-sm mb-3"></p>
       <button type="button" id="mainAdminSetupBannerBtn" class="w-full px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition"></button>
@@ -307,7 +308,7 @@
  </div>
 </div>
 
-<!-- Familien-Dashboard (iPad): Profilauswahl statt Anmeldung, siehe pb_hooks/dashboard.pb.js -->
+<!-- Family dashboard (iPad): profile selection instead of sign-in, see pb_hooks/dashboard.pb.js -->
 <div id="dashboardScreen" class="hidden pinn-auth-screen z-[395] bg-paper">
   <div id="dashBg" class="dash-bg" aria-hidden="true"></div>
   <div class="dash-inner">
@@ -333,7 +334,7 @@
   <div id="dashBusy" class="hidden dash-busy"><span id="dashBusyText">Wird geöffnet …</span></div>
 </div>
 
-<!-- PIN-Eingabe (Dashboard und „PIN festlegen“ im Konto) -->
+<!-- PIN entry (dashboard and "PIN festlegen" in the account) -->
 <div id="pinPadOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="PIN-Eingabe">
   <div id="pinPadBox" class="pin-box">
     <div id="pinPadAvatar" class="hidden"></div>
@@ -367,7 +368,7 @@
   <!-- Sidebar menu -->
   <aside id="sidebar" class="w-0 shrink-0 overflow-hidden bg-pine text-white transition-all duration-300 ease-in-out">
     <nav class="w-64 h-full flex flex-col pt-6">
-      <!-- Menüpunkte: scrollen, wenn das Fenster zu niedrig ist (Fußleiste mit Konto/Einstellungen/Suche bleibt unten stehen) -->
+      <!-- Menu items: scroll if the window is too low (the footer with account/settings/search stays at the bottom) -->
       <div id="sidebarScroll" class="sidebar-scroll flex flex-col">
       <button data-view="uebersicht" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Übersicht</button>
       <button data-view="pinnwand" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Pinnwand<span id="navPinboardBadge" class="pw-nav-badge hidden"></span></button>
@@ -419,7 +420,7 @@
       </button>
       <div class="nt-head-title flex items-baseline gap-2">
         <img src="data:image/png;base64,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" alt="" class="w-7 h-7 rounded-lg self-center" />
-        <!-- Familienname: läuft bei langen Namen hinter der Glocke weiter (Glocke bleibt immer sichtbar) -->
+        <!-- Family name: with long names it runs on behind the bell (the bell always stays visible) -->
         <span class="nt-famname"><h1 class="font-serif text-2xl text-ink">Familie</h1> <span id="lastNameDisplay" class="font-serif text-2xl text-ink"></span></span>
         <button id="ntBellBtn" type="button" class="nt-bell self-center" aria-label="Hinweise" title="Hinweise">
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
@@ -434,7 +435,7 @@
     </div>
   </header>
 
-  <!-- Banner: neue Version auf dem Server erkannt -->
+  <!-- Banner: newer version detected on the server -->
   <div id="updateBanner" class="hidden shrink-0 bg-mustard text-white text-sm px-4 py-2 flex items-center justify-between gap-3">
     <span>Es gibt eine neuere Version dieser App.</span>
     <div class="flex items-center gap-3 shrink-0">
@@ -444,7 +445,7 @@
   </div>
 
   <!-- Main split layout -->
-  <!-- Mobile-Umschalter Kalender/Rezepte (nur in der Übersicht auf schmalen Bildschirmen) -->
+  <!-- Mobile switch calendar/recipes (only in the overview on narrow screens) -->
   <div id="mobileSectionTabs" class="hidden shrink-0 border-b border-ink/10 bg-paper">
     <div class="flex">
       <button type="button" data-section="kalender" class="mobile-section-tab flex-1 py-2.5 text-sm font-medium text-center border-b-2 border-pine text-pine">Kalender</button>
@@ -526,7 +527,7 @@
         <span id="recipeCount" class="text-xs text-ink/40"></span>
       </div>
 
-      <!-- Recipe list (inkl. Wochen-Slider) -->
+      <!-- Recipe list (incl. the week slider) -->
       <div id="recipeListContainer" class="flex-1 min-h-0 overflow-y-auto">
         <div id="recipeWeekSliderWrap" class="hidden px-6 pt-4">
           <h3 class="text-xs uppercase tracking-wide text-ink/40 mb-2">Diese Woche geplant</h3>
@@ -542,7 +543,7 @@
         </div>
       </div>
 
-      <!-- Recipe detail page: eigene Ansicht statt Aufklappen in der Liste -->
+      <!-- Recipe detail page: its own view instead of expanding in the list -->
       <div id="recipeDetailView" class="hidden flex-1 min-h-0 flex flex-col overflow-y-auto">
         <button id="recipeDetailBackBtn" class="sticky top-0 z-10 bg-paper/95 backdrop-blur px-4 py-3 border-b border-ink/10 flex items-center gap-1.5 text-sm font-medium text-ink/70 hover:text-pine transition text-left w-full">
           <span class="text-lg leading-none">‹</span> <span id="recipeDetailBackLabel">Zurück</span>
@@ -588,7 +589,7 @@
       </div>
     </section>
 
-    <!-- RIGHT-2: Aufgaben -->
+    <!-- RIGHT-2: tasks -->
     <section id="taskSection" class="min-h-0 flex flex-col bg-white/40 border-l border-ink/10">
 
       <div class="px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
@@ -614,7 +615,7 @@
       </div>
     </section>
 
-    <!-- Übersicht-Kachel: Wetter der nächsten Tage (antippen = 14 Tage & Urlaubswetter) -->
+    <!-- Overview tile: weather of the next days (tap = 14 days & holiday weather) -->
     <section id="weatherTileSection" class="hidden min-h-0 flex flex-col bg-white/40 border-ink/10">
       <div class="px-6 pt-4 pb-4">
         <div class="flex items-center justify-between gap-3 mb-3">
@@ -625,7 +626,7 @@
       </div>
     </section>
 
-    <!-- Übersicht-Kachel: anstehende Geburtstage (iCloud- und Google-Kontakte der Familie) -->
+    <!-- Overview tile: upcoming birthdays (iCloud and Google contacts of the family) -->
     <section id="birthdayTileSection" class="hidden min-h-0 flex flex-col bg-white/40 border-ink/10">
       <div class="px-6 pt-4 pb-4 min-h-0 overflow-y-auto">
         <div class="flex items-center justify-between gap-3 mb-3">
@@ -636,7 +637,7 @@
       </div>
     </section>
 
-    <!-- Übersicht-Kachel: Familienmitglieder (Tipp auf ein Kind öffnet die Kinderseite) -->
+    <!-- Overview tile: family members (tap on a child opens the kids page) -->
     <section id="familyTileSection" class="hidden min-h-0 flex flex-col bg-white/40 border-ink/10">
       <div class="px-6 pt-4 pb-4 min-h-0">
         <div class="flex items-center justify-between gap-3 mb-3">
@@ -646,7 +647,7 @@
       </div>
     </section>
 
-    <!-- Übersicht-Kachel: anstehende Kündigungsfristen (Finanzen → Verträge) -->
+    <!-- Overview tile: upcoming notice periods (Finances → contracts) -->
     <section id="contractTileSection" class="hidden min-h-0 flex flex-col bg-white/40 border-ink/10">
       <div class="px-6 pt-4 pb-4 min-h-0 overflow-y-auto">
         <div class="flex items-center justify-between gap-3 mb-3">
@@ -657,7 +658,7 @@
       </div>
     </section>
 
-    <!-- Übersicht-Kachel: Pinnwand (nur sichtbar, wenn etwas angepinnt ist) -->
+    <!-- Overview tile: pin board (only visible when something is pinned) -->
     <section id="boardTileSection" class="hidden min-h-0 flex flex-col bg-white/40 border-ink/10">
       <div class="px-6 pt-4 pb-2 min-h-0">
         <div class="flex items-center justify-between gap-3">
@@ -668,7 +669,7 @@
       </div>
     </section>
 
-    <!-- Pinnwand -->
+    <!-- Pin board -->
     <section id="pinboardSection" class="hidden min-h-0 flex-col bg-white/40">
       <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
         <div class="flex items-center justify-between gap-3">
@@ -725,7 +726,7 @@
     </section>
 
     <section id="einkaufSection" class="hidden min-h-0 flex-col bg-white/40">
-      <!-- Übersicht: alle Einkaufslisten als große Karten -->
+      <!-- Overview: all shopping lists as large cards -->
       <div id="shoppingOverview" class="flex flex-1 min-h-0 flex-col">
         <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
           <div class="flex items-center justify-between gap-3">
@@ -743,7 +744,7 @@
         </div>
       </div>
 
-      <!-- Einzelne Liste -->
+      <!-- Single list -->
       <div id="shoppingDetail" class="hidden flex-1 min-h-0 flex-col">
         <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
           <div class="flex items-center gap-2">
@@ -777,9 +778,9 @@
             <button id="finishShoppingPlanBtn" type="button" class="hidden px-3 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">✓ Einkauf erledigt</button>
           </div>
         </div>
-        <!-- Eingabeleiste unten: eigene Einträge auf die gerade geöffnete Liste setzen. Vorschläge aus
-             früheren Eingaben stapeln sich direkt darüber (bester Treffer ganz unten, direkt über dem Feld). -->
-        <!-- Platzhalter: hält den Platz frei, solange die Eingabeleiste über der Tastatur schwebt -->
+        <!-- Input bar at the bottom: put your own entries on the list that is open. Suggestions from
+             earlier entries stack up right above it (best match at the bottom, right above the field). -->
+        <!-- Placeholder: keeps the space free while the input bar floats above the keyboard -->
         <div id="shoppingAddBarSpacer" class="hidden shrink-0" aria-hidden="true"></div>
         <div id="shoppingAddBar" class="shrink-0 bg-transparent px-4 pt-2" style="padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.75rem);">
           <div id="shoppingSuggestions" class="hidden flex-col-reverse gap-1 mb-2 max-w-md mx-auto"></div>
@@ -790,7 +791,7 @@
         </div>
       </div>
 
-      <!-- Listen: Packen, Geschenke, Wünsche, Checklisten, Ideen – Übersicht -->
+      <!-- Lists: packing, gifts, wishes, checklists, ideas – overview -->
       <div id="listsOverview" class="hidden flex-1 min-h-0 flex-col">
         <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
           <div class="flex items-center justify-between gap-3">
@@ -806,7 +807,7 @@
         </div>
       </div>
 
-      <!-- Listen: einzelne Liste -->
+      <!-- Lists: single list -->
       <div id="listsDetail" class="hidden flex-1 min-h-0 flex-col">
         <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
           <div class="flex items-center gap-2">
@@ -889,7 +890,7 @@
             <button id="openExpenseModalBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">+ Buchung</button>
           </div>
         </div>
-        <!-- Umschalter: Ausgaben / Sparen / Taschengeld / Verträge -->
+        <!-- Switch: expenses / savings / pocket money / contracts -->
         <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs mt-3 w-full sm:w-fit" role="tablist" aria-label="Finanzbereich">
           <button type="button" data-fintab="ausgaben" class="fin-tab-btn flex-1 sm:flex-none px-4 py-1.5 rounded-full transition" role="tab">Ausgaben</button>
           <button type="button" data-fintab="sparen" class="fin-tab-btn flex-1 sm:flex-none px-4 py-1.5 rounded-full transition" role="tab">Sparen</button>
@@ -909,7 +910,7 @@
             <button id="finNextBtn" type="button" class="shrink-0 w-9 h-9 rounded-full text-ink/60 hover:text-pine hover:bg-ink/5 grid place-items-center text-xl leading-none select-none" aria-label="Nächster Zeitraum">›</button>
           </div>
         </div>
-        <!-- Verträge: Suche, Status, Kategorie, Sortierung -->
+        <!-- Contracts: search, status, category, sorting -->
         <div id="finContractBar" class="hidden mt-3 flex flex-col gap-2">
           <div class="flex items-center gap-2">
             <div class="relative flex-1 min-w-0">
@@ -994,7 +995,7 @@
             <button id="fzHeaderBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">+ Fahrzeug</button>
           </div>
         </div>
-        <!-- Umschalter: Fahrzeuge / Bilanz / Rechner -->
+        <!-- Switch: vehicles / balance / calculator -->
         <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs mt-3 w-full sm:w-fit" role="tablist" aria-label="Fahrzeugbereich">
           <button type="button" data-fztab="liste" class="fz-tab-btn flex-1 sm:flex-none px-4 py-1.5 rounded-full transition" role="tab">Fahrzeuge</button>
           <button type="button" data-fztab="bilanz" class="fz-tab-btn flex-1 sm:flex-none px-4 py-1.5 rounded-full transition" role="tab">Bilanz</button>
@@ -1017,7 +1018,7 @@
             <button id="hsHeaderBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">+ Zuhause</button>
           </div>
         </div>
-        <!-- Umschalter: Übersicht + gewählte Bausteine (Mängel, Kosten, Zähler, Wartung, Garten …) -->
+        <!-- Switch: overview + chosen modules (defects, costs, meters, maintenance, garden …) -->
         <div id="hsTabs" class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs mt-3 w-full sm:w-fit overflow-x-auto" role="tablist" aria-label="Zuhause">
           <button type="button" data-hstab="uebersicht" class="hs-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Übersicht</button>
         </div>
@@ -1036,7 +1037,7 @@
             <button id="famSetupBtn" type="button" class="hidden px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">⚙︎ Ortung</button>
           </div>
         </div>
-        <!-- Umschalter: Übersicht / Schule & Kita / Haustiere / Ortung / Notfall -->
+        <!-- Switch: overview / school & daycare / pets / location / emergency -->
         <div id="famTabs" class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs mt-3 w-full sm:w-fit overflow-x-auto" role="tablist" aria-label="Familienbereich">
           <button type="button" data-famtab="uebersicht" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Übersicht</button>
           <button type="button" data-famtab="schule" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Schule & Kita</button>
@@ -1238,7 +1239,7 @@
     </div>
   </div>
 
-  <!-- Account view (Kopfzeile + Karten wie die übrigen Seiten) -->
+  <!-- Account view (header + cards like the other pages) -->
   <div id="accountView" class="hidden flex-1 min-h-0 bg-white/40">
     <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
       <div class="flex items-center justify-between gap-3">
@@ -1248,7 +1249,7 @@
     <div id="accountScroll" class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">
       <div class="set-pane max-w-3xl mx-auto">
 
-      <!-- Angemeldetes Profil -->
+      <!-- Signed-in profile -->
       <div class="set-card">
         <div class="acc-hero-row">
           <div id="accountAvatar" class="acc-avatar"></div>
@@ -1265,7 +1266,7 @@
         <p id="accountGuestHint" class="hidden text-xs text-ink/40 px-4 pb-4 -mt-1">Du nutzt ein Gastkonto. Es hat kein Passwort und öffnet sich nur über das Familien-Dashboard – die Finanzen, Dokumente und Einstellungen sind für Gäste nicht verfügbar.</p>
       </div>
 
-      <!-- Angemeldete Geräte (eigenes Profil) – pb_hooks/sitzungen.pb.js -->
+      <!-- Signed-in devices (own profile) – pb_hooks/sitzungen.pb.js -->
       <div id="devicesSection" class="set-card">
         <div class="set-head-row"><span class="set-ico">📱</span><div class="set-head"><h3 class="sa-title">Angemeldete Geräte</h3><small>Wo dein Profil gerade angemeldet ist</small></div></div>
         <div class="set-body">
@@ -1278,7 +1279,7 @@
         </div>
       </div>
 
-      <!-- Push-Benachrichtigungen (persönlich je Profil) -->
+      <!-- Push notifications (personal for each profile) -->
       <div id="pushSection" class="set-card">
         <div class="set-head-row"><span class="set-ico">🔔</span><div class="set-head"><h3 class="sa-title">Benachrichtigungen</h3><small>Push auf diesem Gerät, Erinnerungen, Pinnwand</small></div></div>
         <div class="set-body">
@@ -1286,7 +1287,7 @@
         <p id="pushWhoText" class="text-sm text-ink/70 mb-1"></p>
         <p id="pushStatus" class="text-xs text-ink/50 mb-3"></p>
         <p id="pushIosHint" class="hidden text-xs text-mustard mb-3">Auf iPhone und iPad klappen Benachrichtigungen nur, wenn pinn. über „Teilen → Zum Home-Bildschirm“ hinzugefügt und von dort geöffnet wird (ab iOS 16.4).</p>
-        <!-- Android: Hinweise zu Browser, App-Installation und Energiesparen -->
+        <!-- Android: notes on browser, app installation and power saving -->
         <p id="pushAndroidBrowserHint" class="hidden text-xs text-mustard mb-3">Auf Android-Handys klappen Benachrichtigungen in Chrome, Samsung Internet, Edge oder Firefox – nicht im eingebauten Browser anderer Apps (z. B. WhatsApp, Mail). Bitte die pinn.-Adresse dort öffnen.</p>
         <div id="pushAndroidInstallBox" class="hidden mb-3">
           <p class="text-xs text-ink/60 mb-2">Tipp für Android: pinn. als App auf den Startbildschirm legen – dann öffnet es sich ohne Adressleiste und Mitteilungen kommen mit dem pinn.-Symbol.</p>
@@ -1436,7 +1437,7 @@
         </div>
       </div>
 
-      <!-- Dashboard-PIN (freiwillig) -->
+      <!-- Dashboard PIN (optional) -->
       <div id="dashPinSection" class="set-card">
         <div class="set-head-row"><span class="set-ico">🔢</span><div class="set-head"><h3 class="sa-title">PIN fürs Familien-Dashboard</h3><small>Freiwillig – schützt dein Profil auf dem iPad</small></div></div>
         <div class="set-body">
@@ -1451,7 +1452,7 @@
         </div>
       </div>
 
-      <!-- Dieses Gerät als Familien-Dashboard (iPad) -->
+      <!-- This device as the family dashboard (iPad) -->
       <div id="dashDeviceSection" class="hidden set-card">
         <div class="set-head-row"><span class="set-ico">📱</span><div class="set-head"><h3 class="sa-title">Familien-Dashboard auf diesem Gerät</h3><small>Profilauswahl beim Öffnen, z. B. am Küchen-iPad</small></div></div>
         <div class="set-body">
@@ -1487,7 +1488,7 @@
         </div>
       </div>
 
-      <!-- Nur Admins: Profile, Gäste, Dashboard -->
+      <!-- Admins only: profiles, guests, dashboard -->
       <div id="profileAdminSection" class="hidden set-group">
         <div class="set-card">
           <div class="set-head-row"><span class="set-ico">👥</span><div class="set-head"><h3 class="sa-title">Profile verwalten</h3><small>Mitglieder und Gäste der Familie</small></div></div>
@@ -1578,7 +1579,7 @@
     </div>
   </div>
 
-  <!-- Passwort ändern (Popup) -->
+  <!-- Change password (popup) -->
   <div id="changePasswordModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
     <div class="bg-white rounded-2xl p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
       <h3 class="font-serif text-lg mb-4">Passwort ändern</h3>
@@ -1595,7 +1596,7 @@
     </div>
   </div>
 
-  <!-- Profil verwalten (Popup): Rolle ändern, Passwort zurücksetzen, löschen -->
+  <!-- Manage profile (popup): change role, reset password, delete -->
   <div id="profileManageModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
     <div class="bg-white rounded-2xl p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
       <h3 class="font-serif text-lg mb-1">Profil verwalten</h3>
@@ -1625,7 +1626,7 @@
     </div>
   </div>
 
-  <!-- Gastkonto anlegen (Popup) -->
+  <!-- Create a guest account (popup) -->
   <div id="guestModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
     <div class="bg-white rounded-2xl p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
       <h3 class="font-serif text-lg mb-1">Gastkonto anlegen</h3>
@@ -1640,7 +1641,7 @@
     </div>
   </div>
 
-  <!-- Settings view (Kopfzeile + Karten wie die übrigen Seiten) -->
+  <!-- Settings view (header + cards like the other pages) -->
   <div id="settingsView" class="hidden flex-1 min-h-0 bg-white/40">
     <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
       <div class="flex items-center justify-between gap-3">
@@ -1810,7 +1811,7 @@
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
-        <!-- Wohnform: Familie oder WG – passt die Bezeichnungen der ganzen App an (Daten bleiben gleich) -->
+        <!-- Living situation: family or flat share – adapts the terms of the whole app (the data stays the same) -->
         <div class="mb-4" data-no-term>
           <h4 class="text-sm font-medium mb-2">Wohnform</h4>
           <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit" role="group" aria-label="Wohnform">
@@ -1865,8 +1866,8 @@
           <div id="pinnCalAccounts" class="pinn-cal-accs"></div>
           <ul id="pinnCalList" class="pinn-cal-list"></ul>
           <div id="pinnCalFamily" class="pinn-cal-fam hidden"></div>
-          <!-- Frühere Familienverbindung (Bearbeiten → „Kalender verbinden“): nur sichtbar, solange dort
-               noch Kalender ausgewählt sind -->
+          <!-- Former family connection (Bearbeiten → "Kalender verbinden"): only visible as long as calendars
+               are still selected there -->
           <div id="legacyCalBox" class="hidden rounded-lg border border-ink/10 bg-white px-3 py-3 mb-2">
             <p class="text-[11px] uppercase tracking-wide text-ink/40 mb-1.5">Bisherige Familienverbindung</p>
             <p id="appleCalendarAccountLine" class="text-sm font-medium mb-2">Noch nicht eingerichtet.</p>
@@ -2026,7 +2027,7 @@
       </summary>
       <div class="set-body flex flex-col gap-5">
 
-        <!-- Haushalts-Aufgaben -->
+        <!-- Household tasks -->
         <div>
           <div class="flex items-center justify-between gap-2 mb-2">
             <h4 class="text-sm font-medium">Haushalts-Aufgaben</h4>
@@ -2039,7 +2040,7 @@
           <p id="householdTasksMaintenanceStatus" class="text-xs text-ink/40 mt-2"></p>
         </div>
 
-        <!-- Erledigte Aufgaben löschen -->
+        <!-- Delete completed tasks -->
         <div class="pt-4 border-t border-ink/10">
           <div class="flex items-center justify-between gap-2 mb-2">
             <h4 class="text-sm font-medium">Erledigte Aufgaben löschen</h4>
@@ -2052,7 +2053,7 @@
           </div>
         </div>
 
-        <!-- Aufgaben-Animation -->
+        <!-- Task animation -->
         <div class="pt-4 border-t border-ink/10">
           <h4 class="text-sm font-medium mb-2">Aufgaben-Animation</h4>
           <label class="flex items-center gap-3 cursor-pointer w-fit">
@@ -2132,14 +2133,14 @@
           <p id="versionCheckStatus" class="text-xs text-ink/40 mt-2"></p>
         </div>
 
-        <!-- Sicherungen (nur für Admins sichtbar) – Container „wartung“, pb_hooks/system.pb.js -->
+        <!-- Backups (only visible for admins) – container "wartung", pb_hooks/system.pb.js -->
         <div id="sysBackupSub" class="set-sub hidden">
           <p class="set-sub-title">Sicherungen</p>
           <p id="sysBackupSummary" class="text-xs text-ink/50 mb-2 leading-snug">Wird geladen …</p>
           <button id="openSysMaintBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">🛟 Sicherungen &amp; Wiederherstellung</button>
         </div>
 
-        <!-- Fehlerprotokoll (nur für Admins sichtbar) – pb_hooks/protokoll.pb.js -->
+        <!-- Error log (only visible for admins) – pb_hooks/protokoll.pb.js -->
         <div id="errLogSub" class="set-sub hidden">
           <p class="set-sub-title">Fehlerprotokoll</p>
           <p id="errLogSummary" class="text-xs text-ink/50 mb-2 leading-snug">Wird geladen …</p>
@@ -2148,7 +2149,7 @@
 
         <div class="set-sub">
           <p class="set-sub-title">Daten</p>
-          <!-- Datenexport (nur für Admins sichtbar) – pb_public/datenexport.js, pb_hooks/export.pb.js -->
+          <!-- Data export (only visible for admins) – pb_public/datenexport.js, pb_hooks/export.pb.js -->
           <div id="dataExportSub" class="hidden mb-4" data-no-i18n data-no-term>
             <p id="dataExportText" class="text-xs text-ink/50 mb-2 leading-snug"></p>
             <button id="dataExportBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition"></button>
@@ -2158,7 +2159,7 @@
         </div>
       </div>
     </details>
-    <!-- GitHub: Projektseite und freiwillige Unterstützung (Links in PINN_GITHUB unten im Skript) -->
+    <!-- GitHub: project page and voluntary support (links in PINN_GITHUB, js/versionspruefung.js) -->
     <details class="settings-accordion set-card" id="settingsGithubAccordion">
       <summary class="set-sum">
         <span class="set-ico">⭐</span>
@@ -2195,7 +2196,7 @@
     </div>
   </div>
 
-  <!-- Sicherungen & Updates (Einstellungen → System, Hauptadmin) – pb_hooks/system.pb.js, Container „wartung“ -->
+  <!-- Backups & updates (Settings → System, main admin) – pb_hooks/system.pb.js, container "wartung" -->
   <div id="sysMaintModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[400] grid place-items-center" role="dialog" aria-modal="true" aria-labelledby="sysMaintTitle" data-no-term>
     <div class="sm-box bg-paper rounded-2xl shadow-xl w-full fade-in">
       <div class="sm-head">
@@ -2285,7 +2286,7 @@
     </div>
   </div>
 
-  <!-- Geräte & Anmeldung eines Profils (Admins, Hauptadmin) – pb_hooks/sitzungen.pb.js -->
+  <!-- Devices & sign-in of a profile (admins, main admin) – pb_hooks/sitzungen.pb.js -->
   <div id="devModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[400] grid place-items-center" role="dialog" aria-modal="true" aria-labelledby="devModalTitle">
     <div class="sm-box bg-paper rounded-2xl shadow-xl w-full fade-in">
       <div class="sm-head">
@@ -2310,7 +2311,7 @@
     </div>
   </div>
 
-  <!-- Fehlerprotokoll (Admins, Hauptadmin) – pb_hooks/protokoll.pb.js -->
+  <!-- Error log (admins, main admin) – pb_hooks/protokoll.pb.js -->
   <div id="errLogModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[400] grid place-items-center" role="dialog" aria-modal="true" aria-labelledby="errLogTitle">
     <div class="sm-box el-box bg-paper rounded-2xl shadow-xl w-full fade-in">
       <div class="sm-head">
@@ -2371,7 +2372,7 @@
     </div>
   </div>
 
-  <!-- Einkaufsliste anlegen / bearbeiten -->
+  <!-- Add / edit a shopping list -->
   <div id="shoppingListModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-6">
     <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
       <button id="closeShoppingListModalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -2401,7 +2402,7 @@
         <div class="mb-4"></div>
       </div>
 
-      <!-- Adresse des Ladens: erscheint unter Familie → Orte, Verweilen hakt den geplanten Einkauf ab -->
+      <!-- Address of the shop: appears under Family → Places, staying there checks off the planned shopping -->
       <div id="shoppingListAddrBlock" class="rounded-xl border border-ink/10 bg-ink/[0.03] px-3 py-3 mb-4">
         <div class="flex items-center justify-between gap-2 mb-1">
           <span class="text-sm font-medium">📍 Adressen des Ladens</span>
@@ -2433,14 +2434,14 @@
         </div>
       </div>
 
-      <!-- Kassen: In welche Kasse Einkäufe dieser Liste gebucht werden -->
+      <!-- Kassen: which Kasse purchases from this list are booked to -->
       <div id="shoppingListKasseBlock" class="hidden rounded-xl border border-ink/10 bg-ink/[0.03] px-3 py-3 mb-4">
         <label class="block text-sm font-medium mb-1.5" for="shoppingListKasseSelect">💶 Kasse für Einkäufe</label>
         <select id="shoppingListKasseSelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white mb-1.5"></select>
         <p class="text-[11px] text-ink/45 leading-snug">Beim Abschließen eines Einkaufs landet der Betrag in dieser Kasse. Ist dort „Ausgaben aufteilen“ an (z. B. WG), wird er auf die Mitglieder verteilt – Privates lässt sich dabei abziehen.</p>
       </div>
 
-      <!-- Stammladen: Zutaten der Essensplanung landen automatisch auf dieser Liste -->
+      <!-- Main shop: ingredients from the meal planning land on this list automatically -->
       <div class="rounded-xl border border-ink/10 bg-ink/[0.03] px-3 py-3 mb-4">
         <label class="flex items-start gap-2.5 cursor-pointer select-none">
           <input id="shoppingListStammCheck" type="checkbox" class="shrink-0 w-4 h-4 mt-0.5" />
@@ -2463,7 +2464,7 @@
     </div>
   </div>
 
-  <!-- Stammladen festlegen (aus der Liste "Essensplanung" heraus) -->
+  <!-- Set the main shop (from the list "Essensplanung") -->
   <div id="shoppingStammModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-6">
     <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
       <button id="closeShoppingStammModalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -2487,7 +2488,7 @@
     </div>
   </div>
 
-  <!-- Inhalt einer Einkaufsliste auf eine andere Liste verschieben -->
+  <!-- Move the content of a shopping list to another list -->
   <div id="shoppingMoveModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-6">
     <div class="relative bg-white rounded-2xl shadow-xl max-w-sm w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
       <button id="closeShoppingMoveModalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -2509,7 +2510,7 @@
   </div>
 </div>
 
-<!-- Feste Tab-Leiste unten (ersetzt auf schmalen Bildschirmen/iPhone das Seitenmenü) -->
+<!-- Fixed tab bar at the bottom (replaces the side menu on narrow screens/iPhone) -->
 <div id="bottomTabBackdrop" class="hidden fixed inset-0 z-[145]"></div>
 <nav id="bottomTabBar" class="hidden fixed bottom-0 left-0 right-0 z-[150] bg-paper border-t border-ink/10" style="padding-bottom: env(safe-area-inset-bottom);">
   <div id="bottomTabDrawer" class="hidden border-b border-ink/10">
@@ -2521,7 +2522,7 @@
   <div id="bottomTabMainRow" class="grid grid-cols-5"></div>
 </nav>
 
-<!-- Globale Suche: Lupe in der Seitenleiste öffnet unten eine Suchleiste, Vorschläge erscheinen darüber -->
+<!-- Global search: the magnifier in the sidebar opens a search bar at the bottom, suggestions appear above it -->
 <div id="globalSearchBackdrop" class="gs-backdrop" aria-hidden="true"></div>
 <div id="globalSearch" class="gs-wrap" role="dialog" aria-label="Suche">
   <div class="gs-inner">
@@ -2535,7 +2536,7 @@
 </div>
 <div id="gsEventAnchor" aria-hidden="true"></div>
 
-<!-- Finanzen: Ausgabe/Einnahme (auch regelmäßig) anlegen oder bearbeiten - Minus vor dem Betrag = Einnahme -->
+<!-- Finances: add or edit an expense/income (also recurring) - a minus before the amount = income -->
 <div id="expenseModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[320] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closeExpenseModalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -2575,7 +2576,7 @@
     </div>
     <p id="expenseRecurringInfo" class="hidden text-xs text-pine mb-3"></p>
 
-    <!-- Kassen: Aufteilen auf (nur in Kassen mit „Ausgaben aufteilen“) -->
+    <!-- Kassen: split between (only in Kassen with "Ausgaben aufteilen") -->
     <div id="expenseSplitWrap" class="hidden mb-3 rounded-xl border border-ink/10 bg-ink/[0.03] px-3 py-2.5">
       <span class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">⚖️ Aufteilen auf</span>
       <div id="expenseSplitPicker" class="flex flex-wrap gap-1.5"></div>
@@ -2596,7 +2597,7 @@
       <div id="expenseItemsList" class="mt-2 leading-7"></div>
     </details>
 
-    <!-- Belege zur Ausgabe (Kassenzettel, Rechnung, Garantie) - bei neuen Ausgaben nach dem Speichern hochgeladen -->
+    <!-- Receipts for the expense (till receipt, invoice, warranty) - uploaded after saving for new expenses -->
     <div id="expenseDocsWrap" class="hidden mb-4">
       <div class="flex items-center justify-between gap-2 mb-1.5">
         <span class="block text-xs uppercase tracking-wide text-ink/40">Belege</span>
@@ -2628,11 +2629,11 @@
   </div>
 </div>
 
-<!-- Dokumente: Datei-Auswahl und Kamera (unsichtbar) -->
+<!-- Documents: file picker and camera (invisible) -->
 <input id="docFileInput" type="file" multiple accept="application/pdf,image/*" class="fixed" style="opacity:0;width:1px;height:1px;left:-100px;top:0;pointer-events:none" tabindex="-1" aria-hidden="true" />
 <input id="docCameraInput" type="file" accept="image/*" capture="environment" class="fixed" style="opacity:0;width:1px;height:1px;left:-100px;top:0;pointer-events:none" tabindex="-1" aria-hidden="true" />
 
-<!-- Dokumente: Dokument ansehen -->
+<!-- Documents: view a document -->
 <div id="docDetailModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closeDocDetailBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -2640,7 +2641,7 @@
   </div>
 </div>
 
-<!-- Dokumente: Dokument anlegen / bearbeiten -->
+<!-- Documents: add / edit a document -->
 <div id="docEditModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[320] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closeDocEditBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -2671,7 +2672,7 @@
         <input id="docDateInput" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
       </div>
     </div>
-    <!-- Sichtbarkeit: Familie / nur ich / ausgewählte Personen (Feld „sichtbar“, siehe pinn-dokumente.js) -->
+    <!-- Visibility: family / only me / chosen people (field "sichtbar", see pinn-dokumente.js) -->
     <div id="docKasseWrap" class="hidden mb-3">
       <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docKasseSelect">🔒 Kasse</label>
       <select id="docKasseSelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
@@ -2771,7 +2772,7 @@
   </div>
 </div>
 
-<!-- Dokumente: Kategorien -->
+<!-- Documents: categories -->
 <div id="docCategoryModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closeDocCategoryBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -2786,7 +2787,7 @@
   </div>
 </div>
 
-<!-- Dokumente: Seiten ansehen (Vollbild) -->
+<!-- Documents: view pages (full screen) -->
 <div id="docViewer" class="hidden fixed inset-0 z-[400] doc-viewer" role="dialog" aria-modal="true" aria-label="Dokument ansehen">
   <div class="doc-viewer-top">
     <span id="docViewerTitle" class="doc-viewer-title"></span>
@@ -2801,13 +2802,13 @@
   <div id="docViewerCount" class="doc-viewer-bottom"></div>
 </div>
 
-<!-- Datei-Betrachter: PDF oder Bild im Vollbild (statt neuem Fenster, das in der Home-Bildschirm-App kein Zurück hat) -->
+<!-- File viewer: PDF or image in full screen (instead of a new window, which has no way back in the home screen app) -->
 <div id="fileViewer" class="hidden fixed inset-0 file-viewer" role="dialog" aria-modal="true" aria-label="Datei ansehen">
   <div id="fileViewerStage" class="file-viewer-stage"></div>
   <button id="fileViewerCloseBtn" type="button" class="viewer-close-btn" aria-label="Schließen">✕</button>
 </div>
 
-<!-- Fahrzeuge: Popups (Fahrzeug, Eintrag, Auswahl) - Inhalt kommt aus dem Skript -->
+<!-- Vehicles: popups (vehicle, entry, choice) - the content comes from the script -->
 <div id="fzModal" data-i18n-ctx="fz" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="fzModalClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -2821,22 +2822,22 @@
   </div>
 </div>
 
-<!-- SOS: Hilferuf aus „Traccar Client“ – Warn-Popup mit Karte, Adresse und Notruf (Inhalt aus dem Skript) -->
+<!-- SOS: call for help from "Traccar Client" – warning popup with map, address and emergency call (content from the script) -->
 <div id="sosOverlay" class="hidden" role="alertdialog" aria-modal="true" aria-label="SOS – Hilferuf">
   <div id="sosCard" class="sos-card"></div>
 </div>
 <button id="sosBanner" type="button" class="hidden"></button>
 
-<!-- Heimweg: Hinweis oben („… ist unterwegs nach Hause“) und Popup mit Karte und Anruf (Inhalt aus dem Skript) -->
+<!-- Way home: notice at the top ("… ist unterwegs nach Hause") and popup with map and call (content from the script) -->
 <div id="hwOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="Heimweg">
   <div id="hwCard" class="sos-card"></div>
 </div>
 <div id="hwBanner" class="hidden" role="status"></div>
 
-<!-- Einkaufs-Hinweis: „Gehst du einkaufen?“ – solange das eigene Handy im Umkreis eines Ladens mit offener Liste ist (Inhalt aus dem Skript, eigene Texte in vier Sprachen) -->
+<!-- Shopping notice: "Gehst du einkaufen?" – as long as your own phone is near a shop with an open list (content from the script, own texts in four languages) -->
 <div id="lpBanner" class="hidden" role="status" data-no-i18n></div>
 
-<!-- Ausblick: Wochenvorschau & Monatsausblick Finanzen – Hinweis oben und ganze Seite (Inhalt aus dem Skript, eigene Texte in vier Sprachen) -->
+<!-- Outlook: week preview & monthly finance outlook – notice at the top and a whole page (content from the script, own texts in four languages) -->
 <div id="abBanner" class="hidden" role="status" data-no-i18n></div>
 <div id="abOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="Ausblick" data-no-i18n>
   <div class="ab-sheet fade-in">
@@ -2845,21 +2846,21 @@
   </div>
 </div>
 
-<!-- Familie: Popups (Notfallpass, Ortung einrichten, Orte, Anleitung) - Inhalt kommt aus dem Skript -->
+<!-- Family: popups (emergency card, set up location sharing, places, guide) - the content comes from the script -->
 <div id="famModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="famModalClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
     <div id="famModalBody"></div>
   </div>
 </div>
-<!-- Familie → Haustiere: Popups (Inhalt kommt aus dem Skript) -->
+<!-- Family → pets: popups (the content comes from the script) -->
 <div id="ptModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="ptModalClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
     <div id="ptModalBody"></div>
   </div>
 </div>
-<!-- Wetter: 14 Tage & Urlaubswetter (Tipp auf die Wetter-Kachel) -->
+<!-- Weather: 14 days & holiday weather (tap on the weather tile) -->
 <div id="wxOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="Wetter">
   <div class="wx-sheet fade-in">
     <button id="wxClose" type="button" class="wx-x" aria-label="Schließen">×</button>
@@ -2873,10 +2874,10 @@
   </div>
 </div>
 
-<!-- Finanzen → Verträge: Datei-Auswahl für Dokumente und Belege (unsichtbar) -->
+<!-- Finances → contracts: file picker for documents and receipts (invisible) -->
 <input id="finDocFileInput" type="file" multiple accept="application/pdf,image/*,.doc,.docx,.odt,.xls,.xlsx,.txt" class="fixed" style="opacity:0;width:1px;height:1px;left:-100px;top:0;pointer-events:none" tabindex="-1" aria-hidden="true" />
 
-<!-- Finanzen → Verträge: Vertrag ansehen (Kosten, Frist, Kontakt, Dokumente) -->
+<!-- Finances → contracts: view a contract (costs, notice period, contact, documents) -->
 <div id="contractDetailModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closeContractDetailBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -2884,7 +2885,7 @@
   </div>
 </div>
 
-<!-- Finanzen → Verträge: Vertrag anlegen / bearbeiten -->
+<!-- Finances → contracts: add / edit a contract -->
 <div id="contractModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[320] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closeContractModalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -3078,7 +3079,7 @@
   </div>
 </div>
 
-<!-- Finanzen → Verträge: kündigen (Termine, Bestätigung, Kündigungsschreiben) -->
+<!-- Finances → contracts: cancel (dates, confirmation, cancellation letter) -->
 <div id="contractCancelModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[320] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closeContractCancelBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -3117,7 +3118,7 @@
   </div>
 </div>
 
-<!-- Finanzen → Verträge: Kategorien verwalten (Regler-Symbol oben rechts) -->
+<!-- Finances → contracts: manage categories (slider symbol at the top right) -->
 <div id="contractCategoryModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closeContractCategoryBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -3132,7 +3133,7 @@
   </div>
 </div>
 
-<!-- Finanzen: Betrag einer regelmäßigen Buchung (z. B. Sparrate) geändert - ab wann gilt der neue Betrag? -->
+<!-- Finances: amount of a recurring booking (e.g. savings plan) changed - from when does the new amount apply? -->
 <div id="finScopeModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[330] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closeFinScopeBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -3171,7 +3172,7 @@
   </div>
 </div>
 
-<!-- Einkauf abschließen: bezahlten Betrag buchen, abgehakte Artikel entfernen -->
+<!-- Finish shopping: book the amount paid, remove checked items -->
 <div id="shoppingCheckoutModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closeCheckoutBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -3230,7 +3231,7 @@
   </div>
 </div>
 
-<!-- Vorrat: Artikel anlegen / bearbeiten -->
+<!-- Pantry: add / edit an item -->
 <div id="pantryItemModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closePantryItemBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -3301,7 +3302,7 @@
   </div>
 </div>
 
-<!-- Listen: neue Liste (Vorlage wählen) / Liste bearbeiten -->
+<!-- Lists: new list (choose a template) / edit list -->
 <div id="lsListModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="lsListClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -3329,7 +3330,7 @@
         <input id="lsListDate" type="date" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
       </div>
 
-      <!-- Packliste: Reiseziel & Zeitraum (löst das Urlaubswetter aus) -->
+      <!-- Packing list: destination & period (triggers the holiday weather) -->
       <div id="lsTripWrap" class="hidden mb-3">
         <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsTripPlace">Reiseziel</label>
         <div id="lsTripChosen" class="hidden ls-trip-chosen"></div>
@@ -3372,7 +3373,7 @@
   </div>
 </div>
 
-<!-- Listen: Eintrag bearbeiten -->
+<!-- Lists: edit an entry -->
 <div id="lsItemModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="lsItemClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -3428,7 +3429,7 @@
   </div>
 </div>
 
-<!-- Listen: fehlenden Eintrag auf eine Einkaufsliste setzen -->
+<!-- Lists: put a missing entry on a shopping list -->
 <div id="lsShopModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="lsShopClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -3438,7 +3439,7 @@
   </div>
 </div>
 
-<!-- Pinnwand: Zettel anlegen / bearbeiten -->
+<!-- Pin board: add / edit a note -->
 <div id="pinboardEditModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closePinboardEditBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -3501,7 +3502,7 @@
   </div>
 </div>
 
-<!-- Pinnwand: Zettel ansehen (Antworten, Reaktionen, Aktionen) -->
+<!-- Pin board: view a note (replies, reactions, actions) -->
 <div id="pinboardDetailModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closePinboardDetailBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none z-10" aria-label="Schließen">×</button>
@@ -3516,13 +3517,13 @@
   </div>
 </div>
 
-<!-- Pinnwand: Foto groß -->
+<!-- Pin board: large photo -->
 <div id="pinboardLightbox" class="hidden fixed inset-0">
   <button id="pinboardLightboxClose" type="button" aria-label="Schließen">✕</button>
   <img id="pinboardLightboxImg" alt="" />
 </div>
 
-<!-- Rezepte: Kategorien & Küchengeräte (Änderungen gelten sofort) -->
+<!-- Recipes: categories & kitchen appliances (changes apply at once) -->
 <div id="recipeSettingsModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closeRecipeSettingsBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -3549,7 +3550,7 @@
   </div>
 </div>
 
-<!-- Haushalt: Kategorien (Änderungen gelten sofort) -->
+<!-- Household: categories (changes apply at once) -->
 <div id="householdSettingsModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closeHouseholdSettingsBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -3568,7 +3569,7 @@
   </div>
 </div>
 
-<!-- Smarthome: Geräte, Apple Kurzbefehle, Home Assistant (Einstellungen → Smarthome bzw. Haushalt → Haus-Symbol) -->
+<!-- Smart home: devices, Apple Shortcuts, Home Assistant (Settings → Smarthome or Household → house symbol) -->
 <div id="smartHomeModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closeSmartHomeBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -3614,7 +3615,7 @@
   </div>
 </div>
 
-<!-- Smarthome: Gerät anlegen/bearbeiten -->
+<!-- Smart home: add/edit a device -->
 <div id="smartDeviceModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <h3 id="smartDeviceModalTitle" class="font-serif text-lg mb-4">Neues Gerät</h3>
@@ -3644,7 +3645,7 @@
   </div>
 </div>
 
-<!-- Vorrat: Lagerorte & Kategorien -->
+<!-- Pantry: storage places & categories -->
 <div id="pantrySettingsModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closePantrySettingsBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -3685,7 +3686,7 @@
   </div>
 </div>
 
-<!-- Vorrat: Barcode scannen (Kamera) -->
+<!-- Pantry: scan a barcode (camera) -->
 <div id="pantryScanModal" class="hidden fixed inset-0 bg-ink/40 z-[320] grid place-items-center p-3 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-4 max-h-[94vh] overflow-y-auto fade-in">
     <button id="pantryScanClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -3714,7 +3715,7 @@
   </div>
 </div>
 
-<!-- Vorrat: Was kann ich kochen? -->
+<!-- Pantry: what can I cook? -->
 <div id="pantryCookModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="pantryCookClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -3729,7 +3730,7 @@
   </div>
 </div>
 
-<!-- Geplanter Einkauf erledigt: Betrag je Laden/Liste buchen -->
+<!-- Planned shopping done: book the amount per shop/list -->
 <div id="shoppingPlanDoneModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closePlanDoneBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -3767,7 +3768,7 @@
   </div>
 </div>
 
-<!-- Kassen: Auswahl -->
+<!-- Kassen: selection -->
 <div id="kassenModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closeKassenModalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -3779,7 +3780,7 @@
   </div>
 </div>
 
-<!-- Kassen: anlegen / einstellen -->
+<!-- Kassen: create / set up -->
 <div id="kasseEditModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[320] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closeKasseEditBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -3796,7 +3797,7 @@
   </div>
 </div>
 
-<!-- Kassen: Ausgleich eintragen -->
+<!-- Kassen: enter a settlement -->
 <div id="kasseSettleModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[330] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-sm w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closeKasseSettleBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -3836,7 +3837,7 @@
   </div>
 </div>
 
-<!-- Finanzen einrichten: Budget, Kategorien, regelmäßige Ausgaben, Export -->
+<!-- Set up finances: budget, categories, recurring expenses, export -->
 <div id="financeSettingsModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closeFinanceSettingsBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -3894,7 +3895,7 @@
   </div>
 </div>
 
-<!-- Sparen: Position (ETF, Aktie, Derivat … oder klassisches Sparziel) anlegen / bearbeiten -->
+<!-- Savings: add / edit a position (ETF, share, derivative … or a classic savings goal) -->
 <div id="finGoalModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[320] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closeFinGoalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -3916,7 +3917,7 @@
     </div>
     <div id="finGoalIconPicker" class="flex flex-wrap gap-1 mb-4"></div>
 
-    <!-- Wertpapier (ETF, Aktie, Fonds, Derivat …): Wert wird mit aktuellen Kursen berechnet -->
+    <!-- Security (ETF, share, fund, derivative …): the value is calculated with current prices -->
     <div class="rounded-xl border border-ink/10 p-3 mb-4">
       <p id="finGoalKindHint" class="text-xs text-ink/45">Einzahlungen werden zum Kurs am jeweiligen Tag in Anteile umgerechnet – so siehst du den aktuellen Wert samt Gewinn oder Verlust.</p>
       <div id="finGoalEtfOpts" class="hidden mt-3">
@@ -3956,7 +3957,7 @@
     </div>
     <p id="finGoalStartHint" class="text-xs text-ink/45 mb-4">„Schon gespart“ ist Geld, das bereits vor pinn. für dieses Ziel zurückgelegt war. Alles Weitere buchst du über „Einzahlen“ bzw. in den Ausgaben unter der Kategorie „Sparen“.</p>
 
-    <!-- Sparrate dieser Position: wird am Ausführungstag im Depot angerechnet und in den Ausgaben (Kategorie „Sparen“) abgebucht -->
+    <!-- Savings plan of this position: credited to the depot on the execution day and debited in the expenses (category "Sparen") -->
     <div class="rounded-xl border border-ink/10 p-3 mb-4">
       <div class="flex items-center justify-between gap-2 mb-2">
         <span class="text-xs uppercase tracking-wide text-ink/40">🔁 Sparrate</span>
@@ -3996,7 +3997,7 @@
   </div>
 </div>
 
-<!-- Sparen: Depot / Junior-Depot anlegen / bearbeiten -->
+<!-- Savings: add / edit a depot / junior depot -->
 <div id="finDepotModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[320] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closeFinDepotBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -4039,7 +4040,7 @@
   </div>
 </div>
 
-<!-- Sparen: Depot-Umsätze aus einer CSV-Datei importieren -->
+<!-- Savings: import depot transactions from a CSV file -->
 <div id="finImportModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[320] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-2xl w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closeFinImportBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -4062,7 +4063,7 @@
   </div>
 </div>
 
-<!-- Taschengeld: Betrag, Rhythmus, Guthaben je Kind -->
+<!-- Pocket money: amount, rhythm, balance per child -->
 <div id="finAllowanceModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[320] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closeFinAllowanceBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -4142,7 +4143,7 @@
   </div>
 </div>
 
-<!-- Taschengeld-Guthaben: Kind hat Geld ausgegeben oder bekommen -->
+<!-- Pocket money balance: the child has spent or received money -->
 <div id="finPocketModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[330] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-sm w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
     <button id="closeFinPocketBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
@@ -4173,7 +4174,7 @@
 
 <div id="finToast" class="hidden fixed left-1/2 z-[500] px-4 py-2.5 rounded-xl bg-pine text-white text-sm shadow-lg max-w-[90vw] text-center" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 1.5rem);"></div>
 
-<!-- Kategorie deaktivieren: Warnung + Verschieben betroffener Rezepte -->
+<!-- Deactivate a category: warning + move the affected recipes -->
 <div id="categoryReassignModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-sm fade-in">
     <h3 id="categoryReassignTitle" class="font-serif text-lg mb-2">Kategorie verschieben?</h3>
@@ -4187,7 +4188,7 @@
   </div>
 </div>
 
-<!-- Apple-Kalender-Konto & Kalenderauswahl -->
+<!-- Apple calendar account & calendar selection -->
 <div id="appleCalendarModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
     <h3 class="font-serif text-lg mb-4">Kalender verbinden</h3>
@@ -4197,8 +4198,8 @@
       <p id="appleCalStatusLine" class="text-sm font-medium">Status wird geladen …</p>
       <p id="appleCalStatusDetail" class="text-[11px] text-ink/50 mt-1"></p>
     </div>
-    <!-- Apple-ID der eigenen Familie (nur Admins der Familie). Gespeichert wird verschlüsselt in der
-         gesperrten Server-Sammlung "apple_zugaenge" - das Passwort kommt nie zurück an ein Gerät. -->
+    <!-- Apple ID of your own family (only admins of the family). It is stored encrypted in the
+         locked server collection "apple_zugaenge" - the password never goes back to a device. -->
     <div id="appleCredWrap" class="hidden rounded-lg border border-ink/10 px-3 py-3 mb-3">
       <label for="appleIdInput" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Apple-ID</label>
       <input id="appleIdInput" type="email" inputmode="email" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="name@icloud.com" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-2" />
@@ -4213,9 +4214,9 @@
     </div>
     <p id="appleCredHint" class="hidden text-[11px] text-ink/40 mb-3">Die Apple-ID eurer Familie kann ein Admin deiner Familie hier hinterlegen.</p>
 
-    <!-- Google-Kalender (Android) der eigenen Familie. Verbunden wird über die Google-Anmeldung; nur ein
-         Zugangsschlüssel liegt verschlüsselt in der gesperrten Server-Sammlung "google_zugaenge"
-         (pb_hooks/pinn-google.js) - ein Passwort sieht pinn. nie. -->
+    <!-- Google calendar (Android) of your own family. It is connected via the Google sign-in; only an
+         access key is stored encrypted in the locked server collection "google_zugaenge"
+         (pb_hooks/pinn-google.js) - pinn. never sees a password. -->
     <p class="text-xs uppercase tracking-wide text-ink/40 mb-1.5 mt-1">Google · Android</p>
     <div id="googleCalBox" class="rounded-lg border border-ink/10 px-3 py-2.5 mb-3">
       <p id="googleCalStatusLine" class="text-sm font-medium">Status wird geladen …</p>
@@ -4256,7 +4257,7 @@
   </div>
 </div>
 
-<!-- Kalender hinzufügen / bearbeiten (Einstellungen → Kalender) -->
+<!-- Add / edit a calendar (Settings → Calendar) -->
 <div id="pinnCalModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
     <h3 id="pinnCalModalTitle" class="font-serif text-lg mb-4">Kalender hinzufügen</h3>
@@ -4341,7 +4342,7 @@
       <input id="customColorInput" type="color" value="#2F4B41" class="w-8 h-8 rounded-full border-2 border-transparent cursor-pointer p-0 bg-transparent" />
     </div>
 
-    <!-- Kinderseite: bunte Aufgaben-Seite, die sich per Tipp auf das Bild öffnet -->
+    <!-- Kids page: colourful task page that opens with a tap on the picture -->
     <div id="memberKidSection" class="rounded-xl border border-ink/10 p-3 mb-5">
       <label class="flex items-center gap-2 text-sm cursor-pointer select-none">
         <input id="memberKidMode" type="checkbox" class="w-4 h-4" />
@@ -4369,7 +4370,7 @@
       <input id="memberKidConfigState" type="hidden" value="" />
     </div>
 
-    <!-- Anmeldung: jedes Familienmitglied braucht ein eigenes Profil -->
+    <!-- Sign-in: every family member needs their own profile -->
     <div id="memberLoginSection" class="hidden rounded-xl border border-ink/10 p-3 mb-5">
       <p class="text-xs uppercase tracking-wide text-ink/40 mb-2">Anmeldung</p>
       <div id="memberLoginLinked" class="hidden text-sm">
@@ -4410,7 +4411,7 @@
   </div>
 </div>
 
-<!-- Kinderseite: Aufgaben und Tageszeiten bearbeiten -->
+<!-- Kids page: edit tasks and times of day -->
 <div id="kidRoutineModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[210] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto fade-in">
     <h3 id="kidRoutineTitle" class="font-serif text-lg mb-1">Kinderseite</h3>
@@ -4434,7 +4435,7 @@
   </div>
 </div>
 
-<!-- Kinderseite: Belohnungen für Sterne bearbeiten -->
+<!-- Kids page: edit rewards for stars -->
 <div id="kidRewardsModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[210] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto fade-in">
     <h3 id="kidRewardsTitle" class="font-serif text-lg mb-1">Belohnungen</h3>
@@ -4463,7 +4464,7 @@
   </div>
 </div>
 
-<!-- Kinderseite (Vollbild) -->
+<!-- Kids page (full screen) -->
 <div id="kidPage" class="hidden" role="dialog" aria-label="Kinderseite">
   <div id="kidDeco" class="kid-deco"></div>
   <button type="button" id="kidPageClose" class="kid-topbtn left" aria-label="Kinderseite schließen">✕</button>
@@ -4515,14 +4516,14 @@
     <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Titel</label>
     <input id="taskTitleInput" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="z. B. Mülleimer rausbringen" />
 
-    <!-- Nur bei "Einkauf planen": in welchen Läden (Einkaufslisten) eingekauft werden soll -->
+    <!-- Only for "Einkauf planen": in which shops (shopping lists) to buy -->
     <div id="taskShoppingBlock" class="hidden">
       <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Einkaufen bei</label>
       <div id="taskShoppingListPicker" class="grid grid-cols-3 gap-2 mb-1.5"></div>
       <p id="taskShoppingHint" class="text-[11px] text-ink/40 mb-3">Beim Abhaken der Aufgabe gibst du je Laden den bezahlten Betrag ein – er wird direkt in Finanzen gebucht.</p>
     </div>
 
-    <!-- AUSGEKLAMMERT (Aufgaben liegen jetzt auf dem NAS) - Element bleibt verborgen -->
+    <!-- COMMENTED OUT (tasks are stored on the NAS now) - the element stays hidden -->
     <p id="taskNoListHint" class="hidden text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-3">Noch kein Aufgaben-Kalender festgelegt. Bitte zuerst in Einstellungen → Kalender-Import einrichten.</p>
 
     <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Notizen</label>
@@ -4561,7 +4562,7 @@
   </div>
 </div>
 
-<!-- Neuen Termin anlegen (wird wirklich nach iCloud geschrieben) -->
+<!-- Add a new event (really written to iCloud) -->
 <div id="addEventModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto fade-in">
     <h3 id="addEventModalTitle" class="font-serif text-lg mb-4">Neuer Termin</h3>
@@ -4657,7 +4658,7 @@
   </div>
 </div>
 
-<!-- Termin-Detail-Popover (öffnet sich per Langdruck auf einen Termin) -->
+<!-- Event detail popover (opens with a long press on an event) -->
 <div id="eventDetailPopover" class="hidden fixed z-[300] bg-white rounded-xl border border-ink/10 shadow-xl p-4 pr-8 w-72">
   <button id="closeEventDetailBtn" class="absolute top-2 right-2 w-6 h-6 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 grid place-items-center text-sm" aria-label="Schließen">×</button>
   <div id="eventDetailTitle" class="font-serif text-base mb-1"></div>
@@ -4805,16 +4806,16 @@
 </div>
 
 <script>
-// Zettel verschieben (siehe „Zettel verschieben“ im Pinnwand-Abschnitt) - früh angelegt, da renderPinboard sie nutzt
+// Moving notes (see "Zettel verschieben" in the pin board section) - created early because renderPinboard uses them
 var PW_LONGPRESS_MS = 450;
 var pwArr = { on: false, press: null, drag: null, quietUntil: 0, renderPending: false, ro: null, layoutQueued: false, raf: 0 };
 /* ==========================================================
-   iOS: Doppeltipp-Versatz verhindern
+   iOS: prevent the double-tap offset
    ========================================================== */
-// Schnelles Doppeltippen auf leere Flächen lässt iOS das Dokument ein Stück scrollen. Weil
-// #appRoot fixed ist, sieht man nur ein kurzes Hüpfen - danach sind aber alle Touch-Trefferflächen
-// um genau diesen Betrag nach oben versetzt. 1) Verrutscht das Dokument, sofort auf 0/0 zurück.
-// 2) Den zweiten schnellen Tipp auf nicht-interaktiven Flächen gar nicht erst durchlassen.
+// A quick double tap on empty areas makes iOS scroll the document a little. Because
+// #appRoot is fixed, you only see a short jump - but afterwards every touch target
+// is shifted up by exactly this amount. 1) If the document slips, set it back to 0/0 at once.
+// 2) Don't let the second quick tap on non-interactive areas through at all.
 window.addEventListener('scroll', () => {
   if (window.scrollX || window.scrollY) window.scrollTo(0, 0);
 }, { passive: true });
@@ -4833,25 +4834,25 @@ window.addEventListener('scroll', () => {
 })();
 
 const PB_COLLECTION = 'familien_daten';
-const ICS_URL = '/api/pinn/kalender'; // nur nach Anmeldung abrufbar (pb_hooks/benutzer.pb.js)
-let familyRecordId = null; // wird nach dem Login gesetzt
+const ICS_URL = '/api/pinn/kalender'; // only available after sign-in (pb_hooks/benutzer.pb.js)
+let familyRecordId = null; // set after the login
 let lastIcsSync = null;
 
 /* ==========================================================
-   App-Version & Update-Erkennung (wichtig für "Zum Home-Bildschirm"-Nutzung auf iOS,
-   da solche Web-Apps Inhalte sonst oft nicht automatisch neu laden)
+   App version & update detection (important for use from the home screen on iOS,
+   because such web apps often don't reload their content by themselves)
    ========================================================== */
-// Aktuelle Version - bei jeder neuen Funktion/Änderung wird diese Nummer erhöht (Alpha-Phase: 0.x)
-const APP_VERSION = '1.100.0';
+// Current version – comes from src/version.txt (filled in by src/build.js); pb_hooks/pinn-system.js and pinn-wartung.sh read it here
+const APP_VERSION = '1.101.0';
 
 /* ==========================================================
-   Einstellungen & Konto: zwei gleich hohe Spalten (Querformat ab Tablet-Breite)
+   Settings & account: two columns of equal height (landscape from tablet width)
    ----------------------------------------------------------
-   Die Karten werden in ihrer Reihenfolge so auf links/rechts aufgeteilt, dass beide Spalten im
-   ZUGEKLAPPTEN Zustand möglichst gleich hoch sind (erst links von oben nach unten, dann rechts).
-   Auf- und Zuklappen ändert nur die Höhe der Karte - sie bleibt in ihrer Spalte, die Karten darunter
-   rücken nach. Neu verteilt wird nur, wenn sich die Breite ändert, die Seite geöffnet wird oder
-   Karten ein-/ausgeblendet werden. Ein ResizeObserver statt Dauer-Abfragen hält das CPU-schonend.
+   The cards are split into left/right in their order so that both columns are as high as possible
+   in the COLLAPSED state (first left from top to bottom, then right).
+   Expanding and collapsing only changes the height of the card - it stays in its column, the cards
+   below move along. It is only redistributed when the width changes, the page is opened or
+   cards are shown/hidden. A ResizeObserver instead of constant polling keeps this easy on the CPU.
    ========================================================== */
 (function setMasonry() {
   const GAP = 12; // 0.75rem
@@ -4871,7 +4872,7 @@ const APP_VERSION = '1.100.0';
     return out;
   }
   function isVisible(el) { return el.getClientRects().length > 0 && el.offsetHeight > 0; }
-  // Höhe im zugeklappten Zustand (aufgeklappte Einstellungen zählen nur mit ihrer Überschrift)
+  // Height in the collapsed state (expanded settings only count with their heading)
   function closedHeight(el) {
     if (el.tagName === 'DETAILS' && el.open) {
       const sum = el.querySelector(':scope > summary');
@@ -4911,7 +4912,7 @@ const APP_VERSION = '1.100.0';
     const s = st.get(pane);
     if (!active) return;
     const w = pane.clientWidth;
-    if (!w) return; // Seite gerade nicht sichtbar
+    if (!w) return; // page not visible right now
     const vis = items(pane).filter(isVisible);
     if (force || w !== s.width || !sameSet(vis, s.vis)) {
       s.width = w;
@@ -4953,7 +4954,7 @@ const APP_VERSION = '1.100.0';
     });
   }
   function check() { if (!mq || mq.matches) on(); else off(); }
-  // Neu eingefügte Karten (z. B. nachgeladene Bereiche) ebenfalls beobachten
+  // Also observe newly inserted cards (e.g. sections loaded later)
   const mo = new MutationObserver(() => { if (!active) return; observeItems(); panes.forEach(p => schedule(p, false)); });
   panes.forEach(p => {
     mo.observe(p, { childList: true });
@@ -4967,112 +4968,112 @@ const APP_VERSION = '1.100.0';
 
 
 </script>
-<!-- App-Teile unter pb_public/js/ (klassische Skripte ohne Build-Schritt, Reihenfolge wichtig).
-     ausblick.js muss zuletzt kommen – es startet die App (bootApp). Neue Datei: auch in der
-     Startprüfung oben (PINN_APP_PARTS) eintragen. -->
-<script src="js/grundlagen.js?v=1.100.0"></script>
-<script src="js/popups.js?v=1.100.0"></script>
-<script src="js/verbindung.js?v=1.100.0"></script>
-<script src="js/benutzer.js?v=1.100.0"></script>
-<script src="js/mitteilungen.js?v=1.100.0"></script>
-<script src="js/serverzugriff.js?v=1.100.0"></script>
-<script src="js/tastatur.js?v=1.100.0"></script>
-<script src="js/anmeldemaske.js?v=1.100.0"></script>
-<script src="js/dashboard.js?v=1.100.0"></script>
-<script src="js/dashboardhintergrund.js?v=1.100.0"></script>
-<script src="js/profilauswahl.js?v=1.100.0"></script>
-<script src="js/pineingabe.js?v=1.100.0"></script>
-<script src="js/dashboardsitzung.js?v=1.100.0"></script>
-<script src="js/dashboardkonto.js?v=1.100.0"></script>
-<script src="js/familienverwalten.js?v=1.100.0"></script>
-<script src="js/einrichten.js?v=1.100.0"></script>
-<script src="js/exportieren.js?v=1.100.0"></script>
-<script src="js/hauptadminseite.js?v=1.100.0"></script>
-<script src="js/anmeldung.js?v=1.100.0"></script>
-<script src="js/konto.js?v=1.100.0"></script>
-<script src="js/profilverwaltung.js?v=1.100.0"></script>
-<script src="js/zustand.js?v=1.100.0"></script>
-<script src="js/bedienzustand.js?v=1.100.0"></script>
-<script src="js/rezeptbilder.js?v=1.100.0"></script>
-<script src="js/zusammenfuehren.js?v=1.100.0"></script>
-<script src="js/speichern.js?v=1.100.0"></script>
-<script src="js/design.js?v=1.100.0"></script>
-<script src="js/sprache.js?v=1.100.0"></script>
-<script src="js/uebersicht.js?v=1.100.0"></script>
-<script src="js/familienkachel.js?v=1.100.0"></script>
-<script src="js/wobistdu.js?v=1.100.0"></script>
-<script src="js/geburtstagsfeier.js?v=1.100.0"></script>
-<script src="js/wetterkachel.js?v=1.100.0"></script>
-<script src="js/geburtstage.js?v=1.100.0"></script>
-<script src="js/uebersichteinstellungen.js?v=1.100.0"></script>
-<script src="js/familiensync.js?v=1.100.0"></script>
-<script src="js/kalenderquellen.js?v=1.100.0"></script>
-<script src="js/icsparser.js?v=1.100.0"></script>
-<script src="js/zeitleiste.js?v=1.100.0"></script>
-<script src="js/termindetails.js?v=1.100.0"></script>
-<script src="js/kalenderdatei.js?v=1.100.0"></script>
-<script src="js/wetter.js?v=1.100.0"></script>
-<script src="js/wohnort.js?v=1.100.0"></script>
-<script src="js/feiertage.js?v=1.100.0"></script>
-<script src="js/muellkalender.js?v=1.100.0"></script>
-<script src="js/mitglieder.js?v=1.100.0"></script>
-<script src="js/profilbild.js?v=1.100.0"></script>
-<script src="js/mitglied.js?v=1.100.0"></script>
-<script src="js/kinderseite.js?v=1.100.0"></script>
-<script src="js/kinderroutine.js?v=1.100.0"></script>
-<script src="js/sterne.js?v=1.100.0"></script>
-<script src="js/kalenderansicht.js?v=1.100.0"></script>
-<script src="js/essenplanen.js?v=1.100.0"></script>
-<script src="js/rezeptparser.js?v=1.100.0"></script>
-<script src="js/rezeptdialog.js?v=1.100.0"></script>
-<script src="js/rezeptbild.js?v=1.100.0"></script>
-<script src="js/rezeptmengen.js?v=1.100.0"></script>
-<script src="js/einkauf.js?v=1.100.0"></script>
-<script src="js/einkaufslisten.js?v=1.100.0"></script>
-<script src="js/einkaufseingabe.js?v=1.100.0"></script>
-<script src="js/rezepte.js?v=1.100.0"></script>
-<script src="js/offline.js?v=1.100.0"></script>
-<script src="js/aufgabenextras.js?v=1.100.0"></script>
-<script src="js/appbadge.js?v=1.100.0"></script>
-<script src="js/reisen.js?v=1.100.0"></script>
-<script src="js/aufgabendaten.js?v=1.100.0"></script>
-<script src="js/haushalt.js?v=1.100.0"></script>
-<script src="js/reihum.js?v=1.100.0"></script>
-<script src="js/aufgaben.js?v=1.100.0"></script>
-<script src="js/smarthome.js?v=1.100.0"></script>
-<script src="js/sprachsteuerung.js?v=1.100.0"></script>
-<script src="js/termine.js?v=1.100.0"></script>
-<script src="js/ansichten.js?v=1.100.0"></script>
-<script src="js/versionspruefung.js?v=1.100.0"></script>
-<script src="js/sicherungen.js?v=1.100.0"></script>
-<script src="js/geraete.js?v=1.100.0"></script>
-<script src="js/fehlerprotokoll.js?v=1.100.0"></script>
-<script src="js/versionslog.js?v=1.100.0"></script>
-<script src="js/einstellungen.js?v=1.100.0"></script>
-<script src="js/kalenderkonto.js?v=1.100.0"></script>
-<script src="js/finanzen.js?v=1.100.0"></script>
-<script src="js/kassen.js?v=1.100.0"></script>
-<script src="js/vorrat.js?v=1.100.0"></script>
-<script src="js/vorrat2.js?v=1.100.0"></script>
-<script src="js/sparen.js?v=1.100.0"></script>
-<script src="js/vertraege.js?v=1.100.0"></script>
-<script src="js/fahrzeuge.js?v=1.100.0"></script>
-<script src="js/zuhause.js?v=1.100.0"></script>
-<script src="js/dokumente.js?v=1.100.0"></script>
-<script src="js/pdflesen.js?v=1.100.0"></script>
-<script src="js/appstart.js?v=1.100.0"></script>
-<script src="js/pinnwand.js?v=1.100.0"></script>
-<script src="js/listen.js?v=1.100.0"></script>
-<script src="js/familie.js?v=1.100.0"></script>
-<script src="js/hinweise.js?v=1.100.0"></script>
-<script src="js/ausblick.js?v=1.100.0"></script>
+<!-- App parts under pb_public/js/ (classic scripts without a build step, order matters).
+     ausblick.js must come last – it starts the app (bootApp). New file: add its line here and its name
+     in pinn-setup.sh – src/build.js fills in the list of the start check (PINN_APP_PARTS) by itself. -->
+<script src="js/grundlagen.js?v=1.101.0"></script>
+<script src="js/popups.js?v=1.101.0"></script>
+<script src="js/verbindung.js?v=1.101.0"></script>
+<script src="js/benutzer.js?v=1.101.0"></script>
+<script src="js/mitteilungen.js?v=1.101.0"></script>
+<script src="js/serverzugriff.js?v=1.101.0"></script>
+<script src="js/tastatur.js?v=1.101.0"></script>
+<script src="js/anmeldemaske.js?v=1.101.0"></script>
+<script src="js/dashboard.js?v=1.101.0"></script>
+<script src="js/dashboardhintergrund.js?v=1.101.0"></script>
+<script src="js/profilauswahl.js?v=1.101.0"></script>
+<script src="js/pineingabe.js?v=1.101.0"></script>
+<script src="js/dashboardsitzung.js?v=1.101.0"></script>
+<script src="js/dashboardkonto.js?v=1.101.0"></script>
+<script src="js/familienverwalten.js?v=1.101.0"></script>
+<script src="js/einrichten.js?v=1.101.0"></script>
+<script src="js/exportieren.js?v=1.101.0"></script>
+<script src="js/hauptadminseite.js?v=1.101.0"></script>
+<script src="js/anmeldung.js?v=1.101.0"></script>
+<script src="js/konto.js?v=1.101.0"></script>
+<script src="js/profilverwaltung.js?v=1.101.0"></script>
+<script src="js/zustand.js?v=1.101.0"></script>
+<script src="js/bedienzustand.js?v=1.101.0"></script>
+<script src="js/rezeptbilder.js?v=1.101.0"></script>
+<script src="js/zusammenfuehren.js?v=1.101.0"></script>
+<script src="js/speichern.js?v=1.101.0"></script>
+<script src="js/design.js?v=1.101.0"></script>
+<script src="js/sprache.js?v=1.101.0"></script>
+<script src="js/uebersicht.js?v=1.101.0"></script>
+<script src="js/familienkachel.js?v=1.101.0"></script>
+<script src="js/wobistdu.js?v=1.101.0"></script>
+<script src="js/geburtstagsfeier.js?v=1.101.0"></script>
+<script src="js/wetterkachel.js?v=1.101.0"></script>
+<script src="js/geburtstage.js?v=1.101.0"></script>
+<script src="js/uebersichteinstellungen.js?v=1.101.0"></script>
+<script src="js/familiensync.js?v=1.101.0"></script>
+<script src="js/kalenderquellen.js?v=1.101.0"></script>
+<script src="js/icsparser.js?v=1.101.0"></script>
+<script src="js/zeitleiste.js?v=1.101.0"></script>
+<script src="js/termindetails.js?v=1.101.0"></script>
+<script src="js/kalenderdatei.js?v=1.101.0"></script>
+<script src="js/wetter.js?v=1.101.0"></script>
+<script src="js/wohnort.js?v=1.101.0"></script>
+<script src="js/feiertage.js?v=1.101.0"></script>
+<script src="js/muellkalender.js?v=1.101.0"></script>
+<script src="js/mitglieder.js?v=1.101.0"></script>
+<script src="js/profilbild.js?v=1.101.0"></script>
+<script src="js/mitglied.js?v=1.101.0"></script>
+<script src="js/kinderseite.js?v=1.101.0"></script>
+<script src="js/kinderroutine.js?v=1.101.0"></script>
+<script src="js/sterne.js?v=1.101.0"></script>
+<script src="js/kalenderansicht.js?v=1.101.0"></script>
+<script src="js/essenplanen.js?v=1.101.0"></script>
+<script src="js/rezeptparser.js?v=1.101.0"></script>
+<script src="js/rezeptdialog.js?v=1.101.0"></script>
+<script src="js/rezeptbild.js?v=1.101.0"></script>
+<script src="js/rezeptmengen.js?v=1.101.0"></script>
+<script src="js/einkauf.js?v=1.101.0"></script>
+<script src="js/einkaufslisten.js?v=1.101.0"></script>
+<script src="js/einkaufseingabe.js?v=1.101.0"></script>
+<script src="js/rezepte.js?v=1.101.0"></script>
+<script src="js/offline.js?v=1.101.0"></script>
+<script src="js/aufgabenextras.js?v=1.101.0"></script>
+<script src="js/appbadge.js?v=1.101.0"></script>
+<script src="js/reisen.js?v=1.101.0"></script>
+<script src="js/aufgabendaten.js?v=1.101.0"></script>
+<script src="js/haushalt.js?v=1.101.0"></script>
+<script src="js/reihum.js?v=1.101.0"></script>
+<script src="js/aufgaben.js?v=1.101.0"></script>
+<script src="js/smarthome.js?v=1.101.0"></script>
+<script src="js/sprachsteuerung.js?v=1.101.0"></script>
+<script src="js/termine.js?v=1.101.0"></script>
+<script src="js/ansichten.js?v=1.101.0"></script>
+<script src="js/versionspruefung.js?v=1.101.0"></script>
+<script src="js/sicherungen.js?v=1.101.0"></script>
+<script src="js/geraete.js?v=1.101.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.101.0"></script>
+<script src="js/versionslog.js?v=1.101.0"></script>
+<script src="js/einstellungen.js?v=1.101.0"></script>
+<script src="js/kalenderkonto.js?v=1.101.0"></script>
+<script src="js/finanzen.js?v=1.101.0"></script>
+<script src="js/kassen.js?v=1.101.0"></script>
+<script src="js/vorrat.js?v=1.101.0"></script>
+<script src="js/vorrat2.js?v=1.101.0"></script>
+<script src="js/sparen.js?v=1.101.0"></script>
+<script src="js/vertraege.js?v=1.101.0"></script>
+<script src="js/fahrzeuge.js?v=1.101.0"></script>
+<script src="js/zuhause.js?v=1.101.0"></script>
+<script src="js/dokumente.js?v=1.101.0"></script>
+<script src="js/pdflesen.js?v=1.101.0"></script>
+<script src="js/appstart.js?v=1.101.0"></script>
+<script src="js/pinnwand.js?v=1.101.0"></script>
+<script src="js/listen.js?v=1.101.0"></script>
+<script src="js/familie.js?v=1.101.0"></script>
+<script src="js/hinweise.js?v=1.101.0"></script>
+<script src="js/ausblick.js?v=1.101.0"></script>
 
 <!-- ==========================================================
-     Versions-Log als Terminal (Einstellungen → System → Versions-Log)
-     Klassen "fixed inset-0": die globale Tastatur-Logik passt das Overlay automatisch an den
-     sichtbaren Bereich an, damit die Eingabezeile nie von der Tastatur verdeckt wird.
+     Changelog as a terminal (Settings → System → Versions-Log)
+     Classes "fixed inset-0": the global keyboard logic fits the overlay to the visible
+     area automatically, so the input line is never hidden by the keyboard.
      ========================================================== -->
-<link rel="stylesheet" href="css/terminal.css?v=1.100.0">
+<link rel="stylesheet" href="css/terminal.css?v=1.101.0">
 
 <div id="changelogTerminal" class="hidden fixed inset-0" data-no-term role="dialog" aria-modal="true" aria-label="Versions-Log">
   <div class="term-window" id="changelogTermWindow">
@@ -5100,6 +5101,6 @@ const APP_VERSION = '1.100.0';
     </div>
   </div>
 </div>
-<link rel="stylesheet" href="css/glocke.css?v=1.100.0">
+<link rel="stylesheet" href="css/glocke.css?v=1.101.0">
 </body>
 </html>

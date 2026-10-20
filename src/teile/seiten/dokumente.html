@@ -1,0 +1,34 @@
+    <section id="documentsSection" class="hidden min-h-0 flex-col bg-white/40">
+      <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
+        <div class="flex items-center justify-between gap-3">
+          <h2 class="font-serif text-lg">Dokumente</h2>
+          <div class="flex items-center gap-2 shrink-0">
+            <button id="openDocCategoriesBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center" aria-label="Kategorien" title="Kategorien">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7"></path><path d="M4 10V3"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M20 21v-5"></path><path d="M20 12V3"></path><path d="M1 14h6"></path><path d="M9 8h6"></path><path d="M17 16h6"></path></svg>
+            </button>
+            <button id="openDocAddBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">+ Dokument</button>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 mt-3">
+          <input id="docSearchInput" type="search" autocomplete="off" placeholder="Suchen …" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-1.5 text-base" />
+          <button id="docDueToggle" type="button" class="doc-due-toggle shrink-0 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 transition whitespace-nowrap">⏰ Mit Frist</button>
+        </div>
+        <div class="flex items-center gap-2 mt-2 flex-wrap">
+          <div class="inline-flex rounded-lg border border-ink/15 p-0.5 shrink-0" role="tablist" aria-label="Sortierung">
+            <button type="button" data-dgroup="category" class="doc-group-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">Kategorie</button>
+            <button type="button" data-dgroup="date" class="doc-group-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">Neueste</button>
+            <button type="button" data-dgroup="alpha" class="doc-group-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">A–Z</button>
+          </div>
+          <div class="flex items-center gap-2 w-full sm:w-fit">
+            <select id="docCategoryFilter" class="min-w-0 flex-1 sm:flex-none rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white"></select>
+            <select id="docMemberFilter" class="min-w-0 flex-1 sm:flex-none rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white"></select>
+          </div>
+        </div>
+      </div>
+      <div class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">
+        <div id="docStatusInfo" class="hidden max-w-3xl mx-auto mb-3"></div>
+        <div id="docDueBox" class="max-w-3xl mx-auto"></div>
+        <div id="docList" class="max-w-3xl mx-auto flex flex-col gap-4"></div>
+        <div id="docEmpty" class="hidden max-w-3xl mx-auto"></div>
+      </div>
+    </section>

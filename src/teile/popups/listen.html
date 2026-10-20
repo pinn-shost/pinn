@@ -1,0 +1,136 @@
+<!-- Lists: new list (choose a template) / edit list -->
+<div id="lsListModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
+  <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+    <button id="lsListClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <h3 id="lsListTitle" class="font-serif text-lg mb-1 pr-6">Neue Liste</h3>
+    <p id="lsListSubtitle" class="text-xs text-ink/45 mb-3"></p>
+
+    <div id="lsTplPane">
+      <div id="lsTplGrid"></div>
+    </div>
+
+    <div id="lsFormPane" class="hidden">
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsListName">Name</label>
+      <input id="lsListName" type="text" autocomplete="off" maxlength="60" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Symbol</label>
+      <div id="lsListIcons" class="flex flex-wrap gap-1.5 mb-3"></div>
+
+      <div id="lsListOwnerWrap" class="hidden mb-3">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Wessen Wunschzettel?</label>
+        <div id="lsListOwner" class="flex flex-wrap gap-1.5"></div>
+      </div>
+
+      <div id="lsListDateWrap" class="hidden mb-3">
+        <label id="lsListDateLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsListDate">Datum</label>
+        <input id="lsListDate" type="date" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
+      </div>
+
+      <!-- Packing list: destination & period (triggers the holiday weather) -->
+      <div id="lsTripWrap" class="hidden mb-3">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsTripPlace">Reiseziel</label>
+        <div id="lsTripChosen" class="hidden ls-trip-chosen"></div>
+        <div id="lsTripSug" class="home-sug"></div>
+        <input id="lsTripPlace" type="text" autocomplete="off" maxlength="120" enterkeyhint="search" placeholder="z. B. Mallorca, Sylt, Rom" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
+        <div class="ls-trip-dates">
+          <div><label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsTripFrom">Abreise</label><input id="lsTripFrom" type="date" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" /></div>
+          <div><label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsTripTo">Rückreise</label><input id="lsTripTo" type="date" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" /></div>
+        </div>
+        <div id="lsTripWx" class="hidden ls-trip-wx"></div>
+        <label id="lsTripTipsWrap" class="hidden items-center gap-2 mt-2 text-sm cursor-pointer select-none"><input id="lsTripTips" type="checkbox" class="w-4 h-4" checked /><span>🌦️ Passend zum Wetter: Regenjacke, Sonnencreme &amp; Co. auf die Liste</span></label>
+      </div>
+
+      <div id="lsListPersonsWrap" class="hidden mb-3">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Für wen wird gepackt?</label>
+        <div id="lsListPersons" class="flex flex-wrap gap-1.5"></div>
+        <p class="text-[11px] text-ink/40 mt-1.5">Kleidung &amp; Co. steht dann für jede Person einzeln auf der Liste – Gemeinsames nur einmal.</p>
+      </div>
+
+      <div id="lsListDaysWrap" class="hidden mb-3">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsListDays">Wie viele Tage?</label>
+        <input id="lsListDays" type="text" inputmode="numeric" autocomplete="off" maxlength="3" placeholder="z. B. 7" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
+        <p class="text-[11px] text-ink/40 mt-1">Daraus ergibt sich die Anzahl bei Unterwäsche, Socken usw.</p>
+      </div>
+
+      <label id="lsListPrivateWrap" class="hidden items-center gap-2 mb-3 text-sm cursor-pointer select-none">
+        <input id="lsListPrivate" type="checkbox" class="w-4 h-4" />
+        <span>🔒 Nur für mich sichtbar</span>
+      </label>
+
+      <p id="lsListError" class="hidden text-xs text-red-500 mb-3"></p>
+      <div class="flex items-center gap-2 mt-1 flex-wrap">
+        <button id="lsListDeleteBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Löschen</button>
+        <button id="lsListBackBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">‹ Vorlagen</button>
+        <div class="flex-1"></div>
+        <button id="lsListCancelBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
+        <button id="lsListSaveBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Anlegen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lists: edit an entry -->
+<div id="lsItemModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
+  <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+    <button id="lsItemClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <h3 id="lsItemTitle" class="font-serif text-lg mb-4 pr-6">Eintrag bearbeiten</h3>
+
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsItemText">Eintrag</label>
+    <input id="lsItemText" type="text" autocomplete="off" maxlength="160" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+
+    <div id="lsItemSectionWrap" class="hidden mb-3">
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsItemSection">Bereich</label>
+      <input id="lsItemSection" type="text" autocomplete="off" maxlength="40" list="lsItemSectionList" placeholder="z. B. Kleidung" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
+      <datalist id="lsItemSectionList"></datalist>
+    </div>
+
+    <div id="lsItemWhoWrap" class="hidden mb-3">
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Für wen?</label>
+      <div id="lsItemWho" class="flex flex-wrap gap-1.5"></div>
+    </div>
+
+    <div id="lsItemForWrap" class="hidden mb-3">
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Geschenk für</label>
+      <div id="lsItemFor" class="flex flex-wrap gap-1.5 mb-2"></div>
+      <input id="lsItemForName" type="text" autocomplete="off" maxlength="40" placeholder="oder Name eingeben, z. B. Oma Helga" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
+    </div>
+
+    <div id="lsItemStatusWrap" class="hidden mb-3">
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Stand</label>
+      <div id="lsItemStatus" class="flex flex-wrap gap-1.5"></div>
+    </div>
+
+    <div id="lsItemPriceLinkWrap" class="hidden grid-cols-2 gap-3 mb-3">
+      <div class="min-w-0">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsItemPrice">Preis (<span class="cur-sym">€</span>)</label>
+        <input id="lsItemPrice" type="text" inputmode="decimal" autocomplete="off" maxlength="12" placeholder="z. B. 24,99" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
+      </div>
+      <div class="min-w-0">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsItemLink">Link</label>
+        <input id="lsItemLink" type="url" autocomplete="off" maxlength="500" placeholder="https://…" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
+      </div>
+    </div>
+
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsItemNote">Notiz</label>
+    <input id="lsItemNote" type="text" autocomplete="off" maxlength="160" placeholder="optional" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+
+    <p id="lsItemError" class="hidden text-xs text-red-500 mb-3"></p>
+    <div class="flex items-center gap-2 mt-1 flex-wrap">
+      <button id="lsItemDeleteBtn" type="button" class="px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Löschen</button>
+      <button id="lsItemShopBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">🛒 Fehlt – einkaufen</button>
+      <div class="flex-1"></div>
+      <button id="lsItemCancelBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
+      <button id="lsItemSaveBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- Lists: put a missing entry on a shopping list -->
+<div id="lsShopModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-4 sm:p-6">
+  <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+    <button id="lsShopClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <h3 class="font-serif text-lg mb-1 pr-6">Auf welche Einkaufsliste?</h3>
+    <p id="lsShopSubtitle" class="text-xs text-ink/45 mb-4"></p>
+    <div id="lsShopGrid" class="ls-shop-grid"></div>
+  </div>
+</div>

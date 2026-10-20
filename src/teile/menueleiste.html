@@ -1,0 +1,11 @@
+<!-- Fixed tab bar at the bottom (replaces the side menu on narrow screens/iPhone) -->
+<div id="bottomTabBackdrop" class="hidden fixed inset-0 z-[145]"></div>
+<nav id="bottomTabBar" class="hidden fixed bottom-0 left-0 right-0 z-[150] bg-paper border-t border-ink/10" style="padding-bottom: env(safe-area-inset-bottom);">
+  <div id="bottomTabDrawer" class="hidden border-b border-ink/10">
+    <div id="bottomTabDrawerGrid" class="grid grid-cols-4 gap-1 px-2 pt-1 pb-2"></div>
+  </div>
+  <button type="button" id="bottomTabHandle" class="w-full flex justify-center py-1" aria-label="Weitere Menüpunkte ein-/ausblenden">
+    <span class="w-9 h-1 rounded-full bg-ink/15"></span>
+  </button>
+  <div id="bottomTabMainRow" class="grid grid-cols-5"></div>
+</nav>

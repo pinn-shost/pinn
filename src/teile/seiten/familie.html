@@ -1,0 +1,22 @@
+    <section id="familySection" class="hidden min-h-0 flex-col bg-white/40">
+      <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
+        <div class="flex items-center justify-between gap-3">
+          <h2 class="font-serif text-lg">Familie</h2>
+          <div class="flex items-center gap-2 shrink-0">
+            <button id="famPlacesBtn" type="button" class="hidden px-3 py-1.5 rounded-lg border border-ink/15 text-xs font-medium hover:bg-ink/5 transition whitespace-nowrap">📍 Orte</button>
+            <button id="famSetupBtn" type="button" class="hidden px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">⚙︎ Ortung</button>
+          </div>
+        </div>
+        <!-- Switch: overview / school & daycare / pets / location / emergency -->
+        <div id="famTabs" class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs mt-3 w-full sm:w-fit overflow-x-auto" role="tablist" aria-label="Familienbereich">
+          <button type="button" data-famtab="uebersicht" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Übersicht</button>
+          <button type="button" data-famtab="schule" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Schule & Kita</button>
+          <button type="button" data-famtab="tiere" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Haustiere</button>
+          <button type="button" data-famtab="ortung" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Ortung</button>
+          <button type="button" data-famtab="notfall" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Notfall</button>
+        </div>
+      </div>
+      <div id="famScroll" class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">
+        <div id="famPane" class="max-w-3xl mx-auto flex flex-col gap-4"></div>
+      </div>
+    </section>

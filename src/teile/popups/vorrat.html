@@ -1,0 +1,84 @@
+<!-- Pantry: storage places & categories -->
+<div id="pantrySettingsModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
+  <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+    <button id="closePantrySettingsBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <h3 class="font-serif text-lg mb-4 pr-6">Lagerorte &amp; Kategorien</h3>
+    <div class="mb-6">
+      <div class="flex items-center justify-between gap-3 mb-2">
+        <h4 class="text-xs uppercase tracking-wide text-ink/40">Lagerorte</h4>
+        <button type="button" data-add="locations" class="pantry-add-btn px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Lagerort</button>
+      </div>
+      <div id="pantryLocationEditor" class="flex flex-col gap-2"></div>
+    </div>
+    <div class="mb-5">
+      <div class="flex items-center justify-between gap-3 mb-2">
+        <h4 class="text-xs uppercase tracking-wide text-ink/40">Kategorien</h4>
+        <button type="button" data-add="categories" class="pantry-add-btn px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Kategorie</button>
+      </div>
+      <div id="pantryCategoryEditor" class="flex flex-col gap-2"></div>
+    </div>
+    <div class="mb-5">
+      <h4 class="text-xs uppercase tracking-wide text-ink/40 mb-2">Mindesthaltbarkeit</h4>
+      <label class="flex items-center justify-between gap-3 text-sm" for="pantryMhdDaysSelect">
+        <span>Erinnern, bevor etwas abläuft</span>
+        <select id="pantryMhdDaysSelect" class="rounded-lg border border-ink/15 px-2 py-1.5 text-sm bg-white">
+          <option value="1">1 Tag vorher</option>
+          <option value="2">2 Tage vorher</option>
+          <option value="3">3 Tage vorher</option>
+          <option value="5">5 Tage vorher</option>
+          <option value="7">7 Tage vorher</option>
+          <option value="14">14 Tage vorher</option>
+        </select>
+      </label>
+      <p class="text-[11px] text-ink/40 mt-1.5">Gilt für die ganze Familie. Die Push-Nachricht kommt morgens an alle, die unter Einstellungen → Benachrichtigungen „Vorrat läuft ab“ eingeschaltet haben – einmal vorher und einmal am Tag selbst.</p>
+    </div>
+    <div class="flex justify-end gap-2">
+      <button id="cancelPantrySettingsBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
+      <button id="savePantrySettingsBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- Pantry: scan a barcode (camera) -->
+<div id="pantryScanModal" class="hidden fixed inset-0 bg-ink/40 z-[320] grid place-items-center p-3 sm:p-6">
+  <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-4 max-h-[94vh] overflow-y-auto fade-in">
+    <button id="pantryScanClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <h3 class="font-serif text-lg mb-3 pr-6">Scannen</h3>
+    <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-full mb-3" role="tablist" aria-label="Scan-Modus">
+      <button type="button" data-scanmode="in" class="pscan-mode flex-1 px-3 py-1.5 rounded-full transition">📥 Einräumen</button>
+      <button type="button" data-scanmode="out" class="pscan-mode flex-1 px-3 py-1.5 rounded-full transition">📤 Verbrauchen</button>
+    </div>
+    <div id="pantryScanStage" class="pscan-stage">
+      <video id="pantryScanVideo" playsinline muted autoplay></video>
+      <div class="pscan-shade t"></div><div class="pscan-shade b"></div><div class="pscan-shade l"></div><div class="pscan-shade r"></div>
+      <div class="pscan-frame"><span class="pscan-line"></span></div>
+      <button id="pantryScanTorch" type="button" class="hidden pscan-torch" aria-label="Taschenlampe" title="Taschenlampe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2h8v4l-2 4v11a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V10L8 6z"/><path d="M8 6h8"/><path d="M12 13v2"/></svg></button>
+      <div id="pantryScanCamMsg" class="hidden pscan-cam-msg"></div>
+    </div>
+    <p id="pantryScanStatus" class="text-xs text-ink/50 mt-2 text-center"></p>
+    <div id="pantryScanResult" class="hidden mt-3"></div>
+    <div class="flex items-center gap-2 mt-3">
+      <input id="pantryScanCodeInput" type="text" inputmode="numeric" autocomplete="off" maxlength="14" placeholder="Barcode-Nummer eintippen" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-2 text-base" />
+      <button id="pantryScanCodeBtn" type="button" class="shrink-0 px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">Suchen</button>
+    </div>
+    <p class="text-[10px] text-ink/40 mt-3 leading-snug">Produktnamen kommen aus den freien Datenbanken Open Food Facts, Open Beauty Facts, Open Products Facts und Open Pet Food Facts – abgefragt vom eigenen NAS, nur mit der Barcode-Nummer. Was keine kennt, benennst du einmal selbst; pinn. merkt sich den Barcode für die ganze Familie.</p>
+    <div class="flex justify-end mt-3">
+      <button id="pantryScanDone" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Fertig</button>
+    </div>
+  </div>
+</div>
+
+<!-- Pantry: what can I cook? -->
+<div id="pantryCookModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
+  <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+    <button id="pantryCookClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <h3 class="font-serif text-lg pr-6">Was kann ich kochen?</h3>
+    <p id="pantryCookSub" class="text-xs text-ink/45 mb-3"></p>
+    <div class="flex gap-2 mb-4 flex-wrap">
+      <button id="pantryCookExpOnly" type="button" class="pantry-chip px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 transition whitespace-nowrap">⏳ Ablaufendes verwerten</button>
+      <button id="pantryCookFavOnly" type="button" class="pantry-chip px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 transition whitespace-nowrap">♡ Favoriten</button>
+    </div>
+    <div id="pantryCookList" class="flex flex-col gap-5"></div>
+    <p class="text-[11px] text-ink/40 mt-5">Salz, Pfeffer und Wasser setzt pinn. voraus, Zutaten „nach Belieben“ zählen nicht. Der Abgleich geht über die Namen – „Weizenmehl“ im Vorrat passt zu „Mehl“ im Rezept. Wo die Einheiten zusammenpassen (g, kg, ml, l, Stück), wird auch die Menge verglichen.</p>
+  </div>
+</div>

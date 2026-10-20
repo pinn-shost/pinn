@@ -1,0 +1,27 @@
+<!-- Family: popups (emergency card, set up location sharing, places, guide) - the content comes from the script -->
+<div id="famModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
+  <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+    <button id="famModalClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <div id="famModalBody"></div>
+  </div>
+</div>
+<!-- Family → pets: popups (the content comes from the script) -->
+<div id="ptModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
+  <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+    <button id="ptModalClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <div id="ptModalBody"></div>
+  </div>
+</div>
+<!-- Weather: 14 days & holiday weather (tap on the weather tile) -->
+<div id="wxOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="Wetter">
+  <div class="wx-sheet fade-in">
+    <button id="wxClose" type="button" class="wx-x" aria-label="Schließen">×</button>
+    <div id="wxBody"></div>
+  </div>
+</div>
+<div id="famModal2" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-4 sm:p-6">
+  <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+    <button id="famModal2Close" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <div id="famModal2Body"></div>
+  </div>
+</div>

@@ -1,0 +1,258 @@
+<!-- Finances → contracts: file picker for documents and receipts (invisible) -->
+<input id="finDocFileInput" type="file" multiple accept="application/pdf,image/*,.doc,.docx,.odt,.xls,.xlsx,.txt" class="fixed" style="opacity:0;width:1px;height:1px;left:-100px;top:0;pointer-events:none" tabindex="-1" aria-hidden="true" />
+
+<!-- Finances → contracts: view a contract (costs, notice period, contact, documents) -->
+<div id="contractDetailModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-4 sm:p-6">
+  <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+    <button id="closeContractDetailBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <div id="contractDetailBody"></div>
+  </div>
+</div>
+
+<!-- Finances → contracts: add / edit a contract -->
+<div id="contractModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[320] grid place-items-center p-4 sm:p-6">
+  <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+    <button id="closeContractModalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <h3 id="contractModalTitle" class="font-serif text-lg mb-3 pr-6">Neuer Vertrag</h3>
+    <div id="cfKasseWrap" class="hidden mb-3">
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfKasse">🔒 Kasse</label>
+      <select id="cfKasse" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
+      <p id="cfKasseInfo" class="text-[11px] text-ink/45 mt-1"></p>
+    </div>
+
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfName">Vertrag</label>
+    <input id="cfName" type="text" autocomplete="off" maxlength="120" placeholder="z. B. Haftpflichtversicherung, Strom, Netflix" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfProvider">Anbieter</label>
+    <input id="cfProvider" type="text" autocomplete="off" maxlength="120" placeholder="optional, z. B. HUK-Coburg" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+    <span class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Kategorie</span>
+    <div id="cfCategoryPicker" class="flex flex-wrap gap-1.5 mb-1"></div>
+
+    <h4 class="vt-form-h">💶 Kosten</h4>
+    <div id="cfLinkRecWrap" class="hidden mb-3">
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfLinkRec">Bestehende regelmäßige Ausgabe übernehmen</label>
+      <select id="cfLinkRec" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
+    </div>
+    <div class="grid grid-cols-2 gap-3 mb-3">
+      <div class="min-w-0">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfAmount">Betrag</label>
+        <div class="fin-amount-field vt-amount flex items-center rounded-lg border border-ink/15 px-2.5 py-2">
+          <input id="cfAmount" type="text" inputmode="decimal" autocomplete="off" placeholder="keine" class="w-full min-w-0 bg-transparent border-0 p-0 text-base text-right" />
+          <span class="cur-sym text-sm text-ink/40 ml-1">€</span>
+        </div>
+      </div>
+      <div class="min-w-0">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfInterval">Rhythmus</label>
+        <select id="cfInterval" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white">
+          <option value="weekly">Wöchentlich</option>
+          <option value="biweekly">Alle 2 Wochen</option>
+          <option value="monthly">Monatlich</option>
+          <option value="quarterly">Im Quartal</option>
+          <option value="yearly">Jährlich</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-3 mb-3">
+      <div class="min-w-0">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfCostStart">Abbuchung ab</label>
+        <input id="cfCostStart" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
+      </div>
+      <div class="fin-paidby-wrap min-w-0">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfPaidBy">Bezahlt von</label>
+        <select id="cfPaidBy" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
+      </div>
+    </div>
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfFinCat">In den Ausgaben unter</label>
+    <select id="cfFinCat" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white mb-2"></select>
+    <p id="cfCostInfo" class="text-xs text-ink/50"></p>
+
+    <h4 class="vt-form-h">📅 Laufzeit &amp; Kündigung</h4>
+    <div class="grid grid-cols-2 gap-3 mb-3">
+      <div class="min-w-0">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfTermType">Art</label>
+        <select id="cfTermType" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white">
+          <option value="fixed">Mit Laufzeit (verlängert sich)</option>
+          <option value="open">Unbefristet (jederzeit kündbar)</option>
+          <option value="once">Befristet (endet automatisch)</option>
+        </select>
+      </div>
+      <div class="min-w-0">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfStart">Vertragsbeginn</label>
+        <input id="cfStart" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-3 mb-3">
+      <div id="cfMinTermWrap" class="min-w-0">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfMinTerm">Mindestlaufzeit</label>
+        <select id="cfMinTerm" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white">
+          <option value="">keine</option>
+          <option value="1">1 Monat</option>
+          <option value="3">3 Monate</option>
+          <option value="6">6 Monate</option>
+          <option value="12">12 Monate</option>
+          <option value="24">24 Monate</option>
+          <option value="36">36 Monate</option>
+          <option value="x">eigenes Enddatum</option>
+        </select>
+      </div>
+      <div id="cfFirstEndWrap" class="min-w-0">
+        <label id="cfFirstEndLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfFirstEnd">Laufzeit endet am</label>
+        <input id="cfFirstEnd" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
+      </div>
+    </div>
+    <div id="cfRenewWrap" class="mb-3">
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfRenew">Danach Verlängerung um</label>
+      <select id="cfRenew" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white">
+        <option value="1">1 Monat</option>
+        <option value="3">3 Monate</option>
+        <option value="6">6 Monate</option>
+        <option value="12">12 Monate</option>
+        <option value="24">24 Monate</option>
+        <option value="36">36 Monate</option>
+      </select>
+    </div>
+    <div id="cfNoticeWrap" class="mb-3">
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfNoticeValue">Kündigungsfrist</label>
+      <div class="flex items-center gap-2">
+        <input id="cfNoticeValue" type="text" inputmode="numeric" autocomplete="off" maxlength="3" class="w-16 shrink-0 rounded-lg border border-ink/15 px-2.5 py-2 text-base text-center" />
+        <select id="cfNoticeUnit" class="shrink-0 rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white">
+          <option value="days">Tage</option>
+          <option value="weeks">Wochen</option>
+          <option value="months">Monate</option>
+        </select>
+        <span id="cfNoticeSuffix" class="text-xs text-ink/50 min-w-0">zum Laufzeitende</span>
+      </div>
+      <label id="cfNoticeMonthEndWrap" class="hidden flex items-center gap-2 mt-2 text-sm normal-case tracking-normal">
+        <input id="cfNoticeMonthEnd" type="checkbox" class="vt-check" /> zum Monatsende
+      </label>
+    </div>
+    <p id="cfTermInfo" class="vt-info mb-3"></p>
+
+    <label class="vt-toggle flex items-center gap-2 text-sm mb-2">
+      <input id="cfRemindOn" type="checkbox" class="vt-check" />
+      <span id="cfRemindOnLabel">Rechtzeitig vor der Kündigungsfrist erinnern</span>
+    </label>
+    <div id="cfRemindBlock" class="rounded-xl border border-ink/10 p-3 mb-3">
+      <div class="flex items-center gap-2 flex-wrap mb-2">
+        <select id="cfRemindDays" class="rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm bg-white" aria-label="Wie früh erinnern">
+          <option value="7">7 Tage vorher</option>
+          <option value="14">14 Tage vorher</option>
+          <option value="30">30 Tage vorher</option>
+          <option value="60">60 Tage vorher</option>
+          <option value="90">90 Tage vorher</option>
+        </select>
+        <label id="cfRemindLastWrap" class="flex items-center gap-2 text-sm">
+          <input id="cfRemindLast" type="checkbox" class="vt-check" /> + 3 Tage vorher nochmal
+        </label>
+      </div>
+      <span class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Per Push an</span>
+      <div id="cfRemindTo" class="flex flex-wrap gap-1.5"></div>
+      <p class="text-[11px] text-ink/45 mt-1.5">Niemand ausgewählt = Vertragsinhaber, sonst alle Erwachsenen.</p>
+    </div>
+    <span class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Eigene Erinnerung</span>
+    <div class="flex items-center gap-2 mb-1">
+      <input id="cfExtraDate" type="date" class="shrink-0 rounded-lg border border-ink/15 px-2.5 py-2 text-sm" aria-label="Datum der Erinnerung" />
+      <input id="cfExtraText" type="text" autocomplete="off" maxlength="200" placeholder="z. B. Tarif vergleichen" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-2 text-base" aria-label="Text der Erinnerung" />
+    </div>
+
+    <div id="cfVehicleWrap" class="hidden mt-4">
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfVehicle">🚗 Fahrzeug</label>
+      <select id="cfVehicle" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
+    </div>
+    <details id="cfMoreBlock" class="vt-more mt-4 rounded-xl border border-ink/10 px-3 py-2">
+      <summary class="text-sm cursor-pointer select-none">👤 Vertragsdaten &amp; Kontakt</summary>
+      <div class="pt-3">
+        <div class="grid grid-cols-2 gap-3 mb-3">
+          <div class="min-w-0">
+            <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfHolder">Inhaber</label>
+            <select id="cfHolder" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
+          </div>
+          <div class="min-w-0">
+            <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfPhone">Telefon</label>
+            <input id="cfPhone" type="tel" autocomplete="off" maxlength="60" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-base" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3 mb-3">
+          <div class="min-w-0">
+            <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfCustomerNo">Kundennummer</label>
+            <input id="cfCustomerNo" type="text" autocomplete="off" maxlength="80" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-base" />
+          </div>
+          <div class="min-w-0">
+            <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfContractNo">Vertragsnummer</label>
+            <input id="cfContractNo" type="text" autocomplete="off" maxlength="80" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-base" />
+          </div>
+        </div>
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfEmail">E-Mail</label>
+        <input id="cfEmail" type="email" autocomplete="off" maxlength="120" placeholder="z. B. kuendigung@anbieter.de" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfWeb">Kundenportal</label>
+        <input id="cfWeb" type="url" autocomplete="off" maxlength="300" placeholder="z. B. anbieter.de/login" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="cfAddress">Anschrift (für das Kündigungsschreiben)</label>
+        <textarea id="cfAddress" rows="3" maxlength="500" placeholder="Straße, PLZ Ort" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-1"></textarea>
+      </div>
+    </details>
+
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1 mt-4" for="cfNote">Notiz</label>
+    <textarea id="cfNote" rows="2" maxlength="2000" placeholder="optional, z. B. Tarif, Leistungen, Selbstbeteiligung" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3"></textarea>
+
+    <p id="contractModalError" class="hidden text-xs text-red-500 mb-3"></p>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button id="deleteContractBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Löschen</button>
+      <div class="flex-1"></div>
+      <button id="cancelContractBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
+      <button id="saveContractBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- Finances → contracts: cancel (dates, confirmation, cancellation letter) -->
+<div id="contractCancelModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[320] grid place-items-center p-4 sm:p-6">
+  <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+    <button id="closeContractCancelBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <h3 id="contractCancelTitle" class="font-serif text-lg mb-3 pr-6">Vertrag kündigen</h3>
+    <div class="grid grid-cols-2 gap-3 mb-2">
+      <div class="min-w-0">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="ccSent">Gekündigt am</label>
+        <input id="ccSent" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
+      </div>
+      <div class="min-w-0">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="ccEffective">Wirksam zum</label>
+        <input id="ccEffective" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
+      </div>
+    </div>
+    <p id="ccInfo" class="vt-info mb-3"></p>
+    <label class="flex items-center gap-2 text-sm mb-4">
+      <input id="ccConfirmed" type="checkbox" class="vt-check" /> Kündigungsbestätigung erhalten
+    </label>
+
+    <div class="flex items-center justify-between gap-2 mb-1.5">
+      <span class="block text-xs uppercase tracking-wide text-ink/40">Kündigungsschreiben</span>
+      <div class="flex items-center gap-1.5">
+        <button id="ccCopyBtn" type="button" class="px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">⧉ Kopieren</button>
+        <button id="ccMailBtn" type="button" class="hidden px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">✉️ Per E-Mail</button>
+      </div>
+    </div>
+    <textarea id="ccLetter" rows="12" class="vt-letter w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-1"></textarea>
+    <p class="text-[11px] text-ink/45 mb-4">Vorlage – bei Bedarf anpassen. Kündigung und Bestätigung am besten danach als Dokument am Vertrag ablegen.</p>
+
+    <div class="flex items-center gap-2 flex-wrap">
+      <button id="ccRevokeBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Zurücknehmen</button>
+      <div class="flex-1"></div>
+      <button id="ccCancelBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
+      <button id="ccSaveBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Als gekündigt speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- Finances → contracts: manage categories (slider symbol at the top right) -->
+<div id="contractCategoryModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
+  <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+    <button id="closeContractCategoryBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <h3 class="font-serif text-lg mb-1 pr-6">Vertrags-Kategorien</h3>
+    <p class="text-xs text-ink/50 mb-3">Symbol, Name und in welcher Ausgaben-Kategorie neue Verträge standardmäßig gebucht werden.</p>
+    <div id="contractCategoryEditor" class="flex flex-col gap-2 mb-3"></div>
+    <button id="addContractCategoryBtn" type="button" class="w-full px-3 py-2 rounded-lg border border-dashed border-ink/25 text-sm text-ink/60 hover:text-pine hover:border-pine transition mb-4">+ Kategorie</button>
+    <div class="flex items-center justify-end gap-2">
+      <button id="cancelContractCategoryBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
+      <button id="saveContractCategoryBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern</button>
+    </div>
+  </div>
+</div>

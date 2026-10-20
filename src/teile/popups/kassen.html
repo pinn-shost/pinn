@@ -1,0 +1,68 @@
+<!-- Kassen: selection -->
+<div id="kassenModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-4 sm:p-6">
+  <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+    <button id="closeKassenModalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <h3 class="font-serif text-lg mb-1 pr-6">💶 Kassen</h3>
+    <p class="text-xs text-ink/50 mb-4 leading-snug">Jede Kasse hat eigene Buchungen, Budget, Sparen, Taschengeld, Verträge, Dokumente und Fahrzeuge. Was in einer Kasse steht, sehen nur ihre Mitglieder.</p>
+    <div id="kassenList" class="flex flex-col gap-2 mb-3"></div>
+    <button id="kasseNewBtn" type="button" class="w-full px-3 py-2.5 rounded-xl border border-dashed border-ink/20 text-sm text-ink/60 hover:text-pine hover:border-pine transition">+ Neue Kasse</button>
+    <p class="text-[11px] text-ink/40 mt-3 leading-snug">Mit „Ausgaben aufteilen“ rechnet eine Kasse aus, wer wem wie viel schuldet – z. B. für WG, Urlaub oder als Paar. Einkaufslisten lassen sich unter Listen → Liste bearbeiten einer Kasse zuordnen. „Familie (alle)“ gehört automatisch allen und nimmt Verträge ohne eigene Kasse auf.</p>
+  </div>
+</div>
+
+<!-- Kassen: create / set up -->
+<div id="kasseEditModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[320] grid place-items-center p-4 sm:p-6">
+  <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+    <button id="closeKasseEditBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <h3 id="kasseEditTitle" class="font-serif text-lg mb-2 pr-6">Kasse</h3>
+    <div id="kasseEditBody"></div>
+    <p id="kasseEditError" class="hidden text-xs text-red-500 mt-3"></p>
+    <div class="flex items-center gap-2 flex-wrap mt-4">
+      <button id="kasseEditDeleteBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Löschen</button>
+      <button id="kasseEditLeaveBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-red-500 hover:border-red-300 transition">Verlassen</button>
+      <div class="flex-1"></div>
+      <button id="kasseEditCancelBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
+      <button id="kasseEditSaveBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- Kassen: enter a settlement -->
+<div id="kasseSettleModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[330] grid place-items-center p-4 sm:p-6">
+  <div class="relative bg-white rounded-2xl shadow-xl max-w-sm w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+    <button id="closeKasseSettleBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <h3 class="font-serif text-lg mb-1 pr-6">💸 Ausgleich</h3>
+    <p class="text-xs text-ink/50 mb-4">Geld wurde zurückgezahlt (bar, überwiesen …). Zählt nicht als Ausgabe.</p>
+    <div class="grid grid-cols-2 gap-3 mb-3">
+      <div class="min-w-0">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="kasseSettleFrom">Wer zahlt</label>
+        <select id="kasseSettleFrom" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
+      </div>
+      <div class="min-w-0">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="kasseSettleTo">An wen</label>
+        <select id="kasseSettleTo" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
+      </div>
+    </div>
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="kasseSettleAmount">Betrag</label>
+    <div class="fin-amount-field flex items-baseline gap-2 rounded-xl border border-ink/15 px-4 py-2.5 mb-3">
+      <input id="kasseSettleAmount" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" data-cur-zero class="flex-1 min-w-0 bg-transparent border-0 p-0 text-2xl font-semibold tracking-tight" />
+      <span class="cur-sym text-xl text-ink/40">€</span>
+    </div>
+    <div class="grid grid-cols-2 gap-3 mb-3">
+      <div class="min-w-0">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="kasseSettleDate">Datum</label>
+        <input id="kasseSettleDate" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
+      </div>
+      <div class="min-w-0">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="kasseSettleNote">Notiz</label>
+        <input id="kasseSettleNote" type="text" maxlength="200" autocomplete="off" placeholder="optional" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-base" />
+      </div>
+    </div>
+    <p id="kasseSettleError" class="hidden text-xs text-red-500 mb-3"></p>
+    <div class="flex items-center gap-2">
+      <div class="flex-1"></div>
+      <button id="kasseSettleCancelBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
+      <button id="kasseSettleSaveBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Eintragen</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,72 @@
+    <section id="financeSection" class="hidden min-h-0 flex-col bg-white/40">
+      <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
+        <div class="flex items-center justify-between gap-3">
+          <div class="min-w-0">
+            <h2 class="font-serif text-lg leading-tight">Finanzen</h2>
+            <button id="kassePillFin" type="button" class="kasse-sub hidden" aria-label="Kasse wechseln"></button>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <button id="openFinanceSettingsBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center" aria-label="Budget &amp; Kategorien" title="Budget &amp; Kategorien">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7"></path><path d="M4 10V3"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M20 21v-5"></path><path d="M20 12V3"></path><path d="M1 14h6"></path><path d="M9 8h6"></path><path d="M17 16h6"></path></svg>
+            </button>
+            <button id="openExpenseModalBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">+ Buchung</button>
+          </div>
+        </div>
+        <!-- Switch: expenses / savings / pocket money / contracts -->
+        <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs mt-3 w-full sm:w-fit" role="tablist" aria-label="Finanzbereich">
+          <button type="button" data-fintab="ausgaben" class="fin-tab-btn flex-1 sm:flex-none px-4 py-1.5 rounded-full transition" role="tab">Ausgaben</button>
+          <button type="button" data-fintab="sparen" class="fin-tab-btn flex-1 sm:flex-none px-4 py-1.5 rounded-full transition" role="tab">Sparen</button>
+          <button type="button" id="finTabTaschengeldBtn" data-fintab="taschengeld" class="fin-tab-btn flex-1 sm:flex-none px-4 py-1.5 rounded-full transition" role="tab">Taschengeld</button>
+          <button type="button" data-fintab="vertraege" class="fin-tab-btn flex-1 sm:flex-none px-4 py-1.5 rounded-full transition" role="tab">Verträge</button>
+        </div>
+        <div id="finPeriodBar" class="flex items-center gap-2 mt-3 flex-wrap">
+          <div class="inline-flex rounded-lg border border-ink/15 p-0.5 shrink-0">
+            <button type="button" data-period="week" class="fin-period-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">Woche</button>
+            <button type="button" data-period="month" class="fin-period-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">Monat</button>
+            <button type="button" data-period="year" class="fin-period-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">Jahr</button>
+          </div>
+          <button id="finTodayBtn" type="button" class="shrink-0 ml-auto sm:order-last sm:ml-0 px-2 py-1 rounded-lg border border-ink/15 text-[11px] text-ink/60 hover:text-pine hover:border-pine transition">Heute</button>
+          <div class="fin-period-nav flex items-center gap-1 w-full sm:w-auto sm:ml-auto min-w-0">
+            <button id="finPrevBtn" type="button" class="shrink-0 w-9 h-9 rounded-full text-ink/60 hover:text-pine hover:bg-ink/5 grid place-items-center text-xl leading-none select-none" aria-label="Vorheriger Zeitraum">‹</button>
+            <span id="finPeriodLabel" class="flex-1 sm:flex-none sm:w-56 text-sm font-medium truncate text-center"></span>
+            <button id="finNextBtn" type="button" class="shrink-0 w-9 h-9 rounded-full text-ink/60 hover:text-pine hover:bg-ink/5 grid place-items-center text-xl leading-none select-none" aria-label="Nächster Zeitraum">›</button>
+          </div>
+        </div>
+        <!-- Contracts: search, status, category, sorting -->
+        <div id="finContractBar" class="hidden mt-3 flex flex-col gap-2">
+          <div class="flex items-center gap-2">
+            <div class="relative flex-1 min-w-0">
+              <input id="contractSearchInput" type="search" autocomplete="off" placeholder="Vertrag, Anbieter, Kundennummer …" class="w-full rounded-lg border border-ink/15 pl-8 pr-2.5 py-1.5 text-base" aria-label="Verträge durchsuchen" />
+              <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 text-ink/40 pointer-events-none" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+            </div>
+            <button id="contractDueToggle" type="button" class="vt-due-toggle shrink-0 px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 transition whitespace-nowrap" title="Nur Verträge, um die man sich jetzt kümmern sollte">⏰ Fällig</button>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <div class="inline-flex rounded-lg border border-ink/15 p-0.5 shrink-0">
+              <button type="button" data-cstatus="aktiv" class="contract-status-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">Laufend</button>
+              <button type="button" data-cstatus="gekuendigt" class="contract-status-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">Gekündigt</button>
+              <button type="button" data-cstatus="alle" class="contract-status-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">Alle</button>
+            </div>
+            <div class="flex items-center gap-2 ml-auto min-w-0 flex-1 justify-end">
+              <select id="contractCategoryFilter" class="min-w-0 flex-1 rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="Kategorie"></select>
+              <select id="contractSortSelect" class="shrink-0 rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="Sortierung">
+                <option value="frist">Nach Frist</option>
+                <option value="name">Nach Name</option>
+                <option value="kosten">Nach Kosten</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="financeScroll" class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">
+        <div id="finPaneAusgaben" class="max-w-3xl mx-auto flex flex-col gap-4">
+          <div id="finBudgetCard"></div>
+          <div id="finSplitCard"></div>
+          <div id="finTrendCard"></div>
+          <div id="finExpenseListCard" class="scroll-mt-4"></div>
+        </div>
+        <div id="finPaneSparen" class="hidden max-w-3xl mx-auto flex flex-col gap-4"></div>
+        <div id="finPaneTaschengeld" class="hidden max-w-3xl mx-auto flex flex-col gap-4"></div>
+        <div id="finPaneVertraege" class="hidden max-w-3xl mx-auto flex flex-col gap-4"></div>
+      </div>
+    </section>

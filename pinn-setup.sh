@@ -19,6 +19,8 @@
 #     pb_hooks/      server hooks and their helper modules  → ./pb_hooks
 #     pb_public/     the web app (index.html, icons, js/, lang/, vendor/)  → ./pb_public
 #     caddy/         Caddyfile  → ./caddy/Caddyfile
+#     src/           sources of pb_public/index.html (put together by src/build.js before every release)
+#                    – not installed, the release already contains the built index.html
 #     *.sh, docker-compose.yaml, env.txt, README, LICENSE  → project folder
 #  The index.html at the top of the repository is only a placeholder (the update button of
 #  pinn. 1.38 and older checks for it) and is never installed.
@@ -271,6 +273,8 @@ paket_einsortieren() {   # paket_einsortieren <folder>
   done < "$LISTE"
   # Repository leftovers that don't belong on the NAS, then the (now empty) folders
   rm -rf "$PK/.github" "$PK/.gitignore" "$PK/.gitattributes" "$PK/__MACOSX"
+  # The sources of index.html (src/) are not needed on the NAS – a git checkout keeps them
+  [ -d "$PK/.git" ] || rm -rf "$PK/src"
   find "$PK" -depth -type d 2>/dev/null | while IFS= read -r d; do rmdir "$d" 2>/dev/null; done
 }
 

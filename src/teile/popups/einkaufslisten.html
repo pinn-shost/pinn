@@ -1,0 +1,174 @@
+  <div id="shoppingItemModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-6">
+    <div class="relative bg-white rounded-2xl shadow-xl max-w-sm w-full p-5 fade-in">
+      <button id="closeShoppingItemModalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+      <h3 id="shoppingItemModalTitle" class="font-serif text-lg mb-1 pr-6">Auf die Liste</h3>
+      <p id="shoppingItemModalHint" class="hidden text-xs text-mustard mb-2">Steht schon auf der Liste – Menge und Notiz werden aktualisiert.</p>
+
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1 mt-3">Artikel</label>
+      <input id="shoppingItemNameInput" type="text" autocomplete="off" autocorrect="off" spellcheck="false" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Menge</label>
+      <div class="flex items-center gap-2 mb-3">
+        <button id="shoppingQtyMinusBtn" type="button" class="shrink-0 w-10 h-10 rounded-lg border border-ink/15 text-xl leading-none grid place-items-center text-ink/70 hover:text-pine hover:border-pine transition select-none" aria-label="Weniger">−</button>
+        <input id="shoppingQtyInput" type="text" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="z. B. 2 oder 500 g" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-2 text-base text-center" />
+        <button id="shoppingQtyPlusBtn" type="button" class="shrink-0 w-10 h-10 rounded-lg border border-ink/15 text-xl leading-none grid place-items-center text-ink/70 hover:text-pine hover:border-pine transition select-none" aria-label="Mehr">+</button>
+      </div>
+
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Notiz</label>
+      <input id="shoppingNoteInput" type="text" autocomplete="off" placeholder="z. B. Bio, die große Packung …" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+
+      <div class="grid grid-cols-2 gap-3 mb-5">
+        <div class="min-w-0">
+          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="shoppingItemCategorySelect">Kategorie</label>
+          <select id="shoppingItemCategorySelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-base bg-white"></select>
+        </div>
+        <div class="min-w-0">
+          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="shoppingItemListSelect">Liste</label>
+          <select id="shoppingItemListSelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-base bg-white"></select>
+        </div>
+      </div>
+
+
+      <div class="flex items-center gap-2">
+        <button id="deleteShoppingItemBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Löschen</button>
+        <div class="flex-1"></div>
+        <button id="cancelShoppingItemBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
+        <button id="confirmShoppingItemBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Hinzufügen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add / edit a shopping list -->
+  <div id="shoppingListModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-6">
+    <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+      <button id="closeShoppingListModalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+      <h3 id="shoppingListModalTitle" class="font-serif text-lg mb-3 pr-6">Neue Einkaufsliste</h3>
+
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Laden</label>
+      <div id="shoppingStorePicker" class="grid grid-cols-4 sm:grid-cols-5 gap-2 mb-4"></div>
+
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Name der Liste</label>
+      <input id="shoppingListNameInput" type="text" autocomplete="off" placeholder="z. B. Rewe" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+
+      <div id="shoppingListCustomLogoBlock">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Logo</label>
+        <div class="flex items-center gap-3 mb-2">
+          <div id="shoppingListLogoPreview" class="shrink-0"></div>
+          <div class="flex flex-wrap gap-2">
+            <button id="uploadShoppingListLogoBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Eigenes Bild wählen</button>
+            <button id="removeShoppingListLogoBtn" type="button" class="hidden px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-red-500 hover:border-red-300 transition">Bild entfernen</button>
+          </div>
+          <input id="shoppingListLogoFile" type="file" accept="image/*" class="hidden" />
+        </div>
+        <div id="shoppingListDomainBlock" class="hidden">
+          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1 mt-3">Webseite des Ladens (für das Logo, optional)</label>
+          <input id="shoppingListDomainInput" type="text" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="off" placeholder="z. B. baeckerei-muster.de" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-1" />
+          <p class="text-[11px] text-ink/40">Das Logo wird von der Webseite des Ladens geladen. Ein eigenes Bild hat Vorrang.</p>
+        </div>
+        <div class="mb-4"></div>
+      </div>
+
+      <!-- Address of the shop: appears under Family → Places, staying there checks off the planned shopping -->
+      <div id="shoppingListAddrBlock" class="rounded-xl border border-ink/10 bg-ink/[0.03] px-3 py-3 mb-4">
+        <div class="flex items-center justify-between gap-2 mb-1">
+          <span class="text-sm font-medium">📍 Adressen des Ladens</span>
+          <span class="text-[11px] text-ink/40">optional</span>
+        </div>
+        <p class="text-[11px] text-ink/45 leading-snug mb-2">Erscheint unter Familie → Orte. Bist du eine Weile dort, hakt pinn. den geplanten Einkauf ab – die Ausgaben trägst du dann über die 🔔 oben ein. Gibt es den Laden mehrmals (z. B. zwei Rewe-Märkte), füge jede Filiale hinzu – egal in welcher du einkaufst.</p>
+        <div id="shoppingListAddrChosen" class="hidden flex flex-col gap-1.5 mb-2"></div>
+        <button id="shoppingListAddrAdd" type="button" class="hidden w-full mb-1 px-3 py-2 rounded-lg border border-dashed border-ink/20 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Weitere Adresse (Filiale)</button>
+        <div id="shoppingListAddrSearchWrap">
+          <input id="shoppingListAddrInput" type="search" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" placeholder="z. B. Rewe Hauptstraße Musterstadt" class="fz-in" />
+          <div id="shoppingListAddrResults" class="flex flex-col gap-1 mt-1.5"></div>
+        </div>
+        <div id="shoppingListAddrOpts" class="hidden mt-3">
+          <label class="fz-lbl" for="shoppingListAddrStay">Einkauf abhaken nach</label>
+          <select id="shoppingListAddrStay" class="fz-in mb-3">
+            <option value="5">5 Minuten vor Ort</option>
+            <option value="10">10 Minuten vor Ort (Standard)</option>
+            <option value="15">15 Minuten vor Ort</option>
+            <option value="20">20 Minuten vor Ort</option>
+            <option value="30">30 Minuten vor Ort</option>
+            <option value="45">45 Minuten vor Ort</option>
+            <option value="60">60 Minuten vor Ort</option>
+          </select>
+          <label class="fz-check"><input type="checkbox" id="shoppingListAddrDone" /><span>Geplanten Einkauf automatisch abhaken<span class="block text-[11px] text-ink/45">Bei mehreren Läden, sobald alle besucht sind – je Laden reicht eine seiner Filialen.</span></span></label>
+          <label class="fz-check"><input type="checkbox" id="shoppingListAddrDonePush" /><span>Push „Betrag eintragen“, wenn abgehakt</span></label>
+          <label class="fz-check"><input type="checkbox" id="shoppingListAddrRemind" /><span>Beim Ankommen an die Einkaufsliste erinnern<span class="block text-[11px] text-ink/45">Push „Gehst du einkaufen?“ und Hinweis oben, solange du hier bist und etwas auf der Liste steht – auch ohne geplanten Einkauf.</span></span></label>
+          <label class="fz-check"><input type="checkbox" id="shoppingListAddrArrive" /><span>Familie bei Ankunft benachrichtigen</span></label>
+          <p class="text-[11px] text-ink/45 leading-snug">Umkreis, Personen und Empfänger lassen sich unter Familie → 📍 Orte genauer einstellen. Funktioniert mit der Ortung (Traccar Client) und geteiltem Standort.</p>
+        </div>
+      </div>
+
+      <!-- Kassen: which Kasse purchases from this list are booked to -->
+      <div id="shoppingListKasseBlock" class="hidden rounded-xl border border-ink/10 bg-ink/[0.03] px-3 py-3 mb-4">
+        <label class="block text-sm font-medium mb-1.5" for="shoppingListKasseSelect">💶 Kasse für Einkäufe</label>
+        <select id="shoppingListKasseSelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white mb-1.5"></select>
+        <p class="text-[11px] text-ink/45 leading-snug">Beim Abschließen eines Einkaufs landet der Betrag in dieser Kasse. Ist dort „Ausgaben aufteilen“ an (z. B. WG), wird er auf die Mitglieder verteilt – Privates lässt sich dabei abziehen.</p>
+      </div>
+
+      <!-- Main shop: ingredients from the meal planning land on this list automatically -->
+      <div class="rounded-xl border border-ink/10 bg-ink/[0.03] px-3 py-3 mb-4">
+        <label class="flex items-start gap-2.5 cursor-pointer select-none">
+          <input id="shoppingListStammCheck" type="checkbox" class="shrink-0 w-4 h-4 mt-0.5" />
+          <span class="min-w-0">
+            <span class="block text-sm font-medium">⭐ Als Stammladen festlegen</span>
+            <span class="block text-[11px] text-ink/45 leading-snug">Hier kaufst du normalerweise für die Essensplanung ein – die Rezept-Zutaten können dann automatisch auf dieser Liste landen.</span>
+          </span>
+        </label>
+        <div id="shoppingListStammModeBlock" class="hidden mt-3">
+          <div id="shoppingListStammModes" class="flex flex-col gap-1.5"></div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 mt-2">
+        <button id="deleteShoppingListBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Liste löschen</button>
+        <div class="flex-1"></div>
+        <button id="cancelShoppingListBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
+        <button id="saveShoppingListBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Anlegen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Set the main shop (from the list "Essensplanung") -->
+  <div id="shoppingStammModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-6">
+    <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+      <button id="closeShoppingStammModalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+      <h3 class="font-serif text-lg mb-1 pr-6">⭐ Stammladen</h3>
+      <p class="text-xs text-ink/50 mb-4">Der Laden, in dem ihr normalerweise für die Essensplanung einkauft. Die Zutaten der geplanten Rezepte können dann automatisch auf seiner Liste landen.</p>
+
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Laden</label>
+      <div id="shoppingStammListPicker" class="grid grid-cols-3 gap-2 mb-4"></div>
+      <p id="shoppingStammNoLists" class="hidden text-sm text-ink/50 italic mb-4">Es gibt noch keine Liste für einen Laden. <button type="button" id="shoppingStammNewListBtn" class="underline text-pine not-italic">Jetzt eine anlegen</button></p>
+
+      <div id="shoppingStammModeWrap" class="hidden">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Zutaten der Essensplanung</label>
+        <div id="shoppingStammModes" class="flex flex-col gap-1.5 mb-4"></div>
+      </div>
+
+      <div class="flex items-center gap-2 mt-2">
+        <div class="flex-1"></div>
+        <button id="cancelShoppingStammBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
+        <button id="saveShoppingStammBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Move the content of a shopping list to another list -->
+  <div id="shoppingMoveModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-6">
+    <div class="relative bg-white rounded-2xl shadow-xl max-w-sm w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+      <button id="closeShoppingMoveModalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+      <h3 class="font-serif text-lg mb-1 pr-6">Inhalt verschieben</h3>
+      <p id="shoppingMoveInfo" class="text-xs text-ink/50 mb-4"></p>
+      <div id="shoppingMoveTargets" class="flex flex-col gap-2"></div>
+      <p id="shoppingMoveEmpty" class="hidden text-sm text-ink/50 italic"></p>
+    </div>
+  </div>
+
+  <div id="ingredientBreakdownModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-6">
+    <div class="relative bg-white rounded-2xl shadow-xl max-w-sm w-full p-5">
+      <button id="closeIngredientBreakdownBtn" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+      <h3 id="ingredientBreakdownTitle" class="font-serif text-base font-bold mb-3 pr-6"></h3>
+      <div id="ingredientBreakdownRows" class="font-mono text-sm"></div>
+    </div>
+  </div>

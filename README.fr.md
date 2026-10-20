@@ -90,6 +90,14 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **English, Deutsch, Français et Español**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.101
+
+**Code de l’app découpé, étape 3 – partie 6 : le HTML de la page de l’app (étape 3 terminée)**
+
+- **Pour les contributeurs :** le HTML de la page de l’app se trouve maintenant dans de petits fichiers sous `src/` – un cadre (`src/rahmen.html`) et 53 parties dans `src/teile/` (écrans de connexion, un fichier par page, popups regroupés par domaine). `node src/build.js` les assemble avant chaque version en `pb_public/index.html` ; `node src/build.js --check` indique si les deux correspondent encore. L’`index.html` construit reste dans le dépôt et dans la version, donc rien n’est construit sur le NAS – rien ne change à l’usage, l’installation et les mises à jour fonctionnent comme avant. Le numéro de version n’est plus défini que dans `src/version.txt`. Tous les commentaires de la page de l’app sont maintenant en anglais.
+- `pinn-setup.sh` supprime le dossier `src/` du dossier de version décompressé après l’installation.
+- Seuls des fichiers de l’app changent (`index.html`, nouveau dossier `src/`, `js/versionslog.js`, `pinn-setup.sh`), rien ne change sur le serveur. La 1.100.0 doit être installée avant. Installe comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
+
 ## Nouveautés de la 1.100
 
 **Le code de l’app est découpé, étape 3 – partie 5 : langues**
@@ -97,13 +105,6 @@ pinn. parle **English, Deutsch, Français et Español**, adapte la devise et les
 - **Pour les contributeurs :** le changement de langue (traduction des textes affichés, termes de colocation, chargement du fichier de langue) se trouve maintenant dans son propre fichier `pb_public/js/sprachen.js`. `index.html` le charge exactement au même endroit dans le `<head>`, il s’exécute donc toujours avant que quoi que ce soit ne s’affiche – rien ne change à l’utilisation. Les en-têtes de `lang/en.js`, `lang/fr.js` et `lang/es.js` y renvoient désormais (commentaires en anglais, traductions inchangées).
 - Première version avec un numéro à trois chiffres – la détection des mises à jour dans l’app et sur le serveur reconnaît bien la 1.100.0 comme plus récente que la 1.99.0.
 - Seuls des fichiers de l’app changent (`index.html`, nouveau `js/sprachen.js`, `js/versionslog.js`, les trois fichiers de langue, `pinn-setup.sh`), rien ne change sur le serveur. La 1.99.0 doit être installée avant. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
-## Nouveautés de la 1.99
-
-**Le code de l’app est découpé, étape 3 – partie 4 : mode veille et région**
-
-- **Pour les contributeurs :** le mode veille (économie d’énergie) et la région (pays, devise, format des nombres, numéros d’urgence) se trouvent maintenant dans leurs propres fichiers `pb_public/js/ruhemodus.js` et `pb_public/js/region.js`. `index.html` les charge exactement au même endroit dans le `<head>`, ils s’exécutent donc toujours avant tout le reste – rien ne change à l’utilisation.
-- Seuls des fichiers de l’app changent (`index.html`, 2 nouveaux fichiers dans `js/`, `js/versionslog.js`, `pinn-setup.sh`), rien ne change sur le serveur. La 1.98.0 doit être installée avant. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
 ## Comment ça marche
 
@@ -131,7 +132,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.100.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.101.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -219,13 +220,14 @@ Le dépôt a la même structure qu’une installation sur le NAS – chaque fich
 pinn/
 ├── pb_hooks/            serveur : hooks *.pb.js et leurs modules auxiliaires (pinn-*.js, calendar-sync.js)
 ├── pb_public/           web-app servie par PocketBase
-│   ├── index.html       la page de l’app (HTML, vérification au démarrage)
+│   ├── index.html       la page de l’app, construite depuis src/ (HTML, vérification au démarrage) – ne pas modifier à la main
 │   ├── js/              code de l’app sorti d’index.html, simples fichiers <script> sans étape de build
 │   │                    (ruhemodus.js, sprachen.js, region.js, grundlagen.js, popups.js, verbindung.js, benutzer.js, mitteilungen.js, serverzugriff.js, tastatur.js, anmeldemaske.js, dashboard.js, dashboardhintergrund.js, profilauswahl.js, pineingabe.js, dashboardsitzung.js, dashboardkonto.js, familienverwalten.js, einrichten.js, exportieren.js, hauptadminseite.js, anmeldung.js, konto.js, profilverwaltung.js, zustand.js, bedienzustand.js, rezeptbilder.js, zusammenfuehren.js, speichern.js, design.js, sprache.js, uebersicht.js, familienkachel.js, wobistdu.js, geburtstagsfeier.js, wetterkachel.js, geburtstage.js, uebersichteinstellungen.js, familiensync.js, kalenderquellen.js, icsparser.js, zeitleiste.js, termindetails.js, kalenderdatei.js, wetter.js, wohnort.js, feiertage.js, muellkalender.js, mitglieder.js, profilbild.js, mitglied.js, kinderseite.js, kinderroutine.js, sterne.js, kalenderansicht.js, essenplanen.js, rezeptparser.js, rezeptdialog.js, rezeptbild.js, rezeptmengen.js, einkauf.js, einkaufslisten.js, einkaufseingabe.js, rezepte.js, offline.js, aufgabenextras.js, appbadge.js, reisen.js, aufgabendaten.js, haushalt.js, reihum.js, aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js toujours en dernier)
 │   ├── css/             styles de l’app sortis d’index.html, CSS simple sans étape de build (ergaenzung.css, energiesparen.css, basis.css … haustierewetter.css, terminal.css, glocke.css)
 │   ├── einrichtung.js   assistant de configuration · datenexport.js  export des données
 │   ├── lang/            traductions (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js et Tesseract sont téléchargés par l’installation)
+├── src/                 sources d’index.html (build.js, rahmen.html, teile/) – non installé
 ├── caddy/Caddyfile      proxy inverse HTTPS
 ├── docker-compose.yaml  tous les conteneurs
 ├── env.txt              modèle pour .env

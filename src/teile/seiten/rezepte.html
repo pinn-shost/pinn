@@ -1,0 +1,99 @@
+    <!-- RIGHT: Recipes -->
+    <section id="recipeSection" class="min-h-0 flex flex-col bg-white/40 border-ink/10">
+
+      <div id="recipeListHeader" class="px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
+        <div class="flex items-center justify-between gap-3">
+          <h2 id="recipeSectionTitle" class="font-serif text-lg">Rezepte</h2>
+          <button id="addMealOverviewBtn" class="hidden px-3 py-1.5 rounded-lg bg-mustard text-white text-xs font-medium hover:bg-mustard/90 transition whitespace-nowrap shrink-0" title="Essen hinzufügen">+<span class="hidden sm:inline"> Essen hinzufügen</span></button>
+          <div id="recipeControls" class="hidden items-center gap-2 shrink-0">
+            <button id="openRecipeCookBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center text-base leading-none" aria-label="Was kann ich kochen?" title="Was kann ich kochen? (Abgleich mit dem Vorrat)">🍳</button>
+            <button id="openRecipeSettingsBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center" aria-label="Kategorien &amp; Küchengeräte" title="Kategorien &amp; Küchengeräte">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7"></path><path d="M4 10V3"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M20 21v-5"></path><path d="M20 12V3"></path><path d="M1 14h6"></path><path d="M9 8h6"></path><path d="M17 16h6"></path></svg>
+            </button>
+            <button id="openRecipeModalBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap shrink-0" title="Rezept hinzufügen">+ Rezept</button>
+          </div>
+        </div>
+        <div id="recipeSourceToggle" class="hidden items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mt-2.5">
+          <button type="button" data-source="eigene" class="recipe-source-btn px-3 py-1 rounded-full transition">Eigene</button>
+          <button type="button" data-source="oeffentlich" class="recipe-source-btn px-3 py-1 rounded-full transition">🌍 Öffentlich</button>
+        </div>
+        <div id="recipeFilterBar" class="hidden">
+          <div class="flex items-center gap-2 mt-3">
+            <input id="recipeSearchInput" type="search" autocomplete="off" placeholder="Suchen …" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-1.5 text-base" />
+            <button id="recipeFavoritesToggle" type="button" class="pantry-chip shrink-0 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 transition whitespace-nowrap" aria-pressed="false">♡ Favoriten</button>
+          </div>
+          <div class="flex items-center gap-2 mt-2 mb-2 flex-wrap">
+            <select id="recipeSort" class="min-w-0 flex-1 sm:flex-none rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="Sortierung">
+              <option value="hinzugefuegt">Zuletzt hinzugefügt</option>
+              <option value="titel">Titel (A–Z)</option>
+              <option value="schnellste">Schnellste zuerst</option>
+              <option value="geplant">Diese Woche geplant zuerst</option>
+            </select>
+            <select id="recipeCategoryFilter" class="min-w-0 flex-1 sm:flex-none rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="Kategorie"></select>
+            <select id="recipeToolFilter" class="min-w-0 flex-1 sm:flex-none rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="Küchengerät"></select>
+          </div>
+        </div>
+        <span id="recipeCount" class="text-xs text-ink/40"></span>
+      </div>
+
+      <!-- Recipe list (incl. the week slider) -->
+      <div id="recipeListContainer" class="flex-1 min-h-0 overflow-y-auto">
+        <div id="recipeWeekSliderWrap" class="hidden px-6 pt-4">
+          <h3 class="text-xs uppercase tracking-wide text-ink/40 mb-2">Diese Woche geplant</h3>
+          <div id="recipeWeekSlider" class="flex gap-3 overflow-x-auto pb-3 -mx-6" style="scroll-snap-type: x proximity;"></div>
+        </div>
+        <div id="recipeFavSliderWrap" class="hidden px-6 pt-4">
+          <h3 class="text-xs uppercase tracking-wide text-ink/40 mb-2">Favoriten</h3>
+          <div id="recipeFavSlider" class="flex gap-3 overflow-x-auto pb-3 -mx-6" style="scroll-snap-type: x proximity;"></div>
+        </div>
+        <div class="px-6 py-4">
+          <div id="recipeList" class="flex flex-col gap-3"></div>
+          <p id="emptyRecipes" class="text-sm text-ink/40 italic mt-2">Noch keine Rezepte – füge eines hinzu.</p>
+        </div>
+      </div>
+
+      <!-- Recipe detail page: its own view instead of expanding in the list -->
+      <div id="recipeDetailView" class="hidden flex-1 min-h-0 flex flex-col overflow-y-auto">
+        <button id="recipeDetailBackBtn" class="sticky top-0 z-10 bg-paper/95 backdrop-blur px-4 py-3 border-b border-ink/10 flex items-center gap-1.5 text-sm font-medium text-ink/70 hover:text-pine transition text-left w-full">
+          <span class="text-lg leading-none">‹</span> <span id="recipeDetailBackLabel">Zurück</span>
+        </button>
+        <div id="recipeDetailHero" class="w-full aspect-video shrink-0 bg-ink/10 overflow-hidden" style="position: relative;">
+          <span id="recipeDetailFavBtn" role="button" tabindex="0" class="recipe-fav-btn recipe-fav-large" aria-label="Als Favorit markieren"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span>
+          <img id="recipeDetailHeroImg" class="hidden w-full h-full object-cover" alt="" />
+          <div id="recipeDetailHeroPlaceholder" class="w-full h-full grid place-items-center text-4xl opacity-20">🍽️</div>
+        </div>
+        <div class="px-5 py-4">
+          <h1 id="recipeDetailTitle" class="font-serif text-2xl font-bold mb-2"></h1>
+          <div id="recipeDetailMeta" class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink/50 mb-3"></div>
+          <div id="recipeDetailCategories" class="flex flex-wrap gap-1.5 mb-4"></div>
+          <p id="recipeDetailSource" class="hidden text-xs text-ink/50 -mt-2 mb-4"></p>
+
+          <div class="flex items-center justify-between gap-2 mb-4 rounded-xl border border-ink/10 bg-ink/[0.03] px-3 py-2.5">
+            <span class="text-xs uppercase tracking-wide text-ink/40">Portionen</span>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <button id="recipeDetailServingsMinus" class="w-7 h-7 rounded-full border border-ink/20 text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center text-xs" aria-label="Weniger Personen">–</button>
+              <span id="recipeDetailServingsLabel" class="text-sm font-medium w-20 text-center"></span>
+              <button id="recipeDetailServingsPlus" class="w-7 h-7 rounded-full border border-ink/20 text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center text-xs" aria-label="Mehr Personen">+</button>
+            </div>
+          </div>
+
+          <div id="recipeDetailToolsWrap" class="hidden mb-4">
+            <h3 class="text-xs uppercase tracking-wide text-ink/40 mb-1.5">Küchengeräte</h3>
+            <p id="recipeDetailTools" class="text-sm text-ink/70"></p>
+          </div>
+
+          <h3 class="text-xs uppercase tracking-wide text-ink/40 mb-1.5">Zutaten</h3>
+          <div id="recipeDetailIngredients" class="mb-5"></div>
+
+          <h3 class="text-xs uppercase tracking-wide text-ink/40 mb-1.5">Zubereitung</h3>
+          <div id="recipeDetailSteps" class="mb-5"></div>
+
+          <div class="flex gap-2 pt-2 border-t border-ink/10">
+            <button id="recipeDetailPlanBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-mustard hover:border-mustard transition">📅 Für einen Tag planen</button>
+            <button id="recipeDetailEditBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Bearbeiten</button>
+            <button id="recipeDetailDeleteBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-red-500 hover:border-red-500 transition">Löschen</button>
+            <button id="recipeDetailAdoptBtn" class="hidden px-3 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">＋ Zu meinen Rezepten hinzufügen</button>
+          </div>
+        </div>
+      </div>
+    </section>

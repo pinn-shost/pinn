@@ -1,0 +1,185 @@
+  <!-- Add/edit room modal -->
+  <div id="roomModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
+      <h3 id="roomModalTitle" class="font-serif text-lg mb-4">Neuer Raum</h3>
+
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Name</label>
+      <input id="roomNameInput" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="z. B. Badezimmer" />
+
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Symbol</label>
+      <div id="roomIconPicker" class="flex flex-wrap gap-2 mb-3"></div>
+
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Farbe</label>
+      <div id="roomColorPicker" class="flex flex-wrap gap-2 mb-4"></div>
+
+      <div class="flex items-center justify-between gap-2 mt-2">
+        <button id="deleteRoomBtn" class="hidden px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Raum löschen</button>
+        <div class="flex gap-2 ml-auto">
+          <button id="cancelRoom" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
+          <button id="saveRoom" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Speichern</button>
+        </div>
+      </div>
+      <p id="roomFormStatus" class="text-xs text-ink/40 mt-2"></p>
+    </div>
+  </div>
+
+  <!-- Add/edit trash bin modal -->
+  <div id="trashBinModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
+      <h3 id="trashBinModalTitle" class="font-serif text-lg mb-4">Neuer Mülleimer</h3>
+      <p id="trashBinRoomLabel" class="text-xs text-ink/40 mb-3"></p>
+
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Müllart</label>
+      <div id="trashBinWasteTypePicker" class="flex flex-col gap-1.5 mb-5"></div>
+
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Zuständig</label>
+      <div id="trashBinMemberPicker" class="flex gap-2 flex-wrap mb-1"></div>
+      <p class="text-[11px] text-ink/40 mb-4">Niemand ausgewählt = alle. So verschwindet die Aufgabe nicht aus dem Blick, wenn nach einer Person gefiltert wird.</p>
+
+      <div id="trashBinRotateWrap" class="hh-rotate hidden mb-4">
+        <label class="flex items-center gap-2 text-sm cursor-pointer select-none">
+          <input id="trashBinRotate" type="checkbox" class="w-4 h-4" />
+          <span>🔄 Reihum verteilen</span>
+        </label>
+        <select id="trashBinRotateMode" class="hidden mt-2 w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white">
+          <option value="reihum">Der Reihe nach</option>
+          <option value="fair">Fair – wer zuletzt am wenigsten gemacht hat</option>
+        </select>
+        <p class="text-[11px] text-ink/40 mt-1">Jedes Mal ist nur eine Person dran. Wer seine Aufgabe verpasst, bleibt dran. Wer wie viel erledigt, zeigt „⚖️ Wer macht wie viel?“ auf der Haushalt-Seite.</p>
+      </div>
+
+      <div class="flex items-center gap-1.5 mb-2">
+        <label class="block text-xs uppercase tracking-wide text-ink/40">Smarthome</label>
+        <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Start-Knöpfe erscheinen direkt an der Aufgabe und starten die Aktion – über Apple-Kurzbefehle oder Home Assistant (z. B. Saugen, Wischen oder beides). „Beim Abhaken“ startet zusätzlich eine Aktion, sobald die Aufgabe erledigt ist – z. B. eine Erinnerungs-LED wieder ausschalten. „Automatisch starten“ läuft am Fälligkeitstag ab der Uhrzeit. Geräte richtest du unter Einstellungen → Smarthome oder über das Haus-Symbol oben auf der Haushalt-Seite ein.">i</button>
+      </div>
+      <div id="trashBinSmartPicker" class="mb-4"></div>
+      <div id="trashBinRemindPicker" class="mb-4"></div>
+      <label class="flex items-center gap-2 text-sm mb-3 cursor-pointer">
+        <input id="trashBinManualScheduleCheckbox" type="checkbox" class="w-4 h-4" />
+        Zusätzlich manuellen Rausbring-Rhythmus festlegen
+      </label>
+      <p class="text-[11px] text-ink/40 mb-3 -mt-2">Unabhängig davon entsteht am Vortag automatisch eine Aufgabe, sobald im Müllkalender oder im Kalender eine passende Abholung für morgen steht – nach der Abholung wird sie von selbst abgehakt.</p>
+
+      <div id="trashBinScheduleFields" class="hidden">
+        <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-3">
+          <button type="button" data-scheduletype="weekdays" class="bin-schedule-type-btn px-4 py-1.5 rounded-full transition">Wochentage</button>
+          <button type="button" data-scheduletype="interval" class="bin-schedule-type-btn px-4 py-1.5 rounded-full transition">Intervall</button>
+        </div>
+
+        <div id="trashBinWeekdaysWrap" class="mb-3">
+          <div id="trashBinWeekdayPicker" class="flex gap-1.5 flex-wrap"></div>
+        </div>
+
+        <div id="trashBinIntervalWrap" class="hidden mb-3">
+          <select id="trashBinIntervalSelect" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-2">
+            <option value="1">Täglich</option>
+            <option value="2">Alle 2 Tage</option>
+            <option value="3">Alle 3 Tage</option>
+            <option value="4">Alle 4 Tage</option>
+            <option value="5">Alle 5 Tage</option>
+            <option value="6">Alle 6 Tage</option>
+            <option value="7">Wöchentlich</option>
+            <option value="14">Alle 14 Tage</option>
+            <option value="custom">Eigene…</option>
+          </select>
+          <div id="trashBinCustomIntervalWrap" class="hidden flex items-center gap-2 mb-2">
+            <span class="text-sm text-ink/60">Alle</span>
+            <input id="trashBinCustomIntervalInput" type="number" min="1" class="w-20 rounded-lg border border-ink/15 px-2 py-1.5 text-sm" />
+            <span class="text-sm text-ink/60">Tage</span>
+          </div>
+          <div id="trashBinFirstDateWrap">
+            <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Erstes Rausbringen am</label>
+            <input id="trashBinFirstDateInput" type="date" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm" />
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between gap-2 mt-2">
+        <button id="deleteTrashBinBtn" class="hidden px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Löschen</button>
+        <div class="flex gap-2 ml-auto">
+          <button id="cancelTrashBin" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
+          <button id="saveTrashBin" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Speichern</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/edit room schedule ("Reinigung") modal -->
+  <div id="roomScheduleModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
+      <h3 id="roomScheduleModalTitle" class="font-serif text-lg mb-4">Reinigung hinzufügen</h3>
+      <p id="roomScheduleRoomLabel" class="text-xs text-ink/40 mb-3"></p>
+
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Kategorie</label>
+      <select id="roomScheduleCategorySelect" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-1"></select>
+      <p id="roomScheduleCategoryHint" class="hidden text-[11px] text-ink/50 mb-1">Lege hier deine erste Kategorie an, z. B. „Reinigung“ oder „Aufräumen“.</p>
+      <div class="flex gap-2 mb-3">
+        <input id="roomScheduleNewCategoryInput" class="flex-1 rounded-lg border border-ink/15 px-3 py-1.5 text-xs" placeholder="Eigene Kategorie…" />
+        <button id="addRoomScheduleCategoryBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition whitespace-nowrap">Hinzufügen</button>
+      </div>
+
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Wiederholung</label>
+      <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-3">
+        <button type="button" data-scheduletype="weekdays" class="schedule-type-btn px-4 py-1.5 rounded-full transition">Wochentage</button>
+        <button type="button" data-scheduletype="interval" class="schedule-type-btn px-4 py-1.5 rounded-full transition">Intervall</button>
+      </div>
+
+      <div id="roomScheduleWeekdaysWrap" class="mb-3">
+        <div id="roomScheduleWeekdayPicker" class="flex gap-1.5 flex-wrap"></div>
+      </div>
+
+      <div id="roomScheduleIntervalWrap" class="hidden mb-3">
+        <select id="roomScheduleIntervalSelect" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-2">
+          <option value="1">Täglich</option>
+          <option value="2">Alle 2 Tage</option>
+          <option value="3">Alle 3 Tage</option>
+          <option value="4">Alle 4 Tage</option>
+          <option value="5">Alle 5 Tage</option>
+          <option value="6">Alle 6 Tage</option>
+          <option value="7">Wöchentlich</option>
+          <option value="14">Alle 14 Tage</option>
+          <option value="custom">Eigene…</option>
+        </select>
+        <div id="roomScheduleCustomIntervalWrap" class="hidden flex items-center gap-2 mb-2">
+          <span class="text-sm text-ink/60">Alle</span>
+          <input id="roomScheduleCustomIntervalInput" type="number" min="1" class="w-20 rounded-lg border border-ink/15 px-2 py-1.5 text-sm" />
+          <span class="text-sm text-ink/60">Tage</span>
+        </div>
+        <div id="roomScheduleFirstDateWrap">
+          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Erste Reinigung am</label>
+          <input id="roomScheduleFirstDateInput" type="date" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm" />
+        </div>
+      </div>
+
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Zuständig</label>
+      <div id="roomScheduleMemberPicker" class="flex gap-2 flex-wrap mb-1"></div>
+      <p class="text-[11px] text-ink/40 mb-3">Niemand ausgewählt = alle. So verschwindet die Aufgabe nicht aus dem Blick, wenn nach einer Person gefiltert wird.</p>
+
+      <div id="roomScheduleRotateWrap" class="hh-rotate hidden mb-4">
+        <label class="flex items-center gap-2 text-sm cursor-pointer select-none">
+          <input id="roomScheduleRotate" type="checkbox" class="w-4 h-4" />
+          <span>🔄 Reihum verteilen</span>
+        </label>
+        <select id="roomScheduleRotateMode" class="hidden mt-2 w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white">
+          <option value="reihum">Der Reihe nach</option>
+          <option value="fair">Fair – wer zuletzt am wenigsten gemacht hat</option>
+        </select>
+        <p class="text-[11px] text-ink/40 mt-1">Jedes Mal ist nur eine Person dran. Wer seine Aufgabe verpasst, bleibt dran. Wer wie viel erledigt, zeigt „⚖️ Wer macht wie viel?“ auf der Haushalt-Seite.</p>
+      </div>
+
+      <div class="flex items-center gap-1.5 mb-2">
+        <label class="block text-xs uppercase tracking-wide text-ink/40">Smarthome</label>
+        <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Start-Knöpfe erscheinen direkt an der Aufgabe und starten die Aktion – über Apple-Kurzbefehle oder Home Assistant (z. B. Saugen, Wischen oder beides). „Beim Abhaken“ startet zusätzlich eine Aktion, sobald die Aufgabe erledigt ist – z. B. eine Erinnerungs-LED wieder ausschalten. „Automatisch starten“ läuft am Fälligkeitstag ab der Uhrzeit. Geräte richtest du unter Einstellungen → Smarthome oder über das Haus-Symbol oben auf der Haushalt-Seite ein.">i</button>
+      </div>
+      <div id="roomScheduleSmartPicker" class="mb-4"></div>
+      <div id="roomScheduleRemindPicker" class="mb-4"></div>
+      <p id="roomScheduleFormStatus" class="text-xs text-ink/40 mb-2"></p>
+      <div class="flex items-center justify-between gap-2 mt-2">
+        <button id="deleteRoomScheduleBtn" class="hidden px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Löschen</button>
+        <div class="flex gap-2 ml-auto">
+          <button id="cancelRoomSchedule" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
+          <button id="saveRoomSchedule" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Speichern</button>
+        </div>
+      </div>
+    </div>
+  </div>

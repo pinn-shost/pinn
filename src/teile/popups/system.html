@@ -1,0 +1,142 @@
+  <div id="infoPopupModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-6">
+    <div class="bg-paper rounded-2xl shadow-xl max-w-sm w-full p-5">
+      <p id="infoPopupText" class="text-sm text-ink/80 leading-relaxed"></p>
+      <button id="closeInfoPopupBtn" class="mt-4 px-3 py-1.5 rounded-lg border border-ink/15 text-sm hover:bg-ink/5 transition">Schließen</button>
+    </div>
+  </div>
+
+  <!-- Backups & updates (Settings → System, main admin) – pb_hooks/system.pb.js, container "wartung" -->
+  <div id="sysMaintModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[400] grid place-items-center" role="dialog" aria-modal="true" aria-labelledby="sysMaintTitle" data-no-term>
+    <div class="sm-box bg-paper rounded-2xl shadow-xl w-full fade-in">
+      <div class="sm-head">
+        <h3 id="sysMaintTitle" class="font-serif text-lg">Sicherungen &amp; Updates</h3>
+        <button id="sysMaintClose" type="button" class="sm-x" aria-label="Schließen">×</button>
+      </div>
+      <div class="sm-scroll">
+        <div id="sysMaintNotice" class="set-hint hidden mb-3"><span>⚠️</span><span id="sysMaintNoticeText" class="flex-1 min-w-0"></span></div>
+
+        <div id="sysMaintMain">
+          <section class="sm-sec">
+            <div class="sm-sec-head"><span class="sm-sec-title">Updates</span><span class="sm-mono" data-no-i18n>v<span id="sysMaintVersion"></span></span></div>
+            <div id="sysVorabActive" class="set-hint sm-pre hidden"><span>🧪</span><span class="flex-1 min-w-0"><span id="sysVorabActiveText" data-no-i18n></span> <span>Fällt dir etwas auf? Bitte als Fehlerbericht auf GitHub melden.</span></span><a id="sysVorabActiveIssue" href="https://github.com/pinn-shost/pinn/issues/new" target="_blank" rel="noopener" class="set-hint-btn">Fehler melden ↗</a></div>
+            <p id="sysUpdState" class="text-sm text-ink/70 leading-snug" data-no-i18n></p>
+            <div id="sysUpdRelease" class="sm-release hidden">
+              <div class="sm-rel-head"><span id="sysUpdRelTitle" class="font-medium text-sm" data-no-i18n></span><span id="sysUpdRelDate" class="text-[11px] text-ink/45" data-no-i18n></span></div>
+              <div id="sysUpdRelNotes" class="sm-notes" data-no-i18n></div>
+              <a id="sysUpdRelLink" href="https://github.com/pinn-shost/pinn/releases" target="_blank" rel="noopener" class="text-xs text-pine">Auf GitHub ansehen ↗</a>
+            </div>
+            <div class="flex flex-wrap gap-2 mt-3">
+              <button id="sysUpdCheckBtn" type="button" class="sm-btn">Nach Updates suchen</button>
+              <button id="sysUpdInstallBtn" type="button" class="sm-btn sm-primary hidden">Jetzt installieren</button>
+            </div>
+            <p class="text-[11px] text-ink/45 mt-2 leading-snug">Vor jedem Update legt pinn. automatisch eine Sicherung an. Während des Updates ist pinn. ein paar Minuten nicht erreichbar.</p>
+          </section>
+
+          <details id="sysDevBox" class="sm-sec sm-dev">
+            <summary><span class="sm-dev-title">🧪 Entwickler: Vorabversionen testen</span><span class="sm-dev-chev" aria-hidden="true">›</span></summary>
+            <div class="sm-dev-body">
+              <p class="text-xs text-ink/60 leading-snug">Vorabversionen (Pre-Releases auf GitHub) sind Testversionen vor der fertigen Version. Normale Updates zeigen sie nie an – hier kannst du gezielt danach suchen.</p>
+              <div class="set-hint mt-2"><span>⚠️</span><ul class="sm-dev-warn">
+                <li>Vorabversionen können Fehler enthalten. Funktionen können sich noch ändern, unfertig sein oder wieder wegfallen.</li>
+                <li>Das Update gilt für den ganzen Server: alle Familien und alle Geräte nutzen danach die Vorabversion.</li>
+                <li>Nicht empfohlen, wenn ihr euch im Alltag auf pinn. verlasst – etwa bei Terminen, Erinnerungen oder Notfallpässen.</li>
+                <li>Während der Installation ist pinn. ein paar Minuten nicht erreichbar.</li>
+              </ul></div>
+              <div class="set-hint ok"><span>🛟</span><span>Deine Daten gehen nicht verloren: Vor der Installation legt pinn. automatisch eine Sicherung an („Vor einem Update“). Mit „Wiederherstellen“ → „Alles“ kommst du jederzeit zum Stand vorher zurück. Sobald die fertige Version erscheint, wird sie ganz normal als Update angeboten.</span></div>
+              <div class="set-hint ok"><span>🐞</span><span class="flex-1 min-w-0">Fällt dir etwas auf, melde es bitte auf GitHub – mit Version, Gerät und was du gerade gemacht hast. Hinweise aus dem Fehlerprotokoll helfen dabei.</span><a id="sysDevIssueLink" href="https://github.com/pinn-shost/pinn/issues/new" target="_blank" rel="noopener" class="set-hint-btn">Fehler melden ↗</a></div>
+              <p id="sysDevState" class="text-sm text-ink/70 leading-snug mt-1" data-no-i18n></p>
+              <div id="sysDevRelease" class="sm-release hidden">
+                <div class="sm-rel-head"><span id="sysDevRelTitle" class="font-medium text-sm" data-no-i18n></span><span id="sysDevRelDate" class="text-[11px] text-ink/45" data-no-i18n></span></div>
+                <div id="sysDevRelNotes" class="sm-notes" data-no-i18n></div>
+                <a id="sysDevRelLink" href="https://github.com/pinn-shost/pinn/releases" target="_blank" rel="noopener" class="text-xs text-pine">Auf GitHub ansehen ↗</a>
+              </div>
+              <label id="sysDevConfirmRow" class="sm-check hidden"><input type="checkbox" id="sysDevConfirm"><span>Ich habe die Hinweise gelesen und möchte die Vorabversion auf diesem Server testen.</span></label>
+              <div class="flex flex-wrap gap-2 mt-3">
+                <button id="sysDevCheckBtn" type="button" class="sm-btn">Nach Vorabversion suchen</button>
+                <button id="sysDevInstallBtn" type="button" class="sm-btn sm-danger hidden" disabled>Vorabversion installieren</button>
+              </div>
+            </div>
+          </details>
+
+          <section class="sm-sec">
+            <div class="sm-sec-head"><span class="sm-sec-title">Sicherungen</span><button id="sysBackupNowBtn" type="button" class="sm-btn sm-small">Jetzt sichern</button></div>
+            <p id="sysBackupInfo" class="text-xs text-ink/55 leading-snug mb-3"></p>
+            <div id="sysBackupList" class="sm-list"></div>
+            <button id="sysBackupMore" type="button" class="sm-more hidden"></button>
+          </section>
+        </div>
+
+        <div id="sysRestorePanel" class="hidden">
+          <button id="sysRestoreBack" type="button" class="text-xs text-ink/50 hover:text-pine transition mb-3">‹ Zurück</button>
+          <section class="sm-sec">
+            <span class="sm-sec-title">Sicherung wiederherstellen</span>
+            <p id="sysRestoreWhen" class="text-sm font-medium mt-1.5" data-no-i18n></p>
+            <p id="sysRestoreMeta" class="text-[11px] text-ink/45 mb-3"></p>
+            <label class="sm-opt"><input type="radio" name="sysRestoreScope" value="daten" checked><span><span class="sm-opt-title"><span>Nur Daten</span><span class="sm-tag">empfohlen</span></span><small>Termine, Listen, Rezepte, Finanzen, Dokumente, Fotos und Profile – die App bleibt in der jetzigen Version.</small></span></label>
+            <label class="sm-opt"><input type="radio" name="sysRestoreScope" value="alles"><span><span class="sm-opt-title">Alles</span><small>Zusätzlich App-Dateien und Einrichtung genau wie zur Zeit der Sicherung – z. B. nach einem missglückten Update.</small></span></label>
+            <div class="set-hint mt-2"><span>⚠️</span><span>Alles, was seit dieser Sicherung eingetragen wurde, geht verloren – für alle Familien auf diesem Server. Der jetzige Stand wird vorher automatisch gesichert, du kannst also jederzeit zurück. pinn. ist dabei etwa eine Minute nicht erreichbar.</span></div>
+            <label class="sm-check"><input type="checkbox" id="sysRestoreConfirm"><span>Ja, ich möchte diesen Stand zurückholen.</span></label>
+            <div class="flex flex-wrap gap-2 mt-3">
+              <button id="sysRestoreCancel" type="button" class="sm-btn">Abbrechen</button>
+              <button id="sysRestoreGo" type="button" class="sm-btn sm-danger" disabled>Wiederherstellen</button>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div id="sysMaintProgress" class="sm-progress bg-paper hidden" aria-live="polite">
+        <div id="sysProgSpin" class="sm-spin"></div>
+        <h4 id="sysProgTitle" class="font-serif text-lg text-center"></h4>
+        <ol id="sysProgSteps" class="sm-steps"></ol>
+        <p id="sysProgMsg" class="text-xs text-ink/55 text-center leading-snug"></p>
+        <pre id="sysProgLog" class="sm-log hidden" data-no-i18n></pre>
+        <button id="sysProgDone" type="button" class="sm-btn sm-primary hidden">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Devices & sign-in of a profile (admins, main admin) – pb_hooks/sitzungen.pb.js -->
+  <div id="devModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[400] grid place-items-center" role="dialog" aria-modal="true" aria-labelledby="devModalTitle">
+    <div class="sm-box bg-paper rounded-2xl shadow-xl w-full fade-in">
+      <div class="sm-head">
+        <div class="min-w-0">
+          <h3 id="devModalTitle" class="font-serif text-lg">Geräte &amp; Anmeldung</h3>
+          <p id="devModalName" class="text-xs text-ink/50 truncate" data-no-i18n></p>
+        </div>
+        <button id="devModalClose" type="button" class="sm-x" aria-label="Schließen">×</button>
+      </div>
+      <div class="sm-scroll">
+        <div id="devModalLock" class="set-hint hidden"><span>🔒</span><span id="devModalLockText" class="flex-1 min-w-0"></span><button id="devModalUnlockBtn" type="button" class="set-hint-btn hidden">Sperre aufheben</button></div>
+        <section class="sm-sec">
+          <div class="sm-sec-head"><span class="sm-sec-title">Angemeldete Geräte</span><button id="devModalReload" type="button" class="sm-btn sm-small">Aktualisieren</button></div>
+          <div id="devModalList" class="sm-list"></div>
+          <div class="flex flex-wrap gap-2 mt-3">
+            <button id="devModalAllBtn" type="button" class="sm-btn">Überall abmelden</button>
+          </div>
+          <p id="devModalStatus" class="text-xs text-ink/55 mt-2"></p>
+          <p class="text-[11px] text-ink/45 mt-2 leading-snug">Ein abgemeldetes Gerät verliert sofort den Zugriff, bekommt keine Benachrichtigungen mehr und löscht beim nächsten Öffnen die pinn.-Daten auf dem Gerät.</p>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error log (admins, main admin) – pb_hooks/protokoll.pb.js -->
+  <div id="errLogModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[400] grid place-items-center" role="dialog" aria-modal="true" aria-labelledby="errLogTitle">
+    <div class="sm-box el-box bg-paper rounded-2xl shadow-xl w-full fade-in">
+      <div class="sm-head">
+        <h3 id="errLogTitle" class="font-serif text-lg">Fehlerprotokoll</h3>
+        <button id="errLogClose" type="button" class="sm-x" aria-label="Schließen">×</button>
+      </div>
+      <div class="sm-scroll">
+        <p class="text-[11px] text-ink/50 leading-snug mb-3">Fehler der Server-Abläufe – Kalender-Sync, Push, Müllkalender und Anmeldung. Gleiche Meldungen werden zusammengefasst; klappt es wieder, steht „wieder ok“ dabei. Einträge bleiben 30 Tage.</p>
+        <div id="errLogFilter" class="el-filter"></div>
+        <div id="errLogList" class="sm-list"></div>
+        <div class="flex flex-wrap gap-2 mt-3">
+          <button id="errLogReload" type="button" class="sm-btn sm-small">Aktualisieren</button>
+          <button id="errLogClearDone" type="button" class="sm-btn sm-small">Erledigte löschen</button>
+          <button id="errLogClearAll" type="button" class="sm-btn sm-small">Alles löschen</button>
+        </div>
+        <p id="errLogStatus" class="text-xs text-ink/55 mt-2"></p>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,122 @@
+<!-- Add/edit member modal -->
+<div id="memberModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
+  <div class="bg-white rounded-2xl p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
+    <h3 id="memberModalTitle" class="font-serif text-lg mb-4">Familienmitglied hinzufügen</h3>
+
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Name</label>
+    <input id="newMemberName" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="z. B. Anna" />
+
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Rolle in der Familie</label>
+    <input id="newMemberRole" list="roleSuggestions" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="z. B. Mama, Papa, Oma" />
+    <datalist id="roleSuggestions">
+      <option value="Mama"></option>
+      <option value="Papa"></option>
+      <option value="Oma"></option>
+      <option value="Opa"></option>
+      <option value="Kind"></option>
+      <option value="Partner:in"></option>
+    </datalist>
+
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Anzeige im Kalender</label>
+    <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-4">
+      <button type="button" data-display="name" class="display-mode-btn px-3 py-1 rounded-full transition">Name</button>
+      <button type="button" data-display="role" class="display-mode-btn px-3 py-1 rounded-full transition">Rolle</button>
+    </div>
+
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Bild</label>
+    <div class="flex items-center gap-3 mb-3">
+      <span id="memberAvatarPreview" class="w-14 h-14 rounded-full overflow-hidden border-[3px] shrink-0"></span>
+      <div class="flex flex-col gap-1.5">
+        <label class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs cursor-pointer hover:border-pine hover:text-pine transition text-center">
+          Foto hochladen
+          <input id="memberPhotoFile" type="file" accept="image/*" class="hidden" />
+        </label>
+        <button type="button" id="memberRemoveImage" class="px-3 py-1.5 rounded-lg text-xs text-ink/40 hover:text-red-500 transition text-left">Bild/Avatar entfernen</button>
+      </div>
+    </div>
+
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Oder Avatar wählen</label>
+    <div class="mb-4">
+      <div class="text-[11px] text-ink/40 mb-1">Haustiere</div>
+      <div class="avatar-group flex flex-wrap gap-1.5 mb-2" data-group="pet"></div>
+      <div class="text-[11px] text-ink/40 mb-1">Männlich</div>
+      <div class="avatar-group flex flex-wrap gap-1.5 mb-2" data-group="male"></div>
+      <div class="text-[11px] text-ink/40 mb-1">Weiblich</div>
+      <div class="avatar-group flex flex-wrap gap-1.5" data-group="female"></div>
+    </div>
+
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Farbe (Rand)</label>
+    <div id="colorPicker" class="flex gap-2 mb-2"></div>
+    <div class="flex items-center gap-2 mb-5">
+      <span class="text-xs text-ink/40">Eigene Farbe (RGB):</span>
+      <input id="customColorInput" type="color" value="#2F4B41" class="w-8 h-8 rounded-full border-2 border-transparent cursor-pointer p-0 bg-transparent" />
+    </div>
+
+    <!-- Kids page: colourful task page that opens with a tap on the picture -->
+    <div id="memberKidSection" class="rounded-xl border border-ink/10 p-3 mb-5">
+      <label class="flex items-center gap-2 text-sm cursor-pointer select-none">
+        <input id="memberKidMode" type="checkbox" class="w-4 h-4" />
+        <span>Kinderseite aktivieren ⭐</span>
+      </label>
+      <p class="text-xs text-ink/40 mt-1">Ein Tipp auf das Kind in der Kachel „Familienmitglieder“ auf der Übersicht öffnet eine bunte Seite mit den Aufgaben, die gerade dran sind (z. B. morgens Zähne putzen, abends Schlafanzug anziehen). Jeden Tag beginnt alles von vorne.</p>
+      <div id="memberKidOptions" class="hidden mt-3">
+        <p id="memberKidSummary" class="text-xs text-ink/60 mb-2"></p>
+        <button type="button" id="memberKidEdit" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">Aufgaben &amp; Tageszeiten bearbeiten</button>
+        <label class="flex items-center gap-2 text-sm cursor-pointer select-none mt-3">
+          <input id="memberKidShowAllowance" type="checkbox" class="w-4 h-4" />
+          <span>Taschengeld auf der Kinderseite anzeigen 🐷</span>
+        </label>
+        <p class="text-xs text-ink/40 mt-1">Zeigt den Betrag, die nächste Auszahlung und – falls mitgeführt – das Guthaben. Festgelegt wird das Taschengeld unter Finanzen → Taschengeld.</p>
+        <label class="flex items-center gap-2 text-sm cursor-pointer select-none mt-3">
+          <input id="memberKidStars" type="checkbox" class="w-4 h-4" />
+          <span>Sterne sammeln &amp; eintauschen ⭐</span>
+        </label>
+        <p class="text-xs text-ink/40 mt-1">Jede erledigte Aufgabe bringt Sterne. Auf der Kinderseite tauscht das Kind sie gegen Belohnungen ein – Taschengeld, Medienzeit oder Wünsche. Ihr bestätigt mit einem Tipp.</p>
+        <div id="memberKidStarsOpts" class="hidden mt-2">
+          <p id="memberKidStarsSummary" class="text-xs text-ink/60 mb-2"></p>
+          <button type="button" id="memberKidRewardsEdit" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">Belohnungen bearbeiten</button>
+        </div>
+      </div>
+      <input id="memberKidConfigState" type="hidden" value="" />
+    </div>
+
+    <!-- Sign-in: every family member needs their own profile -->
+    <div id="memberLoginSection" class="hidden rounded-xl border border-ink/10 p-3 mb-5">
+      <p class="text-xs uppercase tracking-wide text-ink/40 mb-2">Anmeldung</p>
+      <div id="memberLoginLinked" class="hidden text-sm">
+        Profil: <span id="memberLoginLinkedName" class="font-medium"></span>
+        <p class="text-xs text-ink/40 mt-1">Passwort und Rolle verwaltest du unter Konto.</p>
+      </div>
+      <p id="memberLoginNoAdmin" class="hidden text-xs text-mustard">Noch kein Profil verknüpft – das kann nur ein Admin einrichten.</p>
+      <div id="memberLoginSetup" class="hidden">
+        <p class="text-xs text-ink/50 mb-2">Jedes Familienmitglied braucht ein eigenes Profil zum Anmelden.</p>
+        <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-3">
+          <button type="button" data-login-mode="neu" class="member-login-mode-btn px-3 py-1 rounded-full transition">Neues Profil</button>
+          <button type="button" data-login-mode="bestehend" class="member-login-mode-btn px-3 py-1 rounded-full transition">Vorhandenes Profil</button>
+        </div>
+        <div id="memberLoginNew">
+          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="memberLoginUsername">Benutzername</label>
+          <input id="memberLoginUsername" type="text" autocomplete="off" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
+          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="memberLoginPassword">Start-Passwort (mind. 8 Zeichen)</label>
+          <input id="memberLoginPassword" type="password" autocomplete="new-password" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
+          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="memberLoginRole">Kategorie</label>
+          <select id="memberLoginRole" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white mb-1">
+            <option value="mitglied">Mitglied</option>
+            <option value="admin">Admin</option>
+          </select>
+          <p class="text-xs text-ink/40">Beim ersten Anmelden muss ein eigenes Passwort vergeben werden.</p>
+        </div>
+        <div id="memberLoginExisting" class="hidden">
+          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="memberLoginExistingSelect">Profil</label>
+          <select id="memberLoginExistingSelect" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white"></select>
+        </div>
+      </div>
+      <p id="memberLoginStatus" class="text-xs text-red-500 mt-2"></p>
+    </div>
+
+    <div class="flex justify-end gap-2">
+      <button id="cancelMember" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
+      <button id="saveMember" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Hinzufügen</button>
+    </div>
+  </div>
+</div>

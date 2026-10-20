@@ -1,0 +1,35 @@
+<!-- Meal planning modal -->
+<div id="mealModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
+  <div class="bg-white rounded-2xl p-6 w-full max-w-sm fade-in overflow-hidden">
+    <h3 class="font-serif text-lg mb-1">Essen planen</h3>
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Datum</label>
+    <input id="mealModalDate" type="date" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-4" />
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Mahlzeit</label>
+    <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-4">
+      <button type="button" data-meal="fruehstueck" class="meal-type-btn px-3 py-1.5 rounded-full transition">🌅 Frühstück</button>
+      <button type="button" data-meal="mittag" class="meal-type-btn px-3 py-1.5 rounded-full transition">☀️ Mittag</button>
+      <button type="button" data-meal="abend" class="meal-type-btn px-3 py-1.5 rounded-full transition">🌙 Abend</button>
+    </div>
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Rezept</label>
+    <div class="relative mb-3">
+      <input id="mealRecipeSearch" type="text" autocomplete="off" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm" placeholder="Rezept suchen …" />
+      <button type="button" id="clearMealRecipeBtn" class="hidden absolute right-2 top-1/2 -translate-y-1/2 text-ink/30 hover:text-ink/60 text-sm leading-none" aria-label="Auswahl löschen">×</button>
+      <div id="mealRecipeSuggestions" class="hidden absolute z-10 left-0 right-0 mt-1 max-h-56 overflow-y-auto bg-white rounded-lg border border-ink/15 shadow-lg"></div>
+    </div>
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Oder eigener Titel (falls kein Rezept passt)</label>
+    <input id="mealFreeTitle" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-5" placeholder="z. B. Reste vom Vortag" />
+
+    <div class="flex items-center justify-between gap-2 mb-5 rounded-xl border border-ink/10 bg-ink/[0.03] px-3 py-2.5">
+      <span class="text-xs uppercase tracking-wide text-ink/40">Portionen an diesem Tag</span>
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button type="button" id="mealServingsMinusBtn" class="w-7 h-7 rounded-full border border-ink/20 text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center text-xs" aria-label="Weniger Portionen">–</button>
+        <span id="mealServingsValue" class="text-sm font-medium w-8 text-center">2</span>
+        <button type="button" id="mealServingsPlusBtn" class="w-7 h-7 rounded-full border border-ink/20 text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center text-xs" aria-label="Mehr Portionen">+</button>
+      </div>
+    </div>
+    <div class="flex justify-end gap-2">
+      <button id="cancelMeal" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
+      <button id="saveMeal" class="px-4 py-2 rounded-lg bg-mustard text-white text-sm font-medium hover:bg-mustard/90">Speichern</button>
+    </div>
+  </div>
+</div>

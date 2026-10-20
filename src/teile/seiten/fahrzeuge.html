@@ -1,0 +1,22 @@
+    <section id="vehiclesSection" data-i18n-ctx="fz" class="hidden min-h-0 flex-col bg-white/40">
+      <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
+        <div class="flex items-center justify-between gap-3">
+          <div class="min-w-0">
+            <h2 class="font-serif text-lg leading-tight">Fahrzeuge</h2>
+            <button id="kassePillFz" type="button" class="kasse-sub hidden" aria-label="Kasse wechseln"></button>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <button id="fzHeaderBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">+ Fahrzeug</button>
+          </div>
+        </div>
+        <!-- Switch: vehicles / balance / calculator -->
+        <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs mt-3 w-full sm:w-fit" role="tablist" aria-label="Fahrzeugbereich">
+          <button type="button" data-fztab="liste" class="fz-tab-btn flex-1 sm:flex-none px-4 py-1.5 rounded-full transition" role="tab">Fahrzeuge</button>
+          <button type="button" data-fztab="bilanz" class="fz-tab-btn flex-1 sm:flex-none px-4 py-1.5 rounded-full transition" role="tab">Bilanz</button>
+          <button type="button" data-fztab="rechner" class="fz-tab-btn flex-1 sm:flex-none px-4 py-1.5 rounded-full transition" role="tab">Rechner</button>
+        </div>
+      </div>
+      <div id="fzScroll" class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">
+        <div id="fzPane" class="max-w-3xl mx-auto flex flex-col gap-4"></div>
+      </div>
+    </section>

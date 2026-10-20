@@ -1,0 +1,58 @@
+<!-- Finish shopping: book the amount paid, remove checked items -->
+<div id="shoppingCheckoutModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-4 sm:p-6">
+  <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+    <button id="closeCheckoutBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <div class="flex items-center gap-3 mb-3 pr-6">
+      <div id="checkoutLogo" class="shrink-0"></div>
+      <div class="min-w-0">
+        <h3 class="font-serif text-lg leading-tight">Einkauf abschließen</h3>
+        <p id="checkoutListName" class="text-xs text-ink/50 truncate"></p>
+      </div>
+    </div>
+    <div id="checkoutItems" class="mb-4 leading-7"></div>
+
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="checkoutAmountInput">Bezahlter Betrag</label>
+    <div class="fin-amount-field flex items-baseline gap-2 rounded-xl border border-ink/15 px-4 py-3 mb-4">
+      <input id="checkoutAmountInput" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" data-cur-zero class="flex-1 min-w-0 bg-transparent border-0 p-0 text-3xl font-semibold tracking-tight" />
+      <span class="cur-sym text-2xl text-ink/40">€</span>
+    </div>
+
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Kategorie</label>
+    <div id="checkoutCategoryPicker" class="grid grid-cols-4 gap-1.5 mb-4"></div>
+
+    <div class="grid grid-cols-2 gap-3 mb-3">
+      <div class="min-w-0">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="checkoutDateInput">Datum</label>
+        <input id="checkoutDateInput" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
+      </div>
+      <div class="fin-paidby-wrap min-w-0">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="checkoutPaidBySelect">Bezahlt von</label>
+        <select id="checkoutPaidBySelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
+      </div>
+    </div>
+    <div id="checkoutKasseWrap" class="hidden mb-3">
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="checkoutKasseSelect">Kasse</label>
+      <select id="checkoutKasseSelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
+    </div>
+    <div id="checkoutSplitWrap" class="hidden mb-3 rounded-xl border border-ink/10 bg-ink/[0.03] px-3 py-3">
+      <span class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">⚖️ Aufteilen auf</span>
+      <div id="checkoutSplitPicker" class="flex flex-wrap gap-1.5"></div>
+      <div id="checkoutPrivateBlock" class="mt-3">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="checkoutPrivateInput">Davon nur für mich (privat)</label>
+        <div class="flex items-center gap-2">
+          <input id="checkoutPrivateInput" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" data-cur-zero class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-2 text-base" />
+          <span class="cur-sym text-ink/40">€</span>
+        </div>
+        <p class="text-[11px] text-ink/45 mt-1">Wird nicht geteilt, sondern in deine eigene Kasse gebucht.</p>
+      </div>
+      <p id="checkoutSplitHint" class="text-[11px] text-ink/45 mt-1.5"></p>
+    </div>
+    <p id="checkoutBudgetHint" class="hidden text-xs text-ink/60 mb-3"></p>
+    <p id="checkoutError" class="hidden text-xs text-red-500 mb-3"></p>
+
+    <div class="flex flex-col gap-2 mt-1">
+      <button id="checkoutSaveBtn" type="button" class="w-full px-4 py-2.5 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Betrag buchen &amp; Liste aufräumen</button>
+      <button id="checkoutSkipBtn" type="button" class="w-full px-4 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Ohne Betrag aufräumen</button>
+    </div>
+  </div>
+</div>

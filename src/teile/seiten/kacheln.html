@@ -1,0 +1,53 @@
+    <!-- Overview tile: weather of the next days (tap = 14 days & holiday weather) -->
+    <section id="weatherTileSection" class="hidden min-h-0 flex flex-col bg-white/40 border-ink/10">
+      <div class="px-6 pt-4 pb-4">
+        <div class="flex items-center justify-between gap-3 mb-3">
+          <h2 class="font-serif text-lg">Wetter</h2>
+          <span id="weatherTilePlace" class="text-xs text-ink/40 truncate"></span>
+        </div>
+        <div id="weatherTileBody"></div>
+      </div>
+    </section>
+
+    <!-- Overview tile: upcoming birthdays (iCloud and Google contacts of the family) -->
+    <section id="birthdayTileSection" class="hidden min-h-0 flex flex-col bg-white/40 border-ink/10">
+      <div class="px-6 pt-4 pb-4 min-h-0 overflow-y-auto">
+        <div class="flex items-center justify-between gap-3 mb-3">
+          <h2 class="font-serif text-lg">Geburtstage</h2>
+          <span id="birthdayTileRange" class="text-xs text-ink/40 truncate"></span>
+        </div>
+        <div id="birthdayTileBody"></div>
+      </div>
+    </section>
+
+    <!-- Overview tile: family members (tap on a child opens the kids page) -->
+    <section id="familyTileSection" class="hidden min-h-0 flex flex-col bg-white/40 border-ink/10">
+      <div class="px-6 pt-4 pb-4 min-h-0">
+        <div class="flex items-center justify-between gap-3 mb-3">
+          <h2 class="font-serif text-lg">Familienmitglieder</h2>
+        </div>
+        <div id="familyTileBody"></div>
+      </div>
+    </section>
+
+    <!-- Overview tile: upcoming notice periods (Finances → contracts) -->
+    <section id="contractTileSection" class="hidden min-h-0 flex flex-col bg-white/40 border-ink/10">
+      <div class="px-6 pt-4 pb-4 min-h-0 overflow-y-auto">
+        <div class="flex items-center justify-between gap-3 mb-3">
+          <h2 class="font-serif text-lg">Kündigungsfristen</h2>
+          <span id="contractTileRange" class="text-xs text-ink/40 truncate"></span>
+        </div>
+        <div id="contractTileBody"></div>
+      </div>
+    </section>
+
+    <!-- Overview tile: pin board (only visible when something is pinned) -->
+    <section id="boardTileSection" class="hidden min-h-0 flex flex-col bg-white/40 border-ink/10">
+      <div class="px-6 pt-4 pb-2 min-h-0">
+        <div class="flex items-center justify-between gap-3">
+          <h2 class="font-serif text-lg">Pinnwand <span id="boardTileCount" class="text-xs font-sans text-mustard font-semibold" style="vertical-align:middle"></span></h2>
+          <button id="boardTileOpenBtn" type="button" class="text-xs text-ink/50 hover:text-pine transition whitespace-nowrap">Alle ansehen ›</button>
+        </div>
+        <div id="boardTileBody"></div>
+      </div>
+    </section>

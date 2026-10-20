@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" id="themeColorMeta" content="#FFFBFB">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<!-- Not "black-translucent": with it, iOS 26 leaves a strip of status bar height OUTSIDE the
+     web view at the bottom of the home screen app, which no page can fill.
+     "black" = black status bar with white text (fits dark mode), "default" = white.
+     iOS only takes this setting when the app is added to the home screen, not dynamically. -->
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>pinn.</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<!-- App icons: ?v= makes browsers load the new icon after an update.
+     The home screen icon has no border (iOS rounds the corners itself). -->
+<link rel="icon" href="favicon.ico?v=1.57.0" sizes="16x16 32x32 48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=1.57.0">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=1.57.0">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=1.57.0">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=1.57.0">
+<link rel="manifest" href="manifest.json">
+<!-- No code from other servers (bank data!): Tailwind as a ready-built CSS file and the PocketBase
+     client are self-hosted on the NAS:
+       pb_public/vendor/pinn.css
+       pb_public/vendor/pocketbase/pocketbase.umd.js
+       pb_public/vendor/pdfjs/pdf.min.mjs + pdf.worker.min.mjs (only loaded for the PDF import)
+       pb_public/vendor/tesseract/tesseract.min.js + worker.min.js, core/ (tesseract-core*.wasm.js),
+         lang/deu.traineddata.gz (text recognition for "Foto einlesen" in recipes, only loaded when needed) -->
+<link rel="stylesheet" href="vendor/pinn.css">
+<link rel="stylesheet" href="css/ergaenzung.css?v={{VERSION}}">
+<!-- ==========================================================
+     Power saving (since 0.99)
+     - Recurring requests (setInterval from 1 second) only run while pinn. is visible;
+       missed runs are caught up once on return (staggered, no load peak).
+     - Idle mode: 3 minutes without interaction (or 1 minute if another window is in front
+       on a Mac/PC) - requests with a 60 s interval at most every 5 minutes, endless animations pause (never SOS).
+       Every touch, mouse or keyboard input wakes pinn. at once and catches up on everything.
+     - Short timers (< 1 s, e.g. the SOS countdown) stay unchanged.
+     ========================================================== -->
+<link rel="stylesheet" href="css/energiesparen.css?v={{VERSION}}">
+<script src="js/ruhemodus.js?v={{VERSION}}"></script>
+<script src="js/sprachen.js?v={{VERSION}}"></script>
+<script src="js/region.js?v={{VERSION}}"></script>
+<script src="vendor/pocketbase/pocketbase.umd.js"></script>
+<!-- If the file sits somewhere else on the NAS or has another name: try further places -->
+<script>if (!window.PocketBase) document.write('<script src="vendor/pocketbase.umd.js"><\/script>');</script>
+<script>if (!window.PocketBase) document.write('<script src="vendor/pocketbase/pocketbase_umd.js"><\/script>');</script>
+<script>if (!window.PocketBase) document.write('<script src="vendor/pocketbase_umd.js"><\/script>');</script>
+<script>if (!window.PocketBase) document.write('<script src="vendor/pocketbase.umd.min.js"><\/script>');</script>
+<script>if (!window.PocketBase) document.write('<script src="pocketbase.umd.js"><\/script>');</script>
+<script>if (!window.PocketBase) document.write('<script src="pocketbase_umd.js"><\/script>');</script>
+<script>
+  // Start check: if a self-hosted file is missing, a clear notice appears instead of an
+  // empty page with buttons that do nothing.
+  // Parts of the app under pb_public/js/ – every file registers itself in window.PINN_PARTS at its end
+  var PINN_APP_PARTS = [{{PINN_APP_PARTS}}];
+  // Styles of the app under pb_public/css/ (since 1.96) – every file is a <link> at the place of the former
+  // <style> block: almost all in the head of index.html, terminal and glocke (since 1.98) at the end of the page
+  var PINN_APP_STYLES = [{{PINN_APP_STYLES}}];
+  window.addEventListener('DOMContentLoaded', function () {
+    var missing = [];
+    if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – der PocketBase-Client (ohne ihn funktioniert nichts)');
+    var probe = document.createElement('div');
+    probe.className = 'hidden';
+    document.body.appendChild(probe);
+    if (getComputedStyle(probe).display !== 'none') missing.push('<b>vendor/pinn.css</b> – die Gestaltung');
+    probe.remove();
+    var loadedParts = window.PINN_PARTS || [];
+    PINN_APP_PARTS.forEach(function (part) {
+      if (loadedParts.indexOf(part) === -1) missing.push('<b>js/' + part + '.js</b> – ein Teil der App');
+    });
+    // A CSS file counts as loaded when the browser has taken over its rules (a 404 or a delivered
+    // index.html result in no stylesheet or one without rules)
+    function fehlendeStyles() {
+      var out = [];
+      PINN_APP_STYLES.forEach(function (name) {
+        var link = document.querySelector('link[rel="stylesheet"][href^="css/' + name + '.css"]');
+        var ok = false;
+        try { ok = !!(link && link.sheet && link.sheet.cssRules.length); } catch (e) { ok = false; }
+        if (!ok) out.push('<b>css/' + name + '.css</b> – ein Teil der App');
+      });
+      return out;
+    }
+    // The browser may still be loading the files at the end of the page (after the js/ files) when DOMContentLoaded
+    // fires – then only check for good after the page has loaded completely (load)
+    if (fehlendeStyles().length && document.readyState !== 'complete') {
+      window.addEventListener('load', function () { melden(missing.concat(fehlendeStyles())); });
+      return;
+    }
+    melden(missing.concat(fehlendeStyles()));
+    // Show the notice (only if something is missing)
+    function melden(missing) {
+      if (!missing.length) return;
+      // Which addresses does the server really deliver? (shows the status of each file, helps with a wrong folder/name)
+      var checks = [
+        'vendor/pinn.css',
+        'vendor/pocketbase/pocketbase.umd.js',
+        'vendor/pocketbase/pocketbase_umd.js',
+        'vendor/pocketbase.umd.js',
+        'vendor/pocketbase_umd.js'
+      ].concat(PINN_APP_STYLES.map(function (name) { return 'css/' + name + '.css'; }))
+        .concat(PINN_APP_PARTS.map(function (part) { return 'js/' + part + '.js'; }));
+      var box = document.createElement('div');
+      box.setAttribute('style', 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;background:#FFFBFB;font-family:system-ui,sans-serif;color:#25231F;overflow:auto;');
+      box.innerHTML = '<div style="max-width:460px;line-height:1.5">'
+        + '<div style="font-size:20px;font-weight:700;margin-bottom:10px">pinn. kann nicht starten</div>'
+        + '<p style="margin:0 0 10px">Auf dem NAS fehlt im Ordner <code>pb_public/</code>:</p>'
+        + '<ul style="margin:0 0 14px;padding-left:20px">' + missing.map(function (m) { return '<li>' + m + '</li>'; }).join('') + '</ul>'
+        + '<p style="margin:0 0 6px;font-size:13px;font-weight:600">So antwortet der Server:</p>'
+        + '<div id="pinnStartChecks" style="font-family:ui-monospace,Menlo,monospace;font-size:12px;margin:0 0 14px;word-break:break-all">wird geprüft …</div>'
+        + '<p style="margin:0 0 16px;font-size:14px;color:#6b6760">Erwartet: <code>pb_public/vendor/pinn.css</code>, <code>pb_public/vendor/pocketbase/pocketbase.umd.js</code> und die Dateien in <code>pb_public/js/</code> – im selben <code>pb_public</code> wie diese <code>index.html</code>. Groß-/Kleinschreibung beachten.</p>'
+        + '<button type="button" onclick="location.href=location.pathname+\'?_r=\'+Date.now()" style="padding:10px 16px;border-radius:10px;border:0;background:#00374A;color:#fff;font-size:15px">Neu laden</button>'
+        + '</div>';
+      document.body.appendChild(box);
+      var out = document.getElementById('pinnStartChecks');
+      var lines = [];
+      function show() { out.innerHTML = lines.join('<br>'); }
+      checks.forEach(function (path, i) {
+        lines[i] = path + ' → …';
+        fetch(path + '?_r=' + Date.now(), { cache: 'no-store' }).then(function (res) {
+          var type = res.headers.get('Content-Type') || '';
+          var okType = /\.css$/.test(path) ? /css/.test(type) : /javascript|ecmascript/.test(type);
+          // For unknown paths PocketBase may deliver index.html - that does not count as found
+          var found = res.ok && okType;
+          lines[i] = (found ? '✅ ' : '❌ ') + path + ' → ' + res.status + (res.ok && !okType ? ' (' + (type.split(';')[0] || 'unbekannter Typ') + ', nicht die Datei)' : '');
+          show();
+        }).catch(function () {
+          lines[i] = '❌ ' + path + ' → keine Antwort';
+          show();
+        });
+      });
+      show();
+    }
+  });
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/basis.css?v={{VERSION}}">
+<link rel="stylesheet" href="css/mobil.css?v={{VERSION}}">
+<link rel="stylesheet" href="css/einstellungen.css?v={{VERSION}}">
+<link rel="stylesheet" href="css/seitenleiste.css?v={{VERSION}}">
+<link rel="stylesheet" href="css/finanzen.css?v={{VERSION}}">
+<link rel="stylesheet" href="css/listen.css?v={{VERSION}}">
+<link rel="stylesheet" href="css/vertraege.css?v={{VERSION}}">
+<link rel="stylesheet" href="css/fahrzeuge.css?v={{VERSION}}">
+<link rel="stylesheet" href="css/notfall.css?v={{VERSION}}">
+<link rel="stylesheet" href="css/hinweise.css?v={{VERSION}}">
+<link rel="stylesheet" href="css/familie.css?v={{VERSION}}">
+<link rel="stylesheet" href="css/dokumente.css?v={{VERSION}}">
+<link rel="stylesheet" href="css/sparen.css?v={{VERSION}}">
+<link rel="stylesheet" href="css/kinderaufgaben.css?v={{VERSION}}">
+<link rel="stylesheet" href="css/dashboard.css?v={{VERSION}}">
+<link rel="stylesheet" href="css/uebersicht.css?v={{VERSION}}">
+<link rel="stylesheet" href="css/wohnort.css?v={{VERSION}}">
+<link rel="stylesheet" href="css/familienkachel.css?v={{VERSION}}">
+<link rel="stylesheet" href="css/pinnwand.css?v={{VERSION}}">
+<link rel="stylesheet" href="css/haustierewetter.css?v={{VERSION}}">
+</head>
+<body class="font-sans text-ink antialiased">
+
+<!-- @include anmeldung.html -->
+
+<!-- @include hauptadmin.html -->
+
+<!-- @include dashboard.html -->
+
+<!-- @include app.html -->
+
+<!-- @include menueleiste.html -->
+
+<!-- @include suche.html -->
+
+<!-- @include popups/ausgabe.html -->
+
+<!-- @include popups/dokumente.html -->
+
+<!-- @include popups/fahrzeuge.html -->
+
+<!-- @include popups/hinweise.html -->
+
+<!-- @include popups/familie.html -->
+
+<!-- @include popups/vertraege.html -->
+
+<!-- @include popups/buchung-ab-wann.html -->
+
+<!-- @include popups/einkauf-abschliessen.html -->
+
+<!-- @include popups/vorrat-artikel.html -->
+
+<!-- @include popups/listen.html -->
+
+<!-- @include popups/pinnwand.html -->
+
+<!-- @include popups/kategorien.html -->
+
+<!-- @include popups/smarthome.html -->
+
+<!-- @include popups/vorrat.html -->
+
+<!-- @include popups/einkauf-erledigt.html -->
+
+<!-- @include popups/kassen.html -->
+
+<!-- @include popups/finanzen-einrichten.html -->
+
+<!-- @include popups/sparen.html -->
+
+<!-- @include popups/kategorie-verschieben.html -->
+
+<!-- @include popups/kalender.html -->
+
+<!-- @include popups/mitglied.html -->
+
+<!-- @include popups/kinderseite.html -->
+
+<!-- @include popups/essen.html -->
+
+<!-- @include popups/aufgabe.html -->
+
+<!-- @include popups/termin.html -->
+
+<!-- @include popups/rezept.html -->
+
+<script>
+// Moving notes (see "Zettel verschieben" in the pin board section) - created early because renderPinboard uses them
+var PW_LONGPRESS_MS = 450;
+var pwArr = { on: false, press: null, drag: null, quietUntil: 0, renderPending: false, ro: null, layoutQueued: false, raf: 0 };
+/* ==========================================================
+   iOS: prevent the double-tap offset
+   ========================================================== */
+// A quick double tap on empty areas makes iOS scroll the document a little. Because
+// #appRoot is fixed, you only see a short jump - but afterwards every touch target
+// is shifted up by exactly this amount. 1) If the document slips, set it back to 0/0 at once.
+// 2) Don't let the second quick tap on non-interactive areas through at all.
+window.addEventListener('scroll', () => {
+  if (window.scrollX || window.scrollY) window.scrollTo(0, 0);
+}, { passive: true });
+
+(function preventIosDoubleTapShift() {
+  let lastTouchEnd = 0;
+  const INTERACTIVE = 'input, textarea, select, button, a, label, [contenteditable], [draggable="true"], [role="button"], [onclick], [data-allow-doubletap]';
+  document.addEventListener('touchend', (e) => {
+    const now = Date.now();
+    const quickSecondTap = now - lastTouchEnd < 350;
+    lastTouchEnd = now;
+    if (!quickSecondTap || e.touches.length > 0) return;
+    if (e.target.closest && e.target.closest(INTERACTIVE)) return;
+    e.preventDefault();
+  }, { passive: false });
+})();
+
+const PB_COLLECTION = 'familien_daten';
+const ICS_URL = '/api/pinn/kalender'; // only available after sign-in (pb_hooks/benutzer.pb.js)
+let familyRecordId = null; // set after the login
+let lastIcsSync = null;
+
+/* ==========================================================
+   App version & update detection (important for use from the home screen on iOS,
+   because such web apps often don't reload their content by themselves)
+   ========================================================== */
+// Current version – comes from src/version.txt (filled in by src/build.js); pb_hooks/pinn-system.js and pinn-wartung.sh read it here
+const APP_VERSION = '{{VERSION}}';
+
+/* ==========================================================
+   Settings & account: two columns of equal height (landscape from tablet width)
+   ----------------------------------------------------------
+   The cards are split into left/right in their order so that both columns are as high as possible
+   in the COLLAPSED state (first left from top to bottom, then right).
+   Expanding and collapsing only changes the height of the card - it stays in its column, the cards
+   below move along. It is only redistributed when the width changes, the page is opened or
+   cards are shown/hidden. A ResizeObserver instead of constant polling keeps this easy on the CPU.
+   ========================================================== */
+(function setMasonry() {
+  const GAP = 12; // 0.75rem
+  const mq = window.matchMedia ? window.matchMedia('(orientation: landscape) and (min-width: 768px)') : null;
+  const panes = Array.from(document.querySelectorAll('#settingsView .set-pane, #accountView .set-pane'));
+  if (!panes.length || typeof ResizeObserver === 'undefined') return;
+  const st = new Map(); // pane -> { left: Set, vis: [el], width, raf }
+  panes.forEach(p => st.set(p, { left: new Set(), vis: [], width: 0, raf: 0 }));
+  let active = false;
+
+  function items(pane) {
+    const out = [];
+    Array.from(pane.children).forEach(el => {
+      if (el.id === 'profileAdminSection') { Array.from(el.children).forEach(c => out.push(c)); return; }
+      out.push(el);
+    });
+    return out;
+  }
+  function isVisible(el) { return el.getClientRects().length > 0 && el.offsetHeight > 0; }
+  // Height in the collapsed state (expanded settings only count with their heading)
+  function closedHeight(el) {
+    if (el.tagName === 'DETAILS' && el.open) {
+      const sum = el.querySelector(':scope > summary');
+      if (sum) return sum.offsetHeight + (el.offsetHeight - el.clientHeight);
+    }
+    return el.offsetHeight;
+  }
+  function assign(pane) {
+    const s = st.get(pane);
+    const vis = items(pane).filter(isVisible);
+    const hs = vis.map(closedHeight);
+    const total = hs.reduce((a, b) => a + b + GAP, 0);
+    let best = vis.length, bestDiff = Infinity, acc = 0;
+    for (let k = 0; k <= vis.length; k++) {
+      const left = acc, right = total - acc;
+      const diff = Math.max(left, right);
+      if (diff < bestDiff - 0.5) { bestDiff = diff; best = k; }
+      if (k < vis.length) acc += hs[k] + GAP;
+    }
+    s.left = new Set(vis.slice(0, best));
+    s.vis = vis;
+  }
+  function place(pane) {
+    const s = st.get(pane);
+    const y = [0, 0];
+    s.vis.forEach(el => {
+      if (!el.isConnected) return;
+      const col = s.left.has(el) ? 0 : 1;
+      el.style.left = col ? 'calc(50% + 0.375rem)' : '0px';
+      el.style.top = y[col] + 'px';
+      y[col] += el.offsetHeight + GAP;
+    });
+    pane.style.height = Math.max(0, Math.max(y[0], y[1]) - GAP) + 'px';
+  }
+  function sameSet(a, b) { return a.length === b.length && a.every((x, i) => x === b[i]); }
+  function layout(pane, force) {
+    const s = st.get(pane);
+    if (!active) return;
+    const w = pane.clientWidth;
+    if (!w) return; // page not visible right now
+    const vis = items(pane).filter(isVisible);
+    if (force || w !== s.width || !sameSet(vis, s.vis)) {
+      s.width = w;
+      assign(pane);
+    }
+    place(pane);
+    if (!pane.classList.contains('set-masonry-ready')) requestAnimationFrame(() => pane.classList.add('set-masonry-ready'));
+  }
+  function schedule(pane, force) {
+    const s = st.get(pane);
+    if (force) s.force = true;
+    if (s.raf) return;
+    s.raf = requestAnimationFrame(() => { s.raf = 0; const f = s.force; s.force = false; layout(pane, f); });
+  }
+  const ro = new ResizeObserver(entries => {
+    entries.forEach(en => {
+      const pane = panes.find(p => p === en.target || p.contains(en.target));
+      if (pane) schedule(pane, false);
+    });
+  });
+  function observeItems() {
+    panes.forEach(p => { ro.observe(p); items(p).forEach(el => ro.observe(el)); });
+  }
+  function on() {
+    if (active) return;
+    active = true;
+    panes.forEach(p => { p.classList.add('set-masonry'); st.get(p).width = 0; st.get(p).vis = []; });
+    observeItems();
+    panes.forEach(p => schedule(p, true));
+  }
+  function off() {
+    if (!active) return;
+    active = false;
+    ro.disconnect();
+    panes.forEach(p => {
+      p.classList.remove('set-masonry', 'set-masonry-ready');
+      p.style.height = '';
+      items(p).forEach(el => { el.style.left = ''; el.style.top = ''; });
+    });
+  }
+  function check() { if (!mq || mq.matches) on(); else off(); }
+  // Also observe newly inserted cards (e.g. sections loaded later)
+  const mo = new MutationObserver(() => { if (!active) return; observeItems(); panes.forEach(p => schedule(p, false)); });
+  panes.forEach(p => {
+    mo.observe(p, { childList: true });
+    const pa = p.querySelector(':scope > #profileAdminSection');
+    if (pa) mo.observe(pa, { childList: true });
+  });
+  if (mq) { if (mq.addEventListener) mq.addEventListener('change', check); else if (mq.addListener) mq.addListener(check); }
+  window.addEventListener('orientationchange', () => setTimeout(check, 250));
+  check();
+})();
+
+
+</script>
+<!-- App parts under pb_public/js/ (classic scripts without a build step, order matters).
+     ausblick.js must come last – it starts the app (bootApp). New file: add its line here and its name
+     in pinn-setup.sh – src/build.js fills in the list of the start check (PINN_APP_PARTS) by itself. -->
+<script src="js/grundlagen.js?v={{VERSION}}"></script>
+<script src="js/popups.js?v={{VERSION}}"></script>
+<script src="js/verbindung.js?v={{VERSION}}"></script>
+<script src="js/benutzer.js?v={{VERSION}}"></script>
+<script src="js/mitteilungen.js?v={{VERSION}}"></script>
+<script src="js/serverzugriff.js?v={{VERSION}}"></script>
+<script src="js/tastatur.js?v={{VERSION}}"></script>
+<script src="js/anmeldemaske.js?v={{VERSION}}"></script>
+<script src="js/dashboard.js?v={{VERSION}}"></script>
+<script src="js/dashboardhintergrund.js?v={{VERSION}}"></script>
+<script src="js/profilauswahl.js?v={{VERSION}}"></script>
+<script src="js/pineingabe.js?v={{VERSION}}"></script>
+<script src="js/dashboardsitzung.js?v={{VERSION}}"></script>
+<script src="js/dashboardkonto.js?v={{VERSION}}"></script>
+<script src="js/familienverwalten.js?v={{VERSION}}"></script>
+<script src="js/einrichten.js?v={{VERSION}}"></script>
+<script src="js/exportieren.js?v={{VERSION}}"></script>
+<script src="js/hauptadminseite.js?v={{VERSION}}"></script>
+<script src="js/anmeldung.js?v={{VERSION}}"></script>
+<script src="js/konto.js?v={{VERSION}}"></script>
+<script src="js/profilverwaltung.js?v={{VERSION}}"></script>
+<script src="js/zustand.js?v={{VERSION}}"></script>
+<script src="js/bedienzustand.js?v={{VERSION}}"></script>
+<script src="js/rezeptbilder.js?v={{VERSION}}"></script>
+<script src="js/zusammenfuehren.js?v={{VERSION}}"></script>
+<script src="js/speichern.js?v={{VERSION}}"></script>
+<script src="js/design.js?v={{VERSION}}"></script>
+<script src="js/sprache.js?v={{VERSION}}"></script>
+<script src="js/uebersicht.js?v={{VERSION}}"></script>
+<script src="js/familienkachel.js?v={{VERSION}}"></script>
+<script src="js/wobistdu.js?v={{VERSION}}"></script>
+<script src="js/geburtstagsfeier.js?v={{VERSION}}"></script>
+<script src="js/wetterkachel.js?v={{VERSION}}"></script>
+<script src="js/geburtstage.js?v={{VERSION}}"></script>
+<script src="js/uebersichteinstellungen.js?v={{VERSION}}"></script>
+<script src="js/familiensync.js?v={{VERSION}}"></script>
+<script src="js/kalenderquellen.js?v={{VERSION}}"></script>
+<script src="js/icsparser.js?v={{VERSION}}"></script>
+<script src="js/zeitleiste.js?v={{VERSION}}"></script>
+<script src="js/termindetails.js?v={{VERSION}}"></script>
+<script src="js/kalenderdatei.js?v={{VERSION}}"></script>
+<script src="js/wetter.js?v={{VERSION}}"></script>
+<script src="js/wohnort.js?v={{VERSION}}"></script>
+<script src="js/feiertage.js?v={{VERSION}}"></script>
+<script src="js/muellkalender.js?v={{VERSION}}"></script>
+<script src="js/mitglieder.js?v={{VERSION}}"></script>
+<script src="js/profilbild.js?v={{VERSION}}"></script>
+<script src="js/mitglied.js?v={{VERSION}}"></script>
+<script src="js/kinderseite.js?v={{VERSION}}"></script>
+<script src="js/kinderroutine.js?v={{VERSION}}"></script>
+<script src="js/sterne.js?v={{VERSION}}"></script>
+<script src="js/kalenderansicht.js?v={{VERSION}}"></script>
+<script src="js/essenplanen.js?v={{VERSION}}"></script>
+<script src="js/rezeptparser.js?v={{VERSION}}"></script>
+<script src="js/rezeptdialog.js?v={{VERSION}}"></script>
+<script src="js/rezeptbild.js?v={{VERSION}}"></script>
+<script src="js/rezeptmengen.js?v={{VERSION}}"></script>
+<script src="js/einkauf.js?v={{VERSION}}"></script>
+<script src="js/einkaufslisten.js?v={{VERSION}}"></script>
+<script src="js/einkaufseingabe.js?v={{VERSION}}"></script>
+<script src="js/rezepte.js?v={{VERSION}}"></script>
+<script src="js/offline.js?v={{VERSION}}"></script>
+<script src="js/aufgabenextras.js?v={{VERSION}}"></script>
+<script src="js/appbadge.js?v={{VERSION}}"></script>
+<script src="js/reisen.js?v={{VERSION}}"></script>
+<script src="js/aufgabendaten.js?v={{VERSION}}"></script>
+<script src="js/haushalt.js?v={{VERSION}}"></script>
+<script src="js/reihum.js?v={{VERSION}}"></script>
+<script src="js/aufgaben.js?v={{VERSION}}"></script>
+<script src="js/smarthome.js?v={{VERSION}}"></script>
+<script src="js/sprachsteuerung.js?v={{VERSION}}"></script>
+<script src="js/termine.js?v={{VERSION}}"></script>
+<script src="js/ansichten.js?v={{VERSION}}"></script>
+<script src="js/versionspruefung.js?v={{VERSION}}"></script>
+<script src="js/sicherungen.js?v={{VERSION}}"></script>
+<script src="js/geraete.js?v={{VERSION}}"></script>
+<script src="js/fehlerprotokoll.js?v={{VERSION}}"></script>
+<script src="js/versionslog.js?v={{VERSION}}"></script>
+<script src="js/einstellungen.js?v={{VERSION}}"></script>
+<script src="js/kalenderkonto.js?v={{VERSION}}"></script>
+<script src="js/finanzen.js?v={{VERSION}}"></script>
+<script src="js/kassen.js?v={{VERSION}}"></script>
+<script src="js/vorrat.js?v={{VERSION}}"></script>
+<script src="js/vorrat2.js?v={{VERSION}}"></script>
+<script src="js/sparen.js?v={{VERSION}}"></script>
+<script src="js/vertraege.js?v={{VERSION}}"></script>
+<script src="js/fahrzeuge.js?v={{VERSION}}"></script>
+<script src="js/zuhause.js?v={{VERSION}}"></script>
+<script src="js/dokumente.js?v={{VERSION}}"></script>
+<script src="js/pdflesen.js?v={{VERSION}}"></script>
+<script src="js/appstart.js?v={{VERSION}}"></script>
+<script src="js/pinnwand.js?v={{VERSION}}"></script>
+<script src="js/listen.js?v={{VERSION}}"></script>
+<script src="js/familie.js?v={{VERSION}}"></script>
+<script src="js/hinweise.js?v={{VERSION}}"></script>
+<script src="js/ausblick.js?v={{VERSION}}"></script>
+
+<!-- ==========================================================
+     Changelog as a terminal (Settings → System → Versions-Log)
+     Classes "fixed inset-0": the global keyboard logic fits the overlay to the visible
+     area automatically, so the input line is never hidden by the keyboard.
+     ========================================================== -->
+<link rel="stylesheet" href="css/terminal.css?v={{VERSION}}">
+
+<!-- @include versionslog.html -->
+<link rel="stylesheet" href="css/glocke.css?v={{VERSION}}">
+</body>
+</html>

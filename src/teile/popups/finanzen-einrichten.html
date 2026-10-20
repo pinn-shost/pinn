@@ -1,0 +1,57 @@
+<!-- Set up finances: budget, categories, recurring expenses, export -->
+<div id="financeSettingsModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
+  <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+    <button id="closeFinanceSettingsBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <h3 class="font-serif text-lg mb-4 pr-6">Finanzen einrichten</h3>
+
+    <button id="finSettingsKassenBtn" type="button" class="w-full flex items-center gap-3 rounded-xl border border-ink/10 px-3 py-2.5 mb-5 text-left hover:border-pine transition">
+      <span class="w-9 h-9 rounded-full bg-pine/10 grid place-items-center text-lg shrink-0">💶</span>
+      <span class="flex-1 min-w-0">
+        <span class="block text-sm font-medium">Kassen</span>
+        <span id="finSettingsKassenInfo" class="block text-[11px] text-ink/45 truncate">Wechseln, neue Kasse anlegen, Mitglieder einstellen</span>
+      </span>
+      <span class="text-ink/30 text-lg shrink-0">›</span>
+    </button>
+
+    <div class="mb-6">
+      <h4 class="text-xs uppercase tracking-wide text-ink/40 mb-1">Haushaltsbudget</h4>
+      <p class="text-xs text-ink/50 mb-2">Das Budget ist die Summe deiner Einnahmen im Zeitraum – einmalige und regelmäßige (z. B. Gehalt mit Minus davor). Hier kannst du es jeden Monat um einen festen Betrag erhöhen oder mit Minus verringern.</p>
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finBudgetInput">Anpassung pro Monat</label>
+      <div id="finBudgetField" class="fin-amount-field flex items-center gap-2 rounded-xl border border-ink/15 pl-2 pr-4 py-2">
+        <button id="finBudgetSignBtn" type="button" class="shrink-0 w-10 h-10 rounded-lg border border-ink/15 text-xl font-semibold text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center select-none" aria-label="Minus setzen oder entfernen (Minus = Budget verringern)" title="Minus = Budget verringern">±</button>
+        <input id="finBudgetInput" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" data-cur-zero class="flex-1 min-w-0 bg-transparent border-0 p-0 text-2xl font-semibold tracking-tight" />
+        <span class="cur-sym text-xl text-ink/40">€</span>
+      </div>
+      <p id="finBudgetInfo" class="text-xs text-ink/50 mt-1.5"></p>
+    </div>
+
+    <div class="mb-6">
+      <div class="flex items-center justify-between gap-3 mb-2">
+        <h4 class="text-xs uppercase tracking-wide text-ink/40">Kategorien</h4>
+        <button id="finAddCategoryBtn" type="button" class="px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Kategorie</button>
+      </div>
+      <div id="finCategoryEditor" class="flex flex-col gap-2"></div>
+    </div>
+
+    <div class="mb-6">
+      <div class="flex items-center justify-between gap-3 mb-2">
+        <h4 class="text-xs uppercase tracking-wide text-ink/40">Regelmäßige Ausgaben &amp; Einnahmen</h4>
+        <button id="finAddRecurringBtn" type="button" class="px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Hinzufügen</button>
+      </div>
+      <div id="finRecurringList" class="flex flex-col"></div>
+    </div>
+
+    <div class="mb-5">
+      <h4 class="text-xs uppercase tracking-wide text-ink/40 mb-2">Export</h4>
+      <div class="flex items-center gap-2">
+        <select id="finExportYear" class="rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
+        <button id="finExportBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Buchungen als CSV</button>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-2 pt-4 border-t border-ink/10">
+      <button id="cancelFinanceSettingsBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
+      <button id="saveFinanceSettingsBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern</button>
+    </div>
+  </div>
+</div>

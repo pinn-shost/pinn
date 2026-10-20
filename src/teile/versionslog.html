@@ -1,0 +1,26 @@
+<div id="changelogTerminal" class="hidden fixed inset-0" data-no-term role="dialog" aria-modal="true" aria-label="Versions-Log">
+  <div class="term-window" id="changelogTermWindow">
+    <div class="term-titlebar">
+      <button type="button" class="term-dot red" id="changelogTermDot" aria-label="Schließen"></button>
+      <span class="term-dot yellow"></span>
+      <span class="term-dot green"></span>
+      <span class="term-title" id="changelogTermTitle">pinn@nas: ~/changelog</span>
+      <button type="button" class="term-close-x" id="changelogTermClose" aria-label="Schließen">×</button>
+    </div>
+    <div class="term-screen" id="changelogTermScreen" aria-live="polite"></div>
+    <div class="term-skip" id="changelogTermSkip">▸ tippen zum überspringen</div>
+    <div class="term-chips" id="changelogTermChips">
+      <button type="button" class="term-chip" data-cmd="neueste">neueste</button>
+      <button type="button" class="term-chip" data-cmd="liste">liste</button>
+      <button type="button" class="term-chip" data-cmd="log">log</button>
+      <button type="button" class="term-chip" data-cmd="neofetch">neofetch</button>
+      <button type="button" class="term-chip" data-cmd="help">help</button>
+      <button type="button" class="term-chip" data-cmd="clear">clear</button>
+      <button type="button" class="term-chip" data-cmd="exit">exit</button>
+    </div>
+    <div class="term-inputbar">
+      <span class="t-prompt" id="changelogTermPrompt"></span>
+      <input id="changelogTermInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="send" placeholder="befehl eingeben …" aria-label="Terminal-Befehl" />
+    </div>
+  </div>
+</div>

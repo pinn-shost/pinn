@@ -4,12 +4,14 @@
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
    Contents: the version log PINN_CHANGELOG (Settings → Updates, also used for the "What's new" notes in
    js/hinweise.js) and its display as a terminal (openChangelogTerminal, commands, boot animation).
-   NEW VERSION: add the entry at the top of PINN_CHANGELOG in THIS file; APP_VERSION stays in index.html. */
+   NEW VERSION: add the entry at the top of PINN_CHANGELOG in THIS file; the version number itself is set in
+   src/version.txt (src/build.js writes it into APP_VERSION of pb_public/index.html). */
 
 /* ==========================================================
    Version log (changelog) – shown as a terminal
    ----------------------------------------------------------
-   MAINTENANCE: with every new version add an entry at the top and raise APP_VERSION (in index.html).
+   MAINTENANCE: with every new version add an entry at the top and raise the version in src/version.txt
+   (then run  node src/build.js).
    - Patch versions (e.g. 0.62.1, 0.62.2) are summarised in the entry of their version (0.62).
    - Bigger updates: short bullet points per new feature.
    - Only small things/bug fixes: one summarising bullet point (typ 'fix').
@@ -17,6 +19,15 @@
    - rueckblick: true = entries before the version log, summarised from the project history.
    ========================================================== */
 const PINN_CHANGELOG = [
+  {
+    v: '1.101', datum: '20.10.2026', titel: 'App-Code wird aufgeteilt (Schritt 3, Teil 6: Seiten-HTML)',
+    punkte: [
+      ['info', 'Für Mitwirkende: Das HTML der App-Seite liegt jetzt in kleinen Dateien unter src/ – ein Rahmen (src/rahmen.html) und 53 Teile unter src/teile/ (Anmeldung, Seiten, Popups). Das Bauskript src/build.js setzt daraus vor jedem Release pb_public/index.html zusammen; die fertige Datei liegt weiter im Paket, auf dem NAS wird nichts gebaut'],
+      ['info', 'Die Versionsnummer steht nur noch in src/version.txt, die Dateilisten der Startprüfung füllt das Bauskript selbst aus. Mit  node src/build.js --check  lässt sich prüfen, ob index.html und src/ zusammenpassen'],
+      ['info', 'Die Kommentare in der index.html sind jetzt auf Englisch – an Aussehen und Bedienung ändert sich nichts'],
+      ['info', 'Geändert: index.html, neuer Ordner src/, js/versionslog.js und pinn-setup.sh (räumt src/ nach der Installation aus dem entpackten Release-Ordner weg) – am Server ändert sich nichts'],
+    ],
+  },
   {
     v: '1.100', datum: '20.10.2026', titel: 'App-Code wird aufgeteilt (Schritt 3, Teil 5: Sprachen)',
     punkte: [

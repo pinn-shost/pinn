@@ -1,0 +1,22 @@
+    <!-- Pin board -->
+    <section id="pinboardSection" class="hidden min-h-0 flex-col bg-white/40">
+      <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
+        <div class="flex items-center justify-between gap-3">
+          <h2 class="font-serif text-lg">Pinnwand</h2>
+          <div class="flex items-center gap-2 shrink-0">
+            <button id="pinboardArrangeBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs font-medium hover:bg-ink/5 transition whitespace-nowrap" title="Zettel verschieben – oder lange auf einen Zettel drücken">↕︎ Anordnen</button>
+            <button id="openPinboardEditorBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">+ Zettel</button>
+          </div>
+        </div>
+        <div id="pinboardChips" class="pw-chips mt-3"></div>
+      </div>
+      <div id="pinboardScroll" class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-6">
+        <div id="pinboardQuick" class="pw-quick">
+          <input id="pinboardQuickInput" type="text" enterkeyhint="send" autocomplete="off" autocapitalize="sentences" maxlength="2000" placeholder="Schnell etwas für alle anpinnen …" aria-label="Schnell etwas anpinnen" />
+          <button id="pinboardQuickMore" type="button" aria-label="Mit Optionen anpinnen" title="Mit Optionen (Art, Farbe, für wen, Erinnerung …)">⋯</button>
+          <button id="pinboardQuickAdd" type="button" class="pw-quick-add" aria-label="Anpinnen" title="Anpinnen">+</button>
+        </div>
+        <div id="pinboardArrangeHint" class="pw-arr-hint hidden">✋ Zettel ziehen und loslassen – Tipp auf eine freie Stelle oder „Fertig“ beendet</div>
+        <div id="pinboardBoard"></div>
+      </div>
+    </section>

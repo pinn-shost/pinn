@@ -1,0 +1,70 @@
+<!-- Pantry: add / edit an item -->
+<div id="pantryItemModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
+  <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
+    <button id="closePantryItemBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <h3 id="pantryItemModalTitle" class="font-serif text-lg mb-4 pr-6">Neuer Vorrats-Artikel</h3>
+
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryNameInput">Name</label>
+    <input id="pantryNameInput" type="text" autocomplete="off" maxlength="80" placeholder="z. B. Nudeln" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+
+    <div class="grid grid-cols-2 gap-3 mb-1">
+      <div class="min-w-0">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryQtyInput">Bestand</label>
+        <div class="flex items-stretch rounded-lg border border-ink/15 overflow-hidden">
+          <button type="button" data-step="-1" data-target="pantryQtyInput" class="pantry-step shrink-0 w-9 text-lg text-ink/60 hover:bg-ink/5">−</button>
+          <input id="pantryQtyInput" type="text" inputmode="decimal" autocomplete="off" placeholder="0" class="w-full min-w-0 border-0 px-1 py-2 text-base text-center" />
+          <button type="button" data-step="1" data-target="pantryQtyInput" class="pantry-step shrink-0 w-9 text-lg text-ink/60 hover:bg-ink/5">+</button>
+        </div>
+      </div>
+      <div class="min-w-0">
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryUnitInput">Einheit</label>
+        <input id="pantryUnitInput" type="text" autocomplete="off" maxlength="20" list="pantryUnitList" placeholder="Stück" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
+        <datalist id="pantryUnitList"><option value="Stück"></option><option value="Pck"></option><option value="Dose"></option><option value="Glas"></option><option value="Flasche"></option><option value="Kiste"></option><option value="g"></option><option value="kg"></option><option value="ml"></option><option value="l"></option><option value="Rolle"></option><option value="Tube"></option></datalist>
+      </div>
+    </div>
+    <div class="min-w-0 mt-3">
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryBestBeforeInput">Mindesthaltbar bis (MHD)</label>
+      <div class="flex items-stretch gap-2">
+        <input id="pantryBestBeforeInput" type="date" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-2 text-base bg-white" />
+        <button id="pantryBestBeforeClear" type="button" class="shrink-0 w-10 rounded-lg border border-ink/15 text-ink/40 hover:text-red-500 hover:border-red-300 text-lg leading-none" aria-label="MHD entfernen" title="MHD entfernen">×</button>
+      </div>
+      <p class="text-[11px] text-ink/40 mt-1">Optional. Bei mehreren Packungen das früheste Datum – pinn. erinnert rechtzeitig per Push.</p>
+    </div>
+    <div class="min-w-0 mt-3 mb-1">
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryMinInput">Mindestbestand</label>
+      <div class="flex items-stretch rounded-lg border border-ink/15 overflow-hidden">
+        <button type="button" data-step="-1" data-target="pantryMinInput" class="pantry-step shrink-0 w-9 text-lg text-ink/60 hover:bg-ink/5">−</button>
+        <input id="pantryMinInput" type="text" inputmode="decimal" autocomplete="off" placeholder="kein Mindestbestand" class="w-full min-w-0 border-0 px-1 py-2 text-base text-center" />
+        <button type="button" data-step="1" data-target="pantryMinInput" class="pantry-step shrink-0 w-9 text-lg text-ink/60 hover:bg-ink/5">+</button>
+      </div>
+    </div>
+    <p class="text-[11px] text-ink/40 mb-3">Fällt der Bestand unter den Mindestbestand, landet der Artikel automatisch auf den gewählten Einkaufslisten.</p>
+
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Kategorie</label>
+    <div id="pantryCategoryPicker" class="flex flex-wrap gap-1.5 mb-3"></div>
+
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Lagerort</label>
+    <div id="pantryLocationPicker" class="flex flex-wrap gap-1.5 mb-3"></div>
+
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Kaufen bei</label>
+    <div id="pantryStorePicker" class="grid grid-cols-3 gap-2 mb-1.5"></div>
+    <p class="text-[11px] text-ink/40 mb-3">Mehrere Läden möglich – der Artikel steht dann auf jeder dieser Listen. Wird er auf einer Liste abgehakt, verschwindet er von den anderen. Ohne Auswahl: Liste „Essensplanung“ – bzw. der Stammladen, wenn die Essensplanung direkt dorthin geht.</p>
+
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryNoteInput">Notiz</label>
+    <input id="pantryNoteInput" type="text" autocomplete="off" maxlength="120" placeholder="optional, z. B. Marke" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+
+    <div id="pantryBarcodeWrap" class="hidden mb-3">
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Verknüpfte Barcodes</label>
+      <div id="pantryBarcodeList" class="flex flex-wrap gap-1.5"></div>
+      <p class="text-[11px] text-ink/40 mt-1.5">Wird einer dieser Barcodes gescannt, landet er bei diesem Artikel.</p>
+    </div>
+
+    <p id="pantryItemError" class="hidden text-xs text-red-500 mb-3"></p>
+    <div class="flex items-center gap-2 mt-1">
+      <button id="deletePantryItemBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Löschen</button>
+      <div class="flex-1"></div>
+      <button id="cancelPantryItemBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
+      <button id="savePantryItemBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern</button>
+    </div>
+  </div>
+</div>

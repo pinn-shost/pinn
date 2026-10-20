@@ -1,0 +1,32 @@
+    <!-- LEFT: Calendar -->
+    <section id="calendarSection" class="min-h-0 w-full min-w-0 flex flex-col border-r border-ink/10">
+
+      <!-- Week/month nav + family members -->
+      <div class="px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
+        <div id="calendarTopRow" class="flex items-center justify-between mb-3 gap-3">
+          <div class="flex items-center gap-2">
+            <button id="prevPeriod" class="w-9 h-9 rounded-full border border-ink/15 hover:bg-pine hover:text-white hover:border-pine transition grid place-items-center" aria-label="Zurück">‹</button>
+            <button id="todayBtn" class="px-3 h-9 rounded-full border border-ink/15 text-sm hover:bg-pine hover:text-white hover:border-pine transition">Heute</button>
+            <button id="nextPeriod" class="w-9 h-9 rounded-full border border-ink/15 hover:bg-pine hover:text-white hover:border-pine transition grid place-items-center" aria-label="Weiter">›</button>
+          </div>
+          <h2 id="periodLabel" class="font-serif text-lg text-ink flex-1 min-w-0 text-center truncate px-1"></h2>
+          <div id="calendarTopRight" class="flex items-center gap-2 shrink-0">
+            <div id="calendarModeToggle" class="hidden items-center gap-1 bg-ink/5 rounded-full p-1 text-xs shrink-0">
+              <button type="button" data-mode="day" class="mode-btn px-2.5 py-1 rounded-full transition">Tag</button>
+              <button type="button" data-mode="week" class="mode-btn px-2.5 py-1 rounded-full transition">Woche</button>
+              <button type="button" data-mode="month" class="mode-btn termine-only-mode px-2.5 py-1 rounded-full transition">Monat</button>
+              <button type="button" data-mode="year" class="mode-btn termine-only-mode px-2.5 py-1 rounded-full transition">Jahr</button>
+            </div>
+            <button id="dayListToggleBtn" type="button" class="w-9 h-9 rounded-full border border-ink/15 hover:bg-pine hover:text-white hover:border-pine transition grid place-items-center text-sm" title="Liste/Zeitleiste umschalten" aria-label="Liste/Zeitleiste umschalten">📋</button>
+            <button id="openAddEventModalBtn" class="w-9 h-9 rounded-full bg-pine text-white hover:bg-pine/90 transition grid place-items-center text-lg leading-none" title="Termin hinzufügen" aria-label="Termin hinzufügen">+</button>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <div id="memberChips" class="flex items-center gap-2 flex-wrap"></div>
+        </div>
+      </div>
+
+      <!-- Calendar body (week or month grid injected here) -->
+      <div id="calendarBody" class="flex-1 min-h-0 w-full overflow-y-auto flex flex-col"></div>
+    </section>

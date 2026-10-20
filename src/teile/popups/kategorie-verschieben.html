@@ -1,0 +1,13 @@
+<!-- Deactivate a category: warning + move the affected recipes -->
+<div id="categoryReassignModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-6">
+  <div class="bg-white rounded-2xl p-6 w-full max-w-sm fade-in">
+    <h3 id="categoryReassignTitle" class="font-serif text-lg mb-2">Kategorie verschieben?</h3>
+    <p id="categoryReassignText" class="text-sm text-ink/70 mb-4"></p>
+    <label id="categoryReassignTargetLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Verschieben nach</label>
+    <select id="categoryReassignTarget" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-5"></select>
+    <div class="flex justify-end gap-2">
+      <button id="cancelCategoryReassign" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
+      <button id="confirmCategoryReassign" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Verschieben</button>
+    </div>
+  </div>
+</div>

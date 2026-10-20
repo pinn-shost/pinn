@@ -1,0 +1,108 @@
+    <section id="einkaufSection" class="hidden min-h-0 flex-col bg-white/40">
+      <!-- Overview: all shopping lists as large cards -->
+      <div id="shoppingOverview" class="flex flex-1 min-h-0 flex-col">
+        <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
+          <div class="flex items-center justify-between gap-3">
+            <h2 class="font-serif text-lg">Listen</h2>
+            <div class="flex items-center gap-2 shrink-0">
+              <button id="openShoppingPlanBtn" type="button" class="px-3 py-1.5 rounded-lg border border-pine text-pine text-xs font-medium hover:bg-pine/10 transition whitespace-nowrap shrink-0">🗓️ Einkauf planen</button>
+              <button id="openNewShoppingListBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap shrink-0">+ Neue Liste</button>
+            </div>
+          </div>
+          <div class="lists-tabbar ls-tabs mt-3" role="tablist" aria-label="Listenart"></div>
+        </div>
+        <div class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">
+          <div id="shoppingListGrid" class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3"></div>
+          <p id="shoppingReorderHint" class="text-[11px] text-ink/35 text-center mt-4 select-none">Liste gedrückt halten und ziehen, um die Reihenfolge zu ändern</p>
+        </div>
+      </div>
+
+      <!-- Single list -->
+      <div id="shoppingDetail" class="hidden flex-1 min-h-0 flex-col">
+        <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
+          <div class="flex items-center gap-2">
+            <button id="shoppingBackBtn" type="button" class="shrink-0 w-9 h-9 -ml-1 rounded-full text-ink/60 hover:text-pine hover:bg-ink/5 grid place-items-center text-2xl leading-none select-none" aria-label="Zurück zu allen Listen">‹</button>
+            <div id="shoppingDetailLogo" class="shrink-0"></div>
+            <h2 id="shoppingDetailTitle" class="font-serif text-lg flex-1 min-w-0 truncate"></h2>
+            <button id="openShoppingMoveBtn" type="button" class="shrink-0 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition whitespace-nowrap">⇄ Verschieben</button>
+            <button id="editShoppingListBtn" type="button" class="shrink-0 w-9 h-9 rounded-full text-ink/50 hover:text-pine hover:bg-ink/5 grid place-items-center text-lg leading-none select-none" aria-label="Liste bearbeiten">✎</button>
+          </div>
+          <div id="shoppingDateRangeBlock" class="mt-3">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-xs text-ink/40 shrink-0">Von</span>
+              <input id="shoppingListFrom" type="date" class="rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm min-w-0" />
+              <span class="text-xs text-ink/40 shrink-0">bis</span>
+              <input id="shoppingListTo" type="date" class="rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm min-w-0" />
+            </div>
+            <div class="flex items-center gap-2">
+              <button id="shoppingListThisWeekBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Diese Woche</button>
+              <button id="shoppingListNextWeekBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Nächste Woche</button>
+            </div>
+          </div>
+        </div>
+        <div class="flex-1 min-h-0 overflow-y-auto px-6 py-4">
+          <div id="shoppingListMeta" class="text-xs text-ink/40 mb-3"></div>
+          <div id="shoppingListContent" class="flex flex-col gap-1.5"></div>
+          <p id="emptyShoppingList" class="hidden text-sm text-ink/40 italic mt-2 text-center"></p>
+          <div id="shoppingListActions" class="hidden flex-wrap justify-center gap-2 mt-4 pt-4 border-t border-ink/10">
+            <button id="copyShoppingListBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">📋 In Zwischenablage kopieren</button>
+            <button id="shareShoppingListBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Teilen</button>
+            <button id="clearDoneShoppingItemsBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">✓ Einkauf abschließen</button>
+            <button id="finishShoppingPlanBtn" type="button" class="hidden px-3 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">✓ Einkauf erledigt</button>
+          </div>
+        </div>
+        <!-- Input bar at the bottom: put your own entries on the list that is open. Suggestions from
+             earlier entries stack up right above it (best match at the bottom, right above the field). -->
+        <!-- Placeholder: keeps the space free while the input bar floats above the keyboard -->
+        <div id="shoppingAddBarSpacer" class="hidden shrink-0" aria-hidden="true"></div>
+        <div id="shoppingAddBar" class="shrink-0 bg-transparent px-4 pt-2" style="padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.75rem);">
+          <div id="shoppingSuggestions" class="hidden flex-col-reverse gap-1 mb-2 max-w-md mx-auto"></div>
+          <div id="shoppingAddField" class="flex items-stretch max-w-md mx-auto rounded-xl border border-ink/15 bg-white shadow-lg overflow-hidden">
+            <input id="shoppingAddInput" type="text" enterkeyhint="done" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="sentences" placeholder="Etwas auf die Liste setzen …" class="flex-1 min-w-0 bg-transparent border-0 rounded-none px-4 py-2.5 text-base" />
+            <button id="shoppingAddBtn" type="button" class="shrink-0 w-12 bg-pine text-white text-2xl leading-none grid place-items-center hover:bg-pine/90 transition select-none" aria-label="Hinzufügen">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lists: packing, gifts, wishes, checklists, ideas – overview -->
+      <div id="listsOverview" class="hidden flex-1 min-h-0 flex-col">
+        <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
+          <div class="flex items-center justify-between gap-3">
+            <h2 class="font-serif text-lg">Listen</h2>
+            <button id="listsNewBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap shrink-0">+ Neue Liste</button>
+          </div>
+          <div class="lists-tabbar ls-tabs mt-3" role="tablist" aria-label="Listenart"></div>
+        </div>
+        <div class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">
+          <p id="listsIntro" class="ls-intro"></p>
+          <div id="listsExtra"></div>
+          <div id="listsGrid" class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3"></div>
+        </div>
+      </div>
+
+      <!-- Lists: single list -->
+      <div id="listsDetail" class="hidden flex-1 min-h-0 flex-col">
+        <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
+          <div class="flex items-center gap-2">
+            <button id="listsBackBtn" type="button" class="shrink-0 w-9 h-9 -ml-1 rounded-full text-ink/60 hover:text-pine hover:bg-ink/5 grid place-items-center text-2xl leading-none select-none" aria-label="Zurück zu allen Listen">‹</button>
+            <div id="listsDetailIcon" class="shrink-0"></div>
+            <h2 id="listsDetailTitle" class="font-serif text-lg flex-1 min-w-0 truncate"></h2>
+            <button id="listsEditBtn" type="button" class="shrink-0 w-9 h-9 rounded-full text-ink/50 hover:text-pine hover:bg-ink/5 grid place-items-center text-lg leading-none select-none" aria-label="Liste bearbeiten">✎</button>
+          </div>
+          <div id="listsDetailMeta" class="mt-3 flex flex-col gap-2"></div>
+          <div id="listsDetailChips" class="pw-chips mt-3" style="display:none"></div>
+        </div>
+        <div id="listsDetailScroll" class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-3">
+          <div id="listsDetailContent" class="max-w-2xl mx-auto"></div>
+          <p id="listsDetailEmpty" class="hidden text-sm text-ink/40 italic mt-4 text-center"></p>
+          <div id="listsDetailActions" class="max-w-2xl mx-auto flex flex-wrap justify-center gap-2 mt-4 pt-4 border-t border-ink/10"></div>
+        </div>
+        <div class="shrink-0 bg-transparent px-4 pt-2" style="padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.75rem);">
+          <div class="flex items-stretch max-w-md mx-auto rounded-xl border border-ink/15 bg-white shadow-lg overflow-hidden">
+            <select id="listsAddSection" class="ls-add-select hidden" aria-label="Bereich"></select>
+            <input id="listsAddInput" type="text" enterkeyhint="done" autocomplete="off" autocapitalize="sentences" maxlength="160" placeholder="Etwas hinzufügen …" class="flex-1 min-w-0 bg-transparent border-0 rounded-none px-4 py-2.5 text-base" />
+            <button id="listsAddBtn" type="button" class="shrink-0 w-12 bg-pine text-white text-2xl leading-none grid place-items-center hover:bg-pine/90 transition select-none" aria-label="Hinzufügen">+</button>
+          </div>
+        </div>
+      </div>
+    </section>

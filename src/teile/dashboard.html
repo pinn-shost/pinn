@@ -1,0 +1,54 @@
+<!-- Family dashboard (iPad): profile selection instead of sign-in, see pb_hooks/dashboard.pb.js -->
+<div id="dashboardScreen" class="hidden pinn-auth-screen z-[395] bg-paper">
+  <div id="dashBg" class="dash-bg" aria-hidden="true"></div>
+  <div class="dash-inner">
+    <div class="dash-head">
+      <div class="min-w-0">
+        <h1 class="font-serif text-3xl leading-tight">Familie <span id="dashFamilyName"></span></h1>
+        <p id="dashDate" class="text-sm text-ink/50 mt-1"></p>
+      </div>
+      <div id="dashClock" class="dash-clock"></div>
+    </div>
+    <div class="dash-main">
+      <p id="dashQuestion" class="text-sm text-ink/50 mb-5 text-center">Wer möchte loslegen? Tippe auf dein Bild.</p>
+      <div id="dashTiles" class="dash-grid"></div>
+      <div id="dashStatusWrap" class="hidden flex flex-col items-center gap-3 mt-6 text-center">
+        <p id="dashStatus" class="text-sm text-red-500"></p>
+        <button type="button" id="dashRetryBtn" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Erneut versuchen</button>
+      </div>
+    </div>
+    <div class="dash-footer">
+      <button type="button" id="dashPasswordLoginBtn" class="text-xs text-ink/40 hover:text-pine underline decoration-dotted">Mit Passwort anmelden</button>
+    </div>
+  </div>
+  <div id="dashBusy" class="hidden dash-busy"><span id="dashBusyText">Wird geöffnet …</span></div>
+</div>
+
+<!-- PIN entry (dashboard and "PIN festlegen" in the account) -->
+<div id="pinPadOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="PIN-Eingabe">
+  <div id="pinPadBox" class="pin-box">
+    <div id="pinPadAvatar" class="hidden"></div>
+    <div id="pinPadTitle" class="pin-title"></div>
+    <div id="pinPadSub" class="pin-sub"></div>
+    <div id="pinPadLengths" class="pin-lengths hidden">
+      <button type="button" class="pin-len-btn" data-pin-len="4">4-stellig</button>
+      <button type="button" class="pin-len-btn" data-pin-len="6">6-stellig</button>
+    </div>
+    <div id="pinPadDots" class="pin-dots"></div>
+    <div id="pinPadError" class="pin-error"></div>
+    <div class="pin-keys">
+      <button type="button" class="pin-key" data-pin-key="1"><span class="pin-digit">1</span><span class="pin-letters"></span></button>
+      <button type="button" class="pin-key" data-pin-key="2"><span class="pin-digit">2</span><span class="pin-letters">ABC</span></button>
+      <button type="button" class="pin-key" data-pin-key="3"><span class="pin-digit">3</span><span class="pin-letters">DEF</span></button>
+      <button type="button" class="pin-key" data-pin-key="4"><span class="pin-digit">4</span><span class="pin-letters">GHI</span></button>
+      <button type="button" class="pin-key" data-pin-key="5"><span class="pin-digit">5</span><span class="pin-letters">JKL</span></button>
+      <button type="button" class="pin-key" data-pin-key="6"><span class="pin-digit">6</span><span class="pin-letters">MNO</span></button>
+      <button type="button" class="pin-key" data-pin-key="7"><span class="pin-digit">7</span><span class="pin-letters">PQRS</span></button>
+      <button type="button" class="pin-key" data-pin-key="8"><span class="pin-digit">8</span><span class="pin-letters">TUV</span></button>
+      <button type="button" class="pin-key" data-pin-key="9"><span class="pin-digit">9</span><span class="pin-letters">WXYZ</span></button>
+      <button type="button" class="pin-key plain" id="pinPadCancel">Abbrechen</button>
+      <button type="button" class="pin-key" data-pin-key="0"><span class="pin-digit">0</span><span class="pin-letters"></span></button>
+      <button type="button" class="pin-key plain" id="pinPadDelete" aria-label="Löschen">Löschen</button>
+    </div>
+  </div>
+</div>
