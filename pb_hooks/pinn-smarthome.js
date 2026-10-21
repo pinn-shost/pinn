@@ -607,6 +607,20 @@ const MOWER_BUSY = ["mowing", "paused"];
 const VAC_ERROR = ["error", "in_error", "charging_problem"];
 // Idle at the dock: only in these states a job that never started may be sent again
 const VAC_IDLE = ["charging", "charging_complete", "idle", "docked", "charger_disconnected"];
+// Station work: a job sent during one of these may simply have been ignored - only then pinn. sends it again
+const VAC_STATION = ["washing_the_mop", "going_to_wash_the_mop", "emptying_the_bin", "air_drying", "air_drying_stopping", "returning_home", "returning", "docking"];
+
+// Give a robot job up for today: report it once, drop the jobs still waiting for this device and start nothing
+// else on it today (a closed door or a blocked path does not open by itself). A start with the button lifts it.
+function giveUp(store, device, now, text) {
+    store.haFehler = { at: new Date(now).toISOString(), text: (device.name || "") + ": " + text };
+    if (!store.stop || typeof store.stop !== "object") store.stop = {};
+    store.stop[device.id] = berlin(now).iso;
+    delete store.belegt[device.id];
+}
+function stoppedToday(store, deviceId, now) {
+    return !!(store.stop && store.stop[deviceId] && store.stop[deviceId] === berlin(now).iso);
+}
 function liveDomain(device) {
     const d = String((device && device.statusEntity) || "").split(".")[0];
     return d === "vacuum" || d === "lawn_mower" ? d : "";
@@ -679,23 +693,48 @@ function deviceBusy(store, device, ha, now) {
     if (live && b && !b.ok && !live.error && !live.afterError && (live.busy || VAC_RUN.indexOf(live.state) >= 0)) b.ok = true;
     // Error during a job started by pinn. (e.g. door closed): give the job up, report it once, never repeat it
     if (live && live.error && b && !b.fehler) {
-        b.fehler = true;
-        b.ok = true;
-        delete b.pending;
-        store.haFehler = { at: new Date(now).toISOString(), text: (device.name || "") + ": " + (b.aktion || "") + " – der Roboter meldet einen Fehler (z. B. Raum nicht erreichbar, Tür zu?). Der Auftrag wurde abgebrochen und wird nicht wiederholt." };
+        giveUp(store, device, now, (b.aktion || "") + " – der Roboter meldet einen Fehler (z. B. Raum nicht erreichbar, Tür zu?). Der Auftrag wurde abgebrochen; heute startet pinn. für dieses Gerät nichts mehr automatisch.");
+        return { bis: 0, aktion: b.aktion || "", zustand: live.state, fehler: true };
+    }
+    // It started but turned back within 3 minutes (no room is cleaned that fast, the way was blocked):
+    // give up as well instead of sending the next job out on the same blocked way
+    if (b && b.pending && b.ok && !b.fertig && live && liveDomain(device) === "vacuum" && now - b.seit < 3 * 60000
+        && (live.state === "returning_home" || live.state === "returning" || live.state === "docking" || VAC_IDLE.indexOf(live.state) >= 0)) {
+        giveUp(store, device, now, (b.pending.label || b.aktion || "") + " – der Roboter ist nach kurzer Zeit umgekehrt (Weg nicht frei, Tür zu?). Der Auftrag wurde abgebrochen; heute startet pinn. für dieses Gerät nichts mehr automatisch.");
+        return { bis: 0, aktion: b.aktion || "", zustand: live.state, fehler: true };
+    }
+    // Remember the last state: markBusy notes in which state a job was sent (see below)
+    if (live) (store.vac[device.id] || (store.vac[device.id] = {})).last = live.state;
+    // Started by pinn., but the robot is back idle at the dock without pinn. ever seeing it work on the job
+    if (b && b.pending && !b.ok && live && now - b.seit >= HA_ANLAUF_MS && now - b.seit < HA_ANLAUF_MS + 4 * 60000
+        && (VAC_IDLE.indexOf(live.state) >= 0 || live.state === "docked")) {
+        const p = b.pending;
+        // It was free when the job came: it took it, drove off and turned back (Roborock "path blocked", closed
+        // door). Trying again would end the same way - give up instead of sending it out again and again.
+        if (VAC_STATION.indexOf(b.startState || "") < 0) {
+            giveUp(store, device, now, (p.label || b.aktion || "") + " – der Roboter ist gleich wieder in die Station gefahren (Weg nicht frei, Tür zu?). Der Auftrag wurde abgebrochen; heute startet pinn. für dieses Gerät nichts mehr automatisch.");
+            return { bis: 0, aktion: p.label || "", zustand: live.state, fehler: true };
+        }
+        // It was busy at the station when the job came and most likely ignored it: send it once more, keeping its place
+        delete store.belegt[device.id];
+        if ((p.versuche || 0) < 1) {
+            store.schlange.unshift({ taskId: p.taskId || "", plantId: p.plantId || "", actionId: p.actionId, at: new Date(b.seit || now).toISOString(), versuche: (p.versuche || 0) + 1 });
+        } else {
+            store.haFehler = { at: new Date(now).toISOString(), text: (device.name || "") + ": " + (p.label || "") + " – das Gerät hat den Auftrag auch beim zweiten Mal nicht angenommen." };
+        }
+        return { bis: 0, aktion: p.label || "", zustand: live.state, retry: true };
     }
     if (b && b.bis > now) return b;
-    // Started by pinn., but the robot never got going (e.g. the station was busy): put the job back in front.
-    // Only when the robot really stands idle at the dock – while it works at the station or after an error it waits.
+    // Old retry path for devices without an idle state (kept for safety, never repeats more than once)
     if (b && b.pending && !b.ok && now - b.seit < HA_ANLAUF_MS + 4 * 60000) {
-        if (live && VAC_IDLE.indexOf(live.state) < 0 && live.state !== "docked") return Object.assign({ bis: 0 }, b, { zustand: live.state });
+        if (live) return Object.assign({ bis: 0 }, b, { zustand: live.state });
         const p = b.pending;
         delete store.belegt[device.id];
-        if ((p.versuche || 0) < 3) {
+        if ((p.versuche || 0) < 1) {
             // Keep its place: the original start time, so it is not queued behind later jobs
             store.schlange.unshift({ taskId: p.taskId || "", plantId: p.plantId || "", actionId: p.actionId, at: new Date(b.seit || now).toISOString(), versuche: (p.versuche || 0) + 1 });
         } else {
-            store.haFehler = { at: new Date(now).toISOString(), text: (device.name || "") + ": " + (p.label || "") + " – das Gerät hat den Auftrag dreimal nicht angenommen." };
+            store.haFehler = { at: new Date(now).toISOString(), text: (device.name || "") + ": " + (p.label || "") + " – das Gerät hat den Auftrag auch beim zweiten Mal nicht angenommen." };
         }
         return { bis: 0, aktion: p.label || "", zustand: live ? live.state : "", retry: true };
     }
@@ -721,6 +760,8 @@ function markBusy(store, hit, now, pending) {
     const b = { bis: bis, seit: now, status: status, aktion: hit.action.label || "" };
     // Robots: remember the job until the robot really started (see deviceBusy)
     if (pending && liveDomain(hit.device)) b.pending = Object.assign({ label: hit.action.label || "" }, pending);
+    // State of the robot when the job was sent (last state deviceBusy saw): free at the dock or busy at the station
+    if (liveDomain(hit.device)) b.startState = (store.vac[hit.device.id] || {}).last || "";
     store.belegt[hit.device.id] = b;
     if (liveDomain(hit.device) === "vacuum") {
         const mem = store.vac[hit.device.id] || (store.vac[hit.device.id] = {});
@@ -856,6 +897,15 @@ function processFamily(familyId, rec, store, system, ha) {
         for (let i = 0; i < schlange.length; i++) {
             const f = schlange[i];
             const busy = deviceBusy(store, f.hit.device, ha, now);
+            // Given up for today (error or blocked way): drop the waiting jobs of this device, start nothing
+            if (system === "ha" && stoppedToday(store, deviceId, now)) {
+                schlange.slice(i).forEach(w => {
+                    if (w.queued) store.schlange = store.schlange.filter(q => q !== w.queued);
+                    if (w.task) store.log[w.task.id + ":auto"] = new Date(now).toISOString();
+                    if (w.logKey) store.log[w.logKey] = new Date(now).toISOString();
+                });
+                break;
+            }
             if (busy) {
                 schlange.slice(i).forEach(w => wartend.push({
                     aktion: w.hit.action.label, geraet: w.hit.device.name, aufgabe: w.task ? w.task.title : (w.plant ? w.plant.name || "" : ""),
@@ -1098,6 +1148,8 @@ function haAusfuehren(familyId, body) {
         return { ok: true, gestartet: true };
     }
     if (taskId) store.log[taskId + ":auto"] = new Date(now).toISOString();
+    // A start with the button means: try again now (lifts "nothing more today" after an error)
+    if (store.stop && store.stop[hit.device.id]) delete store.stop[hit.device.id];
     const busy = deviceBusy(store, hit.device, ha, now);
     const waiting = store.schlange.some(q => q.actionId && actionById(data, q.actionId) && actionById(data, q.actionId).device.id === hit.device.id);
     if (busy || waiting) {

@@ -98,6 +98,7 @@ pinn. speaks **English, Deutsch, Français and Español**, adapts currency and e
 - **Birthdays:** your own iCloud account from Settings → Calendar now also counts for birthdays – only for your own profile, the contacts stay private. Before, the app said “no account connected” although the calendars were working.
 - **Robot vacuum (Home Assistant):** a job no longer runs twice when the robot washes its mop for a long time before mopping. If the robot reports an error (e.g. a closed door), the job is cancelled instead of repeated and shown in the smart home settings; further jobs wait until the robot is back in its dock.
 - **Small things:** profile pictures under Family and in the emergency card show the same crop as everywhere else (especially on iPhone/iPad). Home → “Keep in mind” now names the plants that are really due and what to do; plants out of season stay paused.
+- **1.103.1:** robot vacuum – if it drives straight back into the dock after the start (path blocked, door closed) or reports an error, pinn. no longer sends it out again. The job is cancelled, waiting jobs for this device are dropped and nothing else starts automatically that day; starting with the button still works. Only if the station was still busy at the start is there exactly one second try.
 - Changed: app files and the server files `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-geburtstage.js` and `pb_hooks/geburtstage.pb.js`. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 ## What's new in 1.102
@@ -136,7 +137,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.103.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.103.1` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

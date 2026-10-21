@@ -98,6 +98,7 @@ pinn. spricht **English, Deutsch, Français und Español**, passt Währung und N
 - **Geburtstage:** Das eigene iCloud-Konto aus Einstellungen → Kalender zählt jetzt auch für die Geburtstage – nur für das eigene Profil, die Kontakte bleiben privat. Vorher hieß es „kein Konto verbunden“, obwohl die Kalender liefen.
 - **Saugroboter (Home Assistant):** Ein Auftrag läuft nicht mehr doppelt, wenn der Roboter vor dem Wischen lange den Mopp wäscht. Meldet der Roboter einen Fehler (z. B. Tür zu), wird der Auftrag abgebrochen statt wiederholt und in den Smarthome-Einstellungen angezeigt; weitere Aufträge warten, bis er wieder in der Station ist.
 - **Kleinigkeiten:** Profilbilder unter Familie und im Notfallpass zeigen denselben Ausschnitt wie überall sonst (vor allem iPhone/iPad). Zuhause → „Im Blick“ nennt jetzt die Pflanzen, die wirklich dran sind, und was zu tun ist; Pflanzen außerhalb ihrer Saison bleiben pausiert.
+- **1.103.1:** Saugroboter – fährt er nach dem Start gleich wieder in die Station (Weg nicht frei, Tür zu) oder meldet einen Fehler, schickt pinn. ihn nicht mehr erneut los. Der Auftrag wird abgebrochen, wartende Aufträge für dieses Gerät entfallen und an diesem Tag startet nichts mehr automatisch; ein Start per Knopf geht weiterhin. Nur wenn die Station beim Start noch beschäftigt war, gibt es genau einen zweiten Versuch.
 - Geändert: App-Dateien und am Server `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-geburtstage.js` und `pb_hooks/geburtstage.pb.js`. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
 
 ## Neu in 1.102
@@ -136,7 +137,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Die ZIP der [neuesten Version](https://github.com/pinn-shost/pinn/releases/latest) herunterladen und entpacken.
-2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.103.0` oder `pinn-main`) so, wie er ist, hineinlegen.
+2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.103.1` oder `pinn-main`) so, wie er ist, hineinlegen.
 3. Per SSH anmelden und ausführen:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

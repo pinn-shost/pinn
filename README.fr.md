@@ -98,6 +98,7 @@ pinn. parle **English, Deutsch, Français et Español**, adapte la devise et les
 - **Anniversaires :** ton propre compte iCloud de Réglages → Calendrier compte désormais aussi pour les anniversaires – uniquement pour ton profil, les contacts restent privés. Avant, il était indiqué « aucun compte connecté » alors que les calendriers fonctionnaient.
 - **Robot aspirateur (Home Assistant) :** une tâche ne s’exécute plus deux fois quand le robot lave longtemps sa serpillière avant de laver le sol. Si le robot signale une erreur (p. ex. une porte fermée), la tâche est annulée au lieu d’être répétée et affichée dans les réglages maison connectée ; les tâches suivantes attendent son retour à la station.
 - **Petites choses :** les photos de profil sous Famille et dans la carte d’urgence montrent le même cadrage que partout ailleurs (surtout sur iPhone/iPad). Domicile → « À surveiller » nomme désormais les plantes vraiment concernées et ce qu’il faut faire ; les plantes hors saison restent en pause.
+- **1.103.1 :** robot aspirateur – s’il retourne aussitôt à la station après le départ (passage bloqué, porte fermée) ou signale une erreur, pinn. ne le relance plus. La tâche est annulée, les tâches en attente pour cet appareil sont supprimées et plus rien ne démarre automatiquement ce jour-là ; un démarrage avec le bouton reste possible. Seulement si la station était encore occupée au départ, il y a exactement un second essai.
 - Modifié : fichiers de l’app et sur le serveur `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-geburtstage.js` et `pb_hooks/geburtstage.pb.js`. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
 ## Nouveautés de la 1.102
@@ -136,7 +137,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.103.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.103.1` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
