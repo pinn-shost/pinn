@@ -1,0 +1,85 @@
+# pinn. – automatic checks for every push and pull request (since 1.102.0)
+#
+# Job "check" runs the same checks as  node .github/scripts/check-all.js  on your own computer:
+#   1. pb_public/index.html matches the files in src/   (node src/build.js --check)
+#   2. syntax of every script: app, language files, hooks, inline scripts, JSON, shell scripts (sh -n)
+#   3. project rules (lint): file registration, global names declared only once, hook names and requires
+#   4. hooks in a sandbox: they load, routes and cron jobs are unique and valid, used exports exist, unit tests
+# Job "pocketbase" starts a real PocketBase (version from docker-compose.yaml) with an empty, temporary database,
+# pb_hooks/ and pb_public/, and sends a request to every route.
+# Every step of "check" runs even if an earlier one failed, so one run shows all problems.
+# Only Node.js and the official PocketBase download are used – nothing is installed elsewhere or deployed.
+
+name: Checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Build, syntax, lint, hooks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: index.html matches src/ (node src/build.js --check)
+        run: node src/build.js --check
+
+      - name: Syntax (JavaScript, inline scripts, JSON, sh -n)
+        if: success() || failure()
+        run: node .github/scripts/check-syntax.js
+
+      - name: Lint (project rules)
+        if: success() || failure()
+        run: node .github/scripts/check-lint.js
+
+      - name: Hooks (sandbox, routes, cron jobs, exports, unit tests)
+        if: success() || failure()
+        run: node .github/scripts/check-hooks.js --list
+
+  pocketbase:
+    name: Routes on a real PocketBase
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Download PocketBase (version from docker-compose.yaml, checksum verified)
+        run: |
+          V=$(sed -n 's/^x-pocketbase-version: *&pb-version *"\([^"]*\)".*/\1/p' docker-compose.yaml)
+          if [ -z "$V" ]; then echo "::error::x-pocketbase-version not found in docker-compose.yaml"; exit 1; fi
+          echo "PocketBase $V"
+          Z="pocketbase_${V}_linux_amd64.zip"
+          U="https://github.com/pocketbase/pocketbase/releases/download/v${V}"
+          mkdir -p "$RUNNER_TEMP/pb"
+          cd "$RUNNER_TEMP/pb"
+          curl -fsSLO "$U/$Z"
+          curl -fsSLO "$U/checksums.txt"
+          grep " $Z\$" checksums.txt | sha256sum -c -
+          unzip -o -q "$Z" pocketbase
+          ./pocketbase --version
+
+      - name: Start PocketBase with the hooks and try every route
+        run: node .github/scripts/smoke-pocketbase.js "$RUNNER_TEMP/pb/pocketbase"
