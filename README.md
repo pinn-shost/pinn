@@ -97,7 +97,8 @@ pinn. speaks **English, Deutsch, Français and Español**, adapts currency and e
 - **For contributors:** every push and pull request now runs a GitHub Action (`.github/workflows/check.yml`). It checks that `pb_public/index.html` matches the files in `src/`, that every script parses (app, language files, server hooks, inline scripts, JSON, shell scripts with `sh -n`), that no global name is declared twice across the app files, that every app file is registered and loaded, and that server routes and cron jobs are unique – plus tests for the update check. A second job starts a real PocketBase (same version as on the NAS) with an empty database and calls every server route once. Run the same checks on your own computer with `node .github/scripts/check-all.js` (only Node.js needed).
 - New guide for contributors: [CONTRIBUTING.md](.github/CONTRIBUTING.md) (English and German) – layout, rules, checks and pull requests.
 - The old file `pb_public/js/push.js` (unused since 1.95.1) was removed from the repository.
-- Only the version number in `index.html` and `js/versionslog.js` changed, nothing changes in the app or on the server. 1.101.0 must be installed first. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+- **1.102.1:** during installation and updates, `pinn-setup.sh` now tidies up old files that earlier versions installed and the app no longer uses – starting with `pb_public/js/push.js` (renamed in 1.95.1). They are moved to `_alt/<date>/`, not deleted; your data is never touched. A new GitHub check makes sure the list never names a file the app still loads.
+- Only app files changed (`index.html`, `js/versionslog.js`, `pinn-setup.sh`), nothing changes in the app or on the server. 1.101.0 (or 1.102.0) must be installed first. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 ## What's new in 1.101
 
@@ -133,7 +134,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.102.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.102.1` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

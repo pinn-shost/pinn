@@ -25,7 +25,8 @@ const PINN_CHANGELOG = [
       ['neu', 'Für Mitwirkende: Bei jeder Änderung auf GitHub prüft eine GitHub Action automatisch, ob die index.html zu den Dateien in src/ passt, ob alle Skripte fehlerfrei lesbar sind (App, Sprachdateien, Server-Hooks, Shell-Skripte), ob kein globaler Name doppelt vergeben ist und ob die Server-Hooks sauber laden (Routen und Zeitpläne eindeutig, benutzte Funktionen vorhanden) – dazu Tests für die Update-Erkennung. Dieselben Prüfungen laufen am eigenen Rechner mit node .github/scripts/check-all.js'],
       ['neu', 'Zusätzlich startet die Action einen echten PocketBase-Server (dieselbe Version wie auf dem NAS) mit leerer Datenbank und ruft jede Server-Route einmal auf'],
       ['neu', 'Neue Anleitung für Mitwirkende (.github/CONTRIBUTING.md, Englisch und Deutsch): Aufbau des Repositorys, Regeln, Prüfungen und Ablauf eines Pull Requests'],
-      ['info', 'Geändert: index.html (nur die Versionsnummer) und js/versionslog.js – an der Bedienung und am Server ändert sich nichts. Die alte, seit 1.95.1 unbenutzte Datei js/push.js ist aus dem Repository entfernt'],
+      ['neu', '1.102.1: Beim Installieren und Aktualisieren räumt pinn-setup.sh jetzt alte Dateien auf, die frühere Versionen angelegt haben und die die App nicht mehr braucht – zuerst js/push.js (seit 1.95.1 durch js/mitteilungen.js ersetzt). Sie werden nach _alt/<Datum>/ verschoben, nicht gelöscht; Daten bleiben unberührt. Eine neue Prüfung auf GitHub stellt sicher, dass nie eine Datei auf der Liste steht, die die App noch lädt'],
+      ['info', 'Geändert: index.html (nur die Versionsnummer), js/versionslog.js und pinn-setup.sh – an der Bedienung und am Server ändert sich nichts. Die alte, seit 1.95.1 unbenutzte Datei js/push.js ist aus dem Repository entfernt'],
     ],
   },
   {

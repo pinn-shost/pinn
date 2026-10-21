@@ -28,7 +28,8 @@
 #  Output language: automatic (German, English, French, Spanish), can be fixed with e.g.
 #  sudo sh pinn-setup.sh --lang en
 #  Replaced files are kept in _alt/<date>/ just in case. Your data (pb_data, konfig, backups,
-#  caddy/data …) is never touched.
+#  caddy/data …) is never touched. Files that an earlier version installed and the app no longer
+#  uses (list OBSOLET below, since 1.102.1) are moved to _alt/<date>/ as well – nothing else is removed.
 #  Once pinn. is installed, updates also work with a button in the app (Settings → System →
 #  Backups & updates) – the container "wartung" runs exactly this script for that.
 # ─────────────────────────────────────────────────────────────
@@ -78,6 +79,10 @@ m() {
     en:nothing) echo "No new files to sort" ;;
     fr:nothing) echo "Aucun nouveau fichier à ranger" ;;
     es:nothing) echo "No hay archivos nuevos que ordenar" ;;
+    de:cleaned) echo "alte, nicht mehr benutzte Datei(en) aufgeräumt" ;;
+    en:cleaned) echo "old, unused file(s) tidied up" ;;
+    fr:cleaned) echo "ancien(s) fichier(s) inutilisé(s) rangé(s)" ;;
+    es:cleaned) echo "archivo(s) antiguo(s) sin uso ordenado(s)" ;;
     de:dirs) echo "Ordner angelegt bzw. vorhanden" ;;
     en:dirs) echo "Folders created or present" ;;
     fr:dirs) echo "Dossiers créés ou présents" ;;
@@ -303,6 +308,27 @@ for f in pb_hooks/*; do
   mv "$f" "pb_hooks/$N"; echo "    pb_hooks/$B → pb_hooks/$N"; ANZ=$((ANZ + 1))
 done
 if [ "$ANZ" -gt 0 ]; then ok "$ANZ $(m sorted)"; else ok "$(m nothing)"; fi
+# >>> obsolete files
+# Files that an earlier version installed and the app no longer uses (since 1.102.1). They are MOVED to
+# _alt/<date>/ (not deleted), so nothing is lost. Only the exact paths in this list are touched – never
+# data folders. A file that the installed pb_public/index.html still loads is always kept, and nothing
+# happens if there is no index.html. Add a path here whenever a file is renamed or removed in a release
+# (the repository checks keep this list from ever naming a file the app still needs).
+#   pb_public/js/push.js  – renamed to js/mitteilungen.js in 1.95.1 (ad blockers blocked the old name)
+OBSOLET="pb_public/js/push.js"
+WEG=0
+if [ -f pb_public/index.html ]; then
+  for f in $OBSOLET; do
+    [ -f "$f" ] || continue
+    grep -qF "${f#pb_public/}" pb_public/index.html && continue
+    mkdir -p "$ALT/$(dirname "$f")"
+    mv "$f" "$ALT/$f" || continue
+    echo "    $f → $ALT/$f"
+    WEG=$((WEG + 1))
+  done
+fi
+# <<< obsolete files
+[ "$WEG" -gt 0 ] && ok "$WEG $(m cleaned)"
 [ -d "$ALT" ] && echo "  $(m backup) $ALT"
 
 if [ ! -f docker-compose.yaml ] && [ ! -f docker-compose.yml ]; then fehler "$(m nocompose)"; exit 1; fi
