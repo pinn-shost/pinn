@@ -48,7 +48,7 @@ function renderBirthdaySettingsStatus() {
   if (!el) return;
   if (isCurrentUserGuest()) { el.textContent = ''; return; }
   if (!birthdayData.geladen) { el.textContent = 'Noch nicht geladen.'; return; }
-  if (!birthdayData.eingerichtet) { el.textContent = 'Kein Konto verbunden – die Geburtstage kommen aus den iCloud- bzw. Google-Kontakten (Einstellungen → Kalender: Apple-ID hinterlegen oder mit Google verbinden).'; return; }
+  if (!birthdayData.eingerichtet) { el.textContent = 'Kein Konto verbunden – die Geburtstage kommen aus den iCloud- bzw. Google-Kontakten (Einstellungen → Kalender: ein iCloud- oder Google-Konto verbinden).'; return; }
   const n = birthdayData.liste.length;
   const stand = birthdayData.stand ? new Date(birthdayData.stand).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
   const q = birthdayData.quellen || {};

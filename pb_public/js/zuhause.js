@@ -1363,9 +1363,31 @@ function hsDueItems(h) {
     const nk = hsLogs(h.id).filter(l => l.type === 'nebenkosten').map(l => l.date).sort().pop();
     if (since && vtDiffDays(since, today) > 400 && (!nk || vtDiffDays(nk, today) > 400)) out.push({ tone: 'warn', icon: '🧾', title: 'Nebenkostenabrechnung an den Mieter', sub: 'spätestens 12 Monate nach Ende des Abrechnungszeitraums', when: '', act: 'log-new', type: 'nebenkosten' });
   }
+  // Only plants that are really due (plants out of season are paused and never listed); the text names them
+  // and the jobs that are actually due instead of a fixed "watering, mowing or fertilising"
   const pd = hsPlantsDue(h);
-  if (pd.length) out.unshift({ tone: 'warn', icon: pd.length === 1 ? (pd[0].icon || '🪴') : '💧', title: pd.length === 1 ? pd[0].name : pd.length + ' Pflanzen & Rasen', sub: 'Gießen, Mähen oder Düngen ist dran', when: '', act: 'tab', tab: 'garten' });
+  if (pd.length) out.unshift(hsPlantsDueItem(pd));
   return out.slice(0, 12);
+}
+// "Im Blick" entry for the due plants: names and the jobs due today (watering, mowing, fertilising)
+function hsPlantsDueItem(pd) {
+  const rain = hsRainLog();
+  const jobs = [];
+  const add = j => { if (!jobs.includes(j)) jobs.push(j); };
+  pd.forEach(p => {
+    const s = hsPlantState(p, rain);
+    if (s.due) add(p.act === 'mow' ? 'Mähen' : 'Gießen');
+    if (s.fertDue) add('Düngen');
+  });
+  const names = pd.map(p => p.name || 'Pflanze');
+  // Fixed order and whole sentences, so the language files can translate them as they are
+  const order = ['Gießen', 'Mähen', 'Düngen'].filter(j => jobs.includes(j));
+  const jobText = order.length === 1 ? order[0] + ' ist dran' : order.slice(0, -1).join(', ') + ' und ' + order[order.length - 1] + ' sind dran';
+  return {
+    tone: 'warn', icon: pd.length === 1 ? (pd[0].icon || '🪴') : (order.length === 1 && order[0] === 'Mähen' ? '✂️' : '💧'),
+    title: pd.length === 1 ? names[0] : names.join(', '),
+    sub: order.length ? jobText : '', when: pd.length > 1 ? String(pd.length) : '', act: 'tab', tab: 'garten',
+  };
 }
 function hsDueRowHtml(it) {
   return `

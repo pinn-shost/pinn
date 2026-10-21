@@ -1469,6 +1469,7 @@ async function pinnCalConnectApple() {
     pinnCalSetExtern('apple', Array.isArray(res.extern) ? res.extern : []);
     pinnCalSrcMsg = '✓ Angemeldet – jetzt die Kalender anhaken.';
     renderPinnCalAccounts();
+    loadBirthdays(true); // the own iCloud contacts now also count for birthdays
   } catch (err) {
     pinnCalSrcMsg = pinnCalErrorText(err);
   } finally {

@@ -90,6 +90,16 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **English, Deutsch, Français und Español**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen **Familien**- und **WG**-Bezeichnungen. Ein Server kann mehrere Familien aufnehmen, jede mit eigenen Admins.
 
+## Neu in 1.103
+
+**Fehlerbehebungen: Glocke, Geburtstage, Saugroboter, Profilbilder**
+
+- **Glocke:** Ein Tipp auf eine Karte öffnet wieder die passende Stelle (z. B. „Eure Woche ist da“, Einkäufe, Aufgaben, Termine). Seit der Aufteilung des App-Codes passierte dabei nichts.
+- **Geburtstage:** Das eigene iCloud-Konto aus Einstellungen → Kalender zählt jetzt auch für die Geburtstage – nur für das eigene Profil, die Kontakte bleiben privat. Vorher hieß es „kein Konto verbunden“, obwohl die Kalender liefen.
+- **Saugroboter (Home Assistant):** Ein Auftrag läuft nicht mehr doppelt, wenn der Roboter vor dem Wischen lange den Mopp wäscht. Meldet der Roboter einen Fehler (z. B. Tür zu), wird der Auftrag abgebrochen statt wiederholt und in den Smarthome-Einstellungen angezeigt; weitere Aufträge warten, bis er wieder in der Station ist.
+- **Kleinigkeiten:** Profilbilder unter Familie und im Notfallpass zeigen denselben Ausschnitt wie überall sonst (vor allem iPhone/iPad). Zuhause → „Im Blick“ nennt jetzt die Pflanzen, die wirklich dran sind, und was zu tun ist; Pflanzen außerhalb ihrer Saison bleiben pausiert.
+- Geändert: App-Dateien und am Server `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-geburtstage.js` und `pb_hooks/geburtstage.pb.js`. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
+
 ## Neu in 1.102
 
 **Automatische Prüfungen auf GitHub**
@@ -99,14 +109,6 @@ pinn. spricht **English, Deutsch, Français und Español**, passt Währung und N
 - Die alte, seit 1.95.1 unbenutzte Datei `pb_public/js/push.js` ist aus dem Repository entfernt.
 - **1.102.1:** Bei Installation und Update räumt `pinn-setup.sh` jetzt alte Dateien auf, die frühere Versionen angelegt haben und die die App nicht mehr braucht – zuerst `pb_public/js/push.js` (in 1.95.1 umbenannt). Sie werden nach `_alt/<Datum>/` verschoben, nicht gelöscht; deine Daten bleiben unberührt. Eine neue Prüfung auf GitHub stellt sicher, dass die Liste nie eine Datei nennt, die die App noch lädt.
 - Geändert sind nur App-Dateien (`index.html`, `js/versionslog.js`, `pinn-setup.sh`), an der App und am Server ändert sich nichts. 1.101.0 (oder 1.102.0) muss vorher installiert sein. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
-
-## Neu in 1.101
-
-**App-Code wird aufgeteilt, Schritt 3 – Teil 6: das HTML der App-Seite (Schritt 3 abgeschlossen)**
-
-- **Für Mitwirkende:** Das HTML der App-Seite liegt jetzt in kleinen Dateien unter `src/` – ein Rahmen (`src/rahmen.html`) und 53 Teile unter `src/teile/` (Anmeldebildschirme, je Seite eine Datei, Popups nach Bereichen). `node src/build.js` setzt sie vor jedem Release zu `pb_public/index.html` zusammen; `node src/build.js --check` zeigt, ob beides noch zusammenpasst. Die fertige `index.html` bleibt im Repository und im Release, auf dem NAS wird nichts gebaut – an der Bedienung ändert sich nichts, Installation und Updates laufen wie bisher. Die Versionsnummer wird nur noch in `src/version.txt` gesetzt. Alle Kommentare der App-Seite sind jetzt auf Englisch.
-- `pinn-setup.sh` räumt den Ordner `src/` nach der Installation aus dem entpackten Release-Ordner weg.
-- Nur App-Dateien geändert (`index.html`, neuer Ordner `src/`, `js/versionslog.js`, `pinn-setup.sh`), am Server ändert sich nichts. 1.100.0 muss vorher installiert sein. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
 
 ## So funktioniert's
 
@@ -134,7 +136,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Die ZIP der [neuesten Version](https://github.com/pinn-shost/pinn/releases/latest) herunterladen und entpacken.
-2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.102.1` oder `pinn-main`) so, wie er ist, hineinlegen.
+2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.103.0` oder `pinn-main`) so, wie er ist, hineinlegen.
 3. Per SSH anmelden und ausführen:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

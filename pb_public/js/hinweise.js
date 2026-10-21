@@ -1631,7 +1631,7 @@ function ntActCardHtml(a) {
   const x = ntActText(a);
   const isNew = a.zeit > ntPanelSeenBefore;
   const ico = /^</.test(String(x.ico)) ? x.ico : `<span class="nt-act-ico">${x.ico}</span>`;
-  return `<div class="nt-card act${a.art === 'push' ? ' push' : ''}" data-ntact="act" data-actid=""${escapeHtml(a.id)}" data-ntkey="act:${escapeHtml(a.id)}" role="button" tabindex="0">
+  return `<div class="nt-card act${a.art === 'push' ? ' push' : ''}" data-ntact="act" data-actid="${escapeHtml(a.id)}" data-ntkey="act:${escapeHtml(a.id)}" role="button" tabindex="0">
     <button type="button" class="nt-del" data-ntact="del" aria-label="Hinweis entfernen" title="Entfernen">×</button>
     <div class="nt-act-row">
       ${ico}

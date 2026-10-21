@@ -20,6 +20,16 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.103', datum: '21.10.2026', titel: 'Fehlerbehebungen: Glocke, Geburtstage, Saugroboter, Profilbilder',
+    punkte: [
+      ['fix', 'Glocke: Ein Tipp auf eine Karte öffnet wieder die passende Stelle (z. B. „Eure Woche ist da“, Einkäufe, Aufgaben, Termine) – seit der Aufteilung des App-Codes passierte dabei nichts'],
+      ['fix', 'Geburtstage: Das eigene iCloud-Konto aus Einstellungen → Kalender zählt jetzt auch für die Geburtstage (nur für das eigene Profil, die Kontakte bleiben privat) – vorher hieß es „kein Konto verbunden“, obwohl die Kalender liefen'],
+      ['fix', 'Saugroboter (Home Assistant): Ein Auftrag läuft nicht mehr doppelt, wenn der Roboter vor dem Wischen lange den Mopp wäscht. Meldet der Roboter einen Fehler (z. B. Tür zu), wird der Auftrag abgebrochen statt wiederholt und als Hinweis in den Smarthome-Einstellungen angezeigt; weitere Aufträge warten, bis er wieder in der Station ist'],
+      ['fix', 'Kleinigkeiten: Profilbilder unter Familie und im Notfallpass zeigen denselben Ausschnitt wie überall sonst (vor allem iPhone/iPad) · Zuhause → „Im Blick“ nennt die Pflanzen, die wirklich dran sind, und was zu tun ist – statt immer „Pflanzen & Rasen – Gießen, Mähen oder Düngen“; Pflanzen außerhalb ihrer Saison bleiben pausiert'],
+      ['info', 'Geändert: index.html (Versionsnummer), js/hinweise.js, js/zuhause.js, js/geburtstage.js, js/uebersichteinstellungen.js, js/kalenderkonto.js, js/versionslog.js, css/notfall.css, Sprachdateien en/fr/es sowie am Server pb_hooks/pinn-smarthome.js, pb_hooks/pinn-geburtstage.js und pb_hooks/geburtstage.pb.js'],
+    ],
+  },
+  {
     v: '1.102', datum: '21.10.2026', titel: 'Automatische Prüfungen auf GitHub',
     punkte: [
       ['neu', 'Für Mitwirkende: Bei jeder Änderung auf GitHub prüft eine GitHub Action automatisch, ob die index.html zu den Dateien in src/ passt, ob alle Skripte fehlerfrei lesbar sind (App, Sprachdateien, Server-Hooks, Shell-Skripte), ob kein globaler Name doppelt vergeben ist und ob die Server-Hooks sauber laden (Routen und Zeitpläne eindeutig, benutzte Funktionen vorhanden) – dazu Tests für die Update-Erkennung. Dieselben Prüfungen laufen am eigenen Rechner mit node .github/scripts/check-all.js'],

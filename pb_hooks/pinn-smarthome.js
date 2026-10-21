@@ -602,6 +602,11 @@ const VAC_MID = ["going_to_wash_the_mop"];
 const VAC_END = ["returning_home", "docking", "emptying_the_bin", "charging", "charging_complete", "idle", "air_drying_stopping",
     "charger_disconnected", "back_to_dock_washing_duster", "drying"];
 const MOWER_BUSY = ["mowing", "paused"];
+// Error states (vacuum entity "error" or the Roborock status sensor): the robot stopped, e.g. a room could not
+// be reached because a door was closed. The job is then given up – never repeated – and reported.
+const VAC_ERROR = ["error", "in_error", "charging_problem"];
+// Idle at the dock: only in these states a job that never started may be sent again
+const VAC_IDLE = ["charging", "charging_complete", "idle", "docked", "charger_disconnected"];
 function liveDomain(device) {
     const d = String((device && device.statusEntity) || "").split(".")[0];
     return d === "vacuum" || d === "lawn_mower" ? d : "";
@@ -632,12 +637,24 @@ function liveState(ha, store, device, now) {
     let state = "";
     try { state = haState(ha, ent); } catch (e) { return { busy: false, end: false, state: "", error: e.message }; }
     if (dom === "lawn_mower") {
+        if (state === "error") { mem.err = true; return { busy: true, end: false, state: state, error: true }; }
+        mem.err = false;
         // Returning to the dock counts as "done": the next mowing job may start right away
         return { busy: MOWER_BUSY.indexOf(state) >= 0, end: state === "returning", state: state };
     }
     let detail = "";
     const sid = vacStatusSensor(ha, store, ent, now);
     if (sid) { try { detail = haState(ha, sid); } catch (e) { detail = ""; } }
+    // Error: the robot waits for help. Further jobs wait until it is back at the dock (no new start while it is
+    // still standing somewhere in the flat or on its way back after the error).
+    if (state === "error" || VAC_ERROR.indexOf(detail) >= 0) {
+        mem.err = true; mem.job = false; mem.end = false;
+        return { busy: true, end: false, state: detail || state, error: true };
+    }
+    if (mem.err) {
+        if (state === "docked" || detail === "charging" || detail === "charging_complete") mem.err = false;
+        else return { busy: true, end: false, state: detail || state, afterError: true };
+    }
     if (detail && detail !== "unknown" && detail !== "unavailable") {
         if (VAC_RUN.indexOf(detail) >= 0 || VAC_MID.indexOf(detail) >= 0) { mem.job = true; mem.end = false; return { busy: true, end: false, state: detail }; }
         if (detail === "washing_the_mop") return mem.end ? { busy: false, end: true, state: detail } : { busy: true, end: false, state: detail };
@@ -655,14 +672,28 @@ function liveState(ha, store, device, now) {
 function deviceBusy(store, device, ha, now) {
     const b = store.belegt[device.id];
     const live = ha && deviceSystem(device) === "ha" && liveDomain(device) ? liveState(ha, store, device, now) : null;
-    if (live && b && !b.ok && (VAC_RUN.indexOf(live.state) >= 0 || live.state === "mowing" || live.state === "cleaning")) b.ok = true;
+    // The robot took the job: it drives, cleans or is already working on it at the station (washing the mop
+    // before mopping). Before 1.103 only driving/cleaning counted – a long mop wash then looked like
+    // "not accepted" and the job ran a second time later (the last room was mopped again).
+    // liveState counts a mop wash as busy only within a job, not the wash after the previous one.
+    if (live && b && !b.ok && !live.error && !live.afterError && (live.busy || VAC_RUN.indexOf(live.state) >= 0)) b.ok = true;
+    // Error during a job started by pinn. (e.g. door closed): give the job up, report it once, never repeat it
+    if (live && live.error && b && !b.fehler) {
+        b.fehler = true;
+        b.ok = true;
+        delete b.pending;
+        store.haFehler = { at: new Date(now).toISOString(), text: (device.name || "") + ": " + (b.aktion || "") + " – der Roboter meldet einen Fehler (z. B. Raum nicht erreichbar, Tür zu?). Der Auftrag wurde abgebrochen und wird nicht wiederholt." };
+    }
     if (b && b.bis > now) return b;
-    // Started by pinn., but the robot never got going (e.g. the station was busy): put the job back in front
+    // Started by pinn., but the robot never got going (e.g. the station was busy): put the job back in front.
+    // Only when the robot really stands idle at the dock – while it works at the station or after an error it waits.
     if (b && b.pending && !b.ok && now - b.seit < HA_ANLAUF_MS + 4 * 60000) {
+        if (live && VAC_IDLE.indexOf(live.state) < 0 && live.state !== "docked") return Object.assign({ bis: 0 }, b, { zustand: live.state });
         const p = b.pending;
         delete store.belegt[device.id];
         if ((p.versuche || 0) < 3) {
-            store.schlange.unshift({ taskId: p.taskId || "", plantId: p.plantId || "", actionId: p.actionId, at: new Date(now).toISOString(), versuche: (p.versuche || 0) + 1 });
+            // Keep its place: the original start time, so it is not queued behind later jobs
+            store.schlange.unshift({ taskId: p.taskId || "", plantId: p.plantId || "", actionId: p.actionId, at: new Date(b.seit || now).toISOString(), versuche: (p.versuche || 0) + 1 });
         } else {
             store.haFehler = { at: new Date(now).toISOString(), text: (device.name || "") + ": " + (p.label || "") + " – das Gerät hat den Auftrag dreimal nicht angenommen." };
         }

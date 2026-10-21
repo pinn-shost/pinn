@@ -90,6 +90,16 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **English, Deutsch, Français et Español**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.103
+
+**Corrections : cloche, anniversaires, robot aspirateur, photos de profil**
+
+- **Cloche :** toucher une carte ouvre de nouveau le bon endroit (p. ex. « Votre semaine est là », courses, tâches, rendez-vous). Depuis le découpage du code de l’app, rien ne se passait.
+- **Anniversaires :** ton propre compte iCloud de Réglages → Calendrier compte désormais aussi pour les anniversaires – uniquement pour ton profil, les contacts restent privés. Avant, il était indiqué « aucun compte connecté » alors que les calendriers fonctionnaient.
+- **Robot aspirateur (Home Assistant) :** une tâche ne s’exécute plus deux fois quand le robot lave longtemps sa serpillière avant de laver le sol. Si le robot signale une erreur (p. ex. une porte fermée), la tâche est annulée au lieu d’être répétée et affichée dans les réglages maison connectée ; les tâches suivantes attendent son retour à la station.
+- **Petites choses :** les photos de profil sous Famille et dans la carte d’urgence montrent le même cadrage que partout ailleurs (surtout sur iPhone/iPad). Domicile → « À surveiller » nomme désormais les plantes vraiment concernées et ce qu’il faut faire ; les plantes hors saison restent en pause.
+- Modifié : fichiers de l’app et sur le serveur `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-geburtstage.js` et `pb_hooks/geburtstage.pb.js`. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
+
 ## Nouveautés de la 1.102
 
 **Vérifications automatiques sur GitHub**
@@ -99,14 +109,6 @@ pinn. parle **English, Deutsch, Français et Español**, adapte la devise et les
 - L’ancien fichier `pb_public/js/push.js` (inutilisé depuis la 1.95.1) a été retiré du dépôt.
 - **1.102.1 :** lors de l’installation et des mises à jour, `pinn-setup.sh` range désormais les anciens fichiers que des versions précédentes ont installés et que l’app n’utilise plus – en commençant par `pb_public/js/push.js` (renommé en 1.95.1). Ils sont déplacés dans `_alt/<date>/`, pas supprimés ; tes données ne sont jamais touchées. Une nouvelle vérification sur GitHub garantit que la liste ne nomme jamais un fichier que l’app charge encore.
 - Seuls des fichiers de l’app changent (`index.html`, `js/versionslog.js`, `pinn-setup.sh`), rien ne change dans l’app ni sur le serveur. La 1.101.0 (ou la 1.102.0) doit être installée avant. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
-## Nouveautés de la 1.101
-
-**Code de l’app découpé, étape 3 – partie 6 : le HTML de la page de l’app (étape 3 terminée)**
-
-- **Pour les contributeurs :** le HTML de la page de l’app se trouve maintenant dans de petits fichiers sous `src/` – un cadre (`src/rahmen.html`) et 53 parties dans `src/teile/` (écrans de connexion, un fichier par page, popups regroupés par domaine). `node src/build.js` les assemble avant chaque version en `pb_public/index.html` ; `node src/build.js --check` indique si les deux correspondent encore. L’`index.html` construit reste dans le dépôt et dans la version, donc rien n’est construit sur le NAS – rien ne change à l’usage, l’installation et les mises à jour fonctionnent comme avant. Le numéro de version n’est plus défini que dans `src/version.txt`. Tous les commentaires de la page de l’app sont maintenant en anglais.
-- `pinn-setup.sh` supprime le dossier `src/` du dossier de version décompressé après l’installation.
-- Seuls des fichiers de l’app changent (`index.html`, nouveau dossier `src/`, `js/versionslog.js`, `pinn-setup.sh`), rien ne change sur le serveur. La 1.100.0 doit être installée avant. Installe comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
 ## Comment ça marche
 
@@ -134,7 +136,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.102.1` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.103.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

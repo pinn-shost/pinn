@@ -1,15 +1,15 @@
 // pb_hooks/geburtstage.pb.js
-// Geburtstage aus den iCloud- und Google-Kontakten der eigenen Familie (Logik: pinn-geburtstage.js).
-// Nutzt dieselbe Apple-ID bzw. dasselbe Google-Konto wie der Kalender (Einstellungen → Kalender) -
-// keine weitere Einrichtung.
+// Birthdays from the iCloud and Google contacts (logic: pinn-geburtstage.js). Uses the family accounts
+// from Settings → Calendar and - since 1.103 - also the profile's own iCloud account (only for this profile).
+// No further setup.
 //
 //   GET  /api/pinn/geburtstage               -> { eingerichtet, stand, liste: [{n, m, d, y, q}], fehler,
 //                                                 quellen: {apple, google}, anzahl: {apple, google} }
 //                                                 (q: "a" = iCloud, "g" = Google)
-//   POST /api/pinn/geburtstage/aktualisieren -> sofort neu abgleichen (höchstens alle 2 Minuten)
+//   POST /api/pinn/geburtstage/aktualisieren -> sync right away (at most every 2 minutes)
 //
-// Gastkonten bekommen keine Geburtstage (Kontaktdaten der Familie).
-// Zeitplan: einmal täglich um 4:30 Uhr alle Familien mit Apple-ID und/oder Google-Konto nacheinander.
+// Guest accounts get no birthdays (contact data of the family).
+// Schedule: once a day at 4:30 all families and profiles with a connected account, one after another.
 
 cronAdd("pinnGeburtstageCron", "30 4 * * *", () => {
     try {
@@ -27,7 +27,7 @@ routerAdd("GET", "/api/pinn/geburtstage", (e) => {
     const familyId = lib.familyOf(e);
     if (!familyId) return e.json(200, leer);
     try {
-        return e.json(200, require(`${__hooks}/pinn-geburtstage.js`).forFamily(familyId));
+        return e.json(200, require(`${__hooks}/pinn-geburtstage.js`).forFamily(familyId, e.auth ? e.auth.id : ""));
     } catch (err) {
         return e.json(200, Object.assign({}, leer, { fehler: "Geburtstage konnten nicht gelesen werden: " + err.message }));
     }
@@ -39,7 +39,7 @@ routerAdd("POST", "/api/pinn/geburtstage/aktualisieren", (e) => {
     const familyId = lib.familyOf(e);
     if (!familyId) return e.json(400, { error: "Dein Profil gehört zu keiner Familie." });
     try {
-        const data = require(`${__hooks}/pinn-geburtstage.js`).refreshNow(familyId);
+        const data = require(`${__hooks}/pinn-geburtstage.js`).refreshNow(familyId, e.auth ? e.auth.id : "");
         return e.json(200, Object.assign({ success: !data.fehler }, data));
     } catch (err) {
         return e.json(429, { error: err.message });

@@ -13,10 +13,13 @@ let birthdayLoadedFor = null;
 let birthdayLastFetch = 0;
 let birthdayTileExpanded = false;
 
+// Per profile (since 1.103): besides the family accounts, a profile's own iCloud contacts only count for it
 function birthdayCacheKey() {
   const u = currentUser();
-  return u && u.familie ? LS_BIRTHDAYS_PREFIX + u.familie : '';
+  return u && u.familie && u.id ? LS_BIRTHDAYS_PREFIX + u.familie + '.' + u.id : '';
 }
+// Without a connected account, look again after 10 minutes (an account may just have been connected)
+const BIRTHDAY_RELOAD_EMPTY_MS = 10 * 60 * 1000;
 function normalizeBirthdayData(body) {
   const liste = Array.isArray(body && body.liste) ? body.liste.filter(b => b && typeof b.n === 'string' && b.m >= 1 && b.m <= 12 && b.d >= 1 && b.d <= 31) : [];
   return {
@@ -114,7 +117,7 @@ function renderBirthdayTile() {
     return;
   }
   if (!birthdayData.eingerichtet) {
-    body.innerHTML = '<p class="text-sm text-ink/40 italic">Die Geburtstage kommen aus den iCloud- bzw. Google-Kontakten. Dafür muss ein Admin unter Einstellungen → Kalender eine Apple-ID hinterlegen oder ein Google-Konto verbinden.</p>';
+    body.innerHTML = '<p class="text-sm text-ink/40 italic">Die Geburtstage kommen aus den iCloud- bzw. Google-Kontakten. Dafür unter Einstellungen → Kalender ein iCloud- oder Google-Konto verbinden.</p>';
     return;
   }
   const list = visibleUpcomingBirthdays(overviewBdayDays);
@@ -232,7 +235,8 @@ async function loadBirthdays(force) {
     renderBirthdaySettingsStatus();
   }
   if (!navigator.onLine) return;
-  if (!force && Date.now() - birthdayLastFetch < BIRTHDAY_RELOAD_MS) return;
+  const wait = birthdayData.geladen && !birthdayData.eingerichtet ? BIRTHDAY_RELOAD_EMPTY_MS : BIRTHDAY_RELOAD_MS;
+  if (!force && Date.now() - birthdayLastFetch < wait) return;
   birthdayLastFetch = Date.now();
   try {
     const res = await apiFetch('/api/pinn/geburtstage', { cache: 'no-store' });

@@ -90,6 +90,16 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **English, Deutsch, Français and Español**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.103
+
+**Bug fixes: bell, birthdays, robot vacuum, profile pictures**
+
+- **Bell:** tapping a card opens the right place again (e.g. “Your week is here”, shopping, tasks, events). Since the app code was split up, nothing happened.
+- **Birthdays:** your own iCloud account from Settings → Calendar now also counts for birthdays – only for your own profile, the contacts stay private. Before, the app said “no account connected” although the calendars were working.
+- **Robot vacuum (Home Assistant):** a job no longer runs twice when the robot washes its mop for a long time before mopping. If the robot reports an error (e.g. a closed door), the job is cancelled instead of repeated and shown in the smart home settings; further jobs wait until the robot is back in its dock.
+- **Small things:** profile pictures under Family and in the emergency card show the same crop as everywhere else (especially on iPhone/iPad). Home → “Keep in mind” now names the plants that are really due and what to do; plants out of season stay paused.
+- Changed: app files and the server files `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-geburtstage.js` and `pb_hooks/geburtstage.pb.js`. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.102
 
 **Automatic checks on GitHub**
@@ -99,14 +109,6 @@ pinn. speaks **English, Deutsch, Français and Español**, adapts currency and e
 - The old file `pb_public/js/push.js` (unused since 1.95.1) was removed from the repository.
 - **1.102.1:** during installation and updates, `pinn-setup.sh` now tidies up old files that earlier versions installed and the app no longer uses – starting with `pb_public/js/push.js` (renamed in 1.95.1). They are moved to `_alt/<date>/`, not deleted; your data is never touched. A new GitHub check makes sure the list never names a file the app still loads.
 - Only app files changed (`index.html`, `js/versionslog.js`, `pinn-setup.sh`), nothing changes in the app or on the server. 1.101.0 (or 1.102.0) must be installed first. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
-## What's new in 1.101
-
-**App code split, step 3 – part 6: the HTML of the app page (step 3 complete)**
-
-- **For contributors:** the HTML of the app page now lives in small files under `src/` – a frame (`src/rahmen.html`) and 53 parts under `src/teile/` (sign-in screens, one file per page, popups grouped by area). `node src/build.js` puts them together into `pb_public/index.html` before every release; `node src/build.js --check` tells whether the two still match. The built `index.html` stays in the repository and in the release, so nothing is built on the NAS – nothing changes in use, installing and updating work as before. The version number is now only set in `src/version.txt`. All comments in the app page are in English now.
-- `pinn-setup.sh` removes the `src/` folder from the unzipped release folder after the installation.
-- Only app files changed (`index.html`, new folder `src/`, `js/versionslog.js`, `pinn-setup.sh`), nothing changes on the server. 1.100.0 must be installed first. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 ## How it works
 
@@ -134,7 +136,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.102.1` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.103.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
