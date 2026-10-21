@@ -9,7 +9,7 @@
 | `teile/*.html` | Screens outside the app: sign-in, main admin, dashboard, app shell, tab bar, search, version log terminal |
 | `teile/seiten/*.html` | One file per page of the app (calendar, recipes, finances, settings …) |
 | `teile/popups/*.html` | Popups, grouped by area |
-| `version.txt` | The app version, e.g. `1.101.0` – the only place where it is set |
+| `version.txt` | The app version, e.g. `1.102.0` – the only place where it is set |
 | `build.js` | The build script (Node.js, no npm packages needed) |
 
 ## Build
@@ -20,7 +20,9 @@ node src/build.js --check    # only checks that pb_public/index.html matches src
 ```
 
 The built `pb_public/index.html` is committed as well: pinn. installs and updates straight from the
-release archive, nothing is built on the NAS.
+release archive, nothing is built on the NAS. GitHub Actions runs `node src/build.js --check` on every push
+and pull request; run all checks yourself with `node .github/scripts/check-all.js` (see
+[.github/CONTRIBUTING.md](../.github/CONTRIBUTING.md)).
 
 ## Rules
 

@@ -20,6 +20,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.102', datum: '21.10.2026', titel: 'Automatische Prüfungen auf GitHub',
+    punkte: [
+      ['neu', 'Für Mitwirkende: Bei jeder Änderung auf GitHub prüft eine GitHub Action automatisch, ob die index.html zu den Dateien in src/ passt, ob alle Skripte fehlerfrei lesbar sind (App, Sprachdateien, Server-Hooks, Shell-Skripte), ob kein globaler Name doppelt vergeben ist und ob die Server-Hooks sauber laden (Routen und Zeitpläne eindeutig, benutzte Funktionen vorhanden) – dazu Tests für die Update-Erkennung. Dieselben Prüfungen laufen am eigenen Rechner mit node .github/scripts/check-all.js'],
+      ['neu', 'Zusätzlich startet die Action einen echten PocketBase-Server (dieselbe Version wie auf dem NAS) mit leerer Datenbank und ruft jede Server-Route einmal auf'],
+      ['neu', 'Neue Anleitung für Mitwirkende (.github/CONTRIBUTING.md, Englisch und Deutsch): Aufbau des Repositorys, Regeln, Prüfungen und Ablauf eines Pull Requests'],
+      ['info', 'Geändert: index.html (nur die Versionsnummer) und js/versionslog.js – an der Bedienung und am Server ändert sich nichts. Die alte, seit 1.95.1 unbenutzte Datei js/push.js ist aus dem Repository entfernt'],
+    ],
+  },
+  {
     v: '1.101', datum: '20.10.2026', titel: 'App-Code wird aufgeteilt (Schritt 3, Teil 6: Seiten-HTML)',
     punkte: [
       ['info', 'Für Mitwirkende: Das HTML der App-Seite liegt jetzt in kleinen Dateien unter src/ – ein Rahmen (src/rahmen.html) und 53 Teile unter src/teile/ (Anmeldung, Seiten, Popups). Das Bauskript src/build.js setzt daraus vor jedem Release pb_public/index.html zusammen; die fertige Datei liegt weiter im Paket, auf dem NAS wird nichts gebaut'],

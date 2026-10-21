@@ -90,6 +90,15 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **English, Deutsch, Français und Español**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen **Familien**- und **WG**-Bezeichnungen. Ein Server kann mehrere Familien aufnehmen, jede mit eigenen Admins.
 
+## Neu in 1.102
+
+**Automatische Prüfungen auf GitHub**
+
+- **Für Mitwirkende:** Jeder Push und jeder Pull Request startet jetzt eine GitHub Action (`.github/workflows/check.yml`). Sie prüft, ob `pb_public/index.html` zu den Dateien in `src/` passt, ob alle Skripte fehlerfrei lesbar sind (App, Sprachdateien, Server-Hooks, Inline-Skripte, JSON, Shell-Skripte mit `sh -n`), ob kein globaler Name in den App-Dateien doppelt vergeben ist, ob jede App-Datei angemeldet und eingebunden ist und ob Server-Routen und Cron-Jobs eindeutig sind – dazu Tests für die Update-Erkennung. Ein zweiter Job startet einen echten PocketBase (dieselbe Version wie auf dem NAS) mit leerer Datenbank und ruft jede Server-Route einmal auf. Dieselben Prüfungen laufen am eigenen Rechner mit `node .github/scripts/check-all.js` (nur Node.js nötig).
+- Neue Anleitung für Mitwirkende: [CONTRIBUTING.md](.github/CONTRIBUTING.md) (Englisch und Deutsch) – Aufbau, Regeln, Prüfungen und Pull Requests.
+- Die alte, seit 1.95.1 unbenutzte Datei `pb_public/js/push.js` ist aus dem Repository entfernt.
+- Geändert sind nur die Versionsnummer in `index.html` und `js/versionslog.js`, an der App und am Server ändert sich nichts. 1.101.0 muss vorher installiert sein. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
+
 ## Neu in 1.101
 
 **App-Code wird aufgeteilt, Schritt 3 – Teil 6: das HTML der App-Seite (Schritt 3 abgeschlossen)**
@@ -97,14 +106,6 @@ pinn. spricht **English, Deutsch, Français und Español**, passt Währung und N
 - **Für Mitwirkende:** Das HTML der App-Seite liegt jetzt in kleinen Dateien unter `src/` – ein Rahmen (`src/rahmen.html`) und 53 Teile unter `src/teile/` (Anmeldebildschirme, je Seite eine Datei, Popups nach Bereichen). `node src/build.js` setzt sie vor jedem Release zu `pb_public/index.html` zusammen; `node src/build.js --check` zeigt, ob beides noch zusammenpasst. Die fertige `index.html` bleibt im Repository und im Release, auf dem NAS wird nichts gebaut – an der Bedienung ändert sich nichts, Installation und Updates laufen wie bisher. Die Versionsnummer wird nur noch in `src/version.txt` gesetzt. Alle Kommentare der App-Seite sind jetzt auf Englisch.
 - `pinn-setup.sh` räumt den Ordner `src/` nach der Installation aus dem entpackten Release-Ordner weg.
 - Nur App-Dateien geändert (`index.html`, neuer Ordner `src/`, `js/versionslog.js`, `pinn-setup.sh`), am Server ändert sich nichts. 1.100.0 muss vorher installiert sein. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
-
-## Neu in 1.100
-
-**App-Code wird aufgeteilt, Schritt 3 – Teil 5: Sprachen**
-
-- **Für Mitwirkende:** Die Sprachumschaltung (Übersetzung der angezeigten Texte, WG-Bezeichnungen, Laden der Sprachdatei) liegt jetzt in der eigenen Datei `pb_public/js/sprachen.js`. Die `index.html` lädt sie an genau derselben Stelle im Kopf der Seite – sie läuft weiterhin, bevor irgendetwas angezeigt wird, an der Bedienung ändert sich nichts. Die Köpfe von `lang/en.js`, `lang/fr.js` und `lang/es.js` verweisen jetzt darauf (Kommentare auf Englisch, Übersetzungen unverändert).
-- Erste Version mit dreistelliger Nummer – die Update-Erkennung in der App und auf dem Server erkennt 1.100.0 richtig als neuer als 1.99.0.
-- Nur App-Dateien geändert (`index.html`, neue Datei `js/sprachen.js`, `js/versionslog.js`, die drei Sprachdateien, `pinn-setup.sh`), am Server ändert sich nichts. 1.99.0 muss vorher installiert sein. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
 
 ## So funktioniert's
 
@@ -132,7 +133,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Die ZIP der [neuesten Version](https://github.com/pinn-shost/pinn/releases/latest) herunterladen und entpacken.
-2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.101.0` oder `pinn-main`) so, wie er ist, hineinlegen.
+2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.102.0` oder `pinn-main`) so, wie er ist, hineinlegen.
 3. Per SSH anmelden und ausführen:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -227,6 +228,7 @@ pinn/
 │   ├── einrichtung.js   Einrichtungsassistent · datenexport.js  Datenexport
 │   ├── lang/            Übersetzungen (en, fr, es)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js und Tesseract lädt das Setup herunter)
+├── .github/             GitHub Actions (workflows/check.yml), Prüfungen (scripts/), CONTRIBUTING.md, SECURITY.md, Bilder – wird nicht installiert
 ├── src/                 Quellen der index.html (build.js, rahmen.html, teile/) – wird nicht installiert
 ├── caddy/Caddyfile      HTTPS-Reverse-Proxy
 ├── docker-compose.yaml  alle Container
@@ -242,7 +244,7 @@ pinn/
 
 ## Mitmachen
 
-Fehlerberichte, Ideen und Übersetzungen sind sehr willkommen – siehe [CONTRIBUTING.md](.github/CONTRIBUTING.md). Sicherheitsprobleme bitte vertraulich melden, wie in [SECURITY.md](.github/SECURITY.md) beschrieben.
+Fehlerberichte, Ideen und Übersetzungen sind sehr willkommen – siehe [CONTRIBUTING.md](.github/CONTRIBUTING.md). Sicherheitsprobleme bitte vertraulich melden, wie in [SECURITY.md](.github/SECURITY.md) beschrieben. Vor einem Pull Request bitte `node .github/scripts/check-all.js` laufen lassen – dieselben Prüfungen laufen auf GitHub automatisch.
 
 ## pinn. unterstützen
 
