@@ -20,6 +20,14 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.104', datum: '22.10.2026', titel: 'Rezepte und Essensplan in eigenen Datensätzen',
+    punkte: [
+      ['info', 'Rezepte (mit Favoriten und Kategorien) und der Essensplan liegen jetzt in eigenen Datensätzen auf dem Server statt im großen Familien-Datenblock. Jeder Teil wird für sich gespeichert und abgeglichen – zwei Handys, die an Verschiedenem arbeiten, kommen sich nicht mehr in die Quere, und ein neuer Einkaufsartikel schickt nicht mehr alle Rezepte mit. An der Bedienung ändert sich nichts'],
+      ['info', 'Sicherer Umzug: Vor dem Umzug sichert pinn. die Daten jeder Familie (pb_data/pinn_umzug, 30 Tage); klappt das nicht, wird nichts umgezogen. Ältere Geräte sehen bis zu ihrem Update weiter alles, und was sie schicken, wird ergänzt – nie gelöscht'],
+      ['info', 'Geändert: index.html, neu js/bereiche.js, js/familiensync.js, js/anmeldung.js, js/sicherungen.js, js/versionslog.js, pinn-setup.sh sowie am Server pb_hooks/save_family_data.pb.js, pb_hooks/pinn-push.js und neu pb_hooks/bereiche.pb.js und pb_hooks/pinn-bereiche.js'],
+    ],
+  },
+  {
     v: '1.103', datum: '21.10.2026', titel: 'Fehlerbehebungen: Glocke, Geburtstage, Saugroboter, Profilbilder',
     punkte: [
       ['fix', 'Glocke: Ein Tipp auf eine Karte öffnet wieder die passende Stelle (z. B. „Eure Woche ist da“, Einkäufe, Aufgaben, Termine) – seit der Aufteilung des App-Codes passierte dabei nichts'],

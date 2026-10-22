@@ -1154,8 +1154,20 @@ function buildDigest(person, ctx, events, taskCal, dayWall, hour) {
     });
     termine.sort((a, b) => (a.allDay === b.allDay ? a.w - b.w : (a.allDay ? -1 : 1)));
 
-    const recipes = ctx.data.recipes || [];
-    const meals = (ctx.data.mealPlan || []).filter(m => m.date === iso)
+    // Essensplan und Rezepte liegen seit 1.104 in eigenen Datensätzen (pinn-bereiche.js) - je Familie nur
+    // einmal lesen, die Rezepte nur, wenn heute ein Essen mit Rezept geplant ist
+    if (ctx.bereichPlan === undefined) {
+        ctx.bereichPlan = null;
+        try { ctx.bereichPlan = require(`${__hooks}/pinn-bereiche.js`).readMany(ctx.familyId, ["essensplan"]).mealPlan || null; } catch (e) { ctx.bereichPlan = null; }
+    }
+    const plan = ctx.bereichPlan || ctx.data.mealPlan || [];
+    const todays = plan.filter(m => m && m.date === iso);
+    if (ctx.bereichRezepte === undefined && todays.some(m => m.recipeId)) {
+        ctx.bereichRezepte = null;
+        try { ctx.bereichRezepte = require(`${__hooks}/pinn-bereiche.js`).readMany(ctx.familyId, ["rezepte"]).recipes || null; } catch (e) { ctx.bereichRezepte = null; }
+    }
+    const recipes = ctx.bereichRezepte || ctx.data.recipes || [];
+    const meals = todays
         .sort((a, b) => (a.mealType === b.mealType ? 0 : a.mealType === "mittag" ? -1 : 1))
         .map(m => {
             const r = m.recipeId ? recipes.find(x => x.id === m.recipeId) : null;

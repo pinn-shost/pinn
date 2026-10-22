@@ -4,9 +4,12 @@
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
    Contents: building the family record (buildFamilyPayload), loading it (loadFamilyData, offline with the last known state),
    saving without overwriting each other (persistState, flushSync with merging), fetching changes of other devices
-   (pullRemoteChanges, rerenderAfterRemoteChange) and the save shortcuts (saveMembers, saveMealPlan, saveRecipes, saveTasks). */
+   (pullRemoteChanges, rerenderAfterRemoteChange) and the save shortcuts (saveMembers, saveMealPlan, saveRecipes, saveTasks).
+   Since 1.104.0 some parts (recipes, meal plan) live in records of their own (js/bereiche.js): they are left out of
+   the family record (buildFamilyPayload) and put back on top whenever a state is applied (composeFamilyState). */
 
-function buildFamilyPayload() {
+// Complete state of the app (family record + areas)
+function collectFamilyState() {
   const payload = {
     members, mealPlan, recipes, recipeFavorites, shoppingItems, shoppingHistory, shoppingLists, shoppingTransferred, shoppingPlans, shoppingListOrder, shoppingMealTarget, shoppingIngredientRules, shoppingCategoryOrder, pantryItems, pantryCategories, pantryLocations, pantrySettings, pinboard, familyLists, listTemplates, documentCategories, emergencyPasses, schoolProfiles, schoolHomework, schoolLetters, schoolClosures, pets, petLog, tasks, lastName, wohnform: householdType, themeColors, categoryActive, recipeCategories, appleCalendar, weatherLocation, rooms, roomSchedules, trashBins, smartDevices, houseMaintenance, cleaningCategories, kitchenTools, favoriteTabs, guestHiddenViews, doneTaskCleanupDays, finance,
     defaultViewModeDesktop, defaultViewScopeDesktop, defaultViewModeMobile, defaultViewScopeMobile,
@@ -24,6 +27,20 @@ function buildFamilyPayload() {
     payload.defaultViewScopeMobile = familyDesign.defaultViewScopeMobile;
   }
   return payload;
+}
+// What goes into the family record: everything except the areas with records of their own
+function buildFamilyPayload() {
+  return areaStripPayload(collectFamilyState());
+}
+// The family data this device is working with (own pending changes, otherwise the server state)
+function familyWorkingData() {
+  const pending = readPending();
+  if (pending && pending.recordId === familyRecordId && pending.local) return pending.local;
+  return syncBase || {};
+}
+// Family data + current state of the areas, ready for applyFamilyData
+function composeFamilyState(familyPart) {
+  return { ...defaultFamilyData(), ...(familyPart || {}), ...areaOverlay() };
 }
 
 // After a merge or a change from another device, refresh the display
@@ -58,12 +75,15 @@ function rerenderAfterRemoteChange() {
 
 async function loadFamilyData() {
   kassenStashRescue(); // back up the old intermediate state of the finance data before it is replaced
+  // Areas first (recipes, meal plan …): the server moves them out of the family record on the first request
+  try { await areasLoad(true); } catch (e) { /* offline – cached state */ }
   // Every family has exactly one record (field "familie"); the server only delivers the own one.
   const myFamily = (currentUser() && currentUser().familie) || '';
   let existing = null;
   let listError = null;
   try {
-    const list = await pb.collection(PB_COLLECTION).getList(1, 1, { filter: pb.filter('familie = {:f}', { f: myFamily }) });
+    // bereiche=1: this app version loads the areas itself (older versions get them added by the server)
+    const list = await pb.collection(PB_COLLECTION).getList(1, 1, { filter: pb.filter('familie = {:f}', { f: myFamily }), query: { bereiche: '1' } });
     existing = list.items[0] || null;
   } catch (err) {
     listError = err;
@@ -81,7 +101,7 @@ async function loadFamilyData() {
     syncBaseUpdated = cache.updated || '';
     const pending = readPending();
     const working = (pending && pending.recordId === familyRecordId) ? pending.local : syncBase;
-    applyFamilyData({ ...defaultFamilyData(), ...working });
+    applyFamilyData(composeFamilyState(working));
     setSyncStatus('offline');
     scheduleSyncRetry();
     setTimeout(() => { shrinkOversizedMemberPhotos().catch(() => {}); }, 0);
@@ -93,8 +113,8 @@ async function loadFamilyData() {
     syncBase = existing.data || {};
     syncBaseUpdated = existing.updated || '';
   } else {
-    const initial = defaultFamilyData();
-    const created = await pb.collection(PB_COLLECTION).create({ data: initial, familie: myFamily });
+    const initial = areaStripPayload(defaultFamilyData());
+    const created = await pb.collection(PB_COLLECTION).create({ data: initial, familie: myFamily }, { query: { bereiche: '1' } });
     familyRecordId = created.id;
     syncBase = initial;
     syncBaseUpdated = created.updated || '';
@@ -105,11 +125,11 @@ async function loadFamilyData() {
   const pending = readPending();
   if (pending && pending.recordId === familyRecordId && pending.local) {
     const merged = mergeFamilyData(pending.base || {}, pending.local, syncBase);
-    applyFamilyData({ ...defaultFamilyData(), ...merged });
+    applyFamilyData(composeFamilyState(merged));
     writePending({ seq: ++pendingSeq, recordId: familyRecordId, base: syncBase, baseUpdated: syncBaseUpdated, local: buildFamilyPayload() });
     setTimeout(() => flushSync(), 0);
   } else {
-    applyFamilyData({ ...defaultFamilyData(), ...syncBase });
+    applyFamilyData(composeFamilyState(syncBase));
   }
   writeCache();
   setTimeout(() => { shrinkOversizedMemberPhotos().catch(err => console.warn('Profilbilder verkleinern fehlgeschlagen', err)); }, 0);
@@ -118,7 +138,9 @@ async function loadFamilyData() {
 async function persistState() {
   if (!familyRecordId) return;
   kassenCapture(); // note changed finance data of the fund shown
-  writePending({ seq: ++pendingSeq, recordId: familyRecordId, base: syncBase, baseUpdated: syncBaseUpdated, local: buildFamilyPayload() });
+  const full = collectFamilyState();
+  areasCapture(full); // recipes, meal plan …: queued and sent separately (js/bereiche.js)
+  writePending({ seq: ++pendingSeq, recordId: familyRecordId, base: syncBase, baseUpdated: syncBaseUpdated, local: areaStripPayload(full) });
   // Shops: report open items per list to the server (delayed, only on change)
   try { if (typeof ladenPlansSync === 'function') ladenPlansSync(false); } catch (e) { /* ignore */ }
   await flushSync();
@@ -142,7 +164,7 @@ async function flushSync() {
       try {
         res = await apiFetch('/api/pinn/save', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ recordId: sent.recordId, expectedUpdated: sent.baseUpdated, data: sent.local }),
+          body: JSON.stringify({ recordId: sent.recordId, expectedUpdated: sent.baseUpdated, data: sent.local, bereiche: areasActive() }),
         });
         body = await res.json().catch(() => ({}));
       } catch (netErr) {
@@ -187,7 +209,7 @@ async function flushSync() {
         syncBase = remote;
         syncBaseUpdated = body.updated;
         writeCache();
-        applyFamilyData({ ...defaultFamilyData(), ...merged });
+        applyFamilyData(composeFamilyState(merged));
         rerenderAfterRemoteChange();
         writePending({ seq: ++pendingSeq, recordId: familyRecordId, base: syncBase, baseUpdated: syncBaseUpdated, local: buildFamilyPayload() });
         continue;
@@ -210,15 +232,16 @@ async function flushSync() {
 async function pullRemoteChanges() {
   if (!familyRecordId) return;
   kassenLoad(false); // Funds of other devices (throttled)
+  areasPull(); // Areas (recipes, meal plan …) of other devices
   if (syncInFlight) return;
   if (readPending()) { flushSync(); return; }
   try {
-    const rec = await pb.collection(PB_COLLECTION).getOne(familyRecordId);
+    const rec = await pb.collection(PB_COLLECTION).getOne(familyRecordId, { query: { bereiche: '1' } });
     if (rec.updated && rec.updated !== syncBaseUpdated) {
       syncBase = rec.data || {};
       syncBaseUpdated = rec.updated;
       writeCache();
-      applyFamilyData({ ...defaultFamilyData(), ...syncBase });
+      applyFamilyData(composeFamilyState(syncBase));
       rerenderAfterRemoteChange();
     }
     setSyncStatus('ok');

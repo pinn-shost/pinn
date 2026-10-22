@@ -93,7 +93,7 @@ async function logout() {
   // At the family dashboard "Abmelden" means: back to the profile selection (data stays on the device)
   if (isDashboardSession()) { returnToDashboard(); return; }
   let hasPending = false;
-  try { hasPending = !!localStorage.getItem('pinn.pendingSync') || !!localStorage.getItem('pinn.outbox'); } catch (e) { /* ignore */ }
+  try { hasPending = !!localStorage.getItem('pinn.pendingSync') || !!localStorage.getItem('pinn.outbox') || !!localStorage.getItem(LS_AREAS_PENDING_KEY); } catch (e) { /* ignore */ }
   if (hasPending && !confirm('Es gibt noch nicht synchronisierte Änderungen. Beim Abmelden gehen sie verloren. Trotzdem abmelden?')) return;
   clearAppBadgeNow(); // logged out: no number on the app icon any more
   // After logging out, this device should not receive personal notifications any more
@@ -109,7 +109,7 @@ async function logout() {
   } catch (e) { /* ignore */ }
   pb.authStore.clear();
   try {
-    ['pinn.cache', 'pinn.pendingSync', 'pinn.outbox', 'pinn.aufgabenCache', 'pinn.icsCache', 'pinn.profileCache', LS_SESSION_ONLY].forEach(k => localStorage.removeItem(k));
+    ['pinn.cache', 'pinn.pendingSync', 'pinn.outbox', 'pinn.aufgabenCache', 'pinn.icsCache', 'pinn.profileCache', LS_AREAS_KEY, LS_AREAS_PENDING_KEY, LS_SESSION_ONLY].forEach(k => localStorage.removeItem(k));
     sessionStorage.removeItem(SS_SESSION_ALIVE);
   } catch (e) { /* ignore */ }
   try { if (window.caches) await caches.delete('pinn-daten'); } catch (e) { /* ignore */ }

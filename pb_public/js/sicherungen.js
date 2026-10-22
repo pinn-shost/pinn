@@ -543,7 +543,7 @@ async function sysFollow(id, art, version) {
 // and not overwritten by old changes remembered locally.
 function sysClearLocalData() {
   [LS_CACHE_KEY, LS_PENDING_KEY, LS_OUTBOX, LS_AUFGABEN_CACHE, LS_ICS_CACHE, LS_PROFILE_CACHE,
-   LS_FIN_QUEUE, LS_FIN_CACHE, LS_KASSEN, LS_KASSEN_PENDING, LS_FIN_DOCS, LS_DOCS].forEach(k => {
+   LS_FIN_QUEUE, LS_FIN_CACHE, LS_KASSEN, LS_KASSEN_PENDING, LS_FIN_DOCS, LS_DOCS, LS_AREAS_KEY, LS_AREAS_PENDING_KEY].forEach(k => {
     try { localStorage.removeItem(k); } catch (e) { /* ignore */ }
   });
 }

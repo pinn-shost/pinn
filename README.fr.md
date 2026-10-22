@@ -90,6 +90,16 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **English, Deutsch, Français et Español**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.104
+
+**Recettes et planning des repas dans leurs propres enregistrements**
+
+- Première étape du découpage des données de la famille, jusqu’ici réunies dans un seul grand bloc : les **recettes** (avec favoris et catégories) et le **planning des repas** sont désormais stockés dans leurs propres enregistrements sur le serveur (collection `familien_bereiche`). Chaque partie est enregistrée et synchronisée séparément – deux téléphones qui modifient des choses différentes ne se gênent plus, et ajouter un article de courses n’envoie plus toutes les recettes. Rien ne change à l’utilisation.
+- **Déménagement sûr :** au premier démarrage après la mise à jour, pinn. écrit une sauvegarde des données de chaque famille dans `pb_data/pinn_umzug/` avant de déplacer quoi que ce soit (conservée 30 jours) ; si cela échoue, rien n’est déplacé. Une copie de l’état déplacé reste aussi 30 jours dans la base de données.
+- **Les appareils plus anciens continuent de fonctionner** jusqu’à leur mise à jour : ils voient toujours toutes les recettes et tous les repas, et ce qu’ils envoient est ajouté – jamais supprimé ni écrasé.
+- La notification du résumé quotidien, la cloche et les recettes publiques lisent les nouveaux enregistrements.
+- Modifiés : fichiers de l’app (`index.html`, nouveau `js/bereiche.js`, `js/familiensync.js`, `js/anmeldung.js`, `js/sicherungen.js`, `js/versionslog.js`, `pinn-setup.sh`) et sur le serveur `pb_hooks/save_family_data.pb.js`, `pb_hooks/pinn-push.js` ainsi que les nouveaux `pb_hooks/bereiche.pb.js` et `pb_hooks/pinn-bereiche.js`. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
+
 ## Nouveautés de la 1.103
 
 **Corrections : cloche, anniversaires, robot aspirateur, photos de profil**
@@ -100,16 +110,6 @@ pinn. parle **English, Deutsch, Français et Español**, adapte la devise et les
 - **Petites choses :** les photos de profil sous Famille et dans la carte d’urgence montrent le même cadrage que partout ailleurs (surtout sur iPhone/iPad). Domicile → « À surveiller » nomme désormais les plantes vraiment concernées et ce qu’il faut faire ; les plantes hors saison restent en pause.
 - **1.103.1 :** robot aspirateur – s’il retourne aussitôt à la station après le départ (passage bloqué, porte fermée) ou signale une erreur, pinn. ne le relance plus. La tâche est annulée, les tâches en attente pour cet appareil sont supprimées et plus rien ne démarre automatiquement ce jour-là ; un démarrage avec le bouton reste possible. Seulement si la station était encore occupée au départ, il y a exactement un second essai.
 - Modifié : fichiers de l’app et sur le serveur `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-geburtstage.js` et `pb_hooks/geburtstage.pb.js`. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
-## Nouveautés de la 1.102
-
-**Vérifications automatiques sur GitHub**
-
-- **Pour les contributeurs :** chaque push et chaque pull request lance désormais une GitHub Action (`.github/workflows/check.yml`). Elle vérifie que `pb_public/index.html` correspond aux fichiers de `src/`, que tous les scripts se lisent sans erreur (app, fichiers de langue, hooks du serveur, scripts en ligne, JSON, scripts shell avec `sh -n`), qu’aucun nom global n’est déclaré deux fois dans les fichiers de l’app, que chaque fichier de l’app est enregistré et chargé, et que les routes et tâches cron du serveur sont uniques – plus des tests pour la détection des mises à jour. Un second job démarre un vrai PocketBase (même version que sur le NAS) avec une base de données vide et appelle une fois chaque route du serveur. Les mêmes vérifications tournent sur ton propre ordinateur avec `node .github/scripts/check-all.js` (seul Node.js est nécessaire).
-- Nouveau guide pour les contributeurs : [CONTRIBUTING.md](.github/CONTRIBUTING.md) (anglais et allemand) – structure, règles, vérifications et pull requests.
-- L’ancien fichier `pb_public/js/push.js` (inutilisé depuis la 1.95.1) a été retiré du dépôt.
-- **1.102.1 :** lors de l’installation et des mises à jour, `pinn-setup.sh` range désormais les anciens fichiers que des versions précédentes ont installés et que l’app n’utilise plus – en commençant par `pb_public/js/push.js` (renommé en 1.95.1). Ils sont déplacés dans `_alt/<date>/`, pas supprimés ; tes données ne sont jamais touchées. Une nouvelle vérification sur GitHub garantit que la liste ne nomme jamais un fichier que l’app charge encore.
-- Seuls des fichiers de l’app changent (`index.html`, `js/versionslog.js`, `pinn-setup.sh`), rien ne change dans l’app ni sur le serveur. La 1.101.0 (ou la 1.102.0) doit être installée avant. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
 ## Comment ça marche
 
@@ -137,7 +137,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.103.1` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.104.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -227,7 +227,7 @@ pinn/
 ├── pb_public/           web-app servie par PocketBase
 │   ├── index.html       la page de l’app, construite depuis src/ (HTML, vérification au démarrage) – ne pas modifier à la main
 │   ├── js/              code de l’app sorti d’index.html, simples fichiers <script> sans étape de build
-│   │                    (ruhemodus.js, sprachen.js, region.js, grundlagen.js, popups.js, verbindung.js, benutzer.js, mitteilungen.js, serverzugriff.js, tastatur.js, anmeldemaske.js, dashboard.js, dashboardhintergrund.js, profilauswahl.js, pineingabe.js, dashboardsitzung.js, dashboardkonto.js, familienverwalten.js, einrichten.js, exportieren.js, hauptadminseite.js, anmeldung.js, konto.js, profilverwaltung.js, zustand.js, bedienzustand.js, rezeptbilder.js, zusammenfuehren.js, speichern.js, design.js, sprache.js, uebersicht.js, familienkachel.js, wobistdu.js, geburtstagsfeier.js, wetterkachel.js, geburtstage.js, uebersichteinstellungen.js, familiensync.js, kalenderquellen.js, icsparser.js, zeitleiste.js, termindetails.js, kalenderdatei.js, wetter.js, wohnort.js, feiertage.js, muellkalender.js, mitglieder.js, profilbild.js, mitglied.js, kinderseite.js, kinderroutine.js, sterne.js, kalenderansicht.js, essenplanen.js, rezeptparser.js, rezeptdialog.js, rezeptbild.js, rezeptmengen.js, einkauf.js, einkaufslisten.js, einkaufseingabe.js, rezepte.js, offline.js, aufgabenextras.js, appbadge.js, reisen.js, aufgabendaten.js, haushalt.js, reihum.js, aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js toujours en dernier)
+│   │                    (ruhemodus.js, sprachen.js, region.js, grundlagen.js, popups.js, verbindung.js, benutzer.js, mitteilungen.js, serverzugriff.js, tastatur.js, anmeldemaske.js, dashboard.js, dashboardhintergrund.js, profilauswahl.js, pineingabe.js, dashboardsitzung.js, dashboardkonto.js, familienverwalten.js, einrichten.js, exportieren.js, hauptadminseite.js, anmeldung.js, konto.js, profilverwaltung.js, zustand.js, bedienzustand.js, rezeptbilder.js, zusammenfuehren.js, speichern.js, design.js, sprache.js, uebersicht.js, familienkachel.js, wobistdu.js, geburtstagsfeier.js, wetterkachel.js, geburtstage.js, uebersichteinstellungen.js, familiensync.js, bereiche.js, kalenderquellen.js, icsparser.js, zeitleiste.js, termindetails.js, kalenderdatei.js, wetter.js, wohnort.js, feiertage.js, muellkalender.js, mitglieder.js, profilbild.js, mitglied.js, kinderseite.js, kinderroutine.js, sterne.js, kalenderansicht.js, essenplanen.js, rezeptparser.js, rezeptdialog.js, rezeptbild.js, rezeptmengen.js, einkauf.js, einkaufslisten.js, einkaufseingabe.js, rezepte.js, offline.js, aufgabenextras.js, appbadge.js, reisen.js, aufgabendaten.js, haushalt.js, reihum.js, aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js toujours en dernier)
 │   ├── css/             styles de l’app sortis d’index.html, CSS simple sans étape de build (ergaenzung.css, energiesparen.css, basis.css … haustierewetter.css, terminal.css, glocke.css)
 │   ├── einrichtung.js   assistant de configuration · datenexport.js  export des données
 │   ├── lang/            traductions (en, fr, es)

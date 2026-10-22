@@ -19,6 +19,13 @@
 // in den Kassen. Ein mitgeschicktes "finance" (z. B. von einem noch nicht aktualisierten Gerät) wird
 // dann verworfen und nie mehr im Familien-Datensatz gespeichert - sonst sähe jedes Profil sie wieder.
 //
+// Bereiche (pinn-bereiche.js, ab 1.104.0): Rezepte und Essensplan liegen in eigenen Datensätzen
+// ("familien_bereiche") und werden über /api/pinn/bereiche/speichern gespeichert. Die neue App schickt sie
+// hier nicht mehr mit (und setzt "bereiche: true"). Ältere Geräte schicken sie noch im großen Block:
+// Fehlendes wird in die Bereiche übernommen (löscht nie etwas), danach werden sie hier verworfen. Ältere
+// Geräte bekommen bei einem Konflikt und beim Abruf ohne ?bereiche=1 die Bereiche mitgeliefert, damit
+// sie bis zu ihrem Update weiter alles sehen.
+//
 // Familienmitglieder: Die früheren Beispiel-Mitglieder (Anna/Jonas/Mia) werden beim Speichern
 // verworfen, solange kein Profil mit ihnen verknüpft ist (pinn-benutzer.js).
 //
@@ -51,6 +58,10 @@ routerAdd("POST", "/api/pinn/save", (e) => {
     // Beispiel-Mitglieder (Anna/Jonas/Mia) von älteren Geräten nie wieder speichern
     try { require(`${__hooks}/pinn-benutzer.js`).stripExampleMembers(e.auth.getString("familie"), incoming); } catch (err) { /* egal */ }
 
+    // Bereiche (Rezepte, Essensplan …) gehören nicht mehr in den Familien-Datensatz
+    const neueApp = body.bereiche === true;
+    try { require(`${__hooks}/pinn-bereiche.js`).absorb(e.auth.getString("familie"), incoming); } catch (err) { console.log("[Bereiche] " + err.message); }
+
     let result = null;
     let savedFamily = "";
     let previous = null;
@@ -67,6 +78,8 @@ routerAdd("POST", "/api/pinn/save", (e) => {
                 const current = calendarSync.parseRecordData(record.get("data"));
                 calendarSync.stripAppleSecrets(current);
                 if ((guest || kassenAktiv) && current) delete current.finance;
+                // Ältere Geräte kennen die Bereiche noch nicht: mitliefern, sonst verschwänden dort die Rezepte
+                if (!neueApp && current) { try { require(`${__hooks}/pinn-bereiche.js`).overlay(ownFamily, current); } catch (err) { /* egal */ } }
                 result = {
                     status: 409,
                     body: { conflict: true, updated: currentUpdated, data: current },
@@ -93,7 +106,13 @@ routerAdd("POST", "/api/pinn/save", (e) => {
     }
     if (savedFamily) {
         try {
-            require(`${__hooks}/pinn-rezepte.js`).syncFamily(savedFamily, incoming);
+            const bereiche = require(`${__hooks}/pinn-bereiche.js`);
+            if (!bereiche.isMoved(savedFamily, "rezepte")) {
+                require(`${__hooks}/pinn-rezepte.js`).syncFamily(savedFamily, incoming);
+            } else if (JSON.stringify((previous && previous.kitchenTools) || null) !== JSON.stringify(incoming.kitchenTools || null)) {
+                // Rezepte liegen im eigenen Bereich - hier nur, wenn sich die Küchengeräte geändert haben
+                bereiche.syncPublicRecipes(savedFamily, incoming.kitchenTools);
+            }
         } catch (err) {
             console.log("[Rezepte] Abgleich öffentlicher Rezepte fehlgeschlagen: " + err.message);
         }
@@ -115,6 +134,23 @@ routerAdd("POST", "/api/pinn/save", (e) => {
 // Gastkonten: Finanz-Einstellungen beim Abruf entfernen, direkte Änderungen über die API sperren
 // ---------------------------------------------------------------------------------------------
 onRecordEnrich((e) => {
+    // Ältere App-Versionen (Abruf ohne ?bereiche=1) bekommen die Bereiche (Rezepte, Essensplan …) mitgeliefert
+    try {
+        let query = null;
+        try { query = e.requestInfo ? e.requestInfo.query : null; } catch (err) { query = null; }
+        const neueApp = !!(query && String(query["bereiche"] || "") === "1");
+        if (!neueApp) {
+            const fam = e.record.getString("familie");
+            const bereiche = require(`${__hooks}/pinn-bereiche.js`);
+            if (fam && bereiche.movedNames(fam).length) {
+                const data = require(`${__hooks}/calendar-sync.js`).parseRecordData(e.record.get("data")) || {};
+                bereiche.overlay(fam, data);
+                e.record.set("data", data);
+            }
+        }
+    } catch (err) {
+        console.log("[Familiendaten] Bereiche für ältere Geräte nicht ergänzbar: " + err.message);
+    }
     try {
         const auth = e.requestInfo ? e.requestInfo.auth : null;
         if (auth && require(`${__hooks}/pinn-benutzer.js`).isGuestRecord(auth)) {
