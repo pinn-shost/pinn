@@ -18,7 +18,7 @@ pinn. has **no bundler and no npm dependencies**. The repository looks exactly l
 | `src/` | Sources of the page: `rahmen.html` (frame), `teile/` (screens, pages, popups), `version.txt`, `build.js` – see [src/README.md](../src/README.md) |
 | `pb_public/js/` | App code as plain `<script>` files (no modules) |
 | `pb_public/css/` | Stylesheets |
-| `pb_public/lang/` | Translations (`en.js`, `fr.js`, `es.js`, `it.js`) – the app texts themselves are German |
+| `pb_public/lang/` | Translations (`en.js`, `fr.js`, `es.js`, `it.js`, `pt.js`, `zh.js`) – the app texts themselves are German |
 | `pb_hooks/` | Server: PocketBase hooks (`*.pb.js`) and their shared modules (`pinn-*.js`) |
 | `pinn-setup.sh`, `pinn-wartung.sh` | Installation/update and the maintenance container (POSIX `sh`) |
 | `.github/` | GitHub Actions (`workflows/check.yml`), the checks (`scripts/`), this file, images |
@@ -85,7 +85,7 @@ pinn. hat **keinen Bundler und keine npm-Abhängigkeiten**. Das Repository sieht
 | `src/` | Quellen der Seite: `rahmen.html` (Rahmen), `teile/` (Bildschirme, Seiten, Popups), `version.txt`, `build.js` – siehe [src/README.md](../src/README.md) |
 | `pb_public/js/` | App-Code als einfache `<script>`-Dateien (keine Module) |
 | `pb_public/css/` | Gestaltung |
-| `pb_public/lang/` | Übersetzungen (`en.js`, `fr.js`, `es.js`, `it.js`) – die App-Texte selbst sind deutsch |
+| `pb_public/lang/` | Übersetzungen (`en.js`, `fr.js`, `es.js`, `it.js`, `pt.js`, `zh.js`) – die App-Texte selbst sind deutsch |
 | `pb_hooks/` | Server: PocketBase-Hooks (`*.pb.js`) und gemeinsame Module (`pinn-*.js`) |
 | `pinn-setup.sh`, `pinn-wartung.sh` | Installation/Update und der Wartungs-Container (POSIX-`sh`) |
 | `.github/` | GitHub Actions (`workflows/check.yml`), die Prüfungen (`scripts/`), diese Datei, Bilder |
