@@ -88,7 +88,15 @@ Siempre contigo: pinn. se instala en cada iPhone y móvil Android como una app n
 | 🔔 **Notificaciones** | Mensajes push personales en iPhone, iPad y Android, y una campana que recoge todos los cambios de la familia. |
 | 🧩 **Todo lo demás** | Tablón familiar con notas movibles, búsqueda global, modo sin conexión con sincronización automática, modo oscuro, panel para iPad con PIN por perfil, cuenta de invitado, control parental. |
 
-pinn. habla **English, Deutsch, Français, Español e Italiano**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
+pinn. habla **English, Deutsch, Français, Español, Italiano, Português y 中文**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
+
+## Novedades de la 1.107.1
+
+**Nuevos idiomas: portugués (Brasil) y chino (simplificado)**
+
+- pinn. ya está disponible en **portugués (Brasil)** y **chino (simplificado)** (Ajustes → Idioma). Toda la app está traducida, incluida la vista previa semanal y mensual, el aviso de compras y el botón de exportación.
+- Todavía no en estos idiomas: el asistente de configuración, los archivos de la exportación de datos y las notificaciones push del servidor; de momento aparecen en inglés.
+- Modificado: archivos de la app (`index.html`, `js/sprachen.js`, `js/ausblick.js`, `js/einrichten.js`, `js/exportieren.js`, `js/hinweise.js`, `js/versionslog.js`, nuevos `lang/pt.js` y `lang/zh.js`, archivos de idioma `en`, `fr`, `es`, `it`). En el servidor no cambia nada.
 
 ## Novedades de la 1.107
 

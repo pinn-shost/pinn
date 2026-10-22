@@ -88,7 +88,15 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 | 🔔 **Mitteilungen** | Persönliche Push-Mitteilungen auf iPhone, iPad und Android, dazu eine Glocke, die jede Änderung in der Familie sammelt. |
 | 🧩 **Und sonst** | Pinnwand mit verschiebbaren Notizen, globale Suche, Offline-Modus mit automatischem Abgleich, Dunkelmodus, iPad-Dashboard mit Profil-PINs, Gastkonto, Kindersicherung. |
 
-pinn. spricht **English, Deutsch, Français, Español und Italiano**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen **Familien**- und **WG**-Bezeichnungen. Ein Server kann mehrere Familien aufnehmen, jede mit eigenen Admins.
+pinn. spricht **English, Deutsch, Français, Español, Italiano, Português und 中文**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen **Familien**- und **WG**-Bezeichnungen. Ein Server kann mehrere Familien aufnehmen, jede mit eigenen Admins.
+
+## Neu in 1.107.1
+
+**Neue Sprachen: Portugiesisch (Brasilien) und Chinesisch (vereinfacht)**
+
+- pinn. gibt es jetzt auch auf **Portugiesisch (Brasilien)** und **Chinesisch (vereinfacht)** (Einstellungen → Sprache). Die ganze App ist übersetzt, auch die Wochen- und Monatsvorschau, der Laden-Hinweis und der Export-Knopf.
+- Noch nicht in diesen Sprachen: der Einrichtungsassistent, die Dateien des Datenexports und die Push-Nachrichten vom Server – dort erscheint vorerst Englisch.
+- Geändert: App-Dateien (`index.html`, `js/sprachen.js`, `js/ausblick.js`, `js/einrichten.js`, `js/exportieren.js`, `js/hinweise.js`, `js/versionslog.js`, neu `lang/pt.js` und `lang/zh.js`, Sprachdateien `en`, `fr`, `es`, `it`). Am Server ändert sich nichts.
 
 ## Neu in 1.107
 

@@ -75,6 +75,30 @@ const PINN_SETUP_TEXTE = {
     loginMain: 'La prima volta la password è «Admin»: poi ne imposti una tua e parte la configurazione.',
     laden: 'Impossibile caricare la configurazione (manca pb_public/einrichtung.js?).',
   },
+  pt: {
+    btn: '⚙︎ Configuração',
+    offen: 'A configuração do pinn. ainda não foi concluída. Sem ela, faltam HTTPS, notificações push e o app na tela de início.',
+    fortsetzen: 'Continuar a configuração',
+    neustart: 'As configurações salvas só passam a valer depois que o pinn. reiniciar.',
+    neustartBtn: 'Aplicar agora (reinício rápido)',
+    neustartLaeuft: 'O pinn. está reiniciando …',
+    loginHint: 'É novo por aqui? A configuração inicial começa ao entrar como administrador principal.',
+    loginBtn: 'Entrar como administrador principal',
+    loginMain: 'Na primeira vez a senha é “Admin” – depois você define a sua e a configuração começa.',
+    laden: 'Não foi possível carregar a configuração (falta pb_public/einrichtung.js?).',
+  },
+  zh: {
+    btn: '⚙︎ 设置向导',
+    offen: 'pinn. 的设置尚未完成。没有它，就缺少 HTTPS、推送通知和主屏幕上的应用。',
+    fortsetzen: '继续设置',
+    neustart: '保存的设置要在 pinn. 重启后才会生效。',
+    neustartBtn: '立即应用（短暂重启）',
+    neustartLaeuft: 'pinn. 正在重启 …',
+    loginHint: '第一次使用？以主管理员身份登录后，初始设置就会开始。',
+    loginBtn: '以主管理员身份登录',
+    loginMain: '首次登录时密码是“Admin”——之后你设置自己的密码，设置向导随即开始。',
+    laden: '无法加载设置向导（缺少 pb_public/einrichtung.js？）。',
+  },
 };
 function pinnSetupText(key) {
   const l = (window.PINN_I18N && window.PINN_I18N.current) || 'en';

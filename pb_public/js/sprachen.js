@@ -32,6 +32,10 @@ window.PINN_LANGUAGES = [
     flag: '<svg viewBox="0 0 750 500" aria-hidden="true"><path d="M0,0h750v500H0z" fill="#AA151B"/><path d="M0,125h750v250H0z" fill="#F1BF00"/></svg>' },
   { code: 'it', name: 'Italiano', locale: 'it-IT', file: 'lang/it.js',
     flag: '<svg viewBox=\"0 0 3 2\" aria-hidden=\"true\"><path d=\"M0,0h3v2H0z\" fill=\"#CE2B37\"/><path d=\"M0,0h2v2H0z\" fill=\"#fff\"/><path d=\"M0,0h1v2H0z\" fill=\"#009246\"/></svg>' },
+  { code: 'pt', name: 'Português', locale: 'pt-BR', file: 'lang/pt.js',
+    flag: '<svg viewBox=\"0 0 20 14\" aria-hidden=\"true\"><path d=\"M0,0h20v14H0z\" fill=\"#009C3B\"/><path d=\"M10,1.6L18,7L10,12.4L2,7z\" fill=\"#FFDF00\"/><circle cx=\"10\" cy=\"7\" r=\"3.1\" fill=\"#002776\"/></svg>' },
+  { code: 'zh', name: '中文', locale: 'zh-CN', file: 'lang/zh.js',
+    flag: '<svg viewBox=\"0 0 30 20\" aria-hidden=\"true\"><path d=\"M0,0h30v20H0z\" fill=\"#DE2910\"/><path d=\"M5,2.2l1.2,3.7h3.9l-3.1,2.3l1.2,3.7L5,9.6L1.9,11.9l1.2-3.7L0,5.9h3.9z\" fill=\"#FFDE00\"/></svg>' },
   { code: 'de', name: 'Deutsch', locale: 'de-DE', file: '',
     flag: '<svg viewBox="0 0 5 3" aria-hidden="true"><path d="M0,0h5v3H0z"/><path d="M0,1h5v2H0z" fill="#D00"/><path d="M0,2h5v1H0z" fill="#FFCE00"/></svg>' },
 ];
@@ -183,9 +187,25 @@ window.PINN_LANGUAGES = [
       [/\bfamiliare\b/g, 'della casa'],
       [/\b([Ff])amiglia\b/g, function (m, f) { return cap(f === 'F', 'casa condivisa'); }],
     ] },
+    pt: { keep: /livro de família|carro de família|carro da família/g, rules: [
+      [/\b([Mm])embros da família\b/g, function (m, f) { return cap(f === 'M', 'colegas de casa'); }],
+      [/\b([Mm])embro da família\b/g, function (m, f) { return cap(f === 'M', 'colega de casa'); }],
+      [/\b([Tt])oda a família\b/g, '$1oda a casa'],
+      [/\b([Tt])odas as famílias\b/g, '$1odas as casas'],
+      [/\b([Ff])amília toda\b/g, function (m, f) { return cap(f === 'F', 'casa toda'); }],
+      [/\b([Ff])amílias\b/g, function (m, f) { return cap(f === 'F', 'casas'); }],
+      [/\bfamiliares\b/g, 'da casa'],
+      [/\bfamiliar\b/g, 'da casa'],
+      [/\b([Ff])amília\b/g, function (m, f) { return cap(f === 'F', 'casa compartilhada'); }],
+    ] },
+    zh: { keep: /家庭医生/g, rules: [
+      [/家庭成员/g, '室友'],
+      [/全家/g, '整个合租'],
+      [/家庭/g, '合租'],
+    ] },
   };
   var TERM = wohnform === 'wg' ? (TERMS[lang.code] || TERMS.de) : null;
-  var TERM_HINT = /[Ff]amil|[Ff]amigli|\uD83D\uDC68\u200D\uD83D\uDC69/;
+  var TERM_HINT = /[Ff]amil|[Ff]amigli|[Ff]am\u00EDli|\u5BB6\u5EAD|\u5168\u5BB6|\uD83D\uDC68\u200D\uD83D\uDC69/;
   function term(s) {
     if (!TERM || !s || !TERM_HINT.test(s)) return s;
     var kept = [];
@@ -426,7 +446,7 @@ window.PINN_LANGUAGES = [
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
   // Raise the version number with every change to the language files, otherwise devices keep using the old file
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.107.0" onerror="PINN_I18N.fail()"><\/script>');
+  if (DICT) document.write('<script src="' + lang.file + '?v=1.107.1" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // German as a flat share: no dictionary, only the flat share terms
 })();
 

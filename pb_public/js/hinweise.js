@@ -38,6 +38,10 @@ const LP_T = {
         mehr: '{n} tiendas cerca', alle: 'Ver las listas de la compra', x: 'Ocultar' },
   it: { q: 'Vai a fare la spesa?', bei: 'Sei da {laden}', n1: '1 articolo nella lista', n: '{n} articoli nella lista', n1k: '1 articolo', nk: '{n} articoli',
         mehr: '{n} negozi nelle vicinanze', alle: 'Apri le liste della spesa', x: 'Chiudi' },
+  pt: { q: 'Vai fazer compras?', bei: 'Você está em {laden}', n1: '1 item na lista', n: '{n} itens na lista', n1k: '1 item', nk: '{n} itens',
+        mehr: '{n} lojas por perto', alle: 'Ver as listas de compras', x: 'Ocultar' },
+  zh: { q: '要去购物吗？', bei: '你在 {laden}', n1: '清单上有 1 项', n: '清单上有 {n} 项', n1k: '1 项', nk: '{n} 项',
+        mehr: '附近有 {n} 家店铺', alle: '查看购物清单', x: '隐藏' },
 };
 function lpT(k, vars) {
   const l = (window.PINN_I18N && PINN_I18N.current) || 'en';

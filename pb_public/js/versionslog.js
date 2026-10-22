@@ -20,6 +20,14 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.107.1', datum: '22.10.2026', titel: 'Neue Sprachen: Portugiesisch und Chinesisch',
+    punkte: [
+      ['neu', 'Neue Sprachen Portugiesisch (Brasilien) und Chinesisch (vereinfacht) (Einstellungen → Sprache) – die ganze App ist übersetzt, auch die Wochen- und Monatsvorschau'],
+      ['info', 'Noch nicht auf Portugiesisch und Chinesisch: der Einrichtungsassistent, die Dateien des Datenexports und die Push-Nachrichten vom Server – dort erscheint vorerst Englisch'],
+      ['info', 'Geändert: index.html, js/sprachen.js, js/ausblick.js, js/einrichten.js, js/exportieren.js, js/hinweise.js, js/versionslog.js, neue Dateien lang/pt.js und lang/zh.js sowie die Sprachdateien en, fr, es und it – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.107', datum: '22.10.2026', titel: 'Neue Sprache: Italienisch',
     punkte: [
       ['neu', 'Neue Sprache Italienisch (Einstellungen → Sprache) – die ganze App ist übersetzt, auch die Wochen- und Monatsvorschau'],
