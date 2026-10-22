@@ -63,6 +63,18 @@ const PINN_SETUP_TEXTE = {
     loginMain: 'La primera vez la contraseña es «Admin» – después eliges una propia y empieza la configuración.',
     laden: 'No se pudo cargar la configuración (¿falta pb_public/einrichtung.js?).',
   },
+  it: {
+    btn: '⚙︎ Configurazione',
+    offen: 'La configurazione di pinn. non è ancora terminata. Senza di essa mancano HTTPS, le notifiche push e l’app nella schermata Home.',
+    fortsetzen: 'Continua la configurazione',
+    neustart: 'Le impostazioni salvate diventano attive solo dopo il riavvio di pinn.',
+    neustartBtn: 'Applica ora (breve riavvio)',
+    neustartLaeuft: 'pinn. si sta riavviando …',
+    loginHint: 'Sei nuovo? La configurazione iniziale parte dopo l’accesso come amministratore principale.',
+    loginBtn: 'Accedi come amministratore principale',
+    loginMain: 'La prima volta la password è «Admin»: poi ne imposti una tua e parte la configurazione.',
+    laden: 'Impossibile caricare la configurazione (manca pb_public/einrichtung.js?).',
+  },
 };
 function pinnSetupText(key) {
   const l = (window.PINN_I18N && window.PINN_I18N.current) || 'en';

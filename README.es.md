@@ -88,7 +88,16 @@ Siempre contigo: pinn. se instala en cada iPhone y móvil Android como una app n
 | 🔔 **Notificaciones** | Mensajes push personales en iPhone, iPad y Android, y una campana que recoge todos los cambios de la familia. |
 | 🧩 **Todo lo demás** | Tablón familiar con notas movibles, búsqueda global, modo sin conexión con sincronización automática, modo oscuro, panel para iPad con PIN por perfil, cuenta de invitado, control parental. |
 
-pinn. habla **English, Deutsch, Français y Español**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
+pinn. habla **English, Deutsch, Français, Español e Italiano**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
+
+## Novedades de la 1.107
+
+**Nuevo idioma: italiano**
+
+- pinn. ya está disponible en **italiano** (Ajustes → Idioma). Toda la app está traducida, también la vista previa semanal y mensual, el aviso de compras y el botón de exportación.
+- Todavía no en italiano: el asistente de configuración, los archivos de la exportación de datos y las notificaciones push del servidor – de momento aparecen en inglés.
+- Para colaboradores: una nueva comprobación de los archivos de idioma (`.github/scripts/check-lang.js`, incluida en `check-all.js` y en las comprobaciones de GitHub) y una herramienta que traduce nuevos idiomas con la API de Claude (`.github/scripts/translate.js`, workflow «Translate»). Habrá más idiomas.
+- Modificado: archivos de la app (`index.html`, `js/sprachen.js`, `js/ausblick.js`, `js/einrichten.js`, `js/exportieren.js`, `js/hinweise.js`, `js/versionslog.js`, nuevo `lang/it.js`, archivos de idioma `en`, `fr`, `es`) y en el servidor `pb_hooks/pinn-pushtext.js`, `pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-sprache.js`, `pinn-wobistdu.js`. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
 
 ## Novedades de la 1.106
 

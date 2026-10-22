@@ -30,6 +30,8 @@ window.PINN_LANGUAGES = [
     flag: '<svg viewBox="0 0 3 2" aria-hidden="true"><path d="M0,0h3v2H0z" fill="#ED2939"/><path d="M0,0h2v2H0z" fill="#fff"/><path d="M0,0h1v2H0z" fill="#002395"/></svg>' },
   { code: 'es', name: 'Español', locale: 'es-ES', file: 'lang/es.js',
     flag: '<svg viewBox="0 0 750 500" aria-hidden="true"><path d="M0,0h750v500H0z" fill="#AA151B"/><path d="M0,125h750v250H0z" fill="#F1BF00"/></svg>' },
+  { code: 'it', name: 'Italiano', locale: 'it-IT', file: 'lang/it.js',
+    flag: '<svg viewBox=\"0 0 3 2\" aria-hidden=\"true\"><path d=\"M0,0h3v2H0z\" fill=\"#CE2B37\"/><path d=\"M0,0h2v2H0z\" fill=\"#fff\"/><path d=\"M0,0h1v2H0z\" fill=\"#009246\"/></svg>' },
   { code: 'de', name: 'Deutsch', locale: 'de-DE', file: '',
     flag: '<svg viewBox="0 0 5 3" aria-hidden="true"><path d="M0,0h5v3H0z"/><path d="M0,1h5v2H0z" fill="#D00"/><path d="M0,2h5v1H0z" fill="#FFCE00"/></svg>' },
 ];
@@ -170,9 +172,20 @@ window.PINN_LANGUAGES = [
       [/\bfamiliar\b/g, 'del piso'],
       [/\b([Ff])amilia\b/g, function (m, f) { return cap(f === 'F', 'piso compartido'); }],
     ] },
+    it: { keep: /libro di famiglia|auto di famiglia/g, rules: [
+      [/\b([Mm])embri della famiglia\b/g, function (m, f) { return cap(f === 'M', 'coinquilini'); }],
+      [/\b([Mm])embro della famiglia\b/g, function (m, f) { return cap(f === 'M', 'coinquilino'); }],
+      [/\b([Tt])utta la famiglia\b/g, '$1utta la casa'],
+      [/\b([Tt])utte le famiglie\b/g, '$1utte le case'],
+      [/\b([Ll])e famiglie\b/g, '$1e case'],
+      [/\b([Ff])amiglie\b/g, function (m, f) { return cap(f === 'F', 'case'); }],
+      [/\bfamiliari\b/g, 'coinquilini'],
+      [/\bfamiliare\b/g, 'della casa'],
+      [/\b([Ff])amiglia\b/g, function (m, f) { return cap(f === 'F', 'casa condivisa'); }],
+    ] },
   };
   var TERM = wohnform === 'wg' ? (TERMS[lang.code] || TERMS.de) : null;
-  var TERM_HINT = /[Ff]amil|\uD83D\uDC68\u200D\uD83D\uDC69/;
+  var TERM_HINT = /[Ff]amil|[Ff]amigli|\uD83D\uDC68\u200D\uD83D\uDC69/;
   function term(s) {
     if (!TERM || !s || !TERM_HINT.test(s)) return s;
     var kept = [];
@@ -413,7 +426,7 @@ window.PINN_LANGUAGES = [
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
   // Raise the version number with every change to the language files, otherwise devices keep using the old file
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.66.0" onerror="PINN_I18N.fail()"><\/script>');
+  if (DICT) document.write('<script src="' + lang.file + '?v=1.107.0" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // German as a flat share: no dictionary, only the flat share terms
 })();
 

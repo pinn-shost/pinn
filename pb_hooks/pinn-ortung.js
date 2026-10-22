@@ -2066,6 +2066,7 @@ function langOfUser(userId) {
     try { w = require(`${__hooks}/pinn-design.js`).readDesign($app.findRecordById(USERS, userId)).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
     if (["de", "en", "fr", "es"].indexOf(s) >= 0) return s;
+    if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
     if (["FR", "BE", "MC"].indexOf(land) >= 0) return "fr";

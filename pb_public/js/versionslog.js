@@ -20,6 +20,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.107', datum: '22.10.2026', titel: 'Neue Sprache: Italienisch',
+    punkte: [
+      ['neu', 'Neue Sprache Italienisch (Einstellungen → Sprache) – die ganze App ist übersetzt, auch die Wochen- und Monatsvorschau'],
+      ['info', 'Noch nicht auf Italienisch: der Einrichtungsassistent, die Dateien des Datenexports und die Push-Nachrichten vom Server – dort erscheint vorerst Englisch'],
+      ['info', 'Für Mitwirkende: neue Prüfung für Sprachdateien (.github/scripts/check-lang.js) und ein Werkzeug, das mit der Claude-API neue Sprachen übersetzt (.github/scripts/translate.js, Workflow „Translate“)'],
+      ['info', 'Geändert: index.html, js/sprachen.js, js/ausblick.js, js/einrichten.js, js/exportieren.js, js/hinweise.js, js/versionslog.js, neue Datei lang/it.js, die Sprachdateien en, fr und es sowie am Server pb_hooks/pinn-pushtext.js, pinn-ausblick.js, pinn-familie-geburtstag.js, pinn-haustiere.js, pinn-ortung.js, pinn-sprache.js und pinn-wobistdu.js'],
+    ],
+  },
+  {
     v: '1.106', datum: '22.10.2026', titel: 'Pinnwand, Listen, Schule & Kita, Haustiere und Wartungsplan in eigenen Datensätzen',
     punkte: [
       ['info', 'Pinnwand, die Listen (Packen, Geschenke, Wünsche, Checklisten, Ideen samt Vorlagen), Schule & Kita, Haustiere und der Wartungsplan unter Zuhause liegen jetzt in eigenen Datensätzen auf dem Server. Jeder Teil wird für sich gespeichert und abgeglichen – an der Bedienung ändert sich nichts'],

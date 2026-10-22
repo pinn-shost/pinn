@@ -88,7 +88,16 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 | 🔔 **Notifications** | Personal push messages on iPhone, iPad and Android, plus a notification bell that collects every change in the family. |
 | 🧩 **Everything else** | Family board with movable notes, global search, offline mode with automatic sync, dark mode, iPad dashboard with profile PINs, guest account, child lock. |
 
-pinn. speaks **English, Deutsch, Français and Español**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
+pinn. speaks **English, Deutsch, Français, Español and Italiano**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
+
+## What's new in 1.107
+
+**New language: Italian**
+
+- pinn. is now available in **Italian** (Settings → Language). The whole app is translated, including the weekly and monthly preview, the shopping hint and the export button.
+- Not yet in Italian: the setup assistant, the data export files and the push messages from the server – they show English for now.
+- For contributors: a new check for language files (`.github/scripts/check-lang.js`, part of `check-all.js` and of the GitHub checks) and a tool that translates new languages with the Claude API (`.github/scripts/translate.js`, workflow “Translate”). More languages will follow.
+- Changed: app files (`index.html`, `js/sprachen.js`, `js/ausblick.js`, `js/einrichten.js`, `js/exportieren.js`, `js/hinweise.js`, `js/versionslog.js`, new `lang/it.js`, language files `en`, `fr`, `es`) and on the server `pb_hooks/pinn-pushtext.js`, `pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-sprache.js`, `pinn-wobistdu.js`. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 ## What's new in 1.106
 

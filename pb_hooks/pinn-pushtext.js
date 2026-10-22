@@ -28,7 +28,7 @@ function langOfUser(userRec) {
     try {
         const w = require(`${__hooks}/pinn-design.js`).readDesign(userRec).werte || {};
         const c = String(w.sprache || "").slice(0, 2).toLowerCase();
-        return LANGS.indexOf(c) >= 0 ? c : "de";
+        return LANGS.indexOf(c) >= 0 ? c : (c ? "en" : "de");
     } catch (e) { return "de"; }
 }
 

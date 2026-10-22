@@ -106,6 +106,27 @@ const AB_T = {
     zu_fin: 'Abrir finanzas', schliessen: 'Cerrar', laden: 'Cargando …', bis: 'hasta el {d}',
     s_urlaub: 'Vacaciones', u_regen: '{n} días de lluvia', u_regen1: '1 día de lluvia', u_trocken: 'seco', u_wasser: 'agua {t}°', u_sonne: '{h} h de sol', u_klima: 'En parte valores típicos de los últimos tres años: la previsión abarca 16 días.', u_keine: 'El tiempo del destino aparecerá cuando pinn. vuelva a tener conexión.', u_mehr: 'Tiempo de las vacaciones día a día', tier_faellig: 'Mascota: toca', tier_ueber: 'Mascota: con retraso', tier_geb: 'cumple años 🐾',
   },
+  it: {
+    w_kicker: 'Anteprima settimanale', w_title: 'La tua settimana', w_sub: 'Settimana {kw} · {range}', b_w: 'L’anteprima della settimana è pronta', b_w_s: 'Eventi, attività e pasti · {range}',
+    m_kicker: 'Previsione finanziaria mensile', m_title: 'Previsione: {monat}', b_m: 'Previsione finanziaria: {monat}', b_m_s: 'Cosa ti aspetta – e com’è andato {prev}',
+    c_termine: 'eventi', c_termin: 'evento', c_aufgaben: 'attività', c_aufgabe: 'attività', c_essen: 'pasti pianificati', c_geb: 'compleanno', c_gebs: 'compleanni', c_muell: 'giorno di raccolta', c_muells: 'giorni di raccolta',
+    s_wetter: 'Meteo', s_merken: 'Da non dimenticare', s_tage: 'Giorno per giorno', s_rueck: 'La settimana scorsa in breve', s_offen: 'Ancora aperto',
+    heute: 'Oggi', morgen: 'Domani', frei: 'Niente in programma', ganz: 'tutto il giorno', fruehstueck: 'Colazione', mittag: 'Pranzo', abend: 'Cena', alle: 'tutti', reihum: 'a turno',
+    haushalt: 'Casa', raus: 'portare fuori', geb: 'Compleanno di {name}', geb_alt: '{name} compie {age} anni',
+    ferien_bis: 'fino al {d}', ferien_ab: 'dal {d}', vt_frist: 'Termine di disdetta', vt_ende: 'Scadenza del contratto', vt_erinn: 'Promemoria',
+    mhd: 'Da consumare entro il {d}', mhd_ab: 'scaduto', faellig: 'in scadenza dal {d}', abbuch: 'Addebito', eingang: 'Entrata',
+    r_termine: 'eventi', r_haushalt: 'faccende fatte', r_ausg: 'speso', r_essen: 'pasti cucinati', r_essen_p: 'pasti pianificati', r_top: '🏆 Il più attivo: {name}',
+    r_leer: 'Niente da riassumere per la settimana scorsa.', leer: 'La settimana è ancora completamente libera: goditela! 🌿',
+    zu_kal: 'Apri calendario', zu_aufg: 'Apri attività',
+    m_rueck: 'Com’è andato {monat}', m_aus: 'Cosa ti aspetta a {monat}', m_ein: 'Entrate', m_aus_t: 'Uscite', m_saldo: 'Saldo', m_budget: 'Budget rimanente', m_ueber: 'Oltre il budget',
+    m_top: 'Voci più alte', m_spar: 'risparmiato', m_p_ein: 'Entrate previste', m_p_fix: 'Costi fissi', m_p_spar: 'Piani di risparmio', m_p_frei: 'Rimane libero',
+    m_frei_h: 'Entrate (incl. adeguamento del budget) meno costi fissi e piani di risparmio: per la spesa e tutto il resto.',
+    m_mehr: 'Costi fissi superiori di {d} rispetto a {prev}.', m_weniger: 'Costi fissi inferiori di {d} rispetto a {prev}.',
+    m_selten: 'Non mensili: da pianificare', m_fristen: 'Termini di disdetta', m_liste: 'Pagamenti previsti', m_weitere: '+ altri {n}',
+    m_leer: 'Per questo mese non è ancora previsto nulla: gli addebiti ricorrenti compaiono qui automaticamente.', m_keine: 'La previsione mensile richiede l’accesso alle finanze e almeno un fondo.',
+    zu_fin: 'Apri finanze', schliessen: 'Chiudi', laden: 'Caricamento …', bis: 'fino al {d}',
+    s_urlaub: 'Vacanza', u_regen: '{n} giorni di pioggia', u_regen1: '1 giorno di pioggia', u_trocken: 'asciutto', u_wasser: 'acqua {t}°', u_sonne: '{h} h di sole', u_klima: 'In parte valori tipici degli ultimi tre anni: la previsione copre 16 giorni.', u_keine: 'Il meteo della destinazione comparirà non appena pinn. sarà di nuovo online.', u_mehr: 'Il meteo della vacanza giorno per giorno', tier_faellig: 'Animale: in scadenza', tier_ueber: 'Animale: scaduto', tier_geb: 'compie gli anni 🐾',
+  },
 };
 function abLang() { const l = (window.PINN_I18N && PINN_I18N.current) || 'en'; return AB_T[l] ? l : 'en'; }
 function abLocale() { return (window.PINN_I18N && PINN_I18N.language && PINN_I18N.language.locale) || 'de-DE'; }

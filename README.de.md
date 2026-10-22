@@ -88,7 +88,16 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 | 🔔 **Mitteilungen** | Persönliche Push-Mitteilungen auf iPhone, iPad und Android, dazu eine Glocke, die jede Änderung in der Familie sammelt. |
 | 🧩 **Und sonst** | Pinnwand mit verschiebbaren Notizen, globale Suche, Offline-Modus mit automatischem Abgleich, Dunkelmodus, iPad-Dashboard mit Profil-PINs, Gastkonto, Kindersicherung. |
 
-pinn. spricht **English, Deutsch, Français und Español**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen **Familien**- und **WG**-Bezeichnungen. Ein Server kann mehrere Familien aufnehmen, jede mit eigenen Admins.
+pinn. spricht **English, Deutsch, Français, Español und Italiano**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen **Familien**- und **WG**-Bezeichnungen. Ein Server kann mehrere Familien aufnehmen, jede mit eigenen Admins.
+
+## Neu in 1.107
+
+**Neue Sprache: Italienisch**
+
+- pinn. gibt es jetzt auch auf **Italienisch** (Einstellungen → Sprache). Die ganze App ist übersetzt, auch die Wochen- und Monatsvorschau, der Laden-Hinweis und der Export-Knopf.
+- Noch nicht auf Italienisch: der Einrichtungsassistent, die Dateien des Datenexports und die Push-Nachrichten vom Server – dort erscheint vorerst Englisch.
+- Für Mitwirkende: eine neue Prüfung für Sprachdateien (`.github/scripts/check-lang.js`, Teil von `check-all.js` und der GitHub-Prüfungen) und ein Werkzeug, das neue Sprachen mit der Claude-API übersetzt (`.github/scripts/translate.js`, Workflow „Translate“). Weitere Sprachen folgen.
+- Geändert: App-Dateien (`index.html`, `js/sprachen.js`, `js/ausblick.js`, `js/einrichten.js`, `js/exportieren.js`, `js/hinweise.js`, `js/versionslog.js`, neu `lang/it.js`, Sprachdateien `en`, `fr`, `es`) und am Server `pb_hooks/pinn-pushtext.js`, `pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-sprache.js`, `pinn-wobistdu.js`. Wie gewohnt einspielen (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
 
 ## Neu in 1.106
 
