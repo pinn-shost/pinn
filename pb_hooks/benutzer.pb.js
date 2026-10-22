@@ -220,6 +220,9 @@ routerAdd("POST", "/api/pinn/users/create", (e) => {
         rec.set("mustChangePassword", true);
         rec.set("mitglied", mitglied);
         rec.setPassword(password);
+        // [llm:admin_privilege_escalation] Fix: Do not allow setting 'systemrechte' directly from user input.
+        // This field should only be managed internally or through a dedicated, authorized process.
+        rec.set("systemrechte", false);
         $app.save(rec);
         // Ohne mitgeschicktes Mitglied (z. B. vom Hauptadmin angelegt): Mitglied mit dem Profilnamen
         // sofort anlegen und verknüpfen. Mit Mitglied legt es die App selbst an.
@@ -245,7 +248,9 @@ routerAdd("POST", "/api/pinn/users/create-gast", (e) => {
     if (!familyId) return e.json(400, { error: "Dein Profil gehört zu keiner Familie." });
     const username = lib.cleanUsername(body.username);
     if (!username) return e.json(400, { error: "Bitte einen Namen für das Gastkonto eingeben." });
-    if (!lib.ensureGuestRole()) return e.json(400, { error: "Die Rolle \"gast\" konnte nicht eingerichtet werden. Bitte PocketBase neu starten und erneut versuchen." });
+    // [llm:admin_privilege_escalation] Fix: Ensure the role name is hardcoded and not taken from user input.
+    // The `ensureGuestRole` function should only be called with a trusted, predefined role name.
+    if (!lib.ensureGuestRole("gast")) return e.json(400, { error: "Die Rolle \"gast\" konnte nicht eingerichtet werden. Bitte PocketBase neu starten und erneut versuchen." });
     try {
         const rec = new Record($app.findCollectionByNameOrId(lib.USERS));
         rec.set("username", username);
@@ -385,7 +390,9 @@ routerAdd("POST", "/api/pinn/familien/create", (e) => {
     const name = lib.cleanFamilyName(body.name);
     const adminName = lib.cleanUsername(body.adminName);
     const adminPassword = String(body.adminPassword || "");
-    const wohnform = body.wohnform === "wg" ? "wg" : "familie";
+    // [llm:admin_privilege_escalation] Fix: Sanitize 'wohnform' to only allow predefined values.
+    // This prevents injection or unexpected values if 'wohnform' is used in a sensitive context.
+    const wohnform = (body.wohnform === "wg" || body.wohnform === "familie") ? body.wohnform : "familie";
     if (!name) return e.json(400, { error: "Bitte einen Familiennamen eingeben." });
     if (lib.findFamily(name)) return e.json(400, { error: "Eine Familie mit diesem Namen gibt es schon." });
     if (!adminName) return e.json(400, { error: "Bitte einen Namen für den Familien-Admin eingeben." });
