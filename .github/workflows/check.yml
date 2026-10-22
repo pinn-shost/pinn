@@ -58,6 +58,10 @@ jobs:
         if: success() || failure()
         run: node .github/scripts/check-setup.js
 
+      - name: Language files (placeholders, completeness)
+        if: success() || failure()
+        run: node .github/scripts/check-lang.js
+
   pocketbase:
     name: Routes on a real PocketBase
     runs-on: ubuntu-latest

@@ -18,7 +18,7 @@ pinn. has **no bundler and no npm dependencies**. The repository looks exactly l
 | `src/` | Sources of the page: `rahmen.html` (frame), `teile/` (screens, pages, popups), `version.txt`, `build.js` – see [src/README.md](../src/README.md) |
 | `pb_public/js/` | App code as plain `<script>` files (no modules) |
 | `pb_public/css/` | Stylesheets |
-| `pb_public/lang/` | Translations (`en.js`, `fr.js`, `es.js`) – the app texts themselves are German |
+| `pb_public/lang/` | Translations (`en.js`, `fr.js`, `es.js`, `it.js`) – the app texts themselves are German |
 | `pb_hooks/` | Server: PocketBase hooks (`*.pb.js`) and their shared modules (`pinn-*.js`) |
 | `pinn-setup.sh`, `pinn-wartung.sh` | Installation/update and the maintenance container (POSIX `sh`) |
 | `.github/` | GitHub Actions (`workflows/check.yml`), the checks (`scripts/`), this file, images |
@@ -29,7 +29,7 @@ pinn. has **no bundler and no npm dependencies**. The repository looks exactly l
 2. **New app file** `pb_public/js/<name>.js` (or `css/<name>.css`) needs: its line in `src/rahmen.html`, its name in `pinn-setup.sh` (function `ziel`), and for JavaScript at the end `(window.PINN_PARTS = window.PINN_PARTS || []).push('<name>');` (the start check uses it). Avoid names containing *push*, *ad*, *track* or *analytics* – ad blockers block such files. If you **rename or remove** an app file, also add its old path to `OBSOLET` in `pinn-setup.sh`, so that updates tidy it up on the NAS (it is moved to `_alt/`, not deleted).
 3. **HTML** is changed in `src/`, then `node src/build.js`. Keep element IDs – the scripts use them.
 4. **Hooks** are named with a dot (`example.pb.js`, not `example_pb.js`). Shared code goes into a module that is not a `*.pb.js` and is loaded with ``require(`${__hooks}/pinn-example.js`)``.
-5. **Comments in English.** App texts stay German and are translated at runtime – add new texts to `pb_public/lang/en.js`, `fr.js` and `es.js` as well.
+5. **Comments in English.** App texts stay German and are translated at runtime – add new texts to `pb_public/lang/en.js`, `fr.js`, `es.js` and `it.js` as well (`node .github/scripts/check-lang.js` checks placeholders and completeness).
 6. **Input fields:** the page must move up when the on-screen keyboard appears (see `js/tastatur.js`).
 7. **Child lock:** the editor functions `openTaskModal`, `openEditTaskModal`, `openAddEventModal`, `openMealModal`, `openPinboardEditor` and `openKidRoutineEditor` are wrapped after loading – never hand them over directly at load time (`addEventListener('click', openTaskModal)`), always call them inside a function (`() => openTaskModal()`).
 8. The **version number** and the version log (`js/versionslog.js`) are maintained by the maintainer when a release is made – please leave them as they are in pull requests.
@@ -51,6 +51,7 @@ node .github/scripts/check-all.js ~/pocketbase   # … plus the PocketBase smoke
 | `check-lint.js` | Missing registration, files that are never loaded, global names declared twice, hook files named with `_`, `require()` of hook modules that do not exist, merge conflict markers |
 | `check-hooks.js` | Runs every hook in a sandbox that stands in for PocketBase: hooks that fail while loading, routes or cron jobs registered twice, invalid cron schedules, top-level declarations in `*.pb.js` (handlers cannot see them), functions used from a `pinn-*.js` module that it does not export, unit tests of the update check. `--list` prints all routes |
 | `smoke-pocketbase.js` | Second job on GitHub: starts a real PocketBase (version from `docker-compose.yaml`) with an empty database and sends a request to every route – fails if PocketBase does not start, the app page is missing or a protected route answers 404; public routes that need a configuration or the internet only give a warning |
+| `check-lang.js` | Language files (`pb_public/lang/`): placeholders such as `{0}`, `{1|s}`, `{2|x=a|b}` must be valid and match the English text, every text of `en.js` must exist, and the file must call `PINN_I18N.load` exactly once. New languages can be created with the `translate.js` tool or the GitHub workflow “Translate” (needs the secret `ANTHROPIC_API_KEY`) |
 | `check-setup.js` | The clean-up list `OBSOLET` of `pinn-setup.sh`: fails if it names a file that is still part of the repository, still loaded by the app or not a plain path below `pb_public/` or `pb_hooks/`; runs the shell block in a temporary folder to prove it moves only the listed files |
 
 A known, intended exception is listed at the top of `check-lint.js` (`KNOWN_DUPLICATE_FUNCTIONS`). The checks cannot sign in or use real data – please also try your change in a real installation and say in the pull request how you tested it.
@@ -84,7 +85,7 @@ pinn. hat **keinen Bundler und keine npm-Abhängigkeiten**. Das Repository sieht
 | `src/` | Quellen der Seite: `rahmen.html` (Rahmen), `teile/` (Bildschirme, Seiten, Popups), `version.txt`, `build.js` – siehe [src/README.md](../src/README.md) |
 | `pb_public/js/` | App-Code als einfache `<script>`-Dateien (keine Module) |
 | `pb_public/css/` | Gestaltung |
-| `pb_public/lang/` | Übersetzungen (`en.js`, `fr.js`, `es.js`) – die App-Texte selbst sind deutsch |
+| `pb_public/lang/` | Übersetzungen (`en.js`, `fr.js`, `es.js`, `it.js`) – die App-Texte selbst sind deutsch |
 | `pb_hooks/` | Server: PocketBase-Hooks (`*.pb.js`) und gemeinsame Module (`pinn-*.js`) |
 | `pinn-setup.sh`, `pinn-wartung.sh` | Installation/Update und der Wartungs-Container (POSIX-`sh`) |
 | `.github/` | GitHub Actions (`workflows/check.yml`), die Prüfungen (`scripts/`), diese Datei, Bilder |
@@ -95,7 +96,7 @@ pinn. hat **keinen Bundler und keine npm-Abhängigkeiten**. Das Repository sieht
 2. **Neue App-Datei** `pb_public/js/<name>.js` (oder `css/<name>.css`) braucht: ihre Zeile in `src/rahmen.html`, ihren Namen in `pinn-setup.sh` (Funktion `ziel`) und bei JavaScript am Ende `(window.PINN_PARTS = window.PINN_PARTS || []).push('<name>');` (darauf baut die Startprüfung). Namen mit *push*, *ad*, *track* oder *analytics* vermeiden – Werbeblocker sperren solche Dateien. Wird eine App-Datei **umbenannt oder entfernt**, ihren alten Pfad auch in `OBSOLET` in `pinn-setup.sh` eintragen, damit Updates sie auf dem NAS aufräumen (sie wird nach `_alt/` verschoben, nicht gelöscht).
 3. **HTML** wird in `src/` geändert, danach `node src/build.js`. Element-IDs beibehalten – die Skripte nutzen sie.
 4. **Hooks** werden mit Punkt benannt (`beispiel.pb.js`, nicht `beispiel_pb.js`). Gemeinsamer Code kommt in ein Modul, das kein `*.pb.js` ist, und wird mit ``require(`${__hooks}/pinn-beispiel.js`)`` geladen.
-5. **Kommentare auf Englisch.** App-Texte bleiben deutsch und werden zur Laufzeit übersetzt – neue Texte auch in `pb_public/lang/en.js`, `fr.js` und `es.js` eintragen.
+5. **Kommentare auf Englisch.** App-Texte bleiben deutsch und werden zur Laufzeit übersetzt – neue Texte auch in `pb_public/lang/en.js`, `fr.js`, `es.js` und `it.js` eintragen (`node .github/scripts/check-lang.js` prüft Platzhalter und Vollständigkeit).
 6. **Eingabefelder:** Die Seite muss hochrutschen, wenn die Bildschirmtastatur erscheint (siehe `js/tastatur.js`).
 7. **Kindersicherung:** Die Editor-Funktionen `openTaskModal`, `openEditTaskModal`, `openAddEventModal`, `openMealModal`, `openPinboardEditor` und `openKidRoutineEditor` werden nach dem Laden abgesichert – nie beim Laden direkt weiterreichen (`addEventListener('click', openTaskModal)`), immer in einer Funktion aufrufen (`() => openTaskModal()`).
 8. **Versionsnummer** und Versions-Log (`js/versionslog.js`) pflegt der Maintainer beim Release – in Pull Requests bitte unverändert lassen.
@@ -117,6 +118,7 @@ node .github/scripts/check-all.js ~/pocketbase   # … und zusätzlich der Pocke
 | `check-lint.js` | Fehlende Anmeldung, Dateien, die nie geladen werden, doppelt vergebene globale Namen, Hook-Dateien mit `_`, `require()` auf Hook-Module, die es nicht gibt, übrig gebliebene Konflikt-Markierungen |
 | `check-hooks.js` | Führt jeden Hook in einer Nachbildung von PocketBase aus: Hooks, die beim Laden abbrechen, doppelt angelegte Routen oder Cron-Jobs, ungültige Zeitpläne, Deklarationen auf oberster Ebene in `*.pb.js` (Handler sehen sie nicht), Funktionen aus einem `pinn-*.js`-Modul, die es gar nicht exportiert, Tests der Update-Erkennung. `--list` zeigt alle Routen |
 | `smoke-pocketbase.js` | Zweiter Job auf GitHub: startet einen echten PocketBase (Version aus `docker-compose.yaml`) mit leerer Datenbank und ruft jede Route auf – schlägt fehl, wenn PocketBase nicht startet, die App-Seite fehlt oder eine geschützte Route mit 404 antwortet; öffentliche Routen, die eine Einrichtung oder das Internet brauchen, geben nur eine Warnung |
+| `check-lang.js` | Sprachdateien (`pb_public/lang/`): Platzhalter wie `{0}`, `{1|s}`, `{2|x=a|b}` müssen gültig sein und zum englischen Text passen, jeder Text aus `en.js` muss vorkommen und die Datei darf `PINN_I18N.load` nur einmal aufrufen. Neue Sprachen entstehen mit dem Werkzeug `translate.js` oder dem GitHub-Workflow „Translate“ (braucht das Secret `ANTHROPIC_API_KEY`) |
 | `check-setup.js` | Die Aufräumliste `OBSOLET` in `pinn-setup.sh`: schlägt fehl, wenn sie eine Datei nennt, die noch im Repository liegt, von der App noch geladen wird oder kein einfacher Pfad unter `pb_public/` oder `pb_hooks/` ist; führt den Shell-Block in einem Temp-Ordner aus und beweist, dass nur Dateien der Liste verschoben werden |
 
 Eine bekannte, gewollte Ausnahme steht oben in `check-lint.js` (`KNOWN_DUPLICATE_FUNCTIONS`). Die Prüfungen können sich nicht anmelden und haben keine echten Daten – bitte die Änderung auch in einer echten Installation ausprobieren und im Pull Request schreiben, wie getestet wurde.
