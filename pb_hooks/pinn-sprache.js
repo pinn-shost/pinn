@@ -421,8 +421,7 @@ function addItemsArea(bereiche, familyId, auth, intent, L) {
     return { antwort: reply, geaendert: r.changed };
 }
 function readList(familyId, intent, L) {
-    const data = require(`${__hooks}/pinn-benutzer.js`).loadFamilyDataFor(familyId) || {};
-    try { require(`${__hooks}/pinn-bereiche.js`).overlay(familyId, data, ["einkauf"]); } catch (e) { /* noch ohne Bereiche */ }
+    const data = require(`${__hooks}/pinn-benutzer.js`).loadFamilyDataFor(familyId) || {}; // enthält die Bereiche
     const items = (Array.isArray(data.shoppingItems) ? data.shoppingItems : []).filter(x => x && !x.done && x.name);
     let list = null, open = items;
     if (intent.laden) {

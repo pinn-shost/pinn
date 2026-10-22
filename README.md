@@ -90,6 +90,15 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **English, Deutsch, Français and Español**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.106
+
+**Board, lists, school, pets and maintenance plan in records of their own**
+
+- Third step of moving the family data out of the one big data block: the **family board**, the **lists** (packing, gifts, wishes, checklists, ideas and templates), **school & daycare**, **pets** and the **maintenance plan** (Home) now live in records of their own on the server. Each part is saved and synced on its own. Nothing changes in how you use the app.
+- Same safety net as before: a backup per family before the move (`pb_data/pinn_umzug/`, 30 days), devices with an older app keep seeing everything.
+- All server functions (reminders, board messages and photos, pets, packing lists, household tasks) now read the family data including every moved part.
+- Changed: app files (`index.html`, `js/versionslog.js`) and on the server `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-benutzer.js`, `pb_hooks/save_family_data.pb.js`, `pb_hooks/pinn-sprache.js`, `pb_hooks/pinn-vorrat.js`. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.105
 
 **Shopping and pantry in records of their own**
@@ -97,16 +106,6 @@ pinn. speaks **English, Deutsch, Français and Español**, adapts currency and e
 - Second step of moving the family data out of the one big data block: the **shopping lists** (incl. shops, planned shopping trips and sorting) and the **pantry** now live in records of their own on the server, like recipes and the meal plan since 1.104. When several people tick off items in the shop at the same time, only the shopping list is synced – not all family data. Nothing changes in how you use the app.
 - Same safety net as in 1.104: a backup per family before the move (`pb_data/pinn_umzug/`, 30 days), devices with an older app keep seeing everything. Voice control, the notification bell and the best-before reminder work with the new records.
 - Changed: app files (`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/versionslog.js`) and on the server `pb_hooks/pinn-bereiche.js`, `pb_hooks/save_family_data.pb.js`, `pb_hooks/pinn-sprache.js`, `pb_hooks/pinn-vorrat.js`. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
-## What's new in 1.104
-
-**Recipes and meal plan in records of their own**
-
-- First step of moving the family data out of the one big data block: **recipes** (incl. favourites and categories) and the **meal plan** now live in records of their own on the server (collection `familien_bereiche`). Each part is saved and synced on its own – two phones editing different things no longer get in each other's way, and saving a shopping item no longer sends every recipe along. Nothing changes in how you use the app.
-- **Safe move:** on the first start after the update pinn. writes a backup of every family's data to `pb_data/pinn_umzug/` before moving anything (kept for 30 days); if that fails, nothing is moved. A copy of the moved state also stays in the database for 30 days.
-- **Older devices keep working** until they update: they still see all recipes and meals, and what they send is added – never deleted or overwritten.
-- Daily summary push, the notification bell and public recipes read the new records.
-- Changed: app files (`index.html`, new `js/bereiche.js`, `js/familiensync.js`, `js/anmeldung.js`, `js/sicherungen.js`, `js/versionslog.js`, `pinn-setup.sh`) and on the server `pb_hooks/save_family_data.pb.js`, `pb_hooks/pinn-push.js` plus the new `pb_hooks/bereiche.pb.js` and `pb_hooks/pinn-bereiche.js`. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 ## How it works
 
@@ -134,7 +133,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.105.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.106.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

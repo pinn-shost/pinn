@@ -117,21 +117,31 @@ function familyDataRecord(familyId) {
     if (!familyId) return null;
     try { return $app.findFirstRecordByFilter("familien_daten", "familie = {:f}", { f: String(familyId) }); } catch (e) { return null; }
 }
+// Familiendaten samt Bereichen (Rezepte, Einkauf, Pinnwand … liegen seit 1.104 in "familien_bereiche",
+// pinn-bereiche.js) - so sehen alle Server-Funktionen weiter den vollständigen Stand. Nur zum Lesen:
+// geschrieben wird familien_daten immer über familyDataRecord() bzw. die Bereiche über pinn-bereiche.js.
 function loadFamilyDataFor(familyId) {
     const rec = familyDataRecord(familyId);
-    if (!rec) return {};
-    try {
-        return require(`${__hooks}/calendar-sync.js`).parseRecordData(rec.get("data")) || {};
-    } catch (e) { return {}; }
+    let data = {};
+    if (rec) {
+        try { data = require(`${__hooks}/calendar-sync.js`).parseRecordData(rec.get("data")) || {}; } catch (e) { data = {}; }
+    }
+    if (!familyId) return data;
+    try { require(`${__hooks}/pinn-bereiche.js`).overlay(familyId, data); } catch (e) { /* noch ohne Bereiche */ }
+    return data;
 }
-// Änderungszeitpunkt der Familiendaten, ohne die (großen) Daten selbst zu laden
+// Änderungszeitpunkt der Familiendaten (inkl. Bereiche), ohne die (großen) Daten selbst zu laden
 function familyDataStamp(familyId) {
     if (!familyId) return "";
+    let stamp = "";
     try {
         const m = new DynamicModel({ updated: "" });
         $app.db().newQuery("SELECT updated FROM familien_daten WHERE familie = {:f} LIMIT 1").bind({ f: String(familyId) }).one(m);
-        return String(m.updated || "");
-    } catch (e) { return ""; }
+        stamp = String(m.updated || "");
+    } catch (e) { stamp = ""; }
+    let bereiche = "";
+    try { bereiche = require(`${__hooks}/pinn-bereiche.js`).areasStamp(familyId); } catch (e) { bereiche = ""; }
+    return bereiche ? stamp + "|" + bereiche : stamp;
 }
 
 // ---------------------------------------------------------------------------------------------

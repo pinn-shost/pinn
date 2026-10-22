@@ -125,7 +125,8 @@ routerAdd("POST", "/api/pinn/save", (e) => {
             console.log("[Rezepte] Abgleich öffentlicher Rezepte fehlgeschlagen: " + err.message);
         }
         try {
-            require(`${__hooks}/pinn-pinnwand.js`).afterSave(savedFamily, incoming, e.auth.id);
+            // Pinnwand liegt seit 1.106 im eigenen Bereich (Auswertung dort) - hier nur, solange noch nicht umgezogen
+            if (incoming.pinboard !== undefined) require(`${__hooks}/pinn-pinnwand.js`).afterSave(savedFamily, incoming, e.auth.id);
         } catch (err) {
             console.log("[Pinnwand] Auswertung nach dem Speichern fehlgeschlagen: " + err.message);
         }

@@ -13,6 +13,14 @@
 //               shoppingListOrder, shoppingMealTarget, shoppingIngredientRules,
 //               shoppingCategoryOrder                              (since 1.105.0)
 //   vorrat      pantryItems, pantryCategories, pantryLocations, pantrySettings (since 1.105.0)
+//   pinnwand    pinboard                                           (since 1.106.0)
+//   listen      familyLists, listTemplates                         (since 1.106.0)
+//   schule      schoolProfiles, schoolHomework, schoolLetters, schoolClosures (since 1.106.0)
+//   haustiere   pets, petLog                                       (since 1.106.0)
+//   zuhause     houseMaintenance                                   (since 1.106.0)
+//
+// Server code reads the family data through pinn-benutzer.js: loadFamilyDataFor() contains the areas
+// (overlay) and familyDataStamp() changes with every area as well, so caches built on it stay correct.
 //
 // Fields of "familien_bereiche":
 //   familie (relation, deleted together with the family), bereich (name of the area),
@@ -46,6 +54,11 @@ const AREAS = {
     einkauf: ["shoppingItems", "shoppingHistory", "shoppingLists", "shoppingTransferred", "shoppingPlans",
         "shoppingListOrder", "shoppingMealTarget", "shoppingIngredientRules", "shoppingCategoryOrder"],
     vorrat: ["pantryItems", "pantryCategories", "pantryLocations", "pantrySettings"],
+    pinnwand: ["pinboard"],
+    listen: ["familyLists", "listTemplates"],
+    schule: ["schoolProfiles", "schoolHomework", "schoolLetters", "schoolClosures"],
+    haustiere: ["pets", "petLog"],
+    zuhause: ["houseMaintenance"],
 };
 // Areas app 1.104 knew (it sent bereiche=true / ?bereiche=1)
 const AREAS_1104 = ["rezepte", "essensplan"];
@@ -518,13 +531,27 @@ function updateArea(familyId, name, fn) {
     });
     return out;
 }
-// After a successful save: public recipes and the bell (notifications about new meals, items …)
+// Latest change of any area of a family (part of pinn-benutzer.familyDataStamp)
+function areasStamp(familyId) {
+    if (!familyId || !findCol(COL)) return "";
+    try {
+        const m = new DynamicModel({ u: "", n: 0 });
+        $app.db().newQuery("SELECT COALESCE(MAX(updated), '') AS u, COUNT(*) AS n FROM " + COL + " WHERE familie = {:f}").bind({ f: String(familyId) }).one(m);
+        return String(m.n || 0) + ":" + String(m.u || "");
+    } catch (e) { return ""; }
+}
+// After a successful save: public recipes, the board and the bell (notifications about new meals, items …)
 function afterSave(familyId, name, previous, saved, auth) {
     if (!saved) return;
     if (name === "rezepte") {
         try {
             require(`${__hooks}/pinn-rezepte.js`).syncFamily(familyId, { recipes: saved.recipes || [], kitchenTools: kitchenToolsOf(familyId) });
         } catch (err) { console.log("[Rezepte] Abgleich öffentlicher Rezepte fehlgeschlagen: " + err.message); }
+    }
+    if (name === "pinnwand") {
+        // Board: remember new notes, replies and reminders for the push messages
+        try { require(`${__hooks}/pinn-pinnwand.js`).afterSave(familyId, saved, auth ? auth.id : ""); }
+        catch (err) { console.log("[Pinnwand] Auswertung nach dem Speichern fehlgeschlagen: " + err.message); }
     }
     try {
         // Context areas only where needed (a new meal gets the title of its recipe). A key that was not
@@ -573,6 +600,6 @@ module.exports = {
     COL, AREAS, COPY_DAYS,
     ensureSchema, migrateAll, migrateFamily, ensureFamily, expireCopies, takeLeftovers, absorb,
     names, keysOf, allKeys, areaOfKey, movedNames, isMoved, readMany, overlay, kitchenToolsOf, leftoverKeys,
-    list, save, afterSave, syncPublicRecipes, unionMerge, knownAreas, unknownAreas, updateArea,
+    list, save, afterSave, syncPublicRecipes, unionMerge, knownAreas, unknownAreas, updateArea, areasStamp,
     httpSend, httpBody, httpFamily, httpFail,
 };

@@ -164,8 +164,6 @@ function remindFamily(familyId, today, status) {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const push = require(`${__hooks}/pinn-push.js`);
     const data = lib.loadFamilyDataFor(familyId) || {};
-    // Ab 1.105 liegt der Vorrat im eigenen Bereich "vorrat" (pinn-bereiche.js)
-    try { require(`${__hooks}/pinn-bereiche.js`).overlay(familyId, data, ["vorrat"]); } catch (e) { /* noch ohne Bereiche */ }
     const due = dueItems(familyId, data, today, status);
     if (!due.length) return 0;
     const msg = messageFor(due);

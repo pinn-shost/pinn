@@ -20,6 +20,14 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.106', datum: '22.10.2026', titel: 'Pinnwand, Listen, Schule & Kita, Haustiere und Wartungsplan in eigenen Datensätzen',
+    punkte: [
+      ['info', 'Pinnwand, die Listen (Packen, Geschenke, Wünsche, Checklisten, Ideen samt Vorlagen), Schule & Kita, Haustiere und der Wartungsplan unter Zuhause liegen jetzt in eigenen Datensätzen auf dem Server. Jeder Teil wird für sich gespeichert und abgeglichen – an der Bedienung ändert sich nichts'],
+      ['info', 'Wie bei 1.104/1.105: vor dem Umzug eine Sicherung je Familie (pb_data/pinn_umzug, 30 Tage), Geräte mit älterer App sehen weiter alles. Alle Server-Funktionen (Erinnerungen, Pinnwand-Nachrichten und -Fotos, Haustiere, Packlisten, Haushaltsaufgaben) lesen die Familiendaten jetzt samt aller Bereiche'],
+      ['info', 'Geändert: index.html, js/versionslog.js sowie am Server pb_hooks/pinn-bereiche.js, pb_hooks/pinn-benutzer.js, pb_hooks/save_family_data.pb.js, pb_hooks/pinn-sprache.js und pb_hooks/pinn-vorrat.js'],
+    ],
+  },
+  {
     v: '1.105', datum: '22.10.2026', titel: 'Einkauf und Vorrat in eigenen Datensätzen',
     punkte: [
       ['info', 'Einkaufslisten (mit Läden, geplanten Einkäufen und Sortierung) und der Vorrat liegen jetzt ebenfalls in eigenen Datensätzen auf dem Server. Wenn mehrere im Laden gleichzeitig abhaken oder etwas auf die Liste setzen, wird nur noch die Einkaufsliste abgeglichen – nicht mehr alle Familiendaten. An der Bedienung ändert sich nichts'],
