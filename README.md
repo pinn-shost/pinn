@@ -90,6 +90,14 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **English, Deutsch, Français and Español**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.105
+
+**Shopping and pantry in records of their own**
+
+- Second step of moving the family data out of the one big data block: the **shopping lists** (incl. shops, planned shopping trips and sorting) and the **pantry** now live in records of their own on the server, like recipes and the meal plan since 1.104. When several people tick off items in the shop at the same time, only the shopping list is synced – not all family data. Nothing changes in how you use the app.
+- Same safety net as in 1.104: a backup per family before the move (`pb_data/pinn_umzug/`, 30 days), devices with an older app keep seeing everything. Voice control, the notification bell and the best-before reminder work with the new records.
+- Changed: app files (`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/versionslog.js`) and on the server `pb_hooks/pinn-bereiche.js`, `pb_hooks/save_family_data.pb.js`, `pb_hooks/pinn-sprache.js`, `pb_hooks/pinn-vorrat.js`. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.104
 
 **Recipes and meal plan in records of their own**
@@ -99,17 +107,6 @@ pinn. speaks **English, Deutsch, Français and Español**, adapts currency and e
 - **Older devices keep working** until they update: they still see all recipes and meals, and what they send is added – never deleted or overwritten.
 - Daily summary push, the notification bell and public recipes read the new records.
 - Changed: app files (`index.html`, new `js/bereiche.js`, `js/familiensync.js`, `js/anmeldung.js`, `js/sicherungen.js`, `js/versionslog.js`, `pinn-setup.sh`) and on the server `pb_hooks/save_family_data.pb.js`, `pb_hooks/pinn-push.js` plus the new `pb_hooks/bereiche.pb.js` and `pb_hooks/pinn-bereiche.js`. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
-## What's new in 1.103
-
-**Bug fixes: bell, birthdays, robot vacuum, profile pictures**
-
-- **Bell:** tapping a card opens the right place again (e.g. “Your week is here”, shopping, tasks, events). Since the app code was split up, nothing happened.
-- **Birthdays:** your own iCloud account from Settings → Calendar now also counts for birthdays – only for your own profile, the contacts stay private. Before, the app said “no account connected” although the calendars were working.
-- **Robot vacuum (Home Assistant):** a job no longer runs twice when the robot washes its mop for a long time before mopping. If the robot reports an error (e.g. a closed door), the job is cancelled instead of repeated and shown in the smart home settings; further jobs wait until the robot is back in its dock.
-- **Small things:** profile pictures under Family and in the emergency card show the same crop as everywhere else (especially on iPhone/iPad). Home → “Keep in mind” now names the plants that are really due and what to do; plants out of season stay paused.
-- **1.103.1:** robot vacuum – if it drives straight back into the dock after the start (path blocked, door closed) or reports an error, pinn. no longer sends it out again. The job is cancelled, waiting jobs for this device are dropped and nothing else starts automatically that day; starting with the button still works. Only if the station was still busy at the start is there exactly one second try.
-- Changed: app files and the server files `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-geburtstage.js` and `pb_hooks/geburtstage.pb.js`. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 ## How it works
 
@@ -137,7 +134,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.104.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.105.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

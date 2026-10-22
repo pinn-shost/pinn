@@ -352,6 +352,10 @@ function itemText(it) { return (it.qty ? it.qty + " " : "") + it.name; }
 
 function addItems(familyId, auth, intent, L) {
     if (!intent.items.length) return { antwort: L.noItems };
+    // Ab 1.105 liegt die Einkaufsliste im eigenen Bereich "einkauf" (pinn-bereiche.js)
+    let bereiche = null;
+    try { bereiche = require(`${__hooks}/pinn-bereiche.js`); } catch (e) { bereiche = null; }
+    if (bereiche && bereiche.isMoved(familyId, "einkauf")) return addItemsArea(bereiche, familyId, auth, intent, L);
     let reply = "", changed = false;
     let before = null, after = null;
     $app.runInTransaction((tx) => {
@@ -388,8 +392,37 @@ function addItems(familyId, auth, intent, L) {
     }
     return { antwort: reply, geaendert: changed };
 }
+// Dasselbe im eigenen Bereich "einkauf"
+function addItemsArea(bereiche, familyId, auth, intent, L) {
+    let reply = "";
+    const r = bereiche.updateArea(familyId, "einkauf", (data) => {
+        const items = Array.isArray(data.shoppingItems) ? data.shoppingItems : [];
+        const list = targetList(data, intent.laden);
+        const listId = list.id;
+        const added = [], dup = [];
+        intent.items.forEach((it, i) => {
+            const exists = items.find(x => x && !x.done && (x.listId || "essensplanung") === listId && norm(x.name) === norm(it.name));
+            if (exists) { dup.push(it.name); return; }
+            items.push({
+                id: "si" + Date.now().toString(36) + i + Math.random().toString(36).slice(2, 6),
+                name: it.name, qty: it.qty, note: "", done: false, createdAt: Date.now(), listId: listId, voice: true,
+            });
+            added.push(itemText(it));
+        });
+        data.shoppingItems = items;
+        const ll = listLabel(list, L);
+        if (!added.length) { reply = fill(L.already, { l: ll, i: joinList(dup, L) }); return false; }
+        reply = dup.length ? fill(L.addedSome, { l: ll, i: joinList(added, L), d: joinList(dup, L) }) : fill(L.added, { l: ll, i: joinList(added, L) });
+        return true;
+    });
+    if (r.changed) {
+        try { require(`${__hooks}/pinn-hinweise.js`).afterSave(familyId, r.before, r.after, auth); } catch (err) { console.log("[Sprache] Hinweise: " + err.message); }
+    }
+    return { antwort: reply, geaendert: r.changed };
+}
 function readList(familyId, intent, L) {
     const data = require(`${__hooks}/pinn-benutzer.js`).loadFamilyDataFor(familyId) || {};
+    try { require(`${__hooks}/pinn-bereiche.js`).overlay(familyId, data, ["einkauf"]); } catch (e) { /* noch ohne Bereiche */ }
     const items = (Array.isArray(data.shoppingItems) ? data.shoppingItems : []).filter(x => x && !x.done && x.name);
     let list = null, open = items;
     if (intent.laden) {

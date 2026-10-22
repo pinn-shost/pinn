@@ -9,6 +9,10 @@
 // Areas (AREAS below – later versions add more, the move itself needs no further changes):
 //   rezepte     recipes, recipeFavorites, recipeCategories        (since 1.104.0)
 //   essensplan  mealPlan                                           (since 1.104.0)
+//   einkauf     shoppingItems, shoppingHistory, shoppingLists, shoppingTransferred, shoppingPlans,
+//               shoppingListOrder, shoppingMealTarget, shoppingIngredientRules,
+//               shoppingCategoryOrder                              (since 1.105.0)
+//   vorrat      pantryItems, pantryCategories, pantryLocations, pantrySettings (since 1.105.0)
 //
 // Fields of "familien_bereiche":
 //   familie (relation, deleted together with the family), bereich (name of the area),
@@ -25,8 +29,10 @@
 //      kept in "altbestand" for COPY_DAYS days, and the keys are removed from familien_daten.
 //
 // Safety net for devices that still run an older app version:
-//   - They keep seeing everything: when familien_daten is read through the collection API without
-//     ?bereiche=1 (only the new app sends it), the areas are added to the answer (overlay).
+//   - They keep seeing everything: when familien_daten is read through the collection API, every area
+//     the device does not know yet is added to the answer (overlay). The app tells which areas it handles
+//     itself: ?bereiche=<names, comma separated> (1.104 sent ?bereiche=1 = rezepte,essensplan); the same
+//     list comes with /api/pinn/save as "bereiche" (1.104 sent true). No list = app without areas.
 //   - What they still send in the old block is added to the areas (absorb): missing entries are added,
 //     empty values filled – never deleted or overwritten. After COPY_DAYS days this stops; by then
 //     every device has long had the new app.
@@ -37,7 +43,14 @@ const COL = "familien_bereiche";
 const AREAS = {
     rezepte: ["recipes", "recipeFavorites", "recipeCategories"],
     essensplan: ["mealPlan"],
+    einkauf: ["shoppingItems", "shoppingHistory", "shoppingLists", "shoppingTransferred", "shoppingPlans",
+        "shoppingListOrder", "shoppingMealTarget", "shoppingIngredientRules", "shoppingCategoryOrder"],
+    vorrat: ["pantryItems", "pantryCategories", "pantryLocations", "pantrySettings"],
 };
+// Areas app 1.104 knew (it sent bereiche=true / ?bereiche=1)
+const AREAS_1104 = ["rezepte", "essensplan"];
+// Other areas the bell needs to describe a change (a new meal gets the title of its recipe)
+const CONTEXT = { essensplan: ["rezepte"] };
 const DATA_MAX = 50 * 1024 * 1024;   // same limit as familien_daten (recipe photos of old versions are embedded)
 const COPY_DAYS = 30;
 const BACKUP_DIR = "/pb_data/pinn_umzug";
@@ -164,10 +177,11 @@ function readMany(familyId, list) {
     });
     return out;
 }
-// Adds the areas to a family data object (for older app versions and server functions that need them)
-function overlay(familyId, data) {
+// Adds the areas to a family data object (for older app versions and server functions that need them).
+// names: only these areas (default: all moved ones)
+function overlay(familyId, data, names) {
     const base = isObj(data) ? data : {};
-    const moved = movedNames(familyId);
+    const moved = movedNames(familyId).filter(n => !Array.isArray(names) || names.indexOf(n) >= 0);
     if (!moved.length) return base;
     const extra = readMany(familyId, moved);
     Object.keys(extra).forEach(k => { base[k] = extra[k]; });
@@ -243,13 +257,13 @@ function unionMerge(target, source, stats) {
 // ---------------------------------------------------------------------------------------------
 // Backup before the move
 // ---------------------------------------------------------------------------------------------
-function backupFile(familyId) {
-    return BACKUP_DIR + "/familien_daten_" + familyId + "_" + today() + ".json";
+function backupFile(familyId, list) {
+    return BACKUP_DIR + "/familien_daten_" + familyId + "_" + today() + "_" + (list || []).join("-") + ".json";
 }
 // -> true if the backup exists afterwards (or there is nothing to back up)
-function backupFamilyData(familyId, rec) {
+function backupFamilyData(familyId, rec, list) {
     if (!rec) return true;
-    const path = backupFile(familyId);
+    const path = backupFile(familyId, list);
     try { $os.stat(path); return true; } catch (e) { /* not there yet */ }
     try {
         $os.mkdirAll(BACKUP_DIR, 448); // 0700
@@ -272,7 +286,7 @@ function cleanupBackups() {
     entries.forEach(en => {
         let n = "";
         try { n = String(en.name()); } catch (e) { n = ""; }
-        const m = /^familien_daten_[a-z0-9]+_(\d{4}-\d{2}-\d{2})\.json$/.exec(n);
+        const m = /^familien_daten_[a-z0-9]+_(\d{4}-\d{2}-\d{2})(_[a-z-]*)?\.json$/.exec(n);
         if (!m || m[1] >= limit) return;
         try { $os.remove(BACKUP_DIR + "/" + n); } catch (e) { /* ignore */ }
     });
@@ -291,7 +305,7 @@ function migrateFamily(familyId) {
         let famRec = null;
         try { famRec = $app.findFirstRecordByFilter("familien_daten", "familie = {:f}", { f: String(familyId) }); } catch (e) { famRec = null; }
         const needsBackup = famRec && missing.some(n => hasAny(parse(famRec.get("data")), keysOf(n)));
-        if (needsBackup && !backupFamilyData(familyId, famRec)) return result;
+        if (needsBackup && !backupFamilyData(familyId, famRec, missing)) return result;
         try {
             $app.runInTransaction((tx) => {
                 let fr = null;
@@ -473,7 +487,38 @@ function save(familyId, body) {
     });
     return { status: result.status, body: result.body, previous: previous, saved: result.status === 200 ? incoming : null, name: name };
 }
-// After a successful save: public recipes and the bell (notifications about new meals/recipes)
+// Areas an app handles itself: true / "1" = app 1.104, array or "a,b" = these names, anything else = none
+function knownAreas(value) {
+    if (value === true || value === "1") return AREAS_1104.slice();
+    let list = [];
+    if (Array.isArray(value)) list = value;
+    else if (typeof value === "string" && value) list = value.split(",");
+    return list.map(x => String(x || "").trim()).filter(n => !!AREAS[n]);
+}
+// Moved areas an app does not know yet (they are added to familien_daten for it)
+function unknownAreas(familyId, known) {
+    return movedNames(familyId).filter(n => (known || []).indexOf(n) < 0);
+}
+// Changes one area on the server itself (e.g. voice control). fn(data) changes data in place and returns
+// true if something changed. -> { changed, before, after } (before/after: the area keys only)
+function updateArea(familyId, name, fn) {
+    if (!AREAS[name]) throw new Error("Unbekannter Bereich.");
+    if (!areaRecord(familyId, name)) migrateFamily(familyId);
+    const out = { changed: false, before: null, after: null };
+    $app.runInTransaction((tx) => {
+        const rec = areaRecord(familyId, name, tx);
+        if (!rec) throw new Error("Bereich " + name + " fehlt.");
+        const data = pick(parse(rec.get("data")), keysOf(name));
+        out.before = JSON.parse(JSON.stringify(data));
+        if (!fn(data)) return;
+        rec.set("data", pick(data, keysOf(name)));
+        tx.save(rec);
+        out.changed = true;
+        out.after = data;
+    });
+    return out;
+}
+// After a successful save: public recipes and the bell (notifications about new meals, items …)
 function afterSave(familyId, name, previous, saved, auth) {
     if (!saved) return;
     if (name === "rezepte") {
@@ -482,9 +527,12 @@ function afterSave(familyId, name, previous, saved, auth) {
         } catch (err) { console.log("[Rezepte] Abgleich öffentlicher Rezepte fehlgeschlagen: " + err.message); }
     }
     try {
-        // Both areas together, so a new meal gets the title of its recipe
-        const others = readMany(familyId, names().filter(n => n !== name));
-        const oldView = Object.assign({}, others, previous || {});
+        // Context areas only where needed (a new meal gets the title of its recipe). A key that was not
+        // stored before counts as unchanged – otherwise everything in it would be reported as new.
+        const others = readMany(familyId, CONTEXT[name] || []);
+        const prev = Object.assign({}, previous || {});
+        Object.keys(saved).forEach(k => { if (prev[k] === undefined) prev[k] = saved[k]; });
+        const oldView = Object.assign({}, others, prev);
         const newView = Object.assign({}, others, saved);
         require(`${__hooks}/pinn-hinweise.js`).afterSave(familyId, oldView, newView, auth);
     } catch (err) { console.log("[Hinweise] Auswertung nach dem Speichern fehlgeschlagen: " + err.message); }
@@ -525,6 +573,6 @@ module.exports = {
     COL, AREAS, COPY_DAYS,
     ensureSchema, migrateAll, migrateFamily, ensureFamily, expireCopies, takeLeftovers, absorb,
     names, keysOf, allKeys, areaOfKey, movedNames, isMoved, readMany, overlay, kitchenToolsOf, leftoverKeys,
-    list, save, afterSave, syncPublicRecipes, unionMerge,
+    list, save, afterSave, syncPublicRecipes, unionMerge, knownAreas, unknownAreas, updateArea,
     httpSend, httpBody, httpFamily, httpFail,
 };

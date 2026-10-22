@@ -20,6 +20,14 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.105', datum: '22.10.2026', titel: 'Einkauf und Vorrat in eigenen Datensätzen',
+    punkte: [
+      ['info', 'Einkaufslisten (mit Läden, geplanten Einkäufen und Sortierung) und der Vorrat liegen jetzt ebenfalls in eigenen Datensätzen auf dem Server. Wenn mehrere im Laden gleichzeitig abhaken oder etwas auf die Liste setzen, wird nur noch die Einkaufsliste abgeglichen – nicht mehr alle Familiendaten. An der Bedienung ändert sich nichts'],
+      ['info', 'Wie bei 1.104: vor dem Umzug eine Sicherung je Familie (pb_data/pinn_umzug, 30 Tage), Geräte mit älterer App sehen weiter alles. Sprachsteuerung („setz Milch auf die Liste“), die Glocke und die Erinnerung ans Mindesthaltbarkeitsdatum arbeiten mit den neuen Datensätzen'],
+      ['info', 'Geändert: index.html, js/bereiche.js, js/familiensync.js, js/versionslog.js sowie am Server pb_hooks/pinn-bereiche.js, pb_hooks/save_family_data.pb.js, pb_hooks/pinn-sprache.js und pb_hooks/pinn-vorrat.js'],
+    ],
+  },
+  {
     v: '1.104', datum: '22.10.2026', titel: 'Rezepte und Essensplan in eigenen Datensätzen',
     punkte: [
       ['info', 'Rezepte (mit Favoriten und Kategorien) und der Essensplan liegen jetzt in eigenen Datensätzen auf dem Server statt im großen Familien-Datenblock. Jeder Teil wird für sich gespeichert und abgeglichen – zwei Handys, die an Verschiedenem arbeiten, kommen sich nicht mehr in die Quere, und ein neuer Einkaufsartikel schickt nicht mehr alle Rezepte mit. An der Bedienung ändert sich nichts'],

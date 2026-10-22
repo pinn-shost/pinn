@@ -90,6 +90,14 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **English, Deutsch, Français und Español**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen **Familien**- und **WG**-Bezeichnungen. Ein Server kann mehrere Familien aufnehmen, jede mit eigenen Admins.
 
+## Neu in 1.105
+
+**Einkauf und Vorrat in eigenen Datensätzen**
+
+- Zweiter Schritt beim Aufteilen der Familiendaten: Die **Einkaufslisten** (mit Läden, geplanten Einkäufen und Sortierung) und der **Vorrat** liegen jetzt in eigenen Datensätzen auf dem Server – wie seit 1.104 Rezepte und Essensplan. Haken mehrere im Laden gleichzeitig ab, wird nur noch die Einkaufsliste abgeglichen, nicht mehr alle Familiendaten. An der Bedienung ändert sich nichts.
+- Gleiches Sicherheitsnetz wie bei 1.104: vor dem Umzug eine Sicherung je Familie (`pb_data/pinn_umzug/`, 30 Tage), Geräte mit älterer App sehen weiter alles. Sprachsteuerung, Glocke und die Erinnerung ans Mindesthaltbarkeitsdatum arbeiten mit den neuen Datensätzen.
+- Geändert: App-Dateien (`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/versionslog.js`) und am Server `pb_hooks/pinn-bereiche.js`, `pb_hooks/save_family_data.pb.js`, `pb_hooks/pinn-sprache.js`, `pb_hooks/pinn-vorrat.js`. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
+
 ## Neu in 1.104
 
 **Rezepte und Essensplan in eigenen Datensätzen**
@@ -99,17 +107,6 @@ pinn. spricht **English, Deutsch, Français und Español**, passt Währung und N
 - **Ältere Geräte funktionieren weiter**, bis sie aktualisiert sind: Sie sehen weiter alle Rezepte und Essen, und was sie schicken, wird ergänzt – nie gelöscht oder überschrieben.
 - Tagesübersicht-Push, Glocke und öffentliche Rezepte lesen die neuen Datensätze.
 - Geändert: App-Dateien (`index.html`, neu `js/bereiche.js`, `js/familiensync.js`, `js/anmeldung.js`, `js/sicherungen.js`, `js/versionslog.js`, `pinn-setup.sh`) und am Server `pb_hooks/save_family_data.pb.js`, `pb_hooks/pinn-push.js` sowie neu `pb_hooks/bereiche.pb.js` und `pb_hooks/pinn-bereiche.js`. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
-
-## Neu in 1.103
-
-**Fehlerbehebungen: Glocke, Geburtstage, Saugroboter, Profilbilder**
-
-- **Glocke:** Ein Tipp auf eine Karte öffnet wieder die passende Stelle (z. B. „Eure Woche ist da“, Einkäufe, Aufgaben, Termine). Seit der Aufteilung des App-Codes passierte dabei nichts.
-- **Geburtstage:** Das eigene iCloud-Konto aus Einstellungen → Kalender zählt jetzt auch für die Geburtstage – nur für das eigene Profil, die Kontakte bleiben privat. Vorher hieß es „kein Konto verbunden“, obwohl die Kalender liefen.
-- **Saugroboter (Home Assistant):** Ein Auftrag läuft nicht mehr doppelt, wenn der Roboter vor dem Wischen lange den Mopp wäscht. Meldet der Roboter einen Fehler (z. B. Tür zu), wird der Auftrag abgebrochen statt wiederholt und in den Smarthome-Einstellungen angezeigt; weitere Aufträge warten, bis er wieder in der Station ist.
-- **Kleinigkeiten:** Profilbilder unter Familie und im Notfallpass zeigen denselben Ausschnitt wie überall sonst (vor allem iPhone/iPad). Zuhause → „Im Blick“ nennt jetzt die Pflanzen, die wirklich dran sind, und was zu tun ist; Pflanzen außerhalb ihrer Saison bleiben pausiert.
-- **1.103.1:** Saugroboter – fährt er nach dem Start gleich wieder in die Station (Weg nicht frei, Tür zu) oder meldet einen Fehler, schickt pinn. ihn nicht mehr erneut los. Der Auftrag wird abgebrochen, wartende Aufträge für dieses Gerät entfallen und an diesem Tag startet nichts mehr automatisch; ein Start per Knopf geht weiterhin. Nur wenn die Station beim Start noch beschäftigt war, gibt es genau einen zweiten Versuch.
-- Geändert: App-Dateien und am Server `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-geburtstage.js` und `pb_hooks/geburtstage.pb.js`. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
 
 ## So funktioniert's
 
@@ -137,7 +134,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Die ZIP der [neuesten Version](https://github.com/pinn-shost/pinn/releases/latest) herunterladen und entpacken.
-2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.104.0` oder `pinn-main`) so, wie er ist, hineinlegen.
+2. Auf dem NAS einen Ordner anlegen, z. B. `/volume1/docker/Pocketbase`, und den entpackten Ordner (z. B. `pinn-1.105.0` oder `pinn-main`) so, wie er ist, hineinlegen.
 3. Per SSH anmelden und ausführen:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

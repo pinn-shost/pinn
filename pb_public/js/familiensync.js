@@ -5,8 +5,9 @@
    Contents: building the family record (buildFamilyPayload), loading it (loadFamilyData, offline with the last known state),
    saving without overwriting each other (persistState, flushSync with merging), fetching changes of other devices
    (pullRemoteChanges, rerenderAfterRemoteChange) and the save shortcuts (saveMembers, saveMealPlan, saveRecipes, saveTasks).
-   Since 1.104.0 some parts (recipes, meal plan) live in records of their own (js/bereiche.js): they are left out of
-   the family record (buildFamilyPayload) and put back on top whenever a state is applied (composeFamilyState). */
+   Since 1.104.0 some parts (recipes, meal plan, since 1.105 also shopping and pantry) live in records of their own
+   (js/bereiche.js): they are left out of the family record (buildFamilyPayload) and put back on top whenever a state
+   is applied (composeFamilyState). */
 
 // Complete state of the app (family record + areas)
 function collectFamilyState() {
@@ -82,8 +83,8 @@ async function loadFamilyData() {
   let existing = null;
   let listError = null;
   try {
-    // bereiche=1: this app version loads the areas itself (older versions get them added by the server)
-    const list = await pb.collection(PB_COLLECTION).getList(1, 1, { filter: pb.filter('familie = {:f}', { f: myFamily }), query: { bereiche: '1' } });
+    // bereiche=<names>: the areas this device loads itself (the server adds the others to the answer)
+    const list = await pb.collection(PB_COLLECTION).getList(1, 1, { filter: pb.filter('familie = {:f}', { f: myFamily }), query: { bereiche: areaKnownParam() } });
     existing = list.items[0] || null;
   } catch (err) {
     listError = err;
@@ -114,7 +115,7 @@ async function loadFamilyData() {
     syncBaseUpdated = existing.updated || '';
   } else {
     const initial = areaStripPayload(defaultFamilyData());
-    const created = await pb.collection(PB_COLLECTION).create({ data: initial, familie: myFamily }, { query: { bereiche: '1' } });
+    const created = await pb.collection(PB_COLLECTION).create({ data: initial, familie: myFamily }, { query: { bereiche: areaKnownParam() } });
     familyRecordId = created.id;
     syncBase = initial;
     syncBaseUpdated = created.updated || '';
@@ -164,7 +165,7 @@ async function flushSync() {
       try {
         res = await apiFetch('/api/pinn/save', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ recordId: sent.recordId, expectedUpdated: sent.baseUpdated, data: sent.local, bereiche: areasActive() }),
+          body: JSON.stringify({ recordId: sent.recordId, expectedUpdated: sent.baseUpdated, data: sent.local, bereiche: areaKnownList() }),
         });
         body = await res.json().catch(() => ({}));
       } catch (netErr) {
@@ -236,7 +237,7 @@ async function pullRemoteChanges() {
   if (syncInFlight) return;
   if (readPending()) { flushSync(); return; }
   try {
-    const rec = await pb.collection(PB_COLLECTION).getOne(familyRecordId, { query: { bereiche: '1' } });
+    const rec = await pb.collection(PB_COLLECTION).getOne(familyRecordId, { query: { bereiche: areaKnownParam() } });
     if (rec.updated && rec.updated !== syncBaseUpdated) {
       syncBase = rec.data || {};
       syncBaseUpdated = rec.updated;

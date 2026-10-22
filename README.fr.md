@@ -90,6 +90,14 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **English, Deutsch, Français et Español**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.105
+
+**Courses et réserves dans leurs propres enregistrements**
+
+- Deuxième étape du découpage des données de la famille : les **listes de courses** (avec magasins, courses planifiées et tri) et les **réserves** sont désormais stockées dans leurs propres enregistrements sur le serveur, comme les recettes et le planning des repas depuis la 1.104. Quand plusieurs personnes cochent des articles au magasin en même temps, seule la liste de courses est synchronisée – plus toutes les données de la famille. Rien ne change à l’utilisation.
+- Même filet de sécurité qu’en 1.104 : une sauvegarde par famille avant le déplacement (`pb_data/pinn_umzug/`, 30 jours), les appareils avec une ancienne version de l’app voient toujours tout. La commande vocale, la cloche et le rappel de date de péremption utilisent les nouveaux enregistrements.
+- Modifiés : fichiers de l’app (`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/versionslog.js`) et sur le serveur `pb_hooks/pinn-bereiche.js`, `pb_hooks/save_family_data.pb.js`, `pb_hooks/pinn-sprache.js`, `pb_hooks/pinn-vorrat.js`. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
+
 ## Nouveautés de la 1.104
 
 **Recettes et planning des repas dans leurs propres enregistrements**
@@ -99,17 +107,6 @@ pinn. parle **English, Deutsch, Français et Español**, adapte la devise et les
 - **Les appareils plus anciens continuent de fonctionner** jusqu’à leur mise à jour : ils voient toujours toutes les recettes et tous les repas, et ce qu’ils envoient est ajouté – jamais supprimé ni écrasé.
 - La notification du résumé quotidien, la cloche et les recettes publiques lisent les nouveaux enregistrements.
 - Modifiés : fichiers de l’app (`index.html`, nouveau `js/bereiche.js`, `js/familiensync.js`, `js/anmeldung.js`, `js/sicherungen.js`, `js/versionslog.js`, `pinn-setup.sh`) et sur le serveur `pb_hooks/save_family_data.pb.js`, `pb_hooks/pinn-push.js` ainsi que les nouveaux `pb_hooks/bereiche.pb.js` et `pb_hooks/pinn-bereiche.js`. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
-## Nouveautés de la 1.103
-
-**Corrections : cloche, anniversaires, robot aspirateur, photos de profil**
-
-- **Cloche :** toucher une carte ouvre de nouveau le bon endroit (p. ex. « Votre semaine est là », courses, tâches, rendez-vous). Depuis le découpage du code de l’app, rien ne se passait.
-- **Anniversaires :** ton propre compte iCloud de Réglages → Calendrier compte désormais aussi pour les anniversaires – uniquement pour ton profil, les contacts restent privés. Avant, il était indiqué « aucun compte connecté » alors que les calendriers fonctionnaient.
-- **Robot aspirateur (Home Assistant) :** une tâche ne s’exécute plus deux fois quand le robot lave longtemps sa serpillière avant de laver le sol. Si le robot signale une erreur (p. ex. une porte fermée), la tâche est annulée au lieu d’être répétée et affichée dans les réglages maison connectée ; les tâches suivantes attendent son retour à la station.
-- **Petites choses :** les photos de profil sous Famille et dans la carte d’urgence montrent le même cadrage que partout ailleurs (surtout sur iPhone/iPad). Domicile → « À surveiller » nomme désormais les plantes vraiment concernées et ce qu’il faut faire ; les plantes hors saison restent en pause.
-- **1.103.1 :** robot aspirateur – s’il retourne aussitôt à la station après le départ (passage bloqué, porte fermée) ou signale une erreur, pinn. ne le relance plus. La tâche est annulée, les tâches en attente pour cet appareil sont supprimées et plus rien ne démarre automatiquement ce jour-là ; un démarrage avec le bouton reste possible. Seulement si la station était encore occupée au départ, il y a exactement un second essai.
-- Modifié : fichiers de l’app et sur le serveur `pb_hooks/pinn-smarthome.js`, `pb_hooks/pinn-geburtstage.js` et `pb_hooks/geburtstage.pb.js`. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
 ## Comment ça marche
 
@@ -137,7 +134,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.104.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.105.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

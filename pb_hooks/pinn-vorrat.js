@@ -3,7 +3,7 @@
 //
 // Vorrat 2.0 (pinn. 1.30)
 //  1. Erinnerung an das Mindesthaltbarkeitsdatum (MHD):
-//     - Die Vorrats-Artikel liegen wie bisher im Familien-Datensatz (pantryItems, Feld "bestBefore",
+//     - Die Vorrats-Artikel liegen seit 1.105 im eigenen Bereich "vorrat" (pinn-bereiche.js; pantryItems, Feld "bestBefore",
 //       ISO-Datum). Wie viele Tage vorher erinnert wird, steht in pantrySettings.mhdDays (1–14, Standard 3).
 //     - Je Familie EINE Sammel-Nachricht am Morgen (ab 9 Uhr): einmal, wenn ein Artikel in den
 //       Vorlauf kommt, und einmal am Tag des Ablaufs. Ist ein Artikel schon abgelaufen, ohne dass es
@@ -164,6 +164,8 @@ function remindFamily(familyId, today, status) {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const push = require(`${__hooks}/pinn-push.js`);
     const data = lib.loadFamilyDataFor(familyId) || {};
+    // Ab 1.105 liegt der Vorrat im eigenen Bereich "vorrat" (pinn-bereiche.js)
+    try { require(`${__hooks}/pinn-bereiche.js`).overlay(familyId, data, ["vorrat"]); } catch (e) { /* noch ohne Bereiche */ }
     const due = dueItems(familyId, data, today, status);
     if (!due.length) return 0;
     const msg = messageFor(due);

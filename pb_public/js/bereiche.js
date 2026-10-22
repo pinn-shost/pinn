@@ -1,8 +1,10 @@
 /* pinn. – Family areas: own records for parts of the family data (js/bereiche.js)
    Classic script, no build step; loaded right after js/familiensync.js (load order: src/rahmen.html).
    Since 1.104.0 some parts of the family data live in records of their own on the server
-   (collection "familien_bereiche", pb_hooks/pinn-bereiche.js) – for now recipes (recipes, recipeFavorites,
-   recipeCategories) and the meal plan (mealPlan). Which keys belong to which area is told by the server.
+   (collection "familien_bereiche", pb_hooks/pinn-bereiche.js) – recipes and the meal plan (1.104), shopping and
+   pantry (1.105). Which keys belong to which area is told by the server, so a new area needs no change here.
+   The server is told which areas this device handles itself (areaKnownList / areaKnownParam); areas it does not
+   know yet are added to the family record for it, so nothing ever disappears while the lists differ.
    The rest of the app does not notice anything: the app variables stay the same, only loading and saving
    is split up here:
    - areasLoad / areasPull: fetch the areas (only those that changed since the last time)
@@ -36,6 +38,13 @@ function areaPick(src, keys) {
 }
 function areasActive() {
   return areaServer === true && areaStateFamily === areaFamily() && Object.keys(areaState).length > 0;
+}
+// Names of the areas this device handles itself – sent with /api/pinn/save and when reading familien_daten
+function areaKnownList() {
+  return areasActive() ? Object.keys(areaState) : [];
+}
+function areaKnownParam() {
+  return areaKnownList().join(',') || 'keine';
 }
 function areaKeyList() {
   const out = [];
@@ -107,13 +116,16 @@ function areaStripPayload(payload) {
 /* ---------- Loading ---------- */
 // Takes changes of an area still pending in the old family record over (device that was offline
 // during the update) – merged with the server state of the area, then removed from the family record.
-function areaAdoptFamilyPending() {
+// names: the areas that are new for this device
+function areaAdoptFamilyPending(names) {
   const p = readPending();
   if (!p || !p.local) return;
-  const keys = areaKeyList();
+  const list = (names || Object.keys(areaState)).filter(n => areaState[n]);
+  const keys = [];
+  list.forEach(n => (areaState[n].keys || []).forEach(k => keys.push(k)));
   if (!keys.some(k => Object.prototype.hasOwnProperty.call(p.local, k))) return;
   const items = areaPendingRead();
-  Object.keys(areaState).forEach(n => {
+  list.forEach(n => {
     const ks = areaState[n].keys || [];
     const local = areaPick(p.local, ks);
     const base = areaPick(p.base || {}, ks);
@@ -134,7 +146,7 @@ async function areasLoad(force) {
   if (areaLoading) return areaLoading;
   if (!force && areaLoadedAt && Date.now() - areaLoadedAt < 20 * 1000) return false;
   areaLoading = (async () => {
-    const wasActive = areasActive();
+    const knownBefore = areasActive() ? Object.keys(areaState) : [];
     let res, body;
     try {
       const stand = {};
@@ -178,7 +190,8 @@ async function areasLoad(force) {
     Object.keys(areaState).forEach(n => { if (!seen[n]) { delete areaState[n]; delete items[n]; changed = true; } });
     areaPendingWrite(items);
     areaCacheWrite();
-    if (!wasActive && areasActive()) areaAdoptFamilyPending();
+    const fresh = Object.keys(areaState).filter(n => knownBefore.indexOf(n) < 0);
+    if (fresh.length && areasActive()) areaAdoptFamilyPending(fresh);
     if (areasHavePending()) setTimeout(() => areasFlush(), 0);
     return changed;
   })();
