@@ -17,7 +17,10 @@
       require() of it – require(`${__hooks}/x.js`).name, a variable holding it (x.name) or { name } = require(…) –
       is exported by that module.
    4. Unit tests: version compare of the update check and reading APP_VERSION from the built
-      pb_public/index.html (pinn-system.js) – the update button depends on both. */
+      pb_public/index.html (pinn-system.js) – the update button depends on both.
+   5. Database schema (pinn-schema.js, since 1.110.0): every module that creates collections or fields is part of
+      the start-up checks, the migration list is ascending, unique and named, and the runner is tested against a
+      simulated database (fresh install, second start, failing step, newer database, failing check). */
 
 'use strict';
 const fs = require('fs');
@@ -271,6 +274,112 @@ if (!exists(path.join(HOOKS, 'pinn-system.js'))) {
     }
   }
 }
+// ---------- 5: database schema (pinn-schema.js) ----------
+if (!exists(path.join(HOOKS, 'pinn-schema.js'))) {
+  r.fail('pb_hooks/pinn-schema.js', 'missing');
+} else {
+  const schemaCode = read(path.join(HOOKS, 'pinn-schema.js'));
+  const listed = new Set((schemaCode.match(/\$\{__hooks\}\/(pinn-[\w-]+\.js)/g) || []).map(x => x.split('/').pop()));
+  modFiles.forEach(file => {
+    const name = path.basename(file);
+    if (name === 'pinn-schema.js') return;
+    const bare = scan(read(file)).bare;
+    if (/\bnew\s+Collection\s*\(|\.fields\.add\s*\(/.test(bare) && !listed.has(name)) {
+      r.fail(rel(file), 'creates collections or fields but is not part of the start-up checks in pb_hooks/pinn-schema.js');
+    }
+  });
+
+  // A simulated database: collections by name, records of "pinn_schema", a store, the error log
+  function fakeDb(names, applied) {
+    const cols = new Set(names);
+    const rows = (applied || []).map(v => ({ version: v }));
+    const store = new Map();
+    const log = [];
+    const calls = [];
+    const stub = label => new Proxy({}, { get: (t, fn) => () => { calls.push(label + '.' + String(fn)); return true; } });
+    const modules = {};
+    const globals = {
+      $app: {
+        store: () => ({ get: k => store.get(k), set: (k, v) => store.set(k, v) }),
+        findCollectionByNameOrId: n => { if (!cols.has(n)) throw new Error('missing'); return { name: n }; },
+        findRecordsByFilter: (n) => { if (n !== 'pinn_schema' || !cols.has(n)) throw new Error('missing'); return rows.map(x => ({ get: k => x[k] })); },
+        save: x => { if (x && x.__col) rows.push(Object.assign({}, x.data)); else if (x && x.name) cols.add(x.name); },
+      },
+      Collection: function (def) { Object.assign(this, def); },
+      Record: function () { this.__col = true; this.data = {}; this.set = (k, v) => { this.data[k] = v; }; },
+      console: { log: () => {} },
+      require: id => {
+        const n = String(id).split('/').pop();
+        if (n === 'pinn-protokoll.js') {
+          return new Proxy({}, { get: (t, fn) => (...a) => { if (fn === 'fehler' || fn === 'warnung') log.push(fn + ': ' + a[1]); calls.push('pinn-protokoll.js.' + String(fn)); return true; } });
+        }
+        if (n === 'pinn-system.js') return { installierteVersion: () => '9.9.9', ensureSchema: () => { calls.push('pinn-system.js.ensureSchema'); } };
+        return modules[n] || (modules[n] = stub(n));
+      },
+    };
+    return { globals, cols, rows, store, log, calls, modules };
+  }
+  let lib = null;
+  test('pinn-schema.js loads without touching the server', () => {
+    lib = loadModule('pinn-schema.js', { $app: forbidden('$app'), $os: forbidden('$os'), require: () => { throw new Error('require while loading'); } });
+  });
+  if (lib) {
+    test('MIGRATIONS: versions 1, 2, 3 … in order, each with a name and an up() function', () => {
+      const bad = [];
+      lib.MIGRATIONS.forEach((m, i) => {
+        if (m.version !== i + 1) bad.push('position ' + (i + 1) + ' has version ' + m.version);
+        if (!m.name || typeof m.name !== 'string') bad.push('version ' + m.version + ' has no name');
+        if (typeof m.up !== 'function') bad.push('version ' + m.version + ' has no up()');
+      });
+      if (lib.latest() !== lib.MIGRATIONS.length) bad.push('latest() is ' + lib.latest());
+      return bad.join('; ');
+    });
+    const all = lib.BASELINE_COLLECTIONS;
+    test('fresh database: all checks in order, then every step once, recorded', () => {
+      const db = fakeDb(all);
+      const s2 = loadModule('pinn-schema.js', db.globals);
+      const st = s2.ensureCurrent();
+      const order = db.calls.filter(c => !c.startsWith('pinn-protokoll.js.fehler')).map(c => c.split('.js.')[0]);
+      if (order[0] !== 'pinn-protokoll' || order[1] !== 'pinn-benutzer') return 'checks start with ' + order.slice(0, 2).join(', ');
+      if (order.indexOf('pinn-finanzen') > order.indexOf('pinn-kassen')) return 'pinn-finanzen must come before pinn-kassen';
+      if (!db.cols.has('pinn_schema')) return 'collection pinn_schema not created';
+      return eq({ ok: st.ok, version: st.version, rows: db.rows.map(x => x.version), app: db.rows[0] && db.rows[0].app }, { ok: true, version: lib.latest(), rows: lib.MIGRATIONS.map(m => m.version), app: '9.9.9' });
+    });
+    test('second call and second start: nothing runs again', () => {
+      const db = fakeDb(all.concat('pinn_schema'), lib.MIGRATIONS.map(m => m.version));
+      const s2 = loadModule('pinn-schema.js', db.globals);
+      s2.ensureCurrent();
+      const n = db.calls.length;
+      const st = s2.ensureCurrent();
+      if (db.calls.length !== n) return 'second ensureCurrent() ran again';
+      return eq({ ok: st.ok, version: st.version, rows: db.rows.length }, { ok: true, version: lib.latest(), rows: lib.MIGRATIONS.length });
+    });
+    test('step 1 with a missing collection: not recorded, reported, retried on the next start', () => {
+      const db = fakeDb(all.filter(n => n !== 'ortung'));
+      const st = loadModule('pinn-schema.js', db.globals).ensureCurrent();
+      if (st.ok || st.schritt !== 1 || db.rows.length) return 'expected a failed step 1, got ' + JSON.stringify(st);
+      if (!db.log.some(l => l.includes('ortung'))) return 'error log does not name the missing collection';
+      db.cols.add('ortung'); db.store.clear();
+      const st2 = loadModule('pinn-schema.js', db.globals).ensureCurrent();
+      return eq({ ok: st2.ok, rows: db.rows.length }, { ok: true, rows: lib.MIGRATIONS.length });
+    });
+    test('database newer than the code: no step runs, warning in the error log', () => {
+      const db = fakeDb(all.concat('pinn_schema'), [1, 999]);
+      const st = loadModule('pinn-schema.js', db.globals).ensureCurrent();
+      if (!st.neuer || st.version !== 999) return 'expected neuer with version 999, got ' + JSON.stringify(st);
+      if (db.rows.length !== 2) return 'a step ran on a newer database';
+      return db.log.some(l => l.startsWith('warnung')) ? '' : 'no warning in the error log';
+    });
+    test('a failing check is reported but does not stop the other checks or the steps', () => {
+      const db = fakeDb(all);
+      db.modules['pinn-muell.js'] = { ensureSchema: () => { throw new Error('kaputt'); } };
+      const st = loadModule('pinn-schema.js', db.globals).ensureCurrent();
+      if (!db.calls.some(c => c.startsWith('pinn-zuhause.js'))) return 'checks after the failing one did not run';
+      return eq({ ok: st.ok, pruefungen: st.pruefungen, rows: db.rows.length, logged: db.log.some(l => l.includes('kaputt')) }, { ok: false, pruefungen: ['muell'], rows: lib.MIGRATIONS.length, logged: true });
+    });
+  }
+}
+
 r.info(tests + ' unit tests');
 
 r.done();
