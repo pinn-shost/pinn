@@ -15,7 +15,12 @@
   <a href="README.md">🇬🇧 English</a> ·
   <a href="README.de.md">🇩🇪 Deutsch</a> ·
   <a href="README.es.md">🇪🇸 Español</a> ·
-  <b>🇫🇷 Français</b>
+  <b>🇫🇷 Français</b> ·
+  <a href="README.it.md">🇮🇹 Italiano</a> ·
+  <a href="README.pt.md">🇧🇷 Português</a> ·
+  <a href="README.zh.md">🇨🇳 中文</a> ·
+  <a href="README.ja.md">🇯🇵 日本語</a> ·
+  <a href="README.ko.md">🇰🇷 한국어</a>
 </p>
 
 <p align="center">
@@ -88,7 +93,15 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 | 🔔 **Notifications** | Messages push personnels sur iPhone, iPad et Android, plus une cloche qui rassemble chaque changement dans la famille. |
 | 🧩 **Tout le reste** | Tableau familial avec notes déplaçables, recherche globale, mode hors ligne avec synchronisation automatique, mode sombre, tableau de bord iPad avec PIN par profil, compte invité, contrôle parental. |
 
-pinn. parle **English, Deutsch, Français, Español, Italiano, Português et 中文**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
+pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 et 🇰🇷 한국어**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
+
+## Nouveautés de la 1.107.3
+
+**Nouvelles langues : japonais et coréen**
+
+- pinn. est désormais disponible en **japonais** et en **coréen** (Réglages → Langue). Toute l’appli est traduite, y compris l’aperçu hebdomadaire et mensuel.
+- Pas encore dans ces langues : l’assistant de configuration, les fichiers d’export des données et les messages push du serveur – ils s’affichent pour l’instant en anglais.
+- Modifié : fichiers de l’appli (`index.html`, `js/sprachen.js`, `js/hinweise.js`, `js/versionslog.js`, nouveaux `lang/ja.js` et `lang/ko.js`, fichiers de langue `en`, `fr`, `es`, `it`, `pt`, `zh`). Rien ne change sur le serveur.
 
 ## Nouveautés de la 1.107.2
 
@@ -165,7 +178,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
    ```
    Le script met chaque fichier à sa place, télécharge les bibliothèques pour l’import PDF et la reconnaissance de texte sur photo, et démarre pinn.
 4. Ouvre `http://<IP-du-NAS>:8090` → **Se connecter en admin principal** → mot de passe `Admin` → choisis ton propre mot de passe.
-5. L’**assistant de configuration** t’accompagne pour le reste – HTTPS, accès à distance via WireGuard ou Tailscale, Google, IA, localisation et Home Assistant – étape par étape, en quatre langues.
+5. L’**assistant de configuration** t’accompagne pour le reste – HTTPS, accès à distance via WireGuard ou Tailscale, Google, IA, localisation et Home Assistant – étape par étape, en sept langues.
 6. Ouvre pinn. sur chaque téléphone via son adresse HTTPS et ajoute-le à l’écran d’accueil :
    - **iPhone/iPad (Safari) :** Partager → *Sur l’écran d’accueil* (iOS 16.4 ou plus récent pour les notifications)
    - **Android (Chrome) :** Réglages → Notifications → *Installer pinn. comme app*, ou menu Chrome ⋮ → *Installer l’application*
@@ -262,7 +275,7 @@ pinn/
 ├── pinn-wartung.sh      sauvegardes & mises à jour (conteneur « wartung »)
 ├── pinn-pocketbase-update.sh
 ├── index.html           simple espace réservé, jamais installé (garde le bouton de mise à jour de la 1.38 fonctionnel)
-└── README.md            page en anglais · README.de.md · README.es.md · README.fr.md (cette page)
+└── README.md            page en anglais · README.<code>.md en de, es, fr (cette page), it, pt, zh, ja, ko
 ```
 
 `pinn-setup.sh` copie `pb_hooks/`, `pb_public/` et `caddy/Caddyfile` tels quels dans le dossier du projet ; les dossiers de données (`pb_data/`, `konfig/`, `backups/`, `caddy/data/` …) ne sont jamais touchés.

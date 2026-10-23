@@ -20,6 +20,14 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.107.3', datum: '23.10.2026', titel: 'Neue Sprachen: Japanisch und Koreanisch',
+    punkte: [
+      ['neu', 'Neue Sprachen Japanisch und Koreanisch (Einstellungen → Sprache) – die ganze App ist übersetzt, auch die Wochen- und Monatsvorschau'],
+      ['info', 'Noch nicht auf Japanisch und Koreanisch: der Einrichtungsassistent, die Dateien des Datenexports und die Push-Nachrichten vom Server – dort erscheint vorerst Englisch'],
+      ['info', 'Geändert: index.html, js/sprachen.js, js/hinweise.js, js/versionslog.js, neue Dateien lang/ja.js und lang/ko.js sowie die Sprachdateien en, fr, es, it, pt und zh – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.107.2', datum: '22.10.2026', titel: 'Neue Sprachen vollständig: Einrichtung, Datenexport und Push-Nachrichten',
     punkte: [
       ['neu', 'Italienisch, Portugiesisch und Chinesisch gibt es jetzt auch im Einrichtungsassistenten, in den Dateien des Datenexports und in den Push-Nachrichten vom Server – dort erschien bisher Englisch'],

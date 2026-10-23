@@ -1422,7 +1422,7 @@ function ntActDate(ymd) {
 // Quotation marks of the selected language
 function ntActQuote(t) {
   const c = ntLangCode();
-  const q = c === 'fr' ? ['« ', ' »'] : c === 'es' || c === 'it' ? ['«', '»'] : c === 'de' ? ['„', '“'] : ['“', '”'];
+  const q = c === 'fr' ? ['« ', ' »'] : c === 'es' || c === 'it' ? ['«', '»'] : c === 'de' ? ['„', '“'] : c === 'ja' ? ['「', '」'] : ['“', '”'];
   return q[0] + escapeHtml(ntW(t)) + q[1];
 }
 // Icon of a personal push message (by its "tag")

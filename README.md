@@ -15,7 +15,12 @@
   <b>🇬🇧 English</b> ·
   <a href="README.de.md">🇩🇪 Deutsch</a> ·
   <a href="README.es.md">🇪🇸 Español</a> ·
-  <a href="README.fr.md">🇫🇷 Français</a>
+  <a href="README.fr.md">🇫🇷 Français</a> ·
+  <a href="README.it.md">🇮🇹 Italiano</a> ·
+  <a href="README.pt.md">🇧🇷 Português</a> ·
+  <a href="README.zh.md">🇨🇳 中文</a> ·
+  <a href="README.ja.md">🇯🇵 日本語</a> ·
+  <a href="README.ko.md">🇰🇷 한국어</a>
 </p>
 
 <p align="center">
@@ -88,7 +93,15 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 | 🔔 **Notifications** | Personal push messages on iPhone, iPad and Android, plus a notification bell that collects every change in the family. |
 | 🧩 **Everything else** | Family board with movable notes, global search, offline mode with automatic sync, dark mode, iPad dashboard with profile PINs, guest account, child lock. |
 
-pinn. speaks **English, Deutsch, Français, Español, Italiano, Português and 中文**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
+pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 and 🇰🇷 한국어**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
+
+## What's new in 1.107.3
+
+**New languages: Japanese and Korean**
+
+- pinn. is now available in **Japanese** and **Korean** (Settings → Language). The whole app is translated, including the weekly and monthly preview.
+- Not yet in these languages: the setup assistant, the data export files and the push messages from the server – they show English for now.
+- Changed: app files (`index.html`, `js/sprachen.js`, `js/hinweise.js`, `js/versionslog.js`, new `lang/ja.js` and `lang/ko.js`, language files `en`, `fr`, `es`, `it`, `pt`, `zh`). Nothing changes on the server.
 
 ## What's new in 1.107.2
 
@@ -165,7 +178,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
    ```
    The script copies every file into place, downloads the libraries for PDF import and photo text recognition, and starts pinn.
 4. Open `http://<NAS-IP>:8090` → **Log in as main admin** → password `Admin` → choose your own password.
-5. The **setup assistant** walks you through the rest – HTTPS, remote access via WireGuard or Tailscale, Google, AI, location and Home Assistant – step by step, in four languages.
+5. The **setup assistant** walks you through the rest – HTTPS, remote access via WireGuard or Tailscale, Google, AI, location and Home Assistant – step by step, in seven languages.
 6. Open pinn. via its HTTPS address on each phone and add it to the home screen:
    - **iPhone/iPad (Safari):** Share → *Add to Home Screen* (iOS 16.4 or later for notifications)
    - **Android (Chrome):** Settings → Notifications → *Install pinn. as an app*, or Chrome menu ⋮ → *Install app*
@@ -251,7 +264,7 @@ pinn/
 │   │                    (ruhemodus.js, sprachen.js, region.js, grundlagen.js, popups.js, verbindung.js, benutzer.js, mitteilungen.js, serverzugriff.js, tastatur.js, anmeldemaske.js, dashboard.js, dashboardhintergrund.js, profilauswahl.js, pineingabe.js, dashboardsitzung.js, dashboardkonto.js, familienverwalten.js, einrichten.js, exportieren.js, hauptadminseite.js, anmeldung.js, konto.js, profilverwaltung.js, zustand.js, bedienzustand.js, rezeptbilder.js, zusammenfuehren.js, speichern.js, design.js, sprache.js, uebersicht.js, familienkachel.js, wobistdu.js, geburtstagsfeier.js, wetterkachel.js, geburtstage.js, uebersichteinstellungen.js, familiensync.js, bereiche.js, kalenderquellen.js, icsparser.js, zeitleiste.js, termindetails.js, kalenderdatei.js, wetter.js, wohnort.js, feiertage.js, muellkalender.js, mitglieder.js, profilbild.js, mitglied.js, kinderseite.js, kinderroutine.js, sterne.js, kalenderansicht.js, essenplanen.js, rezeptparser.js, rezeptdialog.js, rezeptbild.js, rezeptmengen.js, einkauf.js, einkaufslisten.js, einkaufseingabe.js, rezepte.js, offline.js, aufgabenextras.js, appbadge.js, reisen.js, aufgabendaten.js, haushalt.js, reihum.js, aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js always comes last)
 │   ├── css/             app styles split out of index.html, plain CSS without a build step (ergaenzung.css, energiesparen.css, basis.css … haustierewetter.css, terminal.css, glocke.css)
 │   ├── einrichtung.js   setup assistant · datenexport.js  data export
-│   ├── lang/            translations (en, fr, es)
+│   ├── lang/            translations (en, fr, es, it, pt, zh, ja, ko)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js and Tesseract are downloaded by the setup)
 ├── .github/             GitHub Actions (workflows/check.yml), checks (scripts/), CONTRIBUTING.md, SECURITY.md, images – not installed
 ├── src/                 sources of index.html (build.js, rahmen.html, teile/) – not installed
@@ -262,7 +275,7 @@ pinn/
 ├── pinn-wartung.sh      backups & updates (container "wartung")
 ├── pinn-pocketbase-update.sh
 ├── index.html           placeholder only, never installed (keeps the update button of 1.38 working)
-└── README.md            this page · README.de.md · README.es.md · README.fr.md
+└── README.md            this page · README.<code>.md in de, es, fr, it, pt, zh, ja, ko
 ```
 
 `pinn-setup.sh` copies `pb_hooks/`, `pb_public/` and `caddy/Caddyfile` 1:1 into the project folder; data folders (`pb_data/`, `konfig/`, `backups/`, `caddy/data/` …) are never touched.

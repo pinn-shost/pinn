@@ -36,6 +36,10 @@ window.PINN_LANGUAGES = [
     flag: '<svg viewBox=\"0 0 20 14\" aria-hidden=\"true\"><path d=\"M0,0h20v14H0z\" fill=\"#009C3B\"/><path d=\"M10,1.6L18,7L10,12.4L2,7z\" fill=\"#FFDF00\"/><circle cx=\"10\" cy=\"7\" r=\"3.1\" fill=\"#002776\"/></svg>' },
   { code: 'zh', name: '中文', locale: 'zh-CN', file: 'lang/zh.js',
     flag: '<svg viewBox=\"0 0 30 20\" aria-hidden=\"true\"><path d=\"M0,0h30v20H0z\" fill=\"#DE2910\"/><path d=\"M5,2.2l1.2,3.7h3.9l-3.1,2.3l1.2,3.7L5,9.6L1.9,11.9l1.2-3.7L0,5.9h3.9z\" fill=\"#FFDE00\"/></svg>' },
+  { code: 'ja', name: '日本語', locale: 'ja-JP', file: 'lang/ja.js',
+    flag: '<svg viewBox="0 0 30 20" aria-hidden="true"><path d="M0,0h30v20H0z" fill="#fff"/><circle cx="15" cy="10" r="6" fill="#BC002D"/></svg>' },
+  { code: 'ko', name: '한국어', locale: 'ko-KR', file: 'lang/ko.js',
+    flag: '<svg viewBox="0 0 36 24" aria-hidden="true"><path d="M0,0h36v24H0z" fill="#fff"/><path d="M12,12A6,6 0 0 1 24,12A3,3 0 0 1 18,12A3,3 0 0 0 12,12z" fill="#CD2E3A"/><path d="M24,12A6,6 0 0 1 12,12A3,3 0 0 1 18,12A3,3 0 0 0 24,12z" fill="#0047A0"/><g fill="#000"><g transform="translate(6.5,4.5) rotate(-57)"><rect x="-2.5" y="-2.0" width="5" height="0.8"/><rect x="-2.5" y="-0.4" width="5" height="0.8"/><rect x="-2.5" y="1.2000000000000002" width="5" height="0.8"/></g><g transform="translate(29.5,19.5) rotate(-57)"><rect x="-2.5" y="-2.0" width="2.1" height="0.8"/><rect x="0.4" y="-2.0" width="2.1" height="0.8"/><rect x="-2.5" y="-0.4" width="2.1" height="0.8"/><rect x="0.4" y="-0.4" width="2.1" height="0.8"/><rect x="-2.5" y="1.2000000000000002" width="2.1" height="0.8"/><rect x="0.4" y="1.2000000000000002" width="2.1" height="0.8"/></g><g transform="translate(29.5,4.5) rotate(57)"><rect x="-2.5" y="-2.0" width="2.1" height="0.8"/><rect x="0.4" y="-2.0" width="2.1" height="0.8"/><rect x="-2.5" y="-0.4" width="5" height="0.8"/><rect x="-2.5" y="1.2000000000000002" width="2.1" height="0.8"/><rect x="0.4" y="1.2000000000000002" width="2.1" height="0.8"/></g><g transform="translate(6.5,19.5) rotate(57)"><rect x="-2.5" y="-2.0" width="5" height="0.8"/><rect x="-2.5" y="-0.4" width="2.1" height="0.8"/><rect x="0.4" y="-0.4" width="2.1" height="0.8"/><rect x="-2.5" y="1.2000000000000002" width="5" height="0.8"/></g></g></svg>' },
   { code: 'de', name: 'Deutsch', locale: 'de-DE', file: '',
     flag: '<svg viewBox="0 0 5 3" aria-hidden="true"><path d="M0,0h5v3H0z"/><path d="M0,1h5v2H0z" fill="#D00"/><path d="M0,2h5v1H0z" fill="#FFCE00"/></svg>' },
 ];
@@ -203,9 +207,30 @@ window.PINN_LANGUAGES = [
       [/全家/g, '整个合租'],
       [/家庭/g, '合租'],
     ] },
+    ja: { keep: /家族登録簿/g, rules: [
+      [/家族メンバー/g, 'ルームメイト'],
+      [/家族全員/g, 'ルームシェア全員'],
+      [/家族/g, 'ルームシェア'],
+    ] },
+    ko: { keep: /가족관계 등록부|가족용 밴/g, rules: [
+      [/가족 구성원이/g, '룸메이트가'],
+      [/가족 구성원은/g, '룸메이트는'],
+      [/가족 구성원을/g, '룸메이트를'],
+      [/가족 구성원과/g, '룸메이트와'],
+      [/가족 구성원으로/g, '룸메이트로'],
+      [/가족 구성원/g, '룸메이트'],
+      [/온 가족/g, '셰어하우스 전체'],
+      [/가족 전체/g, '셰어하우스 전체'],
+      [/가족이/g, '셰어하우스가'],
+      [/가족은/g, '셰어하우스는'],
+      [/가족을/g, '셰어하우스를'],
+      [/가족과/g, '셰어하우스와'],
+      [/가족으로/g, '셰어하우스로'],
+      [/가족/g, '셰어하우스'],
+    ] },
   };
   var TERM = wohnform === 'wg' ? (TERMS[lang.code] || TERMS.de) : null;
-  var TERM_HINT = /[Ff]amil|[Ff]amigli|[Ff]am\u00EDli|\u5BB6\u5EAD|\u5168\u5BB6|\uD83D\uDC68\u200D\uD83D\uDC69/;
+  var TERM_HINT = /[Ff]amil|[Ff]amigli|[Ff]am\u00EDli|\u5BB6\u5EAD|\u5168\u5BB6|\u5BB6\u65CF|\uAC00\uC871|\uD83D\uDC68\u200D\uD83D\uDC69/;
   function term(s) {
     if (!TERM || !s || !TERM_HINT.test(s)) return s;
     var kept = [];
@@ -446,7 +471,7 @@ window.PINN_LANGUAGES = [
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
   // Raise the version number with every change to the language files, otherwise devices keep using the old file
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.107.2" onerror="PINN_I18N.fail()"><\/script>');
+  if (DICT) document.write('<script src="' + lang.file + '?v=1.107.3" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // German as a flat share: no dictionary, only the flat share terms
 })();
 
