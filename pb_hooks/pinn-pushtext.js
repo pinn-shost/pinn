@@ -46,10 +46,8 @@ function wohnformOf(familyId) {
     } catch (e) { /* neu lesen */ }
     let w = "";
     try {
-        const m = new DynamicModel({ w: "" });
-        $app.db().newQuery("SELECT COALESCE(json_extract(data, '$.wohnform'), '') AS w FROM familien_daten WHERE familie = {:f} LIMIT 1")
-            .bind({ f: String(familyId) }).one(m);
-        w = String(m.w || "");
+        // Ab 1.108 im Bereich „einstellungen“ (pinn-bereiche.js), vorher in familien_daten - fieldText liest beides
+        w = require(`${__hooks}/pinn-bereiche.js`).fieldText(familyId, "einstellungen", "wohnform");
     } catch (e) {
         // SQLite ohne JSON-Funktionen (sollte es nicht geben): einmal die Familiendaten lesen
         try { w = String((require(`${__hooks}/pinn-benutzer.js`).loadFamilyDataFor(familyId) || {}).wohnform || ""); } catch (e2) { w = ""; }

@@ -19,7 +19,8 @@
 // in den Kassen. Ein mitgeschicktes "finance" (z. B. von einem noch nicht aktualisierten Gerät) wird
 // dann verworfen und nie mehr im Familien-Datensatz gespeichert - sonst sähe jedes Profil sie wieder.
 //
-// Bereiche (pinn-bereiche.js, ab 1.104.0): Rezepte, Essensplan, Einkauf und Vorrat liegen in eigenen
+// Bereiche (pinn-bereiche.js, ab 1.104.0): Rezepte, Essensplan, Einkauf, Vorrat, Pinnwand, Listen,
+// Schule & Kita, Haustiere, Wartungsplan und ab 1.108.0 Mitglieder, Notfallpässe und Einstellungen liegen in eigenen
 // Datensätzen ("familien_bereiche") und werden über /api/pinn/bereiche/speichern gespeichert. Die App
 // schickt mit, welche Bereiche sie selbst verwaltet ("bereiche": Liste der Namen; 1.104 schickte true =
 // Rezepte und Essensplan). Was ein Gerät trotzdem noch im großen Block schickt, wird in die Bereiche
@@ -58,6 +59,9 @@ routerAdd("POST", "/api/pinn/save", (e) => {
 
     // Beispiel-Mitglieder (Anna/Jonas/Mia) von älteren Geräten nie wieder speichern
     try { require(`${__hooks}/pinn-benutzer.js`).stripExampleMembers(e.auth.getString("familie"), incoming); } catch (err) { /* egal */ }
+
+    // Gäste ändern die Gast-Menüs nie - auch nicht über die Bereiche (ab 1.108 im Bereich „einstellungen“)
+    if (guest) delete incoming.guestHiddenViews;
 
     // Bereiche (Rezepte, Essensplan …) gehören nicht mehr in den Familien-Datensatz
     let bekannt = [];

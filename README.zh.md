@@ -99,16 +99,21 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語和 🇰🇷 한국어**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
-## 1.107.4 新功能
+## 1.108.0 新功能
 
-**日语和韩语补全：设置向导、数据导出和推送消息**
+**家庭成员、紧急卡和设置改为独立记录**
 
-- 设置向导、数据导出文件和服务器推送消息现在也支持日语和韩语（此前显示英文）。九种语言全部完成。
-- 语音控制（Siri/Android）仍然支持德语、英语、法语和西班牙语。
-- 已更改：应用文件（`index.html`, `js/sprachen.js`, `js/einrichten.js`, `js/exportieren.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`，所有语言文件）以及服务器上的 `pb_hooks/pinn-pushtext.js`, `pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-aufgaben.js`, `pinn-wobistdu.js`, `pinn-einrichtung.js`。
+- **家庭成员**、**紧急卡**和**家庭设置**（名称、家庭/合租、类别、厨具、菜单）现在作为独立记录保存在服务器上。每个部分单独保存和同步，使用方式没有变化。
+- 迁移前为每个家庭创建备份（`pb_data/pinn_umzug/`，保留 30 天）；旧版应用的设备仍能看到全部内容。
+- 变更：应用文件（`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/profilverwaltung.js`, `js/sprachen.js`, `js/versionslog.js`、所有语言文件）以及服务器上的 `pb_hooks/pinn-bereiche.js`, `bereiche.pb.js`, `pinn-benutzer.js`, `save_family_data.pb.js`, `pinn-pushtext.js`, `calendar-sync.js`。
 
 更早的版本请见 [Releases](https://github.com/pinn-shost/pinn/releases)。
 
+## 工作原理
+
+```mermaid
+flowchart LR
+  subgraph Home["你的家庭网络"]
     direction LR
     P["📱 Phones & tablets<br/>pinn. on the home screen"] -->|HTTPS| C["Caddy<br/>certificate via DuckDNS"]
     C --> PB["PocketBase<br/>pinn. app + database"]
@@ -132,7 +137,7 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.107.4` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.108.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

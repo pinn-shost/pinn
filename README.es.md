@@ -95,6 +95,15 @@ Siempre contigo: pinn. se instala en cada iPhone y móvil Android como una app n
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 y 🇰🇷 한국어**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.108.0
+
+**Miembros de la familia, pasaportes de emergencia y ajustes en registros propios**
+
+- Cuarto paso del traslado de los datos familiares fuera del gran bloque de datos: los **miembros de la familia**, los **pasaportes de emergencia** y los **ajustes de la familia** (nombre, familia/piso compartido, categorías, utensilios de cocina, menús) ahora están en registros propios en el servidor. Cada parte se guarda y sincroniza por separado. El uso no cambia.
+- La misma red de seguridad que antes: una copia de seguridad por familia antes del traslado (`pb_data/pinn_umzug/`, 30 días); los dispositivos con una app más antigua siguen viéndolo todo.
+- Los perfiles nuevos o eliminados cambian los miembros directamente en el nuevo registro; los invitados siguen sin poder cambiar los menús de invitado.
+- Modificado: archivos de la app (`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/profilverwaltung.js`, `js/sprachen.js`, `js/versionslog.js`, todos los archivos de idioma) y en el servidor `pb_hooks/pinn-bereiche.js`, `bereiche.pb.js`, `pinn-benutzer.js`, `save_family_data.pb.js`, `pinn-pushtext.js`, `calendar-sync.js`. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
+
 ## Novedades de la 1.107.4
 
 **Japonés y coreano completos: configuración, exportación de datos y mensajes push**
@@ -136,15 +145,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Para colaboradores: una nueva comprobación de los archivos de idioma (`.github/scripts/check-lang.js`, incluida en `check-all.js` y en las comprobaciones de GitHub) y una herramienta que traduce nuevos idiomas con la API de Claude (`.github/scripts/translate.js`, workflow «Translate»). Habrá más idiomas.
 - Modificado: archivos de la app (`index.html`, `js/sprachen.js`, `js/ausblick.js`, `js/einrichten.js`, `js/exportieren.js`, `js/hinweise.js`, `js/versionslog.js`, nuevo `lang/it.js`, archivos de idioma `en`, `fr`, `es`) y en el servidor `pb_hooks/pinn-pushtext.js`, `pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-sprache.js`, `pinn-wobistdu.js`. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
 
-## Novedades de la 1.106
-
-**Tablón, listas, colegio, mascotas y plan de mantenimiento en registros propios**
-
-- Tercer paso para dividir los datos de la familia: el **tablón familiar**, las **listas** (equipaje, regalos, deseos, listas de control, ideas y plantillas), **colegio y guardería**, las **mascotas** y el **plan de mantenimiento** (Hogar) se guardan ahora en registros propios en el servidor. Cada parte se guarda y sincroniza por separado. El uso de la app no cambia.
-- La misma red de seguridad que antes: una copia de seguridad por familia antes del traslado (`pb_data/pinn_umzug/`, 30 días); los dispositivos con una versión antigua de la app siguen viéndolo todo.
-- Todas las funciones del servidor (recordatorios, mensajes y fotos del tablón, mascotas, listas de equipaje, tareas del hogar) leen ahora los datos de la familia con todas las partes trasladadas.
-- Cambiados: archivos de la app (`index.html`, `js/versionslog.js`) y en el servidor `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-benutzer.js`, `pb_hooks/save_family_data.pb.js`, `pb_hooks/pinn-sprache.js`, `pb_hooks/pinn-vorrat.js`. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
-
 ## Cómo funciona
 
 ```mermaid
@@ -171,7 +171,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.107.4` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.108.0` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

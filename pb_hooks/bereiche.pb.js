@@ -11,6 +11,7 @@
 //   POST /api/pinn/bereiche/speichern  { bereich, expectedUpdated, data } -> 200 { success, updated } |
 //                                      409 { conflict, updated, data } (someone else saved in between –
 //                                      the app merges both states and tries again)
+//                                      Guest accounts cannot change the guest menus (settings area).
 //
 // IMPORTANT: PocketBase runs every route handler isolated – functions declared at file level are not
 // visible inside a handler. Everything lives in pinn-bereiche.js and is fetched with require().
@@ -44,7 +45,9 @@ routerAdd("POST", "/api/pinn/bereiche/speichern", (e) => {
         const familyId = B.httpFamily(e);
         if (!familyId) return B.httpSend(e, 403, { error: "Dein Profil gehört zu keiner Familie." });
         if (!B.ensureSchema()) return B.httpSend(e, 503, { error: "Die Bereiche sind auf dem Server noch nicht eingerichtet." });
-        const r = B.save(familyId, B.httpBody(e));
+        let guest = false;
+        try { guest = require(`${__hooks}/pinn-benutzer.js`).isGuest(e); } catch (err) { guest = false; }
+        const r = B.save(familyId, B.httpBody(e), { guest: guest });
         if (r.saved) B.afterSave(familyId, r.name, r.previous, r.saved, e.auth);
         return B.httpSend(e, r.status, r.body);
     } catch (ex) {

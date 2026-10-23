@@ -95,6 +95,15 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 and 🇰🇷 한국어**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.108.0
+
+**Family members, emergency passes and settings in records of their own**
+
+- Fourth step of moving the family data out of the one big data block: the **family members**, the **emergency passes** and the **family settings** (name, family/flatshare, categories, kitchen tools, menus) now live in records of their own on the server. Each part is saved and synced on its own. Nothing changes in how you use the app.
+- Same safety net as before: a backup per family before the move (`pb_data/pinn_umzug/`, 30 days), devices with an older app keep seeing everything.
+- New or deleted profiles change the members directly in the new record; guests still cannot change the guest menus.
+- Changed: app files (`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/profilverwaltung.js`, `js/sprachen.js`, `js/versionslog.js`, all language files) and on the server `pb_hooks/pinn-bereiche.js`, `bereiche.pb.js`, `pinn-benutzer.js`, `save_family_data.pb.js`, `pinn-pushtext.js`, `calendar-sync.js`. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.107.4
 
 **Japanese and Korean complete: setup, data export and push messages**
@@ -136,15 +145,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - For contributors: a new check for language files (`.github/scripts/check-lang.js`, part of `check-all.js` and of the GitHub checks) and a tool that translates new languages with the Claude API (`.github/scripts/translate.js`, workflow “Translate”). More languages will follow.
 - Changed: app files (`index.html`, `js/sprachen.js`, `js/ausblick.js`, `js/einrichten.js`, `js/exportieren.js`, `js/hinweise.js`, `js/versionslog.js`, new `lang/it.js`, language files `en`, `fr`, `es`) and on the server `pb_hooks/pinn-pushtext.js`, `pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-sprache.js`, `pinn-wobistdu.js`. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
-## What's new in 1.106
-
-**Board, lists, school, pets and maintenance plan in records of their own**
-
-- Third step of moving the family data out of the one big data block: the **family board**, the **lists** (packing, gifts, wishes, checklists, ideas and templates), **school & daycare**, **pets** and the **maintenance plan** (Home) now live in records of their own on the server. Each part is saved and synced on its own. Nothing changes in how you use the app.
-- Same safety net as before: a backup per family before the move (`pb_data/pinn_umzug/`, 30 days), devices with an older app keep seeing everything.
-- All server functions (reminders, board messages and photos, pets, packing lists, household tasks) now read the family data including every moved part.
-- Changed: app files (`index.html`, `js/versionslog.js`) and on the server `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-benutzer.js`, `pb_hooks/save_family_data.pb.js`, `pb_hooks/pinn-sprache.js`, `pb_hooks/pinn-vorrat.js`. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
 ## How it works
 
 ```mermaid
@@ -171,7 +171,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.107.4` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.108.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -18,6 +18,13 @@
 //   schule      schoolProfiles, schoolHomework, schoolLetters, schoolClosures (since 1.106.0)
 //   haustiere   pets, petLog                                       (since 1.106.0)
 //   zuhause     houseMaintenance                                   (since 1.106.0)
+//   mitglieder  members                                            (since 1.108.0)
+//   notfall     emergencyPasses                                    (since 1.108.0)
+//   einstellungen  lastName, wohnform, themeColors, darkMode, default views, categoryActive,
+//               weatherLocation, kitchenTools, favoriteTabs, guestHiddenViews,
+//               documentCategories                                 (since 1.108.0)
+// Still in familien_daten: tasks and the household (rooms, roomSchedules, trashBins, smartDevices,
+// cleaningCategories, doneTaskCleanupDays), the calendar selection (appleCalendar) and old values.
 //
 // Server code reads the family data through pinn-benutzer.js: loadFamilyDataFor() contains the areas
 // (overlay) and familyDataStamp() changes with every area as well, so caches built on it stay correct.
@@ -59,11 +66,18 @@ const AREAS = {
     schule: ["schoolProfiles", "schoolHomework", "schoolLetters", "schoolClosures"],
     haustiere: ["pets", "petLog"],
     zuhause: ["houseMaintenance"],
+    mitglieder: ["members"],
+    notfall: ["emergencyPasses"],
+    einstellungen: ["lastName", "wohnform", "themeColors", "darkMode", "defaultViewModeDesktop", "defaultViewScopeDesktop",
+        "defaultViewModeMobile", "defaultViewScopeMobile", "categoryActive", "weatherLocation", "kitchenTools", "favoriteTabs",
+        "guestHiddenViews", "documentCategories"],
 };
 // Areas app 1.104 knew (it sent bereiche=true / ?bereiche=1)
 const AREAS_1104 = ["rezepte", "essensplan"];
 // Other areas the bell needs to describe a change (a new meal gets the title of its recipe)
-const CONTEXT = { essensplan: ["rezepte"] };
+const CONTEXT = { essensplan: ["rezepte"], notfall: ["mitglieder"] };
+// Keys of an area a guest account cannot change (the stored value is kept)
+const GUEST_LOCKED = { einstellungen: ["guestHiddenViews"] };
 const DATA_MAX = 50 * 1024 * 1024;   // same limit as familien_daten (recipe photos of old versions are embedded)
 const COPY_DAYS = 30;
 const BACKUP_DIR = "/pb_data/pinn_umzug";
@@ -200,14 +214,27 @@ function overlay(familyId, data, names) {
     Object.keys(extra).forEach(k => { base[k] = extra[k]; });
     return base;
 }
-// Kitchen tools of the family (for the public recipes) without parsing the whole family record
-function kitchenToolsOf(familyId) {
+// One value of an area as SQLite returns it (json_extract: text as is, lists/objects as JSON text), without
+// parsing the area in JS. Until the area has moved (or if the key is missing there) familien_daten is read.
+// -> "" if the value is not there
+function fieldText(familyId, name, key) {
+    if (!familyId || !/^[A-Za-z0-9_]+$/.test(String(key || ""))) return "";
+    const fromFamily = "(SELECT json_extract(data, '$." + key + "') FROM familien_daten WHERE familie = {:f} LIMIT 1)";
+    const fromArea = "(SELECT json_extract(data, '$." + key + "') FROM " + COL + " WHERE familie = {:f} AND bereich = {:b} LIMIT 1)";
+    const sql = findCol(COL) && AREAS[name]
+        ? "SELECT COALESCE(" + fromArea + ", " + fromFamily + ", '') AS t"
+        : "SELECT COALESCE(" + fromFamily + ", '') AS t";
     try {
         const m = new DynamicModel({ t: "" });
-        $app.db().newQuery("SELECT COALESCE(json_extract(data, '$.kitchenTools'), '') AS t FROM familien_daten WHERE familie = {:f} LIMIT 1")
-            .bind({ f: String(familyId) }).one(m);
-        const t = String(m.t || "");
-        if (!t) return [];
+        $app.db().newQuery(sql).bind({ f: String(familyId), b: String(name || "") }).one(m);
+        return String(m.t === null || m.t === undefined ? "" : m.t);
+    } catch (e) { return ""; }
+}
+// Kitchen tools of the family (for the public recipes) without parsing the whole family record
+function kitchenToolsOf(familyId) {
+    const t = fieldText(familyId, "einstellungen", "kitchenTools");
+    if (!t) return [];
+    try {
         const v = JSON.parse(t);
         return Array.isArray(v) ? v : [];
     } catch (e) { return []; }
@@ -397,10 +424,12 @@ function absorb(familyId, incoming) {
     const moved = movedNames(familyId);
     if (!moved.length) return 0;
     let added = 0;
+    let toolsAdded = false;
     moved.forEach(n => {
         const keys = keysOf(n);
         if (!hasAny(incoming, keys)) return;
         const part = pick(incoming, keys);
+        const before = added;
         keys.forEach(k => { delete incoming[k]; });
         try {
             $app.runInTransaction((tx) => {
@@ -419,8 +448,13 @@ function absorb(familyId, incoming) {
         } catch (err) {
             console.log("[Bereiche] Daten eines älteren Geräts nicht übernehmbar: " + err.message);
         }
+        if (n === "einstellungen" && added > before && part.kitchenTools !== undefined) toolsAdded = true;
     });
     if (added) console.log("[Bereiche] Familie " + familyId + ": " + added + " Einträge von einem älteren Gerät ergänzt.");
+    if (toolsAdded) {
+        // New kitchen tools from an older device: the public recipes show them as well
+        try { syncPublicRecipes(familyId); } catch (err) { console.log("[Rezepte] Abgleich öffentlicher Rezepte fehlgeschlagen: " + err.message); }
+    }
     return added;
 }
 // Copies of the move are only kept for COPY_DAYS days
@@ -473,8 +507,8 @@ function list(familyId, stand) {
     });
     return out;
 }
-// body: { bereich, expectedUpdated, data } -> { status, body, previous, saved }
-function save(familyId, body) {
+// body: { bereich, expectedUpdated, data }, opts: { guest } -> { status, body, previous, saved }
+function save(familyId, body, opts) {
     const name = String((body && body.bereich) || "");
     if (!AREAS[name]) return { status: 400, body: { error: "Unbekannter Bereich.", gone: true } };
     if (!body || !isObj(body.data)) return { status: 400, body: { error: "data fehlt." } };
@@ -494,6 +528,13 @@ function save(familyId, body) {
             return;
         }
         previous = pick(parse(rec.get("data")), keysOf(name));
+        if (opts && opts.guest) {
+            // A guest cannot change these keys: keep what is stored
+            (GUEST_LOCKED[name] || []).forEach(k => {
+                if (previous[k] !== undefined) incoming[k] = previous[k];
+                else delete incoming[k];
+            });
+        }
         rec.set("data", incoming);
         tx.save(rec);
         result = { status: 200, body: { success: true, updated: rec.getString("updated") } };
@@ -548,6 +589,11 @@ function afterSave(familyId, name, previous, saved, auth) {
             require(`${__hooks}/pinn-rezepte.js`).syncFamily(familyId, { recipes: saved.recipes || [], kitchenTools: kitchenToolsOf(familyId) });
         } catch (err) { console.log("[Rezepte] Abgleich öffentlicher Rezepte fehlgeschlagen: " + err.message); }
     }
+    if (name === "einstellungen" && JSON.stringify((previous && previous.kitchenTools) || null) !== JSON.stringify(saved.kitchenTools || null)) {
+        // Kitchen tools are part of the public recipes
+        try { syncPublicRecipes(familyId, saved.kitchenTools); }
+        catch (err) { console.log("[Rezepte] Abgleich öffentlicher Rezepte fehlgeschlagen: " + err.message); }
+    }
     if (name === "pinnwand") {
         // Board: remember new notes, replies and reminders for the push messages
         try { require(`${__hooks}/pinn-pinnwand.js`).afterSave(familyId, saved, auth ? auth.id : ""); }
@@ -597,9 +643,9 @@ function httpFail(e, where, ex, status) {
 }
 
 module.exports = {
-    COL, AREAS, COPY_DAYS,
+    COL, AREAS, COPY_DAYS, GUEST_LOCKED,
     ensureSchema, migrateAll, migrateFamily, ensureFamily, expireCopies, takeLeftovers, absorb,
-    names, keysOf, allKeys, areaOfKey, movedNames, isMoved, readMany, overlay, kitchenToolsOf, leftoverKeys,
+    names, keysOf, allKeys, areaOfKey, movedNames, isMoved, readMany, overlay, fieldText, kitchenToolsOf, leftoverKeys,
     list, save, afterSave, syncPublicRecipes, unionMerge, knownAreas, unknownAreas, updateArea, areasStamp,
     httpSend, httpBody, httpFamily, httpFail,
 };

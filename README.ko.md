@@ -99,16 +99,21 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
-## 1.107.4의 새 소식
+## 1.108.0의 새 소식
 
-**일본어와 한국어 완전 지원: 초기 설정, 데이터 내보내기, 푸시 알림**
+**가족 구성원, 비상 카드, 설정을 별도 레코드로**
 
-- 이제 초기 설정 도우미, 데이터 내보내기 파일, 서버의 푸시 알림에서도 일본어와 한국어를 쓸 수 있어요(지금까지는 영어로 표시). 아홉 개 언어가 모두 완성됐어요.
-- 음성 제어(Siri/Android)는 계속 독일어, 영어, 프랑스어, 스페인어를 이해해요.
-- 변경: 앱 파일(`index.html`, `js/sprachen.js`, `js/einrichten.js`, `js/exportieren.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, 모든 언어 파일) 및 서버의 `pb_hooks/pinn-pushtext.js`, `pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-aufgaben.js`, `pinn-wobistdu.js`, `pinn-einrichtung.js`.
+- **가족 구성원**, **비상 카드**, **가족 설정**(이름, 가족/셰어하우스, 카테고리, 주방 도구, 메뉴)이 이제 서버의 별도 레코드에 저장돼요. 각 부분은 따로 저장되고 동기화돼요. 사용 방법은 바뀌지 않아요.
+- 이전 전에 가족별 백업을 만들어요(`pb_data/pinn_umzug/`, 30일). 이전 앱을 쓰는 기기에서도 계속 모든 내용이 보여요.
+- 변경: 앱 파일(`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/profilverwaltung.js`, `js/sprachen.js`, `js/versionslog.js`, 모든 언어 파일)과 서버의 `pb_hooks/pinn-bereiche.js`, `bereiche.pb.js`, `pinn-benutzer.js`, `save_family_data.pb.js`, `pinn-pushtext.js`, `calendar-sync.js`.
 
 이전 버전은 [Releases](https://github.com/pinn-shost/pinn/releases)에서 볼 수 있어요.
 
+## 작동 방식
+
+```mermaid
+flowchart LR
+  subgraph Home["집 네트워크"]
     direction LR
     P["📱 Phones & tablets<br/>pinn. on the home screen"] -->|HTTPS| C["Caddy<br/>certificate via DuckDNS"]
     C --> PB["PocketBase<br/>pinn. app + database"]
@@ -132,7 +137,7 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.107.4` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.108.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

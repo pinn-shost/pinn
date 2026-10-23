@@ -576,9 +576,50 @@ function newMemberId(taken) {
     taken[id] = true;
     return id;
 }
+// Bereiche-Modul (pinn-bereiche.js) - null, wenn es (noch) nicht geladen werden kann
+function areasLib() {
+    try { return require(`${__hooks}/pinn-bereiche.js`); } catch (e) { return null; }
+}
+// Profile ohne verknüpftes Mitglied bekommen eine neue Mitglieds-ID (wird am Profil gespeichert).
+// Läuft immer AUSSERHALB einer Transaktion. -> Liste der Profile der Familie
+function linkProfilesToMembers(familyId, members) {
+    const used = {};
+    (members || []).forEach(m => { if (m && m.id) used[String(m.id)] = true; });
+    const profiles = familyMemberProfiles(familyId);
+    profiles.forEach(p => {
+        if (p.getString("mitglied")) return;
+        p.set("mitglied", newMemberId(used));
+        $app.save(p);
+    });
+    return profiles;
+}
+// Ergänzt in einer Mitgliederliste die Mitglieder der Profile, die noch fehlen. true = etwas ergänzt.
+function addProfileMembers(list, profiles) {
+    const ids = {};
+    list.forEach(m => { if (m && m.id) ids[String(m.id)] = true; });
+    let changed = false;
+    profiles.forEach(p => {
+        const mid = p.getString("mitglied");
+        if (!mid || ids[mid]) return;
+        list.push({
+            id: mid,
+            name: p.getString("username"),
+            role: "",
+            color: MEMBER_COLORS[list.length % MEMBER_COLORS.length],
+            displayMode: "name",
+        });
+        ids[mid] = true;
+        changed = true;
+    });
+    return changed;
+}
 // Gleicht die Familienmitglieder einer Familie mit ihren Profilen ab. true = etwas geändert.
+// Ab 1.108 liegen die Mitglieder im Bereich „mitglieder“ und der Familienname im Bereich „einstellungen“
+// (pinn-bereiche.js); solange eine Familie noch nicht umgezogen ist, gilt der alte Weg über familien_daten.
 function syncFamilyMembers(familyId) {
     if (!familyId) return false;
+    const B = areasLib();
+    if (B && B.isMoved(familyId, "mitglieder")) return syncFamilyMembersArea(B, familyId);
     try {
         let fam = null;
         try { fam = $app.findRecordById(FAMILIEN, String(familyId)); } catch (e) { return false; }
@@ -598,28 +639,8 @@ function syncFamilyMembers(familyId) {
         let changed = isNew || !Array.isArray(data.members);
         if (!Array.isArray(data.members)) data.members = [];
         if (stripExampleMembers(familyId, data)) changed = true;
-        const ids = {};
-        data.members.forEach(m => { if (m && m.id) ids[String(m.id)] = true; });
-        const used = Object.assign({}, ids);
-        familyMemberProfiles(familyId).forEach(p => {
-            let mid = p.getString("mitglied");
-            if (mid && ids[mid]) return;
-            if (!mid) {
-                mid = newMemberId(used);
-                p.set("mitglied", mid);
-                $app.save(p);
-            }
-            data.members.push({
-                id: mid,
-                name: p.getString("username"),
-                role: "",
-                color: MEMBER_COLORS[data.members.length % MEMBER_COLORS.length],
-                displayMode: "name",
-            });
-            ids[mid] = true;
-            used[mid] = true;
-            changed = true;
-        });
+        const profiles = linkProfilesToMembers(familyId, data.members);
+        if (addProfileMembers(data.members, profiles)) changed = true;
         if (data.lastName === undefined || data.lastName === "Mustermann") {
             data.lastName = lastNameFromFamily(fam.getString("name"));
             changed = true;
@@ -633,25 +654,94 @@ function syncFamilyMembers(familyId) {
         return false;
     }
 }
+// Abgleich über die Bereiche. Alles, was andere Datensätze liest oder schreibt (Profile, Beispiel-Mitglieder),
+// passiert vorher - in der Transaktion von updateArea wird nur noch die Liste geändert.
+function syncFamilyMembersArea(B, familyId) {
+    try {
+        let fam = null;
+        try { fam = $app.findRecordById(FAMILIEN, String(familyId)); } catch (e) { return false; }
+        const current = (B.readMany(familyId, ["mitglieder"]).members) || [];
+        const check = { members: Array.isArray(current) ? current.slice() : [] };
+        const strip = stripExampleMembers(familyId, check);
+        const keep = {};
+        check.members.forEach(m => { if (m && m.id) keep[String(m.id)] = true; });
+        const profiles = linkProfilesToMembers(familyId, current);
+        const r1 = B.updateArea(familyId, "mitglieder", (data) => {
+            let changed = false;
+            if (!Array.isArray(data.members)) { data.members = []; changed = true; }
+            if (strip) {
+                const before = data.members.length;
+                data.members = data.members.filter(m => !isExampleMember(m) || (m && keep[String(m.id)]));
+                if (data.members.length !== before) changed = true;
+            }
+            if (addProfileMembers(data.members, profiles)) changed = true;
+            return changed;
+        });
+        let changed = r1.changed;
+        if (B.isMoved(familyId, "einstellungen")) {
+            const name = lastNameFromFamily(fam.getString("name"));
+            const r2 = B.updateArea(familyId, "einstellungen", (data) => {
+                if (data.lastName !== undefined && data.lastName !== "Mustermann") return false;
+                data.lastName = name;
+                return true;
+            });
+            if (r2.changed) changed = true;
+        }
+        return changed;
+    } catch (err) {
+        console.log("[Familien] Abgleich der Familienmitglieder fehlgeschlagen: " + err.message);
+        return false;
+    }
+}
 function syncAllFamilyMembers() {
     allFamilies().forEach(f => syncFamilyMembers(f.id));
 }
-// Mitglied (samt Notfallpass) aus den Familiendaten entfernen, z. B. wenn sein Profil gelöscht wurde
+// Mitglied (samt Notfallpass) aus den Familiendaten entfernen, z. B. wenn sein Profil gelöscht wurde.
+// Ab 1.108 aus den Bereichen „mitglieder“ und „notfall“, sonst (noch nicht umgezogen) aus familien_daten.
 function removeFamilyMember(familyId, memberId) {
     if (!familyId || !memberId) return false;
+    const B = areasLib();
+    const movedMembers = !!(B && B.isMoved(familyId, "mitglieder"));
+    const movedPasses = !!(B && B.isMoved(familyId, "notfall"));
+    let removed = false;
     try {
+        if (movedMembers) {
+            const r = B.updateArea(familyId, "mitglieder", (data) => {
+                if (!Array.isArray(data.members) || !data.members.some(m => m && m.id === memberId)) return false;
+                data.members = data.members.filter(m => !m || m.id !== memberId);
+                return true;
+            });
+            removed = r.changed;
+        }
+        if (movedPasses) {
+            B.updateArea(familyId, "notfall", (data) => {
+                const passes = data.emergencyPasses;
+                if (!passes || typeof passes !== "object" || Array.isArray(passes) || !Object.prototype.hasOwnProperty.call(passes, memberId)) return false;
+                delete passes[memberId];
+                return true;
+            });
+        }
+        if (movedMembers && movedPasses) return removed;
         const rec = familyDataRecord(familyId);
-        if (!rec) return false;
+        if (!rec) return removed;
         const data = require(`${__hooks}/calendar-sync.js`).parseRecordData(rec.get("data")) || {};
-        if (!Array.isArray(data.members) || !data.members.some(m => m && m.id === memberId)) return false;
-        data.members = data.members.filter(m => !m || m.id !== memberId);
-        if (data.emergencyPasses && typeof data.emergencyPasses === "object") delete data.emergencyPasses[memberId];
+        let changed = false;
+        if (!movedMembers && Array.isArray(data.members) && data.members.some(m => m && m.id === memberId)) {
+            data.members = data.members.filter(m => !m || m.id !== memberId);
+            changed = true;
+            removed = true;
+        }
+        if (!movedPasses && data.emergencyPasses && typeof data.emergencyPasses === "object" && Object.prototype.hasOwnProperty.call(data.emergencyPasses, memberId)) {
+            delete data.emergencyPasses[memberId];
+            changed = true;
+        }
+        if (!changed) return removed;
         rec.set("data", data);
         $app.save(rec);
-        return true;
+        return removed;
     } catch (err) {
         console.log("[Familien] Mitglied konnte nicht entfernt werden: " + err.message);
-        return false;
+        return removed;
     }
 }
 

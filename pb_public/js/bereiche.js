@@ -2,7 +2,8 @@
    Classic script, no build step; loaded right after js/familiensync.js (load order: src/rahmen.html).
    Since 1.104.0 some parts of the family data live in records of their own on the server
    (collection "familien_bereiche", pb_hooks/pinn-bereiche.js) – recipes and the meal plan (1.104), shopping and
-   pantry (1.105). Which keys belong to which area is told by the server, so a new area needs no change here.
+   pantry (1.105), board, lists, school & daycare, pets and the maintenance plan (1.106), members, emergency passes
+   and the family settings (1.108). Which keys belong to which area is told by the server, so a new area needs no change here.
    The server is told which areas this device handles itself (areaKnownList / areaKnownParam); areas it does not
    know yet are added to the family record for it, so nothing ever disappears while the lists differ.
    The rest of the app does not notice anything: the app variables stay the same, only loading and saving
@@ -202,6 +203,13 @@ async function areasPull() {
   if (!familyRecordId || !areaFamily()) return;
   if (areasHavePending()) { areasFlush(); return; }
   const changed = await areasLoad(false);
+  if (changed && areasActive()) areaApplyToApp();
+}
+// Fetch the areas right away and show changes (e.g. after a profile was deleted: the server removes its member)
+async function areasRefresh() {
+  if (!familyRecordId || !areaFamily() || areaServer !== true) return;
+  if (areasHavePending()) { areasFlush(); return; }
+  const changed = await areasLoad(true);
   if (changed && areasActive()) areaApplyToApp();
 }
 function areaApplyToApp() {

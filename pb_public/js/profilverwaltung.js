@@ -40,6 +40,7 @@ async function profileManageCall(url, payload, okText) {
   const body = await res.json().catch(() => ({}));
   status.textContent = res.ok ? okText : (body.error || 'Fehler');
   renderAccountSettings();
+  if (res.ok) areasRefresh().catch(() => {}); // members live in their own record – show what the server changed
   return res.ok;
 }
 

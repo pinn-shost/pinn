@@ -20,6 +20,14 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.108', datum: '23.10.2026', titel: 'Familienmitglieder, Notfallpässe und Einstellungen in eigenen Datensätzen',
+    punkte: [
+      ['info', 'Familienmitglieder, Notfallpässe und die Familien-Einstellungen (Name, Familie/WG, Kategorien, Küchengeräte, Menüs) liegen jetzt in eigenen Datensätzen auf dem Server. Jeder Teil wird für sich gespeichert und abgeglichen – an der Bedienung ändert sich nichts'],
+      ['info', 'Wie bei 1.104–1.106: vor dem Umzug eine Sicherung je Familie (pb_data/pinn_umzug, 30 Tage), Geräte mit älterer App sehen weiter alles. Neue oder gelöschte Profile ändern die Mitglieder direkt im neuen Datensatz; Gäste können die Gast-Menüs weiterhin nicht ändern'],
+      ['info', 'Geändert: index.html, js/bereiche.js, js/familiensync.js, js/profilverwaltung.js, js/sprachen.js, js/versionslog.js, alle Sprachdateien sowie am Server pb_hooks/pinn-bereiche.js, bereiche.pb.js, pinn-benutzer.js, save_family_data.pb.js, pinn-pushtext.js und calendar-sync.js'],
+    ],
+  },
+  {
     v: '1.107.4', datum: '23.10.2026', titel: 'Japanisch und Koreanisch vollständig: Einrichtung, Datenexport und Push-Nachrichten',
     punkte: [
       ['neu', 'Japanisch und Koreanisch gibt es jetzt auch im Einrichtungsassistenten, in den Dateien des Datenexports und in den Push-Nachrichten vom Server – dort erschien bisher Englisch'],
