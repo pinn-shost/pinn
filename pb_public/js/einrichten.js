@@ -2,13 +2,13 @@
    Part of the app code that used to be a single block in index.html. Classic script, no build step:
    it is loaded right after the inline script of index.html and before the other files in js/
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
-   Contents: the texts of the setup in four languages (PINN_SETUP_TEXTE, pinnSetupText) and loading and opening the assistant (loadPinnSetupScript, openPinnSetup). The assistant itself lives in pb_public/einrichtung.js and is only loaded when first opened. The notice about the open setup is in js/hauptadminseite.js. */
+   Contents: the texts of the setup in nine languages (PINN_SETUP_TEXTE, pinnSetupText) and loading and opening the assistant (loadPinnSetupScript, openPinnSetup). The assistant itself lives in pb_public/einrichtung.js and is only loaded when first opened. The notice about the open setup is in js/hauptadminseite.js. */
 
 /* ==========================================================
    Setup (assistant for the main admin)
    ----------------------------------------------------------
    The assistant lives in pb_public/einrichtung.js and is only loaded when it is needed
-   (own texts in German, English, French and Spanish). Server: pb_hooks/einrichtung.pb.js.
+   (own texts in German, English, French, Spanish, Italian, Portuguese, Chinese, Japanese and Korean). Server: pb_hooks/einrichtung.pb.js.
    - starts by itself after login as main admin as long as the setup is still open
      ("Später" holds until the app is closed)
    - reachable at any time via Main admin → ⚙︎ Einrichtung
@@ -98,6 +98,30 @@ const PINN_SETUP_TEXTE = {
     loginBtn: '以主管理员身份登录',
     loginMain: '首次登录时密码是“Admin”——之后你设置自己的密码，设置向导随即开始。',
     laden: '无法加载设置向导（缺少 pb_public/einrichtung.js？）。',
+  },
+  ja: {
+    btn: '⚙︎ 初期設定',
+    offen: 'pinn. の初期設定はまだ完了していません。完了しないと、HTTPS、プッシュ通知、ホーム画面のアプリが使えません。',
+    fortsetzen: '初期設定を続ける',
+    neustart: '保存した設定は pinn. の再起動後に反映されます。',
+    neustartBtn: '今すぐ反映（短い再起動）',
+    neustartLaeuft: 'pinn. を再起動中 …',
+    loginHint: 'はじめての方へ：メイン管理者としてログインすると初期設定が始まります。',
+    loginBtn: 'メイン管理者としてログイン',
+    loginMain: '初回のパスワードは「Admin」です。そのあと自分のパスワードを設定すると、初期設定が始まります。',
+    laden: '初期設定を読み込めませんでした（pb_public/einrichtung.js がありませんか？）。',
+  },
+  ko: {
+    btn: '⚙︎ 초기 설정',
+    offen: 'pinn. 초기 설정이 아직 끝나지 않았어요. 설정하지 않으면 HTTPS, 푸시 알림, 홈 화면 앱을 쓸 수 없어요.',
+    fortsetzen: '초기 설정 계속하기',
+    neustart: '저장한 설정은 pinn.을 다시 시작한 뒤에 적용돼요.',
+    neustartBtn: '지금 적용(잠깐 다시 시작)',
+    neustartLaeuft: 'pinn.을 다시 시작하는 중 …',
+    loginHint: '처음이신가요? 메인 관리자로 로그인하면 초기 설정이 시작돼요.',
+    loginBtn: '메인 관리자로 로그인',
+    loginMain: '처음에는 비밀번호가 “Admin”이에요 – 그다음 내 비밀번호를 정하면 초기 설정이 시작돼요.',
+    laden: '초기 설정을 불러올 수 없어요(pb_public/einrichtung.js가 없나요?).',
   },
 };
 function pinnSetupText(key) {

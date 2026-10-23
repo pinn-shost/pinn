@@ -99,13 +99,13 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
-## 1.107.3の新機能
+## 1.107.4の新機能
 
-**新しい言語：日本語と韓国語**
+**日本語と韓国語に完全対応：初期設定、データのエクスポート、プッシュ通知**
 
-- pinn.が**日本語**と**韓国語**で使えるようになりました（設定 → 言語）。週間・月間の予告を含め、アプリ全体が翻訳されています。
-- これらの言語にまだ対応していないもの：セットアップアシスタント、データのエクスポートのファイル、サーバーからのプッシュメッセージ。当面は英語で表示されます。
-- 変更：アプリのファイル（`index.html`、`js/sprachen.js`、`js/hinweise.js`、`js/versionslog.js`、新しい `lang/ja.js` と `lang/ko.js`、言語ファイル `en`、`fr`、`es`、`it`、`pt`、`zh`）。サーバー側の変更はありません。
+- 初期設定アシスタント、データのエクスポートのファイル、サーバーからのプッシュ通知も日本語と韓国語に対応しました（これまでは英語で表示）。これで9つの言語すべてに完全対応です。
+- 音声操作（Siri/Android）は引き続きドイツ語、英語、フランス語、スペイン語に対応しています。
+- 変更：アプリのファイル（`index.html`、`js/sprachen.js`、`js/einrichten.js`、`js/exportieren.js`、`js/versionslog.js`、`einrichtung.js`、`datenexport.js`、すべての言語ファイル）、サーバーの `pb_hooks/pinn-pushtext.js`、`pinn-ausblick.js`、`pinn-familie-geburtstag.js`、`pinn-haustiere.js`、`pinn-ortung.js`、`pinn-packliste.js`、`pinn-aufgaben.js`、`pinn-wobistdu.js`、`pinn-einrichtung.js`。
 
 以前のバージョンは [Releases](https://github.com/pinn-shost/pinn/releases) をご覧ください。
 
@@ -132,14 +132,14 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.106.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.107.4`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    スクリプトがすべてのファイルを所定の場所にコピーし、PDF取り込みと写真の文字認識に必要なライブラリをダウンロードして、pinn.を起動します。
 4. `http://<NASのIP>:8090`を開き、**メイン管理者としてログイン** → パスワード`Admin` → 自分のパスワードを設定します。
-5. **セットアップアシスタント**が、HTTPS、WireGuardまたはTailscaleでのリモートアクセス、Google、AI、位置情報、Home Assistantといった残りの設定を、7つの言語で順番に案内します。
+5. **セットアップアシスタント**が、HTTPS、WireGuardまたはTailscaleでのリモートアクセス、Google、AI、位置情報、Home Assistantといった残りの設定を、9つの言語で順番に案内します。
 6. 各スマートフォンでHTTPSアドレスからpinn.を開き、ホーム画面に追加します：
    - **iPhone/iPad（Safari）：** 共有 → *ホーム画面に追加*（通知にはiOS 16.4以降が必要）
    - **Android（Chrome）：** 設定 → 通知 → *pinn.をアプリとしてインストール*、またはChromeのメニュー ⋮ → *アプリをインストール*

@@ -99,13 +99,13 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
-## 1.107.3의 새 소식
+## 1.107.4의 새 소식
 
-**새 언어: 일본어와 한국어**
+**일본어와 한국어 완전 지원: 초기 설정, 데이터 내보내기, 푸시 알림**
 
-- pinn.을 이제 **일본어**와 **한국어**로 쓸 수 있어요(설정 → 언어). 주간 및 월간 미리보기를 포함해 앱 전체가 번역되어 있어요.
-- 이 언어들에서 아직 지원하지 않는 것: 설정 도우미, 데이터 내보내기 파일, 서버의 푸시 메시지. 당분간 영어로 표시돼요.
-- 변경: 앱 파일(`index.html`, `js/sprachen.js`, `js/hinweise.js`, `js/versionslog.js`, 새 `lang/ja.js`와 `lang/ko.js`, 언어 파일 `en`, `fr`, `es`, `it`, `pt`, `zh`). 서버는 바뀌는 것이 없어요.
+- 이제 초기 설정 도우미, 데이터 내보내기 파일, 서버의 푸시 알림에서도 일본어와 한국어를 쓸 수 있어요(지금까지는 영어로 표시). 아홉 개 언어가 모두 완성됐어요.
+- 음성 제어(Siri/Android)는 계속 독일어, 영어, 프랑스어, 스페인어를 이해해요.
+- 변경: 앱 파일(`index.html`, `js/sprachen.js`, `js/einrichten.js`, `js/exportieren.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, 모든 언어 파일) 및 서버의 `pb_hooks/pinn-pushtext.js`, `pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-aufgaben.js`, `pinn-wobistdu.js`, `pinn-einrichtung.js`.
 
 이전 버전은 [Releases](https://github.com/pinn-shost/pinn/releases)에서 볼 수 있어요.
 
@@ -132,14 +132,14 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.106.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.107.4` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    스크립트가 모든 파일을 제자리에 복사하고, PDF 가져오기와 사진 문자 인식에 필요한 라이브러리를 내려받고, pinn.을 시작해요.
 4. `http://<NAS-IP>:8090`을 열고 → **메인 관리자로 로그인** → 비밀번호 `Admin` → 나만의 비밀번호를 정해요.
-5. **설정 도우미**가 나머지를 안내해 줘요. HTTPS, WireGuard 또는 Tailscale을 통한 원격 접속, Google, AI, 위치, Home Assistant를 일곱 가지 언어로 차례대로요.
+5. **설정 도우미**가 나머지를 안내해 줘요. HTTPS, WireGuard 또는 Tailscale을 통한 원격 접속, Google, AI, 위치, Home Assistant를 아홉 가지 언어로 차례대로요.
 6. 각 휴대폰에서 HTTPS 주소로 pinn.을 열고 홈 화면에 추가해요:
    - **iPhone/iPad(Safari):** 공유 → *홈 화면에 추가*(알림에는 iOS 16.4 이상 필요)
    - **Android(Chrome):** 설정 → 알림 → *pinn.을 앱으로 설치*, 또는 Chrome 메뉴 ⋮ → *앱 설치*

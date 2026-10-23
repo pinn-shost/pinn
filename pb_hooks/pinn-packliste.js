@@ -114,6 +114,8 @@ const T = {
     it: { titel: "🧳 Lista dei bagagli per «{t}»?", heute: "Si parte oggi", morgen: "Si parte domani", tage: "Si parte tra {n} giorni", text: "{w}: tocca per crearla con le date già inserite." },
     pt: { titel: "🧳 Lista de mala para “{t}”?", heute: "Começa hoje", morgen: "Começa amanhã", tage: "Começa em {n} dias", text: "{w} – toque para criá-la com as datas já preenchidas." },
     zh: { titel: "🧳 要为“{t}”创建打包清单吗？", heute: "今天出发", morgen: "明天出发", tage: "{n} 天后出发", text: "{w}——点按即可创建，日期已填好。" },
+    ja: { titel: "🧳 「{t}」の持ち物リストを作りますか？", heute: "今日出発です", morgen: "明日出発です", tage: "{n}日後に出発です", text: "{w} – タップすると日程入りで作成します。" },
+    ko: { titel: "🧳 “{t}” 짐 싸기 목록을 만들까요?", heute: "오늘 출발해요", morgen: "내일 출발해요", tage: "{n}일 후에 출발해요", text: "{w} – 탭하면 날짜가 채워진 목록이 만들어져요." },
 };
 function tx(lang, k, vars) {
     let s = (T[lang] || T.en)[k] || T.en[k];

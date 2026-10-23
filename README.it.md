@@ -99,13 +99,13 @@ Sempre con te: pinn. si installa su ogni iPhone e telefono Android come un’app
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 e 🇰🇷 한국어**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
-## Novità della 1.107.3
+## Novità della 1.107.4
 
-**Nuove lingue: giapponese e coreano**
+**Giapponese e coreano completi: configurazione, esportazione dei dati e notifiche push**
 
-- pinn. è ora disponibile in **giapponese** e **coreano** (Impostazioni → Lingua). L’intera app è tradotta, comprese l’anteprima settimanale e mensile.
-- Non ancora in queste lingue: l’assistente di configurazione, i file dell’esportazione dei dati e i messaggi push del server – per ora appaiono in inglese.
-- Modificato: file dell’app (`index.html`, `js/sprachen.js`, `js/hinweise.js`, `js/versionslog.js`, nuovi `lang/ja.js` e `lang/ko.js`, file di lingua `en`, `fr`, `es`, `it`, `pt`, `zh`). Sul server non cambia nulla.
+- Il giapponese e il coreano ora funzionano anche nella configurazione guidata, nei file dell’esportazione dei dati e nelle notifiche push dal server (prima apparivano in inglese). Tutte e nove le lingue sono complete.
+- Il controllo vocale (Siri/Android) continua a capire tedesco, inglese, francese e spagnolo.
+- Modificati: file dell’app (`index.html`, `js/sprachen.js`, `js/einrichten.js`, `js/exportieren.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, tutti i file di lingua) e sul server `pb_hooks/pinn-pushtext.js`, `pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-aufgaben.js`, `pinn-wobistdu.js`, `pinn-einrichtung.js`.
 
 Le versioni precedenti si trovano nelle [Releases](https://github.com/pinn-shost/pinn/releases).
 
@@ -132,14 +132,14 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.106.0` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.107.4` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    Lo script copia ogni file al suo posto, scarica le librerie per l’importazione dei PDF e il riconoscimento del testo nelle foto e avvia pinn.
 4. Apri `http://<IP-NAS>:8090` → **Accedi come amministratore principale** → password `Admin` → scegli la tua password.
-5. L’**assistente di configurazione** ti guida nel resto – HTTPS, accesso remoto con WireGuard o Tailscale, Google, IA, posizione e Home Assistant – passo dopo passo, in sette lingue.
+5. L’**assistente di configurazione** ti guida nel resto – HTTPS, accesso remoto con WireGuard o Tailscale, Google, IA, posizione e Home Assistant – passo dopo passo, in nove lingue.
 6. Apri pinn. dal suo indirizzo HTTPS su ogni telefono e aggiungilo alla schermata Home:
    - **iPhone/iPad (Safari):** Condividi → *Aggiungi alla schermata Home* (iOS 16.4 o successivo per le notifiche)
    - **Android (Chrome):** Impostazioni → Notifiche → *Installa pinn. come app*, oppure menu di Chrome ⋮ → *Installa app*

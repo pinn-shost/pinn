@@ -11,7 +11,8 @@
    Das ZIP entsteht hier im Browser – der Server liefert nur Sammlung für Sammlung und Datei für Datei
    (pb_hooks/export.pb.js + pinn-export.js). Dateien werden unkomprimiert übernommen (PDFs und Fotos
    sind schon komprimiert), die JSON-Daten werden – wo der Browser es kann – komprimiert.
-   Eigene Texte in Deutsch, Englisch, Französisch und Spanisch (data-no-i18n / data-no-term).
+   Eigene Texte in Deutsch, Englisch, Französisch, Spanisch, Italienisch, Portugiesisch, Chinesisch,
+   Japanisch und Koreanisch (data-no-i18n / data-no-term).
 
    Aufbau des ZIP:
      pinn-export.json                 Beschreibung: Format, Version, Familie, Inhalt, Dateiliste
@@ -23,7 +24,7 @@
   'use strict';
   if (window.PinnExport) return;
 
-  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh'];
+  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko'];
   var T = {};
   T.de = {
     F: 'Familie', FW: 'WG', Fd: 'der Familie', FWd: 'der WG',
@@ -471,6 +472,164 @@
       '请妥善保管。',
     ],
   };
+  T.ja = {
+    F: '家族', FW: 'ルームシェア', Fd: '家族', FWd: 'ルームシェア',
+    titel: '{F}をエクスポート',
+    intro: '{Fd}のすべてのデータを1つの ZIP ファイルにまとめます。書類、領収書、画像も含みます。別の NAS への引っ越しや、自分用のバックアップなどに。',
+    lade: '内容を確認中 …',
+    fehler: 'うまくいきませんでした。',
+    fehlerNetz: 'pinn. に接続できません。自宅のネットワークまたは VPN につながっているか確認してください。',
+    serverFehlt: 'サーバーに export.pb.js と pinn-export.js（pb_hooks）がまだありません。',
+    familieWaehlen: 'どの{F}ですか？',
+    inhalt: 'ZIP に含まれるもの',
+    eintraege: '{0}件',
+    dateienN: '{0}ファイル',
+    dokumente: 'ファイルの合計',
+    groesse: 'サイズ（約）',
+    nichtDrin: '含まれないもの',
+    nichtDrinText: 'パスワード、PIN、iCloud・Google・Home Assistant のアクセス情報、ログイン中の端末、プッシュ通知の登録。別の NAS では、もう一度サインインするだけです。Traccar の位置履歴も含まれません。',
+    privat: 'プライベートなため含まれないもの：あなたがメンバーでない共有の財布 {0} 件と、ほかのプロフィールの「自分だけ」のカレンダー {1} 件。引っ越し用などの完全なエクスポートは、メイン管理者が作成します。',
+    voll: '完全なエクスポート – すべてのプロフィールのプライベートな財布と「自分だけ」のカレンダーも含みます。',
+    sicherheit: 'この ZIP には家計、書類、緊急カードが暗号化されずに入っています。大切に保管し、メールで送らないでください。',
+    gross: '約 {0} です。スマートフォンでは時間がかかることがあります。パソコンでエクスポートし、その間 pinn. を開いたままにするのがおすすめです。',
+    starten: 'ZIP を作成',
+    abbrechen: 'キャンセル',
+    schliessen: '閉じる',
+    nochmal: 'もう一度',
+    schrittDaten: 'データ：{0}',
+    schrittDatei: 'ファイル {0} / {1}',
+    packe: 'ZIP をまとめています …',
+    offenLassen: 'エクスポートが終わるまで pinn. を開いたままにしてください。',
+    fertig: 'エクスポート完了 ✓',
+    fertigText: '{0}件と{1}ファイル · {2}',
+    speichern: 'ZIP を保存',
+    teilen: '共有または「ファイル」に保存',
+    speichernTipp: 'iPhone/iPad：「共有」→「ファイルに保存」。パソコン：「ZIP を保存」でダウンロードフォルダに保存されます。',
+    fehlende: '{0}個のファイルを読み込めませんでした。ZIP 内の export-fehler.txt に一覧があります。',
+    abgebrochen: 'エクスポートをキャンセルしました。',
+    zuGross: 'エクスポートが 4 GB を超えています。通常の ZIP には収まりません。',
+    keinAdmin: 'エクスポートを作成できるのは管理者だけです。',
+    S: {
+      familien: '{F}',
+      benutzer: 'プロフィール',
+      familien_daten: 'カレンダー、リスト、レシピ、メンバー、設定',
+      rezept_bilder: 'レシピの画像',
+      oeffentliche_rezepte: '共有レシピ',
+      aufgaben: 'タスク',
+      haushalt_verlauf: '家事の履歴',
+      kassen: '財布、証券口座、契約',
+      ausgaben: '取引',
+      finanz_dokumente: '契約書類',
+      dokumente: '書類',
+      pinnwand_bilder: '掲示板の画像',
+      kalender_eigene: '自分のカレンダー',
+      kalender_termine: '予定',
+      muellkalender: 'ごみ収集カレンダー',
+      ortung: '場所と位置情報',
+      zuhause: '住まい',
+      smarthome_zugaenge: 'スマートホーム',
+      dashboard_hintergruende: 'ダッシュボード',
+      apple_zugaenge: 'iCloud',
+      google_zugaenge: 'Google',
+    },
+    liesmich: 'はじめにお読みください.txt',
+    readme: [
+      'pinn. – データのエクスポート',
+      '',
+      '{F}：{0}',
+      '作成：{1}、作成者：{2}（pinn. {3}）',
+      '',
+      '内容：',
+      '  pinn-export.json  エクスポートの説明（形式、内容、ファイル一覧）',
+      '  daten/            コレクションごとの全レコード（JSON、PocketBase と同じ形式）',
+      '  dateien/          書類、領収書、画像：dateien/<コレクション>/<レコードID>/<ファイル>',
+      '',
+      '含まれないもの：パスワード、PIN、アクセス情報（iCloud、Google、Home Assistant）、',
+      'ログイン中の端末、プッシュ通知の登録、Traccar の位置履歴。',
+      '',
+      '注意：このファイルには家計、書類、緊急カードが暗号化されずに入っています。',
+      '大切に保管してください。',
+    ],
+  };
+  T.ko = {
+    F: '가족', FW: '셰어하우스', Fd: '가족', FWd: '셰어하우스',
+    titel: '{F} 내보내기',
+    intro: '{Fd}의 모든 데이터를 ZIP 파일 하나로 – 문서, 영수증, 사진까지 포함해요. 다른 NAS로 옮기거나 개인 백업용으로 쓸 수 있어요.',
+    lade: '내용 확인 중 …',
+    fehler: '잘 되지 않았어요.',
+    fehlerNetz: 'pinn.에 연결할 수 없어요. 집 네트워크나 VPN에 연결되어 있는지 확인하세요.',
+    serverFehlt: '서버에 export.pb.js와 pinn-export.js(pb_hooks)가 아직 없어요.',
+    familieWaehlen: '어떤 {F}인가요?',
+    inhalt: 'ZIP에 들어가는 것',
+    eintraege: '항목 {0}개',
+    dateienN: '파일 {0}개',
+    dokumente: '전체 파일',
+    groesse: '크기(약)',
+    nichtDrin: '포함되지 않는 것',
+    nichtDrinText: '비밀번호, PIN, iCloud·Google·Home Assistant 접속 정보, 로그인된 기기, 푸시 구독. 다른 NAS에서는 다시 로그인하면 돼요. Traccar 위치 기록도 포함되지 않아요.',
+    privat: '개인 정보라 포함되지 않음: 내가 멤버가 아닌 자금 {0}개와 다른 프로필의 “나만 보기” 캘린더 {1}개. 이사용 등 전체 내보내기는 메인 관리자가 만들어요.',
+    voll: '전체 내보내기 – 모든 프로필의 개인 자금과 “나만 보기” 캘린더도 포함돼요.',
+    sicherheit: '이 ZIP에는 재정, 문서, 응급 카드가 암호화되지 않은 상태로 들어 있어요. 안전하게 보관하고 이메일로 보내지 마세요.',
+    gross: '약 {0}이에요. 휴대폰에서는 시간이 걸릴 수 있어요 – 컴퓨터에서 내보내고 그동안 pinn.을 열어 두는 게 좋아요.',
+    starten: 'ZIP 만들기',
+    abbrechen: '취소',
+    schliessen: '닫기',
+    nochmal: '다시 시도',
+    schrittDaten: '데이터: {0}',
+    schrittDatei: '파일 {1}개 중 {0}번째',
+    packe: 'ZIP으로 묶는 중 …',
+    offenLassen: '내보내기가 끝날 때까지 pinn.을 열어 두세요.',
+    fertig: '내보내기 완료 ✓',
+    fertigText: '항목 {0}개, 파일 {1}개 · {2}',
+    speichern: 'ZIP 저장',
+    teilen: '공유 또는 “파일”에 저장',
+    speichernTipp: 'iPhone/iPad: “공유” → “파일에 저장”. 컴퓨터: “ZIP 저장”을 누르면 다운로드 폴더에 저장돼요.',
+    fehlende: '파일 {0}개를 읽을 수 없었어요 – ZIP 안의 export-fehler.txt에 목록이 있어요.',
+    abgebrochen: '내보내기가 취소됐어요.',
+    zuGross: '내보내기가 4 GB보다 커요 – 일반 ZIP에는 담을 수 없어요.',
+    keinAdmin: '관리자만 내보내기를 만들 수 있어요.',
+    S: {
+      familien: '{F}',
+      benutzer: '프로필',
+      familien_daten: '캘린더, 목록, 레시피, 구성원, 설정',
+      rezept_bilder: '레시피 사진',
+      oeffentliche_rezepte: '공유 레시피',
+      aufgaben: '할 일',
+      haushalt_verlauf: '집안일 기록',
+      kassen: '자금, 증권 계좌, 계약',
+      ausgaben: '거래 내역',
+      finanz_dokumente: '계약 문서',
+      dokumente: '문서',
+      pinnwand_bilder: '게시판 사진',
+      kalender_eigene: '내 캘린더',
+      kalender_termine: '일정',
+      muellkalender: '쓰레기 수거 캘린더',
+      ortung: '장소와 위치',
+      zuhause: '우리 집',
+      smarthome_zugaenge: '스마트홈',
+      dashboard_hintergruende: '대시보드',
+      apple_zugaenge: 'iCloud',
+      google_zugaenge: 'Google',
+    },
+    liesmich: '읽어보세요.txt',
+    readme: [
+      'pinn. – 데이터 내보내기',
+      '',
+      '{F}: {0}',
+      '생성: {1}, 만든 사람: {2} (pinn. {3})',
+      '',
+      '내용:',
+      '  pinn-export.json  내보내기 설명(형식, 내용, 파일 목록)',
+      '  daten/            컬렉션별 모든 레코드(JSON, PocketBase에 저장된 그대로)',
+      '  dateien/          문서, 영수증, 사진: dateien/<컬렉션>/<레코드 ID>/<파일>',
+      '',
+      '포함되지 않음: 비밀번호, PIN, 접속 정보(iCloud, Google, Home Assistant),',
+      '로그인된 기기, 푸시 구독, Traccar 위치 기록.',
+      '',
+      '주의: 이 파일에는 재정, 문서, 응급 카드가 암호화되지 않은 상태로 들어 있어요.',
+      '안전하게 보관하세요.',
+    ],
+  };
 
   var S = { opts: {}, lang: 'en', wg: false, info: null, familie: '', laeuft: false, abbruch: false, ergebnis: null, url: '' };
 
@@ -499,7 +658,7 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
-  function locale() { return { de: 'de-DE', en: 'en-GB', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', pt: 'pt-BR', zh: 'zh-CN' }[S.lang] || 'en-GB'; }
+  function locale() { return { de: 'de-DE', en: 'en-GB', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', pt: 'pt-BR', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR' }[S.lang] || 'en-GB'; }
   function zahl(n) { try { return Number(n || 0).toLocaleString(locale()); } catch (e) { return String(n || 0); } }
   function groesse(b) {
     b = Number(b) || 0;

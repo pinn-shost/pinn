@@ -128,7 +128,7 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -137,6 +137,8 @@ function langOf(u) {
     if (["IT", "SM", "VA"].indexOf(land) >= 0) return "it";
     if (["BR", "PT", "AO", "MZ"].indexOf(land) >= 0) return "pt";
     if (["CN"].indexOf(land) >= 0) return "zh";
+    if (["JP"].indexOf(land) >= 0) return "ja";
+    if (["KR"].indexOf(land) >= 0) return "ko";
     return "en";
 }
 const T = {
@@ -154,6 +156,10 @@ const T = {
           gebText: "Hoje tem petisco extra 🦴", mehr: "🐾 Há algo planejado para os seus animais", kurzHeute: "hoje", kurzIn3: "em 3 dias", kurzUeber: "atrasado" },
     zh: { futter: "给喂食器补充食物", futterHeute: "今天补充", futterUeber: "已拖延 {n} 天", leer: "喂食器快空了", leerText: "余量 {v}——请补充。", leerText0: "请补充。", heute: "今天到期", in3: "3 天后到期", ueber: "已逾期 {n} 天", geb: "今天是 {name} 的生日！", gebAlt: "{name} 今天 {n} 岁了 🐾",
           gebText: "今天多给一份小零食 🦴", mehr: "🐾 你们的宠物有事项要处理", kurzHeute: "今天", kurzIn3: "3 天后", kurzUeber: "已逾期" },
+    ja: { futter: "給餌器を補充", futterHeute: "今日補充", futterUeber: "{n}日前から期限切れ", leer: "給餌器がほぼ空です", leerText: "残量 {v} – 補充してください。", leerText0: "補充してください。", heute: "今日が期限", in3: "3日後が期限", ueber: "{n}日超過", geb: "今日は{name}の誕生日です！", gebAlt: "{name}は今日で{n}歳 🐾",
+          gebText: "今日はおやつを少し多めに 🦴", mehr: "🐾 ペットの予定があります", kurzHeute: "今日", kurzIn3: "3日後", kurzUeber: "超過" },
+    ko: { futter: "급식기 채우기", futterHeute: "오늘 채우기", futterUeber: "{n}일째 밀림", leer: "급식기가 거의 비었어요", leerText: "남은 양 {v} – 채워 주세요.", leerText0: "채워 주세요.", heute: "오늘 마감", in3: "3일 후 마감", ueber: "{n}일 지남", geb: "오늘은 {name}의 생일이에요!", gebAlt: "{name}이(가) 오늘 {n}살이 돼요 🐾",
+          gebText: "오늘은 간식을 하나 더 🦴", mehr: "🐾 반려동물 일정이 있어요", kurzHeute: "오늘", kurzIn3: "3일 후", kurzUeber: "지남" },
 };
 function tx(lang, k, vars) {
     let s = (T[lang] || T.en)[k] || T.en[k] || k;

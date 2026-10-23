@@ -1047,6 +1047,8 @@ const REWARD_TEXT = {
     it: { t: "⭐ Premio richiesto", b: "{k} vorrebbe scambiare {n} stelle con «{w}»." },
     pt: { t: "⭐ Recompensa solicitada", b: "{k} quer trocar {n} estrelas por “{w}”." },
     zh: { t: "⭐ 有人申请兑换奖励", b: "{k} 想用 {n} 颗星星兑换“{w}”。" },
+    ja: { t: "⭐ ごほうびのリクエスト", b: "{k}が星{n}個を「{w}」と交換したいそうです。" },
+    ko: { t: "⭐ 보상 요청", b: "{k}님이 별 {n}개를 “{w}”(으)로 바꾸고 싶어 해요." },
 };
 function notifyReward(familyId, actorUserId, body) {
     if (!familyId) return 0;

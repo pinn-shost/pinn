@@ -95,6 +95,14 @@ Siempre contigo: pinn. se instala en cada iPhone y móvil Android como una app n
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 y 🇰🇷 한국어**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.107.4
+
+**Japonés y coreano completos: configuración, exportación de datos y mensajes push**
+
+- El japonés y el coreano ya funcionan también en el asistente de configuración, en los archivos de la exportación de datos y en los mensajes push del servidor (antes aparecían en inglés). Los nueve idiomas están completos.
+- El control por voz (Siri/Android) sigue entendiendo alemán, inglés, francés y español.
+- Modificado: archivos de la app (`index.html`, `js/sprachen.js`, `js/einrichten.js`, `js/exportieren.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, todos los archivos de idioma) y en el servidor `pb_hooks/pinn-pushtext.js`, `pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-aufgaben.js`, `pinn-wobistdu.js`, `pinn-einrichtung.js`.
+
 ## Novedades de la 1.107.3
 
 **Nuevos idiomas: japonés y coreano**
@@ -137,14 +145,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Todas las funciones del servidor (recordatorios, mensajes y fotos del tablón, mascotas, listas de equipaje, tareas del hogar) leen ahora los datos de la familia con todas las partes trasladadas.
 - Cambiados: archivos de la app (`index.html`, `js/versionslog.js`) y en el servidor `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-benutzer.js`, `pb_hooks/save_family_data.pb.js`, `pb_hooks/pinn-sprache.js`, `pb_hooks/pinn-vorrat.js`. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
 
-## Novedades de la 1.105
-
-**Compra y despensa en registros propios**
-
-- Segundo paso para dividir los datos de la familia: las **listas de la compra** (con tiendas, compras planificadas y orden) y la **despensa** se guardan ahora en registros propios en el servidor, como las recetas y el plan de comidas desde la 1.104. Cuando varias personas marcan artículos en la tienda a la vez, solo se sincroniza la lista de la compra, ya no todos los datos de la familia. El uso de la app no cambia.
-- La misma red de seguridad que en la 1.104: una copia de seguridad por familia antes del traslado (`pb_data/pinn_umzug/`, 30 días); los dispositivos con una versión antigua de la app siguen viéndolo todo. El control por voz, la campana y el aviso de fecha de consumo preferente usan los nuevos registros.
-- Cambiados: archivos de la app (`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/versionslog.js`) y en el servidor `pb_hooks/pinn-bereiche.js`, `pb_hooks/save_family_data.pb.js`, `pb_hooks/pinn-sprache.js`, `pb_hooks/pinn-vorrat.js`. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
-
 ## Cómo funciona
 
 ```mermaid
@@ -171,14 +171,14 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.106.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.107.4` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    El script coloca cada archivo en su sitio, descarga las bibliotecas para importar PDF y reconocer texto en fotos, e inicia pinn.
 4. Abre `http://<IP-del-NAS>:8090` → **Iniciar sesión como admin principal** → contraseña `Admin` → elige tu propia contraseña.
-5. El **asistente de configuración** te guía en el resto – HTTPS, acceso remoto con WireGuard o Tailscale, Google, IA, ubicación y Home Assistant – paso a paso, en siete idiomas.
+5. El **asistente de configuración** te guía en el resto – HTTPS, acceso remoto con WireGuard o Tailscale, Google, IA, ubicación y Home Assistant – paso a paso, en nueve idiomas.
 6. Abre pinn. en cada móvil con su dirección HTTPS y añádelo a la pantalla de inicio:
    - **iPhone/iPad (Safari):** Compartir → *Añadir a pantalla de inicio* (iOS 16.4 o posterior para las notificaciones)
    - **Android (Chrome):** Ajustes → Notificaciones → *Instalar pinn. como app*, o menú de Chrome ⋮ → *Instalar app*

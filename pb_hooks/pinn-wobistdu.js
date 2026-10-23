@@ -38,7 +38,7 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -47,6 +47,8 @@ function langOf(u) {
     if (["IT", "SM", "VA"].indexOf(land) >= 0) return "it";
     if (["BR", "PT", "AO", "MZ"].indexOf(land) >= 0) return "pt";
     if (["CN"].indexOf(land) >= 0) return "zh";
+    if (["JP"].indexOf(land) >= 0) return "ja";
+    if (["KR"].indexOf(land) >= 0) return "ko";
     return "en";
 }
 const CODE_TEXT = {
@@ -57,19 +59,23 @@ const CODE_TEXT = {
     it: { zuhause: "🏠 Sono a casa", unterwegs: "🚶 Sono in giro", gleich: "⏱️ Arrivo subito", gut: "👍 Tutto bene", anrufen: "📞 Chiamami" },
     pt: { zuhause: "🏠 Estou em casa", unterwegs: "🚶 Estou a caminho", gleich: "⏱️ Chego já", gut: "👍 Tudo bem", anrufen: "📞 Me ligue" },
     zh: { zuhause: "🏠 我在家", unterwegs: "🚶 我在路上", gleich: "⏱️ 马上到", gut: "👍 一切都好", anrufen: "📞 给我打电话" },
+    ja: { zuhause: "🏠 家にいます", unterwegs: "🚶 移動中です", gleich: "⏱️ もうすぐ着きます", gut: "👍 大丈夫です", anrufen: "📞 電話してください" },
+    ko: { zuhause: "🏠 집이에요", unterwegs: "🚶 이동 중이에요", gleich: "⏱️ 곧 도착해요", gut: "👍 괜찮아요", anrufen: "📞 전화해 주세요" },
 };
 function askMessage(lang, name) {
-    const n = name || ({ de: "Jemand", en: "Someone", fr: "Quelqu'un", es: "Alguien", it: "Qualcuno", pt: "Alguém", zh: "有人" }[lang]);
+    const n = name || ({ de: "Jemand", en: "Someone", fr: "Quelqu'un", es: "Alguien", it: "Qualcuno", pt: "Alguém", zh: "有人", ja: "誰か", ko: "누군가" }[lang]);
     if (lang === "de") return { titel: "📍 " + n + " fragt: Wo bist du?", text: "Tippe hier, um deinen Standort zu schicken oder kurz zu antworten." };
     if (lang === "fr") return { titel: "📍 " + n + " demande : où es-tu ?", text: "Touche ici pour envoyer ta position ou répondre en un mot." };
     if (lang === "es") return { titel: "📍 " + n + " pregunta: ¿dónde estás?", text: "Toca aquí para enviar tu ubicación o responder rápido." };
     if (lang === "it") return { titel: "📍 " + n + " chiede: dove sei?", text: "Tocca qui per inviare la tua posizione o rispondere al volo." };
     if (lang === "pt") return { titel: "📍 " + n + " pergunta: onde você está?", text: "Toque aqui para enviar sua localização ou responder rápido." };
     if (lang === "zh") return { titel: "📍 " + n + " 问：你在哪里？", text: "点按这里发送你的位置或快速回复。" };
+    if (lang === "ja") return { titel: "📍 " + n + "から：今どこ？", text: "タップして位置を送るか、ひとことで返信できます。" };
+    if (lang === "ko") return { titel: "📍 " + n + "님이 물어요: 어디야?", text: "여기를 탭해 위치를 보내거나 짧게 답하세요." };
     return { titel: "📍 " + n + " asks: where are you?", text: "Tap here to send your location or a quick reply." };
 }
 function answerMessage(lang, name, a) {
-    const n = name || ({ de: "Jemand", en: "Someone", fr: "Quelqu'un", es: "Alguien", it: "Qualcuno", pt: "Alguém", zh: "有人" }[lang]);
+    const n = name || ({ de: "Jemand", en: "Someone", fr: "Quelqu'un", es: "Alguien", it: "Qualcuno", pt: "Alguém", zh: "有人", ja: "誰か", ko: "누군가" }[lang]);
     const t = a.text ? ((CODE_TEXT[lang] || CODE_TEXT.en)[a.text] || ("„" + a.text + "“")) : "";
     if (lang === "de") return { titel: "📍 " + n + " hat geantwortet", text: a.lat != null ? "Standort geschickt – tippe zum Ansehen." : t };
     if (lang === "fr") return { titel: "📍 " + n + " a répondu", text: a.lat != null ? "Position envoyée – touche pour la voir." : t };
@@ -77,6 +83,8 @@ function answerMessage(lang, name, a) {
     if (lang === "it") return { titel: "📍 " + n + " ha risposto", text: a.lat != null ? "Posizione inviata: tocca per vederla." : t };
     if (lang === "pt") return { titel: "📍 " + n + " respondeu", text: a.lat != null ? "Localização enviada – toque para ver." : t };
     if (lang === "zh") return { titel: "📍 " + n + " 回复了", text: a.lat != null ? "位置已发送——点按查看。" : t };
+    if (lang === "ja") return { titel: "📍 " + n + "から返信がありました", text: a.lat != null ? "位置が送られました – タップして表示。" : t };
+    if (lang === "ko") return { titel: "📍 " + n + "님이 답했어요", text: a.lat != null ? "위치를 보냈어요 – 탭해서 보기." : t };
     return { titel: "📍 " + n + " replied", text: a.lat != null ? "Location sent – tap to view." : t };
 }
 

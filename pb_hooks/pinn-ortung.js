@@ -2065,7 +2065,7 @@ function langOfUser(userId) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign($app.findRecordById(USERS, userId)).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -2074,6 +2074,8 @@ function langOfUser(userId) {
     if (["IT", "SM", "VA"].indexOf(land) >= 0) return "it";
     if (["BR", "PT", "AO", "MZ"].indexOf(land) >= 0) return "pt";
     if (["CN"].indexOf(land) >= 0) return "zh";
+    if (["JP"].indexOf(land) >= 0) return "ja";
+    if (["KR"].indexOf(land) >= 0) return "ko";
     return "en";
 }
 const LADEN_TEXT = {
@@ -2091,6 +2093,10 @@ const LADEN_TEXT = {
           geplant: "Planejado: {titel}", tipp1: "Toque aqui para ver a lista de compras.", tippN: "Toque aqui para ver as listas de compras.", und: " e " },
     zh: { bei: "你在 {laden}", frage: "要去购物吗？", artikel1: "清单上有 1 项", artikel: "清单上有 {n} 项",
           geplant: "已计划：{titel}", tipp1: "点按这里查看购物清单。", tippN: "点按这里查看购物清单。", und: "和" },
+    ja: { bei: "{laden}にいます", frage: "買い物しますか？", artikel1: "リストに1件", artikel: "リストに{n}件",
+          geplant: "予定：{titel}", tipp1: "タップすると買い物リストを開きます。", tippN: "タップすると買い物リストを開きます。", und: "と" },
+    ko: { bei: "{laden}에 있어요", frage: "장 볼까요?", artikel1: "목록에 1개", artikel: "목록에 {n}개",
+          geplant: "계획: {titel}", tipp1: "여기를 탭하면 장보기 목록이 열려요.", tippN: "여기를 탭하면 장보기 목록이 열려요.", und: ", " },
 };
 function ladenPushText(lang, items, geraetId) {
     const T = LADEN_TEXT[lang] || LADEN_TEXT.en;

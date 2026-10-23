@@ -118,7 +118,7 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -127,6 +127,8 @@ function langOf(u) {
     if (["IT", "SM", "VA"].indexOf(land) >= 0) return "it";
     if (["BR", "PT", "AO", "MZ"].indexOf(land) >= 0) return "pt";
     if (["CN"].indexOf(land) >= 0) return "zh";
+    if (["JP"].indexOf(land) >= 0) return "ja";
+    if (["KR"].indexOf(land) >= 0) return "ko";
     return "en";
 }
 
@@ -141,6 +143,8 @@ const MONTHS = {
     it: ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"],
     pt: ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"],
     zh: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+    ja: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+    ko: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
 };
 function rangeText(lang, mondayIso) {
     const a = mondayIso.split("-").map(Number);
@@ -152,6 +156,8 @@ function rangeText(lang, mondayIso) {
     if (lang === "it") return a[1] === b[1] ? ("dal " + a[2] + " al " + b[2] + " " + M[b[1] - 1]) : ("dal " + a[2] + " " + M[a[1] - 1] + " al " + b[2] + " " + M[b[1] - 1]);
     if (lang === "pt") return a[1] === b[1] ? (a[2] + " a " + b[2] + " de " + M[b[1] - 1]) : (a[2] + " de " + M[a[1] - 1] + " a " + b[2] + " de " + M[b[1] - 1]);
     if (lang === "zh") return a[1] === b[1] ? (M[b[1] - 1] + a[2] + "日–" + b[2] + "日") : (M[a[1] - 1] + a[2] + "日–" + M[b[1] - 1] + b[2] + "日");
+    if (lang === "ja") return a[1] === b[1] ? (M[b[1] - 1] + a[2] + "日～" + b[2] + "日") : (M[a[1] - 1] + a[2] + "日～" + M[b[1] - 1] + b[2] + "日");
+    if (lang === "ko") return a[1] === b[1] ? (M[b[1] - 1] + " " + a[2] + "일~" + b[2] + "일") : (M[a[1] - 1] + " " + a[2] + "일~" + M[b[1] - 1] + " " + b[2] + "일");
     return a[1] === b[1] ? ("du " + a[2] + " au " + b[2] + " " + M[b[1] - 1]) : ("du " + a[2] + " " + M[a[1] - 1] + " au " + b[2] + " " + M[b[1] - 1]);
 }
 function weekMessage(lang, mondayIso) {
@@ -162,6 +168,8 @@ function weekMessage(lang, mondayIso) {
     if (lang === "it") return { titel: "🗓️ La vostra settimana è pronta", text: "Eventi, attività, pasti e altro " + r + ": tutto a colpo d’occhio." };
     if (lang === "pt") return { titel: "🗓️ A semana de vocês está pronta", text: "Compromissos, tarefas, refeições e mais de " + r + " – tudo num relance." };
     if (lang === "zh") return { titel: "🗓️ 你们的一周来了", text: r + "的日程、任务、餐食等——一目了然。" };
+    if (lang === "ja") return { titel: "🗓️ 今週の予定が届きました", text: r + "の予定、タスク、食事など – ひと目でわかります。" };
+    if (lang === "ko") return { titel: "🗓️ 이번 주가 준비됐어요", text: r + "의 일정, 할 일, 식사 등 – 한눈에 확인하세요." };
     return { titel: "🗓️ Your week is ready", text: "Events, tasks, meals and more for " + r + " – all at a glance." };
 }
 function monthMessage(lang, key) {
@@ -174,6 +182,8 @@ function monthMessage(lang, key) {
     if (lang === "it") return { titel: "💶 Previsione finanziaria: " + next, text: "Cosa c’è in arrivo a " + next + " – e com’è andato " + prev + "." };
     if (lang === "pt") return { titel: "💶 Previsão financeira: " + next, text: "O que vem por aí em " + next + " – e como foi " + prev + "." };
     if (lang === "zh") return { titel: "💶 财务展望：" + next, text: "接下来" + next + "有什么——以及" + prev + "的情况。" };
+    if (lang === "ja") return { titel: "💶 家計の見通し：" + next, text: next + "の予定と、" + prev + "の振り返り。" };
+    if (lang === "ko") return { titel: "💶 재정 전망: " + next, text: next + "에 예정된 일 – 그리고 " + prev + "은 어땠는지." };
     return { titel: "💶 Finance outlook: " + next.charAt(0).toUpperCase() + next.slice(1), text: "What's coming up in " + next + " – and how " + prev + " went." };
 }
 

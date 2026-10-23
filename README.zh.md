@@ -99,13 +99,13 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語和 🇰🇷 한국어**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
-## 1.107.3 新功能
+## 1.107.4 新功能
 
-**新语言：日语和韩语**
+**日语和韩语补全：设置向导、数据导出和推送消息**
 
-- pinn. 现已提供**日语**和**韩语**（设置 → 语言）。整个应用都已翻译，包括每周和每月预览。
-- 这些语言中尚未支持：设置向导、数据导出文件和服务器的推送消息——目前仍显示英文。
-- 已更改：应用文件（`index.html`、`js/sprachen.js`、`js/hinweise.js`、`js/versionslog.js`、新文件 `lang/ja.js` 和 `lang/ko.js`、语言文件 `en`、`fr`、`es`、`it`、`pt`、`zh`）。服务器端无变化。
+- 设置向导、数据导出文件和服务器推送消息现在也支持日语和韩语（此前显示英文）。九种语言全部完成。
+- 语音控制（Siri/Android）仍然支持德语、英语、法语和西班牙语。
+- 已更改：应用文件（`index.html`, `js/sprachen.js`, `js/einrichten.js`, `js/exportieren.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`，所有语言文件）以及服务器上的 `pb_hooks/pinn-pushtext.js`, `pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-aufgaben.js`, `pinn-wobistdu.js`, `pinn-einrichtung.js`。
 
 更早的版本请见 [Releases](https://github.com/pinn-shost/pinn/releases)。
 
@@ -132,14 +132,14 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.106.0` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.107.4` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    脚本会把每个文件复制到位，下载 PDF 导入和照片文字识别所需的库，并启动 pinn.。
 4. 打开 `http://<NAS-IP>:8090` → **以主管理员身份登录** → 密码 `Admin` → 设置你自己的密码。
-5. **设置向导**会带你完成其余步骤——HTTPS、通过 WireGuard 或 Tailscale 远程访问、Google、AI、位置和 Home Assistant——一步一步，支持七种语言。
+5. **设置向导**会带你完成其余步骤——HTTPS、通过 WireGuard 或 Tailscale 远程访问、Google、AI、位置和 Home Assistant——一步一步，支持九种语言。
 6. 在每部手机上通过 HTTPS 地址打开 pinn.，并添加到主屏幕：
    - **iPhone/iPad（Safari）：** 分享 → *添加到主屏幕*（通知需要 iOS 16.4 或更高版本）
    - **Android（Chrome）：** 设置 → 通知 → *将 pinn. 安装为应用*，或 Chrome 菜单 ⋮ → *安装应用*

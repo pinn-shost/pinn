@@ -20,6 +20,14 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.107.4', datum: '23.10.2026', titel: 'Japanisch und Koreanisch vollständig: Einrichtung, Datenexport und Push-Nachrichten',
+    punkte: [
+      ['neu', 'Japanisch und Koreanisch gibt es jetzt auch im Einrichtungsassistenten, in den Dateien des Datenexports und in den Push-Nachrichten vom Server – dort erschien bisher Englisch'],
+      ['info', 'Damit sind alle neun Sprachen vollständig. Die Sprachsteuerung (Siri/Android) versteht weiterhin Deutsch, Englisch, Französisch und Spanisch'],
+      ['info', 'Geändert: index.html, js/sprachen.js, js/einrichten.js, js/exportieren.js, js/versionslog.js, einrichtung.js, datenexport.js, alle Sprachdateien sowie am Server pb_hooks/pinn-pushtext.js, pinn-ausblick.js, pinn-familie-geburtstag.js, pinn-haustiere.js, pinn-ortung.js, pinn-packliste.js, pinn-aufgaben.js, pinn-wobistdu.js und pinn-einrichtung.js'],
+    ],
+  },
+  {
     v: '1.107.3', datum: '23.10.2026', titel: 'Neue Sprachen: Japanisch und Koreanisch',
     punkte: [
       ['neu', 'Neue Sprachen Japanisch und Koreanisch (Einstellungen → Sprache) – die ganze App ist übersetzt, auch die Wochen- und Monatsvorschau'],
