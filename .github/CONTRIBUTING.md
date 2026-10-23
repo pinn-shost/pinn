@@ -18,7 +18,8 @@ pinn. has **no bundler and no npm dependencies**. The repository looks exactly l
 | `src/` | Sources of the page: `rahmen.html` (frame), `teile/` (screens, pages, popups), `version.txt`, `build.js` – see [src/README.md](../src/README.md) |
 | `pb_public/js/` | App code as plain `<script>` files (no modules) |
 | `pb_public/css/` | Stylesheets |
-| `pb_public/lang/` | Translations (`en.js`, `fr.js`, `es.js`, `it.js`, `pt.js`, `zh.js`) – the app texts themselves are German |
+| `pb_public/i18n/` | Texts by key, one file per language (`de.i18n.js`, `en.i18n.js` …) – English is the reference (since 1.111.0, see [Texts](#texts)) |
+| `pb_public/lang/` | Old dictionaries (German text → translation) for the parts that do not use keys yet (`en.js`, `fr.js`, `es.js`, `it.js`, `pt.js`, `zh.js`, `ja.js`, `ko.js`) |
 | `pb_hooks/` | Server: PocketBase hooks (`*.pb.js`) and their shared modules (`pinn-*.js`) |
 | `pinn-setup.sh`, `pinn-wartung.sh` | Installation/update and the maintenance container (POSIX `sh`) |
 | `.github/` | GitHub Actions (`workflows/check.yml`), the checks (`scripts/`), this file, images |
@@ -29,10 +30,31 @@ pinn. has **no bundler and no npm dependencies**. The repository looks exactly l
 2. **New app file** `pb_public/js/<name>.js` (or `css/<name>.css`) needs: its line in `src/rahmen.html`, its name in `pinn-setup.sh` (function `ziel`), and for JavaScript at the end `(window.PINN_PARTS = window.PINN_PARTS || []).push('<name>');` (the start check uses it). Avoid names containing *push*, *ad*, *track* or *analytics* – ad blockers block such files. If you **rename or remove** an app file, also add its old path to `OBSOLET` in `pinn-setup.sh`, so that updates tidy it up on the NAS (it is moved to `_alt/`, not deleted).
 3. **HTML** is changed in `src/`, then `node src/build.js`. Keep element IDs – the scripts use them.
 4. **Hooks** are named with a dot (`example.pb.js`, not `example_pb.js`). Shared code goes into a module that is not a `*.pb.js` and is loaded with ``require(`${__hooks}/pinn-example.js`)``.
-5. **Comments in English.** App texts stay German and are translated at runtime – add new texts to `pb_public/lang/en.js`, `fr.js`, `es.js` and `it.js` as well (`node .github/scripts/check-lang.js` checks placeholders and completeness).
+5. **Comments in English.** New texts use **keys** (see [Texts](#texts)). Code that still has German texts is translated at runtime with `pb_public/lang/` – if you change such a text, change it in every file there too (`node .github/scripts/check-lang.js` checks placeholders and completeness).
 6. **Input fields:** the page must move up when the on-screen keyboard appears (see `js/tastatur.js`).
 7. **Child lock:** the editor functions `openTaskModal`, `openEditTaskModal`, `openAddEventModal`, `openMealModal`, `openPinboardEditor` and `openKidRoutineEditor` are wrapped after loading – never hand them over directly at load time (`addEventListener('click', openTaskModal)`), always call them inside a function (`() => openTaskModal()`).
 8. The **version number** and the version log (`js/versionslog.js`) are maintained by the maintainer when a release is made – please leave them as they are in pull requests.
+
+### Texts
+
+pinn. is moving from German texts in the code to **text keys** (roadmap step 6, since 1.111.0). Areas that are converted ask for their texts by a key; everything else is still translated from German by the old dictionaries until its turn comes.
+
+- **In JavaScript:** `tk('settings.region.title')` returns the text in the user's language. With values: `tk('tasks.open', { n: 3 })` – placeholders have names (`{n}`, `{name}`, `{date}`).
+- **In HTML (`src/`):** `<span data-tk="settings.region.title">Language &amp; region</span>` – keep the English text inside, so the HTML stays readable (`check-keys.js` makes sure it matches). Attributes: `data-tk-attr="placeholder:lists.add.hint;title:common.save"`. Markup from the language file: `data-tk-html="key"`. For HTML you add later, call `PINN_I18N.apply(element)`.
+- **Files:** `pb_public/i18n/<code>.i18n.js`, one line per key, sorted. `en.i18n.js` is the reference; every language that can be chosen needs every key.
+- **Plurals:** a text can be an object with plural forms, chosen by the value `n`: `{ "one": "{n} open task", "other": "{n} open tasks" }`. Which forms a language needs is listed in `FORMS` of `pb_public/js/textkern.js` – Russian, for example, needs `one`, `few` and `many`. The same file exists as `pb_hooks/pinn-textkern.js` for the server; both must stay identical.
+- **Flat share:** a variant `"<key>#wg"` is used when a household is set to flat share (family members → flatmates).
+- **Key names:** `area.part.name` in English, e.g. `settings.region.country`, `emergency.police`, `common.save`.
+- **Moving existing texts:** `node .github/scripts/i18n-keys.js add <key> "<German text>"` takes the German text and all its translations from the old dictionaries and writes them under the key into every file – nothing has to be translated again. Many keys at once: `import <map.json>`; one text by hand: `set <key> <lang> "<text>"`. The header of the script explains the options.
+- **A new language:** add a line to `PINN_LANGUAGES` in `pb_public/js/sprachen.js` (with `hidden: true` until it is complete), a plural rule to `RULES`/`FORMS` in both text core files and a file `pb_public/i18n/<code>.i18n.js`. A hidden language can be tried out on one device with `localStorage.setItem('pinn.sprachen.alle', '1')` in the browser console.
+
+### Database changes
+
+The database schema lives in one place, `pb_hooks/pinn-schema.js` (since 1.110.0):
+
+- **New collection or field:** add it to the module's ensure function. A new module adds its ensure function to `CHECKS` – these run on every start and only add what is missing.
+- **Anything else** (renaming or removing fields, moving or cleaning up data, dropping old collections): append a step to `MIGRATIONS` with the next version number, e.g. `{ version: 2, name: "remove-old-view", up: () => … }`. Each step runs exactly once and is recorded in the collection `pinn_schema`. Never change, reorder or remove a released step – add a new one. Use `$app.runInTransaction((txApp) => { … })` for data changes (only `txApp` inside), make every step safe to repeat after a partial run and keep a backup copy of anything you delete or rewrite.
+- `check-hooks.js` checks both lists and runs the steps against a simulated database. The header of `pinn-schema.js` has the details.
 
 ### Checks
 
@@ -52,6 +74,7 @@ node .github/scripts/check-all.js ~/pocketbase   # … plus the PocketBase smoke
 | `check-hooks.js` | Runs every hook in a sandbox that stands in for PocketBase: hooks that fail while loading, routes or cron jobs registered twice, invalid cron schedules, top-level declarations in `*.pb.js` (handlers cannot see them), functions used from a `pinn-*.js` module that it does not export, unit tests of the update check. `--list` prints all routes |
 | `smoke-pocketbase.js` | Second job on GitHub: starts a real PocketBase (version from `docker-compose.yaml`) with an empty database and sends a request to every route – fails if PocketBase does not start, the app page is missing or a protected route answers 404; public routes that need a configuration or the internet only give a warning |
 | `check-lang.js` | Language files (`pb_public/lang/`): placeholders such as `{0}`, `{1|s}`, `{2|x=a|b}` must be valid and match the English text, every text of `en.js` must exist, and the file must call `PINN_I18N.load` exactly once. New languages can be created with the `translate.js` tool or the GitHub workflow “Translate” (needs the secret `ANTHROPIC_API_KEY`) |
+| `check-keys.js` | Text keys (`pb_public/i18n/`): every key of `en.i18n.js` exists in every language that can be chosen, plural forms and placeholders are complete, every key used in the code (`tk('…')`, `data-tk`) exists and the English text in the HTML matches; the two text core files are identical and their plural rules agree with Node.js; `js/sprachen.js` is tried out in a simulated page |
 | `check-setup.js` | The clean-up list `OBSOLET` of `pinn-setup.sh`: fails if it names a file that is still part of the repository, still loaded by the app or not a plain path below `pb_public/` or `pb_hooks/`; runs the shell block in a temporary folder to prove it moves only the listed files |
 
 A known, intended exception is listed at the top of `check-lint.js` (`KNOWN_DUPLICATE_FUNCTIONS`). The checks cannot sign in or use real data – please also try your change in a real installation and say in the pull request how you tested it.
@@ -85,7 +108,8 @@ pinn. hat **keinen Bundler und keine npm-Abhängigkeiten**. Das Repository sieht
 | `src/` | Quellen der Seite: `rahmen.html` (Rahmen), `teile/` (Bildschirme, Seiten, Popups), `version.txt`, `build.js` – siehe [src/README.md](../src/README.md) |
 | `pb_public/js/` | App-Code als einfache `<script>`-Dateien (keine Module) |
 | `pb_public/css/` | Gestaltung |
-| `pb_public/lang/` | Übersetzungen (`en.js`, `fr.js`, `es.js`, `it.js`, `pt.js`, `zh.js`) – die App-Texte selbst sind deutsch |
+| `pb_public/i18n/` | Texte nach Schlüssel, eine Datei je Sprache (`de.i18n.js`, `en.i18n.js` …) – Englisch ist die Vorlage (seit 1.111.0, siehe [Texte](#texte)) |
+| `pb_public/lang/` | Alte Wörterbücher (deutscher Text → Übersetzung) für die Teile, die noch keine Schlüssel nutzen (`en.js`, `fr.js`, `es.js`, `it.js`, `pt.js`, `zh.js`, `ja.js`, `ko.js`) |
 | `pb_hooks/` | Server: PocketBase-Hooks (`*.pb.js`) und gemeinsame Module (`pinn-*.js`) |
 | `pinn-setup.sh`, `pinn-wartung.sh` | Installation/Update und der Wartungs-Container (POSIX-`sh`) |
 | `.github/` | GitHub Actions (`workflows/check.yml`), die Prüfungen (`scripts/`), diese Datei, Bilder |
@@ -96,10 +120,31 @@ pinn. hat **keinen Bundler und keine npm-Abhängigkeiten**. Das Repository sieht
 2. **Neue App-Datei** `pb_public/js/<name>.js` (oder `css/<name>.css`) braucht: ihre Zeile in `src/rahmen.html`, ihren Namen in `pinn-setup.sh` (Funktion `ziel`) und bei JavaScript am Ende `(window.PINN_PARTS = window.PINN_PARTS || []).push('<name>');` (darauf baut die Startprüfung). Namen mit *push*, *ad*, *track* oder *analytics* vermeiden – Werbeblocker sperren solche Dateien. Wird eine App-Datei **umbenannt oder entfernt**, ihren alten Pfad auch in `OBSOLET` in `pinn-setup.sh` eintragen, damit Updates sie auf dem NAS aufräumen (sie wird nach `_alt/` verschoben, nicht gelöscht).
 3. **HTML** wird in `src/` geändert, danach `node src/build.js`. Element-IDs beibehalten – die Skripte nutzen sie.
 4. **Hooks** werden mit Punkt benannt (`beispiel.pb.js`, nicht `beispiel_pb.js`). Gemeinsamer Code kommt in ein Modul, das kein `*.pb.js` ist, und wird mit ``require(`${__hooks}/pinn-beispiel.js`)`` geladen.
-5. **Kommentare auf Englisch.** App-Texte bleiben deutsch und werden zur Laufzeit übersetzt – neue Texte auch in `pb_public/lang/en.js`, `fr.js`, `es.js` und `it.js` eintragen (`node .github/scripts/check-lang.js` prüft Platzhalter und Vollständigkeit).
+5. **Kommentare auf Englisch.** Neue Texte bekommen **Schlüssel** (siehe [Texte](#texte)). Code, der noch deutsche Texte enthält, wird zur Laufzeit mit `pb_public/lang/` übersetzt – wer einen solchen Text ändert, ändert ihn dort in jeder Datei mit (`node .github/scripts/check-lang.js` prüft Platzhalter und Vollständigkeit).
 6. **Eingabefelder:** Die Seite muss hochrutschen, wenn die Bildschirmtastatur erscheint (siehe `js/tastatur.js`).
 7. **Kindersicherung:** Die Editor-Funktionen `openTaskModal`, `openEditTaskModal`, `openAddEventModal`, `openMealModal`, `openPinboardEditor` und `openKidRoutineEditor` werden nach dem Laden abgesichert – nie beim Laden direkt weiterreichen (`addEventListener('click', openTaskModal)`), immer in einer Funktion aufrufen (`() => openTaskModal()`).
 8. **Versionsnummer** und Versions-Log (`js/versionslog.js`) pflegt der Maintainer beim Release – in Pull Requests bitte unverändert lassen.
+
+### Texte
+
+pinn. stellt von deutschen Texten im Code auf **Text-Schlüssel** um (Fahrplan-Schritt 6, seit 1.111.0). Umgestellte Bereiche holen ihre Texte über einen Schlüssel; alles andere übersetzen weiter die alten Wörterbücher aus dem Deutschen, bis es an der Reihe ist.
+
+- **In JavaScript:** `tk('settings.region.title')` liefert den Text in der Sprache des Profils. Mit Werten: `tk('tasks.open', { n: 3 })` – Platzhalter haben Namen (`{n}`, `{name}`, `{date}`).
+- **In HTML (`src/`):** `<span data-tk="settings.region.title">Language &amp; region</span>` – den englischen Text drin lassen, damit das HTML lesbar bleibt (`check-keys.js` prüft, dass er passt). Attribute: `data-tk-attr="placeholder:lists.add.hint;title:common.save"`. Markup aus der Sprachdatei: `data-tk-html="key"`. Für HTML, das später dazukommt, `PINN_I18N.apply(element)` aufrufen.
+- **Dateien:** `pb_public/i18n/<code>.i18n.js`, eine Zeile je Schlüssel, sortiert. `en.i18n.js` ist die Vorlage; jede wählbare Sprache braucht jeden Schlüssel.
+- **Mehrzahl:** Ein Text kann ein Objekt mit Mehrzahlformen sein, gewählt über den Wert `n`: `{ "one": "{n} open task", "other": "{n} open tasks" }`. Welche Formen eine Sprache braucht, steht in `FORMS` in `pb_public/js/textkern.js` – Russisch braucht zum Beispiel `one`, `few` und `many`. Dieselbe Datei liegt als `pb_hooks/pinn-textkern.js` für den Server; beide müssen gleich bleiben.
+- **WG:** Eine Variante `"<key>#wg"` gilt, wenn ein Haushalt auf WG steht (Familienmitglieder → Mitbewohner).
+- **Schlüsselnamen:** `bereich.teil.name` auf Englisch, z. B. `settings.region.country`, `emergency.police`, `common.save`.
+- **Vorhandene Texte umziehen:** `node .github/scripts/i18n-keys.js add <key> "<deutscher Text>"` nimmt den deutschen Text samt allen Übersetzungen aus den alten Wörterbüchern und schreibt ihn unter dem Schlüssel in jede Datei – nichts muss neu übersetzt werden. Viele Schlüssel auf einmal: `import <map.json>`; einen Text von Hand: `set <key> <lang> "<text>"`. Der Kopf des Skripts erklärt die Optionen.
+- **Neue Sprache:** eine Zeile in `PINN_LANGUAGES` in `pb_public/js/sprachen.js` (mit `hidden: true`, bis sie vollständig ist), eine Mehrzahlregel in `RULES`/`FORMS` beider Textkern-Dateien und eine Datei `pb_public/i18n/<code>.i18n.js`. Eine versteckte Sprache lässt sich auf einem Gerät mit `localStorage.setItem('pinn.sprachen.alle', '1')` in der Browser-Konsole ausprobieren.
+
+### Änderungen an der Datenbank
+
+Das Datenbank-Schema steht an einer Stelle, in `pb_hooks/pinn-schema.js` (seit 1.110.0):
+
+- **Neue Sammlung oder neues Feld:** in die ensure-Funktion des Moduls. Ein neues Modul trägt seine ensure-Funktion in `CHECKS` ein – diese laufen bei jedem Start und ergänzen nur, was fehlt.
+- **Alles andere** (Felder umbenennen oder entfernen, Daten verschieben oder aufräumen, alte Sammlungen löschen): einen Schritt mit der nächsten Versionsnummer ans Ende von `MIGRATIONS` hängen, z. B. `{ version: 2, name: "alte-ansicht-entfernen", up: () => … }`. Jeder Schritt läuft genau einmal und wird in der Sammlung `pinn_schema` vermerkt. Veröffentlichte Schritte nie ändern, umsortieren oder löschen – stattdessen einen neuen anlegen. Datenänderungen in `$app.runInTransaction((txApp) => { … })` (darin nur `txApp`), jeden Schritt so bauen, dass er nach einem halben Durchlauf wiederholt werden kann, und von allem, was gelöscht oder umgeschrieben wird, eine Sicherungskopie behalten.
+- `check-hooks.js` prüft beide Listen und spielt die Schritte gegen eine nachgebildete Datenbank durch. Einzelheiten stehen im Kopf von `pinn-schema.js`.
 
 ### Prüfungen
 
@@ -119,6 +164,7 @@ node .github/scripts/check-all.js ~/pocketbase   # … und zusätzlich der Pocke
 | `check-hooks.js` | Führt jeden Hook in einer Nachbildung von PocketBase aus: Hooks, die beim Laden abbrechen, doppelt angelegte Routen oder Cron-Jobs, ungültige Zeitpläne, Deklarationen auf oberster Ebene in `*.pb.js` (Handler sehen sie nicht), Funktionen aus einem `pinn-*.js`-Modul, die es gar nicht exportiert, Tests der Update-Erkennung. `--list` zeigt alle Routen |
 | `smoke-pocketbase.js` | Zweiter Job auf GitHub: startet einen echten PocketBase (Version aus `docker-compose.yaml`) mit leerer Datenbank und ruft jede Route auf – schlägt fehl, wenn PocketBase nicht startet, die App-Seite fehlt oder eine geschützte Route mit 404 antwortet; öffentliche Routen, die eine Einrichtung oder das Internet brauchen, geben nur eine Warnung |
 | `check-lang.js` | Sprachdateien (`pb_public/lang/`): Platzhalter wie `{0}`, `{1|s}`, `{2|x=a|b}` müssen gültig sein und zum englischen Text passen, jeder Text aus `en.js` muss vorkommen und die Datei darf `PINN_I18N.load` nur einmal aufrufen. Neue Sprachen entstehen mit dem Werkzeug `translate.js` oder dem GitHub-Workflow „Translate“ (braucht das Secret `ANTHROPIC_API_KEY`) |
+| `check-keys.js` | Text-Schlüssel (`pb_public/i18n/`): jeder Schlüssel aus `en.i18n.js` in jeder wählbaren Sprache, Mehrzahlformen und Platzhalter vollständig, jeder im Code benutzte Schlüssel (`tk('…')`, `data-tk`) vorhanden und der englische Text im HTML passend; die beiden Textkern-Dateien sind gleich und ihre Mehrzahlregeln stimmen mit Node.js überein; `js/sprachen.js` wird in einer nachgebildeten Seite ausprobiert |
 | `check-setup.js` | Die Aufräumliste `OBSOLET` in `pinn-setup.sh`: schlägt fehl, wenn sie eine Datei nennt, die noch im Repository liegt, von der App noch geladen wird oder kein einfacher Pfad unter `pb_public/` oder `pb_hooks/` ist; führt den Shell-Block in einem Temp-Ordner aus und beweist, dass nur Dateien der Liste verschoben werden |
 
 Eine bekannte, gewollte Ausnahme steht oben in `check-lint.js` (`KNOWN_DUPLICATE_FUNCTIONS`). Die Prüfungen können sich nicht anmelden und haben keine echten Daten – bitte die Änderung auch in einer echten Installation ausprobieren und im Pull Request schreiben, wie getestet wurde.

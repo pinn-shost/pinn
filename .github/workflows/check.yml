@@ -6,6 +6,7 @@
 #   3. project rules (lint): file registration, global names declared only once, hook names and requires
 #   4. hooks in a sandbox: they load, routes and cron jobs are unique and valid, used exports exist, unit tests
 #   5. clean-up list of pinn-setup.sh: never names a file the app still needs, the shell block works (since 1.102.1)
+#   6. language files (lang/) and text keys (i18n/, since 1.111.0)
 # Job "pocketbase" starts a real PocketBase (version from docker-compose.yaml) with an empty, temporary database,
 # pb_hooks/ and pb_public/, and sends a request to every route.
 # Every step of "check" runs even if an earlier one failed, so one run shows all problems.
@@ -61,6 +62,10 @@ jobs:
       - name: Language files (placeholders, completeness)
         if: success() || failure()
         run: node .github/scripts/check-lang.js
+
+      - name: Text keys (i18n files, keys in the code, plural rules)
+        if: success() || failure()
+        run: node .github/scripts/check-keys.js
 
   pocketbase:
     name: Routes on a real PocketBase
