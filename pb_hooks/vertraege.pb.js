@@ -2,7 +2,7 @@
 // Finanzen → Verträge: Dokumente-Sammlung und Erinnerungen an Kündigungsfristen.
 // Die Logik steckt in pinn-vertraege.js.
 //
-// Beim Start: legt die Sammlung "finanz_dokumente" an (Vertragsdokumente und Belege zu Ausgaben;
+// Beim Start (über pinn-schema.js): legt die Sammlung "finanz_dokumente" an (Vertragsdokumente und Belege zu Ausgaben;
 // geschützte Dateien, nur für die eigene Familie, nicht für Gastkonten). Hoch-/runtergeladen wird
 // direkt über die PocketBase-Sammlungs-API mit Anmeldung bzw. Datei-Token.
 //
@@ -13,15 +13,6 @@
 //
 // Zeitplan: stündlich (Minute 23) - die eigentliche Prüfung aller Familien läuft aber nur einmal am
 // Tag ab 8 Uhr.
-
-onBootstrap((e) => {
-    e.next();
-    try {
-        require(`${__hooks}/pinn-vertraege.js`).ensureSchema();
-    } catch (err) {
-        console.log("[Verträge] Einrichtung fehlgeschlagen: " + err.message);
-    }
-});
 
 cronAdd("pinnVertraege", "23 * * * *", () => {
     try {

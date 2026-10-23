@@ -99,14 +99,13 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語和 🇰🇷 한국어**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
-## 1.109.0 新功能
+## 1.110.0 新功能
 
-**任务、家务和日历选择改为独立记录**
+**数据库带有架构版本**
 
-- **任务**、**家务**（房间、清洁计划、垃圾桶、清洁类别、智能家居设备）和**日历选择**现在作为独立记录保存在服务器上。家庭数据的迁移至此完成，使用方式不变。
-- 迁移前为每个家庭做一次备份（`pb_data/pinn_umzug/`，保留 30 天）；使用旧版应用的设备仍能看到全部内容。Apple ID 和 App 专用密码绝不会进入日历选择。
-- 保存现在会等到所有部分都已到达服务器；旧设备不会再重置已关闭的深色模式等设置。
-- 已更改：应用文件（`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/sprachen.js`, `js/versionslog.js`、所有语言文件）以及服务器上的 `pb_hooks/pinn-bereiche.js`, `pinn-smarthome.js`, `calendar-sync.js`, `save_family_data.pb.js`。
+- 数据库现在有了**架构版本**：服务器启动时设置的一切（集合、字段、访问规则）都集中在一处 `pb_hooks/pinn-schema.js`，并按固定顺序运行。一次性改动会获得一个编号，只运行一次，并记录在锁定的集合 `pinn_schema` 中。使用方式没有任何变化。
+- 更安全的更新：如果某个设置步骤失败，现在会显示在错误日志中（设置 → 系统）。旧版 pinn. 运行在较新的数据库上时，不会改动数据库，并会显示警告。提交到 GitHub 的错误报告会附带架构版本。
+- 已更改：应用文件（`index.html`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`、所有语言文件）以及服务器上的 `pb_hooks/pinn-schema.js`, `schema.pb.js`（新增）、`pinn-system.js` 和 26 个启动文件（`*.pb.js`）。
 
 更早的版本请见 [Releases](https://github.com/pinn-shost/pinn/releases)。
 
@@ -138,7 +137,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.109.0` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.110.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

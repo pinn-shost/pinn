@@ -17,6 +17,7 @@
 
 onBootstrap((e) => {
     e.next();
+    try { require(`${__hooks}/pinn-schema.js`).ensureCurrent(); } catch (err) { /* egal */ }
     try {
         const google = require(`${__hooks}/pinn-google.js`);
         google.setup();

@@ -20,6 +20,14 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.110', datum: '23.10.2026', titel: 'Datenbank mit Schema-Version',
+    punkte: [
+      ['neu', 'Die Datenbank hat jetzt eine Schema-Version: Alle Einrichtungsschritte des Servers stehen an einer Stelle und laufen beim Start in fester Reihenfolge. Einmalige Umbauten bekommen eine Nummer, laufen genau einmal und werden in der Datenbank vermerkt – an der Bedienung ändert sich nichts'],
+      ['info', 'Klappt ein Einrichtungsschritt nicht, steht er jetzt im Fehlerprotokoll (vorher nur im Docker-Log). Läuft eine ältere pinn.-Version auf einer neueren Datenbank, bleibt die Datenbank unverändert und es gibt eine Warnung. Fehlerberichte an GitHub nennen die Schema-Version mit'],
+      ['info', 'Geändert: index.html, js/sicherungen.js, js/sprachen.js, js/versionslog.js, alle Sprachdateien sowie am Server pb_hooks/pinn-schema.js und schema.pb.js (neu), pinn-system.js und 26 Start-Dateien (*.pb.js)'],
+    ],
+  },
+  {
     v: '1.109', datum: '23.10.2026', titel: 'Aufgaben, Haushalt und Kalender-Auswahl in eigenen Datensätzen',
     punkte: [
       ['info', 'Aufgaben, der Haushalt (Räume, Putzpläne, Mülleimer, Putz-Kategorien, Smart-Home-Geräte) und die Kalender-Auswahl liegen jetzt in eigenen Datensätzen auf dem Server. Damit ist der Umzug der Familiendaten abgeschlossen – an der Bedienung ändert sich nichts'],

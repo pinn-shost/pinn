@@ -1,7 +1,7 @@
 // pb_hooks/hinweise.pb.js
 // Alles für die 🔔 Glocke (Logik: pinn-hinweise.js).
 //
-// Beim Start: legt die Sammlung "hinweise" an bzw. ergänzt neue Felder (Sammlungs-API gesperrt,
+// Beim Start (über pinn-schema.js): legt die Sammlung "hinweise" an bzw. ergänzt neue Felder (Sammlungs-API gesperrt,
 // Zugriff nur über diese Route).
 // Angelegt werden die Hinweise:
 //   - bei jeder persönlichen Push-Nachricht (pinn-push.js) - als Hinweis für den Empfänger
@@ -16,15 +16,6 @@
 //                            und nur die, die für das eigene Profil bestimmt sind
 //
 // Kein Zeitplan - alte Hinweise werden beim Anlegen neuer Hinweise mit aufgeräumt.
-
-onBootstrap((e) => {
-    e.next();
-    try {
-        require(`${__hooks}/pinn-hinweise.js`).ensureSchema();
-    } catch (err) {
-        console.log("[Hinweise] Einrichtung fehlgeschlagen: " + err.message);
-    }
-});
 
 routerAdd("GET", "/api/pinn/hinweise", (e) => {
     e.response.header().set("Cache-Control", "no-store");

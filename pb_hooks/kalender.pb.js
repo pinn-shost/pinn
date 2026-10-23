@@ -1,7 +1,7 @@
 // pb_hooks/kalender.pb.js
 // Eigene Kalender je Profil (Einstellungen → Kalender → Eigene Kalender). Die Logik steckt in pinn-kalender.js.
 //
-// Beim Start: legt die gesperrten Sammlungen "kalender_eigene" und "kalender_termine" an.
+// Beim Start (über pinn-schema.js): legt die gesperrten Sammlungen "kalender_eigene" und "kalender_termine" an.
 //
 // Angemeldet (Profile einer Familie):
 //   GET  /api/pinn/kalender/eigene            { kalender: [{ id, name, farbe, geteilt, mein, von, darf }] }
@@ -26,15 +26,6 @@
 //
 // Aufräumen: wird ein Profil gelöscht, verschwinden seine privaten Kalender (geteilte bleiben der
 // Familie erhalten); wird eine Familie gelöscht, alle ihre eigenen Kalender.
-
-onBootstrap((e) => {
-    e.next();
-    try {
-        require(`${__hooks}/pinn-kalender.js`).ensureSchema();
-    } catch (err) {
-        console.log("[Kalender] Einrichtung fehlgeschlagen: " + err.message);
-    }
-});
 
 onRecordAfterDeleteSuccess((e) => {
     try { require(`${__hooks}/pinn-kalender.js`).cleanupUser(e.record.id); } catch (err) { console.log("[Kalender] Aufräumen (Profil) fehlgeschlagen: " + err.message); }

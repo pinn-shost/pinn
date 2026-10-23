@@ -1,7 +1,7 @@
 // pb_hooks/ortung.pb.js
 // Familie → Ortung. Die Logik steckt in pinn-ortung.js.
 //
-// Beim Start: legt die gesperrte Sammlung "ortung" an (je Familie Geräte, Orte, Heimweg).
+// Beim Start (über pinn-schema.js): legt die gesperrte Sammlung "ortung" an (je Familie Geräte, Orte, Heimweg).
 //
 // Routen (angemeldet, nicht für Gastkonten):
 //   GET  /api/pinn/ortung/status          Geräte, Orte, aktuelle Positionen (nur bei geteiltem Standort)
@@ -43,15 +43,6 @@
 // Zeitplan: jede Minute SOS-Ereignisse aus Traccar prüfen (Tracker, direkt gesendete Handys),
 //           Ankommen/Verlassen der Orte (nur wenn Orte oder Heimwege bestehen),
 //           Verweilen in Läden -> geplanten Einkauf abhaken.
-
-onBootstrap((e) => {
-    e.next();
-    try {
-        require(`${__hooks}/pinn-ortung.js`).ensureSchema();
-    } catch (err) {
-        console.log("[Ortung] Einrichtung fehlgeschlagen: " + err.message);
-    }
-});
 
 // Meldungen von „Traccar Client“ an der Hauptadresse abfangen (z. B. /?id=123456&lat=..&lon=..&alarm=sos),
 // bevor sie als normale Seite ausgeliefert werden.

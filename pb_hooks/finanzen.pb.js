@@ -10,15 +10,6 @@
 // Kein Zeitplan - es läuft nur etwas, wenn jemand in der App eine Ausgabe bucht oder ansieht.
 // Gastkonten (Rolle "gast") haben keinen Zugriff auf die Finanzen.
 
-onBootstrap((e) => {
-    e.next();
-    try {
-        require(`${__hooks}/pinn-finanzen.js`).ensureSchema();
-    } catch (err) {
-        console.log("[Finanzen] Einrichtung fehlgeschlagen: " + err.message);
-    }
-});
-
 routerAdd("GET", "/api/pinn/finanzen", (e) => {
     e.response.header().set("Cache-Control", "no-store");
     if (require(`${__hooks}/pinn-benutzer.js`).isGuest(e)) return e.json(403, { error: "Gastkonten haben keinen Zugriff auf die Finanzen." });

@@ -357,6 +357,10 @@ function vorabStand() {
 // ---------------------------------------------------------------------------------------------
 // Overall status for the app
 // ---------------------------------------------------------------------------------------------
+// Database schema version (pinn-schema.js) – shown in bug reports
+function schemaStatus() {
+    try { return require(`${__hooks}/pinn-schema.js`).status(); } catch (e) { return null; }
+}
 function status(e, pruefen, vorab) {
     const r = rechte(e);
     const w = wartung();
@@ -372,6 +376,7 @@ function status(e, pruefen, vorab) {
         update: updateInfo(pruefen),
         repo: repo(),
         vorabStand: vorabStand(),
+        schema: schemaStatus(),
     };
     // Pre-release search only when the developer area asks for it
     if (vorab) out.vorab = vorabInfo(true);

@@ -24,6 +24,7 @@
 
 onBootstrap((e) => {
     e.next();
+    try { require(`${__hooks}/pinn-schema.js`).ensureCurrent(); } catch (err) { /* egal */ }
     try {
         const sitz = require(`${__hooks}/pinn-sitzungen.js`);
         if (sitz.ensureSchema()) sitz.doppelteZusammenfuehren();

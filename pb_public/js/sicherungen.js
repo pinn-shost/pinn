@@ -250,8 +250,10 @@ function sysRepo(info) {
 // "New issue" on GitHub, pre-filled with version and device so a report is useful right away
 function sysIssueUrl(info, version) {
   const v = version || ((info || sysInfo || {}).version) || APP_VERSION;
+  const sch = (info || sysInfo || {}).schema;
   const body = [
     'Version: ' + v,
+    ...(sch && sch.version ? ['Schema: ' + sch.version + (sch.ok ? '' : ' (!)')] : []),
     sysT('Gerät / Browser') + ': ' + navigator.userAgent,
     '',
     sysT('Was ist passiert?'),

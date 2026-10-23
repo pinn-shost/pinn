@@ -1,7 +1,7 @@
 // pb_hooks/pinnwand.pb.js
 // Pinnwand der Familie (Logik: pinn-pinnwand.js).
 //
-// Beim Start: legt die Sammlung "pinnwand_bilder" an (Fotos der Zettel; geschützte Dateien, nur für
+// Beim Start (über pinn-schema.js): legt die Sammlung "pinnwand_bilder" an (Fotos der Zettel; geschützte Dateien, nur für
 // die eigene Familie). Hoch-/runtergeladen wird direkt über die PocketBase-Sammlungs-API mit
 // Anmeldung bzw. Datei-Token.
 //
@@ -13,15 +13,6 @@
 // Zettel-Erinnerungen. Liest dafür nur einen kleinen Stand aus dem Zwischenspeicher; die
 // Familiendaten werden nur gelesen, wenn wirklich etwas zu verschicken ist. Einmal täglich (ab 3 Uhr)
 // werden Fotos gelöscht, die zu keinem Zettel mehr gehören.
-
-onBootstrap((e) => {
-    e.next();
-    try {
-        require(`${__hooks}/pinn-pinnwand.js`).ensureSchema();
-    } catch (err) {
-        console.log("[Pinnwand] Einrichtung fehlgeschlagen: " + err.message);
-    }
-});
 
 cronAdd("pinnPinnwand", "* * * * *", () => {
     try {

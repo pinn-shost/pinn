@@ -19,6 +19,7 @@
 
 onBootstrap((e) => {
     e.next();
+    try { require(`${__hooks}/pinn-schema.js`).ensureCurrent(); } catch (err) { /* ignore */ }
     try {
         require(`${__hooks}/pinn-bereiche.js`).migrateAll();
     } catch (err) {

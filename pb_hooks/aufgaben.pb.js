@@ -19,15 +19,6 @@
 //
 // Zeitplan: einmal pro Stunde (Minute 7) für alle Familien Haushalts-Aufgaben prüfen und erledigte aufräumen.
 
-onBootstrap((e) => {
-    e.next();
-    try {
-        require(`${__hooks}/pinn-aufgaben.js`).ensureSchema();
-    } catch (err) {
-        console.log("[Aufgaben] Einrichtung fehlgeschlagen: " + err.message);
-    }
-});
-
 cronAdd("pinnAufgaben", "7 * * * *", () => {
     try {
         require(`${__hooks}/pinn-aufgaben.js`).runCron();

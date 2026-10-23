@@ -6,15 +6,6 @@
 //        uebernommen = false: auf einem anderen Gerät wurde später geändert; "design" enthält dann
 //        den gültigen (neueren) Stand, den die App übernehmen soll.
 
-onBootstrap((e) => {
-    e.next();
-    try {
-        require(`${__hooks}/pinn-design.js`).ensureField();
-    } catch (err) {
-        console.log("[Design] Einrichtung fehlgeschlagen: " + err.message);
-    }
-});
-
 routerAdd("GET", "/api/pinn/design", (e) => {
     const lib = require(`${__hooks}/pinn-design.js`);
     e.response.header().set("Cache-Control", "no-store");

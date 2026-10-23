@@ -34,9 +34,9 @@
 onBootstrap((e) => {
     e.next();
     try {
-        // Buchungen, Belege und Dokumente brauchen das Feld "kasse", bevor die Kassen sie übernehmen
-        try { require(`${__hooks}/pinn-finanzen.js`).ensureSchema(); } catch (err) { console.log("[Kassen] Buchungen: " + err.message); }
-        try { require(`${__hooks}/pinn-vertraege.js`).ensureSchema(); } catch (err) { console.log("[Kassen] Belege: " + err.message); }
+        // Buchungen, Belege und Dokumente brauchen das Feld "kasse", bevor die Kassen sie übernehmen –
+        // die Datenbank-Einrichtung (pinn-schema.js) legt sie in dieser Reihenfolge an
+        try { require(`${__hooks}/pinn-schema.js`).ensureCurrent(); } catch (err) { console.log("[Kassen] Einrichtung: " + err.message); }
         require(`${__hooks}/pinn-kassen.js`).migrateAll();
         try { require(`${__hooks}/pinn-dokumente.js`).ensureSchema(); } catch (err) { console.log("[Kassen] Dokumente: " + err.message); }
     } catch (err) {

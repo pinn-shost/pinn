@@ -7,15 +7,6 @@
 //
 // Kein Zeitplan - Kurse werden nur geholt, wenn jemand in der App „Sparen“ ansieht.
 
-onBootstrap((e) => {
-    e.next();
-    try {
-        require(`${__hooks}/pinn-kurse.js`).ensureSchema();
-    } catch (err) {
-        console.log("[Kurse] Einrichtung fehlgeschlagen: " + err.message);
-    }
-});
-
 routerAdd("POST", "/api/pinn/kurse", (e) => {
     e.response.header().set("Cache-Control", "no-store");
     if (require(`${__hooks}/pinn-benutzer.js`).isGuest(e)) return e.json(403, { error: "Gastkonten haben keinen Zugriff auf die Finanzen." });

@@ -29,11 +29,8 @@
 
 onBootstrap((e) => {
     e.next();
-    try {
-        require(`${__hooks}/pinn-benutzer.js`).ensureSchema();
-    } catch (err) {
-        console.log("[Anmeldung] Einrichtung fehlgeschlagen: " + err.message);
-    }
+    // Datenbank-Einrichtung (pinn-schema.js, darin auch pinn-benutzer.ensureSchema)
+    try { require(`${__hooks}/pinn-schema.js`).ensureCurrent(); } catch (err) { console.log("[Anmeldung] Einrichtung fehlgeschlagen: " + err.message); }
     // Jedes Profil ist ein Familienmitglied: fehlende Mitglieder anlegen, Beispiel-Mitglieder entfernen
     try {
         require(`${__hooks}/pinn-benutzer.js`).syncAllFamilyMembers();

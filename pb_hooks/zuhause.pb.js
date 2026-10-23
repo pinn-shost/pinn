@@ -1,7 +1,7 @@
 // pb_hooks/zuhause.pb.js
 // Einstellungen → Zuhause (je Familie). Die Logik steckt in pinn-zuhause.js.
 //
-// Beim Start: legt die gesperrte Sammlung "zuhause" an.
+// Beim Start (über pinn-schema.js): legt die gesperrte Sammlung "zuhause" an.
 //
 // Angemeldet:
 //   GET  /api/pinn/zuhause                       { zuhause, optionen, darfAendern }
@@ -19,15 +19,6 @@
 //
 // Kein Zeitplan - es läuft nur etwas, wenn die App fragt (Wetter 15 Min., Stundenverlauf und Reisewetter 30 Min.,
 // Erfahrungswerte 7 Tage, Ferien 14 Tage zwischengespeichert).
-
-onBootstrap((e) => {
-    e.next();
-    try {
-        require(`${__hooks}/pinn-zuhause.js`).ensureSchema();
-    } catch (err) {
-        console.log("[Zuhause] Einrichtung fehlgeschlagen: " + err.message);
-    }
-});
 
 routerAdd("GET", "/api/pinn/zuhause", (e) => {
     e.response.header().set("Cache-Control", "no-store");

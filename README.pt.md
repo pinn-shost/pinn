@@ -99,14 +99,13 @@ Sempre com você: o pinn. se instala em todo iPhone e celular Android como um ap
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 e 🇰🇷 한국어**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
-## Novidades da 1.109.0
+## Novidades da 1.110.0
 
-**Tarefas, casa e seleção de calendários em registros próprios**
+**Banco de dados com versão de esquema**
 
-- As **tarefas**, a **casa** (cômodos, planos de limpeza, lixeiras, categorias de limpeza, dispositivos de casa inteligente) e a **seleção de calendários** agora ficam em registros próprios no servidor. Com isso a mudança dos dados da família está concluída. Nada muda no uso.
-- Antes da mudança é feito um backup por família (`pb_data/pinn_umzug/`, 30 dias); dispositivos com um app mais antigo continuam vendo tudo. O ID Apple e a senha de app nunca vão para a seleção de calendários.
-- Salvar agora espera até que todas as partes estejam no servidor; dispositivos mais antigos não redefinem mais ajustes como o modo escuro desligado.
-- Alterado: arquivos do app (`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/sprachen.js`, `js/versionslog.js`, todos os arquivos de idioma) e no servidor `pb_hooks/pinn-bereiche.js`, `pinn-smarthome.js`, `calendar-sync.js`, `save_family_data.pb.js`.
+- O banco de dados agora tem uma **versão de esquema**: tudo o que o servidor configura na inicialização (coleções, campos, regras de acesso) fica em um só lugar, `pb_hooks/pinn-schema.js`, e roda em ordem fixa. Mudanças únicas recebem um número, rodam exatamente uma vez e ficam registradas na coleção bloqueada `pinn_schema`. Nada muda no uso do app.
+- Atualizações mais seguras: se uma etapa de configuração falhar, ela agora aparece no registro de erros (Configurações → Sistema). Uma versão mais antiga do pinn. sobre um banco mais novo não o altera e mostra um aviso. Relatórios de erro para o GitHub informam a versão do esquema.
+- Alterado: arquivos do app (`index.html`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, todos os arquivos de idioma) e no servidor `pb_hooks/pinn-schema.js`, `schema.pb.js` (novos), `pinn-system.js` e 26 arquivos de inicialização (`*.pb.js`).
 
 As versões anteriores estão em [Releases](https://github.com/pinn-shost/pinn/releases).
 
@@ -138,7 +137,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.109.0` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.110.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

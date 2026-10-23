@@ -1,7 +1,7 @@
 // pb_hooks/smarthome.pb.js
 // Smart home (Settings → Smart home or Household → house icon). The logic lives in pinn-smarthome.js.
 //
-// On startup: creates the locked collection "smarthome_zugaenge" or adds the field "ha".
+// On startup (via pinn-schema.js): creates the locked collection "smarthome_zugaenge" or adds the field "ha".
 // Schedule: every minute – Home Assistant: due automatic starts, queued actions, "When ticked off",
 // plants (watering / mowing) and switching off again after a duration.
 //
@@ -20,15 +20,6 @@
 //   POST /api/pinn/smart/ha/test               { entity, service, data? } | { ha: { kind: "segments", … }, raum }
 //   POST /api/pinn/smart/ha/sauger             { entity: vacuum.… } -> { raeume, fanSpeeds, water, mopMode, sensoren, … }
 //   POST /api/pinn/smart/ha/zustand            { entity } -> { state, unit, name }  (e.g. fill level of a pet feeder)
-
-onBootstrap((e) => {
-    e.next();
-    try {
-        require(`${__hooks}/pinn-smarthome.js`).ensureSchema();
-    } catch (err) {
-        console.log("[Smarthome] Einrichtung fehlgeschlagen: " + err.message);
-    }
-});
 
 cronAdd("pinnSmartHomeHa", "* * * * *", () => {
     try {

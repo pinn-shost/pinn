@@ -2,7 +2,7 @@
 // Admin-Fehlerprotokoll – Fehler der Server-Hooks (Kalender-Sync, Push, Müllkalender, Anmeldung …)
 // in der App statt nur im Docker-Log. Die Logik steckt in pinn-protokoll.js.
 //
-// Beim Start: legt die gesperrte Sammlung "protokoll" an.
+// Beim Start (über pinn-schema.js): legt die gesperrte Sammlung "protokoll" an.
 //
 // Nur Admins (Hauptadmin: alles; Familien-Admins: ihre Familie, bei nur einer Familie auch die
 // allgemeinen Server-Einträge):
@@ -11,15 +11,6 @@
 //   POST /api/pinn/protokoll/leeren            { art: "behoben" | "alle" } oder { id }
 //
 // Zeitplan: nachts 03:47 Uhr – Einträge älter als 30 Tage löschen, höchstens 1000 behalten.
-
-onBootstrap((e) => {
-    e.next();
-    try {
-        require(`${__hooks}/pinn-protokoll.js`).ensureSchema();
-    } catch (err) {
-        console.log("[Protokoll] Einrichtung fehlgeschlagen: " + err.message);
-    }
-});
 
 cronAdd("pinnProtokollAufraeumen", "47 3 * * *", () => {
     try {

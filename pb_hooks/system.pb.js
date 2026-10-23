@@ -16,11 +16,6 @@
 //  POST /api/pinn/system/rechte             { id, an } main admin only: a family admin may do updates and
 //                                           restores (also with several families)
 
-onBootstrap((e) => {
-    e.next();
-    try { require(`${__hooks}/pinn-system.js`).ensureSchema(); } catch (err) { console.log("[System] Einrichtung: " + err.message); }
-});
-
 // Error responses are written directly in every handler (file-level helper functions are not
 // visible inside the isolated handlers of PocketBase).
 

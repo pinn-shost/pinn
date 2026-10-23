@@ -18,6 +18,7 @@
 
 onBootstrap((e) => {
     e.next();
+    try { require(`${__hooks}/pinn-schema.js`).ensureCurrent(); } catch (err) { /* egal */ }
     try {
         require(`${__hooks}/pinn-apple.js`).setup();
     } catch (err) {

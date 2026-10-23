@@ -1,7 +1,7 @@
 // pb_hooks/muell.pb.js
 // Müllkalender der Familie (Einstellungen → Kalender → Müllkalender). Die Logik steckt in pinn-muell.js.
 //
-// Beim Start: legt die gesperrte Sammlung "muellkalender" an (je Familie genau ein Kalender).
+// Beim Start (über pinn-schema.js): legt die gesperrte Sammlung "muellkalender" an (je Familie genau ein Kalender).
 //
 // Angemeldet (alle Profile der Familie, auch Gäste – nur lesen):
 //   GET  /api/pinn/muell?stand=...           { kalender, termine[{d,t}], stand, darfAendern, ki }
@@ -17,16 +17,6 @@
 //
 // Fehler stehen zusätzlich im Admin-Fehlerprotokoll (pinn-protokoll.js).
 // Zeitplan: montags 5:15 Uhr – Kalender mit Link, die älter als 6 Tage geprüft sind, neu laden.
-
-onBootstrap((e) => {
-    e.next();
-    try {
-        require(`${__hooks}/pinn-muell.js`).ensureSchema();
-    } catch (err) {
-        console.log("[Müll] Einrichtung fehlgeschlagen: " + err.message);
-        try { require(`${__hooks}/pinn-protokoll.js`).fehler("muell", "Müllkalender-Einrichtung fehlgeschlagen: " + err.message); } catch (e2) { /* egal */ }
-    }
-});
 
 cronAdd("pinnMuellCron", "15 5 * * 1", () => {
     try {

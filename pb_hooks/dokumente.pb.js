@@ -2,7 +2,7 @@
 // Menüpunkt „Dokumente“: Sammlung für Dokumente und Erinnerungen an Ablaufdaten/Garantien.
 // Die Logik steckt in pinn-dokumente.js.
 //
-// Beim Start: legt die Sammlung "dokumente" an (Fotos/PDFs als geschützte Dateien, nur für die
+// Beim Start (über pinn-schema.js): legt die Sammlung "dokumente" an (Fotos/PDFs als geschützte Dateien, nur für die
 // eigene Familie, nicht für Gastkonten). Hoch-/runtergeladen wird direkt über die PocketBase-
 // Sammlungs-API mit Anmeldung bzw. Datei-Token.
 //
@@ -12,15 +12,6 @@
 //                                      Erinnerung auf; nur zwischen 8 und 21 Uhr, nichts doppelt)
 //
 // Zeitplan: stündlich (Minute 27) - die eigentliche Prüfung läuft aber nur einmal am Tag ab 8 Uhr.
-
-onBootstrap((e) => {
-    e.next();
-    try {
-        require(`${__hooks}/pinn-dokumente.js`).ensureSchema();
-    } catch (err) {
-        console.log("[Dokumente] Einrichtung fehlgeschlagen: " + err.message);
-    }
-});
 
 cronAdd("pinnDokumente", "27 * * * *", () => {
     try {

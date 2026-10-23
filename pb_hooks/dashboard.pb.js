@@ -24,6 +24,7 @@
 
 onBootstrap((e) => {
     e.next();
+    try { require(`${__hooks}/pinn-schema.js`).ensureCurrent(); } catch (err) { /* egal */ }
     try {
         const dash = require(`${__hooks}/pinn-dashboard.js`);
         if (dash.ensureSchema()) dash.doppelteZusammenfuehren();

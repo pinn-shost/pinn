@@ -1,7 +1,7 @@
 // pb_hooks/sprache.pb.js
 // Voice control (Settings -> Sprachsteuerung). The logic lives in pinn-sprache.js.
 //
-// On startup: creates the locked collection "sprache_zugaenge".
+// On startup (via pinn-schema.js): creates the locked collection "sprache_zugaenge".
 //
 // Public, personal token only (for the Siri shortcut or "HTTP Shortcuts" on Android):
 //   POST /api/pinn/sprache?token=...        { text }  -> answer as plain text to be read aloud
@@ -17,15 +17,6 @@
 // functions or use variables declared at the top level of this file - only globals such as
 // require(), __hooks, $app, $apis. Therefore the shared answer logic is written directly inside
 // the handler below (registered for both methods in a loop) instead of in a helper function.
-
-onBootstrap((e) => {
-    e.next();
-    try {
-        require(`${__hooks}/pinn-sprache.js`).ensureSchema();
-    } catch (err) {
-        console.log("[Sprache] Einrichtung fehlgeschlagen: " + err.message);
-    }
-});
 
 ["POST", "GET"].forEach((method) => {
     routerAdd(method, "/api/pinn/sprache", (e) => {

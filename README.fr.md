@@ -95,6 +95,15 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 et 🇰🇷 한국어**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.110.0
+
+**Base de données avec version de schéma**
+
+- Étape 5 de la feuille de route : la base de données a désormais une **version de schéma**. Tout ce que le serveur configure au démarrage (collections, champs, règles d’accès) est réuni en un seul endroit, `pb_hooks/pinn-schema.js`, et s’exécute dans un ordre fixe. Les modifications ponctuelles reçoivent un numéro, s’exécutent une seule fois et sont consignées dans la collection verrouillée `pinn_schema`. Rien ne change à l’utilisation.
+- Mises à jour plus sûres : si une étape de configuration échoue, elle apparaît désormais dans le journal des erreurs (Réglages → Système) et plus seulement dans le journal Docker. Une version plus ancienne de pinn. sur une base plus récente ne la modifie pas et affiche un avertissement. Les rapports de bug vers GitHub indiquent la version du schéma.
+- Pour les contributeurs : une nouvelle collection ou un nouveau champ va dans la fonction ensure du module ; tout le reste (renommer, nettoyer des données) devient une nouvelle étape numérotée dans `MIGRATIONS` – voir l’en-tête de `pb_hooks/pinn-schema.js`. `check-hooks.js` teste le déroulement sur une base de données simulée.
+- Modifié : fichiers de l’app (`index.html`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, tous les fichiers de langue) et, sur le serveur, `pb_hooks/pinn-schema.js`, `schema.pb.js` (nouveaux), `pinn-system.js` et 26 fichiers de démarrage (`*.pb.js`), ainsi que `.github/scripts/check-hooks.js`. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
+
 ## Nouveautés de la 1.109.0
 
 **Tâches, ménage et choix des calendriers dans des enregistrements séparés**
@@ -137,14 +146,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - La commande vocale (Siri/Android) comprend toujours l’allemand, l’anglais, le français et l’espagnol.
 - Modifié : fichiers de l’appli (`index.html`, `js/sprachen.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, fichiers de langue `en`, `fr`, `es`, `it`, `pt`, `zh`) et sur le serveur `pb_hooks/pinn-pushtext.js`, `pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-aufgaben.js`, `pinn-wobistdu.js`, `pinn-einrichtung.js`.
 
-## Nouveautés de la 1.107.1
-
-**Nouvelles langues : portugais (Brésil) et chinois (simplifié)**
-
-- pinn. est désormais disponible en **portugais (Brésil)** et en **chinois (simplifié)** (Paramètres → Langue). Toute l’appli est traduite, y compris l’aperçu de la semaine et du mois, l’indice de courses et le bouton d’export.
-- Pas encore dans ces langues : l’assistant de configuration, les fichiers de l’export des données et les notifications push du serveur – ils s’affichent pour l’instant en anglais.
-- Modifié : fichiers de l’appli (`index.html`, `js/sprachen.js`, `js/ausblick.js`, `js/einrichten.js`, `js/exportieren.js`, `js/hinweise.js`, `js/versionslog.js`, nouveaux `lang/pt.js` et `lang/zh.js`, fichiers de langue `en`, `fr`, `es`, `it`). Rien ne change sur le serveur.
-
 ## Comment ça marche
 
 ```mermaid
@@ -171,7 +172,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.109.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.110.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

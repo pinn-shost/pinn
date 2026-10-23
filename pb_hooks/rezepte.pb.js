@@ -1,7 +1,7 @@
 // pb_hooks/rezepte.pb.js
 // Öffentliche Rezepte über alle Familien hinweg. Die Logik steckt in pinn-rezepte.js.
 //
-// Beim Start: legt die Sammlung "oeffentliche_rezepte" an bzw. ergänzt fehlende Felder.
+// Beim Start (über pinn-schema.js): legt die Sammlung "oeffentliche_rezepte" an bzw. ergänzt fehlende Felder.
 // Befüllt wird sie beim Speichern der Familiendaten (save_family_data.pb.js) - jedes Rezept mit
 // gesetztem Haken "Rezept öffentlich teilen" landet dort, entfernte Haken/gelöschte Rezepte
 // verschwinden wieder.
@@ -12,15 +12,6 @@
 // Route (nur angemeldet):
 //   GET /api/pinn/rezepte/oeffentlich   alle öffentlichen Rezepte aller Familien
 //                                        (eigene sind mit "eigene: true" gekennzeichnet)
-
-onBootstrap((e) => {
-    e.next();
-    try {
-        require(`${__hooks}/pinn-rezepte.js`).ensureSchema();
-    } catch (err) {
-        console.log("[Rezepte] Einrichtung fehlgeschlagen: " + err.message);
-    }
-});
 
 // Vor dem Löschen einer Familie: öffentliche Rezepte in die "Rezepte Familie" verschieben.
 // Ein Fehler hier wird nur geloggt und verhindert das Löschen nicht.

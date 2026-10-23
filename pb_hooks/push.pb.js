@@ -34,12 +34,8 @@
 
 onBootstrap((e) => {
     e.next();
-    try {
-        require(`${__hooks}/pinn-push.js`).ensurePushCollections();
-    } catch (err) {
-        console.log("[Push] " + err.message);
-        try { require(`${__hooks}/pinn-protokoll.js`).fehler("push", "Push-Sammlungen konnten nicht eingerichtet werden: " + err.message); } catch (e2) { /* egal */ }
-    }
+    // Push-Sammlungen legt die Datenbank-Einrichtung an (pinn-schema.js)
+    try { require(`${__hooks}/pinn-schema.js`).ensureCurrent(); } catch (err) { console.log("[Push] Einrichtung: " + err.message); }
     try {
         const push = require(`${__hooks}/pinn-push.js`);
         const r = push.restorePersisted();
