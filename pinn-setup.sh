@@ -17,7 +17,7 @@
 #  Repository layout = installation layout (since 1.39.0): every file in the release lies at the
 #  same relative path at which it ends up in the project folder:
 #     pb_hooks/      server hooks and their helper modules  → ./pb_hooks
-#     pb_public/     the web app (index.html, icons, js/, lang/, vendor/)  → ./pb_public
+#     pb_public/     the web app (index.html, icons, js/, css/, i18n/, lang/, vendor/)  → ./pb_public
 #     caddy/         Caddyfile  → ./caddy/Caddyfile
 #     src/           sources of pb_public/index.html (put together by src/build.js before every release)
 #                    – not installed, the release already contains the built index.html
@@ -205,11 +205,12 @@ ziel() {
     pinn-setup.sh|pinn-pocketbase-update.sh|pinn-wartung.sh|docker-compose.yaml|docker-compose.yml|env.txt|.env) echo "" ;;
     pinn-*.js|calendar-sync.js)      echo "pb_hooks/$1" ;;
     index.html|manifest.json|einrichtung.js|datenexport.js|*.png|*.ico|*.svg|*.webmanifest) echo "pb_public/$1" ;;
+    [a-z][a-z].i18n.js)              echo "pb_public/i18n/$1" ;;   # key-based texts (since 1.111.0)
     [a-z][a-z].js)                   echo "pb_public/lang/$1" ;;
     pinn.css)                        echo "pb_public/vendor/pinn.css" ;;
     pocketbase_umd.js|pocketbase.umd.js|pocketbase.umd.min.js) echo "pb_public/vendor/pocketbase/pocketbase.umd.js" ;;
     pdf.min.mjs|pdf.worker.min.mjs)  echo "pb_public/vendor/pdfjs/$1" ;;
-    ausblick.js|hinweise.js|familie.js|listen.js|pinnwand.js|appstart.js|pdflesen.js|dokumente.js|zuhause.js|fahrzeuge.js|vertraege.js|sparen.js|vorrat2.js|vorrat.js|kassen.js|finanzen.js|kalenderkonto.js|einstellungen.js|versionslog.js|fehlerprotokoll.js|geraete.js|sicherungen.js|versionspruefung.js|ansichten.js|termine.js|sprachsteuerung.js|smarthome.js|aufgaben.js|reihum.js|haushalt.js|aufgabendaten.js|reisen.js|appbadge.js|aufgabenextras.js|offline.js|rezepte.js|einkaufseingabe.js|einkaufslisten.js|einkauf.js|rezeptmengen.js|rezeptbild.js|rezeptdialog.js|rezeptparser.js|essenplanen.js|kalenderansicht.js|sterne.js|kinderroutine.js|kinderseite.js|mitglied.js|profilbild.js|mitglieder.js|muellkalender.js|feiertage.js|wohnort.js|wetter.js|kalenderdatei.js|termindetails.js|zeitleiste.js|icsparser.js|kalenderquellen.js|bereiche.js|familiensync.js|uebersichteinstellungen.js|geburtstage.js|wetterkachel.js|geburtstagsfeier.js|wobistdu.js|familienkachel.js|uebersicht.js|sprache.js|design.js|speichern.js|zusammenfuehren.js|rezeptbilder.js|bedienzustand.js|zustand.js|profilverwaltung.js|konto.js|anmeldung.js|hauptadminseite.js|exportieren.js|einrichten.js|familienverwalten.js|dashboardkonto.js|dashboardsitzung.js|pineingabe.js|profilauswahl.js|dashboardhintergrund.js|dashboard.js|anmeldemaske.js|tastatur.js|serverzugriff.js|mitteilungen.js|benutzer.js|verbindung.js|popups.js|grundlagen.js|region.js|ruhemodus.js|sprachen.js) echo "pb_public/js/$1" ;;   # app parts split out of index.html
+    ausblick.js|hinweise.js|familie.js|listen.js|pinnwand.js|appstart.js|pdflesen.js|dokumente.js|zuhause.js|fahrzeuge.js|vertraege.js|sparen.js|vorrat2.js|vorrat.js|kassen.js|finanzen.js|kalenderkonto.js|einstellungen.js|versionslog.js|fehlerprotokoll.js|geraete.js|sicherungen.js|versionspruefung.js|ansichten.js|termine.js|sprachsteuerung.js|smarthome.js|aufgaben.js|reihum.js|haushalt.js|aufgabendaten.js|reisen.js|appbadge.js|aufgabenextras.js|offline.js|rezepte.js|einkaufseingabe.js|einkaufslisten.js|einkauf.js|rezeptmengen.js|rezeptbild.js|rezeptdialog.js|rezeptparser.js|essenplanen.js|kalenderansicht.js|sterne.js|kinderroutine.js|kinderseite.js|mitglied.js|profilbild.js|mitglieder.js|muellkalender.js|feiertage.js|wohnort.js|wetter.js|kalenderdatei.js|termindetails.js|zeitleiste.js|icsparser.js|kalenderquellen.js|bereiche.js|familiensync.js|uebersichteinstellungen.js|geburtstage.js|wetterkachel.js|geburtstagsfeier.js|wobistdu.js|familienkachel.js|uebersicht.js|sprache.js|design.js|speichern.js|zusammenfuehren.js|rezeptbilder.js|bedienzustand.js|zustand.js|profilverwaltung.js|konto.js|anmeldung.js|hauptadminseite.js|exportieren.js|einrichten.js|familienverwalten.js|dashboardkonto.js|dashboardsitzung.js|pineingabe.js|profilauswahl.js|dashboardhintergrund.js|dashboard.js|anmeldemaske.js|tastatur.js|serverzugriff.js|mitteilungen.js|benutzer.js|verbindung.js|popups.js|grundlagen.js|region.js|ruhemodus.js|sprachen.js|textkern.js) echo "pb_public/js/$1" ;;   # app parts split out of index.html
     haustierewetter.css|pinnwand.css|familienkachel.css|wohnort.css|uebersicht.css|dashboard.css|kinderaufgaben.css|sparen.css|dokumente.css|familie.css|hinweise.css|notfall.css|fahrzeuge.css|vertraege.css|listen.css|finanzen.css|seitenleiste.css|einstellungen.css|mobil.css|basis.css|glocke.css|terminal.css|energiesparen.css|ergaenzung.css) echo "pb_public/css/$1" ;;   # app styles split out of index.html
     Caddyfile)                       echo "caddy/Caddyfile" ;;
     *) echo "" ;;
@@ -336,7 +337,7 @@ if [ ! -f docker-compose.yaml ] && [ ! -f docker-compose.yml ]; then fehler "$(m
 if platzhalter pb_public/index.html; then fehler "$(m platzhalter)"; exit 1; fi
 
 # ── 3. Folders and basic files ──────────────────────────────
-mkdir -p pb_data pb_public/lang pb_public/vendor/pocketbase pb_public/vendor/pdfjs pb_public/vendor/tesseract pb_hooks \
+mkdir -p pb_data pb_public/lang pb_public/i18n pb_public/vendor/pocketbase pb_public/vendor/pdfjs pb_public/vendor/tesseract pb_hooks \
          caddy/data caddy/config konfig backups wartung traccar/data traccar/logs tailscale
 chmod 700 konfig backups wartung 2>/dev/null
 ok "$(m dirs)"

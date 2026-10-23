@@ -99,13 +99,13 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
-## 1.110.0의 새 소식
+## 1.111.0의 새 소식
 
-**스키마 버전이 있는 데이터베이스**
+**텍스트 키를 사용한 번역: 기반 마련**
 
-- 이제 데이터베이스에 **스키마 버전**이 있어요. 서버가 시작할 때 설정하는 모든 것(컬렉션, 필드, 접근 규칙)이 `pb_hooks/pinn-schema.js` 한곳에 모여 있고 정해진 순서대로 실행돼요. 한 번만 하는 변경에는 번호가 붙고, 딱 한 번 실행된 뒤 잠긴 컬렉션 `pinn_schema`에 기록돼요. 사용 방법은 바뀌지 않아요.
-- 더 안전한 업데이트: 설정 단계가 실패하면 이제 오류 기록(설정 → 시스템)에 표시돼요. 이전 버전의 pinn.이 더 새로운 데이터베이스에서 실행되면 데이터베이스는 그대로 두고 경고를 보여 줘요. GitHub에 보내는 버그 보고서에 스키마 버전이 함께 들어가요.
-- 변경됨: 앱 파일(`index.html`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, 모든 언어 파일)과 서버의 `pb_hooks/pinn-schema.js`, `schema.pb.js`(새 파일), `pinn-system.js`, 시작 파일 26개(`*.pb.js`).
+- 로드맵 6단계가 시작되었어요. 텍스트를 독일어 원문 대신 **키**(예: `settings.region.title`)로 불러와요. 언어마다 `pb_public/i18n/`에 자체 파일이 있고(독일어 포함), 영어가 기준이에요. 처음으로 새 키를 쓰는 곳은 **설정 → 언어 및 지역**이고, 나머지는 차례가 올 때까지 이전처럼 번역돼요. 사용 방법은 바뀌지 않아요.
+- **올바른 복수형:** 앱과 서버가 함께 쓰는 규칙표(`js/textkern.js`, 서버에서는 `pinn-textkern.js`)가 앱과 푸시 알림에서 알맞은 복수형을 골라요. 세 가지 형태를 가진 언어도 지원해요. **러시아어**는 준비되었지만 아직 선택할 수 없어요.
+- 변경됨: 앱 파일(`index.html`, `js/sprachen.js`, `js/sprache.js`, `js/versionslog.js`, `js/textkern.js`(신규), `lang/` 및 `i18n/`(신규)의 모든 언어 파일), `pinn-setup.sh`, 서버의 `pb_hooks/sw.pb.js` 및 `pinn-textkern.js`(신규).
 
 이전 버전은 [Releases](https://github.com/pinn-shost/pinn/releases)에서 볼 수 있어요.
 
@@ -137,7 +137,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.110.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.111.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -231,10 +231,11 @@ pinn/
 ├── pb_public/           web app served by PocketBase
 │   ├── index.html       the app page, built from src/ (HTML, start check) – do not edit by hand
 │   ├── js/              app code split out of index.html, plain <script> files without a build step
-│   │                    (ruhemodus.js, sprachen.js, region.js, grundlagen.js, popups.js, verbindung.js, benutzer.js, mitteilungen.js, serverzugriff.js, tastatur.js, anmeldemaske.js, dashboard.js, dashboardhintergrund.js, profilauswahl.js, pineingabe.js, dashboardsitzung.js, dashboardkonto.js, familienverwalten.js, einrichten.js, exportieren.js, hauptadminseite.js, anmeldung.js, konto.js, profilverwaltung.js, zustand.js, bedienzustand.js, rezeptbilder.js, zusammenfuehren.js, speichern.js, design.js, sprache.js, uebersicht.js, familienkachel.js, wobistdu.js, geburtstagsfeier.js, wetterkachel.js, geburtstage.js, uebersichteinstellungen.js, familiensync.js, bereiche.js, kalenderquellen.js, icsparser.js, zeitleiste.js, termindetails.js, kalenderdatei.js, wetter.js, wohnort.js, feiertage.js, muellkalender.js, mitglieder.js, profilbild.js, mitglied.js, kinderseite.js, kinderroutine.js, sterne.js, kalenderansicht.js, essenplanen.js, rezeptparser.js, rezeptdialog.js, rezeptbild.js, rezeptmengen.js, einkauf.js, einkaufslisten.js, einkaufseingabe.js, rezepte.js, offline.js, aufgabenextras.js, appbadge.js, reisen.js, aufgabendaten.js, haushalt.js, reihum.js, aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js always comes last)
+│   │                    (ruhemodus.js, textkern.js, sprachen.js, region.js, grundlagen.js, popups.js, verbindung.js, benutzer.js, mitteilungen.js, serverzugriff.js, tastatur.js, anmeldemaske.js, dashboard.js, dashboardhintergrund.js, profilauswahl.js, pineingabe.js, dashboardsitzung.js, dashboardkonto.js, familienverwalten.js, einrichten.js, exportieren.js, hauptadminseite.js, anmeldung.js, konto.js, profilverwaltung.js, zustand.js, bedienzustand.js, rezeptbilder.js, zusammenfuehren.js, speichern.js, design.js, sprache.js, uebersicht.js, familienkachel.js, wobistdu.js, geburtstagsfeier.js, wetterkachel.js, geburtstage.js, uebersichteinstellungen.js, familiensync.js, bereiche.js, kalenderquellen.js, icsparser.js, zeitleiste.js, termindetails.js, kalenderdatei.js, wetter.js, wohnort.js, feiertage.js, muellkalender.js, mitglieder.js, profilbild.js, mitglied.js, kinderseite.js, kinderroutine.js, sterne.js, kalenderansicht.js, essenplanen.js, rezeptparser.js, rezeptdialog.js, rezeptbild.js, rezeptmengen.js, einkauf.js, einkaufslisten.js, einkaufseingabe.js, rezepte.js, offline.js, aufgabenextras.js, appbadge.js, reisen.js, aufgabendaten.js, haushalt.js, reihum.js, aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js always comes last)
 │   ├── css/             app styles split out of index.html, plain CSS without a build step (ergaenzung.css, energiesparen.css, basis.css … haustierewetter.css, terminal.css, glocke.css)
 │   ├── einrichtung.js   setup assistant · datenexport.js  data export
-│   ├── lang/            translations (en, fr, es, it, pt, zh, ja, ko)
+│   ├── i18n/            texts by key (de, en, fr, es, it, pt, zh, ja, ko) – English is the reference
+│   ├── lang/            old dictionaries for parts without keys yet (en, fr, es, it, pt, zh, ja, ko)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js and Tesseract are downloaded by the setup)
 ├── .github/             GitHub Actions (workflows/check.yml), checks (scripts/), CONTRIBUTING.md, SECURITY.md, images – not installed
 ├── src/                 sources of index.html (build.js, rahmen.html, teile/) – not installed

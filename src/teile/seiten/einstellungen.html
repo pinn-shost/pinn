@@ -73,14 +73,14 @@
     <details class="settings-accordion set-card" id="settingsLanguageAccordion">
       <summary class="set-sum">
         <span class="set-ico">🌐</span>
-        <span class="set-head"><span class="sa-title">Sprache &amp; Region</span><small>Sprache, Land, Währung und Notrufnummern</small></span>
+        <span class="set-head"><span class="sa-title" data-tk="settings.region.title">Language &amp; region</span><small data-tk="settings.region.subtitle">Language, country, currency and emergency numbers</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
-        <p class="text-xs text-ink/50 mb-4">Gilt nur für dein Profil – auf allen Geräten, auf denen du angemeldet bist.</p>
+        <p class="text-xs text-ink/50 mb-4" data-tk="settings.profileOnly">Applies only to your profile – on all devices you are logged in on.</p>
         <div class="region-grid">
           <div class="region-field">
-            <span class="region-lbl">Sprache</span>
+            <span class="region-lbl" data-tk="settings.region.language">Language</span>
             <div class="lang-dd" id="langDropdown" data-no-i18n>
               <button type="button" id="langDdBtn" class="lang-dd-btn" aria-haspopup="listbox" aria-expanded="false">
                 <span class="lang-flag" id="langDdFlag"></span>
@@ -91,21 +91,21 @@
             </div>
           </div>
           <label class="region-field">
-            <span class="region-lbl">Land</span>
+            <span class="region-lbl" data-tk="settings.region.country">Country</span>
             <select id="regionCountrySelect" class="region-sel" data-no-i18n></select>
           </label>
           <label class="region-field">
-            <span class="region-lbl">Währung</span>
+            <span class="region-lbl" data-tk="settings.region.currency">Currency</span>
             <select id="regionCurrencySelect" class="region-sel" data-no-i18n></select>
           </label>
           <label class="region-field">
-            <span class="region-lbl">Zahlenformat</span>
+            <span class="region-lbl" data-tk="settings.region.numberFormat">Number format</span>
             <select id="regionFormatSelect" class="region-sel" data-no-i18n></select>
           </label>
         </div>
         <div id="regionPreview" class="region-preview" data-no-i18n></div>
         <div class="flex items-center gap-3 mt-4">
-          <button type="button" id="langSaveBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90">Speichern</button>
+          <button type="button" id="langSaveBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90" data-tk="common.save">Save</button>
         </div>
         <p id="langStatus" class="text-xs text-ink/50 mt-2 min-h-[1em]"></p>
       </div>

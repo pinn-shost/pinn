@@ -4,7 +4,9 @@
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
    Contents: the language dropdown, country, currency and number format with a live preview (renderLanguageSettings,
    renderRegionSettings, renderRegionPreview, initLanguageSettings) and saving them (remembered on the device, stored in the
-   profile, then pinn. reloads). Also i18nT (overridden later by the definition in js/smarthome.js, as before). */
+   profile, then pinn. reloads). Also i18nT (overridden later by the definition in js/smarthome.js, as before).
+   Texts: key based since 1.111.0 – tk('settings.region.…') here, data-tk in src/teile/seiten/einstellungen.html,
+   texts in pb_public/i18n/<code>.i18n.js. */
 
 /* ---------- Language & region (Settings → Language & region) ----------
    The languages are in PINN_LANGUAGES, countries, currencies and emergency numbers in PINN_REGION (both
@@ -21,7 +23,8 @@ function i18nT(s) { return window.PINN_I18N ? PINN_I18N.t(s) : s; }
 function renderLanguageSettings() {
   const btn = document.getElementById('langDdBtn');
   if (!btn || !window.PINN_LANGUAGES) return;
-  const langs = window.PINN_LANGUAGES;
+  // Hidden languages (prepared, not offered yet) stay out of the list
+  const langs = window.PINN_I18N && PINN_I18N.available ? PINN_I18N.available() : window.PINN_LANGUAGES;
   if (!langPendingCode || !langs.some(l => l.code === langPendingCode)) langPendingCode = (window.PINN_I18N && PINN_I18N.current) || 'en';
   const sel = langs.find(l => l.code === langPendingCode) || langs[0];
   document.getElementById('langDdFlag').innerHTML = sel.flag;
@@ -46,12 +49,12 @@ function renderRegionSettings() {
   const autoCur = row ? row[2] : R.currency;
   const curLabel = c => `${c} · ${R.currencyName(c)}`;
   const wSel = document.getElementById('regionCurrencySelect');
-  wSel.innerHTML = `<option value="auto">${escapeHtml(i18nT('Automatisch') + ' – ' + curLabel(autoCur))}</option>`
+  wSel.innerHTML = `<option value="auto">${escapeHtml(tk('settings.region.automatic') + ' – ' + curLabel(autoCur))}</option>`
     + R.CURRENCIES.map(c => `<option value="${c}">${escapeHtml(curLabel(c))}</option>`).join('');
   wSel.value = p.waehrung;
   // Number format: „Automatisch“ = as usual in the country
   const fSel = document.getElementById('regionFormatSelect');
-  fSel.innerHTML = `<option value="auto">${escapeHtml(i18nT('Automatisch (wie Land)') + ' – ' + R.numSample(p.land))}</option>`
+  fSel.innerHTML = `<option value="auto">${escapeHtml(tk('settings.region.automaticCountry') + ' – ' + R.numSample(p.land))}</option>`
     + Object.keys(R.FORMATS).map(k => `<option value="${k}">${escapeHtml(R.FORMATS[k].sample)}</option>`).join('');
   fSel.value = p.zahlen;
   renderRegionPreview();
@@ -62,21 +65,21 @@ function renderRegionPreview() {
   if (!R || !box || !regionPending) return;
   const pv = R.preview(regionPending);
   const n = pv.notruf;
-  const call = (ic, label, nr) => `<span class="rp-call"><span>${ic}</span>${escapeHtml(i18nT(label))} <b>${escapeHtml(nr)}</b></span>`;
+  const call = (ic, label, nr) => `<span class="rp-call"><span>${ic}</span>${escapeHtml(tk(label))} <b>${escapeHtml(nr)}</b></span>`;
   const calls = [];
-  if (n.polizei === n.rettung && n.rettung === n.feuer) calls.push(call('🆘', 'Notruf', n.polizei));
+  if (n.polizei === n.rettung && n.rettung === n.feuer) calls.push(call('🆘', 'emergency.call', n.polizei));
   else {
-    calls.push(call('🚓', 'Polizei', n.polizei));
-    if (n.rettung === n.feuer) calls.push(call('🚑', 'Rettung · Feuerwehr', n.rettung));
-    else { calls.push(call('🚑', 'Rettung', n.rettung)); calls.push(call('🚒', 'Feuerwehr', n.feuer)); }
+    calls.push(call('🚓', 'emergency.police', n.polizei));
+    if (n.rettung === n.feuer) calls.push(call('🚑', 'emergency.ambulanceFire', n.rettung));
+    else { calls.push(call('🚑', 'emergency.ambulance', n.rettung)); calls.push(call('🚒', 'emergency.fire', n.feuer)); }
   }
-  if (n.allgemein && ![n.polizei, n.rettung, n.feuer].includes(n.allgemein)) calls.push(call('🆘', 'Allgemeiner Notruf', n.allgemein));
+  if (n.allgemein && ![n.polizei, n.rettung, n.feuer].includes(n.allgemein)) calls.push(call('🆘', 'emergency.general', n.allgemein));
   box.innerHTML = `
-    <div class="rp-k">${escapeHtml(i18nT('Beispiel'))}</div>
+    <div class="rp-k">${escapeHtml(tk('settings.region.example'))}</div>
     <div class="rp-money">${escapeHtml(pv.money)}</div>
-    <div class="rp-k mt-3">${escapeHtml(i18nT('Notrufnummern'))} · ${escapeHtml((R.flag(pv.row[0]) + ' ' + R.countryName(pv.row[0])).trim())}</div>
+    <div class="rp-k mt-3">${escapeHtml(tk('settings.region.emergencyNumbers'))} · ${escapeHtml((R.flag(pv.row[0]) + ' ' + R.countryName(pv.row[0])).trim())}</div>
     <div class="rp-calls">${calls.join('')}</div>
-    <p class="rp-note">${escapeHtml(i18nT('Gilt für den Notfallpass, das SOS-Popup und „Ich bin unterwegs“.'))}</p>`;
+    <p class="rp-note">${escapeHtml(tk('settings.region.appliesTo'))}</p>`;
 }
 function setLanguageDropdown(open) {
   const dd = document.getElementById('langDropdown');
@@ -130,9 +133,9 @@ function initLanguageSettings() {
     if (!window.PINN_I18N || !PINN_I18N.find(code)) return;
     const langChanged = code !== PINN_I18N.current;
     const regionChanged = window.PINN_REGION && regionPending ? PINN_REGION.save(regionPending) : false;
-    if (!langChanged && !regionChanged) { status.textContent = 'Diese Einstellungen sind schon aktiv.'; return; }
+    if (!langChanged && !regionChanged) { status.textContent = tk('settings.region.alreadyActive'); return; }
     PINN_I18N.switchTo(code, true); // remember first, reloading happens after saving in the profile
-    status.textContent = 'Gespeichert – pinn. wird neu geladen …';
+    status.textContent = tk('settings.region.savedReloading');
     if (currentUser()) {
       personalDesign = { werte: currentDesignValues(), stand: Date.now() };
       writeDesignCache(true);

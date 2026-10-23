@@ -13,8 +13,8 @@
 //     cache on update. The page itself is always fetched fresh from the server first (updates arrive
 //     right away) - only without a connection, or when the server does not answer, pinn. starts with
 //     the most recently loaded version.
-//     Recipe images (/api/files/...) are kept after they were shown once, as is the chosen language
-//     file (/lang/<code>.js). The app files under /js/ (split out of index.html since 1.40) and the
+//     Recipe images (/api/files/...) are kept after they were shown once, as are the files of the chosen
+//     language (/lang/<code>.js and, since 1.111.0, /i18n/<code>.i18n.js). The app files under /js/ (split out of index.html since 1.40) and the
 //     app styles under /css/ (since 1.96) are cached together with every freshly loaded app page;
 //     old versions are removed from the cache afterwards. pdf.js (large, only needed for the PDF
 //     import) is cached on first use, not already at installation.
@@ -184,8 +184,8 @@ self.addEventListener('fetch', (event) => {
     // Self-hosted libraries (pb_public/vendor/…): right away from the cache, refreshed in the
     // background. Stored under the path without version suffix (matches the precaching).
     if (url.pathname.indexOf('/vendor/') === 0) { event.respondWith(staleWhileRevalidate(event, url.search ? req.url : url.pathname)); return; }
-    // Language files (pb_public/lang/…): loaded once per version (?v=…), then also available offline
-    if (url.pathname.indexOf('/lang/') === 0) { event.respondWith(staleWhileRevalidate(event, req.url)); return; }
+    // Language files (pb_public/lang/… and pb_public/i18n/…): loaded once per version (?v=…), then also available offline
+    if (url.pathname.indexOf('/lang/') === 0 || url.pathname.indexOf('/i18n/') === 0) { event.respondWith(staleWhileRevalidate(event, req.url)); return; }
     // App files (pb_public/js/…): stored per version (?v=…), right away from the cache
     if (url.pathname.indexOf('/js/') === 0) { event.respondWith(staleWhileRevalidate(event, req.url)); return; }
     // App styles (pb_public/css/…, since 1.96): same as the app files

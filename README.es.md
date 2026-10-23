@@ -95,6 +95,15 @@ Siempre contigo: pinn. se instala en cada iPhone y móvil Android como una app n
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 y 🇰🇷 한국어**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.111.0
+
+**Traducciones con claves de texto: la base**
+
+- Empieza el paso 6 de la hoja de ruta: los textos se buscan por una **clave** (p. ej. `settings.region.title`) en lugar de por su original en alemán. Cada idioma tiene su propio archivo en `pb_public/i18n/` – alemán incluido, el inglés es la referencia. La primera parte que lo usa es **Ajustes → Idioma y región**; todo lo demás se traduce como antes hasta que le llegue el turno. El uso no cambia.
+- **Plurales correctos:** una tabla de reglas común (`js/textkern.js`, en el servidor `pinn-textkern.js`) elige la forma de plural adecuada en la app y en las notificaciones push, también para idiomas con tres formas. El **ruso** queda preparado, pero todavía no se ofrece.
+- Para colaboradores: `tk('key')` en JavaScript, `data-tk="key"` en HTML. `.github/scripts/i18n-keys.js` pasa las traducciones existentes a una clave sin volver a escribirlas, `check-keys.js` revisa todos los idiomas, marcadores y formas de plural – ver [CONTRIBUTING.md](.github/CONTRIBUTING.md#texts).
+- Modificado: archivos de la app (`index.html`, `js/sprachen.js`, `js/sprache.js`, `js/versionslog.js`, `js/textkern.js` (nuevo), todos los archivos de idioma en `lang/` e `i18n/` (nuevo)), `pinn-setup.sh` y en el servidor `pb_hooks/sw.pb.js` y `pinn-textkern.js` (nuevo), además de `.github/` (comprobaciones, workflow, CONTRIBUTING.md). Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
+
 ## Novedades de la 1.110.0
 
 **Base de datos con versión de esquema**
@@ -138,14 +147,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Aún no en estos idiomas: el asistente de configuración, los archivos de exportación de datos y los mensajes push del servidor – por ahora aparecen en inglés.
 - Modificado: archivos de la app (`index.html`, `js/sprachen.js`, `js/hinweise.js`, `js/versionslog.js`, nuevos `lang/ja.js` y `lang/ko.js`, archivos de idioma `en`, `fr`, `es`, `it`, `pt`, `zh`). En el servidor no cambia nada.
 
-## Novedades de la 1.107.2
-
-**Nuevos idiomas completos: configuración, exportación de datos y notificaciones push**
-
-- El italiano, el portugués y el chino ya funcionan también en el asistente de configuración, en los archivos de la exportación de datos y en las notificaciones push del servidor (hasta ahora aparecían en inglés).
-- El control por voz (Siri/Android) sigue entendiendo alemán, inglés, francés y español.
-- Modificado: archivos de la app (`index.html`, `js/sprachen.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, archivos de idioma `en`, `fr`, `es`, `it`, `pt`, `zh`) y, en el servidor, `pb_hooks/pinn-pushtext.js`, `pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-aufgaben.js`, `pinn-wobistdu.js`, `pinn-einrichtung.js`.
-
 ## Cómo funciona
 
 ```mermaid
@@ -172,7 +173,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.110.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.111.0` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -262,10 +263,11 @@ pinn/
 ├── pb_public/           app web servida por PocketBase
 │   ├── index.html       la página de la app, construida desde src/ (HTML, comprobación de inicio) – no editar a mano
 │   ├── js/              código de la app separado de index.html, archivos <script> simples sin paso de compilación
-│   │                    (ruhemodus.js, sprachen.js, region.js, grundlagen.js, popups.js, verbindung.js, benutzer.js, mitteilungen.js, serverzugriff.js, tastatur.js, anmeldemaske.js, dashboard.js, dashboardhintergrund.js, profilauswahl.js, pineingabe.js, dashboardsitzung.js, dashboardkonto.js, familienverwalten.js, einrichten.js, exportieren.js, hauptadminseite.js, anmeldung.js, konto.js, profilverwaltung.js, zustand.js, bedienzustand.js, rezeptbilder.js, zusammenfuehren.js, speichern.js, design.js, sprache.js, uebersicht.js, familienkachel.js, wobistdu.js, geburtstagsfeier.js, wetterkachel.js, geburtstage.js, uebersichteinstellungen.js, familiensync.js, bereiche.js, kalenderquellen.js, icsparser.js, zeitleiste.js, termindetails.js, kalenderdatei.js, wetter.js, wohnort.js, feiertage.js, muellkalender.js, mitglieder.js, profilbild.js, mitglied.js, kinderseite.js, kinderroutine.js, sterne.js, kalenderansicht.js, essenplanen.js, rezeptparser.js, rezeptdialog.js, rezeptbild.js, rezeptmengen.js, einkauf.js, einkaufslisten.js, einkaufseingabe.js, rezepte.js, offline.js, aufgabenextras.js, appbadge.js, reisen.js, aufgabendaten.js, haushalt.js, reihum.js, aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js siempre va al final)
+│   │                    (ruhemodus.js, textkern.js, sprachen.js, region.js, grundlagen.js, popups.js, verbindung.js, benutzer.js, mitteilungen.js, serverzugriff.js, tastatur.js, anmeldemaske.js, dashboard.js, dashboardhintergrund.js, profilauswahl.js, pineingabe.js, dashboardsitzung.js, dashboardkonto.js, familienverwalten.js, einrichten.js, exportieren.js, hauptadminseite.js, anmeldung.js, konto.js, profilverwaltung.js, zustand.js, bedienzustand.js, rezeptbilder.js, zusammenfuehren.js, speichern.js, design.js, sprache.js, uebersicht.js, familienkachel.js, wobistdu.js, geburtstagsfeier.js, wetterkachel.js, geburtstage.js, uebersichteinstellungen.js, familiensync.js, bereiche.js, kalenderquellen.js, icsparser.js, zeitleiste.js, termindetails.js, kalenderdatei.js, wetter.js, wohnort.js, feiertage.js, muellkalender.js, mitglieder.js, profilbild.js, mitglied.js, kinderseite.js, kinderroutine.js, sterne.js, kalenderansicht.js, essenplanen.js, rezeptparser.js, rezeptdialog.js, rezeptbild.js, rezeptmengen.js, einkauf.js, einkaufslisten.js, einkaufseingabe.js, rezepte.js, offline.js, aufgabenextras.js, appbadge.js, reisen.js, aufgabendaten.js, haushalt.js, reihum.js, aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js siempre va al final)
 │   ├── css/             estilos de la app separados de index.html, CSS simple sin paso de compilación (ergaenzung.css, energiesparen.css, basis.css … haustierewetter.css, terminal.css, glocke.css)
 │   ├── einrichtung.js   asistente de configuración · datenexport.js  exportación de datos
-│   ├── lang/            traducciones (en, fr, es)
+│   ├── i18n/            textos por clave (de, en, fr, es, it, pt, zh, ja, ko) – el inglés es la referencia
+│   ├── lang/            diccionarios antiguos para las partes aún sin claves (en, fr, es, it, pt, zh, ja, ko)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js y Tesseract los descarga la instalación)
 ├── .github/             GitHub Actions (workflows/check.yml), comprobaciones (scripts/), CONTRIBUTING.md, SECURITY.md, imágenes – no se instala
 ├── src/                 fuentes de index.html (build.js, rahmen.html, teile/) – no se instala

@@ -95,6 +95,15 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 et 🇰🇷 한국어**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.111.0
+
+**Traductions avec des clés de texte : les fondations**
+
+- L’étape 6 de la feuille de route commence : les textes sont retrouvés par une **clé** (p. ex. `settings.region.title`) au lieu de leur original allemand. Chaque langue a son propre fichier dans `pb_public/i18n/` – allemand compris, l’anglais sert de référence. La première partie à l’utiliser est **Réglages → Langue et région** ; tout le reste est traduit comme avant jusqu’à ce que son tour vienne. L’utilisation ne change pas.
+- **Le pluriel correct :** une table de règles commune (`js/textkern.js`, sur le serveur `pinn-textkern.js`) choisit la bonne forme de pluriel dans l’appli et dans les notifications push – aussi pour les langues à trois formes. Le **russe** est préparé, mais pas encore proposé.
+- Pour les contributeurs : `tk('key')` en JavaScript, `data-tk="key"` en HTML. `.github/scripts/i18n-keys.js` reprend les traductions existantes sous une clé sans les retaper, `check-keys.js` vérifie toutes les langues, les marqueurs et les formes de pluriel – voir [CONTRIBUTING.md](.github/CONTRIBUTING.md#texts).
+- Modifié : fichiers de l’appli (`index.html`, `js/sprachen.js`, `js/sprache.js`, `js/versionslog.js`, `js/textkern.js` (nouveau), tous les fichiers de langue dans `lang/` et `i18n/` (nouveau)), `pinn-setup.sh` et sur le serveur `pb_hooks/sw.pb.js` et `pinn-textkern.js` (nouveau), plus `.github/` (contrôles, workflow, CONTRIBUTING.md). Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
+
 ## Nouveautés de la 1.110.0
 
 **Base de données avec version de schéma**
@@ -138,14 +147,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Pas encore dans ces langues : l’assistant de configuration, les fichiers d’export des données et les messages push du serveur – ils s’affichent pour l’instant en anglais.
 - Modifié : fichiers de l’appli (`index.html`, `js/sprachen.js`, `js/hinweise.js`, `js/versionslog.js`, nouveaux `lang/ja.js` et `lang/ko.js`, fichiers de langue `en`, `fr`, `es`, `it`, `pt`, `zh`). Rien ne change sur le serveur.
 
-## Nouveautés de la 1.107.2
-
-**Nouvelles langues complètes : configuration, export des données et notifications push**
-
-- L’italien, le portugais et le chinois fonctionnent désormais aussi dans l’assistant de configuration, dans les fichiers de l’export des données et dans les notifications push du serveur (elles s’affichaient jusqu’ici en anglais).
-- La commande vocale (Siri/Android) comprend toujours l’allemand, l’anglais, le français et l’espagnol.
-- Modifié : fichiers de l’appli (`index.html`, `js/sprachen.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, fichiers de langue `en`, `fr`, `es`, `it`, `pt`, `zh`) et sur le serveur `pb_hooks/pinn-pushtext.js`, `pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-aufgaben.js`, `pinn-wobistdu.js`, `pinn-einrichtung.js`.
-
 ## Comment ça marche
 
 ```mermaid
@@ -172,7 +173,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.110.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.111.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -262,10 +263,11 @@ pinn/
 ├── pb_public/           web-app servie par PocketBase
 │   ├── index.html       la page de l’app, construite depuis src/ (HTML, vérification au démarrage) – ne pas modifier à la main
 │   ├── js/              code de l’app sorti d’index.html, simples fichiers <script> sans étape de build
-│   │                    (ruhemodus.js, sprachen.js, region.js, grundlagen.js, popups.js, verbindung.js, benutzer.js, mitteilungen.js, serverzugriff.js, tastatur.js, anmeldemaske.js, dashboard.js, dashboardhintergrund.js, profilauswahl.js, pineingabe.js, dashboardsitzung.js, dashboardkonto.js, familienverwalten.js, einrichten.js, exportieren.js, hauptadminseite.js, anmeldung.js, konto.js, profilverwaltung.js, zustand.js, bedienzustand.js, rezeptbilder.js, zusammenfuehren.js, speichern.js, design.js, sprache.js, uebersicht.js, familienkachel.js, wobistdu.js, geburtstagsfeier.js, wetterkachel.js, geburtstage.js, uebersichteinstellungen.js, familiensync.js, bereiche.js, kalenderquellen.js, icsparser.js, zeitleiste.js, termindetails.js, kalenderdatei.js, wetter.js, wohnort.js, feiertage.js, muellkalender.js, mitglieder.js, profilbild.js, mitglied.js, kinderseite.js, kinderroutine.js, sterne.js, kalenderansicht.js, essenplanen.js, rezeptparser.js, rezeptdialog.js, rezeptbild.js, rezeptmengen.js, einkauf.js, einkaufslisten.js, einkaufseingabe.js, rezepte.js, offline.js, aufgabenextras.js, appbadge.js, reisen.js, aufgabendaten.js, haushalt.js, reihum.js, aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js toujours en dernier)
+│   │                    (ruhemodus.js, textkern.js, sprachen.js, region.js, grundlagen.js, popups.js, verbindung.js, benutzer.js, mitteilungen.js, serverzugriff.js, tastatur.js, anmeldemaske.js, dashboard.js, dashboardhintergrund.js, profilauswahl.js, pineingabe.js, dashboardsitzung.js, dashboardkonto.js, familienverwalten.js, einrichten.js, exportieren.js, hauptadminseite.js, anmeldung.js, konto.js, profilverwaltung.js, zustand.js, bedienzustand.js, rezeptbilder.js, zusammenfuehren.js, speichern.js, design.js, sprache.js, uebersicht.js, familienkachel.js, wobistdu.js, geburtstagsfeier.js, wetterkachel.js, geburtstage.js, uebersichteinstellungen.js, familiensync.js, bereiche.js, kalenderquellen.js, icsparser.js, zeitleiste.js, termindetails.js, kalenderdatei.js, wetter.js, wohnort.js, feiertage.js, muellkalender.js, mitglieder.js, profilbild.js, mitglied.js, kinderseite.js, kinderroutine.js, sterne.js, kalenderansicht.js, essenplanen.js, rezeptparser.js, rezeptdialog.js, rezeptbild.js, rezeptmengen.js, einkauf.js, einkaufslisten.js, einkaufseingabe.js, rezepte.js, offline.js, aufgabenextras.js, appbadge.js, reisen.js, aufgabendaten.js, haushalt.js, reihum.js, aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js toujours en dernier)
 │   ├── css/             styles de l’app sortis d’index.html, CSS simple sans étape de build (ergaenzung.css, energiesparen.css, basis.css … haustierewetter.css, terminal.css, glocke.css)
 │   ├── einrichtung.js   assistant de configuration · datenexport.js  export des données
-│   ├── lang/            traductions (en, fr, es)
+│   ├── i18n/            textes par clé (de, en, fr, es, it, pt, zh, ja, ko) – l’anglais sert de référence
+│   ├── lang/            anciens dictionnaires pour les parties encore sans clés (en, fr, es, it, pt, zh, ja, ko)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js et Tesseract sont téléchargés par l’installation)
 ├── .github/             GitHub Actions (workflows/check.yml), vérifications (scripts/), CONTRIBUTING.md, SECURITY.md, images – non installé
 ├── src/                 sources d’index.html (build.js, rahmen.html, teile/) – non installé

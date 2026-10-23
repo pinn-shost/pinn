@@ -20,6 +20,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.111', datum: '23.10.2026', titel: 'Übersetzungen mit Text-Schlüsseln (Fundament)',
+    punkte: [
+      ['neu', 'Fundament für Übersetzungen mit Text-Schlüsseln: Texte werden über einen festen Namen abgerufen statt über den deutschen Originaltext. Jede Sprache hat dafür eine eigene Datei (pb_public/i18n), Deutsch eingeschlossen. Als Erstes nutzt Einstellungen → Sprache & Region die neuen Schlüssel – alles andere läuft wie bisher'],
+      ['neu', 'Mehrzahl in jeder Sprache richtig: Eine gemeinsame Regeltabelle für App und Server kennt auch Sprachen mit mehreren Mehrzahlformen. Russisch ist damit vorbereitet, aber noch nicht wählbar'],
+      ['info', 'Für Mitwirkende: Das neue Werkzeug .github/scripts/i18n-keys.js übernimmt vorhandene Übersetzungen unter einen Schlüssel, die neue Prüfung check-keys.js kontrolliert alle Sprachen – Anleitung in CONTRIBUTING.md'],
+      ['info', 'Geändert: index.html, js/sprachen.js, js/sprache.js, js/versionslog.js, js/textkern.js (neu), alle Sprachdateien in lang/ und i18n/ (neu), pinn-setup.sh sowie am Server pb_hooks/pinn-textkern.js (neu) und sw.pb.js'],
+    ],
+  },
+  {
     v: '1.110', datum: '23.10.2026', titel: 'Datenbank mit Schema-Version',
     punkte: [
       ['neu', 'Die Datenbank hat jetzt eine Schema-Version: Alle Einrichtungsschritte des Servers stehen an einer Stelle und laufen beim Start in fester Reihenfolge. Einmalige Umbauten bekommen eine Nummer, laufen genau einmal und werden in der Datenbank vermerkt – an der Bedienung ändert sich nichts'],

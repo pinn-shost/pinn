@@ -99,6 +99,15 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 und 🇰🇷 한국어**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.111.0
+
+**Übersetzungen mit Text-Schlüsseln – das Fundament**
+
+- Schritt 6 des Fahrplans beginnt: Texte werden über einen **Schlüssel** abgerufen (z. B. `settings.region.title`) statt über ihren deutschen Originaltext. Jede Sprache hat eine eigene Datei in `pb_public/i18n/` – Deutsch eingeschlossen, Englisch ist die Vorlage. Als Erstes nutzt **Einstellungen → Sprache & Region** die neuen Schlüssel; alles andere wird wie bisher übersetzt, bis es an der Reihe ist. An der Bedienung ändert sich nichts.
+- **Mehrzahl richtig:** Eine gemeinsame Regeltabelle (`js/textkern.js`, am Server `pinn-textkern.js`) wählt in der App und in Push-Nachrichten die passende Mehrzahlform – auch für Sprachen mit drei Formen. **Russisch** ist vorbereitet, aber noch nicht wählbar.
+- Für Mitwirkende: `tk('key')` in JavaScript, `data-tk="key"` in HTML. `.github/scripts/i18n-keys.js` übernimmt vorhandene Übersetzungen unter einen Schlüssel, ohne dass etwas neu übersetzt werden muss, `check-keys.js` prüft alle Sprachen, Platzhalter und Mehrzahlformen – siehe [CONTRIBUTING.md](.github/CONTRIBUTING.md#texte).
+- Geändert: App-Dateien (`index.html`, `js/sprachen.js`, `js/sprache.js`, `js/versionslog.js`, `js/textkern.js` (neu), alle Sprachdateien in `lang/` und `i18n/` (neu)), `pinn-setup.sh` und am Server `pb_hooks/sw.pb.js` und `pinn-textkern.js` (neu), dazu `.github/` (Prüfungen, Workflow, CONTRIBUTING.md). Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
+
 ## Neu in 1.110.0
 
 **Datenbank mit Schema-Version**
@@ -107,15 +116,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Sicherere Updates: Klappt ein Einrichtungsschritt nicht, steht er jetzt im Fehlerprotokoll (Einstellungen → System) statt nur im Docker-Log. Läuft eine ältere pinn.-Version auf einer neueren Datenbank, bleibt die Datenbank unverändert und es gibt eine Warnung. Fehlerberichte an GitHub nennen die Schema-Version mit.
 - Für Mitwirkende: Neue Sammlungen oder Felder kommen in die ensure-Funktion des Moduls, alles andere (Umbenennen, Daten aufräumen) wird ein neuer, nummerierter Schritt in `MIGRATIONS` – siehe Kopf von `pb_hooks/pinn-schema.js`. `check-hooks.js` testet den Ablauf an einer nachgebildeten Datenbank.
 - Geändert: App-Dateien (`index.html`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien) und am Server `pb_hooks/pinn-schema.js`, `schema.pb.js` (neu), `pinn-system.js` und 26 Start-Dateien (`*.pb.js`), dazu `.github/scripts/check-hooks.js`. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
-
-## Neu in 1.109.0
-
-**Aufgaben, Haushalt und Kalender-Auswahl in eigenen Datensätzen**
-
-- Letzter Schritt beim Umzug der Familiendaten aus dem einen großen Datenblock: die **Aufgaben**, der **Haushalt** (Räume, Putzpläne, Mülleimer, Putz-Kategorien, Smart-Home-Geräte) und die **Kalender-Auswahl** liegen jetzt in eigenen Datensätzen auf dem Server. An der Bedienung ändert sich nichts.
-- Gleiches Sicherheitsnetz wie bisher: vor dem Umzug eine Sicherung je Familie (`pb_data/pinn_umzug/`, 30 Tage), Geräte mit älterer App sehen weiter alles. Apple-ID und App-Passwort gelangen nie in die Kalender-Auswahl oder die Sicherung.
-- Speichern wartet jetzt, bis alle Teile auf dem Server sind: „Haushaltsaufgaben jetzt erstellen“ und der Kalender-Abgleich arbeiten sofort mit dem, was du gerade geändert hast. Ältere Geräte setzen Einstellungen wie „Erledigte Aufgaben: Sofort“ oder einen ausgeschalteten Dunkelmodus nicht mehr zurück.
-- Geändert: App-Dateien (`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien) und am Server `pb_hooks/pinn-bereiche.js`, `pinn-smarthome.js`, `calendar-sync.js`, `save_family_data.pb.js`. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
 
 Ältere Versionen findest du unter [Releases](https://github.com/pinn-shost/pinn/releases).
 
@@ -147,7 +147,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.110.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.111.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -241,10 +241,11 @@ pinn/
 ├── pb_public/           web app served by PocketBase
 │   ├── index.html       the app page, built from src/ (HTML, start check) – do not edit by hand
 │   ├── js/              app code split out of index.html, plain <script> files without a build step
-│   │                    (ruhemodus.js, sprachen.js, region.js, grundlagen.js, popups.js, verbindung.js, benutzer.js, mitteilungen.js, serverzugriff.js, tastatur.js, anmeldemaske.js, dashboard.js, dashboardhintergrund.js, profilauswahl.js, pineingabe.js, dashboardsitzung.js, dashboardkonto.js, familienverwalten.js, einrichten.js, exportieren.js, hauptadminseite.js, anmeldung.js, konto.js, profilverwaltung.js, zustand.js, bedienzustand.js, rezeptbilder.js, zusammenfuehren.js, speichern.js, design.js, sprache.js, uebersicht.js, familienkachel.js, wobistdu.js, geburtstagsfeier.js, wetterkachel.js, geburtstage.js, uebersichteinstellungen.js, familiensync.js, bereiche.js, kalenderquellen.js, icsparser.js, zeitleiste.js, termindetails.js, kalenderdatei.js, wetter.js, wohnort.js, feiertage.js, muellkalender.js, mitglieder.js, profilbild.js, mitglied.js, kinderseite.js, kinderroutine.js, sterne.js, kalenderansicht.js, essenplanen.js, rezeptparser.js, rezeptdialog.js, rezeptbild.js, rezeptmengen.js, einkauf.js, einkaufslisten.js, einkaufseingabe.js, rezepte.js, offline.js, aufgabenextras.js, appbadge.js, reisen.js, aufgabendaten.js, haushalt.js, reihum.js, aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js always comes last)
+│   │                    (ruhemodus.js, textkern.js, sprachen.js, region.js, grundlagen.js, popups.js, verbindung.js, benutzer.js, mitteilungen.js, serverzugriff.js, tastatur.js, anmeldemaske.js, dashboard.js, dashboardhintergrund.js, profilauswahl.js, pineingabe.js, dashboardsitzung.js, dashboardkonto.js, familienverwalten.js, einrichten.js, exportieren.js, hauptadminseite.js, anmeldung.js, konto.js, profilverwaltung.js, zustand.js, bedienzustand.js, rezeptbilder.js, zusammenfuehren.js, speichern.js, design.js, sprache.js, uebersicht.js, familienkachel.js, wobistdu.js, geburtstagsfeier.js, wetterkachel.js, geburtstage.js, uebersichteinstellungen.js, familiensync.js, bereiche.js, kalenderquellen.js, icsparser.js, zeitleiste.js, termindetails.js, kalenderdatei.js, wetter.js, wohnort.js, feiertage.js, muellkalender.js, mitglieder.js, profilbild.js, mitglied.js, kinderseite.js, kinderroutine.js, sterne.js, kalenderansicht.js, essenplanen.js, rezeptparser.js, rezeptdialog.js, rezeptbild.js, rezeptmengen.js, einkauf.js, einkaufslisten.js, einkaufseingabe.js, rezepte.js, offline.js, aufgabenextras.js, appbadge.js, reisen.js, aufgabendaten.js, haushalt.js, reihum.js, aufgaben.js, smarthome.js, sprachsteuerung.js, termine.js, ansichten.js, versionspruefung.js, sicherungen.js, geraete.js, fehlerprotokoll.js, versionslog.js, einstellungen.js, kalenderkonto.js, finanzen.js, kassen.js, vorrat.js, vorrat2.js, sparen.js, vertraege.js, fahrzeuge.js, zuhause.js, dokumente.js, pdflesen.js, appstart.js, pinnwand.js, listen.js, familie.js, hinweise.js, ausblick.js – ausblick.js always comes last)
 │   ├── css/             app styles split out of index.html, plain CSS without a build step (ergaenzung.css, energiesparen.css, basis.css … haustierewetter.css, terminal.css, glocke.css)
 │   ├── einrichtung.js   setup assistant · datenexport.js  data export
-│   ├── lang/            translations (en, fr, es, it, pt, zh, ja, ko)
+│   ├── i18n/            texts by key (de, en, fr, es, it, pt, zh, ja, ko) – English is the reference
+│   ├── lang/            old dictionaries for parts without keys yet (en, fr, es, it, pt, zh, ja, ko)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js and Tesseract are downloaded by the setup)
 ├── .github/             GitHub Actions (workflows/check.yml), checks (scripts/), CONTRIBUTING.md, SECURITY.md, images – not installed
 ├── src/                 sources of index.html (build.js, rahmen.html, teile/) – not installed

@@ -42,6 +42,7 @@
      ========================================================== -->
 <link rel="stylesheet" href="css/energiesparen.css?v={{VERSION}}">
 <script src="js/ruhemodus.js?v={{VERSION}}"></script>
+<script src="js/textkern.js?v={{VERSION}}"></script>
 <script src="js/sprachen.js?v={{VERSION}}"></script>
 <script src="js/region.js?v={{VERSION}}"></script>
 <script src="vendor/pocketbase/pocketbase.umd.js"></script>
@@ -72,6 +73,8 @@
     PINN_APP_PARTS.forEach(function (part) {
       if (loadedParts.indexOf(part) === -1) missing.push('<b>js/' + part + '.js</b> – ein Teil der App');
     });
+    // Texts of the chosen language (pb_public/i18n/<code>.i18n.js, since 1.111.0)
+    if (window.PINN_I18N && PINN_I18N.keysMissing) missing.push('<b>' + PINN_I18N.keysMissing + '</b> – die Texte der App');
     // A CSS file counts as loaded when the browser has taken over its rules (a 404 or a delivered
     // index.html result in no stylesheet or one without rules)
     function fehlendeStyles() {
@@ -102,7 +105,8 @@
         'vendor/pocketbase.umd.js',
         'vendor/pocketbase_umd.js'
       ].concat(PINN_APP_STYLES.map(function (name) { return 'css/' + name + '.css'; }))
-        .concat(PINN_APP_PARTS.map(function (part) { return 'js/' + part + '.js'; }));
+        .concat(PINN_APP_PARTS.map(function (part) { return 'js/' + part + '.js'; }))
+        .concat(window.PINN_I18N && PINN_I18N.keysMissing ? [PINN_I18N.keysMissing] : []);
       var box = document.createElement('div');
       box.setAttribute('style', 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;background:#FFFBFB;font-family:system-ui,sans-serif;color:#25231F;overflow:auto;');
       box.innerHTML = '<div style="max-width:460px;line-height:1.5">'

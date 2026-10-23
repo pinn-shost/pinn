@@ -5,23 +5,29 @@
    The language file (lang/<code>.js) is added with document.write right behind this script, so it also runs
    before js/region.js.
    Contents: PINN_LANGUAGES (list of languages with flag), window.PINN_I18N (current language, switchTo, wohnform,
-   setWohnform, t, load, fail), the flat share terms (TERMS), the dictionary lookup (exact entries and patterns
-   with placeholders) and the MutationObserver that translates every displayed text. It also wraps alert/confirm/
-   prompt, the date methods (toLocale…String) and CanvasRenderingContext2D.fillText for the chosen language.
-   Everything sits in one IIFE – the only global names are PINN_LANGUAGES and PINN_I18N. */
+   setWohnform, t, load, fail, tk, has, apply, keys, keysFail, available), the key-based texts (tk, data-tk), the
+   flat share terms (TERMS), the dictionary lookup (exact entries and patterns with placeholders) and the
+   MutationObserver that translates every displayed text. It also wraps alert/confirm/prompt, the date methods
+   (toLocale…String) and CanvasRenderingContext2D.fillText for the chosen language.
+   Everything sits in one IIFE – the only global names are PINN_LANGUAGES, PINN_I18N and tk.
+   Needs js/textkern.js (plural rules, placeholders), which index.html loads right before this file. */
 
 /* ==========================================================
    Languages (i18n)
    ----------------------------------------------------------
-   The code of pinn. is written in German. Every other language has its own small file
-   under pb_public/lang/<code>.js that is only loaded when someone has chosen that language –
-   nothing is loaded for German. Translation works on the displayed texts
-   (MutationObserver): every new or changed text is looked up in the dictionary once.
-   New language: copy lang/en.js, translate it, adjust the code in the call at the bottom of that file
-   and add a line to PINN_LANGUAGES here (js/sprachen.js) – the dropdown in the settings grows
-   by itself.
+   Two systems work side by side while pinn. moves from German source texts to text keys
+   (roadmap step 6, 1.111.0 – 1.118.0):
+   1. Key-based texts (new): the code asks for a text by its key – tk('settings.region.title') in
+      JavaScript, data-tk="settings.region.title" in HTML. Every language has a file
+      pb_public/i18n/<code>.i18n.js with all keys (German included, English is the reference).
+      Only the file of the chosen language is loaded. See .github/CONTRIBUTING.md → "Texts".
+   2. The dictionary (old): texts that still sit in the code in German are translated on the screen
+      (MutationObserver) with pb_public/lang/<code>.js – nothing is loaded for German. This part
+      is removed once every area uses keys.
    Order of the language choice: stored on the device (or in the profile, after sign-in) →
    language of the device, if available → English (default).
+   Hidden languages (hidden: true) are prepared but not offered yet; for testing they can be
+   unlocked on one device with localStorage.setItem('pinn.sprachen.alle', '1').
    ========================================================== */
 window.PINN_LANGUAGES = [
   { code: 'en', name: 'English', locale: 'en-GB', file: 'lang/en.js',
@@ -42,12 +48,21 @@ window.PINN_LANGUAGES = [
     flag: '<svg viewBox="0 0 36 24" aria-hidden="true"><path d="M0,0h36v24H0z" fill="#fff"/><path d="M12,12A6,6 0 0 1 24,12A3,3 0 0 1 18,12A3,3 0 0 0 12,12z" fill="#CD2E3A"/><path d="M24,12A6,6 0 0 1 12,12A3,3 0 0 1 18,12A3,3 0 0 0 24,12z" fill="#0047A0"/><g fill="#000"><g transform="translate(6.5,4.5) rotate(-57)"><rect x="-2.5" y="-2.0" width="5" height="0.8"/><rect x="-2.5" y="-0.4" width="5" height="0.8"/><rect x="-2.5" y="1.2000000000000002" width="5" height="0.8"/></g><g transform="translate(29.5,19.5) rotate(-57)"><rect x="-2.5" y="-2.0" width="2.1" height="0.8"/><rect x="0.4" y="-2.0" width="2.1" height="0.8"/><rect x="-2.5" y="-0.4" width="2.1" height="0.8"/><rect x="0.4" y="-0.4" width="2.1" height="0.8"/><rect x="-2.5" y="1.2000000000000002" width="2.1" height="0.8"/><rect x="0.4" y="1.2000000000000002" width="2.1" height="0.8"/></g><g transform="translate(29.5,4.5) rotate(57)"><rect x="-2.5" y="-2.0" width="2.1" height="0.8"/><rect x="0.4" y="-2.0" width="2.1" height="0.8"/><rect x="-2.5" y="-0.4" width="5" height="0.8"/><rect x="-2.5" y="1.2000000000000002" width="2.1" height="0.8"/><rect x="0.4" y="1.2000000000000002" width="2.1" height="0.8"/></g><g transform="translate(6.5,19.5) rotate(57)"><rect x="-2.5" y="-2.0" width="5" height="0.8"/><rect x="-2.5" y="-0.4" width="2.1" height="0.8"/><rect x="0.4" y="-0.4" width="2.1" height="0.8"/><rect x="-2.5" y="1.2000000000000002" width="5" height="0.8"/></g></g></svg>' },
   { code: 'de', name: 'Deutsch', locale: 'de-DE', file: '',
     flag: '<svg viewBox="0 0 5 3" aria-hidden="true"><path d="M0,0h5v3H0z"/><path d="M0,1h5v2H0z" fill="#D00"/><path d="M0,2h5v1H0z" fill="#FFCE00"/></svg>' },
+  // Prepared, not offered yet: plural rules are in js/textkern.js, the texts come once every area uses keys
+  { code: 'ru', name: 'Русский', locale: 'ru-RU', file: '', hidden: true,
+    flag: '<svg viewBox="0 0 9 6" aria-hidden="true"><path d="M0,0h9v6H0z" fill="#fff"/><path d="M0,2h9v4H0z" fill="#0039A6"/><path d="M0,4h9v2H0z" fill="#D52B1E"/></svg>' },
 ];
 (function () {
   var KEY = 'pinn.sprache';
   var DEFAULT = 'en';
   var LANGS = window.PINN_LANGUAGES;
-  function find(code) { for (var i = 0; i < LANGS.length; i++) if (LANGS[i].code === code) return LANGS[i]; return null; }
+  var ALL = false;   // hidden languages unlocked on this device (for testing a new language)
+  try { ALL = localStorage.getItem('pinn.sprachen.alle') === '1'; } catch (e) { /* private mode */ }
+  for (var li = 0; li < LANGS.length; li++) if (!LANGS[li].i18n) LANGS[li].i18n = 'i18n/' + LANGS[li].code + '.i18n.js';
+  function find(code) {
+    for (var i = 0; i < LANGS.length; i++) if (LANGS[i].code === code) return (LANGS[i].hidden && !ALL) ? null : LANGS[i];
+    return null;
+  }
   function readStored() { try { return localStorage.getItem(KEY) || ''; } catch (e) { return ''; } }
   function writeStored(code) { try { localStorage.setItem(KEY, code); } catch (e) { /* private mode/full */ } }
   function deviceLang() {
@@ -78,6 +93,8 @@ window.PINN_LANGUAGES = [
     // Stored language of this device (for the personal settings)
     stored: function () { return find(readStored()) ? readStored() : lang.code; },
     find: find,
+    // Languages that can be chosen (without hidden ones)
+    available: function () { var out = []; for (var i = 0; i < LANGS.length; i++) if (find(LANGS[i].code)) out.push(LANGS[i]); return out; },
     t: function (s) { return s; },
     // Switch language: remember it and reload (switching back needs the original texts)
     switchTo: function (c, noReload) {
@@ -122,7 +139,86 @@ window.PINN_LANGUAGES = [
   try { if (sessionStorage.getItem('pinn.wohnform.reload') === wohnform) sessionStorage.removeItem('pinn.wohnform.reload'); } catch (e) { /* ignore */ }
   document.documentElement.lang = lang.code;
   document.documentElement.setAttribute('data-wohnform', wohnform);
-  if (!lang.file && wohnform !== 'wg') return; // Original language as a family: load nothing, observe nothing
+
+  // Raise with every change to a language file (lang/ or i18n/), otherwise devices keep using the old file.
+  // .github/scripts/check-lang.js makes sure it matches src/version.txt.
+  var FILE_VERSION = '1.111.0';
+
+  // Invisible until the texts are in place (no short flash of other texts)
+  var style = document.createElement('style');
+  style.textContent = 'html.pinn-i18n-wait body{visibility:hidden}';
+  document.head.appendChild(style);
+  document.documentElement.classList.add('pinn-i18n-wait');
+  var reveal = function () { document.documentElement.classList.remove('pinn-i18n-wait'); };
+  setTimeout(reveal, 4000);
+
+  /* ---------- Key-based texts (since 1.111.0) ----------
+     tk(key, values) returns the text of the chosen language: plural form by values.n, placeholders {name}
+     filled from values (js/textkern.js). In a flat share a variant "<key>#wg" wins if the file has one.
+     HTML: data-tk="key" (text), data-tk-html="key" (markup from the language file),
+     data-tk-attr="placeholder:key;title:key" (attributes) – applied once when the page is ready and again
+     with PINN_I18N.apply(element) for HTML that is added later. A missing key shows the key itself and a
+     warning in the console; texts already in an element with data-tk stay as they are. */
+  var KEYS = null;     // key -> entry of the chosen language
+  var KEYOUT = null;   // all plain texts of that file – the dictionary (old) leaves them alone
+  var warned = {};
+  function keyEntry(key) {
+    if (!KEYS) return undefined;
+    if (wohnform === 'wg' && KEYS[key + '#wg'] !== undefined) return KEYS[key + '#wg'];
+    return KEYS[key];
+  }
+  function tk(key, vals) {
+    var e = keyEntry(key);
+    if (e === undefined) {
+      if (!warned[key]) { warned[key] = 1; try { console.warn('[pinn.] text key missing: ' + key); } catch (x) { /* no console */ } }
+      return String(key);
+    }
+    var K = window.PINN_TEXTKERN;
+    return K ? K.text(e, lang.code, vals) : (typeof e === 'string' ? e : '');
+  }
+  function has(key) { return keyEntry(key) !== undefined; }
+  function applyKeys(root) {
+    if (!KEYS || !root) return;
+    var list = [];
+    if (root.nodeType === 1 && root.matches && root.matches('[data-tk],[data-tk-html],[data-tk-attr]')) list.push(root);
+    if (root.querySelectorAll) list = list.concat(Array.prototype.slice.call(root.querySelectorAll('[data-tk],[data-tk-html],[data-tk-attr]')));
+    for (var i = 0; i < list.length; i++) {
+      var el = list[i], k = el.getAttribute('data-tk');
+      if (k && has(k)) el.textContent = tk(k);
+      k = el.getAttribute('data-tk-html');
+      if (k && has(k)) el.innerHTML = tk(k);
+      var pairs = (el.getAttribute('data-tk-attr') || '').split(';');
+      for (var j = 0; j < pairs.length; j++) {
+        var c = pairs[j].indexOf(':');
+        if (c < 1) continue;
+        var name = pairs[j].slice(0, c).trim(), key = pairs[j].slice(c + 1).trim();
+        if (name && has(key)) el.setAttribute(name, tk(key));
+      }
+    }
+  }
+  api.tk = tk;
+  api.has = has;
+  api.apply = applyKeys;
+  api.keys = function (c, data) {
+    if (c !== lang.code || KEYS) return;
+    KEYS = data || {};
+    KEYOUT = new Set();
+    Object.keys(KEYS).forEach(function (k) {
+      var v = KEYS[k];
+      if (typeof v === 'string') KEYOUT.add(norm(v));
+      else if (v && typeof v === 'object') Object.keys(v).forEach(function (f) { if (typeof v[f] === 'string') KEYOUT.add(norm(v[f])); });
+    });
+  };
+  api.keysFail = function () { if (!KEYS) { KEYS = {}; KEYOUT = new Set(); api.keysMissing = lang.i18n; } };
+  window.tk = tk;
+  document.write('<script src="' + lang.i18n + '?v=' + FILE_VERSION + '" onerror="PINN_I18N.keysFail()"><\/script>');
+
+  if (!lang.file && wohnform !== 'wg') {
+    // Original language as a family: no dictionary, no observer – only the key-based texts
+    var ready = function () { applyKeys(document); reveal(); };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready); else ready();
+    return;
+  }
   var DICT = !!lang.file;    // Dictionary needed (not German)?
 
   /* Terms for a flat share – applied to the finished text of the chosen language after the
@@ -242,14 +338,6 @@ window.PINN_LANGUAGES = [
   }
   function noTermAt(el) { return !!TERM && !!el && !!el.closest && !!el.closest('[data-no-term]'); }
 
-  // Invisible until the first translation (no short flash of the original texts)
-  var style = document.createElement('style');
-  style.textContent = 'html.pinn-i18n-wait body{visibility:hidden}';
-  document.head.appendChild(style);
-  document.documentElement.classList.add('pinn-i18n-wait');
-  var reveal = function () { document.documentElement.classList.remove('pinn-i18n-wait'); };
-  setTimeout(reveal, 4000);
-
   var exact = null;          // Map: original text -> translation
   var pre = null, suf = null, mid = null; // patterns with placeholders, sorted by first/last word
   var WORD = /[A-Za-zÄÖÜäöüß]{2,}/;
@@ -365,7 +453,7 @@ window.PINN_LANGUAGES = [
   function tr(text, depth, ctx, noTerm) {
     if (!text) return text;
     var res = text;
-    if (DICT && WORD.test(text)) {
+    if (DICT && WORD.test(text) && !(KEYOUT && KEYOUT.has(norm(text)))) {
       var key = norm(text);
       var out = trLoose(key, depth || 0, ctx || '');
       if (out !== null && out !== key) {
@@ -462,7 +550,7 @@ window.PINN_LANGUAGES = [
     new MutationObserver(onMutations).observe(document.documentElement, {
       childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ATTRS,
     });
-    var sweep = function () { if (document.body) walk(document.body); if (document.title) document.title = tr(document.title, 0); reveal(); };
+    var sweep = function () { applyKeys(document); if (document.body) walk(document.body); if (document.title) document.title = tr(document.title, 0); reveal(); };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sweep); else sweep();
   }
   api.load = function (c, data) {
@@ -470,8 +558,7 @@ window.PINN_LANGUAGES = [
     start(data);
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
-  // Raise the version number with every change to the language files, otherwise devices keep using the old file
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.110.0" onerror="PINN_I18N.fail()"><\/script>');
+  if (DICT) document.write('<script src="' + lang.file + '?v=' + FILE_VERSION + '" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // German as a flat share: no dictionary, only the flat share terms
 })();
 
