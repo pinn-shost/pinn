@@ -99,13 +99,14 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
-## 1.108.0の新機能
+## 1.109.0の新機能
 
-**家族メンバー、緊急パス、設定を個別のレコードに**
+**タスク、家事、カレンダーの選択を個別のレコードに**
 
-- **家族メンバー**、**緊急パス**、**家族の設定**（名前、家族/シェアハウス、カテゴリー、調理器具、メニュー）は、サーバー上の個別のレコードに保存されるようになりました。各部分は個別に保存・同期されます。使い方は変わりません。
-- 移行前に家族ごとのバックアップを作成します（`pb_data/pinn_umzug/`、30日間）。古いアプリの端末でも引き続きすべて表示されます。
-- 変更：アプリのファイル（`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/profilverwaltung.js`, `js/sprachen.js`, `js/versionslog.js`、すべての言語ファイル）、サーバーの `pb_hooks/pinn-bereiche.js`, `bereiche.pb.js`, `pinn-benutzer.js`, `save_family_data.pb.js`, `pinn-pushtext.js`, `calendar-sync.js`。
+- **タスク**、**家事**（部屋、掃除の予定、ごみ箱、掃除のカテゴリー、スマートホーム機器）と**カレンダーの選択**は、サーバー上の個別のレコードに保存されるようになりました。これで家族データの移行は完了です。使い方は変わりません。
+- 移行前に家族ごとのバックアップを作成します（`pb_data/pinn_umzug/`、30日間）。古いアプリの端末でも引き続きすべて表示されます。Apple ID と App 用パスワードがカレンダーの選択に入ることはありません。
+- 保存は、すべての部分がサーバーに届くまで待つようになりました。古い端末がオフにしたダークモードなどの設定を元に戻すことはなくなりました。
+- 変更：アプリのファイル（`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/sprachen.js`, `js/versionslog.js`、すべての言語ファイル）とサーバーの `pb_hooks/pinn-bereiche.js`, `pinn-smarthome.js`, `calendar-sync.js`, `save_family_data.pb.js`。
 
 以前のバージョンは [Releases](https://github.com/pinn-shost/pinn/releases) をご覧ください。
 
@@ -137,7 +138,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.108.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.109.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

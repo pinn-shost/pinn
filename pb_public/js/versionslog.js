@@ -20,6 +20,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.109', datum: '23.10.2026', titel: 'Aufgaben, Haushalt und Kalender-Auswahl in eigenen Datensätzen',
+    punkte: [
+      ['info', 'Aufgaben, der Haushalt (Räume, Putzpläne, Mülleimer, Putz-Kategorien, Smart-Home-Geräte) und die Kalender-Auswahl liegen jetzt in eigenen Datensätzen auf dem Server. Damit ist der Umzug der Familiendaten abgeschlossen – an der Bedienung ändert sich nichts'],
+      ['info', 'Wie bei 1.104–1.108: vor dem Umzug eine Sicherung je Familie (pb_data/pinn_umzug, 30 Tage), Geräte mit älterer App sehen weiter alles. Apple-ID und App-Passwort gelangen nie in die Kalender-Auswahl oder die Sicherung'],
+      ['fix', 'Speichern wartet jetzt, bis alle Teile auf dem Server sind: Nach dem Ändern einer Haushaltsregel oder der Kalender-Auswahl arbeitet der Server sofort mit dem neuen Stand. Ältere Geräte setzen Einstellungen wie „Erledigte Aufgaben: Sofort“ oder einen ausgeschalteten Dunkelmodus nicht mehr zurück'],
+      ['info', 'Geändert: index.html, js/bereiche.js, js/familiensync.js, js/sprachen.js, js/versionslog.js, alle Sprachdateien sowie am Server pb_hooks/pinn-bereiche.js, pinn-smarthome.js, calendar-sync.js und save_family_data.pb.js'],
+    ],
+  },
+  {
     v: '1.108', datum: '23.10.2026', titel: 'Familienmitglieder, Notfallpässe und Einstellungen in eigenen Datensätzen',
     punkte: [
       ['info', 'Familienmitglieder, Notfallpässe und die Familien-Einstellungen (Name, Familie/WG, Kategorien, Küchengeräte, Menüs) liegen jetzt in eigenen Datensätzen auf dem Server. Jeder Teil wird für sich gespeichert und abgeglichen – an der Bedienung ändert sich nichts'],

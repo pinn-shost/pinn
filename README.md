@@ -95,6 +95,15 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 and 🇰🇷 한국어**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.109.0
+
+**Tasks, household and calendar selection in records of their own**
+
+- Last step of moving the family data out of the one big data block: the **tasks**, the **household** (rooms, cleaning plans, bins, cleaning categories, smart home devices) and the **calendar selection** now live in records of their own on the server. Nothing changes in how you use the app.
+- Same safety net as before: a backup per family before the move (`pb_data/pinn_umzug/`, 30 days), devices with an older app keep seeing everything. Apple ID and app password never get into the calendar selection or the backup.
+- Saving now waits until every part is on the server, so “create household tasks now” and the calendar sync work with what you just changed. Older devices no longer reset settings such as “Completed tasks: Immediately” or a switched-off dark mode.
+- Changed: app files (`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/sprachen.js`, `js/versionslog.js`, all language files) and on the server `pb_hooks/pinn-bereiche.js`, `pinn-smarthome.js`, `calendar-sync.js`, `save_family_data.pb.js`. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.108.0
 
 **Family members, emergency passes and settings in records of their own**
@@ -136,15 +145,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Not yet in these languages: the setup assistant, the data export files and the push messages from the server – they show English for now.
 - Changed: app files (`index.html`, `js/sprachen.js`, `js/ausblick.js`, `js/einrichten.js`, `js/exportieren.js`, `js/hinweise.js`, `js/versionslog.js`, new `lang/pt.js` and `lang/zh.js`, language files `en`, `fr`, `es`, `it`). Nothing changes on the server.
 
-## What's new in 1.107
-
-**New language: Italian**
-
-- pinn. is now available in **Italian** (Settings → Language). The whole app is translated, including the weekly and monthly preview, the shopping hint and the export button.
-- Not yet in Italian: the setup assistant, the data export files and the push messages from the server – they show English for now.
-- For contributors: a new check for language files (`.github/scripts/check-lang.js`, part of `check-all.js` and of the GitHub checks) and a tool that translates new languages with the Claude API (`.github/scripts/translate.js`, workflow “Translate”). More languages will follow.
-- Changed: app files (`index.html`, `js/sprachen.js`, `js/ausblick.js`, `js/einrichten.js`, `js/exportieren.js`, `js/hinweise.js`, `js/versionslog.js`, new `lang/it.js`, language files `en`, `fr`, `es`) and on the server `pb_hooks/pinn-pushtext.js`, `pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-sprache.js`, `pinn-wobistdu.js`. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
 ## How it works
 
 ```mermaid
@@ -171,7 +171,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.108.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.109.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

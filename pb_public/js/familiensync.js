@@ -6,7 +6,8 @@
    saving without overwriting each other (persistState, flushSync with merging), fetching changes of other devices
    (pullRemoteChanges, rerenderAfterRemoteChange) and the save shortcuts (saveMembers, saveMealPlan, saveRecipes, saveTasks).
    Since 1.104.0 some parts (recipes, meal plan, since 1.105 also shopping and pantry, since 1.106 board, lists, school,
-   pets and the maintenance plan, since 1.108 members, emergency passes and settings) live in records of their own
+   pets and the maintenance plan, since 1.108 members, emergency passes and settings, since 1.109 tasks, the household
+   and the calendar selection) live in records of their own
    (js/bereiche.js): they are left out of the family record (buildFamilyPayload) and put back on top whenever a state
    is applied (composeFamilyState). */
 
@@ -145,7 +146,8 @@ async function persistState() {
   writePending({ seq: ++pendingSeq, recordId: familyRecordId, base: syncBase, baseUpdated: syncBaseUpdated, local: areaStripPayload(full) });
   // Shops: report open items per list to the server (delayed, only on change)
   try { if (typeof ladenPlansSync === 'function') ladenPlansSync(false); } catch (e) { /* ignore */ }
-  await flushSync();
+  // Family record and areas are sent side by side; both are on the server when persistState returns
+  await Promise.all([flushSync(), areasSettle()]);
 }
 
 function scheduleSyncRetry() {

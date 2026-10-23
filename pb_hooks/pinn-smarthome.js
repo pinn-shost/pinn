@@ -211,13 +211,12 @@ function newToken() {
 
 // ---------------------------------------------------------------------------------------------
 // Family data (only the smart home part, cached until the next change)
+// Since 1.109 rooms, rules and devices live in the area "haushalt" (pinn-bereiche.js): it is put on top of
+// familien_daten (only that area – the plants still come from the old finance block), and the stamp of
+// pinn-benutzer.familyDataStamp() changes with every area, so the cache stays correct.
 // ---------------------------------------------------------------------------------------------
 function familyStamp(familyId) {
-    try {
-        const m = new DynamicModel({ updated: "" });
-        $app.db().newQuery("SELECT updated FROM familien_daten WHERE familie = {:f} LIMIT 1").bind({ f: String(familyId) }).one(m);
-        return String(m.updated || "");
-    } catch (e) { return ""; }
+    try { return String(require(`${__hooks}/pinn-benutzer.js`).familyDataStamp(familyId) || ""); } catch (e) { return ""; }
 }
 function familyData(familyId) {
     const key = "pinnSmartData:" + familyId;
@@ -231,6 +230,7 @@ function familyData(familyId) {
         const rec = $app.findFirstRecordByFilter("familien_daten", "familie = {:f}", { f: String(familyId) });
         full = require(`${__hooks}/calendar-sync.js`).parseRecordData(rec.get("data")) || {};
     } catch (e) { full = {}; }
+    try { require(`${__hooks}/pinn-bereiche.js`).overlay(familyId, full, ["haushalt"]); } catch (e) { /* no areas yet */ }
     const data = {
         rooms: Array.isArray(full.rooms) ? full.rooms : [],
         cleaningCategories: Array.isArray(full.cleaningCategories) ? full.cleaningCategories : [],

@@ -23,8 +23,12 @@
 //   einstellungen  lastName, wohnform, themeColors, darkMode, default views, categoryActive,
 //               weatherLocation, kitchenTools, favoriteTabs, guestHiddenViews,
 //               documentCategories                                 (since 1.108.0)
-// Still in familien_daten: tasks and the household (rooms, roomSchedules, trashBins, smartDevices,
-// cleaningCategories, doneTaskCleanupDays), the calendar selection (appleCalendar) and old values.
+//   aufgaben    tasks, doneTaskCleanupDays                         (since 1.109.0)
+//   haushalt    rooms, roomSchedules, trashBins, cleaningCategories, smartDevices (since 1.109.0)
+//   kalender    appleCalendar (calendar selection and colours – never the Apple ID or password,
+//               see cleanArea)                                     (since 1.109.0)
+// Still in familien_daten: only the old finance block (before the funds) and old default views
+// (defaultViewMode / defaultViewScope).
 //
 // Server code reads the family data through pinn-benutzer.js: loadFamilyDataFor() contains the areas
 // (overlay) and familyDataStamp() changes with every area as well, so caches built on it stay correct.
@@ -71,6 +75,9 @@ const AREAS = {
     einstellungen: ["lastName", "wohnform", "themeColors", "darkMode", "defaultViewModeDesktop", "defaultViewScopeDesktop",
         "defaultViewModeMobile", "defaultViewScopeMobile", "categoryActive", "weatherLocation", "kitchenTools", "favoriteTabs",
         "guestHiddenViews", "documentCategories"],
+    aufgaben: ["tasks", "doneTaskCleanupDays"],
+    haushalt: ["rooms", "roomSchedules", "trashBins", "cleaningCategories", "smartDevices"],
+    kalender: ["appleCalendar"],
 };
 // Areas app 1.104 knew (it sent bereiche=true / ?bereiche=1)
 const AREAS_1104 = ["rezepte", "essensplan"];
@@ -98,7 +105,9 @@ function parseOrNull(raw) {
     return (v && typeof v === "object") ? v : null;
 }
 function isObj(v) { return !!v && typeof v === "object" && !Array.isArray(v); }
-function isEmptyVal(v) { return v === undefined || v === null || v === "" || v === 0 || v === false; }
+// 0 and false are real values (e.g. doneTaskCleanupDays 0 = "remove at once", darkMode false) – an older
+// device must not replace them with its own setting
+function isEmptyVal(v) { return v === undefined || v === null || v === ""; }
 function names() { return Object.keys(AREAS); }
 function keysOf(name) { return AREAS[name] || []; }
 function allKeys() {
@@ -118,6 +127,12 @@ function pick(src, keys) {
 }
 function hasAny(src, keys) {
     return isObj(src) && keys.some(k => Object.prototype.hasOwnProperty.call(src, k) && src[k] !== undefined);
+}
+// Apple ID and app password never belong in an area (they live encrypted in "apple_zugaenge",
+// see pinn-apple.js). Changes obj in place. -> true if something was removed
+function cleanArea(name, obj) {
+    if (name !== "kalender" || !isObj(obj)) return false;
+    try { return require(`${__hooks}/calendar-sync.js`).stripAppleSecrets(obj); } catch (e) { return false; }
 }
 function ymd(ms) {
     const d = new Date(ms);
@@ -310,6 +325,11 @@ function backupFamilyData(familyId, rec, list) {
         let text = "";
         try { text = toString(rec.get("data")); } catch (e) { text = ""; }
         if (!text || text.charAt(0) !== "{") text = JSON.stringify(parse(rec.get("data")));
+        if (/"appleCalendar"/.test(text) && /"(email|appPassword)"/.test(text)) {
+            // Never write old Apple credentials into the backup file
+            const d = parse(text);
+            if (cleanArea("kalender", d)) text = JSON.stringify(d);
+        }
         $os.writeFile(path, text, 384); // 0600
         console.log("[Bereiche] Sicherung vor dem Umzug: " + path);
         return true;
@@ -357,6 +377,7 @@ function migrateFamily(familyId) {
                     if (areaRecord(familyId, n, tx)) return; // created in the meantime
                     const keys = keysOf(n);
                     const content = pick(data, keys);
+                    cleanArea(n, content);
                     const rec = new Record(col);
                     rec.set("familie", String(familyId));
                     rec.set("bereich", n);
@@ -403,7 +424,9 @@ function takeLeftovers(familyId) {
                 if (!rec) return;
                 const stats = { n: 0 };
                 const current = parse(rec.get("data"));
-                const merged = unionMerge(isObj(current) ? current : {}, pick(data, keys), stats);
+                const part = pick(data, keys);
+                cleanArea(n, part);
+                const merged = unionMerge(isObj(current) ? current : {}, part, stats);
                 if (stats.n) { rec.set("data", merged); tx.save(rec); added += stats.n; }
                 keys.forEach(k => { if (Object.prototype.hasOwnProperty.call(data, k)) { delete data[k]; changed = true; } });
             });
@@ -429,6 +452,7 @@ function absorb(familyId, incoming) {
         const keys = keysOf(n);
         if (!hasAny(incoming, keys)) return;
         const part = pick(incoming, keys);
+        cleanArea(n, part);
         const before = added;
         keys.forEach(k => { delete incoming[k]; });
         try {
@@ -471,6 +495,25 @@ function expireCopies() {
     });
     cleanupBackups();
 }
+// Removes Apple credentials that might have reached a calendar area before (safety net at every start)
+function scrubSecrets() {
+    if (!findCol(COL)) return;
+    let recs = [];
+    try { recs = $app.findRecordsByFilter(COL, "bereich = 'kalender'", "", 0, 0); } catch (e) { recs = []; }
+    recs.forEach(rec => {
+        try {
+            let changed = false;
+            ["data", "altbestand"].forEach(f => {
+                const d = parseOrNull(rec.get(f));
+                if (d && cleanArea("kalender", d)) { rec.set(f, d); changed = true; }
+            });
+            if (changed) {
+                $app.save(rec);
+                console.log("[Bereiche] Alte Apple-Zugangsdaten aus der Kalender-Auswahl entfernt.");
+            }
+        } catch (err) { console.log("[Bereiche] Kalender-Auswahl nicht bereinigt: " + err.message); }
+    });
+}
 function migrateAll() {
     if (!ensureSchema()) return;
     let families = [];
@@ -479,6 +522,7 @@ function migrateAll() {
         try { migrateFamily(f.id); } catch (e) { console.log("[Bereiche] Familie " + f.id + ": " + e.message); }
     });
     try { expireCopies(); } catch (e) { console.log("[Bereiche] Aufräumen: " + e.message); }
+    try { scrubSecrets(); } catch (e) { console.log("[Bereiche] Kalender-Auswahl: " + e.message); }
 }
 // Before answering: missing areas or leftovers? Only checked again when familien_daten has changed.
 function ensureFamily(familyId) {
@@ -513,6 +557,7 @@ function save(familyId, body, opts) {
     if (!AREAS[name]) return { status: 400, body: { error: "Unbekannter Bereich.", gone: true } };
     if (!body || !isObj(body.data)) return { status: 400, body: { error: "data fehlt." } };
     const incoming = pick(body.data, keysOf(name));
+    cleanArea(name, incoming);
     let size = 0;
     try { size = JSON.stringify(incoming).length; } catch (e) { size = DATA_MAX + 1; }
     if (size > DATA_MAX) return { status: 413, body: { error: "Die Daten sind zu groß." } };
@@ -565,6 +610,7 @@ function updateArea(familyId, name, fn) {
         const data = pick(parse(rec.get("data")), keysOf(name));
         out.before = JSON.parse(JSON.stringify(data));
         if (!fn(data)) return;
+        cleanArea(name, data);
         rec.set("data", pick(data, keysOf(name)));
         tx.save(rec);
         out.changed = true;
@@ -645,7 +691,7 @@ function httpFail(e, where, ex, status) {
 module.exports = {
     COL, AREAS, COPY_DAYS, GUEST_LOCKED,
     ensureSchema, migrateAll, migrateFamily, ensureFamily, expireCopies, takeLeftovers, absorb,
-    names, keysOf, allKeys, areaOfKey, movedNames, isMoved, readMany, overlay, fieldText, kitchenToolsOf, leftoverKeys,
+    names, keysOf, allKeys, areaOfKey, cleanArea, scrubSecrets, movedNames, isMoved, readMany, overlay, fieldText, kitchenToolsOf, leftoverKeys,
     list, save, afterSave, syncPublicRecipes, unionMerge, knownAreas, unknownAreas, updateArea, areasStamp,
     httpSend, httpBody, httpFamily, httpFail,
 };

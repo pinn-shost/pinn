@@ -947,9 +947,10 @@ function loadAppleConfig(familyId) {
             data = parseRecordData(record.get("data")) || {};
         }
     } catch (e) { data = {}; }
-    // Familienmitglieder liegen ab 1.108 im Bereich „mitglieder“ (pinn-bereiche.js) - nur zum Lesen ergänzen
+    // Familienmitglieder liegen ab 1.108 im Bereich „mitglieder“, Aufgaben, Haushalt und die Kalender-Auswahl
+    // (appleCalendar) ab 1.109 in „aufgaben“, „haushalt“ und „kalender“ (pinn-bereiche.js) - nur zum Lesen ergänzen
     if (familyId) {
-        try { require(`${__hooks}/pinn-bereiche.js`).overlay(familyId, data, ["mitglieder"]); } catch (e) { /* noch ohne Bereiche */ }
+        try { require(`${__hooks}/pinn-bereiche.js`).overlay(familyId, data, ["mitglieder", "aufgaben", "haushalt", "kalender"]); } catch (e) { /* noch ohne Bereiche */ }
     }
     const creds = getAppleCredentials(familyId);
     const stored = (data && data.appleCalendar && typeof data.appleCalendar === "object") ? data.appleCalendar : {};

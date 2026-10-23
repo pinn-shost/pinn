@@ -20,7 +20,8 @@
 // dann verworfen und nie mehr im Familien-Datensatz gespeichert - sonst sähe jedes Profil sie wieder.
 //
 // Bereiche (pinn-bereiche.js, ab 1.104.0): Rezepte, Essensplan, Einkauf, Vorrat, Pinnwand, Listen,
-// Schule & Kita, Haustiere, Wartungsplan und ab 1.108.0 Mitglieder, Notfallpässe und Einstellungen liegen in eigenen
+// Schule & Kita, Haustiere, Wartungsplan, ab 1.108.0 Mitglieder, Notfallpässe und Einstellungen und ab 1.109.0
+// Aufgaben, Haushalt (Räume, Putzpläne, Mülleimer, Smart-Home-Geräte) und die Kalender-Auswahl liegen in eigenen
 // Datensätzen ("familien_bereiche") und werden über /api/pinn/bereiche/speichern gespeichert. Die App
 // schickt mit, welche Bereiche sie selbst verwaltet ("bereiche": Liste der Namen; 1.104 schickte true =
 // Rezepte und Essensplan). Was ein Gerät trotzdem noch im großen Block schickt, wird in die Bereiche

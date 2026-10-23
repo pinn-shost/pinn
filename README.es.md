@@ -95,6 +95,15 @@ Siempre contigo: pinn. se instala en cada iPhone y móvil Android como una app n
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 y 🇰🇷 한국어**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.109.0
+
+**Tareas, hogar y selección de calendarios en registros propios**
+
+- Último paso del traslado de los datos familiares fuera del gran bloque único: las **tareas**, el **hogar** (habitaciones, planes de limpieza, cubos de basura, categorías de limpieza, dispositivos domóticos) y la **selección de calendarios** se guardan ahora en registros propios en el servidor. El uso no cambia.
+- La misma red de seguridad que antes: una copia de seguridad por familia antes del traslado (`pb_data/pinn_umzug/`, 30 días), los dispositivos con una app antigua siguen viéndolo todo. El ID de Apple y la contraseña de app nunca llegan a la selección de calendarios ni a la copia de seguridad.
+- Guardar espera ahora hasta que todas las partes estén en el servidor: «crear tareas del hogar ahora» y la sincronización de calendarios usan enseguida lo que acabas de cambiar. Los dispositivos antiguos ya no restablecen ajustes como «Tareas hechas: al instante» o un modo oscuro desactivado.
+- Cambiado: archivos de la app (`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/sprachen.js`, `js/versionslog.js`, todos los archivos de idioma) y en el servidor `pb_hooks/pinn-bereiche.js`, `pinn-smarthome.js`, `calendar-sync.js`, `save_family_data.pb.js`. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
+
 ## Novedades de la 1.108.0
 
 **Miembros de la familia, pasaportes de emergencia y ajustes en registros propios**
@@ -136,15 +145,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Todavía no en estos idiomas: el asistente de configuración, los archivos de la exportación de datos y las notificaciones push del servidor; de momento aparecen en inglés.
 - Modificado: archivos de la app (`index.html`, `js/sprachen.js`, `js/ausblick.js`, `js/einrichten.js`, `js/exportieren.js`, `js/hinweise.js`, `js/versionslog.js`, nuevos `lang/pt.js` y `lang/zh.js`, archivos de idioma `en`, `fr`, `es`, `it`). En el servidor no cambia nada.
 
-## Novedades de la 1.107
-
-**Nuevo idioma: italiano**
-
-- pinn. ya está disponible en **italiano** (Ajustes → Idioma). Toda la app está traducida, también la vista previa semanal y mensual, el aviso de compras y el botón de exportación.
-- Todavía no en italiano: el asistente de configuración, los archivos de la exportación de datos y las notificaciones push del servidor – de momento aparecen en inglés.
-- Para colaboradores: una nueva comprobación de los archivos de idioma (`.github/scripts/check-lang.js`, incluida en `check-all.js` y en las comprobaciones de GitHub) y una herramienta que traduce nuevos idiomas con la API de Claude (`.github/scripts/translate.js`, workflow «Translate»). Habrá más idiomas.
-- Modificado: archivos de la app (`index.html`, `js/sprachen.js`, `js/ausblick.js`, `js/einrichten.js`, `js/exportieren.js`, `js/hinweise.js`, `js/versionslog.js`, nuevo `lang/it.js`, archivos de idioma `en`, `fr`, `es`) y en el servidor `pb_hooks/pinn-pushtext.js`, `pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-sprache.js`, `pinn-wobistdu.js`. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
-
 ## Cómo funciona
 
 ```mermaid
@@ -171,7 +171,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.108.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.109.0` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

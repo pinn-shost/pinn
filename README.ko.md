@@ -99,13 +99,14 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
-## 1.108.0의 새 소식
+## 1.109.0의 새 소식
 
-**가족 구성원, 비상 카드, 설정을 별도 레코드로**
+**할 일, 집안일, 캘린더 선택을 별도 레코드로**
 
-- **가족 구성원**, **비상 카드**, **가족 설정**(이름, 가족/셰어하우스, 카테고리, 주방 도구, 메뉴)이 이제 서버의 별도 레코드에 저장돼요. 각 부분은 따로 저장되고 동기화돼요. 사용 방법은 바뀌지 않아요.
-- 이전 전에 가족별 백업을 만들어요(`pb_data/pinn_umzug/`, 30일). 이전 앱을 쓰는 기기에서도 계속 모든 내용이 보여요.
-- 변경: 앱 파일(`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/profilverwaltung.js`, `js/sprachen.js`, `js/versionslog.js`, 모든 언어 파일)과 서버의 `pb_hooks/pinn-bereiche.js`, `bereiche.pb.js`, `pinn-benutzer.js`, `save_family_data.pb.js`, `pinn-pushtext.js`, `calendar-sync.js`.
+- **할 일**, **집안일**(방, 청소 일정, 쓰레기통, 청소 카테고리, 스마트홈 기기)과 **캘린더 선택**이 이제 서버에서 별도 레코드로 저장돼요. 이로써 가족 데이터 이전이 끝났어요. 사용 방법은 그대로예요.
+- 이전 전에 가족별 백업을 만들어요(`pb_data/pinn_umzug/`, 30일). 이전 버전 앱을 쓰는 기기에서도 계속 모두 보여요. Apple ID와 앱 암호는 캘린더 선택에 절대 들어가지 않아요.
+- 저장할 때 이제 모든 부분이 서버에 도착할 때까지 기다려요. 이전 기기가 꺼 둔 다크 모드 같은 설정을 되돌리지 않아요.
+- 변경: 앱 파일(`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/sprachen.js`, `js/versionslog.js`, 모든 언어 파일)과 서버의 `pb_hooks/pinn-bereiche.js`, `pinn-smarthome.js`, `calendar-sync.js`, `save_family_data.pb.js`.
 
 이전 버전은 [Releases](https://github.com/pinn-shost/pinn/releases)에서 볼 수 있어요.
 
@@ -137,7 +138,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.108.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.109.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

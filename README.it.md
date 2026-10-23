@@ -99,13 +99,14 @@ Sempre con te: pinn. si installa su ogni iPhone e telefono Android come un’app
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 e 🇰🇷 한국어**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
-## Novità della 1.108.0
+## Novità della 1.109.0
 
-**Membri della famiglia, passaporti di emergenza e impostazioni in record propri**
+**Attività, casa e scelta dei calendari in record propri**
 
-- I **membri della famiglia**, i **passaporti di emergenza** e le **impostazioni della famiglia** (nome, famiglia/coinquilini, categorie, utensili da cucina, menu) ora si trovano in record propri sul server. Ogni parte viene salvata e sincronizzata separatamente. L’uso non cambia.
-- Prima del trasferimento viene creato un backup per famiglia (`pb_data/pinn_umzug/`, 30 giorni); i dispositivi con un’app più vecchia continuano a vedere tutto.
-- Modificato: file dell’app (`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/profilverwaltung.js`, `js/sprachen.js`, `js/versionslog.js`, tutti i file di lingua) e sul server `pb_hooks/pinn-bereiche.js`, `bereiche.pb.js`, `pinn-benutzer.js`, `save_family_data.pb.js`, `pinn-pushtext.js`, `calendar-sync.js`.
+- Le **attività**, la **casa** (stanze, piani di pulizia, bidoni, categorie di pulizia, dispositivi smart home) e la **scelta dei calendari** ora si trovano in record propri sul server. Così il trasferimento dei dati di famiglia è completato. L’uso non cambia.
+- Prima del trasferimento viene creato un backup per famiglia (`pb_data/pinn_umzug/`, 30 giorni); i dispositivi con un’app più vecchia continuano a vedere tutto. ID Apple e password per app non finiscono mai nella scelta dei calendari.
+- Il salvataggio ora attende che tutte le parti siano sul server; i dispositivi più vecchi non ripristinano più impostazioni come la modalità scura disattivata.
+- Modificato: file dell’app (`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/sprachen.js`, `js/versionslog.js`, tutti i file di lingua) e sul server `pb_hooks/pinn-bereiche.js`, `pinn-smarthome.js`, `calendar-sync.js`, `save_family_data.pb.js`.
 
 Le versioni precedenti si trovano nelle [Releases](https://github.com/pinn-shost/pinn/releases).
 
@@ -137,7 +138,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.108.0` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.109.0` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -99,6 +99,15 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 und 🇰🇷 한국어**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.109.0
+
+**Aufgaben, Haushalt und Kalender-Auswahl in eigenen Datensätzen**
+
+- Letzter Schritt beim Umzug der Familiendaten aus dem einen großen Datenblock: die **Aufgaben**, der **Haushalt** (Räume, Putzpläne, Mülleimer, Putz-Kategorien, Smart-Home-Geräte) und die **Kalender-Auswahl** liegen jetzt in eigenen Datensätzen auf dem Server. An der Bedienung ändert sich nichts.
+- Gleiches Sicherheitsnetz wie bisher: vor dem Umzug eine Sicherung je Familie (`pb_data/pinn_umzug/`, 30 Tage), Geräte mit älterer App sehen weiter alles. Apple-ID und App-Passwort gelangen nie in die Kalender-Auswahl oder die Sicherung.
+- Speichern wartet jetzt, bis alle Teile auf dem Server sind: „Haushaltsaufgaben jetzt erstellen“ und der Kalender-Abgleich arbeiten sofort mit dem, was du gerade geändert hast. Ältere Geräte setzen Einstellungen wie „Erledigte Aufgaben: Sofort“ oder einen ausgeschalteten Dunkelmodus nicht mehr zurück.
+- Geändert: App-Dateien (`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien) und am Server `pb_hooks/pinn-bereiche.js`, `pinn-smarthome.js`, `calendar-sync.js`, `save_family_data.pb.js`. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
+
 ## Neu in 1.108.0
 
 **Familienmitglieder, Notfallpässe und Einstellungen in eigenen Datensätzen**
@@ -107,14 +116,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Gleiches Sicherheitsnetz wie bisher: vor dem Umzug eine Sicherung je Familie (`pb_data/pinn_umzug/`, 30 Tage), Geräte mit älterer App sehen weiter alles.
 - Neue oder gelöschte Profile ändern die Mitglieder direkt im neuen Datensatz; Gäste können die Gast-Menüs weiterhin nicht ändern.
 - Geändert: App-Dateien (`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/profilverwaltung.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien) und am Server `pb_hooks/pinn-bereiche.js`, `bereiche.pb.js`, `pinn-benutzer.js`, `save_family_data.pb.js`, `pinn-pushtext.js`, `calendar-sync.js`. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
-
-## Neu in 1.107.4
-
-**Japanisch und Koreanisch vollständig: Einrichtung, Datenexport und Push-Nachrichten**
-
-- Japanisch und Koreanisch gibt es jetzt auch im Einrichtungsassistenten, in den Dateien des Datenexports und in den Push-Nachrichten vom Server (dort erschien bisher Englisch). Damit sind alle neun Sprachen vollständig.
-- Die Sprachsteuerung (Siri/Android) versteht weiterhin Deutsch, Englisch, Französisch und Spanisch.
-- Geändert: App-Dateien (`index.html`, `js/sprachen.js`, `js/einrichten.js`, `js/exportieren.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, alle Sprachdateien) und am Server `pb_hooks/pinn-pushtext.js`, `pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-aufgaben.js`, `pinn-wobistdu.js`, `pinn-einrichtung.js`.
 
 Ältere Versionen findest du unter [Releases](https://github.com/pinn-shost/pinn/releases).
 
@@ -146,7 +147,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.108.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.109.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

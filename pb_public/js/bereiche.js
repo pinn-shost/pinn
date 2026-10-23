@@ -3,7 +3,7 @@
    Since 1.104.0 some parts of the family data live in records of their own on the server
    (collection "familien_bereiche", pb_hooks/pinn-bereiche.js) – recipes and the meal plan (1.104), shopping and
    pantry (1.105), board, lists, school & daycare, pets and the maintenance plan (1.106), members, emergency passes
-   and the family settings (1.108). Which keys belong to which area is told by the server, so a new area needs no change here.
+   and the family settings (1.108), tasks, the household and the calendar selection (1.109). Which keys belong to which area is told by the server, so a new area needs no change here.
    The server is told which areas this device handles itself (areaKnownList / areaKnownParam); areas it does not
    know yet are added to the family record for it, so nothing ever disappears while the lists differ.
    The rest of the app does not notice anything: the app variables stay the same, only loading and saving
@@ -13,6 +13,8 @@
    - areaStripPayload: removes the area keys from what is sent to /api/pinn/save
    - areasCapture / areasFlush: changes of an area are queued locally (works offline) and sent with
      conflict protection – if someone else saved in between, both states are merged (mergeFamilyData).
+   - areasSettle: waits until the queued changes have been sent (persistState awaits it, so a server action
+     right after saving – e.g. "create household tasks now" or "sync calendars now" – sees the new state).
    Without areas on the server (older server) everything stays in the family record as before. */
 
 const LS_AREAS_KEY = 'pinn.bereiche';                  // { familie, areas: { <name>: { keys, base, updated } } }
@@ -26,6 +28,7 @@ let areaFlushing = false;
 let areaFlushAgain = false;
 let areaRetryTimer = null;
 let areaFlushTimer = null;
+let areaFlushDone = null;    // promise of the flush that is running right now (areasSettle waits for it)
 let areaLoading = null;
 let areaLoadedAt = 0;
 let areaSentJson = {};       // <name> -> JSON of the state last queued or applied (avoids needless sending)
@@ -253,6 +256,8 @@ async function areasFlush() {
   if (areaServer !== true) return;
   if (areaFlushing) { areaFlushAgain = true; return; }
   areaFlushing = true;
+  let flushFinished;
+  areaFlushDone = new Promise(r => { flushFinished = r; });
   let mergedSomething = false;
   try {
     for (let guard = 0; guard < 20; guard++) {
@@ -312,8 +317,24 @@ async function areasFlush() {
     if (!areasHavePending() && !readPending() && (familySyncState === 'offline' || familySyncState === 'error')) setSyncStatus('ok');
   } finally {
     areaFlushing = false;
+    flushFinished();
     if (mergedSomething) areaApplyToApp();
     if (areaFlushAgain) { areaFlushAgain = false; areasFlush(); }
+  }
+}
+// Sends the queued area changes right away and waits until they are on the server (or the device is
+// offline – then they stay queued and the retry timer takes over). Never throws.
+async function areasSettle() {
+  if (areaServer !== true) return;
+  clearTimeout(areaFlushTimer);
+  for (let guard = 0; guard < 6; guard++) {
+    try {
+      if (areaFlushing) { await areaFlushDone; continue; }
+      if (!areasHavePending()) return;
+      await areasFlush();
+      if (areaFlushing) continue;                  // a new round was started in the meantime
+      if (areasHavePending()) return;              // offline or error: retried later
+    } catch (e) { return; }
   }
 }
 window.addEventListener('online', () => { areasFlush(); });
