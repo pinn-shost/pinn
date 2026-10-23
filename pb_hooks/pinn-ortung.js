@@ -2065,12 +2065,15 @@ function langOfUser(userId) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign($app.findRecordById(USERS, userId)).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
     if (["FR", "BE", "MC"].indexOf(land) >= 0) return "fr";
     if (["ES", "MX", "AR", "CO", "CL", "PE"].indexOf(land) >= 0) return "es";
+    if (["IT", "SM", "VA"].indexOf(land) >= 0) return "it";
+    if (["BR", "PT", "AO", "MZ"].indexOf(land) >= 0) return "pt";
+    if (["CN"].indexOf(land) >= 0) return "zh";
     return "en";
 }
 const LADEN_TEXT = {
@@ -2082,6 +2085,12 @@ const LADEN_TEXT = {
           geplant: "Prévu : {titel}", tipp1: "Touche ici pour la liste de courses.", tippN: "Touche ici pour les listes de courses.", und: " et " },
     es: { bei: "Estás en {laden}", frage: "¿vas a hacer la compra?", artikel1: "1 artículo en la lista", artikel: "{n} artículos en la lista",
           geplant: "Planeado: {titel}", tipp1: "Toca aquí para la lista de la compra.", tippN: "Toca aquí para las listas de la compra.", und: " y " },
+    it: { bei: "Sei da {laden}", frage: "vai a fare la spesa?", artikel1: "1 articolo nella lista", artikel: "{n} articoli nella lista",
+          geplant: "Previsto: {titel}", tipp1: "Tocca qui per la lista della spesa.", tippN: "Tocca qui per le liste della spesa.", und: " e " },
+    pt: { bei: "Você está em {laden}", frage: "vai fazer compras?", artikel1: "1 item na lista", artikel: "{n} itens na lista",
+          geplant: "Planejado: {titel}", tipp1: "Toque aqui para ver a lista de compras.", tippN: "Toque aqui para ver as listas de compras.", und: " e " },
+    zh: { bei: "你在 {laden}", frage: "要去购物吗？", artikel1: "清单上有 1 项", artikel: "清单上有 {n} 项",
+          geplant: "已计划：{titel}", tipp1: "点按这里查看购物清单。", tippN: "点按这里查看购物清单。", und: "和" },
 };
 function ladenPushText(lang, items, geraetId) {
     const T = LADEN_TEXT[lang] || LADEN_TEXT.en;

@@ -1044,6 +1044,9 @@ const REWARD_TEXT = {
     en: { t: "⭐ Reward requested", b: "{k} would like to trade {n} stars for “{w}”." },
     fr: { t: "⭐ Récompense demandée", b: "{k} aimerait échanger {n} étoiles contre « {w} »." },
     es: { t: "⭐ Recompensa solicitada", b: "{k} quiere canjear {n} estrellas por «{w}»." },
+    it: { t: "⭐ Premio richiesto", b: "{k} vorrebbe scambiare {n} stelle con «{w}»." },
+    pt: { t: "⭐ Recompensa solicitada", b: "{k} quer trocar {n} estrelas por “{w}”." },
+    zh: { t: "⭐ 有人申请兑换奖励", b: "{k} 想用 {n} 颗星星兑换“{w}”。" },
 };
 function notifyReward(familyId, actorUserId, body) {
     if (!familyId) return 0;

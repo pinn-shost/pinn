@@ -111,6 +111,9 @@ const T = {
     en: { titel: "🧳 Packing list for “{t}”?", heute: "It starts today", morgen: "It starts tomorrow", tage: "It starts in {n} days", text: "{w} – tap to create it with the dates already filled in." },
     fr: { titel: "🧳 Liste de bagages pour « {t} » ?", heute: "C'est aujourd'hui", morgen: "C'est demain", tage: "C'est dans {n} jours", text: "{w} – touchez pour la créer avec les dates déjà remplies." },
     es: { titel: "🧳 ¿Lista de equipaje para «{t}»?", heute: "Empieza hoy", morgen: "Empieza mañana", tage: "Empieza en {n} días", text: "{w}: toca para crearla con las fechas ya puestas." },
+    it: { titel: "🧳 Lista dei bagagli per «{t}»?", heute: "Si parte oggi", morgen: "Si parte domani", tage: "Si parte tra {n} giorni", text: "{w}: tocca per crearla con le date già inserite." },
+    pt: { titel: "🧳 Lista de mala para “{t}”?", heute: "Começa hoje", morgen: "Começa amanhã", tage: "Começa em {n} dias", text: "{w} – toque para criá-la com as datas já preenchidas." },
+    zh: { titel: "🧳 要为“{t}”创建打包清单吗？", heute: "今天出发", morgen: "明天出发", tage: "{n} 天后出发", text: "{w}——点按即可创建，日期已填好。" },
 };
 function tx(lang, k, vars) {
     let s = (T[lang] || T.en)[k] || T.en[k];

@@ -446,7 +446,7 @@ window.PINN_LANGUAGES = [
   };
   api.fail = function () { if (!exact) start({}); reveal(); };
   // Raise the version number with every change to the language files, otherwise devices keep using the old file
-  if (DICT) document.write('<script src="' + lang.file + '?v=1.107.1" onerror="PINN_I18N.fail()"><\/script>');
+  if (DICT) document.write('<script src="' + lang.file + '?v=1.107.2" onerror="PINN_I18N.fail()"><\/script>');
   else start({}); // German as a flat share: no dictionary, only the flat share terms
 })();
 

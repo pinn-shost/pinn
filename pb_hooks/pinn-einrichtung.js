@@ -51,7 +51,7 @@ const FELDER = {
 const META = {
     fernzugriff: ["wireguard", "tailscale", "keiner", ""],
     homeassistant: ["keiner", "geraet", "vm", ""],
-    sprache: ["de", "en", "fr", "es", ""],
+    sprache: ["de", "en", "fr", "es", "it", "pt", "zh", ""],
     rebind: ["ja", ""],
 };
 

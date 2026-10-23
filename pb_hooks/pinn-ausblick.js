@@ -118,12 +118,15 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
     if (["FR", "BE", "MC"].indexOf(land) >= 0) return "fr";
     if (["ES", "MX", "AR", "CO", "CL", "PE"].indexOf(land) >= 0) return "es";
+    if (["IT", "SM", "VA"].indexOf(land) >= 0) return "it";
+    if (["BR", "PT", "AO", "MZ"].indexOf(land) >= 0) return "pt";
+    if (["CN"].indexOf(land) >= 0) return "zh";
     return "en";
 }
 
@@ -135,6 +138,9 @@ const MONTHS = {
     en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
     fr: ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"],
     es: ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"],
+    it: ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"],
+    pt: ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"],
+    zh: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
 };
 function rangeText(lang, mondayIso) {
     const a = mondayIso.split("-").map(Number);
@@ -143,6 +149,9 @@ function rangeText(lang, mondayIso) {
     if (lang === "en") return a[1] === b[1] ? (a[2] + "–" + b[2] + " " + M[b[1] - 1]) : (a[2] + " " + M[a[1] - 1] + " – " + b[2] + " " + M[b[1] - 1]);
     if (lang === "de") return a[1] === b[1] ? (a[2] + ".–" + b[2] + ". " + M[b[1] - 1]) : (a[2] + ". " + M[a[1] - 1] + " – " + b[2] + ". " + M[b[1] - 1]);
     if (lang === "es") return a[1] === b[1] ? ("del " + a[2] + " al " + b[2] + " de " + M[b[1] - 1]) : ("del " + a[2] + " de " + M[a[1] - 1] + " al " + b[2] + " de " + M[b[1] - 1]);
+    if (lang === "it") return a[1] === b[1] ? ("dal " + a[2] + " al " + b[2] + " " + M[b[1] - 1]) : ("dal " + a[2] + " " + M[a[1] - 1] + " al " + b[2] + " " + M[b[1] - 1]);
+    if (lang === "pt") return a[1] === b[1] ? (a[2] + " a " + b[2] + " de " + M[b[1] - 1]) : (a[2] + " de " + M[a[1] - 1] + " a " + b[2] + " de " + M[b[1] - 1]);
+    if (lang === "zh") return a[1] === b[1] ? (M[b[1] - 1] + a[2] + "日–" + b[2] + "日") : (M[a[1] - 1] + a[2] + "日–" + M[b[1] - 1] + b[2] + "日");
     return a[1] === b[1] ? ("du " + a[2] + " au " + b[2] + " " + M[b[1] - 1]) : ("du " + a[2] + " " + M[a[1] - 1] + " au " + b[2] + " " + M[b[1] - 1]);
 }
 function weekMessage(lang, mondayIso) {
@@ -150,6 +159,9 @@ function weekMessage(lang, mondayIso) {
     if (lang === "de") return { titel: "🗓️ Eure Woche ist da", text: "Termine, Aufgaben, Essen und mehr für " + r + " – alles auf einen Blick." };
     if (lang === "fr") return { titel: "🗓️ Votre semaine est prête", text: "Rendez-vous, tâches, repas et plus " + r + " – tout en un coup d'œil." };
     if (lang === "es") return { titel: "🗓️ Vuestra semana está lista", text: "Citas, tareas, comidas y más " + r + ", todo de un vistazo." };
+    if (lang === "it") return { titel: "🗓️ La vostra settimana è pronta", text: "Eventi, attività, pasti e altro " + r + ": tutto a colpo d’occhio." };
+    if (lang === "pt") return { titel: "🗓️ A semana de vocês está pronta", text: "Compromissos, tarefas, refeições e mais de " + r + " – tudo num relance." };
+    if (lang === "zh") return { titel: "🗓️ 你们的一周来了", text: r + "的日程、任务、餐食等——一目了然。" };
     return { titel: "🗓️ Your week is ready", text: "Events, tasks, meals and more for " + r + " – all at a glance." };
 }
 function monthMessage(lang, key) {
@@ -159,6 +171,9 @@ function monthMessage(lang, key) {
     if (lang === "de") return { titel: "💶 Finanz-Ausblick " + next, text: "Was im " + next + " ansteht – und wie der " + prev + " gelaufen ist." };
     if (lang === "fr") return { titel: "💶 Perspectives financières : " + next, text: "Ce qui vous attend en " + next + " – et le bilan de " + prev + "." };
     if (lang === "es") return { titel: "💶 Previsión financiera: " + next, text: "Lo que viene en " + next + " y cómo ha ido " + prev + "." };
+    if (lang === "it") return { titel: "💶 Previsione finanziaria: " + next, text: "Cosa c’è in arrivo a " + next + " – e com’è andato " + prev + "." };
+    if (lang === "pt") return { titel: "💶 Previsão financeira: " + next, text: "O que vem por aí em " + next + " – e como foi " + prev + "." };
+    if (lang === "zh") return { titel: "💶 财务展望：" + next, text: "接下来" + next + "有什么——以及" + prev + "的情况。" };
     return { titel: "💶 Finance outlook: " + next.charAt(0).toUpperCase() + next.slice(1), text: "What's coming up in " + next + " – and how " + prev + " went." };
 }
 

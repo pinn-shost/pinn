@@ -20,6 +20,14 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.107.2', datum: '22.10.2026', titel: 'Neue Sprachen vollständig: Einrichtung, Datenexport und Push-Nachrichten',
+    punkte: [
+      ['neu', 'Italienisch, Portugiesisch und Chinesisch gibt es jetzt auch im Einrichtungsassistenten, in den Dateien des Datenexports und in den Push-Nachrichten vom Server – dort erschien bisher Englisch'],
+      ['info', 'Die Sprachsteuerung (Siri/Android) versteht weiterhin Deutsch, Englisch, Französisch und Spanisch'],
+      ['info', 'Geändert: index.html, js/sprachen.js, js/versionslog.js, einrichtung.js, datenexport.js, die Sprachdateien en, fr, es, it, pt und zh sowie am Server pb_hooks/pinn-pushtext.js, pinn-ausblick.js, pinn-familie-geburtstag.js, pinn-haustiere.js, pinn-ortung.js, pinn-packliste.js, pinn-aufgaben.js, pinn-wobistdu.js und pinn-einrichtung.js'],
+    ],
+  },
+  {
     v: '1.107.1', datum: '22.10.2026', titel: 'Neue Sprachen: Portugiesisch und Chinesisch',
     punkte: [
       ['neu', 'Neue Sprachen Portugiesisch (Brasilien) und Chinesisch (vereinfacht) (Einstellungen → Sprache) – die ganze App ist übersetzt, auch die Wochen- und Monatsvorschau'],

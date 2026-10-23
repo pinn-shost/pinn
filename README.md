@@ -90,6 +90,14 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **English, Deutsch, Français, Español, Italiano, Português and 中文**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.107.2
+
+**New languages complete: setup, data export and push messages**
+
+- Italian, Portuguese and Chinese now also work in the setup assistant, in the data export files and in the push messages from the server (they showed English before).
+- Voice control (Siri/Android) still understands German, English, French and Spanish.
+- Changed: app files (`index.html`, `js/sprachen.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, language files `en`, `fr`, `es`, `it`, `pt`, `zh`) and on the server `pb_hooks/pinn-pushtext.js`, `pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-aufgaben.js`, `pinn-wobistdu.js`, `pinn-einrichtung.js`.
+
 ## What's new in 1.107.1
 
 **New languages: Portuguese (Brazil) and Chinese (Simplified)**

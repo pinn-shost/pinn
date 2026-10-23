@@ -115,17 +115,20 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
     if (["FR", "BE", "MC"].indexOf(land) >= 0) return "fr";
     if (["ES", "MX", "AR", "CO", "CL", "PE"].indexOf(land) >= 0) return "es";
+    if (["IT", "SM", "VA"].indexOf(land) >= 0) return "it";
+    if (["BR", "PT", "AO", "MZ"].indexOf(land) >= 0) return "pt";
+    if (["CN"].indexOf(land) >= 0) return "zh";
     return "en";
 }
 function joinNames(lang, names) {
     if (names.length <= 1) return names[0] || "";
-    const und = { de: " und ", en: " and ", fr: " et ", es: " y " }[lang] || " and ";
+    const und = { de: " und ", en: " and ", fr: " et ", es: " y ", it: " e ", pt: " e ", zh: "和" }[lang] || " and ";
     return names.slice(0, -1).join(", ") + und + names[names.length - 1];
 }
 function message(lang, list) {
@@ -135,12 +138,18 @@ function message(lang, list) {
         if (lang === "de") return { titel: "🎂 " + n + " hat heute Geburtstag!", text: (b.alter ? n + " wird heute " + b.alter + ". " : "") + "Vergesst nicht zu gratulieren 🎉" };
         if (lang === "fr") return { titel: "🎂 C'est l'anniversaire de " + n + " !", text: (b.alter ? n + " a " + b.alter + " ans aujourd'hui. " : "") + "N'oubliez pas de le souhaiter 🎉" };
         if (lang === "es") return { titel: "🎂 ¡Hoy es el cumpleaños de " + n + "!", text: (b.alter ? n + " cumple " + b.alter + " años. " : "") + "No olvidéis felicitarle 🎉" };
+        if (lang === "it") return { titel: "🎂 Oggi è il compleanno di " + n + "!", text: (b.alter ? n + " compie " + b.alter + " anni oggi. " : "") + "Non dimenticate di fare gli auguri 🎉" };
+        if (lang === "pt") return { titel: "🎂 Hoje é aniversário de " + n + "!", text: (b.alter ? n + " faz " + b.alter + " anos hoje. " : "") + "Não esqueçam de dar os parabéns 🎉" };
+        if (lang === "zh") return { titel: "🎂 今天是 " + n + " 的生日！", text: (b.alter ? n + " 今天满 " + b.alter + " 岁。" : "") + "别忘了送上祝福 🎉" };
         return { titel: "🎂 It's " + n + "'s birthday today!", text: (b.alter ? n + " turns " + b.alter + " today. " : "") + "Don't forget to say happy birthday 🎉" };
     }
     const names = joinNames(lang, list.map(b => b.name));
     if (lang === "de") return { titel: "🎂 Heute haben Geburtstag: " + names, text: "Vergesst nicht zu gratulieren 🎉" };
     if (lang === "fr") return { titel: "🎂 Anniversaires aujourd'hui : " + names, text: "N'oubliez pas de les souhaiter 🎉" };
     if (lang === "es") return { titel: "🎂 Hoy cumplen años: " + names, text: "No olvidéis felicitarles 🎉" };
+    if (lang === "it") return { titel: "🎂 Oggi compiono gli anni: " + names, text: "Non dimenticate di fare gli auguri 🎉" };
+    if (lang === "pt") return { titel: "🎂 Aniversariantes de hoje: " + names, text: "Não esqueçam de dar os parabéns 🎉" };
+    if (lang === "zh") return { titel: "🎂 今天过生日的人：" + names, text: "别忘了送上祝福 🎉" };
     return { titel: "🎂 Birthdays today: " + names, text: "Don't forget to say happy birthday 🎉" };
 }
 

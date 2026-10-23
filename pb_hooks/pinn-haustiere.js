@@ -128,12 +128,15 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
     if (["FR", "BE", "MC"].indexOf(land) >= 0) return "fr";
     if (["ES", "MX", "AR", "CO", "CL", "PE"].indexOf(land) >= 0) return "es";
+    if (["IT", "SM", "VA"].indexOf(land) >= 0) return "it";
+    if (["BR", "PT", "AO", "MZ"].indexOf(land) >= 0) return "pt";
+    if (["CN"].indexOf(land) >= 0) return "zh";
     return "en";
 }
 const T = {
@@ -145,6 +148,12 @@ const T = {
           gebText: "Une friandise en plus aujourd'hui 🦴", mehr: "🐾 Quelque chose est prévu pour vos animaux", kurzHeute: "aujourd'hui", kurzIn3: "dans 3 jours", kurzUeber: "en retard" },
     es: { futter: "Rellenar el comedero", futterHeute: "rellenar hoy", futterUeber: "pendiente desde hace {n} días", leer: "Comedero casi vacío", leerText: "Nivel {v} – por favor, rellénalo.", leerText0: "Por favor, rellénalo.", heute: "toca hoy", in3: "toca en 3 días", ueber: "con {n} días de retraso", geb: "¡Hoy es el cumpleaños de {name}!", gebAlt: "{name} cumple {n} hoy 🐾",
           gebText: "Hoy toca un premio extra 🦴", mehr: "🐾 Hay algo pendiente para vuestras mascotas", kurzHeute: "hoy", kurzIn3: "en 3 días", kurzUeber: "con retraso" },
+    it: { futter: "Riempi il distributore", futterHeute: "da riempire oggi", futterUeber: "da fare da {n} giorni", leer: "Distributore quasi vuoto", leerText: "Livello {v} – riempilo, per favore.", leerText0: "Riempilo, per favore.", heute: "scade oggi", in3: "scade tra 3 giorni", ueber: "in ritardo di {n} giorni", geb: "Oggi è il compleanno di {name}!", gebAlt: "{name} compie {n} anni oggi 🐾",
+          gebText: "Oggi un premietto in più 🦴", mehr: "🐾 C’è qualcosa in programma per i vostri animali", kurzHeute: "oggi", kurzIn3: "tra 3 giorni", kurzUeber: "in ritardo" },
+    pt: { futter: "Reabastecer o comedouro", futterHeute: "reabastecer hoje", futterUeber: "pendente há {n} dias", leer: "Comedouro quase vazio", leerText: "Nível {v} – reabasteça, por favor.", leerText0: "Reabasteça, por favor.", heute: "vence hoje", in3: "vence em 3 dias", ueber: "atrasado há {n} dias", geb: "Hoje é aniversário de {name}!", gebAlt: "{name} faz {n} anos hoje 🐾",
+          gebText: "Hoje tem petisco extra 🦴", mehr: "🐾 Há algo planejado para os seus animais", kurzHeute: "hoje", kurzIn3: "em 3 dias", kurzUeber: "atrasado" },
+    zh: { futter: "给喂食器补充食物", futterHeute: "今天补充", futterUeber: "已拖延 {n} 天", leer: "喂食器快空了", leerText: "余量 {v}——请补充。", leerText0: "请补充。", heute: "今天到期", in3: "3 天后到期", ueber: "已逾期 {n} 天", geb: "今天是 {name} 的生日！", gebAlt: "{name} 今天 {n} 岁了 🐾",
+          gebText: "今天多给一份小零食 🦴", mehr: "🐾 你们的宠物有事项要处理", kurzHeute: "今天", kurzIn3: "3 天后", kurzUeber: "已逾期" },
 };
 function tx(lang, k, vars) {
     let s = (T[lang] || T.en)[k] || T.en[k] || k;
