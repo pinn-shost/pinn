@@ -6,7 +6,10 @@
    "On check-off" actions, the notice bar, the smart home popup (tabs Devices | Apple automation | Home Assistant),
    Settings → Smart home, the device editor and the robot vacuum room cleaning (rooms, suction, water, mop mode).
    The server side is pb_hooks/pinn-smarthome.js. Functions here are called by the task and household code
-   (inline script) only at runtime, never while loading. */
+   (inline script) only at runtime, never while loading.
+   Texts (since 1.113.1): every text on screen comes from a text key via tk(), see pb_public/i18n/. Labels of device
+   types, suggested actions, Home Assistant domains/services and robot vacuum levels are getters or key maps, so
+   they always follow the chosen language. Action names and device names the user saved stay as they are (data). */
 
 /* ==========================================================
    Smart home: devices with actions – Apple Shortcuts or Home Assistant.
@@ -20,28 +23,34 @@
      the queue waits until e.g. the robot vacuum is back in its dock.
    - The room name is passed along as input (Apple) or as the script variable "raum" (Home Assistant).
    ========================================================== */
+// key = text key of the type name; de = German name of earlier versions (device names may still be exactly that);
+// actions = suggested actions: text key + robot vacuum mode / mower service (no longer guessed from the translated name)
 const SMART_DEVICE_TYPES = [
-  { id: 'sauger', label: 'Saugroboter', icon: '🤖', actions: ['Saugen', 'Wischen', 'Saugen & Wischen'] },
-  { id: 'maeher', label: 'Mähroboter', icon: '🌱', actions: ['Mähen', 'Zur Station'] },
-  { id: 'bewaesserung', label: 'Bewässerung', icon: '💦', actions: ['Gießen'] },
-  { id: 'futter', label: 'Futterautomat', icon: '🍽️', actions: ['Füttern'] },
-  { id: 'licht', label: 'Licht / LED', icon: '💡', actions: ['Erinnerung an', 'Aus'] },
-  { id: 'steckdose', label: 'Steckdose', icon: '🔌', actions: ['Ein', 'Aus'] },
-  { id: 'lautsprecher', label: 'Lautsprecher', icon: '🔊', actions: ['Ansage'] },
-  { id: 'sonstiges', label: 'Sonstiges', icon: '⚙️', actions: ['Starten'] },
+  { id: 'sauger', key: 'smart.type.vacuum', de: 'Saugroboter', icon: '🤖', actions: [{ key: 'smart.action.vacuum', mode: 'vac' }, { key: 'smart.action.mop', mode: 'mop' }, { key: 'smart.action.vacuumMop', mode: 'vacmop' }] },
+  { id: 'maeher', key: 'smart.type.mower', de: 'Mähroboter', icon: '🌱', actions: [{ key: 'smart.action.mow', mower: 'lawn_mower.start_mowing' }, { key: 'smart.action.dock', mower: 'lawn_mower.dock' }] },
+  { id: 'bewaesserung', key: 'smart.type.watering', de: 'Bewässerung', icon: '💦', actions: [{ key: 'smart.action.water' }] },
+  { id: 'futter', key: 'smart.type.feeder', de: 'Futterautomat', icon: '🍽️', actions: [{ key: 'smart.action.feed' }] },
+  { id: 'licht', key: 'smart.type.light', de: 'Licht / LED', icon: '💡', actions: [{ key: 'smart.action.remind' }, { key: 'smart.action.off' }] },
+  { id: 'steckdose', key: 'smart.type.plug', de: 'Steckdose', icon: '🔌', actions: [{ key: 'smart.action.on' }, { key: 'smart.action.off' }] },
+  { id: 'lautsprecher', key: 'smart.type.speaker', de: 'Lautsprecher', icon: '🔊', actions: [{ key: 'smart.action.announce' }] },
+  { id: 'sonstiges', key: 'smart.type.other', de: 'Sonstiges', icon: '⚙️', actions: [{ key: 'smart.action.start' }] },
 ];
+SMART_DEVICE_TYPES.forEach(t => Object.defineProperty(t, 'label', { get() { return tk(this.key); } }));
 const SMART_ICONS = ['🤖', '🧽', '🌱', '💦', '💡', '🌈', '🔌', '🔊', '🌀', '🪟', '🧺', '🍽️', '🌡️', '⚙️'];
 const SMART_SYSTEMS = [
-  { id: 'shortcut', label: 'Apple Kurzbefehle', short: 'Apple' },
+  { id: 'shortcut', get label() { return tk('settings.smartHome.apple'); }, short: 'Apple' },
   { id: 'ha', label: 'Home Assistant', short: 'Home Assistant' },
 ];
-const HA_DOMAIN_LABELS = {
-  script: 'Skripte', scene: 'Szenen', automation: 'Automationen', button: 'Tasten', input_button: 'Helfer-Tasten',
-  vacuum: 'Saugroboter', lawn_mower: 'Mähroboter', light: 'Lichter', switch: 'Schalter', fan: 'Ventilatoren',
-  input_boolean: 'Helfer-Schalter', cover: 'Rollläden & Tore', media_player: 'Medien', climate: 'Heizung & Klima',
-  siren: 'Sirenen', lock: 'Schlösser', valve: 'Ventile', humidifier: 'Luftbefeuchter',
-  select: 'Auswahlen', sensor: 'Sensoren', binary_sensor: 'Zustände',
+// Home Assistant domain → text key of its group name in the entity list
+const HA_DOMAIN_KEYS = {
+  script: 'smart.domain.script', scene: 'smart.domain.scene', automation: 'smart.domain.automation', button: 'smart.domain.button',
+  input_button: 'smart.domain.inputButton', vacuum: 'smart.domain.vacuum', lawn_mower: 'smart.domain.lawnMower', light: 'smart.domain.light',
+  switch: 'smart.domain.switch', fan: 'smart.domain.fan', input_boolean: 'smart.domain.inputBoolean', cover: 'smart.domain.cover',
+  media_player: 'smart.domain.mediaPlayer', climate: 'smart.domain.climate', siren: 'smart.domain.siren', lock: 'smart.domain.lock',
+  valve: 'smart.domain.valve', humidifier: 'smart.domain.humidifier', select: 'smart.domain.select', sensor: 'smart.domain.sensor',
+  binary_sensor: 'smart.domain.binarySensor',
 };
+function haDomainLabel(domain) { return HA_DOMAIN_KEYS[domain] ? tk(HA_DOMAIN_KEYS[domain]) : domain; }
 const HA_SERVICES = {
   script: ['turn_on'], scene: ['turn_on'], automation: ['trigger', 'turn_on', 'turn_off'], button: ['press'], input_button: ['press'],
   vacuum: ['start', 'return_to_base', 'pause', 'stop'], lawn_mower: ['start_mowing', 'dock', 'pause'],
@@ -50,29 +59,36 @@ const HA_SERVICES = {
   media_player: ['media_play', 'media_pause', 'turn_on', 'turn_off'], climate: ['turn_on', 'turn_off'],
   siren: ['turn_on', 'turn_off'], lock: ['lock', 'unlock'], valve: ['open_valve', 'close_valve'], humidifier: ['turn_on', 'turn_off'],
 };
-const HA_SERVICE_LABELS = {
-  turn_on: 'Einschalten', turn_off: 'Ausschalten', toggle: 'Umschalten', trigger: 'Auslösen', press: 'Drücken',
-  start: 'Starten', return_to_base: 'Zur Station', pause: 'Pause', stop: 'Stopp', start_mowing: 'Mähen', dock: 'Zur Station',
-  open_cover: 'Öffnen', close_cover: 'Schließen', stop_cover: 'Stopp', media_play: 'Abspielen', media_pause: 'Pause',
-  lock: 'Abschließen', unlock: 'Aufschließen', open_valve: 'Öffnen', close_valve: 'Schließen',
+// Home Assistant service → text key of its name
+const HA_SERVICE_KEYS = {
+  turn_on: 'smart.service.turnOn', turn_off: 'smart.service.turnOff', toggle: 'smart.service.toggle', trigger: 'smart.service.trigger',
+  press: 'smart.service.press', start: 'smart.action.start', return_to_base: 'smart.action.dock', pause: 'smart.service.pause',
+  stop: 'smart.service.stop', start_mowing: 'smart.action.mow', dock: 'smart.action.dock', open_cover: 'smart.service.open',
+  close_cover: 'smart.service.close', stop_cover: 'smart.service.stop', media_play: 'smart.service.play', media_pause: 'smart.service.pause',
+  lock: 'smart.service.lock', unlock: 'smart.service.unlock', open_valve: 'smart.service.open', close_valve: 'smart.service.close',
 };
 const HA_ACTION_DOMAINS = Object.keys(HA_SERVICES);
 const HA_STATUS_DOMAINS = ['vacuum', 'lawn_mower', 'media_player', 'switch', 'light', 'fan', 'climate', 'cover', 'humidifier', 'valve', 'input_boolean', 'sensor', 'binary_sensor'];
-// Robot vacuum (room cleaning): modes and German names for suction levels, water amount and mop mode
+// Robot vacuum (room cleaning): modes and names for suction levels, water amount and mop mode
 const SMART_VAC_MODES = [
-  { id: 'vac', label: '🌀 Saugen' },
-  { id: 'vacmop', label: '🌀💧 Saugen & Wischen' },
-  { id: 'mop', label: '💧 Wischen' },
+  { id: 'vac', get label() { return '🌀 ' + tk('smart.action.vacuum'); } },
+  { id: 'vacmop', get label() { return '🌀💧 ' + tk('smart.action.vacuumMop'); } },
+  { id: 'mop', get label() { return '💧 ' + tk('smart.action.mop'); } },
 ];
-const SMART_VAC_LABELS = {
-  off: 'Aus', quiet: 'Leise', silent: 'Leise', gentle: 'Sanft', balanced: 'Ausgewogen', standard: 'Standard', medium: 'Mittel',
-  moderate: 'Mittel', turbo: 'Turbo', max: 'Max', max_plus: 'Max+', strong: 'Stark', low: 'Wenig', mild: 'Wenig', high: 'Viel',
-  intense: 'Intensiv', extreme: 'Extrem', custom: 'Benutzerdefiniert', custom_water_flow: 'Eigene Wassermenge', smart_mode: 'SmartPlan',
-  deep: 'Gründlich', deep_plus: 'Gründlich+', fast: 'Schnell',
+// Option of the robot → text key (names like Turbo, Max or SmartPlan stay as they are)
+const SMART_VAC_KEYS = {
+  off: 'smart.action.off', quiet: 'smart.vac.quiet', silent: 'smart.vac.quiet', gentle: 'smart.vac.gentle', balanced: 'smart.vac.balanced',
+  standard: 'smart.vac.standard', medium: 'smart.vac.medium', moderate: 'smart.vac.medium', strong: 'smart.vac.strong', low: 'smart.vac.low',
+  mild: 'smart.vac.low', high: 'smart.vac.high', intense: 'smart.vac.intense', extreme: 'smart.vac.extreme', custom: 'smart.vac.custom',
+  custom_water_flow: 'smart.vac.customWater', deep: 'smart.vac.deep', fast: 'smart.vac.fast',
 };
-// Text in the chosen language (for suggestions that are stored as data)
+const SMART_VAC_NAMES = { turbo: 'Turbo', max: 'Max', max_plus: 'Max+', smart_mode: 'SmartPlan' };
+// Text in the chosen language (old dictionaries; still used by other files – see js/sprache.js)
 function i18nT(s) { return (window.PINN_I18N && PINN_I18N.active) ? PINN_I18N.t(s) : s; }
-function smartVacLabel(o) { return SMART_VAC_LABELS[o] || String(o).replace(/_/g, ' '); }
+function smartVacLabel(o) {
+  if (o === 'deep_plus') return tk('smart.vac.deep') + '+';
+  return SMART_VAC_KEYS[o] ? tk(SMART_VAC_KEYS[o]) : (SMART_VAC_NAMES[o] || String(o).replace(/_/g, ' '));
+}
 function smartVacModeOf(label) {
   const l = String(label || '').toLowerCase();
   const vac = /saug|vacuum|aspir/.test(l), mop = /wisch|mop|serpill|fregar|friega/.test(l);
@@ -93,8 +109,8 @@ function smartMatchVacRoom(list, name) {
   return hit;
 }
 function haServiceLabel(domain, svc) {
-  if ((domain === 'script' || domain === 'scene') && svc === 'turn_on') return 'Ausführen';
-  return HA_SERVICE_LABELS[svc] || svc;
+  if ((domain === 'script' || domain === 'scene') && svc === 'turn_on') return tk('smart.service.run');
+  return HA_SERVICE_KEYS[svc] ? tk(HA_SERVICE_KEYS[svc]) : svc;
 }
 
 // Duration of an action in minutes (0 = unknown, does not block the device)
@@ -211,7 +227,7 @@ function showSmartBar({ title, text, yesLabel, onYes, ms }) {
   box.setAttribute('role', onYes ? 'dialog' : 'status');
   box.innerHTML = `<div class="text-sm font-medium">${escapeHtml(title)}</div>
     ${text ? `<div class="text-xs mt-0.5" style="opacity:.75">${escapeHtml(text)}</div>` : ''}
-    <div class="sdp-btns"><button type="button" class="sdp-no">${onYes ? 'Später' : 'OK'}</button>${onYes ? `<button type="button" class="sdp-yes">${escapeHtml(yesLabel || 'OK')}</button>` : ''}</div>`;
+    <div class="sdp-btns"><button type="button" class="sdp-no">${onYes ? escapeHtml(tk('smart.later')) : 'OK'}</button>${onYes ? `<button type="button" class="sdp-yes">${escapeHtml(yesLabel || 'OK')}</button>` : ''}</div>`;
   let timer = null;
   const close = () => {
     clearTimeout(timer);
@@ -228,9 +244,9 @@ function showSmartDonePrompt(run) {
   const task = deriveTasks().find(t => t.id === run.taskId);
   if (!task || task.done || taskDoneOverrides.get(task.id) === true) return;
   showSmartBar({
-    title: `${run.icon} ${run.label} gestartet`,
-    text: `„${task.title}“ jetzt abhaken?`,
-    yesLabel: '✓ Abhaken',
+    title: run.icon + ' ' + tk('smart.started', { action: run.label }),
+    text: tk('smart.checkOffNow', { title: task.title }),
+    yesLabel: tk('smart.checkOffBtn'),
     onYes: () => {
       const current = deriveTasks().find(t => t.id === run.taskId);
       if (current && !current.done) toggleTaskDone(current);
@@ -248,11 +264,11 @@ function smartShortcutsAvailable() {
 function smartCanRun(hit, quiet) {
   if (!hit) return false;
   if (!smartHitReady(hit)) {
-    if (!quiet) alert(`„${hit.action.label}“ ist noch nicht fertig eingerichtet (${smartSystem(hit.device) === 'ha' ? 'Entität und Dienst fehlen' : 'kein Kurzbefehl eingetragen'}). Unter Einstellungen → Smarthome nachtragen.`);
+    if (!quiet) alert(tk('smart.notReady', { action: hit.action.label, reason: smartSystem(hit.device) === 'ha' ? tk('smart.missingEntity') : tk('smart.missingShortcut') }));
     return false;
   }
   if (smartSystem(hit.device) === 'shortcut' && !smartShortcutsAvailable()) {
-    if (!quiet) alert('Apple-Kurzbefehle lassen sich nur auf iPhone, iPad oder Mac starten. Für alle Geräte (auch Android): das Gerät über Home Assistant anbinden.');
+    if (!quiet) alert(tk('smart.appleOnlyHint'));
     return false;
   }
   return true;
@@ -282,7 +298,7 @@ async function smartHaRun(taskId, hit, art) {
     body: JSON.stringify({ taskId: taskId && !String(taskId).startsWith('tmp') ? taskId : '', actionId: hit.action.id, art }),
   });
   const body = await res.json().catch(() => ({}));
-  if (!res.ok || body.error) throw new Error(body.error || 'Server antwortet nicht.');
+  if (!res.ok || body.error) throw new Error(body.error || tk('smart.serverNoAnswer'));
   return body;
 }
 
@@ -295,8 +311,8 @@ async function runSmartActionForTask(task, hit) {
       const r = await smartHaRun(task.id, hit, 'start');
       if (r.eingereiht) {
         showSmartBar({
-          title: `${hit.device.icon} ${hit.action.label} eingereiht`,
-          text: `${hit.device.name} ist noch beschäftigt${r.belegtMit ? ' (' + r.belegtMit + ')' : ''} – startet automatisch direkt im Anschluss${r.ab ? ', frühestens ' + r.ab + ' Uhr' : ''}.`,
+          title: hit.device.icon + ' ' + tk('smart.queued', { action: hit.action.label }),
+          text: tk('smart.busyQueued', { device: hit.device.name, busyWith: r.belegtMit ? ' (' + r.belegtMit + ')' : '', earliest: r.ab ? tk('smart.earliest', { time: r.ab }) : '' }),
           ms: 8000,
         });
       } else {
@@ -375,7 +391,7 @@ function renderSmartLinkPicker() {
   if (!wrap) return;
   const all = smartAllActions();
   if (!all.length) {
-    wrap.innerHTML = `<p class="text-[11px] text-ink/40">Noch keine Geräte eingerichtet. <button type="button" class="smart-open-setup text-pine underline">Smarthome einrichten</button></p>`;
+    wrap.innerHTML = `<p class="text-[11px] text-ink/40">${escapeHtml(tk('smart.noDevicesSetUp'))} <button type="button" class="smart-open-setup text-pine underline">${escapeHtml(tk('smart.setUp'))}</button></p>`;
     wrap.querySelector('.smart-open-setup').addEventListener('click', () => openSmartHomeModal('geraete'));
     return;
   }
@@ -384,33 +400,33 @@ function renderSmartLinkPicker() {
     const on = pendingSmartStart.includes(hit.action.id);
     return `<button type="button" class="sh-chip${on ? ' active' : ''}" data-id="${escapeHtml(hit.action.id)}" aria-pressed="${on}">${escapeHtml(hit.device.icon)} ${escapeHtml(hit.action.label)}${multi ? ` <span style="opacity:.6">(${escapeHtml(hit.device.name)})</span>` : ''}${smartHitReady(hit) ? '' : ' <span class="sh-missing">!</span>'}</button>`;
   }).join('');
-  const options = '<option value="">Nichts</option>' + all.map(({ device, action }) =>
+  const options = `<option value="">${escapeHtml(tk('smart.nothing'))}</option>` + all.map(({ device, action }) =>
     `<option value="${escapeHtml(action.id)}">${escapeHtml(device.icon + ' ' + device.name + ': ' + action.label)}</option>`).join('');
   const autoHit = smartActionById(pendingSmartAuto.action);
   let autoHint = '';
   if (autoHit) {
     if (smartSystem(autoHit.device) === 'ha') {
-      autoHint = 'Läuft am Fälligkeitstag ab dieser Uhrzeit über Home Assistant, solange die Aufgabe offen ist.' + (smartStatus && smartStatus.ha && !smartStatus.ha.verbunden ? ' <span class="sh-missing">Home Assistant ist noch nicht verbunden.</span>' : '');
+      autoHint = escapeHtml(tk('smart.autoHintHa', { extra: '' })) + (smartStatus && smartStatus.ha && !smartStatus.ha.verbunden ? ` <span class="sh-missing">${escapeHtml(tk('smart.haNotConnected'))}</span>` : '');
     } else {
-      autoHint = 'Läuft am Fälligkeitstag ab dieser Uhrzeit über den Kurzbefehl „pinn Automatik“, solange die Aufgabe offen ist.' + (smartStatus && !smartStatus.aktiv ? ' <span class="sh-missing">Apple-Automatik ist noch nicht eingerichtet.</span>' : '');
+      autoHint = escapeHtml(tk('smart.autoHintApple', { extra: '' })) + (smartStatus && !smartStatus.aktiv ? ` <span class="sh-missing">${escapeHtml(tk('smart.appleAutoNotSet'))}</span>` : '');
     }
-    autoHint += ' Ist das Gerät noch beschäftigt, startet die Aktion danach; bei gleicher Uhrzeit in der Reihenfolge der Räume.';
+    autoHint += ' ' + escapeHtml(tk('smart.autoHintQueue'));
   }
   wrap.innerHTML = `
-    <p class="text-[11px] text-ink/50 mb-1.5">Start-Knöpfe an der Aufgabe</p>
+    <p class="text-[11px] text-ink/50 mb-1.5">${escapeHtml(tk('smart.startButtons'))}</p>
     <div class="flex gap-1.5 flex-wrap mb-3">${chips}</div>
-    <label class="block text-[11px] text-ink/50 mb-1">Beim Abhaken starten</label>
+    <label class="block text-[11px] text-ink/50 mb-1">${escapeHtml(tk('smart.onCheckOff'))}</label>
     <select class="smart-done-select w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white mb-3">${options}</select>
-    <label class="block text-[11px] text-ink/50 mb-1">Automatisch starten (Automatik)</label>
+    <label class="block text-[11px] text-ink/50 mb-1">${escapeHtml(tk('smart.autoStart'))}</label>
     <div class="flex items-center gap-2">
       <select class="smart-auto-select flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white">${options}</select>
-      <input type="time" class="smart-auto-time ${autoHit ? '' : 'hidden'} w-28 shrink-0 rounded-lg border border-ink/15 px-2 py-2 text-base" aria-label="Uhrzeit" />
+      <input type="time" class="smart-auto-time ${autoHit ? '' : 'hidden'} w-28 shrink-0 rounded-lg border border-ink/15 px-2 py-2 text-base" aria-label="${escapeHtml(tk('smart.time'))}" />
     </div>
     <label class="smart-auto-done ${autoHit ? 'flex' : 'hidden'} items-center gap-2 text-xs text-ink/60 mt-2 cursor-pointer">
-      <input type="checkbox" class="w-4 h-4" ${pendingSmartAuto.abhaken ? 'checked' : ''} /> Aufgabe danach automatisch abhaken
+      <input type="checkbox" class="w-4 h-4" ${pendingSmartAuto.abhaken ? 'checked' : ''} /> ${escapeHtml(tk('smart.autoCheckOff'))}
     </label>
     ${autoHint ? `<p class="text-[11px] text-ink/40 mt-1.5">${autoHint}</p>` : ''}
-    ${all.some(x => !smartHitReady(x)) ? '<p class="text-[11px] sh-missing mt-1.5">! = noch nicht fertig eingerichtet</p>' : ''}`;
+    ${all.some(x => !smartHitReady(x)) ? `<p class="text-[11px] sh-missing mt-1.5">${escapeHtml(tk('smart.missingLegend'))}</p>` : ''}`;
   const sel = wrap.querySelector('.smart-done-select');
   sel.value = pendingSmartDone;
   sel.addEventListener('change', () => { pendingSmartDone = sel.value; });
@@ -455,7 +471,7 @@ let smartStatus = null;
 async function loadSmartStatus() {
   try {
     const res = await apiFetch('/api/pinn/smart/status');
-    smartStatus = res.ok ? await res.json() : { aktiv: false, ha: { verbunden: false }, error: 'Server antwortet nicht' };
+    smartStatus = res.ok ? await res.json() : { aktiv: false, ha: { verbunden: false }, error: tk('smart.noAnswer') };
   } catch (e) {
     smartStatus = { aktiv: false, ha: { verbunden: false }, offline: true };
   }
@@ -464,17 +480,17 @@ async function loadSmartStatus() {
 }
 function smartServerProblemHtml(st) {
   if (!st || !(st.offline || st.error)) return '';
-  return `<p class="text-xs text-ink/50 mb-3">Keine Verbindung zum Server${st.error ? ' (' + escapeHtml(st.error) + ')' : ''}. Dafür müssen <b>smarthome.pb.js</b> und <b>pinn-smarthome.js</b> in pb_hooks liegen.</p>`;
+  return `<p class="text-xs text-ink/50 mb-3">${st.error ? tk('smart.serverProblemErr', { error: escapeHtml(st.error) }) : tk('smart.serverProblem')}</p>`;
 }
 function smartBusyHtml(st) {
   if (!st) return '';
   const rows = Object.entries(st.belegt || {}).map(([id, b]) => {
     const d = smartDevices.find(x => x.id === id);
     if (!d || !b) return '';
-    const bis = b.bis > Date.now() ? ' bis mindestens ' + new Date(b.bis).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + ' Uhr' : (b.status ? ', bis es wieder frei meldet' : '');
-    return `<p class="text-[11px] text-ink/60 mb-1">${escapeHtml(d.icon)} ${escapeHtml(d.name)} ist beschäftigt${escapeHtml(bis)}${b.aktion ? ' (' + escapeHtml(b.aktion) + ')' : ''}.</p>`;
+    const until = b.bis > Date.now() ? tk('smart.busyUntil', { time: new Date(b.bis).toLocaleTimeString(sysLocale(), { hour: '2-digit', minute: '2-digit' }) }) : (b.status ? tk('smart.busyStatus') : '');
+    return `<p class="text-[11px] text-ink/60 mb-1">${escapeHtml(tk('smart.busy', { icon: d.icon, device: d.name, until, extra: b.aktion ? ' (' + b.aktion + ')' : '' }))}</p>`;
   }).join('');
-  const waiting = (st.wartend || []).map(w => `<p class="text-[11px] text-ink/50 mb-1">⏳ Wartet: ${escapeHtml(w.aktion)}${w.aufgabe ? ' – ' + escapeHtml(w.aufgabe) : ''}</p>`).join('');
+  const waiting = (st.wartend || []).map(w => `<p class="text-[11px] text-ink/50 mb-1">${escapeHtml(tk('smart.waiting', { action: w.aktion }))}${w.aufgabe ? ' – ' + escapeHtml(w.aufgabe) : ''}</p>`).join('');
   return rows || waiting ? `<div class="mb-3">${rows}${waiting}</div>` : '';
 }
 
@@ -497,7 +513,7 @@ document.querySelectorAll('#smartHomeTabs [data-tab]').forEach(b => b.addEventLi
 function renderSmartDeviceList() {
   const list = document.getElementById('smartDeviceList');
   if (!smartDevices.length) {
-    list.innerHTML = '<p class="text-xs text-ink/40 italic">Noch keine Geräte – z. B. den Saugroboter oder eine LED hinzufügen.</p>';
+    list.innerHTML = `<p class="text-xs text-ink/40 italic">${escapeHtml(tk('smart.noDevices'))}</p>`;
   } else {
     list.innerHTML = smartDevices.map(d => {
       const missing = d.actions.filter(a => !smartHitReady({ device: d, action: a })).length;
@@ -507,8 +523,8 @@ function renderSmartDeviceList() {
         <span class="text-2xl shrink-0">${escapeHtml(d.icon)}</span>
         <span class="flex-1 min-w-0">
           <span class="block text-sm font-medium truncate">${escapeHtml(d.name)} <span class="text-[10px] font-normal text-ink/40">· ${escapeHtml(sys.short)}</span></span>
-          <span class="block text-[11px] text-ink/50 truncate">${d.actions.length ? d.actions.map(a => escapeHtml(a.label) + (a.minutes ? ' (' + a.minutes + ' Min.)' : '')).join(', ') : 'Keine Aktionen'}</span>
-          <span class="block text-[11px] ${missing ? 'sh-missing' : 'text-ink/40'}">${missing ? `${missing} noch nicht fertig eingerichtet` : (usage ? `In ${usage} ${usage === 1 ? 'Regel' : 'Regeln'} verknüpft` : 'Noch nicht verknüpft')}</span>
+          <span class="block text-[11px] text-ink/50 truncate">${d.actions.length ? d.actions.map(a => escapeHtml(a.label) + (a.minutes ? ' (' + escapeHtml(tk('smart.minutes', { n: a.minutes })) + ')' : '')).join(', ') : escapeHtml(tk('smart.noActions'))}</span>
+          <span class="block text-[11px] ${missing ? 'sh-missing' : 'text-ink/40'}">${escapeHtml(missing ? tk('smart.notReadyN', { n: missing }) : (usage ? tk('smart.linkedInRules', { n: usage }) : tk('smart.notLinked')))}</span>
         </span>
         <span class="text-ink/30 shrink-0">›</span>
       </button>`;
@@ -561,64 +577,64 @@ function renderSmartAutoSection() {
   const box = document.getElementById('smartAutoSection');
   if (!box) return;
   const st = smartStatus;
-  if (!st) { box.innerHTML = '<p class="text-xs text-ink/40">Wird geladen …</p>'; return; }
-  if (st.gesperrt) { box.innerHTML = '<p class="text-xs text-ink/40">Für Gastkonten nicht verfügbar.</p>'; return; }
+  if (!st) { box.innerHTML = `<p class="text-xs text-ink/40">${escapeHtml(tk('common.loading'))}</p>`; return; }
+  if (st.gesperrt) { box.innerHTML = `<p class="text-xs text-ink/40">${escapeHtml(tk('smart.notForGuests'))}</p>`; return; }
   if (st.offline || st.error) { box.innerHTML = smartServerProblemHtml(st); return; }
   if (!st.aktiv) {
-    box.innerHTML = `<p class="text-xs text-ink/60 mb-3">Startet Apple-Aktionen zu festen Uhrzeiten von selbst – z. B. den Saugroboter um 10 Uhr oder die Müll-LED am Abend vor der Abholung. Dafür ruft ein Kurzbefehl auf einem iPhone oder iPad zu Hause pinn. ab.</p>
-      <button type="button" id="smartAutoSetupBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Automatik einrichten</button>`;
+    box.innerHTML = `<p class="text-xs text-ink/60 mb-3">${escapeHtml(tk('smart.autoIntro'))}</p>
+      <button type="button" id="smartAutoSetupBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">${escapeHtml(tk('smart.autoSetup'))}</button>`;
     box.querySelector('#smartAutoSetupBtn').addEventListener('click', () => smartAutoAction('einrichten'));
     return;
   }
   const times = smartAutoTimes();
   const last = st.abruf ? new Date(st.abruf) : null;
-  const lastTxt = last ? last.toLocaleString('de-DE', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) + ' Uhr' + (st.abrufAnzahl ? ` · ${st.abrufAnzahl} gestartet` : '') : 'noch nie';
+  const lastTxt = last ? tk('cal.timeAt', { time: last.toLocaleString(sysLocale(), { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) }) + (st.abrufAnzahl ? ' · ' + tk('smart.startedN', { n: st.abrufAnzahl }) : '') : tk('smart.never');
   box.innerHTML = `
-    <p class="text-[11px] text-ink/50 mb-1">Automatik-Link (geheim halten)</p>
+    <p class="text-[11px] text-ink/50 mb-1">${escapeHtml(tk('smart.autoLinkSecret'))}</p>
     <div class="flex items-center gap-2 mb-2">
-      <input id="smartAutoUrlField" type="text" readonly value="${escapeHtml(smartAutoUrl())}" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-xs bg-ink/5" aria-label="Automatik-Link" />
-      <button type="button" id="smartAutoCopyBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition shrink-0">Kopieren</button>
+      <input id="smartAutoUrlField" type="text" readonly value="${escapeHtml(smartAutoUrl())}" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-xs bg-ink/5" aria-label="${escapeHtml(tk('smart.autoLink'))}" />
+      <button type="button" id="smartAutoCopyBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition shrink-0">${escapeHtml(tk('common.copy'))}</button>
     </div>
-    <p class="text-[11px] text-ink/50 mb-3">Zuletzt abgerufen: ${escapeHtml(lastTxt)}</p>
+    <p class="text-[11px] text-ink/50 mb-3">${escapeHtml(tk('smart.lastFetched', { when: lastTxt }))}</p>
     ${smartBusyHtml(st)}
-    <p class="text-xs font-medium mb-1">Uhrzeiten für die Automationen <span class="font-normal text-ink/40">(inkl. Folgezeiten für Aktionen, die warten)</span></p>
-    <p class="text-xs mb-3 ${times.length ? 'text-ink/70' : 'text-ink/40 italic'}">${times.length ? times.map(t => escapeHtml(t) + ' Uhr').join(', ') : 'Noch keine – in einer Reinigung oder einem Mülleimer „Automatisch starten“ mit einem Apple-Gerät wählen.'}</p>
+    <p class="text-xs font-medium mb-1">${escapeHtml(tk('smart.autoTimes'))} <span class="font-normal text-ink/40">${escapeHtml(tk('smart.autoTimesHint'))}</span></p>
+    <p class="text-xs mb-3 ${times.length ? 'text-ink/70' : 'text-ink/40 italic'}">${escapeHtml(times.length ? times.map(t => tk('cal.timeAt', { time: t })).join(', ') : tk('smart.noAutoTimes'))}</p>
     <div class="rounded-xl bg-ink/5 p-3 mb-3">
-      <p class="text-xs font-medium mb-1">Einmalig in der Kurzbefehle-App</p>
+      <p class="text-xs font-medium mb-1">${escapeHtml(tk('smart.onceInShortcuts'))}</p>
       <p class="text-[11px] text-ink/60 leading-relaxed">
-        1. Neuer Kurzbefehl „pinn Automatik“:<br>
-        &nbsp;&nbsp;• „Inhalt von URL abrufen“ – den Link oben einfügen<br>
-        &nbsp;&nbsp;• „Wörterbuchwert abrufen“ – Schlüssel „aktionen“<br>
-        &nbsp;&nbsp;• „Wiederholen mit jedem Objekt“, darin:<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;– „Wörterbuchwert abrufen“ – Schlüssel „eingabe“ aus „Wiederholungsobjekt“<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;– „Wörterbuchwert abrufen“ – Schlüssel „kurzbefehl“ aus „Wiederholungsobjekt“<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;– „Kurzbefehl ausführen“ – als Kurzbefehl den Wert „kurzbefehl“, als Eingabe den Wert „eingabe“ wählen<br>
-        2. Tab „Automation“ → „Tageszeit“ – je Uhrzeit oben eine Automation, „Sofort ausführen“ → „pinn Automatik“.<br>
-        3. Tipp: zusätzlich „Ankommen“ (Zuhause) → „pinn Automatik“ – holt Verpasstes nach.<br>
-        Das Gerät muss pinn. dabei erreichen (WLAN zu Hause oder VPN). Jede Aktion läuft je Aufgabe nur einmal; was schon per Knopf gestartet wurde, startet die Automatik nicht noch einmal.
+        ${escapeHtml(tk('smart.guide1'))}<br>
+        &nbsp;&nbsp;${escapeHtml(tk('smart.guide2'))}<br>
+        &nbsp;&nbsp;${escapeHtml(tk('smart.guide3'))}<br>
+        &nbsp;&nbsp;${escapeHtml(tk('smart.guide4'))}<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;${escapeHtml(tk('smart.guide5'))}<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;${escapeHtml(tk('smart.guide6'))}<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;${escapeHtml(tk('smart.guide7'))}<br>
+        ${escapeHtml(tk('smart.guide8'))}<br>
+        ${escapeHtml(tk('smart.guide9'))}<br>
+        ${escapeHtml(tk('smart.guide10'))}
       </p>
     </div>
     <div class="flex flex-wrap gap-2">
-      <button type="button" id="smartAutoTestBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Kurzbefehl testen</button>
-      <button type="button" id="smartAutoRenewBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Neuen Link erzeugen</button>
-      <button type="button" id="smartAutoOffBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-red-600 hover:bg-red-50 transition">Ausschalten</button>
+      <button type="button" id="smartAutoTestBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">${escapeHtml(tk('smart.testShortcut'))}</button>
+      <button type="button" id="smartAutoRenewBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">${escapeHtml(tk('smart.newLink'))}</button>
+      <button type="button" id="smartAutoOffBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-red-600 hover:bg-red-50 transition">${escapeHtml(tk('smart.turnOff'))}</button>
     </div>`;
   box.querySelector('#smartAutoCopyBtn').addEventListener('click', async (e) => {
     const field = box.querySelector('#smartAutoUrlField');
     try { await navigator.clipboard.writeText(field.value); }
     catch (err) { field.select(); try { document.execCommand('copy'); } catch (e2) { /* ignore */ } }
-    e.target.textContent = '✓ Kopiert';
-    setTimeout(() => { if (e.target.isConnected) e.target.textContent = 'Kopieren'; }, 1800);
+    e.target.textContent = tk('smart.copiedCheck');
+    setTimeout(() => { if (e.target.isConnected) e.target.textContent = tk('common.copy'); }, 1800);
   });
   box.querySelector('#smartAutoTestBtn').addEventListener('click', () => {
-    if (!smartShortcutsAvailable()) { alert('Apple-Kurzbefehle lassen sich nur auf iPhone, iPad oder Mac starten.'); return; }
+    if (!smartShortcutsAvailable()) { alert(tk('smart.appleOnly')); return; }
     runSmartShortcut({ shortcut: 'pinn Automatik' }, '');
   });
   box.querySelector('#smartAutoRenewBtn').addEventListener('click', () => {
-    if (confirm('Neuen Link erzeugen? Der alte funktioniert dann nicht mehr – im Kurzbefehl „pinn Automatik“ muss der neue eingefügt werden.')) smartAutoAction('einrichten');
+    if (confirm(tk('smart.confirmNewLink'))) smartAutoAction('einrichten');
   });
   box.querySelector('#smartAutoOffBtn').addEventListener('click', () => {
-    if (confirm('Apple-Automatik ausschalten? Der Link wird gelöscht, Apple-Aktionen starten dann nur noch per Knopf.')) smartAutoAction('ausschalten');
+    if (confirm(tk('smart.confirmAutoOff'))) smartAutoAction('ausschalten');
   });
 }
 async function smartPost(path, body) {
@@ -626,14 +642,14 @@ async function smartPost(path, body) {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}),
   });
   const out = await res.json().catch(() => ({}));
-  if (!res.ok || out.error) throw new Error(out.error || 'Server antwortet nicht.');
+  if (!res.ok || out.error) throw new Error(out.error || tk('smart.serverNoAnswer'));
   return out;
 }
 async function smartAutoAction(what) {
   const box = document.getElementById('smartAutoSection');
   box.querySelectorAll('button').forEach(b => { b.disabled = true; });
   try { smartStatus = await smartPost(what); }
-  catch (e) { alert('Das hat nicht geklappt: ' + e.message); }
+  catch (e) { alert(tk('smart.failedMsg', { error: e.message })); }
   renderSmartAutoSection();
   renderSettingsSmartStatus();
 }
@@ -644,23 +660,23 @@ function renderSmartHaSection() {
   const box = document.getElementById('smartHaSection');
   if (!box) return;
   const st = smartStatus;
-  if (!st) { box.innerHTML = '<p class="text-xs text-ink/40">Wird geladen …</p>'; return; }
-  if (st.gesperrt) { box.innerHTML = '<p class="text-xs text-ink/40">Für Gastkonten nicht verfügbar.</p>'; return; }
+  if (!st) { box.innerHTML = `<p class="text-xs text-ink/40">${escapeHtml(tk('common.loading'))}</p>`; return; }
+  if (st.gesperrt) { box.innerHTML = `<p class="text-xs text-ink/40">${escapeHtml(tk('smart.notForGuests'))}</p>`; return; }
   if (st.offline || st.error) { box.innerHTML = smartServerProblemHtml(st); return; }
   const ha = st.ha || { verbunden: false };
   if (!ha.verbunden || smartHaEditing) {
     box.innerHTML = `
-      <p class="text-xs text-ink/60 mb-3">Der pinn.-Server steuert Home Assistant direkt – Knöpfe funktionieren auf jedem Gerät (auch Android), Automatik und „Beim Abhaken“ laufen ohne Kurzbefehle. Mit einer Status-Entität wartet pinn., bis z. B. der Saugroboter wirklich fertig ist.</p>
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="smartHaUrl">Adresse</label>
-      <input id="smartHaUrl" type="text" inputmode="url" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="next" placeholder="z. B. 192.168.178.10" value="${escapeHtml(ha.url || '')}" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-1" />
-      <p class="text-[11px] text-ink/40 mb-3">Einfach die IP-Adresse, wie du sie im Browser eingibst – http://, https:// und Port (8123) probiert pinn. selbst durch. „homeassistant.local“ funktioniert hier nicht, bitte die IP nehmen (Home Assistant → Einstellungen → System → Netzwerk oder im Router).</p>
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="smartHaToken">Langlebiger Zugriffstoken</label>
-      <input id="smartHaToken" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" placeholder="${ha.verbunden ? 'Leer lassen = bisheriger Token' : 'Token einfügen'}" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-1" />
-      <p class="text-[11px] text-ink/40 mb-3">In Home Assistant: unten links auf dein Profil → Reiter „Sicherheit“ → „Langlebige Zugriffstoken“ → „Token erstellen“ und die lange Zeichenkette komplett einfügen. „Bearer“ musst du nicht davorschreiben – das ergänzt pinn. selbst (stört aber auch nicht). Der Token bleibt auf dem Server und wird nie an Geräte geschickt.</p>
+      <p class="text-xs text-ink/60 mb-3">${escapeHtml(tk('smart.haIntro'))}</p>
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="smartHaUrl">${escapeHtml(tk('smart.haAddress'))}</label>
+      <input id="smartHaUrl" type="text" inputmode="url" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="next" placeholder="${escapeHtml(tk('smart.haAddressPh'))}" value="${escapeHtml(ha.url || '')}" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-1" />
+      <p class="text-[11px] text-ink/40 mb-3">${escapeHtml(tk('smart.haAddressHint'))}</p>
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="smartHaToken">${escapeHtml(tk('smart.haToken'))}</label>
+      <input id="smartHaToken" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" placeholder="${escapeHtml(ha.verbunden ? tk('smart.haTokenKeep') : tk('smart.haTokenPaste'))}" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-1" />
+      <p class="text-[11px] text-ink/40 mb-3">${escapeHtml(tk('smart.haTokenHint'))}</p>
       <p id="smartHaStatus" class="text-xs text-red-600 mb-2"></p>
       <div class="flex justify-end gap-2">
-        ${ha.verbunden ? '<button type="button" id="smartHaCancelBtn" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>' : ''}
-        <button type="button" id="smartHaConnectBtn" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Verbinden &amp; prüfen</button>
+        ${ha.verbunden ? `<button type="button" id="smartHaCancelBtn" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">${escapeHtml(tk('common.cancel'))}</button>` : ''}
+        <button type="button" id="smartHaConnectBtn" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">${escapeHtml(tk('smart.haConnect'))}</button>
       </div>`;
     const cancel = box.querySelector('#smartHaCancelBtn');
     if (cancel) cancel.addEventListener('click', () => { smartHaEditing = false; renderSmartHaSection(); });
@@ -668,9 +684,9 @@ function renderSmartHaSection() {
       const status = box.querySelector('#smartHaStatus');
       const url = box.querySelector('#smartHaUrl').value.trim();
       const token = box.querySelector('#smartHaToken').value.trim();
-      if (!url) { status.textContent = 'Bitte die Adresse eingeben.'; return; }
+      if (!url) { status.textContent = tk('smart.haNeedAddress'); return; }
       e.target.disabled = true;
-      e.target.textContent = 'Suche Home Assistant …';
+      e.target.textContent = tk('smart.haSearching');
       status.textContent = '';
       try {
         smartStatus = await smartPost('ha/verbinden', { url, token });
@@ -681,44 +697,44 @@ function renderSmartHaSection() {
       } catch (err) {
         status.textContent = err.message;
         e.target.disabled = false;
-        e.target.innerHTML = 'Verbinden &amp; prüfen';
+        e.target.textContent = tk('smart.haConnect');
       }
     });
     return;
   }
-  const lauf = ha.lauf ? new Date(ha.lauf).toLocaleString('de-DE', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) + ' Uhr' + (ha.laufInfo ? ' – ' + ha.laufInfo : '') : '';
+  const lauf = ha.lauf ? tk('cal.timeAt', { time: new Date(ha.lauf).toLocaleString(sysLocale(), { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) }) + (ha.laufInfo ? ' – ' + ha.laufInfo : '') : '';
   const fehler = ha.fehler && ha.fehler.at && Date.now() - Date.parse(ha.fehler.at) < 24 * 3600000 ? ha.fehler : null;
   const haDevices = smartDevices.filter(d => smartSystem(d) === 'ha');
   box.innerHTML = `
     <div class="flex items-start gap-3 rounded-xl border border-ink/10 px-3 py-2.5 mb-3">
       <span class="text-xl shrink-0">🏠</span>
       <div class="flex-1 min-w-0">
-        <p class="text-sm font-medium truncate">✓ Verbunden${ha.ort ? ' mit ' + escapeHtml(ha.ort) : ''}</p>
-        <p class="text-[11px] text-ink/50 truncate">${escapeHtml(ha.url)}${ha.version ? ' · Version ' + escapeHtml(ha.version) : ''}</p>
+        <p class="text-sm font-medium truncate">${escapeHtml(ha.ort ? tk('smart.haConnectedTo', { place: ha.ort }) : tk('smart.haConnected'))}</p>
+        <p class="text-[11px] text-ink/50 truncate">${escapeHtml(ha.url)}${ha.version ? ' · ' + escapeHtml(tk('smart.version', { version: ha.version })) : ''}</p>
       </div>
     </div>
-    ${lauf ? `<p class="text-[11px] text-ink/50 mb-2">Zuletzt automatisch gestartet: ${escapeHtml(lauf)}</p>` : ''}
-    ${fehler ? `<p class="text-[11px] text-red-600 mb-2">Fehler (${escapeHtml(new Date(fehler.at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }))} Uhr): ${escapeHtml(fehler.text)}</p>` : ''}
+    ${lauf ? `<p class="text-[11px] text-ink/50 mb-2">${escapeHtml(tk('smart.lastAutoRun', { when: lauf }))}</p>` : ''}
+    ${fehler ? `<p class="text-[11px] text-red-600 mb-2">${escapeHtml(tk('smart.errorAt', { time: new Date(fehler.at).toLocaleTimeString(sysLocale(), { hour: '2-digit', minute: '2-digit' }), error: fehler.text }))}</p>` : ''}
     ${smartBusyHtml(st)}
-    <p class="text-xs mb-3 ${haDevices.length ? 'text-ink/60' : 'text-ink/40 italic'}">${haDevices.length ? 'Geräte über Home Assistant: ' + haDevices.map(d => escapeHtml(d.icon + ' ' + d.name)).join(', ') : 'Noch keine Geräte über Home Assistant – im Reiter „Geräte“ ein Gerät anlegen und „Home Assistant“ wählen.'}</p>
+    <p class="text-xs mb-3 ${haDevices.length ? 'text-ink/60' : 'text-ink/40 italic'}">${escapeHtml(haDevices.length ? tk('smart.haDevices', { list: haDevices.map(d => d.icon + ' ' + d.name).join(', ') }) : tk('smart.haNoDevices'))}</p>
     <div class="rounded-xl bg-ink/5 p-3 mb-3">
-      <p class="text-xs font-medium mb-1">Tipps</p>
+      <p class="text-xs font-medium mb-1">${escapeHtml(tk('smart.tips'))}</p>
       <p class="text-[11px] text-ink/60 leading-relaxed">
-        • Roborock: Gerät „Saugroboter“ anlegen, oben den Roboter (vacuum.…) wählen – pinn. lädt die Räume aus der Karte. Je Aktion „Raumreinigung“ mit Räumen und Modus (Saugen, Saugen &amp; Wischen, Wischen). „Raum der Aufgabe“ nimmt den Raum der Haushalt-Reinigung – die Namen müssen wie in der Roborock-App heißen.<br>
-        • Der Roboter dient zugleich als Status: die nächste Aktion startet erst, wenn er wieder in der Station ist.<br>
-        • Skripte bekommen den Raumnamen als Variable <span class="font-mono">raum</span> – ein Skript kann so alle Räume bedienen.<br>
-        • Lichter/LEDs: Farbe und Helligkeit direkt an der Aktion einstellen.<br>
-        • Automatik läuft auf dem Server jede Minute – keine Automation auf dem Handy nötig.
+        • ${escapeHtml(tk('smart.haTip1'))}<br>
+        • ${escapeHtml(tk('smart.haTip2'))}<br>
+        • ${tk('smart.haTip3')}<br>
+        • ${escapeHtml(tk('smart.haTip4'))}<br>
+        • ${escapeHtml(tk('smart.haTip5'))}
       </p>
     </div>
     <div class="flex flex-wrap gap-2">
-      <button type="button" id="smartHaEditBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Zugang ändern</button>
-      <button type="button" id="smartHaOffBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-red-600 hover:bg-red-50 transition">Trennen</button>
+      <button type="button" id="smartHaEditBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">${escapeHtml(tk('smart.haChange'))}</button>
+      <button type="button" id="smartHaOffBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-red-600 hover:bg-red-50 transition">${escapeHtml(tk('common.disconnect'))}</button>
     </div>`;
   box.querySelector('#smartHaEditBtn').addEventListener('click', () => { smartHaEditing = true; renderSmartHaSection(); });
   box.querySelector('#smartHaOffBtn').addEventListener('click', async () => {
-    if (!confirm('Home Assistant trennen? Aktionen über Home Assistant funktionieren dann nicht mehr, bis du wieder verbindest.')) return;
-    try { smartStatus = await smartPost('ha/trennen'); } catch (e) { alert('Das hat nicht geklappt: ' + e.message); }
+    if (!confirm(tk('smart.confirmHaOff'))) return;
+    try { smartStatus = await smartPost('ha/trennen'); } catch (e) { alert(tk('smart.failedMsg', { error: e.message })); }
     smartHaEntities = null;
     renderSmartHaSection();
     renderSettingsSmartStatus();
@@ -734,7 +750,7 @@ async function loadSmartHaEntities(force) {
   try {
     const res = await apiFetch('/api/pinn/smart/ha/entitaeten');
     const body = await res.json().catch(() => ({}));
-    if (!res.ok || body.error) throw new Error(body.error || 'Server antwortet nicht.');
+    if (!res.ok || body.error) throw new Error(body.error || tk('smart.serverNoAnswer'));
     smartHaEntities = Array.isArray(body.entitaeten) ? body.entitaeten : [];
   } catch (e) {
     smartHaEntitiesError = e.message;
@@ -742,14 +758,15 @@ async function loadSmartHaEntities(force) {
   }
   return smartHaEntities;
 }
-function haEntityOptions(selected, filterDomains) {
+// emptyLabel: text of the empty first option (default: "– choose entity –")
+function haEntityOptions(selected, filterDomains, emptyLabel) {
   const list = (smartHaEntities || []).filter(e => !filterDomains || filterDomains.includes(e.domain));
   const groups = new Map();
   list.forEach(e => { if (!groups.has(e.domain)) groups.set(e.domain, []); groups.get(e.domain).push(e); });
-  let html = '<option value="">– Entität wählen –</option>';
+  let html = `<option value="">${escapeHtml(emptyLabel || tk('smart.pickEntity'))}</option>`;
   if (selected && !list.some(e => e.id === selected)) html += `<option value="${escapeHtml(selected)}" selected>${escapeHtml(selected)}</option>`;
   groups.forEach((items, domain) => {
-    html += `<optgroup label="${escapeHtml(HA_DOMAIN_LABELS[domain] || domain)}">` +
+    html += `<optgroup label="${escapeHtml(haDomainLabel(domain))}">` +
       items.map(e => `<option value="${escapeHtml(e.id)}"${e.id === selected ? ' selected' : ''}>${escapeHtml(e.name)}</option>`).join('') + '</optgroup>';
   });
   return html;
@@ -781,10 +798,10 @@ function renderSettingsSmartStatus() {
   if (!el) return;
   const st = smartStatus;
   const n = smartDevices.length;
-  const parts = [n ? `${n} ${n === 1 ? 'Gerät' : 'Geräte'}` : 'Noch keine Geräte'];
+  const parts = [n ? tk('smart.devicesN', { n }) : tk('smart.noDevicesShort')];
   if (st && !st.offline && !st.error) {
-    parts.push('Apple-Automatik ' + (st.aktiv ? 'an' : 'aus'));
-    parts.push('Home Assistant ' + (st.ha && st.ha.verbunden ? 'verbunden' : 'nicht verbunden'));
+    parts.push(st.aktiv ? tk('smart.appleAutoOn') : tk('smart.appleAutoOff'));
+    parts.push(st.ha && st.ha.verbunden ? tk('smart.haOn') : tk('smart.haOff'));
   }
   el.textContent = parts.join(' · ');
 }
@@ -849,7 +866,7 @@ function smartComposeHaData(ha) {
   const txt = String(ha.dataText || '').trim();
   if (txt) {
     data = JSON.parse(txt);
-    if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Die Zusatzdaten müssen ein JSON-Objekt sein, z. B. {"brightness_pct": 50}.');
+    if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error(tk('smart.jsonObject'));
   }
   if (/^light\.turn_on$/.test(ha.service || '')) {
     const rgb = smartHexToRgb(ha.color);
@@ -861,11 +878,13 @@ function smartComposeHaData(ha) {
 // Suggested actions of a device type (robot vacuum via Home Assistant: straight away as room cleaning)
 function smartDefaultActions(typeId, system) {
   const type = SMART_DEVICE_TYPES.find(t => t.id === typeId) || SMART_DEVICE_TYPES[0];
-  return type.actions.map(label => { const a = smartNewAction(label, typeId, system); a.label = i18nT(label); return a; });
+  return type.actions.map(s => smartNewAction(tk(s.key), typeId, system, s));
 }
-function smartNewAction(label, typeId, system) {
+// spec (suggested actions only): robot vacuum mode and mower service, otherwise guessed from the name
+function smartNewAction(label, typeId, system, spec) {
   const ha = normalizeSmartHa(null);
-  if (typeId === 'sauger' && system === 'ha') { ha.kind = 'segments'; ha.mode = smartVacModeOf(label); }
+  if (typeId === 'sauger' && system === 'ha') { ha.kind = 'segments'; ha.mode = spec && spec.mode ? spec.mode : smartVacModeOf(label); }
+  if (typeId === 'maeher' && spec && spec.mower) ha.mowerService = spec.mower;
   if (typeId === 'bewaesserung') ha.offAfter = true;
   return { id: smartNewId('sa'), label: label || '', shortcut: '', minutes: typeId === 'bewaesserung' ? 15 : 0, ha };
 }
@@ -877,8 +896,8 @@ function renderSmartSystemPicker() {
   const wrap = document.getElementById('smartDeviceSystemPicker');
   const haOk = !!(smartStatus && smartStatus.ha && smartStatus.ha.verbunden);
   wrap.innerHTML = SMART_SYSTEMS.map(s => `<button type="button" class="sh-chip${s.id === smartEditSystem ? ' active' : ''}" data-system="${s.id}">${s.id === 'ha' ? '🏠' : '📱'} ${escapeHtml(s.label)}</button>`).join('') +
-    (smartEditSystem === 'ha' && !haOk ? '<p class="w-full text-[11px] sh-missing mt-1">Home Assistant ist noch nicht verbunden – im Reiter „Home Assistant“ verbinden.</p>' : '') +
-    (smartEditSystem === 'shortcut' ? '<p class="w-full text-[11px] text-ink/40 mt-1">Startet Kurzbefehle auf iPhone, iPad oder Mac. Für Android und Automatik ohne Handy: Home Assistant.</p>' : '');
+    (smartEditSystem === 'ha' && !haOk ? `<p class="w-full text-[11px] sh-missing mt-1">${escapeHtml(tk('smart.haConnectFirst'))}</p>` : '') +
+    (smartEditSystem === 'shortcut' ? `<p class="w-full text-[11px] text-ink/40 mt-1">${escapeHtml(tk('smart.shortcutSystemHint'))}</p>` : '');
   wrap.querySelectorAll('[data-system]').forEach(btn => btn.addEventListener('click', async () => {
     smartReadActionInputs();
     smartEditSystem = btn.dataset.system;
@@ -904,7 +923,8 @@ function renderSmartTypePicker() {
     // Suggest actions as long as nothing has been set up yet
     if (notSetUp) smartEditActions = smartDefaultActions(type.id, smartEditSystem);
     const nameInput = document.getElementById('smartDeviceName');
-    if (!nameInput.value.trim() || SMART_DEVICE_TYPES.some(t => t.label === nameInput.value.trim() || i18nT(t.label) === nameInput.value.trim())) nameInput.value = i18nT(type.label);
+    const cur = nameInput.value.trim();
+    if (!cur || SMART_DEVICE_TYPES.some(t => t.label === cur || t.de === cur || i18nT(t.de) === cur)) nameInput.value = type.label;
     renderSmartTypePicker();
     renderSmartIconPicker();
     renderSmartActionEditor();
@@ -913,7 +933,7 @@ function renderSmartTypePicker() {
 function renderSmartIconPicker() {
   const wrap = document.getElementById('smartDeviceIconPicker');
   const icons = SMART_ICONS.includes(smartEditIcon) ? SMART_ICONS : [smartEditIcon, ...SMART_ICONS];
-  wrap.innerHTML = icons.map(i => `<button type="button" class="sh-icon${i === smartEditIcon ? ' active' : ''}" data-icon="${i}" aria-label="Symbol ${i}">${i}</button>`).join('');
+  wrap.innerHTML = icons.map(i => `<button type="button" class="sh-icon${i === smartEditIcon ? ' active' : ''}" data-icon="${i}" aria-label="${escapeHtml(tk('smart.symbolN', { icon: i }))}">${i}</button>`).join('');
   wrap.querySelectorAll('[data-icon]').forEach(btn => btn.addEventListener('click', () => {
     smartEditIcon = btn.dataset.icon;
     renderSmartIconPicker();
@@ -922,15 +942,15 @@ function renderSmartIconPicker() {
 function smartActionTargetHtml(a) {
   if (smartEditSystem === 'shortcut') {
     return `<div class="flex items-center gap-2">
-        <input data-field="shortcut" type="text" maxlength="80" enterkeyhint="done" autocomplete="off" autocorrect="off" spellcheck="false" value="${escapeHtml(a.shortcut || '')}" placeholder="Name des Kurzbefehls" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="Name des Kurzbefehls" />
-        <button type="button" data-act="test" class="sh-run shrink-0" title="Kurzbefehl testen">▶ Test</button>
+        <input data-field="shortcut" type="text" maxlength="80" enterkeyhint="done" autocomplete="off" autocorrect="off" spellcheck="false" value="${escapeHtml(a.shortcut || '')}" placeholder="${escapeHtml(tk('smart.shortcutName'))}" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="${escapeHtml(tk('smart.shortcutName'))}" />
+        <button type="button" data-act="test" class="sh-run shrink-0" title="${escapeHtml(tk('smart.testShortcut'))}">${escapeHtml(tk('smart.testBtn'))}</button>
       </div>`;
   }
   if (!a.ha) a.ha = normalizeSmartHa(null);
   if (smartEditType === 'sauger') {
     const kindChips = `<div class="flex flex-wrap gap-1.5 mb-2">
-      <button type="button" class="sh-chip${a.ha.kind === 'segments' ? ' active' : ''}" data-kind="segments">🧹 Raumreinigung</button>
-      <button type="button" class="sh-chip${a.ha.kind !== 'segments' ? ' active' : ''}" data-kind="">⚙️ Entität / Taste</button>
+      <button type="button" class="sh-chip${a.ha.kind === 'segments' ? ' active' : ''}" data-kind="segments">${escapeHtml(tk('smart.roomCleaning'))}</button>
+      <button type="button" class="sh-chip${a.ha.kind !== 'segments' ? ' active' : ''}" data-kind="">${escapeHtml(tk('smart.entityButton'))}</button>
     </div>`;
     return kindChips + (a.ha.kind === 'segments' ? smartVacActionHtml(a) : smartHaGenericHtml(a));
   }
@@ -952,54 +972,56 @@ function smartVacSelect(field, label, options, value) {
   return `<label class="flex items-center gap-2 text-xs text-ink/60">
       <span class="w-24 shrink-0">${escapeHtml(label)}</span>
       <select data-field="${field}" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2 py-1 text-sm bg-white">
-        <option value="">wie eingestellt</option>
+        <option value="">${escapeHtml(tk('smart.asSet'))}</option>
         ${opts.map(o => `<option value="${escapeHtml(o)}" ${o === value ? 'selected' : ''}>${escapeHtml(smartVacLabel(o))}</option>`).join('')}
       </select>
     </label>`;
 }
 function smartVacActionHtml(a) {
   const ha = a.ha;
-  if (!/^vacuum\./.test(smartEditStatusEntity)) return '<p class="text-[11px] sh-missing">Bitte oben den Saugroboter wählen – dann lädt pinn. die Räume aus der Karte.</p>';
+  if (!/^vacuum\./.test(smartEditStatusEntity)) return `<p class="text-[11px] sh-missing">${escapeHtml(tk('smart.pickVacuumFirst'))}</p>`;
   const info = smartVacCurrent();
   const loading = smartVacLoading === smartEditStatusEntity;
   const list = smartVacRoomList(a);
   const multiMap = new Set(list.map(r => r.map || '')).size > 1;
   const taskMode = !Array.isArray(ha.rooms);
-  let roomsHtml = `<button type="button" class="sh-chip${taskMode ? ' active' : ''}" data-room="task">📍 Raum der Aufgabe</button>`;
+  let roomsHtml = `<button type="button" class="sh-chip${taskMode ? ' active' : ''}" data-room="task">${escapeHtml(tk('smart.taskRoom'))}</button>`;
   roomsHtml += list.map(r => `<button type="button" class="sh-chip${!taskMode && ha.rooms.includes(r.id) ? ' active' : ''}" data-room="${r.id}">${escapeHtml(r.name)}${multiMap && r.map ? ' <span style="opacity:.6">· ' + escapeHtml(r.map) + '</span>' : ''}</button>`).join('');
   let roomHint = '';
-  if (loading && !list.length) roomHint = '<p class="text-[11px] text-ink/40 mt-1">Räume werden geladen …</p>';
+  if (loading && !list.length) roomHint = `<p class="text-[11px] text-ink/40 mt-1">${escapeHtml(tk('smart.roomsLoading'))}</p>`;
   else if (!list.length) {
-    roomHint = `<p class="text-[11px] sh-missing mt-1">${escapeHtml((smartVacInfo && smartVacInfo.entity === smartEditStatusEntity && (smartVacInfo.raeumeFehler || smartVacInfo.error)) || 'Keine Räume gefunden.')}</p>
-      <input data-field="roomIds" type="text" inputmode="numeric" enterkeyhint="done" autocomplete="off" value="${taskMode ? '' : escapeHtml(ha.rooms.join(', '))}" placeholder="Raum-Nummern von Hand, z. B. 16, 17" class="w-full mt-1 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="Raum-Nummern" />`;
+    roomHint = `<p class="text-[11px] sh-missing mt-1">${escapeHtml((smartVacInfo && smartVacInfo.entity === smartEditStatusEntity && (smartVacInfo.raeumeFehler || smartVacInfo.error)) || tk('smart.noRooms'))}</p>
+      <input data-field="roomIds" type="text" inputmode="numeric" enterkeyhint="done" autocomplete="off" value="${taskMode ? '' : escapeHtml(ha.rooms.join(', '))}" placeholder="${escapeHtml(tk('smart.roomIdsPh'))}" class="w-full mt-1 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="${escapeHtml(tk('smart.roomIds'))}" />`;
   }
   if (taskMode && list.length) {
     const names = [...new Set(roomSchedules.map(s => (rooms.find(r => r.id === s.roomId) || {}).name).filter(Boolean))];
     const ok = names.filter(n => smartMatchVacRoom(list, n).length);
     const miss = names.filter(n => !smartMatchVacRoom(list, n).length);
-    roomHint += `<p class="text-[11px] text-ink/50 mt-1 leading-relaxed">Nimmt den Raum der Haushalt-Reinigung.${ok.length ? ' Passt: ' + ok.map(escapeHtml).join(', ') + '.' : ''}${miss.length ? ` <span class="sh-missing">Nicht in der Karte: ${miss.map(escapeHtml).join(', ')}</span> – dort feste Räume wählen oder in der Roborock-App gleich benennen.` : ''}</p>`;
+    const okTxt = ok.length ? ' ' + escapeHtml(tk('smart.matches')) + ' ' + ok.map(escapeHtml).join(', ') + '.' : '';
+    const missTxt = miss.length ? ` <span class="sh-missing">${escapeHtml(tk('smart.notInMap', { rooms: miss.join(', ') }))}</span> ${escapeHtml(tk('smart.notInMapHint'))}` : '';
+    roomHint += `<p class="text-[11px] text-ink/50 mt-1 leading-relaxed">${tk('smart.takesTaskRoom', { matches: okTxt, missing: missTxt })}</p>`;
   }
   const fanList = info ? info.fanSpeeds || [] : [];
   const water = info && info.water ? info.water.options : [];
   const mop = info && info.mopMode ? info.mopMode.options : [];
   const settings = [];
-  if (ha.mode !== 'mop' && (fanList.length || ha.fan)) settings.push(smartVacSelect('fan', 'Saugstärke', fanList, ha.fan));
-  if (ha.mode !== 'vac' && (water.length || ha.water)) settings.push(smartVacSelect('water', 'Wassermenge', water, ha.water));
-  if (ha.mode !== 'vac' && (mop.length || ha.mopMode)) settings.push(smartVacSelect('mopMode', 'Wischmodus', mop, ha.mopMode));
+  if (ha.mode !== 'mop' && (fanList.length || ha.fan)) settings.push(smartVacSelect('fan', tk('smart.suction'), fanList, ha.fan));
+  if (ha.mode !== 'vac' && (water.length || ha.water)) settings.push(smartVacSelect('water', tk('smart.water'), water, ha.water));
+  if (ha.mode !== 'vac' && (mop.length || ha.mopMode)) settings.push(smartVacSelect('mopMode', tk('smart.mopMode'), mop, ha.mopMode));
   settings.push(`<label class="flex items-center gap-2 text-xs text-ink/60">
-      <span class="w-24 shrink-0">Durchgänge</span>
+      <span class="w-24 shrink-0">${escapeHtml(tk('smart.passes'))}</span>
       <select data-field="repeat" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2 py-1 text-sm bg-white">
         ${[1, 2, 3].map(n => `<option value="${n}" ${n === ha.repeat ? 'selected' : ''}>${n}×</option>`).join('')}
       </select>
     </label>`);
   return `
-    <p class="text-[11px] uppercase tracking-wide text-ink/40 mb-1">Räume</p>
+    <p class="text-[11px] uppercase tracking-wide text-ink/40 mb-1">${escapeHtml(tk('smart.rooms'))}</p>
     <div class="flex flex-wrap gap-1.5">${roomsHtml}</div>
     ${roomHint}
-    <p class="text-[11px] uppercase tracking-wide text-ink/40 mt-2.5 mb-1">Modus</p>
-    <div class="flex flex-wrap gap-1.5 mb-2">${SMART_VAC_MODES.map(m => `<button type="button" class="sh-chip${ha.mode === m.id ? ' active' : ''}" data-mode="${m.id}">${m.label}</button>`).join('')}</div>
+    <p class="text-[11px] uppercase tracking-wide text-ink/40 mt-2.5 mb-1">${escapeHtml(tk('smart.mode'))}</p>
+    <div class="flex flex-wrap gap-1.5 mb-2">${SMART_VAC_MODES.map(m => `<button type="button" class="sh-chip${ha.mode === m.id ? ' active' : ''}" data-mode="${m.id}">${escapeHtml(m.label)}</button>`).join('')}</div>
     <div class="space-y-1.5 mb-2">${settings.join('')}</div>
-    <div class="flex justify-end"><button type="button" data-act="test" class="sh-run shrink-0" title="Roboter jetzt starten">▶ Test</button></div>`;
+    <div class="flex justify-end"><button type="button" data-act="test" class="sh-run shrink-0" title="${escapeHtml(tk('smart.startRobotNow'))}">${escapeHtml(tk('smart.testBtn'))}</button></div>`;
 }
 function smartHaGenericHtml(a) {
   const ha = a.ha || normalizeSmartHa(null);
@@ -1008,24 +1030,24 @@ function smartHaGenericHtml(a) {
   ha.service = service;
   const isLight = service === 'light.turn_on';
   return `
-    <select data-field="entity" class="w-full rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm bg-white mb-1.5" aria-label="Entität">${haEntityOptions(ha.entity, HA_ACTION_DOMAINS)}</select>
+    <select data-field="entity" class="w-full rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm bg-white mb-1.5" aria-label="${escapeHtml(tk('smart.entity'))}">${haEntityOptions(ha.entity, HA_ACTION_DOMAINS)}</select>
     <div class="flex items-center gap-2">
-      <select data-field="service" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm bg-white" aria-label="Dienst" ${ha.entity ? '' : 'disabled'}>
+      <select data-field="service" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm bg-white" aria-label="${escapeHtml(tk('smart.service'))}" ${ha.entity ? '' : 'disabled'}>
         ${services.map(s => `<option value="${escapeHtml(s.id)}" ${s.id === service ? 'selected' : ''}>${escapeHtml(s.label)}</option>`).join('')}
         ${service && !services.some(s => s.id === service) ? `<option value="${escapeHtml(service)}" selected>${escapeHtml(service)}</option>` : ''}
       </select>
-      <button type="button" data-act="test" class="sh-run shrink-0" title="In Home Assistant ausführen">▶ Test</button>
+      <button type="button" data-act="test" class="sh-run shrink-0" title="${escapeHtml(tk('smart.runInHa'))}">${escapeHtml(tk('smart.testBtn'))}</button>
     </div>
     ${isLight ? `<div class="flex items-center gap-2 mt-1.5 text-xs text-ink/60">
-      <label class="flex items-center gap-1.5 cursor-pointer"><input data-field="colorOn" type="checkbox" class="w-4 h-4" ${ha.color ? 'checked' : ''} /> Farbe</label>
-      <input data-field="color" type="color" value="${escapeHtml(ha.color || '#ff0000')}" class="w-9 h-8 rounded border border-ink/15 bg-white" aria-label="Farbe" />
-      <input data-field="brightness" type="number" inputmode="numeric" min="0" max="100" value="${ha.brightness || ''}" placeholder="%" class="w-16 rounded-lg border border-ink/15 px-2 py-1 text-base" aria-label="Helligkeit in Prozent" />
-      <span>Helligkeit</span>
+      <label class="flex items-center gap-1.5 cursor-pointer"><input data-field="colorOn" type="checkbox" class="w-4 h-4" ${ha.color ? 'checked' : ''} /> ${escapeHtml(tk('smart.color'))}</label>
+      <input data-field="color" type="color" value="${escapeHtml(ha.color || '#ff0000')}" class="w-9 h-8 rounded border border-ink/15 bg-white" aria-label="${escapeHtml(tk('smart.color'))}" />
+      <input data-field="brightness" type="number" inputmode="numeric" min="0" max="100" value="${ha.brightness || ''}" placeholder="%" class="w-16 rounded-lg border border-ink/15 px-2 py-1 text-base" aria-label="${escapeHtml(tk('smart.brightnessPct'))}" />
+      <span>${escapeHtml(tk('smart.brightness'))}</span>
     </div>` : ''}
-    ${smartOffServiceFor(service) ? `<label class="flex items-center gap-2 mt-1.5 text-xs text-ink/60 cursor-pointer"><input data-field="offAfter" type="checkbox" class="w-4 h-4" ${ha.offAfter ? 'checked' : ''} /> <span>Nach der Dauer (Min.) wieder ausschalten</span></label>` : ''}
+    ${smartOffServiceFor(service) ? `<label class="flex items-center gap-2 mt-1.5 text-xs text-ink/60 cursor-pointer"><input data-field="offAfter" type="checkbox" class="w-4 h-4" ${ha.offAfter ? 'checked' : ''} /> <span>${escapeHtml(tk('smart.offAfter'))}</span></label>` : ''}
     <details class="mt-1.5"${ha.dataText ? ' open' : ''}>
-      <summary class="text-[11px] text-ink/40 cursor-pointer">Erweitert: Zusatzdaten (JSON)</summary>
-      <textarea data-field="dataText" rows="2" spellcheck="false" autocapitalize="off" placeholder='z. B. {"variables": {"modus": "wischen"}}' class="w-full mt-1 rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm font-mono">${escapeHtml(ha.dataText || '')}</textarea>
+      <summary class="text-[11px] text-ink/40 cursor-pointer">${escapeHtml(tk('smart.extraData'))}</summary>
+      <textarea data-field="dataText" rows="2" spellcheck="false" autocapitalize="off" placeholder="${escapeHtml(tk('smart.extraDataPh'))}" class="w-full mt-1 rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm font-mono">${escapeHtml(ha.dataText || '')}</textarea>
     </details>`;
 }
 function renderSmartActionEditor() {
@@ -1040,9 +1062,9 @@ function renderSmartActionEditor() {
   if (isVac) {
     statusWrap.classList.remove('hidden');
     statusWrap.innerHTML = `
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="smartDeviceStatusEntity">Saugroboter</label>
-      <select id="smartDeviceStatusEntity" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white mb-1">${haEntityOptions(smartEditStatusEntity, ['vacuum']).replace('– Entität wählen –', '– Saugroboter wählen –')}</select>
-      <p class="text-[11px] text-ink/40 mb-2">Räume kommen aus der Karte des Roboters. Solange er reinigt oder zurückfährt, warten weitere Aktionen.</p>
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="smartDeviceStatusEntity">${escapeHtml(tk('smart.type.vacuum'))}</label>
+      <select id="smartDeviceStatusEntity" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white mb-1">${haEntityOptions(smartEditStatusEntity, ['vacuum'], tk('smart.pickVacuum'))}</select>
+      <p class="text-[11px] text-ink/40 mb-2">${escapeHtml(tk('smart.vacStatusHint'))}</p>
       <div class="mb-4">${smartVacInfoHtml()}</div>`;
   } else if (smartEditSystem === 'ha' && smartEditType === 'maeher') {
     // Mower (1.62): the mower entity is the status as well – a single one is taken right away
@@ -1052,19 +1074,19 @@ function renderSmartActionEditor() {
     }
     if (/^lawn_mower\./.test(smartEditStatusEntity)) smartEditActions.forEach(a => {
       if (!a.ha) a.ha = normalizeSmartHa(null);
-      if (!a.ha.entity) { a.ha.entity = smartEditStatusEntity; a.ha.service = smartMowerService(a.label); }
+      if (!a.ha.entity) { a.ha.entity = smartEditStatusEntity; a.ha.service = a.ha.mowerService || smartMowerService(a.label); }
     });
     statusWrap.classList.remove('hidden');
     statusWrap.innerHTML = `
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="smartDeviceStatusEntity">Mähroboter</label>
-      <select id="smartDeviceStatusEntity" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white mb-1">${haEntityOptions(smartEditStatusEntity, ['lawn_mower']).replace('– Entität wählen –', '– Mähroboter wählen –')}</select>
-      <p class="text-[11px] text-ink/40 mb-4">Solange er mäht, warten weitere Aufträge – sie starten, sobald er zurückfährt. Verknüpfen unter Zuhause → Garten beim Rasen.</p>`;
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="smartDeviceStatusEntity">${escapeHtml(tk('smart.type.mower'))}</label>
+      <select id="smartDeviceStatusEntity" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white mb-1">${haEntityOptions(smartEditStatusEntity, ['lawn_mower'], tk('smart.pickMower'))}</select>
+      <p class="text-[11px] text-ink/40 mb-4">${escapeHtml(tk('smart.mowerStatusHint'))}</p>`;
   } else if (smartEditSystem === 'ha') {
     statusWrap.classList.remove('hidden');
     statusWrap.innerHTML = `
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="smartDeviceStatusEntity">Status-Entität <span class="text-ink/30" style="text-transform:none;letter-spacing:normal">(optional)</span></label>
-      <select id="smartDeviceStatusEntity" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white mb-1">${haEntityOptions(smartEditStatusEntity, HA_STATUS_DOMAINS).replace('– Entität wählen –', 'Keine – nur Dauer verwenden')}</select>
-      <p class="text-[11px] text-ink/40 mb-4">Z. B. der Saugroboter selbst: Solange er reinigt oder zurückfährt, warten weitere Aktionen dieses Geräts.</p>`;
+      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="smartDeviceStatusEntity">${escapeHtml(tk('smart.statusEntity'))} <span class="text-ink/30" style="text-transform:none;letter-spacing:normal">${escapeHtml(tk('smart.optional'))}</span></label>
+      <select id="smartDeviceStatusEntity" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white mb-1">${haEntityOptions(smartEditStatusEntity, HA_STATUS_DOMAINS, tk('smart.durationOnly'))}</select>
+      <p class="text-[11px] text-ink/40 mb-4">${escapeHtml(tk('smart.statusEntityHint'))}</p>`;
   } else {
     statusWrap.classList.add('hidden');
     statusWrap.innerHTML = '';
@@ -1084,22 +1106,22 @@ function renderSmartActionEditor() {
   }
   if (smartEditSystem === 'ha' && !smartHaEntities) {
     wrap.innerHTML = smartHaEntitiesError
-      ? `<p class="text-xs text-red-600">Entitäten konnten nicht geladen werden: ${escapeHtml(smartHaEntitiesError)}</p><button type="button" id="smartHaRetryBtn" class="mt-2 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Erneut laden</button>`
-      : '<p class="text-xs text-ink/40">Entitäten aus Home Assistant werden geladen …</p>';
+      ? `<p class="text-xs text-red-600">${escapeHtml(tk('smart.entitiesFailed', { error: smartHaEntitiesError }))}</p><button type="button" id="smartHaRetryBtn" class="mt-2 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">${escapeHtml(tk('common.reload'))}</button>`
+      : `<p class="text-xs text-ink/40">${escapeHtml(tk('smart.entitiesLoading'))}</p>`;
     const retry = wrap.querySelector('#smartHaRetryBtn');
     if (retry) retry.addEventListener('click', async () => { await loadSmartHaEntities(true); renderSmartActionEditor(); });
     return;
   }
   if (!smartEditActions.length) {
-    wrap.innerHTML = '<p class="text-xs text-ink/40 italic">Noch keine Aktion – über „+ Aktion“ hinzufügen.</p>';
+    wrap.innerHTML = `<p class="text-xs text-ink/40 italic">${escapeHtml(tk('smart.noAction'))}</p>`;
     return;
   }
   wrap.innerHTML = smartEditActions.map(a => `
     <div class="sh-action-row" data-aid="${escapeHtml(a.id)}">
       <div class="flex items-center gap-2 mb-1.5">
-        <input data-field="label" type="text" maxlength="30" enterkeyhint="next" autocomplete="off" value="${escapeHtml(a.label)}" placeholder="Aktion, z. B. Saugen" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="Name der Aktion" />
-        <input data-field="minutes" type="number" inputmode="numeric" min="0" max="600" enterkeyhint="next" value="${a.minutes ? a.minutes : ''}" placeholder="Min." class="w-16 shrink-0 rounded-lg border border-ink/15 px-2 py-1.5 text-base" aria-label="Dauer in Minuten" title="Dauer in Minuten" />
-        <button type="button" data-act="remove" class="w-8 h-8 shrink-0 rounded-full text-ink/40 hover:text-red-500 hover:bg-ink/5 grid place-items-center text-lg leading-none" aria-label="Aktion entfernen">×</button>
+        <input data-field="label" type="text" maxlength="30" enterkeyhint="next" autocomplete="off" value="${escapeHtml(a.label)}" placeholder="${escapeHtml(tk('smart.actionPh'))}" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="${escapeHtml(tk('smart.actionName'))}" />
+        <input data-field="minutes" type="number" inputmode="numeric" min="0" max="600" enterkeyhint="next" value="${a.minutes ? a.minutes : ''}" placeholder="${escapeHtml(tk('smart.min'))}" class="w-16 shrink-0 rounded-lg border border-ink/15 px-2 py-1.5 text-base" aria-label="${escapeHtml(tk('smart.durationMin'))}" title="${escapeHtml(tk('smart.durationMin'))}" />
+        <button type="button" data-act="remove" class="w-8 h-8 shrink-0 rounded-full text-ink/40 hover:text-red-500 hover:bg-ink/5 grid place-items-center text-lg leading-none" aria-label="${escapeHtml(tk('smart.removeAction'))}">×</button>
       </div>
       ${smartActionTargetHtml(a)}
     </div>`).join('');
@@ -1143,32 +1165,32 @@ function renderSmartActionEditor() {
       const a = smartEditActions.find(x => x.id === id);
       if (!a) return;
       if (smartEditSystem === 'shortcut') {
-        if (!a.shortcut) { alert('Bitte zuerst den Namen des Kurzbefehls eintragen.'); return; }
-        if (!smartShortcutsAvailable()) { alert('Apple-Kurzbefehle lassen sich nur auf iPhone, iPad oder Mac starten.'); return; }
+        if (!a.shortcut) { alert(tk('smart.needShortcutName')); return; }
+        if (!smartShortcutsAvailable()) { alert(tk('smart.appleOnly')); return; }
         runSmartShortcut(a, 'Test');
         return;
       }
       if (smartEditType === 'sauger' && a.ha.kind === 'segments') {
-        if (!/^vacuum\./.test(smartEditStatusEntity)) { alert('Bitte oben zuerst den Saugroboter wählen.'); return; }
+        if (!/^vacuum\./.test(smartEditStatusEntity)) { alert(tk('smart.pickVacuumFirstShort')); return; }
         const list = smartVacRoomList(a);
         let raum = '';
         if (!Array.isArray(a.ha.rooms)) {
-          raum = prompt('In welchem Raum testen?' + (list.length ? '\nRäume: ' + list.map(r => r.name).join(', ') : ''), list.length ? list[0].name : '');
+          raum = prompt(tk('smart.testWhichRoom') + (list.length ? '\n' + tk('smart.roomsList', { rooms: list.map(r => r.name).join(', ') }) : ''), list.length ? list[0].name : '');
           if (!raum) return;
         }
         const btn = e.currentTarget;
         btn.disabled = true;
         try {
           await smartPost('ha/test', { ha: smartVacPayload(a), raum: raum.trim() });
-          btn.textContent = '✓ Gestartet';
+          btn.textContent = tk('smart.startedCheck');
         } catch (err) {
           alert('Home Assistant: ' + err.message);
-          btn.textContent = '▶ Test';
+          btn.textContent = tk('smart.testBtn');
         }
-        setTimeout(() => { if (btn.isConnected) { btn.textContent = '▶ Test'; btn.disabled = false; } }, 2500);
+        setTimeout(() => { if (btn.isConnected) { btn.textContent = tk('smart.testBtn'); btn.disabled = false; } }, 2500);
         return;
       }
-      if (!a.ha.entity || !a.ha.service) { alert('Bitte zuerst eine Entität wählen.'); return; }
+      if (!a.ha.entity || !a.ha.service) { alert(tk('smart.needEntity')); return; }
       let data;
       try { data = smartComposeHaData(a.ha); } catch (err) { alert(err.message); return; }
       const btn = e.currentTarget;
@@ -1178,9 +1200,9 @@ function renderSmartActionEditor() {
         btn.textContent = '✓ OK';
       } catch (err) {
         alert('Home Assistant: ' + err.message);
-        btn.textContent = '▶ Test';
+        btn.textContent = tk('smart.testBtn');
       }
-      setTimeout(() => { if (btn.isConnected) { btn.textContent = '▶ Test'; btn.disabled = false; } }, 1800);
+      setTimeout(() => { if (btn.isConnected) { btn.textContent = tk('smart.testBtn'); btn.disabled = false; } }, 1800);
     });
   });
 }
@@ -1206,20 +1228,20 @@ async function smartVacLoad(entity, force) {
 }
 function smartVacInfoHtml() {
   if (!/^vacuum\./.test(smartEditStatusEntity)) return '';
-  if (smartVacLoading === smartEditStatusEntity) return '<p class="text-[11px] text-ink/40">Roboter wird abgefragt …</p>';
+  if (smartVacLoading === smartEditStatusEntity) return `<p class="text-[11px] text-ink/40">${escapeHtml(tk('smart.robotQuerying'))}</p>`;
   const info = smartVacInfo && smartVacInfo.entity === smartEditStatusEntity ? smartVacInfo : null;
-  const reload = '<button type="button" id="smartVacReloadBtn" class="text-[11px] text-pine underline">neu laden</button>';
+  const reload = `<button type="button" id="smartVacReloadBtn" class="text-[11px] text-pine underline">${escapeHtml(tk('smart.reloadLower'))}</button>`;
   if (!info) return reload;
   if (info.error) return `<p class="text-[11px] text-red-600">${escapeHtml(info.error)}</p>${reload}`;
   const parts = [];
   if (info.akku !== null && info.akku !== undefined) parts.push('🔋 ' + escapeHtml(String(info.akku)) + ' %');
   if (info.state) parts.push(escapeHtml(info.state));
-  parts.push((info.raeume || []).length + ' Räume');
+  parts.push(escapeHtml(tk('smart.roomsN', { n: (info.raeume || []).length })));
   const sensoren = info.sensoren || [];
   return `<div class="rounded-xl bg-ink/5 px-3 py-2">
       <div class="flex items-center gap-2 text-[11px] text-ink/60"><span class="flex-1 min-w-0 truncate">${parts.join(' · ')}</span>${reload}</div>
       ${sensoren.length ? `<details class="mt-1">
-        <summary class="text-[11px] text-ink/40 cursor-pointer">Sensoren &amp; Zustand (${sensoren.length})</summary>
+        <summary class="text-[11px] text-ink/40 cursor-pointer">${escapeHtml(tk('smart.sensors', { n: sensoren.length }))}</summary>
         <div class="mt-1 space-y-0.5 max-h-48 overflow-y-auto">${sensoren.map(x => `<div class="flex gap-2 text-[11px]"><span class="flex-1 min-w-0 truncate text-ink/60">${escapeHtml(x.name)}</span><span class="shrink-0">${escapeHtml(x.state)}${x.unit ? ' ' + escapeHtml(x.unit) : ''}</span></div>`).join('')}</div>
       </details>` : ''}
     </div>`;
@@ -1256,7 +1278,7 @@ async function openSmartDeviceModal(existingId) {
   smartEditSystem = d ? smartSystem(d) : (haOk ? 'ha' : 'shortcut');
   smartEditStatusEntity = d ? d.statusEntity || '' : '';
   smartEditActions = d ? d.actions.map(a => ({ ...a, ha: { ...normalizeSmartHa(a.ha) } })) : smartDefaultActions(type.id, smartEditSystem);
-  document.getElementById('smartDeviceModalTitle').textContent = d ? 'Gerät bearbeiten' : 'Neues Gerät';
+  document.getElementById('smartDeviceModalTitle').textContent = d ? tk('smart.editDevice') : tk('smart.newDevice');
   document.getElementById('smartDeviceName').value = d ? d.name : type.label;
   document.getElementById('smartDeviceStatus').textContent = '';
   document.getElementById('deleteSmartDeviceBtn').classList.toggle('hidden', !d);
@@ -1288,22 +1310,22 @@ document.getElementById('saveSmartDevice').addEventListener('click', async () =>
   smartReadActionInputs();
   const status = document.getElementById('smartDeviceStatus');
   const name = document.getElementById('smartDeviceName').value.trim();
-  if (!name) { status.textContent = 'Bitte einen Namen eingeben.'; return; }
+  if (!name) { status.textContent = tk('common.needName'); return; }
   const named = smartEditActions.filter(a => a.label);
-  if (!named.length) { status.textContent = 'Bitte mindestens eine Aktion mit Namen anlegen.'; return; }
-  if (smartEditActions.some(a => !a.label && (a.shortcut || (a.ha && a.ha.entity)))) { status.textContent = 'Bitte jeder eingerichteten Aktion auch einen Namen geben.'; return; }
+  if (!named.length) { status.textContent = tk('smart.needAction'); return; }
+  if (smartEditActions.some(a => !a.label && (a.shortcut || (a.ha && a.ha.entity)))) { status.textContent = tk('smart.needActionNames'); return; }
   let actions;
   try {
     actions = named.map(a => {
       let ha = normalizeSmartHa(a.ha);
       if (smartEditSystem === 'ha' && smartEditType === 'sauger' && ha.kind === 'segments') {
-        if (!/^vacuum\./.test(smartEditStatusEntity)) throw new Error(`„${a.label}“: Bitte oben den Saugroboter wählen.`);
+        if (!/^vacuum\./.test(smartEditStatusEntity)) throw new Error(tk('smart.actionPickVacuum', { action: a.label }));
         ha = smartVacPayload(a);
       } else {
         ha.kind = '';
         if (smartEditSystem === 'ha') {
           try { ha.data = smartComposeHaData(ha); }
-          catch (err) { throw new Error(`„${a.label}“: ${err instanceof SyntaxError ? 'Die Zusatzdaten sind kein gültiges JSON.' : err.message}`); }
+          catch (err) { throw new Error(tk('smart.actionError', { action: a.label, error: err instanceof SyntaxError ? tk('smart.invalidJson') : err.message })); }
         }
       }
       return { id: a.id, label: a.label, shortcut: a.shortcut || '', minutes: smartMinutes(a.minutes), ha };
@@ -1329,7 +1351,7 @@ document.getElementById('saveSmartDevice').addEventListener('click', async () =>
 document.getElementById('deleteSmartDeviceBtn').addEventListener('click', async () => {
   if (!editingSmartDeviceId) return;
   const d = smartDevices.find(x => x.id === editingSmartDeviceId);
-  if (!d || !confirm(`„${d.name}“ wirklich löschen? Die Start-Knöpfe an den Aufgaben verschwinden dann.`)) return;
+  if (!d || !confirm(tk('smart.confirmDelete', { name: d.name }))) return;
   smartDevices = smartDevices.filter(x => x.id !== editingSmartDeviceId);
   stripSmartRefs();
   await persistState();

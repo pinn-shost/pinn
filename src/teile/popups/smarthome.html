@@ -1,36 +1,36 @@
 <!-- Smart home: devices, Apple Shortcuts, Home Assistant (Settings → Smarthome or Household → house symbol) -->
 <div id="smartHomeModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closeSmartHomeBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 class="font-serif text-lg mb-1 pr-6">Smarthome</h3>
-    <p class="text-xs text-ink/50 mb-3">Geräte und ihre Aktionen – über Apple-Kurzbefehle oder Home Assistant. Verknüpft mit einer Reinigung oder einem Mülleimer bekommt die Aufgabe Start-Knöpfe und auf Wunsch eine Automatik.</p>
+    <button id="closeSmartHomeBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close" data-tk-attr="aria-label:common.close">×</button>
+    <h3 data-tk="settings.smartHome.title" class="font-serif text-lg mb-1 pr-6">Smart home</h3>
+    <p data-tk="smart.popupIntro" class="text-xs text-ink/50 mb-3">Devices and their actions – via Apple Shortcuts or Home Assistant. Linked to a cleaning task or a bin, the task gets start buttons and optionally an automation.</p>
     <div id="smartHomeTabs" class="flex gap-1.5 flex-wrap mb-4" role="tablist">
-      <button type="button" class="sh-chip active" data-tab="geraete" role="tab">Geräte</button>
-      <button type="button" class="sh-chip" data-tab="apple" role="tab">📱 Apple Kurzbefehle</button>
+      <button data-tk="smart.devices" type="button" class="sh-chip active" data-tab="geraete" role="tab">Devices</button>
+      <button data-tk="smart.tabApple" type="button" class="sh-chip" data-tab="apple" role="tab">📱 Apple Shortcuts</button>
       <button type="button" class="sh-chip" data-tab="ha" role="tab">🏠 Home Assistant</button>
     </div>
 
     <div id="smartPanel_geraete">
       <div class="flex items-center justify-between gap-3 mb-2">
-        <h4 class="text-xs uppercase tracking-wide text-ink/40">Geräte</h4>
-        <button id="addSmartDeviceBtn" type="button" class="px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Gerät</button>
+        <h4 data-tk="smart.devices" class="text-xs uppercase tracking-wide text-ink/40">Devices</h4>
+        <button id="addSmartDeviceBtn" type="button" class="px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition" data-tk="smart.addDevice">+ Device</button>
       </div>
       <div id="smartDeviceList" class="flex flex-col gap-2 mb-4"></div>
       <div class="rounded-xl bg-ink/5 p-3 mb-4">
-        <p class="text-xs font-medium mb-1">So richtest du es ein</p>
-        <p class="text-[11px] text-ink/60 leading-relaxed">1. Gerät anlegen und wählen, ob es über Apple-Kurzbefehle oder Home Assistant läuft.<br>2. Aktionen einrichten (Kurzbefehl-Name bzw. Entität aus Home Assistant) – „▶ Test“ probiert sie direkt aus. Mit Dauer bzw. Status-Entität laufen Aktionen desselben Geräts nacheinander.<br>3. Auf der Haushalt-Seite in einer Reinigung oder einem Mülleimer die Aktionen auswählen.<br>Home Assistant funktioniert auf allen Geräten (auch Android) und braucht für die Automatik kein Handy.</p>
+        <p data-tk="smart.howTo" class="text-xs font-medium mb-1">How to set it up</p>
+        <p class="text-[11px] text-ink/60 leading-relaxed"><span data-tk="smart.howTo1">1. Create a device and choose whether it runs via Apple Shortcuts or Home Assistant.</span><br><span data-tk="smart.howTo2">2. Set up actions (shortcut name or entity from Home Assistant) – “▶ Test” tries them right away. With a duration or status entity, actions of the same device run one after another.</span><br><span data-tk="smart.howTo3">3. On the Household page, select the actions in a cleaning task or a bin.</span><br><span data-tk="smart.howTo4">Home Assistant works on all devices (including Android) and doesn't need a phone for the automation.</span></p>
       </div>
     </div>
 
     <div id="smartPanel_apple" class="hidden">
       <div class="flex items-center gap-1.5 mb-2">
-        <h4 class="text-xs uppercase tracking-wide text-ink/40">Automatik</h4>
-        <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Ein Kurzbefehl auf einem iPhone oder iPad zu Hause fragt pinn. zu festen Uhrzeiten, was jetzt laufen soll, und startet es. Außerdem holt er „Beim Abhaken“-Aktionen nach, wenn eine Aufgabe auf einem Gerät ohne Kurzbefehle (z. B. Android) abgehakt wurde. Der Link enthält einen geheimen Schlüssel und gibt nur diese Liste heraus. Gilt nur für Geräte über Apple-Kurzbefehle.">i</button>
+        <h4 data-tk="smart.automation" class="text-xs uppercase tracking-wide text-ink/40">Automation</h4>
+        <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="A shortcut on an iPhone or iPad at home asks pinn. at fixed times what should run now and starts it. It also catches up on “On check-off” actions if a task was checked off on a device without shortcuts (e.g. Android). The link contains a secret key and only reveals this list. Only applies to devices via Apple Shortcuts." data-tk-attr="data-info:smart.autoInfo">i</button>
       </div>
       <div id="smartAutoSection" class="mb-4"></div>
       <div class="rounded-xl bg-ink/5 p-3 mb-4">
-        <p class="text-xs font-medium mb-1">Knöpfe mit Kurzbefehlen</p>
-        <p class="text-[11px] text-ink/60 leading-relaxed">In der Kurzbefehle-App je Aktion einen Kurzbefehl anlegen, z. B. mit der Home-Aktion „Szene ausführen“ oder der Aktion deines Saugroboters, und den Namen beim Gerät genau so eintragen. pinn. gibt den Raumnamen als Eingabe an den Kurzbefehl weiter – so kann ein einziger Kurzbefehl alle Räume bedienen. Funktioniert auf iPhone, iPad und Mac.</p>
+        <p data-tk="smart.shortcutButtons" class="text-xs font-medium mb-1">Buttons with shortcuts</p>
+        <p data-tk="smart.shortcutButtonsHint" class="text-[11px] text-ink/60 leading-relaxed">In the Shortcuts app, create one shortcut per action, e.g. with the Home action “Run Scene” or your robot vacuum's action, and enter the name exactly like that for the device. pinn. passes the room name as input to the shortcut – so a single shortcut can handle all rooms. Works on iPhone, iPad and Mac.</p>
       </div>
     </div>
 
@@ -39,7 +39,7 @@
     </div>
 
     <div class="flex justify-end gap-2">
-      <button id="doneSmartHomeBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Fertig</button>
+      <button id="doneSmartHomeBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition" data-tk="common.done">Done</button>
     </div>
   </div>
 </div>
@@ -47,28 +47,28 @@
 <!-- Smart home: add/edit a device -->
 <div id="smartDeviceModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <h3 id="smartDeviceModalTitle" class="font-serif text-lg mb-4">Neues Gerät</h3>
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Steuern über</label>
+    <h3 data-tk="smart.newDevice" id="smartDeviceModalTitle" class="font-serif text-lg mb-4">New device</h3>
+    <label data-tk="smart.controlVia" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Control via</label>
     <div id="smartDeviceSystemPicker" class="flex gap-1.5 flex-wrap mb-4"></div>
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Art</label>
+    <label data-tk="smart.kind" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Type</label>
     <div id="smartDeviceTypePicker" class="flex gap-1.5 flex-wrap mb-4"></div>
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="smartDeviceName">Name</label>
-    <input id="smartDeviceName" type="text" maxlength="40" enterkeyhint="done" autocomplete="off" placeholder="z. B. Saugroboter Erdgeschoss" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-4" />
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Symbol</label>
+    <label data-tk="common.name" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="smartDeviceName">Name</label>
+    <input id="smartDeviceName" type="text" maxlength="40" enterkeyhint="done" autocomplete="off" placeholder="e.g. robot vacuum ground floor" data-tk-attr="placeholder:smart.namePh" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-4" />
+    <label data-tk="smart.symbol" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Icon</label>
     <div id="smartDeviceIconPicker" class="flex gap-1.5 flex-wrap mb-4"></div>
     <div id="smartDeviceStatusWrap" class="hidden"></div>
     <div class="flex items-center justify-between gap-3 mb-2">
-      <label class="block text-xs uppercase tracking-wide text-ink/40">Aktionen</label>
-      <button id="addSmartActionBtn" type="button" class="px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Aktion</button>
+      <label data-tk="smart.actions" class="block text-xs uppercase tracking-wide text-ink/40">Actions</label>
+      <button id="addSmartActionBtn" type="button" class="px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition" data-tk="smart.addAction">+ Action</button>
     </div>
     <div id="smartDeviceActions" class="flex flex-col gap-2 mb-1"></div>
-    <p class="text-[11px] text-ink/40 mb-3">Name der Aktion, wie er an der Aufgabe erscheint, daneben die ungefähre Dauer in Minuten. Mit Dauer ist das Gerät so lange belegt – weitere Aktionen desselben Geräts starten erst danach (z. B. erst Wohnzimmer saugen, dann Küche wischen). Lieber ein paar Minuten Puffer einplanen, inklusive Rückfahrt zur Station. Bei Home Assistant mit Status-Entität zählt zusätzlich der echte Zustand des Geräts.</p>
+    <p data-tk="smart.actionsHint" class="text-[11px] text-ink/40 mb-3">Name of the action as it appears on the task, next to it the approximate duration in minutes. With a duration, the device is occupied for that long – further actions of the same device only start afterwards (e.g. first vacuum the living room, then mop the kitchen). Better plan a few minutes of buffer, including the return trip to the station. With Home Assistant and a status entity, the device's real state also counts.</p>
     <p id="smartDeviceStatus" class="text-xs text-red-600 mb-2"></p>
     <div class="flex items-center justify-between gap-2 mt-2">
-      <button id="deleteSmartDeviceBtn" type="button" class="hidden px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Löschen</button>
+      <button data-tk="common.delete" id="deleteSmartDeviceBtn" type="button" class="hidden px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Delete</button>
       <div class="flex gap-2 ml-auto">
-        <button id="cancelSmartDevice" type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-        <button id="saveSmartDevice" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Speichern</button>
+        <button data-tk="common.cancel" id="cancelSmartDevice" type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+        <button data-tk="common.save" id="saveSmartDevice" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Save</button>
       </div>
     </div>
   </div>

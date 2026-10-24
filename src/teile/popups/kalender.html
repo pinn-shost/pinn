@@ -1,67 +1,67 @@
 <!-- Apple calendar account & calendar selection -->
 <div id="appleCalendarModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
-    <h3 class="font-serif text-lg mb-4">Kalender verbinden</h3>
+    <h3 data-tk="calLink.title" class="font-serif text-lg mb-4">Connect calendar</h3>
 
-    <p class="text-xs uppercase tracking-wide text-ink/40 mb-1.5">iCloud · iPhone, iPad, Mac</p>
+    <p data-tk="calLink.icloudDevices" class="text-xs uppercase tracking-wide text-ink/40 mb-1.5">iCloud · iPhone, iPad, Mac</p>
     <div id="appleCalStatusBox" class="rounded-lg border border-ink/10 px-3 py-2.5 mb-3">
-      <p id="appleCalStatusLine" class="text-sm font-medium">Status wird geladen …</p>
+      <p data-tk="calLink.statusLoading" id="appleCalStatusLine" class="text-sm font-medium">Loading status …</p>
       <p id="appleCalStatusDetail" class="text-[11px] text-ink/50 mt-1"></p>
     </div>
     <!-- Apple ID of your own family (only admins of the family). It is stored encrypted in the
          locked server collection "apple_zugaenge" - the password never goes back to a device. -->
     <div id="appleCredWrap" class="hidden rounded-lg border border-ink/10 px-3 py-3 mb-3">
-      <label for="appleIdInput" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Apple-ID</label>
+      <label data-tk="calLink.appleId" for="appleIdInput" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Apple ID</label>
       <input id="appleIdInput" type="email" inputmode="email" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="name@icloud.com" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-2" />
-      <label for="appleAppPasswordInput" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">App-spezifisches Passwort</label>
+      <label data-tk="calLink.appPassword" for="appleAppPasswordInput" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">App-specific password</label>
       <input id="appleAppPasswordInput" type="password" autocomplete="new-password" autocapitalize="none" spellcheck="false" placeholder="xxxx-xxxx-xxxx-xxxx" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-2" />
-      <p class="text-[11px] text-ink/40 mb-2">Erstellen unter appleid.apple.com → Anmelden &amp; Sicherheit → App-spezifische Passwörter. Wird verschlüsselt auf dem Server gespeichert und nie an Geräte ausgeliefert.</p>
+      <p data-tk="calLink.appPwHelp" class="text-[11px] text-ink/40 mb-2">Create under appleid.apple.com → Sign-In &amp; Security → App-Specific Passwords. Stored encrypted on the server and never delivered to devices.</p>
       <div class="flex items-center gap-2">
-        <button id="saveAppleCredsBtn" type="button" class="flex-1 px-3 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Apple-ID speichern</button>
-        <button id="removeAppleCredsBtn" type="button" class="hidden px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Entfernen</button>
+        <button id="saveAppleCredsBtn" type="button" class="flex-1 px-3 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition" data-tk="calLink.saveAppleId">Save Apple ID</button>
+        <button data-tk="common.remove" id="removeAppleCredsBtn" type="button" class="hidden px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Remove</button>
       </div>
       <p id="appleCredsStatus" class="hidden text-xs rounded-lg px-3 py-2 mt-2"></p>
     </div>
-    <p id="appleCredHint" class="hidden text-[11px] text-ink/40 mb-3">Die Apple-ID eurer Familie kann ein Admin deiner Familie hier hinterlegen.</p>
+    <p data-tk="calLink.appleIdAdminHint" id="appleCredHint" class="hidden text-[11px] text-ink/40 mb-3">An admin of your family can store your family's Apple ID here.</p>
 
     <!-- Google calendar (Android) of your own family. It is connected via the Google sign-in; only an
          access key is stored encrypted in the locked server collection "google_zugaenge"
          (pb_hooks/pinn-google.js) - pinn. never sees a password. -->
-    <p class="text-xs uppercase tracking-wide text-ink/40 mb-1.5 mt-1">Google · Android</p>
+    <p data-tk="calLink.googleDevices" class="text-xs uppercase tracking-wide text-ink/40 mb-1.5 mt-1">Google · Android</p>
     <div id="googleCalBox" class="rounded-lg border border-ink/10 px-3 py-2.5 mb-3">
-      <p id="googleCalStatusLine" class="text-sm font-medium">Status wird geladen …</p>
+      <p data-tk="calLink.statusLoading" id="googleCalStatusLine" class="text-sm font-medium">Loading status …</p>
       <p id="googleCalStatusDetail" class="text-[11px] text-ink/50 mt-1"></p>
       <div id="googleCalActions" class="hidden flex items-center gap-2 mt-2.5">
-        <button id="connectGoogleBtn" type="button" class="flex-1 px-3 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Mit Google verbinden</button>
-        <button id="removeGoogleBtn" type="button" class="hidden px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Trennen</button>
+        <button id="connectGoogleBtn" type="button" class="flex-1 px-3 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition" data-tk="calLink.connectGoogle">Connect with Google</button>
+        <button data-tk="common.disconnect" id="removeGoogleBtn" type="button" class="hidden px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Disconnect</button>
       </div>
       <p id="googleSetupHint" class="hidden text-[11px] text-ink/45 mt-2 leading-snug"></p>
       <p id="googleCalMsg" class="hidden text-xs rounded-lg px-3 py-2 mt-2"></p>
     </div>
 
-    <button id="loadAppleCalendarsBtn" type="button" class="w-full px-3 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition mb-3">Kalender laden</button>
+    <button id="loadAppleCalendarsBtn" type="button" class="w-full px-3 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition mb-3" data-tk="calLink.load">Load calendar</button>
     <p id="appleCalError" class="hidden text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-3"></p>
 
     <div id="appleCalListWrap" class="hidden mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Zu synchronisierende Kalender</label>
+      <label data-tk="calLink.toSync" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Calendars to synchronise</label>
       <div id="appleCalList" class="flex flex-col gap-1.5 max-h-48 overflow-y-auto"></div>
     </div>
 
     <div id="taskCalendarWrap" class="hidden mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Aufgaben-Kalender</label>
+      <label data-tk="calLink.taskCalendar" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Tasks calendar</label>
       <select id="taskCalendarSelect" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-2"></select>
-      <p class="text-[11px] text-ink/40 mb-2">Termine aus diesem Kalender erscheinen in pinn standardmäßig nur bei den Aufgaben, nicht zusätzlich als normale Termine – muss dafür nicht extra oben in der Kalenderliste angehakt werden.</p>
+      <p data-tk="calLink.taskCalendarHint" class="text-[11px] text-ink/40 mb-2">Events from this calendar appear in pinn by default only with the tasks, not additionally as normal events – it doesn't need to be ticked separately in the calendar list above.</p>
       <label class="flex items-center gap-2 text-sm cursor-pointer">
         <input id="showTaskCalendarAsEventsCheckbox" type="checkbox" class="w-4 h-4" />
-        Zusätzlich auch als normale Termine anzeigen
+        <span data-tk="calLink.alsoAsEvents">Also show as normal events</span>
       </label>
     </div>
 
     <div class="flex items-center justify-between gap-2 mt-2">
-      <button id="disconnectAppleCalendar" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Auswahl zurücksetzen</button>
+      <button data-tk="calLink.resetSelection" id="disconnectAppleCalendar" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Reset selection</button>
       <div class="flex gap-2">
-        <button id="cancelAppleCalendar" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-        <button id="saveAppleCalendar" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Speichern</button>
+        <button data-tk="common.cancel" id="cancelAppleCalendar" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+        <button data-tk="common.save" id="saveAppleCalendar" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Save</button>
       </div>
     </div>
   </div>
@@ -70,30 +70,30 @@
 <!-- Add / edit a calendar (Settings → Calendar) -->
 <div id="pinnCalModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
-    <h3 id="pinnCalModalTitle" class="font-serif text-lg mb-4">Kalender hinzufügen</h3>
+    <h3 data-tk="calForm.addTitle" id="pinnCalModalTitle" class="font-serif text-lg mb-4">Add calendar</h3>
     <div id="pinnCalSourceWrap" class="mb-4">
-      <p class="text-xs uppercase tracking-wide text-ink/40 mb-1.5">Konto</p>
+      <p data-tk="calForm.account" class="text-xs uppercase tracking-wide text-ink/40 mb-1.5">Account</p>
       <div id="pinnCalSourceSeg" class="pinn-cal-seg three mb-2">
         <button type="button" data-src="apple">🍎 iCloud</button>
         <button type="button" data-src="google">🟢 Google</button>
-        <button type="button" data-src="">🗄 Ohne Konto</button>
+        <button data-tk="calForm.noAccount" type="button" data-src="">🗄 Without account</button>
       </div>
       <div id="pinnCalSourceBody" class="pinn-cal-src"></div>
     </div>
     <div id="pinnCalOwnBox">
-      <label for="pinnCalNameInput" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Name</label>
-      <input id="pinnCalNameInput" type="text" maxlength="60" autocomplete="off" enterkeyhint="done" placeholder="z. B. Arbeit, Sport, Schule" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-4" />
-      <p class="text-xs uppercase tracking-wide text-ink/40 mb-1.5">Farbe</p>
+      <label data-tk="common.name" for="pinnCalNameInput" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Name</label>
+      <input id="pinnCalNameInput" type="text" maxlength="60" autocomplete="off" enterkeyhint="done" placeholder="e.g. work, sport, school" data-tk-attr="placeholder:calForm.namePh" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-4" />
+      <p data-tk="calForm.color" class="text-xs uppercase tracking-wide text-ink/40 mb-1.5">Colour</p>
       <div id="pinnCalColors" class="pinn-cal-colors mb-4"></div>
       <div id="pinnCalVisRow" class="pcs-tbl pinn-cal-vis mb-1.5"></div>
       <p id="pinnCalShareHint" class="text-[11px] text-ink/45 mb-4"></p>
     </div>
     <p id="pinnCalModalStatus" class="text-xs text-red-600 min-h-[1em] mb-2"></p>
     <div class="flex items-center gap-2">
-      <button id="pinnCalDeleteBtn" type="button" class="hidden px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Löschen</button>
+      <button data-tk="common.delete" id="pinnCalDeleteBtn" type="button" class="hidden px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Delete</button>
       <span class="flex-1"></span>
-      <button id="pinnCalCancelBtn" type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-      <button id="pinnCalSaveBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Anlegen</button>
+      <button data-tk="common.cancel" id="pinnCalCancelBtn" type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+      <button data-tk="common.create" id="pinnCalSaveBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Create</button>
     </div>
   </div>
 </div>

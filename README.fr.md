@@ -95,6 +95,15 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 et 🇰🇷 한국어**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.113.1
+
+**Clés de texte, partie 4 : réglages du calendrier et maison connectée**
+
+- **Réglages → Calendrier** (tes propres comptes iCloud et Google, calendriers « Pour moi » et « Famille », le formulaire *Ajouter un calendrier*, l'ancienne connexion familiale), le **calendrier des déchets**, l'**adresse du domicile** avec jours fériés et vacances scolaires ainsi que toute la fenêtre **maison connectée** (appareils, Raccourcis Apple, Home Assistant, robot aspirateur avec pièces et modes) prennent maintenant leurs textes dans les fichiers de langue de `pb_public/i18n/` – dans les neuf langues et en colocation. Rien ne change à l'utilisation.
+- Petites corrections : les Länder allemands, les dates et les heures de ces réglages suivent le format de ta langue ; les suggestions pour un nouvel appareil (nom et actions) apparaissent dans ta langue, et le mode du robot aspirateur et la commande du robot tondeuse sont reconnus de façon fiable ; les nombres comme « 1 appareil » ou « 1 pièce » sont au bon singulier ou pluriel.
+- Prochaine étape : listes, réserves et recettes arrivent avec la 1.114.0.
+- Modifié : uniquement des fichiers de l'app (`index.html`, `js/kalenderkonto.js`, `js/smarthome.js`, `js/sprachen.js`, `js/versionslog.js`, tous les fichiers de langue dans `i18n/` et `lang/`) – rien ne change sur le serveur. Installation comme d'habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
+
 ## Nouveautés de la 1.113.0
 
 **Clés de texte, partie 3 : calendrier, tâches et ménage**
@@ -142,15 +151,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Pour les contributeurs : une nouvelle collection ou un nouveau champ va dans la fonction ensure du module ; tout le reste (renommer, nettoyer des données) devient une nouvelle étape numérotée dans `MIGRATIONS` – voir l’en-tête de `pb_hooks/pinn-schema.js`. `check-hooks.js` teste le déroulement sur une base de données simulée.
 - Modifié : fichiers de l’app (`index.html`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, tous les fichiers de langue) et, sur le serveur, `pb_hooks/pinn-schema.js`, `schema.pb.js` (nouveaux), `pinn-system.js` et 26 fichiers de démarrage (`*.pb.js`), ainsi que `.github/scripts/check-hooks.js`. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
-## Nouveautés de la 1.109.0
-
-**Tâches, ménage et choix des calendriers dans des enregistrements séparés**
-
-- Dernière étape du déménagement des données familiales hors du grand bloc unique : les **tâches**, le **ménage** (pièces, plannings de ménage, poubelles, catégories de ménage, appareils connectés) et le **choix des calendriers** sont désormais enregistrés séparément sur le serveur. Rien ne change à l’utilisation.
-- Même filet de sécurité qu’avant : une sauvegarde par famille avant le déménagement (`pb_data/pinn_umzug/`, 30 jours), les appareils avec une ancienne version voient toujours tout. L’identifiant Apple et le mot de passe d’app n’arrivent jamais dans le choix des calendriers ni dans la sauvegarde.
-- L’enregistrement attend maintenant que toutes les parties soient sur le serveur : « créer les tâches ménagères maintenant » et la synchronisation des calendriers utilisent tout de suite ce que tu viens de modifier. Les anciens appareils ne réinitialisent plus des réglages comme « Tâches terminées : immédiatement » ou un mode sombre désactivé.
-- Modifié : fichiers de l’app (`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/sprachen.js`, `js/versionslog.js`, tous les fichiers de langue) et sur le serveur `pb_hooks/pinn-bereiche.js`, `pinn-smarthome.js`, `calendar-sync.js`, `save_family_data.pb.js`. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
 ## Comment ça marche
 
 ```mermaid
@@ -177,7 +177,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.113.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.113.1` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

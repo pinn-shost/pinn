@@ -199,7 +199,7 @@
         <div id="homeCard" class="home-card"></div>
         <div id="homeEditBox">
           <div id="homeSuggest" class="home-sug" role="listbox" aria-label="Address suggestions" data-tk-attr="aria-label:settings.home.addressSuggestions"></div>
-          <input id="homeAddressInput" type="search" class="home-input" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" placeholder="Adresse eingeben, z. B. Hauptstraße 5, Köln" />
+          <input id="homeAddressInput" type="search" class="home-input" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" placeholder="Enter address, e.g. 5 Main Street, London" data-tk-attr="placeholder:settings.home.addressPlaceholder" />
           <div class="home-btns">
             <button data-tk="settings.home.useLocation" type="button" id="homeUseLocationBtn" class="home-btn">📍 Use current location</button>
             <button type="button" id="homeMigrateBtn" class="home-btn hidden"></button>
@@ -227,7 +227,7 @@
                are still selected there -->
           <div id="legacyCalBox" class="hidden rounded-lg border border-ink/10 bg-white px-3 py-3 mb-2">
             <p data-tk="settings.calendar.legacy" class="text-[11px] uppercase tracking-wide text-ink/40 mb-1.5">Previous family connection</p>
-            <p id="appleCalendarAccountLine" class="text-sm font-medium mb-2">Noch nicht eingerichtet.</p>
+            <p data-tk="settings.calendar.notSetUp" id="appleCalendarAccountLine" class="text-sm font-medium mb-2">Not set up yet.</p>
             <p id="googleCalendarAccountLine" class="hidden text-sm font-medium mb-2"></p>
             <ul id="appleCalendarListSummary" class="flex flex-col gap-1.5 mb-2"></ul>
             <button data-tk="common.edit" id="editAppleCalendarBtn" class="text-xs text-pine hover:underline font-medium">Edit</button>
@@ -236,7 +236,7 @@
             <button data-tk="settings.calendar.addCalendar" type="button" id="pinnCalAddBtn" class="home-btn primary">+ Add calendar</button>
             <button data-tk="common.updateNow" type="button" id="refreshCalendarBtn" class="home-btn hidden">Update now</button>
           </div>
-          <p id="icsSyncStatus" class="home-status hidden">Noch nicht geladen</p>
+          <p data-tk="common.notLoadedYet" id="icsSyncStatus" class="home-status hidden">Not loaded yet</p>
           <p id="pinnCalStatus" class="home-status"></p>
         </div>
         <div class="set-sub">
@@ -290,17 +290,17 @@
             </div>
           </div>
           <div id="muellEditBox" class="hidden">
-            <p id="muellEditTitle" class="home-sect">Müllkalender suchen</p>
+            <p data-tk="settings.waste.search" id="muellEditTitle" class="home-sect">Search waste calendar</p>
             <div id="muellHomeLine" class="muell-addr hidden"></div>
             <div id="muellManualBox" class="muell-manual hidden">
               <input id="muellStreetInput" type="text" class="home-input" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="next" placeholder="Street and house number (optional)" data-tk-attr="placeholder:settings.waste.street" />
-              <input id="muellPlaceInput" type="text" class="home-input" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" placeholder="PLZ und Ort, z. B. 50667 Köln" />
+              <input id="muellPlaceInput" type="text" class="home-input" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" placeholder="Postcode and town, e.g. SW1A 1AA London" data-tk-attr="placeholder:settings.waste.place" />
             </div>
             <div class="home-btns">
               <button data-tk="settings.waste.searchAi" type="button" id="muellSearchBtn" class="home-btn primary">🔎 Search with AI</button>
-              <button type="button" id="muellManualToggle" class="home-btn hidden">Andere Adresse</button>
+              <button data-tk="settings.waste.otherAddress" type="button" id="muellManualToggle" class="home-btn hidden">Other address</button>
             </div>
-            <div id="muellProgress" class="muell-progress hidden"><span class="muell-spin"></span><span id="muellProgressText">Die KI sucht …</span></div>
+            <div id="muellProgress" class="muell-progress hidden"><span class="muell-spin"></span><span data-tk="settings.waste.aiSearching" id="muellProgressText">The AI is searching …</span></div>
             <div id="muellResults" class="muell-results"></div>
             <details id="muellManualDetails" class="muell-own">
               <summary data-tk="settings.waste.ownSource">Enter link or file yourself</summary>

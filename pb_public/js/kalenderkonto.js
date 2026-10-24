@@ -5,7 +5,8 @@
    Loaded first of the files in js/, right before js/finanzen.js (js/ausblick.js stays last and
    starts the app with bootApp()).
 
-   Contents (moved unchanged from index.html in 1.59.0, only the comments were translated):
+   Contents (moved from index.html in 1.59.0; since 1.113.1 every text comes from a text key via tk(),
+   see pb_public/i18n/ – names of German federal states via homeStateLabel() in js/feiertage.js):
    - Settings → Home (Zuhause) – the family's address with suggestions, taking over the old weather
      location, own location on request, public holidays & school holidays (home…)
    - Settings → Calendar → waste calendar (Müllkalender) – search by place/street, link or file,
@@ -44,31 +45,31 @@ function renderHomeSettings() {
   const guest = isCurrentUserGuest();
   const canEdit = homeCanEdit && !guest && !homeServerMissing;
   if (homeServerMissing) {
-    card.innerHTML = `<div class="home-card-title">Server-Teil fehlt</div><div class="home-card-sub">pb_hooks/zuhause.pb.js und pinn-zuhause.js sind auf dem NAS noch nicht eingespielt.</div>`;
+    card.innerHTML = `<div class="home-card-title">${escapeHtml(tk('settings.home.serverMissing'))}</div><div class="home-card-sub">${escapeHtml(tk('settings.home.serverMissingText'))}</div>`;
   } else if (homeInfo) {
     const sun = homeSunLine();
-    card.innerHTML = `<div class="home-card-title">🏠 ${escapeHtml(homeInfo.titel || 'Zuhause')}</div>
-      <div class="home-card-sub">${escapeHtml([homeInfo.zusatz, homeInfo.bundeslandName && !String(homeInfo.zusatz || '').includes(homeInfo.bundeslandName) ? homeInfo.bundeslandName : ''].filter(Boolean).join(' · '))}</div>
-      ${sun ? `<div class="home-card-sun">Heute: ${sun}</div>` : ''}`;
+    card.innerHTML = `<div class="home-card-title">🏠 ${escapeHtml(homeInfo.titel || tk('settings.home.title'))}</div>
+      <div class="home-card-sub">${escapeHtml([homeInfo.zusatz, homeInfo.bundeslandName && !String(homeInfo.zusatz || '').includes(homeInfo.bundeslandName) ? homeStateLabel(homeInfo.bundesland) || homeInfo.bundeslandName : ''].filter(Boolean).join(' · '))}</div>
+      ${sun ? `<div class="home-card-sun">${tk('settings.home.sunToday', { sun })}</div>` : ''}`;
   } else {
-    card.innerHTML = `<div class="home-card-title">Noch kein Zuhause festgelegt</div>
-      <div class="home-card-sub">${canEdit ? 'Adresse eingeben und einen Vorschlag antippen – oder einmalig den aktuellen Standort übernehmen.' : 'Das Zuhause kann ein Admin deiner Familie festlegen.'}</div>`;
+    card.innerHTML = `<div class="home-card-title">${escapeHtml(tk('settings.home.notSet'))}</div>
+      <div class="home-card-sub">${escapeHtml(canEdit ? tk('settings.home.notSetEdit') : tk('settings.home.notSetAdmin'))}</div>`;
   }
   document.getElementById('homeEditBox').classList.toggle('hidden', !canEdit);
   const input = document.getElementById('homeAddressInput');
-  input.placeholder = homeInfo ? 'Neue Adresse eingeben …' : 'Adresse eingeben, z. B. Hauptstraße 5, Köln';
+  input.placeholder = homeInfo ? tk('settings.home.newAddress') : tk('settings.home.addressPlaceholder');
   document.getElementById('homeRemoveBtn').classList.toggle('hidden', !homeInfo);
   // Take over the previous weather location once
   const mig = document.getElementById('homeMigrateBtn');
   const wl = weatherLocation;
   const canMigrate = !homeInfo && wl && wl.lat != null && wl.lon != null;
   mig.classList.toggle('hidden', !canMigrate);
-  if (canMigrate) mig.textContent = `🌤️ Bisherigen Wetter-Ort übernehmen${wl.label ? ' (' + wl.label + ')' : ''}`;
+  if (canMigrate) mig.textContent = tk('settings.home.migrateWeather') + (wl.label ? ' (' + wl.label + ')' : '');
 
   const sel = document.getElementById('homeStateSelect');
   const bl = homeBundesland();
-  sel.innerHTML = `<option value="">– ${bl ? 'keins' : 'bitte wählen'} –</option>` +
-    Object.keys(HOME_LAENDER).map(k => `<option value="${k}"${k === bl ? ' selected' : ''}>${escapeHtml(HOME_LAENDER[k])}</option>`).join('');
+  sel.innerHTML = `<option value="">– ${escapeHtml(bl ? tk('settings.holidays.stateNone') : tk('settings.holidays.statePick'))} –</option>` +
+    Object.keys(HOME_LAENDER).map(k => `<option value="${k}"${k === bl ? ' selected' : ''}>${escapeHtml(homeStateLabel(k))}</option>`).join('');
   sel.disabled = !canEdit;
   const o = homeOptions || {};
   const hol = document.getElementById('homeShowHolidays');
@@ -82,13 +83,14 @@ function renderHomeSettings() {
   const hint = document.getElementById('homeCalHint');
   if (homeServerMissing) {
     hint.className = 'set-hint';
-    hint.innerHTML = '<span>⚠️</span><span>Für Feiertage und Schulferien fehlt auf dem NAS noch der Server-Teil fürs Zuhause (pb_hooks/zuhause.pb.js).</span>';
+    hint.innerHTML = `<span>⚠️</span><span>${escapeHtml(tk('settings.holidays.serverMissing'))}</span>`;
   } else if (!calOk) {
     hint.className = 'set-hint';
-    hint.innerHTML = `<span>🏠</span><span>Feiertage und Schulferien richten sich nach eurem Bundesland. Um sie zu nutzen, bitte zuerst unter <b>Zuhause</b> eure Adresse angeben${canEdit ? '' : ' – das kann ein Admin eurer Familie'}.</span>${canEdit ? '<button type="button" class="set-hint-btn" data-open-home>Zuhause angeben</button>' : ''}`;
+    hint.innerHTML = `<span>🏠</span><span>${canEdit ? tk('settings.holidays.needHomeEdit') : tk('settings.holidays.needHomeAdmin')}</span>${canEdit ? `<button type="button" class="set-hint-btn" data-open-home>${escapeHtml(tk('settings.holidays.setHome'))}</button>` : ''}`;
   } else {
     hint.className = 'set-hint ok';
-    hint.innerHTML = `<span>🏠</span><span>Grundlage ist euer Zuhause${homeInfo.bundeslandName ? ' (' + escapeHtml(homeInfo.bundeslandName) + ')' : ''} – das Bundesland lässt sich hier ändern.</span>`;
+    const stateName = homeInfo.bundesland ? homeStateLabel(homeInfo.bundesland) : homeInfo.bundeslandName;
+    hint.innerHTML = `<span>🏠</span><span>${escapeHtml(stateName ? tk('settings.holidays.basedOnHomeState', { state: stateName }) : tk('settings.holidays.basedOnHome'))}</span>`;
   }
   try { renderMuellSettings(); } catch (e) { /* waste calendar not built yet */ }
 }
@@ -98,7 +100,7 @@ function homeSetCalStatus(text, err) {
   el.textContent = text || '';
   el.classList.toggle('err', !!err);
 }
-// „Zuhause angeben“ in the calendar section: open the home section and scroll to it
+// "Set home" in the calendar section: open the home section and scroll to it
 document.getElementById('homeCalHint').addEventListener('click', (ev) => {
   if (!ev.target.closest('[data-open-home]')) return;
   const det = document.getElementById('homeSettingsAccordion');
@@ -129,57 +131,57 @@ async function homeSearch(q) {
   try {
     const res = await apiFetch('/api/pinn/zuhause/suche?q=' + encodeURIComponent(q), { cache: 'no-store' });
     if (seq !== homeSugSeq) return;
-    if (res.status === 404) { homeRenderSuggestions([], 'Der Server-Teil (pb_hooks/zuhause.pb.js) fehlt noch.'); return; }
+    if (res.status === 404) { homeRenderSuggestions([], tk('settings.home.serverPartMissing')); return; }
     const body = await res.json().catch(() => ({}));
     if (seq !== homeSugSeq) return;
     const list = Array.isArray(body.treffer) ? body.treffer : [];
-    homeRenderSuggestions(list, list.length ? '' : (body.error || 'Keine passende Adresse gefunden.'));
+    homeRenderSuggestions(list, list.length ? '' : (body.error || tk('settings.home.noMatch')));
   } catch (e) {
-    if (seq === homeSugSeq) homeRenderSuggestions([], 'Adresssuche nicht möglich – keine Verbindung zum NAS.');
+    if (seq === homeSugSeq) homeRenderSuggestions([], tk('settings.home.searchOffline'));
   }
 }
 async function homeSave(hit) {
-  homeSetStatus('Wird gespeichert …');
+  homeSetStatus(tk('common.saving'));
   try {
     const res = await apiFetch('/api/pinn/zuhause', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(hit) });
     const body = await res.json().catch(() => ({}));
-    if (!res.ok || body.error) throw new Error(body.error || 'Speichern fehlgeschlagen.');
+    if (!res.ok || body.error) throw new Error(body.error || tk('common.saveFailed'));
     document.getElementById('homeAddressInput').value = '';
     homeRenderSuggestions([]);
     homeApply(body, outboxFamily());
     const z = body.zuhause;
-    homeSetStatus(z && z.land === 'DE' && !z.bundesland ? 'Gespeichert. Bitte unter Kalender noch das Bundesland wählen.' : 'Gespeichert ✓');
+    homeSetStatus(z && z.land === 'DE' && !z.bundesland ? tk('settings.home.savedPickState') : tk('common.savedCheck'));
     hcLoadSchoolHolidays(true);
   } catch (e) {
-    homeSetStatus(navigator.onLine === false ? 'Keine Verbindung – das Zuhause lässt sich nur mit Verbindung zum NAS ändern.' : e.message, true);
+    homeSetStatus(navigator.onLine === false ? tk('settings.home.offline') : e.message, true);
   }
 }
 async function homeSetOptions(patch) {
-  homeSetCalStatus('Wird gespeichert …');
+  homeSetCalStatus(tk('common.saving'));
   try {
     const res = await apiFetch('/api/pinn/zuhause/optionen', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(patch) });
     const body = await res.json().catch(() => ({}));
-    if (!res.ok || body.error) throw new Error(body.error || 'Speichern fehlgeschlagen.');
+    if (!res.ok || body.error) throw new Error(body.error || tk('common.saveFailed'));
     homeApply(body, outboxFamily());
-    homeSetCalStatus('Gespeichert ✓');
+    homeSetCalStatus(tk('common.savedCheck'));
     if (patch.bundesland !== undefined || patch.ferien) hcLoadSchoolHolidays(true);
   } catch (e) {
-    homeSetCalStatus(navigator.onLine === false ? 'Keine Verbindung zum NAS.' : e.message, true);
+    homeSetCalStatus(navigator.onLine === false ? tk('common.noNas') : e.message, true);
     renderHomeSettings();
   }
 }
 async function homeFromCoords(lat, lon, fallbackTitle) {
-  homeSetStatus('Adresse wird ermittelt …');
+  homeSetStatus(tk('settings.home.resolving'));
   let hit = null;
   try {
     const res = await apiFetch(`/api/pinn/zuhause/adresse?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`, { cache: 'no-store' });
     const body = await res.json().catch(() => ({}));
     hit = Array.isArray(body.treffer) && body.treffer[0] ? body.treffer[0] : null;
   } catch (e) { hit = null; }
-  const data = hit || { lat, lon, titel: fallbackTitle || 'Zuhause', zusatz: '' };
+  const data = hit || { lat, lon, titel: fallbackTitle || tk('settings.home.title'), zusatz: '' };
   const label = [data.titel, data.zusatz].filter(Boolean).join(', ');
   homeSetStatus('');
-  if (!confirm(`Als Zuhause übernehmen?\n\n${label}`)) return;
+  if (!confirm(tk('settings.home.confirmUse') + '\n\n' + label)) return;
   await homeSave(data);
 }
 
@@ -204,28 +206,28 @@ document.getElementById('homeSuggest').addEventListener('click', (ev) => {
 });
 document.getElementById('homeUseLocationBtn').addEventListener('click', () => {
   // Only here – once and on request – the device asks for the location
-  if (!navigator.geolocation) { homeSetStatus('Standort ist auf diesem Gerät nicht verfügbar.', true); return; }
+  if (!navigator.geolocation) { homeSetStatus(tk('settings.home.noGeo'), true); return; }
   const btn = document.getElementById('homeUseLocationBtn');
   btn.disabled = true;
-  homeSetStatus('Standort wird bestimmt …');
+  homeSetStatus(tk('settings.home.locating'));
   navigator.geolocation.getCurrentPosition(
-    (pos) => { btn.disabled = false; homeFromCoords(pos.coords.latitude, pos.coords.longitude, 'Zuhause'); },
-    () => { btn.disabled = false; homeSetStatus('Standort nicht freigegeben – bitte die Adresse eintippen.', true); },
+    (pos) => { btn.disabled = false; homeFromCoords(pos.coords.latitude, pos.coords.longitude, tk('settings.home.title')); },
+    () => { btn.disabled = false; homeSetStatus(tk('settings.home.geoDenied'), true); },
     { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
 });
 document.getElementById('homeMigrateBtn').addEventListener('click', () => {
   const wl = weatherLocation;
-  if (wl && wl.lat != null && wl.lon != null) homeFromCoords(wl.lat, wl.lon, wl.label || 'Zuhause');
+  if (wl && wl.lat != null && wl.lon != null) homeFromCoords(wl.lat, wl.lon, wl.label || tk('settings.home.title'));
 });
 document.getElementById('homeRemoveBtn').addEventListener('click', async () => {
-  if (!confirm('Zuhause entfernen? Wetter, Sonnenzeiten und die Kartenmitte gibt es dann erst wieder mit einer neuen Adresse. Der Ort „Zuhause“ in der Ortung bleibt bestehen.')) return;
-  homeSetStatus('Wird entfernt …');
+  if (!confirm(tk('settings.home.confirmRemove'))) return;
+  homeSetStatus(tk('common.removing'));
   try {
     const res = await apiFetch('/api/pinn/zuhause/entfernen', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
     const body = await res.json().catch(() => ({}));
-    if (!res.ok || body.error) throw new Error(body.error || 'Entfernen fehlgeschlagen.');
+    if (!res.ok || body.error) throw new Error(body.error || tk('common.removeFailed'));
     homeApply(body, outboxFamily());
-    homeSetStatus('Entfernt.');
+    homeSetStatus(tk('common.removed'));
   } catch (e) {
     homeSetStatus(e.message, true);
   }
@@ -244,7 +246,7 @@ function muellSetStatus(text, err) {
   el.classList.toggle('err', !!err);
 }
 function muellFmtShort(d) {
-  try { return new Date(d + 'T00:00:00').toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' }); }
+  try { return new Date(d + 'T00:00:00').toLocaleDateString(sysLocale(), { weekday: 'short', day: '2-digit', month: '2-digit' }); }
   catch (e) { return d; }
 }
 function muellFmtLong(d) { return d ? hcFmtDate(d) : ''; }
@@ -269,13 +271,13 @@ function renderMuellSettings() {
   const hint = document.getElementById('muellHint');
   if (muellServerMissing) {
     hint.className = 'set-hint';
-    hint.innerHTML = '<span>⚠️</span><span>Für den Müllkalender fehlt auf dem NAS noch der Server-Teil (pb_hooks/muell.pb.js und pinn-muell.js).</span>';
+    hint.innerHTML = `<span>⚠️</span><span>${escapeHtml(tk('settings.waste.serverMissing'))}</span>`;
   } else if (!k && !canEdit) {
     hint.className = 'set-hint';
-    hint.innerHTML = '<span>🗑️</span><span>Noch kein Müllkalender eingerichtet – das kann ein Admin eurer Familie hier erledigen.</span>';
+    hint.innerHTML = `<span>🗑️</span><span>${escapeHtml(tk('settings.waste.notSetAdmin'))}</span>`;
   } else if (canEdit && !muellKi) {
     hint.className = 'set-hint';
-    hint.innerHTML = '<span>🤖</span><span>Die KI-Suche ist auf dem Server nicht eingerichtet (PINN_GEMINI_KEY in der .env). Den Link zur .ics-Datei eures Entsorgers kannst du unten selbst einfügen oder die Datei hochladen.</span>';
+    hint.innerHTML = `<span>🤖</span><span>${escapeHtml(tk('settings.waste.noAi'))}</span>`;
   } else {
     hint.className = 'set-hint hidden';
     hint.innerHTML = '';
@@ -290,22 +292,22 @@ function renderMuellSettings() {
     const heute = isoDate(new Date());
     const naechste = (muellData.termine || []).filter(x => x.d >= heute && !(k.ausgeblendet || []).includes(x.t)).slice(0, 3);
     const quelleZeile = q.art === 'datei'
-      ? `Aus der Datei${q.dateiname ? ' „' + escapeHtml(q.dateiname) + '“' : ''} – für neue Termine einfach die neue Datei hochladen.`
-      : `Aktualisiert sich jede Woche von selbst${k.geprueft ? ' · zuletzt geprüft am ' + escapeHtml(new Date(k.geprueft).toLocaleDateString('de-DE')) : ''}.`;
+      ? escapeHtml(q.dateiname ? tk('settings.waste.fromFileNamed', { name: q.dateiname }) : tk('settings.waste.fromFile'))
+      : escapeHtml(k.geprueft ? tk('settings.waste.autoWeeklyChecked', { date: new Date(k.geprueft).toLocaleDateString(sysLocale()) }) : tk('settings.waste.autoWeekly'));
     const bald = k.bis && k.bis < addDaysToDateStr(heute, 30);
-    card.innerHTML = `<div class="home-card-title">🗑️ ${escapeHtml(q.titel || 'Müllkalender')}</div>
+    card.innerHTML = `<div class="home-card-title">🗑️ ${escapeHtml(q.titel || tk('settings.waste.title'))}</div>
       <div class="home-card-sub">${escapeHtml([q.anbieter, q.adresse].filter(Boolean).join(' · '))}</div>
-      <div class="home-card-sub">${k.anzahl ? `${k.anzahl} kommende Abfuhrtermine bis ${escapeHtml(muellFmtLong(k.bis))}` : 'Keine kommenden Abfuhrtermine'}</div>
+      <div class="home-card-sub">${escapeHtml(k.anzahl ? tk('settings.waste.upcomingUntil', { n: k.anzahl, date: muellFmtLong(k.bis) }) : tk('settings.waste.noUpcoming'))}</div>
       ${naechste.length ? `<div class="muell-hit-dates">${naechste.map(x => `<span><i style="background:${escapeHtml(muellArtFarbe(x.t))}"></i>${escapeHtml(muellFmtShort(x.d))} – ${escapeHtml(x.t)}</span>`).join('')}</div>` : ''}
       <div class="home-card-sub" style="margin-top:0.45rem">${quelleZeile}</div>
-      ${k.fehler ? `<div class="muell-err" style="margin-top:0.3rem">Letzte Prüfung fehlgeschlagen: ${escapeHtml(k.fehler)}</div>` : ''}
-      ${bald ? `<div class="muell-err" style="margin-top:0.3rem">Die Termine reichen nur noch bis ${escapeHtml(muellFmtLong(k.bis))} – bitte einen neuen Kalender suchen oder die neue Datei hochladen.</div>` : ''}`;
+      ${k.fehler ? `<div class="muell-err" style="margin-top:0.3rem">${escapeHtml(tk('settings.waste.lastCheckFailed', { error: k.fehler }))}</div>` : ''}
+      ${bald ? `<div class="muell-err" style="margin-top:0.3rem">${escapeHtml(tk('settings.waste.endsSoon', { date: muellFmtLong(k.bis) }))}</div>` : ''}`;
     const tog = document.getElementById('muellShowToggle');
     tog.checked = k.anzeigen !== false;
     tog.disabled = !canEdit;
     const hidden = Array.isArray(k.ausgeblendet) ? k.ausgeblendet : [];
     document.getElementById('muellTypes').innerHTML = (k.arten || []).map((a, i) =>
-      `<button type="button" class="muell-type${hidden.includes(a.name) ? ' off' : ''}" data-muellart="${i}"${canEdit ? '' : ' disabled'} aria-pressed="${hidden.includes(a.name) ? 'false' : 'true'}" title="${canEdit ? 'Antippen zum Ein-/Ausblenden' : ''}"><i style="background:${escapeHtml(a.farbe || '#7A6F5A')}"></i>${escapeHtml(a.name)}</button>`).join('');
+      `<button type="button" class="muell-type${hidden.includes(a.name) ? ' off' : ''}" data-muellart="${i}"${canEdit ? '' : ' disabled'} aria-pressed="${hidden.includes(a.name) ? 'false' : 'true'}" title="${canEdit ? escapeHtml(tk('settings.waste.tapToToggle')) : ''}"><i style="background:${escapeHtml(a.farbe || '#7A6F5A')}"></i>${escapeHtml(a.name)}</button>`).join('');
     document.getElementById('muellCardBtns').classList.toggle('hidden', !canEdit);
     document.getElementById('muellRefreshBtn').classList.toggle('hidden', q.art !== 'link');
   }
@@ -314,27 +316,27 @@ function renderMuellSettings() {
   const edit = document.getElementById('muellEditBox');
   edit.classList.toggle('hidden', !canEdit);
   if (!canEdit) return;
-  document.getElementById('muellEditTitle').textContent = k ? 'Anderen Müllkalender suchen (ersetzt den jetzigen)' : 'Müllkalender suchen';
+  document.getElementById('muellEditTitle').textContent = k ? tk('settings.waste.searchOther') : tk('settings.waste.search');
   const homeAdr = muellHomeAddress();
   const useHome = !!homeAdr && !muellManualMode;
   const line = document.getElementById('muellHomeLine');
   line.classList.toggle('hidden', !useHome);
-  if (useHome) line.innerHTML = `<span>🏠</span><span class="min-w-0"><b class="font-medium">${escapeHtml(homeAdr)}</b><small>Suche für euer Zuhause</small></span>`;
+  if (useHome) line.innerHTML = `<span>🏠</span><span class="min-w-0"><b class="font-medium">${escapeHtml(homeAdr)}</b><small>${escapeHtml(tk('settings.waste.searchForHome'))}</small></span>`;
   document.getElementById('muellManualBox').classList.toggle('hidden', useHome || !muellKi);
   const tgl = document.getElementById('muellManualToggle');
   tgl.classList.toggle('hidden', !homeAdr || !muellKi);
-  tgl.textContent = muellManualMode ? '🏠 Zuhause verwenden' : 'Andere Adresse';
+  tgl.textContent = muellManualMode ? tk('settings.waste.useHome') : tk('settings.waste.otherAddress');
   document.getElementById('muellSearchBtn').classList.toggle('hidden', !muellKi);
   document.getElementById('muellSearchBtn').disabled = muellBusy;
-  if (!homeAdr && muellKi) document.getElementById('muellPlaceInput').placeholder = 'PLZ und Ort (kein Zuhause angegeben), z. B. 50667 Köln';
-  else document.getElementById('muellPlaceInput').placeholder = 'PLZ und Ort, z. B. 50667 Köln';
+  if (!homeAdr && muellKi) document.getElementById('muellPlaceInput').placeholder = tk('settings.waste.placeNoHome');
+  else document.getElementById('muellPlaceInput').placeholder = tk('settings.waste.place');
   if (!muellKi) document.getElementById('muellManualDetails').open = true;
 }
 
 function muellStartProgress() {
   const box = document.getElementById('muellProgress');
   const txt = document.getElementById('muellProgressText');
-  const steps = ['Die KI sucht euren Entsorger …', 'Die KI sucht den Kalender-Link …', 'Seiten des Entsorgers werden durchsucht …', 'Gefundene Kalender werden heruntergeladen und geprüft …', 'Dauert etwas länger – gleich geschafft …'];
+  const steps = [tk('settings.waste.progressCollector'), tk('settings.waste.progressLink'), tk('settings.waste.progressPages'), tk('settings.waste.progressCheck'), tk('settings.waste.progressLong')];
   let i = 0;
   txt.textContent = steps[0];
   box.classList.remove('hidden');
@@ -357,21 +359,21 @@ function muellRenderResults(body) {
     html += `<div class="muell-hit">
       <div class="muell-hit-head">
         <div class="min-w-0">
-          <div class="muell-hit-title">${escapeHtml(h.titel || 'Abfallkalender')}</div>
-          <div class="muell-hit-sub">${escapeHtml(h.anbieter || '')} · ${h.anzahl} Termine bis ${escapeHtml(muellFmtLong(h.bis))}</div>
+          <div class="muell-hit-title">${escapeHtml(h.titel || tk('settings.waste.wasteCalendar'))}</div>
+          <div class="muell-hit-sub">${escapeHtml(h.anbieter || '')} · ${escapeHtml(tk('settings.waste.datesUntil', { n: h.anzahl, date: muellFmtLong(h.bis) }))}</div>
           <div class="muell-hit-sub">${escapeHtml(arten.map(a => a.name).join(', '))}</div>
         </div>
-        <button type="button" class="muell-take" data-muelltake="${i}">Übernehmen</button>
+        <button type="button" class="muell-take" data-muelltake="${i}">${escapeHtml(tk('common.apply'))}</button>
       </div>
       ${dates ? `<div class="muell-hit-dates">${dates}</div>` : ''}
     </div>`;
   });
   if (!muellHits.length || seiten.length) {
     html += `<div class="muell-pages">
-      <p>${muellHits.length ? 'Weitere Seiten des Entsorgers:' : `Keine Kalenderdatei direkt gefunden${body && body.entsorger ? ' – zuständig ist wohl <b>' + escapeHtml(body.entsorger) + '</b>' : ''}. ${seiten.length ? 'Hier gibt es den Kalender für eure Straße zum Herunterladen:' : ''}`}</p>
+      <p>${muellHits.length ? escapeHtml(tk('settings.waste.morePages')) : (body && body.entsorger ? tk('settings.waste.noFileCollector', { name: escapeHtml(body.entsorger) }) : escapeHtml(tk('settings.waste.noFile'))) + (seiten.length ? ' ' + escapeHtml(tk('settings.waste.pagesHere')) : '')}</p>
       ${body && body.hinweis && !muellHits.length ? `<p>${escapeHtml(body.hinweis)}</p>` : ''}
       ${seiten.map(s => `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(s.titel || s.url)}<small>${escapeHtml(s.url)}</small></a>`).join('')}
-      ${!muellHits.length ? '<p>Dort die .ics-Datei herunterladen oder den Link kopieren und unten bei „Link oder Datei selbst angeben“ einfügen.</p>' : ''}
+      ${!muellHits.length ? `<p>${escapeHtml(tk('settings.waste.pagesHow'))}</p>` : ''}
     </div>`;
   }
   box.innerHTML = html;
@@ -379,22 +381,22 @@ function muellRenderResults(body) {
 }
 async function muellPost(path, data) {
   const res = await apiFetch('/api/pinn/muell/' + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data || {}) });
-  if (res.status === 404) throw new Error('Der Server-Teil (pb_hooks/muell.pb.js) fehlt noch.');
+  if (res.status === 404) throw new Error(tk('settings.waste.serverPartMissing'));
   const body = await res.json().catch(() => ({}));
-  if (!res.ok || body.error) throw new Error(body.error || 'Das hat nicht geklappt.');
+  if (!res.ok || body.error) throw new Error(body.error || tk('common.failed'));
   return body;
 }
 function muellConfirmReplace() {
   const k = muellData && muellData.kalender;
   if (!k) return true;
-  return confirm(`Den bisherigen Müllkalender „${(k.quelle && k.quelle.titel) || 'Müllkalender'}“ ersetzen?\n\nJede Familie hat genau einen Müllkalender – der alte wird dabei überschrieben.`);
+  return confirm(tk('settings.waste.confirmReplace', { title: (k.quelle && k.quelle.titel) || tk('settings.waste.title') }));
 }
 function muellOfflineMsg(e) {
-  return navigator.onLine === false ? 'Keine Verbindung – der Müllkalender lässt sich nur mit Verbindung zum NAS ändern.' : e.message;
+  return navigator.onLine === false ? tk('settings.waste.offline') : e.message;
 }
 function muellDoneMsg(body) {
   const k = body && body.kalender;
-  return k ? `Übernommen ✓ – ${k.anzahl} kommende Abfuhrtermine im Kalender` : 'Gespeichert ✓';
+  return k ? tk('settings.waste.applied', { n: k.anzahl }) : tk('common.savedCheck');
 }
 async function muellSearch() {
   if (muellBusy) return;
@@ -405,7 +407,7 @@ async function muellSearch() {
   } else {
     const strasse = document.getElementById('muellStreetInput').value.trim();
     const ort = document.getElementById('muellPlaceInput').value.trim();
-    if (ort.length < 2) { muellSetStatus('Bitte mindestens Postleitzahl oder Ort angeben.', true); document.getElementById('muellPlaceInput').focus(); return; }
+    if (ort.length < 2) { muellSetStatus(tk('settings.waste.needPlace'), true); document.getElementById('muellPlaceInput').focus(); return; }
     data = { adresse: [strasse, ort].filter(Boolean).join(', ') };
   }
   muellBusy = true;
@@ -417,13 +419,13 @@ async function muellSearch() {
   const timer = ctrl ? setTimeout(() => ctrl.abort(), 160000) : null;
   try {
     const res = await apiFetch('/api/pinn/muell/suche', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), signal: ctrl ? ctrl.signal : undefined });
-    if (res.status === 404) throw new Error('Der Server-Teil (pb_hooks/muell.pb.js) fehlt noch.');
+    if (res.status === 404) throw new Error(tk('settings.waste.serverPartMissing'));
     const body = await res.json().catch(() => ({}));
-    if (!res.ok || body.error) throw new Error(body.error || 'Die Suche hat nicht geklappt.');
+    if (!res.ok || body.error) throw new Error(body.error || tk('settings.waste.searchFailed'));
     muellRenderResults(body);
-    muellSetStatus(body.treffer && body.treffer.length ? `${body.treffer.length === 1 ? '1 Kalender' : body.treffer.length + ' Kalender'} gefunden und geprüft – bitte den passenden übernehmen.` : '');
+    muellSetStatus(body.treffer && body.treffer.length ? tk('settings.waste.found', { n: body.treffer.length }) : '');
   } catch (e) {
-    muellSetStatus(e && e.name === 'AbortError' ? 'Die Suche hat zu lange gedauert – bitte noch einmal versuchen oder den Link selbst angeben.' : muellOfflineMsg(e), true);
+    muellSetStatus(e && e.name === 'AbortError' ? tk('settings.waste.searchTimeout') : muellOfflineMsg(e), true);
   } finally {
     if (timer) clearTimeout(timer);
     muellStopProgress();
@@ -433,8 +435,8 @@ async function muellSearch() {
 }
 async function muellTake(hit, btn) {
   if (!hit || !muellConfirmReplace()) return;
-  if (btn) { btn.disabled = true; btn.textContent = 'Wird geladen …'; }
-  muellSetStatus('Kalender wird heruntergeladen …');
+  if (btn) { btn.disabled = true; btn.textContent = tk('common.loading'); }
+  muellSetStatus(tk('settings.waste.downloading'));
   try {
     const body = await muellPost('uebernehmen', { url: hit.url, anbieter: hit.anbieter || '', titel: hit.titel || '', adresse: muellManualMode ? '' : muellHomeAddress() });
     muellApply(body, outboxFamily());
@@ -443,15 +445,15 @@ async function muellTake(hit, btn) {
     muellSetStatus(muellDoneMsg(body));
   } catch (e) {
     muellSetStatus(muellOfflineMsg(e), true);
-    if (btn) { btn.disabled = false; btn.textContent = 'Übernehmen'; }
+    if (btn) { btn.disabled = false; btn.textContent = tk('common.apply'); }
   }
 }
 async function muellSetOptions(patch) {
-  muellSetStatus('Wird gespeichert …');
+  muellSetStatus(tk('common.saving'));
   try {
     const body = await muellPost('optionen', patch);
     muellApply(body, outboxFamily());
-    muellSetStatus('Gespeichert ✓');
+    muellSetStatus(tk('common.savedCheck'));
   } catch (e) {
     muellSetStatus(muellOfflineMsg(e), true);
     renderMuellSettings();
@@ -483,11 +485,11 @@ document.getElementById('muellResults').addEventListener('click', (ev) => {
 document.getElementById('muellLinkBtn').addEventListener('click', async () => {
   const inp = document.getElementById('muellLinkInput');
   const url = inp.value.trim();
-  if (!/^(https?|webcals?):\/\//i.test(url)) { muellSetStatus('Bitte einen vollständigen Link (https://… oder webcal://…) einfügen.', true); return; }
+  if (!/^(https?|webcals?):\/\//i.test(url)) { muellSetStatus(tk('settings.waste.needLink'), true); return; }
   if (!muellConfirmReplace()) return;
   const btn = document.getElementById('muellLinkBtn');
   btn.disabled = true;
-  muellSetStatus('Kalender wird heruntergeladen und geprüft …');
+  muellSetStatus(tk('settings.waste.downloadingCheck'));
   try {
     const body = await muellPost('uebernehmen', { url, adresse: muellManualMode ? '' : muellHomeAddress() });
     muellApply(body, outboxFamily());
@@ -511,12 +513,12 @@ document.getElementById('muellFileInput').addEventListener('change', async (ev) 
   const file = ev.target.files && ev.target.files[0];
   ev.target.value = '';
   if (!file) return;
-  if (file.size > 6 * 1024 * 1024) { muellSetStatus('Die Datei ist zu groß (höchstens 6 MB).', true); return; }
+  if (file.size > 6 * 1024 * 1024) { muellSetStatus(tk('settings.waste.fileTooBig'), true); return; }
   if (!muellConfirmReplace()) return;
-  muellSetStatus('Datei wird geprüft …');
+  muellSetStatus(tk('settings.waste.checkingFile'));
   try {
     const text = await file.text();
-    if (!/BEGIN:VCALENDAR/i.test(text)) throw new Error('Das ist keine Kalenderdatei (.ics).');
+    if (!/BEGIN:VCALENDAR/i.test(text)) throw new Error(tk('settings.waste.notIcs'));
     const body = await muellPost('datei', { name: file.name, text, adresse: muellManualMode ? '' : muellHomeAddress() });
     muellApply(body, outboxFamily());
     document.getElementById('muellResults').innerHTML = '';
@@ -541,11 +543,11 @@ document.getElementById('muellTypes').addEventListener('click', (ev) => {
 document.getElementById('muellRefreshBtn').addEventListener('click', async () => {
   const btn = document.getElementById('muellRefreshBtn');
   btn.disabled = true;
-  muellSetStatus('Wird beim Entsorger abgefragt …');
+  muellSetStatus(tk('settings.waste.querying'));
   try {
     const body = await muellPost('aktualisieren', {});
     muellApply(body, outboxFamily());
-    muellSetStatus(body.geaendert ? 'Neue Termine übernommen ✓' : 'Alles aktuell ✓');
+    muellSetStatus(body.geaendert ? tk('settings.waste.newDates') : tk('settings.waste.upToDate'));
   } catch (e) {
     muellSetStatus(muellOfflineMsg(e), true);
     loadMuell(true);
@@ -554,12 +556,12 @@ document.getElementById('muellRefreshBtn').addEventListener('click', async () =>
   }
 });
 document.getElementById('muellRemoveBtn').addEventListener('click', async () => {
-  if (!confirm('Müllkalender entfernen? Die Abfuhrtermine verschwinden für die ganze Familie aus dem Kalender.')) return;
-  muellSetStatus('Wird entfernt …');
+  if (!confirm(tk('settings.waste.confirmRemove'))) return;
+  muellSetStatus(tk('common.removing'));
   try {
     const body = await muellPost('entfernen', {});
     muellApply(body, outboxFamily());
-    muellSetStatus('Entfernt ✓');
+    muellSetStatus(tk('common.removedCheck'));
   } catch (e) {
     muellSetStatus(muellOfflineMsg(e), true);
   }
@@ -572,36 +574,36 @@ async function fetchAppleServerStatus() {
   try {
     const res = await apiFetch('/api/pinn/apple-status');
     if (res.status === 404) {
-      appleServerStatus = { configured: false, account: '', hasAppleId: false, hasAppPassword: false, lastSync: null, canEdit: false, error: 'pb_hooks/apple_credentials.pb.js fehlt auf dem Server.' };
+      appleServerStatus = { configured: false, account: '', hasAppleId: false, hasAppPassword: false, lastSync: null, canEdit: false, error: tk('calLink.appleHookMissing') };
     } else {
       appleServerStatus = await res.json();
     }
   } catch (err) {
-    appleServerStatus = { configured: false, account: '', hasAppleId: false, hasAppPassword: false, lastSync: null, canEdit: false, error: 'Server nicht erreichbar.' };
+    appleServerStatus = { configured: false, account: '', hasAppleId: false, hasAppPassword: false, lastSync: null, canEdit: false, error: tk('calLink.serverUnreachable') };
   }
   return appleServerStatus;
 }
 
 function appleStatusTexts(st) {
-  if (!st) return { line: 'Status wird geladen …', detail: '', ok: null };
-  if (st.error && !st.canEdit) return { line: 'Status nicht verfügbar', detail: st.error, ok: false };
+  if (!st) return { line: tk('calLink.statusLoading'), detail: '', ok: null };
+  if (st.error && !st.canEdit) return { line: tk('calLink.statusUnavailable'), detail: st.error, ok: false };
   if (!st.configured) {
-    if (st.error) return { line: 'Apple-ID prüfen', detail: st.error, ok: false };
+    if (st.error) return { line: tk('calLink.checkAppleId'), detail: st.error, ok: false };
     return {
-      line: 'Nicht eingerichtet',
-      detail: st.canEdit ? 'Noch keine Apple-ID für eure Familie hinterlegt.' : 'Noch keine Apple-ID hinterlegt – das kann ein Admin deiner Familie übernehmen.',
+      line: tk('calLink.notSetUp'),
+      detail: st.canEdit ? tk('calLink.noAppleIdAdmin') : tk('calLink.noAppleId'),
       ok: false,
     };
   }
   let detail = '';
   const ls = st.lastSync;
   if (ls && ls.at) {
-    const when = new Date(ls.at).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-    detail = (ls.ok ? 'Letzter Abgleich ' : 'Letzter Abgleich fehlgeschlagen ') + when + (ls.message ? ' – ' + ls.message : '');
+    const when = new Date(ls.at).toLocaleString(sysLocale(), { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    detail = (ls.ok ? tk('calLink.lastSync', { when }) : tk('calLink.lastSyncFailed', { when })) + (ls.message ? ' – ' + ls.message : '');
   } else {
-    detail = 'Noch kein Abgleich seit dem letzten Serverstart bzw. dem Speichern der Apple-ID.';
+    detail = tk('calLink.noSyncYet');
   }
-  return { line: 'Verbunden als ' + st.account, detail, ok: !(ls && ls.ok === false) };
+  return { line: tk('calLink.connectedAs', { account: st.account }), detail, ok: !(ls && ls.ok === false) };
 }
 
 function renderAppleStatusBox() {
@@ -639,7 +641,7 @@ async function fetchGoogleServerStatus() {
       googleServerStatus = await res.json();
     }
   } catch (err) {
-    googleServerStatus = { available: false, configured: false, account: '', error: 'Server nicht erreichbar.', redirectUri: '', lastSync: null, canEdit: false };
+    googleServerStatus = { available: false, configured: false, account: '', error: tk('calLink.serverUnreachable'), redirectUri: '', lastSync: null, canEdit: false };
   }
   return googleServerStatus;
 }
@@ -650,33 +652,33 @@ function googleRedirectUri() {
 }
 
 function googleStatusTexts(st) {
-  if (!st) return { line: 'Status wird geladen …', detail: '', ok: null };
-  if (st.missingHook) return { line: 'Nicht verfügbar', detail: 'pb_hooks/google_credentials.pb.js fehlt auf dem Server.', ok: false };
+  if (!st) return { line: tk('calLink.statusLoading'), detail: '', ok: null };
+  if (st.missingHook) return { line: tk('calLink.notAvailable'), detail: tk('calLink.googleHookMissing'), ok: false };
   if (!st.configured) {
-    if (st.error && !st.canEdit && !st.available) return { line: 'Status nicht verfügbar', detail: st.error, ok: false };
+    if (st.error && !st.canEdit && !st.available) return { line: tk('calLink.statusUnavailable'), detail: st.error, ok: false };
     if (!st.available) {
       return {
-        line: 'Nicht eingerichtet',
-        detail: st.canEdit ? 'Auf dem Server fehlt noch der Google-Zugang für pinn. (einmalige Einrichtung, siehe unten).' : 'Google-Kalender ist auf diesem Server noch nicht eingerichtet.',
+        line: tk('calLink.notSetUp'),
+        detail: st.canEdit ? tk('calLink.googleMissingAdmin') : tk('calLink.googleMissing'),
         ok: null,
       };
     }
     return {
-      line: 'Nicht verbunden',
-      detail: st.canEdit ? 'Mit dem Google-Konto anmelden, das auf dem Android-Handy für den Kalender genutzt wird.' : 'Euren Google-Kalender kann ein Admin deiner Familie verbinden.',
+      line: tk('calLink.notConnected'),
+      detail: st.canEdit ? tk('calLink.googleSignInHint') : tk('calLink.googleAdmin'),
       ok: null,
     };
   }
-  if (st.error) return { line: 'Verbunden als ' + st.account, detail: st.error, ok: false };
+  if (st.error) return { line: tk('calLink.connectedAs', { account: st.account }), detail: st.error, ok: false };
   let detail = '';
   const ls = st.lastSync;
   if (ls && ls.at) {
-    const when = new Date(ls.at).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-    detail = (ls.ok ? 'Letzter Abgleich ' : 'Letzter Abgleich fehlgeschlagen ') + when + (ls.message ? ' – ' + ls.message : '');
+    const when = new Date(ls.at).toLocaleString(sysLocale(), { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    detail = (ls.ok ? tk('calLink.lastSync', { when }) : tk('calLink.lastSyncFailed', { when })) + (ls.message ? ' – ' + ls.message : '');
   } else {
-    detail = 'Jetzt unten die Google-Kalender (mit „(Google)“ im Namen) auswählen und speichern.';
+    detail = tk('calLink.googlePick');
   }
-  return { line: 'Verbunden als ' + st.account, detail, ok: !(ls && ls.ok === false) };
+  return { line: tk('calLink.connectedAs', { account: st.account }), detail, ok: !(ls && ls.ok === false) };
 }
 
 function renderGoogleBox() {
@@ -694,7 +696,7 @@ function renderGoogleBox() {
   const available = !!(st && st.available);
   document.getElementById('googleCalActions').classList.toggle('hidden', !(canEdit && (available || configured)));
   const connectBtn = document.getElementById('connectGoogleBtn');
-  connectBtn.textContent = configured ? 'Neu verbinden' : 'Mit Google verbinden';
+  connectBtn.textContent = configured ? tk('calLink.reconnect') : tk('calLink.connectGoogle');
   connectBtn.classList.toggle('hidden', !available);
   connectBtn.classList.toggle('bg-pine', !configured);
   connectBtn.classList.toggle('text-white', !configured);
@@ -709,9 +711,7 @@ function renderGoogleBox() {
   const showHint = canEdit && st && !available && !st.missingHook;
   hint.classList.toggle('hidden', !showHint);
   if (showHint) {
-    hint.innerHTML = 'Einmalige Einrichtung auf dem NAS: in der <b>.env</b> neben der docker-compose.yaml '
-      + '<b>PINN_GOOGLE_CLIENT_ID</b> und <b>PINN_GOOGLE_CLIENT_SECRET</b> eintragen und den Container neu starten. '
-      + 'Autorisierte Weiterleitungs-URI im Google-Cloud-Projekt:<br><span class="font-mono text-[10px] text-ink/70" style="word-break:break-all;-webkit-user-select:all;user-select:all">' + escapeHtml(googleRedirectUri()) + '</span>';
+    hint.innerHTML = tk('calLink.googleSetup') + '<br><span class="font-mono text-[10px] text-ink/70" style="word-break:break-all;-webkit-user-select:all;user-select:all">' + escapeHtml(googleRedirectUri()) + '</span>';
   }
 }
 
@@ -730,10 +730,10 @@ document.getElementById('connectGoogleBtn').addEventListener('click', async () =
   const btn = document.getElementById('connectGoogleBtn');
   showGoogleMsg('', true);
   btn.disabled = true;
-  btn.textContent = 'Weiter zu Google …';
+  btn.textContent = tk('calLink.toGoogle');
   try {
     const r = await postJson('/api/pinn/google/start', { origin: location.origin });
-    if (!r.url) throw new Error('Google-Anmeldung konnte nicht gestartet werden.');
+    if (!r.url) throw new Error(tk('calLink.googleStartFailed'));
     location.href = r.url; // Google asks for the account and permission and sends the user back to pinn.
   } catch (e) {
     showGoogleMsg(e.message, false);
@@ -743,13 +743,13 @@ document.getElementById('connectGoogleBtn').addEventListener('click', async () =
 });
 
 document.getElementById('removeGoogleBtn').addEventListener('click', async () => {
-  if (!confirm('Google-Konto eurer Familie wirklich trennen? Termine aus den Google-Kalendern werden dann nicht mehr angezeigt, bis wieder ein Google-Konto verbunden ist. Die Kalenderauswahl bleibt erhalten.')) return;
+  if (!confirm(tk('calLink.confirmRemoveGoogle'))) return;
   const btn = document.getElementById('removeGoogleBtn');
   btn.disabled = true;
   try {
     await postJson('/api/pinn/google/loeschen', {});
     await refreshAppleServerStatus();
-    showGoogleMsg('Google-Konto getrennt.', true);
+    showGoogleMsg(tk('calLink.googleRemoved'), true);
     loadBirthdays(true); // Birthdays from Google disappear
     if (calendarsUsable()) {
       await loadAppleCalendarList();
@@ -781,9 +781,9 @@ async function googleReturnFromUrl() {
   setView('einstellungen');
   await openCalendarModal();
   if (result === 'verbunden') {
-    showGoogleMsg(note ? 'Verbunden. Achtung: ' + note : 'Google-Konto verbunden. Jetzt die Google-Kalender auswählen und unten speichern.', !note);
+    showGoogleMsg(note ? tk('calLink.connectedNote', { note }) : tk('calLink.googleConnected'), !note);
   } else {
-    showGoogleMsg(reason || 'Google-Konto konnte nicht verbunden werden.', false);
+    showGoogleMsg(reason || tk('calLink.googleConnectFailed'), false);
   }
 }
 
@@ -799,7 +799,7 @@ function renderAppleCredForm() {
   if (!canEdit) return;
   const idInput = document.getElementById('appleIdInput');
   if (!idInput.dataset.touched) idInput.value = st.account || '';
-  document.getElementById('saveAppleCredsBtn').textContent = st.configured ? 'Apple-ID ändern' : 'Apple-ID speichern';
+  document.getElementById('saveAppleCredsBtn').textContent = st.configured ? tk('calLink.changeAppleId') : tk('calLink.saveAppleId');
   document.getElementById('removeAppleCredsBtn').classList.toggle('hidden', !(st.configured || st.hasAppleId));
 }
 
@@ -824,18 +824,18 @@ document.getElementById('saveAppleCredsBtn').addEventListener('click', async () 
   const appPassword = pwInput.value.trim();
   showAppleCredsStatus('', true);
   if (!appleId || !appPassword) {
-    showAppleCredsStatus('Bitte Apple-ID und App-spezifisches Passwort eingeben.', false);
+    showAppleCredsStatus(tk('calLink.needAppleCreds'), false);
     return;
   }
   btn.disabled = true;
-  btn.textContent = 'Wird bei iCloud geprüft …';
+  btn.textContent = tk('calLink.checkingIcloud');
   try {
     const r = await postJson('/api/pinn/apple-zugang', { appleId, appPassword });
     pwInput.value = '';
     delete idInput.dataset.touched;
     try { document.activeElement && document.activeElement.blur(); } catch (e) { /* ignore */ }
     await refreshAppleServerStatus();
-    showAppleCredsStatus('Gespeichert. Jetzt die Kalender auswählen und unten speichern.', true);
+    showAppleCredsStatus(tk('calLink.savedPick'), true);
     document.getElementById('appleCalError').classList.add('hidden');
     if (r.calendars && r.calendars.length) await loadAppleCalendarList(); // iCloud + Google if connected
     armModalSnapshot('appleCalendarModal');
@@ -851,7 +851,7 @@ document.getElementById('saveAppleCredsBtn').addEventListener('click', async () 
 });
 
 document.getElementById('removeAppleCredsBtn').addEventListener('click', async () => {
-  if (!confirm('Apple-ID eurer Familie wirklich entfernen? Termine aus iCloud werden dann nicht mehr angezeigt, bis wieder eine Apple-ID hinterlegt ist. Die Kalenderauswahl bleibt erhalten.')) return;
+  if (!confirm(tk('calLink.confirmRemoveApple'))) return;
   const btn = document.getElementById('removeAppleCredsBtn');
   btn.disabled = true;
   try {
@@ -862,7 +862,7 @@ document.getElementById('removeAppleCredsBtn').addEventListener('click', async (
     document.getElementById('appleCalListWrap').classList.add('hidden');
     document.getElementById('appleCalList').innerHTML = '';
     await refreshAppleServerStatus();
-    showAppleCredsStatus('Apple-ID entfernt.', true);
+    showAppleCredsStatus(tk('calLink.appleRemoved'), true);
     loadBirthdays(true); // Birthdays from iCloud disappear
     if (googleServerStatus && googleServerStatus.configured) {
       // Google stays connected: reload the list and the events, Google events stay
@@ -910,7 +910,7 @@ function renderAppleCalendarSummary() {
   //   namesToShow.push(appleCalendar.taskCalendarName);
   // }
   if (!namesToShow.length) {
-    listEl.innerHTML = '<li class="text-xs text-ink/40 italic">Keine Kalender ausgewählt.</li>';
+    listEl.innerHTML = `<li class="text-xs text-ink/40 italic">${escapeHtml(tk('calLink.noneSelected'))}</li>`;
     return;
   }
   namesToShow.forEach(name => {
@@ -918,7 +918,7 @@ function renderAppleCalendarSummary() {
     const color = appleCalendar.calendarColors[name] || '#9a9284';
     const li = document.createElement('li');
     li.className = 'flex items-center gap-2 text-xs text-ink/70';
-    li.innerHTML = `<span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:${color}"></span><span class="truncate">${escapeHtml(name)}</span>${isTaskCal ? '<span class="text-ink/40 shrink-0">(Aufgaben-Kalender)</span>' : ''}`;
+    li.innerHTML = `<span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:${color}"></span><span class="truncate">${escapeHtml(name)}</span>${isTaskCal ? `<span class="text-ink/40 shrink-0">${escapeHtml(tk('calLink.taskCalendarTag'))}</span>` : ''}`;
     listEl.appendChild(li);
   });
 }
@@ -994,7 +994,7 @@ function renderAppleCalList(names) {
         <input type="checkbox" class="apple-cal-checkbox" value="${escapeHtml(name)}" ${pendingSelectedCalendars.includes(name) ? 'checked' : ''} />
         <span class="truncate">${escapeHtml(name)}</span>
       </label>
-      <button type="button" class="cal-color-swatch w-6 h-6 rounded-full border-2 border-white shadow shrink-0" data-name="${escapeHtml(name)}" style="background:${pendingCalendarColors[name]}" title="Farbe für diesen Kalender ändern (antippen zum Wechseln)"></button>
+      <button type="button" class="cal-color-swatch w-6 h-6 rounded-full border-2 border-white shadow shrink-0" data-name="${escapeHtml(name)}" style="background:${pendingCalendarColors[name]}" title="${escapeHtml(tk('calLink.changeColor'))}"></button>
     `;
     wrap.appendChild(row);
   });
@@ -1022,7 +1022,7 @@ function renderAppleCalList(names) {
   document.getElementById('appleCalListWrap').classList.remove('hidden');
 
   const taskSel = document.getElementById('taskCalendarSelect');
-  taskSel.innerHTML = '<option value="">Kein Aufgaben-Kalender</option>' + names.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
+  taskSel.innerHTML = `<option value="">${escapeHtml(tk('calLink.noTaskCalendar'))}</option>` + names.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
   taskSel.value = pendingTaskCalendarName || '';
   taskSel.onchange = () => {
     pendingTaskCalendarName = taskSel.value;
@@ -1038,15 +1038,15 @@ async function loadAppleCalendarList() {
 
   if (!calendarsUsable()) {
     errEl.textContent = (appleServerStatus && appleServerStatus.canEdit)
-      ? 'Bitte zuerst oben eine Apple-ID hinterlegen oder ein Google-Konto verbinden.'
-      : 'Für eure Familie ist noch kein Kalender verbunden – das kann ein Admin deiner Familie übernehmen.';
+      ? tk('calLink.needAccountAdmin')
+      : tk('calLink.needAccount');
     errEl.classList.remove('hidden');
     return;
   }
 
   const btn = document.getElementById('loadAppleCalendarsBtn');
   btn.disabled = true;
-  btn.textContent = 'Lade Kalender …';
+  btn.textContent = tk('calLink.loadingCalendars');
   try {
     const res = await apiFetch('/api/discover-calendars', {
       method: 'POST',
@@ -1060,7 +1060,7 @@ async function loadAppleCalendarList() {
       return;
     }
     if (!result.calendars || result.calendars.length === 0) {
-      errEl.textContent = 'Keine Kalender gefunden.';
+      errEl.textContent = tk('calLink.noneFound');
       errEl.classList.remove('hidden');
       return;
     }
@@ -1071,11 +1071,11 @@ async function loadAppleCalendarList() {
       errEl.classList.remove('hidden');
     }
   } catch (err) {
-    errEl.textContent = 'Verbindung zum Server fehlgeschlagen. Bitte NAS/Netzwerk prüfen.';
+    errEl.textContent = tk('calLink.serverFailed');
     errEl.classList.remove('hidden');
   } finally {
     btn.disabled = !calendarsUsable();
-    btn.textContent = 'Kalender laden';
+    btn.textContent = tk('calLink.load');
   }
 }
 document.getElementById('loadAppleCalendarsBtn').addEventListener('click', () => loadAppleCalendarList());
@@ -1085,7 +1085,7 @@ document.getElementById('loadAppleCalendarsBtn').addEventListener('click', () =>
 // as well as after saving the calendar selection.
 async function triggerFullCalendarResync() {
   const statusEl = document.getElementById('icsSyncStatus');
-  if (statusEl) statusEl.textContent = 'Synchronisiere Kalender …';
+  if (statusEl) statusEl.textContent = tk('settings.calendar.syncing');
   try {
     await apiFetch('/api/sync-calendar-now', { method: 'POST' });
   } catch (err) {
@@ -1107,7 +1107,7 @@ document.getElementById('saveAppleCalendar').addEventListener('click', async () 
 });
 
 document.getElementById('disconnectAppleCalendar').addEventListener('click', async () => {
-  if (!confirm('Kalenderauswahl wirklich zurücksetzen? Es werden dann keine Termine mehr importiert, bis wieder Kalender ausgewählt sind (Aufgaben bleiben erhalten). Apple-ID und Google-Konto bleiben verbunden.')) return;
+  if (!confirm(tk('calLink.confirmReset'))) return;
   appleCalendar = { selectedCalendars: [], calendarColors: {}, taskCalendarName: '', showTaskCalendarAsEvents: false };
   document.getElementById('appleCalendarModal').classList.add('hidden');
   renderAppleCalendarSummary();
@@ -1132,9 +1132,9 @@ function pinnCalSrcTag(c) {
   return c.quelle ? PINN_CAL_SRC_ICON[c.quelle] + ' ' + PINN_CAL_SRC_LABEL[c.quelle] : '🗄 pinn.';
 }
 function pinnCalSubLabel(c) {
-  let t = (c.geteilt ? '👨‍👩‍👧 Familie' : '🔒 Für mich') + ' · ' + pinnCalSrcTag(c);
+  let t = escapeHtml(c.geteilt ? tk('settings.calendar.tagFamily') : tk('settings.calendar.tagMine')) + ' · ' + pinnCalSrcTag(c);
   if (c.quelle && c.externName && c.externName !== c.name) t += ' „' + escapeHtml(c.externName) + '“';
-  if (c.nurLesen) t += ' · nur lesen';
+  if (c.nurLesen) t += ' · ' + escapeHtml(tk('settings.calendar.readOnly'));
   return t;
 }
 
@@ -1161,8 +1161,8 @@ function renderPinnCalAccounts() {
     const st = pinnCalKonten[art];
     return `<div class="pca-row${st.fehler ? ' err' : ''}">
       <span class="pca-ico">${PINN_CAL_SRC_ICON[art]}</span>
-      <span class="pca-txt"><b>${escapeHtml(st.konto || PINN_CAL_SRC_LABEL[art])}</b><small>${st.fehler ? '⚠️ ' + escapeHtml(st.fehler) : PINN_CAL_SRC_LABEL[art] + '-Konto'}</small></span>
-      <button type="button" class="pc-edit" data-pca="${art}">Kalender wählen</button>
+      <span class="pca-txt"><b>${escapeHtml(st.konto || PINN_CAL_SRC_LABEL[art])}</b><small>${st.fehler ? '⚠️ ' + escapeHtml(st.fehler) : escapeHtml(tk('settings.calendar.account', { name: PINN_CAL_SRC_LABEL[art] }))}</small></span>
+      <button type="button" class="pc-edit" data-pca="${art}">${escapeHtml(tk('settings.calendar.pickCalendars'))}</button>
     </div>`;
   }).join('');
 }
@@ -1177,17 +1177,17 @@ function renderPinnCalSettings() {
   list.innerHTML = order.map(c => `<li class="pinn-cal-item">
       <span class="pc-dot" style="background:${escapeHtml(c.farbe || PINN_CAL_COLORS[0])}"></span>
       <span class="pc-txt"><b>${escapeHtml(c.name)}</b><small>${pinnCalSubLabel(c)}</small>${c.fehler ? `<small class="err">⚠️ ${escapeHtml(c.fehler)}</small>` : ''}</span>
-      ${c.darf ? `<button type="button" class="pc-edit" data-pinncal="${escapeHtml(c.id)}">Bearbeiten</button>` : ''}
+      ${c.darf ? `<button type="button" class="pc-edit" data-pinncal="${escapeHtml(c.id)}">${escapeHtml(tk('common.edit'))}</button>` : ''}
     </li>`).join('');
   // Other people's family calendars: only as a hint about which (masked) account they come from
   const fam = pinnCals.filter(c => c.geteilt && !c.mein);
   const famBox = document.getElementById('pinnCalFamily');
   famBox.classList.toggle('hidden', !fam.length);
-  famBox.innerHTML = fam.length ? `<p class="pcf-title">👨‍👩‍👧 Familienkalender</p>` + fam.map(c => `<div class="pcf-row">
+  famBox.innerHTML = fam.length ? `<p class="pcf-title">${escapeHtml(tk('settings.calendar.familyCalendars'))}</p>` + fam.map(c => `<div class="pcf-row">
       <span class="pc-dot" style="background:${escapeHtml(c.farbe || PINN_CAL_COLORS[0])}"></span>
-      <span class="pcf-txt"><b>${escapeHtml(c.name)}</b><small>${c.quelle
-        ? 'über ' + escapeHtml(c.konto || PINN_CAL_SRC_LABEL[c.quelle]) + ' · ' + PINN_CAL_SRC_LABEL[c.quelle]
-        : 'von ' + escapeHtml(c.von || 'der Familie') + ' · pinn.'}${c.nurLesen ? ' · nur lesen' : ''}</small></span>
+      <span class="pcf-txt"><b>${escapeHtml(c.name)}</b><small>${escapeHtml(c.quelle
+        ? tk('settings.calendar.via', { account: c.konto || PINN_CAL_SRC_LABEL[c.quelle], source: PINN_CAL_SRC_LABEL[c.quelle] })
+        : (c.von ? tk('settings.calendar.from', { name: c.von }) : tk('settings.calendar.fromFamily')))}${c.nurLesen ? ' · ' + escapeHtml(tk('settings.calendar.readOnly')) : ''}</small></span>
     </div>`).join('') : '';
   renderPinnCalLegacy();
   renderPinnCalAccounts();
@@ -1212,7 +1212,7 @@ async function loadPinnCalKonten() {
   try {
     const res = await apiFetch('/api/pinn/kalender/konten?origin=' + encodeURIComponent(location.origin));
     const body = await res.json().catch(() => ({}));
-    if (!res.ok || body.error) throw new Error(body.error || 'Konten konnten nicht geladen werden.');
+    if (!res.ok || body.error) throw new Error(body.error || tk('settings.calendar.accountsFailed'));
     pinnCalKonten = body;
     pinnCalKontenErr = '';
   } catch (err) {
@@ -1223,10 +1223,10 @@ async function loadPinnCalKonten() {
   renderPinnCalSource();
 }
 
-/* ----- Form „Kalender hinzufügen“ / „Kalender bearbeiten“ ----- */
+/* ----- Form "Add calendar" / "Edit calendar" ----- */
 let pinnCalEditing = null;   // Calendar being edited, null = add
 let pinnCalColor = PINN_CAL_COLORS[0];
-let pinnCalShared = false;   // Calendar without an account or while editing: „Familie“ ticked
+let pinnCalShared = false;   // Calendar without an account or while editing: "Family" ticked
 let pinnCalSource = 'apple'; // 'apple' | 'google' | '' (without an account, pinn. server only)
 let pinnCalExtern = { apple: null, google: null };   // Calendars of the accounts (null = not loaded yet)
 let pinnCalExternErr = { apple: '', google: '' };
@@ -1236,10 +1236,10 @@ let pinnCalSrcBusy = false;
 let pinnCalSrcMsg = '';
 
 function pinnCalChecks(cur, attrs, locked) {
-  return ['ich', 'familie'].map(z => `<button type="button" class="pcs-chk${cur === z ? ' on' : ''}" data-ziel="${z}" ${attrs}${locked ? ' disabled' : ''} aria-label="${z === 'ich' ? 'Für mich' : 'Familie'}" aria-pressed="${cur === z}"></button>`).join('');
+  return ['ich', 'familie'].map(z => `<button type="button" class="pcs-chk${cur === z ? ' on' : ''}" data-ziel="${z}" ${attrs}${locked ? ' disabled' : ''} aria-label="${escapeHtml(z === 'ich' ? tk('calForm.forMe') : tk('calForm.family'))}" aria-pressed="${cur === z}"></button>`).join('');
 }
 function pinnCalTableHead(first) {
-  return `<div class="pcs-row head"><span>${first}</span><span>Für mich</span><span>Familie</span></div>`;
+  return `<div class="pcs-row head"><span>${escapeHtml(first)}</span><span>${escapeHtml(tk('calForm.forMe'))}</span><span>${escapeHtml(tk('calForm.family'))}</span></div>`;
 }
 
 function renderPinnCalSource() {
@@ -1258,86 +1258,86 @@ function renderPinnCalSource() {
   });
   const msg = pinnCalSrcMsg ? `<p class="${/^✓/.test(pinnCalSrcMsg) ? 'pcs-ok' : 'pcs-err'}">${escapeHtml(pinnCalSrcMsg)}</p>` : '';
   if (!pinnCalSource) {
-    body.innerHTML = '<p>Ohne Konto – die Termine liegen nur auf eurem pinn.-Server und sind nur in pinn. sichtbar.</p>';
+    body.innerHTML = `<p>${escapeHtml(tk('calForm.noAccountHint'))}</p>`;
     saveBtn.classList.remove('hidden');
-    saveBtn.textContent = 'Anlegen';
+    saveBtn.textContent = tk('common.create');
     return;
   }
   const art = pinnCalSource;
   const lbl = PINN_CAL_SRC_LABEL[art];
   saveBtn.classList.add('hidden');
   if (!pinnCalKonten) {
-    body.innerHTML = pinnCalKontenErr ? `<p class="pcs-err">${escapeHtml(pinnCalKontenErr)}</p><button type="button" class="pcs-link" data-pcs="konten">Erneut versuchen</button>` : '<p>Lade …</p>';
+    body.innerHTML = pinnCalKontenErr ? `<p class="pcs-err">${escapeHtml(pinnCalKontenErr)}</p><button type="button" class="pcs-link" data-pcs="konten">${escapeHtml(tk('common.retry'))}</button>` : `<p>${escapeHtml(tk('calForm.loadingShort'))}</p>`;
     return;
   }
   const st = pinnCalKonten[art] || {};
   if (art === 'google' && !st.verfuegbar) {
     const uri = st.weiterleitung || (location.origin + '/api/pinn/google/callback');
-    body.innerHTML = `<p><b>Google ist auf eurem pinn.-Server noch nicht freigeschaltet.</b></p>
-      ${st.einrichtbar ? `<p>Einmalig die Zugangsdaten aus der Google Cloud Console eintragen (APIs und Dienste → Anmeldedaten → OAuth-Client vom Typ „Webanwendung“):</p>
-        <input id="pinnCalGClientId" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="next" placeholder="Client-ID (…apps.googleusercontent.com)" />
-        <input id="pinnCalGClientSecret" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" placeholder="Clientschlüssel (Client Secret)" />
-        <small style="margin-bottom:0.4rem">Autorisierte Weiterleitungs-URI im OAuth-Client:</small>
+    body.innerHTML = `<p><b>${escapeHtml(tk('calForm.googleLocked'))}</b></p>
+      ${st.einrichtbar ? `<p>${escapeHtml(tk('calForm.googleCreds'))}</p>
+        <input id="pinnCalGClientId" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="next" placeholder="${escapeHtml(tk('calForm.clientId'))}" />
+        <input id="pinnCalGClientSecret" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" placeholder="${escapeHtml(tk('calForm.clientSecret'))}" />
+        <small style="margin-bottom:0.4rem">${escapeHtml(tk('calForm.redirectUri'))}</small>
         <code class="pcs-code">${escapeHtml(uri)}</code>
-        <small style="margin-bottom:0.5rem">Im Cloud-Projekt aktivieren: „Google Calendar API“ und „CalDAV API“. Stehen die Werte schon in der .env? Dann reicht es auch, den Container mit „docker compose up -d“ neu zu erstellen – ein einfacher Neustart liest die .env nicht neu ein.</small>
+        <small style="margin-bottom:0.5rem">${escapeHtml(tk('calForm.googleApis'))}</small>
         ${msg}
-        <button type="button" class="pcs-btn" id="pinnCalGClientSave"${pinnCalSrcBusy ? ' disabled' : ''}>${pinnCalSrcBusy ? 'Speichere …' : 'Google freischalten'}</button>`
-      : `<p>Das kann ein Admin eurer Familie hier einmalig einrichten.</p>${msg}`}`;
+        <button type="button" class="pcs-btn" id="pinnCalGClientSave"${pinnCalSrcBusy ? ' disabled' : ''}>${escapeHtml(pinnCalSrcBusy ? tk('calForm.savingShort') : tk('calForm.unlockGoogle'))}</button>`
+      : `<p>${escapeHtml(tk('calForm.adminOnce'))}</p>${msg}`}`;
     return;
   }
   if (!st.verbunden) {
     if (art === 'apple') {
       const prevId = (document.getElementById('pinnCalAppleId') || {}).value || '';
-      body.innerHTML = `<p>Melde dich mit <b>deiner</b> Apple-ID an – danach wählst du die Kalender aus.</p>
-        <input id="pinnCalAppleId" type="email" autocomplete="username" autocapitalize="off" spellcheck="false" enterkeyhint="next" placeholder="Apple-ID (E-Mail)" value="${escapeHtml(prevId)}" />
-        <input id="pinnCalApplePw" type="password" autocomplete="off" enterkeyhint="go" placeholder="App-spezifisches Passwort (xxxx-xxxx-xxxx-xxxx)" />
-        <small style="margin-bottom:0.5rem">Erstellen unter account.apple.com → Anmeldung und Sicherheit → App-spezifische Passwörter. Es liegt verschlüsselt auf eurem NAS.</small>
+      body.innerHTML = `<p>${tk('calForm.appleSignIn')}</p>
+        <input id="pinnCalAppleId" type="email" autocomplete="username" autocapitalize="off" spellcheck="false" enterkeyhint="next" placeholder="${escapeHtml(tk('calForm.appleIdPh'))}" value="${escapeHtml(prevId)}" />
+        <input id="pinnCalApplePw" type="password" autocomplete="off" enterkeyhint="go" placeholder="${escapeHtml(tk('calForm.appPwPh'))}" />
+        <small style="margin-bottom:0.5rem">${escapeHtml(tk('calForm.appPwHint'))}</small>
         ${msg}
-        <button type="button" class="pcs-btn" id="pinnCalAppleConnect"${pinnCalSrcBusy ? ' disabled' : ''}>${pinnCalSrcBusy ? 'Prüfe bei iCloud …' : 'Mit iCloud anmelden'}</button>`;
+        <button type="button" class="pcs-btn" id="pinnCalAppleConnect"${pinnCalSrcBusy ? ' disabled' : ''}>${escapeHtml(pinnCalSrcBusy ? tk('calForm.checkingIcloud') : tk('calForm.signInIcloud'))}</button>`;
     } else {
-      body.innerHTML = `<p>Melde dich mit <b>deinem</b> Google-Konto an – danach wählst du die Kalender aus.</p>
+      body.innerHTML = `<p>${tk('calForm.googleSignIn')}</p>
         ${msg}
-        <button type="button" class="pcs-btn" id="pinnCalGoogleConnect"${pinnCalSrcBusy ? ' disabled' : ''}>${pinnCalSrcBusy ? 'Weiter zu Google …' : 'Mit Google anmelden'}</button>`;
+        <button type="button" class="pcs-btn" id="pinnCalGoogleConnect"${pinnCalSrcBusy ? ' disabled' : ''}>${escapeHtml(pinnCalSrcBusy ? tk('calLink.toGoogle') : tk('calForm.signInGoogle'))}</button>`;
     }
     return;
   }
   const list = pinnCalExtern[art];
   let picker;
   if (list === null) {
-    picker = '<p>Kalender werden geladen …</p>';
+    picker = `<p>${escapeHtml(tk('calForm.loadingCalendars'))}</p>`;
   } else if (pinnCalExternErr[art]) {
-    picker = `<p class="pcs-err">${escapeHtml(pinnCalExternErr[art])}</p><button type="button" class="pcs-link" data-pcs="reload">Erneut laden</button>`;
+    picker = `<p class="pcs-err">${escapeHtml(pinnCalExternErr[art])}</p><button type="button" class="pcs-link" data-pcs="reload">${escapeHtml(tk('common.reload'))}</button>`;
   } else if (!list.length) {
-    picker = '<p>In diesem Konto wurden keine Kalender gefunden.</p>';
+    picker = `<p>${escapeHtml(tk('calForm.noneInAccount'))}</p>`;
   } else {
     const sel = pinnCalSel[art];
-    picker = `<div class="pcs-tbl">${pinnCalTableHead('Kalender')}${list.map((c, i) => `<div class="pcs-row">
-        <span class="pcs-name">${escapeHtml(c.name)}${c.nurLesen ? '<small>nur lesen</small>' : ''}</span>
+    picker = `<div class="pcs-tbl">${pinnCalTableHead(tk('calForm.calendar'))}${list.map((c, i) => `<div class="pcs-row">
+        <span class="pcs-name">${escapeHtml(c.name)}${c.nurLesen ? `<small>${escapeHtml(tk('settings.calendar.readOnly'))}</small>` : ''}</span>
         ${pinnCalChecks(sel[c.href] || '', `data-i="${i}"`, pinnCalSrcBusy)}
       </div>`).join('')}</div>
-      <small style="margin-top:0.5rem">„Für mich“ siehst nur du. „Familie“ sehen und nutzen alle in eurer Familie – sie erfahren nur, über welches Konto der Kalender kommt (unkenntlich, z. B. m**l@g***l.com). Termine landen direkt in ${lbl}.</small>`;
+      <small style="margin-top:0.5rem">${escapeHtml(tk('calForm.pickHint', { source: lbl }))}</small>`;
     saveBtn.classList.remove('hidden');
-    saveBtn.textContent = 'Übernehmen';
+    saveBtn.textContent = tk('common.apply');
   }
-  body.innerHTML = `<div class="pcs-acc"><span>${PINN_CAL_SRC_ICON[art]} ${escapeHtml(st.konto || lbl)}</span><button type="button" class="pcs-link red" data-pcs="trennen">Abmelden</button></div>
+  body.innerHTML = `<div class="pcs-acc"><span>${PINN_CAL_SRC_ICON[art]} ${escapeHtml(st.konto || lbl)}</span><button type="button" class="pcs-link red" data-pcs="trennen">${escapeHtml(tk('common.logOut'))}</button></div>
     ${st.fehler ? `<p class="pcs-err">${escapeHtml(st.fehler)}</p>` : ''}${msg}${picker}`;
 }
 
 function renderPinnCalModalParts() {
   const box = document.getElementById('pinnCalColors');
-  box.innerHTML = PINN_CAL_COLORS.map(col => `<button type="button" data-col="${col}" class="${col === pinnCalColor ? 'on' : ''}" style="background:${col}" aria-label="Farbe ${col}"></button>`).join('');
+  box.innerHTML = PINN_CAL_COLORS.map(col => `<button type="button" data-col="${col}" class="${col === pinnCalColor ? 'on' : ''}" style="background:${col}" aria-label="${escapeHtml(tk('calForm.colorN', { color: col }))}"></button>`).join('');
   const c = pinnCalEditing;
   const locked = !!(c && !c.mein);
-  document.getElementById('pinnCalVisRow').innerHTML = pinnCalTableHead('Sichtbar für') + `<div class="pcs-row">
-      <span class="pcs-name">${escapeHtml((document.getElementById('pinnCalNameInput').value || '').trim() || (c ? c.name : 'Neuer Kalender'))}</span>
+  document.getElementById('pinnCalVisRow').innerHTML = pinnCalTableHead(tk('calForm.visibleFor')) + `<div class="pcs-row">
+      <span class="pcs-name">${escapeHtml((document.getElementById('pinnCalNameInput').value || '').trim() || (c ? c.name : tk('calForm.newCalendar')))}</span>
       ${pinnCalChecks(pinnCalShared ? 'familie' : 'ich', 'data-own="1"', locked)}
     </div>`;
   let hint;
-  if (locked) hint = 'Ob der Kalender für die Familie ist, entscheidet nur, wer ihn angelegt hat.';
-  else if (c && c.quelle) hint = `Verknüpft mit deinem ${PINN_CAL_SRC_LABEL[c.quelle]}-Kalender „${c.externName || c.name}“${c.nurLesen ? ' (nur lesen)' : ''}${c.konto ? ' · ' + c.konto : ''}.`;
-  else hint = pinnCalShared ? 'Alle in eurer Familie sehen den Kalender und können Termine darin anlegen.' : 'Nur du siehst diesen Kalender und seine Termine.';
+  if (locked) hint = tk('calForm.lockedHint');
+  else if (c && c.quelle) hint = tk('calForm.linkedTo', { source: PINN_CAL_SRC_LABEL[c.quelle], name: c.externName || c.name, extra: (c.nurLesen ? ' (' + tk('settings.calendar.readOnly') + ')' : '') + (c.konto ? ' · ' + c.konto : '') });
+  else hint = pinnCalShared ? tk('calForm.sharedHint') : tk('calForm.privateHint');
   document.getElementById('pinnCalShareHint').textContent = hint;
-  document.getElementById('pinnCalDeleteBtn').textContent = (c && c.quelle) ? 'Entfernen' : 'Löschen';
+  document.getElementById('pinnCalDeleteBtn').textContent = (c && c.quelle) ? tk('common.remove') : tk('common.delete');
   renderPinnCalSource();
 }
 
@@ -1358,9 +1358,9 @@ function openPinnCalModal(cal, opts) {
   pinnCalExternErr = { apple: '', google: '' };
   pinnCalSel = { apple: {}, google: {} };
   pinnCalSelOrig = { apple: {}, google: {} };
-  document.getElementById('pinnCalModalTitle').textContent = cal ? 'Kalender bearbeiten' : 'Kalender hinzufügen';
+  document.getElementById('pinnCalModalTitle').textContent = cal ? tk('calForm.editTitle') : tk('calForm.addTitle');
   const saveBtn = document.getElementById('pinnCalSaveBtn');
-  saveBtn.textContent = cal ? 'Speichern' : 'Anlegen';
+  saveBtn.textContent = cal ? tk('common.save') : tk('common.create');
   saveBtn.classList.remove('hidden');
   document.getElementById('pinnCalNameInput').value = cal ? cal.name : '';
   document.getElementById('pinnCalModalStatus').textContent = '';
@@ -1406,7 +1406,7 @@ function closePinnCalModal() { document.getElementById('pinnCalModal').classList
 function attemptClosePinnCalModal() {
   const pending = !pinnCalEditing && pinnCalSource && pinnCalSelChanges(pinnCalSource).length;
   if (pending) {
-    if (!confirm('Wirklich abbrechen? Deine Auswahl wird nicht übernommen.')) return;
+    if (!confirm(tk('calForm.confirmCancel'))) return;
     closePinnCalModal();
     return;
   }
@@ -1425,7 +1425,7 @@ document.getElementById('pinnCalColors').addEventListener('click', (ev) => {
 });
 document.getElementById('pinnCalNameInput').addEventListener('input', () => {
   const n = document.querySelector('#pinnCalVisRow .pcs-row:not(.head) .pcs-name');
-  if (n) n.textContent = document.getElementById('pinnCalNameInput').value.trim() || (pinnCalEditing ? pinnCalEditing.name : 'Neuer Kalender');
+  if (n) n.textContent = document.getElementById('pinnCalNameInput').value.trim() || (pinnCalEditing ? pinnCalEditing.name : tk('calForm.newCalendar'));
 });
 // Tick for the own calendar (without an account / editing): exactly one column
 document.getElementById('pinnCalVisRow').addEventListener('click', (ev) => {
@@ -1459,7 +1459,7 @@ document.getElementById('pinnCalModal').addEventListener('focusin', (ev) => {
 async function pinnCalConnectApple() {
   const appleId = (document.getElementById('pinnCalAppleId').value || '').trim();
   const appPassword = (document.getElementById('pinnCalApplePw').value || '').trim();
-  if (!appleId || !appPassword) { pinnCalSrcMsg = 'Bitte Apple-ID und App-spezifisches Passwort eingeben.'; renderPinnCalSource(); return; }
+  if (!appleId || !appPassword) { pinnCalSrcMsg = tk('calLink.needAppleCreds'); renderPinnCalSource(); return; }
   pinnCalSrcBusy = true;
   pinnCalSrcMsg = '';
   renderPinnCalSource();
@@ -1467,7 +1467,7 @@ async function pinnCalConnectApple() {
     const res = await postJson('/api/pinn/kalender/konten/apple', { appleId, appPassword, origin: location.origin });
     pinnCalKonten = res.konten || pinnCalKonten;
     pinnCalSetExtern('apple', Array.isArray(res.extern) ? res.extern : []);
-    pinnCalSrcMsg = '✓ Angemeldet – jetzt die Kalender anhaken.';
+    pinnCalSrcMsg = tk('calForm.signedIn');
     renderPinnCalAccounts();
     loadBirthdays(true); // the own iCloud contacts now also count for birthdays
   } catch (err) {
@@ -1480,14 +1480,14 @@ async function pinnCalConnectApple() {
 async function pinnCalSaveGoogleClient() {
   const clientId = (document.getElementById('pinnCalGClientId').value || '').trim();
   const clientSecret = (document.getElementById('pinnCalGClientSecret').value || '').trim();
-  if (!clientId || !clientSecret) { pinnCalSrcMsg = 'Bitte Client-ID und Clientschlüssel eintragen.'; renderPinnCalSource(); return; }
+  if (!clientId || !clientSecret) { pinnCalSrcMsg = tk('calForm.needClient'); renderPinnCalSource(); return; }
   pinnCalSrcBusy = true;
   pinnCalSrcMsg = '';
   renderPinnCalSource();
   try {
     const res = await postJson('/api/pinn/kalender/konten/google-client', { clientId, clientSecret, origin: location.origin });
     if (res.konten) pinnCalKonten = res.konten; else await loadPinnCalKonten();
-    pinnCalSrcMsg = '✓ Google ist freigeschaltet – jetzt anmelden.';
+    pinnCalSrcMsg = tk('calForm.googleUnlocked');
   } catch (err) {
     pinnCalSrcMsg = pinnCalErrorText(err);
   } finally {
@@ -1522,7 +1522,7 @@ document.getElementById('pinnCalSourceBody').addEventListener('click', async (ev
     renderPinnCalSource();
     try {
       const r = await postJson('/api/pinn/kalender/konten/google/start', { origin: location.origin });
-      if (!r.url) throw new Error('Google-Anmeldung konnte nicht gestartet werden.');
+      if (!r.url) throw new Error(tk('calLink.googleStartFailed'));
       location.href = r.url; // Google asks for the account and permission and sends the user back to pinn.
     } catch (err) {
       pinnCalSrcBusy = false;
@@ -1539,7 +1539,7 @@ document.getElementById('pinnCalSourceBody').addEventListener('click', async (ev
   if (act.dataset.pcs === 'trennen') {
     const lbl = PINN_CAL_SRC_LABEL[art];
     const n = pinnCals.filter(c => c.mein && c.quelle === art).length;
-    if (!confirm(`Von deinem ${lbl}-Konto abmelden?` + (n ? ` Deine ${n} Kalender daraus verschwinden aus pinn. – auch die für die Familie. In ${lbl} bleiben sie mit allen Terminen erhalten.` : ''))) return;
+    if (!confirm(tk('calForm.confirmSignOut', { source: lbl }) + (n ? ' ' + tk('calForm.signOutCalendars', { n, source: lbl }) : ''))) return;
     try {
       const res = await postJson('/api/pinn/kalender/konten/trennen', { art, origin: location.origin });
       pinnCalKonten = res.konten || null;
@@ -1556,9 +1556,9 @@ document.getElementById('pinnCalSourceBody').addEventListener('click', async (ev
   }
 });
 function pinnCalErrorText(err) {
-  if (navigator.onLine === false) return 'Keine Verbindung – Kalender lassen sich nur mit Verbindung zum NAS hinzufügen und ändern.';
-  if (/404|Not Found/i.test(err && err.message)) return 'Auf dem NAS fehlt noch der Server-Teil (pb_hooks/kalender.pb.js, pinn-kalender.js und pinn-kalender-konten.js).';
-  return (err && err.message) || 'Aktion fehlgeschlagen.';
+  if (navigator.onLine === false) return tk('calForm.offline');
+  if (/404|Not Found/i.test(err && err.message)) return tk('calForm.serverMissing');
+  return (err && err.message) || tk('common.actionFailed');
 }
 async function pinnCalAfterChange(res) {
   if (res && Array.isArray(res.kalender)) setPinnCals(res.kalender);
@@ -1572,23 +1572,23 @@ async function pinnCalSaveSelection() {
   const changes = pinnCalSelChanges(art);
   if (!changes.length) { closePinnCalModal(); return; }
   const removing = changes.filter(c => !c.ziel).length;
-  if (removing && !confirm(`${removing} Kalender aus pinn. entfernen? In ${PINN_CAL_SRC_LABEL[art]} bleiben sie mit allen Terminen erhalten.`)) return;
+  if (removing && !confirm(tk('calForm.confirmRemoveN', { n: removing, source: PINN_CAL_SRC_LABEL[art] }))) return;
   const btn = document.getElementById('pinnCalSaveBtn');
   btn.disabled = true;
-  btn.textContent = 'Übernehme …';
+  btn.textContent = tk('calForm.applying');
   pinnCalSrcBusy = true;
   st.textContent = '';
   try {
     const res = await postJson('/api/pinn/kalender/konten/auswahl', { art, auswahl: changes });
     closePinnCalModal();
-    document.getElementById('pinnCalStatus').textContent = res.hinweis || 'Auswahl übernommen.';
+    document.getElementById('pinnCalStatus').textContent = res.hinweis || tk('calForm.selectionApplied');
     await pinnCalAfterChange(res);
   } catch (err) {
     st.textContent = pinnCalErrorText(err);
   } finally {
     pinnCalSrcBusy = false;
     btn.disabled = false;
-    btn.textContent = 'Übernehmen';
+    btn.textContent = tk('common.apply');
     renderPinnCalSource();
   }
 }
@@ -1596,7 +1596,7 @@ document.getElementById('pinnCalSaveBtn').addEventListener('click', async () => 
   if (!pinnCalEditing && pinnCalSource) { pinnCalSaveSelection(); return; }
   const name = document.getElementById('pinnCalNameInput').value.trim();
   const st = document.getElementById('pinnCalModalStatus');
-  if (!name) { st.textContent = 'Bitte einen Namen eingeben.'; return; }
+  if (!name) { st.textContent = tk('common.needName'); return; }
   const btn = document.getElementById('pinnCalSaveBtn');
   btn.disabled = true;
   st.textContent = '';
@@ -1607,29 +1607,28 @@ document.getElementById('pinnCalSaveBtn').addEventListener('click', async () => 
     const res = await postJson('/api/pinn/kalender/eigene/speichern', payload);
     closePinnCalModal();
     document.getElementById('pinnCalStatus').textContent = pinnCalEditing
-      ? 'Kalender gespeichert.'
-      : `Kalender „${name}“ angelegt – er steht jetzt beim Anlegen von Terminen zur Auswahl.`;
+      ? tk('calForm.saved')
+      : tk('calForm.created', { name });
     await pinnCalAfterChange(res);
   } catch (err) {
     st.textContent = pinnCalErrorText(err);
   } finally {
     btn.disabled = false;
-    btn.textContent = pinnCalEditing ? 'Speichern' : 'Anlegen';
+    btn.textContent = pinnCalEditing ? tk('common.save') : tk('common.create');
   }
 });
 document.getElementById('pinnCalDeleteBtn').addEventListener('click', async () => {
   const c = pinnCalEditing;
   if (!c) return;
-  const who = c.geteilt ? ' für die ganze Familie' : '';
   const q = c.quelle
-    ? `„${c.name}“ aus pinn. entfernen?${c.geteilt ? ' Auch die Familie sieht ihn dann nicht mehr.' : ''} In ${PINN_CAL_SRC_LABEL[c.quelle]} bleibt er mit allen Terminen erhalten.`
-    : `Kalender „${c.name}“ mit allen seinen Terminen${who} löschen? Das kann nicht rückgängig gemacht werden.`;
+    ? (c.geteilt ? tk('calForm.confirmUnlinkShared', { name: c.name, source: PINN_CAL_SRC_LABEL[c.quelle] }) : tk('calForm.confirmUnlink', { name: c.name, source: PINN_CAL_SRC_LABEL[c.quelle] }))
+    : (c.geteilt ? tk('calForm.confirmDeleteShared', { name: c.name }) : tk('calForm.confirmDelete', { name: c.name }));
   if (!confirm(q)) return;
   const st = document.getElementById('pinnCalModalStatus');
   try {
     const res = await postJson('/api/pinn/kalender/eigene/loeschen', { id: c.id });
     closePinnCalModal();
-    document.getElementById('pinnCalStatus').textContent = c.quelle ? `„${c.name}“ entfernt.` : `Kalender „${c.name}“ gelöscht.`;
+    document.getElementById('pinnCalStatus').textContent = c.quelle ? tk('calForm.unlinked', { name: c.name }) : tk('calForm.deleted', { name: c.name });
     await pinnCalAfterChange(res);
   } catch (err) {
     st.textContent = pinnCalErrorText(err);
@@ -1644,8 +1643,8 @@ async function pinnCalGoogleReturn(result, reason, note) {
   openPinnCalModal(null, {
     quelle: 'google',
     msg: result === 'verbunden'
-      ? (note ? 'Angemeldet. Achtung: ' + note : '✓ Bei Google angemeldet – jetzt die Kalender anhaken.')
-      : (reason || 'Google-Konto konnte nicht verbunden werden.'),
+      ? (note ? tk('calForm.signedInNote', { note }) : tk('calForm.googleSignedIn'))
+      : (reason || tk('calLink.googleConnectFailed')),
   });
 }
 

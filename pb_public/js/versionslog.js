@@ -24,6 +24,9 @@ const PINN_CHANGELOG = [
     punkte: [
       ['info', 'Kalender (Tag, Woche, Monat, Jahr), Termin-Popup, Aufgaben, Haushalt mit Räumen, Mülleimern, Reinigungen und „Wer macht wie viel?“ holen ihre Texte jetzt über Text-Schlüssel – in allen neun Sprachen, auch als WG. Wochentage, Monatsnamen und Datum stehen im Format der eingestellten Sprache'],
       ['fix', 'Kleinigkeiten: „Alle [n] Wochen“ in der Termin-Wiederholung, „Keine“ und „Bis“ stehen jetzt in jeder Sprache richtig; Feiertage zeigen das Datum im Format der eingestellten Sprache; Zahlen wie „3 Aufgaben angelegt“ oder „1 erledigt“ in richtiger Einzahl und Mehrzahl'],
+      ['info', '1.113.1: Kalender-Einstellungen (iCloud- und Google-Konten, eigene Kalender, Müllkalender, Zuhause-Adresse, Feiertage) und Smarthome (Geräte, Apple-Kurzbefehle, Home Assistant, Saugroboter) holen ihre Texte jetzt über Text-Schlüssel – in allen neun Sprachen, auch als WG'],
+      ['fix', '1.113.1: Kleinigkeiten: Bundesländer, Datum und Uhrzeit stehen in den Kalender- und Smarthome-Einstellungen im Format der eingestellten Sprache; Vorschläge für neue Smarthome-Geräte (Name und Aktionen) erscheinen in der eingestellten Sprache, Saugroboter-Modus und Mähroboter-Befehl werden dabei sicher erkannt; Zahlen wie „1 Gerät“ oder „1 Raum“ in richtiger Einzahl und Mehrzahl'],
+      ['info', '1.113.1 geändert: index.html, js/kalenderkonto.js, js/smarthome.js, js/sprachen.js, js/versionslog.js, alle Sprachdateien in i18n/ und lang/ – am Server ändert sich nichts'],
       ['info', 'Geändert: index.html, js/kalenderansicht.js, js/termine.js, js/termindetails.js, js/kalenderquellen.js, js/kalenderdatei.js, js/feiertage.js, js/muellkalender.js, js/aufgaben.js, js/aufgabendaten.js, js/aufgabenextras.js, js/haushalt.js, js/reihum.js, js/zustand.js, js/sprachen.js, js/versionslog.js, alle Sprachdateien in i18n/ und lang/ – am Server ändert sich nichts'],
     ],
   },

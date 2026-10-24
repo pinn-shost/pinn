@@ -99,13 +99,13 @@ Sempre com você: o pinn. se instala em todo iPhone e celular Android como um ap
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 e 🇰🇷 한국어**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
-## Novidades da 1.113.0
+## Novidades da 1.113.1
 
-**Chaves de texto, parte 3: calendário, tarefas e casa**
+**Chaves de texto, parte 4: configurações do calendário e casa inteligente**
 
-- O **calendário** (dia, semana, mês, ano e lista), a janela e os detalhes de compromissos, as **tarefas** e a página **Casa** com cômodos, lixeiras, limpezas, “Revezar” e “Quem faz quanto?” agora pegam os textos dos arquivos de idioma em `pb_public/i18n/` – nos nove idiomas e como casa compartilhada. O uso não muda.
-- Dias da semana, meses e datas no calendário, nos feriados e nas tarefas seguem agora o formato do seu idioma.
-- As configurações do calendário (iCloud/Google, calendário de coleta, casa) e a casa inteligente vêm com a 1.113.1.
+- **Configurações → Calendário** (suas contas iCloud e Google, calendários “Para mim” e “Família”, o formulário *Adicionar calendário*), o **calendário de coleta**, o **endereço de casa** com feriados e férias escolares e toda a janela de **casa inteligente** (dispositivos, Atalhos da Apple, Home Assistant, robô aspirador com cômodos e modos) agora pegam os textos dos arquivos de idioma em `pb_public/i18n/` – nos nove idiomas e como casa compartilhada. O uso não muda.
+- Datas e horas nessas configurações seguem o formato do seu idioma; as sugestões para um novo dispositivo aparecem no seu idioma.
+- Listas, despensa e receitas vêm com a 1.114.0.
 - Alterados só arquivos do app – nada muda no servidor.
 
 ## Como funciona
@@ -136,7 +136,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.113.0` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.113.1` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
