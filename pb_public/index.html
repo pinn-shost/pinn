@@ -31,7 +31,7 @@
        pb_public/vendor/tesseract/tesseract.min.js + worker.min.js, core/ (tesseract-core*.wasm.js),
          lang/deu.traineddata.gz (text recognition for "Foto einlesen" in recipes, only loaded when needed) -->
 <link rel="stylesheet" href="vendor/pinn.css">
-<link rel="stylesheet" href="css/ergaenzung.css?v=1.111.0">
+<link rel="stylesheet" href="css/ergaenzung.css?v=1.112.0">
 <!-- ==========================================================
      Power saving (since 0.99)
      - Recurring requests (setInterval from 1 second) only run while pinn. is visible;
@@ -41,11 +41,11 @@
        Every touch, mouse or keyboard input wakes pinn. at once and catches up on everything.
      - Short timers (< 1 s, e.g. the SOS countdown) stay unchanged.
      ========================================================== -->
-<link rel="stylesheet" href="css/energiesparen.css?v=1.111.0">
-<script src="js/ruhemodus.js?v=1.111.0"></script>
-<script src="js/textkern.js?v=1.111.0"></script>
-<script src="js/sprachen.js?v=1.111.0"></script>
-<script src="js/region.js?v=1.111.0"></script>
+<link rel="stylesheet" href="css/energiesparen.css?v=1.112.0">
+<script src="js/ruhemodus.js?v=1.112.0"></script>
+<script src="js/textkern.js?v=1.112.0"></script>
+<script src="js/sprachen.js?v=1.112.0"></script>
+<script src="js/region.js?v=1.112.0"></script>
 <script src="vendor/pocketbase/pocketbase.umd.js"></script>
 <!-- If the file sits somewhere else on the NAS or has another name: try further places -->
 <script>if (!window.PocketBase) document.write('<script src="vendor/pocketbase.umd.js"><\/script>');</script>
@@ -143,26 +143,26 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/basis.css?v=1.111.0">
-<link rel="stylesheet" href="css/mobil.css?v=1.111.0">
-<link rel="stylesheet" href="css/einstellungen.css?v=1.111.0">
-<link rel="stylesheet" href="css/seitenleiste.css?v=1.111.0">
-<link rel="stylesheet" href="css/finanzen.css?v=1.111.0">
-<link rel="stylesheet" href="css/listen.css?v=1.111.0">
-<link rel="stylesheet" href="css/vertraege.css?v=1.111.0">
-<link rel="stylesheet" href="css/fahrzeuge.css?v=1.111.0">
-<link rel="stylesheet" href="css/notfall.css?v=1.111.0">
-<link rel="stylesheet" href="css/hinweise.css?v=1.111.0">
-<link rel="stylesheet" href="css/familie.css?v=1.111.0">
-<link rel="stylesheet" href="css/dokumente.css?v=1.111.0">
-<link rel="stylesheet" href="css/sparen.css?v=1.111.0">
-<link rel="stylesheet" href="css/kinderaufgaben.css?v=1.111.0">
-<link rel="stylesheet" href="css/dashboard.css?v=1.111.0">
-<link rel="stylesheet" href="css/uebersicht.css?v=1.111.0">
-<link rel="stylesheet" href="css/wohnort.css?v=1.111.0">
-<link rel="stylesheet" href="css/familienkachel.css?v=1.111.0">
-<link rel="stylesheet" href="css/pinnwand.css?v=1.111.0">
-<link rel="stylesheet" href="css/haustierewetter.css?v=1.111.0">
+<link rel="stylesheet" href="css/basis.css?v=1.112.0">
+<link rel="stylesheet" href="css/mobil.css?v=1.112.0">
+<link rel="stylesheet" href="css/einstellungen.css?v=1.112.0">
+<link rel="stylesheet" href="css/seitenleiste.css?v=1.112.0">
+<link rel="stylesheet" href="css/finanzen.css?v=1.112.0">
+<link rel="stylesheet" href="css/listen.css?v=1.112.0">
+<link rel="stylesheet" href="css/vertraege.css?v=1.112.0">
+<link rel="stylesheet" href="css/fahrzeuge.css?v=1.112.0">
+<link rel="stylesheet" href="css/notfall.css?v=1.112.0">
+<link rel="stylesheet" href="css/hinweise.css?v=1.112.0">
+<link rel="stylesheet" href="css/familie.css?v=1.112.0">
+<link rel="stylesheet" href="css/dokumente.css?v=1.112.0">
+<link rel="stylesheet" href="css/sparen.css?v=1.112.0">
+<link rel="stylesheet" href="css/kinderaufgaben.css?v=1.112.0">
+<link rel="stylesheet" href="css/dashboard.css?v=1.112.0">
+<link rel="stylesheet" href="css/uebersicht.css?v=1.112.0">
+<link rel="stylesheet" href="css/wohnort.css?v=1.112.0">
+<link rel="stylesheet" href="css/familienkachel.css?v=1.112.0">
+<link rel="stylesheet" href="css/pinnwand.css?v=1.112.0">
+<link rel="stylesheet" href="css/haustierewetter.css?v=1.112.0">
 </head>
 <body class="font-sans text-ink antialiased">
 
@@ -173,46 +173,46 @@
     <div class="flex flex-col items-center mb-6">
       <img id="loginLogo" alt="" class="w-14 h-14 rounded-2xl mb-3" />
       <h1 class="font-serif text-2xl">pinn.</h1>
-      <p id="loginSubtitle" class="text-xs text-ink/40 mt-1">Bitte anmelden</p>
+      <p data-tk="login.pleaseLogIn" id="loginSubtitle" class="text-xs text-ink/40 mt-1">Please log in</p>
     </div>
 
   <!-- Step 1: family -->
   <form id="loginFamilyForm" class="w-full" autocomplete="off">
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginFamilyInput">Familie</label>
+    <label data-tk="login.family" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginFamilyInput">Family</label>
     <div id="loginFamilySelectWrap" class="hidden flex items-center gap-2 mb-3">
       <select id="loginFamilySelect" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white"></select>
-      <button type="button" id="loginFamilyForgetBtn" class="shrink-0 px-2.5 py-2 rounded-lg border border-ink/15 text-xs text-ink/50 hover:text-red-500 hover:border-red-500 transition" title="Gespeicherte Familie von diesem Gerät entfernen">Entfernen</button>
+      <button data-tk="common.remove" type="button" id="loginFamilyForgetBtn" class="shrink-0 px-2.5 py-2 rounded-lg border border-ink/15 text-xs text-ink/50 hover:text-red-500 hover:border-red-500 transition" title="Remove saved family from this device" data-tk-attr="title:login.removeSavedFamily">Remove</button>
     </div>
-    <input id="loginFamilyInput" type="text" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="Name der Familie" />
+    <input id="loginFamilyInput" type="text" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="Name of the family" data-tk-attr="placeholder:login.familyName" />
     <label id="loginFamilySaveWrap" class="flex items-center gap-2 text-sm mb-4 cursor-pointer select-none">
       <input id="loginFamilySave" type="checkbox" class="w-4 h-4" checked />
-      Familie auf diesem Gerät merken
+      <span data-tk="login.rememberFamilyDevice">Remember family on this device</span>
     </label>
     <p id="loginFamilyError" class="hidden text-xs text-red-500 mb-3"></p>
-    <button id="loginFamilySubmit" type="submit" class="w-full px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Weiter</button>
+    <button data-tk="common.next" id="loginFamilySubmit" type="submit" class="w-full px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Next</button>
   </form>
 
   <!-- Step 2: profile + password (or only the password for the main admin sign-in) -->
   <form id="loginForm" class="hidden w-full" autocomplete="on">
     <div id="loginFamilyBar" class="flex items-center justify-between gap-2 mb-4 rounded-lg border border-ink/10 px-3 py-2">
-      <p class="text-sm min-w-0 truncate"><span id="loginFamilyLabel" class="text-ink/40">Familie</span> <span id="loginFamilyName" class="font-medium"></span></p>
-      <button type="button" id="loginFamilyChangeBtn" class="shrink-0 text-xs text-pine underline decoration-dotted">ändern</button>
+      <p class="text-sm min-w-0 truncate"><span data-tk="login.family" id="loginFamilyLabel" class="text-ink/40">Family</span> <span id="loginFamilyName" class="font-medium"></span></p>
+      <button data-tk="login.changeFamily" type="button" id="loginFamilyChangeBtn" class="shrink-0 text-xs text-pine underline decoration-dotted">change</button>
     </div>
     <div id="loginProfileWrap">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginProfileSelect">Name</label>
+      <label data-tk="common.name" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginProfileSelect">Name</label>
       <select id="loginProfileSelect" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3 bg-white"></select>
     </div>
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginPassword">Passwort</label>
+    <label data-tk="common.password" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginPassword">Password</label>
     <input id="loginPassword" type="password" autocomplete="current-password" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
     <label id="loginRememberWrap" class="flex items-center gap-2 text-sm mb-4 cursor-pointer select-none">
       <input id="loginRemember" type="checkbox" class="w-4 h-4" checked />
-      Angemeldet bleiben
+      <span data-tk="login.stayLoggedIn">Stay logged in</span>
     </label>
     <p id="loginError" class="hidden text-xs text-red-500 mb-3"></p>
-    <button id="loginSubmit" type="submit" class="w-full px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Anmelden</button>
+    <button data-tk="common.logIn" id="loginSubmit" type="submit" class="w-full px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Log in</button>
   </form>
-  <button id="loginToggleCreateBtn" type="button" class="hidden w-full mt-4 text-xs text-ink/40 hover:text-pine underline decoration-dotted text-center">Neues Konto anlegen</button>
-  <button id="loginMainAdminBtn" type="button" class="w-full mt-4 text-xs text-ink/40 hover:text-pine underline decoration-dotted text-center">Als Hauptadmin anmelden</button>
+  <button data-tk="login.createNewAccount" id="loginToggleCreateBtn" type="button" class="hidden w-full mt-4 text-xs text-ink/40 hover:text-pine underline decoration-dotted text-center">Create new account</button>
+  <button data-tk="login.asMainAdmin" id="loginMainAdminBtn" type="button" class="w-full mt-4 text-xs text-ink/40 hover:text-pine underline decoration-dotted text-center">Log in as main admin</button>
   <!-- First setup: only on a new installation (setup open, no family yet) -->
   <div id="loginSetupHint" class="hidden w-full mt-4 rounded-xl border border-ink/10 p-4 bg-pine/5" data-no-i18n data-no-term>
     <p id="loginSetupHintText" class="text-sm"></p>
@@ -222,22 +222,22 @@
   <!-- Create a new account: only appears after signing in above as an admin of the family -->
   <div id="loginCreateAccountSection" class="hidden w-full">
     <div class="flex flex-col items-center mb-4">
-      <h2 class="font-serif text-lg">Neues Konto anlegen</h2>
-      <p class="text-xs text-ink/40 mt-1 text-center">Angemeldet als Admin „<span id="loginCreateAdminName"></span>“</p>
+      <h2 data-tk="login.createNewAccount" class="font-serif text-lg">Create new account</h2>
+      <p class="text-xs text-ink/40 mt-1 text-center"><span id="loginCreateAdminName" data-no-i18n></span></p>
     </div>
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginNewUsername">Name</label>
+    <label data-tk="common.name" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginNewUsername">Name</label>
     <input id="loginNewUsername" type="text" autocomplete="off" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginNewPassword">Start-Passwort (mind. 8 Zeichen)</label>
+    <label data-tk="login.startPassword" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginNewPassword">Start password (min. 8 characters)</label>
     <input id="loginNewPassword" type="password" autocomplete="new-password" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginNewRole">Rolle</label>
+    <label data-tk="login.role" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginNewRole">Role</label>
     <select id="loginNewRole" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3 bg-white">
-      <option value="mitglied" selected>Mitglied</option>
-      <option value="admin">Admin</option>
+      <option data-tk="common.member" value="mitglied" selected>Member</option>
+      <option data-tk="common.admin" value="admin">Admin</option>
     </select>
     <p id="loginCreateError" class="hidden text-xs text-red-500 mb-3"></p>
     <p id="loginCreateSuccess" class="hidden text-xs text-pine mb-3"></p>
-    <button id="loginCreateSubmit" type="button" class="w-full px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition mb-2">Konto anlegen</button>
-    <button id="loginCreateDone" type="button" class="w-full px-4 py-2 rounded-lg border border-ink/15 text-sm hover:border-pine transition">Fertig, zur Anmeldung</button>
+    <button data-tk="login.createAccount" id="loginCreateSubmit" type="button" class="w-full px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition mb-2">Create account</button>
+    <button data-tk="login.doneBackToLogin" id="loginCreateDone" type="button" class="w-full px-4 py-2 rounded-lg border border-ink/15 text-sm hover:border-pine transition">Done, to login</button>
   </div>
  </div>
  </div>
@@ -247,18 +247,18 @@
 <div id="forcePasswordScreen" class="hidden pinn-auth-screen z-[410] bg-paper">
  <div class="pinn-auth-inner">
   <form id="forcePasswordForm" class="w-full max-w-xs">
-    <h2 class="font-serif text-xl mb-1">Neues Passwort festlegen</h2>
-    <p class="text-xs text-ink/50 mb-4">Aus Sicherheitsgründen musst du vor der ersten Nutzung ein eigenes Passwort vergeben (mindestens 8 Zeichen).</p>
+    <h2 data-tk="login.setNewPassword" class="font-serif text-xl mb-1">Set new password</h2>
+    <p data-tk="login.forcePasswordHint" class="text-xs text-ink/50 mb-4">For security reasons you must set your own password before first use (at least 8 characters).</p>
     <div id="forcePasswordOldWrap">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="forcePasswordOld">Aktuelles Passwort</label>
+      <label data-tk="login.currentPassword" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="forcePasswordOld">Current password</label>
       <input id="forcePasswordOld" type="password" autocomplete="current-password" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
     </div>
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="forcePasswordNew">Neues Passwort</label>
+    <label data-tk="login.newPassword" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="forcePasswordNew">New password</label>
     <input id="forcePasswordNew" type="password" autocomplete="new-password" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="forcePasswordRepeat">Neues Passwort wiederholen</label>
+    <label data-tk="login.repeatNewPassword" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="forcePasswordRepeat">Repeat new password</label>
     <input id="forcePasswordRepeat" type="password" autocomplete="new-password" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
     <p id="forcePasswordError" class="hidden text-xs text-red-500 mb-3"></p>
-    <button type="submit" class="w-full px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern und weiter</button>
+    <button data-tk="login.saveContinue" type="submit" class="w-full px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Save and continue</button>
   </form>
  </div>
 </div>
@@ -269,16 +269,16 @@
   <div class="w-full max-w-md">
     <div class="flex items-start justify-between gap-3 mb-6">
       <div class="min-w-0">
-        <h1 class="font-serif text-2xl">Familien</h1>
-        <p class="text-xs text-ink/40 mt-1">Angemeldet als Hauptadmin „<span id="mainAdminName"></span>“</p>
+        <h1 data-tk="mainAdmin.families" class="font-serif text-2xl">Families</h1>
+        <p class="text-xs text-ink/40 mt-1"><span id="mainAdminName" data-no-i18n></span></p>
       </div>
       <div class="flex flex-col items-end gap-1.5 shrink-0">
-        <button type="button" id="mainAdminLogoutBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-red-500 hover:border-red-500 transition">Abmelden</button>
-        <button type="button" id="mainAdminPasswordBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Passwort ändern</button>
+        <button data-tk="common.logOut" type="button" id="mainAdminLogoutBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-red-500 hover:border-red-500 transition">Log out</button>
+        <button data-tk="mainAdmin.changePassword" type="button" id="mainAdminPasswordBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Change password</button>
         <button type="button" id="mainAdminSetupBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition" data-no-i18n>⚙︎ Einrichtung</button>
-        <button type="button" id="mainAdminSystemBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">🛟 Sicherungen &amp; Updates</button>
-        <button type="button" id="mainAdminErrLogBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition"><span>🧾 Fehlerprotokoll</span><span id="mainAdminErrLogBadge" class="el-badge hidden" data-no-i18n></span></button>
-        <button type="button" id="mainAdminDevicesBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">📱 Meine Geräte</button>
+        <button data-tk="mainAdmin.backupsUpdates" type="button" id="mainAdminSystemBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">🛟 Backups &amp; updates</button>
+        <button type="button" id="mainAdminErrLogBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition"><span data-tk="mainAdmin.errorLog">🧾 Error log</span><span id="mainAdminErrLogBadge" class="el-badge hidden" data-no-i18n></span></button>
+        <button data-tk="mainAdmin.myDevices" type="button" id="mainAdminDevicesBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">📱 My devices</button>
       </div>
     </div>
 
@@ -289,21 +289,21 @@
     </div>
 
     <form id="mainAdminCreateForm" class="rounded-xl border border-ink/10 p-4 mb-6" autocomplete="off">
-      <h2 class="text-xs uppercase tracking-wide text-ink/40 mb-3">Neue Familie anlegen</h2>
-      <label class="block text-xs text-ink/50 mb-1" for="mainAdminNewFamily">Name der Familie</label>
+      <h2 data-tk="mainAdmin.createNewFamily" class="text-xs uppercase tracking-wide text-ink/40 mb-3">Create new family</h2>
+      <label data-tk="mainAdmin.familyName" class="block text-xs text-ink/50 mb-1" for="mainAdminNewFamily">Name of the family</label>
       <input id="mainAdminNewFamily" type="text" autocomplete="off" autocapitalize="words" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
-      <p class="block text-xs text-ink/50 mb-1">Wohnform</p>
-      <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-1" role="group" aria-label="Wohnform">
-        <button type="button" data-ma-wohnform="familie" class="ma-wohnform-btn active px-3 py-1.5 rounded-full transition">👨‍👩‍👧 Familie</button>
-        <button type="button" data-ma-wohnform="wg" class="ma-wohnform-btn px-3 py-1.5 rounded-full transition">🧑‍🤝‍🧑 WG</button>
+      <p data-tk="mainAdmin.householdType" class="block text-xs text-ink/50 mb-1">Household type</p>
+      <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-1" role="group" aria-label="Household type" data-tk-attr="aria-label:mainAdmin.householdType">
+        <button data-tk="mainAdmin.family" type="button" data-ma-wohnform="familie" class="ma-wohnform-btn active px-3 py-1.5 rounded-full transition">👨‍👩‍👧 Family</button>
+        <button data-tk="mainAdmin.flatshare" type="button" data-ma-wohnform="wg" class="ma-wohnform-btn px-3 py-1.5 rounded-full transition">🧑‍🤝‍🧑 Flatshare</button>
       </div>
-      <p class="text-[11px] text-ink/40 mb-3">Als WG heißen Familienmitglieder „Mitbewohner“, Kinder-Funktionen sind ausgeblendet. Später änderbar unter Einstellungen → Familienmitglieder.</p>
-      <label class="block text-xs text-ink/50 mb-1" for="mainAdminNewAdmin">Name des Familien-Admins</label>
+      <p data-tk="mainAdmin.flatshareHint" class="text-[11px] text-ink/40 mb-3">In a flatshare, family members are called “flatmates” and child features are hidden. Can be changed later under Settings → Family members.</p>
+      <label data-tk="mainAdmin.adminName" class="block text-xs text-ink/50 mb-1" for="mainAdminNewAdmin">Name of the family admin</label>
       <input id="mainAdminNewAdmin" type="text" autocomplete="off" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
-      <label class="block text-xs text-ink/50 mb-1" for="mainAdminNewPassword">Start-Passwort (mind. 8 Zeichen, muss beim ersten Anmelden geändert werden)</label>
+      <label data-tk="mainAdmin.startPassword" class="block text-xs text-ink/50 mb-1" for="mainAdminNewPassword">Start password (min. 8 characters, must be changed at first login)</label>
       <input id="mainAdminNewPassword" type="password" autocomplete="new-password" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
       <p id="mainAdminCreateStatus" class="hidden text-xs mb-3"></p>
-      <button type="submit" id="mainAdminCreateBtn" class="w-full px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Familie anlegen</button>
+      <button data-tk="mainAdmin.createFamily" type="submit" id="mainAdminCreateBtn" class="w-full px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Create family</button>
     </form>
 
     <p id="mainAdminListStatus" class="hidden text-xs mb-3"></p>
@@ -318,35 +318,35 @@
   <div class="dash-inner">
     <div class="dash-head">
       <div class="min-w-0">
-        <h1 class="font-serif text-3xl leading-tight">Familie <span id="dashFamilyName"></span></h1>
+        <h1 class="font-serif text-3xl leading-tight"><span data-tk="dashboard.family">Family</span> <span id="dashFamilyName"></span></h1>
         <p id="dashDate" class="text-sm text-ink/50 mt-1"></p>
       </div>
       <div id="dashClock" class="dash-clock"></div>
     </div>
     <div class="dash-main">
-      <p id="dashQuestion" class="text-sm text-ink/50 mb-5 text-center">Wer möchte loslegen? Tippe auf dein Bild.</p>
+      <p data-tk="dashboard.whoIsStarting" id="dashQuestion" class="text-sm text-ink/50 mb-5 text-center">Who wants to get started? Tap your picture.</p>
       <div id="dashTiles" class="dash-grid"></div>
       <div id="dashStatusWrap" class="hidden flex flex-col items-center gap-3 mt-6 text-center">
         <p id="dashStatus" class="text-sm text-red-500"></p>
-        <button type="button" id="dashRetryBtn" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Erneut versuchen</button>
+        <button data-tk="dashboard.tryAgain" type="button" id="dashRetryBtn" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Try again</button>
       </div>
     </div>
     <div class="dash-footer">
-      <button type="button" id="dashPasswordLoginBtn" class="text-xs text-ink/40 hover:text-pine underline decoration-dotted">Mit Passwort anmelden</button>
+      <button data-tk="dashboard.logInWithPassword" type="button" id="dashPasswordLoginBtn" class="text-xs text-ink/40 hover:text-pine underline decoration-dotted">Log in with password</button>
     </div>
   </div>
-  <div id="dashBusy" class="hidden dash-busy"><span id="dashBusyText">Wird geöffnet …</span></div>
+  <div id="dashBusy" class="hidden dash-busy"><span data-tk="dashboard.opening" id="dashBusyText">Opening …</span></div>
 </div>
 
 <!-- PIN entry (dashboard and "PIN festlegen" in the account) -->
-<div id="pinPadOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="PIN-Eingabe">
+<div id="pinPadOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="PIN entry" data-tk-attr="aria-label:dashboard.pinEntry">
   <div id="pinPadBox" class="pin-box">
     <div id="pinPadAvatar" class="hidden"></div>
     <div id="pinPadTitle" class="pin-title"></div>
     <div id="pinPadSub" class="pin-sub"></div>
     <div id="pinPadLengths" class="pin-lengths hidden">
-      <button type="button" class="pin-len-btn" data-pin-len="4">4-stellig</button>
-      <button type="button" class="pin-len-btn" data-pin-len="6">6-stellig</button>
+      <button data-tk="dashboard.fourDigits" type="button" class="pin-len-btn" data-pin-len="4">4 digits</button>
+      <button data-tk="dashboard.sixDigits" type="button" class="pin-len-btn" data-pin-len="6">6 digits</button>
     </div>
     <div id="pinPadDots" class="pin-dots"></div>
     <div id="pinPadError" class="pin-error"></div>
@@ -360,9 +360,9 @@
       <button type="button" class="pin-key" data-pin-key="7"><span class="pin-digit">7</span><span class="pin-letters">PQRS</span></button>
       <button type="button" class="pin-key" data-pin-key="8"><span class="pin-digit">8</span><span class="pin-letters">TUV</span></button>
       <button type="button" class="pin-key" data-pin-key="9"><span class="pin-digit">9</span><span class="pin-letters">WXYZ</span></button>
-      <button type="button" class="pin-key plain" id="pinPadCancel">Abbrechen</button>
+      <button data-tk="common.cancel" type="button" class="pin-key plain" id="pinPadCancel">Cancel</button>
       <button type="button" class="pin-key" data-pin-key="0"><span class="pin-digit">0</span><span class="pin-letters"></span></button>
-      <button type="button" class="pin-key plain" id="pinPadDelete" aria-label="Löschen">Löschen</button>
+      <button data-tk="common.delete" type="button" class="pin-key plain" id="pinPadDelete" aria-label="Delete" data-tk-attr="aria-label:common.delete">Delete</button>
     </div>
   </div>
 </div>
@@ -374,36 +374,36 @@
     <nav class="w-64 h-full flex flex-col pt-6">
       <!-- Menu items: scroll if the window is too low (the footer with account/settings/search stays at the bottom) -->
       <div id="sidebarScroll" class="sidebar-scroll flex flex-col">
-      <button data-view="uebersicht" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Übersicht</button>
-      <button data-view="pinnwand" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Pinnwand<span id="navPinboardBadge" class="pw-nav-badge hidden"></span></button>
+      <button data-tk="nav.overview" data-view="uebersicht" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Overview</button>
+      <button data-view="pinnwand" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition"><span data-tk="nav.board">Board</span><span id="navPinboardBadge" class="pw-nav-badge hidden"></span></button>
       <div class="nav-divider mx-6 my-3 border-t border-white/25" aria-hidden="true"></div>
-      <button data-view="termine" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Kalender</button>
-      <button data-view="aufgaben" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Aufgaben</button>
-      <button data-view="familie" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Familie</button>
+      <button data-tk="nav.calendar" data-view="termine" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Calendar</button>
+      <button data-tk="nav.tasks" data-view="aufgaben" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Tasks</button>
+      <button data-tk="nav.family" data-view="familie" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Family</button>
       <div class="nav-divider mx-6 my-3 border-t border-white/25" aria-hidden="true"></div>
-      <button data-view="rezepte" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Rezepte</button>
-      <button data-view="vorrat" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Vorrat</button>
-      <button data-view="einkauf" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Listen</button>
+      <button data-tk="nav.recipes" data-view="rezepte" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Recipes</button>
+      <button data-tk="nav.pantry" data-view="vorrat" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Pantry</button>
+      <button data-tk="nav.lists" data-view="einkauf" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Lists</button>
       <div class="nav-divider mx-6 my-3 border-t border-white/25" aria-hidden="true"></div>
-      <button data-view="finanzen" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Finanzen</button>
-      <button data-view="dokumente" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Dokumente</button>
+      <button data-tk="nav.finance" data-view="finanzen" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Finance</button>
+      <button data-tk="nav.documents" data-view="dokumente" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Documents</button>
       <div class="nav-divider mx-6 my-3 border-t border-white/25" aria-hidden="true"></div>
-      <button data-view="fahrzeuge" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Fahrzeuge</button>
-      <button data-view="haus" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Zuhause</button>
+      <button data-tk="nav.vehicles" data-view="fahrzeuge" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Vehicles</button>
+      <button data-tk="nav.home" data-view="haus" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Home</button>
       </div>
 
       <div class="sidebar-foot mt-auto flex items-center gap-2 px-6 pt-4 pb-3 border-t border-white/10">
-        <button data-view="konto" class="nav-item sidebar-icon-btn p-2 rounded-lg border-l-4 border-transparent hover:bg-white/10 transition" aria-label="Konto" title="Konto">
+        <button data-view="konto" class="nav-item sidebar-icon-btn p-2 rounded-lg border-l-4 border-transparent hover:bg-white/10 transition" aria-label="Account" title="Account" data-tk-attr="aria-label:nav.account;title:nav.account">
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"></path></svg>
         </button>
-        <button data-view="einstellungen" class="nav-item sidebar-icon-btn p-2 rounded-lg border-l-4 border-transparent hover:bg-white/10 transition" aria-label="Einstellungen" title="Einstellungen">
+        <button data-view="einstellungen" class="nav-item sidebar-icon-btn p-2 rounded-lg border-l-4 border-transparent hover:bg-white/10 transition" aria-label="Settings" title="Settings" data-tk-attr="aria-label:nav.settings;title:nav.settings">
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 13a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V19a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 17.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 13 1.65 1.65 0 0 0 3.09 12H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 7a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
         </button>
-        <button id="globalSearchBtn" type="button" class="sidebar-icon-btn p-2 rounded-lg border-l-4 border-transparent hover:bg-white/10 transition" aria-label="Suchen" title="Suchen">
+        <button id="globalSearchBtn" type="button" class="sidebar-icon-btn p-2 rounded-lg border-l-4 border-transparent hover:bg-white/10 transition" aria-label="Search" title="Search" data-tk-attr="aria-label:nav.search;title:nav.search">
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="M20.5 20.5l-4.6-4.6"></path></svg>
         </button>
       </div>
-      <div id="sidebarVersionBtn" role="button" tabindex="0" title="Versions-Log öffnen" class="sidebar-foot px-6 pb-5 text-[10px] text-white/40 cursor-pointer hover:text-white/70 transition select-none">Version <span id="sidebarVersionDisplay" class="font-mono"></span> <span class="font-mono">&gt;_</span></div>
+      <div id="sidebarVersionBtn" role="button" tabindex="0" title="Open version log" class="sidebar-foot px-6 pb-5 text-[10px] text-white/40 cursor-pointer hover:text-white/70 transition select-none" data-tk-attr="title:nav.openVersionLog"><span data-tk="nav.version">Version</span> <span id="sidebarVersionDisplay" class="font-mono"></span> <span class="font-mono">&gt;_</span></div>
     </nav>
   </aside>
 
@@ -412,39 +412,39 @@
   <!-- Top bar -->
   <header class="flex items-center justify-between px-6 py-3 border-b border-ink/10 shrink-0 bg-paper/80 backdrop-blur" style="padding-top: calc(env(safe-area-inset-top) + 0.75rem);">
     <div class="nt-head-left flex items-center gap-3">
-      <button id="menuToggle" class="w-9 h-9 rounded-lg hover:bg-ink/5 grid place-items-center transition shrink-0" aria-label="Menü öffnen/schließen">
+      <button id="menuToggle" class="w-9 h-9 rounded-lg hover:bg-ink/5 grid place-items-center transition shrink-0" aria-label="Open/close menu" data-tk-attr="aria-label:app.openCloseMenu">
         <span class="flex flex-col gap-[3px]">
           <span class="hamburger-bar block w-5 h-0.5 bg-ink rounded-full"></span>
           <span class="hamburger-bar block w-5 h-0.5 bg-ink rounded-full"></span>
           <span class="hamburger-bar block w-5 h-0.5 bg-ink rounded-full"></span>
         </span>
       </button>
-      <button id="dashHomeBtn" type="button" class="hidden w-9 h-9 rounded-lg hover:bg-ink/5 grid place-items-center transition shrink-0 text-ink/70" aria-label="Zur Profilauswahl" title="Zur Profilauswahl">
+      <button id="dashHomeBtn" type="button" class="hidden w-9 h-9 rounded-lg hover:bg-ink/5 grid place-items-center transition shrink-0 text-ink/70" aria-label="To profile selection" title="To profile selection" data-tk-attr="aria-label:app.toProfileSelection;title:app.toProfileSelection">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"></circle><path d="M3 19c0-3.3 2.7-6 6-6s6 2.7 6 6"></path><circle cx="17" cy="9" r="2.5"></circle><path d="M15.5 13.3c.5-.2 1-.3 1.5-.3 2.5 0 4.5 2 4.5 4.5"></path></svg>
       </button>
       <div class="nt-head-title flex items-baseline gap-2">
         <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAApvklEQVR4nO3deZhU1Z3G8beqq/duaNZumn1XNhEQFBdQVETjGkxidjXJZDSamGSMWcxksjgmMU6MQaOTjBqNxt0YDaBRUZEAAgqyqezI2mzN2nvNH6QNIEt39b33nHPP9/M8/eR5DF319q3l995z761KCM4bftn4tOkMYbpj9KbI7uvrM0ojuy+YwfMpGHOfmpownQEtwwPogLgP+KOJ8s26UZzftH3H8yk6FAT78QBZxudhfygTb9aNfH3TjjOeT+ZRCuzCg2EQw/7ITL5ZN+JNOz54PtmLUmAOGz5CDPymseHNuhFv2u7j+eQWCkF0UqYDxB1DHwCa7sD3TMpAuNi4IWDoZ86mvbVG7LW5i+dTfFAGgscKQEAY+gAQHlYGgsdGbAGGfrBs3FtrxF6be3g++YEykDlWADLA4AcAOzS+H1MEmo8C0AwMfgCwE0Wg+dhQx8DQj4bNy7WNWLZ1B88nSJSBY2EF4AgY/ADgNlYFjo4CcAgGPwDEC0Xg8CgA/8TgB4B4owgczPsCwOAHAL9QBPZLmg5gEsMfAPzl+wzwcgXA9wcdALCfz6sBXhUABj8A4HB8LALeHAJg+AMAjsWnWRH7FQCfHkwAQMv5shoQ6wIw/NLxaTH+ERSeSwgSzyfrDb90fHru0/EtAbEsAMMvZa8fANByjfMkjkUgducAMPwBAEGL42yJVQGI4wMEALBD3GZMLA4BDL/03H8+KLF6bGAdnl8IEs8nFzXOm7lPv+D8IQHnVwD+NfwBAIhGHGaP0wUgDg8AAMBNrs8gJw8BuL7RAQDx4PIhAedWABj+AADbuDibnCoALm5gAIAfXJtRzhQA1zYsAMA/Ls0qJwqASxsUAOA3V2aW9ScBDrv03LQTWxKxx/MQQeL5FG/DLj03Pc/yEwOtXgEY5kiLAgDgULbPMGsLgO0bDgCAY7F5lllZAGzeYAAANIetM826AmDrhgIAIFM2zjarCoCNGwgAgCDYNuOsKQC2bRgAAIJm06yzogDYtEEAAAiTLTPPeAGwZUMAABAVG2af0QJgwwYAAMAE0zPQWAEw/YcDAGCayVlopAAw/AEA2M/UTIy8ADD8AQA4mInZaPwkQAAAEL1ICwB7/wAAHF7UMzKyAsDwBwDg6KKclako7mTYJeem+fJrOI/nMILE8wlHMOySc9PznnkhEfb9cA4AAAAeCr0ADLuEpX8AAJojitkZagFg+AMAkJmwZ2hoBYDhDwBAy4Q5SzkHAAAAD4VyFcCwS85Jc4or4ofnNILE8wlNM+ySc9Lznnkx8KsCAl8B2D/8AQBAUMKYrRwCAADAQ4EWAPb+kanrp3cwHeGobM+Hg9n+eNmeD3YKesYGVgAY/gAAhCvIWcshAAAAPBRIAWDvH0GwdVnU1lw4OlsfN1tzwR1BzVxWAAAA8FCLCwB7/wiSbXtHtuVB89j2+NmWB+4KYva2qAAw/AEAMKOlM5hDALCOLXtJtuRAy9jyONqSA2iUcQFg7x9hMv1mafr+ESzTj6fp+0d8tWQWswIAa5l60+TNOp54PgEHy6gAsPePqET95smbdbzxfEIcZTqTWQGA9aJ6E+XN2g88n4D9mv31giey9w9D7jytIrTbvo43a+/wfELcvNXMrwxOhRUECFrjm2qQb9y8UfuL5xN816y2wN4/bNKSN27eqHEonk+Ig+asAjRvBYDxD4tc9/q/3nTvPP3Yb94H/nvgUDyf4BsOASAWeDNGkHg+wQdNvgrgxItZ/gcAwGbNmdVcBggAgIeaVADY+wcAwA1NndmsAAAA4KFjFgD2/gEAcEtTZjcrAAAAeKgJlwGyAAAAQNwcdQXgxIvPZvoDAOCgY81wDgEAAOAhCgAAAB46YgFg+R8AALcdbZazAgAAgIcoAAAAeOiwBYDlfwAA4uFIM50VAAAAPEQBAADAQx8pACz/AwAQL4eb7awAAADgIQoAAAAe+uiXAXEAAACA2DtoBeDEizj+DwBAHB064zkEAACAhygAAAB4iAIAAICHKAAAAHjowwLACYAAAMTbgbOeFQAAADz04ecAsPsPAIA/WAEAAMBDB3wSIGsAAAD4IilJQy8ax/QHAMADjTOfQwAAAHiIAgAAgIcoAAAAeIgCAACAhygAAAB4iAIAAICHKAAAAHgowWcAAADgnxQfAAgAgH84BAAAgIcoAAAAeIgCAACAh1LH/icAAFf9tkNpk//t1yo2hZgEtqEAADiiNq1ba0j/4zSobz8d16u3+nXvoTatW4d6n5W7dmnZ6lVaunKFlixfpgXvvquNWypCvc84ac7AP9bvUgjiLTH0Qi4DBFqiT/ce+s6X/k3FhQUtvq3aujpd9b3vqLauLoBkzVdcWKSRg4fopCFDNGLQYHXrVG4kx6E2bd2iuQvf0awF8zXz7be0fedO05Gs05LBfywUgXiiAAAZKsjP15WXTdRnLrxYqayswG73yzd/V/OXLg3s9o6lW6dyjRk5SqePOElD+vVXMmn3qUEN6bQWLF2iabNn6aV/zNCmrVtMRzIqzMF/KIpAvFAAgGYqyM/XxPET9LmLLlHr4uLAb//XD9ynh597NvDbPVCnDh103uljdM7oU9Wne49Q7ytM6XRa8xYv0vPTXtHf//GGqqqrTUeKTJSD/1AUgXigAABN1KW0TBPPm6CLx52twvyWL/cfybMvv6Sf3v3bwG83lZWls04+RRePO0cjBg1WIpEI/D5M2r13r/726it69G/Pa+3GDabjhMrk8G9ECXAfBQA4irzcXJ056mRdeOY4jRg0OJL7nLtoof79RzcHdnuti4s1cfwETRw/Qe1KSgK7XVs1pNN6dfYs3f/0k1qyfJnpOIGzYfg3ogS4jasAgEMU5OVp1AlDNe6UU3X6iBHKz82L9P47tG0byO20b9NGn7v4Ul169rnKy80N5DZdkEwkdOaok3XmqJP1xry5uufRh7V0xQrTsVrMpsHfqDETRcBNiaEXnsUKALyWTCbVv2cvjRg4WCcPPVFDjx+g7JS5bly5a5fOuepzGf9+6+JiXXnZ5Zo4/jzlZOcEmMxN6XRaU6e/prsfeUgbKty8nPC3HcpMRzimr1VsNB0BzUQBgHdKiltpQJ8+Gti3n4b0P06D+/ZXQX6+6Vgfqqmt1WmfvrzZv5eTna1PXXChrrxsYqjnKLiquqZG9z/9hB78yzOqqa0xHafJXBj+jSgBbuEQAGIrlZWlLmWd1Ltbd/Xp1l39evRUv549VdquveloR5XJ6sMZI0bqhi9erc6l9i0T2yI3J0f/9slP64KxZ+mnd92peYsXmY4EGMUKAJxWXFik0nbtVNahg8o7lKq8tKO6lpWrW3m5upSWKSvA6/OjNPLyS5r078rad9C3r/6yzhgxMtxAMfTUi1N1xwP3aV91lekoR+TS3n8jVgHcQQFAZJLJpBKJhLKSWUplJZWVlVJ2KqWc7Oz9Pzk5ysvNVX5urgry8lWYn6+C/HwVFxaqqLBQJcWtVFLcSm1at1bb1q3VrqSNcnPieYz7WAUgkUjo8vHn65rPfE4FedGepBgnazes1w/uuN3KqwUCH/4DFh/5/1s8INC7ogS4IXECBQAhe/PxZ0xHcM5JRykAnTp01H9ee72GDxwUXaAYq6+v128eekCPPP9XpdN2vB1OCmr4H23oH0lAZeBaSoD1OAcAcMiEM8bopi991aqTFl2XlZWlG75wlU7of7z+a9Id2ltl7yGBJstk8B/6uwGvCsA+KdlReAEc6JDXZUFenm76yr9rwhljzOTxwFknn6Ju5eX65q0/04bNm43lmNSxhXv/LRn+h95OC0rApA5lunYzqwA2s/tbPwCoT7fuevAXtzP8I9CnW3c9cOttGtinr+kozTdgcXDDP8zbhDUoAIDFJpwxRvff+kt1K7fja3l90KZVK93z45/ptOEjIr/vjPf+wx7SGd5+i1czECoKAGChZDKpb37xav34+htie6WDzXJzcvSr73xP551+hukoQGgoAICFfvP9H+qKj11oOobXksmk/uv6G3TRWWdHcn/W7v238H5YBbAXBQCw0KgThpqOAO3/YqEf/Pu1umDMmaajHF7Ux+c5HyBWKAAAcBSJREI//Nr1OvuUU01HAQJFAQCAY0gmEvrx12/QSYOHmI7yL6b2xlkFiA0KAAA0QXYqpdtu/K76du8R+G3H/Th53P8+V1EAAKCJCvLzdft3v6+2JSWmowAtRgEAgGYoa99Bv/rO95STnW0uhOlleNP3j0BQAACgmQb17acbvni16RhAi1AAACADE8efp/PHjDUdA8gYBQAAMnTTV77KxzTDWRQAAMhQfm6ebrnh28pO8c3qcA8FAABaoH/PXrp64idMxwCaLfWRLx4HADTLlZdN1KuzZ2rJiuWmo1iMWWMbVgAAoIWSyaR++LWvK5WVFc0dLh4Qzf3Yev8IRIpSBvhjzfr1WrTsPS1fs0ar163Txi0V2la5Q7v37FFVTY2UTiuVSikvN1fFhUVqW1Ki0nbt1b28XL27ddfxvfuoSxmf6nY4fbp112cvvET3P/2k6Sh2YtZYhzNXgBirrqnR9Llz9NqbszVr/tvaumP7MX+nprZWNbW12rl7t9Zt2qh3Dvn/O7Rtp1FDTtCYkaM0etgw5WTnhBPeQV/6xKc05fXXtHFLRbN+79pNGzSptFNIqcy7dtMG0xFwGBQAIIbeW7lSj0/9m16cPl179u0N9LYrtm3Vc9Ne1nPTXlZxYaHGn3aGPnH+BerZpWug9+Oi3JwcfeOLV+mm234e/p0tHmDmE/lY/o8NCgAQI/OXLtG9jz6i2QvmR3J/u/bs0RNTJ+vJF6ZozEmj9NUrPq3e3bpHct+2GnfKaA0bOEjzFi00HQU4Kk4CBGLgg40b9a1bf6Yvff+myIb/gdLptKbNnqlPf+sb+vm9v9PuvcGuOrjmG1+4UolEIvw7inpvnL3/WKEAAA6rr6/X7x9/VJ/8xnV67c3ZpuOooaFBT0ydrE98/WuaNf9t03GMOb53H51z6mnN+p2Mj5NHNZQzvB+O/9uLAgA4avX6dbryu/+he/78sGpqa0zHOUjFtq26/ic/0j1/fljptJ+nf3/1is8oK6rLAoEMJNPaf3UGP/yE9YPgvThjuj777W9q8fLlxh/fI/3Up9P638cf1Y2/vFU1tbVhbg4rdS3rpAlnjG3WNrvG1lWADG//mk0bjD8P+TnyDycBInQvz5yhVevWaWNFhbZW7tD2ykrt3rNHe6r2qbqmRjU1Naqtq1NDOq36+vqM72fag4+oqKAgwOR2uvOhP+oBh641f2XWTF33kx/pju//UHm5uabjROrqiZ/Q86++ooaGhvDvrHFIB3llAMf8Yy0x5IIz06ZDAC1VXFioV/74sOkYoaqrr9eP7vy1prz+mukoGRk+cJDuvPk/vfvcgB/8+lfNfszuaulnAgRRAlo4/DNezUBkOAcAsdCpY0fTEUJVV1+vG395q7PDX5LmLlqo795+mxo8Oyfg85dcFs0VAQdaPCDzAd6S34VTKACIhbJ27U1HCE1DOq2bbvuFFWf5t9Srs2fp9vt+bzpGpPr16KlRQ4Y263cC23tuHObHGuhN/XdNxN6/GzgHALHQoV070xFCc+u9d2va7JmmYwTmz88/p349eumis8aZjhKZT55/gWbOf6tZv3PNpg0tPxRwoIj26hn+7mAFALHQrqSN6Qih+ONfntZTL0w1HSNwt977O723cqXpGJE5bfgIdS1r/jB3bZi6ltd3FADEQtvWrU1HCNyb7yzQpD89aDpGKGpqa3TT7b9QVXW16SiRSCQSuvTc8aZjAAehACAWSopbmY4QqO07K/X9X/+qRZdF2m7N+vW644/3m44RmY+NOVOpDD4YyJW9aldy4l8oAIiFklbxKgA/mXSntu3YYTpG6J6YOlnzFi8yHSMSbUtKdMZJozL6XduHq+35cHgUAMRCQV6e6QiBem3Om6YjRCKdTutnd09SXYxXOg70sbFnZvy712zaYN2gtTETmi4lz67JRTwVFRaajhAsj16Xq9d9oD89+4y+cOnHTUcJ3ehhw9W6qEiVu3ZlfBvXbFyvu8rKA0yVeQ64jRUAxEJ+brxWAHzzf08+rh07d5qOEbpUVpbOHt28bwk8HNPD1/T9IxgUAMSCb58xHzd79u7V7x9/1HSMSIw7ZXQgt3PNxvWRD2IT94nwUAAQCznZ2aYjoIWeemGKNm/dYjpG6EYMGqzWxcWB3V4UQ5nBH08UAMRCJpdXwS41tbV68C9Pm44RumQyqTEZXg1wNGEMaQZ/vPFRwIiFZJIuGwfP/P1FffkTn1KrouD2kG102vARevblv4dy24cO7OacMMiw9wsFALEQ+betIRT7qqr05NSpuvLjE01HCdXJQ09Udiql2rq60O+LoY4jYbcJgFUen/I3NTQ0mI4RqoL8fA057njTMeA5CgAAq2zeukWve/BBSKOGnGA6AjxHAQBgnb+89KLpCKEbMXiI6QjwHAUAgHVmzJur7TsrTccI1aC+/VSQn286BjxGAQBgnbr6er00Y4bpGKFKJpMa1Lef6RjwGAUAgJVenDHddITQDT1+gOkI8BgFAICV3lq8SDt3Z/6lOS4Y0v840xHgMQoAACs1NDRo+tw5pmOEakCfvnyGBYxJ+fOlo4A7eF3u98a8uTp/zJmmY4SmVVGROnUs1bpNG01HgYdYAQBgrZnz31Y6He86NKBPH9MR4KkUuxqAhXhdSpJ2VO7U+6tXqV+PnqajhKZP1+56MR3/Ex5hH1YAAFht7sKFpiOEqm+Myw3slmJXA7ARr8tGcxYu0BUfu9B0jND06d5NPN4wgRUAAFabv2SJ6Qih6tSxVDnZ2aZjwEMUAABW276zUh9s3GA6RmiSiYS6lJWZjgEPUQAAWO+d9941HSFUPTp3NR0BHqIAALDe4mXLTEcIVeeyUtMR4CEKAADrLV2x3HSEUJV3pAAgehQAANZ7b+VK0xFCVd6xo+kI8BAFAID1du/dow0Vm03HCE3Hdu1NR4CHKAAAnLBizRrTEULToW1b0xHgIQoAACesWLvWdITQlBS3UiorZToGPEMBAOCEVes/MB0hNIlEQu1KSkzHgGcoAACcsHZDfD8MSJJaFxebjgDPUAAAOOGDmBeAklatTEeAZygAAJxQsW2r6urrTMcIDSsAiFqKL6ECLMTr8iMa0mlt2rJFnUvj+bn5xQVFPO6IFCsAAJyxacsW0xFCU5CfbzoCPEMBAOCMzdu2mY4QmuLCAtMR4BkKAABnbN2+3XSE0OTl5pqOAM+kOOgE2IjX5eFsq9xhOkJo9hcAHndEhxUAAM7YUVlpOkJocrJzTEeAZ1L0TcA+vC4Pr3LPbtMRQpOTk83jjkixAgDAGTt37TIdITTJBG/HiBbPOADO2L1vr+kIocnK4u0Y0eIZB8AZe/ftMx0hNKwAIGo84wA4o6q62nSE8CQSphPAMxQAAM6orq4xHSE0DQ31piPAMxQAAM6oqas1HSE09fUNpiPAMxQAAM6oq4vvtwHWswKAiFEAADijIR3fK+Vra+NbbmAnCgAAZ9TXx3cvuaq6ynQEeCbFR08BFuJ1eVjJZHz3Waqqa3jcEan4vpoAxE5WnAtATYwvcYSV4vtqAhA7cV4B2L1nj+kI8Ex8X00AYifOKwC7KACIWHxfTQBiJ5VKmY4QGgoAokYBAOCMvNxc0xFCs2PnTtMR4JkUp50CNuJ1eTh5uTmmI4RmW+V28bgjSqwAAHBGnFcAtu3YYToCPEMBAOCMuBaA2ro6zgFA5CgAAJxRmF9gOkIoNm/ZonSMP+YYdqIAAHBGSXEr0xFCsXFLhekI8BAFAIAziosKTUcIxcYKCgCiRwEA4IziwiLTEUKxfvMm0xHgIQoAAGeUtIrnIYA1G9abjgAPUQAAOKNdSRvTEUKxZj0FANGjAABwRrs2cS0A60xHgIdSXHkC2IfX5eG1j+EKwNYdO7Rj5y7TMeAhVgAAOCOOKwDL16w2HQGeogAAcEJBXr5aFcXvKoD3Vq40HQGeogAAcEJ5aUfTEULx/ioKAMygAABwQnnHUtMRQrF42fumI8BTFAAATohjAaiqrtaKtWtNx4CnKAAAnNCtvNx0hMAtWb5MDQ0NpmPAUxQAAE7o3rmL6QiBW7B0qekI8FhK4oJjwD68Lg/Vo0tn0xEC99biheKxhimsAACwXm5Ojjp1iNdVAOl0Wm8vWWI6BjxGAQBgvV5duymRSJiOEaj3V61U5a6dpmPAYxQAANbr37OX6QiBmzX/bdMR4DkKAADr9enRw3SEwM1eMN90BHiOAgDAev1itgJQU1OjOe8sMB0DnqMAALBaMpHQ8b17m44RqFkL3lZVdbXpGPAcBQCA1bp17qKigkLTMQI1fc4c0xEApbgEFbAQr8sPDel3nOkIgXtt1iweYxjHCgAAqw0+rr/pCIF65913tXFLhekYAAUAgN2G9I/XCsCLb7xuOgIgiQIAwGKti4vVt0dP0zEC9fc3ppuOAEiiAACw2IjBQ2L1CYDzFi7Uhs2bTccAJFEAAFjslBOHmY4QqOdeecl0BOBDFAAAVkokEjp1xAjTMQJTXVPD8j+skuJKFMA+vC6l43r1Vln7DqZjBObFN6Zr5549pmMAH2IFAICVxo0ebTpCoJ6cMtl0BOAgKfY1ABvxuhx/+hjTEQKzYu0avbV4oekYwEFYAQBgnSHHHa+unTqZjhGYh5/9i+kIwEdQAABY5+Jx55iOEJhde/bo+Wkvm44BfAQFAIBVCgsKNGHsWNMxAvPE5L9pX1WV6RjAR1AAAFjlwrPOVkFevukYgaiprdWf/vqM6RjAYVEAAFgjmUzqMxddYjpGYJ57+SVt2bbNdAzgsPg6YMBGnr4uzz319Nic/NfQ0KD7nnjM28cS9mMFAIAVkomEvvypK0zHCMxzL7+ktRs2mI4BHBEFAIAVJow9U727dTcdIxD19fW655GHTccAjooCAMC4nOxsXfvZz5uOEZhnXnxB6zZtNB0DOCoKAADjPnfJZSovLTUdIxD7qqp098MPmY4BHBMFAIBRXcrK9JUrPm06RmAeeOpJzvyHEygAAIxJJBL6wbXXKTcnx3SUQFRs26o/PvWk6RhAk1AAABjz8fMm6OQTh5mOEZjb/+8P2lu1z3QMoEkoAACM6N2tu779pa+YjhGYtxYv0pRXp5mOATQZBQBA5Ary8vXLm76nvNxc01ECUVdXp1vu+q3SaT71B+6gAACIVCKR0E+++S316tbNdJTA3PfE43p/1SrTMYBmSfE5lYCN4vu6vO7zX9S40aeajhGY1evW6fePPaI4P2aIJ1YAAETm0xddrKsu/6TpGIFpSKd18//8UtU1NaajAM1GAQAQicvGT9B/fPmrpmME6r4nHtOCpUtNxwAykjIdAED8ffaSy2J1xr8kLV2+XL/704OmYwAZS3HSKmCfuLwuU6mUvv2lr+iKCy8yHSVQ+6qqdOPPb1FNbZ3pKEDGOAQAWGjieecrmXT75VleWqo/3PqL2A1/SbrlrklavW6d6RhAi7j9DgPE1M3XXa9nfve/umjcOUql3DpSl0wkdPn5F+iJSb/T0OMHmI4TuCenTNazL71oOgbQYonjx42OyWIjfDb/+SmmI4SmYttWPTF5sp5+YYo2bdliOs5RDR80WN+6+ssa2K+f6SihWPTee/rijd9STW2t6ShAi1EAEAtxLgCNGtJpzZ7/tiZPe0Uv/2OGdu7ebTqSpP0f7DPqhKG66vJPatTQoabjhGbLtm36zDe/ro0VFaajAIGgACAWfCgAB6qvr9fsBfP16qxZev3N2fpg44bIM5R16KDzzhijS889Tz26dIn8/qNUXVOjq77zH1r43rumowCBoQAgFnwrAIdat2mjZs+fr7eXLNaCpUu06oMP1NDQEOh95OXmalC//jppyBCdftJIDewbz2X+Q6XTad146y16YfrrpqMAgaIAIBZ8LwCHqq6p0bLVq7Tqgw+0dsN6bdi8WZu2btX2yh2q3LlLe6v2aV9Vlerq65VOp5XKylIqlVJRQaGKiwrVrqSNOrZrpy5lndS9c2f169lLvbp2VVZWluk/LXK/vPcePfSXp03HAALn1unFAJokNydHA/v282YvPSz/98RjDH/EFpcBAsBhPPb8c/rN/feZjgGEhgIAAId45oWpuuXuSUrH5SMZgcPgEAAAHODpF6bqx7/5NcMfsUcBAIB/euSvz+rn99zN8IcXUhJPdAC4988Pa9KDD5iOAUSGFQAAXmtIp3Xr3ZP06PN/NR0FiFSKBQAAvtpXVaWbfnGrps38h+koQORYAQDgpY0VFbruRzfrvZUrTUcBjKAAAPDOnHcW6Mb/vkVbd2w3HQUwhgIAwCv3P/G4fvPAfaqvrzcdBTCKAgDAC5W7dunm22/Tq7Nmmo4CWIECACD2Zs9/W9+77Req2LrVdBTAGhQAALFVVV2tX9/3Bz3612fVwIf7AAdJ8ZIAEEdvLligH91xu9Zu2GA6CmAlVgAAxMr2ykr96g//q7++9Hc+0hc4CgoAgFior6/XY397Xnc99EdV7tplOg5gPQoAAOe9/uZs3fb7e7Vy7VrTUQBnUAAAOGv2gvn67QP36+0li01HAZxDAQDgnBlz5+j3jz2qOe8sMB0FcBYFAIATauvqNOW1V/XgU09q6YrlpuMAzuPbAAHLvLVood5ftUrnnHa62rRubTqOces3bdKTUybrySmTtW3HDtNxgNhgBQCwzPrNm/XT396p/777Lp1y4jBNGDtWY0adrFZFRaajRWbvvn16ZeY/9NSUyZrzzjtczgeEICWWAAALpVVfX6fpc2Zr+pzZSqVSGjnkBJ192ukae/LJat+mremAgdu9Z4+mz52jqa9O0/Q5c1RdU206EhBrrAAADqirq9OMeXM1Y95c/eTOhI7v00dnnDRKZ4wcpYH9+imRSJiOmJH3Vq7QzLfe0muzZ+qtRYtUW1dnOhLgDQoA4Jh0Oq3F77+vxe+/r989/JBaFxdr1NATNWroiRo9bLg6l5WZjnhYtXV1Wrp8mRYsWaJ5ixZqzjsLtL2y0nQswFsUAMBxlbt26YXXX9MLr78mSSpt317DBg3W4P79NaBPP/Xr2VNFhYWR5Umn09qwebNWr1unZatX6f1VK/XuiuVatmoVe/iARSgAQMxs2rJFk6e9osnTXvnwv3Vo21Y9unRVeWmpyjuWqmP7dmrfpq1KWrVScVGRigoKlJ+Xp5zsHGWnUkomk0qn06qvr1d9Q71q6+q1r6pK+/bt096qfdq5e7e2V1Zqx86d2rZjhzZtqdDGigptqNisdRs3qqa21uAWANAUFADAAxXbtqli2zbTMQBYJGk6AAAAiB4FAAAAD1EAAADwEAUAAAAPUQAAAPAQBQAAAA+l+I4NwDJpidclgLCxAgAAgIcoAAAAeIgCAACAh1ISBxsBu6TF6xJA2FgBAADAQxQAAAA8RAEAAMBDFAAAADxEAQAAwEMUAAAAPEQBAADAQxQAAAA8RAEAAMBDKT5wDLAQr0sAIWMFAAAAD1EAAADwEAUAAAAPUQAAAPAQBQAAAA+lON0YsBGvSwDhSvE2A9glLcY/gPBxCAAAAA9RAAAA8BAFAAAAD1EA4LxkImE6AgA4hwIA5yWSPI0BoLl454TzUllZpiMAgHP4NkA4LzuVbTpC8HhdAggZKwBwXm5OjukIAOAcCgCcl5ebazoCADiHAgDnFRYUmI4AAM6hAMB5rQqLTEcAAOdQAOC84iIKAAA0FwUAzitp1cp0BABwDl8HDOe1LWltOkIIeF0CCBcrAHBeh7btTEcAAOdQAOC8ju3bm44AAM6hAMB55R1LTUcAAOdQAOC8Lp06mY4AAM6hAMBpxUVFXAUAABmgAMBpvbp2Mx0BAJyUSnO1ERzWt2cv0xGCl5Z4XQIIGysAcNqg/v1NRwAAJ1EA4LSThpxgOgIAOIkCAGd1LS9X986dTccAACdRAOCs88eeaToCADiLAgAnJRMJXTr+PNMxAMBZFAA46azRp6prebnpGADgLAoAnJOVlaWvX3W16RihaUg3mI4AwAMUADjnCx+fqF7d4vsBQOkGPgQAQPhSfO84XDKwbz9df+VVpmOELC1elwDCxgoAnNGpY0fd+eOfKjuVMh0FAJxHAYATunTqpPt/9T8qbd/edBQAiAV2pWC9s087Xf91w7e8+da/Du3a68Jx56hj+/bq0K6t2pW0UUmr1mpVVKTiokLl5+UrPy9P2amUslMpZWVlNev2B55zVkjJAbiEAgBrDR0wQF/9zOd1+siRpqNEavTw4Ro9fLjpGABiLsW5RrBFMpFQv169dcaoUTpvzFj1793bdKR44jUPQKwAIGIjhw5Vdipb+Xl5al1crHZt2qhzWZl6du2m/r17q6igwHREAPACBQCRuu+2201HAACIqwAAAPASBQAAAA9RAAAA8BAFAAAAD1EAAADwUIpLggG/8JoHILECAACAl/g6YMA7vOYBsAIAAICXKAAAAHiILwMCfMNrHoBYAQAAwEsUAAAAPEQBAADAQxQAAAA8RAEAAMBDFAAAADyUXPbG3ITpEAAAIDrL3pibYAUAAAAPUQAAAPAQBQAAAA9RAAAA8FBq///w4eCAP3i9A2gsALwfICIDzhprOgIAQBwCAADASx9+BkDv0cNYBwAAIOaWz5iXkFgBAADASxQAAAA8RAEAAMBDFAAAADz0YQFoPCkAAADE04GznhUAAAA8RAEAAMBDFAAAADxEAQAAwEMHFQBOBAQAIJ4OnfGsAAAA4KHUR/5Lmq8EAAAg7lgBAADAQx8pAMv/8RbnAQAAECOHm+2sAAAA4CEKAAAAHjpsAeAwAAAA8XCkmc4KAAAAHqIAAADgoaMu9fc65UQ+FAAAAEetOMohfVYAAADwEAUAAAAPHbUAHG3pAAAA2OtYM5wVAAAAPPTRLwM6FKcBAgAQO01a4u918lBqAAAAjlgx8+1jzncOAQAA4KEmFYCmNAkAAGBeU2c2KwAAAHioyQWAVQAAAOzWnFnNCgAAAB6iAAAA4KFmFQAOAwAAYKfmzmhWAAAA8FCzCwCrAAAA2CWT2cwKAAAAHsqoALAKAACAHTKdycf+MqAj4dsBAABwVov25HuO4kuCAAAwZeWszFfkOQcAAAAPtagAtKR5AACAzLV0Brd4BYASAABAtIKYvZmfBHgQTgUAAMAlgZwDsHLWfFYBAACIQFAzl5MAAQDwUGAFgFUAAADCFeSsDXQFgBIAAEA4gp6xHAIAAMBDgRcAVgEAAAhWGLM1lBUASgAAAMEIa6YG9DkAh8FHAwAAYK3QzgFYOZtVAAAAWiLMWRrqSYCUAAAAMhP2DA39KgBKAAAAzRPF7OQyQAAAPBRJAWAVAACApolqZkY6mHuOHMK1AQAAHMHK2Qsim8uRHgKI8g8DAMAlUc/I8D4H4AhYAgAAwLzITwJcxSoAAAAHMTEbjVwFQAkAAGA/UzPR2GWAlAAAgO9MzkLjQ7jHSVwZAADwz6o3ze4IG/8gINMbAACAqNkw+4wXAMmODQEAQBRsmXlWFADJng0CAEBYbJp11hQAya4NAwBAkGybcVYVAMm+DQQAQEvZONusKwCSnRsKAIBM2DrTrCwAkr0bDACAprJ5llkbrFGPkwbzOQEAAOesevMdq2estSsAjWzfgAAAHMqF2WV9AZDc2JAAAEjuzCwnCoDkzgYFAPjLpVnlTAGQ3NqwAAC/uDajnArbqMcITgwEANhj1Ry3hr/kaAFo1J0iAAAwaLWDg7+RU4cADuXyhgcAuM31GeR0AZDcfwAAAO6Jw+xx/g84EIcEAABhisPgb+T8CsCB4vTAAADsErcZE6sCIMXvAQIAmBfH2RK7P+hAHBIAALREHAd/o9itABwozg8cACBccZ8hsf7jDtR9xCBWAwAAx7R6zkIvZmOsVwAO5MsDCgDInE+zwps/9ECsBgAADuTT4G/k3R98oO7DKQIA4LPVc/0b/I28OQRwOD4/8ADgO99ngNd//IFYDQAAP/g++BuxEQ5BEQCAeGLwH4yNcQQUAQCIBwb/4bFRjoEiAABuYvAfHRunGSgDAGA3hn7TsaEyQBEAALsw+JuPDdYC3SgCAGDUGgZ/xthwAaEMAEA0GPrBYCOGgDIAAMFi6AePDRqybsMHUgYAIANr5i5iRoWIjRshygAAHB1DPzpsaIO6DaMQAPDbmnkMfFPY8JahFACIK4a9XXgwHEApAOAahr39eIBigIIAIGoMePf9P7XJJCYPB5nnAAAAAElFTkSuQmCC" alt="" class="w-7 h-7 rounded-lg self-center" />
         <!-- Family name: with long names it runs on behind the bell (the bell always stays visible) -->
-        <span class="nt-famname"><h1 class="font-serif text-2xl text-ink">Familie</h1> <span id="lastNameDisplay" class="font-serif text-2xl text-ink"></span></span>
-        <button id="ntBellBtn" type="button" class="nt-bell self-center" aria-label="Hinweise" title="Hinweise">
+        <span class="nt-famname"><h1 data-tk="app.family" class="font-serif text-2xl text-ink">Family</h1> <span id="lastNameDisplay" class="font-serif text-2xl text-ink"></span></span>
+        <button id="ntBellBtn" type="button" class="nt-bell self-center" aria-label="Hinweise" title="Notifications" data-tk-attr="title:app.notifications">
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
           <span id="ntBellBadge" class="nt-badge hidden">0</span>
         </button>
-        <span id="offlineBadge" class="hidden self-center ml-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-mustard/15 text-mustard border border-mustard/40" title="Keine Verbindung zum Server. Änderungen werden lokal gesichert und automatisch nachgereicht.">offline</span>
+        <span data-tk="app.offline" id="offlineBadge" class="hidden self-center ml-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-mustard/15 text-mustard border border-mustard/40" title="No connection to the server. Changes are saved locally and submitted automatically." data-tk-attr="title:app.offlineHint">offline</span>
       </div>
     </div>
     <div class="flex items-center gap-3 shrink-0 pl-2">
       <div id="clock" class="text-sm text-ink/60 font-bold shrink-0"></div>
-      <button id="headerWeather" type="button" class="hidden" aria-label="Wetter" title="Wetter"></button>
+      <button id="headerWeather" type="button" class="hidden" aria-label="Weather" title="Weather" data-tk-attr="aria-label:app.weather;title:app.weather"></button>
     </div>
   </header>
 
   <!-- Banner: newer version detected on the server -->
   <div id="updateBanner" class="hidden shrink-0 bg-mustard text-white text-sm px-4 py-2 flex items-center justify-between gap-3">
-    <span>Es gibt eine neuere Version dieser App.</span>
+    <span data-tk="app.newerVersion">There is a newer version of this app.</span>
     <div class="flex items-center gap-3 shrink-0">
-      <button id="updateBannerRefreshBtn" class="px-3 py-1 rounded-lg bg-white/20 hover:bg-white/30 transition font-medium">Jetzt aktualisieren</button>
-      <button id="updateBannerDismissBtn" class="text-white/70 hover:text-white" aria-label="Schließen">×</button>
+      <button data-tk="common.updateNow" id="updateBannerRefreshBtn" class="px-3 py-1 rounded-lg bg-white/20 hover:bg-white/30 transition font-medium">Update now</button>
+      <button id="updateBannerDismissBtn" class="text-white/70 hover:text-white" aria-label="Close" data-tk-attr="aria-label:common.close">×</button>
     </div>
   </div>
 
@@ -452,9 +452,9 @@
   <!-- Mobile switch calendar/recipes (only in the overview on narrow screens) -->
   <div id="mobileSectionTabs" class="hidden shrink-0 border-b border-ink/10 bg-paper">
     <div class="flex">
-      <button type="button" data-section="kalender" class="mobile-section-tab flex-1 py-2.5 text-sm font-medium text-center border-b-2 border-pine text-pine">Kalender</button>
-      <button type="button" data-section="rezepte" class="mobile-section-tab flex-1 py-2.5 text-sm font-medium text-center border-b-2 border-transparent text-ink/40">Essen</button>
-      <button type="button" data-section="aufgaben" class="mobile-section-tab flex-1 py-2.5 text-sm font-medium text-center border-b-2 border-transparent text-ink/40">Aufgaben</button>
+      <button data-tk="app.tab.calendar" type="button" data-section="kalender" class="mobile-section-tab flex-1 py-2.5 text-sm font-medium text-center border-b-2 border-pine text-pine">Calendar</button>
+      <button data-tk="app.tab.meals" type="button" data-section="rezepte" class="mobile-section-tab flex-1 py-2.5 text-sm font-medium text-center border-b-2 border-transparent text-ink/40">Meals</button>
+      <button data-tk="app.tab.tasks" type="button" data-section="aufgaben" class="mobile-section-tab flex-1 py-2.5 text-sm font-medium text-center border-b-2 border-transparent text-ink/40">Tasks</button>
     </div>
   </div>
 
@@ -1649,22 +1649,22 @@
   <div id="settingsView" class="hidden flex-1 min-h-0 bg-white/40">
     <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
       <div class="flex items-center justify-between gap-3">
-        <h2 class="font-serif text-lg">Einstellungen</h2>
+        <h2 data-tk="settings.title" class="font-serif text-lg">Settings</h2>
       </div>
-      <p class="child-lock-only text-xs text-ink/60 mt-2 px-3 py-2 rounded-lg bg-ink/5">🔒 Kindersicherung: Die Einstellungen können nur angesehen werden. Ändern kann sie ein Erwachsener in seinem Profil.</p>
+      <p data-tk="settings.childLockNotice" class="child-lock-only text-xs text-ink/60 mt-2 px-3 py-2 rounded-lg bg-ink/5">🔒 Child lock: the settings can only be viewed. An adult can change them in their profile.</p>
     </div>
     <div id="settingsScroll" class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">
       <div class="set-pane max-w-3xl mx-auto">
     <details class="settings-accordion set-card">
       <summary class="set-sum">
         <span class="set-ico">🎨</span>
-        <span class="set-head"><span class="sa-title">Darstellung</span><small>Dunkelmodus, Farben, Termin-Ansicht</small></span>
+        <span class="set-head"><span data-tk="settings.display.title" class="sa-title">Appearance</span><small data-tk="settings.display.subtitle">Dark mode, colours, event view</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
-        <p class="text-xs text-ink/50 mb-4">Gilt nur für dein Profil – auf allen Geräten, auf denen du angemeldet bist.</p>
+        <p data-tk="settings.display.profileOnly" class="text-xs text-ink/50 mb-4">Applies only to your profile – on all devices you are logged in on.</p>
         <label class="flex items-center gap-3 cursor-pointer w-fit mb-5">
-          <span class="text-sm">Dunkelmodus</span>
+          <span data-tk="settings.display.darkMode" class="text-sm">Dark mode</span>
           <span class="relative inline-block w-11 h-6">
             <input id="darkModeToggle" type="checkbox" class="peer sr-only" />
             <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
@@ -1672,48 +1672,48 @@
           </span>
         </label>
 
-        <p class="text-xs uppercase tracking-wide text-ink/40 mb-2">Eigene Farben</p>
+        <p data-tk="settings.display.customColors" class="text-xs uppercase tracking-wide text-ink/40 mb-2">Custom colours</p>
         <div class="flex flex-wrap items-center gap-5 mb-6">
           <label class="flex items-center gap-2 text-sm">
-            Hintergrund
+            <span data-tk="settings.display.background">Background</span>
             <input id="colorPaper" type="color" class="w-9 h-9 rounded-full border border-ink/15 cursor-pointer p-0 bg-transparent" />
           </label>
           <label class="flex items-center gap-2 text-sm">
-            Akzent 1
+            <span data-tk="settings.display.accent1">Accent 1</span>
             <input id="colorPine" type="color" class="w-9 h-9 rounded-full border border-ink/15 cursor-pointer p-0 bg-transparent" />
           </label>
           <label class="flex items-center gap-2 text-sm">
-            Akzent 2
+            <span data-tk="settings.display.accent2">Accent 2</span>
             <input id="colorMustard" type="color" class="w-9 h-9 rounded-full border border-ink/15 cursor-pointer p-0 bg-transparent" />
           </label>
-          <button id="resetThemeColorsBtn" class="text-xs text-ink/40 hover:text-pine transition">Zurücksetzen</button>
+          <button data-tk="common.reset" id="resetThemeColorsBtn" class="text-xs text-ink/40 hover:text-pine transition">Reset</button>
         </div>
 
         <div class="flex items-center gap-1.5 mb-2">
-          <p class="text-xs uppercase tracking-wide text-ink/40">Standard-Ansicht für Termine</p>
-          <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Legt fest, ob Termine standardmäßig als Kalender (Zeitleiste) oder als Liste angezeigt werden – getrennt einstellbar für iPad/Desktop und fürs Handy, da beide unterschiedlich viel Platz haben. „Gilt für&quot; legt zusätzlich fest, ob der Standard nur in der Übersicht, nur im Termine-Tab, oder in beiden greift.">i</button>
+          <p data-tk="settings.display.defaultView" class="text-xs uppercase tracking-wide text-ink/40">Default view for events</p>
+          <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Determines whether events are shown as a calendar (timeline) or as a list by default – set separately for iPad/desktop and for phone, as both have different amounts of space. “Applies to&quot; also determines whether the default applies only in the overview, only in the events tab, or in both." data-tk-attr="data-info:settings.display.defaultViewInfo">i</button>
         </div>
 
-        <p class="text-xs font-medium text-ink/70 mb-2">🖥 iPad / Desktop</p>
+        <p data-tk="settings.display.ipadDesktop" class="text-xs font-medium text-ink/70 mb-2">🖥 iPad / desktop</p>
         <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-3">
-          <button type="button" data-default-view-mode="timeline" class="default-view-mode-btn-desktop px-3 py-1.5 rounded-full transition">🗓 Kalender</button>
-          <button type="button" data-default-view-mode="list" class="default-view-mode-btn-desktop px-3 py-1.5 rounded-full transition">📋 Liste</button>
+          <button data-tk="settings.display.calendar" type="button" data-default-view-mode="timeline" class="default-view-mode-btn-desktop px-3 py-1.5 rounded-full transition">🗓 Calendar</button>
+          <button data-tk="settings.display.list" type="button" data-default-view-mode="list" class="default-view-mode-btn-desktop px-3 py-1.5 rounded-full transition">📋 List</button>
         </div>
         <select id="defaultViewScopeSelectDesktop" class="w-full max-w-xs rounded-lg border border-ink/15 px-3 py-2 text-sm mb-5">
-          <option value="both">Gilt für Übersicht und Termine</option>
-          <option value="uebersicht">Gilt nur für Übersicht</option>
-          <option value="termine">Gilt nur für Termine</option>
+          <option data-tk="settings.display.scopeBoth" value="both">Applies to overview and events</option>
+          <option data-tk="settings.display.scopeOverview" value="uebersicht">Applies only to overview</option>
+          <option data-tk="settings.display.scopeEvents" value="termine">Applies only to events</option>
         </select>
 
-        <p class="text-xs font-medium text-ink/70 mb-2">📱 Handy</p>
+        <p data-tk="settings.display.phone" class="text-xs font-medium text-ink/70 mb-2">📱 Phone</p>
         <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-3">
-          <button type="button" data-default-view-mode="timeline" class="default-view-mode-btn-mobile px-3 py-1.5 rounded-full transition">🗓 Kalender</button>
-          <button type="button" data-default-view-mode="list" class="default-view-mode-btn-mobile px-3 py-1.5 rounded-full transition">📋 Liste</button>
+          <button data-tk="settings.display.calendar" type="button" data-default-view-mode="timeline" class="default-view-mode-btn-mobile px-3 py-1.5 rounded-full transition">🗓 Calendar</button>
+          <button data-tk="settings.display.list" type="button" data-default-view-mode="list" class="default-view-mode-btn-mobile px-3 py-1.5 rounded-full transition">📋 List</button>
         </div>
         <select id="defaultViewScopeSelectMobile" class="w-full max-w-xs rounded-lg border border-ink/15 px-3 py-2 text-sm">
-          <option value="both">Gilt für Übersicht und Termine</option>
-          <option value="uebersicht">Gilt nur für Übersicht</option>
-          <option value="termine">Gilt nur für Termine</option>
+          <option data-tk="settings.display.scopeBoth" value="both">Applies to overview and events</option>
+          <option data-tk="settings.display.scopeOverview" value="uebersicht">Applies only to overview</option>
+          <option data-tk="settings.display.scopeEvents" value="termine">Applies only to events</option>
         </select>
       </div>
     </details>
@@ -1760,32 +1760,32 @@
     <details class="settings-accordion set-card">
       <summary class="set-sum">
         <span class="set-ico">🧩</span>
-        <span class="set-head"><span class="sa-title">Übersicht</span><small>Kacheln anordnen und ausblenden</small></span>
+        <span class="set-head"><span data-tk="settings.overview.title" class="sa-title">Overview</span><small data-tk="settings.overview.subtitle">Arrange and hide tiles</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
-        <p class="text-xs text-ink/50 mb-4">Reihenfolge und Anzeige der Kacheln auf der Übersicht. Gilt nur für dein Profil – auf allen Geräten, auf denen du angemeldet bist.</p>
+        <p data-tk="settings.overview.intro" class="text-xs text-ink/50 mb-4">Order and display of the tiles on the overview. Applies only to your profile – on all devices you are logged in on.</p>
         <div id="overviewTileSettingsList" class="flex flex-col gap-2 mb-2"></div>
-        <p class="text-xs text-ink/40 mb-6">Am Handy und am iPad im Hochformat stehen die Kacheln in dieser Reihenfolge untereinander. Im Querformat steht der Kalender links (bzw. rechts, wenn eine andere große Kachel vor ihm steht), alle übrigen Kacheln daneben untereinander.</p>
+        <p data-tk="settings.overview.layoutHint" class="text-xs text-ink/40 mb-6">On phones and on the iPad in portrait mode, the tiles are stacked in this order. In landscape mode the calendar is on the left (or on the right if another large tile comes before it), all other tiles next to it, stacked.</p>
 
         <div class="flex items-center flex-wrap gap-3">
-          <button id="resetOverviewBtn" type="button" class="text-xs text-ink/40 hover:text-pine transition">Übersicht zurücksetzen</button>
+          <button data-tk="settings.overview.reset" id="resetOverviewBtn" type="button" class="text-xs text-ink/40 hover:text-pine transition">Reset overview</button>
         </div>
       </div>
     </details>
     <details class="settings-accordion set-card" id="settingsAusblickAccordion">
       <summary class="set-sum">
         <span class="set-ico">🔭</span>
-        <span class="set-head"><span class="sa-title">Ausblick</span><small>Wochenvorschau und Monatsausblick Finanzen</small></span>
+        <span class="set-head"><span data-tk="settings.outlook.title" class="sa-title">Outlook</span><small data-tk="settings.outlook.subtitle">Weekly preview and monthly finance outlook</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
-        <p class="text-xs text-ink/50 mb-4">Jeden Sonntag ab 18 Uhr gibt es die Wochenvorschau mit allem Wichtigen der Familie für die kommende Woche, am letzten Tag des Monats ab 18 Uhr den Ausblick auf die Finanzen des nächsten Monats. Beide erscheinen einmal als Hinweis oben und als Push-Nachricht – hier kannst du sie jederzeit wieder öffnen.</p>
+        <p data-tk="settings.outlook.intro" class="text-xs text-ink/50 mb-4">Every Sunday from 6 pm there's the weekly preview with everything important for the family in the coming week, and on the last day of the month from 6 pm the outlook on next month's finances. Both appear once as a notice at the top and as a push notification – you can open them again here at any time.</p>
         <div class="ab-set-btns mb-5">
-          <button type="button" id="abSetWeekBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90">🗓️ Wochenvorschau öffnen</button>
-          <button type="button" id="abSetMonthBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm hover:border-pine hover:text-pine transition">💶 Monatsausblick öffnen</button>
+          <button data-tk="settings.outlook.openWeek" type="button" id="abSetWeekBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90">🗓️ Open weekly preview</button>
+          <button data-tk="settings.outlook.openMonth" type="button" id="abSetMonthBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm hover:border-pine hover:text-pine transition">💶 Open monthly outlook</button>
         </div>
-        <h4 class="text-xs uppercase tracking-wide text-ink/40 mb-2">Push-Nachrichten</h4>
+        <h4 data-tk="settings.outlook.pushNotifications" class="text-xs uppercase tracking-wide text-ink/40 mb-2">Push notifications</h4>
         <div id="abSetPushRows" class="flex flex-col gap-3">
           <label class="flex items-center gap-3 cursor-pointer w-fit">
             <span class="relative inline-block w-11 h-6 shrink-0">
@@ -1793,7 +1793,7 @@
               <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
               <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
             </span>
-            <span class="text-sm">Wochenvorschau am Sonntag um 18 Uhr</span>
+            <span data-tk="settings.outlook.pushWeek" class="text-sm">Weekly preview on Sunday at 6 pm</span>
           </label>
           <label id="abSetPushMonthRow" class="flex items-center gap-3 cursor-pointer w-fit">
             <span class="relative inline-block w-11 h-6 shrink-0">
@@ -1801,56 +1801,56 @@
               <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
               <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
             </span>
-            <span class="text-sm">Monatsausblick am Monatsende um 18 Uhr</span>
+            <span data-tk="settings.outlook.pushMonth" class="text-sm">Monthly outlook at the end of the month at 6 pm</span>
           </label>
         </div>
-        <p class="text-[11px] text-ink/40 mt-3">Gilt nur für dein Profil. Damit die Push-Nachricht ankommt, müssen die Benachrichtigungen auf dem Gerät aktiviert sein (Einstellungen → Benachrichtigungen).</p>
+        <p data-tk="settings.outlook.pushHint" class="text-[11px] text-ink/40 mt-3">Applies only to your profile. For the push notification to arrive, notifications must be activated on the device (Settings → Notifications).</p>
         <p id="abSetStatus" class="text-xs text-ink/50 mt-2 min-h-[1em]"></p>
       </div>
     </details>
     <details class="settings-accordion set-card">
       <summary class="set-sum">
         <span class="set-ico">👨‍👩‍👧</span>
-        <span class="set-head"><span class="sa-title">Familienmitglieder</span><small data-no-term>Familie oder WG, Name, Mitglieder, Kindersicherung</small></span>
+        <span class="set-head"><span data-tk="settings.members.title" class="sa-title">Family members</span><small data-tk="settings.household.subtitle" data-no-term>Family or flatshare, name, members, child lock</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
         <!-- Living situation: family or flat share – adapts the terms of the whole app (the data stays the same) -->
         <div class="mb-4" data-no-term>
-          <h4 class="text-sm font-medium mb-2">Wohnform</h4>
-          <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit" role="group" aria-label="Wohnform">
-            <button type="button" data-household-type="familie" class="household-type-btn px-3 py-1.5 rounded-full transition">👨‍👩‍👧 Familie</button>
-            <button type="button" data-household-type="wg" class="household-type-btn px-3 py-1.5 rounded-full transition">🧑‍🤝‍🧑 WG</button>
+          <h4 data-tk="settings.household.householdType" class="text-sm font-medium mb-2">Household type</h4>
+          <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit" role="group" aria-label="Household type" data-tk-attr="aria-label:settings.household.householdType">
+            <button data-tk="settings.household.family" type="button" data-household-type="familie" class="household-type-btn px-3 py-1.5 rounded-full transition">👨‍👩‍👧 Family</button>
+            <button data-tk="settings.household.flatshare" type="button" data-household-type="wg" class="household-type-btn px-3 py-1.5 rounded-full transition">🧑‍🤝‍🧑 Flatshare</button>
           </div>
-          <p class="text-[11px] text-ink/40 mt-2">In einer WG heißen Familienmitglieder „Mitbewohner“ und die Familie „WG“ – in der ganzen App und für alle Profile. Alle Daten bleiben erhalten. Umstellen können nur Admins.</p>
+          <p data-tk="settings.household.hint" class="text-[11px] text-ink/40 mt-2">In a flatshare, family members are called “flatmates” and the family becomes the “flatshare” – throughout the app and for all profiles. All data is kept. Only admins can switch.</p>
         </div>
         <div class="flex items-center gap-2 mb-4">
-          <input id="settingsLastName" type="text" class="rounded-lg border border-ink/15 px-3 py-2 text-sm w-52" placeholder="Nachname" />
-          <button id="settingsSaveLastName" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90">Speichern</button>
+          <input id="settingsLastName" type="text" class="rounded-lg border border-ink/15 px-3 py-2 text-sm w-52" placeholder="Last name" data-tk-attr="placeholder:settings.members.lastName" />
+          <button data-tk="common.save" id="settingsSaveLastName" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90">Save</button>
         </div>
         <div id="settingsMemberList" class="flex flex-col gap-2 mb-3"></div>
-        <button id="settingsAddMember" class="px-3 py-2 rounded-lg border border-dashed border-ink/30 text-sm text-ink/60 hover:text-pine hover:border-pine transition">+ Mitglied hinzufügen</button>
-        <p id="childLockHint" class="text-[11px] text-ink/40 mt-2">🔒 Kindersicherung: Das Profil dieses Mitglieds kann nichts hinzufügen, bearbeiten oder löschen (Abhaken geht), sieht in den Einstellungen alles nur an, bei den Aufgaben nur die eigenen (inkl. „Alle“) und hat keinen Zugriff auf Finanzen, Dokumente und Fahrzeuge. Admins können nicht gesperrt werden.</p>
+        <button data-tk="settings.members.addMember" id="settingsAddMember" class="px-3 py-2 rounded-lg border border-dashed border-ink/30 text-sm text-ink/60 hover:text-pine hover:border-pine transition">+ Add member</button>
+        <p data-tk="settings.members.childLockHint" id="childLockHint" class="text-[11px] text-ink/40 mt-2">🔒 Child lock: this member's profile cannot add, edit or delete anything (checking off works), only views everything in the settings, only sees their own tasks (incl. “All”) and has no access to finance, documents and vehicles. Admins cannot be locked.</p>
       </div>
     </details>
     <details class="settings-accordion set-card" id="homeSettingsAccordion">
       <summary class="set-sum">
         <span class="set-ico">🏠</span>
-        <span class="set-head"><span class="sa-title">Zuhause</span><small>Adresse für Wetter, Sonnenzeiten und Ortung</small></span>
+        <span class="set-head"><span data-tk="settings.home.title" class="sa-title">Home</span><small data-tk="settings.home.subtitle">Address for weather, sun times and location</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
         <div class="flex justify-end -mt-1 mb-2">
-          <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Euer Zuhause gilt für die ganze Familie: Wetter, Feiertage und Schulferien eures Bundeslands im Kalender, Sonnenauf- und -untergang (z. B. für die Kinderseite) und die Ortung (Ort „Zuhause“ mit Push bei Ankunft und Verlassen, die Karte startet dort). pinn. fragt dafür nicht mehr bei jedem Start nach dem Standort. Die Adresssuche läuft über den eigenen Server.">i</button>
+          <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Your home applies to the whole family: weather, public holidays and school holidays of your state in the calendar, sunrise and sunset (e.g. for the kids' page) and location (place “Home” with push on arrival and departure, the map starts there). pinn. no longer asks for the location at every start. The address search runs via your own server." data-tk-attr="data-info:settings.home.info">i</button>
         </div>
         <div id="homeCard" class="home-card"></div>
         <div id="homeEditBox">
-          <div id="homeSuggest" class="home-sug" role="listbox" aria-label="Adressvorschläge"></div>
+          <div id="homeSuggest" class="home-sug" role="listbox" aria-label="Address suggestions" data-tk-attr="aria-label:settings.home.addressSuggestions"></div>
           <input id="homeAddressInput" type="search" class="home-input" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" placeholder="Adresse eingeben, z. B. Hauptstraße 5, Köln" />
           <div class="home-btns">
-            <button type="button" id="homeUseLocationBtn" class="home-btn">📍 Aktuellen Standort übernehmen</button>
+            <button data-tk="settings.home.useLocation" type="button" id="homeUseLocationBtn" class="home-btn">📍 Use current location</button>
             <button type="button" id="homeMigrateBtn" class="home-btn hidden"></button>
-            <button type="button" id="homeRemoveBtn" class="home-btn danger hidden">Entfernen</button>
+            <button data-tk="common.remove" type="button" id="homeRemoveBtn" class="home-btn danger hidden">Remove</button>
           </div>
         </div>
         <p id="homeStatus" class="home-status"></p>
@@ -1859,12 +1859,12 @@
     <details class="settings-accordion set-card" id="settingsCalendarAccordion">
       <summary class="set-sum">
         <span class="set-ico">📅</span>
-        <span class="set-head"><span class="sa-title">Kalender</span><small>iCloud &amp; Google, Feiertage, Ferien, Müll, Geburtstage</small></span>
+        <span class="set-head"><span data-tk="settings.calendar.title" class="sa-title">Calendar</span><small data-tk="settings.calendar.subtitle">iCloud &amp; Google, public holidays, school holidays, waste, birthdays</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
         <div class="flex justify-end -mt-1 mb-2">
-          <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Jedes Profil meldet sich mit seinem eigenen iCloud- oder Google-Konto an und hakt die Kalender daraus an: „Für mich“ sieht nur das eigene Profil, „Familie“ sehen und nutzen alle in eurer Familie. Die anderen sehen dabei nur, über welches Konto ein Familienkalender kommt – unkenntlich gemacht, z. B. m**l@g***l.com. Termine lassen sich wie gewohnt anlegen, bearbeiten, verschieben und offline vormerken und landen direkt in iCloud bzw. Google (und damit auf dem Handy). Abgleich alle 15 Minuten oder mit „Jetzt aktualisieren“. Ohne Konto geht auch ein Kalender nur auf eurem pinn.-Server. Erinnerungen und Tagesübersicht per Push: private Termine nur an dich.">i</button>
+          <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Each profile signs in with its own iCloud or Google account and ticks the calendars from it: “For me” is only seen by your own profile, “Family” is seen and used by everyone in your family. The others only see which account a family calendar comes from – obscured, e.g. m**l@g***l.com. Events can be created, edited, moved and queued offline as usual and go directly to iCloud or Google (and thus to the phone). Sync every 15 minutes or with “Update now”. Without an account, a calendar on your pinn. server only also works. Reminders and daily summary by push: private events only to you." data-tk-attr="data-info:settings.calendar.info">i</button>
         </div>
         <div id="pinnCalSettings">
           <div id="pinnCalAccounts" class="pinn-cal-accs"></div>
@@ -1873,29 +1873,29 @@
           <!-- Former family connection (Bearbeiten → "Kalender verbinden"): only visible as long as calendars
                are still selected there -->
           <div id="legacyCalBox" class="hidden rounded-lg border border-ink/10 bg-white px-3 py-3 mb-2">
-            <p class="text-[11px] uppercase tracking-wide text-ink/40 mb-1.5">Bisherige Familienverbindung</p>
+            <p data-tk="settings.calendar.legacy" class="text-[11px] uppercase tracking-wide text-ink/40 mb-1.5">Previous family connection</p>
             <p id="appleCalendarAccountLine" class="text-sm font-medium mb-2">Noch nicht eingerichtet.</p>
             <p id="googleCalendarAccountLine" class="hidden text-sm font-medium mb-2"></p>
             <ul id="appleCalendarListSummary" class="flex flex-col gap-1.5 mb-2"></ul>
-            <button id="editAppleCalendarBtn" class="text-xs text-pine hover:underline font-medium">Bearbeiten</button>
+            <button data-tk="common.edit" id="editAppleCalendarBtn" class="text-xs text-pine hover:underline font-medium">Edit</button>
           </div>
           <div class="home-btns" id="pinnCalBtns">
-            <button type="button" id="pinnCalAddBtn" class="home-btn primary">+ Kalender hinzufügen</button>
-            <button type="button" id="refreshCalendarBtn" class="home-btn hidden">Jetzt aktualisieren</button>
+            <button data-tk="settings.calendar.addCalendar" type="button" id="pinnCalAddBtn" class="home-btn primary">+ Add calendar</button>
+            <button data-tk="common.updateNow" type="button" id="refreshCalendarBtn" class="home-btn hidden">Update now</button>
           </div>
           <p id="icsSyncStatus" class="home-status hidden">Noch nicht geladen</p>
           <p id="pinnCalStatus" class="home-status"></p>
         </div>
         <div class="set-sub">
-          <p class="set-sub-title">Feiertage &amp; Schulferien</p>
+          <p data-tk="settings.holidays.title" class="set-sub-title">Public holidays &amp; school holidays</p>
           <div id="homeCalHint" class="set-hint hidden"></div>
           <div id="homeCalOptions">
             <div class="home-row">
-              <span>Bundesland<small>für Feiertage und Schulferien</small></span>
+              <span><span data-tk="settings.holidays.state">State</span><small data-tk="settings.holidays.stateHint">for public holidays and school holidays</small></span>
               <select id="homeStateSelect" class="home-select"></select>
             </div>
             <label class="home-row cursor-pointer">
-              <span><i class="home-dot" style="background:#C0392B"></i>Gesetzliche Feiertage</span>
+              <span><i class="home-dot" style="background:#C0392B"></i><span data-tk="settings.holidays.publicHolidays">Public holidays</span></span>
               <span class="relative inline-block w-11 h-6 shrink-0">
                 <input id="homeShowHolidays" type="checkbox" class="peer sr-only" />
                 <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
@@ -1903,7 +1903,7 @@
               </span>
             </label>
             <label class="home-row cursor-pointer">
-              <span><i class="home-dot" style="background:#2E9C7A"></i>Schulferien</span>
+              <span><i class="home-dot" style="background:#2E9C7A"></i><span data-tk="settings.holidays.schoolHolidays">School holidays</span></span>
               <span class="relative inline-block w-11 h-6 shrink-0">
                 <input id="homeShowSchool" type="checkbox" class="peer sr-only" />
                 <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
@@ -1915,15 +1915,15 @@
         </div>
         <div class="set-sub" id="muellSettings">
           <div class="flex items-center justify-between gap-2">
-            <p class="set-sub-title">Müllkalender</p>
-            <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0 -mt-2" data-info="Die Abfuhrtermine eures Entsorgers (Restmüll, Bio, Papier, Gelber Sack …) erscheinen im Kalender – je Familie genau ein Müllkalender; ein neuer ersetzt den bisherigen. Die KI sucht mit eurer Adresse nach der iCal-Datei, der pinn.-Server lädt sie selbst herunter und prüft sie. Kalender mit Link aktualisiert der Server jede Woche von selbst. Alternativ: Link zur .ics-Datei einfügen oder die Datei hochladen.">i</button>
+            <p data-tk="settings.waste.title" class="set-sub-title">Waste calendar</p>
+            <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0 -mt-2" data-info="Your waste collector's collection dates (general waste, organic, paper, recycling …) appear in the calendar – exactly one waste calendar per family; a new one replaces the old one. The AI searches for the iCal file using your address, the pinn. server downloads and checks it itself. The server updates calendars with a link every week by itself. Alternatively: paste the link to the .ics file or upload the file." data-tk-attr="data-info:settings.waste.info">i</button>
           </div>
-          <p class="text-[11px] text-ink/45 mb-2">Für jede Abholung legt pinn. am Vortag eine Aufgabe für den passenden Mülleimer an (Aufgaben → Haushalt) und hakt sie nach der Abholung von selbst ab. Die Erinnerung am Vortag stellt jeder unter Benachrichtigungen ein.</p>
+          <p data-tk="settings.waste.tasksHint" class="text-[11px] text-ink/45 mb-2">For every collection, pinn. creates a task for the matching bin the day before (Tasks → Household) and checks it off by itself after the collection. Everyone sets the reminder for the day before under Notifications.</p>
           <div id="muellHint" class="set-hint hidden"></div>
           <div id="muellCard" class="home-card hidden"></div>
           <div id="muellOptions" class="hidden">
             <label class="home-row cursor-pointer">
-              <span>Im Kalender anzeigen<small>gilt für die ganze Familie</small></span>
+              <span><span data-tk="settings.waste.showCalendar">Show in calendar</span><small data-tk="settings.waste.wholeFamily">applies to the whole family</small></span>
               <span class="relative inline-block w-11 h-6 shrink-0">
                 <input id="muellShowToggle" type="checkbox" class="peer sr-only" />
                 <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
@@ -1932,30 +1932,30 @@
             </label>
             <div id="muellTypes" class="muell-types"></div>
             <div class="home-btns" id="muellCardBtns">
-              <button type="button" id="muellRefreshBtn" class="home-btn">Jetzt aktualisieren</button>
-              <button type="button" id="muellRemoveBtn" class="home-btn danger">Entfernen</button>
+              <button data-tk="common.updateNow" type="button" id="muellRefreshBtn" class="home-btn">Update now</button>
+              <button data-tk="common.remove" type="button" id="muellRemoveBtn" class="home-btn danger">Remove</button>
             </div>
           </div>
           <div id="muellEditBox" class="hidden">
             <p id="muellEditTitle" class="home-sect">Müllkalender suchen</p>
             <div id="muellHomeLine" class="muell-addr hidden"></div>
             <div id="muellManualBox" class="muell-manual hidden">
-              <input id="muellStreetInput" type="text" class="home-input" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="next" placeholder="Straße und Hausnummer (optional)" />
+              <input id="muellStreetInput" type="text" class="home-input" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="next" placeholder="Street and house number (optional)" data-tk-attr="placeholder:settings.waste.street" />
               <input id="muellPlaceInput" type="text" class="home-input" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" placeholder="PLZ und Ort, z. B. 50667 Köln" />
             </div>
             <div class="home-btns">
-              <button type="button" id="muellSearchBtn" class="home-btn primary">🔎 Mit KI suchen</button>
+              <button data-tk="settings.waste.searchAi" type="button" id="muellSearchBtn" class="home-btn primary">🔎 Search with AI</button>
               <button type="button" id="muellManualToggle" class="home-btn hidden">Andere Adresse</button>
             </div>
             <div id="muellProgress" class="muell-progress hidden"><span class="muell-spin"></span><span id="muellProgressText">Die KI sucht …</span></div>
             <div id="muellResults" class="muell-results"></div>
             <details id="muellManualDetails" class="muell-own">
-              <summary>Link oder Datei selbst angeben</summary>
-              <p class="muell-own-txt">Auf der Seite eures Entsorgers gibt es meist „iCal“, „Kalender exportieren“ oder „.ics“. Den Link dazu hier einfügen – oder die heruntergeladene Datei hochladen.</p>
-              <input id="muellLinkInput" type="url" class="home-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" placeholder="https://… oder webcal://…" />
+              <summary data-tk="settings.waste.ownSource">Enter link or file yourself</summary>
+              <p data-tk="settings.waste.ownSourceHint" class="muell-own-txt">Your waste collector's website usually offers “iCal”, “Export calendar” or “.ics”. Paste the link here – or upload the downloaded file.</p>
+              <input id="muellLinkInput" type="url" class="home-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" placeholder="https://… or webcal://…" data-tk-attr="placeholder:settings.waste.linkPlaceholder" />
               <div class="home-btns">
-                <button type="button" id="muellLinkBtn" class="home-btn">Link übernehmen</button>
-                <button type="button" id="muellFileBtn" class="home-btn">📄 .ics-Datei hochladen</button>
+                <button data-tk="settings.waste.applyLink" type="button" id="muellLinkBtn" class="home-btn">Apply link</button>
+                <button data-tk="settings.waste.uploadIcsFile" type="button" id="muellFileBtn" class="home-btn">📄 Upload .ics file</button>
                 <input id="muellFileInput" type="file" accept=".ics,.ical,.icalendar,text/calendar" class="hidden" />
               </div>
             </details>
@@ -1963,12 +1963,12 @@
           <p id="muellStatus" class="home-status"></p>
         </div>
         <div class="set-sub">
-        <p class="set-sub-title">Geburtstage</p>
+        <p data-tk="settings.birthdays.title" class="set-sub-title">Birthdays</p>
         <select id="overviewBdayDaysSelect" class="w-full max-w-xs rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3">
-          <option value="7">Nächste 7 Tage anzeigen</option>
-          <option value="14">Nächste 14 Tage anzeigen</option>
-          <option value="30">Nächste 30 Tage anzeigen</option>
-          <option value="60">Nächste 60 Tage anzeigen</option>
+          <option data-tk="settings.birthdays.next7" value="7">Show next 7 days</option>
+          <option data-tk="settings.birthdays.next14" value="14">Show next 14 days</option>
+          <option data-tk="settings.birthdays.next30" value="30">Show next 30 days</option>
+          <option data-tk="settings.birthdays.next60" value="60">Show next 60 days</option>
         </select>
         <label class="flex items-center gap-3 cursor-pointer mb-4">
           <span class="ov-set-switch">
@@ -1976,57 +1976,57 @@
             <span class="ov-track"></span>
             <span class="ov-knob"></span>
           </span>
-          <span class="text-sm">Kachel nur zeigen, wenn in diesem Zeitraum ein Geburtstag ansteht</span>
+          <span data-tk="settings.birthdays.onlyUpcoming" class="text-sm">Only show tile if a birthday is coming up in this period</span>
         </label>
-        <p id="birthdaySyncStatus" class="text-xs text-ink/40 mb-2">Noch nicht geladen</p>
+        <p data-tk="common.notLoadedYet" id="birthdaySyncStatus" class="text-xs text-ink/40 mb-2">Not loaded yet</p>
           <div class="flex items-center flex-wrap gap-3">
-            <button id="refreshBirthdaysBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Geburtstage jetzt aktualisieren</button>
-            <button id="resetHiddenBirthdaysBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Keine Geburtstage ausgeblendet</button>
+            <button data-tk="settings.birthdays.refresh" id="refreshBirthdaysBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Update birthdays now</button>
+            <button data-tk="settings.birthdays.noneHidden" id="resetHiddenBirthdaysBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">No birthdays hidden</button>
           </div>
-          <p class="text-[11px] text-ink/40 mt-2">Tipp: In der Übersicht einen Geburtstag nach links wischen (am Computer auf × klicken), um ihn auszublenden.</p>
+          <p data-tk="settings.birthdays.hideTip" class="text-[11px] text-ink/40 mt-2">Tip: Swipe a birthday to the left in the overview (on a computer click ×) to hide it.</p>
         </div>
       </div>
     </details>
     <details class="settings-accordion set-card" id="settingsShoppingAccordion">
       <summary class="set-sum">
         <span class="set-ico">🛒</span>
-        <span class="set-head"><span class="sa-title">Einkauf</span><small>Stammladen, Sonderlisten und Kategorien</small></span>
+        <span class="set-head"><span data-tk="settings.shopping.title" class="sa-title">Shopping</span><small data-tk="settings.shopping.subtitle">Main shop, special lists and categories</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
         <div class="flex justify-end -mt-1 mb-2">
-          <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Stammladen: Hier landen die Zutaten der Essensplanung (manuell, gespiegelt oder direkt). Sonderlisten: Zutaten mit bestimmten Stichwörtern (z. B. Hack, Schnitzel, Speck) kommen stattdessen auf eine andere Liste, z. B. zur Metzgerei. Gilt für alle Geräte der Familie.">i</button>
+          <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Main shop: the ingredients of the meal plan go here (manual, mirrored or direct). Special lists: ingredients with certain keywords (e.g. mince, schnitzel, bacon) go to another list instead, e.g. to the butcher. Applies to all devices of the family." data-tk-attr="data-info:settings.shopping.info">i</button>
         </div>
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Stammladen</label>
+        <label data-tk="settings.shopping.mainShop" class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Main shop</label>
         <div class="flex items-center gap-3 rounded-xl border border-ink/10 bg-white px-3 py-2.5 mb-5">
           <div id="settingsStammLogo" class="shrink-0"></div>
           <div class="flex-1 min-w-0">
             <div id="settingsStammName" class="text-sm font-medium truncate"></div>
             <div id="settingsStammMode" class="text-[11px] text-ink/50 truncate"></div>
           </div>
-          <button id="settingsStammBtn" type="button" class="shrink-0 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Ändern</button>
+          <button data-tk="common.change" id="settingsStammBtn" type="button" class="shrink-0 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Change</button>
         </div>
 
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Sonderlisten für Zutaten</label>
-        <p class="text-[11px] text-ink/45 mb-2.5 leading-snug">Zutaten aus der Essensplanung, die zu einem Stichwort passen, landen auf der gewählten Liste statt im Stammladen – z. B. alles aus Rewe, nur das Hackfleisch von der Metzgerei. Auf der Essensplanung bleiben sie sichtbar (mit Hinweis).</p>
+        <label data-tk="settings.shopping.specialLists" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Special lists for ingredients</label>
+        <p data-tk="settings.shopping.specialListsHint" class="text-[11px] text-ink/45 mb-2.5 leading-snug">Ingredients from the meal plan that match a keyword end up on the chosen list instead of the main shop – e.g. everything from Tesco, only the mince from the butcher. They remain visible on the meal plan (with a note).</p>
         <div id="settingsIngredientRules" class="flex flex-col gap-3 mb-3"></div>
         <div class="flex flex-wrap gap-2">
-          <button id="settingsAddMeatRuleBtn" type="button" class="px-3 py-2 rounded-lg border border-dashed border-ink/30 text-sm text-ink/60 hover:text-pine hover:border-pine transition">+ 🥩 Metzgerei (Fleisch &amp; Wurst)</button>
-          <button id="settingsAddCustomRuleBtn" type="button" class="px-3 py-2 rounded-lg border border-dashed border-ink/30 text-sm text-ink/60 hover:text-pine hover:border-pine transition">+ Eigene Sonderliste</button>
+          <button data-tk="settings.shopping.addButcher" id="settingsAddMeatRuleBtn" type="button" class="px-3 py-2 rounded-lg border border-dashed border-ink/30 text-sm text-ink/60 hover:text-pine hover:border-pine transition">+ 🥩 Butcher (meat &amp; sausage)</button>
+          <button data-tk="settings.shopping.addCustom" id="settingsAddCustomRuleBtn" type="button" class="px-3 py-2 rounded-lg border border-dashed border-ink/30 text-sm text-ink/60 hover:text-pine hover:border-pine transition">+ Custom special list</button>
         </div>
 
         <div class="flex items-center justify-between gap-2 mt-6 mb-1">
-          <label class="block text-xs uppercase tracking-wide text-ink/40">Kategorien auf den Einkaufslisten</label>
-          <button id="settingsShopCatReset" type="button" class="shrink-0 px-2.5 py-1 rounded-lg border border-ink/15 text-[11px] text-ink/60 hover:text-pine hover:border-pine transition">Zurücksetzen</button>
+          <label data-tk="settings.shopping.categories" class="block text-xs uppercase tracking-wide text-ink/40">Categories on the shopping lists</label>
+          <button data-tk="common.reset" id="settingsShopCatReset" type="button" class="shrink-0 px-2.5 py-1 rounded-lg border border-ink/15 text-[11px] text-ink/60 hover:text-pine hover:border-pine transition">Reset</button>
         </div>
-        <p class="text-[11px] text-ink/45 mb-2.5 leading-snug">Die Artikel werden automatisch nach Kategorien sortiert. Bring die Kategorien in die Reihenfolge, in der du durch deinen Laden gehst – gilt für alle Listen und Geräte der Familie. Eine falsch erkannte Kategorie änderst du, indem du den Artikel lange drückst.</p>
+        <p data-tk="settings.shopping.categoriesHint" class="text-[11px] text-ink/45 mb-2.5 leading-snug">Items are sorted into categories automatically. Put the categories in the order in which you walk through your shop – applies to all lists and devices of the family. To change a wrongly detected category, long-press the item.</p>
         <div id="settingsShopCategories" class="flex flex-col gap-1.5"></div>
       </div>
     </details>
     <details class="settings-accordion set-card">
       <summary class="set-sum">
         <span class="set-ico">✅</span>
-        <span class="set-head"><span class="sa-title">Aufgaben</span><small>Haushalt, Aufräumen, Animation</small></span>
+        <span class="set-head"><span data-tk="settings.tasks.title" class="sa-title">Tasks</span><small data-tk="settings.tasks.subtitle">Household, tidying, animation</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body flex flex-col gap-5">
@@ -2034,12 +2034,12 @@
         <!-- Household tasks -->
         <div>
           <div class="flex items-center justify-between gap-2 mb-2">
-            <h4 class="text-sm font-medium">Haushalts-Aufgaben</h4>
-            <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Betrifft nur vom Haushalt-Bereich automatisch erzeugte Aufgaben (Reinigung/Aufräumen/Mülleimer rausbringen) – normale, selbst angelegte Aufgaben bleiben davon unberührt.">i</button>
+            <h4 data-tk="settings.tasks.householdTasks" class="text-sm font-medium">Household tasks</h4>
+            <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Only affects tasks created automatically by the household section (cleaning/tidying/taking out bins) – normal, self-created tasks are not affected." data-tk-attr="data-info:settings.tasks.householdInfo">i</button>
           </div>
           <div class="flex flex-wrap gap-2">
-            <button id="regenerateHouseholdTasksBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Jetzt neu generieren</button>
-            <button id="deleteHouseholdTasksBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-red-600 hover:bg-red-50 transition">Haushalts-Aufgaben löschen</button>
+            <button data-tk="settings.tasks.regenerateNow" id="regenerateHouseholdTasksBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Regenerate now</button>
+            <button data-tk="settings.tasks.deleteHousehold" id="deleteHouseholdTasksBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-red-600 hover:bg-red-50 transition">Delete household tasks</button>
           </div>
           <p id="householdTasksMaintenanceStatus" class="text-xs text-ink/40 mt-2"></p>
         </div>
@@ -2047,28 +2047,28 @@
         <!-- Delete completed tasks -->
         <div class="pt-4 border-t border-ink/10">
           <div class="flex items-center justify-between gap-2 mb-2">
-            <h4 class="text-sm font-medium">Erledigte Aufgaben löschen</h4>
-            <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Legt fest, wie lange eine abgehakte Aufgabe erhalten bleibt, bevor sie automatisch gelöscht wird (geprüft wird einmal pro Stunde). Bei &quot;Sofort&quot; verschwindet sie direkt aus der Liste; erledigte Haushalts-Aufgaben von heute werden erst am Folgetag gelöscht - damit sie am selben Tag nicht neu angelegt werden.">i</button>
+            <h4 data-tk="settings.tasks.cleanup" class="text-sm font-medium">Delete completed tasks</h4>
+            <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Determines how long a checked-off task is kept before it is deleted automatically (checked once per hour). With &quot;Immediately&quot; it disappears from the list right away; completed household tasks from today are only deleted the following day - so they are not created again the same day." data-tk-attr="data-info:settings.tasks.cleanupInfo">i</button>
           </div>
           <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit">
-            <button type="button" data-cleanup-days="2" class="done-task-cleanup-btn px-3 py-1.5 rounded-full transition">Nach 2 Tagen</button>
-            <button type="button" data-cleanup-days="1" class="done-task-cleanup-btn px-3 py-1.5 rounded-full transition">Nach 1 Tag</button>
-            <button type="button" data-cleanup-days="0" class="done-task-cleanup-btn px-3 py-1.5 rounded-full transition">Sofort</button>
+            <button data-tk="settings.tasks.after2Days" type="button" data-cleanup-days="2" class="done-task-cleanup-btn px-3 py-1.5 rounded-full transition">After 2 days</button>
+            <button data-tk="settings.tasks.after1Day" type="button" data-cleanup-days="1" class="done-task-cleanup-btn px-3 py-1.5 rounded-full transition">After 1 day</button>
+            <button data-tk="settings.tasks.immediately" type="button" data-cleanup-days="0" class="done-task-cleanup-btn px-3 py-1.5 rounded-full transition">Immediately</button>
           </div>
         </div>
 
         <!-- Task animation -->
         <div class="pt-4 border-t border-ink/10">
-          <h4 class="text-sm font-medium mb-2">Aufgaben-Animation</h4>
+          <h4 data-tk="settings.tasks.animation" class="text-sm font-medium mb-2">Task animation</h4>
           <label class="flex items-center gap-3 cursor-pointer w-fit">
             <span class="relative inline-block w-11 h-6 shrink-0">
               <input id="doneAnimationToggle" type="checkbox" class="peer sr-only" />
               <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
               <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
             </span>
-            <span class="text-sm">Feier-Animation, wenn ich alle Aufgaben bis jetzt erledigt habe</span>
+            <span data-tk="settings.tasks.animationToggle" class="text-sm">Celebration animation when I have done all tasks so far</span>
           </label>
-          <p class="text-[11px] text-ink/40 mt-2">Persönlich für dein Profil – gilt auf allen Geräten, auf denen du angemeldet bist.</p>
+          <p data-tk="settings.tasks.animationHint" class="text-[11px] text-ink/40 mt-2">Personal for your profile – applies on all devices you are logged in on.</p>
           <p id="doneAnimationStatus" class="text-xs text-ink/40 mt-1"></p>
         </div>
 
@@ -2077,7 +2077,7 @@
     <details class="settings-accordion set-card" id="settingsSmartHomeAccordion">
       <summary class="set-sum">
         <span class="set-ico">🏠</span>
-        <span class="set-head"><span class="sa-title">Smarthome</span><small>Geräte, Apple Kurzbefehle, Home Assistant</small></span>
+        <span class="set-head"><span data-tk="settings.smartHome.title" class="sa-title">Smart home</span><small data-tk="settings.smartHome.subtitle">Devices, Apple Shortcuts, Home Assistant</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
@@ -2085,81 +2085,81 @@
         <div class="flex flex-col gap-2">
           <button type="button" data-smart-open="geraete" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl border border-ink/10 bg-white hover:border-pine transition">
             <span class="text-xl shrink-0">🤖</span>
-            <span class="flex-1 min-w-0"><span class="block text-sm font-medium">Geräte &amp; Aktionen</span><span class="block text-[11px] text-ink/50">Saugroboter, Licht/LED, Steckdosen … mit Dauer und Test</span></span>
+            <span class="flex-1 min-w-0"><span data-tk="settings.smartHome.devices" class="block text-sm font-medium">Devices &amp; actions</span><span data-tk="settings.smartHome.devicesHint" class="block text-[11px] text-ink/50">Robot vacuum, light/LED, sockets … with duration and test</span></span>
             <span class="text-ink/30 shrink-0">›</span>
           </button>
           <button type="button" data-smart-open="apple" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl border border-ink/10 bg-white hover:border-pine transition">
             <span class="text-xl shrink-0">📱</span>
-            <span class="flex-1 min-w-0"><span class="block text-sm font-medium">Apple Kurzbefehle</span><span class="block text-[11px] text-ink/50">Automatik-Link für den Kurzbefehl „pinn Automatik“</span></span>
+            <span class="flex-1 min-w-0"><span data-tk="settings.smartHome.apple" class="block text-sm font-medium">Apple Shortcuts</span><span data-tk="settings.smartHome.appleHint" class="block text-[11px] text-ink/50">Automation link for the shortcut “pinn Automatik”</span></span>
             <span class="text-ink/30 shrink-0">›</span>
           </button>
           <button type="button" data-smart-open="ha" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl border border-ink/10 bg-white hover:border-pine transition">
             <span class="text-xl shrink-0">🏠</span>
-            <span class="flex-1 min-w-0"><span class="block text-sm font-medium">Home Assistant</span><span class="block text-[11px] text-ink/50">Verbinden – für alle Geräte, auch Android</span></span>
+            <span class="flex-1 min-w-0"><span data-tk="settings.smartHome.homeAssistant" class="block text-sm font-medium">Home Assistant</span><span data-tk="settings.smartHome.haHint" class="block text-[11px] text-ink/50">Connect – for all devices, including Android</span></span>
             <span class="text-ink/30 shrink-0">›</span>
           </button>
         </div>
-        <p class="text-[11px] text-ink/40 mt-3">Welche Aktion zu welcher Aufgabe gehört, stellst du auf der Haushalt-Seite in der jeweiligen Reinigung bzw. am Mülleimer ein.</p>
+        <p data-tk="settings.smartHome.footer" class="text-[11px] text-ink/40 mt-3">You set which action belongs to which task on the household page in the respective cleaning task or on the bin.</p>
       </div>
     </details>
     <details class="settings-accordion set-card" id="settingsVoiceAccordion">
       <summary class="set-sum">
         <span class="set-ico">🎙️</span>
-        <span class="set-head"><span class="sa-title">Sprachsteuerung</span><small>Siri &amp; Android: Einkaufsliste, Aufgaben, Tagesüberblick</small></span>
+        <span class="set-head"><span data-tk="settings.voice.title" class="sa-title">Voice control</span><small data-tk="settings.voice.subtitle">Siri &amp; Android: shopping list, tasks, daily overview</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
-        <div id="voiceSettingsBody" class="flex flex-col gap-3"><p class="text-xs text-ink/50">Wird geladen …</p></div>
+        <div id="voiceSettingsBody" class="flex flex-col gap-3"><p data-tk="common.loading" class="text-xs text-ink/50">Loading …</p></div>
       </div>
     </details>
     <details class="settings-accordion set-card" id="settingsSystemAccordion">
       <summary class="set-sum">
         <span class="set-ico">🔄</span>
-        <span class="set-head"><span class="sa-title">System</span><small>Synchronisierung, Updates, Sicherungen, Daten</small></span>
+        <span class="set-head"><span data-tk="settings.system.title" class="sa-title">System</span><small data-tk="settings.system.subtitle">Synchronisation, updates, backups, data</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
-        <p class="set-sub-title">Synchronisierung</p>
-        <p class="text-sm text-ink/70">Status: <span id="syncStatus">synchronisiert</span></p>
+        <p data-tk="settings.system.sync" class="set-sub-title">Synchronisation</p>
+        <p class="text-sm text-ink/70"><span data-tk="settings.system.status">Status:</span> <span id="syncStatus">synchronisiert</span></p>
 
         <div class="set-sub">
-          <p class="set-sub-title">Updates</p>
-          <p class="text-xs text-ink/40 mb-2">Installierte Version: <span id="settingsVersionDisplay" class="font-mono text-ink/60"></span></p>
+          <p data-tk="settings.system.updates" class="set-sub-title">Updates</p>
+          <p class="text-xs text-ink/40 mb-2"><span data-tk="settings.system.installedVersion">Installed version:</span> <span id="settingsVersionDisplay" class="font-mono text-ink/60"></span></p>
           <div id="sysUpdateHint" class="set-hint ok hidden mb-2">
             <span>✨</span>
             <span id="sysUpdateHintText" class="flex-1 min-w-0"></span>
-            <button id="sysUpdateHintBtn" type="button" class="set-hint-btn">Ansehen</button>
+            <button data-tk="common.view" id="sysUpdateHintBtn" type="button" class="set-hint-btn">View</button>
           </div>
           <div class="flex flex-wrap items-center gap-2">
-            <button id="checkUpdateBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Auf Update prüfen</button>
-            <button id="openChangelogBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition inline-flex items-center gap-1.5"><span class="font-mono text-xs">&gt;_</span><span>Versions-Log</span></button>
+            <button data-tk="settings.system.checkUpdate" id="checkUpdateBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Check for update</button>
+            <button id="openChangelogBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition inline-flex items-center gap-1.5"><span class="font-mono text-xs">&gt;_</span><span data-tk="settings.system.versionLog">Version log</span></button>
           </div>
           <p id="versionCheckStatus" class="text-xs text-ink/40 mt-2"></p>
         </div>
 
         <!-- Backups (only visible for admins) – container "wartung", pb_hooks/system.pb.js -->
         <div id="sysBackupSub" class="set-sub hidden">
-          <p class="set-sub-title">Sicherungen</p>
+          <p data-tk="settings.system.backups" class="set-sub-title">Backups</p>
           <p id="sysBackupSummary" class="text-xs text-ink/50 mb-2 leading-snug">Wird geladen …</p>
-          <button id="openSysMaintBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">🛟 Sicherungen &amp; Wiederherstellung</button>
+          <button data-tk="settings.system.backupsButton" id="openSysMaintBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">🛟 Backups &amp; restore</button>
         </div>
 
         <!-- Error log (only visible for admins) – pb_hooks/protokoll.pb.js -->
         <div id="errLogSub" class="set-sub hidden">
-          <p class="set-sub-title">Fehlerprotokoll</p>
+          <p data-tk="settings.system.errorLog" class="set-sub-title">Error log</p>
           <p id="errLogSummary" class="text-xs text-ink/50 mb-2 leading-snug">Wird geladen …</p>
-          <button id="openErrLogBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition"><span>🧾 Fehlerprotokoll</span><span id="errLogBadge" class="el-badge hidden" data-no-i18n></span></button>
+          <button id="openErrLogBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition"><span data-tk="settings.system.errorLogButton">🧾 Error log</span><span id="errLogBadge" class="el-badge hidden" data-no-i18n></span></button>
         </div>
 
         <div class="set-sub">
-          <p class="set-sub-title">Daten</p>
+          <p data-tk="settings.system.data" class="set-sub-title">Data</p>
           <!-- Data export (only visible for admins) – pb_public/datenexport.js, pb_hooks/export.pb.js -->
           <div id="dataExportSub" class="hidden mb-4" data-no-i18n data-no-term>
             <p id="dataExportText" class="text-xs text-ink/50 mb-2 leading-snug"></p>
             <button id="dataExportBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition"></button>
           </div>
-          <p class="text-xs text-ink/40 mb-2">Setzt die auf diesem Gerät gespeicherten pinn.-Daten auf den Anfangszustand zurück.</p>
-          <button id="resetDataBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-white hover:bg-red-500 hover:border-red-500 transition">Alle Daten zurücksetzen</button>
+          <p data-tk="settings.system.resetHint" class="text-xs text-ink/40 mb-2">Resets the pinn. data stored on this device to the initial state.</p>
+          <button data-tk="settings.system.resetData" id="resetDataBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-white hover:bg-red-500 hover:border-red-500 transition">Reset all data</button>
         </div>
       </div>
     </details>
@@ -2167,21 +2167,21 @@
     <details class="settings-accordion set-card" id="settingsGithubAccordion">
       <summary class="set-sum">
         <span class="set-ico">⭐</span>
-        <span class="set-head"><span class="sa-title">GitHub</span><small>Projektseite, Fehler melden, pinn. unterstützen</small></span>
+        <span class="set-head"><span class="sa-title">GitHub</span><small data-tk="settings.github.subtitle">Project page, report bugs, support pinn.</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
-        <p class="text-sm text-ink/70 leading-relaxed">pinn. ist Open Source und kostenlos – ohne Werbung und ohne Abo. Eure Daten bleiben auf eurem eigenen NAS.</p>
-        <p class="text-xs text-ink/40 mt-1.5"><span>Version</span> <span id="githubVersionDisplay" class="font-mono text-ink/60"></span> · <span>MIT-Lizenz</span></p>
+        <p data-tk="settings.github.intro" class="text-sm text-ink/70 leading-relaxed">pinn. is open source and free – no ads, no subscription. Your data stays on your own NAS.</p>
+        <p class="text-xs text-ink/40 mt-1.5"><span data-tk="settings.github.version">Version</span> <span id="githubVersionDisplay" class="font-mono text-ink/60"></span> · <span data-tk="settings.github.license">MIT licence</span></p>
         <div class="flex flex-wrap items-center gap-2 mt-3">
-          <a id="githubRepoLink" href="https://github.com/pinn-shost/pinn" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition inline-flex items-center gap-1.5"><span>Projekt auf GitHub</span><span class="gh-ext" aria-hidden="true">↗</span></a>
-          <a id="githubIssuesLink" href="https://github.com/pinn-shost/pinn/issues" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition inline-flex items-center gap-1.5"><span>Fehler melden oder Idee vorschlagen</span><span class="gh-ext" aria-hidden="true">↗</span></a>
+          <a id="githubRepoLink" href="https://github.com/pinn-shost/pinn" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition inline-flex items-center gap-1.5"><span data-tk="settings.github.project">Project on GitHub</span><span class="gh-ext" aria-hidden="true">↗</span></a>
+          <a id="githubIssuesLink" href="https://github.com/pinn-shost/pinn/issues" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition inline-flex items-center gap-1.5"><span data-tk="settings.github.issues">Report a bug or suggest an idea</span><span class="gh-ext" aria-hidden="true">↗</span></a>
         </div>
-        <p class="text-[11px] text-ink/45 mt-2">Gefällt dir pinn.? Ein ⭐ auf GitHub hilft anderen, es zu finden.</p>
+        <p data-tk="settings.github.star" class="text-[11px] text-ink/45 mt-2">Like pinn.? A ⭐ on GitHub helps others find it.</p>
 
         <div class="set-sub">
-          <p class="set-sub-title">pinn. unterstützen</p>
-          <p class="text-sm text-ink/70 leading-relaxed">pinn. entsteht in der Freizeit. Wenn es euch den Alltag ein bisschen leichter macht, freue ich mich über eine kleine Unterstützung – ganz freiwillig. pinn. bleibt für alle kostenlos und vollständig.</p>
+          <p data-tk="settings.github.support" class="set-sub-title">Support pinn.</p>
+          <p data-tk="settings.github.supportText" class="text-sm text-ink/70 leading-relaxed">pinn. is made in my spare time. If it makes your everyday life a little easier, I'd be happy about a small contribution – entirely voluntary. pinn. stays free and complete for everyone.</p>
           <div class="flex flex-wrap items-center gap-2 mt-3">
             <a id="githubKofiLink" href="https://ko-fi.com/pinnapp" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition inline-flex items-center gap-1.5"><span class="gh-heart" aria-hidden="true">♥</span><span>Ko-fi</span></a>
             <a id="githubBmcLink" href="https://buymeacoffee.com/pinn" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition inline-flex items-center gap-1.5"><span class="gh-heart" aria-hidden="true">♥</span><span>Buy Me a Coffee</span></a>
@@ -2520,7 +2520,7 @@
   <div id="bottomTabDrawer" class="hidden border-b border-ink/10">
     <div id="bottomTabDrawerGrid" class="grid grid-cols-4 gap-1 px-2 pt-1 pb-2"></div>
   </div>
-  <button type="button" id="bottomTabHandle" class="w-full flex justify-center py-1" aria-label="Weitere Menüpunkte ein-/ausblenden">
+  <button type="button" id="bottomTabHandle" class="w-full flex justify-center py-1" aria-label="Show/hide more menu items" data-tk-attr="aria-label:nav.moreItems">
     <span class="w-9 h-1 rounded-full bg-ink/15"></span>
   </button>
   <div id="bottomTabMainRow" class="grid grid-cols-5"></div>
@@ -2528,13 +2528,13 @@
 
 <!-- Global search: the magnifier in the sidebar opens a search bar at the bottom, suggestions appear above it -->
 <div id="globalSearchBackdrop" class="gs-backdrop" aria-hidden="true"></div>
-<div id="globalSearch" class="gs-wrap" role="dialog" aria-label="Suche">
+<div id="globalSearch" class="gs-wrap" role="dialog" aria-label="Search" data-tk-attr="aria-label:search.dialog">
   <div class="gs-inner">
-    <div id="globalSearchResults" class="gs-results" role="listbox" aria-label="Suchvorschläge"></div>
+    <div id="globalSearchResults" class="gs-results" role="listbox" aria-label="Search suggestions" data-tk-attr="aria-label:search.suggestions"></div>
     <div id="globalSearchField" class="gs-field">
       <span class="gs-field-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="M20.5 20.5l-4.6-4.6"></path></svg></span>
-      <input id="globalSearchInput" type="text" enterkeyhint="search" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="off" placeholder="pinn. durchsuchen …" aria-label="Suchbegriff" />
-      <button id="globalSearchClose" type="button" class="gs-close" aria-label="Suche schließen">×</button>
+      <input id="globalSearchInput" type="text" enterkeyhint="search" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="off" placeholder="Search pinn. …" aria-label="Search term" data-tk-attr="placeholder:search.placeholder;aria-label:search.term" />
+      <button id="globalSearchClose" type="button" class="gs-close" aria-label="Close search" data-tk-attr="aria-label:search.close">×</button>
     </div>
   </div>
 </div>
@@ -4810,6 +4810,11 @@
 </div>
 
 <script>
+// Texts by key (pb_public/i18n): fill in the HTML above now, before the app scripts run – they may change some
+// of these texts afterwards (js/sprachen.js only fills in elements it has not done yet when the page is ready)
+if (window.PINN_I18N && PINN_I18N.apply) PINN_I18N.apply(document.body);
+</script>
+<script>
 // Moving notes (see "Zettel verschieben" in the pin board section) - created early because renderPinboard uses them
 var PW_LONGPRESS_MS = 450;
 var pwArr = { on: false, press: null, drag: null, quietUntil: 0, renderPending: false, ro: null, layoutQueued: false, raf: 0 };
@@ -4847,7 +4852,7 @@ let lastIcsSync = null;
    because such web apps often don't reload their content by themselves)
    ========================================================== */
 // Current version – comes from src/version.txt (filled in by src/build.js); pb_hooks/pinn-system.js and pinn-wartung.sh read it here
-const APP_VERSION = '1.111.0';
+const APP_VERSION = '1.112.0';
 
 /* ==========================================================
    Settings & account: two columns of equal height (landscape from tablet width)
@@ -4975,110 +4980,110 @@ const APP_VERSION = '1.111.0';
 <!-- App parts under pb_public/js/ (classic scripts without a build step, order matters).
      ausblick.js must come last – it starts the app (bootApp). New file: add its line here and its name
      in pinn-setup.sh – src/build.js fills in the list of the start check (PINN_APP_PARTS) by itself. -->
-<script src="js/grundlagen.js?v=1.111.0"></script>
-<script src="js/popups.js?v=1.111.0"></script>
-<script src="js/verbindung.js?v=1.111.0"></script>
-<script src="js/benutzer.js?v=1.111.0"></script>
-<script src="js/mitteilungen.js?v=1.111.0"></script>
-<script src="js/serverzugriff.js?v=1.111.0"></script>
-<script src="js/tastatur.js?v=1.111.0"></script>
-<script src="js/anmeldemaske.js?v=1.111.0"></script>
-<script src="js/dashboard.js?v=1.111.0"></script>
-<script src="js/dashboardhintergrund.js?v=1.111.0"></script>
-<script src="js/profilauswahl.js?v=1.111.0"></script>
-<script src="js/pineingabe.js?v=1.111.0"></script>
-<script src="js/dashboardsitzung.js?v=1.111.0"></script>
-<script src="js/dashboardkonto.js?v=1.111.0"></script>
-<script src="js/familienverwalten.js?v=1.111.0"></script>
-<script src="js/einrichten.js?v=1.111.0"></script>
-<script src="js/exportieren.js?v=1.111.0"></script>
-<script src="js/hauptadminseite.js?v=1.111.0"></script>
-<script src="js/anmeldung.js?v=1.111.0"></script>
-<script src="js/konto.js?v=1.111.0"></script>
-<script src="js/profilverwaltung.js?v=1.111.0"></script>
-<script src="js/zustand.js?v=1.111.0"></script>
-<script src="js/bedienzustand.js?v=1.111.0"></script>
-<script src="js/rezeptbilder.js?v=1.111.0"></script>
-<script src="js/zusammenfuehren.js?v=1.111.0"></script>
-<script src="js/speichern.js?v=1.111.0"></script>
-<script src="js/design.js?v=1.111.0"></script>
-<script src="js/sprache.js?v=1.111.0"></script>
-<script src="js/uebersicht.js?v=1.111.0"></script>
-<script src="js/familienkachel.js?v=1.111.0"></script>
-<script src="js/wobistdu.js?v=1.111.0"></script>
-<script src="js/geburtstagsfeier.js?v=1.111.0"></script>
-<script src="js/wetterkachel.js?v=1.111.0"></script>
-<script src="js/geburtstage.js?v=1.111.0"></script>
-<script src="js/uebersichteinstellungen.js?v=1.111.0"></script>
-<script src="js/familiensync.js?v=1.111.0"></script>
-<script src="js/bereiche.js?v=1.111.0"></script>
-<script src="js/kalenderquellen.js?v=1.111.0"></script>
-<script src="js/icsparser.js?v=1.111.0"></script>
-<script src="js/zeitleiste.js?v=1.111.0"></script>
-<script src="js/termindetails.js?v=1.111.0"></script>
-<script src="js/kalenderdatei.js?v=1.111.0"></script>
-<script src="js/wetter.js?v=1.111.0"></script>
-<script src="js/wohnort.js?v=1.111.0"></script>
-<script src="js/feiertage.js?v=1.111.0"></script>
-<script src="js/muellkalender.js?v=1.111.0"></script>
-<script src="js/mitglieder.js?v=1.111.0"></script>
-<script src="js/profilbild.js?v=1.111.0"></script>
-<script src="js/mitglied.js?v=1.111.0"></script>
-<script src="js/kinderseite.js?v=1.111.0"></script>
-<script src="js/kinderroutine.js?v=1.111.0"></script>
-<script src="js/sterne.js?v=1.111.0"></script>
-<script src="js/kalenderansicht.js?v=1.111.0"></script>
-<script src="js/essenplanen.js?v=1.111.0"></script>
-<script src="js/rezeptparser.js?v=1.111.0"></script>
-<script src="js/rezeptdialog.js?v=1.111.0"></script>
-<script src="js/rezeptbild.js?v=1.111.0"></script>
-<script src="js/rezeptmengen.js?v=1.111.0"></script>
-<script src="js/einkauf.js?v=1.111.0"></script>
-<script src="js/einkaufslisten.js?v=1.111.0"></script>
-<script src="js/einkaufseingabe.js?v=1.111.0"></script>
-<script src="js/rezepte.js?v=1.111.0"></script>
-<script src="js/offline.js?v=1.111.0"></script>
-<script src="js/aufgabenextras.js?v=1.111.0"></script>
-<script src="js/appbadge.js?v=1.111.0"></script>
-<script src="js/reisen.js?v=1.111.0"></script>
-<script src="js/aufgabendaten.js?v=1.111.0"></script>
-<script src="js/haushalt.js?v=1.111.0"></script>
-<script src="js/reihum.js?v=1.111.0"></script>
-<script src="js/aufgaben.js?v=1.111.0"></script>
-<script src="js/smarthome.js?v=1.111.0"></script>
-<script src="js/sprachsteuerung.js?v=1.111.0"></script>
-<script src="js/termine.js?v=1.111.0"></script>
-<script src="js/ansichten.js?v=1.111.0"></script>
-<script src="js/versionspruefung.js?v=1.111.0"></script>
-<script src="js/sicherungen.js?v=1.111.0"></script>
-<script src="js/geraete.js?v=1.111.0"></script>
-<script src="js/fehlerprotokoll.js?v=1.111.0"></script>
-<script src="js/versionslog.js?v=1.111.0"></script>
-<script src="js/einstellungen.js?v=1.111.0"></script>
-<script src="js/kalenderkonto.js?v=1.111.0"></script>
-<script src="js/finanzen.js?v=1.111.0"></script>
-<script src="js/kassen.js?v=1.111.0"></script>
-<script src="js/vorrat.js?v=1.111.0"></script>
-<script src="js/vorrat2.js?v=1.111.0"></script>
-<script src="js/sparen.js?v=1.111.0"></script>
-<script src="js/vertraege.js?v=1.111.0"></script>
-<script src="js/fahrzeuge.js?v=1.111.0"></script>
-<script src="js/zuhause.js?v=1.111.0"></script>
-<script src="js/dokumente.js?v=1.111.0"></script>
-<script src="js/pdflesen.js?v=1.111.0"></script>
-<script src="js/appstart.js?v=1.111.0"></script>
-<script src="js/pinnwand.js?v=1.111.0"></script>
-<script src="js/listen.js?v=1.111.0"></script>
-<script src="js/familie.js?v=1.111.0"></script>
-<script src="js/hinweise.js?v=1.111.0"></script>
-<script src="js/ausblick.js?v=1.111.0"></script>
+<script src="js/grundlagen.js?v=1.112.0"></script>
+<script src="js/popups.js?v=1.112.0"></script>
+<script src="js/verbindung.js?v=1.112.0"></script>
+<script src="js/benutzer.js?v=1.112.0"></script>
+<script src="js/mitteilungen.js?v=1.112.0"></script>
+<script src="js/serverzugriff.js?v=1.112.0"></script>
+<script src="js/tastatur.js?v=1.112.0"></script>
+<script src="js/anmeldemaske.js?v=1.112.0"></script>
+<script src="js/dashboard.js?v=1.112.0"></script>
+<script src="js/dashboardhintergrund.js?v=1.112.0"></script>
+<script src="js/profilauswahl.js?v=1.112.0"></script>
+<script src="js/pineingabe.js?v=1.112.0"></script>
+<script src="js/dashboardsitzung.js?v=1.112.0"></script>
+<script src="js/dashboardkonto.js?v=1.112.0"></script>
+<script src="js/familienverwalten.js?v=1.112.0"></script>
+<script src="js/einrichten.js?v=1.112.0"></script>
+<script src="js/exportieren.js?v=1.112.0"></script>
+<script src="js/hauptadminseite.js?v=1.112.0"></script>
+<script src="js/anmeldung.js?v=1.112.0"></script>
+<script src="js/konto.js?v=1.112.0"></script>
+<script src="js/profilverwaltung.js?v=1.112.0"></script>
+<script src="js/zustand.js?v=1.112.0"></script>
+<script src="js/bedienzustand.js?v=1.112.0"></script>
+<script src="js/rezeptbilder.js?v=1.112.0"></script>
+<script src="js/zusammenfuehren.js?v=1.112.0"></script>
+<script src="js/speichern.js?v=1.112.0"></script>
+<script src="js/design.js?v=1.112.0"></script>
+<script src="js/sprache.js?v=1.112.0"></script>
+<script src="js/uebersicht.js?v=1.112.0"></script>
+<script src="js/familienkachel.js?v=1.112.0"></script>
+<script src="js/wobistdu.js?v=1.112.0"></script>
+<script src="js/geburtstagsfeier.js?v=1.112.0"></script>
+<script src="js/wetterkachel.js?v=1.112.0"></script>
+<script src="js/geburtstage.js?v=1.112.0"></script>
+<script src="js/uebersichteinstellungen.js?v=1.112.0"></script>
+<script src="js/familiensync.js?v=1.112.0"></script>
+<script src="js/bereiche.js?v=1.112.0"></script>
+<script src="js/kalenderquellen.js?v=1.112.0"></script>
+<script src="js/icsparser.js?v=1.112.0"></script>
+<script src="js/zeitleiste.js?v=1.112.0"></script>
+<script src="js/termindetails.js?v=1.112.0"></script>
+<script src="js/kalenderdatei.js?v=1.112.0"></script>
+<script src="js/wetter.js?v=1.112.0"></script>
+<script src="js/wohnort.js?v=1.112.0"></script>
+<script src="js/feiertage.js?v=1.112.0"></script>
+<script src="js/muellkalender.js?v=1.112.0"></script>
+<script src="js/mitglieder.js?v=1.112.0"></script>
+<script src="js/profilbild.js?v=1.112.0"></script>
+<script src="js/mitglied.js?v=1.112.0"></script>
+<script src="js/kinderseite.js?v=1.112.0"></script>
+<script src="js/kinderroutine.js?v=1.112.0"></script>
+<script src="js/sterne.js?v=1.112.0"></script>
+<script src="js/kalenderansicht.js?v=1.112.0"></script>
+<script src="js/essenplanen.js?v=1.112.0"></script>
+<script src="js/rezeptparser.js?v=1.112.0"></script>
+<script src="js/rezeptdialog.js?v=1.112.0"></script>
+<script src="js/rezeptbild.js?v=1.112.0"></script>
+<script src="js/rezeptmengen.js?v=1.112.0"></script>
+<script src="js/einkauf.js?v=1.112.0"></script>
+<script src="js/einkaufslisten.js?v=1.112.0"></script>
+<script src="js/einkaufseingabe.js?v=1.112.0"></script>
+<script src="js/rezepte.js?v=1.112.0"></script>
+<script src="js/offline.js?v=1.112.0"></script>
+<script src="js/aufgabenextras.js?v=1.112.0"></script>
+<script src="js/appbadge.js?v=1.112.0"></script>
+<script src="js/reisen.js?v=1.112.0"></script>
+<script src="js/aufgabendaten.js?v=1.112.0"></script>
+<script src="js/haushalt.js?v=1.112.0"></script>
+<script src="js/reihum.js?v=1.112.0"></script>
+<script src="js/aufgaben.js?v=1.112.0"></script>
+<script src="js/smarthome.js?v=1.112.0"></script>
+<script src="js/sprachsteuerung.js?v=1.112.0"></script>
+<script src="js/termine.js?v=1.112.0"></script>
+<script src="js/ansichten.js?v=1.112.0"></script>
+<script src="js/versionspruefung.js?v=1.112.0"></script>
+<script src="js/sicherungen.js?v=1.112.0"></script>
+<script src="js/geraete.js?v=1.112.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.112.0"></script>
+<script src="js/versionslog.js?v=1.112.0"></script>
+<script src="js/einstellungen.js?v=1.112.0"></script>
+<script src="js/kalenderkonto.js?v=1.112.0"></script>
+<script src="js/finanzen.js?v=1.112.0"></script>
+<script src="js/kassen.js?v=1.112.0"></script>
+<script src="js/vorrat.js?v=1.112.0"></script>
+<script src="js/vorrat2.js?v=1.112.0"></script>
+<script src="js/sparen.js?v=1.112.0"></script>
+<script src="js/vertraege.js?v=1.112.0"></script>
+<script src="js/fahrzeuge.js?v=1.112.0"></script>
+<script src="js/zuhause.js?v=1.112.0"></script>
+<script src="js/dokumente.js?v=1.112.0"></script>
+<script src="js/pdflesen.js?v=1.112.0"></script>
+<script src="js/appstart.js?v=1.112.0"></script>
+<script src="js/pinnwand.js?v=1.112.0"></script>
+<script src="js/listen.js?v=1.112.0"></script>
+<script src="js/familie.js?v=1.112.0"></script>
+<script src="js/hinweise.js?v=1.112.0"></script>
+<script src="js/ausblick.js?v=1.112.0"></script>
 
 <!-- ==========================================================
      Changelog as a terminal (Settings → System → Versions-Log)
      Classes "fixed inset-0": the global keyboard logic fits the overlay to the visible
      area automatically, so the input line is never hidden by the keyboard.
      ========================================================== -->
-<link rel="stylesheet" href="css/terminal.css?v=1.111.0">
+<link rel="stylesheet" href="css/terminal.css?v=1.112.0">
 
 <div id="changelogTerminal" class="hidden fixed inset-0" data-no-term role="dialog" aria-modal="true" aria-label="Versions-Log">
   <div class="term-window" id="changelogTermWindow">
@@ -5106,6 +5111,6 @@ const APP_VERSION = '1.111.0';
     </div>
   </div>
 </div>
-<link rel="stylesheet" href="css/glocke.css?v=1.111.0">
+<link rel="stylesheet" href="css/glocke.css?v=1.112.0">
 </body>
 </html>

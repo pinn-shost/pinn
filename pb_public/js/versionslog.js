@@ -20,6 +20,14 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.112', datum: '23.10.2026', titel: 'Übersetzungen mit Text-Schlüsseln: Rahmen, Anmeldung und Einstellungen',
+    punkte: [
+      ['info', 'Anmeldung, Hauptadmin, Familien-Dashboard, Menü, Kopfzeile, Suche und die ganze Einstellungen-Seite holen ihre Texte jetzt über Text-Schlüssel – in allen neun Sprachen, auch als WG. An der Bedienung ändert sich nichts'],
+      ['fix', 'Kleinigkeiten: Die Zahl der Kontakte mit Geburtstag, der Hinweis auf Mitglieder ohne Profil und Texte für Bildschirmleser (z. B. „Menü öffnen/schließen“) stehen jetzt in jeder Sprache richtig – Einzahl und Mehrzahl inklusive'],
+      ['info', 'Geändert: index.html, js/sprachen.js, js/anmeldemaske.js, js/anmeldung.js, js/hauptadminseite.js, js/profilauswahl.js, js/pineingabe.js, js/verbindung.js, js/zustand.js, js/ansichten.js, js/einstellungen.js, js/uebersichteinstellungen.js, js/versionslog.js, alle Sprachdateien in i18n/ und lang/ – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.111', datum: '23.10.2026', titel: 'Übersetzungen mit Text-Schlüsseln (Fundament)',
     punkte: [
       ['neu', 'Fundament für Übersetzungen mit Text-Schlüsseln: Texte werden über einen festen Namen abgerufen statt über den deutschen Originaltext. Jede Sprache hat dafür eine eigene Datei (pb_public/i18n), Deutsch eingeschlossen. Als Erstes nutzt Einstellungen → Sprache & Region die neuen Schlüssel – alles andere läuft wie bisher'],

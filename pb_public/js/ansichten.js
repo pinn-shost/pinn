@@ -393,8 +393,8 @@ function renderBottomTabBar() {
   `;
   // Guests see neither finance nor settings - their account takes the place of settings
   const einstellungenTab = isCurrentUserGuest()
-    ? { id: 'konto', icon: '👤', label: 'Konto' }
-    : { id: 'einstellungen', icon: '⚙️', label: 'Einstellungen' };
+    ? { id: 'konto', icon: '👤', label: tk('nav.account') }
+    : { id: 'einstellungen', icon: '⚙️', label: tk('nav.settings') };
   const allowedTabs = ALL_MENU_TABS.filter(t => isViewAllowed(t.id));
   const favorites = favoriteTabs.map(id => allowedTabs.find(t => t.id === id)).filter(Boolean);
   const rest = allowedTabs.filter(t => !favorites.includes(t));

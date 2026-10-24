@@ -47,7 +47,7 @@ async function refreshMainAdminSetupBanner(autoOpen) {
 
 function showMainAdminScreen() {
   const u = currentUser();
-  document.getElementById('mainAdminName').textContent = u ? u.username : '';
+  document.getElementById('mainAdminName').textContent = u ? tk('mainAdmin.signedInAs', { name: u.username }) : '';
   document.getElementById('mainAdminScreen').classList.remove('hidden');
   document.getElementById('mainAdminLogoutBtn').onclick = logout;
   const setupBtn = document.getElementById('mainAdminSetupBtn');
@@ -58,12 +58,12 @@ function showMainAdminScreen() {
   document.getElementById('mainAdminErrLogBtn').onclick = () => openErrLog();
   errLogRefreshSummary();
   document.getElementById('mainAdminPasswordBtn').onclick = async () => {
-    const oldPw = prompt('Aktuelles Passwort:');
+    const oldPw = prompt(tk('mainAdmin.promptCurrentPassword'));
     if (!oldPw) return;
-    const newPw = prompt('Neues Passwort (mind. 8 Zeichen):');
+    const newPw = prompt(tk('mainAdmin.promptNewPassword'));
     if (!newPw) return;
-    if (prompt('Neues Passwort wiederholen:') !== newPw) { alert('Die beiden neuen Passwörter stimmen nicht überein.'); return; }
-    try { await changeOwnPassword(oldPw, newPw); alert('Passwort geändert.'); } catch (e) { alert(e.message); }
+    if (prompt(tk('mainAdmin.promptRepeatPassword')) !== newPw) { alert(tk('login.passwordsMismatch')); return; }
+    try { await changeOwnPassword(oldPw, newPw); alert(tk('mainAdmin.passwordChanged')); } catch (e) { alert(e.message); }
   };
   let maWohnform = 'familie';
   const maWohnformRender = () => document.querySelectorAll('.ma-wohnform-btn').forEach(b => {
@@ -80,7 +80,7 @@ function showMainAdminScreen() {
     const name = document.getElementById('mainAdminNewFamily').value.trim();
     const adminName = document.getElementById('mainAdminNewAdmin').value.trim();
     const adminPassword = document.getElementById('mainAdminNewPassword').value;
-    if (!name || !adminName || !adminPassword) { mainAdminStatus('mainAdminCreateStatus', 'Bitte alle drei Felder ausfüllen.', false); return; }
+    if (!name || !adminName || !adminPassword) { mainAdminStatus('mainAdminCreateStatus', tk('mainAdmin.fillAllFields'), false); return; }
     const btn = document.getElementById('mainAdminCreateBtn');
     btn.disabled = true;
     try {
@@ -88,8 +88,8 @@ function showMainAdminScreen() {
       ['mainAdminNewFamily', 'mainAdminNewAdmin', 'mainAdminNewPassword'].forEach(id => { document.getElementById(id).value = ''; });
       try { document.activeElement && document.activeElement.blur(); } catch (e) { /* ignore */ }
       mainAdminStatus('mainAdminCreateStatus', maWohnform === 'wg'
-        ? `WG „${name}“ mit Admin „${adminName}“ angelegt.`
-        : `Familie „${name}“ mit Admin „${adminName}“ angelegt.`, true);
+        ? tk('mainAdmin.flatshareCreated', { name, admin: adminName })
+        : tk('mainAdmin.familyCreated', { name, admin: adminName }), true);
       maWohnform = 'familie';
       maWohnformRender();
       loadMainAdminFamilies();

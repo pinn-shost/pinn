@@ -105,7 +105,7 @@ function showDashboardScreen(dash) {
     }
     function deviceGone(message) {
       closePinPad();
-      alert(message || 'Dieses Gerät ist nicht mehr als Familien-Dashboard eingerichtet. Bitte normal anmelden.');
+      alert(message || tk('dashboard.deviceGone'));
       clearDashboardConfig();
       hideDashboardScreen();
       finish('invalid');
@@ -120,7 +120,7 @@ function showDashboardScreen(dash) {
       try {
         res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), cache: 'no-store' });
       } catch (e) {
-        const err = new Error('Keine Verbindung zum Server. Bitte Netzwerk bzw. VPN prüfen.');
+        const err = new Error(tk('common.noConnectionVpn'));
         err.offline = true;
         throw err;
       }
@@ -130,7 +130,7 @@ function showDashboardScreen(dash) {
 
     async function load() {
       statusWrap.classList.add('hidden');
-      tilesEl.innerHTML = '<p class="text-sm text-ink/40">Profile werden geladen …</p>';
+      tilesEl.innerHTML = '<p class="text-sm text-ink/40">' + escapeHtml(tk('dashboard.loadingProfiles')) + '</p>';
       let r;
       try {
         r = await postDashboard('/api/pinn/dashboard/profile', { key: dash.key });
@@ -143,8 +143,8 @@ function showDashboardScreen(dash) {
       if (!r.res.ok) {
         tilesEl.innerHTML = '';
         showStatus(r.body.error || (r.res.status === 404
-          ? 'Das Dashboard ist auf dem Server noch nicht eingerichtet (pb_hooks/dashboard.pb.js fehlt?).'
-          : 'Die Profile konnten nicht geladen werden.'));
+          ? tk('dashboard.notSetUp')
+          : tk('dashboard.profilesFailed')));
         return;
       }
       const famName = r.body.familie && r.body.familie.name;
@@ -161,14 +161,14 @@ function showDashboardScreen(dash) {
     function render(profiles) {
       const tiles = buildDashboardTiles(profiles, members);
       if (!tiles.length) {
-        tilesEl.innerHTML = '<p class="text-sm text-ink/50">In dieser Familie gibt es noch keine Profile.</p>';
+        tilesEl.innerHTML = '<p class="text-sm text-ink/50">' + escapeHtml(tk('dashboard.noProfiles')) + '</p>';
         return;
       }
       tilesEl.innerHTML = tiles.map((t, i) => {
         const guest = t.profile.rolle === 'gast';
-        const badge = t.kid ? '⭐ Meine Aufgaben' : (guest ? 'Gast' : '');
+        const badge = t.kid ? escapeHtml(tk('dashboard.myTasks')) : (guest ? escapeHtml(tk('dashboard.guest')) : '');
         return `<button type="button" class="dash-tile${t.kid ? ' kid' : ''}${guest ? ' guest' : ''}" data-tile="${i}">
-          ${t.profile.pin ? '<span class="dash-lock" aria-label="mit PIN geschützt">🔒</span>' : ''}
+          ${t.profile.pin ? '<span class="dash-lock" aria-label="' + escapeHtml(tk('dashboard.pinProtected')) + '">🔒</span>' : ''}
           ${dashAvatarHtml(t.member, t.profile)}
           <span class="dash-name">${escapeHtml(t.name)}</span>
           ${badge ? `<span class="dash-badge">${badge}</span>` : ''}
@@ -181,7 +181,7 @@ function showDashboardScreen(dash) {
       const r = await postDashboard('/api/pinn/dashboard/login', { key: dash.key, id: tile.profile.id, pin: pin || '' });
       if (r.res.status === 404 && r.body.ungueltig) { deviceGone(r.body.error); return; }
       if (!r.res.ok || !r.body.token) {
-        const err = new Error(r.body.error || 'Das Profil konnte nicht geöffnet werden.');
+        const err = new Error(r.body.error || tk('dashboard.openFailed'));
         err.status = r.res.status;
         throw err;
       }
@@ -189,7 +189,7 @@ function showDashboardScreen(dash) {
       ssSet(SS_DASH_ACTIVE, '1');
       ssSet(SS_DASH_KID, tile.kid && tile.member ? tile.member.id : null);
       authExpiredHandled = false;
-      busyText.textContent = tile.kid ? `Hallo ${tile.name}! Deine Aufgaben kommen gleich …` : `Hallo ${tile.name}!`;
+      busyText.textContent = tile.kid ? tk('dashboard.helloKid', { name: tile.name }) : tk('dashboard.hello', { name: tile.name });
       busy.classList.remove('hidden');
       finish('ok');
     }
@@ -199,7 +199,7 @@ function showDashboardScreen(dash) {
       if (tile.profile.pin) {
         openPinPad({
           title: tile.name,
-          sub: 'PIN eingeben',
+          sub: tk('dashboard.enterPin'),
           length: tile.profile.pin,
           avatarHtml: dashAvatarHtml(tile.member, tile.profile, true),
           onComplete: async (pin, pad) => {
@@ -212,7 +212,7 @@ function showDashboardScreen(dash) {
         });
         return;
       }
-      busyText.textContent = 'Wird geöffnet …';
+      busyText.textContent = tk('dashboard.opening');
       busy.classList.remove('hidden');
       login(tile, '').catch(e => {
         busy.classList.add('hidden');

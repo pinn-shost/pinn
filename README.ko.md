@@ -99,13 +99,13 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
-## 1.111.0의 새 소식
+## 1.112.0의 새 소식
 
-**텍스트 키를 사용한 번역: 기반 마련**
+**텍스트 키 1부: 프레임, 로그인, 설정**
 
-- 로드맵 6단계가 시작되었어요. 텍스트를 독일어 원문 대신 **키**(예: `settings.region.title`)로 불러와요. 언어마다 `pb_public/i18n/`에 자체 파일이 있고(독일어 포함), 영어가 기준이에요. 처음으로 새 키를 쓰는 곳은 **설정 → 언어 및 지역**이고, 나머지는 차례가 올 때까지 이전처럼 번역돼요. 사용 방법은 바뀌지 않아요.
-- **올바른 복수형:** 앱과 서버가 함께 쓰는 규칙표(`js/textkern.js`, 서버에서는 `pinn-textkern.js`)가 앱과 푸시 알림에서 알맞은 복수형을 골라요. 세 가지 형태를 가진 언어도 지원해요. **러시아어**는 준비되었지만 아직 선택할 수 없어요.
-- 변경됨: 앱 파일(`index.html`, `js/sprachen.js`, `js/sprache.js`, `js/versionslog.js`, `js/textkern.js`(신규), `lang/` 및 `i18n/`(신규)의 모든 언어 파일), `pinn-setup.sh`, 서버의 `pb_hooks/sw.pb.js` 및 `pinn-textkern.js`(신규).
+- 로그인, 메인 관리자, 가족 대시보드, 메뉴, 머리글, 검색, **설정 페이지 전체**가 이제 `pb_public/i18n/`의 언어 파일에서 문구를 가져와요. 아홉 개 언어 모두, 셰어하우스에서도 마찬가지예요. 사용 방법은 바뀌지 않아요.
+- 작은 수정: 생일이 있는 연락처 수와 프로필이 없는 구성원 안내가 이제 모든 언어에서 올바른 단수·복수로 표시되고, 화면 낭독기용 레이블도 번역돼요.
+- 변경: 앱 파일만(`index.html`, `js/`의 일부 파일, `i18n/`과 `lang/`의 모든 언어 파일)과 `.github/` – 서버는 변경 없음.
 
 이전 버전은 [Releases](https://github.com/pinn-shost/pinn/releases)에서 볼 수 있어요.
 
@@ -137,7 +137,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.111.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.112.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

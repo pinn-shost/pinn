@@ -112,7 +112,7 @@ async function handleRemoteLogout() {
     sessionStorage.removeItem('pinn.sessionAlive');
   } catch (e) { /* ignore */ }
   try { if (window.caches) await caches.delete('pinn-daten'); } catch (e) { /* ignore */ }
-  alert('Dieses Gerät wurde in pinn. abgemeldet. Die pinn.-Daten auf diesem Gerät wurden gelöscht – bitte melde dich erneut an.');
+  alert(tk('app.deviceLoggedOut'));
   location.reload();
 }
 

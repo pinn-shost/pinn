@@ -4,16 +4,16 @@
   <div class="w-full max-w-md">
     <div class="flex items-start justify-between gap-3 mb-6">
       <div class="min-w-0">
-        <h1 class="font-serif text-2xl">Familien</h1>
-        <p class="text-xs text-ink/40 mt-1">Angemeldet als Hauptadmin „<span id="mainAdminName"></span>“</p>
+        <h1 data-tk="mainAdmin.families" class="font-serif text-2xl">Families</h1>
+        <p class="text-xs text-ink/40 mt-1"><span id="mainAdminName" data-no-i18n></span></p>
       </div>
       <div class="flex flex-col items-end gap-1.5 shrink-0">
-        <button type="button" id="mainAdminLogoutBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-red-500 hover:border-red-500 transition">Abmelden</button>
-        <button type="button" id="mainAdminPasswordBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Passwort ändern</button>
+        <button data-tk="common.logOut" type="button" id="mainAdminLogoutBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-red-500 hover:border-red-500 transition">Log out</button>
+        <button data-tk="mainAdmin.changePassword" type="button" id="mainAdminPasswordBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Change password</button>
         <button type="button" id="mainAdminSetupBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition" data-no-i18n>⚙︎ Einrichtung</button>
-        <button type="button" id="mainAdminSystemBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">🛟 Sicherungen &amp; Updates</button>
-        <button type="button" id="mainAdminErrLogBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition"><span>🧾 Fehlerprotokoll</span><span id="mainAdminErrLogBadge" class="el-badge hidden" data-no-i18n></span></button>
-        <button type="button" id="mainAdminDevicesBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">📱 Meine Geräte</button>
+        <button data-tk="mainAdmin.backupsUpdates" type="button" id="mainAdminSystemBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">🛟 Backups &amp; updates</button>
+        <button type="button" id="mainAdminErrLogBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition"><span data-tk="mainAdmin.errorLog">🧾 Error log</span><span id="mainAdminErrLogBadge" class="el-badge hidden" data-no-i18n></span></button>
+        <button data-tk="mainAdmin.myDevices" type="button" id="mainAdminDevicesBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">📱 My devices</button>
       </div>
     </div>
 
@@ -24,21 +24,21 @@
     </div>
 
     <form id="mainAdminCreateForm" class="rounded-xl border border-ink/10 p-4 mb-6" autocomplete="off">
-      <h2 class="text-xs uppercase tracking-wide text-ink/40 mb-3">Neue Familie anlegen</h2>
-      <label class="block text-xs text-ink/50 mb-1" for="mainAdminNewFamily">Name der Familie</label>
+      <h2 data-tk="mainAdmin.createNewFamily" class="text-xs uppercase tracking-wide text-ink/40 mb-3">Create new family</h2>
+      <label data-tk="mainAdmin.familyName" class="block text-xs text-ink/50 mb-1" for="mainAdminNewFamily">Name of the family</label>
       <input id="mainAdminNewFamily" type="text" autocomplete="off" autocapitalize="words" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
-      <p class="block text-xs text-ink/50 mb-1">Wohnform</p>
-      <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-1" role="group" aria-label="Wohnform">
-        <button type="button" data-ma-wohnform="familie" class="ma-wohnform-btn active px-3 py-1.5 rounded-full transition">👨‍👩‍👧 Familie</button>
-        <button type="button" data-ma-wohnform="wg" class="ma-wohnform-btn px-3 py-1.5 rounded-full transition">🧑‍🤝‍🧑 WG</button>
+      <p data-tk="mainAdmin.householdType" class="block text-xs text-ink/50 mb-1">Household type</p>
+      <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-1" role="group" aria-label="Household type" data-tk-attr="aria-label:mainAdmin.householdType">
+        <button data-tk="mainAdmin.family" type="button" data-ma-wohnform="familie" class="ma-wohnform-btn active px-3 py-1.5 rounded-full transition">👨‍👩‍👧 Family</button>
+        <button data-tk="mainAdmin.flatshare" type="button" data-ma-wohnform="wg" class="ma-wohnform-btn px-3 py-1.5 rounded-full transition">🧑‍🤝‍🧑 Flatshare</button>
       </div>
-      <p class="text-[11px] text-ink/40 mb-3">Als WG heißen Familienmitglieder „Mitbewohner“, Kinder-Funktionen sind ausgeblendet. Später änderbar unter Einstellungen → Familienmitglieder.</p>
-      <label class="block text-xs text-ink/50 mb-1" for="mainAdminNewAdmin">Name des Familien-Admins</label>
+      <p data-tk="mainAdmin.flatshareHint" class="text-[11px] text-ink/40 mb-3">In a flatshare, family members are called “flatmates” and child features are hidden. Can be changed later under Settings → Family members.</p>
+      <label data-tk="mainAdmin.adminName" class="block text-xs text-ink/50 mb-1" for="mainAdminNewAdmin">Name of the family admin</label>
       <input id="mainAdminNewAdmin" type="text" autocomplete="off" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
-      <label class="block text-xs text-ink/50 mb-1" for="mainAdminNewPassword">Start-Passwort (mind. 8 Zeichen, muss beim ersten Anmelden geändert werden)</label>
+      <label data-tk="mainAdmin.startPassword" class="block text-xs text-ink/50 mb-1" for="mainAdminNewPassword">Start password (min. 8 characters, must be changed at first login)</label>
       <input id="mainAdminNewPassword" type="password" autocomplete="new-password" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
       <p id="mainAdminCreateStatus" class="hidden text-xs mb-3"></p>
-      <button type="submit" id="mainAdminCreateBtn" class="w-full px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Familie anlegen</button>
+      <button data-tk="mainAdmin.createFamily" type="submit" id="mainAdminCreateBtn" class="w-full px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Create family</button>
     </form>
 
     <p id="mainAdminListStatus" class="hidden text-xs mb-3"></p>

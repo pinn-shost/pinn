@@ -5,46 +5,46 @@
     <div class="flex flex-col items-center mb-6">
       <img id="loginLogo" alt="" class="w-14 h-14 rounded-2xl mb-3" />
       <h1 class="font-serif text-2xl">pinn.</h1>
-      <p id="loginSubtitle" class="text-xs text-ink/40 mt-1">Bitte anmelden</p>
+      <p data-tk="login.pleaseLogIn" id="loginSubtitle" class="text-xs text-ink/40 mt-1">Please log in</p>
     </div>
 
   <!-- Step 1: family -->
   <form id="loginFamilyForm" class="w-full" autocomplete="off">
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginFamilyInput">Familie</label>
+    <label data-tk="login.family" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginFamilyInput">Family</label>
     <div id="loginFamilySelectWrap" class="hidden flex items-center gap-2 mb-3">
       <select id="loginFamilySelect" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white"></select>
-      <button type="button" id="loginFamilyForgetBtn" class="shrink-0 px-2.5 py-2 rounded-lg border border-ink/15 text-xs text-ink/50 hover:text-red-500 hover:border-red-500 transition" title="Gespeicherte Familie von diesem Gerät entfernen">Entfernen</button>
+      <button data-tk="common.remove" type="button" id="loginFamilyForgetBtn" class="shrink-0 px-2.5 py-2 rounded-lg border border-ink/15 text-xs text-ink/50 hover:text-red-500 hover:border-red-500 transition" title="Remove saved family from this device" data-tk-attr="title:login.removeSavedFamily">Remove</button>
     </div>
-    <input id="loginFamilyInput" type="text" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="Name der Familie" />
+    <input id="loginFamilyInput" type="text" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="Name of the family" data-tk-attr="placeholder:login.familyName" />
     <label id="loginFamilySaveWrap" class="flex items-center gap-2 text-sm mb-4 cursor-pointer select-none">
       <input id="loginFamilySave" type="checkbox" class="w-4 h-4" checked />
-      Familie auf diesem Gerät merken
+      <span data-tk="login.rememberFamilyDevice">Remember family on this device</span>
     </label>
     <p id="loginFamilyError" class="hidden text-xs text-red-500 mb-3"></p>
-    <button id="loginFamilySubmit" type="submit" class="w-full px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Weiter</button>
+    <button data-tk="common.next" id="loginFamilySubmit" type="submit" class="w-full px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Next</button>
   </form>
 
   <!-- Step 2: profile + password (or only the password for the main admin sign-in) -->
   <form id="loginForm" class="hidden w-full" autocomplete="on">
     <div id="loginFamilyBar" class="flex items-center justify-between gap-2 mb-4 rounded-lg border border-ink/10 px-3 py-2">
-      <p class="text-sm min-w-0 truncate"><span id="loginFamilyLabel" class="text-ink/40">Familie</span> <span id="loginFamilyName" class="font-medium"></span></p>
-      <button type="button" id="loginFamilyChangeBtn" class="shrink-0 text-xs text-pine underline decoration-dotted">ändern</button>
+      <p class="text-sm min-w-0 truncate"><span data-tk="login.family" id="loginFamilyLabel" class="text-ink/40">Family</span> <span id="loginFamilyName" class="font-medium"></span></p>
+      <button data-tk="login.changeFamily" type="button" id="loginFamilyChangeBtn" class="shrink-0 text-xs text-pine underline decoration-dotted">change</button>
     </div>
     <div id="loginProfileWrap">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginProfileSelect">Name</label>
+      <label data-tk="common.name" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginProfileSelect">Name</label>
       <select id="loginProfileSelect" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3 bg-white"></select>
     </div>
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginPassword">Passwort</label>
+    <label data-tk="common.password" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginPassword">Password</label>
     <input id="loginPassword" type="password" autocomplete="current-password" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
     <label id="loginRememberWrap" class="flex items-center gap-2 text-sm mb-4 cursor-pointer select-none">
       <input id="loginRemember" type="checkbox" class="w-4 h-4" checked />
-      Angemeldet bleiben
+      <span data-tk="login.stayLoggedIn">Stay logged in</span>
     </label>
     <p id="loginError" class="hidden text-xs text-red-500 mb-3"></p>
-    <button id="loginSubmit" type="submit" class="w-full px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Anmelden</button>
+    <button data-tk="common.logIn" id="loginSubmit" type="submit" class="w-full px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Log in</button>
   </form>
-  <button id="loginToggleCreateBtn" type="button" class="hidden w-full mt-4 text-xs text-ink/40 hover:text-pine underline decoration-dotted text-center">Neues Konto anlegen</button>
-  <button id="loginMainAdminBtn" type="button" class="w-full mt-4 text-xs text-ink/40 hover:text-pine underline decoration-dotted text-center">Als Hauptadmin anmelden</button>
+  <button data-tk="login.createNewAccount" id="loginToggleCreateBtn" type="button" class="hidden w-full mt-4 text-xs text-ink/40 hover:text-pine underline decoration-dotted text-center">Create new account</button>
+  <button data-tk="login.asMainAdmin" id="loginMainAdminBtn" type="button" class="w-full mt-4 text-xs text-ink/40 hover:text-pine underline decoration-dotted text-center">Log in as main admin</button>
   <!-- First setup: only on a new installation (setup open, no family yet) -->
   <div id="loginSetupHint" class="hidden w-full mt-4 rounded-xl border border-ink/10 p-4 bg-pine/5" data-no-i18n data-no-term>
     <p id="loginSetupHintText" class="text-sm"></p>
@@ -54,22 +54,22 @@
   <!-- Create a new account: only appears after signing in above as an admin of the family -->
   <div id="loginCreateAccountSection" class="hidden w-full">
     <div class="flex flex-col items-center mb-4">
-      <h2 class="font-serif text-lg">Neues Konto anlegen</h2>
-      <p class="text-xs text-ink/40 mt-1 text-center">Angemeldet als Admin „<span id="loginCreateAdminName"></span>“</p>
+      <h2 data-tk="login.createNewAccount" class="font-serif text-lg">Create new account</h2>
+      <p class="text-xs text-ink/40 mt-1 text-center"><span id="loginCreateAdminName" data-no-i18n></span></p>
     </div>
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginNewUsername">Name</label>
+    <label data-tk="common.name" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginNewUsername">Name</label>
     <input id="loginNewUsername" type="text" autocomplete="off" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginNewPassword">Start-Passwort (mind. 8 Zeichen)</label>
+    <label data-tk="login.startPassword" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginNewPassword">Start password (min. 8 characters)</label>
     <input id="loginNewPassword" type="password" autocomplete="new-password" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginNewRole">Rolle</label>
+    <label data-tk="login.role" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="loginNewRole">Role</label>
     <select id="loginNewRole" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3 bg-white">
-      <option value="mitglied" selected>Mitglied</option>
-      <option value="admin">Admin</option>
+      <option data-tk="common.member" value="mitglied" selected>Member</option>
+      <option data-tk="common.admin" value="admin">Admin</option>
     </select>
     <p id="loginCreateError" class="hidden text-xs text-red-500 mb-3"></p>
     <p id="loginCreateSuccess" class="hidden text-xs text-pine mb-3"></p>
-    <button id="loginCreateSubmit" type="button" class="w-full px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition mb-2">Konto anlegen</button>
-    <button id="loginCreateDone" type="button" class="w-full px-4 py-2 rounded-lg border border-ink/15 text-sm hover:border-pine transition">Fertig, zur Anmeldung</button>
+    <button data-tk="login.createAccount" id="loginCreateSubmit" type="button" class="w-full px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition mb-2">Create account</button>
+    <button data-tk="login.doneBackToLogin" id="loginCreateDone" type="button" class="w-full px-4 py-2 rounded-lg border border-ink/15 text-sm hover:border-pine transition">Done, to login</button>
   </div>
  </div>
  </div>
@@ -79,18 +79,18 @@
 <div id="forcePasswordScreen" class="hidden pinn-auth-screen z-[410] bg-paper">
  <div class="pinn-auth-inner">
   <form id="forcePasswordForm" class="w-full max-w-xs">
-    <h2 class="font-serif text-xl mb-1">Neues Passwort festlegen</h2>
-    <p class="text-xs text-ink/50 mb-4">Aus Sicherheitsgründen musst du vor der ersten Nutzung ein eigenes Passwort vergeben (mindestens 8 Zeichen).</p>
+    <h2 data-tk="login.setNewPassword" class="font-serif text-xl mb-1">Set new password</h2>
+    <p data-tk="login.forcePasswordHint" class="text-xs text-ink/50 mb-4">For security reasons you must set your own password before first use (at least 8 characters).</p>
     <div id="forcePasswordOldWrap">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="forcePasswordOld">Aktuelles Passwort</label>
+      <label data-tk="login.currentPassword" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="forcePasswordOld">Current password</label>
       <input id="forcePasswordOld" type="password" autocomplete="current-password" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
     </div>
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="forcePasswordNew">Neues Passwort</label>
+    <label data-tk="login.newPassword" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="forcePasswordNew">New password</label>
     <input id="forcePasswordNew" type="password" autocomplete="new-password" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="forcePasswordRepeat">Neues Passwort wiederholen</label>
+    <label data-tk="login.repeatNewPassword" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="forcePasswordRepeat">Repeat new password</label>
     <input id="forcePasswordRepeat" type="password" autocomplete="new-password" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
     <p id="forcePasswordError" class="hidden text-xs text-red-500 mb-3"></p>
-    <button type="submit" class="w-full px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern und weiter</button>
+    <button data-tk="login.saveContinue" type="submit" class="w-full px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Save and continue</button>
   </form>
  </div>
 </div>

@@ -3,35 +3,35 @@
     <nav class="w-64 h-full flex flex-col pt-6">
       <!-- Menu items: scroll if the window is too low (the footer with account/settings/search stays at the bottom) -->
       <div id="sidebarScroll" class="sidebar-scroll flex flex-col">
-      <button data-view="uebersicht" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Übersicht</button>
-      <button data-view="pinnwand" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Pinnwand<span id="navPinboardBadge" class="pw-nav-badge hidden"></span></button>
+      <button data-tk="nav.overview" data-view="uebersicht" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Overview</button>
+      <button data-view="pinnwand" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition"><span data-tk="nav.board">Board</span><span id="navPinboardBadge" class="pw-nav-badge hidden"></span></button>
       <div class="nav-divider mx-6 my-3 border-t border-white/25" aria-hidden="true"></div>
-      <button data-view="termine" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Kalender</button>
-      <button data-view="aufgaben" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Aufgaben</button>
-      <button data-view="familie" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Familie</button>
+      <button data-tk="nav.calendar" data-view="termine" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Calendar</button>
+      <button data-tk="nav.tasks" data-view="aufgaben" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Tasks</button>
+      <button data-tk="nav.family" data-view="familie" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Family</button>
       <div class="nav-divider mx-6 my-3 border-t border-white/25" aria-hidden="true"></div>
-      <button data-view="rezepte" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Rezepte</button>
-      <button data-view="vorrat" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Vorrat</button>
-      <button data-view="einkauf" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Listen</button>
+      <button data-tk="nav.recipes" data-view="rezepte" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Recipes</button>
+      <button data-tk="nav.pantry" data-view="vorrat" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Pantry</button>
+      <button data-tk="nav.lists" data-view="einkauf" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Lists</button>
       <div class="nav-divider mx-6 my-3 border-t border-white/25" aria-hidden="true"></div>
-      <button data-view="finanzen" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Finanzen</button>
-      <button data-view="dokumente" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Dokumente</button>
+      <button data-tk="nav.finance" data-view="finanzen" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Finance</button>
+      <button data-tk="nav.documents" data-view="dokumente" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Documents</button>
       <div class="nav-divider mx-6 my-3 border-t border-white/25" aria-hidden="true"></div>
-      <button data-view="fahrzeuge" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Fahrzeuge</button>
-      <button data-view="haus" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Zuhause</button>
+      <button data-tk="nav.vehicles" data-view="fahrzeuge" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Vehicles</button>
+      <button data-tk="nav.home" data-view="haus" class="nav-item text-left px-6 py-3.5 text-sm border-l-4 border-transparent hover:bg-white/10 transition">Home</button>
       </div>
 
       <div class="sidebar-foot mt-auto flex items-center gap-2 px-6 pt-4 pb-3 border-t border-white/10">
-        <button data-view="konto" class="nav-item sidebar-icon-btn p-2 rounded-lg border-l-4 border-transparent hover:bg-white/10 transition" aria-label="Konto" title="Konto">
+        <button data-view="konto" class="nav-item sidebar-icon-btn p-2 rounded-lg border-l-4 border-transparent hover:bg-white/10 transition" aria-label="Account" title="Account" data-tk-attr="aria-label:nav.account;title:nav.account">
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"></path></svg>
         </button>
-        <button data-view="einstellungen" class="nav-item sidebar-icon-btn p-2 rounded-lg border-l-4 border-transparent hover:bg-white/10 transition" aria-label="Einstellungen" title="Einstellungen">
+        <button data-view="einstellungen" class="nav-item sidebar-icon-btn p-2 rounded-lg border-l-4 border-transparent hover:bg-white/10 transition" aria-label="Settings" title="Settings" data-tk-attr="aria-label:nav.settings;title:nav.settings">
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 13a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V19a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 17.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 13 1.65 1.65 0 0 0 3.09 12H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 7a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
         </button>
-        <button id="globalSearchBtn" type="button" class="sidebar-icon-btn p-2 rounded-lg border-l-4 border-transparent hover:bg-white/10 transition" aria-label="Suchen" title="Suchen">
+        <button id="globalSearchBtn" type="button" class="sidebar-icon-btn p-2 rounded-lg border-l-4 border-transparent hover:bg-white/10 transition" aria-label="Search" title="Search" data-tk-attr="aria-label:nav.search;title:nav.search">
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="M20.5 20.5l-4.6-4.6"></path></svg>
         </button>
       </div>
-      <div id="sidebarVersionBtn" role="button" tabindex="0" title="Versions-Log öffnen" class="sidebar-foot px-6 pb-5 text-[10px] text-white/40 cursor-pointer hover:text-white/70 transition select-none">Version <span id="sidebarVersionDisplay" class="font-mono"></span> <span class="font-mono">&gt;_</span></div>
+      <div id="sidebarVersionBtn" role="button" tabindex="0" title="Open version log" class="sidebar-foot px-6 pb-5 text-[10px] text-white/40 cursor-pointer hover:text-white/70 transition select-none" data-tk-attr="title:nav.openVersionLog"><span data-tk="nav.version">Version</span> <span id="sidebarVersionDisplay" class="font-mono"></span> <span class="font-mono">&gt;_</span></div>
     </nav>
   </aside>

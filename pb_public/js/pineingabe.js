@@ -83,7 +83,7 @@ async function pinPadPress(key) {
   try {
     await current.onComplete(pin, pinPadApi());
   } catch (e) {
-    if (pinPad === current) pinPadApi().fail(e.message || 'Das hat nicht geklappt.');
+    if (pinPad === current) pinPadApi().fail(e.message || tk('dashboard.pinFailed'));
   } finally {
     current.busy = false;
     box.classList.remove('busy');

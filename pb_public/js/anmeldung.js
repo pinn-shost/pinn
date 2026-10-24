@@ -10,7 +10,7 @@ async function changeOwnPassword(oldPassword, newPassword) {
     body: JSON.stringify({ oldPassword, newPassword }),
   });
   const body = await res.json().catch(() => ({}));
-  if (!res.ok || !body.token) throw new Error(body.error || body.message || 'Passwort konnte nicht geändert werden.');
+  if (!res.ok || !body.token) throw new Error(body.error || body.message || tk('login.passwordChangeFailed'));
   pb.authStore.save(body.token, body.record); // the server replaced the old login
 }
 
@@ -27,8 +27,8 @@ function showForcePasswordScreen() {
       const newPw = document.getElementById('forcePasswordNew').value;
       const repeat = document.getElementById('forcePasswordRepeat').value;
       err.classList.add('hidden');
-      if (newPw.length < 8) { err.textContent = 'Mindestens 8 Zeichen.'; err.classList.remove('hidden'); return; }
-      if (newPw !== repeat) { err.textContent = 'Die beiden neuen Passwörter stimmen nicht überein.'; err.classList.remove('hidden'); return; }
+      if (newPw.length < 8) { err.textContent = tk('login.minLength'); err.classList.remove('hidden'); return; }
+      if (newPw !== repeat) { err.textContent = tk('login.passwordsMismatch'); err.classList.remove('hidden'); return; }
       try {
         await changeOwnPassword(oldPw, newPw);
         lastLoginPassword = null;
@@ -94,7 +94,7 @@ async function logout() {
   if (isDashboardSession()) { returnToDashboard(); return; }
   let hasPending = false;
   try { hasPending = !!localStorage.getItem('pinn.pendingSync') || !!localStorage.getItem('pinn.outbox') || !!localStorage.getItem(LS_AREAS_PENDING_KEY); } catch (e) { /* ignore */ }
-  if (hasPending && !confirm('Es gibt noch nicht synchronisierte Änderungen. Beim Abmelden gehen sie verloren. Trotzdem abmelden?')) return;
+  if (hasPending && !confirm(tk('app.logoutUnsynced'))) return;
   clearAppBadgeNow(); // logged out: no number on the app icon any more
   // After logging out, this device should not receive personal notifications any more
   try { await Promise.race([disablePushOnThisDevice(), new Promise(r => setTimeout(r, 3000))]); } catch (e) { /* ignore */ }

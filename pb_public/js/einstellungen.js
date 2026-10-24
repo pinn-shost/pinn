@@ -27,7 +27,7 @@ function renderHouseholdTypeSetting() {
     b.classList.toggle('opacity-60', !admin && b.dataset.householdType !== householdType);
   });
   const input = document.getElementById('settingsLastName');
-  if (input) input.placeholder = isHouseholdWG() ? 'Name der WG' : 'Nachname';
+  if (input) input.placeholder = isHouseholdWG() ? tk('settings.members.flatshareName') : tk('settings.members.lastName');
   applyWgKidVisibility();
 }
 
@@ -57,8 +57,8 @@ document.querySelectorAll('.household-type-btn').forEach(btn => {
   btn.addEventListener('click', async () => {
     const v = btn.dataset.householdType === 'wg' ? 'wg' : 'familie';
     if (v === householdType) return;
-    if (!isCurrentUserAdmin()) { alert('Die Wohnform kann nur ein Admin ändern.'); return; }
-    if (!confirm('Wohnform ändern? pinn. lädt danach neu und zeigt für alle Profile die passenden Bezeichnungen – alle Daten bleiben erhalten.')) return;
+    if (!isCurrentUserAdmin()) { alert(tk('settings.household.adminOnly')); return; }
+    if (!confirm(tk('settings.household.confirm'))) return;
     householdType = v;
     renderHouseholdTypeSetting();
     btn.disabled = true;
@@ -69,7 +69,7 @@ document.querySelectorAll('.household-type-btn').forEach(btn => {
 
 function renderFavoriteTabsPicker() {
   const wrap = document.getElementById('favoriteTabsPicker');
-  document.getElementById('favoriteTabsCount').textContent = `${favoriteTabs.length} von 4 ausgewählt`;
+  document.getElementById('favoriteTabsCount').textContent = tk('settings.favorites.selected', { n: favoriteTabs.length });
   wrap.innerHTML = ALL_MENU_TABS.map(tab => {
     const isChecked = favoriteTabs.includes(tab.id);
     const atLimit = favoriteTabs.length >= 4 && !isChecked;
@@ -77,7 +77,7 @@ function renderFavoriteTabsPicker() {
       <label class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-ink/10 bg-white ${atLimit ? 'opacity-40' : 'cursor-pointer'}">
         <input type="checkbox" class="favorite-tab-check shrink-0 w-4 h-4" data-id="${tab.id}" ${isChecked ? 'checked' : ''} ${atLimit ? 'disabled' : ''} />
         <span class="text-lg">${tab.icon}</span>
-        <span class="text-sm flex-1">${tab.label}</span>
+        <span class="text-sm flex-1">${escapeHtml(tab.label)}</span>
       </label>
     `;
   }).join('');
@@ -135,35 +135,33 @@ function renderSettingsMemberList() {
   if (admin && unlinked.length) {
     const hint = document.createElement('p');
     hint.className = 'text-xs text-mustard';
-    hint.textContent = unlinked.length === 1
-      ? '1 Mitglied hat noch kein Profil – bitte über „Bearbeiten“ anlegen oder verknüpfen.'
-      : unlinked.length + ' Mitglieder haben noch kein Profil – bitte über „Bearbeiten“ anlegen oder verknüpfen.';
+    hint.textContent = tk('settings.members.unlinked', { n: unlinked.length });
     list.appendChild(hint);
   }
   members.forEach(m => {
     const profile = profileForMember(m.id);
     const profileText = profile
-      ? `<span class="text-ink/40">· Profil: ${escapeHtml(profile.username)}</span>`
-      : '<span class="text-mustard">· kein Profil</span>';
+      ? `<span class="text-ink/40">${escapeHtml(tk('settings.members.profile', { name: profile.username }))}</span>`
+      : `<span class="text-mustard">${escapeHtml(tk('settings.members.noProfile'))}</span>`;
     const row = document.createElement('div');
     row.className = 'flex items-center gap-3 px-3 py-2 rounded-lg border border-ink/10 bg-white';
     row.innerHTML = `
       <span class="w-8 h-8 rounded-full overflow-hidden border-2 shrink-0" style="border-color:${memberBorderColor(m)}">${memberAvatarInnerHTML(m)}</span>
       <div class="flex-1 min-w-0">
         <div class="text-sm font-medium truncate">${escapeHtml(m.name)}</div>
-        <div class="text-xs text-ink/40 truncate">${escapeHtml(m.role || '–')} · zeigt ${m.displayMode === 'role' ? 'Rolle' : 'Name'} ${profileText}${!admin && m.childLock ? ' · 🔒 Kindersicherung' : ''}</div>
+        <div class="text-xs text-ink/40 truncate">${escapeHtml(m.role || '–')} · ${escapeHtml(tk(m.displayMode === 'role' ? 'settings.members.showsRole' : 'settings.members.showsName'))} ${profileText}${!admin && m.childLock ? ' · ' + escapeHtml(tk('settings.members.childLock')) : ''}</div>
         ${admin && !(wgHidesKids() && !m.childLock) ? (() => {
           const me = currentMember();
           const locked = !!(profile && (profile.rolle === 'admin' || profile.rolle === 'gast')) || (me && me.id === m.id);
-          const why = me && me.id === m.id ? 'Für dich selbst nicht möglich' : 'Admins können nicht gesperrt werden';
-          return `<label class="member-lock-row${locked ? ' is-disabled' : ''}" title="${locked ? why : 'Kein Löschen, kein Zugriff auf Finanzen, Dokumente und Fahrzeuge'}">
+          const why = me && me.id === m.id ? tk('settings.members.lockSelf') : tk('settings.members.lockAdmin');
+          return `<label class="member-lock-row${locked ? ' is-disabled' : ''}" title="${escapeHtml(locked ? why : tk('settings.members.lockTitle'))}">
             <span class="ov-set-switch"><input type="checkbox" data-child-lock="${m.id}" ${m.childLock && !locked ? 'checked' : ''} ${locked ? 'disabled' : ''} /><span class="ov-track"></span><span class="ov-knob"></span></span>
-            <span>🔒 Kindersicherung</span>
+            <span>${escapeHtml(tk('settings.members.childLock'))}</span>
           </label>`;
         })() : ''}
       </div>
-      ${canEditMember(m) ? `<button class="edit-settings-member text-ink/30 hover:text-pine text-xs shrink-0" data-id="${m.id}">Bearbeiten</button>` : ''}
-      ${admin ? `<button class="del-settings-member text-ink/30 hover:text-red-500 text-xs shrink-0" data-id="${m.id}">Entfernen</button>` : ''}
+      ${canEditMember(m) ? `<button class="edit-settings-member text-ink/30 hover:text-pine text-xs shrink-0" data-id="${m.id}">${escapeHtml(tk('common.edit'))}</button>` : ''}
+      ${admin ? `<button class="del-settings-member text-ink/30 hover:text-red-500 text-xs shrink-0" data-id="${m.id}">${escapeHtml(tk('common.remove'))}</button>` : ''}
     `;
     list.appendChild(row);
   });
@@ -189,12 +187,12 @@ async function removeMemberWithProfile(memberId) {
   const profile = profileForMember(memberId);
   const u = currentUser();
   if (profile && u && profile.id === u.id) {
-    alert('Du kannst dich nicht selbst entfernen.');
+    alert(tk('settings.members.removeSelf'));
     return;
   }
   const question = profile
-    ? `„${m.name}“ und das zugehörige Profil „${profile.username}“ wirklich entfernen? Eine Anmeldung mit diesem Profil ist danach nicht mehr möglich.`
-    : `„${m.name}“ wirklich entfernen?`;
+    ? tk('settings.members.removeWithProfileConfirm', { name: m.name, profile: profile.username })
+    : tk('settings.members.removeConfirm', { name: m.name });
   if (!confirm(question)) return;
   if (profile) {
     try {
@@ -567,7 +565,7 @@ function setDarkMode(on) {
 document.getElementById('darkModeToggle').addEventListener('change', (e) => setDarkMode(e.target.checked));
 
 document.getElementById('resetDataBtn').addEventListener('click', async () => {
-  if (!confirm('Wirklich alle Termine, Rezepte und Daten löschen? Dies betrifft die gesamte Familie. Familienmitglieder mit Profil bleiben erhalten.')) return;
+  if (!confirm(tk('settings.system.resetConfirm'))) return;
   const fresh = defaultFamilyData();
   members = members.filter(m => profileForMember(m.id)); events = fresh.events; mealPlan = fresh.mealPlan;
   recipes = fresh.recipes; categoryActive = fresh.categoryActive;

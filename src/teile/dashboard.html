@@ -4,35 +4,35 @@
   <div class="dash-inner">
     <div class="dash-head">
       <div class="min-w-0">
-        <h1 class="font-serif text-3xl leading-tight">Familie <span id="dashFamilyName"></span></h1>
+        <h1 class="font-serif text-3xl leading-tight"><span data-tk="dashboard.family">Family</span> <span id="dashFamilyName"></span></h1>
         <p id="dashDate" class="text-sm text-ink/50 mt-1"></p>
       </div>
       <div id="dashClock" class="dash-clock"></div>
     </div>
     <div class="dash-main">
-      <p id="dashQuestion" class="text-sm text-ink/50 mb-5 text-center">Wer möchte loslegen? Tippe auf dein Bild.</p>
+      <p data-tk="dashboard.whoIsStarting" id="dashQuestion" class="text-sm text-ink/50 mb-5 text-center">Who wants to get started? Tap your picture.</p>
       <div id="dashTiles" class="dash-grid"></div>
       <div id="dashStatusWrap" class="hidden flex flex-col items-center gap-3 mt-6 text-center">
         <p id="dashStatus" class="text-sm text-red-500"></p>
-        <button type="button" id="dashRetryBtn" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Erneut versuchen</button>
+        <button data-tk="dashboard.tryAgain" type="button" id="dashRetryBtn" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Try again</button>
       </div>
     </div>
     <div class="dash-footer">
-      <button type="button" id="dashPasswordLoginBtn" class="text-xs text-ink/40 hover:text-pine underline decoration-dotted">Mit Passwort anmelden</button>
+      <button data-tk="dashboard.logInWithPassword" type="button" id="dashPasswordLoginBtn" class="text-xs text-ink/40 hover:text-pine underline decoration-dotted">Log in with password</button>
     </div>
   </div>
-  <div id="dashBusy" class="hidden dash-busy"><span id="dashBusyText">Wird geöffnet …</span></div>
+  <div id="dashBusy" class="hidden dash-busy"><span data-tk="dashboard.opening" id="dashBusyText">Opening …</span></div>
 </div>
 
 <!-- PIN entry (dashboard and "PIN festlegen" in the account) -->
-<div id="pinPadOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="PIN-Eingabe">
+<div id="pinPadOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="PIN entry" data-tk-attr="aria-label:dashboard.pinEntry">
   <div id="pinPadBox" class="pin-box">
     <div id="pinPadAvatar" class="hidden"></div>
     <div id="pinPadTitle" class="pin-title"></div>
     <div id="pinPadSub" class="pin-sub"></div>
     <div id="pinPadLengths" class="pin-lengths hidden">
-      <button type="button" class="pin-len-btn" data-pin-len="4">4-stellig</button>
-      <button type="button" class="pin-len-btn" data-pin-len="6">6-stellig</button>
+      <button data-tk="dashboard.fourDigits" type="button" class="pin-len-btn" data-pin-len="4">4 digits</button>
+      <button data-tk="dashboard.sixDigits" type="button" class="pin-len-btn" data-pin-len="6">6 digits</button>
     </div>
     <div id="pinPadDots" class="pin-dots"></div>
     <div id="pinPadError" class="pin-error"></div>
@@ -46,9 +46,9 @@
       <button type="button" class="pin-key" data-pin-key="7"><span class="pin-digit">7</span><span class="pin-letters">PQRS</span></button>
       <button type="button" class="pin-key" data-pin-key="8"><span class="pin-digit">8</span><span class="pin-letters">TUV</span></button>
       <button type="button" class="pin-key" data-pin-key="9"><span class="pin-digit">9</span><span class="pin-letters">WXYZ</span></button>
-      <button type="button" class="pin-key plain" id="pinPadCancel">Abbrechen</button>
+      <button data-tk="common.cancel" type="button" class="pin-key plain" id="pinPadCancel">Cancel</button>
       <button type="button" class="pin-key" data-pin-key="0"><span class="pin-digit">0</span><span class="pin-letters"></span></button>
-      <button type="button" class="pin-key plain" id="pinPadDelete" aria-label="Löschen">Löschen</button>
+      <button data-tk="common.delete" type="button" class="pin-key plain" id="pinPadDelete" aria-label="Delete" data-tk-attr="aria-label:common.delete">Delete</button>
     </div>
   </div>
 </div>

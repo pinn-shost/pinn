@@ -35,12 +35,12 @@ async function loginRequest(payload) {
   try {
     res = await fetch('/api/pinn/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), cache: 'no-store' });
   } catch (e) {
-    const err = new Error('Keine Verbindung zum Server. Bitte Netzwerk bzw. VPN prüfen.');
+    const err = new Error(tk('common.noConnectionVpn'));
     err.offline = true;
     throw err;
   }
   const body = await res.json().catch(() => ({}));
-  if (!res.ok || !body.token) throw new Error(body.error || 'Anmeldung fehlgeschlagen. Bitte Name und Passwort prüfen.');
+  if (!res.ok || !body.token) throw new Error(body.error || tk('login.failed'));
   pb.authStore.save(body.token, body.record);
 }
 
@@ -99,7 +99,7 @@ function showLoginScreen() {
       try { last = localStorage.getItem(LS_LAST_FAMILY) || ''; } catch (e) { /* ignore */ }
       if (saved.length) {
         familySelect.innerHTML = saved.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('') +
-          `<option value="${FAMILY_OTHER}">Andere Familie eingeben …</option>`;
+          `<option value="${FAMILY_OTHER}">${escapeHtml(tk('login.otherFamily'))}</option>`;
         const pick = saved.find(n => n.toLowerCase() === last.toLowerCase()) || saved[0];
         familySelect.value = pick;
         familySelectWrap.classList.remove('hidden');
@@ -129,20 +129,20 @@ function showLoginScreen() {
       familyBar.classList.toggle('hidden', mode !== 'profile');
       profileWrap.classList.toggle('hidden', mode !== 'profile');
       toggleCreateBtn.classList.toggle('hidden', mode !== 'profile');
-      mainAdminBtn.textContent = mode === 'main' ? 'Zurück zur Familien-Anmeldung' : 'Als Hauptadmin anmelden';
+      mainAdminBtn.textContent = mode === 'main' ? tk('login.backToFamilyLogin') : tk('login.asMainAdmin');
       if (mode === 'family') {
         creatingAccount = false;
-        subtitle.textContent = 'Bitte Familie wählen';
+        subtitle.textContent = tk('login.chooseFamily');
         renderFamilyChoice();
       } else if (mode === 'main') {
         creatingAccount = false;
-        subtitle.textContent = 'Hauptadmin-Anmeldung';
+        subtitle.textContent = tk('login.mainAdminLogin');
       } else {
-        subtitle.textContent = creatingAccount ? 'Admin-Anmeldung erforderlich, um ein neues Konto anzulegen' : 'Bitte anmelden';
+        subtitle.textContent = creatingAccount ? tk('login.adminRequired') : tk('login.pleaseLogIn');
       }
-      btn.textContent = creatingAccount ? 'Als Admin anmelden' : 'Anmelden';
+      btn.textContent = creatingAccount ? tk('login.asAdmin') : tk('common.logIn');
       rememberWrap.classList.toggle('hidden', creatingAccount);
-      toggleCreateBtn.textContent = creatingAccount ? 'Abbrechen' : 'Neues Konto anlegen';
+      toggleCreateBtn.textContent = creatingAccount ? tk('common.cancel') : tk('login.createNewAccount');
       pw.value = '';
       renderSetupHint();
     }
@@ -154,7 +154,7 @@ function showLoginScreen() {
     document.getElementById('loginFamilyForgetBtn').onclick = () => {
       const name = familySelect.value;
       if (!name || name === FAMILY_OTHER) return;
-      if (!confirm(`„${name}“ von diesem Gerät entfernen?`)) return;
+      if (!confirm(tk('login.forgetFamilyConfirm', { name }))) return;
       forgetFamily(name);
       renderFamilyChoice();
     };
@@ -166,16 +166,16 @@ function showLoginScreen() {
       if (!name) { familyInput.focus(); return; }
       familyErr.classList.add('hidden');
       familyBtn.disabled = true;
-      familyBtn.textContent = 'Suche …';
+      familyBtn.textContent = tk('login.searching');
       try {
         let res;
         try {
           res = await fetch('/api/pinn/familie?name=' + encodeURIComponent(name), { cache: 'no-store' });
         } catch (e) {
-          throw new Error('Keine Verbindung zum Server. Bitte Netzwerk bzw. VPN prüfen.');
+          throw new Error(tk('common.noConnectionVpn'));
         }
         const data = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(res.status === 404 ? `Die Familie „${name}“ gibt es nicht. Bitte den Namen prüfen.` : (data.error || 'Familie konnte nicht geladen werden.'));
+        if (!res.ok) throw new Error(res.status === 404 ? tk('login.familyUnknown', { name }) : (data.error || tk('login.familyLoadFailed')));
         familyName = data.name || name;
         const saved = readSavedFamilies();
         if (typed ? familySave.checked : true) {
@@ -192,8 +192,8 @@ function showLoginScreen() {
         try { last = localStorage.getItem(lastProfileKey(familyName)); } catch (e) { /* ignore */ }
         if (last && names.includes(last)) select.value = last;
         document.getElementById('loginFamilyName').textContent = familyName;
-        // the type of household comes from the server: "Familie" or "WG" (the language layer translates the word)
-        document.getElementById('loginFamilyLabel').textContent = data.wohnform === 'wg' ? 'WG' : 'Familie';
+        // the type of household comes from the server: family or flat share
+        document.getElementById('loginFamilyLabel').textContent = data.wohnform === 'wg' ? tk('login.flatshare') : tk('login.family');
         blurActive();
         setMode('profile');
       } catch (e) {
@@ -201,7 +201,7 @@ function showLoginScreen() {
         familyErr.classList.remove('hidden');
       } finally {
         familyBtn.disabled = false;
-        familyBtn.textContent = 'Weiter';
+        familyBtn.textContent = tk('common.next');
       }
     };
 
@@ -224,7 +224,7 @@ function showLoginScreen() {
       if ((mode === 'profile' && !username) || !password) return;
       err.classList.add('hidden');
       btn.disabled = true;
-      btn.textContent = 'Anmelden …';
+      btn.textContent = tk('login.loggingIn');
       try {
         await loginRequest(mode === 'main'
           ? { hauptadmin: true, password }
@@ -232,7 +232,7 @@ function showLoginScreen() {
         if (creatingAccount) {
           if (!isCurrentUserAdmin()) {
             pb.authStore.clear();
-            err.textContent = 'Nur Admins können neue Konten anlegen.';
+            err.textContent = tk('login.onlyAdminsCreate');
             err.classList.remove('hidden');
             return;
           }
@@ -241,7 +241,7 @@ function showLoginScreen() {
           form.classList.add('hidden');
           toggleCreateBtn.classList.add('hidden');
           mainAdminBtn.classList.add('hidden');
-          document.getElementById('loginCreateAdminName').textContent = username;
+          document.getElementById('loginCreateAdminName').textContent = tk('login.signedInAsAdmin', { name: username });
           document.getElementById('loginNewUsername').value = '';
           document.getElementById('loginNewPassword').value = '';
           document.getElementById('loginCreateError').classList.add('hidden');
@@ -267,7 +267,7 @@ function showLoginScreen() {
         err.classList.remove('hidden');
       } finally {
         btn.disabled = false;
-        btn.textContent = creatingAccount ? 'Als Admin anmelden' : 'Anmelden';
+        btn.textContent = creatingAccount ? tk('login.asAdmin') : tk('common.logIn');
       }
     };
 
@@ -282,7 +282,7 @@ function showLoginScreen() {
       cOk.classList.add('hidden');
       if (!username || !password) return;
       cBtn.disabled = true;
-      cBtn.textContent = 'Anlegen …';
+      cBtn.textContent = tk('login.creating');
       try {
         const res = await apiFetch('/api/pinn/users/create', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -292,18 +292,18 @@ function showLoginScreen() {
         if (res.ok) {
           document.getElementById('loginNewUsername').value = '';
           document.getElementById('loginNewPassword').value = '';
-          cOk.textContent = `Konto "${username}" wurde angelegt.`;
+          cOk.textContent = tk('login.accountCreated', { name: username });
           cOk.classList.remove('hidden');
         } else {
-          cErr.textContent = body.error || 'Konto konnte nicht angelegt werden.';
+          cErr.textContent = body.error || tk('login.accountCreateFailed');
           cErr.classList.remove('hidden');
         }
       } catch (e) {
-        cErr.textContent = 'Keine Verbindung zum Server. Bitte Netzwerk bzw. VPN prüfen.';
+        cErr.textContent = tk('common.noConnectionVpn');
         cErr.classList.remove('hidden');
       } finally {
         cBtn.disabled = false;
-        cBtn.textContent = 'Konto anlegen';
+        cBtn.textContent = tk('login.createAccount');
       }
     };
 

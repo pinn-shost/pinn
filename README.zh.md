@@ -99,13 +99,13 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語和 🇰🇷 한국어**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
-## 1.111.0 新功能
+## 1.112.0 新功能
 
-**使用文本键的翻译：打好基础**
+**文本键（第 1 部分）：框架、登录和设置**
 
-- 路线图第 6 步开始：文本通过**键**（例如 `settings.region.title`）获取，而不再通过德语原文。每种语言在 `pb_public/i18n/` 中都有自己的文件（包括德语），英语是参照。第一个使用新键的部分是**设置 → 语言和地区**；其他部分在轮到之前仍按原方式翻译。使用方式不变。
-- **复数正确：**应用和服务器共用一张规则表（`js/textkern.js`，服务器上为 `pinn-textkern.js`），在应用和推送消息中选择正确的复数形式——也支持有三种形式的语言。**俄语**已准备好，但暂未提供。
-- 已更改：应用文件（`index.html`、`js/sprachen.js`、`js/sprache.js`、`js/versionslog.js`、`js/textkern.js`（新）、`lang/` 和 `i18n/`（新）中的所有语言文件）、`pinn-setup.sh`，以及服务器上的 `pb_hooks/sw.pb.js` 和 `pinn-textkern.js`（新）。
+- 登录、主管理员、家庭看板、菜单、页眉、搜索以及**整个设置页面**现在都从 `pb_public/i18n/` 中的语言文件获取文字——支持全部九种语言，合租模式也一样。使用方式不变。
+- 顺带的小修正：有生日的联系人数量和没有个人资料的成员提示现在在每种语言中都使用正确的单复数，屏幕阅读器的标签也已翻译。
+- 已更改：仅应用文件（`index.html`、`js/` 中的部分文件、`i18n/` 和 `lang/` 中的所有语言文件）以及 `.github/`——服务器端没有变化。
 
 更早的版本请见 [Releases](https://github.com/pinn-shost/pinn/releases)。
 
@@ -137,7 +137,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.111.0` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.112.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

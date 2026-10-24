@@ -21,10 +21,10 @@ function renderOverviewSettings() {
           <div class="ov-set-label">${escapeHtml(t.label)}</div>
           <div class="ov-set-hint">${escapeHtml(t.hint)}</div>
         </div>
-        <button type="button" class="ov-set-move" data-ov-move="-1" data-ov-id="${id}" aria-label="${escapeHtml(t.label)} nach oben" ${i === 0 ? 'disabled' : ''}>▲</button>
-        <button type="button" class="ov-set-move" data-ov-move="1" data-ov-id="${id}" aria-label="${escapeHtml(t.label)} nach unten" ${i === overviewOrder.length - 1 ? 'disabled' : ''}>▼</button>
-        <label class="ov-set-switch" title="${lastOn ? 'Mindestens eine Kachel muss sichtbar bleiben' : (on ? 'Ausblenden' : 'Einblenden')}">
-          <input type="checkbox" data-ov-toggle="${id}" aria-label="${escapeHtml(t.label)} anzeigen" ${on ? 'checked' : ''} ${lastOn ? 'disabled' : ''} />
+        <button type="button" class="ov-set-move" data-ov-move="-1" data-ov-id="${id}" aria-label="${escapeHtml(tk('settings.overview.moveUp', { name: t.label }))}" ${i === 0 ? 'disabled' : ''}>▲</button>
+        <button type="button" class="ov-set-move" data-ov-move="1" data-ov-id="${id}" aria-label="${escapeHtml(tk('settings.overview.moveDown', { name: t.label }))}" ${i === overviewOrder.length - 1 ? 'disabled' : ''}>▼</button>
+        <label class="ov-set-switch" title="${escapeHtml(lastOn ? tk('settings.overview.keepOne') : (on ? tk('settings.overview.hide') : tk('settings.overview.show')))}">
+          <input type="checkbox" data-ov-toggle="${id}" aria-label="${escapeHtml(tk('settings.overview.showTile', { name: t.label }))}" ${on ? 'checked' : ''} ${lastOn ? 'disabled' : ''} />
           <span class="ov-track"></span>
           <span class="ov-knob"></span>
         </label>
@@ -39,7 +39,7 @@ function renderOverviewSettings() {
     const n = overviewBdayHidden ? overviewBdayHidden.size : 0;
     resetHidden.disabled = !n;
     resetHidden.classList.toggle('opacity-40', !n);
-    resetHidden.textContent = n ? `Ausgeblendete Geburtstage wieder anzeigen (${n})` : 'Keine Geburtstage ausgeblendet';
+    resetHidden.textContent = n ? tk('settings.birthdays.showHidden', { n }) : tk('settings.birthdays.noneHidden');
   }
   renderBirthdaySettingsStatus();
 }
@@ -47,16 +47,17 @@ function renderBirthdaySettingsStatus() {
   const el = document.getElementById('birthdaySyncStatus');
   if (!el) return;
   if (isCurrentUserGuest()) { el.textContent = ''; return; }
-  if (!birthdayData.geladen) { el.textContent = 'Noch nicht geladen.'; return; }
-  if (!birthdayData.eingerichtet) { el.textContent = 'Kein Konto verbunden – die Geburtstage kommen aus den iCloud- bzw. Google-Kontakten (Einstellungen → Kalender: ein iCloud- oder Google-Konto verbinden).'; return; }
+  if (!birthdayData.geladen) { el.textContent = tk('common.notLoadedYet'); return; }
+  if (!birthdayData.eingerichtet) { el.textContent = tk('settings.birthdays.noAccount'); return; }
   const n = birthdayData.liste.length;
-  const stand = birthdayData.stand ? new Date(birthdayData.stand).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+  const stand = birthdayData.stand ? new Date(birthdayData.stand).toLocaleString(PINN_I18N.language.locale, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
   const q = birthdayData.quellen || {};
   const parts = [];
   if (q.apple) parts.push(`iCloud ${birthdayData.anzahl.apple}`);
   if (q.google) parts.push(`Google ${birthdayData.anzahl.google}`);
-  let text = `${n} Kontakt${n === 1 ? '' : 'e'} mit Geburtstag${parts.length ? ' (' + parts.join(', ') + ')' : ''}${stand ? ' · Stand ' + stand : ''} · wird täglich abgeglichen`;
-  if (birthdayData.fehler) text += ` · Letzter Abgleich fehlgeschlagen: ${birthdayData.fehler}`;
+  let text = tk('settings.birthdays.contacts', { n }) + (parts.length ? ' (' + parts.join(', ') + ')' : '') +
+    (stand ? ' · ' + tk('settings.birthdays.asOf', { date: stand }) : '') + ' · ' + tk('settings.birthdays.daily');
+  if (birthdayData.fehler) text += ' · ' + tk('settings.birthdays.lastSyncFailed', { error: birthdayData.fehler });
   el.textContent = text;
 }
 function saveOverviewPrefs() {
@@ -114,17 +115,17 @@ document.getElementById('resetOverviewBtn').addEventListener('click', () => {
 document.getElementById('refreshBirthdaysBtn').addEventListener('click', async () => {
   const btn = document.getElementById('refreshBirthdaysBtn');
   const status = document.getElementById('birthdaySyncStatus');
-  if (!navigator.onLine) { status.textContent = 'Keine Verbindung zum Server – bitte später erneut versuchen.'; return; }
+  if (!navigator.onLine) { status.textContent = tk('common.noConnectionLater'); return; }
   btn.disabled = true;
   const label = btn.textContent;
-  btn.textContent = 'Kontakte werden abgeglichen …';
+  btn.textContent = tk('settings.birthdays.syncing');
   try {
     const res = await apiFetch('/api/pinn/geburtstage/aktualisieren', { method: 'POST' });
     const body = await res.json().catch(() => ({}));
     if (res.status === 404) {
-      status.textContent = 'Auf dem Server fehlt noch geburtstage.pb.js (pb_hooks).';
+      status.textContent = tk('settings.birthdays.hookMissing');
     } else if (!res.ok) {
-      status.textContent = body.error || ('Abgleich fehlgeschlagen (' + res.status + ').');
+      status.textContent = body.error || tk('settings.birthdays.syncFailed', { status: res.status });
     } else {
       birthdayData = normalizeBirthdayData(body);
       birthdayLastFetch = Date.now();
@@ -133,7 +134,7 @@ document.getElementById('refreshBirthdaysBtn').addEventListener('click', async (
       refreshOverviewTiles();
     }
   } catch (e) {
-    status.textContent = 'Keine Verbindung zum Server – bitte später erneut versuchen.';
+    status.textContent = tk('common.noConnectionLater');
   } finally {
     btn.disabled = false;
     btn.textContent = label;

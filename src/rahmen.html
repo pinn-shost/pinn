@@ -230,6 +230,11 @@
 <!-- @include popups/rezept.html -->
 
 <script>
+// Texts by key (pb_public/i18n): fill in the HTML above now, before the app scripts run – they may change some
+// of these texts afterwards (js/sprachen.js only fills in elements it has not done yet when the page is ready)
+if (window.PINN_I18N && PINN_I18N.apply) PINN_I18N.apply(document.body);
+</script>
+<script>
 // Moving notes (see "Zettel verschieben" in the pin board section) - created early because renderPinboard uses them
 var PW_LONGPRESS_MS = 450;
 var pwArr = { on: false, press: null, drag: null, quietUntil: 0, renderPending: false, ro: null, layoutQueued: false, raf: 0 };

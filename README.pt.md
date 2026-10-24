@@ -99,13 +99,13 @@ Sempre com você: o pinn. se instala em todo iPhone e celular Android como um ap
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 e 🇰🇷 한국어**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
-## Novidades da 1.111.0
+## Novidades da 1.112.0
 
-**Traduções com chaves de texto: a base**
+**Chaves de texto, parte 1: estrutura, login e configurações**
 
-- Começa o passo 6 do roteiro: os textos são buscados por uma **chave** (por exemplo `settings.region.title`) em vez do original em alemão. Cada idioma tem seu próprio arquivo em `pb_public/i18n/`, alemão incluído; o inglês é a referência. A primeira parte a usá-las é **Configurações → Idioma e região**; todo o resto é traduzido como antes. O uso não muda.
-- **Plural correto:** uma tabela de regras comum (`js/textkern.js`, no servidor `pinn-textkern.js`) escolhe a forma certa no app e nas notificações push, também para idiomas com três formas. O **russo** está preparado, mas ainda não é oferecido.
-- Alterados: arquivos do app (`index.html`, `js/sprachen.js`, `js/sprache.js`, `js/versionslog.js`, `js/textkern.js` (novo), todos os arquivos de idioma em `lang/` e `i18n/` (novo)), `pinn-setup.sh` e no servidor `pb_hooks/sw.pb.js` e `pinn-textkern.js` (novo).
+- Login, administrador principal, painel da família, menu, cabeçalho, pesquisa e **toda a página de configurações** agora pegam seus textos dos arquivos de idioma em `pb_public/i18n/` – nos nove idiomas e também como casa compartilhada. Nada muda no uso.
+- Pequenas correções: o número de contatos com aniversário e o aviso sobre membros sem perfil agora usam o singular ou plural correto em cada idioma, e os rótulos para leitores de tela também são traduzidos.
+- Alterado: apenas arquivos do app (`index.html`, alguns arquivos em `js/`, todos os arquivos de idioma em `i18n/` e `lang/`) e `.github/` – nada muda no servidor.
 
 As versões anteriores estão em [Releases](https://github.com/pinn-shost/pinn/releases).
 
@@ -137,7 +137,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.111.0` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.112.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

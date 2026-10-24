@@ -2,22 +2,22 @@
   <div id="settingsView" class="hidden flex-1 min-h-0 bg-white/40">
     <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
       <div class="flex items-center justify-between gap-3">
-        <h2 class="font-serif text-lg">Einstellungen</h2>
+        <h2 data-tk="settings.title" class="font-serif text-lg">Settings</h2>
       </div>
-      <p class="child-lock-only text-xs text-ink/60 mt-2 px-3 py-2 rounded-lg bg-ink/5">🔒 Kindersicherung: Die Einstellungen können nur angesehen werden. Ändern kann sie ein Erwachsener in seinem Profil.</p>
+      <p data-tk="settings.childLockNotice" class="child-lock-only text-xs text-ink/60 mt-2 px-3 py-2 rounded-lg bg-ink/5">🔒 Child lock: the settings can only be viewed. An adult can change them in their profile.</p>
     </div>
     <div id="settingsScroll" class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">
       <div class="set-pane max-w-3xl mx-auto">
     <details class="settings-accordion set-card">
       <summary class="set-sum">
         <span class="set-ico">🎨</span>
-        <span class="set-head"><span class="sa-title">Darstellung</span><small>Dunkelmodus, Farben, Termin-Ansicht</small></span>
+        <span class="set-head"><span data-tk="settings.display.title" class="sa-title">Appearance</span><small data-tk="settings.display.subtitle">Dark mode, colours, event view</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
-        <p class="text-xs text-ink/50 mb-4">Gilt nur für dein Profil – auf allen Geräten, auf denen du angemeldet bist.</p>
+        <p data-tk="settings.display.profileOnly" class="text-xs text-ink/50 mb-4">Applies only to your profile – on all devices you are logged in on.</p>
         <label class="flex items-center gap-3 cursor-pointer w-fit mb-5">
-          <span class="text-sm">Dunkelmodus</span>
+          <span data-tk="settings.display.darkMode" class="text-sm">Dark mode</span>
           <span class="relative inline-block w-11 h-6">
             <input id="darkModeToggle" type="checkbox" class="peer sr-only" />
             <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
@@ -25,48 +25,48 @@
           </span>
         </label>
 
-        <p class="text-xs uppercase tracking-wide text-ink/40 mb-2">Eigene Farben</p>
+        <p data-tk="settings.display.customColors" class="text-xs uppercase tracking-wide text-ink/40 mb-2">Custom colours</p>
         <div class="flex flex-wrap items-center gap-5 mb-6">
           <label class="flex items-center gap-2 text-sm">
-            Hintergrund
+            <span data-tk="settings.display.background">Background</span>
             <input id="colorPaper" type="color" class="w-9 h-9 rounded-full border border-ink/15 cursor-pointer p-0 bg-transparent" />
           </label>
           <label class="flex items-center gap-2 text-sm">
-            Akzent 1
+            <span data-tk="settings.display.accent1">Accent 1</span>
             <input id="colorPine" type="color" class="w-9 h-9 rounded-full border border-ink/15 cursor-pointer p-0 bg-transparent" />
           </label>
           <label class="flex items-center gap-2 text-sm">
-            Akzent 2
+            <span data-tk="settings.display.accent2">Accent 2</span>
             <input id="colorMustard" type="color" class="w-9 h-9 rounded-full border border-ink/15 cursor-pointer p-0 bg-transparent" />
           </label>
-          <button id="resetThemeColorsBtn" class="text-xs text-ink/40 hover:text-pine transition">Zurücksetzen</button>
+          <button data-tk="common.reset" id="resetThemeColorsBtn" class="text-xs text-ink/40 hover:text-pine transition">Reset</button>
         </div>
 
         <div class="flex items-center gap-1.5 mb-2">
-          <p class="text-xs uppercase tracking-wide text-ink/40">Standard-Ansicht für Termine</p>
-          <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Legt fest, ob Termine standardmäßig als Kalender (Zeitleiste) oder als Liste angezeigt werden – getrennt einstellbar für iPad/Desktop und fürs Handy, da beide unterschiedlich viel Platz haben. „Gilt für&quot; legt zusätzlich fest, ob der Standard nur in der Übersicht, nur im Termine-Tab, oder in beiden greift.">i</button>
+          <p data-tk="settings.display.defaultView" class="text-xs uppercase tracking-wide text-ink/40">Default view for events</p>
+          <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Determines whether events are shown as a calendar (timeline) or as a list by default – set separately for iPad/desktop and for phone, as both have different amounts of space. “Applies to&quot; also determines whether the default applies only in the overview, only in the events tab, or in both." data-tk-attr="data-info:settings.display.defaultViewInfo">i</button>
         </div>
 
-        <p class="text-xs font-medium text-ink/70 mb-2">🖥 iPad / Desktop</p>
+        <p data-tk="settings.display.ipadDesktop" class="text-xs font-medium text-ink/70 mb-2">🖥 iPad / desktop</p>
         <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-3">
-          <button type="button" data-default-view-mode="timeline" class="default-view-mode-btn-desktop px-3 py-1.5 rounded-full transition">🗓 Kalender</button>
-          <button type="button" data-default-view-mode="list" class="default-view-mode-btn-desktop px-3 py-1.5 rounded-full transition">📋 Liste</button>
+          <button data-tk="settings.display.calendar" type="button" data-default-view-mode="timeline" class="default-view-mode-btn-desktop px-3 py-1.5 rounded-full transition">🗓 Calendar</button>
+          <button data-tk="settings.display.list" type="button" data-default-view-mode="list" class="default-view-mode-btn-desktop px-3 py-1.5 rounded-full transition">📋 List</button>
         </div>
         <select id="defaultViewScopeSelectDesktop" class="w-full max-w-xs rounded-lg border border-ink/15 px-3 py-2 text-sm mb-5">
-          <option value="both">Gilt für Übersicht und Termine</option>
-          <option value="uebersicht">Gilt nur für Übersicht</option>
-          <option value="termine">Gilt nur für Termine</option>
+          <option data-tk="settings.display.scopeBoth" value="both">Applies to overview and events</option>
+          <option data-tk="settings.display.scopeOverview" value="uebersicht">Applies only to overview</option>
+          <option data-tk="settings.display.scopeEvents" value="termine">Applies only to events</option>
         </select>
 
-        <p class="text-xs font-medium text-ink/70 mb-2">📱 Handy</p>
+        <p data-tk="settings.display.phone" class="text-xs font-medium text-ink/70 mb-2">📱 Phone</p>
         <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-3">
-          <button type="button" data-default-view-mode="timeline" class="default-view-mode-btn-mobile px-3 py-1.5 rounded-full transition">🗓 Kalender</button>
-          <button type="button" data-default-view-mode="list" class="default-view-mode-btn-mobile px-3 py-1.5 rounded-full transition">📋 Liste</button>
+          <button data-tk="settings.display.calendar" type="button" data-default-view-mode="timeline" class="default-view-mode-btn-mobile px-3 py-1.5 rounded-full transition">🗓 Calendar</button>
+          <button data-tk="settings.display.list" type="button" data-default-view-mode="list" class="default-view-mode-btn-mobile px-3 py-1.5 rounded-full transition">📋 List</button>
         </div>
         <select id="defaultViewScopeSelectMobile" class="w-full max-w-xs rounded-lg border border-ink/15 px-3 py-2 text-sm">
-          <option value="both">Gilt für Übersicht und Termine</option>
-          <option value="uebersicht">Gilt nur für Übersicht</option>
-          <option value="termine">Gilt nur für Termine</option>
+          <option data-tk="settings.display.scopeBoth" value="both">Applies to overview and events</option>
+          <option data-tk="settings.display.scopeOverview" value="uebersicht">Applies only to overview</option>
+          <option data-tk="settings.display.scopeEvents" value="termine">Applies only to events</option>
         </select>
       </div>
     </details>
@@ -113,32 +113,32 @@
     <details class="settings-accordion set-card">
       <summary class="set-sum">
         <span class="set-ico">🧩</span>
-        <span class="set-head"><span class="sa-title">Übersicht</span><small>Kacheln anordnen und ausblenden</small></span>
+        <span class="set-head"><span data-tk="settings.overview.title" class="sa-title">Overview</span><small data-tk="settings.overview.subtitle">Arrange and hide tiles</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
-        <p class="text-xs text-ink/50 mb-4">Reihenfolge und Anzeige der Kacheln auf der Übersicht. Gilt nur für dein Profil – auf allen Geräten, auf denen du angemeldet bist.</p>
+        <p data-tk="settings.overview.intro" class="text-xs text-ink/50 mb-4">Order and display of the tiles on the overview. Applies only to your profile – on all devices you are logged in on.</p>
         <div id="overviewTileSettingsList" class="flex flex-col gap-2 mb-2"></div>
-        <p class="text-xs text-ink/40 mb-6">Am Handy und am iPad im Hochformat stehen die Kacheln in dieser Reihenfolge untereinander. Im Querformat steht der Kalender links (bzw. rechts, wenn eine andere große Kachel vor ihm steht), alle übrigen Kacheln daneben untereinander.</p>
+        <p data-tk="settings.overview.layoutHint" class="text-xs text-ink/40 mb-6">On phones and on the iPad in portrait mode, the tiles are stacked in this order. In landscape mode the calendar is on the left (or on the right if another large tile comes before it), all other tiles next to it, stacked.</p>
 
         <div class="flex items-center flex-wrap gap-3">
-          <button id="resetOverviewBtn" type="button" class="text-xs text-ink/40 hover:text-pine transition">Übersicht zurücksetzen</button>
+          <button data-tk="settings.overview.reset" id="resetOverviewBtn" type="button" class="text-xs text-ink/40 hover:text-pine transition">Reset overview</button>
         </div>
       </div>
     </details>
     <details class="settings-accordion set-card" id="settingsAusblickAccordion">
       <summary class="set-sum">
         <span class="set-ico">🔭</span>
-        <span class="set-head"><span class="sa-title">Ausblick</span><small>Wochenvorschau und Monatsausblick Finanzen</small></span>
+        <span class="set-head"><span data-tk="settings.outlook.title" class="sa-title">Outlook</span><small data-tk="settings.outlook.subtitle">Weekly preview and monthly finance outlook</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
-        <p class="text-xs text-ink/50 mb-4">Jeden Sonntag ab 18 Uhr gibt es die Wochenvorschau mit allem Wichtigen der Familie für die kommende Woche, am letzten Tag des Monats ab 18 Uhr den Ausblick auf die Finanzen des nächsten Monats. Beide erscheinen einmal als Hinweis oben und als Push-Nachricht – hier kannst du sie jederzeit wieder öffnen.</p>
+        <p data-tk="settings.outlook.intro" class="text-xs text-ink/50 mb-4">Every Sunday from 6 pm there's the weekly preview with everything important for the family in the coming week, and on the last day of the month from 6 pm the outlook on next month's finances. Both appear once as a notice at the top and as a push notification – you can open them again here at any time.</p>
         <div class="ab-set-btns mb-5">
-          <button type="button" id="abSetWeekBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90">🗓️ Wochenvorschau öffnen</button>
-          <button type="button" id="abSetMonthBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm hover:border-pine hover:text-pine transition">💶 Monatsausblick öffnen</button>
+          <button data-tk="settings.outlook.openWeek" type="button" id="abSetWeekBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90">🗓️ Open weekly preview</button>
+          <button data-tk="settings.outlook.openMonth" type="button" id="abSetMonthBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm hover:border-pine hover:text-pine transition">💶 Open monthly outlook</button>
         </div>
-        <h4 class="text-xs uppercase tracking-wide text-ink/40 mb-2">Push-Nachrichten</h4>
+        <h4 data-tk="settings.outlook.pushNotifications" class="text-xs uppercase tracking-wide text-ink/40 mb-2">Push notifications</h4>
         <div id="abSetPushRows" class="flex flex-col gap-3">
           <label class="flex items-center gap-3 cursor-pointer w-fit">
             <span class="relative inline-block w-11 h-6 shrink-0">
@@ -146,7 +146,7 @@
               <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
               <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
             </span>
-            <span class="text-sm">Wochenvorschau am Sonntag um 18 Uhr</span>
+            <span data-tk="settings.outlook.pushWeek" class="text-sm">Weekly preview on Sunday at 6 pm</span>
           </label>
           <label id="abSetPushMonthRow" class="flex items-center gap-3 cursor-pointer w-fit">
             <span class="relative inline-block w-11 h-6 shrink-0">
@@ -154,56 +154,56 @@
               <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
               <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
             </span>
-            <span class="text-sm">Monatsausblick am Monatsende um 18 Uhr</span>
+            <span data-tk="settings.outlook.pushMonth" class="text-sm">Monthly outlook at the end of the month at 6 pm</span>
           </label>
         </div>
-        <p class="text-[11px] text-ink/40 mt-3">Gilt nur für dein Profil. Damit die Push-Nachricht ankommt, müssen die Benachrichtigungen auf dem Gerät aktiviert sein (Einstellungen → Benachrichtigungen).</p>
+        <p data-tk="settings.outlook.pushHint" class="text-[11px] text-ink/40 mt-3">Applies only to your profile. For the push notification to arrive, notifications must be activated on the device (Settings → Notifications).</p>
         <p id="abSetStatus" class="text-xs text-ink/50 mt-2 min-h-[1em]"></p>
       </div>
     </details>
     <details class="settings-accordion set-card">
       <summary class="set-sum">
         <span class="set-ico">👨‍👩‍👧</span>
-        <span class="set-head"><span class="sa-title">Familienmitglieder</span><small data-no-term>Familie oder WG, Name, Mitglieder, Kindersicherung</small></span>
+        <span class="set-head"><span data-tk="settings.members.title" class="sa-title">Family members</span><small data-tk="settings.household.subtitle" data-no-term>Family or flatshare, name, members, child lock</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
         <!-- Living situation: family or flat share – adapts the terms of the whole app (the data stays the same) -->
         <div class="mb-4" data-no-term>
-          <h4 class="text-sm font-medium mb-2">Wohnform</h4>
-          <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit" role="group" aria-label="Wohnform">
-            <button type="button" data-household-type="familie" class="household-type-btn px-3 py-1.5 rounded-full transition">👨‍👩‍👧 Familie</button>
-            <button type="button" data-household-type="wg" class="household-type-btn px-3 py-1.5 rounded-full transition">🧑‍🤝‍🧑 WG</button>
+          <h4 data-tk="settings.household.householdType" class="text-sm font-medium mb-2">Household type</h4>
+          <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit" role="group" aria-label="Household type" data-tk-attr="aria-label:settings.household.householdType">
+            <button data-tk="settings.household.family" type="button" data-household-type="familie" class="household-type-btn px-3 py-1.5 rounded-full transition">👨‍👩‍👧 Family</button>
+            <button data-tk="settings.household.flatshare" type="button" data-household-type="wg" class="household-type-btn px-3 py-1.5 rounded-full transition">🧑‍🤝‍🧑 Flatshare</button>
           </div>
-          <p class="text-[11px] text-ink/40 mt-2">In einer WG heißen Familienmitglieder „Mitbewohner“ und die Familie „WG“ – in der ganzen App und für alle Profile. Alle Daten bleiben erhalten. Umstellen können nur Admins.</p>
+          <p data-tk="settings.household.hint" class="text-[11px] text-ink/40 mt-2">In a flatshare, family members are called “flatmates” and the family becomes the “flatshare” – throughout the app and for all profiles. All data is kept. Only admins can switch.</p>
         </div>
         <div class="flex items-center gap-2 mb-4">
-          <input id="settingsLastName" type="text" class="rounded-lg border border-ink/15 px-3 py-2 text-sm w-52" placeholder="Nachname" />
-          <button id="settingsSaveLastName" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90">Speichern</button>
+          <input id="settingsLastName" type="text" class="rounded-lg border border-ink/15 px-3 py-2 text-sm w-52" placeholder="Last name" data-tk-attr="placeholder:settings.members.lastName" />
+          <button data-tk="common.save" id="settingsSaveLastName" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90">Save</button>
         </div>
         <div id="settingsMemberList" class="flex flex-col gap-2 mb-3"></div>
-        <button id="settingsAddMember" class="px-3 py-2 rounded-lg border border-dashed border-ink/30 text-sm text-ink/60 hover:text-pine hover:border-pine transition">+ Mitglied hinzufügen</button>
-        <p id="childLockHint" class="text-[11px] text-ink/40 mt-2">🔒 Kindersicherung: Das Profil dieses Mitglieds kann nichts hinzufügen, bearbeiten oder löschen (Abhaken geht), sieht in den Einstellungen alles nur an, bei den Aufgaben nur die eigenen (inkl. „Alle“) und hat keinen Zugriff auf Finanzen, Dokumente und Fahrzeuge. Admins können nicht gesperrt werden.</p>
+        <button data-tk="settings.members.addMember" id="settingsAddMember" class="px-3 py-2 rounded-lg border border-dashed border-ink/30 text-sm text-ink/60 hover:text-pine hover:border-pine transition">+ Add member</button>
+        <p data-tk="settings.members.childLockHint" id="childLockHint" class="text-[11px] text-ink/40 mt-2">🔒 Child lock: this member's profile cannot add, edit or delete anything (checking off works), only views everything in the settings, only sees their own tasks (incl. “All”) and has no access to finance, documents and vehicles. Admins cannot be locked.</p>
       </div>
     </details>
     <details class="settings-accordion set-card" id="homeSettingsAccordion">
       <summary class="set-sum">
         <span class="set-ico">🏠</span>
-        <span class="set-head"><span class="sa-title">Zuhause</span><small>Adresse für Wetter, Sonnenzeiten und Ortung</small></span>
+        <span class="set-head"><span data-tk="settings.home.title" class="sa-title">Home</span><small data-tk="settings.home.subtitle">Address for weather, sun times and location</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
         <div class="flex justify-end -mt-1 mb-2">
-          <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Euer Zuhause gilt für die ganze Familie: Wetter, Feiertage und Schulferien eures Bundeslands im Kalender, Sonnenauf- und -untergang (z. B. für die Kinderseite) und die Ortung (Ort „Zuhause“ mit Push bei Ankunft und Verlassen, die Karte startet dort). pinn. fragt dafür nicht mehr bei jedem Start nach dem Standort. Die Adresssuche läuft über den eigenen Server.">i</button>
+          <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Your home applies to the whole family: weather, public holidays and school holidays of your state in the calendar, sunrise and sunset (e.g. for the kids' page) and location (place “Home” with push on arrival and departure, the map starts there). pinn. no longer asks for the location at every start. The address search runs via your own server." data-tk-attr="data-info:settings.home.info">i</button>
         </div>
         <div id="homeCard" class="home-card"></div>
         <div id="homeEditBox">
-          <div id="homeSuggest" class="home-sug" role="listbox" aria-label="Adressvorschläge"></div>
+          <div id="homeSuggest" class="home-sug" role="listbox" aria-label="Address suggestions" data-tk-attr="aria-label:settings.home.addressSuggestions"></div>
           <input id="homeAddressInput" type="search" class="home-input" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" placeholder="Adresse eingeben, z. B. Hauptstraße 5, Köln" />
           <div class="home-btns">
-            <button type="button" id="homeUseLocationBtn" class="home-btn">📍 Aktuellen Standort übernehmen</button>
+            <button data-tk="settings.home.useLocation" type="button" id="homeUseLocationBtn" class="home-btn">📍 Use current location</button>
             <button type="button" id="homeMigrateBtn" class="home-btn hidden"></button>
-            <button type="button" id="homeRemoveBtn" class="home-btn danger hidden">Entfernen</button>
+            <button data-tk="common.remove" type="button" id="homeRemoveBtn" class="home-btn danger hidden">Remove</button>
           </div>
         </div>
         <p id="homeStatus" class="home-status"></p>
@@ -212,12 +212,12 @@
     <details class="settings-accordion set-card" id="settingsCalendarAccordion">
       <summary class="set-sum">
         <span class="set-ico">📅</span>
-        <span class="set-head"><span class="sa-title">Kalender</span><small>iCloud &amp; Google, Feiertage, Ferien, Müll, Geburtstage</small></span>
+        <span class="set-head"><span data-tk="settings.calendar.title" class="sa-title">Calendar</span><small data-tk="settings.calendar.subtitle">iCloud &amp; Google, public holidays, school holidays, waste, birthdays</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
         <div class="flex justify-end -mt-1 mb-2">
-          <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Jedes Profil meldet sich mit seinem eigenen iCloud- oder Google-Konto an und hakt die Kalender daraus an: „Für mich“ sieht nur das eigene Profil, „Familie“ sehen und nutzen alle in eurer Familie. Die anderen sehen dabei nur, über welches Konto ein Familienkalender kommt – unkenntlich gemacht, z. B. m**l@g***l.com. Termine lassen sich wie gewohnt anlegen, bearbeiten, verschieben und offline vormerken und landen direkt in iCloud bzw. Google (und damit auf dem Handy). Abgleich alle 15 Minuten oder mit „Jetzt aktualisieren“. Ohne Konto geht auch ein Kalender nur auf eurem pinn.-Server. Erinnerungen und Tagesübersicht per Push: private Termine nur an dich.">i</button>
+          <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Each profile signs in with its own iCloud or Google account and ticks the calendars from it: “For me” is only seen by your own profile, “Family” is seen and used by everyone in your family. The others only see which account a family calendar comes from – obscured, e.g. m**l@g***l.com. Events can be created, edited, moved and queued offline as usual and go directly to iCloud or Google (and thus to the phone). Sync every 15 minutes or with “Update now”. Without an account, a calendar on your pinn. server only also works. Reminders and daily summary by push: private events only to you." data-tk-attr="data-info:settings.calendar.info">i</button>
         </div>
         <div id="pinnCalSettings">
           <div id="pinnCalAccounts" class="pinn-cal-accs"></div>
@@ -226,29 +226,29 @@
           <!-- Former family connection (Bearbeiten → "Kalender verbinden"): only visible as long as calendars
                are still selected there -->
           <div id="legacyCalBox" class="hidden rounded-lg border border-ink/10 bg-white px-3 py-3 mb-2">
-            <p class="text-[11px] uppercase tracking-wide text-ink/40 mb-1.5">Bisherige Familienverbindung</p>
+            <p data-tk="settings.calendar.legacy" class="text-[11px] uppercase tracking-wide text-ink/40 mb-1.5">Previous family connection</p>
             <p id="appleCalendarAccountLine" class="text-sm font-medium mb-2">Noch nicht eingerichtet.</p>
             <p id="googleCalendarAccountLine" class="hidden text-sm font-medium mb-2"></p>
             <ul id="appleCalendarListSummary" class="flex flex-col gap-1.5 mb-2"></ul>
-            <button id="editAppleCalendarBtn" class="text-xs text-pine hover:underline font-medium">Bearbeiten</button>
+            <button data-tk="common.edit" id="editAppleCalendarBtn" class="text-xs text-pine hover:underline font-medium">Edit</button>
           </div>
           <div class="home-btns" id="pinnCalBtns">
-            <button type="button" id="pinnCalAddBtn" class="home-btn primary">+ Kalender hinzufügen</button>
-            <button type="button" id="refreshCalendarBtn" class="home-btn hidden">Jetzt aktualisieren</button>
+            <button data-tk="settings.calendar.addCalendar" type="button" id="pinnCalAddBtn" class="home-btn primary">+ Add calendar</button>
+            <button data-tk="common.updateNow" type="button" id="refreshCalendarBtn" class="home-btn hidden">Update now</button>
           </div>
           <p id="icsSyncStatus" class="home-status hidden">Noch nicht geladen</p>
           <p id="pinnCalStatus" class="home-status"></p>
         </div>
         <div class="set-sub">
-          <p class="set-sub-title">Feiertage &amp; Schulferien</p>
+          <p data-tk="settings.holidays.title" class="set-sub-title">Public holidays &amp; school holidays</p>
           <div id="homeCalHint" class="set-hint hidden"></div>
           <div id="homeCalOptions">
             <div class="home-row">
-              <span>Bundesland<small>für Feiertage und Schulferien</small></span>
+              <span><span data-tk="settings.holidays.state">State</span><small data-tk="settings.holidays.stateHint">for public holidays and school holidays</small></span>
               <select id="homeStateSelect" class="home-select"></select>
             </div>
             <label class="home-row cursor-pointer">
-              <span><i class="home-dot" style="background:#C0392B"></i>Gesetzliche Feiertage</span>
+              <span><i class="home-dot" style="background:#C0392B"></i><span data-tk="settings.holidays.publicHolidays">Public holidays</span></span>
               <span class="relative inline-block w-11 h-6 shrink-0">
                 <input id="homeShowHolidays" type="checkbox" class="peer sr-only" />
                 <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
@@ -256,7 +256,7 @@
               </span>
             </label>
             <label class="home-row cursor-pointer">
-              <span><i class="home-dot" style="background:#2E9C7A"></i>Schulferien</span>
+              <span><i class="home-dot" style="background:#2E9C7A"></i><span data-tk="settings.holidays.schoolHolidays">School holidays</span></span>
               <span class="relative inline-block w-11 h-6 shrink-0">
                 <input id="homeShowSchool" type="checkbox" class="peer sr-only" />
                 <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
@@ -268,15 +268,15 @@
         </div>
         <div class="set-sub" id="muellSettings">
           <div class="flex items-center justify-between gap-2">
-            <p class="set-sub-title">Müllkalender</p>
-            <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0 -mt-2" data-info="Die Abfuhrtermine eures Entsorgers (Restmüll, Bio, Papier, Gelber Sack …) erscheinen im Kalender – je Familie genau ein Müllkalender; ein neuer ersetzt den bisherigen. Die KI sucht mit eurer Adresse nach der iCal-Datei, der pinn.-Server lädt sie selbst herunter und prüft sie. Kalender mit Link aktualisiert der Server jede Woche von selbst. Alternativ: Link zur .ics-Datei einfügen oder die Datei hochladen.">i</button>
+            <p data-tk="settings.waste.title" class="set-sub-title">Waste calendar</p>
+            <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0 -mt-2" data-info="Your waste collector's collection dates (general waste, organic, paper, recycling …) appear in the calendar – exactly one waste calendar per family; a new one replaces the old one. The AI searches for the iCal file using your address, the pinn. server downloads and checks it itself. The server updates calendars with a link every week by itself. Alternatively: paste the link to the .ics file or upload the file." data-tk-attr="data-info:settings.waste.info">i</button>
           </div>
-          <p class="text-[11px] text-ink/45 mb-2">Für jede Abholung legt pinn. am Vortag eine Aufgabe für den passenden Mülleimer an (Aufgaben → Haushalt) und hakt sie nach der Abholung von selbst ab. Die Erinnerung am Vortag stellt jeder unter Benachrichtigungen ein.</p>
+          <p data-tk="settings.waste.tasksHint" class="text-[11px] text-ink/45 mb-2">For every collection, pinn. creates a task for the matching bin the day before (Tasks → Household) and checks it off by itself after the collection. Everyone sets the reminder for the day before under Notifications.</p>
           <div id="muellHint" class="set-hint hidden"></div>
           <div id="muellCard" class="home-card hidden"></div>
           <div id="muellOptions" class="hidden">
             <label class="home-row cursor-pointer">
-              <span>Im Kalender anzeigen<small>gilt für die ganze Familie</small></span>
+              <span><span data-tk="settings.waste.showCalendar">Show in calendar</span><small data-tk="settings.waste.wholeFamily">applies to the whole family</small></span>
               <span class="relative inline-block w-11 h-6 shrink-0">
                 <input id="muellShowToggle" type="checkbox" class="peer sr-only" />
                 <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
@@ -285,30 +285,30 @@
             </label>
             <div id="muellTypes" class="muell-types"></div>
             <div class="home-btns" id="muellCardBtns">
-              <button type="button" id="muellRefreshBtn" class="home-btn">Jetzt aktualisieren</button>
-              <button type="button" id="muellRemoveBtn" class="home-btn danger">Entfernen</button>
+              <button data-tk="common.updateNow" type="button" id="muellRefreshBtn" class="home-btn">Update now</button>
+              <button data-tk="common.remove" type="button" id="muellRemoveBtn" class="home-btn danger">Remove</button>
             </div>
           </div>
           <div id="muellEditBox" class="hidden">
             <p id="muellEditTitle" class="home-sect">Müllkalender suchen</p>
             <div id="muellHomeLine" class="muell-addr hidden"></div>
             <div id="muellManualBox" class="muell-manual hidden">
-              <input id="muellStreetInput" type="text" class="home-input" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="next" placeholder="Straße und Hausnummer (optional)" />
+              <input id="muellStreetInput" type="text" class="home-input" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="next" placeholder="Street and house number (optional)" data-tk-attr="placeholder:settings.waste.street" />
               <input id="muellPlaceInput" type="text" class="home-input" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" placeholder="PLZ und Ort, z. B. 50667 Köln" />
             </div>
             <div class="home-btns">
-              <button type="button" id="muellSearchBtn" class="home-btn primary">🔎 Mit KI suchen</button>
+              <button data-tk="settings.waste.searchAi" type="button" id="muellSearchBtn" class="home-btn primary">🔎 Search with AI</button>
               <button type="button" id="muellManualToggle" class="home-btn hidden">Andere Adresse</button>
             </div>
             <div id="muellProgress" class="muell-progress hidden"><span class="muell-spin"></span><span id="muellProgressText">Die KI sucht …</span></div>
             <div id="muellResults" class="muell-results"></div>
             <details id="muellManualDetails" class="muell-own">
-              <summary>Link oder Datei selbst angeben</summary>
-              <p class="muell-own-txt">Auf der Seite eures Entsorgers gibt es meist „iCal“, „Kalender exportieren“ oder „.ics“. Den Link dazu hier einfügen – oder die heruntergeladene Datei hochladen.</p>
-              <input id="muellLinkInput" type="url" class="home-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" placeholder="https://… oder webcal://…" />
+              <summary data-tk="settings.waste.ownSource">Enter link or file yourself</summary>
+              <p data-tk="settings.waste.ownSourceHint" class="muell-own-txt">Your waste collector's website usually offers “iCal”, “Export calendar” or “.ics”. Paste the link here – or upload the downloaded file.</p>
+              <input id="muellLinkInput" type="url" class="home-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" placeholder="https://… or webcal://…" data-tk-attr="placeholder:settings.waste.linkPlaceholder" />
               <div class="home-btns">
-                <button type="button" id="muellLinkBtn" class="home-btn">Link übernehmen</button>
-                <button type="button" id="muellFileBtn" class="home-btn">📄 .ics-Datei hochladen</button>
+                <button data-tk="settings.waste.applyLink" type="button" id="muellLinkBtn" class="home-btn">Apply link</button>
+                <button data-tk="settings.waste.uploadIcsFile" type="button" id="muellFileBtn" class="home-btn">📄 Upload .ics file</button>
                 <input id="muellFileInput" type="file" accept=".ics,.ical,.icalendar,text/calendar" class="hidden" />
               </div>
             </details>
@@ -316,12 +316,12 @@
           <p id="muellStatus" class="home-status"></p>
         </div>
         <div class="set-sub">
-        <p class="set-sub-title">Geburtstage</p>
+        <p data-tk="settings.birthdays.title" class="set-sub-title">Birthdays</p>
         <select id="overviewBdayDaysSelect" class="w-full max-w-xs rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3">
-          <option value="7">Nächste 7 Tage anzeigen</option>
-          <option value="14">Nächste 14 Tage anzeigen</option>
-          <option value="30">Nächste 30 Tage anzeigen</option>
-          <option value="60">Nächste 60 Tage anzeigen</option>
+          <option data-tk="settings.birthdays.next7" value="7">Show next 7 days</option>
+          <option data-tk="settings.birthdays.next14" value="14">Show next 14 days</option>
+          <option data-tk="settings.birthdays.next30" value="30">Show next 30 days</option>
+          <option data-tk="settings.birthdays.next60" value="60">Show next 60 days</option>
         </select>
         <label class="flex items-center gap-3 cursor-pointer mb-4">
           <span class="ov-set-switch">
@@ -329,57 +329,57 @@
             <span class="ov-track"></span>
             <span class="ov-knob"></span>
           </span>
-          <span class="text-sm">Kachel nur zeigen, wenn in diesem Zeitraum ein Geburtstag ansteht</span>
+          <span data-tk="settings.birthdays.onlyUpcoming" class="text-sm">Only show tile if a birthday is coming up in this period</span>
         </label>
-        <p id="birthdaySyncStatus" class="text-xs text-ink/40 mb-2">Noch nicht geladen</p>
+        <p data-tk="common.notLoadedYet" id="birthdaySyncStatus" class="text-xs text-ink/40 mb-2">Not loaded yet</p>
           <div class="flex items-center flex-wrap gap-3">
-            <button id="refreshBirthdaysBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Geburtstage jetzt aktualisieren</button>
-            <button id="resetHiddenBirthdaysBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Keine Geburtstage ausgeblendet</button>
+            <button data-tk="settings.birthdays.refresh" id="refreshBirthdaysBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Update birthdays now</button>
+            <button data-tk="settings.birthdays.noneHidden" id="resetHiddenBirthdaysBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">No birthdays hidden</button>
           </div>
-          <p class="text-[11px] text-ink/40 mt-2">Tipp: In der Übersicht einen Geburtstag nach links wischen (am Computer auf × klicken), um ihn auszublenden.</p>
+          <p data-tk="settings.birthdays.hideTip" class="text-[11px] text-ink/40 mt-2">Tip: Swipe a birthday to the left in the overview (on a computer click ×) to hide it.</p>
         </div>
       </div>
     </details>
     <details class="settings-accordion set-card" id="settingsShoppingAccordion">
       <summary class="set-sum">
         <span class="set-ico">🛒</span>
-        <span class="set-head"><span class="sa-title">Einkauf</span><small>Stammladen, Sonderlisten und Kategorien</small></span>
+        <span class="set-head"><span data-tk="settings.shopping.title" class="sa-title">Shopping</span><small data-tk="settings.shopping.subtitle">Main shop, special lists and categories</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
         <div class="flex justify-end -mt-1 mb-2">
-          <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Stammladen: Hier landen die Zutaten der Essensplanung (manuell, gespiegelt oder direkt). Sonderlisten: Zutaten mit bestimmten Stichwörtern (z. B. Hack, Schnitzel, Speck) kommen stattdessen auf eine andere Liste, z. B. zur Metzgerei. Gilt für alle Geräte der Familie.">i</button>
+          <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Main shop: the ingredients of the meal plan go here (manual, mirrored or direct). Special lists: ingredients with certain keywords (e.g. mince, schnitzel, bacon) go to another list instead, e.g. to the butcher. Applies to all devices of the family." data-tk-attr="data-info:settings.shopping.info">i</button>
         </div>
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Stammladen</label>
+        <label data-tk="settings.shopping.mainShop" class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Main shop</label>
         <div class="flex items-center gap-3 rounded-xl border border-ink/10 bg-white px-3 py-2.5 mb-5">
           <div id="settingsStammLogo" class="shrink-0"></div>
           <div class="flex-1 min-w-0">
             <div id="settingsStammName" class="text-sm font-medium truncate"></div>
             <div id="settingsStammMode" class="text-[11px] text-ink/50 truncate"></div>
           </div>
-          <button id="settingsStammBtn" type="button" class="shrink-0 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Ändern</button>
+          <button data-tk="common.change" id="settingsStammBtn" type="button" class="shrink-0 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Change</button>
         </div>
 
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Sonderlisten für Zutaten</label>
-        <p class="text-[11px] text-ink/45 mb-2.5 leading-snug">Zutaten aus der Essensplanung, die zu einem Stichwort passen, landen auf der gewählten Liste statt im Stammladen – z. B. alles aus Rewe, nur das Hackfleisch von der Metzgerei. Auf der Essensplanung bleiben sie sichtbar (mit Hinweis).</p>
+        <label data-tk="settings.shopping.specialLists" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Special lists for ingredients</label>
+        <p data-tk="settings.shopping.specialListsHint" class="text-[11px] text-ink/45 mb-2.5 leading-snug">Ingredients from the meal plan that match a keyword end up on the chosen list instead of the main shop – e.g. everything from Tesco, only the mince from the butcher. They remain visible on the meal plan (with a note).</p>
         <div id="settingsIngredientRules" class="flex flex-col gap-3 mb-3"></div>
         <div class="flex flex-wrap gap-2">
-          <button id="settingsAddMeatRuleBtn" type="button" class="px-3 py-2 rounded-lg border border-dashed border-ink/30 text-sm text-ink/60 hover:text-pine hover:border-pine transition">+ 🥩 Metzgerei (Fleisch &amp; Wurst)</button>
-          <button id="settingsAddCustomRuleBtn" type="button" class="px-3 py-2 rounded-lg border border-dashed border-ink/30 text-sm text-ink/60 hover:text-pine hover:border-pine transition">+ Eigene Sonderliste</button>
+          <button data-tk="settings.shopping.addButcher" id="settingsAddMeatRuleBtn" type="button" class="px-3 py-2 rounded-lg border border-dashed border-ink/30 text-sm text-ink/60 hover:text-pine hover:border-pine transition">+ 🥩 Butcher (meat &amp; sausage)</button>
+          <button data-tk="settings.shopping.addCustom" id="settingsAddCustomRuleBtn" type="button" class="px-3 py-2 rounded-lg border border-dashed border-ink/30 text-sm text-ink/60 hover:text-pine hover:border-pine transition">+ Custom special list</button>
         </div>
 
         <div class="flex items-center justify-between gap-2 mt-6 mb-1">
-          <label class="block text-xs uppercase tracking-wide text-ink/40">Kategorien auf den Einkaufslisten</label>
-          <button id="settingsShopCatReset" type="button" class="shrink-0 px-2.5 py-1 rounded-lg border border-ink/15 text-[11px] text-ink/60 hover:text-pine hover:border-pine transition">Zurücksetzen</button>
+          <label data-tk="settings.shopping.categories" class="block text-xs uppercase tracking-wide text-ink/40">Categories on the shopping lists</label>
+          <button data-tk="common.reset" id="settingsShopCatReset" type="button" class="shrink-0 px-2.5 py-1 rounded-lg border border-ink/15 text-[11px] text-ink/60 hover:text-pine hover:border-pine transition">Reset</button>
         </div>
-        <p class="text-[11px] text-ink/45 mb-2.5 leading-snug">Die Artikel werden automatisch nach Kategorien sortiert. Bring die Kategorien in die Reihenfolge, in der du durch deinen Laden gehst – gilt für alle Listen und Geräte der Familie. Eine falsch erkannte Kategorie änderst du, indem du den Artikel lange drückst.</p>
+        <p data-tk="settings.shopping.categoriesHint" class="text-[11px] text-ink/45 mb-2.5 leading-snug">Items are sorted into categories automatically. Put the categories in the order in which you walk through your shop – applies to all lists and devices of the family. To change a wrongly detected category, long-press the item.</p>
         <div id="settingsShopCategories" class="flex flex-col gap-1.5"></div>
       </div>
     </details>
     <details class="settings-accordion set-card">
       <summary class="set-sum">
         <span class="set-ico">✅</span>
-        <span class="set-head"><span class="sa-title">Aufgaben</span><small>Haushalt, Aufräumen, Animation</small></span>
+        <span class="set-head"><span data-tk="settings.tasks.title" class="sa-title">Tasks</span><small data-tk="settings.tasks.subtitle">Household, tidying, animation</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body flex flex-col gap-5">
@@ -387,12 +387,12 @@
         <!-- Household tasks -->
         <div>
           <div class="flex items-center justify-between gap-2 mb-2">
-            <h4 class="text-sm font-medium">Haushalts-Aufgaben</h4>
-            <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Betrifft nur vom Haushalt-Bereich automatisch erzeugte Aufgaben (Reinigung/Aufräumen/Mülleimer rausbringen) – normale, selbst angelegte Aufgaben bleiben davon unberührt.">i</button>
+            <h4 data-tk="settings.tasks.householdTasks" class="text-sm font-medium">Household tasks</h4>
+            <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Only affects tasks created automatically by the household section (cleaning/tidying/taking out bins) – normal, self-created tasks are not affected." data-tk-attr="data-info:settings.tasks.householdInfo">i</button>
           </div>
           <div class="flex flex-wrap gap-2">
-            <button id="regenerateHouseholdTasksBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Jetzt neu generieren</button>
-            <button id="deleteHouseholdTasksBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-red-600 hover:bg-red-50 transition">Haushalts-Aufgaben löschen</button>
+            <button data-tk="settings.tasks.regenerateNow" id="regenerateHouseholdTasksBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Regenerate now</button>
+            <button data-tk="settings.tasks.deleteHousehold" id="deleteHouseholdTasksBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-red-600 hover:bg-red-50 transition">Delete household tasks</button>
           </div>
           <p id="householdTasksMaintenanceStatus" class="text-xs text-ink/40 mt-2"></p>
         </div>
@@ -400,28 +400,28 @@
         <!-- Delete completed tasks -->
         <div class="pt-4 border-t border-ink/10">
           <div class="flex items-center justify-between gap-2 mb-2">
-            <h4 class="text-sm font-medium">Erledigte Aufgaben löschen</h4>
-            <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Legt fest, wie lange eine abgehakte Aufgabe erhalten bleibt, bevor sie automatisch gelöscht wird (geprüft wird einmal pro Stunde). Bei &quot;Sofort&quot; verschwindet sie direkt aus der Liste; erledigte Haushalts-Aufgaben von heute werden erst am Folgetag gelöscht - damit sie am selben Tag nicht neu angelegt werden.">i</button>
+            <h4 data-tk="settings.tasks.cleanup" class="text-sm font-medium">Delete completed tasks</h4>
+            <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Determines how long a checked-off task is kept before it is deleted automatically (checked once per hour). With &quot;Immediately&quot; it disappears from the list right away; completed household tasks from today are only deleted the following day - so they are not created again the same day." data-tk-attr="data-info:settings.tasks.cleanupInfo">i</button>
           </div>
           <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit">
-            <button type="button" data-cleanup-days="2" class="done-task-cleanup-btn px-3 py-1.5 rounded-full transition">Nach 2 Tagen</button>
-            <button type="button" data-cleanup-days="1" class="done-task-cleanup-btn px-3 py-1.5 rounded-full transition">Nach 1 Tag</button>
-            <button type="button" data-cleanup-days="0" class="done-task-cleanup-btn px-3 py-1.5 rounded-full transition">Sofort</button>
+            <button data-tk="settings.tasks.after2Days" type="button" data-cleanup-days="2" class="done-task-cleanup-btn px-3 py-1.5 rounded-full transition">After 2 days</button>
+            <button data-tk="settings.tasks.after1Day" type="button" data-cleanup-days="1" class="done-task-cleanup-btn px-3 py-1.5 rounded-full transition">After 1 day</button>
+            <button data-tk="settings.tasks.immediately" type="button" data-cleanup-days="0" class="done-task-cleanup-btn px-3 py-1.5 rounded-full transition">Immediately</button>
           </div>
         </div>
 
         <!-- Task animation -->
         <div class="pt-4 border-t border-ink/10">
-          <h4 class="text-sm font-medium mb-2">Aufgaben-Animation</h4>
+          <h4 data-tk="settings.tasks.animation" class="text-sm font-medium mb-2">Task animation</h4>
           <label class="flex items-center gap-3 cursor-pointer w-fit">
             <span class="relative inline-block w-11 h-6 shrink-0">
               <input id="doneAnimationToggle" type="checkbox" class="peer sr-only" />
               <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
               <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
             </span>
-            <span class="text-sm">Feier-Animation, wenn ich alle Aufgaben bis jetzt erledigt habe</span>
+            <span data-tk="settings.tasks.animationToggle" class="text-sm">Celebration animation when I have done all tasks so far</span>
           </label>
-          <p class="text-[11px] text-ink/40 mt-2">Persönlich für dein Profil – gilt auf allen Geräten, auf denen du angemeldet bist.</p>
+          <p data-tk="settings.tasks.animationHint" class="text-[11px] text-ink/40 mt-2">Personal for your profile – applies on all devices you are logged in on.</p>
           <p id="doneAnimationStatus" class="text-xs text-ink/40 mt-1"></p>
         </div>
 
@@ -430,7 +430,7 @@
     <details class="settings-accordion set-card" id="settingsSmartHomeAccordion">
       <summary class="set-sum">
         <span class="set-ico">🏠</span>
-        <span class="set-head"><span class="sa-title">Smarthome</span><small>Geräte, Apple Kurzbefehle, Home Assistant</small></span>
+        <span class="set-head"><span data-tk="settings.smartHome.title" class="sa-title">Smart home</span><small data-tk="settings.smartHome.subtitle">Devices, Apple Shortcuts, Home Assistant</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
@@ -438,81 +438,81 @@
         <div class="flex flex-col gap-2">
           <button type="button" data-smart-open="geraete" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl border border-ink/10 bg-white hover:border-pine transition">
             <span class="text-xl shrink-0">🤖</span>
-            <span class="flex-1 min-w-0"><span class="block text-sm font-medium">Geräte &amp; Aktionen</span><span class="block text-[11px] text-ink/50">Saugroboter, Licht/LED, Steckdosen … mit Dauer und Test</span></span>
+            <span class="flex-1 min-w-0"><span data-tk="settings.smartHome.devices" class="block text-sm font-medium">Devices &amp; actions</span><span data-tk="settings.smartHome.devicesHint" class="block text-[11px] text-ink/50">Robot vacuum, light/LED, sockets … with duration and test</span></span>
             <span class="text-ink/30 shrink-0">›</span>
           </button>
           <button type="button" data-smart-open="apple" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl border border-ink/10 bg-white hover:border-pine transition">
             <span class="text-xl shrink-0">📱</span>
-            <span class="flex-1 min-w-0"><span class="block text-sm font-medium">Apple Kurzbefehle</span><span class="block text-[11px] text-ink/50">Automatik-Link für den Kurzbefehl „pinn Automatik“</span></span>
+            <span class="flex-1 min-w-0"><span data-tk="settings.smartHome.apple" class="block text-sm font-medium">Apple Shortcuts</span><span data-tk="settings.smartHome.appleHint" class="block text-[11px] text-ink/50">Automation link for the shortcut “pinn Automatik”</span></span>
             <span class="text-ink/30 shrink-0">›</span>
           </button>
           <button type="button" data-smart-open="ha" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl border border-ink/10 bg-white hover:border-pine transition">
             <span class="text-xl shrink-0">🏠</span>
-            <span class="flex-1 min-w-0"><span class="block text-sm font-medium">Home Assistant</span><span class="block text-[11px] text-ink/50">Verbinden – für alle Geräte, auch Android</span></span>
+            <span class="flex-1 min-w-0"><span data-tk="settings.smartHome.homeAssistant" class="block text-sm font-medium">Home Assistant</span><span data-tk="settings.smartHome.haHint" class="block text-[11px] text-ink/50">Connect – for all devices, including Android</span></span>
             <span class="text-ink/30 shrink-0">›</span>
           </button>
         </div>
-        <p class="text-[11px] text-ink/40 mt-3">Welche Aktion zu welcher Aufgabe gehört, stellst du auf der Haushalt-Seite in der jeweiligen Reinigung bzw. am Mülleimer ein.</p>
+        <p data-tk="settings.smartHome.footer" class="text-[11px] text-ink/40 mt-3">You set which action belongs to which task on the household page in the respective cleaning task or on the bin.</p>
       </div>
     </details>
     <details class="settings-accordion set-card" id="settingsVoiceAccordion">
       <summary class="set-sum">
         <span class="set-ico">🎙️</span>
-        <span class="set-head"><span class="sa-title">Sprachsteuerung</span><small>Siri &amp; Android: Einkaufsliste, Aufgaben, Tagesüberblick</small></span>
+        <span class="set-head"><span data-tk="settings.voice.title" class="sa-title">Voice control</span><small data-tk="settings.voice.subtitle">Siri &amp; Android: shopping list, tasks, daily overview</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
-        <div id="voiceSettingsBody" class="flex flex-col gap-3"><p class="text-xs text-ink/50">Wird geladen …</p></div>
+        <div id="voiceSettingsBody" class="flex flex-col gap-3"><p data-tk="common.loading" class="text-xs text-ink/50">Loading …</p></div>
       </div>
     </details>
     <details class="settings-accordion set-card" id="settingsSystemAccordion">
       <summary class="set-sum">
         <span class="set-ico">🔄</span>
-        <span class="set-head"><span class="sa-title">System</span><small>Synchronisierung, Updates, Sicherungen, Daten</small></span>
+        <span class="set-head"><span data-tk="settings.system.title" class="sa-title">System</span><small data-tk="settings.system.subtitle">Synchronisation, updates, backups, data</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
-        <p class="set-sub-title">Synchronisierung</p>
-        <p class="text-sm text-ink/70">Status: <span id="syncStatus">synchronisiert</span></p>
+        <p data-tk="settings.system.sync" class="set-sub-title">Synchronisation</p>
+        <p class="text-sm text-ink/70"><span data-tk="settings.system.status">Status:</span> <span id="syncStatus">synchronisiert</span></p>
 
         <div class="set-sub">
-          <p class="set-sub-title">Updates</p>
-          <p class="text-xs text-ink/40 mb-2">Installierte Version: <span id="settingsVersionDisplay" class="font-mono text-ink/60"></span></p>
+          <p data-tk="settings.system.updates" class="set-sub-title">Updates</p>
+          <p class="text-xs text-ink/40 mb-2"><span data-tk="settings.system.installedVersion">Installed version:</span> <span id="settingsVersionDisplay" class="font-mono text-ink/60"></span></p>
           <div id="sysUpdateHint" class="set-hint ok hidden mb-2">
             <span>✨</span>
             <span id="sysUpdateHintText" class="flex-1 min-w-0"></span>
-            <button id="sysUpdateHintBtn" type="button" class="set-hint-btn">Ansehen</button>
+            <button data-tk="common.view" id="sysUpdateHintBtn" type="button" class="set-hint-btn">View</button>
           </div>
           <div class="flex flex-wrap items-center gap-2">
-            <button id="checkUpdateBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Auf Update prüfen</button>
-            <button id="openChangelogBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition inline-flex items-center gap-1.5"><span class="font-mono text-xs">&gt;_</span><span>Versions-Log</span></button>
+            <button data-tk="settings.system.checkUpdate" id="checkUpdateBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Check for update</button>
+            <button id="openChangelogBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition inline-flex items-center gap-1.5"><span class="font-mono text-xs">&gt;_</span><span data-tk="settings.system.versionLog">Version log</span></button>
           </div>
           <p id="versionCheckStatus" class="text-xs text-ink/40 mt-2"></p>
         </div>
 
         <!-- Backups (only visible for admins) – container "wartung", pb_hooks/system.pb.js -->
         <div id="sysBackupSub" class="set-sub hidden">
-          <p class="set-sub-title">Sicherungen</p>
+          <p data-tk="settings.system.backups" class="set-sub-title">Backups</p>
           <p id="sysBackupSummary" class="text-xs text-ink/50 mb-2 leading-snug">Wird geladen …</p>
-          <button id="openSysMaintBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">🛟 Sicherungen &amp; Wiederherstellung</button>
+          <button data-tk="settings.system.backupsButton" id="openSysMaintBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">🛟 Backups &amp; restore</button>
         </div>
 
         <!-- Error log (only visible for admins) – pb_hooks/protokoll.pb.js -->
         <div id="errLogSub" class="set-sub hidden">
-          <p class="set-sub-title">Fehlerprotokoll</p>
+          <p data-tk="settings.system.errorLog" class="set-sub-title">Error log</p>
           <p id="errLogSummary" class="text-xs text-ink/50 mb-2 leading-snug">Wird geladen …</p>
-          <button id="openErrLogBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition"><span>🧾 Fehlerprotokoll</span><span id="errLogBadge" class="el-badge hidden" data-no-i18n></span></button>
+          <button id="openErrLogBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition"><span data-tk="settings.system.errorLogButton">🧾 Error log</span><span id="errLogBadge" class="el-badge hidden" data-no-i18n></span></button>
         </div>
 
         <div class="set-sub">
-          <p class="set-sub-title">Daten</p>
+          <p data-tk="settings.system.data" class="set-sub-title">Data</p>
           <!-- Data export (only visible for admins) – pb_public/datenexport.js, pb_hooks/export.pb.js -->
           <div id="dataExportSub" class="hidden mb-4" data-no-i18n data-no-term>
             <p id="dataExportText" class="text-xs text-ink/50 mb-2 leading-snug"></p>
             <button id="dataExportBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition"></button>
           </div>
-          <p class="text-xs text-ink/40 mb-2">Setzt die auf diesem Gerät gespeicherten pinn.-Daten auf den Anfangszustand zurück.</p>
-          <button id="resetDataBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-white hover:bg-red-500 hover:border-red-500 transition">Alle Daten zurücksetzen</button>
+          <p data-tk="settings.system.resetHint" class="text-xs text-ink/40 mb-2">Resets the pinn. data stored on this device to the initial state.</p>
+          <button data-tk="settings.system.resetData" id="resetDataBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-white hover:bg-red-500 hover:border-red-500 transition">Reset all data</button>
         </div>
       </div>
     </details>
@@ -520,21 +520,21 @@
     <details class="settings-accordion set-card" id="settingsGithubAccordion">
       <summary class="set-sum">
         <span class="set-ico">⭐</span>
-        <span class="set-head"><span class="sa-title">GitHub</span><small>Projektseite, Fehler melden, pinn. unterstützen</small></span>
+        <span class="set-head"><span class="sa-title">GitHub</span><small data-tk="settings.github.subtitle">Project page, report bugs, support pinn.</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
-        <p class="text-sm text-ink/70 leading-relaxed">pinn. ist Open Source und kostenlos – ohne Werbung und ohne Abo. Eure Daten bleiben auf eurem eigenen NAS.</p>
-        <p class="text-xs text-ink/40 mt-1.5"><span>Version</span> <span id="githubVersionDisplay" class="font-mono text-ink/60"></span> · <span>MIT-Lizenz</span></p>
+        <p data-tk="settings.github.intro" class="text-sm text-ink/70 leading-relaxed">pinn. is open source and free – no ads, no subscription. Your data stays on your own NAS.</p>
+        <p class="text-xs text-ink/40 mt-1.5"><span data-tk="settings.github.version">Version</span> <span id="githubVersionDisplay" class="font-mono text-ink/60"></span> · <span data-tk="settings.github.license">MIT licence</span></p>
         <div class="flex flex-wrap items-center gap-2 mt-3">
-          <a id="githubRepoLink" href="https://github.com/pinn-shost/pinn" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition inline-flex items-center gap-1.5"><span>Projekt auf GitHub</span><span class="gh-ext" aria-hidden="true">↗</span></a>
-          <a id="githubIssuesLink" href="https://github.com/pinn-shost/pinn/issues" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition inline-flex items-center gap-1.5"><span>Fehler melden oder Idee vorschlagen</span><span class="gh-ext" aria-hidden="true">↗</span></a>
+          <a id="githubRepoLink" href="https://github.com/pinn-shost/pinn" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition inline-flex items-center gap-1.5"><span data-tk="settings.github.project">Project on GitHub</span><span class="gh-ext" aria-hidden="true">↗</span></a>
+          <a id="githubIssuesLink" href="https://github.com/pinn-shost/pinn/issues" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition inline-flex items-center gap-1.5"><span data-tk="settings.github.issues">Report a bug or suggest an idea</span><span class="gh-ext" aria-hidden="true">↗</span></a>
         </div>
-        <p class="text-[11px] text-ink/45 mt-2">Gefällt dir pinn.? Ein ⭐ auf GitHub hilft anderen, es zu finden.</p>
+        <p data-tk="settings.github.star" class="text-[11px] text-ink/45 mt-2">Like pinn.? A ⭐ on GitHub helps others find it.</p>
 
         <div class="set-sub">
-          <p class="set-sub-title">pinn. unterstützen</p>
-          <p class="text-sm text-ink/70 leading-relaxed">pinn. entsteht in der Freizeit. Wenn es euch den Alltag ein bisschen leichter macht, freue ich mich über eine kleine Unterstützung – ganz freiwillig. pinn. bleibt für alle kostenlos und vollständig.</p>
+          <p data-tk="settings.github.support" class="set-sub-title">Support pinn.</p>
+          <p data-tk="settings.github.supportText" class="text-sm text-ink/70 leading-relaxed">pinn. is made in my spare time. If it makes your everyday life a little easier, I'd be happy about a small contribution – entirely voluntary. pinn. stays free and complete for everyone.</p>
           <div class="flex flex-wrap items-center gap-2 mt-3">
             <a id="githubKofiLink" href="https://ko-fi.com/pinnapp" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition inline-flex items-center gap-1.5"><span class="gh-heart" aria-hidden="true">♥</span><span>Ko-fi</span></a>
             <a id="githubBmcLink" href="https://buymeacoffee.com/pinn" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition inline-flex items-center gap-1.5"><span class="gh-heart" aria-hidden="true">♥</span><span>Buy Me a Coffee</span></a>

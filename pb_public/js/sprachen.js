@@ -142,7 +142,7 @@ window.PINN_LANGUAGES = [
 
   // Raise with every change to a language file (lang/ or i18n/), otherwise devices keep using the old file.
   // .github/scripts/check-lang.js makes sure it matches src/version.txt.
-  var FILE_VERSION = '1.111.0';
+  var FILE_VERSION = '1.112.0';
 
   // Invisible until the texts are in place (no short flash of other texts)
   var style = document.createElement('style');
@@ -156,19 +156,24 @@ window.PINN_LANGUAGES = [
      tk(key, values) returns the text of the chosen language: plural form by values.n, placeholders {name}
      filled from values (js/textkern.js). In a flat share a variant "<key>#wg" wins if the file has one.
      HTML: data-tk="key" (text), data-tk-html="key" (markup from the language file),
-     data-tk-attr="placeholder:key;title:key" (attributes) – applied once when the page is ready and again
-     with PINN_I18N.apply(element) for HTML that is added later. A missing key shows the key itself and a
-     warning in the console; texts already in an element with data-tk stay as they are. */
+     data-tk-attr="placeholder:key;title:key" (attributes). The static HTML is filled in right before the app
+     scripts run (src/rahmen.html calls PINN_I18N.apply(document.body)), so the scripts may change these texts
+     afterwards; the sweep when the page is ready only fills in elements that were not done yet. For HTML that
+     is added later call PINN_I18N.apply(element). Inside [data-no-term] (sign-in, main admin, the switch
+     between family and flat share) the flat share variant is never used. A missing key shows the key itself
+     and a warning in the console; texts already in an element with data-tk stay as they are. */
   var KEYS = null;     // key -> entry of the chosen language
   var KEYOUT = null;   // all plain texts of that file – the dictionary (old) leaves them alone
   var warned = {};
-  function keyEntry(key) {
+  var keysDone = typeof WeakSet === 'function' ? new WeakSet() : null;   // elements filled in already
+  // plain = keep the family terms (no flat share variant), e.g. inside [data-no-term]
+  function keyEntry(key, plain) {
     if (!KEYS) return undefined;
-    if (wohnform === 'wg' && KEYS[key + '#wg'] !== undefined) return KEYS[key + '#wg'];
+    if (!plain && wohnform === 'wg' && KEYS[key + '#wg'] !== undefined) return KEYS[key + '#wg'];
     return KEYS[key];
   }
-  function tk(key, vals) {
-    var e = keyEntry(key);
+  function tk(key, vals, plain) {
+    var e = keyEntry(key, plain);
     if (e === undefined) {
       if (!warned[key]) { warned[key] = 1; try { console.warn('[pinn.] text key missing: ' + key); } catch (x) { /* no console */ } }
       return String(key);
@@ -177,28 +182,32 @@ window.PINN_LANGUAGES = [
     return K ? K.text(e, lang.code, vals) : (typeof e === 'string' ? e : '');
   }
   function has(key) { return keyEntry(key) !== undefined; }
-  function applyKeys(root) {
+  // onlyNew = skip elements that were filled in before (their text may have been changed by the app since)
+  function applyKeys(root, onlyNew) {
     if (!KEYS || !root) return;
     var list = [];
     if (root.nodeType === 1 && root.matches && root.matches('[data-tk],[data-tk-html],[data-tk-attr]')) list.push(root);
     if (root.querySelectorAll) list = list.concat(Array.prototype.slice.call(root.querySelectorAll('[data-tk],[data-tk-html],[data-tk-attr]')));
     for (var i = 0; i < list.length; i++) {
-      var el = list[i], k = el.getAttribute('data-tk');
-      if (k && has(k)) el.textContent = tk(k);
+      var el = list[i];
+      if (keysDone) { if (onlyNew && keysDone.has(el)) continue; keysDone.add(el); }
+      var plain = wohnform === 'wg' && !!el.closest && !!el.closest('[data-no-term]');
+      var k = el.getAttribute('data-tk');
+      if (k && has(k)) el.textContent = tk(k, null, plain);
       k = el.getAttribute('data-tk-html');
-      if (k && has(k)) el.innerHTML = tk(k);
+      if (k && has(k)) el.innerHTML = tk(k, null, plain);
       var pairs = (el.getAttribute('data-tk-attr') || '').split(';');
       for (var j = 0; j < pairs.length; j++) {
         var c = pairs[j].indexOf(':');
         if (c < 1) continue;
         var name = pairs[j].slice(0, c).trim(), key = pairs[j].slice(c + 1).trim();
-        if (name && has(key)) el.setAttribute(name, tk(key));
+        if (name && has(key)) el.setAttribute(name, tk(key, null, plain));
       }
     }
   }
   api.tk = tk;
   api.has = has;
-  api.apply = applyKeys;
+  api.apply = function (root) { applyKeys(root, false); };
   api.keys = function (c, data) {
     if (c !== lang.code || KEYS) return;
     KEYS = data || {};
@@ -215,7 +224,7 @@ window.PINN_LANGUAGES = [
 
   if (!lang.file && wohnform !== 'wg') {
     // Original language as a family: no dictionary, no observer – only the key-based texts
-    var ready = function () { applyKeys(document); reveal(); };
+    var ready = function () { applyKeys(document, true); reveal(); };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready); else ready();
     return;
   }
@@ -550,7 +559,7 @@ window.PINN_LANGUAGES = [
     new MutationObserver(onMutations).observe(document.documentElement, {
       childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ATTRS,
     });
-    var sweep = function () { applyKeys(document); if (document.body) walk(document.body); if (document.title) document.title = tr(document.title, 0); reveal(); };
+    var sweep = function () { applyKeys(document, true); if (document.body) walk(document.body); if (document.title) document.title = tr(document.title, 0); reveal(); };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sweep); else sweep();
   }
   api.load = function (c, data) {
