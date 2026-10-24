@@ -33,6 +33,10 @@ routerAdd("POST", "/api/create-calendar-event", (e) => {
     } else {
         try {
             const calendarSync = require(`${__hooks}/calendar-sync.js`);
+            const allowedCalendarNames = ["iCloud", "Google"]; // Whitelist of allowed calendar names
+            if (!allowedCalendarNames.includes(body.calendarName)) {
+                return e.json(400, { error: "Ungültiger Kalendername." });
+            }
             calendarSync.createEventForFamily(familyId, body.calendarName, body);
             calendarSync.syncCalendarFileOnly(familyId); // nur Kalenderdatei aktualisieren - KEINE Haushalts-Erkennung (sonst kommen geloeschte, aber "heute noch faellige" Aufgaben sofort wieder)
         } catch (err) {

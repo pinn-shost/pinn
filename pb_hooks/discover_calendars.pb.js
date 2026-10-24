@@ -15,7 +15,11 @@ routerAdd("POST", "/api/discover-calendars", (e) => {
     if (denied) return e.json(200, { error: denied });
     try {
         const calendarSync = require(`${__hooks}/calendar-sync.js`);
-        const result = calendarSync.discoverCalendarsForFamily(lib.familyOf(e));
+        const familyId = lib.familyOf(e);
+        if (!familyId) {
+            return e.json(200, { error: "Family ID not found." });
+        }
+        const result = calendarSync.discoverCalendarsForFamily(familyId);
         if (result.error) return e.json(200, { error: result.error });
         return e.json(200, { calendars: result.calendars, warning: result.warning || "" });
     } catch (err) {
