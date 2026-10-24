@@ -16,8 +16,11 @@
    add      looks the German text up in every old dictionary: exact texts (with the context "<c>|text" first,
             see data-i18n-ctx) or, for texts with placeholders, the patterns. Numbered placeholders get names:
             --names n,name turns {0} into {n} and {1} into {name}. A text ending in ":" or "…" also matches the
-            dictionary entry without it. For a flat share, a variant "<key>#wg" is added wherever the flat share
-            terms of js/sprachen.js (TERMS) change the text.
+            dictionary entry without it, and symbols or emojis at the start/end ("🗓 Kalender", "+ Liste") are kept
+            while the text between them is looked up – the same way the old dictionaries translate on the screen.
+            For a flat share, a variant "<key>#wg" is added wherever the flat share terms of js/sprachen.js (TERMS)
+            change the text – except for keys of the areas that always keep the family terms (NO_WG below: sign-in,
+            main admin, the switch between family and flat share).
    import   the same for many keys from a JSON file:
               { "settings.region.title": "Sprache & Region",
                 "settings.region.save": { "de": "Speichern", "ctx": "fz" },
@@ -38,6 +41,9 @@ const I18N_DIR = path.join(ROOT, 'pb_public', 'i18n');
 const LANG_DIR = path.join(ROOT, 'pb_public', 'lang');
 const SPRACHEN = path.join(ROOT, 'pb_public', 'js', 'sprachen.js');
 const K = require(path.join(ROOT, 'pb_hooks', 'pinn-textkern.js'));
+// Keys of these areas never get a flat share variant: their screens keep the family terms (data-no-term)
+const NO_WG = ['login.', 'mainAdmin.', 'settings.household.'];
+const noWg = key => NO_WG.some(p => key.startsWith(p));
 
 /* ---------- languages (from PINN_LANGUAGES in js/sprachen.js) ---------- */
 function languages() {
@@ -100,10 +106,19 @@ function lookup(code, de, ctx) {
     if (d.patterns.has(s)) return d.patterns.get(s);
     return null;
   };
-  let out = one(de);
+  const core = s => {
+    let out = one(s);
+    if (out === null) {
+      const m = /^([\s\S]*?)(\s*[:…]+)$/.exec(s);
+      if (m) { const stem = one(m[1]); if (stem !== null) out = stem + m[2]; }
+    }
+    return out;
+  };
+  let out = core(de);
   if (out === null) {
-    const m = /^([\s\S]*?)(\s*[:…]+)$/.exec(de);
-    if (m) { const stem = one(m[1]); if (stem !== null) out = stem + m[2]; }
+    // Symbols/emojis at the edges stay as they are (like trLoose in js/sprachen.js)
+    const m = /^([^A-Za-zÄÖÜäöüßÀ-ÿ0-9{]*)([\s\S]*?)([^A-Za-zÄÖÜäöüßÀ-ÿ0-9}]*)$/.exec(de);
+    if (m && (m[1] || m[3]) && m[2]) { const mid = core(m[2]); if (mid !== null) out = m[1] + mid + m[3]; }
   }
   return out;
 }
@@ -209,7 +224,7 @@ function main() {
       files[code] = files[code] || {};
       files[code][key] = res[code];
       delete files[code][key + '#wg'];
-      const wg = wgEntry(code, res[code]);
+      const wg = noWg(key) ? null : wgEntry(code, res[code]);
       if (wg) files[code][key + '#wg'] = wg;
     }
   };
@@ -256,7 +271,7 @@ function usage() {
   process.exitCode = 1;
 }
 
-module.exports = { languages, loadKeys, wgText, I18N_DIR };
+module.exports = { languages, loadKeys, writeKeys, lookup, rename, wgText, wgEntry, noWg, NO_WG, I18N_DIR };
 if (require.main === module) {
   try { main(); } catch (e) { console.error('✗ ' + e.message); process.exit(1); }
 }
