@@ -20,7 +20,7 @@
             while the text between them is looked up – the same way the old dictionaries translate on the screen.
             For a flat share, a variant "<key>#wg" is added wherever the flat share terms of js/sprachen.js (TERMS)
             change the text – except for keys of the areas that always keep the family terms (NO_WG below: sign-in,
-            main admin, the switch between family and flat share).
+            main admin, the switch between family and flat share, backups & updates).
    import   the same for many keys from a JSON file:
               { "settings.region.title": "Sprache & Region",
                 "settings.region.save": { "de": "Speichern", "ctx": "fz" },
@@ -41,8 +41,9 @@ const I18N_DIR = path.join(ROOT, 'pb_public', 'i18n');
 const LANG_DIR = path.join(ROOT, 'pb_public', 'lang');
 const SPRACHEN = path.join(ROOT, 'pb_public', 'js', 'sprachen.js');
 const K = require(path.join(ROOT, 'pb_hooks', 'pinn-textkern.js'));
-// Keys of these areas never get a flat share variant: their screens keep the family terms (data-no-term)
-const NO_WG = ['login.', 'mainAdmin.', 'settings.household.'];
+// Keys of these areas never get a flat share variant: their screens keep the family terms (data-no-term).
+// maint.* = backups & updates: they always concern every family on the server.
+const NO_WG = ['login.', 'mainAdmin.', 'settings.household.', 'maint.'];
 const noWg = key => NO_WG.some(p => key.startsWith(p));
 
 /* ---------- languages (from PINN_LANGUAGES in js/sprachen.js) ---------- */
