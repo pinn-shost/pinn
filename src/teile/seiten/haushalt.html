@@ -1,25 +1,25 @@
     <section id="householdSection" class="hidden min-h-0 flex-col bg-white/40">
       <div class="px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
         <div class="flex items-center justify-between gap-3">
-          <h2 class="font-serif text-lg">Aufgaben</h2>
+          <h2 data-tk="tasks.title" class="font-serif text-lg">Tasks</h2>
           <div class="flex items-center gap-2 shrink-0">
-            <button id="openSmartHomeBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center" aria-label="Smarthome" title="Smarthome">
+            <button id="openSmartHomeBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center" data-tk-attr="aria-label:household.smartHome;title:household.smartHome" aria-label="Smart home" title="Smart home">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9v11h14V9"></path><path d="M9.5 15.5a3.5 3.5 0 0 1 5 0"></path><path d="M7.8 13.3a6 6 0 0 1 8.4 0"></path><circle cx="12" cy="17.6" r="0.6" fill="currentColor"></circle></svg>
             </button>
-            <button id="openHouseholdSettingsBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center" aria-label="Haushalt-Kategorien" title="Haushalt-Kategorien">
+            <button id="openHouseholdSettingsBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center" data-tk-attr="aria-label:household.categories;title:household.categories" aria-label="Household categories" title="Household categories">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7"></path><path d="M4 10V3"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M20 21v-5"></path><path d="M20 12V3"></path><path d="M1 14h6"></path><path d="M9 8h6"></path><path d="M17 16h6"></path></svg>
             </button>
-            <button id="openRoomModalBtn" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap shrink-0">+ Raum hinzufügen</button>
+            <button data-tk="household.addRoom" id="openRoomModalBtn" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap shrink-0">+ Add room</button>
           </div>
         </div>
-        <div class="ls-tabs task-kind-tabs mt-3" role="tablist" aria-label="Aufgaben oder Haushalt">
-          <button type="button" class="ls-tab" data-task-kind="aufgaben" role="tab">✅ Aufgaben</button>
-          <button type="button" class="ls-tab" data-task-kind="haushalt" role="tab">🧹 Haushalt</button>
+        <div class="ls-tabs task-kind-tabs mt-3" role="tablist" data-tk-attr="aria-label:tasks.tabsLabel" aria-label="Tasks or household">
+          <button data-tk="tasks.tabTasks" type="button" class="ls-tab" data-task-kind="aufgaben" role="tab">✅ Tasks</button>
+          <button data-tk="tasks.tabHousehold" type="button" class="ls-tab" data-task-kind="haushalt" role="tab">🧹 Household</button>
         </div>
         <div id="householdFilterBar" class="hidden">
           <div class="flex items-center gap-2 mt-3 flex-wrap">
-            <select id="householdRoomFilter" class="min-w-0 flex-1 sm:flex-none rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="Raum"></select>
-            <select id="householdCategoryFilter" class="min-w-0 flex-1 sm:flex-none rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="Kategorie"></select>
+            <select id="householdRoomFilter" class="min-w-0 flex-1 sm:flex-none rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" data-tk-attr="aria-label:household.room" aria-label="Room"></select>
+            <select id="householdCategoryFilter" class="min-w-0 flex-1 sm:flex-none rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" data-tk-attr="aria-label:household.category" aria-label="Category"></select>
           </div>
         </div>
       </div>
@@ -27,6 +27,6 @@
         <div id="hhFairCard" class="mb-3"></div>
         <div id="hhMaintCard" class="mb-3"></div>
         <div id="roomList" class="flex flex-col gap-3"></div>
-        <p id="emptyRooms" class="hidden text-sm text-ink/40 italic">Noch keine Räume – füge einen hinzu.</p>
+        <p id="emptyRooms" class="hidden text-sm text-ink/40 italic">No rooms yet – add one.</p>
       </div>
     </section>

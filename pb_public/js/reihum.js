@@ -44,7 +44,8 @@ function hhRotateValue(containerId) {
   if (el.box) el.box.addEventListener('change', () => hhRotateUi(id));
 });
 
-const HH_FAIR_DAYS = [[30, '30 Tage'], [90, '90 Tage'], [365, '1 Jahr']];
+// [days, text key of the chip]
+const HH_FAIR_DAYS = [[30, 'rotation.days30'], [90, 'rotation.days90'], [365, 'rotation.year']];
 let hhFairDays = 30;
 let hhFairCache = null;     // { days, at, data }
 let hhFairLoading = false;
@@ -91,7 +92,7 @@ function hhFairRender(d) {
       <div class="flex-1 min-w-0">
         <div class="flex items-baseline justify-between gap-2">
           <span class="text-sm truncate" data-no-i18n>${escapeHtml(memberLabel(r.m))}</span>
-          <span class="text-xs text-ink/50 shrink-0"><b class="text-ink" data-no-i18n>${done}</b> <span>erledigt</span>${r.s.verpasst ? ` · <span data-no-i18n>${r.s.verpasst}</span> <span>verpasst</span>` : ''}${total ? ` · <span data-no-i18n>${share} %</span>` : ''}</span>
+          <span class="text-xs text-ink/50 shrink-0">${escapeHtml(tk('rotation.doneN', { n: done }))}${r.s.verpasst ? ` · ${escapeHtml(tk('rotation.missedN', { n: r.s.verpasst }))}` : ''}${total ? ` · <span data-no-i18n>${share} %</span>` : ''}</span>
         </div>
         <div class="hh-fair-bar"><span style="width:${done / max * 100}%;background:${escapeHtml(color)}"></span></div>
       </div>
@@ -103,16 +104,16 @@ function hhFairRender(d) {
     if (!now && !next) return '';
     return `<div class="hh-fair-rule">
       <span class="flex-1 min-w-0 truncate" data-no-i18n>🔄 ${escapeHtml(r.titel || '')}</span>
-      <span class="shrink-0 text-ink/55">${now ? `<span>dran:</span> <b class="text-ink" data-no-i18n>${escapeHtml(memberLabel(now))}</b>` : ''}${now && next ? ' · ' : ''}${next ? `<span>danach:</span> <b class="text-ink" data-no-i18n>${escapeHtml(memberLabel(next))}</b>` : ''}</span>
+      <span class="shrink-0 text-ink/55">${now ? `<span>${escapeHtml(tk('rotation.upNow'))}</span> <b class="text-ink" data-no-i18n>${escapeHtml(memberLabel(now))}</b>` : ''}${now && next ? ' · ' : ''}${next ? `<span>${escapeHtml(tk('rotation.then'))}</span> <b class="text-ink" data-no-i18n>${escapeHtml(memberLabel(next))}</b>` : ''}</span>
     </div>`;
   }).join('');
-  const chips = HH_FAIR_DAYS.map(([n, label]) => `<button type="button" class="hh-fair-chip${n === hhFairDays ? ' active' : ''}" data-days="${n}">${label}</button>`).join('');
+  const chips = HH_FAIR_DAYS.map(([n, label]) => `<button type="button" class="hh-fair-chip${n === hhFairDays ? ' active' : ''}" data-days="${n}">${escapeHtml(tk(label))}</button>`).join('');
   el.innerHTML = `<div class="hh-fair rounded-xl border border-ink/10 p-3">
     <div class="flex items-center justify-between gap-2 flex-wrap mb-2">
-      <span class="font-serif text-base">⚖️ Wer macht wie viel?</span>
+      <span class="font-serif text-base">${escapeHtml(tk('rotation.title'))}</span>
       <span class="flex gap-1">${chips}</span>
     </div>
-    ${total || rows.some(r => r.s.verpasst) ? rowsHtml : '<p class="text-xs text-ink/40 italic">In diesem Zeitraum wurde noch keine Haushaltsaufgabe erledigt.</p>'}
+    ${total || rows.some(r => r.s.verpasst) ? rowsHtml : '<p class="text-xs text-ink/40 italic">' + escapeHtml(tk('rotation.none')) + '</p>'}
     ${rules ? `<div class="hh-fair-rules">${rules}</div>` : ''}
   </div>`;
   el.querySelectorAll('.hh-fair-chip').forEach(b => b.addEventListener('click', () => {

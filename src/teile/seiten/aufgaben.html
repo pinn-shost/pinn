@@ -4,14 +4,14 @@
       <div class="px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
         <div class="flex items-center justify-between gap-3">
           <div class="flex items-baseline gap-2 flex-wrap min-w-0">
-            <h2 class="font-serif text-lg">Aufgaben</h2>
-            <span id="taskCount" class="text-xs text-ink/40" title="Erledigt / gesamt"></span>
+            <h2 data-tk="tasks.title" class="font-serif text-lg">Tasks</h2>
+            <span id="taskCount" class="text-xs text-ink/40" data-tk-attr="title:tasks.doneOfTotal" title="Done / total"></span>
           </div>
-          <button id="openTaskModalBtn" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap shrink-0" title="Aufgabe hinzufügen">+<span class="hidden sm:inline"> Aufgabe hinzufügen</span></button>
+          <button id="openTaskModalBtn" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap shrink-0" data-tk-attr="title:tasks.add" title="Add task">+<span class="hidden sm:inline"> <span data-tk="tasks.add">Add task</span></span></button>
         </div>
-        <div class="ls-tabs task-kind-tabs mt-3 is-off" role="tablist" aria-label="Aufgaben oder Haushalt" id="taskKindTabsMain">
-          <button type="button" class="ls-tab" data-task-kind="aufgaben" role="tab">✅ Aufgaben</button>
-          <button type="button" class="ls-tab" data-task-kind="haushalt" role="tab">🧹 Haushalt</button>
+        <div class="ls-tabs task-kind-tabs mt-3 is-off" role="tablist" data-tk-attr="aria-label:tasks.tabsLabel" aria-label="Tasks or household" id="taskKindTabsMain">
+          <button data-tk="tasks.tabTasks" type="button" class="ls-tab" data-task-kind="aufgaben" role="tab">✅ Tasks</button>
+          <button data-tk="tasks.tabHousehold" type="button" class="ls-tab" data-task-kind="haushalt" role="tab">🧹 Household</button>
         </div>
         <div class="flex items-center gap-2 flex-wrap mt-2">
           <div id="memberChipsTasks" class="flex items-center gap-2 flex-wrap"></div>
@@ -20,6 +20,6 @@
 
       <div class="flex-1 min-h-0 overflow-y-auto px-6 py-4">
         <div id="taskList" class="flex flex-col gap-3"></div>
-        <p id="emptyTasks" class="text-sm text-ink/40 italic mt-2">Noch keine Aufgaben – füge eine hinzu.</p>
+        <p id="emptyTasks" class="text-sm text-ink/40 italic mt-2">No tasks yet – add one.</p>
       </div>
     </section>

@@ -57,7 +57,7 @@ function setPinnCals(list) {
 function calendarLabel(name) {
   const c = pinnCalByName(name);
   if (c) return c.name + (c.geteilt ? '' : ' 🔒') + (c.quelle === 'apple' ? ' · iCloud' : c.quelle === 'google' ? ' · Google' : '');
-  return isPinnCalName(name) ? 'Eigener Kalender' : (name || '');
+  return isPinnCalName(name) ? tk('cal.ownCalendar') : (name || '');
 }
 function calendarCount() { return appleCalendar.selectedCalendars.length + pinnCals.length; }
 // School holidays, waste collection, school & daycare (system calendars): shown smaller and always at the very top

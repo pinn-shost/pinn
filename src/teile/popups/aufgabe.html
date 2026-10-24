@@ -1,42 +1,42 @@
 <!-- Add/edit task modal -->
 <div id="taskModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
-    <h3 id="taskModalTitle" class="font-serif text-lg mb-4">Neue Aufgabe</h3>
+    <h3 id="taskModalTitle" class="font-serif text-lg mb-4">New task</h3>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Titel</label>
-    <input id="taskTitleInput" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="z. B. Mülleimer rausbringen" />
+    <label data-tk="common.title" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Title</label>
+    <input id="taskTitleInput" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" data-tk-attr="placeholder:tasks.titlePlaceholder" placeholder="e.g. take out the bins" />
 
     <!-- Only for "Einkauf planen": in which shops (shopping lists) to buy -->
     <div id="taskShoppingBlock" class="hidden">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Einkaufen bei</label>
+      <label data-tk="tasks.shopAt" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Shopping at</label>
       <div id="taskShoppingListPicker" class="grid grid-cols-3 gap-2 mb-1.5"></div>
-      <p id="taskShoppingHint" class="text-[11px] text-ink/40 mb-3">Beim Abhaken der Aufgabe gibst du je Laden den bezahlten Betrag ein – er wird direkt in Finanzen gebucht.</p>
+      <p data-tk="tasks.shopHint" id="taskShoppingHint" class="text-[11px] text-ink/40 mb-3">When checking off the task, you enter the amount paid per shop – it is booked directly in Finance.</p>
     </div>
 
     <!-- COMMENTED OUT (tasks are stored on the NAS now) - the element stays hidden -->
-    <p id="taskNoListHint" class="hidden text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-3">Noch kein Aufgaben-Kalender festgelegt. Bitte zuerst in Einstellungen → Kalender-Import einrichten.</p>
+    <p id="taskNoListHint" class="hidden text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-3"></p>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Notizen</label>
+    <label data-tk="event.notes" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Notes</label>
     <textarea id="taskNotesInput" rows="3" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3 resize-none"></textarea>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Zugewiesen an</label>
+    <label data-tk="tasks.assignedTo" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Assigned to</label>
     <div id="taskAssigneeList" class="flex flex-col gap-1.5 mb-4"></div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Fällig am</label>
+    <label data-tk="tasks.dueOn" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Due on</label>
     <input id="taskDueDate" type="date" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm mb-3" />
 
     <label class="flex items-center gap-2 text-sm mb-3 cursor-pointer">
       <input id="taskTimeWindowCheckbox" type="checkbox" class="w-4 h-4" />
-      Zeitfenster festlegen
+      <span data-tk="tasks.timeWindow">Set time window</span>
     </label>
 
     <div id="taskTimeWindowFields" class="hidden grid grid-cols-2 gap-4 mb-3">
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Von</label>
+        <label data-tk="tasks.from" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">From</label>
         <input id="taskFromTime" type="time" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm" />
       </div>
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Bis</label>
+        <label data-tk="tasks.to" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">To</label>
         <input id="taskToTime" type="time" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm" />
       </div>
     </div>
@@ -45,9 +45,9 @@
 
     <p id="taskFormStatus" class="text-xs text-ink/40 mb-2"></p>
     <div class="flex justify-end gap-2">
-      <button id="taskDoneBtn" type="button" class="hidden mr-auto px-3 py-2 rounded-lg border border-pine/30 text-sm text-pine hover:bg-pine/5">✓ Erledigt</button>
-      <button id="cancelTask" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-      <button id="saveTask" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Speichern</button>
+      <button id="taskDoneBtn" type="button" class="hidden mr-auto px-3 py-2 rounded-lg border border-pine/30 text-sm text-pine hover:bg-pine/5" data-tk="tasks.doneBtn">✓ Done</button>
+      <button data-tk="common.cancel" id="cancelTask" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+      <button id="saveTask" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Save</button>
     </div>
   </div>
 </div>

@@ -48,12 +48,12 @@ function updateCalendarSyncStatus(err) {
   const el = document.getElementById('icsSyncStatus');
   if (!el) return;
   if (err) {
-    el.textContent = 'Konnte kalender.ics nicht laden (' + err.message + ')';
+    el.textContent = tk('cal.icsFailed', { error: err.message });
     el.classList.add('text-red-500');
   } else {
     el.textContent = lastIcsSync
-      ? ('Zuletzt geladen um ' + lastIcsSync.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + ' · ' + events.length + ' Termine')
-      : 'Noch nicht geladen';
+      ? tk('cal.icsLoaded', { time: lastIcsSync.toLocaleTimeString(sysLocale(), { hour: '2-digit', minute: '2-digit' }), n: events.length })
+      : tk('common.notLoadedYet');
     el.classList.remove('text-red-500');
   }
 }

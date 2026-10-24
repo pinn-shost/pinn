@@ -31,7 +31,7 @@
        pb_public/vendor/tesseract/tesseract.min.js + worker.min.js, core/ (tesseract-core*.wasm.js),
          lang/deu.traineddata.gz (text recognition for "Foto einlesen" in recipes, only loaded when needed) -->
 <link rel="stylesheet" href="vendor/pinn.css">
-<link rel="stylesheet" href="css/ergaenzung.css?v=1.112.1">
+<link rel="stylesheet" href="css/ergaenzung.css?v=1.113.0">
 <!-- ==========================================================
      Power saving (since 0.99)
      - Recurring requests (setInterval from 1 second) only run while pinn. is visible;
@@ -41,11 +41,11 @@
        Every touch, mouse or keyboard input wakes pinn. at once and catches up on everything.
      - Short timers (< 1 s, e.g. the SOS countdown) stay unchanged.
      ========================================================== -->
-<link rel="stylesheet" href="css/energiesparen.css?v=1.112.1">
-<script src="js/ruhemodus.js?v=1.112.1"></script>
-<script src="js/textkern.js?v=1.112.1"></script>
-<script src="js/sprachen.js?v=1.112.1"></script>
-<script src="js/region.js?v=1.112.1"></script>
+<link rel="stylesheet" href="css/energiesparen.css?v=1.113.0">
+<script src="js/ruhemodus.js?v=1.113.0"></script>
+<script src="js/textkern.js?v=1.113.0"></script>
+<script src="js/sprachen.js?v=1.113.0"></script>
+<script src="js/region.js?v=1.113.0"></script>
 <script src="vendor/pocketbase/pocketbase.umd.js"></script>
 <!-- If the file sits somewhere else on the NAS or has another name: try further places -->
 <script>if (!window.PocketBase) document.write('<script src="vendor/pocketbase.umd.js"><\/script>');</script>
@@ -143,26 +143,26 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/basis.css?v=1.112.1">
-<link rel="stylesheet" href="css/mobil.css?v=1.112.1">
-<link rel="stylesheet" href="css/einstellungen.css?v=1.112.1">
-<link rel="stylesheet" href="css/seitenleiste.css?v=1.112.1">
-<link rel="stylesheet" href="css/finanzen.css?v=1.112.1">
-<link rel="stylesheet" href="css/listen.css?v=1.112.1">
-<link rel="stylesheet" href="css/vertraege.css?v=1.112.1">
-<link rel="stylesheet" href="css/fahrzeuge.css?v=1.112.1">
-<link rel="stylesheet" href="css/notfall.css?v=1.112.1">
-<link rel="stylesheet" href="css/hinweise.css?v=1.112.1">
-<link rel="stylesheet" href="css/familie.css?v=1.112.1">
-<link rel="stylesheet" href="css/dokumente.css?v=1.112.1">
-<link rel="stylesheet" href="css/sparen.css?v=1.112.1">
-<link rel="stylesheet" href="css/kinderaufgaben.css?v=1.112.1">
-<link rel="stylesheet" href="css/dashboard.css?v=1.112.1">
-<link rel="stylesheet" href="css/uebersicht.css?v=1.112.1">
-<link rel="stylesheet" href="css/wohnort.css?v=1.112.1">
-<link rel="stylesheet" href="css/familienkachel.css?v=1.112.1">
-<link rel="stylesheet" href="css/pinnwand.css?v=1.112.1">
-<link rel="stylesheet" href="css/haustierewetter.css?v=1.112.1">
+<link rel="stylesheet" href="css/basis.css?v=1.113.0">
+<link rel="stylesheet" href="css/mobil.css?v=1.113.0">
+<link rel="stylesheet" href="css/einstellungen.css?v=1.113.0">
+<link rel="stylesheet" href="css/seitenleiste.css?v=1.113.0">
+<link rel="stylesheet" href="css/finanzen.css?v=1.113.0">
+<link rel="stylesheet" href="css/listen.css?v=1.113.0">
+<link rel="stylesheet" href="css/vertraege.css?v=1.113.0">
+<link rel="stylesheet" href="css/fahrzeuge.css?v=1.113.0">
+<link rel="stylesheet" href="css/notfall.css?v=1.113.0">
+<link rel="stylesheet" href="css/hinweise.css?v=1.113.0">
+<link rel="stylesheet" href="css/familie.css?v=1.113.0">
+<link rel="stylesheet" href="css/dokumente.css?v=1.113.0">
+<link rel="stylesheet" href="css/sparen.css?v=1.113.0">
+<link rel="stylesheet" href="css/kinderaufgaben.css?v=1.113.0">
+<link rel="stylesheet" href="css/dashboard.css?v=1.113.0">
+<link rel="stylesheet" href="css/uebersicht.css?v=1.113.0">
+<link rel="stylesheet" href="css/wohnort.css?v=1.113.0">
+<link rel="stylesheet" href="css/familienkachel.css?v=1.113.0">
+<link rel="stylesheet" href="css/pinnwand.css?v=1.113.0">
+<link rel="stylesheet" href="css/haustierewetter.css?v=1.113.0">
 </head>
 <body class="font-sans text-ink antialiased">
 
@@ -467,20 +467,20 @@
       <div class="px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
         <div id="calendarTopRow" class="flex items-center justify-between mb-3 gap-3">
           <div class="flex items-center gap-2">
-            <button id="prevPeriod" class="w-9 h-9 rounded-full border border-ink/15 hover:bg-pine hover:text-white hover:border-pine transition grid place-items-center" aria-label="Zurück">‹</button>
-            <button id="todayBtn" class="px-3 h-9 rounded-full border border-ink/15 text-sm hover:bg-pine hover:text-white hover:border-pine transition">Heute</button>
-            <button id="nextPeriod" class="w-9 h-9 rounded-full border border-ink/15 hover:bg-pine hover:text-white hover:border-pine transition grid place-items-center" aria-label="Weiter">›</button>
+            <button id="prevPeriod" class="w-9 h-9 rounded-full border border-ink/15 hover:bg-pine hover:text-white hover:border-pine transition grid place-items-center" data-tk-attr="aria-label:cal.back" aria-label="Back">‹</button>
+            <button data-tk="common.today" id="todayBtn" class="px-3 h-9 rounded-full border border-ink/15 text-sm hover:bg-pine hover:text-white hover:border-pine transition">Today</button>
+            <button id="nextPeriod" class="w-9 h-9 rounded-full border border-ink/15 hover:bg-pine hover:text-white hover:border-pine transition grid place-items-center" data-tk-attr="aria-label:cal.next" aria-label="Next">›</button>
           </div>
           <h2 id="periodLabel" class="font-serif text-lg text-ink flex-1 min-w-0 text-center truncate px-1"></h2>
           <div id="calendarTopRight" class="flex items-center gap-2 shrink-0">
             <div id="calendarModeToggle" class="hidden items-center gap-1 bg-ink/5 rounded-full p-1 text-xs shrink-0">
-              <button type="button" data-mode="day" class="mode-btn px-2.5 py-1 rounded-full transition">Tag</button>
-              <button type="button" data-mode="week" class="mode-btn px-2.5 py-1 rounded-full transition">Woche</button>
-              <button type="button" data-mode="month" class="mode-btn termine-only-mode px-2.5 py-1 rounded-full transition">Monat</button>
-              <button type="button" data-mode="year" class="mode-btn termine-only-mode px-2.5 py-1 rounded-full transition">Jahr</button>
+              <button data-tk="cal.day" type="button" data-mode="day" class="mode-btn px-2.5 py-1 rounded-full transition">Day</button>
+              <button data-tk="cal.week" type="button" data-mode="week" class="mode-btn px-2.5 py-1 rounded-full transition">Week</button>
+              <button data-tk="cal.month" type="button" data-mode="month" class="mode-btn termine-only-mode px-2.5 py-1 rounded-full transition">Month</button>
+              <button data-tk="cal.year" type="button" data-mode="year" class="mode-btn termine-only-mode px-2.5 py-1 rounded-full transition">Year</button>
             </div>
-            <button id="dayListToggleBtn" type="button" class="w-9 h-9 rounded-full border border-ink/15 hover:bg-pine hover:text-white hover:border-pine transition grid place-items-center text-sm" title="Liste/Zeitleiste umschalten" aria-label="Liste/Zeitleiste umschalten">📋</button>
-            <button id="openAddEventModalBtn" class="w-9 h-9 rounded-full bg-pine text-white hover:bg-pine/90 transition grid place-items-center text-lg leading-none" title="Termin hinzufügen" aria-label="Termin hinzufügen">+</button>
+            <button id="dayListToggleBtn" type="button" class="w-9 h-9 rounded-full border border-ink/15 hover:bg-pine hover:text-white hover:border-pine transition grid place-items-center text-sm" data-tk-attr="title:cal.toggleList;aria-label:cal.toggleList" title="Toggle list/timeline" aria-label="Toggle list/timeline">📋</button>
+            <button id="openAddEventModalBtn" class="w-9 h-9 rounded-full bg-pine text-white hover:bg-pine/90 transition grid place-items-center text-lg leading-none" data-tk-attr="title:cal.addEvent;aria-label:cal.addEvent" title="Add event" aria-label="Add event">+</button>
           </div>
         </div>
 
@@ -599,14 +599,14 @@
       <div class="px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
         <div class="flex items-center justify-between gap-3">
           <div class="flex items-baseline gap-2 flex-wrap min-w-0">
-            <h2 class="font-serif text-lg">Aufgaben</h2>
-            <span id="taskCount" class="text-xs text-ink/40" title="Erledigt / gesamt"></span>
+            <h2 data-tk="tasks.title" class="font-serif text-lg">Tasks</h2>
+            <span id="taskCount" class="text-xs text-ink/40" data-tk-attr="title:tasks.doneOfTotal" title="Done / total"></span>
           </div>
-          <button id="openTaskModalBtn" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap shrink-0" title="Aufgabe hinzufügen">+<span class="hidden sm:inline"> Aufgabe hinzufügen</span></button>
+          <button id="openTaskModalBtn" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap shrink-0" data-tk-attr="title:tasks.add" title="Add task">+<span class="hidden sm:inline"> <span data-tk="tasks.add">Add task</span></span></button>
         </div>
-        <div class="ls-tabs task-kind-tabs mt-3 is-off" role="tablist" aria-label="Aufgaben oder Haushalt" id="taskKindTabsMain">
-          <button type="button" class="ls-tab" data-task-kind="aufgaben" role="tab">✅ Aufgaben</button>
-          <button type="button" class="ls-tab" data-task-kind="haushalt" role="tab">🧹 Haushalt</button>
+        <div class="ls-tabs task-kind-tabs mt-3 is-off" role="tablist" data-tk-attr="aria-label:tasks.tabsLabel" aria-label="Tasks or household" id="taskKindTabsMain">
+          <button data-tk="tasks.tabTasks" type="button" class="ls-tab" data-task-kind="aufgaben" role="tab">✅ Tasks</button>
+          <button data-tk="tasks.tabHousehold" type="button" class="ls-tab" data-task-kind="haushalt" role="tab">🧹 Household</button>
         </div>
         <div class="flex items-center gap-2 flex-wrap mt-2">
           <div id="memberChipsTasks" class="flex items-center gap-2 flex-wrap"></div>
@@ -615,7 +615,7 @@
 
       <div class="flex-1 min-h-0 overflow-y-auto px-6 py-4">
         <div id="taskList" class="flex flex-col gap-3"></div>
-        <p id="emptyTasks" class="text-sm text-ink/40 italic mt-2">Noch keine Aufgaben – füge eine hinzu.</p>
+        <p id="emptyTasks" class="text-sm text-ink/40 italic mt-2">No tasks yet – add one.</p>
       </div>
     </section>
 
@@ -699,25 +699,25 @@
     <section id="householdSection" class="hidden min-h-0 flex-col bg-white/40">
       <div class="px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
         <div class="flex items-center justify-between gap-3">
-          <h2 class="font-serif text-lg">Aufgaben</h2>
+          <h2 data-tk="tasks.title" class="font-serif text-lg">Tasks</h2>
           <div class="flex items-center gap-2 shrink-0">
-            <button id="openSmartHomeBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center" aria-label="Smarthome" title="Smarthome">
+            <button id="openSmartHomeBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center" data-tk-attr="aria-label:household.smartHome;title:household.smartHome" aria-label="Smart home" title="Smart home">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9v11h14V9"></path><path d="M9.5 15.5a3.5 3.5 0 0 1 5 0"></path><path d="M7.8 13.3a6 6 0 0 1 8.4 0"></path><circle cx="12" cy="17.6" r="0.6" fill="currentColor"></circle></svg>
             </button>
-            <button id="openHouseholdSettingsBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center" aria-label="Haushalt-Kategorien" title="Haushalt-Kategorien">
+            <button id="openHouseholdSettingsBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center" data-tk-attr="aria-label:household.categories;title:household.categories" aria-label="Household categories" title="Household categories">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7"></path><path d="M4 10V3"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M20 21v-5"></path><path d="M20 12V3"></path><path d="M1 14h6"></path><path d="M9 8h6"></path><path d="M17 16h6"></path></svg>
             </button>
-            <button id="openRoomModalBtn" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap shrink-0">+ Raum hinzufügen</button>
+            <button data-tk="household.addRoom" id="openRoomModalBtn" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap shrink-0">+ Add room</button>
           </div>
         </div>
-        <div class="ls-tabs task-kind-tabs mt-3" role="tablist" aria-label="Aufgaben oder Haushalt">
-          <button type="button" class="ls-tab" data-task-kind="aufgaben" role="tab">✅ Aufgaben</button>
-          <button type="button" class="ls-tab" data-task-kind="haushalt" role="tab">🧹 Haushalt</button>
+        <div class="ls-tabs task-kind-tabs mt-3" role="tablist" data-tk-attr="aria-label:tasks.tabsLabel" aria-label="Tasks or household">
+          <button data-tk="tasks.tabTasks" type="button" class="ls-tab" data-task-kind="aufgaben" role="tab">✅ Tasks</button>
+          <button data-tk="tasks.tabHousehold" type="button" class="ls-tab" data-task-kind="haushalt" role="tab">🧹 Household</button>
         </div>
         <div id="householdFilterBar" class="hidden">
           <div class="flex items-center gap-2 mt-3 flex-wrap">
-            <select id="householdRoomFilter" class="min-w-0 flex-1 sm:flex-none rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="Raum"></select>
-            <select id="householdCategoryFilter" class="min-w-0 flex-1 sm:flex-none rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="Kategorie"></select>
+            <select id="householdRoomFilter" class="min-w-0 flex-1 sm:flex-none rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" data-tk-attr="aria-label:household.room" aria-label="Room"></select>
+            <select id="householdCategoryFilter" class="min-w-0 flex-1 sm:flex-none rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" data-tk-attr="aria-label:household.category" aria-label="Category"></select>
           </div>
         </div>
       </div>
@@ -725,7 +725,7 @@
         <div id="hhFairCard" class="mb-3"></div>
         <div id="hhMaintCard" class="mb-3"></div>
         <div id="roomList" class="flex flex-col gap-3"></div>
-        <p id="emptyRooms" class="hidden text-sm text-ink/40 italic">Noch keine Räume – füge einen hinzu.</p>
+        <p id="emptyRooms" class="hidden text-sm text-ink/40 italic">No rooms yet – add one.</p>
       </div>
     </section>
 
@@ -1060,22 +1060,22 @@
   <!-- Add/edit room modal -->
   <div id="roomModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
     <div class="bg-white rounded-2xl p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
-      <h3 id="roomModalTitle" class="font-serif text-lg mb-4">Neuer Raum</h3>
+      <h3 id="roomModalTitle" class="font-serif text-lg mb-4">New room</h3>
 
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Name</label>
-      <input id="roomNameInput" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="z. B. Badezimmer" />
+      <label data-tk="common.name" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Name</label>
+      <input data-tk-attr="placeholder:household.roomPlaceholder" id="roomNameInput" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="e.g. bathroom" />
 
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Symbol</label>
+      <label data-tk="household.icon" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Icon</label>
       <div id="roomIconPicker" class="flex flex-wrap gap-2 mb-3"></div>
 
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Farbe</label>
+      <label data-tk="household.color" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Colour</label>
       <div id="roomColorPicker" class="flex flex-wrap gap-2 mb-4"></div>
 
       <div class="flex items-center justify-between gap-2 mt-2">
-        <button id="deleteRoomBtn" class="hidden px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Raum löschen</button>
+        <button data-tk="household.deleteRoom" id="deleteRoomBtn" class="hidden px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Delete room</button>
         <div class="flex gap-2 ml-auto">
-          <button id="cancelRoom" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-          <button id="saveRoom" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Speichern</button>
+          <button data-tk="common.cancel" id="cancelRoom" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+          <button id="saveRoom" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Save</button>
         </div>
       </div>
       <p id="roomFormStatus" class="text-xs text-ink/40 mt-2"></p>
@@ -1085,44 +1085,44 @@
   <!-- Add/edit trash bin modal -->
   <div id="trashBinModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
     <div class="bg-white rounded-2xl p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
-      <h3 id="trashBinModalTitle" class="font-serif text-lg mb-4">Neuer Mülleimer</h3>
+      <h3 id="trashBinModalTitle" class="font-serif text-lg mb-4">New bin</h3>
       <p id="trashBinRoomLabel" class="text-xs text-ink/40 mb-3"></p>
 
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Müllart</label>
+      <label data-tk="household.wasteType" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Waste type</label>
       <div id="trashBinWasteTypePicker" class="flex flex-col gap-1.5 mb-5"></div>
 
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Zuständig</label>
+      <label data-tk="household.responsible" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Responsible</label>
       <div id="trashBinMemberPicker" class="flex gap-2 flex-wrap mb-1"></div>
-      <p class="text-[11px] text-ink/40 mb-4">Niemand ausgewählt = alle. So verschwindet die Aufgabe nicht aus dem Blick, wenn nach einer Person gefiltert wird.</p>
+      <p data-tk="household.nobodyAll" class="text-[11px] text-ink/40 mb-4">Nobody selected = everyone. That way the task doesn't disappear from view when filtering by person.</p>
 
       <div id="trashBinRotateWrap" class="hh-rotate hidden mb-4">
         <label class="flex items-center gap-2 text-sm cursor-pointer select-none">
           <input id="trashBinRotate" type="checkbox" class="w-4 h-4" />
-          <span>🔄 Reihum verteilen</span>
+          <span data-tk="rotation.toggle">🔄 Take turns</span>
         </label>
         <select id="trashBinRotateMode" class="hidden mt-2 w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white">
-          <option value="reihum">Der Reihe nach</option>
-          <option value="fair">Fair – wer zuletzt am wenigsten gemacht hat</option>
+          <option data-tk="rotation.inOrder" value="reihum">In order</option>
+          <option data-tk="rotation.fair" value="fair">Fair – whoever did the least lately</option>
         </select>
-        <p class="text-[11px] text-ink/40 mt-1">Jedes Mal ist nur eine Person dran. Wer seine Aufgabe verpasst, bleibt dran. Wer wie viel erledigt, zeigt „⚖️ Wer macht wie viel?“ auf der Haushalt-Seite.</p>
+        <p data-tk="rotation.hint" class="text-[11px] text-ink/40 mt-1">Only one person is up each time. Whoever misses their task stays up. “⚖️ Who does how much?” on the household page shows who did what.</p>
       </div>
 
       <div class="flex items-center gap-1.5 mb-2">
-        <label class="block text-xs uppercase tracking-wide text-ink/40">Smarthome</label>
-        <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Start-Knöpfe erscheinen direkt an der Aufgabe und starten die Aktion – über Apple-Kurzbefehle oder Home Assistant (z. B. Saugen, Wischen oder beides). „Beim Abhaken“ startet zusätzlich eine Aktion, sobald die Aufgabe erledigt ist – z. B. eine Erinnerungs-LED wieder ausschalten. „Automatisch starten“ läuft am Fälligkeitstag ab der Uhrzeit. Geräte richtest du unter Einstellungen → Smarthome oder über das Haus-Symbol oben auf der Haushalt-Seite ein.">i</button>
+        <label data-tk="household.smartHome" class="block text-xs uppercase tracking-wide text-ink/40">Smart home</label>
+        <button data-tk-attr="data-info:household.smartInfo" type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Start buttons appear directly on the task and start the action – via Apple Shortcuts or Home Assistant (e.g. vacuum, mop or both). “On check-off” additionally starts an action as soon as the task is done – e.g. switching a reminder LED off again. “Start automatically” runs on the due date from the set time. You set up devices under Settings → Smart home or via the house icon at the top of the household page.">i</button>
       </div>
       <div id="trashBinSmartPicker" class="mb-4"></div>
       <div id="trashBinRemindPicker" class="mb-4"></div>
       <label class="flex items-center gap-2 text-sm mb-3 cursor-pointer">
         <input id="trashBinManualScheduleCheckbox" type="checkbox" class="w-4 h-4" />
-        Zusätzlich manuellen Rausbring-Rhythmus festlegen
+        <span data-tk="household.manualRhythm">Additionally set a manual collection rhythm</span>
       </label>
-      <p class="text-[11px] text-ink/40 mb-3 -mt-2">Unabhängig davon entsteht am Vortag automatisch eine Aufgabe, sobald im Müllkalender oder im Kalender eine passende Abholung für morgen steht – nach der Abholung wird sie von selbst abgehakt.</p>
+      <p data-tk="household.autoBinTask" class="text-[11px] text-ink/40 mb-3 -mt-2">Regardless of this, a task is created automatically the day before as soon as the waste calendar or the calendar shows a matching collection for tomorrow – after the collection it is checked off by itself.</p>
 
       <div id="trashBinScheduleFields" class="hidden">
         <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-3">
-          <button type="button" data-scheduletype="weekdays" class="bin-schedule-type-btn px-4 py-1.5 rounded-full transition">Wochentage</button>
-          <button type="button" data-scheduletype="interval" class="bin-schedule-type-btn px-4 py-1.5 rounded-full transition">Intervall</button>
+          <button data-tk="household.weekdays" type="button" data-scheduletype="weekdays" class="bin-schedule-type-btn px-4 py-1.5 rounded-full transition">Weekdays</button>
+          <button data-tk="household.interval" type="button" data-scheduletype="interval" class="bin-schedule-type-btn px-4 py-1.5 rounded-full transition">Interval</button>
         </div>
 
         <div id="trashBinWeekdaysWrap" class="mb-3">
@@ -1131,33 +1131,33 @@
 
         <div id="trashBinIntervalWrap" class="hidden mb-3">
           <select id="trashBinIntervalSelect" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-2">
-            <option value="1">Täglich</option>
-            <option value="2">Alle 2 Tage</option>
-            <option value="3">Alle 3 Tage</option>
-            <option value="4">Alle 4 Tage</option>
-            <option value="5">Alle 5 Tage</option>
-            <option value="6">Alle 6 Tage</option>
-            <option value="7">Wöchentlich</option>
-            <option value="14">Alle 14 Tage</option>
-            <option value="custom">Eigene…</option>
+            <option data-tk="repeat.daily" value="1">Daily</option>
+            <option data-tk="household.every2" value="2">Every 2 days</option>
+            <option data-tk="household.every3" value="3">Every 3 days</option>
+            <option data-tk="household.every4" value="4">Every 4 days</option>
+            <option data-tk="household.every5" value="5">Every 5 days</option>
+            <option data-tk="household.every6" value="6">Every 6 days</option>
+            <option data-tk="repeat.weekly" value="7">Weekly</option>
+            <option data-tk="household.every14" value="14">Every 14 days</option>
+            <option data-tk="household.custom" value="custom">Custom…</option>
           </select>
           <div id="trashBinCustomIntervalWrap" class="hidden flex items-center gap-2 mb-2">
-            <span class="text-sm text-ink/60">Alle</span>
+            <span data-tk="repeat.every" class="text-sm text-ink/60">Every</span>
             <input id="trashBinCustomIntervalInput" type="number" min="1" class="w-20 rounded-lg border border-ink/15 px-2 py-1.5 text-sm" />
-            <span class="text-sm text-ink/60">Tage</span>
+            <span data-tk="repeat.unit.days" class="text-sm text-ink/60">days</span>
           </div>
           <div id="trashBinFirstDateWrap">
-            <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Erstes Rausbringen am</label>
+            <label data-tk="household.firstBinDate" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">First collection on</label>
             <input id="trashBinFirstDateInput" type="date" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm" />
           </div>
         </div>
       </div>
 
       <div class="flex items-center justify-between gap-2 mt-2">
-        <button id="deleteTrashBinBtn" class="hidden px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Löschen</button>
+        <button data-tk="common.delete" id="deleteTrashBinBtn" class="hidden px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Delete</button>
         <div class="flex gap-2 ml-auto">
-          <button id="cancelTrashBin" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-          <button id="saveTrashBin" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Speichern</button>
+          <button data-tk="common.cancel" id="cancelTrashBin" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+          <button id="saveTrashBin" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Save</button>
         </div>
       </div>
     </div>
@@ -1166,21 +1166,21 @@
   <!-- Add/edit room schedule ("Reinigung") modal -->
   <div id="roomScheduleModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
     <div class="bg-white rounded-2xl p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
-      <h3 id="roomScheduleModalTitle" class="font-serif text-lg mb-4">Reinigung hinzufügen</h3>
+      <h3 id="roomScheduleModalTitle" class="font-serif text-lg mb-4">Add cleaning task</h3>
       <p id="roomScheduleRoomLabel" class="text-xs text-ink/40 mb-3"></p>
 
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Kategorie</label>
+      <label data-tk="household.category" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Category</label>
       <select id="roomScheduleCategorySelect" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-1"></select>
-      <p id="roomScheduleCategoryHint" class="hidden text-[11px] text-ink/50 mb-1">Lege hier deine erste Kategorie an, z. B. „Reinigung“ oder „Aufräumen“.</p>
+      <p data-tk="household.firstCategoryHint" id="roomScheduleCategoryHint" class="hidden text-[11px] text-ink/50 mb-1">Create your first category here, e.g. “Cleaning” or “Tidying”.</p>
       <div class="flex gap-2 mb-3">
-        <input id="roomScheduleNewCategoryInput" class="flex-1 rounded-lg border border-ink/15 px-3 py-1.5 text-xs" placeholder="Eigene Kategorie…" />
-        <button id="addRoomScheduleCategoryBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition whitespace-nowrap">Hinzufügen</button>
+        <input data-tk-attr="placeholder:household.ownCategory" id="roomScheduleNewCategoryInput" class="flex-1 rounded-lg border border-ink/15 px-3 py-1.5 text-xs" placeholder="Custom category…" />
+        <button data-tk="common.add" id="addRoomScheduleCategoryBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition whitespace-nowrap">Add</button>
       </div>
 
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Wiederholung</label>
+      <label data-tk="event.repeat" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Repeat</label>
       <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-3">
-        <button type="button" data-scheduletype="weekdays" class="schedule-type-btn px-4 py-1.5 rounded-full transition">Wochentage</button>
-        <button type="button" data-scheduletype="interval" class="schedule-type-btn px-4 py-1.5 rounded-full transition">Intervall</button>
+        <button data-tk="household.weekdays" type="button" data-scheduletype="weekdays" class="schedule-type-btn px-4 py-1.5 rounded-full transition">Weekdays</button>
+        <button data-tk="household.interval" type="button" data-scheduletype="interval" class="schedule-type-btn px-4 py-1.5 rounded-full transition">Interval</button>
       </div>
 
       <div id="roomScheduleWeekdaysWrap" class="mb-3">
@@ -1189,55 +1189,55 @@
 
       <div id="roomScheduleIntervalWrap" class="hidden mb-3">
         <select id="roomScheduleIntervalSelect" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-2">
-          <option value="1">Täglich</option>
-          <option value="2">Alle 2 Tage</option>
-          <option value="3">Alle 3 Tage</option>
-          <option value="4">Alle 4 Tage</option>
-          <option value="5">Alle 5 Tage</option>
-          <option value="6">Alle 6 Tage</option>
-          <option value="7">Wöchentlich</option>
-          <option value="14">Alle 14 Tage</option>
-          <option value="custom">Eigene…</option>
+          <option data-tk="repeat.daily" value="1">Daily</option>
+          <option data-tk="household.every2" value="2">Every 2 days</option>
+          <option data-tk="household.every3" value="3">Every 3 days</option>
+          <option data-tk="household.every4" value="4">Every 4 days</option>
+          <option data-tk="household.every5" value="5">Every 5 days</option>
+          <option data-tk="household.every6" value="6">Every 6 days</option>
+          <option data-tk="repeat.weekly" value="7">Weekly</option>
+          <option data-tk="household.every14" value="14">Every 14 days</option>
+          <option data-tk="household.custom" value="custom">Custom…</option>
         </select>
         <div id="roomScheduleCustomIntervalWrap" class="hidden flex items-center gap-2 mb-2">
-          <span class="text-sm text-ink/60">Alle</span>
+          <span data-tk="repeat.every" class="text-sm text-ink/60">Every</span>
           <input id="roomScheduleCustomIntervalInput" type="number" min="1" class="w-20 rounded-lg border border-ink/15 px-2 py-1.5 text-sm" />
-          <span class="text-sm text-ink/60">Tage</span>
+          <span data-tk="repeat.unit.days" class="text-sm text-ink/60">days</span>
         </div>
         <div id="roomScheduleFirstDateWrap">
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Erste Reinigung am</label>
+          <label data-tk="household.firstCleaningDate" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">First cleaning on</label>
           <input id="roomScheduleFirstDateInput" type="date" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm" />
         </div>
       </div>
 
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Zuständig</label>
+      <label data-tk="household.responsible" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Responsible</label>
       <div id="roomScheduleMemberPicker" class="flex gap-2 flex-wrap mb-1"></div>
-      <p class="text-[11px] text-ink/40 mb-3">Niemand ausgewählt = alle. So verschwindet die Aufgabe nicht aus dem Blick, wenn nach einer Person gefiltert wird.</p>
+      <p data-tk="household.nobodyAll" class="text-[11px] text-ink/40 mb-3">Nobody selected = everyone. That way the task doesn't disappear from view when filtering by person.</p>
 
       <div id="roomScheduleRotateWrap" class="hh-rotate hidden mb-4">
         <label class="flex items-center gap-2 text-sm cursor-pointer select-none">
           <input id="roomScheduleRotate" type="checkbox" class="w-4 h-4" />
-          <span>🔄 Reihum verteilen</span>
+          <span data-tk="rotation.toggle">🔄 Take turns</span>
         </label>
         <select id="roomScheduleRotateMode" class="hidden mt-2 w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white">
-          <option value="reihum">Der Reihe nach</option>
-          <option value="fair">Fair – wer zuletzt am wenigsten gemacht hat</option>
+          <option data-tk="rotation.inOrder" value="reihum">In order</option>
+          <option data-tk="rotation.fair" value="fair">Fair – whoever did the least lately</option>
         </select>
-        <p class="text-[11px] text-ink/40 mt-1">Jedes Mal ist nur eine Person dran. Wer seine Aufgabe verpasst, bleibt dran. Wer wie viel erledigt, zeigt „⚖️ Wer macht wie viel?“ auf der Haushalt-Seite.</p>
+        <p data-tk="rotation.hint" class="text-[11px] text-ink/40 mt-1">Only one person is up each time. Whoever misses their task stays up. “⚖️ Who does how much?” on the household page shows who did what.</p>
       </div>
 
       <div class="flex items-center gap-1.5 mb-2">
-        <label class="block text-xs uppercase tracking-wide text-ink/40">Smarthome</label>
-        <button type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Start-Knöpfe erscheinen direkt an der Aufgabe und starten die Aktion – über Apple-Kurzbefehle oder Home Assistant (z. B. Saugen, Wischen oder beides). „Beim Abhaken“ startet zusätzlich eine Aktion, sobald die Aufgabe erledigt ist – z. B. eine Erinnerungs-LED wieder ausschalten. „Automatisch starten“ läuft am Fälligkeitstag ab der Uhrzeit. Geräte richtest du unter Einstellungen → Smarthome oder über das Haus-Symbol oben auf der Haushalt-Seite ein.">i</button>
+        <label data-tk="household.smartHome" class="block text-xs uppercase tracking-wide text-ink/40">Smart home</label>
+        <button data-tk-attr="data-info:household.smartInfo" type="button" class="info-btn w-4 h-4 rounded-full border border-ink/30 text-ink/40 text-[10px] leading-none grid place-items-center hover:border-pine hover:text-pine transition shrink-0" data-info="Start buttons appear directly on the task and start the action – via Apple Shortcuts or Home Assistant (e.g. vacuum, mop or both). “On check-off” additionally starts an action as soon as the task is done – e.g. switching a reminder LED off again. “Start automatically” runs on the due date from the set time. You set up devices under Settings → Smart home or via the house icon at the top of the household page.">i</button>
       </div>
       <div id="roomScheduleSmartPicker" class="mb-4"></div>
       <div id="roomScheduleRemindPicker" class="mb-4"></div>
       <p id="roomScheduleFormStatus" class="text-xs text-ink/40 mb-2"></p>
       <div class="flex items-center justify-between gap-2 mt-2">
-        <button id="deleteRoomScheduleBtn" class="hidden px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Löschen</button>
+        <button data-tk="common.delete" id="deleteRoomScheduleBtn" class="hidden px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Delete</button>
         <div class="flex gap-2 ml-auto">
-          <button id="cancelRoomSchedule" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-          <button id="saveRoomSchedule" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Speichern</button>
+          <button data-tk="common.cancel" id="cancelRoomSchedule" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+          <button id="saveRoomSchedule" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Save</button>
         </div>
       </div>
     </div>
@@ -4515,42 +4515,42 @@
 <!-- Add/edit task modal -->
 <div id="taskModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
-    <h3 id="taskModalTitle" class="font-serif text-lg mb-4">Neue Aufgabe</h3>
+    <h3 id="taskModalTitle" class="font-serif text-lg mb-4">New task</h3>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Titel</label>
-    <input id="taskTitleInput" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="z. B. Mülleimer rausbringen" />
+    <label data-tk="common.title" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Title</label>
+    <input id="taskTitleInput" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" data-tk-attr="placeholder:tasks.titlePlaceholder" placeholder="e.g. take out the bins" />
 
     <!-- Only for "Einkauf planen": in which shops (shopping lists) to buy -->
     <div id="taskShoppingBlock" class="hidden">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Einkaufen bei</label>
+      <label data-tk="tasks.shopAt" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Shopping at</label>
       <div id="taskShoppingListPicker" class="grid grid-cols-3 gap-2 mb-1.5"></div>
-      <p id="taskShoppingHint" class="text-[11px] text-ink/40 mb-3">Beim Abhaken der Aufgabe gibst du je Laden den bezahlten Betrag ein – er wird direkt in Finanzen gebucht.</p>
+      <p data-tk="tasks.shopHint" id="taskShoppingHint" class="text-[11px] text-ink/40 mb-3">When checking off the task, you enter the amount paid per shop – it is booked directly in Finance.</p>
     </div>
 
     <!-- COMMENTED OUT (tasks are stored on the NAS now) - the element stays hidden -->
-    <p id="taskNoListHint" class="hidden text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-3">Noch kein Aufgaben-Kalender festgelegt. Bitte zuerst in Einstellungen → Kalender-Import einrichten.</p>
+    <p id="taskNoListHint" class="hidden text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-3"></p>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Notizen</label>
+    <label data-tk="event.notes" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Notes</label>
     <textarea id="taskNotesInput" rows="3" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3 resize-none"></textarea>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Zugewiesen an</label>
+    <label data-tk="tasks.assignedTo" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Assigned to</label>
     <div id="taskAssigneeList" class="flex flex-col gap-1.5 mb-4"></div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Fällig am</label>
+    <label data-tk="tasks.dueOn" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Due on</label>
     <input id="taskDueDate" type="date" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm mb-3" />
 
     <label class="flex items-center gap-2 text-sm mb-3 cursor-pointer">
       <input id="taskTimeWindowCheckbox" type="checkbox" class="w-4 h-4" />
-      Zeitfenster festlegen
+      <span data-tk="tasks.timeWindow">Set time window</span>
     </label>
 
     <div id="taskTimeWindowFields" class="hidden grid grid-cols-2 gap-4 mb-3">
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Von</label>
+        <label data-tk="tasks.from" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">From</label>
         <input id="taskFromTime" type="time" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm" />
       </div>
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Bis</label>
+        <label data-tk="tasks.to" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">To</label>
         <input id="taskToTime" type="time" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm" />
       </div>
     </div>
@@ -4559,9 +4559,9 @@
 
     <p id="taskFormStatus" class="text-xs text-ink/40 mb-2"></p>
     <div class="flex justify-end gap-2">
-      <button id="taskDoneBtn" type="button" class="hidden mr-auto px-3 py-2 rounded-lg border border-pine/30 text-sm text-pine hover:bg-pine/5">✓ Erledigt</button>
-      <button id="cancelTask" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-      <button id="saveTask" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Speichern</button>
+      <button id="taskDoneBtn" type="button" class="hidden mr-auto px-3 py-2 rounded-lg border border-pine/30 text-sm text-pine hover:bg-pine/5" data-tk="tasks.doneBtn">✓ Done</button>
+      <button data-tk="common.cancel" id="cancelTask" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+      <button id="saveTask" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Save</button>
     </div>
   </div>
 </div>
@@ -4569,112 +4569,112 @@
 <!-- Add a new event (really written to iCloud) -->
 <div id="addEventModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto fade-in">
-    <h3 id="addEventModalTitle" class="font-serif text-lg mb-4">Neuer Termin</h3>
+    <h3 id="addEventModalTitle" class="font-serif text-lg mb-4">New event</h3>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Titel</label>
-    <input id="eventTitleInput" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="z. B. Zahnarzt" />
+    <label data-tk="common.title" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Title</label>
+    <input id="eventTitleInput" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" data-tk-attr="placeholder:event.titlePlaceholder" placeholder="e.g. dentist" />
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Betrifft</label>
+    <label data-tk="event.concerns" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Concerns</label>
     <div id="eventAssigneeChips" class="flex items-center gap-2 flex-wrap mb-3"></div>
-    <p class="text-[11px] text-ink/40 mb-3">Wird lesbar in die Notizen des Termins geschrieben (z. B. "Zugewiesen: Mama, Papa"), damit wir die Person(en) beim Anzeigen farblich erkennen können.</p>
+    <p data-tk="event.assignHint" class="text-[11px] text-ink/40 mb-3">Written readably into the event's notes (e.g. &quot;Assigned: Mum, Dad&quot;) so that we can recognise the person(s) by colour when displaying.</p>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Kalender</label>
+    <label data-tk="event.calendar" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Calendar</label>
     <select id="eventCalendarSelect" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3"></select>
-    <p id="eventNoCalendarHint" class="hidden text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-3">Noch kein Kalender vorhanden. Unter Einstellungen → Kalender einen eigenen Kalender anlegen oder iCloud/Google verbinden.</p>
+    <p data-tk="event.noCalendar" id="eventNoCalendarHint" class="hidden text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-3">No calendar yet. Create your own calendar under Settings → Calendar or connect iCloud/Google.</p>
 
     <label class="flex items-center gap-2 text-sm mb-3">
       <input id="eventAllDay" type="checkbox" class="w-4 h-4" />
-      Ganztägig
+      <span data-tk="cal.allDay">All day</span>
     </label>
 
     <div class="grid grid-cols-[3fr_2fr] gap-4 mb-1">
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Beginn</label>
+        <label data-tk="event.start" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Start</label>
         <input id="eventStartDate" type="date" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm" />
       </div>
       <div class="min-w-0">
-        <label id="eventStartTimeLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Uhrzeit</label>
+        <label data-tk="event.time" id="eventStartTimeLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Time</label>
         <input id="eventStartTime" type="time" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm" />
       </div>
     </div>
     <div class="grid grid-cols-[3fr_2fr] gap-4 mb-3">
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Ende</label>
+        <label data-tk="event.end" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">End</label>
         <input id="eventEndDate" type="date" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm" />
       </div>
       <div class="min-w-0">
-        <label id="eventEndTimeLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Uhrzeit</label>
+        <label data-tk="event.time" id="eventEndTimeLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Time</label>
         <input id="eventEndTime" type="time" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm" />
       </div>
     </div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Ort</label>
-    <input id="eventLocationInput" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="Optional" />
+    <label data-tk="event.location" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Place</label>
+    <input id="eventLocationInput" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" data-tk-attr="placeholder:common.optional" placeholder="Optional" />
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Notizen</label>
+    <label data-tk="event.notes" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Notes</label>
     <textarea id="eventNotesInput" rows="2" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3 resize-none"></textarea>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Link (URL)</label>
-    <input id="eventUrlInput" type="url" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="Optional" />
+    <label data-tk="event.url" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Link (URL)</label>
+    <input id="eventUrlInput" type="url" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" data-tk-attr="placeholder:common.optional" placeholder="Optional" />
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Wiederholung</label>
+    <label data-tk="event.repeat" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Repeat</label>
     <select id="eventRepeatSelect" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3">
-      <option value="none">Keine</option>
-      <option value="daily">Täglich</option>
-      <option value="weekly">Wöchentlich</option>
-      <option value="monthly">Monatlich</option>
-      <option value="yearly">Jährlich</option>
+      <option data-tk="common.none" value="none">None</option>
+      <option data-tk="repeat.daily" value="daily">Daily</option>
+      <option data-tk="repeat.weekly" value="weekly">Weekly</option>
+      <option data-tk="repeat.monthly" value="monthly">Monthly</option>
+      <option data-tk="repeat.yearly" value="yearly">Yearly</option>
     </select>
 
     <div id="eventRepeatOptions" class="hidden mb-3 pl-3 border-l-2 border-ink/10 space-y-2">
       <div class="flex items-center gap-2 text-sm">
-        <span class="text-ink/60">Alle</span>
+        <span data-tk="repeat.every" class="text-ink/60">Every</span>
         <input id="eventRepeatInterval" type="number" min="1" value="1" class="w-16 rounded-lg border border-ink/15 px-2 py-1 text-sm" />
-        <span id="eventRepeatUnitLabel" class="text-ink/60">Wochen</span>
+        <span data-tk="repeat.unit.weeks" id="eventRepeatUnitLabel" class="text-ink/60">weeks</span>
       </div>
-      <label class="flex items-center gap-2 text-sm"><input type="radio" name="repeatEnd" value="never" checked /> Endet nie</label>
+      <label class="flex items-center gap-2 text-sm"><input type="radio" name="repeatEnd" value="never" checked /> <span data-tk="event.endsNever">Never ends</span></label>
       <label class="flex items-center gap-2 text-sm">
-        <input type="radio" name="repeatEnd" value="count" /> Endet nach
-        <input id="eventRepeatCount" type="number" min="1" value="10" class="w-16 rounded-lg border border-ink/15 px-2 py-1 text-sm" /> Malen
+        <input type="radio" name="repeatEnd" value="count" /> <span data-tk="event.endsAfter">Ends after</span>
+        <input id="eventRepeatCount" type="number" min="1" value="10" class="w-16 rounded-lg border border-ink/15 px-2 py-1 text-sm" /> <span data-tk="event.times">times</span>
       </label>
       <label class="flex items-center gap-2 text-sm">
-        <input type="radio" name="repeatEnd" value="until" /> Endet am
+        <input type="radio" name="repeatEnd" value="until" /> <span data-tk="event.endsOn">Ends on</span>
         <input id="eventRepeatUntil" type="date" class="rounded-lg border border-ink/15 px-2 py-1 text-sm" />
       </label>
     </div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Erinnerung</label>
+    <label data-tk="event.reminder" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Reminder</label>
     <select id="eventAlertSelect" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-5">
-      <option value="none">Keine</option>
-      <option value="0">Zum Zeitpunkt des Termins</option>
-      <option value="5">5 Minuten vorher</option>
-      <option value="15">15 Minuten vorher</option>
-      <option value="30">30 Minuten vorher</option>
-      <option value="60">1 Stunde vorher</option>
-      <option value="1440">1 Tag vorher</option>
+      <option data-tk="common.none" value="none">None</option>
+      <option data-tk="event.alertAtStart" value="0">At the time of the event</option>
+      <option data-tk="event.alert5" value="5">5 minutes before</option>
+      <option data-tk="event.alert15" value="15">15 minutes before</option>
+      <option data-tk="event.alert30" value="30">30 minutes before</option>
+      <option data-tk="event.alert60" value="60">1 hour before</option>
+      <option data-tk="event.alert1440" value="1440">1 day before</option>
     </select>
 
     <p id="addEventStatus" class="text-xs text-ink/40 mb-2"></p>
     <div class="flex justify-end gap-2">
-      <button id="cancelAddEvent" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-      <button id="saveAddEvent" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Im Kalender anlegen</button>
+      <button data-tk="common.cancel" id="cancelAddEvent" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+      <button id="saveAddEvent" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Create in calendar</button>
     </div>
   </div>
 </div>
 
 <!-- Event detail popover (opens with a long press on an event) -->
 <div id="eventDetailPopover" class="hidden fixed z-[300] bg-white rounded-xl border border-ink/10 shadow-xl p-4 pr-8 w-72">
-  <button id="closeEventDetailBtn" class="absolute top-2 right-2 w-6 h-6 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 grid place-items-center text-sm" aria-label="Schließen">×</button>
+  <button id="closeEventDetailBtn" class="absolute top-2 right-2 w-6 h-6 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 grid place-items-center text-sm" data-tk-attr="aria-label:common.close" aria-label="Close">×</button>
   <div id="eventDetailTitle" class="font-serif text-base mb-1"></div>
   <div id="eventDetailWhen" class="text-xs text-ink/50 mb-2"></div>
   <div id="eventDetailLocation" class="text-xs text-ink/70 mb-1"></div>
   <div id="eventDetailCalName" class="text-xs text-ink/50 mb-1"></div>
   <div id="eventDetailDescription" class="text-xs text-ink/70 whitespace-pre-line mb-2"></div>
   <div id="eventDetailLinks" class="hidden flex flex-wrap gap-1.5 mb-2"></div>
-  <a id="eventDetailCalendarLink" href="#" class="inline-block text-xs text-pine hover:underline font-medium">📅 In der Kalender-App anzeigen</a>
+  <a data-tk="event.showInCalendarApp" id="eventDetailCalendarLink" href="#" class="inline-block text-xs text-pine hover:underline font-medium">📅 Show in calendar app</a>
   <div class="mt-2 pt-2 border-t border-ink/10 flex items-center gap-3">
-    <button id="eventDetailEditBtn" class="text-xs text-pine hover:underline font-medium">Bearbeiten</button>
-    <button id="eventDetailDeleteBtn" class="text-xs text-red-500 hover:underline font-medium">Termin löschen</button>
+    <button data-tk="common.edit" id="eventDetailEditBtn" class="text-xs text-pine hover:underline font-medium">Edit</button>
+    <button data-tk="event.delete" id="eventDetailDeleteBtn" class="text-xs text-red-500 hover:underline font-medium">Delete event</button>
   </div>
   <p id="eventDetailDeleteStatus" class="text-xs text-ink/40 mt-1"></p>
 </div>
@@ -4852,7 +4852,7 @@ let lastIcsSync = null;
    because such web apps often don't reload their content by themselves)
    ========================================================== */
 // Current version – comes from src/version.txt (filled in by src/build.js); pb_hooks/pinn-system.js and pinn-wartung.sh read it here
-const APP_VERSION = '1.112.1';
+const APP_VERSION = '1.113.0';
 
 /* ==========================================================
    Settings & account: two columns of equal height (landscape from tablet width)
@@ -4980,110 +4980,110 @@ const APP_VERSION = '1.112.1';
 <!-- App parts under pb_public/js/ (classic scripts without a build step, order matters).
      ausblick.js must come last – it starts the app (bootApp). New file: add its line here and its name
      in pinn-setup.sh – src/build.js fills in the list of the start check (PINN_APP_PARTS) by itself. -->
-<script src="js/grundlagen.js?v=1.112.1"></script>
-<script src="js/popups.js?v=1.112.1"></script>
-<script src="js/verbindung.js?v=1.112.1"></script>
-<script src="js/benutzer.js?v=1.112.1"></script>
-<script src="js/mitteilungen.js?v=1.112.1"></script>
-<script src="js/serverzugriff.js?v=1.112.1"></script>
-<script src="js/tastatur.js?v=1.112.1"></script>
-<script src="js/anmeldemaske.js?v=1.112.1"></script>
-<script src="js/dashboard.js?v=1.112.1"></script>
-<script src="js/dashboardhintergrund.js?v=1.112.1"></script>
-<script src="js/profilauswahl.js?v=1.112.1"></script>
-<script src="js/pineingabe.js?v=1.112.1"></script>
-<script src="js/dashboardsitzung.js?v=1.112.1"></script>
-<script src="js/dashboardkonto.js?v=1.112.1"></script>
-<script src="js/familienverwalten.js?v=1.112.1"></script>
-<script src="js/einrichten.js?v=1.112.1"></script>
-<script src="js/exportieren.js?v=1.112.1"></script>
-<script src="js/hauptadminseite.js?v=1.112.1"></script>
-<script src="js/anmeldung.js?v=1.112.1"></script>
-<script src="js/konto.js?v=1.112.1"></script>
-<script src="js/profilverwaltung.js?v=1.112.1"></script>
-<script src="js/zustand.js?v=1.112.1"></script>
-<script src="js/bedienzustand.js?v=1.112.1"></script>
-<script src="js/rezeptbilder.js?v=1.112.1"></script>
-<script src="js/zusammenfuehren.js?v=1.112.1"></script>
-<script src="js/speichern.js?v=1.112.1"></script>
-<script src="js/design.js?v=1.112.1"></script>
-<script src="js/sprache.js?v=1.112.1"></script>
-<script src="js/uebersicht.js?v=1.112.1"></script>
-<script src="js/familienkachel.js?v=1.112.1"></script>
-<script src="js/wobistdu.js?v=1.112.1"></script>
-<script src="js/geburtstagsfeier.js?v=1.112.1"></script>
-<script src="js/wetterkachel.js?v=1.112.1"></script>
-<script src="js/geburtstage.js?v=1.112.1"></script>
-<script src="js/uebersichteinstellungen.js?v=1.112.1"></script>
-<script src="js/familiensync.js?v=1.112.1"></script>
-<script src="js/bereiche.js?v=1.112.1"></script>
-<script src="js/kalenderquellen.js?v=1.112.1"></script>
-<script src="js/icsparser.js?v=1.112.1"></script>
-<script src="js/zeitleiste.js?v=1.112.1"></script>
-<script src="js/termindetails.js?v=1.112.1"></script>
-<script src="js/kalenderdatei.js?v=1.112.1"></script>
-<script src="js/wetter.js?v=1.112.1"></script>
-<script src="js/wohnort.js?v=1.112.1"></script>
-<script src="js/feiertage.js?v=1.112.1"></script>
-<script src="js/muellkalender.js?v=1.112.1"></script>
-<script src="js/mitglieder.js?v=1.112.1"></script>
-<script src="js/profilbild.js?v=1.112.1"></script>
-<script src="js/mitglied.js?v=1.112.1"></script>
-<script src="js/kinderseite.js?v=1.112.1"></script>
-<script src="js/kinderroutine.js?v=1.112.1"></script>
-<script src="js/sterne.js?v=1.112.1"></script>
-<script src="js/kalenderansicht.js?v=1.112.1"></script>
-<script src="js/essenplanen.js?v=1.112.1"></script>
-<script src="js/rezeptparser.js?v=1.112.1"></script>
-<script src="js/rezeptdialog.js?v=1.112.1"></script>
-<script src="js/rezeptbild.js?v=1.112.1"></script>
-<script src="js/rezeptmengen.js?v=1.112.1"></script>
-<script src="js/einkauf.js?v=1.112.1"></script>
-<script src="js/einkaufslisten.js?v=1.112.1"></script>
-<script src="js/einkaufseingabe.js?v=1.112.1"></script>
-<script src="js/rezepte.js?v=1.112.1"></script>
-<script src="js/offline.js?v=1.112.1"></script>
-<script src="js/aufgabenextras.js?v=1.112.1"></script>
-<script src="js/appbadge.js?v=1.112.1"></script>
-<script src="js/reisen.js?v=1.112.1"></script>
-<script src="js/aufgabendaten.js?v=1.112.1"></script>
-<script src="js/haushalt.js?v=1.112.1"></script>
-<script src="js/reihum.js?v=1.112.1"></script>
-<script src="js/aufgaben.js?v=1.112.1"></script>
-<script src="js/smarthome.js?v=1.112.1"></script>
-<script src="js/sprachsteuerung.js?v=1.112.1"></script>
-<script src="js/termine.js?v=1.112.1"></script>
-<script src="js/ansichten.js?v=1.112.1"></script>
-<script src="js/versionspruefung.js?v=1.112.1"></script>
-<script src="js/sicherungen.js?v=1.112.1"></script>
-<script src="js/geraete.js?v=1.112.1"></script>
-<script src="js/fehlerprotokoll.js?v=1.112.1"></script>
-<script src="js/versionslog.js?v=1.112.1"></script>
-<script src="js/einstellungen.js?v=1.112.1"></script>
-<script src="js/kalenderkonto.js?v=1.112.1"></script>
-<script src="js/finanzen.js?v=1.112.1"></script>
-<script src="js/kassen.js?v=1.112.1"></script>
-<script src="js/vorrat.js?v=1.112.1"></script>
-<script src="js/vorrat2.js?v=1.112.1"></script>
-<script src="js/sparen.js?v=1.112.1"></script>
-<script src="js/vertraege.js?v=1.112.1"></script>
-<script src="js/fahrzeuge.js?v=1.112.1"></script>
-<script src="js/zuhause.js?v=1.112.1"></script>
-<script src="js/dokumente.js?v=1.112.1"></script>
-<script src="js/pdflesen.js?v=1.112.1"></script>
-<script src="js/appstart.js?v=1.112.1"></script>
-<script src="js/pinnwand.js?v=1.112.1"></script>
-<script src="js/listen.js?v=1.112.1"></script>
-<script src="js/familie.js?v=1.112.1"></script>
-<script src="js/hinweise.js?v=1.112.1"></script>
-<script src="js/ausblick.js?v=1.112.1"></script>
+<script src="js/grundlagen.js?v=1.113.0"></script>
+<script src="js/popups.js?v=1.113.0"></script>
+<script src="js/verbindung.js?v=1.113.0"></script>
+<script src="js/benutzer.js?v=1.113.0"></script>
+<script src="js/mitteilungen.js?v=1.113.0"></script>
+<script src="js/serverzugriff.js?v=1.113.0"></script>
+<script src="js/tastatur.js?v=1.113.0"></script>
+<script src="js/anmeldemaske.js?v=1.113.0"></script>
+<script src="js/dashboard.js?v=1.113.0"></script>
+<script src="js/dashboardhintergrund.js?v=1.113.0"></script>
+<script src="js/profilauswahl.js?v=1.113.0"></script>
+<script src="js/pineingabe.js?v=1.113.0"></script>
+<script src="js/dashboardsitzung.js?v=1.113.0"></script>
+<script src="js/dashboardkonto.js?v=1.113.0"></script>
+<script src="js/familienverwalten.js?v=1.113.0"></script>
+<script src="js/einrichten.js?v=1.113.0"></script>
+<script src="js/exportieren.js?v=1.113.0"></script>
+<script src="js/hauptadminseite.js?v=1.113.0"></script>
+<script src="js/anmeldung.js?v=1.113.0"></script>
+<script src="js/konto.js?v=1.113.0"></script>
+<script src="js/profilverwaltung.js?v=1.113.0"></script>
+<script src="js/zustand.js?v=1.113.0"></script>
+<script src="js/bedienzustand.js?v=1.113.0"></script>
+<script src="js/rezeptbilder.js?v=1.113.0"></script>
+<script src="js/zusammenfuehren.js?v=1.113.0"></script>
+<script src="js/speichern.js?v=1.113.0"></script>
+<script src="js/design.js?v=1.113.0"></script>
+<script src="js/sprache.js?v=1.113.0"></script>
+<script src="js/uebersicht.js?v=1.113.0"></script>
+<script src="js/familienkachel.js?v=1.113.0"></script>
+<script src="js/wobistdu.js?v=1.113.0"></script>
+<script src="js/geburtstagsfeier.js?v=1.113.0"></script>
+<script src="js/wetterkachel.js?v=1.113.0"></script>
+<script src="js/geburtstage.js?v=1.113.0"></script>
+<script src="js/uebersichteinstellungen.js?v=1.113.0"></script>
+<script src="js/familiensync.js?v=1.113.0"></script>
+<script src="js/bereiche.js?v=1.113.0"></script>
+<script src="js/kalenderquellen.js?v=1.113.0"></script>
+<script src="js/icsparser.js?v=1.113.0"></script>
+<script src="js/zeitleiste.js?v=1.113.0"></script>
+<script src="js/termindetails.js?v=1.113.0"></script>
+<script src="js/kalenderdatei.js?v=1.113.0"></script>
+<script src="js/wetter.js?v=1.113.0"></script>
+<script src="js/wohnort.js?v=1.113.0"></script>
+<script src="js/feiertage.js?v=1.113.0"></script>
+<script src="js/muellkalender.js?v=1.113.0"></script>
+<script src="js/mitglieder.js?v=1.113.0"></script>
+<script src="js/profilbild.js?v=1.113.0"></script>
+<script src="js/mitglied.js?v=1.113.0"></script>
+<script src="js/kinderseite.js?v=1.113.0"></script>
+<script src="js/kinderroutine.js?v=1.113.0"></script>
+<script src="js/sterne.js?v=1.113.0"></script>
+<script src="js/kalenderansicht.js?v=1.113.0"></script>
+<script src="js/essenplanen.js?v=1.113.0"></script>
+<script src="js/rezeptparser.js?v=1.113.0"></script>
+<script src="js/rezeptdialog.js?v=1.113.0"></script>
+<script src="js/rezeptbild.js?v=1.113.0"></script>
+<script src="js/rezeptmengen.js?v=1.113.0"></script>
+<script src="js/einkauf.js?v=1.113.0"></script>
+<script src="js/einkaufslisten.js?v=1.113.0"></script>
+<script src="js/einkaufseingabe.js?v=1.113.0"></script>
+<script src="js/rezepte.js?v=1.113.0"></script>
+<script src="js/offline.js?v=1.113.0"></script>
+<script src="js/aufgabenextras.js?v=1.113.0"></script>
+<script src="js/appbadge.js?v=1.113.0"></script>
+<script src="js/reisen.js?v=1.113.0"></script>
+<script src="js/aufgabendaten.js?v=1.113.0"></script>
+<script src="js/haushalt.js?v=1.113.0"></script>
+<script src="js/reihum.js?v=1.113.0"></script>
+<script src="js/aufgaben.js?v=1.113.0"></script>
+<script src="js/smarthome.js?v=1.113.0"></script>
+<script src="js/sprachsteuerung.js?v=1.113.0"></script>
+<script src="js/termine.js?v=1.113.0"></script>
+<script src="js/ansichten.js?v=1.113.0"></script>
+<script src="js/versionspruefung.js?v=1.113.0"></script>
+<script src="js/sicherungen.js?v=1.113.0"></script>
+<script src="js/geraete.js?v=1.113.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.113.0"></script>
+<script src="js/versionslog.js?v=1.113.0"></script>
+<script src="js/einstellungen.js?v=1.113.0"></script>
+<script src="js/kalenderkonto.js?v=1.113.0"></script>
+<script src="js/finanzen.js?v=1.113.0"></script>
+<script src="js/kassen.js?v=1.113.0"></script>
+<script src="js/vorrat.js?v=1.113.0"></script>
+<script src="js/vorrat2.js?v=1.113.0"></script>
+<script src="js/sparen.js?v=1.113.0"></script>
+<script src="js/vertraege.js?v=1.113.0"></script>
+<script src="js/fahrzeuge.js?v=1.113.0"></script>
+<script src="js/zuhause.js?v=1.113.0"></script>
+<script src="js/dokumente.js?v=1.113.0"></script>
+<script src="js/pdflesen.js?v=1.113.0"></script>
+<script src="js/appstart.js?v=1.113.0"></script>
+<script src="js/pinnwand.js?v=1.113.0"></script>
+<script src="js/listen.js?v=1.113.0"></script>
+<script src="js/familie.js?v=1.113.0"></script>
+<script src="js/hinweise.js?v=1.113.0"></script>
+<script src="js/ausblick.js?v=1.113.0"></script>
 
 <!-- ==========================================================
      Changelog as a terminal (Settings → System → Versions-Log)
      Classes "fixed inset-0": the global keyboard logic fits the overlay to the visible
      area automatically, so the input line is never hidden by the keyboard.
      ========================================================== -->
-<link rel="stylesheet" href="css/terminal.css?v=1.112.1">
+<link rel="stylesheet" href="css/terminal.css?v=1.113.0">
 
 <div id="changelogTerminal" class="hidden fixed inset-0" data-no-term role="dialog" aria-modal="true" aria-label="Versions-Log">
   <div class="term-window" id="changelogTermWindow">
@@ -5111,6 +5111,6 @@ const APP_VERSION = '1.112.1';
     </div>
   </div>
 </div>
-<link rel="stylesheet" href="css/glocke.css?v=1.112.1">
+<link rel="stylesheet" href="css/glocke.css?v=1.113.0">
 </body>
 </html>

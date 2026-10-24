@@ -14,14 +14,14 @@ function taskRemindValid(v) { return /^([01]\d|2[0-3]):[0-5]\d$/.test(String(v |
 function taskRemindHtml(prefix, value, opts = {}) {
   const on = taskRemindValid(value);
   const time = on ? value : (opts.def || '09:00');
-  const label = opts.label || '🔔 Erinnerung per Push';
+  const label = opts.label || tk('tasks.remindPush');
   return `<div class="task-remind">
     <label class="flex items-center gap-2 text-sm cursor-pointer select-none">
       <input id="${prefix}RemindOn" type="checkbox" class="w-4 h-4"${on ? ' checked' : ''} />
       <span>${escapeHtml(label)}</span>
     </label>
     <div id="${prefix}RemindWrap" class="${on ? '' : 'hidden '}flex items-center gap-2 mt-2 pl-6 flex-wrap">
-      <span class="text-xs text-ink/50">am Fälligkeitstag um</span>
+      <span class="text-xs text-ink/50">${escapeHtml(tk('tasks.remindOnDue'))}</span>
       <input id="${prefix}RemindTime" type="time" value="${escapeHtml(time)}" class="rounded-lg border border-ink/15 px-2 py-1.5 text-sm" />
     </div>
     ${opts.hint ? `<p class="text-[11px] text-ink/40 mt-1">${escapeHtml(opts.hint)}</p>` : ''}

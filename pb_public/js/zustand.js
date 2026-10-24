@@ -12,18 +12,20 @@ const PALETTE = ['#2F4B41', '#B9842E', '#7A5C8E', '#B85C5C', '#3E7CA6', '#5C8A3E
 const ROOM_ICONS = ['🛏️', '🛁', '🍳', '🛋️', '🚪', '📚', '🧸', '🚗', '🌳', '🧺', '🪜', '🏠'];
 // Common waste types in Germany - "keywords" are used to recognise collection dates by their title in the
 // (already synced) calendar (e.g. a title like "Gelbe Tonne" from a
-// municipal waste collection calendar subscription).
+// municipal waste collection calendar subscription). label = text key (display), taskLabel = German task title (data,
+// matches the tasks the server creates).
 const WASTE_TYPES = [
-  { id: 'restmuell', label: 'Restmüll', icon: '🗑️', taskLabel: 'Restmüll', keywords: ['restmüll', 'restabfall', 'restmülltonne', 'hausmüll', 'graue tonne', 'schwarze tonne', 'rest-'] },
-  { id: 'biomuell', label: 'Biomüll', icon: '🍂', taskLabel: 'Biomüll', keywords: ['biomüll', 'bioabfall', 'biotonne', 'bio-tonne', 'braune tonne', 'grünabfall', 'kompost'] },
-  { id: 'papier', label: 'Papier/Pappe', icon: '📦', taskLabel: 'Papiermüll', keywords: ['papier', 'pappe', 'papiertonne', 'blaue tonne', 'altpapier', 'ppk'] },
-  { id: 'gelbersack', label: 'Gelber Sack / Verpackungen', icon: '♻️', taskLabel: 'Gelber Sack', keywords: ['gelber sack', 'gelbe tonne', 'gelbe säcke', 'verpackung', 'wertstoff', 'leichtverpackung', 'lvp'] },
-  { id: 'glas', label: 'Glas', icon: '🍾', taskLabel: 'Altglas', keywords: ['altglas', 'glas'] },
+  { id: 'restmuell', get label() { return tk('waste.type.restmuell'); }, icon: '🗑️', taskLabel: 'Restmüll', keywords: ['restmüll', 'restabfall', 'restmülltonne', 'hausmüll', 'graue tonne', 'schwarze tonne', 'rest-'] },
+  { id: 'biomuell', get label() { return tk('waste.type.biomuell'); }, icon: '🍂', taskLabel: 'Biomüll', keywords: ['biomüll', 'bioabfall', 'biotonne', 'bio-tonne', 'braune tonne', 'grünabfall', 'kompost'] },
+  { id: 'papier', get label() { return tk('waste.type.papier'); }, icon: '📦', taskLabel: 'Papiermüll', keywords: ['papier', 'pappe', 'papiertonne', 'blaue tonne', 'altpapier', 'ppk'] },
+  { id: 'gelbersack', get label() { return tk('waste.type.gelbersack'); }, icon: '♻️', taskLabel: 'Gelber Sack', keywords: ['gelber sack', 'gelbe tonne', 'gelbe säcke', 'verpackung', 'wertstoff', 'leichtverpackung', 'lvp'] },
+  { id: 'glas', get label() { return tk('waste.type.glas'); }, icon: '🍾', taskLabel: 'Altglas', keywords: ['altglas', 'glas'] },
 ];
 function wasteTypeById(id) { return WASTE_TYPES.find(w => w.id === id); }
 const WEEKDAYS = [
-  { id: 'mo', label: 'Mo' }, { id: 'di', label: 'Di' }, { id: 'mi', label: 'Mi' },
-  { id: 'do', label: 'Do' }, { id: 'fr', label: 'Fr' }, { id: 'sa', label: 'Sa' }, { id: 'so', label: 'So' },
+  { id: 'mo', get label() { return tk('weekday.mo'); } }, { id: 'di', get label() { return tk('weekday.di'); } }, { id: 'mi', get label() { return tk('weekday.mi'); } },
+  { id: 'do', get label() { return tk('weekday.do'); } }, { id: 'fr', get label() { return tk('weekday.fr'); } }, { id: 'sa', get label() { return tk('weekday.sa'); } },
+  { id: 'so', get label() { return tk('weekday.so'); } },
 ];
 function cleaningCategoryById(id) { return cleaningCategories.find(c => c.id === id); }
 function kitchenToolById(id) { return kitchenTools.find(t => t.id === id); }

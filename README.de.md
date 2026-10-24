@@ -99,6 +99,16 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 und 🇰🇷 한국어**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.113.0
+
+**Text-Schlüssel, Teil 3: Kalender, Aufgaben und Haushalt**
+
+- Der **Kalender** (Tag, Woche, Monat, Jahr und Liste), das Termin-Popup und die Termin-Details, die **Aufgaben** und die **Haushalt**-Seite mit Räumen, Mülleimern, Reinigungen, „Reihum verteilen“ und „Wer macht wie viel?“ holen ihre Texte jetzt aus den Sprachdateien in `pb_public/i18n/` – in allen neun Sprachen und als WG. An der Bedienung ändert sich nichts.
+- Wochentage, Monatsnamen und Datumsangaben im Kalender, bei Feiertagen und Aufgaben richten sich jetzt nach dem Format der eingestellten Sprache.
+- Kleinigkeiten: „Alle [n] Wochen“ in der Termin-Wiederholung, „Keine“ und „Bis“ stehen jetzt in jeder Sprache richtig; Zahlen wie „3 Aufgaben angelegt“ oder „1 erledigt“ stehen in der richtigen Einzahl oder Mehrzahl.
+- Als Nächstes: Kalender-Einstellungen (iCloud/Google, Müllkalender, Zuhause) und Smarthome folgen mit 1.113.1.
+- Geändert: nur App-Dateien (`index.html`, `js/kalenderansicht.js`, `js/termine.js`, `js/termindetails.js`, `js/kalenderquellen.js`, `js/kalenderdatei.js`, `js/feiertage.js`, `js/muellkalender.js`, `js/aufgaben.js`, `js/aufgabendaten.js`, `js/aufgabenextras.js`, `js/haushalt.js`, `js/reihum.js`, `js/zustand.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien in `i18n/` und `lang/`) – am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
+
 ## Neu in 1.112.1
 
 **Text-Schlüssel, Teil 2: Konto, Geräte, Sicherungen und Fehlerprotokoll**
@@ -108,17 +118,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Kleinigkeiten: Die Sperrzeit nach falschen Passwörtern im Geräte-Popup endet nicht mehr mit einem doppelten Punkt, Dashboard-Geräte zeigen das Datum im Format deiner Sprache, und die Rollen „Admin“, „Mitglied“ und „Gast“ sind überall übersetzt.
 - Für Mitwirkende: Schlüssel, die mit `maint.` beginnen, bekommen keine WG-Variante – Sicherungen und Updates betreffen immer alle Familien auf dem Server.
 - Geändert: nur App-Dateien (`index.html`, `js/konto.js`, `js/profilverwaltung.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/dashboardsitzung.js`, `js/mitteilungen.js`, `js/geraete.js`, `js/fehlerprotokoll.js`, `js/sicherungen.js`, `js/speichern.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien in `i18n/` und `lang/`) und `.github/` (CONTRIBUTING.md, `i18n-keys.js`) – am Server ändert sich nichts. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
-
-## Neu in 1.112.0
-
-**Text-Schlüssel, Teil 1: Rahmen, Anmeldung und Einstellungen**
-
-- Anmeldung, Hauptadmin, Familien-Dashboard, Menü, Kopfzeile, Suche und die **ganze Einstellungen-Seite** holen ihre Texte jetzt aus den Sprachdateien in `pb_public/i18n/` – in allen neun Sprachen und auch als WG. An der Bedienung ändert sich nichts.
-- Kleinigkeiten nebenbei: Die Zahl der Kontakte mit Geburtstag und der Hinweis auf Mitglieder ohne Profil stehen jetzt in jeder Sprache in der richtigen Einzahl oder Mehrzahl, und Beschriftungen für Bildschirmleser (z. B. „Menü öffnen/schließen“) werden ebenfalls übersetzt.
-- Für Mitwirkende: Texte im HTML werden einmal eingesetzt, direkt bevor die App-Skripte starten – Skripte dürfen sie danach ändern. `i18n-keys.js` behält jetzt Emojis und Zeichen am Anfang oder Ende eines Textes. Konto, Geräte, Sicherungen und Fehlerprotokoll folgen im nächsten Schritt.
-- Geändert: nur App-Dateien (`index.html`, `js/sprachen.js`, `js/anmeldemaske.js`, `js/anmeldung.js`, `js/hauptadminseite.js`, `js/profilauswahl.js`, `js/pineingabe.js`, `js/verbindung.js`, `js/zustand.js`, `js/ansichten.js`, `js/einstellungen.js`, `js/uebersichteinstellungen.js`, `js/versionslog.js`, alle Sprachdateien in `i18n/` und `lang/`) und `.github/` (CONTRIBUTING.md, `i18n-keys.js`) – am Server ändert sich nichts. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
-
-Ältere Versionen findest du unter [Releases](https://github.com/pinn-shost/pinn/releases).
 
 ## So funktioniert’s
 
@@ -148,7 +147,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.112.1` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.113.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

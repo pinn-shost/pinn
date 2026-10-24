@@ -5,20 +5,20 @@
       <div class="px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
         <div id="calendarTopRow" class="flex items-center justify-between mb-3 gap-3">
           <div class="flex items-center gap-2">
-            <button id="prevPeriod" class="w-9 h-9 rounded-full border border-ink/15 hover:bg-pine hover:text-white hover:border-pine transition grid place-items-center" aria-label="Zurück">‹</button>
-            <button id="todayBtn" class="px-3 h-9 rounded-full border border-ink/15 text-sm hover:bg-pine hover:text-white hover:border-pine transition">Heute</button>
-            <button id="nextPeriod" class="w-9 h-9 rounded-full border border-ink/15 hover:bg-pine hover:text-white hover:border-pine transition grid place-items-center" aria-label="Weiter">›</button>
+            <button id="prevPeriod" class="w-9 h-9 rounded-full border border-ink/15 hover:bg-pine hover:text-white hover:border-pine transition grid place-items-center" data-tk-attr="aria-label:cal.back" aria-label="Back">‹</button>
+            <button data-tk="common.today" id="todayBtn" class="px-3 h-9 rounded-full border border-ink/15 text-sm hover:bg-pine hover:text-white hover:border-pine transition">Today</button>
+            <button id="nextPeriod" class="w-9 h-9 rounded-full border border-ink/15 hover:bg-pine hover:text-white hover:border-pine transition grid place-items-center" data-tk-attr="aria-label:cal.next" aria-label="Next">›</button>
           </div>
           <h2 id="periodLabel" class="font-serif text-lg text-ink flex-1 min-w-0 text-center truncate px-1"></h2>
           <div id="calendarTopRight" class="flex items-center gap-2 shrink-0">
             <div id="calendarModeToggle" class="hidden items-center gap-1 bg-ink/5 rounded-full p-1 text-xs shrink-0">
-              <button type="button" data-mode="day" class="mode-btn px-2.5 py-1 rounded-full transition">Tag</button>
-              <button type="button" data-mode="week" class="mode-btn px-2.5 py-1 rounded-full transition">Woche</button>
-              <button type="button" data-mode="month" class="mode-btn termine-only-mode px-2.5 py-1 rounded-full transition">Monat</button>
-              <button type="button" data-mode="year" class="mode-btn termine-only-mode px-2.5 py-1 rounded-full transition">Jahr</button>
+              <button data-tk="cal.day" type="button" data-mode="day" class="mode-btn px-2.5 py-1 rounded-full transition">Day</button>
+              <button data-tk="cal.week" type="button" data-mode="week" class="mode-btn px-2.5 py-1 rounded-full transition">Week</button>
+              <button data-tk="cal.month" type="button" data-mode="month" class="mode-btn termine-only-mode px-2.5 py-1 rounded-full transition">Month</button>
+              <button data-tk="cal.year" type="button" data-mode="year" class="mode-btn termine-only-mode px-2.5 py-1 rounded-full transition">Year</button>
             </div>
-            <button id="dayListToggleBtn" type="button" class="w-9 h-9 rounded-full border border-ink/15 hover:bg-pine hover:text-white hover:border-pine transition grid place-items-center text-sm" title="Liste/Zeitleiste umschalten" aria-label="Liste/Zeitleiste umschalten">📋</button>
-            <button id="openAddEventModalBtn" class="w-9 h-9 rounded-full bg-pine text-white hover:bg-pine/90 transition grid place-items-center text-lg leading-none" title="Termin hinzufügen" aria-label="Termin hinzufügen">+</button>
+            <button id="dayListToggleBtn" type="button" class="w-9 h-9 rounded-full border border-ink/15 hover:bg-pine hover:text-white hover:border-pine transition grid place-items-center text-sm" data-tk-attr="title:cal.toggleList;aria-label:cal.toggleList" title="Toggle list/timeline" aria-label="Toggle list/timeline">📋</button>
+            <button id="openAddEventModalBtn" class="w-9 h-9 rounded-full bg-pine text-white hover:bg-pine/90 transition grid place-items-center text-lg leading-none" data-tk-attr="title:cal.addEvent;aria-label:cal.addEvent" title="Add event" aria-label="Add event">+</button>
           </div>
         </div>
 

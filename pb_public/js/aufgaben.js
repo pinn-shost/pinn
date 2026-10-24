@@ -44,14 +44,14 @@ function renderTasks() {
   */
   if (!aufgabenLoaded) {
     count.textContent = '';
-    empty.textContent = 'Aufgaben werden geladen …';
+    empty.textContent = tk('tasks.loading');
     empty.classList.remove('hidden');
     return;
   }
   // Counter: done / all displayed tasks (e.g. 3/8)
   const doneCount = visibleItems.filter(t => t.done).length;
   count.textContent = visibleItems.length ? `${doneCount}/${visibleItems.length}` : '';
-  empty.textContent = 'Noch keine Aufgaben - füge eine hinzu.';
+  empty.textContent = tk('tasks.empty');
   empty.classList.toggle('hidden', visibleItems.length > 0);
 
   sorted.forEach(task => {
@@ -78,27 +78,27 @@ function renderTasks() {
       <div class="w-1.5 shrink-0 flex flex-col">${barSegments}</div>
       <div class="flex-1 min-w-0 px-3 py-2.5">
         <div class="flex items-start justify-between gap-2">
-          <button class="task-toggle-done shrink-0 w-5 h-5 rounded-full border-2 mt-0.5 ${task.done ? 'bg-pine border-pine' : 'border-ink/25'}" data-id="${task.id}" aria-label="Als erledigt markieren"></button>
+          <button class="task-toggle-done shrink-0 w-5 h-5 rounded-full border-2 mt-0.5 ${task.done ? 'bg-pine border-pine' : 'border-ink/25'}" data-id="${task.id}" aria-label="${escapeHtml(tk('tasks.markDone'))}"></button>
           <div class="flex-1 min-w-0">
             <div class="font-serif text-base truncate ${task.done ? 'line-through' : ''}">${escapeHtml(displayTitle)}</div>
             ${notesDisplay ? `<div class="text-xs text-ink/60 mt-0.5 whitespace-pre-line">${escapeHtml(notesDisplay)}</div>` : ''}
             ${shoppingPlanBadgeHtml(task)}
-            ${smartAuto ? `<div class="text-[11px] text-ink/50 mt-1.5">⏱ ${escapeHtml(smartAuto.device.icon)} ${escapeHtml(smartAuto.action.label)} startet automatisch um ${escapeHtml(smartAuto.time)} Uhr</div>` : ''}
+            ${smartAuto ? `<div class="text-[11px] text-ink/50 mt-1.5">${escapeHtml(tk('tasks.autoStarts', { icon: smartAuto.device.icon, action: smartAuto.action.label, time: smartAuto.time }))}</div>` : ''}
             ${taskAct ? `<div class="flex flex-wrap gap-1.5 mt-2"><button type="button" class="task-act-btn sh-run">${escapeHtml(taskAct.label)}</button></div>` : ''}
             ${smartStart.length ? `<div class="flex flex-wrap gap-1.5 mt-2">${smartStart.map(x => `<button type="button" class="smart-run-btn sh-run" data-action="${escapeHtml(x.action.id)}">▶ ${escapeHtml(x.device.icon)} ${escapeHtml(x.action.label)}</button>`).join('')}</div>` : ''}
             <div class="text-[11px] text-ink/40 mt-1.5">
-              ${assignees.map(m => escapeHtml(memberLabel(m))).join(', ') || 'Niemandem zugewiesen'}
+              ${assignees.map(m => escapeHtml(memberLabel(m))).join(', ') || escapeHtml(tk('tasks.unassigned'))}
             </div>
-            ${task.dueDate ? `<div class="text-[11px] text-ink/50 font-medium">Fällig: ${task.hasTimeWindow ? fmtDateTime(task.dueDate, null) + ', ' + task.fromTime + '–' + task.toTime + ' Uhr' : fmtDateTime(task.dueDate, null)}</div>` : ''}
-            ${task.remindAt && !task.done ? `<div class="text-[11px] text-ink/45">🔔 Erinnerung um ${escapeHtml(task.remindAt)} Uhr</div>` : ''}
-            ${task.pending && outboxBlocked ? `<div class="text-[10px] text-mustard font-medium mt-0.5">${PENDING_MARK}wird nachgetragen, sobald wieder Verbindung besteht</div>` : ''}
+            ${task.dueDate ? `<div class="text-[11px] text-ink/50 font-medium">${escapeHtml(tk('tasks.due', { date: task.hasTimeWindow ? fmtDateTime(task.dueDate, null) + ', ' + tk('cal.timeRange', { from: task.fromTime, to: task.toTime }) : fmtDateTime(task.dueDate, null) }))}</div>` : ''}
+            ${task.remindAt && !task.done ? `<div class="text-[11px] text-ink/45">${escapeHtml(tk('tasks.remindAt', { time: task.remindAt }))}</div>` : ''}
+            ${task.pending && outboxBlocked ? `<div class="text-[10px] text-mustard font-medium mt-0.5">${PENDING_MARK}${escapeHtml(tk('tasks.pendingSync'))}</div>` : ''}
           </div>
           <div class="flex items-center gap-2 shrink-0">
-            <button class="edit-task text-ink/30 hover:text-pine text-xs" data-id="${task.id}">Bearbeiten</button>
+            <button class="edit-task text-ink/30 hover:text-pine text-xs" data-id="${task.id}">${escapeHtml(tk('common.edit'))}</button>
             <button class="del-task text-ink/30 hover:text-red-500 text-xs" data-id="${task.id}">×</button>
           </div>
         </div>
-        ${missCount > 0 ? `<div class="flex justify-end mt-1.5"><span class="px-2.5 py-1 rounded-lg border border-ink/15 text-[11px] text-ink/60">${missCount}x nicht erledigt</span></div>` : ''}
+        ${missCount > 0 ? `<div class="flex justify-end mt-1.5"><span class="px-2.5 py-1 rounded-lg border border-ink/15 text-[11px] text-ink/60">${escapeHtml(tk('tasks.missed', { n: missCount }))}</span></div>` : ''}
       </div>
     `;
     if (pendingTaskToggles.has(task.id)) {
@@ -124,7 +124,7 @@ function renderTasks() {
     }
     card.querySelector('.edit-task').addEventListener('click', () => openEditTaskModal(task));
     card.querySelector('.del-task').addEventListener('click', async () => {
-      if (!confirm(`"${task.title}" wirklich löschen?`)) return;
+      if (!confirm(tk('tasks.confirmDelete', { title: task.title }))) return;
       // Remove right away; the deletion on the NAS is submitted (possibly later)
       queueTaskDelete(task.id);
       removeShoppingPlan(task.id);
@@ -176,8 +176,8 @@ function showAllTasksDoneCelebration() {
   box.className = 'done-celebrate';
   box.innerHTML = `<div class="done-celebrate-box">
     <div class="done-celebrate-icon">🎉</div>
-    <div class="font-serif text-2xl mt-2">Alles erledigt${me ? ', ' + escapeHtml(me.name) : ''}!</div>
-    <div class="text-sm text-ink/60 mt-1">Du hast alle Aufgaben bis jetzt geschafft.</div>
+    <div class="font-serif text-2xl mt-2">${escapeHtml(me ? tk('tasks.allDoneName', { name: me.name }) : tk('tasks.allDone'))}</div>
+    <div class="text-sm text-ink/60 mt-1">${escapeHtml(tk('tasks.allDoneSub'))}</div>
   </div>`;
   const dismiss = () => {
     if (!box.isConnected) return;
@@ -286,7 +286,7 @@ function renderTaskAssigneeOptions() {
 
   const allRow = document.createElement('label');
   allRow.className = 'flex items-center gap-2 text-sm px-2 py-1.5 rounded-lg hover:bg-ink/5 cursor-pointer';
-  allRow.innerHTML = `<input type="checkbox" class="task-assignee-checkbox" value="${TASK_ALL}" ${pendingTaskAssignees.includes(TASK_ALL) ? 'checked' : ''} /><span class="font-medium">Alle</span>`;
+  allRow.innerHTML = `<input type="checkbox" class="task-assignee-checkbox" value="${TASK_ALL}" ${pendingTaskAssignees.includes(TASK_ALL) ? 'checked' : ''} /><span class="font-medium">${escapeHtml(tk('tasks.everyone'))}</span>`;
   wrap.appendChild(allRow);
 
   members.forEach(m => {
@@ -318,8 +318,8 @@ function openTaskModal() {
   editingTaskId = null;
   document.getElementById('taskDoneBtn').classList.add('hidden');
   setTaskShoppingMode(false);
-  document.getElementById('taskModalTitle').textContent = 'Neue Aufgabe';
-  document.getElementById('saveTask').textContent = 'Speichern';
+  document.getElementById('taskModalTitle').textContent = tk('tasks.new');
+  document.getElementById('saveTask').textContent = tk('common.save');
   document.getElementById('taskTitleInput').value = '';
   document.getElementById('taskNotesInput').value = '';
   document.getElementById('taskDueDate').value = isoDate(new Date());
@@ -361,13 +361,13 @@ function assigneeIdsFromNotes(notes) {
 function openEditTaskModal(task) {
   const a = task ? aufgaben.find(x => x.id === task.id) : null;
   if (!a) {
-    alert('Diese Aufgabe gibt es nicht mehr.');
+    alert(tk('tasks.gone'));
     return;
   }
   editingTaskId = a.id;
   document.getElementById('taskDoneBtn').classList.toggle('hidden', !!a.done);
-  document.getElementById('taskModalTitle').textContent = 'Aufgabe bearbeiten';
-  document.getElementById('saveTask').textContent = 'Änderungen speichern';
+  document.getElementById('taskModalTitle').textContent = tk('tasks.edit');
+  document.getElementById('saveTask').textContent = tk('common.saveChanges');
   document.getElementById('taskTitleInput').value = a.title;
   document.getElementById('taskNotesInput').value = stripAssignedLine(a.notes);
   document.getElementById('taskDueDate').value = a.dueDate || isoDate(new Date());
@@ -411,11 +411,11 @@ document.getElementById('saveTask').addEventListener('click', async () => {
   const toTime = document.getElementById('taskToTime').value;
   const statusEl = document.getElementById('taskFormStatus');
 
-  if (!dueDate) { statusEl.textContent = 'Bitte ein Fälligkeitsdatum angeben.'; return; }
-  if (hasTimeWindow && (!fromTime || !toTime)) { statusEl.textContent = 'Bitte Von und Bis für das Zeitfenster angeben.'; return; }
+  if (!dueDate) { statusEl.textContent = tk('tasks.needDue'); return; }
+  if (hasTimeWindow && (!fromTime || !toTime)) { statusEl.textContent = tk('tasks.needWindow'); return; }
   const shoppingMode = taskShoppingMode;
   const planListIds = pendingTaskShoppingLists.filter(id => getShoppingList(id));
-  if (shoppingMode && !planListIds.length) { statusEl.textContent = 'Bitte mindestens eine Einkaufsliste auswählen.'; return; }
+  if (shoppingMode && !planListIds.length) { statusEl.textContent = tk('tasks.needList'); return; }
 
   // New tasks get their ID right here - so they can be created offline as well and
   // submitted later without duplicates.
@@ -438,7 +438,7 @@ document.getElementById('saveTask').addEventListener('click', async () => {
   setTaskShoppingMode(false);
   rebuildAufgaben();
   renderTasks();
-  if (shoppingMode && isNew) finShowToast('Einkauf geplant – Aufgabe angelegt.');
+  if (shoppingMode && isNew) finShowToast(tk('tasks.shoppingPlanned'));
   await flushOutbox();
   notifyIfQueuedOffline();
 });
@@ -501,8 +501,8 @@ document.getElementById('saveTask_kalender').addEventListener('click', async () 
   const statusEl = document.getElementById('taskFormStatus');
 
   if (!appleCalendar.taskCalendarName) { statusEl.textContent = 'Bitte zuerst einen Aufgaben-Kalender in den Einstellungen festlegen.'; return; }
-  if (!dueDate) { statusEl.textContent = 'Bitte ein Fälligkeitsdatum angeben.'; return; }
-  if (hasTimeWindow && (!fromTime || !toTime)) { statusEl.textContent = 'Bitte Von und Bis für das Zeitfenster angeben.'; return; }
+  if (!dueDate) { statusEl.textContent = tk('tasks.needDue'); return; }
+  if (hasTimeWindow && (!fromTime || !toTime)) { statusEl.textContent = tk('tasks.needWindow'); return; }
 
   const isEditing = !!editingTaskHref;
   const payload = hasTimeWindow ? {

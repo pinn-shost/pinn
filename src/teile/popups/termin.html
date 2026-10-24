@@ -1,112 +1,112 @@
 <!-- Add a new event (really written to iCloud) -->
 <div id="addEventModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto fade-in">
-    <h3 id="addEventModalTitle" class="font-serif text-lg mb-4">Neuer Termin</h3>
+    <h3 id="addEventModalTitle" class="font-serif text-lg mb-4">New event</h3>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Titel</label>
-    <input id="eventTitleInput" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="z. B. Zahnarzt" />
+    <label data-tk="common.title" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Title</label>
+    <input id="eventTitleInput" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" data-tk-attr="placeholder:event.titlePlaceholder" placeholder="e.g. dentist" />
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Betrifft</label>
+    <label data-tk="event.concerns" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Concerns</label>
     <div id="eventAssigneeChips" class="flex items-center gap-2 flex-wrap mb-3"></div>
-    <p class="text-[11px] text-ink/40 mb-3">Wird lesbar in die Notizen des Termins geschrieben (z. B. "Zugewiesen: Mama, Papa"), damit wir die Person(en) beim Anzeigen farblich erkennen können.</p>
+    <p data-tk="event.assignHint" class="text-[11px] text-ink/40 mb-3">Written readably into the event's notes (e.g. &quot;Assigned: Mum, Dad&quot;) so that we can recognise the person(s) by colour when displaying.</p>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Kalender</label>
+    <label data-tk="event.calendar" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Calendar</label>
     <select id="eventCalendarSelect" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3"></select>
-    <p id="eventNoCalendarHint" class="hidden text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-3">Noch kein Kalender vorhanden. Unter Einstellungen → Kalender einen eigenen Kalender anlegen oder iCloud/Google verbinden.</p>
+    <p data-tk="event.noCalendar" id="eventNoCalendarHint" class="hidden text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-3">No calendar yet. Create your own calendar under Settings → Calendar or connect iCloud/Google.</p>
 
     <label class="flex items-center gap-2 text-sm mb-3">
       <input id="eventAllDay" type="checkbox" class="w-4 h-4" />
-      Ganztägig
+      <span data-tk="cal.allDay">All day</span>
     </label>
 
     <div class="grid grid-cols-[3fr_2fr] gap-4 mb-1">
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Beginn</label>
+        <label data-tk="event.start" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Start</label>
         <input id="eventStartDate" type="date" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm" />
       </div>
       <div class="min-w-0">
-        <label id="eventStartTimeLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Uhrzeit</label>
+        <label data-tk="event.time" id="eventStartTimeLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Time</label>
         <input id="eventStartTime" type="time" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm" />
       </div>
     </div>
     <div class="grid grid-cols-[3fr_2fr] gap-4 mb-3">
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Ende</label>
+        <label data-tk="event.end" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">End</label>
         <input id="eventEndDate" type="date" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm" />
       </div>
       <div class="min-w-0">
-        <label id="eventEndTimeLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Uhrzeit</label>
+        <label data-tk="event.time" id="eventEndTimeLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Time</label>
         <input id="eventEndTime" type="time" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm" />
       </div>
     </div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Ort</label>
-    <input id="eventLocationInput" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="Optional" />
+    <label data-tk="event.location" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Place</label>
+    <input id="eventLocationInput" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" data-tk-attr="placeholder:common.optional" placeholder="Optional" />
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Notizen</label>
+    <label data-tk="event.notes" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Notes</label>
     <textarea id="eventNotesInput" rows="2" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3 resize-none"></textarea>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Link (URL)</label>
-    <input id="eventUrlInput" type="url" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="Optional" />
+    <label data-tk="event.url" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Link (URL)</label>
+    <input id="eventUrlInput" type="url" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" data-tk-attr="placeholder:common.optional" placeholder="Optional" />
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Wiederholung</label>
+    <label data-tk="event.repeat" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Repeat</label>
     <select id="eventRepeatSelect" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3">
-      <option value="none">Keine</option>
-      <option value="daily">Täglich</option>
-      <option value="weekly">Wöchentlich</option>
-      <option value="monthly">Monatlich</option>
-      <option value="yearly">Jährlich</option>
+      <option data-tk="common.none" value="none">None</option>
+      <option data-tk="repeat.daily" value="daily">Daily</option>
+      <option data-tk="repeat.weekly" value="weekly">Weekly</option>
+      <option data-tk="repeat.monthly" value="monthly">Monthly</option>
+      <option data-tk="repeat.yearly" value="yearly">Yearly</option>
     </select>
 
     <div id="eventRepeatOptions" class="hidden mb-3 pl-3 border-l-2 border-ink/10 space-y-2">
       <div class="flex items-center gap-2 text-sm">
-        <span class="text-ink/60">Alle</span>
+        <span data-tk="repeat.every" class="text-ink/60">Every</span>
         <input id="eventRepeatInterval" type="number" min="1" value="1" class="w-16 rounded-lg border border-ink/15 px-2 py-1 text-sm" />
-        <span id="eventRepeatUnitLabel" class="text-ink/60">Wochen</span>
+        <span data-tk="repeat.unit.weeks" id="eventRepeatUnitLabel" class="text-ink/60">weeks</span>
       </div>
-      <label class="flex items-center gap-2 text-sm"><input type="radio" name="repeatEnd" value="never" checked /> Endet nie</label>
+      <label class="flex items-center gap-2 text-sm"><input type="radio" name="repeatEnd" value="never" checked /> <span data-tk="event.endsNever">Never ends</span></label>
       <label class="flex items-center gap-2 text-sm">
-        <input type="radio" name="repeatEnd" value="count" /> Endet nach
-        <input id="eventRepeatCount" type="number" min="1" value="10" class="w-16 rounded-lg border border-ink/15 px-2 py-1 text-sm" /> Malen
+        <input type="radio" name="repeatEnd" value="count" /> <span data-tk="event.endsAfter">Ends after</span>
+        <input id="eventRepeatCount" type="number" min="1" value="10" class="w-16 rounded-lg border border-ink/15 px-2 py-1 text-sm" /> <span data-tk="event.times">times</span>
       </label>
       <label class="flex items-center gap-2 text-sm">
-        <input type="radio" name="repeatEnd" value="until" /> Endet am
+        <input type="radio" name="repeatEnd" value="until" /> <span data-tk="event.endsOn">Ends on</span>
         <input id="eventRepeatUntil" type="date" class="rounded-lg border border-ink/15 px-2 py-1 text-sm" />
       </label>
     </div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Erinnerung</label>
+    <label data-tk="event.reminder" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Reminder</label>
     <select id="eventAlertSelect" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-5">
-      <option value="none">Keine</option>
-      <option value="0">Zum Zeitpunkt des Termins</option>
-      <option value="5">5 Minuten vorher</option>
-      <option value="15">15 Minuten vorher</option>
-      <option value="30">30 Minuten vorher</option>
-      <option value="60">1 Stunde vorher</option>
-      <option value="1440">1 Tag vorher</option>
+      <option data-tk="common.none" value="none">None</option>
+      <option data-tk="event.alertAtStart" value="0">At the time of the event</option>
+      <option data-tk="event.alert5" value="5">5 minutes before</option>
+      <option data-tk="event.alert15" value="15">15 minutes before</option>
+      <option data-tk="event.alert30" value="30">30 minutes before</option>
+      <option data-tk="event.alert60" value="60">1 hour before</option>
+      <option data-tk="event.alert1440" value="1440">1 day before</option>
     </select>
 
     <p id="addEventStatus" class="text-xs text-ink/40 mb-2"></p>
     <div class="flex justify-end gap-2">
-      <button id="cancelAddEvent" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-      <button id="saveAddEvent" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Im Kalender anlegen</button>
+      <button data-tk="common.cancel" id="cancelAddEvent" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+      <button id="saveAddEvent" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Create in calendar</button>
     </div>
   </div>
 </div>
 
 <!-- Event detail popover (opens with a long press on an event) -->
 <div id="eventDetailPopover" class="hidden fixed z-[300] bg-white rounded-xl border border-ink/10 shadow-xl p-4 pr-8 w-72">
-  <button id="closeEventDetailBtn" class="absolute top-2 right-2 w-6 h-6 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 grid place-items-center text-sm" aria-label="Schließen">×</button>
+  <button id="closeEventDetailBtn" class="absolute top-2 right-2 w-6 h-6 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 grid place-items-center text-sm" data-tk-attr="aria-label:common.close" aria-label="Close">×</button>
   <div id="eventDetailTitle" class="font-serif text-base mb-1"></div>
   <div id="eventDetailWhen" class="text-xs text-ink/50 mb-2"></div>
   <div id="eventDetailLocation" class="text-xs text-ink/70 mb-1"></div>
   <div id="eventDetailCalName" class="text-xs text-ink/50 mb-1"></div>
   <div id="eventDetailDescription" class="text-xs text-ink/70 whitespace-pre-line mb-2"></div>
   <div id="eventDetailLinks" class="hidden flex flex-wrap gap-1.5 mb-2"></div>
-  <a id="eventDetailCalendarLink" href="#" class="inline-block text-xs text-pine hover:underline font-medium">📅 In der Kalender-App anzeigen</a>
+  <a data-tk="event.showInCalendarApp" id="eventDetailCalendarLink" href="#" class="inline-block text-xs text-pine hover:underline font-medium">📅 Show in calendar app</a>
   <div class="mt-2 pt-2 border-t border-ink/10 flex items-center gap-3">
-    <button id="eventDetailEditBtn" class="text-xs text-pine hover:underline font-medium">Bearbeiten</button>
-    <button id="eventDetailDeleteBtn" class="text-xs text-red-500 hover:underline font-medium">Termin löschen</button>
+    <button data-tk="common.edit" id="eventDetailEditBtn" class="text-xs text-pine hover:underline font-medium">Edit</button>
+    <button data-tk="event.delete" id="eventDetailDeleteBtn" class="text-xs text-red-500 hover:underline font-medium">Delete event</button>
   </div>
   <p id="eventDetailDeleteStatus" class="text-xs text-ink/40 mt-1"></p>
 </div>

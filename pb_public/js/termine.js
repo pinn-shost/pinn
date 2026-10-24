@@ -12,7 +12,13 @@
 /* ==========================================================
    Create a new event (really writes to iCloud)
    ========================================================== */
-const REPEAT_UNIT_LABELS = { daily: 'Tage', weekly: 'Wochen', monthly: 'Monate', yearly: 'Jahre' };
+// Unit after "every [n]" in the repeat options (text keys)
+const REPEAT_UNIT_LABELS = {
+  get daily() { return tk('repeat.unit.days'); },
+  get weekly() { return tk('repeat.unit.weeks'); },
+  get monthly() { return tk('repeat.unit.months'); },
+  get yearly() { return tk('repeat.unit.years'); },
+};
 
 // Remembers the last valid distance between start and end (default: 1 hour) - when
 // the start is changed, the end jumps along by the same distance (10-11 -> start
@@ -128,13 +134,13 @@ function fillEventForm(data) {
   const myCals = pinnCals.filter(c => !c.geteilt);
   const opt = (v, l) => `<option value="${escapeHtml(v)}">${escapeHtml(l)}</option>`;
   const groups = [];
-  if (famCals.length) groups.push(['Familienkalender', famCals.map(n => opt(n, n))]);
+  if (famCals.length) groups.push([tk('event.familyCalendar'), famCals.map(n => opt(n, n))]);
   const srcTag = c => c.quelle === 'apple' ? ' · iCloud' : c.quelle === 'google' ? ' · Google' : '';
-  if (sharedCals.length) groups.push(['Familie', sharedCals.map(c => opt(PINN_CAL_PREFIX + c.id, c.name + (c.mein ? srcTag(c) : (!c.quelle && c.von ? ' · ' + c.von : ''))))]);
+  if (sharedCals.length) groups.push([tk('event.groupFamily'), sharedCals.map(c => opt(PINN_CAL_PREFIX + c.id, c.name + (c.mein ? srcTag(c) : (!c.quelle && c.von ? ' · ' + c.von : ''))))]);
   const myWritable = myCals.filter(c => !c.nurLesen); // do not offer read-only (linked) calendars for creating
-  if (myWritable.length) groups.push(['Für mich', myWritable.map(c => opt(PINN_CAL_PREFIX + c.id, '🔒 ' + c.name + srcTag(c)))]);
+  if (myWritable.length) groups.push([tk('event.groupForMe'), myWritable.map(c => opt(PINN_CAL_PREFIX + c.id, '🔒 ' + c.name + srcTag(c)))]);
   calSelect.innerHTML = groups.length > 1
-    ? groups.map(g => `<optgroup label="${g[0]}">${g[1].join('')}</optgroup>`).join('')
+    ? groups.map(g => `<optgroup label="${escapeHtml(g[0])}">${g[1].join('')}</optgroup>`).join('')
     : (groups[0] ? groups[0][1].join('') : '');
   const calValues = [...famCals, ...pinnCals.filter(c => !c.nurLesen).map(c => PINN_CAL_PREFIX + c.id)];
   // Event from a calendar that is no longer in the list (e.g. after deselecting it): show it anyway
@@ -154,8 +160,8 @@ function fillEventForm(data) {
 function openAddEventModal() {
   editingEventHref = null;
   editingEventUid = null;
-  document.getElementById('addEventModalTitle').textContent = 'Neuer Termin';
-  document.getElementById('saveAddEvent').textContent = 'Im Kalender anlegen';
+  document.getElementById('addEventModalTitle').textContent = tk('event.new');
+  document.getElementById('saveAddEvent').textContent = tk('event.createInCalendar');
   const d = new Date(); d.setDate(d.getDate() + dayOffset);
   fillEventForm({ startDate: isoDate(d), endDate: isoDate(d), startTime: '09:00', endTime: '10:00' });
   document.getElementById('addEventModal').classList.remove('hidden');
@@ -243,11 +249,11 @@ async function openEditEventModal(ev) {
   if (ev && ev.pinnHoliday === 'urlaub' && ev.pinnTripList) { setView('einkauf'); lsOpenList(ev.pinnTripList); return; } // trip: tap opens the packing list
   if (ev && ev.pinnHoliday) return; // Holidays/school holidays/waste collection cannot be edited
   if (!ev || !ev.pinnHref) {
-    alert('Dieser Termin kann nicht bearbeitet werden (keine Kalender-Adresse bekannt).');
+    alert(tk('event.notEditable'));
     return;
   }
   closeEventDetail();
-  document.getElementById('addEventModalTitle').textContent = 'Termin wird geladen …';
+  document.getElementById('addEventModalTitle').textContent = tk('event.loading');
   document.getElementById('saveAddEvent').disabled = true;
   document.getElementById('addEventModal').classList.remove('hidden');
   try {
@@ -255,7 +261,7 @@ async function openEditEventModal(ev) {
     try {
       ics = await loadEventIcsForEdit(ev.pinnHref); // also works offline or for queued events
     } catch (loadErr) {
-      alert('Termin konnte nicht geladen werden: ' + loadErr.message);
+      alert(tk('event.loadFailed', { error: loadErr.message }));
       document.getElementById('addEventModal').classList.add('hidden');
       return;
     }
@@ -264,11 +270,11 @@ async function openEditEventModal(ev) {
     editingEventUid = parsed.uid;
     parsed.calendarName = ev.pinnCalName || '';
     fillEventForm(parsed);
-    document.getElementById('addEventModalTitle').textContent = 'Termin bearbeiten';
-    document.getElementById('saveAddEvent').textContent = 'Änderungen speichern';
+    document.getElementById('addEventModalTitle').textContent = tk('event.edit');
+    document.getElementById('saveAddEvent').textContent = tk('common.saveChanges');
     armModalSnapshot('addEventModal');
   } catch (err) {
-    alert('Verbindung fehlgeschlagen. Bitte NAS/Netzwerk prüfen.');
+    alert(tk('common.connectionFailed'));
     document.getElementById('addEventModal').classList.add('hidden');
   } finally {
     document.getElementById('saveAddEvent').disabled = false;
@@ -311,11 +317,11 @@ document.getElementById('saveAddEvent').addEventListener('click', async () => {
   };
 
   if (!payload.calendarName) {
-    statusEl.textContent = 'Bitte zuerst einen Kalender in den Einstellungen einrichten.';
+    statusEl.textContent = tk('event.setupCalendarFirst');
     return;
   }
   if (!payload.startDate || !payload.endDate) {
-    statusEl.textContent = 'Bitte Start- und Enddatum angeben.';
+    statusEl.textContent = tk('event.needDates');
     return;
   }
 

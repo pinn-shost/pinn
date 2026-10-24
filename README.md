@@ -95,6 +95,16 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 and 🇰🇷 한국어**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.113.0
+
+**Text keys, part 3: calendar, tasks and household**
+
+- The **calendar** (day, week, month, year and list), the event popup and event details, **tasks** and the **household** page with rooms, bins, cleaning tasks, “Take turns” and “Who does how much?” now take their texts from the language files in `pb_public/i18n/` – in all nine languages and as a flatshare. Nothing changes in how you use the app.
+- Weekday names, month names and dates in the calendar, in public holidays and in tasks now follow the format of your language.
+- Small fixes: “Every [n] weeks” in the event repeat, “None” and “To” are now right in every language, and numbers such as “3 tasks created” or “1 done” use the right singular or plural.
+- Next: calendar settings (iCloud/Google, waste calendar, home) and smart home follow in 1.113.1.
+- Changed: app files only (`index.html`, `js/kalenderansicht.js`, `js/termine.js`, `js/termindetails.js`, `js/kalenderquellen.js`, `js/kalenderdatei.js`, `js/feiertage.js`, `js/muellkalender.js`, `js/aufgaben.js`, `js/aufgabendaten.js`, `js/aufgabenextras.js`, `js/haushalt.js`, `js/reihum.js`, `js/zustand.js`, `js/sprachen.js`, `js/versionslog.js`, all language files in `i18n/` and `lang/`) – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.112.1
 
 **Text keys, part 2: account, devices, backups and error log**
@@ -141,15 +151,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Saving now waits until every part is on the server, so “create household tasks now” and the calendar sync work with what you just changed. Older devices no longer reset settings such as “Completed tasks: Immediately” or a switched-off dark mode.
 - Changed: app files (`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/sprachen.js`, `js/versionslog.js`, all language files) and on the server `pb_hooks/pinn-bereiche.js`, `pinn-smarthome.js`, `calendar-sync.js`, `save_family_data.pb.js`. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
-## What's new in 1.108.0
-
-**Family members, emergency passes and settings in records of their own**
-
-- Fourth step of moving the family data out of the one big data block: the **family members**, the **emergency passes** and the **family settings** (name, family/flatshare, categories, kitchen tools, menus) now live in records of their own on the server. Each part is saved and synced on its own. Nothing changes in how you use the app.
-- Same safety net as before: a backup per family before the move (`pb_data/pinn_umzug/`, 30 days), devices with an older app keep seeing everything.
-- New or deleted profiles change the members directly in the new record; guests still cannot change the guest menus.
-- Changed: app files (`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/profilverwaltung.js`, `js/sprachen.js`, `js/versionslog.js`, all language files) and on the server `pb_hooks/pinn-bereiche.js`, `bereiche.pb.js`, `pinn-benutzer.js`, `save_family_data.pb.js`, `pinn-pushtext.js`, `calendar-sync.js`. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
 ## How it works
 
 ```mermaid
@@ -176,7 +177,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.112.1` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.113.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -55,7 +55,7 @@ function muellCalendarEvents() {
     if (!x || !x.d || hidden.includes(x.t)) return;
     out.push({
       id: 'pinn-mk-' + x.d + '-' + i, date: x.d, time: '', endTime: null, title: x.t, memberId: null, location: '',
-      description: `Müllabfuhr: ${x.t}${quelle}`, fullDayFiller: false, pinnHref: '', pinnCalName: '', isRecurring: false,
+      description: tk('waste.collectionOf', { type: x.t }) + quelle, fullDayFiller: false, pinnHref: '', pinnCalName: '', isRecurring: false,
       pinnHoliday: 'muell', pinnColor: muellArtFarbe(x.t),
     });
   });

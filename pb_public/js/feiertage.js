@@ -25,25 +25,25 @@ function hcPublicHolidays(y, bl) {
   const fix = (m, d) => `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
   const bb = (() => { const d = new Date(y, 10, 22); while (d.getDay() !== 3) d.setDate(d.getDate() - 1); return isoDate(d); })();
   const rows = [
-    [fix(1, 1), 'Neujahr'],
-    [fix(1, 6), 'Heilige Drei Könige', ['BW', 'BY', 'ST']],
-    [fix(3, 8), 'Internationaler Frauentag', (bl === 'BE' && y >= 2019) || (bl === 'MV' && y >= 2023) ? [bl] : []],
-    [off(-2), 'Karfreitag'],
-    [off(0), 'Ostersonntag', ['BB']],
-    [off(1), 'Ostermontag'],
-    [fix(5, 1), 'Tag der Arbeit'],
-    [off(39), 'Christi Himmelfahrt'],
-    [off(49), 'Pfingstsonntag', ['BB']],
-    [off(50), 'Pfingstmontag'],
-    [off(60), 'Fronleichnam', ['BW', 'BY', 'HE', 'NW', 'RP', 'SL'], ['SN', 'TH']],
-    [fix(8, 15), 'Mariä Himmelfahrt', ['SL'], ['BY']],
-    [fix(9, 20), 'Weltkindertag', y >= 2019 ? ['TH'] : []],
-    [fix(10, 3), 'Tag der Deutschen Einheit'],
-    [fix(10, 31), 'Reformationstag', ['BB', 'HB', 'HH', 'MV', 'NI', 'SN', 'ST', 'SH', 'TH']],
-    [fix(11, 1), 'Allerheiligen', ['BW', 'BY', 'NW', 'RP', 'SL']],
-    [bb, 'Buß- und Bettag', ['SN']],
-    [fix(12, 25), '1. Weihnachtsfeiertag'],
-    [fix(12, 26), '2. Weihnachtsfeiertag'],
+    [fix(1, 1), tk('holiday.newYear')],
+    [fix(1, 6), tk('holiday.epiphany'), ['BW', 'BY', 'ST']],
+    [fix(3, 8), tk('holiday.womensDay'), (bl === 'BE' && y >= 2019) || (bl === 'MV' && y >= 2023) ? [bl] : []],
+    [off(-2), tk('holiday.goodFriday')],
+    [off(0), tk('holiday.easterSunday'), ['BB']],
+    [off(1), tk('holiday.easterMonday')],
+    [fix(5, 1), tk('holiday.labourDay')],
+    [off(39), tk('holiday.ascension')],
+    [off(49), tk('holiday.whitSunday'), ['BB']],
+    [off(50), tk('holiday.whitMonday')],
+    [off(60), tk('holiday.corpusChristi'), ['BW', 'BY', 'HE', 'NW', 'RP', 'SL'], ['SN', 'TH']],
+    [fix(8, 15), tk('holiday.assumption'), ['SL'], ['BY']],
+    [fix(9, 20), tk('holiday.childrensDay'), y >= 2019 ? ['TH'] : []],
+    [fix(10, 3), tk('holiday.germanUnity')],
+    [fix(10, 31), tk('holiday.reformation'), ['BB', 'HB', 'HH', 'MV', 'NI', 'SN', 'ST', 'SH', 'TH']],
+    [fix(11, 1), tk('holiday.allSaints'), ['BW', 'BY', 'NW', 'RP', 'SL']],
+    [bb, tk('holiday.repentance'), ['SN']],
+    [fix(12, 25), tk('holiday.christmas1')],
+    [fix(12, 26), tk('holiday.christmas2')],
   ];
   const out = [];
   rows.forEach(([date, name, only, regional]) => {
@@ -58,7 +58,35 @@ function hcSchoolStore() {
     return (o && typeof o === 'object') ? o : {};
   } catch (e) { return {}; }
 }
-function hcFmtDate(d) { const p = String(d).split('-'); return p.length === 3 ? `${p[2]}.${p[1]}.${p[0]}` : d; }
+function hcFmtDate(d) {
+  const p = String(d).split('-');
+  if (p.length !== 3) return d;
+  try { return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString(sysLocale(), { day: '2-digit', month: '2-digit', year: 'numeric' }); } catch (e) { return `${p[2]}.${p[1]}.${p[0]}`; }
+}
+// Name of a German federal state in the app language (the codes in HOME_LAENDER stay the saved values)
+// (keys written out in full so that the key check finds them)
+const HOME_STATE_KEYS = {
+  BW: 'state.BW',
+  BY: 'state.BY',
+  BE: 'state.BE',
+  BB: 'state.BB',
+  HB: 'state.HB',
+  HH: 'state.HH',
+  HE: 'state.HE',
+  MV: 'state.MV',
+  NI: 'state.NI',
+  NW: 'state.NW',
+  RP: 'state.RP',
+  SL: 'state.SL',
+  SN: 'state.SN',
+  ST: 'state.ST',
+  SH: 'state.SH',
+  TH: 'state.TH',
+};
+function homeStateLabel(bl) {
+  const key = HOME_STATE_KEYS[bl];
+  return key ? tk(key) : ((typeof HOME_LAENDER !== 'undefined' && HOME_LAENDER[bl]) || bl);
+}
 // Additional calendar entries (read only): public holidays and school holidays
 function homeCalendarEvents() {
   const bl = homeBundesland();
@@ -71,7 +99,7 @@ function homeCalendarEvents() {
   const keys = Object.keys(store).filter(k => k.indexOf(bl + '|') === 0).sort();
   const sig = [bl, showHol, showSchool, y, keys.map(k => k + ':' + (store[k].ts || 0)).join(',')].join('|');
   if (sig === hcSig) return hcList;
-  const land = HOME_LAENDER[bl] || bl;
+  const land = homeStateLabel(bl);
   const mk = (id, date, title, desc, kind) => ({
     id, date, time: '', endTime: null, title, memberId: null, location: '', description: desc,
     fullDayFiller: false, pinnHref: '', pinnCalName: '', isRecurring: false, pinnHoliday: kind,
@@ -80,7 +108,7 @@ function homeCalendarEvents() {
   if (showHol) {
     for (let yy = y - 1; yy <= y + 2; yy++) {
       hcPublicHolidays(yy, bl).forEach(h => out.push(mk('pinn-ft-' + h.date, h.date, h.name,
-        h.regional ? `Feiertag nur in Teilen von ${land}` : `Gesetzlicher Feiertag in ${land}`, 'feiertag')));
+        h.regional ? tk('holiday.regional', { state: land }) : tk('holiday.public', { state: land }), 'feiertag')));
     }
   }
   if (showSchool) {
@@ -89,7 +117,7 @@ function homeCalendarEvents() {
       const sk = f.von + '|' + f.name;
       if (seen.has(sk) || !f.von || !f.bis) return;
       seen.add(sk);
-      const desc = `Schulferien ${land}: ${hcFmtDate(f.von)} – ${hcFmtDate(f.bis)}`;
+      const desc = tk('holiday.school', { state: land, from: hcFmtDate(f.von), to: hcFmtDate(f.bis) });
       let d = f.von, guard = 0;
       while (d <= f.bis && guard++ < 120) {
         out.push(mk('pinn-sf-' + d + '-' + sk, d, f.name, desc, 'ferien'));

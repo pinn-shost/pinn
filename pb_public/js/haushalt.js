@@ -23,12 +23,12 @@ function renderHousehold() {
 
 function scheduleSummary(s) {
   if (s.scheduleType === 'weekdays') {
-    return (s.weekdays || []).map(wd => (WEEKDAYS.find(w => w.id === wd) || {}).label || wd).join(', ') || 'Keine Tage gewählt';
+    return (s.weekdays || []).map(wd => (WEEKDAYS.find(w => w.id === wd) || {}).label || wd).join(', ') || tk('household.noDays');
   }
-  if (s.intervalDays === 1) return 'Täglich';
-  if (s.intervalDays === 7) return 'Wöchentlich';
-  if (s.intervalDays === 14) return 'Alle 2 Wochen';
-  return 'Alle ' + s.intervalDays + ' Tage';
+  if (s.intervalDays === 1) return tk('repeat.daily');
+  if (s.intervalDays === 7) return tk('repeat.weekly');
+  if (s.intervalDays === 14) return tk('household.every2Weeks');
+  return tk('household.everyNDays', { n: s.intervalDays });
 }
 
 // Filters of the household page (dropdowns in the style of the pantry page)
@@ -43,10 +43,10 @@ function renderHouseholdFilters() {
   const usedCats = new Set(roomSchedules.map(s => s.category));
   const cats = cleaningCategories.filter(c => c.active !== false || usedCats.has(c.id));
   if (householdFilterCategory && householdFilterCategory !== HOUSEHOLD_FILTER_BINS && !cats.some(c => c.id === householdFilterCategory)) householdFilterCategory = '';
-  roomSel.innerHTML = '<option value="">Alle Räume</option>' + rooms.map(r => `<option value="${escapeHtml(r.id)}">${escapeHtml((r.icon ? r.icon + ' ' : '') + r.name)}</option>`).join('');
-  catSel.innerHTML = '<option value="">Alle Kategorien</option>'
+  roomSel.innerHTML = '<option value="">' + escapeHtml(tk('household.allRooms')) + '</option>' + rooms.map(r => `<option value="${escapeHtml(r.id)}">${escapeHtml((r.icon ? r.icon + ' ' : '') + r.name)}</option>`).join('');
+  catSel.innerHTML = '<option value="">' + escapeHtml(tk('household.allCategories')) + '</option>'
     + cats.map(c => `<option value="${escapeHtml(c.id)}">🧹 ${escapeHtml(c.label)}</option>`).join('')
-    + `<option value="${HOUSEHOLD_FILTER_BINS}">🗑️ Mülleimer</option>`;
+    + `<option value="${HOUSEHOLD_FILTER_BINS}">${escapeHtml(tk('household.binsFilter'))}</option>`;
   roomSel.value = householdFilterRoom;
   catSel.value = householdFilterCategory;
   bar.classList.toggle('hidden', !rooms.length);
@@ -65,7 +65,7 @@ function renderRoomList() {
     if (catFilter === HOUSEHOLD_FILTER_BINS) return trashBins.some(b => b.roomId === room.id);
     return roomSchedules.some(s => s.roomId === room.id && s.category === catFilter);
   });
-  empty.textContent = rooms.length ? 'Keine Einträge für diese Auswahl.' : 'Noch keine Räume – füge einen hinzu.';
+  empty.textContent = rooms.length ? tk('household.noEntries') : tk('household.noRooms');
   empty.classList.toggle('hidden', shownRooms.length > 0);
 
   shownRooms.forEach(room => {
@@ -83,7 +83,7 @@ function renderRoomList() {
             <span class="text-xl shrink-0">${room.icon}</span>
             <span class="font-serif text-base truncate">${escapeHtml(room.name)}</span>
           </div>
-          <button class="edit-room-btn text-xs text-ink/40 hover:text-pine shrink-0">Bearbeiten</button>
+          <button class="edit-room-btn text-xs text-ink/40 hover:text-pine shrink-0">${escapeHtml(tk('common.edit'))}</button>
         </div>
         <div class="pl-4 flex flex-col gap-1.5">
           ${schedules.map(s => `
@@ -95,14 +95,14 @@ function renderRoomList() {
             const waste = wasteTypeById(b.wasteType);
             const scheduleLabel = b.schedule ? ' · ' + scheduleSummary(b.schedule) : '';
             return `<button class="edit-bin-btn flex items-center justify-between gap-2 text-xs px-2 py-1.5 rounded-lg bg-white/70 hover:bg-white transition text-left w-full" data-id="${b.id}">
-              <span>${waste ? waste.icon : '🗑️'} ${waste ? escapeHtml(waste.label) : 'Unbekannt'}${escapeHtml(scheduleLabel)}${b.rotate ? ' · 🔄' : ''}</span>
+              <span>${waste ? waste.icon : '🗑️'} ${escapeHtml(waste ? waste.label : tk('household.unknown'))}${escapeHtml(scheduleLabel)}${b.rotate ? ' · 🔄' : ''}</span>
               <span class="text-ink/30">›</span>
             </button>`;
           }).join('')}
-          ${(!schedules.length && !bins.length && !filtered) ? '<p class="text-xs text-ink/30 italic">Noch nichts hinzugefügt.</p>' : ''}
+          ${(!schedules.length && !bins.length && !filtered) ? '<p class="text-xs text-ink/30 italic">' + escapeHtml(tk('household.nothingYet')) + '</p>' : ''}
           <div class="flex gap-2 mt-1">
-            <button class="add-bin-btn px-2.5 py-1 rounded-lg border border-ink/15 text-[11px] text-ink/60 hover:text-pine hover:border-pine transition">+ Mülleimer</button>
-            <button class="add-schedule-btn px-2.5 py-1 rounded-lg border border-ink/15 text-[11px] text-ink/60 hover:text-pine hover:border-pine transition">+ Reinigung hinzufügen</button>
+            <button class="add-bin-btn px-2.5 py-1 rounded-lg border border-ink/15 text-[11px] text-ink/60 hover:text-pine hover:border-pine transition">${escapeHtml(tk('household.addBin'))}</button>
+            <button class="add-schedule-btn px-2.5 py-1 rounded-lg border border-ink/15 text-[11px] text-ink/60 hover:text-pine hover:border-pine transition">${escapeHtml(tk('household.addCleaning'))}</button>
           </div>
         </div>
       </div>
@@ -155,7 +155,7 @@ let pendingRoomColor = PALETTE[0];
 function openRoomModal(existingId = null) {
   editingRoomId = existingId;
   const room = existingId ? rooms.find(r => r.id === existingId) : null;
-  document.getElementById('roomModalTitle').textContent = room ? 'Raum bearbeiten' : 'Neuer Raum';
+  document.getElementById('roomModalTitle').textContent = room ? tk('household.editRoom') : tk('household.newRoom');
   document.getElementById('roomNameInput').value = room ? room.name : '';
   document.getElementById('roomFormStatus').textContent = '';
   document.getElementById('deleteRoomBtn').classList.toggle('hidden', !room);
@@ -174,7 +174,7 @@ wireModalOutsideClick('roomModal', closeRoomModal);
 document.getElementById('saveRoom').addEventListener('click', async () => {
   const name = document.getElementById('roomNameInput').value.trim();
   const statusEl = document.getElementById('roomFormStatus');
-  if (!name) { statusEl.textContent = 'Bitte einen Namen eingeben.'; return; }
+  if (!name) { statusEl.textContent = tk('common.needName'); return; }
 
   if (editingRoomId) {
     const room = rooms.find(r => r.id === editingRoomId);
@@ -190,7 +190,7 @@ document.getElementById('saveRoom').addEventListener('click', async () => {
 document.getElementById('deleteRoomBtn').addEventListener('click', async () => {
   if (!editingRoomId) return;
   const room = rooms.find(r => r.id === editingRoomId);
-  if (!confirm(`"${room.name}" wirklich löschen? Zugeordnete Reinigungen und Mülleimer werden mit gelöscht.`)) return;
+  if (!confirm(tk('household.confirmDeleteRoom', { name: room.name }))) return;
   await cleanupLegacyCleaningSeries(room);
   rooms = rooms.filter(r => r.id !== editingRoomId);
   roomSchedules = roomSchedules.filter(s => s.roomId !== editingRoomId);
@@ -282,7 +282,7 @@ function renderHouseholdMemberPicker(containerId) {
     });
     wrap.appendChild(chip);
   });
-  if (!members.length) wrap.innerHTML = '<p class="text-xs text-ink/30 italic">Keine Familienmitglieder angelegt.</p>';
+  if (!members.length) wrap.innerHTML = '<p class="text-xs text-ink/30 italic">' + escapeHtml(tk('household.noMembers')) + '</p>';
   if (typeof hhRotateUi === 'function') hhRotateUi(containerId);
 }
 
@@ -291,7 +291,7 @@ function openTrashBinModal(existingId, roomId) {
   const bin = existingId ? trashBins.find(b => b.id === existingId) : null;
   pendingTrashBinRoomId = bin ? bin.roomId : roomId;
   const room = rooms.find(r => r.id === pendingTrashBinRoomId);
-  document.getElementById('trashBinModalTitle').textContent = bin ? 'Mülleimer bearbeiten' : 'Neuer Mülleimer';
+  document.getElementById('trashBinModalTitle').textContent = bin ? tk('household.editBin') : tk('household.newBin');
   document.getElementById('trashBinRoomLabel').textContent = room ? (room.icon + ' ' + room.name) : '';
   renderTrashBinWasteTypePicker(bin ? bin.wasteType : WASTE_TYPES[0].id);
   document.getElementById('deleteTrashBinBtn').classList.toggle('hidden', !bin);
@@ -299,7 +299,7 @@ function openTrashBinModal(existingId, roomId) {
   renderHouseholdMemberPicker('trashBinMemberPicker');
   hhRotateLoad('trashBinMemberPicker', bin ? bin.rotate : '');
   smartPickerLoad(bin ? bin.smart : null, 'trashBinSmartPicker');
-  taskRemindLoad('trashBinRemindPicker', 'trashBin', bin ? bin.remindAt : '', { label: '🔔 Extra-Erinnerung per Push', def: '18:00', hint: 'Gilt für jede Aufgabe dieses Mülleimers – zusätzlich zur Müll-Erinnerung am Vortag.' });
+  taskRemindLoad('trashBinRemindPicker', 'trashBin', bin ? bin.remindAt : '', { label: tk('household.extraRemind'), def: '18:00', hint: tk('household.binRemindHint') });
 
   const schedule = bin ? bin.schedule : null;
   document.getElementById('trashBinManualScheduleCheckbox').checked = !!schedule;
@@ -340,21 +340,21 @@ document.getElementById('saveTrashBin').addEventListener('click', async () => {
   let schedule = null;
   if (document.getElementById('trashBinManualScheduleCheckbox').checked) {
     if (pendingBinScheduleType === 'weekdays') {
-      if (!pendingBinScheduleWeekdays.length) { alert('Bitte mindestens einen Wochentag wählen.'); return; }
+      if (!pendingBinScheduleWeekdays.length) { alert(tk('household.needWeekday')); return; }
       schedule = { scheduleType: 'weekdays', weekdays: [...pendingBinScheduleWeekdays], intervalDays: null, createdDate: isoDate(new Date()) };
     } else {
       const intervalSelVal = document.getElementById('trashBinIntervalSelect').value;
       let intervalDays;
       if (intervalSelVal === 'custom') {
         intervalDays = parseInt(document.getElementById('trashBinCustomIntervalInput').value, 10);
-        if (!intervalDays || intervalDays < 1) { alert('Bitte eine gültige Anzahl Tage angeben.'); return; }
+        if (!intervalDays || intervalDays < 1) { alert(tk('household.needDays')); return; }
       } else {
         intervalDays = parseInt(intervalSelVal, 10);
       }
       let createdDate = isoDate(new Date());
       if (intervalDays !== 1) {
         const firstDate = document.getElementById('trashBinFirstDateInput').value;
-        if (!firstDate) { alert('Bitte den Tag des ersten Rausbringens angeben.'); return; }
+        if (!firstDate) { alert(tk('household.needFirstBin')); return; }
         createdDate = firstDate;
       }
       schedule = { scheduleType: 'interval', weekdays: [], intervalDays, createdDate };
@@ -420,7 +420,7 @@ function renderCleaningCategorySelect(selected) {
   const visible = cleaningCategories.filter(c => c.active !== false || c.id === selected);
   sel.innerHTML = visible.length
     ? visible.map(c => `<option value="${c.id}">${escapeHtml(c.label)}</option>`).join('')
-    : '<option value="">– Noch keine Kategorie –</option>';
+    : '<option value="">' + escapeHtml(tk('household.noCategoryYet')) + '</option>';
   if (selected) sel.value = selected;
   const hint = document.getElementById('roomScheduleCategoryHint');
   if (hint) hint.classList.toggle('hidden', visible.length > 0);
@@ -462,7 +462,7 @@ function openRoomScheduleModal(existingId, roomId) {
   pendingScheduleRoomId = schedule ? schedule.roomId : roomId;
   const room = rooms.find(r => r.id === pendingScheduleRoomId);
 
-  document.getElementById('roomScheduleModalTitle').textContent = schedule ? 'Reinigung bearbeiten' : 'Reinigung hinzufügen';
+  document.getElementById('roomScheduleModalTitle').textContent = schedule ? tk('household.editCleaning') : tk('household.addCleaningTitle');
   document.getElementById('roomScheduleRoomLabel').textContent = room ? (room.icon + ' ' + room.name) : '';
   document.getElementById('roomScheduleFormStatus').textContent = '';
   document.getElementById('roomScheduleNewCategoryInput').value = '';
@@ -471,7 +471,7 @@ function openRoomScheduleModal(existingId, roomId) {
   renderHouseholdMemberPicker('roomScheduleMemberPicker');
   hhRotateLoad('roomScheduleMemberPicker', schedule ? schedule.rotate : '');
   smartPickerLoad(schedule ? schedule.smart : null, 'roomScheduleSmartPicker');
-  taskRemindLoad('roomScheduleRemindPicker', 'roomSchedule', schedule ? schedule.remindAt : '', { label: '🔔 Extra-Erinnerung per Push', def: '10:00', hint: 'Gilt für jede Aufgabe dieser Reinigung.' });
+  taskRemindLoad('roomScheduleRemindPicker', 'roomSchedule', schedule ? schedule.remindAt : '', { label: tk('household.extraRemind'), def: '10:00', hint: tk('household.cleaningRemindHint') });
 
   setScheduleTypeChoice(schedule ? schedule.scheduleType : 'weekdays');
 
@@ -531,28 +531,28 @@ document.getElementById('saveRoomSchedule').addEventListener('click', async () =
       cleaningCategories.push({ id: category, label: typed, active: true });
       renderCleaningCategorySelect(category);
       document.getElementById('roomScheduleNewCategoryInput').value = '';
-    } else { statusEl.textContent = 'Bitte eine Kategorie eingeben, z. B. „Reinigung“.'; return; }
+    } else { statusEl.textContent = tk('household.needCategoryFirst'); return; }
   }
-  if (!category) { statusEl.textContent = 'Bitte eine Kategorie wählen.'; return; }
+  if (!category) { statusEl.textContent = tk('household.needCategory'); return; }
   // COMMENTED OUT (tasks calendar): if (!appleCalendar.taskCalendarName) { statusEl.textContent = 'Bitte zuerst einen Aufgaben-Kalender in den Einstellungen festlegen.'; return; }
 
   let weekdays = [];
   let intervalDays = null;
   let createdDate = isoDate(new Date());
   if (scheduleType === 'weekdays') {
-    if (!pendingScheduleWeekdays.length) { statusEl.textContent = 'Bitte mindestens einen Wochentag wählen.'; return; }
+    if (!pendingScheduleWeekdays.length) { statusEl.textContent = tk('household.needWeekday'); return; }
     weekdays = [...pendingScheduleWeekdays];
   } else {
     const intervalSelVal = document.getElementById('roomScheduleIntervalSelect').value;
     if (intervalSelVal === 'custom') {
       intervalDays = parseInt(document.getElementById('roomScheduleCustomIntervalInput').value, 10);
-      if (!intervalDays || intervalDays < 1) { statusEl.textContent = 'Bitte eine gültige Anzahl Tage angeben.'; return; }
+      if (!intervalDays || intervalDays < 1) { statusEl.textContent = tk('household.needDays'); return; }
     } else {
       intervalDays = parseInt(intervalSelVal, 10);
     }
     if (intervalDays !== 1) {
       const firstDate = document.getElementById('roomScheduleFirstDateInput').value;
-      if (!firstDate) { statusEl.textContent = 'Bitte den Tag der ersten Reinigung angeben.'; return; }
+      if (!firstDate) { statusEl.textContent = tk('household.needFirstCleaning'); return; }
       createdDate = firstDate;
     }
   }
@@ -655,7 +655,7 @@ function pollHouseholdProgress(btn, statusEl, fallbackLabel) {
       const res = await apiFetch('/api/household-tasks-progress');
       const p = await res.json();
       if (p.active) {
-        btn.textContent = p.total > 0 ? `${p.done} von ${p.total} …` : `${p.label} …`;
+        btn.textContent = p.total > 0 ? tk('household.progress', { done: p.done, total: p.total }) : `${p.label} …`;
       }
     } catch (err) {
       btn.textContent = fallbackLabel;
@@ -691,11 +691,11 @@ document.getElementById('doneAnimationToggle').addEventListener('change', async 
     const settings = { ...((pushConfig && pushConfig.settings) || {}), animation: on };
     const r = await postJson('/api/pinn/push/einstellungen', { settings });
     if (pushConfig) pushConfig.settings = r.settings || settings;
-    info.textContent = 'Gespeichert.';
+    info.textContent = tk('common.saved');
     setTimeout(() => { info.textContent = ''; }, 1500);
   } catch (err) {
     e.target.checked = !on;
-    info.textContent = err.message || 'Speichern fehlgeschlagen.';
+    info.textContent = err.message || tk('common.saveFailed');
   }
 });
 
@@ -705,17 +705,17 @@ document.getElementById('regenerateHouseholdTasksBtn').addEventListener('click',
   const originalText = btn.textContent;
   btn.disabled = true;
   btn.classList.add('opacity-60', 'cursor-not-allowed');
-  btn.textContent = 'Wird geprüft …';
+  btn.textContent = tk('common.checking');
   statusEl.textContent = '';
   try {
     const res = await apiFetch('/api/pinn/aufgaben/haushalt-jetzt', { method: 'POST' });
     const result = await res.json();
-    if (result.error) { statusEl.textContent = 'Fehler: ' + result.error; return; }
-    if (result.busy) statusEl.textContent = 'Läuft gerade schon - bitte gleich noch einmal versuchen.';
-    else statusEl.textContent = result.created ? `${result.created} Aufgabe${result.created === 1 ? '' : 'n'} angelegt.` : 'Alles aktuell - keine neuen Aufgaben nötig.';
+    if (result.error) { statusEl.textContent = tk('common.errorMsg', { error: result.error }); return; }
+    if (result.busy) statusEl.textContent = tk('household.busy');
+    else statusEl.textContent = result.created ? tk('household.tasksCreated', { n: result.created }) : tk('household.upToDate');
     await loadAufgaben();
   } catch (err) {
-    statusEl.textContent = 'Verbindung fehlgeschlagen. Bitte NAS/Netzwerk prüfen.';
+    statusEl.textContent = tk('common.connectionFailed');
   } finally {
     btn.disabled = false;
     btn.classList.remove('opacity-60', 'cursor-not-allowed');
@@ -724,22 +724,22 @@ document.getElementById('regenerateHouseholdTasksBtn').addEventListener('click',
 });
 
 document.getElementById('deleteHouseholdTasksBtn').addEventListener('click', async () => {
-  if (!confirm('Wirklich alle automatisch erzeugten Haushalts-Aufgaben (Reinigung/Aufräumen/Mülleimer rausbringen) löschen? Normale, selbst angelegte Aufgaben bleiben erhalten.')) return;
+  if (!confirm(tk('household.confirmDeleteTasks'))) return;
   const btn = document.getElementById('deleteHouseholdTasksBtn');
   const statusEl = document.getElementById('householdTasksMaintenanceStatus');
   const originalText = btn.textContent;
   btn.disabled = true;
   btn.classList.add('opacity-60', 'cursor-not-allowed');
-  btn.textContent = 'Wird gelöscht …';
+  btn.textContent = tk('common.deleting');
   statusEl.textContent = '';
   try {
     const res = await apiFetch('/api/delete-household-tasks', { method: 'POST' });
     const result = await res.json();
-    if (result.error) { statusEl.textContent = 'Fehler: ' + result.error; return; }
-    statusEl.textContent = `${result.deletedCount} Aufgabe${result.deletedCount === 1 ? '' : 'n'} gelöscht.`;
+    if (result.error) { statusEl.textContent = tk('common.errorMsg', { error: result.error }); return; }
+    statusEl.textContent = tk('household.tasksDeleted', { n: result.deletedCount });
     await loadAufgaben();
   } catch (err) {
-    statusEl.textContent = 'Verbindung fehlgeschlagen. Bitte NAS/Netzwerk prüfen.';
+    statusEl.textContent = tk('common.connectionFailed');
   } finally {
     btn.disabled = false;
     btn.classList.remove('opacity-60', 'cursor-not-allowed');

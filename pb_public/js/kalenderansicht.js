@@ -125,7 +125,7 @@ function renderWeekGrid() {
         <div id="weekHeaderRow" class="grid grid-cols-7 flex-1 min-w-0"></div>
       </div>
       <div class="flex shrink-0 border-b border-ink/10">
-        <div class="w-10 shrink-0 pt-1.5 pl-0.5"><div class="cal-allday-label text-ink/40">Ganztägig</div></div>
+        <div class="w-10 shrink-0 pt-1.5 pl-0.5"><div class="cal-allday-label text-ink/40">${tk('cal.allDay')}</div></div>
         <div id="weekAllDayRow" class="grid grid-cols-7 flex-1 min-w-0"></div>
       </div>
       <div class="flex-1 min-h-0 flex">
@@ -156,7 +156,7 @@ function renderWeekGrid() {
     // Header row
     const header = document.createElement('div');
     header.className = 'day-col px-2 pt-3 pb-2 text-center cursor-pointer hover:bg-pine/5 transition';
-    header.title = 'Tagesansicht öffnen';
+    header.title = tk('cal.openDayView');
     header.innerHTML = `
       <div class="text-[11px] uppercase tracking-wide text-ink/40">${fmtDay(d)}</div>
       <div class="mt-1 inline-flex items-center justify-center w-8 h-8 rounded-full text-sm ${isToday ? 'bg-pine text-white' : 'text-ink/80'}">${d.getDate()}</div>
@@ -217,13 +217,13 @@ function renderWeekGrid() {
     attachDayDropTarget(mealsCell, dISO);
     dayMeals.forEach(p => {
       const recipe = p.recipeId ? recipes.find(r => r.id === p.recipeId) : null;
-      const title = recipe ? recipe.title : (p.title || 'Ohne Titel');
+      const title = recipe ? recipe.title : (p.title || tk('common.untitled'));
       const chip = document.createElement('div');
       chip.className = 'group relative rounded-lg px-2 py-1.5 text-xs text-white cursor-grab active:cursor-grabbing fade-in bg-mustard';
       chip.title = mealTypeLabel(p.mealType, true);
       chip.innerHTML = `
         <div class="leading-snug truncate">${mealTypeIcon(p.mealType)} ${escapeHtml(title)}</div>
-        <button class="del-meal absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-white text-ink/70 text-[10px] grid place-items-center opacity-0 group-hover:opacity-100 transition" data-id="${p.id}" aria-label="Mahlzeit löschen">×</button>
+        <button class="del-meal absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-white text-ink/70 text-[10px] grid place-items-center opacity-0 group-hover:opacity-100 transition" data-id="${p.id}" aria-label="${tk('cal.deleteMeal')}">×</button>
       `;
       attachMealDragSource(chip, p.id);
       mealsCell.appendChild(chip);
@@ -231,7 +231,7 @@ function renderWeekGrid() {
     const addMealBtn = document.createElement('button');
     addMealBtn.className = 'add-meal-btn py-1.5 rounded-lg border border-dashed border-ink/20 text-ink/40 text-[10px] hover:text-mustard hover:border-mustard transition';
     addMealBtn.dataset.day = dISO;
-    addMealBtn.textContent = '+ Essen';
+    addMealBtn.textContent = tk('cal.addMeal');
     mealsCell.appendChild(addMealBtn);
     mealsRow.appendChild(mealsCell);
   });
@@ -262,22 +262,22 @@ function renderWeekAgenda(days, todayISO) {
       .sort((a, b) => mealTypeRank(a.mealType) - mealTypeRank(b.mealType));
     const evHtml = items.map(ev => {
       const c = colorForCalendarEvent(ev);
-      const t = (ev.fullDayFiller || !ev.time) ? 'Ganztägig' : `${ev.time}${ev.endTime ? '–' + ev.endTime : ''}`;
+      const t = (ev.fullDayFiller || !ev.time) ? tk('cal.allDay') : `${ev.time}${ev.endTime ? '–' + ev.endTime : ''}`;
       return `<div class="cal-agenda-ev${isMinorCalEvent(ev) ? ' cal-minor-ag' : ''}${matchesActiveMemberFilter(ev) ? '' : ' is-dim'}" data-ev="${escapeHtml(ev.id)}" style="border-left-color:${c};background:${hexToRgba(c, isMinorCalEvent(ev) ? 0.08 : 0.13)}">
         <span class="cal-agenda-time">${t}</span><span class="cal-agenda-title">${escapeHtml(ev.title)}</span></div>`;
     }).join('');
     const mealHtml = meals.map(p => {
       const recipe = p.recipeId ? recipes.find(r => r.id === p.recipeId) : null;
-      const title = recipe ? recipe.title : (p.title || 'Ohne Titel');
+      const title = recipe ? recipe.title : (p.title || tk('common.untitled'));
       return `<div class="cal-agenda-meal" title="${mealTypeLabel(p.mealType, true)}">${mealTypeIcon(p.mealType)} ${escapeHtml(title)}</div>`;
     }).join('');
     return `<div class="cal-agenda-day${isToday ? ' is-today' : ''}" data-day="${dISO}">
       <button type="button" class="cal-agenda-head" data-open-day="${dISO}">
         <span class="cal-agenda-num">${d.getDate()}</span>
-        <span class="cal-agenda-wd">${d.toLocaleDateString('de-DE', { weekday: 'long' })}<small>${d.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })}</small></span>
-        ${isToday ? '<span class="cal-agenda-badge">Heute</span>' : ''}
+        <span class="cal-agenda-wd">${d.toLocaleDateString(sysLocale(), { weekday: 'long' })}<small>${d.toLocaleDateString(sysLocale(), { month: 'long', year: 'numeric' })}</small></span>
+        ${isToday ? '<span class="cal-agenda-badge">' + tk('common.today') + '</span>' : ''}
       </button>
-      <div class="cal-agenda-items">${evHtml || (mealHtml ? '' : '<p class="cal-agenda-empty">Keine Termine</p>')}${mealHtml}</div>
+      <div class="cal-agenda-items">${evHtml || (mealHtml ? '' : '<p class="cal-agenda-empty">' + tk('cal.noEventsLabel') + '</p>')}${mealHtml}</div>
     </div>`;
   }).join('')}</div>`;
   body.querySelectorAll('[data-open-day]').forEach(btn => btn.addEventListener('click', () => jumpToDayView(btn.dataset.openDay)));
@@ -313,7 +313,7 @@ function renderWeekListGrid(days, todayISO) {
     // Header row (identical to the timeline view)
     const header = document.createElement('div');
     header.className = 'day-col px-2 pt-3 pb-2 text-center cursor-pointer hover:bg-pine/5 transition';
-    header.title = 'Tagesansicht öffnen';
+    header.title = tk('cal.openDayView');
     header.innerHTML = `
       <div class="text-[11px] uppercase tracking-wide text-ink/40">${fmtDay(d)}</div>
       <div class="mt-1 inline-flex items-center justify-center w-8 h-8 rounded-full text-sm ${isToday ? 'bg-pine text-white' : 'text-ink/80'}">${d.getDate()}</div>
@@ -328,11 +328,11 @@ function renderWeekListGrid(days, todayISO) {
     // dayEventsRaw already contains the all-day appointments - deduplicate via Set, otherwise they show up twice
     const allItems = [...new Set([...allDayEvents, ...dayEventsRaw])].sort(calListCompare);
     if (allItems.length === 0) {
-      listCell.innerHTML = '<p class="text-[11px] text-ink/30 italic px-0.5">Keine Termine.</p>';
+      listCell.innerHTML = '<p class="text-[11px] text-ink/30 italic px-0.5">' + tk('cal.noEvents') + '</p>';
     }
     allItems.forEach(ev => {
       const calColor = colorForCalendarEvent(ev);
-      const timeLabel = (ev.fullDayFiller || !ev.time) ? 'Ganztägig' : `${ev.time}${ev.endTime ? '–' + ev.endTime : ''}`;
+      const timeLabel = (ev.fullDayFiller || !ev.time) ? tk('cal.allDay') : `${ev.time}${ev.endTime ? '–' + ev.endTime : ''}`;
       const card = document.createElement('div');
       card.className = 'rounded-lg border overflow-hidden fade-in px-1.5 py-1' + (isMinorCalEvent(ev) ? ' cal-minor-wl' : '') + (matchesActiveMemberFilter(ev) ? '' : ' opacity-30');
       card.style.backgroundColor = hexToRgba(calColor, 0.16);
@@ -352,13 +352,13 @@ function renderWeekListGrid(days, todayISO) {
     attachDayDropTarget(mealsCell, dISO);
     dayMeals.forEach(p => {
       const recipe = p.recipeId ? recipes.find(r => r.id === p.recipeId) : null;
-      const title = recipe ? recipe.title : (p.title || 'Ohne Titel');
+      const title = recipe ? recipe.title : (p.title || tk('common.untitled'));
       const chip = document.createElement('div');
       chip.className = 'group relative rounded-lg px-2 py-1.5 text-xs text-white cursor-grab active:cursor-grabbing fade-in bg-mustard';
       chip.title = mealTypeLabel(p.mealType, true);
       chip.innerHTML = `
         <div class="leading-snug truncate">${mealTypeIcon(p.mealType)} ${escapeHtml(title)}</div>
-        <button class="del-meal absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-white text-ink/70 text-[10px] grid place-items-center opacity-0 group-hover:opacity-100 transition" data-id="${p.id}" aria-label="Mahlzeit löschen">×</button>
+        <button class="del-meal absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-white text-ink/70 text-[10px] grid place-items-center opacity-0 group-hover:opacity-100 transition" data-id="${p.id}" aria-label="${tk('cal.deleteMeal')}">×</button>
       `;
       attachMealDragSource(chip, p.id);
       mealsCell.appendChild(chip);
@@ -366,7 +366,7 @@ function renderWeekListGrid(days, todayISO) {
     const addMealBtn = document.createElement('button');
     addMealBtn.className = 'add-meal-btn py-1.5 rounded-lg border border-dashed border-ink/20 text-ink/40 text-[10px] hover:text-mustard hover:border-mustard transition';
     addMealBtn.dataset.day = dISO;
-    addMealBtn.textContent = '+ Essen';
+    addMealBtn.textContent = tk('cal.addMeal');
     mealsCell.appendChild(addMealBtn);
     mealsRow.appendChild(mealsCell);
   });
@@ -392,6 +392,18 @@ function jumpToDayView(dISO) {
 
 // Builds the time labels for the left edge of the timeline (one per full hour
 // within the visible time window), at the same percentage positions as the hour lines.
+// Weekday names Monday to Sunday in the app language ('short' without a trailing dot, or 'narrow')
+function calWeekdayLabels(width) {
+  const out = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(2024, 0, 1 + i); // 1 January 2024 was a Monday
+    let s;
+    try { s = d.toLocaleDateString(sysLocale(), { weekday: width }); } catch (e) { s = ''; }
+    out.push(s.replace(/\.$/, ''));
+  }
+  return out;
+}
+
 function buildHourGutterHtml(rangeStart, rangeEnd) {
   const rangeSpan = rangeEnd - rangeStart;
   if (rangeSpan <= 0) return '';
@@ -420,15 +432,15 @@ function renderDayView() {
   const periodLabelEl = document.getElementById('periodLabel');
   if (isMobile()) {
     // Two lines instead of a too narrow one-line short form: "Sa. 19." on top, month centred below.
-    const weekdayShort = d.toLocaleDateString('de-DE', { weekday: 'short' });
-    const monthShort = d.toLocaleDateString('de-DE', { month: 'short' });
+    const weekdayShort = d.toLocaleDateString(sysLocale(), { weekday: 'short' });
+    const monthShort = d.toLocaleDateString(sysLocale(), { month: 'short' });
     periodLabelEl.classList.remove('truncate');
     periodLabelEl.innerHTML = `<span class="block leading-tight">${weekdayShort} ${d.getDate()}.</span><span class="block leading-tight">${monthShort}</span>`;
   } else {
     periodLabelEl.classList.add('truncate');
     periodLabelEl.textContent = currentView === 'uebersicht'
-      ? d.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' })
-      : d.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      ? d.toLocaleDateString(sysLocale(), { weekday: 'short', day: 'numeric', month: 'short' })
+      : d.toLocaleDateString(sysLocale(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   }
 
   const allDayEvents = events.filter(e => e.date === dISO && !e.time && isEventVisibleAsCalendarEntry(e))
@@ -451,9 +463,9 @@ function renderDayView() {
       <div class="flex flex-col w-full${compactList ? '' : ' h-full'}">
         <div id="dayListWrap" class="${compactList ? '' : 'flex-1 min-h-0 overflow-y-auto '}px-4 py-3 flex flex-col gap-2"></div>
         ${showInlineMeals ? `<div class="shrink-0 border-t border-ink/10 px-4 py-3">
-          <h3 class="text-xs uppercase tracking-wide text-ink/40 mb-2">Mahlzeiten</h3>
+          <h3 class="text-xs uppercase tracking-wide text-ink/40 mb-2">${tk('cal.meals')}</h3>
           <div id="dayMealsWrap" class="flex flex-row gap-2 mb-2"></div>
-          <button id="dayAddMealBtn" class="w-full py-2 rounded-lg border border-dashed border-ink/20 text-ink/40 text-xs hover:text-mustard hover:border-mustard transition">+ Essen</button>
+          <button id="dayAddMealBtn" class="w-full py-2 rounded-lg border border-dashed border-ink/20 text-ink/40 text-xs hover:text-mustard hover:border-mustard transition">${tk('cal.addMeal')}</button>
         </div>` : ''}
       </div>
     `;
@@ -461,11 +473,11 @@ function renderDayView() {
     // dayEventsRaw already contains the all-day appointments - deduplicate via Set, otherwise they show up twice
     const allItems = [...new Set([...allDayEvents, ...dayEventsRaw])].sort(calListCompare);
     if (allItems.length === 0) {
-      listWrap.innerHTML = '<p class="text-sm text-ink/30 italic px-1">Keine Termine.</p>';
+      listWrap.innerHTML = '<p class="text-sm text-ink/30 italic px-1">' + tk('cal.noEvents') + '</p>';
     }
     allItems.forEach(ev => {
       const calColor = colorForCalendarEvent(ev);
-      const timeLabel = (ev.fullDayFiller || !ev.time) ? 'Ganztägig' : `${ev.time}${ev.endTime ? '–' + ev.endTime : ''}`;
+      const timeLabel = (ev.fullDayFiller || !ev.time) ? tk('cal.allDay') : `${ev.time}${ev.endTime ? '–' + ev.endTime : ''}`;
       const assignedBar = assignedMembersBarHtml(ev);
       const card = document.createElement('div');
       card.className = 'rounded-xl border overflow-hidden fade-in flex relative' + (isMinorCalEvent(ev) ? ' cal-minor-card' : '') + (matchesActiveMemberFilter(ev) ? '' : ' opacity-30');
@@ -486,7 +498,7 @@ function renderDayView() {
   body.innerHTML = `
     <div class="flex flex-col h-full w-full">
       <div class="flex px-4 pt-3">
-        <div class="w-10 shrink-0 pt-0.5"><div class="cal-allday-label text-ink/40">Ganztägig</div></div>
+        <div class="w-10 shrink-0 pt-0.5"><div class="cal-allday-label text-ink/40">${tk('cal.allDay')}</div></div>
         <div id="dayAllDayWrap" class="flex-1 min-w-0 flex flex-col gap-1.5"></div>
       </div>
       <div class="flex-1 min-h-0 px-4 py-2 flex">
@@ -494,9 +506,9 @@ function renderDayView() {
         <div id="dayTimeline" class="relative flex-1 min-w-0" style="background-image: repeating-linear-gradient(to bottom, rgba(37,35,31,0.08) 0, rgba(37,35,31,0.08) 1px, transparent 1px, transparent ${hourStepPercent}%);"></div>
       </div>
       ${showInlineMeals ? `<div class="shrink-0 border-t border-ink/10 px-4 py-3">
-        <h3 class="text-xs uppercase tracking-wide text-ink/40 mb-2">Mahlzeiten</h3>
+        <h3 class="text-xs uppercase tracking-wide text-ink/40 mb-2">${tk('cal.meals')}</h3>
         <div id="dayMealsWrap" class="flex flex-row gap-2 mb-2"></div>
-        <button id="dayAddMealBtn" class="w-full py-2 rounded-lg border border-dashed border-ink/20 text-ink/40 text-xs hover:text-mustard hover:border-mustard transition">+ Essen</button>
+        <button id="dayAddMealBtn" class="w-full py-2 rounded-lg border border-dashed border-ink/20 text-ink/40 text-xs hover:text-mustard hover:border-mustard transition">${tk('cal.addMeal')}</button>
       </div>` : ''}
     </div>
   `;
@@ -519,7 +531,7 @@ function renderDayView() {
   if (timedEvents.length === 0 && allDayEvents.length === 0) {
     const hint = document.createElement('p');
     hint.className = 'absolute top-2 left-2 text-sm text-ink/30 italic';
-    hint.textContent = 'Keine Termine.';
+    hint.textContent = tk('cal.noEvents');
     timeline.appendChild(hint);
   }
   timedEvents.forEach(ev => {
@@ -547,10 +559,10 @@ function renderDayView() {
   if (showInlineMeals) {
     const mealsWrap = document.getElementById('dayMealsWrap');
     attachDayDropTarget(mealsWrap, dISO);
-    if (dayMeals.length === 0) mealsWrap.innerHTML = '<p class="text-sm text-ink/30 italic">Keine Mahlzeiten geplant.</p>';
+    if (dayMeals.length === 0) mealsWrap.innerHTML = '<p class="text-sm text-ink/30 italic">' + tk('cal.noMealsPlanned') + '</p>';
     dayMeals.forEach(p => {
       const recipe = p.recipeId ? recipes.find(r => r.id === p.recipeId) : null;
-      const title = recipe ? recipe.title : (p.title || 'Ohne Titel');
+      const title = recipe ? recipe.title : (p.title || tk('common.untitled'));
       const row = document.createElement('div');
       row.className = 'group relative rounded-lg px-3 py-2 text-sm text-white flex flex-col items-start gap-0.5 fade-in bg-mustard cursor-grab active:cursor-grabbing flex-1 min-w-0';
       row.title = mealTypeLabel(p.mealType, true);
@@ -574,11 +586,11 @@ function renderMonthGrid() {
   base.setMonth(base.getMonth() + monthOffset);
   const year = base.getFullYear(), monthIndex = base.getMonth();
   document.getElementById('periodLabel').classList.add('truncate');
-  document.getElementById('periodLabel').textContent = base.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' });
+  document.getElementById('periodLabel').textContent = base.toLocaleDateString(sysLocale(), { month: 'long', year: 'numeric' });
 
   const todayISO = isoDate(new Date());
   const cells = monthGridDays(year, monthIndex);
-  const weekdayLabels = ['Mo','Di','Mi','Do','Fr','Sa','So'];
+  const weekdayLabels = calWeekdayLabels('short');
   const mobileMonth = isMobile();
 
   const body = document.getElementById('calendarBody');
@@ -599,7 +611,7 @@ function renderMonthGrid() {
         return `<button class="month-cell text-left p-1.5 bg-paper hover:bg-pine/5 transition flex flex-col gap-1 min-h-[76px]${mobileMonth ? ' cal-month-cell-m' : ''} ${inMonth ? '' : 'opacity-35'}" data-day="${dISO}">
           <span class="text-xs flex items-center justify-between">
             <span class="${isToday ? 'inline-flex w-5 h-5 rounded-full bg-pine text-white items-center justify-center' : ''}">${d.getDate()}</span>
-            ${hasMeals ? '<span title="Essen geplant" class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-mustard-50 shadow-sm shrink-0 leading-none">🍽</span>' : ''}
+            ${hasMeals ? '<span title="' + tk('cal.mealPlanned') + '" class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-mustard-50 shadow-sm shrink-0 leading-none">🍽</span>' : ''}
           </span>
           ${mobileMonth
             ? `<span class="cal-month-dots">${shown.map(ev => `<i${isMinorCalEvent(ev) ? ' class="minor"' : ''} style="background:${colorForCalendarEvent(ev)}${matchesActiveMemberFilter(ev) ? '' : ';opacity:.3'}"></i>`).join('')}${more > 0 ? `<em>+${more}</em>` : ''}</span>`
@@ -621,13 +633,13 @@ function renderYearGrid() {
   document.getElementById('periodLabel').classList.add('truncate');
   document.getElementById('periodLabel').textContent = String(year);
   const todayISO = isoDate(new Date());
-  const weekdayLabels = ['M','D','M','D','F','S','S'];
+  const weekdayLabels = calWeekdayLabels('narrow');
 
   const body = document.getElementById('calendarBody');
   body.innerHTML = `<div class="${isMobile() ? 'grid grid-cols-2 gap-2 p-2' : 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4'}">${
     [...Array(12)].map((_, monthIndex) => {
       const cells = monthGridDays(year, monthIndex);
-      const monthLabel = new Date(year, monthIndex, 1).toLocaleDateString('de-DE', { month: 'long' });
+      const monthLabel = new Date(year, monthIndex, 1).toLocaleDateString(sysLocale(), { month: 'long' });
       return `
         <div class="rounded-xl border border-ink/10 bg-white p-3">
           <button class="year-month-label font-serif text-sm mb-2 hover:text-pine transition" data-month="${monthIndex}">${monthLabel}</button>

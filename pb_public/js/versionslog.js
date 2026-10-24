@@ -20,6 +20,14 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.113', datum: '24.10.2026', titel: 'Übersetzungen mit Text-Schlüsseln: Kalender, Aufgaben und Haushalt',
+    punkte: [
+      ['info', 'Kalender (Tag, Woche, Monat, Jahr), Termin-Popup, Aufgaben, Haushalt mit Räumen, Mülleimern, Reinigungen und „Wer macht wie viel?“ holen ihre Texte jetzt über Text-Schlüssel – in allen neun Sprachen, auch als WG. Wochentage, Monatsnamen und Datum stehen im Format der eingestellten Sprache'],
+      ['fix', 'Kleinigkeiten: „Alle [n] Wochen“ in der Termin-Wiederholung, „Keine“ und „Bis“ stehen jetzt in jeder Sprache richtig; Feiertage zeigen das Datum im Format der eingestellten Sprache; Zahlen wie „3 Aufgaben angelegt“ oder „1 erledigt“ in richtiger Einzahl und Mehrzahl'],
+      ['info', 'Geändert: index.html, js/kalenderansicht.js, js/termine.js, js/termindetails.js, js/kalenderquellen.js, js/kalenderdatei.js, js/feiertage.js, js/muellkalender.js, js/aufgaben.js, js/aufgabendaten.js, js/aufgabenextras.js, js/haushalt.js, js/reihum.js, js/zustand.js, js/sprachen.js, js/versionslog.js, alle Sprachdateien in i18n/ und lang/ – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.112', datum: '23.10.2026', titel: 'Übersetzungen mit Text-Schlüsseln: Rahmen, Anmeldung und Einstellungen',
     punkte: [
       ['info', 'Anmeldung, Hauptadmin, Familien-Dashboard, Menü, Kopfzeile, Suche und die ganze Einstellungen-Seite holen ihre Texte jetzt über Text-Schlüssel – in allen neun Sprachen, auch als WG. An der Bedienung ändert sich nichts'],

@@ -102,8 +102,8 @@ function assigneesForTask(task) {
 function fmtDateTime(dateStr, timeStr) {
   if (!dateStr) return '';
   const d = new Date(dateStr + 'T00:00:00');
-  const dateLabel = d.toLocaleDateString('de-DE', { day: 'numeric', month: 'short', year: 'numeric' });
-  return timeStr ? `${dateLabel}, ${timeStr} Uhr` : dateLabel;
+  const dateLabel = d.toLocaleDateString(sysLocale(), { day: 'numeric', month: 'short', year: 'numeric' });
+  return timeStr ? `${dateLabel}, ${tk('cal.timeAt', { time: timeStr })}` : dateLabel;
 }
 
 // Marks this file as loaded – the start check in index.html reports missing app files

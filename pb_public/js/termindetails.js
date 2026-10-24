@@ -78,8 +78,9 @@ function showEventDetail(ev, anchorEl) {
 
   document.getElementById('eventDetailTitle').textContent = ev.title;
   const dateObj = new Date(ev.date + 'T00:00:00');
-  const dateStr = dateObj.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  const timeStr = ev.fullDayFiller ? 'Ganztägig' : (ev.time ? `${ev.time}${ev.endTime ? '–' + ev.endTime + ' Uhr' : ' Uhr'}` : 'Ganztägig');
+  const dateStr = dateObj.toLocaleDateString(sysLocale(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const timeStr = ev.fullDayFiller || !ev.time ? tk('cal.allDay')
+    : (ev.endTime ? tk('cal.timeRange', { from: ev.time, to: ev.endTime }) : tk('cal.timeAt', { time: ev.time }));
   document.getElementById('eventDetailWhen').textContent = `${dateStr} · ${timeStr}`;
 
   const locEl = document.getElementById('eventDetailLocation');
@@ -108,12 +109,12 @@ function showEventDetail(ev, anchorEl) {
   const deleteStatus = document.getElementById('eventDetailDeleteStatus');
   deleteStatus.textContent = '';
   deleteBtn.disabled = false;
-  deleteBtn.textContent = 'Termin löschen';
+  deleteBtn.textContent = tk('event.delete');
   deleteBtn.classList.toggle('hidden', !ev.pinnHref);
   // Public holidays and school holidays (from the federal state under Settings → Home) are read only
   const isHoliday = !!ev.pinnHoliday;
   if (isHoliday) {
-    calNameEl.textContent = ev.pinnHoliday === 'muell' ? '🗑️ Müllabfuhr' : ev.pinnHoliday === 'ferien' ? '🎒 Schulferien' : ev.pinnHoliday === 'schule' ? '🏫 Schule & Kita' : ev.pinnHoliday === 'urlaub' ? '🧳 Urlaub' : '🎉 Feiertag';
+    calNameEl.textContent = ev.pinnHoliday === 'muell' ? tk('event.badge.waste') : ev.pinnHoliday === 'ferien' ? tk('event.badge.schoolHolidays') : ev.pinnHoliday === 'schule' ? tk('event.badge.school') : ev.pinnHoliday === 'urlaub' ? tk('event.badge.trip') : tk('event.badge.holiday');
     calNameEl.classList.remove('hidden');
   }
   renderEventDetailLinks(ev);
@@ -147,13 +148,13 @@ function renderEventDetailLinks(ev) {
   const links = [];
   const canLists = isViewAllowed('einkauf') && !isCurrentUserGuest();
   if (ev.pinnHoliday === 'urlaub' && ev.pinnTripList) {
-    if (canLists) links.push(['list', '🧳 Packliste', ev.pinnTripList]);
-    links.push(['wx', '🌤️ Urlaubswetter', ev.pinnTripList]);
+    if (canLists) links.push(['list', tk('event.link.packList'), ev.pinnTripList]);
+    links.push(['wx', tk('event.link.tripWeather'), ev.pinnTripList]);
   } else if (!ev.pinnHoliday && canLists && calTravelKind(ev.title)) {
     const r = calEventRange(ev);
     const have = calPackListForRange(r.from, r.to);
-    if (have) links.push(['list', '🧳 Packliste', have.id]);
-    else links.push(['new', '🧳 Packliste anlegen', '']);
+    if (have) links.push(['list', tk('event.link.packList'), have.id]);
+    else links.push(['new', tk('event.link.newPackList'), '']);
   }
   box.innerHTML = links.map(([k, label, id]) => `<button type="button" class="ev-link-btn" data-evlink="${k}" data-id="${escapeHtml(id)}">${escapeHtml(label)}</button>`).join('');
   box.classList.toggle('hidden', !links.length);
@@ -186,8 +187,8 @@ document.getElementById('eventDetailDeleteBtn').addEventListener('click', async 
   if (!ev || !ev.pinnHref) return;
 
   const warning = ev.isRecurring
-    ? `"${ev.title}" ist ein wiederkehrender Termin. Löschen entfernt die GESAMTE Serie aus deinem Kalender, nicht nur diesen einen Tag. Wirklich fortfahren?`
-    : `"${ev.title}" wirklich aus deinem Kalender löschen? Das kann nicht rückgängig gemacht werden.`;
+    ? tk('event.confirmDeleteSeries', { title: ev.title })
+    : tk('event.confirmDelete', { title: ev.title });
   if (!confirm(warning)) return;
 
   // Remove immediately (all occurrences with the same iCloud resource, so for series the
