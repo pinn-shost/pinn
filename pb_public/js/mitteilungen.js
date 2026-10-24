@@ -95,15 +95,14 @@ function sameKey(a, b) {
 // Register the service worker exactly once and wait for an ACTIVE worker.
 // iOS rejects pushManager.subscribe() as long as the worker is not active yet.
 function getPushRegistration() {
-  if (!('serviceWorker' in navigator)) return Promise.reject(new Error('Dieses Gerät unterstützt keine Hintergrunddienste (Service Worker).'));
+  if (!('serviceWorker' in navigator)) return Promise.reject(new Error(tk('account.push.err.noServiceWorker')));
   if (!pushRegPromise) {
     pushRegPromise = (async () => {
       let reg = null;
       try { reg = await navigator.serviceWorker.getRegistration('/'); } catch (e) { reg = null; }
       if (!reg) reg = await navigator.serviceWorker.register('/sw.js', { scope: '/', updateViaCache: 'none' });
       if (reg.active) return reg;
-      return await pushWithTimeout(navigator.serviceWorker.ready, 15000,
-        'Der Hintergrunddienst von pinn. startet nicht. Bitte pinn. komplett schließen (vom Bildschirmrand wegwischen) und neu öffnen.');
+      return await pushWithTimeout(navigator.serviceWorker.ready, 15000, tk('account.push.err.swNotStarting'));
     })().catch(e => { pushRegPromise = null; throw e; });
   }
   return pushRegPromise;
@@ -152,33 +151,30 @@ function pushSubscribeErrorText(e) {
   const name = (e && e.name) || '';
   const msg = (e && e.message) || String(e || '');
   if (name === 'NotAllowedError') {
-    if (isAppleMobile()) return 'iOS hat die Anmeldung abgelehnt. Bitte in den iPhone-Einstellungen → Mitteilungen → pinn. „Mitteilungen erlauben“ einschalten und erneut tippen.';
-    if (isAndroidDevice()) return 'Android hat die Anmeldung abgelehnt. Bitte in Chrome auf das Symbol links neben der Adresse tippen → Berechtigungen → Benachrichtigungen erlauben und erneut tippen.';
-    return 'Benachrichtigungen wurden nicht erlaubt.';
+    if (isAppleMobile()) return tk('account.push.err.iosRejected');
+    if (isAndroidDevice()) return tk('account.push.err.androidRejected');
+    return tk('account.push.err.notAllowed');
   }
   if (name === 'InvalidStateError' || name === 'AbortError') {
-    return 'Die Anmeldung beim Push-Dienst ist fehlgeschlagen (' + name + ': ' + msg + '). Bitte pinn. komplett schließen, neu öffnen und erneut tippen.';
+    return tk('account.push.err.subscribeRetry', { error: name + ': ' + msg });
   }
-  return 'Anmeldung beim Push-Dienst fehlgeschlagen' + (name ? ' (' + name + ')' : '') + ': ' + msg;
+  return tk('account.push.err.subscribeFailed', { error: (name ? '(' + name + ') ' : '') + msg });
 }
 
 async function enablePushOnThisDevice() {
   // Ask for permission first - Safari requires this to follow the tap directly
   const permission = await requestNotificationPermission();
   if (permission === 'denied') {
-    throw new Error(isAppleMobile()
-      ? 'Benachrichtigungen sind für pinn. blockiert. Bitte in den iPhone-Einstellungen → Mitteilungen → pinn. „Mitteilungen erlauben“ einschalten.'
-      : (isAndroidDevice()
-        ? 'Benachrichtigungen sind für pinn. blockiert. Bitte in Chrome auf das Symbol links neben der Adresse tippen → Berechtigungen → Benachrichtigungen erlauben (installierte App: Android-Einstellungen → Apps → pinn. → Benachrichtigungen).'
-        : 'Benachrichtigungen sind für pinn. blockiert. Bitte in den Browser-Einstellungen erlauben.'));
+    throw new Error(tk(isAppleMobile() ? 'account.push.err.blockedIos'
+      : (isAndroidDevice() ? 'account.push.err.blockedAndroid' : 'account.push.err.blockedBrowser')));
   }
-  if (permission !== 'granted') throw new Error('Die Abfrage wurde geschlossen, ohne zu erlauben. Bitte erneut tippen und „Erlauben“ wählen.');
+  if (permission !== 'granted') throw new Error(tk('account.push.err.dismissed'));
 
   if (!pushConfig || !pushConfig.publicKey) await loadPushConfig();
-  if (!pushConfig.available || !pushConfig.publicKey) throw new Error(pushConfig.message || 'Push ist auf dem Server nicht verfügbar.');
+  if (!pushConfig.available || !pushConfig.publicKey) throw new Error(pushConfig.message || tk('account.push.err.serverUnavailable'));
 
   const reg = await getPushRegistration();
-  if (!reg || !reg.pushManager) throw new Error('Dieses Gerät unterstützt keine Push-Benachrichtigungen.');
+  if (!reg || !reg.pushManager) throw new Error(tk('account.push.err.deviceUnsupported'));
   const key = base64UrlToUint8Array(pushConfig.publicKey);
 
   let sub = null;
@@ -192,18 +188,18 @@ async function enablePushOnThisDevice() {
     try {
       sub = await pushWithTimeout(
         reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key }),
-        20000, 'Der Push-Dienst von Apple/Google antwortet nicht. Bitte Internetverbindung prüfen und erneut tippen.');
+        20000, tk('account.push.err.serviceTimeout'));
     } catch (e) {
       throw new Error(e && e.name ? pushSubscribeErrorText(e) : (e.message || String(e)));
     }
   }
-  if (!sub) throw new Error('Das Gerät hat keine Push-Adresse geliefert. Bitte pinn. neu öffnen und erneut tippen.');
+  if (!sub) throw new Error(tk('account.push.err.noAddress'));
 
   setPushWanted(true);
   try {
     await sendSubscriptionToServer(sub);
   } catch (e) {
-    throw new Error('Das Gerät konnte nicht beim pinn.-Server angemeldet werden: ' + e.message);
+    throw new Error(tk('account.push.err.serverRegister', { error: e.message }));
   }
   return sub;
 }
@@ -241,7 +237,7 @@ function syncPushSubscription() {
       if (!sub && serverKey && Notification.permission === 'granted') {
         try {
           sub = await pushWithTimeout(reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: serverKey }),
-            20000, 'Zeitüberschreitung');
+            20000, tk('account.push.err.timeout'));
         } catch (e) { sub = null; }
       }
       if (sub) await sendSubscriptionToServer(sub);
@@ -321,33 +317,30 @@ async function renderPushSettings(knownSub) {
   updateAndroidInstallUi();
 
   const me = currentMember();
-  who.textContent = me
-    ? `Persönlich für ${me.name}: deine Termine, Aufgaben und Zuweisungen.`
-    : 'Dein Profil ist mit keinem Familienmitglied verknüpft – persönliche Termine und Aufgaben können deshalb nicht zugeordnet werden.';
+  who.textContent = me ? tk('account.push.who', { name: me.name }) : tk('account.push.notLinked');
 
   try {
     await loadPushConfig();
   } catch (e) {
-    status.textContent = 'Keine Verbindung zum Server.';
+    status.textContent = tk('common.noConnection');
     return;
   }
   fillPushSettingsForm(pushConfig.settings || {});
   box.classList.remove('hidden');
   if (!pushConfig.available) {
-    status.textContent = 'Auf dem Server nicht verfügbar: ' + (pushConfig.message || 'unbekannter Fehler');
+    status.textContent = tk('account.push.serverUnavailableDetail', { error: pushConfig.message || tk('common.unknownError') });
     return;
   }
   if (!window.isSecureContext) {
-    status.textContent = 'Nur über die HTTPS-Adresse von pinn. möglich (nicht über http://…:8090).';
+    status.textContent = tk('account.push.httpsOnly');
     return;
   }
   if (!pushSupported()) {
     const needsHomeScreen = isAppleMobile() && !isStandaloneApp();
     iosHint.classList.toggle('hidden', !needsHomeScreen);
     androidBrowserHint.classList.toggle('hidden', !isAndroidDevice());
-    status.textContent = needsHomeScreen
-      ? 'Auf diesem Gerät noch nicht möglich.'
-      : (isAppleMobile() ? 'Dieses iPhone/iPad unterstützt noch keine Benachrichtigungen für Web-Apps – bitte auf iOS 16.4 oder neuer aktualisieren.' : 'Dieser Browser unterstützt keine Push-Benachrichtigungen.');
+    status.textContent = tk(needsHomeScreen ? 'account.push.notYetPossible'
+      : (isAppleMobile() ? 'account.push.iosTooOld' : 'account.push.browserUnsupported'));
     return;
   }
   iosHint.classList.add('hidden');
@@ -372,11 +365,11 @@ async function renderPushSettings(knownSub) {
       await sendSubscriptionToServer(sub);
       await loadPushConfig();
     } catch (e) {
-      serverErr = e.message || 'unbekannter Fehler';
+      serverErr = e.message || tk('common.unknownError');
     }
     const others = Math.max(0, (pushConfig.geraete || 0) - 1);
     if (serverErr) {
-      status.textContent = 'Auf diesem Gerät eingeschaltet, aber nicht beim pinn.-Server angemeldet: ' + serverErr;
+      status.textContent = tk('account.push.onButNotRegistered', { error: serverErr });
       status.classList.add('text-red-500');
       enableBtn.classList.remove('hidden');
       disableBtn.classList.remove('hidden');
@@ -386,7 +379,7 @@ async function renderPushSettings(knownSub) {
       status.textContent = pushLastError;
       status.classList.add('text-red-500');
     } else {
-      status.textContent = 'Auf diesem Gerät aktiv' + (others ? ` (und auf ${others} weiteren Gerät${others === 1 ? '' : 'en'}).` : '.');
+      status.textContent = others ? tk('account.push.activeHereAndOthers', { n: others }) : tk('account.push.activeHere');
     }
     disableBtn.classList.remove('hidden');
     testBtn.classList.remove('hidden');
@@ -394,11 +387,8 @@ async function renderPushSettings(knownSub) {
   }
   const others = Math.max(0, pushConfig.geraete || 0);
   if (Notification.permission === 'denied') {
-    status.textContent = isAppleMobile()
-      ? 'Benachrichtigungen sind für pinn. blockiert. Bitte in den iPhone-Einstellungen → Mitteilungen → pinn. „Mitteilungen erlauben“ einschalten und pinn. neu öffnen.'
-      : (isAndroidDevice()
-        ? 'Benachrichtigungen sind für pinn. blockiert. Bitte in Chrome auf das Symbol links neben der Adresse tippen → Berechtigungen → Benachrichtigungen erlauben (installierte App: Android-Einstellungen → Apps → pinn. → Benachrichtigungen) und pinn. neu öffnen.'
-        : 'Benachrichtigungen sind für pinn. auf diesem Gerät blockiert. Bitte in den Browser-Einstellungen erlauben.');
+    status.textContent = tk(isAppleMobile() ? 'account.push.blockedIosReopen'
+      : (isAndroidDevice() ? 'account.push.blockedAndroidReopen' : 'account.push.blockedBrowserDevice'));
     status.classList.add('text-red-500');
     return;
   }
@@ -406,10 +396,10 @@ async function renderPushSettings(knownSub) {
     status.textContent = pushLastError;
     status.classList.add('text-red-500');
   } else if (lostSub) {
-    status.textContent = 'Die Anmeldung dieses Geräts wurde vom System zurückgesetzt. Bitte einmal „Auf diesem Gerät aktivieren“ tippen.';
+    status.textContent = tk('account.push.lostRegistration');
     status.classList.add('text-red-500');
   } else {
-    status.textContent = 'Auf diesem Gerät nicht aktiv' + (others ? ` (aktiv auf ${others} anderen Gerät${others === 1 ? '' : 'en'}).` : '.');
+    status.textContent = others ? tk('account.push.inactiveHereActiveOthers', { n: others }) : tk('account.push.inactiveHere');
   }
   enableBtn.classList.remove('hidden');
   if (others) testBtn.classList.remove('hidden');
@@ -420,7 +410,7 @@ document.getElementById('pushEnableBtn').addEventListener('click', async () => {
   const btn = document.getElementById('pushEnableBtn');
   btn.disabled = true;
   status.classList.remove('text-red-500');
-  status.textContent = 'Wird aktiviert …';
+  status.textContent = tk('account.push.activating');
   try {
     const sub = await enablePushOnThisDevice();
     pushLastError = '';
@@ -429,7 +419,7 @@ document.getElementById('pushEnableBtn').addEventListener('click', async () => {
       status.classList.remove('text-red-500');
     }
   } catch (e) {
-    pushLastError = (e && e.message) || 'Aktivieren fehlgeschlagen.';
+    pushLastError = (e && e.message) || tk('account.push.activateFailed');
     await renderPushSettings();
   } finally {
     btn.disabled = false;
@@ -455,7 +445,7 @@ document.getElementById('pushTestBtn').addEventListener('click', async () => {
   const btn = document.getElementById('pushTestBtn');
   btn.disabled = true;
   status.classList.remove('text-red-500');
-  status.textContent = 'Test wird gesendet …';
+  status.textContent = tk('account.push.testSending');
   try {
     let sub = await currentPushSubscription();
     // register the device with the server (again) before the test
@@ -466,18 +456,19 @@ document.getElementById('pushTestBtn').addEventListener('click', async () => {
     } catch (e) {
       // The push service no longer knows the old device address -> register again and send once more
       if (sub && /nicht mehr angemeldet|kein Gerät angemeldet|neu aktivieren/i.test(e.message || '')) {
-        status.textContent = 'Gerät wird neu angemeldet …';
+        status.textContent = tk('account.push.reregistering');
         try { await postJson('/api/pinn/push/abo-loeschen', { endpoint: sub.endpoint }); } catch (e2) { /* ignore */ }
         try { await sub.unsubscribe(); } catch (e2) { /* ignore */ }
         sub = await enablePushOnThisDevice();
-        status.textContent = 'Test wird gesendet …';
+        status.textContent = tk('account.push.testSending');
         r = await postJson('/api/pinn/push/test', {});
       } else {
         throw e;
       }
     }
     pushLastError = '';
-    status.textContent = `Test gesendet an ${r.sent} Gerät${r.sent === 1 ? '' : 'e'}.` + (r.fehler && r.fehler.length ? ' Hinweis: ' + r.fehler.join(' | ') : '');
+    status.textContent = tk('account.push.testSent', { n: r.sent }) +
+      (r.fehler && r.fehler.length ? ' ' + tk('account.push.testNote', { details: r.fehler.join(' | ') }) : '');
   } catch (e) {
     status.textContent = e.message;
     status.classList.add('text-red-500');
@@ -496,7 +487,7 @@ document.querySelectorAll('.push-opt').forEach(el => el.addEventListener('change
     try {
       const r = await postJson('/api/pinn/push/einstellungen', { settings: st });
       if (pushConfig) pushConfig.settings = r.settings;
-      info.textContent = 'Gespeichert.';
+      info.textContent = tk('common.saved');
       setTimeout(() => { info.textContent = ''; }, 1500);
     } catch (e) {
       info.textContent = e.message;

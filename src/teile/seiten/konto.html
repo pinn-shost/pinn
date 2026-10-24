@@ -2,7 +2,7 @@
   <div id="accountView" class="hidden flex-1 min-h-0 bg-white/40">
     <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
       <div class="flex items-center justify-between gap-3">
-        <h2 class="font-serif text-lg">Konto</h2>
+        <h2 data-tk="nav.account" class="font-serif text-lg">Account</h2>
       </div>
     </div>
     <div id="accountScroll" class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">
@@ -13,55 +13,55 @@
         <div class="acc-hero-row">
           <div id="accountAvatar" class="acc-avatar"></div>
           <div class="min-w-0 flex-1">
-            <p class="acc-hero-label">Angemeldet als</p>
+            <p data-tk="account.signedInAs" class="acc-hero-label">Logged in as</p>
             <p class="acc-hero-name"><span id="accountName"></span> <span id="accountRole" class="text-xs text-ink/40 font-normal"></span></p>
             <p id="accountFamily" class="text-xs text-ink/50"></p>
           </div>
         </div>
         <div class="acc-hero-actions">
-          <button type="button" id="openChangePasswordBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition">Passwort ändern</button>
-          <button type="button" id="logoutBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-red-500 hover:border-red-500 transition">Abmelden</button>
+          <button data-tk="account.changePassword" type="button" id="openChangePasswordBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition">Change password</button>
+          <button data-tk="common.logOut" type="button" id="logoutBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-red-500 hover:border-red-500 transition">Log out</button>
         </div>
-        <p id="accountGuestHint" class="hidden text-xs text-ink/40 px-4 pb-4 -mt-1">Du nutzt ein Gastkonto. Es hat kein Passwort und öffnet sich nur über das Familien-Dashboard – die Finanzen, Dokumente und Einstellungen sind für Gäste nicht verfügbar.</p>
+        <p data-tk="account.guestHint" id="accountGuestHint" class="hidden text-xs text-ink/40 px-4 pb-4 -mt-1">You are using a guest account. It has no password and only opens via the family dashboard – finance, documents and settings are not available to guests.</p>
       </div>
 
       <!-- Signed-in devices (own profile) – pb_hooks/sitzungen.pb.js -->
       <div id="devicesSection" class="set-card">
-        <div class="set-head-row"><span class="set-ico">📱</span><div class="set-head"><h3 class="sa-title">Angemeldete Geräte</h3><small>Wo dein Profil gerade angemeldet ist</small></div></div>
+        <div class="set-head-row"><span class="set-ico">📱</span><div class="set-head"><h3 data-tk="devices.title" class="sa-title">Signed-in devices</h3><small data-tk="devices.subtitle">Where your profile is signed in</small></div></div>
         <div class="set-body">
-          <div id="devicesList" class="sm-list"><p class="sm-empty">Wird geladen …</p></div>
+          <div id="devicesList" class="sm-list"><p data-tk="common.loading" class="sm-empty">Loading …</p></div>
           <div class="flex flex-wrap items-center gap-2 mt-3">
-            <button type="button" id="devicesLogoutOthersBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-red-500 hover:border-red-500 transition">Alle anderen Geräte abmelden</button>
+            <button data-tk="devices.logoutOthers" type="button" id="devicesLogoutOthersBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-red-500 hover:border-red-500 transition">Sign out all other devices</button>
           </div>
           <p id="devicesStatus" class="text-xs text-ink/50 mt-2"></p>
-          <p class="text-[11px] text-ink/40 mt-2">Ein abgemeldetes Gerät verliert sofort den Zugriff, bekommt keine Benachrichtigungen mehr und löscht beim nächsten Öffnen die pinn.-Daten auf dem Gerät – praktisch, wenn ein Handy verloren geht. Auch „Passwort ändern“ meldet alle anderen Geräte ab.</p>
+          <p data-tk="devices.hintOwn" class="text-[11px] text-ink/40 mt-2">A signed-out device loses access immediately, no longer receives notifications and deletes the pinn. data on the device the next time it is opened – handy if a phone gets lost. “Change password” also signs out all other devices.</p>
         </div>
       </div>
 
       <!-- Push notifications (personal for each profile) -->
       <div id="pushSection" class="set-card">
-        <div class="set-head-row"><span class="set-ico">🔔</span><div class="set-head"><h3 class="sa-title">Benachrichtigungen</h3><small>Push auf diesem Gerät, Erinnerungen, Pinnwand</small></div></div>
+        <div class="set-head-row"><span class="set-ico">🔔</span><div class="set-head"><h3 data-tk="account.push.title" class="sa-title">Notifications</h3><small data-tk="account.push.subtitle">Push on this device, reminders, board</small></div></div>
         <div class="set-body">
 
         <p id="pushWhoText" class="text-sm text-ink/70 mb-1"></p>
         <p id="pushStatus" class="text-xs text-ink/50 mb-3"></p>
-        <p id="pushIosHint" class="hidden text-xs text-mustard mb-3">Auf iPhone und iPad klappen Benachrichtigungen nur, wenn pinn. über „Teilen → Zum Home-Bildschirm“ hinzugefügt und von dort geöffnet wird (ab iOS 16.4).</p>
+        <p data-tk="account.push.iosHint" id="pushIosHint" class="hidden text-xs text-mustard mb-3">On iPhone and iPad, notifications only work if pinn. was added via “Share → Add to Home Screen” and is opened from there (iOS 16.4 or later).</p>
         <!-- Android: notes on browser, app installation and power saving -->
-        <p id="pushAndroidBrowserHint" class="hidden text-xs text-mustard mb-3">Auf Android-Handys klappen Benachrichtigungen in Chrome, Samsung Internet, Edge oder Firefox – nicht im eingebauten Browser anderer Apps (z. B. WhatsApp, Mail). Bitte die pinn.-Adresse dort öffnen.</p>
+        <p data-tk="account.push.androidBrowserHint" id="pushAndroidBrowserHint" class="hidden text-xs text-mustard mb-3">On Android phones, notifications work in Chrome, Samsung Internet, Edge or Firefox – not in the built-in browser of other apps (e.g. WhatsApp, Mail). Please open the pinn. address there.</p>
         <div id="pushAndroidInstallBox" class="hidden mb-3">
-          <p class="text-xs text-ink/60 mb-2">Tipp für Android: pinn. als App auf den Startbildschirm legen – dann öffnet es sich ohne Adressleiste und Mitteilungen kommen mit dem pinn.-Symbol.</p>
-          <button type="button" id="pushAndroidInstallBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">📲 pinn. als App installieren</button>
-          <p id="pushAndroidInstallManual" class="hidden text-xs text-ink/50">In Chrome oben rechts auf ⋮ tippen → „App installieren“ bzw. „Zum Startbildschirm hinzufügen“.</p>
+          <p data-tk="account.push.androidInstallTip" class="text-xs text-ink/60 mb-2">Tip for Android: add pinn. to the home screen as an app – it then opens without an address bar and notifications come with the pinn. icon.</p>
+          <button data-tk="account.push.androidInstallButton" type="button" id="pushAndroidInstallBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">📲 Install pinn. as an app</button>
+          <p data-tk="account.push.androidInstallManual" id="pushAndroidInstallManual" class="hidden text-xs text-ink/50">In Chrome, tap ⋮ at the top right → “Install app” or “Add to Home screen”.</p>
         </div>
-        <p id="pushAndroidBatteryHint" class="hidden text-xs text-ink/50 mb-3">Kommen Mitteilungen auf Android verspätet oder gar nicht, wenn das Handy länger liegt? Unter Einstellungen → Apps → Chrome (bzw. pinn.) → Akku „Nicht eingeschränkt“ wählen und prüfen, ob unter Benachrichtigungen alles erlaubt ist.</p>
+        <p data-tk="account.push.androidBatteryHint" id="pushAndroidBatteryHint" class="hidden text-xs text-ink/50 mb-3">Do notifications arrive late or not at all on Android when the phone has been idle for a while? Under Settings → Apps → Chrome (or pinn.) → Battery choose “Unrestricted” and check that everything is allowed under Notifications.</p>
         <div class="flex flex-wrap items-center gap-2 mb-5">
-          <button type="button" id="pushEnableBtn" class="hidden px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition">Auf diesem Gerät aktivieren</button>
-          <button type="button" id="pushDisableBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-red-500 hover:border-red-500 transition">Auf diesem Gerät deaktivieren</button>
-          <button type="button" id="pushTestBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Test senden</button>
+          <button data-tk="account.push.enable" type="button" id="pushEnableBtn" class="hidden px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition">Activate on this device</button>
+          <button data-tk="account.push.disable" type="button" id="pushDisableBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-red-500 hover:border-red-500 transition">Deactivate on this device</button>
+          <button data-tk="account.push.sendTest" type="button" id="pushTestBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Send test</button>
         </div>
 
         <div id="pushSettingsBox" class="hidden flex flex-col gap-4">
-          <p class="text-xs text-ink/40 -mb-1">Gilt für alle Geräte, auf denen du angemeldet bist.</p>
+          <p data-tk="account.push.allDevices" class="text-xs text-ink/40 -mb-1">Applies to all devices you are logged in on.</p>
           <div class="flex flex-wrap items-center gap-3">
             <label class="flex items-center gap-3 cursor-pointer w-fit">
               <span class="relative inline-block w-11 h-6">
@@ -69,16 +69,16 @@
                 <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
                 <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
               </span>
-              <span class="text-sm">Terminerinnerung</span>
+              <span data-tk="account.push.eventReminder" class="text-sm">Event reminder</span>
             </label>
             <select id="pushOptVorlauf" class="push-opt rounded-lg border border-ink/15 px-2 py-1.5 text-sm bg-white">
-              <option value="5">5 Min. vorher</option>
-              <option value="10">10 Min. vorher</option>
-              <option value="15">15 Min. vorher</option>
-              <option value="30">30 Min. vorher</option>
-              <option value="60">1 Std. vorher</option>
-              <option value="120">2 Std. vorher</option>
-              <option value="1440">1 Tag vorher</option>
+              <option data-tk="account.push.before5" value="5">5 min before</option>
+              <option data-tk="account.push.before10" value="10">10 min before</option>
+              <option data-tk="account.push.before15" value="15">15 min before</option>
+              <option data-tk="account.push.before30" value="30">30 min before</option>
+              <option data-tk="account.push.before60" value="60">1 hr before</option>
+              <option data-tk="account.push.before120" value="120">2 hrs before</option>
+              <option data-tk="account.push.before1440" value="1440">1 day before</option>
             </select>
           </div>
           <div class="flex flex-wrap items-center gap-3">
@@ -88,7 +88,7 @@
                 <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
                 <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
               </span>
-              <span class="text-sm">Tagesübersicht um</span>
+              <span data-tk="account.push.dailyAt" class="text-sm">Daily summary at</span>
             </label>
             <input id="pushOptUhrzeit" type="time" step="300" class="push-opt rounded-lg border border-ink/15 px-2 py-1.5 text-sm bg-white" />
           </div>
@@ -98,7 +98,7 @@
               <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
               <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
             </span>
-            <span class="text-sm">Wenn mir jemand einen Termin oder eine Aufgabe zuweist</span>
+            <span data-tk="account.push.assigned" class="text-sm">When someone assigns me an event or a task</span>
           </label>
           <label class="flex items-center gap-3 cursor-pointer w-fit">
             <span class="relative inline-block w-11 h-6">
@@ -106,16 +106,16 @@
               <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
               <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
             </span>
-            <span class="text-sm">Auch Termine ohne Zuweisung (für die ganze Familie)</span>
+            <span data-tk="account.push.unassigned" class="text-sm">Also events without assignment (for the whole family)</span>
           </label>
-          <h4 class="text-xs uppercase tracking-wide text-ink/40 mt-2 -mb-1">Erledigte Aufgaben</h4>
+          <h4 data-tk="account.push.completedTitle" class="text-xs uppercase tracking-wide text-ink/40 mt-2 -mb-1">Completed tasks</h4>
           <label class="flex items-center gap-3 cursor-pointer w-fit">
             <span class="relative inline-block w-11 h-6 shrink-0">
               <input id="pushOptAlleErledigt" type="checkbox" class="push-opt peer sr-only" />
               <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
               <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
             </span>
-            <span class="text-sm">Wenn jemand alle Aufgaben bis jetzt erledigt hat</span>
+            <span data-tk="account.push.allDone" class="text-sm">When someone has done all tasks so far</span>
           </label>
           <label id="pushKidAufgabeRow" class="flex items-center gap-3 cursor-pointer w-fit">
             <span class="relative inline-block w-11 h-6 shrink-0">
@@ -123,7 +123,7 @@
               <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
               <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
             </span>
-            <span class="text-sm">Wenn ein Kind eine Aufgabe erledigt</span>
+            <span data-tk="account.push.kidTask" class="text-sm">When a child completes a task</span>
           </label>
           <label id="pushKidAlleRow" class="flex items-center gap-3 cursor-pointer w-fit">
             <span class="relative inline-block w-11 h-6 shrink-0">
@@ -131,17 +131,17 @@
               <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
               <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
             </span>
-            <span class="text-sm">Wenn ein Kind alle Aufgaben erledigt hat</span>
+            <span data-tk="account.push.kidAll" class="text-sm">When a child has done all tasks</span>
           </label>
-          <p id="pushKidHint" class="text-[11px] text-ink/40 -mt-2">Kinder sind Mitglieder mit Kinderseite oder der Rolle „Kind“. Du bekommst die Hinweise auch, wenn jemand anderes die Aufgabe eines Kindes abhakt.</p>
-          <h4 class="text-xs uppercase tracking-wide text-ink/40 mt-2 -mb-1">Pinnwand</h4>
+          <p data-tk="account.push.kidHint" id="pushKidHint" class="text-[11px] text-ink/40 -mt-2">Children are members with a kids' page or the role “Child”. You also get the notifications when someone else checks off a child's task.</p>
+          <h4 data-tk="nav.board" class="text-xs uppercase tracking-wide text-ink/40 mt-2 -mb-1">Board</h4>
           <label class="flex items-center gap-3 cursor-pointer w-fit">
             <span class="relative inline-block w-11 h-6 shrink-0">
               <input id="pushOptPwMich" type="checkbox" class="push-opt peer sr-only" />
               <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
               <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
             </span>
-            <span class="text-sm">Zettel an mich, Dankeschöns und wichtige Zettel</span>
+            <span data-tk="account.push.boardMe" class="text-sm">Notes to me, thank-yous and important notes</span>
           </label>
           <label class="flex items-center gap-3 cursor-pointer w-fit">
             <span class="relative inline-block w-11 h-6 shrink-0">
@@ -149,7 +149,7 @@
               <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
               <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
             </span>
-            <span class="text-sm">Jeder neue Zettel für die ganze Familie</span>
+            <span data-tk="account.push.boardAll" class="text-sm">Every new note for the whole family</span>
           </label>
           <label class="flex items-center gap-3 cursor-pointer w-fit">
             <span class="relative inline-block w-11 h-6 shrink-0">
@@ -157,7 +157,7 @@
               <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
               <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
             </span>
-            <span class="text-sm">Antworten, Reaktionen und Stimmen zu meinen Zetteln</span>
+            <span data-tk="account.push.boardReplies" class="text-sm">Replies, reactions and votes on my notes</span>
           </label>
           <label class="flex items-center gap-3 cursor-pointer w-fit">
             <span class="relative inline-block w-11 h-6 shrink-0">
@@ -165,20 +165,20 @@
               <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
               <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
             </span>
-            <span class="text-sm">Erinnerungen von Zetteln</span>
+            <span data-tk="account.push.boardReminders" class="text-sm">Reminders from notes</span>
           </label>
-          <p class="text-[11px] text-ink/40 -mt-2">Die Nachricht kommt etwa eine halbe Minute nach dem Anpinnen – mehrere Reaktionen werden zusammengefasst. Eigene Zettel und Antworten melden sich nie bei dir selbst.</p>
-          <h4 class="text-xs uppercase tracking-wide text-ink/40 mt-2 -mb-1">Vorrat</h4>
+          <p data-tk="account.push.boardHint" class="text-[11px] text-ink/40 -mt-2">The message arrives about half a minute after pinning – several reactions are combined. Your own notes and replies never notify yourself.</p>
+          <h4 data-tk="nav.pantry" class="text-xs uppercase tracking-wide text-ink/40 mt-2 -mb-1">Pantry</h4>
           <label class="flex items-center gap-3 cursor-pointer w-fit">
             <span class="relative inline-block w-11 h-6 shrink-0">
               <input id="pushOptVorrat" type="checkbox" class="push-opt peer sr-only" />
               <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
               <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
             </span>
-            <span class="text-sm">Vorrat läuft ab (Mindesthaltbarkeit)</span>
+            <span data-tk="account.push.pantryExpiry" class="text-sm">Pantry expiring (best-before date)</span>
           </label>
-          <p class="text-[11px] text-ink/40 -mt-2">Morgens eine Sammel-Nachricht, wenn Artikel im Vorrat bald ablaufen – wie viele Tage vorher, stellst du auf der Vorrat-Seite (Regler-Symbol) ein.</p>
-          <h4 class="text-xs uppercase tracking-wide text-ink/40 mt-2 -mb-1">Müllabfuhr</h4>
+          <p data-tk="account.push.pantryHint" class="text-[11px] text-ink/40 -mt-2">One combined message in the morning when pantry items are about to expire – how many days before is set on the pantry page (slider icon).</p>
+          <h4 data-tk="account.push.wasteTitle" class="text-xs uppercase tracking-wide text-ink/40 mt-2 -mb-1">Bin collection</h4>
           <div class="flex flex-wrap items-center gap-3">
             <label class="flex items-center gap-3 cursor-pointer w-fit">
               <span class="relative inline-block w-11 h-6 shrink-0">
@@ -186,11 +186,11 @@
                 <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
                 <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
               </span>
-              <span class="text-sm">Am Vortag erinnern um</span>
+              <span data-tk="account.push.wasteRemind" class="text-sm">Remind me the day before at</span>
             </label>
             <input id="pushOptMuellZeit" type="time" step="300" class="push-opt rounded-lg border border-ink/15 px-2 py-1.5 text-sm bg-white" />
           </div>
-          <p class="text-[11px] text-ink/40 -mt-2">Kommt nur, wenn laut Müllkalender (Einstellungen → Kalender) am nächsten Tag etwas abgeholt wird – mit den Tonnen und wer mit Rausbringen dran ist. Kinder bekommen sie nur, wenn sie selbst dran sind.</p>
+          <p data-tk="account.push.wasteHint" class="text-[11px] text-ink/40 -mt-2">Only arrives if the waste calendar (Settings → Calendar) shows a collection the next day – with the bins and whose turn it is to take them out. Children only get it when it’s their own turn.</p>
           <p id="pushSettingsStatus" class="text-xs text-ink/40"></p>
         </div>
         </div>
@@ -198,14 +198,14 @@
 
       <!-- Dashboard PIN (optional) -->
       <div id="dashPinSection" class="set-card">
-        <div class="set-head-row"><span class="set-ico">🔢</span><div class="set-head"><h3 class="sa-title">PIN fürs Familien-Dashboard</h3><small>Freiwillig – schützt dein Profil auf dem iPad</small></div></div>
+        <div class="set-head-row"><span class="set-ico">🔢</span><div class="set-head"><h3 data-tk="account.pin.title" class="sa-title">PIN for the family dashboard</h3><small data-tk="account.pin.subtitle">Optional – protects your profile on the iPad</small></div></div>
         <div class="set-body">
 
         <p id="dashPinStatus" class="text-sm text-ink/70 mb-1"></p>
-        <p class="text-xs text-ink/40 mb-3">Auf dem Familien-Dashboard (z. B. dem iPad in der Küche) öffnet sich dein Profil mit einem Tipp auf dein Bild. Mit einer PIN wird vorher – wie am iPhone – dein Code abgefragt. Die PIN ist freiwillig.</p>
+        <p data-tk="account.pin.hint" class="text-xs text-ink/40 mb-3">On the family dashboard (e.g. the iPad in the kitchen), your profile opens with a tap on your picture. With a PIN, your code is asked for first – like on the iPhone. The PIN is optional.</p>
         <div class="flex flex-wrap items-center gap-2">
-          <button type="button" id="dashPinSetBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition">PIN festlegen</button>
-          <button type="button" id="dashPinRemoveBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-red-500 hover:border-red-500 transition">PIN entfernen</button>
+          <button data-tk="account.pin.set" type="button" id="dashPinSetBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition">Set PIN</button>
+          <button data-tk="account.pin.remove" type="button" id="dashPinRemoveBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-red-500 hover:border-red-500 transition">Remove PIN</button>
         </div>
         <p id="dashPinMsg" class="text-xs text-ink/50 mt-2"></p>
         </div>
@@ -213,35 +213,35 @@
 
       <!-- This device as the family dashboard (iPad) -->
       <div id="dashDeviceSection" class="hidden set-card">
-        <div class="set-head-row"><span class="set-ico">📱</span><div class="set-head"><h3 class="sa-title">Familien-Dashboard auf diesem Gerät</h3><small>Profilauswahl beim Öffnen, z. B. am Küchen-iPad</small></div></div>
+        <div class="set-head-row"><span class="set-ico">📱</span><div class="set-head"><h3 data-tk="account.dashDevice.title" class="sa-title">Family dashboard on this device</h3><small data-tk="account.dashDevice.subtitle">Profile selection when opening, e.g. on the kitchen iPad</small></div></div>
         <div class="set-body">
 
         <div id="dashDeviceSetup" class="hidden">
-          <p class="text-xs text-ink/40 mb-3">Als Dashboard zeigt dieses Gerät beim Öffnen die Profile der Familie. Ein Tipp auf ein Kind öffnet direkt seine Kinderseite mit den Aufgaben, alle anderen öffnen ihr Profil – mit PIN, falls sie eine festgelegt haben. Persönliche Benachrichtigungen gibt es auf einem Dashboard-Gerät nicht.</p>
+          <p data-tk="account.dashDevice.hint" class="text-xs text-ink/40 mb-3">As a dashboard, this device shows the family's profiles when opened. Tapping a child opens their kids' page with tasks directly, everyone else opens their profile – with a PIN if they have set one. There are no personal notifications on a dashboard device.</p>
           <div id="dashDeviceSetupForm" class="flex flex-wrap items-center gap-2">
-            <input id="dashDeviceNameInput" type="text" autocomplete="off" maxlength="60" class="flex-1 min-w-[10rem] rounded-lg border border-ink/15 px-3 py-2 text-sm" placeholder="Name des Geräts, z. B. iPad Küche" />
-            <button type="button" id="dashDeviceActivateBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition whitespace-nowrap">Als Dashboard einrichten</button>
+            <input id="dashDeviceNameInput" type="text" autocomplete="off" maxlength="60" class="flex-1 min-w-[10rem] rounded-lg border border-ink/15 px-3 py-2 text-sm" data-tk-attr="placeholder:account.dashDevice.namePlaceholder" placeholder="Name of the device, e.g. kitchen iPad" />
+            <button data-tk="account.dashDevice.activate" type="button" id="dashDeviceActivateBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition whitespace-nowrap">Set up as dashboard</button>
           </div>
-          <p id="dashDeviceNoAdmin" class="hidden text-xs text-mustard">Ein Dashboard kann nur ein Admin der Familie einrichten.</p>
+          <p data-tk="account.dashDevice.noAdmin" id="dashDeviceNoAdmin" class="hidden text-xs text-mustard">Only an admin of the family can set up a dashboard.</p>
         </div>
         <div id="dashDeviceActive" class="hidden">
           <p id="dashDeviceActiveText" class="text-sm text-ink/70 mb-3"></p>
           <label class="flex flex-wrap items-center gap-2 text-sm mb-4">
-            <span>Zurück zur Profilauswahl nach</span>
+            <span data-tk="account.dashDevice.backAfter">Back to profile selection after</span>
             <select id="dashTimeoutSelect" class="rounded-lg border border-ink/15 px-2 py-1.5 text-sm bg-white">
-              <option value="0">nie automatisch</option>
-              <option value="1">1 Minute ohne Bedienung</option>
-              <option value="2">2 Minuten ohne Bedienung</option>
-              <option value="5">5 Minuten ohne Bedienung</option>
-              <option value="10">10 Minuten ohne Bedienung</option>
-              <option value="30">30 Minuten ohne Bedienung</option>
+              <option data-tk="account.dashDevice.never" value="0">never automatically</option>
+              <option data-tk="account.dashDevice.idle1" value="1">1 minute without use</option>
+              <option data-tk="account.dashDevice.idle2" value="2">2 minutes without use</option>
+              <option data-tk="account.dashDevice.idle5" value="5">5 minutes without use</option>
+              <option data-tk="account.dashDevice.idle10" value="10">10 minutes without use</option>
+              <option data-tk="account.dashDevice.idle30" value="30">30 minutes without use</option>
             </select>
           </label>
           <div class="flex flex-wrap items-center gap-2">
-            <button type="button" id="dashDeviceHomeBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition">Zur Profilauswahl</button>
-            <button type="button" id="dashDeviceEndBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-red-500 hover:border-red-500 transition">Dashboard auf diesem Gerät beenden</button>
+            <button data-tk="app.toProfileSelection" type="button" id="dashDeviceHomeBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition">To profile selection</button>
+            <button data-tk="account.dashDevice.end" type="button" id="dashDeviceEndBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-red-500 hover:border-red-500 transition">End dashboard on this device</button>
           </div>
-          <p id="dashDeviceEndHint" class="hidden text-xs text-ink/40 mt-2">Beenden kann nur ein Admin der Familie.</p>
+          <p data-tk="account.dashDevice.endHint" id="dashDeviceEndHint" class="hidden text-xs text-ink/40 mt-2">Only an admin of the family can end this.</p>
         </div>
         <p id="dashDeviceStatus" class="text-xs text-ink/50 mt-2"></p>
         </div>
@@ -250,38 +250,38 @@
       <!-- Admins only: profiles, guests, dashboard -->
       <div id="profileAdminSection" class="hidden set-group">
         <div class="set-card">
-          <div class="set-head-row"><span class="set-ico">👥</span><div class="set-head"><h3 class="sa-title">Profile verwalten</h3><small>Mitglieder und Gäste der Familie</small></div></div>
+          <div class="set-head-row"><span class="set-ico">👥</span><div class="set-head"><h3 data-tk="account.profiles.title" class="sa-title">Manage profiles</h3><small data-tk="account.profiles.subtitle">Members and guests of the family</small></div></div>
           <div class="set-body">
             <div class="flex items-center justify-end gap-1.5 mb-3">
           <div class="flex items-center gap-1.5">
-            <button type="button" id="openAddGuestBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Gast</button>
-            <button type="button" id="openAddProfileBtn" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs hover:bg-pine/90 transition">+ Mitglied hinzufügen</button>
+            <button data-tk="account.profiles.addGuest" type="button" id="openAddGuestBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Guest</button>
+            <button data-tk="account.profiles.addMember" type="button" id="openAddProfileBtn" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs hover:bg-pine/90 transition">+ Add member</button>
           </div>
             </div>
-        <p class="text-xs text-ink/40 mb-2">Jedes Familienmitglied hat ein eigenes Profil. Neue Personen legst du als Mitglied an – das Profil wird dabei mit erstellt. Gastkonten haben kein Passwort, öffnen sich nur über das Familien-Dashboard und sehen keine Finanzen, Dokumente und Einstellungen.</p>
+        <p data-tk="account.profiles.hint" class="text-xs text-ink/40 mb-2">Each family member has their own profile. You create new people as a member – the profile is created along with it. Guest accounts have no password, only open via the family dashboard and don't see finance, documents and settings.</p>
         <div id="profileList" class="flex flex-col gap-1.5"></div>
           </div>
         </div>
 
         <div id="guestMenuWrap" class="set-card">
-          <div class="set-head-row"><span class="set-ico">🙈</span><div class="set-head"><h3 class="sa-title">Menüs für Gäste</h3><small>Welche Bereiche Gastkonten sehen</small></div></div>
+          <div class="set-head-row"><span class="set-ico">🙈</span><div class="set-head"><h3 data-tk="account.guestMenus.title" class="sa-title">Menus for guests</h3><small data-tk="account.guestMenus.subtitle">Which areas guest accounts see</small></div></div>
           <div class="set-body">
 
-          <p class="text-xs text-ink/40 mb-2">Angehakte Bereiche sehen Gastkonten. Finanzen, Dokumente und Einstellungen sind für Gäste immer gesperrt. Hinweis: Die Übersicht zeigt Kalender, Essen und Aufgaben zusammen auf einer Seite – ist der Kalender abgewählt, fehlt er auch dort.</p>
+          <p data-tk="account.guestMenus.hint" class="text-xs text-ink/40 mb-2">Ticked areas are visible to guest accounts. Finance, documents and settings are always locked for guests. Note: The overview shows calendar, meals and tasks together on one page – if the calendar is deselected, it is missing there too.</p>
           <div id="guestMenuList" class="flex flex-wrap gap-2"></div>
           <p id="guestMenuStatus" class="text-xs text-ink/50 mt-2"></p>
           </div>
         </div>
 
         <div id="dashBgWrap" class="set-card">
-          <div class="set-head-row"><span class="set-ico">🖼️</span><div class="set-head"><h3 class="sa-title">Dashboard-Hintergrund</h3><small>Farbe, Verlauf oder eigenes Bild</small></div></div>
+          <div class="set-head-row"><span class="set-ico">🖼️</span><div class="set-head"><h3 data-tk="account.dashBg.title" class="sa-title">Dashboard background</h3><small data-tk="account.dashBg.subtitle">Colour, gradient or custom image</small></div></div>
           <div class="set-body">
 
-          <p class="text-xs text-ink/40 mb-3">Gilt für alle Familien-Dashboards dieser Familie (z. B. das iPad in der Küche). Ein eigenes Bild wird beim Hochladen automatisch verkleinert.</p>
+          <p data-tk="account.dashBg.hint" class="text-xs text-ink/40 mb-3">Applies to all family dashboards of this family (e.g. the iPad in the kitchen). A custom image is automatically reduced when uploading.</p>
           <div id="dashBgPreview" class="dash-bg-preview">
             <div id="dashBgPreviewLayer" class="dash-bg"></div>
             <div class="dash-bg-preview-content">
-              <span id="dashBgPreviewTitle" class="dash-bg-preview-title">Familie</span>
+              <span data-tk="app.family" id="dashBgPreviewTitle" class="dash-bg-preview-title">Family</span>
               <div class="dash-bg-preview-tiles">
                 <div class="dash-bg-preview-tile"><span></span></div>
                 <div class="dash-bg-preview-tile"><span></span></div>
@@ -290,43 +290,43 @@
             </div>
           </div>
           <div id="dashBgArtButtons" class="flex flex-wrap gap-2 mt-3">
-            <button type="button" class="dash-bg-art-btn" data-bg-art="standard">Standard</button>
-            <button type="button" class="dash-bg-art-btn" data-bg-art="farbe">Farbe</button>
-            <button type="button" class="dash-bg-art-btn" data-bg-art="verlauf">Farbverlauf</button>
-            <button type="button" class="dash-bg-art-btn" data-bg-art="bild">Eigenes Bild</button>
+            <button data-tk="account.dashBg.standard" type="button" class="dash-bg-art-btn" data-bg-art="standard">Default</button>
+            <button data-tk="account.dashBg.color" type="button" class="dash-bg-art-btn" data-bg-art="farbe">Colour</button>
+            <button data-tk="account.dashBg.gradient" type="button" class="dash-bg-art-btn" data-bg-art="verlauf">Colour gradient</button>
+            <button data-tk="account.dashBg.ownImage" type="button" class="dash-bg-art-btn" data-bg-art="bild">Custom image</button>
           </div>
           <div id="dashBgColorBox" class="hidden flex flex-wrap items-center gap-2 mt-3">
             <div id="dashBgColorList" class="flex flex-wrap items-center gap-2"></div>
             <label class="flex items-center gap-2 text-xs text-ink/50 ml-1">
               <input id="dashBgColorInput" type="color" class="w-9 h-9 rounded-full border border-ink/15 cursor-pointer p-0 bg-transparent" />
-              <span>eigene Farbe</span>
+              <span data-tk="account.dashBg.ownColor">custom colour</span>
             </label>
           </div>
           <div id="dashBgGradientBox" class="hidden flex flex-wrap items-center gap-2 mt-3"></div>
           <div id="dashBgImageBox" class="hidden mt-3">
             <div class="flex flex-wrap items-center gap-2">
               <label class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition cursor-pointer">
-                <span id="dashBgPickLabel">Bild auswählen</span>
+                <span data-tk="account.dashBg.pickImage" id="dashBgPickLabel">Select image</span>
                 <input id="dashBgFileInput" type="file" accept="image/*" class="hidden" />
               </label>
-              <button type="button" id="dashBgImageRemoveBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-red-500 hover:border-red-500 transition">Bild entfernen</button>
+              <button data-tk="account.dashBg.removeImage" type="button" id="dashBgImageRemoveBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-red-500 hover:border-red-500 transition">Remove image</button>
             </div>
             <label class="flex items-center gap-3 text-sm mt-3 max-w-xs">
-              <span class="whitespace-nowrap">Abdunkeln</span>
+              <span data-tk="account.dashBg.darken" class="whitespace-nowrap">Darken</span>
               <input id="dashBgDim" type="range" min="0" max="70" step="5" class="flex-1 accent-pine" />
               <span id="dashBgDimValue" class="w-10 text-right text-xs text-ink/50"></span>
             </label>
-            <p class="text-xs text-ink/40 mt-1">Abdunkeln sorgt dafür, dass Uhrzeit und Namen auf dem Bild gut lesbar bleiben.</p>
+            <p data-tk="account.dashBg.darkenHint" class="text-xs text-ink/40 mt-1">Darkening keeps the time and names on the image easy to read.</p>
           </div>
           <div class="flex flex-wrap items-center gap-2 mt-4">
-            <button type="button" id="dashBgSaveBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition">Hintergrund speichern</button>
+            <button data-tk="account.dashBg.save" type="button" id="dashBgSaveBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition">Save background</button>
           </div>
           <p id="dashBgStatus" class="text-xs text-ink/50 mt-2"></p>
           </div>
         </div>
 
         <div id="dashDevicesWrap" class="hidden set-card">
-          <div class="set-head-row"><span class="set-ico">🖥️</span><div class="set-head"><h3 class="sa-title">Dashboard-Geräte</h3><small>Als Familien-Dashboard eingerichtete Geräte</small></div></div>
+          <div class="set-head-row"><span class="set-ico">🖥️</span><div class="set-head"><h3 data-tk="account.dashDevices.title" class="sa-title">Dashboard devices</h3><small data-tk="account.dashDevices.subtitle">Devices set up as family dashboard</small></div></div>
           <div class="set-body">
 
           <div id="dashDevicesList" class="flex flex-col gap-1.5"></div>

@@ -1,16 +1,16 @@
   <!-- Change password (popup) -->
   <div id="changePasswordModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
     <div class="bg-white rounded-2xl p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
-      <h3 class="font-serif text-lg mb-4">Passwort ändern</h3>
+      <h3 data-tk="account.changePassword" class="font-serif text-lg mb-4">Change password</h3>
       <div class="flex flex-col gap-2 mb-3">
-        <input id="accountOldPassword" type="password" autocomplete="current-password" class="rounded-lg border border-ink/15 px-3 py-2 text-sm" placeholder="Aktuelles Passwort" />
-        <input id="accountNewPassword" type="password" autocomplete="new-password" class="rounded-lg border border-ink/15 px-3 py-2 text-sm" placeholder="Neues Passwort (mind. 8 Zeichen)" />
-        <input id="accountRepeatPassword" type="password" autocomplete="new-password" class="rounded-lg border border-ink/15 px-3 py-2 text-sm" placeholder="Neues Passwort wiederholen" />
+        <input id="accountOldPassword" type="password" autocomplete="current-password" class="rounded-lg border border-ink/15 px-3 py-2 text-sm" data-tk-attr="placeholder:account.password.current" placeholder="Current password" />
+        <input id="accountNewPassword" type="password" autocomplete="new-password" class="rounded-lg border border-ink/15 px-3 py-2 text-sm" data-tk-attr="placeholder:account.password.new" placeholder="New password (min. 8 characters)" />
+        <input id="accountRepeatPassword" type="password" autocomplete="new-password" class="rounded-lg border border-ink/15 px-3 py-2 text-sm" data-tk-attr="placeholder:account.password.repeat" placeholder="Repeat new password" />
       </div>
       <p id="accountStatus" class="text-xs text-ink/50 mb-2"></p>
       <div class="flex justify-end gap-2">
-        <button type="button" id="cancelChangePassword" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-        <button type="button" id="accountChangePasswordBtn" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Passwort ändern</button>
+        <button data-tk="common.cancel" type="button" id="cancelChangePassword" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+        <button data-tk="account.changePassword" type="button" id="accountChangePasswordBtn" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Change password</button>
       </div>
     </div>
   </div>
@@ -18,29 +18,29 @@
   <!-- Manage profile (popup): change role, reset password, delete -->
   <div id="profileManageModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
     <div class="bg-white rounded-2xl p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
-      <h3 class="font-serif text-lg mb-1">Profil verwalten</h3>
+      <h3 data-tk="account.manage.title" class="font-serif text-lg mb-1">Manage profile</h3>
       <p id="profileManageName" class="text-sm text-ink/50 mb-4"></p>
 
-      <p id="profileManageGuestInfo" class="hidden text-xs text-ink/50 mb-4">Gastkonto – ohne Passwort und ohne Familienmitglied. Es öffnet sich nur über das Familien-Dashboard und hat keinen Zugriff auf Finanzen, Dokumente und Einstellungen.</p>
+      <p data-tk="account.manage.guestInfo" id="profileManageGuestInfo" class="hidden text-xs text-ink/50 mb-4">Guest account – without password and without family member. It only opens via the family dashboard and has no access to finance, documents and settings.</p>
       <div id="profileManageMemberFields">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="profileManageRole">Kategorie</label>
+        <label data-tk="account.manage.category" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="profileManageRole">Category</label>
         <select id="profileManageRole" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white mb-4">
-          <option value="mitglied">Mitglied</option>
-          <option value="admin">Admin</option>
+          <option data-tk="common.member" value="mitglied">Member</option>
+          <option data-tk="common.admin" value="admin">Admin</option>
         </select>
 
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="profileManageMember">Familienmitglied</label>
+        <label data-tk="account.manage.member" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="profileManageMember">Family member</label>
         <select id="profileManageMember" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white mb-4"></select>
 
-        <button type="button" id="profileManageResetBtn" class="w-full px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition mb-2">Passwort zurücksetzen</button>
+        <button data-tk="account.manage.resetPassword" type="button" id="profileManageResetBtn" class="w-full px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition mb-2">Reset password</button>
       </div>
-      <button type="button" id="profileManagePinBtn" class="hidden w-full px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition mb-2">Dashboard-PIN entfernen</button>
-      <button type="button" id="profileManageDevicesBtn" class="w-full px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition mb-2">📱 Geräte &amp; Anmeldung</button>
-      <button type="button" id="profileManageDeleteBtn" class="w-full px-3 py-2 rounded-lg border border-ink/15 text-sm text-red-500 hover:border-red-500 transition">Profil löschen</button>
+      <button data-tk="account.manage.removePin" type="button" id="profileManagePinBtn" class="hidden w-full px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition mb-2">Remove dashboard PIN</button>
+      <button data-tk="devices.manageButton" type="button" id="profileManageDevicesBtn" class="w-full px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition mb-2">📱 Devices &amp; sign-in</button>
+      <button data-tk="account.manage.delete" type="button" id="profileManageDeleteBtn" class="w-full px-3 py-2 rounded-lg border border-ink/15 text-sm text-red-500 hover:border-red-500 transition">Delete profile</button>
 
       <p id="profileManageStatus" class="text-xs text-ink/50 mt-3"></p>
       <div class="flex justify-end gap-2 mt-2">
-        <button type="button" id="cancelProfileManage" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Schließen</button>
+        <button data-tk="common.close" type="button" id="cancelProfileManage" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Close</button>
       </div>
     </div>
   </div>
@@ -48,14 +48,14 @@
   <!-- Create a guest account (popup) -->
   <div id="guestModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
     <div class="bg-white rounded-2xl p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
-      <h3 class="font-serif text-lg mb-1">Gastkonto anlegen</h3>
-      <p class="text-xs text-ink/50 mb-4">Ein Gast erscheint als eigenes Bild auf dem Familien-Dashboard und öffnet sich ohne Passwort und ohne PIN. Finanzen, Dokumente und Einstellungen sind für Gäste gesperrt.</p>
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="guestNameInput">Name</label>
-      <input id="guestNameInput" type="text" autocomplete="off" maxlength="60" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="z. B. Gast oder Oma" />
+      <h3 data-tk="account.guest.title" class="font-serif text-lg mb-1">Create guest account</h3>
+      <p data-tk="account.guest.hint" class="text-xs text-ink/50 mb-4">A guest appears as their own picture on the family dashboard and opens without password and without PIN. Finance, documents and settings are locked for guests.</p>
+      <label data-tk="common.name" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="guestNameInput">Name</label>
+      <input id="guestNameInput" type="text" autocomplete="off" maxlength="60" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" data-tk-attr="placeholder:account.guest.namePlaceholder" placeholder="e.g. guest or Grandma" />
       <p id="guestModalStatus" class="text-xs text-red-500 mb-2"></p>
       <div class="flex justify-end gap-2">
-        <button type="button" id="cancelGuestModal" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-        <button type="button" id="saveGuestModal" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Anlegen</button>
+        <button data-tk="common.cancel" type="button" id="cancelGuestModal" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+        <button data-tk="common.create" type="button" id="saveGuestModal" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Create</button>
       </div>
     </div>
   </div>

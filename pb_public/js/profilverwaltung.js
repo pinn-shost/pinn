@@ -14,7 +14,7 @@ function openProfileManageModal(id) {
   document.getElementById('profileManageStatus').textContent = '';
   const memberSelect = document.getElementById('profileManageMember');
   const selectable = members.filter(m => m.id === x.mitglied || !profileForMember(m.id));
-  memberSelect.innerHTML = '<option value="">— kein Familienmitglied —</option>' +
+  memberSelect.innerHTML = `<option value="">${escapeHtml(tk('account.manage.noMember'))}</option>` +
     selectable.map(m => `<option value="${m.id}">${escapeHtml(m.name)}</option>`).join('');
   memberSelect.value = (x.mitglied && memberById(x.mitglied)) ? x.mitglied : '';
   const u = currentUser();
@@ -38,7 +38,7 @@ async function profileManageCall(url, payload, okText) {
   status.textContent = '';
   const res = await apiFetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
   const body = await res.json().catch(() => ({}));
-  status.textContent = res.ok ? okText : (body.error || 'Fehler');
+  status.textContent = res.ok ? okText : (body.error || tk('common.error'));
   renderAccountSettings();
   if (res.ok) areasRefresh().catch(() => {}); // members live in their own record – show what the server changed
   return res.ok;
@@ -46,23 +46,23 @@ async function profileManageCall(url, payload, okText) {
 
 document.getElementById('profileManageRole').addEventListener('change', (e) => {
   if (!profileManageId) return;
-  profileManageCall('/api/pinn/users/set-role', { id: profileManageId, rolle: e.target.value }, 'Kategorie geändert.');
+  profileManageCall('/api/pinn/users/set-role', { id: profileManageId, rolle: e.target.value }, tk('account.manage.categoryChanged'));
 });
 document.getElementById('profileManageMember').addEventListener('change', async (e) => {
   if (!profileManageId) return;
-  if (!e.target.value && !confirm('Verknüpfung wirklich lösen? Das Familienmitglied hat dann kein Profil mehr und bekommt keine persönlichen Benachrichtigungen.')) {
+  if (!e.target.value && !confirm(tk('account.manage.unlinkConfirm'))) {
     openProfileManageModal(profileManageId);
     return;
   }
-  const ok = await profileManageCall('/api/pinn/users/link', { id: profileManageId, mitglied: e.target.value }, 'Familienmitglied geändert.');
+  const ok = await profileManageCall('/api/pinn/users/link', { id: profileManageId, mitglied: e.target.value }, tk('account.manage.memberChanged'));
   if (ok) { await loadFamilyProfiles(); openProfileManageModal(profileManageId); }
 });
 document.getElementById('profileManagePinBtn').addEventListener('click', async () => {
   if (!profileManageId) return;
   const id = profileManageId;
   const name = document.getElementById('profileManageName').textContent;
-  if (!confirm(`Dashboard-PIN von „${name}“ entfernen? Das Profil öffnet sich am Dashboard dann wieder mit einem Tipp.`)) return;
-  const ok = await profileManageCall('/api/pinn/dashboard/pin-entfernen', { id }, 'PIN entfernt.');
+  if (!confirm(tk('account.manage.removePinConfirm', { name }))) return;
+  const ok = await profileManageCall('/api/pinn/dashboard/pin-entfernen', { id }, tk('account.pin.removed'));
   if (ok) {
     if (dashPinInfo.profile) dashPinInfo.profile[id] = 0;
     document.getElementById('profileManagePinBtn').classList.add('hidden');
@@ -71,8 +71,8 @@ document.getElementById('profileManagePinBtn').addEventListener('click', async (
 document.getElementById('profileManageResetBtn').addEventListener('click', () => {
   if (!profileManageId) return;
   const name = document.getElementById('profileManageName').textContent;
-  const pwNew = prompt(`Neues Start-Passwort für "${name}" (mind. 8 Zeichen). Es muss beim nächsten Anmelden geändert werden:`);
-  if (pwNew) profileManageCall('/api/pinn/users/reset-password', { id: profileManageId, password: pwNew }, 'Passwort zurückgesetzt.');
+  const pwNew = prompt(tk('account.manage.resetPrompt', { name }));
+  if (pwNew) profileManageCall('/api/pinn/users/reset-password', { id: profileManageId, password: pwNew }, tk('account.manage.resetDone'));
 });
 document.getElementById('profileManageDeleteBtn').addEventListener('click', async () => {
   if (!profileManageId) return;
@@ -80,10 +80,10 @@ document.getElementById('profileManageDeleteBtn').addEventListener('click', asyn
   const profile = accountProfiles.find(p => p.id === profileManageId);
   const linkedMember = profile && profile.mitglied ? memberById(profile.mitglied) : null;
   const question = linkedMember
-    ? `Profil "${name}" wirklich löschen? Das Familienmitglied „${linkedMember.name}“ wird dabei ebenfalls entfernt.`
-    : `Profil "${name}" wirklich löschen?`;
+    ? tk('account.manage.deleteWithMemberConfirm', { name, member: linkedMember.name })
+    : tk('account.manage.deleteConfirm', { name });
   if (!confirm(question)) return;
-  const ok = await profileManageCall('/api/pinn/users/delete', { id: profileManageId }, 'Profil gelöscht.');
+  const ok = await profileManageCall('/api/pinn/users/delete', { id: profileManageId }, tk('account.manage.deleted'));
   if (ok) {
     if (linkedMember) {
       members = members.filter(m => m.id !== linkedMember.id);

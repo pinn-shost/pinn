@@ -220,7 +220,7 @@ function firstAllowedView() {
   return ['uebersicht', ...GUEST_SELECTABLE_VIEWS].find(isViewAllowed) || 'konto';
 }
 function roleLabel(rolle) {
-  return rolle === 'admin' ? 'Admin' : rolle === 'gast' ? 'Gast' : 'Mitglied';
+  return tk(rolle === 'admin' ? 'common.admin' : rolle === 'gast' ? 'dashboard.guest' : 'common.member');
 }
 // iPad (also in Safari's desktop mode) and large screens - not the phone
 function canBeDashboardDevice() {

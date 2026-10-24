@@ -26,11 +26,11 @@ function startDashboardIdleWatch() {
 function applyDashboardChrome() {
   const dashSession = isDashboardSession();
   document.getElementById('dashHomeBtn').classList.toggle('hidden', !dashSession);
-  document.getElementById('logoutBtn').textContent = dashSession ? 'Zur Profilauswahl' : 'Abmelden';
+  document.getElementById('logoutBtn').textContent = tk(dashSession ? 'app.toProfileSelection' : 'common.logOut');
   const kidClose = document.getElementById('kidPageClose');
   if (isDashboardKidSession()) {
     kidClose.textContent = '🏠';
-    kidClose.setAttribute('aria-label', 'Zurück zur Profilauswahl');
+    kidClose.setAttribute('aria-label', tk('dashboard.backToProfiles'));
   }
 }
 document.getElementById('dashHomeBtn').addEventListener('click', returnToDashboard);
@@ -86,9 +86,9 @@ function renderGuestMenuSettings() {
     const hidden = [...list.querySelectorAll('.guest-menu-check')].filter(x => !x.checked).map(x => x.dataset.view);
     guestHiddenViews = GUEST_SELECTABLE_VIEWS.filter(id => hidden.includes(id));
     persistState();
-    document.getElementById('guestMenuStatus').textContent = hidden.length === GUEST_SELECTABLE_VIEWS.length
-      ? 'Gespeichert. Gäste sehen damit nur noch ihr Konto.'
-      : 'Gespeichert.';
+    document.getElementById('guestMenuStatus').textContent = tk(hidden.length === GUEST_SELECTABLE_VIEWS.length
+      ? 'account.guestMenus.savedOnlyAccount'
+      : 'common.saved');
   }));
 }
 

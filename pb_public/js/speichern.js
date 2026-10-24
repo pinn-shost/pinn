@@ -53,14 +53,14 @@ let familySyncState = 'ok';
 function setSyncStatus(state) {
   familySyncState = state;
   const statusEl = document.getElementById('syncStatus');
-  const texts = {
-    ok: 'synchronisiert',
-    pending: 'wird synchronisiert …',
-    offline: 'offline – Änderungen werden nachgereicht, sobald wieder Verbindung besteht',
-    error: 'nicht synchronisiert – NAS/Verbindung prüfen',
+  const keys = {
+    ok: 'settings.system.synced',
+    pending: 'settings.system.syncing',
+    offline: 'settings.system.syncOffline',
+    error: 'settings.system.syncError',
   };
   if (statusEl) {
-    statusEl.textContent = texts[state] || '';
+    statusEl.textContent = keys[state] ? tk(keys[state]) : '';
     statusEl.classList.toggle('text-red-500', state === 'error' || state === 'offline');
   }
   refreshOfflineBadge();

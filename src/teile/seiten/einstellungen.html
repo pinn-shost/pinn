@@ -473,7 +473,7 @@
       </summary>
       <div class="set-body">
         <p data-tk="settings.system.sync" class="set-sub-title">Synchronisation</p>
-        <p class="text-sm text-ink/70"><span data-tk="settings.system.status">Status:</span> <span id="syncStatus">synchronisiert</span></p>
+        <p class="text-sm text-ink/70"><span data-tk="settings.system.status">Status:</span> <span data-tk="settings.system.synced" id="syncStatus">synchronised</span></p>
 
         <div class="set-sub">
           <p data-tk="settings.system.updates" class="set-sub-title">Updates</p>
@@ -493,14 +493,14 @@
         <!-- Backups (only visible for admins) – container "wartung", pb_hooks/system.pb.js -->
         <div id="sysBackupSub" class="set-sub hidden">
           <p data-tk="settings.system.backups" class="set-sub-title">Backups</p>
-          <p id="sysBackupSummary" class="text-xs text-ink/50 mb-2 leading-snug">Wird geladen …</p>
+          <p data-tk="common.loading" id="sysBackupSummary" class="text-xs text-ink/50 mb-2 leading-snug">Loading …</p>
           <button data-tk="settings.system.backupsButton" id="openSysMaintBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">🛟 Backups &amp; restore</button>
         </div>
 
         <!-- Error log (only visible for admins) – pb_hooks/protokoll.pb.js -->
         <div id="errLogSub" class="set-sub hidden">
           <p data-tk="settings.system.errorLog" class="set-sub-title">Error log</p>
-          <p id="errLogSummary" class="text-xs text-ink/50 mb-2 leading-snug">Wird geladen …</p>
+          <p data-tk="common.loading" id="errLogSummary" class="text-xs text-ink/50 mb-2 leading-snug">Loading …</p>
           <button id="openErrLogBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition"><span data-tk="settings.system.errorLogButton">🧾 Error log</span><span id="errLogBadge" class="el-badge hidden" data-no-i18n></span></button>
         </div>
 

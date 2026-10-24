@@ -39,7 +39,7 @@ async function renderAccountSettings() {
   const pinsLoaded = guest ? Promise.resolve(dashPinInfo) : loadDashboardPins().then(info => { renderDashPinSection(); return info; });
   const famEl = document.getElementById('accountFamily');
   if (famEl && u && u.familie) {
-    pb.collection('familien').getOne(u.familie).then(f => { famEl.textContent = 'Familie ' + f.name; }).catch(() => { /* offline */ });
+    pb.collection('familien').getOne(u.familie).then(f => { famEl.textContent = tk('account.familyName', { name: f.name }); }).catch(() => { /* offline */ });
   }
   const adminSection = document.getElementById('profileAdminSection');
   adminSection.classList.toggle('hidden', !isCurrentUserAdmin());
@@ -50,7 +50,7 @@ async function renderAccountSettings() {
   if (!isCurrentUserAdmin()) return;
   const list = document.getElementById('profileList');
   if (!loaded) {
-    list.innerHTML = '<p class="text-xs text-red-500">Profile konnten nicht geladen werden.</p>';
+    list.innerHTML = `<p class="text-xs text-red-500">${escapeHtml(tk('account.profiles.loadFailed'))}</p>`;
     return;
   }
   accountProfiles = familyProfiles;
@@ -58,16 +58,16 @@ async function renderAccountSettings() {
   list.innerHTML = accountProfiles.map(x => {
       const linkedMember = x.mitglied ? memberById(x.mitglied) : null;
       const memberText = x.rolle === 'gast'
-        ? ' · nur über das Dashboard'
-        : (linkedMember ? ' · ' + escapeHtml(linkedMember.name) : ' · <span class="text-mustard">ohne Familienmitglied</span>');
+        ? ' · ' + escapeHtml(tk('account.profiles.dashboardOnly'))
+        : (linkedMember ? ' · ' + escapeHtml(linkedMember.name) : ` · <span class="text-mustard">${escapeHtml(tk('account.profiles.noMember'))}</span>`);
       const pinText = pins.profile && pins.profile[x.id] ? ' · 🔒 PIN' : '';
       return `
       <div class="flex items-center gap-2 px-3 py-2 rounded-lg border border-ink/10 bg-white">
         <div class="flex-1 min-w-0">
-          <p class="text-sm truncate">${escapeHtml(x.username)}${x.id === u.id ? ' <span class="text-xs text-ink/40">(du)</span>' : ''}${x.mustChangePassword ? ' <span class="text-xs text-mustard">Passwort ausstehend</span>' : ''}</p>
-          <p class="text-xs text-ink/40">${roleLabel(x.rolle)}${memberText}${pinText}<span class="pdev-info" data-id="${x.id}"></span></p>
+          <p class="text-sm truncate">${escapeHtml(x.username)}${x.id === u.id ? ` <span class="text-xs text-ink/40">${escapeHtml(tk('account.profiles.you'))}</span>` : ''}${x.mustChangePassword ? ` <span class="text-xs text-mustard">${escapeHtml(tk('account.profiles.passwordPending'))}</span>` : ''}</p>
+          <p class="text-xs text-ink/40">${escapeHtml(roleLabel(x.rolle))}${memberText}${pinText}<span class="pdev-info" data-id="${x.id}"></span></p>
         </div>
-        <button type="button" class="profile-manage-btn px-2 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition" data-id="${x.id}">Verwalten</button>
+        <button type="button" class="profile-manage-btn px-2 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition" data-id="${x.id}">${escapeHtml(tk('account.profiles.manage'))}</button>
       </div>`;
     }).join('');
   list.querySelectorAll('.profile-manage-btn').forEach(b => b.addEventListener('click', () => openProfileManageModal(b.dataset.id)));
@@ -94,11 +94,11 @@ document.getElementById('accountChangePasswordBtn').addEventListener('click', as
   const newPw = document.getElementById('accountNewPassword').value;
   const repeat = document.getElementById('accountRepeatPassword').value;
   const status = document.getElementById('accountStatus');
-  if (newPw.length < 8) { status.textContent = 'Das neue Passwort muss mindestens 8 Zeichen lang sein.'; return; }
-  if (newPw !== repeat) { status.textContent = 'Die beiden neuen Passwörter stimmen nicht überein.'; return; }
+  if (newPw.length < 8) { status.textContent = tk('account.password.tooShort'); return; }
+  if (newPw !== repeat) { status.textContent = tk('account.password.mismatch'); return; }
   try {
     await changeOwnPassword(oldPw, newPw);
-    status.textContent = 'Passwort geändert.';
+    status.textContent = tk('account.password.changed');
     armModalSnapshot('changePasswordModal'); // field contents now count as "unchanged" again
     setTimeout(closeChangePasswordModal, 800);
   } catch (e) {

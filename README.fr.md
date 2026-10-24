@@ -95,6 +95,16 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 et 🇰🇷 한국어**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.112.1
+
+**Clés de texte, partie 2 : compte, appareils, sauvegardes et journal des erreurs**
+
+- La **page Compte** (profil, notifications, PIN et appareils du tableau de bord, profils, menus invités, fond du tableau de bord), la **gestion des appareils**, **Sauvegardes & mises à jour** et le **journal des erreurs** prennent désormais leurs textes dans les fichiers de langue de `pb_public/i18n/`, dans les neuf langues et aussi en colocation. Les lignes d’état sous Paramètres → Système en font partie. L’utilisation ne change pas.
+- Les nombres utilisent désormais le bon singulier ou pluriel dans chaque langue, p. ex. « 1 erreur non résolue », « 3 sauvegardes », « 2 autres appareils ».
+- Petites corrections : le temps de blocage après des mots de passe erronés ne se termine plus par un double point, les appareils du tableau de bord affichent la date au format de ta langue et les rôles « Admin », « Membre » et « Invité » sont traduits partout.
+- Pour les contributeurs : les clés commençant par `maint.` n’ont pas de variante colocation.
+- Modifié : uniquement des fichiers de l’appli (`index.html`, `js/konto.js`, `js/profilverwaltung.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/dashboardsitzung.js`, `js/mitteilungen.js`, `js/geraete.js`, `js/fehlerprotokoll.js`, `js/sicherungen.js`, `js/speichern.js`, `js/sprachen.js`, `js/versionslog.js`, tous les fichiers de langue dans `i18n/` et `lang/`) et `.github/` (CONTRIBUTING.md, `i18n-keys.js`) – rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
+
 ## Nouveautés de la 1.112.0
 
 **Clés de texte, partie 1 : cadre, connexion et réglages**
@@ -140,14 +150,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Les profils créés ou supprimés modifient directement les membres dans le nouvel enregistrement ; les invités ne peuvent toujours pas modifier les menus invités.
 - Modifié : fichiers de l’app (`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/profilverwaltung.js`, `js/sprachen.js`, `js/versionslog.js`, tous les fichiers de langue) et sur le serveur `pb_hooks/pinn-bereiche.js`, `bereiche.pb.js`, `pinn-benutzer.js`, `save_family_data.pb.js`, `pinn-pushtext.js`, `calendar-sync.js`. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
-## Nouveautés de la 1.107.4
-
-**Japonais et coréen complets : configuration, export des données et notifications push**
-
-- Le japonais et le coréen fonctionnent désormais aussi dans l’assistant de configuration, dans les fichiers d’export des données et dans les notifications push du serveur (qui s’affichaient en anglais). Les neuf langues sont ainsi complètes.
-- La commande vocale (Siri/Android) comprend toujours l’allemand, l’anglais, le français et l’espagnol.
-- Modifié : fichiers de l’app (`index.html`, `js/sprachen.js`, `js/einrichten.js`, `js/exportieren.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, tous les fichiers de langue) et sur le serveur `pb_hooks/pinn-pushtext.js`, `pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-aufgaben.js`, `pinn-wobistdu.js`, `pinn-einrichtung.js`.
-
 ## Comment ça marche
 
 ```mermaid
@@ -174,7 +176,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.112.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.112.1` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

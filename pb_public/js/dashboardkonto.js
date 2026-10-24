@@ -22,9 +22,9 @@ function renderDashPinSection() {
   if (guest) return;
   const len = dashPinInfo.eigene;
   document.getElementById('dashPinStatus').textContent = len
-    ? `Dein Profil ist mit einer ${len}-stelligen PIN geschützt.`
-    : 'Du hast keine PIN – dein Profil öffnet sich am Dashboard mit einem Tipp.';
-  document.getElementById('dashPinSetBtn').textContent = len ? 'PIN ändern' : 'PIN festlegen';
+    ? tk('account.pin.protected', { digits: len })
+    : tk('account.pin.none');
+  document.getElementById('dashPinSetBtn').textContent = tk(len ? 'account.pin.change' : 'account.pin.set');
   document.getElementById('dashPinRemoveBtn').classList.toggle('hidden', !len);
 }
 function startSetOwnPin() {
@@ -32,8 +32,8 @@ function startSetOwnPin() {
   const me = currentMember();
   const u = currentUser();
   openPinPad({
-    title: dashPinInfo.eigene ? 'PIN ändern' : 'PIN festlegen',
-    sub: 'Neue PIN eingeben',
+    title: tk(dashPinInfo.eigene ? 'account.pin.change' : 'account.pin.set'),
+    sub: tk('account.pin.enterNew'),
     length: dashPinInfo.eigene === 6 ? 6 : 4,
     lengthChoice: true,
     avatarHtml: dashAvatarHtml(me, u ? { username: u.username, rolle: u.rolle } : null, true),
@@ -41,14 +41,14 @@ function startSetOwnPin() {
       if (first === null) {
         first = pin;
         pad.showLengthChoice(false);
-        pad.reset('PIN zur Bestätigung wiederholen');
+        pad.reset(tk('account.pin.repeat'));
         return;
       }
       if (pin !== first) {
         first = null;
         pad.showLengthChoice(true);
-        pad.setSub('Neue PIN eingeben');
-        pad.fail('Die beiden PINs stimmen nicht überein. Bitte noch einmal.');
+        pad.setSub(tk('account.pin.enterNew'));
+        pad.fail(tk('account.pin.mismatch'));
         return;
       }
       try {
@@ -56,14 +56,14 @@ function startSetOwnPin() {
       } catch (e) {
         first = null;
         pad.showLengthChoice(true);
-        pad.setSub('Neue PIN eingeben');
+        pad.setSub(tk('account.pin.enterNew'));
         pad.fail(e.message);
         return;
       }
       dashPinInfo.eigene = pin.length;
       pad.close();
       renderDashPinSection();
-      document.getElementById('dashPinMsg').textContent = 'PIN gespeichert.';
+      document.getElementById('dashPinMsg').textContent = tk('account.pin.saved');
     },
   });
 }
@@ -73,12 +73,12 @@ document.getElementById('dashPinSetBtn').addEventListener('click', () => {
 });
 document.getElementById('dashPinRemoveBtn').addEventListener('click', async () => {
   const msg = document.getElementById('dashPinMsg');
-  if (!confirm('PIN wirklich entfernen? Dein Profil öffnet sich am Dashboard dann mit einem Tipp.')) return;
+  if (!confirm(tk('account.pin.removeConfirm'))) return;
   try {
     await postJson('/api/pinn/dashboard/pin', { pin: '' });
     dashPinInfo.eigene = 0;
     renderDashPinSection();
-    msg.textContent = 'PIN entfernt.';
+    msg.textContent = tk('account.pin.removed');
   } catch (e) {
     msg.textContent = e.message;
   }
@@ -103,7 +103,7 @@ function renderDashDeviceSection() {
     document.getElementById('dashDeviceActivateBtn').disabled = false;
     return;
   }
-  document.getElementById('dashDeviceActiveText').textContent = `Dieses Gerät ist das Familien-Dashboard „${cfg.name || 'Dashboard'}“.`;
+  document.getElementById('dashDeviceActiveText').textContent = tk('account.dashDevice.active', { name: cfg.name || 'Dashboard' });
   const select = document.getElementById('dashTimeoutSelect');
   const minutes = String(dashboardTimeoutMinutes());
   select.value = [...select.options].some(o => o.value === minutes) ? minutes : String(DASH_DEFAULT_TIMEOUT);
@@ -116,7 +116,7 @@ document.getElementById('dashTimeoutSelect').addEventListener('change', (e) => {
   if (!cfg) return;
   writeDashboardConfig({ ...cfg, timeout: Number(e.target.value) || 0 });
   noteDashboardActivity();
-  document.getElementById('dashDeviceStatus').textContent = 'Gespeichert.';
+  document.getElementById('dashDeviceStatus').textContent = tk('common.saved');
 });
 document.getElementById('dashDeviceHomeBtn').addEventListener('click', returnToDashboard);
 document.getElementById('dashDeviceActivateBtn').addEventListener('click', async () => {
@@ -124,9 +124,9 @@ document.getElementById('dashDeviceActivateBtn').addEventListener('click', async
   const btn = document.getElementById('dashDeviceActivateBtn');
   const status = document.getElementById('dashDeviceStatus');
   const name = document.getElementById('dashDeviceNameInput').value.replace(/\s+/g, ' ').trim() || 'Dashboard';
-  if (!confirm(`Dieses Gerät als Familien-Dashboard „${name}“ einrichten?\n\nBeim Öffnen von pinn. erscheint dann die Profilauswahl der Familie. Persönliche Benachrichtigungen werden auf diesem Gerät abgeschaltet.`)) return;
+  if (!confirm(tk('account.dashDevice.activateConfirm', { name }))) return;
   btn.disabled = true;
-  status.textContent = 'Wird eingerichtet …';
+  status.textContent = tk('account.dashDevice.settingUp');
   try {
     const r = await postJson('/api/pinn/dashboard/aktivieren', { name });
     try { await Promise.race([disablePushOnThisDevice(), new Promise(res => setTimeout(res, 3000))]); } catch (e) { /* ignore */ }
@@ -146,11 +146,11 @@ document.getElementById('dashDeviceActivateBtn').addEventListener('click', async
 document.getElementById('dashDeviceEndBtn').addEventListener('click', async () => {
   const cfg = readDashboardConfig();
   if (!cfg || !isCurrentUserAdmin()) return;
-  if (!confirm('Dashboard auf diesem Gerät beenden?\n\nDanach meldet man sich hier wieder ganz normal mit Familie, Name und Passwort an.')) return;
+  if (!confirm(tk('account.dashDevice.endConfirm'))) return;
   try {
     await postJson('/api/pinn/dashboard/geraet-entfernen', { id: cfg.id });
   } catch (e) {
-    if (!confirm('Das Gerät konnte auf dem Server nicht entfernt werden (' + e.message + '). Trotzdem auf diesem Gerät beenden?')) return;
+    if (!confirm(tk('account.dashDevice.endServerFailed', { error: e.message }))) return;
   }
   clearDashboardConfig();
   ssSet(SS_DASH_ACTIVE, null);
@@ -175,21 +175,22 @@ async function renderDashDeviceList() {
   const cfg = readDashboardConfig();
   const fmt = (iso) => {
     const d = iso ? new Date(iso) : null;
-    return d && !isNaN(d) ? d.toLocaleDateString('de-DE') : '–';
+    if (!d || isNaN(d)) return '–';
+    try { return d.toLocaleDateString(sysLocale()); } catch (e) { return d.toLocaleDateString(); }
   };
   list.innerHTML = devices.map(d => `
     <div class="flex items-center gap-2 px-3 py-2 rounded-lg border border-ink/10 bg-white">
       <div class="flex-1 min-w-0">
-        <p class="text-sm truncate">${escapeHtml(d.name || 'Dashboard')}${cfg && cfg.id === d.id ? ' <span class="text-xs text-ink/40">(dieses Gerät)</span>' : ''}</p>
-        <p class="text-xs text-ink/40">zuletzt benutzt ${fmt(d.zuletzt)}</p>
+        <p class="text-sm truncate">${escapeHtml(d.name || 'Dashboard')}${cfg && cfg.id === d.id ? ` <span class="text-xs text-ink/40">${escapeHtml(tk('account.dashDevices.thisDevice'))}</span>` : ''}</p>
+        <p class="text-xs text-ink/40">${escapeHtml(tk('account.dashDevices.lastUsed', { date: fmt(d.zuletzt) }))}</p>
       </div>
-      <button type="button" class="dash-device-remove px-2 py-1 rounded-lg border border-ink/15 text-xs text-red-500 hover:border-red-500 transition" data-id="${kidAttr(d.id)}" data-name="${kidAttr(d.name || 'Dashboard')}">Entfernen</button>
+      <button type="button" class="dash-device-remove px-2 py-1 rounded-lg border border-ink/15 text-xs text-red-500 hover:border-red-500 transition" data-id="${kidAttr(d.id)}" data-name="${kidAttr(d.name || 'Dashboard')}">${escapeHtml(tk('common.remove'))}</button>
     </div>`).join('');
   list.querySelectorAll('.dash-device-remove').forEach(btn => btn.addEventListener('click', async () => {
     const own = cfg && cfg.id === btn.dataset.id;
     if (!confirm(own
-      ? `„${btn.dataset.name}“ ist dieses Gerät. Dashboard hier wirklich beenden?`
-      : `Dashboard „${btn.dataset.name}“ entfernen? Das Gerät zeigt danach wieder die normale Anmeldung.`)) return;
+      ? tk('account.dashDevices.endOwnConfirm', { name: btn.dataset.name })
+      : tk('account.dashDevices.removeConfirm', { name: btn.dataset.name }))) return;
     try {
       await postJson('/api/pinn/dashboard/geraet-entfernen', { id: btn.dataset.id });
     } catch (e) {
@@ -222,11 +223,11 @@ function renderDashBgControls() {
   document.getElementById('dashBgGradientBox').classList.toggle('hidden', stil.art !== 'verlauf');
   document.getElementById('dashBgImageBox').classList.toggle('hidden', stil.art !== 'bild');
   document.getElementById('dashBgColorList').innerHTML = DASH_BG_COLORS.map(c =>
-    `<button type="button" class="dash-bg-swatch${c === stil.farbe ? ' active' : ''}" data-bg-color="${c}" style="background:${c}" aria-label="Farbe ${c}"></button>`).join('');
+    `<button type="button" class="dash-bg-swatch${c === stil.farbe ? ' active' : ''}" data-bg-color="${c}" style="background:${c}" aria-label="${kidAttr(tk('account.dashBg.colorLabel', { color: c }))}"></button>`).join('');
   document.getElementById('dashBgColorInput').value = stil.farbe.toLowerCase();
   document.getElementById('dashBgGradientBox').innerHTML = DASH_BG_GRADIENTS.map(g =>
     `<button type="button" class="dash-bg-swatch gradient${g.id === stil.verlauf ? ' active' : ''}" data-bg-gradient="${g.id}" style="background:${g.css}" title="${kidAttr(g.label)}" aria-label="${kidAttr(g.label)}"></button>`).join('');
-  document.getElementById('dashBgPickLabel').textContent = dashBgEdit.bild ? 'Anderes Bild auswählen' : 'Bild auswählen';
+  document.getElementById('dashBgPickLabel').textContent = tk(dashBgEdit.bild ? 'account.dashBg.pickOtherImage' : 'account.dashBg.pickImage');
   document.getElementById('dashBgImageRemoveBtn').classList.toggle('hidden', !dashBgEdit.bild);
   document.getElementById('dashBgDim').value = String(stil.abdunkeln);
   document.getElementById('dashBgDimValue').textContent = stil.abdunkeln + ' %';
@@ -242,23 +243,21 @@ async function renderDashBgSettings() {
   const status = document.getElementById('dashBgStatus');
   const famTitle = document.getElementById('dashBgPreviewTitle');
   const famText = (document.getElementById('accountFamily').textContent || '').trim();
-  famTitle.textContent = famText || 'Familie';
+  famTitle.textContent = famText || tk('app.family');
   dashBgEdit.geladen = false;
-  status.textContent = 'Wird geladen …';
+  status.textContent = tk('common.loading');
   renderDashBgControls();
   try {
     const res = await apiFetch('/api/pinn/dashboard/hintergrund', { cache: 'no-store' });
     const body = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(body.error || (res.status === 404
-      ? 'Der Server kennt den Dashboard-Hintergrund noch nicht (pb_hooks/dashboard.pb.js aktualisieren).'
-      : 'Der Hintergrund konnte nicht geladen werden.'));
+    if (!res.ok) throw new Error(body.error || tk(res.status === 404 ? 'account.dashBg.serverOld' : 'account.dashBg.loadFailed'));
     dashBgEdit = { stil: cleanDashBgStyle(body.stil), bild: typeof body.bild === 'string' ? body.bild : '', bildGeaendert: false, geladen: true };
     if (dashBgEdit.stil.art === 'bild' && !dashBgEdit.bild) dashBgEdit.stil.art = 'standard';
     status.textContent = '';
   } catch (e) {
     status.textContent = e.message && !/fetch|network|load failed/i.test(e.message)
       ? e.message
-      : 'Keine Verbindung zum Server – der Hintergrund lässt sich nur online ändern.';
+      : tk('account.dashBg.offline');
   }
   const t = (document.getElementById('accountFamily').textContent || '').trim();
   if (t) famTitle.textContent = t;
@@ -267,10 +266,10 @@ async function renderDashBgSettings() {
 // shrink the image (longest side at most 2048 px) and store it as JPEG
 function readDashBgImageFile(file) {
   return new Promise((resolve, reject) => {
-    if (!file || !/^image\//.test(file.type || 'image/')) { reject(new Error('Bitte eine Bilddatei auswählen.')); return; }
+    if (!file || !/^image\//.test(file.type || 'image/')) { reject(new Error(tk('account.dashBg.notAnImage'))); return; }
     const url = URL.createObjectURL(file);
     const img = new Image();
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Das Bild konnte nicht gelesen werden.')); };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error(tk('account.dashBg.unreadable'))); };
     img.onload = () => {
       URL.revokeObjectURL(url);
       let max = 2048;
@@ -289,7 +288,7 @@ function readDashBgImageFile(file) {
         if (data.length <= DASH_BG_MAX_CHARS && /^data:image\/jpeg;base64,/.test(data)) { resolve(data); return; }
         if (quality > 0.6) quality -= 0.1; else max = Math.round(max * 0.8);
       }
-      reject(new Error('Das Bild ist zu groß. Bitte ein kleineres Bild wählen.'));
+      reject(new Error(tk('account.dashBg.tooLarge')));
     };
     img.src = url;
   });
@@ -300,7 +299,7 @@ function readDashBgImageFile(file) {
     const btn = e.target.closest('[data-bg-art]');
     if (!btn) return;
     dashBgEdit.stil.art = btn.dataset.bgArt;
-    status().textContent = dashBgEdit.stil.art === 'bild' && !dashBgEdit.bild ? 'Wähle jetzt ein Bild aus.' : '';
+    status().textContent = dashBgEdit.stil.art === 'bild' && !dashBgEdit.bild ? tk('account.dashBg.chooseNow') : '';
     renderDashBgControls();
   });
   document.getElementById('dashBgColorList').addEventListener('click', (e) => {
@@ -331,34 +330,34 @@ function readDashBgImageFile(file) {
     const file = e.target.files && e.target.files[0];
     e.target.value = '';
     if (!file) return;
-    status().textContent = 'Bild wird vorbereitet …';
+    status().textContent = tk('account.dashBg.preparing');
     try {
       dashBgEdit.bild = await readDashBgImageFile(file);
       dashBgEdit.bildGeaendert = true;
       dashBgEdit.stil.art = 'bild';
-      status().textContent = 'Bild übernommen – zum Übernehmen auf den Dashboards „Hintergrund speichern“ tippen.';
+      status().textContent = tk('account.dashBg.imageReady');
     } catch (err) {
       status().textContent = err.message;
     }
     renderDashBgControls();
   });
   document.getElementById('dashBgImageRemoveBtn').addEventListener('click', () => {
-    if (!confirm('Hintergrundbild entfernen?')) return;
+    if (!confirm(tk('account.dashBg.removeConfirm'))) return;
     dashBgEdit.bild = '';
     dashBgEdit.bildGeaendert = true;
     if (dashBgEdit.stil.art === 'bild') dashBgEdit.stil.art = 'standard';
-    status().textContent = 'Bild entfernt – zum Übernehmen „Hintergrund speichern“ tippen.';
+    status().textContent = tk('account.dashBg.imageRemoved');
     renderDashBgControls();
   });
   document.getElementById('dashBgSaveBtn').addEventListener('click', async () => {
     if (!isCurrentUserAdmin() || !dashBgEdit.geladen) return;
     const stil = cleanDashBgStyle(dashBgEdit.stil);
-    if (stil.art === 'bild' && !dashBgEdit.bild) { status().textContent = 'Bitte zuerst ein Bild auswählen.'; return; }
+    if (stil.art === 'bild' && !dashBgEdit.bild) { status().textContent = tk('account.dashBg.pickFirst'); return; }
     const payload = { stil };
     if (dashBgEdit.bildGeaendert) payload.bild = dashBgEdit.bild;
     const btn = document.getElementById('dashBgSaveBtn');
     btn.disabled = true;
-    status().textContent = payload.bild ? 'Bild wird hochgeladen …' : 'Wird gespeichert …';
+    status().textContent = tk(payload.bild ? 'account.dashBg.uploading' : 'common.saving');
     try {
       const r = await postJson('/api/pinn/dashboard/hintergrund', payload);
       dashBgEdit.bildGeaendert = false;
@@ -371,10 +370,10 @@ function readDashBgImageFile(file) {
         await dashBgImagePut(withImage ? dashBgEdit.bild : '');
         writeDashBgMeta({ familie: cfg.familie, stand: String(r.stand || ''), stil: dashBgEdit.stil, bild: withImage });
       }
-      status().textContent = 'Gespeichert. Die Dashboards zeigen den neuen Hintergrund beim nächsten Öffnen der Profilauswahl.';
+      status().textContent = tk('account.dashBg.saved');
     } catch (err) {
       status().textContent = /fetch|network|load failed/i.test(err.message || '')
-        ? 'Keine Verbindung zum Server – bitte später erneut speichern.'
+        ? tk('account.dashBg.saveOffline')
         : err.message;
     }
     btn.disabled = false;
@@ -397,7 +396,7 @@ async function saveGuestFromModal() {
   const btn = document.getElementById('saveGuestModal');
   const name = document.getElementById('guestNameInput').value.replace(/\s+/g, ' ').trim();
   status.textContent = '';
-  if (!name) { status.textContent = 'Bitte einen Namen eingeben.'; return; }
+  if (!name) { status.textContent = tk('account.guest.nameMissing'); return; }
   btn.disabled = true;
   try {
     await postJson('/api/pinn/users/create-gast', { username: name });

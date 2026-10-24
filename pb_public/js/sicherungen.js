@@ -4,8 +4,9 @@
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
    Contents: Settings → System → backups & updates (also on the main admin screen): summary, update check
    and install, backups (list, back up now, restore), progress across the restart of pinn., shared helpers
-   pinnModalToTop, sysCanUse, sysLocale, sysT (also used by other files at runtime).
-   Since 1.66.0 also the developer area for pre-releases (search, warnings, install with automatic backup). */
+   pinnModalToTop, sysCanUse, sysLocale (also used by other files at runtime).
+   Since 1.66.0 also the developer area for pre-releases (search, warnings, install with automatic backup).
+   Since 1.112.1 all texts come from text keys (maint.*, tk()); messages from the server are shown as they come. */
 
 /* ==========================================================
    Backups & updates at the push of a button (Settings → System, main admin)
@@ -37,9 +38,6 @@ function sysCanUse() {
 function sysLocale() {
   return (window.PINN_I18N && PINN_I18N.language && PINN_I18N.language.locale) || 'de-DE';
 }
-function sysT(s) {
-  try { return (window.PINN_I18N && PINN_I18N.t) ? PINN_I18N.t(s) : s; } catch (e) { return s; }
-}
 function sysFmtWhen(sec) {
   if (!sec) return '';
   const d = new Date(sec * 1000);
@@ -58,12 +56,12 @@ function sysSleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 // Kind of a backup → icon + label (daily backups older than the retention days are weekly backups)
 function sysBackupKind(b) {
-  if (b.art === 'manuell') return { ico: '✋', label: 'Von Hand' };
-  if (b.art === 'vor-update') return { ico: '⬆️', label: 'Vor einem Update' };
-  if (b.art === 'vor-wiederherstellung') return { ico: '↩️', label: 'Vor einer Wiederherstellung' };
+  if (b.art === 'manuell') return { ico: '✋', label: tk('maint.kind.manual') };
+  if (b.art === 'vor-update') return { ico: '⬆️', label: tk('maint.kind.beforeUpdate') };
+  if (b.art === 'vor-wiederherstellung') return { ico: '↩️', label: tk('maint.kind.beforeRestore') };
   const tage = (sysInfo && sysInfo.wartung && sysInfo.wartung.tage) || 7;
   const alt = (Date.now() / 1000 - b.zeit) > (tage + 0.5) * 86400;
-  return alt ? { ico: '📅', label: 'Wochensicherung' } : { ico: '🌙', label: 'Tägliche Sicherung' };
+  return alt ? { ico: '📅', label: tk('maint.kind.weekly') } : { ico: '🌙', label: tk('maint.kind.daily') };
 }
 
 async function sysFetch(pruefen, vorab) {
@@ -71,9 +69,9 @@ async function sysFetch(pruefen, vorab) {
   if (pruefen) q.push('pruefen=1');
   if (vorab) q.push('vorab=1');
   const res = await apiFetch('/api/pinn/system' + (q.length ? '?' + q.join('&') : ''), { cache: 'no-store' });
-  if (res.status === 404) { const e = new Error('Auf dem Server fehlt noch pb_hooks/system.pb.js (und pinn-system.js).'); e.code = 'alt'; throw e; }
+  if (res.status === 404) { const e = new Error(tk('maint.serverMissing')); e.code = 'alt'; throw e; }
   const body = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(body.error || 'Das hat nicht geklappt.');
+  if (!res.ok) throw new Error(body.error || tk('common.failed'));
   return body;
 }
 
@@ -86,7 +84,7 @@ async function sysRefreshSummary() {
   sub.classList.toggle('hidden', !show);
   if (!show) { hint.classList.add('hidden'); return; }
   const sum = document.getElementById('sysBackupSummary');
-  if (!navigator.onLine) { sum.textContent = 'Keine Verbindung zum Server.'; return; }
+  if (!navigator.onLine) { sum.textContent = tk('common.noConnection'); return; }
   try {
     sysInfo = await sysFetch(false);
   } catch (e) {
@@ -97,7 +95,7 @@ async function sysRefreshSummary() {
   sum.textContent = sysSummaryText(sysInfo);
   const u = sysInfo.update || {};
   if (u.neuer && u.version) {
-    document.getElementById('sysUpdateHintText').textContent = sysT('Version {0} ist verfügbar.').replace('{0}', u.version);
+    document.getElementById('sysUpdateHintText').textContent = tk('maint.versionAvailable', { version: u.version });
     hint.classList.remove('hidden');
   } else {
     hint.classList.add('hidden');
@@ -105,10 +103,10 @@ async function sysRefreshSummary() {
 }
 function sysSummaryText(info) {
   const w = info.wartung || {};
-  if (!w.eingerichtet || !w.aktiv) return 'Der Container „wartung“ läuft noch nicht – Einrichtung siehe „Sicherungen & Wiederherstellung“.';
+  if (!w.eingerichtet || !w.aktiv) return tk('maint.notRunningShort');
   const list = info.backups || [];
-  if (!list.length) return 'Noch keine Sicherung vorhanden – die erste entsteht heute Nacht oder mit „Jetzt sichern“.';
-  return sysT('Letzte Sicherung: {0} · {1} Sicherungen auf dem NAS').replace('{0}', sysFmtWhen(list[0].zeit)).replace('{1}', String(list.length));
+  if (!list.length) return tk('maint.noBackupYet');
+  return tk('maint.lastBackup', { when: sysFmtWhen(list[0].zeit), n: list.length });
 }
 
 /* ---------- Modal ---------- */
@@ -121,7 +119,7 @@ async function openSysMaint(opts = {}) {
   document.getElementById('sysMaintProgress').classList.add('hidden');
   sysShowView('main');
   document.getElementById('sysMaintVersion').textContent = APP_VERSION;
-  document.getElementById('sysUpdState').textContent = sysT(opts.pruefen ? 'Suche nach Updates …' : 'Wird geladen …');
+  document.getElementById('sysUpdState').textContent = tk(opts.pruefen ? 'maint.checking' : 'common.loading');
   document.getElementById('sysBackupList').innerHTML = '';
   document.getElementById('sysBackupInfo').textContent = '';
   sysDevReset();
@@ -145,7 +143,7 @@ function sysNotice(text) {
 }
 
 async function sysLoad(pruefen) {
-  if (!navigator.onLine) { sysNotice('Keine Verbindung zum Server.'); document.getElementById('sysUpdState').textContent = ''; return; }
+  if (!navigator.onLine) { sysNotice(tk('common.noConnection')); document.getElementById('sysUpdState').textContent = ''; return; }
   try {
     sysInfo = await sysFetch(pruefen);
   } catch (e) {
@@ -167,9 +165,9 @@ function sysRender() {
 
   // Notes about the setup or the permissions
   let notice = '';
-  if (!w.eingerichtet || !w.aktiv) notice = 'Der Container „wartung“ läuft noch nicht. Einmalig per SSH im pinn.-Ordner „sudo sh pinn-setup.sh“ ausführen – danach gehen Sicherungen, Wiederherstellung und Updates hier per Knopf.';
-  else if (!w.docker) notice = 'Der Container „wartung“ hat keinen Zugriff auf Docker – Wiederherstellen und Updates sind deshalb aus. Sichern geht weiterhin.';
-  else if (!info.darf) notice = 'Wiederherstellen und Updates betreffen alle Familien auf diesem Server – das kann der Hauptadmin oder ein Admin, dem er es erlaubt hat.';
+  if (!w.eingerichtet || !w.aktiv) notice = tk('maint.notRunning');
+  else if (!w.docker) notice = tk('maint.noDocker');
+  else if (!info.darf) notice = tk('maint.noPermission');
   sysNotice(notice);
   const kannAktion = !!(info.darf && w.aktiv && w.docker);
 
@@ -179,14 +177,14 @@ function sysRender() {
   const rel = document.getElementById('sysUpdRelease');
   const inst = document.getElementById('sysUpdInstallBtn');
   let text = '';
-  if (u.neuer) text = sysT('Version {0} ist verfügbar.').replace('{0}', u.version);
-  else if (u.keine) text = 'Auf GitHub gibt es noch keine veröffentlichte Version.';
-  else if (u.fehler === 'limit') text = 'GitHub hat gerade zu viele Anfragen gezählt – bitte in einer Stunde noch einmal versuchen.';
-  else if (u.fehler && !u.tag) text = 'GitHub ist gerade nicht erreichbar – bitte später noch einmal versuchen.';
-  else if (u.tag) text = 'pinn. ist auf dem neuesten Stand.';
+  if (u.neuer) text = tk('maint.versionAvailable', { version: u.version });
+  else if (u.keine) text = tk('maint.noRelease');
+  else if (u.fehler === 'limit') text = tk('maint.rateLimit');
+  else if (u.fehler && !u.tag) text = tk('maint.githubDown');
+  else if (u.tag) text = tk('maint.upToDate');
   const teile = [];
-  if (text) teile.push(sysT(text));
-  if (u.geprueft) teile.push(sysT('Zuletzt geprüft: {0}').replace('{0}', sysFmtWhen(Math.floor(u.geprueft / 1000))));
+  if (text) teile.push(text);
+  if (u.geprueft) teile.push(tk('maint.lastChecked', { when: sysFmtWhen(Math.floor(u.geprueft / 1000)) }));
   st.textContent = teile.join(' ');
   if (u.neuer) {
     rel.classList.remove('hidden');
@@ -201,14 +199,14 @@ function sysRender() {
   }
   inst.classList.toggle('hidden', !u.neuer);
   inst.disabled = !kannAktion;
-  if (u.neuer) inst.textContent = sysT('Version {0} installieren').replace('{0}', u.version);
+  if (u.neuer) inst.textContent = tk('maint.installVersion', { version: u.version });
 
   // Pre-release running on this server? Then say so and point to the bug report
   const vs = info.vorabStand;
   const pre = document.getElementById('sysVorabActive');
   pre.classList.toggle('hidden', !vs);
   if (vs) {
-    document.getElementById('sysVorabActiveText').textContent = sysT('Auf diesem Server läuft die Vorabversion {0}.').replace('{0}', vs.version);
+    document.getElementById('sysVorabActiveText').textContent = tk('maint.preReleaseRunning', { version: vs.version });
     document.getElementById('sysVorabActiveIssue').href = sysIssueUrl(info, vs.version);
   }
   sysRenderDev();
@@ -216,27 +214,26 @@ function sysRender() {
   // Backups
   document.getElementById('sysBackupNowBtn').disabled = !w.aktiv;
   document.getElementById('sysBackupInfo').textContent = w.aktiv
-    ? sysT('Jeden Tag um {0} – aufbewahrt werden alle Sicherungen der letzten {1} Tage und danach {2} Wochen lang eine pro Woche. Sie liegen auf dem NAS im pinn.-Ordner unter „backups“.')
-        .replace('{0}', w.uhrzeit || '03:30').replace('{1}', String(w.tage || 7)).replace('{2}', String(w.wochen || 4))
+    ? tk('maint.schedule', { time: w.uhrzeit || '03:30', days: w.tage || 7, weeks: w.wochen || 4 })
     : '';
   const list = info.backups || [];
   const box = document.getElementById('sysBackupList');
   if (!list.length) {
-    box.innerHTML = `<p class="sm-empty">${escapeHtml(sysT(w.aktiv ? 'Noch keine Sicherung vorhanden – die erste entsteht heute Nacht oder mit „Jetzt sichern“.' : 'Noch keine Sicherungen.'))}</p>`;
+    box.innerHTML = `<p class="sm-empty">${escapeHtml(tk(w.aktiv ? 'maint.noBackupYet' : 'maint.noBackups'))}</p>`;
   } else {
     const rows = sysShowAll ? list : list.slice(0, SYS_ROWS);
     box.innerHTML = rows.map(b => {
       const k = sysBackupKind(b);
       return `<div class="sm-row">
         <span class="sm-row-ico">${k.ico}</span>
-        <span class="sm-row-main"><span class="sm-row-title" data-no-i18n>${escapeHtml(sysFmtWhen(b.zeit))}</span><span class="sm-row-sub">${escapeHtml(sysT(k.label))} · ${escapeHtml(sysFmtSize(b.groesse))}</span></span>
-        ${kannAktion ? `<button type="button" class="sm-btn sm-small" data-sys-restore="${escapeHtml(b.datei)}">${escapeHtml(sysT('Wiederherstellen'))}</button>` : ''}
+        <span class="sm-row-main"><span class="sm-row-title" data-no-i18n>${escapeHtml(sysFmtWhen(b.zeit))}</span><span class="sm-row-sub">${escapeHtml(k.label)} · ${escapeHtml(sysFmtSize(b.groesse))}</span></span>
+        ${kannAktion ? `<button type="button" class="sm-btn sm-small" data-sys-restore="${escapeHtml(b.datei)}">${escapeHtml(tk('maint.restore'))}</button>` : ''}
       </div>`;
     }).join('');
   }
   const more = document.getElementById('sysBackupMore');
   more.classList.toggle('hidden', list.length <= SYS_ROWS);
-  more.textContent = sysShowAll ? sysT('Weniger anzeigen') : sysT('Alle {0} Sicherungen zeigen').replace('{0}', String(list.length));
+  more.textContent = sysShowAll ? tk('maint.showLess') : tk('maint.showAll', { n: list.length });
 }
 
 /* ---------- Developer area: pre-releases ----------
@@ -254,13 +251,13 @@ function sysIssueUrl(info, version) {
   const body = [
     'Version: ' + v,
     ...(sch && sch.version ? ['Schema: ' + sch.version + (sch.ok ? '' : ' (!)')] : []),
-    sysT('Gerät / Browser') + ': ' + navigator.userAgent,
+    tk('maint.issue.device') + ': ' + navigator.userAgent,
     '',
-    sysT('Was ist passiert?'),
+    tk('maint.issue.what'),
     '',
-    sysT('Was hätte passieren sollen?'),
+    tk('maint.issue.expected'),
     '',
-    sysT('Schritte zum Nachstellen:'),
+    tk('maint.issue.steps'),
     '1. ',
   ].join('\n');
   return 'https://github.com/' + sysRepo(info) + '/issues/new?title=' + encodeURIComponent('[' + v + '] ') + '&body=' + encodeURIComponent(body);
@@ -286,15 +283,15 @@ function sysRenderDev() {
   document.getElementById('sysDevIssueLink').href = sysIssueUrl(info);
   document.getElementById('sysDevCheckBtn').disabled = sysDevBusy;
   let text = '';
-  if (sysDevBusy) text = 'Suche nach Vorabversionen …';
+  if (sysDevBusy) text = tk('maint.dev.checking');
   else if (!v) text = '';
-  else if (v.neuer) text = sysT('Vorabversion {0} ist verfügbar.').replace('{0}', v.version);
-  else if (v.fehler === 'limit') text = 'GitHub hat gerade zu viele Anfragen gezählt – bitte in einer Stunde noch einmal versuchen.';
-  else if (v.fehler && !v.tag) text = 'GitHub ist gerade nicht erreichbar – bitte später noch einmal versuchen.';
-  else if (v.keine || !v.tag) text = 'Zurzeit gibt es keine Vorabversion.';
-  else if (v.ueberholt) text = sysT('Die letzte Vorabversion {0} ist schon als fertige Version erschienen – dafür gibt es das normale Update.').replace('{0}', v.version);
-  else text = sysT('Die letzte Vorabversion {0} ist nicht neuer als deine Version – du bist auf dem neuesten Stand.').replace('{0}', v.version);
-  st.textContent = text ? sysT(text) : '';
+  else if (v.neuer) text = tk('maint.dev.available', { version: v.version });
+  else if (v.fehler === 'limit') text = tk('maint.rateLimit');
+  else if (v.fehler && !v.tag) text = tk('maint.githubDown');
+  else if (v.keine || !v.tag) text = tk('maint.dev.none');
+  else if (v.ueberholt) text = tk('maint.dev.released', { version: v.version });
+  else text = tk('maint.dev.notNewer', { version: v.version });
+  st.textContent = text;
   const show = !!(v && v.neuer && !sysDevBusy);
   rel.classList.toggle('hidden', !show);
   row.classList.toggle('hidden', !show);
@@ -306,7 +303,7 @@ function sysRenderDev() {
     document.getElementById('sysDevRelDate').textContent = datum;
     document.getElementById('sysDevRelNotes').innerHTML = sysMarkdown(v.notizen || '');
     document.getElementById('sysDevRelLink').href = v.url || ('https://github.com/' + sysRepo(info) + '/releases');
-    inst.textContent = sysT('Vorabversion {0} installieren').replace('{0}', v.version);
+    inst.textContent = tk('maint.dev.install', { version: v.version });
   } else if (cb) {
     cb.checked = false;
   }
@@ -335,7 +332,7 @@ async function sysDevCheck() {
 async function sysStartPreUpdate() {
   const v = sysDevInfo || {};
   if (!v.neuer || !document.getElementById('sysDevConfirm').checked) return;
-  if (!confirm(sysT('Vorabversion {0} jetzt installieren? Sie kann Fehler enthalten und gilt für alle Familien auf diesem Server. Vorher wird automatisch gesichert – über „Wiederherstellen“ kommst du jederzeit zurück. pinn. ist dabei ein paar Minuten nicht erreichbar.').replace('{0}', v.version))) return;
+  if (!confirm(tk('maint.dev.installConfirm', { version: v.version }))) return;
   const btn = document.getElementById('sysDevInstallBtn');
   btn.disabled = true;
   try {
@@ -370,7 +367,7 @@ function sysOpenRestore(file) {
   if (!b) return;
   sysRestoreFile = file;
   document.getElementById('sysRestoreWhen').textContent = sysFmtWhen(b.zeit);
-  document.getElementById('sysRestoreMeta').textContent = sysT(sysBackupKind(b).label) + ' · ' + sysFmtSize(b.groesse);
+  document.getElementById('sysRestoreMeta').textContent = sysBackupKind(b).label + ' · ' + sysFmtSize(b.groesse);
   document.querySelector('input[name="sysRestoreScope"][value="daten"]').checked = true;
   const cb = document.getElementById('sysRestoreConfirm');
   cb.checked = false;
@@ -406,7 +403,7 @@ async function sysStartBackup() {
 async function sysStartUpdate() {
   const u = (sysInfo && sysInfo.update) || {};
   if (!u.neuer) return;
-  if (!confirm(sysT('pinn. jetzt auf Version {0} aktualisieren? Vorher wird automatisch gesichert. pinn. ist dabei ein paar Minuten nicht erreichbar – auf allen Geräten.').replace('{0}', u.version))) return;
+  if (!confirm(tk('maint.updateConfirm', { version: u.version }))) return;
   const btn = document.getElementById('sysUpdInstallBtn');
   btn.disabled = true;
   try {
@@ -419,31 +416,33 @@ async function sysStartUpdate() {
 }
 
 /* ---------- Progress ---------- */
+// Steps of each job: [step name reported by the server, text key]
 const SYS_STEPS = {
-  sichern: [['sichern', 'Sicherung erstellen']],
-  wiederherstellen: [['sichern', 'Jetzigen Stand sichern'], ['entpacken', 'Sicherung prüfen'], ['stoppen', 'pinn. anhalten'], ['einspielen', 'Daten zurückspielen'], ['starten', 'pinn. starten']],
-  update: [['sichern', 'Jetzigen Stand sichern'], ['laden', 'Update von GitHub laden'], ['entpacken', 'Paket prüfen'], ['installieren', 'Update einspielen'], ['neustart', 'pinn. neu starten']],
+  sichern: [['sichern', 'maint.step.backup']],
+  wiederherstellen: [['sichern', 'maint.step.saveCurrent'], ['entpacken', 'maint.step.checkBackup'], ['stoppen', 'maint.step.stop'], ['einspielen', 'maint.step.restoreData'], ['starten', 'maint.step.start']],
+  update: [['sichern', 'maint.step.saveCurrent'], ['laden', 'maint.step.download'], ['entpacken', 'maint.step.checkPackage'], ['installieren', 'maint.step.install'], ['neustart', 'maint.step.restart']],
 };
+// Error codes of the „wartung“ container → text key
 const SYS_FEHLER = {
-  sichern: 'Die Sicherung ist fehlgeschlagen – ist auf dem NAS noch genug Speicherplatz frei?',
-  datei: 'Diese Sicherung wurde nicht gefunden.',
-  docker: 'Der Container „wartung“ hat keinen Zugriff auf Docker.',
-  entpacken: 'Die Sicherung ließ sich nicht entpacken – es wurde nichts verändert.',
-  defekt: 'Die Datenbank in dieser Sicherung ist beschädigt – es wurde nichts verändert.',
-  start: 'pinn. startete mit der Sicherung nicht – der vorherige Stand ist wieder aktiv.',
-  laden: 'Das Update ließ sich nicht von GitHub laden – bitte die Internetverbindung des NAS prüfen. Es wurde nichts verändert.',
-  paket: 'Das heruntergeladene Paket ist unvollständig – es wurde nichts verändert.',
-  setup: 'Beim Einspielen meldete pinn-setup.sh einen Fehler (Einzelheiten unten). Die Sicherung von vorher liegt bereit.',
-  abbruch: 'Der Vorgang wurde unterbrochen, weil der Container neu gestartet ist.',
-  beschaeftigt: 'Es lief gerade schon ein anderer Vorgang – bitte gleich noch einmal versuchen.',
-  wartung: 'Der Container „wartung“ reagiert nicht – läuft er? (docker logs wartung)',
+  sichern: 'maint.err.backup',
+  datei: 'maint.err.file',
+  docker: 'maint.err.docker',
+  entpacken: 'maint.err.unpack',
+  defekt: 'maint.err.damaged',
+  start: 'maint.err.start',
+  laden: 'maint.err.download',
+  paket: 'maint.err.package',
+  setup: 'maint.err.setup',
+  abbruch: 'maint.err.aborted',
+  beschaeftigt: 'maint.err.busy',
+  wartung: 'maint.err.container',
 };
 function sysRenderProgress(art, version, step, state) {
   const titles = {
-    sichern: ['Sicherung läuft …', 'Sicherung erstellt', 'Sicherung fehlgeschlagen'],
-    wiederherstellen: ['Wiederherstellung läuft …', 'Wiederhergestellt', 'Wiederherstellung fehlgeschlagen'],
-    update: [sysT('Update auf {0} läuft …').replace('{0}', version || ''), 'Update installiert', 'Update fehlgeschlagen'],
-  }[art] || ['…', 'Fertig', 'Fehler'];
+    sichern: [tk('maint.prog.backupRunning'), tk('maint.prog.backupDone'), tk('maint.prog.backupFailed')],
+    wiederherstellen: [tk('maint.prog.restoreRunning'), tk('maint.prog.restoreDone'), tk('maint.prog.restoreFailed')],
+    update: [tk('maint.prog.updateRunning', { version: version || '' }), tk('maint.prog.updateDone'), tk('maint.prog.updateFailed')],
+  }[art] || ['…', tk('maint.prog.done'), tk('common.error')];
   const spin = document.getElementById('sysProgSpin');
   spin.classList.toggle('ok', state === 'fertig');
   spin.classList.toggle('err', state === 'fehler');
@@ -454,7 +453,7 @@ function sysRenderProgress(art, version, step, state) {
     let cls = '';
     if (state === 'fertig' || (idx >= 0 && i < idx)) cls = 'done';
     else if (i === idx) cls = state === 'fehler' ? 'err' : 'on';
-    return `<li class="${cls}">${escapeHtml(sysT(s[1]))}</li>`;
+    return `<li class="${cls}">${escapeHtml(tk(s[1]))}</li>`;
   }).join('');
 }
 function sysProgMsg(text) {
@@ -471,7 +470,7 @@ async function sysFollow(id, art, version) {
   document.getElementById('sysProgDone').classList.add('hidden');
   document.getElementById('sysProgLog').classList.add('hidden');
   sysRenderProgress(art, version, art === 'sichern' ? 'sichern' : '', 'laeuft');
-  sysProgMsg('Wartet auf den Container „wartung“ …');
+  sysProgMsg(tk('maint.prog.waiting'));
   const t0 = Date.now();
   let warWeg = false, gesehen = false, ende = null;
   while (Date.now() - t0 < 45 * 60 * 1000) {
@@ -485,20 +484,20 @@ async function sysFollow(id, art, version) {
     if (alt && warWeg) { ende = { zustand: 'fertig', schritt: 'fertig' }; break; }
     if (!st && !alt) {
       warWeg = true;
-      sysProgMsg(art === 'update' ? 'pinn. wird gerade erneuert und startet neu – einen Moment …' : 'pinn. startet neu – einen Moment …');
+      sysProgMsg(tk(art === 'update' ? 'maint.prog.renewing' : 'maint.prog.restarting'));
     } else if (j && j.id === id) {
       gesehen = true;
       if (j.version) version = j.version;
       if (j.zustand === 'fertig' || j.zustand === 'fehler') { ende = j; break; }
       sysRenderProgress(art, version, j.schritt, 'laeuft');
-      sysProgMsg(j.zustand === 'wartet' ? 'Wartet auf den Container „wartung“ …'
-        : (art === 'sichern' ? 'Das kann je nach Menge an Fotos und Dokumenten ein paar Minuten dauern.' : 'Bitte die App geöffnet lassen.'));
+      sysProgMsg(tk(j.zustand === 'wartet' ? 'maint.prog.waiting'
+        : (art === 'sichern' ? 'maint.prog.backupTakesTime' : 'maint.prog.keepOpen')));
     } else if (!gesehen && Date.now() - t0 > 20 * 60 * 1000) {
       ende = { zustand: 'fehler', fehler: 'wartung' };
       break;
     } else if (!gesehen && Date.now() - t0 > 30 * 1000) {
       // e.g. the nightly backup is running right now – the job starts right after it
-      sysProgMsg('Der Container „wartung“ ist noch beschäftigt – der Auftrag startet direkt danach.');
+      sysProgMsg(tk('maint.prog.busy'));
     }
     await sysSleep(2500);
   }
@@ -512,7 +511,7 @@ async function sysFollow(id, art, version) {
       await sysSleep(1500);
     }
     if (art === 'wiederherstellen') sysClearLocalData();
-    sysProgMsg(art === 'update' ? sysT('pinn. {0} ist installiert – die App lädt neu …').replace('{0}', version || '') : 'Der gewählte Stand ist zurück – die App lädt neu …');
+    sysProgMsg(art === 'update' ? tk('maint.prog.installed', { version: version || '' }) : tk('maint.prog.restored'));
     await sysSleep(2500);
     sysPolling = false;
     hardReload();
@@ -524,9 +523,9 @@ async function sysFollow(id, art, version) {
   const done = document.getElementById('sysProgDone');
   done.classList.remove('hidden');
   if (ende.zustand === 'fertig') {
-    sysProgMsg('Die Sicherung liegt auf dem NAS im pinn.-Ordner unter „backups“.');
+    sysProgMsg(tk('maint.prog.backupLocation'));
   } else {
-    let msg = sysT(SYS_FEHLER[ende.fehler] || 'Das hat nicht geklappt.');
+    let msg = tk(SYS_FEHLER[ende.fehler] || 'common.failed');
     if (ende.meldung && ende.fehler !== 'setup') msg += ' (' + ende.meldung + ')';
     sysProgMsg(msg);
     if (art === 'update') {
@@ -560,7 +559,7 @@ document.getElementById('sysProgDone').addEventListener('click', () => {
 document.getElementById('sysUpdCheckBtn').addEventListener('click', async () => {
   const b = document.getElementById('sysUpdCheckBtn');
   b.disabled = true;
-  document.getElementById('sysUpdState').textContent = sysT('Suche nach Updates …');
+  document.getElementById('sysUpdState').textContent = tk('maint.checking');
   await sysLoad(true);
   b.disabled = false;
 });

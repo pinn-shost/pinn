@@ -95,6 +95,16 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 and 🇰🇷 한국어**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.112.1
+
+**Text keys, part 2: account, devices, backups and error log**
+
+- The **account page** (profile, notifications, dashboard PIN and devices, profiles, guest menus, dashboard background), the **device management**, **Backups & updates** and the **error log** now take their texts from the language files in `pb_public/i18n/` – in all nine languages and as a flatshare. The status lines under Settings → System (synchronisation, backups, error log) are included. Nothing changes in how you use the app.
+- Numbers now use the right singular or plural in every language, e.g. “1 open error”, “3 backups”, “2 other devices”.
+- Small fixes: the lock time after wrong passwords in the devices popup no longer ends with a double full stop, dashboard devices show the date in the format of your language, and the roles “Admin”, “Member” and “Guest” are translated everywhere.
+- For contributors: keys starting with `maint.` get no flatshare variant – backups and updates always concern every family on the server.
+- Changed: app files only (`index.html`, `js/konto.js`, `js/profilverwaltung.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/dashboardsitzung.js`, `js/mitteilungen.js`, `js/geraete.js`, `js/fehlerprotokoll.js`, `js/sicherungen.js`, `js/speichern.js`, `js/sprachen.js`, `js/versionslog.js`, all language files in `i18n/` and `lang/`) and `.github/` (CONTRIBUTING.md, `i18n-keys.js`) – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.112.0
 
 **Text keys, part 1: frame, sign-in and settings**
@@ -140,14 +150,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - New or deleted profiles change the members directly in the new record; guests still cannot change the guest menus.
 - Changed: app files (`index.html`, `js/bereiche.js`, `js/familiensync.js`, `js/profilverwaltung.js`, `js/sprachen.js`, `js/versionslog.js`, all language files) and on the server `pb_hooks/pinn-bereiche.js`, `bereiche.pb.js`, `pinn-benutzer.js`, `save_family_data.pb.js`, `pinn-pushtext.js`, `calendar-sync.js`. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
-## What's new in 1.107.4
-
-**Japanese and Korean complete: setup, data export and push messages**
-
-- Japanese and Korean now also work in the setup assistant, in the data export files and in the push messages from the server (they showed English before). All nine languages are now complete.
-- Voice control (Siri/Android) still understands German, English, French and Spanish.
-- Changed: app files (`index.html`, `js/sprachen.js`, `js/einrichten.js`, `js/exportieren.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, all language files) and on the server `pb_hooks/pinn-pushtext.js`, `pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-aufgaben.js`, `pinn-wobistdu.js`, `pinn-einrichtung.js`.
-
 ## How it works
 
 ```mermaid
@@ -174,7 +176,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.112.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.112.1` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

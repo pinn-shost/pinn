@@ -24,6 +24,9 @@ const PINN_CHANGELOG = [
     punkte: [
       ['info', 'Anmeldung, Hauptadmin, Familien-Dashboard, Menü, Kopfzeile, Suche und die ganze Einstellungen-Seite holen ihre Texte jetzt über Text-Schlüssel – in allen neun Sprachen, auch als WG. An der Bedienung ändert sich nichts'],
       ['fix', 'Kleinigkeiten: Die Zahl der Kontakte mit Geburtstag, der Hinweis auf Mitglieder ohne Profil und Texte für Bildschirmleser (z. B. „Menü öffnen/schließen“) stehen jetzt in jeder Sprache richtig – Einzahl und Mehrzahl inklusive'],
+      ['info', '1.112.1: Konto, Geräteverwaltung, Sicherungen & Updates und das Fehlerprotokoll holen ihre Texte jetzt über Text-Schlüssel – in allen neun Sprachen, auch als WG. Zahlen stehen in jeder Sprache in der richtigen Einzahl oder Mehrzahl (z. B. „1 offener Fehler“, „3 Sicherungen“)'],
+      ['fix', '1.112.1: Kleinigkeiten: Die Sperrzeit nach falschen Passwörtern im Geräte-Popup hat keinen doppelten Punkt mehr, die Dashboard-Geräte zeigen das Datum im Format der eingestellten Sprache und die Rollen „Admin“, „Mitglied“ und „Gast“ stehen überall übersetzt'],
+      ['info', '1.112.1 geändert: index.html, js/konto.js, js/profilverwaltung.js, js/dashboard.js, js/dashboardkonto.js, js/dashboardsitzung.js, js/mitteilungen.js, js/geraete.js, js/fehlerprotokoll.js, js/sicherungen.js, js/speichern.js, js/sprachen.js, js/versionslog.js, alle Sprachdateien in i18n/ und lang/ – am Server ändert sich nichts'],
       ['info', 'Geändert: index.html, js/sprachen.js, js/anmeldemaske.js, js/anmeldung.js, js/hauptadminseite.js, js/profilauswahl.js, js/pineingabe.js, js/verbindung.js, js/zustand.js, js/ansichten.js, js/einstellungen.js, js/uebersichteinstellungen.js, js/versionslog.js, alle Sprachdateien in i18n/ und lang/ – am Server ändert sich nichts'],
     ],
   },
