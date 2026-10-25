@@ -51,16 +51,16 @@ function pantryExpiryDays(p) {
 function pantryIsExpiring(p) { const d = pantryExpiryDays(p); return d !== null && d <= pantrySettings.mhdDays; }
 function pantryExpiryLabel(d) {
   if (d === null) return '';
-  if (d < -1) return `seit ${-d} Tagen abgelaufen`;
-  if (d === -1) return 'seit gestern abgelaufen';
-  if (d === 0) return 'läuft heute ab';
-  if (d === 1) return 'läuft morgen ab';
-  return `noch ${d} Tage`;
+  if (d < -1) return tk('pantry.exp.since', { n: -d });
+  if (d === -1) return tk('pantry.exp.sinceYesterday');
+  if (d === 0) return tk('pantry.exp.today');
+  if (d === 1) return tk('pantry.exp.tomorrow');
+  return tk('pantry.exp.left', { n: d });
 }
 function pantryShortDate(iso) {
   if (!pantryIsoValid(iso)) return '';
   const [y, m, d] = iso.split('-').map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
+  return new Date(y, m - 1, d).toLocaleDateString(sysLocale(), { day: '2-digit', month: '2-digit' });
 }
 function pantryExpiryPillHtml(p) {
   const d = pantryExpiryDays(p);
@@ -310,7 +310,7 @@ function pantryScanSetStatus(text, isError = false) {
 function pantryScanSetCamMsg(text, withResume = false) {
   const el = document.getElementById('pantryScanCamMsg');
   if (!text) { el.classList.add('hidden'); el.innerHTML = ''; return; }
-  el.innerHTML = `<span>${escapeHtml(text)}</span>${withResume ? '<button type="button" id="pantryScanResume" class="mt-2 px-3 py-1.5 rounded-lg bg-white text-pine text-xs font-medium">▶ Weiter scannen</button>' : ''}`;
+  el.innerHTML = `<span>${escapeHtml(text)}</span>${withResume ? '<button type="button" id="pantryScanResume" class="mt-2 px-3 py-1.5 rounded-lg bg-white text-pine text-xs font-medium">' + escapeHtml(tk('pantry.scan.resume')) + '</button>' : ''}`;
   el.classList.remove('hidden');
   const btn = document.getElementById('pantryScanResume');
   if (btn) btn.addEventListener('click', () => { pantryScanSetCamMsg(''); pantryScanStartCamera(); });
@@ -334,7 +334,7 @@ function openPantryScan() {
   document.getElementById('pantryScanCodeInput').value = '';
   pantryScanRenderMode();
   pantryScanAudioUnlock();
-  pantryScanSetStatus('Barcode in den Rahmen halten – waagerecht oder senkrecht.');
+  pantryScanSetStatus(tk('pantry.scan.hold'));
   document.getElementById('pantryScanModal').classList.remove('hidden');
   pantryScanStartCamera();
 }
@@ -351,7 +351,7 @@ async function pantryScanStartCamera() {
   pantryScanSetCamMsg('');
   const video = document.getElementById('pantryScanVideo');
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    pantryScanSetCamMsg('Die Kamera ist hier nicht verfügbar – die Nummer unten eintippen.');
+    pantryScanSetCamMsg(tk('pantry.scan.noCamera'));
     return;
   }
   try {
@@ -362,8 +362,8 @@ async function pantryScanStartCamera() {
   } catch (e) {
     const denied = e && (e.name === 'NotAllowedError' || e.name === 'SecurityError');
     pantryScanSetCamMsg(denied
-      ? 'Kein Zugriff auf die Kamera. Bitte in den Einstellungen des Geräts für pinn. erlauben – oder die Nummer unten eintippen.'
-      : 'Die Kamera ließ sich nicht starten – die Nummer unten eintippen.');
+      ? tk('pantry.scan.denied')
+      : tk('pantry.scan.startFailed'));
     return;
   }
   if (!pantryScanModalOpen()) { pantryScanStopCamera(); return; }
@@ -417,7 +417,7 @@ function pantryScanArmIdle() {
   pantryScan.idleTimer = setTimeout(() => {
     if (!pantryScan.stream) return;
     pantryScanStopCamera();
-    pantryScanSetCamMsg('Kamera pausiert, um Akku zu sparen.', true);
+    pantryScanSetCamMsg(tk('pantry.scan.paused'), true);
   }, 90000);
 }
 function pantryScanLoop() {
@@ -481,7 +481,7 @@ function pantryScanResume() {
   pantryScan.paused = false;
   document.getElementById('pantryScanResult').classList.add('hidden');
   document.getElementById('pantryScanResult').innerHTML = '';
-  pantryScanSetStatus('Barcode in den Rahmen halten – waagerecht oder senkrecht.');
+  pantryScanSetStatus(tk('pantry.scan.hold'));
   if (!pantryScan.stream) pantryScanStartCamera(); else pantryScanArmIdle();
 }
 
@@ -510,7 +510,7 @@ async function pantryScanHandleCode(code) {
   const known = pantryItemByBarcode(code);
   if (known) { pantryScanShowKnown(known, code); return; }
   box.classList.remove('hidden');
-  box.innerHTML = `<div class="pscan-card text-sm text-ink/60">🔎 ${escapeHtml(code)} – Produkt wird gesucht …</div>`;
+  box.innerHTML = `<div class="pscan-card text-sm text-ink/60">${escapeHtml(tk('pantry.scan.searching', { code }))}</div>`;
   pantryScanSetStatus('');
   const info = await pantryLookupBarcode(code);
   if (!pantryScanModalOpen() || !pantryScan.paused) return;
@@ -553,24 +553,24 @@ function pantryScanShowKnown(p, code) {
         <span class="text-2xl leading-none">${escapeHtml(cat.icon || '📦')}</span>
         <div class="flex-1 min-w-0">
           <div class="font-medium truncate">${escapeHtml(p.name)}</div>
-          <div class="text-[11px] text-ink/50 truncate">Im Vorrat: ${escapeHtml(pantryStockText(p))}${loc ? ' · ' + escapeHtml((loc.icon ? loc.icon + ' ' : '') + loc.label) : ''}</div>
-          ${d !== null ? `<div class="text-[11px] text-ink/50">MHD ${escapeHtml(pantryShortDate(p.bestBefore))}${d <= pantrySettings.mhdDays ? ' · ' + escapeHtml(pantryExpiryLabel(d)) : ''}</div>` : ''}
+          <div class="text-[11px] text-ink/50 truncate">${escapeHtml(tk('pantry.scan.inStock', { stock: pantryStockText(p) }))}${loc ? ' · ' + escapeHtml((loc.icon ? loc.icon + ' ' : '') + loc.label) : ''}</div>
+          ${d !== null ? `<div class="text-[11px] text-ink/50">${escapeHtml(tk('pantry.bestBeforeShort', { date: pantryShortDate(p.bestBefore) }))}${d <= pantrySettings.mhdDays ? ' · ' + escapeHtml(pantryExpiryLabel(d)) : ''}</div>` : ''}
         </div>
       </div>
       <div class="grid ${isIn ? 'grid-cols-2' : 'grid-cols-1'} gap-2 mb-3">
         <div class="min-w-0">
-          <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1" for="pscanQty">${isIn ? 'Dazu' : 'Verbraucht'}${p.unit ? ' (' + escapeHtml(p.unit) + ')' : ''}</label>
+          <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1" for="pscanQty">${escapeHtml(isIn ? tk('pantry.scan.add') : tk('pantry.scan.used'))}${p.unit ? ' (' + escapeHtml(p.unit) + ')' : ''}</label>
           ${pantryScanQtyHtml('pscanQty', pantryScanDefaultQty(p.unit))}
         </div>
         ${isIn ? `<div class="min-w-0">
-          <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1" for="pscanMhd">MHD</label>
+          <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1" for="pscanMhd">${escapeHtml(tk('pantry.sortBestBefore'))}</label>
           <input id="pscanMhd" type="date" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-base bg-white" />
         </div>` : ''}
       </div>
       <div class="flex items-center gap-2">
-        <button type="button" id="pscanCancel" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5">Abbrechen</button>
+        <button type="button" id="pscanCancel" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5">${escapeHtml(tk('common.cancel'))}</button>
         <div class="flex-1"></div>
-        <button type="button" id="pscanSave" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium">${isIn ? '📥 Einräumen' : '📤 Verbrauchen'}</button>
+        <button type="button" id="pscanSave" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium">${escapeHtml(isIn ? tk('pantry.scan.putAway') : tk('pantry.scan.useUp'))}</button>
       </div>
     </div>`;
   pantryScanWireSteps(box, () => p.unit);
@@ -605,8 +605,8 @@ function pantryScanBook(id, code, amount, mhd) {
   pantryCommit();
   pantryScheduleExpiryCheck();
   const isOn = shoppingItems.some(it => it.pantryId === id && !it.done);
-  let msg = isIn ? `${name}: +${fmtPantryNum(amount)} eingeräumt.` : `${name}: −${fmtPantryNum(amount)} verbraucht.`;
-  if (p && !wasOn && isOn) msg += ' Jetzt knapp – steht auf der Einkaufsliste.';
+  let msg = isIn ? tk('pantry.scan.booked', { name, qty: fmtPantryNum(amount) }) : tk('pantry.scan.consumed', { name, qty: fmtPantryNum(amount) });
+  if (p && !wasOn && isOn) msg += ' ' + tk('pantry.scan.nowLow');
   finShowToast(msg);
   pantryScanResume();
 }
@@ -621,11 +621,11 @@ function pantryScanShowNew(code, info) {
   const note = found ? [info.marke, info.menge].filter(Boolean).join(' · ') : '';
   const source = found ? ({ off: 'Open Food Facts', obf: 'Open Beauty Facts', opf: 'Open Products Facts', opff: 'Open Pet Food Facts' }[info.quelle] || '') : '';
   let hint;
-  if (found) hint = source ? `Gefunden in ${source} – Name bei Bedarf kürzen, z. B. „Milch“.` : 'Gefunden – Name bei Bedarf kürzen.';
-  else if (info && info.fehlt) hint = 'Auf dem Server fehlt noch vorrat.pb.js – Name bitte selbst eintragen.';
-  else if (info && info.offline) hint = 'Ohne Verbindung zum NAS – Name bitte selbst eintragen.';
-  else if (info && info.netz) hint = 'Der NAS erreicht die Produkt-Datenbanken gerade nicht – Name bitte selbst eintragen.';
-  else hint = 'Unbekanntes Produkt – gib ihm einen Namen. pinn. merkt sich den Barcode.';
+  if (found) hint = source ? tk('pantry.scan.foundIn', { source }) : tk('pantry.scan.found');
+  else if (info && info.fehlt) hint = tk('pantry.scan.hookMissing');
+  else if (info && info.offline) hint = tk('pantry.scan.offline');
+  else if (info && info.netz) hint = tk('pantry.scan.dbUnreachable');
+  else hint = tk('pantry.scan.unknown');
   const isIn = pantryScan.mode === 'in';
   const others = pantryItems.slice().sort((a, b) => (a.name || '').localeCompare(b.name || '', 'de', { sensitivity: 'base' }));
   box.classList.remove('hidden');
@@ -633,24 +633,24 @@ function pantryScanShowNew(code, info) {
     <div class="pscan-card">
       <div class="text-[11px] text-ink/50 mb-2">${escapeHtml(hint)}</div>
       ${others.length ? `
-      <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1" for="pscanLink">Zu einem vorhandenen Artikel?</label>
+      <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1" for="pscanLink">${escapeHtml(tk('pantry.scan.linkExisting'))}</label>
       <select id="pscanLink" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white mb-3">
-        <option value="">– Neuer Artikel –</option>
+        <option value="">${escapeHtml(tk('pantry.scan.newItemOpt'))}</option>
         ${others.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.name)}</option>`).join('')}
       </select>` : ''}
       <div id="pscanNewFields">
-        <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1" for="pscanName">Name</label>
-        <input id="pscanName" type="text" autocomplete="off" maxlength="80" value="${escapeHtml(found ? info.name || '' : '')}" placeholder="z. B. Spülmittel" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-2" />
-        ${note ? `<div class="text-[11px] text-ink/45 mb-2">Notiz: ${escapeHtml(note)}</div>` : ''}
+        <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1" for="pscanName">${escapeHtml(tk('common.name'))}</label>
+        <input id="pscanName" type="text" autocomplete="off" maxlength="80" value="${escapeHtml(found ? info.name || '' : '')}" placeholder="${escapeHtml(tk('pantry.scan.namePlaceholder'))}" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-2" />
+        ${note ? `<div class="text-[11px] text-ink/45 mb-2">${escapeHtml(tk('pantry.scan.noteLine', { note }))}</div>` : ''}
         <div class="grid grid-cols-2 gap-2 mb-2">
           <div class="min-w-0">
-            <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1" for="pscanCat">Kategorie</label>
+            <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1" for="pscanCat">${escapeHtml(tk('pantry.item.category'))}</label>
             <select id="pscanCat" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm bg-white">
               ${pantryCategories.map(c => `<option value="${escapeHtml(c.id)}"${c.id === catId ? ' selected' : ''}>${escapeHtml((c.icon ? c.icon + ' ' : '') + c.label)}</option>`).join('')}
             </select>
           </div>
           <div class="min-w-0">
-            <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1" for="pscanLoc">Lagerort</label>
+            <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1" for="pscanLoc">${escapeHtml(tk('pantry.item.place'))}</label>
             <select id="pscanLoc" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm bg-white">
               <option value="">–</option>
               ${pantryLocations.map(l => `<option value="${escapeHtml(l.id)}"${l.id === locId ? ' selected' : ''}>${escapeHtml((l.icon ? l.icon + ' ' : '') + l.label)}</option>`).join('')}
@@ -660,21 +660,21 @@ function pantryScanShowNew(code, info) {
       </div>
       <div class="grid ${isIn ? 'grid-cols-2' : 'grid-cols-1'} gap-2 mb-3">
         <div class="min-w-0">
-          <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1" for="pscanQty">${isIn ? 'Menge' : 'Verbraucht'}</label>
+          <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1" for="pscanQty">${escapeHtml(isIn ? tk('shop.entry.quantity') : tk('pantry.scan.used'))}</label>
           ${pantryScanQtyHtml('pscanQty', '1')}
         </div>
         ${isIn ? `<div class="min-w-0">
-          <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1" for="pscanMhd">MHD</label>
+          <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1" for="pscanMhd">${escapeHtml(tk('pantry.sortBestBefore'))}</label>
           <input id="pscanMhd" type="date" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-base bg-white" />
         </div>` : ''}
       </div>
       <p id="pscanErr" class="hidden text-xs text-red-500 mb-2"></p>
       <div class="flex items-center gap-2">
-        <button type="button" id="pscanCancel" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5">Abbrechen</button>
+        <button type="button" id="pscanCancel" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5">${escapeHtml(tk('common.cancel'))}</button>
         <div class="flex-1"></div>
-        <button type="button" id="pscanSave" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium">${isIn ? '📥 Anlegen & einräumen' : '📤 Zuordnen & verbrauchen'}</button>
+        <button type="button" id="pscanSave" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium">${escapeHtml(isIn ? tk('pantry.scan.createPut') : tk('pantry.scan.linkUse'))}</button>
       </div>
-      <div class="text-[10px] text-ink/35 mt-2 tabular-nums">Barcode ${escapeHtml(code)}</div>
+      <div class="text-[10px] text-ink/35 mt-2 tabular-nums">${escapeHtml(tk('pantry.scan.barcodeLine', { code }))}</div>
     </div>`;
   const linkSel = document.getElementById('pscanLink');
   const newFields = document.getElementById('pscanNewFields');
@@ -682,7 +682,7 @@ function pantryScanShowNew(code, info) {
   const syncLink = () => {
     const linked = linkSel && linkSel.value;
     newFields.classList.toggle('hidden', !!linked);
-    saveBtn.textContent = linked ? (isIn ? '📥 Zuordnen & einräumen' : '📤 Zuordnen & verbrauchen') : (isIn ? '📥 Anlegen & einräumen' : '📤 Zuordnen & verbrauchen');
+    saveBtn.textContent = linked ? (isIn ? tk('pantry.scan.linkPut') : tk('pantry.scan.linkUse')) : (isIn ? tk('pantry.scan.createPut') : tk('pantry.scan.linkUse'));
   };
   if (linkSel) linkSel.addEventListener('change', syncLink);
   if (!isIn && linkSel) { linkSel.value = ''; }
@@ -700,9 +700,9 @@ function pantryScanShowNew(code, info) {
     const mhd = mhdEl ? mhdEl.value : '';
     const linked = linkSel && linkSel.value ? pantryItems.find(p => p.id === linkSel.value) : null;
     if (linked) { pantryScanBook(linked.id, code, amount, mhd); return; }
-    if (!isIn) { err.textContent = 'Bitte einen vorhandenen Artikel wählen.'; err.classList.remove('hidden'); return; }
+    if (!isIn) { err.textContent = tk('pantry.scan.chooseExisting'); err.classList.remove('hidden'); return; }
     const name = document.getElementById('pscanName').value.trim();
-    if (!name) { err.textContent = 'Bitte einen Namen eingeben.'; err.classList.remove('hidden'); return; }
+    if (!name) { err.textContent = tk('common.needName'); err.classList.remove('hidden'); return; }
     const dup = pantryItems.find(x => pantryNameKey(x.name) === pantryNameKey(name));
     if (dup) { pantryScanBook(dup.id, code, amount, mhd); return; }
     const item = {
@@ -716,7 +716,7 @@ function pantryScanShowNew(code, info) {
     pantryItems = [...pantryItems, item];
     pantryCommit();
     pantryScheduleExpiryCheck();
-    finShowToast(`${name} angelegt und eingeräumt.`);
+    finShowToast(tk('pantry.scan.created', { name }));
     pantryScanResume();
   });
 }
@@ -724,7 +724,7 @@ function pantryScanShowNew(code, info) {
 function pantryScanManualLookup() {
   const input = document.getElementById('pantryScanCodeInput');
   const code = pantryNormCode(input.value);
-  if (!code || !pantryCodeValid(code)) { pantryScanSetStatus('Die Nummer stimmt nicht – bitte alle 8 oder 13 Ziffern unter dem Barcode eintippen.', true); return; }
+  if (!code || !pantryCodeValid(code)) { pantryScanSetStatus(tk('pantry.scan.badCode'), true); return; }
   input.blur();
   pantryScan.paused = true;
   pantryScanHandleCode(code);
@@ -832,29 +832,29 @@ function pcookCompute() {
 }
 function pcookTimeText(r) {
   const t = (Number(r.prepTime) || 0) + (Number(r.cookTime) || 0);
-  return t > 0 ? `⏱ ${t} Min.` : '';
+  return t > 0 ? '⏱ ' + tk('recipe.minutes', { n: t }) : '';
 }
 function pcookCardHtml(x, idx) {
   const r = x.r;
   const ok = x.have.length;
   const pct = Math.round(ok / x.total * 100);
   const lack = [...x.missing.map(l => ({ t: l.core, cls: 'pcook-miss' })), ...x.short.map(s => ({ t: s.line.core, cls: 'pcook-short' }))];
-  const meta = [`${ok} von ${x.total} Zutaten da`, pcookTimeText(r)].filter(Boolean).join(' · ');
+  const meta = [tk('pantry.cook.have', { n: ok, total: x.total }), pcookTimeText(r)].filter(Boolean).join(' · ');
   return `
     <div class="pcook-card" data-idx="${idx}">
       <div class="flex items-start gap-3">
         <div class="pcook-ring shrink-0" style="--p:${pct}"><span>${ok}/${x.total}</span></div>
         <div class="flex-1 min-w-0">
-          <div class="font-medium text-sm leading-snug">${x.fav ? '❤️ ' : ''}${escapeHtml(r.title || 'Unbenanntes Rezept')}</div>
+          <div class="font-medium text-sm leading-snug">${x.fav ? '❤️ ' : ''}${escapeHtml(r.title || tk('recipe.untitled'))}</div>
           <div class="text-[11px] text-ink/50 mt-0.5">${escapeHtml(meta)}</div>
-          ${x.expiring.length ? `<div class="pcook-exp mt-1">⏳ verwertet ${escapeHtml(x.expiring.map(p => p.name).join(', '))}</div>` : ''}
+          ${x.expiring.length ? `<div class="pcook-exp mt-1">⏳ ${escapeHtml(tk('pantry.cook.usesUp'))} ${escapeHtml(x.expiring.map(p => p.name).join(', '))}</div>` : ''}
           ${lack.length ? `<div class="flex flex-wrap gap-1 mt-1.5">${lack.map(l => `<span class="pcook-chip ${l.cls}">${escapeHtml(l.t)}</span>`).join('')}</div>` : ''}
         </div>
       </div>
       <div class="flex flex-wrap gap-2 mt-2.5 justify-end">
-        <button type="button" data-pc="open" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 hover:border-pine hover:text-pine">Ansehen</button>
-        <button type="button" data-pc="plan" class="pcook-act px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 hover:border-pine hover:text-pine">📅 Einplanen</button>
-        ${lack.length ? '<button type="button" data-pc="shop" class="pcook-act px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium">🛒 Fehlendes</button>' : ''}
+        <button type="button" data-pc="open" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 hover:border-pine hover:text-pine">${escapeHtml(tk('pantry.cook.view'))}</button>
+        <button type="button" data-pc="plan" class="pcook-act px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 hover:border-pine hover:text-pine">${escapeHtml(tk('pantry.cook.plan'))}</button>
+        ${lack.length ? '<button type="button" data-pc="shop" class="pcook-act px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium">' + escapeHtml(tk('pantry.cook.missing')) + '</button>' : ''}
       </div>
       <div class="pcook-shop hidden mt-2.5"></div>
     </div>`;
@@ -875,21 +875,21 @@ function renderPantryCook() {
   const stock = pantryItems.filter(p => (pantryNum(p.qty) || 0) > 0).length;
   if (!recipes.length) {
     sub.textContent = '';
-    list.innerHTML = '<p class="text-sm text-ink/45 italic text-center py-6">Noch keine Rezepte – leg unter „Rezepte“ welche an.</p>';
+    list.innerHTML = '<p class="text-sm text-ink/45 italic text-center py-6">' + escapeHtml(tk('pantry.cook.noRecipes')) + '</p>';
     return;
   }
   if (!stock) {
     sub.textContent = '';
-    list.innerHTML = '<p class="text-sm text-ink/45 italic text-center py-6">Der Vorrat ist leer – trag ein, was da ist. Am schnellsten per 📷 Scan.</p>';
+    list.innerHTML = '<p class="text-sm text-ink/45 italic text-center py-6">' + escapeHtml(tk('pantry.cook.noStock')) + '</p>';
     return;
   }
   pcookResults = pcookCompute();
   let rows = pcookResults;
   if (pcookOnlyExpiring) rows = rows.filter(x => x.expiring.length);
   if (pcookOnlyFav) rows = rows.filter(x => x.fav);
-  sub.textContent = `${stock} Artikel im Vorrat · ${pcookResults.length} Rezepte geprüft`;
+  sub.textContent = tk('pantry.cook.stock', { n: stock }) + ' · ' + tk('pantry.cook.checked', { n: pcookResults.length });
   if (!rows.length) {
-    list.innerHTML = `<p class="text-sm text-ink/45 italic text-center py-6">${pcookOnlyExpiring ? 'Kein Rezept verwertet gerade Ablaufendes.' : 'Kein Rezept passt zu dieser Auswahl.'}</p>`;
+    list.innerHTML = `<p class="text-sm text-ink/45 italic text-center py-6">${escapeHtml(pcookOnlyExpiring ? tk('pantry.cook.noneExpiring') : tk('pantry.cook.noneMatch'))}</p>`;
     return;
   }
   const all = rows.filter(x => !x.missing.length && !x.short.length);
@@ -900,11 +900,11 @@ function renderPantryCook() {
       <h4 class="text-xs uppercase tracking-wide text-ink/40 mb-2">${escapeHtml(title)} <span class="normal-case tracking-normal text-ink/30">· ${items.length}</span></h4>
       <div class="flex flex-col gap-2">${items.map(x => pcookCardHtml(x, pcookResults.indexOf(x))).join('')}</div>
     </div>` : '';
-  let html = sec('✅ Alles da', all) + sec('Fast alles da', near);
+  let html = sec(tk('pantry.cook.allThere'), all) + sec(tk('pantry.cook.nearly'), near);
   if (rest.length) {
     html += pcookShowAll || (!all.length && !near.length)
-      ? sec('Da fehlt mehr', rest.slice(0, 30))
-      : `<button type="button" id="pcookMoreBtn" class="self-center px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine">Weitere zeigen (${rest.length})</button>`;
+      ? sec(tk('pantry.cook.more'), rest.slice(0, 30))
+      : `<button type="button" id="pcookMoreBtn" class="self-center px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine">${escapeHtml(tk('pantry.cook.showMore', { n: rest.length }))}</button>`;
   }
   list.innerHTML = html;
   const more = document.getElementById('pcookMoreBtn');
@@ -934,7 +934,7 @@ function pcookAction(act, x, card) {
     const hideMeal = typeof shoppingMealListHidden === 'function' && shoppingMealListHidden();
     const lists = allShoppingLists().filter(sl => !(hideMeal && sl.id === SHOPPING_MEAL_LIST_ID));
     const stamm = shoppingStammladenId();
-    box.innerHTML = `<div class="text-[11px] text-ink/50 mb-1.5">Auf welche Einkaufsliste?</div><div class="ls-shop-grid">${lists.map(sl => `<button type="button" class="ls-shop-btn${sl.id === stamm ? ' border-pine' : ''}" data-sl="${escapeHtml(sl.id)}">${shoppingListLogoHtml(sl, 28)}<span>${escapeHtml(sl.name || 'Einkaufsliste')}${sl.id === stamm ? ' ⭐' : ''}</span></button>`).join('') || '<p class="text-sm text-ink/40">Noch keine Einkaufslisten vorhanden.</p>'}</div>`;
+    box.innerHTML = `<div class="text-[11px] text-ink/50 mb-1.5">${escapeHtml(tk('lists.shop.title'))}</div><div class="ls-shop-grid">${lists.map(sl => `<button type="button" class="ls-shop-btn${sl.id === stamm ? ' border-pine' : ''}" data-sl="${escapeHtml(sl.id)}">${shoppingListLogoHtml(sl, 28)}<span>${escapeHtml(sl.name || tk('shop.shareTitle'))}${sl.id === stamm ? ' ⭐' : ''}</span></button>`).join('') || '<p class="text-sm text-ink/40">' + escapeHtml(tk('lists.shop.none')) + '</p>'}</div>`;
     box.classList.remove('hidden');
     box.querySelectorAll('[data-sl]').forEach(b => b.addEventListener('click', () => pcookToShopping(x, b.dataset.sl)));
   }
@@ -950,15 +950,15 @@ function pcookToShopping(x, listId) {
     const qty = l.qty !== null ? (formatScaledNumber(l.qty) + (l.unit ? ' ' + l.unit : '')) : '';
     shoppingItems = [...shoppingItems, {
       id: 'si' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
-      name, qty, note: 'für ' + (x.r.title || 'Rezept'), done: false, createdAt: Date.now(), listId: target,
+      name, qty, note: tk('lists.forPerson', { name: x.r.title || tk('search.type.recipe') }), done: false, createdAt: Date.now(), listId: target,
     }];
     added++;
   });
   persistState();
   if (currentView === 'einkauf') renderShoppingList();
   const list = getShoppingList(listId);
-  const lname = list ? list.name : 'die Einkaufsliste';
-  finShowToast(added ? `${added} Zutaten auf „${lname}“ gesetzt.` : 'Steht schon alles auf der Liste.');
+  const lname = list ? list.name : tk('shop.shareTitle');
+  finShowToast(added ? tk('pantry.cook.added', { n: added, name: lname }) : tk('pantry.cook.alreadyAll'));
   renderPantryCook();
 }
 
@@ -1000,7 +1000,7 @@ document.getElementById('pantryScanTorch').addEventListener('click', async () =>
   } else {
     pantryScan.torch = false;
     btn.classList.remove('on');
-    pantryScanSetStatus('Die Taschenlampe lässt sich in pinn. auf diesem Gerät nicht einschalten – bitte die Taschenlampe im Kontrollzentrum nutzen.', true);
+    pantryScanSetStatus(tk('pantry.scan.torchFailed'), true);
   }
 });
 document.getElementById('pantryScanCodeBtn').addEventListener('click', pantryScanManualLookup);
@@ -1070,12 +1070,12 @@ function shoppingPlanBadgeHtml(task) {
   return `<div class="flex flex-wrap items-center gap-1.5 mt-1.5">${lists.map(l => `
     <span class="inline-flex items-center gap-1 pl-0.5 pr-2 py-0.5 rounded-full border border-ink/10 text-[11px] text-ink/60">
       ${shoppingListLogoHtml(l, 18)}<span class="truncate max-w-[7rem]">${escapeHtml(l.name || '')}</span>
-    </span>`).join('')}${plan.bookedAt ? '<span class="text-[10px] text-ink/40">· gebucht</span>' : ''}${isViewAllowed('einkauf') ? `<span class="task-shopping-open">🛒 ${lists.length > 1 ? 'Listen' : 'Liste'} öffnen ›</span>` : ''}</div>`;
+    </span>`).join('')}${plan.bookedAt ? '<span class="text-[10px] text-ink/40">· ' + escapeHtml(tk('shop.plan.booked')) + '</span>' : ''}${isViewAllowed('einkauf') ? `<span class="task-shopping-open">${escapeHtml(tk('shop.plan.openLists', { n: lists.length }))}</span>` : ''}</div>`;
 }
 
 function shoppingPlanAutoTitle() {
   const names = pendingTaskShoppingLists.map(id => getShoppingList(id)).filter(Boolean).map(l => l.name || '');
-  return names.length ? 'Einkaufen: ' + names.join(', ') : 'Einkaufen';
+  return names.length ? tk('shop.shoppingAt', { names: names.join(', ') }) : tk('shop.plan.shopping');
 }
 
 function setTaskShoppingMode(on, selectedIds = []) {
@@ -1097,7 +1097,7 @@ function renderTaskShoppingListPicker() {
         <span class="plan-check absolute top-1 right-1 w-4 h-4 rounded-full bg-pine text-white grid place-items-center text-[10px] leading-none">✓</span>
         ${shoppingListLogoHtml(list, 34)}
         <span class="text-[11px] leading-tight w-full truncate">${escapeHtml(list.name || '')}</span>
-        <span class="text-[10px] leading-none text-ink/40">${count ? count + ' offen' : 'leer'}</span>
+        <span class="text-[10px] leading-none text-ink/40">${escapeHtml(count ? tk('shop.nOpen', { n: count }) : tk('lists.emptySmall'))}</span>
       </label>`;
   }).join('');
   wrap.querySelectorAll('.plan-list-cb').forEach(cb => cb.addEventListener('change', () => {
@@ -1116,8 +1116,8 @@ function openShoppingPlanModal() {
   const preselect = allShoppingLists().filter(l => shoppingListSummary(l.id).count > 0).map(l => l.id);
   setTaskShoppingMode(true, preselect);
   taskTitleAuto = true;
-  document.getElementById('taskModalTitle').textContent = 'Einkauf planen';
-  document.getElementById('saveTask').textContent = 'Einkauf planen';
+  document.getElementById('taskModalTitle').textContent = tk('shop.plan.title');
+  document.getElementById('saveTask').textContent = tk('shop.plan.title');
   document.getElementById('taskTitleInput').value = shoppingPlanAutoTitle();
   if (isMobile()) document.getElementById('taskTitleInput').blur();
   armModalSnapshot('taskModal');
@@ -1134,8 +1134,8 @@ let planDoneTaskId = null;
 let planDoneRows = []; // { listId, category, pickerOpen, itemsOpen, answered, bought:Set }
 
 function planDefaultTitle(list) {
-  if (!list || list.id === SHOPPING_MEAL_LIST_ID) return 'Einkauf Essensplanung';
-  return 'Einkauf bei ' + (list.name || 'Laden');
+  if (!list || list.id === SHOPPING_MEAL_LIST_ID) return tk('shop.plan.mealExpense');
+  return tk('shop.plan.expenseAt', { name: list.name || tk('shop.list.shop') });
 }
 function planItemsOfList(listId) { return shoppingItemsOfList(listId); }
 
@@ -1158,7 +1158,7 @@ function openShoppingPlanDone(taskId, taskTitle) {
       bought: new Set(done.map(it => it.id)),
     };
   });
-  document.getElementById('planDoneTaskTitle').textContent = taskTitle || 'Einkauf';
+  document.getElementById('planDoneTaskTitle').textContent = taskTitle || tk('lists.type.shop');
   document.getElementById('planDoneDateInput').value = finTodayIso();
   fillFinPaidBySelect('planDonePaidBySelect', currentMember() ? currentMember().id : '');
   document.getElementById('planDoneError').classList.add('hidden');
@@ -1181,8 +1181,8 @@ function planItemsHtml(row, i) {
   const items = planItemsOfList(row.listId);
   if (!items.length) {
     return listHasRecipeItems(row.listId)
-      ? '<p class="text-[11px] text-ink/40 mb-2">Keine eigenen Einträge – die Rezept-Zutaten richten sich weiter nach der Essensplanung.</p>'
-      : '<p class="text-[11px] text-ink/40 mb-2">Keine Artikel auf dieser Liste.</p>';
+      ? '<p class="text-[11px] text-ink/40 mb-2">' + escapeHtml(tk('shop.done.noOwn')) + '</p>'
+      : '<p class="text-[11px] text-ink/40 mb-2">' + escapeHtml(tk('shop.done.noItems')) + '</p>';
   }
   const boughtCount = items.filter(it => row.bought.has(it.id)).length;
   const allSelected = boughtCount === items.length;
@@ -1191,25 +1191,25 @@ function planItemsHtml(row, i) {
   if (!row.answered) {
     return `
       <div class="rounded-xl bg-mustard/10 border border-mustard/25 px-3 py-2.5 mb-2">
-        <div class="text-sm font-medium mb-2">Alles eingekauft? <span class="text-xs font-normal text-ink/50">(${items.length} Artikel auf der Liste)</span></div>
+        <div class="text-sm font-medium mb-2">${escapeHtml(tk('shop.done.allBought'))} <span class="text-xs font-normal text-ink/50">(${escapeHtml(tk('shop.done.itemsOnList', { n: items.length }))})</span></div>
         <div class="flex gap-2">
-          <button type="button" class="plan-ans-all flex-1 px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition">Ja, alles</button>
-          <button type="button" class="plan-ans-some flex-1 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 hover:border-pine hover:text-pine transition">Nur einiges</button>
+          <button type="button" class="plan-ans-all flex-1 px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition">${escapeHtml(tk('shop.done.yesAll'))}</button>
+          <button type="button" class="plan-ans-some flex-1 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 hover:border-pine hover:text-pine transition">${escapeHtml(tk('shop.done.some'))}</button>
         </div>
       </div>`;
   }
 
   const summary = allSelected
-    ? `Alles gekauft (${items.length} Artikel)`
+    ? tk('shop.done.allBoughtN', { n: items.length })
     : boughtCount
-      ? `${boughtCount} von ${items.length} gekauft – ${items.length - boughtCount} bleib${items.length - boughtCount === 1 ? 't' : 'en'} auf der Liste`
-      : `Nichts gekauft – alle ${items.length} bleiben auf der Liste`;
+      ? tk('shop.done.someBought', { done: boughtCount, total: items.length }) + ' – ' + tk('shop.done.stay', { n: items.length - boughtCount })
+      : tk('shop.done.noneBought', { n: items.length });
 
   const listHtml = row.itemsOpen ? `
     <div class="rounded-xl border border-ink/10 mt-2 overflow-hidden">
       <div class="flex items-center justify-between gap-2 px-3 py-2 bg-ink/5">
-        <span class="text-[11px] uppercase tracking-wide text-ink/40">Was hast du bekommen?</span>
-        <button type="button" class="plan-select-all px-2.5 py-1 rounded-lg border border-ink/15 bg-white text-xs text-ink/70 hover:border-pine hover:text-pine transition">${allSelected ? 'Keine auswählen' : 'Alle auswählen'}</button>
+        <span class="text-[11px] uppercase tracking-wide text-ink/40">${escapeHtml(tk('shop.done.whatGot'))}</span>
+        <button type="button" class="plan-select-all px-2.5 py-1 rounded-lg border border-ink/15 bg-white text-xs text-ink/70 hover:border-pine hover:text-pine transition">${escapeHtml(allSelected ? tk('shop.done.selectNone') : tk('shop.done.selectAll'))}</button>
       </div>
       <div class="max-h-60 overflow-y-auto px-3">
         ${items.map(it => {
@@ -1218,7 +1218,7 @@ function planItemsHtml(row, i) {
           return `
           <button type="button" class="plan-item-row w-full flex items-center gap-2.5 py-2 border-b border-dashed border-ink/10 last:border-0 text-left select-none" data-item-id="${escapeHtml(it.id)}">
             <span class="plan-item-dot shrink-0 w-5 h-5 rounded-full border-2 grid place-items-center ${on ? 'bg-pine border-pine' : 'border-ink/30'}">${on ? '<span class="text-white text-[11px] leading-none">✓</span>' : ''}</span>
-            <span class="flex-1 min-w-0 flex items-center gap-1.5"><span class="truncate text-sm ${on ? 'text-ink/80' : 'text-ink/50'}">${escapeHtml(it.name || '')}</span>${pantryItemForShopping(it) ? '<span class="pantry-tag shrink-0">🥫 Vorrat</span>' : ''}</span>
+            <span class="flex-1 min-w-0 flex items-center gap-1.5"><span class="truncate text-sm ${on ? 'text-ink/80' : 'text-ink/50'}">${escapeHtml(it.name || '')}</span>${pantryItemForShopping(it) ? '<span class="pantry-tag shrink-0">' + escapeHtml(tk('shop.pantryTag')) + '</span>' : ''}</span>
             ${qty ? `<span class="shrink-0 text-xs text-ink/40">${escapeHtml(qty)}</span>` : ''}
           </button>`;
         }).join('')}
@@ -1229,7 +1229,7 @@ function planItemsHtml(row, i) {
     <div class="mb-2">
       <div class="flex items-center justify-between gap-2">
         <span class="text-xs ${allSelected ? 'text-pine' : 'text-ink/60'} min-w-0">${escapeHtml(summary)}</span>
-        <button type="button" class="plan-items-toggle shrink-0 px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:border-pine hover:text-pine transition">${row.itemsOpen ? 'Fertig ▴' : 'Artikel wählen ▾'}</button>
+        <button type="button" class="plan-items-toggle shrink-0 px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:border-pine hover:text-pine transition">${escapeHtml(row.itemsOpen ? tk('shop.done.closeItems') : tk('shop.done.chooseItems'))}</button>
       </div>
       ${listHtml}
     </div>`;
@@ -1267,10 +1267,10 @@ function renderPlanDoneRows() {
         </div>
         ${planItemsHtml(row, i)}
         ${kassePlanRowHtml(row, k)}
-        <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1">Name in den Ausgaben</label>
+        <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1">${escapeHtml(tk('shop.done.expenseName'))}</label>
         <input type="text" autocomplete="off" maxlength="200" class="plan-title w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-2" value="${escapeHtml(titleVal)}" />
         <div class="flex items-center justify-between gap-2">
-          <span class="text-[11px] uppercase tracking-wide text-ink/40">Kategorie</span>
+          <span class="text-[11px] uppercase tracking-wide text-ink/40">${escapeHtml(tk('shop.entry.category'))}</span>
           <button type="button" class="plan-cat-toggle inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs hover:border-pine transition" style="--cat:${cat.color}">
             <span class="text-base leading-none">${escapeHtml(cat.icon || '')}</span>
             <span class="font-medium">${escapeHtml(cat.label)}</span>
@@ -1356,8 +1356,8 @@ function updatePlanDoneTotals() {
   if (monthBudget && inMonth && total > 0) {
     const rest = monthBudget - finStats(monthRange).total - total;
     parts.push(rest >= 0
-      ? `Danach noch <b style="color:${FIN_GREEN}">${fmtEur(rest)}</b> im Budget für ${escapeHtml(monthRange.longShort)}.`
-      : `Damit <b style="color:${FIN_RED}">${fmtEur(-rest)}</b> über dem Budget für ${escapeHtml(monthRange.longShort)}.`);
+      ? tk('shop.budget.left', { amount: `<b style="color:${FIN_GREEN}">${fmtEur(rest)}</b>`, period: escapeHtml(monthRange.longShort) })
+      : tk('shop.budget.over', { amount: `<b style="color:${FIN_RED}">${fmtEur(-rest)}</b>`, period: escapeHtml(monthRange.longShort) }));
   }
   hint.innerHTML = parts.join(' ');
   hint.classList.toggle('hidden', !parts.length);
@@ -1370,13 +1370,13 @@ function finishShoppingPlanDone(withAmounts) {
   const rows = planDoneAmounts();
   const date = document.getElementById('planDoneDateInput').value || finTodayIso();
   const paidBy = document.getElementById('planDonePaidBySelect').value;
-  let toast = 'Einkauf abgeschlossen.';
+  let toast = tk('shop.done.finished');
   const itemLabel = it => { const { qty } = manualItemQtyNote(it); return (qty ? qty + ' ' : '') + (it.name || ''); };
 
   if (withAmounts) {
     const booked = rows.filter(r => r.amount > 0);
     if (!booked.length) {
-      errEl.textContent = 'Bitte mindestens einen Betrag eingeben – oder „Ohne Beträge abschließen“ wählen.';
+      errEl.textContent = tk('shop.done.needAmount');
       errEl.classList.remove('hidden');
       return;
     }
@@ -1384,13 +1384,13 @@ function finishShoppingPlanDone(withAmounts) {
     const unanswered = booked.map(r => planDoneRows[r.idx]).find(row => !row.answered);
     if (unanswered) {
       const l = getShoppingList(unanswered.listId);
-      errEl.textContent = `Bitte bei „${l ? l.name : 'der Liste'}“ angeben, ob alles eingekauft wurde.`;
+      errEl.textContent = l ? tk('shop.done.answerFor', { name: l.name }) : tk('shop.done.answer');
       errEl.classList.remove('hidden');
       return;
     }
     const tooMuch = booked.find(r => r.priv < 0 || r.priv > r.amount);
     if (tooMuch) {
-      errEl.textContent = 'Der private Anteil kann nicht größer sein als der Betrag.';
+      errEl.textContent = tk('shop.done.privateTooBig');
       errEl.classList.remove('hidden');
       return;
     }
@@ -1420,8 +1420,8 @@ function finishShoppingPlanDone(withAmounts) {
     });
     finance.listCategories = listCats;
     toast = booked.length === 1
-      ? `${fmtEur(sum)} unter ${finCategory(planDoneRows[booked[0].idx].category).label} gebucht.` + (kasseNote || finBudgetToastSuffix(date))
-      : `${booked.length} Einkäufe über ${fmtEur(sum)} gebucht.` + finBudgetToastSuffix(date);
+      ? tk('shop.done.bookedUnder', { amount: fmtEur(sum), cat: i18nT(finCategory(planDoneRows[booked[0].idx].category).label) }) + (kasseNote || finBudgetToastSuffix(date))
+      : tk('shop.done.bookedMany', { n: booked.length, amount: fmtEur(sum) }) + finBudgetToastSuffix(date);
   }
 
   // Bought items disappear from the list, ones not bought stay (open again).
@@ -1437,8 +1437,8 @@ function finishShoppingPlanDone(withAmounts) {
   shoppingItems = shoppingItems
     .filter(it => { if (boughtIds.has(it.id)) { removed++; return false; } return true; })
     .map(it => { if (keepIds.has(it.id)) { kept++; return it.done ? { ...it, done: false } : it; } return it; });
-  if (kept) toast += ` ${kept} Artikel bleib${kept === 1 ? 't' : 'en'} auf der Liste.`;
-  if (pantryBooked) toast += ` ${pantryBooked} in den Vorrat gebucht.`;
+  if (kept) toast += ' ' + tk('shop.done.keptToast', { n: kept });
+  if (pantryBooked) toast += ' ' + tk('shop.done.pantryBooked', { n: pantryBooked });
   syncPantryToShopping();
 
   shoppingPlans = shoppingPlans.map(p => p.id === taskId ? { ...p, bookedAt: new Date().toISOString() } : p);
@@ -1457,7 +1457,7 @@ document.getElementById('planDoneDateInput').addEventListener('change', updatePl
 document.getElementById('shoppingPlanDoneModal').addEventListener('click', (e) => {
   if (e.target.id !== 'shoppingPlanDoneModal') return;
   const typed = planDoneAmounts().some(r => r.amount > 0);
-  if (typed && !confirm('Wirklich schließen? Die eingegebenen Beträge werden nicht gebucht.')) return;
+  if (typed && !confirm(tk('shop.done.confirmClose'))) return;
   closeShoppingPlanDone();
 });
 
@@ -1472,14 +1472,14 @@ function openShoppingCheckout(listId) {
   if (!list || !doneItems.length) return;
   if (isCurrentUserGuest()) {
     // Guests do not book amounts (no finances) - only the ticked-off items are removed
-    if (confirm(`${doneItems.length} abgehakte${doneItems.length === 1 ? 'n' : ''} Artikel aus der Liste entfernen?`)) finishShoppingCheckout(false);
+    if (confirm(tk('shop.complete.confirmClear', { n: doneItems.length }))) finishShoppingCheckout(false);
     else checkoutListId = null;
     return;
   }
   document.getElementById('checkoutLogo').innerHTML = shoppingListLogoHtml(list, 40);
-  document.getElementById('checkoutListName').textContent = `${list.name} · ${doneItems.length} abgehakte${doneItems.length === 1 ? 'r' : ''} Artikel`;
+  document.getElementById('checkoutListName').textContent = list.name + ' · ' + tk('shop.complete.checkedN', { n: doneItems.length });
   const preview = doneItems.slice(0, 12).map(it => `<span class="inline-block px-2 py-0.5 rounded-full bg-ink/5 text-xs text-ink/60">${escapeHtml(it.name || '')}</span>`).join(' ');
-  document.getElementById('checkoutItems').innerHTML = preview + (doneItems.length > 12 ? ` <span class="text-xs text-ink/40">+ ${doneItems.length - 12} weitere</span>` : '');
+  document.getElementById('checkoutItems').innerHTML = preview + (doneItems.length > 12 ? ` <span class="text-xs text-ink/40">${escapeHtml(tk('shop.moreItems', { n: doneItems.length - 12 }))}</span>` : '');
   document.getElementById('checkoutAmountInput').value = '';
   document.getElementById('checkoutDateInput').value = finTodayIso();
   fillFinPaidBySelect('checkoutPaidBySelect', currentMember() ? currentMember().id : '');
@@ -1509,15 +1509,15 @@ function updateCheckoutBudgetHint() {
   if (monthBudget && inMonth) {
     const rest = monthBudget - finStats(monthRange).total - amount;
     parts.push(rest >= 0
-      ? `Danach noch <b style="color:${FIN_GREEN}">${fmtEur(rest)}</b> im Budget für ${escapeHtml(monthRange.longShort)}.`
-      : `Damit <b style="color:${FIN_RED}">${fmtEur(-rest)}</b> über dem Budget für ${escapeHtml(monthRange.longShort)}.`);
+      ? tk('shop.budget.left', { amount: `<b style="color:${FIN_GREEN}">${fmtEur(rest)}</b>`, period: escapeHtml(monthRange.longShort) })
+      : tk('shop.budget.over', { amount: `<b style="color:${FIN_RED}">${fmtEur(-rest)}</b>`, period: escapeHtml(monthRange.longShort) }));
   }
   const cat = finCategory(checkoutCategory);
   const catBudget = cat.budget;
   if (catBudget && inMonth) {
     const spentCat = finStats(monthRange).byCat.find(c => c.cat.id === cat.id);
     const restCat = catBudget - (spentCat ? spentCat.total : 0) - amount;
-    parts.push(`${escapeHtml(cat.label)}: ${restCat >= 0 ? 'noch ' + fmtEur(restCat) : fmtEur(-restCat) + ' drüber'}.`);
+    parts.push(`${escapeHtml(i18nT(cat.label))}: ${escapeHtml(restCat >= 0 ? tk('shop.budget.catLeft', { amount: fmtEur(restCat) }) : tk('shop.budget.catOver', { amount: fmtEur(-restCat) }))}.`);
   }
   hint.innerHTML = parts.join(' ');
   hint.classList.toggle('hidden', !parts.length);
@@ -1527,11 +1527,11 @@ function finishShoppingCheckout(withAmount) {
   const list = getShoppingList(listId);
   if (!list) { closeShoppingCheckout(); return; }
   const doneItems = shoppingItemsOfList(listId).filter(it => it.done);
-  let toast = 'Abgehakte Artikel entfernt.';
+  let toast = tk('shop.complete.removed');
   if (withAmount) {
     const errEl = document.getElementById('checkoutError');
     const amount = parseEuro(document.getElementById('checkoutAmountInput').value);
-    if (!(amount > 0)) { errEl.textContent = 'Bitte den bezahlten Betrag eingeben – oder „Ohne Betrag aufräumen“ wählen.'; errEl.classList.remove('hidden'); return; }
+    if (!(amount > 0)) { errEl.textContent = tk('shop.complete.needAmount'); errEl.classList.remove('hidden'); return; }
     const date = document.getElementById('checkoutDateInput').value || finTodayIso();
     const isMeal = listId === SHOPPING_MEAL_LIST_ID;
     const items = doneItems.map(it => {
@@ -1540,7 +1540,7 @@ function finishShoppingCheckout(withAmount) {
     }).filter(Boolean);
     const booked = kasseBookPurchase({
       id: newRecordId(), amount, date, category: checkoutCategory,
-      title: isMeal ? 'Einkauf Essensplanung' : '',
+      title: isMeal ? tk('shop.plan.mealExpense') : '',
       store: isMeal ? '' : (list.name || ''),
       listId, items,
       paidBy: document.getElementById('checkoutPaidBySelect').value,
@@ -1550,12 +1550,12 @@ function finishShoppingCheckout(withAmount) {
     }, checkoutKasseId, kasseSplitValue('checkout'), parseEuro(document.getElementById('checkoutPrivateInput').value) || 0);
     if (booked.error) { errEl.textContent = booked.error; errEl.classList.remove('hidden'); return; }
     finance.listCategories = { ...finance.listCategories, [listId]: checkoutCategory };
-    toast = `${fmtEur(amount)} unter ${finCategory(checkoutCategory).label} gebucht.` + (booked.note || finBudgetToastSuffix(date));
+    toast = tk('shop.done.bookedUnder', { amount: fmtEur(amount), cat: i18nT(finCategory(checkoutCategory).label) }) + (booked.note || finBudgetToastSuffix(date));
   }
   const doneIds = new Set(doneItems.map(it => it.id));
   const pantryBooked = bookPurchasedIntoPantry(doneItems);
   shoppingItems = shoppingItems.filter(x => !doneIds.has(x.id));
-  if (pantryBooked) toast += ` ${pantryBooked} Artikel in den Vorrat gebucht.`;
+  if (pantryBooked) toast += ' ' + tk('shop.done.pantryBooked', { n: pantryBooked });
   persistState();
   closeShoppingCheckout();
   renderShoppingList();

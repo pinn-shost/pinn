@@ -122,9 +122,9 @@ function openShoppingItemModal({ name = '', editId = null } = {}) {
   listSelect.innerHTML = allShoppingLists().map(l => `<option value="${escapeHtml(l.id)}">${escapeHtml(l.name || '')}</option>`).join('');
   listSelect.value = existing ? itemListId(existing) : activeListId;
 
-  titleEl.textContent = editId ? 'Eintrag bearbeiten' : 'Auf die Liste';
+  titleEl.textContent = editId ? tk('lists.item.editTitle') : tk('shop.entry.onList');
   hintEl.classList.toggle('hidden', !isDuplicate);
-  confirmBtn.textContent = existing ? 'Speichern' : 'Hinzufügen';
+  confirmBtn.textContent = existing ? tk('common.save') : tk('common.add');
   deleteBtn.classList.toggle('hidden', !editId);
 
   modal.classList.remove('hidden');
@@ -139,7 +139,7 @@ function renderShoppingItemCategorySelect() {
   const it = shoppingModalEditId ? shoppingItems.find(x => x.id === shoppingModalEditId) : null;
   const auto = shoppingItemCategory({ name: document.getElementById('shoppingItemNameInput').value, pantryId: it ? it.pantryId : '' });
   const autoCat = shoppingCategoryById(auto);
-  sel.innerHTML = `<option value="">✨ ${escapeHtml(i18nT('Automatisch'))}${autoCat ? ' · ' + escapeHtml(i18nT(autoCat.label)) : ''}</option>` +
+  sel.innerHTML = `<option value="">✨ ${escapeHtml(tk('shop.entry.auto'))}${autoCat ? ' · ' + escapeHtml(i18nT(autoCat.label)) : ''}</option>` +
     shoppingCategoriesOrdered().map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml((c.icon ? c.icon + ' ' : '') + i18nT(c.label))}</option>`).join('');
   sel.value = chosen;
 }
@@ -324,7 +324,7 @@ function submitShoppingAddInput() {
   document.getElementById('cancelShoppingItemBtn').addEventListener('click', closeShoppingItemModal);
   document.getElementById('closeShoppingItemModalBtn').addEventListener('click', closeShoppingItemModal);
   document.getElementById('deleteShoppingItemBtn').addEventListener('click', () => {
-    if (confirm('Diesen Eintrag von der Einkaufsliste löschen?')) deleteShoppingItemFromModal();
+    if (confirm(tk('shop.entry.confirmDelete'))) deleteShoppingItemFromModal();
   });
   document.getElementById('shoppingItemModal').addEventListener('click', (e) => {
     if (e.target.id === 'shoppingItemModal') closeShoppingItemModal();
@@ -377,7 +377,7 @@ function buildShoppingListText(from, to) {
     return shoppingCombinedListIds().map(id => {
       const list = getShoppingList(id);
       const body = buildShoppingListTextFor(id, from, to);
-      return '== ' + (list.name || '') + ' ==\n' + (body || '(nichts offen)');
+      return '== ' + (list.name || '') + ' ==\n' + (body || '(' + tk('shop.nothingOpen') + ')');
     }).join('\n\n');
   }
   return buildShoppingListTextFor(activeShoppingListId(), from, to);
@@ -434,7 +434,7 @@ document.getElementById('copyShoppingListBtn').addEventListener('click', async (
   const btn = document.getElementById('copyShoppingListBtn');
   const original = btn.textContent;
   const success = await copyTextRobust(text);
-  btn.textContent = success ? '✓ Kopiert' : 'Kopieren fehlgeschlagen – bitte manuell markieren';
+  btn.textContent = success ? tk('shop.copiedCheck') : tk('shop.copyFailed');
   setTimeout(() => { btn.textContent = original; }, success ? 1600 : 3000);
 });
 if (navigator.share) {
@@ -446,8 +446,8 @@ if (navigator.share) {
     const combined = !currentShoppingListId && currentShoppingPlanTaskId;
     const list = getShoppingList(activeShoppingListId());
     const title = combined
-      ? 'Einkaufsliste – ' + shoppingCombinedListIds().map(id => getShoppingList(id).name || '').join(', ')
-      : 'Einkaufsliste' + (list ? ' – ' + list.name : '');
+      ? tk('shop.shareTitle') + ' – ' + shoppingCombinedListIds().map(id => getShoppingList(id).name || '').join(', ')
+      : tk('shop.shareTitle') + (list ? ' – ' + list.name : '');
     try { await navigator.share({ title, text }); } catch (e) { /* cancelled */ }
   });
 }

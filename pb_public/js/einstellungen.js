@@ -216,7 +216,8 @@ async function removeMemberWithProfile(memberId) {
    Changes apply immediately: rename when leaving the field, enable/disable with a switch,
    delete with ×. If entries are still in use, the move dialog asks for the target. */
 const CAT_EDITOR_TARGETS = { rezepte: 'recipeCategoryEditor', geraete: 'kitchenToolEditor', haushalt: 'cleaningCategoryEditor' };
-const CAT_EDITOR_WORDS = { rezepte: ['Rezept', 'Rezepte'], geraete: ['Rezept', 'Rezepte'], haushalt: ['Reinigung', 'Reinigungen'] };
+// Usage counter per editor (plural forms come from the language file)
+const CAT_EDITOR_COUNT = { rezepte: 'cat.countRecipes', geraete: 'cat.countRecipes', haushalt: 'cat.countCleanings' };
 let catEditorNewRow = null; // Area with a freshly added, still empty row
 
 function catEditorEntries(domain) {
@@ -228,9 +229,8 @@ function catEditorEntries(domain) {
 function renderCategoryEditor(domain) {
   const wrap = document.getElementById(CAT_EDITOR_TARGETS[domain]);
   if (!wrap) return;
-  const words = CAT_EDITOR_WORDS[domain];
   const toggleHtml = (checked) => `
-      <label class="flex items-center cursor-pointer shrink-0" title="Aktiv">
+      <label class="flex items-center cursor-pointer shrink-0" title="${escapeHtml(tk('cat.active'))}">
         <span class="relative inline-block w-11 h-6">
           <input type="checkbox" data-action="toggle" class="peer sr-only" ${checked ? 'checked' : ''} />
           <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
@@ -240,20 +240,20 @@ function renderCategoryEditor(domain) {
   let html = catEditorEntries(domain).map(e => `
     <div class="flex items-center gap-2" data-key="${escapeHtml(e.key)}">
       <div class="flex-1 min-w-0">
-        <input type="text" data-field="label" data-i18n-value value="${escapeHtml(e.label)}" maxlength="40" enterkeyhint="done" autocomplete="off" class="w-full min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base ${e.active ? '' : 'text-ink/40'}" aria-label="Name" />
-        ${e.count ? `<div class="text-[11px] text-ink/40 mt-0.5">${e.count} ${e.count === 1 ? words[0] : words[1]}</div>` : ''}
+        <input type="text" data-field="label" data-i18n-value value="${escapeHtml(e.label)}" maxlength="40" enterkeyhint="done" autocomplete="off" class="w-full min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base ${e.active ? '' : 'text-ink/40'}" aria-label="${escapeHtml(tk('common.name'))}" />
+        ${e.count ? `<div class="text-[11px] text-ink/40 mt-0.5">${escapeHtml(tk(CAT_EDITOR_COUNT[domain], { n: e.count }))}</div>` : ''}
       </div>
       ${toggleHtml(e.active)}
-      <button type="button" data-action="delete" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-red-500 hover:bg-red-50 grid place-items-center text-lg leading-none" aria-label="Löschen">×</button>
+      <button type="button" data-action="delete" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-red-500 hover:bg-red-50 grid place-items-center text-lg leading-none" aria-label="${escapeHtml(tk('common.delete'))}">×</button>
     </div>`).join('');
   if (catEditorNewRow === domain) {
     html += `
     <div class="flex items-center gap-2" data-new="1">
-      <input type="text" data-field="new" maxlength="40" enterkeyhint="done" autocomplete="off" placeholder="${domain === 'geraete' ? 'Neues Gerät, z. B. Waffeleisen' : domain === 'haushalt' ? 'Neue Kategorie, z. B. Lüften' : 'Neue Kategorie, z. B. Grillen'}" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="Name" />
+      <input type="text" data-field="new" maxlength="40" enterkeyhint="done" autocomplete="off" placeholder="${escapeHtml(domain === 'geraete' ? tk('cat.newTool') : domain === 'haushalt' ? tk('cat.newHousehold') : tk('cat.newRecipe'))}" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="${escapeHtml(tk('common.name'))}" />
       <span class="w-8 shrink-0"></span>
     </div>`;
   }
-  wrap.innerHTML = html || '<p class="text-xs text-ink/40 italic">Noch keine Einträge – leg mit „+“ los.</p>';
+  wrap.innerHTML = html || '<p class="text-xs text-ink/40 italic">' + escapeHtml(tk('cat.empty')) + '</p>';
 
   wrap.querySelectorAll('[data-key]').forEach(row => {
     const key = row.dataset.key;
@@ -271,8 +271,7 @@ function renderCategoryEditor(domain) {
     row.querySelector('[data-action="delete"]').addEventListener('click', () => {
       const e = entry();
       if (!e) return;
-      const what = domain === 'geraete' ? 'Küchengerät' : 'Kategorie';
-      if (!confirm(`${what} „${e.label}“ wirklich löschen?`)) return;
+      if (!confirm(tk(domain === 'geraete' ? 'cat.confirmDeleteTool' : 'cat.confirmDeleteCat', { name: i18nT(e.label) }))) return;
       requestCategoryChange(domain, key, e.label, 'delete', null);
     });
   });
@@ -312,7 +311,7 @@ function addCategoryEntry(domain, rawLabel) {
   const label = String(rawLabel || '').trim();
   if (!label) return false;
   if (catEditorEntries(domain).some(e => e.label.toLowerCase() === label.toLowerCase())) {
-    alert(`„${label}“ gibt es schon.`);
+    alert(tk('cat.exists', { name: label }));
     return false;
   }
   if (domain === 'rezepte') { recipeCategories.push(label); categoryActive[label] = true; }
@@ -328,7 +327,7 @@ async function renameCategoryEntry(domain, key, rawLabel) {
   if (!cur) return;
   if (!label || label === cur.label || label === i18nT(cur.label)) { renderCategoryEditor(domain); return; }
   if (entries.some(e => e.key !== key && e.label.toLowerCase() === label.toLowerCase())) {
-    alert(`„${label}“ gibt es schon.`);
+    alert(tk('cat.exists', { name: label }));
     renderCategoryEditor(domain);
     return;
   }
@@ -415,9 +414,12 @@ function requestCategoryChange(domain, key, label, action, revertFn) {
   const options = domain === 'rezepte' ? recipeCategories.filter(c => c !== key && categoryActive[c] !== false).map(c => ({ key: c, label: c }))
     : domain === 'haushalt' ? cleaningCategories.filter(c => c.id !== key && c.active !== false).map(c => ({ key: c.id, label: c.label }))
     : kitchenTools.filter(t => t.id !== key && t.active !== false).map(t => ({ key: t.id, label: t.label }));
-  const itemWordSingular = domain === 'rezepte' ? 'Rezept' : domain === 'haushalt' ? 'Reinigung' : 'Rezept';
-  const itemWordPlural = domain === 'rezepte' ? 'Rezepte' : domain === 'haushalt' ? 'Reinigungen' : 'Rezepte';
-  const targetWord = domain === 'rezepte' ? 'Rezepte' : domain === 'haushalt' ? 'Reinigungen' : 'Rezepte';
+  // Text keys: recipe categories and kitchen tools use the …Recipes… texts, household categories the …Cleanings… texts
+  const hide = action === 'hide';
+  const K = domain === 'haushalt'
+    ? { blocked: hide ? 'cat.blockedCleaningsHide' : 'cat.blockedCleaningsDelete', text: hide ? 'cat.reassignCleaningsHide' : 'cat.reassignCleaningsDelete', target: 'cat.reassign.moveCleanings' }
+    : { blocked: hide ? 'cat.blockedRecipesHide' : 'cat.blockedRecipesDelete', text: hide ? 'cat.reassignRecipesHide' : 'cat.reassignRecipesDelete', target: 'cat.reassign.moveRecipes' };
+  const shown = i18nT(label);
 
   if (affected.length === 0) {
     applyCategoryChange(domain, key, action, null);
@@ -426,23 +428,18 @@ function requestCategoryChange(domain, key, label, action, revertFn) {
 
   if (options.length === 0) {
     if (revertFn) revertFn();
-    const actionWord = action === 'hide' ? 'ausgeblendet' : 'gelöscht';
-    const itemWord = affected.length === 1 ? itemWordSingular : itemWordPlural;
-    alert(`"${label}" kann nicht ${actionWord} werden: ${affected.length} ${itemWord} nutzen diese Kategorie noch, aber es gibt keine andere aktive Kategorie, in die sie verschoben werden könnten. Lege zuerst eine weitere an oder aktiviere eine.`);
+    alert(tk(K.blocked, { name: shown, n: affected.length }));
     return;
   }
 
   if (revertFn) revertFn(); // Only switch the UI (toggle) for real after confirmation
   pendingReassign = { domain, key, action };
-  const itemWord = affected.length === 1 ? itemWordSingular + ' ist' : itemWordPlural + ' sind';
-  const actionWord = action === 'hide' ? 'ausgeblendet' : 'gelöscht';
-  document.getElementById('categoryReassignTitle').textContent = action === 'hide' ? 'Kategorie ausblenden?' : 'Kategorie löschen?';
-  document.getElementById('categoryReassignText').textContent =
-    `${affected.length} ${itemWord} aktuell der Kategorie "${label}" zugeordnet. Wohin sollen sie verschoben werden, bevor die Kategorie ${actionWord} wird?`;
-  document.getElementById('categoryReassignTargetLabel').textContent = targetWord + ' verschieben nach';
+  document.getElementById('categoryReassignTitle').textContent = action === 'hide' ? tk('cat.reassign.hideTitle') : tk('cat.reassign.deleteTitle');
+  document.getElementById('categoryReassignText').textContent = tk(K.text, { name: shown, n: affected.length });
+  document.getElementById('categoryReassignTargetLabel').textContent = tk(K.target);
   const targetSelect = document.getElementById('categoryReassignTarget');
   targetSelect.innerHTML = options.map(o => `<option value="${escapeHtml(o.key)}">${escapeHtml(o.label)}</option>`).join('');
-  document.getElementById('confirmCategoryReassign').textContent = action === 'hide' ? 'Verschieben & ausblenden' : 'Verschieben & löschen';
+  document.getElementById('confirmCategoryReassign').textContent = action === 'hide' ? tk('cat.reassign.moveHide') : tk('cat.reassign.moveDelete');
   document.getElementById('categoryReassignModal').classList.remove('hidden');
   armModalSnapshot('categoryReassignModal');
 }

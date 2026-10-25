@@ -13,17 +13,18 @@ function parseRecipeText(raw) {
   const lines = rawLines.filter(l => l.length > 0);
   if (lines.length === 0) return { title: '', ingredients: [], steps: [] };
 
-  const ingredientsHeaderRE = /^(zutaten)\s*:?\s*$/i;
-  const stepsHeaderRE = /^(zubereitung|zubereitungsschritte|anleitung|schritte)\s*:?\s*$/i;
+  // Headings in all app languages, so a recipe typed after the example placeholder is recognised
+  const ingredientsHeaderRE = /^(zutaten|ingredients|ingrédients|ingredientes|ingredienti|材料|재료)\s*[:：]?\s*$/i;
+  const stepsHeaderRE = /^(zubereitung|zubereitungsschritte|anleitung|schritte|method|directions|instructions|preparation|steps|préparation|étapes|preparación|instrucciones|pasos|preparazione|procedimento|preparação|modo de preparo|做法|步骤|作り方|手順|만드는 법|조리법)\s*[:：]?\s*$/i;
   const bulletRE = /^[-*•]\s*/;
   const numberedRE = /^\d+[.)]\s*/;
-  const quantityRE = /^\d+([.,]\d+)?\s*(g|kg|ml|l|el|tl|stück|stk|prise|pck|dose|bund|zehe|scheibe[n]?)\b/i;
+  const quantityRE = /^\d+([.,]\d+)?\s*(g|kg|ml|l|el|tl|stück|stk|prise|pck|dose|bund|zehe|scheibe[n]?|cups?|tbsp|tsp|oz|lb)\b/i;
   const clean = (l) => l.replace(bulletRE, '').replace(numberedRE, '').trim();
 
   let title = lines[0];
   let bodyStart = 1;
   if (bulletRE.test(title) || numberedRE.test(title) || quantityRE.test(clean(title))) {
-    title = 'Importiertes Rezept';
+    title = tk('recipe.imported');
     bodyStart = 0;
   }
 

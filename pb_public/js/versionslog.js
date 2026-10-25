@@ -20,6 +20,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.114', datum: '25.10.2026', titel: 'Übersetzungen mit Text-Schlüsseln: Listen, Vorrat und Rezepte',
+    punkte: [
+      ['info', 'Listen (Einkauf, Packen, Geschenke, Wünsche, Checklisten, Ideen), Vorrat mit Scannen und „Was kann ich kochen?“, Rezepte, Essen planen und die Suche holen ihre Texte jetzt über Text-Schlüssel – in allen neun Sprachen, auch als WG'],
+      ['neu', 'Vorlagen in jeder Sprache: Eine neue Liste aus einer Vorlage (Urlaub, Krankenhaus, Geburt, Party …) entsteht in der eingestellten Sprache, Läden wie Apotheke, Bäckerei oder Metzgerei heißen passend'],
+      ['fix', 'Kleinigkeiten: Datum und Preise stehen in Listen, Vorrat und Rezepten im Format der eingestellten Region; die Rezept-Erkennung findet Zutaten und Zubereitung auch unter Überschriften in den anderen Sprachen; Zahlen wie „1 Rezept“ oder „1 Eintrag“ in richtiger Einzahl und Mehrzahl'],
+      ['info', 'Geändert: index.html, js/einkauf.js, js/einkaufslisten.js, js/einkaufseingabe.js, js/listen.js, js/vorrat.js, js/vorrat2.js, js/rezepte.js, js/rezeptdialog.js, js/rezeptmengen.js, js/rezeptbild.js, js/rezeptbilder.js, js/rezeptparser.js, js/essenplanen.js, js/einstellungen.js, js/hinweise.js, js/finanzen.js, js/bedienzustand.js, js/sprachen.js, js/versionslog.js, alle Sprachdateien in i18n/ und lang/ – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.113', datum: '24.10.2026', titel: 'Übersetzungen mit Text-Schlüsseln: Kalender, Aufgaben und Haushalt',
     punkte: [
       ['info', 'Kalender (Tag, Woche, Monat, Jahr), Termin-Popup, Aufgaben, Haushalt mit Räumen, Mülleimern, Reinigungen und „Wer macht wie viel?“ holen ihre Texte jetzt über Text-Schlüssel – in allen neun Sprachen, auch als WG. Wochentage, Monatsnamen und Datum stehen im Format der eingestellten Sprache'],

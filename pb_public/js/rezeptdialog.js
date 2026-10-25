@@ -65,18 +65,18 @@ async function analyzeRecipeText() {
   // Load the status later if necessary (e.g. popup opened right after the start)
   if (isLink && !recipeKiStatus && navigator.onLine) { try { await recipeKiLoadStatus(); } catch (e) { /* ignore */ } }
   if (recipeKiEnabled()) {
-    const ok = await recipeKiImport({ text: raw.trim() }, isLink ? 'Rezeptseite' : 'Text');
+    const ok = await recipeKiImport({ text: raw.trim() }, isLink ? tk('recipe.ai.page') : tk('recipe.ai.text'));
     if (ok) return true;
     // For links the AI's error message stays (with the real reason) - don't overwrite it
     if (isLink) return false;
   }
   if (isLink) {
     let msg;
-    if (!navigator.onLine) msg = 'Keine Internetverbindung – Rezept-Links lassen sich nur online einlesen. Alternativ den Rezepttext kopieren und hier einfügen.';
-    else if (!recipeKiStatus) msg = 'Der Server ist gerade nicht erreichbar – bitte gleich noch einmal versuchen oder den Rezepttext kopieren und hier einfügen.';
-    else if (!recipeKiStatus.aktiv) msg = 'Rezept-Links lassen sich nur mit eingerichteter KI einlesen – bitte den Rezepttext kopieren und hier einfügen.';
-    else if (!recipeKiWanted()) msg = 'Für Rezept-Links bitte oben den Haken „✨ Mit KI auswerten“ setzen.';
-    else msg = 'Rezept-Links lassen sich nur mit KI einlesen – alternativ den Rezepttext kopieren und hier einfügen.';
+    if (!navigator.onLine) msg = tk('recipe.link.offline');
+    else if (!recipeKiStatus) msg = tk('recipe.link.serverDown');
+    else if (!recipeKiStatus.aktiv) msg = tk('recipe.link.notSetUp');
+    else if (!recipeKiWanted()) msg = tk('recipe.link.tickAi');
+    else msg = tk('recipe.link.onlyAi');
     recipeKiShowInfo(msg, true);
     return false;
   }
@@ -108,7 +108,7 @@ function renderRecipeToolsPicker() {
   wrap.innerHTML = '';
   const visible = kitchenTools.filter(t => t.active !== false || pendingRecipeTools.includes(t.id));
   if (!visible.length) {
-    wrap.innerHTML = '<p class="text-xs text-ink/30 italic">Keine Küchengeräte angelegt – über das Regler-Symbol auf der Rezepte-Seite hinzufügbar.</p>';
+    wrap.innerHTML = '<p class="text-xs text-ink/30 italic">' + escapeHtml(tk('recipe.edit.noTools')) + '</p>';
     return;
   }
   visible.forEach(tool => {
@@ -133,7 +133,7 @@ function renderRecipeCategoriesPicker() {
   wrap.innerHTML = '';
   const visible = recipeCategories.filter(c => categoryActive[c] !== false || pendingRecipeCategories.includes(c));
   if (!visible.length) {
-    wrap.innerHTML = '<p class="text-xs text-ink/30 italic">Keine Kategorien angelegt – über das Regler-Symbol auf der Rezepte-Seite hinzufügbar.</p>';
+    wrap.innerHTML = '<p class="text-xs text-ink/30 italic">' + escapeHtml(tk('recipe.edit.noCats')) + '</p>';
     return;
   }
   visible.forEach(cat => {
@@ -158,7 +158,7 @@ function openRecipeModal(existingId = null) {
   editingRecipeId = existingId;
   const r = existingId ? recipes.find(x => x.id === existingId) : null;
 
-  document.getElementById('recipeModalTitle').textContent = r ? 'Rezept bearbeiten' : 'Neues Rezept';
+  document.getElementById('recipeModalTitle').textContent = r ? tk('recipe.edit.editTitle') : tk('recipe.edit.newTitle');
   document.getElementById('importText').value = '';
   document.getElementById('rTitle').value = r ? r.title : '';
   document.getElementById('rIngredients').value = r ? r.ingredients.join('\n') : '';
@@ -200,7 +200,7 @@ document.getElementById('saveRecipeBtn').addEventListener('click', async () => {
     if (!ok) return;
   }
 
-  const title = document.getElementById('rTitle').value.trim() || 'Unbenanntes Rezept';
+  const title = document.getElementById('rTitle').value.trim() || tk('recipe.untitled');
   const ingredients = document.getElementById('rIngredients').value.split('\n').map(s => s.trim()).filter(Boolean);
   const steps = document.getElementById('rSteps').value.split('\n').map(s => s.trim()).filter(Boolean);
   const servings = getFormServings();
@@ -210,7 +210,7 @@ document.getElementById('saveRecipeBtn').addEventListener('click', async () => {
   const oeffentlich = document.getElementById('rPublic').checked;
 
   if (checkIngredientsQuantityWarning()) {
-    if (!confirm('Mindestens eine Zutat hat keine Mengenangabe. Trotzdem speichern?')) return;
+    if (!confirm(tk('recipe.edit.confirmNoQty'))) return;
   }
 
   // Shrink a newly chosen image (data:...) and upload it as a file of its own. If that fails (e.g.
@@ -223,13 +223,13 @@ document.getElementById('saveRecipeBtn').addEventListener('click', async () => {
     const btn = document.getElementById('saveRecipeBtn');
     const btnLabel = btn.textContent;
     btn.disabled = true;
-    btn.textContent = 'Bild wird gespeichert …';
+    btn.textContent = tk('recipe.edit.savingImage');
     try {
       const up = await uploadRecipeImage(image);
       image = up.path;
       imageRecordId = up.recordId;
     } catch (err) {
-      console.warn('Bild-Upload fehlgeschlagen, speichere verkleinert eingebettet:', err);
+      console.warn('Image upload failed, storing a smaller embedded copy:', err);
       try {
         const blob = await compressImageDataUrl(image);
         image = await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(blob); });

@@ -1,26 +1,26 @@
 <!-- Recipes: categories & kitchen appliances (changes apply at once) -->
 <div id="recipeSettingsModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closeRecipeSettingsBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 class="font-serif text-lg mb-4 pr-6">Kategorien &amp; Küchengeräte</h3>
+    <button data-tk-attr="aria-label:common.close" id="closeRecipeSettingsBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+    <h3 data-tk="recipe.catsTools" class="font-serif text-lg mb-4 pr-6">Categories &amp; kitchen appliances</h3>
     <div class="mb-6">
       <div class="flex items-center justify-between gap-3 mb-2">
-        <h4 class="text-xs uppercase tracking-wide text-ink/40">Kategorien</h4>
-        <button type="button" data-cat-add="rezepte" class="cat-editor-add-btn px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Kategorie</button>
+        <h4 data-tk="cat.categories" class="text-xs uppercase tracking-wide text-ink/40">Categories</h4>
+        <button data-tk="cat.addCategory" type="button" data-cat-add="rezepte" class="cat-editor-add-btn px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Category</button>
       </div>
       <div id="recipeCategoryEditor" class="flex flex-col gap-2"></div>
-      <p class="text-[11px] text-ink/40 mt-2">Ausgeschaltete Kategorien erscheinen nicht mehr bei neuen Rezepten und im Filter – praktisch z. B., wenn ihr Mittag- und Abendessen nicht trennt.</p>
+      <p data-tk="recipe.settings.catsHint" class="text-[11px] text-ink/40 mt-2">Switched-off categories no longer appear for new recipes and in the filter – handy e.g. if you don't separate lunch and dinner.</p>
     </div>
     <div class="mb-5">
       <div class="flex items-center justify-between gap-3 mb-2">
-        <h4 class="text-xs uppercase tracking-wide text-ink/40">Küchengeräte</h4>
-        <button type="button" data-cat-add="geraete" class="cat-editor-add-btn px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Gerät</button>
+        <h4 data-tk="recipe.tools" class="text-xs uppercase tracking-wide text-ink/40">Kitchen appliances</h4>
+        <button data-tk="recipe.settings.addTool" type="button" data-cat-add="geraete" class="cat-editor-add-btn px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Device</button>
       </div>
       <div id="kitchenToolEditor" class="flex flex-col gap-2"></div>
-      <p class="text-[11px] text-ink/40 mt-2">Zur Auswahl beim Anlegen von Rezepten und als Filter in der Rezeptliste.</p>
+      <p data-tk="recipe.settings.toolsHint" class="text-[11px] text-ink/40 mt-2">For selection when creating recipes and as a filter in the recipe list.</p>
     </div>
     <div class="flex justify-end gap-2">
-      <button id="doneRecipeSettingsBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Fertig</button>
+      <button data-tk="common.done" id="doneRecipeSettingsBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Done</button>
     </div>
   </div>
 </div>
@@ -28,18 +28,18 @@
 <!-- Household: categories (changes apply at once) -->
 <div id="householdSettingsModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closeHouseholdSettingsBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 class="font-serif text-lg mb-4 pr-6">Haushalt-Kategorien</h3>
+    <button data-tk-attr="aria-label:common.close" id="closeHouseholdSettingsBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+    <h3 data-tk="household.categoriesTitle" class="font-serif text-lg mb-4 pr-6">Household categories</h3>
     <div class="mb-5">
       <div class="flex items-center justify-between gap-3 mb-2">
-        <h4 class="text-xs uppercase tracking-wide text-ink/40">Kategorien</h4>
-        <button type="button" data-cat-add="haushalt" class="cat-editor-add-btn px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Kategorie</button>
+        <h4 data-tk="cat.categories" class="text-xs uppercase tracking-wide text-ink/40">Categories</h4>
+        <button data-tk="cat.addCategory" type="button" data-cat-add="haushalt" class="cat-editor-add-btn px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Category</button>
       </div>
       <div id="cleaningCategoryEditor" class="flex flex-col gap-2"></div>
-      <p class="text-[11px] text-ink/40 mt-2">Für Raum-Reinigungen, z. B. „Reinigung“ oder „Aufräumen“. Ausgeschaltete Kategorien stehen bei neuen Reinigungen nicht mehr zur Auswahl.</p>
+      <p data-tk="household.categoriesHint" class="text-[11px] text-ink/40 mt-2">For room cleaning, e.g. “Cleaning” or “Tidying”. Switched-off categories are no longer available for new cleaning tasks.</p>
     </div>
     <div class="flex justify-end gap-2">
-      <button id="doneHouseholdSettingsBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Fertig</button>
+      <button data-tk="common.done" id="doneHouseholdSettingsBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Done</button>
     </div>
   </div>
 </div>

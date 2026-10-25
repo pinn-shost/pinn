@@ -31,7 +31,7 @@
        pb_public/vendor/tesseract/tesseract.min.js + worker.min.js, core/ (tesseract-core*.wasm.js),
          lang/deu.traineddata.gz (text recognition for "Foto einlesen" in recipes, only loaded when needed) -->
 <link rel="stylesheet" href="vendor/pinn.css">
-<link rel="stylesheet" href="css/ergaenzung.css?v=1.113.1">
+<link rel="stylesheet" href="css/ergaenzung.css?v=1.114.0">
 <!-- ==========================================================
      Power saving (since 0.99)
      - Recurring requests (setInterval from 1 second) only run while pinn. is visible;
@@ -41,11 +41,11 @@
        Every touch, mouse or keyboard input wakes pinn. at once and catches up on everything.
      - Short timers (< 1 s, e.g. the SOS countdown) stay unchanged.
      ========================================================== -->
-<link rel="stylesheet" href="css/energiesparen.css?v=1.113.1">
-<script src="js/ruhemodus.js?v=1.113.1"></script>
-<script src="js/textkern.js?v=1.113.1"></script>
-<script src="js/sprachen.js?v=1.113.1"></script>
-<script src="js/region.js?v=1.113.1"></script>
+<link rel="stylesheet" href="css/energiesparen.css?v=1.114.0">
+<script src="js/ruhemodus.js?v=1.114.0"></script>
+<script src="js/textkern.js?v=1.114.0"></script>
+<script src="js/sprachen.js?v=1.114.0"></script>
+<script src="js/region.js?v=1.114.0"></script>
 <script src="vendor/pocketbase/pocketbase.umd.js"></script>
 <!-- If the file sits somewhere else on the NAS or has another name: try further places -->
 <script>if (!window.PocketBase) document.write('<script src="vendor/pocketbase.umd.js"><\/script>');</script>
@@ -143,26 +143,26 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/basis.css?v=1.113.1">
-<link rel="stylesheet" href="css/mobil.css?v=1.113.1">
-<link rel="stylesheet" href="css/einstellungen.css?v=1.113.1">
-<link rel="stylesheet" href="css/seitenleiste.css?v=1.113.1">
-<link rel="stylesheet" href="css/finanzen.css?v=1.113.1">
-<link rel="stylesheet" href="css/listen.css?v=1.113.1">
-<link rel="stylesheet" href="css/vertraege.css?v=1.113.1">
-<link rel="stylesheet" href="css/fahrzeuge.css?v=1.113.1">
-<link rel="stylesheet" href="css/notfall.css?v=1.113.1">
-<link rel="stylesheet" href="css/hinweise.css?v=1.113.1">
-<link rel="stylesheet" href="css/familie.css?v=1.113.1">
-<link rel="stylesheet" href="css/dokumente.css?v=1.113.1">
-<link rel="stylesheet" href="css/sparen.css?v=1.113.1">
-<link rel="stylesheet" href="css/kinderaufgaben.css?v=1.113.1">
-<link rel="stylesheet" href="css/dashboard.css?v=1.113.1">
-<link rel="stylesheet" href="css/uebersicht.css?v=1.113.1">
-<link rel="stylesheet" href="css/wohnort.css?v=1.113.1">
-<link rel="stylesheet" href="css/familienkachel.css?v=1.113.1">
-<link rel="stylesheet" href="css/pinnwand.css?v=1.113.1">
-<link rel="stylesheet" href="css/haustierewetter.css?v=1.113.1">
+<link rel="stylesheet" href="css/basis.css?v=1.114.0">
+<link rel="stylesheet" href="css/mobil.css?v=1.114.0">
+<link rel="stylesheet" href="css/einstellungen.css?v=1.114.0">
+<link rel="stylesheet" href="css/seitenleiste.css?v=1.114.0">
+<link rel="stylesheet" href="css/finanzen.css?v=1.114.0">
+<link rel="stylesheet" href="css/listen.css?v=1.114.0">
+<link rel="stylesheet" href="css/vertraege.css?v=1.114.0">
+<link rel="stylesheet" href="css/fahrzeuge.css?v=1.114.0">
+<link rel="stylesheet" href="css/notfall.css?v=1.114.0">
+<link rel="stylesheet" href="css/hinweise.css?v=1.114.0">
+<link rel="stylesheet" href="css/familie.css?v=1.114.0">
+<link rel="stylesheet" href="css/dokumente.css?v=1.114.0">
+<link rel="stylesheet" href="css/sparen.css?v=1.114.0">
+<link rel="stylesheet" href="css/kinderaufgaben.css?v=1.114.0">
+<link rel="stylesheet" href="css/dashboard.css?v=1.114.0">
+<link rel="stylesheet" href="css/uebersicht.css?v=1.114.0">
+<link rel="stylesheet" href="css/wohnort.css?v=1.114.0">
+<link rel="stylesheet" href="css/familienkachel.css?v=1.114.0">
+<link rel="stylesheet" href="css/pinnwand.css?v=1.114.0">
+<link rel="stylesheet" href="css/haustierewetter.css?v=1.114.0">
 </head>
 <body class="font-sans text-ink antialiased">
 
@@ -498,34 +498,34 @@
 
       <div id="recipeListHeader" class="px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
         <div class="flex items-center justify-between gap-3">
-          <h2 id="recipeSectionTitle" class="font-serif text-lg">Rezepte</h2>
-          <button id="addMealOverviewBtn" class="hidden px-3 py-1.5 rounded-lg bg-mustard text-white text-xs font-medium hover:bg-mustard/90 transition whitespace-nowrap shrink-0" title="Essen hinzufügen">+<span class="hidden sm:inline"> Essen hinzufügen</span></button>
+          <h2 data-tk="recipe.title" id="recipeSectionTitle" class="font-serif text-lg">Recipes</h2>
+          <button data-tk-attr="title:recipe.addMeal" id="addMealOverviewBtn" class="hidden px-3 py-1.5 rounded-lg bg-mustard text-white text-xs font-medium hover:bg-mustard/90 transition whitespace-nowrap shrink-0" title="Add meal">+<span data-tk="recipe.addMeal" class="hidden sm:inline"> Add meal</span></button>
           <div id="recipeControls" class="hidden items-center gap-2 shrink-0">
-            <button id="openRecipeCookBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center text-base leading-none" aria-label="Was kann ich kochen?" title="Was kann ich kochen? (Abgleich mit dem Vorrat)">🍳</button>
-            <button id="openRecipeSettingsBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center" aria-label="Kategorien &amp; Küchengeräte" title="Kategorien &amp; Küchengeräte">
+            <button data-tk-attr="title:recipe.whatCanICookTitle;aria-label:recipe.whatCanICook" id="openRecipeCookBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center text-base leading-none" aria-label="What can I cook?" title="What can I cook? (matched against the pantry)">🍳</button>
+            <button data-tk-attr="title:recipe.catsTools;aria-label:recipe.catsTools" id="openRecipeSettingsBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center" aria-label="Categories &amp; kitchen appliances" title="Categories &amp; kitchen appliances">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7"></path><path d="M4 10V3"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M20 21v-5"></path><path d="M20 12V3"></path><path d="M1 14h6"></path><path d="M9 8h6"></path><path d="M17 16h6"></path></svg>
             </button>
-            <button id="openRecipeModalBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap shrink-0" title="Rezept hinzufügen">+ Rezept</button>
+            <button data-tk="recipe.addBtn" data-tk-attr="title:recipe.add" id="openRecipeModalBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap shrink-0" title="Add recipe">+ Recipe</button>
           </div>
         </div>
         <div id="recipeSourceToggle" class="hidden items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mt-2.5">
-          <button type="button" data-source="eigene" class="recipe-source-btn px-3 py-1 rounded-full transition">Eigene</button>
-          <button type="button" data-source="oeffentlich" class="recipe-source-btn px-3 py-1 rounded-full transition">🌍 Öffentlich</button>
+          <button data-tk="recipe.own" type="button" data-source="eigene" class="recipe-source-btn px-3 py-1 rounded-full transition">Custom</button>
+          <button data-tk="recipe.public" type="button" data-source="oeffentlich" class="recipe-source-btn px-3 py-1 rounded-full transition">🌍 Public</button>
         </div>
         <div id="recipeFilterBar" class="hidden">
           <div class="flex items-center gap-2 mt-3">
-            <input id="recipeSearchInput" type="search" autocomplete="off" placeholder="Suchen …" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-1.5 text-base" />
-            <button id="recipeFavoritesToggle" type="button" class="pantry-chip shrink-0 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 transition whitespace-nowrap" aria-pressed="false">♡ Favoriten</button>
+            <input data-tk-attr="placeholder:recipe.searchPlaceholder" id="recipeSearchInput" type="search" autocomplete="off" placeholder="Searching …" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-1.5 text-base" />
+            <button data-tk="recipe.favouritesFilter" id="recipeFavoritesToggle" type="button" class="pantry-chip shrink-0 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 transition whitespace-nowrap" aria-pressed="false">♡ Favourites</button>
           </div>
           <div class="flex items-center gap-2 mt-2 mb-2 flex-wrap">
-            <select id="recipeSort" class="min-w-0 flex-1 sm:flex-none rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="Sortierung">
-              <option value="hinzugefuegt">Zuletzt hinzugefügt</option>
-              <option value="titel">Titel (A–Z)</option>
-              <option value="schnellste">Schnellste zuerst</option>
-              <option value="geplant">Diese Woche geplant zuerst</option>
+            <select data-tk-attr="aria-label:recipe.sorting" id="recipeSort" class="min-w-0 flex-1 sm:flex-none rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="Sorting">
+              <option data-tk="recipe.sort.recent" value="hinzugefuegt">Recently added</option>
+              <option data-tk="recipe.sort.title" value="titel">Title (A–Z)</option>
+              <option data-tk="recipe.sort.fastest" value="schnellste">Fastest first</option>
+              <option data-tk="recipe.sort.planned" value="geplant">Planned this week first</option>
             </select>
-            <select id="recipeCategoryFilter" class="min-w-0 flex-1 sm:flex-none rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="Kategorie"></select>
-            <select id="recipeToolFilter" class="min-w-0 flex-1 sm:flex-none rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="Küchengerät"></select>
+            <select data-tk-attr="aria-label:recipe.category" id="recipeCategoryFilter" class="min-w-0 flex-1 sm:flex-none rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="Category"></select>
+            <select data-tk-attr="aria-label:recipe.tool" id="recipeToolFilter" class="min-w-0 flex-1 sm:flex-none rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="Kitchen appliance"></select>
           </div>
         </div>
         <span id="recipeCount" class="text-xs text-ink/40"></span>
@@ -534,26 +534,26 @@
       <!-- Recipe list (incl. the week slider) -->
       <div id="recipeListContainer" class="flex-1 min-h-0 overflow-y-auto">
         <div id="recipeWeekSliderWrap" class="hidden px-6 pt-4">
-          <h3 class="text-xs uppercase tracking-wide text-ink/40 mb-2">Diese Woche geplant</h3>
+          <h3 data-tk="recipe.plannedThisWeek" class="text-xs uppercase tracking-wide text-ink/40 mb-2">Planned this week</h3>
           <div id="recipeWeekSlider" class="flex gap-3 overflow-x-auto pb-3 -mx-6" style="scroll-snap-type: x proximity;"></div>
         </div>
         <div id="recipeFavSliderWrap" class="hidden px-6 pt-4">
-          <h3 class="text-xs uppercase tracking-wide text-ink/40 mb-2">Favoriten</h3>
+          <h3 data-tk="recipe.favourites" class="text-xs uppercase tracking-wide text-ink/40 mb-2">Favourites</h3>
           <div id="recipeFavSlider" class="flex gap-3 overflow-x-auto pb-3 -mx-6" style="scroll-snap-type: x proximity;"></div>
         </div>
         <div class="px-6 py-4">
           <div id="recipeList" class="flex flex-col gap-3"></div>
-          <p id="emptyRecipes" class="text-sm text-ink/40 italic mt-2">Noch keine Rezepte – füge eines hinzu.</p>
+          <p data-tk="recipe.empty" id="emptyRecipes" class="text-sm text-ink/40 italic mt-2">No recipes yet – add one.</p>
         </div>
       </div>
 
       <!-- Recipe detail page: its own view instead of expanding in the list -->
       <div id="recipeDetailView" class="hidden flex-1 min-h-0 flex flex-col overflow-y-auto">
         <button id="recipeDetailBackBtn" class="sticky top-0 z-10 bg-paper/95 backdrop-blur px-4 py-3 border-b border-ink/10 flex items-center gap-1.5 text-sm font-medium text-ink/70 hover:text-pine transition text-left w-full">
-          <span class="text-lg leading-none">‹</span> <span id="recipeDetailBackLabel">Zurück</span>
+          <span class="text-lg leading-none">‹</span> <span data-tk="recipe.back" id="recipeDetailBackLabel">Back</span>
         </button>
         <div id="recipeDetailHero" class="w-full aspect-video shrink-0 bg-ink/10 overflow-hidden" style="position: relative;">
-          <span id="recipeDetailFavBtn" role="button" tabindex="0" class="recipe-fav-btn recipe-fav-large" aria-label="Als Favorit markieren"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span>
+          <span data-tk-attr="aria-label:recipe.markFavourite" id="recipeDetailFavBtn" role="button" tabindex="0" class="recipe-fav-btn recipe-fav-large" aria-label="Mark as favourite"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span>
           <img id="recipeDetailHeroImg" class="hidden w-full h-full object-cover" alt="" />
           <div id="recipeDetailHeroPlaceholder" class="w-full h-full grid place-items-center text-4xl opacity-20">🍽️</div>
         </div>
@@ -564,30 +564,30 @@
           <p id="recipeDetailSource" class="hidden text-xs text-ink/50 -mt-2 mb-4"></p>
 
           <div class="flex items-center justify-between gap-2 mb-4 rounded-xl border border-ink/10 bg-ink/[0.03] px-3 py-2.5">
-            <span class="text-xs uppercase tracking-wide text-ink/40">Portionen</span>
+            <span data-tk="recipe.servings" class="text-xs uppercase tracking-wide text-ink/40">Servings</span>
             <div class="flex items-center gap-1.5 shrink-0">
-              <button id="recipeDetailServingsMinus" class="w-7 h-7 rounded-full border border-ink/20 text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center text-xs" aria-label="Weniger Personen">–</button>
+              <button data-tk-attr="aria-label:recipe.fewerPeople" id="recipeDetailServingsMinus" class="w-7 h-7 rounded-full border border-ink/20 text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center text-xs" aria-label="Fewer people">–</button>
               <span id="recipeDetailServingsLabel" class="text-sm font-medium w-20 text-center"></span>
-              <button id="recipeDetailServingsPlus" class="w-7 h-7 rounded-full border border-ink/20 text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center text-xs" aria-label="Mehr Personen">+</button>
+              <button data-tk-attr="aria-label:recipe.morePeople" id="recipeDetailServingsPlus" class="w-7 h-7 rounded-full border border-ink/20 text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center text-xs" aria-label="More people">+</button>
             </div>
           </div>
 
           <div id="recipeDetailToolsWrap" class="hidden mb-4">
-            <h3 class="text-xs uppercase tracking-wide text-ink/40 mb-1.5">Küchengeräte</h3>
+            <h3 data-tk="recipe.tools" class="text-xs uppercase tracking-wide text-ink/40 mb-1.5">Kitchen appliances</h3>
             <p id="recipeDetailTools" class="text-sm text-ink/70"></p>
           </div>
 
-          <h3 class="text-xs uppercase tracking-wide text-ink/40 mb-1.5">Zutaten</h3>
+          <h3 data-tk="recipe.ingredients" class="text-xs uppercase tracking-wide text-ink/40 mb-1.5">Ingredients</h3>
           <div id="recipeDetailIngredients" class="mb-5"></div>
 
-          <h3 class="text-xs uppercase tracking-wide text-ink/40 mb-1.5">Zubereitung</h3>
+          <h3 data-tk="recipe.method" class="text-xs uppercase tracking-wide text-ink/40 mb-1.5">Method</h3>
           <div id="recipeDetailSteps" class="mb-5"></div>
 
           <div class="flex gap-2 pt-2 border-t border-ink/10">
-            <button id="recipeDetailPlanBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-mustard hover:border-mustard transition">📅 Für einen Tag planen</button>
-            <button id="recipeDetailEditBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Bearbeiten</button>
-            <button id="recipeDetailDeleteBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-red-500 hover:border-red-500 transition">Löschen</button>
-            <button id="recipeDetailAdoptBtn" class="hidden px-3 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">＋ Zu meinen Rezepten hinzufügen</button>
+            <button data-tk="recipe.planDay" id="recipeDetailPlanBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-mustard hover:border-mustard transition">📅 Plan for one day</button>
+            <button data-tk="common.edit" id="recipeDetailEditBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Edit</button>
+            <button data-tk="common.delete" id="recipeDetailDeleteBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-red-500 hover:border-red-500 transition">Delete</button>
+            <button data-tk="recipe.addToMine" id="recipeDetailAdoptBtn" class="hidden px-3 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">＋ Add to my recipes</button>
           </div>
         </div>
       </div>
@@ -734,17 +734,17 @@
       <div id="shoppingOverview" class="flex flex-1 min-h-0 flex-col">
         <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
           <div class="flex items-center justify-between gap-3">
-            <h2 class="font-serif text-lg">Listen</h2>
+            <h2 data-tk="lists.title" class="font-serif text-lg">Lists</h2>
             <div class="flex items-center gap-2 shrink-0">
-              <button id="openShoppingPlanBtn" type="button" class="px-3 py-1.5 rounded-lg border border-pine text-pine text-xs font-medium hover:bg-pine/10 transition whitespace-nowrap shrink-0">🗓️ Einkauf planen</button>
-              <button id="openNewShoppingListBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap shrink-0">+ Neue Liste</button>
+              <button data-tk="shop.planShopping" id="openShoppingPlanBtn" type="button" class="px-3 py-1.5 rounded-lg border border-pine text-pine text-xs font-medium hover:bg-pine/10 transition whitespace-nowrap shrink-0">🗓️ Plan shopping</button>
+              <button data-tk="lists.newListBtn" id="openNewShoppingListBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap shrink-0">+ New list</button>
             </div>
           </div>
-          <div class="lists-tabbar ls-tabs mt-3" role="tablist" aria-label="Listenart"></div>
+          <div data-tk-attr="aria-label:lists.listType" class="lists-tabbar ls-tabs mt-3" role="tablist" aria-label="List type"></div>
         </div>
         <div class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">
           <div id="shoppingListGrid" class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3"></div>
-          <p id="shoppingReorderHint" class="text-[11px] text-ink/35 text-center mt-4 select-none">Liste gedrückt halten und ziehen, um die Reihenfolge zu ändern</p>
+          <p data-tk="shop.reorderHint" id="shoppingReorderHint" class="text-[11px] text-ink/35 text-center mt-4 select-none">Press and hold a list and drag to change the order</p>
         </div>
       </div>
 
@@ -752,22 +752,22 @@
       <div id="shoppingDetail" class="hidden flex-1 min-h-0 flex-col">
         <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
           <div class="flex items-center gap-2">
-            <button id="shoppingBackBtn" type="button" class="shrink-0 w-9 h-9 -ml-1 rounded-full text-ink/60 hover:text-pine hover:bg-ink/5 grid place-items-center text-2xl leading-none select-none" aria-label="Zurück zu allen Listen">‹</button>
+            <button data-tk-attr="aria-label:lists.backToAll" id="shoppingBackBtn" type="button" class="shrink-0 w-9 h-9 -ml-1 rounded-full text-ink/60 hover:text-pine hover:bg-ink/5 grid place-items-center text-2xl leading-none select-none" aria-label="Back to all lists">‹</button>
             <div id="shoppingDetailLogo" class="shrink-0"></div>
             <h2 id="shoppingDetailTitle" class="font-serif text-lg flex-1 min-w-0 truncate"></h2>
-            <button id="openShoppingMoveBtn" type="button" class="shrink-0 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition whitespace-nowrap">⇄ Verschieben</button>
-            <button id="editShoppingListBtn" type="button" class="shrink-0 w-9 h-9 rounded-full text-ink/50 hover:text-pine hover:bg-ink/5 grid place-items-center text-lg leading-none select-none" aria-label="Liste bearbeiten">✎</button>
+            <button data-tk="shop.move" id="openShoppingMoveBtn" type="button" class="shrink-0 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition whitespace-nowrap">⇄ Move</button>
+            <button data-tk-attr="aria-label:lists.editList" id="editShoppingListBtn" type="button" class="shrink-0 w-9 h-9 rounded-full text-ink/50 hover:text-pine hover:bg-ink/5 grid place-items-center text-lg leading-none select-none" aria-label="Edit list">✎</button>
           </div>
           <div id="shoppingDateRangeBlock" class="mt-3">
             <div class="flex items-center gap-2 mb-2">
-              <span class="text-xs text-ink/40 shrink-0">Von</span>
+              <span data-tk="shop.from" class="text-xs text-ink/40 shrink-0">From</span>
               <input id="shoppingListFrom" type="date" class="rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm min-w-0" />
-              <span class="text-xs text-ink/40 shrink-0">bis</span>
+              <span data-tk="shop.to" class="text-xs text-ink/40 shrink-0">To</span>
               <input id="shoppingListTo" type="date" class="rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm min-w-0" />
             </div>
             <div class="flex items-center gap-2">
-              <button id="shoppingListThisWeekBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Diese Woche</button>
-              <button id="shoppingListNextWeekBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Nächste Woche</button>
+              <button data-tk="shop.thisWeek" id="shoppingListThisWeekBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">This week</button>
+              <button data-tk="shop.nextWeek" id="shoppingListNextWeekBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Next week</button>
             </div>
           </div>
         </div>
@@ -776,10 +776,10 @@
           <div id="shoppingListContent" class="flex flex-col gap-1.5"></div>
           <p id="emptyShoppingList" class="hidden text-sm text-ink/40 italic mt-2 text-center"></p>
           <div id="shoppingListActions" class="hidden flex-wrap justify-center gap-2 mt-4 pt-4 border-t border-ink/10">
-            <button id="copyShoppingListBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">📋 In Zwischenablage kopieren</button>
-            <button id="shareShoppingListBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Teilen</button>
-            <button id="clearDoneShoppingItemsBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">✓ Einkauf abschließen</button>
-            <button id="finishShoppingPlanBtn" type="button" class="hidden px-3 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">✓ Einkauf erledigt</button>
+            <button data-tk="shop.copyToClipboard" id="copyShoppingListBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">📋 Copy to clipboard</button>
+            <button data-tk="shop.share" id="shareShoppingListBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Share</button>
+            <button data-tk="shop.complete" id="clearDoneShoppingItemsBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">✓ Complete shopping</button>
+            <button data-tk="shop.doneBtn" id="finishShoppingPlanBtn" type="button" class="hidden px-3 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">✓ Shopping done</button>
           </div>
         </div>
         <!-- Input bar at the bottom: put your own entries on the list that is open. Suggestions from
@@ -789,8 +789,8 @@
         <div id="shoppingAddBar" class="shrink-0 bg-transparent px-4 pt-2" style="padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.75rem);">
           <div id="shoppingSuggestions" class="hidden flex-col-reverse gap-1 mb-2 max-w-md mx-auto"></div>
           <div id="shoppingAddField" class="flex items-stretch max-w-md mx-auto rounded-xl border border-ink/15 bg-white shadow-lg overflow-hidden">
-            <input id="shoppingAddInput" type="text" enterkeyhint="done" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="sentences" placeholder="Etwas auf die Liste setzen …" class="flex-1 min-w-0 bg-transparent border-0 rounded-none px-4 py-2.5 text-base" />
-            <button id="shoppingAddBtn" type="button" class="shrink-0 w-12 bg-pine text-white text-2xl leading-none grid place-items-center hover:bg-pine/90 transition select-none" aria-label="Hinzufügen">+</button>
+            <input data-tk-attr="placeholder:shop.inputPlaceholder" id="shoppingAddInput" type="text" enterkeyhint="done" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="sentences" placeholder="Put something on the list …" class="flex-1 min-w-0 bg-transparent border-0 rounded-none px-4 py-2.5 text-base" />
+            <button data-tk-attr="aria-label:common.add" id="shoppingAddBtn" type="button" class="shrink-0 w-12 bg-pine text-white text-2xl leading-none grid place-items-center hover:bg-pine/90 transition select-none" aria-label="Add">+</button>
           </div>
         </div>
       </div>
@@ -799,10 +799,10 @@
       <div id="listsOverview" class="hidden flex-1 min-h-0 flex-col">
         <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
           <div class="flex items-center justify-between gap-3">
-            <h2 class="font-serif text-lg">Listen</h2>
-            <button id="listsNewBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap shrink-0">+ Neue Liste</button>
+            <h2 data-tk="lists.title" class="font-serif text-lg">Lists</h2>
+            <button data-tk="lists.newListBtn" id="listsNewBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap shrink-0">+ New list</button>
           </div>
-          <div class="lists-tabbar ls-tabs mt-3" role="tablist" aria-label="Listenart"></div>
+          <div data-tk-attr="aria-label:lists.listType" class="lists-tabbar ls-tabs mt-3" role="tablist" aria-label="List type"></div>
         </div>
         <div class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">
           <p id="listsIntro" class="ls-intro"></p>
@@ -815,10 +815,10 @@
       <div id="listsDetail" class="hidden flex-1 min-h-0 flex-col">
         <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
           <div class="flex items-center gap-2">
-            <button id="listsBackBtn" type="button" class="shrink-0 w-9 h-9 -ml-1 rounded-full text-ink/60 hover:text-pine hover:bg-ink/5 grid place-items-center text-2xl leading-none select-none" aria-label="Zurück zu allen Listen">‹</button>
+            <button data-tk-attr="aria-label:lists.backToAll" id="listsBackBtn" type="button" class="shrink-0 w-9 h-9 -ml-1 rounded-full text-ink/60 hover:text-pine hover:bg-ink/5 grid place-items-center text-2xl leading-none select-none" aria-label="Back to all lists">‹</button>
             <div id="listsDetailIcon" class="shrink-0"></div>
             <h2 id="listsDetailTitle" class="font-serif text-lg flex-1 min-w-0 truncate"></h2>
-            <button id="listsEditBtn" type="button" class="shrink-0 w-9 h-9 rounded-full text-ink/50 hover:text-pine hover:bg-ink/5 grid place-items-center text-lg leading-none select-none" aria-label="Liste bearbeiten">✎</button>
+            <button data-tk-attr="aria-label:lists.editList" id="listsEditBtn" type="button" class="shrink-0 w-9 h-9 rounded-full text-ink/50 hover:text-pine hover:bg-ink/5 grid place-items-center text-lg leading-none select-none" aria-label="Edit list">✎</button>
           </div>
           <div id="listsDetailMeta" class="mt-3 flex flex-col gap-2"></div>
           <div id="listsDetailChips" class="pw-chips mt-3" style="display:none"></div>
@@ -830,9 +830,9 @@
         </div>
         <div class="shrink-0 bg-transparent px-4 pt-2" style="padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.75rem);">
           <div class="flex items-stretch max-w-md mx-auto rounded-xl border border-ink/15 bg-white shadow-lg overflow-hidden">
-            <select id="listsAddSection" class="ls-add-select hidden" aria-label="Bereich"></select>
-            <input id="listsAddInput" type="text" enterkeyhint="done" autocomplete="off" autocapitalize="sentences" maxlength="160" placeholder="Etwas hinzufügen …" class="flex-1 min-w-0 bg-transparent border-0 rounded-none px-4 py-2.5 text-base" />
-            <button id="listsAddBtn" type="button" class="shrink-0 w-12 bg-pine text-white text-2xl leading-none grid place-items-center hover:bg-pine/90 transition select-none" aria-label="Hinzufügen">+</button>
+            <select data-tk-attr="aria-label:lists.section" id="listsAddSection" class="ls-add-select hidden" aria-label="Area"></select>
+            <input data-tk-attr="placeholder:lists.addPlaceholder" id="listsAddInput" type="text" enterkeyhint="done" autocomplete="off" autocapitalize="sentences" maxlength="160" placeholder="Add something …" class="flex-1 min-w-0 bg-transparent border-0 rounded-none px-4 py-2.5 text-base" />
+            <button data-tk-attr="aria-label:common.add" id="listsAddBtn" type="button" class="shrink-0 w-12 bg-pine text-white text-2xl leading-none grid place-items-center hover:bg-pine/90 transition select-none" aria-label="Add">+</button>
           </div>
         </div>
       </div>
@@ -841,29 +841,29 @@
     <section id="pantrySection" class="hidden min-h-0 flex-col bg-white/40">
       <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
         <div class="flex items-center justify-between gap-3">
-          <h2 class="font-serif text-lg">Vorrat</h2>
+          <h2 data-tk="pantry.title" class="font-serif text-lg">Pantry</h2>
           <div class="flex items-center gap-2 shrink-0">
-            <button id="openPantryCookBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center text-base leading-none" aria-label="Was kann ich kochen?" title="Was kann ich kochen?">🍳</button>
-            <button id="openPantryScanBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center" aria-label="Barcode scannen" title="Barcode scannen">
+            <button data-tk-attr="title:pantry.whatCanICook;aria-label:pantry.whatCanICook" id="openPantryCookBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center text-base leading-none" aria-label="What can I cook?" title="What can I cook?">🍳</button>
+            <button data-tk-attr="title:pantry.scanBarcode;aria-label:pantry.scanBarcode" id="openPantryScanBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center" aria-label="Scan barcode" title="Scan barcode">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><path d="M7 8v8"></path><path d="M10 8v8"></path><path d="M13 8v8"></path><path d="M17 8v8"></path></svg>
             </button>
-            <button id="openPantrySettingsBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center" aria-label="Lagerorte &amp; Kategorien" title="Lagerorte &amp; Kategorien">
+            <button data-tk-attr="title:pantry.placesCategories;aria-label:pantry.placesCategories" id="openPantrySettingsBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center" aria-label="Storage locations &amp; categories" title="Storage locations &amp; categories">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7"></path><path d="M4 10V3"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M20 21v-5"></path><path d="M20 12V3"></path><path d="M1 14h6"></path><path d="M9 8h6"></path><path d="M17 16h6"></path></svg>
             </button>
-            <button id="openPantryItemBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">+ Artikel</button>
+            <button data-tk="pantry.addItemBtn" id="openPantryItemBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">+ Item</button>
           </div>
         </div>
         <div class="flex items-center gap-2 mt-3">
-          <input id="pantrySearchInput" type="search" autocomplete="off" placeholder="Suchen …" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-1.5 text-base" />
-          <button id="pantryLowToggle" type="button" class="pantry-chip shrink-0 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 transition whitespace-nowrap">⚠️ Knapp</button>
-          <button id="pantryExpToggle" type="button" class="pantry-chip shrink-0 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 transition whitespace-nowrap">⏳ Läuft ab</button>
+          <input data-tk-attr="placeholder:pantry.searchPlaceholder" id="pantrySearchInput" type="search" autocomplete="off" placeholder="Searching …" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-1.5 text-base" />
+          <button data-tk="pantry.filterLow" id="pantryLowToggle" type="button" class="pantry-chip shrink-0 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 transition whitespace-nowrap">⚠️ Low</button>
+          <button data-tk="pantry.filterExpiring" id="pantryExpToggle" type="button" class="pantry-chip shrink-0 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 transition whitespace-nowrap">⏳ Expiring</button>
         </div>
         <div class="flex items-center gap-2 mt-2 flex-wrap">
-          <div class="inline-flex rounded-lg border border-ink/15 p-0.5 shrink-0" role="tablist" aria-label="Sortierung">
-            <button type="button" data-pgroup="category" class="pantry-group-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">Kategorie</button>
-            <button type="button" data-pgroup="location" class="pantry-group-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">Ort</button>
+          <div data-tk-attr="aria-label:pantry.sorting" class="inline-flex rounded-lg border border-ink/15 p-0.5 shrink-0" role="tablist" aria-label="Sorting">
+            <button data-tk="pantry.sortCategory" type="button" data-pgroup="category" class="pantry-group-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">Category</button>
+            <button data-tk="pantry.sortPlace" type="button" data-pgroup="location" class="pantry-group-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">Place</button>
             <button type="button" data-pgroup="alpha" class="pantry-group-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">A–Z</button>
-            <button type="button" data-pgroup="mhd" class="pantry-group-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">MHD</button>
+            <button data-tk="pantry.sortBestBefore" type="button" data-pgroup="mhd" class="pantry-group-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">Best before</button>
           </div>
           <select id="pantryLocationFilter" class="min-w-0 flex-1 sm:flex-none rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white"></select>
           <select id="pantryCategoryFilter" class="min-w-0 flex-1 sm:flex-none rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white"></select>
@@ -872,7 +872,7 @@
       <div class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">
         <div id="pantryExpInfo" class="hidden max-w-3xl mx-auto mb-3 rounded-xl border px-3 py-2 text-xs flex items-center gap-2 pantry-exp-info">
           <span id="pantryExpInfoText" class="flex-1 min-w-0"></span>
-          <button id="pantryExpCookBtn" type="button" class="shrink-0 px-2.5 py-1 rounded-lg bg-white/70 border border-current text-[11px] font-medium whitespace-nowrap">🍳 Was kochen?</button>
+          <button data-tk="pantry.whatToCook" id="pantryExpCookBtn" type="button" class="shrink-0 px-2.5 py-1 rounded-lg bg-white/70 border border-current text-[11px] font-medium whitespace-nowrap">🍳 What to cook?</button>
         </div>
         <div id="pantryLowInfo" class="hidden max-w-3xl mx-auto mb-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700"></div>
         <div id="pantryList" class="max-w-3xl mx-auto flex flex-col gap-4"></div>
@@ -2338,40 +2338,40 @@
 
   <div id="shoppingItemModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-6">
     <div class="relative bg-white rounded-2xl shadow-xl max-w-sm w-full p-5 fade-in">
-      <button id="closeShoppingItemModalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-      <h3 id="shoppingItemModalTitle" class="font-serif text-lg mb-1 pr-6">Auf die Liste</h3>
-      <p id="shoppingItemModalHint" class="hidden text-xs text-mustard mb-2">Steht schon auf der Liste – Menge und Notiz werden aktualisiert.</p>
+      <button data-tk-attr="aria-label:common.close" id="closeShoppingItemModalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+      <h3 data-tk="shop.entry.onList" id="shoppingItemModalTitle" class="font-serif text-lg mb-1 pr-6">To the list</h3>
+      <p data-tk="shop.entry.alreadyOnList" id="shoppingItemModalHint" class="hidden text-xs text-mustard mb-2">Already on the list – quantity and note are updated.</p>
 
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1 mt-3">Artikel</label>
+      <label data-tk="shop.entry.item" class="block text-xs uppercase tracking-wide text-ink/40 mb-1 mt-3">Items</label>
       <input id="shoppingItemNameInput" type="text" autocomplete="off" autocorrect="off" spellcheck="false" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
 
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Menge</label>
+      <label data-tk="shop.entry.quantity" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Quantity</label>
       <div class="flex items-center gap-2 mb-3">
-        <button id="shoppingQtyMinusBtn" type="button" class="shrink-0 w-10 h-10 rounded-lg border border-ink/15 text-xl leading-none grid place-items-center text-ink/70 hover:text-pine hover:border-pine transition select-none" aria-label="Weniger">−</button>
-        <input id="shoppingQtyInput" type="text" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="z. B. 2 oder 500 g" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-2 text-base text-center" />
-        <button id="shoppingQtyPlusBtn" type="button" class="shrink-0 w-10 h-10 rounded-lg border border-ink/15 text-xl leading-none grid place-items-center text-ink/70 hover:text-pine hover:border-pine transition select-none" aria-label="Mehr">+</button>
+        <button data-tk-attr="aria-label:shop.entry.less" id="shoppingQtyMinusBtn" type="button" class="shrink-0 w-10 h-10 rounded-lg border border-ink/15 text-xl leading-none grid place-items-center text-ink/70 hover:text-pine hover:border-pine transition select-none" aria-label="Less">−</button>
+        <input data-tk-attr="placeholder:shop.entry.quantityPlaceholder" id="shoppingQtyInput" type="text" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="e.g. 2 or 500 g" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-2 text-base text-center" />
+        <button data-tk-attr="aria-label:shop.entry.more" id="shoppingQtyPlusBtn" type="button" class="shrink-0 w-10 h-10 rounded-lg border border-ink/15 text-xl leading-none grid place-items-center text-ink/70 hover:text-pine hover:border-pine transition select-none" aria-label="More">+</button>
       </div>
 
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Notiz</label>
-      <input id="shoppingNoteInput" type="text" autocomplete="off" placeholder="z. B. Bio, die große Packung …" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+      <label data-tk="shop.entry.note" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Note</label>
+      <input data-tk-attr="placeholder:shop.entry.notePlaceholder" id="shoppingNoteInput" type="text" autocomplete="off" placeholder="e.g. organic, the big pack …" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
 
       <div class="grid grid-cols-2 gap-3 mb-5">
         <div class="min-w-0">
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="shoppingItemCategorySelect">Kategorie</label>
+          <label data-tk="shop.entry.category" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="shoppingItemCategorySelect">Category</label>
           <select id="shoppingItemCategorySelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-base bg-white"></select>
         </div>
         <div class="min-w-0">
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="shoppingItemListSelect">Liste</label>
+          <label data-tk="shop.entry.list" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="shoppingItemListSelect">List</label>
           <select id="shoppingItemListSelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-base bg-white"></select>
         </div>
       </div>
 
 
       <div class="flex items-center gap-2">
-        <button id="deleteShoppingItemBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Löschen</button>
+        <button data-tk="common.delete" id="deleteShoppingItemBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Delete</button>
         <div class="flex-1"></div>
-        <button id="cancelShoppingItemBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
-        <button id="confirmShoppingItemBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Hinzufügen</button>
+        <button data-tk="common.cancel" id="cancelShoppingItemBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Cancel</button>
+        <button data-tk="common.add" id="confirmShoppingItemBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Add</button>
       </div>
     </div>
   </div>
@@ -2379,29 +2379,29 @@
   <!-- Add / edit a shopping list -->
   <div id="shoppingListModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-6">
     <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-      <button id="closeShoppingListModalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-      <h3 id="shoppingListModalTitle" class="font-serif text-lg mb-3 pr-6">Neue Einkaufsliste</h3>
+      <button data-tk-attr="aria-label:common.close" id="closeShoppingListModalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+      <h3 data-tk="shop.list.newTitle" id="shoppingListModalTitle" class="font-serif text-lg mb-3 pr-6">New shopping list</h3>
 
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Laden</label>
+      <label data-tk="shop.list.shop" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Shop</label>
       <div id="shoppingStorePicker" class="grid grid-cols-4 sm:grid-cols-5 gap-2 mb-4"></div>
 
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Name der Liste</label>
-      <input id="shoppingListNameInput" type="text" autocomplete="off" placeholder="z. B. Rewe" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+      <label data-tk="shop.list.name" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Name of the list</label>
+      <input data-tk-attr="placeholder:shop.list.namePlaceholder" id="shoppingListNameInput" type="text" autocomplete="off" placeholder="e.g. Tesco" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
 
       <div id="shoppingListCustomLogoBlock">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Logo</label>
+        <label data-tk="shop.list.logo" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Logo</label>
         <div class="flex items-center gap-3 mb-2">
           <div id="shoppingListLogoPreview" class="shrink-0"></div>
           <div class="flex flex-wrap gap-2">
-            <button id="uploadShoppingListLogoBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Eigenes Bild wählen</button>
-            <button id="removeShoppingListLogoBtn" type="button" class="hidden px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-red-500 hover:border-red-300 transition">Bild entfernen</button>
+            <button data-tk="shop.list.ownImage" id="uploadShoppingListLogoBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Choose custom image</button>
+            <button data-tk="shop.list.removeImage" id="removeShoppingListLogoBtn" type="button" class="hidden px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-red-500 hover:border-red-300 transition">Remove image</button>
           </div>
           <input id="shoppingListLogoFile" type="file" accept="image/*" class="hidden" />
         </div>
         <div id="shoppingListDomainBlock" class="hidden">
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1 mt-3">Webseite des Ladens (für das Logo, optional)</label>
-          <input id="shoppingListDomainInput" type="text" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="off" placeholder="z. B. baeckerei-muster.de" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-1" />
-          <p class="text-[11px] text-ink/40">Das Logo wird von der Webseite des Ladens geladen. Ein eigenes Bild hat Vorrang.</p>
+          <label data-tk="shop.list.website" class="block text-xs uppercase tracking-wide text-ink/40 mb-1 mt-3">Shop website (for the logo, optional)</label>
+          <input data-tk-attr="placeholder:shop.list.websitePlaceholder" id="shoppingListDomainInput" type="text" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="off" placeholder="e.g. bakery-example.com" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-1" />
+          <p data-tk="shop.list.websiteHint" class="text-[11px] text-ink/40">The logo is loaded from the shop's website. A custom image takes priority.</p>
         </div>
         <div class="mb-4"></div>
       </div>
@@ -2409,40 +2409,40 @@
       <!-- Address of the shop: appears under Family → Places, staying there checks off the planned shopping -->
       <div id="shoppingListAddrBlock" class="rounded-xl border border-ink/10 bg-ink/[0.03] px-3 py-3 mb-4">
         <div class="flex items-center justify-between gap-2 mb-1">
-          <span class="text-sm font-medium">📍 Adressen des Ladens</span>
-          <span class="text-[11px] text-ink/40">optional</span>
+          <span data-tk="shop.list.addresses" class="text-sm font-medium">📍 Shop addresses</span>
+          <span data-tk="shop.list.optionalSmall" class="text-[11px] text-ink/40">optional</span>
         </div>
-        <p class="text-[11px] text-ink/45 leading-snug mb-2">Erscheint unter Familie → Orte. Bist du eine Weile dort, hakt pinn. den geplanten Einkauf ab – die Ausgaben trägst du dann über die 🔔 oben ein. Gibt es den Laden mehrmals (z. B. zwei Rewe-Märkte), füge jede Filiale hinzu – egal in welcher du einkaufst.</p>
+        <p data-tk="shop.list.addressesHint" class="text-[11px] text-ink/45 leading-snug mb-2">Appears under Family → Places. If you stay there for a while, pinn. checks off the planned shopping – you then enter the expenses via the 🔔 at the top. If the shop exists more than once (e.g. two Rewe stores), add every branch – no matter which one you shop at.</p>
         <div id="shoppingListAddrChosen" class="hidden flex flex-col gap-1.5 mb-2"></div>
-        <button id="shoppingListAddrAdd" type="button" class="hidden w-full mb-1 px-3 py-2 rounded-lg border border-dashed border-ink/20 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Weitere Adresse (Filiale)</button>
+        <button data-tk="shop.list.addAddress" id="shoppingListAddrAdd" type="button" class="hidden w-full mb-1 px-3 py-2 rounded-lg border border-dashed border-ink/20 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Additional address (branch)</button>
         <div id="shoppingListAddrSearchWrap">
-          <input id="shoppingListAddrInput" type="search" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" placeholder="z. B. Rewe Hauptstraße Musterstadt" class="fz-in" />
+          <input data-tk-attr="placeholder:shop.list.addressPlaceholder" id="shoppingListAddrInput" type="search" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" placeholder="e.g. Tesco High Street Sampletown" class="fz-in" />
           <div id="shoppingListAddrResults" class="flex flex-col gap-1 mt-1.5"></div>
         </div>
         <div id="shoppingListAddrOpts" class="hidden mt-3">
-          <label class="fz-lbl" for="shoppingListAddrStay">Einkauf abhaken nach</label>
+          <label data-tk="shop.list.checkOffAfter" class="fz-lbl" for="shoppingListAddrStay">Check off shopping after</label>
           <select id="shoppingListAddrStay" class="fz-in mb-3">
-            <option value="5">5 Minuten vor Ort</option>
-            <option value="10">10 Minuten vor Ort (Standard)</option>
-            <option value="15">15 Minuten vor Ort</option>
-            <option value="20">20 Minuten vor Ort</option>
-            <option value="30">30 Minuten vor Ort</option>
-            <option value="45">45 Minuten vor Ort</option>
-            <option value="60">60 Minuten vor Ort</option>
+            <option data-tk="shop.list.stay5" value="5">5 minutes on site</option>
+            <option data-tk="shop.list.stay10" value="10">10 minutes on site (default)</option>
+            <option data-tk="shop.list.stay15" value="15">15 minutes on site</option>
+            <option data-tk="shop.list.stay20" value="20">20 minutes on site</option>
+            <option data-tk="shop.list.stay30" value="30">30 minutes on site</option>
+            <option data-tk="shop.list.stay45" value="45">45 minutes on site</option>
+            <option data-tk="shop.list.stay60" value="60">60 minutes on site</option>
           </select>
-          <label class="fz-check"><input type="checkbox" id="shoppingListAddrDone" /><span>Geplanten Einkauf automatisch abhaken<span class="block text-[11px] text-ink/45">Bei mehreren Läden, sobald alle besucht sind – je Laden reicht eine seiner Filialen.</span></span></label>
-          <label class="fz-check"><input type="checkbox" id="shoppingListAddrDonePush" /><span>Push „Betrag eintragen“, wenn abgehakt</span></label>
-          <label class="fz-check"><input type="checkbox" id="shoppingListAddrRemind" /><span>Beim Ankommen an die Einkaufsliste erinnern<span class="block text-[11px] text-ink/45">Push „Gehst du einkaufen?“ und Hinweis oben, solange du hier bist und etwas auf der Liste steht – auch ohne geplanten Einkauf.</span></span></label>
-          <label class="fz-check"><input type="checkbox" id="shoppingListAddrArrive" /><span>Familie bei Ankunft benachrichtigen</span></label>
-          <p class="text-[11px] text-ink/45 leading-snug">Umkreis, Personen und Empfänger lassen sich unter Familie → 📍 Orte genauer einstellen. Funktioniert mit der Ortung (Traccar Client) und geteiltem Standort.</p>
+          <label class="fz-check"><input type="checkbox" id="shoppingListAddrDone" /><span><span data-tk="shop.list.autoCheckOff">Automatically check off planned shopping</span><span data-tk="shop.list.autoCheckOffHint" class="block text-[11px] text-ink/45">With several shops, as soon as all have been visited – one branch per shop is enough.</span></span></label>
+          <label class="fz-check"><input type="checkbox" id="shoppingListAddrDonePush" /><span data-tk="shop.list.pushAmount">Push “Enter amount” when checked off</span></label>
+          <label class="fz-check"><input type="checkbox" id="shoppingListAddrRemind" /><span><span data-tk="shop.list.remindArrival">Remind me of the shopping list on arrival</span><span data-tk="shop.list.remindArrivalHint" class="block text-[11px] text-ink/45">Push “Going shopping?” and a notice at the top while you're here and something is on the list – even without a planned shopping trip.</span></span></label>
+          <label class="fz-check"><input type="checkbox" id="shoppingListAddrArrive" /><span data-tk="shop.list.notifyFamily">Notify family on arrival</span></label>
+          <p data-tk="shop.list.placesHint" class="text-[11px] text-ink/45 leading-snug">Radius, people and recipients can be set in more detail under Family → 📍 Places. Works with location (Traccar Client) and shared location.</p>
         </div>
       </div>
 
       <!-- Kassen: which Kasse purchases from this list are booked to -->
       <div id="shoppingListKasseBlock" class="hidden rounded-xl border border-ink/10 bg-ink/[0.03] px-3 py-3 mb-4">
-        <label class="block text-sm font-medium mb-1.5" for="shoppingListKasseSelect">💶 Kasse für Einkäufe</label>
+        <label data-tk="shop.list.fund" class="block text-sm font-medium mb-1.5" for="shoppingListKasseSelect">💶 Fund for shopping</label>
         <select id="shoppingListKasseSelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white mb-1.5"></select>
-        <p class="text-[11px] text-ink/45 leading-snug">Beim Abschließen eines Einkaufs landet der Betrag in dieser Kasse. Ist dort „Ausgaben aufteilen“ an (z. B. WG), wird er auf die Mitglieder verteilt – Privates lässt sich dabei abziehen.</p>
+        <p data-tk="shop.list.fundHint" class="text-[11px] text-ink/45 leading-snug">When completing a shopping trip, the amount goes into this fund. If “Split expenses” is on there (e.g. shared flat), it is distributed among the members – private items can be deducted.</p>
       </div>
 
       <!-- Main shop: ingredients from the meal planning land on this list automatically -->
@@ -2450,8 +2450,8 @@
         <label class="flex items-start gap-2.5 cursor-pointer select-none">
           <input id="shoppingListStammCheck" type="checkbox" class="shrink-0 w-4 h-4 mt-0.5" />
           <span class="min-w-0">
-            <span class="block text-sm font-medium">⭐ Als Stammladen festlegen</span>
-            <span class="block text-[11px] text-ink/45 leading-snug">Hier kaufst du normalerweise für die Essensplanung ein – die Rezept-Zutaten können dann automatisch auf dieser Liste landen.</span>
+            <span data-tk="shop.list.setMain" class="block text-sm font-medium">⭐ Set as main shop</span>
+            <span data-tk="shop.list.setMainHint" class="block text-[11px] text-ink/45 leading-snug">This is where you normally shop for the meal plan – the recipe ingredients can then automatically end up on this list.</span>
           </span>
         </label>
         <div id="shoppingListStammModeBlock" class="hidden mt-3">
@@ -2460,10 +2460,10 @@
       </div>
 
       <div class="flex items-center gap-2 mt-2">
-        <button id="deleteShoppingListBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Liste löschen</button>
+        <button data-tk="shop.list.delete" id="deleteShoppingListBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Delete list</button>
         <div class="flex-1"></div>
-        <button id="cancelShoppingListBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
-        <button id="saveShoppingListBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Anlegen</button>
+        <button data-tk="common.cancel" id="cancelShoppingListBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Cancel</button>
+        <button data-tk="common.create" id="saveShoppingListBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Create</button>
       </div>
     </div>
   </div>
@@ -2471,23 +2471,23 @@
   <!-- Set the main shop (from the list "Essensplanung") -->
   <div id="shoppingStammModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-6">
     <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-      <button id="closeShoppingStammModalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-      <h3 class="font-serif text-lg mb-1 pr-6">⭐ Stammladen</h3>
-      <p class="text-xs text-ink/50 mb-4">Der Laden, in dem ihr normalerweise für die Essensplanung einkauft. Die Zutaten der geplanten Rezepte können dann automatisch auf seiner Liste landen.</p>
+      <button data-tk-attr="aria-label:common.close" id="closeShoppingStammModalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+      <h3 data-tk="shop.main.title" class="font-serif text-lg mb-1 pr-6">⭐ Main shop</h3>
+      <p data-tk="shop.main.hint" class="text-xs text-ink/50 mb-4">The shop where you normally shop for the meal plan. The ingredients of the planned recipes can then automatically end up on its list.</p>
 
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Laden</label>
+      <label data-tk="shop.list.shop" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Shop</label>
       <div id="shoppingStammListPicker" class="grid grid-cols-3 gap-2 mb-4"></div>
-      <p id="shoppingStammNoLists" class="hidden text-sm text-ink/50 italic mb-4">Es gibt noch keine Liste für einen Laden. <button type="button" id="shoppingStammNewListBtn" class="underline text-pine not-italic">Jetzt eine anlegen</button></p>
+      <p id="shoppingStammNoLists" class="hidden text-sm text-ink/50 italic mb-4"><span data-tk="shop.main.noLists">There is no list for a shop yet.</span> <button data-tk="shop.main.createOne" type="button" id="shoppingStammNewListBtn" class="underline text-pine not-italic">Create one now</button></p>
 
       <div id="shoppingStammModeWrap" class="hidden">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Zutaten der Essensplanung</label>
+        <label data-tk="shop.main.ingredients" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Meal plan ingredients</label>
         <div id="shoppingStammModes" class="flex flex-col gap-1.5 mb-4"></div>
       </div>
 
       <div class="flex items-center gap-2 mt-2">
         <div class="flex-1"></div>
-        <button id="cancelShoppingStammBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
-        <button id="saveShoppingStammBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern</button>
+        <button data-tk="common.cancel" id="cancelShoppingStammBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Cancel</button>
+        <button data-tk="common.save" id="saveShoppingStammBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Save</button>
       </div>
     </div>
   </div>
@@ -2495,8 +2495,8 @@
   <!-- Move the content of a shopping list to another list -->
   <div id="shoppingMoveModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-6">
     <div class="relative bg-white rounded-2xl shadow-xl max-w-sm w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-      <button id="closeShoppingMoveModalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-      <h3 class="font-serif text-lg mb-1 pr-6">Inhalt verschieben</h3>
+      <button data-tk-attr="aria-label:common.close" id="closeShoppingMoveModalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+      <h3 data-tk="shop.moveContent" class="font-serif text-lg mb-1 pr-6">Move content</h3>
       <p id="shoppingMoveInfo" class="text-xs text-ink/50 mb-4"></p>
       <div id="shoppingMoveTargets" class="flex flex-col gap-2"></div>
       <p id="shoppingMoveEmpty" class="hidden text-sm text-ink/50 italic"></p>
@@ -2505,7 +2505,7 @@
 
   <div id="ingredientBreakdownModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-6">
     <div class="relative bg-white rounded-2xl shadow-xl max-w-sm w-full p-5">
-      <button id="closeIngredientBreakdownBtn" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+      <button data-tk-attr="aria-label:common.close" id="closeIngredientBreakdownBtn" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
       <h3 id="ingredientBreakdownTitle" class="font-serif text-base font-bold mb-3 pr-6"></h3>
       <div id="ingredientBreakdownRows" class="font-mono text-sm"></div>
     </div>
@@ -3179,49 +3179,49 @@
 <!-- Finish shopping: book the amount paid, remove checked items -->
 <div id="shoppingCheckoutModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closeCheckoutBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <button data-tk-attr="aria-label:common.close" id="closeCheckoutBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
     <div class="flex items-center gap-3 mb-3 pr-6">
       <div id="checkoutLogo" class="shrink-0"></div>
       <div class="min-w-0">
-        <h3 class="font-serif text-lg leading-tight">Einkauf abschließen</h3>
+        <h3 data-tk="shop.complete.title" class="font-serif text-lg leading-tight">Complete shopping</h3>
         <p id="checkoutListName" class="text-xs text-ink/50 truncate"></p>
       </div>
     </div>
     <div id="checkoutItems" class="mb-4 leading-7"></div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="checkoutAmountInput">Bezahlter Betrag</label>
+    <label data-tk="shop.complete.amount" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="checkoutAmountInput">Amount paid</label>
     <div class="fin-amount-field flex items-baseline gap-2 rounded-xl border border-ink/15 px-4 py-3 mb-4">
       <input id="checkoutAmountInput" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" data-cur-zero class="flex-1 min-w-0 bg-transparent border-0 p-0 text-3xl font-semibold tracking-tight" />
       <span class="cur-sym text-2xl text-ink/40">€</span>
     </div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Kategorie</label>
+    <label data-tk="shop.entry.category" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Category</label>
     <div id="checkoutCategoryPicker" class="grid grid-cols-4 gap-1.5 mb-4"></div>
 
     <div class="grid grid-cols-2 gap-3 mb-3">
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="checkoutDateInput">Datum</label>
+        <label data-tk="shop.complete.date" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="checkoutDateInput">Date</label>
         <input id="checkoutDateInput" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
       </div>
       <div class="fin-paidby-wrap min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="checkoutPaidBySelect">Bezahlt von</label>
+        <label data-tk="shop.complete.paidBy" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="checkoutPaidBySelect">Paid by</label>
         <select id="checkoutPaidBySelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
       </div>
     </div>
     <div id="checkoutKasseWrap" class="hidden mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="checkoutKasseSelect">Kasse</label>
+      <label data-tk="shop.complete.fund" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="checkoutKasseSelect">Fund</label>
       <select id="checkoutKasseSelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
     </div>
     <div id="checkoutSplitWrap" class="hidden mb-3 rounded-xl border border-ink/10 bg-ink/[0.03] px-3 py-3">
-      <span class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">⚖️ Aufteilen auf</span>
+      <span data-tk="shop.complete.splitAmong" class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">⚖️ Split among</span>
       <div id="checkoutSplitPicker" class="flex flex-wrap gap-1.5"></div>
       <div id="checkoutPrivateBlock" class="mt-3">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="checkoutPrivateInput">Davon nur für mich (privat)</label>
+        <label data-tk="shop.complete.privatePart" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="checkoutPrivateInput">Of which only for me (private)</label>
         <div class="flex items-center gap-2">
           <input id="checkoutPrivateInput" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" data-cur-zero class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-2 text-base" />
           <span class="cur-sym text-ink/40">€</span>
         </div>
-        <p class="text-[11px] text-ink/45 mt-1">Wird nicht geteilt, sondern in deine eigene Kasse gebucht.</p>
+        <p data-tk="shop.complete.privateHint" class="text-[11px] text-ink/45 mt-1">Not shared, but booked into your own fund.</p>
       </div>
       <p id="checkoutSplitHint" class="text-[11px] text-ink/45 mt-1.5"></p>
     </div>
@@ -3229,8 +3229,8 @@
     <p id="checkoutError" class="hidden text-xs text-red-500 mb-3"></p>
 
     <div class="flex flex-col gap-2 mt-1">
-      <button id="checkoutSaveBtn" type="button" class="w-full px-4 py-2.5 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Betrag buchen &amp; Liste aufräumen</button>
-      <button id="checkoutSkipBtn" type="button" class="w-full px-4 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Ohne Betrag aufräumen</button>
+      <button data-tk="shop.complete.book" id="checkoutSaveBtn" type="button" class="w-full px-4 py-2.5 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Book amount &amp; tidy up list</button>
+      <button data-tk="shop.complete.withoutAmount" id="checkoutSkipBtn" type="button" class="w-full px-4 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Tidy up without amount</button>
     </div>
   </div>
 </div>
@@ -3238,15 +3238,15 @@
 <!-- Pantry: add / edit an item -->
 <div id="pantryItemModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closePantryItemBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 id="pantryItemModalTitle" class="font-serif text-lg mb-4 pr-6">Neuer Vorrats-Artikel</h3>
+    <button data-tk-attr="aria-label:common.close" id="closePantryItemBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+    <h3 data-tk="pantry.item.newTitle" id="pantryItemModalTitle" class="font-serif text-lg mb-4 pr-6">New pantry item</h3>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryNameInput">Name</label>
-    <input id="pantryNameInput" type="text" autocomplete="off" maxlength="80" placeholder="z. B. Nudeln" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+    <label data-tk="common.name" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryNameInput">Name</label>
+    <input data-tk-attr="placeholder:pantry.item.namePlaceholder" id="pantryNameInput" type="text" autocomplete="off" maxlength="80" placeholder="e.g. pasta" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
 
     <div class="grid grid-cols-2 gap-3 mb-1">
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryQtyInput">Bestand</label>
+        <label data-tk="pantry.item.stock" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryQtyInput">Stock</label>
         <div class="flex items-stretch rounded-lg border border-ink/15 overflow-hidden">
           <button type="button" data-step="-1" data-target="pantryQtyInput" class="pantry-step shrink-0 w-9 text-lg text-ink/60 hover:bg-ink/5">−</button>
           <input id="pantryQtyInput" type="text" inputmode="decimal" autocomplete="off" placeholder="0" class="w-full min-w-0 border-0 px-1 py-2 text-base text-center" />
@@ -3254,54 +3254,54 @@
         </div>
       </div>
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryUnitInput">Einheit</label>
-        <input id="pantryUnitInput" type="text" autocomplete="off" maxlength="20" list="pantryUnitList" placeholder="Stück" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
+        <label data-tk="pantry.item.unit" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryUnitInput">Unit</label>
+        <input data-tk-attr="placeholder:pantry.item.unitPlaceholder" id="pantryUnitInput" type="text" autocomplete="off" maxlength="20" list="pantryUnitList" placeholder="Pieces" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
         <datalist id="pantryUnitList"><option value="Stück"></option><option value="Pck"></option><option value="Dose"></option><option value="Glas"></option><option value="Flasche"></option><option value="Kiste"></option><option value="g"></option><option value="kg"></option><option value="ml"></option><option value="l"></option><option value="Rolle"></option><option value="Tube"></option></datalist>
       </div>
     </div>
     <div class="min-w-0 mt-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryBestBeforeInput">Mindesthaltbar bis (MHD)</label>
+      <label data-tk="pantry.item.bestBefore" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryBestBeforeInput">Best before</label>
       <div class="flex items-stretch gap-2">
         <input id="pantryBestBeforeInput" type="date" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-2 text-base bg-white" />
-        <button id="pantryBestBeforeClear" type="button" class="shrink-0 w-10 rounded-lg border border-ink/15 text-ink/40 hover:text-red-500 hover:border-red-300 text-lg leading-none" aria-label="MHD entfernen" title="MHD entfernen">×</button>
+        <button data-tk-attr="title:pantry.item.removeBestBefore;aria-label:pantry.item.removeBestBefore" id="pantryBestBeforeClear" type="button" class="shrink-0 w-10 rounded-lg border border-ink/15 text-ink/40 hover:text-red-500 hover:border-red-300 text-lg leading-none" aria-label="Remove best-before date" title="Remove best-before date">×</button>
       </div>
-      <p class="text-[11px] text-ink/40 mt-1">Optional. Bei mehreren Packungen das früheste Datum – pinn. erinnert rechtzeitig per Push.</p>
+      <p data-tk="pantry.item.bestBeforeHint" class="text-[11px] text-ink/40 mt-1">Optional. With several packs, use the earliest date – pinn. reminds you in time by push.</p>
     </div>
     <div class="min-w-0 mt-3 mb-1">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryMinInput">Mindestbestand</label>
+      <label data-tk="pantry.item.minStock" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryMinInput">Minimum stock</label>
       <div class="flex items-stretch rounded-lg border border-ink/15 overflow-hidden">
         <button type="button" data-step="-1" data-target="pantryMinInput" class="pantry-step shrink-0 w-9 text-lg text-ink/60 hover:bg-ink/5">−</button>
-        <input id="pantryMinInput" type="text" inputmode="decimal" autocomplete="off" placeholder="kein Mindestbestand" class="w-full min-w-0 border-0 px-1 py-2 text-base text-center" />
+        <input data-tk-attr="placeholder:pantry.item.minStockPlaceholder" id="pantryMinInput" type="text" inputmode="decimal" autocomplete="off" placeholder="no minimum stock" class="w-full min-w-0 border-0 px-1 py-2 text-base text-center" />
         <button type="button" data-step="1" data-target="pantryMinInput" class="pantry-step shrink-0 w-9 text-lg text-ink/60 hover:bg-ink/5">+</button>
       </div>
     </div>
-    <p class="text-[11px] text-ink/40 mb-3">Fällt der Bestand unter den Mindestbestand, landet der Artikel automatisch auf den gewählten Einkaufslisten.</p>
+    <p data-tk="pantry.item.minStockHint" class="text-[11px] text-ink/40 mb-3">If stock falls below the minimum stock, the item automatically ends up on the selected shopping lists.</p>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Kategorie</label>
+    <label data-tk="pantry.item.category" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Category</label>
     <div id="pantryCategoryPicker" class="flex flex-wrap gap-1.5 mb-3"></div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Lagerort</label>
+    <label data-tk="pantry.item.place" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Storage location</label>
     <div id="pantryLocationPicker" class="flex flex-wrap gap-1.5 mb-3"></div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Kaufen bei</label>
+    <label data-tk="pantry.item.buyAt" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Buy at</label>
     <div id="pantryStorePicker" class="grid grid-cols-3 gap-2 mb-1.5"></div>
-    <p class="text-[11px] text-ink/40 mb-3">Mehrere Läden möglich – der Artikel steht dann auf jeder dieser Listen. Wird er auf einer Liste abgehakt, verschwindet er von den anderen. Ohne Auswahl: Liste „Essensplanung“ – bzw. der Stammladen, wenn die Essensplanung direkt dorthin geht.</p>
+    <p data-tk="pantry.item.buyAtHint" class="text-[11px] text-ink/40 mb-3">Several shops possible – the item then appears on each of these lists. If it is checked off on one list, it disappears from the others. Without selection: list “Meal plan” – or the main shop if the meal plan goes there directly.</p>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryNoteInput">Notiz</label>
-    <input id="pantryNoteInput" type="text" autocomplete="off" maxlength="120" placeholder="optional, z. B. Marke" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+    <label data-tk="pantry.item.note" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryNoteInput">Note</label>
+    <input data-tk-attr="placeholder:pantry.item.notePlaceholder" id="pantryNoteInput" type="text" autocomplete="off" maxlength="120" placeholder="optional, e.g. brand" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
 
     <div id="pantryBarcodeWrap" class="hidden mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Verknüpfte Barcodes</label>
+      <label data-tk="pantry.item.barcodes" class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Linked barcodes</label>
       <div id="pantryBarcodeList" class="flex flex-wrap gap-1.5"></div>
-      <p class="text-[11px] text-ink/40 mt-1.5">Wird einer dieser Barcodes gescannt, landet er bei diesem Artikel.</p>
+      <p data-tk="pantry.item.barcodesHint" class="text-[11px] text-ink/40 mt-1.5">When one of these barcodes is scanned, it goes to this item.</p>
     </div>
 
     <p id="pantryItemError" class="hidden text-xs text-red-500 mb-3"></p>
     <div class="flex items-center gap-2 mt-1">
-      <button id="deletePantryItemBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Löschen</button>
+      <button data-tk="common.delete" id="deletePantryItemBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Delete</button>
       <div class="flex-1"></div>
-      <button id="cancelPantryItemBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
-      <button id="savePantryItemBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern</button>
+      <button data-tk="common.cancel" id="cancelPantryItemBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Cancel</button>
+      <button data-tk="common.save" id="savePantryItemBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Save</button>
     </div>
   </div>
 </div>
@@ -3309,8 +3309,8 @@
 <!-- Lists: new list (choose a template) / edit list -->
 <div id="lsListModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="lsListClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 id="lsListTitle" class="font-serif text-lg mb-1 pr-6">Neue Liste</h3>
+    <button data-tk-attr="aria-label:common.close" id="lsListClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+    <h3 data-tk="lists.modal.newTitle" id="lsListTitle" class="font-serif text-lg mb-1 pr-6">New list</h3>
     <p id="lsListSubtitle" class="text-xs text-ink/45 mb-3"></p>
 
     <div id="lsTplPane">
@@ -3318,60 +3318,60 @@
     </div>
 
     <div id="lsFormPane" class="hidden">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsListName">Name</label>
+      <label data-tk="common.name" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsListName">Name</label>
       <input id="lsListName" type="text" autocomplete="off" maxlength="60" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
 
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Symbol</label>
+      <label data-tk="lists.modal.icon" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Icon</label>
       <div id="lsListIcons" class="flex flex-wrap gap-1.5 mb-3"></div>
 
       <div id="lsListOwnerWrap" class="hidden mb-3">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Wessen Wunschzettel?</label>
+        <label data-tk="lists.modal.whoseWish" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Whose wish list?</label>
         <div id="lsListOwner" class="flex flex-wrap gap-1.5"></div>
       </div>
 
       <div id="lsListDateWrap" class="hidden mb-3">
-        <label id="lsListDateLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsListDate">Datum</label>
+        <label data-tk="lists.modal.date" id="lsListDateLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsListDate">Date</label>
         <input id="lsListDate" type="date" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
       </div>
 
       <!-- Packing list: destination & period (triggers the holiday weather) -->
       <div id="lsTripWrap" class="hidden mb-3">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsTripPlace">Reiseziel</label>
+        <label data-tk="lists.modal.destination" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsTripPlace">Destination</label>
         <div id="lsTripChosen" class="hidden ls-trip-chosen"></div>
         <div id="lsTripSug" class="home-sug"></div>
-        <input id="lsTripPlace" type="text" autocomplete="off" maxlength="120" enterkeyhint="search" placeholder="z. B. Mallorca, Sylt, Rom" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
+        <input data-tk-attr="placeholder:lists.modal.destinationPlaceholder" id="lsTripPlace" type="text" autocomplete="off" maxlength="120" enterkeyhint="search" placeholder="e.g. Mallorca, Cornwall, Rome" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
         <div class="ls-trip-dates">
-          <div><label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsTripFrom">Abreise</label><input id="lsTripFrom" type="date" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" /></div>
-          <div><label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsTripTo">Rückreise</label><input id="lsTripTo" type="date" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" /></div>
+          <div><label data-tk="lists.modal.departure" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsTripFrom">Departure</label><input id="lsTripFrom" type="date" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" /></div>
+          <div><label data-tk="lists.modal.return" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsTripTo">Return</label><input id="lsTripTo" type="date" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" /></div>
         </div>
         <div id="lsTripWx" class="hidden ls-trip-wx"></div>
-        <label id="lsTripTipsWrap" class="hidden items-center gap-2 mt-2 text-sm cursor-pointer select-none"><input id="lsTripTips" type="checkbox" class="w-4 h-4" checked /><span>🌦️ Passend zum Wetter: Regenjacke, Sonnencreme &amp; Co. auf die Liste</span></label>
+        <label id="lsTripTipsWrap" class="hidden items-center gap-2 mt-2 text-sm cursor-pointer select-none"><input id="lsTripTips" type="checkbox" class="w-4 h-4" checked /><span data-tk="lists.modal.weatherHint">🌦️ Weather-based: add rain jacket, sunscreen &amp; co. to the list</span></label>
       </div>
 
       <div id="lsListPersonsWrap" class="hidden mb-3">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Für wen wird gepackt?</label>
+        <label data-tk="lists.modal.forWhom" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Who is being packed for?</label>
         <div id="lsListPersons" class="flex flex-wrap gap-1.5"></div>
-        <p class="text-[11px] text-ink/40 mt-1.5">Kleidung &amp; Co. steht dann für jede Person einzeln auf der Liste – Gemeinsames nur einmal.</p>
+        <p data-tk="lists.modal.forWhomHint" class="text-[11px] text-ink/40 mt-1.5">Clothing &amp; co. then appears on the list for each person individually – shared items only once.</p>
       </div>
 
       <div id="lsListDaysWrap" class="hidden mb-3">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsListDays">Wie viele Tage?</label>
-        <input id="lsListDays" type="text" inputmode="numeric" autocomplete="off" maxlength="3" placeholder="z. B. 7" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
-        <p class="text-[11px] text-ink/40 mt-1">Daraus ergibt sich die Anzahl bei Unterwäsche, Socken usw.</p>
+        <label data-tk="lists.modal.days" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsListDays">How many days?</label>
+        <input data-tk-attr="placeholder:lists.modal.daysPlaceholder" id="lsListDays" type="text" inputmode="numeric" autocomplete="off" maxlength="3" placeholder="e.g. 7" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
+        <p data-tk="lists.modal.daysHint" class="text-[11px] text-ink/40 mt-1">This determines the number of underwear, socks etc.</p>
       </div>
 
       <label id="lsListPrivateWrap" class="hidden items-center gap-2 mb-3 text-sm cursor-pointer select-none">
         <input id="lsListPrivate" type="checkbox" class="w-4 h-4" />
-        <span>🔒 Nur für mich sichtbar</span>
+        <span data-tk="lists.modal.private">🔒 Only visible to me</span>
       </label>
 
       <p id="lsListError" class="hidden text-xs text-red-500 mb-3"></p>
       <div class="flex items-center gap-2 mt-1 flex-wrap">
-        <button id="lsListDeleteBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Löschen</button>
-        <button id="lsListBackBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">‹ Vorlagen</button>
+        <button data-tk="common.delete" id="lsListDeleteBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Delete</button>
+        <button data-tk="lists.modal.templates" id="lsListBackBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">‹ Templates</button>
         <div class="flex-1"></div>
-        <button id="lsListCancelBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
-        <button id="lsListSaveBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Anlegen</button>
+        <button data-tk="common.cancel" id="lsListCancelBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Cancel</button>
+        <button data-tk="common.create" id="lsListSaveBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Create</button>
       </div>
     </div>
   </div>
@@ -3380,55 +3380,55 @@
 <!-- Lists: edit an entry -->
 <div id="lsItemModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="lsItemClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 id="lsItemTitle" class="font-serif text-lg mb-4 pr-6">Eintrag bearbeiten</h3>
+    <button data-tk-attr="aria-label:common.close" id="lsItemClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+    <h3 data-tk="lists.item.editTitle" id="lsItemTitle" class="font-serif text-lg mb-4 pr-6">Edit entry</h3>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsItemText">Eintrag</label>
+    <label data-tk="lists.item.entry" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsItemText">Entry</label>
     <input id="lsItemText" type="text" autocomplete="off" maxlength="160" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
 
     <div id="lsItemSectionWrap" class="hidden mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsItemSection">Bereich</label>
-      <input id="lsItemSection" type="text" autocomplete="off" maxlength="40" list="lsItemSectionList" placeholder="z. B. Kleidung" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
+      <label data-tk="lists.section" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsItemSection">Area</label>
+      <input data-tk-attr="placeholder:lists.item.sectionPlaceholder" id="lsItemSection" type="text" autocomplete="off" maxlength="40" list="lsItemSectionList" placeholder="e.g. clothing" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
       <datalist id="lsItemSectionList"></datalist>
     </div>
 
     <div id="lsItemWhoWrap" class="hidden mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Für wen?</label>
+      <label data-tk="lists.item.forWhom" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">For whom?</label>
       <div id="lsItemWho" class="flex flex-wrap gap-1.5"></div>
     </div>
 
     <div id="lsItemForWrap" class="hidden mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Geschenk für</label>
+      <label data-tk="lists.item.giftFor" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Gift for</label>
       <div id="lsItemFor" class="flex flex-wrap gap-1.5 mb-2"></div>
-      <input id="lsItemForName" type="text" autocomplete="off" maxlength="40" placeholder="oder Name eingeben, z. B. Oma Helga" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
+      <input data-tk-attr="placeholder:lists.item.giftForPlaceholder" id="lsItemForName" type="text" autocomplete="off" maxlength="40" placeholder="or enter a name, e.g. Grandma Helga" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
     </div>
 
     <div id="lsItemStatusWrap" class="hidden mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Stand</label>
+      <label data-tk="lists.item.status" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">As of</label>
       <div id="lsItemStatus" class="flex flex-wrap gap-1.5"></div>
     </div>
 
     <div id="lsItemPriceLinkWrap" class="hidden grid-cols-2 gap-3 mb-3">
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsItemPrice">Preis (<span class="cur-sym">€</span>)</label>
-        <input id="lsItemPrice" type="text" inputmode="decimal" autocomplete="off" maxlength="12" placeholder="z. B. 24,99" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
+        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsItemPrice"><span data-tk="lists.item.price">Price</span> (<span class="cur-sym">€</span>)</label>
+        <input data-tk-attr="placeholder:lists.item.pricePlaceholder" id="lsItemPrice" type="text" inputmode="decimal" autocomplete="off" maxlength="12" placeholder="e.g. 24.99" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
       </div>
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsItemLink">Link</label>
+        <label data-tk="lists.item.link" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsItemLink">Link</label>
         <input id="lsItemLink" type="url" autocomplete="off" maxlength="500" placeholder="https://…" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
       </div>
     </div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsItemNote">Notiz</label>
-    <input id="lsItemNote" type="text" autocomplete="off" maxlength="160" placeholder="optional" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+    <label data-tk="lists.item.note" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="lsItemNote">Note</label>
+    <input data-tk-attr="placeholder:lists.item.notePlaceholder" id="lsItemNote" type="text" autocomplete="off" maxlength="160" placeholder="optional" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
 
     <p id="lsItemError" class="hidden text-xs text-red-500 mb-3"></p>
     <div class="flex items-center gap-2 mt-1 flex-wrap">
-      <button id="lsItemDeleteBtn" type="button" class="px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Löschen</button>
-      <button id="lsItemShopBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">🛒 Fehlt – einkaufen</button>
+      <button data-tk="common.delete" id="lsItemDeleteBtn" type="button" class="px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Delete</button>
+      <button data-tk="lists.item.missingShop" id="lsItemShopBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">🛒 Missing – buy</button>
       <div class="flex-1"></div>
-      <button id="lsItemCancelBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
-      <button id="lsItemSaveBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern</button>
+      <button data-tk="common.cancel" id="lsItemCancelBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Cancel</button>
+      <button data-tk="common.save" id="lsItemSaveBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Save</button>
     </div>
   </div>
 </div>
@@ -3436,8 +3436,8 @@
 <!-- Lists: put a missing entry on a shopping list -->
 <div id="lsShopModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="lsShopClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 class="font-serif text-lg mb-1 pr-6">Auf welche Einkaufsliste?</h3>
+    <button data-tk-attr="aria-label:common.close" id="lsShopClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+    <h3 data-tk="lists.shop.title" class="font-serif text-lg mb-1 pr-6">Which shopping list?</h3>
     <p id="lsShopSubtitle" class="text-xs text-ink/45 mb-4"></p>
     <div id="lsShopGrid" class="ls-shop-grid"></div>
   </div>
@@ -3530,26 +3530,26 @@
 <!-- Recipes: categories & kitchen appliances (changes apply at once) -->
 <div id="recipeSettingsModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closeRecipeSettingsBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 class="font-serif text-lg mb-4 pr-6">Kategorien &amp; Küchengeräte</h3>
+    <button data-tk-attr="aria-label:common.close" id="closeRecipeSettingsBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+    <h3 data-tk="recipe.catsTools" class="font-serif text-lg mb-4 pr-6">Categories &amp; kitchen appliances</h3>
     <div class="mb-6">
       <div class="flex items-center justify-between gap-3 mb-2">
-        <h4 class="text-xs uppercase tracking-wide text-ink/40">Kategorien</h4>
-        <button type="button" data-cat-add="rezepte" class="cat-editor-add-btn px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Kategorie</button>
+        <h4 data-tk="cat.categories" class="text-xs uppercase tracking-wide text-ink/40">Categories</h4>
+        <button data-tk="cat.addCategory" type="button" data-cat-add="rezepte" class="cat-editor-add-btn px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Category</button>
       </div>
       <div id="recipeCategoryEditor" class="flex flex-col gap-2"></div>
-      <p class="text-[11px] text-ink/40 mt-2">Ausgeschaltete Kategorien erscheinen nicht mehr bei neuen Rezepten und im Filter – praktisch z. B., wenn ihr Mittag- und Abendessen nicht trennt.</p>
+      <p data-tk="recipe.settings.catsHint" class="text-[11px] text-ink/40 mt-2">Switched-off categories no longer appear for new recipes and in the filter – handy e.g. if you don't separate lunch and dinner.</p>
     </div>
     <div class="mb-5">
       <div class="flex items-center justify-between gap-3 mb-2">
-        <h4 class="text-xs uppercase tracking-wide text-ink/40">Küchengeräte</h4>
-        <button type="button" data-cat-add="geraete" class="cat-editor-add-btn px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Gerät</button>
+        <h4 data-tk="recipe.tools" class="text-xs uppercase tracking-wide text-ink/40">Kitchen appliances</h4>
+        <button data-tk="recipe.settings.addTool" type="button" data-cat-add="geraete" class="cat-editor-add-btn px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Device</button>
       </div>
       <div id="kitchenToolEditor" class="flex flex-col gap-2"></div>
-      <p class="text-[11px] text-ink/40 mt-2">Zur Auswahl beim Anlegen von Rezepten und als Filter in der Rezeptliste.</p>
+      <p data-tk="recipe.settings.toolsHint" class="text-[11px] text-ink/40 mt-2">For selection when creating recipes and as a filter in the recipe list.</p>
     </div>
     <div class="flex justify-end gap-2">
-      <button id="doneRecipeSettingsBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Fertig</button>
+      <button data-tk="common.done" id="doneRecipeSettingsBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Done</button>
     </div>
   </div>
 </div>
@@ -3557,18 +3557,18 @@
 <!-- Household: categories (changes apply at once) -->
 <div id="householdSettingsModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closeHouseholdSettingsBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 class="font-serif text-lg mb-4 pr-6">Haushalt-Kategorien</h3>
+    <button data-tk-attr="aria-label:common.close" id="closeHouseholdSettingsBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+    <h3 data-tk="household.categoriesTitle" class="font-serif text-lg mb-4 pr-6">Household categories</h3>
     <div class="mb-5">
       <div class="flex items-center justify-between gap-3 mb-2">
-        <h4 class="text-xs uppercase tracking-wide text-ink/40">Kategorien</h4>
-        <button type="button" data-cat-add="haushalt" class="cat-editor-add-btn px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Kategorie</button>
+        <h4 data-tk="cat.categories" class="text-xs uppercase tracking-wide text-ink/40">Categories</h4>
+        <button data-tk="cat.addCategory" type="button" data-cat-add="haushalt" class="cat-editor-add-btn px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Category</button>
       </div>
       <div id="cleaningCategoryEditor" class="flex flex-col gap-2"></div>
-      <p class="text-[11px] text-ink/40 mt-2">Für Raum-Reinigungen, z. B. „Reinigung“ oder „Aufräumen“. Ausgeschaltete Kategorien stehen bei neuen Reinigungen nicht mehr zur Auswahl.</p>
+      <p data-tk="household.categoriesHint" class="text-[11px] text-ink/40 mt-2">For room cleaning, e.g. “Cleaning” or “Tidying”. Switched-off categories are no longer available for new cleaning tasks.</p>
     </div>
     <div class="flex justify-end gap-2">
-      <button id="doneHouseholdSettingsBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Fertig</button>
+      <button data-tk="common.done" id="doneHouseholdSettingsBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Done</button>
     </div>
   </div>
 </div>
@@ -3652,40 +3652,40 @@
 <!-- Pantry: storage places & categories -->
 <div id="pantrySettingsModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closePantrySettingsBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 class="font-serif text-lg mb-4 pr-6">Lagerorte &amp; Kategorien</h3>
+    <button data-tk-attr="aria-label:common.close" id="closePantrySettingsBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+    <h3 data-tk="pantry.placesCategories" class="font-serif text-lg mb-4 pr-6">Storage locations &amp; categories</h3>
     <div class="mb-6">
       <div class="flex items-center justify-between gap-3 mb-2">
-        <h4 class="text-xs uppercase tracking-wide text-ink/40">Lagerorte</h4>
-        <button type="button" data-add="locations" class="pantry-add-btn px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Lagerort</button>
+        <h4 data-tk="pantry.settings.places" class="text-xs uppercase tracking-wide text-ink/40">Storage locations</h4>
+        <button data-tk="pantry.settings.addPlace" type="button" data-add="locations" class="pantry-add-btn px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Storage location</button>
       </div>
       <div id="pantryLocationEditor" class="flex flex-col gap-2"></div>
     </div>
     <div class="mb-5">
       <div class="flex items-center justify-between gap-3 mb-2">
-        <h4 class="text-xs uppercase tracking-wide text-ink/40">Kategorien</h4>
-        <button type="button" data-add="categories" class="pantry-add-btn px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Kategorie</button>
+        <h4 data-tk="pantry.settings.categories" class="text-xs uppercase tracking-wide text-ink/40">Categories</h4>
+        <button data-tk="pantry.settings.addCategory" type="button" data-add="categories" class="pantry-add-btn px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Category</button>
       </div>
       <div id="pantryCategoryEditor" class="flex flex-col gap-2"></div>
     </div>
     <div class="mb-5">
-      <h4 class="text-xs uppercase tracking-wide text-ink/40 mb-2">Mindesthaltbarkeit</h4>
+      <h4 data-tk="pantry.settings.bestBefore" class="text-xs uppercase tracking-wide text-ink/40 mb-2">Best-before dates</h4>
       <label class="flex items-center justify-between gap-3 text-sm" for="pantryMhdDaysSelect">
-        <span>Erinnern, bevor etwas abläuft</span>
+        <span data-tk="pantry.settings.remind">Remind me before something expires</span>
         <select id="pantryMhdDaysSelect" class="rounded-lg border border-ink/15 px-2 py-1.5 text-sm bg-white">
-          <option value="1">1 Tag vorher</option>
-          <option value="2">2 Tage vorher</option>
-          <option value="3">3 Tage vorher</option>
-          <option value="5">5 Tage vorher</option>
-          <option value="7">7 Tage vorher</option>
-          <option value="14">14 Tage vorher</option>
+          <option data-tk="pantry.settings.before1" value="1">1 day before</option>
+          <option data-tk="pantry.settings.before2" value="2">2 days before</option>
+          <option data-tk="pantry.settings.before3" value="3">3 days before</option>
+          <option data-tk="pantry.settings.before5" value="5">5 days before</option>
+          <option data-tk="pantry.settings.before7" value="7">7 days before</option>
+          <option data-tk="pantry.settings.before14" value="14">14 days before</option>
         </select>
       </label>
-      <p class="text-[11px] text-ink/40 mt-1.5">Gilt für die ganze Familie. Die Push-Nachricht kommt morgens an alle, die unter Einstellungen → Benachrichtigungen „Vorrat läuft ab“ eingeschaltet haben – einmal vorher und einmal am Tag selbst.</p>
+      <p data-tk="pantry.settings.remindHint" class="text-[11px] text-ink/40 mt-1.5">Applies to the whole family. The push notification arrives in the morning for everyone who has turned on “Pantry expiring” under Settings → Notifications – once beforehand and once on the day itself.</p>
     </div>
     <div class="flex justify-end gap-2">
-      <button id="cancelPantrySettingsBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
-      <button id="savePantrySettingsBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern</button>
+      <button data-tk="common.cancel" id="cancelPantrySettingsBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Cancel</button>
+      <button data-tk="common.save" id="savePantrySettingsBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Save</button>
     </div>
   </div>
 </div>
@@ -3693,28 +3693,28 @@
 <!-- Pantry: scan a barcode (camera) -->
 <div id="pantryScanModal" class="hidden fixed inset-0 bg-ink/40 z-[320] grid place-items-center p-3 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-4 max-h-[94vh] overflow-y-auto fade-in">
-    <button id="pantryScanClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 class="font-serif text-lg mb-3 pr-6">Scannen</h3>
-    <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-full mb-3" role="tablist" aria-label="Scan-Modus">
-      <button type="button" data-scanmode="in" class="pscan-mode flex-1 px-3 py-1.5 rounded-full transition">📥 Einräumen</button>
-      <button type="button" data-scanmode="out" class="pscan-mode flex-1 px-3 py-1.5 rounded-full transition">📤 Verbrauchen</button>
+    <button data-tk-attr="aria-label:common.close" id="pantryScanClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+    <h3 data-tk="pantry.scan.title" class="font-serif text-lg mb-3 pr-6">Scan</h3>
+    <div data-tk-attr="aria-label:pantry.scan.mode" class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-full mb-3" role="tablist" aria-label="Scan mode">
+      <button data-tk="pantry.scan.putAway" type="button" data-scanmode="in" class="pscan-mode flex-1 px-3 py-1.5 rounded-full transition">📥 Put away</button>
+      <button data-tk="pantry.scan.useUp" type="button" data-scanmode="out" class="pscan-mode flex-1 px-3 py-1.5 rounded-full transition">📤 Use up</button>
     </div>
     <div id="pantryScanStage" class="pscan-stage">
       <video id="pantryScanVideo" playsinline muted autoplay></video>
       <div class="pscan-shade t"></div><div class="pscan-shade b"></div><div class="pscan-shade l"></div><div class="pscan-shade r"></div>
       <div class="pscan-frame"><span class="pscan-line"></span></div>
-      <button id="pantryScanTorch" type="button" class="hidden pscan-torch" aria-label="Taschenlampe" title="Taschenlampe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2h8v4l-2 4v11a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V10L8 6z"/><path d="M8 6h8"/><path d="M12 13v2"/></svg></button>
+      <button data-tk-attr="title:pantry.scan.torch;aria-label:pantry.scan.torch" id="pantryScanTorch" type="button" class="hidden pscan-torch" aria-label="Torch" title="Torch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2h8v4l-2 4v11a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V10L8 6z"/><path d="M8 6h8"/><path d="M12 13v2"/></svg></button>
       <div id="pantryScanCamMsg" class="hidden pscan-cam-msg"></div>
     </div>
     <p id="pantryScanStatus" class="text-xs text-ink/50 mt-2 text-center"></p>
     <div id="pantryScanResult" class="hidden mt-3"></div>
     <div class="flex items-center gap-2 mt-3">
-      <input id="pantryScanCodeInput" type="text" inputmode="numeric" autocomplete="off" maxlength="14" placeholder="Barcode-Nummer eintippen" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-2 text-base" />
-      <button id="pantryScanCodeBtn" type="button" class="shrink-0 px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">Suchen</button>
+      <input data-tk-attr="placeholder:pantry.scan.manualPlaceholder" id="pantryScanCodeInput" type="text" inputmode="numeric" autocomplete="off" maxlength="14" placeholder="Type in barcode number" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-2 text-base" />
+      <button data-tk="pantry.scan.search" id="pantryScanCodeBtn" type="button" class="shrink-0 px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">Search</button>
     </div>
-    <p class="text-[10px] text-ink/40 mt-3 leading-snug">Produktnamen kommen aus den freien Datenbanken Open Food Facts, Open Beauty Facts, Open Products Facts und Open Pet Food Facts – abgefragt vom eigenen NAS, nur mit der Barcode-Nummer. Was keine kennt, benennst du einmal selbst; pinn. merkt sich den Barcode für die ganze Familie.</p>
+    <p data-tk="pantry.scan.sourceHint" class="text-[10px] text-ink/40 mt-3 leading-snug">Product names come from the free databases Open Food Facts, Open Beauty Facts, Open Products Facts and Open Pet Food Facts – queried by your own NAS, using only the barcode number. If none of them knows a product, you name it once; pinn. remembers the barcode for the whole family.</p>
     <div class="flex justify-end mt-3">
-      <button id="pantryScanDone" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Fertig</button>
+      <button data-tk="common.done" id="pantryScanDone" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Done</button>
     </div>
   </div>
 </div>
@@ -3722,52 +3722,52 @@
 <!-- Pantry: what can I cook? -->
 <div id="pantryCookModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="pantryCookClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 class="font-serif text-lg pr-6">Was kann ich kochen?</h3>
+    <button data-tk-attr="aria-label:common.close" id="pantryCookClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+    <h3 data-tk="pantry.whatCanICook" class="font-serif text-lg pr-6">What can I cook?</h3>
     <p id="pantryCookSub" class="text-xs text-ink/45 mb-3"></p>
     <div class="flex gap-2 mb-4 flex-wrap">
-      <button id="pantryCookExpOnly" type="button" class="pantry-chip px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 transition whitespace-nowrap">⏳ Ablaufendes verwerten</button>
-      <button id="pantryCookFavOnly" type="button" class="pantry-chip px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 transition whitespace-nowrap">♡ Favoriten</button>
+      <button data-tk="pantry.cook.expiring" id="pantryCookExpOnly" type="button" class="pantry-chip px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 transition whitespace-nowrap">⏳ Use up what’s expiring</button>
+      <button data-tk="pantry.cook.favourites" id="pantryCookFavOnly" type="button" class="pantry-chip px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 transition whitespace-nowrap">♡ Favourites</button>
     </div>
     <div id="pantryCookList" class="flex flex-col gap-5"></div>
-    <p class="text-[11px] text-ink/40 mt-5">Salz, Pfeffer und Wasser setzt pinn. voraus, Zutaten „nach Belieben“ zählen nicht. Der Abgleich geht über die Namen – „Weizenmehl“ im Vorrat passt zu „Mehl“ im Rezept. Wo die Einheiten zusammenpassen (g, kg, ml, l, Stück), wird auch die Menge verglichen.</p>
+    <p data-tk="pantry.cook.hint" class="text-[11px] text-ink/40 mt-5">pinn. assumes salt, pepper and water; ingredients “to taste” don’t count. Matching works by name – “wheat flour” in the pantry fits “flour” in the recipe. Where units fit together (g, kg, ml, l, pieces), quantities are compared too.</p>
   </div>
 </div>
 
 <!-- Planned shopping done: book the amount per shop/list -->
 <div id="shoppingPlanDoneModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closePlanDoneBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <button data-tk-attr="aria-label:common.close" id="closePlanDoneBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
     <div class="mb-3 pr-6">
-      <h3 class="font-serif text-lg leading-tight">Einkauf erledigt 🎉</h3>
+      <h3 data-tk="shop.done.title" class="font-serif text-lg leading-tight">Shopping done 🎉</h3>
       <p id="planDoneTaskTitle" class="text-xs text-ink/50 truncate"></p>
     </div>
-    <p class="text-xs text-ink/60 mb-3">Trag je Laden ein, was du bezahlt hast und was du bekommen hast. Gekaufte Artikel verschwinden von der Liste, alles andere bleibt stehen. Name und Kategorie sind vorausgefüllt und lassen sich ändern. Läden ohne Betrag werden nicht gebucht.</p>
+    <p data-tk="shop.done.hint" class="text-xs text-ink/60 mb-3">Enter per shop what you paid and what you got. Bought items disappear from the list, everything else stays. Name and category are prefilled and can be changed. Shops without an amount are not booked.</p>
 
     <div id="planDoneLists" class="flex flex-col gap-3 mb-4"></div>
 
     <div class="grid grid-cols-2 gap-3 mb-3">
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="planDoneDateInput">Datum</label>
+        <label data-tk="shop.complete.date" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="planDoneDateInput">Date</label>
         <input id="planDoneDateInput" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
       </div>
       <div class="fin-paidby-wrap min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="planDonePaidBySelect">Bezahlt von</label>
+        <label data-tk="shop.complete.paidBy" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="planDonePaidBySelect">Paid by</label>
         <select id="planDonePaidBySelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
       </div>
     </div>
 
 
     <div class="flex items-center justify-between gap-3 rounded-xl bg-ink/5 px-3 py-2 mb-2">
-      <span class="text-xs uppercase tracking-wide text-ink/40">Gesamt</span>
+      <span data-tk="shop.done.total" class="text-xs uppercase tracking-wide text-ink/40">Total</span>
       <span id="planDoneTotal" class="text-base font-semibold">0,00 €</span>
     </div>
     <p id="planDoneBudgetHint" class="hidden text-xs text-ink/60 mb-3"></p>
     <p id="planDoneError" class="hidden text-xs text-red-500 mb-3"></p>
 
     <div class="flex flex-col gap-2 mt-1">
-      <button id="planDoneSaveBtn" type="button" class="w-full px-4 py-2.5 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Beträge in Finanzen buchen</button>
-      <button id="planDoneSkipBtn" type="button" class="w-full px-4 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Ohne Beträge abschließen</button>
+      <button data-tk="shop.done.book" id="planDoneSaveBtn" type="button" class="w-full px-4 py-2.5 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Book amounts in Finance</button>
+      <button data-tk="shop.done.withoutAmounts" id="planDoneSkipBtn" type="button" class="w-full px-4 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Complete without amounts</button>
     </div>
   </div>
 </div>
@@ -4181,13 +4181,13 @@
 <!-- Deactivate a category: warning + move the affected recipes -->
 <div id="categoryReassignModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-sm fade-in">
-    <h3 id="categoryReassignTitle" class="font-serif text-lg mb-2">Kategorie verschieben?</h3>
+    <h3 data-tk="cat.reassign.title" id="categoryReassignTitle" class="font-serif text-lg mb-2">Move category?</h3>
     <p id="categoryReassignText" class="text-sm text-ink/70 mb-4"></p>
-    <label id="categoryReassignTargetLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Verschieben nach</label>
+    <label data-tk="cat.reassign.to" id="categoryReassignTargetLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Move to</label>
     <select id="categoryReassignTarget" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-5"></select>
     <div class="flex justify-end gap-2">
-      <button id="cancelCategoryReassign" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-      <button id="confirmCategoryReassign" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Verschieben</button>
+      <button data-tk="common.cancel" id="cancelCategoryReassign" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+      <button data-tk="cat.reassign.move" id="confirmCategoryReassign" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Move</button>
     </div>
   </div>
 </div>
@@ -4479,35 +4479,35 @@
 <!-- Meal planning modal -->
 <div id="mealModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-sm fade-in overflow-hidden">
-    <h3 class="font-serif text-lg mb-1">Essen planen</h3>
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Datum</label>
+    <h3 data-tk="meal.title" class="font-serif text-lg mb-1">Plan meals</h3>
+    <label data-tk="meal.date" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Date</label>
     <input id="mealModalDate" type="date" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-4" />
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Mahlzeit</label>
+    <label data-tk="meal.slot" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Meal</label>
     <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-4">
-      <button type="button" data-meal="fruehstueck" class="meal-type-btn px-3 py-1.5 rounded-full transition">🌅 Frühstück</button>
-      <button type="button" data-meal="mittag" class="meal-type-btn px-3 py-1.5 rounded-full transition">☀️ Mittag</button>
-      <button type="button" data-meal="abend" class="meal-type-btn px-3 py-1.5 rounded-full transition">🌙 Abend</button>
+      <button data-tk="meal.breakfast" type="button" data-meal="fruehstueck" class="meal-type-btn px-3 py-1.5 rounded-full transition">🌅 Breakfast</button>
+      <button data-tk="meal.lunch" type="button" data-meal="mittag" class="meal-type-btn px-3 py-1.5 rounded-full transition">☀️ Lunch</button>
+      <button data-tk="meal.dinner" type="button" data-meal="abend" class="meal-type-btn px-3 py-1.5 rounded-full transition">🌙 Evening</button>
     </div>
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Rezept</label>
+    <label data-tk="meal.recipe" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Recipe</label>
     <div class="relative mb-3">
-      <input id="mealRecipeSearch" type="text" autocomplete="off" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm" placeholder="Rezept suchen …" />
-      <button type="button" id="clearMealRecipeBtn" class="hidden absolute right-2 top-1/2 -translate-y-1/2 text-ink/30 hover:text-ink/60 text-sm leading-none" aria-label="Auswahl löschen">×</button>
+      <input data-tk-attr="placeholder:meal.searchRecipe" id="mealRecipeSearch" type="text" autocomplete="off" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm" placeholder="Search recipe …" />
+      <button data-tk-attr="aria-label:meal.clear" type="button" id="clearMealRecipeBtn" class="hidden absolute right-2 top-1/2 -translate-y-1/2 text-ink/30 hover:text-ink/60 text-sm leading-none" aria-label="Clear selection">×</button>
       <div id="mealRecipeSuggestions" class="hidden absolute z-10 left-0 right-0 mt-1 max-h-56 overflow-y-auto bg-white rounded-lg border border-ink/15 shadow-lg"></div>
     </div>
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Oder eigener Titel (falls kein Rezept passt)</label>
-    <input id="mealFreeTitle" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-5" placeholder="z. B. Reste vom Vortag" />
+    <label data-tk="meal.ownTitle" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Or custom title (if no recipe fits)</label>
+    <input data-tk-attr="placeholder:meal.ownTitlePlaceholder" id="mealFreeTitle" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-5" placeholder="e.g. leftovers from yesterday" />
 
     <div class="flex items-center justify-between gap-2 mb-5 rounded-xl border border-ink/10 bg-ink/[0.03] px-3 py-2.5">
-      <span class="text-xs uppercase tracking-wide text-ink/40">Portionen an diesem Tag</span>
+      <span data-tk="meal.servings" class="text-xs uppercase tracking-wide text-ink/40">Servings on this day</span>
       <div class="flex items-center gap-1.5 shrink-0">
-        <button type="button" id="mealServingsMinusBtn" class="w-7 h-7 rounded-full border border-ink/20 text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center text-xs" aria-label="Weniger Portionen">–</button>
+        <button data-tk-attr="aria-label:recipe.fewerServings" type="button" id="mealServingsMinusBtn" class="w-7 h-7 rounded-full border border-ink/20 text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center text-xs" aria-label="Fewer servings">–</button>
         <span id="mealServingsValue" class="text-sm font-medium w-8 text-center">2</span>
-        <button type="button" id="mealServingsPlusBtn" class="w-7 h-7 rounded-full border border-ink/20 text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center text-xs" aria-label="Mehr Portionen">+</button>
+        <button data-tk-attr="aria-label:recipe.moreServings" type="button" id="mealServingsPlusBtn" class="w-7 h-7 rounded-full border border-ink/20 text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center text-xs" aria-label="More servings">+</button>
       </div>
     </div>
     <div class="flex justify-end gap-2">
-      <button id="cancelMeal" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-      <button id="saveMeal" class="px-4 py-2 rounded-lg bg-mustard text-white text-sm font-medium hover:bg-mustard/90">Speichern</button>
+      <button data-tk="common.cancel" id="cancelMeal" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+      <button data-tk="common.save" id="saveMeal" class="px-4 py-2 rounded-lg bg-mustard text-white text-sm font-medium hover:bg-mustard/90">Save</button>
     </div>
   </div>
 </div>
@@ -4683,112 +4683,112 @@
 <div id="recipeModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto fade-in">
     <div class="flex items-center justify-between gap-3 mb-4">
-      <h3 id="recipeModalTitle" class="font-serif text-lg">Neues Rezept</h3>
+      <h3 data-tk="recipe.edit.newTitle" id="recipeModalTitle" class="font-serif text-lg">New recipe</h3>
       <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs shrink-0">
-        <button type="button" data-mode="freitext" class="recipe-input-mode-btn px-3 py-1 rounded-full transition">Freitext</button>
-        <button type="button" data-mode="strukturiert" class="recipe-input-mode-btn px-3 py-1 rounded-full transition">Strukturiert</button>
+        <button data-tk="recipe.edit.freeText" type="button" data-mode="freitext" class="recipe-input-mode-btn px-3 py-1 rounded-full transition">Free text</button>
+        <button data-tk="recipe.edit.structured" type="button" data-mode="strukturiert" class="recipe-input-mode-btn px-3 py-1 rounded-full transition">Structured</button>
       </div>
     </div>
 
     <div id="freitextBlock" class="mb-4">
-      <p class="text-xs text-ink/50 mb-2">Rezepttext z. B. aus der Notizen-App als Freitext einfügen, ein Foto (Kochbuch, Zeitschrift, Rezeptkarte) oder ein Rezept als PDF einlesen – Titel, Zutaten und Zubereitung werden automatisch erkannt und in die passenden Felder sortiert. <span id="recipeKiHint" style="display:none">Mit KI geht auch ein Link zu einer Rezeptseite.</span> Danach geht's direkt in die Detailansicht zum Prüfen und Ergänzen.</p>
+      <p class="text-xs text-ink/50 mb-2"><span data-tk="recipe.edit.importHint">Paste recipe text e.g. from the Notes app as free text, read a photo (cookbook, magazine, recipe card) or a recipe as PDF – title, ingredients and method are recognised automatically and sorted into the right fields.</span> <span data-tk="recipe.edit.importAiHint" id="recipeKiHint" style="display:none">With AI, a link to a recipe page also works.</span> <span data-tk="recipe.edit.importAfter">Afterwards you go straight to the detail view to check and complete.</span></p>
       <textarea id="importText" rows="7"
         class="w-full rounded-xl border border-ink/15 bg-white p-3 text-sm leading-relaxed resize-none focus:border-pine"
-        placeholder="Pasta Carbonara&#10;Zutaten:&#10;- 200g Spaghetti&#10;- 2 Eier&#10;- 100g Speck&#10;Zubereitung:&#10;1. Wasser kochen und Spaghetti darin garen.&#10;2. Speck anbraten, Eier verquirlen, alles vermischen."></textarea>
+        data-tk-attr="placeholder:recipe.edit.importPlaceholder" placeholder="Pasta carbonara&#10;Ingredients:&#10;- 200g spaghetti&#10;- 2 eggs&#10;- 100g bacon&#10;Method:&#10;1. Boil water and cook the spaghetti in it.&#10;2. Fry the bacon, whisk the eggs, mix everything."></textarea>
       <div class="flex items-center justify-between gap-2 mt-2">
         <div class="flex items-center gap-2 flex-wrap">
           <label class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 cursor-pointer hover:border-pine hover:text-pine transition">
-            📷 Foto einlesen
+            <span data-tk="recipe.edit.readPhoto">📷 Read photo</span>
             <input id="recipePhotoInput" type="file" accept="image/*" multiple class="hidden" />
           </label>
           <label class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 cursor-pointer hover:border-pine hover:text-pine transition">
-            📄 PDF einlesen
+            <span data-tk="recipe.edit.readPdf">📄 Read PDF</span>
             <input id="recipePdfInput" type="file" accept="application/pdf,.pdf" class="hidden" />
           </label>
         </div>
-        <button type="button" id="analyzeBtn" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition">Text analysieren</button>
+        <button data-tk="recipe.edit.analyse" type="button" id="analyzeBtn" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition">Analyse text</button>
       </div>
       <label id="recipeKiToggleWrap" class="items-start gap-2 mt-3 rounded-xl border border-ink/10 bg-ink/[0.03] px-3 py-2 cursor-pointer" style="display:none">
         <input id="recipeKiToggle" type="checkbox" class="w-4 h-4 mt-0.5 shrink-0" style="accent-color: var(--c-pine);" />
         <span class="min-w-0">
-          <span class="block text-xs font-medium">✨ Mit KI auswerten (Google Gemini)</span>
-          <span class="block text-[11px] text-ink/50 mt-0.5">Text, Fotos, PDF oder Rezept-Link gehen über den pinn.-Server an Google und kommen sortiert zurück – mit Portionen, Zeiten, Kategorien und Küchengeräten, auch übersetzt. Ohne Haken oder ohne Verbindung wertet pinn. wie bisher selbst auf dem Gerät aus.</span>
+          <span data-tk="recipe.edit.useAi" class="block text-xs font-medium">✨ Analyse with AI (Google Gemini)</span>
+          <span data-tk="recipe.edit.aiHint" class="block text-[11px] text-ink/50 mt-0.5">Text, photos, PDF or recipe link go via the pinn. server to Google and come back sorted – with servings, times, categories and kitchen appliances, also translated. Without the tick or without a connection, pinn. analyses on the device itself as before.</span>
         </span>
       </label>
       <p id="recipePdfInfo" class="hidden text-xs text-ink/50 mt-2"></p>
     </div>
 
     <div id="structuredFieldsBlock" class="hidden">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Titel</label>
+      <label data-tk="common.title" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Title</label>
       <input id="rTitle" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
         <div>
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Zutaten (eine Zeile je Zutat)</label>
+          <label data-tk="recipe.edit.ingredientsLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Ingredients (one line per ingredient)</label>
           <textarea id="rIngredients" rows="6" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm resize-none"></textarea>
-          <p id="ingredientsQuantityWarning" class="hidden text-xs text-red-500 mt-1">Mindestens eine Zutat hat keine Mengenangabe.</p>
+          <p data-tk="recipe.edit.noQuantity" id="ingredientsQuantityWarning" class="hidden text-xs text-red-500 mt-1">At least one ingredient has no quantity.</p>
         </div>
         <div>
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Zubereitung (eine Zeile je Schritt)</label>
+          <label data-tk="recipe.edit.methodLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Method (one line per step)</label>
           <textarea id="rSteps" rows="6" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm resize-none"></textarea>
         </div>
       </div>
 
       <div class="grid grid-cols-3 gap-3 mb-4">
         <div>
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Portionen</label>
+          <label data-tk="recipe.servings" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Servings</label>
           <div class="flex items-center gap-1.5">
-            <button type="button" id="rServingsMinusBtn" class="w-8 h-8 rounded-full border border-ink/20 text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center shrink-0" aria-label="Weniger Portionen">–</button>
+            <button data-tk-attr="aria-label:recipe.fewerServings" type="button" id="rServingsMinusBtn" class="w-8 h-8 rounded-full border border-ink/20 text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center shrink-0" aria-label="Fewer servings">–</button>
             <span id="rServingsValue" class="text-sm font-medium flex-1 text-center">2</span>
-            <button type="button" id="rServingsPlusBtn" class="w-8 h-8 rounded-full border border-ink/20 text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center shrink-0" aria-label="Mehr Portionen">+</button>
+            <button data-tk-attr="aria-label:recipe.moreServings" type="button" id="rServingsPlusBtn" class="w-8 h-8 rounded-full border border-ink/20 text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center shrink-0" aria-label="More servings">+</button>
           </div>
         </div>
         <div>
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Vorb. (Min.)</label>
+          <label data-tk="recipe.edit.prepMin" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Prep (min.)</label>
           <input id="rPrep" type="number" min="0" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm" />
         </div>
         <div>
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Zub. (Min.)</label>
+          <label data-tk="recipe.edit.cookMin" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Cook (min.)</label>
           <input id="rCook" type="number" min="0" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm" />
         </div>
       </div>
 
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Kategorien</label>
+      <label data-tk="cat.categories" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Categories</label>
       <div id="rCategoriesPicker" class="flex gap-2 flex-wrap mb-5"></div>
 
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Küchengeräte</label>
+      <label data-tk="recipe.tools" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Kitchen appliances</label>
       <div id="rToolsPicker" class="flex gap-2 flex-wrap mb-5"></div>
 
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Bild</label>
+      <label data-tk="recipe.edit.image" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Image</label>
       <div class="flex items-center gap-3 mb-5">
-        <div id="rImagePreview" class="w-16 h-16 rounded-lg bg-ink/5 grid place-items-center overflow-hidden shrink-0 text-ink/30 text-[10px] text-center leading-tight" style="position: relative;">Kein Bild</div>
+        <div data-tk="recipe.noImage" id="rImagePreview" class="w-16 h-16 rounded-lg bg-ink/5 grid place-items-center overflow-hidden shrink-0 text-ink/30 text-[10px] text-center leading-tight" style="position: relative;">No image</div>
         <div class="flex flex-col gap-1.5">
           <label class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs cursor-pointer hover:border-pine hover:text-pine transition text-center">
-            Aus Mediathek wählen
+            <span data-tk="recipe.edit.fromLibrary">Choose from library</span>
             <input id="rImageFile" type="file" accept="image/*" class="hidden" />
           </label>
           <label class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs cursor-pointer hover:border-pine hover:text-pine transition text-center">
-            Foto aufnehmen
+            <span data-tk="recipe.edit.takePhoto">Take photo</span>
             <input id="rImageCapture" type="file" accept="image/*" capture="environment" class="hidden" />
           </label>
-          <button type="button" id="rRemoveImage" class="px-3 py-1.5 rounded-lg text-xs text-ink/40 hover:text-red-500 transition">Bild entfernen</button>
+          <button data-tk="recipe.edit.removeImage" type="button" id="rRemoveImage" class="px-3 py-1.5 rounded-lg text-xs text-ink/40 hover:text-red-500 transition">Remove image</button>
         </div>
       </div>
       <div id="rImageFrameWrap" class="hidden -mt-2 mb-5">
         <div class="flex items-center justify-between gap-2 mb-1.5">
-          <span class="text-xs text-ink/50">Ausschnitt anpassen</span>
-          <button type="button" id="rImageFrameReset" class="text-xs text-ink/40 hover:text-pine transition">Zurücksetzen</button>
+          <span data-tk="recipe.edit.crop" class="text-xs text-ink/50">Adjust crop</span>
+          <button data-tk="common.reset" type="button" id="rImageFrameReset" class="text-xs text-ink/40 hover:text-pine transition">Reset</button>
         </div>
-        <div id="rImageFrame" tabindex="0" class="rif-frame w-full aspect-video rounded-xl overflow-hidden bg-ink/5" aria-label="Bildausschnitt: ziehen zum Verschieben, Pfeiltasten verschieben, Plus und Minus zoomen">
+        <div data-tk-attr="aria-label:recipe.edit.cropLabel" id="rImageFrame" tabindex="0" class="rif-frame w-full aspect-video rounded-xl overflow-hidden bg-ink/5" aria-label="Image crop: drag to move, arrow keys move, plus and minus zoom">
           <img id="rImageFrameImg" class="w-full h-full object-cover" alt="" draggable="false" />
           <div class="rif-grid" aria-hidden="true"></div>
         </div>
         <div class="flex items-center gap-3 mt-2">
           <span class="text-xs text-ink/40" aria-hidden="true">−</span>
-          <input id="rImageFrameZoom" type="range" min="100" max="400" step="1" value="100" class="flex-1" style="accent-color: var(--c-pine);" aria-label="Zoom" />
+          <input data-tk-attr="aria-label:recipe.edit.zoom" id="rImageFrameZoom" type="range" min="100" max="400" step="1" value="100" class="flex-1" style="accent-color: var(--c-pine);" aria-label="Zoom" />
           <span class="text-sm text-ink/40" aria-hidden="true">+</span>
         </div>
-        <p class="text-[11px] text-ink/40 mt-1">Bild ziehen zum Verschieben, mit dem Regler oder zwei Fingern zoomen – der Rahmen bleibt immer ganz ausgefüllt. So erscheint das Bild oben im Rezept und in den Vorschaubildern.</p>
+        <p data-tk="recipe.edit.cropHint" class="text-[11px] text-ink/40 mt-1">Drag the image to move it, zoom with the slider or two fingers – the frame always stays completely filled. This is how the image appears at the top of the recipe and in the thumbnails.</p>
         <input type="hidden" id="rImageFrameX" value="50" />
         <input type="hidden" id="rImageFrameY" value="50" />
       </div>
@@ -4796,15 +4796,15 @@
       <label class="flex items-start gap-3 rounded-xl border border-ink/10 bg-ink/[0.03] px-3 py-2.5 mb-5 cursor-pointer">
         <input id="rPublic" type="checkbox" class="w-4 h-4 mt-0.5 shrink-0" style="accent-color: var(--c-pine);" />
         <span class="min-w-0">
-          <span class="block text-sm font-medium">🌍 Rezept öffentlich teilen</span>
-          <span class="block text-xs text-ink/50 mt-0.5">Alle Familien auf diesem pinn.-Server können das Rezept sehen und in ihre eigenen Rezepte übernehmen. Haken entfernen = nicht mehr geteilt.</span>
+          <span data-tk="recipe.edit.sharePublic" class="block text-sm font-medium">🌍 Share recipe publicly</span>
+          <span data-tk="recipe.edit.sharePublicHint" class="block text-xs text-ink/50 mt-0.5">All families on this pinn. server can see the recipe and copy it into their own recipes. Untick = no longer shared.</span>
         </span>
       </label>
     </div>
 
     <div class="flex justify-end gap-2">
-      <button type="button" id="cancelRecipe" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-      <button type="button" id="saveRecipeBtn" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Rezept speichern</button>
+      <button data-tk="common.cancel" type="button" id="cancelRecipe" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+      <button data-tk="recipe.edit.save" type="button" id="saveRecipeBtn" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Save recipe</button>
     </div>
   </div>
 </div>
@@ -4852,7 +4852,7 @@ let lastIcsSync = null;
    because such web apps often don't reload their content by themselves)
    ========================================================== */
 // Current version – comes from src/version.txt (filled in by src/build.js); pb_hooks/pinn-system.js and pinn-wartung.sh read it here
-const APP_VERSION = '1.113.1';
+const APP_VERSION = '1.114.0';
 
 /* ==========================================================
    Settings & account: two columns of equal height (landscape from tablet width)
@@ -4980,110 +4980,110 @@ const APP_VERSION = '1.113.1';
 <!-- App parts under pb_public/js/ (classic scripts without a build step, order matters).
      ausblick.js must come last – it starts the app (bootApp). New file: add its line here and its name
      in pinn-setup.sh – src/build.js fills in the list of the start check (PINN_APP_PARTS) by itself. -->
-<script src="js/grundlagen.js?v=1.113.1"></script>
-<script src="js/popups.js?v=1.113.1"></script>
-<script src="js/verbindung.js?v=1.113.1"></script>
-<script src="js/benutzer.js?v=1.113.1"></script>
-<script src="js/mitteilungen.js?v=1.113.1"></script>
-<script src="js/serverzugriff.js?v=1.113.1"></script>
-<script src="js/tastatur.js?v=1.113.1"></script>
-<script src="js/anmeldemaske.js?v=1.113.1"></script>
-<script src="js/dashboard.js?v=1.113.1"></script>
-<script src="js/dashboardhintergrund.js?v=1.113.1"></script>
-<script src="js/profilauswahl.js?v=1.113.1"></script>
-<script src="js/pineingabe.js?v=1.113.1"></script>
-<script src="js/dashboardsitzung.js?v=1.113.1"></script>
-<script src="js/dashboardkonto.js?v=1.113.1"></script>
-<script src="js/familienverwalten.js?v=1.113.1"></script>
-<script src="js/einrichten.js?v=1.113.1"></script>
-<script src="js/exportieren.js?v=1.113.1"></script>
-<script src="js/hauptadminseite.js?v=1.113.1"></script>
-<script src="js/anmeldung.js?v=1.113.1"></script>
-<script src="js/konto.js?v=1.113.1"></script>
-<script src="js/profilverwaltung.js?v=1.113.1"></script>
-<script src="js/zustand.js?v=1.113.1"></script>
-<script src="js/bedienzustand.js?v=1.113.1"></script>
-<script src="js/rezeptbilder.js?v=1.113.1"></script>
-<script src="js/zusammenfuehren.js?v=1.113.1"></script>
-<script src="js/speichern.js?v=1.113.1"></script>
-<script src="js/design.js?v=1.113.1"></script>
-<script src="js/sprache.js?v=1.113.1"></script>
-<script src="js/uebersicht.js?v=1.113.1"></script>
-<script src="js/familienkachel.js?v=1.113.1"></script>
-<script src="js/wobistdu.js?v=1.113.1"></script>
-<script src="js/geburtstagsfeier.js?v=1.113.1"></script>
-<script src="js/wetterkachel.js?v=1.113.1"></script>
-<script src="js/geburtstage.js?v=1.113.1"></script>
-<script src="js/uebersichteinstellungen.js?v=1.113.1"></script>
-<script src="js/familiensync.js?v=1.113.1"></script>
-<script src="js/bereiche.js?v=1.113.1"></script>
-<script src="js/kalenderquellen.js?v=1.113.1"></script>
-<script src="js/icsparser.js?v=1.113.1"></script>
-<script src="js/zeitleiste.js?v=1.113.1"></script>
-<script src="js/termindetails.js?v=1.113.1"></script>
-<script src="js/kalenderdatei.js?v=1.113.1"></script>
-<script src="js/wetter.js?v=1.113.1"></script>
-<script src="js/wohnort.js?v=1.113.1"></script>
-<script src="js/feiertage.js?v=1.113.1"></script>
-<script src="js/muellkalender.js?v=1.113.1"></script>
-<script src="js/mitglieder.js?v=1.113.1"></script>
-<script src="js/profilbild.js?v=1.113.1"></script>
-<script src="js/mitglied.js?v=1.113.1"></script>
-<script src="js/kinderseite.js?v=1.113.1"></script>
-<script src="js/kinderroutine.js?v=1.113.1"></script>
-<script src="js/sterne.js?v=1.113.1"></script>
-<script src="js/kalenderansicht.js?v=1.113.1"></script>
-<script src="js/essenplanen.js?v=1.113.1"></script>
-<script src="js/rezeptparser.js?v=1.113.1"></script>
-<script src="js/rezeptdialog.js?v=1.113.1"></script>
-<script src="js/rezeptbild.js?v=1.113.1"></script>
-<script src="js/rezeptmengen.js?v=1.113.1"></script>
-<script src="js/einkauf.js?v=1.113.1"></script>
-<script src="js/einkaufslisten.js?v=1.113.1"></script>
-<script src="js/einkaufseingabe.js?v=1.113.1"></script>
-<script src="js/rezepte.js?v=1.113.1"></script>
-<script src="js/offline.js?v=1.113.1"></script>
-<script src="js/aufgabenextras.js?v=1.113.1"></script>
-<script src="js/appbadge.js?v=1.113.1"></script>
-<script src="js/reisen.js?v=1.113.1"></script>
-<script src="js/aufgabendaten.js?v=1.113.1"></script>
-<script src="js/haushalt.js?v=1.113.1"></script>
-<script src="js/reihum.js?v=1.113.1"></script>
-<script src="js/aufgaben.js?v=1.113.1"></script>
-<script src="js/smarthome.js?v=1.113.1"></script>
-<script src="js/sprachsteuerung.js?v=1.113.1"></script>
-<script src="js/termine.js?v=1.113.1"></script>
-<script src="js/ansichten.js?v=1.113.1"></script>
-<script src="js/versionspruefung.js?v=1.113.1"></script>
-<script src="js/sicherungen.js?v=1.113.1"></script>
-<script src="js/geraete.js?v=1.113.1"></script>
-<script src="js/fehlerprotokoll.js?v=1.113.1"></script>
-<script src="js/versionslog.js?v=1.113.1"></script>
-<script src="js/einstellungen.js?v=1.113.1"></script>
-<script src="js/kalenderkonto.js?v=1.113.1"></script>
-<script src="js/finanzen.js?v=1.113.1"></script>
-<script src="js/kassen.js?v=1.113.1"></script>
-<script src="js/vorrat.js?v=1.113.1"></script>
-<script src="js/vorrat2.js?v=1.113.1"></script>
-<script src="js/sparen.js?v=1.113.1"></script>
-<script src="js/vertraege.js?v=1.113.1"></script>
-<script src="js/fahrzeuge.js?v=1.113.1"></script>
-<script src="js/zuhause.js?v=1.113.1"></script>
-<script src="js/dokumente.js?v=1.113.1"></script>
-<script src="js/pdflesen.js?v=1.113.1"></script>
-<script src="js/appstart.js?v=1.113.1"></script>
-<script src="js/pinnwand.js?v=1.113.1"></script>
-<script src="js/listen.js?v=1.113.1"></script>
-<script src="js/familie.js?v=1.113.1"></script>
-<script src="js/hinweise.js?v=1.113.1"></script>
-<script src="js/ausblick.js?v=1.113.1"></script>
+<script src="js/grundlagen.js?v=1.114.0"></script>
+<script src="js/popups.js?v=1.114.0"></script>
+<script src="js/verbindung.js?v=1.114.0"></script>
+<script src="js/benutzer.js?v=1.114.0"></script>
+<script src="js/mitteilungen.js?v=1.114.0"></script>
+<script src="js/serverzugriff.js?v=1.114.0"></script>
+<script src="js/tastatur.js?v=1.114.0"></script>
+<script src="js/anmeldemaske.js?v=1.114.0"></script>
+<script src="js/dashboard.js?v=1.114.0"></script>
+<script src="js/dashboardhintergrund.js?v=1.114.0"></script>
+<script src="js/profilauswahl.js?v=1.114.0"></script>
+<script src="js/pineingabe.js?v=1.114.0"></script>
+<script src="js/dashboardsitzung.js?v=1.114.0"></script>
+<script src="js/dashboardkonto.js?v=1.114.0"></script>
+<script src="js/familienverwalten.js?v=1.114.0"></script>
+<script src="js/einrichten.js?v=1.114.0"></script>
+<script src="js/exportieren.js?v=1.114.0"></script>
+<script src="js/hauptadminseite.js?v=1.114.0"></script>
+<script src="js/anmeldung.js?v=1.114.0"></script>
+<script src="js/konto.js?v=1.114.0"></script>
+<script src="js/profilverwaltung.js?v=1.114.0"></script>
+<script src="js/zustand.js?v=1.114.0"></script>
+<script src="js/bedienzustand.js?v=1.114.0"></script>
+<script src="js/rezeptbilder.js?v=1.114.0"></script>
+<script src="js/zusammenfuehren.js?v=1.114.0"></script>
+<script src="js/speichern.js?v=1.114.0"></script>
+<script src="js/design.js?v=1.114.0"></script>
+<script src="js/sprache.js?v=1.114.0"></script>
+<script src="js/uebersicht.js?v=1.114.0"></script>
+<script src="js/familienkachel.js?v=1.114.0"></script>
+<script src="js/wobistdu.js?v=1.114.0"></script>
+<script src="js/geburtstagsfeier.js?v=1.114.0"></script>
+<script src="js/wetterkachel.js?v=1.114.0"></script>
+<script src="js/geburtstage.js?v=1.114.0"></script>
+<script src="js/uebersichteinstellungen.js?v=1.114.0"></script>
+<script src="js/familiensync.js?v=1.114.0"></script>
+<script src="js/bereiche.js?v=1.114.0"></script>
+<script src="js/kalenderquellen.js?v=1.114.0"></script>
+<script src="js/icsparser.js?v=1.114.0"></script>
+<script src="js/zeitleiste.js?v=1.114.0"></script>
+<script src="js/termindetails.js?v=1.114.0"></script>
+<script src="js/kalenderdatei.js?v=1.114.0"></script>
+<script src="js/wetter.js?v=1.114.0"></script>
+<script src="js/wohnort.js?v=1.114.0"></script>
+<script src="js/feiertage.js?v=1.114.0"></script>
+<script src="js/muellkalender.js?v=1.114.0"></script>
+<script src="js/mitglieder.js?v=1.114.0"></script>
+<script src="js/profilbild.js?v=1.114.0"></script>
+<script src="js/mitglied.js?v=1.114.0"></script>
+<script src="js/kinderseite.js?v=1.114.0"></script>
+<script src="js/kinderroutine.js?v=1.114.0"></script>
+<script src="js/sterne.js?v=1.114.0"></script>
+<script src="js/kalenderansicht.js?v=1.114.0"></script>
+<script src="js/essenplanen.js?v=1.114.0"></script>
+<script src="js/rezeptparser.js?v=1.114.0"></script>
+<script src="js/rezeptdialog.js?v=1.114.0"></script>
+<script src="js/rezeptbild.js?v=1.114.0"></script>
+<script src="js/rezeptmengen.js?v=1.114.0"></script>
+<script src="js/einkauf.js?v=1.114.0"></script>
+<script src="js/einkaufslisten.js?v=1.114.0"></script>
+<script src="js/einkaufseingabe.js?v=1.114.0"></script>
+<script src="js/rezepte.js?v=1.114.0"></script>
+<script src="js/offline.js?v=1.114.0"></script>
+<script src="js/aufgabenextras.js?v=1.114.0"></script>
+<script src="js/appbadge.js?v=1.114.0"></script>
+<script src="js/reisen.js?v=1.114.0"></script>
+<script src="js/aufgabendaten.js?v=1.114.0"></script>
+<script src="js/haushalt.js?v=1.114.0"></script>
+<script src="js/reihum.js?v=1.114.0"></script>
+<script src="js/aufgaben.js?v=1.114.0"></script>
+<script src="js/smarthome.js?v=1.114.0"></script>
+<script src="js/sprachsteuerung.js?v=1.114.0"></script>
+<script src="js/termine.js?v=1.114.0"></script>
+<script src="js/ansichten.js?v=1.114.0"></script>
+<script src="js/versionspruefung.js?v=1.114.0"></script>
+<script src="js/sicherungen.js?v=1.114.0"></script>
+<script src="js/geraete.js?v=1.114.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.114.0"></script>
+<script src="js/versionslog.js?v=1.114.0"></script>
+<script src="js/einstellungen.js?v=1.114.0"></script>
+<script src="js/kalenderkonto.js?v=1.114.0"></script>
+<script src="js/finanzen.js?v=1.114.0"></script>
+<script src="js/kassen.js?v=1.114.0"></script>
+<script src="js/vorrat.js?v=1.114.0"></script>
+<script src="js/vorrat2.js?v=1.114.0"></script>
+<script src="js/sparen.js?v=1.114.0"></script>
+<script src="js/vertraege.js?v=1.114.0"></script>
+<script src="js/fahrzeuge.js?v=1.114.0"></script>
+<script src="js/zuhause.js?v=1.114.0"></script>
+<script src="js/dokumente.js?v=1.114.0"></script>
+<script src="js/pdflesen.js?v=1.114.0"></script>
+<script src="js/appstart.js?v=1.114.0"></script>
+<script src="js/pinnwand.js?v=1.114.0"></script>
+<script src="js/listen.js?v=1.114.0"></script>
+<script src="js/familie.js?v=1.114.0"></script>
+<script src="js/hinweise.js?v=1.114.0"></script>
+<script src="js/ausblick.js?v=1.114.0"></script>
 
 <!-- ==========================================================
      Changelog as a terminal (Settings → System → Versions-Log)
      Classes "fixed inset-0": the global keyboard logic fits the overlay to the visible
      area automatically, so the input line is never hidden by the keyboard.
      ========================================================== -->
-<link rel="stylesheet" href="css/terminal.css?v=1.113.1">
+<link rel="stylesheet" href="css/terminal.css?v=1.114.0">
 
 <div id="changelogTerminal" class="hidden fixed inset-0" data-no-term role="dialog" aria-modal="true" aria-label="Versions-Log">
   <div class="term-window" id="changelogTermWindow">
@@ -5111,6 +5111,6 @@ const APP_VERSION = '1.113.1';
     </div>
   </div>
 </div>
-<link rel="stylesheet" href="css/glocke.css?v=1.113.1">
+<link rel="stylesheet" href="css/glocke.css?v=1.114.0">
 </body>
 </html>

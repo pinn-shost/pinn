@@ -2,112 +2,112 @@
 <div id="recipeModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto fade-in">
     <div class="flex items-center justify-between gap-3 mb-4">
-      <h3 id="recipeModalTitle" class="font-serif text-lg">Neues Rezept</h3>
+      <h3 data-tk="recipe.edit.newTitle" id="recipeModalTitle" class="font-serif text-lg">New recipe</h3>
       <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs shrink-0">
-        <button type="button" data-mode="freitext" class="recipe-input-mode-btn px-3 py-1 rounded-full transition">Freitext</button>
-        <button type="button" data-mode="strukturiert" class="recipe-input-mode-btn px-3 py-1 rounded-full transition">Strukturiert</button>
+        <button data-tk="recipe.edit.freeText" type="button" data-mode="freitext" class="recipe-input-mode-btn px-3 py-1 rounded-full transition">Free text</button>
+        <button data-tk="recipe.edit.structured" type="button" data-mode="strukturiert" class="recipe-input-mode-btn px-3 py-1 rounded-full transition">Structured</button>
       </div>
     </div>
 
     <div id="freitextBlock" class="mb-4">
-      <p class="text-xs text-ink/50 mb-2">Rezepttext z. B. aus der Notizen-App als Freitext einfügen, ein Foto (Kochbuch, Zeitschrift, Rezeptkarte) oder ein Rezept als PDF einlesen – Titel, Zutaten und Zubereitung werden automatisch erkannt und in die passenden Felder sortiert. <span id="recipeKiHint" style="display:none">Mit KI geht auch ein Link zu einer Rezeptseite.</span> Danach geht's direkt in die Detailansicht zum Prüfen und Ergänzen.</p>
+      <p class="text-xs text-ink/50 mb-2"><span data-tk="recipe.edit.importHint">Paste recipe text e.g. from the Notes app as free text, read a photo (cookbook, magazine, recipe card) or a recipe as PDF – title, ingredients and method are recognised automatically and sorted into the right fields.</span> <span data-tk="recipe.edit.importAiHint" id="recipeKiHint" style="display:none">With AI, a link to a recipe page also works.</span> <span data-tk="recipe.edit.importAfter">Afterwards you go straight to the detail view to check and complete.</span></p>
       <textarea id="importText" rows="7"
         class="w-full rounded-xl border border-ink/15 bg-white p-3 text-sm leading-relaxed resize-none focus:border-pine"
-        placeholder="Pasta Carbonara&#10;Zutaten:&#10;- 200g Spaghetti&#10;- 2 Eier&#10;- 100g Speck&#10;Zubereitung:&#10;1. Wasser kochen und Spaghetti darin garen.&#10;2. Speck anbraten, Eier verquirlen, alles vermischen."></textarea>
+        data-tk-attr="placeholder:recipe.edit.importPlaceholder" placeholder="Pasta carbonara&#10;Ingredients:&#10;- 200g spaghetti&#10;- 2 eggs&#10;- 100g bacon&#10;Method:&#10;1. Boil water and cook the spaghetti in it.&#10;2. Fry the bacon, whisk the eggs, mix everything."></textarea>
       <div class="flex items-center justify-between gap-2 mt-2">
         <div class="flex items-center gap-2 flex-wrap">
           <label class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 cursor-pointer hover:border-pine hover:text-pine transition">
-            📷 Foto einlesen
+            <span data-tk="recipe.edit.readPhoto">📷 Read photo</span>
             <input id="recipePhotoInput" type="file" accept="image/*" multiple class="hidden" />
           </label>
           <label class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 cursor-pointer hover:border-pine hover:text-pine transition">
-            📄 PDF einlesen
+            <span data-tk="recipe.edit.readPdf">📄 Read PDF</span>
             <input id="recipePdfInput" type="file" accept="application/pdf,.pdf" class="hidden" />
           </label>
         </div>
-        <button type="button" id="analyzeBtn" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition">Text analysieren</button>
+        <button data-tk="recipe.edit.analyse" type="button" id="analyzeBtn" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition">Analyse text</button>
       </div>
       <label id="recipeKiToggleWrap" class="items-start gap-2 mt-3 rounded-xl border border-ink/10 bg-ink/[0.03] px-3 py-2 cursor-pointer" style="display:none">
         <input id="recipeKiToggle" type="checkbox" class="w-4 h-4 mt-0.5 shrink-0" style="accent-color: var(--c-pine);" />
         <span class="min-w-0">
-          <span class="block text-xs font-medium">✨ Mit KI auswerten (Google Gemini)</span>
-          <span class="block text-[11px] text-ink/50 mt-0.5">Text, Fotos, PDF oder Rezept-Link gehen über den pinn.-Server an Google und kommen sortiert zurück – mit Portionen, Zeiten, Kategorien und Küchengeräten, auch übersetzt. Ohne Haken oder ohne Verbindung wertet pinn. wie bisher selbst auf dem Gerät aus.</span>
+          <span data-tk="recipe.edit.useAi" class="block text-xs font-medium">✨ Analyse with AI (Google Gemini)</span>
+          <span data-tk="recipe.edit.aiHint" class="block text-[11px] text-ink/50 mt-0.5">Text, photos, PDF or recipe link go via the pinn. server to Google and come back sorted – with servings, times, categories and kitchen appliances, also translated. Without the tick or without a connection, pinn. analyses on the device itself as before.</span>
         </span>
       </label>
       <p id="recipePdfInfo" class="hidden text-xs text-ink/50 mt-2"></p>
     </div>
 
     <div id="structuredFieldsBlock" class="hidden">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Titel</label>
+      <label data-tk="common.title" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Title</label>
       <input id="rTitle" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
         <div>
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Zutaten (eine Zeile je Zutat)</label>
+          <label data-tk="recipe.edit.ingredientsLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Ingredients (one line per ingredient)</label>
           <textarea id="rIngredients" rows="6" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm resize-none"></textarea>
-          <p id="ingredientsQuantityWarning" class="hidden text-xs text-red-500 mt-1">Mindestens eine Zutat hat keine Mengenangabe.</p>
+          <p data-tk="recipe.edit.noQuantity" id="ingredientsQuantityWarning" class="hidden text-xs text-red-500 mt-1">At least one ingredient has no quantity.</p>
         </div>
         <div>
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Zubereitung (eine Zeile je Schritt)</label>
+          <label data-tk="recipe.edit.methodLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Method (one line per step)</label>
           <textarea id="rSteps" rows="6" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm resize-none"></textarea>
         </div>
       </div>
 
       <div class="grid grid-cols-3 gap-3 mb-4">
         <div>
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Portionen</label>
+          <label data-tk="recipe.servings" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Servings</label>
           <div class="flex items-center gap-1.5">
-            <button type="button" id="rServingsMinusBtn" class="w-8 h-8 rounded-full border border-ink/20 text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center shrink-0" aria-label="Weniger Portionen">–</button>
+            <button data-tk-attr="aria-label:recipe.fewerServings" type="button" id="rServingsMinusBtn" class="w-8 h-8 rounded-full border border-ink/20 text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center shrink-0" aria-label="Fewer servings">–</button>
             <span id="rServingsValue" class="text-sm font-medium flex-1 text-center">2</span>
-            <button type="button" id="rServingsPlusBtn" class="w-8 h-8 rounded-full border border-ink/20 text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center shrink-0" aria-label="Mehr Portionen">+</button>
+            <button data-tk-attr="aria-label:recipe.moreServings" type="button" id="rServingsPlusBtn" class="w-8 h-8 rounded-full border border-ink/20 text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center shrink-0" aria-label="More servings">+</button>
           </div>
         </div>
         <div>
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Vorb. (Min.)</label>
+          <label data-tk="recipe.edit.prepMin" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Prep (min.)</label>
           <input id="rPrep" type="number" min="0" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm" />
         </div>
         <div>
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Zub. (Min.)</label>
+          <label data-tk="recipe.edit.cookMin" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Cook (min.)</label>
           <input id="rCook" type="number" min="0" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm" />
         </div>
       </div>
 
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Kategorien</label>
+      <label data-tk="cat.categories" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Categories</label>
       <div id="rCategoriesPicker" class="flex gap-2 flex-wrap mb-5"></div>
 
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Küchengeräte</label>
+      <label data-tk="recipe.tools" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Kitchen appliances</label>
       <div id="rToolsPicker" class="flex gap-2 flex-wrap mb-5"></div>
 
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Bild</label>
+      <label data-tk="recipe.edit.image" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Image</label>
       <div class="flex items-center gap-3 mb-5">
-        <div id="rImagePreview" class="w-16 h-16 rounded-lg bg-ink/5 grid place-items-center overflow-hidden shrink-0 text-ink/30 text-[10px] text-center leading-tight" style="position: relative;">Kein Bild</div>
+        <div data-tk="recipe.noImage" id="rImagePreview" class="w-16 h-16 rounded-lg bg-ink/5 grid place-items-center overflow-hidden shrink-0 text-ink/30 text-[10px] text-center leading-tight" style="position: relative;">No image</div>
         <div class="flex flex-col gap-1.5">
           <label class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs cursor-pointer hover:border-pine hover:text-pine transition text-center">
-            Aus Mediathek wählen
+            <span data-tk="recipe.edit.fromLibrary">Choose from library</span>
             <input id="rImageFile" type="file" accept="image/*" class="hidden" />
           </label>
           <label class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs cursor-pointer hover:border-pine hover:text-pine transition text-center">
-            Foto aufnehmen
+            <span data-tk="recipe.edit.takePhoto">Take photo</span>
             <input id="rImageCapture" type="file" accept="image/*" capture="environment" class="hidden" />
           </label>
-          <button type="button" id="rRemoveImage" class="px-3 py-1.5 rounded-lg text-xs text-ink/40 hover:text-red-500 transition">Bild entfernen</button>
+          <button data-tk="recipe.edit.removeImage" type="button" id="rRemoveImage" class="px-3 py-1.5 rounded-lg text-xs text-ink/40 hover:text-red-500 transition">Remove image</button>
         </div>
       </div>
       <div id="rImageFrameWrap" class="hidden -mt-2 mb-5">
         <div class="flex items-center justify-between gap-2 mb-1.5">
-          <span class="text-xs text-ink/50">Ausschnitt anpassen</span>
-          <button type="button" id="rImageFrameReset" class="text-xs text-ink/40 hover:text-pine transition">Zurücksetzen</button>
+          <span data-tk="recipe.edit.crop" class="text-xs text-ink/50">Adjust crop</span>
+          <button data-tk="common.reset" type="button" id="rImageFrameReset" class="text-xs text-ink/40 hover:text-pine transition">Reset</button>
         </div>
-        <div id="rImageFrame" tabindex="0" class="rif-frame w-full aspect-video rounded-xl overflow-hidden bg-ink/5" aria-label="Bildausschnitt: ziehen zum Verschieben, Pfeiltasten verschieben, Plus und Minus zoomen">
+        <div data-tk-attr="aria-label:recipe.edit.cropLabel" id="rImageFrame" tabindex="0" class="rif-frame w-full aspect-video rounded-xl overflow-hidden bg-ink/5" aria-label="Image crop: drag to move, arrow keys move, plus and minus zoom">
           <img id="rImageFrameImg" class="w-full h-full object-cover" alt="" draggable="false" />
           <div class="rif-grid" aria-hidden="true"></div>
         </div>
         <div class="flex items-center gap-3 mt-2">
           <span class="text-xs text-ink/40" aria-hidden="true">−</span>
-          <input id="rImageFrameZoom" type="range" min="100" max="400" step="1" value="100" class="flex-1" style="accent-color: var(--c-pine);" aria-label="Zoom" />
+          <input data-tk-attr="aria-label:recipe.edit.zoom" id="rImageFrameZoom" type="range" min="100" max="400" step="1" value="100" class="flex-1" style="accent-color: var(--c-pine);" aria-label="Zoom" />
           <span class="text-sm text-ink/40" aria-hidden="true">+</span>
         </div>
-        <p class="text-[11px] text-ink/40 mt-1">Bild ziehen zum Verschieben, mit dem Regler oder zwei Fingern zoomen – der Rahmen bleibt immer ganz ausgefüllt. So erscheint das Bild oben im Rezept und in den Vorschaubildern.</p>
+        <p data-tk="recipe.edit.cropHint" class="text-[11px] text-ink/40 mt-1">Drag the image to move it, zoom with the slider or two fingers – the frame always stays completely filled. This is how the image appears at the top of the recipe and in the thumbnails.</p>
         <input type="hidden" id="rImageFrameX" value="50" />
         <input type="hidden" id="rImageFrameY" value="50" />
       </div>
@@ -115,15 +115,15 @@
       <label class="flex items-start gap-3 rounded-xl border border-ink/10 bg-ink/[0.03] px-3 py-2.5 mb-5 cursor-pointer">
         <input id="rPublic" type="checkbox" class="w-4 h-4 mt-0.5 shrink-0" style="accent-color: var(--c-pine);" />
         <span class="min-w-0">
-          <span class="block text-sm font-medium">🌍 Rezept öffentlich teilen</span>
-          <span class="block text-xs text-ink/50 mt-0.5">Alle Familien auf diesem pinn.-Server können das Rezept sehen und in ihre eigenen Rezepte übernehmen. Haken entfernen = nicht mehr geteilt.</span>
+          <span data-tk="recipe.edit.sharePublic" class="block text-sm font-medium">🌍 Share recipe publicly</span>
+          <span data-tk="recipe.edit.sharePublicHint" class="block text-xs text-ink/50 mt-0.5">All families on this pinn. server can see the recipe and copy it into their own recipes. Untick = no longer shared.</span>
         </span>
       </label>
     </div>
 
     <div class="flex justify-end gap-2">
-      <button type="button" id="cancelRecipe" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-      <button type="button" id="saveRecipeBtn" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Rezept speichern</button>
+      <button data-tk="common.cancel" type="button" id="cancelRecipe" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+      <button data-tk="recipe.edit.save" type="button" id="saveRecipeBtn" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Save recipe</button>
     </div>
   </div>
 </div>

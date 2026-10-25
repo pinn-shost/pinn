@@ -1746,7 +1746,7 @@ function finBudgetToastSuffix(iso) {
   const today = finTodayIso();
   if (iso < range.startIso || iso > range.endIso || iso > today) return '';
   const rest = budget - finStats(range).total;
-  return rest >= 0 ? ` Noch ${fmtEur(rest)} im Budget.` : ` ${fmtEur(-rest)} über Budget.`;
+  return ' ' + (rest >= 0 ? tk('fin.toast.budgetLeft', { amount: fmtEur(rest) }) : tk('fin.toast.budgetOver', { amount: fmtEur(-rest) }));
 }
 
 // Marks this file as loaded – the start check in index.html reports missing app files

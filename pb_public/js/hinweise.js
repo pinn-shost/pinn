@@ -998,10 +998,10 @@ function ladenModalRender() {
   document.getElementById('shoppingListAddrAdd').classList.toggle('hidden', !has || st.adding || full);
   document.getElementById('shoppingListAddrOpts').classList.toggle('hidden', !has);
   const input = document.getElementById('shoppingListAddrInput');
-  input.placeholder = has ? 'Weitere Filiale suchen, z. B. Rewe Bahnhofstraße' : 'z. B. Rewe Hauptstraße Musterstadt';
+  input.placeholder = has ? tk('shop.addr.searchMore') : tk('shop.list.addressPlaceholder');
   chosen.innerHTML = st.filialen.map((f, i) => `<div class="ntl-chosen">
       <span class="text-lg leading-none">📍</span>
-      <span class="min-w-0 flex-1 text-sm leading-snug">${n > 1 ? `<span class="block text-[10px] uppercase tracking-wide text-ink/40">Filiale ${i + 1}</span>` : ''}${escapeHtml(f.adresse || 'Lage auf der Karte festgelegt')}</span>
+      <span class="min-w-0 flex-1 text-sm leading-snug">${n > 1 ? `<span class="block text-[10px] uppercase tracking-wide text-ink/40">${escapeHtml(tk('shop.addr.branch', { n: i + 1 }))}</span>` : ''}${escapeHtml(f.adresse || tk('shop.addr.mapOnly'))}</span>
       <button type="button" class="fz-mini-btn" data-ladenact="remove" data-ladenidx="${i}" aria-label="Adresse entfernen">✕</button>
     </div>`).join('');
 }
@@ -1009,7 +1009,7 @@ async function ladenSearch(q) {
   const box = document.getElementById('shoppingListAddrResults');
   const seq = ++ladenSearchSeq;
   if (String(q || '').trim().length < 3) { box.innerHTML = ''; return; }
-  box.innerHTML = '<p class="text-xs text-ink/40 px-1">Suche …</p>';
+  box.innerHTML = '<p class="text-xs text-ink/40 px-1">' + escapeHtml(tk('shop.addr.searching')) + '</p>';
   try {
     const res = await apiFetch('/api/pinn/ortung/suche?q=' + encodeURIComponent(q.trim()));
     const body = await res.json().catch(() => ({}));
@@ -1017,10 +1017,10 @@ async function ladenSearch(q) {
     const list = Array.isArray(body.treffer) ? body.treffer : [];
     box.innerHTML = list.length
       ? list.map((t, i) => `<button type="button" class="fz-pick-row text-xs" data-ladenhit="${i}">📍 <span class="min-w-0 flex-1">${escapeHtml(ntShortAddr(t.name))}</span></button>`).join('')
-      : `<p class="text-xs text-ink/40 px-1">${escapeHtml(res.status === 404 ? 'Die Adresssuche ist auf dem Server noch nicht eingespielt.' : (body.error || 'Nichts gefunden – Straße und Ort probieren.'))}</p>`;
+      : `<p class="text-xs text-ink/40 px-1">${escapeHtml(res.status === 404 ? tk('shop.addr.noHook') : (body.error || tk('shop.addr.nothing')))}</p>`;
     box._hits = list;
   } catch (e) {
-    if (seq === ladenSearchSeq) box.innerHTML = '<p class="text-xs text-red-600 px-1">Suche nicht möglich – keine Verbindung.</p>';
+    if (seq === ladenSearchSeq) box.innerHTML = '<p class="text-xs text-red-600 px-1">' + escapeHtml(tk('shop.addr.offline')) + '</p>';
   }
 }
 function ladenModalSave(listId, name) {
@@ -1033,7 +1033,7 @@ function ladenModalSave(listId, name) {
     return;
   }
   const shop = {
-    laden: listId, name: String(name || 'Laden').slice(0, 40),
+    laden: listId, name: String(name || tk('shop.list.shop')).slice(0, 40),
     filialen: st.filialen.slice(0, LADEN_MAX_FILIALEN).map(f => ({ id: f.id, lat: f.lat, lon: f.lon, adresse: f.adresse || '' })),
     verweil: Number(document.getElementById('shoppingListAddrStay').value) || 10,
     abhaken: document.getElementById('shoppingListAddrDone').checked,
@@ -1055,7 +1055,7 @@ function ladenModalSave(listId, name) {
   }
   ladenQueueSave(listId, shop);
   const n = shop.filialen.length;
-  finShowToast((n > 1 ? n + ' Adressen gespeichert' : 'Adresse gespeichert') + ' – der Laden steht jetzt auch unter Familie → Orte.');
+  finShowToast(tk('shop.addr.saved', { n }));
 }
 (function wireLadenModal() {
   const input = document.getElementById('shoppingListAddrInput');
@@ -1084,7 +1084,7 @@ function ladenModalSave(listId, name) {
     const st = ladenModalState;
     // Do not add the same branch twice
     if (st.filialen.some(f => Math.abs(f.lat - lat) < 0.0002 && Math.abs(f.lon - lon) < 0.0002)) {
-      finShowToast('Diese Adresse ist schon eingetragen.', true);
+      finShowToast(tk('shop.addr.duplicate'), true);
       return;
     }
     if (st.filialen.length >= LADEN_MAX_FILIALEN) return;

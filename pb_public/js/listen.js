@@ -43,23 +43,26 @@ let gsRenderTimer = null;
    In templates: '@' at the start = once for each person, '{t}' = number of days.
    ========================================================== */
 const LIST_TYPES = [
-  { id: 'einkauf', icon: '🛒', label: 'Einkauf' },
-  { id: 'pack', icon: '🧳', label: 'Packen', one: 'Packliste', sections: true, members: true, progress: true, toShop: true, date: 'Abreise', doneWord: 'gepackt', hideWord: 'Gepacktes ausblenden',
-    intro: 'Packlisten für Urlaub, Krankenhaus, Geburt oder Party – aus Vorlagen erstellt und pro Person aufgeteilt. Was fehlt, landet mit einem Tipp auf der Einkaufsliste.' },
-  { id: 'gift', icon: '🎁', label: 'Geschenke', one: 'Geschenkeliste', gift: true, date: 'Anlass am', privateDefault: true,
-    intro: 'Geschenkideen sammeln, Preise im Blick behalten und den Stand festhalten: Idee → besorgt → verpackt → verschenkt. Auf Wunsch nur für dich sichtbar.' },
-  { id: 'wish', icon: '⭐', label: 'Wünsche', one: 'Wunschzettel', wish: true,
-    intro: 'Wunschzettel für jedes Familienmitglied. Die anderen reservieren, was sie besorgen – wer sich etwas wünscht, sieht das nicht.' },
-  { id: 'check', icon: '☑️', label: 'Checklisten', one: 'Checkliste', sections: true, progress: true, toShop: true, date: 'Stichtag', doneWord: 'erledigt', hideWord: 'Erledigtes ausblenden',
-    intro: 'Checklisten für größere Vorhaben – Umzug, Baby-Erstausstattung, Schulstart oder der Haus-Check vor dem Urlaub.' },
-  { id: 'idea', icon: '💡', label: 'Ideen', one: 'Ideenliste', sections: true, progress: true, doneWord: 'erledigt', hideWord: 'Erledigtes ausblenden',
-    intro: 'Ideen sammeln: Ausflugsziele, Filme, Bücher, Restaurants – und abhaken, was ihr schon gemacht habt.' },
+  { id: 'einkauf', icon: '🛒', get label() { return tk('lists.type.shop'); }, get one() { return tk('lists.type.shop'); }, get newOne() { return tk('shop.list.newTitle'); } },
+  { id: 'pack', icon: '🧳', get label() { return tk('lists.type.pack'); }, get one() { return tk('lists.type.packOne'); }, get newOne() { return tk('lists.type.packNew'); }, sections: true, members: true, progress: true, toShop: true,
+    get date() { return tk('lists.type.packDate'); }, get doneWord() { return tk('lists.type.packDone'); }, get hideWord() { return tk('lists.type.packHide'); },
+    get intro() { return tk('lists.type.packIntro'); } },
+  { id: 'gift', icon: '🎁', get label() { return tk('lists.type.gift'); }, get one() { return tk('lists.type.giftOne'); }, get newOne() { return tk('lists.type.giftNew'); }, gift: true, get date() { return tk('lists.type.giftDate'); }, privateDefault: true,
+    get intro() { return tk('lists.type.giftIntro'); } },
+  { id: 'wish', icon: '⭐', get label() { return tk('lists.type.wish'); }, get one() { return tk('lists.type.wishOne'); }, get newOne() { return tk('lists.type.wishNew'); }, wish: true,
+    get intro() { return tk('lists.type.wishIntro'); } },
+  { id: 'check', icon: '☑️', get label() { return tk('lists.type.check'); }, get one() { return tk('lists.type.checkOne'); }, get newOne() { return tk('lists.type.checkNew'); }, sections: true, progress: true, toShop: true,
+    get date() { return tk('lists.type.checkDate'); }, get doneWord() { return tk('lists.type.done'); }, get hideWord() { return tk('lists.type.hideDone'); },
+    get intro() { return tk('lists.type.checkIntro'); } },
+  { id: 'idea', icon: '💡', get label() { return tk('lists.type.idea'); }, get one() { return tk('lists.type.ideaOne'); }, get newOne() { return tk('lists.type.ideaNew'); }, sections: true, progress: true,
+    get doneWord() { return tk('lists.type.done'); }, get hideWord() { return tk('lists.type.hideDone'); },
+    get intro() { return tk('lists.type.ideaIntro'); } },
 ];
 const LS_GIFT_STATUS = [
-  { id: 'idee', icon: '💡', label: 'Idee' },
-  { id: 'besorgt', icon: '🛍️', label: 'Besorgt' },
-  { id: 'verpackt', icon: '🎀', label: 'Verpackt' },
-  { id: 'verschenkt', icon: '✅', label: 'Verschenkt' },
+  { id: 'idee', icon: '💡', get label() { return tk('lists.gift.idea'); } },
+  { id: 'besorgt', icon: '🛍️', get label() { return tk('lists.gift.got'); } },
+  { id: 'verpackt', icon: '🎀', get label() { return tk('lists.gift.wrapped'); } },
+  { id: 'verschenkt', icon: '✅', get label() { return tk('lists.gift.given'); } },
 ];
 const LS_ICONS = {
   pack: ['🧳', '🏖️', '⛷️', '🏙️', '⛺', '🏥', '👶', '🎉', '🎈', '👜', '🥾', '🏊', '💼', '🚗', '✈️', '🚆', '🐾', '🏝️', '⛵'],
@@ -70,144 +73,147 @@ const LS_ICONS = {
 };
 const LS_PALETTE = ['#3B7EA1', '#2A9D8F', '#D9822B', '#9C4DCC', '#C0567A', '#5E8C31', '#B5543C', '#4A6FA5', '#D4A017', '#546E7A'];
 
+// Built-in templates hold text keys ('@' + key = once for each person); own templates hold the text itself
+function lsP(key) { return '@' + key; }
+function lsTplText(s, vals) { s = String(s || ''); return /^lists\.t\./.test(s) && window.PINN_I18N && PINN_I18N.has(s) ? tk(s, vals) : s; }
 // Recurring building blocks of the templates
-const LS_T_DOCS = ['Personalausweise / Reisepässe', 'Krankenversicherungskarten', 'Auslandskrankenversicherung', 'Buchungsbestätigungen & Tickets', 'Führerschein & Fahrzeugschein', 'Bargeld & Karten', 'Impfpässe'];
-const LS_T_HYGIENE = ['Zahnbürsten & Zahnpasta', 'Duschgel & Shampoo', 'Deo', 'Haarbürste / Kamm', 'Rasierzeug', 'Kosmetik & Pflege', 'Hygieneartikel', 'Nagelschere & Pinzette', 'Taschentücher'];
-const LS_T_MEDS = ['Persönliche Medikamente', 'Pflaster & Verbandszeug', 'Schmerz- & Fiebermittel', 'Mittel gegen Durchfall & Übelkeit', 'Desinfektionsmittel', 'Fieberthermometer', 'Zeckenzange'];
-const LS_T_TECH = ['Handys & Ladekabel', 'Powerbank', 'Kopfhörer', 'Reiseadapter', 'Kamera', 'Bücher / E-Reader'];
-const LS_T_HOUSE = ['Fenster & Balkontür schließen', 'Herd, Bügeleisen & Kaffeemaschine aus', 'Stecker ziehen', 'Kühlschrank leeren', 'Müll rausbringen', 'Heizung runterdrehen', 'Pflanzen versorgen lassen', 'Briefkasten leeren lassen', 'Haustür abschließen'];
+const LS_T_DOCS = ['lists.t.i.idCardsPassports', 'lists.t.i.healthInsuranceCards', 'lists.t.i.travelHealthInsurance', 'lists.t.i.bookingConfirmationsTickets', 'lists.t.i.drivingLicenceRegistration', 'lists.t.i.cashCards', 'lists.t.i.vaccinationCards'];
+const LS_T_HYGIENE = ['lists.t.i.toothbrushesToothpaste', 'lists.t.i.showerGelShampoo', 'lists.t.i.deodorant', 'lists.t.i.hairbrushComb', 'lists.t.i.shavingKit', 'lists.t.i.cosmeticsCare', 'lists.t.i.hygieneProducts', 'lists.t.i.nailScissorsTweezers', 'lists.t.i.tissues'];
+const LS_T_MEDS = ['lists.t.i.personalMedication', 'lists.t.i.plastersBandages', 'lists.t.i.painFeverMedication', 'lists.t.i.remediesDiarrhoeaNausea', 'lists.t.i.disinfectant', 'lists.t.i.thermometer', 'lists.t.i.tickTweezers'];
+const LS_T_TECH = ['lists.t.i.phonesChargingCables', 'lists.t.i.powerBank', 'lists.t.i.headphones', 'lists.t.i.travelAdapter', 'lists.t.i.camera', 'lists.t.i.booksReader'];
+const LS_T_HOUSE = ['lists.t.i.closeWindowsBalconyDoor', 'lists.t.i.stoveIronCoffeeMachine', 'lists.t.i.unplugAppliances', 'lists.t.i.emptyFridge', 'lists.t.i.takeOutBins', 'lists.t.i.turnDownHeating', 'lists.t.i.arrangePlantCare', 'lists.t.i.arrangeMailboxEmptying', 'lists.t.i.lockFrontDoor'];
 
 const LIST_TEMPLATES = {
   pack: [
-    { id: 'sommer', icon: '🏖️', name: 'Sommerurlaub', days: true, sections: [
-      ['Dokumente & Geld', LS_T_DOCS],
-      ['Kleidung', ['@Unterwäsche ({t}×)', '@Socken ({t}×)', '@T-Shirts / Tops', '@Kurze Hosen / Röcke', '@Lange Hose', '@Pullover / Strickjacke', '@Schlafanzug', '@Badesachen', '@Sonnenhut / Kappe', '@Sandalen / Badeschuhe', '@Bequeme Schuhe', '@Regenjacke']],
-      ['Hygiene', [...LS_T_HYGIENE, 'Sonnencreme', 'After-Sun']],
-      ['Reiseapotheke', [...LS_T_MEDS, 'Insektenschutz']],
-      ['Technik', LS_T_TECH],
-      ['Strand & Freizeit', ['Strandtücher', 'Sonnenbrillen', 'Strandspielzeug', 'Schwimmflügel', 'Sonnenschirm / Strandmuschel', 'Spiele für unterwegs']],
-      ['Für unterwegs', ['Snacks & Getränke', 'Kuscheltiere', 'Reisekissen', 'Feuchttücher', 'Spucktüten']],
-      ['Vor der Abfahrt', LS_T_HOUSE],
+    { id: 'sommer', icon: '🏖️', name: 'lists.t.n.summerHoliday', days: true, sections: [
+      ['lists.t.s.documentsMoney', LS_T_DOCS],
+      ['lists.t.s.clothing', [lsP('lists.t.i.underwear'), lsP('lists.t.i.socks'), lsP('lists.t.i.tShirtsTops'), lsP('lists.t.i.shortsSkirts'), lsP('lists.t.i.trousers'), lsP('lists.t.i.jumperCardigan'), lsP('lists.t.i.pyjamas'), lsP('lists.t.i.swimwear'), lsP('lists.t.i.sunHatCap'), lsP('lists.t.i.sandalsPoolShoes'), lsP('lists.t.i.comfortableShoes'), lsP('lists.t.i.rainJacket')]],
+      ['lists.t.s.hygiene', [...LS_T_HYGIENE, 'lists.t.i.sunscreen', 'lists.t.i.afterSun']],
+      ['lists.t.s.travelFirstAidKit', [...LS_T_MEDS, 'lists.t.i.insectRepellent']],
+      ['lists.t.s.tech', LS_T_TECH],
+      ['lists.t.s.beachLeisure', ['lists.t.i.beachTowels', 'lists.t.i.sunglasses', 'lists.t.i.beachToys', 'lists.t.i.armbands', 'lists.t.i.parasolBeachTent', 'lists.t.i.gamesGo']],
+      ['lists.t.s.go', ['lists.t.i.snacksDrinks', 'lists.t.i.cuddlyToys', 'lists.t.i.travelPillow', 'lists.t.i.wetWipes', 'lists.t.i.sickBags']],
+      ['lists.t.s.beforeDeparture', LS_T_HOUSE],
     ] },
-    { id: 'winter', icon: '⛷️', name: 'Winter- & Skiurlaub', days: true, sections: [
-      ['Dokumente & Geld', LS_T_DOCS],
-      ['Kleidung', ['@Skijacke', '@Skihose', '@Funktionsunterwäsche', '@Skisocken ({t}×)', '@Fleece / Pullover', '@Mütze', '@Handschuhe', '@Schal / Buff', '@Winterstiefel', '@Hausschuhe', '@Unterwäsche ({t}×)', '@Freizeithose', '@Schlafanzug']],
-      ['Ausrüstung', ['Ski / Snowboards', 'Skischuhe', 'Helme', 'Skibrillen', 'Skipässe', 'Schlitten', 'Tagesrucksack']],
-      ['Hygiene', [...LS_T_HYGIENE, 'Sonnencreme LSF 50', 'Lippenpflege mit LSF', 'Fettcreme']],
-      ['Reiseapotheke', LS_T_MEDS],
-      ['Technik', LS_T_TECH],
-      ['Vor der Abfahrt', LS_T_HOUSE],
+    { id: 'winter', icon: '⛷️', name: 'lists.t.n.winterSkiHoliday', days: true, sections: [
+      ['lists.t.s.documentsMoney', LS_T_DOCS],
+      ['lists.t.s.clothing', [lsP('lists.t.i.skiJacket'), lsP('lists.t.i.skiTrousers'), lsP('lists.t.i.thermalUnderwear'), lsP('lists.t.i.skiSocks'), lsP('lists.t.i.fleeceJumper'), lsP('lists.t.i.hat'), lsP('lists.t.i.gloves'), lsP('lists.t.i.scarfBuff'), lsP('lists.t.i.winterBoots'), lsP('lists.t.i.slippers'), lsP('lists.t.i.underwear'), lsP('lists.t.i.casualTrousers'), lsP('lists.t.i.pyjamas')]],
+      ['lists.t.s.equipment', ['lists.t.i.skisSnowboards', 'lists.t.i.skiBoots', 'lists.t.i.helmets', 'lists.t.i.skiGoggles', 'lists.t.i.skiPasses', 'lists.t.i.sledge', 'lists.t.i.daypack']],
+      ['lists.t.s.hygiene', [...LS_T_HYGIENE, 'lists.t.i.sunscreenSpf50', 'lists.t.i.lipBalmSpf', 'lists.t.i.richCream']],
+      ['lists.t.s.travelFirstAidKit', LS_T_MEDS],
+      ['lists.t.s.tech', LS_T_TECH],
+      ['lists.t.s.beforeDeparture', LS_T_HOUSE],
     ] },
-    { id: 'kurztrip', icon: '🏙️', name: 'Wochenende / Städtetrip', days: true, sections: [
-      ['Dokumente & Geld', ['Personalausweise', 'Krankenversicherungskarten', 'Tickets & Buchung', 'Bargeld & Karten']],
-      ['Kleidung', ['@Unterwäsche ({t}×)', '@Socken ({t}×)', '@T-Shirts', '@Hose', '@Pullover', '@Jacke', '@Bequeme Schuhe', '@Schlafanzug']],
-      ['Hygiene', ['Zahnbürsten & Zahnpasta', 'Duschgel & Shampoo', 'Deo', 'Haarbürste', 'Persönliche Medikamente']],
-      ['Sonstiges', ['Handys & Ladekabel', 'Powerbank', 'Tagesrucksack', 'Trinkflasche', 'Regenschirm', 'Stadtplan / App']],
+    { id: 'kurztrip', icon: '🏙️', name: 'lists.t.n.weekendCityTrip', days: true, sections: [
+      ['lists.t.s.documentsMoney', ['lists.t.i.idCards', 'lists.t.i.healthInsuranceCards', 'lists.t.i.ticketsBooking', 'lists.t.i.cashCards']],
+      ['lists.t.s.clothing', [lsP('lists.t.i.underwear'), lsP('lists.t.i.socks'), lsP('lists.t.i.tShirts'), lsP('lists.t.i.trousers2'), lsP('lists.t.i.jumper'), lsP('lists.t.i.jacket'), lsP('lists.t.i.comfortableShoes'), lsP('lists.t.i.pyjamas')]],
+      ['lists.t.s.hygiene', ['lists.t.i.toothbrushesToothpaste', 'lists.t.i.showerGelShampoo', 'lists.t.i.deodorant', 'lists.t.i.hairbrush', 'lists.t.i.personalMedication']],
+      ['lists.t.s.other', ['lists.t.i.phonesChargingCables', 'lists.t.i.powerBank', 'lists.t.i.daypack', 'lists.t.i.waterBottle', 'lists.t.i.umbrella', 'lists.t.i.cityMapApp']],
     ] },
-    { id: 'camping', icon: '⛺', name: 'Camping', days: true, sections: [
-      ['Schlafen', ['Zelt', 'Schlafsäcke', 'Isomatten / Luftmatratzen', 'Kopfkissen', 'Luftpumpe']],
-      ['Küche', ['Campingkocher & Gas', 'Topf & Pfanne', 'Geschirr & Besteck', 'Becher', 'Schneidebrett & Messer', 'Spülmittel & Schwamm', 'Kühlbox', 'Wasserkanister', 'Feuerzeug', 'Müllbeutel']],
-      ['Ausrüstung', ['Campingstühle', 'Campingtisch', 'Stirnlampen', 'Laterne', 'Taschenmesser', 'Heringe & Hammer', 'Wäscheleine & Klammern', 'Panzertape']],
-      ['Kleidung', ['@Wetterfeste Jacke', '@Warmer Pullover', '@Unterwäsche ({t}×)', '@Socken ({t}×)', '@T-Shirts', '@Lange Hose', '@Wanderschuhe', '@Badeschlappen', '@Mütze für abends', '@Schlafanzug']],
-      ['Hygiene', ['Kulturbeutel', 'Handtücher', 'Toilettenpapier', 'Sonnencreme', 'Mückenschutz']],
-      ['Apotheke', LS_T_MEDS],
+    { id: 'camping', icon: '⛺', name: 'lists.t.n.camping', days: true, sections: [
+      ['lists.t.s.sleeping', ['lists.t.i.tent', 'lists.t.i.sleepingBags', 'lists.t.i.sleepingMatsAirMattresses', 'lists.t.i.pillows', 'lists.t.i.airPump']],
+      ['lists.t.s.kitchen', ['lists.t.i.campingStoveGas', 'lists.t.i.potPan', 'lists.t.i.dishesCutlery', 'lists.t.i.cups', 'lists.t.i.choppingBoardKnife', 'lists.t.i.washingUpLiquidSponge', 'lists.t.i.coolBox', 'lists.t.i.waterCanister', 'lists.t.i.lighter', 'lists.t.i.binBags']],
+      ['lists.t.s.equipment', ['lists.t.i.campingChairs', 'lists.t.i.campingTable', 'lists.t.i.headTorches', 'lists.t.i.lantern', 'lists.t.i.pocketKnife', 'lists.t.i.tentPegsMallet', 'lists.t.i.washingLinePegs', 'lists.t.i.ductTape']],
+      ['lists.t.s.clothing', [lsP('lists.t.i.weatherproofJacket'), lsP('lists.t.i.warmJumper'), lsP('lists.t.i.underwear'), lsP('lists.t.i.socks'), lsP('lists.t.i.tShirts'), lsP('lists.t.i.trousers'), lsP('lists.t.i.hikingBoots'), lsP('lists.t.i.flipFlops'), lsP('lists.t.i.hatEvening'), lsP('lists.t.i.pyjamas')]],
+      ['lists.t.s.hygiene', ['lists.t.i.toiletryBag', 'lists.t.i.towels', 'lists.t.i.toiletPaper', 'lists.t.i.sunscreen', 'lists.t.i.insectRepellent2']],
+      ['lists.t.s.pharmacy', LS_T_MEDS],
     ] },
-    { id: 'haustier', icon: '🐾', name: 'Urlaub mit Haustier', days: true, sections: [
-      ['Futter & Wasser', ['Futter (für alle Tage + Reserve)', 'Leckerlis', 'Futter- & Wassernapf', 'Trinkflasche für unterwegs']],
-      ['Unterwegs', ['Leine & Halsband / Geschirr', 'Kotbeutel', 'Transportbox / Sicherheitsgurt', 'Decke / Körbchen', 'Lieblingsspielzeug', 'Handtuch']],
-      ['Gesundheit & Papiere', ['EU-Heimtierausweis', 'Impfnachweis (Tollwut)', 'Medikamente', 'Floh- & Zeckenschutz', 'Zeckenzange', 'Adresse Tierarzt am Urlaubsort']],
-      ['Kleidung', ['@Unterwäsche ({t}×)', '@Socken ({t}×)', '@T-Shirts', '@Hose', '@Pullover', '@Wetterfeste Jacke', '@Feste Schuhe', '@Schlafanzug']],
-      ['Vor der Abfahrt', LS_T_HOUSE],
+    { id: 'haustier', icon: '🐾', name: 'lists.t.n.holidayPet', days: true, sections: [
+      ['lists.t.s.foodWater', ['lists.t.i.foodAllDaysSpare', 'lists.t.i.treats', 'lists.t.i.foodWaterBowl', 'lists.t.i.travelWaterBottle']],
+      ['lists.t.s.go2', ['lists.t.i.leadCollarHarness', 'lists.t.i.poopBags', 'lists.t.i.petCarrierSafetyBelt', 'lists.t.i.blanketBasket', 'lists.t.i.favouriteToy', 'lists.t.i.towel']],
+      ['lists.t.s.healthPapers', ['lists.t.i.euPetPassport', 'lists.t.i.vaccinationRecordRabies', 'lists.t.i.medication', 'lists.t.i.fleaTickProtection', 'lists.t.i.tickTweezers', 'lists.t.i.vetAddressDestination']],
+      ['lists.t.s.clothing', [lsP('lists.t.i.underwear'), lsP('lists.t.i.socks'), lsP('lists.t.i.tShirts'), lsP('lists.t.i.trousers2'), lsP('lists.t.i.jumper'), lsP('lists.t.i.weatherproofJacket'), lsP('lists.t.i.sturdyShoes'), lsP('lists.t.i.pyjamas')]],
+      ['lists.t.s.beforeDeparture', LS_T_HOUSE],
     ] },
-    { id: 'krankenhaus', icon: '🏥', name: 'Krankenhaus', sections: [
-      ['Unterlagen', ['Versichertenkarte', 'Personalausweis', 'Einweisungsschein', 'Medikamentenplan', 'Befunde & Arztbriefe', 'Allergie- & Impfpass', 'Notfallkontakte']],
-      ['Kleidung', ['Schlafanzüge / Nachthemden', 'Bademantel', 'Rutschfeste Hausschuhe', 'Unterwäsche', 'Socken', 'Bequeme Kleidung / Trainingsanzug']],
-      ['Pflege', ['Zahnbürste & Zahnpasta', 'Duschgel & Shampoo', 'Deo', 'Haarbürste', 'Handtücher', 'Brille / Kontaktlinsen', 'Lippenpflege', 'Ohrstöpsel & Schlafmaske']],
-      ['Medikamente', ['Eigene Medikamente (Originalpackung)', 'Hilfsmittel (Hörgerät, Gehstütze …)']],
-      ['Beschäftigung', ['Handy & langes Ladekabel', 'Kopfhörer', 'Bücher / Zeitschriften', 'Tablet', 'Kleingeld']],
+    { id: 'krankenhaus', icon: '🏥', name: 'lists.t.n.hospital', sections: [
+      ['lists.t.s.documents', ['lists.t.i.healthInsuranceCard', 'lists.t.i.idCard', 'lists.t.i.hospitalReferral', 'lists.t.i.medicationPlan', 'lists.t.i.findingsDoctorSLetters', 'lists.t.i.allergyVaccinationCard', 'lists.t.i.emergencyContacts']],
+      ['lists.t.s.clothing', ['lists.t.i.pyjamasNightgowns', 'lists.t.i.bathrobe', 'lists.t.i.nonSlipSlippers', 'lists.t.i.underwear2', 'lists.t.i.socks2', 'lists.t.i.comfortableClothesTracksuit']],
+      ['lists.t.s.care', ['lists.t.i.toothbrushToothpaste', 'lists.t.i.showerGelShampoo', 'lists.t.i.deodorant', 'lists.t.i.hairbrush', 'lists.t.i.towels', 'lists.t.i.glassesContactLenses', 'lists.t.i.lipBalm', 'lists.t.i.earplugsSleepMask']],
+      ['lists.t.s.medication', ['lists.t.i.ownMedicationOriginalPackaging', 'lists.t.i.aidsHearingAidWalking']],
+      ['lists.t.s.activities', ['lists.t.i.phoneLongChargingCable', 'lists.t.i.headphones', 'lists.t.i.booksMagazines', 'lists.t.i.tablet', 'lists.t.i.change']],
     ] },
-    { id: 'geburt', icon: '👶', name: 'Kliniktasche zur Geburt', sections: [
-      ['Unterlagen', ['Mutterpass', 'Personalausweise', 'Versichertenkarte', 'Geburtsurkunden der Eltern / Familienstammbuch', 'Heiratsurkunde bzw. Vaterschaftsanerkennung', 'Klinikunterlagen']],
-      ['Für die Geburt', ['Langes, bequemes Shirt / Nachthemd', 'Warme Socken', 'Bademantel', 'Hausschuhe', 'Haargummis', 'Lippenpflege', 'Snacks & Traubenzucker', 'Trinkflasche mit Strohhalm', 'Musik & Kopfhörer', 'Handy & langes Ladekabel']],
-      ['Fürs Wochenbett', ['Still-BHs', 'Stilleinlagen', 'Bequeme Unterhosen / Netzhöschen', 'Wochenbetteinlagen', 'Bequeme Kleidung', 'Schlafanzüge zum Stillen', 'Brustwarzensalbe', 'Kulturbeutel', 'Handtücher']],
-      ['Fürs Baby', ['Babyschale fürs Auto', 'Bodys (Gr. 50/56)', 'Strampler', 'Mützchen', 'Söckchen', 'Jäckchen', 'Spucktücher', 'Decke']],
-      ['Für die Begleitung', ['Snacks & Getränke', 'Wechselshirt', 'Kleingeld für Parkautomat', 'Kamera', 'Ladekabel']],
+    { id: 'geburt', icon: '👶', name: 'lists.t.n.hospitalBagBirth', sections: [
+      ['lists.t.s.documents', ['lists.t.i.maternityRecord', 'lists.t.i.idCards', 'lists.t.i.healthInsuranceCard', 'lists.t.i.parentsBirthCertificatesFamily', 'lists.t.i.marriageCertificateAcknowledgementPaternity', 'lists.t.i.hospitalDocuments']],
+      ['lists.t.s.birth', ['lists.t.i.longComfortableShirtNightgown', 'lists.t.i.warmSocks', 'lists.t.i.bathrobe', 'lists.t.i.slippers', 'lists.t.i.hairTies', 'lists.t.i.lipBalm', 'lists.t.i.snacksGlucose', 'lists.t.i.drinkingBottleStraw', 'lists.t.i.musicHeadphones', 'lists.t.i.phoneLongChargingCable']],
+      ['lists.t.s.postpartumPeriod', ['lists.t.i.nursingBras', 'lists.t.i.nursingPads', 'lists.t.i.comfortableUnderpantsMeshPanties', 'lists.t.i.maternityPads', 'lists.t.i.comfortableClothes', 'lists.t.i.nursingPyjamas', 'lists.t.i.nippleCream', 'lists.t.i.toiletryBag', 'lists.t.i.towels']],
+      ['lists.t.s.baby', ['lists.t.i.babyCarSeat', 'lists.t.i.bodysuitsSize5056', 'lists.t.i.rompers', 'lists.t.i.babyHats', 'lists.t.i.babySocks', 'lists.t.i.babyJackets', 'lists.t.i.burpCloths', 'lists.t.i.blanket']],
+      ['lists.t.s.companion', ['lists.t.i.snacksDrinks', 'lists.t.i.spareShirt', 'lists.t.i.changeParkingMeter', 'lists.t.i.camera', 'lists.t.i.chargingCable']],
     ] },
-    { id: 'party', icon: '🎉', name: 'Party / Feier', sections: [
-      ['Planung', ['Gästeliste', 'Einladungen verschicken', 'Musik / Playlist']],
-      ['Essen & Trinken', ['Getränke', 'Eiswürfel', 'Snacks & Knabberzeug', 'Kuchen / Torte', 'Grillgut / Buffet', 'Brot & Dips']],
-      ['Geschirr', ['Teller', 'Gläser / Becher', 'Besteck', 'Servietten', 'Tischdecken', 'Grillbesteck']],
-      ['Deko', ['Luftballons', 'Girlanden', 'Lichterkette', 'Kerzen', 'Tischdeko']],
-      ['Sonstiges', ['Müllbeutel', 'Flaschenöffner', 'Feuerzeug', 'Kühlbox', 'Mehrfachstecker', 'Lautsprecher', 'Spiele']],
+    { id: 'party', icon: '🎉', name: 'lists.t.n.partyCelebration', sections: [
+      ['lists.t.s.planning', ['lists.t.i.guestList', 'lists.t.i.sendInvitations', 'lists.t.i.musicPlaylist']],
+      ['lists.t.s.foodDrink', ['lists.t.i.drinks', 'lists.t.i.iceCubes', 'lists.t.i.snacksNibbles', 'lists.t.i.cakeGateau', 'lists.t.i.barbecueFoodBuffet', 'lists.t.i.breadDips']],
+      ['lists.t.s.dishes', ['lists.t.i.plates', 'lists.t.i.glassesCups', 'lists.t.i.cutlery', 'lists.t.i.napkins', 'lists.t.i.tablecloths', 'lists.t.i.barbecueTools']],
+      ['lists.t.s.decorations', ['lists.t.i.balloons', 'lists.t.i.garlands', 'lists.t.i.fairyLights', 'lists.t.i.candles', 'lists.t.i.tableDecorations']],
+      ['lists.t.s.other', ['lists.t.i.binBags', 'lists.t.i.bottleOpener', 'lists.t.i.lighter', 'lists.t.i.coolBox', 'lists.t.i.powerStrip', 'lists.t.i.speaker', 'lists.t.i.games']],
     ] },
-    { id: 'kindergeburtstag', icon: '🎈', name: 'Kindergeburtstag', sections: [
-      ['Vorbereitung', ['Einladungen', 'Kuchen / Muffins', 'Geburtstagskerzen', 'Deko', 'Mitgebsel', 'Spiele & kleine Preise', 'Schatzsuche vorbereiten']],
-      ['Essen', ['Würstchen / Pizza', 'Rohkost', 'Saft & Wasser', 'Süßigkeiten']],
-      ['Sonstiges', ['Pappteller & Becher', 'Servietten', 'Kamera', 'Pflaster']],
+    { id: 'kindergeburtstag', icon: '🎈', name: 'lists.t.n.childrenSBirthday', sections: [
+      ['lists.t.s.preparation', ['lists.t.i.invitations', 'lists.t.i.cakeMuffins', 'lists.t.i.birthdayCandles', 'lists.t.i.decorations', 'lists.t.i.partyBags', 'lists.t.i.gamesSmallPrizes', 'lists.t.i.prepareTreasureHunt']],
+      ['lists.t.s.meals', ['lists.t.i.sausagesPizza', 'lists.t.i.cruditS', 'lists.t.i.juiceWater', 'lists.t.i.sweets']],
+      ['lists.t.s.other', ['lists.t.i.paperPlatesCups', 'lists.t.i.napkins', 'lists.t.i.camera', 'lists.t.i.plasters']],
     ] },
-    { id: 'wickeltasche', icon: '👜', name: 'Wickeltasche / Ausflug mit Baby', sections: [
-      ['', ['Windeln', 'Feuchttücher', 'Wickelunterlage', 'Wundschutzcreme', 'Wechselkleidung', 'Spucktuch', 'Fläschchen / Milchpulver', 'Snacks', 'Trinkflasche', 'Schnuller', 'Kuscheltier', 'Sonnenhut / Mütze', 'Sonnencreme', 'Müllbeutel', 'Pflaster']],
+    { id: 'wickeltasche', icon: '👜', name: 'lists.t.n.changingBagTripBaby', sections: [
+      ['', ['lists.t.i.nappies', 'lists.t.i.wetWipes', 'lists.t.i.changingMat', 'lists.t.i.nappyCream', 'lists.t.i.changeClothes', 'lists.t.i.burpCloth', 'lists.t.i.babyBottlesFormula', 'lists.t.i.snacks', 'lists.t.i.waterBottle', 'lists.t.i.dummy', 'lists.t.i.cuddlyToy', 'lists.t.i.sunHatCap2', 'lists.t.i.sunscreen', 'lists.t.i.binBags', 'lists.t.i.plasters']],
     ] },
-    { id: 'wandern', icon: '🥾', name: 'Wandern / Tagesausflug', sections: [
-      ['', ['Rucksack', 'Trinkflaschen', 'Proviant', 'Wanderkarte / App', '@Regenjacke', '@Wanderschuhe', 'Sonnencreme', 'Kopfbedeckung', 'Erste-Hilfe-Set', 'Taschenmesser', 'Powerbank', 'Taschentücher', 'Zeckenzange']],
+    { id: 'wandern', icon: '🥾', name: 'lists.t.n.hikingDayTrip', sections: [
+      ['', ['lists.t.i.backpack', 'lists.t.i.waterBottles', 'lists.t.i.provisions', 'lists.t.i.hikingMapApp', lsP('lists.t.i.rainJacket'), lsP('lists.t.i.hikingBoots'), 'lists.t.i.sunscreen', 'lists.t.i.headwear', 'lists.t.i.firstAidKit', 'lists.t.i.pocketKnife', 'lists.t.i.powerBank', 'lists.t.i.tissues', 'lists.t.i.tickTweezers']],
     ] },
-    { id: 'schwimmbad', icon: '🏊', name: 'Schwimmbad / Badesee', sections: [
-      ['', ['@Badesachen', '@Handtuch', '@Badelatschen', '@Wechselunterwäsche', 'Duschgel & Shampoo', 'Haarbürste', 'Sonnencreme', 'Schwimmflügel', 'Wasserspielzeug', 'Snacks & Getränke', 'Geld / Eintrittskarte', 'Münze für den Spind']],
+    { id: 'schwimmbad', icon: '🏊', name: 'lists.t.n.swimmingPoolLake', sections: [
+      ['', [lsP('lists.t.i.swimwear'), lsP('lists.t.i.towel'), lsP('lists.t.i.flipFlops2'), lsP('lists.t.i.spareUnderwear'), 'lists.t.i.showerGelShampoo', 'lists.t.i.hairbrush', 'lists.t.i.sunscreen', 'lists.t.i.armbands', 'lists.t.i.waterToys', 'lists.t.i.snacksDrinks', 'lists.t.i.moneyTicket', 'lists.t.i.coinLocker']],
     ] },
-    { id: 'geschaeftsreise', icon: '💼', name: 'Geschäftsreise', days: true, sections: [
-      ['Unterlagen', ['Personalausweis', 'Tickets', 'Hotelbuchung', 'Visitenkarten', 'Firmenkreditkarte']],
-      ['Kleidung', ['@Anzug / Kostüm', '@Hemden / Blusen ({t}×)', '@Unterwäsche ({t}×)', '@Socken ({t}×)', '@Schuhe', '@Gürtel', '@Schlafanzug']],
-      ['Technik', ['Laptop & Ladegerät', 'Handy & Ladekabel', 'Adapter', 'Präsentation / USB-Stick', 'Kopfhörer']],
-      ['Hygiene', ['Zahnbürste & Zahnpasta', 'Duschgel', 'Deo', 'Rasierzeug', 'Persönliche Medikamente']],
+    { id: 'geschaeftsreise', icon: '💼', name: 'lists.t.n.businessTrip', days: true, sections: [
+      ['lists.t.s.documents', ['lists.t.i.idCard', 'lists.t.i.tickets', 'lists.t.i.hotelBooking', 'lists.t.i.businessCards', 'lists.t.i.companyCreditCard']],
+      ['lists.t.s.clothing', [lsP('lists.t.i.suitCostume'), lsP('lists.t.i.shirtsBlouses'), lsP('lists.t.i.underwear'), lsP('lists.t.i.socks'), lsP('lists.t.i.shoes'), lsP('lists.t.i.belt'), lsP('lists.t.i.pyjamas')]],
+      ['lists.t.s.tech', ['lists.t.i.laptopCharger', 'lists.t.i.phoneChargingCable', 'lists.t.i.adapter', 'lists.t.i.presentationUsbStick', 'lists.t.i.headphones']],
+      ['lists.t.s.hygiene', ['lists.t.i.toothbrushToothpaste', 'lists.t.i.showerGel', 'lists.t.i.deodorant', 'lists.t.i.shavingKit', 'lists.t.i.personalMedication']],
     ] },
   ],
   gift: [
-    { id: 'weihnachten', icon: '🎄', name: 'Weihnachten {jahr}', date: 'xmas', sections: [['Drumherum', ['Geschenkpapier', 'Geschenkband', 'Weihnachtskarten']]] },
-    { id: 'geburtstag', icon: '🎂', name: 'Geburtstag', sections: [] },
-    { id: 'ostern', icon: '🐣', name: 'Ostern {jahr}', sections: [] },
-    { id: 'muttertag', icon: '💐', name: 'Muttertag', sections: [] },
-    { id: 'vatertag', icon: '👔', name: 'Vatertag', sections: [] },
-    { id: 'hochzeit', icon: '💍', name: 'Hochzeit / Jahrestag', sections: [] },
-    { id: 'einschulung', icon: '🎓', name: 'Einschulung', sections: [] },
-    { id: 'ideen', icon: '💡', name: 'Geschenkideen', sections: [] },
+    { id: 'weihnachten', icon: '🎄', name: 'lists.t.n.christmasYear', date: 'xmas', sections: [['lists.t.s.extras', ['lists.t.i.wrappingPaper', 'lists.t.i.giftRibbon', 'lists.t.i.christmasCards']]] },
+    { id: 'geburtstag', icon: '🎂', name: 'lists.t.n.birthday', sections: [] },
+    { id: 'ostern', icon: '🐣', name: 'lists.t.n.easterYear', sections: [] },
+    { id: 'muttertag', icon: '💐', name: 'lists.t.n.motherSDay', sections: [] },
+    { id: 'vatertag', icon: '👔', name: 'lists.t.n.fatherSDay', sections: [] },
+    { id: 'hochzeit', icon: '💍', name: 'lists.t.n.weddingAnniversary', sections: [] },
+    { id: 'einschulung', icon: '🎓', name: 'lists.t.n.schoolEnrolment', sections: [] },
+    { id: 'ideen', icon: '💡', name: 'lists.t.n.giftIdeas', sections: [] },
   ],
   wish: [
     { id: 'wunsch', icon: '⭐', name: '', sections: [] },
-    { id: 'wunsch_xmas', icon: '🎄', name: '', occasion: 'Weihnachten', sections: [] },
-    { id: 'wunsch_geb', icon: '🎂', name: '', occasion: 'Geburtstag', sections: [] },
+    { id: 'wunsch_xmas', icon: '🎄', name: '', occasion: 'lists.t.n.christmas', sections: [] },
+    { id: 'wunsch_geb', icon: '🎂', name: '', occasion: 'lists.t.n.birthday', sections: [] },
   ],
   check: [
-    { id: 'umzug', icon: '🚚', name: 'Umzug', sections: [
-      ['3 Monate vorher', ['Mietvertrag kündigen', 'Umzugsfirma / Helfer organisieren', 'Urlaub für den Umzugstag beantragen', 'Kita / Schule ummelden']],
-      ['1 Monat vorher', ['Umzugskartons besorgen', 'Nachsendeauftrag stellen', 'Strom, Gas & Internet ummelden', 'Halteverbotszone beantragen', 'Ausmisten & verkaufen']],
-      ['Umzugswoche', ['Kisten packen & beschriften', 'Kühlschrank abtauen', 'Werkzeug & Erste-Hilfe bereitlegen', 'Snacks & Getränke für Helfer']],
-      ['Danach', ['Wohnsitz ummelden (innerhalb von 2 Wochen)', 'Neue Adresse: Bank & Versicherungen', 'Neue Adresse: Arbeitgeber & Ärzte', 'Abos & Verträge umstellen', 'Kfz-Zulassung ändern', 'Rundfunkbeitrag ummelden', 'Wohnungsübergabe & Zählerstände']],
+    { id: 'umzug', icon: '🚚', name: 'lists.t.n.movingHouse', sections: [
+      ['lists.t.s.3MonthsBefore', ['lists.t.i.cancelRentalContract', 'lists.t.i.organiseRemovalCompanyHelpers', 'lists.t.i.requestLeaveMovingDay', 'lists.t.i.reRegisterNurserySchool']],
+      ['lists.t.s.1MonthBefore', ['lists.t.i.getMovingBoxes', 'lists.t.i.setUpMailForwarding', 'lists.t.i.transferElectricityGasInternet', 'lists.t.i.applyParkingRestrictionZone', 'lists.t.i.declutterSell']],
+      ['lists.t.s.movingWeek', ['lists.t.i.packLabelBoxes', 'lists.t.i.defrostFridge', 'lists.t.i.getToolsFirstAid', 'lists.t.i.snacksDrinksHelpers']],
+      ['lists.t.s.afterwards', ['lists.t.i.reRegisterResidenceWithin', 'lists.t.i.newAddressBankInsurance', 'lists.t.i.newAddressEmployerDoctors', 'lists.t.i.convertSubscriptionsContracts', 'lists.t.i.changeVehicleRegistration', 'lists.t.i.transferTvLicenceFee', 'lists.t.i.flatHandoverMeterReadings']],
     ] },
-    { id: 'baby', icon: '🍼', name: 'Baby-Erstausstattung', sections: [
-      ['Schlafen', ['Babybett / Beistellbett', 'Matratze', 'Schlafsäcke', 'Spannbettlaken']],
-      ['Unterwegs', ['Kinderwagen', 'Babyschale', 'Tragetuch / Babytrage', 'Wickeltasche']],
-      ['Wickeln', ['Wickelkommode / -auflage', 'Windeln', 'Feuchttücher / Waschlappen', 'Wundschutzcreme', 'Windeleimer']],
-      ['Kleidung', ['Bodys (Gr. 50/56)', 'Strampler', 'Mützchen', 'Söckchen', 'Jäckchen', 'Schlafanzüge']],
-      ['Pflege & Gesundheit', ['Babybadewanne', 'Kapuzenhandtücher', 'Fieberthermometer', 'Babynagelschere', 'Nasensauger']],
-      ['Stillen & Füttern', ['Stillkissen', 'Spucktücher', 'Fläschchen', 'Flaschenbürste', 'Milchpulver (falls nötig)']],
+    { id: 'baby', icon: '🍼', name: 'lists.t.n.babyEssentials', sections: [
+      ['lists.t.s.sleeping', ['lists.t.i.cotBedsideCrib', 'lists.t.i.mattress', 'lists.t.i.sleepingBags', 'lists.t.i.fittedSheets']],
+      ['lists.t.s.go2', ['lists.t.i.pram', 'lists.t.i.infantCarSeat', 'lists.t.i.babyWrapCarrier', 'lists.t.i.changingBag']],
+      ['lists.t.s.changing', ['lists.t.i.changingTableMat', 'lists.t.i.nappies', 'lists.t.i.wetWipesWashcloths', 'lists.t.i.nappyCream', 'lists.t.i.nappyBin']],
+      ['lists.t.s.clothing', ['lists.t.i.bodysuitsSize5056', 'lists.t.i.rompers', 'lists.t.i.babyHats', 'lists.t.i.babySocks', 'lists.t.i.babyJackets', 'lists.t.i.pyjamas2']],
+      ['lists.t.s.careHealth', ['lists.t.i.babyBath', 'lists.t.i.hoodedTowels', 'lists.t.i.thermometer', 'lists.t.i.babyNailScissors', 'lists.t.i.nasalAspirator']],
+      ['lists.t.s.breastfeedingFeeding', ['lists.t.i.nursingPillow', 'lists.t.i.burpCloths', 'lists.t.i.babyBottles', 'lists.t.i.bottleBrush', 'lists.t.i.formulaIfNeeded']],
     ] },
-    { id: 'schulstart', icon: '🎒', name: 'Schulstart', sections: [
-      ['', ['Schulranzen', 'Federmappe', 'Turnbeutel & Sportzeug', 'Brotdose & Trinkflasche', 'Hefte & Umschläge', 'Ordner / Mappen', 'Bunt- & Bleistifte', 'Kleber & Schere', 'Hausschuhe', 'Namensaufkleber', 'Schultüte', 'Foto am ersten Schultag']],
+    { id: 'schulstart', icon: '🎒', name: 'lists.t.n.startingSchool', sections: [
+      ['', ['lists.t.i.schoolBag', 'lists.t.i.pencilCase', 'lists.t.i.peBagSportsKit', 'lists.t.i.lunchBoxWaterBottle', 'lists.t.i.exerciseBooksCovers', 'lists.t.i.folders', 'lists.t.i.colouredPencilsPencils', 'lists.t.i.glueScissors', 'lists.t.i.slippers', 'lists.t.i.nameLabels', 'lists.t.i.schoolCone', 'lists.t.i.photoFirstDaySchool']],
     ] },
-    { id: 'hauscheck', icon: '🏠', name: 'Haus-Check vor dem Urlaub', sections: [
-      ['', [...LS_T_HOUSE, 'Wasserhahn der Waschmaschine zudrehen', 'Rollläden / Zeitschaltuhr einstellen', 'Haustiere versorgt', 'Ersatzschlüssel beim Nachbarn']],
+    { id: 'hauscheck', icon: '🏠', name: 'lists.t.n.houseCheckBeforeHolidays', sections: [
+      ['', [...LS_T_HOUSE, 'lists.t.i.turnOffWashingMachine', 'lists.t.i.setShuttersTimer', 'lists.t.i.petsCared', 'lists.t.i.spareKeyNeighbour']],
     ] },
-    { id: 'advent', icon: '🎄', name: 'Weihnachtsvorbereitung', sections: [
-      ['', ['Adventskranz', 'Adventskalender', 'Weihnachtsbaum kaufen', 'Deko aufhängen', 'Weihnachtskarten schreiben', 'Geschenke besorgen', 'Festessen planen', 'Plätzchen backen']],
+    { id: 'advent', icon: '🎄', name: 'lists.t.n.christmasPreparation', sections: [
+      ['', ['lists.t.i.adventWreath', 'lists.t.i.adventCalendar', 'lists.t.i.buyChristmasTree', 'lists.t.i.hangUpDecorations', 'lists.t.i.writeChristmasCards', 'lists.t.i.getPresents', 'lists.t.i.planFestiveMeal', 'lists.t.i.bakeCookies']],
     ] },
   ],
   idea: [
-    { id: 'ausfluege', icon: '🗺️', name: 'Ausflugsziele', sections: [] },
-    { id: 'filme', icon: '🎬', name: 'Filme & Serien', sections: [] },
-    { id: 'buecher', icon: '📚', name: 'Bücher', sections: [] },
-    { id: 'restaurants', icon: '🍝', name: 'Restaurants zum Ausprobieren', sections: [] },
-    { id: 'reiseziele', icon: '🌍', name: 'Reiseziele', sections: [] },
-    { id: 'bucket', icon: '✨', name: 'Bucket List', sections: [] },
+    { id: 'ausfluege', icon: '🗺️', name: 'lists.t.n.dayTripIdeas', sections: [] },
+    { id: 'filme', icon: '🎬', name: 'lists.t.n.filmsSeries', sections: [] },
+    { id: 'buecher', icon: '📚', name: 'lists.t.n.books', sections: [] },
+    { id: 'restaurants', icon: '🍝', name: 'lists.t.n.restaurantsTry', sections: [] },
+    { id: 'reiseziele', icon: '🌍', name: 'lists.t.n.travelDestinations', sections: [] },
+    { id: 'bucket', icon: '✨', name: 'lists.t.n.bucketList', sections: [] },
   ],
 };
 
@@ -224,7 +230,7 @@ function lsMyName() {
   const me = currentMember();
   if (me) return memberLabel(me);
   const u = currentUser();
-  return (u && (u.name || u.benutzername || u.username)) || 'Jemand';
+  return (u && (u.name || u.benutzername || u.username)) || tk('lists.someone');
 }
 function lsVisible(l) { return !!l && (!l.privateTo || l.privateTo === lsMyUserId()); }
 function lsIsPet(m) { return !!(m && m.avatar && AVATARS.pet.some(([e]) => e === m.avatar)); }
@@ -255,8 +261,8 @@ function lsDateText(ymd) {
   const diff = lsDaysUntil(ymd);
   if (diff === null) return '';
   const [y, m, d] = ymd.split('-').map(Number);
-  const nice = new Date(y, m - 1, d).toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' });
-  const rel = diff === 0 ? 'heute' : diff === 1 ? 'morgen' : diff === -1 ? 'gestern' : diff > 0 ? `in ${diff} Tagen` : `vor ${-diff} Tagen`;
+  const nice = new Date(y, m - 1, d).toLocaleDateString(sysLocale(), { weekday: 'short', day: '2-digit', month: '2-digit' });
+  const rel = diff === 0 ? tk('lists.when.today') : diff === 1 ? tk('lists.when.tomorrow') : diff === -1 ? tk('lists.when.yesterday') : diff > 0 ? tk('lists.when.inDays', { n: diff }) : tk('lists.when.daysAgo', { n: -diff });
   return `${nice} · ${rel}`;
 }
 function lsPrice(v) {
@@ -264,7 +270,7 @@ function lsPrice(v) {
   const n = typeof v === 'number' ? v : parseEuro(v);
   return Number.isFinite(n) && n >= 0 ? Math.round(n * 100) / 100 : null;
 }
-function lsMoney(n) { return (n || 0).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' }); }
+function lsMoney(n) { return fmtEur(n || 0); }
 function lsSafeLink(v) {
   const s = String(v || '').trim();
   if (!s) return '';
@@ -395,28 +401,28 @@ function lsHideGenericViews() {
 function lsRenderOverview() {
   const t = lsType(listsTab);
   document.getElementById('listsIntro').textContent = t.intro || '';
-  document.getElementById('listsNewBtn').textContent = t.wish ? '+ Neuer Wunschzettel' : '+ Neue Liste';
+  document.getElementById('listsNewBtn').textContent = t.wish ? tk('lists.newWishBtn') : tk('lists.newListBtn');
   const lists = lsListsOfType(t.id);
   const cards = lists.map(l => {
     const open = lsOpenItems(l);
     let badge = open.length;
     let sub = [];
     if (l.date) sub.push('🗓️ ' + lsDateText(l.date));
-    if (t.wish && l.memberId && memberById(l.memberId)) sub.push('von ' + memberLabel(memberById(l.memberId)));
-    if (t.gift && l.forName) sub.push('für ' + l.forName);
-    if (l.privateTo) sub.push('🔒 nur für dich');
+    if (t.wish && l.memberId && memberById(l.memberId)) sub.push(tk('lists.ofPerson', { name: memberLabel(memberById(l.memberId)) }));
+    if (t.gift && l.forName) sub.push(tk('lists.forPerson', { name: l.forName }));
+    if (l.privateTo) sub.push(tk('lists.onlyYouSmall'));
     let extra = '';
     if (t.progress && l.items.length) {
       const done = l.items.filter(i => i.done).length;
       const pct = Math.round(done / l.items.length * 100);
-      extra = `<div class="mt-auto"><div class="ls-bar${pct === 100 ? ' full' : ''}"><span style="width:${pct}%"></span></div><div class="text-[11px] text-ink/45 mt-1">${done} von ${l.items.length} ${escapeHtml(t.doneWord || 'erledigt')}</div></div>`;
+      extra = `<div class="mt-auto"><div class="ls-bar${pct === 100 ? ' full' : ''}"><span style="width:${pct}%"></span></div><div class="text-[11px] text-ink/45 mt-1">${escapeHtml(tk('lists.progress', { done, n: l.items.length, word: t.doneWord || tk('lists.type.done') }))}</div></div>`;
     } else if (t.gift && l.items.length) {
       const sum = l.items.reduce((s, i) => s + (lsPrice(i.price) || 0), 0);
       const got = l.items.filter(i => (i.status || 'idee') !== 'idee').length;
-      extra = `<div class="text-[11px] text-ink/50 mt-auto">${got} von ${l.items.length} besorgt${sum ? ' · ' + lsMoney(sum) : ''}</div>`;
+      extra = `<div class="text-[11px] text-ink/50 mt-auto">${escapeHtml(tk('lists.giftProgress', { done: got, n: l.items.length }))}${sum ? ' · ' + lsMoney(sum) : ''}</div>`;
     }
     const preview = open.slice(0, extra ? 2 : 3).map(i => `<span class="block truncate">${escapeHtml(i.text)}</span>`).join('')
-      + (open.length > (extra ? 2 : 3) ? `<span class="block text-ink/35">+ ${open.length - (extra ? 2 : 3)} weitere</span>` : '');
+      + (open.length > (extra ? 2 : 3) ? `<span class="block text-ink/35">${escapeHtml(tk('shop.moreItems', { n: open.length - (extra ? 2 : 3) }))}</span>` : '');
     return `
       <button type="button" class="ls-card relative text-left rounded-2xl bg-white border border-ink/10 shadow-sm hover:shadow-md hover:border-pine/40 transition p-4 pt-5 flex flex-col gap-3 min-h-[11rem] overflow-hidden select-none" data-lid="${escapeHtml(l.id)}">
         <span class="absolute top-0 left-0 right-0 h-1.5" style="background:${lsColor(l)}"></span>
@@ -428,7 +434,7 @@ function lsRenderOverview() {
           <div class="font-serif text-base leading-tight truncate">${escapeHtml(l.name || t.one)}</div>
           ${sub.length ? `<div class="text-[11px] text-ink/45 truncate">${escapeHtml(sub.join(' · '))}</div>` : ''}
         </div>
-        ${preview ? `<div class="text-xs text-ink/55 leading-snug min-w-0">${preview}</div>` : (!extra ? '<div class="text-xs italic text-ink/35 mt-auto">Leer</div>' : '')}
+        ${preview ? `<div class="text-xs text-ink/55 leading-snug min-w-0">${preview}</div>` : (!extra ? '<div class="text-xs italic text-ink/35 mt-auto">' + escapeHtml(tk('shop.empty')) + '</div>' : '')}
         ${extra}
       </button>`;
   }).join('');
@@ -436,7 +442,7 @@ function lsRenderOverview() {
   grid.innerHTML = cards + `
     <button type="button" id="lsNewCard" class="rounded-2xl border-2 border-dashed border-ink/15 text-ink/40 hover:text-pine hover:border-pine transition p-4 min-h-[11rem] flex flex-col items-center justify-center gap-2 select-none">
       <span class="text-3xl leading-none">+</span>
-      <span class="text-sm text-center">${t.wish ? 'Neuer Wunschzettel' : 'Neue ' + escapeHtml(t.one)}</span>
+      <span class="text-sm text-center">${escapeHtml(t.newOne)}</span>
     </button>`;
   grid.querySelectorAll('.ls-card').forEach(c => c.addEventListener('click', () => lsOpenList(c.dataset.lid)));
   document.getElementById('lsNewCard').addEventListener('click', () => lsOpenListModal(null));
@@ -451,7 +457,7 @@ function lsRenderOverview() {
       l.items.filter(i => i.reservedBy && i.reservedBy === me).forEach(i => res.push({ l, i }));
     });
     if (res.length) {
-      extraEl.innerHTML = `<div class="ls-note mb-4"><div class="font-medium mb-1">🎁 Von dir reservierte Wünsche</div>${res.map(({ l, i }) => {
+      extraEl.innerHTML = `<div class="ls-note mb-4"><div class="font-medium mb-1">${escapeHtml(tk('lists.reservedByYou'))}</div>${res.map(({ l, i }) => {
         const owner = l.memberId && memberById(l.memberId) ? memberLabel(memberById(l.memberId)) : (l.name || '');
         return `<button type="button" class="block text-left w-full py-0.5 hover:text-pine" data-wl="${escapeHtml(l.id)}">• ${escapeHtml(i.text)} <span class="text-ink/45">(${escapeHtml(owner)}${lsPrice(i.price) !== null ? ' · ' + lsMoney(lsPrice(i.price)) : ''})</span></button>`;
       }).join('')}</div>`;
@@ -493,9 +499,9 @@ function lsRowHtml(l, it) {
   let left = '';
   if (t.gift) {
     const st = LS_GIFT_STATUS.find(s => s.id === (it.status || 'idee')) || LS_GIFT_STATUS[0];
-    left = `<button type="button" class="ls-status" data-act="status" data-iid="${escapeHtml(it.id)}" title="${escapeHtml(st.label)} – antippen für den nächsten Schritt" aria-label="Stand: ${escapeHtml(st.label)}">${st.icon}</button>`;
+    left = `<button type="button" class="ls-status" data-act="status" data-iid="${escapeHtml(it.id)}" title="${escapeHtml(tk('lists.gift.nextStep', { status: st.label }))}" aria-label="${escapeHtml(tk('lists.gift.statusLabel', { status: st.label }))}">${st.icon}</button>`;
   } else if (!t.wish) {
-    left = `<button type="button" class="ls-check${it.done ? ' on' : ''}" data-act="toggle" data-iid="${escapeHtml(it.id)}" aria-label="${it.done ? 'Haken entfernen' : 'Abhaken'}">✓</button>`;
+    left = `<button type="button" class="ls-check${it.done ? ' on' : ''}" data-act="toggle" data-iid="${escapeHtml(it.id)}" aria-label="${escapeHtml(it.done ? tk('lists.untick') : tk('lists.tick'))}">✓</button>`;
   }
   const sub = [];
   if (t.members && m && listsFilter !== it.memberId) sub.push(lsWhoHtml(m));
@@ -506,16 +512,16 @@ function lsRowHtml(l, it) {
   if (it.note) sub.push(escapeHtml(it.note));
   if (it.shopListId && !it.done) {
     const sl = getShoppingList(it.shopListId);
-    sub.push('🛒 ' + escapeHtml(sl ? sl.name : 'auf der Einkaufsliste'));
+    sub.push('🛒 ' + escapeHtml(sl ? sl.name : tk('lists.onShoppingList')));
   }
-  if (t.wish && !owner && it.reservedBy && it.reservedBy !== lsMyUserId()) sub.push('🎁 reserviert von ' + escapeHtml(it.reservedName || 'jemandem'));
+  if (t.wish && !owner && it.reservedBy && it.reservedBy !== lsMyUserId()) sub.push(escapeHtml(tk('lists.reservedBy', { name: it.reservedName || tk('lists.someoneDat') })));
   let right = '';
   const price = lsPrice(it.price);
   if (price !== null) right += `<span class="ls-price">${lsMoney(price)}</span>`;
-  if (it.link) right += `<a class="ls-link" href="${escapeHtml(lsSafeLink(it.link))}" target="_blank" rel="noopener noreferrer" aria-label="Link öffnen" title="Link öffnen">↗</a>`;
+  if (it.link) right += `<a class="ls-link" href="${escapeHtml(lsSafeLink(it.link))}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(tk('lists.openLink'))}" title="${escapeHtml(tk('lists.openLink'))}">↗</a>`;
   if (t.wish && !owner) {
-    if (it.reservedBy === lsMyUserId()) right += `<button type="button" class="ls-reserve mine" data-act="reserve" data-iid="${escapeHtml(it.id)}">🎁 Du besorgst es</button>`;
-    else if (!it.reservedBy) right += `<button type="button" class="ls-reserve" data-act="reserve" data-iid="${escapeHtml(it.id)}">Reservieren</button>`;
+    if (it.reservedBy === lsMyUserId()) right += `<button type="button" class="ls-reserve mine" data-act="reserve" data-iid="${escapeHtml(it.id)}">${escapeHtml(tk('lists.youGetIt'))}</button>`;
+    else if (!it.reservedBy) right += `<button type="button" class="ls-reserve" data-act="reserve" data-iid="${escapeHtml(it.id)}">${escapeHtml(tk('lists.reserve'))}</button>`;
   }
   return `
     <div class="ls-row${done ? ' done' : ''}">
@@ -543,18 +549,18 @@ function lsRenderDetail(l) {
     if (listsFilter && listsFilter !== '_shared' && !ids.has(listsFilter)) listsFilter = '';
     if (ids.size) {
       const cnt = arr => arr.filter(i => !i.done).length;
-      chips.push(`<button type="button" class="pw-chip${!listsFilter ? ' active' : ''}" data-lf="">Alle <b>${cnt(l.items)}</b></button>`);
+      chips.push(`<button type="button" class="pw-chip${!listsFilter ? ' active' : ''}" data-lf="">${escapeHtml(tk('lists.filterAll'))} <b>${cnt(l.items)}</b></button>`);
       members.filter(m => ids.has(m.id)).forEach(m => {
         chips.push(`<button type="button" class="pw-chip${listsFilter === m.id ? ' active' : ''}" data-lf="${escapeHtml(m.id)}">${m.avatar ? escapeHtml(m.avatar) + ' ' : ''}${escapeHtml(memberLabel(m))} <b>${cnt(l.items.filter(i => i.memberId === m.id))}</b></button>`);
       });
       const shared = l.items.filter(i => !i.memberId || !memberById(i.memberId));
-      if (shared.length) chips.push(`<button type="button" class="pw-chip${listsFilter === '_shared' ? ' active' : ''}" data-lf="_shared">👨‍👩‍👧 Gemeinsam <b>${cnt(shared)}</b></button>`);
+      if (shared.length) chips.push(`<button type="button" class="pw-chip${listsFilter === '_shared' ? ' active' : ''}" data-lf="_shared">${escapeHtml(tk('lists.shared'))} <b>${cnt(shared)}</b></button>`);
     } else listsFilter = '';
     if (listsFilter === '_shared') items = items.filter(i => !i.memberId || !memberById(i.memberId));
     else if (listsFilter) items = items.filter(i => i.memberId === listsFilter);
   }
   if (t.progress && l.items.some(i => i.done)) {
-    chips.push(`<button type="button" class="pw-chip${listsHideDone ? ' active' : ''}" data-lhide="1">${listsHideDone ? '👁 Alles zeigen' : '🙈 ' + escapeHtml(t.hideWord || 'Erledigtes ausblenden')}</button>`);
+    chips.push(`<button type="button" class="pw-chip${listsHideDone ? ' active' : ''}" data-lhide="1">${listsHideDone ? escapeHtml(tk('lists.showAll')) : '🙈 ' + escapeHtml(t.hideWord || tk('lists.type.hideDone'))}</button>`);
   }
   chipsEl.innerHTML = chips.join('');
   chipsEl.style.display = chips.length ? '' : 'none';
@@ -562,24 +568,24 @@ function lsRenderDetail(l) {
   // Header line: date, progress, totals, hints
   const meta = [];
   if (tripValid(l)) meta.push(lsTripCardHtml(l));
-  else if (l.date) meta.push(`<div class="ls-sum"><span>🗓️ ${escapeHtml(t.date || 'Datum')}: ${escapeHtml(lsDateText(l.date))}</span></div>`);
+  else if (l.date) meta.push(`<div class="ls-sum"><span>🗓️ ${escapeHtml(t.date || tk('lists.modal.date'))}: ${escapeHtml(lsDateText(l.date))}</span></div>`);
   if (t.progress && items.length) {
     const done = items.filter(i => i.done).length;
     const pct = Math.round(done / items.length * 100);
-    meta.push(`<div><div class="ls-bar${pct === 100 ? ' full' : ''}"><span style="width:${pct}%"></span></div><div class="ls-sum mt-1"><span>${done} von ${items.length} ${escapeHtml(t.doneWord || 'erledigt')}${pct === 100 ? ' 🎉' : ''}</span></div></div>`);
+    meta.push(`<div><div class="ls-bar${pct === 100 ? ' full' : ''}"><span style="width:${pct}%"></span></div><div class="ls-sum mt-1"><span>${escapeHtml(tk('lists.progress', { done, n: items.length, word: t.doneWord || tk('lists.type.done') }))}${pct === 100 ? ' 🎉' : ''}</span></div></div>`);
   }
   if (t.gift && l.items.length) {
     const sum = l.items.reduce((s, i) => s + (lsPrice(i.price) || 0), 0);
     const got = l.items.filter(i => (i.status || 'idee') !== 'idee').length;
-    meta.push(`<div class="ls-sum"><span>🎁 ${got} von ${l.items.length} besorgt</span>${sum ? `<span>💶 ${lsMoney(sum)}</span>` : ''}</div>`);
+    meta.push(`<div class="ls-sum"><span>🎁 ${escapeHtml(tk('lists.giftProgress', { done: got, n: l.items.length }))}</span>${sum ? `<span>💶 ${lsMoney(sum)}</span>` : ''}</div>`);
   }
   if (t.wish) {
-    const who = l.memberId && memberById(l.memberId) ? memberLabel(memberById(l.memberId)) : 'die Person';
+    const who = l.memberId && memberById(l.memberId) ? memberLabel(memberById(l.memberId)) : tk('lists.thePerson');
     meta.push(owner
-      ? `<div class="ls-note">⭐ Dein Wunschzettel – was die anderen reservieren, bleibt für dich eine Überraschung.</div>`
-      : `<div class="ls-note">🤫 Reserviere, was du besorgst – ${escapeHtml(who)} sieht das nicht.</div>`);
+      ? `<div class="ls-note">${escapeHtml(tk('lists.wishOwnerNote'))}</div>`
+      : `<div class="ls-note">${escapeHtml(tk('lists.wishOthersNote', { name: who }))}</div>`);
   }
-  if (l.privateTo) meta.push('<div class="ls-sum"><span>🔒 Nur für dich sichtbar</span></div>');
+  if (l.privateTo) meta.push('<div class="ls-sum"><span>' + escapeHtml(tk('lists.modal.private')) + '</span></div>');
   const metaEl = document.getElementById('listsDetailMeta');
   metaEl.innerHTML = meta.join('');
   metaEl.classList.toggle('hidden', !meta.length);
@@ -593,14 +599,14 @@ function lsRenderDetail(l) {
   content.innerHTML = groups.map(g => {
     let head = '';
     if (showHeads) {
-      const label = g.key || (t.gift ? 'Noch ohne Empfänger' : 'Allgemein');
+      const label = g.key || (t.gift ? tk('lists.noRecipient') : tk('lists.general'));
       let right = '';
       if (t.gift) { const s = g.items.reduce((a, i) => a + (lsPrice(i.price) || 0), 0); right = s ? lsMoney(s) : ''; }
       else if (t.progress) {
         const all = items.filter(i => (i.section || '') === g.key);
         right = `${all.filter(i => i.done).length}/${all.length}`;
       }
-      head = `<div class="ls-sec"><span>${t.gift && g.key ? 'für ' : ''}${escapeHtml(label)}</span>${right ? `<b>${escapeHtml(right)}</b>` : ''}</div>`;
+      head = `<div class="ls-sec"><span>${escapeHtml(t.gift && g.key ? tk('lists.forPerson', { name: label }) : label)}</span>${right ? `<b>${escapeHtml(right)}</b>` : ''}</div>`;
     }
     return head + g.items.map(i => lsRowHtml(l, i)).join('');
   }).join('');
@@ -610,18 +616,18 @@ function lsRenderDetail(l) {
   empty.classList.toggle('hidden', hasRows);
   if (!hasRows) {
     empty.textContent = !l.items.length
-      ? (t.wish ? (owner ? 'Noch keine Wünsche – schreib unten hinein, was du dir wünschst.' : 'Noch keine Wünsche eingetragen.') : 'Noch leer – unten etwas hinzufügen.')
-      : (listsHideDone ? 'Alles ' + (t.doneWord || 'erledigt') + ' 🎉' : 'Hier ist nichts.');
+      ? (t.wish ? (owner ? tk('lists.wishEmptyOwner') : tk('lists.wishEmpty')) : tk('lists.emptyAdd'))
+      : (listsHideDone ? tk('lists.allDone', { word: t.doneWord || tk('lists.type.done') }) : tk('lists.nothingHere'));
   }
 
   // Actions at the bottom
   const acts = [];
   const btn = (id, label) => `<button type="button" data-lact="${id}" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">${label}</button>`;
-  if (l.items.length) acts.push(btn('copy', '📋 Kopieren'));
-  if (l.items.length && navigator.share) acts.push(btn('share', 'Teilen'));
-  if (t.progress && l.items.some(i => i.done)) acts.push(btn('reset', '↺ Haken zurücksetzen'));
-  if (t.gift && l.items.some(i => i.status === 'verschenkt')) acts.push(btn('cleargift', '🧹 Verschenkte entfernen'));
-  if ((t.id === 'pack' || t.id === 'check' || t.id === 'idea') && l.items.length) acts.push(btn('tpl', '⭐ Als Vorlage speichern'));
+  if (l.items.length) acts.push(btn('copy', escapeHtml(tk('lists.act.copy'))));
+  if (l.items.length && navigator.share) acts.push(btn('share', escapeHtml(tk('shop.share'))));
+  if (t.progress && l.items.some(i => i.done)) acts.push(btn('reset', escapeHtml(tk('lists.act.reset'))));
+  if (t.gift && l.items.some(i => i.status === 'verschenkt')) acts.push(btn('cleargift', escapeHtml(tk('lists.act.clearGiven'))));
+  if ((t.id === 'pack' || t.id === 'check' || t.id === 'idea') && l.items.length) acts.push(btn('tpl', escapeHtml(tk('lists.act.saveTpl'))));
   const actsEl = document.getElementById('listsDetailActions');
   actsEl.innerHTML = acts.join('');
   actsEl.classList.toggle('hidden', !acts.length);
@@ -630,13 +636,13 @@ function lsRenderDetail(l) {
   // Input bar: choose a section
   const sel = document.getElementById('listsAddSection');
   const input = document.getElementById('listsAddInput');
-  input.placeholder = t.wish ? (owner ? 'Ich wünsche mir …' : 'Wunsch hinzufügen …') : t.gift ? (l.forName ? `Geschenkidee für ${l.forName} …` : 'Geschenkidee …') : 'Etwas hinzufügen …';
+  input.placeholder = t.wish ? (owner ? tk('lists.ph.iWish') : tk('lists.ph.addWish')) : t.gift ? (l.forName ? tk('lists.ph.giftFor', { name: l.forName }) : tk('lists.ph.gift')) : tk('lists.addPlaceholder');
   if (t.sections) {
     const secs = [...new Set(l.items.map(i => i.section || '').filter(Boolean))];
     if (listsAddSectionValue && !secs.includes(listsAddSectionValue)) secs.push(listsAddSectionValue);
-    sel.innerHTML = `<option value="">${secs.length ? 'Allgemein' : 'Bereich …'}</option>`
+    sel.innerHTML = `<option value="">${escapeHtml(secs.length ? tk('lists.general') : tk('lists.sectionDots'))}</option>`
       + secs.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('')
-      + '<option value="__new">＋ Neuer Bereich …</option>';
+      + '<option value="__new">' + escapeHtml(tk('lists.newSection')) + '</option>';
     sel.value = listsAddSectionValue;
     sel.classList.remove('hidden');
   } else {
@@ -669,17 +675,17 @@ function lsAddFromBar() {
 function lsListAsText(l) {
   const t = lsType(l.type);
   const lines = [l.name || t.one];
-  if (l.date) lines.push(`${t.date || 'Datum'}: ${lsDateText(l.date)}`);
+  if (l.date) lines.push(`${t.date || tk('lists.modal.date')}: ${lsDateText(l.date)}`);
   const owner = t.wish && lsIsOwner(l);
   lsGroupItems(l, l.items).forEach(g => {
     lines.push('');
-    if (g.key) lines.push((t.gift ? 'Für ' : '') + g.key + ':');
+    if (g.key) lines.push((t.gift ? tk('lists.forHead', { name: g.key }) : g.key) + ':');
     g.items.forEach(i => {
       const m = i.memberId ? memberById(i.memberId) : null;
       const box = t.gift ? ((LS_GIFT_STATUS.find(s => s.id === (i.status || 'idee')) || LS_GIFT_STATUS[0]).icon + ' ')
         : t.wish ? '• ' : (i.done ? '☑ ' : '☐ ');
       const extra = [t.members && m ? memberLabel(m) : '', lsPrice(i.price) !== null ? lsMoney(lsPrice(i.price)) : '', i.note || '', i.link ? lsSafeLink(i.link) : '',
-        (t.wish && !owner && i.reservedBy) ? 'reserviert' : ''].filter(Boolean);
+        (t.wish && !owner && i.reservedBy) ? tk('lists.reserved') : ''].filter(Boolean);
       lines.push(box + i.text + (extra.length ? ' (' + extra.join(', ') + ')' : ''));
     });
   });
@@ -694,7 +700,7 @@ function lsDetailAction(act) {
     const text = lsListAsText(l);
     const done = () => {
       const b = document.querySelector('#listsDetailActions [data-lact="copy"]');
-      if (b) { b.textContent = '✓ Kopiert'; setTimeout(() => { if (b.isConnected) b.textContent = '📋 Kopieren'; }, 1800); }
+      if (b) { b.textContent = tk('shop.copiedCheck'); setTimeout(() => { if (b.isConnected) b.textContent = tk('lists.act.copy'); }, 1800); }
     };
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(() => {});
     else {
@@ -706,12 +712,12 @@ function lsDetailAction(act) {
   } else if (act === 'share') {
     navigator.share({ title: l.name || t.one, text: lsListAsText(l) }).catch(() => {});
   } else if (act === 'reset') {
-    if (!confirm('Alle Haken dieser Liste entfernen? Praktisch, um die Liste für die nächste Reise wiederzuverwenden.')) return;
+    if (!confirm(tk('lists.confirmReset'))) return;
     lsUpdateList(l.id, x => ({ ...x, items: x.items.map(i => i.done ? { ...i, done: false } : i) }));
     listsHideDone = false;
     lsCommit();
   } else if (act === 'cleargift') {
-    if (!confirm('Alle verschenkten Geschenke aus der Liste entfernen?')) return;
+    if (!confirm(tk('lists.confirmClearGiven'))) return;
     lsUpdateList(l.id, x => ({ ...x, items: x.items.filter(i => i.status !== 'verschenkt') }));
     lsCommit();
   } else if (act === 'tpl') {
@@ -720,9 +726,9 @@ function lsDetailAction(act) {
 }
 
 function lsSaveAsTemplate(l) {
-  const name = prompt('Name der Vorlage:', l.name || '');
+  const name = prompt(tk('lists.tplNamePrompt'), l.name || '');
   if (name === null) return;
-  const clean = name.trim() || l.name || 'Eigene Vorlage';
+  const clean = name.trim() || l.name || tk('lists.ownTemplate');
   const secOrder = [];
   const secMap = new Map();
   l.items.forEach(i => {
@@ -737,14 +743,14 @@ function lsSaveAsTemplate(l) {
   const tpl = { id: lsId('lt'), type: l.type, icon: l.icon || lsType(l.type).icon, name: clean, sections: secOrder.map(s => [s, secMap.get(s)]), createdAt: Date.now() };
   const existing = listTemplates.find(x => x.type === l.type && x.name.toLowerCase() === clean.toLowerCase());
   if (existing) {
-    if (!confirm(`Die Vorlage „${existing.name}“ gibt es schon. Ersetzen?`)) return;
+    if (!confirm(tk('lists.tplExists', { name: existing.name }))) return;
     listTemplates = listTemplates.map(x => x.id === existing.id ? { ...tpl, id: existing.id } : x);
   } else {
     listTemplates = [...listTemplates, tpl];
   }
   persistState();
   const b = document.querySelector('#listsDetailActions [data-lact="tpl"]');
-  if (b) { b.textContent = '✓ Als Vorlage gespeichert'; setTimeout(() => { if (b.isConnected) b.textContent = '⭐ Als Vorlage speichern'; }, 2200); }
+  if (b) { b.textContent = tk('lists.tplSaved'); setTimeout(() => { if (b.isConnected) b.textContent = tk('lists.act.saveTpl'); }, 2200); }
 }
 
 function lsRowAction(act, itemId) {
@@ -766,7 +772,7 @@ function lsRowAction(act, itemId) {
     const me = lsMyUserId();
     if (it.reservedBy && it.reservedBy !== me) return;
     if (it.reservedBy === me) {
-      if (!confirm(`Reservierung für „${it.text}“ aufheben?`)) return;
+      if (!confirm(tk('lists.confirmUnreserve', { name: it.text }))) return;
       lsUpdateItem(l.id, itemId, i => { const c = { ...i }; delete c.reservedBy; delete c.reservedName; return c; });
     } else {
       lsUpdateItem(l.id, itemId, i => ({ ...i, reservedBy: me, reservedName: lsMyName() }));
@@ -790,7 +796,7 @@ function lsTplName(tpl) {
   const now = new Date();
   let year = now.getFullYear();
   if (tpl.date === 'xmas' && now.getMonth() === 11 && now.getDate() > 26) year++;
-  return String(tpl.name || '').replace('{jahr}', year);
+  return lsTplText(tpl.name, { year }).replace('{jahr}', year);
 }
 function lsTplDate(tpl) {
   if (tpl.date === 'xmas') {
@@ -805,8 +811,8 @@ function lsBirthdayTemplates() {
   if (typeof upcomingBirthdays !== 'function') return [];
   try {
     return upcomingBirthdays(60).slice(0, 4).map(b => ({
-      id: 'bday:' + b.n, icon: '🎂', name: `Geburtstag ${b.n}`, forName: b.n, dateValue: lsYmd(b.next),
-      hint: birthdayWhenText(b.diff) + (b.age ? ` · wird ${b.age}` : ''), sections: [],
+      id: 'bday:' + b.n, icon: '🎂', name: tk('lists.birthdayOf', { name: b.n }), forName: b.n, dateValue: lsYmd(b.next),
+      hint: birthdayWhenText(b.diff) + (b.age ? ' · ' + tk('lists.turnsAge', { n: b.age }) : ''), sections: [],
     }));
   } catch (e) { return []; }
 }
@@ -822,12 +828,12 @@ function lsOpenListModal(listId) {
   document.getElementById('lsListError').classList.add('hidden');
   document.getElementById('lsListModal').classList.remove('hidden');
   if (l) {
-    document.getElementById('lsListTitle').textContent = (t.wish ? 'Wunschzettel' : t.one) + ' bearbeiten';
+    document.getElementById('lsListTitle').textContent = tk('lists.editNamed', { name: t.one });
     document.getElementById('lsListSubtitle').textContent = '';
     lsShowListForm(l);
   } else {
-    document.getElementById('lsListTitle').textContent = t.wish ? 'Neuer Wunschzettel' : 'Neue ' + t.one;
-    document.getElementById('lsListSubtitle').textContent = lsListCtx.prefill ? lsPrefillLabel(lsListCtx.prefill) : (t.wish ? 'Wähle eine Art – danach, für wen.' : 'Wähle eine Vorlage – alles lässt sich danach noch ändern.');
+    document.getElementById('lsListTitle').textContent = t.newOne;
+    document.getElementById('lsListSubtitle').textContent = lsListCtx.prefill ? lsPrefillLabel(lsListCtx.prefill) : (t.wish ? tk('lists.chooseKind') : tk('lists.chooseTemplate'));
     lsRenderTplPane();
   }
 }
@@ -838,35 +844,35 @@ function lsRenderTplPane() {
   document.getElementById('lsFormPane').classList.add('hidden');
   const tplBtn = (tpl, own) => {
     const n = lsTplItemCount(tpl);
-    const name = t.wish ? (tpl.occasion ? 'Wunschzettel ' + tpl.occasion : 'Wunschzettel') : lsTplName(tpl);
-    const small = tpl.hint || (n ? `${n} Einträge` : (t.wish ? 'leer' : 'zum Sammeln'));
+    const name = t.wish ? (tpl.occasion ? tk('lists.wishOccasion', { occasion: lsTplText(tpl.occasion) }) : t.one) : lsTplName(tpl);
+    const small = tpl.hint || (n ? tk('lists.nEntries', { n }) : (t.wish ? tk('lists.emptySmall') : tk('lists.forCollecting')));
     return `<button type="button" class="ls-tpl" data-tpl="${escapeHtml(tpl.id)}">
       <span class="ls-tpl-ic">${escapeHtml(tpl.icon || t.icon)}</span>
       <span class="ls-tpl-tx"><span>${escapeHtml(name)}</span><small>${escapeHtml(small)}</small></span>
-      ${own ? `<span class="ls-tpl-del" data-deltpl="${escapeHtml(tpl.id)}" role="button" aria-label="Vorlage löschen" title="Vorlage löschen">×</span>` : ''}
+      ${own ? `<span class="ls-tpl-del" data-deltpl="${escapeHtml(tpl.id)}" role="button" aria-label="${escapeHtml(tk('lists.deleteTpl'))}" title="${escapeHtml(tk('lists.deleteTpl'))}">×</span>` : ''}
     </button>`;
   };
   let html = '';
   if (!t.wish) {
-    html += `<div class="ls-tpl-grid"><button type="button" class="ls-tpl" data-tpl="__empty"><span class="ls-tpl-ic">✏️</span><span class="ls-tpl-tx"><span>Leere Liste</span><small>selbst befüllen</small></span></button></div>`;
+    html += `<div class="ls-tpl-grid"><button type="button" class="ls-tpl" data-tpl="__empty"><span class="ls-tpl-ic">✏️</span><span class="ls-tpl-tx"><span>${escapeHtml(tk('lists.emptyList'))}</span><small>${escapeHtml(tk('lists.fillYourself'))}</small></span></button></div>`;
   }
   const own = listTemplates.filter(x => x.type === ctx.type);
-  if (own.length) html += `<div class="ls-tpl-head">Eigene Vorlagen</div><div class="ls-tpl-grid">${own.map(x => tplBtn(x, true)).join('')}</div>`;
+  if (own.length) html += `<div class="ls-tpl-head">${escapeHtml(tk('lists.ownTemplates'))}</div><div class="ls-tpl-grid">${own.map(x => tplBtn(x, true)).join('')}</div>`;
   if (t.gift) {
     const bdays = lsBirthdayTemplates();
-    if (bdays.length) html += `<div class="ls-tpl-head">Bald Geburtstag</div><div class="ls-tpl-grid">${bdays.map(x => tplBtn(x, false)).join('')}</div>`;
+    if (bdays.length) html += `<div class="ls-tpl-head">${escapeHtml(tk('lists.birthdaySoon'))}</div><div class="ls-tpl-grid">${bdays.map(x => tplBtn(x, false)).join('')}</div>`;
   }
   const builtIn = LIST_TEMPLATES[ctx.type] || [];
   const sugId = ctx.prefill ? lsPrefillTemplate(ctx.prefill) : '';
   const sug = sugId ? builtIn.find(x => x.id === sugId) : null;
-  if (sug) html = `<div class="ls-tpl-head">Vorschlag</div><div class="ls-tpl-grid">${tplBtn(sug, false)}</div>` + html;
-  if (builtIn.length) html += `<div class="ls-tpl-head">${t.wish ? 'Art' : 'Vorlagen'}</div><div class="ls-tpl-grid">${builtIn.map(x => tplBtn(x, false)).join('')}</div>`;
+  if (sug) html = `<div class="ls-tpl-head">${escapeHtml(tk('lists.suggestion'))}</div><div class="ls-tpl-grid">${tplBtn(sug, false)}</div>` + html;
+  if (builtIn.length) html += `<div class="ls-tpl-head">${escapeHtml(t.wish ? tk('lists.kind') : tk('lists.templates'))}</div><div class="ls-tpl-grid">${builtIn.map(x => tplBtn(x, false)).join('')}</div>`;
   const grid = document.getElementById('lsTplGrid');
   grid.innerHTML = html;
   grid.querySelectorAll('[data-deltpl]').forEach(x => x.addEventListener('click', (e) => {
     e.stopPropagation();
     const tpl = listTemplates.find(v => v.id === x.dataset.deltpl);
-    if (!tpl || !confirm(`Vorlage „${tpl.name}“ löschen?`)) return;
+    if (!tpl || !confirm(tk('lists.confirmDeleteTpl', { name: tpl.name }))) return;
     listTemplates = listTemplates.filter(v => v.id !== tpl.id);
     persistState();
     lsRenderTplPane();
@@ -889,11 +895,11 @@ function lsShowListForm(l) {
   const isNew = ctx.mode === 'new';
   document.getElementById('lsTplPane').classList.add('hidden');
   document.getElementById('lsFormPane').classList.remove('hidden');
-  if (isNew) document.getElementById('lsListSubtitle').textContent = tpl && tpl.id !== '__empty' && !t.wish ? `Vorlage: ${lsTplName(tpl)}` : '';
+  if (isNew) document.getElementById('lsListSubtitle').textContent = tpl && tpl.id !== '__empty' && !t.wish ? tk('lists.templateNamed', { name: lsTplName(tpl) }) : '';
   const pf = isNew ? ctx.prefill : null;
 
   const nameEl = document.getElementById('lsListName');
-  nameEl.placeholder = t.wish ? 'z. B. Mein Wunschzettel' : t.gift ? 'z. B. Weihnachten 2026' : t.id === 'pack' ? 'z. B. Ostsee 2027' : 'Name der Liste';
+  nameEl.placeholder = t.wish ? tk('lists.ph.wishName') : t.gift ? tk('lists.ph.giftName') : t.id === 'pack' ? tk('lists.ph.packName') : tk('shop.list.name');
   if (l) nameEl.value = l.name || '';
   else if (t.wish) nameEl.value = '';
   else nameEl.value = pf && pf.titel ? pf.titel : (tpl && tpl.id !== '__empty' ? lsTplName(tpl) : '');
@@ -916,11 +922,11 @@ function lsShowListForm(l) {
     const autoName = id => {
       const m = memberById(id);
       if (!m) return '';
-      return 'Wunschzettel ' + (tpl && tpl.occasion ? tpl.occasion + ' – ' : 'von ') + memberLabel(m);
+      return tpl && tpl.occasion ? tk('lists.wishOccasionOf', { occasion: lsTplText(tpl.occasion), name: memberLabel(m) }) : tk('lists.wishOf', { name: memberLabel(m) });
     };
     const drawOwner = () => {
       ownerEl.innerHTML = members.map(m => `<button type="button" class="ls-pick${ctx.owner === m.id ? ' active' : ''}" data-ow="${escapeHtml(m.id)}">${m.avatar ? escapeHtml(m.avatar) + ' ' : ''}${escapeHtml(memberLabel(m))}</button>`).join('')
-        || '<span class="text-xs text-ink/40">Noch keine Familienmitglieder angelegt.</span>';
+        || '<span class="text-xs text-ink/40">' + escapeHtml(tk('lists.noMembers')) + '</span>';
       ownerEl.querySelectorAll('[data-ow]').forEach(b => b.addEventListener('click', () => {
         ctx.owner = b.dataset.ow;
         if (ctx.nameAuto) nameEl.value = autoName(ctx.owner);
@@ -935,7 +941,7 @@ function lsShowListForm(l) {
   // Date
   const dateWrap = document.getElementById('lsListDateWrap');
   dateWrap.classList.toggle('hidden', !t.date);
-  document.getElementById('lsListDateLabel').textContent = t.date || 'Datum';
+  document.getElementById('lsListDateLabel').textContent = t.date || tk('lists.modal.date');
   document.getElementById('lsListDate').value = l ? (l.date || '') : (tpl ? lsTplDate(tpl) : '');
 
   // Persons (only when creating a packing list with personal items)
@@ -966,7 +972,7 @@ function lsShowListForm(l) {
 
   document.getElementById('lsListDeleteBtn').classList.toggle('hidden', isNew);
   document.getElementById('lsListBackBtn').classList.toggle('hidden', !isNew);
-  document.getElementById('lsListSaveBtn').textContent = isNew ? 'Anlegen' : 'Speichern';
+  document.getElementById('lsListSaveBtn').textContent = isNew ? tk('common.create') : tk('common.save');
   lsTripInit(l);
   if (pf) lsApplyPrefill(pf);
   if (isNew && !isMobile() && !t.wish && !pf) setTimeout(() => { nameEl.focus(); nameEl.select(); }, 50);
@@ -984,11 +990,12 @@ function lsBuildItems(tpl, persons, days) {
     let text = typeof raw === 'string' ? raw : (raw && raw.text) || '';
     let personal = typeof raw === 'string' ? false : !!(raw && raw.personal);
     if (text.startsWith('@')) { personal = true; text = text.slice(1); }
+    text = lsTplText(text);
     if (text.includes('{t}')) text = days > 0 ? text.replace('{t}', days) : text.replace(/\s*\(\{t\}×?\)/, '').replace('{t}', '').trim();
     if (!text) return;
     const mk = memberId => {
       const it = { id: lsId('fi'), text, done: false, createdAt: now + (n++) };
-      if (sec) it.section = sec;
+      if (sec) it.section = lsTplText(sec);
       if (memberId) it.memberId = memberId;
       if (tpl.forName) it.forName = tpl.forName;
       if (lsListCtx && lsListCtx.type === 'gift') it.status = 'idee';
@@ -1005,10 +1012,10 @@ function lsSaveListFromModal() {
   const t = lsType(ctx.type);
   const err = document.getElementById('lsListError');
   let name = document.getElementById('lsListName').value.trim();
-  if (t.wish && !ctx.owner) { err.textContent = 'Bitte auswählen, wessen Wunschzettel das ist.'; err.classList.remove('hidden'); return; }
+  if (t.wish && !ctx.owner) { err.textContent = tk('lists.chooseOwner'); err.classList.remove('hidden'); return; }
   if (!name) {
-    if (t.wish) { const m = memberById(ctx.owner); name = 'Wunschzettel von ' + (m ? memberLabel(m) : ''); }
-    else { err.textContent = 'Bitte einen Namen eingeben.'; err.classList.remove('hidden'); return; }
+    if (t.wish) { const m = memberById(ctx.owner); name = tk('lists.wishOf', { name: m ? memberLabel(m) : '' }).trim(); }
+    else { err.textContent = tk('common.needName'); err.classList.remove('hidden'); return; }
   }
   let date = t.date ? (document.getElementById('lsListDate').value || '') : '';
   const trip = lsTripData();
@@ -1042,7 +1049,7 @@ function lsSaveListFromModal() {
   if (tripTips.length) {
     const have = new Set(l.items.map(i => normalizeForGrouping(i.text || '')));
     const now = Date.now();
-    tripTips.filter(x => !have.has(normalizeForGrouping(x))).forEach((text, i) => l.items.push({ id: lsId('fi'), text, done: false, section: 'Wetter-Tipps', createdAt: now + 1000 + i }));
+    tripTips.filter(x => !have.has(normalizeForGrouping(x))).forEach((text, i) => l.items.push({ id: lsId('fi'), text, done: false, section: tk('lists.weatherTips'), createdAt: now + 1000 + i }));
   }
   familyLists = [...familyLists, l];
   lsCloseListModal();
@@ -1054,7 +1061,7 @@ function lsDeleteListFromModal() {
   const ctx = lsListCtx;
   const l = ctx && lsGetList(ctx.listId);
   if (!l) return;
-  if (!confirm(`„${l.name || lsType(l.type).one}“ mit ${l.items.length} Einträgen löschen?`)) return;
+  if (!confirm(tk('lists.confirmDelete', { name: l.name || lsType(l.type).one, n: l.items.length }))) return;
   familyLists = familyLists.filter(x => x.id !== l.id);
   lsCloseListModal();
   listsDetailId = null;
@@ -1079,7 +1086,7 @@ function lsStartPackFromEvent(pf) {
   lsOpenListModal(null);
 }
 function lsPrefillLabel(pf) {
-  const fmt = d => new Date(d + 'T12:00:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'short' });
+  const fmt = d => new Date(d + 'T12:00:00').toLocaleDateString(sysLocale(), { day: 'numeric', month: 'short' });
   return '🗓️ ' + (pf.titel || '') + (pf.von ? ' · ' + fmt(pf.von) + (pf.bis && pf.bis !== pf.von ? ' – ' + fmt(pf.bis) : '') : '');
 }
 function lsPrefillTemplate(pf) {
@@ -1112,7 +1119,7 @@ function lsOpenItemModal(listId, itemId) {
   if (!it) return;
   const t = lsType(l.type);
   lsItemCtx = { listId, itemId, memberId: it.memberId || '', forMember: (t.gift && it.memberId) ? it.memberId : '', status: it.status || 'idee' };
-  document.getElementById('lsItemTitle').textContent = t.gift ? 'Geschenk bearbeiten' : t.wish ? 'Wunsch bearbeiten' : 'Eintrag bearbeiten';
+  document.getElementById('lsItemTitle').textContent = t.gift ? tk('lists.item.editGift') : t.wish ? tk('lists.item.editWish') : tk('lists.item.editTitle');
   document.getElementById('lsItemText').value = it.text || '';
   document.getElementById('lsItemNote').value = it.note || '';
   document.getElementById('lsItemError').classList.add('hidden');
@@ -1129,7 +1136,7 @@ function lsOpenItemModal(listId, itemId) {
   if (t.members) {
     const whoEl = document.getElementById('lsItemWho');
     const draw = () => {
-      whoEl.innerHTML = `<button type="button" class="ls-pick${!lsItemCtx.memberId ? ' active' : ''}" data-who="">👨‍👩‍👧 Gemeinsam</button>`
+      whoEl.innerHTML = `<button type="button" class="ls-pick${!lsItemCtx.memberId ? ' active' : ''}" data-who="">${escapeHtml(tk('lists.shared'))}</button>`
         + members.map(m => `<button type="button" class="ls-pick${lsItemCtx.memberId === m.id ? ' active' : ''}" data-who="${escapeHtml(m.id)}">${m.avatar ? escapeHtml(m.avatar) + ' ' : ''}${escapeHtml(memberLabel(m))}</button>`).join('');
       whoEl.querySelectorAll('[data-who]').forEach(b => b.addEventListener('click', () => { lsItemCtx.memberId = b.dataset.who; draw(); }));
     };
@@ -1184,9 +1191,9 @@ function lsSaveItemFromModal() {
   const t = lsType(l.type);
   const text = document.getElementById('lsItemText').value.trim();
   const err = document.getElementById('lsItemError');
-  if (!text) { err.textContent = 'Bitte etwas eintragen.'; err.classList.remove('hidden'); return; }
+  if (!text) { err.textContent = tk('lists.item.needText'); err.classList.remove('hidden'); return; }
   const priceRaw = document.getElementById('lsItemPrice').value.trim();
-  if (priceRaw && lsPrice(priceRaw) === null && (t.gift || t.wish)) { err.textContent = 'Der Preis ist keine gültige Zahl.'; err.classList.remove('hidden'); return; }
+  if (priceRaw && lsPrice(priceRaw) === null && (t.gift || t.wish)) { err.textContent = tk('lists.item.badPrice'); err.classList.remove('hidden'); return; }
   lsUpdateItem(l.id, ctx.itemId, i => {
     const c = { ...i, text };
     const set = (k, v) => { if (v) c[k] = v; else delete c[k]; };
@@ -1212,7 +1219,7 @@ function lsDeleteItemFromModal() {
   const ctx = lsItemCtx;
   const l = ctx && lsGetList(ctx.listId);
   const it = l && l.items.find(i => i.id === ctx.itemId);
-  if (!it || !confirm(`„${it.text}“ löschen?`)) return;
+  if (!it || !confirm(tk('lists.item.confirmDelete', { name: it.text }))) return;
   lsUpdateList(l.id, x => ({ ...x, items: x.items.filter(i => i.id !== it.id) }));
   lsCloseItemModal();
   lsCommit();
@@ -1225,19 +1232,19 @@ function lsOpenShopModal() {
   const it = l && l.items.find(i => i.id === ctx.itemId);
   if (!it) return;
   const text = document.getElementById('lsItemText').value.trim() || it.text;
-  document.getElementById('lsShopSubtitle').textContent = `„${text}“ wird dort mit dem Hinweis „für ${l.name || lsType(l.type).one}“ eingetragen.`;
+  document.getElementById('lsShopSubtitle').textContent = tk('lists.shop.subtitle', { name: text, list: l.name || lsType(l.type).one });
   const hideMeal = typeof shoppingMealListHidden === 'function' && shoppingMealListHidden();
   const lists = allShoppingLists().filter(sl => !(hideMeal && sl.id === SHOPPING_MEAL_LIST_ID));
   const stamm = shoppingStammladenId();
   const grid = document.getElementById('lsShopGrid');
-  grid.innerHTML = lists.map(sl => `<button type="button" class="ls-shop-btn${sl.id === stamm ? ' border-pine' : ''}" data-sl="${escapeHtml(sl.id)}">${shoppingListLogoHtml(sl, 32)}<span>${escapeHtml(sl.name || 'Einkaufsliste')}${sl.id === stamm ? ' ⭐' : ''}</span></button>`).join('')
-    || '<p class="text-sm text-ink/40">Noch keine Einkaufslisten vorhanden.</p>';
+  grid.innerHTML = lists.map(sl => `<button type="button" class="ls-shop-btn${sl.id === stamm ? ' border-pine' : ''}" data-sl="${escapeHtml(sl.id)}">${shoppingListLogoHtml(sl, 32)}<span>${escapeHtml(sl.name || tk('shop.shareTitle'))}${sl.id === stamm ? ' ⭐' : ''}</span></button>`).join('')
+    || '<p class="text-sm text-ink/40">' + escapeHtml(tk('lists.shop.none')) + '</p>';
   grid.querySelectorAll('[data-sl]').forEach(b => b.addEventListener('click', () => {
     const sid = b.dataset.sl;
     const curText = document.getElementById('lsItemText').value.trim() || it.text;
     shoppingItems = [...shoppingItems, {
       id: 'si' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
-      name: curText, qty: '', note: 'für ' + (l.name || lsType(l.type).one), done: false, createdAt: Date.now(),
+      name: curText, qty: '', note: tk('lists.forPerson', { name: l.name || lsType(l.type).one }), done: false, createdAt: Date.now(),
       listId: sid === SHOPPING_MEAL_LIST_ID ? '' : sid,
     }];
     lsUpdateItem(l.id, it.id, i => ({ ...i, shopListId: sid }));
@@ -1292,7 +1299,7 @@ function lsOpenShopModal() {
   });
   document.getElementById('listsAddSection').addEventListener('change', (e) => {
     if (e.target.value === '__new') {
-      const name = (prompt('Name des neuen Bereichs:', '') || '').trim();
+      const name = (prompt(tk('lists.newSectionPrompt'), '') || '').trim();
       listsAddSectionValue = name;
       renderShoppingList();
       if (name) input.focus();
@@ -1388,7 +1395,7 @@ function gsFmtDate(iso, withYear) {
   const d = new Date(iso.slice(0, 10) + 'T00:00:00');
   const opts = { weekday: 'short', day: 'numeric', month: 'short' };
   if (withYear || d.getFullYear() !== new Date().getFullYear()) opts.year = 'numeric';
-  return d.toLocaleDateString('de-DE', opts);
+  return d.toLocaleDateString(sysLocale(), opts);
 }
 function gsDaysFromToday(iso) {
   const d = new Date(String(iso).slice(0, 10) + 'T00:00:00');
@@ -1432,11 +1439,11 @@ function gsCollect(q) {
   // Menu items
   safe(() => {
     ALL_MENU_TABS.filter(t => allowed(t.id)).forEach(t => {
-      add('menu', { icon: t.icon, typeLabel: 'Menü', sub: 'Seite öffnen', run: () => setView(t.id) }, t.label, GS_MENU_KEYWORDS[t.id] || '');
+      add('menu', { icon: t.icon, typeLabel: tk('search.type.menu'), sub: tk('search.openPage'), run: () => setView(t.id) }, t.label, GS_MENU_KEYWORDS[t.id] || '');
     });
-    add('menu', { icon: '👤', typeLabel: 'Menü', sub: 'Profil, Passwort, PIN', run: () => setView('konto') }, 'Konto', 'profil passwort pin abmelden benutzer');
-    if (allowed('einstellungen')) add('menu', { icon: '⚙️', typeLabel: 'Menü', sub: 'Darstellung, Kalender, Benachrichtigungen …', run: () => setView('einstellungen') }, 'Einstellungen', 'optionen design');
-    add('menu', { icon: '📜', typeLabel: 'Menü', sub: 'Was ist neu in pinn.', run: () => openChangelogTerminal() }, 'Versions-Log', 'changelog updates version neuigkeiten');
+    add('menu', { icon: '👤', typeLabel: tk('search.type.menu'), sub: tk('search.accountSub'), run: () => setView('konto') }, tk('search.account'), 'profil passwort pin abmelden benutzer');
+    if (allowed('einstellungen')) add('menu', { icon: '⚙️', typeLabel: tk('search.type.menu'), sub: tk('search.settingsSub'), run: () => setView('einstellungen') }, tk('search.settings'), 'optionen design');
+    add('menu', { icon: '📜', typeLabel: tk('search.type.menu'), sub: tk('search.changelogSub'), run: () => openChangelogTerminal() }, tk('search.changelog'), 'changelog updates version neuigkeiten');
   });
 
   // Settings: collapsible sections (their content is searched too)
@@ -1448,7 +1455,7 @@ function gsCollect(q) {
       const label = sum ? sum.textContent.trim() : '';
       if (!label) return;
       add('settings', {
-        icon: '⚙️', typeLabel: 'Einstellungen', sub: 'Abschnitt öffnen',
+        icon: '⚙️', typeLabel: tk('search.settings'), sub: tk('search.openSection'),
         run: () => { setView('einstellungen'); det.open = true; gsScrollTo(det); },
       }, label, '', det.textContent.replace(/\s+/g, ' '));
     });
@@ -1462,12 +1469,12 @@ function gsCollect(q) {
       const label = h.textContent.trim();
       if (!label) return;
       const block = h.closest('.set-card') || h.parentElement;
-      add('account', { icon: '👤', typeLabel: 'Konto', sub: 'Abschnitt öffnen', run: () => { setView('konto'); gsScrollTo(h.closest('.set-card') || h); } },
+      add('account', { icon: '👤', typeLabel: tk('search.account'), sub: tk('search.openSection'), run: () => { setView('konto'); gsScrollTo(h.closest('.set-card') || h); } },
         label, '', block ? block.textContent.replace(/\s+/g, ' ') : '');
     });
     const pwBtn = document.getElementById('openChangePasswordBtn');
     if (pwBtn && !gsHiddenWithin(pwBtn, root)) {
-      add('account', { icon: '🔑', typeLabel: 'Konto', sub: 'Neues Passwort festlegen', run: () => { setView('konto'); pwBtn.click(); } }, 'Passwort ändern', 'kennwort');
+      add('account', { icon: '🔑', typeLabel: tk('search.account'), sub: tk('search.newPassword'), run: () => { setView('konto'); pwBtn.click(); } }, tk('account.changePassword'), 'kennwort');
     }
   });
 
@@ -1476,13 +1483,13 @@ function gsCollect(q) {
     members.forEach(m => {
       const label = memberLabel(m);
       add('member', {
-        icon: '🧑', typeLabel: 'Familie', sub: (m.role && label !== m.role ? m.role + ' · ' : '') + 'Profil · Notfallpass',
+        icon: '🧑', typeLabel: tk('search.type.family'), sub: (m.role && label !== m.role ? m.role + ' · ' : '') + tk('search.memberSub'),
         run: () => { if (allowed('familie')) famOpenMember(m.id); else openMemberModal(m.id); },
       }, label, [m.name, m.role].join(' '));
     });
     if (allowed('familie')) (Array.isArray(pets) ? pets : []).filter(p => p && p.name).forEach(p => {
       add('member', {
-        icon: p.emoji || '🐾', typeLabel: 'Haustier', sub: [p.breed || ptSpecies(p.species).label, p.chip ? 'Chip ' + p.chip : ''].filter(Boolean).join(' · '),
+        icon: p.emoji || '🐾', typeLabel: tk('search.type.pet'), sub: [p.breed || ptSpecies(p.species).label, p.chip ? tk('search.chip', { chip: p.chip }) : ''].filter(Boolean).join(' · '),
         run: () => ptOpen(p.id),
       }, p.name, [p.name, p.breed, ptSpecies(p.species).label, 'haustier tier', p.chip].join(' '));
     });
@@ -1503,11 +1510,11 @@ function gsCollect(q) {
     });
     best.forEach(ev => {
       const days = gsDaysFromToday(ev.date);
-      const when = days === 0 ? 'heute' : days === 1 ? 'morgen' : gsFmtDate(ev.date);
-      const time = ev.fullDayFiller || !ev.time ? 'ganztägig' : ev.time + ' Uhr';
+      const when = days === 0 ? tk('lists.when.today') : days === 1 ? tk('lists.when.tomorrow') : gsFmtDate(ev.date);
+      const time = ev.fullDayFiller || !ev.time ? tk('search.allDay') : tk('cal.timeAt', { time: ev.time });
       const sub = [when, time, ev.location, ev.isRecurring ? 'wiederkehrend' : ''].filter(Boolean).join(' · ');
       const o = {
-        icon: '📅', typeLabel: 'Termin', sub,
+        icon: '📅', typeLabel: tk('search.type.event'), sub,
         run: () => {
           gsJumpToDay(ev.date);
           setTimeout(() => {
@@ -1527,10 +1534,10 @@ function gsCollect(q) {
       if (!a || !a.title) return;
       const isHousehold = !!a.household;
       if (isHousehold ? !allowed('haushalt') : !allowed('aufgaben')) return;
-      const sub = [a.done ? 'erledigt' : (a.dueDate ? 'fällig ' + gsFmtDate(a.dueDate) : ''), a.fromTime ? a.fromTime + (a.toTime ? '–' + a.toTime : '') + ' Uhr' : '', isHousehold ? 'Haushalt' : ''].filter(Boolean).join(' · ');
+      const sub = [a.done ? tk('lists.type.done') : (a.dueDate ? tk('search.due', { date: gsFmtDate(a.dueDate) }) : ''), a.fromTime ? tk('cal.timeAt', { time: a.fromTime + (a.toTime ? '–' + a.toTime : '') }) : '', isHousehold ? tk('search.household') : ''].filter(Boolean).join(' · ');
       const before = out.length;
       add('task', {
-        icon: a.done ? '☑️' : '✅', typeLabel: 'Aufgabe', sub,
+        icon: a.done ? '☑️' : '✅', typeLabel: tk('search.type.task'), sub,
         run: () => {
           if (isHousehold) { setView('haushalt'); return; }
           setView('aufgaben');
@@ -1547,14 +1554,14 @@ function gsCollect(q) {
       if (!r || !r.title) return;
       const fav = typeof recipeFavorites !== 'undefined' && recipeFavorites.some(f => f.id === r.id);
       add('recipe', {
-        icon: fav ? '❤️' : '🍽', typeLabel: 'Rezept', sub: (r.categories || []).join(', ') || 'Rezept öffnen',
+        icon: fav ? '❤️' : '🍽', typeLabel: tk('search.type.recipe'), sub: (r.categories || []).join(', ') || tk('search.openRecipe'),
         run: () => { setView('rezepte'); openRecipeDetailPage(r.id); },
       }, r.title, (Array.isArray(r.ingredients) ? r.ingredients : []).join(' '));
     });
     if (Array.isArray(publicRecipes)) publicRecipes.forEach(e => {
       if (!e || e.eigene || !e.data || !e.data.title) return;
       add('precipe', {
-        icon: '🌍', typeLabel: 'Öffentliches Rezept', sub: 'aus einer anderen Familie',
+        icon: '🌍', typeLabel: tk('search.type.publicRecipe'), sub: tk('search.otherFamily'),
         run: () => { setView('rezepte'); openRecipeDetailPage(null, e); },
       }, e.data.title, (Array.isArray(e.data.ingredients) ? e.data.ingredients : []).join(' '));
     });
@@ -1566,16 +1573,16 @@ function gsCollect(q) {
     lists.forEach(l => {
       const open = shoppingItemsOfList(l.id).filter(x => !x.done).length;
       add('list', {
-        icon: '🛒', typeLabel: 'Einkaufsliste', sub: open ? open + ' offen' : 'leer',
+        icon: '🛒', typeLabel: tk('shop.shareTitle'), sub: open ? tk('shop.nOpen', { n: open }) : tk('lists.emptySmall'),
         run: () => { setView('einkauf'); openShoppingList(l.id); },
-      }, l.name || 'Einkaufsliste', [l.store, l.domain].join(' '));
+      }, l.name || tk('shop.shareTitle'), [l.store, l.domain].join(' '));
     });
     shoppingItems.forEach(it => {
       if (!it || it.done || !it.name) return;
       const listId = itemListId(it);
       const l = getShoppingList(listId);
       add('item', {
-        icon: '🧺', typeLabel: 'Auf der Liste', sub: [l ? l.name : '', it.qty, it.note].filter(Boolean).join(' · '),
+        icon: '🧺', typeLabel: tk('search.onList'), sub: [l ? l.name : '', it.qty, it.note].filter(Boolean).join(' · '),
         run: () => { setView('einkauf'); openShoppingList(listId); },
       }, it.name, it.note || '');
     });
@@ -1590,7 +1597,7 @@ function gsCollect(q) {
       lsOpenItems(l).forEach(it => {
         if (!it || !it.text) return;
         add('item', {
-          icon: t.icon, typeLabel: 'Auf der ' + t.one, sub: [l.name, it.section, it.note].filter(Boolean).join(' · '),
+          icon: t.icon, typeLabel: tk('search.onNamed', { name: t.one }), sub: [l.name, it.section, it.note].filter(Boolean).join(' · '),
           run: () => { setView('einkauf'); lsOpenList(l.id); },
         }, it.text, [it.note, it.forName].filter(Boolean).join(' '));
       });
@@ -1604,7 +1611,7 @@ function gsCollect(q) {
       const loc = typeof pantryLocation === 'function' ? pantryLocation(p.location) : null;
       const qty = [p.qty, p.unit].filter(x => x !== '' && x != null).join(' ');
       add('pantry', {
-        icon: '🥫', typeLabel: 'Vorrat', sub: [qty, loc ? loc.label : ''].filter(Boolean).join(' · ') || 'Vorrats-Artikel',
+        icon: '🥫', typeLabel: tk('pantry.title'), sub: [qty, loc ? loc.label : ''].filter(Boolean).join(' · ') || tk('search.pantryItem'),
         run: () => { setView('vorrat'); openPantryItemModal(p.id); },
       }, p.name, [p.note, loc ? loc.label : ''].join(' '));
     });
@@ -1615,10 +1622,10 @@ function gsCollect(q) {
     pinboard.forEach(n => {
       if (!n || pwIsArchived(n)) return;
       const firstLine = String(n.text || '').split('\n').map(x => x.trim()).find(Boolean) || '';
-      const title = n.title || firstLine || ({ photo: 'Foto', poll: 'Umfrage', kudos: 'Dankeschön', countdown: 'Countdown', list: 'Liste' }[n.type] || 'Zettel');
+      const title = n.title || firstLine || ({ photo: tk('search.note.photo'), poll: tk('search.note.poll'), kudos: tk('search.note.kudos'), countdown: tk('search.note.countdown'), list: tk('search.note.list') }[n.type] || tk('search.note.note'));
       const hay = [n.text, ...(n.items || []).map(i => i && i.text), ...(n.options || []).map(o => o && o.text), n.authorName].join(' ');
       add('pin', {
-        icon: '📌', typeLabel: 'Pinnwand', sub: [n.authorName, n.title && firstLine ? firstLine : ''].filter(Boolean).join(' · ') || 'Zettel öffnen',
+        icon: '📌', typeLabel: tk('search.type.board'), sub: [n.authorName, n.title && firstLine ? firstLine : ''].filter(Boolean).join(' · ') || tk('search.openNote'),
         run: () => { setView('pinnwand'); openPinboardDetail(n.id); },
       }, title, hay);
     });
@@ -1630,9 +1637,9 @@ function gsCollect(q) {
       if (!d) return;
       const cat = docCategory(d.kategorie);
       add('doc', {
-        icon: cat.icon || '🗂️', typeLabel: 'Dokument', sub: [cat.label, d.aussteller, vtFmt(d.datum)].filter(Boolean).join(' · '),
+        icon: cat.icon || '🗂️', typeLabel: tk('search.type.doc'), sub: [cat.label, d.aussteller, vtFmt(d.datum)].filter(Boolean).join(' · '),
         run: () => { setView('dokumente'); openDocDetail(d.id); },
-      }, d.titel || 'Dokument', [d.aussteller, d.notiz, cat.label, ...(d.dateien || [])].join(' '));
+      }, d.titel || tk('search.type.doc'), [d.aussteller, d.notiz, cat.label, ...(d.dateien || [])].join(' '));
     });
   });
 
@@ -1643,16 +1650,16 @@ function gsCollect(q) {
       if (!c) return;
       const cat = vtCategory(c.category);
       add('contract', {
-        icon: '📄', typeLabel: 'Vertrag', sub: [c.provider, cat.label].filter(Boolean).join(' · '),
+        icon: '📄', typeLabel: tk('search.type.contract'), sub: [c.provider, cat.label].filter(Boolean).join(' · '),
         run: () => { setView('finanzen'); openContractDetail(c.id); },
-      }, c.name || c.provider || 'Vertrag', [c.provider, c.customerNo, c.contractNo, c.note, cat.label].join(' '));
+      }, c.name || c.provider || tk('search.type.contract'), [c.provider, c.customerNo, c.contractNo, c.note, cat.label].join(' '));
     });
     (finance.recurring || []).forEach(r => {
       if (!r || (r.contract && vtContract(r.contract))) return;
       const cat = finCategory(r.category);
       const amt = finRecurringAmountFor(r, today);
       add('recurring', {
-        icon: '🔁', typeLabel: 'Dauerbuchung', sub: [amt < 0 ? '+ ' + fmtEur(-amt) : fmtEur(amt), cat.label, r.until && r.until < today ? 'beendet' : ''].filter(Boolean).join(' · '),
+        icon: '🔁', typeLabel: tk('search.type.recurring'), sub: [amt < 0 ? '+ ' + fmtEur(-amt) : fmtEur(amt), cat.label, r.until && r.until < today ? tk('search.ended') : ''].filter(Boolean).join(' · '),
         run: () => { setView('finanzen'); openExpenseModal({ recurring: r }); },
       }, r.title || cat.label, [r.note, cat.label].join(' '));
     });
@@ -1661,7 +1668,7 @@ function gsCollect(q) {
       const cat = finCategory(e.category);
       const before = out.length;
       add('expense', {
-        icon: cat.icon || '💶', typeLabel: 'Buchung', sub: [vtFmt(e.date), finIsIncome(e) ? '+ ' + fmtEur(-e.amount) : fmtEur(e.amount), cat.label].filter(Boolean).join(' · '),
+        icon: cat.icon || '💶', typeLabel: tk('search.type.expense'), sub: [vtFmt(e.date), finIsIncome(e) ? '+ ' + fmtEur(-e.amount) : fmtEur(e.amount), cat.label].filter(Boolean).join(' · '),
         run: () => { setView('finanzen'); openExpenseModal({ expense: e }); },
       }, finEntryTitle(e), [e.store, e.note, cat.label, ...((e.items || []).map(i => i && (i.name || i.text)))].join(' '));
       if (out.length > before) out[out.length - 1].tie = -gsDaysFromToday(e.date || today);
@@ -1673,7 +1680,7 @@ function gsCollect(q) {
     fzVehicles().forEach(v => {
       if (!v) return;
       add('vehicle', {
-        icon: '🚗', typeLabel: 'Fahrzeug', sub: [fzPlateText(v.plate), [v.make, v.model].filter(Boolean).join(' ')].filter(Boolean).join(' · ') || 'Fahrzeug öffnen',
+        icon: '🚗', typeLabel: tk('search.type.vehicle'), sub: [fzPlateText(v.plate), [v.make, v.model].filter(Boolean).join(' ')].filter(Boolean).join(' · ') || tk('search.openVehicle'),
         run: () => { fzDetailId = v.id; setView('fahrzeuge'); },
       }, fzName(v), [fzPlateText(v.plate), v.make, v.model, v.vin].join(' '));
     });
@@ -1683,7 +1690,7 @@ function gsCollect(q) {
   if (allowed('haushalt')) safe(() => {
     rooms.forEach(r => {
       if (!r || !r.name) return;
-      add('room', { icon: r.icon || '🧹', typeLabel: 'Raum', sub: 'Haushalt', run: () => setView('haushalt') }, r.name, '');
+      add('room', { icon: r.icon || '🧹', typeLabel: tk('search.type.room'), sub: tk('search.household'), run: () => setView('haushalt') }, r.name, '');
     });
   });
 
@@ -1696,10 +1703,10 @@ function gsCollect(q) {
       const iso = isoDate(next);
       const days = gsDaysFromToday(iso);
       const age = b.y ? next.getFullYear() - b.y : null;
-      const when = days === 0 ? 'heute' : days === 1 ? 'morgen' : next.toLocaleDateString('de-DE', { day: 'numeric', month: 'long' });
+      const when = days === 0 ? tk('lists.when.today') : days === 1 ? tk('lists.when.tomorrow') : next.toLocaleDateString(sysLocale(), { day: 'numeric', month: 'long' });
       const before = out.length;
       add('birthday', {
-        icon: '🎂', typeLabel: 'Geburtstag', sub: when + (age ? ' · wird ' + age : ''),
+        icon: '🎂', typeLabel: tk('search.type.birthday'), sub: when + (age ? ' · ' + tk('lists.turnsAge', { n: age }) : ''),
         run: () => { if (allowed('termine')) gsJumpToDay(iso); else setView('uebersicht'); },
       }, b.n, 'geburtstag');
       if (out.length > before) out[out.length - 1].tie = days;
@@ -1741,7 +1748,7 @@ function gsRender() {
   gsResults = gsCollect(q);
   gsActive = 0;
   if (!gsResults.length) {
-    box.innerHTML = `<div class="gs-empty">Keine Treffer für „${escapeHtml(q.trim())}“</div>`;
+    box.innerHTML = `<div class="gs-empty">${escapeHtml(tk('search.noHits', { q: q.trim() }))}</div>`;
   } else {
     // column-reverse: the first (best) hit is at the bottom, right above the search field
     box.innerHTML = gsResults.map((r, i) => `
@@ -1776,7 +1783,7 @@ function gsRunResult(i) {
   if (!r) return;
   closeGlobalSearch();
   setTimeout(() => {
-    try { r.run(); } catch (e) { console.error('Suche: Eintrag konnte nicht geöffnet werden', e); }
+    try { r.run(); } catch (e) { console.error('Search: could not open the entry', e); }
   }, 30);
 }
 

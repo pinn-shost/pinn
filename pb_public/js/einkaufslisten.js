@@ -97,20 +97,20 @@ function renderShoppingOverview() {
     const color = shoppingListColor(list);
     const isStamm = list.id === stammId;
     const previewHtml = preview.length
-      ? preview.map(n => `<span class="block truncate">${escapeHtml(n)}</span>`).join('') + (count > preview.length ? `<span class="block text-ink/35">+ ${count - preview.length} weitere</span>` : '')
-      : `<span class="block italic text-ink/35">${listHasRecipeItems(list.id) ? 'Nichts geplant' : 'Leer'}</span>`;
+      ? preview.map(n => `<span class="block truncate">${escapeHtml(n)}</span>`).join('') + (count > preview.length ? `<span class="block text-ink/35">${escapeHtml(tk('shop.moreItems', { n: count - preview.length }))}</span>` : '')
+      : `<span class="block italic text-ink/35">${listHasRecipeItems(list.id) ? tk('shop.nothingPlanned') : tk('shop.empty')}</span>`;
     let subtitle = '';
     if (list.id === SHOPPING_MEAL_LIST_ID) {
-      if (mode === 'mirror' && stammList) subtitle = `🔗 Gespiegelt nach ${escapeHtml(stammList.name || '')}`;
-      else if (mode === 'direct' && stammList) subtitle = `Eigene Einträge · Zutaten ➜ ${escapeHtml(stammList.name || '')}`;
-      else subtitle = 'Rezepte &amp; eigene Einträge';
+      if (mode === 'mirror' && stammList) subtitle = escapeHtml(tk('shop.mirroredTo', { name: stammList.name || '' }));
+      else if (mode === 'direct' && stammList) subtitle = escapeHtml(tk('shop.ownEntriesIngredientsTo', { name: stammList.name || '' }));
+      else subtitle = escapeHtml(tk('shop.recipesOwnEntries'));
     } else if (isStamm) {
-      subtitle = mode === 'mirror' ? '⭐ Stammladen · 🔗 Essensplanung'
-        : mode === 'direct' ? '⭐ Stammladen · inkl. Essensplanung'
-        : '⭐ Stammladen';
+      subtitle = mode === 'mirror' ? tk('shop.mainMealMirrored')
+        : mode === 'direct' ? tk('shop.mainInclMeal')
+        : tk('shop.mainShop');
     } else {
       const rules = shoppingActiveRules().filter(r => r.listId === list.id);
-      if (rules.length) subtitle = rules.map(r => r.icon).join('') + ' Sonderliste · ' + escapeHtml(rules.map(r => r.name).join(', '));
+      if (rules.length) subtitle = rules.map(r => r.icon).join('') + ' ' + escapeHtml(tk('shop.rule.name')) + ' · ' + escapeHtml(rules.map(r => r.name).join(', '));
     }
     return `
       <button type="button" class="shopping-list-card relative text-left rounded-2xl bg-white border border-ink/10 shadow-sm hover:shadow-md hover:border-pine/40 transition p-4 pt-5 flex flex-col gap-3 min-h-[11rem] overflow-hidden select-none" data-list-id="${escapeHtml(list.id)}">
@@ -127,12 +127,7 @@ function renderShoppingOverview() {
       </button>
     `;
   }).join('');
-  grid.innerHTML = cards + `
-    <button type="button" id="shoppingNewListCard" class="rounded-2xl border-2 border-dashed border-ink/15 text-ink/40 hover:text-pine hover:border-pine transition p-4 min-h-[11rem] flex flex-col items-center justify-center gap-2 select-none">
-      <span class="text-3xl leading-none">+</span>
-      <span class="text-sm">Neue Liste</span>
-    </button>
-  `;
+  grid.innerHTML = cards + ('\n    <button type="button" id="shoppingNewListCard" class="rounded-2xl border-2 border-dashed border-ink/15 text-ink/40 hover:text-pine hover:border-pine transition p-4 min-h-[11rem] flex flex-col items-center justify-center gap-2 select-none">\n      <span class="text-3xl leading-none">+</span>\n      <span class="text-sm">' + tk('lists.modal.newTitle') + '</span>\n    </button>\n  ');
   grid.querySelectorAll('.shopping-list-card').forEach(card => {
     card.addEventListener('click', () => {
       if (shoppingDragSuppressClick) return;
@@ -393,9 +388,9 @@ function shoppingQtyControlsHtml(kind, id, qtyText, muted, pantry = false) {
   if (muted) return qtyText ? `<span class="shop-qty-val shrink-0 text-sm text-ink/30 line-through px-2"${title}>${inner}</span>` : '';
   return `
         <div class="shop-qty flex items-center gap-1 pr-2 shrink-0">
-          <button type="button" class="shop-qty-btn shop-qty-minus" data-kind="${kind}" data-id="${escapeHtml(id)}" data-dir="-1" aria-label="Einen weniger">−</button>
+          <button type="button" class="shop-qty-btn shop-qty-minus" data-kind="${kind}" data-id="${escapeHtml(id)}" data-dir="-1" aria-label="${escapeHtml(tk('shop.oneLess'))}">−</button>
           <span class="shop-qty-val text-center text-sm font-semibold ${qtyText ? '' : 'text-ink/35 font-normal'}"${title}>${inner}</span>
-          <button type="button" class="shop-qty-btn shop-qty-plus" data-kind="${kind}" data-id="${escapeHtml(id)}" data-dir="1" aria-label="Einen mehr">+</button>
+          <button type="button" class="shop-qty-btn shop-qty-plus" data-kind="${kind}" data-id="${escapeHtml(id)}" data-dir="1" aria-label="${escapeHtml(tk('shop.oneMore'))}">+</button>
         </div>`;
 }
 function shoppingManualRowHtml(it) {
@@ -408,7 +403,7 @@ function shoppingManualRowHtml(it) {
       <button type="button" class="shopping-manual-row shop-row-main flex-1 min-w-0 flex items-center gap-3 text-left select-none" data-manual-id="${escapeHtml(it.id)}">
         <span class="shop-check" aria-hidden="true">${muted ? '✓' : ''}</span>
         <span class="flex-1 min-w-0">
-          <span class="flex items-center gap-1.5 min-w-0"><span class="shop-name truncate">${escapeHtml(truncateTitle(it.name || '', 40))}</span>${pItem ? `<span class="pantry-tag shrink-0 ${muted ? 'opacity-40' : ''}" title="Vorrat: ${escapeHtml(pantryStockText(pItem))} da">🥫 Vorrat</span>` : ''}</span>
+          <span class="flex items-center gap-1.5 min-w-0"><span class="shop-name truncate">${escapeHtml(truncateTitle(it.name || '', 40))}</span>${pItem ? `<span class="pantry-tag shrink-0 ${muted ? 'opacity-40' : ''}" title="${escapeHtml(tk('shop.pantryStock', { stock: pantryStockText(pItem) }))}">${escapeHtml(tk('shop.pantryTag'))}</span>` : ''}</span>
           ${note ? `<span class="shop-note block truncate">${escapeHtml(note)}</span>` : ''}
         </span>
       </button>
@@ -420,7 +415,7 @@ function shoppingRecipeRouteTagHtml(item, muted) {
   const list = getShoppingList(item.route);
   const rule = shoppingActiveRules().find(r => r.listId === item.route);
   if (!list) return '';
-  return `<span class="shrink-0 max-w-[45%] truncate text-[10px] font-sans px-1.5 py-0.5 rounded-full bg-mustard/15 text-mustard ${muted ? 'opacity-40' : ''}" title="Steht auf der Liste ${escapeHtml(list.name || '')}">${rule ? rule.icon : '➜'} ${escapeHtml(list.name || '')}</span>`;
+  return `<span class="shrink-0 max-w-[45%] truncate text-[10px] font-sans px-1.5 py-0.5 rounded-full bg-mustard/15 text-mustard ${muted ? 'opacity-40' : ''}" title="${escapeHtml(tk('shop.onListNamed', { name: list.name || '' }))}">${rule ? rule.icon : '➜'} ${escapeHtml(list.name || '')}</span>`;
 }
 function shoppingRecipeRowHtml(item, showRoute = false) {
   const adj = getShoppingItemAdjustment(item.key);
@@ -436,7 +431,7 @@ function shoppingRecipeRowHtml(item, showRoute = false) {
         <span class="shop-check" aria-hidden="true">${muted ? '✓' : ''}</span>
         <span class="flex-1 min-w-0">
           <span class="flex items-center gap-1.5 min-w-0"><span class="shop-name truncate">${escapeHtml(truncateTitle(label, 40))}</span>${showRoute ? shoppingRecipeRouteTagHtml(item, muted) : ''}</span>
-          <span class="shop-note block truncate">🍽️ <span>${escapeHtml(muted ? 'Hab ich noch zu Hause' : 'aus der Essensplanung')}</span></span>
+          <span class="shop-note block truncate">🍽️ <span>${escapeHtml(muted ? tk('shop.stillAtHome') : tk('shop.fromMealPlan'))}</span></span>
         </span>
       </button>
       ${qtyHtml}
@@ -462,10 +457,10 @@ function shoppingGroupedBodyHtml(manual, recipeItems, showRoute) {
   const doneCount = doneManual.length + doneRecipe.length;
   const doneHtml = doneCount ? `
     <div class="shop-group shop-group-done">
-      <h3 class="shop-group-head"><span class="text-sm">✓</span>Abgehakt<span class="text-ink/30 normal-case tracking-normal">· ${doneCount}</span></h3>
+      <h3 class="shop-group-head"><span class="text-sm">✓</span>${tk('shop.checkedOff')}<span class="text-ink/30 normal-case tracking-normal">· ${doneCount}</span></h3>
       <div class="flex flex-col gap-1.5">${doneManual.map(shoppingManualRowHtml).join('')}${doneRecipe.map(i => shoppingRecipeRowHtml(i, showRoute)).join('')}</div>
     </div>` : '';
-  if (!groupHtml && doneCount) return `<p class="text-sm text-pine text-center py-1">Alles abgehakt 🎉</p>` + doneHtml;
+  if (!groupHtml && doneCount) return ('<p class="text-sm text-pine text-center py-1">' + tk('shop.allChecked') + '</p>') + doneHtml;
   return groupHtml + doneHtml;
 }
 // Check off all own entries of a list or reopen them
@@ -572,7 +567,7 @@ function renderShoppingCombinedDetail() {
 
   document.getElementById('shoppingDetailLogo').innerHTML =
     `<div class="shopping-combined-logos">${lists.slice(0, 3).map(l => shoppingListLogoHtml(l, 30)).join('')}</div>`;
-  document.getElementById('shoppingDetailTitle').textContent = (task && task.title) || ('Einkaufen: ' + lists.map(l => l.name || '').join(', '));
+  document.getElementById('shoppingDetailTitle').textContent = (task && task.title) || tk('shop.shoppingAt', { names: lists.map(l => l.name || '').join(', ') });
   document.getElementById('editShoppingListBtn').classList.add('hidden');
   document.getElementById('openShoppingMoveBtn').classList.add('hidden');
   document.getElementById('shoppingDateRangeBlock').classList.toggle('hidden', !hasMeal);
@@ -583,8 +578,8 @@ function renderShoppingCombinedDetail() {
   if (hasMeal && rangeValid) recipeItems = computeShoppingList(from, to).items;
 
   const totalOpen = listIds.reduce((sum, id) => sum + shoppingListSummary(id).count, 0);
-  const metaParts = [`${lists.length} Listen zusammengefügt`, `${totalOpen} Artikel offen`];
-  if (task && task.dueDate) metaParts.push('Fällig: ' + fmtDateTime(task.dueDate, null));
+  const metaParts = [tk('shop.listsMerged', { n: lists.length }), tk('shop.itemsOpen', { n: totalOpen })];
+  if (task && task.dueDate) metaParts.push((tk('shop.due') + ' ') + fmtDateTime(task.dueDate, null));
   metaEl.textContent = metaParts.join(' · ');
   emptyEl.classList.add('hidden');
 
@@ -598,17 +593,17 @@ function renderShoppingCombinedDetail() {
     const allDone = manual.length > 0 && manual.every(it => it.done);
     const body = (manual.length || items.length)
       ? shoppingGroupedBodyHtml(manual, items, showRoute)
-      : `<p class="text-sm text-ink/35 italic text-center py-2">${isMeal ? 'Für diesen Zeitraum nichts geplant.' : 'Diese Liste ist leer.'}</p>`;
+      : `<p class="text-sm text-ink/35 italic text-center py-2">${isMeal ? tk('shop.nothingPlannedPeriod') : tk('shop.listEmpty')}</p>`;
     return `
       <section class="shopping-combined-section mx-auto w-full max-w-xl" style="--list-color:${color}">
         <div class="shopping-combined-head">
           ${shoppingListLogoHtml(list, 30)}
           <div class="flex-1 min-w-0">
             <div class="font-serif text-base leading-tight truncate">${escapeHtml(list.name || '')}</div>
-            <div class="text-[11px] text-ink/50 leading-tight">${count ? count + ' offen' : 'nichts offen'}</div>
+            <div class="text-[11px] text-ink/50 leading-tight">${count ? escapeHtml(tk('shop.nOpen', { n: count })) : escapeHtml(tk('shop.nothingOpen'))}</div>
           </div>
-          ${manual.length ? `<button type="button" class="shopping-section-all shrink-0 px-2.5 py-1 rounded-lg border border-ink/15 bg-white text-[11px] text-ink/60 hover:text-pine hover:border-pine transition" data-list-id="${escapeHtml(list.id)}">${allDone ? '○ Keine' : '✓ Alle'}</button>` : ''}
-          <button type="button" class="shopping-section-open shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-medium hover:bg-white/60 transition" style="color:${color}" data-list-id="${escapeHtml(list.id)}">Öffnen ›</button>
+          ${manual.length ? `<button type="button" class="shopping-section-all shrink-0 px-2.5 py-1 rounded-lg border border-ink/15 bg-white text-[11px] text-ink/60 hover:text-pine hover:border-pine transition" data-list-id="${escapeHtml(list.id)}">${allDone ? tk('shop.selectNone') : tk('shop.selectAll')}</button>` : ''}
+          <button type="button" class="shopping-section-open shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-medium hover:bg-white/60 transition" style="color:${color}" data-list-id="${escapeHtml(list.id)}">${escapeHtml(tk('shop.open'))}</button>
         </div>
         <div class="shopping-combined-paper shop-list-body px-3 py-3">
           ${body}
@@ -653,8 +648,8 @@ function renderShoppingDetail() {
   const editBtn = document.getElementById('editShoppingListBtn');
   editBtn.classList.remove('hidden');
   editBtn.textContent = isMeal ? '⭐' : '✎';
-  editBtn.setAttribute('aria-label', isMeal ? 'Stammladen festlegen' : 'Liste bearbeiten');
-  editBtn.title = isMeal ? 'Stammladen festlegen' : 'Liste bearbeiten';
+  editBtn.setAttribute('aria-label', isMeal ? tk('shop.setMainShop') : tk('lists.editList'));
+  editBtn.title = isMeal ? tk('shop.setMainShop') : tk('lists.editList');
   document.getElementById('shoppingDateRangeBlock').classList.toggle('hidden', !showsRecipes);
 
   // Recipe ingredients are on the meal planning and (mirrored/direct) in the main shop - they
@@ -672,14 +667,14 @@ function renderShoppingDetail() {
 
   // Note on how meal planning and main shop are currently connected
   let linkNote = '';
-  if (isMeal && stammList && mealMode === 'mirror') linkNote = `🔗 Wird automatisch nach „${escapeHtml(stammList.name || '')}“ gespiegelt`;
-  else if (isMeal && stammList && mealMode === 'direct') linkNote = `➜ Rezept-Zutaten stehen direkt auf „${escapeHtml(stammList.name || '')}“`;
-  else if (!isMeal && listId === stammId && mealMode === 'mirror') linkNote = '⭐ Stammladen · 🔗 Zutaten aus der Essensplanung (gespiegelt)';
-  else if (!isMeal && listId === stammId && mealMode === 'direct') linkNote = '⭐ Stammladen · Zutaten aus der Essensplanung';
-  else if (!isMeal && listId === stammId) linkNote = '⭐ Stammladen';
+  if (isMeal && stammList && mealMode === 'mirror') linkNote = escapeHtml(tk('shop.autoMirroredTo', { name: stammList.name || '' }));
+  else if (isMeal && stammList && mealMode === 'direct') linkNote = escapeHtml(tk('shop.ingredientsDirectlyOn', { name: stammList.name || '' }));
+  else if (!isMeal && listId === stammId && mealMode === 'mirror') linkNote = tk('shop.mainIngredientsMirrored');
+  else if (!isMeal && listId === stammId && mealMode === 'direct') linkNote = tk('shop.mainIngredients');
+  else if (!isMeal && listId === stammId) linkNote = tk('shop.mainShop');
   const ruleHere = shoppingActiveRules().filter(r => r.listId === listId);
   if (!isMeal && ruleHere.length) {
-    const ruleNote = ruleHere.map(r => r.icon).join('') + ' Sonderliste: ' + escapeHtml(ruleHere.map(r => r.name).join(', ')) + ' aus der Essensplanung';
+    const ruleNote = ruleHere.map(r => r.icon).join('') + ' ' + escapeHtml(tk('shop.ruleFromMeal', { names: ruleHere.map(r => r.name).join(', ') }));
     linkNote = linkNote ? linkNote + ' · ' + ruleNote : ruleNote;
   }
   if (routedAway.length) {
@@ -687,7 +682,7 @@ function renderShoppingDetail() {
     routedAway.forEach(i => byList.set(i.route, (byList.get(i.route) || 0) + 1));
     const notes = [...byList.entries()].map(([id, n]) => {
       const l = getShoppingList(id); const r = shoppingActiveRules().find(x => x.listId === id);
-      return `${r ? r.icon : '➜'} ${n} Zutat${n === 1 ? '' : 'en'} ➜ ${escapeHtml((l && l.name) || '')}`;
+      return `${r ? r.icon : '➜'} ${escapeHtml(tk('shop.ingredientsTo', { n, name: (l && l.name) || '' }))}`;
     });
     linkNote = (linkNote ? linkNote + ' · ' : '') + notes.join(' · ');
   }
@@ -695,12 +690,12 @@ function renderShoppingDetail() {
   if (!showsRecipes) {
     metaEl.innerHTML = linkNote;
   } else if (!rangeValid) {
-    metaEl.innerHTML = (linkNote ? linkNote + ' · ' : '') + (from && to ? 'Das Enddatum liegt vor dem Startdatum.' : '');
+    metaEl.innerHTML = (linkNote ? linkNote + ' · ' : '') + (from && to ? tk('shop.endBeforeStart') : '');
   } else {
     const parts = [];
     if (linkNote) parts.push(linkNote);
-    if (mealCount) parts.push(escapeHtml(`${mealCount} geplante Mahlzeit${mealCount === 1 ? '' : 'en'} aus ${recipeCount} Rezept${recipeCount === 1 ? '' : 'en'}`));
-    if (transferredCount) parts.push(`${transferredCount} Mahlzeit${transferredCount === 1 ? '' : 'en'} bereits auf eine andere Liste übertragen – <button type="button" id="restoreTransferredMealsBtn" class="underline hover:text-pine">wieder anzeigen</button>`);
+    if (mealCount) parts.push(escapeHtml(tk('shop.plannedMeals', { n: mealCount }) + ' ' + tk('shop.fromRecipes', { n: recipeCount })));
+    if (transferredCount) parts.push(`${escapeHtml(tk('shop.mealsTransferred', { n: transferredCount }))} – <button type="button" id="restoreTransferredMealsBtn" class="underline hover:text-pine">${escapeHtml(tk('shop.showAgain'))}</button>`);
     metaEl.innerHTML = parts.join(' · ');
     const restoreBtn = document.getElementById('restoreTransferredMealsBtn');
     if (restoreBtn) restoreBtn.addEventListener('click', () => {
@@ -718,16 +713,16 @@ function renderShoppingDetail() {
 
   if (showsRecipes) {
     emptyEl.textContent = transferredCount && !mealCount
-      ? 'Die Rezept-Zutaten dieses Zeitraums stehen schon auf einer anderen Liste.'
+      ? tk('shop.ingredientsElsewhere')
       : (!listShowsRecipes(listId) && mealCount)
-        ? 'Für diesen Zeitraum passt keine geplante Zutat zu dieser Sonderliste.'
-        : 'Für diesen Zeitraum ist kein Essen mit Rezept geplant.';
+        ? tk('shop.noRuleIngredient')
+        : tk('shop.noRecipeMeal');
     emptyEl.classList.toggle('hidden', !rangeValid || items.length > 0 || (!isMeal && manual.length > 0));
   } else if (isMeal && mealMode === 'direct' && stammList) {
-    emptyEl.textContent = `Die Rezept-Zutaten stehen direkt auf „${stammList.name || ''}“. Hier bleiben nur eigene Einträge.`;
+    emptyEl.textContent = tk('shop.directOnlyOwn', { name: stammList.name || '' });
     emptyEl.classList.toggle('hidden', manual.length > 0);
   } else {
-    emptyEl.textContent = 'Diese Liste ist noch leer – unten etwas hinzufügen oder den Inhalt einer anderen Liste hierher verschieben.';
+    emptyEl.textContent = tk('shop.listStillEmpty');
     emptyEl.classList.toggle('hidden', manual.length > 0);
   }
   actionsEl.classList.toggle('hidden', !hasAny);
@@ -739,7 +734,7 @@ function renderShoppingDetail() {
   const allManualDone = manual.length > 0 && manual.every(it => it.done);
   const selectAllHtml = manual.length ? `
     <div class="mx-auto w-full max-w-xl flex justify-end mb-2">
-      <button type="button" id="shoppingSelectAllBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 bg-white text-xs text-ink/60 hover:text-pine hover:border-pine transition">${allManualDone ? '○ Keine abhaken' : '✓ Alle abhaken'}</button>
+      <button type="button" id="shoppingSelectAllBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 bg-white text-xs text-ink/60 hover:text-pine hover:border-pine transition">${allManualDone ? tk('shop.checkNone') : tk('shop.checkAll')}</button>
     </div>` : '';
   contentEl.innerHTML = selectAllHtml + `
     <div id="shoppingListPaper" class="shop-list-body mx-auto w-full max-w-xl">
@@ -768,17 +763,17 @@ function openShoppingMoveModal() {
   const targetsEl = document.getElementById('shoppingMoveTargets');
   const emptyEl = document.getElementById('shoppingMoveEmpty');
 
-  infoEl.textContent = `${total} offene${total === 1 ? 'r' : ''} Eintr${total === 1 ? 'ag' : 'äge'} von „${src.name}“ auf eine andere Liste übertragen. Gleiche Artikel werden dort zusammengefasst, abgehakte bleiben hier stehen.`
-    + (listHasRecipeItems(src.id) ? ' Als „zu Hause vorhanden“ markierte Zutaten werden nicht übertragen.' : '')
-    + (src.id === SHOPPING_MEAL_LIST_ID && shoppingActiveRules().length ? ' Zutaten für Sonderlisten (z. B. Metzgerei) bleiben auf ihrer Sonderliste.' : '');
+  infoEl.textContent = tk('shop.moveInfo', { n: total, name: src.name })
+    + (listHasRecipeItems(src.id) ? (' ' + tk('shop.moveNotHome')) : '')
+    + (src.id === SHOPPING_MEAL_LIST_ID && shoppingActiveRules().length ? (' ' + tk('shop.moveRulesStay')) : '');
 
   targetsEl.innerHTML = '';
   emptyEl.classList.add('hidden');
   if (!total) {
-    emptyEl.textContent = 'Auf dieser Liste ist nichts Offenes zum Verschieben.';
+    emptyEl.textContent = tk('shop.moveNothingOpen');
     emptyEl.classList.remove('hidden');
   } else if (!targets.length) {
-    emptyEl.innerHTML = 'Es gibt noch keine weitere Liste. <button type="button" id="shoppingMoveNewListBtn" class="underline text-pine">Jetzt eine anlegen</button>';
+    emptyEl.innerHTML = (tk('shop.moveNoOther') + ' <button type="button" id="shoppingMoveNewListBtn" class="underline text-pine">' + tk('shop.main.createOne') + '</button>');
     emptyEl.classList.remove('hidden');
     document.getElementById('shoppingMoveNewListBtn').addEventListener('click', () => {
       closeShoppingMoveModal();
@@ -793,14 +788,12 @@ function openShoppingMoveModal() {
           ${shoppingListLogoHtml(l, 36)}
           <span class="flex-1 min-w-0">
             <span class="block truncate text-sm font-medium">${escapeHtml(l.name || '')}</span>
-            ${isStamm ? '<span class="block text-[11px] text-mustard">⭐ Stammladen</span>' : ''}
+            ${isStamm ? ('<span class="block text-[11px] text-mustard">' + tk('shop.mainShop') + '</span>') : ''}
           </span>
           <span class="shrink-0 text-xs text-ink/40">${count ? count + ' offen' : 'leer'}</span>
         </button>
       `;
-    }).join('') + `
-      <button type="button" id="shoppingMoveNewListBtn" class="w-full rounded-xl border-2 border-dashed border-ink/15 text-ink/40 hover:text-pine hover:border-pine transition px-3 py-2.5 text-sm">+ Neue Liste anlegen</button>
-    `;
+    }).join('') + ('\n      <button type="button" id="shoppingMoveNewListBtn" class="w-full rounded-xl border-2 border-dashed border-ink/15 text-ink/40 hover:text-pine hover:border-pine transition px-3 py-2.5 text-sm">' + tk('shop.createNewList') + '</button>\n    ');
     targetsEl.querySelectorAll('.shopping-move-target').forEach(btn => {
       btn.addEventListener('click', () => {
         const toId = btn.dataset.listId;
@@ -831,7 +824,7 @@ let shoppingListModalStammMode = 'mirror'; // chosen mode in the list popup
 function shoppingListModalDraft() {
   return {
     id: shoppingListModalEditId || 'draft',
-    name: document.getElementById('shoppingListNameInput').value.trim() || (shoppingStoreByKey(shoppingListModalStore) || {}).name || '',
+    name: document.getElementById('shoppingListNameInput').value.trim() || shoppingStoreName(shoppingStoreByKey(shoppingListModalStore)) || '',
     store: shoppingListModalStore,
     domain: shoppingListModalStore === 'eigener' ? normalizeShoppingDomain(document.getElementById('shoppingListDomainInput').value) : '',
     logo: shoppingListModalLogo,
@@ -856,8 +849,8 @@ function renderShoppingStorePicker() {
     const active = st.key === shoppingListModalStore;
     return `
       <button type="button" class="shopping-store-option flex flex-col items-center gap-1 rounded-xl p-1.5 transition ${active ? 'bg-pine/10 ring-2 ring-pine' : 'hover:bg-ink/5'}" data-store="${st.key}">
-        ${shoppingListLogoHtml({ id: 'store-' + st.key, name: st.name, store: st.key }, 40)}
-        <span class="text-[10px] leading-tight text-ink/60 text-center w-full truncate">${escapeHtml(st.name)}</span>
+        ${shoppingListLogoHtml({ id: 'store-' + st.key, name: shoppingStoreName(st), store: st.key }, 40)}
+        <span class="text-[10px] leading-tight text-ink/60 text-center w-full truncate">${escapeHtml(shoppingStoreName(st))}</span>
       </button>
     `;
   }).join('');
@@ -869,7 +862,7 @@ function renderShoppingStorePicker() {
       // Only take over the name if none is set yet or it is still the name of the previously
       // chosen shop - don't overwrite a name typed in by the user.
       const current = nameInput.value.trim();
-      if (!current || (prev && current === prev.name)) nameInput.value = next.custom ? '' : next.name;
+      if (!current || (prev && (current === prev.name || current === shoppingStoreName(prev)))) nameInput.value = next.custom ? '' : shoppingStoreName(next);
       shoppingListModalStore = next.key;
       renderShoppingStorePicker();
       updateShoppingListModalPreview();
@@ -883,10 +876,10 @@ function openShoppingListModal(editId = null, opts = {}) {
   shoppingListModalReopenMove = !!opts.reopenMove;
   shoppingListModalStore = existing ? (existing.store || 'eigener') : 'rewe';
   shoppingListModalLogo = existing ? (existing.logo || '') : '';
-  document.getElementById('shoppingListModalTitle').textContent = existing ? 'Liste bearbeiten' : 'Neue Einkaufsliste';
-  document.getElementById('shoppingListNameInput').value = existing ? (existing.name || '') : (shoppingStoreByKey('rewe').name);
+  document.getElementById('shoppingListModalTitle').textContent = existing ? tk('lists.editList') : tk('shop.list.newTitle');
+  document.getElementById('shoppingListNameInput').value = existing ? (existing.name || '') : (shoppingStoreName(shoppingStoreByKey('rewe')));
   document.getElementById('shoppingListDomainInput').value = existing ? (existing.domain || '') : '';
-  document.getElementById('saveShoppingListBtn').textContent = existing ? 'Speichern' : 'Anlegen';
+  document.getElementById('saveShoppingListBtn').textContent = existing ? tk('common.save') : tk('common.create');
   document.getElementById('deleteShoppingListBtn').classList.toggle('hidden', !existing);
   shoppingListModalStamm = !!existing && existing.id === shoppingStammladenId();
   shoppingListModalStammMode = shoppingMealTarget.mode || 'mirror';
@@ -935,7 +928,7 @@ function deleteShoppingListFromModal() {
   const list = shoppingLists.find(l => l.id === id);
   if (!list) return;
   const count = shoppingItemsOfList(id).length;
-  const msg = `Liste „${list.name}“ löschen?` + (count ? ` Die ${count} Eintr${count === 1 ? 'ag' : 'äge'} darauf werden ebenfalls gelöscht.` : '');
+  const msg = tk('shop.confirmDeleteList', { name: list.name }) + (count ? ' ' + tk('shop.entriesDeletedToo', { n: count }) : '');
   if (!confirm(msg)) return;
   shoppingItems = shoppingItems.filter(it => it.listId !== id);
   shoppingLists = shoppingLists.filter(l => l.id !== id);
@@ -957,10 +950,10 @@ function deleteShoppingListFromModal() {
 function readShoppingLogoFile(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onerror = () => reject(new Error('Datei konnte nicht gelesen werden'));
+    reader.onerror = () => reject(new Error(tk('shop.fileUnreadable')));
     reader.onload = () => {
       const img = new Image();
-      img.onerror = () => reject(new Error('Kein gültiges Bild'));
+      img.onerror = () => reject(new Error(tk('shop.invalidImage')));
       img.onload = () => {
         const MAX = 128;
         const scale = Math.min(1, MAX / Math.max(img.width, img.height));
@@ -999,8 +992,8 @@ function renderShoppingCategorySettings() {
       <span class="w-6 text-center text-[11px] text-ink/35 shrink-0">${i + 1}.</span>
       <span class="text-base shrink-0">${escapeHtml(c.icon || '')}</span>
       <span class="flex-1 min-w-0 text-sm truncate">${escapeHtml(c.label)}</span>
-      <button type="button" class="shop-cat-move" data-move="-1" ${i === 0 ? 'disabled' : ''} aria-label="Nach oben">▲</button>
-      <button type="button" class="shop-cat-move" data-move="1" ${i === cats.length - 1 ? 'disabled' : ''} aria-label="Nach unten">▼</button>
+      <button type="button" class="shop-cat-move" data-move="-1" ${i === 0 ? 'disabled' : ''} aria-label="${escapeHtml(tk('common.moveUp'))}">▲</button>
+      <button type="button" class="shop-cat-move" data-move="1" ${i === cats.length - 1 ? 'disabled' : ''} aria-label="${escapeHtml(tk('common.moveDown'))}">▼</button>
     </div>`).join('');
   shopCatFreshId = '';
   wrap.querySelectorAll('.shop-cat-move').forEach(btn => btn.addEventListener('click', () => {
@@ -1036,46 +1029,46 @@ function renderShoppingSettings() {
   document.getElementById('settingsStammLogo').innerHTML = stamm
     ? shoppingListLogoHtml(stamm, 34)
     : '<div class="w-[34px] h-[34px] rounded-[9px] border-2 border-dashed border-ink/20 grid place-items-center text-ink/35">–</div>';
-  document.getElementById('settingsStammName').textContent = stamm ? '⭐ ' + (stamm.name || '') : 'Kein Stammladen';
-  document.getElementById('settingsStammMode').textContent = stamm && modeInfo ? modeInfo.icon + ' ' + modeInfo.label : 'Essensplanung bleibt eine eigene Liste';
+  document.getElementById('settingsStammName').textContent = stamm ? '⭐ ' + (stamm.name || '') : tk('shop.noMainShop');
+  document.getElementById('settingsStammMode').textContent = stamm && modeInfo ? modeInfo.icon + ' ' + modeInfo.label : tk('shop.mealOwnList');
 
   // Special lists
   document.getElementById('settingsAddMeatRuleBtn').classList.toggle('hidden', shoppingIngredientRules.some(r => r.preset === 'metzger'));
   if (!shoppingIngredientRules.length) {
-    wrap.innerHTML = '<p class="text-sm text-ink/40 italic">Noch keine Sonderliste angelegt.</p>';
+    wrap.innerHTML = ('<p class="text-sm text-ink/40 italic">' + tk('shop.rule.none') + '</p>');
     return;
   }
-  const listOptions = (sel) => `<option value="">— Liste wählen —</option>` + shoppingLists.map(l =>
-    `<option value="${escapeHtml(l.id)}" ${l.id === sel ? 'selected' : ''}>${escapeHtml(l.name || '')}${l.id === stammId ? ' (Stammladen)' : ''}</option>`).join('');
+  const listOptions = (sel) => ('<option value="">' + tk('shop.rule.chooseList') + '</option>') + shoppingLists.map(l =>
+    `<option value="${escapeHtml(l.id)}" ${l.id === sel ? 'selected' : ''}>${escapeHtml(l.name || '')}${l.id === stammId ? (' ' + tk('shop.rule.mainSuffix')) : ''}</option>`).join('');
   wrap.innerHTML = shoppingIngredientRules.map(r => {
     const list = r.listId ? getShoppingList(r.listId) : null;
     const warn = !shoppingLists.length
-      ? '<p class="text-[11px] text-mustard mt-1">Lege zuerst eine Liste für den Laden an (Einkauf → + Neue Liste).</p>'
-      : (!list ? '<p class="text-[11px] text-mustard mt-1">Bitte eine Liste wählen – vorher ist die Sonderliste nicht aktiv.</p>' : '');
+      ? ('<p class="text-[11px] text-mustard mt-1">' + tk('shop.rule.createListFirst') + '</p>')
+      : (!list ? ('<p class="text-[11px] text-mustard mt-1">' + tk('shop.rule.chooseListHint') + '</p>') : '');
     return `
       <div class="rounded-xl border border-ink/10 bg-white px-3 py-3 ${r.active ? '' : 'opacity-70'}" data-rule-id="${escapeHtml(r.id)}">
         <div class="flex items-center gap-2 mb-2.5">
           <span class="text-xl leading-none shrink-0">${escapeHtml(r.icon)}</span>
           <input type="text" class="rule-name flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm font-medium" value="${escapeHtml(r.name)}" maxlength="40" />
           <label class="shrink-0 flex items-center gap-1.5 text-xs text-ink/60 cursor-pointer select-none">
-            <input type="checkbox" class="rule-active w-4 h-4" ${r.active ? 'checked' : ''} /> aktiv
+            <input type="checkbox" class="rule-active w-4 h-4" ${r.active ? 'checked' : ''} /> ${escapeHtml(tk('shop.rule.active'))}
           </label>
         </div>
-        <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1">Auf diese Liste</label>
+        <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1">${tk('shop.rule.toList')}</label>
         <div class="flex items-center gap-2">
           ${list ? `<div class="shrink-0">${shoppingListLogoHtml(list, 30)}</div>` : ''}
           <select class="rule-list flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm bg-white">${listOptions(r.listId)}</select>
         </div>
         ${warn}
-        <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1 mt-3">Stichwörter (durch Komma getrennt)</label>
-        <textarea class="rule-keywords w-full rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm leading-snug" rows="3" placeholder="z. B. hack, schnitzel, speck">${escapeHtml(r.keywords.join(', '))}</textarea>
-        <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1 mt-2">Ausnahmen (nie auf diese Liste)</label>
-        <textarea class="rule-exclude w-full rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm leading-snug" rows="2" placeholder="z. B. brühe, soja">${escapeHtml(r.exclude.join(', '))}</textarea>
-        <p class="text-[11px] text-ink/40 mt-1">Passt auch als Wortteil: „hack“ erfasst z. B. Rinderhack und Hackfleisch.</p>
+        <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1 mt-3">${tk('shop.rule.keywords')}</label>
+        <textarea class="rule-keywords w-full rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm leading-snug" rows="3" placeholder="${escapeHtml(tk('shop.rule.keywordsPlaceholder'))}">${escapeHtml(r.keywords.join(', '))}</textarea>
+        <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1 mt-2">${tk('shop.rule.exclude')}</label>
+        <textarea class="rule-exclude w-full rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm leading-snug" rows="2" placeholder="${escapeHtml(tk('shop.rule.excludePlaceholder'))}">${escapeHtml(r.exclude.join(', '))}</textarea>
+        <p class="text-[11px] text-ink/40 mt-1">${tk('shop.rule.partWord')}</p>
         <div class="flex flex-wrap items-center gap-2 mt-3">
-          ${r.preset && SHOPPING_RULE_PRESETS[r.preset] ? '<button type="button" class="rule-reset px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Standard-Stichwörter</button>' : ''}
+          ${r.preset && SHOPPING_RULE_PRESETS[r.preset] ? ('<button type="button" class="rule-reset px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">' + tk('shop.rule.defaultKeywords') + '</button>') : ''}
           <div class="flex-1"></div>
-          <button type="button" class="rule-delete px-2.5 py-1.5 rounded-lg border border-red-300 text-xs text-red-500 hover:bg-red-50 transition">Entfernen</button>
+          <button type="button" class="rule-delete px-2.5 py-1.5 rounded-lg border border-red-300 text-xs text-red-500 hover:bg-red-50 transition">${tk('common.remove')}</button>
         </div>
       </div>`;
   }).join('');
@@ -1088,7 +1081,7 @@ function renderShoppingSettings() {
   };
   wrap.querySelectorAll('[data-rule-id]').forEach(card => {
     const id = card.dataset.ruleId;
-    card.querySelector('.rule-name').addEventListener('change', (e) => update(id, { name: e.target.value.trim() || 'Sonderliste' }, false));
+    card.querySelector('.rule-name').addEventListener('change', (e) => update(id, { name: e.target.value.trim() || tk('shop.rule.name') }, false));
     card.querySelector('.rule-active').addEventListener('change', (e) => update(id, { active: e.target.checked }, true));
     card.querySelector('.rule-list').addEventListener('change', (e) => update(id, { listId: e.target.value }, true));
     card.querySelector('.rule-keywords').addEventListener('change', (e) => update(id, { keywords: splitRuleWords(e.target.value) }, false));
@@ -1097,12 +1090,12 @@ function renderShoppingSettings() {
     if (resetBtn) resetBtn.addEventListener('click', () => {
       const r = shoppingIngredientRules.find(x => x.id === id);
       const preset = r && SHOPPING_RULE_PRESETS[r.preset];
-      if (!preset || !confirm('Stichwörter und Ausnahmen auf den Standard zurücksetzen?')) return;
+      if (!preset || !confirm(tk('shop.rule.confirmReset'))) return;
       update(id, { keywords: [...preset.keywords], exclude: [...preset.exclude] }, true);
     });
     card.querySelector('.rule-delete').addEventListener('click', () => {
       const r = shoppingIngredientRules.find(x => x.id === id);
-      if (!r || !confirm(`Sonderliste „${r.name}“ entfernen? Die Zutaten landen dann wieder im Stammladen bzw. auf der Essensplanung.`)) return;
+      if (!r || !confirm(tk('shop.rule.confirmRemove', { name: r.name }))) return;
       shoppingIngredientRules = shoppingIngredientRules.filter(x => x.id !== id);
       persistState();
       if (currentView === 'einkauf') renderShoppingList();
@@ -1117,7 +1110,7 @@ function addShoppingIngredientRule(presetKey) {
   shoppingIngredientRules = [...shoppingIngredientRules, {
     id: 'ir' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
     preset: presetKey || '',
-    name: preset ? preset.name : 'Eigene Sonderliste',
+    name: preset ? preset.name : tk('shop.rule.customName'),
     icon: preset ? preset.icon : '🏷️',
     listId: guess ? guess.id : '',
     keywords: preset ? [...preset.keywords] : [],
@@ -1148,7 +1141,7 @@ function renderShoppingStammModal() {
   picker.innerHTML = `
     <button type="button" class="shopping-stamm-option flex flex-col items-center justify-center gap-1 rounded-xl p-2 transition ${off ? 'bg-pine/10 ring-2 ring-pine' : 'border border-ink/10 hover:bg-ink/5'}" data-list-id="">
       <div class="w-10 h-10 rounded-[10px] border-2 border-dashed border-ink/20 grid place-items-center text-ink/40 text-lg leading-none">–</div>
-      <span class="text-[10px] leading-tight text-ink/60 text-center w-full truncate">Kein Stammladen</span>
+      <span class="text-[10px] leading-tight text-ink/60 text-center w-full truncate">${tk('shop.noMainShop')}</span>
     </button>` + lists.map(l => {
       const active = l.id === shoppingStammModalListId;
       return `
@@ -1243,7 +1236,7 @@ function saveShoppingStammModal() {
       shoppingListModalLogo = await readShoppingLogoFile(file);
       updateShoppingListModalPreview();
     } catch (err) {
-      alert('Das Bild konnte nicht geladen werden.');
+      alert(tk('shop.imageLoadFailed'));
     }
     e.target.value = '';
   });

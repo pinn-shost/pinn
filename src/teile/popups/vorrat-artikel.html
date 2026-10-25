@@ -1,15 +1,15 @@
 <!-- Pantry: add / edit an item -->
 <div id="pantryItemModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closePantryItemBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 id="pantryItemModalTitle" class="font-serif text-lg mb-4 pr-6">Neuer Vorrats-Artikel</h3>
+    <button data-tk-attr="aria-label:common.close" id="closePantryItemBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+    <h3 data-tk="pantry.item.newTitle" id="pantryItemModalTitle" class="font-serif text-lg mb-4 pr-6">New pantry item</h3>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryNameInput">Name</label>
-    <input id="pantryNameInput" type="text" autocomplete="off" maxlength="80" placeholder="z. B. Nudeln" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+    <label data-tk="common.name" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryNameInput">Name</label>
+    <input data-tk-attr="placeholder:pantry.item.namePlaceholder" id="pantryNameInput" type="text" autocomplete="off" maxlength="80" placeholder="e.g. pasta" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
 
     <div class="grid grid-cols-2 gap-3 mb-1">
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryQtyInput">Bestand</label>
+        <label data-tk="pantry.item.stock" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryQtyInput">Stock</label>
         <div class="flex items-stretch rounded-lg border border-ink/15 overflow-hidden">
           <button type="button" data-step="-1" data-target="pantryQtyInput" class="pantry-step shrink-0 w-9 text-lg text-ink/60 hover:bg-ink/5">−</button>
           <input id="pantryQtyInput" type="text" inputmode="decimal" autocomplete="off" placeholder="0" class="w-full min-w-0 border-0 px-1 py-2 text-base text-center" />
@@ -17,54 +17,54 @@
         </div>
       </div>
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryUnitInput">Einheit</label>
-        <input id="pantryUnitInput" type="text" autocomplete="off" maxlength="20" list="pantryUnitList" placeholder="Stück" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
+        <label data-tk="pantry.item.unit" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryUnitInput">Unit</label>
+        <input data-tk-attr="placeholder:pantry.item.unitPlaceholder" id="pantryUnitInput" type="text" autocomplete="off" maxlength="20" list="pantryUnitList" placeholder="Pieces" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
         <datalist id="pantryUnitList"><option value="Stück"></option><option value="Pck"></option><option value="Dose"></option><option value="Glas"></option><option value="Flasche"></option><option value="Kiste"></option><option value="g"></option><option value="kg"></option><option value="ml"></option><option value="l"></option><option value="Rolle"></option><option value="Tube"></option></datalist>
       </div>
     </div>
     <div class="min-w-0 mt-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryBestBeforeInput">Mindesthaltbar bis (MHD)</label>
+      <label data-tk="pantry.item.bestBefore" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryBestBeforeInput">Best before</label>
       <div class="flex items-stretch gap-2">
         <input id="pantryBestBeforeInput" type="date" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-2 text-base bg-white" />
-        <button id="pantryBestBeforeClear" type="button" class="shrink-0 w-10 rounded-lg border border-ink/15 text-ink/40 hover:text-red-500 hover:border-red-300 text-lg leading-none" aria-label="MHD entfernen" title="MHD entfernen">×</button>
+        <button data-tk-attr="title:pantry.item.removeBestBefore;aria-label:pantry.item.removeBestBefore" id="pantryBestBeforeClear" type="button" class="shrink-0 w-10 rounded-lg border border-ink/15 text-ink/40 hover:text-red-500 hover:border-red-300 text-lg leading-none" aria-label="Remove best-before date" title="Remove best-before date">×</button>
       </div>
-      <p class="text-[11px] text-ink/40 mt-1">Optional. Bei mehreren Packungen das früheste Datum – pinn. erinnert rechtzeitig per Push.</p>
+      <p data-tk="pantry.item.bestBeforeHint" class="text-[11px] text-ink/40 mt-1">Optional. With several packs, use the earliest date – pinn. reminds you in time by push.</p>
     </div>
     <div class="min-w-0 mt-3 mb-1">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryMinInput">Mindestbestand</label>
+      <label data-tk="pantry.item.minStock" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryMinInput">Minimum stock</label>
       <div class="flex items-stretch rounded-lg border border-ink/15 overflow-hidden">
         <button type="button" data-step="-1" data-target="pantryMinInput" class="pantry-step shrink-0 w-9 text-lg text-ink/60 hover:bg-ink/5">−</button>
-        <input id="pantryMinInput" type="text" inputmode="decimal" autocomplete="off" placeholder="kein Mindestbestand" class="w-full min-w-0 border-0 px-1 py-2 text-base text-center" />
+        <input data-tk-attr="placeholder:pantry.item.minStockPlaceholder" id="pantryMinInput" type="text" inputmode="decimal" autocomplete="off" placeholder="no minimum stock" class="w-full min-w-0 border-0 px-1 py-2 text-base text-center" />
         <button type="button" data-step="1" data-target="pantryMinInput" class="pantry-step shrink-0 w-9 text-lg text-ink/60 hover:bg-ink/5">+</button>
       </div>
     </div>
-    <p class="text-[11px] text-ink/40 mb-3">Fällt der Bestand unter den Mindestbestand, landet der Artikel automatisch auf den gewählten Einkaufslisten.</p>
+    <p data-tk="pantry.item.minStockHint" class="text-[11px] text-ink/40 mb-3">If stock falls below the minimum stock, the item automatically ends up on the selected shopping lists.</p>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Kategorie</label>
+    <label data-tk="pantry.item.category" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Category</label>
     <div id="pantryCategoryPicker" class="flex flex-wrap gap-1.5 mb-3"></div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Lagerort</label>
+    <label data-tk="pantry.item.place" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Storage location</label>
     <div id="pantryLocationPicker" class="flex flex-wrap gap-1.5 mb-3"></div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Kaufen bei</label>
+    <label data-tk="pantry.item.buyAt" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Buy at</label>
     <div id="pantryStorePicker" class="grid grid-cols-3 gap-2 mb-1.5"></div>
-    <p class="text-[11px] text-ink/40 mb-3">Mehrere Läden möglich – der Artikel steht dann auf jeder dieser Listen. Wird er auf einer Liste abgehakt, verschwindet er von den anderen. Ohne Auswahl: Liste „Essensplanung“ – bzw. der Stammladen, wenn die Essensplanung direkt dorthin geht.</p>
+    <p data-tk="pantry.item.buyAtHint" class="text-[11px] text-ink/40 mb-3">Several shops possible – the item then appears on each of these lists. If it is checked off on one list, it disappears from the others. Without selection: list “Meal plan” – or the main shop if the meal plan goes there directly.</p>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryNoteInput">Notiz</label>
-    <input id="pantryNoteInput" type="text" autocomplete="off" maxlength="120" placeholder="optional, z. B. Marke" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+    <label data-tk="pantry.item.note" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pantryNoteInput">Note</label>
+    <input data-tk-attr="placeholder:pantry.item.notePlaceholder" id="pantryNoteInput" type="text" autocomplete="off" maxlength="120" placeholder="optional, e.g. brand" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
 
     <div id="pantryBarcodeWrap" class="hidden mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Verknüpfte Barcodes</label>
+      <label data-tk="pantry.item.barcodes" class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Linked barcodes</label>
       <div id="pantryBarcodeList" class="flex flex-wrap gap-1.5"></div>
-      <p class="text-[11px] text-ink/40 mt-1.5">Wird einer dieser Barcodes gescannt, landet er bei diesem Artikel.</p>
+      <p data-tk="pantry.item.barcodesHint" class="text-[11px] text-ink/40 mt-1.5">When one of these barcodes is scanned, it goes to this item.</p>
     </div>
 
     <p id="pantryItemError" class="hidden text-xs text-red-500 mb-3"></p>
     <div class="flex items-center gap-2 mt-1">
-      <button id="deletePantryItemBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Löschen</button>
+      <button data-tk="common.delete" id="deletePantryItemBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Delete</button>
       <div class="flex-1"></div>
-      <button id="cancelPantryItemBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
-      <button id="savePantryItemBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern</button>
+      <button data-tk="common.cancel" id="cancelPantryItemBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Cancel</button>
+      <button data-tk="common.save" id="savePantryItemBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Save</button>
     </div>
   </div>
 </div>

@@ -19,9 +19,9 @@ let pendingMealDay = null;
 let pendingMealType = null;
 // Meal times (1.61: breakfast added). Older entries only know 'mittag' and 'abend'; anything else counts as dinner.
 const MEAL_TYPES = [
-  { id: 'fruehstueck', label: 'Frühstück', long: 'Frühstück', icon: '🌅' },
-  { id: 'mittag', label: 'Mittag', long: 'Mittagessen', icon: '☀️' },
-  { id: 'abend', label: 'Abend', long: 'Abendessen', icon: '🌙' },
+  { id: 'fruehstueck', get label() { return tk('meal.type.breakfast'); }, get long() { return tk('meal.type.breakfast'); }, icon: '🌅' },
+  { id: 'mittag', get label() { return tk('meal.type.lunch'); }, get long() { return tk('meal.type.lunchLong'); }, icon: '☀️' },
+  { id: 'abend', get label() { return tk('meal.type.dinner'); }, get long() { return tk('meal.type.dinnerLong'); }, icon: '🌙' },
 ];
 function mealTypeInfo(type) { return MEAL_TYPES.find(t => t.id === type) || MEAL_TYPES[2]; }
 function mealTypeRank(type) { return MEAL_TYPES.indexOf(mealTypeInfo(type)); }

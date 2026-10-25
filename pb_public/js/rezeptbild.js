@@ -27,7 +27,7 @@ function renderRecipeImagePreview() {
     if (frameImg.getAttribute('src') !== src) frameImg.setAttribute('src', src);
     wrap.classList.remove('hidden');
   } else {
-    el.textContent = 'Kein Bild';
+    el.textContent = tk('recipe.noImage');
     frameImg.removeAttribute('src');
     wrap.classList.add('hidden');
   }

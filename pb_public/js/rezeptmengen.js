@@ -13,11 +13,11 @@ function totalTime(r) { return (r.prepTime || 0) + (r.cookTime || 0); }
 // rounded (not a round value like 90 or 120 minutes), a ~ is put in front.
 function formatRecipeDuration(totalMinutes) {
   if (!totalMinutes) return null;
-  if (totalMinutes < 60) return `${totalMinutes} Min.`;
+  if (totalMinutes < 60) return tk('recipe.minutes', { n: totalMinutes });
   const rounded = Math.round(totalMinutes / 15) * 15;
   const hours = Math.floor(rounded / 60);
   const mins = rounded % 60;
-  const timeStr = mins === 0 ? `${hours} Std.` : `${hours} Std. ${mins} Min.`;
+  const timeStr = mins === 0 ? tk('recipe.hours', { n: hours }) : tk('recipe.hours', { n: hours }) + ' ' + tk('recipe.minutes', { n: mins });
   return (rounded !== totalMinutes ? '~' : '') + timeStr;
 }
 
@@ -131,7 +131,7 @@ function isLikelyGroupHeader(line) {
 // numbering of the preparation steps counts through cleanly (headings themselves are not
 // counted) - independent of the original numbering in the imported text.
 function renderRecipeItemsHtml(items, numbered, transformLine) {
-  if (!items.length) return `<p class="text-sm text-ink/30 italic">Keine Angaben</p>`;
+  if (!items.length) return `<p class="text-sm text-ink/30 italic">${escapeHtml(tk('recipe.noDetails'))}</p>`;
   let n = 0;
   return `<div class="flex flex-col ${numbered ? 'gap-2' : 'gap-1'}">` + items.map(line => {
     if (isLikelyGroupHeader(line)) {

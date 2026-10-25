@@ -144,7 +144,7 @@ function showIngredientBreakdown(item, fromISO, toISO) {
   const rowsEl = document.getElementById('ingredientBreakdownRows');
 
   if (!contributions.length) {
-    rowsEl.innerHTML = '<p class="text-ink/40 italic font-sans">Keine Rezept-Zuordnung gefunden.</p>';
+    rowsEl.innerHTML = '<p class="text-ink/40 italic font-sans">' + escapeHtml(tk('shop.noRecipeSource')) + '</p>';
   } else if (!item.hasQuantity) {
     // No numbers to sum up - simply list the recipes the ingredient comes from
     rowsEl.innerHTML = contributions.map(c => `<div class="truncate">${escapeHtml(truncateTitle(c.recipeTitle, 26))}</div>`).join('');
@@ -352,12 +352,12 @@ const SHOPPING_STORES = [
   { key: 'obi',       name: 'OBI',           domain: 'obi.de',           color: '#FF7E21' },
   { key: 'hornbach',  name: 'Hornbach',      domain: 'hornbach.de',      color: '#F7931E' },
   { key: 'bauhaus',   name: 'BAUHAUS',       domain: 'bauhaus.info',     color: '#D6001C' },
-  { key: 'apotheke',  name: 'Apotheke',      emoji: '💊',                color: '#D6001C' },
-  { key: 'baecker',   name: 'Bäckerei',      emoji: '🥖',                color: '#B9842E' },
-  { key: 'metzger',   name: 'Metzgerei',     emoji: '🥩',                color: '#A33B3B' },
-  { key: 'markt',     name: 'Wochenmarkt',   emoji: '🧺',                color: '#4E7A3A' },
-  { key: 'getraenke', name: 'Getränke',      emoji: '🍺',                color: '#C98A1A' },
-  { key: 'eigener',   name: 'Eigener Laden', emoji: '🏪',                color: '#00374A', custom: true },
+  { key: 'apotheke',  tk: 'shop.store.pharmacy', name: 'Apotheke', emoji: '💊', color: '#D6001C' },
+  { key: 'baecker',   tk: 'shop.store.bakery', name: 'Bäckerei', emoji: '🥖', color: '#B9842E' },
+  { key: 'metzger',   tk: 'shop.store.butcher', name: 'Metzgerei', emoji: '🥩', color: '#A33B3B' },
+  { key: 'markt',     tk: 'shop.store.market', name: 'Wochenmarkt', emoji: '🧺', color: '#4E7A3A' },
+  { key: 'getraenke', tk: 'shop.store.drinks', name: 'Getränke', emoji: '🍺', color: '#C98A1A' },
+  { key: 'eigener',   tk: 'shop.store.own', name: 'Eigener Laden', emoji: '🏪', color: '#00374A', custom: true },
 ];
 let currentShoppingListId = null; // null = overview with all lists
 // Planned shopping trip (task) with several lists: the lists are shown in ONE view,
@@ -378,7 +378,9 @@ function activeShoppingListId() {
 }
 
 function shoppingStoreByKey(key) { return SHOPPING_STORES.find(st => st.key === key) || null; }
-function mealShoppingList() { return { id: SHOPPING_MEAL_LIST_ID, name: 'Essensplanung', builtIn: true }; }
+// Display name of a shop preset: brands keep their name, generic shops (pharmacy, bakery …) are translated
+function shoppingStoreName(st) { return st ? (st.tk ? tk(st.tk) : st.name) : ''; }
+function mealShoppingList() { return { id: SHOPPING_MEAL_LIST_ID, name: tk('shop.mealPlan'), builtIn: true }; }
 // Order as set by drag & drop in the overview. Lists that are not (yet) in
 // shoppingListOrder (e.g. just created) come at the end in creation order.
 function allShoppingLists() {
@@ -398,9 +400,9 @@ function getShoppingList(id) { return allShoppingLists().find(l => l.id === id) 
    or directly (only in the main shop). "Manuell" leaves everything as before - the main shop is only
    preselected when moving. Stored in the family record, so it applies on all devices. */
 const SHOPPING_MEAL_MODES = [
-  { key: 'manual', icon: '✋', label: 'Manuell',  desc: 'Die Essensplanung bleibt eine eigene Liste. Du verschiebst die Zutaten selbst – der Stammladen ist dabei vorausgewählt.' },
-  { key: 'mirror', icon: '🔗', label: 'Spiegeln', desc: 'Die Zutaten stehen automatisch auf beiden Listen. Abhaken auf einer Liste hakt sie auch auf der anderen ab.' },
-  { key: 'direct', icon: '➜',  label: 'Direkt',   desc: 'Die Zutaten landen nur noch im Stammladen. Die Essensplanung verschwindet aus der Übersicht, solange sie keine eigenen Einträge hat.' },
+  { key: 'manual', icon: '✋', get label() { return tk('shop.mode.manual'); }, get desc() { return tk('shop.mode.manualDesc'); } },
+  { key: 'mirror', icon: '🔗', get label() { return tk('shop.mode.mirror'); }, get desc() { return tk('shop.mode.mirrorDesc'); } },
+  { key: 'direct', icon: '➜',  get label() { return tk('shop.mode.direct'); }, get desc() { return tk('shop.mode.directDesc'); } },
 ];
 function normalizeShoppingMealTarget(raw) {
   const t = raw && typeof raw === 'object' ? raw : {};
@@ -437,7 +439,7 @@ function shoppingMealListHidden() {
    share the checked state as with mirroring. */
 const SHOPPING_RULE_PRESETS = {
   metzger: {
-    name: 'Fleisch & Wurst', icon: '🥩',
+    get name() { return tk('shop.rule.meatName'); }, icon: '🥩',
     keywords: ['hack', 'mett', 'rind', 'kalb', 'schwein', 'lamm', 'hähnchen', 'hühnchen', 'huhn', 'hühner', 'pute', 'ente', 'gans', 'speck', 'schinken', 'bacon', 'wurst', 'würst', 'salami', 'chorizo', 'kassler', 'leberkäs', 'frikadell', 'steak', 'schnitzel', 'gulasch', 'geschnetzelt', 'kotelett', 'braten', 'keule', 'haxe', 'lende', 'rouladen'],
     exclude: ['brühe', 'fond', 'bouillon', 'soja', 'vegan', 'vegetar', 'veggie', 'tofu', 'seitan', 'bratensoße', 'bratensauce', 'bratfett', 'bratöl', 'gewürz', 'hühnerei', 'eier', 'studentenfutter'],
   },
@@ -451,7 +453,7 @@ function normalizeShoppingIngredientRules(raw) {
   return raw.filter(r => r && r.id).map(r => ({
     id: String(r.id),
     preset: r.preset || '',
-    name: String(r.name || 'Sonderliste'),
+    name: String(r.name || tk('shop.rule.name')),
     icon: String(r.icon || '🏷️'),
     listId: typeof r.listId === 'string' ? r.listId : '',
     keywords: splitRuleWords(r.keywords),
@@ -500,8 +502,8 @@ function renderShoppingMealModeOptions(containerId, current, onPick) {
       <button type="button" class="shopping-meal-mode w-full flex items-start gap-2.5 rounded-xl border px-3 py-2 text-left transition ${active ? 'border-pine bg-pine/10 ring-1 ring-pine' : 'border-ink/10 bg-white hover:border-pine/50'}" data-mode="${m.key}">
         <span class="shrink-0 w-6 text-center text-base leading-6">${m.icon}</span>
         <span class="min-w-0">
-          <span class="block text-sm font-medium ${active ? 'text-pine' : ''}">${m.label}</span>
-          <span class="block text-[11px] text-ink/50 leading-snug">${m.desc}</span>
+          <span class="block text-sm font-medium ${active ? 'text-pine' : ''}">${escapeHtml(m.label)}</span>
+          <span class="block text-[11px] text-ink/50 leading-snug">${escapeHtml(m.desc)}</span>
         </span>
       </button>`;
   }).join('');

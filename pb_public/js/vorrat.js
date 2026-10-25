@@ -222,8 +222,8 @@ function pantryCommit() {
 function renderPantryFilters() {
   const locSel = document.getElementById('pantryLocationFilter');
   const catSel = document.getElementById('pantryCategoryFilter');
-  locSel.innerHTML = '<option value="">Alle Orte</option>' + pantryLocations.map(l => `<option value="${escapeHtml(l.id)}">${escapeHtml((l.icon ? l.icon + ' ' : '') + l.label)}</option>`).join('');
-  catSel.innerHTML = '<option value="">Alle Kategorien</option>' + pantryCategories.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml((c.icon ? c.icon + ' ' : '') + c.label)}</option>`).join('');
+  locSel.innerHTML = '<option value="">' + escapeHtml(tk('pantry.allPlaces')) + '</option>' + pantryLocations.map(l => `<option value="${escapeHtml(l.id)}">${escapeHtml((l.icon ? l.icon + ' ' : '') + l.label)}</option>`).join('');
+  catSel.innerHTML = '<option value="">' + escapeHtml(tk('pantry.allCategories')) + '</option>' + pantryCategories.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml((c.icon ? c.icon + ' ' : '') + c.label)}</option>`).join('');
   if (pantryFilterLocation && !pantryLocation(pantryFilterLocation)) pantryFilterLocation = '';
   if (pantryFilterCategory && !pantryCategories.some(c => c.id === pantryFilterCategory)) pantryFilterCategory = '';
   locSel.value = pantryFilterLocation;
@@ -248,9 +248,9 @@ function pantryRowHtml(p) {
   const meta = [];
   if (pantryGroupMode !== 'category') meta.push(`${cat.icon || ''} ${cat.label}`);
   if (pantryGroupMode !== 'location' && loc) meta.push(`${loc.icon || ''} ${loc.label}`);
-  if (min !== null && min > 0) meta.push(`min. ${fmtQtyUnit(min, p.unit)}`);
+  if (min !== null && min > 0) meta.push(tk('pantry.minShort', { qty: fmtQtyUnit(min, p.unit) }));
   const expD = pantryExpiryDays(p);
-  if (expD !== null && expD > pantrySettings.mhdDays) meta.push(`MHD ${pantryShortDate(p.bestBefore)}`);
+  if (expD !== null && expD > pantrySettings.mhdDays) meta.push(tk('pantry.bestBeforeShort', { date: pantryShortDate(p.bestBefore) }));
   const expPill = pantryExpiryPillHtml(p);
   return `
     <div class="pantry-row flex items-stretch rounded-xl border ${low ? 'border-red-200' : 'border-ink/10'} bg-white overflow-hidden" data-id="${escapeHtml(p.id)}">
@@ -259,15 +259,15 @@ function pantryRowHtml(p) {
         <div class="flex items-center gap-1.5 min-w-0">
           <span class="font-medium text-sm truncate">${escapeHtml(p.name)}</span>
           ${expPill}
-          ${onList ? '<span class="shrink-0 text-[10px] px-1.5 py-0.5 rounded-full bg-pine/10 text-pine whitespace-nowrap">🛒 auf der Liste</span>' : ''}
-          ${inCart ? '<span class="shrink-0 text-[10px] px-1.5 py-0.5 rounded-full bg-pine/10 text-pine whitespace-nowrap">✓ im Wagen</span>' : ''}
+          ${onList ? '<span class="shrink-0 text-[10px] px-1.5 py-0.5 rounded-full bg-pine/10 text-pine whitespace-nowrap">' + escapeHtml(tk('pantry.onList')) + '</span>' : ''}
+          ${inCart ? '<span class="shrink-0 text-[10px] px-1.5 py-0.5 rounded-full bg-pine/10 text-pine whitespace-nowrap">' + escapeHtml(tk('pantry.inCart')) + '</span>' : ''}
         </div>
         ${meta.length || p.note ? `<div class="text-[11px] text-ink/45 truncate mt-0.5">${escapeHtml([...meta, p.note || ''].filter(Boolean).join(' · '))}</div>` : ''}
       </button>
       <div class="flex items-center gap-1 pr-2 shrink-0">
-        <button type="button" class="pantry-step pantry-minus w-8 h-8 rounded-full border border-ink/15 text-ink/60 hover:text-pine hover:border-pine grid place-items-center text-lg leading-none" aria-label="Einen weniger">−</button>
+        <button type="button" class="pantry-step pantry-minus w-8 h-8 rounded-full border border-ink/15 text-ink/60 hover:text-pine hover:border-pine grid place-items-center text-lg leading-none" aria-label="${escapeHtml(tk('shop.oneLess'))}">−</button>
         <span class="min-w-[3.5rem] text-center text-sm font-semibold ${low ? 'text-red-600' : ''}">${escapeHtml(pantryStockText(p))}</span>
-        <button type="button" class="pantry-step pantry-plus w-8 h-8 rounded-full border border-ink/15 text-ink/60 hover:text-pine hover:border-pine grid place-items-center text-lg leading-none" aria-label="Einen mehr">+</button>
+        <button type="button" class="pantry-step pantry-plus w-8 h-8 rounded-full border border-ink/15 text-ink/60 hover:text-pine hover:border-pine grid place-items-center text-lg leading-none" aria-label="${escapeHtml(tk('shop.oneMore'))}">+</button>
       </div>
     </div>`;
 }
@@ -283,7 +283,7 @@ function renderPantry() {
   const lowAll = pantryItems.filter(pantryIsLow);
   lowInfo.classList.toggle('hidden', !lowAll.length);
   lowInfo.textContent = lowAll.length
-    ? `${lowAll.length} Artikel unter dem Mindestbestand – steh${lowAll.length === 1 ? 't' : 'en'} automatisch auf der Einkaufsliste.`
+    ? tk('pantry.lowInfo', { n: lowAll.length })
     : '';
 
   const expAll = pantryItems.filter(pantryIsExpiring);
@@ -293,7 +293,7 @@ function renderPantry() {
   expInfo.classList.toggle('hidden', !expAll.length);
   expInfo.classList.toggle('bad', expBad > 0);
   document.getElementById('pantryExpInfoText').textContent = expAll.length
-    ? '⏳ ' + [expBad ? `${expBad} abgelaufen` : '', expSoon ? (expSoon === 1 ? '1 läuft bald ab' : `${expSoon} laufen bald ab`) : ''].filter(Boolean).join(' · ')
+    ? '⏳ ' + [expBad ? tk('pantry.expiredN', { n: expBad }) : '', expSoon ? tk('pantry.expiringN', { n: expSoon }) : ''].filter(Boolean).join(' · ')
     : '';
 
   const items = pantryItems.filter(p =>
@@ -306,7 +306,7 @@ function renderPantry() {
 
   if (!items.length) {
     listEl.innerHTML = '';
-    emptyEl.textContent = pantryItems.length ? 'Keine Artikel für diese Auswahl.' : 'Noch nichts im Vorrat – leg mit „+ Artikel“ los.';
+    emptyEl.textContent = pantryItems.length ? tk('pantry.noneSelected') : tk('pantry.empty');
     emptyEl.classList.remove('hidden');
     return;
   }
@@ -317,11 +317,11 @@ function renderPantry() {
     const dOf = p => pantryExpiryDays(p);
     const byDate = (a, b) => (dOf(a) ?? 99999) - (dOf(b) ?? 99999) || (a.name || '').localeCompare(b.name || '', 'de', { sensitivity: 'base' });
     groups = [
-      { title: 'Abgelaufen', icon: '⚠️', test: d => d !== null && d < 0 },
-      { title: 'Heute & morgen', icon: '⏳', test: d => d !== null && d >= 0 && d <= 1 },
-      { title: 'Nächste 7 Tage', icon: '🗓️', test: d => d !== null && d >= 2 && d <= 7 },
-      { title: 'Später', icon: '✅', test: d => d !== null && d > 7 },
-      { title: 'Ohne MHD', icon: '❔', test: d => d === null },
+      { title: tk('pantry.group.expired'), icon: '⚠️', test: d => d !== null && d < 0 },
+      { title: tk('pantry.group.todayTomorrow'), icon: '⏳', test: d => d !== null && d >= 0 && d <= 1 },
+      { title: tk('pantry.group.next7'), icon: '🗓️', test: d => d !== null && d >= 2 && d <= 7 },
+      { title: tk('pantry.group.later'), icon: '✅', test: d => d !== null && d > 7 },
+      { title: tk('pantry.group.noBestBefore'), icon: '❔', test: d => d === null },
     ].map(g => ({ title: g.title, icon: g.icon, items: items.filter(p => g.test(dOf(p))).sort(byDate) })).filter(g => g.items.length);
   } else if (pantryGroupMode === 'alpha') {
     const map = new Map();
@@ -333,7 +333,7 @@ function renderPantry() {
     });
     groups = [...map.entries()].sort((a, b) => a[0].localeCompare(b[0])).map(([k, v]) => ({ title: k, icon: '', items: v }));
   } else if (pantryGroupMode === 'location') {
-    groups = [...pantryLocations, { id: '', label: 'Ohne Lagerort', icon: '❔' }]
+    groups = [...pantryLocations, { id: '', label: tk('pantry.noPlace'), icon: '❔' }]
       .map(l => ({ title: l.label, icon: l.icon, items: items.filter(p => (l.id ? p.location === l.id : !pantryLocation(p.location))) }))
       .filter(g => g.items.length);
   } else {
@@ -372,7 +372,7 @@ function pantryAdjust(id, dir) {
   const wasOn = shoppingItems.some(it => it.pantryId === id && !it.done);
   pantryCommit();
   const isOn = shoppingItems.some(it => it.pantryId === id && !it.done);
-  if (p && !wasOn && isOn) finShowToast(`${p.name} ist knapp – steht jetzt auf der Einkaufsliste.`);
+  if (p && !wasOn && isOn) finShowToast(tk('pantry.lowToast', { name: p.name }));
 }
 
 /* ---------- Popup: item ---------- */
@@ -413,7 +413,7 @@ function openPantryItemModal(id = null) {
     stores: p ? (p.stores || []).filter(x => getShoppingList(x)) : [],
     barcodes: p && Array.isArray(p.barcodes) ? [...p.barcodes] : [],
   };
-  document.getElementById('pantryItemModalTitle').textContent = p ? 'Vorrats-Artikel bearbeiten' : 'Neuer Vorrats-Artikel';
+  document.getElementById('pantryItemModalTitle').textContent = p ? tk('pantry.item.editTitle') : tk('pantry.item.newTitle');
   document.getElementById('pantryNameInput').value = p ? p.name : '';
   document.getElementById('pantryQtyInput').value = p ? fmtPantryNum(pantryNum(p.qty) || 0) : '1';
   document.getElementById('pantryUnitInput').value = p ? (p.unit || '') : '';
@@ -424,7 +424,7 @@ function openPantryItemModal(id = null) {
   renderPantryBarcodeList();
   document.getElementById('pantryItemError').classList.add('hidden');
   document.getElementById('deletePantryItemBtn').classList.toggle('hidden', !p);
-  document.getElementById('savePantryItemBtn').textContent = p ? 'Speichern' : 'Anlegen';
+  document.getElementById('savePantryItemBtn').textContent = p ? tk('common.save') : tk('common.create');
   renderPantryChips('pantryCategoryPicker', pantryCategories, pantryDraft.category, v => { pantryDraft.category = v; });
   renderPantryChips('pantryLocationPicker', pantryLocations, pantryDraft.location, v => { pantryDraft.location = v; });
   renderPantryStorePicker();
@@ -440,9 +440,9 @@ function closePantryItemModal() {
 function savePantryItemFromModal() {
   const name = document.getElementById('pantryNameInput').value.trim();
   const err = document.getElementById('pantryItemError');
-  if (!name) { err.textContent = 'Bitte einen Namen eingeben.'; err.classList.remove('hidden'); return; }
+  if (!name) { err.textContent = tk('common.needName'); err.classList.remove('hidden'); return; }
   const dup = pantryItems.find(x => x.id !== pantryEditId && pantryNameKey(x.name) === pantryNameKey(name));
-  if (dup) { err.textContent = `„${dup.name}“ gibt es schon im Vorrat.`; err.classList.remove('hidden'); return; }
+  if (dup) { err.textContent = tk('pantry.duplicate', { name: dup.name }); err.classList.remove('hidden'); return; }
   const qty = Math.max(0, pantryNum(document.getElementById('pantryQtyInput').value) || 0);
   const minRaw = pantryNum(document.getElementById('pantryMinInput').value);
   const data = {
@@ -468,7 +468,7 @@ function savePantryItemFromModal() {
 }
 function deletePantryItemFromModal() {
   const p = pantryItems.find(x => x.id === pantryEditId);
-  if (!p || !confirm(`„${p.name}“ aus dem Vorrat löschen?`)) return;
+  if (!p || !confirm(tk('pantry.confirmDelete', { name: p.name }))) return;
   const id = p.id;
   pantryItems = pantryItems.filter(x => x.id !== id);
   // Automatically created, open entries for it disappear from the lists
@@ -495,9 +495,9 @@ function renderPantrySettingsEditors() {
     const wrap = document.getElementById(elId);
     wrap.innerHTML = pantrySettingsDraft[key].map((c, i) => `
       <div class="flex items-center gap-2" data-idx="${i}">
-        <input type="text" data-field="icon" value="${escapeHtml(c.icon || '')}" maxlength="4" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="Symbol" />
-        <input type="text" data-field="label" data-i18n-value value="${escapeHtml(c.label || '')}" maxlength="40" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="Name" />
-        ${c.id === 'sonstiges' && key === 'categories' ? '<span class="w-8 shrink-0"></span>' : `<button type="button" data-action="delete" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-red-500 hover:bg-red-50 grid place-items-center text-lg leading-none" aria-label="Löschen">×</button>`}
+        <input type="text" data-field="icon" value="${escapeHtml(c.icon || '')}" maxlength="4" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="${escapeHtml(tk('lists.modal.icon'))}" />
+        <input type="text" data-field="label" data-i18n-value value="${escapeHtml(c.label || '')}" maxlength="40" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="${escapeHtml(tk('common.name'))}" />
+        ${c.id === 'sonstiges' && key === 'categories' ? '<span class="w-8 shrink-0"></span>' : `<button type="button" data-action="delete" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-red-500 hover:bg-red-50 grid place-items-center text-lg leading-none" aria-label="${escapeHtml(tk('common.delete'))}">×</button>`}
       </div>`).join('');
     wrap.querySelectorAll('[data-idx]').forEach(row => {
       const i = Number(row.dataset.idx);
@@ -507,7 +507,7 @@ function renderPantrySettingsEditors() {
         const item = pantrySettingsDraft[key][i];
         const field = key === 'locations' ? 'location' : 'category';
         const used = pantryItems.filter(p => p[field] === item.id).length;
-        if (used && !confirm(`„${item.label}“ wird von ${used} Artikel${used === 1 ? '' : 'n'} verwendet. Diese stehen danach unter ${key === 'locations' ? '„Ohne Lagerort“' : '„Sonstiges“'}. Trotzdem löschen?`)) return;
+        if (used && !confirm(tk(key === 'locations' ? 'pantry.settings.confirmDeletePlace' : 'pantry.settings.confirmDeleteCat', { name: item.label, n: used, other: i18nT(pantryCategory('sonstiges').label) }))) return;
         pantrySettingsDraft[key].splice(i, 1);
         renderPantrySettingsEditors();
       });

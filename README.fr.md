@@ -95,6 +95,16 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 et 🇰🇷 한국어**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.114.0
+
+**Clés de texte, partie 5 : listes, réserves et recettes**
+
+- Les **listes** (courses avec magasin principal, listes spéciales et *Planifier les courses*, bagages, cadeaux, souhaits, checklists, idées), les **réserves** avec scan de codes-barres et *Que puis-je cuisiner ?*, les **recettes** avec les recettes publiques, le **planning des repas**, la **recherche** et l'éditeur de catégories prennent désormais leurs textes dans les fichiers de langue de `pb_public/i18n/` – dans les neuf langues et en colocation. Rien ne change dans l'utilisation.
+- **Modèles dans chaque langue :** une nouvelle liste créée à partir d'un modèle (vacances, hôpital, naissance, fête …) est rédigée dans ta langue avec environ 400 entrées traduites ; les magasins génériques comme la pharmacie, la boulangerie ou la boucherie portent le bon nom. Les listes existantes restent inchangées.
+- Petites corrections : les dates et les prix des listes, réserves et recettes suivent le format de ta région ; la reconnaissance des recettes trouve aussi les ingrédients et la préparation sous des titres dans les autres langues ; les nombres comme « 1 recette » ou « 1 entrée » sont au bon singulier ou pluriel.
+- Ensuite : les finances et les caisses suivent avec la 1.115.0.
+- Modifié : uniquement des fichiers de l'app (`index.html`, `js/einkauf.js`, `js/einkaufslisten.js`, `js/einkaufseingabe.js`, `js/listen.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/rezepte.js`, `js/rezeptdialog.js`, `js/rezeptmengen.js`, `js/rezeptbild.js`, `js/rezeptbilder.js`, `js/rezeptparser.js`, `js/essenplanen.js`, `js/einstellungen.js`, `js/hinweise.js`, `js/finanzen.js`, `js/bedienzustand.js`, `js/sprachen.js`, `js/versionslog.js`, tous les fichiers de langue dans `i18n/` et `lang/`) – rien ne change sur le serveur. Installation comme d'habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
+
 ## Nouveautés de la 1.113.1
 
 **Clés de texte, partie 4 : réglages du calendrier et maison connectée**
@@ -177,7 +187,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.113.1` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.114.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

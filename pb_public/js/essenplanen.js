@@ -34,7 +34,7 @@ function renderMealRecipeSuggestions(query) {
   matches = matches.slice(0, 8);
 
   if (!matches.length) {
-    box.innerHTML = '<p class="px-3 py-2 text-xs text-ink/40 italic">Keine Treffer</p>';
+    box.innerHTML = '<p class="px-3 py-2 text-xs text-ink/40 italic">' + escapeHtml(tk('meal.noHits')) + '</p>';
   } else {
     box.innerHTML = matches.map(r => `
       <button type="button" class="meal-recipe-suggestion w-full text-left px-3 py-2 text-sm hover:bg-mustard/10 transition flex items-center gap-2" data-id="${r.id}">

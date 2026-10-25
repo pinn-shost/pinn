@@ -99,6 +99,16 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.114.0の新機能
+
+**テキストキー 第5弾：リスト、在庫、レシピ**
+
+- **リスト**（いつものお店、特別リスト、*買い物を計画* 付きの買い物、持ち物、ギフト、ほしい物、チェックリスト、アイデア）、バーコードスキャンと *何が作れる？* 付きの**在庫**、公開レシピを含む**レシピ**、**献立**、**検索**、カテゴリ編集が `pb_public/i18n/` の言語ファイルから文章を取得するようになりました – 9 言語すべてで、シェアハウスにも対応。使い方は変わりません。
+- **各言語のテンプレート：**テンプレート（旅行、入院、出産、パーティー …）から作る新しいリストは、約 400 項目を翻訳済みで設定した言語で作成されます。薬局、パン屋、精肉店などの一般的なお店も適切な名前になります。既存のリストはそのままです。
+- 細かな修正：リスト、在庫、レシピの日付と価格は地域の形式で表示されます。レシピ認識は他の言語の見出しの下でも材料と作り方を見つけます。「1 件のレシピ」「1 件の項目」などの数は単数・複数が正しくなりました。
+- 次の予定：家計とキャッシュボックスは 1.115.0 で対応します。
+- 変更：アプリのファイルのみ（`index.html`, `js/einkauf.js`, `js/einkaufslisten.js`, `js/einkaufseingabe.js`, `js/listen.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/rezepte.js`, `js/rezeptdialog.js`, `js/rezeptmengen.js`, `js/rezeptbild.js`, `js/rezeptbilder.js`, `js/rezeptparser.js`, `js/essenplanen.js`, `js/einstellungen.js`, `js/hinweise.js`, `js/finanzen.js`, `js/bedienzustand.js`, `js/sprachen.js`, `js/versionslog.js`、`i18n/` と `lang/` のすべての言語ファイル） – サーバー側の変更はありません。いつも通りインストール（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
+
 ## 1.113.1の新機能
 
 **テキストキー 第4弾：カレンダー設定とスマートホーム**
@@ -136,7 +146,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.113.1`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.114.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

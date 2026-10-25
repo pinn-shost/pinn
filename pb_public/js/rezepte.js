@@ -43,7 +43,7 @@ function setRecipeFavorite(key, on) {
 }
 function recipeFavButtonHtml(key, extraClass = '') {
   const fav = isRecipeFavorite(key);
-  return `<span role="button" tabindex="0" class="recipe-fav-btn ${extraClass} ${fav ? 'is-fav' : ''}" data-fav-key="${escapeHtml(key)}" aria-pressed="${fav}" aria-label="${fav ? 'Aus Favoriten entfernen' : 'Als Favorit markieren'}" title="${fav ? 'Favorit' : 'Als Favorit markieren'}">${RECIPE_HEART_SVG}</span>`;
+  return `<span role="button" tabindex="0" class="recipe-fav-btn ${extraClass} ${fav ? 'is-fav' : ''}" data-fav-key="${escapeHtml(key)}" aria-pressed="${fav}" aria-label="${escapeHtml(fav ? tk('recipe.unfavourite') : tk('recipe.markFavourite'))}" title="${escapeHtml(fav ? tk('recipe.favourite') : tk('recipe.markFavourite'))}">${RECIPE_HEART_SVG}</span>`;
 }
 function refreshRecipeFavButtons(key) {
   const fav = isRecipeFavorite(key);
@@ -51,8 +51,8 @@ function refreshRecipeFavButtons(key) {
     if (el.dataset.favKey !== key) return;
     el.classList.toggle('is-fav', fav);
     el.setAttribute('aria-pressed', String(fav));
-    el.setAttribute('aria-label', fav ? 'Aus Favoriten entfernen' : 'Als Favorit markieren');
-    el.title = fav ? 'Favorit' : 'Als Favorit markieren';
+    el.setAttribute('aria-label', fav ? tk('recipe.unfavourite') : tk('recipe.markFavourite'));
+    el.title = fav ? tk('recipe.favourite') : tk('recipe.markFavourite');
   });
 }
 function toggleRecipeFavorite(key) {
@@ -84,9 +84,9 @@ function sortedRecipes(source = recipes) {
   const q = recipeSearch.trim().toLowerCase();
   if (q) arr = arr.filter(r => recipeSearchText(r).includes(q));
   switch (document.getElementById('recipeSort').value) {
-    case 'titel': arr.sort((a, b) => a.title.localeCompare(b.title, 'de')); break;
+    case 'titel': arr.sort((a, b) => a.title.localeCompare(b.title, sysLocale())); break;
     case 'schnellste': arr.sort((a, b) => totalTime(a) - totalTime(b)); break;
-    case 'geplant': arr.sort((a, b) => (isPlannedThisWeek(b.id) ? 1 : 0) - (isPlannedThisWeek(a.id) ? 1 : 0) || a.title.localeCompare(b.title, 'de')); break;
+    case 'geplant': arr.sort((a, b) => (isPlannedThisWeek(b.id) ? 1 : 0) - (isPlannedThisWeek(a.id) ? 1 : 0) || a.title.localeCompare(b.title, sysLocale())); break;
     default: arr.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
   }
   return arr;
@@ -122,14 +122,14 @@ async function loadPublicRecipes(force) {
     const res = await apiFetch('/api/pinn/rezepte/oeffentlich', { cache: 'no-store' });
     const body = await res.json().catch(() => ({}));
     if (res.status === 404) {
-      publicRecipesError = 'Öffentliche Rezepte sind auf dem Server noch nicht eingerichtet (pb_hooks/rezepte.pb.js fehlt).';
+      publicRecipesError = tk('recipe.pub.noHook');
     } else {
       publicRecipes = Array.isArray(body.rezepte) ? body.rezepte : [];
-      if (body.error) publicRecipesError = 'Öffentliche Rezepte konnten nicht geladen werden: ' + body.error;
+      if (body.error) publicRecipesError = tk('recipe.pub.loadFailedMsg', { msg: body.error });
     }
     publicRecipesLoadedAt = Date.now();
   } catch (err) {
-    publicRecipesError = 'Öffentliche Rezepte konnten nicht geladen werden (keine Verbindung?).';
+    publicRecipesError = tk('recipe.pub.offline');
     publicRecipesLoadedAt = Date.now(); // don't retry right away - again on the next opening
   } finally {
     publicRecipesLoading = false;
@@ -147,7 +147,7 @@ function publicEntryToRecipe(p) {
   const d = (p && p.data) || {};
   return {
     id: 'pub:' + p.id,
-    title: d.title || 'Unbenanntes Rezept',
+    title: d.title || tk('recipe.untitled'),
     ingredients: Array.isArray(d.ingredients) ? d.ingredients : [],
     steps: Array.isArray(d.steps) ? d.steps : [],
     servings: d.servings || 2,
@@ -166,8 +166,8 @@ function publicEntryToRecipe(p) {
 // "Rezepte Familie" (with the name of the original family, if known).
 function publicRecipeOriginLabel(p) {
   if (!p) return '';
-  if (p.verwaist) return 'Rezepte Familie' + (p.herkunft ? ` (ursprünglich Familie ${p.herkunft})` : '');
-  return `Familie ${p.familie || ''}`;
+  if (p.verwaist) return tk('recipe.pub.poolFamily') + (p.herkunft ? ' ' + tk('recipe.pub.originally', { name: p.herkunft }) : '');
+  return tk('recipe.pub.family', { name: p.familie || '' });
 }
 
 function adoptedCopyOf(p) {
@@ -178,7 +178,7 @@ function blobToDataUrl(blob) {
   return new Promise((resolve, reject) => {
     const fr = new FileReader();
     fr.onload = () => resolve(fr.result);
-    fr.onerror = () => reject(new Error('Bild konnte nicht gelesen werden.'));
+    fr.onerror = () => reject(new Error(tk('recipe.imageUnreadable')));
     fr.readAsDataURL(blob);
   });
 }
@@ -191,7 +191,7 @@ async function adoptPublicRecipe(p, btn) {
   if (already) return already;
   const d = p.data || {};
   const btnLabel = btn ? btn.textContent : '';
-  if (btn) { btn.disabled = true; btn.textContent = 'Wird übernommen …'; }
+  if (btn) { btn.disabled = true; btn.textContent = tk('recipe.pub.adopting'); }
   try {
     let image = null;
     let imageRecordId = null;
@@ -203,7 +203,7 @@ async function adoptPublicRecipe(p, btn) {
         image = up.path;
         imageRecordId = up.recordId;
       } catch (err) {
-        console.warn('Bild des öffentlichen Rezepts konnte nicht kopiert werden:', err);
+        console.warn('Could not copy the image of the public recipe:', err);
       }
     }
     const lower = v => String(v || '').trim().toLowerCase();
@@ -219,7 +219,7 @@ async function adoptPublicRecipe(p, btn) {
     });
     const copy = {
       id: 'r' + Date.now(),
-      title: d.title || 'Unbenanntes Rezept',
+      title: d.title || tk('recipe.untitled'),
       ingredients: Array.isArray(d.ingredients) ? [...d.ingredients] : [],
       steps: Array.isArray(d.steps) ? [...d.steps] : [],
       servings: d.servings || 2,
@@ -263,15 +263,15 @@ function renderRecipeFilters() {
   const tools = kitchenTools.filter(t => t.active !== false);
   if (recipeFilterCategory && !cats.includes(recipeFilterCategory)) recipeFilterCategory = '';
   if (recipeFilterTool && !tools.some(t => t.id === recipeFilterTool)) recipeFilterTool = '';
-  catSel.innerHTML = '<option value="">Alle Kategorien</option>' + cats.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
-  toolSel.innerHTML = '<option value="">Alle Küchengeräte</option>' + tools.map(t => `<option value="${escapeHtml(t.id)}">${escapeHtml(t.label)}</option>`).join('');
+  catSel.innerHTML = '<option value="">' + escapeHtml(tk('pantry.allCategories')) + '</option>' + cats.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+  toolSel.innerHTML = '<option value="">' + escapeHtml(tk('recipe.allTools')) + '</option>' + tools.map(t => `<option value="${escapeHtml(t.id)}">${escapeHtml(t.label)}</option>`).join('');
   catSel.value = recipeFilterCategory;
   toolSel.value = recipeFilterTool;
   toolSel.classList.toggle('hidden', !tools.length);
   const fav = document.getElementById('recipeFavoritesToggle');
   fav.classList.toggle('active', recipeFavoritesFilterActive);
   fav.setAttribute('aria-pressed', String(recipeFavoritesFilterActive));
-  fav.textContent = (recipeFavoritesFilterActive ? '♥' : '♡') + ' Favoriten';
+  fav.textContent = (recipeFavoritesFilterActive ? '♥' : '♡') + ' ' + tk('recipe.favourites');
   const search = document.getElementById('recipeSearchInput');
   if (document.activeElement !== search && search.value !== recipeSearch) search.value = recipeSearch;
 }
@@ -285,20 +285,20 @@ function renderRecipesForCurrentView() {
   document.querySelectorAll('.recipe-source-btn').forEach(b => b.classList.toggle('active', b.dataset.source === recipeListSource));
   document.getElementById('recipeFilterBar').classList.toggle('hidden', currentView === 'uebersicht');
   if (currentView === 'uebersicht') {
-    titleEl.textContent = 'Diese Woche geplant';
+    titleEl.textContent = tk('recipe.plannedThisWeek');
     document.getElementById('recipeFavSliderWrap').classList.add('hidden');
     document.getElementById('recipeList').innerHTML = '';
     renderRecipeWeekSlider();
     const noneThisWeek = document.getElementById('recipeWeekSliderWrap').classList.contains('hidden');
-    document.getElementById('emptyRecipes').textContent = 'Für diese Woche ist noch nichts geplant.';
+    document.getElementById('emptyRecipes').textContent = tk('recipe.nothingThisWeek');
     document.getElementById('emptyRecipes').classList.toggle('hidden', !noneThisWeek);
     document.getElementById('recipeCount').textContent = '';
   } else if (recipeListSource === 'oeffentlich') {
-    titleEl.textContent = 'Öffentliche Rezepte';
+    titleEl.textContent = tk('recipe.publicTitle');
     renderRecipeFilters();
     renderPublicRecipeList();
   } else {
-    titleEl.textContent = 'Rezepte';
+    titleEl.textContent = tk('recipe.title');
     renderRecipeFilters();
     renderFullRecipeList();
   }
@@ -315,7 +315,7 @@ function renderPublicRecipeList() {
   list.innerHTML = '';
   if (!publicRecipesLoadedAt) {
     count.textContent = '';
-    empty.textContent = 'Öffentliche Rezepte werden geladen …';
+    empty.textContent = tk('recipe.pub.loading');
     empty.classList.remove('hidden');
     loadPublicRecipes(false);
     return;
@@ -325,12 +325,12 @@ function renderPublicRecipeList() {
   const visible = sortedRecipes(all);
   const isFiltered = recipeIsFiltered();
   count.textContent = visible.length
-    ? `${visible.length} öffentliche${visible.length === 1 ? 's' : ''} Rezept${visible.length === 1 ? '' : 'e'}${isFiltered ? ` (gefiltert von ${all.length})` : ''}`
+    ? tk('recipe.pub.count', { n: visible.length }) + (isFiltered ? ' ' + tk('recipe.filteredOf', { total: all.length }) : '')
     : '';
   empty.textContent = publicRecipesError
-    || (recipeOnlyFavoritesFilter() ? 'Noch keine öffentlichen Favoriten – tippe auf das Herz im Rezeptbild.'
-      : isFiltered ? 'Kein öffentliches Rezept passt zu dieser Auswahl.'
-      : 'Noch keine öffentlichen Rezepte. Setze beim Bearbeiten eines Rezepts den Haken „Rezept öffentlich teilen“, um es mit allen Familien zu teilen.');
+    || (recipeOnlyFavoritesFilter() ? tk('recipe.pub.noFav')
+      : isFiltered ? tk('recipe.pub.noneMatch')
+      : tk('recipe.pub.none'));
   empty.classList.toggle('hidden', visible.length > 0 && !publicRecipesError);
 
   visible.forEach(r => {
@@ -342,19 +342,19 @@ function renderPublicRecipeList() {
     card.className = 'recipe-card w-full text-left rounded-xl border border-ink/10 bg-white overflow-hidden fade-in px-4 py-3 flex items-start gap-3 cursor-pointer';
     const timeLabel = totalTime(r) ? `🕐 ${formatRecipeDuration(totalTime(r))}` : null;
     const sourceBadge = p.eigene
-      ? '<span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-pine/10 text-pine">Von euch geteilt</span>'
-      : `<span class="inline-block mt-1 text-[11px] text-ink/50">von ${escapeHtml(publicRecipeOriginLabel(p))}</span>`;
+      ? '<span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-pine/10 text-pine">' + escapeHtml(tk('recipe.pub.yours')) + '</span>'
+      : `<span class="inline-block mt-1 text-[11px] text-ink/50">${escapeHtml(tk('lists.ofPerson', { name: publicRecipeOriginLabel(p) }))}</span>`;
     let action = '';
     if (!p.eigene) {
       action = copy
-        ? '<span class="px-2.5 py-1 rounded-lg text-[11px] text-pine bg-pine/10">✓ Übernommen</span>'
-        : '<button type="button" class="adopt-recipe px-2.5 py-1 rounded-lg border border-ink/15 text-[11px] text-ink/60 hover:text-pine hover:border-pine transition">＋ Übernehmen</button>';
+        ? '<span class="px-2.5 py-1 rounded-lg text-[11px] text-pine bg-pine/10">' + escapeHtml(tk('recipe.pub.adopted')) + '</span>'
+        : '<button type="button" class="adopt-recipe px-2.5 py-1 rounded-lg border border-ink/15 text-[11px] text-ink/60 hover:text-pine hover:border-pine transition">' + escapeHtml(tk('recipe.pub.adopt')) + '</button>';
     }
     card.innerHTML = `
       <div class="recipe-thumb w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-ink/5">${r.image ? `<img src="${recipeImageSrc(r.image, true, r.imageFrame)}" loading="lazy" class="w-full h-full object-cover" alt="" onerror="this.remove()"${recipeImgStyleAttr(r)} />` : '<div class="w-full h-full grid place-items-center text-2xl opacity-30">🍽️</div>'}${recipeFavButtonHtml(recipeFavKey(r))}</div>
       <div class="flex-1 min-w-0">
         <div class="font-serif text-base font-bold truncate">${escapeHtml(r.title)}</div>
-        <div class="text-xs text-ink/40 mt-0.5">${timeLabel || `${r.ingredients.length} Zutaten · ${r.steps.length} Schritte`}</div>
+        <div class="text-xs text-ink/40 mt-0.5">${escapeHtml(timeLabel || tk('recipe.ingredientsN', { n: r.ingredients.length }) + ' · ' + tk('recipe.stepsN', { n: r.steps.length }))}</div>
         ${sourceBadge}
         ${action ? `<div class="flex items-center gap-1.5 mt-2 flex-wrap">${action}</div>` : ''}
       </div>
@@ -388,11 +388,11 @@ function renderFullRecipeList() {
   const visible = sortedRecipes();
   const isFiltered = recipeIsFiltered();
   count.textContent = visible.length
-    ? `${visible.length} Rezept${visible.length === 1 ? '' : 'e'}${isFiltered ? ` (gefiltert von ${recipes.length})` : ''}`
+    ? tk('recipe.count', { n: visible.length }) + (isFiltered ? ' ' + tk('recipe.filteredOf', { total: recipes.length }) : '')
     : '';
-  empty.textContent = !recipes.length ? 'Noch keine Rezepte – füge eines hinzu.'
-    : recipeOnlyFavoritesFilter() ? 'Noch keine Favoriten – tippe auf das Herz im Rezeptbild.'
-    : isFiltered ? 'Kein Rezept passt zu dieser Auswahl.' : 'Noch keine Rezepte – füge eines hinzu.';
+  empty.textContent = !recipes.length ? tk('recipe.empty')
+    : recipeOnlyFavoritesFilter() ? tk('recipe.noFav')
+    : isFiltered ? tk('recipe.noneMatch') : tk('recipe.empty');
   list.innerHTML = '';
   empty.classList.toggle('hidden', visible.length > 0);
 
@@ -401,17 +401,17 @@ function renderFullRecipeList() {
     card.type = 'button';
     card.className = 'recipe-card w-full text-left rounded-xl border border-ink/10 bg-white overflow-hidden fade-in px-4 py-3 flex items-start gap-3';
     const timeLabel = totalTime(r) ? `🕐 ${formatRecipeDuration(totalTime(r))}` : null;
-    const plannedBadge = (isPlannedThisWeek(r.id) ? '<span class="inline-block mt-1 mr-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-mustard-50 text-mustard border border-mustard/30">Diese Woche geplant</span>' : '')
-      + (r.oeffentlich ? '<span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-pine/10 text-pine">🌍 Öffentlich</span>' : '');
+    const plannedBadge = (isPlannedThisWeek(r.id) ? '<span class="inline-block mt-1 mr-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-mustard-50 text-mustard border border-mustard/30">' + escapeHtml(tk('recipe.plannedThisWeek')) + '</span>' : '')
+      + (r.oeffentlich ? '<span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-pine/10 text-pine">' + escapeHtml(tk('recipe.public')) + '</span>' : '');
     card.innerHTML = `
       <div class="recipe-thumb w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-ink/5">${r.image ? `<img src="${recipeImageSrc(r.image, true, r.imageFrame)}" loading="lazy" class="w-full h-full object-cover" alt=""${recipeImgStyleAttr(r)} />` : '<div class="w-full h-full grid place-items-center text-2xl opacity-30">🍽️</div>'}${recipeFavButtonHtml(recipeFavKey(r))}</div>
       <div class="flex-1 min-w-0">
         <div class="font-serif text-base font-bold truncate">${escapeHtml(r.title)}</div>
-        <div class="text-xs text-ink/40 mt-0.5">${timeLabel || `${r.ingredients.length} Zutaten · ${r.steps.length} Schritte`}</div>
+        <div class="text-xs text-ink/40 mt-0.5">${escapeHtml(timeLabel || tk('recipe.ingredientsN', { n: r.ingredients.length }) + ' · ' + tk('recipe.stepsN', { n: r.steps.length }))}</div>
         ${plannedBadge}
         <div class="flex items-center gap-1.5 mt-2 flex-wrap">
-          <button class="plan-recipe px-2.5 py-1 rounded-lg border border-ink/15 text-[11px] text-ink/60 hover:text-mustard hover:border-mustard transition" data-id="${r.id}" title="Für einen Tag planen">📅 Planen</button>
-          <button class="edit-recipe px-2.5 py-1 rounded-lg border border-ink/15 text-[11px] text-ink/60 hover:text-pine hover:border-pine transition" data-id="${r.id}" title="${hasUnquantifiedIngredients(r.ingredients) ? 'Enthält Zutaten ohne Mengenangabe' : ''}">${hasUnquantifiedIngredients(r.ingredients) ? '⚠️ ' : ''}Bearbeiten</button>
+          <button class="plan-recipe px-2.5 py-1 rounded-lg border border-ink/15 text-[11px] text-ink/60 hover:text-mustard hover:border-mustard transition" data-id="${r.id}" title="${escapeHtml(tk('recipe.planForDay'))}">${escapeHtml(tk('recipe.planShort'))}</button>
+          <button class="edit-recipe px-2.5 py-1 rounded-lg border border-ink/15 text-[11px] text-ink/60 hover:text-pine hover:border-pine transition" data-id="${r.id}" title="${hasUnquantifiedIngredients(r.ingredients) ? escapeHtml(tk('recipe.hasUnquantified')) : ''}">${hasUnquantifiedIngredients(r.ingredients) ? '⚠️ ' : ''}${escapeHtml(tk('common.edit'))}</button>
         </div>
       </div>
     `;
@@ -463,7 +463,7 @@ function renderRecipeFavSlider() {
   const edgeSpacer = `<div class="shrink-0" style="width:${WEEK_SLIDER_PEEK_PX}px" aria-hidden="true"></div>`;
   slider.innerHTML = edgeSpacer + items.map((it, i) => {
     const r = it.recipe;
-    const time = totalTime(r) ? `🕐 ${formatRecipeDuration(totalTime(r))}` : `${r.ingredients.length} Zutaten`;
+    const time = totalTime(r) ? `🕐 ${formatRecipeDuration(totalTime(r))}` : tk('recipe.ingredientsN', { n: r.ingredients.length });
     return `
       <button type="button" class="fav-slider-card shrink-0 w-32 text-left rounded-xl border border-ink/10 bg-white p-2 fade-in" data-index="${i}" style="scroll-snap-align: start;">
         <div class="recipe-thumb w-full aspect-square rounded-lg overflow-hidden bg-ink/5">${recipeFavButtonHtml(it.key, 'recipe-fav-badge')}${r.image ? `<img src="${recipeImageSrc(r.image, true, r.imageFrame)}" loading="lazy" class="w-full h-full object-cover" alt="" onerror="this.remove()"${recipeImgStyleAttr(r)} />` : '<div class="w-full h-full grid place-items-center text-2xl opacity-30">🍽️</div>'}</div>
@@ -509,9 +509,9 @@ function markMealCooked(mealId, btnEl) {
   const entry = mealPlan.find(p => String(p.id) === String(mealId));
   if (!entry) return;
   const recipe = entry.recipeId ? recipes.find(r => r.id === entry.recipeId) : null;
-  const title = recipe ? recipe.title : (entry.title || 'Diese Mahlzeit');
+  const title = recipe ? recipe.title : (entry.title || tk('meal.thisMeal'));
   if (btnEl) btnEl.classList.add('is-cooking');
-  if (!confirm(`„${title}“ schon gekocht?`)) {
+  if (!confirm(tk('meal.alreadyCooked', { name: title }))) {
     if (btnEl) btnEl.classList.remove('is-cooking');
     return;
   }
@@ -558,8 +558,8 @@ function renderRecipeWeekSlider() {
   const edgeSpacer = `<div class="shrink-0" style="width:${WEEK_SLIDER_PEEK_PX}px" aria-hidden="true"></div>`;
   slider.innerHTML = edgeSpacer + entries.map(p => {
     const recipe = p.recipeId ? recipes.find(r => r.id === p.recipeId) : null;
-    const title = recipe ? recipe.title : (p.title || 'Ohne Titel');
-    const dayLabel = new Date(p.date).toLocaleDateString('de-DE', { weekday: 'short' });
+    const title = recipe ? recipe.title : (p.title || tk('meal.noTitle'));
+    const dayLabel = new Date(p.date).toLocaleDateString(sysLocale(), { weekday: 'short' });
     return `
       <button type="button" class="week-slider-card shrink-0 ${compactSlider ? 'is-compact' : 'w-32 p-2'} text-left rounded-xl border border-ink/10 bg-white fade-in" data-recipe-id="${recipe ? recipe.id : ''}" data-meal-id="${escapeHtml(String(p.id))}" style="scroll-snap-align: start;">
         <div class="recipe-thumb w-full aspect-square rounded-lg overflow-hidden bg-ink/5">${mealCookedButtonHtml(p.id)}${recipe && isRecipeFavorite(recipe.id) ? recipeFavButtonHtml(recipe.id, 'recipe-fav-badge') : ''}${recipe && recipe.image ? `<img src="${recipeImageSrc(recipe.image, true, recipe.imageFrame)}" loading="lazy" class="w-full h-full object-cover" alt=""${recipeImgStyleAttr(recipe)} />` : recipe ? '<div class="w-full h-full grid place-items-center text-2xl opacity-30">🍽️</div>' : `<img src="${NO_RECIPE_MEAL_IMAGE}" class="w-full h-full object-cover opacity-70" alt="Ohne Rezept" />`}</div>
@@ -618,7 +618,7 @@ function openRecipeDetailPage(recipeId, publicEntry = null) {
   document.getElementById('recipeListHeader').classList.add('hidden');
   document.getElementById('recipeListContainer').classList.add('hidden');
   document.getElementById('recipeDetailView').classList.remove('hidden');
-  document.getElementById('recipeDetailBackLabel').textContent = currentView === 'uebersicht' ? 'Übersicht' : 'Rezepte';
+  document.getElementById('recipeDetailBackLabel').textContent = currentView === 'uebersicht' ? tk('recipe.backOverview') : tk('recipe.title');
 
   // Opened from the overview, the detail page shows full screen instead of squeezed into the
   // narrow right column - hide calendar/tasks for a moment, the recipes section takes the full
@@ -664,8 +664,8 @@ function openRecipeDetailPage(recipeId, publicEntry = null) {
 
   const metaParts = [];
   if (totalTime(r)) metaParts.push(`🕐 ${formatRecipeDuration(totalTime(r))}`);
-  metaParts.push(`${r.ingredients.length} Zutat${r.ingredients.length === 1 ? '' : 'en'}`);
-  if (isPlannedThisWeek(r.id)) metaParts.push('<span class="text-mustard font-medium">Diese Woche geplant</span>');
+  metaParts.push(escapeHtml(tk('recipe.ingredientsN', { n: r.ingredients.length })));
+  if (isPlannedThisWeek(r.id)) metaParts.push('<span class="text-mustard font-medium">' + escapeHtml(tk('recipe.plannedThisWeek')) + '</span>');
   document.getElementById('recipeDetailMeta').innerHTML = metaParts.map(p => `<span>${p}</span>`).join('');
 
   const catWrap = document.getElementById('recipeDetailCategories');
@@ -677,9 +677,9 @@ function openRecipeDetailPage(recipeId, publicEntry = null) {
 
   const sourceEl = document.getElementById('recipeDetailSource');
   let sourceText = '';
-  if (isForeign) sourceText = `🌍 Öffentliches Rezept von ${publicRecipeOriginLabel(publicEntry)}`;
-  else if (r.oeffentlich) sourceText = '🌍 Öffentlich geteilt – alle Familien können dieses Rezept sehen.';
-  else if (r.quelle && r.quelle.familie) sourceText = r.quelle.familie === 'Rezepte Familie' ? 'Übernommen aus der Rezepte Familie' : `Übernommen von Familie ${r.quelle.familie}`;
+  if (isForeign) sourceText = tk('recipe.pub.from', { name: publicRecipeOriginLabel(publicEntry) });
+  else if (r.oeffentlich) sourceText = tk('recipe.pub.shared');
+  else if (r.quelle && r.quelle.familie) sourceText = r.quelle.familie === 'Rezepte Familie' ? tk('recipe.pub.adoptedPool') : tk('recipe.pub.adoptedFrom', { name: r.quelle.familie });
   sourceEl.textContent = sourceText;
   sourceEl.classList.toggle('hidden', !sourceText);
   document.getElementById('recipeDetailToolsWrap').classList.toggle('hidden', !toolLabels.length);
@@ -690,7 +690,7 @@ function openRecipeDetailPage(recipeId, publicEntry = null) {
   const baseServings = r.servings || 2;
   recipeDetailCurrentServings = baseServings;
   function renderDetailServings() {
-    document.getElementById('recipeDetailServingsLabel').textContent = `${recipeDetailCurrentServings} Person${recipeDetailCurrentServings === 1 ? '' : 'en'}`;
+    document.getElementById('recipeDetailServingsLabel').textContent = tk('recipe.persons', { n: recipeDetailCurrentServings });
     const factor = recipeDetailCurrentServings / baseServings;
     document.getElementById('recipeDetailIngredients').innerHTML =
       renderRecipeItemsHtml(r.ingredients, false, (line) => scaleIngredientLine(line, factor));
@@ -715,7 +715,7 @@ function openRecipeDetailPage(recipeId, publicEntry = null) {
   adoptBtn.classList.toggle('hidden', !isForeign);
   if (isForeign) {
     const copy = adoptedCopyOf(publicEntry);
-    adoptBtn.textContent = copy ? '✓ In meinen Rezepten – öffnen' : '＋ Zu meinen Rezepten hinzufügen';
+    adoptBtn.textContent = copy ? tk('recipe.pub.inMine') : tk('recipe.addToMine');
     adoptBtn.disabled = false;
     adoptBtn.onclick = async () => {
       const own = adoptedCopyOf(publicEntry) || await adoptPublicRecipe(publicEntry, adoptBtn);
@@ -730,8 +730,8 @@ function openRecipeDetailPage(recipeId, publicEntry = null) {
   planBtn.onclick = () => openMealModal(isoDate(new Date()), 'mittag', r.id);
   const detailEditBtn = document.getElementById('recipeDetailEditBtn');
   const missingQty = hasUnquantifiedIngredients(r.ingredients);
-  detailEditBtn.textContent = (missingQty ? '⚠️ ' : '') + 'Bearbeiten';
-  detailEditBtn.title = missingQty ? 'Enthält Zutaten ohne Mengenangabe' : '';
+  detailEditBtn.textContent = (missingQty ? '⚠️ ' : '') + tk('common.edit');
+  detailEditBtn.title = missingQty ? tk('recipe.hasUnquantified') : '';
   detailEditBtn.onclick = () => openRecipeModal(r.id);
   document.getElementById('recipeDetailDeleteBtn').onclick = () => {
     deleteRecipeImageRecord(r.imageRecordId);
@@ -837,10 +837,10 @@ function renderOverviewMealList() {
   if (calendarMode === 'day') {
     const d = new Date(); d.setDate(d.getDate() + dayOffset);
     from = to = isoDate(d);
-    emptyText = 'Für diesen Tag sind noch keine Mahlzeiten geplant.';
+    emptyText = tk('meal.noneDay');
   } else {
     from = isoDate(monday); to = isoDate(sunday);
-    emptyText = 'Für diese Woche sind noch keine Mahlzeiten geplant.';
+    emptyText = tk('meal.noneWeek');
   }
   empty.textContent = emptyText;
 
@@ -848,7 +848,7 @@ function renderOverviewMealList() {
     .filter(p => p.date >= from && p.date <= to)
     .sort((a, b) => a.date === b.date ? (mealTypeRank(a.mealType) - mealTypeRank(b.mealType)) : a.date.localeCompare(b.date));
 
-  count.textContent = entries.length ? `${entries.length} geplante Mahlzeit${entries.length === 1 ? '' : 'en'} · zum Verschieben ziehen, antippen für Details` : '';
+  count.textContent = entries.length ? tk('shop.plannedMeals', { n: entries.length }) + ' · ' + tk('meal.dragHint') : '';
   empty.classList.toggle('hidden', entries.length > 0);
 
   // If the previously expanded meal no longer occurs in this view (e.g. after
@@ -860,16 +860,16 @@ function renderOverviewMealList() {
 
   entries.forEach(p => {
     const recipe = p.recipeId ? recipes.find(r => r.id === p.recipeId) : null;
-    const title = recipe ? recipe.title : (p.title || 'Ohne Titel');
+    const title = recipe ? recipe.title : (p.title || tk('meal.noTitle'));
     const mealLabel = mealTypeLabel(p.mealType, true);
-    const dayLabel = new Date(p.date).toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'short' });
+    const dayLabel = new Date(p.date).toLocaleDateString(sysLocale(), { weekday: 'long', day: 'numeric', month: 'short' });
     const isExpanded = expandedMealCardId === p.id;
 
     const card = document.createElement('div');
     card.className = 'recipe-card rounded-xl border border-ink/10 bg-white overflow-hidden fade-in cursor-grab active:cursor-grabbing';
     card.innerHTML = `
       <button class="recipe-toggle w-full text-left px-3 py-2 flex items-center gap-2.5">
-        <span class="text-ink/20 text-xs shrink-0" title="Ziehen zum Verschieben">⠿</span>
+        <span class="text-ink/20 text-xs shrink-0" title="${escapeHtml(tk('meal.dragTitle'))}">⠿</span>
         <div class="w-9 h-9 rounded-lg overflow-hidden shrink-0 bg-ink/5" style="position: relative;">${recipe && recipe.image ? `<img src="${recipeImageSrc(recipe.image, true, recipe.imageFrame)}" loading="lazy" class="w-full h-full object-cover" alt=""${recipeImgStyleAttr(recipe)} />` : ''}</div>
         <div class="flex-1 min-w-0">
           <div class="font-serif text-sm truncate">${escapeHtml(title)}</div>
@@ -878,25 +878,25 @@ function renderOverviewMealList() {
       </button>
       <div class="recipe-body ${isExpanded ? '' : 'hidden'} px-4 pb-4 border-t border-ink/10 pt-3">
         <div class="text-xs text-ink/40 mb-3">${dayLabel} · ${mealLabel}</div>
-        <h4 class="text-xs uppercase tracking-wide text-ink/40 mb-1.5">Verschieben</h4>
+        <h4 class="text-xs uppercase tracking-wide text-ink/40 mb-1.5">${escapeHtml(tk('cat.reassign.move'))}</h4>
         <div class="flex flex-wrap items-center gap-2 mb-4">
           <input type="date" class="move-day-select text-sm rounded-lg border border-ink/15 px-2 py-1.5" value="${p.date}" />
           <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs">
             ${MEAL_TYPES.map(t => `<button type="button" class="move-meal-btn px-3 py-1 rounded-full transition ${mealTypeInfo(p.mealType).id === t.id ? 'active' : ''}" data-meal="${t.id}">${t.icon} ${t.label}</button>`).join('')}
           </div>
-          <button class="apply-move-btn px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition">Verschieben</button>
+          <button class="apply-move-btn px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition">${escapeHtml(tk('cat.reassign.move'))}</button>
         </div>
         ${recipe ? `<div class="grid grid-cols-2 gap-4 mb-4">
           <div>
-            <h4 class="text-xs uppercase tracking-wide text-ink/40 mb-1.5">Zutaten</h4>
+            <h4 class="text-xs uppercase tracking-wide text-ink/40 mb-1.5">${escapeHtml(tk('recipe.ingredients'))}</h4>
             ${renderRecipeItemsHtml(recipe.ingredients, false)}
           </div>
           <div>
-            <h4 class="text-xs uppercase tracking-wide text-ink/40 mb-1.5">Zubereitung</h4>
+            <h4 class="text-xs uppercase tracking-wide text-ink/40 mb-1.5">${escapeHtml(tk('recipe.method'))}</h4>
             ${renderRecipeItemsHtml(recipe.steps, true)}
           </div>
         </div>` : ''}
-        <button class="del-planned-meal text-xs text-ink/40 hover:text-red-500 transition" data-id="${p.id}">Aus der Essensplanung entfernen</button>
+        <button class="del-planned-meal text-xs text-ink/40 hover:text-red-500 transition" data-id="${p.id}">${escapeHtml(tk('meal.remove'))}</button>
       </div>
     `;
 
@@ -925,7 +925,7 @@ function renderOverviewMealList() {
     });
     card.querySelector('.del-planned-meal').addEventListener('click', (e) => {
       e.stopPropagation();
-      if (!confirm(`"${title}" (${mealLabel}, ${dayLabel}) wirklich aus der Essensplanung entfernen?`)) return;
+      if (!confirm(tk('meal.confirmRemove', { name: title, meal: mealLabel, day: dayLabel }))) return;
       mealPlan = mealPlan.filter(x => x.id !== p.id);
       saveMealPlan();
       expandedMealCardId = null;

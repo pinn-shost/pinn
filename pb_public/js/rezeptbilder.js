@@ -76,9 +76,9 @@ function compressImageDataUrl(dataUrl) {
       ctx.fillStyle = '#ffffff'; // transparent PNGs would otherwise turn black in the JPEG
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Bild konnte nicht umgewandelt werden.')), 'image/jpeg', RECIPE_IMAGE_QUALITY);
+      canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error(tk('recipe.imageConvertFailed'))), 'image/jpeg', RECIPE_IMAGE_QUALITY);
     };
-    img.onerror = () => reject(new Error('Bild konnte nicht gelesen werden.'));
+    img.onerror = () => reject(new Error(tk('recipe.imageUnreadable')));
     img.src = dataUrl;
   });
 }
@@ -95,7 +95,7 @@ async function uploadRecipeImage(dataUrl) {
 
 function deleteRecipeImageRecord(recordId) {
   if (!recordId) return;
-  pb.collection(RECIPE_IMAGE_COLLECTION).delete(recordId).catch(err => console.warn('Rezeptbild konnte nicht gelöscht werden:', err));
+  pb.collection(RECIPE_IMAGE_COLLECTION).delete(recordId).catch(err => console.warn('Could not delete the recipe image:', err));
 }
 
 // One-time move: upload embedded legacy images and replace them in the recipe by the path. Runs in the
@@ -116,13 +116,13 @@ async function migrateEmbeddedRecipeImages() {
         r.imageRecordId = recordId;
         moved++;
       } catch (err) {
-        console.warn('Bild-Umzug abgebrochen (Sammlung "' + RECIPE_IMAGE_COLLECTION + '" vorhanden?):', err);
+        console.warn('Image move stopped (does the collection "' + RECIPE_IMAGE_COLLECTION + '" exist?):', err);
         break;
       }
     }
     if (moved) {
       await persistState();
-      console.log(`Bild-Umzug: ${moved} von ${pending.length} Rezeptbildern ausgelagert.`);
+      console.log(`Image move: ${moved} of ${pending.length} recipe images moved out.`);
       renderRecipesForCurrentView();
     }
   } finally {
