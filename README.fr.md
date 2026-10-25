@@ -95,6 +95,15 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 et 🇰🇷 한국어**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.115.0
+
+**Clés de texte, partie 6 : finances, caisses et contrats**
+
+- Les **finances** (dépenses avec budget, analyse, historique et fenêtre d’opération, opérations régulières avec la question « à partir de quand ? », réglages des finances et export CSV), les **caisses** avec *Terminer les courses*, invités et *Qui doit quoi à qui*, les **contrats** avec échéances, coûts, documents et lettre de résiliation, l’**épargne** avec dépôts, positions, import et versements réguliers, l’**argent de poche** (aussi sur la page enfant) et la lecture des factures PDF prennent désormais leurs textes dans les fichiers de langue de `pb_public/i18n/` – dans les neuf langues et en colocation. Rien ne change à l’utilisation.
+- Petites corrections : dates, jours de la semaine et noms de mois des finances suivent ta langue ; des textes comme *Par rapport à la semaine précédente* ou *Nouvelle dépense régulière* sont désormais des phrases complètes dans chaque langue ; des nombres comme « 1 opération » ou « 1 personne » sont au singulier ou au pluriel correct.
+- Prochaine étape : famille, localisation, maison, véhicules et documents arrivent avec la 1.116.0.
+- Modifié : uniquement des fichiers de l’app (`index.html`, `js/finanzen.js`, `js/kassen.js`, `js/vertraege.js`, `js/sparen.js`, `js/vorrat2.js`, `js/pdflesen.js`, `js/sprachen.js`, `js/versionslog.js`, tous les fichiers de langue dans `i18n/` et `lang/`) – rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou bouton de mise à jour).
+
 ## Nouveautés de la 1.114.0
 
 **Clés de texte, partie 5 : listes, réserves et recettes**
@@ -152,15 +161,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Pour les contributeurs : `tk('key')` en JavaScript, `data-tk="key"` en HTML. `.github/scripts/i18n-keys.js` reprend les traductions existantes sous une clé sans les retaper, `check-keys.js` vérifie toutes les langues, les marqueurs et les formes de pluriel – voir [CONTRIBUTING.md](.github/CONTRIBUTING.md#texts).
 - Modifié : fichiers de l’appli (`index.html`, `js/sprachen.js`, `js/sprache.js`, `js/versionslog.js`, `js/textkern.js` (nouveau), tous les fichiers de langue dans `lang/` et `i18n/` (nouveau)), `pinn-setup.sh` et sur le serveur `pb_hooks/sw.pb.js` et `pinn-textkern.js` (nouveau), plus `.github/` (contrôles, workflow, CONTRIBUTING.md). Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
-## Nouveautés de la 1.110.0
-
-**Base de données avec version de schéma**
-
-- Étape 5 de la feuille de route : la base de données a désormais une **version de schéma**. Tout ce que le serveur configure au démarrage (collections, champs, règles d’accès) est réuni en un seul endroit, `pb_hooks/pinn-schema.js`, et s’exécute dans un ordre fixe. Les modifications ponctuelles reçoivent un numéro, s’exécutent une seule fois et sont consignées dans la collection verrouillée `pinn_schema`. Rien ne change à l’utilisation.
-- Mises à jour plus sûres : si une étape de configuration échoue, elle apparaît désormais dans le journal des erreurs (Réglages → Système) et plus seulement dans le journal Docker. Une version plus ancienne de pinn. sur une base plus récente ne la modifie pas et affiche un avertissement. Les rapports de bug vers GitHub indiquent la version du schéma.
-- Pour les contributeurs : une nouvelle collection ou un nouveau champ va dans la fonction ensure du module ; tout le reste (renommer, nettoyer des données) devient une nouvelle étape numérotée dans `MIGRATIONS` – voir l’en-tête de `pb_hooks/pinn-schema.js`. `check-hooks.js` teste le déroulement sur une base de données simulée.
-- Modifié : fichiers de l’app (`index.html`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, tous les fichiers de langue) et, sur le serveur, `pb_hooks/pinn-schema.js`, `schema.pb.js` (nouveaux), `pinn-system.js` et 26 fichiers de démarrage (`*.pb.js`), ainsi que `.github/scripts/check-hooks.js`. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
 ## Comment ça marche
 
 ```mermaid
@@ -187,7 +187,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.114.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.115.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

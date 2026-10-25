@@ -20,6 +20,14 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.115', datum: '25.10.2026', titel: 'Übersetzungen mit Text-Schlüsseln: Finanzen, Kassen und Verträge',
+    punkte: [
+      ['info', 'Finanzen mit Ausgaben, Budget, Auswertung und Verlauf, Kassen samt „Einkauf abschließen“ und „Wer schuldet wem“, Verträge mit Fristen und Kündigungsschreiben, Sparen mit Depots und Import sowie das Taschengeld holen ihre Texte jetzt über Text-Schlüssel – in allen neun Sprachen, auch als WG'],
+      ['fix', 'Kleinigkeiten: Datum, Wochentage und Monatsnamen in den Finanzen stehen im Format der eingestellten Sprache; Texte wie „Vergleich zur Vorwoche“ oder „Neue regelmäßige Ausgabe“ sind jetzt in jeder Sprache ganze Sätze; Zahlen wie „1 Buchung“ oder „1 Person“ stehen in der richtigen Einzahl oder Mehrzahl'],
+      ['info', 'Geändert: index.html, js/finanzen.js, js/kassen.js, js/vertraege.js, js/sparen.js, js/vorrat2.js, js/pdflesen.js, js/sprachen.js, js/versionslog.js, alle Sprachdateien in i18n/ und lang/ – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.114', datum: '25.10.2026', titel: 'Übersetzungen mit Text-Schlüsseln: Listen, Vorrat und Rezepte',
     punkte: [
       ['info', 'Listen (Einkauf, Packen, Geschenke, Wünsche, Checklisten, Ideen), Vorrat mit Scannen und „Was kann ich kochen?“, Rezepte, Essen planen und die Suche holen ihre Texte jetzt über Text-Schlüssel – in allen neun Sprachen, auch als WG'],

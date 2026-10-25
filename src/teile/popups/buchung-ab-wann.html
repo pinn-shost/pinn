@@ -1,22 +1,22 @@
 <!-- Finances: amount of a recurring booking (e.g. savings plan) changed - from when does the new amount apply? -->
 <div id="finScopeModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[330] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closeFinScopeBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 id="finScopeTitle" class="font-serif text-lg mb-1 pr-6">Ab wann gilt der neue Betrag?</h3>
+    <button id="closeFinScopeBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close" data-tk-attr="aria-label:common.close">×</button>
+    <h3 data-tk="fin.scope.title" id="finScopeTitle" class="font-serif text-lg mb-1 pr-6">From when does the new amount apply?</h3>
     <p id="finScopeInfo" class="text-xs text-ink/50 mb-4"></p>
     <div class="flex flex-col gap-2 mb-4">
       <label class="fin-scope-opt flex items-start gap-3 rounded-xl border border-ink/10 p-3 cursor-pointer">
         <input type="radio" name="finScope" value="future" class="w-4 h-4 shrink-0 mt-0.5" />
         <span class="flex-1 min-w-0">
-          <span class="block text-sm font-medium">Nur für die Zukunft</span>
+          <span data-tk="fin.onlyFuture" class="block text-sm font-medium">Only for the future</span>
           <span id="finScopeFutureSub" class="block text-xs text-ink/50"></span>
         </span>
       </label>
       <label class="fin-scope-opt flex items-start gap-3 rounded-xl border border-ink/10 p-3 cursor-pointer">
         <input type="radio" name="finScope" value="date" class="w-4 h-4 shrink-0 mt-0.5" />
         <span class="flex-1 min-w-0">
-          <span class="block text-sm font-medium">Rückwirkend ab einem Datum</span>
-          <span class="block text-xs text-ink/50 mb-2">Buchungen ab diesem Tag bekommen den neuen Betrag, ältere behalten ihren.</span>
+          <span data-tk="fin.retroactivelyFromDate" class="block text-sm font-medium">Retroactively from a date</span>
+          <span data-tk="fin.transactionsFromDayGet" class="block text-xs text-ink/50 mb-2">Transactions from this day get the new amount, older ones keep theirs.</span>
           <input id="finScopeDate" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
           <span id="finScopeDateSub" class="block text-xs text-ink/50 mt-1"></span>
         </span>
@@ -24,15 +24,15 @@
       <label class="fin-scope-opt flex items-start gap-3 rounded-xl border border-ink/10 p-3 cursor-pointer">
         <input type="radio" name="finScope" value="all" class="w-4 h-4 shrink-0 mt-0.5" />
         <span class="flex-1 min-w-0">
-          <span class="block text-sm font-medium">Rückwirkend für alle Buchungen</span>
+          <span data-tk="fin.retroactivelyAllTransactions" class="block text-sm font-medium">Retroactively for all transactions</span>
           <span id="finScopeAllSub" class="block text-xs text-ink/50"></span>
         </span>
       </label>
     </div>
     <p id="finScopeHint" class="hidden text-xs mb-3"></p>
     <div class="flex items-center justify-end gap-2">
-      <button id="cancelFinScopeBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
-      <button id="saveFinScopeBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Übernehmen</button>
+      <button data-tk="common.cancel" id="cancelFinScopeBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Cancel</button>
+      <button data-tk="common.apply" id="saveFinScopeBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Apply</button>
     </div>
   </div>
 </div>

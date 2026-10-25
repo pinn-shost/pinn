@@ -60,9 +60,9 @@ async function pinnPdfLines(file, maxPages = 6) {
   return lines;
 }
 function pinnPdfErrorText(err) {
-  if (err && err.code === 'nopdfjs') return 'PDF lässt sich nicht auslesen: pdf.js fehlt auf dem NAS (pb_public/vendor/pdfjs/pdf.min.mjs und pdf.worker.min.mjs).';
-  if (err && /password/i.test(String(err.name || '') + String(err.message || ''))) return 'Die PDF ist mit einem Passwort geschützt und lässt sich nicht auslesen.';
-  return 'Die PDF ließ sich nicht auslesen.';
+  if (err && err.code === 'nopdfjs') return tk('pdf.err.noPdfJs');
+  if (err && /password/i.test(String(err.name || '') + String(err.message || ''))) return tk('pdf.err.password');
+  return tk('pdf.err.unreadable');
 }
 function pinnIsPdfFile(f) { return !!f && (/pdf/i.test(f.type || '') || /\.pdf$/i.test(f.name || '')); }
 
@@ -269,12 +269,12 @@ function pdfParseInvoice(lines) {
 async function docAutofillFromPdf(file) {
   const info = document.getElementById('docPdfInfo');
   const show = (text, warn) => { info.textContent = text; info.classList.toggle('warn', !!warn); info.classList.remove('hidden'); };
-  show('⏳ PDF wird ausgelesen …');
+  show(tk('pdf.reading'));
   let lines = [];
   try { lines = await pinnPdfLines(file, 4); }
   catch (err) { if (docDraft) show(pinnPdfErrorText(err), true); return; }
   if (!docDraft) return;
-  if (lines.filter(l => /[a-zäöü]{3}/i.test(l.text)).length < 3) { show('Die PDF enthält keinen lesbaren Text (z. B. eingescannt) – bitte die Angaben selbst eintragen.', true); return; }
+  if (lines.filter(l => /[a-zäöü]{3}/i.test(l.text)).length < 3) { show(tk('pdf.noText'), true); return; }
   const r = pdfParseInvoice(lines);
   const filled = [];
   const set = (id, val) => { const el = document.getElementById(id); if (el && !el.value.trim() && val) { el.value = val; return true; } return false; };
@@ -284,12 +284,12 @@ async function docAutofillFromPdf(file) {
   if (fzHit && !docDraft.vehTouched && !docDraft.vehicles.includes(fzHit.id)) {
     docDraft.vehicles = [fzHit.id];
     if (docDraft.isNew && !docDraft.catTouched && !r.category) r.category = 'fahrzeuge';
-    filled.push('Fahrzeug ' + fzName(fzHit));
+    filled.push(tk('pdf.field.vehicle', { name: fzName(fzHit) }));
   }
   if (docDraft.isNew && !docDraft.catTouched && r.category && docCategories().some(c => c.id === r.category) && docDraft.catId !== r.category) {
     docDraft.catId = r.category;
     renderDocCategoryPicker();
-    filled.push('Kategorie');
+    filled.push(tk('pdf.field.category'));
   }
   docSuggestVehicle();
   renderDocVehiclePicker();
@@ -302,32 +302,32 @@ async function docAutofillFromPdf(file) {
   if (docDraft.fzTyp) {
     // Uploaded on a vehicle: keep the vehicle title, append shop/garage or item
     const add = (docDraft.fzTyp === 'rechnung' && r.product) ? r.product : r.issuer;
-    if (add && docDraft.fzTitle && titleEl.value === docDraft.fzTitle) { titleEl.value = (docDraft.fzTitle + ' · ' + add).slice(0, 200); filled.push('Titel'); }
+    if (add && docDraft.fzTitle && titleEl.value === docDraft.fzTitle) { titleEl.value = (docDraft.fzTitle + ' · ' + add).slice(0, 200); filled.push(tk('pdf.field.title')); }
   } else {
     let title = '';
     if (cat.fields === 'kauf' && r.product) title = r.product;
     else if (r.type && r.issuer) title = `${r.type} ${r.issuer}`;
     else title = r.type || r.issuer || '';
-    if (title && (!titleEl.value.trim() || titleEl.value === docDraft.autoTitle)) { titleEl.value = title.slice(0, 200); docDraft.autoTitle = ''; filled.push('Titel'); }
+    if (title && (!titleEl.value.trim() || titleEl.value === docDraft.autoTitle)) { titleEl.value = title.slice(0, 200); docDraft.autoTitle = ''; filled.push(tk('pdf.field.title')); }
   }
   if (r.date && !docDraft.dateTouched) {
     document.getElementById('docDateInput').value = r.date;
-    filled.push('Datum');
+    filled.push(tk('pdf.field.date'));
   }
-  if (set('docIssuerInput', r.issuer)) filled.push(DOC_ISSUER_HINTS[cat.id] ? DOC_ISSUER_HINTS[cat.id][0] : 'Aussteller');
+  if (set('docIssuerInput', r.issuer)) filled.push(DOC_ISSUER_HINTS[cat.id] ? DOC_ISSUER_HINTS[cat.id][0] : tk('pdf.field.issuer'));
   if (buy) {
     const buyEl = document.getElementById('docBuyDateInput');
     if (r.date && (!buyEl.value || (docDraft.autoBuy && buyEl.value === docDraft.autoBuy)) && buyEl.value !== r.date) {
       buyEl.value = r.date;
       docDraft.autoBuy = '';
       onDocBuyDateChanged();
-      filled.push('Kaufdatum', 'Gewährleistung');
+      filled.push(tk('pdf.field.purchaseDate'), tk('pdf.field.warranty'));
     }
-    if (r.total > 0 && set('docPriceInput', euroInputValue(r.total))) filled.push('Preis ' + fmtEur(r.total));
+    if (r.total > 0 && set('docPriceInput', euroInputValue(r.total))) filled.push(tk('pdf.field.price', { amount: fmtEur(r.total) }));
     const gSel = document.getElementById('docGuaranteeSelect');
     if (!gSel.value) {
-      if (r.guaranteeDate) { gSel.value = 'x'; document.getElementById('docGuaranteeDateInput').value = r.guaranteeDate; filled.push('Garantie'); }
-      else if (r.guaranteeYears && [1, 2, 3, 5, 10].includes(r.guaranteeYears)) { gSel.value = String(r.guaranteeYears); filled.push('Garantie'); }
+      if (r.guaranteeDate) { gSel.value = 'x'; document.getElementById('docGuaranteeDateInput').value = r.guaranteeDate; filled.push(tk('pdf.field.guarantee')); }
+      else if (r.guaranteeYears && [1, 2, 3, 5, 10].includes(r.guaranteeYears)) { gSel.value = String(r.guaranteeYears); filled.push(tk('pdf.field.guarantee')); }
     }
   }
   const expEl = document.getElementById('docExpiryInput');
@@ -335,30 +335,30 @@ async function docAutofillFromPdf(file) {
     expEl.value = r.validUntil;
     docDraft.autoExpiry = '';
     document.getElementById('docExpiryBlock').open = true;
-    filled.push('Gültig bis');
+    filled.push(tk('pdf.field.validUntil'));
   }
   if (r.invoiceNo) {
-    const noLine = (/(bestell|auftrag)/i.test(r.type) ? 'Bestellnr. ' : 'Rechnungsnr. ') + r.invoiceNo;
+    const noLine = /(bestell|auftrag)/i.test(r.type) ? tk('pdf.orderNo', { no: r.invoiceNo }) : tk('pdf.invoiceNo', { no: r.invoiceNo });
     const noteEl = document.getElementById('docNoteInput');
-    if (!noteEl.value.trim()) { noteEl.value = noLine; filled.push('Rechnungsnr.'); }
-    else if (docDraft.fzTyp && !noteEl.value.includes(r.invoiceNo)) { noteEl.value = (noLine + '\n' + noteEl.value).slice(0, 4000); filled.push('Rechnungsnr.'); }
+    if (!noteEl.value.trim()) { noteEl.value = noLine; filled.push(tk('pdf.field.invoiceNo')); }
+    else if (docDraft.fzTyp && !noteEl.value.includes(r.invoiceNo)) { noteEl.value = (noLine + '\n' + noteEl.value).slice(0, 4000); filled.push(tk('pdf.field.invoiceNo')); }
   }
   updateDocEditUi();
-  if (filled.length) show('✨ Aus der PDF übernommen: ' + filled.join(', ') + ' – bitte kurz prüfen.');
-  else show('In der PDF wurden keine passenden Angaben gefunden – bitte selbst eintragen.', true);
+  if (filled.length) show(tk('pdf.takenFromPdf', { fields: filled.join(', ') }));
+  else show(tk('pdf.nothingInPdf'), true);
 }
 
 /* ---------- Finances: pre-fill a new expense from a PDF receipt ---------- */
 async function expenseAutofillFromPdf(file) {
   const amountEl = document.getElementById('expenseAmountInput');
   if (!amountEl || amountEl.value.trim()) return; // only for new, still empty expenses
-  finShowToast('⏳ Beleg wird ausgelesen …');
+  finShowToast(tk('pdf.readingReceipt'));
   let lines = [];
   try { lines = await pinnPdfLines(file, 3); }
   catch (err) { finShowToast(pinnPdfErrorText(err), true); return; }
   const modal = document.getElementById('expenseModal');
   if (!modal || modal.classList.contains('hidden') || amountEl.value.trim()) return;
-  if (lines.filter(l => /[a-zäöü]{3}/i.test(l.text)).length < 3) { finShowToast('Der Beleg enthält keinen lesbaren Text – bitte Betrag selbst eintragen.', true); return; }
+  if (lines.filter(l => /[a-zäöü]{3}/i.test(l.text)).length < 3) { finShowToast(tk('pdf.noTextReceipt'), true); return; }
   const r = pdfParseInvoice(lines);
   const filled = [];
   if (r.total > 0) {
@@ -368,13 +368,13 @@ async function expenseAutofillFromPdf(file) {
   }
   const titleEl = document.getElementById('expenseTitleInput');
   const title = r.product || (r.issuer ? (r.type && r.type !== 'Rechnung' && r.type !== 'Kassenbon' ? r.type + ' ' : '') + r.issuer : '');
-  if (title && !titleEl.value.trim()) { titleEl.value = title.slice(0, 200); filled.push('Beschreibung'); }
-  if (r.date) { document.getElementById('expenseDateInput').value = r.date; filled.push('Datum'); }
+  if (title && !titleEl.value.trim()) { titleEl.value = title.slice(0, 200); filled.push(tk('pdf.field.description')); }
+  if (r.date) { document.getElementById('expenseDateInput').value = r.date; filled.push(tk('pdf.field.date')); }
   const storeEl = document.getElementById('expenseStoreInput');
-  if (r.issuer && storeEl && !storeEl.value.trim()) { storeEl.value = r.issuer; filled.push('Laden'); }
+  if (r.issuer && storeEl && !storeEl.value.trim()) { storeEl.value = r.issuer; filled.push(tk('pdf.field.store')); }
   const noteEl = document.getElementById('expenseNoteInput');
-  if (r.invoiceNo && noteEl && !noteEl.value.trim()) noteEl.value = 'Rechnungsnr. ' + r.invoiceNo;
-  finShowToast(filled.length ? '✨ Aus dem Beleg übernommen: ' + filled.join(', ') + ' – bitte kurz prüfen.' : 'Im Beleg wurden keine passenden Angaben gefunden.', !filled.length);
+  if (r.invoiceNo && noteEl && !noteEl.value.trim()) noteEl.value = tk('pdf.invoiceNo', { no: r.invoiceNo });
+  finShowToast(filled.length ? tk('pdf.takenFromReceipt', { fields: filled.join(', ') }) : tk('pdf.nothingInReceipt'), !filled.length);
 }
 
 /* ---------- Recipes ---------- */
@@ -693,7 +693,7 @@ async function importRecipeFromPdf(file) {
     try { part = await recipeKiFilePart(file, 'application/pdf'); } catch (e) { part = null; }
     if (part && await recipeKiImport({ dateien: [part] }, 'PDF')) return;
   }
-  show('⏳ PDF wird ausgelesen …');
+  show(tk('pdf.reading'));
   let lines = [];
   try { lines = await pinnPdfLines(file, 6); }
   catch (err) { show(pinnPdfErrorText(err), true); return; }

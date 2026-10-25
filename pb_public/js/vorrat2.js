@@ -1594,10 +1594,10 @@ function updateFinBudgetInfo() {
   const range = finPeriodRange('month', 0);
   const income = finBudgetIncomeIn(range.startIso, range.endIso);
   const total = Math.round((income + adj) * 100) / 100;
-  let text = `${range.longShort}: Einnahmen ${fmtEur(income)}`;
+  let text = tk('fin.settings.incomeOf', { period: range.longShort, amount: fmtEur(income) });
   if (adj) text += ` ${adj > 0 ? '+' : '−'} ${fmtEur(Math.abs(adj))}`;
-  text += total > 0 ? ` = Budget ${fmtEur(total)}` : ' – damit kein Budget';
-  if (raw && !isFinite(parsed)) text = 'Bitte einen gültigen Betrag eingeben (mit Minus davor zum Verringern).';
+  text += total > 0 ? ' = ' + tk('fin.settings.budgetIs', { amount: fmtEur(total) }) : ' ' + tk('fin.settings.noBudget');
+  if (raw && !isFinite(parsed)) text = tk('fin.settings.invalidAdjust');
   info.textContent = text;
   info.style.color = adj < 0 ? FIN_RED : '';
 }
@@ -1617,16 +1617,16 @@ function renderFinCategoryEditor() {
     return `
       <div class="fin-cat-edit rounded-xl border border-ink/10 p-2.5 ${inactive ? 'opacity-50' : ''}" data-idx="${i}">
         <div class="flex items-center gap-2">
-          <input type="text" data-field="icon" value="${escapeHtml(c.icon || '')}" maxlength="4" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="Symbol" />
-          <input type="color" data-field="color" value="${escapeHtml(c.color || '#9A9A9A')}" class="w-9 h-9 shrink-0 rounded-lg border border-ink/15 p-0.5 bg-white cursor-pointer" aria-label="Farbe" />
-          <input type="text" data-field="label" data-i18n-value value="${escapeHtml(c.label || '')}" maxlength="40" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm" aria-label="Name" />
-          ${c.id === 'sonstiges' ? '' : `<button type="button" data-action="toggle" class="shrink-0 px-2 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:border-pine transition">${inactive ? 'Einblenden' : 'Ausblenden'}</button>`}
-          ${isDefault ? '' : `<button type="button" data-action="delete" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-red-500 hover:bg-red-50 grid place-items-center text-lg leading-none" aria-label="Kategorie löschen">×</button>`}
+          <input type="text" data-field="icon" value="${escapeHtml(c.icon || '')}" maxlength="4" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="${escapeHtml(tk('household.icon'))}" />
+          <input type="color" data-field="color" value="${escapeHtml(c.color || '#9A9A9A')}" class="w-9 h-9 shrink-0 rounded-lg border border-ink/15 p-0.5 bg-white cursor-pointer" aria-label="${escapeHtml(tk('account.dashBg.color'))}" />
+          <input type="text" data-field="label" data-i18n-value value="${escapeHtml(c.label || '')}" maxlength="40" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm" aria-label="${escapeHtml(tk('common.name'))}" />
+          ${c.id === 'sonstiges' ? '' : `<button type="button" data-action="toggle" class="shrink-0 px-2 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:border-pine transition">${escapeHtml(inactive ? tk('fin.settings.show') : tk('fin.settings.hide'))}</button>`}
+          ${isDefault ? '' : `<button type="button" data-action="delete" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-red-500 hover:bg-red-50 grid place-items-center text-lg leading-none" aria-label="${escapeHtml(tk('fin.settings.deleteCat'))}">×</button>`}
         </div>
         <div class="flex items-center gap-2 mt-2 pl-[3.25rem]">
-          <span class="text-[11px] text-ink/45 shrink-0">Monatsbudget</span>
+          <span class="text-[11px] text-ink/45 shrink-0">${escapeHtml(tk('fin.settings.monthlyBudget'))}</span>
           <div class="fin-amount-field flex items-center rounded-lg border border-ink/15 px-2 py-1 w-28">
-            <input type="text" inputmode="decimal" data-field="budget" value="${escapeHtml(euroInputValue(c.budget))}" placeholder="optional" class="w-full min-w-0 bg-transparent border-0 p-0 text-sm text-right" />
+            <input type="text" inputmode="decimal" data-field="budget" value="${escapeHtml(euroInputValue(c.budget))}" placeholder="${escapeHtml(tk('common.optional'))}" class="w-full min-w-0 bg-transparent border-0 p-0 text-sm text-right" />
             <span class="cur-sym text-xs text-ink/40 ml-1">${curSym()}</span>
           </div>
         </div>
@@ -1647,7 +1647,7 @@ function renderFinCategoryEditor() {
     if (del) del.addEventListener('click', () => {
       const cat = finSettingsDraft[idx];
       const used = ausgaben.some(a => a.category === cat.id) || finance.recurring.some(r => r.category === cat.id);
-      if (used && !confirm(`„${cat.label}“ wird schon verwendet. Diese Ausgaben erscheinen danach unter „Sonstiges“. Trotzdem löschen?`)) return;
+      if (used && !confirm(tk('fin.settings.catInUse', { name: i18nT(cat.label) }))) return;
       finSettingsDraft.splice(idx, 1);
       renderFinCategoryEditor();
     });
@@ -1661,7 +1661,7 @@ function renderFinRecurringEditor() {
     (finRecIsRunning(a, todayIso) ? 0 : 1) - (finRecIsRunning(b, todayIso) ? 0 : 1)
     || (finRecNext(a, todayIso) || '9999').localeCompare(finRecNext(b, todayIso) || '9999'));
   if (!list.length) {
-    wrap.innerHTML = '<p class="text-xs text-ink/40 italic">Noch keine – z. B. Miete, Strom, Versicherungen, Sparrate oder Gehalt (Gehalt mit Minus davor). Taschengeld legst du unter Finanzen → Taschengeld an.</p>';
+    wrap.innerHTML = '<p class="text-xs text-ink/40 italic">' + escapeHtml(tk('fin.settings.noRecurring')) + '</p>';
     return;
   }
   const running = list.filter(r => finRecIsRunning(r, todayIso));
@@ -1676,11 +1676,11 @@ function renderFinRecurringEditor() {
         <span class="shrink-0 w-9 h-9 rounded-full grid place-items-center text-lg" style="background:${cat.color}22">${escapeHtml(cat.icon || '')}</span>
         <span class="flex-1 min-w-0">
           <span class="block text-sm font-medium truncate">${escapeHtml(r.title || cat.label)}</span>
-          <span class="block text-xs text-ink/45 truncate">${ended ? 'beendet' : escapeHtml(finRecDescribe(r))} · ${escapeHtml(cat.label)}${linkLabel ? ' · ' + escapeHtml(linkLabel) : ''}</span>
+          <span class="block text-xs text-ink/45 truncate">${ended ? escapeHtml(tk('contract.endedLower')) : escapeHtml(finRecDescribe(r))} · ${escapeHtml(cat.label)}${linkLabel ? ' · ' + escapeHtml(linkLabel) : ''}</span>
         </span>
         ${(() => { const a = finRecurringAmountFor(r, todayIso); return a < 0 ? `<span class="shrink-0 text-sm font-semibold" style="color:${FIN_GREEN}">+ ${fmtEur(-a)}</span>` : `<span class="shrink-0 text-sm font-semibold">${fmtEur(a)}</span>`; })()}
       </button>`;
-  }).join('') + `<p class="text-xs text-ink/50 text-right mt-1 pr-2">Umgerechnet pro Monat: ${fmtEur(monthlyOut)} Ausgaben${monthlyIn > 0 ? ` · <span style="color:${FIN_GREEN}">+ ${fmtEur(monthlyIn)} Einnahmen</span>` : ''}</p>`;
+  }).join('') + `<p class="text-xs text-ink/50 text-right mt-1 pr-2">${escapeHtml(tk('fin.settings.perMonthOut', { amount: fmtEur(monthlyOut) }))}${monthlyIn > 0 ? ` · <span style="color:${FIN_GREEN}">${escapeHtml(tk('fin.stat.incomePlus', { amount: fmtEur(monthlyIn) }))}</span>` : ''}</p>`;
   wrap.querySelectorAll('.fin-rec-row').forEach(btn => btn.addEventListener('click', () => {
     const r = finance.recurring.find(x => x.id === btn.dataset.id);
     if (r) openExpenseModal({ recurring: r });
@@ -1699,7 +1699,7 @@ function saveFinanceSettings() {
     const prev = prevById.get(c.id) || {};
     return {
       ...c,
-      label: String(c.label || '').trim() || prev.label || 'Kategorie',
+      label: String(c.label || '').trim() || prev.label || tk('fin.settings.category'),
       icon: String(c.icon || '').trim() || prev.icon || '📦',
       color: /^#[0-9a-fA-F]{6}$/.test(c.color || '') ? c.color : (prev.color || '#9A9A9A'),
       budget: (typeof c.budget === 'number' && c.budget > 0) ? c.budget : null,
@@ -1710,12 +1710,12 @@ function saveFinanceSettings() {
   persistState();
   closeFinanceSettings();
   renderFinance();
-  finShowToast('Einstellungen gespeichert.');
+  finShowToast(tk('fin.settings.saved'));
 }
 function addFinCategory() {
   if (!finSettingsDraft) return;
   const palette = FIN_CUSTOM_PALETTE;
-  const newCat = { id: 'k' + newRecordId().slice(0, 10), label: 'Neue Kategorie', icon: '🏷️', color: palette[finSettingsDraft.length % palette.length], active: true, budget: null };
+  const newCat = { id: 'k' + newRecordId().slice(0, 10), label: tk('fin.settings.newCategory'), icon: '🏷️', color: palette[finSettingsDraft.length % palette.length], active: true, budget: null };
   const idx = finSettingsDraft.findIndex(c => c.id === 'sonstiges');
   if (idx >= 0) finSettingsDraft.splice(idx, 0, newCat); else finSettingsDraft.push(newCat);
   renderFinCategoryEditor();
@@ -1730,14 +1730,14 @@ function exportFinanceCsv(year) {
     const s = String(v == null ? '' : v);
     return /[";\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
   };
-  const rows = [['Datum', 'Art', 'Betrag', 'Kategorie', 'Zuordnung', 'Beschreibung', 'Laden', 'Bezahlt von', 'Notiz', 'Artikel', 'Regelmäßig']];
+  const rows = [[tk('fin.csv.date'), tk('fin.csv.kind'), tk('fin.csv.amount'), tk('fin.csv.category'), tk('fin.csv.link'), tk('fin.csv.description'), tk('fin.csv.store'), tk('fin.csv.paidBy'), tk('fin.csv.note'), tk('fin.csv.items'), tk('fin.csv.recurring')]];
   entries.forEach(e => {
     const m = e.paidBy ? kassePartById(e.paidBy) : null;
     const [y, mo, d] = e.date.split('-');
     rows.push([
-      `${d}.${mo}.${y}`, finIsIncome(e) ? 'Einnahme' : 'Ausgabe', numDec(Number(e.amount || 0).toFixed(2)), finCategory(e.category).label,
+      `${d}.${mo}.${y}`, finIsIncome(e) ? tk('fin.csv.income') : tk('fin.csv.expense'), numDec(Number(e.amount || 0).toFixed(2)), i18nT(finCategory(e.category).label),
       finLinkLabel(e.link), e.title || '', e.store || '', m ? memberLabel(m) : '', e.note || '', (e.items || []).join(', '),
-      e.recurringId ? (() => { const r = finance.recurring.find(x => x.id === e.recurringId); return r ? finIntervalInfo(finRecInterval(r)).label : 'ja'; })() : '',
+      e.recurringId ? (() => { const r = finance.recurring.find(x => x.id === e.recurringId); return r ? finIntervalInfo(finRecInterval(r)).label : tk('fin.csv.yes'); })() : '',
     ]);
   });
   const csv = '\ufeff' + rows.map(r => r.map(cell).join(';')).join('\r\n');

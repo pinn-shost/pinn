@@ -1,38 +1,38 @@
 <!-- Finances: add or edit an expense/income (also recurring) - a minus before the amount = income -->
 <div id="expenseModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[320] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closeExpenseModalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 id="expenseModalTitle" class="font-serif text-lg mb-3 pr-6">Neue Ausgabe</h3>
+    <button id="closeExpenseModalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close" data-tk-attr="aria-label:common.close">×</button>
+    <h3 data-tk="fin.title.new.expense" id="expenseModalTitle" class="font-serif text-lg mb-3 pr-6">New expense</h3>
 
     <div id="expenseAmountField" class="fin-amount-field flex items-center gap-2 rounded-xl border border-ink/15 pl-2 pr-4 py-2.5 mb-1.5">
-      <button id="expenseSignBtn" type="button" class="shrink-0 w-10 h-10 rounded-lg border border-ink/15 text-xl font-semibold text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center select-none" aria-label="Minus setzen oder entfernen (Minus = Einnahme)" title="Minus = Einnahme">±</button>
+      <button id="expenseSignBtn" type="button" class="shrink-0 w-10 h-10 rounded-lg border border-ink/15 text-xl font-semibold text-ink/60 hover:border-pine hover:text-pine transition grid place-items-center select-none" aria-label="Set or remove minus (minus = income)" title="Minus = income" data-tk-attr="aria-label:fin.setRemoveMinusMinus;title:fin.minusIncome">±</button>
       <input id="expenseAmountInput" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" data-cur-zero class="flex-1 min-w-0 bg-transparent border-0 p-0 text-3xl font-semibold tracking-tight" />
       <span class="cur-sym text-2xl text-ink/40">€</span>
     </div>
-    <p id="expenseKindHint" class="text-xs text-ink/45 mb-4">Ein Minus vor dem Betrag bucht eine Einnahme.</p>
+    <p data-tk="fin.hint.expense" id="expenseKindHint" class="text-xs text-ink/45 mb-4">A minus in front of the amount books income.</p>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Kategorie</label>
+    <label data-tk="account.manage.category" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Category</label>
     <div id="expenseCategoryPicker" class="grid grid-cols-4 gap-1.5 mb-4"></div>
 
     <div id="expenseLinkWrap" class="hidden mb-4">
       <div id="expenseDepotWrap" class="hidden mb-3">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="expenseDepotSelect">Depot</label>
+        <label data-tk="depot.mainName" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="expenseDepotSelect">Depot</label>
         <select id="expenseDepotSelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
       </div>
-      <label id="expenseLinkLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="expenseLinkSelect">Position</label>
+      <label data-tk="depot.position" id="expenseLinkLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="expenseLinkSelect">Position</label>
       <select id="expenseLinkSelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
     </div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="expenseTitleInput">Beschreibung</label>
-    <input id="expenseTitleInput" type="text" autocomplete="off" maxlength="200" placeholder="z. B. Wocheneinkauf" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+    <label data-tk="fin.csv.description" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="expenseTitleInput">Description</label>
+    <input id="expenseTitleInput" type="text" autocomplete="off" maxlength="200" placeholder="e.g. weekly shopping" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3"  data-tk-attr="placeholder:fin.eGWeeklyShopping"/>
 
     <div class="grid grid-cols-2 gap-3 mb-3">
       <div class="min-w-0">
-        <label id="expenseDateLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="expenseDateInput">Datum</label>
+        <label data-tk="fin.csv.date" id="expenseDateLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="expenseDateInput">Date</label>
         <input id="expenseDateInput" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
       </div>
       <div class="fin-paidby-wrap min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="expensePaidBySelect">Bezahlt von</label>
+        <label data-tk="fin.csv.paidBy" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="expensePaidBySelect">Paid by</label>
         <select id="expensePaidBySelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
       </div>
     </div>
@@ -40,19 +40,19 @@
 
     <!-- Kassen: split between (only in Kassen with "Ausgaben aufteilen") -->
     <div id="expenseSplitWrap" class="hidden mb-3 rounded-xl border border-ink/10 bg-ink/[0.03] px-3 py-2.5">
-      <span class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">⚖️ Aufteilen auf</span>
+      <span data-tk="shop.complete.splitAmong" class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">⚖️ Split among</span>
       <div id="expenseSplitPicker" class="flex flex-wrap gap-1.5"></div>
       <p id="expenseSplitHint" class="text-[11px] text-ink/45 mt-1.5"></p>
     </div>
 
     <div id="expenseStoreBlock">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="expenseStoreInput">Laden / Ort</label>
-      <input id="expenseStoreInput" type="text" list="expenseStoreSuggestions" autocomplete="off" maxlength="100" placeholder="optional" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+      <label data-tk="fin.shopPlace" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="expenseStoreInput">Shop / place</label>
+      <input id="expenseStoreInput" type="text" list="expenseStoreSuggestions" autocomplete="off" maxlength="100" placeholder="optional" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3"  data-tk-attr="placeholder:lists.item.notePlaceholder"/>
       <datalist id="expenseStoreSuggestions"></datalist>
     </div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="expenseNoteInput">Notiz</label>
-    <textarea id="expenseNoteInput" rows="2" maxlength="1000" placeholder="optional" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3"></textarea>
+    <label data-tk="fin.csv.note" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="expenseNoteInput">Note</label>
+    <textarea id="expenseNoteInput" rows="2" maxlength="1000" placeholder="optional" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" data-tk-attr="placeholder:lists.item.notePlaceholder"></textarea>
 
     <details id="expenseItemsBlock" class="hidden mb-3 rounded-lg border border-ink/10 px-3 py-2">
       <summary id="expenseItemsSummary" class="text-xs text-ink/60 cursor-pointer select-none"></summary>
@@ -62,31 +62,31 @@
     <!-- Receipts for the expense (till receipt, invoice, warranty) - uploaded after saving for new expenses -->
     <div id="expenseDocsWrap" class="hidden mb-4">
       <div class="flex items-center justify-between gap-2 mb-1.5">
-        <span class="block text-xs uppercase tracking-wide text-ink/40">Belege</span>
-        <button id="expenseDocAddBtn" type="button" class="px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Beleg</button>
+        <span data-tk="fin.receipts" class="block text-xs uppercase tracking-wide text-ink/40">Receipts</span>
+        <button data-tk="fin.receipt" id="expenseDocAddBtn" type="button" class="px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Receipt</button>
       </div>
       <div id="expenseDocsList" class="flex flex-col gap-1.5"></div>
     </div>
 
     <div id="expenseRepeatWrap" class="mb-4">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="expenseRepeatSelect">Wiederholung</label>
+      <label data-tk="event.repeat" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="expenseRepeatSelect">Repeat</label>
       <select id="expenseRepeatSelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white">
-        <option value="">Einmalig</option>
-        <option value="weekly">Wöchentlich</option>
-        <option value="biweekly">Alle 2 Wochen</option>
-        <option value="monthly">Monatlich</option>
-        <option value="quarterly">Im Quartal (alle 3 Monate)</option>
-        <option value="yearly">Jährlich</option>
+        <option data-tk="fin.oneOff" value="">One-off</option>
+        <option data-tk="fin.interval.weekly" value="weekly">weekly</option>
+        <option data-tk="fin.interval.biweekly" value="biweekly">Every 2 weeks</option>
+        <option data-tk="fin.interval.monthly" value="monthly">Monthly</option>
+        <option data-tk="fin.quarterlyEvery3Months" value="quarterly">Quarterly (every 3 months)</option>
+        <option data-tk="fin.interval.yearly" value="yearly">Yearly</option>
       </select>
     </div>
 
     <p id="expenseModalError" class="hidden text-xs text-red-500 mb-3"></p>
     <div class="flex items-center gap-2 flex-wrap">
-      <button id="deleteExpenseBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Löschen</button>
-      <button id="endRecurringBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Beenden</button>
+      <button data-tk="common.delete" id="deleteExpenseBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Delete</button>
+      <button data-tk="fin.end" id="endRecurringBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">End</button>
       <div class="flex-1"></div>
-      <button id="cancelExpenseBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
-      <button id="saveExpenseBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern</button>
+      <button data-tk="common.cancel" id="cancelExpenseBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Cancel</button>
+      <button data-tk="common.save" id="saveExpenseBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Save</button>
     </div>
   </div>
 </div>

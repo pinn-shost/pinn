@@ -99,6 +99,15 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.115.0의 새 소식
+
+**텍스트 키, 6부: 가계부, 금고, 계약**
+
+- **가계부**(지출, 예산, 분석, 추이, 정기 거래, 가계부 설정, CSV 내보내기), *장보기 완료*와 *누가 누구에게 빚졌나*를 포함한 **금고**, 기한과 해지서를 포함한 **계약**, 계좌와 가져오기를 포함한 **저축**, **용돈**, PDF 청구서 읽기가 이제 `pb_public/i18n/`의 언어 파일에서 문구를 가져와요 – 9개 언어 모두, 셰어하우스 모드에서도. 사용 방법은 그대로예요.
+- 가계부의 날짜, 요일, 월 이름이 선택한 언어 형식으로 표시되고, “거래 1건”, “1명” 같은 숫자는 올바른 단수·복수를 사용해요.
+- 가족, 위치, 집, 차량, 문서는 1.116.0에서 이어져요.
+- 앱 파일만 바뀌었어요 – 서버에는 변경 사항이 없어요.
+
 ## 1.114.0의 새 소식
 
 **텍스트 키 5단계: 목록, 재고, 레시피**
@@ -108,15 +117,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - 작은 수정: 목록, 재고, 레시피의 날짜와 가격이 지역 형식을 따릅니다. 레시피 인식이 다른 언어의 제목 아래에서도 재료와 조리법을 찾습니다. "레시피 1개", "항목 1개" 같은 숫자가 올바른 단·복수를 사용합니다.
 - 다음 단계: 재정과 금고는 1.115.0에서 이어집니다.
 - 변경: 앱 파일만 (`index.html`, `js/einkauf.js`, `js/einkaufslisten.js`, `js/einkaufseingabe.js`, `js/listen.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/rezepte.js`, `js/rezeptdialog.js`, `js/rezeptmengen.js`, `js/rezeptbild.js`, `js/rezeptbilder.js`, `js/rezeptparser.js`, `js/essenplanen.js`, `js/einstellungen.js`, `js/hinweise.js`, `js/finanzen.js`, `js/bedienzustand.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` 및 `lang/`의 모든 언어 파일) – 서버에서는 바뀌는 것이 없습니다. 평소처럼 설치하세요(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
-
-## 1.113.1의 새 소식
-
-**텍스트 키 4단계: 캘린더 설정과 스마트홈**
-
-- **설정 → 캘린더**(내 iCloud·Google 계정, „나만“과 „가족“ 캘린더, *캘린더 추가* 양식), **쓰레기 수거 캘린더**, 공휴일과 방학이 포함된 **집 주소**, 그리고 **스마트홈** 팝업 전체(기기, Apple 단축어, Home Assistant, 방과 모드가 있는 로봇청소기)가 이제 `pb_public/i18n/`의 언어 파일에서 문구를 가져와요 – 9개 언어 모두, 셰어하우스 모드에서도. 사용 방법은 그대로예요.
-- 이 설정의 날짜와 시간이 선택한 언어 형식으로 표시되고, 새 기기 추천도 선택한 언어로 나와요.
-- 목록, 재고, 레시피는 1.114.0에서 이어져요.
-- 앱 파일만 바뀌었어요 – 서버에는 변경이 없어요.
 
 ## 작동 방식
 
@@ -146,7 +146,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.114.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.115.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

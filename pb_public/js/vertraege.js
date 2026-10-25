@@ -53,17 +53,17 @@ const FIN_DOC_MAX_BYTES = 25 * 1024 * 1024;
 const FIN_DOC_IMAGE_MAX_PX = 2400;
 const LS_FIN_DOCS = 'pinn.finanzen.dokumente';
 const FIN_DOC_TYPES = [
-  { id: 'vertrag', label: 'Vertrag', icon: '📄' },
-  { id: 'rechnung', label: 'Rechnung', icon: '🧾' },
-  { id: 'beleg', label: 'Beleg', icon: '🧾' },
-  { id: 'kuendigung', label: 'Kündigung', icon: '✉️' },
-  { id: 'bestaetigung', label: 'Bestätigung', icon: '✅' },
-  { id: 'schreiben', label: 'Schriftverkehr', icon: '📨' },
-  { id: 'fzschein', label: 'Fahrzeugschein / -brief', icon: '🪪', fz: true },
-  { id: 'hubericht', label: 'HU-Bericht', icon: '🔍', fz: true },
-  { id: 'werkstatt', label: 'Werkstattrechnung', icon: '🔧', fz: true },
-  { id: 'garantie', label: 'Garantie', icon: '🛡️', fz: true },
-  { id: 'sonstiges', label: 'Sonstiges', icon: '📎' },
+  { id: 'vertrag', get label() { return tk('contract.docType.doc'); }, icon: '📄' },
+  { id: 'rechnung', get label() { return tk('contract.docType.invoice'); }, icon: '🧾' },
+  { id: 'beleg', get label() { return tk('contract.docType.receipt'); }, icon: '🧾' },
+  { id: 'kuendigung', get label() { return tk('contract.docType.cancellation'); }, icon: '✉️' },
+  { id: 'bestaetigung', get label() { return tk('contract.docType.confirmation'); }, icon: '✅' },
+  { id: 'schreiben', get label() { return tk('contract.docType.correspondence'); }, icon: '📨' },
+  { id: 'fzschein', get label() { return tk('contract.docType.registration'); }, icon: '🪪', fz: true },
+  { id: 'hubericht', get label() { return tk('contract.docType.inspection'); }, icon: '🔍', fz: true },
+  { id: 'werkstatt', get label() { return tk('contract.docType.workshop'); }, icon: '🔧', fz: true },
+  { id: 'garantie', get label() { return tk('contract.docType.warranty'); }, icon: '🛡️', fz: true },
+  { id: 'sonstiges', get label() { return tk('contract.docType.other'); }, icon: '📎' },
 ];
 const VT_REMIND_DAYS = [7, 14, 30, 60, 90];
 const VT_RENEW_MONTHS = [1, 3, 6, 12, 24, 36];
@@ -175,17 +175,17 @@ function vtEarliestEnd(c, sentIso) {
 }
 
 /* ---------- Display helpers ---------- */
-function vtFmt(iso) { return vtIsIso(iso) ? iso.slice(8, 10) + '.' + iso.slice(5, 7) + '.' + iso.slice(0, 4) : ''; }
-function vtInDays(n) { return n <= 0 ? 'heute' : n === 1 ? 'morgen' : 'noch ' + n + ' Tage'; }
-function vtMonthsText(n) { return n === 1 ? '1 Monat' : n + ' Monate'; }
+function vtFmt(iso) { return vtIsIso(iso) ? new Date(iso + 'T00:00:00').toLocaleDateString(sysLocale(), { day: '2-digit', month: '2-digit', year: 'numeric' }) : ''; }
+function vtInDays(n) { return n <= 0 ? tk('contract.today') : n === 1 ? tk('contract.tomorrow') : tk('contract.daysLeftN', { n }); }
+function vtMonthsText(n) { return tk('contract.monthsN', { n }); }
 function vtNoticeText(c) {
   const n = vtNotice(c);
-  if (!n.value) return 'keine Frist';
-  const w = n.unit === 'days' ? (n.value === 1 ? 'Tag' : 'Tage') : n.unit === 'weeks' ? (n.value === 1 ? 'Woche' : 'Wochen') : (n.value === 1 ? 'Monat' : 'Monate');
-  return n.value + ' ' + w;
+  if (!n.value) return tk('contract.noDeadline');
+  return n.unit === 'days' ? tk('contract.daysN', { n: n.value }) : n.unit === 'weeks' ? tk('contract.weeksN', { n: n.value }) : tk('contract.monthsN', { n: n.value });
 }
 function vtIntervalLabel(id) {
-  return { weekly: 'wöchentlich', biweekly: 'alle 2 Wochen', monthly: 'monatlich', quarterly: 'vierteljährlich', yearly: 'jährlich' }[id] || 'monatlich';
+  const L = { weekly: 'contract.interval.weekly', biweekly: 'contract.interval.biweekly', monthly: 'contract.interval.monthly', quarterly: 'contract.interval.quarterly', yearly: 'contract.interval.yearly' };
+  return tk(L[id] || 'contract.interval.monthly');
 }
 function vtFileSize(bytes) {
   const b = Number(bytes) || 0;
@@ -247,27 +247,27 @@ function vtStatusView(c, today = finTodayIso()) {
   const s = vtStatus(c, today);
   const rem = vtReminder(c);
   const out = { s, tone: 'ok', label: '', sub: '', sortKey: '9999' };
-  if (c && c.fixkosten && s.state === 'aktiv') { out.label = 'Laufende Fixkosten'; out.sub = 'nicht kündbar'; out.sortKey = '9999'; return out; }
-  if (s.state === 'beendet') { out.tone = 'muted'; out.label = 'Beendet am ' + vtFmt(s.end); out.sortKey = 'z' + s.end; return out; }
+  if (c && c.fixkosten && s.state === 'aktiv') { out.label = tk('contract.fixedCosts'); out.sub = tk('contract.notCancellable'); out.sortKey = '9999'; return out; }
+  if (s.state === 'beendet') { out.tone = 'muted'; out.label = tk('contract.endedOn', { date: vtFmt(s.end) }); out.sortKey = 'z' + s.end; return out; }
   if (s.state === 'gekuendigt') {
     const conf = !!(c.cancel && c.cancel.confirmed);
     out.tone = conf ? 'muted' : 'warn';
-    out.label = 'Gekündigt zum ' + vtFmt(s.end);
-    out.sub = conf ? 'Bestätigung erhalten ✓' : 'Bestätigung steht noch aus';
+    out.label = tk('contract.cancelledAsOf', { date: vtFmt(s.end) });
+    out.sub = conf ? tk('contract.confirmationReceived') : tk('contract.confirmationPending');
     out.sortKey = s.end;
     return out;
   }
-  if (s.unknown) { out.tone = 'muted'; out.label = 'Laufzeit fehlt'; out.sub = 'für die Kündigungsfrist ergänzen'; out.sortKey = '9997'; return out; }
-  if (s.kind === 'open') { out.label = 'Jederzeit kündbar'; out.sub = 'frühestens zum ' + vtFmt(s.earliestEnd); out.sortKey = '9998'; return out; }
+  if (s.unknown) { out.tone = 'muted'; out.label = tk('contract.termMissing'); out.sub = tk('contract.addForNotice'); out.sortKey = '9997'; return out; }
+  if (s.kind === 'open') { out.label = tk('contract.cancelAnytime'); out.sub = tk('contract.earliestAsOf', { date: vtFmt(s.earliestEnd) }); out.sortKey = '9998'; return out; }
   if (s.kind === 'once') {
-    out.label = 'Endet am ' + vtFmt(s.end);
+    out.label = tk('contract.endsOn', { date: vtFmt(s.end) });
     out.sub = vtInDays(s.daysLeft);
     out.sortKey = s.end;
     if (s.daysLeft <= rem.days) out.tone = 'warn';
     return out;
   }
-  out.label = 'Kündbar bis ' + vtFmt(s.deadline);
-  out.sub = vtInDays(s.daysLeft) + ' · zum ' + vtFmt(s.nextEnd);
+  out.label = tk('contract.cancellableUntil', { date: vtFmt(s.deadline) });
+  out.sub = vtInDays(s.daysLeft) + ' · ' + tk('contract.asOf', { date: vtFmt(s.nextEnd) });
   out.sortKey = s.deadline;
   if (s.daysLeft <= 7) out.tone = 'urgent';
   else if (s.daysLeft <= rem.days) out.tone = 'warn';
@@ -282,14 +282,14 @@ function vtDueList(today = finTodayIso()) {
     const rem = vtReminder(c);
     const window = rem.on ? rem.days : 14;
     if (s.state === 'aktiv' && s.kind === 'fixed' && !s.unknown && s.daysLeft <= window) {
-      out.push({ c, date: s.deadline, tone: s.daysLeft <= 7 ? 'urgent' : 'warn', title: c.name, sub: 'kündbar bis ' + vtFmt(s.deadline) + ' · sonst +' + vtMonthsText(s.renew), when: vtInDays(s.daysLeft), days: s.daysLeft });
+      out.push({ c, date: s.deadline, tone: s.daysLeft <= 7 ? 'urgent' : 'warn', title: c.name, sub: tk('contract.dueSub', { date: vtFmt(s.deadline), renew: vtMonthsText(s.renew) }), when: vtInDays(s.daysLeft), days: s.daysLeft });
     } else if (s.state === 'aktiv' && s.kind === 'once' && !s.unknown && s.daysLeft <= window) {
-      out.push({ c, date: s.end, tone: 'warn', title: c.name, sub: 'endet am ' + vtFmt(s.end), when: vtInDays(s.daysLeft), days: s.daysLeft });
+      out.push({ c, date: s.end, tone: 'warn', title: c.name, sub: tk('contract.endsOnLower', { date: vtFmt(s.end) }), when: vtInDays(s.daysLeft), days: s.daysLeft });
     }
     const x = c.extraReminder || {};
     if (vtIsIso(x.date) && s.state !== 'beendet') {
       const d = vtDiffDays(today, x.date);
-      if (d <= 7 && d >= -3) out.push({ c, date: x.date, tone: d <= 0 ? 'warn' : 'ok', title: c.name, sub: '🔔 ' + (x.text || 'Erinnerung'), when: d < 0 ? 'seit ' + (-d) + (d === -1 ? ' Tag' : ' Tagen') : vtInDays(d), days: d });
+      if (d <= 7 && d >= -3) out.push({ c, date: x.date, tone: d <= 0 ? 'warn' : 'ok', title: c.name, sub: '🔔 ' + (x.text || tk('event.reminder')), when: d < 0 ? tk('contract.sinceDaysN', { n: -d }) : vtInDays(d), days: d });
     }
   });
   return out.sort((a, b) => a.date.localeCompare(b.date));
@@ -306,7 +306,7 @@ function vtReminderTargetsLabel(c) {
   const names = rem.to.map(id => memberById(id)).filter(Boolean).map(memberLabel);
   if (names.length) return names.join(', ');
   const h = c.holder ? memberById(c.holder) : null;
-  return h ? memberLabel(h) : 'alle Erwachsenen';
+  return h ? memberLabel(h) : tk('contract.allAdults');
 }
 function vtApplyCancelToRecurring(c) {
   if (!c || !c.recurringId) return;
@@ -432,21 +432,21 @@ function finDocRowsHtml(docs, bezug) {
         <a class="fin-doc-link flex-1 min-w-0 flex items-center gap-2.5 py-0.5" data-doc="${escapeHtml(d.id)}" href="${escapeHtml(finDocUrl(d))}" target="_blank" rel="noopener">
           <span class="text-xl leading-none shrink-0">${icon}</span>
           <span class="min-w-0">
-            <span class="block text-sm font-medium truncate">${escapeHtml(d.name || d.datei || 'Dokument')}</span>
+            <span class="block text-sm font-medium truncate">${escapeHtml(d.name || d.datei || tk('search.type.doc'))}</span>
             <span class="block text-[11px] text-ink/45 truncate">${escapeHtml(meta)}</span>
           </span>
         </a>
-        <button type="button" data-doc-edit="${escapeHtml(d.id)}" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-pine hover:bg-ink/5 grid place-items-center text-sm" aria-label="Umbenennen" title="Umbenennen">✎</button>
-        <button type="button" data-doc-del="${escapeHtml(d.id)}" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-red-500 hover:bg-red-50 grid place-items-center text-lg leading-none" aria-label="Löschen" title="Löschen">×</button>
+        <button type="button" data-doc-edit="${escapeHtml(d.id)}" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-pine hover:bg-ink/5 grid place-items-center text-sm" aria-label="${escapeHtml(tk('contract.rename'))}" title="${escapeHtml(tk('contract.rename'))}">✎</button>
+        <button type="button" data-doc-del="${escapeHtml(d.id)}" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-red-500 hover:bg-red-50 grid place-items-center text-lg leading-none" aria-label="${escapeHtml(tk('common.delete'))}" title="${escapeHtml(tk('common.delete'))}">×</button>
       </div>`;
   }).join('');
   const up = finDocUploading[bezug] || 0;
-  const upHtml = up ? `<div class="flex items-center gap-2 rounded-xl border border-dashed border-ink/20 px-3 py-2 text-xs text-ink/50"><span class="fin-etf-spin">⏳</span> ${up === 1 ? 'Dokument wird' : up + ' Dokumente werden'} hochgeladen …</div>` : '';
+  const upHtml = up ? `<div class="flex items-center gap-2 rounded-xl border border-dashed border-ink/20 px-3 py-2 text-xs text-ink/50"><span class="fin-etf-spin">⏳</span> ${escapeHtml(tk('contract.uploadingN', { n: up }))}</div>` : '';
   return rows + upHtml;
 }
 function finDocStatusHint() {
-  if (finDocsError === 'missing') return '<p class="text-xs text-red-500">Auf dem Server fehlen noch die Dateien vertraege.pb.js und pinn-vertraege.js (pb_hooks) – danach PocketBase neu starten.</p>';
-  if (finDocsError === 'offline' && !finDocsLoaded) return '<p class="text-xs text-ink/45">Offline – Dokumente sind erst wieder mit Verbindung zum NAS verfügbar.</p>';
+  if (finDocsError === 'missing') return ('<p class="text-xs text-red-500">' + escapeHtml(tk('contract.filesVertraegePbJs')) + '</p>');
+  if (finDocsError === 'offline' && !finDocsLoaded) return ('<p class="text-xs text-ink/45">' + escapeHtml(tk('contract.offlineDocumentsAreOnly')) + '</p>');
   return '';
 }
 function finSafeFileName(name) {
@@ -486,8 +486,8 @@ async function finUploadDoc(file, bezug, typ) {
   let fileName = file.name || 'dokument';
   const small = await finCompressDocImage(file).catch(() => null);
   if (small) { blob = small; fileName = fileName.replace(/\.[^.]+$/, '') + '.jpg'; }
-  if (blob.size > FIN_DOC_MAX_BYTES) { const e = new Error(`„${file.name}“ ist zu groß (höchstens 25 MB).`); e.local = true; throw e; }
-  const display = String(file.name || 'Dokument').replace(/\.[^.]+$/, '').replace(/[_]+/g, ' ').trim().slice(0, 200) || 'Dokument';
+  if (blob.size > FIN_DOC_MAX_BYTES) { const e = new Error(tk('contract.tooLargeMax25', { name: file.name })); e.local = true; throw e; }
+  const display = String(file.name || tk('search.type.doc')).replace(/\.[^.]+$/, '').replace(/[_]+/g, ' ').trim().slice(0, 200) || tk('search.type.doc');
   const form = new FormData();
   form.append('datei', blob, finSafeFileName(fileName));
   form.append('bezug', bezug);
@@ -509,16 +509,16 @@ async function finUploadDoc(file, bezug, typ) {
 function finDocErrorText(err, file) {
   if (err && err.local) return err.message;
   const st = err && err.status;
-  if (st === 404) return 'Auf dem Server fehlen noch vertraege.pb.js und pinn-vertraege.js (pb_hooks) – danach PocketBase neu starten.';
-  if (st === 400) return `„${(file && file.name) || 'Datei'}“ wurde nicht angenommen – erlaubt sind PDF, Fotos, Word/Excel und Text bis 25 MB.`;
-  if (st === 403) return 'Keine Berechtigung für Dokumente.';
-  if (!st) return 'Keine Verbindung zum NAS – bitte später erneut versuchen.';
-  return 'Hochladen fehlgeschlagen: ' + ((err && err.message) || 'unbekannter Fehler');
+  if (st === 404) return tk('contract.vertraegePbJsPinn');
+  if (st === 400) return tk('contract.wasNotAcceptedPdf', { name: (file && file.name) || tk('contract.file') });
+  if (st === 403) return tk('contract.noPermissionDocuments');
+  if (!st) return tk('contract.noConnectionNasPlease');
+  return tk('contract.uploadFailed', { error: (err && err.message) || tk('common.unknownError') });
 }
 async function finUploadMany(files, bezug, typ) {
   const list = Array.from(files || []).filter(Boolean);
   if (!list.length) return;
-  if (!navigator.onLine) { finShowToast('Keine Verbindung – Dokumente lassen sich nur mit Verbindung zum NAS hochladen.', true); return; }
+  if (!navigator.onLine) { finShowToast(tk('contract.noConnectionDocumentsCan'), true); return; }
   finDocUploading[bezug] = (finDocUploading[bezug] || 0) + list.length;
   finDocsChanged();
   let ok = 0;
@@ -540,11 +540,11 @@ async function finUploadMany(files, bezug, typ) {
     if (c && c.cancel && !c.cancel.confirmed) {
       finance.contracts = finance.contracts.map(x => x.id === c.id ? { ...x, cancel: { ...x.cancel, confirmed: true } } : x);
       vtAfterChange();
-      extra = ' Kündigung als bestätigt markiert.';
+      extra = ' ' + tk('contract.cancelMarkedConfirmed');
     }
   }
   if (errors.length) finShowToast(errors[0], true);
-  else finShowToast((ok === 1 ? 'Dokument gespeichert.' : `${ok} Dokumente gespeichert.`) + extra);
+  else finShowToast(tk('contract.docsSavedN', { n: ok }) + extra);
 }
 async function finDeleteDoc(id) {
   await pb.collection(FIN_DOC_COLLECTION).delete(id, { requestKey: null });
@@ -562,7 +562,7 @@ async function finDeleteDocsFor(bezug) {
     try { await finDeleteDoc(d.id); } catch (e) { failed++; }
   }
   finDocsChanged();
-  if (failed) finShowToast(`${failed} Dokument${failed === 1 ? '' : 'e'} konnte${failed === 1 ? '' : 'n'} nicht gelöscht werden (keine Verbindung?).`, true);
+  if (failed) finShowToast(tk('contract.docsDeleteFailedN', { n: failed }), true);
 }
 function finPickDocs(target) {
   if (isCurrentUserGuest()) return;
@@ -613,23 +613,23 @@ document.addEventListener('click', async (ev) => {
       await ensureFinDocToken(true);
       refreshDocLinks();
       if (w) w.location.href = finDocUrl(d);
-      else finShowToast('Bitte noch einmal antippen.');
+      else finShowToast(tk('contract.pleaseTapAgain'));
     }
     return;
   }
   const del = ev.target.closest('[data-doc-del]');
   if (del) {
     const d = finDocs.find(x => x.id === del.dataset.docDel);
-    if (!d || !confirm(`Dokument „${d.name || d.datei}“ löschen?`)) return;
-    try { await finDeleteDoc(d.id); finDocsChanged(); finShowToast('Dokument gelöscht.'); }
-    catch (err) { finShowToast('Löschen fehlgeschlagen – keine Verbindung zum NAS?', true); }
+    if (!d || !confirm(tk('contract.deleteDocument', { name: d.name || d.datei }))) return;
+    try { await finDeleteDoc(d.id); finDocsChanged(); finShowToast(tk('contract.documentDeleted')); }
+    catch (err) { finShowToast(tk('contract.deletingFailedNoConnection'), true); }
     return;
   }
   const edit = ev.target.closest('[data-doc-edit]');
   if (edit) {
     const d = finDocs.find(x => x.id === edit.dataset.docEdit);
     if (!d) return;
-    const name = prompt('Name des Dokuments', d.name || '');
+    const name = prompt(tk('contract.nameDocument'), d.name || '');
     if (name == null) return;
     const clean = name.replace(/\s+/g, ' ').trim().slice(0, 200);
     if (!clean || clean === d.name) return;
@@ -638,7 +638,7 @@ document.addEventListener('click', async (ev) => {
       finDocs = finDocs.map(x => x.id === d.id ? { ...x, name: clean } : x);
       finDocsCacheWrite();
       finDocsChanged();
-    } catch (err) { finShowToast('Umbenennen fehlgeschlagen – keine Verbindung zum NAS?', true); }
+    } catch (err) { finShowToast(tk('contract.renamingFailedNoConnection'), true); }
     return;
   }
   const pend = ev.target.closest('[data-pending-del]');
@@ -676,13 +676,13 @@ function renderExpenseDocs() {
     <div class="flex items-center gap-2 rounded-xl border border-dashed border-ink/20 pl-2.5 pr-1 py-1.5">
       <span class="text-lg shrink-0">📎</span>
       <span class="flex-1 min-w-0">
-        <span class="block text-sm truncate">${escapeHtml(f.name || 'Datei')}</span>
-        <span class="block text-[11px] text-ink/45">wird beim Speichern hochgeladen · ${escapeHtml(vtFileSize(f.size))}</span>
+        <span class="block text-sm truncate">${escapeHtml(f.name || tk('contract.file'))}</span>
+        <span class="block text-[11px] text-ink/45">${escapeHtml(tk('contract.uploadOnSave'))} · ${escapeHtml(vtFileSize(f.size))}</span>
       </span>
-      <button type="button" data-pending-del="${i}" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-red-500 hover:bg-red-50 grid place-items-center text-lg leading-none" aria-label="Entfernen">×</button>
+      <button type="button" data-pending-del="${i}" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-red-500 hover:bg-red-50 grid place-items-center text-lg leading-none" aria-label="${escapeHtml(tk('common.remove'))}">×</button>
     </div>`).join('');
   const rows = finDocRowsHtml(docs, bezug);
-  list.innerHTML = (rows + pending) || '<p class="text-xs text-ink/40 italic">Kassenzettel, Rechnung oder Garantiebeleg – als Foto oder PDF.</p>';
+  list.innerHTML = (rows + pending) || ('<p class="text-xs text-ink/40 italic">' + escapeHtml(tk('contract.receiptInvoiceWarrantyDocument')) + '</p>');
   if (docs.length) list.insertAdjacentHTML('beforeend', finDocStatusHint());
 }
 
@@ -799,7 +799,7 @@ function renderContracts() {
   const catSel = document.getElementById('contractCategoryFilter');
   const cats = vtCategories();
   if (vtFilterCategory && !cats.some(c => c.id === vtFilterCategory)) vtFilterCategory = '';
-  catSel.innerHTML = '<option value="">Alle Kategorien</option>' + cats.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml((c.icon ? c.icon + ' ' : '') + c.label)}</option>`).join('');
+  catSel.innerHTML = ('<option value="">' + escapeHtml(tk('household.allCategories')) + '</option>') + cats.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml((c.icon ? c.icon + ' ' : '') + c.label)}</option>`).join('');
   catSel.value = vtFilterCategory;
   document.getElementById('contractSortSelect').value = vtSort;
   const searchInp = document.getElementById('contractSearchInput');
@@ -823,14 +823,14 @@ function renderContracts() {
     <div class="rounded-2xl bg-white border border-ink/10 shadow-sm p-4 sm:p-5">
       <div class="flex items-start justify-between gap-3">
         <div class="min-w-0">
-          <div class="text-[11px] uppercase tracking-wide text-ink/40">Fixkosten aus Verträgen</div>
-          <div class="font-serif text-2xl">${fmtEur(monthly)} <span class="text-sm text-ink/45 font-sans">/ Monat</span></div>
-          <div class="text-xs text-ink/50">${fmtEur(monthly * 12)} im Jahr · umgerechnet</div>
+          <div class="text-[11px] uppercase tracking-wide text-ink/40">${escapeHtml(tk('contract.fixedFromContracts'))}</div>
+          <div class="font-serif text-2xl">${fmtEur(monthly)} <span class="text-sm text-ink/45 font-sans">${escapeHtml(tk('contract.perMonthSlash'))}</span></div>
+          <div class="text-xs text-ink/50">${escapeHtml(tk('contract.perYearConverted', { amount: fmtEur(monthly * 12) }))}</div>
         </div>
         <div class="text-right shrink-0">
-          <div class="text-[11px] uppercase tracking-wide text-ink/40">Verträge</div>
+          <div class="text-[11px] uppercase tracking-wide text-ink/40">${escapeHtml(tk('contract.contracts'))}</div>
           <div class="font-serif text-2xl">${activeCount}</div>
-          <div class="text-xs text-ink/50">${cancelledCount ? cancelledCount + ' gekündigt' : 'laufend'}</div>
+          <div class="text-xs text-ink/50">${escapeHtml(cancelledCount ? tk('contract.cancelledN', { n: cancelledCount }) : tk('contract.running'))}</div>
         </div>
       </div>
       ${catRows.length ? `<div class="flex flex-col gap-2 mt-4">${catRows.map(e => `
@@ -846,7 +846,7 @@ function renderContracts() {
   const due = vtDueList(today);
   const dueHtml = due.length ? `
     <div class="rounded-2xl border border-mustard/40 bg-mustard/10 p-4">
-      <div class="text-sm font-medium mb-2">⏰ Jetzt kümmern</div>
+      <div class="text-sm font-medium mb-2">${escapeHtml(tk('contract.takeCareNow'))}</div>
       <div class="flex flex-col gap-1.5">${due.map(d => `
         <button type="button" class="vt-due-row w-full flex items-center gap-3 rounded-xl bg-white/70 px-3 py-2 text-left" data-vtopen="${escapeHtml(d.c.id)}">
           <span class="flex-1 min-w-0">
@@ -860,8 +860,8 @@ function renderContracts() {
   const unlinked = vtUnlinkedRecurring();
   const suggestHtml = unlinked.length ? `
     <details class="vt-suggest rounded-2xl bg-white border border-ink/10 shadow-sm px-4 py-3">
-      <summary class="text-sm cursor-pointer select-none">💡 ${unlinked.length} regelmäßige Ausgabe${unlinked.length === 1 ? '' : 'n'} ohne Vertrag</summary>
-      <p class="text-xs text-ink/50 mt-2 mb-2">Antippen legt daraus einen Vertrag an – die Buchung bleibt, bekommt aber Laufzeit, Kündigungsfrist, Erinnerung und Dokumente dazu.</p>
+      <summary class="text-sm cursor-pointer select-none">💡 ${escapeHtml(tk('contract.unlinkedN', { n: unlinked.length }))}</summary>
+      <p class="text-xs text-ink/50 mt-2 mb-2">${escapeHtml(tk('contract.tappingCreatesContractFrom'))}</p>
       <div class="flex flex-wrap gap-1.5">${unlinked.slice(0, 20).map(r => {
         const cat = finCategory(r.category);
         return `<button type="button" class="pantry-chip px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 transition" data-vtfromrec="${escapeHtml(r.id)}">${escapeHtml((cat.icon ? cat.icon + ' ' : '') + (r.title || cat.label))} · ${fmtEur(finRecurringAmountFor(r, today))}</button>`;
@@ -892,13 +892,13 @@ function renderContracts() {
     const sub = [c.provider, x.cat.label, holder ? memberLabel(holder) : ''].filter(Boolean).map(escapeHtml).join(' · ');
     const nDocs = finDocsFor('vertrag:' + c.id).length;
     const costHtml = x.cost
-      ? `<span class="block text-sm font-semibold${x.cost.running ? '' : ' text-ink/40'}">${fmtEur(x.cost.amount)}</span><span class="block text-[11px] text-ink/45">${x.cost.running ? escapeHtml(vtIntervalLabel(x.cost.interval)) : 'beendet'}</span>`
-      : '<span class="block text-[11px] text-ink/40">keine Kosten</span>';
+      ? `<span class="block text-sm font-semibold${x.cost.running ? '' : ' text-ink/40'}">${fmtEur(x.cost.amount)}</span><span class="block text-[11px] text-ink/45">${x.cost.running ? escapeHtml(vtIntervalLabel(x.cost.interval)) : escapeHtml(tk('contract.endedLower'))}</span>`
+      : '<span class="block text-[11px] text-ink/40">' + escapeHtml(tk('contract.noCosts')) + '</span>';
     return `
       <button type="button" class="vt-card w-full flex items-start gap-3 rounded-2xl bg-white border border-ink/10 shadow-sm p-3.5 text-left transition${x.v.s.state === 'beendet' ? ' opacity-60' : ''}" data-vtopen="${escapeHtml(c.id)}">
         <span class="shrink-0 w-11 h-11 rounded-full grid place-items-center text-xl" style="background:${vtCatColor(x.cat)}22">${escapeHtml(x.cat.icon || '📄')}</span>
         <span class="flex-1 min-w-0">
-          <span class="block text-sm font-medium truncate">${escapeHtml(c.name || 'Vertrag')}</span>
+          <span class="block text-sm font-medium truncate">${escapeHtml(c.name || tk('contract.docType.doc'))}</span>
           <span class="block text-xs text-ink/45 truncate">${sub || '&nbsp;'}</span>
           <span class="flex items-center gap-1.5 mt-1.5 flex-wrap">
             <span class="vt-chip ${x.v.tone}">${escapeHtml(x.v.label)}</span>
@@ -916,12 +916,12 @@ function renderContracts() {
   let empty = '';
   if (!list.length) {
     empty = vtContracts().length
-      ? `<p class="text-sm text-ink/40 italic text-center py-6">${filtered ? 'Keine Verträge für diese Auswahl.' : 'Keine laufenden Verträge.'}</p>`
+      ? `<p class="text-sm text-ink/40 italic text-center py-6">${filtered ? tk('contract.noContractsSelection') : tk('contract.noRunningContracts')}</p>`
       : `<div class="rounded-2xl bg-white border border-dashed border-ink/20 p-6 text-center">
           <div class="text-3xl mb-2">📄</div>
-          <div class="font-serif text-lg mb-1">Noch keine Verträge</div>
-          <p class="text-xs text-ink/50 mb-4">Versicherungen, Strom, Handy, Streaming, Fitnessstudio … – mit Kosten, Laufzeit, Kündigungsfrist samt Erinnerung und allen Dokumenten an einem Ort. Die Kosten landen automatisch in den Ausgaben.</p>
-          <button type="button" id="vtEmptyAddBtn" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">+ Ersten Vertrag anlegen</button>
+          <div class="font-serif text-lg mb-1">${escapeHtml(tk('contract.noContractsYet'))}</div>
+          <p class="text-xs text-ink/50 mb-4">${escapeHtml(tk('contract.insuranceElectricityPhoneStreaming'))}</p>
+          <button type="button" id="vtEmptyAddBtn" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">${escapeHtml(tk('contract.createFirstContract'))}</button>
         </div>`;
   }
   pane.innerHTML = summary + dueHtml + suggestHtml + (list.length ? `<div class="flex flex-col gap-2">${cards}</div>` : empty);
@@ -942,7 +942,7 @@ function renderContracts() {
 /* ---------- Popup: view contract ---------- */
 function openContractDetail(id) {
   const c = vtContract(id);
-  if (!c) { finShowToast('Diesen Vertrag gibt es nicht mehr.', true); return; }
+  if (!c) { finShowToast(tk('contract.contractNoLongerExists'), true); return; }
   vtDetailId = id;
   renderContractDetail();
   document.getElementById('contractDetailModal').classList.remove('hidden');
@@ -966,7 +966,7 @@ function renderContractDetail() {
   const rem = vtReminder(c);
   const holder = c.holder ? memberById(c.holder) : null;
 
-  let costHtml = '<p class="text-xs text-ink/45">Keine laufenden Kosten hinterlegt – unter „Bearbeiten“ ergänzen, dann landen sie automatisch in den Ausgaben.</p>';
+  let costHtml = ('<p class="text-xs text-ink/45">' + escapeHtml(tk('contract.noRunningCostsStored')) + '</p>');
   if (cost) {
     const startRec = finRecStart(cost.r);
     const dates = startRec ? finRecDates(cost.r, startRec, today) : [];
@@ -976,60 +976,60 @@ function renderContractDetail() {
     const fcat = finCategory(cost.r.category);
     const hist = (Array.isArray(cost.r.history) ? cost.r.history : []).filter(h => h && h.from).slice().sort((a, b) => (a.from < b.from ? -1 : 1));
     const histHtml = hist.length > 1 ? `
-      <details class="mt-2"><summary class="text-xs text-ink/50 cursor-pointer select-none">Preisentwicklung (${hist.length - 1} Änderung${hist.length === 2 ? '' : 'en'})</summary>
+      <details class="mt-2"><summary class="text-xs text-ink/50 cursor-pointer select-none">${escapeHtml(tk('contract.priceHistoryN', { n: hist.length - 1 }))}</summary>
         <div class="mt-1">${hist.map((h, i) => {
           const prev = i ? Number(hist[i - 1].amount) || 0 : null;
           const diff = prev != null ? (Number(h.amount) || 0) - prev : 0;
-          return `<div class="vt-row"><span>ab ${escapeHtml(vtFmt(h.from))}</span><span>${fmtEur(h.amount)}${prev != null && Math.abs(diff) > 0.001 ? ` <span style="color:${diff > 0 ? FIN_RED : FIN_GREEN}">(${diff > 0 ? '+' : '−'}${fmtEur(Math.abs(diff))})</span>` : ''}</span></div>`;
+          return `<div class="vt-row"><span>${escapeHtml(tk('contract.fromDate', { date: vtFmt(h.from) }))}</span><span>${fmtEur(h.amount)}${prev != null && Math.abs(diff) > 0.001 ? ` <span style="color:${diff > 0 ? FIN_RED : FIN_GREEN}">(${diff > 0 ? '+' : '−'}${fmtEur(Math.abs(diff))})</span>` : ''}</span></div>`;
         }).join('')}</div>
       </details>` : '';
     costHtml = `
       <div class="vt-tiles">
-        ${vtCostTile('Kosten', fmtEur(cost.amount), escapeHtml(vtIntervalLabel(cost.interval)))}
-        ${vtCostTile('Pro Jahr', fmtEur(cost.running ? cost.monthly * 12 : 0), cost.running ? 'umgerechnet' : 'beendet')}
-        ${vtCostTile('Bezahlt', fmtEur(paid), 'davon ' + fmtEur(paidYear) + ' ' + today.slice(0, 4))}
+        ${vtCostTile(escapeHtml(tk('contract.costs')), fmtEur(cost.amount), escapeHtml(vtIntervalLabel(cost.interval)))}
+        ${vtCostTile(escapeHtml(tk('contract.perYear')), fmtEur(cost.running ? cost.monthly * 12 : 0), escapeHtml(cost.running ? tk('contract.converted') : tk('contract.endedLower')))}
+        ${vtCostTile(escapeHtml(tk('contract.paid')), fmtEur(paid), escapeHtml(tk('contract.ofWhichInYear', { amount: fmtEur(paidYear), year: today.slice(0, 4) })))}
       </div>
-      <p class="text-xs text-ink/50 mt-2">${cost.next ? `Nächste Abbuchung: <b>${escapeHtml(finDayLabel(cost.next))}</b> · ` : (cost.running ? '' : 'Abbuchung beendet · ')}Ausgaben-Kategorie ${escapeHtml((fcat.icon ? fcat.icon + ' ' : '') + fcat.label)}${cost.r.paidBy && memberById(cost.r.paidBy) ? ' · bezahlt von ' + escapeHtml(memberLabel(memberById(cost.r.paidBy))) : ''}</p>
+      <p class="text-xs text-ink/50 mt-2">${cost.next ? `${escapeHtml(tk('contract.nextDebit'))} <b>${escapeHtml(finDayLabel(cost.next))}</b> · ` : (cost.running ? '' : escapeHtml(tk('contract.debitEnded')) + ' · ')}${escapeHtml(tk('contract.expenseCatLabel', { cat: (fcat.icon ? fcat.icon + ' ' : '') + i18nT(fcat.label) }))}${cost.r.paidBy && memberById(cost.r.paidBy) ? ' · ' + escapeHtml(tk('contract.paidByName', { name: memberLabel(memberById(cost.r.paidBy)) })) : ''}</p>
       ${histHtml}
-      ${cost.parts && cost.parts.length > 1 ? `<div class="mt-2">${cost.parts.map(p => `<div class="vt-row"><span>${escapeHtml(p.title || finCategory(p.category).label)}</span><span><span class="vt-amt">${fmtEur(finRecurringAmountFor(p, today))}</span> <span class="text-ink/45">${escapeHtml(vtIntervalLabel(finRecInterval(p)))}${finRecIsRunning(p, today) ? '' : ' · beendet'}</span></span></div>`).join('')}</div>` : ''}`;
+      ${cost.parts && cost.parts.length > 1 ? `<div class="mt-2">${cost.parts.map(p => `<div class="vt-row"><span>${escapeHtml(p.title || finCategory(p.category).label)}</span><span><span class="vt-amt">${fmtEur(finRecurringAmountFor(p, today))}</span> <span class="text-ink/45">${escapeHtml(vtIntervalLabel(finRecInterval(p)))}${finRecIsRunning(p, today) ? '' : (' ' + tk('contract.ended'))}</span></span></div>`).join('')}</div>` : ''}`;
   }
 
   const rows = [];
   const kind = vtTermType(c);
-  if (vtIsIso(c.start)) rows.push(['Beginn', vtFmt(c.start)]);
+  if (vtIsIso(c.start)) rows.push([tk('event.start'), vtFmt(c.start)]);
   if (kind === 'fixed') {
     const mm = parseInt(c.minMonths, 10) || 0;
-    rows.push(['Laufzeit', (mm ? vtMonthsText(mm) + ' Mindestlaufzeit, dann ' : '') + '+' + vtMonthsText(vtRenew(c)) + ' je Verlängerung']);
-    rows.push(['Kündigungsfrist', vtNoticeText(c) + ' zum Laufzeitende']);
-    if (s.state === 'aktiv' && s.termEnd) rows.push(['Aktuelles Laufzeitende', vtFmt(s.termEnd)]);
+    rows.push([tk('contract.term'), mm ? tk('contract.termFixedMin', { min: vtMonthsText(mm), renew: vtMonthsText(vtRenew(c)) }) : tk('contract.termFixed', { renew: vtMonthsText(vtRenew(c)) })]);
+    rows.push([tk('contract.noticePeriod'), tk('contract.noticeToTermEnd', { notice: vtNoticeText(c) })]);
+    if (s.state === 'aktiv' && s.termEnd) rows.push([tk('contract.currentTermEnd'), vtFmt(s.termEnd)]);
   } else if (c.fixkosten) {
-    rows.push(['Art', 'Laufende Fixkosten (Steuer, Abgabe oder Beitrag) – nicht kündbar']);
+    rows.push([tk('contract.kind'), tk('contract.fixedCostsLong')]);
   } else if (kind === 'open') {
-    rows.push(['Laufzeit', 'unbefristet – jederzeit kündbar']);
-    rows.push(['Kündigungsfrist', vtNoticeText(c) + (c.noticeMonthEnd ? ' zum Monatsende' : '')]);
+    rows.push([tk('contract.term'), tk('contract.termOpen')]);
+    rows.push([tk('contract.noticePeriod'), c.noticeMonthEnd ? tk('contract.noticeToMonthEnd', { notice: vtNoticeText(c) }) : vtNoticeText(c)]);
   } else {
-    rows.push(['Laufzeit', 'befristet – endet automatisch']);
-    if (vtFirstEnd(c)) rows.push(['Endet am', vtFmt(vtFirstEnd(c))]);
+    rows.push([tk('contract.term'), tk('contract.termOnce')]);
+    if (vtFirstEnd(c)) rows.push([tk('event.endsOn'), vtFmt(vtFirstEnd(c))]);
   }
   if (c.cancel && vtIsIso(c.cancel.effective)) {
-    if (vtIsIso(c.cancel.sent)) rows.push(['Gekündigt am', vtFmt(c.cancel.sent)]);
-    rows.push(['Wirksam zum', vtFmt(c.cancel.effective)]);
-    rows.push(['Bestätigung', c.cancel.confirmed ? 'erhalten ✓' : 'steht noch aus']);
+    if (vtIsIso(c.cancel.sent)) rows.push([tk('contract.cancelledOn'), vtFmt(c.cancel.sent)]);
+    rows.push([tk('contract.effectiveAs'), vtFmt(c.cancel.effective)]);
+    rows.push([tk('contract.confirmation'), c.cancel.confirmed ? tk('contract.receivedCheck') : tk('contract.stillPending')]);
   } else if (kind !== 'open') {
-    rows.push(['Erinnerung', rem.on ? `${rem.days} Tage vorher${rem.last && rem.days > 3 ? ' + 3 Tage vorher' : ''} · ${vtReminderTargetsLabel(c)}` : 'aus']);
+    rows.push([tk('event.reminder'), rem.on ? (rem.last && rem.days > 3 ? tk('contract.remindDaysPlus3', { n: rem.days, to: vtReminderTargetsLabel(c) }) : tk('contract.remindDays', { n: rem.days, to: vtReminderTargetsLabel(c) })) : tk('contract.off')]);
   }
-  if (c.extraReminder && vtIsIso(c.extraReminder.date)) rows.push(['Eigene Erinnerung', vtFmt(c.extraReminder.date) + (c.extraReminder.text ? ' · ' + c.extraReminder.text : '')]);
+  if (c.extraReminder && vtIsIso(c.extraReminder.date)) rows.push([tk('contract.ownReminder'), vtFmt(c.extraReminder.date) + (c.extraReminder.text ? ' · ' + c.extraReminder.text : '')]);
 
   const contact = c.contact || {};
   const infoRows = [];
-  if (holder) infoRows.push(['Vertragsinhaber', memberLabel(holder)]);
-  if (c.customerNo) infoRows.push(['Kundennummer', c.customerNo, true]);
-  if (c.contractNo) infoRows.push(['Vertragsnummer', c.contractNo, true]);
+  if (holder) infoRows.push([tk('contract.contractHolder'), memberLabel(holder)]);
+  if (c.customerNo) infoRows.push([tk('contract.customerNumber'), c.customerNo, true]);
+  if (c.contractNo) infoRows.push([tk('contract.contractNumber'), c.contractNo, true]);
   const webUrl = contact.web ? (/^https?:\/\//i.test(contact.web) ? contact.web : 'https://' + contact.web) : '';
   const contactBtns = [
     contact.phone ? `<a href="tel:${escapeHtml(String(contact.phone).replace(/[^\d+]/g, ''))}" class="px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 hover:text-pine hover:border-pine transition">📞 ${escapeHtml(contact.phone)}</a>` : '',
     contact.email ? `<a href="mailto:${escapeHtml(contact.email)}" class="px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 hover:text-pine hover:border-pine transition truncate">✉️ ${escapeHtml(contact.email)}</a>` : '',
-    webUrl ? `<a href="${escapeHtml(webUrl)}" target="_blank" rel="noopener" class="px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 hover:text-pine hover:border-pine transition truncate">🌐 Kundenportal</a>` : '',
+    webUrl ? `<a href="${escapeHtml(webUrl)}" target="_blank" rel="noopener" class="px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 hover:text-pine hover:border-pine transition truncate">${escapeHtml(tk('contract.customerPortal'))}</a>` : '',
   ].filter(Boolean).join('');
 
   const docs = finDocsFor('vertrag:' + c.id);
@@ -1047,7 +1047,7 @@ function renderContractDetail() {
     <div class="flex items-start gap-3 mb-3 pr-6">
       <span class="shrink-0 w-12 h-12 rounded-full grid place-items-center text-2xl" style="background:${vtCatColor(cat)}22">${escapeHtml(cat.icon || '📄')}</span>
       <div class="flex-1 min-w-0">
-        <h3 class="font-serif text-lg leading-tight">${escapeHtml(c.name || 'Vertrag')}</h3>
+        <h3 class="font-serif text-lg leading-tight">${escapeHtml(c.name || tk('contract.docType.doc'))}</h3>
         <div class="text-xs text-ink/50 truncate">${escapeHtml([c.provider, cat.label].filter(Boolean).join(' · '))}</div>
       </div>
     </div>
@@ -1055,39 +1055,39 @@ function renderContractDetail() {
     <div class="vt-status-box ${v.tone} mb-4">
       <div class="text-sm font-semibold">${escapeHtml(v.label)}</div>
       ${v.sub ? `<div class="text-xs opacity-80">${escapeHtml(v.sub)}</div>` : ''}
-      ${s.state === 'aktiv' && kind === 'fixed' && s.missed ? `<div class="text-xs opacity-80 mt-1">Die Frist zum ${escapeHtml(vtFmt(s.termEnd))} ist schon vorbei – der Vertrag verlängert sich bis ${escapeHtml(vtFmt(s.nextEnd))}.</div>` : ''}
+      ${s.state === 'aktiv' && kind === 'fixed' && s.missed ? `<div class="text-xs opacity-80 mt-1">${escapeHtml(tk('contract.missedExtends', { date: vtFmt(s.termEnd), end: vtFmt(s.nextEnd) }))}</div>` : ''}
     </div>
 
-    <h4 class="vt-detail-h">💶 Kosten</h4>
+    <h4 class="vt-detail-h">${escapeHtml(tk('contract.costs2'))}</h4>
     ${costHtml}
 
-    <h4 class="vt-detail-h">📅 Laufzeit &amp; Kündigung</h4>
+    <h4 class="vt-detail-h">📅 ${escapeHtml(tk('contract.termAndCancel'))}</h4>
     <div>${rows.map(r => `<div class="vt-row"><span>${escapeHtml(r[0])}</span><span>${escapeHtml(r[1])}</span></div>`).join('')}</div>
     <div class="flex flex-wrap gap-2 mt-3">
-      ${canCancel ? '<button type="button" data-act="cancel" class="px-3 py-1.5 rounded-lg border border-red-300 text-xs text-red-500 hover:bg-red-50 transition">✉️ Kündigen</button>' : ''}
-      ${isCancelled ? '<button type="button" data-act="cancel" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 hover:text-pine hover:border-pine transition">✉️ Kündigung &amp; Schreiben</button>' : ''}
+      ${canCancel ? ('<button type="button" data-act="cancel" class="px-3 py-1.5 rounded-lg border border-red-300 text-xs text-red-500 hover:bg-red-50 transition">' + escapeHtml(tk('contract.cancel')) + '</button>') : ''}
+      ${isCancelled ? '<button type="button" data-act="cancel" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 hover:text-pine hover:border-pine transition">✉️ ' + escapeHtml(tk('contract.cancelAndLetter')) + '</button>' : ''}
     </div>
 
     ${(infoRows.length || contactBtns || contact.address) ? `
       <h4 class="vt-detail-h">👤 Vertragsdaten &amp; Kontakt</h4>
-      <div>${infoRows.map(r => `<div class="vt-row"><span>${escapeHtml(r[0])}</span><span>${r[2] ? `<button type="button" class="font-mono text-ink/80 hover:text-pine" data-copy="${escapeHtml(r[1])}" title="Kopieren">${escapeHtml(r[1])} ⧉</button>` : escapeHtml(r[1])}</span></div>`).join('')}</div>
+      <div>${infoRows.map(r => `<div class="vt-row"><span>${escapeHtml(r[0])}</span><span>${r[2] ? `<button type="button" class="font-mono text-ink/80 hover:text-pine" data-copy="${escapeHtml(r[1])}" title="${escapeHtml(tk('common.copy'))}">${escapeHtml(r[1])} ⧉</button>` : escapeHtml(r[1])}</span></div>`).join('')}</div>
       ${contactBtns ? `<div class="flex flex-wrap gap-2 mt-2">${contactBtns}</div>` : ''}
       ${contact.address ? `<p class="text-xs text-ink/55 mt-2" style="white-space:pre-line">${escapeHtml(contact.address)}</p>` : ''}` : ''}
 
-    <h4 class="vt-detail-h">📎 Dokumente <span class="text-ink/40 font-normal normal-case">${docs.length || ''}</span></h4>
+    <h4 class="vt-detail-h">${escapeHtml(tk('contract.documents'))} <span class="text-ink/40 font-normal normal-case">${docs.length || ''}</span></h4>
     <div class="flex items-center gap-2 mb-2">
-      <select id="vtDocTypeSelect" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="Art des Dokuments">${docTypeOpts}</select>
-      <button type="button" data-act="doc-add" class="shrink-0 px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">+ Hochladen</button>
+      <select id="vtDocTypeSelect" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="${escapeHtml(tk('contract.typeDocument'))}">${docTypeOpts}</select>
+      <button type="button" data-act="doc-add" class="shrink-0 px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">${escapeHtml(tk('contract.upload'))}</button>
     </div>
-    <div class="flex flex-col gap-1.5">${docRows || '<p class="text-xs text-ink/40 italic">Vertrag, Rechnungen, Kündigung, Bestätigung … als PDF oder Foto (auch direkt mit der Kamera).</p>'}</div>
+    <div class="flex flex-col gap-1.5">${docRows || ('<p class="text-xs text-ink/40 italic">' + escapeHtml(tk('contract.contractInvoicesCancellationConfirmation')) + '</p>')}</div>
     ${finDocStatusHint()}
 
-    ${c.note ? `<h4 class="vt-detail-h">📝 Notiz</h4><p class="text-sm text-ink/70" style="white-space:pre-line">${escapeHtml(c.note)}</p>` : ''}
+    ${c.note ? `<h4 class="vt-detail-h">${escapeHtml(tk('contract.note'))}</h4><p class="text-sm text-ink/70" style="white-space:pre-line">${escapeHtml(c.note)}</p>` : ''}
 
     <div class="flex items-center gap-2 mt-5">
       <div class="flex-1"></div>
-      <button type="button" data-act="close" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Schließen</button>
-      <button type="button" data-act="edit" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Bearbeiten</button>
+      <button type="button" data-act="close" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">${escapeHtml(tk('common.close'))}</button>
+      <button type="button" data-act="edit" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">${escapeHtml(tk('common.edit'))}</button>
     </div>`;
 
   body.querySelectorAll('[data-act="cancel"]').forEach(b => b.addEventListener('click', () => openContractCancel(c.id)));
@@ -1096,13 +1096,13 @@ function renderContractDetail() {
   const fzBtn = body.querySelector('[data-act="fz-open"]');
   if (fzBtn) fzBtn.addEventListener('click', () => { const vid = c.vehicle; closeContractDetail(); fzOpenVehicle(vid); });
   body.querySelector('[data-act="doc-add"]').addEventListener('click', () => {
-    if (!navigator.onLine) { finShowToast('Keine Verbindung – Dokumente lassen sich nur mit Verbindung zum NAS hochladen.', true); return; }
+    if (!navigator.onLine) { finShowToast(tk('contract.noConnectionDocumentsCan'), true); return; }
     finPickDocs({ mode: 'contract', bezug, typ: document.getElementById('vtDocTypeSelect').value || 'sonstiges' });
   });
-  body.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => vtCopyText(b.dataset.copy, 'Kopiert.')));
+  body.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => vtCopyText(b.dataset.copy, tk('common.copied'))));
 }
 function vtCopyText(text, okMsg) {
-  const done = () => finShowToast(okMsg || 'Kopiert.');
+  const done = () => finShowToast(okMsg || tk('common.copied'));
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text).then(done).catch(() => vtCopyFallback(text, done));
   } else vtCopyFallback(text, done);
@@ -1114,7 +1114,7 @@ function vtCopyFallback(text, done) {
   ta.style.position = 'fixed'; ta.style.opacity = '0'; ta.style.top = '0';
   document.body.appendChild(ta);
   ta.select();
-  try { document.execCommand('copy'); done(); } catch (e) { finShowToast('Kopieren nicht möglich.', true); }
+  try { document.execCommand('copy'); done(); } catch (e) { finShowToast(tk('contract.copyingNotPossible'), true); }
   ta.remove();
 }
 
@@ -1136,7 +1136,7 @@ function vtSetupKasse(isEdit) {
   const sel = document.getElementById('cfKasse');
   if (!kassenActiveMode() || !kassen.length || !activeKasse()) { wrap.classList.add('hidden'); return; }
   const list = kassenSorted().slice().sort((a, b) => (a.art === 'familie' ? 0 : 1) - (b.art === 'familie' ? 0 : 1));
-  sel.innerHTML = list.map(k => `<option value="${escapeHtml(k.id)}">${escapeHtml((k.icon || '💶') + ' ' + kasseDisplayName(k) + (k.art === 'familie' ? ' – ohne eigene Kasse' : ''))}</option>`).join('');
+  sel.innerHTML = list.map(k => `<option value="${escapeHtml(k.id)}">${escapeHtml((k.icon || '💶') + ' ' + kasseDisplayName(k) + (k.art === 'familie' ? (' ' + tk('contract.withoutOwnFund')) : ''))}</option>`).join('');
   sel.value = activeKasseId;
   sel.disabled = !!isEdit;
   wrap.classList.remove('hidden');
@@ -1149,9 +1149,9 @@ function vtKasseInfo(isEdit) {
   if (!k) { el.textContent = ''; return; }
   const n = kasseUserIds(k).length;
   el.textContent = (k.art === 'familie'
-    ? 'Alle Profile der Familie sehen den Vertrag und seine Dokumente (keine Gäste).'
-    : `Nur die Mitglieder dieser Kasse (${n} ${n === 1 ? 'Person' : 'Personen'}) sehen den Vertrag, seine Kosten und Dokumente.`)
-    + (isEdit ? ' Die Kasse eines bestehenden Vertrags lässt sich nicht ändern.' : '');
+    ? tk('contract.allProfilesFamilySee')
+    : tk('contract.onlyFundMembersN', { n }))
+    + (isEdit ? (' ' + tk('contract.fundExistingContractCannot')) : '');
 }
 function onVtKasseChanged() {
   const id = vtVal('cfKasse');
@@ -1167,12 +1167,12 @@ function onVtKasseChanged() {
   fillFinPaidBySelect('cfPaidBy', keepPaid);
   const fzVehList = fzVehicles().filter(x => !fzIsArchived(x));
   const fzSelEl = document.getElementById('cfVehicle');
-  fzSelEl.innerHTML = '<option value="">– keinem Fahrzeug</option>' + fzVehList.map(x => `<option value="${escapeHtml(x.id)}">${escapeHtml(fzKind(x.kind).icon + ' ' + fzName(x))}</option>`).join('');
+  fzSelEl.innerHTML = ('<option value="">' + escapeHtml(tk('contract.noVehicle')) + '</option>') + fzVehList.map(x => `<option value="${escapeHtml(x.id)}">${escapeHtml(fzKind(x.kind).icon + ' ' + fzName(x))}</option>`).join('');
   fzSelEl.value = '';
   document.getElementById('cfVehicleWrap').classList.toggle('hidden', !fzVehList.length);
   vtKasseInfo(false);
   updateContractFormUi();
-  finShowToast('Kasse: ' + kasseDisplayName(activeKasse()));
+  finShowToast((tk('fund.fund') + ' ') + kasseDisplayName(activeKasse()));
 }
 document.getElementById('cfKasse').addEventListener('change', onVtKasseChanged);
 function openContractModal({ contract = null, fromRecurring = null, preset = null } = {}) {
@@ -1183,7 +1183,7 @@ function openContractModal({ contract = null, fromRecurring = null, preset = nul
   const rec = contract ? vtRec(contract) : fromRecurring;
   vtLinkRecId = (!contract && fromRecurring) ? fromRecurring.id : '';
   vtPresetHome = (!contract && preset && preset.home) ? String(preset.home) : '';
-  document.getElementById('contractModalTitle').textContent = contract ? 'Vertrag bearbeiten' : 'Neuer Vertrag';
+  document.getElementById('contractModalTitle').textContent = contract ? tk('contract.editContract') : tk('contract.newContract');
   vtSetupKasse(!!contract);
   vtSet('cfName', c.name || (fromRecurring ? fromRecurring.title || '' : '') || (preset && preset.name) || '');
   vtSet('cfProvider', c.provider || '');
@@ -1191,7 +1191,7 @@ function openContractModal({ contract = null, fromRecurring = null, preset = nul
   // Vehicle (menu „Fahrzeuge“)
   const fzVehList = fzVehicles().filter(x => !fzIsArchived(x) || x.id === c.vehicle);
   const fzSelEl = document.getElementById('cfVehicle');
-  fzSelEl.innerHTML = '<option value="">– keinem Fahrzeug</option>' + fzVehList.map(x => `<option value="${escapeHtml(x.id)}">${escapeHtml(fzKind(x.kind).icon + ' ' + fzName(x))}</option>`).join('');
+  fzSelEl.innerHTML = ('<option value="">' + escapeHtml(tk('contract.noVehicle')) + '</option>') + fzVehList.map(x => `<option value="${escapeHtml(x.id)}">${escapeHtml(fzKind(x.kind).icon + ' ' + fzName(x))}</option>`).join('');
   fzSelEl.value = (c.vehicle && fzVehicle(c.vehicle)) ? c.vehicle : ((preset && preset.vehicle && fzVehicle(preset.vehicle)) ? preset.vehicle : '');
   document.getElementById('cfVehicleWrap').classList.toggle('hidden', !fzVehList.length);
   renderVtCategoryPicker();
@@ -1308,7 +1308,7 @@ function vtFillLinkRecSelect(contract) {
   }
   if (!options.length) { wrap.classList.add('hidden'); sel.innerHTML = ''; return; }
   const today = finTodayIso();
-  sel.innerHTML = '<option value="">– neu anlegen –</option>' + options.map(r => {
+  sel.innerHTML = ('<option value="">' + escapeHtml(tk('contract.createNew')) + '</option>') + options.map(r => {
     const cat = finCategory(r.category);
     return `<option value="${escapeHtml(r.id)}">${escapeHtml((r.title || cat.label) + ' · ' + fmtEur(finRecurringAmountFor(r, today)) + ' ' + vtIntervalLabel(finRecInterval(r)))}</option>`;
   }).join('');
@@ -1335,7 +1335,7 @@ function onVtLinkRecChanged() {
 function renderVtRemindTo() {
   const wrap = document.getElementById('cfRemindTo');
   const adults = members.filter(m => !vtIsChildMember(m));
-  if (!adults.length) { wrap.innerHTML = '<span class="text-xs text-ink/40">Noch keine Familienmitglieder angelegt.</span>'; return; }
+  if (!adults.length) { wrap.innerHTML = ('<span class="text-xs text-ink/40">' + escapeHtml(tk('lists.noMembers')) + '</span>'); return; }
   wrap.innerHTML = adults.map(m => `
     <button type="button" class="vt-remind-chip pantry-chip px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 transition ${vtDraftRemindTo.includes(m.id) ? 'active' : ''}" data-id="${escapeHtml(m.id)}">${vtDraftRemindTo.includes(m.id) ? '✓ ' : ''}${escapeHtml(memberLabel(m))}</button>`).join('');
   wrap.querySelectorAll('.vt-remind-chip').forEach(b => b.addEventListener('click', () => {
@@ -1364,11 +1364,11 @@ function updateContractFormUi() {
   document.getElementById('cfMinTermWrap').classList.toggle('hidden', kind !== 'fixed');
   document.getElementById('cfRenewWrap').classList.toggle('hidden', kind !== 'fixed');
   document.getElementById('cfFirstEndWrap').classList.toggle('hidden', kind === 'open');
-  document.getElementById('cfFirstEndLabel').textContent = kind === 'once' ? 'Endet am' : 'Laufzeit endet am';
+  document.getElementById('cfFirstEndLabel').textContent = kind === 'once' ? tk('event.endsOn') : tk('contract.termEnds');
   document.getElementById('cfNoticeWrap').classList.toggle('hidden', kind === 'once');
   document.getElementById('cfNoticeMonthEndWrap').classList.toggle('hidden', kind !== 'open');
-  document.getElementById('cfNoticeSuffix').textContent = kind === 'open' ? '' : 'zum Laufzeitende';
-  document.getElementById('cfRemindOnLabel').textContent = kind === 'once' ? 'Rechtzeitig vor dem Vertragsende erinnern' : 'Rechtzeitig vor der Kündigungsfrist erinnern';
+  document.getElementById('cfNoticeSuffix').textContent = kind === 'open' ? '' : tk('contract.atEndTerm');
+  document.getElementById('cfRemindOnLabel').textContent = kind === 'once' ? tk('contract.remindGoodTimeBefore') : tk('contract.remindGoodTimeBefore2');
   const remOn = document.getElementById('cfRemindOn').checked;
   document.getElementById('cfRemindBlock').classList.toggle('hidden', !remOn || kind === 'open');
   document.getElementById('cfRemindOn').closest('label').classList.toggle('hidden', kind === 'open');
@@ -1380,14 +1380,14 @@ function updateContractFormUi() {
   const s = vtStatus(d, today);
   let text = '';
   let warn = false;
-  if (kind === 'open') text = `Jederzeit kündbar – bei Kündigung heute endet der Vertrag zum ${vtFmt(s.earliestEnd)}.`;
-  else if (s.unknown) text = kind === 'once' ? 'Trag ein, wann der Vertrag endet.' : 'Trag Beginn und Mindestlaufzeit (oder das Laufzeitende) ein – dann berechnet pinn. die Kündigungsfrist.';
-  else if (kind === 'once') text = s.state === 'beendet' ? `Beendet am ${vtFmt(s.end)}.` : `Endet automatisch am ${vtFmt(s.end)} (${vtInDays(s.daysLeft)}).`;
+  if (kind === 'open') text = tk('contract.info.open', { date: vtFmt(s.earliestEnd) });
+  else if (s.unknown) text = kind === 'once' ? tk('contract.info.enterEnd') : tk('contract.info.enterStart');
+  else if (kind === 'once') text = s.state === 'beendet' ? tk('contract.info.ended', { date: vtFmt(s.end) }) : tk('contract.info.endsAuto', { date: vtFmt(s.end), when: vtInDays(s.daysLeft) });
   else {
-    text = `Kündbar bis ${vtFmt(s.deadline)} (${vtInDays(s.daysLeft)}) zum ${vtFmt(s.nextEnd)} – sonst verlängert er sich um ${vtMonthsText(s.renew)}.`;
-    if (s.missed) text += ` Die Frist zum ${vtFmt(s.termEnd)} ist schon vorbei.`;
+    text = tk('contract.info.cancellable', { date: vtFmt(s.deadline), when: vtInDays(s.daysLeft), end: vtFmt(s.nextEnd), renew: vtMonthsText(s.renew) });
+    if (s.missed) text += ' ' + tk('contract.info.missed', { date: vtFmt(s.termEnd) });
     warn = s.daysLeft <= (d.reminder.on ? d.reminder.days : 14);
-    if (d.reminder.on && !warn) text += ` Erinnerung am ${vtFmt(vtAddDays(s.deadline, -d.reminder.days))}.`;
+    if (d.reminder.on && !warn) text += ' ' + tk('contract.info.remindOn', { date: vtFmt(vtAddDays(s.deadline, -d.reminder.days)) });
   }
   info.textContent = text;
   info.classList.toggle('warn', warn);
@@ -1401,9 +1401,11 @@ function updateContractFormUi() {
     const probe = { start: cs, interval: vtVal('cfInterval') || 'monthly' };
     const next = finRecNext(probe, today);
     const monthly = amount * finIntervalInfo(probe.interval).perYear / 12;
-    costInfo.textContent = `Wird ${finRecDescribe(probe)} als Ausgabe gebucht${next ? ' – nächste: ' + finDayLabel(next) : ''}. Umgerechnet ${fmtEur(monthly)} im Monat.${cs < today && !vtLinkRecId && !(vtEditId && vtRec(vtContract(vtEditId))) ? ' Buchungen ab ' + vtFmt(cs) + ' werden nachgetragen.' : ''}`;
+    costInfo.textContent = (next ? tk('contract.cost.bookedNext', { rhythm: finRecDescribe(probe), date: finDayLabel(next) }) : tk('contract.cost.booked', { rhythm: finRecDescribe(probe) }))
+      + ' ' + tk('contract.cost.perMonth', { amount: fmtEur(monthly) })
+      + (cs < today && !vtLinkRecId && !(vtEditId && vtRec(vtContract(vtEditId))) ? ' ' + tk('contract.cost.backfill', { date: vtFmt(cs) }) : '');
   } else if (!amountRaw) {
-    costInfo.textContent = 'Ohne Betrag entstehen keine Buchungen (z. B. bei kostenlosen Verträgen).';
+    costInfo.textContent = tk('contract.withoutAmountNoTransactions');
   } else costInfo.textContent = '';
 }
 function onVtStartOrMinChanged() {
@@ -1429,24 +1431,24 @@ async function saveContractFromModal() {
   errEl.classList.add('hidden');
   const today = finTodayIso();
   const name = vtVal('cfName').replace(/\s+/g, ' ').trim().slice(0, 120);
-  if (!name) return showErr('Bitte einen Namen für den Vertrag eingeben.');
+  if (!name) return showErr(tk('contract.pleaseEnterNameContract'));
   const existing = vtEditId ? vtContract(vtEditId) : null;
   const id = existing ? existing.id : 'v' + newRecordId().slice(0, 14);
   const term = vtDraftTerm();
-  if (term.termType !== 'open' && vtIsIso(term.firstEnd) && vtIsIso(term.start) && term.firstEnd < term.start) return showErr('Das Laufzeitende liegt vor dem Vertragsbeginn.');
+  if (term.termType !== 'open' && vtIsIso(term.firstEnd) && vtIsIso(term.start) && term.firstEnd < term.start) return showErr(tk('contract.endTermBeforeStart'));
   const extraDate = vtVal('cfExtraDate');
   const email = vtVal('cfEmail').trim();
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showErr('Die E-Mail-Adresse sieht nicht richtig aus.');
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showErr(tk('contract.emailAddressDoesnT'));
 
   // Costs
   const amountRaw = vtVal('cfAmount').trim();
   const hasCost = amountRaw !== '';
   const amount = hasCost ? parseEuro(amountRaw) : NaN;
-  if (hasCost && (!isFinite(amount) || amount <= 0)) return showErr('Bitte einen gültigen Betrag eingeben – oder das Feld leer lassen, wenn der Vertrag nichts kostet.');
-  if (hasCost && amount > 1000000) return showErr('Der Betrag ist zu groß.');
+  if (hasCost && (!isFinite(amount) || amount <= 0)) return showErr(tk('contract.pleaseEnterValidAmount'));
+  if (hasCost && amount > 1000000) return showErr(tk('fin.err.tooBig'));
   const interval = vtVal('cfInterval') || 'monthly';
   const costStart = vtVal('cfCostStart');
-  if (hasCost && !vtIsIso(costStart)) return showErr('Bitte angeben, ab wann abgebucht wird.');
+  if (hasCost && !vtIsIso(costStart)) return showErr(tk('contract.pleaseSpecifyFromWhen'));
   const finCat = vtVal('cfFinCat') || 'sonstiges';
   const paidBy = vtVal('cfPaidBy');
 
@@ -1499,7 +1501,7 @@ async function saveContractFromModal() {
     contract.recurringId = recId;
   } else if (recId && existing && existing.recurringId === recId) {
     const r = finance.recurring.find(x => x.id === recId);
-    if (!confirm(`Keine laufenden Kosten mehr? Die regelmäßige Buchung „${(r && r.title) || name}“ endet heute – bisherige Buchungen bleiben in den Ausgaben.`)) return;
+    if (!confirm(tk('contract.noMoreRunningCosts', { name: (r && r.title) || name }))) return;
     if (r && finRecIsRunning(r, today)) finEndRecurring(recId);
     finance.recurring = finance.recurring.map(x => x.id === recId ? { ...x, contract: '' } : x);
     contract.recurringId = '';
@@ -1512,10 +1514,10 @@ async function saveContractFromModal() {
   vtAfterChange();
   if (existing) {
     if (vtDetailId === id) renderContractDetail();
-    finShowToast('Vertrag gespeichert.' + (applyFrom ? ' Neuer Betrag gilt ab ' + vtFmt(applyFrom) + '.' : ''));
+    finShowToast(tk('contract.saved') + (applyFrom ? ' ' + tk('contract.newAmountFrom', { date: vtFmt(applyFrom) }) : ''));
   } else {
     openContractDetail(id);
-    finShowToast(hasCost ? `Vertrag angelegt – ${fmtEur(amount)} ${vtIntervalLabel(interval)} unter ${finCategory(finCat).label} in den Ausgaben.` : 'Vertrag angelegt.');
+    finShowToast(hasCost ? tk('contract.createdWithCost', { amount: fmtEur(amount), interval: vtIntervalLabel(interval), cat: i18nT(finCategory(finCat).label) }) : tk('contract.created'));
   }
 }
 async function deleteContractFromModal() {
@@ -1525,9 +1527,9 @@ async function deleteContractFromModal() {
   const nDocs = finDocsFor('vertrag:' + c.id).length;
   const rec = vtRec(c);
   const today = finTodayIso();
-  let msg = `Vertrag „${c.name}“ löschen?`;
-  if (rec && finRecIsRunning(rec, today)) msg += ' Die regelmäßige Buchung endet heute – bisherige Buchungen bleiben in den Ausgaben.';
-  if (nDocs) msg += ` ${nDocs} Dokument${nDocs === 1 ? ' wird' : 'e werden'} ebenfalls gelöscht.`;
+  let msg = tk('contract.deleteContract', { name: c.name });
+  if (rec && finRecIsRunning(rec, today)) msg += (' ' + tk('contract.recurringTransactionEndsToday'));
+  if (nDocs) msg += ' ' + tk('contract.docsAlsoDeletedN', { n: nDocs });
   if (!confirm(msg)) return;
   if (rec) {
     if (finRecIsRunning(rec, today)) finEndRecurring(rec.id);
@@ -1539,7 +1541,7 @@ async function deleteContractFromModal() {
   closeContractModal();
   closeContractDetail();
   vtAfterChange();
-  finShowToast('Vertrag gelöscht.');
+  finShowToast(tk('contract.contractDeleted'));
   finDeleteDocsFor('vertrag:' + c.id);
 }
 
@@ -1559,9 +1561,9 @@ function openContractCancel(id) {
   vtCancelEffTouched = cancelled;
   vtLetterTouched = false;
   document.getElementById('ccConfirmed').checked = !!(cancelled && c.cancel.confirmed);
-  document.getElementById('contractCancelTitle').textContent = cancelled ? `Kündigung: ${c.name}` : `${c.name} kündigen`;
+  document.getElementById('contractCancelTitle').textContent = cancelled ? tk('contract.cancellation', { name: c.name }) : tk('contract.cancel2', { name: c.name });
   document.getElementById('ccRevokeBtn').classList.toggle('hidden', !cancelled);
-  document.getElementById('ccSaveBtn').textContent = cancelled ? 'Speichern' : 'Als gekündigt speichern';
+  document.getElementById('ccSaveBtn').textContent = cancelled ? tk('common.save') : tk('contract.saveAsCancelled');
   document.getElementById('ccMailBtn').classList.toggle('hidden', !(c.contact && c.contact.email));
   updateContractCancelUi(true);
   document.getElementById('contractCancelModal').classList.remove('hidden');
@@ -1581,13 +1583,13 @@ function updateContractCancelUi(regenLetter) {
   const kind = vtTermType(c);
   const earliest = vtIsIso(sent) ? vtEarliestEnd(c, sent) : '';
   let text = '';
-  if (kind === 'open') text = `Unbefristet mit ${vtNoticeText(c)} Frist – bei Kündigung am ${vtFmt(sent)} frühestens zum ${vtFmt(earliest)}.`;
+  if (kind === 'open') text = tk('contract.cc.open', { notice: vtNoticeText(c), sent: vtFmt(sent), date: vtFmt(earliest) });
   else if (earliest) {
     const dl = vtMinusNotice(earliest, vtNotice(c));
-    text = `Frist ${vtNoticeText(c)} zum Laufzeitende: Kündigung bis ${vtFmt(dl)} wirkt zum ${vtFmt(earliest)}.`;
-  } else text = 'Ohne Laufzeitende lässt sich das Vertragsende nicht berechnen – bitte „Wirksam zum“ selbst eintragen.';
+    text = tk('contract.cc.fixed', { notice: vtNoticeText(c), until: vtFmt(dl), date: vtFmt(earliest) });
+  } else text = tk('contract.withoutEndTermEnd');
   const rec = vtRec(c);
-  if (rec && vtIsIso(eff)) text += ` Die Abbuchung endet mit dem ${vtFmt(eff)}.`;
+  if (rec && vtIsIso(eff)) text += ` ${tk('contract.debitEnds', { date: vtFmt(eff) })}`;
   info.textContent = text;
   if (regenLetter || !vtLetterTouched) vtSet('ccLetter', vtLetter(c, eff));
 }
@@ -1600,17 +1602,17 @@ function vtLetter(c, effIso) {
   lines.push(c.provider || c.name || '');
   if (ct.address) ct.address.split(/\r?\n/).forEach(l => lines.push(l));
   lines.push('', vtFmt(finTodayIso()), '');
-  lines.push(`Kündigung ${c.name ? '„' + c.name + '“' : 'meines Vertrags'}`);
-  if (c.customerNo) lines.push('Kundennummer: ' + c.customerNo);
-  if (c.contractNo) lines.push('Vertragsnummer: ' + c.contractNo);
-  lines.push('', 'Sehr geehrte Damen und Herren,', '');
+  lines.push(c.name ? tk('contract.letter.subjectNamed', { name: c.name }) : tk('contract.letter.subject'));
+  if (c.customerNo) lines.push(tk('contract.letter.customerNo', { no: c.customerNo }));
+  if (c.contractNo) lines.push(tk('contract.letter.contractNo', { no: c.contractNo }));
+  lines.push('', tk('contract.dearSirMadam'), '');
   lines.push(vtIsIso(effIso)
-    ? `hiermit kündige ich den oben genannten Vertrag fristgerecht zum ${vtFmt(effIso)}, hilfsweise zum nächstmöglichen Zeitpunkt.`
-    : 'hiermit kündige ich den oben genannten Vertrag fristgerecht zum nächstmöglichen Zeitpunkt.');
-  lines.push('', 'Bitte bestätigen Sie mir den Eingang dieser Kündigung sowie das genaue Vertragsende schriftlich.');
-  if (vtRec(c)) lines.push('Die mit dem Vertrag verbundene Einzugsermächtigung (SEPA-Lastschriftmandat) widerrufe ich zum Vertragsende.');
-  lines.push('Einer Kontaktaufnahme zur Rückgewinnung sowie der weiteren Nutzung meiner Daten zu Werbezwecken widerspreche ich.');
-  lines.push('', 'Mit freundlichen Grüßen', '', holderName || '');
+    ? tk('contract.iHerebyGiveNotice', { date: vtFmt(effIso) })
+    : tk('contract.iHerebyGiveNotice2'));
+  lines.push('', tk('contract.pleaseConfirmWritingReceipt'));
+  if (vtRec(c)) lines.push(tk('contract.iRevokeDirectDebit'));
+  lines.push(tk('contract.iObjectBeingContacted'));
+  lines.push('', tk('contract.kindRegards'), '', holderName || '');
   return lines.join('\n');
 }
 function saveContractCancel() {
@@ -1618,30 +1620,30 @@ function saveContractCancel() {
   if (!c) return;
   const sent = vtVal('ccSent');
   const eff = vtVal('ccEffective');
-  if (!vtIsIso(eff)) { document.getElementById('ccEffective').focus(); finShowToast('Bitte eintragen, zu wann die Kündigung wirkt.', true); return; }
+  if (!vtIsIso(eff)) { document.getElementById('ccEffective').focus(); finShowToast(tk('contract.pleaseEnterWhenCancellation'), true); return; }
   const upd = { ...c, cancel: { sent: vtIsIso(sent) ? sent : finTodayIso(), effective: eff, confirmed: document.getElementById('ccConfirmed').checked } };
   finance.contracts = finance.contracts.map(x => x.id === c.id ? upd : x);
   vtApplyCancelToRecurring(upd);
   closeContractCancel();
   vtAfterChange();
   if (vtDetailId === c.id) renderContractDetail();
-  finShowToast(`Gekündigt zum ${vtFmt(eff)}${vtRec(upd) ? ' – die Abbuchung endet dann automatisch' : ''}. Tipp: Kündigung und Bestätigung als Dokument ablegen.`);
+  finShowToast((vtRec(upd) ? tk('contract.cancelledDebitEnds', { date: vtFmt(eff) }) : tk('contract.cancelledAsOfToast', { date: vtFmt(eff) })) + ' ' + tk('contract.cancelTip'));
 }
 function revokeContractCancel() {
   const c = vtContract(vtCancelId);
-  if (!c || !confirm('Kündigung zurücknehmen? Der Vertrag läuft dann normal weiter.')) return;
+  if (!c || !confirm(tk('contract.withdrawCancellationContractThen'))) return;
   const upd = { ...c, cancel: null };
   finance.contracts = finance.contracts.map(x => x.id === c.id ? upd : x);
   vtApplyCancelToRecurring(upd);
   closeContractCancel();
   vtAfterChange();
   if (vtDetailId === c.id) renderContractDetail();
-  finShowToast('Kündigung zurückgenommen.');
+  finShowToast(tk('contract.cancellationWithdrawn'));
 }
 function mailContractCancel() {
   const c = vtContract(vtCancelId);
   if (!c || !c.contact || !c.contact.email) return;
-  const subject = `Kündigung ${c.name}${c.customerNo ? ' – Kundennummer ' + c.customerNo : ''}`;
+  const subject = c.customerNo ? tk('contract.mail.subjectNo', { name: c.name, no: c.customerNo }) : tk('contract.mail.subject', { name: c.name });
   location.href = `mailto:${encodeURIComponent(c.contact.email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(vtVal('ccLetter'))}`;
 }
 
@@ -1663,14 +1665,14 @@ function renderContractCategoryEditor() {
   wrap.innerHTML = vtCatDraft.map((c, i) => `
     <div class="rounded-xl border border-ink/10 p-2" data-idx="${i}">
       <div class="flex items-center gap-2">
-        <input type="text" data-field="icon" value="${escapeHtml(c.icon || '')}" maxlength="4" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="Symbol" />
-        <input type="text" data-field="label" data-i18n-value value="${escapeHtml(c.label || '')}" maxlength="40" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="Name" />
-        ${c.id === 'sonstiges' ? '<span class="w-8 shrink-0"></span>' : '<button type="button" data-action="delete" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-red-500 hover:bg-red-50 grid place-items-center text-lg leading-none" aria-label="Löschen">×</button>'}
+        <input type="text" data-field="icon" value="${escapeHtml(c.icon || '')}" maxlength="4" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="${escapeHtml(tk('household.icon'))}" />
+        <input type="text" data-field="label" data-i18n-value value="${escapeHtml(c.label || '')}" maxlength="40" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="${escapeHtml(tk('common.name'))}" />
+        ${c.id === 'sonstiges' ? '<span class="w-8 shrink-0"></span>' : ('<button type="button" data-action="delete" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-red-500 hover:bg-red-50 grid place-items-center text-lg leading-none" aria-label="' + escapeHtml(tk('common.delete')) + '">×</button>')}
       </div>
       <div class="flex items-center gap-2 mt-1.5">
         <span class="text-[11px] text-ink/45 shrink-0 w-11 text-center">💶</span>
-        <select data-field="finCat" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="Ausgaben-Kategorie">
-          ${finCats.map(f => `<option value="${escapeHtml(f.id)}"${f.id === (c.finCat || 'sonstiges') ? ' selected' : ''}>Ausgaben: ${escapeHtml((f.icon ? f.icon + ' ' : '') + f.label)}</option>`).join('')}
+        <select data-field="finCat" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="${escapeHtml(tk('contract.expenseCategory'))}">
+          ${finCats.map(f => `<option value="${escapeHtml(f.id)}"${f.id === (c.finCat || 'sonstiges') ? ' selected' : ''}>${escapeHtml(tk('contract.expensesCat', { cat: (f.icon ? f.icon + ' ' : '') + i18nT(f.label) }))}</option>`).join('')}
         </select>
       </div>
     </div>`).join('');
@@ -1681,7 +1683,7 @@ function renderContractCategoryEditor() {
     if (del) del.addEventListener('click', () => {
       const item = vtCatDraft[i];
       const used = vtContracts().filter(c => c.category === item.id).length;
-      if (used && !confirm(`„${item.label}“ wird von ${used} Vertr${used === 1 ? 'ag' : 'ägen'} verwendet. Diese stehen danach unter „Sonstige“. Trotzdem löschen?`)) return;
+      if (used && !confirm(tk('contract.catUsedN', { name: item.label, n: used }))) return;
       vtCatDraft.splice(i, 1);
       renderContractCategoryEditor();
     });
@@ -1712,7 +1714,7 @@ function renderContractTile() {
   if (!finance || isCurrentUserGuest()) { body.innerHTML = ''; range.textContent = ''; return; }
   const list = vtDueList(finTodayIso());
   range.textContent = list.length ? (list.length === 1 ? '1 steht an' : list.length + ' stehen an') : '';
-  if (!list.length) { body.innerHTML = '<p class="text-sm text-ink/40 italic">Gerade steht keine Kündigungsfrist an.</p>'; return; }
+  if (!list.length) { body.innerHTML = ('<p class="text-sm text-ink/40 italic">' + escapeHtml(tk('contract.noCancellationDeadlineDue')) + '</p>'); return; }
   body.innerHTML = `<div class="ov-bday-list">${list.slice(0, 6).map(d => {
     const month = new Date(d.date + 'T00:00:00').toLocaleDateString('de-DE', { month: 'short' }).replace('.', '');
     return `
@@ -1783,7 +1785,7 @@ function vtOpenFromUrl() {
   document.getElementById('ccSent').addEventListener('change', () => updateContractCancelUi(false));
   document.getElementById('ccEffective').addEventListener('change', () => { vtCancelEffTouched = true; updateContractCancelUi(false); });
   document.getElementById('ccLetter').addEventListener('input', () => { vtLetterTouched = true; });
-  document.getElementById('ccCopyBtn').addEventListener('click', () => vtCopyText(vtVal('ccLetter'), 'Kündigungsschreiben kopiert.'));
+  document.getElementById('ccCopyBtn').addEventListener('click', () => vtCopyText(vtVal('ccLetter'), tk('contract.cancellationLetterCopied')));
   document.getElementById('ccMailBtn').addEventListener('click', mailContractCancel);
 
   // Categories

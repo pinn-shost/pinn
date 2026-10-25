@@ -1,101 +1,101 @@
 <!-- Savings: add / edit a position (ETF, share, derivative … or a classic savings goal) -->
 <div id="finGoalModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[320] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closeFinGoalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 id="finGoalTitle" class="font-serif text-lg mb-4 pr-6">Neue Position</h3>
+    <button id="closeFinGoalBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close" data-tk-attr="aria-label:common.close">×</button>
+    <h3 data-tk="depot.newPosition2" id="finGoalTitle" class="font-serif text-lg mb-4 pr-6">New position</h3>
 
     <div id="finGoalDepotWrap" class="mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finGoalDepot">Depot</label>
+      <label data-tk="depot.mainName" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finGoalDepot">Depot</label>
       <select id="finGoalDepot" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
     </div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finGoalKind">Art</label>
+    <label data-tk="contract.kind" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finGoalKind">Type</label>
     <select id="finGoalKind" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white mb-3"></select>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finGoalName">Name</label>
+    <label data-tk="common.name" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finGoalName">Name</label>
     <div class="flex items-center gap-2 mb-2">
-      <input id="finGoalIcon" type="text" maxlength="4" value="🎯" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="Symbol (Emoji)" />
-      <input id="finGoalColor" type="color" value="#2F9E5B" class="w-9 h-9 shrink-0 rounded-lg border border-ink/15 p-0.5 bg-white cursor-pointer" aria-label="Farbe" />
-      <input id="finGoalName" type="text" maxlength="40" autocomplete="off" placeholder="z. B. Urlaub, Notgroschen" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" />
+      <input id="finGoalIcon" type="text" maxlength="4" value="🎯" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="Icon (emoji)"  data-tk-attr="aria-label:fin.cat.symbol"/>
+      <input id="finGoalColor" type="color" value="#2F9E5B" class="w-9 h-9 shrink-0 rounded-lg border border-ink/15 p-0.5 bg-white cursor-pointer" aria-label="Colour"  data-tk-attr="aria-label:account.dashBg.color"/>
+      <input id="finGoalName" type="text" maxlength="40" autocomplete="off" placeholder="e.g. holiday, emergency fund" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base"  data-tk-attr="placeholder:depot.eGHolidayEmergency"/>
     </div>
     <div id="finGoalIconPicker" class="flex flex-wrap gap-1 mb-4"></div>
 
     <!-- Security (ETF, share, fund, derivative …): the value is calculated with current prices -->
     <div class="rounded-xl border border-ink/10 p-3 mb-4">
-      <p id="finGoalKindHint" class="text-xs text-ink/45">Einzahlungen werden zum Kurs am jeweiligen Tag in Anteile umgerechnet – so siehst du den aktuellen Wert samt Gewinn oder Verlust.</p>
+      <p data-tk="depot.depositsAreConvertedInto2" id="finGoalKindHint" class="text-xs text-ink/45">Deposits are converted into shares at the price of the respective day – so you see the current value including gain or loss.</p>
       <div id="finGoalEtfOpts" class="hidden mt-3">
         <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finGoalIsin">ISIN</label>
         <div class="flex items-center gap-2">
-          <input id="finGoalIsin" type="text" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="z. B. IE00B4L5Y983" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base font-mono uppercase tracking-wide" />
-          <button id="finGoalIsinCheck" type="button" class="shrink-0 px-3 py-2 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Kurs prüfen</button>
+          <input id="finGoalIsin" type="text" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. IE00B4L5Y983" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base font-mono uppercase tracking-wide"  data-tk-attr="placeholder:depot.eGIe00b4l5y983"/>
+          <button data-tk="depot.checkPrice" id="finGoalIsinCheck" type="button" class="shrink-0 px-3 py-2 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Check price</button>
         </div>
         <p id="finGoalIsinInfo" class="hidden text-xs mt-1.5"></p>
         <div id="finGoalImportBox" class="hidden mt-3 rounded-lg bg-ink/5 px-3 py-2">
           <p id="finGoalImportInfo" class="text-xs text-ink/60"></p>
-          <button id="finGoalImportClear" type="button" class="mt-1.5 text-xs text-red-500">Importierte Umsätze entfernen</button>
+          <button data-tk="depot.removeImportedTransactions" id="finGoalImportClear" type="button" class="mt-1.5 text-xs text-red-500">Remove imported transactions</button>
         </div>
-        <label id="finGoalSharesLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1 mt-3" for="finGoalShares">Anteile schon im Depot</label>
-        <input id="finGoalShares" type="text" inputmode="decimal" autocomplete="off" placeholder="optional, z. B. 12,345" class="w-full rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" />
+        <label data-tk="depot.sharesAlreadyDepot" id="finGoalSharesLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1 mt-3" for="finGoalShares">Shares already in the depot</label>
+        <input id="finGoalShares" type="text" inputmode="decimal" autocomplete="off" placeholder="optional, e.g. 12.345" class="w-full rounded-lg border border-ink/15 px-2.5 py-1.5 text-base"  data-tk-attr="placeholder:depot.optionalEG12"/>
       </div>
     </div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finGoalTarget">Zielbetrag</label>
+    <label data-tk="depot.targetAmount" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finGoalTarget">Target amount</label>
     <div class="fin-amount-field flex items-baseline gap-2 rounded-xl border border-ink/15 px-4 py-2.5 mb-3">
-      <input id="finGoalTarget" type="text" inputmode="decimal" autocomplete="off" placeholder="optional" class="flex-1 min-w-0 bg-transparent border-0 p-0 text-2xl font-semibold tracking-tight" />
+      <input id="finGoalTarget" type="text" inputmode="decimal" autocomplete="off" placeholder="optional" class="flex-1 min-w-0 bg-transparent border-0 p-0 text-2xl font-semibold tracking-tight"  data-tk-attr="placeholder:lists.item.notePlaceholder"/>
       <span class="cur-sym text-xl text-ink/40">€</span>
     </div>
 
     <div class="grid grid-cols-2 gap-3 mb-1">
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finGoalDate">Erreichen bis</label>
+        <label data-tk="depot.reachBy" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finGoalDate">Reach by</label>
         <input id="finGoalDate" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
       </div>
       <div class="min-w-0">
-        <label id="finGoalStartLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finGoalStart">Schon gespart</label>
+        <label data-tk="depot.alreadySaved" id="finGoalStartLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finGoalStart">Already saved</label>
         <div class="fin-amount-field flex items-center rounded-lg border border-ink/15 px-2.5 py-2">
           <input id="finGoalStart" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" data-cur-zero class="w-full min-w-0 bg-transparent border-0 p-0 text-sm text-right" />
           <span class="cur-sym text-xs text-ink/40 ml-1">€</span>
         </div>
       </div>
     </div>
-    <p id="finGoalStartHint" class="text-xs text-ink/45 mb-4">„Schon gespart“ ist Geld, das bereits vor pinn. für dieses Ziel zurückgelegt war. Alles Weitere buchst du über „Einzahlen“ bzw. in den Ausgaben unter der Kategorie „Sparen“.</p>
+    <p data-tk="depot.alreadySavedMoneyThat" id="finGoalStartHint" class="text-xs text-ink/45 mb-4">“Already saved” is money that was already put aside for this goal before pinn. You book everything else via “Deposit” or in the expenses under the category “Savings”.</p>
 
     <!-- Savings plan of this position: credited to the depot on the execution day and debited in the expenses (category "Sparen") -->
     <div class="rounded-xl border border-ink/10 p-3 mb-4">
       <div class="flex items-center justify-between gap-2 mb-2">
-        <span class="text-xs uppercase tracking-wide text-ink/40">🔁 Sparrate</span>
+        <span data-tk="depot.savingsPlan" class="text-xs uppercase tracking-wide text-ink/40">🔁 Savings plan</span>
         <span id="finGoalRateState" class="text-xs text-ink/45"></span>
       </div>
       <div class="grid grid-cols-2 gap-3">
         <div class="min-w-0">
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finGoalRateAmount">Betrag</label>
+          <label data-tk="depot.amount" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finGoalRateAmount">Amount</label>
           <div class="fin-amount-field flex items-center rounded-lg border border-ink/15 px-2.5 py-2">
-            <input id="finGoalRateAmount" type="text" inputmode="decimal" autocomplete="off" placeholder="keine" class="w-full min-w-0 bg-transparent border-0 p-0 text-sm text-right" />
+            <input id="finGoalRateAmount" type="text" inputmode="decimal" autocomplete="off" placeholder="None" class="w-full min-w-0 bg-transparent border-0 p-0 text-sm text-right"  data-tk-attr="placeholder:depot.none2"/>
             <span class="cur-sym text-xs text-ink/40 ml-1">€</span>
           </div>
         </div>
         <div class="min-w-0">
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finGoalRateInterval">Rhythmus</label>
+          <label data-tk="depot.rhythm" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finGoalRateInterval">Rhythm</label>
           <select id="finGoalRateInterval" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white">
-            <option value="weekly">Wöchentlich</option>
-            <option value="biweekly">Alle 2 Wochen</option>
-            <option value="monthly">Monatlich</option>
-            <option value="quarterly">Im Quartal</option>
-            <option value="yearly">Jährlich</option>
+            <option data-tk="fin.interval.weekly" value="weekly">weekly</option>
+            <option data-tk="fin.interval.biweekly" value="biweekly">Every 2 weeks</option>
+            <option data-tk="fin.interval.monthly" value="monthly">Monthly</option>
+            <option data-tk="fin.interval.quarterly" value="quarterly">Quarterly</option>
+            <option data-tk="fin.interval.yearly" value="yearly">Yearly</option>
           </select>
         </div>
       </div>
-      <label id="finGoalRateStartLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1 mt-3" for="finGoalRateStart">Erste Ausführung am</label>
+      <label data-tk="depot.firstExecution" id="finGoalRateStartLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1 mt-3" for="finGoalRateStart">First execution on</label>
       <input id="finGoalRateStart" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
       <p id="finGoalRateInfo" class="text-xs text-ink/45 mt-1.5"></p>
     </div>
 
     <p id="finGoalError" class="hidden text-xs text-red-500 mb-3"></p>
     <div class="flex items-center gap-2 flex-wrap">
-      <button id="deleteFinGoalBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Löschen</button>
+      <button data-tk="common.delete" id="deleteFinGoalBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Delete</button>
       <div class="flex-1"></div>
-      <button id="cancelFinGoalBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
-      <button id="saveFinGoalBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern</button>
+      <button data-tk="common.cancel" id="cancelFinGoalBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Cancel</button>
+      <button data-tk="common.save" id="saveFinGoalBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Save</button>
     </div>
   </div>
 </div>
@@ -103,42 +103,42 @@
 <!-- Savings: add / edit a depot / junior depot -->
 <div id="finDepotModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[320] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closeFinDepotBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 id="finDepotTitle" class="font-serif text-lg mb-4 pr-6">Neues Depot</h3>
+    <button id="closeFinDepotBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close" data-tk-attr="aria-label:common.close">×</button>
+    <h3 data-tk="depot.newDepot" id="finDepotTitle" class="font-serif text-lg mb-4 pr-6">New depot</h3>
 
-    <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs mb-4 w-full" role="tablist" aria-label="Art des Depots">
-      <button type="button" data-depot-type="depot" class="fin-depot-type-btn flex-1 px-4 py-1.5 rounded-full border border-transparent transition" role="tab">Depot</button>
-      <button type="button" id="finDepotTypeJuniorBtn" data-depot-type="junior" class="fin-depot-type-btn flex-1 px-4 py-1.5 rounded-full border border-transparent transition" role="tab">Junior-Depot</button>
+    <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs mb-4 w-full" role="tablist" aria-label="Type of depot" data-tk-attr="aria-label:depot.typeDepot">
+      <button data-tk="depot.mainName" type="button" data-depot-type="depot" class="fin-depot-type-btn flex-1 px-4 py-1.5 rounded-full border border-transparent transition" role="tab">Depot</button>
+      <button data-tk="depot.juniorDepot" type="button" id="finDepotTypeJuniorBtn" data-depot-type="junior" class="fin-depot-type-btn flex-1 px-4 py-1.5 rounded-full border border-transparent transition" role="tab">Junior depot</button>
     </div>
 
     <div id="finDepotKidWrap" class="hidden mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finDepotKid">Für</label>
+      <label data-tk="depot.text" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finDepotKid">for</label>
       <select id="finDepotKid" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
     </div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finDepotName">Name</label>
+    <label data-tk="common.name" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finDepotName">Name</label>
     <div class="flex items-center gap-2 mb-2">
-      <input id="finDepotIcon" type="text" maxlength="4" value="💼" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="Symbol (Emoji)" />
-      <input id="finDepotColor" type="color" value="#3D5A80" class="w-9 h-9 shrink-0 rounded-lg border border-ink/15 p-0.5 bg-white cursor-pointer" aria-label="Farbe" />
-      <input id="finDepotName" type="text" maxlength="40" autocomplete="off" placeholder="z. B. Mein Depot" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" />
+      <input id="finDepotIcon" type="text" maxlength="4" value="💼" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="Icon (emoji)"  data-tk-attr="aria-label:fin.cat.symbol"/>
+      <input id="finDepotColor" type="color" value="#3D5A80" class="w-9 h-9 shrink-0 rounded-lg border border-ink/15 p-0.5 bg-white cursor-pointer" aria-label="Colour"  data-tk-attr="aria-label:account.dashBg.color"/>
+      <input id="finDepotName" type="text" maxlength="40" autocomplete="off" placeholder="e.g. My depot" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base"  data-tk-attr="placeholder:depot.eGMyDepot"/>
     </div>
     <div id="finDepotIconPicker" class="flex flex-wrap gap-1 mb-4"></div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finDepotBank">Bank / Broker</label>
-    <input id="finDepotBank" type="text" maxlength="40" autocomplete="off" placeholder="optional, z. B. Trade Republic, ING" class="w-full rounded-lg border border-ink/15 px-2.5 py-1.5 text-base mb-4" />
+    <label data-tk="depot.bankBroker" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finDepotBank">Bank / broker</label>
+    <input id="finDepotBank" type="text" maxlength="40" autocomplete="off" placeholder="optional, e.g. Trade Republic, ING" class="w-full rounded-lg border border-ink/15 px-2.5 py-1.5 text-base mb-4"  data-tk-attr="placeholder:depot.optionalEGTrade"/>
 
     <label class="flex items-start gap-2 text-sm cursor-pointer select-none mb-1">
       <input id="finDepotIncluded" type="checkbox" class="w-4 h-4 mt-0.5 shrink-0" />
-      <span>In meiner Gesamtübersicht mitzählen</span>
+      <span data-tk="depot.countMyTotalOverview">Count in my total overview</span>
     </label>
-    <p class="text-xs text-ink/45 mb-4">Gilt nur für dein Profil – jedes Familienmitglied entscheidet selbst, welche Depots in seine Gesamtübersicht einfließen.</p>
+    <p data-tk="depot.appliesOnlyYourProfile2" class="text-xs text-ink/45 mb-4">Applies only to your profile – each family member decides which depots are included in their total overview.</p>
 
     <p id="finDepotError" class="hidden text-xs text-red-500 mb-3"></p>
     <div class="flex items-center gap-2 flex-wrap">
-      <button id="deleteFinDepotBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Löschen</button>
+      <button data-tk="common.delete" id="deleteFinDepotBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Delete</button>
       <div class="flex-1"></div>
-      <button id="cancelFinDepotBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
-      <button id="saveFinDepotBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern</button>
+      <button data-tk="common.cancel" id="cancelFinDepotBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Cancel</button>
+      <button data-tk="common.save" id="saveFinDepotBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Save</button>
     </div>
   </div>
 </div>
@@ -146,22 +146,22 @@
 <!-- Savings: import depot transactions from a CSV file -->
 <div id="finImportModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[320] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-2xl w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closeFinImportBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 class="font-serif text-lg mb-1 pr-6">Depot-Umsätze importieren</h3>
-    <p class="text-xs text-ink/50 mb-4">CSV-Export deiner Käufe, Sparplan-Ausführungen und Verkäufe – z. B. aus Trade Republic oder Portfolio Performance – oder die Depot-Umsätze der ING als PDF. Mehrere ETFs in einer Datei sind kein Problem. Zeilen ohne ISIN (etwa Einzahlungen aufs Konto) werden übersprungen, schon importierte Umsätze erkennt pinn. und legt sie nicht doppelt an.</p>
+    <button id="closeFinImportBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close" data-tk-attr="aria-label:common.close">×</button>
+    <h3 data-tk="depot.importDepotTransactions" class="font-serif text-lg mb-1 pr-6">Import depot transactions</h3>
+    <p data-tk="depot.csvExportYourPurchases" class="text-xs text-ink/50 mb-4">CSV export of your purchases, savings plan executions and sales – e.g. from Trade Republic or Portfolio Performance – or ING's depot transactions as PDF. Several ETFs in one file are no problem. Rows without ISIN (such as deposits to the account) are skipped; pinn. recognises transactions already imported and doesn't create them twice.</p>
     <div id="finImportDepotWrap" class="hidden mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finImportDepot">In Depot</label>
+      <label data-tk="depot.depot2" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finImportDepot">In depot</label>
       <select id="finImportDepot" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
     </div>
     <label class="flex items-center justify-center gap-2 w-full rounded-xl border-2 border-dashed border-ink/20 px-4 py-5 text-sm text-ink/60 hover:border-pine hover:text-pine transition cursor-pointer">
       <input id="finImportFile" type="file" accept=".csv,.txt,.tsv,.pdf,text/csv,text/plain,text/comma-separated-values,application/pdf" class="hidden" />
-      <span aria-hidden="true">📄</span><span id="finImportFileLabel" class="truncate">CSV- oder PDF-Datei auswählen</span>
+      <span aria-hidden="true">📄</span><span data-tk="depot.selectCsvPdfFile" id="finImportFileLabel" class="truncate">Select CSV or PDF file</span>
     </label>
     <p id="finImportError" class="hidden text-xs text-red-500 mt-3"></p>
     <div id="finImportBody" class="hidden mt-4"></div>
     <div class="flex items-center justify-end gap-2 mt-5 pt-4 border-t border-ink/10">
-      <button id="cancelFinImportBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
-      <button id="saveFinImportBtn" type="button" disabled class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition disabled:opacity-40">Importieren</button>
+      <button data-tk="common.cancel" id="cancelFinImportBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Cancel</button>
+      <button data-tk="depot.import" id="saveFinImportBtn" type="button" disabled class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition disabled:opacity-40">Import</button>
     </div>
   </div>
 </div>
@@ -169,15 +169,15 @@
 <!-- Pocket money: amount, rhythm, balance per child -->
 <div id="finAllowanceModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[320] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closeFinAllowanceBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 id="finAllowanceTitle" class="font-serif text-lg mb-4 pr-6">Taschengeld</h3>
+    <button id="closeFinAllowanceBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close" data-tk-attr="aria-label:common.close">×</button>
+    <h3 data-tk="depot.pocketMoney" id="finAllowanceTitle" class="font-serif text-lg mb-4 pr-6">Pocket money</h3>
 
     <div id="finAllowanceKidWrap" class="mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finAllowanceKidSelect">Für</label>
+      <label data-tk="depot.text" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finAllowanceKidSelect">for</label>
       <select id="finAllowanceKidSelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
     </div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finAllowanceAmount">Betrag</label>
+    <label data-tk="depot.amount" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finAllowanceAmount">Amount</label>
     <div class="fin-amount-field flex items-baseline gap-2 rounded-xl border border-ink/15 px-4 py-2.5 mb-3">
       <input id="finAllowanceAmount" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" data-cur-zero class="flex-1 min-w-0 bg-transparent border-0 p-0 text-3xl font-semibold tracking-tight" />
       <span class="cur-sym text-2xl text-ink/40">€</span>
@@ -185,40 +185,40 @@
 
     <div class="grid grid-cols-2 gap-3 mb-2">
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finAllowanceInterval">Rhythmus</label>
+        <label data-tk="depot.rhythm" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finAllowanceInterval">Rhythm</label>
         <select id="finAllowanceInterval" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white">
-          <option value="weekly">Wöchentlich</option>
-          <option value="biweekly">Alle 2 Wochen</option>
-          <option value="monthly">Monatlich</option>
-          <option value="quarterly">Im Quartal</option>
-          <option value="yearly">Jährlich</option>
+          <option data-tk="fin.interval.weekly" value="weekly">weekly</option>
+          <option data-tk="fin.interval.biweekly" value="biweekly">Every 2 weeks</option>
+          <option data-tk="fin.interval.monthly" value="monthly">Monthly</option>
+          <option data-tk="fin.interval.quarterly" value="quarterly">Quarterly</option>
+          <option data-tk="fin.interval.yearly" value="yearly">Yearly</option>
         </select>
       </div>
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finAllowanceStart">Erste Auszahlung</label>
+        <label data-tk="depot.firstPayout" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finAllowanceStart">First payout</label>
         <input id="finAllowanceStart" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
       </div>
     </div>
     <p id="finAllowanceInfo" class="text-xs text-pine mb-3"></p>
 
     <div class="fin-paidby-wrap mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finAllowancePaidBy">Zahlt</label>
+      <label data-tk="depot.pays" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finAllowancePaidBy">Pays</label>
       <select id="finAllowancePaidBy" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
     </div>
 
     <div class="rounded-xl border border-ink/10 p-3 mb-3">
       <label class="flex items-center gap-2 text-sm cursor-pointer select-none">
         <input id="finAllowanceTrack" type="checkbox" class="w-4 h-4" />
-        <span>Guthaben mitführen 👛</span>
+        <span data-tk="depot.trackBalance">Track balance 👛</span>
       </label>
-      <p class="text-xs text-ink/45 mt-1">pinn. zählt jede Auszahlung automatisch dazu. Was das Kind ausgibt oder geschenkt bekommt, trägst du auf der Taschengeld-Seite über „Ausgegeben“ bzw. „Bekommen“ ein.</p>
+      <p data-tk="depot.pinnAddsEveryPayout" class="text-xs text-ink/45 mt-1">pinn. adds every payout automatically. What the child spends or receives as a gift, you enter on the pocket money page via “Spent” or “Received”.</p>
       <div id="finAllowanceTrackOpts" class="hidden grid grid-cols-2 gap-3 mt-3">
         <div class="min-w-0">
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finAllowanceTrackStart">Stand am</label>
+          <label data-tk="depot.as" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finAllowanceTrackStart">As of</label>
           <input id="finAllowanceTrackStart" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
         </div>
         <div class="min-w-0">
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finAllowanceTrackBalance">Guthaben</label>
+          <label data-tk="depot.balance2" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finAllowanceTrackBalance">Balance</label>
           <div class="fin-amount-field flex items-center rounded-lg border border-ink/15 px-2.5 py-2">
             <input id="finAllowanceTrackBalance" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" data-cur-zero class="w-full min-w-0 bg-transparent border-0 p-0 text-sm text-right" />
             <span class="cur-sym text-xs text-ink/40 ml-1">€</span>
@@ -230,18 +230,18 @@
     <div class="rounded-xl border border-ink/10 p-3 mb-4">
       <label id="finAllowanceShowWrap" class="flex items-center gap-2 text-sm cursor-pointer select-none">
         <input id="finAllowanceShowKid" type="checkbox" class="w-4 h-4" />
-        <span>Auf der Kinderseite anzeigen 🐷</span>
+        <span data-tk="depot.showKidsPage">Show on the kids' page 🐷</span>
       </label>
       <p id="finAllowanceShowHint" class="text-xs text-ink/45 mt-1"></p>
     </div>
 
     <p id="finAllowanceError" class="hidden text-xs text-red-500 mb-3"></p>
     <div class="flex items-center gap-2 flex-wrap">
-      <button id="deleteFinAllowanceBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Löschen</button>
-      <button id="endFinAllowanceBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Beenden</button>
+      <button data-tk="common.delete" id="deleteFinAllowanceBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Delete</button>
+      <button data-tk="fin.end" id="endFinAllowanceBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">End</button>
       <div class="flex-1"></div>
-      <button id="cancelFinAllowanceBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
-      <button id="saveFinAllowanceBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern</button>
+      <button data-tk="common.cancel" id="cancelFinAllowanceBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Cancel</button>
+      <button data-tk="common.save" id="saveFinAllowanceBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Save</button>
     </div>
   </div>
 </div>
@@ -249,28 +249,28 @@
 <!-- Pocket money balance: the child has spent or received money -->
 <div id="finPocketModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[330] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-sm w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closeFinPocketBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 id="finPocketTitle" class="font-serif text-lg mb-3 pr-6">Guthaben</h3>
+    <button id="closeFinPocketBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close" data-tk-attr="aria-label:common.close">×</button>
+    <h3 data-tk="depot.balance2" id="finPocketTitle" class="font-serif text-lg mb-3 pr-6">Balance</h3>
     <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-4">
-      <button type="button" data-kind="out" class="fin-pocket-kind-btn px-4 py-1.5 rounded-full transition">Ausgegeben</button>
-      <button type="button" data-kind="in" class="fin-pocket-kind-btn px-4 py-1.5 rounded-full transition">Bekommen</button>
+      <button data-tk="fin.stat.spent" type="button" data-kind="out" class="fin-pocket-kind-btn px-4 py-1.5 rounded-full transition">Spent</button>
+      <button data-tk="depot.received" type="button" data-kind="in" class="fin-pocket-kind-btn px-4 py-1.5 rounded-full transition">Received</button>
     </div>
     <div class="fin-amount-field flex items-baseline gap-2 rounded-xl border border-ink/15 px-4 py-2.5 mb-3">
       <input id="finPocketAmount" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" data-cur-zero class="flex-1 min-w-0 bg-transparent border-0 p-0 text-3xl font-semibold tracking-tight" />
       <span class="cur-sym text-2xl text-ink/40">€</span>
     </div>
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finPocketNote">Wofür / von wem</label>
-    <input id="finPocketNote" type="text" maxlength="120" autocomplete="off" placeholder="z. B. Eis, Geburtstagsgeld von Oma" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finPocketDate">Datum</label>
+    <label data-tk="depot.whatFromWhom" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finPocketNote">For what / from whom</label>
+    <input id="finPocketNote" type="text" maxlength="120" autocomplete="off" placeholder="e.g. ice cream, birthday money from Grandma" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3"  data-tk-attr="placeholder:depot.eGIceCream"/>
+    <label data-tk="fin.csv.date" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="finPocketDate">Date</label>
     <input id="finPocketDate" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm mb-3" />
     <label id="finPocketBookWrap" class="hidden flex items-start gap-2 text-sm cursor-pointer select-none mb-3">
       <input id="finPocketBook" type="checkbox" class="w-4 h-4 mt-0.5" />
-      <span>Von uns bezahlt – zusätzlich als Ausgabe unter „Kinder“ buchen (z. B. Extra-Taschengeld)</span>
+      <span data-tk="depot.paidByUsAdditionally">Paid by us – additionally book as an expense under “Children” (e.g. extra pocket money)</span>
     </label>
     <p id="finPocketError" class="hidden text-xs text-red-500 mb-3"></p>
     <div class="flex items-center justify-end gap-2">
-      <button id="cancelFinPocketBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
-      <button id="saveFinPocketBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Eintragen</button>
+      <button data-tk="common.cancel" id="cancelFinPocketBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Cancel</button>
+      <button data-tk="fund.enter" id="saveFinPocketBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Enter</button>
     </div>
   </div>
 </div>

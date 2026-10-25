@@ -48,17 +48,21 @@ const FIN_GOAL_ICONS = ['🎯', '📈', '🏢', '🎲', '🏖️', '✈️', '�
 // Kinds of positions: everything except „Sparziel“ (savings goal) has an ISIN and therefore a price
 const FIN_GOAL_KINDS = [
   { id: 'etf', label: 'ETF', icon: '📈' },
-  { id: 'aktie', label: 'Aktie', icon: '🏢' },
-  { id: 'fonds', label: 'Fonds', icon: '🧺' },
-  { id: 'derivat', label: 'Derivat / Zertifikat', icon: '🎲' },
-  { id: 'anleihe', label: 'Anleihe', icon: '📜' },
-  { id: 'wertpapier', label: 'Sonstiges Wertpapier', icon: '📄' },
-  { id: 'ziel', label: 'Sparziel (ohne Kurs)', icon: '🎯' },
+  { id: 'aktie', get label() { return tk('depot.kind.share'); }, icon: '🏢' },
+  { id: 'fonds', get label() { return tk('depot.kind.fund'); }, icon: '🧺' },
+  { id: 'derivat', get label() { return tk('depot.kind.derivative'); }, icon: '🎲' },
+  { id: 'anleihe', get label() { return tk('depot.kind.bond'); }, icon: '📜' },
+  { id: 'wertpapier', get label() { return tk('depot.kind.other'); }, icon: '📄' },
+  { id: 'ziel', get label() { return tk('depot.kind.goal'); }, icon: '🎯' },
 ];
 const FIN_DEPOT_ICONS = ['💼', '🏦', '📈', '💰', '🐷', '🌱', '🧒', '👧', '👦', '🐣', '🎓', '🛟', '🏠', '⭐'];
 const FIN_DEPOT_COLORS = ['#3D5A80', '#2F9E5B', '#E07A5F', '#8E6BBF', '#2A9D8F', '#D4A017', '#C0567A', '#4A6FA5'];
 const FIN_GOAL_COLORS = ['#2F9E5B', '#3D5A80', '#E07A5F', '#D4A017', '#8E6BBF', '#2A9D8F', '#C0567A', '#4A6FA5'];
-const FIN_KID_RHYTHM = { weekly: 'jede Woche', biweekly: 'alle 2 Wochen', monthly: 'jeden Monat', quarterly: 'alle 3 Monate', yearly: 'jedes Jahr' };
+const FIN_KID_RHYTHM = {
+  get weekly() { return tk('pocket.rhythm.weekly'); }, get biweekly() { return tk('pocket.rhythm.biweekly'); },
+  get monthly() { return tk('pocket.rhythm.monthly'); }, get quarterly() { return tk('pocket.rhythm.quarterly'); },
+  get yearly() { return tk('pocket.rhythm.yearly'); },
+};
 const finOpenKidMoves = new Set(); // expanded „Letzte Bewegungen“ (latest movements) per child
 
 function finRound(v) { return Math.round((Number(v) || 0) * 100) / 100; }
@@ -73,9 +77,9 @@ function finLinkLabel(link) {
   if (l.type === 'spar') {
     const g = finGoal(l.id);
     if (!g) return '';
-    const name = (g.icon ? g.icon + ' ' : '') + (g.name || 'Position');
+    const name = (g.icon ? g.icon + ' ' : '') + (g.name || tk('depot.position'));
     const d = finDepots().length > 1 ? finDepot(finGoalDepotId(g)) : null;
-    return d ? name + ' · ' + (d.name || 'Depot') : name;
+    return d ? name + ' · ' + (d.name || tk('depot.mainName')) : name;
   }
   if (l.type === 'depot') {
     const d = finDepot(l.id);
@@ -83,7 +87,7 @@ function finLinkLabel(link) {
   }
   if (l.type === 'fahrzeug') return fzLinkLabel(l.id);
   const m = memberById(l.id);
-  return m ? 'für ' + memberLabel(m) : '';
+  return m ? tk('depot.forName', { name: memberLabel(m) }) : '';
 }
 
 /* ---------- Savings: depots ----------
@@ -111,14 +115,14 @@ function finLinkDepotId(link) {
 function finDepotIncluded(id) { return !finDepotsOut.includes(id); }
 function finIncludedDepotIds() { return finDepots().filter(d => finDepotIncluded(d.id)).map(d => d.id); }
 function finDepotColor(d) { return d && /^#[0-9a-fA-F]{6}$/.test(d.color || '') ? d.color : '#3D5A80'; }
-function finDepotLabel(d) { return d ? (d.icon ? d.icon + ' ' : '') + (d.name || 'Depot') : ''; }
+function finDepotLabel(d) { return d ? (d.icon ? d.icon + ' ' : '') + (d.name || tk('depot.mainName')) : ''; }
 function finDepotSub(d) {
   if (!d) return '';
   const parts = [];
   if (d.type === 'junior') {
     const m = d.kid ? memberById(d.kid) : null;
-    parts.push('Junior-Depot' + (m ? ' · für ' + memberLabel(m) : ''));
-  } else parts.push('Depot');
+    parts.push(tk('depot.juniorDepot') + (m ? ' · ' + tk('depot.forName', { name: memberLabel(m) }) : ''));
+  } else parts.push(tk('depot.mainName'));
   if (d.bank) parts.push(d.bank);
   return parts.join(' · ');
 }
@@ -142,7 +146,7 @@ function finGoalKind(g) {
 function finKindInfo(kind) { return FIN_GOAL_KINDS.find(k => k.id === kind) || FIN_GOAL_KINDS[0]; }
 function finGoalOptionLabel(g) {
   const kind = finGoalKind(g);
-  return (g.icon ? g.icon + ' ' : '') + (g.name || 'Position') + (kind !== 'ziel' ? ' · ' + finKindInfo(kind).label : '');
+  return (g.icon ? g.icon + ' ' : '') + (g.name || tk('depot.position')) + (kind !== 'ziel' ? ' · ' + finKindInfo(kind).label : '');
 }
 function finSignedEur(v) {
   const r = finRound(v);
@@ -204,7 +208,7 @@ function finSavingsEntries(toIso = finTodayIso()) {
     out.push({
       id: t.id, trade: true, date: t.date, category: FIN_SAVINGS_CATEGORY, link: 'spar:' + t.goal,
       amount: sign * (Number(t.amount) || 0), shares: Number(t.shares) > 0 ? sign * Number(t.shares) : null,
-      title: t.type === 'sell' ? 'Verkauf (Import)' : 'Kauf (Import)', created: '',
+      title: t.type === 'sell' ? tk('depot.saleImport') : tk('depot.purchaseImport'), created: '',
     });
   });
   return out;
@@ -301,23 +305,23 @@ function finValueTimeline(ov, maxPoints = 48) {
 function finGoalForecast(x) {
   const g = x.goal;
   const target = Number(g.target) || 0;
-  if (!target) return (x.rate > 0 && !finGoalRatePlans(g.id).length) ? `Sparrate ≈ ${fmtEur0(x.rate)} pro Monat` : '';
+  if (!target) return (x.rate > 0 && !finGoalRatePlans(g.id).length) ? tk('depot.savingsPlanPerMonth', { amount: fmtEur0(x.rate) }) : '';
   const rest = finRound(target - x.balance);
-  if (rest <= 0) return 'Ziel erreicht 🎉';
-  const parts = [`noch ${fmtEur(rest)}`];
+  if (rest <= 0) return tk('depot.goalReached');
+  const parts = [tk('depot.goalLeft', { amount: fmtEur(rest) })];
   const todayIso = finTodayIso();
   if (g.targetDate && g.targetDate > todayIso) {
     const need = rest / finMonthsUntil(g.targetDate);
     const until = new Date(g.targetDate + 'T00:00:00').toLocaleDateString('de-DE', { month: 'short', year: 'numeric' });
-    parts.push(`${fmtEur0(Math.ceil(need))}/Monat bis ${until}`);
+    parts.push(tk('depot.monthUntil', { amount: fmtEur0(Math.ceil(need)), until }));
   } else if (g.targetDate) {
-    parts.push('Zieldatum vorbei');
+    parts.push(tk('depot.targetDatePassed'));
   }
   if (x.rate > 0) {
     const d = new Date();
     d.setDate(1);
     d.setMonth(d.getMonth() + Math.ceil(rest / x.rate));
-    parts.push(`bei ${fmtEur0(x.rate)}/Monat ca. ${d.toLocaleDateString('de-DE', { month: 'short', year: 'numeric' })}`);
+    parts.push(tk('depot.atMonthApprox', { amount: fmtEur0(x.rate), date: d.toLocaleDateString('de-DE', { month: 'short', year: 'numeric' }) }));
   }
   return parts.join(' · ');
 }
@@ -467,7 +471,7 @@ function finEtfChartSvg(points, heightPx = 150) {
   const last = points[points.length - 1];
   const color = last.value >= last.invested ? FIN_GREEN : FIN_RED;
   return `
-    <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" class="block w-full" style="height:${heightPx}px" role="img" aria-label="Wert und Einzahlungen über die Zeit">
+    <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" class="block w-full" style="height:${heightPx}px" role="img" aria-label="${escapeHtml(tk('depot.valueDepositsOverTime'))}">
       <path d="${line('value')} L${W} ${H} L0 ${H} Z" fill="${color}" fill-opacity="0.12"></path>
       <path d="${line('invested')}" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" stroke-dasharray="5 4" vector-effect="non-scaling-stroke"></path>
       <path d="${line('value')}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
@@ -510,7 +514,7 @@ async function loadEtfQuotes(force = false, onlyIsins = null) {
     finQuotesError = '';
     finQuotesSave();
   } catch (err) {
-    finQuotesError = (err instanceof TypeError || err.retry) ? 'Keine Verbindung zum Server – zuletzt bekannte Kurse.' : err.message;
+    finQuotesError = (err instanceof TypeError || err.retry) ? tk('depot.noConnectionServerLast') : err.message;
   } finally {
     finQuotesLoading = false;
     finQuotesLastLoad = Date.now();
@@ -532,7 +536,7 @@ function finEtfDepotHtml(ov) {
   const chartSlots = finEtfChartSel === 'all' ? slots : slots.filter(x => x.goal.id === finEtfChartSel);
   const points = finEtfTimeline(chartSlots);
   const chips = slots.length > 1 ? `<div class="flex flex-wrap gap-1.5 mt-4">
-      <button type="button" class="fin-etf-chip px-2.5 py-1 rounded-full border border-ink/15 text-xs ${finEtfChartSel === 'all' ? 'active' : ''}" data-sel="all">Alle</button>
+      <button type="button" class="fin-etf-chip px-2.5 py-1 rounded-full border border-ink/15 text-xs ${finEtfChartSel === 'all' ? 'active' : ''}" data-sel="all">${escapeHtml(tk('errorLog.all'))}</button>
       ${slots.map(x => `<button type="button" class="fin-etf-chip px-2.5 py-1 rounded-full border border-ink/15 text-xs ${finEtfChartSel === x.goal.id ? 'active' : ''}" data-sel="${escapeHtml(x.goal.id)}">${escapeHtml((x.goal.icon ? x.goal.icon + ' ' : '') + (x.goal.name || x.goal.isin))}</button>`).join('')}
     </div>` : '';
   const firstDate = points.length ? new Date(points[0].date + 'T00:00:00').toLocaleDateString('de-DE', { month: 'short', year: 'numeric' }) : '';
@@ -540,21 +544,21 @@ function finEtfDepotHtml(ov) {
     <div class="mt-3 text-ink">${finEtfChartSvg(points)}</div>
     <div class="flex justify-between text-[10px] text-ink/40 mt-1"><span>${escapeHtml(firstDate)}</span><span>heute</span></div>
     <div class="flex items-center gap-4 mt-2 text-[11px] text-ink/50">
-      <span class="inline-flex items-center gap-1.5"><span class="w-3 h-0.5 rounded" style="background:${points[points.length - 1].value >= points[points.length - 1].invested ? FIN_GREEN : FIN_RED}"></span>Wert</span>
-      <span class="inline-flex items-center gap-1.5"><span class="w-3 border-t-2 border-dashed border-ink/40"></span>Eingezahlt</span>
+      <span class="inline-flex items-center gap-1.5"><span class="w-3 h-0.5 rounded" style="background:${points[points.length - 1].value >= points[points.length - 1].invested ? FIN_GREEN : FIN_RED}"></span>${escapeHtml(tk('depot.value'))}</span>
+      <span class="inline-flex items-center gap-1.5"><span class="w-3 border-t-2 border-dashed border-ink/40"></span>${escapeHtml(tk('depot.paid'))}</span>
     </div>`
-    : '<p class="text-xs text-ink/45 mt-3">Der Verlauf erscheint, sobald Einzahlungen über mehr als einen Tag vorliegen.</p>';
+    : ('<p class="text-xs text-ink/45 mt-3">' + escapeHtml(tk('depot.historyAppearsAsSoon')) + '</p>');
   const rows = slots.map(x => {
     const g = x.goal, st = x.etf, q = st.q;
     const color = /^#[0-9a-fA-F]{6}$/.test(g.color || '') ? g.color : FIN_GREEN;
-    let sub = `${escapeHtml(finKindInfo(finGoalKind(g)).label)} · ${escapeHtml(g.isin)} · ${finFmtShares(st.shares)} Anteile`;
+    let sub = `${escapeHtml(finKindInfo(finGoalKind(g)).label)} · ${escapeHtml(g.isin)} · ${escapeHtml(tk('depot.sharesN', { n: finFmtShares(st.shares) }))}`;
     if (st.hasPrice) {
-      sub += ` · Kurs ${fmtEur(st.price)}`;
+      sub += ` ${tk('depot.price', { amount: fmtEur(st.price) })}`;
       if (st.dayPct !== null) sub += ` <span style="color:${st.dayPct >= 0 ? FIN_GREEN : FIN_RED}">${st.dayPct >= 0 ? '▲' : '▼'} ${finFmtPct(st.dayPct).replace(/^[+−]/, '')}</span>`;
     }
-    const warn = !st.hasPrice ? `<span class="block text-[11px]" style="color:${FIN_RED}">Kein Kurs verfügbar – Wert zum Einstand${q && q.error ? ' (' + escapeHtml(q.error.slice(0, 80)) + ')' : ''}</span>`
-      : (q && q.currency && q.currency !== 'EUR') ? `<span class="block text-[11px] text-mustard">Kurs in ${escapeHtml(q.currency)} – nicht in Euro umgerechnet</span>` : '';
-    const imported = g.importedUntil ? `<span class="block text-[11px] text-ink/40 truncate">⤓ Import bis ${escapeHtml(new Date(g.importedUntil + 'T00:00:00').toLocaleDateString('de-DE'))} · danach zählen die Sparraten aus den Ausgaben</span>` : '';
+    const warn = !st.hasPrice ? `<span class="block text-[11px]" style="color:${FIN_RED}">${escapeHtml(tk('depot.noPriceAtCost'))}${q && q.error ? ' (' + escapeHtml(q.error.slice(0, 80)) + ')' : ''}</span>`
+      : (q && q.currency && q.currency !== 'EUR') ? `<span class="block text-[11px] text-mustard">${escapeHtml(tk('depot.priceNotConvertedEuros', { v: q.currency }))}</span>` : '';
+    const imported = g.importedUntil ? `<span class="block text-[11px] text-ink/40 truncate">${escapeHtml(tk('depot.importUntilAfterwardsSavings', { date: new Date(g.importedUntil + 'T00:00:00').toLocaleDateString('de-DE') }))}</span>` : '';
     return `
       <button type="button" class="fin-etf-row w-full flex items-center gap-3 py-2.5 border-t border-ink/10 first:border-t-0 text-left" data-goal="${escapeHtml(g.id)}">
         <span class="shrink-0 w-10 h-10 rounded-full grid place-items-center text-xl" style="background:${color}22">${escapeHtml(g.icon || '📈')}</span>
@@ -574,25 +578,25 @@ function finEtfDepotHtml(ov) {
   const priceDates = slots.map(x => x.etf.q && x.etf.q.priceDate).filter(Boolean).sort();
   const stand = fetched
     ? `Kurse abgerufen ${new Date(fetched).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}${priceDates.length ? ' (Kursdatum ' + new Date(priceDates[0] + 'T00:00:00').toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }) + ')' : ''}`
-    : 'Noch keine Kurse geladen';
+    : tk('depot.noPricesLoadedYet');
   return `
     <div class="rounded-2xl bg-white border border-ink/10 shadow-sm p-4 sm:p-5">
       <div class="flex items-start justify-between gap-3">
         <div class="min-w-0">
-          <div class="text-[11px] uppercase tracking-wide text-ink/40">📈 Wertpapiere</div>
+          <div class="text-[11px] uppercase tracking-wide text-ink/40">${escapeHtml(tk('depot.securities'))}</div>
           <div class="font-serif text-3xl">${fmtEur(tot.value)}</div>
-          <div class="text-xs text-ink/50 mt-0.5">Eingezahlt ${fmtEur(tot.invested)} · <b style="color:${gColor}">${finSignedEur(gain)}${tot.invested > 0 ? ' (' + finFmtPct(gainPct) + ')' : ''}</b></div>
+          <div class="text-xs text-ink/50 mt-0.5">${escapeHtml(tk('depot.paidIn', { amount: fmtEur(tot.invested) }))} · <b style="color:${gColor}">${finSignedEur(gain)}${tot.invested > 0 ? ' (' + finFmtPct(gainPct) + ')' : ''}</b></div>
         </div>
         <div class="shrink-0 flex items-center gap-2">
-        <button type="button" id="finEtfImport" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center text-base leading-none" aria-label="Umsätze importieren" title="Umsätze importieren">⤓</button>
-        <button type="button" id="finEtfRefresh" class="shrink-0 w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center text-lg leading-none" aria-label="Kurse aktualisieren" title="Kurse aktualisieren">${finQuotesLoading ? '<span class="fin-etf-spin">↻</span>' : '↻'}</button>
+        <button type="button" id="finEtfImport" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center text-base leading-none" aria-label="${escapeHtml(tk('depot.importTransactions'))}" title="${escapeHtml(tk('depot.importTransactions'))}">⤓</button>
+        <button type="button" id="finEtfRefresh" class="shrink-0 w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center text-lg leading-none" aria-label="${escapeHtml(tk('depot.updatePrices'))}" title="${escapeHtml(tk('depot.updatePrices'))}">${finQuotesLoading ? '<span class="fin-etf-spin">↻</span>' : '↻'}</button>
         </div>
       </div>
       ${chips}
       ${chart}
       <div class="mt-3">${rows}</div>
       ${finQuotesError ? `<p class="text-xs mt-2" style="color:${FIN_RED}">${escapeHtml(finQuotesError)}</p>` : ''}
-      <p class="text-[11px] text-ink/40 mt-2">${escapeHtml(stand)}. Importierte Umsätze zählen mit ihren echten Anteilen, jede andere Einzahlung wird zum Schlusskurs ihres Tages in Anteile umgerechnet (ohne Ordergebühren und Steuern). Kurse ohne Gewähr (justETF / Yahoo Finance).</p>
+      <p class="text-[11px] text-ink/40 mt-2">${escapeHtml(stand)}. ${escapeHtml(tk('depot.priceNote'))}</p>
     </div>`;
 }
 function finWireEtfDepot(pane) {
@@ -615,14 +619,14 @@ function finWireEtfDepot(pane) {
    expenses (e.g. the monthly savings instalment) only count for this goal after that day - so nothing is
    counted twice and future purchases simply continue via the savings instalment. */
 const FIN_IMPORT_FIELDS = [
-  { id: 'date', label: 'Datum', re: /^(datum|date|buchungstag|buchungsdatum|handelstag|handelsdatum|ausf(ü|ue)hrungs(tag|datum)|schlusstag|valuta|zeit|time|timestamp|ausf(ü|ue)hrung)/ },
+  { id: 'date', label: tk('fin.date'), re: /^(datum|date|buchungstag|buchungsdatum|handelstag|handelsdatum|ausf(ü|ue)hrungs(tag|datum)|schlusstag|valuta|zeit|time|timestamp|ausf(ü|ue)hrung)/ },
   { id: 'isin', label: 'ISIN', re: /isin/ },
-  { id: 'shares', label: 'Anteile', re: /(st(ü|ue)ck|anzahl|anteile|shares|quantity|menge|nominal)/ },
-  { id: 'amount', label: 'Betrag', re: /(betrag|value|amount|kurswert|gesamt|total|summe|umsatz|^wert$|endbetrag|investiert)/ },
-  { id: 'fee', label: 'Gebühren', re: /(geb(ü|ue)hr|fee|provision|entgelt|kosten|commission)/ },
-  { id: 'price', label: 'Kurs', re: /(kurs|preis|price)/ },
-  { id: 'type', label: 'Art', re: /(typ|type|^art|gesch(ä|ae)ftsart|buchungsart|transaktion|vorgang|kategorie|category|richtung|action)/ },
-  { id: 'name', label: 'Name', re: /(name|wertpapier|bezeichnung|instrument|titel|security|asset|beschreibung|description|note|notiz|verwendungszweck)/ },
+  { id: 'shares', label: tk('depot.shares'), re: /(st(ü|ue)ck|anzahl|anteile|shares|quantity|menge|nominal)/ },
+  { id: 'amount', label: tk('depot.amount'), re: /(betrag|value|amount|kurswert|gesamt|total|summe|umsatz|^wert$|endbetrag|investiert)/ },
+  { id: 'fee', label: tk('depot.fees'), re: /(geb(ü|ue)hr|fee|provision|entgelt|kosten|commission)/ },
+  { id: 'price', label: tk('depot.price2'), re: /(kurs|preis|price)/ },
+  { id: 'type', label: tk('contract.kind'), re: /(typ|type|^art|gesch(ä|ae)ftsart|buchungsart|transaktion|vorgang|kategorie|category|richtung|action)/ },
+  { id: 'name', label: tk('common.name'), re: /(name|wertpapier|bezeichnung|instrument|titel|security|asset|beschreibung|description|note|notiz|verwendungszweck)/ },
 ];
 let finImport = null;
 
@@ -881,7 +885,7 @@ function finPdfLinesToRows(lines) {
   if (cur) records.push(cur);
 
   // 2) Evaluate every transaction
-  const rows = [['Datum', 'ISIN', 'Art', 'Stück', 'Kurs', 'Betrag', 'Name']];
+  const rows = [[tk('fin.date'), 'ISIN', tk('contract.kind'), tk('pantry.item.unitPlaceholder'), tk('depot.price2'), tk('depot.amount'), tk('common.name')]];
   const numRe = () => new RegExp('(' + FIN_PDF_NUM + ')', 'g');
   records.forEach(rec => {
     const text = rec.lines.join(' ');
@@ -919,8 +923,8 @@ function finPdfLinesToRows(lines) {
       const cand = eur.filter(v => v !== amount).sort((a, b) => Math.abs(a - target) - Math.abs(b - target))[0];
       if (cand && Math.abs(cand - target) / target < 0.1) price = cand;
     }
-    let type = typeM ? typeM[0] : 'Kauf';
-    if (/thesaurierung/i.test(type)) type = 'Thesaurierung (Steuer)';
+    let type = typeM ? typeM[0] : tk('depot.purchase');
+    if (/thesaurierung/i.test(type)) type = tk('depot.accumulationTax');
     const name = (sectionName || text
       .replace(new RegExp(FIN_PDF_DATE_RE.source, 'g'), ' ')
       .replace(new RegExp(isin, 'gi'), ' ')
@@ -967,7 +971,7 @@ function openImportModal(depotId = null) {
   finImportFillDepotSelect();
   finImport = null;
   document.getElementById('finImportFile').value = '';
-  document.getElementById('finImportFileLabel').textContent = 'CSV- oder PDF-Datei auswählen';
+  document.getElementById('finImportFileLabel').textContent = tk('depot.selectCsvPdfFile');
   document.getElementById('finImportError').classList.add('hidden');
   document.getElementById('finImportBody').classList.add('hidden');
   document.getElementById('finImportBody').innerHTML = '';
@@ -982,24 +986,24 @@ async function finImportReadFile(file) {
   const errEl = document.getElementById('finImportError');
   errEl.classList.add('hidden');
   if (!file) return;
-  if (file.size > 5 * 1024 * 1024) { errEl.textContent = 'Die Datei ist zu groß (höchstens 5 MB).'; errEl.classList.remove('hidden'); return; }
+  if (file.size > 5 * 1024 * 1024) { errEl.textContent = tk('depot.fileTooLargeMax'); errEl.classList.remove('hidden'); return; }
   if (/\.pdf$/i.test(file.name) || file.type === 'application/pdf') {
     const labelEl = document.getElementById('finImportFileLabel');
-    labelEl.textContent = file.name + ' – wird gelesen …';
+    labelEl.textContent = tk('depot.fileReading', { name: file.name });
     let rows = [];
     try {
       rows = finPdfLinesToRows(await finPdfToLines(await file.arrayBuffer()));
     } catch (err) {
-      labelEl.textContent = 'CSV- oder PDF-Datei auswählen';
+      labelEl.textContent = tk('depot.selectCsvPdfFile');
       errEl.textContent = err && err.code === 'nopdfjs'
-        ? 'PDF-Import nicht möglich: pdf.js fehlt auf dem NAS (pb_public/vendor/pdfjs/pdf.min.mjs und pdf.worker.min.mjs).'
-        : 'Die PDF-Datei konnte nicht gelesen werden' + (err && err.name === 'PasswordException' ? ' (passwortgeschützt).' : '.');
+        ? tk('depot.pdfImportNotPossible')
+        : (err && err.name === 'PasswordException' ? tk('depot.pdfReadFailedPw') : tk('depot.pdfReadFailed'));
       errEl.classList.remove('hidden');
       return;
     }
     labelEl.textContent = file.name;
     if (rows.length < 2) {
-      errEl.textContent = 'In der PDF wurden keine Wertpapier-Umsätze erkannt (Kauf, Sparplan oder Verkauf mit ISIN).';
+      errEl.textContent = tk('depot.noSecurityTransactionsWere');
       errEl.classList.remove('hidden');
       return;
     }
@@ -1016,7 +1020,7 @@ async function finImportReadFile(file) {
   text = text.replace(/^\ufeff/, '');
   const delim = finDetectDelim(text);
   const rows = finCsvParse(text, delim);
-  if (rows.length < 2) { errEl.textContent = 'In der Datei wurden keine Tabellenzeilen gefunden.'; errEl.classList.remove('hidden'); return; }
+  if (rows.length < 2) { errEl.textContent = tk('depot.noTableRowsWere'); errEl.classList.remove('hidden'); return; }
   let headerIdx = finImportFindHeader(rows);
   if (headerIdx < 0) headerIdx = 0;
   const header = rows[headerIdx];
@@ -1028,7 +1032,7 @@ function renderImportBody() {
   const imp = finImport;
   const body = document.getElementById('finImportBody');
   if (!imp) { body.classList.add('hidden'); return; }
-  const colOpts = (sel) => `<option value="-1">– keine –</option>` + imp.header.map((h, i) => `<option value="${i}" ${sel === i ? 'selected' : ''}>${escapeHtml(h || ('Spalte ' + (i + 1)))}</option>`).join('');
+  const colOpts = (sel) => `<option value="-1">${escapeHtml(tk('depot.none'))}</option>` + imp.header.map((h, i) => `<option value="${i}" ${sel === i ? 'selected' : ''}>${escapeHtml(h || ((tk('depot.column') + ' ') + (i + 1)))}</option>`).join('');
   const missing = imp.map.date < 0 || (imp.map.amount < 0 && imp.map.shares < 0);
   const items = imp.items;
   const usable = items.filter(it => it.usable && !it.dup);
@@ -1037,7 +1041,7 @@ function renderImportBody() {
   const depotSuffix = x => {
     if (!multi) return '';
     const d = finDepot(finGoalDepotId(x));
-    return d ? ' – ' + (d.name || 'Depot') : '';
+    return d ? ' – ' + (d.name || tk('depot.mainName')) : '';
   };
   const goalOpts = (g) => {
     const inDepot = x => finGoalDepotId(x) === finImportDepotId;
@@ -1046,13 +1050,13 @@ function renderImportBody() {
     const others = finance.savingsGoals.filter(x => x.isin !== g.isin && inDepot(x));
     return [
       ...same.map(x => [x.id, `${x.icon || '📈'} ${x.name || x.isin} (gleiche ISIN)`]),
-      ['new', `➕ Neue Position „${(g.name || g.isin).slice(0, 40)}“`],
-      ...others.map(x => [x.id, `${x.icon || '🎯'} ${x.name || 'Position'}${x.isin ? ' · ' + x.isin : ''}`]),
+      ['new', tk('depot.newPosition', { name: (g.name || g.isin).slice(0, 40) })],
+      ...others.map(x => [x.id, `${x.icon || '🎯'} ${x.name || tk('depot.position')}${x.isin ? ' · ' + x.isin : ''}`]),
       ...sameElsewhere.map(x => [x.id, `${x.icon || '📈'} ${x.name || x.isin} (gleiche ISIN${depotSuffix(x)})`]),
-      ['skip', 'Nicht importieren'],
+      ['skip', tk('depot.donTImport')],
     ].map(([v, t]) => `<option value="${escapeHtml(v)}" ${g.target === v ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('');
   };
-  const kindLabel = { buy: 'Kauf', sell: 'Verkauf', div: 'Ausschüttung', skip: 'übersprungen' };
+  const kindLabel = { buy: tk('depot.purchase'), sell: tk('depot.sale'), div: tk('depot.distribution'), skip: tk('depot.skipped') };
   const rowsHtml = items.slice(0, 600).map(it => {
     const selectable = it.usable && !it.dup && (imp.groups[it.isin] || {}).target !== 'skip';
     const checked = selectable && !imp.excluded.has(it.id);
@@ -1060,7 +1064,7 @@ function renderImportBody() {
       <label class="flex items-center gap-2 py-1 text-xs border-t border-ink/5 first:border-t-0 ${selectable ? 'cursor-pointer' : 'opacity-45'}">
         <input type="checkbox" class="fin-imp-row w-4 h-4 shrink-0" data-id="${escapeHtml(it.id)}" ${checked ? 'checked' : ''} ${selectable ? '' : 'disabled'} />
         <span class="shrink-0 w-20">${escapeHtml(new Date(it.date + 'T00:00:00').toLocaleDateString('de-DE'))}</span>
-        <span class="shrink-0 w-20">${it.dup ? 'schon da' : kindLabel[it.kind]}</span>
+        <span class="shrink-0 w-20">${escapeHtml(it.dup ? tk('depot.alreadyThere') : kindLabel[it.kind])}</span>
         <span class="flex-1 min-w-0 truncate font-mono">${escapeHtml(it.isin)}</span>
         <span class="shrink-0 w-20 text-right">${it.shares ? finFmtShares(it.shares) : '–'}</span>
         <span class="shrink-0 w-20 text-right font-semibold">${it.amount ? fmtEur(it.amount) : '–'}</span>
@@ -1068,13 +1072,13 @@ function renderImportBody() {
   }).join('');
   body.innerHTML = `
     <div class="rounded-xl bg-ink/5 px-3 py-2.5 text-sm">
-      <b>${usable.length}</b> Käufe/Verkäufe erkannt · ${groups.length} ISIN${groups.length === 1 ? '' : 's'}
-      ${items.filter(i => i.dup).length ? ` · ${items.filter(i => i.dup).length} schon importiert` : ''}
-      ${imp.skipped ? `<span class="block text-xs text-ink/50 mt-0.5">${imp.skipped} Zeilen ohne ISIN oder Datum übersprungen (z. B. Ein-/Auszahlungen aufs Konto).</span>` : ''}
+      ${tk('depot.tradesFound', { n: '<b>' + usable.length + '</b>' })} · ${escapeHtml(tk('depot.isinsN', { n: groups.length }))}
+      ${items.filter(i => i.dup).length ? ` ${tk('depot.alreadyImported', { v: items.filter(i => i.dup).length })}` : ''}
+      ${imp.skipped ? `<span class="block text-xs text-ink/50 mt-0.5">${escapeHtml(tk('depot.rowsWithoutIsinDate', { v: imp.skipped }))}</span>` : ''}
     </div>
 
     <details class="mt-3 rounded-xl border border-ink/10 px-3 py-2" ${missing ? 'open' : ''}>
-      <summary class="text-sm cursor-pointer select-none">Spalten zuordnen ${missing ? '<span class="text-xs" style="color:' + FIN_RED + '">– bitte prüfen</span>' : '<span class="text-xs text-ink/45">– automatisch erkannt</span>'}</summary>
+      <summary class="text-sm cursor-pointer select-none">Spalten zuordnen ${missing ? '<span class="text-xs" style="color:' + FIN_RED + ('">' + escapeHtml(tk('depot.pleaseCheck')) + '</span>') : ('<span class="text-xs text-ink/45">' + escapeHtml(tk('depot.recognisedAutomatically')) + '</span>')}</summary>
       <div class="grid grid-cols-2 gap-2 mt-3">
         ${FIN_IMPORT_FIELDS.map(f => `
           <label class="block min-w-0">
@@ -1084,12 +1088,12 @@ function renderImportBody() {
       </div>
       <label class="flex items-center gap-2 text-xs mt-3 cursor-pointer select-none">
         <input id="finImpFeeAdd" type="checkbox" class="w-4 h-4" ${imp.feeAdd ? 'checked' : ''} ${imp.map.fee < 0 ? 'disabled' : ''} />
-        <span>Gebühren zum Betrag rechnen (nur abwählen, wenn der Betrag die Gebühren schon enthält)</span>
+        <span>${escapeHtml(tk('depot.addFeesAmountOnly'))}</span>
       </label>
-      <p class="text-[11px] text-ink/45 mt-2">Kopfzeile: Zeile ${imp.headerIdx + 1}. Findet pinn. keine ISIN-Spalte, wird die ISIN aus dem Text jeder Zeile gelesen.</p>
+      <p class="text-[11px] text-ink/45 mt-2">${escapeHtml(tk('depot.headerRow', { row: imp.headerIdx + 1 }))}</p>
     </details>
 
-    ${groups.length ? `<h4 class="text-xs uppercase tracking-wide text-ink/40 mt-4 mb-2">Zuordnung je Wertpapier${multi ? ' · neue Positionen landen in „' + escapeHtml((finDepot(finImportDepotId) || {}).name || 'Depot') + '“' : ''}</h4>
+    ${groups.length ? `<h4 class="text-xs uppercase tracking-wide text-ink/40 mt-4 mb-2">${escapeHtml(tk('depot.assignmentPerSecurity', { name: multi ? ' · ' + tk('depot.newPositionsInto', { name: (finDepot(finImportDepotId) || {}).name || tk('depot.mainName') }) : '' }))}</h4>
     <div class="flex flex-col gap-2">
       ${groups.map(g => `
         <div class="rounded-xl border border-ink/10 p-3">
@@ -1097,17 +1101,17 @@ function renderImportBody() {
             <span class="text-sm font-medium truncate">${escapeHtml(g.name || g.isin)}</span>
             <span class="shrink-0 text-xs font-mono text-ink/50">${escapeHtml(g.isin)}</span>
           </div>
-          <div class="text-xs text-ink/50 mt-0.5">${g.buy} Käufe ${g.buy ? fmtEur(g.buySum) : ''}${g.sell ? ` · ${g.sell} Verkäufe ${fmtEur(g.sellSum)}` : ''}${g.div ? ` · ${g.div} Ausschüttungen (nicht gezählt)` : ''}${g.dup ? ` · ${g.dup} schon importiert` : ''}</div>
+          <div class="text-xs text-ink/50 mt-0.5">${escapeHtml(tk('depot.buysN', { n: g.buy }))} ${g.buy ? fmtEur(g.buySum) : ''}${g.sell ? ` ${tk('depot.sales', { v: g.sell, amount: fmtEur(g.sellSum) })}` : ''}${g.div ? ` ${tk('depot.distributionsNotCounted', { v: g.div })}` : ''}${g.dup ? ` ${tk('depot.alreadyImported', { v: g.dup })}` : ''}</div>
           <select class="fin-imp-goal w-full rounded-lg border border-ink/15 px-2 py-1.5 text-sm bg-white mt-2" data-isin="${escapeHtml(g.isin)}">${goalOpts(g)}</select>
         </div>`).join('')}
-    </div>` : '<p class="text-sm text-ink/50 mt-4">Keine Umsätze mit ISIN gefunden – prüfe die Spaltenzuordnung.</p>'}
+    </div>` : ('<p class="text-sm text-ink/50 mt-4">' + escapeHtml(tk('depot.noTransactionsWithIsin')) + '</p>')}
 
     ${items.length ? `<details class="mt-3 rounded-xl border border-ink/10 px-3 py-2">
-      <summary class="text-sm cursor-pointer select-none">Einzelne Umsätze prüfen (${items.length})</summary>
+      <summary class="text-sm cursor-pointer select-none">${escapeHtml(tk('depot.checkIndividualTransactions', { v: items.length }))}</summary>
       <div class="mt-2 max-h-72 overflow-y-auto">${rowsHtml}</div>
-      ${items.length > 600 ? '<p class="text-[11px] text-ink/45 mt-1">Es werden die ersten 600 Zeilen angezeigt – importiert werden alle.</p>' : ''}
+      ${items.length > 600 ? ('<p class="text-[11px] text-ink/45 mt-1">' + escapeHtml(tk('depot.first600RowsAre')) + '</p>') : ''}
     </details>` : ''}
-    <p class="text-[11px] text-ink/45 mt-3">Nach dem Import zählen für diese ETFs Sparen-Buchungen aus den Ausgaben (z. B. deine monatliche Sparrate) erst ab dem Tag nach dem letzten importierten Umsatz – so wird nichts doppelt gezählt.</p>`;
+    <p class="text-[11px] text-ink/45 mt-3">${escapeHtml(tk('depot.afterImportSavingsTransactions'))}</p>`;
   body.classList.remove('hidden');
   body.querySelectorAll('.fin-imp-map').forEach(sel => sel.addEventListener('change', () => {
     imp.map[sel.dataset.field] = Number(sel.value);
@@ -1134,7 +1138,7 @@ function finImportUpdateButton() {
   const btn = document.getElementById('saveFinImportBtn');
   const n = finImportSelected().length;
   btn.disabled = !n;
-  btn.textContent = n ? `${n} Umsätze importieren` : 'Importieren';
+  btn.textContent = n ? tk('depot.importTransactions2', { n }) : tk('depot.import');
 }
 function saveImportFromModal() {
   const sel = finImportSelected();
@@ -1183,13 +1187,13 @@ function saveImportFromModal() {
   closeImportModal();
   renderFinance();
   loadEtfQuotes(true, [...new Set(trades.map(t => t.isin))]);
-  finShowToast(`${trades.length} Umsätze importiert${newGoals.length ? `, ${newGoals.length} Position${newGoals.length === 1 ? '' : 'en'} angelegt` : ''}.`);
+  finShowToast(tk('depot.transactionsImported', { v: trades.length, v2: newGoals.length ? `, ${newGoals.length} Position${newGoals.length === 1 ? '' : 'en'} angelegt` : '' }));
 }
 function removeGoalImports(goalId) {
   const g = finGoal(goalId);
   const n = finance.etfTrades.filter(t => t.goal === goalId).length;
   if (!g || !n) return;
-  if (!confirm(`${n} importierte Umsätze von „${g.name}“ entfernen? Danach zählen wieder alle Sparen-Buchungen aus den Ausgaben.`)) return;
+  if (!confirm(tk('depot.removeImportedTransactionsAfterwards', { n, name: g.name }))) return;
   finance.etfTrades = finance.etfTrades.filter(t => t.goal !== goalId);
   finance.savingsGoals = finance.savingsGoals.map(x => {
     if (x.id !== goalId) return x;
@@ -1199,7 +1203,7 @@ function removeGoalImports(goalId) {
   persistState();
   closeGoalModal();
   renderFinance();
-  finShowToast('Importierte Umsätze entfernt.');
+  finShowToast(tk('depot.importedTransactionsRemoved'));
 }
 // „Sparen“ booking without a (valid) assignment: find the savings goal via the name / the ISIN in the description
 function finMatchGoalByText(text, depotId = null) {
@@ -1306,8 +1310,8 @@ function finSavingsBarsCard(bars) {
   return `
     <div class="rounded-2xl bg-white border border-ink/10 shadow-sm p-4 sm:p-5">
       <div class="flex items-baseline justify-between gap-3 mb-3">
-        <h3 class="font-serif text-base">Verlauf</h3>
-        <span class="text-xs text-ink/45">netto pro Monat</span>
+        <h3 class="font-serif text-base">${escapeHtml(tk('fin.trend.title'))}</h3>
+        <span class="text-xs text-ink/45">${escapeHtml(tk('depot.netPerMonth'))}</span>
       </div>
       <div class="flex items-start gap-1 sm:gap-2">${bars.html}</div>
       <div class="flex items-center gap-4 mt-3 text-[11px] text-ink/50">
@@ -1324,8 +1328,8 @@ function finValueChartHtml(points) {
     <div class="mt-3 text-ink">${finEtfChartSvg(points)}</div>
     <div class="flex justify-between text-[10px] text-ink/40 mt-1"><span>${escapeHtml(firstDate)}</span><span>heute</span></div>
     <div class="flex items-center gap-4 mt-2 text-[11px] text-ink/50">
-      <span class="inline-flex items-center gap-1.5"><span class="w-3 h-0.5 rounded" style="background:${last.value >= last.invested ? FIN_GREEN : FIN_RED}"></span>Wert</span>
-      <span class="inline-flex items-center gap-1.5"><span class="w-3 border-t-2 border-dashed border-ink/40"></span>Eingezahlt</span>
+      <span class="inline-flex items-center gap-1.5"><span class="w-3 h-0.5 rounded" style="background:${last.value >= last.invested ? FIN_GREEN : FIN_RED}"></span>${escapeHtml(tk('depot.value'))}</span>
+      <span class="inline-flex items-center gap-1.5"><span class="w-3 border-t-2 border-dashed border-ink/40"></span>${escapeHtml(tk('depot.paid'))}</span>
     </div>`;
 }
 // Latest savings bookings (showDepot: show the depot as well in the overall overview)
@@ -1337,34 +1341,34 @@ function finSavingsRecentCard(ov, showDepot) {
     const g = l && l.type === 'spar' ? finGoal(l.id) : null;
     const d = showDepot ? finDepot(finLinkDepotId(e.link)) : null;
     const color = g && /^#[0-9a-fA-F]{6}$/.test(g.color || '') ? g.color : finCategory(FIN_SAVINGS_CATEGORY).color;
-    const title = e.title || (amt < 0 ? 'Entnahme' : 'Einzahlung');
-    const where = (g ? (g.name || 'Position') : 'Ohne Position') + (d ? ' · ' + (d.name || 'Depot') : '');
+    const title = e.title || (amt < 0 ? tk('depot.withdrawal') : tk('depot.deposit'));
+    const where = (g ? (g.name || tk('depot.position')) : tk('depot.withoutPosition')) + (d ? ' · ' + (d.name || tk('depot.mainName')) : '');
     return `
       <button type="button" class="fin-save-row w-full flex items-center gap-3 px-1 py-2 rounded-xl hover:bg-ink/5 transition text-left" data-id="${escapeHtml(e.id)}" data-rec="${escapeHtml(e.recurringId || '')}" data-goal="${e.trade && g ? escapeHtml(g.id) : ''}">
         <span class="shrink-0 w-10 h-10 rounded-full grid place-items-center text-lg" style="background:${color}22">${escapeHtml(g ? (g.icon || '🎯') : (d && d.icon) || '🐷')}</span>
         <span class="flex-1 min-w-0">
-          <span class="block text-sm font-medium truncate">${e.recurringId ? '🔁 ' : e.trade ? '⤓ ' : ''}${escapeHtml(title)}${e.trade && e.shares ? ` <span class="text-xs text-ink/45 font-normal">${finFmtShares(Math.abs(e.shares))} Anteile</span>` : ''}</span>
+          <span class="block text-sm font-medium truncate">${e.recurringId ? '🔁 ' : e.trade ? '⤓ ' : ''}${escapeHtml(title)}${e.trade && e.shares ? ` <span class="text-xs text-ink/45 font-normal">${escapeHtml(tk('depot.shares2', { v: finFmtShares(Math.abs(e.shares)) }))}</span>` : ''}</span>
           <span class="block text-xs text-ink/45 truncate">${escapeHtml(finDayLabel(e.date))} · ${escapeHtml(where)}</span>
         </span>
-        <span class="shrink-0 text-sm font-semibold" style="color:${amt >= 0 ? FIN_GREEN : FIN_RED}">${e.pending ? '<span title="Noch nicht übertragen">⏳</span> ' : ''}${finSignedEur(amt)}</span>
+        <span class="shrink-0 text-sm font-semibold" style="color:${amt >= 0 ? FIN_GREEN : FIN_RED}">${e.pending ? ('<span title="' + escapeHtml(tk('fin.notSynced')) + '">⏳</span> ') : ''}${finSignedEur(amt)}</span>
       </button>`;
   }).join('');
   return `
     <div class="rounded-2xl bg-white border border-ink/10 shadow-sm p-4 sm:p-5">
       <div class="flex items-center justify-between gap-3 mb-2">
-        <h3 class="font-serif text-base">Sparbuchungen</h3>
-        <button type="button" id="finSaveAllBtn" class="text-xs text-pine">in den Ausgaben ›</button>
+        <h3 class="font-serif text-base">${escapeHtml(tk('depot.savingsTransactions'))}</h3>
+        <button type="button" id="finSaveAllBtn" class="text-xs text-pine">${escapeHtml(tk('depot.expenses'))}</button>
       </div>
-      ${recent.length ? html : '<p class="text-sm text-ink/40 italic">Noch keine Buchungen unter „Sparen“. Tippe auf „+ Einzahlen“ oder richte eine Sparrate ein.</p>'}
-      <p class="text-[11px] text-ink/40 mt-3">Alle Buchungen der Kategorie „Sparen“ zählen hier – auch die aus den Ausgaben. Ein Minus davor bucht eine Entnahme.</p>
+      ${recent.length ? html : ('<p class="text-sm text-ink/40 italic">' + escapeHtml(tk('depot.noTransactionsUnderSavings')) + '</p>')}
+      <p class="text-[11px] text-ink/40 mt-3">${escapeHtml(tk('depot.allTransactionsCategorySavings'))}</p>
     </div>`;
 }
 function finSavingsButtonsHtml() {
   return `
       <div class="flex flex-wrap gap-2 mt-4">
-        <button type="button" id="finSaveDepositBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">+ Einzahlen</button>
-        <button type="button" id="finSaveWithdrawBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">Entnehmen</button>
-        <button type="button" id="finSaveRateBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">🔁 Sparrate</button>
+        <button type="button" id="finSaveDepositBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">${escapeHtml(tk('fin.add.deposit'))}</button>
+        <button type="button" id="finSaveWithdrawBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">${escapeHtml(tk('depot.withdraw'))}</button>
+        <button type="button" id="finSaveRateBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">${escapeHtml(tk('depot.savingsPlan'))}</button>
       </div>`;
 }
 // Events that the overall overview and the depot share
@@ -1374,7 +1378,7 @@ function finWireSavingsPane(pane, depotId) {
   const withdraw = (goalId) => openExpenseModal({ preset: { category: FIN_SAVINGS_CATEGORY, link: goalId ? 'spar:' + goalId : finDefaultGoalLink(depotId), amountText: '-' } });
   on('#finSaveDepositBtn', () => deposit(null));
   on('#finSaveWithdrawBtn', () => withdraw(null));
-  on('#finSaveRateBtn', () => openExpenseModal({ asRecurring: true, preset: { category: FIN_SAVINGS_CATEGORY, link: finDefaultGoalLink(depotId), title: 'Sparrate' } }));
+  on('#finSaveRateBtn', () => openExpenseModal({ asRecurring: true, preset: { category: FIN_SAVINGS_CATEGORY, link: finDefaultGoalLink(depotId), title: tk('depot.savingsPlan2') } }));
   on('#finSaveAllBtn', () => { finCategoryFilter = FIN_SAVINGS_CATEGORY; finSetTab('ausgaben'); });
   on('#finSaveUnassigned', () => { finCategoryFilter = FIN_SAVINGS_CATEGORY; finSetTab('ausgaben'); });
   pane.querySelectorAll('.fin-goal').forEach(card => {
@@ -1420,13 +1424,13 @@ function renderSavingsOverview(pane, allEntries) {
     const n = dov.goals.length;
     const perf = Math.abs(dov.gain) >= 0.005
       ? `<span style="color:${dov.gain >= 0 ? FIN_GREEN : FIN_RED}">${finSignedEur(dov.gain)}${dov.invested > 0 ? ' · ' + finFmtPct(dov.gain / dov.invested * 100) : ''}</span>`
-      : `<span class="text-ink/45">${n} Position${n === 1 ? '' : 'en'}</span>`;
+      : `<span class="text-ink/45">${escapeHtml(tk('depot.positionsN', { n }))}</span>`;
     return `
-      <button type="button" class="fin-depot-card ${incl ? '' : 'is-out'} w-full rounded-xl border border-ink/10 p-3 text-left hover:bg-ink/5" data-depot="${escapeHtml(d.id)}" aria-label="${escapeHtml('Depot ' + (d.name || '') + ' öffnen')}">
+      <button type="button" class="fin-depot-card ${incl ? '' : 'is-out'} w-full rounded-xl border border-ink/10 p-3 text-left hover:bg-ink/5" data-depot="${escapeHtml(d.id)}" aria-label="${escapeHtml((tk('depot.mainName') + ' ') + (d.name || '') + (' ' + tk('depot.open')))}">
         <span class="flex items-center gap-3">
           <span class="shrink-0 w-10 h-10 rounded-full grid place-items-center text-xl" style="background:${color}22">${escapeHtml(d.icon || '💼')}</span>
           <span class="flex-1 min-w-0">
-            <span class="block text-sm font-medium truncate">${escapeHtml(d.name || 'Depot')}</span>
+            <span class="block text-sm font-medium truncate">${escapeHtml(d.name || tk('depot.mainName'))}</span>
             <span class="block text-xs text-ink/50 truncate">${escapeHtml(finDepotSub(d))}</span>
           </span>
           <span class="shrink-0 text-right">
@@ -1435,53 +1439,53 @@ function renderSavingsOverview(pane, allEntries) {
           </span>
         </span>
         ${pts.length >= 2 ? `<span class="block mt-2 text-ink">${finEtfChartSvg(pts, 44)}</span>` : ''}
-        ${incl ? '' : '<span class="block mt-2"><span class="fin-depot-tag out">nicht in deiner Gesamtübersicht</span></span>'}
+        ${incl ? '' : ('<span class="block mt-2"><span class="fin-depot-tag out">' + escapeHtml(tk('depot.notYourTotalOverview')) + '</span></span>')}
       </button>`;
   }).join('');
   const picker = (finDepotPickerOpen && depots.length > 1) ? `
     <div class="rounded-xl bg-ink/5 px-3 py-2.5 mb-3">
-      <div class="text-[11px] uppercase tracking-wide text-ink/40 mb-1">In meiner Gesamtübersicht</div>
+      <div class="text-[11px] uppercase tracking-wide text-ink/40 mb-1">${escapeHtml(tk('depot.myTotalOverview'))}</div>
       ${depots.map(d => `
         <label class="fin-depot-incl-row flex items-center gap-2 py-1.5 text-sm cursor-pointer select-none">
           <input type="checkbox" class="fin-depot-incl w-4 h-4 shrink-0" data-depot="${escapeHtml(d.id)}" ${finDepotIncluded(d.id) ? 'checked' : ''} />
           <span class="truncate">${escapeHtml(finDepotLabel(d))}</span>
         </label>`).join('')}
-      <p class="text-[11px] text-ink/45 mt-1">Gilt nur für dein Profil – auf allen deinen Geräten.</p>
+      <p class="text-[11px] text-ink/45 mt-1">${escapeHtml(tk('depot.appliesOnlyYourProfile'))}</p>
     </div>` : '';
 
   pane.innerHTML = `
     <div class="rounded-2xl bg-white border border-ink/10 shadow-sm p-4 sm:p-5">
       <div class="flex items-start justify-between gap-3">
         <div class="min-w-0">
-          <div class="text-[11px] uppercase tracking-wide text-ink/40">Erspart insgesamt${depots.length > 1 ? ` · ${inc.length} von ${depots.length} Depots` : ''}</div>
+          <div class="text-[11px] uppercase tracking-wide text-ink/40">${escapeHtml(tk('depot.savedTotalTitle'))}${depots.length > 1 ? ' · ' + escapeHtml(tk('depot.ofDepotsN', { k: inc.length, n: depots.length })) : ''}</div>
           <div class="font-serif text-3xl" style="color:${ov.total >= 0 ? FIN_GREEN : FIN_RED}">${fmtEur(ov.total)}</div>
           ${gainLine ? `<div class="text-xs text-ink/50 mt-0.5">${gainLine}</div>` : ''}
           <div class="text-xs text-ink/50 mt-0.5">${finSavingsMonthLine(ms)}</div>
         </div>
         <span class="fin-piggy shrink-0" aria-hidden="true">🐷</span>
       </div>
-      ${!inc.length ? `<p class="text-xs mt-2" style="color:${FIN_RED}">Kein Depot in deiner Gesamtübersicht – unten bei „Depots“ über „Auswahl“ festlegen.</p>` : ''}
+      ${!inc.length ? `<p class="text-xs mt-2" style="color:${FIN_RED}">${escapeHtml(tk('depot.noDepotYourTotal'))}</p>` : ''}
       ${chart}
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4">
-        ${finTile('Sparrate', rt.rate ? fmtEur(rt.rate) : '–', rt.rate ? `pro Monat · ${rt.count} regelmäßig` : 'keine regelmäßige')}
-        ${finTile('Diesen Monat', `<span style="color:${ms.monthNet >= 0 ? FIN_GREEN : FIN_RED}">${finSignedEur(ms.monthNet)}</span>`, 'netto')}
-        ${finTile('Sparquote', quote !== null ? quote + ' %' : '–', quote !== null ? 'vom Einkommen' : 'keine Einnahmen gebucht')}
-        ${finTile('Ø 6 Monate', fmtEur0(bars.avg6), 'pro Monat')}
+        ${finTile(tk('depot.savingsPlan2'), rt.rate ? fmtEur(rt.rate) : '–', rt.rate ? tk('depot.perMonthRecurring', { v: rt.count }) : tk('depot.noRecurring'))}
+        ${finTile(tk('depot.month'), `<span style="color:${ms.monthNet >= 0 ? FIN_GREEN : FIN_RED}">${finSignedEur(ms.monthNet)}</span>`, 'netto')}
+        ${finTile(tk('depot.savingsRate'), quote !== null ? quote + ' %' : '–', quote !== null ? tk('depot.income') : tk('depot.noIncomeBooked'))}
+        ${finTile(tk('depot.6Months'), fmtEur0(bars.avg6), tk('depot.perMonth'))}
       </div>
       ${finSavingsButtonsHtml()}
     </div>
 
     <div class="rounded-2xl bg-white border border-ink/10 shadow-sm p-4 sm:p-5">
       <div class="flex items-center justify-between gap-3 mb-3">
-        <h3 class="font-serif text-base">Depots</h3>
+        <h3 class="font-serif text-base">${escapeHtml(tk('depot.depots'))}</h3>
         <div class="flex items-center gap-2">
-          ${depots.length > 1 ? `<button type="button" id="finDepotPickBtn" class="px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">${finDepotPickerOpen ? 'Fertig' : 'Auswahl'}</button>` : ''}
-          <button type="button" id="finAddDepotBtn" class="px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Depot</button>
+          ${depots.length > 1 ? `<button type="button" id="finDepotPickBtn" class="px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">${finDepotPickerOpen ? tk('common.done') : tk('depot.selection')}</button>` : ''}
+          <button type="button" id="finAddDepotBtn" class="px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">${escapeHtml(tk('depot.depot'))}</button>
         </div>
       </div>
       ${picker}
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">${cards}</div>
-      <p class="text-[11px] text-ink/40 mt-3">Depot antippen für Positionen, Kurse und Buchungen. Mit „+ Depot“ legst du weitere Depots an – auch Junior-Depots für die Kinder.</p>
+      <p class="text-[11px] text-ink/40 mt-3">${escapeHtml(tk('depot.tapDepotPositionsPrices'))}</p>
     </div>
 
     ${finSavingsBarsCard(bars)}
@@ -1519,12 +1523,12 @@ function renderSavingsDepot(pane, d, allEntries) {
     const forecast = finGoalForecast(x);
     const kind = finGoalKind(g);
     return `
-      <div class="fin-goal rounded-xl border border-ink/10 p-3 cursor-pointer hover:bg-ink/5 transition" data-goal="${escapeHtml(g.id)}" role="button" tabindex="0" aria-label="${escapeHtml('Position ' + (g.name || '') + ' bearbeiten')}">
+      <div class="fin-goal rounded-xl border border-ink/10 p-3 cursor-pointer hover:bg-ink/5 transition" data-goal="${escapeHtml(g.id)}" role="button" tabindex="0" aria-label="${escapeHtml((tk('depot.position') + ' ') + (g.name || '') + ' bearbeiten')}">
         <div class="flex items-center gap-3">
           <span class="shrink-0 w-10 h-10 rounded-full grid place-items-center text-xl" style="background:${gColor}22">${escapeHtml(g.icon || finKindInfo(kind).icon)}</span>
           <span class="flex-1 min-w-0">
-            <span class="block text-sm font-medium truncate">${escapeHtml(g.name || 'Position')}</span>
-            <span class="block text-xs text-ink/50 truncate">${target ? `${fmtEur(x.balance)} von ${fmtEur0(target)}` : `${fmtEur(x.balance)} ${x.etf ? 'Wert' : 'gespart'}`}${kind !== 'ziel' ? ' · ' + escapeHtml(finKindInfo(kind).label) : ''}</span>
+            <span class="block text-sm font-medium truncate">${escapeHtml(g.name || tk('depot.position'))}</span>
+            <span class="block text-xs text-ink/50 truncate">${target ? `${fmtEur(x.balance)} von ${fmtEur0(target)}` : `${fmtEur(x.balance)} ${x.etf ? tk('depot.value') : 'gespart'}`}${kind !== 'ziel' ? ' · ' + escapeHtml(finKindInfo(kind).label) : ''}</span>
             ${x.etf ? `<span class="block text-[11px] truncate"><span class="text-ink/45">eingezahlt ${fmtEur(x.etf.invested)} · </span><span style="color:${x.etf.gain >= 0 ? FIN_GREEN : FIN_RED}">${finSignedEur(x.etf.gain)}${x.etf.invested > 0 ? ' (' + finFmtPct(x.etf.gainPct) + ')' : ''}</span></span>` : ''}
           </span>
           ${target ? `<span class="shrink-0 text-sm font-semibold" style="color:${gColor}">${reached ? '✓' : pct + ' %'}</span>` : ''}
@@ -1533,8 +1537,8 @@ function renderSavingsDepot(pane, d, allEntries) {
         ${forecast ? `<div class="text-[11px] text-ink/50 mt-1.5">${escapeHtml(forecast)}</div>` : ''}
         ${(() => { const rl = finGoalRateLine(g.id); return rl ? `<div class="text-[11px] mt-1.5" style="color:${FIN_GREEN}">${escapeHtml(rl)}</div>` : ''; })()}
         <div class="flex gap-2 mt-2.5">
-          <button type="button" data-goal-act="in" class="flex-1 px-2 py-1.5 rounded-lg bg-ink/5 text-xs hover:text-pine transition">+ Einzahlen</button>
-          <button type="button" data-goal-act="out" class="flex-1 px-2 py-1.5 rounded-lg bg-ink/5 text-xs hover:text-pine transition">Entnehmen</button>
+          <button type="button" data-goal-act="in" class="flex-1 px-2 py-1.5 rounded-lg bg-ink/5 text-xs hover:text-pine transition">${escapeHtml(tk('fin.add.deposit'))}</button>
+          <button type="button" data-goal-act="out" class="flex-1 px-2 py-1.5 rounded-lg bg-ink/5 text-xs hover:text-pine transition">${escapeHtml(tk('depot.withdraw'))}</button>
         </div>
       </div>`;
   }).join('');
@@ -1542,35 +1546,35 @@ function renderSavingsDepot(pane, d, allEntries) {
     <button type="button" id="finSaveUnassigned" class="w-full flex items-center gap-3 mt-3 pt-3 border-t border-ink/10 text-left">
       <span class="shrink-0 w-10 h-10 rounded-full grid place-items-center text-xl bg-ink/5">🐷</span>
       <span class="flex-1 min-w-0">
-        <span class="block text-sm font-medium">Ohne Position</span>
-        <span class="block text-xs text-ink/50">${ov.goals.length ? 'Beim Bearbeiten einer Buchung einer Position zuordnen' : 'Buchungen, die nur dem Depot zugeordnet sind'}</span>
+        <span class="block text-sm font-medium">${escapeHtml(tk('depot.withoutPosition'))}</span>
+        <span class="block text-xs text-ink/50">${ov.goals.length ? tk('depot.assignPositionWhenEditing') : tk('depot.transactionsAssignedOnlyDepot')}</span>
       </span>
       <span class="shrink-0 text-sm font-semibold">${fmtEur(ov.unassigned)}</span>
     </button>` : '';
 
   pane.innerHTML = `
     <div class="flex items-center justify-between gap-2">
-      <button type="button" id="finDepotBack" class="fin-depot-back px-2.5 py-1.5 rounded-lg text-sm text-ink/60 hover:text-pine hover:bg-ink/5 transition">‹ Alle Depots</button>
-      <button type="button" id="finDepotEdit" class="px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">✎ Depot bearbeiten</button>
+      <button type="button" id="finDepotBack" class="fin-depot-back px-2.5 py-1.5 rounded-lg text-sm text-ink/60 hover:text-pine hover:bg-ink/5 transition">${escapeHtml(tk('depot.allDepots'))}</button>
+      <button type="button" id="finDepotEdit" class="px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">${escapeHtml(tk('depot.editDepot'))}</button>
     </div>
 
     <div class="rounded-2xl bg-white border border-ink/10 shadow-sm p-4 sm:p-5">
       <div class="flex items-start justify-between gap-3">
         <div class="min-w-0">
           <div class="text-[11px] uppercase tracking-wide text-ink/40 truncate">${escapeHtml(finDepotSub(d))}</div>
-          <div class="font-serif text-lg truncate">${escapeHtml(d.name || 'Depot')}</div>
+          <div class="font-serif text-lg truncate">${escapeHtml(d.name || tk('depot.mainName'))}</div>
           <div class="font-serif text-3xl" style="color:${ov.total >= 0 ? FIN_GREEN : FIN_RED}">${fmtEur(ov.total)}</div>
           ${gainLine ? `<div class="text-xs text-ink/50 mt-0.5">${gainLine}</div>` : ''}
           <div class="text-xs text-ink/50 mt-0.5">${finSavingsMonthLine(ms)}</div>
-          ${incl ? '' : '<div class="mt-1.5"><span class="fin-depot-tag out">nicht in deiner Gesamtübersicht</span></div>'}
+          ${incl ? '' : ('<div class="mt-1.5"><span class="fin-depot-tag out">' + escapeHtml(tk('depot.notYourTotalOverview')) + '</span></div>')}
         </div>
         <span class="shrink-0 w-12 h-12 rounded-full grid place-items-center text-2xl" style="background:${color}22" aria-hidden="true">${escapeHtml(d.icon || '💼')}</span>
       </div>
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4">
-        ${finTile('Sparrate', rt.rate ? fmtEur(rt.rate) : '–', rt.rate ? `pro Monat · ${rt.count} regelmäßig` : 'keine regelmäßige')}
-        ${finTile('Diesen Monat', `<span style="color:${ms.monthNet >= 0 ? FIN_GREEN : FIN_RED}">${finSignedEur(ms.monthNet)}</span>`, 'netto')}
-        ${finTile('Ø 6 Monate', fmtEur0(bars.avg6), 'pro Monat')}
-        ${finTile('Positionen', String(ov.goals.length), ov.goals.filter(x => x.etf).length ? `${ov.goals.filter(x => x.etf).length} mit Kurs` : 'ohne Kurs')}
+        ${finTile(tk('depot.savingsPlan2'), rt.rate ? fmtEur(rt.rate) : '–', rt.rate ? tk('depot.perMonthRecurring', { v: rt.count }) : tk('depot.noRecurring'))}
+        ${finTile(tk('depot.month'), `<span style="color:${ms.monthNet >= 0 ? FIN_GREEN : FIN_RED}">${finSignedEur(ms.monthNet)}</span>`, 'netto')}
+        ${finTile(tk('depot.6Months'), fmtEur0(bars.avg6), tk('depot.perMonth'))}
+        ${finTile(tk('depot.positions'), String(ov.goals.length), ov.goals.filter(x => x.etf).length ? tk('depot.withPrice', { v: ov.goals.filter(x => x.etf).length }) : tk('depot.withoutPrice'))}
       </div>
       ${finSavingsButtonsHtml()}
     </div>
@@ -1579,14 +1583,14 @@ function renderSavingsDepot(pane, d, allEntries) {
 
     <div class="rounded-2xl bg-white border border-ink/10 shadow-sm p-4 sm:p-5">
       <div class="flex items-center justify-between gap-3 mb-3">
-        <h3 class="font-serif text-base">Positionen</h3>
+        <h3 class="font-serif text-base">${escapeHtml(tk('depot.positions'))}</h3>
         <div class="flex items-center gap-2">
-          <button type="button" id="finImportBtn" class="px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition" title="Depot-Umsätze aus einer CSV- oder PDF-Datei importieren">⤓ Import</button>
-          <button type="button" id="finAddGoalBtn" class="px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Position</button>
+          <button type="button" id="finImportBtn" class="px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition" title="${escapeHtml(tk('depot.importDepotTransactionsFrom'))}">${escapeHtml(tk('depot.import2'))}</button>
+          <button type="button" id="finAddGoalBtn" class="px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">${escapeHtml(tk('depot.position2'))}</button>
         </div>
       </div>
       ${ov.goals.length ? `<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">${goalCards}</div>`
-        : '<p class="text-sm text-ink/45">Lege eine Position an – einen ETF, eine Aktie, ein Derivat oder ein klassisches Sparziel wie Urlaub oder Notgroschen. Einzahlungen ordnest du dann direkt zu und siehst Wert und Entwicklung.</p>'}
+        : ('<p class="text-sm text-ink/45">' + escapeHtml(tk('depot.createPositionEtfShare')) + '</p>')}
       ${unassignedHtml}
     </div>
 
@@ -1618,7 +1622,7 @@ function finGoalRateLine(goalId) {
   return plans.map(r => {
     const next = finRecNext(r, todayIso);
     const iv = finIntervalInfo(finRecInterval(r)).label;
-    return `🔁 ${fmtEur(finRecurringAmountFor(r, next || todayIso))} ${iv.charAt(0).toLowerCase() + iv.slice(1)}${next ? ' · nächste ' + finDayLabel(next) : ''}`;
+    return `🔁 ${fmtEur(finRecurringAmountFor(r, next || todayIso))} ${iv.charAt(0).toLowerCase() + iv.slice(1)}${next ? ' · ' + tk('depot.nextLower', { date: finDayLabel(next) }) : ''}`;
   }).join(' · ');
 }
 function updateGoalRateInfo() {
@@ -1631,26 +1635,26 @@ function updateGoalRateInfo() {
   info.style.color = '';
   if (!raw) {
     info.textContent = plan
-      ? 'Leer lassen beendet die Sparrate – bisherige Buchungen bleiben erhalten.'
-      : 'Optional, z. B. ' + fmtEur0(250) + ' monatlich. Die Sparrate wird am Ausführungstag im Depot angerechnet und in den Ausgaben unter „Sparen“ abgebucht.';
+      ? tk('depot.leavingEmptyEndsSavings')
+      : tk('depot.planHint', { amount: fmtEur0(250) });
     return;
   }
   if (!(amount > 0)) {
-    info.textContent = 'Bitte einen positiven Betrag eingeben. Entnahmen buchst du über „Entnehmen“.';
+    info.textContent = tk('depot.pleaseEnterPositiveAmount');
     info.style.color = FIN_RED;
     return;
   }
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(start)) { info.textContent = 'Bitte den Tag der ersten Ausführung wählen.'; return; }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(start)) { info.textContent = tk('depot.pleaseChooseDayFirst'); return; }
   const probe = { start, interval };
   const next = finRecNext(probe);
-  info.textContent = `${fmtEur(amount)} ${finRecDescribe(probe)} – wird im Depot angerechnet und in den Ausgaben unter „Sparen“ abgebucht.${next ? ' Nächste: ' + finDayLabel(next) + '.' : ''}`;
+  info.textContent = tk('depot.planInfo', { amount: fmtEur(amount), rhythm: finRecDescribe(probe) }) + (next ? ' ' + tk('fin.rec.next', { date: finDayLabel(next) }) : '');
   info.style.color = FIN_GREEN;
 }
 function openGoalModal(goalId = null, depotId = null) {
   const g = goalId ? finGoal(goalId) : null;
   editingGoalId = g ? g.id : null;
   const kind = g ? finGoalKind(g) : 'etf';
-  document.getElementById('finGoalTitle').textContent = g ? 'Position bearbeiten' : 'Neue Position';
+  document.getElementById('finGoalTitle').textContent = g ? tk('depot.editPosition') : tk('depot.newPosition2');
   // Depot
   const ds = finDepots();
   const depotSel = document.getElementById('finGoalDepot');
@@ -1678,7 +1682,7 @@ function openGoalModal(goalId = null, depotId = null) {
     const sum = buys.reduce((t, x) => t + (Number(x.amount) || 0), 0);
     const until = g.importedUntil ? new Date(g.importedUntil + 'T00:00:00').toLocaleDateString('de-DE') : '';
     document.getElementById('finGoalImportInfo').textContent =
-      `⤓ ${trades.length} importierte Umsätze (${buys.length} Käufe, ${fmtEur(sum)})${until ? ' bis ' + until : ''}. Sparen-Buchungen aus den Ausgaben – z. B. deine Sparrate – zählen für diese Position erst danach. Gib unten nur Anteile an, die nicht im Import stecken.`;
+      tk('depot.importedTransactionsPurchasesSavings', { v: trades.length, v2: buys.length, amount: fmtEur(sum), v3: until ? ' bis ' + until : '' });
   }
   // Savings instalment of the position (the first running one; others can be edited in the expenses)
   const plans = g ? finGoalRatePlans(g.id) : [];
@@ -1687,8 +1691,8 @@ function openGoalModal(goalId = null, depotId = null) {
   document.getElementById('finGoalRateAmount').value = plan ? euroInputValue(finRecurringAmountFor(plan, todayIso)) : '';
   document.getElementById('finGoalRateInterval').value = plan ? finRecInterval(plan) : 'monthly';
   document.getElementById('finGoalRateStart').value = plan ? (finRecStart(plan) || todayIso) : todayIso;
-  document.getElementById('finGoalRateStartLabel').textContent = plan ? 'Läuft seit (erste Ausführung)' : 'Erste Ausführung am';
-  document.getElementById('finGoalRateState').textContent = plans.length > 1 ? `${plans.length} laufende – hier die erste` : (plan ? 'läuft' : '');
+  document.getElementById('finGoalRateStartLabel').textContent = plan ? tk('depot.runningSinceFirstExecution') : tk('depot.firstExecution');
+  document.getElementById('finGoalRateState').textContent = plans.length > 1 ? tk('depot.runningHereFirst', { v: plans.length }) : (plan ? tk('depot.running') : '');
   updateGoalRateInfo();
   document.getElementById('finGoalError').classList.add('hidden');
   document.getElementById('deleteFinGoalBtn').classList.toggle('hidden', !g);
@@ -1700,17 +1704,17 @@ function openGoalModal(goalId = null, depotId = null) {
 function updateGoalEtfUi() {
   const kind = document.getElementById('finGoalKind').value;
   const etf = kind !== 'ziel';
-  const word = etf ? finKindInfo(kind).label.split(' / ')[0] : 'Sparziel';
+  const word = etf ? finKindInfo(kind).label.split(' / ')[0] : tk('depot.savingsGoal');
   document.getElementById('finGoalEtfOpts').classList.toggle('hidden', !etf);
   document.getElementById('finGoalKindHint').textContent = etf
-    ? 'Einzahlungen werden zum Kurs am jeweiligen Tag in Anteile umgerechnet – so siehst du den aktuellen Wert samt Gewinn oder Verlust. Der Kurs kommt über die ISIN (ETFs über justETF, Aktien & Co. über Yahoo Finance; nicht für jedes Derivat verfügbar).'
-    : 'Ein klassisches Sparziel ohne Kurs, z. B. Urlaub, Notgroschen oder Tagesgeld. Es zählt die Summe der Einzahlungen.';
-  document.getElementById('finGoalName').placeholder = etf ? 'z. B. MSCI World, Apple, Mini-Future …' : 'z. B. Urlaub, Notgroschen';
-  document.getElementById('finGoalSharesLabel').textContent = kind === 'aktie' ? 'Stück schon im Depot' : 'Anteile schon im Depot';
-  document.getElementById('finGoalStartLabel').textContent = etf ? 'Schon eingezahlt' : 'Schon gespart';
+    ? tk('depot.depositsAreConvertedInto')
+    : tk('depot.classicSavingsGoalWithout');
+  document.getElementById('finGoalName').placeholder = etf ? tk('depot.eGMsciWorld') : tk('depot.eGHolidayEmergency');
+  document.getElementById('finGoalSharesLabel').textContent = kind === 'aktie' ? tk('depot.unitsAlreadyDepot') : tk('depot.sharesAlreadyDepot');
+  document.getElementById('finGoalStartLabel').textContent = etf ? tk('depot.alreadyPaid') : tk('depot.alreadySaved');
   document.getElementById('finGoalStartHint').textContent = etf
-    ? `„Schon eingezahlt“ ist, was du vor pinn. in diese Position (${word}) investiert hast (Einstand). Trag dazu die Anteile ein, die du schon hast – ohne Anteile rechnet pinn. den Betrag zum Kurs von heute bzw. vom Tag der Anlage um. Neue Käufe buchst du über „Einzahlen“ oder als Sparrate.`
-    : '„Schon gespart“ ist Geld, das bereits vor pinn. für dieses Ziel zurückgelegt war. Alles Weitere buchst du über „Einzahlen“ bzw. in den Ausgaben unter der Kategorie „Sparen“.';
+    ? tk('depot.alreadyPaidWhatYou', { word })
+    : tk('depot.alreadySavedMoneyThat');
 }
 function finShowIsinInfo(q, errText) {
   const el = document.getElementById('finGoalIsinInfo');
@@ -1718,10 +1722,10 @@ function finShowIsinInfo(q, errText) {
   if (!q) { el.classList.add('hidden'); return; }
   if (q.price > 0) {
     const d = q.priceDate ? new Date(q.priceDate + 'T00:00:00').toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
-    el.textContent = `✓ ${q.name ? q.name + ' · ' : ''}Kurs ${fmtEur(q.price)}${q.currency && q.currency !== 'EUR' ? ' (' + q.currency + ')' : ''}${d ? ' · Stand ' + d : ''}`;
+    el.textContent = `✓ ${q.name ? q.name + ' · ' : ''}${tk('depot.priceIs', { amount: fmtEur(q.price) })}${q.currency && q.currency !== 'EUR' ? ' (' + q.currency + ')' : ''}${d ? ' · ' + tk('depot.asOfDate', { date: d }) : ''}`;
     el.style.color = FIN_GREEN;
   } else {
-    el.textContent = 'Kein Kurs gefunden' + (q.error ? ': ' + q.error : '.');
+    el.textContent = q.error ? tk('depot.noPriceFoundErr', { error: q.error }) : tk('depot.noPriceFound');
     el.style.color = FIN_RED;
   }
   el.classList.remove('hidden');
@@ -1730,10 +1734,10 @@ async function checkGoalIsin() {
   const inp = document.getElementById('finGoalIsin');
   const isin = finNormIsin(inp.value);
   inp.value = isin;
-  if (!finValidIsin(isin)) { finShowIsinInfo(null, 'Das ist keine gültige ISIN (12 Zeichen, z. B. IE00B4L5Y983).'); return; }
+  if (!finValidIsin(isin)) { finShowIsinInfo(null, tk('depot.thatNotValidIsin')); return; }
   const btn = document.getElementById('finGoalIsinCheck');
   btn.disabled = true;
-  btn.textContent = 'Prüfe …';
+  btn.textContent = tk('settings.system.checking');
   try {
     const r = await finPost('/api/pinn/kurse', { isins: [{ isin, ab: finIsoAddDays(finTodayIso(), -30) }], frisch: true });
     const k = (r.kurse || {})[isin];
@@ -1748,12 +1752,12 @@ async function checkGoalIsin() {
       const iconInp = document.getElementById('finGoalIcon');
       if (iconInp.value.trim() === '🎯') { iconInp.value = finKindInfo(document.getElementById('finGoalKind').value).icon; renderGoalIconPicker(); }
     }
-    finShowIsinInfo(k || { error: 'Keine Antwort.' });
+    finShowIsinInfo(k || { error: tk('depot.noAnswer') });
   } catch (err) {
-    finShowIsinInfo(null, (err instanceof TypeError || err.retry) ? 'Keine Verbindung zum Server.' : err.message);
+    finShowIsinInfo(null, (err instanceof TypeError || err.retry) ? tk('common.noConnection') : err.message);
   } finally {
     btn.disabled = false;
-    btn.textContent = 'Kurs prüfen';
+    btn.textContent = tk('depot.checkPrice');
   }
 }
 function renderGoalIconPicker() {
@@ -1774,35 +1778,35 @@ async function saveGoalFromModal() {
   const errEl = document.getElementById('finGoalError');
   const showErr = (msg) => { errEl.textContent = msg; errEl.classList.remove('hidden'); };
   const name = document.getElementById('finGoalName').value.replace(/\s+/g, ' ').trim().slice(0, 40);
-  if (!name) return showErr('Bitte einen Namen eingeben.');
+  if (!name) return showErr(tk('common.needName'));
   const targetRaw = document.getElementById('finGoalTarget').value.trim();
   const target = targetRaw ? parseEuro(targetRaw) : null;
-  if (targetRaw && !(target > 0)) return showErr('Bitte einen gültigen Zielbetrag eingeben (oder leer lassen).');
+  if (targetRaw && !(target > 0)) return showErr(tk('depot.pleaseEnterValidTarget'));
   const startRaw = document.getElementById('finGoalStart').value.trim();
   const startBalance = startRaw ? parseEuro(startRaw) : 0;
-  if (startRaw && (!isFinite(startBalance) || startBalance < 0)) return showErr('Bitte bei „Schon gespart“ einen gültigen Betrag eingeben.');
+  if (startRaw && (!isFinite(startBalance) || startBalance < 0)) return showErr(tk('depot.pleaseEnterValidAmount'));
   const targetDate = document.getElementById('finGoalDate').value;
   const kind = document.getElementById('finGoalKind').value;
   const isEtf = kind !== 'ziel';
   const depotSel = document.getElementById('finGoalDepot').value;
   const depot = finDepot(depotSel) ? depotSel : finFallbackDepotId();
   const isin = finNormIsin(document.getElementById('finGoalIsin').value);
-  if (isEtf && !finValidIsin(isin)) return showErr('Bitte eine gültige ISIN eingeben (12 Zeichen, z. B. IE00B4L5Y983).');
+  if (isEtf && !finValidIsin(isin)) return showErr(tk('depot.pleaseEnterValidIsin'));
   const startShares = isEtf ? finParseShares(document.getElementById('finGoalShares').value) : 0;
-  if (isEtf && !isFinite(startShares)) return showErr('Bitte bei „Anteile schon im Depot“ eine gültige Zahl eingeben.');
+  if (isEtf && !isFinite(startShares)) return showErr(tk('depot.pleaseEnterValidNumber'));
   // Savings instalment
   const rateRaw = document.getElementById('finGoalRateAmount').value.trim();
   const rate = rateRaw ? parseEuro(rateRaw) : 0;
-  if (rateRaw && !(rate > 0)) return showErr('Bitte bei der Sparrate einen positiven Betrag eingeben (oder leer lassen).');
-  if (rate > 1000000) return showErr('Die Sparrate ist zu groß.');
+  if (rateRaw && !(rate > 0)) return showErr(tk('depot.pleaseEnterPositiveAmount2'));
+  if (rate > 1000000) return showErr(tk('depot.savingsPlanTooLarge'));
   const rateInterval = FIN_INTERVALS.some(i => i.id === document.getElementById('finGoalRateInterval').value) ? document.getElementById('finGoalRateInterval').value : 'monthly';
   const rateStart = document.getElementById('finGoalRateStart').value;
-  if (rate > 0 && !/^\d{4}-\d{2}-\d{2}$/.test(rateStart)) return showErr('Bitte den Tag der ersten Ausführung der Sparrate wählen.');
+  if (rate > 0 && !/^\d{4}-\d{2}-\d{2}$/.test(rateStart)) return showErr(tk('depot.pleaseChooseDayFirst2'));
   const oldGoal = editingGoalId ? finGoal(editingGoalId) : null;
   const ratePlan = oldGoal ? (finGoalRatePlans(oldGoal.id)[0] || null) : null;
   let rateApplyFrom = null;
   if (ratePlan && !(rate > 0)) {
-    if (!confirm('Die Sparrate wird beendet. Bisherige Buchungen bleiben im Depot und in den Ausgaben erhalten. Fortfahren?')) return;
+    if (!confirm(tk('depot.savingsPlanWillEnded'))) return;
   } else if (ratePlan) {
     const scope = finScopeNeeded(ratePlan, rate, rateStart, rateInterval);
     if (scope) {
@@ -1840,7 +1844,7 @@ async function saveGoalFromModal() {
   // and therefore appears automatically in the depot and in the expenses
   let rateToast = '';
   if (rate > 0) {
-    const keepTitle = ratePlan && ratePlan.title && ratePlan.title !== 'Sparrate' && !(oldGoal && ratePlan.title === oldGoal.name);
+    const keepTitle = ratePlan && ratePlan.title && ratePlan.title !== tk('depot.savingsPlan2') && !(oldGoal && ratePlan.title === oldGoal.name);
     finUpsertRecurring(ratePlan ? ratePlan.id : null, {
       title: keepTitle ? ratePlan.title : name,
       amount: finRound(rate),
@@ -1851,25 +1855,25 @@ async function saveGoalFromModal() {
       interval: rateInterval,
       start: rateStart,
     }, rateApplyFrom);
-    rateToast = ` Sparrate ${fmtEur(rate)} ${finRecDescribe({ start: rateStart, interval: rateInterval })}.`;
+    rateToast = ` ${tk('depot.savingsPlan3', { amount: fmtEur(rate), v: finRecDescribe({ start: rateStart, interval: rateInterval }) })}`;
   } else if (ratePlan) {
     finEndRecurring(ratePlan.id);
-    rateToast = ' Sparrate beendet.';
+    rateToast = (' ' + tk('depot.savingsPlanEnded'));
   }
   persistState();
   closeGoalModal();
   renderFinance();
   renderFinRecurringEditor();
   if (data.isin) loadEtfQuotes(true, [data.isin]);
-  finShowToast(`Position „${name}“ gespeichert.${rateToast}`);
+  finShowToast(tk('depot.positionSaved', { name, rateToast }));
 }
 function deleteGoalFromModal() {
   const g = finGoal(editingGoalId);
   if (!g) return;
-  const extra = Number(g.startBalance) > 0 ? ` Das Startguthaben (${fmtEur(g.startBalance)}) entfällt.` : '';
+  const extra = Number(g.startBalance) > 0 ? ` ${tk('depot.startingBalanceDropped', { amount: fmtEur(g.startBalance) })}` : '';
   const nTrades = finance.etfTrades.filter(t => t.goal === g.id).length;
-  const extraTrades = nTrades ? ` Die ${nTrades} importierten Depot-Umsätze werden mit gelöscht.` : '';
-  if (!confirm(`Position „${g.name}“ löschen? Die zugehörigen Buchungen bleiben erhalten und zählen danach im Depot als „Ohne Position“.${extra}${extraTrades}`)) return;
+  const extraTrades = nTrades ? ` ${tk('depot.importedDepotTransactionsWill', { nTrades })}` : '';
+  if (!confirm(tk('depot.deletePositionAssociatedTransactions', { name: g.name, extra, extraTrades }))) return;
   // Bookings stay in the same depot (instead of slipping into the main depot)
   finRelinkSavings('spar:' + g.id, 'depot:' + finGoalDepotId(g));
   finance.savingsGoals = finance.savingsGoals.filter(x => x.id !== g.id);
@@ -1877,7 +1881,7 @@ function deleteGoalFromModal() {
   persistState();
   closeGoalModal();
   renderFinance();
-  finShowToast('Position gelöscht.');
+  finShowToast(tk('depot.positionDeleted'));
 }
 // Re-assign „Sparen“ bookings (recurring ones in the family record, single ones via the queue)
 function finRelinkSavings(fromLink, toLink) {
@@ -1895,14 +1899,14 @@ function openDepotModal(depotId = null) {
   const d = depotId ? finDepot(depotId) : null;
   editingDepotId = d ? d.id : null;
   depotModalType = d && d.type === 'junior' ? 'junior' : 'depot';
-  document.getElementById('finDepotTitle').textContent = d ? 'Depot bearbeiten' : 'Neues Depot';
+  document.getElementById('finDepotTitle').textContent = d ? tk('depot.editDepot2') : tk('depot.newDepot');
   document.getElementById('finDepotName').value = d ? (d.name || '') : '';
   document.getElementById('finDepotIcon').value = d ? (d.icon || '💼') : '💼';
   document.getElementById('finDepotColor').value = d ? finDepotColor(d) : FIN_DEPOT_COLORS[finDepots().length % FIN_DEPOT_COLORS.length];
   document.getElementById('finDepotBank').value = d ? (d.bank || '') : '';
   document.getElementById('finDepotIncluded').checked = d ? finDepotIncluded(d.id) : true;
   const kidSel = document.getElementById('finDepotKid');
-  kidSel.innerHTML = '<option value="">– noch keinem Kind zugeordnet –</option>'
+  kidSel.innerHTML = ('<option value="">' + escapeHtml(tk('depot.notAssignedChildYet')) + '</option>')
     + finKidCandidates().map(m => `<option value="${escapeHtml(m.id)}">${escapeHtml(memberLabel(m))}</option>`).join('');
   kidSel.value = d && d.kid && memberById(d.kid) ? d.kid : '';
   document.getElementById('finDepotError').classList.add('hidden');
@@ -1923,7 +1927,7 @@ function updateDepotModalUi() {
   });
   document.getElementById('finDepotKidWrap').classList.toggle('hidden', !junior);
   const kid = junior ? memberById(document.getElementById('finDepotKid').value) : null;
-  document.getElementById('finDepotName').placeholder = junior ? ('z. B. Junior-Depot' + (kid ? ' ' + memberLabel(kid) : '')) : 'z. B. Mein Depot';
+  document.getElementById('finDepotName').placeholder = junior ? (kid ? tk('depot.juniorPhKid', { name: memberLabel(kid) }) : tk('depot.juniorPh')) : tk('depot.eGMyDepot');
   renderDepotIconPicker();
 }
 function setDepotModalType(type) {
@@ -1954,8 +1958,8 @@ function saveDepotFromModal() {
   const kidId = junior ? document.getElementById('finDepotKid').value : '';
   const kid = kidId ? memberById(kidId) : null;
   let name = document.getElementById('finDepotName').value.replace(/\s+/g, ' ').trim().slice(0, 40);
-  if (!name && junior) name = ('Junior-Depot' + (kid ? ' ' + memberLabel(kid) : '')).slice(0, 40);
-  if (!name) return showErr('Bitte einen Namen eingeben.');
+  if (!name && junior) name = (tk('depot.juniorDepot') + (kid ? ' ' + memberLabel(kid) : '')).slice(0, 40);
+  if (!name) return showErr(tk('common.needName'));
   const color = document.getElementById('finDepotColor').value;
   const data = {
     name,
@@ -1982,7 +1986,7 @@ function saveDepotFromModal() {
   closeDepotModal();
   if (isNew) finSavingsDepot = id; // open the new depot right away
   renderFinance();
-  finShowToast(`${junior ? 'Junior-Depot' : 'Depot'} „${name}“ gespeichert.`);
+  finShowToast(junior ? tk('depot.juniorSaved', { name }) : tk('depot.depotSaved', { name }));
 }
 function deleteDepotFromModal() {
   const d = finDepot(editingDepotId);
@@ -1990,14 +1994,14 @@ function deleteDepotFromModal() {
   const others = finDepots().filter(x => x.id !== d.id);
   if (!others.length) {
     const errEl = document.getElementById('finDepotError');
-    errEl.textContent = 'Das letzte Depot kann nicht gelöscht werden – du kannst es aber umbenennen.';
+    errEl.textContent = tk('depot.lastDepotCannotDeleted');
     errEl.classList.remove('hidden');
     return;
   }
   const target = others.find(x => x.id === FIN_MAIN_DEPOT) || others[0];
   const goals = finGoalsInDepot(d.id);
-  const moveTxt = goals.length ? ` Die ${goals.length} Position${goals.length === 1 ? '' : 'en'} samt Buchungen wandern ins Depot „${target.name || 'Depot'}“.` : ' Buchungen ohne Position wandern ins Depot „' + (target.name || 'Depot') + '“.';
-  if (!confirm(`Depot „${d.name || 'Depot'}“ löschen?${moveTxt}`)) return;
+  const moveTxt = ' ' + (goals.length ? tk('depot.movePositionsN', { n: goals.length, name: target.name || tk('depot.mainName') }) : tk('depot.moveEntries', { name: target.name || tk('depot.mainName') }));
+  if (!confirm(tk('depot.deleteDepot', { name: d.name || tk('depot.mainName'), moveTxt }))) return;
   finance.savingsGoals = finance.savingsGoals.map(g => finGoalDepotId(g) === d.id ? { ...g, depot: target.id } : g);
   finRelinkSavings('depot:' + d.id, 'depot:' + target.id);
   finance.depots = finance.depots.filter(x => x.id !== d.id);
@@ -2008,7 +2012,7 @@ function deleteDepotFromModal() {
   closeDepotModal();
   if (finSavingsDepot === d.id) finSavingsDepot = null;
   renderFinance();
-  finShowToast('Depot gelöscht.');
+  finShowToast(tk('depot.depotDeleted'));
 }
 
 /* ---------- Pocket money: data ---------- */
@@ -2026,7 +2030,7 @@ function finPocketState(kidId, todayIso = finTodayIso()) {
   const start = /^\d{4}-\d{2}-\d{2}$/.test(p.start || '') ? p.start : '1970-01-01';
   const moves = [];
   finAllowancePlans(kidId).forEach(r => finRecDates(r, start, todayIso).forEach(d => {
-    moves.push({ date: d, amount: finRecurringAmountFor(r, d), note: 'Taschengeld', auto: true });
+    moves.push({ date: d, amount: finRecurringAmountFor(r, d), note: tk('depot.pocketMoney'), auto: true });
   }));
   finance.pocketLedger.filter(l => l.kid === kidId && l.date >= start && l.date <= todayIso).forEach(l => {
     moves.push({ id: l.id, date: l.date, amount: Number(l.amount) || 0, note: l.note || '', expenseId: l.expenseId || '' });
@@ -2063,17 +2067,17 @@ function renderAllowances() {
     <div class="rounded-2xl bg-white border border-ink/10 shadow-sm p-4 sm:p-5">
       <div class="flex items-start justify-between gap-3">
         <div class="min-w-0">
-          <div class="text-[11px] uppercase tracking-wide text-ink/40">Taschengeld pro Monat</div>
+          <div class="text-[11px] uppercase tracking-wide text-ink/40">${escapeHtml(tk('depot.pocketMoneyPerMonth'))}</div>
           <div class="font-serif text-2xl">${fmtEur(perMonth)}</div>
-          <div class="text-xs text-ink/50">umgerechnet, alle Kinder</div>
+          <div class="text-xs text-ink/50">${escapeHtml(tk('depot.convertedAllChildren'))}</div>
         </div>
         <div class="text-right min-w-0">
-          <div class="text-[11px] uppercase tracking-wide text-ink/40">Kategorie Kinder · ${escapeHtml(monthRange.longShort)}</div>
+          <div class="text-[11px] uppercase tracking-wide text-ink/40">${escapeHtml(tk('pocket.catKids'))} · ${escapeHtml(monthRange.longShort)}</div>
           <div class="font-serif text-2xl" style="color:${kidsMonth > 0 ? FIN_RED : 'inherit'}">${fmtEur(kidsMonth)}</div>
-          <div class="text-xs text-ink/50">davon Taschengeld ${fmtEur(allowanceMonth)}</div>
+          <div class="text-xs text-ink/50">${escapeHtml(tk('pocket.ofWhich', { amount: fmtEur(allowanceMonth) }))}</div>
         </div>
       </div>
-      <button type="button" id="finKidsShowExpenses" class="mt-3 text-xs text-pine">Alle Ausgaben unter „Kinder“ ansehen ›</button>
+      <button type="button" id="finKidsShowExpenses" class="mt-3 text-xs text-pine">${escapeHtml(tk('depot.seeAllExpensesUnder'))}</button>
     </div>`;
 
   const cards = kids.map(m => {
@@ -2085,9 +2089,9 @@ function renderAllowances() {
       const next = finRecNext(plan, todayIso);
       const paidYear = finAllowancePlans(m.id).reduce((s, r) => s + finRecDates(r, year + '-01-01', todayIso).reduce((t, d) => t + finRecurringAmountFor(r, d), 0), 0);
       tiles = `<div class="grid grid-cols-3 gap-2 mt-3">
-        ${finTile('Nächste', next ? escapeHtml(finDayLabel(next)) : '–', next ? fmtEur(finRecurringAmountFor(plan, next)) : '')}
-        ${finTile('Pro Monat', fmtEur(finRecMonthly(plan, todayIso)), 'umgerechnet')}
-        ${finTile('Seit Jan.', fmtEur(finRound(paidYear)), 'ausgezahlt')}
+        ${finTile(tk('depot.next'), next ? escapeHtml(finDayLabel(next)) : '–', next ? fmtEur(finRecurringAmountFor(plan, next)) : '')}
+        ${finTile(tk('depot.perMonth2'), fmtEur(finRecMonthly(plan, todayIso)), 'umgerechnet')}
+        ${finTile(tk('depot.sinceJan'), fmtEur(finRound(paidYear)), 'ausgezahlt')}
       </div>`;
     }
     const others = ausgaben.filter(e => e.category === FIN_KIDS_CATEGORY && e.link === 'kind:' + m.id && e.date && e.date.slice(0, 4) === year && e.date <= todayIso)
@@ -2097,45 +2101,45 @@ function renderAllowances() {
     if (pocket) {
       const open = finOpenKidMoves.has(m.id);
       const moves = pocket.moves.slice(0, 10).map(mv => {
-        const inner = `<span class="truncate">${escapeHtml(finDayLabel(mv.date))} · ${escapeHtml(mv.note || (mv.amount < 0 ? 'Ausgegeben' : 'Bekommen'))}${mv.auto ? '' : ' <span class="text-ink/35">✕</span>'}</span><span class="shrink-0 font-semibold" style="color:${mv.amount >= 0 ? FIN_GREEN : FIN_RED}">${finSignedEur(mv.amount)}</span>`;
+        const inner = `<span class="truncate">${escapeHtml(finDayLabel(mv.date))} · ${escapeHtml(mv.note || (mv.amount < 0 ? tk('fin.stat.spent') : tk('depot.received')))}${mv.auto ? '' : ' <span class="text-ink/35">✕</span>'}</span><span class="shrink-0 font-semibold" style="color:${mv.amount >= 0 ? FIN_GREEN : FIN_RED}">${finSignedEur(mv.amount)}</span>`;
         return mv.auto
           ? `<div class="fin-move-row flex items-center justify-between gap-2 text-xs py-1 px-1">${inner}</div>`
-          : `<button type="button" class="fin-move-row w-full flex items-center justify-between gap-2 text-xs py-1 px-1 rounded-lg hover:bg-white/70 text-left" data-move="${escapeHtml(mv.id)}" title="Eintrag löschen">${inner}</button>`;
+          : `<button type="button" class="fin-move-row w-full flex items-center justify-between gap-2 text-xs py-1 px-1 rounded-lg hover:bg-white/70 text-left" data-move="${escapeHtml(mv.id)}" title="${escapeHtml(tk('depot.deleteEntry'))}">${inner}</button>`;
       }).join('');
       pocketHtml = `
         <div class="mt-3 rounded-xl bg-ink/5 p-3">
           <div class="flex items-center justify-between gap-3 flex-wrap">
             <div>
-              <div class="text-[10px] uppercase tracking-wide text-ink/40">👛 Guthaben</div>
+              <div class="text-[10px] uppercase tracking-wide text-ink/40">${escapeHtml(tk('depot.balance'))}</div>
               <div class="text-xl font-semibold" style="color:${pocket.balance >= 0 ? FIN_GREEN : FIN_RED}">${fmtEur(pocket.balance)}</div>
             </div>
             <div class="flex gap-2">
-              <button type="button" data-act="out" class="px-2.5 py-1.5 rounded-lg border border-ink/15 bg-white text-xs text-ink/70 hover:text-pine hover:border-pine transition">− Ausgegeben</button>
-              <button type="button" data-act="in" class="px-2.5 py-1.5 rounded-lg border border-ink/15 bg-white text-xs text-ink/70 hover:text-pine hover:border-pine transition">+ Bekommen</button>
+              <button type="button" data-act="out" class="px-2.5 py-1.5 rounded-lg border border-ink/15 bg-white text-xs text-ink/70 hover:text-pine hover:border-pine transition">${escapeHtml(tk('depot.spent'))}</button>
+              <button type="button" data-act="in" class="px-2.5 py-1.5 rounded-lg border border-ink/15 bg-white text-xs text-ink/70 hover:text-pine hover:border-pine transition">${escapeHtml(tk('depot.received2'))}</button>
             </div>
           </div>
-          ${pocket.moves.length ? `<details class="fin-kid-moves mt-2"${open ? ' open' : ''}><summary class="text-xs text-ink/50 cursor-pointer select-none">Letzte Bewegungen</summary><div class="mt-1">${moves}</div></details>` : ''}
+          ${pocket.moves.length ? `<details class="fin-kid-moves mt-2"${open ? ' open' : ''}><summary class="text-xs text-ink/50 cursor-pointer select-none">${escapeHtml(tk('depot.recentMovements'))}</summary><div class="mt-1">${moves}</div></details>` : ''}
         </div>`;
     }
     const kidPage = isKidPageEnabled(m);
     const visible = kidPage && m.kid && m.kid.showAllowance;
-    const visText = visible ? '👀 Auf der Kinderseite sichtbar'
-      : kidPage ? 'Nicht auf der Kinderseite sichtbar – Haken unter „Bearbeiten“ oder in den Einstellungen des Kindes setzen'
-      : 'Keine Kinderseite aktiviert';
+    const visText = visible ? tk('depot.visibleKidsPage')
+      : kidPage ? tk('depot.notVisibleKidsPage')
+      : tk('depot.noKidsPageActivated');
     return `
       <div class="fin-kid-card rounded-2xl bg-white border border-ink/10 shadow-sm p-4 sm:p-5" data-kid="${escapeHtml(m.id)}">
         <div class="flex items-center gap-3">
           <span class="w-12 h-12 rounded-full overflow-hidden border-2 shrink-0" style="border-color:${memberBorderColor(m)}">${memberAvatarInnerHTML(m)}</span>
           <div class="flex-1 min-w-0">
             <div class="font-serif text-lg leading-tight truncate">${name}</div>
-            <div class="text-xs text-ink/50 truncate">${plan ? `${fmtEur(finRecurringAmountFor(plan, todayIso))} · ${escapeHtml(finRecDescribe(plan))}` : 'Noch kein Taschengeld festgelegt'}</div>
+            <div class="text-xs text-ink/50 truncate">${plan ? `${fmtEur(finRecurringAmountFor(plan, todayIso))} · ${escapeHtml(finRecDescribe(plan))}` : tk('depot.noPocketMoneySet')}</div>
           </div>
-          <button type="button" data-act="edit" class="shrink-0 px-3 py-1.5 rounded-lg ${plan ? 'border border-ink/15 text-ink/60' : 'bg-pine text-white'} text-xs hover:opacity-90 transition">${plan ? 'Bearbeiten' : 'Festlegen'}</button>
+          <button type="button" data-act="edit" class="shrink-0 px-3 py-1.5 rounded-lg ${plan ? 'border border-ink/15 text-ink/60' : 'bg-pine text-white'} text-xs hover:opacity-90 transition">${plan ? tk('common.edit') : tk('depot.set')}</button>
         </div>
         ${tiles}
         ${pocketHtml}
         ${kidStarsFinHtml(m)}
-        ${others > 0 ? `<p class="text-xs text-ink/50 mt-3">Weitere Ausgaben für ${name} ${year}: <b>${fmtEur(finRound(others))}</b></p>` : ''}
+        ${others > 0 ? `<p class="text-xs text-ink/50 mt-3">${escapeHtml(tk('depot.moreExpenses', { name, year }))} <b>${fmtEur(finRound(others))}</b></p>` : ''}
         <p class="text-[11px] text-ink/45 mt-3">${visText}</p>
       </div>`;
   }).join('');
@@ -2143,11 +2147,11 @@ function renderAllowances() {
   const empty = `
     <div class="rounded-2xl bg-white border border-ink/10 shadow-sm p-5 text-center">
       <div class="text-4xl mb-2">🪙</div>
-      <p class="text-sm text-ink/60 mb-3">Noch kein Taschengeld eingerichtet. Lege fest, wer wie oft wie viel bekommt – es wird dann automatisch unter „Kinder“ gebucht.</p>
-      <button type="button" id="finKidsEmptyAdd" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Taschengeld festlegen</button>
+      <p class="text-sm text-ink/60 mb-3">${escapeHtml(tk('depot.noPocketMoneySet2'))}</p>
+      <button type="button" id="finKidsEmptyAdd" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">${escapeHtml(tk('depot.setPocketMoney'))}</button>
     </div>`;
   const addMore = kids.length && members.some(m => !finIsKidish(m))
-    ? `<button type="button" id="finKidsAddOther" class="self-start text-xs text-pine px-1">+ Taschengeld für ein weiteres Familienmitglied</button>` : '';
+    ? `<button type="button" id="finKidsAddOther" class="self-start text-xs text-pine px-1">${escapeHtml(tk('depot.pocketMoneyAnotherFamily'))}</button>` : '';
 
   pane.innerHTML = summary + (kids.length ? cards + addMore : empty);
 
@@ -2176,7 +2180,7 @@ function allowanceModalKid() {
   return allowanceKidId ? memberById(allowanceKidId) : memberById(document.getElementById('finAllowanceKidSelect').value);
 }
 function openAllowanceModal(kidId) {
-  if (!members.length) { finShowToast('Lege zuerst die Familienmitglieder an (Einstellungen → Familie).', true); return; }
+  if (!members.length) { finShowToast(tk('depot.firstCreateFamilyMembers'), true); return; }
   const kid = kidId ? memberById(kidId) : null;
   allowanceKidId = kid ? kid.id : null;
   const todayIso = finTodayIso();
@@ -2190,7 +2194,7 @@ function openAllowanceModal(kidId) {
   const target = allowanceModalKid();
   const plan = target ? finCurrentAllowance(target.id, todayIso) : null;
   allowancePlanId = plan ? plan.id : null;
-  document.getElementById('finAllowanceTitle').textContent = kid ? `Taschengeld für ${memberLabel(kid)}` : 'Taschengeld festlegen';
+  document.getElementById('finAllowanceTitle').textContent = kid ? tk('depot.pocketMoney2', { name: memberLabel(kid) }) : tk('depot.setPocketMoney');
   document.getElementById('finAllowanceAmount').value = plan ? euroInputValue(finRecurringAmountFor(plan, todayIso)) : '';
   document.getElementById('finAllowanceInterval').value = plan ? finRecInterval(plan) : 'weekly';
   document.getElementById('finAllowanceStart').value = plan ? (finRecStart(plan) || todayIso) : todayIso;
@@ -2218,8 +2222,8 @@ function setAllowanceShowCheckbox() {
   box.checked = enabled && !!(kid.kid && kid.kid.showAllowance);
   document.getElementById('finAllowanceShowWrap').classList.toggle('opacity-50', !enabled);
   hint.textContent = enabled
-    ? 'Das Kind sieht den Betrag, wann es wieder etwas gibt und – falls mitgeführt – sein Guthaben. Derselbe Haken steht in den Einstellungen des Kindes.'
-    : `Für ${kid ? memberLabel(kid) : 'dieses Mitglied'} ist keine Kinderseite aktiviert (Einstellungen → Familie → Mitglied bearbeiten).`;
+    ? tk('depot.childSeesAmountWhen')
+    : tk('depot.noKidsPageActivated2', { name: kid ? memberLabel(kid) : tk('depot.member') });
 }
 function updateAllowanceModalUi() {
   const start = document.getElementById('finAllowanceStart').value;
@@ -2228,7 +2232,7 @@ function updateAllowanceModalUi() {
   if (/^\d{4}-\d{2}-\d{2}$/.test(start)) {
     const probe = { start, interval };
     const next = finRecNext(probe);
-    info.textContent = `Wird ${finRecDescribe(probe)} unter „Kinder“ gebucht.${next ? ' Nächste Auszahlung: ' + finDayLabel(next) + '.' : ''}`;
+    info.textContent = tk('pocket.bookedInfo', { rhythm: finRecDescribe(probe) }) + (next ? ' ' + tk('pocket.nextPayout', { date: finDayLabel(next) }) : '');
   } else {
     info.textContent = '';
   }
@@ -2243,23 +2247,23 @@ function saveAllowanceFromModal() {
   const errEl = document.getElementById('finAllowanceError');
   const showErr = (msg) => { errEl.textContent = msg; errEl.classList.remove('hidden'); };
   const kid = allowanceModalKid();
-  if (!kid) return showErr('Bitte ein Kind auswählen.');
+  if (!kid) return showErr(tk('depot.pleaseSelectChild'));
   const amount = parseEuro(document.getElementById('finAllowanceAmount').value);
-  if (!(amount > 0)) return showErr('Bitte einen Betrag eingeben.');
-  if (amount > 100000) return showErr('Der Betrag ist zu groß.');
+  if (!(amount > 0)) return showErr(tk('fund.pleaseEnterAmount'));
+  if (amount > 100000) return showErr(tk('fin.err.tooBig'));
   const interval = document.getElementById('finAllowanceInterval').value || 'weekly';
   const start = document.getElementById('finAllowanceStart').value;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(start)) return showErr('Bitte das Datum der ersten Auszahlung wählen.');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(start)) return showErr(tk('depot.pleaseChooseDateFirst'));
   const track = document.getElementById('finAllowanceTrack').checked;
   const trackStart = document.getElementById('finAllowanceTrackStart').value;
   const trackRaw = document.getElementById('finAllowanceTrackBalance').value.trim();
   const trackBalance = trackRaw ? parseEuro(trackRaw) : 0;
-  if (track && !/^\d{4}-\d{2}-\d{2}$/.test(trackStart)) return showErr('Bitte angeben, ab wann das Guthaben gezählt wird.');
-  if (track && trackRaw && !isFinite(trackBalance)) return showErr('Bitte ein gültiges Guthaben eingeben.');
+  if (track && !/^\d{4}-\d{2}-\d{2}$/.test(trackStart)) return showErr(tk('depot.pleaseSpecifyFromWhen'));
+  if (track && trackRaw && !isFinite(trackBalance)) return showErr(tk('depot.pleaseEnterValidBalance'));
   const todayIso = finTodayIso();
 
   const fields = {
-    title: 'Taschengeld ' + (kid.name || memberLabel(kid)), amount, category: FIN_KIDS_CATEGORY,
+    title: (tk('depot.pocketMoney') + ' ') + (kid.name || memberLabel(kid)), amount, category: FIN_KIDS_CATEGORY,
     paidBy: document.getElementById('finAllowancePaidBy').value, note: '', link: 'kind:' + kid.id,
     interval, start, allowanceFor: kid.id,
   };
@@ -2288,24 +2292,24 @@ function saveAllowanceFromModal() {
   closeAllowanceModal();
   renderFinance();
   if (kidPageMemberId) renderKidPage();
-  finShowToast(`Taschengeld für ${memberLabel(kid)} gespeichert.`);
+  finShowToast(tk('depot.pocketMoneySaved', { name: memberLabel(kid) }));
 }
 function endAllowanceFromModal() {
   const kid = allowanceModalKid();
   const plan = allowancePlanId ? finance.recurring.find(r => r.id === allowancePlanId) : null;
   if (!kid || !plan) return;
-  if (!confirm(`Taschengeld für ${memberLabel(kid)} beenden? Bisherige Auszahlungen bleiben in den Ausgaben erhalten.`)) return;
+  if (!confirm(tk('depot.endPocketMoneyPrevious', { name: memberLabel(kid) }))) return;
   finEndRecurring(plan.id);
   persistState();
   closeAllowanceModal();
   renderFinance();
   if (kidPageMemberId) renderKidPage();
-  finShowToast('Taschengeld beendet.');
+  finShowToast(tk('depot.pocketMoneyEnded'));
 }
 function deleteAllowanceFromModal() {
   const kid = allowanceModalKid();
   if (!kid) return;
-  if (!confirm(`Taschengeld für ${memberLabel(kid)} komplett löschen? Alle bisherigen Auszahlungen verschwinden aus den Ausgaben, das Guthaben samt Bewegungen wird entfernt. Tipp: „Beenden“ behält die bisherigen Auszahlungen.`)) return;
+  if (!confirm(tk('depot.completelyDeletePocketMoney', { name: memberLabel(kid) }))) return;
   finance.recurring = finance.recurring.filter(r => r.allowanceFor !== kid.id);
   finance.pocketMoney = finance.pocketMoney.filter(p => p.id !== kid.id);
   finance.pocketLedger = finance.pocketLedger.filter(l => l.kid !== kid.id);
@@ -2313,7 +2317,7 @@ function deleteAllowanceFromModal() {
   closeAllowanceModal();
   renderFinance();
   if (kidPageMemberId) renderKidPage();
-  finShowToast('Taschengeld gelöscht.');
+  finShowToast(tk('depot.pocketMoneyDeleted'));
 }
 
 /* ---------- Pocket money: balance movement (spent / received) ---------- */
@@ -2338,7 +2342,7 @@ function updatePocketModalUi() {
   const kid = memberById(pocketKidId);
   const name = kid ? memberLabel(kid) : '';
   document.querySelectorAll('.fin-pocket-kind-btn').forEach(b => b.classList.toggle('active', b.dataset.kind === pocketKind));
-  document.getElementById('finPocketTitle').textContent = pocketKind === 'out' ? `${name} hat Geld ausgegeben` : `${name} hat Geld bekommen`;
+  document.getElementById('finPocketTitle').textContent = pocketKind === 'out' ? tk('pocket.spentTitle', { name }) : tk('pocket.receivedTitle', { name });
   document.getElementById('finPocketBookWrap').classList.toggle('hidden', pocketKind !== 'in');
 }
 function closePocketModal() {
@@ -2351,16 +2355,16 @@ function savePocketFromModal() {
   const kid = memberById(pocketKidId);
   if (!kid) return closePocketModal();
   const amount = Math.abs(parseEuro(document.getElementById('finPocketAmount').value));
-  if (!(amount > 0)) return showErr('Bitte einen Betrag eingeben.');
-  if (amount > 100000) return showErr('Der Betrag ist zu groß.');
+  if (!(amount > 0)) return showErr(tk('fund.pleaseEnterAmount'));
+  if (amount > 100000) return showErr(tk('fin.err.tooBig'));
   const date = document.getElementById('finPocketDate').value;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return showErr('Bitte ein Datum wählen.');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return showErr(tk('fin.err.needDate'));
   const note = document.getElementById('finPocketNote').value.replace(/\s+/g, ' ').trim().slice(0, 120);
   const entry = { id: 'p' + newRecordId(), kid: kid.id, date, amount: pocketKind === 'out' ? -amount : amount, note, expenseId: '' };
   if (pocketKind === 'in' && document.getElementById('finPocketBook').checked) {
     const expId = newRecordId();
     finQueueSave({
-      id: expId, amount, date, category: FIN_KIDS_CATEGORY, title: note || ('Extra für ' + (kid.name || memberLabel(kid))),
+      id: expId, amount, date, category: FIN_KIDS_CATEGORY, title: note || tk('pocket.extraFor', { name: kid.name || memberLabel(kid) }),
       note: '', paidBy: currentMember() ? currentMember().id : '', link: 'kind:' + kid.id,
       store: '', listId: '', items: [], createdBy: (currentUser() && currentUser().id) || '', created: new Date().toISOString(),
     });
@@ -2377,7 +2381,7 @@ function deletePocketMove(id) {
   const l = finance.pocketLedger.find(x => x.id === id);
   if (!l) return;
   const linked = l.expenseId && ausgaben.some(x => x.id === l.expenseId);
-  if (!confirm(`Eintrag „${l.note || (l.amount < 0 ? 'Ausgegeben' : 'Bekommen')}“ (${finSignedEur(l.amount)}) löschen?${linked ? ' Die zugehörige Ausgabe unter „Kinder“ wird ebenfalls gelöscht.' : ''}`)) return;
+  if (!confirm(tk('pocket.confirmDeleteEntry', { name: l.note || (l.amount < 0 ? tk('fin.stat.spent') : tk('pocket.received')), amount: finSignedEur(l.amount) }) + (linked ? ' ' + tk('pocket.linkedAlsoDeleted') : ''))) return;
   if (linked) finQueueDelete(l.expenseId);
   finance.pocketLedger = finance.pocketLedger.filter(x => x.id !== id);
   persistState();
@@ -2391,12 +2395,12 @@ function kidMoney(v) {
   return Number.isInteger(r) ? fmtEur0(r) : fmtEur(r);
 }
 function kidNextPayLabel(next, todayIso) {
-  if (next === todayIso) return 'heute gibt es Taschengeld! 🎉';
-  if (next === finIsoAddDays(todayIso, 1)) return 'morgen gibt es wieder was';
+  if (next === todayIso) return tk('pocket.kid.today');
+  if (next === finIsoAddDays(todayIso, 1)) return tk('pocket.kid.tomorrow');
   const d = new Date(next + 'T00:00:00');
   const days = Math.round((d - new Date(todayIso + 'T00:00:00')) / 86400000);
-  if (days < 7) return 'nächstes Mal am ' + FIN_WEEKDAYS[d.getDay()];
-  return 'nächstes Mal am ' + d.toLocaleDateString('de-DE', { day: 'numeric', month: 'long' });
+  if (days < 7) return tk('pocket.kid.nextOn', { date: finWeekdayName(d.getDay()) });
+  return tk('pocket.kid.nextOn', { date: d.toLocaleDateString(sysLocale(), { day: 'numeric', month: 'long' }) });
 }
 function kidAllowanceHtmlInner(m) {
   try {
@@ -2408,10 +2412,10 @@ function kidAllowanceHtmlInner(m) {
     let lines = '';
     if (plan) {
       const next = finRecNext(plan, todayIso);
-      lines += `<div class="kid-money-line">Dein Taschengeld: ${escapeHtml(kidMoney(finRecurringAmountFor(plan, next || todayIso)))}</div>`;
+      lines += `<div class="kid-money-line">${escapeHtml(tk('pocket.kid.yours', { amount: kidMoney(finRecurringAmountFor(plan, next || todayIso)) }))}</div>`;
       lines += `<div class="kid-money-sub">${escapeHtml(FIN_KID_RHYTHM[finRecInterval(plan)] || '')}${next ? ' · ' + escapeHtml(kidNextPayLabel(next, todayIso)) : ''}</div>`;
     }
-    if (pocket) lines += `<div class="kid-money-bal">In deiner Kasse: <b>${escapeHtml(kidMoney(pocket.balance))}</b></div>`;
+    if (pocket) lines += `<div class="kid-money-bal">${tk('pocket.kid.inYourBox', { amount: '<b>' + escapeHtml(kidMoney(pocket.balance)) + '</b>' })}</div>`;
     return `<div class="kid-money"><span class="kid-money-pig" aria-hidden="true">🐷</span><div style="min-width:0">${lines}</div></div>`;
   } catch (e) {
     return '';
@@ -2465,7 +2469,7 @@ function initSavingsAndAllowanceUi() {
   document.getElementById('finImportFile').addEventListener('change', (e) => {
     finImportReadFile(e.target.files && e.target.files[0]).catch(err => {
       const el = document.getElementById('finImportError');
-      el.textContent = 'Datei konnte nicht gelesen werden: ' + err.message;
+      el.textContent = (tk('depot.fileCouldNotRead') + ' ') + err.message;
       el.classList.remove('hidden');
     });
   });
@@ -2475,7 +2479,7 @@ function initSavingsAndAllowanceUi() {
   document.getElementById('saveFinImportBtn').addEventListener('click', saveImportFromModal);
   document.getElementById('finImportModal').addEventListener('click', (e) => {
     if (e.target.id !== 'finImportModal') return;
-    if (finImport && !confirm('Import abbrechen?')) return;
+    if (finImport && !confirm(tk('depot.cancelImport'))) return;
     closeImportModal();
   });
 

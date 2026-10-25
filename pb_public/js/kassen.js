@@ -137,7 +137,7 @@ function kasseGuestById(id) {
   if (!kasseIsGuestId(id)) return null;
   for (const k of kassen) {
     const g = (Array.isArray(k.guests) ? k.guests : []).find(x => x && x.id === id);
-    if (g) return { id: g.id, name: g.name || 'Gast', color: g.color || KASSE_GUEST_COLORS[0], guest: true, removed: !!g.removed };
+    if (g) return { id: g.id, name: g.name || tk('dashboard.guest'), color: g.color || KASSE_GUEST_COLORS[0], guest: true, removed: !!g.removed };
   }
   return null;
 }
@@ -180,27 +180,27 @@ function kasseProfileAvatar(uid, size = 22) {
 }
 function kasseDisplayName(k) {
   if (!k) return '';
-  if (k.art === 'familie') return 'Familie (alle)';
+  if (k.art === 'familie') return tk('fund.familyAll');
   const u = currentUser();
   if (k.art === 'privat') {
-    if (u && k.owner === u.id) return k.name && k.name !== 'Privat' ? k.name : 'Meine Kasse';
-    return (k.name && k.name !== 'Privat' ? k.name : 'Kasse') + ' von ' + kasseProfileName(k.owner);
+    if (u && k.owner === u.id) return k.name && k.name !== 'Privat' ? k.name : tk('fund.myFund');
+    return k.name && k.name !== 'Privat' ? tk('fund.ofPerson', { fund: k.name, name: kasseProfileName(k.owner) }) : tk('fund.fundOf', { name: kasseProfileName(k.owner) });
   }
-  return k.name || 'Kasse';
+  return k.name || tk('shop.complete.fund');
 }
 function kasseDescribe(k) {
   const u = currentUser();
   const n = kasseUserIds(k).length;
   let t;
-  if (k.art === 'familie') return 'Alle Profile der Familie · Verträge ohne eigene Kasse';
-  if (k.art === 'haushalt') t = k.all ? 'Alle Profile der Familie' : `${n} ${n === 1 ? 'Person' : 'Personen'}`;
+  if (k.art === 'familie') return tk('fund.allProfilesFamilyContracts');
+  if (k.art === 'haushalt') t = k.all ? tk('fund.allProfilesFamily') : tk('fund.peopleN', { n });
   else if (k.art === 'privat') {
-    if (u && k.owner === u.id) t = n > 1 ? `Deine Kasse · geteilt mit ${n - 1} ${n - 1 === 1 ? 'Person' : 'Personen'}` : 'Nur du';
-    else t = 'Mit dir geteilt';
-  } else t = `${n} ${n === 1 ? 'Person' : 'Personen'}`;
+    if (u && k.owner === u.id) t = n > 1 ? tk('fund.yoursSharedN', { n: n - 1 }) : tk('fund.onlyYou');
+    else t = tk('fund.sharedWithYou');
+  } else t = tk('fund.peopleN', { n });
   const gn = kasseGuests(k).length;
-  if (gn) t += ` + ${gn} ${gn === 1 ? 'Gast' : 'Gäste'}`;
-  if (k.split && n + gn > 1) t += ' · Ausgaben werden aufgeteilt';
+  if (gn) t += ' ' + tk('fund.plusGuestsN', { n: gn });
+  if (k.split && n + gn > 1) t += (' ' + tk('fund.expensesAreSplit'));
   return t;
 }
 function kassenSorted() {
@@ -237,7 +237,7 @@ function kassenRerender() {
     if (currentView === 'haus') renderHouse();
     if (kidPageMemberId) renderKidPage();
     refreshOverviewTiles();
-  } catch (e) { console.warn('Kassen: Neuzeichnen fehlgeschlagen', e); }
+  } catch (e) { console.warn('Funds: redraw failed', e); }
 }
 function kassenApplyActive(render) {
   const k = activeKasse();
@@ -306,7 +306,7 @@ async function kassenSendRescue() {
     if (body.success || body.expired) {
       try { localStorage.setItem(key + '.fertig', KASSEN_RESCUE_STUFE); } catch (e) { /* ignore – the cached state is kept */ }
       if (body.added > 0) {
-        finShowToast(`${body.added} fehlende Finanz-Einträge (Fahrzeuge, regelmäßige Buchungen, Verträge …) wiederhergestellt.`);
+        finShowToast(tk('fund.missingFinanceEntriesVehicles', { v: body.added }));
         kassenLoadedAt = 0;
         kassenLoad(true);
       }
@@ -408,17 +408,17 @@ async function kassenLoad(force) {
         body: JSON.stringify({ stand }),
       });
       body = await res.json().catch(() => ({}));
-    } catch (e) { kassenLastError = navigator.onLine ? 'Server nicht erreichbar.' : 'Keine Verbindung.'; kassenErrorRender(); return; } // offline – carry on with the cached state
+    } catch (e) { kassenLastError = navigator.onLine ? tk('calLink.serverUnreachable') : tk('fund.noConnection'); kassenErrorRender(); return; } // offline – carry on with the cached state
     if (res.status === 404 && !Array.isArray(body.kassen)) {
       if (kassenServer !== true) kassenServer = false;
-      kassenLastError = 'Der Server kennt die Kassen noch nicht (kassen.pb.js und pinn-kassen.js in pb_hooks, PocketBase neu starten).';
+      kassenLastError = tk('fund.serverDoesnTKnow');
       kassenErrorRender();
       return;
     }
     if (!res.ok || !Array.isArray(body.kassen)) {
       const why = body && (body.error || body.message);
-      kassenLastError = why ? 'Fehler vom Server: ' + why : `Kassen konnten nicht geladen werden (Antwort ${res.status}).`;
-      console.warn('Kassen:', res.status, body);
+      kassenLastError = why ? tk('fund.serverError', { error: why }) : tk('fund.fundsCouldNotLoaded', { v: res.status });
+      console.warn('Funds:', res.status, body);
       kassenErrorRender();
       return;
     }
@@ -502,9 +502,9 @@ function renderKassePills() {
     const noReal = id === 'kassePillFin' && finIsKasseTab() && !kasseIsReal(k);
     const kk = noReal ? null : k;
     b.style.setProperty('--k', kk ? (kk.color || '#2F4B41') : '#9A9A92');
-    const label = kk ? kasseDisplayName(kk) : (kassenLastError ? 'Kassen nicht erreichbar' : (noReal && kassenActiveMode()) ? 'Noch keine Kasse' : 'Kassen');
-    b.innerHTML = `<span class="kasse-sub-dot"></span><span class="truncate">${escapeHtml(label)}</span><span class="text-ink/35 shrink-0">· wechseln</span><svg class="shrink-0" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>`;
-    b.title = kk ? 'Kasse wechseln oder neue anlegen – ' + kasseDescribe(kk) : 'Kassen';
+    const label = kk ? kasseDisplayName(kk) : (kassenLastError ? tk('fund.error.title') : (noReal && kassenActiveMode()) ? tk('fund.empty.title') : tk('fund.funds'));
+    b.innerHTML = `<span class="kasse-sub-dot"></span><span class="truncate">${escapeHtml(label)}</span><span class="text-ink/35 shrink-0">${escapeHtml(tk('fund.switch'))}</span><svg class="shrink-0" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>`;
+    b.title = kk ? tk('fund.switchOrCreate', { info: kasseDescribe(kk) }) : tk('fund.funds');
   });
 }
 
@@ -532,14 +532,14 @@ function renderKassenModal() {
             <span class="kasse-avs mt-1">${avs}${more}</span>
           </span>
         </button>
-        <button type="button" class="shrink-0 w-9 h-9 rounded-lg border border-ink/15 text-ink/50 hover:text-pine hover:border-pine transition grid place-items-center" data-kasse-edit="${escapeHtml(k.id)}" aria-label="Kasse einstellen" title="${k.canManage ? 'Einstellen' : 'Mitglieder ansehen'}">⚙︎</button>
+        <button type="button" class="shrink-0 w-9 h-9 rounded-lg border border-ink/15 text-ink/50 hover:text-pine hover:border-pine transition grid place-items-center" data-kasse-edit="${escapeHtml(k.id)}" aria-label="${escapeHtml(tk('fund.fundSettings'))}" title="${k.canManage ? tk('fund.setUp') : tk('fund.viewMembers')}">⚙︎</button>
       </div>`;
-  }).join('') || `<p class="text-sm ${kassenLastError ? 'text-red-500' : 'text-ink/40 italic'}">${escapeHtml(kassenLastError || 'Kassen werden geladen …')}</p>`;
+  }).join('') || `<p class="text-sm ${kassenLastError ? 'text-red-500' : 'text-ink/40 italic'}">${escapeHtml(kassenLastError || tk('fund.loading.title'))}</p>`;
   document.getElementById('kasseNewBtn').classList.toggle('hidden', !kassenActiveMode());
   wrap.querySelectorAll('[data-kasse-pick]').forEach(b => b.addEventListener('click', () => {
     kassenSetActive(b.dataset.kassePick);
     closeKassenModal();
-    finShowToast('Kasse: ' + kasseDisplayName(activeKasse()));
+    finShowToast((tk('fund.fund') + ' ') + kasseDisplayName(activeKasse()));
   }));
   wrap.querySelectorAll('[data-kasse-edit]').forEach(b => b.addEventListener('click', () => openKasseEdit(b.dataset.kasseEdit)));
 }
@@ -566,61 +566,61 @@ function renderKasseEdit() {
   const nameEl = document.getElementById('kasseEditName');
   if (nameEl) d.name = nameEl.value;
   const artText = d.art === 'familie'
-    ? 'Die Familien-Gruppe gehört automatisch allen Profilen der Familie (außer Gästen). Hier liegen Verträge, die keiner eigenen Kasse zugeordnet sind. Profile mit Kindersicherung öffnen Finanzen und Dokumente gar nicht.'
+    ? tk('fund.familyGroupAutomaticallyBelongs')
     : d.art === 'haushalt'
-    ? 'Die Haushaltskasse ist der Standard: Hierhin gehen Einkäufe und Buchungen, wenn nichts anderes gewählt ist. Wer nicht dazugehört (z. B. Jugendliche mit eigenen Finanzen), sieht nichts davon – auch keine Verträge, Depots oder Belege.'
+    ? tk('fund.householdFundDefaultPurchases')
     : d.art === 'privat'
-      ? 'Deine eigene Kasse. Niemand sonst sieht sie – außer den Personen, mit denen du sie hier teilst (z. B. Partner).'
-      : 'Wähle, wer zu dieser Kasse gehört – z. B. nur die Eltern (Kinder ausgeschlossen), alle aus der WG oder nur du. Nur die Mitglieder sehen ihre Buchungen, Sparen, Verträge und Dokumente.';
+      ? tk('fund.yourOwnFundNobody')
+      : tk('fund.chooseWhoBelongsFund');
   const people = kassePeople();
   const peopleHtml = people.map(p => {
     const fixed = d.art !== 'haushalt' && p.id === d.owner;
     const checked = (d.art === 'haushalt' && d.all) || d.members.has(p.id) || fixed;
     const dis = ro || fixed || (d.art === 'haushalt' && d.all);
-    const sub = p.rolle === 'admin' ? 'Admin' : '';
+    const sub = p.rolle === 'admin' ? tk('common.admin') : '';
     return `
       <label class="flex items-center gap-2.5 py-1.5 ${dis ? '' : 'cursor-pointer'} select-none">
         <input type="checkbox" class="kasse-person-cb w-4 h-4 shrink-0" value="${escapeHtml(p.id)}" ${checked ? 'checked' : ''} ${dis ? 'disabled' : ''} />
         ${kasseProfileAvatar(p.id, 26)}
-        <span class="flex-1 min-w-0 text-sm truncate">${escapeHtml(kasseProfileName(p.id))}${p.id === me ? ' <span class="text-ink/40">(du)</span>' : ''}</span>
-        <span class="text-[10px] text-ink/40">${fixed ? (d.art === 'privat' ? 'Besitzer' : 'angelegt') : escapeHtml(sub)}</span>
+        <span class="flex-1 min-w-0 text-sm truncate">${escapeHtml(kasseProfileName(p.id))}${p.id === me ? ' <span class="text-ink/40">(' + escapeHtml(tk('fund.youLower')) + ')</span>' : ''}</span>
+        <span class="text-[10px] text-ink/40">${fixed ? (d.art === 'privat' ? tk('fund.owner') : 'angelegt') : escapeHtml(sub)}</span>
       </label>`;
   }).join('');
   const isOwnPrivate = d.art === 'privat' && d.owner === me;
-  const title = !d.id ? 'Neue Kasse' : ro ? (kasseDisplayName(kasseById(d.id)) || 'Kasse') : 'Kasse einstellen';
+  const title = !d.id ? tk('fund.newFund') : ro ? (kasseDisplayName(kasseById(d.id)) || tk('shop.complete.fund')) : tk('fund.fundSettings');
   document.getElementById('kasseEditTitle').textContent = title;
   document.getElementById('kasseEditBody').innerHTML = `
     <p class="text-xs text-ink/50 mb-4 leading-snug">${escapeHtml(artText)}</p>
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="kasseEditName">Name</label>
-    <input id="kasseEditName" type="text" maxlength="60" autocomplete="off" placeholder="${d.art === 'privat' ? 'Meine Kasse' : 'z. B. WG-Kasse, Urlaub Italien'}" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" value="${escapeHtml(d.art === 'privat' && d.name === 'Privat' ? '' : d.name)}" ${ro ? 'disabled' : ''} />
+    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="kasseEditName">${escapeHtml(tk('common.name'))}</label>
+    <input id="kasseEditName" type="text" maxlength="60" autocomplete="off" placeholder="${d.art === 'privat' ? tk('fund.myFund') : tk('fund.eGFlatShare')}" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" value="${escapeHtml(d.art === 'privat' && d.name === 'Privat' ? '' : d.name)}" ${ro ? 'disabled' : ''} />
     ${ro ? '' : `
-    <span class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Symbol</span>
+    <span class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">${escapeHtml(tk('household.icon'))}</span>
     <div class="flex flex-wrap gap-1.5 mb-3">${KASSE_ICONS.map(ic => `<button type="button" class="kasse-icon-btn ${ic === d.icon ? 'active' : ''}" data-kasse-icon="${ic}">${ic}</button>`).join('')}</div>
-    <span class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Farbe</span>
-    <div class="flex flex-wrap gap-2 mb-4">${PALETTE.map(c => `<button type="button" class="kasse-color-btn ${c === d.color ? 'active' : ''}" style="background:${c}" data-kasse-color="${c}" aria-label="Farbe ${c}"></button>`).join('')}</div>`}
+    <span class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">${escapeHtml(tk('account.dashBg.color'))}</span>
+    <div class="flex flex-wrap gap-2 mb-4">${PALETTE.map(c => `<button type="button" class="kasse-color-btn ${c === d.color ? 'active' : ''}" style="background:${c}" data-kasse-color="${c}" aria-label="${escapeHtml(tk('account.dashBg.colorLabel', { color: c }))}"></button>`).join('')}</div>`}
     <div class="flex items-center justify-between gap-2 mb-1.5">
-      <span class="block text-xs uppercase tracking-wide text-ink/40">${d.art === 'privat' ? (isOwnPrivate ? 'Teilen mit' : 'Geteilt mit') : d.id ? 'Mitglieder' : 'Wer gehört dazu?'}</span>
-      ${(!ro && d.art !== 'haushalt' && d.art !== 'familie') ? `<span class="flex items-center gap-1.5"><button type="button" class="kasse-quick-btn" data-kasse-quick="alle">Alle</button><button type="button" class="kasse-quick-btn" data-kasse-quick="ich">Nur ich</button></span>` : ''}
+      <span class="block text-xs uppercase tracking-wide text-ink/40">${d.art === 'privat' ? (isOwnPrivate ? tk('fund.shareWith') : tk('fund.sharedWith')) : d.id ? tk('fund.members') : tk('fund.whoBelongs')}</span>
+      ${(!ro && d.art !== 'haushalt' && d.art !== 'familie') ? `<span class="flex items-center gap-1.5"><button type="button" class="kasse-quick-btn" data-kasse-quick="alle">${escapeHtml(tk('errorLog.all'))}</button><button type="button" class="kasse-quick-btn" data-kasse-quick="ich">${escapeHtml(tk('fund.onlyMe'))}</button></span>` : ''}
     </div>
     ${d.art === 'haushalt' ? `
     <label class="flex items-start gap-2.5 mb-2 ${ro ? '' : 'cursor-pointer'} select-none rounded-lg bg-ink/[0.04] px-3 py-2">
       <input id="kasseEditAll" type="checkbox" class="w-4 h-4 mt-0.5 shrink-0" ${d.all ? 'checked' : ''} ${ro ? 'disabled' : ''} />
-      <span class="min-w-0"><span class="block text-sm font-medium">Alle Profile der Familie</span><span class="block text-[11px] text-ink/45 leading-snug">Auch neu angelegte Profile gehören dann automatisch dazu. Abwählen, um z. B. Jugendliche auszunehmen.</span></span>
+      <span class="min-w-0"><span class="block text-sm font-medium">${escapeHtml(tk('fund.allProfilesFamily'))}</span><span class="block text-[11px] text-ink/45 leading-snug">${escapeHtml(tk('fund.newlyCreatedProfilesAre'))}</span></span>
     </label>` : ''}
-    <div class="rounded-xl border border-ink/10 px-3 py-1 mb-4">${peopleHtml || '<p class="text-sm text-ink/40 italic py-2">Keine Profile gefunden.</p>'}</div>
+    <div class="rounded-xl border border-ink/10 px-3 py-1 mb-4">${peopleHtml || ('<p class="text-sm text-ink/40 italic py-2">' + escapeHtml(tk('fund.noProfilesFound')) + '</p>')}</div>
     ${d.art === 'familie' ? '' : kasseEditGuestsHtml(d, ro)}
     <label class="${d.art === 'familie' ? 'hidden ' : ''}flex items-start gap-2.5 mb-2 ${ro ? '' : 'cursor-pointer'} select-none">
       <input id="kasseEditSplit" type="checkbox" class="w-4 h-4 mt-0.5 shrink-0" ${d.split ? 'checked' : ''} ${ro ? 'disabled' : ''} />
-      <span class="min-w-0"><span class="block text-sm font-medium">⚖️ Ausgaben aufteilen – wer schuldet wem</span><span class="block text-[11px] text-ink/45 leading-snug">Für WG, Urlaub &amp; Co.: Jede Ausgabe zählt für die Person, die bezahlt hat, und wird auf die gewählten Mitglieder aufgeteilt. Oben in den Ausgaben steht dann, wer wem wie viel schuldet – mit „Ausgleichen“.</span></span>
+      <span class="min-w-0"><span class="block text-sm font-medium">${escapeHtml(tk('fund.splitExpensesWhoOwes'))}</span><span class="block text-[11px] text-ink/45 leading-snug">${escapeHtml(tk('fund.splitHint'))}</span></span>
     </label>
     ${d.id && kasseById(d.id) && kasseById(d.id).backupDay ? `
     <div class="mt-3 rounded-xl border border-ink/10 px-3 py-2.5">
-      <span class="block text-sm font-medium">↺ Sicherung</span>
-      <span class="block text-[11px] text-ink/45 leading-snug mb-2">Stand vor der ersten Änderung am ${escapeHtml(vtFmt(kasseById(d.id).backupDay))}. Zurückholen ergänzt nur, was inzwischen fehlt – es wird nichts gelöscht.</span>
-      <button type="button" id="kasseBackupBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 hover:text-pine hover:border-pine transition">Fehlendes zurückholen</button>
+      <span class="block text-sm font-medium">${escapeHtml(tk('fund.backup'))}</span>
+      <span class="block text-[11px] text-ink/45 leading-snug mb-2">${escapeHtml(tk('fund.stateBeforeFirstChange', { date: vtFmt(kasseById(d.id).backupDay) }))}</span>
+      <button type="button" id="kasseBackupBtn" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 hover:text-pine hover:border-pine transition">${escapeHtml(tk('fund.restoreMissingItems'))}</button>
     </div>` : ''}
-    ${ro && d.art !== 'haushalt' ? `<p class="text-[11px] text-ink/45 mt-2">Einstellen kann nur ${escapeHtml(kasseProfileName(d.owner))}.</p>` : ''}
-    ${ro && d.art === 'haushalt' ? '<p class="text-[11px] text-ink/45 mt-2">Die Haushaltskasse stellen die Admins ein.</p>' : ''}`;
+    ${ro && d.art !== 'haushalt' ? `<p class="text-[11px] text-ink/45 mt-2">${escapeHtml(tk('fund.onlyCanChange', { name: kasseProfileName(d.owner) }))}</p>` : ''}
+    ${ro && d.art === 'haushalt' ? ('<p class="text-[11px] text-ink/45 mt-2">' + escapeHtml(tk('fund.adminsSetHouseholdFund')) + '</p>') : ''}`;
   const body = document.getElementById('kasseEditBody');
   body.querySelectorAll('[data-kasse-icon]').forEach(b => b.addEventListener('click', () => { d.icon = b.dataset.kasseIcon; renderKasseEdit(); }));
   body.querySelectorAll('[data-kasse-color]').forEach(b => b.addEventListener('click', () => { d.color = b.dataset.kasseColor; renderKasseEdit(); }));
@@ -647,7 +647,7 @@ function renderKasseEdit() {
       if (body.error) throw new Error(body.error);
       kassenLoadedAt = 0;
       await kassenLoad(true);
-      finShowToast(body.added > 0 ? `${body.added} Einträge zurückgeholt.` : 'Es fehlt nichts – alles noch da.');
+      finShowToast(body.added > 0 ? tk('fund.entriesRestored', { v: body.added }) : tk('fund.nothingMissingEverythingS'));
     } catch (e) {
       const errEl = document.getElementById('kasseEditError');
       errEl.textContent = kasseNetError(e);
@@ -656,7 +656,7 @@ function renderKasseEdit() {
   });
   const k = d.id ? kasseById(d.id) : null;
   document.getElementById('kasseEditSaveBtn').classList.toggle('hidden', ro);
-  document.getElementById('kasseEditCancelBtn').textContent = ro ? 'Schließen' : 'Abbrechen';
+  document.getElementById('kasseEditCancelBtn').textContent = ro ? tk('common.close') : tk('common.cancel');
   document.getElementById('kasseEditDeleteBtn').classList.toggle('hidden', !(k && k.art !== 'familie' && d.canManage));
   document.getElementById('kasseEditLeaveBtn').classList.toggle('hidden', !(k && k.art !== 'haushalt' && k.art !== 'familie' && !d.canManage && k.owner !== me));
 }
@@ -670,20 +670,20 @@ function kasseEditGuestsHtml(d, ro) {
         ${ro
           ? `<span class="flex-1 min-w-0 text-sm truncate">${escapeHtml(g.name)}</span>`
           : `<input type="text" maxlength="40" autocomplete="off" class="kasse-guest-name flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" data-guest-idx="${i}" value="${escapeHtml(g.name)}" />
-        <button type="button" class="kasse-guest-del shrink-0 w-8 h-8 rounded-lg border border-ink/15 text-ink/50 hover:text-red-500 hover:border-red-300 transition" data-guest-idx="${i}" aria-label="Gast entfernen" title="Gast entfernen">✕</button>`}
-        <span class="text-[10px] text-ink/40 shrink-0">Gast</span>
+        <button type="button" class="kasse-guest-del shrink-0 w-8 h-8 rounded-lg border border-ink/15 text-ink/50 hover:text-red-500 hover:border-red-300 transition" data-guest-idx="${i}" aria-label="${escapeHtml(tk('fund.removeGuest'))}" title="${escapeHtml(tk('fund.removeGuest'))}">✕</button>`}
+        <span class="text-[10px] text-ink/40 shrink-0">${escapeHtml(tk('dashboard.guest'))}</span>
       </div>`).join('');
   return `
-    <span class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Gäste ohne Profil</span>
+    <span class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">${escapeHtml(tk('fund.guestsWithoutProfile'))}</span>
     <div class="rounded-xl border border-ink/10 px-3 py-1 mb-2">
-      ${rows || '<p class="text-sm text-ink/40 italic py-2">Noch keine Gäste.</p>'}
+      ${rows || ('<p class="text-sm text-ink/40 italic py-2">' + escapeHtml(tk('fund.noGuestsYet')) + '</p>')}
       ${ro ? '' : `
       <div class="flex items-center gap-2 py-1.5 ${rows ? 'border-t border-dashed border-ink/10' : ''}">
-        <input id="kasseGuestNew" type="text" maxlength="40" autocomplete="off" placeholder="Name, z. B. Tom" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" />
-        <button type="button" id="kasseGuestAddBtn" class="shrink-0 px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">+ Gast</button>
+        <input id="kasseGuestNew" type="text" maxlength="40" autocomplete="off" placeholder="${escapeHtml(tk('fund.nameEGTom'))}" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" />
+        <button type="button" id="kasseGuestAddBtn" class="shrink-0 px-3 py-1.5 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">${escapeHtml(tk('account.profiles.addGuest'))}</button>
       </div>`}
     </div>
-    <p class="text-[11px] text-ink/45 mb-4 leading-snug">Für Urlaub mit Freunden &amp; Co.: Gäste brauchen kein Profil und sehen die Kasse nicht – sie zählen nur beim Aufteilen. Was ein Gast bezahlt hat, trägst du mit „Bezahlt von“ ein.${d.split ? '' : ' Wirkt erst mit „Ausgaben aufteilen“ (wird beim ersten Gast eingeschaltet).'}</p>`;
+    <p class="text-[11px] text-ink/45 mb-4 leading-snug">${escapeHtml(tk('fund.guestsHint'))}${d.split ? '' : escapeHtml(' ' + tk('fund.onlyTakesEffectWith'))}</p>`;
 }
 function kasseEditGuestsBind(d, body) {
   const errEl = document.getElementById('kasseEditError');
@@ -692,7 +692,7 @@ function kasseEditGuestsBind(d, body) {
     const name = (inp ? inp.value : '').replace(/\s+/g, ' ').trim().slice(0, 40);
     if (!name) { if (inp) inp.focus(); return; }
     const active = d.guests.filter(g => !g.removed);
-    if (active.length >= 30) { errEl.textContent = 'Höchstens 30 Gäste je Kasse.'; errEl.classList.remove('hidden'); return; }
+    if (active.length >= 30) { errEl.textContent = tk('fund.atMost30Guests'); errEl.classList.remove('hidden'); return; }
     errEl.classList.add('hidden');
     d.guests.push({ id: kasseNewGuestId(), name, color: KASSE_GUEST_COLORS[d.guests.length % KASSE_GUEST_COLORS.length] });
     if (!d.split) d.split = true;
@@ -714,13 +714,13 @@ function kasseEditGuestsBind(d, body) {
     if (!g) return;
     const saved = d.id && kasseGuests(kasseById(d.id), true).some(x => x.id === g.id);
     if (saved && kasseGuestUsed(d.id, g.id)
-      && !confirm(`„${g.name || 'Gast'}“ kommt in Buchungen dieser Kasse vor. Trotzdem entfernen? Beim Aufteilen wird dann nicht mehr für ${g.name || 'den Gast'} gerechnet – offene Beträge vorher ausgleichen.`)) return;
+      && !confirm(tk('fund.confirmRemoveGuest', { name: g.name || tk('dashboard.guest') }))) return;
     if (saved) g.removed = true; else d.guests.splice(idx, 1);
     renderKasseEdit();
   }));
 }
 function kasseNetError(e) {
-  return (e instanceof TypeError || /fetch|network|Load failed/i.test(String(e && e.message))) ? 'Das geht nur mit Verbindung zum Server.' : (e && e.message) || 'Aktion fehlgeschlagen.';
+  return (e instanceof TypeError || /fetch|network|Load failed/i.test(String(e && e.message))) ? tk('fund.onlyWorksWithConnection') : (e && e.message) || tk('common.actionFailed');
 }
 async function saveKasseEdit() {
   const d = kasseEditDraft;
@@ -728,9 +728,9 @@ async function saveKasseEdit() {
   const errEl = document.getElementById('kasseEditError');
   errEl.classList.add('hidden');
   const name = document.getElementById('kasseEditName').value.trim();
-  if (!d.id && !name) { errEl.textContent = 'Bitte einen Namen eingeben.'; errEl.classList.remove('hidden'); return; }
+  if (!d.id && !name) { errEl.textContent = tk('common.needName'); errEl.classList.remove('hidden'); return; }
   const guests = (d.guests || []).map(g => ({ id: g.id, name: String(g.name || '').replace(/\s+/g, ' ').trim().slice(0, 40), color: g.color || KASSE_GUEST_COLORS[0], removed: !!g.removed }));
-  if (guests.some(g => !g.removed && !g.name)) { errEl.textContent = 'Bitte jedem Gast einen Namen geben.'; errEl.classList.remove('hidden'); return; }
+  if (guests.some(g => !g.removed && !g.name)) { errEl.textContent = tk('fund.pleaseGiveEachGuest'); errEl.classList.remove('hidden'); return; }
   const btn = document.getElementById('kasseEditSaveBtn');
   btn.disabled = true;
   try {
@@ -748,7 +748,7 @@ async function saveKasseEdit() {
     closeKasseEdit();
     if (wasNew) kassenSetActive(nk.id); else kassenRerender();
     if (!document.getElementById('kassenModal').classList.contains('hidden')) renderKassenModal();
-    finShowToast(wasNew ? `Kasse „${nk.name}“ angelegt.` : 'Kasse gespeichert.');
+    finShowToast(wasNew ? tk('fund.fundCreated', { name: nk.name }) : tk('fund.fundSaved'));
   } catch (e) {
     errEl.textContent = kasseNetError(e);
     errEl.classList.remove('hidden');
@@ -760,12 +760,12 @@ async function deleteKasseFromEdit() {
   const d = kasseEditDraft;
   const k = d && kasseById(d.id);
   if (!k) return;
-  if (!confirm(`Kasse „${kasseDisplayName(k)}“ wirklich löschen? Alle ihre Buchungen, Verträge und Belege werden für alle Mitglieder gelöscht. Dokumente der Kasse bleiben erhalten und sind danach nur noch für dich sichtbar.`)) return;
+  if (!confirm(tk('fund.reallyDeleteFundAll', { name: kasseDisplayName(k) }))) return;
   try {
     await postJson('/api/pinn/kassen/loeschen', { id: k.id });
     kasseRemoveLocal(k.id);
     closeKasseEdit();
-    finShowToast('Kasse gelöscht.');
+    finShowToast(tk('fund.fundDeleted'));
   } catch (e) {
     const errEl = document.getElementById('kasseEditError');
     errEl.textContent = kasseNetError(e);
@@ -776,12 +776,12 @@ async function leaveKasseFromEdit() {
   const d = kasseEditDraft;
   const k = d && kasseById(d.id);
   if (!k) return;
-  if (!confirm(`Kasse „${kasseDisplayName(k)}“ verlassen? Du siehst sie danach nicht mehr.`)) return;
+  if (!confirm(tk('fund.leaveFundYouWon', { name: kasseDisplayName(k) }))) return;
   try {
     await postJson('/api/pinn/kassen/verlassen', { id: k.id });
     kasseRemoveLocal(k.id);
     closeKasseEdit();
-    finShowToast('Kasse verlassen.');
+    finShowToast(tk('fund.fundLeft'));
   } catch (e) {
     const errEl = document.getElementById('kasseEditError');
     errEl.textContent = kasseNetError(e);
@@ -844,7 +844,7 @@ function kasseSplitHint(key) {
   else {
     amount = (parseEuro(document.getElementById('checkoutAmountInput').value) || 0) - (parseEuro(document.getElementById('checkoutPrivateInput').value) || 0);
   }
-  el.textContent = amount > 0 ? `Je ${fmtEur(amount / n)} für ${n} ${n === 1 ? 'Person' : 'Personen'}.` : `Wird auf ${n} ${n === 1 ? 'Person' : 'Personen'} aufgeteilt.`;
+  el.textContent = amount > 0 ? tk('fund.eachForN', { amount: fmtEur(amount / n), n }) : tk('fund.splitAmongN', { n });
 }
 function kasseSplitSetupExpense(src) {
   const wrap = document.getElementById('expenseSplitWrap');
@@ -870,16 +870,16 @@ function kasseBookPurchase(base, kasseId, split, priv) {
   const shared = kasseIsShared(k);
   const own = kasseOwn();
   const p = (shared && own && own.id !== k.id) ? Math.round((Number(priv) || 0) * 100) / 100 : 0;
-  if (p < 0 || p > base.amount) return { error: 'Der private Anteil kann nicht größer sein als der Betrag.' };
-  const where = k.id !== activeKasseId ? ` Gebucht in „${kasseDisplayName(k)}“.` : '';
+  if (p < 0 || p > base.amount) return { error: tk('shop.done.privateTooBig') };
+  const where = k.id !== activeKasseId ? ` ${tk('fund.booked', { name: kasseDisplayName(k) })}` : '';
   if (p > 0) {
     const rest = Math.round((base.amount - p) * 100) / 100;
     if (rest > 0) finQueueSave({ ...base, amount: rest, kasse: k.id, split: split || [] });
     finQueueSave({
       ...base, id: newRecordId(), amount: p, kasse: own.id, split: [],
-      title: ((base.title || base.store || 'Einkauf') + ' (privat)').slice(0, 200),
+      title: tk('fund.privateTitle', { title: base.title || base.store || tk('lists.type.shop') }).slice(0, 200),
     });
-    return { note: `${where} ${fmtEur(p)} davon privat in „${kasseDisplayName(own)}“.` };
+    return { note: tk('fund.private', { where, amount: fmtEur(p), name: kasseDisplayName(own) }) };
   }
   finQueueSave({ ...base, kasse: k.id, split: shared ? (split || []) : [] });
   return { note: where };
@@ -924,11 +924,11 @@ function kassePlanRowHtml(row, keep) {
   return `
     <div class="flex items-center gap-1.5 text-[11px] text-ink/50 mb-2" style="--k:${escapeHtml(k.color || '#2F4B41')}">
       <span class="kasse-dot" style="width:18px;height:18px;font-size:10px">${escapeHtml(k.icon || '💶')}</span>
-      <span class="truncate">${escapeHtml(kasseDisplayName(k))}${shared ? ' · wird auf ' + kasseMemberIds(k).length + ' Personen aufgeteilt' : ''}</span>
+      <span class="truncate">${escapeHtml(kasseDisplayName(k))}${shared ? ' · ' + escapeHtml(tk('fund.splitAmongN', { n: kasseMemberIds(k).length })) : ''}</span>
     </div>
     ${privOk ? `
     <div class="flex items-center gap-2 mb-2">
-      <label class="text-[11px] uppercase tracking-wide text-ink/40 shrink-0">Davon privat</label>
+      <label class="text-[11px] uppercase tracking-wide text-ink/40 shrink-0">${escapeHtml(tk('fund.whichPrivate'))}</label>
       <input type="text" inputmode="decimal" autocomplete="off" placeholder="${curZero()}" class="plan-private flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base text-right" value="${escapeHtml((keep && keep.priv) || '')}" />
       <span class="cur-sym text-ink/40 text-sm">${curSym()}</span>
     </div>` : ''}`;
@@ -941,9 +941,9 @@ function kasseListModalSetup(existing) {
   if (!kassenActiveMode() || !kassenReal().length) { block.classList.add('hidden'); return; }
   const h = kasseStandard();
   const cur = (existing && existing.kasse) || '';
-  const opts = [`<option value="">${escapeHtml(h ? (h.icon || '💶') + ' ' + kasseDisplayName(h) + ' (Standard)' : 'Standard-Kasse')}</option>`];
+  const opts = [`<option value="">${escapeHtml(h ? (h.icon || '💶') + ' ' + kasseDisplayName(h) + ' ' + tk('fund.default') : tk('fund.defaultFund'))}</option>`];
   kassenRealSorted().filter(k => !h || k.id !== h.id).forEach(k => opts.push(`<option value="${escapeHtml(k.id)}">${escapeHtml((k.icon || '') + ' ' + kasseDisplayName(k))}</option>`));
-  if (cur && !kasseById(cur)) opts.push(`<option value="${escapeHtml(cur)}">🔒 Kasse einer anderen Person</option>`);
+  if (cur && !kasseById(cur)) opts.push(`<option value="${escapeHtml(cur)}">${escapeHtml(tk('fund.anotherPersonSFund'))}</option>`);
   sel.innerHTML = opts.join('');
   sel.value = cur;
   block.classList.remove('hidden');
@@ -1014,10 +1014,10 @@ function renderKasseSplitCard() {
     <div class="flex items-center gap-2 py-2 border-t border-dashed border-ink/10 text-sm">
       <span class="flex-1 min-w-0 flex items-center gap-1.5 flex-wrap">${kasseMemberChip(t.from, 20)}<span class="text-ink/40">→</span>${kasseMemberChip(t.to, 20)}</span>
       <b class="shrink-0">${fmtEur(t.amount)}</b>
-      <button type="button" class="shrink-0 px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/70 hover:text-pine hover:border-pine transition" data-settle="${i}">Ausgleichen</button>
-    </div>`).join('') : '<p class="text-sm text-pine py-2 border-t border-dashed border-ink/10">Alles ausgeglichen 🎉</p>';
+      <button type="button" class="shrink-0 px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/70 hover:text-pine hover:border-pine transition" data-settle="${i}">${escapeHtml(tk('fund.settle'))}</button>
+    </div>`).join('') : ('<p class="text-sm text-pine py-2 border-t border-dashed border-ink/10">' + escapeHtml(tk('fund.allSettled')) + '</p>');
   const sHtml = settlements.slice(0, 5).map(s => `
-    <button type="button" class="w-full flex items-center gap-2 py-1.5 text-left text-xs text-ink/55 hover:text-ink transition" data-settle-id="${escapeHtml(s.id)}" title="Antippen zum Löschen">
+    <button type="button" class="w-full flex items-center gap-2 py-1.5 text-left text-xs text-ink/55 hover:text-ink transition" data-settle-id="${escapeHtml(s.id)}" title="${escapeHtml(tk('fund.tapDelete'))}">
       <span class="shrink-0">${escapeHtml(finDayLabel(s.date))}</span>
       <span class="flex-1 min-w-0 truncate">${escapeHtml(kassePartById(s.paidBy) ? memberLabel(kassePartById(s.paidBy)) : '?')} → ${escapeHtml(kassePartById((s.split || [])[0]) ? memberLabel(kassePartById(s.split[0])) : '?')}${s.pending ? ' ⏳' : ''}</span>
       <span class="shrink-0">${fmtEur(s.amount)}</span>
@@ -1025,13 +1025,13 @@ function renderKasseSplitCard() {
   el.innerHTML = `
     <div class="rounded-2xl bg-white border border-ink/10 shadow-sm p-4 sm:p-5">
       <div class="flex items-center justify-between gap-3 mb-1">
-        <h3 class="font-serif text-base">⚖️ Wer schuldet wem</h3>
-        <button type="button" id="kasseSettleNewBtn" class="px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">+ Ausgleich</button>
+        <h3 class="font-serif text-base">${escapeHtml(tk('fund.whoOwesWhom'))}</h3>
+        <button type="button" id="kasseSettleNewBtn" class="px-2.5 py-1 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">${escapeHtml(tk('fund.settlement'))}</button>
       </div>
-      <p class="text-[11px] text-ink/45 mb-2">Plus = bekommt Geld zurück, Minus = schuldet etwas. Gezählt werden alle Buchungen der Kasse bis heute.</p>
+      <p class="text-[11px] text-ink/45 mb-2">${escapeHtml(tk('fund.plusGetsMoneyBack'))}</p>
       ${rows}
       <div class="mt-2">${tHtml}</div>
-      ${sHtml ? `<div class="mt-3 pt-2 border-t border-ink/10"><span class="block text-[10px] uppercase tracking-wide text-ink/40 mb-1">Letzte Ausgleiche</span>${sHtml}</div>` : ''}
+      ${sHtml ? `<div class="mt-3 pt-2 border-t border-ink/10"><span class="block text-[10px] uppercase tracking-wide text-ink/40 mb-1">${escapeHtml(tk('fund.recentSettlements'))}</span>${sHtml}</div>` : ''}
     </div>`;
   el.querySelectorAll('[data-settle]').forEach(b => b.addEventListener('click', () => {
     const t = transfers[Number(b.dataset.settle)];
@@ -1041,7 +1041,7 @@ function renderKasseSplitCard() {
   el.querySelectorAll('[data-settle-id]').forEach(b => b.addEventListener('click', () => {
     const s = ausgaben.find(x => x.id === b.dataset.settleId);
     if (!s) return;
-    if (!confirm(`Diesen Ausgleich über ${fmtEur(s.amount)} löschen?`)) return;
+    if (!confirm(tk('fund.deleteSettlement', { amount: fmtEur(s.amount) }))) return;
     finQueueDelete(s.id);
     renderFinance();
   }));
@@ -1052,7 +1052,7 @@ function openKasseSettle(t) {
   const k = activeKasse();
   if (!k) return;
   const ids = kasseMemberIds(k);
-  const opts = ids.map(id => { const m = kassePartById(id); return m ? `<option value="${escapeHtml(id)}">${escapeHtml(memberLabel(m) + (m.guest ? ' (Gast)' : ''))}</option>` : ''; }).join('');
+  const opts = ids.map(id => { const m = kassePartById(id); return m ? `<option value="${escapeHtml(id)}">${escapeHtml(memberLabel(m) + (m.guest ? ' ' + tk('fund.guest') : ''))}</option>` : ''; }).join('');
   const from = document.getElementById('kasseSettleFrom');
   const to = document.getElementById('kasseSettleTo');
   from.innerHTML = opts; to.innerHTML = opts;
@@ -1074,12 +1074,12 @@ function saveKasseSettle() {
   const to = document.getElementById('kasseSettleTo').value;
   const amount = parseEuro(document.getElementById('kasseSettleAmount').value);
   const date = document.getElementById('kasseSettleDate').value || finTodayIso();
-  if (!from || !to || from === to) return show('Bitte zwei verschiedene Personen wählen.');
-  if (!(amount > 0)) return show('Bitte einen Betrag eingeben.');
+  if (!from || !to || from === to) return show(tk('fund.pleaseChooseTwoDifferent'));
+  if (!(amount > 0)) return show(tk('fund.pleaseEnterAmount'));
   const fm = kassePartById(from), tm = kassePartById(to);
   finQueueSave({
     id: newRecordId(), amount, date, category: FIN_SETTLE_CATEGORY,
-    title: `Ausgleich ${fm ? memberLabel(fm) : ''} → ${tm ? memberLabel(tm) : ''}`.trim(),
+    title: tk('fund.settlement2', { name: fm ? memberLabel(fm) : '', name2: tm ? memberLabel(tm) : '' }).trim(),
     store: '', listId: '', items: [], paidBy: from, split: [to], link: '',
     note: document.getElementById('kasseSettleNote').value.trim(),
     kasse: activeKasseId,
@@ -1088,7 +1088,7 @@ function saveKasseSettle() {
   });
   closeKasseSettle();
   renderFinance();
-  finShowToast(`Ausgleich über ${fmtEur(amount)} eingetragen.`);
+  finShowToast(tk('fund.settlementEntered', { amount: fmtEur(amount) }));
 }
 
 /* ---------- Pocket money on the children's page: from the box it is stored in ---------- */

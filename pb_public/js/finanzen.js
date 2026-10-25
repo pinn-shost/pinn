@@ -176,7 +176,7 @@ function normalizeFinance(f) {
   const depots = Array.isArray(f.depots) ? f.depots.filter(x => x && typeof x.id === 'string' && x.id).map(x => ({ ...x })) : [];
   const depotIds = new Set(depots.map(x => x.id));
   if (!depotIds.has(FIN_MAIN_DEPOT) && (!depots.length || goalsN.some(g => !g.depot || !depotIds.has(g.depot)))) {
-    depots.unshift({ id: FIN_MAIN_DEPOT, name: 'Depot', icon: '💼', color: '#3D5A80', type: 'depot', kid: '', bank: '', created: '' });
+    depots.unshift({ id: FIN_MAIN_DEPOT, name: tk('depot.mainName'), icon: '💼', color: '#3D5A80', type: 'depot', kid: '', bank: '', created: '' });
   }
   return {
     budgetAdjust: (typeof f.budgetAdjust === 'number' && isFinite(f.budgetAdjust)) ? Math.round(f.budgetAdjust * 100) / 100 : 0,
@@ -278,10 +278,10 @@ function finCurrentMonthBudget() {
   return { range, budget: finBudgetInfo('month', range).budget };
 }
 function finBudgetFormula(info) {
-  if (!info.adjust) return 'aus Einnahmen';
-  return `Einnahmen ${fmtEur0(info.income)} ${info.adjust > 0 ? '+' : '−'} ${fmtEur0(Math.abs(info.adjust))}`;
+  if (!info.adjust) return tk('fin.budget.fromIncome');
+  return tk('fin.budget.incomeAdjusted', { income: fmtEur0(info.income), sign: info.adjust > 0 ? '+' : '−', adjust: fmtEur0(Math.abs(info.adjust)) });
 }
-function finPeriodWord(period) { return period === 'week' ? 'Woche' : period === 'year' ? 'Jahr' : 'Monat'; }
+function finPeriodWord(period) { return period === 'week' ? tk('fin.period.week') : period === 'year' ? tk('fin.period.year') : tk('fin.period.month'); }
 
 /* ---------- Queue & cache ---------- */
 function finQueueRead() {
@@ -317,7 +317,7 @@ function rebuildAusgaben() {
 async function finPost(url, payload) {
   const res = await apiFetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload || {}) });
   const body = await res.json().catch(() => ({}));
-  if (!res.ok) { const err = new Error(body.message || 'Server nicht erreichbar.'); err.retry = true; throw err; }
+  if (!res.ok) { const err = new Error(body.message || tk('fin.err.server')); err.retry = true; throw err; }
   if (body.error) throw new Error(body.error);
   return body;
 }
@@ -342,7 +342,7 @@ async function finFlushQueue() {
         }
       } catch (err) {
         if (err instanceof TypeError || err.retry) { blocked = true; break; } // no connection - try again later
-        finShowToast('Nicht gespeichert: ' + err.message, true);
+        finShowToast(tk('fin.err.notSaved', { error: err.message }), true);
       }
       finQueueWrite(finQueueRead().filter(o => o.opId !== op.opId));
       changed = true;
@@ -400,13 +400,14 @@ async function loadAusgaben() {
 
 /* ---------- Recurring entries (weekly to yearly) ---------- */
 const FIN_INTERVALS = [
-  { id: 'weekly', label: 'Wöchentlich', perYear: 52 },
-  { id: 'biweekly', label: 'Alle 2 Wochen', perYear: 26 },
-  { id: 'monthly', label: 'Monatlich', perYear: 12 },
-  { id: 'quarterly', label: 'Im Quartal', perYear: 4 },
-  { id: 'yearly', label: 'Jährlich', perYear: 1 },
+  { id: 'weekly', get label() { return tk('fin.interval.weekly'); }, perYear: 52 },
+  { id: 'biweekly', get label() { return tk('fin.interval.biweekly'); }, perYear: 26 },
+  { id: 'monthly', get label() { return tk('fin.interval.monthly'); }, perYear: 12 },
+  { id: 'quarterly', get label() { return tk('fin.interval.quarterly'); }, perYear: 4 },
+  { id: 'yearly', get label() { return tk('fin.interval.yearly'); }, perYear: 1 },
 ];
-const FIN_WEEKDAYS = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+// Weekday names (Sunday first, like Date.getDay()) in the language of the app
+function finWeekdayName(day) { return new Date(2000, 0, 2 + day).toLocaleDateString(sysLocale(), { weekday: 'long' }); }
 function finIsoAddDays(iso, days) {
   const d = new Date(iso + 'T00:00:00');
   return isoDate(new Date(d.getFullYear(), d.getMonth(), d.getDate() + days));
@@ -501,14 +502,14 @@ function finRecDescribe(r) {
   const d = new Date(start + 'T00:00:00');
   const iv = finRecInterval(r);
   const day = (!r.start && Number(r.day)) ? Number(r.day) : d.getDate();
-  if (iv === 'weekly') return 'jeden ' + FIN_WEEKDAYS[d.getDay()];
-  if (iv === 'biweekly') return 'alle 2 Wochen ' + FIN_WEEKDAYS[d.getDay()].toLowerCase() + 's';
+  if (iv === 'weekly') return tk('fin.rec.weekly', { weekday: finWeekdayName(d.getDay()) });
+  if (iv === 'biweekly') return tk('fin.rec.biweekly', { weekday: finWeekdayName(d.getDay()) });
   if (iv === 'quarterly') {
-    const months = [0, 3, 6, 9].map(o => new Date(2000, (d.getMonth() + o) % 12, 1).toLocaleDateString('de-DE', { month: 'short' }).replace('.', ''));
-    return `alle 3 Monate am ${day}. (${months.join(', ')})`;
+    const months = [0, 3, 6, 9].map(o => new Date(2000, (d.getMonth() + o) % 12, 1).toLocaleDateString(sysLocale(), { month: 'short' }).replace('.', ''));
+    return tk('fin.rec.quarterly', { day, months: months.join(', ') });
   }
-  if (iv === 'yearly') return 'jedes Jahr am ' + d.toLocaleDateString('de-DE', { day: 'numeric', month: 'long' });
-  return `jeden Monat am ${day}.`;
+  if (iv === 'yearly') return tk('fin.rec.yearly', { date: d.toLocaleDateString(sysLocale(), { day: 'numeric', month: 'long' }) });
+  return tk('fin.rec.monthly', { day });
 }
 function finRecurringEntries(startIso, endIso) {
   const todayIso = finTodayIso();
@@ -561,9 +562,10 @@ function finPeriodRange(period, offset) {
     start = startOfWeek(now); start.setDate(start.getDate() + offset * 7);
     end = new Date(start); end.setDate(end.getDate() + 6);
     const kw = finIsoWeek(start);
-    label = 'KW ' + kw + ' · ' + pad2(start.getDate()) + '.' + pad2(start.getMonth() + 1) + '. – ' + pad2(end.getDate()) + '.' + pad2(end.getMonth() + 1) + '.' + end.getFullYear();
-    short = 'KW' + kw;
-    longShort = 'KW ' + kw;
+    const dfmt = (x, y) => x.toLocaleDateString(sysLocale(), y ? { day: '2-digit', month: '2-digit', year: 'numeric' } : { day: '2-digit', month: '2-digit' });
+    label = tk('fin.period.weekLabel', { week: kw, from: dfmt(start), to: dfmt(end, true) });
+    short = tk('fin.period.weekShort', { week: kw });
+    longShort = tk('fin.period.weekNo', { week: kw });
   } else if (period === 'year') {
     start = new Date(now.getFullYear() + offset, 0, 1);
     end = new Date(now.getFullYear() + offset, 11, 31);
@@ -573,9 +575,9 @@ function finPeriodRange(period, offset) {
   } else {
     start = new Date(now.getFullYear(), now.getMonth() + offset, 1);
     end = new Date(start.getFullYear(), start.getMonth() + 1, 0);
-    label = start.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' });
-    short = start.toLocaleDateString('de-DE', { month: 'short' }).replace('.', '');
-    longShort = start.toLocaleDateString('de-DE', { month: 'long' });
+    label = start.toLocaleDateString(sysLocale(), { month: 'long', year: 'numeric' });
+    short = start.toLocaleDateString(sysLocale(), { month: 'short' }).replace('.', '');
+    longShort = start.toLocaleDateString(sysLocale(), { month: 'long' });
   }
   start.setHours(0, 0, 0, 0); end.setHours(0, 0, 0, 0);
   return { start, end, startIso: isoDate(start), endIso: isoDate(end), label, short, longShort, days: Math.round((end - start) / 86400000) + 1 };
@@ -642,17 +644,16 @@ function finEmptyKind() {
 function finEmptyStateHtml(kind) {
   const sparen = finTab === 'sparen';
   const T = {
-    kasse: ['💶', 'Noch keine Kasse',
-      'Leg zuerst eine Kasse an und wähle, wer dazugehört – z. B. eine Haushaltskasse nur für die Eltern, eine WG-Kasse für alle oder eine Kasse nur für dich. Wer nicht Mitglied ist, sieht weder Buchungen noch Sparen, Verträge oder Dokumente dieser Kasse.'
-        + (sparen ? ' Danach legst du hier dein erstes Depot an.' : ''),
-      [['kasse', '+ Kasse anlegen']],
-      'Später kannst du jederzeit weitere Kassen anlegen – z. B. erst eine gemeinsame für alle, dann eine eigene nur für dich.'],
-    depot: ['📈', 'Noch kein Depot',
-      'Leg ein Depot an – z. B. bei Trade Republic, ING oder ein Junior-Depot für ein Kind. Danach kommen Positionen (ETFs, Aktien …), Sparraten und Einzahlungen dazu.',
-      [['depot', '+ Depot anlegen']],
-      'Das Depot gehört zur Kasse „' + kasseDisplayName(activeKasse()) + '“ – nur ihre Mitglieder sehen es.'],
-    laden: ['⏳', 'Kassen werden geladen …', 'Einen Moment – pinn. holt deine Kassen vom NAS.', [], ''],
-    fehler: ['⚠️', 'Kassen nicht erreichbar', kassenLastError || 'Die Kassen konnten nicht geladen werden.', [['retry', 'Erneut versuchen'], ['diag', 'Fehlerdetails']], 'Fehlerdetails prüft das Laden Schritt für Schritt – den Text einfach kopieren und weitergeben (enthält keine Beträge).'],
+    kasse: ['💶', tk('fund.empty.title'),
+      tk('fund.empty.text') + (sparen ? ' ' + tk('fund.empty.thenDepot') : ''),
+      [['kasse', tk('fund.empty.create')]],
+      tk('fund.empty.hint')],
+    depot: ['📈', tk('depot.empty.title'),
+      tk('depot.empty.text'),
+      [['depot', tk('depot.empty.create')]],
+      tk('depot.empty.belongsTo', { name: kasseDisplayName(activeKasse()) })],
+    laden: ['⏳', tk('fund.loading.title'), tk('fund.loading.text'), [], ''],
+    fehler: ['⚠️', tk('fund.error.title'), kassenLastError || tk('fund.error.text'), [['retry', tk('common.retry')], ['diag', tk('fund.error.details')]], tk('fund.error.hint')],
   };
   const t = T[kind] || T.kasse;
   return `
@@ -662,7 +663,7 @@ function finEmptyStateHtml(kind) {
       <p class="fin-empty-text">${escapeHtml(t[2])}</p>
       ${t[3].length ? `<div class="fin-empty-actions">${t[3].map(a => `<button type="button" class="fin-empty-btn" data-fin-empty="${a[0]}">${escapeHtml(a[1])}</button>`).join('')}</div>` : ''}
       ${t[4] ? `<p class="fin-empty-hint">${escapeHtml(t[4])}</p>` : ''}
-      ${kind === 'fehler' ? `<pre id="finDiagOut" class="fin-diag hidden"></pre><button type="button" id="finDiagCopy" class="kasse-quick-btn hidden" data-fin-empty="diagcopy">📋 Kopieren</button>` : ''}
+      ${kind === 'fehler' ? `<pre id="finDiagOut" class="fin-diag hidden"></pre><button type="button" id="finDiagCopy" class="kasse-quick-btn hidden" data-fin-empty="diagcopy">📋 ${escapeHtml(tk('common.copy'))}</button>` : ''}
     </div>`;
 }
 // Error details: check loading the funds step by step (each step its own request)
@@ -673,7 +674,8 @@ async function runKassenDiagnose() {
   finDiagRunning = true;
   out.classList.remove('hidden');
   const u = currentUser();
-  const lines = [`pinn. ${APP_VERSION} · ${new Date().toLocaleString('de-DE')} · Profil ${u ? u.id : '?'}`, 'Meldung: ' + (kassenLastError || '–')];
+  // Technical support text: always plain English (it is copied and passed on)
+  const lines = [`pinn. ${APP_VERSION} · ${new Date().toISOString()} · profile ${u ? u.id : '?'}`, 'Message: ' + (kassenLastError || '–')];
   const show = () => { const o = document.getElementById('finDiagOut'); if (o) o.textContent = lines.join('\n'); };
   show();
   const step = async (schritt, extra = {}) => {
@@ -690,13 +692,13 @@ async function runKassenDiagnose() {
       let body = null;
       try { body = JSON.parse(txt); } catch (e) { body = null; }
       if (!res.ok || !body || body.error || body.ergebnis === undefined) {
-        line = `${label}: FEHLER ${res.status} – ${body ? (body.error || body.message || JSON.stringify(body)) : txt.slice(0, 300)}`;
+        line = `${label}: ERROR ${res.status} – ${body ? (body.error || body.message || JSON.stringify(body)) : txt.slice(0, 300)}`;
       } else {
         result = body.ergebnis;
         line = `${label}: ${JSON.stringify(result)}`;
       }
     } catch (e) {
-      line = `${label}: keine Verbindung (${e && e.message})`;
+      line = `${label}: no connection (${e && e.message})`;
     }
     lines[lines.length - 1] = line;
     show();
@@ -713,7 +715,7 @@ async function runKassenDiagnose() {
     await step('antwort');
   } finally {
     finDiagRunning = false;
-    lines.push('Fertig.');
+    lines.push('Done.');
     show();
     const c = document.getElementById('finDiagCopy');
     if (c) c.classList.remove('hidden');
@@ -727,7 +729,7 @@ document.getElementById('financeScroll').addEventListener('click', (ev) => {
   else if (a === 'depot') openDepotModal();
   else if (a === 'retry') { kassenLastError = ''; renderFinance(); kassenLoad(true); }
   else if (a === 'diag') runKassenDiagnose();
-  else if (a === 'diagcopy') { const o = document.getElementById('finDiagOut'); if (o) vtCopyText(o.textContent, 'Fehlerdetails kopiert.'); }
+  else if (a === 'diagcopy') { const o = document.getElementById('finDiagOut'); if (o) vtCopyText(o.textContent, tk('fund.error.copied')); }
 });
 
 function renderFinance() {
@@ -755,9 +757,9 @@ function renderFinance() {
   document.getElementById('finPaneVertraege').classList.toggle('hidden', finTab !== 'vertraege');
   document.getElementById('finPeriodBar').classList.toggle('hidden', finTab !== 'ausgaben');
   document.getElementById('finContractBar').classList.toggle('hidden', finTab !== 'vertraege');
-  document.getElementById('openExpenseModalBtn').textContent = finTab === 'sparen' ? '+ Einzahlen' : finTab === 'taschengeld' ? '+ Taschengeld' : finTab === 'vertraege' ? '+ Vertrag' : '+ Buchung';
+  document.getElementById('openExpenseModalBtn').textContent = finTab === 'sparen' ? tk('fin.add.deposit') : finTab === 'taschengeld' ? tk('fin.add.pocket') : finTab === 'vertraege' ? tk('fin.add.contract') : tk('fin.add.entry');
   const finSettingsBtn = document.getElementById('openFinanceSettingsBtn');
-  const finSettingsTitle = finTab === 'vertraege' ? 'Vertrags-Kategorien' : 'Budget & Kategorien';
+  const finSettingsTitle = finTab === 'vertraege' ? tk('fin.settings.contractCats') : tk('fin.settings.title');
   finSettingsBtn.title = finSettingsTitle;
   finSettingsBtn.setAttribute('aria-label', finSettingsTitle);
   const emptyKind = finEmptyKind();
@@ -808,22 +810,22 @@ function renderFinanceBudgetCard(range, stats) {
     if (rest >= 0) {
       const redPct = total > 0 ? Math.max(total / budget * 100, 1.5) : 0;
       barHtml = `<div class="fin-bar">${finBarSegment(redPct, FIN_RED, fmtEur0(total))}${finBarSegment(100 - redPct, FIN_GREEN, fmtEur0(rest))}</div>`;
-      headRight = `<div class="text-right"><div class="text-[11px] uppercase tracking-wide text-ink/40">Noch verfügbar</div><div class="font-serif text-2xl" style="color:${FIN_GREEN}">${fmtEur(rest)}</div></div>`;
+      headRight = `<div class="text-right"><div class="text-[11px] uppercase tracking-wide text-ink/40">${escapeHtml(tk('fin.budget.available'))}</div><div class="font-serif text-2xl" style="color:${FIN_GREEN}">${fmtEur(rest)}</div></div>`;
     } else {
       const budgetPct = budget / total * 100;
       barHtml = `<div class="fin-bar">${finBarSegment(budgetPct, FIN_RED, fmtEur0(budget))}${finBarSegment(100 - budgetPct, '', '+' + fmtEur0(-rest), 'fin-over')}<span class="fin-bar-marker" style="left:${budgetPct}%"></span></div>`;
-      headRight = `<div class="text-right"><div class="text-[11px] uppercase tracking-wide text-ink/40">Über Budget</div><div class="font-serif text-2xl" style="color:${FIN_RED}">${fmtEur(-rest)}</div></div>`;
+      headRight = `<div class="text-right"><div class="text-[11px] uppercase tracking-wide text-ink/40">${escapeHtml(tk('fin.budget.overTitle'))}</div><div class="font-serif text-2xl" style="color:${FIN_RED}">${fmtEur(-rest)}</div></div>`;
     }
     const pctUsed = Math.round(total / budget * 100);
-    const bText = `Budget ${fmtEur(budget)} (${escapeHtml(bForm)})`;
+    const bText = escapeHtml(tk('fin.budget.label', { amount: fmtEur(budget), formula: bForm }));
     if (isCurrent && rest > 0) {
-      infoLine = `${bText} · ${pctUsed} % verbraucht · noch ${daysLeft} Tag${daysLeft === 1 ? '' : 'e'} · <b>${fmtEur(rest / daysLeft)}</b> pro Tag`;
+      infoLine = `${bText} · ${escapeHtml(tk('fin.budget.pctUsed', { pct: pctUsed }))} · ${escapeHtml(tk('fin.budget.daysLeft', { n: daysLeft }))} · ${tk('fin.budget.perDay', { amount: '<b>' + escapeHtml(fmtEur(rest / daysLeft)) + '</b>' })}`;
     } else if (isCurrent) {
-      infoLine = `${bText} · ${pctUsed} % verbraucht`;
+      infoLine = `${bText} · ${escapeHtml(tk('fin.budget.pctUsed', { pct: pctUsed }))}`;
     } else if (isFuture) {
-      infoLine = `${bText} · geplant aus regelmäßigen Buchungen`;
+      infoLine = `${bText} · ${escapeHtml(tk('fin.budget.plannedFromRec'))}`;
     } else {
-      infoLine = rest >= 0 ? `${bText} eingehalten ✓ · ${pctUsed} % verbraucht` : `${bText} um ${fmtEur(-rest)} überschritten`;
+      infoLine = rest >= 0 ? `${bText} · ${escapeHtml(tk('fin.budget.kept'))} · ${escapeHtml(tk('fin.budget.pctUsed', { pct: pctUsed }))}` : `${bText} · ${escapeHtml(tk('fin.budget.exceededBy', { amount: fmtEur(-rest) }))}`;
     }
   } else {
     if (total > 0) {
@@ -831,10 +833,10 @@ function renderFinanceBudgetCard(range, stats) {
     } else {
       barHtml = `<div class="fin-bar"></div>`;
     }
-    headRight = `<button type="button" id="finSetBudgetBtn" class="shrink-0 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">Budget anpassen</button>`;
+    headRight = `<button type="button" id="finSetBudgetBtn" class="shrink-0 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:text-pine hover:border-pine transition">${escapeHtml(tk('fin.budget.adjust'))}</button>`;
     infoLine = (bInfo.income > 0 || bInfo.adjust)
-      ? `Kein Budget übrig (${escapeHtml(bForm)}) – der Balken zeigt die Ausgaben nach Kategorien.`
-      : 'Noch keine Einnahmen – das Budget ergibt sich aus deinen Einnahmen (z. B. Gehalt mit Minus davor). Der Balken zeigt die Ausgaben nach Kategorien.';
+      ? escapeHtml(tk('fin.budget.noneLeft', { formula: bForm }))
+      : escapeHtml(tk('fin.budget.noIncome'));
   }
 
   let detailHtml = '';
@@ -844,10 +846,10 @@ function renderFinanceBudgetCard(range, stats) {
     <div class="rounded-2xl bg-white border border-ink/10 shadow-sm p-4 sm:p-5">
       <div class="flex items-start justify-between gap-3 mb-3">
         <div>
-          <div class="text-[11px] uppercase tracking-wide text-ink/40">${stats.future ? 'Geplant' : 'Ausgegeben'}</div>
+          <div class="text-[11px] uppercase tracking-wide text-ink/40">${escapeHtml(stats.future ? tk('fin.stat.planned') : tk('fin.stat.spent'))}</div>
           <div class="font-serif text-2xl" style="color:${total > 0 ? FIN_RED : 'inherit'}">${fmtEur(total)}</div>
-          ${!stats.future && stats.plannedOut > 0 ? `<div class="text-xs mt-0.5 text-ink/50">+ ${fmtEur(stats.plannedOut)} noch geplant</div>` : ''}
-          ${stats.income > 0 ? `<div class="text-xs mt-0.5"><span style="color:${FIN_GREEN}">+ ${fmtEur(stats.income)} Einnahmen</span> <span class="text-ink/45">· Bilanz <b style="color:${stats.balance >= 0 ? FIN_GREEN : FIN_RED}">${stats.balance >= 0 ? '+' : '−'} ${fmtEur(Math.abs(stats.balance))}</b></span></div>` : ''}
+          ${!stats.future && stats.plannedOut > 0 ? `<div class="text-xs mt-0.5 text-ink/50">${escapeHtml(tk('fin.stat.stillPlanned', { amount: fmtEur(stats.plannedOut) }))}</div>` : ''}
+          ${stats.income > 0 ? `<div class="text-xs mt-0.5"><span style="color:${FIN_GREEN}">${escapeHtml(tk('fin.stat.incomePlus', { amount: fmtEur(stats.income) }))}</span> <span class="text-ink/45">· ${escapeHtml(tk('fin.stat.balance'))} <b style="color:${stats.balance >= 0 ? FIN_GREEN : FIN_RED}">${stats.balance >= 0 ? '+' : '−'} ${fmtEur(Math.abs(stats.balance))}</b></span></div>` : ''}
         </div>
         ${headRight}
       </div>
@@ -855,7 +857,7 @@ function renderFinanceBudgetCard(range, stats) {
         ${barHtml}
         <div class="flex items-center justify-between gap-2 mt-2">
           <span class="text-xs text-ink/50 min-w-0">${infoLine}</span>
-          <span class="shrink-0 text-xs text-pine">${finDetailOpen ? 'Weniger ▴' : 'Details ▾'}</span>
+          <span class="shrink-0 text-xs text-pine">${escapeHtml(finDetailOpen ? tk('fin.stat.less') : tk('fin.stat.details'))}</span>
         </div>
       </button>
       ${detailHtml}
@@ -879,27 +881,27 @@ function finDetailHtml(range, stats, budget, { isCurrent, daysElapsed }) {
   const count = stats.expenseCount;
   const tiles = [];
   const perDayBase = isCurrent ? daysElapsed : range.days;
-  tiles.push(['Ø pro Tag', perDayBase > 0 ? fmtEur(total / perDayBase) : '–', '']);
+  tiles.push([escapeHtml(tk('fin.stat.avgPerDay')), perDayBase > 0 ? fmtEur(total / perDayBase) : '–', '']);
   if (isCurrent && daysElapsed >= 2 && total > 0) {
     const forecast = total / daysElapsed * range.days;
-    const note = budget ? (forecast > budget ? `<span style="color:${FIN_RED}">über Budget</span>` : `<span style="color:${FIN_GREEN}">im Budget</span>`) : 'bis zum Ende';
-    tiles.push(['Prognose', fmtEur0(forecast), note]);
+    const note = budget ? (forecast > budget ? `<span style="color:${FIN_RED}">${escapeHtml(tk('fin.stat.overBudget'))}</span>` : `<span style="color:${FIN_GREEN}">${escapeHtml(tk('fin.stat.inBudget'))}</span>`) : escapeHtml(tk('fin.stat.untilEnd'));
+    tiles.push([escapeHtml(tk('fin.stat.forecast')), fmtEur0(forecast), note]);
   } else {
     const biggest = stats.entries.filter(e => !finIsIncome(e)).sort((a, b) => b.amount - a.amount)[0];
-    tiles.push(['Größte Ausgabe', biggest ? fmtEur(biggest.amount) : '–', biggest ? escapeHtml(finEntryTitle(biggest)) : '']);
+    tiles.push([escapeHtml(tk('fin.stat.biggest')), biggest ? fmtEur(biggest.amount) : '–', biggest ? escapeHtml(finEntryTitle(biggest)) : '']);
   }
   const prev = finStats(finPeriodRange(finPeriod, finOffset - 1));
   if (prev.total > 0) {
     const diff = (total - prev.total) / prev.total * 100;
     const up = diff > 0;
-    tiles.push([`Vergleich zu${finPeriod === 'week' ? 'r' : 'm'} Vor${finPeriodWord(finPeriod).toLowerCase()}`, `<span style="color:${up ? FIN_RED : FIN_GREEN}">${up ? '▲' : '▼'} ${Math.abs(Math.round(diff))} %</span>`, 'vorher ' + fmtEur0(prev.total)]);
+    tiles.push([escapeHtml(finPeriod === 'week' ? tk('fin.stat.vsPrevWeek') : finPeriod === 'year' ? tk('fin.stat.vsPrevYear') : tk('fin.stat.vsPrevMonth')), `<span style="color:${up ? FIN_RED : FIN_GREEN}">${up ? '▲' : '▼'} ${Math.abs(Math.round(diff))} %</span>`, escapeHtml(tk('fin.stat.before', { amount: fmtEur0(prev.total) }))]);
   } else {
-    tiles.push([`Vor${finPeriodWord(finPeriod).toLowerCase()}`, '–', 'keine Daten']);
+    tiles.push([escapeHtml(finPeriod === 'week' ? tk('fin.stat.prevWeek') : finPeriod === 'year' ? tk('fin.stat.prevYear') : tk('fin.stat.prevMonth')), '–', escapeHtml(tk('fin.stat.noData'))]);
   }
-  tiles.push(['Ausgaben', String(count), count ? 'Ø ' + fmtEur(total / count) : '']);
+  tiles.push([escapeHtml(tk('fin.expenses')), String(count), count ? 'Ø ' + fmtEur(total / count) : '']);
   if (stats.income > 0) {
-    tiles.push(['Einnahmen', `<span style="color:${FIN_GREEN}">+ ${fmtEur(stats.income)}</span>`, `${stats.byIncomeCat.reduce((s, c) => s + c.count, 0)} Buchung${stats.byIncomeCat.reduce((s, c) => s + c.count, 0) === 1 ? '' : 'en'}`]);
-    tiles.push(['Bilanz', `<span style="color:${stats.balance >= 0 ? FIN_GREEN : FIN_RED}">${stats.balance >= 0 ? '+' : '−'} ${fmtEur(Math.abs(stats.balance))}</span>`, 'Einnahmen − Ausgaben']);
+    tiles.push([escapeHtml(tk('fin.income')), `<span style="color:${FIN_GREEN}">+ ${fmtEur(stats.income)}</span>`, escapeHtml(tk('fin.entriesN', { n: stats.byIncomeCat.reduce((s, c) => s + c.count, 0) }))]);
+    tiles.push([escapeHtml(tk('fin.stat.balance')), `<span style="color:${stats.balance >= 0 ? FIN_GREEN : FIN_RED}">${stats.balance >= 0 ? '+' : '−'} ${fmtEur(Math.abs(stats.balance))}</span>`, escapeHtml(tk('fin.stat.balanceFormula'))]);
   }
 
   const tilesHtml = tiles.map(([k, v, s]) => `
@@ -920,10 +922,10 @@ function finDetailHtml(range, stats, budget, { isCurrent, daysElapsed }) {
         const rest = catBudget - c.total;
         const redPct = Math.min(100, c.total / catBudget * 100);
         mini = `<div class="flex h-1.5 rounded-full overflow-hidden mt-1.5 bg-ink/5"><div style="width:${redPct}%;background:${FIN_RED}"></div><div style="width:${100 - redPct}%;background:${FIN_GREEN}"></div></div>`;
-        sub = rest >= 0 ? `noch ${fmtEur(rest)} von ${fmtEur0(catBudget)}` : `<span style="color:${FIN_RED}">${fmtEur(-rest)} über ${fmtEur0(catBudget)}</span>`;
+        sub = rest >= 0 ? escapeHtml(tk('fin.cat.leftOf', { amount: fmtEur(rest), budget: fmtEur0(catBudget) })) : `<span style="color:${FIN_RED}">${escapeHtml(tk('fin.cat.overOf', { amount: fmtEur(-rest), budget: fmtEur0(catBudget) }))}</span>`;
       } else {
         mini = `<div class="flex h-1.5 rounded-full overflow-hidden mt-1.5 bg-ink/5"><div style="width:${share}%;background:${c.cat.color}"></div></div>`;
-        sub = `${c.count} Buchung${c.count === 1 ? '' : 'en'}`;
+        sub = escapeHtml(tk('fin.entriesN', { n: c.count }));
       }
       const active = finCategoryFilter === c.cat.id;
       return `
@@ -939,7 +941,7 @@ function finDetailHtml(range, stats, budget, { isCurrent, daysElapsed }) {
           </span>
         </button>`;
     }).join('');
-    catHtml = `<h4 class="text-xs uppercase tracking-wide text-ink/40 mt-5 mb-2">Nach Kategorien</h4>${stack}<div class="flex flex-col gap-0.5">${rows}</div>`;
+    catHtml = `<h4 class="text-xs uppercase tracking-wide text-ink/40 mt-5 mb-2">${escapeHtml(tk('fin.byCategory'))}</h4>${stack}<div class="flex flex-col gap-0.5">${rows}</div>`;
   }
 
   let incomeHtml = '';
@@ -956,16 +958,16 @@ function finDetailHtml(range, stats, budget, { isCurrent, daysElapsed }) {
               <span class="text-sm font-semibold shrink-0" style="color:${FIN_GREEN}">+ ${fmtEur(c.total)}</span>
             </span>
             <div class="flex h-1.5 rounded-full overflow-hidden mt-1.5 bg-ink/5"><div style="width:${share}%;background:${FIN_GREEN}"></div></div>
-            <span class="flex justify-between gap-2 text-[11px] text-ink/45 mt-1"><span class="truncate">${c.count} Buchung${c.count === 1 ? '' : 'en'}</span><span class="shrink-0">${share} %</span></span>
+            <span class="flex justify-between gap-2 text-[11px] text-ink/45 mt-1"><span class="truncate">${escapeHtml(tk('fin.entriesN', { n: c.count }))}</span><span class="shrink-0">${share} %</span></span>
           </span>
         </button>`;
     }).join('');
-    incomeHtml = `<h4 class="text-xs uppercase tracking-wide text-ink/40 mt-5 mb-2">Einnahmen</h4><div class="flex flex-col gap-0.5">${rows}</div>`;
+    incomeHtml = `<h4 class="text-xs uppercase tracking-wide text-ink/40 mt-5 mb-2">${escapeHtml(tk('fin.income'))}</h4><div class="flex flex-col gap-0.5">${rows}</div>`;
   }
 
   let memberHtml = '';
   if (stats.byMember.length) {
-    memberHtml = `<h4 class="text-xs uppercase tracking-wide text-ink/40 mt-5 mb-2">Bezahlt von</h4><div class="flex flex-wrap gap-2">${stats.byMember.map(b => `
+    memberHtml = `<h4 class="text-xs uppercase tracking-wide text-ink/40 mt-5 mb-2">${escapeHtml(tk('fin.paidBy'))}</h4><div class="flex flex-wrap gap-2">${stats.byMember.map(b => `
       <span class="inline-flex items-center gap-2 pl-1 pr-3 py-1 rounded-full bg-ink/5 text-xs">
         <span class="w-6 h-6 rounded-full overflow-hidden border-2 shrink-0" style="border-color:${memberBorderColor(b.member)}">${memberAvatarInnerHTML(b.member)}</span>
         <span>${escapeHtml(memberLabel(b.member))}</span><b>${fmtEur(b.total)}</b>
@@ -975,7 +977,7 @@ function finDetailHtml(range, stats, budget, { isCurrent, daysElapsed }) {
   return `
     <div class="mt-4 pt-4 border-t border-ink/10 fade-in">
       <div class="grid grid-cols-2 ${tiles.length > 4 ? 'sm:grid-cols-3' : 'sm:grid-cols-4'} gap-2">${tilesHtml}</div>
-      ${catHtml || (incomeHtml ? '' : '<p class="text-sm text-ink/40 italic mt-4">In diesem Zeitraum gibt es noch keine Ausgaben.</p>')}
+      ${catHtml || (incomeHtml ? '' : '<p class="text-sm text-ink/40 italic mt-4">' + escapeHtml(tk('fin.noExpensesInPeriod')) + '</p>')}
       ${incomeHtml}
       ${memberHtml}
     </div>`;
@@ -1008,7 +1010,7 @@ function renderFinanceTrend() {
     // Always reserve the year row so all bars stand at the same height
     if (finPeriod === 'month') label += `<span class="block text-[9px] leading-tight text-ink/35">${(c.range.start.getMonth() === 0 || c.off === endOff - n + 1) ? c.range.start.getFullYear() : '&nbsp;'}</span>`;
     return `
-      <button type="button" class="fin-trend-col flex-1 min-w-0 flex flex-col items-center gap-1 select-none${c.future ? ' fin-trend-future' : ''}" data-off="${c.off}" title="${escapeHtml(c.range.label + ': ' + fmtEur(c.total) + (c.future ? ' (geplant)' : ''))}">
+      <button type="button" class="fin-trend-col flex-1 min-w-0 flex flex-col items-center gap-1 select-none${c.future ? ' fin-trend-future' : ''}" data-off="${c.off}" title="${escapeHtml(c.range.label + ': ' + fmtEur(c.total) + (c.future ? ' (' + tk('fin.plannedLower') + ')' : ''))}">
         <span class="text-[10px] ${selected ? 'font-semibold text-ink' : 'text-ink/45'} whitespace-nowrap leading-none h-3" style="display:block;height:12px">${c.total > 0 ? curPlain0(c.total) : ''}</span>
         <span class="fin-trend-track ${selected ? 'selected' : ''}" style="height:${H}px">
           <span class="fin-trend-stack">
@@ -1024,13 +1026,13 @@ function renderFinanceTrend() {
   el.innerHTML = `
     <div class="rounded-2xl bg-white border border-ink/10 shadow-sm p-4 sm:p-5">
       <div class="flex items-baseline justify-between gap-3 mb-3">
-        <h3 class="font-serif text-base">Verlauf</h3>
-        <span class="text-xs text-ink/45">${avg ? 'Ø ' + fmtEur0(avg) + ' pro ' + finPeriodWord(finPeriod) : ''}</span>
+        <h3 class="font-serif text-base">${escapeHtml(tk('fin.trend.title'))}</h3>
+        <span class="text-xs text-ink/45">${avg ? escapeHtml(finPeriod === 'week' ? tk('fin.trend.avgWeek', { amount: fmtEur0(avg) }) : finPeriod === 'year' ? tk('fin.trend.avgYear', { amount: fmtEur0(avg) }) : tk('fin.trend.avgMonth', { amount: fmtEur0(avg) })) : ''}</span>
       </div>
       <div class="flex items-start gap-1 sm:gap-2">${bars}</div>
       <div class="flex items-center gap-4 mt-3 text-[11px] text-ink/50">
-        <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="background:${FIN_RED}"></span>Ausgaben</span>
-        ${cols.some(c => c.budget) ? `<span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="background:${FIN_GREEN}"></span>Rest vom Budget</span>` : ''}
+        <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="background:${FIN_RED}"></span>${escapeHtml(tk('fin.expenses'))}</span>
+        ${cols.some(c => c.budget) ? `<span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="background:${FIN_GREEN}"></span>${escapeHtml(tk('fin.trend.rest'))}</span>` : ''}
       </div>
     </div>`;
   el.querySelectorAll('.fin-trend-col').forEach(btn => btn.addEventListener('click', () => {
@@ -1045,8 +1047,8 @@ function finEntryTitle(e) {
 function finDayLabel(iso) {
   const today = finTodayIso();
   const y = new Date(); y.setDate(y.getDate() - 1);
-  if (iso === today) return 'Heute';
-  if (iso === isoDate(y)) return 'Gestern';
+  if (iso === today) return tk('common.today');
+  if (iso === isoDate(y)) return tk('fin.yesterday');
   const d = new Date(iso + 'T00:00:00');
   return d.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'long' });
 }
@@ -1079,7 +1081,7 @@ function renderFinanceList(range, stats) {
         const subParts = [];
         if (e.title && e.store) subParts.push(escapeHtml(e.store));
         subParts.push(escapeHtml(cat.label));
-        if (e.items && e.items.length) subParts.push(`${e.items.length} Artikel`);
+        if (e.items && e.items.length) subParts.push(tk('fin.itemsN', { n: e.items.length }));
         const linkLabel = finLinkLabel(e.link);
         if (linkLabel) subParts.push(escapeHtml(linkLabel));
         if (member) subParts.push(escapeHtml(memberLabel(member)));
@@ -1090,10 +1092,10 @@ function renderFinanceList(range, stats) {
           <button type="button" class="fin-entry w-full flex items-center gap-3 px-1 py-2 rounded-xl hover:bg-ink/5 transition text-left${e.planned ? ' fin-planned' : ''}" data-id="${escapeHtml(e.id)}" data-rec="${escapeHtml(e.recurringId || '')}">
             <span class="shrink-0 w-10 h-10 rounded-full grid place-items-center text-lg" style="background:${cat.color}22">${escapeHtml(cat.icon || '')}</span>
             <span class="flex-1 min-w-0">
-              <span class="block text-sm font-medium truncate">${e.recurringId ? (e.contract && vtContract(e.contract) ? '📄 ' : '🔁 ') : ''}${escapeHtml(finEntryTitle(e))}${!e.recurringId && finDocsFor('ausgabe:' + e.id).length ? ' <span class="text-xs text-ink/45" title="Beleg vorhanden">📎</span>' : ''}</span>
+              <span class="block text-sm font-medium truncate">${e.recurringId ? (e.contract && vtContract(e.contract) ? '📄 ' : '🔁 ') : ''}${escapeHtml(finEntryTitle(e))}${!e.recurringId && finDocsFor('ausgabe:' + e.id).length ? ' <span class="text-xs text-ink/45" title="' + escapeHtml(tk('fin.hasReceipt')) + '">📎</span>' : ''}</span>
               <span class="block text-xs text-ink/45 truncate">${subParts.join(' · ')}</span>
             </span>
-            <span class="shrink-0 text-sm font-semibold"${finIsIncome(e) ? ` style="color:${FIN_GREEN}"` : ''}>${e.pending ? '<span title="Noch nicht übertragen">⏳</span> ' : ''}${finIsIncome(e) ? '+ ' + fmtEur(-e.amount) : fmtEur(e.amount)}</span>
+            <span class="shrink-0 text-sm font-semibold"${finIsIncome(e) ? ` style="color:${FIN_GREEN}"` : ''}>${e.pending ? '<span title="' + escapeHtml(tk('fin.notSynced')) + '">⏳</span> ' : ''}${finIsIncome(e) ? '+ ' + fmtEur(-e.amount) : fmtEur(e.amount)}</span>
           </button>`;
       }).join('')}
     </div>`).join('');
@@ -1101,11 +1103,11 @@ function renderFinanceList(range, stats) {
   el.innerHTML = `
     <div class="rounded-2xl bg-white border border-ink/10 shadow-sm p-4 sm:p-5">
       <div class="flex items-center justify-between gap-3 mb-3">
-        <h3 class="font-serif text-base">Buchungen <span class="text-xs text-ink/40 font-sans">${entries.length || ''}</span></h3>
+        <h3 class="font-serif text-base">${escapeHtml(tk('fin.entries'))} <span class="text-xs text-ink/40 font-sans">${entries.length || ''}</span></h3>
         ${filterCat ? `<button type="button" id="finClearFilterBtn" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-pine/10 text-pine">${escapeHtml(filterCat.icon + ' ' + filterCat.label)} <span class="text-sm leading-none">×</span></button>` : ''}
       </div>
-      ${pendingCount ? `<p class="text-xs text-mustard mb-2">⏳ ${pendingCount} Änderung${pendingCount === 1 ? '' : 'en'} noch nicht übertragen – wird automatisch nachgereicht.</p>` : ''}
-      ${entries.length ? listHtml : `<p class="text-sm text-ink/40 italic">${filterCat ? 'Keine Buchungen in dieser Kategorie.' : 'Noch keine Buchungen in diesem Zeitraum.'}</p>`}
+      ${pendingCount ? `<p class="text-xs text-mustard mb-2">⏳ ${escapeHtml(tk('fin.pendingN', { n: pendingCount }))}</p>` : ''}
+      ${entries.length ? listHtml : `<p class="text-sm text-ink/40 italic">${escapeHtml(filterCat ? tk('fin.noEntriesInCat') : tk('fin.noEntriesInPeriod'))}</p>`}
     </div>`;
 
   const clearBtn = document.getElementById('finClearFilterBtn');
@@ -1137,7 +1139,7 @@ function renderFinCategoryPicker(containerId, selectedId, onSelect) {
     </button>`).join('') + `
     <button type="button" class="fin-cat-chip fin-cat-add flex flex-col items-center gap-0.5 rounded-xl border border-ink/25 px-1 py-2 text-center text-ink/50 hover:text-pine hover:border-pine transition" data-action="add">
       <span class="text-xl leading-none">＋</span>
-      <span class="text-[10px] leading-tight w-full truncate">Eigene</span>
+      <span class="text-[10px] leading-tight w-full truncate">${escapeHtml(tk('fin.cat.own'))}</span>
     </button>`;
   wrap.querySelectorAll('.fin-cat-chip[data-cat]').forEach(btn => btn.addEventListener('click', () => {
     wrap.querySelectorAll('.fin-cat-chip[data-cat]').forEach(b => b.classList.toggle('active', b === btn));
@@ -1155,15 +1157,15 @@ function finNewCategoryFormEl(containerId) {
     form.id = containerId + 'NewCat';
     form.className = 'hidden -mt-2 mb-4 rounded-xl border border-ink/15 p-2.5';
     form.innerHTML = `
-      <div class="text-[11px] uppercase tracking-wide text-ink/40 mb-1.5">Eigene Kategorie</div>
+      <div class="text-[11px] uppercase tracking-wide text-ink/40 mb-1.5">${escapeHtml(tk('fin.cat.ownTitle'))}</div>
       <div class="flex items-center gap-2">
-        <input type="text" data-field="icon" maxlength="4" value="🏷️" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="Symbol (Emoji)" />
-        <input type="text" data-field="label" maxlength="40" placeholder="Name, z. B. Haustiere" autocomplete="off" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="Name der Kategorie" />
+        <input type="text" data-field="icon" maxlength="4" value="🏷️" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="${escapeHtml(tk('fin.cat.symbol'))}" />
+        <input type="text" data-field="label" maxlength="40" placeholder="${escapeHtml(tk('fin.cat.namePh'))}" autocomplete="off" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="${escapeHtml(tk('fin.cat.nameLabel'))}" />
       </div>
       <p data-field="error" class="hidden text-xs text-red-500 mt-1.5"></p>
       <div class="flex items-center justify-end gap-2 mt-2">
-        <button type="button" data-action="cancel" class="px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
-        <button type="button" data-action="create" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition">Anlegen</button>
+        <button type="button" data-action="cancel" class="px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:bg-ink/5 transition">${escapeHtml(tk('common.cancel'))}</button>
+        <button type="button" data-action="create" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition">${escapeHtml(tk('common.create'))}</button>
       </div>`;
     wrap.insertAdjacentElement('afterend', form);
     form.querySelector('[data-action="cancel"]').addEventListener('click', () => finHideNewCategoryForm(containerId));
@@ -1192,7 +1194,7 @@ function finCreateCategoryFromForm(containerId) {
   const label = form.querySelector('[data-field="label"]').value.replace(/\s+/g, ' ').trim().slice(0, 40);
   const icon = form.querySelector('[data-field="icon"]').value.trim() || '🏷️';
   const errEl = form.querySelector('[data-field="error"]');
-  if (!label) { errEl.textContent = 'Bitte einen Namen eingeben.'; errEl.classList.remove('hidden'); return; }
+  if (!label) { errEl.textContent = tk('common.needName'); errEl.classList.remove('hidden'); return; }
   // If the category already exists (even hidden), it is used instead of being created twice
   let cat = finance.categories.find(c => String(c.label || '').toLowerCase() === label.toLowerCase());
   if (cat) {
@@ -1218,7 +1220,7 @@ function finCreateCategoryFromForm(containerId) {
   const onSelect = finPickerHandlers[containerId];
   renderFinCategoryPicker(containerId, cat.id, onSelect);
   if (onSelect) onSelect(cat.id, true);
-  finShowToast(`Kategorie „${cat.label}“ angelegt.`);
+  finShowToast(tk('fin.cat.created', { name: cat.label }));
 }
 // kasse (optional): its guests without a profile are offered in addition
 function fillFinPaidBySelect(selectId, value, kasse) {
@@ -1226,7 +1228,7 @@ function fillFinPaidBySelect(selectId, value, kasse) {
   const guests = kasse ? kasseGuests(kasse) : [];
   const old = (value && kasseIsGuestId(value) && !guests.some(g => g.id === value)) ? kasseGuestById(value) : null;
   const gOpts = guests.map(g => `<option value="${escapeHtml(g.id)}">${escapeHtml(g.name)}</option>`).join('')
-    + (old ? `<option value="${escapeHtml(old.id)}">${escapeHtml(old.name)}${old.removed ? ' (entfernt)' : ''}</option>` : '');
+    + (old ? `<option value="${escapeHtml(old.id)}">${escapeHtml(old.name)}${old.removed ? ' (' + escapeHtml(tk('fin.removedLower')) + ')' : ''}</option>` : '');
   sel.innerHTML = '<option value="">–</option>' + members.map(m => `<option value="${escapeHtml(m.id)}">${escapeHtml(memberLabel(m))}</option>`).join('')
     + (gOpts ? `<optgroup label="Gäste">${gOpts}</optgroup>` : '');
   sel.value = (value && (memberById(value) || guests.some(g => g.id === value) || old)) ? value : '';
@@ -1302,7 +1304,7 @@ function openExpenseModal({ expense = null, recurring = null, asRecurring = fals
 
   const items = expenseModalExtra.items;
   document.getElementById('expenseItemsBlock').classList.toggle('hidden', !items.length);
-  document.getElementById('expenseItemsSummary').textContent = `${items.length} Artikel aus der Einkaufsliste`;
+  document.getElementById('expenseItemsSummary').textContent = tk('fin.itemsFromList', { n: items.length });
   document.getElementById('expenseItemsList').innerHTML = items.map(n => `<span class="inline-block px-2 py-0.5 rounded-full bg-ink/5 text-xs">${escapeHtml(n)}</span>`).join(' ');
 
   document.getElementById('deleteExpenseBtn').classList.toggle('hidden', !expense && !recurring);
@@ -1338,16 +1340,16 @@ function updateExpenseLinkUi() {
     const did = finLinkDepotId(expenseModalLink) || (depots[0] && depots[0].id) || '';
     showDepots = depots.length > 1;
     if (showDepots) {
-      depotSel.innerHTML = depots.map(d => `<option value="${escapeHtml(d.id)}">${escapeHtml(finDepotLabel(d) + (d.type === 'junior' ? ' (Junior)' : ''))}</option>`).join('');
+      depotSel.innerHTML = depots.map(d => `<option value="${escapeHtml(d.id)}">${escapeHtml(finDepotLabel(d) + (d.type === 'junior' ? ' (' + tk('depot.junior') + ')' : ''))}</option>`).join('');
       depotSel.value = did;
     }
-    label.textContent = 'Position';
-    options = [['depot:' + did, 'Ohne Position (nur Depot)']].concat(finGoalsInDepot(did).map(g => ['spar:' + g.id, finGoalOptionLabel(g)]));
+    label.textContent = tk('depot.position');
+    options = [['depot:' + did, tk('depot.noPosition')]].concat(finGoalsInDepot(did).map(g => ['spar:' + g.id, finGoalOptionLabel(g)]));
     if (!showDepots && options.length < 2) options = null;
     else if (!options.some(o => o[0] === expenseModalLink)) expenseModalLink = 'depot:' + did;
   } else if (cat === FIN_KIDS_CATEGORY) {
-    label.textContent = 'Für wen';
-    options = [['', '– für alle / ohne Zuordnung']].concat(finKidCandidates().map(m => ['kind:' + m.id, memberLabel(m)]));
+    label.textContent = tk('fin.forWhom');
+    options = [['', tk('fin.forAll')]].concat(finKidCandidates().map(m => ['kind:' + m.id, memberLabel(m)]));
   }
   depotWrap.classList.toggle('hidden', !showDepots);
   if (!showDepots) depotSel.innerHTML = '';
@@ -1384,18 +1386,26 @@ function updateExpenseSignUi() {
   const income = finExpenseAmountIsIncome();
   const m = expenseModalMode;
   const saving = expenseModalCategory === FIN_SAVINGS_CATEGORY;
-  const word = saving ? (income ? 'Entnahme' : 'Einzahlung') : (income ? 'Einnahme' : 'Ausgabe');
-  let title;
-  if (m.recurring) title = 'Regelmäßige ' + word;
-  else if (m.existing) title = word + ' bearbeiten';
-  else if (m.asRecurring || document.getElementById('expenseRepeatSelect').value) title = 'Neue regelmäßige ' + word;
-  else title = 'Neue ' + word;
+  const word = saving ? (income ? 'withdrawal' : 'deposit') : (income ? 'income' : 'expense');
+  // Keys written out in full, so the key check finds every one of them
+  const TITLES = {
+    rec: { withdrawal: 'fin.title.rec.withdrawal', deposit: 'fin.title.rec.deposit', income: 'fin.title.rec.income', expense: 'fin.title.rec.expense' },
+    edit: { withdrawal: 'fin.title.edit.withdrawal', deposit: 'fin.title.edit.deposit', income: 'fin.title.edit.income', expense: 'fin.title.edit.expense' },
+    newRec: { withdrawal: 'fin.title.newRec.withdrawal', deposit: 'fin.title.newRec.deposit', income: 'fin.title.newRec.income', expense: 'fin.title.newRec.expense' },
+    new: { withdrawal: 'fin.title.new.withdrawal', deposit: 'fin.title.new.deposit', income: 'fin.title.new.income', expense: 'fin.title.new.expense' },
+  };
+  let form;
+  if (m.recurring) form = 'rec';
+  else if (m.existing) form = 'edit';
+  else if (m.asRecurring || document.getElementById('expenseRepeatSelect').value) form = 'newRec';
+  else form = 'new';
+  const title = tk(TITLES[form][word]);
   document.getElementById('expenseModalTitle').textContent = title;
   document.getElementById('expenseAmountField').classList.toggle('income', income && !saving);
   const hint = document.getElementById('expenseKindHint');
   hint.textContent = saving
-    ? (income ? 'Wird als Entnahme vom Ersparten gebucht.' : 'Geht aufs Ersparte. Ein Minus davor bucht eine Entnahme.')
-    : (income ? 'Wird als Einnahme gebucht.' : 'Ein Minus vor dem Betrag bucht eine Einnahme.');
+    ? (income ? tk('fin.hint.withdrawal') : tk('fin.hint.deposit'))
+    : (income ? tk('fin.hint.income') : tk('fin.hint.expense'));
   hint.style.color = income ? FIN_GREEN : '';
   if (!expenseCategoryTouched) {
     const incomeCat = finDefaultIncomeCategory();
@@ -1426,7 +1436,7 @@ function updateExpenseRecurringUi() {
   const converting = !!editingExpenseId && !!interval; // existing entry becomes recurring
   const isRec = !!editingRecurringId || (!!interval && !editingExpenseId);
   if (expenseModalMode && !expenseModalMode.recurring && !expenseModalMode.existing) updateExpenseSignUi();
-  document.getElementById('expenseDateLabel').textContent = isRec ? 'Erste Buchung am' : 'Datum';
+  document.getElementById('expenseDateLabel').textContent = isRec ? tk('fin.firstEntryOn') : tk('fin.date');
   document.getElementById('expenseStoreBlock').classList.toggle('hidden', isRec);
   const docsWrap = document.getElementById('expenseDocsWrap');
   if (docsWrap) docsWrap.classList.toggle('hidden', isRec || isCurrentUserGuest());
@@ -1435,7 +1445,7 @@ function updateExpenseRecurringUi() {
   if (converting) {
     const next = finExpenseSeriesStart(dateVal, interval);
     if (next) {
-      info.textContent = `Diese Buchung bleibt wie sie ist (mit Laden und Belegen). Ab ${finDayLabel(next)} wird sie ${finRecDescribe({ start: next, interval })} automatisch weitergebucht.`;
+      info.textContent = tk('fin.rec.convertInfo', { date: finDayLabel(next), rhythm: finRecDescribe({ start: next, interval }) });
       info.classList.remove('hidden');
     } else {
       info.classList.add('hidden');
@@ -1445,13 +1455,13 @@ function updateExpenseRecurringUi() {
   if (isRec && /^\d{4}-\d{2}-\d{2}$/.test(dateVal)) {
     const r = editingRecurringId ? finance.recurring.find(x => x.id === editingRecurringId) : null;
     const probe = { start: dateVal, interval: interval || 'monthly' };
-    let text = `Wird ${finRecDescribe(probe)} automatisch gebucht.`;
+    let text = tk('fin.rec.autoBooked', { rhythm: finRecDescribe(probe) });
     const until = r ? finRecUntil(r) : '';
     if (until && until < finTodayIso()) {
-      text = `Beendet – letzte Buchung am ${new Date(until + 'T00:00:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' })}.`;
+      text = tk('fin.rec.endedLast', { date: new Date(until + 'T00:00:00').toLocaleDateString(sysLocale(), { day: 'numeric', month: 'long', year: 'numeric' }) });
     } else {
       const next = finRecNext(probe);
-      if (next) text += ` Nächste: ${finDayLabel(next)}.`;
+      if (next) text += ' ' + tk('fin.rec.next', { date: finDayLabel(next) });
     }
     info.textContent = text;
     info.classList.remove('hidden');
@@ -1524,8 +1534,8 @@ function finScopeNeeded(r, newAmount, newStart, newInterval = null) {
 }
 function finScopeAmountText(amount, saving) {
   const a = Number(amount) || 0;
-  if (saving) return a < 0 ? `${fmtEur(-a)} Entnahme` : `${fmtEur(a)} Einzahlung`;
-  return a < 0 ? `+ ${fmtEur(-a)} Einnahme` : `${fmtEur(a)} Ausgabe`;
+  if (saving) return a < 0 ? tk('fin.scope.amountWithdrawal', { amount: fmtEur(-a) }) : tk('fin.scope.amountDeposit', { amount: fmtEur(a) });
+  return a < 0 ? tk('fin.scope.amountIncome', { amount: fmtEur(-a) }) : tk('fin.scope.amountExpense', { amount: fmtEur(a) });
 }
 // Returns a promise: { from: 'YYYY-MM-DD' | null (= from today) } or null (cancelled)
 function finAskChangeScope({ past, oldAmount, newAmount, start, saving = false, title = '' }) {
@@ -1534,13 +1544,13 @@ function finAskChangeScope({ past, oldAmount, newAmount, start, saving = false, 
     finScopeResolve = resolve;
     finScopeCtx = { past, start };
     const todayIso = finTodayIso();
-    const fmtD = iso => new Date(iso + 'T00:00:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' });
+    const fmtD = iso => new Date(iso + 'T00:00:00').toLocaleDateString(sysLocale(), { day: 'numeric', month: 'long', year: 'numeric' });
     const signFlip = (oldAmount < 0) !== (newAmount < 0);
-    document.getElementById('finScopeTitle').textContent = title ? `„${title}“ – ab wann gilt der neue Betrag?` : 'Ab wann gilt der neue Betrag?';
+    document.getElementById('finScopeTitle').textContent = title ? tk('fin.scope.titleNamed', { name: title }) : tk('fin.scope.title');
     document.getElementById('finScopeInfo').textContent =
-      `Bisher ${finScopeAmountText(oldAmount, saving)}, neu ${finScopeAmountText(newAmount, saving)}. Seit ${fmtD(past[0])} gab es schon ${past.length} Buchung${past.length === 1 ? '' : 'en'}.`;
-    document.getElementById('finScopeFutureSub').textContent = `Ab heute (${fmtD(todayIso)}) – alle bisherigen Buchungen behalten ihren Betrag.`;
-    document.getElementById('finScopeAllSub').textContent = `Alle ${past.length} bisherigen Buchung${past.length === 1 ? '' : 'en'} seit ${fmtD(past[0])} bekommen den neuen Betrag.`;
+      tk('fin.scope.info', { old: finScopeAmountText(oldAmount, saving), new: finScopeAmountText(newAmount, saving), date: fmtD(past[0]), n: past.length });
+    document.getElementById('finScopeFutureSub').textContent = tk('fin.scope.futureSub', { date: fmtD(todayIso) });
+    document.getElementById('finScopeAllSub').textContent = tk('fin.scope.allSub', { n: past.length, date: fmtD(past[0]) });
     const dateInp = document.getElementById('finScopeDate');
     dateInp.min = start;
     dateInp.max = todayIso;
@@ -1549,8 +1559,8 @@ function finAskChangeScope({ past, oldAmount, newAmount, start, saving = false, 
     const hint = document.getElementById('finScopeHint');
     if (signFlip) {
       hint.textContent = saving
-        ? 'Du hast aus einer Einzahlung eine Entnahme gemacht (oder umgekehrt) – das ist meist eine Korrektur, darum ist „für alle“ vorausgewählt.'
-        : 'Du hast aus einer Ausgabe eine Einnahme gemacht (oder umgekehrt) – das ist meist eine Korrektur, darum ist „für alle“ vorausgewählt.';
+        ? tk('fin.scope.flipSaving')
+        : tk('fin.scope.flip');
       hint.style.color = FIN_GREEN;
       hint.classList.remove('hidden');
     } else {
@@ -1576,7 +1586,7 @@ function updateFinScopeDateSub() {
   const v = document.getElementById('finScopeDate').value;
   if (!finScopeCtx || !/^\d{4}-\d{2}-\d{2}$/.test(v)) { el.textContent = ''; return; }
   const n = finScopeCtx.past.filter(d => d >= v).length;
-  el.textContent = n ? `Betrifft ${n} bisherige Buchung${n === 1 ? '' : 'en'}.` : 'Betrifft noch keine bisherige Buchung.';
+  el.textContent = n ? tk('fin.scope.affectsN', { n }) : tk('fin.scope.affectsNone');
 }
 function finScopeFinish(result) {
   document.getElementById('finScopeModal').classList.add('hidden');
@@ -1617,11 +1627,11 @@ async function saveExpenseFromModal() {
   const errEl = document.getElementById('expenseModalError');
   const showErr = (msg) => { errEl.textContent = msg; errEl.classList.remove('hidden'); };
   const amount = parseEuro(document.getElementById('expenseAmountInput').value);
-  if (!isFinite(amount) || amount === 0) return showErr('Bitte einen Betrag eingeben (mit Minus davor für eine Einnahme).');
-  if (Math.abs(amount) > 1000000) return showErr('Der Betrag ist zu groß.');
+  if (!isFinite(amount) || amount === 0) return showErr(tk('fin.err.needAmount'));
+  if (Math.abs(amount) > 1000000) return showErr(tk('fin.err.tooBig'));
   const isIncome = amount < 0;
   const date = document.getElementById('expenseDateInput').value;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return showErr('Bitte ein Datum wählen.');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return showErr(tk('fin.err.needDate'));
   const title = document.getElementById('expenseTitleInput').value.trim();
   const note = document.getElementById('expenseNoteInput').value.trim();
   const paidBy = document.getElementById('expensePaidBySelect').value;
@@ -1651,8 +1661,8 @@ async function saveExpenseFromModal() {
     closeExpenseModal();
     renderFinance();
     renderFinRecurringEditor();
-    const scopeText = applyFrom ? ' – neuer Betrag gilt rückwirkend ab ' + new Date(applyFrom + 'T00:00:00').toLocaleDateString('de-DE') + '.' : '.';
-    finShowToast((category === FIN_SAVINGS_CATEGORY ? (isIncome ? 'Regelmäßige Entnahme gespeichert' : 'Sparrate gespeichert') : (isIncome ? 'Regelmäßige Einnahme gespeichert' : 'Regelmäßige Ausgabe gespeichert')) + scopeText);
+    const savedText = category === FIN_SAVINGS_CATEGORY ? (isIncome ? tk('fin.saved.recWithdrawal') : tk('fin.saved.savingsPlan')) : (isIncome ? tk('fin.saved.recIncome') : tk('fin.saved.recExpense'));
+    finShowToast(applyFrom ? tk('fin.saved.retroactive', { text: savedText, date: new Date(applyFrom + 'T00:00:00').toLocaleDateString(sysLocale()) }) : tk('fin.saved.sentence', { text: savedText }));
     if (kidPageMemberId) renderKidPage();
     return;
   }
@@ -1687,17 +1697,17 @@ async function saveExpenseFromModal() {
   renderFinance();
   if (seriesStart) {
     renderFinRecurringEditor();
-    finShowToast(`Wiederholung eingerichtet – nächste Buchung am ${finDayLabel(seriesStart)}.`);
+    finShowToast(tk('fin.saved.repeatSet', { date: finDayLabel(seriesStart) }));
     return;
   }
-  if (category === FIN_SAVINGS_CATEGORY) finShowToast(isIncome ? `${fmtEur(-amount)} vom Ersparten entnommen.` : `${fmtEur(amount)} aufs Ersparte gebucht.`);
-  else if (existing) finShowToast(isIncome ? 'Einnahme gespeichert.' : 'Ausgabe gespeichert.');
-  else if (isIncome) finShowToast(`+ ${fmtEur(-amount)} als Einnahme unter ${finCategory(category).label} gebucht.`);
-  else finShowToast(`${fmtEur(amount)} unter ${finCategory(category).label} gebucht.` + finBudgetToastSuffix(date));
+  if (category === FIN_SAVINGS_CATEGORY) finShowToast(isIncome ? tk('fin.saved.withdrawn', { amount: fmtEur(-amount) }) : tk('fin.saved.deposited', { amount: fmtEur(amount) }));
+  else if (existing) finShowToast(isIncome ? tk('fin.saved.income') : tk('fin.saved.expense'));
+  else if (isIncome) finShowToast(tk('fin.saved.incomeUnder', { amount: fmtEur(-amount), cat: i18nT(finCategory(category).label) }));
+  else finShowToast(tk('fin.saved.expenseUnder', { amount: fmtEur(amount), cat: i18nT(finCategory(category).label) }) + finBudgetToastSuffix(date));
 }
 function deleteFromExpenseModal() {
   if (editingRecurringId) {
-    if (!confirm('Diese regelmäßige Buchung samt aller bisherigen Buchungen löschen? Tipp: „Beenden“ behält die bisherigen Buchungen.')) return;
+    if (!confirm(tk('fin.confirm.deleteRec'))) return;
     finance.recurring = finance.recurring.filter(r => r.id !== editingRecurringId);
     persistState();
     closeExpenseModal();
@@ -1707,7 +1717,7 @@ function deleteFromExpenseModal() {
   }
   if (!editingExpenseId) return;
   const cur = ausgaben.find(x => x.id === editingExpenseId);
-  if (!confirm(cur && finIsIncome(cur) ? 'Diese Einnahme löschen?' : 'Diese Ausgabe löschen?')) return;
+  if (!confirm(cur && finIsIncome(cur) ? tk('fin.confirm.deleteIncome') : tk('fin.confirm.deleteExpense'))) return;
   const deletedId = editingExpenseId;
   finQueueDelete(deletedId);
   closeExpenseModal();
@@ -1718,13 +1728,13 @@ function endRecurringFromModal() {
   const r = finance.recurring.find(x => x.id === editingRecurringId);
   if (!r) return;
   const past = finRecDates(r, finRecStart(r) || '1970-01-01', finTodayIso());
-  if (!past.length && !confirm('Diese regelmäßige Buchung wurde noch nie gebucht und wird daher komplett entfernt. Fortfahren?')) return;
+  if (!past.length && !confirm(tk('fin.confirm.endNeverBooked'))) return;
   finEndRecurring(r.id);
   persistState();
   closeExpenseModal();
   renderFinance();
   renderFinRecurringEditor();
-  finShowToast('Regelmäßige Buchung beendet – bisherige Buchungen bleiben erhalten.');
+  finShowToast(tk('fin.saved.recEnded'));
 }
 // After booking, show the period in which the entry lies
 function finJumpToDate(iso) {
