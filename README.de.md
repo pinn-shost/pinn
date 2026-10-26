@@ -99,6 +99,16 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 und 🇰🇷 한국어**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.116.1
+
+**Text-Schlüssel, Teil 8: Zuhause, Fahrzeuge und Dokumente**
+
+- **Zuhause** (Übersicht mit der bewegten Szene, Mängel samt Mängelanzeige an den Vermieter, Kosten und Sanierung, Zähler mit Prognose und KI-Ablesung, Wartung, Garten & Pflanzen, Schlüssel und die Smarthome-Meldungen), **Fahrzeuge** (Liste, Details, Bilanz, Rechner, Fristen und automatische Aufgaben), **Dokumente** und der **Rezept-Import** aus PDF, Foto und KI holen ihre Texte jetzt aus den Sprachdateien in `pb_public/i18n/` – in allen neun Sprachen und als WG. In der Bedienung ändert sich nichts.
+- Neue Einträge in deiner Sprache: Wartungs- und Pflanzenvorlagen, Gartenkalender, Dokumenttitel und die Aufgaben für HU, Inspektion und Reifenwechsel entstehen in der gerade eingestellten Sprache. Gespeicherte Einträge bleiben, wie sie sind.
+- Kleinigkeiten: Mängelanzeige, Wetter-Tipps für Pflanzen, Fahrzeug-Rechner und Fristen sind in jeder Sprache ganze Sätze; Monatsnamen folgen der eingestellten Sprache; Zahlen wie „1 Tag“ oder „2 Zutaten“ stehen in richtiger Einzahl oder Mehrzahl.
+- Als Nächstes: die Glocke und die Push-Texte des Servers folgen mit 1.117.0.
+- Geändert: nur App-Dateien (`index.html`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/dokumente.js`, `js/pdflesen.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien in `i18n/` und `lang/`) – am Server ändert sich nichts. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
+
 ## Neu in 1.116.0
 
 **Text-Schlüssel, Teil 7: Familie, Ortung und Kinderseite**
@@ -117,16 +127,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Kleinigkeiten: Datum, Wochentage und Monatsnamen in den Finanzen stehen im Format der eingestellten Sprache; Texte wie *Vergleich zur Vorwoche* oder *Neue regelmäßige Ausgabe* sind jetzt in jeder Sprache ganze Sätze statt zusammengesetzter Wörter; Zahlen wie „1 Buchung“ oder „1 Person“ stehen in der richtigen Einzahl oder Mehrzahl.
 - Als Nächstes: Familie, Ortung, Zuhause, Fahrzeuge und Dokumente folgen mit 1.116.0.
 - Geändert: nur App-Dateien (`index.html`, `js/finanzen.js`, `js/kassen.js`, `js/vertraege.js`, `js/sparen.js`, `js/vorrat2.js`, `js/pdflesen.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien in `i18n/` und `lang/`) – am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
-
-## Neu in 1.114.0
-
-**Text-Schlüssel, Teil 5: Listen, Vorrat und Rezepte**
-
-- **Listen** (Einkauf mit Stammladen, Sonderlisten und *Einkauf planen*, Packen, Geschenke, Wünsche, Checklisten, Ideen), der **Vorrat** mit Barcode-Scan und *Was kann ich kochen?*, die **Rezepte** mit öffentlichen Rezepten, **Essen planen**, die **Suche** und der Kategorien-Editor holen ihre Texte jetzt aus den Sprachdateien in `pb_public/i18n/` – in allen neun Sprachen und als WG. An der Bedienung ändert sich nichts.
-- **Vorlagen in jeder Sprache:** Eine neue Liste aus einer Vorlage (Urlaub, Krankenhaus, Geburt, Party …) entsteht mit rund 400 übersetzten Einträgen in der eingestellten Sprache; allgemeine Läden wie Apotheke, Bäckerei oder Metzgerei heißen passend. Bestehende Listen bleiben, wie sie sind.
-- Kleinigkeiten: Datum und Preise stehen in Listen, Vorrat und Rezepten im Format der eingestellten Region; die Rezept-Erkennung findet Zutaten und Zubereitung auch unter Überschriften in den anderen Sprachen; Zahlen wie „1 Rezept“ oder „1 Eintrag“ stehen in der richtigen Einzahl oder Mehrzahl.
-- Als Nächstes: Finanzen und Kassen folgen mit 1.115.0.
-- Geändert: nur App-Dateien (`index.html`, `js/einkauf.js`, `js/einkaufslisten.js`, `js/einkaufseingabe.js`, `js/listen.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/rezepte.js`, `js/rezeptdialog.js`, `js/rezeptmengen.js`, `js/rezeptbild.js`, `js/rezeptbilder.js`, `js/rezeptparser.js`, `js/essenplanen.js`, `js/einstellungen.js`, `js/hinweise.js`, `js/finanzen.js`, `js/bedienzustand.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien in `i18n/` und `lang/`) – am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
 
 ## So funktioniert’s
 
@@ -156,7 +156,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.116.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.116.1` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

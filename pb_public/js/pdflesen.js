@@ -467,8 +467,8 @@ async function recipeOcrPdfPages(file, maxPages, show) {
   clearTimeout(recipeOcrIdleTimer);
   let current = 1;
   recipeOcrProgress = (m) => {
-    if (m && m.status === 'recognizing text') show(`⏳ Eingescannte PDF wird gelesen${count > 1 ? ` (Seite ${current}/${count})` : ''} … ${Math.round((m.progress || 0) * 100)} %`);
-    else if (m && /loading language|loading tesseract|initializ/i.test(m.status || '')) show('⏳ Texterkennung wird geladen …');
+    if (m && m.status === 'recognizing text') show(tk('recipe.import.readingScanned', { page: count > 1 ? ' ' + tk('recipe.import.page', { current, n: count }) : '', pct: Math.round((m.progress || 0) * 100) }));
+    else if (m && /loading language|loading tesseract|initializ/i.test(m.status || '')) show(tk('recipe.import.loadingTextRecognition'));
   };
   const pages = [];
   try {
@@ -541,7 +541,7 @@ function recipeKiUpdateToggle() {
   const ta = document.getElementById('importText');
   if (ta && !ta.dataset.basePlaceholder) ta.dataset.basePlaceholder = ta.placeholder;
   if (ta) ta.placeholder = aktiv && recipeKiWanted()
-    ? 'Rezepttext einfügen – oder einen Link zu einer Rezeptseite, z. B.\nhttps://www.chefkoch.de/rezepte/…\n\n' + ta.dataset.basePlaceholder
+    ? tk('recipe.import.pastePlaceholder') + '\nhttps://www.chefkoch.de/rezepte/…\n\n' + ta.dataset.basePlaceholder
     : ta.dataset.basePlaceholder;
 }
 (function initRecipeKiToggle() {
@@ -565,7 +565,7 @@ function recipeKiReadBase64(blob) {
   return new Promise((resolve, reject) => {
     const fr = new FileReader();
     fr.onload = () => resolve(String(fr.result || '').replace(/^data:[^,]*,/, ''));
-    fr.onerror = () => reject(fr.error || new Error('Datei nicht lesbar'));
+    fr.onerror = () => reject(fr.error || new Error(tk('recipe.import.fileNotReadable')));
     fr.readAsDataURL(blob);
   });
 }
@@ -581,7 +581,7 @@ async function recipeKiImagePart(file) {
     const img = await new Promise((resolve, reject) => {
       const i = new Image();
       i.onload = () => resolve(i);
-      i.onerror = () => reject(new Error('Bild nicht lesbar'));
+      i.onerror = () => reject(new Error(tk('recipe.import.imageNotReadable')));
       i.src = url;
     });
     const scale = Math.min(1, 2000 / Math.max(img.naturalWidth || 1, img.naturalHeight || 1));
@@ -593,7 +593,7 @@ async function recipeKiImagePart(file) {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.85));
-    if (!blob) throw new Error('Bild nicht umwandelbar');
+    if (!blob) throw new Error(tk('recipe.import.imageCannotConverted'));
     return { mime: 'image/jpeg', daten: await recipeKiReadBase64(blob), name: file.name || '' };
   } catch (e) {
     const t = String(file.type || '').toLowerCase();
@@ -607,7 +607,7 @@ async function recipeKiImagePart(file) {
 // Take the AI result into the form (categories/devices only if the family has them)
 function recipeKiApply(r) {
   document.getElementById('importText').value = '';
-  document.getElementById('rTitle').value = r.title || document.getElementById('rTitle').value || 'Neues Rezept';
+  document.getElementById('rTitle').value = r.title || document.getElementById('rTitle').value || tk('recipe.edit.newTitle');
   document.getElementById('rIngredients').value = (r.ingredients || []).join('\n');
   document.getElementById('rSteps').value = (r.steps || []).join('\n');
   if (r.servings) setFormServings(r.servings);
@@ -634,11 +634,11 @@ async function recipeKiImport(payload, label) {
   const analyzeBtn = document.getElementById('analyzeBtn');
   const saveBtn = document.getElementById('saveRecipeBtn');
   const btnLabel = analyzeBtn ? analyzeBtn.textContent : '';
-  if (analyzeBtn) { analyzeBtn.disabled = true; analyzeBtn.textContent = '✨ KI liest …'; }
+  if (analyzeBtn) { analyzeBtn.disabled = true; analyzeBtn.textContent = tk('recipe.import.aiReading'); }
   if (saveBtn) saveBtn.disabled = true;
-  const steps = ['✨ KI liest das Rezept …', '✨ Zutaten werden sortiert …', '✨ Zubereitung wird aufbereitet …', '✨ Fast fertig …'];
+  const steps = [tk('recipe.import.aiReadingRecipe'), tk('recipe.import.sortingIngredients'), tk('recipe.import.preparingMethod'), tk('recipe.import.almostDone')];
   let n = 0;
-  recipeKiShowInfo(label === 'Rezeptseite' ? '✨ Rezeptseite wird geladen …' : steps[0]);
+  recipeKiShowInfo(label === 'Rezeptseite' ? tk('recipe.import.loadingRecipePage') : steps[0]);
   const ticker = setInterval(() => { n = Math.min(n + 1, steps.length - 1); recipeKiShowInfo(steps[n]); }, 5000);
   try {
     const body = {
@@ -660,26 +660,23 @@ async function recipeKiImport(payload, label) {
     } finally { if (timer) clearTimeout(timer); }
     let data = {};
     try { data = await res.json(); } catch (e) { data = {}; }
-    if (!res.ok || !data.rezept) throw new Error(data.error || ('Server-Fehler ' + res.status));
+    if (!res.ok || !data.rezept) throw new Error(data.error || tk('home.serverError', { status: res.status }));
     const r = data.rezept;
     recipeKiApply(r);
-    const parts = [`${r.ingredients.length} Zutat${r.ingredients.length === 1 ? '' : 'en'}`, `${r.steps.length} Schritt${r.steps.length === 1 ? '' : 'e'}`];
-    if (r.servings) parts.push(`${r.servings} Portionen`);
-    if (r.bild) parts.push('mit Bild');
-    finShowToast('✨ Rezept per KI übernommen (' + parts.join(', ') + ') – bitte kurz prüfen.');
+    finShowToast(tk('recipe.import.aiDone', { info: recipeImportSummary(r, true) }));
     return true;
   } catch (err) {
-    const msg = err && err.name === 'AbortError' ? 'Die KI hat zu lange gebraucht.' : (err && err.message ? err.message : 'Unbekannter Fehler');
-    console.warn('KI-Auswertung:', err);
+    const msg = err && err.name === 'AbortError' ? tk('school.aiTookTooLong') : (err && err.message ? err.message : tk('home.unknownError'));
+    console.warn('AI import:', err);
     recipeKiShowInfo(label === 'Rezeptseite'
-      ? 'Rezept-Link nicht eingelesen: ' + msg + ' Alternativ den Rezepttext kopieren und hier einfügen.'
-      : 'KI nicht verfügbar: ' + msg + ' – pinn. wertet jetzt selbst aus …', true);
-    if (label !== 'Rezeptseite') finShowToast('KI nicht verfügbar – pinn. wertet selbst aus.', true);
+      ? tk('recipe.import.linkFailed', { msg })
+      : tk('recipe.import.aiUnavailable', { msg }), true);
+    if (label !== 'Rezeptseite') finShowToast(tk('recipe.import.aiUnavailableShort'), true);
     return false;
   } finally {
     clearInterval(ticker);
     recipeKiBusy = false;
-    if (analyzeBtn) { analyzeBtn.disabled = false; analyzeBtn.textContent = btnLabel || 'Text analysieren'; }
+    if (analyzeBtn) { analyzeBtn.disabled = false; analyzeBtn.textContent = btnLabel || tk('recipe.edit.analyse'); }
     if (saveBtn) saveBtn.disabled = false;
   }
 }
@@ -687,7 +684,7 @@ async function recipeKiImport(payload, label) {
 async function importRecipeFromPdf(file) {
   const info = document.getElementById('recipePdfInfo');
   const show = (text, isErr) => { info.textContent = text; info.classList.toggle('text-red-500', !!isErr); info.classList.toggle('text-ink/50', !isErr); info.classList.remove('hidden'); };
-  if (!pinnIsPdfFile(file)) { show('Bitte eine PDF-Datei wählen.', true); return; }
+  if (!pinnIsPdfFile(file)) { show(tk('recipe.import.pleaseChoosePdfFile'), true); return; }
   if (recipeKiEnabled() && file.size <= RECIPE_KI_MAX_PDF) {
     let part = null;
     try { part = await recipeKiFilePart(file, 'application/pdf'); } catch (e) { part = null; }
@@ -706,11 +703,11 @@ async function importRecipeFromPdf(file) {
     scanned = true;
     let pages;
     try { pages = await recipeOcrPdfPages(file, 6, show); }
-    catch (err) { show(err && (err.code === 'noocr' || err.code === 'noocrdata') ? 'Die PDF ist eingescannt. ' + recipeOcrErrorText(err) : pinnPdfErrorText(err), true); return; }
+    catch (err) { show(err && (err.code === 'noocr' || err.code === 'noocrdata') ? tk('recipe.import.pdfScanned') + ' ' + recipeOcrErrorText(err) : pinnPdfErrorText(err), true); return; }
     const res = recipeFromOcrPages(pages, { keepOrder: true });
     r = res.recipe;
     allText = res.lines.map(l => l.text).join('\n');
-    if (res.lines.filter(l => /[a-zäöü]{3}/i.test(l.text)).length < 3) { show('In der PDF war kein lesbarer Text zu finden – bitte den Rezepttext selbst einfügen.', true); return; }
+    if (res.lines.filter(l => /[a-zäöü]{3}/i.test(l.text)).length < 3) { show(tk('recipe.import.noReadableTextWas'), true); return; }
   } else {
     // Same evaluator as for photos (headings, subheadings, numbering, quantities);
     // for safety also the previous PDF evaluator - the better result wins.
@@ -723,8 +720,8 @@ async function importRecipeFromPdf(file) {
     });
     const pages = [...byPage.keys()].sort((a, b) => a - b).map(k => byPage.get(k));
     let rNew = null, rOld = null;
-    try { rNew = recipeFromOcrPages(pages, { keepOrder: true }).recipe; } catch (e) { console.warn('PDF-Auswertung (neu):', e); }
-    try { rOld = recipeFromPdfLines(lines); } catch (e) { console.warn('PDF-Auswertung (alt):', e); }
+    try { rNew = recipeFromOcrPages(pages, { keepOrder: true }).recipe; } catch (e) { console.warn('PDF reading (new):', e); }
+    try { rOld = recipeFromPdfLines(lines); } catch (e) { console.warn('PDF reading (old):', e); }
     r = recipeImportScore(rNew) >= recipeImportScore(rOld) ? rNew : rOld;
     allText = lines.map(l => l.text).join('\n');
   }
@@ -732,11 +729,11 @@ async function importRecipeFromPdf(file) {
   if (!r || (!r.ingredients.length && !r.steps.length)) {
     // Nothing usable recognised: put the text into the free-text field for reworking
     document.getElementById('importText').value = allText;
-    show('Zutaten und Zubereitung waren nicht eindeutig – der Text steht jetzt oben im Feld, bitte kurz aufräumen und „Text analysieren“ tippen.', true);
+    show(tk('recipe.import.ingredientsMethodWereNot'), true);
     return;
   }
   document.getElementById('importText').value = '';
-  document.getElementById('rTitle').value = r.title || 'Importiertes Rezept';
+  document.getElementById('rTitle').value = r.title || tk('recipe.imported');
   document.getElementById('rIngredients').value = r.ingredients.join('\n');
   document.getElementById('rSteps').value = r.steps.join('\n');
   if (r.servings) setFormServings(r.servings);
@@ -745,9 +742,7 @@ async function importRecipeFromPdf(file) {
   info.classList.add('hidden');
   setRecipeInputMode('strukturiert');
   checkIngredientsQuantityWarning();
-  const parts = [`${r.ingredients.length} Zutat${r.ingredients.length === 1 ? '' : 'en'}`, `${r.steps.length} Schritt${r.steps.length === 1 ? '' : 'e'}`];
-  if (r.servings) parts.push(`${r.servings} Portionen`);
-  finShowToast('✨ Rezept aus der ' + (scanned ? 'eingescannten ' : '') + 'PDF übernommen (' + parts.join(', ') + ') – bitte kurz prüfen.');
+  finShowToast(tk(scanned ? 'recipe.import.scannedPdfDone' : 'recipe.import.pdfDone', { info: recipeImportSummary(r) }));
 }
 (function initPdfAutofill() {
   const inp = document.getElementById('recipePdfInput');
@@ -776,7 +771,7 @@ function recipeOcrLoadScript(src) {
     const el = document.createElement('script');
     el.src = src;
     el.onload = () => resolve();
-    el.onerror = () => { el.remove(); reject(new Error('Laden fehlgeschlagen: ' + src)); };
+    el.onerror = () => { el.remove(); reject(new Error('Loading failed: ' + src)); };
     document.head.appendChild(el);
   });
 }
@@ -788,7 +783,7 @@ function recipeOcrLoadLib() {
       try { await recipeOcrLoadScript(src); if (window.Tesseract && window.Tesseract.createWorker) return window.Tesseract; }
       catch (e) { /* try the next path */ }
     }
-    const err = new Error('Tesseract fehlt');
+    const err = new Error(tk('recipe.import.tesseractMissing'));
     err.code = 'noocr';
     throw err;
   })();
@@ -828,10 +823,10 @@ function recipeOcrScheduleIdle() {
   }, 120000);
 }
 function recipeOcrErrorText(err) {
-  if (err && err.code === 'noocr') return 'Foto-Erkennung nicht möglich: Tesseract fehlt auf dem NAS (pb_public/vendor/tesseract/tesseract.min.js).';
-  if (err && err.code === 'noocrdata') return 'Foto-Erkennung nicht möglich: Dateien der Texterkennung unvollständig (pb_public/vendor/tesseract/worker.min.js, core/ und lang/deu.traineddata.gz).';
-  if (err && err.code === 'noimage') return 'Das Foto ließ sich nicht öffnen – bitte als JPG/PNG oder direkt mit der Kamera aufnehmen.';
-  return 'Foto konnte nicht gelesen werden: ' + (err && err.message ? err.message : err);
+  if (err && err.code === 'noocr') return tk('recipe.import.photoRecognitionNotPossible');
+  if (err && err.code === 'noocrdata') return tk('recipe.import.photoRecognitionNotPossible2');
+  if (err && err.code === 'noimage') return tk('recipe.import.photoCouldNotOpened');
+  return tk('recipe.import.photoFailed', { msg: err && err.message ? err.message : err });
 }
 // Shrink/enlarge the photo to an easily readable size, greyscale + a bit more contrast
 async function recipeOcrPrepareImage(file) {
@@ -840,7 +835,7 @@ async function recipeOcrPrepareImage(file) {
     const img = await new Promise((resolve, reject) => {
       const i = new Image();
       i.onload = () => resolve(i);
-      i.onerror = () => { const e = new Error('Bild'); e.code = 'noimage'; reject(e); };
+      i.onerror = () => { const e = new Error(tk('recipe.edit.image')); e.code = 'noimage'; reject(e); };
       i.src = url;
     });
     const w0 = img.naturalWidth || img.width, h0 = img.naturalHeight || img.height;
@@ -1114,9 +1109,9 @@ async function importRecipeFromPhotos(files) {
   const info = document.getElementById('recipePdfInfo');
   const show = (text, isErr) => { info.textContent = text; info.classList.toggle('text-red-500', !!isErr); info.classList.toggle('text-ink/50', !isErr); info.classList.remove('hidden'); };
   const images = [...files].filter(f => f && (/^image\//i.test(f.type) || /\.(jpe?g|png|webp|heic|heif|gif|bmp)$/i.test(f.name || ''))).slice(0, 6);
-  if (!images.length) { show('Bitte ein Foto wählen.', true); return; }
+  if (!images.length) { show(tk('recipe.import.choosePhoto'), true); return; }
   if (recipeKiEnabled()) {
-    show(`⏳ Foto${images.length > 1 ? 's werden' : ' wird'} vorbereitet …`);
+    show(tk('recipe.import.preparingPhotos', { n: images.length }));
     const parts = [];
     for (const img of images) {
       try { const part = await recipeKiImagePart(img); if (part) parts.push(part); } catch (e) { /* then without this photo */ }
@@ -1124,18 +1119,18 @@ async function importRecipeFromPhotos(files) {
     if (parts.length === images.length && await recipeKiImport({ dateien: parts }, images.length > 1 ? 'Fotos' : 'Foto')) return;
   }
   if (!navigator.onLine && !recipeOcrWorkerPromise && !(window.Tesseract && window.Tesseract.createWorker)) {
-    show('Für die erste Foto-Erkennung wird die Verbindung zum NAS gebraucht (Texterkennung laden).', true);
+    show(tk('recipe.import.needNasForOcr'), true);
     return;
   }
   clearTimeout(recipeOcrIdleTimer);
-  show('⏳ Texterkennung wird vorbereitet …');
+  show(tk('recipe.import.preparingOcr'));
   let worker;
   let current = 1;
   recipeOcrProgress = (m) => {
     if (!m) return;
-    const pageInfo = images.length > 1 ? ` (Foto ${current}/${images.length})` : '';
-    if (m.status === 'recognizing text') show(`⏳ Text wird erkannt${pageInfo} … ${Math.round((m.progress || 0) * 100)} %`);
-    else if (/loading language|loading tesseract|initializ/i.test(m.status || '')) show('⏳ Texterkennung wird geladen …');
+    const pageInfo = images.length > 1 ? ' ' + tk('recipe.import.photoOf', { current, n: images.length }) : '';
+    if (m.status === 'recognizing text') show(tk('recipe.import.recognising', { page: pageInfo, pct: Math.round((m.progress || 0) * 100) }));
+    else if (/loading language|loading tesseract|initializ/i.test(m.status || '')) show(tk('recipe.import.loadingTextRecognition'));
   };
   const pages = [];
   try {
@@ -1143,7 +1138,7 @@ async function importRecipeFromPhotos(files) {
     try { await worker.setParameters({ tessedit_pageseg_mode: '3', preserve_interword_spaces: '1' }); } catch (e) { /* optional */ }
     for (let i = 0; i < images.length; i++) {
       current = i + 1;
-      show(`⏳ Foto ${images.length > 1 ? current + '/' + images.length + ' ' : ''}wird vorbereitet …`);
+      show(images.length > 1 ? tk('recipe.import.preparingPhotoN', { current, n: images.length }) : tk('recipe.import.preparingPhotos', { n: 1 }));
       const canvas = await recipeOcrPrepareImage(images[i]);
       let res;
       try { res = await worker.recognize(canvas, {}, { text: true, blocks: true }); }
@@ -1160,16 +1155,16 @@ async function importRecipeFromPhotos(files) {
 
   const { lines, recipe: r } = recipeFromOcrPages(pages);
   if (lines.filter(l => /[a-zäöü]{3}/i.test(l.text)).length < 3) {
-    show('Auf dem Foto war kaum Text zu erkennen – bitte gerade, scharf und bei gutem Licht fotografieren.', true);
+    show(tk('recipe.import.hardlyAnyTextCould'), true);
     return;
   }
   if (!r || (!r.ingredients.length && !r.steps.length)) {
     document.getElementById('importText').value = lines.map(l => l.text).join('\n');
-    show('Zutaten und Zubereitung waren nicht eindeutig – der erkannte Text steht jetzt oben im Feld, bitte kurz aufräumen und „Text analysieren“ tippen.', true);
+    show(tk('recipe.import.ingredientsMethodWereNot2'), true);
     return;
   }
   document.getElementById('importText').value = '';
-  document.getElementById('rTitle').value = r.title || 'Rezept vom Foto';
+  document.getElementById('rTitle').value = r.title || tk('recipe.import.recipeFromPhoto');
   document.getElementById('rIngredients').value = r.ingredients.join('\n');
   document.getElementById('rSteps').value = r.steps.join('\n');
   if (r.servings) setFormServings(r.servings);
@@ -1178,9 +1173,14 @@ async function importRecipeFromPhotos(files) {
   info.classList.add('hidden');
   setRecipeInputMode('strukturiert');
   checkIngredientsQuantityWarning();
-  const parts = [`${r.ingredients.length} Zutat${r.ingredients.length === 1 ? '' : 'en'}`, `${r.steps.length} Schritt${r.steps.length === 1 ? '' : 'e'}`];
-  if (r.servings) parts.push(`${r.servings} Portionen`);
-  finShowToast('✨ Rezept vom Foto übernommen (' + parts.join(', ') + ') – bitte kurz prüfen, Texterkennung kann sich vertun.');
+  finShowToast(tk('recipe.import.photoDone', { info: recipeImportSummary(r) }));
+}
+// Short summary of an imported recipe: "12 ingredients, 5 steps, 4 servings"
+function recipeImportSummary(r, withImage) {
+  const parts = [tk('recipe.import.ingredientsN', { n: r.ingredients.length }), tk('recipe.import.stepsN', { n: r.steps.length })];
+  if (r.servings) parts.push(tk('recipe.import.servingsN', { n: Number(r.servings) || 0, v: r.servings }));
+  if (withImage && r.bild) parts.push(tk('recipe.import.withImage'));
+  return parts.join(', ');
 }
 (function initPhotoAutofill() {
   const inp = document.getElementById('recipePhotoInput');

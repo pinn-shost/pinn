@@ -60,17 +60,18 @@ const DOC_DEFAULT_CATEGORIES = [
   { id: 'haustiere', label: 'Haustiere', icon: '🐾', fields: '' },
   { id: 'sonstiges', label: 'Sonstiges', icon: '📦', fields: '' },
 ];
+// Label and placeholder of the "issuer" field per category (getters, so they follow the chosen language)
 const DOC_ISSUER_HINTS = {
-  gesundheit: ['Praxis / Klinik', 'optional, z. B. Hausarztpraxis, Klinikum'],
-  kaufbelege: ['Händler', 'optional, z. B. MediaMarkt, Amazon, Möbelhaus'],
-  ausweise: ['Ausgestellt von', 'optional, z. B. Stadt, Standesamt'],
-  versicherungen: ['Versicherung', 'optional, z. B. HUK-Coburg'],
-  fahrzeuge: ['Aussteller', 'optional, z. B. TÜV, Werkstatt, Zulassungsstelle'],
-  arbeit: ['Arbeitgeber', 'optional'],
-  steuern: ['Behörde', 'optional, z. B. Finanzamt'],
-  bank: ['Bank', 'optional'],
-  schule: ['Schule / Einrichtung', 'optional'],
-  haustiere: ['Tierarzt / Aussteller', 'optional'],
+  get gesundheit() { return [tk('doc.practiceClinic'), tk('doc.optionalEGGp')]; },
+  get kaufbelege() { return [tk('doc.dealer'), tk('doc.optionalEGElectronics')]; },
+  get ausweise() { return [tk('doc.issued'), tk('doc.optionalEGCity')]; },
+  get versicherungen() { return [tk('family.insurance'), tk('contract.optionalEGInsurer')]; },
+  get fahrzeuge() { return [tk('pdf.field.issuer'), tk('doc.optionalEGMot')]; },
+  get arbeit() { return [tk('doc.employer'), tk('doc.optional')]; },
+  get steuern() { return [tk('doc.authority'), tk('doc.optionalEGTax')]; },
+  get bank() { return [tk('home.bank'), tk('doc.optional')]; },
+  get schule() { return [tk('doc.schoolInstitution'), tk('doc.optional')]; },
+  get haustiere() { return [tk('doc.vetIssuer'), tk('doc.optional')]; },
 };
 
 let docServer = [];          // Documents according to the server (or the cache)
@@ -103,7 +104,7 @@ const docBlobUrls = new Map();
 function docNormalizeCategories(list) {
   const cats = (Array.isArray(list) && list.length ? list : DOC_DEFAULT_CATEGORIES)
     .filter(c => c && c.id)
-    .map(c => ({ id: String(c.id), label: String(c.label || '').slice(0, 40) || 'Kategorie', icon: String(c.icon || '').slice(0, 4), fields: ['kauf', 'ablauf'].includes(c.fields) ? c.fields : '' }));
+    .map(c => ({ id: String(c.id), label: String(c.label || '').slice(0, 40) || tk('account.manage.category'), icon: String(c.icon || '').slice(0, 4), fields: ['kauf', 'ablauf'].includes(c.fields) ? c.fields : '' }));
   if (!cats.some(c => c.id === 'sonstiges')) cats.push({ ...DOC_DEFAULT_CATEGORIES[DOC_DEFAULT_CATEGORIES.length - 1] });
   return cats;
 }
@@ -113,7 +114,7 @@ function docCategories() {
 }
 function docCategory(id) {
   const cats = docCategories();
-  return cats.find(c => c.id === id) || cats.find(c => c.id === 'sonstiges') || { id: 'sonstiges', label: 'Sonstiges', icon: '📦', fields: '' };
+  return cats.find(c => c.id === id) || cats.find(c => c.id === 'sonstiges') || { id: 'sonstiges', label: tk('contract.docType.other'), icon: '📦', fields: '' };
 }
 
 /* ---------- Data ---------- */
@@ -203,13 +204,13 @@ function docsChanged() {
 /* ---------- Outbox (IndexedDB, also works without a connection) ---------- */
 function docIdbOpen() {
   return new Promise((resolve, reject) => {
-    if (!window.indexedDB) { reject(new Error('Kein IndexedDB')); return; }
+    if (!window.indexedDB) { reject(new Error(tk('doc.noIndexeddb'))); return; }
     const req = indexedDB.open(DOC_IDB, 1);
     req.onupgradeneeded = () => {
       try { req.result.createObjectStore(DOC_IDB_STORE, { keyPath: 'key' }); } catch (e) { /* already there */ }
     };
     req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error || new Error('IndexedDB nicht verfügbar'));
+    req.onerror = () => reject(req.error || new Error(tk('doc.indexeddbNotAvailable')));
   });
 }
 async function docIdbRun(mode, fn) {
@@ -222,8 +223,8 @@ async function docIdbRun(mode, fn) {
       req = fn(tx.objectStore(DOC_IDB_STORE));
     } catch (e) { db.close(); reject(e); return; }
     tx.oncomplete = () => { db.close(); resolve(req ? req.result : undefined); };
-    tx.onerror = () => { db.close(); reject(tx.error || new Error('IndexedDB-Fehler')); };
-    tx.onabort = () => { db.close(); reject(tx.error || new Error('IndexedDB abgebrochen')); };
+    tx.onerror = () => { db.close(); reject(tx.error || new Error(tk('doc.indexeddbError'))); };
+    tx.onabort = () => { db.close(); reject(tx.error || new Error('IndexedDB aborted')); };
   });
 }
 async function docOutboxLoad() {
@@ -280,7 +281,7 @@ async function docEnqueueSave(id, isNew, fields, addFiles, removeNames, removePe
   op.add = op.add.concat(addFiles || []);
   (removeNames || []).forEach(n => { if (!op.remove.includes(n)) op.remove.push(n); });
   const stored = await docOutboxPut(op);
-  if (!stored && (addFiles || []).length) finShowToast('Hinweis: Auf diesem Gerät lassen sich Dateien nicht zwischenspeichern – bitte die App bis zum Hochladen geöffnet lassen.', true);
+  if (!stored && (addFiles || []).length) finShowToast(tk('doc.noteFilesCannotCached'), true);
 }
 async function docEnqueueDelete(d) {
   const op = docOutboxOp(d.id);
@@ -291,10 +292,10 @@ async function docEnqueueDelete(d) {
 function docErrorText(err, fileName) {
   if (err && err.local) return err.message;
   const st = err && err.status;
-  if (st === 404) return 'Auf dem Server fehlen noch dokumente.pb.js und pinn-dokumente.js (pb_hooks) – danach PocketBase neu starten.';
-  if (st === 400) return fileName ? `„${fileName}“ wurde nicht angenommen – erlaubt sind Fotos und PDFs bis 25 MB.` : 'Der Server hat das Dokument nicht angenommen.';
-  if (st === 403) return 'Keine Berechtigung für Dokumente.';
-  return 'Übertragen fehlgeschlagen: ' + ((err && err.message) || 'unbekannter Fehler');
+  if (st === 404) return tk('doc.dokumentePbJsPinn');
+  if (st === 400) return fileName ? `${tk('doc.wasNotAcceptedPhotos', { fileName })}` : tk('doc.serverDidNotAccept');
+  if (st === 403) return tk('contract.noPermissionDocuments');
+  return tk('doc.transferFailed', { msg: (err && err.message) || tk('doc.unknownError') });
 }
 function docIsPermanentError(err) {
   const st = err && err.status;
@@ -428,21 +429,21 @@ function docScheduleServerCheck() {
 
 /* ---------- Deadlines (expiry date, guarantee, warranty) ---------- */
 const DOC_DEADLINES = [
-  { field: 'gueltig_bis', name: 'Gültig', long: 'Gültig bis' },
-  { field: 'garantie_bis', name: 'Garantie', long: 'Herstellergarantie bis' },
-  { field: 'gewaehrleistung_bis', name: 'Gewährleistung', long: 'Gewährleistung bis' },
+  { field: 'gueltig_bis', get name() { return tk('doc.deadline.gueltigBis'); }, get long() { return tk('doc.deadline.gueltigBisLong'); } },
+  { field: 'garantie_bis', get name() { return tk('doc.deadline.garantieBis'); }, get long() { return tk('doc.deadline.garantieBisLong'); } },
+  { field: 'gewaehrleistung_bis', get name() { return tk('doc.deadline.gewaehrleistungBis'); }, get long() { return tk('doc.deadline.gewaehrleistungBisLong'); } },
 ];
 function docDaysBetween(a, b) {
   const pa = vtParts(a), pb2 = vtParts(b);
   return Math.round((Date.UTC(pb2[0], pb2[1] - 1, pb2[2]) - Date.UTC(pa[0], pa[1] - 1, pa[2])) / 86400000);
 }
 function docInText(n) {
-  if (n <= 0) return 'heute';
-  if (n === 1) return 'morgen';
-  if (n < 60) return `in ${n} Tagen`;
+  if (n <= 0) return tk('contract.today');
+  if (n === 1) return tk('contract.tomorrow');
+  if (n < 60) return tk('lists.when.inDays', { n });
   const m = Math.round(n / 30.4);
-  if (m < 24) return `in ${m} Monaten`;
-  return `in ${Math.round(n / 365)} Jahren`;
+  if (m < 24) return tk('vehicle.inMonthsN', { n: m });
+  return tk('vehicle.inYearsN', { n: Math.round(n / 365) });
 }
 // Most relevant deadline of a document: the next one still open, otherwise the one that expired last
 function docDeadline(d, today) {
@@ -452,10 +453,10 @@ function docDeadline(d, today) {
   const x = open.length ? open[0] : list.sort((a, b) => b.days - a.days)[0];
   const warnDays = Math.max(30, Number(d.erinnern) || 0);
   let tone = 'ok';
-  let label = `${x.name} bis ${vtFmt(x.date)}`;
-  if (x.days < 0) { tone = 'muted'; label = x.field === 'gueltig_bis' ? 'Abgelaufen' : `${x.name} abgelaufen`; }
-  else if (x.days <= 14) { tone = 'urgent'; label = x.field === 'gueltig_bis' ? `Läuft ${docInText(x.days)} ab` : `${x.name} endet ${docInText(x.days)}`; }
-  else if (x.days <= warnDays) { tone = 'warn'; label = x.field === 'gueltig_bis' ? `Läuft ${docInText(x.days)} ab` : `${x.name} endet ${docInText(x.days)}`; }
+  let label = tk('doc.dl.until', { name: x.name, date: vtFmt(x.date) });
+  if (x.days < 0) { tone = 'muted'; label = x.field === 'gueltig_bis' ? tk('doc.dl.expired') : tk('doc.dl.nameExpired', { name: x.name }); }
+  else if (x.days <= 14) { tone = 'urgent'; label = x.field === 'gueltig_bis' ? tk('doc.dl.expires', { when: docInText(x.days) }) : tk('doc.dl.ends', { name: x.name, when: docInText(x.days) }); }
+  else if (x.days <= warnDays) { tone = 'warn'; label = x.field === 'gueltig_bis' ? tk('doc.dl.expires', { when: docInText(x.days) }) : tk('doc.dl.ends', { name: x.name, when: docInText(x.days) }); }
   return { ...x, tone, label };
 }
 function docDueList(today) {
@@ -509,7 +510,7 @@ function docThumbHtml(d) {
   const pImg = pend.find(f => /^image\//.test(f.type || '') || docIsImageName(f.name));
   if (pImg && docBlobUrl(pImg)) return `<span class="doc-thumb"><img src="${escapeHtml(docBlobUrl(pImg))}" alt="" />${count}</span>`;
   const first = files[0] || (pend[0] && pend[0].name) || '';
-  const ext = first && !docIsImageName(first) ? `<span class="doc-thumb-ext">${escapeHtml(docExt(first) || 'DATEI')}</span>` : '';
+  const ext = first && !docIsImageName(first) ? `<span class="doc-thumb-ext">${escapeHtml(docExt(first) || tk('doc.fileUpper'))}</span>` : '';
   return `<span class="doc-thumb">${escapeHtml(cat.icon || '📄')}${ext}${count}</span>`;
 }
 function docMemberName(id) {
@@ -530,12 +531,12 @@ function docRowHtml(d, today) {
   const chips = [];
   if (dl) chips.push(`<span class="vt-chip ${dl.tone}">${escapeHtml(dl.label)}</span>`);
   if (d.betrag > 0) chips.push(`<span class="text-[11px] text-ink/45">${escapeHtml(fmtEur(d.betrag))}</span>`);
-  if (d.pending) chips.push(`<span class="vt-chip muted">${docUploadingKey === d.id ? '⏳ wird übertragen' : (navigator.onLine ? '⏳ wartet' : '📴 wird nachgereicht')}</span>`);
+  if (d.pending) chips.push(`<span class="vt-chip muted">${docUploadingKey === d.id ? tk('home.transferring') : (navigator.onLine ? tk('doc.waiting') : tk('home.willSubmitted'))}</span>`);
   return `
     <button type="button" class="doc-row w-full flex items-center gap-3 rounded-2xl bg-white border border-ink/10 shadow-sm p-2.5 text-left transition${d.pending ? ' is-pending' : ''}" data-docopen="${escapeHtml(d.id)}">
       ${docThumbHtml(d)}
       <span class="flex-1 min-w-0">
-        <span class="block text-sm font-medium truncate">${d.sichtbar ? '<span title="Nicht für die ganze Familie sichtbar">🔒 </span>' : ''}${escapeHtml(d.titel || 'Dokument')}</span>
+        <span class="block text-sm font-medium truncate">${d.sichtbar ? ('<span title="' + escapeHtml(tk('doc.notVisibleWholeFamily')) + '">🔒 </span>') : ''}${escapeHtml(d.titel || tk('search.type.doc'))}</span>
         <span class="block text-[11px] text-ink/45 truncate">${escapeHtml(meta.join(' · ')) || '&nbsp;'}</span>
         ${chips.length ? `<span class="flex items-center gap-1.5 mt-1 flex-wrap">${chips.join('')}</span>` : ''}
       </span>
@@ -546,16 +547,16 @@ function docFinRowsHtml(list) {
   return list.map(fd => {
     const t = finDocType(fd.typ);
     let ref = '';
-    if (/^vertrag:/.test(fd.bezug)) { const c = vtContract(fd.bezug.slice(8)); ref = c ? 'Vertrag: ' + (c.name || '') : 'Vertrag'; }
-    else if (/^fahrzeug:/.test(fd.bezug)) { const fv = fzVehicle(fd.bezug.slice(9)); ref = fv ? 'Fahrzeug: ' + fzName(fv) : 'Fahrzeug'; }
-    else if (/^ausgabe:/.test(fd.bezug)) { const e = ausgaben.find(x => x.id === fd.bezug.slice(8)); ref = e ? 'Ausgabe: ' + (e.title || fmtEur(e.amount)) : 'Beleg zu einer Ausgabe'; }
+    if (/^vertrag:/.test(fd.bezug)) { const c = vtContract(fd.bezug.slice(8)); ref = c ? (tk('doc.contract') + ' ') + (c.name || '') : tk('contract.docType.doc'); }
+    else if (/^fahrzeug:/.test(fd.bezug)) { const fv = fzVehicle(fd.bezug.slice(9)); ref = fv ? (tk('vehicle.vehicle2') + ' ') + fzName(fv) : tk('search.type.vehicle'); }
+    else if (/^ausgabe:/.test(fd.bezug)) { const e = ausgaben.find(x => x.id === fd.bezug.slice(8)); ref = e ? (tk('doc.expense') + ' ') + (e.title || fmtEur(e.amount)) : tk('doc.receiptExpense'); }
     const meta = [t.label, ref, vtFmt(fd.datum)].filter(Boolean).join(' · ');
     const icon = docIsImageName(fd.datei) ? '🖼️' : t.icon;
     return `
       <a class="fin-doc-link doc-row w-full flex items-center gap-3 rounded-2xl bg-white border border-ink/10 shadow-sm p-2.5 text-left transition" data-doc="${escapeHtml(fd.id)}" href="${escapeHtml(finDocUrl(fd))}" target="_blank" rel="noopener">
         <span class="doc-thumb">${escapeHtml(icon)}</span>
         <span class="flex-1 min-w-0">
-          <span class="block text-sm font-medium truncate">${escapeHtml(fd.name || fd.datei || 'Dokument')}</span>
+          <span class="block text-sm font-medium truncate">${escapeHtml(fd.name || fd.datei || tk('search.type.doc'))}</span>
           <span class="block text-[11px] text-ink/45 truncate">${escapeHtml(meta)}</span>
         </span>
         <span class="shrink-0 text-ink/30 text-sm">↗</span>
@@ -581,12 +582,12 @@ function renderDocFilters() {
   const cats = docCategories();
   const finCount = (!isCurrentUserGuest() && typeof finDocs !== 'undefined') ? finDocs.length : 0;
   if (docFilterCategory && docFilterCategory !== DOC_FIN_FILTER && !cats.some(c => c.id === docFilterCategory)) docFilterCategory = '';
-  catSel.innerHTML = '<option value="">Alle Kategorien</option>'
+  catSel.innerHTML = ('<option value="">' + tk('household.allCategories') + '</option>')
     + cats.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml((c.icon ? c.icon + ' ' : '') + c.label)}</option>`).join('')
-    + (finCount ? `<option value="${DOC_FIN_FILTER}">💶 Aus Finanzen (Verträge &amp; Belege)</option>` : '');
+    + (finCount ? `<option value="${DOC_FIN_FILTER}">${tk('doc.fromFinanceContractsReceipts')}</option>` : '');
   catSel.value = docFilterCategory;
   if (docFilterMember && docFilterMember !== '__familie' && !memberById(docFilterMember)) docFilterMember = '';
-  memSel.innerHTML = '<option value="">Alle Personen</option><option value="__familie">👨‍👩‍👧 Ganze Familie</option>'
+  memSel.innerHTML = ('<option value="">' + tk('doc.allPeople') + '</option><option value="__familie">' + tk('doc.wholeFamily') + '</option>')
     + members.map(m => `<option value="${escapeHtml(m.id)}">${escapeHtml(memberLabel(m))}</option>`).join('');
   memSel.value = docFilterMember;
   document.querySelectorAll('.doc-group-btn').forEach(b => b.classList.toggle('active', b.dataset.dgroup === docGroupMode));
@@ -610,9 +611,9 @@ function renderDocuments() {
   // Notes: server files missing / offline / pending transfers
   const pendingCount = docOutbox.filter(o => o.familie === finFamilyKey()).length;
   let status = '';
-  if (docsError === 'missing') status = '<p class="vt-info warn">Auf dem Server fehlen noch dokumente.pb.js und pinn-dokumente.js (pb_hooks) – danach PocketBase neu starten.</p>';
-  else if (pendingCount) status = `<p class="vt-info">${navigator.onLine ? '⏳' : '📴'} ${pendingCount === 1 ? '1 Änderung wartet' : pendingCount + ' Änderungen warten'} auf die Übertragung zum NAS${navigator.onLine ? ' …' : ' – wird automatisch nachgereicht, sobald wieder Verbindung besteht.'}</p>`;
-  else if (docsError === 'offline' && !docsLoaded && !docServer.length) status = '<p class="vt-info">📴 Offline – die Dokumente erscheinen, sobald wieder Verbindung zum NAS besteht.</p>';
+  if (docsError === 'missing') status = ('<p class="vt-info warn">' + tk('doc.dokumentePbJsPinn') + '</p>');
+  else if (pendingCount) status = `<p class="vt-info">${navigator.onLine ? '⏳' : '📴'} ${escapeHtml(tk(navigator.onLine ? 'doc.pendingOnline' : 'doc.pendingOffline', { n: pendingCount }))}</p>`;
+  else if (docsError === 'offline' && !docsLoaded && !docServer.length) status = ('<p class="vt-info">' + tk('doc.offlineDocumentsAppearSoon') + '</p>');
   statusEl.innerHTML = status;
   statusEl.classList.toggle('hidden', !status);
 
@@ -624,11 +625,11 @@ function renderDocuments() {
   const due = (!q && !docFilterCategory && !docFilterMember && !docOnlyDue) ? docDueList(today) : [];
   dueEl.innerHTML = due.length ? `
     <div class="rounded-2xl border border-mustard/40 bg-mustard/10 p-4 mb-4">
-      <div class="text-sm font-medium mb-2">⏰ Fristen im Blick</div>
+      <div class="text-sm font-medium mb-2">${tk('doc.deadlinesGlance')}</div>
       <div class="flex flex-col gap-1.5">${due.slice(0, 5).map(x => `
         <button type="button" class="doc-due-row w-full flex items-center gap-3 rounded-xl bg-white/70 px-3 py-2 text-left" data-docopen="${escapeHtml(x.d.id)}">
           <span class="flex-1 min-w-0">
-            <span class="block text-sm font-medium truncate">${escapeHtml(x.d.titel || 'Dokument')}</span>
+            <span class="block text-sm font-medium truncate">${escapeHtml(x.d.titel || tk('search.type.doc'))}</span>
             <span class="block text-xs text-ink/55 truncate">${escapeHtml(x.dl.long + ' ' + vtFmt(x.dl.date))}</span>
           </span>
           <span class="vt-chip ${x.dl.tone}">${escapeHtml(docInText(x.dl.days))}</span>
@@ -646,7 +647,7 @@ function renderDocuments() {
   let groups = [];
   if (docOnlyDue) {
     items.sort((a, b) => docDeadline(a, today).days - docDeadline(b, today).days || byTitle(a, b));
-    groups = items.length ? [{ title: 'Nach Frist sortiert', icon: '⏰', items }] : [];
+    groups = items.length ? [{ title: tk('doc.sortedDeadline'), icon: '⏰', items }] : [];
   } else if (docGroupMode === 'alpha') {
     const map = new Map();
     items.slice().sort(byTitle).forEach(d => {
@@ -659,7 +660,7 @@ function renderDocuments() {
   } else if (docGroupMode === 'date') {
     const map = new Map();
     items.slice().sort((a, b) => dateKey(b).localeCompare(dateKey(a)) || byTitle(a, b)).forEach(d => {
-      const key = dateKey(d).slice(0, 4) || 'Ohne Datum';
+      const key = dateKey(d).slice(0, 4) || tk('doc.withoutDate');
       if (!map.has(key)) map.set(key, []);
       map.get(key).push(d);
     });
@@ -686,9 +687,9 @@ function renderDocuments() {
   if (finList.length) {
     html += `
       <div>
-        <h3 class="text-xs uppercase tracking-wide text-ink/40 mb-2 flex items-center gap-1.5"><span class="text-sm">💶</span>Aus Finanzen<span class="text-ink/30 normal-case tracking-normal">· ${finList.length}</span></h3>
+        <h3 class="text-xs uppercase tracking-wide text-ink/40 mb-2 flex items-center gap-1.5"><span class="text-sm">💶</span>${tk('doc.fromFinance')}<span class="text-ink/30 normal-case tracking-normal">· ${finList.length}</span></h3>
         <div class="flex flex-col gap-1.5">${docFinRowsHtml(finList)}</div>
-        <p class="text-[11px] text-ink/40 mt-1.5">Vertragsdokumente und Belege werden in Finanzen verwaltet.</p>
+        <p class="text-[11px] text-ink/40 mt-1.5">${tk('doc.contractDocumentsReceiptsManaged')}</p>
       </div>`;
   }
 
@@ -696,12 +697,12 @@ function renderDocuments() {
     listEl.innerHTML = '';
     const filtered = !!(q || docFilterCategory || docFilterMember || docOnlyDue);
     emptyEl.innerHTML = (all.length || filtered)
-      ? '<p class="text-sm text-ink/40 italic text-center py-6">Keine Dokumente für diese Auswahl.</p>'
+      ? ('<p class="text-sm text-ink/40 italic text-center py-6">' + tk('doc.noDocumentsSelection') + '</p>')
       : `<div class="rounded-2xl bg-white border border-dashed border-ink/20 p-6 text-center">
           <div class="text-3xl mb-2">🗂️</div>
-          <div class="font-serif text-lg mb-1">Noch keine Dokumente</div>
-          <p class="text-xs text-ink/50 mb-4">Arztbriefe, Kaufbelege mit Garantie, Ausweise, Versicherungspolicen, Zeugnisse … – einfach abfotografieren oder als PDF ablegen. pinn. erinnert rechtzeitig, bevor ein Ausweis abläuft oder die Garantie endet.</p>
-          <button type="button" id="docEmptyAddBtn" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">+ Erstes Dokument ablegen</button>
+          <div class="font-serif text-lg mb-1">${tk('doc.noDocumentsYet')}</div>
+          <p class="text-xs text-ink/50 mb-4">${tk('doc.doctorsLettersReceiptsWarranty')}</p>
+          <button type="button" id="docEmptyAddBtn" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">${tk('doc.addFirstDocument')}</button>
         </div>`;
     emptyEl.classList.remove('hidden');
     const b = document.getElementById('docEmptyAddBtn');
@@ -717,7 +718,7 @@ function renderDocuments() {
 /* ---------- Popup: view document ---------- */
 function openDocDetail(id) {
   const d = docById(id);
-  if (!d) { finShowToast('Dieses Dokument gibt es nicht mehr.', true); return; }
+  if (!d) { finShowToast(tk('doc.documentNoLongerExists'), true); return; }
   docDetailId = id;
   docShareReady = null;
   renderDocDetail();
@@ -729,7 +730,7 @@ function closeDocDetail() {
   docShareReady = null;
 }
 function docTileHtml(docId, f, opts = {}) {
-  const del = opts.removable ? `<span class="doc-tile-del" role="button" aria-label="Entfernen" data-docfiledel="${escapeHtml(opts.key)}">×</span>` : '';
+  const del = opts.removable ? `<span class="doc-tile-del" role="button" aria-label="${escapeHtml(tk('common.remove'))}" data-docfiledel="${escapeHtml(opts.key)}">×</span>` : '';
   const state = opts.state ? `<span class="doc-tile-state">${escapeHtml(opts.state)}</span>` : '';
   if (f.kind === 'server') {
     const isImg = docIsImageName(f.name);
@@ -745,7 +746,7 @@ function docTileHtml(docId, f, opts = {}) {
   return `
     <button type="button" class="doc-tile${url ? '' : ' no-img'}" data-docfile="${escapeHtml(opts.key)}" title="${escapeHtml(f.name || '')}">
       ${url ? `<img src="${escapeHtml(url)}" alt="" />` : `<span class="doc-tile-icon">${/pdf/i.test(f.type || '') || docIsPdfName(f.name) ? '📄' : '📎'}</span><span class="doc-tile-ext">${escapeHtml(docExt(f.name))}</span>`}
-      <span class="doc-tile-name">${escapeHtml(f.name || 'Datei')}</span>${state}${del}
+      <span class="doc-tile-name">${escapeHtml(f.name || tk('contract.file'))}</span>${state}${del}
     </button>`;
 }
 function renderDocDetail() {
@@ -757,7 +758,7 @@ function renderDocDetail() {
   const cat = docCategory(d.kategorie);
   const dl = docDeadline(d, today);
   const who = docMemberName(d.mitglied);
-  const sub = [cat.label, who ? 'für ' + who : 'ganze Familie', vtIsIso(d.datum) ? vtFmt(d.datum) : ''].filter(Boolean).join(' · ');
+  const sub = [cat.label, who ? tk('doc.forWho', { name: who }) : tk('doc.wholeFamily2'), vtIsIso(d.datum) ? vtFmt(d.datum) : ''].filter(Boolean).join(' · ');
 
   const files = [
     ...(d.dateien || []).map((name, i) => ({ kind: 'server', name, key: 's' + i })),
@@ -766,62 +767,62 @@ function renderDocDetail() {
   const tiles = files.map(f => docTileHtml(d.id, f, { key: f.key, state: f.kind === 'pending' ? (docUploadingKey === d.id ? '⏳' : '📴') : '' })).join('');
 
   const rows = [];
-  if (d.aussteller) rows.push([DOC_ISSUER_HINTS[cat.id] ? DOC_ISSUER_HINTS[cat.id][0] : 'Aussteller', d.aussteller]);
-  if (vtIsIso(d.kaufdatum)) rows.push(['Kaufdatum', vtFmt(d.kaufdatum)]);
-  if (d.betrag > 0) rows.push(['Preis', fmtEur(d.betrag)]);
+  if (d.aussteller) rows.push([DOC_ISSUER_HINTS[cat.id] ? DOC_ISSUER_HINTS[cat.id][0] : tk('pdf.field.issuer'), d.aussteller]);
+  if (vtIsIso(d.kaufdatum)) rows.push([tk('pdf.field.purchaseDate'), vtFmt(d.kaufdatum)]);
+  if (d.betrag > 0) rows.push([tk('lists.item.price'), fmtEur(d.betrag)]);
   DOC_DEADLINES.forEach(x => {
     if (!vtIsIso(d[x.field])) return;
     const n = docDaysBetween(today, d[x.field]);
-    rows.push([x.long, vtFmt(d[x.field]) + (n >= 0 ? ` (${docInText(n)})` : ' (abgelaufen)')]);
+    rows.push([x.long, vtFmt(d[x.field]) + (n >= 0 ? ` (${docInText(n)})` : ' (' + tk('doc.expiredLower') + ')')]);
   });
-  if (DOC_DEADLINES.some(x => vtIsIso(d[x.field]))) rows.push(['Erinnerung', d.erinnern > 0 ? `${d.erinnern} Tage vorher per Push` : 'aus']);
+  if (DOC_DEADLINES.some(x => vtIsIso(d[x.field]))) rows.push([tk('doc.reminder'), d.erinnern > 0 ? tk('doc.daysBeforePushN', { n: d.erinnern }) : tk('doc.off')]);
   const size = vtFileSize(d.groesse);
   const dateCount = files.length;
-  rows.push(['Dateien', `${dateCount} ${dateCount === 1 ? 'Datei' : 'Dateien'}${size ? ' · ' + size : ''}`]);
+  rows.push([tk('doc.files'), `${dateCount} ${dateCount === 1 ? tk('contract.file') : tk('doc.files')}${size ? ' · ' + size : ''}`]);
 
   let hint = '';
   if (dl && (d.gewaehrleistung_bis || d.garantie_bis) && vtIsIso(d.kaufdatum) && dl.days >= 0) {
     const sinceBuy = docDaysBetween(d.kaufdatum, today);
     hint = sinceBuy <= 365
-      ? '<p class="vt-info mt-3">Mangel entdeckt? Im ersten Jahr nach dem Kauf muss der Händler beweisen, dass der Mangel nicht schon beim Kauf bestand – Kaufbeleg und Fotos vom Mangel bereithalten.</p>'
-      : '<p class="vt-info mt-3">Mangel entdeckt? Bei der Gewährleistung ist der Händler der Ansprechpartner, bei der Herstellergarantie der Hersteller – Kaufbeleg bereithalten.</p>';
+      ? ('<p class="vt-info mt-3">' + tk('doc.foundDefectFirstYear') + '</p>')
+      : ('<p class="vt-info mt-3">' + tk('doc.foundDefectStatutoryWarranty') + '</p>');
   }
 
   // Linked vehicles (tapping opens the vehicle)
   const vlinks = isCurrentUserGuest() ? [] : fzVehiclesForDoc(d.id);
   const vehHtml = vlinks.length ? `
-    <h4 class="vt-detail-h">🚗 Fahrzeug</h4>
+    <h4 class="vt-detail-h">${tk('contract.vehicle')}</h4>
     <div class="flex flex-col gap-1.5">${vlinks.map(v => `
       <button type="button" class="fin-doc-row flex items-center gap-2.5 rounded-xl border border-ink/10 px-2.5 py-2 text-left w-full" data-docveh="${escapeHtml(v.id)}">
         <span class="text-xl leading-none shrink-0">${escapeHtml(fzKind(v.kind).icon)}</span>
-        <span class="min-w-0 flex-1"><span class="block text-sm font-medium truncate">${escapeHtml(fzName(v))}</span><span class="block text-[11px] text-ink/45 truncate">${escapeHtml([v.plate ? fzPlateText(v.plate) : '', fzIsArchived(v) ? 'archiviert' : '', 'beim Fahrzeug öffnen'].filter(Boolean).join(' · '))}</span></span>
+        <span class="min-w-0 flex-1"><span class="block text-sm font-medium truncate">${escapeHtml(fzName(v))}</span><span class="block text-[11px] text-ink/45 truncate">${escapeHtml([v.plate ? fzPlateText(v.plate) : '', fzIsArchived(v) ? 'archiviert' : '', tk('doc.openVehicle')].filter(Boolean).join(' · '))}</span></span>
         <span class="shrink-0 text-ink/30 text-sm">›</span>
       </button>`).join('')}</div>` : '';
   const canShare = !!(navigator.share && d.dateien && d.dateien.length && !d.pending);
-  const shareLabel = docShareReady && docShareReady.id === d.id ? '📤 Jetzt teilen' : '📤 Teilen';
+  const shareLabel = docShareReady && docShareReady.id === d.id ? tk('doc.shareNow') : tk('doc.share');
   body.innerHTML = `
     <div class="flex items-start gap-3 mb-3 pr-6">
       <span class="shrink-0 w-12 h-12 rounded-full grid place-items-center text-2xl bg-pine/10">${escapeHtml(cat.icon || '📄')}</span>
       <div class="flex-1 min-w-0">
-        <h3 class="font-serif text-lg leading-tight">${escapeHtml(d.titel || 'Dokument')}</h3>
+        <h3 class="font-serif text-lg leading-tight">${escapeHtml(d.titel || tk('search.type.doc'))}</h3>
         <div class="text-xs text-ink/50 truncate">${escapeHtml(sub)}</div>
         ${d.sichtbar ? `<div class="text-[11px] text-ink/50 mt-0.5">🔒 ${escapeHtml(docVisLabel(d.sichtbar))}</div>` : ''}
-        ${d.kasse ? `<div class="text-[11px] text-ink/50 mt-0.5">💶 Kasse: ${escapeHtml(docKasseName(d.kasse))}</div>` : ''}
+        ${d.kasse ? `<div class="text-[11px] text-ink/50 mt-0.5">${tk('doc.fund', { docKasseName: escapeHtml(docKasseName(d.kasse)) })}</div>` : ''}
       </div>
     </div>
-    ${dl ? `<div class="vt-status-box ${dl.tone === 'ok' ? '' : dl.tone} mb-3"><div class="text-sm font-semibold">${escapeHtml(dl.label)}</div><div class="text-xs opacity-80">${escapeHtml(dl.tone === 'ok' ? (dl.field === 'gueltig_bis' ? 'läuft ' + docInText(dl.days) + ' ab' : 'endet ' + docInText(dl.days)) : dl.long + ' ' + vtFmt(dl.date))}</div></div>` : ''}
-    ${d.pending ? `<p class="vt-info mb-3">${navigator.onLine ? '⏳ Wird gerade zum NAS übertragen …' : '📴 Noch nicht auf dem NAS – wird automatisch übertragen, sobald wieder Verbindung besteht.'}</p>` : ''}
+    ${dl ? `<div class="vt-status-box ${dl.tone === 'ok' ? '' : dl.tone} mb-3"><div class="text-sm font-semibold">${escapeHtml(dl.label)}</div><div class="text-xs opacity-80">${escapeHtml(dl.tone === 'ok' ? (dl.field === 'gueltig_bis' ? tk('doc.dl.expiresLower', { when: docInText(dl.days) }) : tk('doc.dl.endsLower', { when: docInText(dl.days) })) : dl.long + ' ' + vtFmt(dl.date))}</div></div>` : ''}
+    ${d.pending ? `<p class="vt-info mb-3">${navigator.onLine ? tk('doc.beingTransferredNas') : tk('doc.notNasYetWill')}</p>` : ''}
     <div class="doc-file-grid mb-1">${tiles}</div>
-    ${files.length ? '' : '<p class="text-xs text-ink/45 italic">Keine Dateien.</p>'}
-    <h4 class="vt-detail-h">📋 Angaben</h4>
+    ${files.length ? '' : ('<p class="text-xs text-ink/45 italic">' + tk('doc.noFiles') + '</p>')}
+    <h4 class="vt-detail-h">${tk('doc.details')}</h4>
     <div>${rows.map(r => `<div class="vt-row"><span>${escapeHtml(r[0])}</span><span>${escapeHtml(r[1])}</span></div>`).join('')}</div>
     ${vehHtml}
-    ${d.notiz ? `<h4 class="vt-detail-h">📝 Notiz</h4><div class="doc-note">${escapeHtml(d.notiz)}</div>` : ''}
+    ${d.notiz ? `<h4 class="vt-detail-h">${tk('contract.note')}</h4><div class="doc-note">${escapeHtml(d.notiz)}</div>` : ''}
     ${hint}
     <div class="flex items-center gap-2 mt-5">
       ${canShare ? `<button type="button" id="docShareBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">${shareLabel}</button>` : ''}
       <div class="flex-1"></div>
-      <button type="button" id="docDetailEditBtn" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">✎ Bearbeiten</button>
+      <button type="button" id="docDetailEditBtn" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">${tk('home.edit')}</button>
     </div>`;
   docHydrateMedia(body);
   body.querySelectorAll('[data-docfile]').forEach(b => b.addEventListener('click', () => {
@@ -854,16 +855,16 @@ async function docShare(d, btn) {
   if (docShareReady && docShareReady.id === d.id) {
     const files = docShareReady.files;
     try {
-      if (navigator.canShare && !navigator.canShare({ files })) throw new Error('nicht teilbar');
-      await navigator.share({ files, title: d.titel || 'Dokument' });
+      if (navigator.canShare && !navigator.canShare({ files })) throw new Error(tk('doc.notShareable'));
+      await navigator.share({ files, title: d.titel || tk('search.type.doc') });
     } catch (err) {
       if (err && err.name === 'AbortError') return;
-      finShowToast('Teilen wird auf diesem Gerät nicht unterstützt.', true);
+      finShowToast(tk('doc.sharingNotSupportedDevice'), true);
     }
     return;
   }
   btn.disabled = true;
-  btn.textContent = '⏳ Lädt …';
+  btn.textContent = tk('doc.loading');
   try {
     await ensureFinDocToken(true);
     const files = [];
@@ -874,10 +875,10 @@ async function docShare(d, btn) {
       files.push(new File([blob], docFileLabel(name), { type: blob.type || (docIsPdfName(name) ? 'application/pdf' : 'image/jpeg') }));
     }
     docShareReady = { id: d.id, files };
-    btn.textContent = '📤 Jetzt teilen';
+    btn.textContent = tk('doc.shareNow');
   } catch (err) {
-    btn.textContent = '📤 Teilen';
-    finShowToast('Dateien konnten nicht geladen werden – keine Verbindung zum NAS?', true);
+    btn.textContent = tk('doc.share');
+    finShowToast(tk('doc.filesCouldNotLoaded'), true);
   } finally {
     btn.disabled = false;
   }
@@ -893,19 +894,19 @@ async function openFileViewer(src, opts = {}) {
   const seq = ++fileViewerSeq;
   const msg = (t) => { const el = document.createElement('div'); el.className = 'file-viewer-msg'; el.textContent = t; stage.replaceChildren(el); };
   stage.classList.remove('img-mode');
-  msg('Lädt …');
+  msg(tk('doc.loading2'));
   box.classList.remove('hidden');
   stage.scrollTop = 0;
   let url = null;
   try { url = await src; } catch (e) { url = null; }
   if (seq !== fileViewerSeq) return;
-  if (!url) { msg('Datei konnte nicht geladen werden – keine Verbindung zum NAS?'); return; }
+  if (!url) { msg(tk('doc.fileCouldNotLoaded')); return; }
   const isPdf = opts.pdf != null ? !!opts.pdf : docIsPdfName(opts.name || String(url).split('?')[0]);
   if (!isPdf) {
     stage.classList.add('img-mode');
     const img = new Image();
     img.alt = '';
-    img.onerror = () => { if (seq === fileViewerSeq) msg('Bild konnte nicht geladen werden.'); };
+    img.onerror = () => { if (seq === fileViewerSeq) msg(tk('doc.imageCouldNotLoaded')); };
     img.src = url;
     stage.replaceChildren(img);
     return;
@@ -949,7 +950,7 @@ function fileViewerOpen() { return !document.getElementById('fileViewer').classL
 /* ---------- Image viewer ---------- */
 function openDocViewer(d, names, index) {
   if (!names.length) return;
-  docViewerState = { docId: d.id, title: d.titel || 'Dokument', names, index: Math.max(0, index) };
+  docViewerState = { docId: d.id, title: d.titel || tk('search.type.doc'), names, index: Math.max(0, index) };
   document.getElementById('docViewer').classList.remove('hidden');
   renderDocViewer();
 }
@@ -964,7 +965,7 @@ async function renderDocViewer() {
   const img = document.getElementById('docViewerImg');
   const n = s.names.length;
   document.getElementById('docViewerTitle').textContent = s.title;
-  document.getElementById('docViewerCount').textContent = n > 1 ? `Seite ${s.index + 1} von ${n} · wischen zum Blättern` : docFileLabel(s.names[s.index]);
+  document.getElementById('docViewerCount').textContent = n > 1 ? `${tk('doc.pageSwipeTurnPages', { v: s.index + 1, n })}` : docFileLabel(s.names[s.index]);
   document.getElementById('docViewerPrev').classList.toggle('hidden', n < 2);
   document.getElementById('docViewerNext').classList.toggle('hidden', n < 2);
   if (!finDocToken || Date.now() - finDocTokenAt > 100 * 1000) await ensureFinDocToken(true);
@@ -1019,10 +1020,10 @@ function openDocEditModal(id = null, opts = {}) {
   };
   const preVeh = pre && vehIds.length ? fzVehicle(vehIds[0]) : null;
   document.getElementById('docPdfInfo').classList.add('hidden');
-  document.getElementById('docEditTitle').textContent = d ? 'Dokument bearbeiten' : (preVeh ? 'Neues Dokument · ' + fzName(preVeh) : 'Neues Dokument');
+  document.getElementById('docEditTitle').textContent = d ? tk('doc.editDocument') : (preVeh ? (tk('home.newDocument') + ' ') + fzName(preVeh) : tk('doc.newDocument'));
   document.getElementById('docTitleInput').value = d ? d.titel : (pre ? pre.titel : '');
   const memSel = document.getElementById('docMemberSelect');
-  memSel.innerHTML = '<option value="">Ganze Familie</option>' + members.map(m => `<option value="${escapeHtml(m.id)}">${escapeHtml(memberLabel(m))}</option>`).join('');
+  memSel.innerHTML = ('<option value="">' + tk('doc.wholeFamily3') + '</option>') + members.map(m => `<option value="${escapeHtml(m.id)}">${escapeHtml(memberLabel(m))}</option>`).join('');
   memSel.value = d && memberById(d.mitglied) ? d.mitglied
     : (pre ? (memberById(pre.mitglied) ? pre.mitglied : '') : ((docFilterMember && docFilterMember !== '__familie' && memberById(docFilterMember)) ? docFilterMember : ''));
   document.getElementById('docDateInput').value = d ? (d.datum || '') : (pre && vtIsIso(pre.datum) ? pre.datum : finTodayIso());
@@ -1048,7 +1049,7 @@ function openDocEditModal(id = null, opts = {}) {
   document.getElementById('docNoteInput').value = d ? d.notiz : (pre ? pre.notiz : '');
   document.getElementById('docEditError').classList.add('hidden');
   document.getElementById('deleteDocBtn').classList.toggle('hidden', !d);
-  document.getElementById('saveDocBtn').textContent = d ? 'Speichern' : 'Ablegen';
+  document.getElementById('saveDocBtn').textContent = d ? tk('common.save') : tk('doc.file');
   const cat = docCategory(catId);
   document.getElementById('docBuyBlock').open = cat.fields === 'kauf' || !!(d && (d.kaufdatum || d.betrag > 0 || d.gewaehrleistung_bis || d.garantie_bis)) || !!(pre && pre.buy);
   document.getElementById('docExpiryBlock').open = (cat.fields === 'ablauf' && !(pre && pre.buy)) || !!(d && d.gueltig_bis) || !!(pre && pre.gueltig_bis);
@@ -1072,7 +1073,7 @@ function docVehiclesChanged() {
 }
 function attemptCloseDocEdit() {
   if (docDraft && (docDraft.filesChanged || docVehiclesChanged()) && !isModalDirty('docEditModal')) {
-    if (!confirm('Wirklich abbrechen? Deine Eingaben gehen dabei verloren.')) return;
+    if (!confirm(tk('doc.reallyCancelEntriesWill'))) return;
     closeDocEditModal();
     return;
   }
@@ -1111,7 +1112,7 @@ function renderDocVehiclePicker() {
   wrap.classList.toggle('hidden', !list.length);
   if (!list.length) { box.innerHTML = ''; return; }
   box.innerHTML = list.map(v => `
-    <button type="button" class="pantry-chip px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 transition ${docDraft.vehicles.includes(v.id) ? 'active' : ''}" data-veh="${escapeHtml(v.id)}">${escapeHtml(fzKind(v.kind).icon + ' ' + fzName(v) + (v.plate ? ' · ' + fzPlateText(v.plate) : '') + (fzIsArchived(v) ? ' (archiviert)' : ''))}</button>`).join('');
+    <button type="button" class="pantry-chip px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 transition ${docDraft.vehicles.includes(v.id) ? 'active' : ''}" data-veh="${escapeHtml(v.id)}">${escapeHtml(fzKind(v.kind).icon + ' ' + fzName(v) + (v.plate ? ' · ' + fzPlateText(v.plate) : '') + (fzIsArchived(v) ? ' (' + tk('doc.archived') + ')' : ''))}</button>`).join('');
   box.querySelectorAll('[data-veh]').forEach(b => b.addEventListener('click', () => {
     const vid = b.dataset.veh;
     docDraft.vehTouched = true;
@@ -1119,8 +1120,8 @@ function renderDocVehiclePicker() {
     renderDocVehiclePicker();
   }));
   info.textContent = docDraft.vehicles.length
-    ? 'Erscheint zusätzlich beim Fahrzeug – die Zuordnung lässt sich hier oder dort ändern.'
-    : 'Optional: einem Fahrzeug zuordnen – das Dokument erscheint dann auch dort.';
+    ? tk('doc.additionallyAppearsVehicleAssignment')
+    : tk('doc.optionalAssignVehicleDocument');
 }
 function renderDocEditFiles() {
   const wrap = document.getElementById('docEditFiles');
@@ -1158,7 +1159,7 @@ async function onDocFilesChosen(e) {
   const errEl = document.getElementById('docEditError');
   errEl.classList.add('hidden');
   const room = DOC_MAX_FILES - docDraft.files.length;
-  if (room <= 0) { errEl.textContent = `Höchstens ${DOC_MAX_FILES} Dateien je Dokument.`; errEl.classList.remove('hidden'); return; }
+  if (room <= 0) { errEl.textContent = `${tk('doc.mostFilesPerDocument', { dOC_MAX_FILES: DOC_MAX_FILES })}`; errEl.classList.remove('hidden'); return; }
   const btns = ['docAddCameraBtn', 'docAddFileBtn'].map(id => document.getElementById(id));
   btns.forEach(b => { b.disabled = true; });
   const errors = [];
@@ -1168,14 +1169,14 @@ async function onDocFilesChosen(e) {
       let name = file.name || ('foto-' + finTodayIso() + '.jpg');
       const small = await finCompressDocImage(file).catch(() => null);
       if (small) { blob = small; name = name.replace(/\.[^.]+$/, '') + '.jpg'; }
-      if (blob.size > DOC_MAX_BYTES) { errors.push(`„${file.name}“ ist zu groß (höchstens 25 MB).`); continue; }
+      if (blob.size > DOC_MAX_BYTES) { errors.push(`${tk('doc.tooLargeMax25', { name: file.name })}`); continue; }
       docDraft.files.push({ kind: 'new', id: 'f' + newRecordId(), blob, name: finSafeFileName(name), size: blob.size || 0, type: blob.type || file.type || '' });
       docDraft.filesChanged = true;
     }
   } finally {
     btns.forEach(b => { b.disabled = false; });
   }
-  if (files.length > room) errors.push(`Nur ${room} weitere Datei${room === 1 ? '' : 'en'} möglich (höchstens ${DOC_MAX_FILES}).`);
+  if (files.length > room) errors.push(tk('doc.onlyNMoreFiles', { n: room, max: DOC_MAX_FILES }));
   if (errors.length) { errEl.textContent = errors[0]; errEl.classList.remove('hidden'); }
   // Suggest a title from the first file name (not for camera photos like "image.jpg")
   const titleInp = document.getElementById('docTitleInput');
@@ -1198,7 +1199,7 @@ function docGuaranteeDate() {
 function updateDocEditUi() {
   if (!docDraft) return;
   const cat = docCategory(docDraft.catId);
-  const hint = DOC_ISSUER_HINTS[cat.id] || ['Aussteller', 'optional, z. B. Praxis, Händler, Behörde'];
+  const hint = DOC_ISSUER_HINTS[cat.id] || [tk('pdf.field.issuer'), tk('doc.optionalEGPractice')];
   document.getElementById('docIssuerLabel').textContent = hint[0];
   document.getElementById('docIssuerInput').placeholder = hint[1];
   const sel = docVal('docGuaranteeSelect');
@@ -1212,17 +1213,17 @@ function updateDocEditUi() {
   const parts = [];
   if (vtIsIso(law)) {
     const n = docDaysBetween(today, law);
-    parts.push(n >= 0 ? `Gewährleistung noch bis ${vtFmt(law)} (${docInText(n)}).` : `Gewährleistung seit ${vtFmt(law)} abgelaufen.`);
+    parts.push(n >= 0 ? `${tk('doc.warrantyStillUntil', { vtFmt: vtFmt(law), docInText: docInText(n) })}` : `${tk('doc.warrantyExpiredSince', { vtFmt: vtFmt(law) })}`);
   }
-  if (sel && sel !== 'x' && !vtIsIso(buy)) parts.push('Für die Herstellergarantie bitte das Kaufdatum angeben.');
+  if (sel && sel !== 'x' && !vtIsIso(buy)) parts.push(tk('doc.manufacturersWarrantyPleaseEnter'));
   else if (vtIsIso(gar)) {
     const n = docDaysBetween(today, gar);
-    parts.push(n >= 0 ? `Herstellergarantie bis ${vtFmt(gar)} (${docInText(n)}).` : `Herstellergarantie seit ${vtFmt(gar)} abgelaufen.`);
+    parts.push(n >= 0 ? `${tk('doc.manufacturersWarrantyUntil', { vtFmt: vtFmt(gar), docInText: docInText(n) })}` : `${tk('doc.manufacturersWarrantyExpiredSince', { vtFmt: vtFmt(gar) })}`);
   }
   if (vtIsIso(buy)) {
-    parts.push('Gesetzliche Gewährleistung: 2 Jahre ab Kauf (bei Gebrauchtware oft 1 Jahr). Im ersten Jahr muss der Händler beweisen, dass ein Mangel nicht schon beim Kauf bestand.');
+    parts.push(tk('doc.statutoryWarranty2Years'));
   } else if (!parts.length) {
-    parts.push('Mit dem Kaufdatum trägt pinn. die gesetzliche Gewährleistung (2 Jahre) automatisch ein.');
+    parts.push(tk('doc.purchaseDatePinnAutomatically'));
   }
   info.textContent = parts.join(' ');
   info.classList.toggle('warn', sel && sel !== 'x' && !vtIsIso(buy));
@@ -1230,11 +1231,11 @@ function updateDocEditUi() {
   const hasDate = vtIsIso(docVal('docExpiryInput')) || vtIsIso(law) || vtIsIso(gar);
   const rem = Number(docVal('docRemindSelect')) || 0;
   const remInfo = document.getElementById('docRemindInfo');
-  if (!hasDate) remInfo.textContent = 'Greift, sobald ein Ablaufdatum oder eine Garantie eingetragen ist.';
-  else if (!rem) remInfo.textContent = 'Keine Push-Erinnerung.';
+  if (!hasDate) remInfo.textContent = tk('doc.appliesSoonExpiryDate');
+  else if (!rem) remInfo.textContent = tk('doc.noPushReminder');
   else {
     const m = memberById(docVal('docMemberSelect'));
-    remInfo.textContent = (m && !vtIsChildMember(m) ? `Erinnert ${memberLabel(m)}` : 'Erinnert alle Erwachsenen der Familie') + ` ${rem} Tage vor dem Ablauf bzw. Garantie-Ende.`;
+    remInfo.textContent = m && !vtIsChildMember(m) ? tk('doc.remindsPerson', { name: memberLabel(m), n: rem }) : tk('doc.remindsAdults', { n: rem });
   }
 }
 function onDocBuyDateChanged() {
@@ -1247,12 +1248,12 @@ async function saveDocFromModal() {
   const errEl = document.getElementById('docEditError');
   const showErr = (t) => { errEl.textContent = t; errEl.classList.remove('hidden'); };
   errEl.classList.add('hidden');
-  if (!docDraft.files.length) { showErr('Bitte mindestens ein Foto oder PDF hinzufügen.'); return; }
+  if (!docDraft.files.length) { showErr(tk('doc.pleaseAddLeastOne')); return; }
   const sel = docVal('docGuaranteeSelect');
-  if (sel && sel !== 'x' && !vtIsIso(docVal('docBuyDateInput'))) { document.getElementById('docBuyBlock').open = true; showErr('Für die Herstellergarantie bitte das Kaufdatum angeben.'); return; }
+  if (sel && sel !== 'x' && !vtIsIso(docVal('docBuyDateInput'))) { document.getElementById('docBuyBlock').open = true; showErr(tk('doc.manufacturersWarrantyPleaseEnter')); return; }
   const priceRaw = docVal('docPriceInput').trim();
   const price = priceRaw ? parseEuro(priceRaw) : 0;
-  if (priceRaw && (!isFinite(price) || price < 0)) { document.getElementById('docBuyBlock').open = true; showErr('Bitte einen gültigen Preis eingeben.'); return; }
+  if (priceRaw && (!isFinite(price) || price < 0)) { document.getElementById('docBuyBlock').open = true; showErr(tk('vehicle.pleaseEnterValidPrice')); return; }
   const cat = docCategory(docDraft.catId);
   let titel = docVal('docTitleInput').replace(/\s+/g, ' ').trim().slice(0, 200);
   const datum = vtIsIso(docVal('docDateInput')) ? docVal('docDateInput') : '';
@@ -1305,22 +1306,22 @@ async function saveDocFromModal() {
   if (isNew) { docFilterCategory = (docFilterCategory && docFilterCategory !== cat.id) ? '' : docFilterCategory; docOnlyDue = false; }
   closeDocEditModal();
   renderDocuments();
-  const extra = fzNotes.length ? ' Fahrzeug aktualisiert: ' + fzNotes.join(', ') + '.' : '';
-  if (!navigator.onLine) finShowToast('Gespeichert – wird zum NAS übertragen, sobald wieder Verbindung besteht.' + extra);
-  else if (isNew && fzTyp) finShowToast(`Abgelegt unter „Dokumente“ → ${cat.label} und beim Fahrzeug.` + extra);
-  else if (isNew && docHsRef) finShowToast(`Abgelegt unter „Dokumente“ → ${cat.label} und beim Haus.`);
-  else finShowToast((isNew ? 'Dokument abgelegt.' : 'Dokument gespeichert.') + extra);
+  const extra = fzNotes.length ? ' ' + tk('doc.vehicleUpdated', { notes: fzNotes.join(', ') }) : '';
+  if (!navigator.onLine) finShowToast(tk('doc.savedOffline') + extra);
+  else if (isNew && fzTyp) finShowToast(tk('doc.filedVehicle', { label: cat.label }) + extra);
+  else if (isNew && docHsRef) finShowToast(`${tk('doc.filedUnderDocumentsHome', { label: cat.label })}`);
+  else finShowToast((isNew ? tk('doc.documentFiled') : tk('doc.documentSaved')) + extra);
   docFlush();
 }
 async function deleteDocFromModal() {
   const d = docById(docEditId);
-  if (!d || !confirm(`Dokument „${d.titel || 'Dokument'}“ mit allen Dateien löschen?`)) return;
+  if (!d || !confirm(tk('doc.confirmDeleteDoc', { name: d.titel || tk('search.type.doc') }))) return;
   await docEnqueueDelete(d);
   if (finance && fzSetDocVehicles(d.id, [])) fzAfterChange();
   if (finance && hsUnlinkDoc(d.id)) hsAfterChange();
   closeDocEditModal();
   renderDocuments();
-  finShowToast('Dokument gelöscht.');
+  finShowToast(tk('contract.documentDeleted'));
   docFlush();
 }
 
@@ -1342,14 +1343,14 @@ function renderDocCategoryEditor() {
   docAll().forEach(d => used.set(d.kategorie, (used.get(d.kategorie) || 0) + 1));
   wrap.innerHTML = docCatDraft.map((c, i) => `
     <div class="doc-cat-row flex items-center gap-2" data-idx="${i}">
-      <input type="text" data-field="icon" value="${escapeHtml(c.icon || '')}" maxlength="4" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="Symbol" />
-      <input type="text" data-field="label" data-i18n-value value="${escapeHtml(c.label || '')}" maxlength="40" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="Name" />
-      <select data-field="fields" class="w-20 shrink-0 rounded-lg border border-ink/15 px-1.5 py-2 text-xs bg-white" aria-label="Zusatzfelder">
+      <input type="text" data-field="icon" value="${escapeHtml(c.icon || '')}" maxlength="4" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="${escapeHtml(tk('household.icon'))}" />
+      <input type="text" data-field="label" data-i18n-value value="${escapeHtml(c.label || '')}" maxlength="40" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="${escapeHtml(tk('common.name'))}" />
+      <select data-field="fields" class="w-20 shrink-0 rounded-lg border border-ink/15 px-1.5 py-2 text-xs bg-white" aria-label="${escapeHtml(tk('doc.additionalFields'))}">
         <option value=""${c.fields ? '' : ' selected'}>–</option>
-        <option value="kauf"${c.fields === 'kauf' ? ' selected' : ''}>🧾 Kauf</option>
-        <option value="ablauf"${c.fields === 'ablauf' ? ' selected' : ''}>⏳ Frist</option>
+        <option value="kauf"${c.fields === 'kauf' ? ' selected' : ''}>${tk('doc.purchase')}</option>
+        <option value="ablauf"${c.fields === 'ablauf' ? ' selected' : ''}>${tk('doc.deadline')}</option>
       </select>
-      ${c.id === 'sonstiges' ? '<span class="w-8 shrink-0"></span>' : `<button type="button" data-action="delete" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-red-500 hover:bg-red-50 grid place-items-center text-lg leading-none" aria-label="Löschen">×</button>`}
+      ${c.id === 'sonstiges' ? '<span class="w-8 shrink-0"></span>' : `<button type="button" data-action="delete" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-red-500 hover:bg-red-50 grid place-items-center text-lg leading-none" aria-label="${escapeHtml(tk('home.delete'))}">×</button>`}
     </div>`).join('');
   wrap.querySelectorAll('[data-idx]').forEach(row => {
     const i = Number(row.dataset.idx);
@@ -1361,7 +1362,7 @@ function renderDocCategoryEditor() {
     if (del) del.addEventListener('click', () => {
       const c = docCatDraft[i];
       const n = used.get(c.id) || 0;
-      if (n && !confirm(`„${c.label}“ wird von ${n} Dokument${n === 1 ? '' : 'en'} verwendet. Diese stehen danach unter „Sonstiges“. Trotzdem löschen?`)) return;
+      if (n && !confirm(tk('doc.confirmDeleteCat', { name: c.label, n }))) return;
       docCatDraft.splice(i, 1);
       renderDocCategoryEditor();
     });
@@ -1501,7 +1502,7 @@ function docOpenFromUrl() {
 let docKasseStart = '';
 function docKasseName(id) {
   const k = kasseById(id);
-  return k ? (k.icon || '💶') + ' ' + kasseDisplayName(k) : '🔒 Kasse';
+  return k ? (k.icon || '💶') + ' ' + kasseDisplayName(k) : tk('contract.fund');
 }
 function docKasseInit(v) {
   docKasseStart = v || '';
@@ -1509,7 +1510,7 @@ function docKasseInit(v) {
   const sel = document.getElementById('docKasseSelect');
   const real = kassenActiveMode() ? kassenRealSorted() : [];
   if (!real.length && !docKasseStart) { wrap.classList.add('hidden'); sel.innerHTML = ''; return; }
-  const opts = ['<option value="">👨‍👩‍👧 Familie – alle (Standard)</option>']
+  const opts = [('<option value="">' + tk('doc.familyAllDefault') + '</option>')]
     .concat(real.map(k => `<option value="${escapeHtml(k.id)}">${escapeHtml((k.icon || '💶') + ' ' + kasseDisplayName(k))}</option>`));
   if (docKasseStart && !real.some(k => k.id === docKasseStart)) opts.push(`<option value="${escapeHtml(docKasseStart)}">${escapeHtml(docKasseName(docKasseStart))}</option>`);
   sel.innerHTML = opts.join('');
@@ -1521,10 +1522,10 @@ function docKasseInfo() {
   const el = document.getElementById('docKasseInfo');
   const id = document.getElementById('docKasseSelect').value || '';
   const k = id ? kasseById(id) : null;
-  if (!id) { el.textContent = 'Alle Profile der Familie sehen das Dokument (keine Gäste).'; return; }
-  if (!k) { el.textContent = 'Gehört zu einer Kasse, in der du kein Mitglied mehr bist.'; return; }
+  if (!id) { el.textContent = tk('doc.allProfilesFamilySee'); return; }
+  if (!k) { el.textContent = tk('doc.belongsFundNoLonger'); return; }
   const n = kasseUserIds(k).length;
-  el.textContent = `Nur die Mitglieder von „${kasseDisplayName(k)}“ (${n} ${n === 1 ? 'Person' : 'Personen'}) sehen das Dokument und bekommen Erinnerungen dazu.`;
+  el.textContent = tk('doc.onlyFundMembers', { name: kasseDisplayName(k), n });
 }
 function docKasseValue() {
   const wrap = document.getElementById('docKasseWrap');
@@ -1538,9 +1539,9 @@ function docVisIds(v) { return String(v || '').split(',').map(x => x.trim()).fil
 function docVisLabel(v) {
   const ids = docVisIds(v);
   const me = currentUser() ? currentUser().id : '';
-  if (!ids.length) return 'Ganze Familie';
-  if (ids.length === 1 && ids[0] === me) return 'Nur für dich sichtbar';
-  return 'Sichtbar für ' + ids.map(id => id === me ? 'dich' : kasseProfileName(id)).join(', ');
+  if (!ids.length) return tk('doc.wholeFamily3');
+  if (ids.length === 1 && ids[0] === me) return tk('doc.onlyVisible');
+  return tk('doc.visibleFor', { names: ids.map(id => id === me ? tk('doc.you') : kasseProfileName(id)).join(', ') });
 }
 function docVisInit(v) {
   const me = currentUser() ? currentUser().id : '';
@@ -1560,7 +1561,7 @@ function renderDocVis() {
       <label class="flex items-center gap-2.5 py-1.5 ${p.id === me ? '' : 'cursor-pointer'} select-none">
         <input type="checkbox" class="doc-vis-cb w-4 h-4 shrink-0" value="${escapeHtml(p.id)}" ${docVisSet.has(p.id) || p.id === me ? 'checked' : ''} ${p.id === me ? 'disabled' : ''} />
         ${kasseProfileAvatar(p.id, 24)}
-        <span class="flex-1 min-w-0 text-sm truncate">${escapeHtml(kasseProfileName(p.id))}${p.id === me ? ' <span class="text-ink/40">(du)</span>' : ''}</span>
+        <span class="flex-1 min-w-0 text-sm truncate">${escapeHtml(kasseProfileName(p.id))}${p.id === me ? ' <span class="text-ink/40">(' + escapeHtml(tk('doc.youParen')) + ')</span>' : ''}</span>
       </label>`).join('');
     box.querySelectorAll('.doc-vis-cb').forEach(cb => cb.addEventListener('change', () => {
       if (cb.checked) docVisSet.add(cb.value); else docVisSet.delete(cb.value);
@@ -1572,8 +1573,8 @@ function renderDocVis() {
 function renderDocVisInfo() {
   const el = document.getElementById('docVisInfo');
   el.textContent = docVisMode === 'familie'
-    ? 'Alle Profile der Familie sehen das Dokument (keine Gäste).'
-    : docVisMode === 'ich' ? 'Nur du siehst das Dokument – auch Admins nicht.' : docVisLabel(docVisValue()) + '. Alle anderen sehen es nicht.';
+    ? tk('doc.allProfilesFamilySee')
+    : docVisMode === 'ich' ? tk('doc.onlySeeDocumentNot') : docVisLabel(docVisValue()) + '. ' + tk('doc.othersCantSee');
 }
 function docVisValue() {
   const me = currentUser() ? currentUser().id : '';

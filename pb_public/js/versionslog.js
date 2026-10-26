@@ -20,12 +20,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
-    v: '1.116', datum: '25.10.2026', titel: 'Übersetzungen mit Text-Schlüsseln: Familie, Ortung und Kinderseite',
+    v: '1.116', datum: '25.10.2026', titel: 'Übersetzungen mit Text-Schlüsseln: Familie, Ortung, Kinderseite, Zuhause, Fahrzeuge und Dokumente',
     punkte: [
       ['info', 'Familie mit Übersicht, Notfallpässen, Ortung („Mein Standort“, Orte, Anleitung für „Traccar Client“), SOS und Heimweg, Schule & Kita, Haustiere und Urlaubswetter sowie die Kinderseite mit Sternen und Belohnungen, die Kachel „Familienmitglieder“ und „Wo bist du?“ holen ihre Texte jetzt über Text-Schlüssel – in allen neun Sprachen, auch als WG'],
       ['neu', 'Neue Einträge in der eingestellten Sprache: Vorschläge für Kinder-Aufgaben, Schulfächer und die Packliste „Urlaub mit …“ für Haustiere entstehen in der Sprache, die gerade eingestellt ist'],
       ['fix', 'Kleinigkeiten: Rund 150 Texte, die bisher auch in anderen Sprachen deutsch blieben (z. B. „Dauerhaft senden“, die Anleitung für „Traccar Client“, der SOS-Countdown, „Gassi · 7 Tage“), sind jetzt übersetzt; Datum und Uhrzeit stehen im Format der eingestellten Sprache; Alter, Minuten und Tage in richtiger Einzahl und Mehrzahl'],
       ['info', 'Geändert: index.html, js/familie.js, js/familienkachel.js, js/kinderseite.js, js/kinderroutine.js, js/sterne.js, js/wobistdu.js, js/mitglied.js, js/mitglieder.js, js/geburtstagsfeier.js, js/sprachen.js, js/versionslog.js, alle Sprachdateien in i18n/ und lang/ – am Server ändert sich nichts'],
+      ['info', '1.116.1: Zuhause (auch die Smarthome-Meldungen), Fahrzeuge, Dokumente und der Rezept-Import aus PDF, Foto und KI holen ihre Texte jetzt über Text-Schlüssel – in allen neun Sprachen und als WG'],
+      ['fix', '1.116.1 Kleinigkeiten: Mängelanzeige an den Vermieter, Wetter-Tipps für Pflanzen, Zähler-Prognose, Fahrzeug-Rechner und Fristen sind jetzt in jeder Sprache ganze Sätze; Monatsnamen folgen der eingestellten Sprache; Zahlen wie „1 Tag“ oder „2 Zutaten“ stehen in richtiger Einzahl oder Mehrzahl'],
+      ['info', '1.116.1 geändert: index.html, js/zuhause.js, js/fahrzeuge.js, js/dokumente.js, js/pdflesen.js, js/sprachen.js, js/versionslog.js, alle Sprachdateien in i18n/ und lang/ – am Server ändert sich nichts'],
     ],
   },
   {

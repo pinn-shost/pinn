@@ -52,80 +52,95 @@
      calculated from family, vehicle and occasion - so two devices never create two tasks.
    ========================================================== */
 const FZ_KINDS = [
-  { id: 'auto', label: 'Auto', icon: '🚗', drives: ['benzin', 'diesel', 'hybrid', 'phev', 'elektro', 'lpg', 'cng', 'wasserstoff'], defaultDrive: 'benzin', hu: 24, huFirst: 36, tires: true, plate: true, insure: true },
-  { id: 'motorrad', label: 'Motorrad', icon: '🏍️', drives: ['benzin', 'elektro'], defaultDrive: 'benzin', hu: 24, huFirst: 24, tires: false, plate: true, insure: true },
-  { id: 'wohnmobil', label: 'Wohnmobil & Transporter', icon: '🚐', drives: ['diesel', 'benzin', 'hybrid', 'elektro', 'lpg', 'cng'], defaultDrive: 'diesel', hu: 24, huFirst: 24, tires: true, plate: true, insure: true },
-  { id: 'anhaenger', label: 'Anhänger & Wohnwagen', icon: '🏕️', drives: [], defaultDrive: '', hu: 24, huFirst: 36, tires: false, plate: true, insure: true },
-  { id: 'escooter', label: 'E-Scooter & Mofa', icon: '🛴', drives: ['elektro', 'benzin'], defaultDrive: 'elektro', hu: 0, tires: false, plate: false, insure: true, vk: true },
-  { id: 'ebike', label: 'E-Bike & Pedelec', icon: '🚴', drives: ['elektro'], defaultDrive: 'elektro', hu: 0, tires: false, plate: false, bike: true },
-  { id: 'fahrrad', label: 'Fahrrad', icon: '🚲', drives: [], defaultDrive: '', hu: 0, tires: false, plate: false, bike: true },
+  { id: 'auto', get label() { return tk('vehicle.kind.auto'); }, icon: '🚗', drives: ['benzin', 'diesel', 'hybrid', 'phev', 'elektro', 'lpg', 'cng', 'wasserstoff'], defaultDrive: 'benzin', hu: 24, huFirst: 36, tires: true, plate: true, insure: true },
+  { id: 'motorrad', get label() { return tk('vehicle.kind.motorrad'); }, icon: '🏍️', drives: ['benzin', 'elektro'], defaultDrive: 'benzin', hu: 24, huFirst: 24, tires: false, plate: true, insure: true },
+  { id: 'wohnmobil', get label() { return tk('vehicle.kind.wohnmobil'); }, icon: '🚐', drives: ['diesel', 'benzin', 'hybrid', 'elektro', 'lpg', 'cng'], defaultDrive: 'diesel', hu: 24, huFirst: 24, tires: true, plate: true, insure: true },
+  { id: 'anhaenger', get label() { return tk('vehicle.kind.anhaenger'); }, icon: '🏕️', drives: [], defaultDrive: '', hu: 24, huFirst: 36, tires: false, plate: true, insure: true },
+  { id: 'escooter', get label() { return tk('vehicle.kind.escooter'); }, icon: '🛴', drives: ['elektro', 'benzin'], defaultDrive: 'elektro', hu: 0, tires: false, plate: false, insure: true, vk: true },
+  { id: 'ebike', get label() { return tk('vehicle.kind.ebike'); }, icon: '🚴', drives: ['elektro'], defaultDrive: 'elektro', hu: 0, tires: false, plate: false, bike: true },
+  { id: 'fahrrad', get label() { return tk('vehicle.kind.fahrrad'); }, icon: '🚲', drives: [], defaultDrive: '', hu: 0, tires: false, plate: false, bike: true },
 ];
 const FZ_DRIVES = [
-  { id: 'benzin', label: 'Benzin', icon: '⛽', fuels: ['benzin'] },
-  { id: 'diesel', label: 'Diesel', icon: '⛽', fuels: ['diesel', 'adblue'] },
-  { id: 'hybrid', label: 'Hybrid', icon: '♻️', fuels: ['benzin'] },
-  { id: 'phev', label: 'Plug-in-Hybrid', icon: '🔌', fuels: ['benzin', 'strom'] },
-  { id: 'elektro', label: 'Elektro', icon: '⚡', fuels: ['strom'] },
-  { id: 'lpg', label: 'Autogas (LPG)', icon: '🔥', fuels: ['lpg', 'benzin'] },
-  { id: 'cng', label: 'Erdgas (CNG)', icon: '🔥', fuels: ['cng', 'benzin'] },
-  { id: 'wasserstoff', label: 'Wasserstoff', icon: '💧', fuels: ['h2'] },
+  { id: 'benzin', get label() { return tk('vehicle.drive.benzin'); }, icon: '⛽', fuels: ['benzin'] },
+  { id: 'diesel', get label() { return tk('vehicle.drive.diesel'); }, icon: '⛽', fuels: ['diesel', 'adblue'] },
+  { id: 'hybrid', get label() { return tk('vehicle.drive.hybrid'); }, icon: '♻️', fuels: ['benzin'] },
+  { id: 'phev', get label() { return tk('vehicle.drive.phev'); }, icon: '🔌', fuels: ['benzin', 'strom'] },
+  { id: 'elektro', get label() { return tk('vehicle.drive.elektro'); }, icon: '⚡', fuels: ['strom'] },
+  { id: 'lpg', get label() { return tk('vehicle.drive.lpg'); }, icon: '🔥', fuels: ['lpg', 'benzin'] },
+  { id: 'cng', get label() { return tk('vehicle.drive.cng'); }, icon: '🔥', fuels: ['cng', 'benzin'] },
+  { id: 'wasserstoff', get label() { return tk('vehicle.drive.wasserstoff'); }, icon: '💧', fuels: ['h2'] },
 ];
-const FZ_NO_DRIVE = { id: '', label: 'ohne Antrieb', icon: '', fuels: [] };
+const FZ_NO_DRIVE = { id: '', get label() { return tk('vehicle.noDrive'); }, icon: '', fuels: [] };
 // price = suggestion until an own price is known; co2 = kg CO₂ per unit (rough, combustion or electricity mix)
 const FZ_FUELS = {
-  benzin: { label: 'Benzin', unit: 'l', price: 1.75, co2: 2.37, sorts: ['Super E10', 'Super E5', 'Super Plus'] },
-  diesel: { label: 'Diesel', unit: 'l', price: 1.65, co2: 2.65, sorts: ['Diesel', 'HVO100', 'Premium-Diesel'] },
-  adblue: { label: 'AdBlue', unit: 'l', price: 0.95, co2: 0, extra: true },
-  lpg: { label: 'Autogas (LPG)', unit: 'l', price: 0.95, co2: 1.64 },
-  cng: { label: 'Erdgas (CNG)', unit: 'kg', price: 1.55, co2: 2.75 },
-  strom: { label: 'Strom', unit: 'kWh', price: 0.35, co2: 0.38 },
-  h2: { label: 'Wasserstoff', unit: 'kg', price: 13.85, co2: 0 },
+  benzin: { get label() { return tk('vehicle.fuel.petrol'); }, unit: 'l', price: 1.75, co2: 2.37, sorts: ['Super E10', 'Super E5', 'Super Plus'] },
+  diesel: { get label() { return tk('vehicle.fuel.diesel'); }, unit: 'l', price: 1.65, co2: 2.65, sorts: ['Diesel', 'HVO100', 'Premium-Diesel'] },
+  adblue: { get label() { return tk('vehicle.fuel.adblue'); }, unit: 'l', price: 0.95, co2: 0, extra: true },
+  lpg: { get label() { return tk('vehicle.fuel.lpg'); }, unit: 'l', price: 0.95, co2: 1.64 },
+  cng: { get label() { return tk('vehicle.fuel.naturalGasCng'); }, unit: 'kg', price: 1.55, co2: 2.75 },
+  strom: { get label() { return tk('vehicle.fuel.electricity'); }, unit: 'kWh', price: 0.35, co2: 0.38 },
+  h2: { get label() { return tk('vehicle.fuel.hydrogen'); }, unit: 'kg', price: 13.85, co2: 0 },
 };
 const FZ_CHARGE_WHERE = [
-  { id: 'home', label: 'Zuhause', price: 0.35 },
-  { id: 'public', label: 'Öffentlich', price: 0.59 },
-  { id: 'work', label: 'Arbeit', price: 0 },
+  { id: 'home', get label() { return tk('vehicle.chargeAt.home'); }, price: 0.35 },
+  { id: 'public', get label() { return tk('vehicle.chargeAt.public'); }, price: 0.59 },
+  { id: 'work', get label() { return tk('vehicle.chargeAt.work'); }, price: 0 },
 ];
 const FZ_LOG_TYPES = [
-  { id: 'tanken', label: 'Tanken', icon: '⛽', group: 'energie' },
-  { id: 'laden', label: 'Laden', icon: '🔌', group: 'energie' },
-  { id: 'wartung', label: 'Wartung', icon: '🔧', group: 'werkstatt' },
-  { id: 'reparatur', label: 'Reparatur', icon: '🛠️', group: 'werkstatt' },
-  { id: 'reifen', label: 'Reifen', icon: '🛞', group: 'reifen' },
-  { id: 'hu', label: 'HU / TÜV', icon: '🔍', group: 'werkstatt' },
-  { id: 'pflege', label: 'Pflege', icon: '🧽', group: 'unterwegs' },
-  { id: 'parken', label: 'Parken & Maut', icon: '🅿️', group: 'unterwegs' },
-  { id: 'zubehoer', label: 'Zubehör', icon: '🧩', group: 'sonstiges' },
-  { id: 'km', label: 'km-Stand', icon: '📍', group: '' },
-  { id: 'sonstiges', label: 'Sonstiges', icon: '📦', group: 'sonstiges' },
+  { id: 'tanken', get label() { return tk('vehicle.log.tanken'); }, icon: '⛽', group: 'energie' },
+  { id: 'laden', get label() { return tk('vehicle.log.laden'); }, icon: '🔌', group: 'energie' },
+  { id: 'wartung', get label() { return tk('vehicle.log.wartung'); }, icon: '🔧', group: 'werkstatt' },
+  { id: 'reparatur', get label() { return tk('vehicle.log.reparatur'); }, icon: '🛠️', group: 'werkstatt' },
+  { id: 'reifen', get label() { return tk('vehicle.log.reifen'); }, icon: '🛞', group: 'reifen' },
+  { id: 'hu', get label() { return tk('vehicle.log.hu'); }, icon: '🔍', group: 'werkstatt' },
+  { id: 'pflege', get label() { return tk('vehicle.log.pflege'); }, icon: '🧽', group: 'unterwegs' },
+  { id: 'parken', get label() { return tk('vehicle.log.parken'); }, icon: '🅿️', group: 'unterwegs' },
+  { id: 'zubehoer', get label() { return tk('vehicle.log.zubehoer'); }, icon: '🧩', group: 'sonstiges' },
+  { id: 'km', get label() { return tk('vehicle.log.km'); }, icon: '📍', group: '' },
+  { id: 'sonstiges', get label() { return tk('vehicle.log.sonstiges'); }, icon: '📦', group: 'sonstiges' },
 ];
 const FZ_GROUPS = [
-  { id: 'energie', label: 'Tanken & Laden', icon: '⛽', color: '#D9822B' },
-  { id: 'werkstatt', label: 'Werkstatt & HU', icon: '🔧', color: '#3D5A80' },
-  { id: 'reifen', label: 'Reifen', icon: '🛞', color: '#546E7A' },
-  { id: 'vertraege', label: 'Versicherung & Verträge', icon: '🛡️', color: '#4A6FA5' },
-  { id: 'fix', label: 'Steuer & Fixkosten', icon: '🏛️', color: '#8E6BBF' },
-  { id: 'unterwegs', label: 'Pflege, Parken & Maut', icon: '🅿️', color: '#2A9D8F' },
-  { id: 'sonstiges', label: 'Zubehör & Sonstiges', icon: '🧩', color: '#9A9A9A' },
-  { id: 'wertverlust', label: 'Wertverlust (geschätzt)', icon: '📉', color: '#B5543C' },
+  { id: 'energie', get label() { return tk('vehicle.group.energie'); }, icon: '⛽', color: '#D9822B' },
+  { id: 'werkstatt', get label() { return tk('vehicle.group.werkstatt'); }, icon: '🔧', color: '#3D5A80' },
+  { id: 'reifen', get label() { return tk('vehicle.group.reifen'); }, icon: '🛞', color: '#546E7A' },
+  { id: 'vertraege', get label() { return tk('vehicle.group.vertraege'); }, icon: '🛡️', color: '#4A6FA5' },
+  { id: 'fix', get label() { return tk('vehicle.group.fix'); }, icon: '🏛️', color: '#8E6BBF' },
+  { id: 'unterwegs', get label() { return tk('vehicle.group.unterwegs'); }, icon: '🅿️', color: '#2A9D8F' },
+  { id: 'sonstiges', get label() { return tk('vehicle.group.sonstiges'); }, icon: '🧩', color: '#9A9A9A' },
+  { id: 'wertverlust', get label() { return tk('vehicle.group.wertverlust'); }, icon: '📉', color: '#B5543C' },
 ];
 // cat = category under "Dokumente"; plate/hu = only for vehicles with a license plate or HU respectively
 const FZ_DOC_TYPES = [
-  { id: 'fzschein', label: 'Fahrzeugschein / -brief', icon: '🪪', cat: 'fahrzeuge', plate: true },
-  { id: 'hubericht', label: 'HU-Bericht', icon: '🔍', cat: 'fahrzeuge', hu: true },
-  { id: 'werkstatt', label: 'Werkstattrechnung', icon: '🔧', cat: 'fahrzeuge' },
-  { id: 'rechnung', label: 'Rechnung (Teile, Reifen, Zubehör)', icon: '🧾', cat: 'kaufbelege' },
-  { id: 'vertrag', label: 'Kaufvertrag', icon: '📄', cat: 'kaufbelege' },
-  { id: 'garantie', label: 'Garantie', icon: '🏅', cat: 'kaufbelege' },
-  { id: 'versicherung', label: 'Versicherungsschein / eVB', icon: '🛡️', cat: 'versicherungen' },
-  { id: 'steuer', label: 'Kfz-Steuerbescheid', icon: '🏛️', cat: 'steuern', plate: true },
-  { id: 'sonstiges', label: 'Sonstiges', icon: '📎', cat: 'fahrzeuge' },
+  { id: 'fzschein', get label() { return tk('vehicle.docType.fzschein'); }, icon: '🪪', cat: 'fahrzeuge', plate: true },
+  { id: 'hubericht', get label() { return tk('vehicle.docType.hubericht'); }, icon: '🔍', cat: 'fahrzeuge', hu: true },
+  { id: 'werkstatt', get label() { return tk('vehicle.docType.werkstatt'); }, icon: '🔧', cat: 'fahrzeuge' },
+  { id: 'rechnung', get label() { return tk('vehicle.docType.rechnung'); }, icon: '🧾', cat: 'kaufbelege' },
+  { id: 'vertrag', get label() { return tk('vehicle.docType.vertrag'); }, icon: '📄', cat: 'kaufbelege' },
+  { id: 'garantie', get label() { return tk('vehicle.docType.garantie'); }, icon: '🏅', cat: 'kaufbelege' },
+  { id: 'versicherung', get label() { return tk('vehicle.docType.versicherung'); }, icon: '🛡️', cat: 'versicherungen' },
+  { id: 'steuer', get label() { return tk('vehicle.docType.steuer'); }, icon: '🏛️', cat: 'steuern', plate: true },
+  { id: 'sonstiges', get label() { return tk('vehicle.docType.sonstiges'); }, icon: '📎', cat: 'fahrzeuge' },
 ];
 const FZ_DOC_LINK_MAX = 300;
 const FZ_COLORS = ['#2F4B41', '#3D5A80', '#1E4AA8', '#B5543C', '#C0392B', '#D9822B', '#D4A017', '#5E8C31', '#2A9D8F', '#8E6BBF', '#546E7A', '#1F1F1F'];
 const FZ_FIN_CATEGORY = 'mobilitaet';
 const FZ_REMIND_DAYS = [7, 14, 30, 60];
-const FZ_MONTH_NAMES = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+// Month name in the chosen language (i = 0 … 11); style 'long' or 'short'
+// HU results are stored as German words (data); fzHuResultLabel shows them in the chosen language
+const FZ_HU_RESULTS = ['ohne Mängel', 'geringe Mängel', 'erhebliche Mängel'];
+function fzHuResultLabel(r, long) {
+  if (r === 'ohne Mängel') return long ? tk('vehicle.noDefects2') : tk('vehicle.noDefects');
+  if (r === 'geringe Mängel') return tk('vehicle.minorDefects');
+  if (r === 'erhebliche Mängel') return long ? tk('vehicle.majorDefectsReInspection') : tk('vehicle.majorDefects');
+  return r;
+}
+function fzMonthName(i, style) {
+  return new Date(Date.UTC(2020, i, 15)).toLocaleDateString(sysLocale(), { month: style || 'long', timeZone: 'UTC' });
+}
+// Pair lists [id, label]: index 1 is a getter, so the label follows the chosen language (used by zuhause.js too)
+function tkPair(id, key, pre) {
+  return Object.defineProperty([id], 1, { get: () => (pre || '') + tk(key), enumerable: true });
+}
 
 let fzTab = 'liste';         // 'liste' | 'bilanz' | 'rechner' (list | balance | calculators)
 let fzDetailId = null;       // opened vehicle (detail view)
@@ -227,7 +242,7 @@ function fzGroup(id) { return FZ_GROUPS.find(g => g.id === id) || FZ_GROUPS[6]; 
 function fzLogFuel(l) { return l.type === 'laden' ? 'strom' : (FZ_FUELS[l.fuel] ? l.fuel : 'benzin'); }
 function fzColor(v) { return /^#[0-9a-fA-F]{6}$/.test((v && v.color) || '') ? v.color : '#2F4B41'; }
 function fzName(v) {
-  if (!v) return 'Fahrzeug';
+  if (!v) return tk('search.type.vehicle');
   const n = String(v.name || '').trim();
   if (n) return n;
   const mm = [v.make, v.model].filter(Boolean).join(' ').trim();
@@ -294,15 +309,15 @@ function fzParseYm(s) {
   return '';
 }
 function fzMonthEnd(ym) { return vtMonthEnd(ym + '-01'); }
-function fzMonthLabel(ym) { return fzIsYm(ym) ? FZ_MONTH_NAMES[Number(ym.slice(5, 7)) - 1] + ' ' + ym.slice(0, 4) : ''; }
+function fzMonthLabel(ym) { return fzIsYm(ym) ? fzMonthName(Number(ym.slice(5, 7)) - 1) + ' ' + ym.slice(0, 4) : ''; }
 function fzPlakette(ym) { return fzIsYm(ym) ? ym.slice(5, 7) + '/' + ym.slice(2, 4) : ''; }
 function fzWhen(days) {
-  if (days < 0) return days === -1 ? 'seit gestern' : 'seit ' + (-days) + ' Tagen';
-  if (days === 0) return 'heute';
-  if (days === 1) return 'morgen';
-  if (days <= 60) return 'in ' + days + ' Tagen';
+  if (days < 0) return days === -1 ? tk('vehicle.sinceYesterday') : tk('contract.sinceDaysN', { n: -days });
+  if (days === 0) return tk('contract.today');
+  if (days === 1) return tk('contract.tomorrow');
+  if (days <= 60) return tk('lists.when.inDays', { n: days });
   const mo = Math.round(days / 30.44);
-  return mo < 24 ? 'in ' + mo + ' Monaten' : 'in ' + Math.round(days / 365) + ' Jahren';
+  return mo < 24 ? tk('vehicle.inMonthsN', { n: mo }) : tk('vehicle.inYearsN', { n: Math.round(days / 365) });
 }
 function fzToneRank(t) { return { urgent: 0, warn: 1, ok: 2, muted: 3 }[t] ?? 4; }
 
@@ -434,10 +449,10 @@ function fzCostItems(v, s, e) {
     fzContractsFor(v.id).forEach(c => {
       const r = vtRec(c);
       if (!r) return;
-      finRecDates(r, s, to).forEach(d => { const a = finRecurringAmountFor(r, d); if (a > 0) out.push({ date: d, amount: a, group: 'vertraege', label: c.name || 'Vertrag' }); });
+      finRecDates(r, s, to).forEach(d => { const a = finRecurringAmountFor(r, d); if (a > 0) out.push({ date: d, amount: a, group: 'vertraege', label: c.name || tk('contract.docType.doc') }); });
     });
     fzVehicleRecurring(v.id).forEach(r => {
-      finRecDates(r, s, to).forEach(d => { const a = finRecurringAmountFor(r, d); if (a > 0) out.push({ date: d, amount: a, group: 'fix', label: r.title || 'Fixkosten' }); });
+      finRecDates(r, s, to).forEach(d => { const a = finRecurringAmountFor(r, d); if (a > 0) out.push({ date: d, amount: a, group: 'fix', label: r.title || tk('home.fixedCosts') }); });
     });
   }
   return out;
@@ -571,37 +586,37 @@ function fzDueItems(v, today = finTodayIso(), withInfo = false) {
       const tone = days <= 30 ? 'urgent' : days <= 90 ? 'warn' : 'ok';
       out.push({
         key: 'hu:' + due, type: 'hu', tone, icon: '🔍', date: end, act: 'hu',
-        title: days < 0 ? 'HU/TÜV überfällig' : 'HU/TÜV',
-        sub: (days < 0 ? 'war fällig bis Ende ' : 'fällig bis Ende ') + fzMonthLabel(due) + ' · Plakette ' + fzPlakette(due),
-        when: days < 0 ? 'überfällig' : fzWhen(days),
+        title: days < 0 ? tk('vehicle.motOverdue') : tk('vehicle.mot'),
+        sub: tk(days < 0 ? 'vehicle.huWasDue' : 'vehicle.huDue', { month: fzMonthLabel(due), sticker: fzPlakette(due) }),
+        when: days < 0 ? tk('school.overdue') : fzWhen(days),
         task: {
-          title: '🔍 HU/TÜV-Termin: ' + name, due: first > today ? first : today, createAfter: vtAddDays(first, -lead),
-          notes: 'Hauptuntersuchung fällig bis Ende ' + fzMonthLabel(due) + '. Nach dem Termin in pinn. unter Fahrzeuge „Erledigt“ tippen – die nächste HU wird dann automatisch eingetragen.' + (days < -60 ? '\nMehr als 2 Monate überzogen: Es wird eine teurere Ergänzungsuntersuchung fällig.' : '') + stamp,
+          title: tk('vehicle.task.hu', { name }), due: first > today ? first : today, createAfter: vtAddDays(first, -lead),
+          notes: tk('vehicle.task.huNotes', { month: fzMonthLabel(due) }) + (days < -60 ? '\n' + tk('vehicle.task.huLate') : '') + stamp,
         },
       });
     } else if (withInfo) {
-      out.push({ key: 'info:hu', type: 'info', tone: 'muted', icon: '🔍', title: 'HU-Termin fehlt', sub: 'Monat und Jahr von der Prüfplakette eintragen', when: '', date: '9999', act: 'edit' });
+      out.push({ key: 'info:hu', type: 'info', tone: 'muted', icon: '🔍', title: tk('vehicle.motDateMissing'), sub: tk('vehicle.enterMonthYearFrom'), when: '', date: '9999', act: 'edit' });
     }
   }
 
   // Inspection / maintenance
   const svc = fzServiceState(v, today);
   if (svc && svc.missing && withInfo) {
-    out.push({ key: 'info:service', type: 'info', tone: 'muted', icon: '🔧', title: 'Letzte Inspektion fehlt', sub: 'Datum oder km-Stand der letzten Inspektion eintragen', when: '', date: '9999', act: 'edit' });
+    out.push({ key: 'info:service', type: 'info', tone: 'muted', icon: '🔧', title: tk('vehicle.lastServiceMissing'), sub: tk('vehicle.enterDateOdometerReading'), when: '', date: '9999', act: 'edit' });
   } else if (svc && svc.eff) {
     const days = vtDiffDays(today, svc.eff);
     const over = days < 0 || (svc.kmLeft !== null && svc.kmLeft <= 0);
     const tone = over ? 'urgent' : (days <= 30 || (svc.kmLeft !== null && svc.kmLeft <= 1000)) ? 'warn' : 'ok';
     const parts = [];
-    if (svc.dueDate) parts.push((svc.dueDate < today ? 'war fällig am ' : 'spätestens ') + vtFmt(svc.dueDate));
-    if (svc.kmLeft !== null) parts.push(svc.kmLeft > 0 ? 'noch ' + fzKmText(svc.kmLeft) : fzKmText(-svc.kmLeft) + ' drüber');
+    if (svc.dueDate) parts.push(tk(svc.dueDate < today ? 'vehicle.wasDueOn' : 'vehicle.latestOn', { date: vtFmt(svc.dueDate) }));
+    if (svc.kmLeft !== null) parts.push(svc.kmLeft > 0 ? tk('vehicle.kmLeft', { km: fzKmText(svc.kmLeft) }) : tk('vehicle.kmOver', { km: fzKmText(-svc.kmLeft) }));
     out.push({
       key: svc.key, type: 'service', tone, icon: '🔧', date: svc.eff, act: 'service',
-      title: k.bike ? 'Fahrrad-Inspektion' : 'Inspektion',
-      sub: parts.join(' · '), when: over ? 'fällig' : fzWhen(days),
+      title: k.bike ? tk('vehicle.bikeService') : tk('vehicle.service'),
+      sub: parts.join(' · '), when: over ? tk('pet.due2') : fzWhen(days),
       task: {
-        title: '🔧 Inspektion: ' + name, due: svc.eff > today ? svc.eff : today, createAfter: vtAddDays(svc.eff, -lead),
-        notes: 'Inspektion fällig' + (parts.length ? ' (' + parts.join(', ') + ')' : '') + '. Nach der Wartung in pinn. unter Fahrzeuge „Erledigt“ tippen.' + stamp,
+        title: tk('vehicle.task.service', { name }), due: svc.eff > today ? svc.eff : today, createAfter: vtAddDays(svc.eff, -lead),
+        notes: tk('vehicle.task.serviceNotes', { info: parts.length ? ' (' + parts.join(', ') + ')' : '' }) + stamp,
       },
     });
   }
@@ -612,45 +627,45 @@ function fzDueItems(v, today = finTodayIso(), withInfo = false) {
     const ch = fzTireChange(v, today);
     if (ch) {
       const winter = ch.need === 'winter';
-      const label = winter ? 'Winterreifen' : 'Sommerreifen';
-      const monthName = FZ_MONTH_NAMES[Number(ch.start.slice(5, 7)) - 1];
+      const label = winter ? tk('vehicle.winterTyres') : tk('vehicle.summerTyres');
+      const monthName = fzMonthName(Number(ch.start.slice(5, 7)) - 1);
       if (ch.days <= 0) {
         out.push({
           key: ch.key, type: 'reifen', tone: ch.days <= -30 ? 'urgent' : 'warn', icon: '🛞', date: ch.start, act: 'reifen', need: ch.need,
-          title: label + ' aufziehen', sub: 'Wechsel ist seit ' + monthName + ' dran' + (t.storage ? ' · Reifen lagern: ' + t.storage : ''),
-          when: 'jetzt',
+          title: tk('vehicle.fitTyres', { tyres: label }), sub: tk('vehicle.changeDueSince', { month: monthName }) + (t.storage ? ' · ' + tk('vehicle.tyresStoredAt', { place: t.storage }) : ''),
+          when: tk('vehicle.now'),
           task: {
-            title: '🛞 ' + label + ' aufziehen: ' + name, due: today, createAfter: vtAddDays(ch.start, -Math.min(Math.max(lead, 7), 21)),
-            notes: (winter ? 'Faustregel „von O bis O“ – Oktober bis Ostern. Bei Glätte, Schnee oder Eis sind Winter- bzw. Ganzjahresreifen mit Alpine-Symbol Pflicht.' : 'Die Wintersaison ist vorbei – Sommerreifen haben bei Wärme den kürzeren Bremsweg.') + (t.storage ? '\nEingelagert: ' + t.storage : '') + stamp,
+            title: '🛞 ' + tk('vehicle.task.fitTyres', { tyres: label, name }), due: today, createAfter: vtAddDays(ch.start, -Math.min(Math.max(lead, 7), 21)),
+            notes: (winter ? tk('vehicle.ruleThumbOO') : tk('vehicle.winterSeasonOverSummer')) + (t.storage ? (tk('vehicle.stored') + ' ') + t.storage : '') + stamp,
           },
         });
       } else {
         out.push({
           key: ch.key, type: 'reifen', tone: ch.days <= 21 ? 'warn' : 'ok', icon: '🛞', date: ch.start, act: 'reifen', need: ch.need,
-          title: 'Nächster Reifenwechsel', sub: label + ' ab ' + monthName + ' ' + ch.start.slice(0, 4), when: fzWhen(ch.days),
+          title: tk('vehicle.nextTyreChange'), sub: tk('vehicle.tyresFrom', { tyres: label, month: monthName + ' ' + ch.start.slice(0, 4) }), when: fzWhen(ch.days),
           task: {
-            title: '🛞 ' + label + ' aufziehen: ' + name, due: ch.start, createAfter: vtAddDays(ch.start, -Math.min(Math.max(lead, 7), 21)),
-            notes: (winter ? 'Faustregel „von O bis O“ – Oktober bis Ostern. Rechtzeitig einen Termin in der Werkstatt machen.' : 'Ab Ostern wieder auf Sommerreifen wechseln.') + (t.storage ? '\nEingelagert: ' + t.storage : '') + stamp,
+            title: '🛞 ' + tk('vehicle.task.fitTyres', { tyres: label, name }), due: ch.start, createAfter: vtAddDays(ch.start, -Math.min(Math.max(lead, 7), 21)),
+            notes: (winter ? tk('vehicle.ruleThumbOO2') : tk('vehicle.switchBackSummerTyres')) + (t.storage ? (tk('vehicle.stored') + ' ') + t.storage : '') + stamp,
           },
         });
       }
     }
     // Tread depth and age
     const relevant = t.mode === 'ganzjahr' ? ['ganzjahr'] : t.mode === 'wechsel' ? ['sommer', 'winter'] : [];
-    const setLabel = { sommer: 'Sommerreifen', winter: 'Winterreifen', ganzjahr: 'Ganzjahresreifen' };
+    const setLabel = { sommer: tk('vehicle.summerTyres'), winter: tk('vehicle.winterTyres'), ganzjahr: tk('vehicle.allSeasonTyres') };
     relevant.forEach(sid => {
       const set = t.sets[sid] || {};
       const tread = Number(set.tread);
       if (tread > 0) {
         const min = sid === 'sommer' ? 3 : 4;
-        if (tread <= 1.6) out.push({ key: 'tread:' + sid, type: 'info', tone: 'urgent', icon: '🛞', title: setLabel[sid] + ': Profil ' + fzNum(tread, 1) + ' mm', sub: 'Unter dem gesetzlichen Minimum von 1,6 mm – nicht mehr fahren', when: '', date: '0000', act: 'edit' });
-        else if (tread < min) out.push({ key: 'tread:' + sid, type: 'info', tone: 'warn', icon: '🛞', title: setLabel[sid] + ': Profil ' + fzNum(tread, 1) + ' mm', sub: 'Empfohlen sind mindestens ' + min + ' mm – neue Reifen einplanen', when: '', date: '9990', act: 'edit' });
+        if (tread <= 1.6) out.push({ key: 'tread:' + sid, type: 'info', tone: 'urgent', icon: '🛞', title: tk('vehicle.treadDepth', { tyres: setLabel[sid], mm: fzNum(tread, 1) }), sub: tk('vehicle.belowLegalMinimum1'), when: '', date: '0000', act: 'edit' });
+        else if (tread < min) out.push({ key: 'tread:' + sid, type: 'info', tone: 'warn', icon: '🛞', title: tk('vehicle.treadDepth', { tyres: setLabel[sid], mm: fzNum(tread, 1) }), sub: tk('vehicle.treadRecommended', { min }), when: '', date: '9990', act: 'edit' });
       }
       const dot = parseInt(set.dot, 10);
       if (dot > 1990) {
         const age = Number(today.slice(0, 4)) - dot;
-        if (age >= 8) out.push({ key: 'age:' + sid, type: 'info', tone: 'warn', icon: '🛞', title: setLabel[sid] + ' sind ' + age + ' Jahre alt', sub: 'Gummi härtet mit der Zeit aus – Austausch empfohlen', when: '', date: '9991', act: 'edit' });
-        else if (age >= 6 && withInfo) out.push({ key: 'age:' + sid, type: 'info', tone: 'muted', icon: '🛞', title: setLabel[sid] + ' sind ' + age + ' Jahre alt', sub: 'Beim nächsten Wechsel genau prüfen lassen', when: '', date: '9995', act: 'edit' });
+        if (age >= 8) out.push({ key: 'age:' + sid, type: 'info', tone: 'warn', icon: '🛞', title: tk('vehicle.tyresAge', { tyres: setLabel[sid], n: age }), sub: tk('vehicle.rubberHardensOverTime'), when: '', date: '9991', act: 'edit' });
+        else if (age >= 6 && withInfo) out.push({ key: 'age:' + sid, type: 'info', tone: 'muted', icon: '🛞', title: tk('vehicle.tyresAge', { tyres: setLabel[sid], n: age }), sub: tk('vehicle.haveCheckedCarefullyNext'), when: '', date: '9995', act: 'edit' });
       }
     });
   }
@@ -664,10 +679,10 @@ function fzDueItems(v, today = finTodayIso(), withInfo = false) {
     if (days <= 45 || withInfo) {
       out.push({
         key: 'vk:' + start.slice(0, 4), type: 'vk', tone: days <= 7 ? 'urgent' : days <= 45 ? 'warn' : 'ok', icon: '🪪', date: start, act: 'vk',
-        title: 'Neues Versicherungskennzeichen', sub: 'Das alte gilt nur bis Ende Februar – ab 1. März ' + start.slice(0, 4) + ' das neue montieren', when: fzWhen(days),
+        title: tk('vehicle.newInsurancePlate'), sub: tk('vehicle.vkSub', { year: start.slice(0, 4) }), when: fzWhen(days),
         task: {
-          title: '🪪 Versicherungskennzeichen besorgen: ' + name, due: vtAddDays(start, -7) > today ? vtAddDays(start, -7) : today, createAfter: vtAddDays(start, -Math.max(lead, 30)),
-          notes: 'Ohne gültiges Versicherungskennzeichen besteht kein Versicherungsschutz. Neues Kennzeichen (neue Farbe) bei der Versicherung bestellen und ab 1. März montieren.' + stamp,
+          title: tk('vehicle.task.vk', { name }), due: vtAddDays(start, -7) > today ? vtAddDays(start, -7) : today, createAfter: vtAddDays(start, -Math.max(lead, 30)),
+          notes: tk('vehicle.task.vkNotes') + stamp,
         },
       });
     }
@@ -680,8 +695,8 @@ function fzDueItems(v, today = finTodayIso(), withInfo = false) {
     const tone = days <= 7 ? 'urgent' : days <= 30 ? 'warn' : 'ok';
     out.push({
       key: 'frist:' + d.id + ':' + d.date, type: 'frist', id: d.id, tone, icon: '📅', date: d.date, act: 'frist',
-      title: d.label || 'Frist', sub: (days < 0 ? 'war am ' : 'am ') + vtFmt(d.date), when: days < 0 ? 'überfällig' : fzWhen(days),
-      task: { title: '📅 ' + (d.label || 'Frist') + ': ' + name, due: d.date > today ? d.date : today, createAfter: vtAddDays(d.date, -lead), notes: 'Frist am ' + vtFmt(d.date) + '.' + stamp },
+      title: d.label || tk('school.deadline'), sub: tk(days < 0 ? 'vehicle.wasOn' : 'vehicle.onDate', { date: vtFmt(d.date) }), when: days < 0 ? tk('school.overdue') : fzWhen(days),
+      task: { title: '📅 ' + (d.label || tk('school.deadline')) + ': ' + name, due: d.date > today ? d.date : today, createAfter: vtAddDays(d.date, -lead), notes: tk('vehicle.deadlineOn', { date: vtFmt(d.date) }) + stamp },
     });
   });
 
@@ -689,11 +704,11 @@ function fzDueItems(v, today = finTodayIso(), withInfo = false) {
   fzContractsFor(v.id).forEach(c => {
     const vw = vtStatusView(c, today);
     if (vw.tone === 'warn' || vw.tone === 'urgent') {
-      out.push({ key: 'vertrag:' + c.id, type: 'contract', id: c.id, tone: vw.tone, icon: '🛡️', title: c.name || 'Vertrag', sub: vw.label, when: vw.sub ? vw.sub.split(' · ')[0] : '', date: vw.sortKey, act: 'contract' });
+      out.push({ key: 'vertrag:' + c.id, type: 'contract', id: c.id, tone: vw.tone, icon: '🛡️', title: c.name || tk('contract.docType.doc'), sub: vw.label, when: vw.sub ? vw.sub.split(' · ')[0] : '', date: vw.sortKey, act: 'contract' });
     }
   });
   if (withInfo && k.insure && !fzContractsFor(v.id).length) {
-    out.push({ key: 'info:insure', type: 'info', tone: 'muted', icon: '🛡️', title: 'Keine Versicherung zugeordnet', sub: 'Vertrag aus Finanzen → Verträge zuordnen oder neu anlegen', when: '', date: '9999', act: 'assign' });
+    out.push({ key: 'info:insure', type: 'info', tone: 'muted', icon: '🛡️', title: tk('vehicle.noInsuranceAssigned'), sub: tk('vehicle.assignContractFromFinance'), when: '', date: '9999', act: 'assign' });
   }
 
   return out
@@ -765,7 +780,7 @@ function fzRunAutoTasks() {
       if (currentView === 'fahrzeuge') renderVehicles();
     }
   } catch (err) {
-    console.warn('Fahrzeuge: automatische Aufgaben fehlgeschlagen', err);
+    console.warn('Vehicles: automatic tasks failed', err);
   } finally {
     fzRunningAuto = false;
     fzLastAutoRun = Date.now();
@@ -786,7 +801,7 @@ function fzCompleteTask(v, key) {
   flushOutbox();
 }
 // Since 1.57: tapping a vehicle task opens the matching entry (HU, inspection, tyres …); saving it ticks the task off
-const FZ_TASK_ACT_LABELS = { hu: '🔍 HU eintragen', service: '🔧 Inspektion eintragen', reifen: '🛞 Reifenwechsel eintragen', vk: '🪪 Kennzeichen eintragen', frist: '✓ Frist erledigt' };
+const FZ_TASK_ACT_LABELS = { get hu() { return tk('vehicle.enterInspectionMot'); }, get service() { return tk('vehicle.enterService'); }, get reifen() { return tk('vehicle.enterTyreChange'); }, get vk() { return tk('vehicle.enterInsurancePlate'); }, get frist() { return tk('vehicle.deadlineDone'); } };
 function fzTaskAction(task) {
   if (!task || task.done || task.household || !finance || isCurrentUserGuest()) return null;
   for (const v of fzVehicles()) {
@@ -825,14 +840,14 @@ function fzLogTitle(l) {
     const q = Number(l.qty) > 0 ? fzNum(l.qty, f.unit === 'kWh' ? 1 : 2) + ' ' + f.unit + ' ' : '';
     return q + (l.sort || f.label) + (l.type === 'laden' && l.where ? ' · ' + ((FZ_CHARGE_WHERE.find(w => w.id === l.where) || {}).label || '') : '');
   }
-  if (l.type === 'km') return 'Kilometerstand ' + fzKmText(l.odo);
-  if (l.type === 'hu') return 'HU / TÜV' + (l.huResult ? ' · ' + l.huResult : '');
+  if (l.type === 'km') return (tk('vehicle.odometerReading') + ' ') + fzKmText(l.odo);
+  if (l.type === 'hu') return tk('vehicle.log.hu') + (l.huResult ? ' · ' + fzHuResultLabel(l.huResult) : '');
   return l.desc || t.label;
 }
 function fzExpenseTitle(l, v) {
   const t = fzLogType(l.type);
-  if (l.type === 'tanken') return 'Tanken · ' + fzName(v);
-  if (l.type === 'laden') return 'Laden · ' + fzName(v);
+  if (l.type === 'tanken') return (tk('vehicle.fuelling') + ' ') + fzName(v);
+  if (l.type === 'laden') return (tk('vehicle.charging') + ' ') + fzName(v);
   return (l.desc || t.label) + ' · ' + fzName(v);
 }
 function fzDocTypeLabel(id) {
@@ -855,7 +870,7 @@ function renderVehicles() {
   document.querySelectorAll('.fz-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.fztab === fzTab));
   const hb = document.getElementById('fzHeaderBtn');
   const inDetail = fzTab === 'liste' && fzDetailId && fzVehicle(fzDetailId);
-  hb.textContent = inDetail ? '+ Eintrag' : '+ Fahrzeug';
+  hb.textContent = inDetail ? tk('vehicle.entry') : tk('vehicle.vehicle');
   hb.classList.toggle('hidden', fzTab === 'rechner');
   if (fzTab === 'bilanz') { fzToolsBuilt = false; renderVehicleBalance(pane); return; }
   if (fzTab === 'rechner') { if (!fzToolsBuilt) renderVehicleTools(pane); return; }
@@ -884,9 +899,9 @@ function fzBackToList() {
 }
 function fzDueRowHtml(v, it, showVehicle) {
   const t = it.task ? fzTaskFor(v, it.key) : null;
-  const taskChip = t ? (t.done ? '<span class="vt-chip">✓ Aufgabe erledigt</span>' : (t.task ? '<span class="vt-chip muted">✅ Aufgabe angelegt</span>' : '')) : '';
+  const taskChip = t ? (t.done ? ('<span class="vt-chip">' + tk('vehicle.taskDone') + '</span>') : (t.task ? ('<span class="vt-chip muted">' + tk('home.taskCreated') + '</span>') : '')) : '';
   const doneBtn = ['hu', 'service', 'reifen', 'vk', 'frist'].includes(it.act) && it.tone !== 'ok'
-    ? `<span role="button" tabindex="0" class="fz-mini-btn primary" data-fzact="due-done" data-v="${escapeHtml(v.id)}" data-key="${escapeHtml(it.key)}">Erledigt</span>` : '';
+    ? `<span role="button" tabindex="0" class="fz-mini-btn primary" data-fzact="due-done" data-v="${escapeHtml(v.id)}" data-key="${escapeHtml(it.key)}">${tk('school.done2')}</span>` : '';
   return `
     <div class="fz-due-row ${it.tone}" role="button" tabindex="0" data-fzact="due-open" data-v="${escapeHtml(v.id)}" data-key="${escapeHtml(it.key)}">
       <span class="fz-due-ic">${escapeHtml(it.icon || '🔔')}</span>
@@ -909,8 +924,8 @@ function renderVehicleList(pane) {
     pane.innerHTML = `
       <div class="rounded-2xl bg-white border border-dashed border-ink/20 p-6 text-center">
         <div class="fz-empty-car mb-2">🚗</div>
-        <div class="font-serif text-lg mb-1">Noch keine Fahrzeuge</div>
-        <p class="text-xs text-ink/50 mb-4">Autos, E-Autos, Motorräder, E-Bikes und Fahrräder der Familie: Tanken &amp; Laden, Verbrauch, Werkstatt, Versicherung, Dokumente und eine Bilanz aller Kosten. HU, Inspektion und Reifenwechsel landen rechtzeitig als Aufgabe bei der richtigen Person.</p>
+        <div class="font-serif text-lg mb-1">${tk('vehicle.noVehiclesYet')}</div>
+        <p class="text-xs text-ink/50 mb-4">${tk('vehicle.carsECarsMotorbikes')}</p>
         <div class="flex flex-wrap justify-center gap-2">
           ${FZ_KINDS.map(k => `<button type="button" class="fz-kind-btn px-3 py-2 text-sm" data-fzact="new-kind" data-kind="${k.id}">${k.icon} ${escapeHtml(k.label)}</button>`).join('')}
         </div>
@@ -927,20 +942,20 @@ function renderVehicleList(pane) {
   const summary = fzCard(`
     <div class="flex items-start justify-between gap-3">
       <div class="min-w-0">
-        <div class="text-[11px] uppercase tracking-wide text-ink/40">Kosten aller Fahrzeuge</div>
-        <div class="font-serif text-2xl">${fzEur(totalMonthly)} <span class="text-sm text-ink/45 font-sans">/ Monat</span></div>
-        <div class="text-xs text-ink/50">Durchschnitt der letzten 12 Monate · alles inklusive</div>
+        <div class="text-[11px] uppercase tracking-wide text-ink/40">${tk('vehicle.costsAllVehicles')}</div>
+        <div class="font-serif text-2xl">${fzEur(totalMonthly)} <span class="text-sm text-ink/45 font-sans">${tk('contract.perMonthSlash')}</span></div>
+        <div class="text-xs text-ink/50">${tk('vehicle.averageLast12Months')}</div>
       </div>
       <div class="text-right shrink-0">
-        <div class="text-[11px] uppercase tracking-wide text-ink/40">Fahrzeuge</div>
+        <div class="text-[11px] uppercase tracking-wide text-ink/40">${tk('nav.vehicles')}</div>
         <div class="font-serif text-2xl">${active.length}</div>
-        <div class="text-xs text-ink/50">${kmYear > 0 ? '≈ ' + fzKmText(Math.round(kmYear / 100) * 100) + ' / Jahr' : '&nbsp;'}</div>
+        <div class="text-xs text-ink/50">${kmYear > 0 ? escapeHtml(tk('vehicle.kmPerYear', { km: '≈ ' + fzKmText(Math.round(kmYear / 100) * 100) })) : '&nbsp;'}</div>
       </div>
     </div>`);
 
   const dueHtml = allDue.length ? `
     <div class="rounded-2xl border border-mustard/40 bg-mustard/10 p-4">
-      <div class="text-sm font-medium mb-2">⏰ Im Blick</div>
+      <div class="text-sm font-medium mb-2">${tk('home.glance')}</div>
       <div class="flex flex-col gap-1.5">${allDue.slice(0, 12).map(x => fzDueRowHtml(x.v, x.it, true)).join('')}</div>
     </div>` : '';
 
@@ -957,12 +972,12 @@ function renderVehicleList(pane) {
           <span class="block text-xs text-ink/45 truncate">${sub || escapeHtml(fzKind(v.kind).label)}</span>
           <span class="flex items-center gap-1.5 mt-1.5 flex-wrap">
             ${fzPlateHtml(v.plate)}
-            ${firstDue ? `<span class="vt-chip ${firstDue.tone}">${escapeHtml(firstDue.icon + ' ' + firstDue.title)}</span>` : '<span class="vt-chip">✓ alles im grünen Bereich</span>'}
+            ${firstDue ? `<span class="vt-chip ${firstDue.tone}">${escapeHtml(firstDue.icon + ' ' + firstDue.title)}</span>` : ('<span class="vt-chip">' + tk('vehicle.everythingFine') + '</span>')}
           </span>
         </span>
         <span class="shrink-0 text-right">
           <span class="block text-sm font-semibold">${r.monthly > 0 ? fzEur(r.monthly) : '–'}</span>
-          <span class="block text-[11px] text-ink/45">pro Monat</span>
+          <span class="block text-[11px] text-ink/45">${tk('depot.perMonth')}</span>
           ${r.cons ? `<span class="block text-[11px] text-ink/45 mt-1">${r.cons.estimated ? '≈ ' : 'Ø '}${fzNum(r.cons.avg, 1)} ${escapeHtml(r.cons.unit.replace('/100 km', ''))}</span>` : ''}
         </span>
       </button>`;
@@ -970,18 +985,18 @@ function renderVehicleList(pane) {
 
   const archHtml = archived.length ? `
     <details class="vt-more rounded-2xl bg-white border border-ink/10 shadow-sm px-4 py-3"${fzShowArchived ? ' open' : ''} data-fzdetails="archived">
-      <summary class="text-sm cursor-pointer select-none">🗄️ Verkauft &amp; abgemeldet (${archived.length})</summary>
+      <summary class="text-sm cursor-pointer select-none">${tk('vehicle.soldDeregistered', { n: archived.length })}</summary>
       <div class="flex flex-col gap-2 mt-3">${archived.map(v => `
         <button type="button" class="fz-card is-archived" style="--fz:${fzColor(v)}" data-fzact="open" data-v="${escapeHtml(v.id)}">
           <span class="fz-icon">${escapeHtml(fzKind(v.kind).icon)}</span>
           <span class="flex-1 min-w-0">
             <span class="block text-sm font-medium truncate">${escapeHtml(fzName(v))}</span>
-            <span class="block text-xs text-ink/45 truncate">seit ${escapeHtml(vtFmt(v.archived.date))}${Number(v.archived.price) > 0 ? ' · verkauft für ' + escapeHtml(fzEur(v.archived.price)) : ''}</span>
+            <span class="block text-xs text-ink/45 truncate">${escapeHtml(tk('home.sinceDate', { date: vtFmt(v.archived.date) }))}${Number(v.archived.price) > 0 ? ' · ' + escapeHtml(tk('vehicle.soldFor', { amount: fzEur(v.archived.price) })) : ''}</span>
           </span>
         </button>`).join('')}</div>
     </details>` : '';
 
-  pane.innerHTML = summary + dueHtml + (cards ? `<div class="flex flex-col gap-2">${cards}</div>` : '<p class="text-sm text-ink/40 italic text-center py-4">Kein aktives Fahrzeug.</p>') + archHtml;
+  pane.innerHTML = summary + dueHtml + (cards ? `<div class="flex flex-col gap-2">${cards}</div>` : ('<p class="text-sm text-ink/40 italic text-center py-4">' + tk('vehicle.noActiveVehicle') + '</p>')) + archHtml;
   const det = pane.querySelector('[data-fzdetails="archived"]');
   if (det) det.addEventListener('toggle', () => { fzShowArchived = det.open; });
 }
@@ -1016,12 +1031,12 @@ function renderVehicleDetail(pane, v) {
 
   // Header
   const actions = archived ? `
-      <button type="button" class="fz-act-btn" data-fzact="unarchive" data-v="${escapeHtml(v.id)}"><span class="fz-ti">♻️</span>Wieder aktiv</button>
-      <button type="button" class="fz-act-btn" data-fzact="edit" data-v="${escapeHtml(v.id)}"><span class="fz-ti">✎</span>Bearbeiten</button>` : `
-      ${fzCanFuel(v) ? `<button type="button" class="fz-act-btn primary" data-fzact="log-new" data-type="tanken" data-v="${escapeHtml(v.id)}"><span class="fz-ti">⛽</span>Tanken</button>` : ''}
-      ${fzCanCharge(v) ? `<button type="button" class="fz-act-btn${fzCanFuel(v) ? '' : ' primary'}" data-fzact="log-new" data-type="laden" data-v="${escapeHtml(v.id)}"><span class="fz-ti">🔌</span>Laden</button>` : ''}
-      <button type="button" class="fz-act-btn${fzFuels(v).length ? '' : ' primary'}" data-fzact="log-new" data-type="" data-v="${escapeHtml(v.id)}"><span class="fz-ti">➕</span>Eintrag</button>
-      <button type="button" class="fz-act-btn" data-fzact="edit" data-v="${escapeHtml(v.id)}"><span class="fz-ti">✎</span>Bearbeiten</button>`;
+      <button type="button" class="fz-act-btn" data-fzact="unarchive" data-v="${escapeHtml(v.id)}"><span class="fz-ti">♻️</span>${tk('vehicle.activeAgain')}</button>
+      <button type="button" class="fz-act-btn" data-fzact="edit" data-v="${escapeHtml(v.id)}"><span class="fz-ti">✎</span>${tk('common.edit')}</button>` : `
+      ${fzCanFuel(v) ? `<button type="button" class="fz-act-btn primary" data-fzact="log-new" data-type="tanken" data-v="${escapeHtml(v.id)}"><span class="fz-ti">⛽</span>${tk('vehicle.fuelling2')}</button>` : ''}
+      ${fzCanCharge(v) ? `<button type="button" class="fz-act-btn${fzCanFuel(v) ? '' : ' primary'}" data-fzact="log-new" data-type="laden" data-v="${escapeHtml(v.id)}"><span class="fz-ti">🔌</span>${tk('vehicle.charging2')}</button>` : ''}
+      <button type="button" class="fz-act-btn${fzFuels(v).length ? '' : ' primary'}" data-fzact="log-new" data-type="" data-v="${escapeHtml(v.id)}"><span class="fz-ti">➕</span>${tk('lists.item.entry')}</button>
+      <button type="button" class="fz-act-btn" data-fzact="edit" data-v="${escapeHtml(v.id)}"><span class="fz-ti">✎</span>${tk('common.edit')}</button>`;
   const hero = `
     <div class="fz-hero" style="--fz:${fzColor(v)}">
       ${fzSceneHtml(v)}
@@ -1038,7 +1053,7 @@ function renderVehicleDetail(pane, v) {
           ${d.id ? `<span class="vt-chip">${escapeHtml(d.icon + ' ' + d.label)}</span>` : ''}
           ${odo ? `<span class="vt-chip muted">📍 ${escapeHtml(fzKmText(odo))}</span>` : ''}
           ${holder ? `<span class="vt-chip muted">👤 ${escapeHtml(memberLabel(holder))}</span>` : ''}
-          ${archived ? `<span class="vt-chip warn">🗄️ seit ${escapeHtml(vtFmt(v.archived.date))} nicht mehr in der Familie</span>` : ''}
+          ${archived ? `<span class="vt-chip warn">${tk('vehicle.noLongerFamilySince', { vtFmt: escapeHtml(vtFmt(v.archived.date)) })}</span>` : ''}
         </div>
         <div class="flex gap-2 mt-3">${actions}</div>
       </div>
@@ -1046,20 +1061,20 @@ function renderVehicleDetail(pane, v) {
 
   // Notices
   const dueHtml = due.length ? fzCard(`
-    <div class="fz-h">🔔 Hinweise &amp; Termine</div>
+    <div class="fz-h">${tk('vehicle.notificationsEvents')}</div>
     <div class="flex flex-col gap-1.5">${due.map(it => fzDueRowHtml(v, it, false)).join('')}</div>
-    ${!archived ? `<p class="text-[11px] text-ink/45 mt-2">${fzAutoSettings(v).on ? `Automatische Aufgaben: ${fzLead(v)} Tage vorher${fzTaskTargets(v).length ? ' für ' + escapeHtml(fzTaskTargets(v).map(id => memberLabel(memberById(id))).join(', ')) : ''}.` : 'Automatische Aufgaben sind für dieses Fahrzeug aus.'}</p>` : ''}`) : '';
+    ${!archived ? `<p class="text-[11px] text-ink/45 mt-2">${fzAutoSettings(v).on ? escapeHtml(fzTaskTargets(v).length ? tk('vehicle.autoTasksFor', { n: fzLead(v), names: fzTaskTargets(v).map(id => memberLabel(memberById(id))).join(', ') }) : tk('vehicle.autoTasks', { n: fzLead(v) })) : tk('vehicle.autoTasksOff')}</p>` : ''}`) : '';
 
   // Key figures
   const consTile = cons.length
-    ? fzTile('Ø Verbrauch' + (cons.length > 1 ? ' · ' + FZ_FUELS[cons[0].fuel].label : ''), (cons[0].estimated ? '≈ ' : '') + fzNum(cons[0].avg, 1) + ' <span class="text-xs font-normal">' + escapeHtml(cons[0].unit) + '</span>', cons.length > 1 ? cons.slice(1).map(c => FZ_FUELS[c.fuel].label + ' ' + fzNum(c.avg, 1) + ' ' + c.unit).join(' · ') : (cons[0].estimated ? 'geschätzt – „voll“ markieren macht es genau' : 'aus ' + cons[0].segs.length + ' Tankfüllungen'))
-    : (fzFuels(v).length ? fzTile('Ø Verbrauch', '–', 'ab 2 Einträgen mit km-Stand') : fzTile('Fahrleistung', kmYear > 0 ? fzKmText(Math.round(kmYear)) : '–', 'pro Jahr'));
+    ? fzTile(tk('vehicle.consumption') + (cons.length > 1 ? ' · ' + FZ_FUELS[cons[0].fuel].label : ''), (cons[0].estimated ? '≈ ' : '') + fzNum(cons[0].avg, 1) + ' <span class="text-xs font-normal">' + escapeHtml(cons[0].unit) + '</span>', cons.length > 1 ? cons.slice(1).map(c => FZ_FUELS[c.fuel].label + ' ' + fzNum(c.avg, 1) + ' ' + c.unit).join(' · ') : (cons[0].estimated ? tk('vehicle.estimatedMarkingFullMakes') : tk('vehicle.fromFillUps', { n: cons[0].segs.length })))
+    : (fzFuels(v).length ? fzTile(tk('vehicle.consumption'), '–', tk('vehicle.from2EntriesOdometer')) : fzTile(tk('vehicle.mileage'), kmYear > 0 ? fzKmText(Math.round(kmYear)) : '–', tk('vehicle.perYear')));
   const tiles = `
     <div class="grid grid-cols-2 gap-2">
       ${consTile}
-      ${fzTile('Kosten / Monat', monthly > 0 ? fzEur(monthly) : '–', 'letzte 12 Monate, alles inkl.')}
-      ${fzTile('Vollkosten / km', perKm != null ? fmtEur(perKm) : '–', e100 != null ? 'Energie: ' + fzEur(e100) + ' / 100 km' : 'ab ein paar hundert km')}
-      ${fzTile('Fahrleistung', kmYear > 0 ? fzKmText(Math.round(kmYear / 10) * 10) : '–', kmYear > 0 ? 'pro Jahr (hochgerechnet)' : 'km-Stände eintragen')}
+      ${fzTile(tk('vehicle.costsMonth'), monthly > 0 ? fzEur(monthly) : '–', tk('vehicle.last12MonthsEverything'))}
+      ${fzTile(tk('vehicle.fullCostKm'), perKm != null ? fmtEur(perKm) : '–', e100 != null ? tk('vehicle.energyPer100', { amount: fzEur(e100) }) : tk('vehicle.fromFewHundredKm'))}
+      ${fzTile(tk('vehicle.mileage'), kmYear > 0 ? fzKmText(Math.round(kmYear / 10) * 10) : '–', kmYear > 0 ? tk('vehicle.perYearExtrapolated') : tk('vehicle.enterOdometerReadings'))}
     </div>`;
 
   // Consumption chart
@@ -1068,39 +1083,39 @@ function renderVehicleDetail(pane, v) {
   if (segCons) {
     const segs = segCons.segs.slice(-12);
     chart = fzCard(`
-      <div class="fz-h">📈 Verbrauch je Tankfüllung · ${escapeHtml(FZ_FUELS[segCons.fuel].label)}</div>
+      <div class="fz-h">${tk('vehicle.consumptionPerFillUp', { label: escapeHtml(FZ_FUELS[segCons.fuel].label) })}</div>
       ${fzBarsHtml(segs.map(s => s.value), segs.map(s => s.date.slice(8, 10) + '.' + s.date.slice(5, 7) + '.'), fzColor(v), { avg: segCons.avg, avgLabel: fzNum(segCons.avg, 1), short: val => fzNum(val, 1), fmt: val => fzNum(val, 1) + ' ' + segCons.unit })}
-      <p class="text-[11px] text-ink/45 mt-2">${escapeHtml(segCons.unit)} zwischen zwei vollen Füllungen · insgesamt ${escapeHtml(fzKmText(segCons.km))} ausgewertet</p>`);
+      <p class="text-[11px] text-ink/45 mt-2">${escapeHtml(tk('vehicle.segInfo', { unit: segCons.unit, km: fzKmText(segCons.km) }))}</p>`);
   }
 
   // Appointments & maintenance
   const trows = [];
-  if (k.hu) trows.push(['HU / TÜV', v.hu && fzIsYm(v.hu.due) ? fzMonthLabel(v.hu.due) + ' (' + fzPlakette(v.hu.due) + ')' : 'nicht eingetragen']);
+  if (k.hu) trows.push([tk('vehicle.mot2'), v.hu && fzIsYm(v.hu.due) ? fzMonthLabel(v.hu.due) + ' (' + fzPlakette(v.hu.due) + ')' : tk('vehicle.notEntered')]);
   const svc = fzServiceState(v, today);
   const sv = v.service || {};
-  if (svc && !svc.missing) trows.push(['Nächste Inspektion', [svc.dueDate ? vtFmt(svc.dueDate) : '', svc.kmLeft !== null ? (svc.kmLeft > 0 ? 'in ' + fzKmText(svc.kmLeft) : 'km erreicht') : ''].filter(Boolean).join(' · ') || '–']);
-  if (vtIsIso(sv.lastDate) || Number(sv.lastOdo) > 0) trows.push(['Letzte Inspektion', [vtIsIso(sv.lastDate) ? vtFmt(sv.lastDate) : '', Number(sv.lastOdo) > 0 ? fzKmText(sv.lastOdo) : ''].filter(Boolean).join(' · ')]);
-  if (parseInt(sv.months, 10) || parseInt(sv.km, 10)) trows.push(['Intervall', [parseInt(sv.months, 10) ? 'alle ' + parseInt(sv.months, 10) + ' Monate' : '', parseInt(sv.km, 10) ? 'alle ' + fzKmText(parseInt(sv.km, 10)) : ''].filter(Boolean).join(' oder ')]);
+  if (svc && !svc.missing) trows.push([tk('vehicle.nextService'), [svc.dueDate ? vtFmt(svc.dueDate) : '', svc.kmLeft !== null ? (svc.kmLeft > 0 ? tk('vehicle.inKm', { km: fzKmText(svc.kmLeft) }) : tk('vehicle.kmReached')) : ''].filter(Boolean).join(' · ') || '–']);
+  if (vtIsIso(sv.lastDate) || Number(sv.lastOdo) > 0) trows.push([tk('vehicle.lastService'), [vtIsIso(sv.lastDate) ? vtFmt(sv.lastDate) : '', Number(sv.lastOdo) > 0 ? fzKmText(sv.lastOdo) : ''].filter(Boolean).join(' · ')]);
+  if (parseInt(sv.months, 10) || parseInt(sv.km, 10)) trows.push([tk('household.interval'), [parseInt(sv.months, 10) ? tk('home.everyNMonths', { n: parseInt(sv.months, 10) }) : '', parseInt(sv.km, 10) ? tk('vehicle.everyKm', { km: fzKmText(parseInt(sv.km, 10)) }) : ''].filter(Boolean).join(' ' + tk('vehicle.or') + ' ')]);
   if (k.tires) {
     const t = fzTireSetting(v);
-    const lbl = { sommer: 'Sommerreifen', winter: 'Winterreifen' };
-    if (t.mode === 'wechsel') trows.push(['Reifen', lbl[t.mounted] + ' montiert · Wechsel ' + FZ_MONTH_NAMES[t.toWinter - 1].slice(0, 3) + '/' + FZ_MONTH_NAMES[t.toSummer - 1].slice(0, 3)]);
-    else if (t.mode === 'ganzjahr') trows.push(['Reifen', 'Ganzjahresreifen']);
-    if (t.size) trows.push(['Reifengröße', t.size]);
+    const lbl = { sommer: tk('vehicle.summerTyres'), winter: tk('vehicle.winterTyres') };
+    if (t.mode === 'wechsel') trows.push([tk('vehicle.tyres'), tk('vehicle.mountedChange', { tyres: lbl[t.mounted], months: fzMonthName(t.toWinter - 1, 'short') + '/' + fzMonthName(t.toSummer - 1, 'short') })]);
+    else if (t.mode === 'ganzjahr') trows.push([tk('vehicle.tyres'), tk('vehicle.allSeasonTyres')]);
+    if (t.size) trows.push([tk('vehicle.tyreSize'), t.size]);
     ['sommer', 'winter', 'ganzjahr'].forEach(sid => {
       const s = t.sets[sid];
-      if (s && (s.dot || s.tread)) trows.push([{ sommer: 'Sommersatz', winter: 'Wintersatz', ganzjahr: 'Ganzjahressatz' }[sid], [s.dot ? 'DOT ' + s.dot : '', Number(s.tread) > 0 ? fzNum(s.tread, 1) + ' mm Profil' : ''].filter(Boolean).join(' · ')]);
+      if (s && (s.dot || s.tread)) trows.push([{ sommer: tk('vehicle.summerSet'), winter: tk('vehicle.winterSet'), ganzjahr: tk('vehicle.allSeasonSet') }[sid], [s.dot ? 'DOT ' + s.dot : '', Number(s.tread) > 0 ? tk('vehicle.treadMm', { mm: fzNum(s.tread, 1) }) : ''].filter(Boolean).join(' · ')]);
     });
-    if (t.storage) trows.push(['Eingelagert', t.storage]);
+    if (t.storage) trows.push([tk('vehicle.stored2'), t.storage]);
   }
   const deadlines = (Array.isArray(v.deadlines) ? v.deadlines : []).slice().sort((a, b) => String(a.date).localeCompare(String(b.date)));
   const termine = fzCard(`
     <div class="flex items-center justify-between gap-2 mb-1">
-      <div class="fz-h" style="margin:0">🗓️ Termine &amp; Wartung</div>
-      ${archived ? '' : `<button type="button" class="fz-mini-btn" data-fzact="deadline-new" data-v="${escapeHtml(v.id)}">+ Frist</button>`}
+      <div class="fz-h" style="margin:0">${tk('vehicle.datesMaintenance')}</div>
+      ${archived ? '' : `<button type="button" class="fz-mini-btn" data-fzact="deadline-new" data-v="${escapeHtml(v.id)}">${tk('vehicle.deadline')}</button>`}
     </div>
-    ${trows.length ? `<div>${trows.map(r => `<div class="vt-row"><span>${escapeHtml(r[0])}</span><span>${escapeHtml(r[1])}</span></div>`).join('')}</div>` : '<p class="text-xs text-ink/45">Unter „Bearbeiten“ HU, Inspektions-Intervall und Reifen eintragen – pinn. erinnert dann rechtzeitig.</p>'}
-    ${deadlines.length ? `<div class="mt-2">${deadlines.map(x => `<div class="vt-row"><span>📅 ${escapeHtml(x.label || 'Frist')}</span><span><button type="button" class="hover:text-pine" data-fzact="deadline-edit" data-v="${escapeHtml(v.id)}" data-id="${escapeHtml(x.id)}">${escapeHtml(vtFmt(x.date))} ✎</button></span></div>`).join('')}</div>` : '<p class="text-[11px] text-ink/45 mt-2">Eigene Fristen, z. B. Verbandkasten, Garantie, Leasingende, Vignette oder Akku-Garantie.</p>'}`);
+    ${trows.length ? `<div>${trows.map(r => `<div class="vt-row"><span>${escapeHtml(r[0])}</span><span>${escapeHtml(r[1])}</span></div>`).join('')}</div>` : ('<p class="text-xs text-ink/45">' + tk('vehicle.enterMotServiceInterval') + '</p>')}
+    ${deadlines.length ? `<div class="mt-2">${deadlines.map(x => `<div class="vt-row"><span>📅 ${escapeHtml(x.label || tk('school.deadline'))}</span><span><button type="button" class="hover:text-pine" data-fzact="deadline-edit" data-v="${escapeHtml(v.id)}" data-id="${escapeHtml(x.id)}">${escapeHtml(vtFmt(x.date))} ✎</button></span></div>`).join('')}</div>` : ('<p class="text-[11px] text-ink/45 mt-2">' + tk('vehicle.customDeadlinesEG') + '</p>')}`);
 
   // Contracts
   const contracts = fzContractsFor(v.id);
@@ -1112,25 +1127,25 @@ function renderVehicleDetail(pane, v) {
       <button type="button" class="fz-log-row" data-fzact="contract" data-id="${escapeHtml(c.id)}">
         <span class="fz-log-ic" style="background:${vtCatColor(cat)}22">${escapeHtml(cat.icon || '📄')}</span>
         <span class="flex-1 min-w-0">
-          <span class="block text-sm font-medium truncate">${escapeHtml(c.name || 'Vertrag')}</span>
+          <span class="block text-sm font-medium truncate">${escapeHtml(c.name || tk('contract.docType.doc'))}</span>
           <span class="block text-xs text-ink/45 truncate">${escapeHtml([c.provider, vw.label].filter(Boolean).join(' · '))}</span>
         </span>
         <span class="shrink-0 text-right">
-          ${cost ? `<span class="block text-sm font-semibold">${fzEur(cost.amount)}</span><span class="block text-[11px] text-ink/45">${escapeHtml(vtIntervalLabel(cost.interval))}</span>` : '<span class="block text-[11px] text-ink/40">ohne Kosten</span>'}
+          ${cost ? `<span class="block text-sm font-semibold">${fzEur(cost.amount)}</span><span class="block text-[11px] text-ink/45">${escapeHtml(vtIntervalLabel(cost.interval))}</span>` : ('<span class="block text-[11px] text-ink/40">' + tk('home.withoutCosts') + '</span>')}
         </span>
       </button>`;
   }).join('');
   const taxRec = v.taxRecId ? finance.recurring.find(r => r.id === v.taxRecId) : null;
   const fixRows = fzVehicleRecurring(v.id).map(r => `
-      <div class="vt-row"><span>${escapeHtml(r.title || 'Fixkosten')}</span><span>${fzEur(finRecurringAmountFor(r, today))} ${escapeHtml(vtIntervalLabel(finRecInterval(r)))}${finRecIsRunning(r, today) ? '' : ' · beendet'}</span></div>`).join('');
+      <div class="vt-row"><span>${escapeHtml(r.title || tk('home.fixedCosts'))}</span><span>${fzEur(finRecurringAmountFor(r, today))} ${escapeHtml(vtIntervalLabel(finRecInterval(r)))}${finRecIsRunning(r, today) ? '' : (' ' + tk('contract.ended'))}</span></div>`).join('');
   const vertraege = fzCard(`
     <div class="flex items-center justify-between gap-2 mb-1">
-      <div class="fz-h" style="margin:0">🛡️ Versicherung &amp; Verträge</div>
-      ${archived ? '' : `<span class="flex gap-1.5"><button type="button" class="fz-mini-btn" data-fzact="contract-assign" data-v="${escapeHtml(v.id)}">Zuordnen</button><button type="button" class="fz-mini-btn primary" data-fzact="contract-new" data-v="${escapeHtml(v.id)}">+ Neu</button></span>`}
+      <div class="fz-h" style="margin:0">${tk('vehicle.insuranceContracts')}</div>
+      ${archived ? '' : `<span class="flex gap-1.5"><button type="button" class="fz-mini-btn" data-fzact="contract-assign" data-v="${escapeHtml(v.id)}">${tk('home.assign')}</button><button type="button" class="fz-mini-btn primary" data-fzact="contract-new" data-v="${escapeHtml(v.id)}">${tk('school.new')}</button></span>`}
     </div>
-    ${cRows ? `<div class="flex flex-col">${cRows}</div>` : `<p class="text-xs text-ink/45">${k.insure ? 'Kfz-Versicherung, Schutzbrief, Leasing oder Finanzierung aus Finanzen → Verträge zuordnen – Kosten und Kündigungsfristen erscheinen dann hier.' : 'Z. B. Fahrradversicherung, Leasing (Jobrad) oder Diebstahlschutz zuordnen.'}</p>`}
+    ${cRows ? `<div class="flex flex-col">${cRows}</div>` : `<p class="text-xs text-ink/45">${k.insure ? tk('vehicle.assignCarInsuranceBreakdown') : tk('vehicle.eGAssignBike')}</p>`}
     ${fixRows ? `<div class="mt-2">${fixRows}</div>` : ''}
-    ${!taxRec && k.plate && d.id && !archived ? '<p class="text-[11px] text-ink/45 mt-2">Tipp: Kfz-Steuer unter „Bearbeiten“ eintragen – sie wird dann jährlich in Finanzen gebucht.</p>' : ''}`);
+    ${!taxRec && k.plate && d.id && !archived ? ('<p class="text-[11px] text-ink/45 mt-2">' + tk('vehicle.tipEnterVehicleTax') + '</p>') : ''}`);
 
   // Costs this year
   const yStart = today.slice(0, 4) + '-01-01';
@@ -1139,18 +1154,18 @@ function renderVehicleDetail(pane, v) {
   const maxG = gRows.length ? gRows[0].val : 0;
   const kosten = fzCard(`
     <div class="flex items-center justify-between gap-2 mb-2">
-      <div class="fz-h" style="margin:0">💶 Kosten ${escapeHtml(today.slice(0, 4))}</div>
-      <button type="button" class="fz-mini-btn" data-fzact="to-balance" data-v="${escapeHtml(v.id)}">Bilanz ›</button>
+      <div class="fz-h" style="margin:0">${tk('vehicle.costs', { slice: escapeHtml(today.slice(0, 4)) })}</div>
+      <button type="button" class="fz-mini-btn" data-fzact="to-balance" data-v="${escapeHtml(v.id)}">${tk('vehicle.balance')}</button>
     </div>
-    <div class="flex items-baseline gap-2 mb-3"><span class="font-serif text-2xl">${fzEur(bal.total)}</span>${bal.km > 0 ? `<span class="text-xs text-ink/50">bei ${escapeHtml(fzKmText(bal.km))} · ${escapeHtml(fmtEur(bal.total / bal.km))} / km</span>` : ''}</div>
+    <div class="flex items-baseline gap-2 mb-3"><span class="font-serif text-2xl">${fzEur(bal.total)}</span>${bal.km > 0 ? `<span class="text-xs text-ink/50">${tk('vehicle.km', { fzKmText: escapeHtml(fzKmText(bal.km)), fmtEur: escapeHtml(fmtEur(bal.total / bal.km)) })}</span>` : ''}</div>
     ${gRows.length ? `<div class="flex flex-col gap-2">${gRows.map(x => `
       <div>
         <div class="flex items-center justify-between gap-2 text-xs mb-1"><span class="truncate">${escapeHtml(x.g.icon + ' ' + x.g.label)}</span><span class="shrink-0 font-medium">${fzEur(x.val)}</span></div>
         <div class="vt-bar"><span style="width:${Math.max(4, Math.round(x.val / maxG * 100))}%;background:${x.g.color}"></span></div>
-      </div>`).join('')}</div>` : '<p class="text-xs text-ink/45">Noch keine Kosten in diesem Jahr.</p>'}`);
+      </div>`).join('')}</div>` : ('<p class="text-xs text-ink/45">' + tk('home.noCostsYearYet') + '</p>')}`);
 
   // Log
-  const filters = [['alle', 'Alle'], ['energie', '⛽ Energie'], ['werkstatt', '🔧 Werkstatt'], ['reifen', '🛞 Reifen'], ['rest', '🧩 Sonstiges']];
+  const filters = [['alle', tk('errorLog.all')], ['energie', tk('vehicle.energy2')], ['werkstatt', tk('vehicle.workshop')], ['reifen', tk('vehicle.tyres2')], ['rest', tk('vehicle.other')]];
   const flt = logs.slice().reverse().filter(l => {
     if (fzLogFilter === 'alle') return true;
     const g = fzLogType(l.type).group;
@@ -1173,18 +1188,18 @@ function renderVehicleDetail(pane, v) {
         </span>
         <span class="shrink-0 text-right">
           ${Number(l.amount) > 0 ? `<span class="block text-sm font-semibold">${fzEur(l.amount)}</span>` : ''}
-          ${segVal ? `<span class="block text-[11px] text-ink/45">${fzNum(segVal, 1)} ${escapeHtml(FZ_FUELS[fzLogFuel(l)].unit)}/100</span>` : (Number(l.amount) > 0 && !l.booked ? '<span class="block text-[10px] text-ink/40">nicht in Finanzen</span>' : '')}
+          ${segVal ? `<span class="block text-[11px] text-ink/45">${fzNum(segVal, 1)} ${escapeHtml(FZ_FUELS[fzLogFuel(l)].unit)}/100</span>` : (Number(l.amount) > 0 && !l.booked ? ('<span class="block text-[10px] text-ink/40">' + tk('home.notFinance') + '</span>') : '')}
         </span>
       </button>`;
   }).join('');
   const verlauf = fzCard(`
     <div class="flex items-center justify-between gap-2 mb-2">
-      <div class="fz-h" style="margin:0">🧾 Verlauf <span class="text-ink/40 font-normal normal-case">${logs.length || ''}</span></div>
-      ${archived ? '' : `<button type="button" class="fz-mini-btn primary" data-fzact="log-new" data-type="" data-v="${escapeHtml(v.id)}">+ Eintrag</button>`}
+      <div class="fz-h" style="margin:0">${tk('vehicle.history')} <span class="text-ink/40 font-normal normal-case">${logs.length || ''}</span></div>
+      ${archived ? '' : `<button type="button" class="fz-mini-btn primary" data-fzact="log-new" data-type="" data-v="${escapeHtml(v.id)}">${tk('vehicle.entry')}</button>`}
     </div>
     ${logs.length ? `<div class="fz-type-row mb-2">${filters.map(f => `<button type="button" class="fz-filter-chip${fzLogFilter === f[0] ? ' active' : ''}" data-fzact="log-filter" data-f="${f[0]}">${escapeHtml(f[1])}</button>`).join('')}</div>` : ''}
-    ${logRows ? `<div class="flex flex-col">${logRows}</div>` : `<p class="text-xs text-ink/45">${logs.length ? 'Keine Einträge für diesen Filter.' : 'Tanken, Laden, Werkstatt, Reifen, Wäsche, Parken … – alles landet hier und auf Wunsch gleich in Finanzen.'}</p>`}
-    ${flt.length > fzLogLimit ? `<button type="button" class="w-full mt-2 text-xs text-ink/55 hover:text-pine py-1.5" data-fzact="log-more">Weitere ${flt.length - fzLogLimit} anzeigen</button>` : ''}`);
+    ${logRows ? `<div class="flex flex-col">${logRows}</div>` : `<p class="text-xs text-ink/45">${logs.length ? tk('home.noEntriesFilter') : tk('vehicle.fuellingChargingWorkshopTyres')}</p>`}
+    ${flt.length > fzLogLimit ? `<button type="button" class="w-full mt-2 text-xs text-ink/55 hover:text-pine py-1.5" data-fzact="log-more">${tk('vehicle.showMore', { fzLogLimit: flt.length - fzLogLimit })}</button>` : ''}`);
 
   // Documents: stored under "Dokumente" and linked with the vehicle (in both directions)
   const bezug = 'fahrzeug:' + v.id;
@@ -1201,12 +1216,12 @@ function renderVehicleDetail(pane, v) {
     const chips = [];
     if (dl) chips.push(`<span class="vt-chip ${dl.tone}">${escapeHtml(dl.label)}</span>`);
     if (x.betrag > 0) chips.push(`<span class="text-[11px] text-ink/45">${escapeHtml(fmtEur(x.betrag))}</span>`);
-    if (x.pending) chips.push(`<span class="vt-chip muted">${navigator.onLine ? '⏳ wird übertragen' : '📴 wird nachgereicht'}</span>`);
+    if (x.pending) chips.push(`<span class="vt-chip muted">${navigator.onLine ? tk('home.transferring') : tk('home.willSubmitted')}</span>`);
     return `
       <button type="button" class="fin-doc-row flex items-center gap-2.5 rounded-xl border border-ink/10 px-2.5 py-2 text-left w-full" data-fzact="doc-open" data-id="${escapeHtml(x.id)}">
         <span class="text-xl leading-none shrink-0">${escapeHtml(cat.icon || '🗂️')}</span>
         <span class="min-w-0 flex-1">
-          <span class="block text-sm font-medium truncate">${escapeHtml(x.titel || 'Dokument')}</span>
+          <span class="block text-sm font-medium truncate">${escapeHtml(x.titel || tk('search.type.doc'))}</span>
           <span class="block text-[11px] text-ink/45 truncate">${escapeHtml(meta)}</span>
           ${chips.length ? `<span class="flex items-center gap-1.5 mt-1 flex-wrap">${chips.join('')}</span>` : ''}
         </span>
@@ -1215,63 +1230,63 @@ function renderVehicleDetail(pane, v) {
   }).join('');
   const legacyHtml = legacy.length ? `
     <div class="mt-2">
-      <p class="text-[11px] text-ink/45 mb-1.5">${navigator.onLine ? '⏳ Ältere Fahrzeugdokumente werden gerade nach „Dokumente“ übernommen …' : '📴 Ältere Fahrzeugdokumente werden nach „Dokumente“ übernommen, sobald wieder Verbindung besteht.'}</p>
+      <p class="text-[11px] text-ink/45 mb-1.5">${navigator.onLine ? tk('vehicle.olderVehicleDocumentsBeing') : tk('vehicle.olderVehicleDocumentsWill')}</p>
       <div class="flex flex-col gap-1.5">${finDocRowsHtml(legacy, bezug)}</div>
     </div>` : '';
   const docTypes = fzDocTypesFor(v);
   const dokumente = fzCard(`
     <div class="flex items-center justify-between gap-2 mb-2">
-      <div class="fz-h" style="margin:0">📎 Dokumente <span class="text-ink/40 font-normal normal-case">${(linked.length + legacy.length) || ''}</span></div>
-      ${linked.length ? `<button type="button" class="text-xs text-ink/55 hover:text-pine whitespace-nowrap" data-fzact="doc-all" data-v="${escapeHtml(v.id)}">In Dokumente ›</button>` : ''}
+      <div class="fz-h" style="margin:0">${tk('contract.documents')} <span class="text-ink/40 font-normal normal-case">${(linked.length + legacy.length) || ''}</span></div>
+      ${linked.length ? `<button type="button" class="text-xs text-ink/55 hover:text-pine whitespace-nowrap" data-fzact="doc-all" data-v="${escapeHtml(v.id)}">${tk('vehicle.documents')}</button>` : ''}
     </div>
     ${archived ? '' : `<div class="flex items-center gap-2 mb-2">
-      <select id="fzDocTypeSelect" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="Art des Dokuments">${docTypes.map(t => `<option value="${t.id}">${escapeHtml(t.icon + ' ' + t.label)}</option>`).join('')}</select>
-      <button type="button" class="shrink-0 px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap" data-fzact="doc-add" data-v="${escapeHtml(v.id)}">+ Hochladen</button>
+      <select id="fzDocTypeSelect" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="${escapeHtml(tk('contract.typeDocument'))}">${docTypes.map(t => `<option value="${t.id}">${escapeHtml(t.icon + ' ' + t.label)}</option>`).join('')}</select>
+      <button type="button" class="shrink-0 px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap" data-fzact="doc-add" data-v="${escapeHtml(v.id)}">${tk('contract.upload')}</button>
     </div>`}
-    <div class="flex flex-col gap-1.5">${linkedRows || (legacy.length ? '' : '<p class="text-xs text-ink/40 italic">Fahrzeugschein, HU-Bericht, Kaufvertrag, Werkstattrechnungen … als PDF oder Foto. Sie landen automatisch unter „Dokumente“ in der passenden Kategorie – mit Kennzeichen, FIN, Fristen und Gewährleistung.</p>')}</div>
+    <div class="flex flex-col gap-1.5">${linkedRows || (legacy.length ? '' : ('<p class="text-xs text-ink/40 italic">' + tk('vehicle.registrationCertificateMotReport') + '</p>'))}</div>
     ${legacyHtml}
     ${finDocStatusHint()}
-    ${archived ? '' : `<button type="button" class="mt-2 text-xs text-ink/55 hover:text-pine" data-fzact="doc-link" data-v="${escapeHtml(v.id)}">🔗 Vorhandene aus „Dokumente“ verknüpfen</button>`}
-    ${receipts.length ? `<details class="vt-more mt-3 rounded-xl border border-ink/10 px-3 py-2"><summary class="text-sm cursor-pointer select-none">🧾 Belege aus dem Verlauf (${receipts.length})</summary><div class="flex flex-col gap-1.5 pt-2">${finDocRowsHtml(receipts, '')}</div></details>` : ''}`);
+    ${archived ? '' : `<button type="button" class="mt-2 text-xs text-ink/55 hover:text-pine" data-fzact="doc-link" data-v="${escapeHtml(v.id)}">${tk('home.linkExistingFromDocuments')}</button>`}
+    ${receipts.length ? `<details class="vt-more mt-3 rounded-xl border border-ink/10 px-3 py-2"><summary class="text-sm cursor-pointer select-none">${tk('vehicle.receiptsFromHistory', { n: receipts.length })}</summary><div class="flex flex-col gap-1.5 pt-2">${finDocRowsHtml(receipts, '')}</div></details>` : ''}`);
 
   // Vehicle data
   const drows = [];
-  if (v.vin) drows.push([k.bike ? 'Rahmennummer' : 'FIN', v.vin, true]);
+  if (v.vin) drows.push([k.bike ? tk('vehicle.frameNumber') : tk('vehicle.vin'), v.vin, true]);
   if (v.hsn || v.tsn) drows.push(['HSN / TSN', [v.hsn, v.tsn].filter(Boolean).join(' / '), true]);
-  if (fzIsYm(v.firstReg)) drows.push([k.bike ? 'Baujahr' : 'Erstzulassung', v.firstReg.slice(5, 7) + '/' + v.firstReg.slice(0, 4)]);
-  if (Number(v.tank) > 0) drows.push(['Tank', fzNum(v.tank, 0) + ' l']);
-  if (Number(v.battery) > 0) drows.push(['Akku', fzNum(v.battery, 1) + ' kWh']);
-  if (vtIsIso(v.purchaseDate) || Number(v.purchasePrice) > 0) drows.push(['Gekauft', [vtIsIso(v.purchaseDate) ? vtFmt(v.purchaseDate) : '', Number(v.purchasePrice) > 0 ? fzEur(v.purchasePrice) : '', v.odoStart !== '' && Number(v.odoStart) >= 0 && v.odoStart != null ? 'bei ' + fzKmText(v.odoStart) : ''].filter(Boolean).join(' · ')]);
-  if (Number(v.value) > 0) drows.push(['Aktueller Wert', fzEur(v.value) + (vtIsIso(v.valueDate) ? ' (Stand ' + vtFmt(v.valueDate) + ')' : '')]);
-  if (fzLossPerDay(v) > 0) drows.push(['Wertverlust', '≈ ' + fzEur(fzLossPerDay(v) * 30.44) + ' / Monat']);
+  if (fzIsYm(v.firstReg)) drows.push([k.bike ? tk('home.yearManufacture') : tk('vehicle.firstRegistration'), v.firstReg.slice(5, 7) + '/' + v.firstReg.slice(0, 4)]);
+  if (Number(v.tank) > 0) drows.push([tk('vehicle.tank'), fzNum(v.tank, 0) + ' l']);
+  if (Number(v.battery) > 0) drows.push([tk('vehicle.battery'), fzNum(v.battery, 1) + ' kWh']);
+  if (vtIsIso(v.purchaseDate) || Number(v.purchasePrice) > 0) drows.push([tk('vehicle.bought'), [vtIsIso(v.purchaseDate) ? vtFmt(v.purchaseDate) : '', Number(v.purchasePrice) > 0 ? fzEur(v.purchasePrice) : '', v.odoStart !== '' && Number(v.odoStart) >= 0 && v.odoStart != null ? 'bei ' + fzKmText(v.odoStart) : ''].filter(Boolean).join(' · ')]);
+  if (Number(v.value) > 0) drows.push([tk('vehicle.currentValue'), fzEur(v.value) + (vtIsIso(v.valueDate) ? ' ' + tk('vehicle.asOfDate', { date: vtFmt(v.valueDate) }) : '')]);
+  if (fzLossPerDay(v) > 0) drows.push([tk('vehicle.depreciation'), '≈ ' + tk('home.amountPerMonth', { amount: fzEur(fzLossPerDay(v) * 30.44) })]);
   const daten = fzCard(`
-    <div class="fz-h">🪪 Fahrzeugdaten</div>
-    ${drows.length ? `<div>${drows.map(r => `<div class="vt-row"><span>${escapeHtml(r[0])}</span><span>${r[2] ? `<button type="button" class="font-mono text-ink/80 hover:text-pine" data-fzact="copy" data-text="${escapeHtml(r[1])}" title="Kopieren">${escapeHtml(r[1])} ⧉</button>` : escapeHtml(r[1])}</span></div>`).join('')}</div>` : '<p class="text-xs text-ink/45">FIN, HSN/TSN, Kaufdaten und aktuellen Wert unter „Bearbeiten“ ergänzen – der Wertverlust fließt dann in die Bilanz ein.</p>'}
+    <div class="fz-h">${tk('vehicle.vehicleData')}</div>
+    ${drows.length ? `<div>${drows.map(r => `<div class="vt-row"><span>${escapeHtml(r[0])}</span><span>${r[2] ? `<button type="button" class="font-mono text-ink/80 hover:text-pine" data-fzact="copy" data-text="${escapeHtml(r[1])}" title="${escapeHtml(tk('common.copy'))}">${escapeHtml(r[1])} ⧉</button>` : escapeHtml(r[1])}</span></div>`).join('')}</div>` : ('<p class="text-xs text-ink/45">' + tk('vehicle.addVinHsnTsn') + '</p>')}
     ${v.note ? `<p class="text-sm text-ink/70 mt-3" style="white-space:pre-line">${escapeHtml(v.note)}</p>` : ''}
     <div class="flex flex-wrap gap-2 mt-4">
-      <button type="button" class="fz-mini-btn" data-fzact="edit" data-v="${escapeHtml(v.id)}">✎ Bearbeiten</button>
-      ${archived ? '' : `<button type="button" class="fz-mini-btn" data-fzact="archive" data-v="${escapeHtml(v.id)}">🗄️ Verkauft / abgemeldet</button>`}
+      <button type="button" class="fz-mini-btn" data-fzact="edit" data-v="${escapeHtml(v.id)}">${tk('home.edit')}</button>
+      ${archived ? '' : `<button type="button" class="fz-mini-btn" data-fzact="archive" data-v="${escapeHtml(v.id)}">${tk('vehicle.soldDeregistered2')}</button>`}
     </div>`);
 
   pane.innerHTML = `
-    <button type="button" class="self-start text-sm text-ink/55 hover:text-pine -mb-1" data-fzact="back">‹ Alle Fahrzeuge</button>
+    <button type="button" class="self-start text-sm text-ink/55 hover:text-pine -mb-1" data-fzact="back">${tk('vehicle.allVehicles')}</button>
     ${hero}${dueHtml}${tiles}${chart}${termine}${vertraege}${kosten}${verlauf}${dokumente}${daten}`;
 }
 
 /* ---------- Balance ---------- */
 function fzBalRange() {
   const today = finTodayIso();
-  if (fzBalPeriod === '12m') return { s: vtAddDays(vtAddMonths(today, -12, false), 1), e: today, label: 'Letzte 12 Monate' };
+  if (fzBalPeriod === '12m') return { s: vtAddDays(vtAddMonths(today, -12, false), 1), e: today, label: tk('vehicle.last12Months') };
   if (fzBalPeriod === 'gesamt') {
     const list = fzBalVehicle ? [fzVehicle(fzBalVehicle)].filter(Boolean) : fzVehicles();
     const s = list.map(fzStartDate).sort()[0] || today;
-    return { s, e: today, label: 'Seit ' + vtFmt(s) };
+    return { s, e: today, label: (tk('vehicle.since') + ' ') + vtFmt(s) };
   }
   return { s: fzBalYear + '-01-01', e: fzBalYear + '-12-31', label: String(fzBalYear) };
 }
 function renderVehicleBalance(pane) {
   if (!fzVehicles().length) {
-    pane.innerHTML = fzCard('<p class="text-sm text-ink/50 text-center py-4">Noch keine Fahrzeuge – lege zuerst eins an.</p>');
+    pane.innerHTML = fzCard(('<p class="text-sm text-ink/50 text-center py-4">' + tk('vehicle.noVehiclesYetCreate') + '</p>'));
     return;
   }
   if (fzBalVehicle && !fzVehicle(fzBalVehicle)) fzBalVehicle = '';
@@ -1299,7 +1314,7 @@ function renderVehicleBalance(pane) {
   } else {
     let mk = rng.s.slice(0, 7);
     for (let i = 0; i < 12; i++) {
-      barLabels.push(FZ_MONTH_NAMES[Number(mk.slice(5, 7)) - 1].slice(0, 3));
+      barLabels.push(fzMonthName(Number(mk.slice(5, 7)) - 1, 'short'));
       barVals.push(bals.reduce((s, b) => s + (b.byMonth[mk] || 0), 0));
       mk = vtAddMonths(mk + '-01', 1, false).slice(0, 7);
     }
@@ -1320,18 +1335,18 @@ function renderVehicleBalance(pane) {
     return `<div class="vt-row"><span>${escapeHtml(FZ_FUELS[f].label)}</span><span>${fzNum(e.qty, u === 'kWh' ? 0 : 1)} ${u} · ${fzEur(e.cost)}${e.cost > 0 && e.qty > 0 ? ' · Ø ' + fzNum(e.cost / e.qty, u === 'kWh' ? 2 : 3) + ' ' + curSym() + '/' + u : ''}</span></div>`;
   }).join('');
 
-  const periodBtns = [['jahr', 'Jahr'], ['12m', '12 Monate'], ['gesamt', 'Gesamt']].map(p => `<button type="button" class="contract-status-btn px-3 py-1 rounded-md text-xs text-ink/60 transition${fzBalPeriod === p[0] ? ' active' : ''}" data-fzact="bal-period" data-p="${p[0]}">${p[1]}</button>`).join('');
+  const periodBtns = [['jahr', tk('cal.year')], ['12m', tk('contract.12Months')], ['gesamt', tk('shop.done.total')]].map(p => `<button type="button" class="contract-status-btn px-3 py-1 rounded-md text-xs text-ink/60 transition${fzBalPeriod === p[0] ? ' active' : ''}" data-fzact="bal-period" data-p="${p[0]}">${p[1]}</button>`).join('');
   const controls = `
     <div class="flex items-center gap-2 flex-wrap">
       <div class="inline-flex rounded-lg border border-ink/15 p-0.5 shrink-0">${periodBtns}</div>
       ${fzBalPeriod === 'jahr' ? `<div class="flex items-center gap-1">
-        <button type="button" class="shrink-0 w-8 h-8 rounded-full text-ink/60 hover:text-pine hover:bg-ink/5 grid place-items-center text-xl leading-none select-none" data-fzact="bal-year" data-d="-1" aria-label="Vorheriges Jahr">‹</button>
+        <button type="button" class="shrink-0 w-8 h-8 rounded-full text-ink/60 hover:text-pine hover:bg-ink/5 grid place-items-center text-xl leading-none select-none" data-fzact="bal-year" data-d="-1" aria-label="${escapeHtml(tk('vehicle.previousYear'))}">‹</button>
         <span class="text-sm font-medium">${fzBalYear}</span>
-        <button type="button" class="shrink-0 w-8 h-8 rounded-full text-ink/60 hover:text-pine hover:bg-ink/5 grid place-items-center text-xl leading-none select-none" data-fzact="bal-year" data-d="1" aria-label="Nächstes Jahr">›</button>
+        <button type="button" class="shrink-0 w-8 h-8 rounded-full text-ink/60 hover:text-pine hover:bg-ink/5 grid place-items-center text-xl leading-none select-none" data-fzact="bal-year" data-d="1" aria-label="${escapeHtml(tk('vehicle.nextYear'))}">›</button>
       </div>` : ''}
-      <select id="fzBalVehicleSel" class="min-w-0 flex-1 rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="Fahrzeug">
-        <option value="">Alle Fahrzeuge</option>
-        ${fzVehicles().map(v => `<option value="${escapeHtml(v.id)}"${v.id === fzBalVehicle ? ' selected' : ''}>${escapeHtml(fzKind(v.kind).icon + ' ' + fzName(v) + (fzIsArchived(v) ? ' (verkauft)' : ''))}</option>`).join('')}
+      <select id="fzBalVehicleSel" class="min-w-0 flex-1 rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="${escapeHtml(tk('search.type.vehicle'))}">
+        <option value="">${tk('vehicle.allVehicles2')}</option>
+        ${fzVehicles().map(v => `<option value="${escapeHtml(v.id)}"${v.id === fzBalVehicle ? ' selected' : ''}>${escapeHtml(fzKind(v.kind).icon + ' ' + fzName(v) + (fzIsArchived(v) ? ' (' + tk('vehicle.sold') + ')' : ''))}</option>`).join('')}
       </select>
     </div>`;
 
@@ -1339,36 +1354,36 @@ function renderVehicleBalance(pane) {
     <div class="text-[11px] uppercase tracking-wide text-ink/40">${escapeHtml(rng.label)}${fzBalVehicle ? ' · ' + escapeHtml(fzName(fzVehicle(fzBalVehicle))) : ''}</div>
     <div class="font-serif text-3xl">${fzEur(total)}</div>
     <div class="grid grid-cols-3 gap-2 mt-3">
-      ${fzTile('Pro Monat', fzEur(total / months), 'Durchschnitt')}
-      ${fzTile('Gefahren', km > 0 ? fzKmText(km) : '–', 'aus km-Ständen')}
-      ${fzTile('Pro km', km >= 100 ? fmtEur(total / km) : '–', 'Vollkosten')}
+      ${fzTile(tk('depot.perMonth2'), fzEur(total / months), tk('vehicle.average'))}
+      ${fzTile(tk('vehicle.driven'), km > 0 ? fzKmText(km) : '–', tk('vehicle.fromOdometerReadings'))}
+      ${fzTile(tk('vehicle.perKm'), km >= 100 ? fmtEur(total / km) : '–', tk('vehicle.fullCosts'))}
     </div>
-    ${total > 0 ? `<div class="mt-3"><div class="flex justify-between text-[11px] text-ink/50 mb-1"><span>Fix: ${fzEur(fixed)}</span><span>Variabel: ${fzEur(total - fixed)}</span></div><div class="vt-bar"><span style="width:${Math.round(fixed / total * 100)}%;background:#4A6FA5"></span></div></div>` : ''}`);
+    ${total > 0 ? `<div class="mt-3"><div class="flex justify-between text-[11px] text-ink/50 mb-1"><span>${tk('vehicle.fixed', { fzEur: fzEur(fixed) })}</span><span>${tk('vehicle.variable', { fzEur: fzEur(total - fixed) })}</span></div><div class="vt-bar"><span style="width:${Math.round(fixed / total * 100)}%;background:#4A6FA5"></span></div></div>` : ''}`);
 
   const breakdown = fzCard(`
-    <div class="fz-h">📊 Wofür</div>
+    <div class="fz-h">${tk('vehicle.what')}</div>
     ${gRows.length ? `<div class="flex flex-col gap-2.5">${gRows.map(x => `
       <div>
         <div class="flex items-center justify-between gap-2 text-xs mb-1"><span class="truncate">${escapeHtml(x.g.icon + ' ' + x.g.label)}</span><span class="shrink-0"><b>${fzEur(x.val)}</b> <span class="text-ink/45">${total ? Math.round(x.val / total * 100) : 0} %</span></span></div>
         <div class="vt-bar"><span style="width:${Math.max(3, Math.round(x.val / maxG * 100))}%;background:${x.g.color}"></span></div>
-      </div>`).join('')}</div>` : '<p class="text-xs text-ink/45">Keine Kosten in diesem Zeitraum.</p>'}
-    ${!list.some(v => fzLossPerDay(v) > 0) ? '<p class="text-[11px] text-ink/45 mt-3">Tipp: Kaufpreis, Kaufdatum und aktuellen Wert beim Fahrzeug eintragen – dann rechnet die Bilanz den Wertverlust mit ein.</p>' : ''}`);
+      </div>`).join('')}</div>` : ('<p class="text-xs text-ink/45">' + tk('vehicle.noCostsPeriod') + '</p>')}
+    ${!list.some(v => fzLossPerDay(v) > 0) ? ('<p class="text-[11px] text-ink/45 mt-3">' + tk('vehicle.tipEnterPurchasePrice') + '</p>') : ''}`);
 
   const trend = barVals.some(x => x > 0) ? fzCard(`
-    <div class="fz-h">📅 ${fzBalPeriod === 'gesamt' ? 'Pro Jahr' : 'Pro Monat'}</div>
+    <div class="fz-h">📅 ${fzBalPeriod === 'gesamt' ? tk('contract.perYear') : tk('depot.perMonth2')}</div>
     ${fzBarsHtml(barVals, barLabels, fzBalVehicle ? fzColor(fzVehicle(fzBalVehicle)) : 'var(--c-pine)', { short: val => curPlain0(val), fmt: val => fzEur(val) })}
-    <p class="text-[11px] text-ink/45 mt-2">Ohne Wertverlust · Versicherung und Steuer im Monat der Abbuchung</p>`) : '';
+    <p class="text-[11px] text-ink/45 mt-2">${tk('vehicle.withoutDepreciationInsuranceTax')}</p>`) : '';
 
   const cmp = !fzBalVehicle && bals.length > 1 ? fzCard(`
-    <div class="fz-h">🚦 Vergleich</div>
-    <div style="overflow-x:auto"><table class="fz-cmp w-full"><thead><tr><th>Fahrzeug</th><th>Gesamt</th><th>/ Monat</th><th>km</th><th>/ km</th></tr></thead><tbody>
+    <div class="fz-h">${tk('vehicle.comparison')}</div>
+    <div style="overflow-x:auto"><table class="fz-cmp w-full"><thead><tr><th>${tk('search.type.vehicle')}</th><th>${tk('shop.done.total')}</th><th>${tk('contract.perMonthSlash')}</th><th>km</th><th>/ km</th></tr></thead><tbody>
       ${bals.slice().sort((a, b) => b.total - a.total).map(b => `<tr><td><button type="button" class="text-left hover:text-pine" data-fzact="bal-pick" data-v="${escapeHtml(b.v.id)}">${escapeHtml(fzKind(b.v.kind).icon + ' ' + fzName(b.v))}</button></td><td>${fzEur(b.total)}</td><td>${fzEur(b.total / b.months)}</td><td>${b.km ? fzNum(b.km) : '–'}</td><td>${b.km >= 100 ? fmtEur(b.total / b.km) : '–'}</td></tr>`).join('')}
     </tbody></table></div>`) : '';
 
   const energyCard = energyRows ? fzCard(`
-    <div class="fz-h">⛽ Energie</div>
+    <div class="fz-h">${tk('vehicle.energy2')}</div>
     <div>${energyRows}</div>
-    ${co2 > 0 ? `<p class="text-[11px] text-ink/45 mt-2">≈ ${fzNum(co2 / 1000, co2 >= 10000 ? 1 : 2)} t CO₂ (grob: Verbrennung bzw. deutscher Strommix)</p>` : ''}`) : '';
+    ${co2 > 0 ? `<p class="text-[11px] text-ink/45 mt-2">${tk('vehicle.tCo2RoughCombustion', { fzNum: fzNum(co2 / 1000, co2 >= 10000 ? 1 : 2) })}</p>` : ''}`) : '';
 
   pane.innerHTML = controls + head + breakdown + trend + cmp + energyCard;
   const sel = document.getElementById('fzBalVehicleSel');
@@ -1403,7 +1418,7 @@ function renderVehicleTools(pane) {
   const dec = x => fzDecInput(x);
   const vSel = fzActiveVehicles().length ? `
     <div class="flex items-center gap-2">
-      <span class="text-xs text-ink/50 shrink-0">Werte von</span>
+      <span class="text-xs text-ink/50 shrink-0">${tk('vehicle.valuesFrom')}</span>
       <select id="fzToolVehicleSel" class="min-w-0 flex-1 rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white">
         ${fzActiveVehicles().map(v => `<option value="${escapeHtml(v.id)}"${d.v && v.id === d.v.id ? ' selected' : ''}>${escapeHtml(fzKind(v.kind).icon + ' ' + fzName(v))}</option>`).join('')}
       </select>
@@ -1414,38 +1429,38 @@ function renderVehicleTools(pane) {
       <div class="pt-3">${body}<div id="${id}" class="fz-res mt-1"></div></div>
     </details>`;
   pane.innerHTML = vSel
-    + tool('fzResTrip', '🧭', 'Fahrtkosten', 'Was kostet die Fahrt – und pro Person?', `
-      <div class="fz-grid2">${fzToolIn('fzT1Km', 'Strecke', '120', 'km', { int: true })}${fzToolIn('fzT1Pers', 'Personen', '1', '', { int: true })}</div>
-      <label class="fz-check"><input type="checkbox" id="fzT1Back" class="fz-calc" checked /> Hin und zurück</label>
-      <div class="fz-grid2">${fzToolIn('fzT1Cons', 'Verbrauch', dec(d.cons), d.unit + '/100')}${fzToolIn('fzT1Price', 'Preis', dec(d.price), curSym() + '/' + d.unit)}</div>
-      ${fzToolIn('fzT1PerKm', 'Vollkosten je km (optional)', d.perKm != null ? fzDecInput(d.perKm, 2) : '', curSym() + '/km')}`, true)
-    + tool('fzResEv', '⚡', 'Elektro oder Verbrenner?', 'Jährliche Kosten im Vergleich – und ab wann sich der Mehrpreis rechnet', `
-      ${fzToolIn('fzT2Km', 'Fahrleistung pro Jahr', String(d.kmYear), 'km', { int: true })}
-      <div class="text-xs font-semibold text-ink/55 mb-2 mt-1">⛽ Verbrenner</div>
-      <div class="fz-grid2">${fzToolIn('fzT2VCons', 'Verbrauch', dec(d.benzin), 'l/100')}${fzToolIn('fzT2VPrice', 'Spritpreis', dec(d.pBenzin), curSym() + '/l')}</div>
-      <div class="fz-grid2">${fzToolIn('fzT2VFix', 'Steuer + Versicherung', '650', curSym() + '/Jahr', { int: true })}${fzToolIn('fzT2VMaint', 'Wartung', '450', curSym() + '/Jahr', { int: true })}</div>
-      ${fzToolIn('fzT2VBuy', 'Kaufpreis', '30000', curSym(), { int: true })}
-      <div class="text-xs font-semibold text-ink/55 mb-2 mt-1">🔌 Elektro</div>
-      <div class="fz-grid2">${fzToolIn('fzT2ECons', 'Verbrauch', '17', 'kWh/100')}${fzToolIn('fzT2EHome', 'Anteil zuhause', '80', '%', { int: true })}</div>
-      <div class="fz-grid2">${fzToolIn('fzT2EPHome', 'Strom zuhause', dec(d.pHome), curSym() + '/kWh')}${fzToolIn('fzT2EPPub', 'Strom unterwegs', dec(d.pPublic), curSym() + '/kWh')}</div>
-      <div class="fz-grid2">${fzToolIn('fzT2EFix', 'Steuer + Versicherung', '550', curSym() + '/Jahr', { int: true })}${fzToolIn('fzT2EMaint', 'Wartung', '300', curSym() + '/Jahr', { int: true })}</div>
-      ${fzToolIn('fzT2EBuy', 'Kaufpreis', '36000', curSym(), { int: true })}
-      <p class="text-[11px] text-ink/45 mb-2">E-Autos sind je nach Erstzulassung von der Kfz-Steuer befreit – bei Steuer + Versicherung dann nur die Versicherung eintragen.</p>`)
-    + tool('fzResLpg', '🔥', 'Lohnt sich Autogas (LPG)?', 'Ersparnis pro Jahr und Amortisation einer Umrüstung', `
-      <div class="fz-grid2">${fzToolIn('fzT3Cost', 'Umrüstung', '2800', curSym(), { int: true })}${fzToolIn('fzT3Km', 'Fahrleistung', String(d.kmYear), 'km/Jahr', { int: true })}</div>
-      <div class="fz-grid2">${fzToolIn('fzT3Cons', 'Benzinverbrauch', dec(d.benzin), 'l/100')}${fzToolIn('fzT3PB', 'Benzinpreis', dec(d.pBenzin), curSym() + '/l')}</div>
-      <div class="fz-grid2">${fzToolIn('fzT3More', 'Mehrverbrauch LPG', '20', '%', { int: true })}${fzToolIn('fzT3PL', 'LPG-Preis', dec(d.pLpg), curSym() + '/l')}</div>
-      ${fzToolIn('fzT3Extra', 'Zusatzkosten (Gasprüfung, Filter)', '80', curSym() + '/Jahr', { int: true })}`)
-    + tool('fzResBike', '🚲', 'Rad statt Auto', 'Was bringt der Arbeitsweg mit dem Rad – Geld, CO₂ und Kalorien', `
-      <div class="fz-grid2">${fzToolIn('fzT4Km', 'Strecke einfach', '7', 'km')}${fzToolIn('fzT4Days', 'Tage pro Woche', '3', '', { int: true })}</div>
-      <div class="fz-grid2">${fzToolIn('fzT4Weeks', 'Wochen pro Jahr', '40', '', { int: true })}${fzToolIn('fzT4PerKm', 'Auto-Kosten je km', d.perKm != null ? fzDecInput(d.perKm, 2) : numDec('0.30'), curSym() + '/km')}</div>
-      <div class="fz-grid2">${fzToolIn('fzT4Cons', 'Auto-Verbrauch', dec(d.fuel === 'strom' ? 7 : d.cons), 'l/100')}${fzToolIn('fzT4Bike', 'Fahrrad-Kosten', '150', curSym() + '/Jahr', { int: true })}</div>
-      <label class="fz-check"><input type="checkbox" id="fzT4Ebike" class="fz-calc" /> Mit dem E-Bike</label>`)
-    + tool('fzResDetour', '📍', 'Umweg zur günstigeren Tankstelle?', 'Lohnt sich der Umweg für ein paar Cent weniger?', `
-      <div class="fz-grid2">${fzToolIn('fzT5Qty', 'Tankmenge', '45', 'l', { int: true })}${fzToolIn('fzT5Diff', 'Preisunterschied', '6', 'ct/l')}</div>
-      <div class="fz-grid2">${fzToolIn('fzT5Km', 'Umweg (hin + zurück)', '6', 'km')}${fzToolIn('fzT5Cons', 'Verbrauch', dec(d.fuel === 'strom' ? 7 : d.cons), 'l/100')}</div>
-      ${fzToolIn('fzT5Price', 'Spritpreis', dec(d.fuel === 'strom' ? d.pBenzin : d.price), curSym() + '/l')}`)
-    + '<p class="text-[11px] text-ink/45 px-1">Alle Rechner sind Schätzungen. Vorgeschlagene Werte stammen aus deinen Einträgen, sonst aus typischen Durchschnittswerten – einfach anpassen.</p>';
+    + tool('fzResTrip', '🧭', tk('vehicle.tripCosts'), tk('vehicle.whatDoesTripCost'), `
+      <div class="fz-grid2">${fzToolIn('fzT1Km', tk('vehicle.distance'), '120', 'km', { int: true })}${fzToolIn('fzT1Pers', tk('home.people'), '1', '', { int: true })}</div>
+      <label class="fz-check"><input type="checkbox" id="fzT1Back" class="fz-calc" checked /> ${tk('vehicle.returnTrip')}</label>
+      <div class="fz-grid2">${fzToolIn('fzT1Cons', tk('vehicle.consumption2'), dec(d.cons), d.unit + '/100')}${fzToolIn('fzT1Price', tk('lists.item.price'), dec(d.price), curSym() + '/' + d.unit)}</div>
+      ${fzToolIn('fzT1PerKm', tk('vehicle.fullCostPerKm'), d.perKm != null ? fzDecInput(d.perKm, 2) : '', curSym() + '/km')}`, true)
+    + tool('fzResEv', '⚡', tk('vehicle.electricCombustion'), tk('vehicle.annualCostsComparedWhen'), `
+      ${fzToolIn('fzT2Km', tk('vehicle.mileagePerYear'), String(d.kmYear), 'km', { int: true })}
+      <div class="text-xs font-semibold text-ink/55 mb-2 mt-1">${tk('vehicle.combustion')}</div>
+      <div class="fz-grid2">${fzToolIn('fzT2VCons', tk('vehicle.consumption2'), dec(d.benzin), 'l/100')}${fzToolIn('fzT2VPrice', tk('vehicle.fuelPrice'), dec(d.pBenzin), curSym() + '/l')}</div>
+      <div class="fz-grid2">${fzToolIn('fzT2VFix', tk('vehicle.taxInsurance'), '650', curSym() + tk('vehicle.perYearUnit'), { int: true })}${fzToolIn('fzT2VMaint', tk('home.maintenance2'), '450', curSym() + tk('vehicle.perYearUnit'), { int: true })}</div>
+      ${fzToolIn('fzT2VBuy', tk('home.purchasePrice'), '30000', curSym(), { int: true })}
+      <div class="text-xs font-semibold text-ink/55 mb-2 mt-1">${tk('vehicle.electric')}</div>
+      <div class="fz-grid2">${fzToolIn('fzT2ECons', tk('vehicle.consumption2'), '17', 'kWh/100')}${fzToolIn('fzT2EHome', tk('vehicle.shareHome'), '80', '%', { int: true })}</div>
+      <div class="fz-grid2">${fzToolIn('fzT2EPHome', tk('vehicle.electricityHome'), dec(d.pHome), curSym() + '/kWh')}${fzToolIn('fzT2EPPub', tk('vehicle.electricityGo'), dec(d.pPublic), curSym() + '/kWh')}</div>
+      <div class="fz-grid2">${fzToolIn('fzT2EFix', tk('vehicle.taxInsurance'), '550', curSym() + tk('vehicle.perYearUnit'), { int: true })}${fzToolIn('fzT2EMaint', tk('home.maintenance2'), '300', curSym() + tk('vehicle.perYearUnit'), { int: true })}</div>
+      ${fzToolIn('fzT2EBuy', tk('home.purchasePrice'), '36000', curSym(), { int: true })}
+      <p class="text-[11px] text-ink/45 mb-2">${tk('vehicle.dependingFirstRegistrationE')}</p>`)
+    + tool('fzResLpg', '🔥', tk('vehicle.lpgWorth'), tk('vehicle.savingsPerYearPayback'), `
+      <div class="fz-grid2">${fzToolIn('fzT3Cost', tk('vehicle.conversion'), '2800', curSym(), { int: true })}${fzToolIn('fzT3Km', tk('vehicle.mileage'), String(d.kmYear), tk('vehicle.kmYear'), { int: true })}</div>
+      <div class="fz-grid2">${fzToolIn('fzT3Cons', tk('vehicle.petrolConsumption'), dec(d.benzin), 'l/100')}${fzToolIn('fzT3PB', tk('vehicle.petrolPrice'), dec(d.pBenzin), curSym() + '/l')}</div>
+      <div class="fz-grid2">${fzToolIn('fzT3More', tk('vehicle.extraLpgConsumption'), '20', '%', { int: true })}${fzToolIn('fzT3PL', tk('vehicle.lpgPrice'), dec(d.pLpg), curSym() + '/l')}</div>
+      ${fzToolIn('fzT3Extra', tk('vehicle.additionalCostsGasInspection'), '80', curSym() + tk('vehicle.perYearUnit'), { int: true })}`)
+    + tool('fzResBike', '🚲', tk('vehicle.bikeInsteadCar'), tk('vehicle.whatDoesCommutingBike'), `
+      <div class="fz-grid2">${fzToolIn('fzT4Km', tk('vehicle.oneWayDistance'), '7', 'km')}${fzToolIn('fzT4Days', tk('vehicle.daysPerWeek'), '3', '', { int: true })}</div>
+      <div class="fz-grid2">${fzToolIn('fzT4Weeks', tk('vehicle.weeksPerYear'), '40', '', { int: true })}${fzToolIn('fzT4PerKm', tk('vehicle.carCostsPerKm'), d.perKm != null ? fzDecInput(d.perKm, 2) : numDec('0.30'), curSym() + '/km')}</div>
+      <div class="fz-grid2">${fzToolIn('fzT4Cons', tk('vehicle.carConsumption'), dec(d.fuel === 'strom' ? 7 : d.cons), 'l/100')}${fzToolIn('fzT4Bike', tk('vehicle.bikeCosts'), '150', curSym() + tk('vehicle.perYearUnit'), { int: true })}</div>
+      <label class="fz-check"><input type="checkbox" id="fzT4Ebike" class="fz-calc" /> ${tk('vehicle.eBike')}</label>`)
+    + tool('fzResDetour', '📍', tk('vehicle.detourCheaperPetrolStation'), tk('vehicle.detourWorthFewCents'), `
+      <div class="fz-grid2">${fzToolIn('fzT5Qty', tk('vehicle.fuelAmount'), '45', 'l', { int: true })}${fzToolIn('fzT5Diff', tk('vehicle.priceDifference'), '6', 'ct/l')}</div>
+      <div class="fz-grid2">${fzToolIn('fzT5Km', tk('vehicle.detourBack'), '6', 'km')}${fzToolIn('fzT5Cons', tk('vehicle.consumption2'), dec(d.fuel === 'strom' ? 7 : d.cons), 'l/100')}</div>
+      ${fzToolIn('fzT5Price', tk('vehicle.fuelPrice'), dec(d.fuel === 'strom' ? d.pBenzin : d.price), curSym() + '/l')}`)
+    + ('<p class="text-[11px] text-ink/45 px-1">' + tk('vehicle.allCalculatorsEstimatesSuggested') + '</p>');
   fzToolsBuilt = true;
   const sel = document.getElementById('fzToolVehicleSel');
   if (sel) sel.addEventListener('change', () => { fzToolVehicle = sel.value; renderVehicleTools(pane); });
@@ -1465,11 +1480,11 @@ function fzCalc() {
   if (ok(km) && ok(cons) && ok(price) && km > 0) {
     const qty = km * cons / 100;
     const cost = qty * price;
-    let html = `Energie: <b>${fzEur(cost)}</b> für ${fzNum(qty, 1)} ${escapeHtml(unitOf('fzT1Cons'))} auf ${fzKmText(km)}`;
-    if (pers > 1) html += `<br>pro Person: <b>${fzEur(cost / pers)}</b>`;
-    if (ok(pk) && pk > 0) html += `<br>Mit Vollkosten (Wertverlust, Versicherung, Wartung …): <b>${fzEur(km * pk)}</b>${pers > 1 ? ' · ' + fzEur(km * pk / pers) + ' pro Person' : ''}`;
+    let html = tk('vehicle.calc.energy', { amount: `<b>${fzEur(cost)}</b>`, qty: fzNum(qty, 1) + ' ' + escapeHtml(unitOf('fzT1Cons')), km: fzKmText(km) });
+    if (pers > 1) html += `<br>${tk('vehicle.perPerson')} <b>${fzEur(cost / pers)}</b>`;
+    if (ok(pk) && pk > 0) html += `<br>${tk('vehicle.fullCostsDepreciationInsurance')} <b>${fzEur(km * pk)}</b>${pers > 1 ? ' · ' + fzEur(km * pk / pers) + (' ' + tk('vehicle.perPerson2')) : ''}`;
     set('fzResTrip', html);
-  } else set('fzResTrip', 'Strecke, Verbrauch und Preis eingeben.');
+  } else set('fzResTrip', tk('vehicle.enterDistanceConsumptionPrice'));
 
   // 2 Electric vs. combustion
   const kmY = n('fzT2Km');
@@ -1484,15 +1499,15 @@ function fzCalc() {
     const extra = (n('fzT2EBuy') || 0) - (n('fzT2VBuy') || 0);
     const co2V = kmY * n('fzT2VCons') / 100 * FZ_FUELS.benzin.co2, co2E = kwh * FZ_FUELS.strom.co2;
     if (isFinite(vYear) && isFinite(eYear)) {
-      let html = `⛽ Verbrenner: <b>${fzEur(vYear)}</b> / Jahr (Sprit ${fzEur(vEnergy)})<br>🔌 Elektro: <b>${fzEur(eYear)}</b> / Jahr (Strom ${fzEur(eEnergy)})<br>`;
-      html += diff > 0 ? `Elektro spart <b>${fzEur(diff)}</b> pro Jahr` : `Der Verbrenner ist <b>${fzEur(-diff)}</b> pro Jahr günstiger`;
-      if (extra > 0 && diff > 0) html += ` – der Mehrpreis von ${fzEur(extra)} hat sich nach <b>${fzNum(extra / diff, 1)} Jahren</b> (${fzKmText(Math.round(extra / diff * kmY / 1000) * 1000)}) bezahlt gemacht.`;
-      else if (extra <= 0 && diff > 0) html += ' – und ist in der Anschaffung nicht teurer.';
+      let html = tk('vehicle.calc.combustion', { amount: `<b>${fzEur(vYear)}</b>`, energy: fzEur(vEnergy) }) + '<br>' + tk('vehicle.calc.electric', { amount: `<b>${fzEur(eYear)}</b>`, energy: fzEur(eEnergy) }) + '<br>';
+      html += diff > 0 ? `${tk('vehicle.electricSaves')} <b>${fzEur(diff)}</b> ${tk('vehicle.perYear')}` : `${tk('vehicle.combustionCar')} <b>${fzEur(-diff)}</b> ${tk('vehicle.cheaperPerYear')}`;
+      if (extra > 0 && diff > 0) html += ' ' + tk('vehicle.calc.payback', { amount: fzEur(extra), years: `<b>${fzNum(extra / diff, 1)}</b>`, km: fzKmText(Math.round(extra / diff * kmY / 1000) * 1000) });
+      else if (extra <= 0 && diff > 0) html += (' ' + tk('vehicle.notMoreExpensiveBuy'));
       else html += '.';
-      if (isFinite(co2V) && isFinite(co2E)) html += `<br>CO₂: ≈ ${fzNum(co2V / 1000, 1)} t gegenüber ${fzNum(co2E / 1000, 1)} t pro Jahr`;
+      if (isFinite(co2V) && isFinite(co2E)) html += '<br>' + tk('vehicle.calc.co2', { a: fzNum(co2V / 1000, 1), b: fzNum(co2E / 1000, 1) });
       set('fzResEv', html, diff > 0 ? 'good' : '');
-    } else set('fzResEv', 'Bitte alle Werte eingeben.');
-  } else set('fzResEv', 'Fahrleistung eingeben.');
+    } else set('fzResEv', tk('vehicle.pleaseEnterAllValues'));
+  } else set('fzResEv', tk('vehicle.enterMileage'));
 
   // 3 LPG
   const kmL = n('fzT3Km'), consB = n('fzT3Cons');
@@ -1502,13 +1517,13 @@ function fzCalc() {
     const save = benzinCost - lpgCost;
     const conv = n('fzT3Cost') || 0;
     if (isFinite(save)) {
-      let html = `Benzin: ${fzEur(benzinCost)} · Autogas: ${fzEur(lpgCost)} pro Jahr<br>`;
-      if (save > 0) html += `Ersparnis <b>${fzEur(save)}</b> pro Jahr – die Umrüstung hat sich nach <b>${fzNum(conv / save, 1)} Jahren</b> bzw. ${fzKmText(Math.round(conv / save * kmL / 1000) * 1000)} bezahlt gemacht.`;
-      else html += 'Bei diesen Werten lohnt sich die Umrüstung nicht.';
-      html += '<br><span class="text-[11px] opacity-80">inkl. ca. 5 % Benzin für Kaltstart und Umschaltung</span>';
+      let html = tk('vehicle.calc.lpgCompare', { petrol: fzEur(benzinCost), lpg: fzEur(lpgCost) }) + '<br>';
+      if (save > 0) html += tk('vehicle.calc.lpgSave', { amount: `<b>${fzEur(save)}</b>`, years: `<b>${fzNum(conv / save, 1)}</b>`, km: fzKmText(Math.round(conv / save * kmL / 1000) * 1000) });
+      else html += tk('vehicle.conversionDoesntPayOff');
+      html += ('<br><span class="text-[11px] opacity-80">' + tk('vehicle.inclApprox5Petrol') + '</span>');
       set('fzResLpg', html, save > 0 ? 'good' : 'bad');
-    } else set('fzResLpg', 'Bitte alle Werte eingeben.');
-  } else set('fzResLpg', 'Fahrleistung und Verbrauch eingeben.');
+    } else set('fzResLpg', tk('vehicle.pleaseEnterAllValues'));
+  } else set('fzResLpg', tk('vehicle.enterMileageConsumption'));
 
   // 4 Bike instead of car
   const kmB = n('fzT4Km') * 2 * (n('fzT4Days') || 0) * (n('fzT4Weeks') || 0);
@@ -1518,8 +1533,8 @@ function fzCalc() {
     const co2 = kmB * (n('fzT4Cons') || 0) / 100 * FZ_FUELS.benzin.co2;
     const ebike = document.getElementById('fzT4Ebike') && document.getElementById('fzT4Ebike').checked;
     const kcal = kmB * (ebike ? 15 : 30);
-    set('fzResBike', `${fzKmText(Math.round(kmB))} pro Jahr mit dem Rad<br>Gespart: <b>${fzEur(saved)}</b> pro Jahr${saved < 0 ? ' (Rad teurer als die eingesparten Autokilometer)' : ''}<br>CO₂: ≈ <b>${fzNum(co2, 0)} kg</b> weniger · Bonus: ≈ ${fzNum(kcal, 0)} kcal verbrannt 💪`, saved > 0 ? 'good' : '');
-  } else set('fzResBike', 'Strecke, Tage und Wochen eingeben.');
+    set('fzResBike', tk('vehicle.calc.bikeKm', { km: fzKmText(Math.round(kmB)) }) + '<br>' + tk('vehicle.calc.bikeSaved', { amount: `<b>${fzEur(saved)}</b>` }) + (saved < 0 ? ' ' + tk('vehicle.calc.bikeDearer') : '') + '<br>' + tk('vehicle.calc.bikeCo2', { kg: `<b>${fzNum(co2, 0)}</b>`, kcal: fzNum(kcal, 0) }), saved > 0 ? 'good' : '');
+  } else set('fzResBike', tk('vehicle.enterDistanceDaysWeeks'));
 
   // 5 Detour
   const qty5 = n('fzT5Qty'), diff5 = n('fzT5Diff'), km5 = n('fzT5Km');
@@ -1527,8 +1542,8 @@ function fzCalc() {
     const gain = qty5 * diff5 / 100;
     const cost5 = km5 * (n('fzT5Cons') || 0) / 100 * (n('fzT5Price') || 0);
     const net = gain - cost5;
-    set('fzResDetour', `Ersparnis beim Tanken: ${fzEur(gain)} · Umweg kostet ${fzEur(cost5)}<br>${net > 0.2 ? `Lohnt sich: <b>${fzEur(net)}</b> gespart` : net > 0 ? 'Lohnt sich kaum – nur ein paar Cent' : `Lohnt sich nicht: <b>${fzEur(-net)}</b> drauf`}`, net > 0.2 ? 'good' : 'bad');
-  } else set('fzResDetour', 'Werte eingeben.');
+    set('fzResDetour', `${tk('vehicle.savingWhenFuellingDetour', { fzEur: fzEur(gain), fzEur2: fzEur(cost5) })}<br>${net > 0.2 ? `${tk('vehicle.worth')} <b>${fzEur(net)}</b> gespart` : net > 0 ? tk('vehicle.hardlyWorthOnlyFew') : `${tk('vehicle.notWorth')} <b>${fzEur(-net)}</b> drauf`}`, net > 0.2 ? 'good' : 'bad');
+  } else set('fzResDetour', tk('vehicle.enterValues'));
 }
 
 /* ---------- Popups (general) ---------- */
@@ -1574,9 +1589,9 @@ function fzYmIn(id, label, ym, opts = {}) {
   const m = fzIsYm(ym) ? ym.slice(5, 7) : '', y = fzIsYm(ym) ? ym.slice(0, 4) : '';
   return `<div class="fz-field"${opts.wrapId ? ` id="${opts.wrapId}"` : ''}><label class="fz-lbl" for="${id}_m">${escapeHtml(label)}</label>
     <div class="fz-ym">
-      <input id="${id}_m" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" autocomplete="off" placeholder="MM" value="${m}" class="fz-in fz-ym-m" aria-label="${escapeHtml(label)}: Monat" />
+      <input id="${id}_m" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" autocomplete="off" placeholder="MM" value="${m}" class="fz-in fz-ym-m" aria-label="${escapeHtml(label + ': ' + tk('vehicle.month'))}" />
       <span class="fz-ym-slash" aria-hidden="true">/</span>
-      <input id="${id}_y" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="JJJJ" value="${y}" class="fz-in fz-ym-y" aria-label="${escapeHtml(label)}: Jahr" />
+      <input id="${id}_y" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="${escapeHtml(tk('vehicle.yyyy'))}" value="${y}" class="fz-in fz-ym-y" aria-label="${escapeHtml(label + ': ' + tk('vehicle.year'))}" />
     </div>${opts.hint ? `<p class="text-[11px] text-ink/45 mt-1">${escapeHtml(opts.hint)}</p>` : ''}</div>`;
 }
 // Digits only; after two month digits (or 2–9) the cursor jumps to the year, deleting in an empty year goes back to the month
@@ -1635,111 +1650,111 @@ function fzOpenVehicleModal(id, kindPreset) {
   const sv = draft.service || {};
   const hu = draft.hu || {};
   const a = fzAutoSettings(draft);
-  const monthOpts = (from, to) => { const o = []; for (let m = from; m <= to; m++) o.push([String(m), FZ_MONTH_NAMES[m - 1]]); return o; };
+  const monthOpts = (from, to) => { const o = []; for (let m = from; m <= to; m++) o.push([String(m), fzMonthName(m - 1)]); return o; };
   const setRow = (sid, label) => `
     <div class="fz-grid3 items-end">
-      <div class="fz-field"><span class="fz-lbl">${label}</span><span class="text-xs text-ink/50">Satz</span></div>
-      ${fzIn('fzvDot_' + sid, 'DOT-Jahr', (t.sets[sid] || {}).dot || '', { mode: 'numeric', ph: 'z. B. 2022', max: 4 })}
-      ${fzIn('fzvTread_' + sid, 'Profil', (t.sets[sid] || {}).tread ? fzDecInput((t.sets[sid] || {}).tread) : '', { mode: 'decimal', unit: 'mm' })}
+      <div class="fz-field"><span class="fz-lbl">${label}</span><span class="text-xs text-ink/50">${tk('vehicle.set')}</span></div>
+      ${fzIn('fzvDot_' + sid, tk('vehicle.dotYear'), (t.sets[sid] || {}).dot || '', { mode: 'numeric', ph: 'z. B. 2022', max: 4 })}
+      ${fzIn('fzvTread_' + sid, tk('famTile.profile'), (t.sets[sid] || {}).tread ? fzDecInput((t.sets[sid] || {}).tread) : '', { mode: 'decimal', unit: 'mm' })}
     </div>`;
   const html = `
-    <h3 class="font-serif text-lg mb-3 pr-6">${v ? 'Fahrzeug bearbeiten' : 'Neues Fahrzeug'}</h3>
-    <span class="fz-lbl">Art</span>
+    <h3 class="font-serif text-lg mb-3 pr-6">${v ? tk('vehicle.editVehicle') : tk('vehicle.newVehicle')}</h3>
+    <span class="fz-lbl">${tk('contract.kind')}</span>
     <div class="flex flex-wrap gap-1.5 mb-3" id="fzvKinds">${FZ_KINDS.map(k => `<button type="button" class="fz-kind-btn px-2.5 py-1.5 text-xs${k.id === draft.kind ? ' active' : ''}" data-kind="${k.id}">${k.icon} ${escapeHtml(k.label)}</button>`).join('')}</div>
-    ${fzIn('fzvName', 'Name', draft.name || '', { ph: 'z. B. Familienkutsche, Papas Rad', max: 60 })}
-    <div class="fz-grid2">${fzIn('fzvMake', 'Marke', draft.make || '', { ph: 'z. B. VW', max: 40 })}${fzIn('fzvModel', 'Modell', draft.model || '', { ph: 'z. B. Golf 8', max: 60 })}</div>
+    ${fzIn('fzvName', tk('common.name'), draft.name || '', { ph: tk('vehicle.eGFamilyBus'), max: 60 })}
+    <div class="fz-grid2">${fzIn('fzvMake', tk('vehicle.make'), draft.make || '', { ph: tk('vehicle.eGVw'), max: 40 })}${fzIn('fzvModel', tk('vehicle.model'), draft.model || '', { ph: tk('vehicle.eGGolf8'), max: 60 })}</div>
     <div class="fz-grid2">
-      ${fzIn('fzvPlate', 'Kennzeichen', draft.plate || '', { ph: 'z. B. KS AB 123', max: 16, wrapId: 'fzvPlateWrap' })}
-      ${fzSel('fzvHolder', 'Halter / Hauptfahrer', fzMemberOptions(), draft.holder || '')}
+      ${fzIn('fzvPlate', tk('vehicle.licencePlate'), draft.plate || '', { ph: 'z. B. KS AB 123', max: 16, wrapId: 'fzvPlateWrap' })}
+      ${fzSel('fzvHolder', tk('vehicle.keeperMainDriver'), fzMemberOptions(), draft.holder || '')}
     </div>
-    <span class="fz-lbl">Farbe</span>
-    <div class="flex flex-wrap gap-2 mb-3" id="fzvColors">${FZ_COLORS.map(c => `<button type="button" class="fz-color-btn${c === fzColor(draft) ? ' active' : ''}" style="background:${c}" data-color="${c}" aria-label="Farbe ${c}"></button>`).join('')}</div>
+    <span class="fz-lbl">${tk('account.dashBg.color')}</span>
+    <div class="flex flex-wrap gap-2 mb-3" id="fzvColors">${FZ_COLORS.map(c => `<button type="button" class="fz-color-btn${c === fzColor(draft) ? ' active' : ''}" style="background:${c}" data-color="${c}" aria-label="${escapeHtml(tk('vehicle.colourN', { c }))}"></button>`).join('')}</div>
     <div id="fzvDriveWrap">
-      <span class="fz-lbl">Antrieb</span>
+      <span class="fz-lbl">${tk('vehicle.drive')}</span>
       <div class="flex flex-wrap gap-1.5 mb-3" id="fzvDrives"></div>
     </div>
     <div class="fz-grid2">
-      ${fzIn('fzvTank', 'Tank', draft.tank ? fzDecInput(draft.tank) : '', { mode: 'decimal', unit: 'l', wrapId: 'fzvTankWrap' })}
-      ${fzIn('fzvBattery', 'Akku (netto)', draft.battery ? fzDecInput(draft.battery) : '', { mode: 'decimal', unit: 'kWh', wrapId: 'fzvBatteryWrap' })}
+      ${fzIn('fzvTank', tk('vehicle.tank'), draft.tank ? fzDecInput(draft.tank) : '', { mode: 'decimal', unit: 'l', wrapId: 'fzvTankWrap' })}
+      ${fzIn('fzvBattery', tk('vehicle.batteryNet'), draft.battery ? fzDecInput(draft.battery) : '', { mode: 'decimal', unit: 'kWh', wrapId: 'fzvBatteryWrap' })}
     </div>
 
-    <h4 class="vt-form-h">🗓️ HU, Inspektion &amp; Reifen</h4>
+    <h4 class="vt-form-h">${tk('vehicle.motServiceTyres')}</h4>
     <div class="fz-grid2" id="fzvHuWrap">
-      ${fzYmIn('fzvHuDue', 'HU fällig (Plakette)', hu.due)}
-      ${fzSel('fzvHuMonths', 'HU-Intervall', [['24', 'alle 2 Jahre'], ['12', 'jährlich'], ['36', 'nach 3 Jahren (neu)']], String(parseInt(hu.months, 10) || 24))}
+      ${fzYmIn('fzvHuDue', tk('vehicle.motDueSticker'), hu.due)}
+      ${fzSel('fzvHuMonths', tk('vehicle.huInterval'), [['24', tk('pet.every2Years')], ['12', tk('contract.interval.yearly')], ['36', tk('vehicle.after3YearsNew')]], String(parseInt(hu.months, 10) || 24))}
     </div>
     <div class="fz-grid2">
-      ${fzSel('fzvSvcMonths', 'Inspektion alle', [['', '–'], ['6', '6 Monate'], ['12', '12 Monate'], ['24', '24 Monate'], ['36', '36 Monate']], String(parseInt(sv.months, 10) || ''))}
-      ${fzIn('fzvSvcKm', 'oder alle', parseInt(sv.km, 10) ? fzNum(parseInt(sv.km, 10)) : '', { mode: 'numeric', unit: 'km', ph: 'z. B. 30.000' })}
+      ${fzSel('fzvSvcMonths', tk('vehicle.serviceEvery'), [['', '–'], ['6', tk('contract.6Months')], ['12', tk('contract.12Months')], ['24', tk('contract.24Months')], ['36', tk('contract.36Months')]], String(parseInt(sv.months, 10) || ''))}
+      ${fzIn('fzvSvcKm', tk('vehicle.orEvery'), parseInt(sv.km, 10) ? fzNum(parseInt(sv.km, 10)) : '', { mode: 'numeric', unit: 'km', ph: tk('vehicle.egKm') })}
     </div>
     <div class="fz-grid2">
-      ${fzIn('fzvSvcDate', 'Letzte Inspektion am', vtIsIso(sv.lastDate) ? sv.lastDate : '', { type: 'date' })}
-      ${fzIn('fzvSvcOdo', 'bei km-Stand', sv.lastOdo !== '' && sv.lastOdo != null && isFinite(Number(sv.lastOdo)) ? fzNum(sv.lastOdo) : '', { mode: 'numeric', unit: 'km' })}
+      ${fzIn('fzvSvcDate', tk('vehicle.lastService2'), vtIsIso(sv.lastDate) ? sv.lastDate : '', { type: 'date' })}
+      ${fzIn('fzvSvcOdo', tk('vehicle.odometerReading2'), sv.lastOdo !== '' && sv.lastOdo != null && isFinite(Number(sv.lastOdo)) ? fzNum(sv.lastOdo) : '', { mode: 'numeric', unit: 'km' })}
     </div>
     <div id="fzvTireWrap">
       <div class="fz-grid2">
-        ${fzSel('fzvTireMode', 'Reifen', [['wechsel', 'Sommer & Winter'], ['ganzjahr', 'Ganzjahresreifen'], ['keine', 'keine Angabe']], t.mode)}
-        ${fzSel('fzvTireMounted', 'Aktuell montiert', [['sommer', 'Sommerreifen'], ['winter', 'Winterreifen']], t.mounted, { wrapId: 'fzvMountedWrap' })}
+        ${fzSel('fzvTireMode', tk('vehicle.tyres'), [['wechsel', tk('vehicle.summerWinter')], ['ganzjahr', tk('vehicle.allSeasonTyres')], ['keine', tk('vehicle.notSpecified')]], t.mode)}
+        ${fzSel('fzvTireMounted', tk('vehicle.currentlyFitted'), [['sommer', tk('vehicle.summerTyres')], ['winter', tk('vehicle.winterTyres')]], t.mounted, { wrapId: 'fzvMountedWrap' })}
       </div>
       <div class="fz-grid2" id="fzvChangeWrap">
-        ${fzSel('fzvToWinter', 'Winterreifen ab', monthOpts(9, 12), String(t.toWinter))}
-        ${fzSel('fzvToSummer', 'Sommerreifen ab', monthOpts(2, 5), String(t.toSummer))}
+        ${fzSel('fzvToWinter', tk('vehicle.winterTyresFrom'), monthOpts(9, 12), String(t.toWinter))}
+        ${fzSel('fzvToSummer', tk('vehicle.summerTyresFrom'), monthOpts(2, 5), String(t.toSummer))}
       </div>
       <div class="fz-grid2">
-        ${fzIn('fzvTireSize', 'Reifengröße', t.size, { ph: 'z. B. 205/55 R16 91V', max: 40 })}
-        ${fzIn('fzvTireStore', 'Eingelagert bei', t.storage, { ph: 'z. B. Keller, Reifenhotel', max: 60 })}
+        ${fzIn('fzvTireSize', tk('vehicle.tyreSize'), t.size, { ph: 'z. B. 205/55 R16 91V', max: 40 })}
+        ${fzIn('fzvTireStore', tk('vehicle.stored3'), t.storage, { ph: tk('vehicle.eGCellarTyre'), max: 60 })}
       </div>
       <details class="vt-more rounded-xl border border-ink/10 px-3 py-2 mb-3">
-        <summary class="text-sm cursor-pointer select-none">🛞 Reifensätze (Alter &amp; Profil)</summary>
+        <summary class="text-sm cursor-pointer select-none">${tk('vehicle.tyreSetsAgeTread')}</summary>
         <div class="pt-3">
-          <div id="fzvSetSW">${setRow('sommer', 'Sommer')}${setRow('winter', 'Winter')}</div>
-          <div id="fzvSetGJ">${setRow('ganzjahr', 'Ganzjahr')}</div>
-          <p class="text-[11px] text-ink/45">Das DOT-Jahr steht auf der Reifenflanke (z. B. „2322“ = Woche 23/2022). pinn. warnt bei wenig Profil und alten Reifen.</p>
+          <div id="fzvSetSW">${setRow('sommer', tk('vehicle.summer'))}${setRow('winter', tk('vehicle.winter'))}</div>
+          <div id="fzvSetGJ">${setRow('ganzjahr', tk('vehicle.allSeason'))}</div>
+          <p class="text-[11px] text-ink/45">${tk('vehicle.dotYearTyreSidewall')}</p>
         </div>
       </details>
     </div>
-    <label class="fz-check" id="fzvVkWrap"><input type="checkbox" id="fzvVk"${draft.vk !== false ? ' checked' : ''} /> <span>An das neue Versicherungskennzeichen erinnern (gilt jeweils ab 1. März)</span></label>
+    <label class="fz-check" id="fzvVkWrap"><input type="checkbox" id="fzvVk"${draft.vk !== false ? ' checked' : ''} /> <span>${tk('vehicle.remindAboutNewInsurance')}</span></label>
 
-    <h4 class="vt-form-h">💶 Kauf, Wert &amp; Steuer</h4>
+    <h4 class="vt-form-h">${tk('vehicle.purchaseValueTax')}</h4>
     <div class="fz-grid2">
-      ${fzIn('fzvBuyDate', 'Gekauft am', vtIsIso(draft.purchaseDate) ? draft.purchaseDate : '', { type: 'date' })}
-      ${fzIn('fzvBuyPrice', 'Kaufpreis', Number(draft.purchasePrice) > 0 ? euroInputValue(draft.purchasePrice) : '', { mode: 'decimal', unit: curSym() })}
+      ${fzIn('fzvBuyDate', tk('vehicle.bought2'), vtIsIso(draft.purchaseDate) ? draft.purchaseDate : '', { type: 'date' })}
+      ${fzIn('fzvBuyPrice', tk('home.purchasePrice'), Number(draft.purchasePrice) > 0 ? euroInputValue(draft.purchasePrice) : '', { mode: 'decimal', unit: curSym() })}
     </div>
     <div class="fz-grid2">
-      ${fzIn('fzvOdoStart', 'km-Stand beim Kauf', draft.odoStart !== '' && draft.odoStart != null && isFinite(Number(draft.odoStart)) ? fzNum(draft.odoStart) : '', { mode: 'numeric', unit: 'km' })}
-      ${fzYmIn('fzvFirstReg', 'Erstzulassung', draft.firstReg, { wrapId: 'fzvFirstRegWrap' })}
+      ${fzIn('fzvOdoStart', tk('vehicle.odometerPurchase'), draft.odoStart !== '' && draft.odoStart != null && isFinite(Number(draft.odoStart)) ? fzNum(draft.odoStart) : '', { mode: 'numeric', unit: 'km' })}
+      ${fzYmIn('fzvFirstReg', tk('vehicle.firstRegistration'), draft.firstReg, { wrapId: 'fzvFirstRegWrap' })}
     </div>
-    ${fzIn('fzvValue', 'Aktueller Wert (geschätzt)', Number(draft.value) > 0 ? euroInputValue(draft.value) : '', { mode: 'decimal', unit: curSym(), ph: 'z. B. aus einer Online-Bewertung' })}
+    ${fzIn('fzvValue', tk('vehicle.currentValueEstimated'), Number(draft.value) > 0 ? euroInputValue(draft.value) : '', { mode: 'decimal', unit: curSym(), ph: tk('vehicle.eGFromOnline') })}
     <div class="fz-grid2" id="fzvTaxWrap">
-      ${fzIn('fzvTax', 'Kfz-Steuer', taxRec ? euroInputValue(finRecurringAmountFor(taxRec, today)) : '', { mode: 'decimal', unit: curSym() + '/Jahr' })}
-      ${fzIn('fzvTaxDate', 'Abbuchung am', taxRec ? (finRecNext(taxRec, today) || finRecStart(taxRec)) : '', { type: 'date' })}
+      ${fzIn('fzvTax', tk('vehicle.vehicleTax'), taxRec ? euroInputValue(finRecurringAmountFor(taxRec, today)) : '', { mode: 'decimal', unit: curSym() + tk('vehicle.perYearUnit') })}
+      ${fzIn('fzvTaxDate', tk('vehicle.debit'), taxRec ? (finRecNext(taxRec, today) || finRecStart(taxRec)) : '', { type: 'date' })}
     </div>
 
-    <h4 class="vt-form-h">✅ Automatische Aufgaben</h4>
-    <label class="fz-check"><input type="checkbox" id="fzvAutoOn"${a.on ? ' checked' : ''} /> <span>Aufgaben für HU, Inspektion, Reifenwechsel und Fristen automatisch anlegen</span></label>
+    <h4 class="vt-form-h">${tk('vehicle.automaticTasks')}</h4>
+    <label class="fz-check"><input type="checkbox" id="fzvAutoOn"${a.on ? ' checked' : ''} /> <span>${tk('vehicle.automaticallyCreateTasksMot')}</span></label>
     <div id="fzvAutoWrap">
-      ${fzSel('fzvAutoDays', 'Vorlauf', FZ_REMIND_DAYS.map(d => [String(d), d + ' Tage vorher']), String(a.days))}
-      <span class="fz-lbl">Zuständig</span>
+      ${fzSel('fzvAutoDays', tk('vehicle.leadTime'), FZ_REMIND_DAYS.map(d => [String(d), tk('vehicle.daysBefore', { n: d })]), String(a.days))}
+      <span class="fz-lbl">${tk('household.responsible')}</span>
       <div class="flex flex-wrap gap-1.5 mb-1" id="fzvAutoTo">${members.map(m => `<button type="button" class="fz-member-chip px-2.5 py-1.5 text-xs${a.to.includes(m.id) ? ' active' : ''}" data-m="${escapeHtml(m.id)}">${escapeHtml(memberLabel(m))}</button>`).join('')}</div>
-      <p class="text-[11px] text-ink/45 mb-2">Niemand gewählt: die Aufgabe geht an den Halter.</p>
-      <div class="fz-field">${taskRemindHtml('fzv', a.remindAt, { label: '🔔 Extra-Erinnerung per Push', def: '09:00' })}</div>
+      <p class="text-[11px] text-ink/45 mb-2">${tk('vehicle.nobodySelectedTaskGoes')}</p>
+      <div class="fz-field">${taskRemindHtml('fzv', a.remindAt, { label: tk('household.extraRemind'), def: '09:00' })}</div>
     </div>
 
     <details class="vt-more mt-3 rounded-xl border border-ink/10 px-3 py-2"${draft.vin || draft.hsn || draft.tsn || draft.note ? ' open' : ''}>
-      <summary class="text-sm cursor-pointer select-none">🪪 Fahrzeugdaten &amp; Notiz</summary>
+      <summary class="text-sm cursor-pointer select-none">${tk('vehicle.vehicleDataNote')}</summary>
       <div class="pt-3">
-        ${fzIn('fzvVin', 'FIN / Rahmennummer', draft.vin || '', { max: 40 })}
+        ${fzIn('fzvVin', tk('vehicle.vinFrameNumber'), draft.vin || '', { max: 40 })}
         <div class="fz-grid2" id="fzvKeyWrap">${fzIn('fzvHsn', 'HSN (2.1)', draft.hsn || '', { max: 4 })}${fzIn('fzvTsn', 'TSN (2.2)', draft.tsn || '', { max: 10 })}</div>
-        <div class="fz-field"><label class="fz-lbl" for="fzvNote">Notiz</label><textarea id="fzvNote" rows="3" class="fz-in" maxlength="2000" placeholder="z. B. Reifendruck, Ölsorte, Werkstatt">${escapeHtml(draft.note || '')}</textarea></div>
+        <div class="fz-field"><label class="fz-lbl" for="fzvNote">${tk('fin.csv.note')}</label><textarea id="fzvNote" rows="3" class="fz-in" maxlength="2000" placeholder="${escapeHtml(tk('vehicle.eGTyrePressure'))}">${escapeHtml(draft.note || '')}</textarea></div>
       </div>
     </details>
 
     <p id="fzvError" class="hidden text-xs text-red-500 mt-3"></p>
     <div class="flex items-center gap-2 mt-5">
-      ${v ? '<button type="button" id="fzvDelete" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Löschen</button>' : ''}
+      ${v ? ('<button type="button" id="fzvDelete" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">' + tk('home.delete') + '</button>') : ''}
       <div class="flex-1"></div>
-      <button type="button" id="fzvCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-      <button type="button" id="fzvSave" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Speichern</button>
+      <button type="button" id="fzvCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">${tk('common.cancel')}</button>
+      <button type="button" id="fzvSave" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">${tk('common.save')}</button>
     </div>`;
   fzOpenModal(html, body => {
     fzYmWire(body);
@@ -1780,7 +1795,7 @@ function fzVehicleFormUi() {
   show('fzvTankWrap', fuels.some(f => f !== 'strom'));
   show('fzvBatteryWrap', fuels.includes('strom'));
   show('fzvPlateWrap', !k.bike);
-  document.querySelector('label[for="fzvPlate"]').textContent = k.plate ? 'Kennzeichen' : 'Versicherungskennzeichen';
+  document.querySelector('label[for="fzvPlate"]').textContent = k.plate ? tk('vehicle.licencePlate') : tk('vehicle.insurancePlate');
   show('fzvHuWrap', !!k.hu);
   show('fzvTireWrap', !!k.tires);
   const mode = fzVal('fzvTireMode') || 'wechsel';
@@ -1791,8 +1806,8 @@ function fzVehicleFormUi() {
   show('fzvVkWrap', !!k.vk);
   show('fzvTaxWrap', k.plate && fuels.length > 0);
   show('fzvKeyWrap', !!k.plate);
-  document.querySelector('label[for="fzvFirstReg_m"]').textContent = k.bike ? 'Baujahr (Monat)' : 'Erstzulassung';
-  document.querySelector('label[for="fzvVin"]').textContent = k.bike ? 'Rahmennummer' : 'FIN (Fahrzeug-Ident.-Nr.)';
+  document.querySelector('label[for="fzvFirstReg_m"]').textContent = k.bike ? tk('vehicle.yearManufactureMonth') : tk('vehicle.firstRegistration');
+  document.querySelector('label[for="fzvVin"]').textContent = k.bike ? tk('vehicle.frameNumber') : tk('vehicle.vinVehicleIdentificationNumber');
   show('fzvAutoWrap', fzChecked('fzvAutoOn'));
 }
 function fzSaveVehicle() {
@@ -1805,13 +1820,13 @@ function fzSaveVehicle() {
   const err = msg => fzShowErr('fzvError', msg);
   const name = fzVal('fzvName').replace(/\s+/g, ' ').slice(0, 60);
   const make = fzVal('fzvMake').slice(0, 40), model = fzVal('fzvModel').slice(0, 60);
-  if (!name && !make && !model) return err('Bitte einen Namen oder Marke/Modell eingeben.');
+  if (!name && !make && !model) return err(tk('vehicle.pleaseEnterNameMake'));
   const huVal = fzYmVal('fzvHuDue');
   const huDue = huVal.ym;
-  if (k.hu && huVal.invalid) return err('HU-Termin bitte mit Monat (01–12) und Jahr eingeben, z. B. 11 / 2026.');
+  if (k.hu && huVal.invalid) return err(tk('vehicle.pleaseEnterMotDate'));
   const regVal = fzYmVal('fzvFirstReg');
   const firstReg = regVal.ym;
-  if (regVal.invalid) return err('Erstzulassung bitte mit Monat (01–12) und Jahr eingeben, z. B. 03 / 2019.');
+  if (regVal.invalid) return err(tk('vehicle.pleaseEnterFirstRegistration'));
   const num = (id, parser) => { const raw = fzVal(id); return raw ? parser(raw) : ''; };
   const svcKm = num('fzvSvcKm', fzParseInt);
   const svcOdo = num('fzvSvcOdo', fzParseInt);
@@ -1821,11 +1836,11 @@ function fzSaveVehicle() {
   const tax = num('fzvTax', parseEuro);
   const tank = num('fzvTank', fzParseDec);
   const battery = num('fzvBattery', fzParseDec);
-  for (const [x, label] of [[svcKm, 'Inspektions-km'], [svcOdo, 'km-Stand der Inspektion'], [odoStart, 'km-Stand beim Kauf'], [buyPrice, 'Kaufpreis'], [value, 'Wert'], [tax, 'Kfz-Steuer'], [tank, 'Tank'], [battery, 'Akku']]) {
-    if (x !== '' && (!isFinite(x) || x < 0)) return err('Bitte eine gültige Zahl bei „' + label + '“ eingeben.');
+  for (const [x, label] of [[svcKm, tk('vehicle.serviceKm')], [svcOdo, tk('vehicle.odometerReadingService')], [odoStart, tk('vehicle.odometerPurchase')], [buyPrice, tk('home.purchasePrice')], [value, tk('depot.value')], [tax, tk('vehicle.vehicleTax')], [tank, tk('vehicle.tank')], [battery, tk('vehicle.battery')]]) {
+    if (x !== '' && (!isFinite(x) || x < 0)) return err(tk('vehicle.enterValidNumber', { label }));
   }
   const taxDate = fzVal('fzvTaxDate');
-  if (tax > 0 && !vtIsIso(taxDate)) return err('Bitte angeben, wann die Kfz-Steuer abgebucht wird.');
+  if (tax > 0 && !vtIsIso(taxDate)) return err(tk('vehicle.pleaseSpecifyWhenVehicle'));
   const sets = {};
   ['sommer', 'winter', 'ganzjahr'].forEach(sid => {
     const dot = fzParseInt(fzVal('fzvDot_' + sid));
@@ -1869,7 +1884,7 @@ function fzSaveVehicle() {
   let taxRecId = (existing && existing.taxRecId && finance.recurring.some(r => r.id === existing.taxRecId)) ? existing.taxRecId : '';
   const taxOn = k.plate && fzFuels(vehicle).length > 0 && tax !== '' && tax > 0;
   if (taxOn) {
-    const fields = { title: 'Kfz-Steuer ' + fzName(vehicle), amount: Math.round(tax * 100) / 100, category: FZ_FIN_CATEGORY, paidBy: vehicle.holder || '', note: '', link: 'fahrzeug:' + id, interval: 'yearly', start: taxDate };
+    const fields = { title: tk('vehicle.taxTitle', { name: fzName(vehicle) }), amount: Math.round(tax * 100) / 100, category: FZ_FIN_CATEGORY, paidBy: vehicle.holder || '', note: '', link: 'fahrzeug:' + id, interval: 'yearly', start: taxDate };
     if (taxRecId) {
       const r = finance.recurring.find(x => x.id === taxRecId);
       const changed = Math.abs(finRecurringAmountFor(r, today) - fields.amount) > 0.001 || (finRecNext(r, today) || finRecStart(r)) !== taxDate || finRecUntil(r);
@@ -1895,16 +1910,16 @@ function fzSaveVehicle() {
   fzDetailId = id;
   fzTab = 'liste';
   fzAfterChange();
-  finShowToast(existing ? 'Fahrzeug gespeichert.' : 'Fahrzeug angelegt – jetzt Tanken, Werkstatt & Co. eintragen.');
+  finShowToast(existing ? tk('vehicle.vehicleSaved') : tk('vehicle.vehicleCreatedNowEnter'));
 }
 async function fzDeleteVehicle(id) {
   const v = fzVehicle(id);
   if (!v) return;
   const nLogs = fzLogsFor(id).length;
-  let msg = `„${fzName(v)}“ endgültig löschen?`;
-  if (nLogs) msg += ` ${nLogs} Einträge im Verlauf werden gelöscht – bereits in Finanzen gebuchte Ausgaben bleiben erhalten.`;
-  if (Array.isArray(v.docLinks) && v.docLinks.length) msg += ` Verknüpfte Dokumente bleiben unter „Dokumente“ erhalten.`;
-  msg += '\n\nTipp: „Verkauft / abgemeldet“ behält die Kosten für die Bilanz.';
+  let msg = `${tk('vehicle.permanentlyDelete', { fzName: fzName(v) })}`;
+  if (nLogs) msg += ' ' + tk('vehicle.entriesDeleted', { n: nLogs });
+  if (Array.isArray(v.docLinks) && v.docLinks.length) msg += ` ${tk('vehicle.linkedDocumentsKeptUnder')}`;
+  msg += '\n\n' + tk('vehicle.tipSoldKeeps');
   if (!confirm(msg)) return;
   if (v.taxRecId && finance.recurring.some(r => r.id === v.taxRecId)) finEndRecurring(v.taxRecId);
   finance.recurring = finance.recurring.map(r => r.vehicle === id ? { ...r, vehicle: '' } : r);
@@ -1914,7 +1929,7 @@ async function fzDeleteVehicle(id) {
   fzCloseModal();
   fzDetailId = null;
   fzAfterChange();
-  finShowToast('Fahrzeug gelöscht.');
+  finShowToast(tk('vehicle.vehicleDeleted'));
   finDeleteDocsFor('fahrzeug:' + id);
 }
 
@@ -1923,7 +1938,7 @@ function fzOpenLogModal({ vehicleId = '', logId = '', type = '', fromDue = null 
   if (isCurrentUserGuest()) return;
   const log = logId ? fzLogById(logId) : null;
   const v = fzVehicle(log ? log.vehicle : vehicleId);
-  if (!v) { finShowToast('Dieses Fahrzeug gibt es nicht mehr.', true); return; }
+  if (!v) { finShowToast(tk('vehicle.vehicleNoLongerExists'), true); return; }
   const types = fzTypesFor(v);
   let t = log ? log.type : (type || (fzCanFuel(v) ? 'tanken' : fzCanCharge(v) ? 'laden' : 'wartung'));
   if (!types.some(x => x.id === t) && !log) t = types[0].id;
@@ -1932,7 +1947,7 @@ function fzOpenLogModal({ vehicleId = '', logId = '', type = '', fromDue = null 
   const l = log || { type: t, date: today, fuel: fuels[0] || 'benzin', where: 'home', full: true, booked: true, paidBy: currentMember() ? currentMember().id : '' };
   if (!log && fromDue && fromDue.type === 'reifen') l.tireSwitch = fromDue.need;
   if (!log && fromDue && fromDue.type === 'service') l.inspection = true;
-  if (!log && fromDue && fromDue.type === 'vk') l.desc = 'Versicherungskennzeichen ' + (fromDue.key || '').slice(3);
+  if (!log && fromDue && fromDue.type === 'vk') l.desc = (tk('vehicle.insurancePlate') + ' ') + (fromDue.key || '').slice(3);
   fzModalState = { mode: 'log', id: log ? log.id : null, vehicle: v.id, type: t, fromDue, lastEdit: [], bookedTouched: !!log };
   fzLogPending = [];
   const k = fzKind(v.kind);
@@ -1942,56 +1957,56 @@ function fzOpenLogModal({ vehicleId = '', logId = '', type = '', fromDue = null 
   const fuelOpts = fuels.map(f => [f, FZ_FUELS[f].label]);
   const sortOpts = f => [['', '–']].concat((FZ_FUELS[f] && FZ_FUELS[f].sorts ? FZ_FUELS[f].sorts : []).map(s => [s, s]));
   const html = `
-    <h3 class="font-serif text-lg mb-1 pr-6">${log ? 'Eintrag bearbeiten' : 'Neuer Eintrag'}</h3>
+    <h3 class="font-serif text-lg mb-1 pr-6">${log ? tk('lists.item.editTitle') : tk('vehicle.newEntry')}</h3>
     <div class="text-xs text-ink/50 mb-3">${escapeHtml(fzKind(v.kind).icon + ' ' + fzShortName(v))}</div>
     <div class="fz-type-row mb-3" id="fzlTypes">${types.map(x => `<button type="button" class="fz-type-chip${x.id === t ? ' active' : ''}" data-type="${x.id}"><span class="fz-ti">${x.icon}</span>${escapeHtml(x.label)}</button>`).join('')}</div>
 
     <div id="fzlEnergy">
       <div class="fz-grid2" id="fzlFuelRow">
-        ${fzSel('fzlFuel', 'Kraftstoff', fuelOpts.length ? fuelOpts : [['benzin', 'Benzin']], l.fuel || (fuels[0] || 'benzin'))}
-        ${fzSel('fzlSort', 'Sorte', sortOpts(l.fuel || fuels[0] || 'benzin'), l.sort || '')}
+        ${fzSel('fzlFuel', tk('vehicle.fuel'), fuelOpts.length ? fuelOpts : [['benzin', tk('vehicle.petrol')]], l.fuel || (fuels[0] || 'benzin'))}
+        ${fzSel('fzlSort', tk('vehicle.grade'), sortOpts(l.fuel || fuels[0] || 'benzin'), l.sort || '')}
       </div>
-      ${fzSel('fzlWhere', 'Wo geladen', FZ_CHARGE_WHERE.map(w => [w.id, w.label]), l.where || 'home', { wrapId: 'fzlWhereWrap' })}
+      ${fzSel('fzlWhere', tk('vehicle.whereCharged'), FZ_CHARGE_WHERE.map(w => [w.id, w.label]), l.where || 'home', { wrapId: 'fzlWhereWrap' })}
       <div class="fz-grid2">
-        ${fzIn('fzlQty', 'Menge', Number(l.qty) > 0 ? fzDecInput(l.qty) : '', { mode: 'decimal', unit: 'l' })}
-        ${fzIn('fzlPrice', 'Preis je Einheit', Number(l.price) > 0 ? fzDecInput(l.price) : '', { mode: 'decimal', unit: curSym() + '/l' })}
+        ${fzIn('fzlQty', tk('shop.entry.quantity'), Number(l.qty) > 0 ? fzDecInput(l.qty) : '', { mode: 'decimal', unit: 'l' })}
+        ${fzIn('fzlPrice', tk('vehicle.pricePerUnit'), Number(l.price) > 0 ? fzDecInput(l.price) : '', { mode: 'decimal', unit: curSym() + '/l' })}
       </div>
-      <label class="fz-check"><input type="checkbox" id="fzlFull"${l.full ? ' checked' : ''} /> <span id="fzlFullLabel">Vollgetankt <span class="text-ink/45">(für den genauen Verbrauch)</span></span></label>
-      ${fzIn('fzlStation', 'Tankstelle', l.station || '', { ph: 'optional, z. B. Aral Hauptstraße', max: 80, wrapId: 'fzlStationWrap' })}
+      <label class="fz-check"><input type="checkbox" id="fzlFull"${l.full ? ' checked' : ''} /> <span id="fzlFullLabel">${tk('vehicle.fullTank')} <span class="text-ink/45">${tk('vehicle.exactConsumption')}</span></span></label>
+      ${fzIn('fzlStation', tk('vehicle.petrolStation'), l.station || '', { ph: tk('vehicle.optionalEGShell'), max: 80, wrapId: 'fzlStationWrap' })}
     </div>
-    ${fzIn('fzlDesc', 'Beschreibung', l.desc || '', { ph: 'z. B. Ölwechsel, Bremsbeläge, Waschanlage', max: 120, wrapId: 'fzlDescWrap' })}
-    <label class="fz-check" id="fzlInspWrap"><input type="checkbox" id="fzlInsp"${l.inspection ? ' checked' : ''} /> <span>War eine Inspektion – Intervall ab hier neu starten</span></label>
+    ${fzIn('fzlDesc', tk('fin.csv.description'), l.desc || '', { ph: tk('vehicle.eGOilChange'), max: 120, wrapId: 'fzlDescWrap' })}
+    <label class="fz-check" id="fzlInspWrap"><input type="checkbox" id="fzlInsp"${l.inspection ? ' checked' : ''} /> <span>${tk('vehicle.wasServiceRestartInterval')}</span></label>
     <div id="fzlHuWrap" class="fz-grid2">
-      ${fzSel('fzlHuResult', 'Ergebnis', [['ohne Mängel', 'ohne Mängel ✓'], ['geringe Mängel', 'geringe Mängel'], ['erhebliche Mängel', 'erhebliche Mängel (Nachprüfung)']], l.huResult || 'ohne Mängel')}
-      ${fzYmIn('fzlHuNext', 'Nächste HU', log ? '' : nextHu, { hint: log ? 'leer lassen = unverändert' : '' })}
+      ${fzSel('fzlHuResult', tk('vehicle.result'), FZ_HU_RESULTS.map(r => [r, fzHuResultLabel(r, true)]), l.huResult || 'ohne Mängel')}
+      ${fzYmIn('fzlHuNext', tk('vehicle.nextMot'), log ? '' : nextHu, { hint: log ? tk('vehicle.leaveEmptyUnchanged') : '' })}
     </div>
     <div id="fzlTireWrap" class="fz-grid2">
-      ${fzSel('fzlTireSwitch', 'Gewechselt auf', [['', '– kein Wechsel'], ['sommer', 'Sommerreifen'], ['winter', 'Winterreifen'], ['ganzjahr', 'Ganzjahresreifen']], l.tireSwitch || '')}
-      ${fzIn('fzlTireDot', 'Neue Reifen: DOT-Jahr', l.tireDot || '', { ph: 'nur bei neuen Reifen', mode: 'numeric', max: 4 })}
+      ${fzSel('fzlTireSwitch', tk('vehicle.changed'), [['', tk('vehicle.noChange')], ['sommer', tk('vehicle.summerTyres')], ['winter', tk('vehicle.winterTyres')], ['ganzjahr', tk('vehicle.allSeasonTyres')]], l.tireSwitch || '')}
+      ${fzIn('fzlTireDot', tk('vehicle.newTyresDotYear'), l.tireDot || '', { ph: tk('vehicle.onlyNewTyres'), mode: 'numeric', max: 4 })}
     </div>
 
     <div class="fz-grid2">
-      ${fzIn('fzlDate', 'Datum', vtIsIso(l.date) ? l.date : today, { type: 'date' })}
-      ${fzIn('fzlOdo', 'Kilometerstand', Number(l.odo) > 0 ? fzNum(l.odo) : '', { mode: 'numeric', unit: 'km', ph: lastOdo ? 'zuletzt ' + fzNum(lastOdo) : '' })}
+      ${fzIn('fzlDate', tk('fin.csv.date'), vtIsIso(l.date) ? l.date : today, { type: 'date' })}
+      ${fzIn('fzlOdo', tk('vehicle.odometerReading'), Number(l.odo) > 0 ? fzNum(l.odo) : '', { mode: 'numeric', unit: 'km', ph: lastOdo ? 'zuletzt ' + fzNum(lastOdo) : '' })}
     </div>
     <div id="fzlMoney">
       <div class="fz-grid2">
-        ${fzIn('fzlAmount', 'Betrag', Number(l.amount) > 0 ? euroInputValue(l.amount) : '', { mode: 'decimal', unit: curSym() })}
-        <div class="fin-paidby-wrap min-w-0">${fzSel('fzlPaidBy', 'Bezahlt von', fzMemberOptions(), l.paidBy || '')}</div>
+        ${fzIn('fzlAmount', tk('depot.amount'), Number(l.amount) > 0 ? euroInputValue(l.amount) : '', { mode: 'decimal', unit: curSym() })}
+        <div class="fin-paidby-wrap min-w-0">${fzSel('fzlPaidBy', tk('fin.csv.paidBy'), fzMemberOptions(), l.paidBy || '')}</div>
       </div>
-      <label class="fz-check"><input type="checkbox" id="fzlBooked"${l.booked !== false ? ' checked' : ''} /> <span>Auch in Finanzen als Ausgabe buchen <span class="text-ink/45" id="fzlBookedHint"></span></span></label>
+      <label class="fz-check"><input type="checkbox" id="fzlBooked"${l.booked !== false ? ' checked' : ''} /> <span>${tk('vehicle.alsoBookExpenseFinance')} <span class="text-ink/45" id="fzlBookedHint"></span></span></label>
     </div>
-    ${fzIn('fzlNote', 'Notiz', l.note || '', { ph: 'optional', max: 500 })}
+    ${fzIn('fzlNote', tk('fin.csv.note'), l.note || '', { ph: 'optional', max: 500 })}
     <div id="fzlDocsWrap">
-      <div class="flex items-center justify-between gap-2 mb-1.5"><span class="fz-lbl" style="margin:0">Beleg</span><button type="button" id="fzlDocAdd" class="fz-mini-btn">📎 Foto / PDF</button></div>
+      <div class="flex items-center justify-between gap-2 mb-1.5"><span class="fz-lbl" style="margin:0">${tk('contract.docType.receipt')}</span><button type="button" id="fzlDocAdd" class="fz-mini-btn">${tk('vehicle.photoPdf')}</button></div>
       <div id="fzlDocs" class="flex flex-col gap-1.5 mb-2"></div>
     </div>
     <p id="fzlError" class="hidden text-xs text-red-500 mt-2"></p>
     <div class="flex items-center gap-2 mt-4">
-      ${log ? '<button type="button" id="fzlDelete" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Löschen</button>' : ''}
+      ${log ? ('<button type="button" id="fzlDelete" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">' + tk('home.delete') + '</button>') : ''}
       <div class="flex-1"></div>
-      <button type="button" id="fzlCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-      <button type="button" id="fzlSave" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Speichern</button>
+      <button type="button" id="fzlCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">${tk('common.cancel')}</button>
+      <button type="button" id="fzlSave" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">${tk('common.save')}</button>
     </div>`;
   fzOpenModal(html, body => {
     fzYmWire(body);
@@ -2013,7 +2028,7 @@ function fzOpenLogModal({ vehicleId = '', logId = '', type = '', fromDue = null 
     });
     document.getElementById('fzlDocAdd').addEventListener('click', () => {
       if (fzModalState && fzModalState.id) {
-        if (!navigator.onLine) { finShowToast('Keine Verbindung – Belege lassen sich nur mit Verbindung zum NAS hochladen.', true); return; }
+        if (!navigator.onLine) { finShowToast(tk('vehicle.noConnectionReceiptsCan'), true); return; }
         finPickDocs({ mode: 'fzlog', bezug: 'ausgabe:' + fzModalState.id, typ: 'beleg' });
       } else finPickDocs({ mode: 'fzlog-new', bezug: '', typ: 'beleg' });
     });
@@ -2049,9 +2064,9 @@ function fzLogFormUi(setDefaults) {
   if (qtyUnit) qtyUnit.textContent = unit;
   const priceUnit = document.querySelector('#fzlPrice + span');
   if (priceUnit) priceUnit.textContent = curSym() + '/' + unit;
-  document.getElementById('fzlFullLabel').innerHTML = t === 'laden' ? 'Voll geladen <span class="text-ink/45">(für den genauen Verbrauch)</span>' : 'Vollgetankt <span class="text-ink/45">(für den genauen Verbrauch)</span>';
+  document.getElementById('fzlFullLabel').innerHTML = t === 'laden' ? (tk('vehicle.fullyCharged') + ' <span class="text-ink/45">' + tk('vehicle.exactConsumption') + '</span>') : (tk('vehicle.fullTank') + ' <span class="text-ink/45">' + tk('vehicle.exactConsumption') + '</span>');
   const home = t === 'laden' && fzVal('fzlWhere') === 'home';
-  document.getElementById('fzlBookedHint').textContent = home ? '(Zuhause-Laden steckt meist schon in der Stromrechnung)' : '';
+  document.getElementById('fzlBookedHint').textContent = home ? tk('vehicle.homeChargingUsuallyAlready') : '';
   if (setDefaults) {
     if (!st.bookedTouched) document.getElementById('fzlBooked').checked = !home && t !== 'km';
     if (energy) {
@@ -2088,10 +2103,10 @@ function fzRenderLogDocs() {
   const pending = fzLogPending.map((f, i) => `
     <div class="flex items-center gap-2 rounded-xl border border-dashed border-ink/20 pl-2.5 pr-1 py-1.5">
       <span class="text-lg shrink-0">📎</span>
-      <span class="flex-1 min-w-0"><span class="block text-sm truncate">${escapeHtml(f.name || 'Datei')}</span><span class="block text-[11px] text-ink/45">wird beim Speichern hochgeladen</span></span>
-      <button type="button" data-fzpend="${i}" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-red-500 grid place-items-center text-lg leading-none" aria-label="Entfernen">×</button>
+      <span class="flex-1 min-w-0"><span class="block text-sm truncate">${escapeHtml(f.name || tk('contract.file'))}</span><span class="block text-[11px] text-ink/45">${tk('contract.uploadOnSave')}</span></span>
+      <button type="button" data-fzpend="${i}" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-red-500 grid place-items-center text-lg leading-none" aria-label="${escapeHtml(tk('common.remove'))}">×</button>
     </div>`).join('');
-  list.innerHTML = (finDocRowsHtml(docs, bezug) + pending) || '<p class="text-xs text-ink/40 italic">Tankquittung, Werkstattrechnung … – als Foto oder PDF.</p>';
+  list.innerHTML = (finDocRowsHtml(docs, bezug) + pending) || ('<p class="text-xs text-ink/40 italic">' + tk('vehicle.fuelReceiptWorkshopInvoice') + '</p>');
   list.querySelectorAll('[data-fzpend]').forEach(b => b.addEventListener('click', () => { fzLogPending.splice(Number(b.dataset.fzpend), 1); fzRenderLogDocs(); }));
 }
 function fzSaveLog() {
@@ -2104,32 +2119,32 @@ function fzSaveLog() {
   const existing = st.id ? fzLogById(st.id) : null;
   const t = st.type;
   const date = fzVal('fzlDate');
-  if (!vtIsIso(date)) return err('Bitte ein Datum wählen.');
+  if (!vtIsIso(date)) return err(tk('fin.err.needDate'));
   const odoRaw = fzVal('fzlOdo');
   const odo = odoRaw ? fzParseInt(odoRaw) : 0;
-  if (odoRaw && (!isFinite(odo) || odo < 0 || odo > 3000000)) return err('Bitte einen gültigen Kilometerstand eingeben.');
-  if (t === 'km' && !odo) return err('Bitte den Kilometerstand eingeben.');
+  if (odoRaw && (!isFinite(odo) || odo < 0 || odo > 3000000)) return err(tk('vehicle.pleaseEnterValidOdometer'));
+  if (t === 'km' && !odo) return err(tk('vehicle.pleaseEnterOdometerReading'));
   const energy = t === 'tanken' || t === 'laden';
   const qty = energy ? fzParseDec(fzVal('fzlQty')) : NaN;
   const price = energy ? fzParseDec(fzVal('fzlPrice')) : NaN;
   const amountRaw = t === 'km' ? '' : fzVal('fzlAmount');
   const amount = amountRaw ? parseEuro(amountRaw) : 0;
-  if (amountRaw && (!isFinite(amount) || amount < 0 || amount > 1000000)) return err('Bitte einen gültigen Betrag eingeben.');
-  if (energy && !(qty > 0) && !(amount > 0)) return err('Bitte Menge oder Betrag eingeben.');
+  if (amountRaw && (!isFinite(amount) || amount < 0 || amount > 1000000)) return err(tk('home.pleaseEnterValidAmount'));
+  if (energy && !(qty > 0) && !(amount > 0)) return err(tk('vehicle.pleaseEnterQuantityAmount'));
   // Plausibility of the odometer reading (hint only)
   if (odo) {
     const pts = fzOdoPoints(v).filter(p => !existing || !(p.date === existing.date && p.odo === Number(existing.odo)));
     const before = pts.filter(p => p.date < date).map(p => p.odo);
     const after = pts.filter(p => p.date > date).map(p => p.odo);
     if ((before.length && odo < Math.max(...before)) || (after.length && odo > Math.min(...after))) {
-      if (!confirm('Der Kilometerstand passt nicht zu den anderen Einträgen (kleiner als ein früherer bzw. größer als ein späterer). Trotzdem speichern?')) return;
+      if (!confirm(tk('vehicle.odometerReadingDoesntFit'))) return;
     }
   }
   let huNext = '';
   if (t === 'hu') {
     const hv = fzYmVal('fzlHuNext');
     huNext = hv.ym;
-    if (hv.invalid) return err('Nächste HU bitte mit Monat (01–12) und Jahr eingeben, z. B. 11 / 2028.');
+    if (hv.invalid) return err(tk('vehicle.pleaseEnterNextMot'));
   }
   const booked = t !== 'km' && amount > 0 && fzChecked('fzlBooked');
   const id = existing ? existing.id : newRecordId();
@@ -2194,19 +2209,19 @@ function fzSaveLog() {
   fzDetailId = v.id;
   fzAfterChange();
   if (pending.length) finUploadMany(pending, 'ausgabe:' + id, 'beleg');
-  const extra = t === 'hu' && huNext ? ' Nächste HU: ' + fzMonthLabel(huNext) + '.' : (t === 'wartung' && log.inspection ? ' Inspektions-Intervall neu gestartet.' : (t === 'reifen' && log.tireSwitch ? ' Reifen aktualisiert.' : ''));
-  finShowToast((existing ? 'Eintrag gespeichert.' : 'Eintrag gespeichert' + (booked ? ` – ${fzEur(log.amount)} in Finanzen gebucht.` : '.')) + extra);
+  const extra = t === 'hu' && huNext ? ' ' + tk('vehicle.nextHuMonth', { month: fzMonthLabel(huNext) }) : (t === 'wartung' && log.inspection ? (' ' + tk('vehicle.serviceIntervalRestarted')) : (t === 'reifen' && log.tireSwitch ? (' ' + tk('vehicle.tyresUpdated')) : ''));
+  finShowToast((existing ? tk('vehicle.entrySaved') : tk('vehicle.entrySaved2') + (booked ? ` ${tk('vehicle.bookedFinance', { fzEur: fzEur(log.amount) })}` : '.')) + extra);
 }
 function fzDeleteLog(id) {
   const l = fzLogById(id);
   if (!l) return;
   const nDocs = finDocsFor('ausgabe:' + id).length;
-  if (!confirm('Eintrag „' + fzLogTitle(l) + '“ löschen?' + (l.booked ? ' Die Ausgabe in Finanzen wird ebenfalls gelöscht.' : '') + (nDocs ? ` ${nDocs} Beleg${nDocs === 1 ? '' : 'e'} ebenfalls.` : ''))) return;
+  if (!confirm(tk('vehicle.confirmDeleteEntry', { name: fzLogTitle(l) }) + (l.booked ? (' ' + tk('home.expenseFinanceWillDeleted')) : '') + (nDocs ? ' ' + tk('vehicle.receiptsToo', { n: nDocs }) : ''))) return;
   finance.vehicleLog = fzLogs().filter(x => x.id !== id);
   if (l.booked) finQueueDelete(id);
   fzCloseModal();
   fzAfterChange();
-  finShowToast('Eintrag gelöscht.');
+  finShowToast(tk('vehicle.entryDeleted'));
   finDeleteDocsFor('ausgabe:' + id);
 }
 
@@ -2215,27 +2230,27 @@ function fzOpenDeadline(vid, did) {
   const v = fzVehicle(vid);
   if (!v) return;
   const d = did ? (v.deadlines || []).find(x => x.id === did) : null;
-  const presets = ['Verbandkasten haltbar bis', 'Herstellergarantie', 'Akku-Garantie', 'Leasingende', 'Vignette', 'Umweltplakette', 'Anschlussgarantie'];
+  const presets = [tk('vehicle.firstAidKitValid'), tk('vehicle.manufacturersWarranty'), tk('vehicle.batteryWarranty'), tk('vehicle.endLease'), tk('vehicle.vignette'), tk('vehicle.emissionsSticker'), tk('vehicle.extendedWarranty')];
   fzOpenModal2(`
-    <h3 class="font-serif text-lg mb-3 pr-6">${d ? 'Frist bearbeiten' : 'Neue Frist'}</h3>
-    ${fzIn('fzdLabel', 'Was', d ? d.label : '', { ph: 'z. B. Verbandkasten haltbar bis', max: 60 })}
+    <h3 class="font-serif text-lg mb-3 pr-6">${d ? tk('vehicle.editDeadline') : tk('vehicle.newDeadline')}</h3>
+    ${fzIn('fzdLabel', tk('vehicle.what2'), d ? d.label : '', { ph: tk('vehicle.eGFirstAid'), max: 60 })}
     <div class="flex flex-wrap gap-1.5 mb-3">${presets.map(p => `<button type="button" class="fz-filter-chip" data-preset="${escapeHtml(p)}">${escapeHtml(p)}</button>`).join('')}</div>
-    ${fzIn('fzdDate', 'Datum', d ? d.date : '', { type: 'date' })}
-    <p class="text-[11px] text-ink/45 mb-2">Rechtzeitig vorher erscheint ein Hinweis und – wenn eingeschaltet – eine Aufgabe.</p>
+    ${fzIn('fzdDate', tk('fin.csv.date'), d ? d.date : '', { type: 'date' })}
+    <p class="text-[11px] text-ink/45 mb-2">${tk('vehicle.notificationIfSwitchedTask')}</p>
     <p id="fzdError" class="hidden text-xs text-red-500 mb-2"></p>
     <div class="flex items-center gap-2 mt-3">
-      ${d ? '<button type="button" id="fzdDelete" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Entfernen</button>' : ''}
+      ${d ? ('<button type="button" id="fzdDelete" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">' + tk('common.remove') + '</button>') : ''}
       <div class="flex-1"></div>
-      <button type="button" id="fzdCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-      <button type="button" id="fzdSave" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Speichern</button>
+      <button type="button" id="fzdCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">${tk('common.cancel')}</button>
+      <button type="button" id="fzdSave" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">${tk('common.save')}</button>
     </div>`, body => {
     body.querySelectorAll('[data-preset]').forEach(b => b.addEventListener('click', () => { document.getElementById('fzdLabel').value = b.dataset.preset; }));
     document.getElementById('fzdCancel').addEventListener('click', fzCloseModal2);
     document.getElementById('fzdSave').addEventListener('click', () => {
       const label = fzVal('fzdLabel').slice(0, 60);
       const date = fzVal('fzdDate');
-      if (!label) return fzShowErr('fzdError', 'Bitte angeben, worum es geht.');
-      if (!vtIsIso(date)) return fzShowErr('fzdError', 'Bitte ein Datum wählen.');
+      if (!label) return fzShowErr('fzdError', tk('vehicle.pleaseStateWhatAbout'));
+      if (!vtIsIso(date)) return fzShowErr('fzdError', tk('fin.err.needDate'));
       const list = (v.deadlines || []).filter(x => x.id !== (d && d.id));
       if (d && d.date !== date) fzCompleteTask(v, 'frist:' + d.id + ':' + d.date);
       list.push({ id: d ? d.id : 'd' + newRecordId().slice(0, 8), label, date });
@@ -2258,38 +2273,38 @@ function fzOpenArchive(vid) {
   const today = finTodayIso();
   const active = fzContractsFor(v.id).filter(c => vtStatus(c, today).state === 'aktiv');
   fzOpenModal2(`
-    <h3 class="font-serif text-lg mb-1 pr-6">Verkauft / abgemeldet</h3>
-    <p class="text-xs text-ink/50 mb-3">${escapeHtml(fzShortName(v))} wandert ins Archiv – der Verlauf bleibt für die Bilanz erhalten, Hinweise und Aufgaben enden.</p>
-    <div class="fz-grid2">${fzIn('fzaDate', 'Seit', today, { type: 'date' })}${fzIn('fzaPrice', 'Verkaufspreis', '', { mode: 'decimal', unit: curSym(), ph: 'optional' })}</div>
-    <label class="fz-check"><input type="checkbox" id="fzaBook" checked /> <span>Verkaufspreis in Finanzen als Einnahme buchen</span></label>
-    ${active.length ? `<div class="vt-info warn mb-2">Noch ${active.length === 1 ? 'ein laufender Vertrag' : active.length + ' laufende Verträge'}: ${escapeHtml(active.map(c => c.name).join(', '))} – Versicherung und Co. kündigen bzw. ummelden nicht vergessen.</div>` : ''}
+    <h3 class="font-serif text-lg mb-1 pr-6">${tk('vehicle.soldDeregistered3')}</h3>
+    <p class="text-xs text-ink/50 mb-3">${tk('vehicle.movesArchiveHistoryKept', { fzShortName: escapeHtml(fzShortName(v)) })}</p>
+    <div class="fz-grid2">${fzIn('fzaDate', tk('vehicle.since'), today, { type: 'date' })}${fzIn('fzaPrice', tk('vehicle.salePrice'), '', { mode: 'decimal', unit: curSym(), ph: 'optional' })}</div>
+    <label class="fz-check"><input type="checkbox" id="fzaBook" checked /> <span>${tk('vehicle.bookSalePriceIncome')}</span></label>
+    ${active.length ? `<div class="vt-info warn mb-2">${escapeHtml(tk('vehicle.runningContracts', { n: active.length, names: active.map(c => c.name).join(', ') }))}</div>` : ''}
     <p id="fzaError" class="hidden text-xs text-red-500 mb-2"></p>
     <div class="flex items-center gap-2 mt-3">
       <div class="flex-1"></div>
-      <button type="button" id="fzaCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-      <button type="button" id="fzaSave" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Archivieren</button>
+      <button type="button" id="fzaCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">${tk('common.cancel')}</button>
+      <button type="button" id="fzaSave" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">${tk('vehicle.archive')}</button>
     </div>`, () => {
     document.getElementById('fzaCancel').addEventListener('click', fzCloseModal2);
     document.getElementById('fzaSave').addEventListener('click', () => {
       const date = fzVal('fzaDate');
-      if (!vtIsIso(date)) return fzShowErr('fzaError', 'Bitte ein Datum wählen.');
+      if (!vtIsIso(date)) return fzShowErr('fzaError', tk('fin.err.needDate'));
       const raw = fzVal('fzaPrice');
       const price = raw ? parseEuro(raw) : '';
-      if (raw && (!isFinite(price) || price < 0)) return fzShowErr('fzaError', 'Bitte einen gültigen Preis eingeben.');
+      if (raw && (!isFinite(price) || price < 0)) return fzShowErr('fzaError', tk('vehicle.pleaseEnterValidPrice'));
       if (v.taxRecId) finance.recurring = finance.recurring.map(r => r.id === v.taxRecId && (!finRecUntil(r) || finRecUntil(r) > date) ? { ...r, until: date } : r);
       finance.vehicles = fzVehicles().map(x => x.id === v.id ? { ...x, archived: { date, price } } : x);
       if (price > 0 && fzChecked('fzaBook')) {
-        finQueueSave({ id: newRecordId(), amount: -Math.round(price * 100) / 100, date, category: FIN_INCOME_CATEGORY, title: 'Verkauf ' + fzName(v), note: '', paidBy: v.holder || '', link: 'fahrzeug:' + v.id, store: '', listId: '', items: [], createdBy: (currentUser() && currentUser().id) || '', created: new Date().toISOString() });
+        finQueueSave({ id: newRecordId(), amount: -Math.round(price * 100) / 100, date, category: FIN_INCOME_CATEGORY, title: (tk('depot.sale') + ' ') + fzName(v), note: '', paidBy: v.holder || '', link: 'fahrzeug:' + v.id, store: '', listId: '', items: [], createdBy: (currentUser() && currentUser().id) || '', created: new Date().toISOString() });
       }
       fzCloseModal2();
       fzAfterChange();
-      finShowToast('Archiviert.' + (active.length ? ' Denk an die Verträge!' : ''));
+      finShowToast(tk('vehicle.archived') + (active.length ? (' ' + tk('vehicle.rememberContracts')) : ''));
     });
   });
 }
 function fzUnarchive(vid) {
   const v = fzVehicle(vid);
-  if (!v || !confirm(`„${fzName(v)}“ wieder als aktives Fahrzeug führen?`)) return;
+  if (!v || !confirm(`${tk('vehicle.keepActiveVehicleAgain', { fzName: fzName(v) })}`)) return;
   finance.vehicles = fzVehicles().map(x => x.id === vid ? { ...x, archived: null } : x);
   if (v.taxRecId) finance.recurring = finance.recurring.map(r => r.id === v.taxRecId ? { ...r, until: '' } : r);
   fzAfterChange();
@@ -2307,18 +2322,18 @@ function fzOpenContractAssign(vid) {
     const other = c.vehicle && c.vehicle !== vid ? fzVehicle(c.vehicle) : null;
     return `<button type="button" class="fz-pick-row${c.vehicle === vid ? ' active' : ''}" data-c="${escapeHtml(c.id)}">
       <span class="text-xl shrink-0">${escapeHtml(cat.icon || '📄')}</span>
-      <span class="flex-1 min-w-0"><span class="block text-sm font-medium truncate">${escapeHtml(c.name || 'Vertrag')}</span><span class="block text-[11px] text-ink/45 truncate">${escapeHtml([c.provider, cat.label, other ? 'bisher: ' + fzName(other) : ''].filter(Boolean).join(' · '))}</span></span>
+      <span class="flex-1 min-w-0"><span class="block text-sm font-medium truncate">${escapeHtml(c.name || tk('contract.docType.doc'))}</span><span class="block text-[11px] text-ink/45 truncate">${escapeHtml([c.provider, cat.label, other ? tk('home.previously', { name: fzName(other) }) : ''].filter(Boolean).join(' · '))}</span></span>
       <span class="shrink-0 text-lg">${c.vehicle === vid ? '✓' : ''}</span>
     </button>`;
   }).join('');
   fzOpenModal2(`
-    <h3 class="font-serif text-lg mb-1 pr-6">Verträge zuordnen</h3>
-    <p class="text-xs text-ink/50 mb-3">Antippen ordnet den Vertrag ${escapeHtml(fzName(v))} zu – Kosten und Kündigungsfristen erscheinen dann beim Fahrzeug und in der Bilanz.</p>
-    <div class="flex flex-col gap-1.5">${rows || '<p class="text-sm text-ink/45">Noch keine Verträge in Finanzen → Verträge.</p>'}</div>
+    <h3 class="font-serif text-lg mb-1 pr-6">${tk('home.assignContracts')}</h3>
+    <p class="text-xs text-ink/50 mb-3">${tk('vehicle.tappingAssignsContractCosts', { fzName: escapeHtml(fzName(v)) })}</p>
+    <div class="flex flex-col gap-1.5">${rows || ('<p class="text-sm text-ink/45">' + tk('home.noContractsFinanceContracts') + '</p>')}</div>
     <div class="flex items-center gap-2 mt-4">
-      <button type="button" id="fzcNew" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">+ Neuer Vertrag</button>
+      <button type="button" id="fzcNew" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">${tk('home.newContract')}</button>
       <div class="flex-1"></div>
-      <button type="button" id="fzcDone" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Fertig</button>
+      <button type="button" id="fzcDone" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">${tk('common.done')}</button>
     </div>`, body => {
     body.querySelectorAll('[data-c]').forEach(b => b.addEventListener('click', () => {
       const cid = b.dataset.c;
@@ -2336,7 +2351,7 @@ function fzNewContract(vid) {
   const v = fzVehicle(vid);
   if (!v) return;
   const k = fzKind(v.kind);
-  openContractModal({ preset: { name: (k.bike ? 'Fahrradversicherung ' : k.id === 'escooter' ? 'Versicherung ' : 'Kfz-Versicherung ') + fzName(v), category: 'versicherung', vehicle: vid, finCat: 'versicherungen' } });
+  openContractModal({ preset: { name: (k.bike ? (tk('vehicle.bikeInsurance') + ' ') : k.id === 'escooter' ? (tk('family.insurance') + ' ') : (tk('vehicle.carInsurance') + ' ')) + fzName(v), category: 'versicherung', vehicle: vid, finCat: 'versicherungen' } });
 }
 function fzOpenDocLink(vid) {
   const v = fzVehicle(vid);
@@ -2348,15 +2363,15 @@ function fzOpenDocLink(vid) {
     const all = docAll().slice().sort((a, b) => (a.kategorie === 'fahrzeuge' ? 0 : 1) - (b.kategorie === 'fahrzeuge' ? 0 : 1) || String(a.titel || '').localeCompare(String(b.titel || ''), 'de'));
     return all.map(x => `<button type="button" class="fz-pick-row${links.has(x.id) ? ' active' : ''}" data-d="${escapeHtml(x.id)}">
       <span class="text-xl shrink-0">${escapeHtml(docCategory(x.kategorie).icon || '📄')}</span>
-      <span class="flex-1 min-w-0"><span class="block text-sm font-medium truncate">${escapeHtml(x.titel || 'Dokument')}</span><span class="block text-[11px] text-ink/45 truncate">${escapeHtml(docCategory(x.kategorie).label + (x.datum ? ' · ' + vtFmt(x.datum) : ''))}</span></span>
+      <span class="flex-1 min-w-0"><span class="block text-sm font-medium truncate">${escapeHtml(x.titel || tk('search.type.doc'))}</span><span class="block text-[11px] text-ink/45 truncate">${escapeHtml(docCategory(x.kategorie).label + (x.datum ? ' · ' + vtFmt(x.datum) : ''))}</span></span>
       <span class="shrink-0 text-lg">${links.has(x.id) ? '✓' : ''}</span>
     </button>`).join('');
   };
   fzOpenModal2(`
-    <h3 class="font-serif text-lg mb-1 pr-6">Aus „Dokumente“ verknüpfen</h3>
-    <p class="text-xs text-ink/50 mb-3">Dokumente bleiben unter „Dokumente“ und erscheinen zusätzlich beim Fahrzeug – die Zuordnung ist auch dort im Dokument unter „Fahrzeug“ sichtbar und änderbar. Kategorie „Auto &amp; Fahrzeuge“ steht oben.</p>
-    <div id="fzDocPick" class="flex flex-col gap-1.5">${render() || '<p class="text-sm text-ink/45">Noch keine Dokumente vorhanden.</p>'}</div>
-    <div class="flex items-center gap-2 mt-4"><div class="flex-1"></div><button type="button" id="fzdlDone" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Fertig</button></div>`, body => {
+    <h3 class="font-serif text-lg mb-1 pr-6">${tk('home.linkFromDocuments')}</h3>
+    <p class="text-xs text-ink/50 mb-3">${tk('vehicle.documentsStayUnderDocuments')}</p>
+    <div id="fzDocPick" class="flex flex-col gap-1.5">${render() || ('<p class="text-sm text-ink/45">' + tk('home.noDocumentsYet') + '</p>')}</div>
+    <div class="flex items-center gap-2 mt-4"><div class="flex-1"></div><button type="button" id="fzdlDone" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">${tk('common.done')}</button></div>`, body => {
     body.querySelector('#fzDocPick').addEventListener('click', (e) => {
       const b = e.target.closest('[data-d]');
       if (!b) return;
@@ -2418,12 +2433,12 @@ function fzMatchVehicleInText(text) {
 function fzDocFacts(v, all = true) {
   const k = fzKind(v.kind);
   const out = [];
-  if (v.plate) out.push('Kennzeichen: ' + fzPlateText(v.plate));
+  if (v.plate) out.push((tk('vehicle.licencePlate2') + ' ') + fzPlateText(v.plate));
   const mm = [v.make, v.model].filter(Boolean).join(' ').trim();
-  if (all && mm && mm !== fzName(v)) out.push('Fahrzeug: ' + mm);
-  if (v.vin) out.push((k.bike ? 'Rahmennummer: ' : 'FIN: ') + v.vin);
+  if (all && mm && mm !== fzName(v)) out.push((tk('vehicle.vehicle2') + ' ') + mm);
+  if (v.vin) out.push((k.bike ? (tk('vehicle.frameNumber2') + ' ') : tk('vehicle.vin') + ': ') + v.vin);
   if (all && (v.hsn || v.tsn)) out.push('HSN/TSN: ' + [v.hsn, v.tsn].filter(Boolean).join(' / '));
-  if (all && fzIsYm(v.firstReg)) out.push((k.bike ? 'Baujahr: ' : 'Erstzulassung: ') + v.firstReg.slice(5, 7) + '/' + v.firstReg.slice(0, 4));
+  if (all && fzIsYm(v.firstReg)) out.push((k.bike ? (tk('vehicle.yearManufacture') + ' ') : (tk('vehicle.firstRegistration2') + ' ')) + v.firstReg.slice(5, 7) + '/' + v.firstReg.slice(0, 4));
   return out;
 }
 // Prefill for a document uploaded at the vehicle: category, title, person,
@@ -2436,7 +2451,7 @@ function fzDocPreset(v, typ, opts = {}) {
   const date = vtIsIso(opts.date) ? opts.date : today;
   const name = fzShortName(v);
   const odo = fzCurrentOdo(v);
-  const odoLine = odo > 0 ? 'km-Stand: ' + fzKmText(odo) : '';
+  const odoLine = odo > 0 ? (tk('vehicle.odometer') + ' ') + fzKmText(odo) : '';
   const cats = docCategories();
   const catId = cats.some(c => c.id === t.cat) ? t.cat : (cats.some(c => c.id === 'fahrzeuge') ? 'fahrzeuge' : 'sonstiges');
   const insurer = vtContracts().find(c => c.vehicle === v.id && c.category === 'versicherung' && vtStatus(c, today).state !== 'beendet') || null;
@@ -2448,12 +2463,12 @@ function fzDocPreset(v, typ, opts = {}) {
   const lines = [];
   switch (t.id) {
     case 'fzschein':
-      p.titel = 'Fahrzeugschein ' + name;
-      p.aussteller = 'Zulassungsstelle';
+      p.titel = (tk('vehicle.registrationCertificate') + ' ') + name;
+      p.aussteller = tk('vehicle.registrationOffice');
       lines.push(...fzDocFacts(v, true));
       break;
     case 'hubericht': {
-      p.titel = 'HU-Bericht ' + name + ' ' + date.slice(0, 4);
+      p.titel = (tk('contract.docType.inspection') + ' ') + name + ' ' + date.slice(0, 4);
       // Next HU: if it already lies in the future, keep it - otherwise recalculate from today
       const due = v.hu && fzIsYm(v.hu.due) ? v.hu.due : '';
       const months = (v.hu && Number(v.hu.months)) || k.hu || 24;
@@ -2464,22 +2479,22 @@ function fzDocPreset(v, typ, opts = {}) {
       break;
     }
     case 'werkstatt':
-      p.titel = 'Werkstattrechnung ' + name;
+      p.titel = (tk('contract.docType.workshop') + ' ') + name;
       p.buy = true;
       p.kaufdatum = date;
       p.gewaehrleistung_bis = vtAddMonths(date, 24, false);
       lines.push(...fzDocFacts(v, false), odoLine);
       break;
     case 'rechnung':
-      p.titel = 'Rechnung ' + name;
+      p.titel = (tk('contract.docType.invoice') + ' ') + name;
       p.buy = true;
       p.kaufdatum = date;
       p.gewaehrleistung_bis = vtAddMonths(date, 24, false);
       p.erinnern = opts.date ? 0 : 30;
-      lines.push('Für: ' + name);
+      lines.push(tk('vehicle.forName', { name }));
       break;
     case 'vertrag': {
-      p.titel = 'Kaufvertrag ' + name;
+      p.titel = (tk('vehicle.purchaseContract') + ' ') + name;
       p.buy = true;
       p.lawFixed = true;
       if (vtIsIso(v.purchaseDate)) { p.kaufdatum = v.purchaseDate; p.datum = opts.date ? date : v.purchaseDate; }
@@ -2489,11 +2504,11 @@ function fzDocPreset(v, typ, opts = {}) {
       if (p.kaufdatum) p.gewaehrleistung_bis = vtAddMonths(p.kaufdatum, isNewCar ? 24 : 12, false);
       p.erinnern = p.gewaehrleistung_bis && p.gewaehrleistung_bis > today && !opts.date ? 30 : 0;
       lines.push(...fzDocFacts(v, true));
-      if (v.odoStart !== '' && v.odoStart != null && Number(v.odoStart) >= 0) lines.push('km-Stand beim Kauf: ' + fzKmText(v.odoStart));
+      if (v.odoStart !== '' && v.odoStart != null && Number(v.odoStart) >= 0) lines.push((tk('vehicle.odometerPurchase2') + ' ') + fzKmText(v.odoStart));
       break;
     }
     case 'garantie':
-      p.titel = 'Garantie ' + name;
+      p.titel = (tk('contract.docType.warranty') + ' ') + name;
       p.buy = true;
       p.lawFixed = true;
       if (vtIsIso(v.purchaseDate)) p.kaufdatum = v.purchaseDate;
@@ -2501,7 +2516,7 @@ function fzDocPreset(v, typ, opts = {}) {
       lines.push(...fzDocFacts(v, false));
       break;
     case 'versicherung':
-      p.titel = (k.vk ? 'Versicherungskennzeichen ' : 'Versicherungsschein ') + name;
+      p.titel = (k.vk ? (tk('vehicle.insurancePlate') + ' ') : (tk('vehicle.insuranceCertificate') + ' ')) + name;
       if (insurer) p.aussteller = String(insurer.provider || '').slice(0, 200);
       if (k.vk && !opts.date) {
         // The insurance plate is always valid from March to the end of February
@@ -2510,15 +2525,15 @@ function fzDocPreset(v, typ, opts = {}) {
         p.erinnern = 30;
       }
       lines.push(...fzDocFacts(v, false));
-      if (insurer && insurer.contractNo) lines.push('Vertragsnummer: ' + insurer.contractNo);
+      if (insurer && insurer.contractNo) lines.push((tk('vehicle.contractNumber') + ' ') + insurer.contractNo);
       break;
     case 'steuer':
-      p.titel = 'Kfz-Steuerbescheid ' + name;
-      p.aussteller = 'Hauptzollamt';
+      p.titel = (tk('vehicle.vehicleTaxNotice') + ' ') + name;
+      p.aussteller = tk('vehicle.customsOffice');
       lines.push(...fzDocFacts(v, false));
       break;
     default:
-      p.titel = 'Dokument ' + name;
+      p.titel = (tk('search.type.doc') + ' ') + name;
       lines.push(...fzDocFacts(v, false));
   }
   p.notiz = lines.filter(Boolean).join('\n').slice(0, 4000);
@@ -2538,12 +2553,12 @@ function fzApplyDocToVehicle(vid, typ, fields) {
     if (!cur || ym > cur) {
       if (cur) fzCompleteTask(v, 'hu:' + cur);
       patch.hu = { ...(v.hu || {}), due: ym, months: (v.hu && v.hu.months) || fzKind(v.kind).hu || 24 };
-      notes.push('nächste HU ' + fzPlakette(ym));
+      notes.push(tk('vehicle.nextHu', { sticker: fzPlakette(ym) }));
     }
   }
   if (typ === 'vertrag') {
-    if (!vtIsIso(v.purchaseDate) && vtIsIso(fields.kaufdatum)) { patch.purchaseDate = fields.kaufdatum; notes.push('Kaufdatum'); }
-    if (!(Number(v.purchasePrice) > 0) && Number(fields.betrag) > 0) { patch.purchasePrice = Math.round(Number(fields.betrag) * 100) / 100; notes.push('Kaufpreis'); }
+    if (!vtIsIso(v.purchaseDate) && vtIsIso(fields.kaufdatum)) { patch.purchaseDate = fields.kaufdatum; notes.push(tk('pdf.field.purchaseDate')); }
+    if (!(Number(v.purchasePrice) > 0) && Number(fields.betrag) > 0) { patch.purchasePrice = Math.round(Number(fields.betrag) * 100) / 100; notes.push(tk('home.purchasePrice')); }
   }
   if (!notes.length) return [];
   finance.vehicles = fzVehicles().map(x => x.id === vid ? { ...x, ...patch, updated: finTodayIso() } : x);
@@ -2553,7 +2568,7 @@ function fzApplyDocToVehicle(vid, typ, fields) {
 function fzUploadDoc(vid, typ) {
   const v = fzVehicle(vid);
   if (!v || isCurrentUserGuest()) return;
-  if (fzIsArchived(v)) { finShowToast('Das Fahrzeug ist archiviert.'); return; }
+  if (fzIsArchived(v)) { finShowToast(tk('vehicle.vehicleArchived')); return; }
   loadDocuments();
   openDocEditModal(null, { preset: fzDocPreset(v, typ || 'sonstiges') });
   docPickFiles(false); // still within the same tap, otherwise iOS blocks the file picker
@@ -2613,10 +2628,10 @@ async function fzMigrateLegacyDocs() {
     }
     if (moved) {
       finDocsChanged();
-      finShowToast(moved === 1 ? '1 Fahrzeugdokument nach „Dokumente“ übernommen.' : moved + ' Fahrzeugdokumente nach „Dokumente“ übernommen.');
+      finShowToast(moved === 1 ? tk('vehicle.n1VehicleDocumentMoved') : tk('vehicle.docsMoved', { n: moved }));
     }
   } catch (err) {
-    console.warn('Fahrzeuge: Übernahme der Dokumente fehlgeschlagen', err);
+    console.warn('Vehicles: moving the documents failed', err);
   } finally {
     fzDocMigrating = false;
   }
@@ -2643,7 +2658,7 @@ function fzDueDone(vid, key) {
   if (it.act === 'reifen') return fzOpenLogModal({ vehicleId: vid, type: 'reifen', fromDue: { key, type: 'reifen', need: it.need } });
   if (it.act === 'vk') return fzOpenLogModal({ vehicleId: vid, type: 'sonstiges', fromDue: { key, type: 'vk' } });
   if (it.act === 'frist') {
-    if (confirm(`„${it.title}“ erledigt? Die Frist wird entfernt – für eine neue Frist einfach wieder „+ Frist“ tippen.`)) {
+    if (confirm(`${tk('vehicle.doneDeadlineWillRemoved', { title: it.title })}`)) {
       fzCompleteTask(v, key);
       finance.vehicles = fzVehicles().map(x => x.id === vid ? { ...x, deadlines: (x.deadlines || []).filter(d => d.id !== it.id) } : x);
       fzAfterChange();
@@ -2691,7 +2706,7 @@ function fzHandleAct(act, ds) {
     case 'doc-link': fzOpenDocLink(ds.v); break;
     case 'doc-open': openDocDetail(ds.id); break;
     case 'doc-all': fzShowDocsOf(ds.v); break;
-    case 'copy': vtCopyText(ds.text, 'Kopiert.'); break;
+    case 'copy': vtCopyText(ds.text, tk('common.copied')); break;
     case 'to-balance': fzBalVehicle = ds.v; fzBalPeriod = 'jahr'; fzBalYear = new Date().getFullYear(); fzTab = 'bilanz'; renderVehicles(); document.getElementById('fzScroll').scrollTop = 0; break;
     case 'bal-period': fzBalPeriod = ds.p; renderVehicles(); break;
     case 'bal-year': fzBalYear += Number(ds.d) || 0; renderVehicles(); break;
@@ -2724,7 +2739,7 @@ function fzHandleAct(act, ds) {
   }));
   document.getElementById('fzHeaderBtn').addEventListener('click', () => {
     if (fzTab === 'liste' && fzDetailId && fzVehicle(fzDetailId)) {
-      if (fzIsArchived(fzVehicle(fzDetailId))) { finShowToast('Das Fahrzeug ist archiviert.'); return; }
+      if (fzIsArchived(fzVehicle(fzDetailId))) { finShowToast(tk('vehicle.vehicleArchived')); return; }
       fzOpenLogModal({ vehicleId: fzDetailId });
     } else fzOpenVehicleModal(null);
   });

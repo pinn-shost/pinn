@@ -5,7 +5,7 @@
 <!-- Documents: view a document -->
 <div id="docDetailModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closeDocDetailBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <button data-tk-attr="aria-label:common.close" id="closeDocDetailBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
     <div id="docDetailBody"></div>
   </div>
 </div>
@@ -13,94 +13,94 @@
 <!-- Documents: add / edit a document -->
 <div id="docEditModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[320] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closeDocEditBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 id="docEditTitle" class="font-serif text-lg mb-3 pr-6">Neues Dokument</h3>
+    <button data-tk-attr="aria-label:common.close" id="closeDocEditBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+    <h3 data-tk="doc.newDocument2" id="docEditTitle" class="font-serif text-lg mb-3 pr-6">New document</h3>
 
-    <span class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Seiten &amp; Dateien</span>
+    <span data-tk="doc.pagesFiles" class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Pages &amp; files</span>
     <div id="docEditFiles" class="doc-file-grid mb-2"></div>
     <div class="grid grid-cols-2 gap-2 mb-1">
-      <button id="docAddCameraBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">📷 Foto aufnehmen</button>
-      <button id="docAddFileBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">📎 Bild oder PDF</button>
+      <button data-tk="doc.takePhoto" id="docAddCameraBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">📷 Take photo</button>
+      <button data-tk="doc.imagePdf" id="docAddFileBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">📎 Image or PDF</button>
     </div>
-    <p class="text-[11px] text-ink/40 mb-3">Mehrere Seiten möglich (bis 20 Dateien, je höchstens 25 MB). Fotos werden verkleinert, PDFs bleiben unverändert. Aus Rechnungen als PDF werden die Angaben automatisch ausgelesen.</p>
+    <p data-tk="doc.severalPagesPossibleUp" class="text-[11px] text-ink/40 mb-3">Several pages possible (up to 20 files, each max. 25 MB). Photos are reduced, PDFs remain unchanged. Details are read automatically from invoices as PDF.</p>
     <p id="docPdfInfo" class="hidden vt-info mb-3"></p>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docTitleInput">Titel</label>
-    <input id="docTitleInput" type="text" autocomplete="off" maxlength="200" placeholder="z. B. Rechnung Waschmaschine, Befund Hautarzt" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+    <label data-tk="common.title" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docTitleInput">Title</label>
+    <input data-tk-attr="placeholder:doc.eGWashingMachine" id="docTitleInput" type="text" autocomplete="off" maxlength="200" placeholder="e.g. washing machine invoice, dermatologist's findings" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
 
-    <span class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Kategorie</span>
+    <span data-tk="account.manage.category" class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Category</span>
     <div id="docCategoryPicker" class="flex flex-wrap gap-1.5 mb-3"></div>
 
     <div class="grid grid-cols-2 gap-3 mb-3">
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docMemberSelect">Gehört zu</label>
+        <label data-tk="doc.belongs" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docMemberSelect">Belongs to</label>
         <select id="docMemberSelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
       </div>
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docDateInput">Datum</label>
+        <label data-tk="fin.csv.date" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docDateInput">Date</label>
         <input id="docDateInput" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
       </div>
     </div>
     <!-- Visibility: family / only me / chosen people (field "sichtbar", see pinn-dokumente.js) -->
     <div id="docKasseWrap" class="hidden mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docKasseSelect">🔒 Kasse</label>
+      <label data-tk="contract.fund" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docKasseSelect">🔒 Fund</label>
       <select id="docKasseSelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
       <p id="docKasseInfo" class="text-[11px] text-ink/45 mt-1"></p>
     </div>
     <div id="docVisWrap" class="hidden mb-3">
-      <span class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">🔒 Sichtbar für</span>
+      <span data-tk="doc.visible" class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">🔒 Visible to</span>
       <div class="inline-flex rounded-lg border border-ink/15 p-0.5 w-full">
-        <button type="button" data-docvis="familie" class="doc-vis-btn flex-1 px-2 py-1.5 rounded-md text-xs text-ink/60 transition">Ganze Familie</button>
-        <button type="button" data-docvis="ich" class="doc-vis-btn flex-1 px-2 py-1.5 rounded-md text-xs text-ink/60 transition">Nur ich</button>
-        <button type="button" data-docvis="auswahl" class="doc-vis-btn flex-1 px-2 py-1.5 rounded-md text-xs text-ink/60 transition">Ausgewählte</button>
+        <button data-tk="doc.wholeFamily4" type="button" data-docvis="familie" class="doc-vis-btn flex-1 px-2 py-1.5 rounded-md text-xs text-ink/60 transition">Whole family</button>
+        <button data-tk="fund.onlyMe" type="button" data-docvis="ich" class="doc-vis-btn flex-1 px-2 py-1.5 rounded-md text-xs text-ink/60 transition">Only me</button>
+        <button data-tk="doc.selected" type="button" data-docvis="auswahl" class="doc-vis-btn flex-1 px-2 py-1.5 rounded-md text-xs text-ink/60 transition">Selected</button>
       </div>
       <div id="docVisPeople" class="hidden rounded-xl border border-ink/10 px-3 py-1 mt-2"></div>
       <p id="docVisInfo" class="text-[11px] text-ink/45 mt-1"></p>
     </div>
     <div id="docVehicleWrap" class="hidden mb-3">
-      <span class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">🚗 Fahrzeug</span>
+      <span data-tk="contract.vehicle" class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">🚗 Vehicle</span>
       <div id="docVehiclePicker" class="flex flex-wrap gap-1.5"></div>
       <p id="docVehicleInfo" class="text-[11px] text-ink/40 mt-1"></p>
     </div>
-    <label id="docIssuerLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docIssuerInput">Aussteller</label>
-    <input id="docIssuerInput" type="text" autocomplete="off" maxlength="200" placeholder="optional, z. B. Praxis, Händler, Behörde" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+    <label data-tk="pdf.field.issuer" id="docIssuerLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docIssuerInput">Issuer</label>
+    <input data-tk-attr="placeholder:doc.optionalEGPractice2" id="docIssuerInput" type="text" autocomplete="off" maxlength="200" placeholder="optional, e.g. practice, dealer, authority" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
 
     <details id="docBuyBlock" class="vt-more rounded-xl border border-ink/10 px-3 py-2 mb-2">
-      <summary class="text-sm cursor-pointer select-none">🧾 Kauf &amp; Garantie</summary>
+      <summary data-tk="doc.purchaseWarranty" class="text-sm cursor-pointer select-none">🧾 Purchase &amp; warranty</summary>
       <div class="pt-3">
         <div class="grid grid-cols-2 gap-3 mb-3">
           <div class="min-w-0">
-            <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docBuyDateInput">Kaufdatum</label>
+            <label data-tk="pdf.field.purchaseDate" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docBuyDateInput">Purchase date</label>
             <input id="docBuyDateInput" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
           </div>
           <div class="min-w-0">
-            <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docPriceInput">Preis</label>
+            <label data-tk="lists.item.price" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docPriceInput">Price</label>
             <div class="fin-amount-field flex items-center rounded-lg border border-ink/15 px-2.5 py-2">
-              <input id="docPriceInput" type="text" inputmode="decimal" autocomplete="off" placeholder="optional" class="w-full min-w-0 bg-transparent border-0 p-0 text-base text-right" />
+              <input data-tk-attr="placeholder:doc.optional" id="docPriceInput" type="text" inputmode="decimal" autocomplete="off" placeholder="optional" class="w-full min-w-0 bg-transparent border-0 p-0 text-base text-right" />
               <span class="cur-sym text-sm text-ink/40 ml-1">€</span>
             </div>
           </div>
         </div>
         <div class="grid grid-cols-2 gap-3 mb-3">
           <div class="min-w-0">
-            <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docWarrantyLawInput">Gewährleistung</label>
+            <label data-tk="pdf.field.warranty" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docWarrantyLawInput">Warranty</label>
             <input id="docWarrantyLawInput" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
           </div>
           <div class="min-w-0">
-            <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docGuaranteeSelect">Herstellergarantie</label>
+            <label data-tk="doc.manufacturersWarranty" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docGuaranteeSelect">Manufacturer's warranty</label>
             <select id="docGuaranteeSelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white">
-              <option value="">keine</option>
-              <option value="1">1 Jahr</option>
-              <option value="2">2 Jahre</option>
-              <option value="3">3 Jahre</option>
-              <option value="5">5 Jahre</option>
-              <option value="10">10 Jahre</option>
-              <option value="x">eigenes Datum</option>
+              <option data-tk="depot.none2" value="">None</option>
+              <option data-tk="rotation.year" value="1">1 year</option>
+              <option data-tk="doc.2Years" value="2">2 years</option>
+              <option data-tk="doc.3Years" value="3">3 years</option>
+              <option data-tk="doc.5Years" value="5">5 years</option>
+              <option data-tk="doc.10Years" value="10">10 years</option>
+              <option data-tk="doc.customDate" value="x">custom date</option>
             </select>
           </div>
         </div>
         <div id="docGuaranteeDateWrap" class="hidden mb-3">
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docGuaranteeDateInput">Garantie bis</label>
+          <label data-tk="doc.warrantyUntil" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docGuaranteeDateInput">Warranty until</label>
           <input id="docGuaranteeDateInput" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
         </div>
         <p id="docBuyInfo" class="vt-info mb-1"></p>
@@ -108,35 +108,35 @@
     </details>
 
     <details id="docExpiryBlock" class="vt-more rounded-xl border border-ink/10 px-3 py-2 mb-3">
-      <summary class="text-sm cursor-pointer select-none">⏳ Gültig bis / Ablaufdatum</summary>
+      <summary data-tk="doc.validUntilExpiryDate" class="text-sm cursor-pointer select-none">⏳ Valid until / expiry date</summary>
       <div class="pt-3">
-        <input id="docExpiryInput" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm mb-1" aria-label="Gültig bis" />
-        <p class="text-[11px] text-ink/40 mb-1">z. B. Personalausweis, Reisepass, Führerschein, TÜV/HU, Impfung, Rezept oder Attest.</p>
+        <input data-tk-attr="aria-label:pdf.field.validUntil" id="docExpiryInput" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm mb-1" aria-label="Valid until" />
+        <p data-tk="doc.eGIdCard" class="text-[11px] text-ink/40 mb-1">e.g. ID card, passport, driving licence, MOT, vaccination, prescription or certificate.</p>
       </div>
     </details>
 
     <div id="docRemindWrap" class="mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docRemindSelect">Erinnerung per Push</label>
+      <label data-tk="doc.reminderPush" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docRemindSelect">Reminder by push</label>
       <select id="docRemindSelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white">
-        <option value="0">nicht erinnern</option>
-        <option value="7">7 Tage vorher</option>
-        <option value="14">14 Tage vorher</option>
-        <option value="30">30 Tage vorher</option>
-        <option value="60">60 Tage vorher</option>
-        <option value="90">90 Tage vorher</option>
+        <option data-tk="doc.dontRemind" value="0">don't remind</option>
+        <option data-tk="pantry.settings.before7" value="7">7 days before</option>
+        <option data-tk="pantry.settings.before14" value="14">14 days before</option>
+        <option data-tk="contract.30DaysBefore" value="30">30 days before</option>
+        <option data-tk="contract.60DaysBefore" value="60">60 days before</option>
+        <option data-tk="contract.90DaysBefore" value="90">90 days before</option>
       </select>
       <p id="docRemindInfo" class="text-[11px] text-ink/40 mt-1"></p>
     </div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docNoteInput">Notiz</label>
-    <textarea id="docNoteInput" rows="2" maxlength="4000" placeholder="optional, z. B. Seriennummer, Diagnose, Aktenzeichen" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3"></textarea>
+    <label data-tk="fin.csv.note" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docNoteInput">Note</label>
+    <textarea data-tk-attr="placeholder:doc.optionalEGSerial" id="docNoteInput" rows="2" maxlength="4000" placeholder="optional, e.g. serial number, diagnosis, file number" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3"></textarea>
 
     <p id="docEditError" class="hidden text-xs text-red-500 mb-3"></p>
     <div class="flex items-center gap-2 mt-1">
-      <button id="deleteDocBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Löschen</button>
+      <button data-tk="doc.delete" id="deleteDocBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Delete</button>
       <div class="flex-1"></div>
-      <button id="cancelDocEditBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
-      <button id="saveDocBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern</button>
+      <button data-tk="common.cancel" id="cancelDocEditBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Cancel</button>
+      <button data-tk="common.save" id="saveDocBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Save</button>
     </div>
   </div>
 </div>
@@ -144,35 +144,35 @@
 <!-- Documents: categories -->
 <div id="docCategoryModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closeDocCategoryBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 class="font-serif text-lg mb-1 pr-6">Dokument-Kategorien</h3>
-    <p class="text-xs text-ink/50 mb-3">Symbol, Name und welche Zusatzfelder beim Anlegen gleich aufgeklappt sind: 🧾 Kauf &amp; Garantie oder ⏳ Ablaufdatum.</p>
+    <button data-tk-attr="aria-label:common.close" id="closeDocCategoryBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+    <h3 data-tk="doc.documentCategories" class="font-serif text-lg mb-1 pr-6">Document categories</h3>
+    <p data-tk="doc.iconNameWhichAdditional" class="text-xs text-ink/50 mb-3">Icon, name and which additional fields are expanded straight away when creating: 🧾 purchase &amp; warranty or ⏳ expiry date.</p>
     <div id="docCategoryEditor" class="flex flex-col gap-2 mb-3"></div>
-    <button id="addDocCategoryBtn" type="button" class="w-full px-3 py-2 rounded-lg border border-dashed border-ink/25 text-sm text-ink/60 hover:text-pine hover:border-pine transition mb-4">+ Kategorie</button>
+    <button data-tk="cat.addCategory" id="addDocCategoryBtn" type="button" class="w-full px-3 py-2 rounded-lg border border-dashed border-ink/25 text-sm text-ink/60 hover:text-pine hover:border-pine transition mb-4">+ Category</button>
     <div class="flex items-center justify-end gap-2">
-      <button id="cancelDocCategoryBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
-      <button id="saveDocCategoryBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern</button>
+      <button data-tk="common.cancel" id="cancelDocCategoryBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Cancel</button>
+      <button data-tk="common.save" id="saveDocCategoryBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Save</button>
     </div>
   </div>
 </div>
 
 <!-- Documents: view pages (full screen) -->
-<div id="docViewer" class="hidden fixed inset-0 z-[400] doc-viewer" role="dialog" aria-modal="true" aria-label="Dokument ansehen">
+<div data-tk-attr="aria-label:doc.viewDocument" id="docViewer" class="hidden fixed inset-0 z-[400] doc-viewer" role="dialog" aria-modal="true" aria-label="View document">
   <div class="doc-viewer-top">
     <span id="docViewerTitle" class="doc-viewer-title"></span>
-    <button id="docViewerOpenBtn" type="button" class="doc-viewer-btn">Original ↗</button>
-    <button id="docViewerCloseBtn" type="button" class="doc-viewer-btn x" aria-label="Schließen">✕</button>
+    <button data-tk="doc.original" id="docViewerOpenBtn" type="button" class="doc-viewer-btn">Original ↗</button>
+    <button data-tk-attr="aria-label:common.close" id="docViewerCloseBtn" type="button" class="doc-viewer-btn x" aria-label="Close">✕</button>
   </div>
   <div id="docViewerStage" class="doc-viewer-stage">
     <img id="docViewerImg" alt="" />
-    <button id="docViewerPrev" type="button" class="doc-viewer-nav prev" aria-label="Vorherige Seite">‹</button>
-    <button id="docViewerNext" type="button" class="doc-viewer-nav next" aria-label="Nächste Seite">›</button>
+    <button data-tk-attr="aria-label:doc.previousPage" id="docViewerPrev" type="button" class="doc-viewer-nav prev" aria-label="Previous page">‹</button>
+    <button data-tk-attr="aria-label:doc.nextPage" id="docViewerNext" type="button" class="doc-viewer-nav next" aria-label="Next page">›</button>
   </div>
   <div id="docViewerCount" class="doc-viewer-bottom"></div>
 </div>
 
 <!-- File viewer: PDF or image in full screen (instead of a new window, which has no way back in the home screen app) -->
-<div id="fileViewer" class="hidden fixed inset-0 file-viewer" role="dialog" aria-modal="true" aria-label="Datei ansehen">
+<div data-tk-attr="aria-label:doc.viewFile" id="fileViewer" class="hidden fixed inset-0 file-viewer" role="dialog" aria-modal="true" aria-label="View file">
   <div id="fileViewerStage" class="file-viewer-stage"></div>
-  <button id="fileViewerCloseBtn" type="button" class="viewer-close-btn" aria-label="Schließen">✕</button>
+  <button data-tk-attr="aria-label:common.close" id="fileViewerCloseBtn" type="button" class="viewer-close-btn" aria-label="Close">✕</button>
 </div>

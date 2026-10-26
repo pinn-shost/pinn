@@ -95,6 +95,16 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 and 🇰🇷 한국어**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.116.1
+
+**Text keys, part 8: home, vehicles and documents**
+
+- **Home** (overview with the animated scene, defects with the notice to the landlord, costs and renovation, meters with forecast and AI reading, maintenance, garden & plants, keys and the smart home messages), **vehicles** (list, details, balance, calculators, deadlines and automatic tasks), **documents** and the **recipe import** from PDF, photo and AI now take their texts from the language files in `pb_public/i18n/` – in all nine languages and as a flatshare. Nothing changes in how you use it.
+- New entries in your language: maintenance and plant templates, garden calendar, document titles and the tasks for MOT, service and tyre changes are created in the language that is currently set. Saved entries stay as they are.
+- Small things: the notice of defects, weather tips for plants, the vehicle calculators and deadlines are complete sentences in every language; month names follow your language; numbers like “1 day” or “2 ingredients” use the correct singular or plural.
+- Next: the bell and the push texts of the server follow with 1.117.0.
+- Changed: app files only (`index.html`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/dokumente.js`, `js/pdflesen.js`, `js/sprachen.js`, `js/versionslog.js`, all language files in `i18n/` and `lang/`) – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.116.0
 
 **Text keys, part 7: family, location and kids' page**
@@ -153,15 +163,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - For contributors: keys starting with `maint.` get no flatshare variant – backups and updates always concern every family on the server.
 - Changed: app files only (`index.html`, `js/konto.js`, `js/profilverwaltung.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/dashboardsitzung.js`, `js/mitteilungen.js`, `js/geraete.js`, `js/fehlerprotokoll.js`, `js/sicherungen.js`, `js/speichern.js`, `js/sprachen.js`, `js/versionslog.js`, all language files in `i18n/` and `lang/`) and `.github/` (CONTRIBUTING.md, `i18n-keys.js`) – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
-## What's new in 1.112.0
-
-**Text keys, part 1: frame, sign-in and settings**
-
-- Sign-in, main admin, family dashboard, menu, header, search and the **whole settings page** now take their texts from the language files in `pb_public/i18n/` – in all nine languages and as a flatshare. Nothing changes in how you use the app.
-- Small fixes along the way: the number of contacts with a birthday and the hint about members without a profile now use the right singular or plural in every language, and labels for screen readers (e.g. “Open/close menu”) are translated too.
-- For contributors: texts in the HTML are filled in once, right before the app scripts start – scripts may change them afterwards. `i18n-keys.js` now keeps emojis and symbols at the start or end of a text. Account, devices, backups and the error log follow in the next step.
-- Changed: app files only (`index.html`, `js/sprachen.js`, `js/anmeldemaske.js`, `js/anmeldung.js`, `js/hauptadminseite.js`, `js/profilauswahl.js`, `js/pineingabe.js`, `js/verbindung.js`, `js/zustand.js`, `js/ansichten.js`, `js/einstellungen.js`, `js/uebersichteinstellungen.js`, `js/versionslog.js`, all language files in `i18n/` and `lang/`) and `.github/` (CONTRIBUTING.md, `i18n-keys.js`) – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
 ## How it works
 
 ```mermaid
@@ -188,7 +189,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.116.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.116.1` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

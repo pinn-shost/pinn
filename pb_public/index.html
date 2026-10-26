@@ -31,7 +31,7 @@
        pb_public/vendor/tesseract/tesseract.min.js + worker.min.js, core/ (tesseract-core*.wasm.js),
          lang/deu.traineddata.gz (text recognition for "Foto einlesen" in recipes, only loaded when needed) -->
 <link rel="stylesheet" href="vendor/pinn.css">
-<link rel="stylesheet" href="css/ergaenzung.css?v=1.116.0">
+<link rel="stylesheet" href="css/ergaenzung.css?v=1.116.1">
 <!-- ==========================================================
      Power saving (since 0.99)
      - Recurring requests (setInterval from 1 second) only run while pinn. is visible;
@@ -41,11 +41,11 @@
        Every touch, mouse or keyboard input wakes pinn. at once and catches up on everything.
      - Short timers (< 1 s, e.g. the SOS countdown) stay unchanged.
      ========================================================== -->
-<link rel="stylesheet" href="css/energiesparen.css?v=1.116.0">
-<script src="js/ruhemodus.js?v=1.116.0"></script>
-<script src="js/textkern.js?v=1.116.0"></script>
-<script src="js/sprachen.js?v=1.116.0"></script>
-<script src="js/region.js?v=1.116.0"></script>
+<link rel="stylesheet" href="css/energiesparen.css?v=1.116.1">
+<script src="js/ruhemodus.js?v=1.116.1"></script>
+<script src="js/textkern.js?v=1.116.1"></script>
+<script src="js/sprachen.js?v=1.116.1"></script>
+<script src="js/region.js?v=1.116.1"></script>
 <script src="vendor/pocketbase/pocketbase.umd.js"></script>
 <!-- If the file sits somewhere else on the NAS or has another name: try further places -->
 <script>if (!window.PocketBase) document.write('<script src="vendor/pocketbase.umd.js"><\/script>');</script>
@@ -143,26 +143,26 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/basis.css?v=1.116.0">
-<link rel="stylesheet" href="css/mobil.css?v=1.116.0">
-<link rel="stylesheet" href="css/einstellungen.css?v=1.116.0">
-<link rel="stylesheet" href="css/seitenleiste.css?v=1.116.0">
-<link rel="stylesheet" href="css/finanzen.css?v=1.116.0">
-<link rel="stylesheet" href="css/listen.css?v=1.116.0">
-<link rel="stylesheet" href="css/vertraege.css?v=1.116.0">
-<link rel="stylesheet" href="css/fahrzeuge.css?v=1.116.0">
-<link rel="stylesheet" href="css/notfall.css?v=1.116.0">
-<link rel="stylesheet" href="css/hinweise.css?v=1.116.0">
-<link rel="stylesheet" href="css/familie.css?v=1.116.0">
-<link rel="stylesheet" href="css/dokumente.css?v=1.116.0">
-<link rel="stylesheet" href="css/sparen.css?v=1.116.0">
-<link rel="stylesheet" href="css/kinderaufgaben.css?v=1.116.0">
-<link rel="stylesheet" href="css/dashboard.css?v=1.116.0">
-<link rel="stylesheet" href="css/uebersicht.css?v=1.116.0">
-<link rel="stylesheet" href="css/wohnort.css?v=1.116.0">
-<link rel="stylesheet" href="css/familienkachel.css?v=1.116.0">
-<link rel="stylesheet" href="css/pinnwand.css?v=1.116.0">
-<link rel="stylesheet" href="css/haustierewetter.css?v=1.116.0">
+<link rel="stylesheet" href="css/basis.css?v=1.116.1">
+<link rel="stylesheet" href="css/mobil.css?v=1.116.1">
+<link rel="stylesheet" href="css/einstellungen.css?v=1.116.1">
+<link rel="stylesheet" href="css/seitenleiste.css?v=1.116.1">
+<link rel="stylesheet" href="css/finanzen.css?v=1.116.1">
+<link rel="stylesheet" href="css/listen.css?v=1.116.1">
+<link rel="stylesheet" href="css/vertraege.css?v=1.116.1">
+<link rel="stylesheet" href="css/fahrzeuge.css?v=1.116.1">
+<link rel="stylesheet" href="css/notfall.css?v=1.116.1">
+<link rel="stylesheet" href="css/hinweise.css?v=1.116.1">
+<link rel="stylesheet" href="css/familie.css?v=1.116.1">
+<link rel="stylesheet" href="css/dokumente.css?v=1.116.1">
+<link rel="stylesheet" href="css/sparen.css?v=1.116.1">
+<link rel="stylesheet" href="css/kinderaufgaben.css?v=1.116.1">
+<link rel="stylesheet" href="css/dashboard.css?v=1.116.1">
+<link rel="stylesheet" href="css/uebersicht.css?v=1.116.1">
+<link rel="stylesheet" href="css/wohnort.css?v=1.116.1">
+<link rel="stylesheet" href="css/familienkachel.css?v=1.116.1">
+<link rel="stylesheet" href="css/pinnwand.css?v=1.116.1">
+<link rel="stylesheet" href="css/haustierewetter.css?v=1.116.1">
 </head>
 <body class="font-sans text-ink antialiased">
 
@@ -956,22 +956,22 @@
     <section id="documentsSection" class="hidden min-h-0 flex-col bg-white/40">
       <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
         <div class="flex items-center justify-between gap-3">
-          <h2 class="font-serif text-lg">Dokumente</h2>
+          <h2 data-tk="nav.documents" class="font-serif text-lg">Documents</h2>
           <div class="flex items-center gap-2 shrink-0">
-            <button id="openDocCategoriesBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center" aria-label="Kategorien" title="Kategorien">
+            <button data-tk-attr="aria-label:cat.categories;title:cat.categories" id="openDocCategoriesBtn" type="button" class="w-9 h-9 rounded-lg border border-ink/15 text-ink/60 hover:text-pine hover:border-pine transition grid place-items-center" aria-label="Categories" title="Categories">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7"></path><path d="M4 10V3"></path><path d="M12 21v-9"></path><path d="M12 8V3"></path><path d="M20 21v-5"></path><path d="M20 12V3"></path><path d="M1 14h6"></path><path d="M9 8h6"></path><path d="M17 16h6"></path></svg>
             </button>
-            <button id="openDocAddBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">+ Dokument</button>
+            <button data-tk="doc.document" id="openDocAddBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">+ Document</button>
           </div>
         </div>
         <div class="flex items-center gap-2 mt-3">
-          <input id="docSearchInput" type="search" autocomplete="off" placeholder="Suchen …" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-1.5 text-base" />
-          <button id="docDueToggle" type="button" class="doc-due-toggle shrink-0 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 transition whitespace-nowrap">⏰ Mit Frist</button>
+          <input data-tk-attr="placeholder:pantry.searchPlaceholder" id="docSearchInput" type="search" autocomplete="off" placeholder="Searching …" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-3 py-1.5 text-base" />
+          <button data-tk="doc.deadline2" id="docDueToggle" type="button" class="doc-due-toggle shrink-0 px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 transition whitespace-nowrap">⏰ With deadline</button>
         </div>
         <div class="flex items-center gap-2 mt-2 flex-wrap">
-          <div class="inline-flex rounded-lg border border-ink/15 p-0.5 shrink-0" role="tablist" aria-label="Sortierung">
-            <button type="button" data-dgroup="category" class="doc-group-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">Kategorie</button>
-            <button type="button" data-dgroup="date" class="doc-group-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">Neueste</button>
+          <div data-tk-attr="aria-label:pantry.sorting" class="inline-flex rounded-lg border border-ink/15 p-0.5 shrink-0" role="tablist" aria-label="Sorting">
+            <button data-tk="account.manage.category" type="button" data-dgroup="category" class="doc-group-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">Category</button>
+            <button data-tk="doc.newest" type="button" data-dgroup="date" class="doc-group-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">Newest</button>
             <button type="button" data-dgroup="alpha" class="doc-group-btn px-3 py-1 rounded-md text-xs text-ink/60 transition">A–Z</button>
           </div>
           <div class="flex items-center gap-2 w-full sm:w-fit">
@@ -992,18 +992,18 @@
       <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
         <div class="flex items-center justify-between gap-3">
           <div class="min-w-0">
-            <h2 class="font-serif text-lg leading-tight">Fahrzeuge</h2>
-            <button id="kassePillFz" type="button" class="kasse-sub hidden" aria-label="Kasse wechseln"></button>
+            <h2 data-tk="nav.vehicles" class="font-serif text-lg leading-tight">Vehicles</h2>
+            <button data-tk-attr="aria-label:fin.switchFund" id="kassePillFz" type="button" class="kasse-sub hidden" aria-label="Switch fund"></button>
           </div>
           <div class="flex items-center gap-2 shrink-0">
-            <button id="fzHeaderBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">+ Fahrzeug</button>
+            <button data-tk="vehicle.vehicle3" id="fzHeaderBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">+ Vehicle</button>
           </div>
         </div>
         <!-- Switch: vehicles / balance / calculator -->
-        <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs mt-3 w-full sm:w-fit" role="tablist" aria-label="Fahrzeugbereich">
-          <button type="button" data-fztab="liste" class="fz-tab-btn flex-1 sm:flex-none px-4 py-1.5 rounded-full transition" role="tab">Fahrzeuge</button>
-          <button type="button" data-fztab="bilanz" class="fz-tab-btn flex-1 sm:flex-none px-4 py-1.5 rounded-full transition" role="tab">Bilanz</button>
-          <button type="button" data-fztab="rechner" class="fz-tab-btn flex-1 sm:flex-none px-4 py-1.5 rounded-full transition" role="tab">Rechner</button>
+        <div data-tk-attr="aria-label:vehicle.vehiclesSection" class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs mt-3 w-full sm:w-fit" role="tablist" aria-label="Vehicles section">
+          <button data-tk="nav.vehicles" type="button" data-fztab="liste" class="fz-tab-btn flex-1 sm:flex-none px-4 py-1.5 rounded-full transition" role="tab">Vehicles</button>
+          <button data-tk="fin.stat.balance" type="button" data-fztab="bilanz" class="fz-tab-btn flex-1 sm:flex-none px-4 py-1.5 rounded-full transition" role="tab">Balance</button>
+          <button data-tk="vehicle.calculators" type="button" data-fztab="rechner" class="fz-tab-btn flex-1 sm:flex-none px-4 py-1.5 rounded-full transition" role="tab">Calculators</button>
         </div>
       </div>
       <div id="fzScroll" class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">
@@ -1015,16 +1015,16 @@
       <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
         <div class="flex items-center justify-between gap-3">
           <div class="min-w-0">
-            <h2 class="font-serif text-lg leading-tight">Zuhause</h2>
-            <button id="kassePillHs" type="button" class="kasse-sub hidden" aria-label="Kasse wechseln"></button>
+            <h2 data-tk="nav.home" class="font-serif text-lg leading-tight">Home</h2>
+            <button data-tk-attr="aria-label:fin.switchFund" id="kassePillHs" type="button" class="kasse-sub hidden" aria-label="Switch fund"></button>
           </div>
           <div class="flex items-center gap-2 shrink-0">
-            <button id="hsHeaderBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">+ Zuhause</button>
+            <button data-tk="home.home3" id="hsHeaderBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">+ Home</button>
           </div>
         </div>
         <!-- Switch: overview + chosen modules (defects, costs, meters, maintenance, garden …) -->
-        <div id="hsTabs" class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs mt-3 w-full sm:w-fit overflow-x-auto" role="tablist" aria-label="Zuhause">
-          <button type="button" data-hstab="uebersicht" class="hs-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Übersicht</button>
+        <div data-tk-attr="aria-label:nav.home" id="hsTabs" class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs mt-3 w-full sm:w-fit overflow-x-auto" role="tablist" aria-label="Home">
+          <button data-tk="nav.overview" type="button" data-hstab="uebersicht" class="hs-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Overview</button>
         </div>
       </div>
       <div id="hsScroll" class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">
@@ -2640,7 +2640,7 @@
 <!-- Documents: view a document -->
 <div id="docDetailModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closeDocDetailBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <button data-tk-attr="aria-label:common.close" id="closeDocDetailBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
     <div id="docDetailBody"></div>
   </div>
 </div>
@@ -2648,94 +2648,94 @@
 <!-- Documents: add / edit a document -->
 <div id="docEditModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[320] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closeDocEditBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 id="docEditTitle" class="font-serif text-lg mb-3 pr-6">Neues Dokument</h3>
+    <button data-tk-attr="aria-label:common.close" id="closeDocEditBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+    <h3 data-tk="doc.newDocument2" id="docEditTitle" class="font-serif text-lg mb-3 pr-6">New document</h3>
 
-    <span class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Seiten &amp; Dateien</span>
+    <span data-tk="doc.pagesFiles" class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Pages &amp; files</span>
     <div id="docEditFiles" class="doc-file-grid mb-2"></div>
     <div class="grid grid-cols-2 gap-2 mb-1">
-      <button id="docAddCameraBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">📷 Foto aufnehmen</button>
-      <button id="docAddFileBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">📎 Bild oder PDF</button>
+      <button data-tk="doc.takePhoto" id="docAddCameraBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">📷 Take photo</button>
+      <button data-tk="doc.imagePdf" id="docAddFileBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">📎 Image or PDF</button>
     </div>
-    <p class="text-[11px] text-ink/40 mb-3">Mehrere Seiten möglich (bis 20 Dateien, je höchstens 25 MB). Fotos werden verkleinert, PDFs bleiben unverändert. Aus Rechnungen als PDF werden die Angaben automatisch ausgelesen.</p>
+    <p data-tk="doc.severalPagesPossibleUp" class="text-[11px] text-ink/40 mb-3">Several pages possible (up to 20 files, each max. 25 MB). Photos are reduced, PDFs remain unchanged. Details are read automatically from invoices as PDF.</p>
     <p id="docPdfInfo" class="hidden vt-info mb-3"></p>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docTitleInput">Titel</label>
-    <input id="docTitleInput" type="text" autocomplete="off" maxlength="200" placeholder="z. B. Rechnung Waschmaschine, Befund Hautarzt" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+    <label data-tk="common.title" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docTitleInput">Title</label>
+    <input data-tk-attr="placeholder:doc.eGWashingMachine" id="docTitleInput" type="text" autocomplete="off" maxlength="200" placeholder="e.g. washing machine invoice, dermatologist's findings" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
 
-    <span class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Kategorie</span>
+    <span data-tk="account.manage.category" class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Category</span>
     <div id="docCategoryPicker" class="flex flex-wrap gap-1.5 mb-3"></div>
 
     <div class="grid grid-cols-2 gap-3 mb-3">
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docMemberSelect">Gehört zu</label>
+        <label data-tk="doc.belongs" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docMemberSelect">Belongs to</label>
         <select id="docMemberSelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
       </div>
       <div class="min-w-0">
-        <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docDateInput">Datum</label>
+        <label data-tk="fin.csv.date" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docDateInput">Date</label>
         <input id="docDateInput" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
       </div>
     </div>
     <!-- Visibility: family / only me / chosen people (field "sichtbar", see pinn-dokumente.js) -->
     <div id="docKasseWrap" class="hidden mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docKasseSelect">🔒 Kasse</label>
+      <label data-tk="contract.fund" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docKasseSelect">🔒 Fund</label>
       <select id="docKasseSelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white"></select>
       <p id="docKasseInfo" class="text-[11px] text-ink/45 mt-1"></p>
     </div>
     <div id="docVisWrap" class="hidden mb-3">
-      <span class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">🔒 Sichtbar für</span>
+      <span data-tk="doc.visible" class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">🔒 Visible to</span>
       <div class="inline-flex rounded-lg border border-ink/15 p-0.5 w-full">
-        <button type="button" data-docvis="familie" class="doc-vis-btn flex-1 px-2 py-1.5 rounded-md text-xs text-ink/60 transition">Ganze Familie</button>
-        <button type="button" data-docvis="ich" class="doc-vis-btn flex-1 px-2 py-1.5 rounded-md text-xs text-ink/60 transition">Nur ich</button>
-        <button type="button" data-docvis="auswahl" class="doc-vis-btn flex-1 px-2 py-1.5 rounded-md text-xs text-ink/60 transition">Ausgewählte</button>
+        <button data-tk="doc.wholeFamily4" type="button" data-docvis="familie" class="doc-vis-btn flex-1 px-2 py-1.5 rounded-md text-xs text-ink/60 transition">Whole family</button>
+        <button data-tk="fund.onlyMe" type="button" data-docvis="ich" class="doc-vis-btn flex-1 px-2 py-1.5 rounded-md text-xs text-ink/60 transition">Only me</button>
+        <button data-tk="doc.selected" type="button" data-docvis="auswahl" class="doc-vis-btn flex-1 px-2 py-1.5 rounded-md text-xs text-ink/60 transition">Selected</button>
       </div>
       <div id="docVisPeople" class="hidden rounded-xl border border-ink/10 px-3 py-1 mt-2"></div>
       <p id="docVisInfo" class="text-[11px] text-ink/45 mt-1"></p>
     </div>
     <div id="docVehicleWrap" class="hidden mb-3">
-      <span class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">🚗 Fahrzeug</span>
+      <span data-tk="contract.vehicle" class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">🚗 Vehicle</span>
       <div id="docVehiclePicker" class="flex flex-wrap gap-1.5"></div>
       <p id="docVehicleInfo" class="text-[11px] text-ink/40 mt-1"></p>
     </div>
-    <label id="docIssuerLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docIssuerInput">Aussteller</label>
-    <input id="docIssuerInput" type="text" autocomplete="off" maxlength="200" placeholder="optional, z. B. Praxis, Händler, Behörde" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
+    <label data-tk="pdf.field.issuer" id="docIssuerLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docIssuerInput">Issuer</label>
+    <input data-tk-attr="placeholder:doc.optionalEGPractice2" id="docIssuerInput" type="text" autocomplete="off" maxlength="200" placeholder="optional, e.g. practice, dealer, authority" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3" />
 
     <details id="docBuyBlock" class="vt-more rounded-xl border border-ink/10 px-3 py-2 mb-2">
-      <summary class="text-sm cursor-pointer select-none">🧾 Kauf &amp; Garantie</summary>
+      <summary data-tk="doc.purchaseWarranty" class="text-sm cursor-pointer select-none">🧾 Purchase &amp; warranty</summary>
       <div class="pt-3">
         <div class="grid grid-cols-2 gap-3 mb-3">
           <div class="min-w-0">
-            <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docBuyDateInput">Kaufdatum</label>
+            <label data-tk="pdf.field.purchaseDate" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docBuyDateInput">Purchase date</label>
             <input id="docBuyDateInput" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
           </div>
           <div class="min-w-0">
-            <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docPriceInput">Preis</label>
+            <label data-tk="lists.item.price" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docPriceInput">Price</label>
             <div class="fin-amount-field flex items-center rounded-lg border border-ink/15 px-2.5 py-2">
-              <input id="docPriceInput" type="text" inputmode="decimal" autocomplete="off" placeholder="optional" class="w-full min-w-0 bg-transparent border-0 p-0 text-base text-right" />
+              <input data-tk-attr="placeholder:doc.optional" id="docPriceInput" type="text" inputmode="decimal" autocomplete="off" placeholder="optional" class="w-full min-w-0 bg-transparent border-0 p-0 text-base text-right" />
               <span class="cur-sym text-sm text-ink/40 ml-1">€</span>
             </div>
           </div>
         </div>
         <div class="grid grid-cols-2 gap-3 mb-3">
           <div class="min-w-0">
-            <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docWarrantyLawInput">Gewährleistung</label>
+            <label data-tk="pdf.field.warranty" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docWarrantyLawInput">Warranty</label>
             <input id="docWarrantyLawInput" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
           </div>
           <div class="min-w-0">
-            <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docGuaranteeSelect">Herstellergarantie</label>
+            <label data-tk="doc.manufacturersWarranty" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docGuaranteeSelect">Manufacturer's warranty</label>
             <select id="docGuaranteeSelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white">
-              <option value="">keine</option>
-              <option value="1">1 Jahr</option>
-              <option value="2">2 Jahre</option>
-              <option value="3">3 Jahre</option>
-              <option value="5">5 Jahre</option>
-              <option value="10">10 Jahre</option>
-              <option value="x">eigenes Datum</option>
+              <option data-tk="depot.none2" value="">None</option>
+              <option data-tk="rotation.year" value="1">1 year</option>
+              <option data-tk="doc.2Years" value="2">2 years</option>
+              <option data-tk="doc.3Years" value="3">3 years</option>
+              <option data-tk="doc.5Years" value="5">5 years</option>
+              <option data-tk="doc.10Years" value="10">10 years</option>
+              <option data-tk="doc.customDate" value="x">custom date</option>
             </select>
           </div>
         </div>
         <div id="docGuaranteeDateWrap" class="hidden mb-3">
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docGuaranteeDateInput">Garantie bis</label>
+          <label data-tk="doc.warrantyUntil" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docGuaranteeDateInput">Warranty until</label>
           <input id="docGuaranteeDateInput" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm" />
         </div>
         <p id="docBuyInfo" class="vt-info mb-1"></p>
@@ -2743,35 +2743,35 @@
     </details>
 
     <details id="docExpiryBlock" class="vt-more rounded-xl border border-ink/10 px-3 py-2 mb-3">
-      <summary class="text-sm cursor-pointer select-none">⏳ Gültig bis / Ablaufdatum</summary>
+      <summary data-tk="doc.validUntilExpiryDate" class="text-sm cursor-pointer select-none">⏳ Valid until / expiry date</summary>
       <div class="pt-3">
-        <input id="docExpiryInput" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm mb-1" aria-label="Gültig bis" />
-        <p class="text-[11px] text-ink/40 mb-1">z. B. Personalausweis, Reisepass, Führerschein, TÜV/HU, Impfung, Rezept oder Attest.</p>
+        <input data-tk-attr="aria-label:pdf.field.validUntil" id="docExpiryInput" type="date" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm mb-1" aria-label="Valid until" />
+        <p data-tk="doc.eGIdCard" class="text-[11px] text-ink/40 mb-1">e.g. ID card, passport, driving licence, MOT, vaccination, prescription or certificate.</p>
       </div>
     </details>
 
     <div id="docRemindWrap" class="mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docRemindSelect">Erinnerung per Push</label>
+      <label data-tk="doc.reminderPush" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docRemindSelect">Reminder by push</label>
       <select id="docRemindSelect" class="w-full rounded-lg border border-ink/15 px-2.5 py-2 text-sm bg-white">
-        <option value="0">nicht erinnern</option>
-        <option value="7">7 Tage vorher</option>
-        <option value="14">14 Tage vorher</option>
-        <option value="30">30 Tage vorher</option>
-        <option value="60">60 Tage vorher</option>
-        <option value="90">90 Tage vorher</option>
+        <option data-tk="doc.dontRemind" value="0">don't remind</option>
+        <option data-tk="pantry.settings.before7" value="7">7 days before</option>
+        <option data-tk="pantry.settings.before14" value="14">14 days before</option>
+        <option data-tk="contract.30DaysBefore" value="30">30 days before</option>
+        <option data-tk="contract.60DaysBefore" value="60">60 days before</option>
+        <option data-tk="contract.90DaysBefore" value="90">90 days before</option>
       </select>
       <p id="docRemindInfo" class="text-[11px] text-ink/40 mt-1"></p>
     </div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docNoteInput">Notiz</label>
-    <textarea id="docNoteInput" rows="2" maxlength="4000" placeholder="optional, z. B. Seriennummer, Diagnose, Aktenzeichen" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3"></textarea>
+    <label data-tk="fin.csv.note" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="docNoteInput">Note</label>
+    <textarea data-tk-attr="placeholder:doc.optionalEGSerial" id="docNoteInput" rows="2" maxlength="4000" placeholder="optional, e.g. serial number, diagnosis, file number" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base mb-3"></textarea>
 
     <p id="docEditError" class="hidden text-xs text-red-500 mb-3"></p>
     <div class="flex items-center gap-2 mt-1">
-      <button id="deleteDocBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Löschen</button>
+      <button data-tk="doc.delete" id="deleteDocBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Delete</button>
       <div class="flex-1"></div>
-      <button id="cancelDocEditBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
-      <button id="saveDocBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern</button>
+      <button data-tk="common.cancel" id="cancelDocEditBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Cancel</button>
+      <button data-tk="common.save" id="saveDocBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Save</button>
     </div>
   </div>
 </div>
@@ -2779,49 +2779,49 @@
 <!-- Documents: categories -->
 <div id="docCategoryModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closeDocCategoryBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 class="font-serif text-lg mb-1 pr-6">Dokument-Kategorien</h3>
-    <p class="text-xs text-ink/50 mb-3">Symbol, Name und welche Zusatzfelder beim Anlegen gleich aufgeklappt sind: 🧾 Kauf &amp; Garantie oder ⏳ Ablaufdatum.</p>
+    <button data-tk-attr="aria-label:common.close" id="closeDocCategoryBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+    <h3 data-tk="doc.documentCategories" class="font-serif text-lg mb-1 pr-6">Document categories</h3>
+    <p data-tk="doc.iconNameWhichAdditional" class="text-xs text-ink/50 mb-3">Icon, name and which additional fields are expanded straight away when creating: 🧾 purchase &amp; warranty or ⏳ expiry date.</p>
     <div id="docCategoryEditor" class="flex flex-col gap-2 mb-3"></div>
-    <button id="addDocCategoryBtn" type="button" class="w-full px-3 py-2 rounded-lg border border-dashed border-ink/25 text-sm text-ink/60 hover:text-pine hover:border-pine transition mb-4">+ Kategorie</button>
+    <button data-tk="cat.addCategory" id="addDocCategoryBtn" type="button" class="w-full px-3 py-2 rounded-lg border border-dashed border-ink/25 text-sm text-ink/60 hover:text-pine hover:border-pine transition mb-4">+ Category</button>
     <div class="flex items-center justify-end gap-2">
-      <button id="cancelDocCategoryBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
-      <button id="saveDocCategoryBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Speichern</button>
+      <button data-tk="common.cancel" id="cancelDocCategoryBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Cancel</button>
+      <button data-tk="common.save" id="saveDocCategoryBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Save</button>
     </div>
   </div>
 </div>
 
 <!-- Documents: view pages (full screen) -->
-<div id="docViewer" class="hidden fixed inset-0 z-[400] doc-viewer" role="dialog" aria-modal="true" aria-label="Dokument ansehen">
+<div data-tk-attr="aria-label:doc.viewDocument" id="docViewer" class="hidden fixed inset-0 z-[400] doc-viewer" role="dialog" aria-modal="true" aria-label="View document">
   <div class="doc-viewer-top">
     <span id="docViewerTitle" class="doc-viewer-title"></span>
-    <button id="docViewerOpenBtn" type="button" class="doc-viewer-btn">Original ↗</button>
-    <button id="docViewerCloseBtn" type="button" class="doc-viewer-btn x" aria-label="Schließen">✕</button>
+    <button data-tk="doc.original" id="docViewerOpenBtn" type="button" class="doc-viewer-btn">Original ↗</button>
+    <button data-tk-attr="aria-label:common.close" id="docViewerCloseBtn" type="button" class="doc-viewer-btn x" aria-label="Close">✕</button>
   </div>
   <div id="docViewerStage" class="doc-viewer-stage">
     <img id="docViewerImg" alt="" />
-    <button id="docViewerPrev" type="button" class="doc-viewer-nav prev" aria-label="Vorherige Seite">‹</button>
-    <button id="docViewerNext" type="button" class="doc-viewer-nav next" aria-label="Nächste Seite">›</button>
+    <button data-tk-attr="aria-label:doc.previousPage" id="docViewerPrev" type="button" class="doc-viewer-nav prev" aria-label="Previous page">‹</button>
+    <button data-tk-attr="aria-label:doc.nextPage" id="docViewerNext" type="button" class="doc-viewer-nav next" aria-label="Next page">›</button>
   </div>
   <div id="docViewerCount" class="doc-viewer-bottom"></div>
 </div>
 
 <!-- File viewer: PDF or image in full screen (instead of a new window, which has no way back in the home screen app) -->
-<div id="fileViewer" class="hidden fixed inset-0 file-viewer" role="dialog" aria-modal="true" aria-label="Datei ansehen">
+<div data-tk-attr="aria-label:doc.viewFile" id="fileViewer" class="hidden fixed inset-0 file-viewer" role="dialog" aria-modal="true" aria-label="View file">
   <div id="fileViewerStage" class="file-viewer-stage"></div>
-  <button id="fileViewerCloseBtn" type="button" class="viewer-close-btn" aria-label="Schließen">✕</button>
+  <button data-tk-attr="aria-label:common.close" id="fileViewerCloseBtn" type="button" class="viewer-close-btn" aria-label="Close">✕</button>
 </div>
 
 <!-- Vehicles: popups (vehicle, entry, choice) - the content comes from the script -->
 <div id="fzModal" data-i18n-ctx="fz" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="fzModalClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <button data-tk-attr="aria-label:common.close" id="fzModalClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
     <div id="fzModalBody"></div>
   </div>
 </div>
 <div id="fzModal2" data-i18n-ctx="fz" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="fzModal2Close" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <button data-tk-attr="aria-label:common.close" id="fzModal2Close" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
     <div id="fzModal2Body"></div>
   </div>
 </div>
@@ -4852,7 +4852,7 @@ let lastIcsSync = null;
    because such web apps often don't reload their content by themselves)
    ========================================================== */
 // Current version – comes from src/version.txt (filled in by src/build.js); pb_hooks/pinn-system.js and pinn-wartung.sh read it here
-const APP_VERSION = '1.116.0';
+const APP_VERSION = '1.116.1';
 
 /* ==========================================================
    Settings & account: two columns of equal height (landscape from tablet width)
@@ -4980,110 +4980,110 @@ const APP_VERSION = '1.116.0';
 <!-- App parts under pb_public/js/ (classic scripts without a build step, order matters).
      ausblick.js must come last – it starts the app (bootApp). New file: add its line here and its name
      in pinn-setup.sh – src/build.js fills in the list of the start check (PINN_APP_PARTS) by itself. -->
-<script src="js/grundlagen.js?v=1.116.0"></script>
-<script src="js/popups.js?v=1.116.0"></script>
-<script src="js/verbindung.js?v=1.116.0"></script>
-<script src="js/benutzer.js?v=1.116.0"></script>
-<script src="js/mitteilungen.js?v=1.116.0"></script>
-<script src="js/serverzugriff.js?v=1.116.0"></script>
-<script src="js/tastatur.js?v=1.116.0"></script>
-<script src="js/anmeldemaske.js?v=1.116.0"></script>
-<script src="js/dashboard.js?v=1.116.0"></script>
-<script src="js/dashboardhintergrund.js?v=1.116.0"></script>
-<script src="js/profilauswahl.js?v=1.116.0"></script>
-<script src="js/pineingabe.js?v=1.116.0"></script>
-<script src="js/dashboardsitzung.js?v=1.116.0"></script>
-<script src="js/dashboardkonto.js?v=1.116.0"></script>
-<script src="js/familienverwalten.js?v=1.116.0"></script>
-<script src="js/einrichten.js?v=1.116.0"></script>
-<script src="js/exportieren.js?v=1.116.0"></script>
-<script src="js/hauptadminseite.js?v=1.116.0"></script>
-<script src="js/anmeldung.js?v=1.116.0"></script>
-<script src="js/konto.js?v=1.116.0"></script>
-<script src="js/profilverwaltung.js?v=1.116.0"></script>
-<script src="js/zustand.js?v=1.116.0"></script>
-<script src="js/bedienzustand.js?v=1.116.0"></script>
-<script src="js/rezeptbilder.js?v=1.116.0"></script>
-<script src="js/zusammenfuehren.js?v=1.116.0"></script>
-<script src="js/speichern.js?v=1.116.0"></script>
-<script src="js/design.js?v=1.116.0"></script>
-<script src="js/sprache.js?v=1.116.0"></script>
-<script src="js/uebersicht.js?v=1.116.0"></script>
-<script src="js/familienkachel.js?v=1.116.0"></script>
-<script src="js/wobistdu.js?v=1.116.0"></script>
-<script src="js/geburtstagsfeier.js?v=1.116.0"></script>
-<script src="js/wetterkachel.js?v=1.116.0"></script>
-<script src="js/geburtstage.js?v=1.116.0"></script>
-<script src="js/uebersichteinstellungen.js?v=1.116.0"></script>
-<script src="js/familiensync.js?v=1.116.0"></script>
-<script src="js/bereiche.js?v=1.116.0"></script>
-<script src="js/kalenderquellen.js?v=1.116.0"></script>
-<script src="js/icsparser.js?v=1.116.0"></script>
-<script src="js/zeitleiste.js?v=1.116.0"></script>
-<script src="js/termindetails.js?v=1.116.0"></script>
-<script src="js/kalenderdatei.js?v=1.116.0"></script>
-<script src="js/wetter.js?v=1.116.0"></script>
-<script src="js/wohnort.js?v=1.116.0"></script>
-<script src="js/feiertage.js?v=1.116.0"></script>
-<script src="js/muellkalender.js?v=1.116.0"></script>
-<script src="js/mitglieder.js?v=1.116.0"></script>
-<script src="js/profilbild.js?v=1.116.0"></script>
-<script src="js/mitglied.js?v=1.116.0"></script>
-<script src="js/kinderseite.js?v=1.116.0"></script>
-<script src="js/kinderroutine.js?v=1.116.0"></script>
-<script src="js/sterne.js?v=1.116.0"></script>
-<script src="js/kalenderansicht.js?v=1.116.0"></script>
-<script src="js/essenplanen.js?v=1.116.0"></script>
-<script src="js/rezeptparser.js?v=1.116.0"></script>
-<script src="js/rezeptdialog.js?v=1.116.0"></script>
-<script src="js/rezeptbild.js?v=1.116.0"></script>
-<script src="js/rezeptmengen.js?v=1.116.0"></script>
-<script src="js/einkauf.js?v=1.116.0"></script>
-<script src="js/einkaufslisten.js?v=1.116.0"></script>
-<script src="js/einkaufseingabe.js?v=1.116.0"></script>
-<script src="js/rezepte.js?v=1.116.0"></script>
-<script src="js/offline.js?v=1.116.0"></script>
-<script src="js/aufgabenextras.js?v=1.116.0"></script>
-<script src="js/appbadge.js?v=1.116.0"></script>
-<script src="js/reisen.js?v=1.116.0"></script>
-<script src="js/aufgabendaten.js?v=1.116.0"></script>
-<script src="js/haushalt.js?v=1.116.0"></script>
-<script src="js/reihum.js?v=1.116.0"></script>
-<script src="js/aufgaben.js?v=1.116.0"></script>
-<script src="js/smarthome.js?v=1.116.0"></script>
-<script src="js/sprachsteuerung.js?v=1.116.0"></script>
-<script src="js/termine.js?v=1.116.0"></script>
-<script src="js/ansichten.js?v=1.116.0"></script>
-<script src="js/versionspruefung.js?v=1.116.0"></script>
-<script src="js/sicherungen.js?v=1.116.0"></script>
-<script src="js/geraete.js?v=1.116.0"></script>
-<script src="js/fehlerprotokoll.js?v=1.116.0"></script>
-<script src="js/versionslog.js?v=1.116.0"></script>
-<script src="js/einstellungen.js?v=1.116.0"></script>
-<script src="js/kalenderkonto.js?v=1.116.0"></script>
-<script src="js/finanzen.js?v=1.116.0"></script>
-<script src="js/kassen.js?v=1.116.0"></script>
-<script src="js/vorrat.js?v=1.116.0"></script>
-<script src="js/vorrat2.js?v=1.116.0"></script>
-<script src="js/sparen.js?v=1.116.0"></script>
-<script src="js/vertraege.js?v=1.116.0"></script>
-<script src="js/fahrzeuge.js?v=1.116.0"></script>
-<script src="js/zuhause.js?v=1.116.0"></script>
-<script src="js/dokumente.js?v=1.116.0"></script>
-<script src="js/pdflesen.js?v=1.116.0"></script>
-<script src="js/appstart.js?v=1.116.0"></script>
-<script src="js/pinnwand.js?v=1.116.0"></script>
-<script src="js/listen.js?v=1.116.0"></script>
-<script src="js/familie.js?v=1.116.0"></script>
-<script src="js/hinweise.js?v=1.116.0"></script>
-<script src="js/ausblick.js?v=1.116.0"></script>
+<script src="js/grundlagen.js?v=1.116.1"></script>
+<script src="js/popups.js?v=1.116.1"></script>
+<script src="js/verbindung.js?v=1.116.1"></script>
+<script src="js/benutzer.js?v=1.116.1"></script>
+<script src="js/mitteilungen.js?v=1.116.1"></script>
+<script src="js/serverzugriff.js?v=1.116.1"></script>
+<script src="js/tastatur.js?v=1.116.1"></script>
+<script src="js/anmeldemaske.js?v=1.116.1"></script>
+<script src="js/dashboard.js?v=1.116.1"></script>
+<script src="js/dashboardhintergrund.js?v=1.116.1"></script>
+<script src="js/profilauswahl.js?v=1.116.1"></script>
+<script src="js/pineingabe.js?v=1.116.1"></script>
+<script src="js/dashboardsitzung.js?v=1.116.1"></script>
+<script src="js/dashboardkonto.js?v=1.116.1"></script>
+<script src="js/familienverwalten.js?v=1.116.1"></script>
+<script src="js/einrichten.js?v=1.116.1"></script>
+<script src="js/exportieren.js?v=1.116.1"></script>
+<script src="js/hauptadminseite.js?v=1.116.1"></script>
+<script src="js/anmeldung.js?v=1.116.1"></script>
+<script src="js/konto.js?v=1.116.1"></script>
+<script src="js/profilverwaltung.js?v=1.116.1"></script>
+<script src="js/zustand.js?v=1.116.1"></script>
+<script src="js/bedienzustand.js?v=1.116.1"></script>
+<script src="js/rezeptbilder.js?v=1.116.1"></script>
+<script src="js/zusammenfuehren.js?v=1.116.1"></script>
+<script src="js/speichern.js?v=1.116.1"></script>
+<script src="js/design.js?v=1.116.1"></script>
+<script src="js/sprache.js?v=1.116.1"></script>
+<script src="js/uebersicht.js?v=1.116.1"></script>
+<script src="js/familienkachel.js?v=1.116.1"></script>
+<script src="js/wobistdu.js?v=1.116.1"></script>
+<script src="js/geburtstagsfeier.js?v=1.116.1"></script>
+<script src="js/wetterkachel.js?v=1.116.1"></script>
+<script src="js/geburtstage.js?v=1.116.1"></script>
+<script src="js/uebersichteinstellungen.js?v=1.116.1"></script>
+<script src="js/familiensync.js?v=1.116.1"></script>
+<script src="js/bereiche.js?v=1.116.1"></script>
+<script src="js/kalenderquellen.js?v=1.116.1"></script>
+<script src="js/icsparser.js?v=1.116.1"></script>
+<script src="js/zeitleiste.js?v=1.116.1"></script>
+<script src="js/termindetails.js?v=1.116.1"></script>
+<script src="js/kalenderdatei.js?v=1.116.1"></script>
+<script src="js/wetter.js?v=1.116.1"></script>
+<script src="js/wohnort.js?v=1.116.1"></script>
+<script src="js/feiertage.js?v=1.116.1"></script>
+<script src="js/muellkalender.js?v=1.116.1"></script>
+<script src="js/mitglieder.js?v=1.116.1"></script>
+<script src="js/profilbild.js?v=1.116.1"></script>
+<script src="js/mitglied.js?v=1.116.1"></script>
+<script src="js/kinderseite.js?v=1.116.1"></script>
+<script src="js/kinderroutine.js?v=1.116.1"></script>
+<script src="js/sterne.js?v=1.116.1"></script>
+<script src="js/kalenderansicht.js?v=1.116.1"></script>
+<script src="js/essenplanen.js?v=1.116.1"></script>
+<script src="js/rezeptparser.js?v=1.116.1"></script>
+<script src="js/rezeptdialog.js?v=1.116.1"></script>
+<script src="js/rezeptbild.js?v=1.116.1"></script>
+<script src="js/rezeptmengen.js?v=1.116.1"></script>
+<script src="js/einkauf.js?v=1.116.1"></script>
+<script src="js/einkaufslisten.js?v=1.116.1"></script>
+<script src="js/einkaufseingabe.js?v=1.116.1"></script>
+<script src="js/rezepte.js?v=1.116.1"></script>
+<script src="js/offline.js?v=1.116.1"></script>
+<script src="js/aufgabenextras.js?v=1.116.1"></script>
+<script src="js/appbadge.js?v=1.116.1"></script>
+<script src="js/reisen.js?v=1.116.1"></script>
+<script src="js/aufgabendaten.js?v=1.116.1"></script>
+<script src="js/haushalt.js?v=1.116.1"></script>
+<script src="js/reihum.js?v=1.116.1"></script>
+<script src="js/aufgaben.js?v=1.116.1"></script>
+<script src="js/smarthome.js?v=1.116.1"></script>
+<script src="js/sprachsteuerung.js?v=1.116.1"></script>
+<script src="js/termine.js?v=1.116.1"></script>
+<script src="js/ansichten.js?v=1.116.1"></script>
+<script src="js/versionspruefung.js?v=1.116.1"></script>
+<script src="js/sicherungen.js?v=1.116.1"></script>
+<script src="js/geraete.js?v=1.116.1"></script>
+<script src="js/fehlerprotokoll.js?v=1.116.1"></script>
+<script src="js/versionslog.js?v=1.116.1"></script>
+<script src="js/einstellungen.js?v=1.116.1"></script>
+<script src="js/kalenderkonto.js?v=1.116.1"></script>
+<script src="js/finanzen.js?v=1.116.1"></script>
+<script src="js/kassen.js?v=1.116.1"></script>
+<script src="js/vorrat.js?v=1.116.1"></script>
+<script src="js/vorrat2.js?v=1.116.1"></script>
+<script src="js/sparen.js?v=1.116.1"></script>
+<script src="js/vertraege.js?v=1.116.1"></script>
+<script src="js/fahrzeuge.js?v=1.116.1"></script>
+<script src="js/zuhause.js?v=1.116.1"></script>
+<script src="js/dokumente.js?v=1.116.1"></script>
+<script src="js/pdflesen.js?v=1.116.1"></script>
+<script src="js/appstart.js?v=1.116.1"></script>
+<script src="js/pinnwand.js?v=1.116.1"></script>
+<script src="js/listen.js?v=1.116.1"></script>
+<script src="js/familie.js?v=1.116.1"></script>
+<script src="js/hinweise.js?v=1.116.1"></script>
+<script src="js/ausblick.js?v=1.116.1"></script>
 
 <!-- ==========================================================
      Changelog as a terminal (Settings → System → Versions-Log)
      Classes "fixed inset-0": the global keyboard logic fits the overlay to the visible
      area automatically, so the input line is never hidden by the keyboard.
      ========================================================== -->
-<link rel="stylesheet" href="css/terminal.css?v=1.116.0">
+<link rel="stylesheet" href="css/terminal.css?v=1.116.1">
 
 <div id="changelogTerminal" class="hidden fixed inset-0" data-no-term role="dialog" aria-modal="true" aria-label="Versions-Log">
   <div class="term-window" id="changelogTermWindow">
@@ -5111,6 +5111,6 @@ const APP_VERSION = '1.116.0';
     </div>
   </div>
 </div>
-<link rel="stylesheet" href="css/glocke.css?v=1.116.0">
+<link rel="stylesheet" href="css/glocke.css?v=1.116.1">
 </body>
 </html>

@@ -48,59 +48,61 @@
      (pb_hooks/pinn-aufgaben.js): they stay open until they are done, the next due date counts from
      the day of completion. Visible under House → Maintenance and on the household page.
    ========================================================== */
-const HS_MODES = { miete: { label: 'Miete', icon: '🔑' }, eigentum: { label: 'Eigentum', icon: '🏡' }, vermietet: { label: 'Vermietet', icon: '🤝' } };
-const HS_TYPES = [['wohnung', 'Wohnung'], ['haus', 'Einfamilienhaus'], ['reihenhaus', 'Reihenhaus'], ['mfh', 'Mehrfamilienhaus'], ['zimmer', 'Zimmer / WG'], ['garage', 'Garage / Stellplatz']];
+const HS_MODES = { miete: { get label() { return tk('home.rent'); }, icon: '🔑' }, eigentum: { get label() { return tk('home.owned'); }, icon: '🏡' }, vermietet: { get label() { return tk('home.letOut'); }, icon: '🤝' } };
+const HS_TYPES = [tkPair('wohnung', 'home.type.wohnung'), tkPair('haus', 'home.type.haus'), tkPair('reihenhaus', 'home.type.reihenhaus'), tkPair('mfh', 'home.type.mfh'), tkPair('zimmer', 'home.type.zimmer'), tkPair('garage', 'home.type.garage')];
 const HS_TYPE_ICONS = { wohnung: '🏢', haus: '🏡', reihenhaus: '🏘️', mfh: '🏬', zimmer: '🛏️', garage: '🅿️' };
-const HS_HEATING = [['', '–'], ['gas', 'Gas'], ['oel', 'Öl'], ['fernwaerme', 'Fernwärme'], ['waermepumpe', 'Wärmepumpe'], ['strom', 'Strom / Nachtspeicher'], ['pellets', 'Pellets / Holz'], ['sonstige', 'Sonstige']];
+const HS_HEATING = [['', '–'], tkPair('gas', 'home.heating.gas'), tkPair('oel', 'home.heating.oel'), tkPair('fernwaerme', 'home.heating.fernwaerme'), tkPair('waermepumpe', 'home.heating.waermepumpe'), tkPair('strom', 'home.heating.strom'), tkPair('pellets', 'home.heating.pellets'), tkPair('sonstige', 'home.heating.sonstige')];
 const HS_COLORS = ['#2F4B41', '#3B7EA1', '#5E8C31', '#B5543C', '#8E6BBF', '#D9822B', '#546E7A', '#C0567A'];
 const HS_FIN_CATEGORY = 'haushalt';
 const HS_FIX = [
-  { key: 'rent', label: 'Kaltmiete', mode: 'miete', interval: 'monthly', group: 'wohnkosten' },
-  { key: 'nk', label: 'Nebenkosten-Vorauszahlung', mode: 'miete', interval: 'monthly', group: 'wohnkosten' },
-  { key: 'heat', label: 'Heizkosten-Vorauszahlung', mode: 'miete', interval: 'monthly', group: 'wohnkosten' },
-  { key: 'stellplatz', label: 'Stellplatz / Garage', mode: 'miete', interval: 'monthly', group: 'wohnkosten' },
-  { key: 'loan', label: 'Kreditrate', mode: 'eigentum', interval: 'monthly', group: 'kredit' },
-  { key: 'hausgeld', label: 'Hausgeld', mode: 'eigentum', interval: 'monthly', group: 'wohnkosten' },
-  { key: 'grundsteuer', label: 'Grundsteuer', mode: 'eigentum', interval: 'quarterly', group: 'abgaben' },
-  { key: 'abgaben', label: 'Müll, Abwasser & Straßenreinigung', mode: 'eigentum', interval: 'quarterly', group: 'abgaben' },
-  { key: 'gebaeude', label: 'Wohngebäudeversicherung', mode: 'eigentum', interval: 'yearly', group: 'abgaben' },
+  { key: 'rent', get label() { return tk('home.fix.rent'); }, mode: 'miete', interval: 'monthly', group: 'wohnkosten' },
+  { key: 'nk', get label() { return tk('home.fix.nk'); }, mode: 'miete', interval: 'monthly', group: 'wohnkosten' },
+  { key: 'heat', get label() { return tk('home.fix.heat'); }, mode: 'miete', interval: 'monthly', group: 'wohnkosten' },
+  { key: 'stellplatz', get label() { return tk('home.fix.stellplatz'); }, mode: 'miete', interval: 'monthly', group: 'wohnkosten' },
+  { key: 'loan', get label() { return tk('home.fix.loan'); }, mode: 'eigentum', interval: 'monthly', group: 'kredit' },
+  { key: 'hausgeld', get label() { return tk('home.fix.hausgeld'); }, mode: 'eigentum', interval: 'monthly', group: 'wohnkosten' },
+  { key: 'grundsteuer', get label() { return tk('home.fix.grundsteuer'); }, mode: 'eigentum', interval: 'quarterly', group: 'abgaben' },
+  { key: 'abgaben', get label() { return tk('home.fix.abgaben'); }, mode: 'eigentum', interval: 'quarterly', group: 'abgaben' },
+  { key: 'gebaeude', get label() { return tk('home.fix.gebaeude'); }, mode: 'eigentum', interval: 'yearly', group: 'abgaben' },
   // Letting: income (booked as recurring income); the owner costs above apply here too
-  { key: 'let_rent', label: 'Kaltmiete (Einnahme)', mode: 'vermietet', interval: 'monthly', group: 'wohnkosten', income: true },
-  { key: 'let_nk', label: 'Nebenkosten-Vorauszahlung (Einnahme)', mode: 'vermietet', interval: 'monthly', group: 'wohnkosten', income: true },
-  { key: 'let_park', label: 'Stellplatz / Garage (Einnahme)', mode: 'vermietet', interval: 'monthly', group: 'wohnkosten', income: true },
+  { key: 'let_rent', get label() { return tk('home.fix.letRent'); }, mode: 'vermietet', interval: 'monthly', group: 'wohnkosten', income: true },
+  { key: 'let_nk', get label() { return tk('home.fix.letNk'); }, mode: 'vermietet', interval: 'monthly', group: 'wohnkosten', income: true },
+  { key: 'let_park', get label() { return tk('home.parkingGarageIncome'); }, mode: 'vermietet', interval: 'monthly', group: 'wohnkosten', income: true },
 ];
+// Income items are booked under the name of the matching cost item ("Kaltmiete" instead of "Kaltmiete (Einnahme)")
+const HS_FIX_TITLE = { let_rent: 'rent', let_nk: 'nk', let_park: 'stellplatz' };
 const HS_GROUPS = [
-  { id: 'wohnkosten', label: 'Miete & Wohnkosten', icon: '🏠', color: '#3B7EA1' },
-  { id: 'kredit', label: 'Kredit', icon: '🏦', color: '#B5543C' },
-  { id: 'abgaben', label: 'Steuern, Abgaben & Versicherung', icon: '🏛️', color: '#8E6BBF' },
-  { id: 'energie', label: 'Energie & Wasser', icon: '⚡', color: '#D9822B' },
-  { id: 'renovierung', label: 'Renovierung & Sanierung', icon: '🧱', color: '#5E8C31' },
-  { id: 'instandhaltung', label: 'Reparaturen', icon: '🔧', color: '#546E7A' },
-  { id: 'einrichtung', label: 'Einrichtung', icon: '🛋️', color: '#C0567A' },
-  { id: 'sonstiges', label: 'Sonstiges', icon: '📦', color: '#9A9A9A' },
+  { id: 'wohnkosten', get label() { return tk('home.group.wohnkosten'); }, icon: '🏠', color: '#3B7EA1' },
+  { id: 'kredit', get label() { return tk('home.group.kredit'); }, icon: '🏦', color: '#B5543C' },
+  { id: 'abgaben', get label() { return tk('home.group.abgaben'); }, icon: '🏛️', color: '#8E6BBF' },
+  { id: 'energie', get label() { return tk('home.group.energie'); }, icon: '⚡', color: '#D9822B' },
+  { id: 'renovierung', get label() { return tk('home.group.renovierung'); }, icon: '🧱', color: '#5E8C31' },
+  { id: 'instandhaltung', get label() { return tk('home.group.instandhaltung'); }, icon: '🔧', color: '#546E7A' },
+  { id: 'einrichtung', get label() { return tk('home.group.einrichtung'); }, icon: '🛋️', color: '#C0567A' },
+  { id: 'sonstiges', get label() { return tk('home.group.sonstiges'); }, icon: '📦', color: '#9A9A9A' },
 ];
 // warranty = statutory warranty in months (suggestion), labor = ask for the labour share, settle = additional payment/credit
 const HS_LOG_TYPES = [
-  { id: 'moebel', label: 'Möbel', icon: '🛋️', group: 'einrichtung', warranty: 24 },
-  { id: 'geraet', label: 'Haushaltsgerät', icon: '🔌', group: 'einrichtung', warranty: 24 },
-  { id: 'boden', label: 'Boden', icon: '🪵', group: 'renovierung', warranty: 24, labor: true },
-  { id: 'material', label: 'Material', icon: '🧱', group: 'renovierung' },
-  { id: 'handwerker', label: 'Handwerker', icon: '👷', group: 'renovierung', warranty: 24, labor: true },
-  { id: 'reparatur', label: 'Reparatur', icon: '🔧', group: 'instandhaltung', labor: true },
-  { id: 'garten', label: 'Garten', icon: '🌿', group: 'einrichtung', labor: true },
-  { id: 'nebenkosten', label: 'Nebenkostenabrechnung', icon: '🧾', group: 'wohnkosten', settle: true },
-  { id: 'energie', label: 'Energie-Abrechnung', icon: '⚡', group: 'energie', settle: true },
-  { id: 'steuer', label: 'Steuern & Abgaben', icon: '🏛️', group: 'abgaben' },
-  { id: 'versicherung', label: 'Versicherung', icon: '🛡️', group: 'abgaben' },
-  { id: 'sonstiges', label: 'Sonstiges', icon: '📦', group: 'sonstiges' },
+  { id: 'moebel', get label() { return tk('home.logType.moebel'); }, icon: '🛋️', group: 'einrichtung', warranty: 24 },
+  { id: 'geraet', get label() { return tk('home.logType.geraet'); }, icon: '🔌', group: 'einrichtung', warranty: 24 },
+  { id: 'boden', get label() { return tk('home.logType.boden'); }, icon: '🪵', group: 'renovierung', warranty: 24, labor: true },
+  { id: 'material', get label() { return tk('home.logType.material'); }, icon: '🧱', group: 'renovierung' },
+  { id: 'handwerker', get label() { return tk('home.logType.handwerker'); }, icon: '👷', group: 'renovierung', warranty: 24, labor: true },
+  { id: 'reparatur', get label() { return tk('home.logType.reparatur'); }, icon: '🔧', group: 'instandhaltung', labor: true },
+  { id: 'garten', get label() { return tk('home.logType.garten'); }, icon: '🌿', group: 'einrichtung', labor: true },
+  { id: 'nebenkosten', get label() { return tk('home.logType.nebenkosten'); }, icon: '🧾', group: 'wohnkosten', settle: true },
+  { id: 'energie', get label() { return tk('home.logType.energie'); }, icon: '⚡', group: 'energie', settle: true },
+  { id: 'steuer', get label() { return tk('home.logType.steuer'); }, icon: '🏛️', group: 'abgaben' },
+  { id: 'versicherung', get label() { return tk('home.logType.versicherung'); }, icon: '🛡️', group: 'abgaben' },
+  { id: 'sonstiges', get label() { return tk('home.logType.sonstiges'); }, icon: '📦', group: 'sonstiges' },
 ];
-const HS_DEFECT_STATUS = [['offen', 'Offen'], ['gemeldet', 'Gemeldet'], ['behoben', 'Behoben']];
-const HS_SEVERITY = [['klein', 'Kleinigkeit'], ['mittel', 'Stört'], ['gross', 'Dringend']];
-const HS_PROJECT_STATUS = [['idee', 'Idee'], ['geplant', 'Geplant'], ['laufend', 'In Arbeit'], ['fertig', 'Fertig']];
+const HS_DEFECT_STATUS = [tkPair('offen', 'home.defect.offen'), tkPair('gemeldet', 'home.defect.gemeldet'), tkPair('behoben', 'home.defect.behoben')];
+const HS_SEVERITY = [tkPair('klein', 'home.severity.klein'), tkPair('mittel', 'home.severity.mittel'), tkPair('gross', 'home.severity.gross')];
+const HS_PROJECT_STATUS = [tkPair('idee', 'home.projStatus.idee'), tkPair('geplant', 'home.projStatus.geplant'), tkPair('laufend', 'home.projStatus.laufend'), tkPair('fertig', 'home.projStatus.fertig')];
 const HS_PROJECT_AREAS = [
-  ['dach', '🏠 Dach'], ['fassade', '🧱 Fassade & Dämmung'], ['fenster', '🪟 Fenster & Türen'], ['heizung', '♨️ Heizung'],
-  ['solar', '☀️ Photovoltaik & Solar'], ['bad', '🛁 Bad'], ['kueche', '🍳 Küche'], ['elektrik', '🔌 Elektrik'],
-  ['boden', '🪵 Böden'], ['waende', '🎨 Wände & Malern'], ['keller', '🏚️ Keller & Feuchtigkeit'], ['garten', '🌿 Garten & Außen'], ['sonstiges', '📦 Sonstiges'],
+  tkPair('dach', 'home.area.dach', '🏠 '), tkPair('fassade', 'home.area.fassade', '🧱 '), tkPair('fenster', 'home.area.fenster', '🪟 '), tkPair('heizung', 'home.area.heizung', '♨️ '),
+  tkPair('solar', 'home.area.solar', '☀️ '), tkPair('bad', 'home.area.bad', '🛁 '), tkPair('kueche', 'home.area.kueche', '🍳 '), tkPair('elektrik', 'home.area.elektrik', '🔌 '),
+  tkPair('boden', 'home.area.boden', '🪵 '), tkPair('waende', 'home.area.waende', '🎨 '), tkPair('keller', 'home.area.keller', '🏚️ '), tkPair('garten', 'home.area.garten', '🌿 '), tkPair('sonstiges', 'home.area.sonstiges', '📦 '),
 ];
 // Monthly weights for the forecast (Jan … Dec, sum 1)
 const HS_SEASON = {
@@ -111,101 +113,101 @@ const HS_SEASON = {
 };
 // price = suggestion per billing unit (gas: per kWh), base = base price per month
 const HS_METER_TYPES = [
-  { id: 'strom', label: 'Strom', icon: '⚡', unit: 'kWh', price: 0.35, base: 12, season: 'power', color: '#D9822B' },
-  { id: 'gas', label: 'Gas', icon: '🔥', unit: 'm³', billUnit: 'kWh', factor: 10.3, price: 0.12, base: 15, season: 'heat', color: '#3B7EA1' },
-  { id: 'wasser', label: 'Wasser', icon: '💧', unit: 'm³', price: 4.5, base: 8, season: 'flat', color: '#2A9D8F' },
-  { id: 'warmwasser', label: 'Warmwasser', icon: '🚿', unit: 'm³', price: 10, base: 0, season: 'flat', color: '#C0567A' },
-  { id: 'waerme', label: 'Wärme / Fernwärme', icon: '♨️', unit: 'kWh', price: 0.14, base: 25, season: 'heat', color: '#B5543C' },
-  { id: 'heizstrom', label: 'Heizstrom / Wärmepumpe', icon: '🌡️', unit: 'kWh', price: 0.28, base: 10, season: 'heat', color: '#8E6BBF' },
-  { id: 'pv', label: 'PV-Einspeisung', icon: '☀️', unit: 'kWh', price: 0.08, base: 0, season: 'sun', color: '#D4A017', income: true },
+  { id: 'strom', get label() { return tk('home.meter.strom'); }, icon: '⚡', unit: 'kWh', price: 0.35, base: 12, season: 'power', color: '#D9822B' },
+  { id: 'gas', get label() { return tk('home.meter.gas'); }, icon: '🔥', unit: 'm³', billUnit: 'kWh', factor: 10.3, price: 0.12, base: 15, season: 'heat', color: '#3B7EA1' },
+  { id: 'wasser', get label() { return tk('home.meter.wasser'); }, icon: '💧', unit: 'm³', price: 4.5, base: 8, season: 'flat', color: '#2A9D8F' },
+  { id: 'warmwasser', get label() { return tk('home.meter.warmwasser'); }, icon: '🚿', unit: 'm³', price: 10, base: 0, season: 'flat', color: '#C0567A' },
+  { id: 'waerme', get label() { return tk('home.meter.waerme'); }, icon: '♨️', unit: 'kWh', price: 0.14, base: 25, season: 'heat', color: '#B5543C' },
+  { id: 'heizstrom', get label() { return tk('home.meter.heizstrom'); }, icon: '🌡️', unit: 'kWh', price: 0.28, base: 10, season: 'heat', color: '#8E6BBF' },
+  { id: 'pv', get label() { return tk('home.meter.pv'); }, icon: '☀️', unit: 'kWh', price: 0.08, base: 0, season: 'sun', color: '#D4A017', income: true },
 ];
 // Document types at the house: cat = category under "Dokumente" (documents)
 const HS_DOC_TYPES = [
-  { id: 'mietvertrag', label: 'Mietvertrag', icon: '📄', cat: 'wohnen', mode: 'miete' },
-  { id: 'kaufvertrag', label: 'Kaufvertrag (Notar)', icon: '📄', cat: 'wohnen', mode: 'eigentum' },
-  { id: 'uebergabe', label: 'Übergabeprotokoll', icon: '📝', cat: 'wohnen' },
-  { id: 'nebenkosten', label: 'Nebenkostenabrechnung', icon: '🧾', cat: 'wohnen' },
-  { id: 'energie', label: 'Strom- / Gasabrechnung', icon: '⚡', cat: 'wohnen' },
-  { id: 'grundbuch', label: 'Grundbuchauszug', icon: '📜', cat: 'wohnen', mode: 'eigentum' },
-  { id: 'kredit', label: 'Kreditvertrag', icon: '🏦', cat: 'bank', mode: 'eigentum' },
-  { id: 'grundsteuer', label: 'Grundsteuerbescheid', icon: '🏛️', cat: 'steuern', mode: 'eigentum' },
-  { id: 'versicherung', label: 'Versicherungsschein', icon: '🛡️', cat: 'versicherungen' },
-  { id: 'energieausweis', label: 'Energieausweis', icon: '🌡️', cat: 'wohnen' },
-  { id: 'grundriss', label: 'Grundriss / Pläne', icon: '📐', cat: 'wohnen' },
-  { id: 'rechnung', label: 'Rechnung', icon: '🧾', cat: 'kaufbelege' },
-  { id: 'foto', label: 'Foto / Dokumentation', icon: '📷', cat: 'wohnen' },
-  { id: 'sonstiges', label: 'Sonstiges', icon: '📎', cat: 'wohnen' },
+  { id: 'mietvertrag', get label() { return tk('home.docType.mietvertrag'); }, icon: '📄', cat: 'wohnen', mode: 'miete' },
+  { id: 'kaufvertrag', get label() { return tk('home.docType.kaufvertrag'); }, icon: '📄', cat: 'wohnen', mode: 'eigentum' },
+  { id: 'uebergabe', get label() { return tk('home.docType.uebergabe'); }, icon: '📝', cat: 'wohnen' },
+  { id: 'nebenkosten', get label() { return tk('home.docType.nebenkosten'); }, icon: '🧾', cat: 'wohnen' },
+  { id: 'energie', get label() { return tk('home.docType.energie'); }, icon: '⚡', cat: 'wohnen' },
+  { id: 'grundbuch', get label() { return tk('home.docType.grundbuch'); }, icon: '📜', cat: 'wohnen', mode: 'eigentum' },
+  { id: 'kredit', get label() { return tk('home.docType.kredit'); }, icon: '🏦', cat: 'bank', mode: 'eigentum' },
+  { id: 'grundsteuer', get label() { return tk('home.docType.grundsteuer'); }, icon: '🏛️', cat: 'steuern', mode: 'eigentum' },
+  { id: 'versicherung', get label() { return tk('home.docType.versicherung'); }, icon: '🛡️', cat: 'versicherungen' },
+  { id: 'energieausweis', get label() { return tk('home.docType.energieausweis'); }, icon: '🌡️', cat: 'wohnen' },
+  { id: 'grundriss', get label() { return tk('home.docType.grundriss'); }, icon: '📐', cat: 'wohnen' },
+  { id: 'rechnung', get label() { return tk('home.docType.rechnung'); }, icon: '🧾', cat: 'kaufbelege' },
+  { id: 'foto', get label() { return tk('home.docType.foto'); }, icon: '📷', cat: 'wohnen' },
+  { id: 'sonstiges', get label() { return tk('home.docType.sonstiges'); }, icon: '📎', cat: 'wohnen' },
 ];
 // Maintenance plan: templates (months = interval, month = suggested month of the first due date)
 const HS_MAINT_TEMPLATES = [
-  { tpl: 'rauchmelder', icon: '🚨', title: 'Rauchmelder testen', months: 12, month: 0 },
-  { tpl: 'entlueften', icon: '♨️', title: 'Heizung entlüften', months: 12, month: 10 },
-  { tpl: 'heizwartung', icon: '🔧', title: 'Heizungswartung beauftragen', months: 12, month: 8, own: true },
-  { tpl: 'dachrinne', icon: '🍂', title: 'Dachrinne reinigen', months: 12, month: 11, own: true },
-  { tpl: 'dunstabzug', icon: '🍳', title: 'Dunstabzugsfilter reinigen', months: 2, month: 0 },
-  { tpl: 'lueftung', icon: '🌬️', title: 'Lüftungsfilter wechseln', months: 6, month: 0 },
-  { tpl: 'wasserfilter', icon: '💧', title: 'Wasserfilter & Perlatoren entkalken', months: 6, month: 0 },
-  { tpl: 'abfluss', icon: '🚿', title: 'Abflüsse & Siphons reinigen', months: 3, month: 0 },
-  { tpl: 'waschmaschine', icon: '🧺', title: 'Waschmaschine: Flusensieb & Pflegewäsche', months: 2, month: 0 },
-  { tpl: 'kuehlschrank', icon: '❄️', title: 'Kühlschrank & Gefrierfach abtauen', months: 6, month: 0 },
-  { tpl: 'fi', icon: '⚡', title: 'FI-Schutzschalter testen', months: 6, month: 0 },
-  { tpl: 'aussenwasser', icon: '🚰', title: 'Außenwasserhahn winterfest machen', months: 12, month: 10, own: true },
-  { tpl: 'fugen', icon: '🛁', title: 'Silikonfugen prüfen', months: 12, month: 0 },
-  { tpl: 'fenster', icon: '🪟', title: 'Fensterdichtungen & Beschläge pflegen', months: 12, month: 4 },
-  { tpl: 'feuerloescher', icon: '🧯', title: 'Feuerlöscher prüfen lassen', months: 24, month: 0 },
-  { tpl: 'zaehler', icon: '📟', title: 'Zählerstände ablesen', months: 1, month: 0 },
+  { tpl: 'rauchmelder', icon: '🚨', get title() { return tk('home.maint.rauchmelder'); }, months: 12, month: 0 },
+  { tpl: 'entlueften', icon: '♨️', get title() { return tk('home.maint.entlueften'); }, months: 12, month: 10 },
+  { tpl: 'heizwartung', icon: '🔧', get title() { return tk('home.maint.heizwartung'); }, months: 12, month: 8, own: true },
+  { tpl: 'dachrinne', icon: '🍂', get title() { return tk('home.maint.dachrinne'); }, months: 12, month: 11, own: true },
+  { tpl: 'dunstabzug', icon: '🍳', get title() { return tk('home.maint.dunstabzug'); }, months: 2, month: 0 },
+  { tpl: 'lueftung', icon: '🌬️', get title() { return tk('home.maint.lueftung'); }, months: 6, month: 0 },
+  { tpl: 'wasserfilter', icon: '💧', get title() { return tk('home.maint.wasserfilter'); }, months: 6, month: 0 },
+  { tpl: 'abfluss', icon: '🚿', get title() { return tk('home.maint.abfluss'); }, months: 3, month: 0 },
+  { tpl: 'waschmaschine', icon: '🧺', get title() { return tk('home.maint.waschmaschine'); }, months: 2, month: 0 },
+  { tpl: 'kuehlschrank', icon: '❄️', get title() { return tk('home.maint.kuehlschrank'); }, months: 6, month: 0 },
+  { tpl: 'fi', icon: '⚡', get title() { return tk('home.maint.fi'); }, months: 6, month: 0 },
+  { tpl: 'aussenwasser', icon: '🚰', get title() { return tk('home.maint.aussenwasser'); }, months: 12, month: 10, own: true },
+  { tpl: 'fugen', icon: '🛁', get title() { return tk('home.maint.fugen'); }, months: 12, month: 0 },
+  { tpl: 'fenster', icon: '🪟', get title() { return tk('home.maint.fenster'); }, months: 12, month: 4 },
+  { tpl: 'feuerloescher', icon: '🧯', get title() { return tk('home.maint.feuerloescher'); }, months: 24, month: 0 },
+  { tpl: 'zaehler', icon: '📟', get title() { return tk('home.maint.zaehler'); }, months: 1, month: 0 },
   // Garden year (building block "Garten & Pflanzen" = garden & plants) – run like the maintenance plan as household tasks
-  { tpl: 'g_obstbaum', icon: '✂️', title: 'Obstbäume schneiden', months: 12, month: 2, garden: true },
-  { tpl: 'g_beete', icon: '🌱', title: 'Beete vorbereiten & Kompost ausbringen', months: 12, month: 3, garden: true },
-  { tpl: 'g_vertikutieren', icon: '🟩', title: 'Rasen vertikutieren & nachsäen', months: 12, month: 4, garden: true },
-  { tpl: 'g_rasenduenger', icon: '🌾', title: 'Rasen düngen', months: 6, month: 4, garden: true },
-  { tpl: 'g_teich', icon: '🐸', title: 'Teich & Pumpe pflegen', months: 12, month: 4, garden: true },
-  { tpl: 'g_balkon', icon: '🌺', title: 'Balkonkästen bepflanzen (nach den Eisheiligen)', months: 12, month: 5, garden: true },
-  { tpl: 'g_hecke', icon: '🌳', title: 'Hecke schneiden', months: 12, month: 6, garden: true },
-  { tpl: 'g_kuebel', icon: '🪴', title: 'Kübelpflanzen ins Winterquartier', months: 12, month: 10, garden: true },
-  { tpl: 'g_laub', icon: '🍂', title: 'Laub rechen', months: 12, month: 10, garden: true },
-  { tpl: 'g_moebel', icon: '🪑', title: 'Gartenmöbel & Polster einlagern', months: 12, month: 10, garden: true },
-  { tpl: 'g_maeher', icon: '🔧', title: 'Rasenmäher winterfest machen', months: 12, month: 11, garden: true },
-  { tpl: 'g_regentonne', icon: '💧', title: 'Regentonne leeren (Frostschutz)', months: 12, month: 11, garden: true },
+  { tpl: 'g_obstbaum', icon: '✂️', get title() { return tk('home.maint.gObstbaum'); }, months: 12, month: 2, garden: true },
+  { tpl: 'g_beete', icon: '🌱', get title() { return tk('home.maint.gBeete'); }, months: 12, month: 3, garden: true },
+  { tpl: 'g_vertikutieren', icon: '🟩', get title() { return tk('home.maint.gVertikutieren'); }, months: 12, month: 4, garden: true },
+  { tpl: 'g_rasenduenger', icon: '🌾', get title() { return tk('home.maint.gRasenduenger'); }, months: 6, month: 4, garden: true },
+  { tpl: 'g_teich', icon: '🐸', get title() { return tk('home.maint.gTeich'); }, months: 12, month: 4, garden: true },
+  { tpl: 'g_balkon', icon: '🌺', get title() { return tk('home.maint.gBalkon'); }, months: 12, month: 5, garden: true },
+  { tpl: 'g_hecke', icon: '🌳', get title() { return tk('home.maint.gHecke'); }, months: 12, month: 6, garden: true },
+  { tpl: 'g_kuebel', icon: '🪴', get title() { return tk('home.maint.gKuebel'); }, months: 12, month: 10, garden: true },
+  { tpl: 'g_laub', icon: '🍂', get title() { return tk('home.maint.gLaub'); }, months: 12, month: 10, garden: true },
+  { tpl: 'g_moebel', icon: '🪑', get title() { return tk('home.maint.gMoebel'); }, months: 12, month: 10, garden: true },
+  { tpl: 'g_maeher', icon: '🔧', get title() { return tk('home.maint.gMaeher'); }, months: 12, month: 11, garden: true },
+  { tpl: 'g_regentonne', icon: '💧', get title() { return tk('home.maint.gRegentonne'); }, months: 12, month: 11, garden: true },
 ];
 // Building blocks per home: what belongs to it is determined by the tabs (overview is always there)
 const HS_MODULES = [
-  { id: 'maengel', icon: '🛠️', label: 'Mängel', tab: true },
-  { id: 'kosten', icon: '🧾', label: 'Kosten', tab: true },
-  { id: 'zaehler', icon: '📟', label: 'Zähler', tab: true },
-  { id: 'wartung', icon: '🔧', label: 'Wartung', tab: true },
-  { id: 'garten', icon: '🌿', label: 'Garten & Pflanzen', tab: true, tabLabel: 'Garten' },
-  { id: 'schluessel', icon: '🗝️', label: 'Schlüssel', tab: false },
+  { id: 'maengel', icon: '🛠️', get label() { return tk('home.module.maengel'); }, tab: true },
+  { id: 'kosten', icon: '🧾', get label() { return tk('home.module.kosten'); }, tab: true },
+  { id: 'zaehler', icon: '📟', get label() { return tk('home.module.zaehler'); }, tab: true },
+  { id: 'wartung', icon: '🔧', get label() { return tk('home.module.wartung'); }, tab: true },
+  { id: 'garten', icon: '🌿', get label() { return tk('home.module.garten'); }, tab: true, get tabLabel() { return tk('home.module.gartenTabLabel'); } },
+  { id: 'schluessel', icon: '🗝️', get label() { return tk('home.module.schluessel'); }, tab: false },
 ];
-const HS_PLACES = [['innen', '🏠 Drinnen'], ['balkon', '🌇 Balkon / Terrasse'], ['garten', '🌳 Garten']];
+const HS_PLACES = [tkPair('innen', 'home.place.innen', '🏠 '), tkPair('balkon', 'home.place.balkon', '🌇 '), tkPair('garten', 'home.place.garten', '🌳 ')];
 // Plant templates: every = water every x days, fertEvery = fertilise every x days (March–September), months = season
 const HS_PLANT_TPL = [
-  { id: 'gruen', icon: '🪴', name: 'Grünpflanze', place: 'innen', every: 7, fertEvery: 14 },
-  { id: 'orchidee', icon: '🌸', name: 'Orchidee', place: 'innen', every: 10, fertEvery: 21 },
-  { id: 'kaktus', icon: '🌵', name: 'Kaktus & Sukkulenten', place: 'innen', every: 21, fertEvery: 42 },
-  { id: 'kraeuter', icon: '🌿', name: 'Kräuter', place: 'balkon', every: 2, fertEvery: 14 },
-  { id: 'balkon', icon: '🌺', name: 'Balkonblumen', place: 'balkon', every: 2, fertEvery: 7, months: [4, 10] },
-  { id: 'kuebel', icon: '🍋', name: 'Kübelpflanzen', place: 'balkon', every: 3, fertEvery: 14, months: [4, 10] },
-  { id: 'tomate', icon: '🍅', name: 'Tomaten', place: 'garten', every: 2, fertEvery: 7, months: [5, 9], rain: true },
-  { id: 'beet', icon: '🥕', name: 'Gemüsebeet', place: 'garten', every: 2, months: [4, 9], rain: true },
-  { id: 'jung', icon: '🌳', name: 'Junge Bäume & Hecke', place: 'garten', every: 7, months: [4, 9], rain: true },
-  { id: 'rasen', icon: '💦', name: 'Rasen sprengen', place: 'garten', every: 4, months: [5, 9], rain: true },
-  { id: 'maehen', icon: '✂️', name: 'Rasen mähen', place: 'garten', every: 7, months: [4, 10], act: 'mow' },
+  { id: 'gruen', icon: '🪴', get name() { return tk('home.plant.gruen'); }, place: 'innen', every: 7, fertEvery: 14 },
+  { id: 'orchidee', icon: '🌸', get name() { return tk('home.plant.orchidee'); }, place: 'innen', every: 10, fertEvery: 21 },
+  { id: 'kaktus', icon: '🌵', get name() { return tk('home.plant.kaktus'); }, place: 'innen', every: 21, fertEvery: 42 },
+  { id: 'kraeuter', icon: '🌿', get name() { return tk('home.plant.kraeuter'); }, place: 'balkon', every: 2, fertEvery: 14 },
+  { id: 'balkon', icon: '🌺', get name() { return tk('home.plant.balkon'); }, place: 'balkon', every: 2, fertEvery: 7, months: [4, 10] },
+  { id: 'kuebel', icon: '🍋', get name() { return tk('home.plant.kuebel'); }, place: 'balkon', every: 3, fertEvery: 14, months: [4, 10] },
+  { id: 'tomate', icon: '🍅', get name() { return tk('home.plant.tomate'); }, place: 'garten', every: 2, fertEvery: 7, months: [5, 9], rain: true },
+  { id: 'beet', icon: '🥕', get name() { return tk('home.plant.beet'); }, place: 'garten', every: 2, months: [4, 9], rain: true },
+  { id: 'jung', icon: '🌳', get name() { return tk('home.plant.jung'); }, place: 'garten', every: 7, months: [4, 9], rain: true },
+  { id: 'rasen', icon: '💦', get name() { return tk('home.plant.rasen'); }, place: 'garten', every: 4, months: [5, 9], rain: true },
+  { id: 'maehen', icon: '✂️', get name() { return tk('home.plant.maehen'); }, place: 'garten', every: 7, months: [4, 10], act: 'mow' },
 ];
 // Garden calendar (guide values for Central Europe): s = sow, p = plant, e = harvest
 const HS_GARDEN_MONTHS = {
-  1: { s: ['Paprika & Chili vorziehen'], p: [], e: ['Grünkohl', 'Rosenkohl', 'Feldsalat'] },
-  2: { s: ['Tomaten vorziehen', 'Radieschen unter Vlies'], p: ['Obstbäume'], e: ['Feldsalat', 'Lauch'] },
-  3: { s: ['Möhren', 'Radieschen', 'Spinat', 'Erbsen'], p: ['Zwiebeln & Knoblauch', 'Erdbeeren'], e: ['Feldsalat', 'Bärlauch'] },
-  4: { s: ['Salat', 'Mangold', 'Kräuter', 'Rasen'], p: ['Kartoffeln', 'Kohlrabi', 'Beerensträucher'], e: ['Radieschen', 'Spinat', 'Rhabarber'] },
-  5: { s: ['Bohnen', 'Zucchini', 'Gurken'], p: ['Tomaten & Paprika', 'Balkonblumen'], e: ['Spargel', 'Salat', 'Rhabarber'] },
-  6: { s: ['Möhren', 'Fenchel', 'Zucchini'], p: ['Kohl', 'Lauch'], e: ['Erdbeeren', 'Kirschen', 'Erbsen'] },
-  7: { s: ['Feldsalat', 'Spinat', 'Radieschen'], p: ['Grünkohl', 'Endivien'], e: ['Tomaten', 'Zucchini', 'Gurken', 'Johannisbeeren'] },
-  8: { s: ['Feldsalat', 'Rucola', 'Winterspinat'], p: ['Erdbeeren'], e: ['Tomaten', 'Bohnen', 'Pflaumen'] },
-  9: { s: ['Feldsalat', 'Gründüngung'], p: ['Blumenzwiebeln', 'Knoblauch', 'Stauden'], e: ['Äpfel', 'Birnen', 'Kürbis', 'Kartoffeln'] },
-  10: { s: ['Rasen'], p: ['Tulpen & Narzissen', 'Obstbäume', 'Hecken'], e: ['Kürbis', 'Äpfel', 'Möhren'] },
-  11: { s: [], p: ['Obstbäume', 'Rosen'], e: ['Grünkohl', 'Rosenkohl', 'Feldsalat'] },
-  12: { s: ['Kresse (drinnen)'], p: [], e: ['Grünkohl', 'Feldsalat', 'Lauch'] },
+  1: { s: ['home.gc.startPeppersChilliesIndoors'], p: [], e: ['home.gc.kale', 'home.gc.brusselsSprouts', 'home.gc.lambsLettuce'] },
+  2: { s: ['home.gc.startTomatoesIndoors', 'home.gc.radishesUnderFleece'], p: ['home.gc.fruitTrees'], e: ['home.gc.lambsLettuce', 'home.gc.leeks'] },
+  3: { s: ['home.gc.carrots', 'home.gc.radishes', 'home.gc.spinach', 'home.gc.peas'], p: ['home.gc.onionsGarlic', 'home.gc.strawberries'], e: ['home.gc.lambsLettuce', 'home.gc.wildGarlic'] },
+  4: { s: ['home.gc.lettuce', 'home.gc.chard', 'home.gc.herbs', 'home.gc.lawn'], p: ['home.gc.potatoes', 'home.gc.kohlrabi', 'home.gc.berryBushes'], e: ['home.gc.radishes', 'home.gc.spinach', 'home.gc.rhubarb'] },
+  5: { s: ['home.gc.beans', 'home.gc.courgettes', 'home.gc.cucumbers'], p: ['home.gc.tomatoesPeppers', 'home.gc.balconyFlowers'], e: ['home.gc.asparagus', 'home.gc.lettuce', 'home.gc.rhubarb'] },
+  6: { s: ['home.gc.carrots', 'home.gc.fennel', 'home.gc.courgettes'], p: ['home.gc.cabbage', 'home.gc.leeks'], e: ['home.gc.strawberries', 'home.gc.cherries', 'home.gc.peas'] },
+  7: { s: ['home.gc.lambsLettuce', 'home.gc.spinach', 'home.gc.radishes'], p: ['home.gc.kale', 'home.gc.endive'], e: ['home.gc.tomatoes', 'home.gc.courgettes', 'home.gc.cucumbers', 'home.gc.currants'] },
+  8: { s: ['home.gc.lambsLettuce', 'home.gc.rocket', 'home.gc.winterSpinach'], p: ['home.gc.strawberries'], e: ['home.gc.tomatoes', 'home.gc.beans', 'home.gc.plums'] },
+  9: { s: ['home.gc.lambsLettuce', 'home.gc.greenManure'], p: ['home.gc.flowerBulbs', 'home.gc.garlic', 'home.gc.perennials'], e: ['home.gc.apples', 'home.gc.pears', 'home.gc.pumpkin', 'home.gc.potatoes'] },
+  10: { s: ['home.gc.lawn'], p: ['home.gc.tulipsDaffodils', 'home.gc.fruitTrees', 'home.gc.hedges'], e: ['home.gc.pumpkin', 'home.gc.apples', 'home.gc.carrots'] },
+  11: { s: [], p: ['home.gc.fruitTrees', 'home.gc.roses'], e: ['home.gc.kale', 'home.gc.brusselsSprouts', 'home.gc.lambsLettuce'] },
+  12: { s: ['home.gc.cressIndoors'], p: [], e: ['home.gc.kale', 'home.gc.lambsLettuce', 'home.gc.leeks'] },
 };
 const HS_DOC_LINK_MAX = 300;
 
@@ -238,7 +240,7 @@ function hsLet(h) { return hsMode(h) === 'vermietet'; }
 function hsFixMatch(def, mode) { return def.mode === mode || (def.mode === 'eigentum' && mode === 'vermietet'); }
 function hsHeroIcon(h) { const m = hsMode(h); if (m === 'eigentum') return HS_TYPE_ICONS[h && h.type] || '🏡'; return HS_MODES[m].icon; }
 function hsDocTypesFor(h) { const m = hsMode(h); return HS_DOC_TYPES.filter(t => !t.mode || t.mode === m || m === 'vermietet'); }
-function hsName(h) { return (h && String(h.name || '').trim()) || (hsOwn(h) ? 'Unser Zuhause' : 'Unsere Wohnung'); }
+function hsName(h) { return (h && String(h.name || '').trim()) || (hsOwn(h) ? tk('home.ourHome') : tk('home.ourFlat')); }
 function hsColor(h) { return /^#[0-9a-fA-F]{6}$/.test((h && h.color) || '') ? h.color : '#2F4B41'; }
 function hsLogs(hid) { return hsArr('homeLog').filter(l => !hid || l.home === hid); }
 function hsLogById(id) { return hsArr('homeLog').find(l => l.id === id) || null; }
@@ -270,9 +272,9 @@ function hsYearsSince(iso) {
 }
 function hsDuration(iso) {
   const y = hsYearsSince(iso);
-  if (y >= 1) return Math.floor(y) === 1 ? '1 Jahr' : Math.floor(y) + ' Jahre';
+  if (y >= 1) return tk('wx.yearsN', { n: Math.floor(y) });
   const m = Math.floor(y * 12);
-  return m <= 1 ? 'weniger als 2 Monate' : m + ' Monate';
+  return m <= 1 ? tk('home.lessThan2Months') : tk('contract.monthsN', { n: m });
 }
 
 /* ---------- Costs ---------- */
@@ -351,13 +353,13 @@ function hsCostItems(h, s, e) {
   if (to >= s) {
     hsRecurringFor(h.id).forEach(r => {
       const def = HS_FIX.find(d => r.homeFix === d.key);
-      finRecDates(r, s, to).forEach(d => { const a = finRecurringAmountFor(r, d); if (a > 0) out.push({ date: d, amount: a, group: def ? def.group : 'wohnkosten', label: r.title || 'Fixkosten' }); });
+      finRecDates(r, s, to).forEach(d => { const a = finRecurringAmountFor(r, d); if (a > 0) out.push({ date: d, amount: a, group: def ? def.group : 'wohnkosten', label: r.title || tk('home.fixedCosts') }); });
     });
     hsContractsFor(h.id).forEach(c => {
       const r = vtRec(c);
       if (!r) return;
       const grp = c.category === 'energie' ? 'energie' : (c.category === 'versicherung' ? 'abgaben' : (c.category === 'kredit' ? 'kredit' : 'wohnkosten'));
-      finRecDates(r, s, to).forEach(d => { const a = finRecurringAmountFor(r, d); if (a > 0) out.push({ date: d, amount: a, group: grp, label: c.name || 'Vertrag' }); });
+      finRecDates(r, s, to).forEach(d => { const a = finRecurringAmountFor(r, d); if (a > 0) out.push({ date: d, amount: a, group: grp, label: c.name || tk('contract.docType.doc') }); });
     });
   }
   return out;
@@ -523,12 +525,12 @@ function hsMaintNext(m) {
 }
 function hsMaintEvery(months) {
   const n = Number(months) || 12;
-  if (n === 1) return 'monatlich';
-  if (n === 3) return 'vierteljährlich';
-  if (n === 6) return 'halbjährlich';
-  if (n === 12) return 'jährlich';
-  if (n % 12 === 0) return 'alle ' + (n / 12) + ' Jahre';
-  return 'alle ' + n + ' Monate';
+  if (n === 1) return tk('contract.interval.monthly');
+  if (n === 3) return tk('contract.interval.quarterly');
+  if (n === 6) return tk('home.halfYearly');
+  if (n === 12) return tk('contract.interval.yearly');
+  if (n % 12 === 0) return tk('home.everyNYears', { n: n / 12 });
+  return tk('home.everyNMonths', { n });
 }
 // The task key is icon + title: two entries with the same name would share one task (editing one
 // changed the due date of the other). Since 1.57 names are kept unique, e.g. "Rasen düngen (2)".
@@ -611,7 +613,7 @@ function hsTaskAction(task) {
   if (!task || task.done || !hsCanEdit() || !finance) return null;
   const m = hsMeterMaintForTask(task);
   if (!m) return null;
-  return { label: '📟 Zählerstände eintragen', run: () => hsMeterTaskRun(task.id) };
+  return { label: tk('home.enterMeterReadings'), run: () => hsMeterTaskRun(task.id) };
 }
 function hsCompleteTask(task) {
   if (!task || task.done || typeof queueTaskDone !== 'function') return;
@@ -631,7 +633,7 @@ function hsMeterTaskRun(taskId) {
   const m = task ? hsMeterMaintForTask(task) : null;
   if (taskId && !m) return;
   if (!hsAllActiveMeters().length) {
-    finShowToast('Lege zuerst deine Zähler an – danach öffnet die Aufgabe direkt das Eintragen.');
+    finShowToast(tk('home.addMetersFirstAfter'));
     hsOpen('zaehler');
     setTimeout(() => hsOpenMeterModal(null), 250);
     return;
@@ -639,9 +641,9 @@ function hsMeterTaskRun(taskId) {
   const cutoff = task ? hsMeterCutoff(task, m) : vtAddDays(finTodayIso(), -10);
   const pending = hsMeterPending(cutoff);
   if (!pending.length) {
-    if (task && confirm('Alle Zählerstände sind schon eingetragen. Aufgabe „' + task.title + '“ abhaken?')) {
+    if (task && confirm(tk('home.allReadingsTickTask', { title: task.title }))) {
       hsCompleteTask(task);
-      finShowToast('Erledigt ✓');
+      finShowToast(tk('pet.done'));
     } else if (!task) {
       hsOpenReadingModal({});
     }
@@ -663,7 +665,7 @@ function hsMeterAfterReading() {
     closed++;
   });
   if (closed) {
-    finShowToast('Alle Zählerstände eingetragen – Aufgabe erledigt ✓');
+    finShowToast(tk('home.allMeterReadingsEntered'));
     if (currentView === 'haus') renderHouse();
     return true;
   }
@@ -671,7 +673,7 @@ function hsMeterAfterReading() {
     const pending = hsMeterPending(run.cutoff);
     if (pending.length) {
       hsMeterRun = run;
-      finShowToast('Gespeichert – weiter mit ' + hsMeterLabel(pending[0]) + '.');
+      finShowToast(tk('home.savedNextMeter', { name: hsMeterLabel(pending[0]) }));
       setTimeout(() => hsOpenMeterReadingFor(pending[0]), 350);
       return true;
     }
@@ -694,14 +696,14 @@ function hsMaintAct(id) {
   if (!open || !hsCanEdit()) return;
   if (hsMaintIsMeter(m)) { hsMeterTaskRun(open.id); return; }
   hsCompleteTask(open);
-  finShowToast('Erledigt ✓');
+  finShowToast(tk('pet.done'));
   if (currentView === 'haus') renderHouse();
 }
 function hsMaintDueTone(iso) {
   const days = vtDiffDays(finTodayIso(), iso);
-  if (days < 0) return { tone: 'urgent', label: 'überfällig seit ' + vtFmt(iso) };
-  if (days === 0) return { tone: 'warn', label: 'heute' };
-  if (days <= 14) return { tone: 'warn', label: 'in ' + days + ' Tagen' };
+  if (days < 0) return { tone: 'urgent', label: tk('home.overdueSince', { date: vtFmt(iso) }) };
+  if (days === 0) return { tone: 'warn', label: tk('contract.today') };
+  if (days <= 14) return { tone: 'warn', label: tk('lists.when.inDays', { n: days }) };
   return { tone: '', label: vtFmt(iso) };
 }
 
@@ -723,12 +725,12 @@ function renderHouse() {
     tabsEl.dataset.tabs = tabs.join(',');
     tabsEl.innerHTML = tabs.map(id => {
       const m = HS_MODULES.find(x => x.id === id);
-      return `<button type="button" data-hstab="${id}" class="hs-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">${hsEsc(m ? (m.tabLabel || m.label) : 'Übersicht')}</button>`;
+      return `<button type="button" data-hstab="${id}" class="hs-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">${hsEsc(m ? (m.tabLabel || m.label) : tk('nav.overview'))}</button>`;
     }).join('');
   }
   document.querySelectorAll('.hs-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.hstab === hsTab));
   const hb = document.getElementById('hsHeaderBtn');
-  const labels = { uebersicht: h ? '✎ Bearbeiten' : '+ Zuhause', maengel: '+ Mangel', kosten: '+ Rechnung', zaehler: '+ Zählerstand', wartung: '+ Wartung', garten: '+ Pflanze' };
+  const labels = { uebersicht: h ? tk('home.edit') : tk('home.home'), maengel: tk('home.defect'), kosten: tk('home.invoice'), zaehler: tk('home.meterReading'), wartung: tk('home.maintenance'), garten: tk('home.plant') };
   hb.textContent = labels[hsTab] || '+';
   hb.classList.toggle('hidden', !hsCanEdit() || (!h && hsTab !== 'uebersicht' && hsTab !== 'wartung'));
   if (hsTab === 'wartung') { pane.innerHTML = hsMaintPageHtml(); return; }
@@ -762,14 +764,14 @@ function hsToggleModule(id) {
   hsUpsert('homes', { ...h, modules: next, updated: finTodayIso() });
   hsAfterChange();
   const m = HS_MODULES.find(x => x.id === id);
-  finShowToast((on ? 'Hinzugefügt: ' : 'Entfernt: ') + m.label);
+  finShowToast(on ? tk('home.moduleAdded', { name: m.label }) : tk('home.moduleRemoved', { name: m.label }));
 }
 function hsModulesCardHtml(h) {
   if (!hsCanEdit()) return '';
   const cur = hsModules(h);
   return hsCard(`
-    <div class="fz-h">🧩 Bausteine</div>
-    <p class="text-xs text-ink/50 mb-2">Was zu diesem Zuhause gehört – antippen zum Hinzufügen oder Entfernen. Daten entfernter Bausteine bleiben gespeichert.</p>
+    <div class="fz-h">${tk('home.buildingBlocks')}</div>
+    <p class="text-xs text-ink/50 mb-2">${tk('home.whatBelongsHomeTap')}</p>
     <div class="flex flex-wrap gap-1.5">${HS_MODULES.map(m => `<button type="button" class="hs-mod-chip${cur.includes(m.id) ? ' active' : ''}" data-hsact="mod-toggle" data-id="${m.id}" aria-pressed="${cur.includes(m.id)}"><span>${m.icon}</span><span>${hsEsc(m.label)}</span></button>`).join('')}</div>`);
 }
 /* ---------- Animated scene in the header ----------
@@ -871,30 +873,30 @@ function hsSceneHtml(h) {
 }
 function hsHeroActionsHtml(h) {
   const b = [];
-  if (hsHasModule(h, 'kosten')) b.push(['log-new', '🧾', 'Rechnung']);
-  if (hsHasModule(h, 'maengel')) b.push(['defect-new', '🛠️', 'Mangel']);
-  if (hsHasModule(h, 'zaehler')) b.push(['reading-new', '📟', 'Zähler']);
-  if (hsHasModule(h, 'garten') && b.length < 3) b.push(['tab', '🌿', 'Garten', 'garten']);
-  b.push(['home-edit', '✎', 'Bearbeiten']);
+  if (hsHasModule(h, 'kosten')) b.push(['log-new', '🧾', tk('contract.docType.invoice')]);
+  if (hsHasModule(h, 'maengel')) b.push(['defect-new', '🛠️', tk('home.defect2')]);
+  if (hsHasModule(h, 'zaehler')) b.push(['reading-new', '📟', tk('home.meters')]);
+  if (hsHasModule(h, 'garten') && b.length < 3) b.push(['tab', '🌿', tk('home.garden'), 'garten']);
+  b.push(['home-edit', '✎', tk('common.edit')]);
   return b.map((x, i) => `<button type="button" class="fz-act-btn${i === 0 && b.length > 1 ? ' primary' : ''}" data-hsact="${x[0]}"${x[3] ? ` data-tab="${x[3]}"` : ''}><span class="fz-ti">${x[1]}</span>${hsEsc(x[2])}</button>`).join('');
 }
 function hsEmptyHtml() {
   return `
     <div class="rounded-2xl bg-white border border-dashed border-ink/20 p-6 text-center">
       <div class="fz-empty-car mb-2">🏡</div>
-      <div class="font-serif text-lg mb-1">Euer Zuhause</div>
-      <p class="text-xs text-ink/50 mb-4">Mietvertrag oder Kaufvertrag, Kaution, Mängel mit Fotos, Rechnungen für Möbel und Böden, Sanierungsplan, Nebenkosten, Zählerstände mit Prognose, Garten &amp; Pflanzen und ein Wartungsplan, der rechtzeitig Aufgaben verteilt – auch für Wohnungen, Häuser und Garagen, die ihr vermietet. Alles an einem Ort und verknüpft mit Dokumenten und Finanzen.</p>
+      <div class="font-serif text-lg mb-1">${tk('home.home2')}</div>
+      <p class="text-xs text-ink/50 mb-4">${tk('home.tenancyPurchaseContractDeposit')}</p>
       ${hsCanEdit() ? `<div class="flex flex-wrap justify-center gap-2">
-        <button type="button" class="fz-kind-btn px-4 py-2.5 text-sm" data-hsact="home-new" data-mode="miete">🔑 Wir wohnen zur Miete</button>
-        <button type="button" class="fz-kind-btn px-4 py-2.5 text-sm" data-hsact="home-new" data-mode="eigentum">🏡 Wir haben gekauft</button>
-        <button type="button" class="fz-kind-btn px-4 py-2.5 text-sm" data-hsact="home-new" data-mode="vermietet">🤝 Wir vermieten</button>
+        <button type="button" class="fz-kind-btn px-4 py-2.5 text-sm" data-hsact="home-new" data-mode="miete">${tk('home.weRent')}</button>
+        <button type="button" class="fz-kind-btn px-4 py-2.5 text-sm" data-hsact="home-new" data-mode="eigentum">${tk('home.weOwn')}</button>
+        <button type="button" class="fz-kind-btn px-4 py-2.5 text-sm" data-hsact="home-new" data-mode="vermietet">${tk('home.weLetOut')}</button>
       </div>` : ''}
     </div>`;
 }
 function hsSwitcherHtml(h) {
   const list = hsHomes();
   if (list.length < 2) return '';
-  return `<div class="fz-type-row">${list.map(x => `<button type="button" class="fz-filter-chip${x.id === h.id ? ' active' : ''}" data-hsact="home-pick" data-id="${hsEsc(x.id)}">${hsEsc(hsHeroIcon(x) + ' ' + hsName(x))}${hsIsArchived(x) ? ' · ' + hsEsc('früher') : ''}</button>`).join('')}</div>`;
+  return `<div class="fz-type-row">${list.map(x => `<button type="button" class="fz-filter-chip${x.id === h.id ? ' active' : ''}" data-hsact="home-pick" data-id="${hsEsc(x.id)}">${hsEsc(hsHeroIcon(x) + ' ' + hsName(x))}${hsIsArchived(x) ? ' · ' + hsEsc(tk('home.previous')) : ''}</button>`).join('')}</div>`;
 }
 function hsRow(label, value) { return value === '' || value == null ? '' : `<div class="vt-row"><span>${hsEsc(label)}</span><span>${value}</span></div>`; }
 
@@ -904,22 +906,22 @@ function hsTenantCardHtml(h) {
   const t = h.tenant || {}, r = h.rent || {};
   const contact = [t.phone ? `<a class="hover:text-pine" href="tel:${hsEsc(String(t.phone).replace(/[^\d+]/g, ''))}">${hsEsc(t.phone)}</a>` : '', t.email ? `<a class="hover:text-pine" href="mailto:${hsEsc(t.email)}">${hsEsc(t.email)}</a>` : ''].filter(Boolean).join('<br>');
   const rows = [
-    hsRow('Mieter', hsEsc(t.name || '')),
-    hsRow('Kontakt', contact),
-    hsRow('Mieter seit', vtIsIso(t.since) ? hsEsc(vtFmt(t.since) + ' · ' + hsDuration(t.since)) : ''),
+    hsRow(tk('home.tenant'), hsEsc(t.name || '')),
+    hsRow(tk('home.contact'), contact),
+    hsRow(tk('home.tenantSince'), vtIsIso(t.since) ? hsEsc(vtFmt(t.since) + ' · ' + hsDuration(t.since)) : ''),
     ...HS_FIX.filter(d => d.income).map(d => hsRow(d.label.replace(/\s*\(Einnahme\)$/, ''), hsFixAmount(h, d.key) > 0 ? hsEsc(fmtEur(hsFixAmount(h, d.key))) : '')),
-    hsRow('Mietart', r.kind === 'staffel' ? hsEsc('Staffelmiete') : r.kind === 'index' ? hsEsc('Indexmiete') : ''),
-    hsRow('Letzte Erhöhung', vtIsIso(r.lastIncrease) ? hsEsc(vtFmt(r.lastIncrease)) : ''),
-    hsRow('Kündigungsfrist', hsEsc((Number(r.notice) || 3) + ' Monate')),
-    hsRow('Kaution', Number(r.deposit) > 0 ? hsEsc(fmtEur(r.deposit) + (r.depositWhere ? ' · ' + r.depositWhere : '')) : ''),
+    hsRow(tk('home.rentType'), r.kind === 'staffel' ? hsEsc(tk('home.graduatedRent')) : r.kind === 'index' ? hsEsc(tk('home.indexLinkedRent')) : ''),
+    hsRow(tk('home.lastIncrease'), vtIsIso(r.lastIncrease) ? hsEsc(vtFmt(r.lastIncrease)) : ''),
+    hsRow(tk('contract.noticePeriod'), hsEsc(tk('contract.monthsN', { n: Number(r.notice) || 3 }))),
+    hsRow(tk('home.deposit'), Number(r.deposit) > 0 ? hsEsc(fmtEur(r.deposit) + (r.depositWhere ? ' · ' + r.depositWhere : '')) : ''),
   ].join('');
   return hsCard(`
     <div class="flex items-center justify-between gap-2 mb-1">
-      <div class="fz-h" style="margin:0">🤝 Mietverhältnis</div>
-      ${hsCanEdit() ? '<button type="button" class="fz-mini-btn" data-hsact="home-edit">✎ Bearbeiten</button>' : ''}
+      <div class="fz-h" style="margin:0">${tk('home.tenancy')}</div>
+      ${hsCanEdit() ? ('<button type="button" class="fz-mini-btn" data-hsact="home-edit">' + tk('home.edit') + '</button>') : ''}
     </div>
-    ${rows || '<p class="text-xs text-ink/45">Mieter, Miete und Kaution unter „Bearbeiten“ eintragen – die Miete wird als regelmäßige Einnahme in Finanzen gebucht.</p>'}
-    <p class="vt-info mt-3">Tipp: Die Nebenkostenabrechnung muss spätestens 12 Monate nach Ende des Abrechnungszeitraums beim Mieter sein. Eine Mieterhöhung bis zur Vergleichsmiete ist frühestens 15 Monate nach Einzug bzw. der letzten Erhöhung möglich.</p>`);
+    ${rows || ('<p class="text-xs text-ink/45">' + tk('home.enterTenantRentDeposit') + '</p>')}
+    <p class="vt-info mt-3">${tk('home.tipGermanyServiceCharge')}</p>`);
 }
 
 /* ---------- Building block keys ---------- */
@@ -931,15 +933,15 @@ function hsKeysCardHtml(h) {
   const rows = list.map(k => `
     <button type="button" class="fz-log-row" data-hsact="key-edit" data-id="${hsEsc(k.id)}">
       <span class="fz-log-ic" style="background:#D4A01722">🗝️</span>
-      <span class="flex-1 min-w-0"><span class="block text-sm font-medium truncate">${hsEsc(k.label || 'Schlüssel')}</span>${k.holder ? `<span class="block text-xs text-ink/45 truncate">${hsEsc(k.holder)}</span>` : ''}</span>
+      <span class="flex-1 min-w-0"><span class="block text-sm font-medium truncate">${hsEsc(k.label || tk('home.keys'))}</span>${k.holder ? `<span class="block text-xs text-ink/45 truncate">${hsEsc(k.holder)}</span>` : ''}</span>
       <span class="shrink-0 text-sm font-semibold">${hsEsc((Number(k.count) || 1) + '×')}</span>
     </button>`).join('');
   return hsCard(`
     <div class="flex items-center justify-between gap-2 mb-1">
-      <div class="fz-h" style="margin:0">🗝️ Schlüssel <span class="text-ink/40 font-normal normal-case">${total || ''}</span></div>
-      ${hsCanEdit() ? '<button type="button" class="fz-mini-btn primary" data-hsact="key-new">+ Schlüssel</button>' : ''}
+      <div class="fz-h" style="margin:0">${tk('home.keys2')} <span class="text-ink/40 font-normal normal-case">${total || ''}</span></div>
+      ${hsCanEdit() ? ('<button type="button" class="fz-mini-btn primary" data-hsact="key-new">' + tk('home.key') + '</button>') : ''}
     </div>
-    ${rows ? `<div class="flex flex-col">${rows}</div>` : '<p class="text-xs text-ink/45">Haustür, Keller, Briefkasten, Garage … und wer welchen Schlüssel hat – z. B. Nachbarn, Oma oder die Hausverwaltung. Laut Übergabeprotokoll zählt beim Auszug jeder Schlüssel.</p>'}`);
+    ${rows ? `<div class="flex flex-col">${rows}</div>` : ('<p class="text-xs text-ink/45">' + tk('home.frontDoorCellarLetterbox') + '</p>')}`);
 }
 function hsOpenKeyModal(id) {
   const h = hsCurrent();
@@ -948,13 +950,13 @@ function hsOpenKeyModal(id) {
   const d = k || { label: '', count: 1, holder: '', note: '' };
   hsModalState = { mode: 'key', id: k ? k.id : null };
   const html = `
-    <h3 class="font-serif text-lg mb-3 pr-6">${k ? 'Schlüssel bearbeiten' : 'Neuer Schlüssel'}</h3>
+    <h3 class="font-serif text-lg mb-3 pr-6">${k ? tk('home.editKey') : tk('home.newKey')}</h3>
     <div class="grid gap-3" style="grid-template-columns:minmax(0,1fr) 5.5rem">
-      ${fzIn('hskLabel', 'Wofür?', d.label || '', { ph: 'z. B. Haustür, Keller, Briefkasten', max: 80 })}
-      ${fzIn('hskCount', 'Anzahl', String(Number(d.count) || 1), { mode: 'numeric', max: 3 })}
+      ${fzIn('hskLabel', tk('home.what'), d.label || '', { ph: tk('home.eGFrontDoor'), max: 80 })}
+      ${fzIn('hskCount', tk('home.number'), String(Number(d.count) || 1), { mode: 'numeric', max: 3 })}
     </div>
-    ${fzIn('hskHolder', 'Wer hat ihn?', d.holder || '', { ph: 'z. B. Wir · Nachbarn Müller · Oma', max: 120 })}
-    ${fzIn('hskNote', 'Notiz', d.note || '', { ph: 'optional, z. B. Schließanlage Nr. 4711', max: 300 })}
+    ${fzIn('hskHolder', tk('home.whoHas'), d.holder || '', { ph: tk('home.eGUsMillers'), max: 120 })}
+    ${fzIn('hskNote', tk('fin.csv.note'), d.note || '', { ph: tk('home.optionalEGMaster'), max: 300 })}
     ${hsFooter('hsKey', !!k)}`;
   hsOpenModal(html, () => hsWireFooter('hsKey', hsSaveKey, () => hsDeleteKey(k.id)));
 }
@@ -962,7 +964,7 @@ function hsSaveKey() {
   const st = hsModalState, h = hsCurrent();
   if (!st || st.mode !== 'key' || !h) return;
   const label = fzVal('hskLabel').slice(0, 80);
-  if (!label) return fzShowErr('hsKeyError', 'Bitte eingeben, wofür der Schlüssel ist.');
+  if (!label) return fzShowErr('hsKeyError', tk('home.pleaseEnterWhatKey'));
   const count = Math.max(1, Math.min(99, Math.round(Number(fzVal('hskCount')) || 1)));
   const existing = st.id ? hsArr('homeKeys').find(x => x.id === st.id) : null;
   hsUpsert('homeKeys', { ...(existing || {}), id: existing ? existing.id : 'k' + newRecordId().slice(0, 12), home: h.id, label, count, holder: fzVal('hskHolder').slice(0, 120), note: fzVal('hskNote').slice(0, 300), created: (existing && existing.created) || finTodayIso() });
@@ -970,7 +972,7 @@ function hsSaveKey() {
   hsAfterChange();
 }
 function hsDeleteKey(id) {
-  if (!confirm('Schlüssel löschen?')) return;
+  if (!confirm(tk('home.deleteKey'))) return;
   hsSet('homeKeys', hsArr('homeKeys').filter(x => x.id !== id));
   hsCloseModal();
   hsAfterChange();
@@ -1035,27 +1037,27 @@ function hsPlantRowHtml(p, rain) {
   const mow = p.act === 'mow';
   const place = (HS_PLACES.find(x => x[0] === p.place) || HS_PLACES[0])[1];
   const parts = [place];
-  if (s.off) parts.push('Pause bis zur Saison');
-  else if (s.days < 0) parts.push('seit ' + (-s.days) + ' Tagen fällig');
-  else if (s.days === 0) parts.push(mow ? 'heute mähen' : 'heute gießen');
-  else if (s.days === 1) parts.push('morgen');
-  else parts.push('in ' + s.days + ' Tagen');
-  if (!s.off && s.byRain) parts.push('🌧️ Regen am ' + vtFmt(s.byRain));
-  else if (!s.off && s.last) parts.push('zuletzt ' + vtFmt(s.last));
-  if (!s.off && s.hot) parts.push('☀️ Hitze');
+  if (s.off) parts.push(tk('home.pausedUntilSeason'));
+  else if (s.days < 0) parts.push(tk('home.dueForDays', { n: -s.days }));
+  else if (s.days === 0) parts.push(mow ? tk('home.mowToday') : tk('home.waterToday'));
+  else if (s.days === 1) parts.push(tk('contract.tomorrow'));
+  else parts.push(tk('lists.when.inDays', { n: s.days }));
+  if (!s.off && s.byRain) parts.push(tk('home.rainOn', { date: vtFmt(s.byRain) }));
+  else if (!s.off && s.last) parts.push(tk('home.lastOn', { date: vtFmt(s.last) }));
+  if (!s.off && s.hot) parts.push(tk('home.heat'));
   if (!s.off && p.smart && p.smart.auto && hsPlantSmartHit(p.smart.auto.action)) parts.push('🤖 ' + p.smart.auto.time);
   const can = hsCanEdit();
   const btns = [];
-  if (can && !s.off && s.fertDue) btns.push(`<button type="button" class="hs-water-btn fert" data-hsact="plant-fert" data-id="${hsEsc(p.id)}">🧪 Gedüngt</button>`);
+  if (can && !s.off && s.fertDue) btns.push(`<button type="button" class="hs-water-btn fert" data-hsact="plant-fert" data-id="${hsEsc(p.id)}">${tk('home.fed')}</button>`);
   const smartHit = p.smart && p.smart.start ? hsPlantSmartHit(p.smart.start) : null;
   if (can && smartHit && !s.off) btns.push(`<button type="button" class="hs-water-btn hs-smart-btn" data-hsact="plant-smart" data-id="${hsEsc(p.id)}">${hsEsc(smartHit.device.icon)} ${hsEsc(smartHit.action.label)}</button>`);
-  if (can && !s.off) btns.push(`<button type="button" class="hs-water-btn${s.due && !s.wateredToday ? '' : ' done'}" data-hsact="plant-water" data-id="${hsEsc(p.id)}">${s.wateredToday ? '✓ ' : ''}${mow ? '✂️ Gemäht' : '💧 Gegossen'}</button>`);
+  if (can && !s.off) btns.push(`<button type="button" class="hs-water-btn${s.due && !s.wateredToday ? '' : ' done'}" data-hsact="plant-water" data-id="${hsEsc(p.id)}">${s.wateredToday ? '✓ ' : ''}${mow ? tk('home.mowed') : tk('home.watered')}</button>`);
   return `
     <div class="hs-plant${!s.off && (s.due || s.fertDue) ? ' due' : ''}"${s.off ? ' style="opacity:.6"' : ''}>
       <button type="button" class="flex items-center gap-2.5 flex-1 min-w-0 text-left" data-hsact="plant-edit" data-id="${hsEsc(p.id)}">
         <span class="hs-plant-ic">${hsEsc(p.icon || '🪴')}</span>
         <span class="flex-1 min-w-0">
-          <span class="block text-sm font-medium truncate">${hsEsc(p.name || 'Pflanze')}</span>
+          <span class="block text-sm font-medium truncate">${hsEsc(p.name || tk('home.plant'))}</span>
           <span class="block text-xs text-ink/55 truncate">${parts.map(x => `<span>${hsEsc(x)}</span>`).join(' · ')}</span>
         </span>
       </button>
@@ -1064,18 +1066,18 @@ function hsPlantRowHtml(p, rain) {
 }
 function hsGardenTipHtml(rain) {
   const w = hsWx();
-  if (!w) return `<div class="hs-wx-tip">🌦️ <span>Mit dem Zuhause in den Einstellungen (Ort) berücksichtigt pinn. Regen und Hitze beim Gießen.</span></div>`;
+  if (!w) return `<div class="hs-wx-tip">🌦️ <span>${tk('home.homeLocationSettingsPinn')}</span></div>`;
   const today = finTodayIso();
   const t = hsTodayWx();
   const tips = [];
   const rainDay = Object.keys(rain).filter(d => rain[d] >= 4).sort().pop();
-  if (rainDay) tips.push('🌧️ ' + (rainDay === today ? 'Heute regnet es ' + hsNum(rain[rainDay], 1) + ' mm – draußen fällt das Gießen aus.' : 'Es hat ' + hsNum(rain[rainDay], 1) + ' mm geregnet – draußen ist schon gegossen.'));
-  else if (t && Number(t.max) >= 28) tips.push('☀️ ' + 'Heiß – bis ' + Math.round(t.max) + '°. Draußen früh morgens oder abends gießen, Kübel und Balkonkästen eher täglich.');
+  if (rainDay) tips.push('🌧️ ' + (rainDay === today ? tk('home.wx.rainToday', { mm: hsNum(rain[rainDay], 1) }) : tk('home.wx.rained', { mm: hsNum(rain[rainDay], 1) })));
+  else if (t && Number(t.max) >= 28) tips.push('☀️ ' + tk('home.wx.hot', { t: Math.round(t.max) }));
   const next3 = w.days.filter(d => d.date >= today).slice(0, 3);
   const m = Number(today.slice(5, 7));
   const minT = next3.length ? Math.min(...next3.map(d => Number(d.min)).filter(x => isFinite(x))) : null;
-  if (minT != null && isFinite(minT) && minT <= 1 && [3, 4, 5, 9, 10, 11].includes(m)) tips.push('❄️ ' + 'Frost möglich (bis ' + Math.round(minT) + '°) – Kübel reinholen oder empfindliche Pflanzen abdecken.');
-  if (!rainDay && next3.length === 3 && next3.reduce((s, d) => s + (Number(d.mm) || 0), 0) < 1 && m >= 4 && m <= 9) tips.push('🌤️ ' + 'Die nächsten Tage bleibt es trocken.');
+  if (minT != null && isFinite(minT) && minT <= 1 && [3, 4, 5, 9, 10, 11].includes(m)) tips.push('❄️ ' + tk('home.wx.frost', { t: Math.round(minT) }));
+  if (!rainDay && next3.length === 3 && next3.reduce((s, d) => s + (Number(d.mm) || 0), 0) < 1 && m >= 4 && m <= 9) tips.push('🌤️ ' + tk('home.wx.dry'));
   if (!tips.length) return '';
   return `<div class="hs-wx-tip flex flex-col gap-1">${tips.map(x => `<div>${hsEsc(x)}</div>`).join('')}</div>`;
 }
@@ -1092,29 +1094,29 @@ function hsGardenHtml(h) {
   const can = hsCanEdit();
   const plantCard = hsCard(`
     <div class="flex items-center justify-between gap-2 mb-2">
-      <div class="fz-h" style="margin:0">🪴 Pflanzen &amp; Rasen <span class="text-ink/40 font-normal normal-case">${plants.length || ''}</span></div>
-      ${can ? '<button type="button" class="fz-mini-btn primary" data-hsact="plant-new">+ Eigene</button>' : ''}
+      <div class="fz-h" style="margin:0">${tk('home.plantsLawn')} <span class="text-ink/40 font-normal normal-case">${plants.length || ''}</span></div>
+      ${can ? ('<button type="button" class="fz-mini-btn primary" data-hsact="plant-new">' + tk('home.custom') + '</button>') : ''}
     </div>
-    ${plants.length ? `<div class="flex flex-col gap-1.5">${plants.map(x => hsPlantRowHtml(x.p, rain)).join('')}</div>` : '<p class="text-xs text-ink/45">Zimmerpflanzen, Kräuter auf dem Balkon, Tomaten im Beet oder der Rasen: pinn. sagt, wann gegossen, gedüngt oder gemäht werden muss – Regen zählt draußen automatisch mit.</p>'}
-    ${can && tpls.length ? `<div class="fz-h mt-4">✨ Vorlagen</div><div class="flex flex-wrap gap-1.5">${tpls.map(t => `<button type="button" class="fz-filter-chip" data-hsact="plant-tpl" data-tpl="${t.id}">${hsEsc(t.icon + ' ' + t.name)}</button>`).join('')}</div>` : ''}`);
+    ${plants.length ? `<div class="flex flex-col gap-1.5">${plants.map(x => hsPlantRowHtml(x.p, rain)).join('')}</div>` : ('<p class="text-xs text-ink/45">' + tk('home.housePlantsHerbsBalcony') + '</p>')}
+    ${can && tpls.length ? `<div class="fz-h mt-4">${tk('home.templates')}</div><div class="flex flex-wrap gap-1.5">${tpls.map(t => `<button type="button" class="fz-filter-chip" data-hsact="plant-tpl" data-tpl="${t.id}">${hsEsc(t.icon + ' ' + t.name)}</button>`).join('')}</div>` : ''}`);
   const gUsed = new Set(hsMaintItems().map(m => m.tpl).filter(Boolean));
   const gTpls = HS_MAINT_TEMPLATES.filter(t => t.garden && !gUsed.has(t.tpl));
   const gList = hsMaintListHtml(false, 'garden');
   const yearCard = hsCard(`
     <div class="flex items-center justify-between gap-2 mb-2">
-      <div class="fz-h" style="margin:0">🗓️ Gartenjahr</div>
-      ${can ? '<button type="button" class="fz-mini-btn" data-hsact="maint-new-garden">+ Eigene</button>' : ''}
+      <div class="fz-h" style="margin:0">${tk('home.gardenYear')}</div>
+      ${can ? ('<button type="button" class="fz-mini-btn" data-hsact="maint-new-garden">' + tk('home.custom') + '</button>') : ''}
     </div>
-    ${gList ? `<div class="flex flex-col gap-1.5">${gList}</div>` : '<p class="text-xs text-ink/45">Hecke schneiden, Laub rechen, Kübel ins Winterquartier … Vorlage antippen – die Aufgabe kommt zur richtigen Zeit unter „Aufgaben“, auf Wunsch reihum.</p>'}
+    ${gList ? `<div class="flex flex-col gap-1.5">${gList}</div>` : ('<p class="text-xs text-ink/45">' + tk('home.trimHedgeRakeLeaves') + '</p>')}
     ${can && gTpls.length ? `<div class="flex flex-wrap gap-1.5 mt-3">${gTpls.map(t => `<button type="button" class="fz-filter-chip" data-hsact="maint-tpl" data-tpl="${t.tpl}">${hsEsc(t.icon + ' ' + t.title)}</button>`).join('')}</div>` : ''}`);
   const m = Number(finTodayIso().slice(5, 7));
   const cal = HS_GARDEN_MONTHS[m] || { s: [], p: [], e: [] };
-  const col = (title, list) => list.length ? `<div class="hs-season-col"><h5>${hsEsc(title)}</h5><div class="flex flex-wrap gap-1">${list.map(x => `<span class="vt-chip muted">${hsEsc(x)}</span>`).join('')}</div></div>` : '';
-  const monthName = new Date(2026, m - 1, 1).toLocaleDateString('de-DE', { month: 'long' });
+  const col = (title, list) => list.length ? `<div class="hs-season-col"><h5>${hsEsc(title)}</h5><div class="flex flex-wrap gap-1">${list.map(x => `<span class="vt-chip muted">${hsEsc(tk(x))}</span>`).join('')}</div></div>` : '';
+  const monthName = new Date(2026, m - 1, 1).toLocaleDateString(sysLocale(), { month: 'long' });
   const calCard = hsCard(`
-    <div class="fz-h">🌱 Im ${hsEsc(monthName)}</div>
-    <div class="flex flex-col gap-3">${col('Säen', cal.s)}${col('Pflanzen', cal.p)}${col('Ernten', cal.e)}</div>
-    <p class="text-[11px] text-ink/45 mt-2">Richtwerte für Mitteleuropa – je nach Region und Wetter ein paar Wochen früher oder später.</p>`);
+    <div class="fz-h">${tk('home.in', { hsEsc: hsEsc(monthName) })}</div>
+    <div class="flex flex-col gap-3">${col(tk('home.sow'), cal.s)}${col(tk('home.plant2'), cal.p)}${col(tk('home.harvest'), cal.e)}</div>
+    <p class="text-[11px] text-ink/45 mt-2">${tk('home.guideValuesCentralEurope')}</p>`);
   return hsGardenTipHtml(rain) + plantCard + yearCard + calCard;
 }
 function hsOpenPlantModal(id, tplId) {
@@ -1125,32 +1127,32 @@ function hsOpenPlantModal(id, tplId) {
   const d = x || (tpl ? { tpl: tpl.id, icon: tpl.icon, name: tpl.name, place: tpl.place, every: tpl.every, fertEvery: tpl.fertEvery || 0, months: tpl.months || null, rain: !!tpl.rain, act: tpl.act || 'water' }
     : { icon: '🪴', name: '', place: 'innen', every: 7, fertEvery: 0, months: null, rain: false, act: 'water' });
   hsModalState = { mode: 'plant', id: x ? x.id : null, tpl: d.tpl || '' };
-  const everyOpts = [1, 2, 3, 4, 5, 7, 10, 14, 21, 30].map(n => [String(n), n === 1 ? 'Jeden Tag' : 'Alle ' + n + ' Tage']);
-  if (!everyOpts.some(o => o[0] === String(d.every))) everyOpts.push([String(d.every), 'Alle ' + d.every + ' Tage']);
-  const fertOpts = [['0', 'Nicht düngen'], ['7', 'Jede Woche'], ['14', 'Alle 2 Wochen'], ['21', 'Alle 3 Wochen'], ['30', 'Jeden Monat'], ['42', 'Alle 6 Wochen'], ['60', 'Alle 2 Monate']];
-  const monthOpts = [['', 'ganzjährig'], ...Array.from({ length: 12 }, (_, i) => [String(i + 1), new Date(2026, i, 1).toLocaleDateString('de-DE', { month: 'long' })])];
+  const everyOpts = [1, 2, 3, 4, 5, 7, 10, 14, 21, 30].map(n => [String(n), tk('household.everyNDays', { n })]);
+  if (!everyOpts.some(o => o[0] === String(d.every))) everyOpts.push([String(d.every), tk('household.everyNDays', { n: Number(d.every) })]);
+  const fertOpts = [['0', tk('home.dontFeed')], ['7', tk('home.everyWeek')], ['14', tk('fin.interval.biweekly')], ['21', tk('home.every3Weeks')], ['30', tk('home.everyMonth')], ['42', tk('home.every6Weeks')], ['60', tk('home.every2Months')]];
+  const monthOpts = [['', tk('home.allYear')], ...Array.from({ length: 12 }, (_, i) => [String(i + 1), new Date(2026, i, 1).toLocaleDateString(sysLocale(), { month: 'long' })])];
   const mo = Array.isArray(d.months) && d.months.length === 2 ? d.months : ['', ''];
   const html = `
-    <h3 class="font-serif text-lg mb-3 pr-6">${x ? 'Pflanze bearbeiten' : 'Neue Pflanze'}</h3>
+    <h3 class="font-serif text-lg mb-3 pr-6">${x ? tk('home.editPlant') : tk('home.newPlant')}</h3>
     <div class="grid gap-3" style="grid-template-columns:4.2rem minmax(0,1fr)">
-      ${fzIn('hsgIcon', 'Symbol', d.icon || '🪴', { max: 8 })}
-      ${fzIn('hsgName', 'Name', d.name || '', { ph: 'z. B. Monstera im Wohnzimmer', max: 60 })}
+      ${fzIn('hsgIcon', tk('household.icon'), d.icon || '🪴', { max: 8 })}
+      ${fzIn('hsgName', tk('common.name'), d.name || '', { ph: tk('home.eGMonsteraLiving'), max: 60 })}
     </div>
     <div class="fz-grid2">
-      ${fzSel('hsgPlace', 'Wo?', HS_PLACES, d.place || 'innen')}
-      ${fzSel('hsgAct', 'Was ist zu tun?', [['water', '💧 Gießen'], ['mow', '✂️ Rasen mähen']], d.act || 'water')}
+      ${fzSel('hsgPlace', tk('home.where'), HS_PLACES, d.place || 'innen')}
+      ${fzSel('hsgAct', tk('school.whatNeedsDoing'), [['water', tk('home.water')], ['mow', tk('home.mowLawn')]], d.act || 'water')}
     </div>
     <div class="fz-grid2">
-      ${fzSel('hsgEvery', 'Wie oft?', everyOpts, String(d.every || 7))}
-      ${fzIn('hsgLast', 'Zuletzt', vtIsIso(d.last) ? d.last : '', { type: 'date' })}
+      ${fzSel('hsgEvery', tk('home.howOften'), everyOpts, String(d.every || 7))}
+      ${fzIn('hsgLast', tk('family.lastTime'), vtIsIso(d.last) ? d.last : '', { type: 'date' })}
     </div>
-    <div id="hsgFertWrap">${fzSel('hsgFert', 'Düngen (März–September)', fertOpts, String(d.fertEvery || 0))}</div>
-    <label class="fz-check" id="hsgRainWrap"><input type="checkbox" id="hsgRain"${d.rain ? ' checked' : ''} /> <span>🌧️ Bekommt Regen ab – Regen zählt als gegossen</span></label>
+    <div id="hsgFertWrap">${fzSel('hsgFert', tk('home.feedMarchSeptember'), fertOpts, String(d.fertEvery || 0))}</div>
+    <label class="fz-check" id="hsgRainWrap"><input type="checkbox" id="hsgRain"${d.rain ? ' checked' : ''} /> <span>${tk('home.getsRainRainCounts')}</span></label>
     <div class="fz-grid2">
-      ${fzSel('hsgFrom', 'Saison von', monthOpts, String(mo[0] || ''))}
-      ${fzSel('hsgTo', 'bis', monthOpts, String(mo[1] || ''))}
+      ${fzSel('hsgFrom', tk('home.seasonFrom'), monthOpts, String(mo[0] || ''))}
+      ${fzSel('hsgTo', tk('shop.to'), monthOpts, String(mo[1] || ''))}
     </div>
-    ${fzIn('hsgNote', 'Notiz', d.note || '', { ph: 'optional, z. B. nur kalkarmes Wasser', max: 300 })}
+    ${fzIn('hsgNote', tk('fin.csv.note'), d.note || '', { ph: tk('home.optionalEGSoft'), max: 300 })}
     ${hsPlantSmartHtml(d)}
     ${hsFooter('hsPlant', !!x)}`;
   hsOpenModal(html, body => {
@@ -1171,7 +1173,7 @@ function hsSavePlant() {
   const st = hsModalState, h = hsCurrent();
   if (!st || st.mode !== 'plant' || !h) return;
   const name = fzVal('hsgName').slice(0, 60);
-  if (!name) return fzShowErr('hsPlantError', 'Bitte einen Namen eingeben.');
+  if (!name) return fzShowErr('hsPlantError', tk('common.needName'));
   const existing = st.id ? hsArr('homePlants').find(p => p.id === st.id) : null;
   const from = Number(fzVal('hsgFrom')) || 0, to = Number(fzVal('hsgTo')) || 0;
   const act = fzVal('hsgAct') === 'mow' ? 'mow' : 'water';
@@ -1192,7 +1194,7 @@ function hsSavePlant() {
 }
 function hsDeletePlant(id) {
   const x = hsArr('homePlants').find(p => p.id === id);
-  if (!x || !confirm('„' + (x.name || 'Pflanze') + '“ löschen?')) return;
+  if (!x || !confirm(tk('lists.item.confirmDelete', { name: x.name || tk('home.plant') }))) return;
   hsSet('homePlants', hsArr('homePlants').filter(p => p.id !== id));
   hsCloseModal();
   hsAfterChange();
@@ -1203,7 +1205,7 @@ function hsPlantTick(id, fert) {
   if (!x) return;
   const today = finTodayIso();
   if (!fert && x.last === today) {
-    if (!confirm(x.act === 'mow' ? 'Heute doch nicht gemäht?' : 'Heute doch nicht gegossen?')) return;
+    if (!confirm(x.act === 'mow' ? tk('home.notMowedTodayAfter') : tk('home.notWateredTodayAfter'))) return;
     hsUpsert('homePlants', { ...x, last: x.prevLast || '', prevLast: '' });
   } else if (fert) {
     hsUpsert('homePlants', { ...x, lastFert: today });
@@ -1211,7 +1213,7 @@ function hsPlantTick(id, fert) {
     hsUpsert('homePlants', { ...x, prevLast: x.last || '', last: today });
   }
   hsAfterChange();
-  finShowToast(fert ? 'Gedüngt ✓' : (x.last === today ? 'Zurückgenommen.' : (x.act === 'mow' ? 'Gemäht ✓' : 'Gegossen ✓')));
+  finShowToast(fert ? tk('home.fed2') : (x.last === today ? tk('home.undone') : (x.act === 'mow' ? tk('home.mowed2') : tk('home.watered2'))));
 }
 
 /* ---------- Plants & smart home (1.62) ---------- */
@@ -1229,12 +1231,12 @@ function hsPlantSmartHtml(d) {
     `<option value="${hsEsc(action.id)}"${action.id === sel ? ' selected' : ''}>${hsEsc(device.icon + ' ' + device.name + ': ' + action.label)}</option>`).join('');
   const time = auto && /^\d{2}:\d{2}$/.test(auto.time || '') ? auto.time : (mow ? '10:00' : '06:00');
   return `
-    <div class="fz-h mt-2">🤖 Smarthome</div>
-    <div class="fz-field"><label class="fz-lbl" for="hsgSmartStart">Start-Knopf</label><select id="hsgSmartStart" class="fz-in">${opts(sm.start || '')}</select></div>
-    <div class="fz-field"><label class="fz-lbl" for="hsgSmartAuto">Automatisch starten, wenn fällig</label>
+    <div class="fz-h mt-2">${tk('home.smartHome')}</div>
+    <div class="fz-field"><label class="fz-lbl" for="hsgSmartStart">${tk('home.startButton')}</label><select id="hsgSmartStart" class="fz-in">${opts(sm.start || '')}</select></div>
+    <div class="fz-field"><label class="fz-lbl" for="hsgSmartAuto">${tk('home.startAutomaticallyWhenDue')}</label>
       <div class="flex items-center gap-2"><select id="hsgSmartAuto" class="fz-in flex-1">${opts(auto ? auto.action : '')}</select>
-      <span id="hsgSmartTimeWrap" class="${auto ? '' : 'hidden'} shrink-0"><input id="hsgSmartTime" type="time" value="${hsEsc(time)}" class="fz-in" style="width:7.5rem" aria-label="Uhrzeit" /></span></div></div>
-    <p class="text-[11px] text-ink/45 -mt-1 mb-3">Z. B. Mähroboter oder Bewässerungsventil aus Einstellungen → Smarthome. Die Automatik läuft über Home Assistant, nur am Fälligkeitstag – nach Regen wird nicht gegossen, bei Regen nicht gemäht.</p>`;
+      <span id="hsgSmartTimeWrap" class="${auto ? '' : 'hidden'} shrink-0"><input id="hsgSmartTime" type="time" value="${hsEsc(time)}" class="fz-in" style="width:7.5rem" aria-label="${escapeHtml(tk('event.time'))}" /></span></div></div>
+    <p class="text-[11px] text-ink/45 -mt-1 mb-3">${tk('home.eGRobotMower')}</p>`;
 }
 function hsPlantSmartValue(act) {
   const start = document.getElementById('hsgSmartStart');
@@ -1267,15 +1269,15 @@ async function hsPlantSmartRun(id) {
         body: JSON.stringify({ plantId: id, actionId: hit.action.id, art: 'start' }),
       });
       const r = await res.json().catch(() => ({}));
-      if (!res.ok || r.error) throw new Error(r.error || 'Server antwortet nicht.');
+      if (!res.ok || r.error) throw new Error(r.error || tk('smart.serverNoAnswer'));
       if (r.eingereiht) {
-        showSmartBar({ title: `${hit.device.icon} ${hit.action.label} eingereiht`, text: `${hit.device.name} ist noch beschäftigt – startet automatisch direkt im Anschluss.`, ms: 8000 });
+        showSmartBar({ title: tk('home.smart.queued', { icon: hit.device.icon, name: hit.action.label }), text: tk('home.stillBusyStartsAutomatically', { name: hit.device.name }), ms: 8000 });
         return;
       }
       done();
-      finShowToast(`${hit.device.icon} ${hit.action.label} gestartet ✓`);
+      finShowToast(tk('home.smart.started', { icon: hit.device.icon, name: hit.action.label }));
     } catch (err) {
-      alert('Home Assistant: ' + err.message);
+      alert((tk('home.homeAssistant') + ' ') + err.message);
     }
     return;
   }
@@ -1330,38 +1332,38 @@ function hsDueItems(h) {
   const today = finTodayIso();
   const out = [];
   const defects = hsDefects(h.id).filter(d => d.status !== 'behoben');
-  defects.filter(d => vtIsIso(d.deadline) && d.deadline < today && d.status === 'gemeldet').forEach(d => out.push({ tone: 'urgent', icon: '⚠️', title: d.title || 'Mangel', sub: 'Frist zur Beseitigung abgelaufen', when: vtFmt(d.deadline), act: 'defect-edit', id: d.id }));
+  defects.filter(d => vtIsIso(d.deadline) && d.deadline < today && d.status === 'gemeldet').forEach(d => out.push({ tone: 'urgent', icon: '⚠️', title: d.title || tk('home.defect2'), sub: tk('home.deadlineRepairHasPassed'), when: vtFmt(d.deadline), act: 'defect-edit', id: d.id }));
   const urgent = defects.filter(d => d.severity === 'gross' && d.status === 'offen');
-  urgent.forEach(d => out.push({ tone: 'warn', icon: '🛠️', title: d.title || 'Mangel', sub: hsOwn(h) ? 'dringend' : 'dringend – noch nicht gemeldet', when: '', act: 'defect-edit', id: d.id }));
+  urgent.forEach(d => out.push({ tone: 'warn', icon: '🛠️', title: d.title || tk('home.defect2'), sub: hsOwn(h) ? tk('home.urgent') : tk('home.urgentNotReportedYet'), when: '', act: 'defect-edit', id: d.id }));
   hsMaintItems().filter(m => m.active !== false).forEach(m => {
     const next = hsMaintNext(m);
     const days = vtDiffDays(today, next);
-    if (days <= 14) { const t = hsMaintDueTone(next); out.push({ tone: t.tone || 'warn', icon: m.icon || '🔧', title: m.title, sub: hsMaintIsMeter(m) ? 'Antippen zum Eintragen' : 'Wartung', when: t.label, act: 'maint-due', id: m.id }); }
+    if (days <= 14) { const t = hsMaintDueTone(next); out.push({ tone: t.tone || 'warn', icon: m.icon || '🔧', title: m.title, sub: hsMaintIsMeter(m) ? tk('home.tapEnter') : tk('home.maintenance2'), when: t.label, act: 'maint-due', id: m.id }); }
   });
   hsMeters(h.id).filter(m => m.active !== false).forEach(m => {
     const rs = hsReadings(m.id);
     const last = rs.length ? rs[rs.length - 1].date : '';
-    if (!last || vtDiffDays(last, today) > 40) out.push({ tone: 'muted', icon: hsMeterType(m.type).icon, title: 'Zählerstand ' + (m.name || hsMeterType(m.type).label), sub: last ? 'zuletzt am ' + vtFmt(last) : 'noch kein Stand', when: '', act: 'reading-new', id: m.id });
+    if (!last || vtDiffDays(last, today) > 40) out.push({ tone: 'muted', icon: hsMeterType(m.type).icon, title: tk('home.readingOf', { name: m.name || hsMeterType(m.type).label }), sub: last ? tk('home.lastOnDate', { date: vtFmt(last) }) : tk('home.noReadingYet'), when: '', act: 'reading-new', id: m.id });
   });
   if (!hsOwn(h)) {
     const nk = hsLogs(h.id).filter(l => l.type === 'nebenkosten').map(l => l.date).sort().pop();
-    if (vtIsIso(h.moveIn) && vtDiffDays(h.moveIn, today) > 450 && (!nk || vtDiffDays(nk, today) > 450)) out.push({ tone: 'muted', icon: '🧾', title: 'Nebenkostenabrechnung eintragen', sub: 'Vermieter haben 12 Monate nach Ende des Abrechnungszeitraums Zeit', when: '', act: 'log-new', type: 'nebenkosten' });
+    if (vtIsIso(h.moveIn) && vtDiffDays(h.moveIn, today) > 450 && (!nk || vtDiffDays(nk, today) > 450)) out.push({ tone: 'muted', icon: '🧾', title: tk('home.addServiceChargeStatement'), sub: tk('home.landlordsHave12Months'), when: '', act: 'log-new', type: 'nebenkosten' });
     const r = h.rent || {};
-    if (vtIsIso(h.moveOut) && Number(r.deposit) > 0 && !vtIsIso(r.depositBack)) out.push({ tone: 'warn', icon: '💰', title: 'Kaution noch nicht zurück', sub: 'ausgezogen am ' + vtFmt(h.moveOut), when: '', act: 'home-edit' });
+    if (vtIsIso(h.moveOut) && Number(r.deposit) > 0 && !vtIsIso(r.depositBack)) out.push({ tone: 'warn', icon: '💰', title: tk('home.depositNotReturnedYet'), sub: tk('home.movedOutOn', { date: vtFmt(h.moveOut) }), when: '', act: 'home-edit' });
   } else {
     const loan = hsLoan(h);
     if (loan && vtIsIso(loan.l.fixedUntil)) {
       const days = vtDiffDays(today, loan.l.fixedUntil);
-      if (days >= 0 && days <= 730) out.push({ tone: days <= 365 ? 'warn' : 'muted', icon: '🏦', title: 'Zinsbindung endet', sub: 'Anschlussfinanzierung rechtzeitig vergleichen', when: vtFmt(loan.l.fixedUntil), act: 'home-edit' });
+      if (days >= 0 && days <= 730) out.push({ tone: days <= 365 ? 'warn' : 'muted', icon: '🏦', title: tk('home.fixedInterestPeriodEnds'), sub: tk('home.compareFollowUpFinancing'), when: vtFmt(loan.l.fixedUntil), act: 'home-edit' });
     }
   }
   if (hsLet(h) && !hsIsArchived(h)) {
     const t = h.tenant || {}, r = h.rent || {};
     const since = vtIsIso(t.since) ? t.since : '';
     const base = [r.lastIncrease, since].filter(vtIsIso).sort().pop();
-    if (base && r.kind !== 'staffel' && r.kind !== 'index' && vtDiffDays(base, today) >= 456) out.push({ tone: 'muted', icon: '📈', title: 'Mieterhöhung möglich', sub: 'letzte Änderung vor mehr als 15 Monaten', when: '', act: 'home-edit' });
+    if (base && r.kind !== 'staffel' && r.kind !== 'index' && vtDiffDays(base, today) >= 456) out.push({ tone: 'muted', icon: '📈', title: tk('home.rentIncreasePossible'), sub: tk('home.lastChangeMoreThan'), when: '', act: 'home-edit' });
     const nk = hsLogs(h.id).filter(l => l.type === 'nebenkosten').map(l => l.date).sort().pop();
-    if (since && vtDiffDays(since, today) > 400 && (!nk || vtDiffDays(nk, today) > 400)) out.push({ tone: 'warn', icon: '🧾', title: 'Nebenkostenabrechnung an den Mieter', sub: 'spätestens 12 Monate nach Ende des Abrechnungszeitraums', when: '', act: 'log-new', type: 'nebenkosten' });
+    if (since && vtDiffDays(since, today) > 400 && (!nk || vtDiffDays(nk, today) > 400)) out.push({ tone: 'warn', icon: '🧾', title: tk('home.serviceChargeStatementTenant'), sub: tk('home.latest12MonthsAfter'), when: '', act: 'log-new', type: 'nebenkosten' });
   }
   // Only plants that are really due (plants out of season are paused and never listed); the text names them
   // and the jobs that are actually due instead of a fixed "watering, mowing or fertilising"
@@ -1376,15 +1378,17 @@ function hsPlantsDueItem(pd) {
   const add = j => { if (!jobs.includes(j)) jobs.push(j); };
   pd.forEach(p => {
     const s = hsPlantState(p, rain);
-    if (s.due) add(p.act === 'mow' ? 'Mähen' : 'Gießen');
-    if (s.fertDue) add('Düngen');
+    if (s.due) add(p.act === 'mow' ? 'mow' : 'water');
+    if (s.fertDue) add('feed');
   });
-  const names = pd.map(p => p.name || 'Pflanze');
+  const names = pd.map(p => p.name || tk('home.plant'));
   // Fixed order and whole sentences, so the language files can translate them as they are
-  const order = ['Gießen', 'Mähen', 'Düngen'].filter(j => jobs.includes(j));
-  const jobText = order.length === 1 ? order[0] + ' ist dran' : order.slice(0, -1).join(', ') + ' und ' + order[order.length - 1] + ' sind dran';
+  const order = ['water', 'mow', 'feed'].filter(j => jobs.includes(j));
+  const jobName = j => j === 'water' ? tk('home.job.water') : j === 'mow' ? tk('home.job.mow') : tk('home.job.feed');
+  const jobText = order.length === 1 ? tk('home.job.dueOne', { job: jobName(order[0]) })
+    : tk('home.job.dueMany', { jobs: order.slice(0, -1).map(jobName).join(', '), last: jobName(order[order.length - 1]) });
   return {
-    tone: 'warn', icon: pd.length === 1 ? (pd[0].icon || '🪴') : (order.length === 1 && order[0] === 'Mähen' ? '✂️' : '💧'),
+    tone: 'warn', icon: pd.length === 1 ? (pd[0].icon || '🪴') : (order.length === 1 && order[0] === 'mow' ? '✂️' : '💧'),
     title: pd.length === 1 ? names[0] : names.join(', '),
     sub: order.length ? jobText : '', when: pd.length > 1 ? String(pd.length) : '', act: 'tab', tab: 'garten',
   };
@@ -1417,9 +1421,9 @@ function hsOverviewHtml(h) {
           <span class="vt-chip">${hsEsc(HS_MODES[hsMode(h)].label)}</span>
           <span class="vt-chip muted">${hsEsc(type)}</span>
           ${Number(h.area) > 0 ? `<span class="vt-chip muted">${hsEsc(hsNum(h.area, 0))} m²</span>` : ''}
-          ${vtIsIso(h.moveIn) && !arch ? `<span class="vt-chip muted">${hsEsc('seit ' + vtFmt(h.moveIn))}</span>` : ''}
+          ${vtIsIso(h.moveIn) && !arch ? `<span class="vt-chip muted">${hsEsc(tk('home.sinceDate', { date: vtFmt(h.moveIn) }))}</span>` : ''}
           ${heat && heat !== '–' ? `<span class="vt-chip muted">♨️ ${hsEsc(heat)}</span>` : ''}
-          ${arch ? `<span class="vt-chip warn">${hsEsc('ausgezogen am ' + vtFmt(h.moveOut))}</span>` : ''}
+          ${arch ? `<span class="vt-chip warn">${hsEsc(tk('home.movedOutOn', { date: vtFmt(h.moveOut) }))}</span>` : ''}
         </div>
         ${hsCanEdit() ? `<div class="flex gap-2 mt-3">${hsHeroActionsHtml(h)}</div>` : ''}
       </div>
@@ -1428,7 +1432,7 @@ function hsOverviewHtml(h) {
   const due = hsDueItems(h);
   const dueHtml = due.length ? `
     <div class="rounded-2xl border border-mustard/40 bg-mustard/10 p-4">
-      <div class="text-sm font-medium mb-2">⏰ Im Blick</div>
+      <div class="text-sm font-medium mb-2">${tk('home.glance')}</div>
       <div class="flex flex-col gap-1.5">${due.map(hsDueRowHtml).join('')}</div>
     </div>` : '';
 
@@ -1442,24 +1446,24 @@ function hsOverviewHtml(h) {
     const price = (Number(h.own && h.own.price) || 0) + hsBuySideCosts(h);
     const cold = hsFixAmount(h, 'let_rent') * 12;
     const net = inc - monthly;
-    tiles.push(fzTile('Mieteinnahmen / Monat', inc > 0 ? fmtEur(inc) : '–', hsFixAmount(h, 'let_rent') > 0 ? 'kalt ' + fmtEur(hsFixAmount(h, 'let_rent')) : (inc > 0 ? '' : 'Miete unter „Bearbeiten“')));
-    tiles.push(fzTile('Überschuss / Monat', inc > 0 || monthly > 0 ? (net < 0 ? '− ' : '') + fmtEur(Math.abs(net)) : '–', 'Einnahmen minus laufende Kosten'));
-    tiles.push(fzTile('Brutto-Rendite', price > 0 && cold > 0 ? hsNum(cold / price * 100, 1) + ' %' : '–', price > 0 ? 'Jahreskaltmiete / Kaufpreis' : 'Kaufpreis eintragen'));
-    tiles.push(fzTile('Restschuld', loan ? fmtEur0(loan.rest) : '–', loan && loan.M > 0 ? 'Rate ' + fmtEur(loan.M) + ' / Monat' : 'Kredit unter „Bearbeiten“'));
+    tiles.push(fzTile(tk('home.rentalIncomeMonth'), inc > 0 ? fmtEur(inc) : '–', hsFixAmount(h, 'let_rent') > 0 ? (tk('home.basic') + ' ') + fmtEur(hsFixAmount(h, 'let_rent')) : (inc > 0 ? '' : tk('home.rentUnderEdit'))));
+    tiles.push(fzTile(tk('home.surplusMonth'), inc > 0 || monthly > 0 ? (net < 0 ? '− ' : '') + fmtEur(Math.abs(net)) : '–', tk('home.incomeMinusRunningCosts')));
+    tiles.push(fzTile(tk('home.grossYield'), price > 0 && cold > 0 ? hsNum(cold / price * 100, 1) + ' %' : '–', price > 0 ? tk('home.annualBaseRentPurchase') : tk('home.enterPurchasePrice')));
+    tiles.push(fzTile(tk('home.remainingDebt'), loan ? fmtEur0(loan.rest) : '–', loan && loan.M > 0 ? tk('home.instalmentPerMonth', { amount: fmtEur(loan.M) }) : tk('home.loanUnderEdit')));
   } else {
-  tiles.push(fzTile('Wohnkosten / Monat', monthly > 0 ? fmtEur(monthly) : '–', monthly > 0 ? 'laufende Fixkosten & Verträge' : 'Fixkosten unter „Bearbeiten“'));
+  tiles.push(fzTile(tk('home.housingCostsMonth'), monthly > 0 ? fmtEur(monthly) : '–', monthly > 0 ? tk('home.runningFixedCostsContracts') : tk('home.fixedCostsUnderEdit')));
   if (own) {
     const loan = hsLoan(h);
     const price = Number(h.own && h.own.price) || 0;
-    tiles.push(fzTile('Restschuld', loan ? fmtEur0(loan.rest) : '–', loan && loan.M > 0 ? 'Rate ' + fmtEur(loan.M) + ' / Monat' : 'Kredit unter „Bearbeiten“'));
-    tiles.push(fzTile('Kaufpreis', price > 0 ? fmtEur0(price) : '–', hsBuySideCosts(h) > 0 ? '+ ' + fmtEur0(hsBuySideCosts(h)) + ' Nebenkosten' : ''));
-    tiles.push(fzTile('Pro m²', area > 0 && price > 0 ? fmtEur0(price / area) : '–', area > 0 ? hsNum(area, 0) + ' m²' : 'Wohnfläche eintragen'));
+    tiles.push(fzTile(tk('home.remainingDebt'), loan ? fmtEur0(loan.rest) : '–', loan && loan.M > 0 ? tk('home.instalmentPerMonth', { amount: fmtEur(loan.M) }) : tk('home.loanUnderEdit')));
+    tiles.push(fzTile(tk('home.purchasePrice'), price > 0 ? fmtEur0(price) : '–', hsBuySideCosts(h) > 0 ? tk('home.plusSideCosts', { amount: fmtEur0(hsBuySideCosts(h)) }) : ''));
+    tiles.push(fzTile(tk('home.perM2'), area > 0 && price > 0 ? fmtEur0(price / area) : '–', area > 0 ? hsNum(area, 0) + ' m²' : tk('home.enterLivingSpace')));
   } else {
     const warm = hsWarmRent(h);
     const dep = Number(h.rent && h.rent.deposit) || 0;
-    tiles.push(fzTile('Warmmiete', warm > 0 ? fmtEur(warm) : '–', hsFixAmount(h, 'rent') > 0 ? 'kalt ' + fmtEur(hsFixAmount(h, 'rent')) : ''));
-    tiles.push(fzTile('Pro m²', area > 0 && hsFixAmount(h, 'rent') > 0 ? fmtEur(hsFixAmount(h, 'rent') / area) : '–', area > 0 ? 'kalt · ' + hsNum(area, 0) + ' m²' : 'Wohnfläche eintragen'));
-    tiles.push(fzTile('Kaution', dep > 0 ? fmtEur(dep) : '–', dep > 0 ? (vtIsIso(h.rent.depositBack) ? 'zurück am ' + vtFmt(h.rent.depositBack) : (vtIsIso(h.rent.depositPaid) ? 'gezahlt am ' + vtFmt(h.rent.depositPaid) : 'Zahlung eintragen')) : ''));
+    tiles.push(fzTile(tk('home.rentInclUtilities'), warm > 0 ? fmtEur(warm) : '–', hsFixAmount(h, 'rent') > 0 ? (tk('home.basic') + ' ') + fmtEur(hsFixAmount(h, 'rent')) : ''));
+    tiles.push(fzTile(tk('home.perM2'), area > 0 && hsFixAmount(h, 'rent') > 0 ? fmtEur(hsFixAmount(h, 'rent') / area) : '–', area > 0 ? (tk('home.basic2') + ' ') + hsNum(area, 0) + ' m²' : tk('home.enterLivingSpace')));
+    tiles.push(fzTile(tk('home.deposit'), dep > 0 ? fmtEur(dep) : '–', dep > 0 ? (vtIsIso(h.rent.depositBack) ? tk('home.backOn', { date: vtFmt(h.rent.depositBack) }) : (vtIsIso(h.rent.depositPaid) ? tk('home.paidOn', { date: vtFmt(h.rent.depositPaid) }) : tk('home.enterPayment'))) : ''));
   }
   }
   const tilesHtml = `<div class="vt-tiles">${tiles.join('')}</div>`; // 1.62: wraps instead of overflowing on small phones
@@ -1470,42 +1474,42 @@ function hsOverviewHtml(h) {
   const contact = [lord.phone ? `<a class="hover:text-pine" href="tel:${hsEsc(String(lord.phone).replace(/[^\d+]/g, ''))}">${hsEsc(lord.phone)}</a>` : '', lord.email ? `<a class="hover:text-pine" href="mailto:${hsEsc(lord.email)}">${hsEsc(lord.email)}</a>` : ''].filter(Boolean).join('<br>');
   if (!own) {
     const r = h.rent || {};
-    rows.push(hsRow('Vermieter', hsEsc(lord.name || '')));
-    rows.push(hsRow('Kontakt', contact));
-    rows.push(hsRow('Mietbeginn', vtIsIso(h.moveIn) ? hsEsc(vtFmt(h.moveIn) + ' · ' + hsDuration(h.moveIn)) : ''));
+    rows.push(hsRow(tk('home.landlord'), hsEsc(lord.name || '')));
+    rows.push(hsRow(tk('home.contact'), contact));
+    rows.push(hsRow(tk('home.tenancyStart'), vtIsIso(h.moveIn) ? hsEsc(vtFmt(h.moveIn) + ' · ' + hsDuration(h.moveIn)) : ''));
     HS_FIX.filter(d => d.mode === 'miete').forEach(d => rows.push(hsRow(d.label, hsFixAmount(h, d.key) > 0 ? hsEsc(fmtEur(hsFixAmount(h, d.key))) : '')));
-    rows.push(hsRow('Mietart', r.kind === 'staffel' ? hsEsc('Staffelmiete') : r.kind === 'index' ? hsEsc('Indexmiete') : ''));
-    rows.push(hsRow('Letzte Erhöhung', vtIsIso(r.lastIncrease) ? hsEsc(vtFmt(r.lastIncrease)) : ''));
-    rows.push(hsRow('Kündigungsfrist', hsEsc((Number(r.notice) || 3) + ' Monate')));
-    rows.push(hsRow('Kaution angelegt', hsEsc(r.depositWhere || '')));
-    if (vtIsIso(h.moveOut)) rows.push(hsRow('Kaution zurück', vtIsIso(r.depositBack) ? hsEsc(vtFmt(r.depositBack) + (Number(r.depositBackAmount) > 0 ? ' · ' + fmtEur(r.depositBackAmount) : '')) : hsEsc('noch offen')));
+    rows.push(hsRow(tk('home.rentType'), r.kind === 'staffel' ? hsEsc(tk('home.graduatedRent')) : r.kind === 'index' ? hsEsc(tk('home.indexLinkedRent')) : ''));
+    rows.push(hsRow(tk('home.lastIncrease'), vtIsIso(r.lastIncrease) ? hsEsc(vtFmt(r.lastIncrease)) : ''));
+    rows.push(hsRow(tk('contract.noticePeriod'), hsEsc(tk('contract.monthsN', { n: Number(r.notice) || 3 }))));
+    rows.push(hsRow(tk('home.depositHeld'), hsEsc(r.depositWhere || '')));
+    if (vtIsIso(h.moveOut)) rows.push(hsRow(tk('home.depositReturned'), vtIsIso(r.depositBack) ? hsEsc(vtFmt(r.depositBack) + (Number(r.depositBackAmount) > 0 ? ' · ' + fmtEur(r.depositBackAmount) : '')) : hsEsc(tk('home.stillOpen'))));
   } else {
     const o = h.own || {};
     const loan = hsLoan(h);
-    rows.push(hsRow('Kaufdatum', vtIsIso(o.date) ? hsEsc(vtFmt(o.date)) : ''));
-    rows.push(hsRow('Kaufpreis', Number(o.price) > 0 ? hsEsc(fmtEur(o.price)) : ''));
-    rows.push(hsRow('Grunderwerbsteuer', Number(o.landTax) > 0 ? hsEsc(fmtEur(o.landTax)) : ''));
-    rows.push(hsRow('Notar & Grundbuch', Number(o.notary) > 0 ? hsEsc(fmtEur(o.notary)) : ''));
-    rows.push(hsRow('Makler', Number(o.broker) > 0 ? hsEsc(fmtEur(o.broker)) : ''));
+    rows.push(hsRow(tk('pdf.field.purchaseDate'), vtIsIso(o.date) ? hsEsc(vtFmt(o.date)) : ''));
+    rows.push(hsRow(tk('home.purchasePrice'), Number(o.price) > 0 ? hsEsc(fmtEur(o.price)) : ''));
+    rows.push(hsRow(tk('home.landTransferTax'), Number(o.landTax) > 0 ? hsEsc(fmtEur(o.landTax)) : ''));
+    rows.push(hsRow(tk('home.notaryLandRegistry'), Number(o.notary) > 0 ? hsEsc(fmtEur(o.notary)) : ''));
+    rows.push(hsRow(tk('home.estateAgent'), Number(o.broker) > 0 ? hsEsc(fmtEur(o.broker)) : ''));
     if (loan) {
-      rows.push(hsRow('Kredit', hsEsc([loan.l.bank, fmtEur0(loan.P), loan.i > 0 ? hsNum(loan.i * 100, 2) + ' % Zins' : ''].filter(Boolean).join(' · '))));
-      rows.push(hsRow('Rate', loan.M > 0 ? hsEsc(fmtEur(loan.M) + ' / Monat') : ''));
-      rows.push(hsRow('Restschuld heute', hsEsc('≈ ' + fmtEur0(loan.rest))));
-      rows.push(hsRow('Zinsen dieses Jahr', loan.interestYear > 0 ? hsEsc('≈ ' + fmtEur0(loan.interestYear)) : ''));
-      rows.push(hsRow('Zinsbindung bis', vtIsIso(loan.l.fixedUntil) ? hsEsc(vtFmt(loan.l.fixedUntil) + (loan.restAtFix != null ? ' · Rest ≈ ' + fmtEur0(loan.restAtFix) : '')) : ''));
-      rows.push(hsRow('Schuldenfrei', loan.endMonths && vtIsIso(loan.l.start) ? hsEsc('≈ ' + vtFmt(vtAddMonths(loan.l.start, loan.endMonths, false)).slice(3)) : ''));
+      rows.push(hsRow(tk('home.loan'), hsEsc([loan.l.bank, fmtEur0(loan.P), loan.i > 0 ? hsNum(loan.i * 100, 2) + (' ' + tk('home.interest')) : ''].filter(Boolean).join(' · '))));
+      rows.push(hsRow(tk('home.instalment'), loan.M > 0 ? hsEsc(tk('home.amountPerMonth', { amount: fmtEur(loan.M) })) : ''));
+      rows.push(hsRow(tk('home.remainingDebtToday'), hsEsc('≈ ' + fmtEur0(loan.rest))));
+      rows.push(hsRow(tk('home.interestYear'), loan.interestYear > 0 ? hsEsc('≈ ' + fmtEur0(loan.interestYear)) : ''));
+      rows.push(hsRow(tk('home.fixedInterestUntil'), vtIsIso(loan.l.fixedUntil) ? hsEsc(vtFmt(loan.l.fixedUntil) + (loan.restAtFix != null ? ' · ' + tk('home.restApprox', { amount: fmtEur0(loan.restAtFix) }) : '')) : ''));
+      rows.push(hsRow(tk('home.debtFree'), loan.endMonths && vtIsIso(loan.l.start) ? hsEsc('≈ ' + vtFmt(vtAddMonths(loan.l.start, loan.endMonths, false)).slice(3)) : ''));
     }
     HS_FIX.filter(d => d.mode === 'eigentum' && d.key !== 'loan').forEach(d => rows.push(hsRow(d.label, hsFixAmount(h, d.key) > 0 ? hsEsc(fmtEur(hsFixAmount(h, d.key)) + ' ' + vtIntervalLabel(d.interval)) : '')));
-    rows.push(hsRow('Hausverwaltung', hsEsc(lord.name || '')));
-    rows.push(hsRow('Kontakt', contact));
+    rows.push(hsRow(tk('home.propertyManagement'), hsEsc(lord.name || '')));
+    rows.push(hsRow(tk('home.contact'), contact));
   }
   const vertrag = hsCard(`
     <div class="flex items-center justify-between gap-2 mb-1">
-      <div class="fz-h" style="margin:0">${own ? '📜 Kauf &amp; Finanzierung' : '📄 Mietvertrag'}</div>
-      ${hsCanEdit() ? '<button type="button" class="fz-mini-btn" data-hsact="home-edit">✎ Bearbeiten</button>' : ''}
+      <div class="fz-h" style="margin:0">${own ? tk('home.purchaseFinancing') : tk('home.tenancyAgreement')}</div>
+      ${hsCanEdit() ? ('<button type="button" class="fz-mini-btn" data-hsact="home-edit">' + tk('home.edit') + '</button>') : ''}
     </div>
-    ${rows.join('') || `<p class="text-xs text-ink/45">${own ? 'Kaufpreis, Nebenkosten und Kredit unter „Bearbeiten“ eintragen – pinn. rechnet Restschuld, Zinsen und das Ende der Zinsbindung aus.' : 'Vermieter, Miete, Kaution und Kündigungsfrist unter „Bearbeiten“ eintragen.'}</p>`}
-    ${!own && !arch ? '<p class="vt-info mt-3">Tipp: Beim Einzug alle vorhandenen Mängel mit Fotos unter „Mängel“ als „bei Einzug vorhanden“ festhalten – das schützt beim Auszug die Kaution.</p>' : ''}`);
+    ${rows.join('') || `<p class="text-xs text-ink/45">${own ? tk('home.enterPurchasePriceAdditional') : tk('home.enterLandlordRentDeposit')}</p>`}
+    ${!own && !arch ? ('<p class="vt-info mt-3">' + tk('home.tipWhenMovingRecord') + '</p>') : ''}`);
 
   // Contracts & fixed costs
   const contracts = hsContractsFor(h.id);
@@ -1516,17 +1520,17 @@ function hsOverviewHtml(h) {
     return `
       <button type="button" class="fz-log-row" data-hsact="contract" data-id="${hsEsc(c.id)}">
         <span class="fz-log-ic" style="background:${vtCatColor(cat)}22">${hsEsc(cat.icon || '📄')}</span>
-        <span class="flex-1 min-w-0"><span class="block text-sm font-medium truncate">${hsEsc(c.name || 'Vertrag')}</span><span class="block text-xs text-ink/45 truncate">${hsEsc([c.provider, vw.label].filter(Boolean).join(' · '))}</span></span>
-        <span class="shrink-0 text-right">${cost ? `<span class="block text-sm font-semibold">${hsEsc(fmtEur(cost.amount))}</span><span class="block text-[11px] text-ink/45">${hsEsc(vtIntervalLabel(cost.interval))}</span>` : '<span class="block text-[11px] text-ink/40">ohne Kosten</span>'}</span>
+        <span class="flex-1 min-w-0"><span class="block text-sm font-medium truncate">${hsEsc(c.name || tk('contract.docType.doc'))}</span><span class="block text-xs text-ink/45 truncate">${hsEsc([c.provider, vw.label].filter(Boolean).join(' · '))}</span></span>
+        <span class="shrink-0 text-right">${cost ? `<span class="block text-sm font-semibold">${hsEsc(fmtEur(cost.amount))}</span><span class="block text-[11px] text-ink/45">${hsEsc(vtIntervalLabel(cost.interval))}</span>` : ('<span class="block text-[11px] text-ink/40">' + tk('home.withoutCosts') + '</span>')}</span>
       </button>`;
   }).join('');
-  const fixRows = hsRecurringFor(h.id).map(r => `<div class="vt-row"><span>${hsEsc(r.title || 'Fixkosten')}</span><span>${hsEsc(fmtEur(finRecurringAmountFor(r, today)) + ' ' + vtIntervalLabel(finRecInterval(r)))}${finRecIsRunning(r, today) ? '' : ' · ' + hsEsc('beendet')}</span></div>`).join('');
+  const fixRows = hsRecurringFor(h.id).map(r => `<div class="vt-row"><span>${hsEsc(r.title || tk('home.fixedCosts'))}</span><span>${hsEsc(fmtEur(finRecurringAmountFor(r, today)) + ' ' + vtIntervalLabel(finRecInterval(r)))}${finRecIsRunning(r, today) ? '' : ' · ' + hsEsc(tk('contract.endedLower'))}</span></div>`).join('');
   const vertraege = hsCard(`
     <div class="flex items-center justify-between gap-2 mb-1">
-      <div class="fz-h" style="margin:0">⚡ Verträge &amp; Fixkosten</div>
-      ${hsCanEdit() && !arch ? '<span class="flex gap-1.5"><button type="button" class="fz-mini-btn" data-hsact="contract-assign">Zuordnen</button><button type="button" class="fz-mini-btn primary" data-hsact="contract-new">+ Neu</button></span>' : ''}
+      <div class="fz-h" style="margin:0">${tk('home.contractsFixedCosts')}</div>
+      ${hsCanEdit() && !arch ? ('<span class="flex gap-1.5"><button type="button" class="fz-mini-btn" data-hsact="contract-assign">' + tk('home.assign') + '</button><button type="button" class="fz-mini-btn primary" data-hsact="contract-new">' + tk('school.new') + '</button></span>') : ''}
     </div>
-    ${cRows ? `<div class="flex flex-col">${cRows}</div>` : '<p class="text-xs text-ink/45">Strom, Gas, Internet, Hausrat- oder Gebäudeversicherung aus Finanzen → Verträge zuordnen – Kosten und Kündigungsfristen erscheinen dann hier.</p>'}
+    ${cRows ? `<div class="flex flex-col">${cRows}</div>` : ('<p class="text-xs text-ink/45">' + tk('home.assignElectricityGasInternet') + '</p>')}
     ${fixRows ? `<div class="mt-2">${fixRows}</div>` : ''}`);
 
   // Documents
@@ -1536,30 +1540,30 @@ function hsOverviewHtml(h) {
   const docTypes = hsDocTypesFor(h);
   const dokumente = hsCard(`
     <div class="flex items-center justify-between gap-2 mb-2">
-      <div class="fz-h" style="margin:0">📎 Dokumente <span class="text-ink/40 font-normal normal-case">${linked.length || ''}</span></div>
+      <div class="fz-h" style="margin:0">${tk('contract.documents')} <span class="text-ink/40 font-normal normal-case">${linked.length || ''}</span></div>
     </div>
     ${hsCanEdit() ? `<div class="flex items-center gap-2 mb-2">
-      <select id="hsDocTypeSelect" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="Art des Dokuments">${docTypes.map(t => `<option value="${t.id}">${hsEsc(t.icon + ' ' + t.label)}</option>`).join('')}</select>
-      <button type="button" class="shrink-0 px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap" data-hsact="doc-add">+ Hochladen</button>
+      <select id="hsDocTypeSelect" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2 py-1.5 text-xs bg-white" aria-label="${escapeHtml(tk('contract.typeDocument'))}">${docTypes.map(t => `<option value="${t.id}">${hsEsc(t.icon + ' ' + t.label)}</option>`).join('')}</select>
+      <button type="button" class="shrink-0 px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap" data-hsact="doc-add">${tk('contract.upload')}</button>
     </div>` : ''}
-    <div class="flex flex-col gap-1.5">${linked.map(hsDocRowHtml).join('') || '<p class="text-xs text-ink/40 italic">Mietvertrag, Kaufvertrag, Übergabeprotokoll, Nebenkostenabrechnungen, Energieausweis … als PDF oder Foto. Sie landen unter „Dokumente“ in der passenden Kategorie und erscheinen hier.</p>'}</div>
-    ${hsCanEdit() ? '<button type="button" class="mt-2 text-xs text-ink/55 hover:text-pine" data-hsact="doc-link">🔗 Vorhandene aus „Dokumente“ verknüpfen</button>' : ''}`);
+    <div class="flex flex-col gap-1.5">${linked.map(hsDocRowHtml).join('') || ('<p class="text-xs text-ink/40 italic">' + tk('home.tenancyAgreementPurchaseContract') + '</p>')}</div>
+    ${hsCanEdit() ? ('<button type="button" class="mt-2 text-xs text-ink/55 hover:text-pine" data-hsact="doc-link">' + tk('home.linkExistingFromDocuments') + '</button>') : ''}`);
 
   // Data
   const drows = [];
-  drows.push(hsRow('Adresse', hsEsc(h.address || '')));
-  drows.push(hsRow(h.type === 'garage' ? 'Fläche' : 'Wohnfläche', Number(h.area) > 0 ? hsEsc(hsNum(h.area, 1) + ' m²') : ''));
-  drows.push(hsRow('Zimmer', Number(h.rooms) > 0 ? hsEsc(hsNum(h.rooms, 1)) : ''));
-  drows.push(hsRow('Personen im Haushalt', Number(h.persons) > 0 ? hsEsc(String(h.persons)) : ''));
-  drows.push(hsRow('Baujahr', Number(h.built) > 0 ? hsEsc(String(h.built)) : ''));
-  drows.push(hsRow('Heizung', heat && heat !== '–' ? hsEsc(heat) : ''));
+  drows.push(hsRow(tk('smart.haAddress'), hsEsc(h.address || '')));
+  drows.push(hsRow(h.type === 'garage' ? tk('home.area') : tk('home.livingSpace'), Number(h.area) > 0 ? hsEsc(hsNum(h.area, 1) + ' m²') : ''));
+  drows.push(hsRow(tk('home.rooms'), Number(h.rooms) > 0 ? hsEsc(hsNum(h.rooms, 1)) : ''));
+  drows.push(hsRow(tk('home.peopleHousehold'), Number(h.persons) > 0 ? hsEsc(String(h.persons)) : ''));
+  drows.push(hsRow(tk('home.yearManufacture'), Number(h.built) > 0 ? hsEsc(String(h.built)) : ''));
+  drows.push(hsRow(tk('home.heating'), heat && heat !== '–' ? hsEsc(heat) : ''));
   const daten = hsCard(`
-    <div class="fz-h">🏠 Daten</div>
-    ${drows.join('') || '<p class="text-xs text-ink/45">Wohnfläche, Zimmer, Baujahr und Heizung ergänzen – daraus werden z. B. die Kosten pro m² berechnet.</p>'}
+    <div class="fz-h">${tk('home.data')}</div>
+    ${drows.join('') || ('<p class="text-xs text-ink/45">' + tk('home.addLivingSpaceRooms') + '</p>')}
     ${h.note ? `<p class="text-sm text-ink/70 mt-3" style="white-space:pre-line">${hsEsc(h.note)}</p>` : ''}
     ${hsCanEdit() ? `<div class="flex flex-wrap gap-2 mt-4">
-      <button type="button" class="fz-mini-btn" data-hsact="home-edit">✎ Bearbeiten</button>
-      <button type="button" class="fz-mini-btn" data-hsact="home-new" data-mode="${hsLet(h) ? 'vermietet' : hsOwn(h) ? 'miete' : 'eigentum'}">+ Weiteres Zuhause</button>
+      <button type="button" class="fz-mini-btn" data-hsact="home-edit">${tk('home.edit')}</button>
+      <button type="button" class="fz-mini-btn" data-hsact="home-new" data-mode="${hsLet(h) ? 'vermietet' : hsOwn(h) ? 'miete' : 'eigentum'}">${tk('home.anotherHome')}</button>
     </div>` : ''}`);
 
   return hero + dueHtml + tilesHtml + (hsLet(h) ? hsTenantCardHtml(h) : '') + vertrag + vertraege + hsKeysCardHtml(h) + dokumente + daten + hsModulesCardHtml(h);
@@ -1572,12 +1576,12 @@ function hsDocRowHtml(x) {
   const chips = [];
   if (dl) chips.push(`<span class="vt-chip ${dl.tone}">${hsEsc(dl.label)}</span>`);
   if (x.betrag > 0) chips.push(`<span class="text-[11px] text-ink/45">${hsEsc(fmtEur(x.betrag))}</span>`);
-  if (x.pending) chips.push(`<span class="vt-chip muted">${navigator.onLine ? '⏳ wird übertragen' : '📴 wird nachgereicht'}</span>`);
+  if (x.pending) chips.push(`<span class="vt-chip muted">${navigator.onLine ? tk('home.transferring') : tk('home.willSubmitted')}</span>`);
   return `
     <button type="button" class="fin-doc-row flex items-center gap-2.5 rounded-xl border border-ink/10 px-2.5 py-2 text-left w-full" data-hsact="doc-open" data-id="${hsEsc(x.id)}">
       <span class="text-xl leading-none shrink-0">${hsEsc(cat.icon || '🗂️')}</span>
       <span class="min-w-0 flex-1">
-        <span class="block text-sm font-medium truncate">${hsEsc(x.titel || 'Dokument')}</span>
+        <span class="block text-sm font-medium truncate">${hsEsc(x.titel || tk('search.type.doc'))}</span>
         <span class="block text-[11px] text-ink/45 truncate">${hsEsc(meta)}</span>
         ${chips.length ? `<span class="flex items-center gap-1.5 mt-1 flex-wrap">${chips.join('')}</span>` : ''}
       </span>
@@ -1601,12 +1605,12 @@ function hsDefectsHtml(h) {
       <button type="button" class="fz-log-row" data-hsact="defect-edit" data-id="${hsEsc(d.id)}">
         <span class="fz-log-ic">${sevIcon[d.severity] || '🟡'}</span>
         <span class="flex-1 min-w-0">
-          <span class="block text-sm font-medium truncate">${hsEsc(d.title || 'Mangel')}${nDocs ? ' <span class="text-xs text-ink/45">📷 ' + nDocs + '</span>' : ''}</span>
-          <span class="block text-xs text-ink/45 truncate">${hsEsc([d.room, vtIsIso(d.date) ? vtFmt(d.date) : '', d.moveIn ? 'bei Einzug vorhanden' : ''].filter(Boolean).join(' · '))}</span>
+          <span class="block text-sm font-medium truncate">${hsEsc(d.title || tk('home.defect2'))}${nDocs ? ' <span class="text-xs text-ink/45">📷 ' + nDocs + '</span>' : ''}</span>
+          <span class="block text-xs text-ink/45 truncate">${hsEsc([d.room, vtIsIso(d.date) ? vtFmt(d.date) : '', d.moveIn ? tk('home.presentWhenMoving') : ''].filter(Boolean).join(' · '))}</span>
         </span>
         <span class="shrink-0 flex flex-col items-end gap-1">
           <span class="vt-chip ${d.status === 'behoben' ? 'muted' : (overdue ? 'urgent' : (d.status === 'gemeldet' ? '' : 'warn'))}">${hsEsc(st)}</span>
-          ${d.status === 'gemeldet' && vtIsIso(d.deadline) ? `<span class="text-[10px] text-ink/45">${hsEsc('Frist ' + vtFmt(d.deadline))}</span>` : ''}
+          ${d.status === 'gemeldet' && vtIsIso(d.deadline) ? `<span class="text-[10px] text-ink/45">${hsEsc((tk('school.deadline') + ' ') + vtFmt(d.deadline))}</span>` : ''}
         </span>
       </button>`;
   };
@@ -1614,22 +1618,22 @@ function hsDefectsHtml(h) {
   const head = hsCard(`
     <div class="flex items-center justify-between gap-2">
       <div class="min-w-0">
-        <div class="text-[11px] uppercase tracking-wide text-ink/40">Offene Mängel</div>
+        <div class="text-[11px] uppercase tracking-wide text-ink/40">${tk('home.openDefects')}</div>
         <div class="font-serif text-2xl">${open.length}</div>
-        <div class="text-xs text-ink/50">${hsEsc(done.length + ' behoben · ' + moveIn.length + ' bei Einzug dokumentiert')}</div>
+        <div class="text-xs text-ink/50">${hsEsc(tk('home.defectsFixed', { n: done.length }) + ' · ' + tk('home.defectsMoveIn', { n: moveIn.length }))}</div>
       </div>
       <div class="flex flex-col gap-1.5 shrink-0">
-        ${hsCanEdit() ? '<button type="button" class="fz-mini-btn primary" data-hsact="defect-new">+ Mangel</button>' : ''}
-        ${canLetter ? '<button type="button" class="fz-mini-btn" data-hsact="defect-letter">✉️ Mängelanzeige</button>' : ''}
+        ${hsCanEdit() ? ('<button type="button" class="fz-mini-btn primary" data-hsact="defect-new">' + tk('home.defect') + '</button>') : ''}
+        ${canLetter ? ('<button type="button" class="fz-mini-btn" data-hsact="defect-letter">' + tk('home.defectNotice') + '</button>') : ''}
       </div>
     </div>
-    ${!hsOwn(h) ? '<p class="vt-info mt-3">Mängel immer schriftlich melden und eine Frist setzen (meist 14 Tage). Fotos mit Datum sind der beste Nachweis – auch für eine mögliche Mietminderung.</p>' : ''}`);
+    ${!hsOwn(h) ? ('<p class="vt-info mt-3">' + tk('home.alwaysReportDefectsWriting') + '</p>') : ''}`);
   const openHtml = hsCard(`
-    <div class="fz-h">🛠️ Offen &amp; gemeldet</div>
-    ${open.length ? `<div class="flex flex-col">${open.map(row).join('')}</div>` : '<p class="text-xs text-ink/45">Keine offenen Mängel – sehr gut.</p>'}`);
+    <div class="fz-h">${tk('home.openReported')}</div>
+    ${open.length ? `<div class="flex flex-col">${open.map(row).join('')}</div>` : ('<p class="text-xs text-ink/45">' + tk('home.noOpenDefectsGreat') + '</p>')}`);
   const doneHtml = done.length ? `
     <details class="vt-more rounded-2xl bg-white border border-ink/10 shadow-sm px-4 py-3"${hsDefectShowDone ? ' open' : ''} data-hsdetails="defects">
-      <summary class="text-sm cursor-pointer select-none">✅ Behoben (${done.length})</summary>
+      <summary class="text-sm cursor-pointer select-none">${hsEsc(tk('home.fixedCount', { n: done.length }))}</summary>
       <div class="flex flex-col mt-2">${done.map(row).join('')}</div>
     </details>` : '';
   return head + openHtml + doneHtml;
@@ -1654,9 +1658,9 @@ function hsCostsHtml(h) {
     <div class="flex items-center justify-between gap-2 mb-2">
       <button type="button" class="fz-mini-btn" data-hsact="year" data-d="-1"${y <= minY ? ' disabled style="opacity:.35"' : ''}>‹</button>
       <div class="text-center min-w-0">
-        <div class="text-[11px] uppercase tracking-wide text-ink/40">${hsEsc('Kosten ' + y)}</div>
+        <div class="text-[11px] uppercase tracking-wide text-ink/40">${hsEsc(tk('home.costsYear', { year: y }))}</div>
         <div class="font-serif text-2xl">${hsEsc(fmtEur(total))}</div>
-        <div class="text-xs text-ink/50">${area > 0 && total > 0 ? hsEsc(fmtEur(total / area) + ' pro m²') : (y === new Date().getFullYear() ? hsEsc('bis heute') : '&nbsp;')}</div>
+        <div class="text-xs text-ink/50">${area > 0 && total > 0 ? hsEsc(tk('home.perSqm', { amount: fmtEur(total / area) })) : (y === new Date().getFullYear() ? hsEsc(tk('school.date')) : '&nbsp;')}</div>
       </div>
       <button type="button" class="fz-mini-btn" data-hsact="year" data-d="1"${y >= maxY ? ' disabled style="opacity:.35"' : ''}>›</button>
     </div>
@@ -1664,12 +1668,12 @@ function hsCostsHtml(h) {
       <div>
         <div class="flex items-center justify-between gap-2 text-xs mb-1"><span class="truncate">${hsEsc(x.g.icon + ' ' + x.g.label)}</span><span class="shrink-0 font-medium">${hsEsc(fmtEur(x.val))}</span></div>
         <div class="vt-bar"><span style="width:${Math.max(4, Math.round(Math.abs(x.val) / maxG * 100))}%;background:${x.g.color}"></span></div>
-      </div>`).join('')}</div>` : '<p class="text-xs text-ink/45 text-center">Noch keine Kosten in diesem Jahr.</p>'}`);
+      </div>`).join('')}</div>` : ('<p class="text-xs text-ink/45 text-center">' + tk('home.noCostsYearYet') + '</p>')}`);
   const tax = labor > 0 ? hsCard(`
-    <div class="fz-h">🏛️ Für die Steuererklärung</div>
-    <div class="vt-row"><span>Lohnkosten Handwerker ${hsEsc(String(y))}</span><span>${hsEsc(fmtEur(labor))}</span></div>
-    <div class="vt-row"><span>Steuerermäßigung (20 %, max. 1.200 €)</span><span>${hsEsc('bis zu ' + fmtEur(taxBack))}</span></div>
-    <p class="text-[11px] text-ink/45 mt-2">Handwerkerleistungen im eigenen Haushalt (§ 35a EStG, Deutschland): nur Arbeits-, Fahrt- und Maschinenkosten, per Überweisung bezahlt. Rechnungen aufheben.</p>`) : '';
+    <div class="fz-h">${tk('home.taxReturn')}</div>
+    <div class="vt-row"><span>${tk('home.tradesmenLabourCosts', { hsEsc: hsEsc(String(y)) })}</span><span>${hsEsc(fmtEur(labor))}</span></div>
+    <div class="vt-row"><span>${tk('home.taxReduction20Max')}</span><span>${hsEsc(tk('home.upTo', { amount: fmtEur(taxBack) }))}</span></div>
+    <p class="text-[11px] text-ink/45 mt-2">${tk('home.tradesmensServicesOwnHousehold')}</p>`) : '';
 
   // Renovation plan
   const projects = hsProjects(h.id).slice().sort((a, b) => {
@@ -1687,23 +1691,23 @@ function hsCostsHtml(h) {
     return `
       <button type="button" class="w-full text-left rounded-xl border border-ink/10 px-3 py-2.5 hover:border-pine/40 transition" data-hsact="project-edit" data-id="${hsEsc(p.id)}">
         <div class="flex items-center justify-between gap-2">
-          <span class="text-sm font-medium truncate">${hsEsc(area2.split(' ')[0] + ' ' + (p.title || 'Projekt'))}</span>
+          <span class="text-sm font-medium truncate">${hsEsc(area2.split(' ')[0] + ' ' + (p.title || tk('home.project')))}</span>
           <span class="vt-chip ${p.status === 'fertig' ? 'muted' : (p.status === 'laufend' ? 'warn' : '')}">${hsEsc(st)}</span>
         </div>
-        <div class="text-xs text-ink/45 mt-0.5">${hsEsc([Number(p.year) > 0 ? String(p.year) : '', budget > 0 ? 'Budget ' + fmtEur0(budget) : '', spent ? 'ausgegeben ' + fmtEur0(spent) : '', Number(p.funding) > 0 ? 'Förderung ' + fmtEur0(p.funding) : ''].filter(Boolean).join(' · '))}</div>
+        <div class="text-xs text-ink/45 mt-0.5">${hsEsc([Number(p.year) > 0 ? String(p.year) : '', budget > 0 ? tk('home.budgetAmount', { amount: fmtEur0(budget) }) : '', spent ? tk('home.spentAmount', { amount: fmtEur0(spent) }) : '', Number(p.funding) > 0 ? tk('home.fundingAmount', { amount: fmtEur0(p.funding) }) : ''].filter(Boolean).join(' · '))}</div>
         ${budget > 0 ? `<div class="vt-bar mt-1.5"><span style="width:${Math.max(3, pct)}%;background:${over ? '#C0392B' : 'var(--c-pine)'}"></span></div>` : ''}
       </button>`;
   }).join('');
   const planned = projects.filter(p => p.status !== 'fertig').reduce((sum, p) => sum + Math.max(0, (Number(p.budget) || 0) - spentOf(p.id) - (Number(p.funding) || 0)), 0);
   const plan = hsCard(`
     <div class="flex items-center justify-between gap-2 mb-2">
-      <div class="fz-h" style="margin:0">${hsOwn(h) ? '🏗️ Sanierungsplan' : '🎨 Renovierung &amp; Projekte'}</div>
-      ${hsCanEdit() ? '<button type="button" class="fz-mini-btn primary" data-hsact="project-new">+ Projekt</button>' : ''}
+      <div class="fz-h" style="margin:0">${hsOwn(h) ? tk('home.renovationPlan') : tk('home.renovationProjects')}</div>
+      ${hsCanEdit() ? ('<button type="button" class="fz-mini-btn primary" data-hsact="project-new">' + tk('home.project2') + '</button>') : ''}
     </div>
-    ${pRows ? `<div class="flex flex-col gap-1.5">${pRows}</div>${planned > 0 ? `<p class="text-xs text-ink/55 mt-2">${hsEsc('Noch geplant: ' + fmtEur0(planned) + ' (nach Förderung)')}</p>` : ''}` : `<p class="text-xs text-ink/45">${hsOwn(h) ? 'Dach, Fenster, Heizung, Dämmung, Bad … mit Jahr, Budget und Förderung planen. Rechnungen lassen sich einem Projekt zuordnen – so siehst du, ob das Budget reicht.' : 'Streichen, neuer Boden, Küche … mit Budget planen und Rechnungen zuordnen.'}</p>`}`);
+    ${pRows ? `<div class="flex flex-col gap-1.5">${pRows}</div>${planned > 0 ? `<p class="text-xs text-ink/55 mt-2">${hsEsc(tk('home.stillPlanned', { amount: fmtEur0(planned) }))}</p>` : ''}` : `<p class="text-xs text-ink/45">${hsOwn(h) ? tk('home.planRoofWindowsHeating') : tk('home.paintingNewFloorKitchen')}</p>`}`);
 
   // Invoices & costs
-  const filters = [['alle', 'Alle'], ['einrichtung', '🛋️ Einrichtung'], ['renovierung', '🧱 Renovierung'], ['instandhaltung', '🔧 Reparaturen'], ['abrechnung', '🧾 Abrechnungen']];
+  const filters = [['alle', tk('errorLog.all')], ['einrichtung', tk('home.furnishing')], ['renovierung', tk('home.renovation')], ['instandhaltung', tk('home.repairs')], ['abrechnung', tk('home.statements')]];
   const logs = hsLogs(h.id).filter(l => String(l.date).slice(0, 4) === String(y)).sort((a, b) => String(b.date).localeCompare(String(a.date)));
   const flt = logs.filter(l => {
     if (hsLogFilter === 'alle') return true;
@@ -1715,7 +1719,7 @@ function hsCostsHtml(h) {
     const t = hsLogType(l.type);
     const nDocs = hsDocsOf(l).length;
     const proj = l.project ? hsProjectById(l.project) : null;
-    const warranty = vtIsIso(l.warranty) && l.warranty >= finTodayIso() ? 'Gewährleistung bis ' + vtFmt(l.warranty) : '';
+    const warranty = vtIsIso(l.warranty) && l.warranty >= finTodayIso() ? tk('home.warrantyUntil', { date: vtFmt(l.warranty) }) : '';
     const a = Number(l.amount) || 0;
     return `
       <button type="button" class="fz-log-row" data-hsact="log-edit" data-id="${hsEsc(l.id)}">
@@ -1726,27 +1730,27 @@ function hsCostsHtml(h) {
         </span>
         <span class="shrink-0 text-right">
           ${a ? `<span class="block text-sm font-semibold${a < 0 ? ' text-pine' : ''}">${hsEsc(a < 0 ? '+ ' + fmtEur(-a) : fmtEur(a))}</span>` : ''}
-          ${t.settle && a ? `<span class="block text-[10px] text-ink/45">${hsEsc(a < 0 ? 'Guthaben' : 'Nachzahlung')}</span>` : (a && !l.booked ? '<span class="block text-[10px] text-ink/40">nicht in Finanzen</span>' : '')}
+          ${t.settle && a ? `<span class="block text-[10px] text-ink/45">${hsEsc(a < 0 ? tk('depot.balance2') : tk('home.backPayment'))}</span>` : (a && !l.booked ? ('<span class="block text-[10px] text-ink/40">' + tk('home.notFinance') + '</span>') : '')}
         </span>
       </button>`;
   }).join('');
   const verlauf = hsCard(`
     <div class="flex items-center justify-between gap-2 mb-2">
-      <div class="fz-h" style="margin:0">🧾 Rechnungen ${hsEsc(String(y))} <span class="text-ink/40 font-normal normal-case">${logs.length || ''}</span></div>
-      ${hsCanEdit() ? '<button type="button" class="fz-mini-btn primary" data-hsact="log-new">+ Rechnung</button>' : ''}
+      <div class="fz-h" style="margin:0">${tk('home.invoices', { hsEsc: hsEsc(String(y)) })} <span class="text-ink/40 font-normal normal-case">${logs.length || ''}</span></div>
+      ${hsCanEdit() ? ('<button type="button" class="fz-mini-btn primary" data-hsact="log-new">' + tk('home.invoice') + '</button>') : ''}
     </div>
     ${logs.length ? `<div class="fz-type-row mb-2">${filters.map(f => `<button type="button" class="fz-filter-chip${hsLogFilter === f[0] ? ' active' : ''}" data-hsact="log-filter" data-f="${f[0]}">${hsEsc(f[1])}</button>`).join('')}</div>` : ''}
-    ${logRows ? `<div class="flex flex-col">${logRows}</div>` : `<p class="text-xs text-ink/45">${logs.length ? 'Keine Einträge für diesen Filter.' : 'Möbel, Böden, Material, Handwerker, Reparaturen, Nebenkostenabrechnung, Grundsteuer … – mit Beleg unter „Dokumente“ und auf Wunsch gleich als Ausgabe in Finanzen.'}</p>`}
-    ${flt.length > hsLogLimit ? `<button type="button" class="w-full mt-2 text-xs text-ink/55 hover:text-pine py-1.5" data-hsact="log-more">${hsEsc('Weitere ' + (flt.length - hsLogLimit) + ' anzeigen')}</button>` : ''}`);
+    ${logRows ? `<div class="flex flex-col">${logRows}</div>` : `<p class="text-xs text-ink/45">${logs.length ? tk('home.noEntriesFilter') : tk('home.furnitureFloorsMaterialTradesmen')}</p>`}
+    ${flt.length > hsLogLimit ? `<button type="button" class="w-full mt-2 text-xs text-ink/55 hover:text-pine py-1.5" data-hsact="log-more">${hsEsc(tk('home.showMoreN', { n: flt.length - hsLogLimit }))}</button>` : ''}`);
   let income = '';
   if (hsLet(h)) {
     const inc = hsIncomeIn(h, s, e);
     income = hsCard(`
-    <div class="fz-h">🤝 Mieteinnahmen ${hsEsc(String(y))}</div>
-    <div class="vt-row"><span>Einnahmen</span><span style="color:#2F9E5B">${hsEsc('+ ' + fmtEur(inc))}</span></div>
-    <div class="vt-row"><span>Kosten</span><span>${hsEsc('− ' + fmtEur(total))}</span></div>
-    <div class="vt-row"><span><b>Überschuss</b></span><span><b>${hsEsc((inc - total < 0 ? '− ' : '+ ') + fmtEur(Math.abs(inc - total)))}</b></span></div>
-    <p class="text-[11px] text-ink/45 mt-2">Für die Steuererklärung (Anlage V in Deutschland): Kosten wie Zinsen, Grundsteuer, Versicherung, Reparaturen und Hausgeld sind meist Werbungskosten. Abschreibung (AfA) und Kredit-Tilgung sind hier nicht enthalten.</p>`);
+    <div class="fz-h">${tk('home.rentalIncome', { hsEsc: hsEsc(String(y)) })}</div>
+    <div class="vt-row"><span>${tk('fin.income')}</span><span style="color:#2F9E5B">${hsEsc('+ ' + fmtEur(inc))}</span></div>
+    <div class="vt-row"><span>${tk('contract.costs')}</span><span>${hsEsc('− ' + fmtEur(total))}</span></div>
+    <div class="vt-row"><span><b>${tk('home.surplus')}</b></span><span><b>${hsEsc((inc - total < 0 ? '− ' : '+ ') + fmtEur(Math.abs(inc - total)))}</b></span></div>
+    <p class="text-[11px] text-ink/45 mt-2">${tk('home.taxReturnGermanyForm')}</p>`);
   }
   return overview + income + (hsLet(h) ? '' : tax) + plan + verlauf;
 }
@@ -1758,13 +1762,13 @@ function hsMetersHtml(h) {
     return hsCard(`
       <div class="text-center">
         <div class="text-4xl mb-2">📟</div>
-        <div class="font-serif text-lg mb-1">Zähler anlegen</div>
-        <p class="text-xs text-ink/50 mb-4">Strom, Gas, Wasser, Wärme oder PV: Stand per Hand eingeben oder ein Foto vom Zähler machen – die KI liest ihn ab. pinn. rechnet den Jahresverbrauch hoch und zeigt, ob eine Nachzahlung oder ein Guthaben zu erwarten ist.</p>
+        <div class="font-serif text-lg mb-1">${tk('home.addMeters')}</div>
+        <p class="text-xs text-ink/50 mb-4">${tk('home.electricityGasWaterHeat')}</p>
         ${hsCanEdit() ? `<div class="flex flex-wrap justify-center gap-2">${HS_METER_TYPES.map(t => `<button type="button" class="fz-kind-btn px-3 py-2 text-sm" data-hsact="meter-new" data-type="${t.id}">${t.icon} ${hsEsc(t.label)}</button>`).join('')}</div>` : ''}
       </div>`);
   }
   const cards = meters.map(m => hsMeterCardHtml(m)).join('');
-  return cards + (hsCanEdit() ? `<button type="button" class="self-center fz-mini-btn" data-hsact="meter-new">+ Weiterer Zähler</button>` : '');
+  return cards + (hsCanEdit() ? `<button type="button" class="self-center fz-mini-btn" data-hsact="meter-new">${tk('home.anotherMeter')}</button>` : '');
 }
 function hsMeterCardHtml(m) {
   const t = hsMeterType(m.type);
@@ -1775,21 +1779,21 @@ function hsMeterCardHtml(m) {
   const today = finTodayIso();
   const lines = [];
   if (fc.annual != null) {
-    lines.push(hsRow(t.income ? 'Ertrag pro Jahr' : 'Verbrauch pro Jahr', hsEsc((st.reliable ? '' : '≈ ') + hsNum(fc.annual, unit === 'kWh' ? 0 : 1) + ' ' + unit + (hsFactor(m) !== 1 ? ' (' + hsNum(fc.annual * hsFactor(m), 0) + ' ' + hsBillUnit(m) + ')' : ''))));
-    if (Number(h_area()) > 0 && (t.id === 'gas' || t.id === 'waerme' || t.id === 'heizstrom')) lines.push(hsRow('Pro m²', hsEsc(hsNum(fc.annual * hsFactor(m) / h_area(), 0) + ' kWh')));
-    lines.push(hsRow('Im Zeitraum bisher', hsEsc(hsNum(fc.used, unit === 'kWh' ? 0 : 1) + ' ' + unit + ' · seit ' + vtFmt(fc.per.start))));
-    lines.push(hsRow(t.income ? 'Vergütung (Prognose)' : 'Kosten (Prognose)', hsEsc(fmtEur0(fc.cost) + ' · bis ' + vtFmt(fc.per.end))));
+    lines.push(hsRow(t.income ? tk('home.yieldPerYear') : tk('home.consumptionPerYear'), hsEsc((st.reliable ? '' : '≈ ') + hsNum(fc.annual, unit === 'kWh' ? 0 : 1) + ' ' + unit + (hsFactor(m) !== 1 ? ' (' + hsNum(fc.annual * hsFactor(m), 0) + ' ' + hsBillUnit(m) + ')' : ''))));
+    if (Number(h_area()) > 0 && (t.id === 'gas' || t.id === 'waerme' || t.id === 'heizstrom')) lines.push(hsRow(tk('home.perM2'), hsEsc(hsNum(fc.annual * hsFactor(m) / h_area(), 0) + ' kWh')));
+    lines.push(hsRow(tk('home.soFarPeriod'), hsEsc(hsNum(fc.used, unit === 'kWh' ? 0 : 1) + ' ' + unit + ' · ' + tk('home.sinceDate', { date: vtFmt(fc.per.start) }))));
+    lines.push(hsRow(t.income ? tk('home.feedPaymentForecast') : tk('home.costsForecast'), hsEsc(fmtEur0(fc.cost) + ' · ' + tk('home.untilDate', { date: vtFmt(fc.per.end) }))));
   }
   let verdict = '';
   if (fc.diff != null) {
     const pay = fc.diff > 0;
     verdict = `<div class="${pay ? 'vt-info warn' : 'vt-info'} mt-2">${pay
-      ? hsEsc('Voraussichtlich ≈ ' + fmtEur0(fc.diff) + ' Nachzahlung') + '<br><span class="opacity-80">' + hsEsc('Abschlag ' + fmtEur(Number(m.advance)) + ' / Monat · passend wären ≈ ' + fmtEur0(fc.suggest)) + '</span>'
-      : hsEsc('Voraussichtlich ≈ ' + fmtEur0(-fc.diff) + ' Guthaben') + '<br><span class="opacity-80">' + hsEsc('Abschlag ' + fmtEur(Number(m.advance)) + ' / Monat · passend wären ≈ ' + fmtEur0(fc.suggest)) + '</span>'}</div>`;
+      ? hsEsc(tk('home.expectedBackPayment', { amount: fmtEur0(fc.diff) })) + '<br><span class="opacity-80">' + hsEsc(tk('home.advanceSuggest', { amount: fmtEur(Number(m.advance)), suggest: fmtEur0(fc.suggest) })) + '</span>'
+      : hsEsc(tk('home.expectedCredit', { amount: fmtEur0(-fc.diff) })) + '<br><span class="opacity-80">' + hsEsc(tk('home.advanceSuggest', { amount: fmtEur(Number(m.advance)), suggest: fmtEur0(fc.suggest) })) + '</span>'}</div>`;
   } else if (fc.annual != null && fc.suggest && !t.income) {
-    verdict = `<p class="text-[11px] text-ink/45 mt-2">${hsEsc('Passender Abschlag: ≈ ' + fmtEur0(fc.suggest) + ' / Monat – eigenen Abschlag unter ✎ eintragen, dann zeigt pinn. Nachzahlung oder Guthaben.')}</p>`;
+    verdict = `<p class="text-[11px] text-ink/45 mt-2">${hsEsc(tk('home.fittingAdvance', { amount: fmtEur0(fc.suggest) }))}</p>`;
   } else if (fc.annual == null) {
-    verdict = `<p class="text-[11px] text-ink/45 mt-2">${st.rs.length ? 'Ab der zweiten Ablesung (am besten ein paar Wochen später) rechnet pinn. den Verbrauch hoch.' : 'Ersten Zählerstand eintragen – am besten gleich heute.'}</p>`;
+    verdict = `<p class="text-[11px] text-ink/45 mt-2">${st.rs.length ? tk('home.fromSecondReadingIdeally') : tk('home.enterFirstReadingIdeally')}</p>`;
   }
   // Chart: last 12 months
   let chart = '';
@@ -1797,9 +1801,9 @@ function hsMeterCardHtml(m) {
     const mo = hsMonthly(m).months;
     const vals = mo.map(x => x.val != null ? x.val : (x.est || 0));
     const colors = mo.map(x => x.val != null ? t.color : t.color + '55');
-    const labels = mo.map(x => FZ_MONTH_NAMES[Number(x.ym.slice(5, 7)) - 1].slice(0, 3));
+    const labels = mo.map(x => fzMonthName(Number(x.ym.slice(5, 7)) - 1, 'short'));
     chart = `<div class="mt-3">${fzBarsHtml(vals, labels, t.color, { colors, height: 80, short: v => hsNum(v, 0), fmt: v => hsNum(v, 1) + ' ' + unit })}</div>
-      <p class="text-[10px] text-ink/40 mt-1">Hell = geschätzt (keine Ablesung im Monat)</p>`;
+      <p class="text-[10px] text-ink/40 mt-1">${tk('home.lightEstimatedNoReading')}</p>`;
   }
   const rs = st.rs.slice().reverse();
   const shown = hsMeterOpen === m.id ? rs : rs.slice(0, 3);
@@ -1809,7 +1813,7 @@ function hsMeterCardHtml(m) {
     return `
       <button type="button" class="fz-log-row" data-hsact="reading-edit" data-id="${hsEsc(r.id)}">
         <span class="fz-log-ic">${r.source === 'ki' ? '✨' : (r.reset ? '🔁' : '📍')}</span>
-        <span class="flex-1 min-w-0"><span class="block text-sm font-medium truncate">${hsEsc(hsNum(r.value, unit === 'kWh' ? 1 : 3) + ' ' + unit)}</span><span class="block text-xs text-ink/45 truncate">${hsEsc([vtFmt(r.date), r.reset ? 'Zählerwechsel' : '', r.note].filter(Boolean).join(' · '))}</span></span>
+        <span class="flex-1 min-w-0"><span class="block text-sm font-medium truncate">${hsEsc(hsNum(r.value, unit === 'kWh' ? 1 : 3) + ' ' + unit)}</span><span class="block text-xs text-ink/45 truncate">${hsEsc([vtFmt(r.date), r.reset ? tk('home.meterReplaced') : '', r.note].filter(Boolean).join(' · '))}</span></span>
         ${delta != null ? `<span class="shrink-0 text-xs text-ink/50">${hsEsc('+ ' + hsNum(delta, unit === 'kWh' ? 0 : 1))}</span>` : ''}
       </button>`;
   }).join('');
@@ -1819,21 +1823,21 @@ function hsMeterCardHtml(m) {
         <span class="fz-icon" style="--fz:${t.color}">${t.icon}</span>
         <div class="min-w-0">
           <div class="text-sm font-medium truncate">${hsEsc(m.name || t.label)}</div>
-          <div class="text-xs text-ink/45 truncate">${hsEsc([m.number ? 'Nr. ' + m.number : '', last ? 'zuletzt ' + vtFmt(last.date) : 'noch kein Stand'].filter(Boolean).join(' · '))}</div>
+          <div class="text-xs text-ink/45 truncate">${hsEsc([m.number ? 'Nr. ' + m.number : '', last ? 'zuletzt ' + vtFmt(last.date) : tk('home.noReadingYet')].filter(Boolean).join(' · '))}</div>
           ${last ? `<div class="font-serif text-lg leading-tight mt-0.5">${hsEsc(hsNum(last.value, unit === 'kWh' ? 1 : 3) + ' ' + unit)}</div>` : ''}
         </div>
       </div>
       ${hsCanEdit() ? `<div class="flex flex-col gap-1.5 shrink-0">
-        <button type="button" class="fz-mini-btn primary" data-hsact="reading-new" data-id="${hsEsc(m.id)}">+ Stand</button>
+        <button type="button" class="fz-mini-btn primary" data-hsact="reading-new" data-id="${hsEsc(m.id)}">${tk('home.asOf')}</button>
         <button type="button" class="fz-mini-btn" data-hsact="meter-edit" data-id="${hsEsc(m.id)}">✎</button>
       </div>` : ''}
     </div>
-    ${last && vtDiffDays(last.date, today) > 40 && m.active !== false ? `<p class="text-[11px] text-ink/50 mt-2">${hsEsc('Letzte Ablesung vor ' + vtDiffDays(last.date, today) + ' Tagen – einmal im Monat ablesen macht die Prognose genau.')}</p>` : ''}
+    ${last && vtDiffDays(last.date, today) > 40 && m.active !== false ? `<p class="text-[11px] text-ink/50 mt-2">${hsEsc(tk('home.lastReadingDaysAgo', { n: vtDiffDays(last.date, today) }))}</p>` : ''}
     ${lines.length ? `<div class="mt-3">${lines.join('')}</div>` : ''}
     ${verdict}
     ${chart}
     ${readRows ? `<div class="flex flex-col mt-3">${readRows}</div>` : ''}
-    ${rs.length > 3 ? `<button type="button" class="w-full mt-1 text-xs text-ink/55 hover:text-pine py-1" data-hsact="meter-toggle" data-id="${hsEsc(m.id)}">${hsMeterOpen === m.id ? 'Weniger anzeigen' : hsEsc('Alle ' + rs.length + ' Stände anzeigen')}</button>` : ''}`);
+    ${rs.length > 3 ? `<button type="button" class="w-full mt-1 text-xs text-ink/55 hover:text-pine py-1" data-hsact="meter-toggle" data-id="${hsEsc(m.id)}">${hsMeterOpen === m.id ? tk('maint.showLess') : hsEsc(tk('home.showAllReadings', { n: rs.length }))}</button>` : ''}`);
 }
 function h_area() { const h = hsCurrent(); return h ? Number(h.area) || 0 : 0; }
 
@@ -1847,16 +1851,16 @@ function hsMaintListHtml(compact, which = 'all') {
     const t = hsMaintDueTone(next);
     const open = hsMaintOpen(m);
     const who = (m.assignedMemberIds || []).map(id => memberById(id)).filter(Boolean).map(memberLabel);
-    const sub = [hsMaintEvery(m.months), who.length ? (m.rotate && who.length > 1 ? '🔄 ' + who.join(', ') : who.join(', ')) : 'Alle', vtIsIso(m.last) ? 'zuletzt ' + vtFmt(m.last) : ''].filter(Boolean).join(' · ');
+    const sub = [hsMaintEvery(m.months), who.length ? (m.rotate && who.length > 1 ? '🔄 ' + who.join(', ') : who.join(', ')) : tk('errorLog.all'), vtIsIso(m.last) ? 'zuletzt ' + vtFmt(m.last) : ''].filter(Boolean).join(' · ');
     return `
       <div class="fz-due-row${m.active === false ? '' : ' ' + t.tone}" role="button" tabindex="0" data-hsact="maint-edit" data-id="${hsEsc(m.id)}"${m.active === false ? ' style="opacity:.5"' : ''}>
         <span class="fz-due-ic">${hsEsc(m.icon || '🔧')}</span>
         <span class="flex-1 min-w-0">
           <span class="block text-sm font-medium truncate">${hsEsc(m.title)}</span>
           <span class="block text-xs text-ink/55 truncate">${hsEsc(sub)}</span>
-          ${open && !compact ? `<span class="flex gap-1 mt-1 flex-wrap"><span class="vt-chip muted">✅ Aufgabe angelegt</span>${hsCanEdit() ? `<span role="button" tabindex="0" class="fz-mini-btn primary" data-hsact="maint-act" data-id="${hsEsc(m.id)}">${hsMaintIsMeter(m) ? '📟 Eintragen' : '✓ Erledigt'}</span>` : ''}</span>` : ''}
+          ${open && !compact ? `<span class="flex gap-1 mt-1 flex-wrap"><span class="vt-chip muted">${tk('home.taskCreated')}</span>${hsCanEdit() ? `<span role="button" tabindex="0" class="fz-mini-btn primary" data-hsact="maint-act" data-id="${hsEsc(m.id)}">${hsMaintIsMeter(m) ? tk('home.enter') : tk('tasks.doneBtn')}</span>` : ''}</span>` : ''}
         </span>
-        <span class="vt-chip ${m.active === false ? 'muted' : hsEsc(t.tone)}">${m.active === false ? hsEsc('pausiert') : hsEsc(t.label)}</span>
+        <span class="vt-chip ${m.active === false ? 'muted' : hsEsc(t.tone)}">${m.active === false ? hsEsc(tk('home.paused')) : hsEsc(t.label)}</span>
       </div>`;
   }).join('');
 }
@@ -1868,13 +1872,13 @@ function hsMaintPageHtml() {
   const tpls = HS_MAINT_TEMPLATES.filter(t => !used.has(t.tpl) && !t.garden && (!t.own || !h || hsOwn(h)));
   return hsCard(`
     <div class="flex items-center justify-between gap-2 mb-2">
-      <div class="fz-h" style="margin:0">🔧 Wartungsplan</div>
-      ${hsCanEdit() ? '<button type="button" class="fz-mini-btn primary" data-hsact="maint-new">+ Eigene</button>' : ''}
+      <div class="fz-h" style="margin:0">${tk('home.maintenancePlan')}</div>
+      ${hsCanEdit() ? ('<button type="button" class="fz-mini-btn primary" data-hsact="maint-new">' + tk('home.custom') + '</button>') : ''}
     </div>
-    ${list ? `<div class="flex flex-col gap-1.5">${list}</div>` : '<p class="text-xs text-ink/45">Noch nichts geplant. Vorlagen unten antippen – pinn. legt die Aufgaben dann rechtzeitig unter „Aufgaben“ an, auf Wunsch reihum.</p>'}
-    <p class="text-[11px] text-ink/45 mt-2">Die Aufgaben erscheinen bei Fälligkeit unter Aufgaben → Haushalt und bleiben stehen, bis sie erledigt sind. Die nächste Fälligkeit zählt ab dem Tag, an dem abgehakt wurde.</p>`)
+    ${list ? `<div class="flex flex-col gap-1.5">${list}</div>` : ('<p class="text-xs text-ink/45">' + tk('home.nothingPlannedYetTap') + '</p>')}
+    <p class="text-[11px] text-ink/45 mt-2">${tk('home.tasksAppearUnderTasks')}</p>`)
     + (hsCanEdit() && tpls.length ? hsCard(`
-    <div class="fz-h">✨ Vorlagen</div>
+    <div class="fz-h">${tk('home.templates')}</div>
     <div class="flex flex-wrap gap-1.5">${tpls.map(t => `<button type="button" class="fz-filter-chip" data-hsact="maint-tpl" data-tpl="${t.tpl}">${hsEsc(t.icon + ' ' + t.title)}</button>`).join('')}</div>`) : '');
 }
 // Card on the household page
@@ -1884,15 +1888,15 @@ function renderHouseholdMaintenance() {
   hsMaintSyncFromTasks();
   const items = hsMaintItems().filter(m => m.active !== false);
   if (!items.length) {
-    el.innerHTML = hsCanEdit() ? `<button type="button" class="w-full rounded-xl border border-dashed border-ink/20 px-3 py-2.5 text-left text-xs text-ink/55 hover:text-pine hover:border-pine transition" data-hsact="maint-open">🔧 Wartungsplan anlegen – Rauchmelder, Heizung entlüften, Filter, Dachrinne …</button>` : '';
+    el.innerHTML = hsCanEdit() ? `<button type="button" class="w-full rounded-xl border border-dashed border-ink/20 px-3 py-2.5 text-left text-xs text-ink/55 hover:text-pine hover:border-pine transition" data-hsact="maint-open">${tk('home.createMaintPlan')}</button>` : '';
     return;
   }
   const soon = items.map(m => ({ m, next: hsMaintNext(m) })).sort((a, b) => a.next.localeCompare(b.next)).slice(0, 3);
   el.innerHTML = `
     <div class="rounded-xl border border-ink/10 bg-white/70 p-3">
       <div class="flex items-center justify-between gap-2 mb-2">
-        <span class="text-sm font-medium">🔧 Wartungsplan</span>
-        <button type="button" class="text-xs text-ink/50 hover:text-pine" data-hsact="maint-open">Alle anzeigen ›</button>
+        <span class="text-sm font-medium">${tk('home.maintenancePlan')}</span>
+        <button type="button" class="text-xs text-ink/50 hover:text-pine" data-hsact="maint-open">${tk('home.showAll')}</button>
       </div>
       <div class="flex flex-col gap-1">${soon.map(x => { const t = hsMaintDueTone(x.next); return `<div class="flex items-center justify-between gap-2 text-xs"><span class="truncate">${hsEsc((x.m.icon || '🔧') + ' ' + x.m.title)}</span><span class="vt-chip ${hsEsc(t.tone)}">${hsEsc(t.label)}</span></div>`; }).join('')}</div>
     </div>`;
@@ -1922,10 +1926,10 @@ function hsFooter(prefix, canDelete) {
   return `
     <p id="${prefix}Error" class="hidden text-xs text-red-500 mt-2"></p>
     <div class="flex items-center gap-2 mt-4">
-      ${canDelete ? `<button type="button" id="${prefix}DeleteBtn" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">Löschen</button>` : ''}
+      ${canDelete ? `<button type="button" id="${prefix}DeleteBtn" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition">${tk('home.delete')}</button>` : ''}
       <div class="flex-1"></div>
-      <button type="button" id="${prefix}Cancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-      <button type="button" id="${prefix}Save" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Speichern</button>
+      <button type="button" id="${prefix}Cancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">${tk('common.cancel')}</button>
+      <button type="button" id="${prefix}Save" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">${tk('common.save')}</button>
     </div>`;
 }
 function hsWireFooter(prefix, onSave, onDelete) {
@@ -1955,77 +1959,77 @@ function hsOpenHomeModal(id, modePreset) {
   const fixRows = HS_FIX.map(f => `<div data-sec="${fixModes(f)}">${fzIn('hsf_' + f.key, f.label + (f.interval === 'monthly' ? '' : ' (' + vtIntervalLabel(f.interval) + ')'), eur(d.fix[f.key] && d.fix[f.key].amount), { mode: 'decimal', unit: curSym() })}</div>`).join('');
   const anyRec = HS_FIX.some(f => d.fix[f.key] && d.fix[f.key].recId);
   const html = `
-    <h3 class="font-serif text-lg mb-3 pr-6">${h ? 'Zuhause bearbeiten' : 'Neues Zuhause'}</h3>
+    <h3 class="font-serif text-lg mb-3 pr-6">${h ? tk('home.editHome') : tk('home.newHome')}</h3>
     <div class="flex gap-2 mb-3" id="hsMode">
-      <button type="button" class="fz-kind-btn flex-1 px-2 py-2 text-sm${d.mode === 'miete' ? ' active' : ''}" data-mode="miete">🔑 Miete</button>
-      <button type="button" class="fz-kind-btn flex-1 px-2 py-2 text-sm${d.mode === 'eigentum' ? ' active' : ''}" data-mode="eigentum">🏡 Eigentum</button>
-      <button type="button" class="fz-kind-btn flex-1 px-2 py-2 text-sm${d.mode === 'vermietet' ? ' active' : ''}" data-mode="vermietet">🤝 Vermietet</button>
+      <button type="button" class="fz-kind-btn flex-1 px-2 py-2 text-sm${d.mode === 'miete' ? ' active' : ''}" data-mode="miete">${tk('home.rent2')}</button>
+      <button type="button" class="fz-kind-btn flex-1 px-2 py-2 text-sm${d.mode === 'eigentum' ? ' active' : ''}" data-mode="eigentum">${tk('home.owned2')}</button>
+      <button type="button" class="fz-kind-btn flex-1 px-2 py-2 text-sm${d.mode === 'vermietet' ? ' active' : ''}" data-mode="vermietet">${tk('home.letOut2')}</button>
     </div>
-    ${fzIn('hsName', 'Name', d.name || '', { ph: 'z. B. Unser Haus, Wohnung Lindenstraße, Garage', max: 60 })}
+    ${fzIn('hsName', tk('common.name'), d.name || '', { ph: tk('home.eGOurHouse'), max: 60 })}
     <div class="fz-grid2">
-      ${fzSel('hsType', 'Art', HS_TYPES, d.type || 'wohnung')}
-      ${fzIn('hsMoveIn', 'Eingezogen am', d.moveIn || '', { type: 'date' })}
+      ${fzSel('hsType', tk('contract.kind'), HS_TYPES, d.type || 'wohnung')}
+      ${fzIn('hsMoveIn', tk('home.moved'), d.moveIn || '', { type: 'date' })}
     </div>
-    ${fzIn('hsAddress', 'Adresse', d.address || '', { ph: 'Straße, PLZ Ort', max: 200 })}
+    ${fzIn('hsAddress', tk('smart.haAddress'), d.address || '', { ph: tk('contract.streetPostcodeTown'), max: 200 })}
     <div class="fz-grid3">
-      ${fzIn('hsArea', 'Wohnfläche', Number(d.area) > 0 ? hsDecInput(d.area, 1) : '', { mode: 'decimal', unit: 'm²' })}
-      ${fzIn('hsRooms', 'Zimmer', Number(d.rooms) > 0 ? hsDecInput(d.rooms, 1) : '', { mode: 'decimal' })}
-      ${fzIn('hsPersons', 'Personen', Number(d.persons) > 0 ? String(d.persons) : '', { mode: 'numeric' })}
+      ${fzIn('hsArea', tk('home.livingSpace'), Number(d.area) > 0 ? hsDecInput(d.area, 1) : '', { mode: 'decimal', unit: 'm²' })}
+      ${fzIn('hsRooms', tk('home.rooms'), Number(d.rooms) > 0 ? hsDecInput(d.rooms, 1) : '', { mode: 'decimal' })}
+      ${fzIn('hsPersons', tk('home.people'), Number(d.persons) > 0 ? String(d.persons) : '', { mode: 'numeric' })}
     </div>
     <div class="fz-grid2">
-      ${fzIn('hsBuilt', 'Baujahr', Number(d.built) > 0 ? String(d.built) : '', { mode: 'numeric', max: 4 })}
-      ${fzSel('hsHeating', 'Heizung', HS_HEATING, d.heating || '')}
+      ${fzIn('hsBuilt', tk('home.yearManufacture'), Number(d.built) > 0 ? String(d.built) : '', { mode: 'numeric', max: 4 })}
+      ${fzSel('hsHeating', tk('home.heating'), HS_HEATING, d.heating || '')}
     </div>
 
-    <div class="fz-h mt-2" data-sec="miete">🔑 Mietvertrag</div>
+    <div class="fz-h mt-2" data-sec="miete">${tk('home.tenancyAgreement2')}</div>
     <div data-sec="miete">
-      ${fzIn('hsLordName', 'Vermieter', lord.name || '', { max: 120 })}
-      <div class="fz-grid2">${fzIn('hsLordPhone', 'Telefon', lord.phone || '', { type: 'tel', max: 60 })}${fzIn('hsLordMail', 'E-Mail', lord.email || '', { type: 'email', max: 120 })}</div>
-      ${fzIn('hsLordAddr', 'Anschrift Vermieter', lord.address || '', { ph: 'für die Mängelanzeige', max: 200 })}
+      ${fzIn('hsLordName', tk('home.landlord'), lord.name || '', { max: 120 })}
+      <div class="fz-grid2">${fzIn('hsLordPhone', tk('contract.phone'), lord.phone || '', { type: 'tel', max: 60 })}${fzIn('hsLordMail', tk('contract.email'), lord.email || '', { type: 'email', max: 120 })}</div>
+      ${fzIn('hsLordAddr', tk('home.landlordsAddress'), lord.address || '', { ph: tk('home.defectNotice2'), max: 200 })}
     </div>
-    <div class="fz-h mt-2" data-sec="vermietet">🤝 Mieter</div>
+    <div class="fz-h mt-2" data-sec="vermietet">${tk('home.tenant2')}</div>
     <div data-sec="vermietet">
-      ${fzIn('hsTenName', 'Mieter', ten.name || '', { ph: 'Name, bei Leerstand frei lassen', max: 120 })}
-      <div class="fz-grid2">${fzIn('hsTenPhone', 'Telefon', ten.phone || '', { type: 'tel', max: 60 })}${fzIn('hsTenMail', 'E-Mail', ten.email || '', { type: 'email', max: 120 })}</div>
-      ${fzIn('hsTenSince', 'Mieter seit', ten.since || '', { type: 'date' })}
+      ${fzIn('hsTenName', tk('home.tenant'), ten.name || '', { ph: tk('home.nameLeaveEmptyIf'), max: 120 })}
+      <div class="fz-grid2">${fzIn('hsTenPhone', tk('contract.phone'), ten.phone || '', { type: 'tel', max: 60 })}${fzIn('hsTenMail', tk('contract.email'), ten.email || '', { type: 'email', max: 120 })}</div>
+      ${fzIn('hsTenSince', tk('home.tenantSince'), ten.since || '', { type: 'date' })}
     </div>
     <div data-sec="miete vermietet">
       <div class="fz-grid2">
-        ${fzSel('hsRentKind', 'Mietart', [['normal', 'Normal'], ['staffel', 'Staffelmiete'], ['index', 'Indexmiete']], r.kind || 'normal')}
-        ${fzIn('hsLastInc', 'Letzte Mieterhöhung', r.lastIncrease || '', { type: 'date' })}
+        ${fzSel('hsRentKind', tk('home.rentType'), [['normal', tk('home.standard')], ['staffel', tk('home.graduatedRent')], ['index', tk('home.indexLinkedRent')]], r.kind || 'normal')}
+        ${fzIn('hsLastInc', tk('home.lastRentIncrease'), r.lastIncrease || '', { type: 'date' })}
       </div>
       <div class="fz-grid2">
-        ${fzSel('hsNotice', 'Kündigungsfrist', [['1', '1 Monat'], ['2', '2 Monate'], ['3', '3 Monate'], ['6', '6 Monate'], ['12', '12 Monate']], String(r.notice || 3))}
-        ${fzIn('hsDeposit', 'Kaution', eur(r.deposit), { mode: 'decimal', unit: curSym() })}
+        ${fzSel('hsNotice', tk('contract.noticePeriod'), [['1', tk('contract.1Month')], ['2', tk('home.n2Months')], ['3', tk('contract.3Months')], ['6', tk('contract.6Months')], ['12', tk('contract.12Months')]], String(r.notice || 3))}
+        ${fzIn('hsDeposit', tk('home.deposit'), eur(r.deposit), { mode: 'decimal', unit: curSym() })}
       </div>
       <div class="fz-grid2">
-        ${fzIn('hsDepPaid', 'Kaution gezahlt am', r.depositPaid || '', { type: 'date' })}
-        ${fzIn('hsDepWhere', 'Angelegt bei', r.depositWhere || '', { ph: 'z. B. Mietkautionskonto', max: 80 })}
+        ${fzIn('hsDepPaid', tk('home.depositPaid'), r.depositPaid || '', { type: 'date' })}
+        ${fzIn('hsDepWhere', tk('home.held'), r.depositWhere || '', { ph: tk('home.eGRentDeposit'), max: 80 })}
       </div>
     </div>
 
-    <div class="fz-h mt-2" data-sec="eigentum vermietet">📜 Kauf &amp; Finanzierung</div>
+    <div class="fz-h mt-2" data-sec="eigentum vermietet">${tk('home.purchaseFinancing')}</div>
     <div data-sec="eigentum vermietet">
-      <div class="fz-grid2">${fzIn('hsBuyDate', 'Kaufdatum', o.date || '', { type: 'date' })}${fzIn('hsPrice', 'Kaufpreis', eur(o.price), { mode: 'decimal', unit: curSym() })}</div>
-      <div class="fz-grid3 hs-buycosts">${fzIn('hsLandTax', 'Grunderwerbsteuer', eur(o.landTax), { mode: 'decimal', unit: curSym() })}${fzIn('hsNotary', 'Notar & Grundbuch', eur(o.notary), { mode: 'decimal', unit: curSym() })}${fzIn('hsBroker', 'Makler', eur(o.broker), { mode: 'decimal', unit: curSym() })}</div>
-      <div class="fz-grid2">${fzIn('hsLoanBank', 'Bank', l.bank || '', { max: 80 })}${fzIn('hsLoanAmount', 'Darlehen', eur(l.amount), { mode: 'decimal', unit: curSym() })}</div>
-      <div class="fz-grid3">${fzIn('hsLoanRate', 'Zins', Number(l.rate) > 0 ? hsDecInput(l.rate, 2) : '', { mode: 'decimal', unit: '%' })}${fzIn('hsLoanRepay', 'Tilgung', Number(l.repay) > 0 ? hsDecInput(l.repay, 2) : '', { mode: 'decimal', unit: '%' })}${fzIn('hsLoanMonthly', 'Rate', eur(l.monthly), { mode: 'decimal', unit: curSym(), ph: 'leer = berechnet' })}</div>
-      <div class="fz-grid2">${fzIn('hsLoanStart', 'Kredit seit', l.start || '', { type: 'date' })}${fzIn('hsLoanFix', 'Zinsbindung bis', l.fixedUntil || '', { type: 'date' })}</div>
-      ${fzIn('hsLordName2', 'Hausverwaltung', lord.name || '', { ph: 'optional, bei Eigentumswohnungen', max: 120 })}
-      <div class="fz-grid2">${fzIn('hsLordPhone2', 'Telefon', lord.phone || '', { type: 'tel', max: 60 })}${fzIn('hsLordMail2', 'E-Mail', lord.email || '', { type: 'email', max: 120 })}</div>
+      <div class="fz-grid2">${fzIn('hsBuyDate', tk('pdf.field.purchaseDate'), o.date || '', { type: 'date' })}${fzIn('hsPrice', tk('home.purchasePrice'), eur(o.price), { mode: 'decimal', unit: curSym() })}</div>
+      <div class="fz-grid3 hs-buycosts">${fzIn('hsLandTax', tk('home.landTransferTax'), eur(o.landTax), { mode: 'decimal', unit: curSym() })}${fzIn('hsNotary', tk('home.notaryLandRegistry'), eur(o.notary), { mode: 'decimal', unit: curSym() })}${fzIn('hsBroker', tk('home.estateAgent'), eur(o.broker), { mode: 'decimal', unit: curSym() })}</div>
+      <div class="fz-grid2">${fzIn('hsLoanBank', tk('home.bank'), l.bank || '', { max: 80 })}${fzIn('hsLoanAmount', tk('home.loanAmount'), eur(l.amount), { mode: 'decimal', unit: curSym() })}</div>
+      <div class="fz-grid3">${fzIn('hsLoanRate', tk('home.interest2'), Number(l.rate) > 0 ? hsDecInput(l.rate, 2) : '', { mode: 'decimal', unit: '%' })}${fzIn('hsLoanRepay', tk('home.repayment'), Number(l.repay) > 0 ? hsDecInput(l.repay, 2) : '', { mode: 'decimal', unit: '%' })}${fzIn('hsLoanMonthly', tk('home.instalment'), eur(l.monthly), { mode: 'decimal', unit: curSym(), ph: tk('home.emptyCalculated') })}</div>
+      <div class="fz-grid2">${fzIn('hsLoanStart', tk('home.loanSince'), l.start || '', { type: 'date' })}${fzIn('hsLoanFix', tk('home.fixedInterestUntil'), l.fixedUntil || '', { type: 'date' })}</div>
+      ${fzIn('hsLordName2', tk('home.propertyManagement'), lord.name || '', { ph: tk('home.optionalOwnerOccupiedFlats'), max: 120 })}
+      <div class="fz-grid2">${fzIn('hsLordPhone2', tk('contract.phone'), lord.phone || '', { type: 'tel', max: 60 })}${fzIn('hsLordMail2', tk('contract.email'), lord.email || '', { type: 'email', max: 120 })}</div>
     </div>
 
-    <div class="fz-h mt-2">💶 Fixkosten</div>
-    <p class="text-[11px] text-ink/45 mb-2">Werden als regelmäßige Buchungen in Finanzen angelegt (Kategorie „Haushalt &amp; Wohnen“) und zählen so im Budget. Strom, Gas &amp; Internet besser als Vertrag zuordnen.</p>
-    <p class="text-[11px] text-ink/45 mb-2" data-sec="vermietet">Mieteinnahmen werden als regelmäßige Einnahme gebucht (Kategorie „Einnahmen“).</p>
+    <div class="fz-h mt-2">${tk('home.fixedCosts2')}</div>
+    <p class="text-[11px] text-ink/45 mb-2">${tk('home.createdRecurringBookingsFinance')}</p>
+    <p class="text-[11px] text-ink/45 mb-2" data-sec="vermietet">${tk('home.rentalIncomeBookedRecurring')}</p>
     ${fixRows}
-    <label class="fz-check"><input type="checkbox" id="hsFixBook"${(!h || anyRec) ? ' checked' : ''} /> <span>In Finanzen buchen</span></label>
-    ${fzIn('hsFixStart', anyRec ? 'Neue Fixkosten buchen ab' : 'Buchen ab', vtIsIso(d.fixStart) && d.fixStart > finTodayIso() ? d.fixStart : hsNextMonthFirst(), { type: 'date' })}
+    <label class="fz-check"><input type="checkbox" id="hsFixBook"${(!h || anyRec) ? ' checked' : ''} /> <span>${tk('home.bookFinance')}</span></label>
+    ${fzIn('hsFixStart', anyRec ? tk('home.bookNewFixedCosts') : tk('home.bookFrom'), vtIsIso(d.fixStart) && d.fixStart > finTodayIso() ? d.fixStart : hsNextMonthFirst(), { type: 'date' })}
 
-    <div class="fz-h mt-2" id="hsEndHead">🚚 Auszug</div>
-    ${fzIn('hsMoveOut', 'Ausgezogen am', d.moveOut || '', { type: 'date' })}
-    <div class="fz-grid2" data-sec="miete vermietet">${fzIn('hsDepBack', 'Kaution zurück am', r.depositBack || '', { type: 'date' })}${fzIn('hsDepBackAmt', 'Betrag zurück', eur(r.depositBackAmount), { mode: 'decimal', unit: curSym() })}</div>
-    <div class="fz-field"><label class="fz-lbl" for="hsNote">Notiz</label><textarea id="hsNote" rows="2" maxlength="2000" class="fz-in">${hsEsc(d.note || '')}</textarea></div>
+    <div class="fz-h mt-2" id="hsEndHead">${tk('home.movingOut')}</div>
+    ${fzIn('hsMoveOut', tk('home.movedOut'), d.moveOut || '', { type: 'date' })}
+    <div class="fz-grid2" data-sec="miete vermietet">${fzIn('hsDepBack', tk('home.depositReturned2'), r.depositBack || '', { type: 'date' })}${fzIn('hsDepBackAmt', tk('home.amountReturned'), eur(r.depositBackAmount), { mode: 'decimal', unit: curSym() })}</div>
+    <div class="fz-field"><label class="fz-lbl" for="hsNote">${tk('fin.csv.note')}</label><textarea id="hsNote" rows="2" maxlength="2000" class="fz-in">${hsEsc(d.note || '')}</textarea></div>
     ${hsFooter('hsHome', !!h)}`;
   hsOpenModal(html, body => {
     const setLbl = (forId, text) => { const el = body.querySelector('label[for="' + forId + '"]'); if (el) el.textContent = text; };
@@ -2033,13 +2037,13 @@ function hsOpenHomeModal(id, modePreset) {
       const mode = hsModalState.draft.mode;
       body.querySelectorAll('[data-sec]').forEach(el => el.classList.toggle('hidden', !el.dataset.sec.split(' ').includes(mode)));
       const garage = fzVal('hsType') === 'garage';
-      setLbl('hsMoveIn', mode === 'vermietet' ? 'Im Besitz seit' : (garage ? 'Gemietet / gekauft am' : 'Eingezogen am'));
-      setLbl('hsMoveOut', mode === 'vermietet' ? 'Verkauft am' : (garage ? 'Abgegeben am' : 'Ausgezogen am'));
-      setLbl('hsArea', garage ? 'Fläche' : 'Wohnfläche');
-      setLbl('hsDepPaid', mode === 'vermietet' ? 'Kaution erhalten am' : 'Kaution gezahlt am');
-      setLbl('hsDepBack', mode === 'vermietet' ? 'Kaution zurückgezahlt am' : 'Kaution zurück am');
+      setLbl('hsMoveIn', mode === 'vermietet' ? tk('home.ownedSince') : (garage ? tk('home.rentedBought') : tk('home.moved')));
+      setLbl('hsMoveOut', mode === 'vermietet' ? tk('home.sold') : (garage ? tk('home.givenUp') : tk('home.movedOut')));
+      setLbl('hsArea', garage ? tk('home.area') : tk('home.livingSpace'));
+      setLbl('hsDepPaid', mode === 'vermietet' ? tk('home.depositReceived') : tk('home.depositPaid'));
+      setLbl('hsDepBack', mode === 'vermietet' ? tk('home.depositRepaid') : tk('home.depositReturned2'));
       const eh = document.getElementById('hsEndHead');
-      if (eh) eh.textContent = mode === 'vermietet' ? '🏁 Verkauf' : '🚚 Auszug';
+      if (eh) eh.textContent = mode === 'vermietet' ? tk('home.sale') : tk('home.movingOut');
     };
     body.querySelectorAll('#hsMode [data-mode]').forEach(b => b.addEventListener('click', () => {
       hsModalState.draft.mode = b.dataset.mode;
@@ -2062,14 +2066,14 @@ function hsSaveHome() {
   const today = finTodayIso();
   const num = (id, max) => { const raw = fzVal(id); if (!raw) return ''; const v = hsDec(raw); return isFinite(v) && v >= 0 && v <= max ? v : NaN; };
   const vals = { area: num('hsArea', 100000), rooms: num('hsRooms', 1000), persons: num('hsPersons', 100), built: num('hsBuilt', 2200) };
-  for (const k of Object.keys(vals)) if (Number.isNaN(vals[k])) return err('Bitte nur Zahlen eingeben.');
+  for (const k of Object.keys(vals)) if (Number.isNaN(vals[k])) return err(tk('home.pleaseEnterNumbersOnly'));
   const money = {};
   const moneyIds = ['hsDeposit', 'hsPrice', 'hsLandTax', 'hsNotary', 'hsBroker', 'hsLoanAmount', 'hsLoanMonthly', 'hsDepBackAmt', ...HS_FIX.map(f => 'hsf_' + f.key)];
-  for (const id of moneyIds) { money[id] = hsEuro(id); if (Number.isNaN(money[id])) return err('Bitte einen gültigen Betrag eingeben.'); }
+  for (const id of moneyIds) { money[id] = hsEuro(id); if (Number.isNaN(money[id])) return err(tk('home.pleaseEnterValidAmount')); }
   const rate = num('hsLoanRate', 30), repay = num('hsLoanRepay', 100);
-  if (Number.isNaN(rate) || Number.isNaN(repay)) return err('Bitte Zins und Tilgung als Prozent eingeben, z. B. 3,5.');
+  if (Number.isNaN(rate) || Number.isNaN(repay)) return err(tk('home.pleaseEnterInterestRepayment'));
   const moveIn = fzVal('hsMoveIn'), moveOut = fzVal('hsMoveOut');
-  if (vtIsIso(moveIn) && vtIsIso(moveOut) && moveOut < moveIn) return err('Das Auszugsdatum liegt vor dem Einzug.');
+  if (vtIsIso(moveIn) && vtIsIso(moveOut) && moveOut < moveIn) return err(tk('home.moveOutDateBefore'));
   const fixStart = vtIsIso(fzVal('hsFixStart')) ? fzVal('hsFixStart') : hsNextMonthFirst();
   const id = existing ? existing.id : 'h' + newRecordId().slice(0, 14);
   const prevTen = (existing && existing.tenant) || {};
@@ -2126,7 +2130,7 @@ function hsSaveHome() {
         start = [y + '-02-15', y + '-05-15', y + '-08-15', y + '-11-15', (y + 1) + '-02-15'].find(x => x >= fixStart);
       }
       const cat = f.income ? FIN_INCOME_CATEGORY : HS_FIN_CATEGORY;
-      const fields = { title: f.label.replace(/\s*\(Einnahme\)$/, '') + ' · ' + hsName(home), amount: f.income ? -amount : amount, category: cat, paidBy: '', note: '', link: 'haus:' + id, interval: f.interval, start };
+      const fields = { title: (HS_FIX_TITLE[f.key] ? HS_FIX.find(x => x.key === HS_FIX_TITLE[f.key]).label : f.label) + ' · ' + hsName(home), amount: f.income ? -amount : amount, category: cat, paidBy: '', note: '', link: 'haus:' + id, interval: f.interval, start };
       if (recId) {
         const rr = finance.recurring.find(x => x.id === recId);
         finUpsertRecurring(recId, { ...fields, note: rr.note || '', paidBy: rr.paidBy || '', category: rr.category || cat, start: finRecStart(rr) || start, interval: finRecInterval(rr) }, null);
@@ -2146,12 +2150,12 @@ function hsSaveHome() {
   hsHomeId = id;
   hsCloseModal();
   hsAfterChange();
-  finShowToast(existing ? 'Gespeichert.' : 'Zuhause angelegt.');
+  finShowToast(existing ? tk('common.saved') : tk('home.homeCreated'));
 }
 function hsDeleteHome(id) {
   const h = hsHomeById(id);
   if (!h) return;
-  if (!confirm('„' + hsName(h) + '“ mit allen Rechnungen, Mängeln, Projekten, Zählerständen, Pflanzen und Schlüsseln löschen? Gebuchte Ausgaben und Dokumente bleiben erhalten, regelmäßige Buchungen enden.')) return;
+  if (!confirm(tk('home.confirmDeleteHome', { name: hsName(h) }))) return;
   HS_FIX.forEach(f => { const rid = h.fix && h.fix[f.key] && h.fix[f.key].recId; if (rid) finEndRecurring(rid); });
   const meterIds = new Set(hsMeters(id).map(m => m.id));
   hsSet('homes', hsHomes().filter(x => x.id !== id));
@@ -2166,7 +2170,7 @@ function hsDeleteHome(id) {
   hsHomeId = '';
   hsCloseModal();
   hsAfterChange();
-  finShowToast('Gelöscht.');
+  finShowToast(tk('home.deleted'));
 }
 
 /* ---------- Popup: invoice / costs ---------- */
@@ -2181,35 +2185,35 @@ function hsOpenLogModal(id, typePreset) {
   const projects = hsProjects(h.id).filter(p => p.status !== 'fertig' || (l && l.project === p.id));
   const amt = Number(d.amount) || 0;
   const html = `
-    <h3 class="font-serif text-lg mb-1 pr-6">${l ? 'Rechnung bearbeiten' : 'Neue Rechnung'}</h3>
+    <h3 class="font-serif text-lg mb-1 pr-6">${l ? tk('home.editInvoice') : tk('home.newInvoice')}</h3>
     <div class="text-xs text-ink/50 mb-3">${hsEsc(HS_MODES[hsMode(h)].icon + ' ' + hsName(h))}</div>
     <div class="fz-type-row mb-3" id="hslTypes">${HS_LOG_TYPES.map(x => `<button type="button" class="fz-type-chip${x.id === t0 ? ' active' : ''}" data-type="${x.id}"><span class="fz-ti">${x.icon}</span>${hsEsc(x.label)}</button>`).join('')}</div>
-    ${fzIn('hslDesc', 'Beschreibung', d.desc || '', { ph: 'z. B. Sofa, Laminat Wohnzimmer, Wasserhahn', max: 120 })}
+    ${fzIn('hslDesc', tk('fin.csv.description'), d.desc || '', { ph: tk('home.eGSofaLiving'), max: 120 })}
     <div class="fz-grid2">
-      ${fzIn('hslDate', 'Datum', vtIsIso(d.date) ? d.date : today, { type: 'date' })}
-      ${fzIn('hslAmount', 'Betrag', amt ? euroInputValue(Math.abs(amt)) : '', { mode: 'decimal', unit: curSym() })}
+      ${fzIn('hslDate', tk('fin.csv.date'), vtIsIso(d.date) ? d.date : today, { type: 'date' })}
+      ${fzIn('hslAmount', tk('depot.amount'), amt ? euroInputValue(Math.abs(amt)) : '', { mode: 'decimal', unit: curSym() })}
     </div>
     <div id="hslSettleWrap" class="flex gap-2 mb-3">
-      <button type="button" class="fz-kind-btn flex-1 px-3 py-1.5 text-sm${amt >= 0 ? ' active' : ''}" data-sign="1">Nachzahlung</button>
-      <button type="button" class="fz-kind-btn flex-1 px-3 py-1.5 text-sm${amt < 0 ? ' active' : ''}" data-sign="-1">Guthaben</button>
+      <button type="button" class="fz-kind-btn flex-1 px-3 py-1.5 text-sm${amt >= 0 ? ' active' : ''}" data-sign="1">${tk('home.backPayment')}</button>
+      <button type="button" class="fz-kind-btn flex-1 px-3 py-1.5 text-sm${amt < 0 ? ' active' : ''}" data-sign="-1">${tk('depot.balance2')}</button>
     </div>
-    <div id="hslLaborWrap">${fzIn('hslLabor', 'davon Lohnkosten', Number(d.labor) > 0 ? euroInputValue(d.labor) : '', { mode: 'decimal', unit: curSym(), ph: 'für die Steuer (§ 35a)' })}</div>
+    <div id="hslLaborWrap">${fzIn('hslLabor', tk('home.whichLabour'), Number(d.labor) > 0 ? euroInputValue(d.labor) : '', { mode: 'decimal', unit: curSym(), ph: tk('home.tax35a') })}</div>
     <div class="fz-grid2">
-      ${fzIn('hslRoom', 'Raum', d.room || '', { ph: 'optional', max: 60 })}
-      ${fzSel('hslProject', 'Projekt', [['', '–']].concat(projects.map(p => [p.id, p.title || 'Projekt'])), d.project || '')}
+      ${fzIn('hslRoom', tk('household.room'), d.room || '', { ph: 'optional', max: 60 })}
+      ${fzSel('hslProject', tk('home.project'), [['', '–']].concat(projects.map(p => [p.id, p.title || tk('home.project')])), d.project || '')}
     </div>
-    <div id="hslWarrantyWrap">${fzIn('hslWarranty', 'Gewährleistung bis', d.warranty || '', { type: 'date' })}</div>
+    <div id="hslWarrantyWrap">${fzIn('hslWarranty', tk('home.warrantyUntil'), d.warranty || '', { type: 'date' })}</div>
     <div class="fz-grid2 items-end">
-      <div class="fin-paidby-wrap min-w-0">${fzSel('hslPaidBy', 'Bezahlt von', fzMemberOptions(), d.paidBy || '')}</div>
-      <label class="fz-check"><input type="checkbox" id="hslBooked"${d.booked !== false ? ' checked' : ''} /> <span>Als Ausgabe in Finanzen buchen</span></label>
+      <div class="fin-paidby-wrap min-w-0">${fzSel('hslPaidBy', tk('fin.csv.paidBy'), fzMemberOptions(), d.paidBy || '')}</div>
+      <label class="fz-check"><input type="checkbox" id="hslBooked"${d.booked !== false ? ' checked' : ''} /> <span>${tk('home.bookExpenseFinance')}</span></label>
     </div>
-    ${fzIn('hslNote', 'Notiz', d.note || '', { ph: 'optional', max: 500 })}
+    ${fzIn('hslNote', tk('fin.csv.note'), d.note || '', { ph: 'optional', max: 500 })}
     <div class="flex items-center justify-between gap-2 mt-1">
-      <span class="fz-lbl" style="margin:0">Beleg</span>
-      <button type="button" id="hslDocAdd" class="fz-mini-btn">📎 Rechnung ablegen</button>
+      <span class="fz-lbl" style="margin:0">${tk('contract.docType.receipt')}</span>
+      <button type="button" id="hslDocAdd" class="fz-mini-btn">${tk('home.fileInvoice')}</button>
     </div>
     <div class="flex flex-col gap-1.5 mt-1.5">${l ? hsDocsOf(l).map(hsDocRowHtml).join('') : ''}</div>
-    <p class="text-[11px] text-ink/45 mt-1">Speichert den Eintrag und öffnet „Dokumente“ mit Betrag, Kaufdatum und Gewährleistung vorausgefüllt.</p>
+    <p class="text-[11px] text-ink/45 mt-1">${tk('home.savesEntryOpensDocuments')}</p>
     ${hsFooter('hsLog', !!l)}`;
   hsOpenModal(html, body => {
     const ui = () => {
@@ -2240,16 +2244,16 @@ function hsSaveLog(keepQuiet) {
   const t = hsLogType(st.type);
   const existing = st.id ? hsLogById(st.id) : null;
   const date = fzVal('hslDate');
-  if (!vtIsIso(date)) return err('Bitte ein Datum wählen.');
+  if (!vtIsIso(date)) return err(tk('fin.err.needDate'));
   let amount = hsEuro('hslAmount');
-  if (Number.isNaN(amount)) return err('Bitte einen gültigen Betrag eingeben.');
+  if (Number.isNaN(amount)) return err(tk('home.pleaseEnterValidAmount'));
   amount = amount === '' ? 0 : amount;
   if (t.settle) { const neg = document.querySelector('#hslSettleWrap [data-sign="-1"]').classList.contains('active'); if (neg) amount = -amount; }
   const labor = t.labor ? hsEuro('hslLabor') : '';
-  if (Number.isNaN(labor)) return err('Bitte gültige Lohnkosten eingeben.');
-  if (labor !== '' && labor > Math.abs(amount) && amount) return err('Die Lohnkosten sind höher als der Betrag.');
+  if (Number.isNaN(labor)) return err(tk('home.pleaseEnterValidLabour'));
+  if (labor !== '' && labor > Math.abs(amount) && amount) return err(tk('home.labourCostsHigherThan'));
   const desc = fzVal('hslDesc').slice(0, 120);
-  if (!desc && !amount) return err('Bitte eine Beschreibung oder einen Betrag eingeben.');
+  if (!desc && !amount) return err(tk('home.pleaseEnterDescriptionAmount'));
   const id = existing ? existing.id : newRecordId();
   const booked = !!amount && fzChecked('hslBooked');
   const log = {
@@ -2280,7 +2284,7 @@ function hsSaveLog(keepQuiet) {
   if (!keepQuiet) {
     hsCloseModal();
     hsYear = Number(date.slice(0, 4)) || hsYear;
-    finShowToast(existing ? 'Gespeichert.' : 'Gespeichert' + (booked ? ' – auch in Finanzen gebucht.' : '.'));
+    finShowToast(existing || !booked ? tk('common.saved') : tk('home.savedAndBooked'));
   }
   hsAfterChange();
   return log;
@@ -2288,12 +2292,12 @@ function hsSaveLog(keepQuiet) {
 function hsDeleteLog(id) {
   const l = hsLogById(id);
   if (!l) return;
-  if (!confirm('„' + hsLogTitle(l) + '“ löschen?' + (l.booked ? ' Die Ausgabe in Finanzen wird ebenfalls gelöscht.' : '') + ' Verknüpfte Dokumente bleiben unter „Dokumente“.')) return;
+  if (!confirm(tk('lists.item.confirmDelete', { name: hsLogTitle(l) }) + (l.booked ? (' ' + tk('home.expenseFinanceWillDeleted')) : '') + ' ' + tk('home.linkedDocsStay'))) return;
   hsSet('homeLog', hsArr('homeLog').filter(x => x.id !== id));
   if (l.booked) finQueueDelete(id);
   hsCloseModal();
   hsAfterChange();
-  finShowToast('Gelöscht.');
+  finShowToast(tk('home.deleted'));
 }
 
 /* ---------- Popup: defect ---------- */
@@ -2306,27 +2310,27 @@ function hsOpenDefectModal(id) {
   hsModalState = { mode: 'defect', id: x ? x.id : null, home: x ? x.home : h.id };
   const roomList = [...new Set([...rooms.map(r => r.name), ...hsDefects(h.id).map(y => y.room)].filter(Boolean))];
   const html = `
-    <h3 class="font-serif text-lg mb-3 pr-6">${x ? 'Mangel bearbeiten' : 'Neuer Mangel'}</h3>
-    ${fzIn('hsdTitle', 'Was ist kaputt?', d.title || '', { ph: 'z. B. Schimmel im Bad, Fenster undicht', max: 120 })}
+    <h3 class="font-serif text-lg mb-3 pr-6">${x ? tk('home.editDefect') : tk('home.newDefect')}</h3>
+    ${fzIn('hsdTitle', tk('home.whatBroken'), d.title || '', { ph: tk('home.eGMouldBathroom'), max: 120 })}
     <div class="fz-grid2">
-      ${fzIn('hsdRoom', 'Raum', d.room || '', { ph: 'optional', max: 60 })}
-      ${fzIn('hsdDate', 'Entdeckt am', vtIsIso(d.date) ? d.date : today, { type: 'date' })}
+      ${fzIn('hsdRoom', tk('household.room'), d.room || '', { ph: 'optional', max: 60 })}
+      ${fzIn('hsdDate', tk('home.found'), vtIsIso(d.date) ? d.date : today, { type: 'date' })}
     </div>
     <datalist id="hsdRooms">${roomList.map(n => `<option value="${hsEsc(n)}"></option>`).join('')}</datalist>
     <div class="fz-grid2">
-      ${fzSel('hsdSeverity', 'Wie schlimm?', HS_SEVERITY, d.severity || 'mittel')}
+      ${fzSel('hsdSeverity', tk('home.howBad'), HS_SEVERITY, d.severity || 'mittel')}
       ${fzSel('hsdStatus', 'Status', HS_DEFECT_STATUS, d.status || 'offen')}
     </div>
     <div class="fz-grid2" id="hsdReportWrap">
-      ${fzIn('hsdReported', hsOwn(h) ? 'Beauftragt am' : 'Gemeldet am', d.reported || '', { type: 'date' })}
-      ${fzIn('hsdDeadline', 'Frist bis', d.deadline || '', { type: 'date' })}
+      ${fzIn('hsdReported', hsOwn(h) ? tk('home.commissioned') : tk('home.reported'), d.reported || '', { type: 'date' })}
+      ${fzIn('hsdDeadline', tk('home.deadline'), d.deadline || '', { type: 'date' })}
     </div>
-    <div id="hsdFixedWrap">${fzIn('hsdFixed', 'Behoben am', d.fixed || '', { type: 'date' })}</div>
-    <label class="fz-check"><input type="checkbox" id="hsdMoveIn"${d.moveIn ? ' checked' : ''} /> <span>War schon beim Einzug vorhanden <span class="text-ink/45">(nicht von uns verursacht)</span></span></label>
-    <div class="fz-field"><label class="fz-lbl" for="hsdNote">Beschreibung</label><textarea id="hsdNote" rows="3" maxlength="2000" class="fz-in" placeholder="Wo genau, seit wann, was wurde schon versucht …">${hsEsc(d.note || '')}</textarea></div>
+    <div id="hsdFixedWrap">${fzIn('hsdFixed', tk('home.fixed'), d.fixed || '', { type: 'date' })}</div>
+    <label class="fz-check"><input type="checkbox" id="hsdMoveIn"${d.moveIn ? ' checked' : ''} /> <span>${tk('home.alreadyPresentWhenMoving')} <span class="text-ink/45">${tk('home.notCausedUs')}</span></span></label>
+    <div class="fz-field"><label class="fz-lbl" for="hsdNote">${tk('fin.csv.description')}</label><textarea id="hsdNote" rows="3" maxlength="2000" class="fz-in" placeholder="${escapeHtml(tk('home.whereExactlySinceWhen'))}">${hsEsc(d.note || '')}</textarea></div>
     <div class="flex items-center justify-between gap-2">
-      <span class="fz-lbl" style="margin:0">Fotos &amp; Dokumente</span>
-      <button type="button" id="hsdDocAdd" class="fz-mini-btn">📷 Foto hinzufügen</button>
+      <span class="fz-lbl" style="margin:0">${tk('home.photosDocuments')}</span>
+      <button type="button" id="hsdDocAdd" class="fz-mini-btn">${tk('home.addPhoto')}</button>
     </div>
     <div class="flex flex-col gap-1.5 mt-1.5">${x ? hsDocsOf(x).map(hsDocRowHtml).join('') : ''}</div>
     ${hsFooter('hsDefect', !!x)}`;
@@ -2351,7 +2355,7 @@ function hsSaveDefect(keepQuiet) {
   const st = hsModalState;
   if (!st || st.mode !== 'defect') return null;
   const title = fzVal('hsdTitle').slice(0, 120);
-  if (!title) { fzShowErr('hsDefectError', 'Bitte kurz beschreiben, was kaputt ist.'); return null; }
+  if (!title) { fzShowErr('hsDefectError', tk('home.pleaseBrieflyDescribeWhat')); return null; }
   const existing = st.id ? hsDefectById(st.id) : null;
   const status = fzVal('hsdStatus') || 'offen';
   const iso = id => vtIsIso(fzVal(id)) ? fzVal(id) : '';
@@ -2367,13 +2371,13 @@ function hsSaveDefect(keepQuiet) {
   };
   hsUpsert('homeDefects', d);
   hsModalState = { ...st, id: d.id };
-  if (!keepQuiet) { hsCloseModal(); finShowToast('Gespeichert.'); }
+  if (!keepQuiet) { hsCloseModal(); finShowToast(tk('common.saved')); }
   hsAfterChange();
   return d;
 }
 function hsDeleteDefect(id) {
   const d = hsDefectById(id);
-  if (!d || !confirm('Mangel „' + (d.title || '') + '“ löschen? Fotos bleiben unter „Dokumente“.')) return;
+  if (!d || !confirm(tk('home.confirmDeleteDefect', { name: d.title || '' }))) return;
   hsSet('homeDefects', hsArr('homeDefects').filter(x => x.id !== id));
   hsCloseModal();
   hsAfterChange();
@@ -2386,47 +2390,46 @@ function hsOpenDefectLetter() {
   if (!open.length) return;
   const today = finTodayIso();
   const html = `
-    <h3 class="font-serif text-lg mb-1 pr-6">Mängelanzeige</h3>
-    <p class="text-xs text-ink/50 mb-3">Welche Mängel sollen hinein? Der Brief entsteht in der Sprache, die du hier liest – bitte vor dem Versenden prüfen.</p>
+    <h3 class="font-serif text-lg mb-1 pr-6">${tk('home.defectNotice3')}</h3>
+    <p class="text-xs text-ink/50 mb-3">${tk('home.whichDefectsShouldIncluded')}</p>
     <div class="flex flex-col gap-1.5 mb-3" id="hsLetterPick">${open.map(d => `<button type="button" class="fz-pick-row active" data-id="${hsEsc(d.id)}"><span class="flex-1 min-w-0"><span class="block text-sm font-medium truncate">${hsEsc(d.title)}</span><span class="block text-[11px] text-ink/45 truncate">${hsEsc([d.room, vtFmt(d.date)].filter(Boolean).join(' · '))}</span></span><span class="shrink-0 text-lg">✓</span></button>`).join('')}</div>
-    ${fzIn('hsLetterDeadline', 'Frist zur Beseitigung bis', vtAddDays(today, 14), { type: 'date' })}
-    <div class="fz-field"><label class="fz-lbl" for="hsLetterText">Text</label><textarea id="hsLetterText" rows="12" class="fz-in" style="font-size:.85rem"></textarea></div>
-    <label class="fz-check"><input type="checkbox" id="hsLetterMark" checked /> <span>Ausgewählte Mängel als „gemeldet“ mit dieser Frist markieren</span></label>
+    ${fzIn('hsLetterDeadline', tk('home.deadlineRepair'), vtAddDays(today, 14), { type: 'date' })}
+    <div class="fz-field"><label class="fz-lbl" for="hsLetterText">${tk('recipe.ai.text')}</label><textarea id="hsLetterText" rows="12" class="fz-in" style="font-size:.85rem"></textarea></div>
+    <label class="fz-check"><input type="checkbox" id="hsLetterMark" checked /> <span>${tk('home.markSelectedDefectsReported')}</span></label>
     <div class="flex flex-wrap items-center gap-2 mt-3">
-      <button type="button" id="hsLetterCopy" class="fz-mini-btn">⧉ Kopieren</button>
-      ${navigator.share ? '<button type="button" id="hsLetterShare" class="fz-mini-btn">↗ Teilen</button>' : ''}
-      ${h.landlord && h.landlord.email ? '<button type="button" id="hsLetterMail" class="fz-mini-btn">✉️ E-Mail</button>' : ''}
+      <button type="button" id="hsLetterCopy" class="fz-mini-btn">${tk('contract.copy')}</button>
+      ${navigator.share ? ('<button type="button" id="hsLetterShare" class="fz-mini-btn">' + tk('home.share') + '</button>') : ''}
+      ${h.landlord && h.landlord.email ? ('<button type="button" id="hsLetterMail" class="fz-mini-btn">' + tk('school.email') + '</button>') : ''}
       <div class="flex-1"></div>
-      <button type="button" id="hsLetterDone" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Fertig</button>
+      <button type="button" id="hsLetterDone" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">${tk('common.done')}</button>
     </div>`;
   hsOpenModal(html, body => {
     const picked = () => [...body.querySelectorAll('#hsLetterPick .active')].map(b => hsDefectById(b.dataset.id)).filter(Boolean);
     const build = () => {
-      const T = s => (window.PINN_I18N && PINN_I18N.t) ? PINN_I18N.t(s) : s;
       const lord = h.landlord || {};
       const me = currentMember() ? memberLabel(currentMember()) : '';
       const dl = fzVal('hsLetterDeadline');
       const lines = [];
       if (lord.name) lines.push(lord.name);
       if (lord.address) lines.push(lord.address);
-      lines.push('', vtFmt(today), '', T('Mängelanzeige für die Wohnung ' + (h.address || hsName(h))), '');
-      lines.push(T('Sehr geehrte Damen und Herren,'), '');
-      lines.push(T('hiermit zeige ich Ihnen folgende Mängel an der Mietsache an:'), '');
-      picked().forEach((d, i) => lines.push((i + 1) + '. ' + d.title + (d.room ? ' (' + d.room + ')' : '') + ' – ' + T('festgestellt am ' + vtFmt(d.date)) + (d.note ? '\n   ' + d.note.replace(/\n/g, '\n   ') : '')));
-      lines.push('', T('Ich bitte Sie, die Mängel bis zum ' + vtFmt(dl) + ' zu beseitigen. Fotos kann ich Ihnen gerne zusenden.'));
-      lines.push(T('Bis zur Beseitigung behalte ich mir eine Minderung der Miete vor.'), '');
-      lines.push(T('Mit freundlichen Grüßen'), me);
+      lines.push('', vtFmt(today), '', tk('home.letter.subject', { address: h.address || hsName(h) }), '');
+      lines.push(tk('home.letter.greeting'), '');
+      lines.push(tk('home.letter.intro'), '');
+      picked().forEach((d, i) => lines.push((i + 1) + '. ' + d.title + (d.room ? ' (' + d.room + ')' : '') + ' – ' + tk('home.letter.foundOn', { date: vtFmt(d.date) }) + (d.note ? '\n   ' + d.note.replace(/\n/g, '\n   ') : '')));
+      lines.push('', tk('home.letter.deadline', { date: vtFmt(dl) }));
+      lines.push(tk('home.letter.reduction'), '');
+      lines.push(tk('home.letter.regards'), me);
       document.getElementById('hsLetterText').value = lines.join('\n');
     };
     body.querySelectorAll('#hsLetterPick [data-id]').forEach(b => b.addEventListener('click', () => { b.classList.toggle('active'); b.lastElementChild.textContent = b.classList.contains('active') ? '✓' : ''; build(); }));
     document.getElementById('hsLetterDeadline').addEventListener('change', build);
     build();
     const text = () => document.getElementById('hsLetterText').value;
-    document.getElementById('hsLetterCopy').addEventListener('click', () => { try { navigator.clipboard.writeText(text()); finShowToast('Kopiert.'); } catch (e) { /* ignore */ } });
+    document.getElementById('hsLetterCopy').addEventListener('click', () => { try { navigator.clipboard.writeText(text()); finShowToast(tk('common.copied')); } catch (e) { /* ignore */ } });
     const sh = document.getElementById('hsLetterShare');
-    if (sh) sh.addEventListener('click', () => { navigator.share({ title: 'Mängelanzeige', text: text() }).catch(() => { /* cancelled */ }); });
+    if (sh) sh.addEventListener('click', () => { navigator.share({ title: tk('home.defectNotice3'), text: text() }).catch(() => { /* cancelled */ }); });
     const ml = document.getElementById('hsLetterMail');
-    if (ml) ml.addEventListener('click', () => { location.href = 'mailto:' + encodeURIComponent(h.landlord.email) + '?subject=' + encodeURIComponent('Mängelanzeige ' + (h.address || '')) + '&body=' + encodeURIComponent(text()); });
+    if (ml) ml.addEventListener('click', () => { location.href = 'mailto:' + encodeURIComponent(h.landlord.email) + '?subject=' + encodeURIComponent(tk('home.letter.mailSubject', { address: h.address || '' }).trim()) + '&body=' + encodeURIComponent(text()); });
     document.getElementById('hsLetterDone').addEventListener('click', () => {
       if (fzChecked('hsLetterMark')) {
         const dl = vtIsIso(fzVal('hsLetterDeadline')) ? fzVal('hsLetterDeadline') : '';
@@ -2447,16 +2450,16 @@ function hsOpenProjectModal(id) {
   const d = p || { status: 'geplant', area: 'sonstiges', year: new Date().getFullYear(), prio: 2 };
   hsModalState = { mode: 'project', id: p ? p.id : null, home: p ? p.home : h.id };
   const html = `
-    <h3 class="font-serif text-lg mb-3 pr-6">${p ? 'Projekt bearbeiten' : 'Neues Projekt'}</h3>
-    ${fzIn('hspTitle', 'Projekt', d.title || '', { ph: hsOwn(h) ? 'z. B. Fenster tauschen, Dach dämmen' : 'z. B. Wohnzimmer streichen', max: 100 })}
-    <div class="fz-grid2">${fzSel('hspArea', 'Bereich', HS_PROJECT_AREAS, d.area || 'sonstiges')}${fzSel('hspStatus', 'Status', HS_PROJECT_STATUS, d.status || 'geplant')}</div>
+    <h3 class="font-serif text-lg mb-3 pr-6">${p ? tk('home.editProject') : tk('home.newProject')}</h3>
+    ${fzIn('hspTitle', tk('home.project'), d.title || '', { ph: hsOwn(h) ? tk('home.eGReplaceWindows') : tk('home.eGPaintLiving'), max: 100 })}
+    <div class="fz-grid2">${fzSel('hspArea', tk('lists.section'), HS_PROJECT_AREAS, d.area || 'sonstiges')}${fzSel('hspStatus', 'Status', HS_PROJECT_STATUS, d.status || 'geplant')}</div>
     <div class="fz-grid3">
-      ${fzIn('hspYear', 'Jahr', Number(d.year) > 0 ? String(d.year) : '', { mode: 'numeric', max: 4 })}
-      ${fzIn('hspBudget', 'Budget', Number(d.budget) > 0 ? euroInputValue(d.budget) : '', { mode: 'decimal', unit: curSym() })}
-      ${fzIn('hspFunding', 'Förderung', Number(d.funding) > 0 ? euroInputValue(d.funding) : '', { mode: 'decimal', unit: curSym() })}
+      ${fzIn('hspYear', tk('cal.year'), Number(d.year) > 0 ? String(d.year) : '', { mode: 'numeric', max: 4 })}
+      ${fzIn('hspBudget', tk('home.budget'), Number(d.budget) > 0 ? euroInputValue(d.budget) : '', { mode: 'decimal', unit: curSym() })}
+      ${fzIn('hspFunding', tk('home.subsidy'), Number(d.funding) > 0 ? euroInputValue(d.funding) : '', { mode: 'decimal', unit: curSym() })}
     </div>
-    ${fzSel('hspPrio', 'Wichtigkeit', [['1', '❗ Hoch'], ['2', 'Normal'], ['3', 'Kann warten']], String(d.prio || 2))}
-    <div class="fz-field"><label class="fz-lbl" for="hspNote">Notiz</label><textarea id="hspNote" rows="3" maxlength="2000" class="fz-in" placeholder="Angebote, Handwerker, Förderprogramm (z. B. KfW, BAFA) …">${hsEsc(d.note || '')}</textarea></div>
+    ${fzSel('hspPrio', tk('home.priority'), [['1', tk('home.high')], ['2', tk('home.standard')], ['3', tk('home.canWait')]], String(d.prio || 2))}
+    <div class="fz-field"><label class="fz-lbl" for="hspNote">${tk('fin.csv.note')}</label><textarea id="hspNote" rows="3" maxlength="2000" class="fz-in" placeholder="${escapeHtml(tk('home.quotesTradesmenSubsidyProgramme'))}">${hsEsc(d.note || '')}</textarea></div>
     ${hsFooter('hsProject', !!p)}`;
   hsOpenModal(html, () => hsWireFooter('hsProject', hsSaveProject, () => hsDeleteProject(p.id)));
 }
@@ -2464,9 +2467,9 @@ function hsSaveProject() {
   const st = hsModalState;
   if (!st || st.mode !== 'project') return;
   const title = fzVal('hspTitle').slice(0, 100);
-  if (!title) return fzShowErr('hsProjectError', 'Bitte einen Namen eingeben.');
+  if (!title) return fzShowErr('hsProjectError', tk('common.needName'));
   const budget = hsEuro('hspBudget'), funding = hsEuro('hspFunding');
-  if (Number.isNaN(budget) || Number.isNaN(funding)) return fzShowErr('hsProjectError', 'Bitte einen gültigen Betrag eingeben.');
+  if (Number.isNaN(budget) || Number.isNaN(funding)) return fzShowErr('hsProjectError', tk('home.pleaseEnterValidAmount'));
   const year = parseInt(fzVal('hspYear'), 10);
   const existing = st.id ? hsProjectById(st.id) : null;
   hsUpsert('homeProjects', {
@@ -2481,7 +2484,7 @@ function hsSaveProject() {
 }
 function hsDeleteProject(id) {
   const p = hsProjectById(id);
-  if (!p || !confirm('Projekt „' + (p.title || '') + '“ löschen? Zugeordnete Rechnungen bleiben erhalten.')) return;
+  if (!p || !confirm(tk('home.confirmDeleteProject', { name: p.title || '' }))) return;
   hsSet('homeProjects', hsArr('homeProjects').filter(x => x.id !== id));
   hsSet('homeLog', hsArr('homeLog').map(l => l.project === id ? { ...l, project: '' } : l));
   hsCloseModal();
@@ -2498,28 +2501,28 @@ function hsOpenMeterModal(id, typePreset) {
   hsModalState = { mode: 'meter', id: m ? m.id : null, home: m ? m.home : h.id, type: t0.id };
   const bs = /^\d{2}-\d{2}$/.test(d.billStart || '') ? d.billStart : '01-01';
   const html = `
-    <h3 class="font-serif text-lg mb-3 pr-6">${m ? 'Zähler bearbeiten' : 'Neuer Zähler'}</h3>
+    <h3 class="font-serif text-lg mb-3 pr-6">${m ? tk('home.editMeter') : tk('home.newMeter')}</h3>
     <div class="fz-type-row mb-3" id="hsmTypes">${HS_METER_TYPES.map(x => `<button type="button" class="fz-type-chip${x.id === t0.id ? ' active' : ''}" data-type="${x.id}"><span class="fz-ti">${x.icon}</span>${hsEsc(x.label)}</button>`).join('')}</div>
     <div class="fz-grid2">
-      ${fzIn('hsmName', 'Name', d.name || '', { ph: 'optional, z. B. Wohnung, Keller', max: 40 })}
-      ${fzIn('hsmNumber', 'Zählernummer', d.number || '', { ph: 'optional', max: 40 })}
+      ${fzIn('hsmName', tk('common.name'), d.name || '', { ph: tk('home.optionalEGFlat'), max: 40 })}
+      ${fzIn('hsmNumber', tk('home.meterNumber'), d.number || '', { ph: 'optional', max: 40 })}
     </div>
     <div class="fz-grid2">
-      ${fzIn('hsmPrice', 'Arbeitspreis', Number(d.price) > 0 ? hsDecInput(d.price, 4) : '', { mode: 'decimal', unit: curSym() + '/' + hsBillUnit(d), ph: hsDecInput(t0.price, 2) })}
-      ${fzIn('hsmBase', 'Grundpreis', Number(d.base) > 0 ? euroInputValue(d.base) : '', { mode: 'decimal', unit: curSym() + '/Monat' })}
+      ${fzIn('hsmPrice', tk('home.unitPrice'), Number(d.price) > 0 ? hsDecInput(d.price, 4) : '', { mode: 'decimal', unit: curSym() + '/' + hsBillUnit(d), ph: hsDecInput(t0.price, 2) })}
+      ${fzIn('hsmBase', tk('home.standingCharge'), Number(d.base) > 0 ? euroInputValue(d.base) : '', { mode: 'decimal', unit: curSym() + tk('home.perMonthUnit') })}
     </div>
-    <div id="hsmFactorWrap">${fzIn('hsmFactor', 'Umrechnung m³ → kWh', Number(d.factor) > 0 ? hsDecInput(d.factor, 4) : '', { mode: 'decimal', ph: hsDecInput(t0.factor || 10.3, 2), unit: 'kWh/m³' })}<p class="text-[11px] text-ink/45 -mt-2 mb-3">Brennwert × Zustandszahl – steht auf der Gasrechnung.</p></div>
+    <div id="hsmFactorWrap">${fzIn('hsmFactor', tk('home.conversionM3Kwh'), Number(d.factor) > 0 ? hsDecInput(d.factor, 4) : '', { mode: 'decimal', ph: hsDecInput(t0.factor || 10.3, 2), unit: 'kWh/m³' })}<p class="text-[11px] text-ink/45 -mt-2 mb-3">${tk('home.calorificValueCorrectionFactor')}</p></div>
     <div class="fz-grid2" id="hsmAdvWrap">
-      ${fzIn('hsmAdvance', 'Abschlag', Number(d.advance) > 0 ? euroInputValue(d.advance) : '', { mode: 'decimal', unit: curSym() + '/Monat' })}
-      <div class="fz-field"><label class="fz-lbl" for="hsmBillM">Abrechnung beginnt am</label>
+      ${fzIn('hsmAdvance', tk('home.monthlyPayment'), Number(d.advance) > 0 ? euroInputValue(d.advance) : '', { mode: 'decimal', unit: curSym() + tk('home.perMonthUnit') })}
+      <div class="fz-field"><label class="fz-lbl" for="hsmBillM">${tk('home.billingPeriodStarts')}</label>
         <div class="fz-grid2" style="gap:.4rem">
-          <input id="hsmBillD" type="text" inputmode="numeric" maxlength="2" class="fz-in" value="${hsEsc(bs.slice(3, 5))}" aria-label="Tag" />
-          <select id="hsmBillM" class="fz-in">${FZ_MONTH_NAMES.map((n, i) => `<option value="${pad2(i + 1)}"${pad2(i + 1) === bs.slice(0, 2) ? ' selected' : ''}>${hsEsc(n)}</option>`).join('')}</select>
+          <input id="hsmBillD" type="text" inputmode="numeric" maxlength="2" class="fz-in" value="${hsEsc(bs.slice(3, 5))}" aria-label="${escapeHtml(tk('cal.day'))}" />
+          <select id="hsmBillM" class="fz-in">${Array.from({ length: 12 }, (_, i) => `<option value="${pad2(i + 1)}"${pad2(i + 1) === bs.slice(0, 2) ? ' selected' : ''}>${hsEsc(fzMonthName(i))}</option>`).join('')}</select>
         </div>
       </div>
     </div>
-    <label class="fz-check"><input type="checkbox" id="hsmActive"${d.active !== false ? ' checked' : ''} /> <span>Wird abgelesen <span class="text-ink/45">(aus = nur noch Verlauf)</span></span></label>
-    <p class="text-[11px] text-ink/45">Preise und Abschlag stehen auf der letzten Abrechnung oder im Vertrag. Ohne Angaben rechnet pinn. mit üblichen Durchschnittspreisen.</p>
+    <label class="fz-check"><input type="checkbox" id="hsmActive"${d.active !== false ? ' checked' : ''} /> <span>${tk('home.beingRead')} <span class="text-ink/45">${tk('home.offHistoryOnly')}</span></span></label>
+    <p class="text-[11px] text-ink/45">${tk('home.pricesMonthlyPaymentLast')}</p>
     ${hsFooter('hsMeter', !!m)}`;
   hsOpenModal(html, body => {
     const ui = () => {
@@ -2529,7 +2532,7 @@ function hsOpenMeterModal(id, typePreset) {
       const pu = document.querySelector('#hsmPrice + span');
       if (pu) pu.textContent = curSym() + '/' + (t.billUnit || t.unit);
       document.getElementById('hsmPrice').placeholder = hsDecInput(t.price, 2);
-      document.querySelector('label[for="hsmPrice"]').textContent = t.income ? 'Vergütung' : 'Arbeitspreis';
+      document.querySelector('label[for="hsmPrice"]').textContent = t.income ? tk('home.feedTariff') : tk('home.unitPrice');
     };
     body.querySelectorAll('#hsmTypes .fz-type-chip').forEach(b => b.addEventListener('click', () => {
       hsModalState.type = b.dataset.type;
@@ -2547,7 +2550,7 @@ function hsSaveMeter() {
   const price = fzVal('hsmPrice') ? hsDec(fzVal('hsmPrice')) : '';
   const factor = fzVal('hsmFactor') ? hsDec(fzVal('hsmFactor')) : '';
   const base = hsEuro('hsmBase'), advance = hsEuro('hsmAdvance');
-  if ((price !== '' && !(price >= 0 && price < 100)) || (factor !== '' && !(factor > 0 && factor < 50)) || Number.isNaN(base) || Number.isNaN(advance)) return err('Bitte gültige Zahlen eingeben.');
+  if ((price !== '' && !(price >= 0 && price < 100)) || (factor !== '' && !(factor > 0 && factor < 50)) || Number.isNaN(base) || Number.isNaN(advance)) return err(tk('home.pleaseEnterValidNumbers'));
   let day = parseInt(fzVal('hsmBillD'), 10);
   const mon = fzVal('hsmBillM') || '01';
   const dim = vtDim(2025, Number(mon));
@@ -2569,7 +2572,7 @@ function hsSaveMeter() {
 }
 function hsDeleteMeter(id) {
   const m = hsMeterById(id);
-  if (!m || !confirm('Zähler mit allen ' + hsReadings(id).length + ' Ständen löschen?')) return;
+  if (!m || !confirm(tk('home.confirmDeleteMeter', { n: hsReadings(id).length }))) return;
   hsSet('homeMeters', hsArr('homeMeters').filter(x => x.id !== id));
   hsSet('homeReadings', hsArr('homeReadings').filter(x => x.meter !== id));
   hsCloseModal();
@@ -2589,19 +2592,19 @@ function hsOpenReadingModal({ meterId = '', id = '', fromRun = false } = {}) {
   const today = finTodayIso();
   recipeKiLoadStatus();
   const html = `
-    <h3 class="font-serif text-lg mb-3 pr-6">${r ? 'Zählerstand bearbeiten' : 'Zählerstand'}</h3>
-    ${hsMeterRun && !r ? `<p class="text-xs text-ink/55 -mt-2 mb-3">📟 ${hsEsc('Noch ' + hsMeterPending(hsMeterRun.cutoff).length + ' von ' + hsAllActiveMeters().length + ' Zählern offen')}</p>` : ''}
+    <h3 class="font-serif text-lg mb-3 pr-6">${r ? tk('home.editMeterReading') : tk('home.meterReading2')}</h3>
+    ${hsMeterRun && !r ? `<p class="text-xs text-ink/55 -mt-2 mb-3">📟 ${hsEsc(tk('home.metersOpen', { n: hsMeterPending(hsMeterRun.cutoff).length, total: hsAllActiveMeters().length }))}</p>` : ''}
     <div class="fz-type-row mb-3" id="hsrMeters">${meters.map(m => { const t = hsMeterType(m.type); return `<button type="button" class="fz-type-chip${m.id === mid ? ' active' : ''}" data-m="${hsEsc(m.id)}"><span class="fz-ti">${t.icon}</span>${hsEsc(m.name || t.label)}</button>`; }).join('')}</div>
-    <button type="button" id="hsrKi" class="w-full mb-3 px-3 py-2.5 rounded-xl border border-dashed border-pine/50 text-sm text-pine hover:bg-pine/5 transition">📷 Foto vom Zähler – KI liest ab</button>
+    <button type="button" id="hsrKi" class="w-full mb-3 px-3 py-2.5 rounded-xl border border-dashed border-pine/50 text-sm text-pine hover:bg-pine/5 transition">${tk('home.photoMeterAiReads')}</button>
     <input type="file" id="hsrFile" accept="image/*" capture="environment" class="hidden" />
     <p id="hsrKiInfo" class="hidden text-xs mb-3"></p>
     <div class="fz-grid2">
-      ${fzIn('hsrValue', 'Stand', r ? hsDecInput(r.value, 3) : '', { mode: 'decimal', unit: hsMeterType(hsMeterById(mid).type).unit })}
-      ${fzIn('hsrDate', 'Datum', r ? r.date : today, { type: 'date' })}
+      ${fzIn('hsrValue', tk('lists.item.status'), r ? hsDecInput(r.value, 3) : '', { mode: 'decimal', unit: hsMeterType(hsMeterById(mid).type).unit })}
+      ${fzIn('hsrDate', tk('fin.csv.date'), r ? r.date : today, { type: 'date' })}
     </div>
     <p id="hsrLast" class="text-[11px] text-ink/45 -mt-2 mb-3"></p>
-    <label class="fz-check"><input type="checkbox" id="hsrReset"${r && r.reset ? ' checked' : ''} /> <span>Neuer Zähler (Zählerwechsel) – Stand beginnt neu</span></label>
-    ${fzIn('hsrNote', 'Notiz', r ? (r.note || '') : '', { ph: 'optional', max: 200 })}
+    <label class="fz-check"><input type="checkbox" id="hsrReset"${r && r.reset ? ' checked' : ''} /> <span>${tk('home.newMeterMeterReplaced')}</span></label>
+    ${fzIn('hsrNote', tk('fin.csv.note'), r ? (r.note || '') : '', { ph: 'optional', max: 200 })}
     ${hsFooter('hsReading', !!r)}`;
   hsOpenModal(html, body => {
     const ui = () => {
@@ -2611,7 +2614,7 @@ function hsOpenReadingModal({ meterId = '', id = '', fromRun = false } = {}) {
       if (unitEl) unitEl.textContent = t.unit;
       const rs = hsReadings(m.id).filter(x => !r || x.id !== r.id);
       const last = rs.length ? rs[rs.length - 1] : null;
-      document.getElementById('hsrLast').textContent = last ? 'Letzter Stand: ' + hsNum(last.value, t.unit === 'kWh' ? 1 : 3) + ' ' + t.unit + ' am ' + vtFmt(last.date) : 'Noch kein Stand eingetragen.';
+      document.getElementById('hsrLast').textContent = last ? tk('home.lastReadingValue', { value: hsNum(last.value, t.unit === 'kWh' ? 1 : 3) + ' ' + t.unit, date: vtFmt(last.date) }) : tk('home.noReadingEnteredYet');
       const ki = !!(recipeKiStatus && recipeKiStatus.aktiv);
       document.getElementById('hsrKi').classList.toggle('hidden', !ki);
     };
@@ -2632,14 +2635,14 @@ async function hsReadMeterPhoto(file) {
   const info = document.getElementById('hsrKiInfo');
   const btn = document.getElementById('hsrKi');
   const show = (txt, bad) => { if (!info) return; info.textContent = txt; info.classList.remove('hidden'); info.classList.toggle('text-red-500', !!bad); info.classList.toggle('text-ink/55', !bad); };
-  if (!navigator.onLine) { show('Keine Verbindung – den Stand bitte selbst eingeben.', true); return; }
+  if (!navigator.onLine) { show(tk('home.noConnectionPleaseEnter'), true); return; }
   const st = hsModalState;
   if (!st || st.mode !== 'reading') return;
   const m = hsMeterById(st.meter);
   const t = hsMeterType(m.type);
   const rs = hsReadings(m.id);
   btn.disabled = true;
-  show('✨ KI liest den Zähler …');
+  show(tk('home.aiReadsMeter'));
   try {
     const part = await recipeKiImagePart(file);
     const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
@@ -2654,21 +2657,21 @@ async function hsReadMeterPhoto(file) {
     } finally { if (timer) clearTimeout(timer); }
     let data = {};
     try { data = await res.json(); } catch (e) { data = {}; }
-    if (res.status === 404) throw new Error('Auf dem Server fehlen noch die neuen Dateien ki.pb.js und pinn-ki.js.');
-    if (!res.ok || !data.zaehler) throw new Error(data.error || ('Server-Fehler ' + res.status));
+    if (res.status === 404) throw new Error(tk('school.newFilesKiPb'));
+    if (!res.ok || !data.zaehler) throw new Error(data.error || tk('home.serverError', { status: res.status }));
     const z = data.zaehler;
     if (!hsModalState || hsModalState.mode !== 'reading') return;
     document.getElementById('hsrValue').value = hsDecInput(z.stand, 3);
     hsModalState.source = 'ki';
     if (z.nummer && !m.number) hsModalState.number = z.nummer;
     const warnNr = z.nummer && m.number && String(z.nummer).replace(/\W/g, '') !== String(m.number).replace(/\W/g, '');
-    const parts = ['✨ Abgelesen: ' + hsNum(z.stand, 3) + ' ' + t.unit + (z.sicher < 0.7 ? ' – bitte genau prüfen' : ' – bitte kurz prüfen')];
-    if (warnNr) parts.push('Achtung: Zählernummer ' + z.nummer + ' passt nicht zu ' + m.number + '.');
+    const parts = [tk('home.aiRead', { value: hsNum(z.stand, 3) + ' ' + t.unit }) + (z.sicher < 0.7 ? (' ' + tk('home.pleaseCheckCarefully')) : (' ' + tk('home.pleaseCheckBriefly')))];
+    if (warnNr) parts.push(tk('home.meterNumberMismatch', { read: z.nummer, saved: m.number }));
     if (z.hinweis) parts.push(z.hinweis);
     show(parts.join(' '), z.sicher < 0.7 || warnNr);
   } catch (err) {
-    const msg = err && err.name === 'AbortError' ? 'Die KI hat zu lange gebraucht.' : (err && err.message ? err.message : 'Unbekannter Fehler');
-    show('KI: ' + msg + ' – den Stand bitte selbst eingeben.', true);
+    const msg = err && err.name === 'AbortError' ? tk('school.aiTookTooLong') : (err && err.message ? err.message : tk('home.unknownError'));
+    show(tk('home.aiFailedEnterSelf', { msg }), true);
   } finally {
     if (btn) btn.disabled = false;
   }
@@ -2679,16 +2682,16 @@ function hsSaveReading() {
   const err = msg => fzShowErr('hsReadingError', msg);
   const value = hsDec(fzVal('hsrValue'));
   const date = fzVal('hsrDate');
-  if (!(value >= 0) || value > 1e9) return err('Bitte den Zählerstand als Zahl eingeben.');
-  if (!vtIsIso(date)) return err('Bitte ein Datum wählen.');
-  if (date > finTodayIso()) return err('Das Datum liegt in der Zukunft.');
+  if (!(value >= 0) || value > 1e9) return err(tk('home.pleaseEnterMeterReading'));
+  if (!vtIsIso(date)) return err(tk('fin.err.needDate'));
+  if (date > finTodayIso()) return err(tk('home.dateFuture'));
   const existing = st.id ? hsReadingById(st.id) : null;
   const reset = fzChecked('hsrReset');
   const others = hsReadings(st.meter).filter(x => !existing || x.id !== existing.id);
   const before = others.filter(x => x.date <= date).pop();
   const after = others.find(x => x.date > date);
   if (!reset && ((before && value < Number(before.value)) || (after && !after.reset && value > Number(after.value)))) {
-    if (!confirm('Der Stand passt nicht zu den anderen Ablesungen (kleiner als ein früherer bzw. größer als ein späterer). Trotzdem speichern? Bei einem neuen Zähler bitte „Zählerwechsel“ ankreuzen.')) return;
+    if (!confirm(tk('home.readingDoesntFitOthers'))) return;
   }
   hsUpsert('homeReadings', {
     ...(existing || {}),
@@ -2701,12 +2704,12 @@ function hsSaveReading() {
   hsAfterChange();
   const m = hsMeterById(st.meter);
   const fc = hsForecast(m);
-  finShowToast(fc.diff != null ? (fc.diff > 0 ? 'Gespeichert – voraussichtlich Nachzahlung.' : 'Gespeichert – voraussichtlich Guthaben.') : 'Gespeichert.');
+  finShowToast(fc.diff != null ? (fc.diff > 0 ? tk('home.savedBackPaymentLikely') : tk('home.savedCreditLikely')) : tk('common.saved'));
   // Since 1.57: completes "Zählerstände ablesen" or continues with the next meter
   if (!existing) hsMeterAfterReading();
 }
 function hsDeleteReading(id) {
-  if (!confirm('Diesen Zählerstand löschen?')) return;
+  if (!confirm(tk('home.deleteMeterReading'))) return;
   hsSet('homeReadings', hsArr('homeReadings').filter(x => x.id !== id));
   hsCloseModal();
   hsAfterChange();
@@ -2727,24 +2730,24 @@ function hsOpenMaintModal(id, tplId, garden = false) {
   const d = x || { icon: tpl ? tpl.icon : '🔧', title: tpl ? tpl.title : '', months: tpl ? tpl.months : 12, lead: 0, active: true, assignedMemberIds: [], rotate: '', tpl: tpl ? tpl.tpl : '' };
   const next = x ? hsMaintNext(x) : firstDue;
   hsModalState = { mode: 'maint', id: x ? x.id : null, tpl: d.tpl || '', nextStart: next, oldKey: x ? hsMaintKey(x) : '', garden: !!(garden || (tpl && tpl.garden) || (x && x.garden)) };
-  const monthsOpts = [[1, 'Monatlich'], [2, 'Alle 2 Monate'], [3, 'Vierteljährlich'], [6, 'Halbjährlich'], [12, 'Jährlich'], [24, 'Alle 2 Jahre'], [36, 'Alle 3 Jahre'], [60, 'Alle 5 Jahre']];
-  if (!monthsOpts.some(o => o[0] === Number(d.months))) monthsOpts.push([Number(d.months), 'Alle ' + d.months + ' Monate']);
+  const monthsOpts = [[1, tk('fin.interval.monthly')], [2, tk('home.every2Months')], [3, tk('home.quarterly')], [6, tk('home.halfYearly2')], [12, tk('fin.interval.yearly')], [24, tk('home.every2Years')], [36, tk('home.every3Years')], [60, tk('home.every5Years')]];
+  if (!monthsOpts.some(o => o[0] === Number(d.months))) monthsOpts.push([Number(d.months), tk('home.everyNMonthsCap', { n: Number(d.months) })]);
   const html = `
-    <h3 class="font-serif text-lg mb-3 pr-6">${x ? 'Wartung bearbeiten' : 'Neue Wartung'}</h3>
+    <h3 class="font-serif text-lg mb-3 pr-6">${x ? tk('home.editMaintenance') : tk('home.newMaintenance')}</h3>
     <div class="grid gap-3" style="grid-template-columns:4.2rem minmax(0,1fr)">
-      ${fzIn('hswIcon', 'Symbol', d.icon || '🔧', { max: 8 })}
-      ${fzIn('hswTitle', 'Was ist zu tun?', d.title || '', { ph: hsModalState.garden ? 'z. B. Rosen zurückschneiden' : 'z. B. Regenrinne säubern', max: 100 })}
+      ${fzIn('hswIcon', tk('household.icon'), d.icon || '🔧', { max: 8 })}
+      ${fzIn('hswTitle', tk('school.whatNeedsDoing'), d.title || '', { ph: hsModalState.garden ? tk('home.eGCutBack') : tk('home.eGClearGutter'), max: 100 })}
     </div>
     <div class="fz-grid2">
-      ${fzSel('hswMonths', 'Wie oft?', monthsOpts.map(o => [String(o[0]), o[1]]), String(d.months || 12))}
-      ${fzIn('hswNext', 'Nächstes Mal fällig', next, { type: 'date' })}
+      ${fzSel('hswMonths', tk('home.howOften'), monthsOpts.map(o => [String(o[0]), o[1]]), String(d.months || 12))}
+      ${fzIn('hswNext', tk('home.nextDue'), next, { type: 'date' })}
     </div>
-    ${fzSel('hswLead', 'Aufgabe anlegen', [['0', 'am Fälligkeitstag'], ['3', '3 Tage vorher'], ['7', '1 Woche vorher'], ['14', '2 Wochen vorher']], String(d.lead || 0))}
-    <div class="fz-field"><span class="fz-lbl">Wer kümmert sich?</span>${hsMemberChips('hswWho', d.assignedMemberIds || [])}<p class="text-[11px] text-ink/45 mt-1">Niemand gewählt = Aufgabe für alle.</p></div>
-    <label class="fz-check" id="hswRotateWrap"><input type="checkbox" id="hswRotate"${d.rotate ? ' checked' : ''} /> <span>🔄 Reihum verteilen <span class="text-ink/45">(wer zuletzt am wenigsten gemacht hat)</span></span></label>
-    ${fzIn('hswNote', 'Hinweis in der Aufgabe', d.note || '', { ph: 'optional, z. B. Entlüftungsschlüssel liegt im Keller', max: 300 })}
-    <div class="fz-field">${taskRemindHtml('hsw', d.remindAt, { label: '🔔 Extra-Erinnerung per Push', def: '09:00' })}</div>
-    <label class="fz-check"><input type="checkbox" id="hswActive"${d.active !== false ? ' checked' : ''} /> <span>Aktiv <span class="text-ink/45">(aus = pausiert, keine Aufgaben)</span></span></label>
+    ${fzSel('hswLead', tk('home.createTask'), [['0', tk('home.dueDate')], ['3', tk('pantry.settings.before3')], ['7', tk('home.n1WeekBefore')], ['14', tk('home.n2WeeksBefore')]], String(d.lead || 0))}
+    <div class="fz-field"><span class="fz-lbl">${tk('home.whoTakesCare')}</span>${hsMemberChips('hswWho', d.assignedMemberIds || [])}<p class="text-[11px] text-ink/45 mt-1">${tk('home.nobodySelectedTaskEveryone')}</p></div>
+    <label class="fz-check" id="hswRotateWrap"><input type="checkbox" id="hswRotate"${d.rotate ? ' checked' : ''} /> <span>${tk('rotation.toggle')} <span class="text-ink/45">${tk('home.whoeverDidLeastRecently')}</span></span></label>
+    ${fzIn('hswNote', tk('home.noteTask'), d.note || '', { ph: tk('home.optionalEGBleed'), max: 300 })}
+    <div class="fz-field">${taskRemindHtml('hsw', d.remindAt, { label: tk('household.extraRemind'), def: '09:00' })}</div>
+    <label class="fz-check"><input type="checkbox" id="hswActive"${d.active !== false ? ' checked' : ''} /> <span>${tk('cat.active')} <span class="text-ink/45">${tk('home.offPausedNoTasks')}</span></span></label>
     ${hsFooter('hsMaint', !!x)}`;
   hsOpenModal(html, body => {
     hsWireChips(body, '#hswWho');
@@ -2759,9 +2762,9 @@ function hsSaveMaint() {
   const st = hsModalState;
   if (!st || st.mode !== 'maint') return;
   const wanted = fzVal('hswTitle').replace(/\s+/g, ' ').slice(0, 100);
-  if (!wanted) return fzShowErr('hsMaintError', 'Bitte eingeben, was zu tun ist.');
+  if (!wanted) return fzShowErr('hsMaintError', tk('home.pleaseEnterWhatNeeds'));
   const next = fzVal('hswNext');
-  if (!vtIsIso(next)) return fzShowErr('hsMaintError', 'Bitte ein Datum für die nächste Fälligkeit wählen.');
+  if (!vtIsIso(next)) return fzShowErr('hsMaintError', tk('home.pleaseChooseDateNext'));
   const existing = st.id ? hsMaintItems().find(m => m.id === st.id) : null;
   const title = hsMaintUniqueTitle((fzVal('hswIcon') || '🔧').slice(0, 8), wanted, existing ? existing.id : '');
   const who = hsChipVals('#hswWho').filter(id => memberById(id));
@@ -2793,12 +2796,12 @@ function hsSaveMaint() {
   // An open task of this entry takes over the reminder time right away
   const newKey = hsMaintKey(item);
   taskRemindApplyOpen(t => t.household === newKey, item.remindAt);
-  if (title !== wanted) finShowToast('Gespeichert als „' + title + '“ – den Namen gab es schon.');
-  else finShowToast(item.active ? 'Gespeichert – die Aufgabe kommt rechtzeitig unter „Aufgaben“.' : 'Gespeichert.');
+  if (title !== wanted) finShowToast(tk('home.savedAsName', { name: title }));
+  else finShowToast(item.active ? tk('home.savedTaskWillAppear') : tk('common.saved'));
 }
 function hsDeleteMaint(id) {
   const x = hsMaintItems().find(m => m.id === id);
-  if (!x || !confirm('„' + x.title + '“ aus dem Wartungsplan löschen?')) return;
+  if (!x || !confirm(tk('home.confirmDeleteMaint', { name: x.title }))) return;
   const open = hsMaintOpen(x);
   if (open) { queueTaskDelete(open.id); rebuildAufgaben(); try { renderTasks(); } catch (e) { /* ignore */ } flushOutbox(); }
   houseMaintenance = hsMaintItems().filter(m => m.id !== id);
@@ -2823,18 +2826,18 @@ function hsOpenContractAssign() {
     const other = c.home && c.home !== h.id ? hsHomeById(c.home) : null;
     return `<button type="button" class="fz-pick-row${c.home === h.id ? ' active' : ''}" data-c="${hsEsc(c.id)}">
       <span class="text-xl shrink-0">${hsEsc(cat.icon || '📄')}</span>
-      <span class="flex-1 min-w-0"><span class="block text-sm font-medium truncate">${hsEsc(c.name || 'Vertrag')}</span><span class="block text-[11px] text-ink/45 truncate">${hsEsc([c.provider, cat.label, other ? 'bisher: ' + hsName(other) : ''].filter(Boolean).join(' · '))}</span></span>
+      <span class="flex-1 min-w-0"><span class="block text-sm font-medium truncate">${hsEsc(c.name || tk('contract.docType.doc'))}</span><span class="block text-[11px] text-ink/45 truncate">${hsEsc([c.provider, cat.label, other ? tk('home.previously', { name: hsName(other) }) : ''].filter(Boolean).join(' · '))}</span></span>
       <span class="shrink-0 text-lg">${c.home === h.id ? '✓' : ''}</span>
     </button>`;
   }).join('');
   fzOpenModal2(`
-    <h3 class="font-serif text-lg mb-1 pr-6">Verträge zuordnen</h3>
-    <p class="text-xs text-ink/50 mb-3">Antippen ordnet den Vertrag diesem Zuhause zu – Kosten und Kündigungsfristen erscheinen dann hier und in den Wohnkosten.</p>
-    <div class="flex flex-col gap-1.5">${rows || '<p class="text-sm text-ink/45">Noch keine Verträge in Finanzen → Verträge.</p>'}</div>
+    <h3 class="font-serif text-lg mb-1 pr-6">${tk('home.assignContracts')}</h3>
+    <p class="text-xs text-ink/50 mb-3">${tk('home.tapAssignContractHome')}</p>
+    <div class="flex flex-col gap-1.5">${rows || ('<p class="text-sm text-ink/45">' + tk('home.noContractsFinanceContracts') + '</p>')}</div>
     <div class="flex items-center gap-2 mt-4">
-      <button type="button" id="hscNew" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">+ Neuer Vertrag</button>
+      <button type="button" id="hscNew" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">${tk('home.newContract')}</button>
       <div class="flex-1"></div>
-      <button type="button" id="hscDone" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Fertig</button>
+      <button type="button" id="hscDone" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">${tk('common.done')}</button>
     </div>`, body => {
     body.querySelectorAll('[data-c]').forEach(b => b.addEventListener('click', () => {
       const cid = b.dataset.c;
@@ -2851,7 +2854,7 @@ function hsOpenContractAssign() {
 function hsNewContract() {
   const h = hsCurrent();
   if (!h) return;
-  openContractModal({ preset: { name: 'Strom ' + hsName(h), category: 'energie', home: h.id, finCat: 'haushalt' } });
+  openContractModal({ preset: { name: (tk('home.electricity') + ' ') + hsName(h), category: 'energie', home: h.id, finCat: 'haushalt' } });
 }
 
 /* ---------- Documents ---------- */
@@ -2897,7 +2900,7 @@ function hsDocPreset(ref, typ, obj) {
   const cats = docCategories();
   const catId = cats.some(c => c.id === t.cat) ? t.cat : (cats.some(c => c.id === 'wohnen') ? 'wohnen' : 'sonstiges');
   const today = finTodayIso();
-  const p = { typ: '', vehicles: [], catId, titel: t.label + ' · ' + hsName(h), mitglied: '', datum: today, aussteller: '', kaufdatum: '', betrag: 0, gewaehrleistung_bis: '', garantie: '', gueltig_bis: '', erinnern: 0, notiz: h && h.address ? 'Adresse: ' + h.address : '', buy: false, lawFixed: false, hsRef: ref };
+  const p = { typ: '', vehicles: [], catId, titel: t.label + ' · ' + hsName(h), mitglied: '', datum: today, aussteller: '', kaufdatum: '', betrag: 0, gewaehrleistung_bis: '', garantie: '', gueltig_bis: '', erinnern: 0, notiz: h && h.address ? (tk('home.address') + ' ') + h.address : '', buy: false, lawFixed: false, hsRef: ref };
   if (typ === 'mietvertrag' && h) { p.aussteller = (h.landlord && h.landlord.name) || ''; if (vtIsIso(h.moveIn)) p.datum = h.moveIn; }
   if (typ === 'kaufvertrag' && h && h.own) { if (vtIsIso(h.own.date)) p.datum = h.own.date; if (Number(h.own.price) > 0) p.betrag = Number(h.own.price); }
   if (obj && /^log:/.test(ref)) {
@@ -2912,12 +2915,12 @@ function hsDocPreset(ref, typ, obj) {
       p.erinnern = p.gewaehrleistung_bis && p.gewaehrleistung_bis > today ? 30 : 0;
     } else if (lt.id === 'steuer') { p.catId = cats.some(c => c.id === 'steuern') ? 'steuern' : catId; }
     else if (lt.id === 'versicherung') { p.catId = cats.some(c => c.id === 'versicherungen') ? 'versicherungen' : catId; }
-    p.notiz = [obj.room ? 'Raum: ' + obj.room : '', p.notiz].filter(Boolean).join('\n');
+    p.notiz = [obj.room ? (tk('home.room') + ' ') + obj.room : '', p.notiz].filter(Boolean).join('\n');
   }
   if (obj && /^defect:/.test(ref)) {
-    p.titel = ('Mangel: ' + (obj.title || '') + ' · ' + vtFmt(obj.date)).slice(0, 200);
+    p.titel = ((tk('home.defect4') + ' ') + (obj.title || '') + ' · ' + vtFmt(obj.date)).slice(0, 200);
     p.datum = today;
-    p.notiz = [obj.room ? 'Raum: ' + obj.room : '', obj.note || '', p.notiz].filter(Boolean).join('\n').slice(0, 4000);
+    p.notiz = [obj.room ? (tk('home.room') + ' ') + obj.room : '', obj.note || '', p.notiz].filter(Boolean).join('\n').slice(0, 4000);
   }
   return p;
 }
@@ -2928,7 +2931,7 @@ function hsUploadDoc(ref, typ, obj) {
   loadDocuments();
   openDocEditModal(null, { preset: hsDocPreset(ref, typ, obj) });
   const ttl = document.getElementById('docEditTitle');
-  if (ttl && h) ttl.textContent = 'Neues Dokument · ' + hsName(h);
+  if (ttl && h) ttl.textContent = (tk('home.newDocument') + ' ') + hsName(h);
   docPickFiles(false); // still within the same tap, otherwise iOS blocks the file picker
 }
 function hsOpenDocLink() {
@@ -2941,15 +2944,15 @@ function hsOpenDocLink() {
     const all = docAll().slice().sort((a, b) => (a.kategorie === 'wohnen' ? 0 : 1) - (b.kategorie === 'wohnen' ? 0 : 1) || String(a.titel || '').localeCompare(String(b.titel || ''), 'de'));
     return all.map(x => `<button type="button" class="fz-pick-row${links.has(x.id) ? ' active' : ''}" data-d="${hsEsc(x.id)}">
       <span class="text-xl shrink-0">${hsEsc(docCategory(x.kategorie).icon || '📄')}</span>
-      <span class="flex-1 min-w-0"><span class="block text-sm font-medium truncate">${hsEsc(x.titel || 'Dokument')}</span><span class="block text-[11px] text-ink/45 truncate">${hsEsc(docCategory(x.kategorie).label + (x.datum ? ' · ' + vtFmt(x.datum) : ''))}</span></span>
+      <span class="flex-1 min-w-0"><span class="block text-sm font-medium truncate">${hsEsc(x.titel || tk('search.type.doc'))}</span><span class="block text-[11px] text-ink/45 truncate">${hsEsc(docCategory(x.kategorie).label + (x.datum ? ' · ' + vtFmt(x.datum) : ''))}</span></span>
       <span class="shrink-0 text-lg">${links.has(x.id) ? '✓' : ''}</span>
     </button>`).join('');
   };
   fzOpenModal2(`
-    <h3 class="font-serif text-lg mb-1 pr-6">Aus „Dokumente“ verknüpfen</h3>
-    <p class="text-xs text-ink/50 mb-3">Dokumente bleiben unter „Dokumente“ und erscheinen zusätzlich beim Zuhause. Kategorie „Wohnen &amp; Nebenkosten“ steht oben.</p>
-    <div id="hsDocPick" class="flex flex-col gap-1.5">${render() || '<p class="text-sm text-ink/45">Noch keine Dokumente vorhanden.</p>'}</div>
-    <div class="flex items-center gap-2 mt-4"><div class="flex-1"></div><button type="button" id="hsdlDone" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Fertig</button></div>`, body => {
+    <h3 class="font-serif text-lg mb-1 pr-6">${tk('home.linkFromDocuments')}</h3>
+    <p class="text-xs text-ink/50 mb-3">${tk('home.documentsStayDocumentsAlso')}</p>
+    <div id="hsDocPick" class="flex flex-col gap-1.5">${render() || ('<p class="text-sm text-ink/45">' + tk('home.noDocumentsYet') + '</p>')}</div>
+    <div class="flex items-center gap-2 mt-4"><div class="flex-1"></div><button type="button" id="hsdlDone" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">${tk('common.done')}</button></div>`, body => {
     body.querySelector('#hsDocPick').addEventListener('click', (e) => {
       const b = e.target.closest('[data-d]');
       if (!b) return;
