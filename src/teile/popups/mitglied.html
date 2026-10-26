@@ -1,13 +1,13 @@
 <!-- Add/edit member modal -->
 <div id="memberModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
-    <h3 id="memberModalTitle" class="font-serif text-lg mb-4">Familienmitglied hinzufügen</h3>
+    <h3 data-tk="member.addFamilyMember" id="memberModalTitle" class="font-serif text-lg mb-4">Add family member</h3>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Name</label>
-    <input id="newMemberName" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="z. B. Anna" />
+    <label data-tk="common.name" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Name</label>
+    <input data-tk-attr="placeholder:member.eGAnna" id="newMemberName" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="e.g. Anna" />
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Rolle in der Familie</label>
-    <input id="newMemberRole" list="roleSuggestions" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="z. B. Mama, Papa, Oma" />
+    <label data-tk="member.roleFamily" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Role in the family</label>
+    <input data-tk-attr="placeholder:member.eGMumDad" id="newMemberRole" list="roleSuggestions" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="e.g. Mum, Dad, Grandma" />
     <datalist id="roleSuggestions">
       <option value="Mama"></option>
       <option value="Papa"></option>
@@ -17,38 +17,38 @@
       <option value="Partner:in"></option>
     </datalist>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Anzeige im Kalender</label>
+    <label data-tk="member.displayCalendar" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Display in calendar</label>
     <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-4">
-      <button type="button" data-display="name" class="display-mode-btn px-3 py-1 rounded-full transition">Name</button>
-      <button type="button" data-display="role" class="display-mode-btn px-3 py-1 rounded-full transition">Rolle</button>
+      <button data-tk="common.name" type="button" data-display="name" class="display-mode-btn px-3 py-1 rounded-full transition">Name</button>
+      <button data-tk="login.role" type="button" data-display="role" class="display-mode-btn px-3 py-1 rounded-full transition">Role</button>
     </div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Bild</label>
+    <label data-tk="recipe.edit.image" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Image</label>
     <div class="flex items-center gap-3 mb-3">
       <span id="memberAvatarPreview" class="w-14 h-14 rounded-full overflow-hidden border-[3px] shrink-0"></span>
       <div class="flex flex-col gap-1.5">
         <label class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs cursor-pointer hover:border-pine hover:text-pine transition text-center">
-          Foto hochladen
+          <span data-tk="member.uploadPhoto">Upload photo</span>
           <input id="memberPhotoFile" type="file" accept="image/*" class="hidden" />
         </label>
-        <button type="button" id="memberRemoveImage" class="px-3 py-1.5 rounded-lg text-xs text-ink/40 hover:text-red-500 transition text-left">Bild/Avatar entfernen</button>
+        <button data-tk="member.removeImageAvatar" type="button" id="memberRemoveImage" class="px-3 py-1.5 rounded-lg text-xs text-ink/40 hover:text-red-500 transition text-left">Remove image/avatar</button>
       </div>
     </div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Oder Avatar wählen</label>
+    <label data-tk="member.chooseAvatar" class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Or choose avatar</label>
     <div class="mb-4">
-      <div class="text-[11px] text-ink/40 mb-1">Haustiere</div>
+      <div data-tk="pet.pets4" class="text-[11px] text-ink/40 mb-1">Pets</div>
       <div class="avatar-group flex flex-wrap gap-1.5 mb-2" data-group="pet"></div>
-      <div class="text-[11px] text-ink/40 mb-1">Männlich</div>
+      <div data-tk="member.male" class="text-[11px] text-ink/40 mb-1">Male</div>
       <div class="avatar-group flex flex-wrap gap-1.5 mb-2" data-group="male"></div>
-      <div class="text-[11px] text-ink/40 mb-1">Weiblich</div>
+      <div data-tk="member.female" class="text-[11px] text-ink/40 mb-1">Female</div>
       <div class="avatar-group flex flex-wrap gap-1.5" data-group="female"></div>
     </div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Farbe (Rand)</label>
+    <label data-tk="member.colourBorder" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Colour (border)</label>
     <div id="colorPicker" class="flex gap-2 mb-2"></div>
     <div class="flex items-center gap-2 mb-5">
-      <span class="text-xs text-ink/40">Eigene Farbe (RGB):</span>
+      <span data-tk="member.customColourRgb" class="text-xs text-ink/40">Custom colour (RGB):</span>
       <input id="customColorInput" type="color" value="#2F4B41" class="w-8 h-8 rounded-full border-2 border-transparent cursor-pointer p-0 bg-transparent" />
     </div>
 
@@ -56,25 +56,25 @@
     <div id="memberKidSection" class="rounded-xl border border-ink/10 p-3 mb-5">
       <label class="flex items-center gap-2 text-sm cursor-pointer select-none">
         <input id="memberKidMode" type="checkbox" class="w-4 h-4" />
-        <span>Kinderseite aktivieren ⭐</span>
+        <span data-tk="member.activateKidsPage">Activate kids' page ⭐</span>
       </label>
-      <p class="text-xs text-ink/40 mt-1">Ein Tipp auf das Kind in der Kachel „Familienmitglieder“ auf der Übersicht öffnet eine bunte Seite mit den Aufgaben, die gerade dran sind (z. B. morgens Zähne putzen, abends Schlafanzug anziehen). Jeden Tag beginnt alles von vorne.</p>
+      <p data-tk="member.tappingChildFamilyMembers" class="text-xs text-ink/40 mt-1">Tapping the child in the “Family members” tile on the overview opens a colourful page with the tasks that are due right now (e.g. brushing teeth in the morning, putting on pyjamas in the evening). Everything starts over every day.</p>
       <div id="memberKidOptions" class="hidden mt-3">
         <p id="memberKidSummary" class="text-xs text-ink/60 mb-2"></p>
-        <button type="button" id="memberKidEdit" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">Aufgaben &amp; Tageszeiten bearbeiten</button>
+        <button data-tk="member.editTasksTimesDay" type="button" id="memberKidEdit" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">Edit tasks &amp; times of day</button>
         <label class="flex items-center gap-2 text-sm cursor-pointer select-none mt-3">
           <input id="memberKidShowAllowance" type="checkbox" class="w-4 h-4" />
-          <span>Taschengeld auf der Kinderseite anzeigen 🐷</span>
+          <span data-tk="member.showPocketMoneyKids">Show pocket money on the kids' page 🐷</span>
         </label>
-        <p class="text-xs text-ink/40 mt-1">Zeigt den Betrag, die nächste Auszahlung und – falls mitgeführt – das Guthaben. Festgelegt wird das Taschengeld unter Finanzen → Taschengeld.</p>
+        <p data-tk="member.showsAmountNextPayout" class="text-xs text-ink/40 mt-1">Shows the amount, the next payout and – if tracked – the balance. Pocket money is set under Finance → Pocket money.</p>
         <label class="flex items-center gap-2 text-sm cursor-pointer select-none mt-3">
           <input id="memberKidStars" type="checkbox" class="w-4 h-4" />
-          <span>Sterne sammeln &amp; eintauschen ⭐</span>
+          <span data-tk="member.collectTradeStars">Collect &amp; trade stars ⭐</span>
         </label>
-        <p class="text-xs text-ink/40 mt-1">Jede erledigte Aufgabe bringt Sterne. Auf der Kinderseite tauscht das Kind sie gegen Belohnungen ein – Taschengeld, Medienzeit oder Wünsche. Ihr bestätigt mit einem Tipp.</p>
+        <p data-tk="member.everyFinishedTaskEarns" class="text-xs text-ink/40 mt-1">Every finished task earns stars. On the kids' page, your child trades them for rewards – pocket money, screen time or wishes. You confirm with one tap.</p>
         <div id="memberKidStarsOpts" class="hidden mt-2">
           <p id="memberKidStarsSummary" class="text-xs text-ink/60 mb-2"></p>
-          <button type="button" id="memberKidRewardsEdit" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">Belohnungen bearbeiten</button>
+          <button data-tk="member.editRewards" type="button" id="memberKidRewardsEdit" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">Edit rewards</button>
         </div>
       </div>
       <input id="memberKidConfigState" type="hidden" value="" />
@@ -82,32 +82,32 @@
 
     <!-- Sign-in: every family member needs their own profile -->
     <div id="memberLoginSection" class="hidden rounded-xl border border-ink/10 p-3 mb-5">
-      <p class="text-xs uppercase tracking-wide text-ink/40 mb-2">Anmeldung</p>
+      <p data-tk="errorLog.area.signIn" class="text-xs uppercase tracking-wide text-ink/40 mb-2">Login</p>
       <div id="memberLoginLinked" class="hidden text-sm">
-        Profil: <span id="memberLoginLinkedName" class="font-medium"></span>
-        <p class="text-xs text-ink/40 mt-1">Passwort und Rolle verwaltest du unter Konto.</p>
+        <span data-tk="member.profile">Profile:</span> <span id="memberLoginLinkedName" class="font-medium"></span>
+        <p data-tk="member.managePasswordRoleUnder" class="text-xs text-ink/40 mt-1">You manage password and role under Account.</p>
       </div>
-      <p id="memberLoginNoAdmin" class="hidden text-xs text-mustard">Noch kein Profil verknüpft – das kann nur ein Admin einrichten.</p>
+      <p data-tk="member.noProfileLinkedYet" id="memberLoginNoAdmin" class="hidden text-xs text-mustard">No profile linked yet – only an admin can set this up.</p>
       <div id="memberLoginSetup" class="hidden">
-        <p class="text-xs text-ink/50 mb-2">Jedes Familienmitglied braucht ein eigenes Profil zum Anmelden.</p>
+        <p data-tk="member.eachFamilyMemberNeeds" class="text-xs text-ink/50 mb-2">Each family member needs their own profile to log in.</p>
         <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-3">
-          <button type="button" data-login-mode="neu" class="member-login-mode-btn px-3 py-1 rounded-full transition">Neues Profil</button>
-          <button type="button" data-login-mode="bestehend" class="member-login-mode-btn px-3 py-1 rounded-full transition">Vorhandenes Profil</button>
+          <button data-tk="member.newProfile" type="button" data-login-mode="neu" class="member-login-mode-btn px-3 py-1 rounded-full transition">New profile</button>
+          <button data-tk="member.existingProfile" type="button" data-login-mode="bestehend" class="member-login-mode-btn px-3 py-1 rounded-full transition">Existing profile</button>
         </div>
         <div id="memberLoginNew">
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="memberLoginUsername">Benutzername</label>
+          <label data-tk="member.username" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="memberLoginUsername">Username</label>
           <input id="memberLoginUsername" type="text" autocomplete="off" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="memberLoginPassword">Start-Passwort (mind. 8 Zeichen)</label>
+          <label data-tk="login.startPassword" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="memberLoginPassword">Start password (min. 8 characters)</label>
           <input id="memberLoginPassword" type="password" autocomplete="new-password" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="memberLoginRole">Kategorie</label>
+          <label data-tk="account.manage.category" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="memberLoginRole">Category</label>
           <select id="memberLoginRole" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white mb-1">
-            <option value="mitglied">Mitglied</option>
-            <option value="admin">Admin</option>
+            <option data-tk="common.member" value="mitglied">Member</option>
+            <option data-tk="common.admin" value="admin">Admin</option>
           </select>
-          <p class="text-xs text-ink/40">Beim ersten Anmelden muss ein eigenes Passwort vergeben werden.</p>
+          <p data-tk="member.personalPasswordMustSet" class="text-xs text-ink/40">A personal password must be set on first login.</p>
         </div>
         <div id="memberLoginExisting" class="hidden">
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="memberLoginExistingSelect">Profil</label>
+          <label data-tk="famTile.profile" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="memberLoginExistingSelect">Profile</label>
           <select id="memberLoginExistingSelect" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white"></select>
         </div>
       </div>
@@ -115,8 +115,8 @@
     </div>
 
     <div class="flex justify-end gap-2">
-      <button id="cancelMember" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-      <button id="saveMember" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Hinzufügen</button>
+      <button data-tk="common.cancel" id="cancelMember" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+      <button data-tk="common.add" id="saveMember" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Add</button>
     </div>
   </div>
 </div>

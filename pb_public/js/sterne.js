@@ -23,9 +23,9 @@
      Declined (s = 'nein') = the stars count again.
    ========================================================== */
 const KID_REWARD_TYPES = [
-  { id: 'geld', label: 'Taschengeld', icon: '💶' },
-  { id: 'medien', label: 'Medienzeit', icon: '📺' },
-  { id: 'wunsch', label: 'Wunsch', icon: '🎁' },
+  { id: 'geld', label: tk('depot.pocketMoney'), icon: '💶' },
+  { id: 'medien', label: tk('stars.screenTime'), icon: '📺' },
+  { id: 'wunsch', label: tk('stars.wish'), icon: '🎁' },
 ];
 const KID_REWARD_EMOJIS = ['💶', '🪙', '🐷', '📺', '🎮', '📱', '🎧', '🍦', '🍫', '🍕', '🍿', '🎬', '🎡', '🏊', '⚽', '🧸', '📚', '🎨', '🛝', '🐴', '🎁', '⭐', '🌙', '🚲'];
 let kidShopView = null;       // open rewards view on the kids page: { confirm: reward ID }
@@ -35,11 +35,11 @@ let kidRewardsEmojiFor = null;
 function kidRid(p) { return (p || 'r') + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 function kidDefaultRewards() {
   return [
-    ['📺', '30 Min. Medienzeit', 'medien', 30, 8],
-    ['🎮', '1 Std. Medienzeit', 'medien', 60, 15],
-    ['💶', '1 € extra', 'geld', 1, 10],
-    ['🍦', 'Eis essen gehen', 'wunsch', 0, 20],
-    ['🎬', 'Kinoabend', 'wunsch', 0, 60],
+    ['📺', tk('stars.n30MinScreenTime'), 'medien', 30, 8],
+    ['🎮', tk('stars.n1HrScreenTime'), 'medien', 60, 15],
+    ['💶', tk('stars.n1Extra'), 'geld', 1, 10],
+    ['🍦', tk('stars.goOutIceCream'), 'wunsch', 0, 20],
+    ['🎬', tk('stars.movieNight'), 'wunsch', 0, 60],
   ].map(([emoji, title, type, value, cost]) => {
     // Suggestions in the chosen language (the titles are stored and no longer translated)
     let t = title;
@@ -95,7 +95,7 @@ function kidStarsOnToggle(m, task, nowDone, period, allDone) {
   }
   const hadBonus = log.some(e => e.id === bid);
   if (allDone && st.bonus > 0 && !hadBonus) {
-    log.push({ id: bid, d: today, n: st.bonus, k: 'bonus', t: 'Alles geschafft', ts: Date.now() });
+    log.push({ id: bid, d: today, n: st.bonus, k: 'bonus', t: tk('stars.allDone'), ts: Date.now() });
     gained += st.bonus;
   }
   if (!allDone && hadBonus) log = log.filter(e => e.id !== bid);
@@ -120,8 +120,8 @@ function kidBankHtml(m) {
   return `<button type="button" class="kid-bank" id="kidBankBtn">
     <span class="kid-bank-star" aria-hidden="true">⭐</span>
     <span class="kid-bank-num" id="kidBankNum" data-no-i18n>${kidStarBalance(m)}</span>
-    <span class="kid-bank-label">Sterne</span>
-    <span class="kid-bank-shop"><span>🎁 Belohnungen</span>${pend ? `<span class="kid-bank-pend" data-no-i18n>${pend}</span>` : ''}</span>
+    <span class="kid-bank-label">${tk('stars.stars')}</span>
+    <span class="kid-bank-shop"><span>${tk('stars.rewards')}</span>${pend ? `<span class="kid-bank-pend" data-no-i18n>${pend}</span>` : ''}</span>
   </button>`;
 }
 function kidRefreshBank(m, gained) {
@@ -176,10 +176,10 @@ function kidRenderShop() {
       <div class="kid-shop-big">${escapeHtml(conf.emoji)}</div>
       <div class="kid-shop-q">${escapeHtml(conf.title)}</div>
       <div class="kid-shop-cost"><span data-no-i18n>${conf.cost}</span> ⭐</div>
-      <div class="kid-shop-ask">Eintauschen?</div>
+      <div class="kid-shop-ask">${tk('stars.tradeThem')}</div>
       <div class="kid-shop-actions">
-        <button type="button" class="kid-shop-btn no" data-shop="back">Doch nicht</button>
-        <button type="button" class="kid-shop-btn yes" data-shop="buy" data-id="${kidAttr(conf.id)}">Ja, bitte! 🎉</button>
+        <button type="button" class="kid-shop-btn no" data-shop="back">${tk('stars.notNow')}</button>
+        <button type="button" class="kid-shop-btn yes" data-shop="buy" data-id="${kidAttr(conf.id)}">${tk('stars.yesPlease')}</button>
       </div>
     </div>`;
   } else {
@@ -189,23 +189,23 @@ function kidRenderShop() {
         <span class="kid-reward-emoji">${escapeHtml(r.emoji)}</span>
         <span class="kid-reward-title">${escapeHtml(r.title)}</span>
         <span class="kid-reward-cost"><span data-no-i18n>${r.cost}</span> ⭐</span>
-        ${can ? '' : `<span class="kid-reward-miss">noch ${r.cost - bal} ⭐</span>`}
+        ${can ? '' : `<span class="kid-reward-miss">${tk('stars.go', { bal: r.cost - bal })}</span>`}
       </button>`;
     }).join('');
     const pend = kidStarPending(m).map(e => `<div class="kid-pend-row">
         <span class="kid-pend-emoji">${escapeHtml(e.e || '🎁')}</span>
-        <span class="kid-pend-main"><span class="kid-pend-title">${escapeHtml(e.t || '')}</span><span class="kid-pend-sub">⏳ wartet auf OK</span></span>
-        ${parent ? `<button type="button" class="kid-pend-btn no" data-shop="nein" data-id="${kidAttr(e.id)}" aria-label="Ablehnen">✕</button><button type="button" class="kid-pend-btn ok" data-shop="ok" data-id="${kidAttr(e.id)}">OK</button>` : ''}
+        <span class="kid-pend-main"><span class="kid-pend-title">${escapeHtml(e.t || '')}</span><span class="kid-pend-sub">${tk('stars.waitingOk')}</span></span>
+        ${parent ? `<button type="button" class="kid-pend-btn no" data-shop="nein" data-id="${kidAttr(e.id)}" aria-label="${escapeHtml(tk('stars.decline'))}">✕</button><button type="button" class="kid-pend-btn ok" data-shop="ok" data-id="${kidAttr(e.id)}">${tk('stars.ok')}</button>` : ''}
       </div>`).join('');
     inner = `<div class="kid-shop-head">
-        <div class="kid-shop-title">🎁 Belohnungen</div>
-        <div class="kid-shop-bal"><span>Du hast</span> <b data-no-i18n>${bal}</b> ⭐</div>
+        <div class="kid-shop-title">${tk('stars.rewards')}</div>
+        <div class="kid-shop-bal"><span>${tk('stars.have')}</span> <b data-no-i18n>${bal}</b> ⭐</div>
       </div>
       ${pend ? `<div class="kid-pend">${pend}</div>` : ''}
-      ${cards ? `<div class="kid-rewards">${cards}</div>` : '<p class="kid-shop-empty">Noch keine Belohnungen – frag deine Eltern! 😊</p>'}`;
+      ${cards ? `<div class="kid-rewards">${cards}</div>` : ('<p class="kid-shop-empty">' + tk('stars.noRewardsYetAsk') + '</p>')}`;
   }
   box.innerHTML = `<div class="kid-shop-box">
-    <button type="button" class="kid-shop-x" data-shop="close" aria-label="Schließen">✕</button>
+    <button type="button" class="kid-shop-x" data-shop="close" aria-label="${escapeHtml(tk('common.close'))}">✕</button>
     ${inner}
   </div>`;
 }
@@ -259,7 +259,7 @@ function kidApply(m, e, ok) {
   const me = currentMember();
   m.kidStarLog = kidStarLog(m).map(x => x.id === e.id ? { ...x, s: ok ? 'ok' : 'nein', by: me ? me.id : '' } : x);
   if (ok && e.typ === 'geld' && Number(e.val) > 0) {
-    try { kidRewardPayout(m, e); } catch (err) { console.warn('Belohnung: Buchung fehlgeschlagen', err); }
+    try { kidRewardPayout(m, e); } catch (err) { console.warn('Reward: booking failed', err); }
   }
 }
 function kidDecide(m, entryId, ok) {
@@ -270,7 +270,7 @@ function kidDecide(m, entryId, ok) {
   if (kidShopView) kidRenderShop();
   if (kidPageMemberId === m.id) kidRefreshBank(m, 0);
   if (typeof currentView !== 'undefined' && currentView === 'finanzen') renderFinance();
-  if (typeof finShowToast === 'function') finShowToast(ok ? `Belohnung für ${memberLabel(m)} bestätigt.` : `Abgelehnt – ${memberLabel(m)} bekommt die Sterne zurück.`);
+  if (typeof finShowToast === 'function') finShowToast(ok ? `${tk('stars.rewardConfirmed', { memberLabel: memberLabel(m) })}` : `${tk('stars.declinedGetsStarsBack', { memberLabel: memberLabel(m) })}`);
 }
 // Booking in the fund where the child's pocket money is kept (otherwise in the default or active fund)
 function kidWithAllowanceFinance(m, fn) {
@@ -305,7 +305,7 @@ function kidRewardPayout(m, e) {
     const date = finTodayIso();
     const expId = newRecordId();
     finQueueSave({
-      id: expId, amount, date, category: FIN_KIDS_CATEGORY, title: '⭐ ' + (e.t || 'Belohnung'),
+      id: expId, amount, date, category: FIN_KIDS_CATEGORY, title: '⭐ ' + (e.t || tk('stars.reward')),
       note: '', paidBy: currentMember() ? currentMember().id : '', link: 'kind:' + m.id,
       store: '', listId: '', items: [], createdBy: (currentUser() && currentUser().id) || '', created: new Date().toISOString(),
     });
@@ -339,32 +339,32 @@ function kidStarsFinHtml(m) {
     <div class="flex items-center gap-2 text-xs py-1">
       <span class="text-base shrink-0">${escapeHtml(e.e || '🎁')}</span>
       <span class="flex-1 min-w-0 truncate"><span data-no-i18n>${escapeHtml(e.t || '')}</span> · <span data-no-i18n>${-(Number(e.n) || 0)}</span> ⭐${e.typ === 'geld' && Number(e.val) > 0 ? ` · <span data-no-i18n>${escapeHtml(fmtEur(e.val))}</span>` : ''}</span>
-      <button type="button" data-star-act="nein" data-id="${escapeHtml(e.id)}" class="shrink-0 px-2 py-1 rounded-lg border border-ink/15 bg-white text-ink/60 hover:text-red-500 transition">Ablehnen</button>
-      <button type="button" data-star-act="ok" data-id="${escapeHtml(e.id)}" class="shrink-0 px-2.5 py-1 rounded-lg bg-pine text-white hover:bg-pine/90 transition">OK</button>
+      <button type="button" data-star-act="nein" data-id="${escapeHtml(e.id)}" class="shrink-0 px-2 py-1 rounded-lg border border-ink/15 bg-white text-ink/60 hover:text-red-500 transition">${tk('stars.decline')}</button>
+      <button type="button" data-star-act="ok" data-id="${escapeHtml(e.id)}" class="shrink-0 px-2.5 py-1 rounded-lg bg-pine text-white hover:bg-pine/90 transition">${tk('stars.ok')}</button>
     </div>`).join('');
   return `
     <div class="mt-3 rounded-xl p-3 kid-fin-stars">
       <div class="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <div class="text-[10px] uppercase tracking-wide text-ink/40">⭐ Sterne</div>
+          <div class="text-[10px] uppercase tracking-wide text-ink/40">${tk('stars.stars2')}</div>
           <div class="text-xl font-semibold" data-no-i18n>${kidStarBalance(m)}</div>
         </div>
-        <button type="button" data-star-act="extra" class="px-2.5 py-1.5 rounded-lg border border-ink/15 bg-white text-xs text-ink/70 hover:text-pine hover:border-pine transition">+ Sterne</button>
+        <button type="button" data-star-act="extra" class="px-2.5 py-1.5 rounded-lg border border-ink/15 bg-white text-xs text-ink/70 hover:text-pine hover:border-pine transition">${tk('stars.stars3')}</button>
       </div>
-      ${rows ? `<div class="mt-2"><div class="text-[11px] text-ink/50 mb-1">Wartet auf euer OK</div>${rows}</div>` : ''}
+      ${rows ? `<div class="mt-2"><div class="text-[11px] text-ink/50 mb-1">${tk('stars.waitingOk2')}</div>${rows}</div>` : ''}
     </div>`;
 }
 function kidStarFinAction(kidId, act, id) {
   const m = memberById(kidId);
   if (!m) return;
   if (act !== 'extra') { kidDecide(m, id, act === 'ok'); return; }
-  const raw = prompt('Wie viele Sterne? (Minus zum Abziehen, z. B. -2)', '1');
+  const raw = prompt(tk('stars.howManyStarsMinus'), '1');
   if (raw === null) return;
   const n = Math.round(Number(String(raw).replace(',', '.').trim()));
-  if (!n || !isFinite(n) || Math.abs(n) > 999) { finShowToast('Bitte eine ganze Zahl eingeben, z. B. 2 oder -1.', true); return; }
-  const why = prompt('Wofür? (optional)', n > 0 ? 'Extra-Sterne' : 'Korrektur');
+  if (!n || !isFinite(n) || Math.abs(n) > 999) { finShowToast(tk('stars.pleaseEnterWholeNumber'), true); return; }
+  const why = prompt(tk('stars.whatOptional'), n > 0 ? tk('stars.extraStars') : tk('stars.correction'));
   if (why === null) return;
-  m.kidStarLog = [...kidStarLog(m), { id: kidRid('e'), d: isoDate(new Date()), n, k: 'extra', t: String(why).trim().slice(0, 60) || 'Extra-Sterne', ts: Date.now() }];
+  m.kidStarLog = [...kidStarLog(m), { id: kidRid('e'), d: isoDate(new Date()), n, k: 'extra', t: String(why).trim().slice(0, 60) || tk('stars.extraStars'), ts: Date.now() }];
   kidStarCompact(m);
   saveMembers();
   renderFinance();
@@ -381,7 +381,7 @@ function openKidRewardsEditor() {
   kidRewardsEdit = st.rewards.map(r => ({ ...r }));
   kidRewardsEmojiFor = null;
   const name = document.getElementById('newMemberName').value.trim();
-  document.getElementById('kidRewardsTitle').textContent = name ? `Belohnungen für ${name}` : 'Belohnungen';
+  document.getElementById('kidRewardsTitle').textContent = name ? `${tk('stars.rewards2', { name })}` : tk('stars.rewards3');
   document.getElementById('kidRewardsBonus').value = String(st.bonus);
   document.getElementById('kidRewardsStatus').textContent = '';
   renderKidRewardsList();
@@ -391,7 +391,7 @@ function openKidRewardsEditor() {
 function closeKidRewardsModal() { document.getElementById('kidRewardsModal').classList.add('hidden'); }
 function renderKidRewardsList() {
   const list = document.getElementById('kidRewardsList');
-  if (!kidRewardsEdit.length) { list.innerHTML = '<p class="text-xs text-ink/30 italic">Noch keine Belohnungen</p>'; return; }
+  if (!kidRewardsEdit.length) { list.innerHTML = ('<p class="text-xs text-ink/30 italic">' + tk('stars.noRewardsYet') + '</p>'); return; }
   const cur = kidCurSymbol();
   list.innerHTML = kidRewardsEdit.map(r => {
     const types = KID_REWARD_TYPES.map(t => `<option value="${t.id}"${t.id === r.type ? ' selected' : ''}>${t.icon} ${t.label}</option>`).join('');
@@ -399,12 +399,12 @@ function renderKidRewardsList() {
       ? `<div class="flex flex-wrap gap-1 mt-1.5 p-2 rounded-lg bg-ink/5">${KID_REWARD_EMOJIS.map(e =>
           `<button type="button" class="kid-rw-pick w-9 h-9 rounded-lg text-xl grid place-items-center hover:bg-white" data-emoji="${kidAttr(e)}">${e}</button>`).join('')}</div>`
       : '';
-    const unit = r.type === 'geld' ? cur : r.type === 'medien' ? 'Min.' : '';
+    const unit = r.type === 'geld' ? cur : r.type === 'medien' ? tk('smart.min') : '';
     return `<div class="kid-edit-row kid-rw-row" data-id="${kidAttr(r.id)}">
       <div class="flex items-center gap-1.5">
-        <button type="button" class="kid-rw-emoji w-10 h-10 shrink-0 rounded-lg bg-ink/5 text-xl grid place-items-center" title="Bild wählen">${escapeHtml(r.emoji || '🎁')}</button>
-        <input type="text" class="kid-rw-title flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-2 text-sm" maxlength="40" placeholder="z. B. Eis essen gehen" value="${kidAttr(r.title)}" />
-        <button type="button" class="kid-rw-del w-8 h-8 shrink-0 rounded-lg text-ink/40 hover:text-red-500 transition" title="Entfernen" aria-label="Belohnung entfernen">✕</button>
+        <button type="button" class="kid-rw-emoji w-10 h-10 shrink-0 rounded-lg bg-ink/5 text-xl grid place-items-center" title="${escapeHtml(tk('kid.chooseImage'))}">${escapeHtml(r.emoji || '🎁')}</button>
+        <input type="text" class="kid-rw-title flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-2 text-sm" maxlength="40" placeholder="${escapeHtml(tk('stars.eGGoingOut'))}" value="${kidAttr(r.title)}" />
+        <button type="button" class="kid-rw-del w-8 h-8 shrink-0 rounded-lg text-ink/40 hover:text-red-500 transition" title="${escapeHtml(tk('common.remove'))}" aria-label="${escapeHtml(tk('stars.removeReward'))}">✕</button>
       </div>
       <div class="flex items-center gap-1.5 mt-1 pl-[46px] flex-wrap">
         <select class="kid-rw-type rounded-lg border border-ink/15 px-2 py-1 text-xs bg-white">${types}</select>
@@ -413,7 +413,7 @@ function renderKidRewardsList() {
           <span class="text-xs text-ink/50"${r.type === 'geld' ? ' data-no-i18n' : ''}>${escapeHtml(unit)}</span>
         </span>
         <span class="inline-flex items-center gap-1 ml-auto">
-          <span class="text-xs text-ink/50">kostet</span>
+          <span class="text-xs text-ink/50">${tk('stars.costs')}</span>
           <input type="text" inputmode="numeric" class="kid-rw-cost w-16 rounded-lg border border-ink/15 px-2 py-1 text-xs" value="${kidAttr(r.costRaw !== undefined ? r.costRaw : String(r.cost || ''))}" />
           <span class="text-xs">⭐</span>
         </span>
@@ -475,7 +475,7 @@ function kidRewardsRow(el) {
     if (input) input.focus();
   });
   document.getElementById('kidRewardsDefaults').addEventListener('click', () => {
-    if (kidRewardsEdit.length && !confirm('Alle Belohnungen durch die Vorschläge ersetzen?')) return;
+    if (kidRewardsEdit.length && !confirm(tk('stars.replaceAllRewardsSuggestions'))) return;
     kidRewardsEdit = kidDefaultRewards();
     kidRewardsEmojiFor = null;
     renderKidRewardsList();
@@ -488,12 +488,12 @@ function kidRewardsRow(el) {
       const title = String(r.title || '').trim();
       if (!title) continue;
       const cost = Math.round(Number(String(r.costRaw !== undefined ? r.costRaw : r.cost).replace(',', '.')));
-      if (!(cost >= 1 && cost <= 9999)) { status.textContent = `Bitte bei „${title}“ angeben, wie viele Sterne es kostet.`; return; }
+      if (!(cost >= 1 && cost <= 9999)) { status.textContent = `${tk('stars.pleaseEnterHowMany', { title })}`; return; }
       let value = 0;
       if (r.type !== 'wunsch') {
         const raw = r.valueRaw !== undefined ? r.valueRaw : String(r.value || '');
         value = r.type === 'geld' ? parseEuro(raw) : Math.round(Number(String(raw).replace(',', '.')));
-        if (!(value > 0)) { status.textContent = r.type === 'geld' ? `Bitte bei „${title}“ den Betrag eingeben.` : `Bitte bei „${title}“ die Minuten eingeben.`; return; }
+        if (!(value > 0)) { status.textContent = r.type === 'geld' ? `${tk('stars.pleaseEnterAmount', { title })}` : `${tk('stars.pleaseEnterMinutes', { title })}`; return; }
       }
       out.push({ id: r.id, emoji: r.emoji || '🎁', title: title.slice(0, 60), type: r.type, value: r.type === 'geld' ? finRound(value) : value, cost });
     }

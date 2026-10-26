@@ -99,6 +99,15 @@ Sempre com você: o pinn. se instala em todo iPhone e celular Android como um ap
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 e 🇰🇷 한국어**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.116.0
+
+**Chaves de texto, parte 7: família, localização e página infantil**
+
+- **Família** (visão geral, cartões de emergência, localização, SOS e caminho para casa, escola e creche, animais e o tempo das férias), a **página infantil** com estrelas e recompensas, o bloco *Membros da família* e *Onde você está?* agora usam os arquivos de idioma em `pb_public/i18n/` – nos nove idiomas e também como república. Nada muda no uso.
+- Cerca de 150 textos que continuavam em alemão foram traduzidos; data e hora seguem o seu idioma; idade, minutos e dias usam o singular ou plural correto.
+- Casa, veículos e documentos vêm com a 1.116.1.
+- Alterados apenas arquivos do app – nada muda no servidor.
+
 ## Novidades da 1.115.0
 
 **Chaves de texto, parte 6: finanças, caixas e contratos**
@@ -107,16 +116,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Datas, dias da semana e meses nas finanças seguem o seu idioma; números como “1 lançamento” ou “1 pessoa” usam o singular ou plural correto.
 - Família, localização, casa, veículos e documentos vêm com a 1.116.0.
 - Alterados apenas arquivos do app – nada muda no servidor.
-
-## Novidades da 1.114.0
-
-**Chaves de texto, parte 5: listas, despensa e receitas**
-
-- As **listas** (compras com loja principal, listas especiais e *Planear compras*, bagagem, presentes, desejos, checklists, ideias), a **despensa** com leitura de códigos de barras e *O que posso cozinhar?*, as **receitas** com as receitas públicas, o **planeamento de refeições**, a **pesquisa** e o editor de categorias obtêm agora os seus textos dos ficheiros de idioma em `pb_public/i18n/` – nos nove idiomas e como casa partilhada. Na utilização nada muda.
-- **Modelos em cada idioma:** uma nova lista criada a partir de um modelo (férias, hospital, nascimento, festa …) surge no teu idioma com cerca de 400 entradas traduzidas; lojas genéricas como farmácia, padaria ou talho recebem o nome certo. As listas existentes ficam como estão.
-- Pequenas correções: as datas e os preços nas listas, despensa e receitas seguem o formato da tua região; o reconhecimento de receitas encontra ingredientes e preparação também sob títulos nos outros idiomas; números como «1 receita» ou «1 entrada» usam o singular ou plural correto.
-- A seguir: finanças e caixas chegam com a 1.115.0.
-- Alterado: apenas ficheiros da app (`index.html`, `js/einkauf.js`, `js/einkaufslisten.js`, `js/einkaufseingabe.js`, `js/listen.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/rezepte.js`, `js/rezeptdialog.js`, `js/rezeptmengen.js`, `js/rezeptbild.js`, `js/rezeptbilder.js`, `js/rezeptparser.js`, `js/essenplanen.js`, `js/einstellungen.js`, `js/hinweise.js`, `js/finanzen.js`, `js/bedienzustand.js`, `js/sprachen.js`, `js/versionslog.js`, todos os ficheiros de idioma em `i18n/` e `lang/`) – no servidor nada muda. Instalação como habitual (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
 
 ## Como funciona
 
@@ -146,7 +145,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.115.0` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.116.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

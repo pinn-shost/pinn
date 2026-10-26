@@ -95,6 +95,16 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 and 🇰🇷 한국어**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.116.0
+
+**Text keys, part 7: family, location and kids' page**
+
+- The **family** page (overview, emergency cards, location with *My location*, places and the guide for *Traccar Client*, SOS and the way home, school & daycare, pets and the holiday weather), the **kids' page** with stars and rewards, the *Family members* tile, *Where are you?* and the member popup now take their texts from the language files in `pb_public/i18n/` – in all nine languages and as a flatshare. Nothing changes in how you use it.
+- New entries in your language: suggestions for kids' tasks, school subjects and the *Holiday with …* packing list for pets are created in the language that is currently set.
+- Small things: about 150 texts that stayed German in the other languages so far are now translated (e.g. *Send permanently*, the *Traccar Client* guide, the SOS countdown); dates and times follow your language; age, minutes and days use the correct singular or plural.
+- Next: home, vehicles and documents follow with 1.116.1.
+- Changed: app files only (`index.html`, `js/familie.js`, `js/familienkachel.js`, `js/kinderseite.js`, `js/kinderroutine.js`, `js/sterne.js`, `js/wobistdu.js`, `js/mitglied.js`, `js/mitglieder.js`, `js/geburtstagsfeier.js`, `js/sprachen.js`, `js/versionslog.js`, all language files in `i18n/` and `lang/`) – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.115.0
 
 **Text keys, part 6: finances, funds and contracts**
@@ -152,15 +162,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - For contributors: texts in the HTML are filled in once, right before the app scripts start – scripts may change them afterwards. `i18n-keys.js` now keeps emojis and symbols at the start or end of a text. Account, devices, backups and the error log follow in the next step.
 - Changed: app files only (`index.html`, `js/sprachen.js`, `js/anmeldemaske.js`, `js/anmeldung.js`, `js/hauptadminseite.js`, `js/profilauswahl.js`, `js/pineingabe.js`, `js/verbindung.js`, `js/zustand.js`, `js/ansichten.js`, `js/einstellungen.js`, `js/uebersichteinstellungen.js`, `js/versionslog.js`, all language files in `i18n/` and `lang/`) and `.github/` (CONTRIBUTING.md, `i18n-keys.js`) – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
-## What's new in 1.111.0
-
-**Translations with text keys – the foundation**
-
-- Step 6 of the roadmap begins: texts are looked up by a **key** (e.g. `settings.region.title`) instead of by their German original. Every language has its own file in `pb_public/i18n/` – German included, English is the reference. The first part to use it is **Settings → Language & region**; everything else is translated as before until its turn comes. Nothing changes in how you use the app.
-- **Plurals done right:** one shared rule table (`js/textkern.js`, on the server `pinn-textkern.js`) picks the right plural form in the app and in push messages – also for languages with three forms. **Russian** is prepared, but not offered yet.
-- For contributors: `tk('key')` in JavaScript, `data-tk="key"` in HTML. `.github/scripts/i18n-keys.js` moves existing translations under a key without retyping them, `check-keys.js` checks every language, placeholder and plural form – see [CONTRIBUTING.md](.github/CONTRIBUTING.md#texts).
-- Changed: app files (`index.html`, `js/sprachen.js`, `js/sprache.js`, `js/versionslog.js`, `js/textkern.js` (new), all language files in `lang/` and `i18n/` (new)), `pinn-setup.sh` and on the server `pb_hooks/sw.pb.js` and `pinn-textkern.js` (new), plus `.github/` (checks, workflow, CONTRIBUTING.md). Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
 ## How it works
 
 ```mermaid
@@ -187,7 +188,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.115.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.116.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

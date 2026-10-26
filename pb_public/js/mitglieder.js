@@ -62,7 +62,7 @@ function renderMemberChips() {
       const avatarHtml = `<span class="w-6 h-6 rounded-full overflow-hidden border-2 shrink-0" style="border-color:${memberBorderColor(m)}">${memberAvatarInnerHTML(m)}</span>`;
       // The kids page is now opened by the overview tile „Familienmitglieder“ (renderFamilyTile)
       chip.innerHTML = `${avatarHtml}<span>${escapeHtml(memberLabel(m))}</span>`;
-      chip.title = 'Klicken, um nur Termine/Aufgaben dieser Person hervorzuheben';
+      chip.title = tk('member.clickHighlightOnlyPersons');
       chip.addEventListener('click', () => {
         if (activeMemberFilter.has(m.id)) activeMemberFilter.delete(m.id);
         else activeMemberFilter.add(m.id);

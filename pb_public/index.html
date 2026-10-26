@@ -31,7 +31,7 @@
        pb_public/vendor/tesseract/tesseract.min.js + worker.min.js, core/ (tesseract-core*.wasm.js),
          lang/deu.traineddata.gz (text recognition for "Foto einlesen" in recipes, only loaded when needed) -->
 <link rel="stylesheet" href="vendor/pinn.css">
-<link rel="stylesheet" href="css/ergaenzung.css?v=1.115.0">
+<link rel="stylesheet" href="css/ergaenzung.css?v=1.116.0">
 <!-- ==========================================================
      Power saving (since 0.99)
      - Recurring requests (setInterval from 1 second) only run while pinn. is visible;
@@ -41,11 +41,11 @@
        Every touch, mouse or keyboard input wakes pinn. at once and catches up on everything.
      - Short timers (< 1 s, e.g. the SOS countdown) stay unchanged.
      ========================================================== -->
-<link rel="stylesheet" href="css/energiesparen.css?v=1.115.0">
-<script src="js/ruhemodus.js?v=1.115.0"></script>
-<script src="js/textkern.js?v=1.115.0"></script>
-<script src="js/sprachen.js?v=1.115.0"></script>
-<script src="js/region.js?v=1.115.0"></script>
+<link rel="stylesheet" href="css/energiesparen.css?v=1.116.0">
+<script src="js/ruhemodus.js?v=1.116.0"></script>
+<script src="js/textkern.js?v=1.116.0"></script>
+<script src="js/sprachen.js?v=1.116.0"></script>
+<script src="js/region.js?v=1.116.0"></script>
 <script src="vendor/pocketbase/pocketbase.umd.js"></script>
 <!-- If the file sits somewhere else on the NAS or has another name: try further places -->
 <script>if (!window.PocketBase) document.write('<script src="vendor/pocketbase.umd.js"><\/script>');</script>
@@ -143,26 +143,26 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/basis.css?v=1.115.0">
-<link rel="stylesheet" href="css/mobil.css?v=1.115.0">
-<link rel="stylesheet" href="css/einstellungen.css?v=1.115.0">
-<link rel="stylesheet" href="css/seitenleiste.css?v=1.115.0">
-<link rel="stylesheet" href="css/finanzen.css?v=1.115.0">
-<link rel="stylesheet" href="css/listen.css?v=1.115.0">
-<link rel="stylesheet" href="css/vertraege.css?v=1.115.0">
-<link rel="stylesheet" href="css/fahrzeuge.css?v=1.115.0">
-<link rel="stylesheet" href="css/notfall.css?v=1.115.0">
-<link rel="stylesheet" href="css/hinweise.css?v=1.115.0">
-<link rel="stylesheet" href="css/familie.css?v=1.115.0">
-<link rel="stylesheet" href="css/dokumente.css?v=1.115.0">
-<link rel="stylesheet" href="css/sparen.css?v=1.115.0">
-<link rel="stylesheet" href="css/kinderaufgaben.css?v=1.115.0">
-<link rel="stylesheet" href="css/dashboard.css?v=1.115.0">
-<link rel="stylesheet" href="css/uebersicht.css?v=1.115.0">
-<link rel="stylesheet" href="css/wohnort.css?v=1.115.0">
-<link rel="stylesheet" href="css/familienkachel.css?v=1.115.0">
-<link rel="stylesheet" href="css/pinnwand.css?v=1.115.0">
-<link rel="stylesheet" href="css/haustierewetter.css?v=1.115.0">
+<link rel="stylesheet" href="css/basis.css?v=1.116.0">
+<link rel="stylesheet" href="css/mobil.css?v=1.116.0">
+<link rel="stylesheet" href="css/einstellungen.css?v=1.116.0">
+<link rel="stylesheet" href="css/seitenleiste.css?v=1.116.0">
+<link rel="stylesheet" href="css/finanzen.css?v=1.116.0">
+<link rel="stylesheet" href="css/listen.css?v=1.116.0">
+<link rel="stylesheet" href="css/vertraege.css?v=1.116.0">
+<link rel="stylesheet" href="css/fahrzeuge.css?v=1.116.0">
+<link rel="stylesheet" href="css/notfall.css?v=1.116.0">
+<link rel="stylesheet" href="css/hinweise.css?v=1.116.0">
+<link rel="stylesheet" href="css/familie.css?v=1.116.0">
+<link rel="stylesheet" href="css/dokumente.css?v=1.116.0">
+<link rel="stylesheet" href="css/sparen.css?v=1.116.0">
+<link rel="stylesheet" href="css/kinderaufgaben.css?v=1.116.0">
+<link rel="stylesheet" href="css/dashboard.css?v=1.116.0">
+<link rel="stylesheet" href="css/uebersicht.css?v=1.116.0">
+<link rel="stylesheet" href="css/wohnort.css?v=1.116.0">
+<link rel="stylesheet" href="css/familienkachel.css?v=1.116.0">
+<link rel="stylesheet" href="css/pinnwand.css?v=1.116.0">
+<link rel="stylesheet" href="css/haustierewetter.css?v=1.116.0">
 </head>
 <body class="font-sans text-ink antialiased">
 
@@ -1035,19 +1035,19 @@
     <section id="familySection" class="hidden min-h-0 flex-col bg-white/40">
       <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
         <div class="flex items-center justify-between gap-3">
-          <h2 class="font-serif text-lg">Familie</h2>
+          <h2 data-tk="app.family" class="font-serif text-lg">Family</h2>
           <div class="flex items-center gap-2 shrink-0">
-            <button id="famPlacesBtn" type="button" class="hidden px-3 py-1.5 rounded-lg border border-ink/15 text-xs font-medium hover:bg-ink/5 transition whitespace-nowrap">📍 Orte</button>
-            <button id="famSetupBtn" type="button" class="hidden px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">⚙︎ Ortung</button>
+            <button data-tk="family.places" id="famPlacesBtn" type="button" class="hidden px-3 py-1.5 rounded-lg border border-ink/15 text-xs font-medium hover:bg-ink/5 transition whitespace-nowrap">📍 Places</button>
+            <button data-tk="family.location" id="famSetupBtn" type="button" class="hidden px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">⚙︎ Location</button>
           </div>
         </div>
         <!-- Switch: overview / school & daycare / pets / location / emergency -->
-        <div id="famTabs" class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs mt-3 w-full sm:w-fit overflow-x-auto" role="tablist" aria-label="Familienbereich">
-          <button type="button" data-famtab="uebersicht" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Übersicht</button>
-          <button type="button" data-famtab="schule" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Schule & Kita</button>
-          <button type="button" data-famtab="tiere" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Haustiere</button>
-          <button type="button" data-famtab="ortung" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Ortung</button>
-          <button type="button" data-famtab="notfall" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Notfall</button>
+        <div data-tk-attr="aria-label:family.familyArea" id="famTabs" class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs mt-3 w-full sm:w-fit overflow-x-auto" role="tablist" aria-label="Family area">
+          <button data-tk="nav.overview" type="button" data-famtab="uebersicht" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Overview</button>
+          <button data-tk="school.title" type="button" data-famtab="schule" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">School &amp; daycare</button>
+          <button data-tk="pet.pets4" type="button" data-famtab="tiere" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Pets</button>
+          <button data-tk="family.location3" type="button" data-famtab="ortung" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Location</button>
+          <button data-tk="family.emergency" type="button" data-famtab="notfall" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Emergency</button>
         </div>
       </div>
       <div id="famScroll" class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">
@@ -2853,27 +2853,27 @@
 <!-- Family: popups (emergency card, set up location sharing, places, guide) - the content comes from the script -->
 <div id="famModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="famModalClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <button data-tk-attr="aria-label:common.close" id="famModalClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
     <div id="famModalBody"></div>
   </div>
 </div>
 <!-- Family → pets: popups (the content comes from the script) -->
 <div id="ptModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="ptModalClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <button data-tk-attr="aria-label:common.close" id="ptModalClose" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
     <div id="ptModalBody"></div>
   </div>
 </div>
 <!-- Weather: 14 days & holiday weather (tap on the weather tile) -->
-<div id="wxOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="Wetter">
+<div data-tk-attr="aria-label:app.weather" id="wxOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="Weather">
   <div class="wx-sheet fade-in">
-    <button id="wxClose" type="button" class="wx-x" aria-label="Schließen">×</button>
+    <button data-tk-attr="aria-label:common.close" id="wxClose" type="button" class="wx-x" aria-label="Close">×</button>
     <div id="wxBody"></div>
   </div>
 </div>
 <div id="famModal2" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[310] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="famModal2Close" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
+    <button data-tk-attr="aria-label:common.close" id="famModal2Close" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
     <div id="famModal2Body"></div>
   </div>
 </div>
@@ -4295,13 +4295,13 @@
 <!-- Add/edit member modal -->
 <div id="memberModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
-    <h3 id="memberModalTitle" class="font-serif text-lg mb-4">Familienmitglied hinzufügen</h3>
+    <h3 data-tk="member.addFamilyMember" id="memberModalTitle" class="font-serif text-lg mb-4">Add family member</h3>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Name</label>
-    <input id="newMemberName" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="z. B. Anna" />
+    <label data-tk="common.name" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Name</label>
+    <input data-tk-attr="placeholder:member.eGAnna" id="newMemberName" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="e.g. Anna" />
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Rolle in der Familie</label>
-    <input id="newMemberRole" list="roleSuggestions" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="z. B. Mama, Papa, Oma" />
+    <label data-tk="member.roleFamily" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Role in the family</label>
+    <input data-tk-attr="placeholder:member.eGMumDad" id="newMemberRole" list="roleSuggestions" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" placeholder="e.g. Mum, Dad, Grandma" />
     <datalist id="roleSuggestions">
       <option value="Mama"></option>
       <option value="Papa"></option>
@@ -4311,38 +4311,38 @@
       <option value="Partner:in"></option>
     </datalist>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Anzeige im Kalender</label>
+    <label data-tk="member.displayCalendar" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Display in calendar</label>
     <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-4">
-      <button type="button" data-display="name" class="display-mode-btn px-3 py-1 rounded-full transition">Name</button>
-      <button type="button" data-display="role" class="display-mode-btn px-3 py-1 rounded-full transition">Rolle</button>
+      <button data-tk="common.name" type="button" data-display="name" class="display-mode-btn px-3 py-1 rounded-full transition">Name</button>
+      <button data-tk="login.role" type="button" data-display="role" class="display-mode-btn px-3 py-1 rounded-full transition">Role</button>
     </div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Bild</label>
+    <label data-tk="recipe.edit.image" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Image</label>
     <div class="flex items-center gap-3 mb-3">
       <span id="memberAvatarPreview" class="w-14 h-14 rounded-full overflow-hidden border-[3px] shrink-0"></span>
       <div class="flex flex-col gap-1.5">
         <label class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs cursor-pointer hover:border-pine hover:text-pine transition text-center">
-          Foto hochladen
+          <span data-tk="member.uploadPhoto">Upload photo</span>
           <input id="memberPhotoFile" type="file" accept="image/*" class="hidden" />
         </label>
-        <button type="button" id="memberRemoveImage" class="px-3 py-1.5 rounded-lg text-xs text-ink/40 hover:text-red-500 transition text-left">Bild/Avatar entfernen</button>
+        <button data-tk="member.removeImageAvatar" type="button" id="memberRemoveImage" class="px-3 py-1.5 rounded-lg text-xs text-ink/40 hover:text-red-500 transition text-left">Remove image/avatar</button>
       </div>
     </div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Oder Avatar wählen</label>
+    <label data-tk="member.chooseAvatar" class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Or choose avatar</label>
     <div class="mb-4">
-      <div class="text-[11px] text-ink/40 mb-1">Haustiere</div>
+      <div data-tk="pet.pets4" class="text-[11px] text-ink/40 mb-1">Pets</div>
       <div class="avatar-group flex flex-wrap gap-1.5 mb-2" data-group="pet"></div>
-      <div class="text-[11px] text-ink/40 mb-1">Männlich</div>
+      <div data-tk="member.male" class="text-[11px] text-ink/40 mb-1">Male</div>
       <div class="avatar-group flex flex-wrap gap-1.5 mb-2" data-group="male"></div>
-      <div class="text-[11px] text-ink/40 mb-1">Weiblich</div>
+      <div data-tk="member.female" class="text-[11px] text-ink/40 mb-1">Female</div>
       <div class="avatar-group flex flex-wrap gap-1.5" data-group="female"></div>
     </div>
 
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Farbe (Rand)</label>
+    <label data-tk="member.colourBorder" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Colour (border)</label>
     <div id="colorPicker" class="flex gap-2 mb-2"></div>
     <div class="flex items-center gap-2 mb-5">
-      <span class="text-xs text-ink/40">Eigene Farbe (RGB):</span>
+      <span data-tk="member.customColourRgb" class="text-xs text-ink/40">Custom colour (RGB):</span>
       <input id="customColorInput" type="color" value="#2F4B41" class="w-8 h-8 rounded-full border-2 border-transparent cursor-pointer p-0 bg-transparent" />
     </div>
 
@@ -4350,25 +4350,25 @@
     <div id="memberKidSection" class="rounded-xl border border-ink/10 p-3 mb-5">
       <label class="flex items-center gap-2 text-sm cursor-pointer select-none">
         <input id="memberKidMode" type="checkbox" class="w-4 h-4" />
-        <span>Kinderseite aktivieren ⭐</span>
+        <span data-tk="member.activateKidsPage">Activate kids' page ⭐</span>
       </label>
-      <p class="text-xs text-ink/40 mt-1">Ein Tipp auf das Kind in der Kachel „Familienmitglieder“ auf der Übersicht öffnet eine bunte Seite mit den Aufgaben, die gerade dran sind (z. B. morgens Zähne putzen, abends Schlafanzug anziehen). Jeden Tag beginnt alles von vorne.</p>
+      <p data-tk="member.tappingChildFamilyMembers" class="text-xs text-ink/40 mt-1">Tapping the child in the “Family members” tile on the overview opens a colourful page with the tasks that are due right now (e.g. brushing teeth in the morning, putting on pyjamas in the evening). Everything starts over every day.</p>
       <div id="memberKidOptions" class="hidden mt-3">
         <p id="memberKidSummary" class="text-xs text-ink/60 mb-2"></p>
-        <button type="button" id="memberKidEdit" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">Aufgaben &amp; Tageszeiten bearbeiten</button>
+        <button data-tk="member.editTasksTimesDay" type="button" id="memberKidEdit" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">Edit tasks &amp; times of day</button>
         <label class="flex items-center gap-2 text-sm cursor-pointer select-none mt-3">
           <input id="memberKidShowAllowance" type="checkbox" class="w-4 h-4" />
-          <span>Taschengeld auf der Kinderseite anzeigen 🐷</span>
+          <span data-tk="member.showPocketMoneyKids">Show pocket money on the kids' page 🐷</span>
         </label>
-        <p class="text-xs text-ink/40 mt-1">Zeigt den Betrag, die nächste Auszahlung und – falls mitgeführt – das Guthaben. Festgelegt wird das Taschengeld unter Finanzen → Taschengeld.</p>
+        <p data-tk="member.showsAmountNextPayout" class="text-xs text-ink/40 mt-1">Shows the amount, the next payout and – if tracked – the balance. Pocket money is set under Finance → Pocket money.</p>
         <label class="flex items-center gap-2 text-sm cursor-pointer select-none mt-3">
           <input id="memberKidStars" type="checkbox" class="w-4 h-4" />
-          <span>Sterne sammeln &amp; eintauschen ⭐</span>
+          <span data-tk="member.collectTradeStars">Collect &amp; trade stars ⭐</span>
         </label>
-        <p class="text-xs text-ink/40 mt-1">Jede erledigte Aufgabe bringt Sterne. Auf der Kinderseite tauscht das Kind sie gegen Belohnungen ein – Taschengeld, Medienzeit oder Wünsche. Ihr bestätigt mit einem Tipp.</p>
+        <p data-tk="member.everyFinishedTaskEarns" class="text-xs text-ink/40 mt-1">Every finished task earns stars. On the kids' page, your child trades them for rewards – pocket money, screen time or wishes. You confirm with one tap.</p>
         <div id="memberKidStarsOpts" class="hidden mt-2">
           <p id="memberKidStarsSummary" class="text-xs text-ink/60 mb-2"></p>
-          <button type="button" id="memberKidRewardsEdit" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">Belohnungen bearbeiten</button>
+          <button data-tk="member.editRewards" type="button" id="memberKidRewardsEdit" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">Edit rewards</button>
         </div>
       </div>
       <input id="memberKidConfigState" type="hidden" value="" />
@@ -4376,32 +4376,32 @@
 
     <!-- Sign-in: every family member needs their own profile -->
     <div id="memberLoginSection" class="hidden rounded-xl border border-ink/10 p-3 mb-5">
-      <p class="text-xs uppercase tracking-wide text-ink/40 mb-2">Anmeldung</p>
+      <p data-tk="errorLog.area.signIn" class="text-xs uppercase tracking-wide text-ink/40 mb-2">Login</p>
       <div id="memberLoginLinked" class="hidden text-sm">
-        Profil: <span id="memberLoginLinkedName" class="font-medium"></span>
-        <p class="text-xs text-ink/40 mt-1">Passwort und Rolle verwaltest du unter Konto.</p>
+        <span data-tk="member.profile">Profile:</span> <span id="memberLoginLinkedName" class="font-medium"></span>
+        <p data-tk="member.managePasswordRoleUnder" class="text-xs text-ink/40 mt-1">You manage password and role under Account.</p>
       </div>
-      <p id="memberLoginNoAdmin" class="hidden text-xs text-mustard">Noch kein Profil verknüpft – das kann nur ein Admin einrichten.</p>
+      <p data-tk="member.noProfileLinkedYet" id="memberLoginNoAdmin" class="hidden text-xs text-mustard">No profile linked yet – only an admin can set this up.</p>
       <div id="memberLoginSetup" class="hidden">
-        <p class="text-xs text-ink/50 mb-2">Jedes Familienmitglied braucht ein eigenes Profil zum Anmelden.</p>
+        <p data-tk="member.eachFamilyMemberNeeds" class="text-xs text-ink/50 mb-2">Each family member needs their own profile to log in.</p>
         <div class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs w-fit mb-3">
-          <button type="button" data-login-mode="neu" class="member-login-mode-btn px-3 py-1 rounded-full transition">Neues Profil</button>
-          <button type="button" data-login-mode="bestehend" class="member-login-mode-btn px-3 py-1 rounded-full transition">Vorhandenes Profil</button>
+          <button data-tk="member.newProfile" type="button" data-login-mode="neu" class="member-login-mode-btn px-3 py-1 rounded-full transition">New profile</button>
+          <button data-tk="member.existingProfile" type="button" data-login-mode="bestehend" class="member-login-mode-btn px-3 py-1 rounded-full transition">Existing profile</button>
         </div>
         <div id="memberLoginNew">
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="memberLoginUsername">Benutzername</label>
+          <label data-tk="member.username" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="memberLoginUsername">Username</label>
           <input id="memberLoginUsername" type="text" autocomplete="off" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="memberLoginPassword">Start-Passwort (mind. 8 Zeichen)</label>
+          <label data-tk="login.startPassword" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="memberLoginPassword">Start password (min. 8 characters)</label>
           <input id="memberLoginPassword" type="password" autocomplete="new-password" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-3" />
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="memberLoginRole">Kategorie</label>
+          <label data-tk="account.manage.category" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="memberLoginRole">Category</label>
           <select id="memberLoginRole" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white mb-1">
-            <option value="mitglied">Mitglied</option>
-            <option value="admin">Admin</option>
+            <option data-tk="common.member" value="mitglied">Member</option>
+            <option data-tk="common.admin" value="admin">Admin</option>
           </select>
-          <p class="text-xs text-ink/40">Beim ersten Anmelden muss ein eigenes Passwort vergeben werden.</p>
+          <p data-tk="member.personalPasswordMustSet" class="text-xs text-ink/40">A personal password must be set on first login.</p>
         </div>
         <div id="memberLoginExisting" class="hidden">
-          <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="memberLoginExistingSelect">Profil</label>
+          <label data-tk="famTile.profile" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="memberLoginExistingSelect">Profile</label>
           <select id="memberLoginExistingSelect" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white"></select>
         </div>
       </div>
@@ -4409,8 +4409,8 @@
     </div>
 
     <div class="flex justify-end gap-2">
-      <button id="cancelMember" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-      <button id="saveMember" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Hinzufügen</button>
+      <button data-tk="common.cancel" id="cancelMember" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+      <button data-tk="common.add" id="saveMember" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Add</button>
     </div>
   </div>
 </div>
@@ -4418,22 +4418,22 @@
 <!-- Kids page: edit tasks and times of day -->
 <div id="kidRoutineModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[210] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto fade-in">
-    <h3 id="kidRoutineTitle" class="font-serif text-lg mb-1">Kinderseite</h3>
-    <p class="text-xs text-ink/50 mb-4">Jede Aufgabe erscheint nur zu ihrer Tageszeit – morgens z. B. kein Schlafanzug, abends kein Frühstück mehr. „Den ganzen Tag“ erscheint immer. Um Mitternacht beginnt der Tag von vorne.</p>
+    <h3 data-tk="famTile.kidsPage" id="kidRoutineTitle" class="font-serif text-lg mb-1">Kids' page</h3>
+    <p data-tk="kid.eachTaskOnlyAppears" class="text-xs text-ink/50 mb-4">Each task only appears at its time of day – e.g. no pyjamas in the morning, no breakfast in the evening. “All day” always appears. At midnight the day starts over.</p>
 
-    <p class="text-xs uppercase tracking-wide text-ink/40 mb-2">Tageszeiten</p>
+    <p data-tk="kid.timesDay" class="text-xs uppercase tracking-wide text-ink/40 mb-2">Times of day</p>
     <div id="kidTimesGrid" class="grid grid-cols-2 gap-x-3 gap-y-2 mb-1"></div>
-    <p class="text-[11px] text-ink/40 mb-3">Ab der Schlafenszeit bis zum Morgen zeigt die Seite nur noch „Schlaf gut“.</p>
-    <label class="kid-sun-opt"><input type="checkbox" id="kidSunEvening" /><span>🌇 „Abends“ schon ab Sonnenuntergang, wenn es früher dunkel wird<small id="kidSunHint"></small></span></label>
+    <p data-tk="kid.fromBedtimeUntilMorning" class="text-[11px] text-ink/40 mb-3">From bedtime until morning the page only shows “Sleep well”.</p>
+    <label class="kid-sun-opt"><input type="checkbox" id="kidSunEvening" /><span><span data-tk="kid.eveningAlreadyFromSunset">🌇 “Evening” already from sunset when it gets dark earlier</span><small id="kidSunHint"></small></span></label>
 
     <div id="kidTaskGroups" class="flex flex-col gap-5 mb-4"></div>
 
     <p id="kidRoutineStatus" class="text-xs text-red-500 mb-2"></p>
     <div class="flex items-center justify-between gap-2">
-      <button type="button" id="kidRoutineDefaults" class="px-2 py-2 rounded-lg text-xs text-ink/50 hover:text-pine transition">Vorschläge laden</button>
+      <button data-tk="kid.loadSuggestions" type="button" id="kidRoutineDefaults" class="px-2 py-2 rounded-lg text-xs text-ink/50 hover:text-pine transition">Load suggestions</button>
       <div class="flex gap-2">
-        <button type="button" id="kidRoutineCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-        <button type="button" id="kidRoutineApply" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Übernehmen</button>
+        <button data-tk="common.cancel" type="button" id="kidRoutineCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+        <button data-tk="common.apply" type="button" id="kidRoutineApply" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Apply</button>
       </div>
     </div>
   </div>
@@ -4442,37 +4442,37 @@
 <!-- Kids page: edit rewards for stars -->
 <div id="kidRewardsModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[210] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto fade-in">
-    <h3 id="kidRewardsTitle" class="font-serif text-lg mb-1">Belohnungen</h3>
-    <p class="text-xs text-ink/50 mb-4">Legt fest, was es für wie viele Sterne gibt. Wünscht sich das Kind etwas, bekommt ihr eine Benachrichtigung und bestätigt auf der Kinderseite oder unter Finanzen → Taschengeld. Taschengeld-Belohnungen kommen danach ins Guthaben und als Ausgabe unter „Kinder“.</p>
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="kidRewardsBonus">Extra-Sterne für „Alles geschafft“</label>
+    <h3 data-tk="stars.rewards3" id="kidRewardsTitle" class="font-serif text-lg mb-1">Rewards</h3>
+    <p data-tk="kid.decideWhatCanHad" class="text-xs text-ink/50 mb-4">Decide what can be had for how many stars. When your child asks for something, you get a notification and confirm on the kids' page or under Finance → Pocket money. Pocket money rewards then go to the balance and are booked as an expense under “Kids”.</p>
+    <label data-tk="kid.bonusStarsAllDone" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="kidRewardsBonus">Bonus stars for “All done”</label>
     <select id="kidRewardsBonus" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white mb-4">
-      <option value="0">Keine</option>
+      <option data-tk="common.none" value="0">None</option>
       <option value="1">1 ⭐</option>
       <option value="2">2 ⭐</option>
       <option value="3">3 ⭐</option>
       <option value="4">4 ⭐</option>
       <option value="5">5 ⭐</option>
     </select>
-    <p class="text-xs uppercase tracking-wide text-ink/40 mb-2">Belohnungen</p>
+    <p data-tk="stars.rewards3" class="text-xs uppercase tracking-wide text-ink/40 mb-2">Rewards</p>
     <div id="kidRewardsList" class="flex flex-col gap-2 mb-2"></div>
-    <button type="button" id="kidRewardsAdd" class="text-xs text-pine font-medium px-2 py-1 rounded-lg hover:bg-ink/5 mb-3">+ Belohnung</button>
-    <p class="text-[11px] text-ink/40 mb-3">Wie viele Sterne eine Aufgabe bringt (1–3), stellst du unter „Aufgaben &amp; Tageszeiten bearbeiten“ ein.</p>
+    <button data-tk="kid.reward" type="button" id="kidRewardsAdd" class="text-xs text-pine font-medium px-2 py-1 rounded-lg hover:bg-ink/5 mb-3">+ Reward</button>
+    <p data-tk="kid.howManyStarsTask" class="text-[11px] text-ink/40 mb-3">How many stars a task earns (1–3) is set under “Edit tasks &amp; times of day”.</p>
     <p id="kidRewardsStatus" class="text-xs text-red-500 mb-2"></p>
     <div class="flex items-center justify-between gap-2">
-      <button type="button" id="kidRewardsDefaults" class="px-2 py-2 rounded-lg text-xs text-ink/50 hover:text-pine transition">Vorschläge laden</button>
+      <button data-tk="kid.loadSuggestions" type="button" id="kidRewardsDefaults" class="px-2 py-2 rounded-lg text-xs text-ink/50 hover:text-pine transition">Load suggestions</button>
       <div class="flex gap-2">
-        <button type="button" id="kidRewardsCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-        <button type="button" id="kidRewardsApply" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Übernehmen</button>
+        <button data-tk="common.cancel" type="button" id="kidRewardsCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+        <button data-tk="common.apply" type="button" id="kidRewardsApply" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Apply</button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- Kids page (full screen) -->
-<div id="kidPage" class="hidden" role="dialog" aria-label="Kinderseite">
+<div data-tk-attr="aria-label:famTile.kidsPage" id="kidPage" class="hidden" role="dialog" aria-label="Kids' page">
   <div id="kidDeco" class="kid-deco"></div>
-  <button type="button" id="kidPageClose" class="kid-topbtn left" aria-label="Kinderseite schließen">✕</button>
-  <button type="button" id="kidPageSound" class="kid-topbtn right" aria-label="Ton an/aus">🔊</button>
+  <button data-tk-attr="aria-label:kid.closeKidsPage" type="button" id="kidPageClose" class="kid-topbtn left" aria-label="Close kids' page">✕</button>
+  <button data-tk-attr="aria-label:kid.soundOff" type="button" id="kidPageSound" class="kid-topbtn right" aria-label="Sound on/off">🔊</button>
   <div id="kidContent" class="kid-inner"></div>
 </div>
 
@@ -4852,7 +4852,7 @@ let lastIcsSync = null;
    because such web apps often don't reload their content by themselves)
    ========================================================== */
 // Current version – comes from src/version.txt (filled in by src/build.js); pb_hooks/pinn-system.js and pinn-wartung.sh read it here
-const APP_VERSION = '1.115.0';
+const APP_VERSION = '1.116.0';
 
 /* ==========================================================
    Settings & account: two columns of equal height (landscape from tablet width)
@@ -4980,110 +4980,110 @@ const APP_VERSION = '1.115.0';
 <!-- App parts under pb_public/js/ (classic scripts without a build step, order matters).
      ausblick.js must come last – it starts the app (bootApp). New file: add its line here and its name
      in pinn-setup.sh – src/build.js fills in the list of the start check (PINN_APP_PARTS) by itself. -->
-<script src="js/grundlagen.js?v=1.115.0"></script>
-<script src="js/popups.js?v=1.115.0"></script>
-<script src="js/verbindung.js?v=1.115.0"></script>
-<script src="js/benutzer.js?v=1.115.0"></script>
-<script src="js/mitteilungen.js?v=1.115.0"></script>
-<script src="js/serverzugriff.js?v=1.115.0"></script>
-<script src="js/tastatur.js?v=1.115.0"></script>
-<script src="js/anmeldemaske.js?v=1.115.0"></script>
-<script src="js/dashboard.js?v=1.115.0"></script>
-<script src="js/dashboardhintergrund.js?v=1.115.0"></script>
-<script src="js/profilauswahl.js?v=1.115.0"></script>
-<script src="js/pineingabe.js?v=1.115.0"></script>
-<script src="js/dashboardsitzung.js?v=1.115.0"></script>
-<script src="js/dashboardkonto.js?v=1.115.0"></script>
-<script src="js/familienverwalten.js?v=1.115.0"></script>
-<script src="js/einrichten.js?v=1.115.0"></script>
-<script src="js/exportieren.js?v=1.115.0"></script>
-<script src="js/hauptadminseite.js?v=1.115.0"></script>
-<script src="js/anmeldung.js?v=1.115.0"></script>
-<script src="js/konto.js?v=1.115.0"></script>
-<script src="js/profilverwaltung.js?v=1.115.0"></script>
-<script src="js/zustand.js?v=1.115.0"></script>
-<script src="js/bedienzustand.js?v=1.115.0"></script>
-<script src="js/rezeptbilder.js?v=1.115.0"></script>
-<script src="js/zusammenfuehren.js?v=1.115.0"></script>
-<script src="js/speichern.js?v=1.115.0"></script>
-<script src="js/design.js?v=1.115.0"></script>
-<script src="js/sprache.js?v=1.115.0"></script>
-<script src="js/uebersicht.js?v=1.115.0"></script>
-<script src="js/familienkachel.js?v=1.115.0"></script>
-<script src="js/wobistdu.js?v=1.115.0"></script>
-<script src="js/geburtstagsfeier.js?v=1.115.0"></script>
-<script src="js/wetterkachel.js?v=1.115.0"></script>
-<script src="js/geburtstage.js?v=1.115.0"></script>
-<script src="js/uebersichteinstellungen.js?v=1.115.0"></script>
-<script src="js/familiensync.js?v=1.115.0"></script>
-<script src="js/bereiche.js?v=1.115.0"></script>
-<script src="js/kalenderquellen.js?v=1.115.0"></script>
-<script src="js/icsparser.js?v=1.115.0"></script>
-<script src="js/zeitleiste.js?v=1.115.0"></script>
-<script src="js/termindetails.js?v=1.115.0"></script>
-<script src="js/kalenderdatei.js?v=1.115.0"></script>
-<script src="js/wetter.js?v=1.115.0"></script>
-<script src="js/wohnort.js?v=1.115.0"></script>
-<script src="js/feiertage.js?v=1.115.0"></script>
-<script src="js/muellkalender.js?v=1.115.0"></script>
-<script src="js/mitglieder.js?v=1.115.0"></script>
-<script src="js/profilbild.js?v=1.115.0"></script>
-<script src="js/mitglied.js?v=1.115.0"></script>
-<script src="js/kinderseite.js?v=1.115.0"></script>
-<script src="js/kinderroutine.js?v=1.115.0"></script>
-<script src="js/sterne.js?v=1.115.0"></script>
-<script src="js/kalenderansicht.js?v=1.115.0"></script>
-<script src="js/essenplanen.js?v=1.115.0"></script>
-<script src="js/rezeptparser.js?v=1.115.0"></script>
-<script src="js/rezeptdialog.js?v=1.115.0"></script>
-<script src="js/rezeptbild.js?v=1.115.0"></script>
-<script src="js/rezeptmengen.js?v=1.115.0"></script>
-<script src="js/einkauf.js?v=1.115.0"></script>
-<script src="js/einkaufslisten.js?v=1.115.0"></script>
-<script src="js/einkaufseingabe.js?v=1.115.0"></script>
-<script src="js/rezepte.js?v=1.115.0"></script>
-<script src="js/offline.js?v=1.115.0"></script>
-<script src="js/aufgabenextras.js?v=1.115.0"></script>
-<script src="js/appbadge.js?v=1.115.0"></script>
-<script src="js/reisen.js?v=1.115.0"></script>
-<script src="js/aufgabendaten.js?v=1.115.0"></script>
-<script src="js/haushalt.js?v=1.115.0"></script>
-<script src="js/reihum.js?v=1.115.0"></script>
-<script src="js/aufgaben.js?v=1.115.0"></script>
-<script src="js/smarthome.js?v=1.115.0"></script>
-<script src="js/sprachsteuerung.js?v=1.115.0"></script>
-<script src="js/termine.js?v=1.115.0"></script>
-<script src="js/ansichten.js?v=1.115.0"></script>
-<script src="js/versionspruefung.js?v=1.115.0"></script>
-<script src="js/sicherungen.js?v=1.115.0"></script>
-<script src="js/geraete.js?v=1.115.0"></script>
-<script src="js/fehlerprotokoll.js?v=1.115.0"></script>
-<script src="js/versionslog.js?v=1.115.0"></script>
-<script src="js/einstellungen.js?v=1.115.0"></script>
-<script src="js/kalenderkonto.js?v=1.115.0"></script>
-<script src="js/finanzen.js?v=1.115.0"></script>
-<script src="js/kassen.js?v=1.115.0"></script>
-<script src="js/vorrat.js?v=1.115.0"></script>
-<script src="js/vorrat2.js?v=1.115.0"></script>
-<script src="js/sparen.js?v=1.115.0"></script>
-<script src="js/vertraege.js?v=1.115.0"></script>
-<script src="js/fahrzeuge.js?v=1.115.0"></script>
-<script src="js/zuhause.js?v=1.115.0"></script>
-<script src="js/dokumente.js?v=1.115.0"></script>
-<script src="js/pdflesen.js?v=1.115.0"></script>
-<script src="js/appstart.js?v=1.115.0"></script>
-<script src="js/pinnwand.js?v=1.115.0"></script>
-<script src="js/listen.js?v=1.115.0"></script>
-<script src="js/familie.js?v=1.115.0"></script>
-<script src="js/hinweise.js?v=1.115.0"></script>
-<script src="js/ausblick.js?v=1.115.0"></script>
+<script src="js/grundlagen.js?v=1.116.0"></script>
+<script src="js/popups.js?v=1.116.0"></script>
+<script src="js/verbindung.js?v=1.116.0"></script>
+<script src="js/benutzer.js?v=1.116.0"></script>
+<script src="js/mitteilungen.js?v=1.116.0"></script>
+<script src="js/serverzugriff.js?v=1.116.0"></script>
+<script src="js/tastatur.js?v=1.116.0"></script>
+<script src="js/anmeldemaske.js?v=1.116.0"></script>
+<script src="js/dashboard.js?v=1.116.0"></script>
+<script src="js/dashboardhintergrund.js?v=1.116.0"></script>
+<script src="js/profilauswahl.js?v=1.116.0"></script>
+<script src="js/pineingabe.js?v=1.116.0"></script>
+<script src="js/dashboardsitzung.js?v=1.116.0"></script>
+<script src="js/dashboardkonto.js?v=1.116.0"></script>
+<script src="js/familienverwalten.js?v=1.116.0"></script>
+<script src="js/einrichten.js?v=1.116.0"></script>
+<script src="js/exportieren.js?v=1.116.0"></script>
+<script src="js/hauptadminseite.js?v=1.116.0"></script>
+<script src="js/anmeldung.js?v=1.116.0"></script>
+<script src="js/konto.js?v=1.116.0"></script>
+<script src="js/profilverwaltung.js?v=1.116.0"></script>
+<script src="js/zustand.js?v=1.116.0"></script>
+<script src="js/bedienzustand.js?v=1.116.0"></script>
+<script src="js/rezeptbilder.js?v=1.116.0"></script>
+<script src="js/zusammenfuehren.js?v=1.116.0"></script>
+<script src="js/speichern.js?v=1.116.0"></script>
+<script src="js/design.js?v=1.116.0"></script>
+<script src="js/sprache.js?v=1.116.0"></script>
+<script src="js/uebersicht.js?v=1.116.0"></script>
+<script src="js/familienkachel.js?v=1.116.0"></script>
+<script src="js/wobistdu.js?v=1.116.0"></script>
+<script src="js/geburtstagsfeier.js?v=1.116.0"></script>
+<script src="js/wetterkachel.js?v=1.116.0"></script>
+<script src="js/geburtstage.js?v=1.116.0"></script>
+<script src="js/uebersichteinstellungen.js?v=1.116.0"></script>
+<script src="js/familiensync.js?v=1.116.0"></script>
+<script src="js/bereiche.js?v=1.116.0"></script>
+<script src="js/kalenderquellen.js?v=1.116.0"></script>
+<script src="js/icsparser.js?v=1.116.0"></script>
+<script src="js/zeitleiste.js?v=1.116.0"></script>
+<script src="js/termindetails.js?v=1.116.0"></script>
+<script src="js/kalenderdatei.js?v=1.116.0"></script>
+<script src="js/wetter.js?v=1.116.0"></script>
+<script src="js/wohnort.js?v=1.116.0"></script>
+<script src="js/feiertage.js?v=1.116.0"></script>
+<script src="js/muellkalender.js?v=1.116.0"></script>
+<script src="js/mitglieder.js?v=1.116.0"></script>
+<script src="js/profilbild.js?v=1.116.0"></script>
+<script src="js/mitglied.js?v=1.116.0"></script>
+<script src="js/kinderseite.js?v=1.116.0"></script>
+<script src="js/kinderroutine.js?v=1.116.0"></script>
+<script src="js/sterne.js?v=1.116.0"></script>
+<script src="js/kalenderansicht.js?v=1.116.0"></script>
+<script src="js/essenplanen.js?v=1.116.0"></script>
+<script src="js/rezeptparser.js?v=1.116.0"></script>
+<script src="js/rezeptdialog.js?v=1.116.0"></script>
+<script src="js/rezeptbild.js?v=1.116.0"></script>
+<script src="js/rezeptmengen.js?v=1.116.0"></script>
+<script src="js/einkauf.js?v=1.116.0"></script>
+<script src="js/einkaufslisten.js?v=1.116.0"></script>
+<script src="js/einkaufseingabe.js?v=1.116.0"></script>
+<script src="js/rezepte.js?v=1.116.0"></script>
+<script src="js/offline.js?v=1.116.0"></script>
+<script src="js/aufgabenextras.js?v=1.116.0"></script>
+<script src="js/appbadge.js?v=1.116.0"></script>
+<script src="js/reisen.js?v=1.116.0"></script>
+<script src="js/aufgabendaten.js?v=1.116.0"></script>
+<script src="js/haushalt.js?v=1.116.0"></script>
+<script src="js/reihum.js?v=1.116.0"></script>
+<script src="js/aufgaben.js?v=1.116.0"></script>
+<script src="js/smarthome.js?v=1.116.0"></script>
+<script src="js/sprachsteuerung.js?v=1.116.0"></script>
+<script src="js/termine.js?v=1.116.0"></script>
+<script src="js/ansichten.js?v=1.116.0"></script>
+<script src="js/versionspruefung.js?v=1.116.0"></script>
+<script src="js/sicherungen.js?v=1.116.0"></script>
+<script src="js/geraete.js?v=1.116.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.116.0"></script>
+<script src="js/versionslog.js?v=1.116.0"></script>
+<script src="js/einstellungen.js?v=1.116.0"></script>
+<script src="js/kalenderkonto.js?v=1.116.0"></script>
+<script src="js/finanzen.js?v=1.116.0"></script>
+<script src="js/kassen.js?v=1.116.0"></script>
+<script src="js/vorrat.js?v=1.116.0"></script>
+<script src="js/vorrat2.js?v=1.116.0"></script>
+<script src="js/sparen.js?v=1.116.0"></script>
+<script src="js/vertraege.js?v=1.116.0"></script>
+<script src="js/fahrzeuge.js?v=1.116.0"></script>
+<script src="js/zuhause.js?v=1.116.0"></script>
+<script src="js/dokumente.js?v=1.116.0"></script>
+<script src="js/pdflesen.js?v=1.116.0"></script>
+<script src="js/appstart.js?v=1.116.0"></script>
+<script src="js/pinnwand.js?v=1.116.0"></script>
+<script src="js/listen.js?v=1.116.0"></script>
+<script src="js/familie.js?v=1.116.0"></script>
+<script src="js/hinweise.js?v=1.116.0"></script>
+<script src="js/ausblick.js?v=1.116.0"></script>
 
 <!-- ==========================================================
      Changelog as a terminal (Settings → System → Versions-Log)
      Classes "fixed inset-0": the global keyboard logic fits the overlay to the visible
      area automatically, so the input line is never hidden by the keyboard.
      ========================================================== -->
-<link rel="stylesheet" href="css/terminal.css?v=1.115.0">
+<link rel="stylesheet" href="css/terminal.css?v=1.116.0">
 
 <div id="changelogTerminal" class="hidden fixed inset-0" data-no-term role="dialog" aria-modal="true" aria-label="Versions-Log">
   <div class="term-window" id="changelogTermWindow">
@@ -5111,6 +5111,6 @@ const APP_VERSION = '1.115.0';
     </div>
   </div>
 </div>
-<link rel="stylesheet" href="css/glocke.css?v=1.115.0">
+<link rel="stylesheet" href="css/glocke.css?v=1.116.0">
 </body>
 </html>

@@ -91,11 +91,11 @@ function famDeviceName(g) { const m = g ? memberById(g.memberId) : null; return 
 function famAgo(ms) {
   if (!ms) return '';
   const d = Math.max(0, famNow() - ms);
-  if (d < 60 * 1000) return 'gerade eben';
-  if (d < 60 * 60 * 1000) return 'vor ' + Math.round(d / 60000) + ' Min.';
-  if (d < 24 * 60 * 60 * 1000) return 'vor ' + Math.round(d / 3600000) + ' Std.';
+  if (d < 60 * 1000) return tk('devices.justNow');
+  if (d < 60 * 60 * 1000) return tk('devices.minutesAgo', { n: Math.round(d / 60000) });
+  if (d < 24 * 60 * 60 * 1000) return tk('family.hoursAgo', { n: Math.round(d / 3600000) });
   const dt = new Date(ms);
-  return dt.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }) + ', ' + dt.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  return dt.toLocaleDateString(sysLocale(), { day: 'numeric', month: 'short' }) + ', ' + dt.toLocaleTimeString(sysLocale(), { hour: '2-digit', minute: '2-digit' });
 }
 function famAge(birth) {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(birth || ''));
@@ -118,7 +118,7 @@ function famAvatarInner(m) {
   return `<span class="fam-ava-in ini" style="background:${famAttr(famColor(m))}">${escapeHtml(initial)}</span>`;
 }
 function famCopy(text) {
-  const done = () => finShowToast('Kopiert');
+  const done = () => finShowToast(tk('family.copied'));
   try {
     if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).then(done, () => famCopyFallback(text, done)); return; }
   } catch (e) { /* continue */ }
@@ -128,7 +128,7 @@ function famCopyFallback(text, done) {
   const ta = document.createElement('textarea');
   ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
   document.body.appendChild(ta); ta.select();
-  try { document.execCommand('copy'); done(); } catch (e) { finShowToast('Kopieren nicht möglich', true); }
+  try { document.execCommand('copy'); done(); } catch (e) { finShowToast(tk('family.copyingNotPossible'), true); }
   ta.remove();
 }
 function famOsmandUrl() { return location.origin + '/api/pinn/ortung/osmand'; }
@@ -150,10 +150,10 @@ async function famLoadStatus() {
     const res = await apiFetch('/api/pinn/ortung/status', { cache: 'no-store' });
     const body = await res.json().catch(() => ({}));
     if (res.status === 404) {
-      famStatusErr = 'Die Ortung ist auf dem Server noch nicht eingespielt (pb_hooks/ortung.pb.js und pinn-ortung.js).';
+      famStatusErr = tk('family.locationNotInstalledServer');
       if (!famStatus) famStatus = { geraete: [], orte: [], unterwegs: {}, verbunden: false };
     } else if (!res.ok) {
-      famStatusErr = body.error || 'Standorte gerade nicht abrufbar.';
+      famStatusErr = body.error || tk('family.locationsNotRetrievableRight');
     } else {
       famStatus = body;
       famStatusErr = '';
@@ -163,7 +163,7 @@ async function famLoadStatus() {
       try { localStorage.setItem(LS_FAM_STATUS, JSON.stringify({ familie: (currentUser() && currentUser().familie) || '', data: body })); } catch (e) { /* ignore */ }
     }
   } catch (e) {
-    famStatusErr = 'offline';
+    famStatusErr = tk('app.offline');
     if (!famStatus) {
       try {
         const c = JSON.parse(localStorage.getItem(LS_FAM_STATUS) || 'null');
@@ -218,10 +218,10 @@ function famCreateMap(host, opts) {
   el.setAttribute('data-allow-doubletap', '');
   el.innerHTML = `<div class="fm-pane"><div class="fm-tiles"></div><svg class="fm-svg" xmlns="http://www.w3.org/2000/svg"></svg><div class="fm-marks"></div></div>
     <div class="fm-ctrl">
-      <button type="button" data-fm="in" aria-label="Vergrößern">+</button>
-      <button type="button" data-fm="out" aria-label="Verkleinern">−</button>
-      ${opts.fitBtn ? '<button type="button" data-fm="fit" aria-label="Alle zeigen" title="Alle zeigen">⤢</button>' : ''}
-      ${opts.centerBtn ? '<button type="button" data-fm="me" class="fm-me hidden" aria-label="Zur verfolgten Person" title="Zur verfolgten Person">◎</button>' : ''}
+      <button type="button" data-fm="in" aria-label="${escapeHtml(tk('family.enlarge'))}">+</button>
+      <button type="button" data-fm="out" aria-label="${escapeHtml(tk('family.zoomOut'))}">−</button>
+      ${opts.fitBtn ? ('<button type="button" data-fm="fit" aria-label="' + escapeHtml(tk('family.showAll')) + '" title="' + escapeHtml(tk('family.showAll')) + '">⤢</button>') : ''}
+      ${opts.centerBtn ? '<button type="button" data-fm="me" class="fm-me hidden" aria-label="' + escapeHtml(tk('family.toFollowed')) + '" title="' + escapeHtml(tk('family.toFollowed')) + '">◎</button>' : ''}
     </div>
     <div class="fm-attr">© OpenStreetMap</div>`;
   host.appendChild(el);
@@ -497,16 +497,16 @@ function famPersonHtml(m) {
   const live = famIsLive(g);
   const pos = g && g.teilen ? g.position : null;
   let sub = '';
-  if (g && famUnterwegs(g)) sub = '🚶 unterwegs nach Hause';
-  else if (g && !g.teilen) sub = 'Standort aus';
+  if (g && famUnterwegs(g)) sub = tk('family.wayHome');
+  else if (g && !g.teilen) sub = tk('family.locationOff');
   else if (pos) {
     const pl = famPlace(pos.ort);
     sub = (pl ? pl.emoji + ' ' + pl.name : (live ? 'unterwegs' : 'zuletzt')) + ' · ' + famAgo(pos.zeit);
-  } else if (famPass(m.id)) sub = '🩺 Notfallpass';
+  } else if (famPass(m.id)) sub = tk('family.emergencyCard');
   const sosA = sosActiveFor(m.id);
-  if (sosA) sub = '🆘 SOS aktiv';
+  if (sosA) sub = tk('family.sosActive');
   return `<button type="button" class="fam-person${sosA ? ' sos' : ''}" data-${sosA ? 'sosopen' : 'famopen'}="${famAttr(sosA ? sosA.id : m.id)}" style="--fam:${famAttr(famColor(m))}">
-    <span class="fam-ava">${famAvatarInner(m)}${live ? '<span class="fam-ping" title="Live-Standort"></span>' : ''}</span>
+    <span class="fam-ava">${famAvatarInner(m)}${live ? ('<span class="fam-ping" title="' + escapeHtml(tk('family.liveLocation')) + '"></span>') : ''}</span>
     <span class="fam-name">${escapeHtml(memberLabel(m))}</span>
     <span class="fam-sub">${escapeHtml(sub)}</span>
   </button>`;
@@ -606,12 +606,12 @@ function famRenderChips() {
     const on = !famHidden.has(g.id);
     return `<button type="button" class="fz-filter-chip${on ? ' active' : ''}" data-famchip="${famAttr(g.id)}">${famIsLive(g) ? '<span class="fam-dot"></span>' : ''}${escapeHtml((m && m.avatar) ? m.avatar + ' ' : '')}${escapeHtml(famDeviceName(g))}</button>`;
   }).join('');
-  const follow = `<select id="famFollowSel" class="fam-sel" aria-label="Person verfolgen">
-      <option value="">👁 Verfolgen …</option>
+  const follow = `<select id="famFollowSel" class="fam-sel" aria-label="${escapeHtml(tk('family.followPerson'))}">
+      <option value="">${tk('family.follow')}</option>
       ${devs.map(g => `<option value="${famAttr(g.id)}"${famFollow === g.id ? ' selected' : ''}>👁 ${escapeHtml(famDeviceName(g))}</option>`).join('')}
     </select>`;
-  const trail = famFollow ? `<select id="famTrailSel" class="fam-sel" aria-label="Spur anzeigen">
-      ${[[0, 'Spur aus'], [1, 'Spur 1 Std.'], [3, 'Spur 3 Std.'], [8, 'Spur 8 Std.'], [24, 'Spur 24 Std.']].map(([v, l]) => `<option value="${v}"${famTrailHours === v ? ' selected' : ''}>〰 ${l}</option>`).join('')}
+  const trail = famFollow ? `<select id="famTrailSel" class="fam-sel" aria-label="${escapeHtml(tk('family.showTrail'))}">
+      ${[[0, tk('family.trailOff')], [1, tk('family.trailHours', { n: 1 })], [3, tk('family.trailHours', { n: 3 })], [8, tk('family.trailHours', { n: 8 })], [24, tk('family.trailHours', { n: 24 })]].map(([v, l]) => `<option value="${v}"${famTrailHours === v ? ' selected' : ''}>〰 ${l}</option>`).join('')}
     </select>` : '';
   wrap.innerHTML = follow + trail + chips;
 }
@@ -626,7 +626,7 @@ function famRenderInfo() {
   const live = famIsLive(g);
   const addr = famAddress[g.id] && Math.abs(famAddress[g.id].lat - p.lat) < 0.0002 && Math.abs(famAddress[g.id].lon - p.lon) < 0.0002 ? famAddress[g.id].name : '';
   const facts = [
-    live ? '<span class="text-red-600 font-medium">● live</span>' : '',
+    live ? ('<span class="text-red-600 font-medium">' + tk('family.live') + '</span>') : '',
     famAgo(p.zeit),
     p.akku != null ? (p.laedt ? '🔌 ' : '🔋 ') + p.akku + ' %' : '',
     p.tempo ? '🏃 ' + p.tempo + ' km/h' : '',
@@ -638,16 +638,16 @@ function famRenderInfo() {
   box.innerHTML = `<div class="fam-info">
     <div class="flex items-start gap-3">
       <div class="min-w-0 flex-1">
-        <div class="font-medium text-sm">${escapeHtml(famDeviceName(g))}${famUnterwegs(g) ? ' · 🚶 unterwegs nach Hause' : ''}</div>
+        <div class="font-medium text-sm">${escapeHtml(famDeviceName(g))}${famUnterwegs(g) ? (' ' + tk('family.wayHome2')) : ''}</div>
         <div class="text-xs text-ink/60 mt-0.5">${pl ? escapeHtml(pl.emoji + ' ' + pl.name) + ' · ' : ''}${facts}</div>
         ${addr ? `<div class="text-xs text-ink/60 mt-1">📮 ${escapeHtml(addr)}</div>` : ''}
       </div>
     </div>
     <div class="flex flex-wrap gap-2 mt-2">
-      <button type="button" class="fz-mini-btn${famFollow === g.id ? ' primary' : ''}" data-famact="follow" data-id="${famAttr(g.id)}">👁 ${famFollow === g.id ? 'Verfolgen beenden' : 'Verfolgen'}</button>
-      ${addr ? '' : `<button type="button" class="fz-mini-btn" data-famact="address" data-id="${famAttr(g.id)}">📮 Adresse</button>`}
-      <a class="fz-mini-btn" href="${famAttr(nav)}" target="_blank" rel="noopener">🧭 Navigation</a>
-      ${memberById(g.memberId) ? `<button type="button" class="fz-mini-btn" data-famopen="${famAttr(g.memberId)}">👤 Profil</button><button type="button" class="fz-mini-btn" data-fampass="${famAttr(g.memberId)}">🩺 Notfallpass</button>` : ''}
+      <button type="button" class="fz-mini-btn${famFollow === g.id ? ' primary' : ''}" data-famact="follow" data-id="${famAttr(g.id)}">👁 ${famFollow === g.id ? tk('family.stopFollowing') : tk('family.follow2')}</button>
+      ${addr ? '' : `<button type="button" class="fz-mini-btn" data-famact="address" data-id="${famAttr(g.id)}">${tk('family.address')}</button>`}
+      <a class="fz-mini-btn" href="${famAttr(nav)}" target="_blank" rel="noopener">${tk('family.navigation')}</a>
+      ${memberById(g.memberId) ? `<button type="button" class="fz-mini-btn" data-famopen="${famAttr(g.memberId)}">${tk('family.profile')}</button><button type="button" class="fz-mini-btn" data-fampass="${famAttr(g.memberId)}">${tk('family.emergencyCard')}</button>` : ''}
     </div>
   </div>`;
 }
@@ -655,19 +655,19 @@ function famRenderInfo() {
 function famRenderNote() {
   const box = document.getElementById('famNote');
   const stamp = document.getElementById('famStamp');
-  if (stamp) stamp.textContent = famStatusLoading && !famStatus ? 'lädt …' : (famStatusErr === 'offline' ? 'offline' : (famStatus ? 'aktualisiert ' + new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : ''));
+  if (stamp) stamp.textContent = famStatusLoading && !famStatus ? tk('family.loading') : (famStatusErr === 'offline' ? tk('app.offline') : (famStatus ? (tk('family.updated') + ' ') + new Date().toLocaleTimeString(sysLocale(), { hour: '2-digit', minute: '2-digit' }) : ''));
   if (!box) return;
   const notes = [];
   if (famStatusErr && famStatusErr !== 'offline') notes.push(['urgent', '⚠️', escapeHtml(famStatusErr)]);
-  else if (famStatusErr === 'offline') notes.push(['warn', '📴', 'Keine Verbindung zum Server – angezeigt wird der letzte bekannte Stand.']);
+  else if (famStatusErr === 'offline') notes.push(['warn', '📴', tk('family.noConnectionServerShowing')]);
   if (famStatus && famStatus.verbunden === false && famStatus.fehler && !famStatusErr) notes.push(['urgent', '⚠️', escapeHtml(famStatus.fehler)]);
   else if (famStatus && famStatus.fehler && !famStatusErr && isCurrentUserAdmin()) notes.push(['warn', '🛰️', escapeHtml(famStatus.fehler)]);
   if (famStatus && !famDevices().some(g => g.teilen && g.position)) {
-    notes.push(['', '⏳', 'Noch keine Standorte. Tippe oben auf <b>📍 Standort teilen</b> – sobald jemand teilt, erscheint er hier.' +
-      (isCurrentUserAdmin() ? ' GPS-Tracker und die App für den Hintergrund richtest du unter <b>⚙︎ Ortung</b> ein.' : '')]);
+    notes.push(['', '⏳', tk('loc.noLocationsTapShare', { btn: '<b>' + tk('family.shareLocation') + '</b>' }) +
+      (isCurrentUserAdmin() ? ' ' + tk('loc.setupTrackersUnder', { btn: '<b>' + tk('family.location') + '</b>' }) : '')]);
   }
   if (famStatus && famDevices().length && !famPlaces().length && famCanEdit()) {
-    notes.push(['', '🏠', 'Tipp: Lege unter <b>📍 Orte</b> euer Zuhause an – dann gibt es Meldungen beim Ankommen und „Ich bin unterwegs“ funktioniert.']);
+    notes.push(['', '🏠', (tk('family.tipUnder') + ' <b>' + tk('family.places') + '</b> ' + tk('family.homeThenNotificationsArrival'))]);
   }
   box.innerHTML = notes.length ? `<div class="flex flex-col gap-2 mt-3">${notes.map(([cls, ic, t]) => `<div class="fz-note-box ${cls}"><span>${ic}</span><span class="text-xs leading-relaxed">${t}</span></div>`).join('')}</div>` : '';
 }
@@ -675,13 +675,13 @@ function famRenderNote() {
 // "until 6:30 pm" / "until you are home" / "until you stop it" – duration of a share
 function famShareUntil(g, du) {
   if (!g || !g.teilen) return '';
-  if (g.endeZuhause) return du ? 'bis du zu Hause bist' : 'bis zur Ankunft zu Hause';
+  if (g.endeZuhause) return du ? tk('loc.untilYouAreHome') : tk('loc.untilArrivalHome');
   if (g.bis) {
     const d = new Date(g.bis);
     const heute = new Date().toDateString() === d.toDateString();
-    return 'bis ' + (heute ? '' : d.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'numeric' }) + ' ') + d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + ' Uhr';
+    return tk('loc.untilTime', { time: (heute ? '' : d.toLocaleDateString(sysLocale(), { weekday: 'short', day: 'numeric', month: 'numeric' }) + ' ') + tk('cal.timeAt', { time: d.toLocaleTimeString(sysLocale(), { hour: '2-digit', minute: '2-digit' }) }) });
   }
-  return du ? 'bis du es beendest' : '';
+  return du ? tk('loc.untilYouStop') : '';
 }
 function famMyPhone() {
   const mid = famMyMemberId();
@@ -698,36 +698,36 @@ function famRenderMine() {
   const einmal = !!(g && g.nurEinmal);
   const p = g ? g.position : null;
   const appFresh = !!(p && p.quelle === 'app' && famNow() - p.zeit < 30 * 60 * 1000);
-  const quelle = p ? (p.quelle === 'app' ? ' · aus „Traccar Client“' : (p.quelle === 'pinn' || p.quelle === 'einmal') ? ' · aus pinn.' : '') : '';
+  const quelle = p ? (p.quelle === 'app' ? ' · ' + tk('loc.fromTraccar') : (p.quelle === 'pinn' || p.quelle === 'einmal') ? ' · ' + tk('loc.fromPinn') : '') : '';
   const bis = famShareUntil(g, true);
   let head;
   if (dauerhaft) {
     head = `<div class="flex items-start gap-2 mb-2"><span class="fam-dot" style="margin-top:6px"></span><div class="min-w-0">
-        <div class="text-sm font-medium">Du sendest dauerhaft${bis ? ' · ' + escapeHtml(bis) : ''}</div>
-        <div class="text-[11px] text-ink/50 mt-0.5">${p ? 'Zuletzt ' + escapeHtml(famAgo(p.zeit)) + escapeHtml(quelle) : 'Noch kein Standort angekommen.'} · im Stehen wird nichts gesendet</div>
+        <div class="text-sm font-medium">${tk('loc.youSendPermanently')}${bis ? ' · ' + escapeHtml(bis) : ''}</div>
+        <div class="text-[11px] text-ink/50 mt-0.5">${p ? (tk('family.lastTime') + ' ') + escapeHtml(famAgo(p.zeit)) + escapeHtml(quelle) : tk('loc.noLocationArrivedYet')} · ${tk('loc.nothingSentStanding')}</div>
       </div></div>`;
   } else if (einmal) {
-    head = `<p class="text-xs text-ink/60 mb-2">📍 Einmalig gesendet ${escapeHtml(famAgo(p.zeit))} – die Familie sieht diesen Standort ${escapeHtml(bis)}.</p>`;
+    head = `<p class="text-xs text-ink/60 mb-2">${tk('loc.sentOnceVisible', { ago: escapeHtml(famAgo(p.zeit)), until: escapeHtml(bis) })}</p>`;
   } else {
-    head = `<p class="text-xs text-ink/55 mb-2">Deine Familie sieht dich gerade nicht auf der Karte.${g && g.zuletzt && g.zuletzt.quelle === 'app' && famNow() - g.zuletzt.zeit < 24 * 3600 * 1000 ? ' „Traccar Client“ ist eingerichtet – angezeigt wird erst, wenn du dauerhaft sendest.' : ''}</p>`;
+    head = `<p class="text-xs text-ink/55 mb-2">${tk('loc.familyDoesntSeeYou')}${g && g.zuletzt && g.zuletzt.quelle === 'app' && famNow() - g.zuletzt.zeit < 24 * 3600 * 1000 ? ' ' + tk('loc.traccarSetUpShownWhen') : ''}</p>`;
   }
   const bg = dauerhaft && !appFresh
-    ? `<div class="fz-note-box mb-2"><span>💤</span><span class="text-xs">Solange pinn. offen ist, schickt es bei Bewegung neue Standorte mit. Ist pinn. geschlossen, kommt dein Standort nur mit der einmal eingerichteten App „Traccar Client“.</span></div>`
+    ? `<div class="fz-note-box mb-2"><span>💤</span><span class="text-xs">${tk('loc.whilePinnOpen')}</span></div>`
     : '';
   box.innerHTML = `<div class="fam-card">
-    <div class="fz-h">📱 Mein Standort</div>
+    <div class="fz-h">${tk('family.myLocation')}</div>
     ${head}
     ${bg}
-    <label class="fz-check"><input type="checkbox" data-famact="dauerhaft"${dauerhaft ? ' checked' : ''} /><span>Dauerhaft senden<span class="block text-[11px] text-ink/45">Die Familie sieht dich live auf der Karte – mit Dauer, endet von selbst.</span></span></label>
-    <label class="fz-check"><input type="checkbox" id="famMinePush"${famSharePushPref() ? ' checked' : ''} /><span>🔔 Familie per Push benachrichtigen<span class="block text-[11px] text-ink/45">Beim Einschalten und beim einmaligen Senden. SOS benachrichtigt immer.</span></span></label>
+    <label class="fz-check"><input type="checkbox" data-famact="dauerhaft"${dauerhaft ? ' checked' : ''} /><span>${tk('loc.sendPermanently')}<span class="block text-[11px] text-ink/45">${tk('loc.familySeesLiveDuration')}</span></span></label>
+    <label class="fz-check"><input type="checkbox" id="famMinePush"${famSharePushPref() ? ' checked' : ''} /><span>🔔 ${tk('loc.notifyFamilyPush')}<span class="block text-[11px] text-ink/45">${tk('loc.whenSwitchingOnSos')}</span></span></label>
     <div class="flex flex-wrap gap-2">
-      <button type="button" class="fz-mini-btn primary" data-famact="einmal">📍 Einmalig senden</button>
-      ${dauerhaft ? '<button type="button" class="fz-mini-btn" data-famact="share">⏱ Dauer ändern</button>' : ''}
-      <button type="button" class="fz-mini-btn${unterwegs ? ' primary' : ''}" data-famact="unterwegs" data-an="${unterwegs ? '0' : '1'}">${unterwegs ? '🏁 Heimweg beenden' : '🚶 Ich bin unterwegs nach Hause'}</button>
-      ${g ? `<button type="button" class="fz-mini-btn" data-famact="guide" data-id="${famAttr(g.id)}">⚙︎ App für den Hintergrund</button>` : ''}
+      <button type="button" class="fz-mini-btn primary" data-famact="einmal">📍 ${tk('loc.sendOnce')}</button>
+      ${dauerhaft ? '<button type="button" class="fz-mini-btn" data-famact="share">⏱ ' + tk('loc.changeDuration') + '</button>' : ''}
+      <button type="button" class="fz-mini-btn${unterwegs ? ' primary' : ''}" data-famact="unterwegs" data-an="${unterwegs ? '0' : '1'}">${unterwegs ? tk('family.endWayHome') : tk('family.imMyWayHome')}</button>
+      ${g ? `<button type="button" class="fz-mini-btn" data-famact="guide" data-id="${famAttr(g.id)}">⚙︎ ${tk('loc.backgroundApp')}</button>` : ''}
     </div>
     <button type="button" id="famSosBtn" class="fam-sos-btn${famSosUntil ? ' counting' : ''}" data-famact="sos">${famSosLabel()}</button>
-    ${unterwegs ? `<p class="text-[11px] text-ink/45 mt-2">Die Familie wurde benachrichtigt und sieht deinen Live-Standort. Beim Ankommen zu Hause endet der Heimweg automatisch.</p>` : ''}
+    ${unterwegs ? `<p class="text-[11px] text-ink/45 mt-2">${tk('family.familyHasBeenNotified')}</p>` : ''}
   </div>`;
 }
 // Parts of the page that change with new locations (without rebuilding the map)
@@ -752,7 +752,7 @@ function famRow(label, value, extra) {
   return `<div class="fam-row"><div class="fam-k">${escapeHtml(label)}</div><div class="fam-v">${escapeHtml(value)}</div>${extra || ''}</div>`;
 }
 function famCallBtn(phone) {
-  return phone ? `<a class="fz-mini-btn primary" href="${famAttr(famTel(phone))}">📞 Anrufen</a>` : '';
+  return phone ? `<a class="fz-mini-btn primary" href="${famAttr(famTel(phone))}">${tk('family.call')}</a>` : '';
 }
 function famDetailLocHtml(m) {
   if (!m || !famOrtungAllowed()) return '';
@@ -764,13 +764,13 @@ function famDetailLocHtml(m) {
   const own = g.memberId === famMyMemberId();
   const canToggle = own || isCurrentUserAdmin();
   return `<div class="fam-card">
-    <div class="fz-h">📍 Standort</div>
-    <div class="text-sm">${!g.teilen ? 'Standort wird nicht geteilt.' : p ? `${live ? '<span class="text-red-600 font-medium">● live</span> · ' : ''}${pl ? escapeHtml(pl.emoji + ' ' + pl.name) + ' · ' : ''}${escapeHtml(famAgo(p.zeit))}${p.akku != null ? ' · 🔋 ' + p.akku + ' %' : ''}` : 'Noch kein Standort empfangen.'}</div>
-    ${famUnterwegs(g) ? '<div class="text-xs text-ink/60 mt-1">🚶 unterwegs nach Hause</div>' : ''}
-    ${g.teilen && famShareUntil(g) ? `<div class="text-xs text-ink/60 mt-1">⏱ ${g.nurEinmal ? 'einmalig gesendet, sichtbar' : 'geteilt'} ${escapeHtml(famShareUntil(g))}</div>` : ''}
+    <div class="fz-h">${tk('family.location2')}</div>
+    <div class="text-sm">${!g.teilen ? tk('family.locationNotShared') : p ? `${live ? ('<span class="text-red-600 font-medium">' + tk('family.live') + '</span> · ') : ''}${pl ? escapeHtml(pl.emoji + ' ' + pl.name) + ' · ' : ''}${escapeHtml(famAgo(p.zeit))}${p.akku != null ? ' · 🔋 ' + p.akku + ' %' : ''}` : tk('family.noLocationReceivedYet')}</div>
+    ${famUnterwegs(g) ? ('<div class="text-xs text-ink/60 mt-1">' + tk('family.wayHome') + '</div>') : ''}
+    ${g.teilen && famShareUntil(g) ? `<div class="text-xs text-ink/60 mt-1">⏱ ${g.nurEinmal ? tk('loc.sentOnceVisibleUntil', { until: escapeHtml(famShareUntil(g)) }) : tk('loc.sharedUntil', { until: escapeHtml(famShareUntil(g)) })}</div>` : ''}
     <div class="flex flex-wrap gap-2 mt-2">
-      ${p ? `<button type="button" class="fz-mini-btn primary" data-famact="showmap" data-id="${famAttr(g.id)}">🗺 Auf der Karte zeigen</button>` : ''}
-      ${canToggle ? `<label class="fz-check" style="margin:0;align-items:center"><input type="checkbox" data-famshare="${famAttr(g.id)}"${g.teilen && !g.nurEinmal ? ' checked' : ''} /><span>Dauerhaft senden</span></label>` : ''}
+      ${p ? `<button type="button" class="fz-mini-btn primary" data-famact="showmap" data-id="${famAttr(g.id)}">${tk('family.showMap')}</button>` : ''}
+      ${canToggle ? `<label class="fz-check" style="margin:0;align-items:center"><input type="checkbox" data-famshare="${famAttr(g.id)}"${g.teilen && !g.nurEinmal ? ' checked' : ''} /><span>${tk('loc.sendPermanently')}</span></label>` : ''}
     </div>
   </div>`;
 }
@@ -782,10 +782,10 @@ function regionNotruf() {
 function sosEmergencyCalls(policeLabel) {
   const n = regionNotruf();
   const btn = (cls, ic, nr, label) => `<a class="sos-call ${cls}" href="tel:${escapeHtml(nr)}"><span class="ic">${ic}</span><b>${escapeHtml(nr)}</b><span>${escapeHtml(label)}</span></a>`;
-  if (n.polizei === n.rettung && n.rettung === n.feuer) return [btn('rescue', '🆘', n.polizei, 'Notruf')];
-  const out = [btn('police', '🚓', n.polizei, policeLabel || 'Polizei')];
-  if (n.rettung === n.feuer) out.push(btn('rescue', '🚑', n.rettung, 'Rettung · Feuerwehr'));
-  else { out.push(btn('rescue', '🚑', n.rettung, 'Rettung')); out.push(btn('fire', '🚒', n.feuer, 'Feuerwehr')); }
+  if (n.polizei === n.rettung && n.rettung === n.feuer) return [btn('rescue', '🆘', n.polizei, tk('emergency.call'))];
+  const out = [btn('police', '🚓', n.polizei, policeLabel || tk('emergency.police'))];
+  if (n.rettung === n.feuer) out.push(btn('rescue', '🚑', n.rettung, tk('emergency.ambulanceFire')));
+  else { out.push(btn('rescue', '🚑', n.rettung, tk('emergency.ambulance'))); out.push(btn('fire', '🚒', n.feuer, tk('emergency.fire'))); }
   return out;
 }
 // "110/112" or "911" – for hint texts
@@ -799,30 +799,30 @@ function famDetailHtml(m) {
   const pet = famIsPet(m);
   const age = famAge(p.birth);
   const color = famColor(m);
-  const sub = [m.role && memberLabel(m) !== m.role ? m.role : '', age != null ? age + (age === 1 ? ' Jahr' : ' Jahre') : '', pet && p.species ? p.species : ''].filter(Boolean).join(' · ');
+  const sub = [m.role && memberLabel(m) !== m.role ? m.role : '', age != null ? tk('family.ageYears', { n: age }) : '', pet && p.species ? p.species : ''].filter(Boolean).join(' · ');
   const meds = (Array.isArray(p.meds) ? p.meds : []).filter(x => x && (x.name || x.dose));
   const contacts = (Array.isArray(p.contacts) ? p.contacts : []).filter(x => x && (x.name || x.phone));
   const hasAny = Object.keys(p).some(k => !['updated', 'updatedBy'].includes(k) && (Array.isArray(p[k]) ? p[k].some(x => x && Object.values(x).some(Boolean)) : String(p[k] || '').trim()));
-  const editBtn = famCanEdit() ? `<button type="button" class="fz-act-btn" data-famact="edit"><span class="fz-ti">✏️</span>Bearbeiten</button>` : '';
+  const editBtn = famCanEdit() ? `<button type="button" class="fz-act-btn" data-famact="edit"><span class="fz-ti">✏️</span>${tk('common.edit')}</button>` : '';
   const rettung = regionNotruf().rettung;
-  const sos = `<a class="fz-act-btn fam-sos" href="tel:${escapeHtml(rettung)}"><span class="fz-ti">🚑</span>${escapeHtml(rettung)} anrufen</a>`;
-  const vet = pet && p.vetPhone ? `<a class="fz-act-btn" href="${famAttr(famTel(p.vetPhone))}"><span class="fz-ti">🐾</span>Tierarzt</a>` : '';
-  const doc = !pet && p.doctorPhone ? `<a class="fz-act-btn" href="${famAttr(famTel(p.doctorPhone))}"><span class="fz-ti">🩺</span>Arzt</a>` : '';
+  const sos = `<a class="fz-act-btn fam-sos" href="tel:${escapeHtml(rettung)}"><span class="fz-ti">🚑</span>${tk('family.call2', { rettung: escapeHtml(rettung) })}</a>`;
+  const vet = pet && p.vetPhone ? `<a class="fz-act-btn" href="${famAttr(famTel(p.vetPhone))}"><span class="fz-ti">🐾</span>${tk('family.vet')}</a>` : '';
+  const doc = !pet && p.doctorPhone ? `<a class="fz-act-btn" href="${famAttr(famTel(p.doctorPhone))}"><span class="fz-ti">🩺</span>${tk('family.doctor')}</a>` : '';
 
   const medCard = pet
-    ? [famRow('Tierart / Rasse', p.species), famRow('Geburtsdatum', famFmtDate(p.birth)), famRow('Chipnummer', p.chip), famRow('Gewicht', p.weight ? p.weight + ' kg' : ''),
-       famRow('Allergien & Unverträglichkeiten', p.allergies), famRow('Erkrankungen', p.conditions), famRow('Impfungen', p.vaccinations)].join('')
-    : [famRow('Geburtsdatum', famFmtDate(p.birth)), famRow('Blutgruppe', p.blood), famRow('Größe / Gewicht', [p.height ? p.height + ' cm' : '', p.weight ? p.weight + ' kg' : ''].filter(Boolean).join(' · ')),
-       famRow('Allergien', p.allergies), famRow('Vorerkrankungen', p.conditions), famRow('Impfungen', p.vaccinations),
-       famRow('Organspende', p.organDonor ? { ja: 'Ja – Ausweis vorhanden', nein: 'Nein', teilweise: 'Teilweise (siehe Ausweis)' }[p.organDonor] || p.organDonor : ''), famRow('Patientenverfügung', p.livingWill)].join('');
-  const medsHtml = meds.length ? `<div class="fam-row"><div class="fam-k">Medikamente</div><div class="fam-v">${meds.map(x => `<div>💊 <b>${escapeHtml(x.name || '')}</b>${x.dose ? ' · ' + escapeHtml(x.dose) : ''}</div>`).join('')}</div></div>` : '';
+    ? [famRow(tk('family.speciesBreed'), p.species), famRow(tk('family.dateBirth'), famFmtDate(p.birth)), famRow(tk('family.chipNumber'), p.chip), famRow(tk('family.weight'), p.weight ? p.weight + ' kg' : ''),
+       famRow(tk('family.allergiesIntolerances'), p.allergies), famRow(tk('family.illnesses'), p.conditions), famRow(tk('family.vaccinations'), p.vaccinations)].join('')
+    : [famRow(tk('family.dateBirth'), famFmtDate(p.birth)), famRow(tk('family.bloodType'), p.blood), famRow(tk('family.heightWeight'), [p.height ? p.height + ' cm' : '', p.weight ? p.weight + ' kg' : ''].filter(Boolean).join(' · ')),
+       famRow(tk('family.allergies'), p.allergies), famRow(tk('family.preExistingConditions'), p.conditions), famRow(tk('family.vaccinations'), p.vaccinations),
+       famRow(tk('family.organDonation'), p.organDonor ? { ja: tk('family.yesIdAvailable'), nein: tk('family.no'), teilweise: tk('family.partiallySeeCard') }[p.organDonor] || p.organDonor : ''), famRow(tk('family.livingWill'), p.livingWill)].join('');
+  const medsHtml = meds.length ? `<div class="fam-row"><div class="fam-k">${tk('lists.t.i.medication')}</div><div class="fam-v">${meds.map(x => `<div>💊 <b>${escapeHtml(x.name || '')}</b>${x.dose ? ' · ' + escapeHtml(x.dose) : ''}</div>`).join('')}</div></div>` : '';
   const careCard = pet
-    ? [famRow('Tierarzt', p.vet, famCallBtn(p.vetPhone)), famRow('Versicherung', p.insurance), famRow('Versicherungsnr.', p.insuranceNo)].join('')
-    : [famRow('Krankenkasse', p.insurance), famRow('Versichertennr.', p.insuranceNo), famRow('Hausarzt', p.doctor, famCallBtn(p.doctorPhone))].join('');
+    ? [famRow(tk('family.vet'), p.vet, famCallBtn(p.vetPhone)), famRow(tk('family.insurance'), p.insurance), famRow(tk('family.insuranceNo'), p.insuranceNo)].join('')
+    : [famRow(tk('family.healthInsurance'), p.insurance), famRow(tk('family.insuranceNo2'), p.insuranceNo), famRow(tk('family.gp'), p.doctor, famCallBtn(p.doctorPhone))].join('');
   const contactsHtml = contacts.map(c => `<div class="fam-row"><div class="fam-v"><b>${escapeHtml(c.name || '')}</b>${c.relation ? `<span class="text-ink/50"> · ${escapeHtml(c.relation)}</span>` : ''}${c.phone ? `<div class="text-xs text-ink/50">${escapeHtml(c.phone)}</div>` : ''}</div>${famCallBtn(c.phone)}</div>`).join('');
   const by = p.updatedBy ? (familyProfiles.find(x => x.id === p.updatedBy) || {}).username || '' : '';
   return `
-    <button type="button" class="self-start text-sm text-ink/55 hover:text-pine -mb-1" data-famact="back">‹ ${famPassFrom === 'profil' ? escapeHtml(memberLabel(m)) : 'Zurück'}</button>
+    <button type="button" class="self-start text-sm text-ink/55 hover:text-pine -mb-1" data-famact="back">‹ ${famPassFrom === 'profil' ? escapeHtml(memberLabel(m)) : tk('cal.back')}</button>
     <div class="fz-hero" style="--fz:${famAttr(color)}">
       <div class="fam-band"><svg class="fam-ecg" viewBox="0 0 300 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 22 H105 L114 10 L124 34 L134 4 L146 30 L154 22 H300"></path></svg></div>
       <div class="fam-hero-ava"><span class="fam-ava big" style="--fam:${famAttr(color)}">${famAvatarInner(m)}<span id="famDetailPing" class="fam-ping${famIsLive(famDeviceForMember(m.id)) ? '' : ' hidden'}"></span></span></div>
@@ -831,22 +831,22 @@ function famDetailHtml(m) {
           <div class="font-serif text-xl">${escapeHtml(memberLabel(m))}</div>
           ${!pet && p.blood ? `<span class="fam-blood">🩸 ${escapeHtml(p.blood)}</span>` : ''}
         </div>
-        <div class="text-xs text-ink/50 mt-0.5">${escapeHtml(sub || (pet ? 'Haustier' : 'Notfallpass'))}</div>
+        <div class="text-xs text-ink/50 mt-0.5">${escapeHtml(sub || (pet ? tk('search.type.pet') : tk('family.emergencyCard2')))}</div>
         <div class="flex gap-2 mt-3">${sos}${doc}${vet}${editBtn}</div>
       </div>
     </div>
     <div id="famDetailLoc">${famDetailLocHtml(m)}</div>
     ${!hasAny ? `<div class="fam-card text-center py-6">
         <div class="text-4xl mb-2">🩺</div>
-        <div class="font-serif text-lg mb-1">Noch kein Notfallpass</div>
-        <p class="text-sm text-ink/50 mb-3">${pet ? 'Chipnummer, Tierarzt, Medikamente und Notfallkontakte – alles auf einen Blick.' : 'Blutgruppe, Allergien, Medikamente, Krankenkasse und Notfallkontakte – griffbereit, auch offline.'}</p>
-        ${famCanEdit() ? '<button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-famact="edit">Jetzt ausfüllen</button>' : ''}
+        <div class="font-serif text-lg mb-1">${tk('family.noEmergencyCardYet')}</div>
+        <p class="text-sm text-ink/50 mb-3">${pet ? tk('family.chipNumberVetMedication') : tk('family.bloodTypeAllergiesMedication')}</p>
+        ${famCanEdit() ? ('<button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-famact="edit">' + tk('family.fillNow') + '</button>') : ''}
       </div>` : `
-      ${(contactsHtml || p.phone) ? `<div class="fam-card"><div class="fz-h">🆘 Notfallkontakte</div>${famRow(pet ? 'Tracker (SIM)' : 'Eigenes Handy', p.phone, famCallBtn(p.phone))}${contactsHtml}</div>` : ''}
-      ${(medCard || medsHtml) ? `<div class="fam-card"><div class="fz-h">${pet ? '🐾 Tier & Gesundheit' : '🩺 Medizinisch'}</div>${medCard}${medsHtml}</div>` : ''}
-      ${careCard ? `<div class="fam-card"><div class="fz-h">${pet ? '🏥 Tierarzt & Versicherung' : '🏥 Versicherung & Arzt'}</div>${careCard}</div>` : ''}
-      ${p.notes ? `<div class="fam-card"><div class="fz-h">📝 Wichtige Hinweise</div><div class="text-sm" style="white-space:pre-wrap">${escapeHtml(p.notes)}</div></div>` : ''}
-      ${p.updated ? `<p class="text-[11px] text-ink/40 text-center">Zuletzt geändert am ${escapeHtml(new Date(p.updated).toLocaleDateString('de-DE'))}${by ? ' von ' + escapeHtml(by) : ''}</p>` : ''}
+      ${(contactsHtml || p.phone) ? `<div class="fam-card"><div class="fz-h">${tk('family.emergencyContacts')}</div>${famRow(pet ? tk('family.trackerSim') : tk('family.ownPhone'), p.phone, famCallBtn(p.phone))}${contactsHtml}</div>` : ''}
+      ${(medCard || medsHtml) ? `<div class="fam-card"><div class="fz-h">${pet ? tk('family.animalHealth') : tk('family.medical')}</div>${medCard}${medsHtml}</div>` : ''}
+      ${careCard ? `<div class="fam-card"><div class="fz-h">${pet ? tk('family.vetInsurance') : tk('family.insuranceDoctor')}</div>${careCard}</div>` : ''}
+      ${p.notes ? `<div class="fam-card"><div class="fz-h">${tk('family.importantNotes')}</div><div class="text-sm" style="white-space:pre-wrap">${escapeHtml(p.notes)}</div></div>` : ''}
+      ${p.updated ? `<p class="text-[11px] text-ink/40 text-center">${tk('family.lastChangedOn', { date: escapeHtml(new Date(p.updated).toLocaleDateString(sysLocale())) })}${by ? ' ' + tk('family.byName', { name: escapeHtml(by) }) : ''}</p>` : ''}
     `}`;
 }
 
@@ -883,17 +883,17 @@ function famTa(id, label, value, ph) {
 function famListRowsHtml() {
   const st = famModalState;
   const meds = st.meds.map((x, i) => `<div class="fam-list-row">
-      <input class="fz-in" data-medname="${i}" value="${famAttr(x.name || '')}" placeholder="Medikament" />
-      <input class="fz-in" data-meddose="${i}" value="${famAttr(x.dose || '')}" placeholder="Dosis, z. B. 1-0-1" />
-      <button type="button" class="fam-x" data-famrm="med" data-i="${i}" aria-label="Entfernen">×</button>
+      <input class="fz-in" data-medname="${i}" value="${famAttr(x.name || '')}" placeholder="${escapeHtml(tk('family.medication'))}" />
+      <input class="fz-in" data-meddose="${i}" value="${famAttr(x.dose || '')}" placeholder="${escapeHtml(tk('family.doseEG1'))}" />
+      <button type="button" class="fam-x" data-famrm="med" data-i="${i}" aria-label="${escapeHtml(tk('common.remove'))}">×</button>
     </div>`).join('');
   const contacts = st.contacts.map((x, i) => `<div class="fam-contact-row">
       <div class="fam-list-row">
-        <input class="fz-in" data-cname="${i}" value="${famAttr(x.name || '')}" placeholder="Name" />
-        <input class="fz-in" data-crel="${i}" value="${famAttr(x.relation || '')}" placeholder="z. B. Oma, Nachbar" />
-        <button type="button" class="fam-x" data-famrm="contact" data-i="${i}" aria-label="Entfernen">×</button>
+        <input class="fz-in" data-cname="${i}" value="${famAttr(x.name || '')}" placeholder="${escapeHtml(tk('common.name'))}" />
+        <input class="fz-in" data-crel="${i}" value="${famAttr(x.relation || '')}" placeholder="${escapeHtml(tk('family.eGGrandmaNeighbour'))}" />
+        <button type="button" class="fam-x" data-famrm="contact" data-i="${i}" aria-label="${escapeHtml(tk('common.remove'))}">×</button>
       </div>
-      <input class="fz-in mt-1" type="tel" inputmode="tel" data-cphone="${i}" value="${famAttr(x.phone || '')}" placeholder="Telefonnummer" />
+      <input class="fz-in mt-1" type="tel" inputmode="tel" data-cphone="${i}" value="${famAttr(x.phone || '')}" placeholder="${escapeHtml(tk('family.phoneNumber'))}" />
     </div>`).join('');
   return { meds, contacts };
 }
@@ -913,8 +913,8 @@ function famSyncLists() {
 function famRenderLists() {
   const r = famListRowsHtml();
   const a = document.getElementById('famMedList'), b = document.getElementById('famContactList');
-  if (a) a.innerHTML = r.meds || '<p class="text-xs text-ink/40">Keine Medikamente eingetragen.</p>';
-  if (b) b.innerHTML = r.contacts || '<p class="text-xs text-ink/40">Noch keine Notfallkontakte.</p>';
+  if (a) a.innerHTML = r.meds || ('<p class="text-xs text-ink/40">' + tk('family.noMedicationEntered') + '</p>');
+  if (b) b.innerHTML = r.contacts || ('<p class="text-xs text-ink/40">' + tk('family.noEmergencyContactsYet') + '</p>');
 }
 function famOpenEdit(memberId) {
   const m = memberById(memberId);
@@ -929,49 +929,49 @@ function famOpenEdit(memberId) {
   if (!famModalState.contacts.length) famModalState.contacts.push({ name: '', relation: '', phone: '' });
   const r = famListRowsHtml();
   const html = `
-    <h3 class="font-serif text-lg mb-1">Notfallpass · ${escapeHtml(memberLabel(m))}</h3>
-    <p class="text-xs text-ink/50 mb-4">Nur ausfüllen, was im Notfall helfen kann. Leere Felder werden nicht angezeigt.</p>
-    <div class="fz-h">🆘 Notfallkontakte</div>
-    ${famIn('famF_phone', pet ? 'Telefonnummer am Tracker (SIM)' : 'Eigene Handynummer', p.phone, 'type="tel" inputmode="tel" autocomplete="off" maxlength="40" placeholder="zum Anrufen aus dem SOS-Popup"')}
+    <h3 class="font-serif text-lg mb-1">${tk('family.emergencyCard3', { memberLabel: escapeHtml(memberLabel(m)) })}</h3>
+    <p class="text-xs text-ink/50 mb-4">${tk('family.onlyFillWhatCan')}</p>
+    <div class="fz-h">${tk('family.emergencyContacts')}</div>
+    ${famIn('famF_phone', pet ? tk('family.phoneNumberTrackerSim') : tk('family.ownMobileNumber'), p.phone, ('type="tel" inputmode="tel" autocomplete="off" maxlength="40" placeholder="' + escapeHtml(tk('family.callingFromSosPopup')) + '"'))}
     <div id="famContactList" class="flex flex-col gap-2 mb-2">${r.contacts}</div>
-    <button type="button" class="fz-mini-btn mb-4" data-famadd="contact">+ Kontakt</button>
-    <div class="fz-h">${pet ? '🐾 Tier & Gesundheit' : '🩺 Medizinisch'}</div>
+    <button type="button" class="fz-mini-btn mb-4" data-famadd="contact">${tk('family.contact')}</button>
+    <div class="fz-h">${pet ? tk('family.animalHealth') : tk('family.medical')}</div>
     ${pet ? `
-      <div class="fz-grid2">${famIn('famF_species', 'Tierart / Rasse', p.species, 'placeholder="z. B. Labrador"')}${famIn('famF_birth', 'Geburtsdatum', p.birth, 'type="date"')}</div>
-      <div class="fz-grid2">${famIn('famF_chip', 'Chipnummer', p.chip, 'inputmode="numeric"')}${famIn('famF_weight', 'Gewicht (kg)', p.weight, 'inputmode="decimal"')}</div>
+      <div class="fz-grid2">${famIn('famF_species', tk('family.speciesBreed'), p.species, ('placeholder="' + escapeHtml(tk('family.eGLabrador')) + '"'))}${famIn('famF_birth', tk('family.dateBirth'), p.birth, 'type="date"')}</div>
+      <div class="fz-grid2">${famIn('famF_chip', tk('family.chipNumber'), p.chip, 'inputmode="numeric"')}${famIn('famF_weight', tk('family.weightKg'), p.weight, 'inputmode="decimal"')}</div>
     ` : `
-      <div class="fz-grid2">${famIn('famF_birth', 'Geburtsdatum', p.birth, 'type="date"')}
-        <div class="fz-field"><label class="fz-lbl" for="famF_blood">Blutgruppe</label><select id="famF_blood" class="fz-in">${FAM_BLOOD.map(b => `<option value="${b}"${(p.blood || '') === b ? ' selected' : ''}>${b || '– unbekannt –'}</option>`).join('')}</select></div>
+      <div class="fz-grid2">${famIn('famF_birth', tk('family.dateBirth'), p.birth, 'type="date"')}
+        <div class="fz-field"><label class="fz-lbl" for="famF_blood">${tk('family.bloodType')}</label><select id="famF_blood" class="fz-in">${FAM_BLOOD.map(b => `<option value="${b}"${(p.blood || '') === b ? ' selected' : ''}>${b || tk('family.unknown')}</option>`).join('')}</select></div>
       </div>
-      <div class="fz-grid2">${famIn('famF_height', 'Größe (cm)', p.height, 'inputmode="numeric"')}${famIn('famF_weight', 'Gewicht (kg)', p.weight, 'inputmode="decimal"')}</div>
+      <div class="fz-grid2">${famIn('famF_height', tk('family.heightCm'), p.height, 'inputmode="numeric"')}${famIn('famF_weight', tk('family.weightKg'), p.weight, 'inputmode="decimal"')}</div>
     `}
-    ${famTa('famF_allergies', pet ? 'Allergien & Unverträglichkeiten' : 'Allergien', p.allergies, pet ? 'z. B. Huhn, Flohmittel' : 'z. B. Penicillin, Nüsse, Wespenstich')}
-    ${famTa('famF_conditions', pet ? 'Erkrankungen' : 'Vorerkrankungen / Diagnosen', p.conditions, pet ? 'z. B. Epilepsie' : 'z. B. Asthma, Diabetes Typ 1, Herzschrittmacher')}
-    <label class="fz-lbl">Medikamente</label>
-    <div id="famMedList" class="flex flex-col gap-2 mb-2">${r.meds || '<p class="text-xs text-ink/40">Keine Medikamente eingetragen.</p>'}</div>
-    <button type="button" class="fz-mini-btn mb-4" data-famadd="med">+ Medikament</button>
-    ${famTa('famF_vaccinations', 'Impfungen', p.vaccinations, pet ? 'z. B. Tollwut bis 05/2027' : 'z. B. Tetanus zuletzt 2021')}
+    ${famTa('famF_allergies', pet ? tk('family.allergiesIntolerances') : tk('family.allergies'), p.allergies, pet ? tk('family.eGChickenFlea') : tk('family.eGPenicillinNuts'))}
+    ${famTa('famF_conditions', pet ? tk('family.illnesses') : tk('family.preExistingConditionsDiagnoses'), p.conditions, pet ? tk('family.eGEpilepsy') : tk('family.eGAsthmaType'))}
+    <label class="fz-lbl">${tk('lists.t.i.medication')}</label>
+    <div id="famMedList" class="flex flex-col gap-2 mb-2">${r.meds || ('<p class="text-xs text-ink/40">' + tk('family.noMedicationEntered') + '</p>')}</div>
+    <button type="button" class="fz-mini-btn mb-4" data-famadd="med">${tk('family.medication2')}</button>
+    ${famTa('famF_vaccinations', tk('family.vaccinations'), p.vaccinations, pet ? tk('family.eGRabiesUntil') : tk('family.eGTetanusLast'))}
     ${pet ? '' : `
       <div class="fz-grid2">
-        <div class="fz-field"><label class="fz-lbl" for="famF_organ">Organspende</label><select id="famF_organ" class="fz-in">
-          ${[['', '– keine Angabe –'], ['ja', 'Ja'], ['nein', 'Nein'], ['teilweise', 'Teilweise']].map(([v, l]) => `<option value="${v}"${(p.organDonor || '') === v ? ' selected' : ''}>${l}</option>`).join('')}
+        <div class="fz-field"><label class="fz-lbl" for="famF_organ">${tk('family.organDonation')}</label><select id="famF_organ" class="fz-in">
+          ${[['', tk('family.notSpecified')], ['ja', tk('family.yes')], ['nein', tk('family.no')], ['teilweise', tk('family.partially')]].map(([v, l]) => `<option value="${v}"${(p.organDonor || '') === v ? ' selected' : ''}>${l}</option>`).join('')}
         </select></div>
-        ${famIn('famF_will', 'Patientenverfügung', p.livingWill, 'placeholder="z. B. Ordner im Flur"')}
+        ${famIn('famF_will', tk('family.livingWill'), p.livingWill, ('placeholder="' + escapeHtml(tk('family.eGFolderHallway')) + '"'))}
       </div>`}
-    <div class="fz-h mt-2">🏥 ${pet ? 'Tierarzt & Versicherung' : 'Versicherung & Arzt'}</div>
+    <div class="fz-h mt-2">🏥 ${pet ? tk('family.vetInsurance2') : tk('family.insuranceDoctor2')}</div>
     ${pet ? `
-      <div class="fz-grid2">${famIn('famF_vet', 'Tierarzt', p.vet)}${famIn('famF_vetPhone', 'Telefon Tierarzt', p.vetPhone, 'type="tel" inputmode="tel"')}</div>
-      <div class="fz-grid2">${famIn('famF_insurance', 'Versicherung', p.insurance)}${famIn('famF_insuranceNo', 'Versicherungsnr.', p.insuranceNo)}</div>
+      <div class="fz-grid2">${famIn('famF_vet', tk('family.vet'), p.vet)}${famIn('famF_vetPhone', tk('family.vetsPhone'), p.vetPhone, 'type="tel" inputmode="tel"')}</div>
+      <div class="fz-grid2">${famIn('famF_insurance', tk('family.insurance'), p.insurance)}${famIn('famF_insuranceNo', tk('family.insuranceNo'), p.insuranceNo)}</div>
     ` : `
-      <div class="fz-grid2">${famIn('famF_insurance', 'Krankenkasse', p.insurance)}${famIn('famF_insuranceNo', 'Versichertennr.', p.insuranceNo)}</div>
-      <div class="fz-grid2">${famIn('famF_doctor', 'Hausarzt', p.doctor)}${famIn('famF_doctorPhone', 'Telefon Hausarzt', p.doctorPhone, 'type="tel" inputmode="tel"')}</div>
+      <div class="fz-grid2">${famIn('famF_insurance', tk('family.healthInsurance'), p.insurance)}${famIn('famF_insuranceNo', tk('family.insuranceNo2'), p.insuranceNo)}</div>
+      <div class="fz-grid2">${famIn('famF_doctor', tk('family.gp'), p.doctor)}${famIn('famF_doctorPhone', tk('family.gpsPhone'), p.doctorPhone, 'type="tel" inputmode="tel"')}</div>
     `}
-    ${famTa('famF_notes', 'Wichtige Hinweise', p.notes, pet ? 'z. B. ängstlich bei Fremden, beißt bei Schmerzen' : 'z. B. Brillenträger, Notfallspray in der Jackentasche')}
+    ${famTa('famF_notes', tk('family.importantNotes2'), p.notes, pet ? tk('family.eGAnxiousAround') : tk('family.eGWearsGlasses'))}
     <div class="flex items-center justify-between gap-2 mt-4">
-      ${famPass(memberId) ? '<button type="button" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50" data-famact="clearpass" aria-label="Notfallpass löschen">Leeren</button>' : '<span></span>'}
+      ${famPass(memberId) ? ('<button type="button" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50" data-famact="clearpass" aria-label="' + escapeHtml(tk('family.deleteEmergencyCard')) + '">' + tk('family.empty') + '</button>') : '<span></span>'}
       <div class="flex gap-2">
-        <button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-famact="cancel">Abbrechen</button>
-        <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-famact="savepass">Speichern</button>
+        <button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-famact="cancel">${tk('common.cancel')}</button>
+        <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-famact="savepass">${tk('common.save')}</button>
       </div>
     </div>`;
   famOpenModal(html);
@@ -1005,12 +1005,12 @@ function famSavePass() {
   persistState();
   famCloseModal();
   renderFamily();
-  finShowToast('Notfallpass gespeichert');
+  finShowToast(tk('family.emergencyCardSaved'));
 }
 function famClearPass() {
   const st = famModalState;
   if (!st || childLockActive()) return;
-  if (!confirm('Den Notfallpass wirklich leeren?')) return;
+  if (!confirm(tk('family.reallyClearEmergencyCard'))) return;
   const next = { ...famPasses() };
   delete next[st.memberId];
   emergencyPasses = next;
@@ -1031,42 +1031,42 @@ function famOpenSetup() {
     return `<div class="fz-pick-row">
       <span class="fam-ava sm" style="--fam:${famAttr(famColor(m))}">${m ? famAvatarInner(m) : `<span class="fam-ava-in">${escapeHtml(g.emoji || '📍')}</span>`}</span>
       <div class="min-w-0 flex-1">
-        <div class="text-sm font-medium truncate">${escapeHtml(famDeviceName(g))} <span class="text-ink/45 font-normal">· ${g.typ === 'tracker' ? '🛰️ GPS-Tracker' : '📱 Handy'}</span></div>
-        <div class="text-[11px] text-ink/50 truncate">ID ${escapeHtml(g.uniqueId || '')} · ${!g.teilen ? 'Teilen aus' : p ? 'zuletzt ' + escapeHtml(famAgo(p.zeit)) : 'noch kein Standort'}</div>
+        <div class="text-sm font-medium truncate">${escapeHtml(famDeviceName(g))} <span class="text-ink/45 font-normal">· ${g.typ === 'tracker' ? tk('loc.gpsTracker') : tk('settings.display.phone')}</span></div>
+        <div class="text-[11px] text-ink/50 truncate">ID ${escapeHtml(g.uniqueId || '')} · ${!g.teilen ? tk('loc.sharingOff') : p ? 'zuletzt ' + escapeHtml(famAgo(p.zeit)) : tk('loc.noLocationYet')}</div>
       </div>
-      <button type="button" class="fz-mini-btn" data-famact="guide" data-id="${famAttr(g.id)}">Anleitung</button>
-      <button type="button" class="fam-x" data-famact="deldevice" data-id="${famAttr(g.id)}" aria-label="Gerät löschen">×</button>
+      <button type="button" class="fz-mini-btn" data-famact="guide" data-id="${famAttr(g.id)}">${tk('loc.instructions')}</button>
+      <button type="button" class="fam-x" data-famact="deldevice" data-id="${famAttr(g.id)}" aria-label="${escapeHtml(tk('loc.deleteDevice'))}">×</button>
     </div>`;
   }).join('');
   famOpenModal(`
-    <h3 class="font-serif text-lg mb-1">Ortung einrichten</h3>
-    <p class="text-xs text-ink/50 mb-3">Handys brauchen nichts weiter: Jeder kann unter „Mein Standort“ direkt in pinn. teilen. Im Hintergrund (pinn. geschlossen) sendet das Handy mit der kostenlosen App „Traccar Client“ (iPhone und Android) – direkt an pinn., ein Traccar-Server ist dafür nicht nötig. Nur GPS-Tracker mit SIM-Karte (z. B. am Halsband) brauchen den Container „traccar“. Die Standorte bleiben auf eurem NAS.</p>
-    <div class="fz-note-box ${ok ? 'ok' : 'warn'} mb-4"><span>${ok ? '✅' : '⚠️'}</span><span class="text-xs">${ok ? 'Ortung bereit – Handys senden direkt an pinn.' : escapeHtml(famStatusErr || (famStatus && famStatus.fehler) || 'GPS-Tracker brauchen den Container „traccar“.')}</span></div>
-    <div class="fz-h">Geräte</div>
-    <div class="flex flex-col gap-2 mb-3">${rows || '<p class="text-xs text-ink/40">Noch keine Geräte.</p>'}</div>
-    <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-famact="adddevice">+ Gerät hinzufügen</button>
+    <h3 class="font-serif text-lg mb-1">${tk('loc.setUpLocation')}</h3>
+    <p class="text-xs text-ink/50 mb-3">${tk('loc.setupIntro')}</p>
+    <div class="fz-note-box ${ok ? 'ok' : 'warn'} mb-4"><span>${ok ? '✅' : '⚠️'}</span><span class="text-xs">${ok ? tk('loc.readyPhonesDirect') : escapeHtml(famStatusErr || (famStatus && famStatus.fehler) || tk('loc.trackersNeedContainer'))}</span></div>
+    <div class="fz-h">${tk('smart.devices')}</div>
+    <div class="flex flex-col gap-2 mb-3">${rows || ('<p class="text-xs text-ink/40">' + tk('loc.noDevicesYet') + '</p>')}</div>
+    <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-famact="adddevice">${tk('loc.addDevice')}</button>
     ${devs.length ? `
     <div class="fz-h mt-5">🆘 SOS</div>
-    <p class="text-xs text-ink/50 mb-2">Test: gleicher Ablauf wie ein echter Hilferuf (Push, Popup, Karte, Adresse) – aber nur an dich, die Familie merkt nichts.</p>
+    <p class="text-xs text-ink/50 mb-2">${tk('loc.testSameProcessReal')}</p>
     <div class="flex flex-wrap items-center gap-2 mb-2">
       <select id="famSosTestDev" class="fam-sel">${devs.map(g => `<option value="${famAttr(g.id)}">${escapeHtml(famDeviceName(g))}</option>`).join('')}</select>
-      <button type="button" class="fz-mini-btn primary" data-famact="sostest">🆘 SOS-Test an mich</button>
+      <button type="button" class="fz-mini-btn primary" data-famact="sostest">${tk('loc.sosTestMe')}</button>
     </div>
     <details id="famLogBox" class="fz-tool">
-      <summary class="text-sm font-medium py-1">Letzte Meldungen der Handys</summary>
-      <p class="text-[11px] text-ink/45 mt-1">Zeigt, was „Traccar Client“ an pinn. schickt. Nach dem Drücken auf SOS muss hier „🆘 erkannt“ stehen.</p>
+      <summary class="text-sm font-medium py-1">${tk('loc.latestReportsFromPhones')}</summary>
+      <p class="text-[11px] text-ink/45 mt-1">${tk('loc.showsWhatTraccarClient')}</p>
       <div id="famLogList" class="flex flex-col gap-1.5 mt-2 text-xs"></div>
-      <button type="button" class="fz-mini-btn mt-2" data-famact="reloadlog">↻ Aktualisieren</button>
+      <button type="button" class="fz-mini-btn mt-2" data-famact="reloadlog">${tk('loc.refresh')}</button>
     </details>` : ''}
     <details class="fz-tool mt-5">
-      <summary class="text-sm font-medium py-1">Server-Daten</summary>
+      <summary class="text-sm font-medium py-1">${tk('loc.serverData')}</summary>
       <div class="text-xs text-ink/60 mt-2 leading-relaxed">
-        <div class="mb-1">Handys (Traccar Client, sendet direkt an pinn.):</div>
-        <div class="fam-copy"><code>${escapeHtml(famOsmandUrl())}</code><button type="button" class="fz-mini-btn" data-famcopy="${famAttr(famOsmandUrl())}">Kopieren</button></div>
-        <div class="mt-3 mb-1">GPS-Tracker (nur mit Container „traccar“): Adresse eures Internet-Anschlusses und Port je Protokoll – GT06 5023 · H02 5013 · Watch 5093 · Teltonika 5027 (Geräte-ID = IMEI).</div>
+        <div class="mb-1">${tk('loc.phonesTraccarDirect')}</div>
+        <div class="fam-copy"><code>${escapeHtml(famOsmandUrl())}</code><button type="button" class="fz-mini-btn" data-famcopy="${famAttr(famOsmandUrl())}">${tk('common.copy')}</button></div>
+        <div class="mt-3 mb-1">${tk('loc.trackerPorts')}</div>
       </div>
     </details>
-    <div class="flex justify-end mt-4"><button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-famact="cancel">Schließen</button></div>`);
+    <div class="flex justify-end mt-4"><button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-famact="cancel">${tk('common.close')}</button></div>`);
 }
 // SOS test (only to me) and log of the latest alerts
 async function famSosTest(btn) {
@@ -1074,12 +1074,12 @@ async function famSosTest(btn) {
   if (btn) btn.disabled = true;
   try {
     const r = await postJson('/api/pinn/ortung/sos-test', { geraet: sel ? sel.value : '' });
-    finShowToast(r.push ? 'SOS-Test gesendet' : 'SOS-Test angelegt – Push ist auf diesem Profil nicht aktiviert');
+    finShowToast(r.push ? tk('loc.sosTestSent') : tk('loc.sosTestCreatedPush'));
     famCloseModal();
     sosStarted = true;
     sosOpen(r.id);
   } catch (e) {
-    finShowToast(e.message || 'SOS-Test nicht möglich', true);
+    finShowToast(e.message || tk('loc.sosTestNotPossible'), true);
   } finally {
     if (btn) btn.disabled = false;
   }
@@ -1087,26 +1087,26 @@ async function famSosTest(btn) {
 async function famLoadOsmandLog() {
   const box = document.getElementById('famLogList');
   if (!box) return;
-  box.innerHTML = '<span class="text-ink/40">lädt …</span>';
+  box.innerHTML = ('<span class="text-ink/40">' + tk('family.loading') + '</span>');
   try {
     const res = await apiFetch('/api/pinn/ortung/protokoll', { cache: 'no-store' });
     const body = await res.json().catch(() => ({}));
-    if (res.status === 404) { box.innerHTML = '<span class="text-red-600">Server noch ohne diese Funktion – pinn-ortung.js und ortung.pb.js einspielen und pocketbase neu starten.</span>'; return; }
-    if (!res.ok) throw new Error(body.error || 'nicht abrufbar');
+    if (res.status === 404) { box.innerHTML = ('<span class="text-red-600">' + tk('loc.serverDoesntHaveFunction') + '</span>'); return; }
+    if (!res.ok) throw new Error(body.error || tk('loc.notRetrievable'));
     const list = Array.isArray(body.meldungen) ? body.meldungen : [];
-    if (!list.length) { box.innerHTML = '<span class="text-ink/45">Seit dem letzten Neustart von pinn. kam noch keine Meldung aus „Traccar Client“ an. Bitte Server-URL und Geräte-ID aus der Anleitung prüfen und in der App den Dienst einschalten.</span>'; return; }
+    if (!list.length) { box.innerHTML = '<span class="text-ink/45">' + tk('loc.noReportYet') + '</span>'; return; }
     box.innerHTML = list.map(x => {
-      const t = new Date(x.zeit).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      const tag = x.sos ? (x.fehler ? '<span class="text-red-600 font-semibold">🆘 erkannt, Fehler</span>' : '<span class="text-red-600 font-semibold">🆘 erkannt</span>') : (x.alarm ? '<span class="text-mustard font-semibold">Alarm ohne SOS</span>' : '<span class="text-ink/45">Standort</span>');
+      const t = new Date(x.zeit).toLocaleTimeString(sysLocale(), { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const tag = x.sos ? (x.fehler ? ('<span class="text-red-600 font-semibold">' + tk('loc.detectedError') + '</span>') : '<span class="text-red-600 font-semibold">' + tk('loc.sosDetected') + '</span>') : (x.alarm ? ('<span class="text-mustard font-semibold">' + tk('loc.alarmWithoutSos') + '</span>') : ('<span class="text-ink/45">' + tk('loc.location') + '</span>'));
       return `<div class="fz-note-box ${x.sos ? 'urgent' : ''}" style="padding:6px 9px"><span class="flex-1 min-w-0">
-        <span class="font-medium">${escapeHtml(t)}</span> · ${escapeHtml(x.name || x.uid || 'unbekannt')} · ${tag}${x.status ? ' · Antwort ' + escapeHtml(String(x.status)) : ''}
+        <span class="font-medium">${escapeHtml(t)}</span> · ${escapeHtml(x.name || x.uid || tk('loc.unknown'))} · ${tag}${x.status ? ' · ' + tk('loc.response', { code: escapeHtml(String(x.status)) }) : ''}
         ${x.alarm ? `<span class="block text-ink/55">${escapeHtml(x.alarm)}</span>` : ''}
         ${x.fehler ? `<span class="block text-red-600">${escapeHtml(x.fehler)}</span>` : ''}
-        <span class="block text-ink/40 break-all">Felder: ${escapeHtml(x.felder || '–')}</span>
+        <span class="block text-ink/40 break-all">${tk('loc.fields', { felder: escapeHtml(x.felder || '–') })}</span>
       </span></div>`;
     }).join('');
   } catch (e) {
-    box.innerHTML = `<span class="text-red-600">${escapeHtml(e.message || 'Fehler')}</span>`;
+    box.innerHTML = `<span class="text-red-600">${escapeHtml(e.message || tk('common.error'))}</span>`;
   }
 }
 document.addEventListener('toggle', (e) => {
@@ -1118,22 +1118,22 @@ function famOpenDeviceForm(preset) {
   const free = members.filter(m => !used.has(m.id + '|' + typ));
   const mid = (preset && preset.memberId) || (free[0] && free[0].id) || (members[0] && members[0].id) || '';
   famOpenModal2(`
-    <h3 class="font-serif text-lg mb-3">Gerät hinzufügen</h3>
-    <div class="fz-field"><label class="fz-lbl" for="famD_member">Wer wird geortet?</label>
+    <h3 class="font-serif text-lg mb-3">${tk('loc.addDevice2')}</h3>
+    <div class="fz-field"><label class="fz-lbl" for="famD_member">${tk('loc.whoBeingLocated')}</label>
       <select id="famD_member" class="fz-in">${members.map(m => `<option value="${famAttr(m.id)}"${m.id === mid ? ' selected' : ''}>${escapeHtml((m.avatar ? m.avatar + ' ' : '') + memberLabel(m))}</option>`).join('')}</select></div>
-    <label class="fz-lbl">Gerät</label>
+    <label class="fz-lbl">${tk('devices.device')}</label>
     <div class="fz-grid2 mb-3">
-      <button type="button" class="fz-kind-btn py-2 text-sm${typ === 'handy' ? ' active' : ''}" data-famtyp="handy">📱 Handy<br><span class="text-[11px] text-ink/50">pinn. bzw. „Traccar Client“</span></button>
-      <button type="button" class="fz-kind-btn py-2 text-sm${typ === 'tracker' ? ' active' : ''}" data-famtyp="tracker">🛰️ GPS-Tracker<br><span class="text-[11px] text-ink/50">SIM-Karte · Container „traccar“</span></button>
+      <button type="button" class="fz-kind-btn py-2 text-sm${typ === 'handy' ? ' active' : ''}" data-famtyp="handy">${tk('settings.display.phone')}<br><span class="text-[11px] text-ink/50">${tk('loc.pinnOrTraccar')}</span></button>
+      <button type="button" class="fz-kind-btn py-2 text-sm${typ === 'tracker' ? ' active' : ''}" data-famtyp="tracker">${tk('loc.gpsTracker')}<br><span class="text-[11px] text-ink/50">${tk('loc.simContainer')}</span></button>
     </div>
-    <div class="fz-field"><label class="fz-lbl" for="famD_uid">${typ === 'tracker' ? 'Geräte-ID (IMEI des Trackers)' : 'Geräte-ID (wird in der App eingetragen)'}</label>
+    <div class="fz-field"><label class="fz-lbl" for="famD_uid">${typ === 'tracker' ? tk('loc.deviceIdImeiTracker') : tk('loc.deviceIdEnteredApp')}</label>
       <div class="flex gap-2"><input id="famD_uid" class="fz-in" value="${famAttr(typ === 'handy' ? famNewUniqueId() : '')}" ${typ === 'tracker' ? 'inputmode="numeric" placeholder="15-stellige IMEI"' : ''} autocapitalize="off" autocorrect="off" spellcheck="false" />
-      ${typ === 'handy' ? '<button type="button" class="fz-mini-btn" data-famact="newuid" aria-label="Neue ID">↻</button>' : ''}</div>
-      <p class="text-[11px] text-ink/45 mt-1">${typ === 'tracker' ? 'Die IMEI steht auf dem Tracker, der Verpackung oder kommt per SMS-Befehl.' : 'Die ID ist zufällig – sie verbindet das Handy mit dieser Person.'}</p></div>
+      ${typ === 'handy' ? ('<button type="button" class="fz-mini-btn" data-famact="newuid" aria-label="' + escapeHtml(tk('loc.newId')) + '">↻</button>') : ''}</div>
+      <p class="text-[11px] text-ink/45 mt-1">${typ === 'tracker' ? tk('loc.imeiTrackerPackagingComes') : tk('loc.idRandomLinksPhone')}</p></div>
     <p id="famD_err" class="text-xs text-red-600 mb-2 hidden"></p>
     <div class="flex justify-end gap-2 mt-2">
-      <button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-famact="cancel2">Abbrechen</button>
-      <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-famact="savedevice" data-typ="${typ}">Hinzufügen</button>
+      <button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-famact="cancel2">${tk('common.cancel')}</button>
+      <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-famact="savedevice" data-typ="${typ}">${tk('common.add')}</button>
     </div>`);
 }
 async function famSaveDevice(btn) {
@@ -1143,11 +1143,11 @@ async function famSaveDevice(btn) {
   const typ = btn.dataset.typ === 'tracker' ? 'tracker' : 'handy';
   btn.disabled = true;
   try {
-    const r = await famPost('geraet', { memberId, name: m ? memberLabel(m) : 'Gerät', emoji: (m && m.avatar) || '', typ, uniqueId: famVal('famD_uid') });
+    const r = await famPost('geraet', { memberId, name: m ? memberLabel(m) : tk('devices.device'), emoji: (m && m.avatar) || '', typ, uniqueId: famVal('famD_uid') });
     famCloseModal2();
     await famLoadStatus();
     famOpenSetup();
-    finShowToast('Gerät hinzugefügt');
+    finShowToast(tk('loc.deviceAdded'));
     if (r && r.id) famOpenGuide(r.id);
   } catch (e) {
     if (err) { err.textContent = e.message; err.classList.remove('hidden'); }
@@ -1158,7 +1158,7 @@ async function famSaveDevice(btn) {
 async function famDeleteDevice(id) {
   const g = famDevice(id);
   if (!g || childLockActive()) return;
-  if (!confirm(`Gerät von ${famDeviceName(g)} entfernen? Die Person wird danach nicht mehr geortet.`)) return;
+  if (!confirm(`${tk('loc.removeSDevicePerson', { famDeviceName: famDeviceName(g) })}`)) return;
   try {
     await famPost('geraet-loeschen', { id });
     await famLoadStatus();
@@ -1170,34 +1170,34 @@ function famOpenGuide(id) {
   if (!g) return;
   const uid = g.uniqueId || '';
   const url = famOsmandUrl();
-  const copy = (v) => `<div class="fam-copy"><code>${escapeHtml(v)}</code><button type="button" class="fz-mini-btn" data-famcopy="${famAttr(v)}">Kopieren</button></div>`;
-  const last = g.position ? 'Letzter Standort empfangen: ' + famAgo(g.position.zeit) : 'Von diesem Gerät kam noch kein Standort.';
+  const copy = (v) => `<div class="fam-copy"><code>${escapeHtml(v)}</code><button type="button" class="fz-mini-btn" data-famcopy="${famAttr(v)}">${tk('common.copy')}</button></div>`;
+  const last = g.position ? tk('loc.lastLocationReceived', { ago: famAgo(g.position.zeit) }) : tk('loc.noLocationHasCome');
   const body = g.typ === 'tracker' ? `
-    <p class="text-xs text-ink/60 mb-3">Der Tracker sendet über seine SIM-Karte direkt an Traccar auf eurem NAS – dafür muss der Container „traccar“ laufen (für Handys ist er nicht nötig).</p>
+    <p class="text-xs text-ink/60 mb-3">${tk('loc.trackerViaSim')}</p>
     <ol class="fam-steps">
-      <li>SIM-Karte mit mobilen Daten einlegen und den Tracker einschalten.</li>
-      <li>Als Server die Adresse eures Internet-Anschlusses eintragen (z. B. eure MyFRITZ!-Adresse) – meist per SMS-Befehl laut Anleitung des Trackers.</li>
-      <li>Port je nach Protokoll des Trackers: <b>GT06 5023</b>, H02 5013, Watch 5093, Teltonika 5027. Dieser Port muss in der FRITZ!Box auf das NAS freigegeben sein, weil der Tracker aus dem Mobilfunknetz kommt.</li>
-      <li>Geräte-ID (IMEI) in pinn.:${copy(uid)}</li>
-      <li>Sendeintervall z. B. auf 60 Sekunden stellen.</li>
+      <li>${tk('loc.insertSimCardMobile')}</li>
+      <li>${tk('loc.enterInternetConnectionsAddress')}</li>
+      <li>${tk('loc.portDependingTrackersProtocol')} <b>GT06 5023</b>${tk('loc.h025013Watch5093')}</li>
+      <li>${tk('loc.deviceIdImeiPinn', { copy: copy(uid) })}</li>
+      <li>${tk('loc.setSendIntervalE')}</li>
     </ol>
-    <div class="fz-note-box urgent mt-3"><span>🆘</span><span class="text-xs">Hat der Tracker einen SOS-Knopf, alarmiert pinn. die ganze Familie per Push (innerhalb einer Minute), sobald Traccar den Alarm des Trackers erkennt.</span></div>` : `
-    <p class="text-xs text-ink/60 mb-2">Ohne weitere App geht „📍 Standort teilen“ direkt in pinn. – dann aber nur, solange pinn. offen ist. Damit der Standort auch bei geschlossenem pinn. und gesperrtem Bildschirm kommt, sendet die kostenlose App „Traccar Client“ ihn direkt an pinn. (ein Traccar-Server ist nicht nötig). Gilt für iPhone und Android gleich.</p>
+    <div class="fz-note-box urgent mt-3"><span>🆘</span><span class="text-xs">${tk('loc.ifTrackerHasSos')}</span></div>` : `
+    <p class="text-xs text-ink/60 mb-2">${tk('loc.guideIntro')}</p>
     <ol class="fam-steps">
-      <li>App <b>„Traccar Client“</b> installieren (App Store bzw. Google Play, kostenlos).</li>
-      <li>In der App bei <b>Geräte-ID</b> (Device identifier) eintragen:${copy(uid)}</li>
-      <li>Bei <b>Server-URL</b> eintragen:${copy(url)}</li>
-      <li>Genauigkeit <b>Mittel</b>, Distanz <b>50 m</b>. Die App sendet dann nur, wenn du dich bewegst – im Stehen nichts. Gibt es bei dir weitere Felder (Intervall, Heartbeat), Heartbeat aus bzw. 0.</li>
-      <li>Standortzugriff erlauben: <b>Immer</b> und <b>Genauer Standort</b> an.<br><span class="text-ink/50">iPhone: Einstellungen → Traccar Client → Standort → Immer. Android: Standort → „Immer zulassen“, zusätzlich Akku → „Nicht eingeschränkt“.</span></li>
-      <li>Den Schalter <b>Dienst / Tracking</b> einschalten und <b>immer an lassen</b> – fertig. Ab jetzt steuerst du alles in pinn.: „Dauerhaft senden“ an oder aus, „Einmalig senden“ und SOS. Solange „Dauerhaft senden“ aus ist, sieht niemand deinen Standort und pinn. zeichnet keinen Weg auf.</li>
+      <li>${tk('loc.guide1')}</li>
+      <li>${tk('loc.guide2')}${copy(uid)}</li>
+      <li>${tk('loc.guide3')}${copy(url)}</li>
+      <li>${tk('loc.guide4')}</li>
+      <li>${tk('loc.guide5')}<br><span class="text-ink/50">${tk('loc.iphoneSettingsTraccarClient')}</span></li>
+      <li>${tk('loc.guide6')}</li>
     </ol>
-    <p class="text-[11px] text-ink/45 mt-2">Das Handy muss pinn. unter dieser Adresse erreichen – unterwegs also genauso verbunden sein wie für die pinn.-App selbst.</p>
-    <div class="fz-note-box urgent mt-3"><span>🆘</span><span class="text-xs"><b>SOS:</b> In „Traccar Client“ „SOS senden“ wählen (je nach Version in der App oder lange auf das App-Symbol drücken). pinn. alarmiert sofort alle Familienmitglieder per Push – mit Standort, Adresse, Uhrzeit und Knöpfen für Anruf und Notruf ${escapeHtml(regionNotrufText())}. Tipp: die eigene Handynummer im Notfallpass eintragen.</span></div>`;
+    <p class="text-[11px] text-ink/45 mt-2">${tk('loc.phoneMustReachPinn')}</p>
+    <div class="fz-note-box urgent mt-3"><span>🆘</span><span class="text-xs"><b>SOS:</b> ${tk('loc.traccarClientChooseSend', { regionNotrufText: escapeHtml(regionNotrufText()) })}</span></div>`;
   famOpenModal2(`
-    <h3 class="font-serif text-lg mb-1">Einrichtung · ${escapeHtml(famDeviceName(g))}</h3>
+    <h3 class="font-serif text-lg mb-1">${tk('loc.setup', { famDeviceName: escapeHtml(famDeviceName(g)) })}</h3>
     <div class="fz-note-box ${g.position ? 'ok' : ''} mb-3"><span>${g.position ? '✅' : '⏳'}</span><span class="text-xs">${escapeHtml(last)}</span></div>
     ${body}
-    <div class="flex justify-end mt-4"><button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-famact="cancel2">Fertig</button></div>`);
+    <div class="flex justify-end mt-4"><button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-famact="cancel2">${tk('common.done')}</button></div>`);
 }
 
 /* ---------- Places ---------- */
@@ -1208,13 +1208,13 @@ function famOpenPlaces() {
   const shopRows = shopAll.map(o => {
     const list = getShoppingList(o.laden);
     const sib = shopAll.filter(x => x.laden === o.laden);
-    const fil = sib.length > 1 ? ` <span class="text-[11px] text-ink/45 font-normal">· Filiale ${sib.indexOf(o) + 1}/${sib.length}</span>` : '';
+    const fil = sib.length > 1 ? ` <span class="text-[11px] text-ink/45 font-normal">${tk('loc.branch', { v: sib.indexOf(o) + 1, n: sib.length })}</span>` : '';
     return `<button type="button" class="fz-pick-row" data-famplace="${famAttr(o.id)}">
       ${list ? shoppingListLogoHtml(list, 30) : '<span class="text-2xl leading-none">🛒</span>'}
       <div class="min-w-0 flex-1">
-        <div class="text-sm font-medium truncate">${escapeHtml(o.name)}${fil}${list ? '' : ' <span class="text-[11px] text-red-600 font-normal">· Liste gelöscht</span>'}</div>
-        <div class="text-[11px] text-ink/50 truncate">${escapeHtml(o.adresse || 'Lage auf der Karte festgelegt')}</div>
-        <div class="text-[11px] text-ink/50">${o.abhaken === false ? 'nicht automatisch abhaken' : 'abhaken nach ' + (Number(o.verweil) || 10) + ' Min.'}${o.erinnern === false ? '' : ' · Erinnerung'}${o.ankunft ? ' · Push bei Ankunft' : ''}</div>
+        <div class="text-sm font-medium truncate">${escapeHtml(o.name)}${fil}${list ? '' : (' <span class="text-[11px] text-red-600 font-normal">' + tk('loc.listDeleted') + '</span>')}</div>
+        <div class="text-[11px] text-ink/50 truncate">${escapeHtml(o.adresse || tk('shop.addr.mapOnly'))}</div>
+        <div class="text-[11px] text-ink/50">${o.abhaken === false ? tk('loc.noAutoCheckOff') : tk('loc.checkOffAfterMin', { n: Number(o.verweil) || 10 })}${o.erinnern === false ? '' : (' ' + tk('loc.reminder'))}${o.ankunft ? (' ' + tk('loc.pushArrival')) : ''}</div>
       </div>
       <span class="text-ink/30">›</span>
     </button>`;
@@ -1222,22 +1222,22 @@ function famOpenPlaces() {
   const rows = famPlaces().filter(o => !o.laden).map(o => `<button type="button" class="fz-pick-row" data-famplace="${famAttr(o.id)}">
       <span class="text-2xl leading-none">${escapeHtml(o.emoji || '📍')}</span>
       <div class="min-w-0 flex-1">
-        <div class="text-sm font-medium truncate">${escapeHtml(o.name)}${o.zuhause ? ' <span class="text-[11px] text-ink/45 font-normal">· Zuhause</span>' : ''}</div>
-        <div class="text-[11px] text-ink/50">${Math.round(o.radius)} m · ${[o.ankunft ? 'Ankunft' : '', o.verlassen ? 'Verlassen' : ''].filter(Boolean).join(' & ') || 'keine Meldung'}</div>
+        <div class="text-sm font-medium truncate">${escapeHtml(o.name)}${o.zuhause ? (' <span class="text-[11px] text-ink/45 font-normal">' + tk('loc.home') + '</span>') : ''}</div>
+        <div class="text-[11px] text-ink/50">${Math.round(o.radius)} m · ${[o.ankunft ? tk('loc.arrival') : '', o.verlassen ? tk('fund.leave') : ''].filter(Boolean).join(' & ') || tk('loc.noNotification')}</div>
       </div>
       <span class="text-ink/30">›</span>
     </button>`).join('');
   famOpenModal(`
-    <h3 class="font-serif text-lg mb-1">Bekannte Orte</h3>
-    <p class="text-xs text-ink/50 mb-3">Kommt jemand an oder verlässt einen Ort, gibt es eine Push-Nachricht. „Zuhause“ beendet außerdem „Ich bin unterwegs“.</p>
-    ${famStatus && famStatus.zuhause ? '' : '<div class="fz-note-box mb-3"><span>🏠</span><span class="text-xs">Tipp: Unter Einstellungen → Zuhause eure Adresse festlegen – dann gibt es den Ort „Zuhause“ automatisch, mit Push bei Ankunft und Verlassen.</span></div>'}
-    <div class="flex flex-col gap-2 mb-3">${rows || '<p class="text-xs text-ink/40">Noch keine Orte.</p>'}</div>
-    <div class="fz-lbl mt-4">🛒 Läden</div>
-    <div class="flex flex-col gap-2 mb-2">${shopRows || '<p class="text-xs text-ink/40">Noch keine Läden mit Adresse.</p>'}</div>
-    <p class="text-[11px] text-ink/45 mb-3">Adressen für Läden gibst du unter Listen → Einkaufsliste bearbeiten an – gibt es einen Laden mehrmals, auch mehrere Filialen. Bleibt jemand dort eine Weile, wird der geplante Einkauf abgehakt.</p>
+    <h3 class="font-serif text-lg mb-1">${tk('loc.knownPlaces')}</h3>
+    <p class="text-xs text-ink/50 mb-3">${tk('loc.ifSomeoneArrivesLeaves')}</p>
+    ${famStatus && famStatus.zuhause ? '' : ('<div class="fz-note-box mb-3"><span>🏠</span><span class="text-xs">' + tk('loc.tipSetAddressUnder') + '</span></div>')}
+    <div class="flex flex-col gap-2 mb-3">${rows || ('<p class="text-xs text-ink/40">' + tk('loc.noPlacesYet') + '</p>')}</div>
+    <div class="fz-lbl mt-4">${tk('loc.shops')}</div>
+    <div class="flex flex-col gap-2 mb-2">${shopRows || ('<p class="text-xs text-ink/40">' + tk('loc.noShopsAddressYet') + '</p>')}</div>
+    <p class="text-[11px] text-ink/45 mb-3">${tk('loc.enterShopAddressesUnder')}</p>
     <div class="flex justify-between gap-2">
-      <button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-famact="cancel">Schließen</button>
-      <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-famact="addplace">+ Ort</button>
+      <button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-famact="cancel">${tk('common.close')}</button>
+      <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-famact="addplace">${tk('loc.place')}</button>
     </div>`);
 }
 function famOpenPlaceEdit(id) {
@@ -1264,42 +1264,42 @@ function famOpenPlaceEdit(id) {
   const profs = familyProfiles.filter(p => p.rolle !== 'gast');
   const profLabel = (p) => { const m = p.mitglied ? memberById(p.mitglied) : null; return m ? memberLabel(m) : p.username; };
   famOpenModal(`
-    <button type="button" class="text-sm text-ink/55 hover:text-pine mb-2" data-famact="places">‹ Orte</button>
-    <h3 class="font-serif text-lg mb-3">${shop ? 'Laden bearbeiten' : o ? 'Ort bearbeiten' : 'Neuer Ort'}</h3>
-    ${shop ? `<div class="flex items-center gap-2.5 mb-3">${shopList ? shoppingListLogoHtml(shopList, 36) : '<span class="text-2xl">🛒</span>'}<div class="min-w-0"><div class="text-sm font-medium truncate">${escapeHtml(o.name)}</div><div class="text-[11px] text-ink/45">Name kommt von der Einkaufsliste${o.adresse ? ' · ' + escapeHtml(o.adresse) : ''}</div></div></div>
-    <input id="famP_name" type="hidden" value="${famAttr(o.name)}" />` : `${famIn('famP_name', 'Name', o ? o.name : (home || homeFixed ? '' : 'Zuhause'), 'placeholder="z. B. Schule, Oma, Hundewiese"')}
+    <button type="button" class="text-sm text-ink/55 hover:text-pine mb-2" data-famact="places">${tk('loc.places')}</button>
+    <h3 class="font-serif text-lg mb-3">${shop ? tk('loc.editShop') : o ? tk('loc.editPlace') : tk('loc.newPlace')}</h3>
+    ${shop ? `<div class="flex items-center gap-2.5 mb-3">${shopList ? shoppingListLogoHtml(shopList, 36) : '<span class="text-2xl">🛒</span>'}<div class="min-w-0"><div class="text-sm font-medium truncate">${escapeHtml(o.name)}</div><div class="text-[11px] text-ink/45">${tk('loc.nameFromList')}${o.adresse ? ' · ' + escapeHtml(o.adresse) : ''}</div></div></div>
+    <input id="famP_name" type="hidden" value="${famAttr(o.name)}" />` : `${famIn('famP_name', tk('common.name'), o ? o.name : (home || homeFixed ? '' : tk('nav.home')), ('placeholder="' + escapeHtml(tk('loc.eGSchoolGrandma')) + '"'))}
     <div class="fam-emoji-row mb-3">${FAM_PLACE_EMOJIS.map(e => `<button type="button" class="fam-emoji${famModalState.emoji === e ? ' active' : ''}" data-famemoji="${e}">${e}</button>`).join('')}</div>`}
-    ${auto ? `<div class="fz-note-box ok mb-2"><span>🏠</span><span class="text-xs">${escapeHtml((famStatus.zuhause && famStatus.zuhause.adresse) || 'Adresse aus den Einstellungen')}<br><span class="text-ink/50">Die Lage kommt aus Einstellungen → Zuhause.</span></span></div>
-    <div class="fam-pick-slot mb-3"><div id="famP_map" class="fam-pick-map"></div></div>` : `<label class="fz-lbl" for="famP_search">Adresse suchen oder auf die Karte tippen</label>
-    <div class="flex gap-2 mb-2"><input id="famP_search" class="fz-in" type="search" placeholder="Straße, Ort" enterkeyhint="search" /><button type="button" class="fz-mini-btn" data-famact="placesearch">Suchen</button></div>
+    ${auto ? `<div class="fz-note-box ok mb-2"><span>🏠</span><span class="text-xs">${escapeHtml((famStatus.zuhause && famStatus.zuhause.adresse) || tk('loc.addressFromSettings'))}<br><span class="text-ink/50">${tk('loc.locationComesFromSettings')}</span></span></div>
+    <div class="fam-pick-slot mb-3"><div id="famP_map" class="fam-pick-map"></div></div>` : `<label class="fz-lbl" for="famP_search">${tk('loc.searchAddressTapMap')}</label>
+    <div class="flex gap-2 mb-2"><input id="famP_search" class="fz-in" type="search" placeholder="${escapeHtml(tk('loc.streetTown'))}" enterkeyhint="search" /><button type="button" class="fz-mini-btn" data-famact="placesearch">${tk('nav.search')}</button></div>
     <div id="famP_results" class="flex flex-col gap-1 mb-2"></div>
     <div class="fam-pick-slot mb-2"><div id="famP_map" class="fam-pick-map"></div></div>
     <div class="flex flex-wrap gap-2 mb-3">
-      <button type="button" class="fz-mini-btn" data-famact="placehere">📍 Meine Position</button>
+      <button type="button" class="fz-mini-btn" data-famact="placehere">${tk('loc.myPosition')}</button>
       ${devs.filter(g => g.teilen && g.position).map(g => `<button type="button" class="fz-mini-btn" data-famact="placedev" data-id="${famAttr(g.id)}">👤 ${escapeHtml(famDeviceName(g))}</button>`).join('')}
     </div>`}
-    <div class="fz-field"><label class="fz-lbl" for="famP_radius">Umkreis: <span id="famP_rlabel">${o ? Math.round(o.radius) : 150}</span> m</label>
+    <div class="fz-field"><label class="fz-lbl" for="famP_radius">${tk('loc.radius')} <span id="famP_rlabel">${o ? Math.round(o.radius) : 150}</span> m</label>
       <input id="famP_radius" type="range" min="50" max="1000" step="10" value="${o ? Math.round(o.radius) : 150}" class="w-full" style="accent-color: var(--c-pine)" /></div>
-    ${shop ? `<label class="fz-lbl" for="famP_stay">Einkauf abhaken nach</label>
-    <select id="famP_stay" class="fz-in mb-3">${[5, 10, 15, 20, 30, 45, 60].map(n => `<option value="${n}"${(Number(o.verweil) || 10) === n ? ' selected' : ''}>${n} Minuten vor Ort${n === 10 ? ' (Standard)' : ''}</option>`).join('')}</select>
-    <label class="fz-check"><input type="checkbox" id="famP_done"${o.abhaken === false ? '' : ' checked'} /><span>Geplanten Einkauf automatisch abhaken</span></label>
-    <label class="fz-check"><input type="checkbox" id="famP_donepush"${o.erledigtPush === false ? '' : ' checked'} /><span>Push „Betrag eintragen“, wenn abgehakt</span></label>
-    <label class="fz-check"><input type="checkbox" id="famP_remind"${o.erinnern === false ? '' : ' checked'} /><span>Beim Ankommen an die Einkaufsliste erinnern</span></label>
-    ${famPlaces().filter(x => x.laden === o.laden).length > 1 ? '<p class="text-[11px] text-ink/45 -mt-1 mb-3">Abhaken, Push und Erinnerung gelten für alle Filialen dieses Ladens; Umkreis und Benachrichtigungen je Filiale.</p>' : ''}` : ''}
-    ${homeFixed || shop ? '' : `<label class="fz-check"><input type="checkbox" id="famP_home"${o ? (o.zuhause ? ' checked' : '') : (!home ? ' checked' : '')} /><span>Das ist unser Zuhause<span class="block text-[11px] text-ink/45">Beendet „Ich bin unterwegs“ beim Ankommen.</span></span></label>`}
-    <label class="fz-check"><input type="checkbox" id="famP_in"${!o || o.ankunft ? ' checked' : ''} /><span>${shop ? 'Familie bei Ankunft benachrichtigen' : 'Push bei Ankunft'}</span></label>
-    <label class="fz-check"><input type="checkbox" id="famP_out"${o && o.verlassen ? ' checked' : ''} /><span>Push beim Verlassen</span></label>
-    ${devs.length ? `<label class="fz-lbl mt-2">Für wen? <span class="normal-case text-ink/40">(nichts gewählt = alle)</span></label>
+    ${shop ? `<label class="fz-lbl" for="famP_stay">${tk('shop.list.checkOffAfter')}</label>
+    <select id="famP_stay" class="fz-in mb-3">${[5, 10, 15, 20, 30, 45, 60].map(n => `<option value="${n}"${(Number(o.verweil) || 10) === n ? ' selected' : ''}>${tk('loc.minutesOnSite', { n })}${n === 10 ? (' ' + tk('fund.default')) : ''}</option>`).join('')}</select>
+    <label class="fz-check"><input type="checkbox" id="famP_done"${o.abhaken === false ? '' : ' checked'} /><span>${tk('shop.list.autoCheckOff')}</span></label>
+    <label class="fz-check"><input type="checkbox" id="famP_donepush"${o.erledigtPush === false ? '' : ' checked'} /><span>${tk('shop.list.pushAmount')}</span></label>
+    <label class="fz-check"><input type="checkbox" id="famP_remind"${o.erinnern === false ? '' : ' checked'} /><span>${tk('shop.list.remindArrival')}</span></label>
+    ${famPlaces().filter(x => x.laden === o.laden).length > 1 ? ('<p class="text-[11px] text-ink/45 -mt-1 mb-3">' + tk('loc.checkingOffPushReminders') + '</p>') : ''}` : ''}
+    ${homeFixed || shop ? '' : `<label class="fz-check"><input type="checkbox" id="famP_home"${o ? (o.zuhause ? ' checked' : '') : (!home ? ' checked' : '')} /><span>${tk('loc.ourHome')}<span class="block text-[11px] text-ink/45">${tk('loc.endsImMyWay')}</span></span></label>`}
+    <label class="fz-check"><input type="checkbox" id="famP_in"${!o || o.ankunft ? ' checked' : ''} /><span>${shop ? tk('shop.list.notifyFamily') : tk('loc.pushArrival2')}</span></label>
+    <label class="fz-check"><input type="checkbox" id="famP_out"${o && o.verlassen ? ' checked' : ''} /><span>${tk('loc.pushLeaving')}</span></label>
+    ${devs.length ? `<label class="fz-lbl mt-2">${tk('lists.item.forWhom')} <span class="normal-case text-ink/40">${tk('loc.nothingSelectedAll')}</span></label>
       <div class="flex flex-wrap gap-1.5 mb-3">${devs.map(g => `<button type="button" class="fz-filter-chip${famModalState.geraete.includes(g.id) ? ' active' : ''}" data-famdev="${famAttr(g.id)}">${escapeHtml(famDeviceName(g))}</button>`).join('')}</div>` : ''}
-    ${profs.length ? `<label class="fz-lbl">Wer bekommt die Nachricht? <span class="normal-case text-ink/40">(nichts gewählt = alle)</span></label>
+    ${profs.length ? `<label class="fz-lbl">${tk('loc.whoGetsMessage')} <span class="normal-case text-ink/40">${tk('loc.nothingSelectedAll')}</span></label>
       <div class="flex flex-wrap gap-1.5 mb-3">${profs.map(p => `<button type="button" class="fz-filter-chip${famModalState.empfaenger.includes(p.id) ? ' active' : ''}" data-famrcpt="${famAttr(p.id)}">${escapeHtml(profLabel(p))}</button>`).join('')}</div>
-      <p class="text-[11px] text-ink/45 -mt-2 mb-3">Die Person selbst bekommt keine Meldung über sich.</p>` : ''}
+      <p class="text-[11px] text-ink/45 -mt-2 mb-3">${tk('loc.personThemselfGetsNo')}</p>` : ''}
     <p id="famP_err" class="text-xs text-red-600 mb-2 hidden"></p>
     <div class="flex items-center justify-between gap-2 mt-3">
-      ${o && !auto ? `<button type="button" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50" data-famact="delplace" aria-label="Ort löschen">Löschen</button>` : '<span></span>'}
+      ${o && !auto ? `<button type="button" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50" data-famact="delplace" aria-label="${escapeHtml(tk('loc.deletePlace'))}">${tk('loc.delete')}</button>` : '<span></span>'}
       <div class="flex gap-2">
-        <button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-famact="places">Abbrechen</button>
-        <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-famact="saveplace">Speichern</button>
+        <button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-famact="places">${tk('common.cancel')}</button>
+        <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-famact="saveplace">${tk('common.save')}</button>
       </div>
     </div>`, () => {
     const host = document.getElementById('famP_map');
@@ -1333,23 +1333,23 @@ async function famPlaceSearch() {
   const q = famVal('famP_search');
   const box = document.getElementById('famP_results');
   if (!q || !box) return;
-  box.innerHTML = '<p class="text-xs text-ink/40">Suche …</p>';
+  box.innerHTML = ('<p class="text-xs text-ink/40">' + tk('login.searching') + '</p>');
   try {
     const res = await apiFetch('/api/pinn/ortung/suche?q=' + encodeURIComponent(q));
     const body = await res.json().catch(() => ({}));
     const list = Array.isArray(body.treffer) ? body.treffer : [];
     box.innerHTML = list.length
       ? list.map(t => `<button type="button" class="fz-pick-row text-xs" data-famhit="${t.lat},${t.lon}" data-famhitname="${famAttr(t.name)}">📍 <span class="min-w-0 flex-1 truncate">${escapeHtml(t.name)}</span></button>`).join('')
-      : `<p class="text-xs text-ink/40">${escapeHtml(body.error || 'Nichts gefunden.')}</p>`;
+      : `<p class="text-xs text-ink/40">${escapeHtml(body.error || tk('loc.nothingFound'))}</p>`;
   } catch (e) {
-    box.innerHTML = '<p class="text-xs text-red-600">Suche nicht möglich – keine Verbindung.</p>';
+    box.innerHTML = ('<p class="text-xs text-red-600">' + tk('shop.addr.offline') + '</p>');
   }
 }
 async function famSavePlace(btn) {
   const st = famModalState;
   const err = document.getElementById('famP_err');
   if (!st) return;
-  if (st.lat == null) { err.textContent = 'Bitte den Ort auf der Karte antippen oder eine Adresse suchen.'; err.classList.remove('hidden'); return; }
+  if (st.lat == null) { err.textContent = tk('loc.pleaseTapPlaceMap'); err.classList.remove('hidden'); return; }
   btn.disabled = true;
   try {
     const ort = {
@@ -1373,7 +1373,7 @@ async function famSavePlace(btn) {
     await famLoadStatus();
     ladenCacheFromStatus(famStatus);
     famOpenPlaces();
-    finShowToast(st.laden ? 'Laden gespeichert' : 'Ort gespeichert');
+    finShowToast(st.laden ? tk('loc.shopSaved') : tk('loc.placeSaved'));
   } catch (e) {
     err.textContent = e.message; err.classList.remove('hidden');
   } finally {
@@ -1384,7 +1384,7 @@ async function famDeletePlace() {
   const st = famModalState;
   if (!st || !st.placeId || childLockActive()) return;
   const o = famPlace(st.placeId);
-  if (!confirm(o && o.laden && o.adresse ? `Filiale „${o.name}“ (${o.adresse}) löschen?` : `Ort „${o ? o.name : ''}“ löschen?`)) return;
+  if (!confirm(o && o.laden && o.adresse ? `${tk('loc.deleteBranch', { name: o.name, adresse: o.adresse })}` : `${tk('loc.deletePlace2', { v: o ? o.name : '' })}`)) return;
   try {
     await famPost('ort-loeschen', { id: st.placeId });
     await famLoadStatus();
@@ -1399,7 +1399,7 @@ async function famSetSharing(id, on, input) {
     if (input) input.disabled = true;
     await famPost('teilen', { id, an: !!on });
     await famLoadStatus();
-    finShowToast(on ? 'Standort wird geteilt' : 'Standort wird nicht mehr geteilt');
+    finShowToast(on ? tk('loc.locationBeingShared') : tk('loc.locationNoLongerShared'));
   } catch (e) {
     if (input) input.checked = !on;
     finShowToast(e.message, true);
@@ -1438,19 +1438,19 @@ function famOpenShare() {
   const g = famMyPhone();
   if (g && g.teilen) famShareMin = g.endeZuhause ? -1 : (g.bis ? famShareMin : 0);
   if (famShareMin === -1 && !home) famShareMin = 60;
-  const opts = [[30, '30 Min.'], [60, '1 Std.'], [240, '4 Std.'], [480, '8 Std.'], [1440, '24 Std.']];
-  if (home) opts.push([-1, '🏠 Bis ich zu Hause bin']);
-  opts.push([0, '∞ Bis ich es beende']);
+  const opts = [[30, tk('loc.durMin', { n: 30 })], [60, tk('loc.durHours', { n: 1 })], [240, tk('loc.durHours', { n: 4 })], [480, tk('loc.durHours', { n: 8 })], [1440, tk('loc.durHours', { n: 24 })]];
+  if (home) opts.push([-1, '🏠 ' + tk('loc.untilImHome')]);
+  opts.push([0, '∞ ' + tk('loc.untilIStop')]);
   famOpenModal(`
-    <h3 class="font-serif text-lg mb-1">📍 Dauerhaft senden</h3>
-    <p class="text-xs text-ink/50 mb-3">Deine Familie sieht dich live auf der Karte. Gesendet wird nur, wenn du dich bewegst – im Stehen nichts. Ist pinn. geschlossen, sendet die einmal eingerichtete App „Traccar Client“.</p>
-    <label class="fz-lbl">Wie lange?</label>
+    <h3 class="font-serif text-lg mb-1">📍 ${tk('loc.sendPermanently')}</h3>
+    <p class="text-xs text-ink/50 mb-3">${tk('loc.shareIntro')}</p>
+    <label class="fz-lbl">${tk('loc.howLong')}</label>
     <div class="flex flex-wrap gap-2 mb-3">${opts.map(([v, l]) => `<button type="button" class="fz-filter-chip px-3 py-1.5 text-sm${famShareMin === v ? ' active' : ''}" data-famact="sharedur" data-min="${v}">${escapeHtml(l)}</button>`).join('')}</div>
-    <label class="fz-check"><input type="checkbox" id="famSharePush"${famSharePushPref() ? ' checked' : ''} /><span>Familie per Push benachrichtigen<span class="block text-[11px] text-ink/45">Bei einem Notfall (SOS) bekommt die Familie immer eine Push-Nachricht.</span></span></label>
+    <label class="fz-check"><input type="checkbox" id="famSharePush"${famSharePushPref() ? ' checked' : ''} /><span>${tk('loc.notifyFamilyPush')}<span class="block text-[11px] text-ink/45">${tk('loc.sosAlwaysPush')}</span></span></label>
     <p id="famShareErr" class="text-xs text-red-600 mb-2 hidden"></p>
     <div class="flex justify-end gap-2 mt-3">
-      <button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-famact="cancel">Abbrechen</button>
-      <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-famact="sharego">📍 Senden starten</button>
+      <button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-famact="cancel">${tk('common.cancel')}</button>
+      <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-famact="sharego">📍 ${tk('loc.startSending')}</button>
     </div>`);
 }
 function famShareDur(btn) {
@@ -1464,17 +1464,17 @@ async function famShareGo(btn) {
   try { localStorage.setItem('pinn.teilenPush', push ? '1' : '0'); } catch (e) { /* ignore */ }
   const label = btn.textContent;
   btn.disabled = true;
-  btn.textContent = 'Standort wird ermittelt …';
+  btn.textContent = tk('loc.gettingLocation');
   try {
     const pos = await famGetPosition();
     const r = await famPost('standort-teilen', Object.assign({ an: true, minuten: famShareMin > 0 ? famShareMin : 0, zuhause: famShareMin === -1, push }, pos || {}));
     pinnTeilenMerken({ an: true, bis: r.bis || 0, seit: Date.now() });
     famCloseModal();
     await famLoadStatus();
-    finShowToast(pos ? 'Du sendest jetzt dauerhaft' : 'Läuft – dein Standort war gerade nicht verfügbar (Standortzugriff erlaubt?)', !pos);
+    finShowToast(pos ? tk('loc.nowSendingPermanently') : tk('loc.runningNoLocation'), !pos);
     pinnTeilenLiveCheck(true);
   } catch (e) {
-    if (err) { err.textContent = e.message || 'Teilen nicht möglich'; err.classList.remove('hidden'); }
+    if (err) { err.textContent = e.message || tk('loc.sharingNotPossible'); err.classList.remove('hidden'); }
   } finally {
     btn.disabled = false;
     btn.textContent = label;
@@ -1487,7 +1487,7 @@ async function famShareEnd(btn) {
     pinnTeilenMerken(null);
     pinnTeilenStop();
     await famLoadStatus();
-    finShowToast('Dauerhaft senden ist aus');
+    finShowToast(tk('loc.permanentOff'));
   } catch (e) {
     finShowToast(e.message, true);
   } finally {
@@ -1498,12 +1498,12 @@ async function famShareNow(btn) {
   if (btn) btn.disabled = true;
   try {
     const pos = await famGetPosition();
-    if (!pos) throw new Error('Standort nicht verfügbar – ist der Standortzugriff für pinn. erlaubt?');
+    if (!pos) throw new Error(tk('loc.locationUnavailable'));
     const r = await famPost('standort', pos);
-    if (r && r.teilen === false) { pinnTeilenMerken(null); throw new Error('Deine Freigabe ist schon beendet.'); }
+    if (r && r.teilen === false) { pinnTeilenMerken(null); throw new Error(tk('loc.shareAlreadyEnded')); }
     pinnTeilenLast = { t: Date.now(), lat: pos.lat, lon: pos.lon };
     await famLoadStatus();
-    finShowToast('Standort gesendet');
+    finShowToast(tk('loc.locationSent'));
     pinnTeilenLiveCheck(true);
   } catch (e) {
     finShowToast(e.message, true);
@@ -1518,16 +1518,16 @@ async function famSendOnce(btn) {
   const pushEl = document.getElementById('famMinePush');
   const push = !!(pushEl && pushEl.checked);
   const label = btn ? btn.textContent : '';
-  if (btn) { btn.disabled = true; btn.textContent = 'Standort wird ermittelt …'; }
+  if (btn) { btn.disabled = true; btn.textContent = tk('loc.gettingLocation'); }
   try {
     const pos = await famGetPosition();
-    if (!pos) throw new Error('Standort nicht verfügbar – ist der Standortzugriff für pinn. erlaubt?');
+    if (!pos) throw new Error(tk('loc.locationUnavailable'));
     const r = await famPost('standort-einmal', Object.assign({ push }, pos));
     pinnTeilenLast = { t: Date.now(), lat: pos.lat, lon: pos.lon };
     await famLoadStatus();
-    finShowToast(r && r.dauerhaft ? 'Standort gesendet' : 'Standort einmalig gesendet – 1 Stunde sichtbar');
+    finShowToast(r && r.dauerhaft ? tk('loc.locationSent') : tk('loc.sentOnceOneHour'));
   } catch (e) {
-    finShowToast(e.message || 'Senden nicht möglich', true);
+    finShowToast(e.message || tk('loc.sendingNotPossible'), true);
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = label; }
   }
@@ -1543,9 +1543,9 @@ function famToggleDauerhaft(input) {
 var FAM_SOS_SEC = 3;
 var famSosUntil = 0, famSosTimer = null, famSosSending = false;
 function famSosLabel() {
-  if (famSosSending) return '📡 Alarm wird gesendet …';
-  if (famSosUntil) return '🆘 Alarm in ' + Math.max(1, Math.ceil((famSosUntil - Date.now()) / 1000)) + ' s … nochmal tippen bricht ab';
-  return '🆘 SOS – Familie sofort alarmieren';
+  if (famSosSending) return tk('sos.sendingAlarm');
+  if (famSosUntil) return tk('sos.countdown', { n: Math.max(1, Math.ceil((famSosUntil - Date.now()) / 1000)) });
+  return tk('sos.alertFamilyNow');
 }
 function famSosPaint() {
   const b = document.getElementById('famSosBtn');
@@ -1558,7 +1558,7 @@ function famSosPress() {
   if (famSosSending) return;
   if (famSosUntil) {
     famSosUntil = 0; clearInterval(famSosTimer); famSosTimer = null;
-    hwSosVibrate(60); famSosPaint(); finShowToast('SOS abgebrochen');
+    hwSosVibrate(60); famSosPaint(); finShowToast(tk('sos.cancelled'));
     return;
   }
   famSosUntil = Date.now() + FAM_SOS_SEC * 1000;
@@ -1579,22 +1579,22 @@ async function famSosSend() {
   famSosSending = true;
   famSosPaint();
   let failed = '', id = '';
-  if (navigator.onLine === false) failed = 'Keine Verbindung zu pinn. – der Alarm konnte nicht gesendet werden.';
+  if (navigator.onLine === false) failed = tk('loc.noConnectionPinnAlarm');
   else {
     const pos = await hwSosBrowserPos();
     try { const r = await famPost('sos-ausloesen', pos || {}); id = (r && r.id) || ''; }
-    catch (e) { failed = e.message || 'Der Alarm konnte nicht gesendet werden.'; }
+    catch (e) { failed = e.message || tk('loc.alarmCouldNotSent'); }
   }
   famSosSending = false;
   famSosPaint();
   if (failed) {
     hwSosVibrate([400, 120, 400]);
     const pol = regionNotruf().polizei;
-    if (confirm(failed + '\n\nJetzt den Polizei-Notruf ' + pol + ' anrufen?')) location.href = 'tel:' + pol;
+    if (confirm(failed + '\n\n' + tk('sos.callPoliceNow', { number: pol }))) location.href = 'tel:' + pol;
     return;
   }
   hwSosVibrate([300, 100, 300]);
-  finShowToast('🆘 Alarm gesendet – deine Familie ist informiert');
+  finShowToast(tk('loc.alarmSentFamilyHas'));
   sosStarted = true;
   if (id) sosForceId = id;
   await sosCheck();
@@ -1686,7 +1686,7 @@ setInterval(() => { if (document.visibilityState === 'visible') pinnTeilenLiveCh
 setTimeout(() => pinnTeilenLiveCheck(false), 3000);
 
 async function famSetUnterwegs(on, btn) {
-  if (on && !confirm('Die Familie bekommt eine Nachricht und sieht deinen Live-Standort, bis du zu Hause ankommst. Los?')) return;
+  if (on && !confirm(tk('loc.familyGetsMessageSees'))) return;
   if (btn) btn.disabled = true;
   try {
     await famPost('unterwegs', { an: !!on });
@@ -1697,7 +1697,7 @@ async function famSetUnterwegs(on, btn) {
       pinnTeilenGeste = true;
     }
     await famLoadStatus();
-    finShowToast(on ? 'Gute Fahrt! Die Familie ist informiert.' : 'Heimweg beendet');
+    finShowToast(on ? tk('loc.haveGoodTripFamily') : tk('loc.wayHomeEnded'));
     sosStarted = true;
     sosCheck(); // Show or remove the notice at the top (with contacts and emergency call) right away
   } catch (e) {
@@ -1713,9 +1713,9 @@ async function famLoadAddress(id) {
     const res = await apiFetch(`/api/pinn/ortung/suche?lat=${g.position.lat}&lon=${g.position.lon}`);
     const body = await res.json().catch(() => ({}));
     const t = Array.isArray(body.treffer) && body.treffer[0];
-    famAddress[id] = { lat: g.position.lat, lon: g.position.lon, name: t ? t.name : (body.error || 'Keine Adresse gefunden') };
+    famAddress[id] = { lat: g.position.lat, lon: g.position.lon, name: t ? t.name : (body.error || tk('loc.noAddressFound')) };
   } catch (e) {
-    famAddress[id] = { lat: g.position.lat, lon: g.position.lon, name: 'Keine Verbindung' };
+    famAddress[id] = { lat: g.position.lat, lon: g.position.lon, name: tk('loc.noConnection') };
   }
   famRenderInfo();
 }
@@ -1811,13 +1811,13 @@ function sosMarkSeen(a) {
   Object.keys(m).forEach(k => { if (k === a.id || sosAlarms.some(x => x.id === k)) keep[k] = m[k]; });
   try { localStorage.setItem(LS_SOS_SEEN, JSON.stringify(keep)); } catch (e) { /* ignore */ }
 }
-function sosName(a) { const m = memberById(a.memberId); return m ? memberLabel(m) : (a.name || 'Jemand'); }
+function sosName(a) { const m = memberById(a.memberId); return m ? memberLabel(m) : (a.name || tk('lists.someone')); }
 function sosIsMine(a) { const me = famMyMemberId(); return !!me && a.memberId === me; }
 function sosClock(ms) {
   if (!ms) return '';
   const d = new Date(ms);
-  const t = d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + ' Uhr';
-  return d.toDateString() === new Date().toDateString() ? t : d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }) + ', ' + t;
+  const t = tk('cal.timeAt', { time: d.toLocaleTimeString(sysLocale(), { hour: '2-digit', minute: '2-digit' }) });
+  return d.toDateString() === new Date().toDateString() ? t : d.toLocaleDateString(sysLocale(), { day: '2-digit', month: '2-digit' }) + ', ' + t;
 }
 function sosCurrent(a) { return a.aktuell || a.pos || null; }
 function sosAddress(a) {
@@ -1922,17 +1922,17 @@ function sosSkeleton(a) {
   const pass = famPass(a.memberId) || {};
   const phone = String(pass.phone || '').trim();
   let kicker, title;
-  if (!a.aktiv) { kicker = '✅ Entwarnung'; title = mine ? 'Dein Hilferuf ist beendet' : name + ' ist in Sicherheit'; }
-  else if (mine) { kicker = '🆘 SOS gesendet'; title = 'Dein Hilferuf ist aktiv'; }
-  else { kicker = '🆘 SOS · Hilferuf'; title = name + ' braucht Hilfe!'; }
+  if (!a.aktiv) { kicker = tk('sos.allClear'); title = mine ? tk('sos.callHelpHasEnded') : name + (' ' + tk('sos.safe')); }
+  else if (mine) { kicker = tk('sos.sent'); title = tk('sos.callHelpActive'); }
+  else { kicker = tk('sos.sosCallHelp'); title = name + (' ' + tk('sos.needsHelp')); }
   const ava = m ? `<span class="fam-ava" style="--fam:#fff">${famAvatarInner(m)}</span>` : `<span class="fam-ava" style="--fam:#fff"><span class="fam-ava-in">🆘</span></span>`;
-  const emCalls = sosEmergencyCalls('Polizei');
+  const emCalls = sosEmergencyCalls(tk('emergency.police'));
   const nCalls = emCalls.length + (!mine && phone ? 1 : 0);
   const calls = !a.aktiv ? '' : `<div class="sos-calls${({ 1: ' one', 2: ' two', 4: ' four' })[nCalls] || ''}">
       ${!mine && phone ? `<a class="sos-call person" href="${famAttr(famTel(phone))}"><span class="ic">📞</span><b>${escapeHtml(name)}</b><span>${escapeHtml(phone)}</span></a>` : ''}
       ${emCalls.join('')}
     </div>
-    ${!mine && !phone ? `<p class="text-[11px] text-ink/50 -mt-1">Für ${escapeHtml(name)} ist keine Handynummer im Notfallpass hinterlegt${famCanEdit() ? ' – unter Familie → Bearbeiten eintragen' : ''}.</p>` : ''}`;
+    ${!mine && !phone ? `<p class="text-[11px] text-ink/50 -mt-1">${tk('sos.noPhoneFor', { name: escapeHtml(name) })}${famCanEdit() ? (' ' + tk('sos.enterUnderFamilyEdit')) : ''}.</p>` : ''}`;
   const canPass = !!m && isViewAllowed('familie');
   return `
     <div class="sos-head">
@@ -1948,14 +1948,14 @@ function sosSkeleton(a) {
       <div class="sos-map-slot"><div id="sosMapHost" class="fam-map-host"></div><div class="sos-map-cap" id="sosMapCap"></div></div>
       ${calls}
       <div class="flex flex-wrap gap-2">
-        <a id="sosNav" class="fz-mini-btn" href="#" target="_blank" rel="noopener">🧭 Navigation</a>
-        <button type="button" class="fz-mini-btn" data-sosact="copy">📋 Adresse kopieren</button>
-        ${canPass ? `<button type="button" class="fz-mini-btn" data-sosact="pass">🩺 Notfallpass</button>` : ''}
+        <a id="sosNav" class="fz-mini-btn" href="#" target="_blank" rel="noopener">${tk('family.navigation')}</a>
+        <button type="button" class="fz-mini-btn" data-sosact="copy">${tk('sos.copyAddress')}</button>
+        ${canPass ? `<button type="button" class="fz-mini-btn" data-sosact="pass">${tk('family.emergencyCard')}</button>` : ''}
       </div>
     </div>
     <div class="sos-foot">
-      ${a.aktiv && !isCurrentUserGuest() ? `<button type="button" class="sos-btn-ok" data-sosact="ende">${mine ? '✅ Mir geht es gut' : '✅ Entwarnung geben'}</button>` : ''}
-      <button type="button" class="sos-btn-close" data-sosact="close">Schließen</button>
+      ${a.aktiv && !isCurrentUserGuest() ? `<button type="button" class="sos-btn-ok" data-sosact="ende">${mine ? tk('sos.imFine') : tk('sos.giveAllClear')}</button>` : ''}
+      <button type="button" class="sos-btn-close" data-sosact="close">${tk('common.close')}</button>
     </div>`;
 }
 // Refresh text, map and navigation with the newest location (without rebuilding the map)
@@ -1964,27 +1964,27 @@ function sosUpdate(a) {
   const sub = document.getElementById('sosSub');
   if (sub) {
     const parts = [];
-    if (!a.aktiv && a.ende) parts.push((a.ende.wer ? a.ende.wer + ' hat ' : '') + 'um ' + sosClock(a.ende.zeit) + ' Entwarnung gegeben');
-    else parts.push('ausgelöst um ' + sosClock(a.zeit) + ' · ' + famAgo(a.zeit));
-    if (Number(a.anzahl) > 1 && a.aktiv) parts.push(a.anzahl + '× gedrückt');
-    if (sosIsMine(a) && a.aktiv) parts.push('Deine Familie sieht deinen Standort');
+    if (!a.aktiv && a.ende) parts.push(a.ende.wer ? tk('sos.allClearByAt', { name: a.ende.wer, time: sosClock(a.ende.zeit) }) : tk('sos.allClearAt', { time: sosClock(a.ende.zeit) }));
+    else parts.push((tk('sos.triggered') + ' ') + sosClock(a.zeit) + ' · ' + famAgo(a.zeit));
+    if (Number(a.anzahl) > 1 && a.aktiv) parts.push(tk('sos.pressedN', { n: a.anzahl }));
+    if (sosIsMine(a) && a.aktiv) parts.push(tk('sos.familySeesLocation'));
     sub.textContent = parts.join(' · ');
   }
   const loc = document.getElementById('sosLoc');
   if (loc) {
     if (!c) {
-      loc.innerHTML = `<div class="sos-addr">📍 Standort noch unbekannt</div><div class="sos-when">Es kam noch keine Position – pinn. aktualisiert automatisch.</div>`;
+      loc.innerHTML = `<div class="sos-addr">${tk('sos.locationStillUnknown')}</div><div class="sos-when">${tk('sos.noPositionHasArrived')}</div>`;
     } else {
       const live = a.aktiv && famNow() - Number(c.zeit || 0) < 2 * 60 * 1000;
-      const acc = c.genau ? `(± ${escapeHtml(String(c.genau))} m)` : '(Genauigkeit unbekannt)';
-      const extra = [live ? '<span class="sos-live">● live</span>' : (a.aktiv ? escapeHtml(famAgo(c.zeit)) : ''), c.akku != null ? '🔋 ' + escapeHtml(String(c.akku)) + ' %' : '', c.tempo ? '🏃 ' + escapeHtml(String(c.tempo)) + ' km/h' : ''].filter(Boolean).join(' · ');
+      const acc = c.genau ? `(± ${escapeHtml(String(c.genau))} m)` : tk('sos.accuracyUnknown');
+      const extra = [live ? ('<span class="sos-live">' + tk('family.live') + '</span>') : (a.aktiv ? escapeHtml(famAgo(c.zeit)) : ''), c.akku != null ? '🔋 ' + escapeHtml(String(c.akku)) + ' %' : '', c.tempo ? '🏃 ' + escapeHtml(String(c.tempo)) + ' km/h' : ''].filter(Boolean).join(' · ');
       loc.innerHTML = `<div class="sos-addr">📍 ${escapeHtml(sosAddress(a))}</div>
         <div class="sos-when">🕒 ${escapeHtml(sosClock(c.zeit))} <span class="acc">${acc}</span>${extra ? ' · ' + extra : ''}</div>
-        ${a.aktuell && a.pos && a.adresse && a.adresse !== a.aktuell.adresse ? `<div class="sos-when">🆘 Beim Auslösen: ${escapeHtml(a.adresse)}</div>` : ''}`;
+        ${a.aktuell && a.pos && a.adresse && a.adresse !== a.aktuell.adresse ? `<div class="sos-when">${tk('sos.trigger', { adresse: escapeHtml(a.adresse) })}</div>` : ''}`;
     }
   }
   const cap = document.getElementById('sosMapCap');
-  if (cap) cap.textContent = c ? (c.genau ? '◯ Radius ± ' + c.genau + ' m Genauigkeit' : '◯ Genauigkeit unbekannt') : '';
+  if (cap) cap.textContent = c ? (c.genau ? tk('sos.radiusAccuracy', { m: c.genau }) : tk('sos.accuracyUnknown2')) : '';
   const nav = document.getElementById('sosNav');
   if (nav) {
     if (c) {
@@ -2043,8 +2043,8 @@ function sosRenderBanner() {
   if (!b) return;
   const active = sosEnabled() ? sosAlarms.filter(a => a.aktiv) : [];
   if (!active.length || sosOpenId) { b.classList.add('hidden'); return; }
-  const names = active.map(a => sosIsMine(a) ? 'Dein Hilferuf' : sosName(a));
-  b.textContent = '🆘 SOS aktiv: ' + names.join(', ') + ' – antippen';
+  const names = active.map(a => sosIsMine(a) ? tk('sos.callHelp') : sosName(a));
+  b.textContent = tk('sos.activeBanner', { names: names.join(', ') });
   b.dataset.id = active.sort((x, y) => Number(y.letzte || y.zeit) - Number(x.letzte || x.zeit))[0].id;
   b.classList.remove('hidden');
 }
@@ -2054,12 +2054,12 @@ async function sosEnd(btn) {
   const a = sosAlarms.find(x => x.id === sosOpenId);
   if (!a || sosBusy) return;
   const mine = sosIsMine(a);
-  if (!confirm(mine ? 'Entwarnung geben? Deine Familie bekommt Bescheid, dass es dir gut geht.' : `Entwarnung für ${sosName(a)} geben? Alle in der Familie werden benachrichtigt.`)) return;
+  if (!confirm(mine ? tk('sos.giveAllClearFamily') : `${tk('sos.giveAllClearEveryone', { sosName: sosName(a) })}`)) return;
   sosBusy = true;
   if (btn) btn.disabled = true;
   try {
     await postJson('/api/pinn/ortung/sos-ende', { id: a.id });
-    finShowToast('Entwarnung gesendet');
+    finShowToast(tk('sos.allClearSent'));
     a.aktiv = false;
     a.ende = { zeit: famNow(), wer: (currentMember() && memberLabel(currentMember())) || '' };
     sosMarkSeen(a);
@@ -2067,7 +2067,7 @@ async function sosEnd(btn) {
     sosRenderBanner();
     sosCheck();
   } catch (e) {
-    finShowToast(e.message || 'Entwarnung nicht möglich – keine Verbindung?', true);
+    finShowToast(e.message || tk('sos.allClearNotPossible'), true);
     if (btn) btn.disabled = false;
   } finally {
     sosBusy = false;
@@ -2180,11 +2180,11 @@ function famPassFilled(p) {
 function famHomeHtml() {
   const grid = members.length
     ? `<div id="famGrid" class="fam-grid"></div>`
-    : `<div class="fam-card text-center py-6"><div class="text-4xl mb-2">👨‍👩‍👧‍👦</div><div class="font-serif text-lg mb-1">Noch keine Familienmitglieder</div><p class="text-sm text-ink/50">Mitglieder legt ein Admin unter Einstellungen → Familienmitglieder an.</p></div>`;
+    : `<div class="fam-card text-center py-6"><div class="text-4xl mb-2">👨‍👩‍👧‍👦</div><div class="font-serif text-lg mb-1">${tk('family.noFamilyMembersYet')}</div><p class="text-sm text-ink/50">${tk('family.adminCreatesMembersUnder')}</p></div>`;
   return `${grid}
     ${skTodayCardHtml()}
     ${famQuickCardsHtml()}
-    ${members.length ? '<p class="text-[11px] text-ink/40 text-center">Tippe auf eine Person, um ihr Profil zu öffnen.</p>' : ''}`;
+    ${members.length ? ('<p class="text-[11px] text-ink/40 text-center">' + tk('family.tapPersonOpenTheir') + '</p>') : ''}`;
 }
 function famQuickCardsHtml() {
   const people = members.filter(m => !famIsPet(m));
@@ -2192,22 +2192,22 @@ function famQuickCardsHtml() {
   const cards = [];
   cards.push(`<button type="button" class="fam-quick" data-famtabgo="notfall">
       <span class="fam-quick-ic">🩺</span>
-      <span class="fam-quick-t">Notfall</span>
-      <span class="fam-quick-s">${filled ? `${filled} von ${members.length} Notfallpässen` : 'Noch kein Notfallpass'}</span>
+      <span class="fam-quick-t">${tk('family.emergency')}</span>
+      <span class="fam-quick-s">${filled ? `${tk('family.emergencyCards', { filled, n: members.length })}` : tk('family.noEmergencyCardYet')}</span>
     </button>`);
   if (famOrtungAllowed()) {
     const sharing = famDevices().filter(g => g.teilen && g.position).length;
     cards.push(`<button type="button" class="fam-quick" data-famtabgo="ortung">
       <span class="fam-quick-ic">📍</span>
-      <span class="fam-quick-t">Ortung</span>
-      <span class="fam-quick-s">${sharing ? `${sharing} teilen ihren Standort` : 'Karte & Orte'}</span>
+      <span class="fam-quick-t">${tk('family.location3')}</span>
+      <span class="fam-quick-s">${sharing ? `${tk('family.sharingTheirLocation', { sharing })}` : tk('family.mapPlaces')}</span>
     </button>`);
   }
   if (!skProfiles().length && people.length) {
     cards.push(`<button type="button" class="fam-quick" data-famtabgo="schule">
       <span class="fam-quick-ic">🎒</span>
-      <span class="fam-quick-t">Schule & Kita</span>
-      <span class="fam-quick-s">Stundenplan, Elternbriefe, Schließtage</span>
+      <span class="fam-quick-t">${tk('family.schoolDaycare')}</span>
+      <span class="fam-quick-s">${tk('family.timetableParentLettersClosure')}</span>
     </button>`);
   }
   cards.push(ptQuickCardHtml());
@@ -2219,7 +2219,7 @@ function famOrtungHtml() {
     <div id="famMine"></div>
     <div class="fam-card">
       <div class="flex items-center justify-between gap-2 mb-2">
-        <div class="fz-h" style="margin-bottom:0">📍 Live-Standorte</div>
+        <div class="fz-h" style="margin-bottom:0">${tk('family.liveLocations')}</div>
         <span id="famStamp" class="text-[11px] text-ink/40"></span>
       </div>
       <div id="famChips" class="fam-chip-row"></div>
@@ -2230,8 +2230,8 @@ function famOrtungHtml() {
 }
 function famNotfallHtml() {
   const n = regionNotruf();
-  const calls = [`<a class="fz-act-btn fam-sos" href="tel:${escapeHtml(n.rettung)}"><span class="fz-ti">🚑</span>${escapeHtml(n.rettung)} anrufen</a>`];
-  if (n.polizei && n.polizei !== n.rettung) calls.push(`<a class="fz-act-btn" href="tel:${escapeHtml(n.polizei)}"><span class="fz-ti">🚓</span>${escapeHtml(n.polizei)} anrufen</a>`);
+  const calls = [`<a class="fz-act-btn fam-sos" href="tel:${escapeHtml(n.rettung)}"><span class="fz-ti">🚑</span>${tk('family.call2', { rettung: escapeHtml(n.rettung) })}</a>`];
+  if (n.polizei && n.polizei !== n.rettung) calls.push(`<a class="fz-act-btn" href="tel:${escapeHtml(n.polizei)}"><span class="fz-ti">🚓</span>${tk('family.call3', { polizei: escapeHtml(n.polizei) })}</a>`);
   const rows = members.map(m => {
     const p = famPass(m.id) || {};
     const has = famPassFilled(p);
@@ -2247,19 +2247,19 @@ function famNotfallHtml() {
       <span class="fam-ava sm">${famAvatarInner(m)}</span>
       <span class="min-w-0 flex-1 text-left">
         <span class="block text-sm font-medium truncate">${escapeHtml(memberLabel(m))}</span>
-        <span class="block text-[11px] ${has ? 'text-ink/55' : 'text-mustard'} truncate">${has ? escapeHtml(facts || 'Notfallpass') : 'Noch kein Notfallpass'}</span>
+        <span class="block text-[11px] ${has ? 'text-ink/55' : 'text-mustard'} truncate">${has ? escapeHtml(facts || tk('family.emergencyCard2')) : tk('family.noEmergencyCardYet')}</span>
       </span>
       <span class="text-ink/30 text-lg leading-none">›</span>
     </button>`;
   }).join('');
   return `
     <div class="fam-card">
-      <div class="fz-h">🆘 Notruf</div>
+      <div class="fz-h">${tk('family.emergency2')}</div>
       <div class="flex gap-2">${calls.join('')}</div>
     </div>
-    ${members.length ? `<div class="fam-card"><div class="fz-h">🩺 Notfallpässe</div><div class="flex flex-col">${rows}</div></div>` : ''}
+    ${members.length ? `<div class="fam-card"><div class="fz-h">${tk('family.emergencyCards2')}</div><div class="flex flex-col">${rows}</div></div>` : ''}
     ${ptNotfallHtml()}
-    <p class="text-[11px] text-ink/40 text-center">Notfallpässe sind auch offline griffbereit.</p>`;
+    <p class="text-[11px] text-ink/40 text-center">${tk('family.emergencyCardsAvailableOffline')}</p>`;
 }
 function famProfileHtml(m) {
   const p = famPass(m.id) || {};
@@ -2268,21 +2268,21 @@ function famProfileHtml(m) {
   const color = famColor(m);
   const sp = skProfile(m.id);
   const g = famOrtungAllowed() ? famDeviceForMember(m.id) : null;
-  const sub = [m.role && memberLabel(m) !== m.role ? m.role : '', age != null ? age + (age === 1 ? ' Jahr' : ' Jahre') : '', pet && p.species ? p.species : ''].filter(Boolean).join(' · ');
+  const sub = [m.role && memberLabel(m) !== m.role ? m.role : '', age != null ? tk('family.ageYears', { n: age }) : '', pet && p.species ? p.species : ''].filter(Boolean).join(' · ');
   const btns = [
-    p.phone ? `<a class="fz-act-btn" href="${famAttr(famTel(p.phone))}"><span class="fz-ti">📞</span>Anrufen</a>` : '',
-    `<button type="button" class="fz-act-btn" data-famact="pass"><span class="fz-ti">🩺</span>Notfallpass</button>`,
+    p.phone ? `<a class="fz-act-btn" href="${famAttr(famTel(p.phone))}"><span class="fz-ti">📞</span>${tk('family.callBtn')}</a>` : '',
+    `<button type="button" class="fz-act-btn" data-famact="pass"><span class="fz-ti">🩺</span>${tk('family.emergencyCard2')}</button>`,
     sp ? `<button type="button" class="fz-act-btn" data-sk="open" data-id="${famAttr(m.id)}"><span class="fz-ti">${skIcon(sp)}</span>${skTypeLabel(sp)}</button>` : '',
-    g && g.teilen && g.position ? `<button type="button" class="fz-act-btn" data-famact="showmap" data-id="${famAttr(g.id)}"><span class="fz-ti">🗺</span>Karte</button>` : '',
+    g && g.teilen && g.position ? `<button type="button" class="fz-act-btn" data-famact="showmap" data-id="${famAttr(g.id)}"><span class="fz-ti">🗺</span>${tk('family.map')}</button>` : '',
   ].filter(Boolean).join('');
   const school = sp ? skMemberCardHtml(m, sp)
     : (!pet && famCanEdit() ? `<div class="fam-card flex items-center gap-3">
         <span class="text-3xl leading-none">🎒</span>
-        <div class="min-w-0 flex-1"><div class="text-sm font-medium">Schule oder Kita</div><div class="text-[11px] text-ink/50">Stundenplan, Hausaufgaben, Elternbriefe und Schließtage</div></div>
-        <button type="button" class="fz-mini-btn" data-sk="addkid" data-id="${famAttr(m.id)}">Einrichten</button>
+        <div class="min-w-0 flex-1"><div class="text-sm font-medium">${tk('family.schoolDaycare2')}</div><div class="text-[11px] text-ink/50">${tk('family.timetableHomeworkParentLetters')}</div></div>
+        <button type="button" class="fz-mini-btn" data-sk="addkid" data-id="${famAttr(m.id)}">${tk('family.setUp')}</button>
       </div>` : '');
   return `
-    <button type="button" class="self-start text-sm text-ink/55 hover:text-pine -mb-1" data-famact="back">‹ Familie</button>
+    <button type="button" class="self-start text-sm text-ink/55 hover:text-pine -mb-1" data-famact="back">${tk('family.family')}</button>
     <div class="fz-hero" style="--fz:${famAttr(color)}">
       <div class="fam-band"></div>
       <div class="fam-hero-ava"><span class="fam-ava big" style="--fam:${famAttr(color)}">${famAvatarInner(m)}<span id="famDetailPing" class="fam-ping${famIsLive(g) ? '' : ' hidden'}"></span></span></div>
@@ -2302,17 +2302,17 @@ function famProfileHtml(m) {
 function famPassSummaryHtml(m) {
   const p = famPass(m.id) || {};
   const pet = famIsPet(m);
-  const head = `<div class="flex items-center justify-between gap-2 mb-1"><div class="fz-h" style="margin-bottom:0">🩺 Notfallpass</div><button type="button" class="fz-mini-btn" data-famact="pass">Öffnen ›</button></div>`;
+  const head = `<div class="flex items-center justify-between gap-2 mb-1"><div class="fz-h" style="margin-bottom:0">${tk('family.emergencyCard')}</div><button type="button" class="fz-mini-btn" data-famact="pass">${tk('shop.open')}</button></div>`;
   if (!famPassFilled(p)) {
-    return `<div class="fam-card">${head}<p class="text-sm text-ink/50">${pet ? 'Chipnummer, Tierarzt, Medikamente und Notfallkontakte – alles auf einen Blick.' : 'Blutgruppe, Allergien, Medikamente, Krankenkasse und Notfallkontakte – griffbereit, auch offline.'}</p></div>`;
+    return `<div class="fam-card">${head}<p class="text-sm text-ink/50">${pet ? tk('family.chipNumberVetMedication') : tk('family.bloodTypeAllergiesMedication')}</p></div>`;
   }
   const contacts = (Array.isArray(p.contacts) ? p.contacts : []).filter(x => x && (x.name || x.phone)).map(x => x.name || x.phone);
   const meds = (Array.isArray(p.meds) ? p.meds : []).filter(x => x && x.name).map(x => x.name);
   return `<div class="fam-card">${head}
-    ${famRow('Blutgruppe', pet ? '' : p.blood)}
-    ${famRow(pet ? 'Allergien & Unverträglichkeiten' : 'Allergien', p.allergies)}
-    ${famRow('Medikamente', meds.join(', '))}
-    ${famRow('Notfallkontakte', contacts.join(', '))}
+    ${famRow(tk('family.bloodType'), pet ? '' : p.blood)}
+    ${famRow(pet ? tk('family.allergiesIntolerances') : tk('family.allergies'), p.allergies)}
+    ${famRow(tk('lists.t.i.medication'), meds.join(', '))}
+    ${famRow(tk('lists.t.i.emergencyContacts'), contacts.join(', '))}
   </div>`;
 }
 
@@ -2331,16 +2331,19 @@ function famPassSummaryHtml(m) {
    Closure days and open letter deadlines appear in the calendar (schoolCalendarEvents).
    AI (pb_hooks/pinn-ki.js): timetable and parent letter from a photo.
    ========================================================== */
-var SK_DAYS = [[1, 'Mo', 'Montag'], [2, 'Di', 'Dienstag'], [3, 'Mi', 'Mittwoch'], [4, 'Do', 'Donnerstag'], [5, 'Fr', 'Freitag']];
+var SK_DAYS = [[1, tk('weekday.mo'), tk('school.monday')], [2, tk('weekday.di'), tk('school.tuesday')], [3, tk('weekday.mi'), tk('school.wednesday')], [4, tk('weekday.do'), tk('school.thursday')], [5, tk('weekday.fr'), tk('school.friday')]];
 var SK_ACTIONS = [
-  { id: 'unterschreiben', icon: '✍️', label: 'Unterschreiben' },
-  { id: 'bezahlen', icon: '💶', label: 'Bezahlen' },
-  { id: 'mitbringen', icon: '🎒', label: 'Mitbringen' },
-  { id: 'anmelden', icon: '📝', label: 'Rückmelden' },
-  { id: 'lesen', icon: '📖', label: 'Lesen' },
+  { id: 'unterschreiben', icon: '✍️', label: tk('school.sign') },
+  { id: 'bezahlen', icon: '💶', label: tk('school.pay') },
+  { id: 'mitbringen', icon: '🎒', label: tk('school.bringAlong') },
+  { id: 'anmelden', icon: '📝', label: tk('school.reply') },
+  { id: 'lesen', icon: '📖', label: tk('school.read') },
 ];
-var SK_SUBJECTS = ['Deutsch', 'Mathe', 'Englisch', 'Sachunterricht', 'Sport', 'Musik', 'Kunst', 'Religion', 'Ethik', 'Biologie',
-  'Geschichte', 'Erdkunde', 'Physik', 'Chemie', 'Französisch', 'Spanisch', 'Latein', 'Informatik', 'Politik', 'Werken', 'Förderunterricht', 'AG'];
+// Subject suggestions in the chosen language (a chosen subject is saved as text)
+var SK_SUBJECT_KEYS = ['school.subj.german', 'school.subj.math', 'school.subj.english', 'school.subj.science', 'school.subj.sport', 'school.subj.music', 'school.subj.art', 'school.subj.religion',
+  'school.subj.ethics', 'school.subj.biology', 'school.subj.history', 'school.subj.geography', 'school.subj.physics', 'school.subj.chemistry', 'school.subj.french', 'school.subj.spanish',
+  'school.subj.latin', 'school.subj.computing', 'school.subj.civics', 'school.subj.crafts', 'school.subj.support', 'school.subj.club'];
+function skSubjectSuggestions() { return SK_SUBJECT_KEYS.map(k => tk(k)); }
 var SK_COLORS = ['#4F7CAC', '#C0392B', '#2E9C7A', '#B07A00', '#8E5BB5', '#D2691E', '#00838F', '#AD1457', '#558B2F', '#6D4C41', '#3949AB', '#7B8D00'];
 var skKid = '';
 var skShowDone = false;
@@ -2356,7 +2359,7 @@ function skLettersOf(mid) { return (Array.isArray(schoolLetters) ? schoolLetters
 function skClosuresOf(mid) { return (Array.isArray(schoolClosures) ? schoolClosures : []).filter(c => c && Array.isArray(c.memberIds) && (!mid || c.memberIds.includes(mid))); }
 function skIsKita(p) { return !!(p && p.type === 'kita'); }
 function skIcon(p) { return skIsKita(p) ? '🧸' : '🏫'; }
-function skTypeLabel(p) { return skIsKita(p) ? 'Kita' : 'Schule'; }
+function skTypeLabel(p) { return skIsKita(p) ? tk('school.daycare') : tk('school.school'); }
 function skName(p) { return (p && String(p.name || '').trim()) || skTypeLabel(p); }
 function skIso(s) { return /^\d{4}-\d{2}-\d{2}$/.test(String(s || '')); }
 function skTimeOk(s) { return /^([01]\d|2[0-3]):[0-5]\d$/.test(String(s || '')); }
@@ -2425,25 +2428,25 @@ function skDayInfo(p, iso) {
   return out;
 }
 function skDayLine(p, info) {
-  if (info.closed) return '🚫 ' + (info.closed.reason ? 'Geschlossen: ' + info.closed.reason : 'Geschlossen');
-  if (info.weekend) return 'Wochenende';
+  if (info.closed) return '🚫 ' + (info.closed.reason ? (tk('school.closed') + ' ') + info.closed.reason : tk('school.closed2'));
+  if (info.weekend) return tk('school.weekend');
   if (info.holiday) return '🌴 ' + info.holiday;
   const parts = [];
   if (info.from && info.to) parts.push(info.from + '–' + info.to);
-  if (info.lessons.length) parts.push(`${info.lessons.length} Std.`);
-  if (info.bring) parts.push('bringt ' + memberLabel(memberById(info.bring)));
+  if (info.lessons.length) parts.push(`${tk('school.hr', { n: info.lessons.length })}`);
+  if (info.bring) parts.push((tk('school.dropsOff') + ' ') + memberLabel(memberById(info.bring)));
   if (info.pick) parts.push('holt ' + memberLabel(memberById(info.pick)));
-  if (!parts.length) return skIsKita(p) ? 'Keine Betreuungszeit eingetragen' : 'Kein Unterricht eingetragen';
+  if (!parts.length) return skIsKita(p) ? tk('school.noCareHoursEntered') : tk('school.noLessonsEntered');
   return parts.join(' · ');
 }
 function skDueBadge(iso, done) {
   if (!skIso(iso)) return '';
-  if (done) return `<span class="sk-badge ok">✓ erledigt</span>`;
+  if (done) return `<span class="sk-badge ok">${tk('school.done')}</span>`;
   const d = skDaysBetween(skToday(), iso);
-  if (d < 0) return `<span class="sk-badge urgent">überfällig</span>`;
-  if (d === 0) return `<span class="sk-badge urgent">bis heute</span>`;
-  if (d === 1) return `<span class="sk-badge warn">bis morgen</span>`;
-  return `<span class="sk-badge${d <= 6 ? ' warn' : ''}">bis ${escapeHtml(skFmtDay(iso))}</span>`;
+  if (d < 0) return `<span class="sk-badge urgent">${tk('school.overdue')}</span>`;
+  if (d === 0) return `<span class="sk-badge urgent">${tk('school.date')}</span>`;
+  if (d === 1) return `<span class="sk-badge warn">${tk('school.dueTomorrow')}</span>`;
+  return `<span class="sk-badge${d <= 6 ? ' warn' : ''}">${tk('school.until', { skFmtDay: escapeHtml(skFmtDay(iso)) })}</span>`;
 }
 function skCardHead(title, btns) {
   return `<div class="flex items-center justify-between gap-2 mb-2"><div class="fz-h" style="margin-bottom:0">${title}</div><div class="flex items-center gap-1.5">${btns || ''}</div></div>`;
@@ -2487,7 +2490,7 @@ function skTodayCardHtml() {
     const byKid = {};
     hwDue.forEach(h => { byKid[h.memberId] = (byKid[h.memberId] || 0) + 1; });
     Object.keys(byKid).forEach(mid => {
-      alerts.push(`<button type="button" class="sk-alert" data-sk="open" data-id="${famAttr(mid)}"><span>📚</span><span class="min-w-0 flex-1 text-left truncate">${escapeHtml(memberLabel(memberById(mid)))}: ${byKid[mid]} Hausaufgaben offen</span></button>`);
+      alerts.push(`<button type="button" class="sk-alert" data-sk="open" data-id="${famAttr(mid)}"><span>📚</span><span class="min-w-0 flex-1 text-left truncate">${tk('school.homeworkOpen', { memberLabel: escapeHtml(memberLabel(memberById(mid))), v: byKid[mid] })}</span></button>`);
     });
   }
   const seenClosure = new Set();
@@ -2495,10 +2498,10 @@ function skTodayCardHtml() {
     .sort((a, b) => a.from.localeCompare(b.from)).forEach(c => {
       if (seenClosure.has(c.id)) return;
       seenClosure.add(c.id);
-      alerts.push(`<button type="button" class="sk-alert" data-sk="open" data-id="${famAttr(c.memberIds[0])}"><span>🚫</span><span class="min-w-0 flex-1 text-left truncate">${escapeHtml(c.reason || 'Schließtag')} · ${escapeHtml(skNames(c.memberIds))}</span><span class="sk-badge warn">${escapeHtml(skRange(c.from, c.to))}</span></button>`);
+      alerts.push(`<button type="button" class="sk-alert" data-sk="open" data-id="${famAttr(c.memberIds[0])}"><span>🚫</span><span class="min-w-0 flex-1 text-left truncate">${escapeHtml(c.reason || tk('school.closureDay'))} · ${escapeHtml(skNames(c.memberIds))}</span><span class="sk-badge warn">${escapeHtml(skRange(c.from, c.to))}</span></button>`);
     });
   return `<div class="fam-card">
-    ${skCardHead(`🎒 Schule & Kita · ${tomorrow ? 'Morgen' : 'Heute'}`, `<button type="button" class="fz-mini-btn" data-famtabgo="schule">Alle ›</button>`)}
+    ${skCardHead(`🎒 ${tk('school.title')} · ${tomorrow ? tk('school.tomorrow') : tk('common.today')}`, `<button type="button" class="fz-mini-btn" data-famtabgo="schule">${tk('school.all')}</button>`)}
     <div class="flex flex-col">${rows}</div>
     ${alerts.length ? `<div class="flex flex-col gap-1.5 mt-2">${alerts.join('')}</div>` : ''}
   </div>`;
@@ -2511,11 +2514,11 @@ function skMemberCardHtml(m, p) {
   const letters = skLettersOf(m.id).filter(l => !l.done).sort((a, b) => String(a.deadline || '9').localeCompare(String(b.deadline || '9'))).slice(0, 3);
   const next = skClosuresOf(m.id).filter(c => skIso(c.from) && (c.to || c.from) >= today).sort((a, b) => a.from.localeCompare(b.from))[0];
   return `<div class="fam-card">
-    ${skCardHead(`${skIcon(p)} ${escapeHtml(skName(p))}`, `<button type="button" class="fz-mini-btn" data-sk="open" data-id="${famAttr(m.id)}">Öffnen ›</button>`)}
+    ${skCardHead(`${skIcon(p)} ${escapeHtml(skName(p))}`, `<button type="button" class="fz-mini-btn" data-sk="open" data-id="${famAttr(m.id)}">${tk('shop.open')}</button>`)}
     <div class="text-sm ${info.closed ? 'text-red-600' : ''}">${escapeHtml(skDayLine(p, info))}</div>
     ${hw.length ? `<div class="mt-2">${hw.map(h => skHwRowHtml(h, true)).join('')}</div>` : ''}
     ${letters.length ? `<div class="mt-1">${letters.map(l => skLetterRowHtml(l, true)).join('')}</div>` : ''}
-    ${next ? `<div class="text-[11px] text-ink/55 mt-2">🚫 ${escapeHtml(next.reason || 'Schließtag')} · ${escapeHtml(skRange(next.from, next.to))}</div>` : ''}
+    ${next ? `<div class="text-[11px] text-ink/55 mt-2">🚫 ${escapeHtml(next.reason || tk('school.closureDay'))} · ${escapeHtml(skRange(next.from, next.to))}</div>` : ''}
   </div>`;
 }
 
@@ -2526,9 +2529,9 @@ function skPaneHtml() {
   if (!profs.length) {
     return `<div class="fam-card text-center py-7 px-4">
       <div class="text-5xl mb-2">🎒</div>
-      <div class="font-serif text-lg mb-1">Schule & Kita</div>
-      <p class="text-sm text-ink/55 mb-4">Stundenplan, Hausaufgaben, Elternbriefe mit Fristen und Schließtage – je Kind an einem Ort. Schließtage und Fristen erscheinen automatisch im Kalender.</p>
-      ${can ? '<button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-sk="addkid">Kind einrichten</button>' : '<p class="text-xs text-ink/40">Einrichten kann ein Erwachsener der Familie.</p>'}
+      <div class="font-serif text-lg mb-1">${tk('family.schoolDaycare')}</div>
+      <p class="text-sm text-ink/55 mb-4">${tk('school.timetableHomeworkParentLetters')}</p>
+      ${can ? ('<button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-sk="addkid">' + tk('school.setUpChild') + '</button>') : ('<p class="text-xs text-ink/40">' + tk('school.adultFamilyCanSet') + '</p>')}
     </div>`;
   }
   if (!skProfile(skKid)) skKid = profs[0].memberId;
@@ -2538,7 +2541,7 @@ function skPaneHtml() {
   const chips = profs.map(x => {
     const mm = memberById(x.memberId);
     return `<button type="button" class="fz-filter-chip sk-kid-chip${x.memberId === skKid ? ' active' : ''}" data-sk="kid" data-id="${famAttr(x.memberId)}">${skAvatar(mm)}<span>${escapeHtml(memberLabel(mm))}</span></button>`;
-  }).join('') + (can && free.length ? `<button type="button" class="fz-filter-chip sk-kid-chip" data-sk="addkid">＋ Kind</button>` : '');
+  }).join('') + (can && free.length ? `<button type="button" class="fz-filter-chip sk-kid-chip" data-sk="addkid">${tk('school.child')}</button>` : '');
   return `
     <div class="fam-chip-row" style="padding-bottom:2px">${chips}</div>
     ${skHeroHtml(p, m)}
@@ -2560,15 +2563,15 @@ function skHeroHtml(p, m) {
         <div class="font-serif text-lg leading-tight">${escapeHtml(skName(p))}</div>
         ${sub ? `<div class="text-xs text-ink/55 mt-0.5">${escapeHtml(sub)}</div>` : ''}
       </div>
-      ${skCanEdit() ? `<button type="button" class="fz-mini-btn" data-sk="editprofile" data-id="${famAttr(p.memberId)}">Bearbeiten</button>` : ''}
+      ${skCanEdit() ? `<button type="button" class="fz-mini-btn" data-sk="editprofile" data-id="${famAttr(p.memberId)}">${tk('common.edit')}</button>` : ''}
     </div>
     <div class="sk-daygrid mt-3">
-      <div><span class="sk-k">Heute</span><span class="${info.closed ? 'text-red-600' : ''}">${escapeHtml(skDayLine(p, info))}</span></div>
-      <div><span class="sk-k">Morgen</span><span class="${tm.closed ? 'text-red-600' : ''}">${escapeHtml(skDayLine(p, tm))}</span></div>
+      <div><span class="sk-k">${tk('common.today')}</span><span class="${info.closed ? 'text-red-600' : ''}">${escapeHtml(skDayLine(p, info))}</span></div>
+      <div><span class="sk-k">${tk('school.tomorrow')}</span><span class="${tm.closed ? 'text-red-600' : ''}">${escapeHtml(skDayLine(p, tm))}</span></div>
     </div>
     ${(p.phone || p.email) ? `<div class="flex flex-wrap gap-2 mt-3">
-      ${p.phone ? `<a class="fz-mini-btn" href="${famAttr(famTel(p.phone))}">📞 Anrufen</a>` : ''}
-      ${p.email ? `<a class="fz-mini-btn" href="mailto:${famAttr(p.email)}">✉️ E-Mail</a>` : ''}
+      ${p.phone ? `<a class="fz-mini-btn" href="${famAttr(famTel(p.phone))}">${tk('family.call')}</a>` : ''}
+      ${p.email ? `<a class="fz-mini-btn" href="mailto:${famAttr(p.email)}">${tk('school.email')}</a>` : ''}
     </div>` : ''}
     ${p.note ? `<div class="text-xs text-ink/60 mt-3" style="white-space:pre-wrap">${escapeHtml(p.note)}</div>` : ''}
   </div>`;
@@ -2579,14 +2582,14 @@ function skTimetableHtml(p) {
   const ki = skKiOn() && can;
   const busy = skKiBusy === p.memberId;
   const btns = [
-    ki ? `<button type="button" class="fz-mini-btn" data-sk="kiplan" data-id="${famAttr(p.memberId)}"${busy ? ' disabled' : ''}>📷 Foto</button>` : '',
-    can ? `<button type="button" class="fz-mini-btn" data-sk="times" data-id="${famAttr(p.memberId)}">⏱ Zeiten</button>` : '',
+    ki ? `<button type="button" class="fz-mini-btn" data-sk="kiplan" data-id="${famAttr(p.memberId)}"${busy ? ' disabled' : ''}>${tk('school.photo')}</button>` : '',
+    can ? `<button type="button" class="fz-mini-btn" data-sk="times" data-id="${famAttr(p.memberId)}">${tk('school.times')}</button>` : '',
   ].join('');
   const msg = skKiMsg && skKiMsg.memberId === p.memberId ? `<p class="text-xs mb-2 ${skKiMsg.bad ? 'text-red-500' : 'text-ink/55'}">${escapeHtml(skKiMsg.text)}</p>` : '';
   if (!times.length) {
-    return `<div class="fam-card">${skCardHead('📅 Stundenplan', btns)}${msg}
-      <p class="text-sm text-ink/50">${ki ? 'Noch kein Stundenplan. Lege die Stundenzeiten fest – oder fotografiere den Stundenplan, die KI trägt ihn ein.' : 'Noch kein Stundenplan. Lege zuerst die Stundenzeiten fest.'}</p>
-      ${can ? `<button type="button" class="fz-mini-btn primary mt-3" data-sk="times" data-id="${famAttr(p.memberId)}">Stundenzeiten festlegen</button>` : ''}
+    return `<div class="fam-card">${skCardHead(tk('school.timetable'), btns)}${msg}
+      <p class="text-sm text-ink/50">${ki ? tk('school.noTimetableYetSet') : tk('school.noTimetableYetSet2')}</p>
+      ${can ? `<button type="button" class="fz-mini-btn primary mt-3" data-sk="times" data-id="${famAttr(p.memberId)}">${tk('school.setLessonTimes')}</button>` : ''}
     </div>`;
   }
   const wdToday = new Date().getDay();
@@ -2602,10 +2605,10 @@ function skTimetableHtml(p) {
         return `<td class="${n === wdToday ? 'today' : ''}"><${can ? 'button type="button"' : 'div'} class="${cls}"${l ? ` style="--sk:${skColor(l.subject)}"` : ''}${attrs}>${inner}</${can ? 'button' : 'div'}></td>`;
       }).join('')}
     </tr>`).join('');
-  return `<div class="fam-card">${skCardHead('📅 Stundenplan', btns)}${msg}
-    ${busy ? '<p class="text-xs text-ink/55 mb-2">✨ KI liest den Stundenplan …</p>' : ''}
+  return `<div class="fam-card">${skCardHead(tk('school.timetable'), btns)}${msg}
+    ${busy ? '<p class="text-xs text-ink/55 mb-2">' + tk('school.aiReadingTimetable') + '</p>' : ''}
     <div class="sk-tt-wrap"><table class="sk-tt">${head}${body}</table></div>
-    ${can && !lessons.length ? '<p class="text-[11px] text-ink/45 mt-2">Tippe auf ein Feld, um das Fach einzutragen.</p>' : ''}
+    ${can && !lessons.length ? ('<p class="text-[11px] text-ink/45 mt-2">' + tk('school.tapCellEnterSubject') + '</p>') : ''}
   </div>`;
 }
 function skDaysCardHtml(p) {
@@ -2624,15 +2627,15 @@ function skDaysCardHtml(p) {
   }).join('');
   const any = SK_DAYS.some(([n]) => { const d = skDayPlan(p, n); return d.from || d.to || d.bring || d.pick; });
   return `<div class="fam-card">
-    ${skCardHead(kita ? '🕒 Betreuungszeiten' : '🚸 Bringen & Abholen', skCanEdit() ? `<button type="button" class="fz-mini-btn" data-sk="days" data-id="${famAttr(p.memberId)}">Bearbeiten</button>` : '')}
+    ${skCardHead(kita ? tk('school.careHours') : tk('school.dropOffPickUp'), skCanEdit() ? `<button type="button" class="fz-mini-btn" data-sk="days" data-id="${famAttr(p.memberId)}">${tk('common.edit')}</button>` : '')}
     ${rows}
-    ${!any ? `<p class="text-[11px] text-ink/45 mt-2">${kita ? 'Trage die Betreuungszeiten ein und wer bringt bzw. abholt.' : 'Wer bringt und wer holt ab? Trage es für jeden Tag ein.'}</p>` : '<p class="text-[11px] text-ink/40 mt-2">→ bringt · ← holt ab</p>'}
+    ${!any ? `<p class="text-[11px] text-ink/45 mt-2">${kita ? tk('school.enterCareHoursWho') : tk('school.whoDropsOffWho')}</p>` : '<p class="text-[11px] text-ink/40 mt-2">' + tk('school.dropPickLegend') + '</p>'}
   </div>`;
 }
 function skHwRowHtml(h, compact) {
   const subj = String(h.subject || '').trim();
   return `<div class="sk-row${h.done ? ' done' : ''}">
-    <button type="button" class="sk-chk${h.done ? ' on' : ''}" data-sk="hwtoggle" data-id="${famAttr(h.id)}"${skCanTick() ? '' : ' disabled'} aria-label="Erledigt">✓</button>
+    <button type="button" class="sk-chk${h.done ? ' on' : ''}" data-sk="hwtoggle" data-id="${famAttr(h.id)}"${skCanTick() ? '' : ' disabled'} aria-label="${escapeHtml(tk('school.done2'))}">✓</button>
     <${skCanEdit() ? 'button type="button"' : 'div'} class="sk-main"${skCanEdit() ? ` data-sk="hw" data-id="${famAttr(h.id)}"` : ''}>
       <div class="sk-t">${subj ? `<span class="sk-subj" style="--sk:${skColor(subj)}"></span><b>${escapeHtml(subj)}</b>${h.text ? ': ' : ''}` : ''}${escapeHtml(h.text || '')}</div>
       ${compact ? '' : (h.due ? `<div class="sk-s">${skDueBadge(h.due, h.done)}</div>` : '')}
@@ -2645,9 +2648,9 @@ function skHomeworkCardHtml(p) {
   const open = all.filter(h => !h.done).sort((a, b) => String(a.due || '9').localeCompare(String(b.due || '9')));
   const done = all.filter(h => h.done).sort((a, b) => String(b.doneAt || '').localeCompare(String(a.doneAt || '')));
   return `<div class="fam-card">
-    ${skCardHead('📚 Hausaufgaben', skCanEdit() ? `<button type="button" class="fz-mini-btn primary" data-sk="hwnew" data-id="${famAttr(p.memberId)}">+ Neu</button>` : '')}
-    ${open.length ? open.map(h => skHwRowHtml(h)).join('') : '<p class="text-sm text-ink/45">Keine offenen Hausaufgaben 🎉</p>'}
-    ${done.length ? `<button type="button" class="text-[11px] text-ink/50 hover:text-pine mt-2" data-sk="showdone">${skShowDone ? 'Erledigte ausblenden' : `Erledigte anzeigen (${done.length})`}</button>
+    ${skCardHead(tk('school.homework'), skCanEdit() ? `<button type="button" class="fz-mini-btn primary" data-sk="hwnew" data-id="${famAttr(p.memberId)}">${tk('school.new')}</button>` : '')}
+    ${open.length ? open.map(h => skHwRowHtml(h)).join('') : ('<p class="text-sm text-ink/45">' + tk('school.noOpenHomework') + '</p>')}
+    ${done.length ? `<button type="button" class="text-[11px] text-ink/50 hover:text-pine mt-2" data-sk="showdone">${skShowDone ? tk('school.hideCompleted') : `${tk('school.showCompleted', { n: done.length })}`}</button>
       ${skShowDone ? `<div class="mt-1">${done.slice(0, 20).map(h => skHwRowHtml(h)).join('')}</div>` : ''}` : ''}
   </div>`;
 }
@@ -2656,7 +2659,7 @@ function skLetterRowHtml(l, compact) {
   const facts = [l.sender, l.amount !== '' && l.amount != null && isFinite(Number(l.amount)) && Number(l.amount) > 0 ? fmtEur(Number(l.amount)) : '', compact ? '' : (l.memberIds.length > 1 ? skNames(l.memberIds) : '')].filter(Boolean).join(' · ');
   const task = l.taskId && !l.done && typeof aufgaben !== 'undefined' && aufgaben.some(t => t.id === l.taskId) ? ' · 🔔' : '';
   return `<div class="sk-row${l.done ? ' done' : ''}">
-    <button type="button" class="sk-chk${l.done ? ' on' : ''}" data-sk="letterdone" data-id="${famAttr(l.id)}"${skCanEdit() ? '' : ' disabled'} aria-label="Erledigt">✓</button>
+    <button type="button" class="sk-chk${l.done ? ' on' : ''}" data-sk="letterdone" data-id="${famAttr(l.id)}"${skCanEdit() ? '' : ' disabled'} aria-label="${escapeHtml(tk('school.done2'))}">✓</button>
     <${skCanEdit() ? 'button type="button"' : 'div'} class="sk-main"${skCanEdit() ? ` data-sk="letter" data-id="${famAttr(l.id)}"` : ''}>
       <div class="sk-t">${a.icon} ${escapeHtml(l.title)}</div>
       ${!compact && (facts || l.deadline || task) ? `<div class="sk-s">${l.deadline ? skDueBadge(l.deadline, l.done) + ' ' : ''}${escapeHtml(facts)}${task}</div>` : ''}
@@ -2670,9 +2673,9 @@ function skLettersCardHtml(p) {
   const done = all.filter(l => l.done).sort((a, b) => String(b.doneAt || '').localeCompare(String(a.doneAt || '')));
   const can = skCanEdit();
   return `<div class="fam-card">
-    ${skCardHead('✉️ Elternbriefe', can ? `${skKiOn() ? `<button type="button" class="fz-mini-btn" data-sk="letterki" data-id="${famAttr(p.memberId)}">📷 Foto</button>` : ''}<button type="button" class="fz-mini-btn primary" data-sk="letternew" data-id="${famAttr(p.memberId)}">+ Neu</button>` : '')}
-    ${open.length ? open.map(l => skLetterRowHtml(l)).join('') : '<p class="text-sm text-ink/45">Keine offenen Elternbriefe.</p>'}
-    ${done.length ? `<button type="button" class="text-[11px] text-ink/50 hover:text-pine mt-2" data-sk="showdone">${skShowDone ? 'Erledigte ausblenden' : `Erledigte anzeigen (${done.length})`}</button>
+    ${skCardHead(tk('school.parentLetters'), can ? `${skKiOn() ? `<button type="button" class="fz-mini-btn" data-sk="letterki" data-id="${famAttr(p.memberId)}">${tk('school.photo')}</button>` : ''}<button type="button" class="fz-mini-btn primary" data-sk="letternew" data-id="${famAttr(p.memberId)}">${tk('school.new')}</button>` : '')}
+    ${open.length ? open.map(l => skLetterRowHtml(l)).join('') : ('<p class="text-sm text-ink/45">' + tk('school.noOpenParentLetters') + '</p>')}
+    ${done.length ? `<button type="button" class="text-[11px] text-ink/50 hover:text-pine mt-2" data-sk="showdone">${skShowDone ? tk('school.hideCompleted') : `${tk('school.showCompleted', { n: done.length })}`}</button>
       ${skShowDone ? `<div class="mt-1">${done.slice(0, 20).map(l => skLetterRowHtml(l)).join('')}</div>` : ''}` : ''}
   </div>`;
 }
@@ -2681,18 +2684,18 @@ function skClosuresCardHtml(p) {
   const list = skClosuresOf(p.memberId).filter(c => skIso(c.from) && (skIso(c.to) ? c.to : c.from) >= today).sort((a, b) => a.from.localeCompare(b.from));
   const can = skCanEdit();
   return `<div class="fam-card">
-    ${skCardHead('🚫 Schließtage', can ? `<button type="button" class="fz-mini-btn primary" data-sk="closurenew" data-id="${famAttr(p.memberId)}">+ Neu</button>` : '')}
+    ${skCardHead(tk('school.closureDays'), can ? `<button type="button" class="fz-mini-btn primary" data-sk="closurenew" data-id="${famAttr(p.memberId)}">${tk('school.new')}</button>` : '')}
     ${list.length ? list.map(c => {
       const days = skDaysBetween(c.from, skIso(c.to) ? c.to : c.from) + 1;
       return `<div class="sk-row">
         <span class="sk-chk sk-cal">📅</span>
         <${can ? 'button type="button"' : 'div'} class="sk-main"${can ? ` data-sk="closure" data-id="${famAttr(c.id)}"` : ''}>
-          <div class="sk-t">${escapeHtml(c.reason || 'Schließtag')}</div>
-          <div class="sk-s">${escapeHtml(skRange(c.from, c.to))}${days > 1 ? ` · ${days} Tage` : ''}${c.memberIds.length > 1 ? ' · ' + escapeHtml(skNames(c.memberIds)) : ''}</div>
+          <div class="sk-t">${escapeHtml(c.reason || tk('school.closureDay'))}</div>
+          <div class="sk-s">${escapeHtml(skRange(c.from, c.to))}${days > 1 ? ` ${tk('school.days', { days })}` : ''}${c.memberIds.length > 1 ? ' · ' + escapeHtml(skNames(c.memberIds)) : ''}</div>
         </${can ? 'button' : 'div'}>
       </div>`;
-    }).join('') : '<p class="text-sm text-ink/45">Keine anstehenden Schließtage.</p>'}
-    <p class="text-[11px] text-ink/40 mt-2">Schließtage und Fristen von Elternbriefen erscheinen automatisch im Kalender.</p>
+    }).join('') : ('<p class="text-sm text-ink/45">' + tk('school.noUpcomingClosureDays') + '</p>')}
+    <p class="text-[11px] text-ink/40 mt-2">${tk('school.closureDaysParentLetter')}</p>
   </div>`;
 }
 
@@ -2733,7 +2736,7 @@ function skTaskOf(l) { return l && l.taskId && typeof aufgaben !== 'undefined' ?
 function skTaskTitle(l) {
   const a = skAction(l.action);
   const names = skNames(l.memberIds);
-  return (a.icon + ' ' + (a.id === 'lesen' ? 'Elternbrief lesen' : a.label) + ': ' + l.title + (names ? ' (' + names + ')' : '')).slice(0, 200);
+  return (a.icon + ' ' + (a.id === 'lesen' ? tk('school.readLetter') : a.label) + ': ' + l.title + (names ? ' (' + names + ')' : '')).slice(0, 200);
 }
 // Create, change, tick off or remove the task for a parent letter
 function skSyncLetterTask(l, prev) {
@@ -2742,7 +2745,7 @@ function skSyncLetterTask(l, prev) {
   const want = !!(l.taskOn && skIso(l.deadline) && Array.isArray(l.taskFor) && l.taskFor.length && !l.done);
   let changed = false;
   if (want) {
-    const notes = buildAssignedNotes([l.sender ? 'Von: ' + l.sender : '', l.note || ''].filter(Boolean).join('\n'), l.taskFor);
+    const notes = buildAssignedNotes([l.sender ? (tk('school.from') + ' ') + l.sender : '', l.note || ''].filter(Boolean).join('\n'), l.taskFor);
     const payload = { id: task ? task.id : newRecordId(), title: skTaskTitle(l), notes, dueDate: l.deadline, fromTime: '', toTime: '' };
     const same = task && task.title === payload.title && task.dueDate === payload.dueDate && String(task.notes || '') === payload.notes;
     if (!same) { queueTaskSave(payload, !task); changed = true; }
@@ -2800,8 +2803,8 @@ function schoolCalendarEvents() {
     if (!ids.length) return;
     const to = skIso(c.to) && c.to >= c.from ? c.to : c.from;
     const places = [...new Set(ids.map(id => skProfile(id)).filter(Boolean).map(skName))].join(', ');
-    const title = (c.reason || 'Schließtag') + ' · ' + skNames(ids);
-    const desc = 'Schließtag' + (places ? ' – ' + places : '') + ': ' + famFmtDate(c.from) + (to !== c.from ? ' – ' + famFmtDate(to) : '');
+    const title = (c.reason || tk('school.closureDay')) + ' · ' + skNames(ids);
+    const desc = tk('school.closureDay') + (places ? ' – ' + places : '') + ': ' + famFmtDate(c.from) + (to !== c.from ? ' – ' + famFmtDate(to) : '');
     let d = c.from, guard = 0;
     while (d <= to && guard++ < 120) {
       const wd = skWeekday(d);
@@ -2813,7 +2816,7 @@ function schoolCalendarEvents() {
     if (!l || l.done || !skIso(l.deadline) || !Array.isArray(l.memberIds)) return;
     const a = skAction(l.action);
     out.push(mk('pinn-sb-' + l.id, l.deadline, a.icon + ' ' + l.title + (l.memberIds.length ? ' · ' + skNames(l.memberIds) : ''),
-      'Elternbrief' + (l.sender ? ' – ' + l.sender : '') + ': ' + a.label + ' bis ' + famFmtDate(l.deadline), skKidColor(l.memberIds)));
+      tk('school.parentLetter') + (l.sender ? ' – ' + l.sender : '') + ': ' + a.label + (' ' + tk('shop.to') + ' ') + famFmtDate(l.deadline), skKidColor(l.memberIds)));
   });
   skCalSig = sig;
   skCalList = out;
@@ -2829,7 +2832,7 @@ function kidHomeworkHtml(m) {
     .sort((a, b) => (a.done - b.done) || String(a.due || '').localeCompare(String(b.due || '')));
   if (!list.length) return '';
   return `<div class="kid-hw">
-    <div class="kid-hw-h">📚 Hausaufgaben</div>
+    <div class="kid-hw-h">${tk('school.homework')}</div>
     ${list.map(h => `<button type="button" class="kid-hw-row${h.done ? ' done' : ''}" data-khw="${kidAttr(h.id)}">
       <span class="kid-hw-chk">${h.done ? '✓' : ''}</span>
       <span class="kid-hw-t">${h.subject ? `<b>${escapeHtml(h.subject)}</b> ` : ''}${escapeHtml(h.text || '')}</span>
@@ -2842,17 +2845,17 @@ function skErr(msg) { fzShowErr('skErr', msg); }
 function skFooter(canDelete, delLabel) {
   return `<p id="skErr" class="hidden text-xs text-red-500 mt-1 mb-2"></p>
     <div class="flex items-center justify-between gap-2 mt-4">
-      ${canDelete ? `<button type="button" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50" data-skm="del">${delLabel || 'Löschen'}</button>` : '<span></span>'}
+      ${canDelete ? `<button type="button" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50" data-skm="del">${delLabel || tk('loc.delete')}</button>` : '<span></span>'}
       <div class="flex gap-2">
-        <button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-skm="cancel">Abbrechen</button>
-        <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-skm="save">Speichern</button>
+        <button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-skm="cancel">${tk('common.cancel')}</button>
+        <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-skm="save">${tk('common.save')}</button>
       </div>
     </div>`;
 }
 function skKidChips(selected, field) {
   const profs = skProfiles();
   if (profs.length < 2) return '';
-  return `<label class="fz-lbl">Für</label><div class="flex flex-wrap gap-1.5 mb-3">${profs.map(p => {
+  return `<label class="fz-lbl">${tk('depot.text')}</label><div class="flex flex-wrap gap-1.5 mb-3">${profs.map(p => {
     const m = memberById(p.memberId);
     return `<button type="button" class="fz-filter-chip sk-kid-chip${selected.includes(p.memberId) ? ' active' : ''}" data-skm="${field}" data-id="${famAttr(p.memberId)}">${skAvatar(m)}<span>${escapeHtml(memberLabel(m))}</span></button>`;
   }).join('')}</div>`;
@@ -2872,34 +2875,34 @@ function skOpenProfile(mid, preset) {
   if (!skCanEdit()) return;
   const p = skProfile(mid);
   const free = members.filter(x => !famIsPet(x) && (!skProfile(x.id) || x.id === mid));
-  if (!p && !free.length) { finShowToast('Alle haben schon Schule oder Kita', true); return; }
+  if (!p && !free.length) { finShowToast(tk('school.everyoneAlreadyHasSchool'), true); return; }
   const pick = p ? p.memberId : (preset && free.some(x => x.id === preset) ? preset : free[0].id);
   const type = p ? p.type : 'schule';
   const html = `
-    <h3 class="font-serif text-lg mb-1">${p ? 'Schule & Kita · ' + escapeHtml(memberLabel(memberById(p.memberId))) : 'Schule oder Kita einrichten'}</h3>
-    <p class="text-xs text-ink/50 mb-4">Stundenplan, Hausaufgaben und Elternbriefe gibt es je Kind. Leere Felder werden nicht angezeigt.</p>
-    ${p ? '' : `<div class="fz-field"><label class="fz-lbl" for="skP_member">Kind</label><select id="skP_member" class="fz-in">${free.map(x => `<option value="${famAttr(x.id)}"${x.id === pick ? ' selected' : ''}>${escapeHtml(memberLabel(x))}</option>`).join('')}</select></div>`}
+    <h3 class="font-serif text-lg mb-1">${p ? (tk('school.schoolDaycare') + ' ') + escapeHtml(memberLabel(memberById(p.memberId))) : tk('school.setUpSchoolDaycare')}</h3>
+    <p class="text-xs text-ink/50 mb-4">${tk('school.timetableHomeworkParentLetters2')}</p>
+    ${p ? '' : `<div class="fz-field"><label class="fz-lbl" for="skP_member">${tk('school.child2')}</label><select id="skP_member" class="fz-in">${free.map(x => `<option value="${famAttr(x.id)}"${x.id === pick ? ' selected' : ''}>${escapeHtml(memberLabel(x))}</option>`).join('')}</select></div>`}
     <div class="fz-type-row mb-3">
-      <button type="button" class="fz-type-chip${type !== 'kita' ? ' active' : ''}" data-skm="type" data-v="schule"><span class="fz-ti">🏫</span>Schule</button>
-      <button type="button" class="fz-type-chip${type === 'kita' ? ' active' : ''}" data-skm="type" data-v="kita"><span class="fz-ti">🧸</span>Kita</button>
+      <button type="button" class="fz-type-chip${type !== 'kita' ? ' active' : ''}" data-skm="type" data-v="schule"><span class="fz-ti">🏫</span>${tk('school.school')}</button>
+      <button type="button" class="fz-type-chip${type === 'kita' ? ' active' : ''}" data-skm="type" data-v="kita"><span class="fz-ti">🧸</span>${tk('school.daycare')}</button>
     </div>
-    ${fzIn('skP_name', 'Name der Einrichtung', p ? p.name : '', { ph: 'z. B. Grundschule am Park', max: 120 })}
+    ${fzIn('skP_name', tk('school.nameSchoolDaycare'), p ? p.name : '', { ph: tk('school.eGParkPrimary'), max: 120 })}
     <div class="fz-grid2">
-      ${fzIn('skP_group', 'Klasse / Gruppe', p ? p.group : '', { ph: 'z. B. 3b', max: 60 })}
-      ${fzIn('skP_contact', 'Lehrkraft / Erzieher:in', p ? p.contact : '', { ph: 'z. B. Frau Müller', max: 80 })}
+      ${fzIn('skP_group', tk('school.classGroup'), p ? p.group : '', { ph: 'z. B. 3b', max: 60 })}
+      ${fzIn('skP_contact', tk('school.teacherCarer'), p ? p.contact : '', { ph: tk('school.eGMrsMiller'), max: 80 })}
     </div>
     <div class="fz-grid2">
-      ${fzIn('skP_phone', 'Telefon', p ? p.phone : '', { type: 'tel', mode: 'tel', max: 40 })}
-      ${fzIn('skP_email', 'E-Mail', p ? p.email : '', { type: 'email', mode: 'email', max: 120 })}
+      ${fzIn('skP_phone', tk('contract.phone'), p ? p.phone : '', { type: 'tel', mode: 'tel', max: 40 })}
+      ${fzIn('skP_email', tk('contract.email'), p ? p.email : '', { type: 'email', mode: 'email', max: 120 })}
     </div>
-    ${famTa('skP_note', 'Notizen', p ? p.note : '', 'z. B. Krankmeldung bis 7:45 Uhr im Sekretariat')}
-    ${skFooter(!!p, 'Entfernen')}`;
+    ${famTa('skP_note', tk('event.notes'), p ? p.note : '', tk('school.eGReportSick'))}
+    ${skFooter(!!p, tk('common.remove'))}`;
   skOpen(html, { kind: 'profile', memberId: p ? p.memberId : '', type });
 }
 function skSaveProfile() {
   const st = skModal;
   const mid = st.memberId || famVal('skP_member');
-  if (!memberById(mid)) return skErr('Bitte ein Kind wählen.');
+  if (!memberById(mid)) return skErr(tk('school.pleaseChooseChild'));
   const old = skProfile(mid);
   skUpsert('profiles', {
     ...(old || {}),
@@ -2915,12 +2918,12 @@ function skSaveProfile() {
   skClose();
   if (currentView === 'familie' && !famDetailId) famTab = 'schule';
   skCommit(true);
-  finShowToast('Gespeichert');
+  finShowToast(tk('common.saved'));
 }
 function skDeleteProfile() {
   const mid = skModal.memberId;
   const m = memberById(mid);
-  if (!m || !confirm(`Schule & Kita für ${memberLabel(m)} entfernen? Stundenplan und Hausaufgaben werden gelöscht.`)) return;
+  if (!m || !confirm(`${tk('school.removeSchoolDaycareTimetable', { memberLabel: memberLabel(m) })}`)) return;
   schoolProfiles = (schoolProfiles || []).filter(p => p.memberId !== mid);
   schoolHomework = (schoolHomework || []).filter(h => h.memberId !== mid);
   const letters = [];
@@ -2944,13 +2947,13 @@ function skPresetTimes() {
 }
 function skTimesRowsHtml() {
   const rows = skModal.rows;
-  if (!rows.length) return '<p class="text-xs text-ink/45">Noch keine Stunden.</p>';
+  if (!rows.length) return ('<p class="text-xs text-ink/45">' + tk('school.noLessonsYet') + '</p>');
   return rows.map((r, i) => `<div class="fam-list-row sk-time-row">
       <span class="sk-time-n">${i + 1}.</span>
-      <input type="time" class="fz-in" data-skfrom="${i}" value="${famAttr(r.from)}" aria-label="Beginn" />
+      <input type="time" class="fz-in" data-skfrom="${i}" value="${famAttr(r.from)}" aria-label="${escapeHtml(tk('event.start'))}" />
       <span class="text-ink/40">–</span>
-      <input type="time" class="fz-in" data-skto="${i}" value="${famAttr(r.to)}" aria-label="Ende" />
-      <button type="button" class="fam-x" data-skm="rmtime" data-i="${i}" aria-label="Entfernen">×</button>
+      <input type="time" class="fz-in" data-skto="${i}" value="${famAttr(r.to)}" aria-label="${escapeHtml(tk('event.end'))}" />
+      <button type="button" class="fam-x" data-skm="rmtime" data-i="${i}" aria-label="${escapeHtml(tk('common.remove'))}">×</button>
     </div>`).join('');
 }
 function skSyncTimes() {
@@ -2967,12 +2970,12 @@ function skOpenTimes(mid) {
   if (!p || !skCanEdit()) return;
   const rows = skTimes(p).map(t => ({ ...t }));
   const html = `
-    <h3 class="font-serif text-lg mb-1">Stundenzeiten</h3>
-    <p class="text-xs text-ink/50 mb-4">Beginn und Ende jeder Stunde – Pausen einfach auslassen.</p>
+    <h3 class="font-serif text-lg mb-1">${tk('school.lessonTimes')}</h3>
+    <p class="text-xs text-ink/50 mb-4">${tk('school.startEndEachLesson')}</p>
     <div id="skTimesList" class="flex flex-col gap-2 mb-3"></div>
     <div class="flex flex-wrap gap-2">
-      <button type="button" class="fz-mini-btn" data-skm="addtime">+ Stunde</button>
-      <button type="button" class="fz-mini-btn" data-skm="preset">Vorlage: 6 × 45 Min.</button>
+      <button type="button" class="fz-mini-btn" data-skm="addtime">${tk('school.lesson')}</button>
+      <button type="button" class="fz-mini-btn" data-skm="preset">${tk('school.template645Min')}</button>
     </div>
     ${skFooter(false)}`;
   skOpen(html, { kind: 'times', memberId: mid, rows }, () => skRenderTimes());
@@ -2984,13 +2987,13 @@ function skSaveTimes() {
   if (!p) { skClose(); return; }
   const rows = st.rows.filter(r => r.from || r.to);
   for (const r of rows) {
-    if (!skTimeOk(r.from) || !skTimeOk(r.to)) return skErr('Bitte bei jeder Stunde Beginn und Ende angeben.');
-    if (r.to <= r.from) return skErr('Das Ende einer Stunde muss nach dem Beginn liegen.');
+    if (!skTimeOk(r.from) || !skTimeOk(r.to)) return skErr(tk('school.pleaseEnterStartEnd'));
+    if (r.to <= r.from) return skErr(tk('school.lessonMustEndAfter'));
   }
   rows.sort((a, b) => a.from.localeCompare(b.from));
   const ids = new Set(rows.map(r => r.id));
   const lost = (p.lessons || []).filter(l => !ids.has(l.slot) && String(l.subject || '').trim());
-  if (lost.length && !confirm(`${lost.length} eingetragene Fächer liegen in entfernten Stunden und werden gelöscht. Fortfahren?`)) return;
+  if (lost.length && !confirm(`${tk('school.enteredSubjectsRemovedLessons', { n: lost.length })}`)) return;
   skUpsert('profiles', { ...p, times: rows.map(r => ({ id: r.id, from: r.from, to: r.to })), lessons: (p.lessons || []).filter(l => ids.has(l.slot)), updated: new Date().toISOString() });
   skClose();
   skCommit(false);
@@ -3005,18 +3008,18 @@ function skOpenLesson(mid, day, slot) {
   if (idx < 0) return;
   const l = (p.lessons || []).find(x => Number(x.day) === day && x.slot === slot) || null;
   const dayName = (SK_DAYS.find(d => d[0] === day) || [0, '', ''])[2];
-  const subjects = [...new Set([...skSubjects(p), ...SK_SUBJECTS])];
+  const subjects = [...new Set([...skSubjects(p), ...skSubjectSuggestions()])];
   const html = `
     <h3 class="font-serif text-lg mb-0.5">${dayName}</h3>
-    <p class="text-xs text-ink/50 mb-4">${idx + 1}. Stunde · ${escapeHtml(times[idx].from)}–${escapeHtml(times[idx].to)}</p>
-    <div class="fz-field"><label class="fz-lbl" for="skL_subject">Fach</label>
-      <input id="skL_subject" class="fz-in" list="skSubjectList" autocomplete="off" maxlength="60" value="${famAttr(l ? l.subject : '')}" placeholder="z. B. Mathe" />
+    <p class="text-xs text-ink/50 mb-4">${tk('school.lessonN', { n: idx + 1 })} · ${escapeHtml(times[idx].from)}–${escapeHtml(times[idx].to)}</p>
+    <div class="fz-field"><label class="fz-lbl" for="skL_subject">${tk('school.subject')}</label>
+      <input id="skL_subject" class="fz-in" list="skSubjectList" autocomplete="off" maxlength="60" value="${famAttr(l ? l.subject : '')}" placeholder="${escapeHtml(tk('school.eGMaths'))}" />
       <datalist id="skSubjectList">${subjects.map(s => `<option value="${famAttr(s)}"></option>`).join('')}</datalist>
     </div>
     <div class="flex flex-wrap gap-1.5 mb-3">${skSubjects(p).slice(0, 12).map(s => `<button type="button" class="fz-filter-chip" data-skm="subj" data-v="${famAttr(s)}"><span class="sk-subj" style="--sk:${skColor(s)}"></span>${escapeHtml(s)}</button>`).join('')}</div>
-    ${fzIn('skL_room', 'Raum', l ? l.room : '', { ph: 'optional', max: 30 })}
-    <label class="fz-check"><input type="checkbox" id="skL_double" /><span>Auch die nächste Stunde (Doppelstunde)</span></label>
-    ${skFooter(!!l, 'Leeren')}`;
+    ${fzIn('skL_room', tk('household.room'), l ? l.room : '', { ph: 'optional', max: 30 })}
+    <label class="fz-check"><input type="checkbox" id="skL_double" /><span>${tk('school.alsoNextLessonDouble')}</span></label>
+    ${skFooter(!!l, tk('family.empty'))}`;
   skOpen(html, { kind: 'lesson', memberId: mid, day, slot });
 }
 function skSaveLesson(clear) {
@@ -3041,21 +3044,21 @@ function skOpenDays(mid) {
   if (!p || !skCanEdit()) return;
   const kita = skIsKita(p);
   const html = `
-    <h3 class="font-serif text-lg mb-1">${kita ? 'Betreuungszeiten' : 'Bringen & Abholen'}</h3>
-    <p class="text-xs text-ink/50 mb-4">${kita ? 'Von wann bis wann, wer bringt und wer holt ab.' : 'Zeiten leer lassen = Beginn und Ende aus dem Stundenplan. Mit Hort oder Ganztag einfach die Abholzeit eintragen.'}</p>
+    <h3 class="font-serif text-lg mb-1">${kita ? tk('school.careHours2') : tk('school.dropOffPickUp2')}</h3>
+    <p class="text-xs text-ink/50 mb-4">${kita ? tk('school.fromWhenWhenWho') : tk('school.leaveTimesEmptyStart')}</p>
     ${SK_DAYS.map(([n, , long]) => {
       const d = skDayPlan(p, n);
       return `<div class="sk-dayedit">
         <div class="text-sm font-medium mb-1.5">${long}</div>
         <div class="fz-grid2">
-          ${fzIn('skD_from' + n, kita ? 'Von' : 'Beginn', d.from || '', { type: 'time' })}
-          ${fzIn('skD_to' + n, kita ? 'Bis' : 'Abholen um', d.to || '', { type: 'time' })}
+          ${fzIn('skD_from' + n, kita ? tk('shop.from') : tk('event.start'), d.from || '', { type: 'time' })}
+          ${fzIn('skD_to' + n, kita ? tk('school.to') : tk('school.pickUp'), d.to || '', { type: 'time' })}
         </div>
         <div class="fz-grid2">
-          ${skMemberSelect('skD_bring' + n, 'Bringt', d.bring || '')}
-          ${skMemberSelect('skD_pick' + n, 'Holt ab', d.pick || '')}
+          ${skMemberSelect('skD_bring' + n, tk('school.dropsOff2'), d.bring || '')}
+          ${skMemberSelect('skD_pick' + n, tk('school.picksUp'), d.pick || '')}
         </div>
-        ${n === 1 ? '<button type="button" class="fz-mini-btn -mt-1 mb-1" data-skm="copymon">Montag für alle Tage übernehmen</button>' : ''}
+        ${n === 1 ? ('<button type="button" class="fz-mini-btn -mt-1 mb-1" data-skm="copymon">' + tk('school.copyMondayAllDays') + '</button>') : ''}
       </div>`;
     }).join('')}
     ${skFooter(false)}`;
@@ -3071,7 +3074,7 @@ function skSaveDays() {
   const days = {};
   for (const [n] of SK_DAYS) {
     const d = { from: famVal('skD_from' + n), to: famVal('skD_to' + n), bring: famVal('skD_bring' + n), pick: famVal('skD_pick' + n) };
-    if (d.from && d.to && d.to <= d.from) return skErr('Bitte prüfen: Das Ende liegt vor dem Beginn.');
+    if (d.from && d.to && d.to <= d.from) return skErr(tk('school.pleaseCheckEndBefore'));
     Object.keys(d).forEach(k => { if (!d[k]) delete d[k]; });
     if (Object.keys(d).length) days[String(n)] = d;
   }
@@ -3101,15 +3104,15 @@ function skOpenHomework(id, mid) {
   if (!p) return;
   const subjects = skSubjects(p);
   const html = `
-    <h3 class="font-serif text-lg mb-1">Hausaufgabe · ${escapeHtml(memberLabel(memberById(kid)))}</h3>
-    <p class="text-xs text-ink/50 mb-4">Erscheint auch auf der Kinderseite zum Abhaken.</p>
-    <div class="fz-field"><label class="fz-lbl" for="skH_subject">Fach</label>
-      <input id="skH_subject" class="fz-in" list="skHwSubjects" autocomplete="off" maxlength="60" value="${famAttr(h ? h.subject : '')}" placeholder="z. B. Mathe" />
-      <datalist id="skHwSubjects">${[...new Set([...subjects, ...SK_SUBJECTS])].map(s => `<option value="${famAttr(s)}"></option>`).join('')}</datalist>
+    <h3 class="font-serif text-lg mb-1">${tk('school.homeworkFor', { name: escapeHtml(memberLabel(memberById(kid))) })}</h3>
+    <p class="text-xs text-ink/50 mb-4">${tk('school.alsoAppearsKidsPage')}</p>
+    <div class="fz-field"><label class="fz-lbl" for="skH_subject">${tk('school.subject')}</label>
+      <input id="skH_subject" class="fz-in" list="skHwSubjects" autocomplete="off" maxlength="60" value="${famAttr(h ? h.subject : '')}" placeholder="${escapeHtml(tk('school.eGMaths'))}" />
+      <datalist id="skHwSubjects">${[...new Set([...subjects, ...skSubjectSuggestions()])].map(s => `<option value="${famAttr(s)}"></option>`).join('')}</datalist>
     </div>
     ${subjects.length ? `<div class="flex flex-wrap gap-1.5 mb-3">${subjects.slice(0, 12).map(s => `<button type="button" class="fz-filter-chip" data-skm="hwsubj" data-v="${famAttr(s)}"><span class="sk-subj" style="--sk:${skColor(s)}"></span>${escapeHtml(s)}</button>`).join('')}</div>` : ''}
-    ${famTa('skH_text', 'Aufgabe', h ? h.text : '', 'z. B. Buch S. 34, Nr. 2–4')}
-    ${fzIn('skH_due', 'Bis wann?', h ? h.due : skNextSchoolDay(p), { type: 'date' })}
+    ${famTa('skH_text', tk('search.type.task'), h ? h.text : '', tk('school.eGBookP'))}
+    ${fzIn('skH_due', tk('school.dueWhen'), h ? h.due : skNextSchoolDay(p), { type: 'date' })}
     <p id="skH_hint" class="text-[11px] text-ink/45 -mt-2 mb-2"></p>
     ${skFooter(!!h)}`;
   skOpen(html, { kind: 'hw', id: h ? h.id : '', memberId: kid, dueTouched: !!h }, body => {
@@ -3127,7 +3130,7 @@ function skHwSubjectChanged() {
   const hint = document.getElementById('skH_hint');
   if (iso) {
     document.getElementById('skH_due').value = iso;
-    if (hint) hint.textContent = 'Nächste Stunde: ' + skFmtDay(iso);
+    if (hint) hint.textContent = tk('school.nextLesson', { day: skFmtDay(iso) });
   } else if (hint) hint.textContent = '';
 }
 function skSaveHomework() {
@@ -3135,7 +3138,7 @@ function skSaveHomework() {
   const subject = famVal('skH_subject');
   const text = famVal('skH_text');
   const due = famVal('skH_due');
-  if (!subject && !text) return skErr('Bitte Fach oder Aufgabe eintragen.');
+  if (!subject && !text) return skErr(tk('school.pleaseEnterSubjectTask'));
   const old = st.id ? skHomeworkOf('').find(x => x.id === st.id) : null;
   skUpsert('hw', {
     ...(old || { done: false, doneAt: '', created: new Date().toISOString() }),
@@ -3155,14 +3158,14 @@ function skParents() { return members.filter(m => !famIsPet(m) && !skProfile(m.i
 function skLetterTaskHtml() {
   const st = skModal;
   const people = skParents();
-  return `<label class="fz-check"><input type="checkbox" id="skB_task"${st.taskOn ? ' checked' : ''} /><span>Als Aufgabe anlegen – mit Erinnerung<span class="block text-[11px] text-ink/45">Wer die Aufgabe abhakt, erledigt auch den Brief. Braucht eine Frist.</span></span></label>
+  return `<label class="fz-check"><input type="checkbox" id="skB_task"${st.taskOn ? ' checked' : ''} /><span>${tk('school.createTaskReminder')}<span class="block text-[11px] text-ink/45">${tk('school.tickingOffTaskAlso')}</span></span></label>
     <div id="skB_taskFor" class="flex flex-wrap gap-1.5 mb-3${st.taskOn ? '' : ' hidden'}">${people.map(m => `<button type="button" class="fz-filter-chip sk-kid-chip${st.taskFor.includes(m.id) ? ' active' : ''}" data-skm="taskfor" data-id="${famAttr(m.id)}">${skAvatar(m)}<span>${escapeHtml(memberLabel(m))}</span></button>`).join('')}</div>`;
 }
 function skKiClosuresHtml() {
   const list = (skModal && skModal.kiClosures) || [];
   if (!list.length) return '';
   return `<div class="fz-note-box ok mb-3"><span>🚫</span><div class="min-w-0 flex-1">
-    <div class="text-xs font-medium mb-1">Schließtage im Brief gefunden – übernehmen?</div>
+    <div class="text-xs font-medium mb-1">${tk('school.closureDaysFoundLetter')}</div>
     ${list.map((c, i) => `<label class="fz-check" style="margin-bottom:0.3rem"><input type="checkbox" data-skkic="${i}"${c.on ? ' checked' : ''} /><span class="text-xs">${escapeHtml(skRange(c.from, c.to))}${c.reason ? ' · ' + escapeHtml(c.reason) : ''}</span></label>`).join('')}
   </div></div>`;
 }
@@ -3175,19 +3178,19 @@ function skOpenLetter(id, mid, autoKi) {
   const action = l ? l.action : 'unterschreiben';
   const ki = skKiOn();
   const html = `
-    <h3 class="font-serif text-lg mb-3">Elternbrief</h3>
-    ${ki ? `<button type="button" id="skB_ki" class="w-full mb-2 px-3 py-2.5 rounded-xl border border-dashed border-pine/50 text-sm text-pine hover:bg-pine/5 transition" data-skm="ki">📷 Brief fotografieren – KI liest aus</button>
+    <h3 class="font-serif text-lg mb-3">${tk('school.parentLetter')}</h3>
+    ${ki ? `<button type="button" id="skB_ki" class="w-full mb-2 px-3 py-2.5 rounded-xl border border-dashed border-pine/50 text-sm text-pine hover:bg-pine/5 transition" data-skm="ki">${tk('school.photographLetterAiReads')}</button>
       <p id="skB_kiInfo" class="hidden text-xs mb-3"></p>` : ''}
     ${skKidChips(kids, 'kid')}
-    ${fzIn('skB_title', 'Worum geht es?', l ? l.title : '', { ph: 'z. B. Ausflug in den Zoo', max: 150 })}
-    ${fzIn('skB_sender', 'Von', l ? l.sender : '', { ph: 'z. B. Klassenlehrerin, Kita-Leitung', max: 100 })}
-    <label class="fz-lbl">Was ist zu tun?</label>
+    ${fzIn('skB_title', tk('school.whatAbout'), l ? l.title : '', { ph: tk('school.eGTripZoo'), max: 150 })}
+    ${fzIn('skB_sender', tk('shop.from'), l ? l.sender : '', { ph: tk('school.eGClassTeacher'), max: 100 })}
+    <label class="fz-lbl">${tk('school.whatNeedsDoing')}</label>
     <div class="fz-type-row mb-3">${SK_ACTIONS.map(a => `<button type="button" class="fz-type-chip${a.id === action ? ' active' : ''}" data-skm="action" data-v="${a.id}"><span class="fz-ti">${a.icon}</span>${a.label}</button>`).join('')}</div>
     <div class="fz-grid2">
-      ${fzIn('skB_deadline', 'Frist', l ? l.deadline : '', { type: 'date' })}
-      ${fzIn('skB_amount', 'Betrag', l && l.amount !== '' && l.amount != null ? hsDecInput(l.amount, 2) : '', { mode: 'decimal', unit: curSym(), ph: 'optional' })}
+      ${fzIn('skB_deadline', tk('school.deadline'), l ? l.deadline : '', { type: 'date' })}
+      ${fzIn('skB_amount', tk('depot.amount'), l && l.amount !== '' && l.amount != null ? hsDecInput(l.amount, 2) : '', { mode: 'decimal', unit: curSym(), ph: 'optional' })}
     </div>
-    ${famTa('skB_note', 'Notiz', l ? l.note : '', 'z. B. Lunchpaket und Regenjacke mitgeben')}
+    ${famTa('skB_note', tk('fin.csv.note'), l ? l.note : '', tk('school.eGPackLunch'))}
     <div id="skB_kiClosures"></div>
     <div id="skB_taskBox"></div>
     ${skFooter(!!l)}`;
@@ -3199,15 +3202,15 @@ function skOpenLetter(id, mid, autoKi) {
 function skSaveLetter() {
   const st = skModal;
   const title = famVal('skB_title');
-  if (!title) return skErr('Bitte eintragen, worum es geht.');
-  if (!st.kids.length) return skErr('Bitte mindestens ein Kind wählen.');
+  if (!title) return skErr(tk('school.pleaseEnterWhatAbout'));
+  if (!st.kids.length) return skErr(tk('school.pleaseChooseLeastOne'));
   const deadline = famVal('skB_deadline');
   const amountRaw = famVal('skB_amount');
   const amount = amountRaw ? hsDec(amountRaw) : '';
-  if (amountRaw && !(amount >= 0)) return skErr('Bitte den Betrag als Zahl eingeben.');
+  if (amountRaw && !(amount >= 0)) return skErr(tk('school.pleaseEnterAmountNumber'));
   const taskOn = fzChecked('skB_task');
-  if (taskOn && !skIso(deadline)) return skErr('Für die Aufgabe braucht der Brief eine Frist.');
-  if (taskOn && !st.taskFor.length) return skErr('Bitte wählen, wer die Aufgabe bekommt.');
+  if (taskOn && !skIso(deadline)) return skErr(tk('school.letterNeedsDeadlineTask'));
+  if (taskOn && !st.taskFor.length) return skErr(tk('school.pleaseChooseWhoGets'));
   const old = st.id ? skLettersOf('').find(x => x.id === st.id) : null;
   let l = {
     ...(old || { done: false, doneAt: '', taskId: '', created: new Date().toISOString() }),
@@ -3223,11 +3226,11 @@ function skSaveLetter() {
   });
   skClose();
   skCommit(true);
-  finShowToast(l.taskId && l.taskOn ? 'Gespeichert – Aufgabe angelegt' : 'Gespeichert');
+  finShowToast(l.taskId && l.taskOn ? tk('school.savedTaskCreated') : tk('common.saved'));
 }
 function skDeleteLetter() {
   const l = skLettersOf('').find(x => x.id === skModal.id);
-  if (!l || !confirm('Elternbrief löschen?')) return;
+  if (!l || !confirm(tk('school.deleteParentLetter'))) return;
   const t = skTaskOf(l);
   if (t && !t.done && typeof queueTaskDelete === 'function') { queueTaskDelete(t.id); try { rebuildAufgaben(); renderTasks(); flushOutbox(); } catch (e) { /* ignore */ } }
   schoolLetters = (schoolLetters || []).filter(x => x.id !== l.id);
@@ -3245,14 +3248,14 @@ function skOpenClosure(id, mid) {
     if (same) skProfiles().forEach(p => { if (p.memberId !== mid && String(p.name || '').trim().toLowerCase() === same) kids.push(p.memberId); });
   }
   const html = `
-    <h3 class="font-serif text-lg mb-1">Schließtag</h3>
-    <p class="text-xs text-ink/50 mb-4">Erscheint im Kalender – auch über mehrere Tage, z. B. Sommerschließzeit.</p>
+    <h3 class="font-serif text-lg mb-1">${tk('school.closureDay')}</h3>
+    <p class="text-xs text-ink/50 mb-4">${tk('school.appearsCalendarAlsoOver')}</p>
     ${skKidChips(kids, 'kid')}
     <div class="fz-grid2">
-      ${fzIn('skC_from', 'Von', c ? c.from : '', { type: 'date' })}
-      ${fzIn('skC_to', 'Bis', c ? (c.to || c.from) : '', { type: 'date' })}
+      ${fzIn('skC_from', tk('shop.from'), c ? c.from : '', { type: 'date' })}
+      ${fzIn('skC_to', tk('school.to'), c ? (c.to || c.from) : '', { type: 'date' })}
     </div>
-    ${fzIn('skC_reason', 'Grund', c ? c.reason : '', { ph: 'z. B. Teamtag, Brückentag, Schließzeit', max: 100 })}
+    ${fzIn('skC_reason', tk('school.reason'), c ? c.reason : '', { ph: tk('school.eGStaffDay'), max: 100 })}
     ${skFooter(!!c)}`;
   skOpen(html, { kind: 'closure', id: c ? c.id : '', kids }, () => {
     const from = document.getElementById('skC_from'), to = document.getElementById('skC_to');
@@ -3263,11 +3266,11 @@ function skSaveClosure() {
   const st = skModal;
   const from = famVal('skC_from');
   let to = famVal('skC_to');
-  if (!skIso(from)) return skErr('Bitte ein Datum wählen.');
+  if (!skIso(from)) return skErr(tk('fin.err.needDate'));
   if (!skIso(to)) to = from;
-  if (to < from) return skErr('„Bis“ liegt vor „Von“.');
-  if (skDaysBetween(from, to) > 120) return skErr('Höchstens 120 Tage am Stück.');
-  if (!st.kids.length) return skErr('Bitte mindestens ein Kind wählen.');
+  if (to < from) return skErr(tk('school.beforeFrom'));
+  if (skDaysBetween(from, to) > 120) return skErr(tk('school.most120DaysRow'));
+  if (!st.kids.length) return skErr(tk('school.pleaseChooseLeastOne'));
   const old = st.id ? skClosuresOf('').find(x => x.id === st.id) : null;
   skUpsert('closures', { ...(old || { created: new Date().toISOString() }), id: old ? old.id : newRecordId(), memberIds: st.kids.slice(), from, to, reason: famVal('skC_reason').slice(0, 100) });
   skClose();
@@ -3299,25 +3302,25 @@ function skPickFile(accept, cb) {
 async function skFilePart(file) {
   const t = String(file.type || '').toLowerCase();
   if (t === 'application/pdf' || /\.pdf$/i.test(file.name || '')) {
-    if (file.size > 12 * 1024 * 1024) throw new Error('Die PDF-Datei ist zu groß (max. 12 MB).');
+    if (file.size > 12 * 1024 * 1024) throw new Error(tk('school.pdfFileTooLarge'));
     return recipeKiFilePart(file, 'application/pdf');
   }
   return recipeKiImagePart(file);
 }
 async function skKiPost(path, body) {
-  if (!navigator.onLine) throw new Error('Keine Verbindung.');
+  if (!navigator.onLine) throw new Error(tk('fund.noConnection'));
   const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
   const timer = ctrl ? setTimeout(() => ctrl.abort(), 150000) : null;
   let res;
   try {
     res = await apiFetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctrl ? ctrl.signal : undefined });
   } catch (err) {
-    throw new Error(err && err.name === 'AbortError' ? 'Die KI hat zu lange gebraucht.' : 'Keine Verbindung zum Server.');
+    throw new Error(err && err.name === 'AbortError' ? tk('school.aiTookTooLong') : tk('common.noConnection'));
   } finally { if (timer) clearTimeout(timer); }
   let data = {};
   try { data = await res.json(); } catch (e) { data = {}; }
-  if (res.status === 404) throw new Error('Auf dem Server fehlen noch die neuen Dateien ki.pb.js und pinn-ki.js.');
-  if (!res.ok) throw new Error(data.error || ('Server-Fehler ' + res.status));
+  if (res.status === 404) throw new Error(tk('school.newFilesKiPb'));
+  if (!res.ok) throw new Error(data.error || tk('school.serverError', { code: res.status }));
   return data;
 }
 async function skKiTimetable(mid, file) {
@@ -3331,9 +3334,9 @@ async function skKiTimetable(mid, file) {
     const data = await skKiPost('/api/pinn/ki/stundenplan', { dateien: [part], kind: memberLabel(memberById(mid)), klasse: p.group || '' });
     const r = data.stundenplan || {};
     const stunden = Array.isArray(r.stunden) ? r.stunden : [];
-    if (!stunden.length) throw new Error('Kein Stundenplan erkannt.');
+    if (!stunden.length) throw new Error(tk('school.noTimetableRecognised'));
     const cur = skProfile(mid);
-    if ((cur.lessons || []).some(l => String(l.subject || '').trim()) && !confirm('Den bisherigen Stundenplan durch den erkannten ersetzen?')) { skKiMsg = null; return; }
+    if ((cur.lessons || []).some(l => String(l.subject || '').trim()) && !confirm(tk('school.replaceCurrentTimetableRecognised'))) { skKiMsg = null; return; }
     let times = (Array.isArray(r.zeiten) ? r.zeiten : []).filter(z => skTimeOk(z.von) && skTimeOk(z.bis) && z.bis > z.von).map(z => ({ id: newRecordId(), from: z.von, to: z.bis }));
     const maxN = stunden.reduce((mx, s) => Math.max(mx, Number(s.stunde) || 0), 0);
     if (times.length < maxN) {
@@ -3356,12 +3359,12 @@ async function skKiTimetable(mid, file) {
       seen.add(key);
       lessons.push({ id: newRecordId(), day, slot: times[n - 1].id, subject, room: String(s.raum || '').trim().slice(0, 30) });
     });
-    if (!lessons.length) throw new Error('Kein Stundenplan erkannt.');
+    if (!lessons.length) throw new Error(tk('school.noTimetableRecognised'));
     skUpsert('profiles', { ...cur, times, lessons, updated: new Date().toISOString() });
-    skKiMsg = { memberId: mid, text: `✨ ${lessons.length} Stunden übernommen – bitte kurz prüfen.${r.hinweis ? ' ' + r.hinweis : ''}`, bad: false };
+    skKiMsg = { memberId: mid, text: `${tk('school.lessonsAddedPleaseCheck', { n: lessons.length, v: r.hinweis ? ' ' + r.hinweis : '' })}`, bad: false };
     persistState();
   } catch (err) {
-    skKiMsg = { memberId: mid, text: 'KI: ' + (err && err.message ? err.message : 'Unbekannter Fehler'), bad: true };
+    skKiMsg = { memberId: mid, text: 'KI: ' + (err && err.message ? err.message : tk('school.unknownError')), bad: true };
   } finally {
     skKiBusy = '';
     if (currentView === 'familie') renderFamily();
@@ -3374,7 +3377,7 @@ async function skKiLetter(file) {
   const btn = document.getElementById('skB_ki');
   const show = (txt, bad) => { if (!info) return; info.textContent = txt; info.classList.remove('hidden'); info.classList.toggle('text-red-500', !!bad); info.classList.toggle('text-ink/55', !bad); };
   if (btn) btn.disabled = true;
-  show('✨ KI liest den Brief …');
+  show(tk('school.aiReadingLetter'));
   try {
     const part = await skFilePart(file);
     const data = await skKiPost('/api/pinn/ki/elternbrief', {
@@ -3401,9 +3404,9 @@ async function skKiLetter(file) {
       const box = document.getElementById('skB_task');
       if (box) { box.checked = false; st.taskOn = false; document.getElementById('skB_taskFor').classList.add('hidden'); }
     }
-    show('✨ Ausgelesen – bitte kurz prüfen.' + (b.hinweis ? ' ' + b.hinweis : ''), false);
+    show(tk('school.readCheck') + (b.hinweis ? ' ' + b.hinweis : ''), false);
   } catch (err) {
-    show('KI: ' + (err && err.message ? err.message : 'Unbekannter Fehler') + ' – bitte selbst eintragen.', true);
+    show(tk('school.aiErrorEnterYourself', { error: err && err.message ? err.message : tk('common.unknownError') }), true);
   } finally {
     if (btn) btn.disabled = false;
   }
@@ -3501,7 +3504,7 @@ function skModalClick(e) {
     case 'rmtime': skSyncTimes(); st.rows.splice(Number(b.dataset.i), 1); skRenderTimes(); break;
     case 'preset':
       skSyncTimes();
-      if (st.rows.length && !confirm('Die Stundenzeiten durch die Vorlage ersetzen?')) break;
+      if (st.rows.length && !confirm(tk('school.replaceLessonTimesTemplate'))) break;
       st.rows = skPresetTimes().map((t, i) => st.rows[i] ? { ...t, id: st.rows[i].id } : t);
       skRenderTimes();
       break;
@@ -3542,41 +3545,41 @@ function skModalChange(e) {
    Push reminders (care due, birthday, pet feeder): pb_hooks/haustiere.pb.js + pinn-haustiere.js.
    ========================================================== */
 var PT_SPECIES = [
-  { id: 'hund', emoji: '🐶', label: 'Hund', walks: 3, feed: ['07:00', '18:00'], emojis: ['🐶', '🐕', '🦮', '🐕‍🦺', '🐩'] },
-  { id: 'katze', emoji: '🐱', label: 'Katze', walks: 0, feed: ['07:00', '18:00'], emojis: ['🐱', '🐈', '🐈‍⬛'] },
-  { id: 'kaninchen', emoji: '🐰', label: 'Kaninchen', walks: 0, feed: ['08:00', '18:00'], emojis: ['🐰', '🐇'] },
-  { id: 'meerschweinchen', emoji: '🐹', label: 'Meerschweinchen', walks: 0, feed: ['08:00', '18:00'], emojis: ['🐹'] },
-  { id: 'hamster', emoji: '🐹', label: 'Hamster & Maus', walks: 0, feed: ['19:00'], emojis: ['🐹', '🐭', '🐁'] },
-  { id: 'vogel', emoji: '🐦', label: 'Vogel', walks: 0, feed: ['08:00'], emojis: ['🐦', '🦜', '🐤'] },
-  { id: 'fisch', emoji: '🐠', label: 'Fische', walks: 0, feed: ['08:00'], emojis: ['🐠', '🐟', '🐡'] },
-  { id: 'reptil', emoji: '🦎', label: 'Reptil', walks: 0, feed: [], emojis: ['🦎', '🐢', '🐍'] },
-  { id: 'pferd', emoji: '🐴', label: 'Pferd', walks: 0, feed: ['07:00', '18:00'], emojis: ['🐴', '🐎'] },
-  { id: 'sonstiges', emoji: '🐾', label: 'Anderes Tier', walks: 0, feed: [], emojis: ['🐾', '🐿️', '🦔', '🐓', '🐐'] },
+  { id: 'hund', emoji: '🐶', label: tk('pet.dog'), walks: 3, feed: ['07:00', '18:00'], emojis: ['🐶', '🐕', '🦮', '🐕‍🦺', '🐩'] },
+  { id: 'katze', emoji: '🐱', label: tk('pet.cat'), walks: 0, feed: ['07:00', '18:00'], emojis: ['🐱', '🐈', '🐈‍⬛'] },
+  { id: 'kaninchen', emoji: '🐰', label: tk('pet.rabbit'), walks: 0, feed: ['08:00', '18:00'], emojis: ['🐰', '🐇'] },
+  { id: 'meerschweinchen', emoji: '🐹', label: tk('pet.guineaPig'), walks: 0, feed: ['08:00', '18:00'], emojis: ['🐹'] },
+  { id: 'hamster', emoji: '🐹', label: tk('pet.hamsterMouse'), walks: 0, feed: ['19:00'], emojis: ['🐹', '🐭', '🐁'] },
+  { id: 'vogel', emoji: '🐦', label: tk('pet.bird'), walks: 0, feed: ['08:00'], emojis: ['🐦', '🦜', '🐤'] },
+  { id: 'fisch', emoji: '🐠', label: tk('pet.fish'), walks: 0, feed: ['08:00'], emojis: ['🐠', '🐟', '🐡'] },
+  { id: 'reptil', emoji: '🦎', label: tk('pet.reptile'), walks: 0, feed: [], emojis: ['🦎', '🐢', '🐍'] },
+  { id: 'pferd', emoji: '🐴', label: tk('pet.horse'), walks: 0, feed: ['07:00', '18:00'], emojis: ['🐴', '🐎'] },
+  { id: 'sonstiges', emoji: '🐾', label: tk('pet.otherPet'), walks: 0, feed: [], emojis: ['🐾', '🐿️', '🦔', '🐓', '🐐'] },
 ];
 var PT_CARE_TYPES = [
-  { id: 'impfung', icon: '💉', label: 'Impfung' },
-  { id: 'wurmkur', icon: '🪱', label: 'Wurmkur' },
-  { id: 'parasiten', icon: '🛡️', label: 'Floh- & Zeckenschutz' },
-  { id: 'tierarzt', icon: '🩺', label: 'Tierarzt' },
-  { id: 'medikament', icon: '💊', label: 'Medikament' },
-  { id: 'zahn', icon: '🦷', label: 'Zähne' },
-  { id: 'krallen', icon: '✂️', label: 'Krallen & Hufe' },
-  { id: 'pflege', icon: '🛁', label: 'Fellpflege' },
-  { id: 'reinigung', icon: '🧽', label: 'Reinigung' },
-  { id: 'sonstiges', icon: '📌', label: 'Sonstiges' },
+  { id: 'impfung', icon: '💉', label: tk('pet.vaccination') },
+  { id: 'wurmkur', icon: '🪱', label: tk('pet.deworming') },
+  { id: 'parasiten', icon: '🛡️', label: tk('lists.t.i.fleaTickProtection') },
+  { id: 'tierarzt', icon: '🩺', label: tk('family.vet') },
+  { id: 'medikament', icon: '💊', label: tk('family.medication') },
+  { id: 'zahn', icon: '🦷', label: tk('pet.teeth') },
+  { id: 'krallen', icon: '✂️', label: tk('pet.clawsHooves') },
+  { id: 'pflege', icon: '🛁', label: tk('pet.grooming') },
+  { id: 'reinigung', icon: '🧽', label: tk('pet.cleaning') },
+  { id: 'sonstiges', icon: '📌', label: tk('contract.docType.other') },
 ];
 // Suggestions per species: [species, title, every x days]
 var PT_CARE_PRESETS = {
-  hund: [['impfung', 'Tollwut-Impfung', 1095], ['impfung', 'Kombi-Impfung (SHPPi + L)', 365], ['wurmkur', 'Wurmkur', 90], ['parasiten', 'Floh- & Zeckenschutz', 30], ['tierarzt', 'Jahres-Check beim Tierarzt', 365], ['krallen', 'Krallen kürzen', 42]],
-  katze: [['impfung', 'Katzenschnupfen & -seuche (RCP)', 365], ['impfung', 'Tollwut-Impfung (Freigänger)', 1095], ['wurmkur', 'Wurmkur', 90], ['parasiten', 'Floh- & Zeckenschutz', 30], ['tierarzt', 'Jahres-Check beim Tierarzt', 365]],
-  kaninchen: [['impfung', 'RHD-Impfung', 365], ['impfung', 'Myxomatose-Impfung', 365], ['krallen', 'Krallen kürzen', 42], ['zahn', 'Zähne kontrollieren', 180], ['reinigung', 'Stall gründlich reinigen', 14]],
-  meerschweinchen: [['krallen', 'Krallen kürzen', 42], ['zahn', 'Zähne kontrollieren', 180], ['reinigung', 'Stall gründlich reinigen', 14], ['tierarzt', 'Gesundheits-Check', 365]],
-  hamster: [['reinigung', 'Käfig gründlich reinigen', 30], ['tierarzt', 'Gesundheits-Check', 365]],
-  vogel: [['reinigung', 'Käfig gründlich reinigen', 14], ['krallen', 'Krallen & Schnabel prüfen', 90], ['tierarzt', 'Gesundheits-Check', 365]],
-  fisch: [['reinigung', 'Teilwasserwechsel', 7], ['reinigung', 'Filter reinigen', 30], ['sonstiges', 'Wasserwerte testen', 14]],
-  reptil: [['reinigung', 'Terrarium reinigen', 30], ['sonstiges', 'UV-Lampe tauschen', 365], ['tierarzt', 'Gesundheits-Check', 365]],
-  pferd: [['krallen', 'Hufschmied', 49], ['wurmkur', 'Wurmkur', 90], ['impfung', 'Influenza- & Tetanus-Impfung', 180], ['zahn', 'Zahnkontrolle', 365]],
-  sonstiges: [['tierarzt', 'Gesundheits-Check', 365]],
+  hund: [['impfung', tk('pet.rabiesVaccination'), 1095], ['impfung', tk('pet.combinedVaccinationDhppiL'), 365], ['wurmkur', tk('pet.deworming'), 90], ['parasiten', tk('lists.t.i.fleaTickProtection'), 30], ['tierarzt', tk('pet.annualVetCheckUp'), 365], ['krallen', tk('pet.trimClaws'), 42]],
+  katze: [['impfung', tk('pet.catFluPanleukopeniaRcp'), 365], ['impfung', tk('pet.rabiesVaccinationOutdoorCat'), 1095], ['wurmkur', tk('pet.deworming'), 90], ['parasiten', tk('lists.t.i.fleaTickProtection'), 30], ['tierarzt', tk('pet.annualVetCheckUp'), 365]],
+  kaninchen: [['impfung', tk('pet.rhdVaccination'), 365], ['impfung', tk('pet.myxomatosisVaccination'), 365], ['krallen', tk('pet.trimClaws'), 42], ['zahn', tk('pet.checkTeeth'), 180], ['reinigung', tk('pet.deepCleanHutch'), 14]],
+  meerschweinchen: [['krallen', tk('pet.trimClaws'), 42], ['zahn', tk('pet.checkTeeth'), 180], ['reinigung', tk('pet.deepCleanHutch'), 14], ['tierarzt', tk('pet.healthCheck'), 365]],
+  hamster: [['reinigung', tk('pet.deepCleanCage'), 30], ['tierarzt', tk('pet.healthCheck'), 365]],
+  vogel: [['reinigung', tk('pet.deepCleanCage'), 14], ['krallen', tk('pet.checkClawsBeak'), 90], ['tierarzt', tk('pet.healthCheck'), 365]],
+  fisch: [['reinigung', tk('pet.partialWaterChange'), 7], ['reinigung', tk('pet.cleanFilter'), 30], ['sonstiges', tk('pet.testWaterQuality'), 14]],
+  reptil: [['reinigung', tk('pet.cleanTerrarium'), 30], ['sonstiges', tk('pet.replaceUvLamp'), 365], ['tierarzt', tk('pet.healthCheck'), 365]],
+  pferd: [['krallen', tk('pet.farrier'), 49], ['wurmkur', tk('pet.deworming'), 90], ['impfung', tk('pet.fluTetanusVaccination'), 180], ['zahn', tk('pet.dentalCheck'), 365]],
+  sonstiges: [['tierarzt', tk('pet.healthCheck'), 365]],
 };
 var PT_LOG_DAYS = 60;
 var PT_COLORS = ['#B5651D', '#8D6E63', '#C0567A', '#3B7EA1', '#2A9D8F', '#5E8C31', '#9C4DCC', '#D4A017', '#546E7A', '#D9822B'];
@@ -3610,13 +3613,13 @@ function ptAge(p) {
 function ptAgeText(p) {
   const a = ptAge(p);
   if (!a) return '';
-  if (a.years >= 1) return a.years === 1 ? '1 Jahr' : a.years + ' Jahre';
-  return a.months === 1 ? '1 Monat' : a.months + ' Monate';
+  if (a.years >= 1) return tk('family.ageYears', { n: a.years });
+  return tk('pet.ageMonths', { n: a.months });
 }
 function ptSubLine(p) {
   const sp = ptSpecies(p.species);
   const sex = p.sex === 'm' ? '♂' : p.sex === 'w' ? '♀' : '';
-  return [p.breed || sp.label, ptAgeText(p), sex ? sex + (p.neutered ? ' kastriert' : '') : ''].filter(Boolean).join(' · ');
+  return [p.breed || sp.label, ptAgeText(p), sex ? sex + (p.neutered ? (' ' + tk('pet.neutered')) : '') : ''].filter(Boolean).join(' · ');
 }
 // Birthday: days until the next one (0 = today), null without a date
 function ptBirthdayIn(p) {
@@ -3658,11 +3661,11 @@ function ptCareSorted(p) {
 }
 function ptCareDueText(c) {
   const d = ptCareDays(c);
-  if (d === null) return c.last ? 'zuletzt am ' + famFmtDate(c.last) : 'noch kein Datum';
-  if (d < 0) return d === -1 ? 'seit gestern fällig' : 'seit ' + (-d) + ' Tagen fällig';
-  if (d === 0) return 'heute fällig';
-  if (d === 1) return 'morgen fällig';
-  if (d <= 60) return 'in ' + d + ' Tagen';
+  if (d === null) return c.last ? tk('pet.lastOn', { date: famFmtDate(c.last) }) : tk('pet.noDateYet');
+  if (d < 0) return d === -1 ? tk('pet.dueSinceYesterday') : tk('pet.overdueDays', { n: -d });
+  if (d === 0) return tk('pet.dueToday');
+  if (d === 1) return tk('pet.dueTomorrow');
+  if (d <= 60) return 'in ' + d + (' ' + tk('pet.days'));
   return 'am ' + famFmtDate(ptCareNext(c));
 }
 function ptOverdue(p) { return p.gone ? [] : (Array.isArray(p.care) ? p.care : []).filter(c => ['over', 'today'].includes(ptCareState(c))); }
@@ -3698,7 +3701,7 @@ function ptOnDuty(p, day) {
   return ids.map(id => memberById(id)).filter(Boolean);
 }
 function ptWhoName(id) { const m = id ? memberById(id) : null; return m ? memberLabel(m) : ''; }
-function ptTimeOf(ms) { return new Date(ms).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }); }
+function ptTimeOf(ms) { return new Date(ms).toLocaleTimeString(sysLocale(), { hour: '2-digit', minute: '2-digit' }); }
 
 /* ---------- Saving ---------- */
 function ptUpdate(id, fn) {
@@ -3725,29 +3728,29 @@ function ptPaneHtml() {
   if (!act.length && !gone.length) {
     out.push(`<div class="fam-card pt-empty">
       <div class="pt-empty-paws" aria-hidden="true"><span>🐾</span><span>🐶</span><span>🐱</span><span>🐰</span><span>🐾</span></div>
-      <div class="font-serif text-lg mb-1">Eure Haustiere</div>
-      <p class="text-sm text-ink/55 mb-3">Füttern, Gassi, Impfungen, Tierarzt und Gewicht – alles an einem Ort. pinn. erinnert an Wurmkur &amp; Co. und hilft, wenn der Tiersitter kommt.</p>
-      ${can ? '<button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-pt="new">+ Haustier hinzufügen</button>' : ''}
+      <div class="font-serif text-lg mb-1">${tk('pet.pets')}</div>
+      <p class="text-sm text-ink/55 mb-3">${tk('pet.feedingWalksVaccinationsVet')}</p>
+      ${can ? ('<button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-pt="new">' + tk('pet.addPet') + '</button>') : ''}
     </div>`);
   } else {
-    out.push(`<div class="pt-grid">${act.map(ptCardHtml).join('')}${can ? `<button type="button" class="pt-card pt-add" data-pt="new"><span class="pt-add-ic">＋</span><span class="text-sm font-medium">Haustier</span></button>` : ''}</div>`);
+    out.push(`<div class="pt-grid">${act.map(ptCardHtml).join('')}${can ? `<button type="button" class="pt-card pt-add" data-pt="new"><span class="pt-add-ic">＋</span><span class="text-sm font-medium">${tk('search.type.pet')}</span></button>` : ''}</div>`);
     const due = [];
     act.forEach(p => ptSoon(p, 7).concat(ptOverdue(p)).forEach(c => { if (!due.some(x => x.c.id === c.id)) due.push({ p, c }); }));
     due.sort((a, b) => String(ptCareNext(a.c)).localeCompare(String(ptCareNext(b.c))));
     if (due.length) {
-      out.push(`<div class="fam-card"><div class="fz-h">🗓️ Steht an</div>${due.slice(0, 8).map(({ p, c }) => ptCareRowHtml(p, c, true)).join('')}</div>`);
+      out.push(`<div class="fam-card"><div class="fz-h">${tk('pet.comingUp')}</div>${due.slice(0, 8).map(({ p, c }) => ptCareRowHtml(p, c, true)).join('')}</div>`);
     }
     const walkers = ptActive().filter(p => (Number(p.walks) || 0) > 0);
     if (walkers.length) out.push(ptWalkWeekHtml(walkers));
   }
   const legacy = ptLegacyMembers();
   if (legacy.length && can) {
-    out.push(`<div class="fam-card pt-legacy"><div class="fz-h">🔁 Als Haustier übernehmen</div>
-      <p class="text-xs text-ink/55 mb-2">Diese Tiere stehen noch als Familienmitglied in pinn. Übernimm sie in die Haustiere – Chipnummer, Tierarzt und Geburtsdatum aus dem Notfallpass kommen mit.</p>
+    out.push(`<div class="fam-card pt-legacy"><div class="fz-h">${tk('pet.movePets')}</div>
+      <p class="text-xs text-ink/55 mb-2">${tk('pet.theseAnimalsStillSet')}</p>
       <div class="flex flex-wrap gap-2">${legacy.map(m => `<button type="button" class="fz-mini-btn" data-pt="adopt" data-id="${famAttr(m.id)}">${escapeHtml(m.avatar || '🐾')} <span>${escapeHtml(memberLabel(m))}</span></button>`).join('')}</div></div>`);
   }
   if (gone.length) {
-    out.push(`<div class="fam-card pt-gone-card"><button type="button" class="pt-gone-h" data-pt="togglegone"><span>🌈 In Erinnerung</span><b>${gone.length}</b><span class="ml-auto text-ink/40">${ptShowGone ? '▾' : '▸'}</span></button>
+    out.push(`<div class="fam-card pt-gone-card"><button type="button" class="pt-gone-h" data-pt="togglegone"><span>${tk('pet.memory')}</span><b>${gone.length}</b><span class="ml-auto text-ink/40">${ptShowGone ? '▾' : '▸'}</span></button>
       ${ptShowGone ? `<div class="pt-grid mt-2">${gone.map(ptCardHtml).join('')}</div>` : ''}</div>`);
   }
   return out.join('');
@@ -3765,7 +3768,7 @@ function ptCardHtml(p) {
   if (!p.gone && walks) stats.push(`<span class="pt-stat${w >= walks ? ' ok' : ''}">🦮 <b>${w}/${walks}</b></span>`);
   let badge = '';
   if (bd === 0) badge = '<span class="pt-badge bday">🎂</span>';
-  else if (over.length) badge = `<span class="pt-badge warn" title="Fällig">${over.length}</span>`;
+  else if (over.length) badge = `<span class="pt-badge warn" title="${escapeHtml(tk('pet.due'))}">${over.length}</span>`;
   return `<button type="button" class="pt-card${p.gone ? ' gone' : ''}" data-pt="open" data-id="${famAttr(p.id)}" style="--pt:${famAttr(color)}">
     <span class="pt-card-band"></span>
     <span class="fam-ava pt-ava" style="--fam:${famAttr(color)}">${ptAvatarInner(p)}${badge}</span>
@@ -3786,7 +3789,7 @@ function ptCareRowHtml(p, c, withName) {
         <span class="pt-care-when">${escapeHtml(ptCareDueText(c))}</span>
       </span>
     </button>
-    ${can && st !== 'none' ? `<button type="button" class="pt-done-btn" data-pt="caredone" data-id="${famAttr(p.id)}" data-cid="${famAttr(c.id)}" title="Erledigt">✓</button>` : ''}
+    ${can && st !== 'none' ? `<button type="button" class="pt-done-btn" data-pt="caredone" data-id="${famAttr(p.id)}" data-cid="${famAttr(c.id)}" title="${escapeHtml(tk('school.done2'))}">✓</button>` : ''}
   </div>`;
 }
 // Walks of the last 7 days (minutes per day, who was out the most)
@@ -3798,9 +3801,9 @@ function ptWalkWeekHtml(list) {
   list.forEach(p => ptLog().filter(x => x.pet === p.id && x.kind === 'gassi' && x.day >= days[0]).forEach(x => { if (x.by) by[x.by] = (by[x.by] || 0) + (Number(x.min) || 20); }));
   const top = Object.keys(by).sort((a, b) => by[b] - by[a]).filter(id => memberById(id));
   const total = per.reduce((a, b) => a + b, 0);
-  return `<div class="fam-card"><div class="fz-h">🦮 Gassi · 7 Tage</div>
-    <div class="pt-bars">${days.map((d, i) => `<div class="pt-bar${d === ptToday() ? ' today' : ''}"><span class="pt-bar-col"><span style="height:${Math.round(per[i] / max * 100)}%"></span></span><small>${escapeHtml(new Date(d + 'T12:00:00').toLocaleDateString('de-DE', { weekday: 'narrow' }))}</small></div>`).join('')}</div>
-    <div class="pt-walk-sum"><span><b>${Math.round(total / 60 * 10) / 10}</b> <span>Std. unterwegs</span></span>${top.length ? `<span>🏆 <b>${escapeHtml(ptWhoName(top[0]))}</b></span>` : ''}</div>
+  return `<div class="fam-card"><div class="fz-h">🦮 ${tk('pet.walks7Days')}</div>
+    <div class="pt-bars">${days.map((d, i) => `<div class="pt-bar${d === ptToday() ? ' today' : ''}"><span class="pt-bar-col"><span style="height:${Math.round(per[i] / max * 100)}%"></span></span><small>${escapeHtml(new Date(d + 'T12:00:00').toLocaleDateString(sysLocale(), { weekday: 'narrow' }))}</small></div>`).join('')}</div>
+    <div class="pt-walk-sum"><span><b>${Math.round(total / 60 * 10) / 10}</b> <span>${tk('pet.hrsOutWalking')}</span></span>${top.length ? `<span>🏆 <b>${escapeHtml(ptWhoName(top[0]))}</b></span>` : ''}</div>
   </div>`;
 }
 
@@ -3812,43 +3815,43 @@ function ptProfileHtml(p) {
   const bd = ptBirthdayIn(p);
   const age = ptAge(p);
   const btns = [];
-  if (!p.gone && (Number(p.walks) || 0) > 0 && can) btns.push(`<button type="button" class="fz-act-btn primary" data-pt="walk" data-id="${famAttr(p.id)}"><span class="fz-ti">🦮</span>Gassi</button>`);
-  if (!p.gone && ptFeedTimes(p).length && can) btns.push(`<button type="button" class="fz-act-btn" data-pt="feednext" data-id="${famAttr(p.id)}"><span class="fz-ti">🍖</span>Gefüttert</button>`);
-  if (p.vetPhone) btns.push(`<a class="fz-act-btn" href="${famAttr(famTel(p.vetPhone))}"><span class="fz-ti">🩺</span>Tierarzt</a>`);
-  if (ptCanEdit()) btns.push(`<button type="button" class="fz-act-btn" data-pt="edit" data-id="${famAttr(p.id)}"><span class="fz-ti">✏️</span>Bearbeiten</button>`);
+  if (!p.gone && (Number(p.walks) || 0) > 0 && can) btns.push(`<button type="button" class="fz-act-btn primary" data-pt="walk" data-id="${famAttr(p.id)}"><span class="fz-ti">🦮</span>${tk('pet.walk')}</button>`);
+  if (!p.gone && ptFeedTimes(p).length && can) btns.push(`<button type="button" class="fz-act-btn" data-pt="feednext" data-id="${famAttr(p.id)}"><span class="fz-ti">🍖</span>${tk('pet.fed')}</button>`);
+  if (p.vetPhone) btns.push(`<a class="fz-act-btn" href="${famAttr(famTel(p.vetPhone))}"><span class="fz-ti">🩺</span>${tk('family.vet')}</a>`);
+  if (ptCanEdit()) btns.push(`<button type="button" class="fz-act-btn" data-pt="edit" data-id="${famAttr(p.id)}"><span class="fz-ti">✏️</span>${tk('common.edit')}</button>`);
   const out = [];
-  out.push(`<button type="button" class="self-start text-sm text-ink/55 hover:text-pine -mb-1" data-pt="back">‹ Haustiere</button>`);
+  out.push(`<button type="button" class="self-start text-sm text-ink/55 hover:text-pine -mb-1" data-pt="back">${tk('pet.pets2')}</button>`);
   out.push(`<div class="fz-hero pt-hero" style="--fz:${famAttr(color)}">
     <div class="fam-band pt-band"><span class="pt-trail" aria-hidden="true">🐾 🐾 🐾 🐾 🐾 🐾</span></div>
     <div class="fam-hero-ava"><span class="fam-ava big" style="--fam:${famAttr(color)}">${ptAvatarInner(p)}</span></div>
     <div class="fam-hero-body">
       <div class="flex items-center gap-2 flex-wrap">
         <div class="font-serif text-xl">${escapeHtml(p.name)}</div>
-        ${bd === 0 ? '<span class="pt-pill bday">🎂 <span>Geburtstag!</span></span>' : bd !== null && bd <= 14 ? `<span class="pt-pill">🎂 <span>${escapeHtml(bd === 1 ? 'morgen' : 'in ' + bd + ' Tagen')}</span></span>` : ''}
+        ${bd === 0 ? ('<span class="pt-pill bday">🎂 <span>' + tk('pet.birthday') + '</span></span>') : bd !== null && bd <= 14 ? `<span class="pt-pill">🎂 <span>${escapeHtml(bd === 1 ? tk('contract.tomorrow') : 'in ' + bd + (' ' + tk('pet.days')))}</span></span>` : ''}
       </div>
       <div class="text-xs text-ink/50 mt-0.5">${escapeHtml(ptSubLine(p))}</div>
       ${btns.length ? `<div class="flex gap-2 mt-3">${btns.join('')}</div>` : ''}
     </div>
   </div>`);
-  if (bd === 0) out.push(`<div class="pt-bday-card"><span class="pt-bday-ic">🎂</span><div><div class="text-sm font-semibold">${escapeHtml(p.name)} <span>hat heute Geburtstag!</span></div>${age && age.years ? `<div class="text-xs" style="opacity:.8">${escapeHtml(age.years === 1 ? '1 Jahr' : age.years + ' Jahre')} 🐾</div>` : ''}</div></div>`);
-  if (p.gone) out.push(`<div class="fam-card pt-memorial"><div class="text-3xl mb-1">🌈</div><div class="font-serif text-lg">In Erinnerung</div><p class="text-sm text-ink/55">${escapeHtml([ptIso(p.birth) ? famFmtDate(p.birth) : '', famFmtDate(p.gone)].filter(Boolean).join(' – '))}</p></div>`);
+  if (bd === 0) out.push(`<div class="pt-bday-card"><span class="pt-bday-ic">🎂</span><div><div class="text-sm font-semibold">${escapeHtml(p.name)} <span>${tk('pet.hasBirthdayToday')}</span></div>${age && age.years ? `<div class="text-xs" style="opacity:.8">${escapeHtml(age.years === 1 ? tk('rotation.year') : age.years + (' ' + tk('family.years')))} 🐾</div>` : ''}</div></div>`);
+  if (p.gone) out.push(`<div class="fam-card pt-memorial"><div class="text-3xl mb-1">🌈</div><div class="font-serif text-lg">${tk('pet.memory2')}</div><p class="text-sm text-ink/55">${escapeHtml([ptIso(p.birth) ? famFmtDate(p.birth) : '', famFmtDate(p.gone)].filter(Boolean).join(' – '))}</p></div>`);
 
   if (!p.gone) {
     out.push(ptTodayHtml(p));
     // Care
     const care = ptCareSorted(p);
     const presets = (PT_CARE_PRESETS[p.species] || []).filter(([, title]) => !(p.care || []).some(c => c.title === title));
-    out.push(`<div class="fam-card"><div class="flex items-center justify-between gap-2 mb-1"><div class="fz-h" style="margin-bottom:0">🩺 Gesundheit &amp; Vorsorge</div>${can ? `<button type="button" class="fz-mini-btn" data-pt="careadd" data-id="${famAttr(p.id)}">+ Vorsorge</button>` : ''}</div>
-      ${care.length ? care.map(c => ptCareRowHtml(p, c, false)).join('') : '<p class="text-sm text-ink/50 py-1">Impfungen, Wurmkur, Floh- und Zeckenschutz – pinn. erinnert rechtzeitig per Push.</p>'}
-      ${can && presets.length ? `<button type="button" class="pt-suggest" data-pt="presets" data-id="${famAttr(p.id)}">✨ <span>Vorschläge für</span> <b>${escapeHtml(sp.label)}</b> <span class="text-ink/45">(${presets.length})</span></button>` : ''}
+    out.push(`<div class="fam-card"><div class="flex items-center justify-between gap-2 mb-1"><div class="fz-h" style="margin-bottom:0">${tk('pet.healthPrevention')}</div>${can ? `<button type="button" class="fz-mini-btn" data-pt="careadd" data-id="${famAttr(p.id)}">${tk('pet.prevention')}</button>` : ''}</div>
+      ${care.length ? care.map(c => ptCareRowHtml(p, c, false)).join('') : ('<p class="text-sm text-ink/50 py-1">' + tk('pet.vaccinationsDewormingFleaTick') + '</p>')}
+      ${can && presets.length ? `<button type="button" class="pt-suggest" data-pt="presets" data-id="${famAttr(p.id)}">✨ <span>${tk('pet.suggestions')}</span> <b>${escapeHtml(sp.label)}</b> <span class="text-ink/45">(${presets.length})</span></button>` : ''}
     </div>`);
     // Medication
     const meds = (Array.isArray(p.meds) ? p.meds : []).filter(m => m && m.name);
     if (meds.length) {
-      out.push(`<div class="fam-card"><div class="fz-h">💊 Medikamente</div>${meds.map(m => {
+      out.push(`<div class="fam-card"><div class="fz-h">${tk('pet.medication')}</div>${meds.map(m => {
         const todayN = ptLogOf(p.id, 'med', ptToday()).filter(x => x.note === m.name).length;
         return `<div class="pt-med-row"><span class="min-w-0 flex-1"><span class="block text-sm font-medium">${escapeHtml(m.name)}</span>${m.dose || m.times ? `<span class="block text-[11px] text-ink/50">${escapeHtml([m.dose, m.times].filter(Boolean).join(' · '))}</span>` : ''}</span>
-          ${can ? `<button type="button" class="fz-mini-btn${todayN ? ' primary' : ''}" data-pt="medgiven" data-id="${famAttr(p.id)}" data-name="${famAttr(m.name)}">${todayN ? '✓ ' + todayN + '×' : '<span>Gegeben</span>'}</button>` : ''}</div>`;
+          ${can ? `<button type="button" class="fz-mini-btn${todayN ? ' primary' : ''}" data-pt="medgiven" data-id="${famAttr(p.id)}" data-name="${famAttr(m.name)}">${todayN ? '✓ ' + todayN + '×' : ('<span>' + tk('pet.given') + '</span>')}</button>` : ''}</div>`;
       }).join('')}</div>`);
     }
   }
@@ -3861,10 +3864,10 @@ function ptProfileHtml(p) {
     const pi = f.pantryId ? (pantryItems || []).find(x => x.id === f.pantryId) : null;
     if (f.brand || f.amount || times.length || pi) {
       const low = pi && Number(pi.minQty) > 0 && Number(pi.qty) <= Number(pi.minQty);
-      out.push(`<div class="fam-card"><div class="fz-h">🥣 Futter</div>
-        ${famRow('Futter', f.brand)}${famRow('Menge je Mahlzeit', f.amount)}${famRow('Fütterungszeiten', times.join(' · '))}
-        ${pi ? `<div class="fam-row"><div class="fam-k">Im Vorrat</div><div class="fam-v"><b>${escapeHtml(String(pi.qty != null ? pi.qty : '–'))}</b> ${escapeHtml(pi.unit || '')} <span class="text-ink/50">· ${escapeHtml(pi.name)}</span>${low ? ' <span class="pt-pill warn">knapp</span>' : ''}</div></div>` : ''}
-        ${can ? `<div class="flex gap-2 mt-2 flex-wrap"><button type="button" class="fz-mini-btn" data-pt="foodshop" data-id="${famAttr(p.id)}">🛒 <span>Auf die Einkaufsliste</span></button>${pi && isViewAllowed('vorrat') ? '<button type="button" class="fz-mini-btn" data-pt="pantry">🥫 <span>Vorrat</span></button>' : ''}</div>` : ''}
+      out.push(`<div class="fam-card"><div class="fz-h">${tk('pet.food')}</div>
+        ${famRow(tk('pet.food2'), f.brand)}${famRow(tk('pet.amountPerMeal'), f.amount)}${famRow(tk('pet.feedingTimes'), times.join(' · '))}
+        ${pi ? `<div class="fam-row"><div class="fam-k">${tk('pet.pantry')}</div><div class="fam-v"><b>${escapeHtml(String(pi.qty != null ? pi.qty : '–'))}</b> ${escapeHtml(pi.unit || '')} <span class="text-ink/50">· ${escapeHtml(pi.name)}</span>${low ? ' <span class="pt-pill warn">knapp</span>' : ''}</div></div>` : ''}
+        ${can ? `<div class="flex gap-2 mt-2 flex-wrap"><button type="button" class="fz-mini-btn" data-pt="foodshop" data-id="${famAttr(p.id)}">🛒 <span>${tk('pet.addShoppingList')}</span></button>${pi && isViewAllowed('vorrat') ? ('<button type="button" class="fz-mini-btn" data-pt="pantry">🥫 <span>' + tk('nav.pantry') + '</span></button>') : ''}</div>` : ''}
       </div>`);
     }
     out.push(ptFeederHtml(p));
@@ -3875,45 +3878,45 @@ function ptProfileHtml(p) {
   if (g) {
     const pos = g.teilen ? g.position : null;
     const pl = pos ? famPlace(pos.ort) : null;
-    out.push(`<div class="fam-card"><div class="fz-h">📍 Tracker</div>
+    out.push(`<div class="fam-card"><div class="fz-h">${tk('pet.tracker')}</div>
       <div class="flex items-center gap-3"><span class="text-2xl">${famIsLive(g) ? '<span class="fam-dot"></span>' : ''}${escapeHtml(g.emoji || '📡')}</span>
-        <div class="min-w-0 flex-1"><div class="text-sm font-medium">${escapeHtml(pl ? pl.emoji + ' ' + pl.name : (pos ? (famIsLive(g) ? 'unterwegs' : 'zuletzt') : 'Kein Standort'))}</div>${pos ? `<div class="text-[11px] text-ink/50">${escapeHtml(famAgo(pos.zeit))}</div>` : ''}</div>
-        ${pos ? `<button type="button" class="fz-mini-btn" data-pt="map" data-id="${famAttr(g.id)}">🗺 <span>Karte</span></button>` : ''}</div></div>`);
+        <div class="min-w-0 flex-1"><div class="text-sm font-medium">${escapeHtml(pl ? pl.emoji + ' ' + pl.name : (pos ? (famIsLive(g) ? 'unterwegs' : 'zuletzt') : tk('pet.noLocation')))}</div>${pos ? `<div class="text-[11px] text-ink/50">${escapeHtml(famAgo(pos.zeit))}</div>` : ''}</div>
+        ${pos ? `<button type="button" class="fz-mini-btn" data-pt="map" data-id="${famAttr(g.id)}">🗺 <span>${tk('family.map')}</span></button>` : ''}</div></div>`);
   }
   // Profile sheet
   const facts = [
-    famRow('Tierart', ptSpecies(p.species).label), famRow('Rasse', p.breed), famRow('Geburtsdatum', famFmtDate(p.birth)), famRow('Bei uns seit', famFmtDate(p.since)),
-    famRow('Chipnummer', p.chip), famRow('Heimtierausweis', p.passNo),
-    famRow('Allergien & Unverträglichkeiten', p.allergies), famRow('Erkrankungen', p.conditions),
-    famRow('Versicherung', [p.insurance, p.insuranceNo].filter(Boolean).join(' · ')),
-    famRow('Bezugspersonen', (p.owners || []).map(ptWhoName).filter(Boolean).join(', ')),
+    famRow(tk('pet.species'), ptSpecies(p.species).label), famRow(tk('pet.breed'), p.breed), famRow(tk('family.dateBirth'), famFmtDate(p.birth)), famRow(tk('pet.usSince'), famFmtDate(p.since)),
+    famRow(tk('family.chipNumber'), p.chip), famRow(tk('pet.petPassport'), p.passNo),
+    famRow(tk('family.allergiesIntolerances'), p.allergies), famRow(tk('family.illnesses'), p.conditions),
+    famRow(tk('family.insurance'), [p.insurance, p.insuranceNo].filter(Boolean).join(' · ')),
+    famRow(tk('pet.mainCarers'), (p.owners || []).map(ptWhoName).filter(Boolean).join(', ')),
   ].join('');
-  out.push(`<div class="fam-card"><div class="fz-h">🐾 Steckbrief</div>${facts}${p.notes ? `<div class="fam-row"><div class="fam-k">Wesen &amp; Eigenheiten</div><div class="fam-v">${escapeHtml(p.notes)}</div></div>` : ''}</div>`);
-  const vets = [famRow('Tierarzt', [p.vet, p.vetAddress].filter(Boolean).join('\n') || p.vetPhone, famCallBtn(p.vetPhone)), famRow('Tiernotdienst', p.emergencyVet || p.emergencyVetPhone, famCallBtn(p.emergencyVetPhone))].join('');
-  if (vets) out.push(`<div class="fam-card"><div class="fz-h">🏥 Tierarzt &amp; Notdienst</div>${vets}</div>`);
+  out.push(`<div class="fam-card"><div class="fz-h">${tk('pet.profile')}</div>${facts}${p.notes ? `<div class="fam-row"><div class="fam-k">${tk('pet.personalityQuirks')}</div><div class="fam-v">${escapeHtml(p.notes)}</div></div>` : ''}</div>`);
+  const vets = [famRow(tk('family.vet'), [p.vet, p.vetAddress].filter(Boolean).join('\n') || p.vetPhone, famCallBtn(p.vetPhone)), famRow(tk('pet.emergencyVet'), p.emergencyVet || p.emergencyVetPhone, famCallBtn(p.emergencyVetPhone))].join('');
+  if (vets) out.push(`<div class="fam-card"><div class="fz-h">${tk('pet.vetEmergencyService')}</div>${vets}</div>`);
   // Tools
   const tools = [];
-  tools.push(`<button type="button" class="pt-tool" data-pt="sitter" data-id="${famAttr(p.id)}"><span>🧑‍🍼</span><b>Tiersitter</b><small>Steckbrief teilen</small></button>`);
-  if (!p.gone) tools.push(`<button type="button" class="pt-tool" data-pt="poster" data-id="${famAttr(p.id)}"><span>🔎</span><b>Vermisst</b><small>Plakat drucken</small></button>`);
-  if (isViewAllowed('dokumente')) tools.push(`<button type="button" class="pt-tool" data-pt="docs"><span>📄</span><b>Dokumente</b><small>Impfpass, Rechnungen</small></button>`);
-  if (isViewAllowed('einkauf') && !p.gone) tools.push(`<button type="button" class="pt-tool" data-pt="packlist" data-id="${famAttr(p.id)}"><span>🧳</span><b>Packliste</b><small>Urlaub mit Tier</small></button>`);
+  tools.push(`<button type="button" class="pt-tool" data-pt="sitter" data-id="${famAttr(p.id)}"><span>🧑‍🍼</span><b>${tk('pet.petSitter')}</b><small>${tk('pet.shareProfile')}</small></button>`);
+  if (!p.gone) tools.push(`<button type="button" class="pt-tool" data-pt="poster" data-id="${famAttr(p.id)}"><span>🔎</span><b>${tk('pet.missing')}</b><small>${tk('pet.printPoster')}</small></button>`);
+  if (isViewAllowed('dokumente')) tools.push(`<button type="button" class="pt-tool" data-pt="docs"><span>📄</span><b>${tk('nav.documents')}</b><small>${tk('pet.vaccinationRecordInvoices')}</small></button>`);
+  if (isViewAllowed('einkauf') && !p.gone) tools.push(`<button type="button" class="pt-tool" data-pt="packlist" data-id="${famAttr(p.id)}"><span>🧳</span><b>${tk('lists.type.packOne')}</b><small>${tk('pet.holidayPet')}</small></button>`);
   out.push(`<div class="pt-tools">${tools.join('')}</div>`);
   // Diary
   const recent = ptLog().filter(x => x.pet === p.id && x.day >= addDaysToDateStr(ptToday(), -6)).sort((a, b) => b.at - a.at).slice(0, 12);
   if (recent.length) {
-    out.push(`<div class="fam-card"><div class="fz-h">📖 Tagebuch</div>${recent.map(x => ptLogRowHtml(p, x)).join('')}</div>`);
+    out.push(`<div class="fam-card"><div class="fz-h">${tk('pet.diary')}</div>${recent.map(x => ptLogRowHtml(p, x)).join('')}</div>`);
   }
-  if (p.updated) out.push(`<p class="text-[11px] text-ink/40 text-center"><span>Zuletzt geändert am</span> ${escapeHtml(new Date(p.updated).toLocaleDateString('de-DE'))}</p>`);
+  if (p.updated) out.push(`<p class="text-[11px] text-ink/40 text-center"><span>${tk('pet.lastChanged')}</span> ${escapeHtml(new Date(p.updated).toLocaleDateString(sysLocale()))}</p>`);
   return out.join('');
 }
 function ptLogRowHtml(p, x) {
   const ic = { gassi: '🦮', futter: '🍖', med: '💊', notiz: '📝' }[x.kind] || '•';
-  const label = x.kind === 'gassi' ? 'Gassi' : x.kind === 'futter' ? 'Gefüttert' : x.kind === 'med' ? (x.note || 'Medikament') : (x.note || 'Notiz');
-  const day = x.day === ptToday() ? 'heute' : x.day === addDaysToDateStr(ptToday(), -1) ? 'gestern' : new Date(x.day + 'T12:00:00').toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' });
+  const label = x.kind === 'gassi' ? tk('pet.walk') : x.kind === 'futter' ? tk('pet.fed') : x.kind === 'med' ? (x.note || tk('family.medication')) : (x.note || tk('fin.csv.note'));
+  const day = x.day === ptToday() ? tk('contract.today') : x.day === addDaysToDateStr(ptToday(), -1) ? tk('pet.yesterday') : new Date(x.day + 'T12:00:00').toLocaleDateString(sysLocale(), { weekday: 'short', day: 'numeric', month: 'short' });
   const can = ptCanEdit();
-  return `<div class="pt-log-row"><span class="pt-log-ic">${ic}</span><span class="min-w-0 flex-1"><span class="block text-sm"><span>${escapeHtml(label)}</span>${x.kind === 'gassi' && x.min ? ` <span class="text-ink/50">· ${escapeHtml(String(x.min))} Min.</span>` : ''}${x.kind === 'gassi' && x.note ? ` <span class="text-ink/50">· ${escapeHtml(x.note)}</span>` : ''}</span>
+  return `<div class="pt-log-row"><span class="pt-log-ic">${ic}</span><span class="min-w-0 flex-1"><span class="block text-sm"><span>${escapeHtml(label)}</span>${x.kind === 'gassi' && x.min ? ` <span class="text-ink/50">· ${tk('loc.durMin', { n: escapeHtml(String(x.min)) })}</span>` : ''}${x.kind === 'gassi' && x.note ? ` <span class="text-ink/50">· ${escapeHtml(x.note)}</span>` : ''}</span>
     <span class="block text-[11px] text-ink/45"><span>${escapeHtml(day)}</span> · ${escapeHtml(ptTimeOf(x.at))}${x.by ? ' · ' + escapeHtml(ptWhoName(x.by)) : ''}</span></span>
-    ${can ? `<button type="button" class="fam-x" data-pt="logdel" data-id="${famAttr(x.id)}" aria-label="Entfernen">×</button>` : ''}</div>`;
+    ${can ? `<button type="button" class="fam-x" data-pt="logdel" data-id="${famAttr(x.id)}" aria-label="${escapeHtml(tk('common.remove'))}">×</button>` : ''}</div>`;
 }
 function ptTodayHtml(p) {
   const can = ptCanEdit();
@@ -3932,17 +3935,17 @@ function ptTodayHtml(p) {
   const done = ptWalksToday(p);
   const dots = walks ? [...Array(Math.max(walks, done.length))].map((_, i) => `<span class="pt-dot${i < done.length ? ' on' : ''}">${i < done.length ? '🐾' : ''}</span>`).join('') : '';
   const mins = done.reduce((s, x) => s + (Number(x.min) || 0), 0);
-  return `<div class="fam-card pt-today"><div class="flex items-center justify-between gap-2 mb-2"><div class="fz-h" style="margin-bottom:0">☀️ Heute</div>
-      ${duty.length ? `<span class="pt-duty">${duty.map(m => `<span class="pt-duty-ava" style="border-color:${memberBorderColor(m) === 'transparent' ? '#fff' : memberBorderColor(m)}">${memberAvatarInnerHTML(m)}</span>`).join('')}<span><span>dran:</span> ${escapeHtml(duty.map(memberLabel).join(', '))}</span></span>` : ''}</div>
+  return `<div class="fam-card pt-today"><div class="flex items-center justify-between gap-2 mb-2"><div class="fz-h" style="margin-bottom:0">${tk('pet.today')}</div>
+      ${duty.length ? `<span class="pt-duty">${duty.map(m => `<span class="pt-duty-ava" style="border-color:${memberBorderColor(m) === 'transparent' ? '#fff' : memberBorderColor(m)}">${memberAvatarInnerHTML(m)}</span>`).join('')}<span><span>${tk('rotation.upNow')}</span> ${escapeHtml(duty.map(memberLabel).join(', '))}</span></span>` : ''}</div>
     ${times.length ? `<div class="pt-slots">${feed}</div>` : ''}
-    ${walks ? `<div class="pt-walks"><div class="pt-dots">${dots}</div><div class="text-[11px] text-ink/55"><b>${done.length}</b> <span>von</span> <b>${walks}</b> <span>Runden</span>${mins ? ` · <b>${mins}</b> <span>Min.</span>` : ''}</div>${can ? `<button type="button" class="fz-mini-btn primary" data-pt="walk" data-id="${famAttr(p.id)}">+ <span>Gassi</span></button>` : ''}</div>` : ''}
+    ${walks ? `<div class="pt-walks"><div class="pt-dots">${dots}</div><div class="text-[11px] text-ink/55"><b>${done.length}</b> <span>${tk('family.of')}</span> <b>${walks}</b> <span>${tk('pet.walks')}</span>${mins ? ` · <b>${mins}</b> <span>${tk('smart.min')}</span>` : ''}</div>${can ? `<button type="button" class="fz-mini-btn primary" data-pt="walk" data-id="${famAttr(p.id)}">+ <span>${tk('pet.walk')}</span></button>` : ''}</div>` : ''}
   </div>`;
 }
 function ptRosterHtml(p) {
-  const wd = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+  const wd = [tk('weekday.mo'), tk('weekday.di'), tk('weekday.mi'), tk('weekday.do'), tk('weekday.fr'), tk('weekday.sa'), tk('weekday.so')];
   const today = String(((new Date().getDay() + 6) % 7) + 1);
   const can = ptCanEdit();
-  return `<div class="fam-card"><div class="flex items-center justify-between gap-2 mb-2"><div class="fz-h" style="margin-bottom:0">📋 Wer ist dran?</div>${can ? `<button type="button" class="fz-mini-btn" data-pt="roster" data-id="${famAttr(p.id)}">Bearbeiten</button>` : ''}</div>
+  return `<div class="fam-card"><div class="flex items-center justify-between gap-2 mb-2"><div class="fz-h" style="margin-bottom:0">📋 ${tk('pet.whoseTurn')}</div>${can ? `<button type="button" class="fz-mini-btn" data-pt="roster" data-id="${famAttr(p.id)}">${tk('common.edit')}</button>` : ''}</div>
     <div class="pt-roster">${wd.map((d, i) => {
       const k = String(i + 1);
       const ms = ((p.roster && p.roster[k]) || []).map(id => memberById(id)).filter(Boolean);
@@ -3953,12 +3956,12 @@ function ptWeightHtml(p) {
   const ws = (Array.isArray(p.weights) ? p.weights : []).filter(w => w && ptIso(w.date) && Number(w.kg) > 0).sort((a, b) => a.date.localeCompare(b.date));
   const can = ptCanEdit() && !p.gone;
   if (!ws.length && !can) return '';
-  const head = `<div class="flex items-center justify-between gap-2 mb-1"><div class="fz-h" style="margin-bottom:0">⚖️ Gewicht</div>${can ? `<button type="button" class="fz-mini-btn" data-pt="weight" data-id="${famAttr(p.id)}">+ <span>Gewicht</span></button>` : ''}</div>`;
-  if (!ws.length) return `<div class="fam-card">${head}<p class="text-sm text-ink/50">Regelmäßig wiegen hilft, Veränderungen früh zu bemerken.</p></div>`;
+  const head = `<div class="flex items-center justify-between gap-2 mb-1"><div class="fz-h" style="margin-bottom:0">${tk('pet.weight')}</div>${can ? `<button type="button" class="fz-mini-btn" data-pt="weight" data-id="${famAttr(p.id)}">+ <span>${tk('family.weight')}</span></button>` : ''}</div>`;
+  if (!ws.length) return `<div class="fam-card">${head}<p class="text-sm text-ink/50">${tk('pet.weighingRegularlyHelpsNotice')}</p></div>`;
   const last = ws[ws.length - 1];
   const prev = ws.length > 1 ? ws[ws.length - 2] : null;
   const diff = prev ? Math.round((last.kg - prev.kg) * 100) / 100 : 0;
-  const fmt = n => Number(n).toLocaleString('de-DE', { maximumFractionDigits: 2 });
+  const fmt = n => Number(n).toLocaleString(sysLocale(), { maximumFractionDigits: 2 });
   let chart = '';
   if (ws.length > 1) {
     const W = 300, H = 90, pad = 8;
@@ -3978,7 +3981,7 @@ function ptWeightHtml(p) {
   return `<div class="fam-card">${head}
     <div class="pt-wnow"><b>${escapeHtml(fmt(last.kg))}</b> <span>kg</span>${prev ? `<span class="pt-wdiff ${diff > 0 ? 'up' : diff < 0 ? 'down' : ''}">${diff > 0 ? '▲' : diff < 0 ? '▼' : '='} ${escapeHtml(fmt(Math.abs(diff)))} kg</span>` : ''}<small>${escapeHtml(famFmtDate(last.date))}</small></div>
     ${chart}
-    ${can && ws.length ? `<button type="button" class="pt-suggest" data-pt="weights" data-id="${famAttr(p.id)}"><span>Alle Werte</span> (${ws.length})</button>` : ''}
+    ${can && ws.length ? `<button type="button" class="pt-suggest" data-pt="weights" data-id="${famAttr(p.id)}"><span>${tk('pet.allValues')}</span> (${ws.length})</button>` : ''}
   </div>`;
 }
 
@@ -3986,12 +3989,12 @@ function ptWeightHtml(p) {
 function ptNotfallHtml() {
   const list = ptActive();
   if (!list.length) return '';
-  return `<div class="fam-card"><div class="fz-h">🐾 Haustiere</div><div class="flex flex-col">${list.map(p => {
-    const facts = [p.chip ? '🔖 ' + p.chip : '', p.allergies ? '⚠️ ' + String(p.allergies).split(/[,;\n]/)[0].trim() : '', p.vetPhone ? '🩺 ' + (p.vet || 'Tierarzt') : ''].filter(Boolean).join(' · ');
+  return `<div class="fam-card"><div class="fz-h">${tk('pet.pets3')}</div><div class="flex flex-col">${list.map(p => {
+    const facts = [p.chip ? '🔖 ' + p.chip : '', p.allergies ? '⚠️ ' + String(p.allergies).split(/[,;\n]/)[0].trim() : '', p.vetPhone ? '🩺 ' + (p.vet || tk('family.vet')) : ''].filter(Boolean).join(' · ');
     return `<button type="button" class="fam-pass-row" data-pt="open" data-id="${famAttr(p.id)}" style="--fam:${famAttr(ptColor(p))}">
       <span class="fam-ava sm">${ptAvatarInner(p)}</span>
       <span class="min-w-0 flex-1 text-left"><span class="block text-sm font-medium truncate">${escapeHtml(p.name)}</span><span class="block text-[11px] text-ink/55 truncate">${escapeHtml(facts || ptSpecies(p.species).label)}</span></span>
-      ${p.emergencyVetPhone ? `<a class="fz-mini-btn" href="${famAttr(famTel(p.emergencyVetPhone))}" onclick="event.stopPropagation()">🚨 <span>Notdienst</span></a>` : '<span class="text-ink/30 text-lg leading-none">›</span>'}
+      ${p.emergencyVetPhone ? `<a class="fz-mini-btn" href="${famAttr(famTel(p.emergencyVetPhone))}" onclick="event.stopPropagation()">🚨 <span>${tk('pet.emergency')}</span></a>` : '<span class="text-ink/30 text-lg leading-none">›</span>'}
     </button>`;
   }).join('')}</div></div>`;
 }
@@ -4000,8 +4003,8 @@ function ptQuickCardHtml() {
   const over = list.reduce((s, p) => s + ptOverdue(p).length, 0);
   return `<button type="button" class="fam-quick" data-famtabgo="tiere">
       <span class="fam-quick-ic">🐾</span>
-      <span class="fam-quick-t">Haustiere</span>
-      <span class="fam-quick-s">${list.length ? (over ? `<b>${over}</b> <span>fällig</span>` : escapeHtml(list.map(p => p.name).join(', '))) : 'Füttern, Gassi, Impfungen'}</span>
+      <span class="fam-quick-t">${tk('pet.pets4')}</span>
+      <span class="fam-quick-s">${list.length ? (over ? `<b>${over}</b> <span>${tk('pet.due2')}</span>` : escapeHtml(list.map(p => p.name).join(', '))) : tk('pet.feedingWalksVaccinations')}</span>
     </button>`;
 }
 function ptOpen(id) {
@@ -4034,7 +4037,7 @@ function ptPeople() { return members.filter(m => !famIsPet(m)); }
 function ptMemberChips(attr, selected) {
   return ptPeople().map(m => `<button type="button" class="fz-member-chip pt-mchip${selected.includes(m.id) ? ' active' : ''}" data-${attr}="${famAttr(m.id)}"><span class="pt-duty-ava">${memberAvatarInnerHTML(m)}</span><span>${escapeHtml(memberLabel(m))}</span></button>`).join('');
 }
-var PT_EVERY = [[0, 'einmalig'], [7, 'jede Woche'], [14, 'alle 2 Wochen'], [30, 'jeden Monat'], [42, 'alle 6 Wochen'], [60, 'alle 2 Monate'], [90, 'alle 3 Monate'], [180, 'alle 6 Monate'], [365, 'jedes Jahr'], [730, 'alle 2 Jahre'], [1095, 'alle 3 Jahre']];
+var PT_EVERY = [[0, tk('pet.once')], [7, tk('pocket.rhythm.weekly')], [14, tk('contract.interval.biweekly')], [30, tk('pocket.rhythm.monthly')], [42, tk('pet.every6Weeks')], [60, tk('pet.every2Months')], [90, tk('pocket.rhythm.quarterly')], [180, tk('pet.every6Months')], [365, tk('pocket.rhythm.yearly')], [730, tk('pet.every2Years')], [1095, tk('pet.every3Years')]];
 
 /* Add / edit pet */
 function ptOpenEdit(id) {
@@ -4052,71 +4055,71 @@ function ptOpenEdit(id) {
   const trackers = famOrtungAllowed() ? famDevices().filter(g => g.typ === 'tracker') : [];
   const pantry = (pantryItems || []).slice().sort((a, b) => String(a.name).localeCompare(String(b.name), 'de'));
   const html = `
-    <h3 class="font-serif text-lg mb-3">${p ? '<span>Haustier bearbeiten</span>' : '<span>Neues Haustier</span>'}</h3>
-    <label class="fz-lbl">Tierart</label>
+    <h3 class="font-serif text-lg mb-3">${p ? ('<span>' + tk('pet.editPet') + '</span>') : ('<span>' + tk('pet.newPet') + '</span>')}</h3>
+    <label class="fz-lbl">${tk('pet.species')}</label>
     <div class="fz-type-row mb-3" id="ptF_species">${PT_SPECIES.map(x => `<button type="button" class="fz-type-chip${x.id === st.species ? ' active' : ''}" data-ptm="species" data-v="${x.id}"><span class="fz-ti">${x.emoji}</span><span>${escapeHtml(x.label)}</span></button>`).join('')}</div>
     <div class="flex items-center gap-3 mb-3">
       <span id="ptF_preview" class="fam-ava big" style="--fam:${famAttr(st.color)}"></span>
       <div class="flex flex-col gap-1.5 min-w-0">
-        <label class="fz-mini-btn text-center cursor-pointer">📷 <span>Foto wählen</span><input id="ptF_photo" type="file" accept="image/*" class="hidden" /></label>
-        <button type="button" class="fz-mini-btn" data-ptm="nophoto"><span>Foto entfernen</span></button>
+        <label class="fz-mini-btn text-center cursor-pointer">📷 <span>${tk('pet.choosePhoto')}</span><input id="ptF_photo" type="file" accept="image/*" class="hidden" /></label>
+        <button type="button" class="fz-mini-btn" data-ptm="nophoto"><span>${tk('pet.removePhoto')}</span></button>
       </div>
     </div>
     <div id="ptF_emojis" class="flex flex-wrap gap-1.5 mb-3"></div>
-    <div class="flex flex-wrap gap-2 mb-3" id="ptF_colors">${PT_COLORS.map(c => `<button type="button" class="fz-color-btn${c === st.color ? ' active' : ''}" style="background:${c}" data-ptm="color" data-v="${c}" aria-label="Farbe"></button>`).join('')}</div>
-    <div class="fz-grid2">${famIn('ptF_name', 'Name', p ? p.name : '', 'maxlength="40" autocomplete="off" placeholder="z. B. Bello"')}${famIn('ptF_breed', 'Rasse', p ? p.breed : '', 'maxlength="60" autocomplete="off" placeholder="z. B. Labrador"')}</div>
-    <label class="fz-lbl">Geschlecht</label>
+    <div class="flex flex-wrap gap-2 mb-3" id="ptF_colors">${PT_COLORS.map(c => `<button type="button" class="fz-color-btn${c === st.color ? ' active' : ''}" style="background:${c}" data-ptm="color" data-v="${c}" aria-label="${escapeHtml(tk('account.dashBg.color'))}"></button>`).join('')}</div>
+    <div class="fz-grid2">${famIn('ptF_name', tk('common.name'), p ? p.name : '', ('maxlength="40" autocomplete="off" placeholder="' + escapeHtml(tk('pet.eGBuddy')) + '"'))}${famIn('ptF_breed', tk('pet.breed'), p ? p.breed : '', ('maxlength="60" autocomplete="off" placeholder="' + escapeHtml(tk('family.eGLabrador')) + '"'))}</div>
+    <label class="fz-lbl">${tk('pet.sex')}</label>
     <div class="flex items-center gap-2 mb-3 flex-wrap">
-      ${[['m', '♂ männlich'], ['w', '♀ weiblich'], ['', '–']].map(([v, l]) => `<button type="button" class="fz-filter-chip px-3 py-1.5 text-sm${st.sex === v ? ' active' : ''}" data-ptm="sex" data-v="${v}">${escapeHtml(l)}</button>`).join('')}
-      <label class="fz-check ml-1" style="margin-bottom:0"><input id="ptF_neutered" type="checkbox"${p && p.neutered ? ' checked' : ''} /><span>kastriert</span></label>
+      ${[['m', tk('pet.male')], ['w', tk('pet.female')], ['', '–']].map(([v, l]) => `<button type="button" class="fz-filter-chip px-3 py-1.5 text-sm${st.sex === v ? ' active' : ''}" data-ptm="sex" data-v="${v}">${escapeHtml(l)}</button>`).join('')}
+      <label class="fz-check ml-1" style="margin-bottom:0"><input id="ptF_neutered" type="checkbox"${p && p.neutered ? ' checked' : ''} /><span>${tk('pet.neutered')}</span></label>
     </div>
-    <div class="fz-grid2">${famIn('ptF_birth', 'Geburtsdatum', p ? p.birth : '', 'type="date"')}${famIn('ptF_since', 'Bei uns seit', p ? p.since : '', 'type="date"')}</div>
-    <label class="fz-lbl">Bezugspersonen</label>
+    <div class="fz-grid2">${famIn('ptF_birth', tk('family.dateBirth'), p ? p.birth : '', 'type="date"')}${famIn('ptF_since', tk('pet.usSince'), p ? p.since : '', 'type="date"')}</div>
+    <label class="fz-lbl">${tk('pet.mainCarers')}</label>
     <div class="flex flex-wrap gap-1.5 mb-1" id="ptF_owners">${ptMemberChips('ptowner', st.owners)}</div>
-    <p class="text-[11px] text-ink/45 mb-3">Bekommen die Erinnerungen. Ohne Auswahl: alle außer Kindern.</p>
+    <p class="text-[11px] text-ink/45 mb-3">${tk('pet.theyGetRemindersIf')}</p>
 
-    <div class="fz-h mt-2">🥣 Füttern &amp; Gassi</div>
-    <div class="fz-grid2">${famIn('ptF_food', 'Futter', f.brand, 'maxlength="80" autocomplete="off" placeholder="z. B. Trockenfutter Adult"')}${famIn('ptF_amount', 'Menge je Mahlzeit', f.amount, 'maxlength="40" autocomplete="off" placeholder="z. B. 150 g"')}</div>
-    <div class="fz-grid2">${famIn('ptF_times', 'Fütterungszeiten', (f.times || (p ? [] : sp.feed)).join(', '), 'autocomplete="off" inputmode="numeric" placeholder="07:00, 18:00"')}${famIn('ptF_walks', 'Gassi-Runden am Tag', p ? (p.walks || '') : (sp.walks || ''), 'inputmode="numeric" maxlength="2" placeholder="0"')}</div>
-    ${pantry.length ? `<div class="fz-field"><label class="fz-lbl" for="ptF_pantry">Futter im Vorrat</label><select id="ptF_pantry" class="fz-in"><option value="">– nicht verknüpft –</option>${pantry.map(x => `<option value="${famAttr(x.id)}"${f.pantryId === x.id ? ' selected' : ''}>${escapeHtml(x.name)}</option>`).join('')}</select></div>` : ''}
-    <label class="fz-check"><input id="ptF_feederOn" type="checkbox"${fd.on ? ' checked' : ''} /><span>🍽️ <span>Futterautomat</span></span></label>
+    <div class="fz-h mt-2">${tk('pet.feedingWalks')}</div>
+    <div class="fz-grid2">${famIn('ptF_food', tk('pet.food2'), f.brand, ('maxlength="80" autocomplete="off" placeholder="' + escapeHtml(tk('pet.eGAdultDry')) + '"'))}${famIn('ptF_amount', tk('pet.amountPerMeal'), f.amount, 'maxlength="40" autocomplete="off" placeholder="z. B. 150 g"')}</div>
+    <div class="fz-grid2">${famIn('ptF_times', tk('pet.feedingTimes'), (f.times || (p ? [] : sp.feed)).join(', '), 'autocomplete="off" inputmode="numeric" placeholder="07:00, 18:00"')}${famIn('ptF_walks', tk('pet.walksPerDay'), p ? (p.walks || '') : (sp.walks || ''), 'inputmode="numeric" maxlength="2" placeholder="0"')}</div>
+    ${pantry.length ? `<div class="fz-field"><label class="fz-lbl" for="ptF_pantry">${tk('pet.foodPantry')}</label><select id="ptF_pantry" class="fz-in"><option value="">${tk('pet.notLinked')}</option>${pantry.map(x => `<option value="${famAttr(x.id)}"${f.pantryId === x.id ? ' selected' : ''}>${escapeHtml(x.name)}</option>`).join('')}</select></div>` : ''}
+    <label class="fz-check"><input id="ptF_feederOn" type="checkbox"${fd.on ? ' checked' : ''} /><span>🍽️ <span>${tk('smart.type.feeder')}</span></span></label>
     <div id="ptF_feederWrap" class="${fd.on ? '' : 'hidden'}">
-      <div class="fz-grid2">${famIn('ptF_feederEvery', 'Auffüllen alle … Tage', fd.every || '', 'inputmode="numeric" maxlength="3" placeholder="z. B. 10"')}${famIn('ptF_feederLast', 'Zuletzt aufgefüllt', fd.last || '', 'type="date"')}</div>
-      <div class="fz-field"><label class="fz-lbl" for="ptF_feederEntity">Füllstand aus Home Assistant (optional)</label><select id="ptF_feederEntity" class="fz-in">${ptFeederEntityOptions(fd.entity || '')}</select><p id="ptF_feederEntityHint" class="text-[11px] text-ink/45 mt-1"></p></div>
-      <div id="ptF_feederBelowWrap" class="${fd.entity ? '' : 'hidden'}">${famIn('ptF_feederBelow', 'Erinnern ab Füllstand von höchstens', fd.below || '', 'inputmode="decimal" maxlength="6" placeholder="z. B. 20"')}</div>
-      <p class="text-[11px] text-ink/45 mb-3">pinn. erinnert per Push, wenn das Auffüllen fällig ist oder der Sensor „fast leer“ meldet.</p>
+      <div class="fz-grid2">${famIn('ptF_feederEvery', tk('pet.refillEveryDays'), fd.every || '', 'inputmode="numeric" maxlength="3" placeholder="z. B. 10"')}${famIn('ptF_feederLast', tk('pet.lastRefilled'), fd.last || '', 'type="date"')}</div>
+      <div class="fz-field"><label class="fz-lbl" for="ptF_feederEntity">${tk('pet.fillLevelFromHome')}</label><select id="ptF_feederEntity" class="fz-in">${ptFeederEntityOptions(fd.entity || '')}</select><p id="ptF_feederEntityHint" class="text-[11px] text-ink/45 mt-1"></p></div>
+      <div id="ptF_feederBelowWrap" class="${fd.entity ? '' : 'hidden'}">${famIn('ptF_feederBelow', tk('pet.remindFillLevelMost'), fd.below || '', 'inputmode="decimal" maxlength="6" placeholder="z. B. 20"')}</div>
+      <p class="text-[11px] text-ink/45 mb-3">${tk('pet.pinnRemindsPushWhen')}</p>
     </div>
 
-    <div class="fz-h mt-2">🩺 Gesundheit</div>
-    ${famTa('ptF_allergies', 'Allergien & Unverträglichkeiten', p ? p.allergies : '', 'z. B. Huhn, Getreide')}
-    ${famTa('ptF_conditions', 'Erkrankungen', p ? p.conditions : '', 'z. B. Arthrose, Epilepsie')}
-    <label class="fz-lbl">Medikamente</label>
+    <div class="fz-h mt-2">${tk('pet.health')}</div>
+    ${famTa('ptF_allergies', tk('family.allergiesIntolerances'), p ? p.allergies : '', tk('pet.eGChickenGrain'))}
+    ${famTa('ptF_conditions', tk('family.illnesses'), p ? p.conditions : '', tk('pet.eGArthritisEpilepsy'))}
+    <label class="fz-lbl">${tk('lists.t.i.medication')}</label>
     <div id="ptF_meds" class="flex flex-col gap-2 mb-2"></div>
-    <button type="button" class="fz-mini-btn mb-4" data-ptm="addmed">+ <span>Medikament</span></button>
+    <button type="button" class="fz-mini-btn mb-4" data-ptm="addmed">+ <span>${tk('family.medication')}</span></button>
 
-    <div class="fz-h mt-2">🏥 Tierarzt &amp; Ausweise</div>
-    <div class="fz-grid2">${famIn('ptF_vet', 'Tierarzt', p ? p.vet : '', 'maxlength="80" autocomplete="off"')}${famIn('ptF_vetPhone', 'Telefon Tierarzt', p ? p.vetPhone : '', 'type="tel" inputmode="tel" maxlength="40"')}</div>
-    ${famIn('ptF_vetAddress', 'Adresse Tierarzt', p ? p.vetAddress : '', 'maxlength="160" autocomplete="off"')}
-    <div class="fz-grid2">${famIn('ptF_eVet', 'Tiernotdienst / Tierklinik', p ? p.emergencyVet : '', 'maxlength="80" autocomplete="off"')}${famIn('ptF_eVetPhone', 'Telefon Notdienst', p ? p.emergencyVetPhone : '', 'type="tel" inputmode="tel" maxlength="40"')}</div>
-    <div class="fz-grid2">${famIn('ptF_chip', 'Chipnummer', p ? p.chip : '', 'inputmode="numeric" maxlength="20" autocomplete="off"')}${famIn('ptF_pass', 'Heimtierausweis-Nr.', p ? p.passNo : '', 'maxlength="30" autocomplete="off"')}</div>
-    <div class="fz-grid2">${famIn('ptF_ins', 'Versicherung', p ? p.insurance : '', 'maxlength="80" autocomplete="off" placeholder="z. B. Hundehaftpflicht"')}${famIn('ptF_insNo', 'Versicherungsnr.', p ? p.insuranceNo : '', 'maxlength="40" autocomplete="off"')}</div>
-    ${trackers.length ? `<div class="fz-field"><label class="fz-lbl" for="ptF_tracker">GPS-Tracker (Ortung)</label><select id="ptF_tracker" class="fz-in"><option value="">– keiner –</option>${trackers.map(g => `<option value="${famAttr(g.id)}"${p && p.trackerId === g.id ? ' selected' : ''}>${escapeHtml((g.emoji ? g.emoji + ' ' : '') + g.name)}</option>`).join('')}</select></div>` : ''}
+    <div class="fz-h mt-2">${tk('pet.vetDocuments')}</div>
+    <div class="fz-grid2">${famIn('ptF_vet', tk('family.vet'), p ? p.vet : '', 'maxlength="80" autocomplete="off"')}${famIn('ptF_vetPhone', tk('family.vetsPhone'), p ? p.vetPhone : '', 'type="tel" inputmode="tel" maxlength="40"')}</div>
+    ${famIn('ptF_vetAddress', tk('pet.vetAddress'), p ? p.vetAddress : '', 'maxlength="160" autocomplete="off"')}
+    <div class="fz-grid2">${famIn('ptF_eVet', tk('pet.emergencyVetAnimalClinic'), p ? p.emergencyVet : '', 'maxlength="80" autocomplete="off"')}${famIn('ptF_eVetPhone', tk('pet.emergencyPhone'), p ? p.emergencyVetPhone : '', 'type="tel" inputmode="tel" maxlength="40"')}</div>
+    <div class="fz-grid2">${famIn('ptF_chip', tk('family.chipNumber'), p ? p.chip : '', 'inputmode="numeric" maxlength="20" autocomplete="off"')}${famIn('ptF_pass', tk('pet.petPassportNo'), p ? p.passNo : '', 'maxlength="30" autocomplete="off"')}</div>
+    <div class="fz-grid2">${famIn('ptF_ins', tk('family.insurance'), p ? p.insurance : '', ('maxlength="80" autocomplete="off" placeholder="' + escapeHtml(tk('pet.eGDogLiability')) + '"'))}${famIn('ptF_insNo', tk('family.insuranceNo'), p ? p.insuranceNo : '', 'maxlength="40" autocomplete="off"')}</div>
+    ${trackers.length ? `<div class="fz-field"><label class="fz-lbl" for="ptF_tracker">${tk('pet.gpsTrackerLocation')}</label><select id="ptF_tracker" class="fz-in"><option value="">${tk('pet.none')}</option>${trackers.map(g => `<option value="${famAttr(g.id)}"${p && p.trackerId === g.id ? ' selected' : ''}>${escapeHtml((g.emoji ? g.emoji + ' ' : '') + g.name)}</option>`).join('')}</select></div>` : ''}
 
-    <div class="fz-h mt-2">📝 Wesen &amp; Tiersitter</div>
-    ${famTa('ptF_notes', 'Wesen & Eigenheiten', p ? p.notes : '', 'z. B. verträglich mit Kindern, ängstlich bei Gewitter')}
-    ${famTa('ptF_sitter', 'Hinweise für den Tiersitter', p ? p.sitter : '', 'z. B. Leine hängt an der Garderobe, nicht an der Hauptstraße ableinen')}
-    <label class="fz-check"><input id="ptF_push" type="checkbox"${!p || p.push !== false ? ' checked' : ''} /><span>Erinnerungen per Push (Vorsorge &amp; Geburtstag)</span></label>
-    ${!p ? '<label class="fz-check"><input id="ptF_presets" type="checkbox" checked /><span>Passende Vorsorge vorschlagen (Impfungen, Wurmkur …)</span></label>' : ''}
+    <div class="fz-h mt-2">${tk('pet.personalityPetSitter')}</div>
+    ${famTa('ptF_notes', tk('pet.personalityQuirks'), p ? p.notes : '', tk('pet.eGGoodChildren'))}
+    ${famTa('ptF_sitter', tk('pet.notesPetSitter'), p ? p.sitter : '', tk('pet.eGLeadHangs'))}
+    <label class="fz-check"><input id="ptF_push" type="checkbox"${!p || p.push !== false ? ' checked' : ''} /><span>${tk('pet.pushRemindersPreventionBirthday')}</span></label>
+    ${!p ? ('<label class="fz-check"><input id="ptF_presets" type="checkbox" checked /><span>' + tk('pet.suggestSuitablePreventionVaccinations') + '</span></label>') : ''}
 
     <p id="ptF_err" class="text-xs text-red-600 min-h-[1em] mt-2"></p>
     <div class="flex items-center justify-between gap-2 mt-2 flex-wrap">
       <div class="flex gap-2">
-        ${p ? `<button type="button" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50" data-ptm="delete">Löschen</button>` : ''}
-        ${p ? `<button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:bg-ink/5" data-ptm="gone">${p.gone ? '↺ <span>Zurückholen</span>' : '🌈 <span>Verstorben</span>'}</button>` : ''}
+        ${p ? `<button type="button" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50" data-ptm="delete">${tk('loc.delete')}</button>` : ''}
+        ${p ? `<button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:bg-ink/5" data-ptm="gone">${p.gone ? ('↺ <span>' + tk('pet.restore') + '</span>') : ('🌈 <span>' + tk('pet.passedAway') + '</span>')}</button>` : ''}
       </div>
       <div class="flex gap-2 ml-auto">
-        <button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-ptm="cancel">Abbrechen</button>
-        <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="savepet">${p ? 'Speichern' : 'Anlegen'}</button>
+        <button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-ptm="cancel">${tk('common.cancel')}</button>
+        <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="savepet">${p ? tk('common.save') : tk('common.create')}</button>
       </div>
     </div>`;
   ptOpenModal(html, st);
@@ -4130,7 +4133,7 @@ function ptFeederEntityOptions(selected) {
   let list = [];
   try { list = (smartHaEntities || []).filter(e => e.domain === 'sensor' || e.domain === 'binary_sensor'); } catch (e) { list = []; }
   if (selected && !list.some(e => e.id === selected)) list = [{ id: selected, name: selected }, ...list];
-  return '<option value="">– kein Sensor –</option>' + list.map(e => `<option value="${famAttr(e.id)}"${e.id === selected ? ' selected' : ''}>${escapeHtml(e.name + (e.state ? ' (' + e.state + ')' : ''))}</option>`).join('');
+  return ('<option value="">' + tk('pet.noSensor') + '</option>') + list.map(e => `<option value="${famAttr(e.id)}"${e.id === selected ? ' selected' : ''}>${escapeHtml(e.name + (e.state ? ' (' + e.state + ')' : ''))}</option>`).join('');
 }
 async function ptFeederWire(selected) {
   const on = document.getElementById('ptF_feederOn');
@@ -4143,11 +4146,11 @@ async function ptFeederWire(selected) {
   let st = null;
   try { st = smartStatus || await loadSmartStatus(); } catch (e) { st = null; }
   if (!document.getElementById('ptF_feederEntity')) return;
-  if (!st || !st.ha || !st.ha.verbunden) { hint.textContent = 'Für den Füllstand Home Assistant unter Einstellungen → Smarthome verbinden.'; return; }
+  if (!st || !st.ha || !st.ha.verbunden) { hint.textContent = tk('pet.fillLevelConnectHome'); return; }
   try { if (!smartHaEntities) await loadSmartHaEntities(); } catch (e) { /* keep the list empty */ }
   const cur = document.getElementById('ptF_feederEntity');
   if (cur) cur.innerHTML = ptFeederEntityOptions(cur.value || selected);
-  hint.textContent = 'Zahl (z. B. Prozent oder Gramm) oder ein Zustand wie „leer“ bzw. „an“ bei „Futter knapp“.';
+  hint.textContent = tk('pet.numberEGPercent');
 }
 function ptFeederValue(old) {
   const on = document.getElementById('ptF_feederOn');
@@ -4185,17 +4188,17 @@ function ptFeederHtml(p) {
   if (Number(fd.every) > 0 && /^\d{4}-\d{2}-\d{2}$/.test(fd.last || '')) {
     const next = addDaysToDateStr(fd.last, Number(fd.every));
     const days = daysBetweenDateStrs(ptToday(), next);
-    const when = days < 0 ? `seit ${-days} ${-days === 1 ? 'Tag' : 'Tagen'} fällig` : days === 0 ? 'heute' : days === 1 ? 'morgen' : `in ${days} Tagen`;
-    rows.push(famRow('Nächstes Auffüllen', when + ' · ' + famFmtDate(next)));
+    const when = days < 0 ? `${tk('pet.overdueDays', { n: -days })}` : days === 0 ? tk('contract.today') : days === 1 ? tk('contract.tomorrow') : `${tk('pet.days2', { days })}`;
+    rows.push(famRow(tk('pet.nextRefill'), when + ' · ' + famFmtDate(next)));
   }
-  if (fd.last) rows.push(famRow('Zuletzt aufgefüllt', famFmtDate(fd.last)));
+  if (fd.last) rows.push(famRow(tk('pet.lastRefilled'), famFmtDate(fd.last)));
   if (fd.entity) {
     ptFeederFetch(p);
     const lv = ptFeederLevels[p.id];
-    rows.push(famRow('Füllstand', lv && lv.text ? lv.text : '…'));
+    rows.push(famRow(tk('pet.fillLevel'), lv && lv.text ? lv.text : '…'));
   }
   const due = Number(fd.every) > 0 && fd.last && addDaysToDateStr(fd.last, Number(fd.every)) <= ptToday();
-  return `<div class="fam-card"><div class="flex items-center justify-between gap-2 mb-1"><div class="fz-h" style="margin-bottom:0">🍽️ Futterautomat</div>${can ? `<button type="button" class="fz-mini-btn${due ? ' primary' : ''}" data-pt="feederfilled" data-id="${famAttr(p.id)}">✓ <span>Aufgefüllt</span></button>` : ''}</div>${rows.join('')}</div>`;
+  return `<div class="fam-card"><div class="flex items-center justify-between gap-2 mb-1"><div class="fz-h" style="margin-bottom:0">${tk('pet.petFeeder')}</div>${can ? `<button type="button" class="fz-mini-btn${due ? ' primary' : ''}" data-pt="feederfilled" data-id="${famAttr(p.id)}">✓ <span>${tk('pet.refilled')}</span></button>` : ''}</div>${rows.join('')}</div>`;
 }
 function ptFeederFilled(id) {
   const p = ptById(id);
@@ -4203,7 +4206,7 @@ function ptFeederFilled(id) {
   pets = ptList().map(x => (x.id === id ? { ...x, feeder: { ...x.feeder, last: ptToday() }, updated: Date.now() } : x));
   persistState();
   ptRefresh();
-  finShowToast('Aufgefüllt ✓');
+  finShowToast(tk('pet.refilled2'));
 }
 function ptDrawEditBits() {
   const st = ptModalState;
@@ -4232,11 +4235,11 @@ function ptDrawMeds() {
   const box = document.getElementById('ptF_meds');
   if (!box || !st) return;
   box.innerHTML = st.meds.length ? st.meds.map((x, i) => `<div class="fam-contact-row">
-      <div class="fam-list-row"><input class="fz-in" data-ptmedname="${i}" value="${famAttr(x.name || '')}" placeholder="Medikament" maxlength="60" />
-        <button type="button" class="fam-x" data-ptm="rmmed" data-i="${i}" aria-label="Entfernen">×</button></div>
-      <div class="fam-list-row mt-1"><input class="fz-in" data-ptmeddose="${i}" value="${famAttr(x.dose || '')}" placeholder="Dosis, z. B. ½ Tablette" maxlength="40" />
-        <input class="fz-in" data-ptmedtimes="${i}" value="${famAttr(x.times || '')}" placeholder="z. B. morgens & abends" maxlength="40" /></div>
-    </div>`).join('') : '<p class="text-xs text-ink/40">Keine Medikamente eingetragen.</p>';
+      <div class="fam-list-row"><input class="fz-in" data-ptmedname="${i}" value="${famAttr(x.name || '')}" placeholder="${escapeHtml(tk('family.medication'))}" maxlength="60" />
+        <button type="button" class="fam-x" data-ptm="rmmed" data-i="${i}" aria-label="${escapeHtml(tk('common.remove'))}">×</button></div>
+      <div class="fam-list-row mt-1"><input class="fz-in" data-ptmeddose="${i}" value="${famAttr(x.dose || '')}" placeholder="${escapeHtml(tk('pet.doseEG1'))}" maxlength="40" />
+        <input class="fz-in" data-ptmedtimes="${i}" value="${famAttr(x.times || '')}" placeholder="${escapeHtml(tk('pet.eGMorningEvening'))}" maxlength="40" /></div>
+    </div>`).join('') : ('<p class="text-xs text-ink/40">' + tk('family.noMedicationEntered') + '</p>');
 }
 function ptParseTimes(v) {
   return [...new Set(String(v || '').split(/[,;\s]+/).map(t => {
@@ -4256,7 +4259,7 @@ function ptSavePet() {
   ptSyncMeds();
   const name = ptVal('ptF_name');
   const err = document.getElementById('ptF_err');
-  if (!name) { err.textContent = 'Bitte einen Namen eingeben.'; return; }
+  if (!name) { err.textContent = tk('common.needName'); return; }
   const old = st.id ? ptById(st.id) : null;
   const walks = Math.max(0, Math.min(12, parseInt(ptVal('ptF_walks'), 10) || 0));
   const p = {
@@ -4290,13 +4293,13 @@ function ptSavePet() {
   ptCloseModal();
   ptDetailId = p.id;
   ptRefresh();
-  finShowToast(old ? 'Gespeichert' : `${p.name} ist jetzt dabei 🐾`);
+  finShowToast(old ? tk('common.saved') : `${tk('pet.nowPartFamily', { name: p.name })}`);
 }
 function ptDeletePet() {
   const st = ptModalState;
   const p = st && ptById(st.id);
   if (!p) return;
-  if (!confirm(`${p.name} mit Vorsorge, Gewicht und Tagebuch wirklich löschen?`)) return;
+  if (!confirm(`${tk('pet.reallyDeletePreventionWeight', { name: p.name })}`)) return;
   pets = ptList().filter(x => x.id !== p.id);
   petLog = ptLog().filter(x => x.pet !== p.id);
   persistState();
@@ -4311,7 +4314,7 @@ function ptToggleGone() {
   if (p.gone) {
     ptUpdate(p.id, x => { const c = { ...x }; delete c.gone; return c; });
   } else {
-    const d = prompt(`Wann ist ${p.name} gestorben? (TT.MM.JJJJ)`, famFmtDate(ptToday()));
+    const d = prompt(`${tk('pet.whenDidPassAway', { name: p.name })}`, famFmtDate(ptToday()));
     if (d === null) return;
     const m = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/.exec(d.trim());
     const iso = m ? `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}` : ptToday();
@@ -4339,7 +4342,7 @@ function ptAdoptMember(mid) {
   persistState();
   ptDetailId = p.id;
   ptRefresh();
-  finShowToast(`${p.name} ist jetzt bei den Haustieren 🐾`);
+  finShowToast(`${tk('pet.nowPets', { name: p.name })}`);
 }
 
 /* Care */
@@ -4350,19 +4353,19 @@ function ptOpenCare(petId, careId, presetType) {
   const st = { kind: 'care', petId, careId: c ? c.id : '', type: c ? c.type : (presetType || 'impfung') };
   const every = c ? (Number(c.every) || 0) : 365;
   const html = `
-    <h3 class="font-serif text-lg mb-1">${c ? '<span>Vorsorge bearbeiten</span>' : '<span>Neue Vorsorge</span>'}</h3>
+    <h3 class="font-serif text-lg mb-1">${c ? ('<span>' + tk('pet.editPrevention') + '</span>') : ('<span>' + tk('pet.newPreventionItem') + '</span>')}</h3>
     <p class="text-xs text-ink/50 mb-3">${escapeHtml(p.name)}</p>
     <div class="fz-type-row mb-3">${PT_CARE_TYPES.map(t => `<button type="button" class="fz-type-chip${t.id === st.type ? ' active' : ''}" data-ptm="ctype" data-v="${t.id}"><span class="fz-ti">${t.icon}</span><span>${escapeHtml(t.label)}</span></button>`).join('')}</div>
-    ${famIn('ptC_title', 'Bezeichnung', c ? c.title : '', 'maxlength="60" autocomplete="off" placeholder="z. B. Tollwut-Impfung"')}
-    <div class="fz-grid2">${famIn('ptC_last', 'Zuletzt erledigt', c ? c.last : '', 'type="date"')}
-      <div class="fz-field"><label class="fz-lbl" for="ptC_every">Wiederholen</label><select id="ptC_every" class="fz-in">${PT_EVERY.map(([v, l]) => `<option value="${v}"${v === every ? ' selected' : ''}>${escapeHtml(l)}</option>`).join('')}${PT_EVERY.some(([v]) => v === every) ? '' : `<option value="${every}" selected>${every}</option>`}</select></div></div>
-    ${famIn('ptC_next', 'Nächstes Mal (optional)', c && ptIso(c.next) ? c.next : '', 'type="date"')}
+    ${famIn('ptC_title', tk('pet.name'), c ? c.title : '', ('maxlength="60" autocomplete="off" placeholder="' + escapeHtml(tk('pet.eGRabiesVaccination')) + '"'))}
+    <div class="fz-grid2">${famIn('ptC_last', tk('pet.lastDone'), c ? c.last : '', 'type="date"')}
+      <div class="fz-field"><label class="fz-lbl" for="ptC_every">${tk('pet.repeat')}</label><select id="ptC_every" class="fz-in">${PT_EVERY.map(([v, l]) => `<option value="${v}"${v === every ? ' selected' : ''}>${escapeHtml(l)}</option>`).join('')}${PT_EVERY.some(([v]) => v === every) ? '' : `<option value="${every}" selected>${every}</option>`}</select></div></div>
+    ${famIn('ptC_next', tk('pet.nextTimeOptional'), c && ptIso(c.next) ? c.next : '', 'type="date"')}
     <p id="ptC_hint" class="text-[11px] text-ink/50 -mt-1 mb-3"></p>
-    ${famTa('ptC_note', 'Notiz', c ? c.note : '', 'z. B. Impfstoff, Charge, Präparat')}
+    ${famTa('ptC_note', tk('fin.csv.note'), c ? c.note : '', tk('pet.eGVaccineBatch'))}
     <div class="flex items-center justify-between gap-2 mt-3">
-      ${c ? '<button type="button" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50" data-ptm="caredel">Löschen</button>' : '<span></span>'}
-      <div class="flex gap-2"><button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-ptm="cancel">Abbrechen</button>
-      <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="savecare">Speichern</button></div>
+      ${c ? ('<button type="button" class="px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50" data-ptm="caredel">' + tk('loc.delete') + '</button>') : '<span></span>'}
+      <div class="flex gap-2"><button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-ptm="cancel">${tk('common.cancel')}</button>
+      <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="savecare">${tk('common.save')}</button></div>
     </div>`;
   ptOpenModal(html, st);
   ptCareHint();
@@ -4374,7 +4377,7 @@ function ptCareHint() {
   const last = ptVal('ptC_last');
   const every = Number(ptVal('ptC_every')) || 0;
   const n = ptIso(next) ? next : (ptIso(last) && every ? addDaysToDateStr(last, every) : '');
-  el.textContent = n ? 'Fällig am ' + famFmtDate(n) : (every ? 'Ohne Datum: einfach „Zuletzt erledigt“ eintragen.' : '');
+  el.textContent = n ? (tk('tasks.dueOn') + ' ') + famFmtDate(n) : (every ? tk('pet.noDateYetSimply') : '');
 }
 function ptSaveCare() {
   const st = ptModalState;
@@ -4396,7 +4399,7 @@ function ptSaveCare() {
 }
 function ptDeleteCare() {
   const st = ptModalState;
-  if (!st || !st.careId || !confirm('Diese Vorsorge löschen?')) return;
+  if (!st || !st.careId || !confirm(tk('pet.deletePreventionItem'))) return;
   ptUpdate(st.petId, p => ({ ...p, care: (p.care || []).filter(x => x.id !== st.careId) }));
   ptCloseModal();
   ptRefresh();
@@ -4414,7 +4417,7 @@ function ptCareDone(petId, careId) {
     return n;
   }) }));
   ptRefresh();
-  finShowToast(every ? 'Erledigt ✓ – nächstes Mal am ' + famFmtDate(addDaysToDateStr(today, every)) : 'Erledigt ✓');
+  finShowToast(every ? tk('pet.doneNextOn', { date: famFmtDate(addDaysToDateStr(today, every)) }) : tk('pet.done'));
 }
 function ptAddPresets(petId) {
   const p = ptById(petId);
@@ -4424,18 +4427,18 @@ function ptAddPresets(petId) {
   if (!add.length) return;
   ptUpdate(petId, x => ({ ...x, care: [...(x.care || []), ...add] }));
   ptRefresh();
-  finShowToast('Vorschläge übernommen – Daten bei Bedarf anpassen.');
+  finShowToast(tk('pet.suggestionsAddedAdjustDates'));
 }
 
 /* Weight */
 function ptOpenWeight(petId) {
   const p = ptById(petId);
   if (!p) return;
-  const html = `<h3 class="font-serif text-lg mb-1"><span>Gewicht eintragen</span></h3><p class="text-xs text-ink/50 mb-3">${escapeHtml(p.name)}</p>
-    <div class="fz-grid2">${famIn('ptW_date', 'Datum', ptToday(), 'type="date"')}<div class="fz-field"><label class="fz-lbl" for="ptW_kg">Gewicht</label><div class="fz-unit"><input id="ptW_kg" class="fz-in" inputmode="decimal" autocomplete="off" maxlength="7" placeholder="z. B. 24,5" /><span>kg</span></div></div></div>
+  const html = `<h3 class="font-serif text-lg mb-1"><span>${tk('pet.logWeight')}</span></h3><p class="text-xs text-ink/50 mb-3">${escapeHtml(p.name)}</p>
+    <div class="fz-grid2">${famIn('ptW_date', tk('fin.csv.date'), ptToday(), 'type="date"')}<div class="fz-field"><label class="fz-lbl" for="ptW_kg">${tk('family.weight')}</label><div class="fz-unit"><input id="ptW_kg" class="fz-in" inputmode="decimal" autocomplete="off" maxlength="7" placeholder="z. B. 24,5" /><span>kg</span></div></div></div>
     <p id="ptW_err" class="text-xs text-red-600 min-h-[1em]"></p>
-    <div class="flex justify-end gap-2 mt-2"><button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-ptm="cancel">Abbrechen</button>
-    <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="saveweight">Speichern</button></div>`;
+    <div class="flex justify-end gap-2 mt-2"><button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-ptm="cancel">${tk('common.cancel')}</button>
+    <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="saveweight">${tk('common.save')}</button></div>`;
   ptOpenModal(html, { kind: 'weight', petId });
   if (!isMobile()) setTimeout(() => { const el = document.getElementById('ptW_kg'); if (el) el.focus(); }, 60);
 }
@@ -4443,7 +4446,7 @@ function ptSaveWeight() {
   const st = ptModalState;
   const kg = Number(ptVal('ptW_kg').replace(',', '.'));
   const date = ptVal('ptW_date') || ptToday();
-  if (!(kg > 0 && kg < 2000)) { document.getElementById('ptW_err').textContent = 'Bitte ein Gewicht eingeben.'; return; }
+  if (!(kg > 0 && kg < 2000)) { document.getElementById('ptW_err').textContent = tk('pet.pleaseEnterWeight'); return; }
   ptUpdate(st.petId, p => ({ ...p, weights: [...(p.weights || []).filter(w => w.date !== date), { id: ptId('pw'), date, kg: Math.round(kg * 100) / 100 }].sort((a, b) => a.date.localeCompare(b.date)) }));
   ptCloseModal();
   ptRefresh();
@@ -4452,9 +4455,9 @@ function ptOpenWeights(petId) {
   const p = ptById(petId);
   if (!p) return;
   const ws = (p.weights || []).slice().sort((a, b) => b.date.localeCompare(a.date));
-  const html = `<h3 class="font-serif text-lg mb-3"><span>Gewicht</span> · ${escapeHtml(p.name)}</h3>
-    <div class="flex flex-col">${ws.map(w => `<div class="fam-row"><div class="fam-v">${escapeHtml(famFmtDate(w.date))}</div><b class="text-sm">${escapeHtml(Number(w.kg).toLocaleString('de-DE'))} kg</b>${ptCanEdit() ? `<button type="button" class="fam-x" data-ptm="wdel" data-v="${famAttr(w.id)}" aria-label="Entfernen">×</button>` : ''}</div>`).join('')}</div>
-    <div class="flex justify-end mt-3"><button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="cancel">Fertig</button></div>`;
+  const html = `<h3 class="font-serif text-lg mb-3"><span>${tk('family.weight')}</span> · ${escapeHtml(p.name)}</h3>
+    <div class="flex flex-col">${ws.map(w => `<div class="fam-row"><div class="fam-v">${escapeHtml(famFmtDate(w.date))}</div><b class="text-sm">${escapeHtml(Number(w.kg).toLocaleString(sysLocale()))} kg</b>${ptCanEdit() ? `<button type="button" class="fam-x" data-ptm="wdel" data-v="${famAttr(w.id)}" aria-label="${escapeHtml(tk('common.remove'))}">×</button>` : ''}</div>`).join('')}</div>
+    <div class="flex justify-end mt-3"><button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="cancel">${tk('common.done')}</button></div>`;
   ptOpenModal(html, { kind: 'weights', petId });
 }
 
@@ -4464,14 +4467,14 @@ function ptOpenWalk(petId) {
   if (!p || !ptCanEdit()) return;
   const me = currentMember();
   const st = { kind: 'walk', petId, min: 30, by: me ? me.id : '' };
-  const html = `<h3 class="font-serif text-lg mb-1">🦮 <span>Gassi eintragen</span></h3><p class="text-xs text-ink/50 mb-3">${escapeHtml(p.name)}</p>
-    <label class="fz-lbl">Wie lange?</label>
-    <div class="flex flex-wrap gap-1.5 mb-3">${[10, 20, 30, 45, 60, 90, 120].map(n => `<button type="button" class="fz-filter-chip px-3 py-1.5 text-sm${n === st.min ? ' active' : ''}" data-ptm="wmin" data-v="${n}"><b>${n}</b> <span>Min.</span></button>`).join('')}</div>
-    <label class="fz-lbl">Wer war unterwegs?</label>
+  const html = `<h3 class="font-serif text-lg mb-1">🦮 <span>${tk('pet.logWalk')}</span></h3><p class="text-xs text-ink/50 mb-3">${escapeHtml(p.name)}</p>
+    <label class="fz-lbl">${tk('loc.howLong')}</label>
+    <div class="flex flex-wrap gap-1.5 mb-3">${[10, 20, 30, 45, 60, 90, 120].map(n => `<button type="button" class="fz-filter-chip px-3 py-1.5 text-sm${n === st.min ? ' active' : ''}" data-ptm="wmin" data-v="${n}"><b>${n}</b> <span>${tk('smart.min')}</span></button>`).join('')}</div>
+    <label class="fz-lbl">${tk('pet.whoWentOut')}</label>
     <div class="flex flex-wrap gap-1.5 mb-3">${ptMemberChips('ptwho', st.by ? [st.by] : [])}</div>
-    ${famIn('ptK_note', 'Notiz (optional)', '', 'maxlength="80" autocomplete="off" placeholder="z. B. Hundewiese, großes Geschäft ✓"')}
-    <div class="flex justify-end gap-2 mt-2"><button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-ptm="cancel">Abbrechen</button>
-    <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="savewalk">Eintragen</button></div>`;
+    ${famIn('ptK_note', tk('pet.noteOptional'), '', ('maxlength="80" autocomplete="off" placeholder="' + escapeHtml(tk('pet.eGDogPark')) + '"'))}
+    <div class="flex justify-end gap-2 mt-2"><button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-ptm="cancel">${tk('common.cancel')}</button>
+    <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="savewalk">${tk('fund.enter')}</button></div>`;
   ptOpenModal(html, st);
 }
 function ptSaveWalk() {
@@ -4483,7 +4486,7 @@ function ptSaveWalk() {
   ptRefresh();
   const n = p ? ptWalksToday(p).length : 0;
   const goal = p ? Number(p.walks) || 0 : 0;
-  finShowToast(goal && n >= goal ? 'Alle Runden für heute geschafft 🐾🎉' : 'Gassi eingetragen 🐾');
+  finShowToast(goal && n >= goal ? tk('pet.allWalksDoneToday') : tk('pet.walkLogged'));
 }
 
 /* Feeding & medication */
@@ -4492,7 +4495,7 @@ function ptToggleFeed(petId, slot) {
   if (!p || !ptCanEdit()) return;
   const x = ptFedSlot(p, slot);
   if (x) {
-    if (!confirm(`Fütterung um ${slot} wieder offen setzen?`)) return;
+    if (!confirm(`${tk('pet.markFeedingNotDone', { slot })}`)) return;
     ptRemoveLog(x.id);
   } else {
     ptAddLog({ pet: petId, kind: 'futter', slot });
@@ -4504,13 +4507,13 @@ function ptFeedNext(petId) {
   const p = ptById(petId);
   if (!p) return;
   const open = ptFeedTimes(p).filter(t => !ptFedSlot(p, t));
-  if (!open.length) { finShowToast('Heute schon alles gefüttert ✓'); return; }
+  if (!open.length) { finShowToast(tk('pet.alreadyFedToday')); return; }
   const now = new Date();
   const hm = `${String(now.getHours() + 1).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
   const slot = open.filter(t => t <= hm).pop() || open[0];
   ptAddLog({ pet: petId, kind: 'futter', slot });
   ptRefresh();
-  finShowToast(`${p.name}: ${slot} gefüttert 🍖`);
+  finShowToast(`${tk('pet.fed2', { name: p.name, slot })}`);
 }
 function ptMedGiven(petId, name) {
   ptAddLog({ pet: petId, kind: 'med', note: name });
@@ -4523,13 +4526,13 @@ function ptOpenRoster(petId) {
   const p = ptById(petId);
   if (!p || !ptCanEdit()) return;
   const st = { kind: 'roster', petId, roster: JSON.parse(JSON.stringify(p.roster || {})) };
-  const wd = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
-  const html = `<h3 class="font-serif text-lg mb-1">📋 <span>Wer ist dran?</span></h3><p class="text-xs text-ink/50 mb-3">${escapeHtml(p.name)} · <span>Füttern, Gassi, Sauber machen</span></p>
+  const wd = [tk('school.monday'), tk('school.tuesday'), tk('school.wednesday'), tk('school.thursday'), tk('school.friday'), tk('pet.saturday'), tk('pet.sunday')];
+  const html = `<h3 class="font-serif text-lg mb-1">📋 <span>${tk('pet.whoseTurn')}</span></h3><p class="text-xs text-ink/50 mb-3">${escapeHtml(p.name)} · <span>${tk('pet.feedingWalksCleaning')}</span></p>
     ${wd.map((d, i) => { const k = String(i + 1); return `<div class="pt-rost-edit"><div class="text-xs font-semibold text-ink/60 mb-1">${escapeHtml(d)}</div><div class="flex flex-wrap gap-1.5">${ptMemberChips('ptrost-' + k, st.roster[k] || [])}</div></div>`; }).join('')}
     <div class="flex items-center justify-between gap-2 mt-3 flex-wrap">
-      <button type="button" class="fz-mini-btn" data-ptm="rostauto">🔄 <span>Reihum verteilen</span></button>
-      <div class="flex gap-2"><button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-ptm="cancel">Abbrechen</button>
-      <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="saveroster">Speichern</button></div>
+      <button type="button" class="fz-mini-btn" data-ptm="rostauto">🔄 <span>${tk('pet.takeTurns')}</span></button>
+      <div class="flex gap-2"><button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-ptm="cancel">${tk('common.cancel')}</button>
+      <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="saveroster">${tk('common.save')}</button></div>
     </div>`;
   ptOpenModal(html, st);
 }
@@ -4558,18 +4561,18 @@ function ptSitterText(p) {
   L.push(`🐾 ${p.name} – ${[p.breed || T(sp.label), T(ptAgeText(p))].filter(Boolean).join(', ')}`);
   const f = p.feed || {};
   const times = ptFeedTimes(p);
-  if (f.brand || f.amount || times.length) L.push('', '🥣 ' + T('Futter') + ': ' + [f.brand, f.amount ? f.amount + ' ' + T('je Mahlzeit') : '', times.length ? times.join(' & ') : ''].filter(Boolean).join(', '));
-  if (Number(p.walks) > 0) L.push('🦮 ' + T('Gassi') + ': ' + p.walks + '× ' + T('am Tag'));
+  if (f.brand || f.amount || times.length) L.push('', '🥣 ' + T(tk('pet.food2')) + ': ' + [f.brand, f.amount ? f.amount + ' ' + T(tk('pet.perMeal')) : '', times.length ? times.join(' & ') : ''].filter(Boolean).join(', '));
+  if (Number(p.walks) > 0) L.push('🦮 ' + T(tk('pet.walk')) + ': ' + p.walks + '× ' + T(tk('pet.day')));
   const meds = (p.meds || []).filter(m => m.name);
-  if (meds.length) L.push('💊 ' + T('Medikamente') + ': ' + meds.map(m => [m.name, m.dose, m.times].filter(Boolean).join(' – ')).join('; '));
-  if (p.allergies) L.push('⚠️ ' + T('Allergien') + ': ' + p.allergies);
-  if (p.conditions) L.push('🩺 ' + T('Erkrankungen') + ': ' + p.conditions);
+  if (meds.length) L.push('💊 ' + T(tk('lists.t.i.medication')) + ': ' + meds.map(m => [m.name, m.dose, m.times].filter(Boolean).join(' – ')).join('; '));
+  if (p.allergies) L.push('⚠️ ' + T(tk('family.allergies')) + ': ' + p.allergies);
+  if (p.conditions) L.push('🩺 ' + T(tk('family.illnesses')) + ': ' + p.conditions);
   if (p.notes) L.push('', '💬 ' + p.notes);
   if (p.sitter) L.push('', '📝 ' + p.sitter);
   L.push('');
-  if (p.vet || p.vetPhone) L.push('🏥 ' + T('Tierarzt') + ': ' + [p.vet, p.vetPhone, p.vetAddress].filter(Boolean).join(', '));
-  if (p.emergencyVet || p.emergencyVetPhone) L.push('🚨 ' + T('Tiernotdienst') + ': ' + [p.emergencyVet, p.emergencyVetPhone].filter(Boolean).join(', '));
-  if (p.chip) L.push('🔖 ' + T('Chipnummer') + ': ' + p.chip);
+  if (p.vet || p.vetPhone) L.push('🏥 ' + T(tk('family.vet')) + ': ' + [p.vet, p.vetPhone, p.vetAddress].filter(Boolean).join(', '));
+  if (p.emergencyVet || p.emergencyVetPhone) L.push('🚨 ' + T(tk('pet.emergencyVet')) + ': ' + [p.emergencyVet, p.emergencyVetPhone].filter(Boolean).join(', '));
+  if (p.chip) L.push('🔖 ' + T(tk('family.chipNumber')) + ': ' + p.chip);
   const owners = (p.owners && p.owners.length ? p.owners : []).map(id => memberById(id)).filter(Boolean);
   const phones = owners.map(m => { const ph = (famPass(m.id) || {}).phone; return ph ? memberLabel(m) + ' ' + ph : ''; }).filter(Boolean);
   if (phones.length) L.push('📞 ' + phones.join(' · '));
@@ -4579,12 +4582,12 @@ function ptOpenSitter(petId) {
   const p = ptById(petId);
   if (!p) return;
   const txt = ptSitterText(p);
-  const html = `<h3 class="font-serif text-lg mb-1">🧑‍🍼 <span>Für den Tiersitter</span></h3><p class="text-xs text-ink/50 mb-3">Alles Wichtige zu ${escapeHtml(p.name)} – zum Kopieren oder Teilen.</p>
+  const html = `<h3 class="font-serif text-lg mb-1">🧑‍🍼 <span>${tk('pet.petSitter2')}</span></h3><p class="text-xs text-ink/50 mb-3">${tk('pet.everythingImportantAboutCopy', { name: escapeHtml(p.name) })}</p>
     <pre class="pt-sitter" data-no-i18n>${escapeHtml(txt)}</pre>
     <div class="flex justify-end gap-2 mt-3 flex-wrap">
-      <button type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm" data-ptm="sittercopy">📋 <span>Kopieren</span></button>
-      ${navigator.share ? '<button type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm" data-ptm="sittershare"><span>Teilen</span></button>' : ''}
-      <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="cancel">Fertig</button>
+      <button type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm" data-ptm="sittercopy">📋 <span>${tk('common.copy')}</span></button>
+      ${navigator.share ? ('<button type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm" data-ptm="sittershare"><span>' + tk('shop.share') + '</span></button>') : ''}
+      <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="cancel">${tk('common.done')}</button>
     </div>`;
   ptOpenModal(html, { kind: 'sitter', petId, text: txt });
 }
@@ -4595,23 +4598,23 @@ function ptPosterHtml(p) {
   const phones = owners.map(m => (famPass(m.id) || {}).phone ? { n: memberLabel(m), ph: famPass(m.id).phone } : null).filter(Boolean).slice(0, 3);
   const sex = p.sex === 'm' ? '♂' : p.sex === 'w' ? '♀' : '';
   return `<div class="pt-poster">
-    <div class="pt-poster-h">VERMISST</div>
+    <div class="pt-poster-h">${tk('pet.missing2')}</div>
     <div class="pt-poster-img">${p.photo ? `<img src="${famAttr(p.photo)}" alt="" />` : `<span>${escapeHtml(p.emoji || '🐾')}</span>`}</div>
     <div class="pt-poster-name">${escapeHtml(p.name)}</div>
     <div class="pt-poster-sub">${escapeHtml([p.breed || ptSpecies(p.species).label, sex, ptAgeText(p)].filter(Boolean).join(' · '))}</div>
     ${p.notes ? `<div class="pt-poster-note">${escapeHtml(p.notes)}</div>` : ''}
-    ${p.chip ? `<div class="pt-poster-chip"><span>Gechippt</span>: ${escapeHtml(p.chip)}</div>` : ''}
-    <div class="pt-poster-call"><span>Bitte melden unter</span>${phones.length ? phones.map(x => `<b>${escapeHtml(x.ph)}</b><small>${escapeHtml(x.n)}</small>`).join('') : '<b>__________________</b>'}</div>
-    <div class="pt-poster-foot"><span>Bitte nicht verfolgen – ruhig ansprechen und anrufen. Danke!</span></div>
+    ${p.chip ? `<div class="pt-poster-chip"><span>${tk('pet.microchipped')}</span>: ${escapeHtml(p.chip)}</div>` : ''}
+    <div class="pt-poster-call"><span>${tk('pet.pleaseCall')}</span>${phones.length ? phones.map(x => `<b>${escapeHtml(x.ph)}</b><small>${escapeHtml(x.n)}</small>`).join('') : '<b>__________________</b>'}</div>
+    <div class="pt-poster-foot"><span>${tk('pet.pleaseDontChaseSpeak')}</span></div>
   </div>`;
 }
 function ptOpenPoster(petId) {
   const p = ptById(petId);
   if (!p) return;
-  const html = `<h3 class="font-serif text-lg mb-1">🔎 <span>Vermisst-Plakat</span></h3><p class="text-xs text-ink/50 mb-3">Drucken oder als PDF sichern – Telefonnummern kommen aus den Notfallpässen der Bezugspersonen.</p>
+  const html = `<h3 class="font-serif text-lg mb-1">🔎 <span>${tk('pet.missingPoster')}</span></h3><p class="text-xs text-ink/50 mb-3">${tk('pet.printSavePdfPhone')}</p>
     <div class="pt-poster-wrap">${ptPosterHtml(p)}</div>
-    <div class="flex justify-end gap-2 mt-3"><button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-ptm="cancel">Schließen</button>
-    <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="print">🖨️ <span>Drucken</span></button></div>`;
+    <div class="flex justify-end gap-2 mt-3"><button type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink" data-ptm="cancel">${tk('common.close')}</button>
+    <button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="print">🖨️ <span>${tk('pet.print')}</span></button></div>`;
   ptOpenModal(html, { kind: 'poster', petId });
 }
 function ptPrintPoster() {
@@ -4633,20 +4636,20 @@ function ptFoodToShopping(petId) {
   if (!p) return;
   const f = p.feed || {};
   const pi = f.pantryId ? (pantryItems || []).find(x => x.id === f.pantryId) : null;
-  const name = pi ? pi.name : (f.brand || 'Tierfutter');
+  const name = pi ? pi.name : (f.brand || tk('pet.petFood'));
   const listId = (typeof shoppingStammladenId === 'function' && shoppingStammladenId()) || '';
   const target = listId === SHOPPING_MEAL_LIST_ID ? '' : listId;
   const exists = shoppingItems.some(it => !it.done && (it.listId || '') === target && normalizeForGrouping(it.name || '') === normalizeForGrouping(name));
-  if (exists) { finShowToast('Steht schon auf der Einkaufsliste.'); return; }
-  shoppingItems = [...shoppingItems, { id: 'si' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), name, qty: '', note: 'für ' + p.name, done: false, createdAt: Date.now(), listId: target }];
+  if (exists) { finShowToast(tk('pet.alreadyShoppingList')); return; }
+  shoppingItems = [...shoppingItems, { id: 'si' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), name, qty: '', note: (tk('pet.for') + ' ') + p.name, done: false, createdAt: Date.now(), listId: target }];
   persistState();
   const l = getShoppingList(listId);
-  finShowToast(`${name} → ${l ? l.name : 'Einkaufsliste'} ✓`);
+  finShowToast(`${name} → ${l ? l.name : tk('shop.shareTitle')} ✓`);
 }
 var PT_PACK = {
-  hund: [['Futter & Wasser', ['Futter (für alle Tage + Reserve)', 'Leckerlis & Kauknochen', 'Futter- & Wassernapf', 'Trinkflasche für unterwegs']], ['Unterwegs', ['Leine & Halsband / Geschirr', 'Schleppleine', 'Kotbeutel', 'Maulkorb (falls Pflicht)', 'Hundedecke / Körbchen', 'Transportbox / Sicherheitsgurt', 'Lieblingsspielzeug', 'Handtuch']], ['Gesundheit & Papiere', ['EU-Heimtierausweis', 'Impfnachweis (Tollwut)', 'Medikamente', 'Floh- & Zeckenschutz', 'Zeckenzange', 'Adresse Tierarzt am Urlaubsort']]],
-  katze: [['Futter & Wasser', ['Futter (für alle Tage + Reserve)', 'Leckerlis', 'Futter- & Wassernapf']], ['Unterwegs', ['Transportbox', 'Katzenklo & Streu', 'Kuscheldecke', 'Kratzbrett', 'Spielzeug', 'Geschirr & Leine']], ['Gesundheit & Papiere', ['EU-Heimtierausweis', 'Impfnachweis', 'Medikamente', 'Flohschutz']]],
-  default: [['Futter & Wasser', ['Futter (für alle Tage + Reserve)', 'Napf / Tränke']], ['Unterwegs', ['Transportbox / Käfig', 'Einstreu', 'Decke', 'Spielzeug']], ['Gesundheit & Papiere', ['Heimtierausweis', 'Medikamente', 'Adresse Tierarzt am Urlaubsort']]],
+  hund: [[tk('lists.t.s.foodWater'), [tk('lists.t.i.foodAllDaysSpare'), tk('pet.treatsChews'), tk('lists.t.i.foodWaterBowl'), tk('lists.t.i.travelWaterBottle')]], [tk('lists.t.s.go2'), [tk('lists.t.i.leadCollarHarness'), tk('pet.longLine'), tk('lists.t.i.poopBags'), tk('pet.muzzleIfRequired'), tk('pet.dogBlanketBasket'), tk('lists.t.i.petCarrierSafetyBelt'), tk('lists.t.i.favouriteToy'), tk('lists.t.i.towel')]], [tk('lists.t.s.healthPapers'), [tk('lists.t.i.euPetPassport'), tk('lists.t.i.vaccinationRecordRabies'), tk('lists.t.i.medication'), tk('lists.t.i.fleaTickProtection'), tk('lists.t.i.tickTweezers'), tk('lists.t.i.vetAddressDestination')]]],
+  katze: [[tk('lists.t.s.foodWater'), [tk('lists.t.i.foodAllDaysSpare'), tk('lists.t.i.treats'), tk('lists.t.i.foodWaterBowl')]], [tk('lists.t.s.go2'), [tk('pet.petCarrier'), tk('pet.litterTrayLitter'), tk('pet.cosyBlanket'), tk('pet.scratchingBoard'), tk('pet.toys'), tk('pet.harnessLead')]], [tk('lists.t.s.healthPapers'), [tk('lists.t.i.euPetPassport'), tk('pet.vaccinationRecord'), tk('lists.t.i.medication'), tk('pet.fleaProtection')]]],
+  default: [[tk('lists.t.s.foodWater'), [tk('lists.t.i.foodAllDaysSpare'), tk('pet.bowlWaterDispenser')]], [tk('lists.t.s.go2'), [tk('pet.carrierCage'), tk('pet.bedding'), tk('lists.t.i.blanket'), tk('pet.toys')]], [tk('lists.t.s.healthPapers'), [tk('pet.petPassport'), tk('lists.t.i.medication'), tk('lists.t.i.vetAddressDestination')]]],
 };
 function ptMakePackList(petId) {
   const p = ptById(petId);
@@ -4656,13 +4659,13 @@ function ptMakePackList(petId) {
   let n = 0;
   const items = [];
   secs.forEach(([sec, arr]) => arr.forEach(text => items.push({ id: lsId('fi'), text, done: false, section: sec, createdAt: now + (n++) })));
-  (p.meds || []).filter(m => m.name).forEach(m => items.push({ id: lsId('fi'), text: m.name + (m.dose ? ' (' + m.dose + ')' : ''), done: false, section: 'Gesundheit & Papiere', createdAt: now + (n++) }));
-  const l = { id: lsId('fl'), type: 'pack', name: 'Urlaub mit ' + p.name, icon: p.emoji || '🐾', createdAt: now, createdBy: lsMyUserId(), items };
+  (p.meds || []).filter(m => m.name).forEach(m => items.push({ id: lsId('fi'), text: m.name + (m.dose ? ' (' + m.dose + ')' : ''), done: false, section: tk('lists.t.s.healthPapers'), createdAt: now + (n++) }));
+  const l = { id: lsId('fl'), type: 'pack', name: tk('pet.holidayWith', { name: p.name }), icon: p.emoji || '🐾', createdAt: now, createdBy: lsMyUserId(), items };
   familyLists = [...familyLists, l];
   persistState();
   setView('einkauf');
   lsOpenList(l.id);
-  finShowToast('Packliste angelegt – Reiseziel & Zeitraum über ✏️ ergänzen.');
+  finShowToast(tk('pet.packingListCreatedAdd'));
 }
 
 /* ---------- Wiring ---------- */
@@ -4689,7 +4692,7 @@ function ptPaneClick(e) {
     case 'feednext': ptFeedNext(id); break;
     case 'medgiven': ptMedGiven(id, b.dataset.name); break;
     case 'roster': ptOpenRoster(id); break;
-    case 'logdel': if (confirm('Eintrag entfernen?')) { ptRemoveLog(id); ptRefresh(); } break;
+    case 'logdel': if (confirm(tk('pet.removeEntry'))) { ptRemoveLog(id); ptRefresh(); } break;
     case 'sitter': ptOpenSitter(id); break;
     case 'poster': ptOpenPoster(id); break;
     case 'docs': docFilterCategory = 'haustiere'; setView('dokumente'); break;
@@ -4800,12 +4803,12 @@ function ptPaneClick(e) {
      ask again every time.
    ========================================================== */
 var WX_DESC = {
-  0: 'Klar', 1: 'Überwiegend sonnig', 2: 'Teils bewölkt', 3: 'Bedeckt', 45: 'Nebel', 48: 'Nebel mit Reif',
-  51: 'Leichter Nieselregen', 53: 'Nieselregen', 55: 'Starker Nieselregen', 56: 'Gefrierender Nieselregen', 57: 'Gefrierender Nieselregen',
-  61: 'Leichter Regen', 63: 'Regen', 65: 'Starker Regen', 66: 'Gefrierender Regen', 67: 'Gefrierender Regen',
-  71: 'Leichter Schneefall', 73: 'Schneefall', 75: 'Starker Schneefall', 77: 'Schneegriesel',
-  80: 'Regenschauer', 81: 'Regenschauer', 82: 'Heftige Regenschauer', 85: 'Schneeschauer', 86: 'Schneeschauer',
-  95: 'Gewitter', 96: 'Gewitter mit Hagel', 99: 'Gewitter mit Hagel',
+  0: tk('wx.clear'), 1: tk('wx.mostlySunny'), 2: tk('wx.partlyCloudy'), 3: tk('wx.overcast'), 45: tk('wx.fog'), 48: tk('wx.freezingFog'),
+  51: tk('wx.lightDrizzle'), 53: tk('wx.drizzle'), 55: tk('wx.heavyDrizzle'), 56: tk('wx.freezingDrizzle'), 57: tk('wx.freezingDrizzle'),
+  61: tk('wx.lightRain'), 63: tk('wx.rain'), 65: tk('wx.heavyRain'), 66: tk('wx.freezingRain'), 67: tk('wx.freezingRain'),
+  71: tk('wx.lightSnow'), 73: tk('wx.snow'), 75: tk('wx.heavySnow'), 77: tk('wx.snowGrains'),
+  80: tk('wx.rainShowers'), 81: tk('wx.rainShowers'), 82: tk('wx.violentRainShowers'), 85: tk('wx.snowShowers'), 86: tk('wx.snowShowers'),
+  95: tk('wx.thunderstorm'), 96: tk('wx.thunderstormHail'), 99: tk('wx.thunderstormHail'),
 };
 var LS_TRIP_WX = 'pinn.reisewetter';
 var TRIP_WX_TTL = 3 * 60 * 60 * 1000;
@@ -4826,34 +4829,34 @@ function wxSky(code) {
 }
 function wxUvLabel(uv) {
   if (uv == null) return '';
-  if (uv < 3) return 'niedrig';
-  if (uv < 6) return 'mäßig';
-  if (uv < 8) return 'hoch';
-  if (uv < 11) return 'sehr hoch';
-  return 'extrem';
+  if (uv < 3) return tk('wx.low');
+  if (uv < 6) return tk('wx.moderate');
+  if (uv < 8) return tk('wx.high');
+  if (uv < 11) return tk('wx.veryHigh');
+  return tk('wx.extreme');
 }
 function wxRainy(d) { return !!d && ((d.rain != null && d.rain >= 50) || (d.mm != null && d.mm >= 1)); }
 function wxDayName(iso, i) {
   const today = isoDate(new Date());
-  if (iso === today) return 'Heute';
-  if (iso === addDaysToDateStr(today, 1)) return 'Morgen';
-  return new Date(iso + 'T12:00:00').toLocaleDateString('de-DE', { weekday: 'long' });
+  if (iso === today) return tk('common.today');
+  if (iso === addDaysToDateStr(today, 1)) return tk('school.tomorrow');
+  return new Date(iso + 'T12:00:00').toLocaleDateString(sysLocale(), { weekday: 'long' });
 }
-function wxShortDate(iso) { return new Date(iso + 'T12:00:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'numeric' }); }
+function wxShortDate(iso) { return new Date(iso + 'T12:00:00').toLocaleDateString(sysLocale(), { day: 'numeric', month: 'numeric' }); }
 // What do we wear? Short tips for one day
 function wxTips(d) {
   if (!d) return [];
   const t = [];
   const code = d.code;
-  if ([95, 96, 99].includes(code)) t.push(['⛈️', 'Gewitter möglich – draußen aufpassen']);
-  if ([71, 73, 75, 77, 85, 86, 56, 57, 66, 67].includes(code) || (d.min != null && d.min <= 0)) t.push(['❄️', 'Glatt möglich – feste Schuhe']);
-  if ((d.rain != null && d.rain >= 60) || (d.mm != null && d.mm >= 2)) t.push(['☔', 'Regenjacke & Schirm mitnehmen']);
-  if (d.max != null && d.max <= 5) t.push(['🧤', 'Mütze, Schal & Handschuhe']);
-  else if (d.max != null && d.max <= 13) t.push(['🧥', 'Warme Jacke anziehen']);
-  else if (d.max != null && d.max >= 26) t.push(['🩳', 'Luftig anziehen & viel trinken']);
-  if (d.uv != null && d.uv >= 6) t.push(['🧴', 'Sonnencreme & Kappe']);
-  if ((d.boeen != null && d.boeen >= 60) || (d.wind != null && d.wind >= 40)) t.push(['💨', 'Sehr windig – Kapuze statt Schirm']);
-  if (!t.length && d.max != null && d.max >= 18 && !wxRainy(d)) t.push(['😎', 'Perfekt für draußen']);
+  if ([95, 96, 99].includes(code)) t.push(['⛈️', tk('wx.thunderstormsPossibleTakeCare')]);
+  if ([71, 73, 75, 77, 85, 86, 56, 57, 66, 67].includes(code) || (d.min != null && d.min <= 0)) t.push(['❄️', tk('wx.couldSlipperySturdyShoes')]);
+  if ((d.rain != null && d.rain >= 60) || (d.mm != null && d.mm >= 2)) t.push(['☔', tk('wx.takeRainJacketUmbrella')]);
+  if (d.max != null && d.max <= 5) t.push(['🧤', tk('wx.hatScarfGloves')]);
+  else if (d.max != null && d.max <= 13) t.push(['🧥', tk('wx.wearWarmJacket')]);
+  else if (d.max != null && d.max >= 26) t.push(['🩳', tk('wx.dressLightDrinkPlenty')]);
+  if (d.uv != null && d.uv >= 6) t.push(['🧴', tk('wx.sunscreenCap')]);
+  if ((d.boeen != null && d.boeen >= 60) || (d.wind != null && d.wind >= 40)) t.push(['💨', tk('wx.veryWindyHoodInstead')]);
+  if (!t.length && d.max != null && d.max >= 18 && !wxRainy(d)) t.push(['😎', tk('wx.perfectBeingOutdoors')]);
   return t.slice(0, 3);
 }
 
@@ -4874,15 +4877,15 @@ function tripName(l) { return (l.trip.place.titel || l.name || 'Urlaub'); }
 function tripDaysUntil(l) { return daysBetweenDateStrs(isoDate(new Date()), l.trip.from); }
 function tripWhenText(l) {
   const n = tripDaysUntil(l);
-  if (n > 1) return 'in ' + n + ' Tagen';
-  if (n === 1) return 'morgen';
-  if (n === 0) return 'heute geht’s los';
-  return 'läuft gerade';
+  if (n > 1) return 'in ' + n + (' ' + tk('pet.days'));
+  if (n === 1) return tk('contract.tomorrow');
+  if (n === 0) return tk('wx.startsToday');
+  return tk('wx.underWay');
 }
 function tripRangeText(l) {
   const a = new Date(l.trip.from + 'T12:00:00'), b = new Date(tripTo(l) + 'T12:00:00');
   const o = { day: 'numeric', month: 'short' };
-  return a.getTime() === b.getTime() ? a.toLocaleDateString('de-DE', o) : a.toLocaleDateString('de-DE', o) + ' – ' + b.toLocaleDateString('de-DE', o);
+  return a.getTime() === b.getTime() ? a.toLocaleDateString(sysLocale(), o) : a.toLocaleDateString(sysLocale(), o) + ' – ' + b.toLocaleDateString(sysLocale(), o);
 }
 function tripSig(place, from, to) { return [Math.round(Number(place.lat) * 100) / 100, Math.round(Number(place.lon) * 100) / 100, from, to || from].join('|'); }
 function tripCacheRead() {
@@ -4908,7 +4911,7 @@ async function tripWeatherFetch(place, from, to, force) {
   const job = (async () => {
     try {
       const res = await apiFetch('/api/pinn/zuhause/reisewetter', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lat: place.lat, lon: place.lon, von: from, bis: to || from }) });
-      if (res.status === 404) throw new Error('Der Server-Teil für das Urlaubswetter fehlt noch (pb_hooks/zuhause.pb.js).');
+      if (res.status === 404) throw new Error(tk('wx.serverPartHolidayWeather'));
       const body = await res.json().catch(() => ({}));
       if (body.error && !(Array.isArray(body.tage) && body.tage.length)) throw new Error(body.error);
       tripCacheRead()[sig] = { ts: Date.now(), data: body };
@@ -4948,14 +4951,14 @@ function tripSummary(data, from, to) {
 function tripPackTips(sum) {
   if (!sum) return [];
   const t = [];
-  if (sum.rainDays >= 1) t.push('Regenjacke', 'Regenschirm');
-  if (sum.rainDays >= 3) t.push('Wasserfeste Schuhe');
-  if (sum.hot >= 25 || sum.uv >= 6) t.push('Sonnencreme', 'Sonnenbrille', 'Sonnenhut / Kappe');
-  if (sum.uv >= 7) t.push('After-Sun');
-  if (sum.hot >= 22 || (sum.water != null && sum.water >= 19)) t.push('Badesachen');
-  if (sum.cold <= 10) t.push('Warmer Pullover', 'Lange Hose');
-  if (sum.cold <= 3) t.push('Mütze & Handschuhe', 'Winterjacke');
-  if (sum.code === 71 || sum.cold <= -2) t.push('Winterstiefel');
+  if (sum.rainDays >= 1) t.push(tk('lists.t.i.rainJacket'), tk('lists.t.i.umbrella'));
+  if (sum.rainDays >= 3) t.push(tk('wx.waterproofShoes'));
+  if (sum.hot >= 25 || sum.uv >= 6) t.push(tk('lists.t.i.sunscreen'), tk('wx.sunglasses'), tk('lists.t.i.sunHatCap'));
+  if (sum.uv >= 7) t.push(tk('lists.t.i.afterSun'));
+  if (sum.hot >= 22 || (sum.water != null && sum.water >= 19)) t.push(tk('lists.t.i.swimwear'));
+  if (sum.cold <= 10) t.push(tk('lists.t.i.warmJumper'), tk('lists.t.i.trousers'));
+  if (sum.cold <= 3) t.push(tk('wx.hatGloves'), tk('wx.winterJacket'));
+  if (sum.code === 71 || sum.cold <= -2) t.push(tk('lists.t.i.winterBoots'));
   return [...new Set(t)];
 }
 function tripMissingTips(l, sum) {
@@ -4965,7 +4968,7 @@ function tripMissingTips(l, sum) {
 function tripAddTips(l, tips) {
   if (!tips.length) return 0;
   const now = Date.now();
-  const add = tips.map((text, i) => ({ id: lsId('fi'), text, done: false, section: 'Wetter-Tipps', createdAt: now + i }));
+  const add = tips.map((text, i) => ({ id: lsId('fi'), text, done: false, section: tk('lists.weatherTips'), createdAt: now + i }));
   lsUpdateList(l.id, x => ({ ...x, items: [...x.items, ...add] }));
   lsCommit();
   return add.length;
@@ -5016,7 +5019,7 @@ function wxClose() {
 function wxPlaceTabs() {
   const trips = tripList();
   if (!trips.length) return '';
-  return `<div class="wx-tabs">${[`<button type="button" class="wx-tab${wxState.place === 'home' ? ' active' : ''}" data-wxplace="home">🏠 <span>Zuhause</span></button>`]
+  return `<div class="wx-tabs">${[`<button type="button" class="wx-tab${wxState.place === 'home' ? ' active' : ''}" data-wxplace="home">🏠 <span>${tk('nav.home')}</span></button>`]
     .concat(trips.map(l => `<button type="button" class="wx-tab${wxState.place === l.id ? ' active' : ''}" data-wxplace="${escapeHtml(l.id)}">${escapeHtml(l.icon || '🧳')} ${escapeHtml(tripName(l))}</button>`)).join('')}</div>`;
 }
 function wxRender() {
@@ -5030,22 +5033,22 @@ function wxRender() {
   const sky = wxSky(weatherData && weatherData.code != null ? weatherData.code : (t0 ? t0.code : 3));
   const hero = `<div class="wx-hero sky-${sky}">
     <div class="wx-hero-deco" aria-hidden="true">${weatherIconForCode(weatherData && weatherData.code != null ? weatherData.code : (t0 ? t0.code : 3))}</div>
-    <div class="wx-kicker">🏠 <span>Zuhause</span></div>
-    <div class="wx-place">${escapeHtml((weatherDaily && weatherDaily.label) || 'Wetter')}</div>
+    <div class="wx-kicker">🏠 <span>${tk('nav.home')}</span></div>
+    <div class="wx-place">${escapeHtml((weatherDaily && weatherDaily.label) || tk('app.weather'))}</div>
     ${weatherData && weatherData.temp != null ? `<div class="wx-now"><b>${weatherData.temp}°</b><span>${escapeHtml(wxDesc(weatherData.code))}</span></div>` : ''}
-    <div class="wx-hero-sub">${t0 ? `<span>↑ <b>${t0.max}°</b></span><span>↓ <b>${t0.min}°</b></span>` : ''}${weatherData && weatherData.gef != null ? `<span><span>gefühlt</span> <b>${weatherData.gef}°</b></span>` : ''}${weatherData && weatherData.wind != null ? `<span>💨 <b>${weatherData.wind}</b> km/h</span>` : ''}</div>
+    <div class="wx-hero-sub">${t0 ? `<span>↑ <b>${t0.max}°</b></span><span>↓ <b>${t0.min}°</b></span>` : ''}${weatherData && weatherData.gef != null ? `<span><span>${tk('wx.feelsLike')}</span> <b>${weatherData.gef}°</b></span>` : ''}${weatherData && weatherData.wind != null ? `<span>💨 <b>${weatherData.wind}</b> km/h</span>` : ''}</div>
   </div>`;
   let list = '';
   if (!days.length) {
-    list = `<div class="wx-empty">${weatherNoLocation ? '<span>Noch kein Zuhause festgelegt – Einstellungen → Zuhause.</span>' : '<span>Wetter wird geladen …</span>'}</div>`;
+    list = `<div class="wx-empty">${weatherNoLocation ? ('<span>' + tk('wx.noHomeSetYet') + '</span>') : ('<span>' + tk('wx.loadingWeather') + '</span>')}</div>`;
   } else {
     list = wxDaysHtml(days, 'home');
   }
   const tips = t0 ? wxTips(t0) : [];
   body.innerHTML = `${hero}${wxPlaceTabs()}<div class="wx-wrap">
-    ${tips.length ? `<div class="wx-card wx-tips"><div class="wx-h">👕 <span>Heute anziehen</span></div>${tips.map(([i, t]) => `<div class="wx-tip"><span>${i}</span><span>${escapeHtml(t)}</span></div>`).join('')}</div>` : ''}
-    <div class="wx-card"><div class="wx-h">📅 <span>14 Tage</span></div>${list}</div>
-    ${weatherDaily && weatherDaily.ts ? `<p class="wx-note"><span>Stand</span> ${escapeHtml(new Date(weatherDaily.ts).toLocaleString('de-DE', { weekday: 'short', hour: '2-digit', minute: '2-digit' }))} · Open-Meteo</p>` : ''}
+    ${tips.length ? `<div class="wx-card wx-tips"><div class="wx-h">👕 <span>${tk('wx.whatWearToday')}</span></div>${tips.map(([i, t]) => `<div class="wx-tip"><span>${i}</span><span>${escapeHtml(t)}</span></div>`).join('')}</div>` : ''}
+    <div class="wx-card"><div class="wx-h">📅 <span>${tk('wx.n14Days')}</span></div>${list}</div>
+    ${weatherDaily && weatherDaily.ts ? `<p class="wx-note"><span>${tk('lists.item.status')}</span> ${escapeHtml(new Date(weatherDaily.ts).toLocaleString(sysLocale(), { weekday: 'short', hour: '2-digit', minute: '2-digit' }))} · Open-Meteo</p>` : ''}
   </div>`;
   wxAfterRender();
 }
@@ -5060,7 +5063,7 @@ function wxDaysHtml(days, placeKey) {
     const idx = daysBetweenDateStrs(today, d.date);
     const kind = d.quelle === 'klima' ? 'klima' : (idx >= 7 ? 'tendenz' : 'nah');
     if (kind !== lastKind && (kind !== 'nah' || lastKind)) {
-      html += `<div class="wx-sep">${kind === 'klima' ? '📊 <span>Erfahrungswerte – Ø der letzten 3 Jahre</span>' : kind === 'tendenz' ? '〰️ <span>Tendenz – noch unsicher</span>' : '🔭 <span>Vorhersage</span>'}</div>`;
+      html += `<div class="wx-sep">${kind === 'klima' ? ('📊 <span>' + tk('wx.typicalValuesAverageLast') + '</span>') : kind === 'tendenz' ? ('〰️ <span>' + tk('wx.trendStillUncertain') + '</span>') : ('🔭 <span>' + tk('wx.forecast') + '</span>')}</div>`;
     }
     lastKind = kind;
     const mn = d.min != null ? d.min : d.max;
@@ -5085,20 +5088,20 @@ function wxTile(ic, label, value, sub) {
 function wxDetailHtml(d, placeKey, kind) {
   const desc = wxDesc(d.code);
   if (kind === 'klima') {
-    return `<p class="wx-dd"><span>Erfahrungswert</span> – <span>so war es an diesem Tag im Schnitt</span>${d.jahre ? ` (<b>${d.jahre}</b> <span>Jahre</span>)` : ''}.</p>
-      <div class="wx-tiles">${wxTile('🌡️', 'Ø Höchstwert', d.max + '°')}${wxTile('🌙', 'Ø Tiefstwert', d.min != null ? d.min + '°' : null)}
-      ${wxTile('💧', 'Regen', d.mm != null ? escapeHtml(String(d.mm).replace('.', ',')) + ' mm' : null, d.rain != null ? `<b>${d.rain}</b> % <span>Regentage</span>` : '')}
-      ${wxTile('☀️', 'Sonne', d.sonne != null ? escapeHtml(String(d.sonne).replace('.', ',')) + ' h' : null)}</div>`;
+    return `<p class="wx-dd"><span>${tk('wx.typicalValue')}</span> – <span>${tk('wx.whatDayWasLike')}</span>${d.jahre ? ` (${tk('wx.yearsN', { n: d.jahre })})` : ''}.</p>
+      <div class="wx-tiles">${wxTile('🌡️', tk('wx.avgHigh'), d.max + '°')}${wxTile('🌙', tk('wx.avgLow'), d.min != null ? d.min + '°' : null)}
+      ${wxTile('💧', tk('wx.rain'), d.mm != null ? escapeHtml(String(d.mm).replace('.', ',')) + ' mm' : null, d.rain != null ? `<b>${d.rain}</b> % <span>${tk('wx.rainyDays')}</span>` : '')}
+      ${wxTile('☀️', tk('wx.sun'), d.sonne != null ? escapeHtml(String(d.sonne).replace('.', ',')) + ' h' : null)}</div>`;
   }
   const arrow = d.richtung != null ? `<span class="wx-arrow" style="transform:rotate(${(d.richtung + 180) % 360}deg)">↑</span>` : '';
   const tiles = [
-    wxTile('🌡️', 'Gefühlt', d.gefMax != null ? (d.gefMin != null ? d.gefMin + '° / ' : '') + d.gefMax + '°' : null),
-    wxTile('💧', 'Regen', d.mm != null ? escapeHtml(String(d.mm).replace('.', ',')) + ' mm' : null, d.regenStd ? `<b>${d.regenStd}</b> <span>Std.</span>` : (d.rain != null ? `<b>${d.rain}</b> %` : '')),
-    wxTile('💨', 'Wind', d.wind != null ? `${arrow}${d.wind} km/h` : null, d.boeen != null ? `<span>Böen</span> <b>${d.boeen}</b>` : ''),
-    wxTile('🕶️', 'UV-Index', d.uv != null ? String(Math.round(d.uv)) : null, d.uv != null ? escapeHtml(wxUvLabel(d.uv)) : ''),
-    wxTile('☀️', 'Sonne', d.sonne != null ? escapeHtml(String(d.sonne).replace('.', ',')) + ' h' : null),
-    wxTile('🌅', 'Sonnenauf- & -untergang', d.auf ? d.auf + ' · ' + (d.unter || '') : null),
-    wxTile('🌊', 'Wasser', d.wasser != null ? d.wasser + '°' : null),
+    wxTile('🌡️', tk('wx.feelsLike2'), d.gefMax != null ? (d.gefMin != null ? d.gefMin + '° / ' : '') + d.gefMax + '°' : null),
+    wxTile('💧', tk('wx.rain'), d.mm != null ? escapeHtml(String(d.mm).replace('.', ',')) + ' mm' : null, d.regenStd ? `<b>${d.regenStd}</b> <span>${tk('family.hr')}</span>` : (d.rain != null ? `<b>${d.rain}</b> %` : '')),
+    wxTile('💨', tk('wx.wind'), d.wind != null ? `${arrow}${d.wind} km/h` : null, d.boeen != null ? `<span>${tk('wx.gusts')}</span> <b>${d.boeen}</b>` : ''),
+    wxTile('🕶️', tk('wx.uvIndex'), d.uv != null ? String(Math.round(d.uv)) : null, d.uv != null ? escapeHtml(wxUvLabel(d.uv)) : ''),
+    wxTile('☀️', tk('wx.sun'), d.sonne != null ? escapeHtml(String(d.sonne).replace('.', ',')) + ' h' : null),
+    wxTile('🌅', tk('wx.sunriseSunset'), d.auf ? d.auf + ' · ' + (d.unter || '') : null),
+    wxTile('🌊', tk('wx.water'), d.wasser != null ? d.wasser + '°' : null),
   ].join('');
   const tips = wxTips(d);
   const key = (placeKey || 'home') + '|' + d.date;
@@ -5111,9 +5114,9 @@ function wxDetailHtml(d, placeKey, kind) {
   } else if (h && h.err) {
     hours = '';
   } else if (kind !== 'klima' && daysBetweenDateStrs(isoDate(new Date()), d.date) <= 15) {
-    hours = `<div class="wx-hours-load">⏳ <span>Stundenverlauf wird geladen …</span></div>`;
+    hours = `<div class="wx-hours-load">⏳ <span>${tk('wx.loadingHourlyForecast')}</span></div>`;
   }
-  return `${desc ? `<p class="wx-dd"><b>${escapeHtml(desc)}</b>${d.unsicher || kind === 'tendenz' ? ' · <span>Tendenz</span>' : ''}</p>` : ''}
+  return `${desc ? `<p class="wx-dd"><b>${escapeHtml(desc)}</b>${d.unsicher || kind === 'tendenz' ? (' · <span>' + tk('wx.trend') + '</span>') : ''}</p>` : ''}
     ${hours}
     <div class="wx-tiles">${tiles}</div>
     ${tips.length ? `<div class="wx-tips-in">${tips.map(([i, t]) => `<span class="wx-chip">${i} <span>${escapeHtml(t)}</span></span>`).join('')}</div>` : ''}`;
@@ -5128,9 +5131,9 @@ async function wxLoadHours(placeKey, date) {
   try {
     const res = await apiFetch('/api/pinn/zuhause/wetter-tag', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     const body = await res.json().catch(() => ({}));
-    wxHours[key] = { stunden: Array.isArray(body.stunden) ? body.stunden : [], ts: Date.now(), err: res.ok && !body.error ? '' : (body.error || 'Fehler') };
+    wxHours[key] = { stunden: Array.isArray(body.stunden) ? body.stunden : [], ts: Date.now(), err: res.ok && !body.error ? '' : (body.error || tk('common.error')) };
   } catch (e) {
-    wxHours[key] = { stunden: [], ts: Date.now() - 25 * 60 * 1000, err: 'offline' };
+    wxHours[key] = { stunden: [], ts: Date.now() - 25 * 60 * 1000, err: tk('app.offline') };
   }
   if (wxState.sel === date && wxState.place === placeKey) wxRender();
 }
@@ -5149,36 +5152,36 @@ function wxTripHtml(l) {
   const when = tripWhenText(l);
   const hero = `<div class="wx-hero sky-${sky} trip">
     <div class="wx-hero-deco" aria-hidden="true">${escapeHtml(l.icon || '🧳')}</div>
-    <div class="wx-kicker">🧳 <span>Urlaubswetter</span></div>
+    <div class="wx-kicker">🧳 <span>${tk('wx.holidayWeather')}</span></div>
     <div class="wx-place">${escapeHtml(tripName(l))}</div>
     ${l.trip.place.zusatz ? `<div class="wx-place-sub">${escapeHtml(l.trip.place.zusatz)}</div>` : ''}
     <div class="wx-hero-sub"><span>📅 ${escapeHtml(tripRangeText(l))}</span><span>${escapeHtml(when)}</span></div>
   </div>`;
   let content = '';
   if (!data) {
-    content = `<div class="wx-card"><div class="wx-empty">${wxState.err ? escapeHtml(wxState.err) : '<span>Urlaubswetter wird geladen …</span>'}</div></div>`;
+    content = `<div class="wx-card"><div class="wx-empty">${wxState.err ? escapeHtml(wxState.err) : ('<span>' + tk('wx.loadingHolidayWeather') + '</span>')}</div></div>`;
   } else if (data.vorbei) {
-    content = `<div class="wx-card"><div class="wx-empty"><span>Dieser Urlaub ist schon vorbei.</span></div></div>`;
+    content = `<div class="wx-card"><div class="wx-empty"><span>${tk('wx.holidayAlreadyOver')}</span></div></div>`;
   } else {
     const days = (data.tage || []).filter(d => d && d.max != null);
     const tips = tripMissingTips(l, sum);
     content = `${sum ? `<div class="wx-card wx-sum">
-        <div class="wx-sum-main"><span class="wx-sum-ic">${weatherIconForCode(sum.code)}</span><div><b>${sum.max}°</b><span class="wx-sum-min">${sum.min}°</span><div class="wx-sum-l"><span>Ø am Tag / in der Nacht</span></div></div></div>
+        <div class="wx-sum-main"><span class="wx-sum-ic">${weatherIconForCode(sum.code)}</span><div><b>${sum.max}°</b><span class="wx-sum-min">${sum.min}°</span><div class="wx-sum-l"><span>${tk('wx.avgDayNight')}</span></div></div></div>
         <div class="wx-sum-chips">
-          <span class="wx-chip">${sum.rainDays ? '🌧️' : '🌤️'} ${sum.rainDays ? `<b>${sum.rainDays}</b> <span>${sum.rainDays === 1 ? 'Regentag' : 'Regentage'}</span>` : '<span>trocken</span>'}</span>
-          ${sum.sun != null ? `<span class="wx-chip">☀️ <b>${String(sum.sun).replace('.', ',')}</b> <span>Std. Sonne/Tag</span></span>` : ''}
-          ${sum.water != null ? `<span class="wx-chip">🌊 <span>Wasser</span> <b>${sum.water}°</b></span>` : ''}
+          <span class="wx-chip">${sum.rainDays ? '🌧️' : '🌤️'} ${sum.rainDays ? `<b>${sum.rainDays}</b> <span>${sum.rainDays === 1 ? tk('wx.rainyDay') : tk('wx.rainyDays')}</span>` : ('<span>' + tk('wx.dry') + '</span>')}</span>
+          ${sum.sun != null ? `<span class="wx-chip">☀️ <b>${String(sum.sun).replace('.', ',')}</b> <span>${tk('wx.hrsSunDay')}</span></span>` : ''}
+          ${sum.water != null ? `<span class="wx-chip">🌊 <span>${tk('wx.water')}</span> <b>${sum.water}°</b></span>` : ''}
           <span class="wx-chip">🌡️ <b>${sum.cold}°</b> – <b>${sum.hot}°</b></span>
         </div>
-        ${sum.climate ? '<p class="wx-note2">📊 <span>Noch zu weit weg für eine Vorhersage – das sind Erfahrungswerte der letzten drei Jahre. Ab 16 Tagen vorher kommt die echte Vorhersage.</span></p>' : sum.someClimate ? '<p class="wx-note2">📊 <span>Hintere Tage noch als Erfahrungswerte – die Vorhersage reicht 16 Tage.</span></p>' : ''}
+        ${sum.climate ? ('<p class="wx-note2">📊 <span>' + tk('wx.stillTooFarOff') + '</span></p>') : sum.someClimate ? ('<p class="wx-note2">📊 <span>' + tk('wx.laterDaysStillShown') + '</span></p>') : ''}
       </div>` : ''}
-      ${tips.length ? `<div class="wx-card"><div class="wx-h">🎒 <span>Passend zum Wetter einpacken</span></div><div class="wx-pack">${tips.map(t => `<button type="button" class="wx-pack-chip" data-wxtip="${escapeHtml(t)}">＋ <span>${escapeHtml(t)}</span></button>`).join('')}</div>
-        <button type="button" class="wx-btn" data-wxtipall="1">✓ <span>Alle auf die Packliste</span></button></div>` : ''}
-      <div class="wx-card"><div class="wx-h">📅 <span>Tag für Tag</span></div>${days.length ? wxDaysHtml(days, l.id) : '<div class="wx-empty"><span>Noch keine Daten.</span></div>'}</div>
+      ${tips.length ? `<div class="wx-card"><div class="wx-h">🎒 <span>${tk('wx.packWeather')}</span></div><div class="wx-pack">${tips.map(t => `<button type="button" class="wx-pack-chip" data-wxtip="${escapeHtml(t)}">＋ <span>${escapeHtml(t)}</span></button>`).join('')}</div>
+        <button type="button" class="wx-btn" data-wxtipall="1">✓ <span>${tk('wx.addAllPackingList')}</span></button></div>` : ''}
+      <div class="wx-card"><div class="wx-h">📅 <span>${tk('wx.dayDay')}</span></div>${days.length ? wxDaysHtml(days, l.id) : ('<div class="wx-empty"><span>' + tk('wx.noDataYet') + '</span></div>')}</div>
       ${data.fehler ? `<p class="wx-note">${escapeHtml(data.fehler)}</p>` : ''}`;
   }
   return `${hero}${wxPlaceTabs()}<div class="wx-wrap">${content}
-    <button type="button" class="wx-btn ghost" data-wxlist="${escapeHtml(l.id)}">🧳 <span>Zur Packliste</span> ›</button>
+    <button type="button" class="wx-btn ghost" data-wxlist="${escapeHtml(l.id)}">🧳 <span>${tk('wx.packingList')}</span> ›</button>
     <p class="wx-note">Open-Meteo</p></div>`;
 }
 (function wxWire() {
@@ -5199,7 +5202,7 @@ function wxTripHtml(l) {
       const sum = tripSummary(tripCached(l.trip.place, l.trip.from, tripTo(l)));
       const list = tip ? [tip.dataset.wxtip] : tripMissingTips(l, sum);
       const n = tripAddTips(lsGetList(l.id) || l, list);
-      finShowToast(n === 1 ? 'Auf die Packliste gesetzt ✓' : `${n} Sachen auf die Packliste gesetzt ✓`);
+      finShowToast(n === 1 ? tk('wx.addedPackingList') : `${tk('wx.thingsAddedPackingList', { n })}`);
       wxRender();
       return;
     }
@@ -5249,7 +5252,7 @@ function lsTripDrawChosen() {
   const pl = ctx.trip && ctx.trip.place;
   box.classList.toggle('hidden', !pl);
   input.classList.toggle('hidden', !!pl);
-  box.innerHTML = pl ? `<span class="ls-trip-pin">📍</span><span class="min-w-0 flex-1"><b>${escapeHtml(pl.titel)}</b>${pl.zusatz ? `<small>${escapeHtml(pl.zusatz)}</small>` : ''}</span><button type="button" class="fam-x" data-tripclear="1" aria-label="Reiseziel ändern">×</button>` : '';
+  box.innerHTML = pl ? `<span class="ls-trip-pin">📍</span><span class="min-w-0 flex-1"><b>${escapeHtml(pl.titel)}</b>${pl.zusatz ? `<small>${escapeHtml(pl.zusatz)}</small>` : ''}</span><button type="button" class="fam-x" data-tripclear="1" aria-label="${escapeHtml(tk('wx.changeDestination'))}">×</button>` : '';
 }
 function lsTripDays() {
   const ctx = lsListCtx;
@@ -5267,9 +5270,9 @@ async function lsTripSearch(q) {
     if (seq !== lsTripSugSeq) return;
     lsTripHits = Array.isArray(body.treffer) ? body.treffer : [];
     box.innerHTML = lsTripHits.length ? lsTripHits.map((h, i) => `<button type="button" class="home-sug-row" data-triphit="${i}"><span>📍</span><span class="min-w-0"><b>${escapeHtml(h.titel)}</b><span class="home-sug-z">${escapeHtml(h.zusatz || '')}</span></span></button>`).join('')
-      : `<p class="home-sug-msg">${escapeHtml(body.error || 'Kein passender Ort gefunden.')}</p>`;
+      : `<p class="home-sug-msg">${escapeHtml(body.error || tk('wx.noMatchingPlaceFound'))}</p>`;
   } catch (e) {
-    if (seq === lsTripSugSeq) box.innerHTML = '<p class="home-sug-msg">Ortssuche nicht möglich – keine Verbindung zum NAS.</p>';
+    if (seq === lsTripSugSeq) box.innerHTML = ('<p class="home-sug-msg">' + tk('wx.placeSearchNotPossible') + '</p>');
   }
 }
 async function lsTripPreview() {
@@ -5286,8 +5289,8 @@ async function lsTripPreview() {
   const draw = (data, err) => {
     if (seq !== lsTripWxSeq) return;
     const sum = tripSummary(data);
-    if (!sum) { box.innerHTML = `<span class="text-ink/50">${escapeHtml(err || (data && data.vorbei ? 'Der Zeitraum liegt in der Vergangenheit.' : 'Urlaubswetter wird geladen …'))}</span>`; return; }
-    box.innerHTML = `<span class="ls-trip-wx-ic">${weatherIconForCode(sum.code)}</span><span class="min-w-0 flex-1"><b>${sum.max}°</b> / ${sum.min}° · <span>${sum.rainDays ? sum.rainDays + (sum.rainDays === 1 ? ' Regentag' : ' Regentage') : 'trocken'}</span>${sum.water != null ? ` · 🌊 ${sum.water}°` : ''}<small>${sum.climate ? 'Erfahrungswerte der letzten Jahre' : 'Vorhersage für die Reisezeit'}</small></span>`;
+    if (!sum) { box.innerHTML = `<span class="text-ink/50">${escapeHtml(err || (data && data.vorbei ? tk('wx.datesPast') : tk('wx.loadingHolidayWeather')))}</span>`; return; }
+    box.innerHTML = `<span class="ls-trip-wx-ic">${weatherIconForCode(sum.code)}</span><span class="min-w-0 flex-1"><b>${sum.max}°</b> / ${sum.min}° · <span>${sum.rainDays ? sum.rainDays + (sum.rainDays === 1 ? (' ' + tk('wx.rainyDay')) : (' ' + tk('wx.rainyDays'))) : tk('wx.dry')}</span>${sum.water != null ? ` · 🌊 ${sum.water}°` : ''}<small>${sum.climate ? tk('wx.typicalValuesFromRecent') : tk('wx.forecastTrip')}</small></span>`;
     const tips = tripPackTips(sum);
     const show = ctx.mode === 'new' && tips.length > 0;
     tipsWrap.classList.toggle('hidden', !show);
@@ -5360,8 +5363,8 @@ function lsTripCardHtml(l) {
   const tips = sum ? tripMissingTips(l, sum) : [];
   return `<button type="button" class="ls-trip-card sky-${sum ? sum.sky : 'part'}" data-tripwx="${escapeHtml(l.id)}">
     <span class="ls-trip-card-ic">${sum ? weatherIconForCode(sum.code) : '🧳'}</span>
-    <span class="min-w-0 flex-1"><b>📍 ${escapeHtml(tripName(l))}</b><small>${escapeHtml(tripRangeText(l))} · ${escapeHtml(past ? 'vorbei' : tripWhenText(l))}</small>
-      ${sum ? `<small class="ls-trip-card-w"><b>${sum.max}°</b> / ${sum.min}° · <span>${sum.rainDays ? sum.rainDays + (sum.rainDays === 1 ? ' Regentag' : ' Regentage') : 'trocken'}</span>${sum.water != null ? ' · 🌊 ' + sum.water + '°' : ''}${sum.climate ? ' · <span>Erfahrungswerte</span>' : ''}</small>` : ''}</span>
+    <span class="min-w-0 flex-1"><b>📍 ${escapeHtml(tripName(l))}</b><small>${escapeHtml(tripRangeText(l))} · ${escapeHtml(past ? tk('wx.over') : tripWhenText(l))}</small>
+      ${sum ? `<small class="ls-trip-card-w"><b>${sum.max}°</b> / ${sum.min}° · <span>${sum.rainDays ? sum.rainDays + (sum.rainDays === 1 ? (' ' + tk('wx.rainyDay')) : (' ' + tk('wx.rainyDays'))) : tk('wx.dry')}</span>${sum.water != null ? ' · 🌊 ' + sum.water + '°' : ''}${sum.climate ? (' · <span>' + tk('wx.typicalValues') + '</span>') : ''}</small>` : ''}</span>
     <span class="ls-trip-card-go">${tips.length ? `<span class="ls-trip-badge">🎒 ${tips.length}</span>` : ''}›</span>
   </button>`;
 }
@@ -5386,7 +5389,7 @@ function ptTileHtml(anySub) {
     if (bd === 0) badge = '🎂';
     else if (over.length) badge = ptCareType(over[0].type).icon;
     let sub = '';
-    if (over.length) sub = 'fällig';
+    if (over.length) sub = tk('pet.due2');
     else if (walks) sub = `🦮 ${w}/${walks}`;
     else if (ptFeedTimes(p).length) { const f = ptFeedTimes(p).filter(t => ptFedSlot(p, t)).length; sub = `🍖 ${f}/${ptFeedTimes(p).length}`; }
     const color = ptColor(p);
@@ -5614,10 +5617,10 @@ function abPetHighlights(mondayIso, endIso) {
       case 'delplace': famDeletePlace(); break;
       case 'placesearch': famPlaceSearch(); break;
       case 'placehere':
-        if (!navigator.geolocation) { finShowToast('Standort auf diesem Gerät nicht verfügbar', true); break; }
+        if (!navigator.geolocation) { finShowToast(tk('wx.locationNotAvailableDevice'), true); break; }
         navigator.geolocation.getCurrentPosition(
           (pos) => famSetPick(pos.coords.latitude, pos.coords.longitude, true),
-          () => finShowToast('Standort nicht freigegeben', true),
+          () => finShowToast(tk('wx.locationNotShared'), true),
           { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
         break;
       case 'placedev': { const g = famDevice(act.dataset.id); if (g && g.position) famSetPick(g.position.lat, g.position.lon, true); break; }

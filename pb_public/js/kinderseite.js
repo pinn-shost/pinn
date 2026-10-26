@@ -23,14 +23,17 @@
    Before "Morgens" and from bedtime on the page only shows a good-night view.
    ========================================================== */
 const KID_PERIODS = [
-  { id: 'morgens', label: 'Morgens', icon: '🌅' },
-  { id: 'mittags', label: 'Mittags', icon: '☀️' },
-  { id: 'nachmittags', label: 'Nachmittags', icon: '🌤️' },
-  { id: 'abends', label: 'Abends', icon: '🌙' },
+  { id: 'morgens', get label() { return tk('kid.morning'); }, icon: '🌅' },
+  { id: 'mittags', get label() { return tk('kid.midday'); }, icon: '☀️' },
+  { id: 'nachmittags', get label() { return tk('kid.afternoon'); }, icon: '🌤️' },
+  { id: 'abends', get label() { return tk('kid.evening'); }, icon: '🌙' },
 ];
-const KID_TASK_GROUPS = [{ id: 'ganztags', label: 'Den ganzen Tag', icon: '⭐' }, ...KID_PERIODS];
+const KID_TASK_GROUPS = [{ id: 'ganztags', get label() { return tk('kid.allDay'); }, icon: '⭐' }, ...KID_PERIODS];
 const KID_TIME_KEYS = ['morgens', 'mittags', 'nachmittags', 'abends', 'nacht'];
-const KID_TIME_LABELS = { morgens: 'Morgens ab', mittags: 'Mittags ab', nachmittags: 'Nachmittags ab', abends: 'Abends ab', nacht: 'Schlafenszeit ab' };
+const KID_TIME_LABELS = {
+  get morgens() { return tk('kid.morningFrom'); }, get mittags() { return tk('kid.middayFrom'); }, get nachmittags() { return tk('kid.afternoonFrom'); },
+  get abends() { return tk('kid.eveningFrom'); }, get nacht() { return tk('kid.bedtimeFrom'); },
+};
 const KID_DEFAULT_TIMES = { morgens: '05:00', mittags: '11:00', nachmittags: '14:00', abends: '17:30', nacht: '21:00' };
 const KID_CARD_COLORS = ['#FFD166', '#8FD3FF', '#FFA8CB', '#B8E986', '#CDB4FF', '#FFBE8F', '#7FE0D1', '#FFE38A'];
 const KID_EMOJIS = ['🪥', '🦷', '🧼', '💧', '🚿', '🛁', '🧴', '💇‍♀️', '💇‍♂️', '🎀', '👕', '👗', '👖', '🧦', '👟', '🧥', '👚',
@@ -58,21 +61,21 @@ function kidToMin(hhmm) {
 }
 function kidDefaultTasks() {
   return [
-    ['morgens', '🪥', 'Zähne putzen'],
-    ['morgens', '💧', 'Gesicht waschen'],
-    ['morgens', '👕', 'Anziehen'],
-    ['morgens', '💇‍♀️', 'Haare kämmen'],
-    ['morgens', '🥣', 'Frühstücken'],
-    ['mittags', '🧼', 'Hände waschen'],
-    ['mittags', '🍽️', 'Mittagessen'],
-    ['nachmittags', '🧸', 'Spielzeug aufräumen'],
-    ['nachmittags', '🍎', 'Obst essen'],
-    ['abends', '🍽️', 'Abendessen'],
-    ['abends', '🛁', 'Waschen'],
-    ['abends', '🪥', 'Zähne putzen'],
-    ['abends', '👚', 'Schlafanzug anziehen'],
-    ['abends', '📖', 'Gute-Nacht-Geschichte'],
-    ['abends', '🛏️', 'Ins Bett gehen'],
+    ['morgens', '🪥', tk('kid.brushTeeth')],
+    ['morgens', '💧', tk('kid.washFace')],
+    ['morgens', '👕', tk('kid.getDressed')],
+    ['morgens', '💇‍♀️', tk('kid.combHair')],
+    ['morgens', '🥣', tk('kid.haveBreakfast')],
+    ['mittags', '🧼', tk('kid.washHands')],
+    ['mittags', '🍽️', tk('meal.type.lunchLong')],
+    ['nachmittags', '🧸', tk('kid.tidyUpToys')],
+    ['nachmittags', '🍎', tk('kid.eatFruit')],
+    ['abends', '🍽️', tk('meal.type.dinnerLong')],
+    ['abends', '🛁', tk('kid.wash')],
+    ['abends', '🪥', tk('kid.brushTeeth')],
+    ['abends', '👚', tk('kid.putPyjamas')],
+    ['abends', '📖', tk('kid.bedtimeStory')],
+    ['abends', '🛏️', tk('kid.goBed')],
   ].map(([period, emoji, title]) => ({ id: kidUid(), emoji, title, period }));
 }
 function normalizeKidConfig(kid) {
@@ -237,8 +240,8 @@ function renderKidPage() {
   if (period === 'nacht') {
     content.innerHTML = `<div class="kid-empty">
       ${kidAvatarHtml(m)}
-      <div class="kid-hello">Schlaf gut, ${name}!</div>
-      <div class="kid-sub">Morgen früh geht's weiter.</div>
+      <div class="kid-hello">${tk('kid.sleepWell', { name })}</div>
+      <div class="kid-sub">${tk('kid.continuesTomorrowMorning')}</div>
       <div class="kid-empty-emoji">😴</div>
       ${kidBankHtml(m)}
       ${kidAllowanceHtml(m)}
@@ -247,10 +250,10 @@ function renderKidPage() {
   }
 
   const greetings = {
-    morgens: ['Guten Morgen', 'Das steht heute früh an ☀️'],
-    mittags: ['Hallo', 'Das ist jetzt dran 🍽️'],
-    nachmittags: ['Hallo', 'Das ist jetzt dran 🌈'],
-    abends: ['Guten Abend', 'Bald ist Schlafenszeit 🌙'],
+    morgens: [tk('kid.goodMorning'), tk('kid.dueMorning')],
+    mittags: [tk('kid.hello'), tk('kid.next')],
+    nachmittags: [tk('kid.hello'), tk('kid.next2')],
+    abends: [tk('kid.goodEvening'), tk('kid.bedtimeSoon')],
   };
   const [hello, sub] = greetings[period];
   const list = kidTasksForPeriod(cfg, period);
@@ -260,7 +263,7 @@ function renderKidPage() {
     content.innerHTML = `<div class="kid-empty">
       ${kidAvatarHtml(m)}
       <div class="kid-hello">${hello}, ${name}!</div>
-      <div class="kid-sub">Gerade gibt es nichts zu tun – spiel schön!${next && period !== 'abends' ? `<br>Ab ${escapeHtml(next)} Uhr geht's weiter.` : ''}</div>
+      <div class="kid-sub">${tk('kid.nothingToDo')}${next && period !== 'abends' ? `<br>${tk('kid.continues', { next: escapeHtml(next) })}` : ''}</div>
       <div class="kid-empty-emoji">🎈</div>
       ${kidBankHtml(m)}
       ${kidHomeworkHtml(m)}
@@ -276,7 +279,7 @@ function renderKidPage() {
     <div class="kid-sub">${sub}</div>
     ${kidBankHtml(m)}
     <div class="kid-stars">${list.map(t => `<span class="kid-star${kidIsDone(m, t.id, today) ? ' on' : ''}" data-star="${kidAttr(t.id)}">⭐</span>`).join('')}</div>
-    <div id="kidDoneBanner" class="kid-done-banner${allDone ? ' show' : ''}">🏆 Alles geschafft! Super, ${name}!</div>
+    <div id="kidDoneBanner" class="kid-done-banner${allDone ? ' show' : ''}">${tk('kid.allDoneGreat', { name })}</div>
     <div class="kid-grid">
       ${list.map((t, i) => `
         <button type="button" class="kid-card${kidIsDone(m, t.id, today) ? ' done' : ''}" data-task="${kidAttr(t.id)}" style="--kc:${KID_CARD_COLORS[i % KID_CARD_COLORS.length]}">
@@ -296,8 +299,8 @@ function kidShowCelebration(m) {
   box.className = 'kid-celebrate';
   box.innerHTML = `<div class="kid-celebrate-box">
     <div style="font-size:84px;line-height:1.1">🏆</div>
-    <div style="font-size:clamp(26px,7vw,36px);font-weight:800;line-height:1.15;margin-top:6px">Super gemacht, ${escapeHtml(m.name || '')}!</div>
-    <div style="font-size:19px;font-weight:600;opacity:.75;margin-top:4px">Du hast alles geschafft 🎉</div>
+    <div style="font-size:clamp(26px,7vw,36px);font-weight:800;line-height:1.15;margin-top:6px">${tk('kid.wellDone', { name: escapeHtml(m.name || '') })}</div>
+    <div style="font-size:19px;font-weight:600;opacity:.75;margin-top:4px">${tk('kid.youveDoneEverything')}</div>
   </div>`;
   const dismiss = () => { box.remove(); };
   box.addEventListener('click', dismiss);

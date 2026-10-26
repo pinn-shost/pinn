@@ -1,22 +1,22 @@
 <!-- Kids page: edit tasks and times of day -->
 <div id="kidRoutineModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[210] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto fade-in">
-    <h3 id="kidRoutineTitle" class="font-serif text-lg mb-1">Kinderseite</h3>
-    <p class="text-xs text-ink/50 mb-4">Jede Aufgabe erscheint nur zu ihrer Tageszeit – morgens z. B. kein Schlafanzug, abends kein Frühstück mehr. „Den ganzen Tag“ erscheint immer. Um Mitternacht beginnt der Tag von vorne.</p>
+    <h3 data-tk="famTile.kidsPage" id="kidRoutineTitle" class="font-serif text-lg mb-1">Kids' page</h3>
+    <p data-tk="kid.eachTaskOnlyAppears" class="text-xs text-ink/50 mb-4">Each task only appears at its time of day – e.g. no pyjamas in the morning, no breakfast in the evening. “All day” always appears. At midnight the day starts over.</p>
 
-    <p class="text-xs uppercase tracking-wide text-ink/40 mb-2">Tageszeiten</p>
+    <p data-tk="kid.timesDay" class="text-xs uppercase tracking-wide text-ink/40 mb-2">Times of day</p>
     <div id="kidTimesGrid" class="grid grid-cols-2 gap-x-3 gap-y-2 mb-1"></div>
-    <p class="text-[11px] text-ink/40 mb-3">Ab der Schlafenszeit bis zum Morgen zeigt die Seite nur noch „Schlaf gut“.</p>
-    <label class="kid-sun-opt"><input type="checkbox" id="kidSunEvening" /><span>🌇 „Abends“ schon ab Sonnenuntergang, wenn es früher dunkel wird<small id="kidSunHint"></small></span></label>
+    <p data-tk="kid.fromBedtimeUntilMorning" class="text-[11px] text-ink/40 mb-3">From bedtime until morning the page only shows “Sleep well”.</p>
+    <label class="kid-sun-opt"><input type="checkbox" id="kidSunEvening" /><span><span data-tk="kid.eveningAlreadyFromSunset">🌇 “Evening” already from sunset when it gets dark earlier</span><small id="kidSunHint"></small></span></label>
 
     <div id="kidTaskGroups" class="flex flex-col gap-5 mb-4"></div>
 
     <p id="kidRoutineStatus" class="text-xs text-red-500 mb-2"></p>
     <div class="flex items-center justify-between gap-2">
-      <button type="button" id="kidRoutineDefaults" class="px-2 py-2 rounded-lg text-xs text-ink/50 hover:text-pine transition">Vorschläge laden</button>
+      <button data-tk="kid.loadSuggestions" type="button" id="kidRoutineDefaults" class="px-2 py-2 rounded-lg text-xs text-ink/50 hover:text-pine transition">Load suggestions</button>
       <div class="flex gap-2">
-        <button type="button" id="kidRoutineCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-        <button type="button" id="kidRoutineApply" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Übernehmen</button>
+        <button data-tk="common.cancel" type="button" id="kidRoutineCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+        <button data-tk="common.apply" type="button" id="kidRoutineApply" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Apply</button>
       </div>
     </div>
   </div>
@@ -25,36 +25,36 @@
 <!-- Kids page: edit rewards for stars -->
 <div id="kidRewardsModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[210] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto fade-in">
-    <h3 id="kidRewardsTitle" class="font-serif text-lg mb-1">Belohnungen</h3>
-    <p class="text-xs text-ink/50 mb-4">Legt fest, was es für wie viele Sterne gibt. Wünscht sich das Kind etwas, bekommt ihr eine Benachrichtigung und bestätigt auf der Kinderseite oder unter Finanzen → Taschengeld. Taschengeld-Belohnungen kommen danach ins Guthaben und als Ausgabe unter „Kinder“.</p>
-    <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="kidRewardsBonus">Extra-Sterne für „Alles geschafft“</label>
+    <h3 data-tk="stars.rewards3" id="kidRewardsTitle" class="font-serif text-lg mb-1">Rewards</h3>
+    <p data-tk="kid.decideWhatCanHad" class="text-xs text-ink/50 mb-4">Decide what can be had for how many stars. When your child asks for something, you get a notification and confirm on the kids' page or under Finance → Pocket money. Pocket money rewards then go to the balance and are booked as an expense under “Kids”.</p>
+    <label data-tk="kid.bonusStarsAllDone" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="kidRewardsBonus">Bonus stars for “All done”</label>
     <select id="kidRewardsBonus" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm bg-white mb-4">
-      <option value="0">Keine</option>
+      <option data-tk="common.none" value="0">None</option>
       <option value="1">1 ⭐</option>
       <option value="2">2 ⭐</option>
       <option value="3">3 ⭐</option>
       <option value="4">4 ⭐</option>
       <option value="5">5 ⭐</option>
     </select>
-    <p class="text-xs uppercase tracking-wide text-ink/40 mb-2">Belohnungen</p>
+    <p data-tk="stars.rewards3" class="text-xs uppercase tracking-wide text-ink/40 mb-2">Rewards</p>
     <div id="kidRewardsList" class="flex flex-col gap-2 mb-2"></div>
-    <button type="button" id="kidRewardsAdd" class="text-xs text-pine font-medium px-2 py-1 rounded-lg hover:bg-ink/5 mb-3">+ Belohnung</button>
-    <p class="text-[11px] text-ink/40 mb-3">Wie viele Sterne eine Aufgabe bringt (1–3), stellst du unter „Aufgaben &amp; Tageszeiten bearbeiten“ ein.</p>
+    <button data-tk="kid.reward" type="button" id="kidRewardsAdd" class="text-xs text-pine font-medium px-2 py-1 rounded-lg hover:bg-ink/5 mb-3">+ Reward</button>
+    <p data-tk="kid.howManyStarsTask" class="text-[11px] text-ink/40 mb-3">How many stars a task earns (1–3) is set under “Edit tasks &amp; times of day”.</p>
     <p id="kidRewardsStatus" class="text-xs text-red-500 mb-2"></p>
     <div class="flex items-center justify-between gap-2">
-      <button type="button" id="kidRewardsDefaults" class="px-2 py-2 rounded-lg text-xs text-ink/50 hover:text-pine transition">Vorschläge laden</button>
+      <button data-tk="kid.loadSuggestions" type="button" id="kidRewardsDefaults" class="px-2 py-2 rounded-lg text-xs text-ink/50 hover:text-pine transition">Load suggestions</button>
       <div class="flex gap-2">
-        <button type="button" id="kidRewardsCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-        <button type="button" id="kidRewardsApply" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Übernehmen</button>
+        <button data-tk="common.cancel" type="button" id="kidRewardsCancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
+        <button data-tk="common.apply" type="button" id="kidRewardsApply" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90">Apply</button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- Kids page (full screen) -->
-<div id="kidPage" class="hidden" role="dialog" aria-label="Kinderseite">
+<div data-tk-attr="aria-label:famTile.kidsPage" id="kidPage" class="hidden" role="dialog" aria-label="Kids' page">
   <div id="kidDeco" class="kid-deco"></div>
-  <button type="button" id="kidPageClose" class="kid-topbtn left" aria-label="Kinderseite schließen">✕</button>
-  <button type="button" id="kidPageSound" class="kid-topbtn right" aria-label="Ton an/aus">🔊</button>
+  <button data-tk-attr="aria-label:kid.closeKidsPage" type="button" id="kidPageClose" class="kid-topbtn left" aria-label="Close kids' page">✕</button>
+  <button data-tk-attr="aria-label:kid.soundOff" type="button" id="kidPageSound" class="kid-topbtn right" aria-label="Sound on/off">🔊</button>
   <div id="kidContent" class="kid-inner"></div>
 </div>

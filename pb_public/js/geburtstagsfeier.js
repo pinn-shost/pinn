@@ -54,10 +54,10 @@ function bdayShow(m, b) {
   ov.setAttribute('role', 'dialog');
   ov.innerHTML = `<div class="bday-card">
       <div class="bday-cake">🎂</div>
-      <div class="bday-hb"><span>Alles Gute zum Geburtstag!</span></div>
+      <div class="bday-hb"><span>${tk('famTile.happyBirthday')}</span></div>
       <div class="bday-name">${escapeHtml(m.name || memberLabel(m))}</div>
-      <div class="bday-sub"><span>${b && b.age ? 'Heute wirst du ' + b.age : 'Hab einen wunderschönen Tag!'}</span> 🎉</div>
-      <button type="button" class="bday-btn"><span>Danke!</span> 🥳</button>
+      <div class="bday-sub"><span>${b && b.age ? tk('famTile.youTurnToday', { n: b.age }) : tk('bday.haveLovelyDay')}</span> 🎉</div>
+      <button type="button" class="bday-btn"><span>${tk('bday.thanks')}</span> 🥳</button>
     </div>`;
   document.body.appendChild(ov);
   const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;

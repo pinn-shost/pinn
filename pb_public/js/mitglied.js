@@ -21,19 +21,19 @@ function openMemberModal(existingId = null) {
   if (existingId && !canEditMember(memberById(existingId))) {
     const target = memberById(existingId);
     alert(target && target.childLock && currentMember() && currentMember().id === target.id
-      ? 'Dein Profil kann nur ein Admin bearbeiten.'
-      : 'Du kannst nur dein eigenes Familienmitglied bearbeiten – alle anderen bearbeitet ein Admin.');
+      ? tk('member.onlyAdminCanEdit')
+      : tk('member.canOnlyEditOwn'));
     return;
   }
   if (!existingId && !isCurrentUserAdmin()) {
-    alert('Neue Familienmitglieder kann nur ein Admin anlegen, weil dabei auch ein Profil zum Anmelden erstellt wird.');
+    alert(tk('member.onlyAdminCanCreate'));
     return;
   }
   editingMemberId = existingId;
   const existing = existingId ? memberById(existingId) : null;
 
-  document.getElementById('memberModalTitle').textContent = existing ? 'Familienmitglied bearbeiten' : 'Familienmitglied hinzufügen';
-  document.getElementById('saveMember').textContent = existing ? 'Speichern' : 'Hinzufügen';
+  document.getElementById('memberModalTitle').textContent = existing ? tk('member.editFamilyMember') : tk('member.addFamilyMember');
+  document.getElementById('saveMember').textContent = existing ? tk('common.save') : tk('common.add');
   document.getElementById('newMemberName').value = existing ? existing.name : '';
   document.getElementById('newMemberRole').value = existing ? (existing.role || '') : '';
   document.getElementById('memberPhotoFile').value = '';
@@ -66,7 +66,7 @@ function openMemberModal(existingId = null) {
   });
   const transparentDot = document.createElement('button');
   transparentDot.type = 'button';
-  transparentDot.title = 'Transparent';
+  transparentDot.title = tk('member.transparent');
   transparentDot.className = 'w-7 h-7 rounded-full border-2 bg-white relative overflow-hidden';
   transparentDot.style.backgroundImage = 'linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%), linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%)';
   transparentDot.style.backgroundSize = '8px 8px';
@@ -113,7 +113,7 @@ function renderMemberLoginSection(existing) {
   noAdmin.classList.add('hidden');
   section.classList.remove('hidden');
   if (linked) {
-    document.getElementById('memberLoginLinkedName').textContent = linked.username + (linked.rolle === 'admin' ? ' (Admin)' : '');
+    document.getElementById('memberLoginLinkedName').textContent = linked.username + (linked.rolle === 'admin' ? (' ' + tk('member.admin')) : '');
     linkedBox.classList.remove('hidden');
     return;
   }
@@ -125,8 +125,8 @@ function renderMemberLoginSection(existing) {
   const free = unlinkedProfiles();
   const select = document.getElementById('memberLoginExistingSelect');
   select.innerHTML = free.length
-    ? free.map(p => `<option value="${p.id}">${escapeHtml(p.username)}${p.rolle === 'admin' ? ' (Admin)' : ''}</option>`).join('')
-    : '<option value="">Kein freies Profil vorhanden</option>';
+    ? free.map(p => `<option value="${p.id}">${escapeHtml(p.username)}${p.rolle === 'admin' ? (' ' + tk('member.admin')) : ''}</option>`).join('')
+    : ('<option value="">' + tk('member.noFreeProfileAvailable') + '</option>');
   document.querySelector('.member-login-mode-btn[data-login-mode="bestehend"]').disabled = !free.length;
   document.querySelector('.member-login-mode-btn[data-login-mode="bestehend"]').classList.toggle('opacity-40', !free.length);
   memberUsernameTouched = false;
@@ -177,11 +177,11 @@ document.getElementById('saveMember').addEventListener('click', async () => {
 
   const existing = editingMemberId ? memberById(editingMemberId) : null;
   if (!existing && !isCurrentUserAdmin()) {
-    status.textContent = 'Neue Familienmitglieder kann nur ein Admin anlegen.';
+    status.textContent = tk('member.onlyAdminCanCreate2');
     return;
   }
   if (existing && !canEditMember(existing)) {
-    status.textContent = 'Dieses Familienmitglied kann nur ein Admin bearbeiten.';
+    status.textContent = tk('member.onlyAdminCanEdit2');
     return;
   }
   const memberId = existing ? existing.id : 'm' + Date.now();
@@ -192,14 +192,14 @@ document.getElementById('saveMember').addEventListener('click', async () => {
     try {
       if (memberLoginMode === 'bestehend') {
         const profileId = document.getElementById('memberLoginExistingSelect').value;
-        if (!profileId) throw new Error('Bitte ein Profil auswählen.');
+        if (!profileId) throw new Error(tk('member.pleaseSelectProfile'));
         await postJson('/api/pinn/users/link', { id: profileId, mitglied: memberId });
       } else {
         const username = document.getElementById('memberLoginUsername').value.trim();
         const password = document.getElementById('memberLoginPassword').value;
         const rolle = document.getElementById('memberLoginRole').value;
-        if (!username) throw new Error('Bitte einen Benutzernamen für das Profil eingeben.');
-        if (password.length < 8) throw new Error('Das Start-Passwort muss mindestens 8 Zeichen lang sein.');
+        if (!username) throw new Error(tk('member.pleaseEnterUsernameProfile'));
+        if (password.length < 8) throw new Error(tk('member.startPasswordMustLeast'));
         await postJson('/api/pinn/users/create', { username, password, rolle, mitglied: memberId });
       }
       await loadFamilyProfiles();

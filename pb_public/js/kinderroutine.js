@@ -22,12 +22,12 @@ function updateMemberKidSection() {
   document.getElementById('memberKidOptions').classList.toggle('hidden', !cfg.enabled);
   const count = cfg.tasks.length;
   document.getElementById('memberKidSummary').textContent =
-    `${count} ${count === 1 ? 'Aufgabe' : 'Aufgaben'} · Morgens ab ${cfg.times.morgens} · Abends ab ${cfg.times.abends} · Schlafenszeit ab ${cfg.times.nacht}`;
+    `${tk('kid.tasksN', { n: count })} · ${KID_TIME_LABELS.morgens} ${cfg.times.morgens} · ${KID_TIME_LABELS.abends} ${cfg.times.abends} · ${KID_TIME_LABELS.nacht} ${cfg.times.nacht}`;
   // Stars & rewards
   const st = normalizeKidStars(cfg.stars);
   document.getElementById('memberKidStars').checked = st.on;
   document.getElementById('memberKidStarsOpts').classList.toggle('hidden', !st.on);
-  document.getElementById('memberKidStarsSummary').textContent = `Belohnungen: ${st.rewards.length} · Extra-Sterne für „Alles geschafft“: ${st.bonus}`;
+  document.getElementById('memberKidStarsSummary').textContent = `${tk('kid.rewardsBonusStarsAll', { n: st.rewards.length, bonus: st.bonus })}`;
   // Hidden field so "Abbrechen" notices unsaved changes to the kids page
   document.getElementById('memberKidConfigState').value = JSON.stringify(cfg);
 }
@@ -51,15 +51,15 @@ function openKidRoutineEditor() {
   kidEditTimes = { ...cfg.times };
   kidEmojiOpenFor = null;
   const name = document.getElementById('newMemberName').value.trim();
-  document.getElementById('kidRoutineTitle').textContent = name ? `Kinderseite von ${name}` : 'Kinderseite';
+  document.getElementById('kidRoutineTitle').textContent = name ? `${tk('kid.sKidsPage', { name })}` : tk('famTile.kidsPage');
   document.getElementById('kidRoutineStatus').textContent = '';
   renderKidRoutineTimes();
   renderKidRoutineTasks();
   document.getElementById('kidSunEvening').checked = !!cfg.sonne;
   const sunToday = homeSunTimes(new Date());
   document.getElementById('kidSunHint').textContent = sunToday && sunToday.unter
-    ? `Heute geht die Sonne um ${homeFmtTime(sunToday.unter)} Uhr unter. „Abends ab“ bleibt die späteste Uhrzeit.`
-    : 'Braucht ein Zuhause (Einstellungen → Zuhause).';
+    ? `${tk('kid.todaySunSetsEvening', { homeFmtTime: homeFmtTime(sunToday.unter) })}`
+    : tk('kid.needsHomeSettingsHome');
   document.getElementById('kidRoutineModal').classList.remove('hidden');
   armModalSnapshot('kidRoutineModal');
 }
@@ -80,15 +80,15 @@ function kidRoutineRowHtml(t, list) {
     : '';
   return `<div class="kid-edit-row" data-id="${kidAttr(t.id)}">
     <div class="flex items-center gap-1.5">
-      <button type="button" class="kid-edit-emoji w-10 h-10 shrink-0 rounded-lg bg-ink/5 text-xl grid place-items-center" title="Bild wählen">${escapeHtml(t.emoji || '⭐')}</button>
-      <input type="text" class="kid-edit-title flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-2 text-sm" maxlength="40" placeholder="z. B. Zähne putzen" value="${kidAttr(t.title)}" />
-      <button type="button" class="kid-edit-del w-8 h-8 shrink-0 rounded-lg text-ink/40 hover:text-red-500 transition" title="Entfernen" aria-label="Aufgabe entfernen">✕</button>
+      <button type="button" class="kid-edit-emoji w-10 h-10 shrink-0 rounded-lg bg-ink/5 text-xl grid place-items-center" title="${escapeHtml(tk('kid.chooseImage'))}">${escapeHtml(t.emoji || '⭐')}</button>
+      <input type="text" class="kid-edit-title flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-2 text-sm" maxlength="40" placeholder="${escapeHtml(tk('kid.eGBrushTeeth'))}" value="${kidAttr(t.title)}" />
+      <button type="button" class="kid-edit-del w-8 h-8 shrink-0 rounded-lg text-ink/40 hover:text-red-500 transition" title="${escapeHtml(tk('common.remove'))}" aria-label="${escapeHtml(tk('kid.removeTask'))}">✕</button>
     </div>
     <div class="flex items-center gap-1 mt-1 pl-[46px]">
       <select class="kid-edit-period rounded-lg border border-ink/15 px-2 py-1 text-xs bg-white">${options}</select>
-      ${pendingKidConfig && pendingKidConfig.stars && pendingKidConfig.stars.on ? `<select class="kid-edit-stars rounded-lg border border-ink/15 px-1.5 py-1 text-xs bg-white" title="Sterne für diese Aufgabe" aria-label="Sterne für diese Aufgabe" data-no-i18n>${[1, 2, 3].map(n => `<option value="${n}"${(Number(t.stars) || 1) === n ? ' selected' : ''}>${'⭐'.repeat(n)}</option>`).join('')}</select>` : ''}
-      <button type="button" class="kid-edit-up w-7 h-7 rounded-lg text-ink/40 hover:text-pine transition${idx === 0 ? ' invisible' : ''}" title="Nach oben" aria-label="Nach oben">↑</button>
-      <button type="button" class="kid-edit-down w-7 h-7 rounded-lg text-ink/40 hover:text-pine transition${idx === list.length - 1 ? ' invisible' : ''}" title="Nach unten" aria-label="Nach unten">↓</button>
+      ${pendingKidConfig && pendingKidConfig.stars && pendingKidConfig.stars.on ? `<select class="kid-edit-stars rounded-lg border border-ink/15 px-1.5 py-1 text-xs bg-white" title="${escapeHtml(tk('kid.starsTask'))}" aria-label="${escapeHtml(tk('kid.starsTask'))}" data-no-i18n>${[1, 2, 3].map(n => `<option value="${n}"${(Number(t.stars) || 1) === n ? ' selected' : ''}>${'⭐'.repeat(n)}</option>`).join('')}</select>` : ''}
+      <button type="button" class="kid-edit-up w-7 h-7 rounded-lg text-ink/40 hover:text-pine transition${idx === 0 ? ' invisible' : ''}" title="${escapeHtml(tk('common.moveUp'))}" aria-label="${escapeHtml(tk('common.moveUp'))}">↑</button>
+      <button type="button" class="kid-edit-down w-7 h-7 rounded-lg text-ink/40 hover:text-pine transition${idx === list.length - 1 ? ' invisible' : ''}" title="${escapeHtml(tk('common.moveDown'))}" aria-label="${escapeHtml(tk('common.moveDown'))}">↓</button>
     </div>
     ${picker}
   </div>`;
@@ -99,10 +99,10 @@ function renderKidRoutineTasks() {
     return `<div>
       <div class="flex items-center justify-between mb-1.5">
         <p class="text-xs uppercase tracking-wide text-ink/40">${g.icon} ${g.label}</p>
-        <button type="button" class="kid-add-task text-xs text-pine font-medium px-2 py-1 rounded-lg hover:bg-ink/5" data-period="${g.id}">+ Aufgabe</button>
+        <button type="button" class="kid-add-task text-xs text-pine font-medium px-2 py-1 rounded-lg hover:bg-ink/5" data-period="${g.id}">${tk('kid.task')}</button>
       </div>
       <div class="flex flex-col gap-1.5">
-        ${list.length ? list.map(t => kidRoutineRowHtml(t, list)).join('') : '<p class="text-xs text-ink/30 italic">Keine Aufgaben</p>'}
+        ${list.length ? list.map(t => kidRoutineRowHtml(t, list)).join('') : ('<p class="text-xs text-ink/30 italic">' + tk('kid.noTasks') + '</p>')}
       </div>
     </div>`;
   }).join('');
@@ -175,7 +175,7 @@ document.getElementById('kidTaskGroups').addEventListener('click', (e) => {
   }
 });
 document.getElementById('kidRoutineDefaults').addEventListener('click', () => {
-  if (kidEditTasks.length && !confirm('Alle Aufgaben und Tageszeiten durch die Vorschläge ersetzen?')) return;
+  if (kidEditTasks.length && !confirm(tk('kid.replaceAllTasksTimes'))) return;
   kidEditTasks = kidDefaultTasks();
   kidEditTimes = { ...KID_DEFAULT_TIMES };
   kidEmojiOpenFor = null;
@@ -186,10 +186,10 @@ document.getElementById('kidRoutineApply').addEventListener('click', () => {
   const status = document.getElementById('kidRoutineStatus');
   status.textContent = '';
   const mins = KID_TIME_KEYS.map(k => kidToMin(kidEditTimes[k]));
-  if (mins.some(v => v === null)) { status.textContent = 'Bitte alle Uhrzeiten ausfüllen.'; return; }
+  if (mins.some(v => v === null)) { status.textContent = tk('kid.pleaseFillAllTimes'); return; }
   for (let i = 1; i < mins.length; i++) {
     if (mins[i] <= mins[i - 1]) {
-      status.textContent = `„${KID_TIME_LABELS[KID_TIME_KEYS[i]]}“ muss später sein als „${KID_TIME_LABELS[KID_TIME_KEYS[i - 1]]}“.`;
+      status.textContent = `${tk('kid.mustLaterThan', { v: KID_TIME_LABELS[KID_TIME_KEYS[i]], v2: KID_TIME_LABELS[KID_TIME_KEYS[i - 1]] })}`;
       return;
     }
   }

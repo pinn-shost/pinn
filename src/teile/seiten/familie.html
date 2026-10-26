@@ -1,19 +1,19 @@
     <section id="familySection" class="hidden min-h-0 flex-col bg-white/40">
       <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
         <div class="flex items-center justify-between gap-3">
-          <h2 class="font-serif text-lg">Familie</h2>
+          <h2 data-tk="app.family" class="font-serif text-lg">Family</h2>
           <div class="flex items-center gap-2 shrink-0">
-            <button id="famPlacesBtn" type="button" class="hidden px-3 py-1.5 rounded-lg border border-ink/15 text-xs font-medium hover:bg-ink/5 transition whitespace-nowrap">📍 Orte</button>
-            <button id="famSetupBtn" type="button" class="hidden px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">⚙︎ Ortung</button>
+            <button data-tk="family.places" id="famPlacesBtn" type="button" class="hidden px-3 py-1.5 rounded-lg border border-ink/15 text-xs font-medium hover:bg-ink/5 transition whitespace-nowrap">📍 Places</button>
+            <button data-tk="family.location" id="famSetupBtn" type="button" class="hidden px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">⚙︎ Location</button>
           </div>
         </div>
         <!-- Switch: overview / school & daycare / pets / location / emergency -->
-        <div id="famTabs" class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs mt-3 w-full sm:w-fit overflow-x-auto" role="tablist" aria-label="Familienbereich">
-          <button type="button" data-famtab="uebersicht" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Übersicht</button>
-          <button type="button" data-famtab="schule" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Schule & Kita</button>
-          <button type="button" data-famtab="tiere" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Haustiere</button>
-          <button type="button" data-famtab="ortung" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Ortung</button>
-          <button type="button" data-famtab="notfall" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Notfall</button>
+        <div data-tk-attr="aria-label:family.familyArea" id="famTabs" class="flex items-center gap-1 bg-ink/5 rounded-full p-1 text-xs mt-3 w-full sm:w-fit overflow-x-auto" role="tablist" aria-label="Family area">
+          <button data-tk="nav.overview" type="button" data-famtab="uebersicht" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Overview</button>
+          <button data-tk="school.title" type="button" data-famtab="schule" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">School &amp; daycare</button>
+          <button data-tk="pet.pets4" type="button" data-famtab="tiere" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Pets</button>
+          <button data-tk="family.location3" type="button" data-famtab="ortung" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Location</button>
+          <button data-tk="family.emergency" type="button" data-famtab="notfall" class="fam-tab-btn flex-1 sm:flex-none px-2.5 sm:px-4 py-1.5 rounded-full transition" role="tab">Emergency</button>
         </div>
       </div>
       <div id="famScroll" class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">

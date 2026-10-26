@@ -111,12 +111,12 @@ function ofsState(m) {
 }
 function ofsSubLine(st) {
   if (st.sos) return { cls: 'sos', t: '🆘 SOS' };
-  if (st.soon) return { cls: 'soon', t: '🏠 gleich da' };
-  if (st.hw) return { cls: '', t: '🚶 ' + (st.hw.entfernung != null ? 'noch ' + hwKm(st.hw.entfernung) : 'Heimweg') };
-  if (st.bday && st.bday.today) return { cls: 'bday', t: '🎉 Geburtstag' };
+  if (st.soon) return { cls: 'soon', t: '🏠 ' + tk('famTile.almostThere') };
+  if (st.hw) return { cls: '', t: '🚶 ' + (st.hw.entfernung != null ? (tk('famTile.left') + ' ') + hwKm(st.hw.entfernung) : tk('famTile.wayHome')) };
+  if (st.bday && st.bday.today) return { cls: 'bday', t: tk('famTile.birthday') };
   if (st.live) return { cls: 'live', t: st.place ? st.place.name : 'unterwegs' };
-  if (st.bday && st.bday.diff === 1) return { cls: '', t: '🎁 morgen' };
-  if (st.bday && st.bday.diff <= 7) return { cls: '', t: '🎁 in ' + st.bday.diff + ' Tagen' };
+  if (st.bday && st.bday.diff === 1) return { cls: '', t: tk('famTile.tomorrow') };
+  if (st.bday && st.bday.diff <= 7) return { cls: '', t: '🎁 in ' + st.bday.diff + (' ' + tk('pet.days')) };
   if (st.kid && st.kid.total) return { cls: '', t: st.kid.done + '/' + st.kid.total + ' ✓' };
   return null;
 }
@@ -139,13 +139,13 @@ function renderFamilyTile() {
     else if (st.stars) { badge = '⭐' + st.stars.stand; badgeCls = ' stars'; }
     else if (kid) badge = st.kid && st.kid.total && st.kid.done >= st.kid.total ? '✅' : '⭐';
     let school = '';
-    if (st.school && st.school.urgentLetters.length) school = `<span class="ov-fam-school urgent" title="Elternbrief mit Frist">✉️</span>`;
-    else if (st.school && st.school.hw.length) school = `<span class="ov-fam-school${st.school.lateHw.length ? ' urgent' : ''}" title="Offene Hausaufgaben">📚${st.school.hw.length}</span>`;
-    else if (st.school && st.school.letters.length) school = `<span class="ov-fam-school" title="Offene Elternbriefe">✉️</span>`;
+    if (st.school && st.school.urgentLetters.length) school = `<span class="ov-fam-school urgent" title="${escapeHtml(tk('famTile.letterWithDeadline'))}">✉️</span>`;
+    else if (st.school && st.school.hw.length) school = `<span class="ov-fam-school${st.school.lateHw.length ? ' urgent' : ''}" title="${escapeHtml(tk('famTile.openHomework'))}">📚${st.school.hw.length}</span>`;
+    else if (st.school && st.school.letters.length) school = `<span class="ov-fam-school" title="${escapeHtml(tk('famTile.openLetters'))}">✉️</span>`;
     const ring = kid && st.kid && st.kid.total ? `<span class="ov-fam-ring" style="--p:${Math.round(st.kid.done / st.kid.total * 100)}"></span>` : '';
-    const title = st.sos ? 'SOS öffnen' : (kid ? 'Kinderseite öffnen' : 'Schnellaktionen');
+    const title = st.sos ? tk('famTile.openSos') : (kid ? tk('famTile.openKidsPage') : tk('famTile.quickActions'));
     return `<button type="button" class="${cls}" data-mid="${escapeHtml(m.id)}" title="${title}" aria-label="${escapeHtml(memberLabel(m))}">
-      <span class="ov-fam-ava-wrap">${ring}<span class="ov-fam-ava" style="border-color:${memberBorderColor(m)}">${memberAvatarInnerHTML(m)}</span>${st.live ? '<span class="ov-fam-live" title="Live-Standort"></span>' : ''}${st.place && st.place.emoji ? `<span class="ov-fam-place">${escapeHtml(st.place.emoji)}</span>` : ''}${badge ? `<span class="ov-fam-badge${badgeCls}">${badge}</span>` : ''}${school}</span>
+      <span class="ov-fam-ava-wrap">${ring}<span class="ov-fam-ava" style="border-color:${memberBorderColor(m)}">${memberAvatarInnerHTML(m)}</span>${st.live ? ('<span class="ov-fam-live" title="' + escapeHtml(tk('family.liveLocation')) + '"></span>') : ''}${st.place && st.place.emoji ? `<span class="ov-fam-place">${escapeHtml(st.place.emoji)}</span>` : ''}${badge ? `<span class="ov-fam-badge${badgeCls}">${badge}</span>` : ''}${school}</span>
       <span class="ov-fam-name">${escapeHtml(memberLabel(m))}</span>${anySub ? `<span class="ov-fam-sub${sub && sub.cls ? ' ' + sub.cls : ''}">${sub ? escapeHtml(sub.t) : ''}</span>` : ''}
     </button>`;
   }).join('')}${ptTileHtml(anySub)}</div>`;
@@ -250,7 +250,7 @@ function ofsSheetHtml(m) {
   const isMe = m.id === famMyMemberId();
   const kid = isKidPageEnabled(m);
   const age = famAge(p.birth);
-  const sub = [m.role && memberLabel(m) !== m.role ? m.role : '', age != null ? age + (age === 1 ? ' Jahr' : ' Jahre') : '', pet && p.species ? p.species : ''].filter(Boolean).join(' · ');
+  const sub = [m.role && memberLabel(m) !== m.role ? m.role : '', age != null ? tk('family.ageYears', { n: age }) : '', pet && p.species ? p.species : ''].filter(Boolean).join(' · ');
   const phone = String(p.phone || '').trim();
   const out = [];
 
@@ -268,34 +268,34 @@ function ofsSheetHtml(m) {
     out.push(`<div class="ofs-bday">
       <span class="ofs-bday-ic">🎂</span>
       <div class="min-w-0 flex-1">
-        <div class="text-sm font-semibold">${isMe ? 'Alles Gute zum Geburtstag!' : 'Hat heute Geburtstag!'}</div>
-        ${st.bday.age ? `<div class="text-xs text-ink/60">${isMe ? 'Heute wirst du ' + st.bday.age : 'wird ' + st.bday.age}</div>` : ''}
+        <div class="text-sm font-semibold">${isMe ? tk('famTile.happyBirthday') : tk('famTile.birthdayToday')}</div>
+        ${st.bday.age ? `<div class="text-xs text-ink/60">${isMe ? tk('famTile.youTurnToday', { n: st.bday.age }) : tk('famTile.turns', { n: st.bday.age })}</div>` : ''}
       </div>
       ${isMe ? '<button type="button" class="fz-mini-btn" data-ofs="replay">🎉</button>' : (canNote ? '<button type="button" class="fz-mini-btn primary" data-ofs="gratulieren">Gratulieren</button>' : '')}
     </div>`);
   } else if (st.bday && st.bday.diff <= 14) {
-    out.push(`<div class="text-xs text-ink/55 -mt-1">🎁 ${st.bday.diff === 1 ? 'Geburtstag morgen' : 'Geburtstag in ' + st.bday.diff + ' Tagen'}${st.bday.age ? ' · ' + 'wird ' + st.bday.age : ''}</div>`);
+    out.push(`<div class="text-xs text-ink/55 -mt-1">🎁 ${st.bday.diff === 1 ? tk('famTile.birthdayTomorrow') : tk('famTile.birthdayInDays', { n: st.bday.diff })}${st.bday.age ? ' · ' + tk('famTile.turns', { n: st.bday.age }) : ''}</div>`);
   }
 
   // SOS / way home / location
   if (st.sos) {
-    out.push(`<button type="button" class="fz-note-box urgent w-full text-left" data-ofs="sos"><span>🆘</span><span class="text-sm font-medium">SOS aktiv – antippen</span></button>`);
+    out.push(`<button type="button" class="fz-note-box urgent w-full text-left" data-ofs="sos"><span>🆘</span><span class="text-sm font-medium">${tk('famTile.sosActiveTap')}</span></button>`);
   }
   if (famOrtungAllowed() && st.g) {
     const g = st.g;
     const pos = g.teilen ? g.position : null;
     let line;
-    if (!g.teilen) line = 'Standort wird nicht geteilt.';
-    else if (!pos) line = 'Noch kein Standort empfangen.';
+    if (!g.teilen) line = tk('family.locationNotShared');
+    else if (!pos) line = tk('family.noLocationReceivedYet');
     else {
       line = [st.place ? st.place.emoji + ' ' + st.place.name : (st.live ? 'unterwegs' : 'zuletzt'), famAgo(pos.zeit),
         pos.akku != null ? (st.low ? '🪫 ' : '🔋 ') + pos.akku + ' %' : ''].filter(Boolean).join(' · ');
     }
     out.push(`<div class="fam-card">
       <div class="text-sm">${st.live ? '<span class="fam-dot"></span><span class="text-red-600 font-medium">live</span> · ' : ''}${escapeHtml(line)}</div>
-      ${st.soon ? `<div class="text-xs mt-1" style="color:#2E9C7A;font-weight:600">🏠 <span>gleich zu Hause</span> · ${escapeHtml('ca. ' + st.soon.eta + ' Min.')}</div>`
-        : (st.hw ? `<div class="text-xs text-ink/60 mt-1">🚶 unterwegs nach Hause${st.hw.entfernung != null ? ' · ' + escapeHtml('noch ' + hwKm(st.hw.entfernung)) : ''}</div>` : '')}
-      ${st.low ? '<div class="text-xs text-red-600 mt-1">🪫 Akku fast leer</div>' : ''}
+      ${st.soon ? `<div class="text-xs mt-1" style="color:#2E9C7A;font-weight:600">🏠 <span>${tk('famTile.almostHome')}</span> · ${escapeHtml(tk('famTile.approxMin', { n: st.soon.eta }))}</div>`
+        : (st.hw ? `<div class="text-xs text-ink/60 mt-1">🚶 ${tk('famTile.onWayHome')}${st.hw.entfernung != null ? ' · ' + escapeHtml((tk('famTile.left') + ' ') + hwKm(st.hw.entfernung)) : ''}</div>` : '')}
+      ${st.low ? '<div class="text-xs text-red-600 mt-1">🪫 ' + tk('famTile.batteryLow') + '</div>' : ''}
     </div>`);
   }
 
@@ -306,10 +306,10 @@ function ofsSheetHtml(m) {
     out.push(`<div class="fam-card flex items-center gap-3">
       <span class="text-2xl leading-none">${a ? (a.lat != null ? '📍' : '💬') : '⏳'}</span>
       <div class="min-w-0 flex-1">
-        <div class="text-sm font-medium truncate">${a ? (a.lat != null ? '<span>Standort geschickt</span>' : escapeHtml(wbAnswerText(a.text))) : '<span>Gefragt: Wo bist du?</span>'}</div>
-        <div class="text-[11px] text-ink/50">${escapeHtml(a ? 'Antwort ' + famAgo(a.zeit) : 'Noch keine Antwort · ' + famAgo(wb.zeit))}</div>
+        <div class="text-sm font-medium truncate">${a ? (a.lat != null ? '<span>' + tk('famTile.locationSent') + '</span>' : escapeHtml(wbAnswerText(a.text))) : '<span>' + tk('famTile.askedWhere') + '</span>'}</div>
+        <div class="text-[11px] text-ink/50">${escapeHtml(a ? tk('famTile.answerAgo', { ago: famAgo(a.zeit) }) : tk('famTile.noAnswerYet', { ago: famAgo(wb.zeit) }))}</div>
       </div>
-      ${a ? `<button type="button" class="fz-mini-btn${a.lat != null ? ' primary' : ''}" data-ofs="wbview" data-id="${famAttr(wb.id)}">Ansehen</button>` : ''}
+      ${a ? `<button type="button" class="fz-mini-btn${a.lat != null ? ' primary' : ''}" data-ofs="wbview" data-id="${famAttr(wb.id)}">${tk('common.view')}</button>` : ''}
     </div>`);
   }
 
@@ -318,10 +318,10 @@ function ofsSheetHtml(m) {
     out.push(`<div class="fam-card flex items-center gap-3">
       <span class="ofs-stars">⭐ ${st.stars.stand}</span>
       <div class="min-w-0 flex-1">
-        <div class="text-sm font-medium">${st.stars.stand === 1 ? 'Stern gesammelt' : 'Sterne gesammelt'}</div>
-        <div class="text-[11px] text-ink/50">${escapeHtml('heute +' + st.stars.heute)}${st.stars.offen ? ' · ' + escapeHtml(st.stars.offen === 1 ? '1 Wunsch wartet auf Freigabe' : st.stars.offen + ' Wünsche warten auf Freigabe') : ''}</div>
+        <div class="text-sm font-medium">${tk('famTile.starsCollected', { n: st.stars.stand })}</div>
+        <div class="text-[11px] text-ink/50">${escapeHtml(tk('famTile.today') + st.stars.heute)}${st.stars.offen ? ' · ' + escapeHtml(tk('famTile.wishesWaiting', { n: st.stars.offen })) : ''}</div>
       </div>
-      ${st.stars.offen ? '<button type="button" class="fz-mini-btn primary" data-ofs="kid">Ansehen</button>' : ''}
+      ${st.stars.offen ? ('<button type="button" class="fz-mini-btn primary" data-ofs="kid">' + tk('common.view') + '</button>') : ''}
     </div>`);
   }
 
@@ -331,24 +331,24 @@ function ofsSheetHtml(m) {
     const rows = [];
     st.school.letters.slice(0, 3).forEach(l => {
       const late = skIso(l.deadline) && l.deadline <= addDaysToDateStr(today, 2);
-      rows.push(`<button type="button" class="ofs-row" data-ofs="letter" data-id="${famAttr(l.id)}"><span class="ofs-chk">✉️</span><span class="min-w-0 flex-1 truncate text-sm">${escapeHtml(l.title || 'Elternbrief')}</span>${skIso(l.deadline) ? `<span class="ofs-due${late ? ' late' : ''}">${escapeHtml(ofsDueLabel(l.deadline))}</span>` : ''}</button>`);
+      rows.push(`<button type="button" class="ofs-row" data-ofs="letter" data-id="${famAttr(l.id)}"><span class="ofs-chk">✉️</span><span class="min-w-0 flex-1 truncate text-sm">${escapeHtml(l.title || tk('school.parentLetter'))}</span>${skIso(l.deadline) ? `<span class="ofs-due${late ? ' late' : ''}">${escapeHtml(ofsDueLabel(l.deadline))}</span>` : ''}</button>`);
     });
     st.school.hw.slice(0, 4).forEach(h => {
       const late = skIso(h.due) && h.due <= addDaysToDateStr(today, 1);
-      rows.push(`<div class="ofs-row">${skCanTick() ? `<button type="button" class="ofs-chk" data-ofs="hwtoggle" data-id="${famAttr(h.id)}" aria-label="Erledigt"></button>` : '<span class="ofs-chk">📚</span>'}<button type="button" class="min-w-0 flex-1 truncate text-sm text-left" data-ofs="school">${escapeHtml([h.subject, h.text].filter(Boolean).join(': ') || 'Hausaufgabe')}</button>${skIso(h.due) ? `<span class="ofs-due${late ? ' late' : ''}">${escapeHtml(ofsDueLabel(h.due))}</span>` : ''}</div>`);
+      rows.push(`<div class="ofs-row">${skCanTick() ? `<button type="button" class="ofs-chk" data-ofs="hwtoggle" data-id="${famAttr(h.id)}" aria-label="${escapeHtml(tk('school.done2'))}"></button>` : '<span class="ofs-chk">📚</span>'}<button type="button" class="min-w-0 flex-1 truncate text-sm text-left" data-ofs="school">${escapeHtml([h.subject, h.text].filter(Boolean).join(': ') || tk('famTile.homework'))}</button>${skIso(h.due) ? `<span class="ofs-due${late ? ' late' : ''}">${escapeHtml(ofsDueLabel(h.due))}</span>` : ''}</div>`);
     });
     const more = Math.max(0, st.school.letters.length - 3) + Math.max(0, st.school.hw.length - 4);
     out.push(`<div class="fam-card">
-      <div class="flex items-center justify-between gap-2 mb-1"><div class="fz-h" style="margin-bottom:0">🎒 Schule & Kita</div><button type="button" class="fz-mini-btn" data-ofs="school">Öffnen ›</button></div>
+      <div class="flex items-center justify-between gap-2 mb-1"><div class="fz-h" style="margin-bottom:0">${tk('famTile.schoolDaycare')}</div><button type="button" class="fz-mini-btn" data-ofs="school">${tk('shop.open')}</button></div>
       ${rows.join('')}
-      ${more ? `<p class="text-[11px] text-ink/45 mt-1">+ ${more} weitere</p>` : ''}
+      ${more ? `<p class="text-[11px] text-ink/45 mt-1">${tk('famTile.moreN', { n: more })}</p>` : ''}
     </div>`);
   }
 
   // Kids' tasks
   if (kid && st.kid && st.kid.total) {
     out.push(`<div class="fam-card">
-      <div class="flex items-center justify-between gap-2 text-sm"><span>⭐ Kinder-Aufgaben</span><span class="text-xs text-ink/55">${st.kid.done} von ${st.kid.total} erledigt</span></div>
+      <div class="flex items-center justify-between gap-2 text-sm"><span>⭐ ${tk('famTile.kidTasks')}</span><span class="text-xs text-ink/55">${tk('famTile.doneOf', { done: st.kid.done, total: st.kid.total })}</span></div>
       <div class="ofs-bar"><i style="width:${Math.round(st.kid.done / st.kid.total * 100)}%"></i></div>
     </div>`);
   }
@@ -361,31 +361,31 @@ function ofsSheetHtml(m) {
     today.tasks.slice(0, 4).forEach(t => rows.push(`<button type="button" class="ofs-row" data-ofs="aufgabe" data-id="${famAttr(t.id)}"><span class="ofs-time">☐</span><span class="min-w-0 flex-1 truncate text-sm">${escapeHtml(t.title)}</span></button>`));
     const more = Math.max(0, today.evs.length - 4) + Math.max(0, today.tasks.length - 4);
     out.push(`<div class="fam-card">
-      <div class="fz-h">📅 Heute</div>
-      ${rows.length ? rows.join('') : '<p class="text-sm text-ink/45">Keine Termine und Aufgaben für heute.</p>'}
-      ${more ? `<p class="text-[11px] text-ink/45 mt-1">+ ${more} weitere</p>` : ''}
+      <div class="fz-h">${tk('famTile.today2')}</div>
+      ${rows.length ? rows.join('') : '<p class="text-sm text-ink/45">' + tk('famTile.nothingToday') + '</p>'}
+      ${more ? `<p class="text-[11px] text-ink/45 mt-1">${tk('famTile.moreN', { n: more })}</p>` : ''}
     </div>`);
   }
 
   // Actions
   const acts = [];
   const act = (key, ic, label, extra) => acts.push(`<button type="button" class="fz-act-btn" data-ofs="${key}"${extra || ''}><span class="fz-ti">${ic}</span><span>${label}</span></button>`);
-  if (kid) act('kid', '⭐', 'Kinderseite');
+  if (kid) act('kid', '⭐', tk('famTile.kidsPage'));
   if (phone && !isMe) {
-    acts.push(`<a class="fz-act-btn" href="${famAttr(famTel(phone))}"><span class="fz-ti">📞</span><span>Anrufen</span></a>`);
-    acts.push(`<a class="fz-act-btn" href="${famAttr('sms:' + phone.replace(/[^\d+]/g, ''))}"><span class="fz-ti">💬</span><span>Nachricht</span></a>`);
+    acts.push(`<a class="fz-act-btn" href="${famAttr(famTel(phone))}"><span class="fz-ti">📞</span><span>${tk('family.callBtn')}</span></a>`);
+    acts.push(`<a class="fz-act-btn" href="${famAttr('sms:' + phone.replace(/[^\d+]/g, ''))}"><span class="fz-ti">💬</span><span>${tk('famTile.message')}</span></a>`);
   }
-  if (st.g && st.g.teilen && st.g.position && isViewAllowed('familie')) act('karte', '🗺', 'Karte');
-  if (wbCanAsk(m, st)) act('wobistdu', '📍', 'Wo bist du?');
-  if (st.hw) act('heimweg', '🚶', 'Heimweg');
-  if (!pet && ofsCanAdd() && isViewAllowed('aufgaben')) act('task', '✅', 'Aufgabe');
+  if (st.g && st.g.teilen && st.g.position && isViewAllowed('familie')) act('karte', '🗺', tk('family.map'));
+  if (wbCanAsk(m, st)) act('wobistdu', '📍', tk('wb.whereAreYou'));
+  if (st.hw) act('heimweg', '🚶', tk('famTile.wayHome'));
+  if (!pet && ofsCanAdd() && isViewAllowed('aufgaben')) act('task', '✅', tk('search.type.task'));
   if (!pet && ofsCanAdd() && isViewAllowed('pinnwand')) {
-    act('zettel', '📝', 'Zettel');
-    if (!isMe) act('danke', '💛', 'Danke');
+    act('zettel', '📝', tk('search.note.note'));
+    if (!isMe) act('danke', '💛', tk('famTile.thanks'));
   }
   if (isViewAllowed('familie')) {
-    act('profil', '👤', 'Profil');
-    act('pass', '🩺', 'Notfallpass');
+    act('profil', '👤', tk('famTile.profile'));
+    act('pass', '🩺', tk('family.emergencyCard2'));
   }
   if (acts.length) out.push(`<div class="ofs-acts">${acts.join('')}</div>`);
 
@@ -395,12 +395,12 @@ function ofsSheetHtml(m) {
     if (g) {
       const unterwegs = famUnterwegs(g);
       out.push(`<div class="fam-card">
-        <label class="fz-check" style="margin-bottom:8px"><input type="checkbox" data-ofs-share="${famAttr(g.id)}"${g.teilen ? ' checked' : ''} /><span>Standort mit der Familie teilen</span></label>
-        <button type="button" class="fz-mini-btn${unterwegs ? ' primary' : ''}" data-ofs="unterwegs" data-an="${unterwegs ? '0' : '1'}">${unterwegs ? '🏁 Heimweg beenden' : '🚶 Ich bin unterwegs nach Hause'}</button>
+        <label class="fz-check" style="margin-bottom:8px"><input type="checkbox" data-ofs-share="${famAttr(g.id)}"${g.teilen ? ' checked' : ''} /><span>${tk('famTile.shareLocationFamily')}</span></label>
+        <button type="button" class="fz-mini-btn${unterwegs ? ' primary' : ''}" data-ofs="unterwegs" data-an="${unterwegs ? '0' : '1'}">${unterwegs ? tk('family.endWayHome') : tk('family.imMyWayHome')}</button>
       </div>`);
     }
   }
-  if (kid) out.push('<p class="text-[11px] text-ink/40 text-center">Tipp: In der Kachel öffnet ein kurzer Tipp aufs Kind die Kinderseite, gedrückt halten diese Schnellaktionen.</p>');
+  if (kid) out.push('<p class="text-[11px] text-ink/40 text-center">' + tk('famTile.tapHoldTip') + '</p>');
   return `<div class="ofs" data-ofs-root="${famAttr(m.id)}">${out.join('')}</div>`;
 }
 function ofsOpen(memberId) {
@@ -468,8 +468,7 @@ function ofsWire(body) {
     }
     else if (k === 'zettel' || k === 'danke' || k === 'gratulieren') {
       ofsClose();
-      const t = (s) => (window.PINN_I18N && PINN_I18N.t) ? PINN_I18N.t(s) : s;
-      const preset = k === 'gratulieren' ? t('Alles Gute zum Geburtstag!') + ' 🎂🎉' : '';
+      const preset = k === 'gratulieren' ? tk('famTile.happyBirthday') + ' 🎂🎉' : '';
       openPinboardEditor(null, k === 'danke' ? 'kudos' : 'note', preset);
       if (pwDraft) {
         pwDraft.to = [id];
@@ -500,11 +499,11 @@ function ofsWire(body) {
 
 function ofsDueLabel(iso) {
   const today = isoDate(new Date());
-  if (iso < today) return 'überfällig';
-  if (iso === today) return 'heute';
-  if (iso === addDaysToDateStr(today, 1)) return 'morgen';
+  if (iso < today) return tk('school.overdue');
+  if (iso === today) return tk('contract.today');
+  if (iso === addDaysToDateStr(today, 1)) return tk('contract.tomorrow');
   const d = new Date(iso + 'T12:00:00');
-  return isNaN(d) ? iso : d.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'numeric' });
+  return isNaN(d) ? iso : d.toLocaleDateString(sysLocale(), { weekday: 'short', day: 'numeric', month: 'numeric' });
 }
 
 /* ---------- Way home: „gleich zu Hause“ ----------
@@ -517,7 +516,7 @@ function hwSoonCheck() {
     const s = ofsSoon(h);
     if (!s) return;
     hwSoonSeen.add(h.id);
-    try { finShowToast('🏠 ' + hwName(h) + ' ist gleich zu Hause (ca. ' + s.eta + ' Min.)'); } catch (e) { /* ignore */ }
+    try { finShowToast('🏠 ' + tk('famTile.isAlmostHome', { name: hwName(h), n: s.eta })); } catch (e) { /* ignore */ }
   });
 }
 

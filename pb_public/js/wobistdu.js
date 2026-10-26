@@ -13,8 +13,8 @@
    map and address. Open questions to me also open the next time pinn. is opened (≤ 30 min.).
    Server: pb_hooks/wobistdu.pb.js + pinn-wobistdu.js. */
 var WB_CODES = [
-  ['zuhause', '🏠', 'Bin zu Hause'], ['unterwegs', '🚶', 'Bin unterwegs'], ['gleich', '⏱️', 'Bin gleich da'],
-  ['gut', '👍', 'Alles gut'], ['anrufen', '📞', 'Ruf mich an'],
+  ['zuhause', '🏠', 'wb.atHome'], ['unterwegs', '🚶', 'wb.onTheWay'], ['gleich', '⏱️', 'wb.almostThere'],
+  ['gut', '👍', 'wb.allGood'], ['anrufen', '📞', 'wb.callMe'],
 ];
 var LS_WB_DONE = 'pinn.wobistduErledigt';
 var wbItems = [];
@@ -23,7 +23,7 @@ var wbNoServer = false;
 var wbBusy = false;
 function wbAnswerText(code) {
   const c = WB_CODES.find(x => x[0] === code);
-  return c ? c[1] + ' ' + c[2] : '„' + String(code || '') + '“';
+  return c ? c[1] + ' ' + tk(c[2]) : '„' + String(code || '') + '“';
 }
 function wbHasProfile(memberId) {
   if (!Array.isArray(familyProfiles) || !familyProfiles.length) return true; // unknown: the server checks
@@ -61,10 +61,10 @@ async function wbAsk(memberId, btn) {
   if (btn) btn.disabled = true;
   try {
     const r = await postJson('/api/pinn/wobistdu', { an: memberId, name: me ? (me.name || memberLabel(me)) : '', anName: m.name || memberLabel(m) });
-    finShowToast(r.schon ? 'Schon gefragt – warte kurz auf die Antwort.' : 'Gefragt – ' + (m.name || memberLabel(m)) + ' bekommt eine Nachricht.');
+    finShowToast(r.schon ? tk('wb.alreadyAsked') : tk('wb.askedGetsMessage', { name: m.name || memberLabel(m) }));
     await wbLoad();
   } catch (e) {
-    finShowToast(e.message || 'Keine Verbindung.', true);
+    finShowToast(e.message || tk('fund.noConnection'), true);
   } finally {
     if (btn) btn.disabled = false;
   }
@@ -90,30 +90,30 @@ async function wbCheckIncoming() {
 function wbName(x, which) {
   const id = which === 'von' ? x.vonMitglied : x.an;
   const m = id ? memberById(id) : null;
-  return m ? (m.name || memberLabel(m)) : (which === 'von' ? x.vonName : x.anName) || 'Jemand';
+  return m ? (m.name || memberLabel(m)) : (which === 'von' ? x.vonName : x.anName) || tk('lists.someone');
 }
 async function wbOpen(id) {
   let x = wbItems.find(i => i.id === id);
   if (!x || Date.now() - wbLoadedAt > 5000) { await wbLoad(); x = wbItems.find(i => i.id === id); }
-  if (!x) { finShowToast('Diese Frage ist nicht mehr da.', true); return; }
+  if (!x) { finShowToast(tk('wb.questionGone'), true); return; }
   ofsOpenId = '';
   if (x.anMich) wbRenderAsk(x); else wbRenderAnswer(x);
 }
 // View for the person asked
 function wbRenderAsk(x) {
-  const name = wbName(x, 'von');
+  const name = wbName(x, tk('family.of'));
   const vm = x.vonMitglied ? memberById(x.vonMitglied) : null;
   const html = `<div class="ofs">
     <div class="ofs-head">
       ${vm ? `<span class="fam-ava big" style="--fam:${famAttr(famColor(vm))}">${famAvatarInner(vm)}</span>` : '<span class="text-4xl">📍</span>'}
-      <div class="min-w-0"><div class="font-serif text-xl">${escapeHtml(name)}</div><div class="text-sm text-ink/60">fragt: Wo bist du?</div><div class="text-[11px] text-ink/40">${escapeHtml(famAgo(x.zeit))}</div></div>
+      <div class="min-w-0"><div class="font-serif text-xl">${escapeHtml(name)}</div><div class="text-sm text-ink/60">${tk('wb.asksWhere')}</div><div class="text-[11px] text-ink/40">${escapeHtml(famAgo(x.zeit))}</div></div>
     </div>
-    ${x.antwort ? `<p class="text-xs text-ink/50">${escapeHtml('Schon geantwortet: ' + (x.antwort.lat != null ? 'Standort' : wbAnswerText(x.antwort.text)))}</p>` : ''}
-    <button type="button" class="wb-big" data-wb="ort">📍 <span>Standort senden</span></button>
-    <p class="text-[11px] text-ink/45 -mt-1">Einmalig dein aktueller Standort – es wird nichts dauerhaft geteilt.</p>
+    ${x.antwort ? `<p class="text-xs text-ink/50">${escapeHtml(tk('wb.alreadyAnswered', { answer: x.antwort.lat != null ? tk('loc.location') : wbAnswerText(x.antwort.text) }))}</p>` : ''}
+    <button type="button" class="wb-big" data-wb="ort">📍 <span>${tk('wb.sendLocation')}</span></button>
+    <p class="text-[11px] text-ink/45 -mt-1">${tk('wb.onceNothingPermanent')}</p>
     <p id="wbErr" class="text-xs text-red-600 hidden"></p>
-    <div class="text-xs text-ink/50">Oder kurz antworten:</div>
-    <div class="wb-quick">${WB_CODES.map(c => `<button type="button" data-wb="${c[0]}">${c[1]} <span>${escapeHtml(c[2])}</span></button>`).join('')}</div>
+    <div class="text-xs text-ink/50">${tk('wb.orQuickReply')}</div>
+    <div class="wb-quick">${WB_CODES.map(c => `<button type="button" data-wb="${c[0]}">${c[1]} <span>${escapeHtml(tk(c[2]))}</span></button>`).join('')}</div>
   </div>`;
   famOpenModal(html, body => {
     body.querySelectorAll('[data-wb]').forEach(b => b.addEventListener('click', () => wbReply(x, b.dataset.wb, b)));
@@ -134,11 +134,11 @@ async function wbReply(x, what, btn) {
   try {
     let payload;
     if (what === 'ort') {
-      if (!navigator.geolocation) throw new Error('Dieses Gerät kann keinen Standort bestimmen.');
+      if (!navigator.geolocation) throw new Error(tk('wb.noGeolocation'));
       wbErr('');
-      if (btn) btn.querySelector('span').textContent = 'Standort wird bestimmt …';
+      if (btn) btn.querySelector('span').textContent = tk('settings.home.locating');
       const pos = await new Promise((resolve, reject) => navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 20000, maximumAge: 30000 }))
-        .catch(err => { throw new Error(err && err.code === 1 ? 'Standort nicht erlaubt – bitte in den Einstellungen des Handys für pinn. bzw. den Browser freigeben.' : 'Standort konnte nicht bestimmt werden.'); });
+        .catch(err => { throw new Error(err && err.code === 1 ? tk('wb.locationNotAllowed') : tk('wb.locationFailed')); });
       payload = { id: x.id, lat: pos.coords.latitude, lon: pos.coords.longitude, genau: pos.coords.accuracy, name };
     } else {
       payload = { id: x.id, text: what, name };
@@ -146,11 +146,11 @@ async function wbReply(x, what, btn) {
     await postJson('/api/pinn/wobistdu/antwort', payload);
     wbMarkDone(x.id);
     famCloseModal();
-    finShowToast('Antwort geschickt ✓');
+    finShowToast(tk('wb.answerSent'));
     wbLoad();
   } catch (e) {
-    wbErr(e.message || 'Keine Verbindung.');
-    if (btn && what === 'ort') btn.querySelector('span').textContent = 'Standort senden';
+    wbErr(e.message || tk('fund.noConnection'));
+    if (btn && what === 'ort') btn.querySelector('span').textContent = tk('wb.sendLocation');
   } finally {
     wbBusy = false;
     if (btn) btn.disabled = false;
@@ -162,23 +162,23 @@ function wbRenderAnswer(x) {
   const m = memberById(x.an);
   const a = x.antwort;
   let main;
-  if (!a) main = `<div class="wb-bubble">⏳ <span>Noch keine Antwort</span></div><p class="text-[11px] text-ink/45 text-center">${escapeHtml('Gefragt ' + famAgo(x.zeit))}</p>`;
+  if (!a) main = `<div class="wb-bubble">⏳ <span>${tk('wb.noAnswerYet')}</span></div><p class="text-[11px] text-ink/45 text-center">${escapeHtml(tk('wb.askedAgo', { ago: famAgo(x.zeit) }))}</p>`;
   else if (a.lat == null) main = `<div class="wb-bubble">${escapeHtml(wbAnswerText(a.text))}</div><p class="text-[11px] text-ink/45 text-center">${escapeHtml(famAgo(a.zeit))}</p>`;
   else {
     const maps = isAppleMobile() ? `https://maps.apple.com/?q=${a.lat},${a.lon}` : (isAndroidDevice() ? `geo:${a.lat},${a.lon}?q=${a.lat},${a.lon}` : `https://www.openstreetmap.org/?mlat=${a.lat}&mlon=${a.lon}#map=17/${a.lat}/${a.lon}`);
     main = `<div id="wbMapHost" class="wb-map"></div>
-      <div class="text-sm"><span id="wbAddr" class="font-medium">Adresse wird gesucht …</span></div>
+      <div class="text-sm"><span id="wbAddr" class="font-medium">${tk('wb.searchingAddress')}</span></div>
       <div class="text-[11px] text-ink/50">${escapeHtml(famAgo(a.zeit) + (a.genau ? ' (± ' + a.genau + ' m)' : ''))}</div>
-      <a class="fz-mini-btn self-start" href="${famAttr(maps)}" target="_blank" rel="noopener">🧭 In Karten-App öffnen</a>`;
+      <a class="fz-mini-btn self-start" href="${famAttr(maps)}" target="_blank" rel="noopener">🧭 ${tk('wb.openInMaps')}</a>`;
   }
   const phone = String(((famPass(x.an) || {}).phone) || '').trim();
   const html = `<div class="ofs">
     <div class="ofs-head">
       ${m ? `<span class="fam-ava big" style="--fam:${famAttr(famColor(m))}">${famAvatarInner(m)}</span>` : '<span class="text-4xl">📍</span>'}
-      <div class="min-w-0"><div class="font-serif text-xl">${escapeHtml(name)}</div><div class="text-sm text-ink/60">${a ? 'hat geantwortet' : 'wurde gefragt: Wo bist du?'}</div></div>
+      <div class="min-w-0"><div class="font-serif text-xl">${escapeHtml(name)}</div><div class="text-sm text-ink/60">${a ? tk('wb.hasAnswered') : tk('wb.wasAsked')}</div></div>
     </div>
     ${main}
-    ${phone ? `<div class="flex gap-2"><a class="fz-act-btn" href="${famAttr(famTel(phone))}"><span class="fz-ti">📞</span><span>Anrufen</span></a><a class="fz-act-btn" href="${famAttr('sms:' + phone.replace(/[^\d+]/g, ''))}"><span class="fz-ti">💬</span><span>Nachricht</span></a></div>` : ''}
+    ${phone ? `<div class="flex gap-2"><a class="fz-act-btn" href="${famAttr(famTel(phone))}"><span class="fz-ti">📞</span><span>${tk('family.callBtn')}</span></a><a class="fz-act-btn" href="${famAttr('sms:' + phone.replace(/[^\d+]/g, ''))}"><span class="fz-ti">💬</span><span>${tk('famTile.message')}</span></a></div>` : ''}
   </div>`;
   famOpenModal(html, body => {
     if (!a || a.lat == null) return;

@@ -95,6 +95,16 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 et 🇰🇷 한국어**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.116.0
+
+**Clés de texte, partie 7 : famille, localisation et page enfant**
+
+- La page **Famille** (aperçu, fiches d’urgence, localisation avec *Ma position*, lieux et le guide pour *Traccar Client*, SOS et retour à la maison, école et crèche, animaux et météo des vacances), la **page enfant** avec étoiles et récompenses, la tuile *Membres de la famille*, *Où es-tu ?* et la fenêtre des membres prennent désormais leurs textes dans les fichiers de langue de `pb_public/i18n/` – dans les neuf langues et en colocation. Rien ne change à l’utilisation.
+- Nouvelles entrées dans ta langue : les suggestions de tâches pour enfants, les matières scolaires et la liste *Vacances avec …* pour les animaux sont créées dans la langue actuellement choisie.
+- Petites corrections : environ 150 textes restés jusqu’ici en allemand dans les autres langues sont traduits (p. ex. *Envoyer en continu*, le guide pour *Traccar Client*, le compte à rebours SOS) ; dates et heures suivent ta langue ; âge, minutes et jours au singulier ou au pluriel correct.
+- Prochaine étape : maison, véhicules et documents arrivent avec la 1.116.1.
+- Modifié : uniquement des fichiers de l’app (`index.html`, `js/familie.js`, `js/familienkachel.js`, `js/kinderseite.js`, `js/kinderroutine.js`, `js/sterne.js`, `js/wobistdu.js`, `js/mitglied.js`, `js/mitglieder.js`, `js/geburtstagsfeier.js`, `js/sprachen.js`, `js/versionslog.js`, tous les fichiers de langue dans `i18n/` et `lang/`) – rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou bouton de mise à jour).
+
 ## Nouveautés de la 1.115.0
 
 **Clés de texte, partie 6 : finances, caisses et contrats**
@@ -152,15 +162,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Pour les contributeurs : les textes du HTML sont insérés une seule fois, juste avant le démarrage des scripts de l’app – les scripts peuvent les modifier ensuite. `i18n-keys.js` conserve désormais les emojis et symboles au début ou à la fin d’un texte. Compte, appareils, sauvegardes et journal des erreurs suivent à la prochaine étape.
 - Modifié : uniquement des fichiers de l’app (`index.html`, `js/sprachen.js`, `js/anmeldemaske.js`, `js/anmeldung.js`, `js/hauptadminseite.js`, `js/profilauswahl.js`, `js/pineingabe.js`, `js/verbindung.js`, `js/zustand.js`, `js/ansichten.js`, `js/einstellungen.js`, `js/uebersichteinstellungen.js`, `js/versionslog.js`, tous les fichiers de langue dans `i18n/` et `lang/`) et `.github/` (CONTRIBUTING.md, `i18n-keys.js`) – rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou bouton de mise à jour).
 
-## Nouveautés de la 1.111.0
-
-**Traductions avec des clés de texte : les fondations**
-
-- L’étape 6 de la feuille de route commence : les textes sont retrouvés par une **clé** (p. ex. `settings.region.title`) au lieu de leur original allemand. Chaque langue a son propre fichier dans `pb_public/i18n/` – allemand compris, l’anglais sert de référence. La première partie à l’utiliser est **Réglages → Langue et région** ; tout le reste est traduit comme avant jusqu’à ce que son tour vienne. L’utilisation ne change pas.
-- **Le pluriel correct :** une table de règles commune (`js/textkern.js`, sur le serveur `pinn-textkern.js`) choisit la bonne forme de pluriel dans l’appli et dans les notifications push – aussi pour les langues à trois formes. Le **russe** est préparé, mais pas encore proposé.
-- Pour les contributeurs : `tk('key')` en JavaScript, `data-tk="key"` en HTML. `.github/scripts/i18n-keys.js` reprend les traductions existantes sous une clé sans les retaper, `check-keys.js` vérifie toutes les langues, les marqueurs et les formes de pluriel – voir [CONTRIBUTING.md](.github/CONTRIBUTING.md#texts).
-- Modifié : fichiers de l’appli (`index.html`, `js/sprachen.js`, `js/sprache.js`, `js/versionslog.js`, `js/textkern.js` (nouveau), tous les fichiers de langue dans `lang/` et `i18n/` (nouveau)), `pinn-setup.sh` et sur le serveur `pb_hooks/sw.pb.js` et `pinn-textkern.js` (nouveau), plus `.github/` (contrôles, workflow, CONTRIBUTING.md). Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
 ## Comment ça marche
 
 ```mermaid
@@ -187,7 +188,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.115.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.116.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
