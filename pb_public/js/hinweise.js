@@ -27,29 +27,6 @@
    ========================================================== */
 var LS_LP_DISMISS = 'pinn.ladenHinweisAus';
 var lpHere = [];
-const LP_T = {
-  de: { q: 'Gehst du einkaufen?', bei: 'Du bist bei {laden}', n1: '1 Artikel auf der Liste', n: '{n} Artikel auf der Liste', n1k: '1 Artikel', nk: '{n} Artikel',
-        mehr: '{n} Läden in deiner Nähe', alle: 'Zu den Einkaufslisten', x: 'Hinweis entfernen' },
-  en: { q: 'Going shopping?', bei: "You're at {laden}", n1: '1 item on the list', n: '{n} items on the list', n1k: '1 item', nk: '{n} items',
-        mehr: '{n} shops nearby', alle: 'Open the shopping lists', x: 'Dismiss' },
-  fr: { q: 'Tu fais les courses ?', bei: 'Tu es chez {laden}', n1: '1 article sur la liste', n: '{n} articles sur la liste', n1k: '1 article', nk: '{n} articles',
-        mehr: '{n} magasins à proximité', alle: 'Voir les listes de courses', x: 'Masquer' },
-  es: { q: '¿Vas a hacer la compra?', bei: 'Estás en {laden}', n1: '1 artículo en la lista', n: '{n} artículos en la lista', n1k: '1 artículo', nk: '{n} artículos',
-        mehr: '{n} tiendas cerca', alle: 'Ver las listas de la compra', x: 'Ocultar' },
-  it: { q: 'Vai a fare la spesa?', bei: 'Sei da {laden}', n1: '1 articolo nella lista', n: '{n} articoli nella lista', n1k: '1 articolo', nk: '{n} articoli',
-        mehr: '{n} negozi nelle vicinanze', alle: 'Apri le liste della spesa', x: 'Chiudi' },
-  pt: { q: 'Vai fazer compras?', bei: 'Você está em {laden}', n1: '1 item na lista', n: '{n} itens na lista', n1k: '1 item', nk: '{n} itens',
-        mehr: '{n} lojas por perto', alle: 'Ver as listas de compras', x: 'Ocultar' },
-  zh: { q: '要去购物吗？', bei: '你在 {laden}', n1: '清单上有 1 项', n: '清单上有 {n} 项', n1k: '1 项', nk: '{n} 项',
-        mehr: '附近有 {n} 家店铺', alle: '查看购物清单', x: '隐藏' },
-};
-function lpT(k, vars) {
-  const l = (window.PINN_I18N && PINN_I18N.current) || 'en';
-  const d = LP_T[l] || LP_T.en;
-  let s = d[k] != null ? d[k] : (LP_T.en[k] != null ? LP_T.en[k] : k);
-  if (vars) s = s.replace(/\{(\w+)\}/g, (m, n) => (vars[n] != null ? String(vars[n]) : ''));
-  return s;
-}
 function lpTake(body) {
   lpHere = Array.isArray(body && body.laeden) ? body.laeden.filter(x => x && x.laden) : [];
 }
@@ -92,13 +69,13 @@ function lpRenderBanner() {
   let tiles;
   if (items.length === 1) {
     const x = items[0];
-    tiles = tile(`data-lplist="${escapeHtml(x.laden)}"`, escapeHtml(lpT('bei', { laden: lpName(x) })), x.count === 1 ? lpT('n1') : lpT('n', { n: x.count }), '🛒');
+    tiles = tile(`data-lplist="${escapeHtml(x.laden)}"`, escapeHtml(tk('bell.shop.youreAt', { shop: lpName(x) })), tk('bell.shop.itemsOnList', { n: x.count }), '🛒');
   } else if (items.length === 2) {
-    tiles = items.map(x => tile(`data-lplist="${escapeHtml(x.laden)}"`, escapeHtml(lpName(x)), x.count === 1 ? lpT('n1k') : lpT('nk', { n: x.count }), '🛒')).join('');
+    tiles = items.map(x => tile(`data-lplist="${escapeHtml(x.laden)}"`, escapeHtml(lpName(x)), tk('bell.shop.items', { n: x.count }), '🛒')).join('');
   } else {
-    tiles = tile('data-lpall="1"', escapeHtml(lpT('mehr', { n: items.length })), lpT('alle') + ' · ' + items.map(lpName).join(', '), '🛍️');
+    tiles = tile('data-lpall="1"', escapeHtml(tk('bell.shop.nearby', { n: items.length })), tk('bell.shop.toLists') + ' · ' + items.map(lpName).join(', '), '🛍️');
   }
-  const html = `<div class="lp-head"><span class="lp-q">${escapeHtml(lpT('q'))}</span><button type="button" class="lp-x" data-lpx="1" aria-label="${escapeHtml(lpT('x'))}">×</button></div>
+  const html = `<div class="lp-head"><span class="lp-q">${escapeHtml(tk('bell.shop.goingShopping'))}</span><button type="button" class="lp-x" data-lpx="1" aria-label="${escapeHtml(tk('bell.shop.dismiss'))}">×</button></div>
     <div class="lp-tiles">${tiles}</div>`;
   b.dataset.keys = items.map(lpKey).join(',');
   const wasHidden = b.classList.contains('hidden');
@@ -166,7 +143,7 @@ function hwActive() { return hwList.filter(h => h.aktiv); }
 function hwDone() { return hwList.filter(h => !h.aktiv); }
 function hwIsMine(h) { const me = famMyMemberId(); return !!me && h.memberId === me; }
 function hwMember(h) { return memberById(h.memberId) || null; }
-function hwName(h) { const m = hwMember(h); return m ? memberLabel(m) : (h.name || 'Jemand'); }
+function hwName(h) { const m = hwMember(h); return m ? memberLabel(m) : (h.name || tk('lists.someone')); }
 function hwPhone(memberId) { return String((famPass(memberId) || {}).phone || '').trim(); }
 function hwKm(m) {
   if (m == null || !isFinite(m)) return '';
@@ -175,11 +152,15 @@ function hwKm(m) {
 }
 function hwDur(min) {
   const n = Math.max(1, Math.round(Number(min) || 0));
-  return n >= 60 ? Math.floor(n / 60) + ' Std. ' + (n % 60) + ' Min.' : n + ' Min.';
+  return n >= 60 ? tk('bell.durHM', { h: Math.floor(n / 60), m: n % 60 }) : tk('loc.durMin', { n });
 }
 function hwJoinNames(names) {
   if (names.length <= 1) return names[0] || '';
-  return names.slice(0, -1).join(', ') + ' und ' + names[names.length - 1];
+  return tk('bell.namesAnd', { a: names.slice(0, -1).join(', '), b: names[names.length - 1] });
+}
+// "… on the way home" for a list of names ("You" first if it is the own trip home)
+function hwOnWayTitle(names, mine) {
+  return mine ? tk('bell.hw.youAndOthersOnWay', { names: hwJoinNames(names) }) : tk('bell.hw.onWay', { n: names.length, names: hwJoinNames(names) });
 }
 function hwBannerKey(h) { return h.aktiv ? h.id : h.id + '|ende'; }
 
@@ -245,25 +226,25 @@ function hwRenderBanner() {
   let title, sub;
   if (active) {
     if (mine && !others.length) {
-      title = '<b>Du</b> bist unterwegs nach Hause';
-      sub = 'Deine Familie sieht deinen Standort · Kontakte & Notruf';
+      title = '<b>' + escapeHtml(tk('bell.hw.youOnWay')) + '</b>';
+      sub = tk('bell.hw.familySeesContacts');
     } else {
-      const names = (mine ? ['Du'] : []).concat(others.map(hwName));
-      title = `<b>${escapeHtml(hwJoinNames(names))}</b> ${mine ? 'seid' : (names.length > 1 ? 'sind' : 'ist')} unterwegs nach Hause`;
+      const names = (mine ? [tk('bell.you')] : []).concat(others.map(hwName));
+      title = ntK(mine ? 'bell.hw.youAndOthersOnWay' : 'bell.hw.onWay', { n: names.length, names: `<b>${escapeHtml(hwJoinNames(names))}</b>` });
       if (others.length === 1) {
         const h = others[0];
         const parts = [];
-        if (h.entfernung != null) parts.push('noch ' + hwKm(h.entfernung) + ' bis Zuhause');
+        if (h.entfernung != null) parts.push(tk('bell.hw.leftToHome', { dist: hwKm(h.entfernung) }));
         if (h.aktuell && h.aktuell.zeit) parts.push(famAgo(h.aktuell.zeit));
-        else parts.push('seit ' + sosClock(h.seit));
+        else parts.push(tk('bell.hw.since', { time: sosClock(h.seit) }));
         sub = parts.join(' · ');
       } else {
-        sub = 'Antippen für Karte und Anruf';
+        sub = tk('bell.hw.tapMapCall');
       }
     }
   } else {
-    title = `🏠 <b>${escapeHtml(hwJoinNames(others.map(hwName)))}</b> ${others.length > 1 ? 'sind' : 'ist'} zu Hause angekommen`;
-    sub = others.length === 1 ? sosClock(others[0].ende) + ' · ' + hwDur(others[0].minuten) + ' unterwegs' : 'Antippen für Details';
+    title = '🏠 ' + ntK('bell.hw.arrived', { n: others.length, names: `<b>${escapeHtml(hwJoinNames(others.map(hwName)))}</b>` });
+    sub = others.length === 1 ? sosClock(others[0].ende) + ' · ' + tk('bell.hw.durOnWay', { dur: hwDur(others[0].minuten) }) : tk('bell.hw.tapDetails');
   }
   const avas = items.slice(0, 3).map(h => {
     const m = hwMember(h);
@@ -276,7 +257,7 @@ function hwRenderBanner() {
   b.innerHTML = `<span class="hw-avas">${avas}</span>
     <span class="hw-txt"><span class="hw-t">${title}</span><span class="hw-s">${active ? '<span class="hw-walk" aria-hidden="true"><i></i><i></i><i></i></span>' : ''}${escapeHtml(sub)}</span></span>
     <span class="hw-chev" aria-hidden="true">›</span>
-    <button type="button" class="hw-x" data-hwbanner="x" aria-label="Hinweis entfernen">×</button>`;
+    <button type="button" class="hw-x" data-hwbanner="x" aria-label="${escapeHtml(tk('bell.removeNotice'))}">×</button>`;
   b.classList.remove('hidden');
   hwLayout();
 }
@@ -331,7 +312,7 @@ function hwOpen(id) {
   sosSchedule();
 }
 function hwClose() {
-  if (hwSosUntil) { hwSosStop(); finShowToast('SOS abgebrochen'); }
+  if (hwSosUntil) { hwSosStop(); finShowToast(tk('sos.cancelled')); }
   hwOpenFlag = false;
   hwRenderedKey = '';
   if (hwMap) { hwMap.destroy(); hwMap = null; }
@@ -368,12 +349,12 @@ function hwSkeleton() {
   const lead = others[0] || mine || hwDone()[0] || null;
   const m = lead ? hwMember(lead) : null;
   let kicker, title;
-  if (!act.length) { kicker = '🏠 Heimweg'; title = 'Alle sind angekommen'; }
-  else if (mine && !others.length) { kicker = '🚶 Dein Heimweg'; title = 'Du bist unterwegs nach Hause'; }
+  if (!act.length) { kicker = '🏠 ' + tk('famTile.wayHome'); title = tk('bell.hw.allArrived'); }
+  else if (mine && !others.length) { kicker = '🚶 ' + tk('bell.hw.yourWayHome'); title = tk('bell.hw.youOnWay'); }
   else {
-    const names = (mine ? ['Du'] : []).concat(others.map(hwName));
-    kicker = '🚶 Heimweg';
-    title = hwJoinNames(names) + ' ' + (mine ? 'seid' : (names.length > 1 ? 'sind' : 'ist')) + ' unterwegs nach Hause';
+    const names = (mine ? [tk('bell.you')] : []).concat(others.map(hwName));
+    kicker = '🚶 ' + tk('famTile.wayHome');
+    title = hwOnWayTitle(names, !!mine);
   }
   const ava = `<span class="fam-ava" style="--fam:#fff">${m ? famAvatarInner(m) : '<span class="fam-ava-in">🚶</span>'}</span>`;
   const canFam = isViewAllowed('familie');
@@ -393,8 +374,8 @@ function hwSkeleton() {
       <div id="hwDoneList"></div>
     </div>
     <div class="sos-foot">
-      ${canFam ? `<button type="button" class="sos-btn-close" data-hwact="familie">👨‍👩‍👧 Familie</button>` : ''}
-      <button type="button" class="sos-btn-close" data-hwact="close">Schließen</button>
+      ${canFam ? `<button type="button" class="sos-btn-close" data-hwact="familie">${escapeHtml(tk('mainAdmin.family'))}</button>` : ''}
+      <button type="button" class="sos-btn-close" data-hwact="close">${escapeHtml(tk('common.close'))}</button>
     </div>`;
 }
 // Fill the contents with the latest data (without rebuilding the map)
@@ -404,10 +385,10 @@ function hwUpdate() {
   const others = act.filter(h => !hwIsMine(h));
   const sub = document.getElementById('hwSub');
   if (sub) {
-    if (others.length === 1) sub.textContent = 'seit ' + sosClock(others[0].seit) + (others[0].entfernung != null ? ' · noch ' + hwKm(others[0].entfernung) + ' (Luftlinie)' : '');
-    else if (others.length > 1) sub.textContent = others.length + ' Personen unterwegs · Live-Standorte';
-    else if (mine) sub.textContent = 'seit ' + sosClock(mine.seit) + ' · Deine Familie sieht deinen Live-Standort';
-    else sub.textContent = 'Heimwege der letzten Stunde';
+    if (others.length === 1) sub.textContent = tk('bell.hw.since', { time: sosClock(others[0].seit) }) + (others[0].entfernung != null ? ' · ' + tk('bell.hw.leftCrow', { dist: hwKm(others[0].entfernung) }) : '');
+    else if (others.length > 1) sub.textContent = tk('bell.hw.peopleOnWay', { n: others.length });
+    else if (mine) sub.textContent = tk('bell.hw.since', { time: sosClock(mine.seit) }) + ' · ' + tk('bell.hw.familySeesLive');
+    else sub.textContent = tk('bell.hw.lastHour');
   }
   const mineBox = document.getElementById('hwMine');
   if (mineBox && mine && !hwSosUntil && !hwSosSending) { mineBox.innerHTML = hwMineHtml(mine); hwSosPaint(); }
@@ -416,7 +397,7 @@ function hwUpdate() {
   const doneBox = document.getElementById('hwDoneList');
   if (doneBox) {
     const done = hwDone();
-    doneBox.innerHTML = done.length ? `<div class="hw-sec">Heimweg beendet</div>` + done.map(hwDoneHtml).join('') : '';
+    doneBox.innerHTML = done.length ? `<div class="hw-sec">${escapeHtml(tk('loc.wayHomeEnded'))}</div>` + done.map(hwDoneHtml).join('') : '';
   }
   hwDrawMap();
 }
@@ -438,23 +419,23 @@ function hwMineHtml(h) {
     const k = ph.replace(/[^\d+]/g, '');
     if (!ph || seen.has(k)) return;
     seen.add(k);
-    calls.push(`<a class="sos-call person hw-call" href="${famAttr(famTel(ph))}"><span class="ic">📞</span><b>${escapeHtml(c.name || 'Kontakt')}</b><span>${escapeHtml(c.relation || ph)}</span></a>`);
+    calls.push(`<a class="sos-call person hw-call" href="${famAttr(famTel(ph))}"><span class="ic">📞</span><b>${escapeHtml(c.name || tk('home.contact'))}</b><span>${escapeHtml(c.relation || ph)}</span></a>`);
   });
   const pol = regionNotruf().polizei;
-  calls.push(`<a class="sos-call police" href="tel:${escapeHtml(pol)}"><span class="ic">🚓</span><b>${escapeHtml(pol)}</b><span>Polizei-Notruf</span></a>`);
+  calls.push(`<a class="sos-call police" href="tel:${escapeHtml(pol)}"><span class="ic">🚓</span><b>${escapeHtml(pol)}</b><span>${escapeHtml(tk('bell.hw.policeCall'))}</span></a>`);
   const pos = h.aktuell;
   return `<div class="hw-mine">
-      <div class="hw-mine-h">${pos ? `📍 ${escapeHtml(pos.adresse || (Number(pos.lat).toFixed(5) + ', ' + Number(pos.lon).toFixed(5)))}` : '📍 Noch kein aktueller Standort – pinn. offen lassen oder „Traccar Client“ einschalten'}</div>
-      ${pos ? `<div class="sos-when">🕒 ${escapeHtml(sosClock(pos.zeit))}${pos.genau ? ` <span class="acc">(± ${escapeHtml(String(pos.genau))} m)</span>` : ''}${h.entfernung != null ? ' · 🏠 noch ' + escapeHtml(hwKm(h.entfernung)) : ''}</div>` : ''}
+      <div class="hw-mine-h">${pos ? `📍 ${escapeHtml(pos.adresse || (Number(pos.lat).toFixed(5) + ', ' + Number(pos.lon).toFixed(5)))}` : '📍 ' + escapeHtml(tk('bell.hw.noLocationYet'))}</div>
+      ${pos ? `<div class="sos-when">🕒 ${escapeHtml(sosClock(pos.zeit))}${pos.genau ? ` <span class="acc">(± ${escapeHtml(String(pos.genau))} m)</span>` : ''}${h.entfernung != null ? ' · 🏠 ' + escapeHtml(tk('bell.hw.left', { dist: hwKm(h.entfernung) })) : ''}</div>` : ''}
       <button type="button" id="hwSosBtn" class="hw-sos" data-hwact="sos" aria-live="assertive">
         <span class="hw-sos-fill"></span>
-        <span class="hw-sos-in"><span class="hw-sos-ic" data-sosic>SOS</span><span class="hw-sos-txt"><b data-sost>SOS – Familie alarmieren</b><small data-soss>Sofort-Alarm mit deinem Standort an alle</small></span></span>
+        <span class="hw-sos-in"><span class="hw-sos-ic" data-sosic>SOS</span><span class="hw-sos-txt"><b data-sost>${escapeHtml(tk('bell.hw.sosTitle'))}</b><small data-soss>${escapeHtml(tk('bell.hw.sosSub'))}</small></span></span>
       </button>
-      ${hwSosError ? `<div class="hw-sos-err">⚠️ ${escapeHtml(hwSosError)}</div>` : `<div class="hw-sos-note">Antippen startet einen Countdown von ${HW_SOS_SEC} Sekunden – nochmal tippen bricht ab.</div>`}
-      <div class="hw-sec">Familie anrufen</div>
+      ${hwSosError ? `<div class="hw-sos-err">⚠️ ${escapeHtml(hwSosError)}</div>` : `<div class="hw-sos-note">${escapeHtml(tk('bell.hw.sosNote', { n: HW_SOS_SEC }))}</div>`}
+      <div class="hw-sec">${escapeHtml(tk('bell.hw.callFamily'))}</div>
       <div class="hw-calls">${calls.join('')}</div>
-      ${calls.length === 1 ? `<p class="text-[11px] text-ink/50 mt-1">In den Notfallpässen der Familie ist noch keine Handynummer hinterlegt${famCanEdit() ? ' – unter Familie → Bearbeiten eintragen' : ''}.</p>` : ''}
-      <button type="button" class="hw-end" data-hwact="ende">🏁 Ich bin angekommen · Heimweg beenden</button>
+      ${calls.length === 1 ? `<p class="text-[11px] text-ink/50 mt-1">${escapeHtml(tk(famCanEdit() ? 'bell.hw.noPhonesEdit' : 'bell.hw.noPhones'))}</p>` : ''}
+      <button type="button" class="hw-end" data-hwact="ende">🏁 ${escapeHtml(tk('bell.hw.arrivedEnd'))}</button>
     </div>`;
 }
 function hwPersonHtml(h) {
@@ -464,8 +445,8 @@ function hwPersonHtml(h) {
   const c = h.aktuell;
   const live = c && famNow() - Number(c.zeit || 0) < 2 * 60 * 1000;
   const meta = [];
-  meta.push('seit ' + sosClock(h.seit));
-  if (c) meta.push(live ? '<span class="sos-live">● live</span>' : 'aktualisiert ' + escapeHtml(famAgo(c.zeit)));
+  meta.push(escapeHtml(tk('bell.hw.since', { time: sosClock(h.seit) })));
+  if (c) meta.push(live ? '<span class="sos-live">' + escapeHtml(tk('family.live')) + '</span>' : escapeHtml(tk('bell.hw.updated', { ago: famAgo(c.zeit) })));
   if (c && c.akku != null) meta.push('🔋 ' + escapeHtml(String(c.akku)) + ' %');
   if (c && c.tempo) meta.push(escapeHtml(String(c.tempo)) + ' km/h');
   return `<div class="hw-person" style="--hw:${famAttr(famColor(m))}">
@@ -473,24 +454,25 @@ function hwPersonHtml(h) {
         <span class="fam-ava sm" style="--fam:${famAttr(famColor(m))}">${m ? famAvatarInner(m) : '<span class="fam-ava-in">🚶</span>'}</span>
         <div class="min-w-0 flex-1">
           <div class="text-sm font-semibold leading-snug">${escapeHtml(name)}</div>
-          <div class="text-[12.5px] leading-snug break-words">${c ? '📍 ' + escapeHtml(c.adresse || (Number(c.lat).toFixed(5) + ', ' + Number(c.lon).toFixed(5))) + (c.genau ? ` <span class="text-ink/45">(± ${escapeHtml(String(c.genau))} m)</span>` : '') : '📍 Standort noch unbekannt'}</div>
+          <div class="text-[12.5px] leading-snug break-words">${c ? '📍 ' + escapeHtml(c.adresse || (Number(c.lat).toFixed(5) + ', ' + Number(c.lon).toFixed(5))) + (c.genau ? ` <span class="text-ink/45">(± ${escapeHtml(String(c.genau))} m)</span>` : '') : escapeHtml(tk('sos.locationStillUnknown'))}</div>
           <div class="text-[11px] text-ink/55 leading-snug mt-0.5">${meta.join(' · ')}</div>
         </div>
-        ${h.entfernung != null ? `<span class="hw-dist" title="Luftlinie bis Zuhause">🏠 ${escapeHtml(hwKm(h.entfernung))}</span>` : ''}
+        ${h.entfernung != null ? `<span class="hw-dist" title="${escapeHtml(tk('bell.hw.crowToHome'))}">🏠 ${escapeHtml(hwKm(h.entfernung))}</span>` : ''}
       </div>
       <div class="flex flex-wrap gap-2 mt-2.5">
-        ${ph ? `<a class="fz-mini-btn primary" href="${famAttr(famTel(ph))}">📞 ${escapeHtml(name)} anrufen</a>
-        <a class="fz-mini-btn" href="${famAttr('sms:' + ph.replace(/[^\d+]/g, ''))}">💬 Nachricht</a>` : `<span class="text-[11px] text-ink/50 self-center">Keine Handynummer im Notfallpass${famCanEdit() ? ' – unter Familie → Bearbeiten eintragen' : ''}.</span>`}
-        ${c ? `<button type="button" class="fz-mini-btn" data-hwact="zeigen" data-hwid="${famAttr(h.id)}">📍 Auf der Karte</button>` : ''}
+        ${ph ? `<a class="fz-mini-btn primary" href="${famAttr(famTel(ph))}">📞 ${escapeHtml(tk('bell.hw.callName', { name }))}</a>
+        <a class="fz-mini-btn" href="${famAttr('sms:' + ph.replace(/[^\d+]/g, ''))}">💬 ${escapeHtml(tk('bell.hw.message'))}</a>` : `<span class="text-[11px] text-ink/50 self-center">${escapeHtml(tk(famCanEdit() ? 'bell.hw.noPhoneEdit' : 'bell.hw.noPhone'))}</span>`}
+        ${c ? `<button type="button" class="fz-mini-btn" data-hwact="zeigen" data-hwid="${famAttr(h.id)}">📍 ${escapeHtml(tk('bell.hw.onMap'))}</button>` : ''}
       </div>
     </div>`;
 }
 function hwDoneHtml(h) {
-  const name = hwIsMine(h) ? 'Du' : hwName(h);
+  const mine = hwIsMine(h);
+  const vals = { name: `<b>${escapeHtml(mine ? tk('bell.you') : hwName(h))}</b>`, time: escapeHtml(sosClock(h.ende)), dur: escapeHtml(hwDur(h.minuten)) };
   const txt = h.grund === 'angekommen'
-    ? `${hwIsMine(h) ? 'bist' : 'ist'} um ${sosClock(h.ende)} zu Hause angekommen (${hwDur(h.minuten)})`
-    : `${hwIsMine(h) ? 'hast' : 'hat'} den Heimweg um ${sosClock(h.ende)} beendet`;
-  return `<div class="hw-done"><span>${h.grund === 'angekommen' ? '🏠' : '🏁'}</span><span><b>${escapeHtml(name)}</b> ${escapeHtml(txt)}</span></div>`;
+    ? ntK(mine ? 'bell.hw.doneArrivedYou' : 'bell.hw.doneArrived', vals)
+    : ntK(mine ? 'bell.hw.doneEndedYou' : 'bell.hw.doneEnded', vals);
+  return `<div class="hw-done"><span>${h.grund === 'angekommen' ? '🏠' : '🏁'}</span><span>${txt}</span></div>`;
 }
 
 /* ---------- Map ---------- */
@@ -527,7 +509,7 @@ function hwDrawMap() {
       id: h.id, lat: Number(c.lat), lon: Number(c.lon),
       html: `<div class="fm-mk${live ? ' live' : ' stale'}" style="--fam:${famAttr(famColor(m))}">
           <div class="fm-mk-ava">${m ? famAvatarInner(m) : '<span class="fam-ava-in">🚶</span>'}</div>
-          <div class="fm-mk-lbl">🚶 ${escapeHtml(hwIsMine(h) ? 'Du' : hwName(h))}</div>
+          <div class="fm-mk-lbl">🚶 ${escapeHtml(hwIsMine(h) ? tk('bell.you') : hwName(h))}</div>
         </div>`,
     });
     if (c.genau) circles.push({ lat: Number(c.lat), lon: Number(c.lon), r: Math.max(5, Number(c.genau)), color: famColor(m) });
@@ -546,16 +528,16 @@ function hwSosPaint() {
   b.classList.toggle('sending', hwSosSending);
   b.disabled = hwSosSending;
   if (hwSosSending) {
-    ic.textContent = '📡'; t.textContent = 'Alarm wird gesendet …'; sub.textContent = 'Einen Moment, bitte';
+    ic.textContent = '📡'; t.textContent = tk('bell.hw.sending'); sub.textContent = tk('bell.hw.oneMoment');
     fill.style.width = '100%';
   } else if (hwSosUntil) {
     const left = Math.max(0, hwSosUntil - Date.now());
     ic.textContent = String(Math.max(1, Math.ceil(left / 1000)));
-    t.textContent = 'Alarm in ' + Math.max(1, Math.ceil(left / 1000)) + ' Sekunde' + (Math.ceil(left / 1000) > 1 ? 'n' : '') + ' …';
-    sub.textContent = 'Nochmal tippen zum Abbrechen';
+    t.textContent = tk('bell.hw.alarmIn', { n: Math.max(1, Math.ceil(left / 1000)) });
+    sub.textContent = tk('bell.hw.tapCancel');
     fill.style.width = Math.min(100, 100 - (left / (HW_SOS_SEC * 1000)) * 100).toFixed(1) + '%';
   } else {
-    ic.textContent = 'SOS'; t.textContent = 'SOS – Familie alarmieren'; sub.textContent = 'Sofort-Alarm mit deinem Standort an alle';
+    ic.textContent = 'SOS'; t.textContent = tk('bell.hw.sosTitle'); sub.textContent = tk('bell.hw.sosSub');
     fill.style.width = '0';
   }
 }
@@ -568,10 +550,10 @@ function hwSosStop() {
 }
 function hwSosPress() {
   if (hwSosSending) return;
-  if (hwSosUntil) { hwSosStop(); hwSosVibrate(60); finShowToast('SOS abgebrochen'); return; }
+  if (hwSosUntil) { hwSosStop(); hwSosVibrate(60); finShowToast(tk('sos.cancelled')); return; }
   hwSosError = '';
   const note = document.querySelector('#hwMine .hw-sos-err');
-  if (note) { note.className = 'hw-sos-note'; note.textContent = 'Nochmal tippen bricht den Alarm ab.'; }
+  if (note) { note.className = 'hw-sos-note'; note.textContent = tk('bell.hw.tapCancelAlarm'); }
   hwSosUntil = Date.now() + HW_SOS_SEC * 1000;
   hwSosLastSec = HW_SOS_SEC;
   hwSosVibrate(200);
@@ -614,14 +596,14 @@ async function hwSosSend() {
   let failed = '';
   let id = '';
   if (navigator.onLine === false) {
-    failed = 'Keine Verbindung zu pinn. – der Alarm konnte nicht gesendet werden.';
+    failed = tk('loc.noConnectionPinnAlarm');
   } else {
     const pos = await hwSosBrowserPos();
     try {
       const r = await famPost('sos-ausloesen', pos || {});
       id = (r && r.id) || '';
     } catch (e) {
-      failed = e.message || 'Der Alarm konnte nicht gesendet werden.';
+      failed = e.message || tk('loc.alarmCouldNotSent');
     }
   }
   hwSosSending = false;
@@ -632,12 +614,12 @@ async function hwSosSend() {
     const box = document.getElementById('hwMine');
     if (box && mine) { box.innerHTML = hwMineHtml(mine); hwSosPaint(); } else hwSosPaint();
     const pol = regionNotruf().polizei;
-    if (confirm(failed + '\n\nJetzt den Polizei-Notruf ' + pol + ' anrufen?')) location.href = 'tel:' + pol;
+    if (confirm(failed + '\n\n' + tk('sos.callPoliceNow', { number: pol }))) location.href = 'tel:' + pol;
     return;
   }
   hwSosError = '';
   hwSosVibrate([300, 100, 300]);
-  finShowToast('🆘 Alarm gesendet – deine Familie ist informiert');
+  finShowToast(tk('loc.alarmSentFamilyHas'));
   hwClose();
   sosStarted = true;
   if (id) sosForceId = id;
@@ -647,16 +629,16 @@ async function hwSosSend() {
 /* ---------- End your own way home ---------- */
 async function hwEndMine(btn) {
   if (hwBusy) return;
-  if (!confirm('Heimweg beenden? Danach gilt deine Standortfreigabe wieder wie vorher.')) return;
+  if (!confirm(tk('bell.hw.endConfirm'))) return;
   hwBusy = true;
   if (btn) btn.disabled = true;
   try {
     await famPost('unterwegs', { an: false });
-    finShowToast('Heimweg beendet');
+    finShowToast(tk('loc.wayHomeEnded'));
     if (currentView === 'familie') famLoadStatus().then(() => famRefreshLive()).catch(() => {});
     await sosCheck();
   } catch (e) {
-    finShowToast(e.message || 'Keine Verbindung – bitte gleich noch einmal versuchen.', true);
+    finShowToast(e.message || tk('bell.noConnectionRetry'), true);
     if (btn) btn.disabled = false;
   } finally {
     hwBusy = false;
@@ -687,7 +669,7 @@ function hwReadUrl() {
       e.stopPropagation();
       hwDismiss(hwPendingKeys());
       hwRenderBanner();
-      finShowToast('Hinweis entfernt – über die 🔔 Glocke weiter abrufbar');
+      finShowToast(tk('bell.removedToast'));
       return;
     }
     hwOpen(banner.dataset.id || '');
@@ -805,53 +787,52 @@ function ntWhen(iso) {
   const d = new Date(t);
   const today = new Date();
   const yest = new Date(); yest.setDate(yest.getDate() - 1);
-  const hm = d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-  if (d.toDateString() === today.toDateString()) return ntTx('heute {0} Uhr', hm);
-  if (d.toDateString() === yest.toDateString()) return ntTx('gestern {0} Uhr', hm);
-  return ntTx('{0}, {1} Uhr', d.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' }), hm);
+  const hm = d.toLocaleTimeString(sysLocale(), { hour: '2-digit', minute: '2-digit' });
+  if (d.toDateString() === today.toDateString()) return tk('bell.todayAt', { time: hm });
+  if (d.toDateString() === yest.toDateString()) return tk('bell.yesterdayAt', { time: hm });
+  return tk('bell.dateAt', { date: d.toLocaleDateString(sysLocale(), { weekday: 'short', day: 'numeric', month: 'short' }), time: hm });
 }
 /* ---------- Bell: texts in the selected language ----------
-   The bell's sentences consist of text and highlighted names (<b>…</b>). The automatic translation
-   only sees fragments of them ("hat … angelegt") and does not recognise them. That is why the whole
-   template with {0}, {1} … is translated here (language file, entries "nt|…") and the values are
-   inserted only afterwards. The finished cards carry data-no-i18n – names and titles typed in freely
-   stay unchanged that way. Without an entry in the language file the German template is kept. */
-function ntTpl(tpl) {
-  try { if (window.PINN_I18N && PINN_I18N.active) return PINN_I18N.t(tpl, 'nt') || tpl; } catch (e) { /* German */ }
-  return tpl;
-}
-// values as ready-made HTML (already escaped)
-function ntT(tpl, ...vals) {
-  return escapeHtml(ntTpl(tpl)).replace(/\{(\d)\}/g, (m, i) => (vals[+i] != null ? String(vals[+i]) : ''));
-}
-// plain text (values unchanged, no HTML)
-function ntTx(tpl, ...vals) {
-  return ntTpl(tpl).replace(/\{(\d)\}/g, (m, i) => (vals[+i] != null ? String(vals[+i]) : ''));
+   The bell's sentences consist of text and highlighted names (<b>…</b>). They come from the text keys
+   "bell.…" of the language files (pb_public/i18n), the values are inserted only afterwards: ntK() escapes
+   the text of the key and then puts in the values as ready-made HTML. The finished cards carry
+   data-no-i18n – names and titles typed in freely stay unchanged that way. */
+function ntK(key, vals) {
+  const marks = {}, html = [];
+  Object.keys(vals || {}).forEach(k => {
+    if (k === 'n') { marks.n = vals.n; return; }
+    marks[k] = '\u0001' + html.length + '\u0002';
+    html.push(vals[k]);
+  });
+  return escapeHtml(tk(key, marks)).replace(/\u0001(\d+)\u0002/g, (m, i) => (html[+i] != null ? String(html[+i]) : ''));
 }
 // Fallback names the server inserts when a title is missing – translate exactly these words only
-var NT_WORDS = ['Jemand', 'Foto', 'Zettel', 'Liste', 'Umfrage', 'Countdown', 'Dokument', 'Vertrag', 'Fahrzeug', 'Buchung', 'Einkaufsliste', 'Kasse', 'Einkauf'];
-function ntW(s) { return NT_WORDS.indexOf(String(s || '')) >= 0 ? ntTx(String(s)) : String(s || ''); }
-function ntLangCode() { return (window.PINN_I18N && PINN_I18N.active && PINN_I18N.current) || 'de'; }
+var NT_WORDS = {
+  Jemand: 'lists.someone', Foto: 'bell.word.photo', Zettel: 'bell.word.note', Liste: 'bell.word.list', Umfrage: 'bell.word.poll',
+  Countdown: 'bell.word.countdown', Dokument: 'bell.word.document', Vertrag: 'bell.word.contract', Fahrzeug: 'bell.word.vehicle',
+  Buchung: 'bell.word.transaction', Einkaufsliste: 'bell.word.shoppingList', Kasse: 'bell.word.fund', Einkauf: 'bell.word.shopping',
+};
+function ntW(s) {
+  s = String(s || '');
+  return Object.prototype.hasOwnProperty.call(NT_WORDS, s) ? tk(NT_WORDS[s]) : s;
+}
 // Time like sosClock, but translated
 function ntClock(ms) {
   if (!ms) return '';
   const d = new Date(ms);
-  const t = ntTx('{0} Uhr', d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }));
-  return d.toDateString() === new Date().toDateString() ? t : d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }) + ', ' + t;
+  const t = tk('bell.clock', { time: d.toLocaleTimeString(sysLocale(), { hour: '2-digit', minute: '2-digit' }) });
+  return d.toDateString() === new Date().toDateString() ? t : d.toLocaleDateString(sysLocale(), { day: '2-digit', month: '2-digit' }) + ', ' + t;
 }
-function ntDur(min) {
-  const n = Math.max(1, Math.round(Number(min) || 0));
-  return n >= 60 ? ntTx('{0} Std. {1} Min.', Math.floor(n / 60), n % 60) : ntTx('{0} Min.', n);
-}
+function ntDur(min) { return hwDur(min); }
 // Event suffix from the server ("Di 06.10., 14:00 Uhr") in the selected language
 function ntTerminZ(e) {
   const z = String((e && e.z) || '');
-  if (!z || ntLangCode() === 'de') return z;
+  if (!z) return z;
   const m = String((e && e.d) || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
   if (!m) return z;
-  const day = new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' });
+  const day = new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString(sysLocale(), { weekday: 'short', day: '2-digit', month: '2-digit' });
   const tm = z.match(/(\d\d:\d\d) Uhr/);
-  return tm ? day + ', ' + ntTx('{0} Uhr', tm[1]) : day;
+  return tm ? tk('bell.dateAt', { date: day, time: tm[1] }) : day;
 }
 
 /* ==========================================================
@@ -874,7 +855,7 @@ function ladenQueuedShop(listId, op) {
   if (!o) return null;
   const known = ladenCachedPlaces().find(x => x.laden === listId);
   return {
-    laden: listId, name: o.name || 'Laden',
+    laden: listId, name: o.name || tk('shop.list.shop'),
     filialen: [{ id: o.id || (known ? known.id : '') || ladenNewId(), lat: o.lat, lon: o.lon, adresse: o.adresse || '' }],
     verweil: o.verweil, abhaken: o.abhaken !== false, erledigtPush: o.erledigtPush !== false, erinnern: o.erinnern !== false, ankunft: !!o.ankunft,
   };
@@ -939,7 +920,7 @@ async function ladenFlush() {
       if (!res.ok && res.status !== 400 && res.status !== 403) break; // server not ready right now
       if (!res.ok) {
         const b = await res.json().catch(() => ({}));
-        finShowToast('Adressen des Ladens nicht gespeichert: ' + (b.error || 'Fehler'), true);
+        finShowToast(tk('bell.shopAddrNotSaved', { error: b.error || tk('common.error') }), true);
       }
       const cur = ladenQueueRead();
       if (cur[listId] && cur[listId].at === op.at) { delete cur[listId]; ladenQueueWrite(cur); }
@@ -1002,7 +983,7 @@ function ladenModalRender() {
   chosen.innerHTML = st.filialen.map((f, i) => `<div class="ntl-chosen">
       <span class="text-lg leading-none">📍</span>
       <span class="min-w-0 flex-1 text-sm leading-snug">${n > 1 ? `<span class="block text-[10px] uppercase tracking-wide text-ink/40">${escapeHtml(tk('shop.addr.branch', { n: i + 1 }))}</span>` : ''}${escapeHtml(f.adresse || tk('shop.addr.mapOnly'))}</span>
-      <button type="button" class="fz-mini-btn" data-ladenact="remove" data-ladenidx="${i}" aria-label="Adresse entfernen">✕</button>
+      <button type="button" class="fz-mini-btn" data-ladenact="remove" data-ladenidx="${i}" aria-label="${escapeHtml(tk('bell.removeAddress'))}">✕</button>
     </div>`).join('');
 }
 async function ladenSearch(q) {
@@ -1407,7 +1388,7 @@ async function ntActFetch(force) {
 }
 function ntActWho(a) {
   const m = a.mitglied && typeof memberById === 'function' ? memberById(a.mitglied) : null;
-  return { m, name: m ? memberLabel(m) : (a.name || ntTx('Jemand')) };
+  return { m, name: m ? memberLabel(m) : (a.name || tk('lists.someone')) };
 }
 function ntActDate(ymd) {
   const m = String(ymd || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
@@ -1415,15 +1396,14 @@ function ntActDate(ymd) {
   const d = new Date(+m[1], +m[2] - 1, +m[3]);
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const diff = Math.round((d - today) / 86400000);
-  if (diff === 0) return ntTx('heute');
-  if (diff === 1) return ntTx('morgen');
-  return d.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' });
+  if (diff === 0) return tk('bell.today');
+  if (diff === 1) return tk('bell.tomorrow');
+  return d.toLocaleDateString(sysLocale(), { weekday: 'short', day: '2-digit', month: '2-digit' });
 }
 // Quotation marks of the selected language
 function ntActQuote(t) {
-  const c = ntLangCode();
-  const q = c === 'fr' ? ['« ', ' »'] : c === 'es' || c === 'it' ? ['«', '»'] : c === 'de' ? ['„', '“'] : c === 'ja' ? ['「', '」'] : ['“', '”'];
-  return q[0] + escapeHtml(ntW(t)) + q[1];
+  const q = tk('bell.quote', { text: '\u0001' }).split('\u0001');
+  return escapeHtml(q[0]) + escapeHtml(ntW(t)) + escapeHtml(q[1] || '');
 }
 // Icon of a personal push message (by its "tag")
 var NT_PUSH_ICONS = {
@@ -1434,7 +1414,7 @@ var NT_PUSH_ICONS = {
 function ntEuro(v) { return typeof fmtEur === 'function' ? fmtEur(v) : (Math.round((v || 0) * 100) / 100).toFixed(2).replace('.', ',') + ' €'; }
 function ntKasseName(a) {
   const k = typeof kasseById === 'function' ? kasseById(a.ziel) : null;
-  return k ? i18nT(kasseDisplayName(k)) : ntW(a.titel || 'Kasse');
+  return k ? i18nT(kasseDisplayName(k)) : (a.titel ? ntW(a.titel) : tk('bell.word.fund'));
 }
 // Who owes whom – from this profile's point of view (shared cash boxes only; calculated like under
 // Finances → "Who owes whom" with all bookings of the cash box up to today)
@@ -1449,13 +1429,13 @@ function ntKasseBalanceHtml(kasseId) {
     if (!me || !(me in bal)) return '';
     const nm = id => { const m = kassePartById(id); return escapeHtml(m ? memberLabel(m) : '?'); };
     const mine = transfers.filter(t => t.from === me || t.to === me).map(t => t.from === me
-      ? ntT('Du schuldest {0} {1}', nm(t.to), `<b>${escapeHtml(ntEuro(t.amount))}</b>`)
-      : ntT('{0} schuldet dir {1}', nm(t.from), `<b>${escapeHtml(ntEuro(t.amount))}</b>`));
+      ? ntK('bell.youOwe', { name: nm(t.to), amount: `<b>${escapeHtml(ntEuro(t.amount))}</b>` })
+      : ntK('bell.owesYou', { name: nm(t.from), amount: `<b>${escapeHtml(ntEuro(t.amount))}</b>` }));
     if (mine.length) return '⚖️ ' + mine.join(' · ');
-    return Math.abs(bal[me] || 0) < 0.005 ? '⚖️ ' + ntT('Bei dir ist alles ausgeglichen') : '';
+    return Math.abs(bal[me] || 0) < 0.005 ? '⚖️ ' + escapeHtml(tk('bell.settled')) : '';
   } catch (e) { return ''; }
 }
-// Text, icon and subline of a notice (sentences via ntT – see "Bell: texts in the selected language")
+// Text, icon and subline of a notice (sentences via ntK – see "Bell: texts in the selected language")
 function ntActText(a) {
   const who = ntActWho(a);
   const nm = `<b>${escapeHtml(who.name)}</b>`;
@@ -1470,11 +1450,11 @@ function ntActText(a) {
   const t = lsTypeSafe(a.typ);
   const shopList = () => {
     const l = getShoppingList(a.ziel);
-    return { l, name: `<b>${escapeHtml((l && l.name) || ntW(a.titel || 'Einkaufsliste'))}</b>` };
+    return { l, name: `<b>${escapeHtml((l && l.name) || (a.titel ? ntW(a.titel) : tk('bell.word.shoppingList')))}</b>` };
   };
   const artikel = z => {
     const m = String(z || '').match(/^(\d+) Artikel$/);
-    return m ? ntTx('{0} Artikel', m[1]) : String(z || '');
+    return m ? tk('bell.act.items', { n: Number(m[1]) }) : String(z || '');
   };
   switch (a.art) {
     case 'push': {
@@ -1490,7 +1470,7 @@ function ntActText(a) {
       const { l, name } = shopList();
       return {
         ico: l ? shoppingListLogoHtml(l, 30) : '🛒',
-        main: n === 1 ? ntT('{0} hat {1} auf {2} gesetzt', nm, q(first.t), name) : ntT('{0} hat {1} Artikel auf {2} gesetzt', nm, n, name),
+        main: n === 1 ? ntK('bell.act.shopAdded', { name: nm, item: q(first.t), list: name }) : ntK('bell.act.shopAddedN', { name: nm, n, list: name }),
         sub: n === 1 ? '' : listNames(),
       };
     }
@@ -1498,7 +1478,7 @@ function ntActText(a) {
       const { l, name } = shopList();
       return {
         ico: l ? shoppingListLogoHtml(l, 30) : '🛒',
-        main: n === 1 ? ntT('{0} hat {1} auf {2} abgehakt', nm, q(first.t), name) : ntT('{0} hat {1} Artikel auf {2} abgehakt', nm, n, name),
+        main: n === 1 ? ntK('bell.act.shopChecked', { name: nm, item: q(first.t), list: name }) : ntK('bell.act.shopCheckedN', { name: nm, n, list: name }),
         sub: n === 1 ? '' : listNames(),
       };
     }
@@ -1506,114 +1486,114 @@ function ntActText(a) {
       const { l, name } = shopList();
       return {
         ico: l ? shoppingListLogoHtml(l, 30) : '🛒',
-        main: n === 1 ? ntT('{0} hat {1} von {2} entfernt', nm, q(first.t), name) : ntT('{0} hat {1} Artikel von {2} entfernt', nm, n, name),
+        main: n === 1 ? ntK('bell.act.shopRemoved', { name: nm, item: q(first.t), list: name }) : ntK('bell.act.shopRemovedN', { name: nm, n, list: name }),
         sub: n === 1 ? '' : listNames(),
       };
     }
     case 'einkaufsliste':
-      return { ico: '🛒', main: ntT('{0} hat die Einkaufsliste {1} angelegt', nm, q(a.titel || first.t)), sub: '' };
+      return { ico: '🛒', main: ntK('bell.act.shopListCreated', { name: nm, title: q(a.titel || first.t) }), sub: '' };
     case 'einkaufsliste-um':
-      return { ico: '🛒', main: ntT('{0} hat die Einkaufsliste {1} in {2} umbenannt', nm, q(first.z || '…'), q(first.t)), sub: '' };
+      return { ico: '🛒', main: ntK('bell.act.shopListRenamed', { name: nm, old: q(first.z || '…'), title: q(first.t) }), sub: '' };
     case 'einkaufsliste-weg':
-      return { ico: '🗑️', main: ntT('{0} hat die Einkaufsliste {1} gelöscht', nm, q(a.titel || first.t)), sub: '' };
+      return { ico: '🗑️', main: ntK('bell.act.shopListDeleted', { name: nm, title: q(a.titel || first.t) }), sub: '' };
     case 'liste-neu':
-      return { ico: t.icon, main: ntT('{0} hat {2} {1} angelegt', nm, q(a.titel || first.t), escapeHtml(t.withArticle)), sub: '' };
+      return { ico: t.icon, main: ntK('bell.act.listCreated', { name: nm, title: q(a.titel || first.t), type: escapeHtml(t.withArticle) }), sub: '' };
     case 'liste-um':
-      return { ico: t.icon, main: ntT('{0} hat {2} {1} in {3} umbenannt', nm, q(first.z || '…'), escapeHtml(t.withArticle), q(first.t)), sub: '' };
+      return { ico: t.icon, main: ntK('bell.act.listRenamed', { name: nm, old: q(first.z || '…'), type: escapeHtml(t.withArticle), title: q(first.t) }), sub: '' };
     case 'liste-weg':
-      return { ico: '🗑️', main: ntT('{0} hat {2} {1} gelöscht', nm, q(a.titel || first.t), escapeHtml(t.withArticle)), sub: '' };
+      return { ico: '🗑️', main: ntK('bell.act.listDeleted', { name: nm, title: q(a.titel || first.t), type: escapeHtml(t.withArticle) }), sub: '' };
     case 'liste': {
       if (a.typ === 'wish') {
-        return { ico: t.icon, main: n === 1 ? ntT('{0} wünscht sich {1}', nm, q(first.t)) : ntT('{0} hat {1} neue Wünsche auf dem Wunschzettel', nm, n), sub: n === 1 ? escapeHtml(ntW(a.titel)) : listNames() };
+        return { ico: t.icon, main: n === 1 ? ntK('bell.act.wish', { name: nm, item: q(first.t) }) : ntK('bell.act.wishN', { name: nm, n }), sub: n === 1 ? escapeHtml(ntW(a.titel)) : listNames() };
       }
       return {
         ico: t.icon,
-        main: n === 1 ? ntT('{0} hat {1} zu {2} hinzugefügt', nm, q(first.t), q(a.titel)) : ntT('{0} hat {1} Einträge zu {2} hinzugefügt', nm, n, q(a.titel)),
+        main: n === 1 ? ntK('bell.act.listAdded', { name: nm, item: q(first.t), list: q(a.titel) }) : ntK('bell.act.listAddedN', { name: nm, n, list: q(a.titel) }),
         sub: n === 1 ? escapeHtml(t.label) : listNames(),
       };
     }
     case 'liste-ab':
       return {
         ico: t.icon,
-        main: n === 1 ? ntT('{0} hat {1} in {2} abgehakt', nm, q(first.t), q(a.titel)) : ntT('{0} hat {1} Einträge in {2} abgehakt', nm, n, q(a.titel)),
+        main: n === 1 ? ntK('bell.act.listChecked', { name: nm, item: q(first.t), list: q(a.titel) }) : ntK('bell.act.listCheckedN', { name: nm, n, list: q(a.titel) }),
         sub: n === 1 ? escapeHtml(t.label) : listNames(),
       };
     case 'essen':
       return {
         ico: '🍽️',
-        main: n === 1 ? ntT('{0} hat {1} für {2} geplant', nm, q(first.t), escapeHtml(ntActDate(first.d) || ntTx('die Woche'))) : ntT('{0} hat {1} Essen geplant', nm, n),
+        main: n === 1 ? ntK('bell.act.meal', { name: nm, meal: q(first.t), when: escapeHtml(ntActDate(first.d) || tk('bell.act.theWeek')) }) : ntK('bell.act.mealN', { name: nm, n }),
         sub: n === 1 ? '' : a.eintraege.slice(0, 6).map(e => escapeHtml(e.t) + (e.d ? ' (' + escapeHtml(ntActDate(e.d)) + ')' : '')).join(', '),
       };
     case 'rezept':
-      return { ico: '📖', main: n === 1 ? ntT('{0} hat das Rezept {1} angelegt', nm, q(first.t)) : ntT('{0} hat {1} neue Rezepte angelegt', nm, n), sub: n === 1 ? '' : listNames() };
+      return { ico: '📖', main: n === 1 ? ntK('bell.act.recipe', { name: nm, title: q(first.t) }) : ntK('bell.act.recipeN', { name: nm, n }), sub: n === 1 ? '' : listNames() };
     case 'aufgabe':
       return {
         ico: '✅',
-        main: n === 1 ? ntT('{0} hat die Aufgabe {1} angelegt', nm, q(first.t)) : ntT('{0} hat {1} Aufgaben angelegt', nm, n),
-        sub: n === 1 ? (first.d ? ntT('fällig {0}', escapeHtml(ntActDate(first.d))) : '') : listNames(),
+        main: n === 1 ? ntK('bell.act.task', { name: nm, title: q(first.t) }) : ntK('bell.act.taskN', { name: nm, n }),
+        sub: n === 1 ? (first.d ? escapeHtml(tk('bell.act.due', { when: ntActDate(first.d) })) : '') : listNames(),
       };
     case 'aufgabe-ab':
       return {
         ico: '✔️',
-        main: n === 1 ? ntT('{0} hat {1} erledigt', nm, q(first.t)) : ntT('{0} hat {1} Aufgaben erledigt', nm, n),
-        sub: n === 1 ? (a.typ === 'haushalt' ? ntT('Haushalt') : '') : listNames(),
+        main: n === 1 ? ntK('bell.act.taskDone', { name: nm, title: q(first.t) }) : ntK('bell.act.taskDoneN', { name: nm, n }),
+        sub: n === 1 ? (a.typ === 'haushalt' ? escapeHtml(tk('bell.act.household')) : '') : listNames(),
       };
     case 'termin':
       return {
         ico: '📅',
-        main: n === 1 ? ntT('{0} hat den Termin {1} eingetragen', nm, q(first.t)) : ntT('{0} hat {1} Termine eingetragen', nm, n),
+        main: n === 1 ? ntK('bell.act.event', { name: nm, title: q(first.t) }) : ntK('bell.act.eventN', { name: nm, n }),
         sub: n === 1 ? escapeHtml(ntTerminZ(first)) : a.eintraege.slice(0, 4).map(e => escapeHtml(e.t) + (e.z ? ' (' + escapeHtml(ntTerminZ(e)) + ')' : '')).join(', '),
       };
     case 'vorrat':
-      return { ico: '🥫', main: n === 1 ? ntT('{0} hat {1} in den Vorrat aufgenommen', nm, q(first.t)) : ntT('{0} hat {1} Artikel in den Vorrat aufgenommen', nm, n), sub: n === 1 ? '' : listNames() };
+      return { ico: '🥫', main: n === 1 ? ntK('bell.act.pantry', { name: nm, item: q(first.t) }) : ntK('bell.act.pantryN', { name: nm, n }), sub: n === 1 ? '' : listNames() };
     case 'mitglied': {
       const m = first.id && typeof memberById === 'function' ? memberById(first.id) : null;
       return {
         ico: m ? `<span class="nt-act-ico nt-ava" style="border-color:${escapeHtml(memberBorderColor(m))}">${memberAvatarInnerHTML(m)}</span>` : '👋',
-        main: n === 1 ? ntT('{0} hat {1} zur Familie hinzugefügt', nm, `<b>${escapeHtml(first.t)}</b>`) : ntT('{0} hat {1} Familienmitglieder hinzugefügt', nm, n),
+        main: n === 1 ? ntK('bell.act.member', { name: nm, member: `<b>${escapeHtml(first.t)}</b>` }) : ntK('bell.act.memberN', { name: nm, n }),
         sub: n === 1 ? escapeHtml(first.z ? i18nT(first.z) : '') : listNames(),
       };
     }
     case 'notfallpass':
-      return { ico: '🩺', main: ntT('{0} hat den Notfallpass von {1} aktualisiert', nm, `<b>${escapeHtml(a.titel || first.t)}</b>`), sub: '' };
+      return { ico: '🩺', main: ntK('bell.act.emergencyCard', { name: nm, member: `<b>${escapeHtml(a.titel || first.t)}</b>` }), sub: '' };
     case 'pinnwand':
-      return { ico: '🧷', main: n === 1 ? ntT('{0} hat {1} an die Pinnwand gehängt', nm, q(first.t)) : ntT('{0} hat {1} Zettel an die Pinnwand gehängt', nm, n), sub: n === 1 ? '' : listNames() };
+      return { ico: '🧷', main: n === 1 ? ntK('bell.act.board', { name: nm, title: q(first.t) }) : ntK('bell.act.boardN', { name: nm, n }), sub: n === 1 ? '' : listNames() };
     case 'pinnwand-antwort':
-      return { ico: '💬', main: n === 1 ? ntT('{0} hat auf {1} geantwortet', nm, q(a.titel)) : ntT('{0} hat {1}× auf {2} geantwortet', nm, n, q(a.titel)), sub: escapeHtml(first.t) };
+      return { ico: '💬', main: n === 1 ? ntK('bell.act.reply', { name: nm, title: q(a.titel) }) : ntK('bell.act.replyN', { name: nm, n, title: q(a.titel) }), sub: escapeHtml(first.t) };
     case 'ausgabe': {
       const sum = a.eintraege.reduce((x, e) => x + (Number(e.b) || 0), 0);
       const bal = ntKasseBalanceHtml(a.ziel);
       const kname = escapeHtml(ntKasseName(a));
       const isArt = z => /^\d+ Artikel$/.test(String(z || ''));
       let main;
-      if (n === 1 && Number(first.b) < 0) main = ntT('{0} hat eine Einnahme gebucht: {1} · {2}', nm, q(first.t), `<b>${escapeHtml(ntEuro(-first.b))}</b>`);
-      else if (n === 1 && first.z && !isArt(first.z)) main = ntT('{0} war bei {1} einkaufen · {2}', nm, `<b>${escapeHtml(first.z)}</b>`, `<b>${escapeHtml(ntEuro(first.b))}</b>`);
-      else if (n === 1) main = ntT('{0} hat {1} gebucht · {2}', nm, q(first.t), `<b>${escapeHtml(ntEuro(first.b))}</b>`);
-      else main = ntT('{0} hat {1} Ausgaben eingetragen · {2}', nm, n, `<b>${escapeHtml(ntEuro(sum))}</b>`);
+      if (n === 1 && Number(first.b) < 0) main = ntK('bell.act.income', { name: nm, title: q(first.t), amount: `<b>${escapeHtml(ntEuro(-first.b))}</b>` });
+      else if (n === 1 && first.z && !isArt(first.z)) main = ntK('bell.act.wentShopping', { name: nm, shop: `<b>${escapeHtml(first.z)}</b>`, amount: `<b>${escapeHtml(ntEuro(first.b))}</b>` });
+      else if (n === 1) main = ntK('bell.act.booked', { name: nm, title: q(first.t), amount: `<b>${escapeHtml(ntEuro(first.b))}</b>` });
+      else main = ntK('bell.act.expensesN', { name: nm, n, amount: `<b>${escapeHtml(ntEuro(sum))}</b>` });
       const details = n === 1 ? (isArt(first.z) ? escapeHtml(artikel(first.z)) : '') : a.eintraege.slice(0, 4).map(e => escapeHtml(isArt(e.z) ? ntW(e.t) : (e.z || ntW(e.t))) + ' ' + escapeHtml(ntEuro(e.b))).join(', ');
       return { ico: '💶', main, sub: [details, kname].filter(Boolean).join(' · '), extra: bal };
     }
     case 'ausgleich': {
-      return { ico: '💸', main: ntT('{0} hat einen Ausgleich über {1} eingetragen', nm, `<b>${escapeHtml(ntEuro(first.b))}</b>`), sub: escapeHtml(ntKasseName(a)), extra: ntKasseBalanceHtml(a.ziel) };
+      return { ico: '💸', main: ntK('bell.act.settlement', { name: nm, amount: `<b>${escapeHtml(ntEuro(first.b))}</b>` }), sub: escapeHtml(ntKasseName(a)), extra: ntKasseBalanceHtml(a.ziel) };
     }
     case 'fahrzeug-log': {
       const v = first.f && typeof fzVehicle === 'function' ? fzVehicle(first.f) : null;
       return {
         ico: '⛽',
-        main: n === 1 ? ntT('{0} hat {1} eingetragen · {2}', nm, q(first.t), `<b>${escapeHtml(ntEuro(first.b))}</b>`) : ntT('{0} hat {1} Fahrzeug-Einträge gemacht', nm, n),
+        main: n === 1 ? ntK('bell.act.vehicleLog', { name: nm, title: q(first.t), amount: `<b>${escapeHtml(ntEuro(first.b))}</b>` }) : ntK('bell.act.vehicleLogN', { name: nm, n }),
         sub: [v ? escapeHtml(ntW(fzName(v))) : '', escapeHtml(ntKasseName(a))].filter(Boolean).join(' · '),
         extra: ntKasseBalanceHtml(a.ziel),
       };
     }
     case 'vertrag':
-      return { ico: '📝', main: n === 1 ? ntT('{0} hat den Vertrag {1} angelegt', nm, q(first.t)) : ntT('{0} hat {1} Verträge angelegt', nm, n), sub: [n === 1 ? escapeHtml(first.z || '') : listNames(), escapeHtml(ntKasseName(a))].filter(Boolean).join(' · ') };
+      return { ico: '📝', main: n === 1 ? ntK('bell.act.contract', { name: nm, title: q(first.t) }) : ntK('bell.act.contractN', { name: nm, n }), sub: [n === 1 ? escapeHtml(first.z || '') : listNames(), escapeHtml(ntKasseName(a))].filter(Boolean).join(' · ') };
     case 'fahrzeug':
-      return { ico: '🚗', main: n === 1 ? ntT('{0} hat das Fahrzeug {1} hinzugefügt', nm, q(first.t)) : ntT('{0} hat {1} Fahrzeuge hinzugefügt', nm, n), sub: n === 1 ? escapeHtml(first.z || '') : listNames() };
+      return { ico: '🚗', main: n === 1 ? ntK('bell.act.vehicle', { name: nm, title: q(first.t) }) : ntK('bell.act.vehicleN', { name: nm, n }), sub: n === 1 ? escapeHtml(first.z || '') : listNames() };
     case 'dokument': {
       const cat = first.z && typeof docCategory === 'function' ? docCategory(first.z) : null;
       return {
         ico: (cat && cat.icon) || '📄',
-        main: n === 1 ? ntT('{0} hat das Dokument {1} abgelegt', nm, q(first.t)) : ntT('{0} hat {1} Dokumente abgelegt', nm, n),
+        main: n === 1 ? ntK('bell.act.document', { name: nm, title: q(first.t) }) : ntK('bell.act.documentN', { name: nm, n }),
         sub: n === 1 ? escapeHtml(cat && cat.label ? i18nT(cat.label) : '') : listNames(),
       };
     }
@@ -1621,28 +1601,25 @@ function ntActText(a) {
       return { ico: '🔔', main: nm, sub: '' };
   }
 }
-// List type: icon, name ("Packliste") and – for the sentences – with article ("die Packliste", "den
-// Wunschzettel"). In other languages the translated name is there in lower case (the templates
-// of the language files insert it appropriately, without a German article).
+// List type: icon, name ("Packing list") and – for the sentences – the name as the language uses it
+// inside a sentence (German "die Packliste", English "the packing list" …)
+var NT_LIST_TYPES = { einkauf: 'bell.listType.shop', pack: 'bell.listType.pack', gift: 'bell.listType.gift', wish: 'bell.listType.wish', check: 'bell.listType.check', idea: 'bell.listType.idea' };
 function lsTypeSafe(id) {
   const t = (typeof lsType === 'function' && id) ? lsType(id) : null;
-  const one = (t && t.one) || 'Liste';
-  const label = ntLangCode() === 'de' ? one : i18nT(one);
-  let withArticle;
-  if (ntLangCode() === 'de') withArticle = (/zettel$/i.test(one) ? 'den ' : 'die ') + one;
-  else withArticle = label.charAt(0).toLowerCase() + label.slice(1);
-  return { icon: (t && t.icon) || '📋', one, label, withArticle };
+  const label = (t && t.one) || tk('bell.word.list');
+  const withArticle = tk((t && NT_LIST_TYPES[t.id]) || 'bell.listType.list');
+  return { icon: (t && t.icon) || '📋', label, withArticle };
 }
 function ntActCardHtml(a) {
   const x = ntActText(a);
   const isNew = a.zeit > ntPanelSeenBefore;
   const ico = /^</.test(String(x.ico)) ? x.ico : `<span class="nt-act-ico">${x.ico}</span>`;
   return `<div class="nt-card act${a.art === 'push' ? ' push' : ''}" data-ntact="act" data-actid="${escapeHtml(a.id)}" data-ntkey="act:${escapeHtml(a.id)}" role="button" tabindex="0">
-    <button type="button" class="nt-del" data-ntact="del" aria-label="Hinweis entfernen" title="Entfernen">×</button>
+    <button type="button" class="nt-del" data-ntact="del" aria-label="${escapeHtml(tk('bell.removeNotice'))}" title="${escapeHtml(tk('common.remove'))}">×</button>
     <div class="nt-act-row">
       ${ico}
       <div class="min-w-0 flex-1"${a.art === 'push' ? '' : ' data-no-i18n'}>
-        <div class="nt-act-main">${isNew ? `<span class="nt-dot" aria-label="${escapeHtml(ntTx('neu'))}"></span>` : ''}${x.main}</div>
+        <div class="nt-act-main">${isNew ? `<span class="nt-dot" aria-label="${escapeHtml(tk('bell.new'))}"></span>` : ''}${x.main}</div>
         ${x.sub ? `<div class="nt-act-sub${x.long ? ' long' : ''}">${x.sub}</div>` : ''}
         ${x.extra ? `<div class="nt-act-bal">${x.extra}</div>` : ''}
         <div class="nt-act-time">${escapeHtml(ntWhen(a.zeit))}</div>
@@ -1831,7 +1808,7 @@ function ntOpenLink(url) {
       return true;
     }
     if (g('einkauf')) { if (isViewAllowed('einkauf')) setView('einkauf'); return true; }
-  } catch (e) { console.warn('Link öffnen fehlgeschlagen', url, e); }
+  } catch (e) { console.warn('Opening the link failed', url, e); }
   return false;
 }
 // The bell opens these addresses itself on start (the others - ?sos, ?heimweg, ?kasse, ?vertrag,
@@ -1852,7 +1829,7 @@ function ntUpdateBadge() {
   badge.classList.toggle('hidden', !n);
   badge.classList.toggle('soft', !buys.length && !hwN);
   btn.classList.toggle('has', !!buys.length || !!hwN);
-  btn.setAttribute('aria-label', n ? `Hinweise (${n})` : 'Hinweise');
+  btn.setAttribute('aria-label', n ? tk('bell.ariaN', { n }) : tk('app.notifications'));
   return { buys };
 }
 function ntRefresh() {
@@ -1890,7 +1867,7 @@ function ntPanelEl() {
     el.id = 'ntPanel';
     el.className = 'nt-panel hidden';
     el.setAttribute('role', 'dialog');
-    el.setAttribute('aria-label', 'Hinweise');
+    el.setAttribute('aria-label', tk('app.notifications'));
     document.body.appendChild(el);
     el.addEventListener('click', ntPanelClick);
     ntWireSwipe(el);
@@ -1930,27 +1907,27 @@ function ntClosePanel() {
 function ntBuyCardHtml(b) {
   const a = b.plan.auto;
   const shops = b.lists.map(l => l.name || '').filter(Boolean).join(', ');
-  const autoTxt = a ? (a.minuten ? ntT('automatisch abgehakt nach {0}', escapeHtml(ntDur(a.minuten))) : ntT('automatisch abgehakt')) + (a.wer ? ' · ' + escapeHtml(a.wer) : '') : '';
+  const autoTxt = a ? escapeHtml(a.minuten ? tk('bell.buy.autoAfter', { dur: ntDur(a.minuten) }) : tk('bell.buy.auto')) + (a.wer ? ' · ' + escapeHtml(a.wer) : '') : '';
   return `<div class="nt-card buy" data-ntplan="${escapeHtml(b.plan.id)}" data-ntkey="buy:${escapeHtml(b.plan.id)}">
-    <button type="button" class="nt-del" data-ntact="del" aria-label="Hinweis entfernen" title="Entfernen">×</button>
+    <button type="button" class="nt-del" data-ntact="del" aria-label="${escapeHtml(tk('bell.removeNotice'))}" title="${escapeHtml(tk('common.remove'))}">×</button>
     <div class="flex items-center gap-2.5">
       <div class="nt-logos">${b.lists.slice(0, 3).map(l => shoppingListLogoHtml(l, 30)).join('')}</div>
       <div class="min-w-0 flex-1">
-        <div class="text-sm font-medium leading-snug truncate">${escapeHtml(b.task.title || 'Einkauf')}</div>
+        <div class="text-sm font-medium leading-snug truncate">${escapeHtml(b.task.title || tk('lists.type.shop'))}</div>
         <div class="text-[11px] text-ink/55 leading-snug">${escapeHtml(shops)}${b.task.doneAt || a ? ' · ' + escapeHtml(ntWhen(b.task.doneAt || (a && a.zeit))) : ''}</div>
         ${autoTxt ? `<div class="text-[11px] text-ink/55 leading-snug" data-no-i18n>📍 ${autoTxt}</div>` : ''}
       </div>
     </div>
     <div class="flex gap-2 mt-2.5">
-      <button type="button" class="fz-mini-btn primary flex-1" data-ntact="book">💶 Betrag eintragen</button>
-      <button type="button" class="fz-mini-btn" data-ntact="skip">Ohne Beträge</button>
+      <button type="button" class="fz-mini-btn primary flex-1" data-ntact="book">💶 ${escapeHtml(tk('bell.buy.enterAmount'))}</button>
+      <button type="button" class="fz-mini-btn" data-ntact="skip">${escapeHtml(tk('bell.buy.withoutAmounts'))}</button>
     </div>
   </div>`;
 }
 function ntNewsHtml(e) {
   const sym = { neu: '+', info: '~', fix: '*' };
-  return `<div class="nt-card news" data-ntact="log" data-ntkey="news:${escapeHtml(e.v)}" role="button" tabindex="0" title="Im Versions-Log ansehen">
-    <button type="button" class="nt-del" data-ntact="del" aria-label="Hinweis entfernen" title="Entfernen">×</button>
+  return `<div class="nt-card news" data-ntact="log" data-ntkey="news:${escapeHtml(e.v)}" role="button" tabindex="0" title="${escapeHtml(tk('bell.viewInLog'))}">
+    <button type="button" class="nt-del" data-ntact="del" aria-label="${escapeHtml(tk('bell.removeNotice'))}" title="${escapeHtml(tk('common.remove'))}">×</button>
     <div class="flex items-baseline justify-between gap-2">
       <span class="text-sm font-medium">${escapeHtml(e.titel)}</span>
       <span class="text-[11px] text-ink/40 shrink-0">v${escapeHtml(e.v)} · ${escapeHtml(e.datum || '')}</span>
@@ -1991,24 +1968,24 @@ function ntHwCardHtml(g) {
   const nm = escapeHtml(hwName(h));
   let t, sub;
   if (h.aktiv) {
-    t = mine ? ntT('Du bist unterwegs nach Hause') : ntT('{0} ist unterwegs nach Hause', nm);
-    sub = [ntTx('seit {0}', ntClock(h.seit)), h.entfernung != null ? ntTx('noch {0}', hwKm(h.entfernung)) : '', h.aktuell && h.aktuell.adresse ? h.aktuell.adresse : ''].filter(Boolean).join(' · ');
+    t = mine ? escapeHtml(tk('bell.hw.youOnWay')) : ntK('bell.hw.nameOnWay', { name: nm });
+    sub = [tk('bell.hw.since', { time: ntClock(h.seit) }), h.entfernung != null ? tk('bell.hw.left', { dist: hwKm(h.entfernung) }) : '', h.aktuell && h.aktuell.adresse ? h.aktuell.adresse : ''].filter(Boolean).join(' · ');
   } else {
     t = h.grund === 'angekommen'
-      ? (mine ? ntT('Du bist zu Hause angekommen') : ntT('{0} ist zu Hause angekommen', nm))
-      : (mine ? ntT('Du hast den Heimweg beendet') : ntT('{0} hat den Heimweg beendet', nm));
-    sub = ntClock(h.ende) + (h.minuten ? ' · ' + ntTx('{0} unterwegs', ntDur(h.minuten)) : '');
+      ? (mine ? escapeHtml(tk('bell.hw.youArrived')) : ntK('bell.hw.nameArrived', { name: nm }))
+      : (mine ? escapeHtml(tk('bell.hw.youEnded')) : ntK('bell.hw.nameEnded', { name: nm }));
+    sub = ntClock(h.ende) + (h.minuten ? ' · ' + tk('bell.hw.durOnWay', { dur: ntDur(h.minuten) }) : '');
   }
   // More trips home on the same day: count and times
   let more = '';
   if (g.all.length > 1) {
     const today = new Date(ntHwTime(h)).toDateString() === new Date().toDateString();
     const times = g.all.slice(1).sort((a, b) => ntHwTime(a) - ntHwTime(b)).map(x => ntClock(ntHwTime(x))).filter(Boolean);
-    more = ntTx(today ? '{0} Heimwege heute' : '{0} Heimwege an diesem Tag', g.all.length) + (times.length ? ' · ' + ntTx('außerdem {0}', times.join(', ')) : '');
+    more = (today ? tk('bell.hw.waysToday', { n: g.all.length }) : tk('bell.hw.waysThatDay', { n: g.all.length })) + (times.length ? ' · ' + tk('bell.hw.also', { times: times.join(', ') }) : '');
   }
   const key = g.all.map(ntHwKey).join(',');
   return `<div class="nt-card hw${h.aktiv ? '' : ' done'}" style="--hw:${famAttr(h.aktiv ? famColor(m) : '#2F7D4F')}" data-ntact="hw" data-hwid="${famAttr(h.id)}" data-ntkey="hw:${famAttr(key)}" role="button" tabindex="0">
-    <button type="button" class="nt-del" data-ntact="del" aria-label="Hinweis entfernen" title="Entfernen">×</button>
+    <button type="button" class="nt-del" data-ntact="del" aria-label="${escapeHtml(tk('bell.removeNotice'))}" title="${escapeHtml(tk('common.remove'))}">×</button>
     <div class="flex items-center gap-2.5">
       <span class="fam-ava sm" style="--fam:${famAttr(famColor(m))}">${m ? famAvatarInner(m) : '<span class="fam-ava-in">🚶</span>'}</span>
       <div class="min-w-0 flex-1" data-no-i18n>
@@ -2031,33 +2008,33 @@ function ntRenderPanel() {
   const acts = ntActivities();
   const any = buys.length || news.length || hws.length || acts.length;
   let html = `<div class="nt-head">
-      <span class="font-serif text-lg">Hinweise</span>
+      <span class="font-serif text-lg">${escapeHtml(tk('app.notifications'))}</span>
       <span class="flex items-center gap-1">
-        ${any ? '<button type="button" class="nt-clear" data-ntact="clear">Alle löschen</button>' : ''}
-        <button type="button" class="nt-x" data-ntact="close" aria-label="Schließen">×</button>
+        ${any ? '<button type="button" class="nt-clear" data-ntact="clear">' + escapeHtml(tk('bell.deleteAll')) + '</button>' : ''}
+        <button type="button" class="nt-x" data-ntact="close" aria-label="${escapeHtml(tk('common.close'))}">×</button>
       </span>
     </div>`;
   if (hws.length) {
-    html += `<div class="nt-sec">Heimweg</div>` + hws.map(ntHwCardHtml).join('');
+    html += `<div class="nt-sec">${escapeHtml(tk('famTile.wayHome'))}</div>` + hws.map(ntHwCardHtml).join('');
   }
   if (buys.length) {
-    html += `<div class="nt-sec">Ausgaben nachtragen</div>` + buys.map(ntBuyCardHtml).join('');
+    html += `<div class="nt-sec">${escapeHtml(tk('bell.sec.addExpenses'))}</div>` + buys.map(ntBuyCardHtml).join('');
   }
   const mine = acts.filter(a => a.art === 'push');
   const family = acts.filter(a => a.art !== 'push');
   if (mine.length) {
-    html += `<div class="nt-sec">Für dich</div>` + mine.map(ntActCardHtml).join('');
+    html += `<div class="nt-sec">${escapeHtml(tk('bell.sec.forYou'))}</div>` + mine.map(ntActCardHtml).join('');
   }
   if (family.length) {
-    html += `<div class="nt-sec">Neu in der Familie</div>` + family.map(ntActCardHtml).join('');
+    html += `<div class="nt-sec">${escapeHtml(tk('bell.sec.newFamily'))}</div>` + family.map(ntActCardHtml).join('');
   }
   if (news.length) {
-    html += `<div class="nt-sec flex items-center justify-between"><span>Neu in pinn.</span><button type="button" class="nt-link" data-ntact="read">Gelesen</button></div>` + news.map(ntNewsHtml).join('');
+    html += `<div class="nt-sec flex items-center justify-between"><span>${escapeHtml(tk('bell.sec.newPinn'))}</span><button type="button" class="nt-link" data-ntact="read">${escapeHtml(tk('bell.read'))}</button></div>` + news.map(ntNewsHtml).join('');
   }
   if (!any) {
-    html += `<div class="nt-empty"><div class="text-3xl mb-1">✨</div><div class="text-sm">Alles erledigt</div><div class="text-[11px] text-ink/45 mt-1">Hier erscheinen deine Benachrichtigungen, Heimwege, Einkäufe, deren Ausgaben noch fehlen, alles, was die Familie einträgt oder ändert (Einkauf, Listen, Essen, Rezepte, Aufgaben, Termine, Vorrat, Pinnwand, Ausgaben, Verträge, Dokumente, Familie) und Neuerungen in pinn. – Antippen öffnet die passende Stelle.</div></div>`;
+    html += `<div class="nt-empty"><div class="text-3xl mb-1">✨</div><div class="text-sm">${escapeHtml(tk('bell.allDone'))}</div><div class="text-[11px] text-ink/45 mt-1">${escapeHtml(tk('bell.emptyInfo'))}</div></div>`;
   }
-  if (any) html += `<div class="nt-swipe-tip">Zum Entfernen eine Karte zur Seite wischen</div>`;
+  if (any) html += `<div class="nt-swipe-tip">${escapeHtml(tk('bell.swipeTip'))}</div>`;
   el.innerHTML = html;
 }
 function ntPanelClick(e) {
@@ -2082,11 +2059,11 @@ function ntPanelClick(e) {
     case 'book': {
       const t = aufgaben.find(a => a.id === planId);
       ntClosePanel();
-      openShoppingPlanDone(planId, t ? t.title : 'Einkauf');
+      openShoppingPlanDone(planId, t ? t.title : tk('lists.type.shop'));
       break;
     }
     case 'skip': {
-      if (!confirm('Diesen Einkauf ohne Beträge abschließen? Die Artikel bleiben auf den Listen.')) return;
+      if (!confirm(tk('bell.buy.skipConfirm'))) return;
       shoppingPlans = shoppingPlans.map(p => p.id === planId ? { ...p, bookedAt: new Date().toISOString(), skipped: true } : p);
       persistState();
       renderTasks();
@@ -2101,7 +2078,7 @@ function ntPanelClick(e) {
 function ntDismissAllowed(card) {
   const key = String(card.dataset.ntkey || '');
   if (!key.startsWith('buy:')) return true;
-  return confirm('Diesen Einkauf ohne Beträge abschließen? Die Artikel bleiben auf den Listen.');
+  return confirm(tk('bell.buy.skipConfirm'));
 }
 function ntDismissCommit(key, noRefresh) {
   key = String(key || '');
@@ -2224,9 +2201,7 @@ function ntClearAll() {
   const cards = Array.from(panel.querySelectorAll('.nt-card[data-ntkey]'));
   if (!cards.length) return;
   const buyN = cards.filter(c => String(c.dataset.ntkey).startsWith('buy:')).length;
-  if (buyN && !confirm(buyN === 1
-    ? 'Dabei wird auch ein offener Einkauf ohne Beträge abgeschlossen. Die Artikel bleiben auf den Listen. Alle Hinweise löschen?'
-    : `Dabei werden auch ${buyN} offene Einkäufe ohne Beträge abgeschlossen. Die Artikel bleiben auf den Listen. Alle Hinweise löschen?`)) return;
+  if (buyN && !confirm(tk('bell.clearConfirmBuys', { n: buyN }))) return;
   const keys = cards.map(c => c.dataset.ntkey);
   const commit = () => {
     keys.forEach(k => ntDismissCommit(k, true));
@@ -2293,10 +2268,10 @@ function ntShowHint() {
   const one = buys.length === 1 ? buys[0] : null;
   el.innerHTML = `<span class="text-xl leading-none">🛒</span>
     <span class="min-w-0 flex-1 text-sm leading-snug">${one
-      ? `<b>${escapeHtml(one.task.title || 'Einkauf')}</b> ist erledigt – Ausgaben noch eintragen?`
-      : `<b>${buys.length} Einkäufe</b> ohne eingetragene Ausgaben`}</span>
-    <button type="button" class="nt-hint-btn" data-nthint="go">${one ? 'Eintragen' : 'Ansehen'}</button>
-    <button type="button" class="nt-hint-x" data-nthint="x" aria-label="Schließen">×</button>`;
+      ? ntK('bell.hint.oneDone', { title: `<b>${escapeHtml(one.task.title || tk('lists.type.shop'))}</b>` })
+      : ntK('bell.hint.many', { n: buys.length })}</span>
+    <button type="button" class="nt-hint-btn" data-nthint="go">${escapeHtml(one ? tk('fund.enter') : tk('common.view'))}</button>
+    <button type="button" class="nt-hint-x" data-nthint="x" aria-label="${escapeHtml(tk('common.close'))}">×</button>`;
   const header = document.querySelector('#appShell > header');
   el.style.top = Math.round((header ? header.getBoundingClientRect().bottom : 60) + 8 + hwBannerOffset()) + 'px';
   el.classList.remove('hidden');

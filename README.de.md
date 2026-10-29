@@ -99,6 +99,16 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 und 🇰🇷 한국어**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.117.0
+
+**Text-Schlüssel, Teil 9: die Glocke und die Push-Nachrichten des Servers**
+
+- Die **Glocke** (Heimweg, offene Einkäufe, Neuigkeiten der Familie, der leere Hinweis) und der Hinweis **„Gehst du einkaufen?“** holen ihre Texte jetzt aus den Sprachdateien in `pb_public/i18n/` – in allen neun Sprachen und als WG. „Gehst du einkaufen?“ gibt es damit auch auf Japanisch und Koreanisch.
+- **Push-Nachrichten vom Server:** Die Übersetzungen stehen nicht mehr im Server-Code. Der Server liest dieselben Sprachdateien wie die App (Schlüssel `push.…`) über `pinn-textkern.js` – Einzahl, Mehrzahl und die WG-Begriffe funktionieren genau wie in der App.
+- Kleinigkeiten: Auf Englisch heißt es jetzt „Fit winter tyres“ statt „Fit Winter tyres“ (ebenso bei Sommerreifen und in den anderen Sprachen); Datum und Uhrzeit in der Glocke folgen der eingestellten Sprache; Zahlen wie „1 Artikel“ stehen in richtiger Einzahl oder Mehrzahl; doppelte Anführungszeichen in japanischen Hinweisen sind weg.
+- Als Nächstes: 1.118.0 räumt auf – der alte Übersetzer und `lang/` fallen weg.
+- Geändert: `index.html`, `js/hinweise.js`, `js/fahrzeuge.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien in `i18n/` und `lang/` sowie am Server `pb_hooks/pinn-pushtext.js`. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
+
 ## Neu in 1.116.1
 
 **Text-Schlüssel, Teil 8: Zuhause, Fahrzeuge und Dokumente**
@@ -156,7 +166,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.116.1` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.117.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

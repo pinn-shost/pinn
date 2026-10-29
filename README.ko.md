@@ -99,6 +99,16 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.117.0의 새 소식
+
+**텍스트 키 9부: 종 알림과 서버 푸시 알림**
+
+- **종**(귀갓길, 열린 장보기, 가족 새 소식)과 **“장 보러 가세요?”** 알림이 이제 `pb_public/i18n/`의 언어 파일에서 문구를 가져와요 – 아홉 개 언어 모두, 셰어하우스에서도요. “장 보러 가세요?”는 이제 일본어와 한국어로도 나와요.
+- **서버 푸시 알림:** 번역이 더 이상 서버 코드에 적혀 있지 않아요. 서버가 `pinn-textkern.js`로 앱과 같은 언어 파일(`push.…` 키)을 읽어요 – 단수·복수와 셰어하우스 용어도 앱과 똑같아요.
+- 작은 개선: 영어에서 “Fit Winter tyres” 대신 “Fit winter tyres”(여름용 타이어와 다른 언어도 마찬가지); 종 알림의 날짜와 시간은 선택한 언어를 따르고, “1개” 같은 숫자의 단수·복수가 맞게 나와요; 일본어 알림의 중복된 따옴표를 없앴어요.
+- 다음 단계: 1.118.0에서 정리 – 예전 번역기와 `lang/`이 빠져요.
+- 변경: `index.html`, `js/hinweise.js`, `js/fahrzeuge.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`와 `lang/`의 모든 언어 파일, 서버의 `pb_hooks/pinn-pushtext.js`. 설치는 평소처럼(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
+
 ## 1.116.1의 새 소식
 
 **텍스트 키 8부: 집, 차량, 문서**
@@ -145,7 +155,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.116.1` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.117.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -95,6 +95,16 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 and 🇰🇷 한국어**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.117.0
+
+**Text keys, part 9: the bell and the push messages of the server**
+
+- The **bell** (way home, open shopping trips, family news, the empty notice) and the **“Going shopping?”** notice now take their texts from the language files in `pb_public/i18n/` – in all nine languages and as a flatshare. “Going shopping?” now also exists in Japanese and Korean.
+- **Push messages from the server:** the translations are no longer written into the server code. The server reads the same language files as the app (keys `push.…`) through `pinn-textkern.js` – singular, plural and the flatshare terms work exactly as in the app.
+- Small things: English now says “Fit winter tyres” instead of “Fit Winter tyres” (likewise for summer tyres and in the other languages); dates and times in the bell follow your language; numbers like “1 item” use the right singular or plural; doubled quotation marks in Japanese notices are gone.
+- Next: 1.118.0 tidies up – the old translator and `lang/` are removed.
+- Changed: `index.html`, `js/hinweise.js`, `js/fahrzeuge.js`, `js/sprachen.js`, `js/versionslog.js`, all language files in `i18n/` and `lang/` and on the server `pb_hooks/pinn-pushtext.js`. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.116.1
 
 **Text keys, part 8: home, vehicles and documents**
@@ -189,7 +199,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.116.1` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.117.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

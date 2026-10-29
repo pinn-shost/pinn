@@ -20,6 +20,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.117', datum: '29.10.2026', titel: 'Übersetzungen mit Text-Schlüsseln: Glocke und Push-Nachrichten',
+    punkte: [
+      ['info', 'Die Glocke (Heimweg, offene Einkäufe, Neuigkeiten der Familie) und der Hinweis „Gehst du einkaufen?“ holen ihre Texte jetzt über Text-Schlüssel – in allen neun Sprachen, auch als WG. „Gehst du einkaufen?“ gibt es damit auch auf Japanisch und Koreanisch'],
+      ['info', 'Push-Nachrichten vom Server: Die Übersetzungen stehen nicht mehr im Server-Code, sondern kommen aus denselben Sprachdateien wie die App (pb_public/i18n) – mit Einzahl, Mehrzahl und WG-Begriffen wie in der App'],
+      ['fix', 'Kleinigkeiten: Auf Englisch heißt es jetzt „Fit winter tyres“ statt „Fit Winter tyres“ (ebenso bei Sommerreifen und in den anderen Sprachen); in der Glocke stehen Datum und Uhrzeit im Format der eingestellten Sprache und Zahlen wie „1 Artikel“ in richtiger Einzahl oder Mehrzahl; doppelte Anführungszeichen in japanischen Hinweisen sind weg'],
+      ['info', 'Geändert: index.html, js/hinweise.js, js/fahrzeuge.js, js/sprachen.js, js/versionslog.js, alle Sprachdateien in i18n/ und lang/ sowie am Server pb_hooks/pinn-pushtext.js'],
+    ],
+  },
+  {
     v: '1.116', datum: '25.10.2026', titel: 'Übersetzungen mit Text-Schlüsseln: Familie, Ortung, Kinderseite, Zuhause, Fahrzeuge und Dokumente',
     punkte: [
       ['info', 'Familie mit Übersicht, Notfallpässen, Ortung („Mein Standort“, Orte, Anleitung für „Traccar Client“), SOS und Heimweg, Schule & Kita, Haustiere und Urlaubswetter sowie die Kinderseite mit Sternen und Belohnungen, die Kachel „Familienmitglieder“ und „Wo bist du?“ holen ihre Texte jetzt über Text-Schlüssel – in allen neun Sprachen, auch als WG'],
