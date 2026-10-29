@@ -69,10 +69,10 @@ function bdayKey(b) {
   return h.toString(36);
 }
 // The server stores at most 30 texts of 300 characters per design value - so the keys are bundled
-function bdayPackHidden() {
+function bdayPackHidden(set = overviewBdayHidden) {
   const out = [];
   let cur = '';
-  [...(overviewBdayHidden || [])].forEach(k => {
+  [...(set || [])].forEach(k => {
     if (cur && cur.length + k.length + 1 > 290) { out.push(cur); cur = ''; }
     cur += (cur ? ',' : '') + k;
   });
@@ -103,39 +103,39 @@ function hideBirthday(key) {
 }
 
 function birthdayWhenText(diff) {
-  if (diff === 0) return 'Heute 🎉';
-  if (diff === 1) return 'Morgen';
-  return `in ${diff} Tagen`;
+  if (diff === 0) return tk('common.today') + ' 🎉';
+  if (diff === 1) return tk('overview.tomorrow');
+  return tk('lists.when.inDays', { n: diff });
 }
 function renderBirthdayTile() {
   const body = document.getElementById('birthdayTileBody');
   const range = document.getElementById('birthdayTileRange');
   if (!body || !range) return;
-  range.textContent = `nächste ${overviewBdayDays} Tage`;
+  range.textContent = tk('overview.bday.nextDays', { n: overviewBdayDays });
   if (!birthdayData.geladen) {
-    body.innerHTML = '<p class="text-sm text-ink/40 italic">Geburtstage werden geladen …</p>';
+    body.innerHTML = '<p class="text-sm text-ink/40 italic">' + escapeHtml(tk('overview.bday.loading')) + '</p>';
     return;
   }
   if (!birthdayData.eingerichtet) {
-    body.innerHTML = '<p class="text-sm text-ink/40 italic">Die Geburtstage kommen aus den iCloud- bzw. Google-Kontakten. Dafür unter Einstellungen → Kalender ein iCloud- oder Google-Konto verbinden.</p>';
+    body.innerHTML = '<p class="text-sm text-ink/40 italic">' + escapeHtml(tk('overview.bday.setup')) + '</p>';
     return;
   }
   const list = visibleUpcomingBirthdays(overviewBdayDays);
   if (!list.length) {
     body.innerHTML = `<p class="text-sm text-ink/40 italic">${birthdayData.fehler && !birthdayData.liste.length
-      ? 'Die Kontakte konnten nicht geladen werden.'
-      : `In den nächsten ${overviewBdayDays} Tagen hat niemand Geburtstag.`}</p>`;
+      ? escapeHtml(tk('overview.bday.loadFailed'))
+      : escapeHtml(tk('overview.bday.none', { n: overviewBdayDays }))}</p>`;
     return;
   }
   const limit = birthdayTileExpanded ? list.length : 4;
   const rows = list.slice(0, limit).map(b => {
-    const month = b.next.toLocaleDateString('de-DE', { month: 'short' }).replace('.', '');
-    const weekday = b.next.toLocaleDateString('de-DE', { weekday: 'long' });
-    const sub = [weekday, b.age ? `wird ${b.age}` : ''].filter(Boolean).join(' · ');
+    const month = b.next.toLocaleDateString(sysLocale(), { month: 'short' }).replace('.', '');
+    const weekday = b.next.toLocaleDateString(sysLocale(), { weekday: 'long' });
+    const sub = [weekday, b.age ? tk('famTile.turns', { n: b.age }) : ''].filter(Boolean).join(' · ');
     const key = bdayKey(b);
     return `
       <div class="ov-bday-swipe" data-bday-key="${key}">
-        <button type="button" class="ov-bday-action" data-bday-hide="${key}">Ausblenden</button>
+        <button type="button" class="ov-bday-action" data-bday-hide="${key}">${escapeHtml(tk('overview.hide'))}</button>
         <div class="ov-bday-row${b.diff === 0 ? ' is-today' : ''}">
           <div class="ov-bday-date"><b>${b.next.getDate()}</b><span>${escapeHtml(month)}</span></div>
           <div class="ov-bday-text">
@@ -143,12 +143,12 @@ function renderBirthdayTile() {
             <div class="ov-bday-sub">${escapeHtml(sub)}</div>
           </div>
           <div class="ov-bday-when">${birthdayWhenText(b.diff)}</div>
-          <button type="button" class="ov-bday-x" data-bday-hide="${key}" aria-label="Geburtstag ausblenden" title="Ausblenden">×</button>
+          <button type="button" class="ov-bday-x" data-bday-hide="${key}" aria-label="${escapeHtml(tk('overview.bday.hideAria'))}" title="${escapeHtml(tk('overview.hide'))}">×</button>
         </div>
       </div>`;
   }).join('');
   const more = list.length > 4
-    ? `<button type="button" class="ov-bday-more" data-bday-more="1">${birthdayTileExpanded ? 'Weniger anzeigen' : `+ ${list.length - limit} weitere`}</button>`
+    ? `<button type="button" class="ov-bday-more" data-bday-more="1">${escapeHtml(birthdayTileExpanded ? tk('maint.showLess') : tk('famTile.moreN', { n: list.length - limit }))}</button>`
     : '';
   body.innerHTML = `<div class="ov-bday-list">${rows}${more}</div>`;
 }
@@ -160,9 +160,10 @@ document.getElementById('birthdayTileBody').addEventListener('click', (e) => {
   renderBirthdayTile();
 });
 
-// Like on the iPhone: swipe a row to the left -> „Ausblenden“ appears; swiping far hides it directly
-(function attachBirthdaySwipe() {
-  const box = document.getElementById('birthdayTileBody');
+// Like on the iPhone: swipe a row to the left -> „Ausblenden“ appears; swiping far hides it directly.
+// Used by the birthday tile and (since 1.118) by the contracts tile: rows are .ov-bday-swipe with data-bday-key.
+function attachOverviewSwipe(box, hideFn) {
+  if (!box) return;
   const OPEN = 104;
   let row = null, wrap = null, sx = 0, sy = 0, base = 0, dx = 0, dir = null;
   const closeAll = (except) => box.querySelectorAll('.ov-bday-swipe.is-open').forEach(w => {
@@ -173,7 +174,7 @@ document.getElementById('birthdayTileBody').addEventListener('click', (e) => {
   });
   box.addEventListener('touchstart', (e) => {
     const r = e.target.closest('.ov-bday-row');
-    if (!r || e.touches.length !== 1 || e.target.closest('[data-bday-hide]')) { row = null; return; }
+    if (!r || e.touches.length !== 1 || e.target.closest('[data-bday-hide],[data-vt-hide]')) { row = null; return; }
     row = r; wrap = r.parentElement;
     sx = e.touches[0].clientX; sy = e.touches[0].clientY; dx = 0; dir = null;
     base = wrap.classList.contains('is-open') ? -OPEN : 0;
@@ -200,7 +201,7 @@ document.getElementById('birthdayTileBody').addEventListener('click', (e) => {
     const x = Math.min(0, base + dx);
     if (x < -w.offsetWidth * 0.55) {
       r.style.transform = `translateX(-${w.offsetWidth}px)`;
-      hideBirthday(w.dataset.bdayKey);
+      hideFn(w.dataset.bdayKey);
     } else if (x < -OPEN / 2) {
       w.classList.add('is-open');
       r.style.transform = `translateX(-${OPEN}px)`;
@@ -211,8 +212,9 @@ document.getElementById('birthdayTileBody').addEventListener('click', (e) => {
   };
   box.addEventListener('touchend', end);
   box.addEventListener('touchcancel', end);
-  document.addEventListener('touchstart', (e) => { if (!e.target.closest('#birthdayTileBody')) closeAll(null); }, { passive: true });
-})();
+  document.addEventListener('touchstart', (e) => { if (!box.contains(e.target)) closeAll(null); }, { passive: true });
+}
+attachOverviewSwipe(document.getElementById('birthdayTileBody'), hideBirthday);
 
 // Loads the birthdays of the own family (at most every 6 hours, otherwise from device storage)
 async function loadBirthdays(force) {

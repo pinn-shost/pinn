@@ -56,7 +56,7 @@ let dashWeatherTimer = null;
 function tickDashboardClock() {
   const now = new Date();
   let clockText = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-  if (weatherData) clockText += ` | ${weatherData.temp}° ${weatherIconForCode(weatherData.code)}`;
+  if (weatherData) clockText += ` | ${tDeg(weatherData.temp)} ${weatherIconForCode(weatherData.code)}`;
   document.getElementById('dashClock').textContent = clockText;
   document.getElementById('dashDate').textContent = now.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
 }

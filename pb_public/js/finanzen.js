@@ -1042,7 +1042,13 @@ function renderFinanceTrend() {
 }
 
 function finEntryTitle(e) {
-  return e.title || e.store || finCategory(e.category).label;
+  return finLegacyTitle(e.title) || e.store || finCategory(e.category).label;
+}
+// Titles that older versions stored in German (imports) are shown in the app language
+const FIN_LEGACY_TITLES = { 'Kauf (Import)': 'depot.purchaseImport', 'Verkauf (Import)': 'depot.saleImport', 'Kauf': 'depot.purchase', 'Verkauf': 'depot.sale' };
+function finLegacyTitle(t) {
+  const k = t && FIN_LEGACY_TITLES[String(t).trim()];
+  return k ? tk(k) : (t || '');
 }
 function finDayLabel(iso) {
   const today = finTodayIso();

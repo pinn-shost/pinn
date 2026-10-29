@@ -96,7 +96,7 @@ function showEventDetail(ev, anchorEl) {
   }
 
   const descEl = document.getElementById('eventDetailDescription');
-  if (ev.description) { descEl.textContent = ev.description; descEl.classList.remove('hidden'); }
+  if (ev.description) { descEl.textContent = localizeNotes(ev.description); descEl.classList.remove('hidden'); }
   else descEl.classList.add('hidden');
 
   // The "calshow:" link opens Apple's Calendar app directly on this day. Apple unfortunately offers no public

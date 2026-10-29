@@ -169,6 +169,48 @@ const AB_T = {
     zu_fin: '打开财务', schliessen: '关闭', laden: '加载中 …', bis: '至 {d}',
     s_urlaub: '假期', u_regen: '{n} 个雨天', u_regen1: '1 个雨天', u_trocken: '干燥', u_wasser: '水温 {t}°', u_sonne: '日照 {h} 小时', u_klima: '部分为最近三年的典型值——预报涵盖 16 天。', u_keine: 'pinn. 重新上线后会显示目的地的天气。', u_mehr: '度假天气逐日', tier_faellig: '宠物：到期', tier_ueber: '宠物：已逾期', tier_geb: '过生日 🐾',
   },
+  ja: {
+    w_kicker: '週間プレビュー', w_title: '今週の予定', w_sub: '第{kw}週 · {range}', b_w: '週間プレビューが届きました', b_w_s: '予定、タスク、食事 · {range}',
+    m_kicker: '月間家計見通し', m_title: '見通し：{monat}', b_m: '家計見通し：{monat}', b_m_s: '今後の予定と{prev}の振り返り',
+    c_termine: '件の予定', c_termin: '件の予定', c_aufgaben: '件のタスク', c_aufgabe: '件のタスク', c_essen: '件の食事予定', c_geb: '件の誕生日', c_gebs: '件の誕生日', c_muell: '回のごみ収集', c_muells: '回のごみ収集',
+    s_wetter: '天気', s_merken: '忘れずに', s_tage: '日ごとの予定', s_rueck: '先週のまとめ', s_offen: '未完了',
+    heute: '今日', morgen: '明日', frei: '予定なし', ganz: '終日', fruehstueck: '朝食', mittag: '昼食', abend: '夕食', alle: '全員', reihum: '交代制',
+    haushalt: '家事', raus: '出す', geb: '{name}さんの誕生日', geb_alt: '{name}さんが{age}歳に',
+    ferien_bis: '{d}まで', ferien_ab: '{d}から', vt_frist: '解約期限', vt_ende: '契約終了', vt_erinn: 'リマインダー',
+    mhd: '賞味期限 {d}', mhd_ab: '期限切れ', faellig: '{d}から期限超過', abbuch: '引き落とし', eingang: '入金',
+    r_termine: '件の予定', r_haushalt: '件の家事完了', r_ausg: '支出', r_essen: '回の料理', r_essen_p: '件の食事予定', r_top: '🏆 一番がんばった人：{name}',
+    r_leer: '先週はまとめることがありません。', leer: '今週はまだ予定がありません。ゆっくり楽しんでください！🌿',
+    zu_kal: 'カレンダーを開く', zu_aufg: 'タスクを開く',
+    m_rueck: '{monat}の振り返り', m_aus: '{monat}の予定', m_ein: '収入', m_aus_t: '支出', m_saldo: '収支', m_budget: '残り予算', m_ueber: '予算超過',
+    m_top: '大きな支出', m_spar: '貯蓄', m_p_ein: '予定収入', m_p_fix: '固定費', m_p_spar: '積立', m_p_frei: '残り',
+    m_frei_h: '収入（予算調整を含む）から固定費と積立を引いた額です。買い物やその他すべてに使えます。',
+    m_mehr: '固定費が{prev}より{d}多くなっています。', m_weniger: '固定費が{prev}より{d}少なくなっています。',
+    m_selten: '毎月ではない支払い – 前もって計画を', m_fristen: '解約期限', m_liste: '予定している支払い', m_weitere: '+ ほか{n}件',
+    m_leer: '今月の予定はまだありません。定期的な支払いは自動的にここに表示されます。', m_keine: '月間見通しには家計へのアクセス権と少なくとも1つの財布が必要です。',
+    zu_fin: '家計を開く', schliessen: '閉じる', laden: '読み込み中…', bis: '{d}まで',
+    s_urlaub: '旅行', u_regen: '雨の日 {n}日', u_regen1: '雨の日 1日', u_trocken: '晴れ', u_wasser: '水温 {t}°', u_sonne: '日照 {h}時間', u_klima: '一部は過去3年間の平均値です（予報は16日先まで）。', u_keine: 'pinn.がオンラインに戻ると目的地の天気が表示されます。', u_mehr: '旅行先の天気（日ごと）', tier_faellig: 'ペット：予定日', tier_ueber: 'ペット：期限超過', tier_geb: 'の誕生日です 🐾',
+  },
+  ko: {
+    w_kicker: '주간 미리보기', w_title: '이번 주', w_sub: '{kw}주차 · {range}', b_w: '주간 미리보기가 도착했어요', b_w_s: '일정, 할 일, 식사 · {range}',
+    m_kicker: '월간 재정 전망', m_title: '전망: {monat}', b_m: '재정 전망: {monat}', b_m_s: '다가오는 일정과 {prev} 돌아보기',
+    c_termine: '개 일정', c_termin: '개 일정', c_aufgaben: '개 할 일', c_aufgabe: '개 할 일', c_essen: '개 식사 계획', c_geb: '개 생일', c_gebs: '개 생일', c_muell: '번 쓰레기 수거', c_muells: '번 쓰레기 수거',
+    s_wetter: '날씨', s_merken: '잊지 마세요', s_tage: '날짜별', s_rueck: '지난주 요약', s_offen: '남은 일',
+    heute: '오늘', morgen: '내일', frei: '일정 없음', ganz: '종일', fruehstueck: '아침', mittag: '점심', abend: '저녁', alle: '모두', reihum: '돌아가며',
+    haushalt: '집안일', raus: '내놓기', geb: '{name}님의 생일', geb_alt: '{name}님이 {age}살이 돼요',
+    ferien_bis: '{d}까지', ferien_ab: '{d}부터', vt_frist: '해지 기한', vt_ende: '계약 종료', vt_erinn: '알림',
+    mhd: '유통기한 {d}', mhd_ab: '기한 지남', faellig: '{d}부터 기한 지남', abbuch: '출금', eingang: '입금',
+    r_termine: '개 일정', r_haushalt: '개 집안일 완료', r_ausg: '지출', r_essen: '번 요리', r_essen_p: '개 식사 계획', r_top: '🏆 가장 열심히 한 사람: {name}',
+    r_leer: '지난주에는 요약할 내용이 없어요.', leer: '이번 주는 아직 비어 있어요 – 즐기세요! 🌿',
+    zu_kal: '캘린더 열기', zu_aufg: '할 일 열기',
+    m_rueck: '{monat} 돌아보기', m_aus: '{monat} 예정', m_ein: '수입', m_aus_t: '지출', m_saldo: '잔액', m_budget: '남은 예산', m_ueber: '예산 초과',
+    m_top: '큰 지출', m_spar: '저축', m_p_ein: '예정 수입', m_p_fix: '고정비', m_p_spar: '적립', m_p_frei: '남는 금액',
+    m_frei_h: '수입(예산 조정 포함)에서 고정비와 적립을 뺀 금액이에요 – 장보기와 그 밖의 모든 것에 쓸 수 있어요.',
+    m_mehr: '고정비가 {prev}보다 {d} 많아요.', m_weniger: '고정비가 {prev}보다 {d} 적어요.',
+    m_selten: '매달이 아닌 지출 – 미리 계획하세요', m_fristen: '해지 기한', m_liste: '예정된 지출', m_weitere: '+ {n}개 더',
+    m_leer: '이번 달에는 아직 계획된 것이 없어요 – 정기 지출은 자동으로 여기에 표시돼요.', m_keine: '월간 전망에는 재정 접근 권한과 지갑이 하나 이상 필요해요.',
+    zu_fin: '재정 열기', schliessen: '닫기', laden: '불러오는 중…', bis: '{d}까지',
+    s_urlaub: '여행', u_regen: '비 오는 날 {n}일', u_regen1: '비 오는 날 1일', u_trocken: '맑음', u_wasser: '수온 {t}°', u_sonne: '일조 {h}시간', u_klima: '일부는 지난 3년간의 평균값이에요 – 예보는 16일까지예요.', u_keine: 'pinn.이 다시 온라인이 되면 여행지 날씨가 표시돼요.', u_mehr: '여행지 날씨 (날짜별)', tier_faellig: '반려동물: 예정', tier_ueber: '반려동물: 기한 지남', tier_geb: '의 생일이에요 🐾',
+  },
 };
 function abLang() { const l = (window.PINN_I18N && PINN_I18N.current) || 'en'; return AB_T[l] ? l : 'en'; }
 function abLocale() { return (window.PINN_I18N && PINN_I18N.language && PINN_I18N.language.locale) || 'de-DE'; }
@@ -564,7 +606,7 @@ async function abRenderWeek(body, mondayIso) {
       const w = wx[i];
       const wd = abFmt(d, { weekday: 'short' });
       if (!w) return `<div class="ab-wx-d"><span>${abEsc(wd)}</span><span class="i">·</span></div>`;
-      return `<div class="ab-wx-d${(w.rain || 0) >= 60 ? ' rain' : ''}"><span>${abEsc(wd)}</span><span class="i">${weatherIconForCode(w.code)}</span><b>${Math.round(w.max)}°</b> <span>${Math.round(w.min)}°</span></div>`;
+      return `<div class="ab-wx-d${(w.rain || 0) >= 60 ? ' rain' : ''}"><span>${abEsc(wd)}</span><span class="i">${weatherIconForCode(w.code)}</span><b>${tDeg(w.max)}</b> <span>${tDeg(w.min)}</span></div>`;
     }).join('')}</div></div>`;
   }
 
@@ -591,7 +633,7 @@ async function abRenderWeek(body, mondayIso) {
   if (overdue.length) {
     html += `<div class="ab-card"><div class="ab-h2">⏰ ${abEsc(abT('s_offen'))}<small>${overdue.length}</small></div>${overdue.slice(0, 6).map(a => {
       const ms = abAssigned(a.notes);
-      return `<div class="ab-hl" style="--ab-tone:#C0392B"><span class="i">☐</span><span>${abEsc(a.title)}<small>${abEsc(abWhoText(ms))}</small></span><span class="when">${abEsc(abT('faellig', { d: abShort(a.dueDate) }))}</span></div>`;
+      return `<div class="ab-hl" style="--ab-tone:#C0392B"><span class="i">☐</span><span>${abEsc(abTx(a.title))}<small>${abEsc(abWhoText(ms))}</small></span><span class="when">${abEsc(abT('faellig', { d: abShort(a.dueDate) }))}</span></div>`;
     }).join('')}${overdue.length > 6 ? `<p class="ab-note">${abEsc(abT('m_weitere', { n: overdue.length - 6 }))}</p>` : ''}</div>`;
   }
 
@@ -613,11 +655,11 @@ async function abRenderWeek(body, mondayIso) {
     tasksWeek.filter(a => a.dueDate === d).forEach(a => {
       const ms = abAssigned(a.notes);
       const t = a.fromTime ? a.fromTime : '✅';
-      items.push(`<div class="ab-it" style="--c:var(--c-mustard)"><span class="t">${abEsc(t)}</span><span class="n"${a.done ? ' style="text-decoration:line-through;opacity:.6"' : ''}>${abEsc(a.title)}</span>${ms.length ? `<span class="who">${abEsc(abWhoText(ms))}</span>` : ''}</div>`);
+      items.push(`<div class="ab-it" style="--c:var(--c-mustard)"><span class="t">${abEsc(t)}</span><span class="n"${a.done ? ' style="text-decoration:line-through;opacity:.6"' : ''}>${abEsc(abTx(a.title))}</span>${ms.length ? `<span class="who">${abEsc(abWhoText(ms))}</span>` : ''}</div>`);
     });
     (hh[d] || []).length && items.push(`<div class="ab-it minor" style="--c:#6B8E7F;flex-wrap:wrap"><span class="t">🧹</span><span class="ab-chiprow" style="flex:1 1 auto;min-width:0">${hh[d].map(x => {
       const who = x.rotate ? abT('reihum') : abWhoText(x.ms);
-      return `<span class="ab-mini"${x.done ? ' style="text-decoration:line-through;opacity:.6"' : ''}>${abEsc(x.title)}${who ? ' · ' + abEsc(who) : ''}</span>`;
+      return `<span class="ab-mini"${x.done ? ' style="text-decoration:line-through;opacity:.6"' : ''}>${abEsc(abTx(x.title))}${who ? ' · ' + abEsc(who) : ''}</span>`;
     }).join('')}</span></div>`);
     meals.filter(p => p.date === d).sort((a, b) => mealTypeRank(a.mealType) - mealTypeRank(b.mealType)).forEach(p => {
       const r = p.recipeId ? recipes.find(x => x.id === p.recipeId) : null;
@@ -635,7 +677,7 @@ async function abRenderWeek(body, mondayIso) {
       <div class="ab-day-h"><span class="ab-day-n">${dt.getDate()}</span>
         <span class="ab-day-wd">${abEsc(abFmt(d, { weekday: 'long' }))}<small>${abEsc(rel || abFmt(d, { month: 'long' }))}</small></span>
         ${hol.map(h => `<span class="ab-day-tag">🎉 ${abEsc(h)}</span>`).join('')}
-        ${w ? `<span class="ab-day-wx">${weatherIconForCode(w.code)} ${Math.round(w.max)}°</span>` : ''}
+        ${w ? `<span class="ab-day-wx">${weatherIconForCode(w.code)} ${tDeg(w.max)}</span>` : ''}
       </div>
       ${items.length ? `<div class="ab-items">${items.join('')}</div>` : `<div class="ab-free">${abEsc(abT('frei'))}</div>`}
     </div>`;

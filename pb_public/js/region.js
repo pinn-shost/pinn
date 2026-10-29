@@ -3,7 +3,7 @@
    it is loaded with <script src> in the <head> of index.html, at exactly the place of the former inline script, so it
    still runs while the <head> is parsed, after js/ruhemodus.js and the language script, before all other app files (the load order is listed in index.html
    and in pinn-setup.sh).
-   Contents: window.PINN_REGION (countries, currencies, formats, money/num/parse, emergency numbers) and the switch of
+   Contents: window.PINN_REGION (countries, currencies, formats, money/num/parse, emergency numbers, temperature unit) and the switch of
    Intl.NumberFormat / Number.prototype.toLocaleString for German formats. Runs after the language script (i18n) and sets
    the class cur-before on <html> before the first paint. */
 
@@ -90,6 +90,8 @@
     ['MY', 'ms-MY', 'MYR', '999', '999', '994', '999'],
     ['VN', 'vi-VN', 'VND', '113', '115', '114', ''],
   ];
+  // Countries that show temperatures in Fahrenheit by default (everything else: Celsius)
+  var FAHRENHEIT = ['US', 'LR', 'BS', 'BZ', 'KY', 'PW', 'FM', 'MH'];
   // Additional selectable currencies (all national currencies above are included anyway)
   var EXTRA_CURRENCIES = ['RUB'];
   // Number format: thousands and decimal separator (auto = as usual in the chosen country)
@@ -128,7 +130,8 @@
     var w = String(o.waehrung || '').toUpperCase();
     var waehrung = CURRENCIES.indexOf(w) >= 0 ? w : 'auto';
     var zahlen = FORMATS[o.zahlen] ? o.zahlen : 'auto';
-    return { land: land, waehrung: waehrung, zahlen: zahlen };
+    var temperatur = o.temperatur === 'C' || o.temperatur === 'F' ? o.temperatur : 'auto';
+    return { land: land, waehrung: waehrung, zahlen: zahlen, temperatur: temperatur };
   }
 
   // Compute the complete settings of a country/format (without the replaced formatters)
@@ -162,12 +165,14 @@
       if (p.type === 'integer') sawNum = true;
       if (p.type === 'currency') { sym = p.value; vorne = !sawNum; }
     });
+    var tUnit = set.temperatur === 'C' || set.temperatur === 'F' ? set.temperatur : (FAHRENHEIT.indexOf(row[0]) >= 0 ? 'F' : 'C');
     return {
+      tempUnit: tUnit,
       row: row, locale: loc, currency: cur, group: g, decimal: d, override: over, digits: nk, symbol: sym, before: vorne,
       notruf: { polizei: row[3], rettung: row[4], feuer: row[5], allgemein: row[6] || '' },
     };
   }
-  function sameSet(a, b) { return a.land === b.land && a.waehrung === b.waehrung && a.zahlen === b.zahlen; }
+  function sameSet(a, b) { return a.land === b.land && a.waehrung === b.waehrung && a.zahlen === b.zahlen && a.temperatur === b.temperatur; }
 
   var stored = cleanSettings(readStored());
   var C = compute(stored);
@@ -251,7 +256,7 @@
   function werteOf(set) {
     var x = compute(set);
     return {
-      land: x.row[0], waehrung: set.waehrung, zahlen: set.zahlen,
+      land: x.row[0], waehrung: set.waehrung, zahlen: set.zahlen, temperatur: set.temperatur, tempEinheit: x.tempUnit,
       geldSym: x.symbol, geldVorne: x.before, geldDez: x.decimal, geldTsd: x.group, geldNk: x.digits,
       notrufPolizei: x.notruf.polizei, notrufRettung: x.notruf.rettung, notrufFeuer: x.notruf.feuer,
     };
@@ -262,6 +267,8 @@
     land: C.row[0], currency: C.currency, locale: C.locale,
     decimal: C.decimal, group: C.group, symbol: C.symbol, symbolBefore: C.before, digits: C.digits,
     notruf: C.notruf,
+    // Temperature unit shown in the app: 'C' or 'F' (pinn. always calculates in °C internally)
+    tempUnit: C.tempUnit, FAHRENHEIT: FAHRENHEIT,
     // Selection stored on this device (land, waehrung = code or 'auto', zahlen = format or 'auto')
     stored: function () { var s = cleanSettings(readStored()); if (!s.land) s.land = C.row[0]; return s; },
     // Remember the selection. true = differs from the one currently shown (pinn. has to reload)
@@ -287,7 +294,7 @@
       var x = compute(cleanSettings(set));
       var mnf = currencyNF(x.locale, x.currency);
       var money = partsOf(mnf, 1234.56).map(function (p) { return p.type === 'decimal' ? x.decimal : p.type === 'group' ? x.group : p.value; }).join('');
-      return { money: money, notruf: x.notruf, currency: x.currency, row: x.row };
+      return { money: money, notruf: x.notruf, currency: x.currency, row: x.row, tempUnit: x.tempUnit };
     },
     numSample: function (land) {
       var row = findCountry(land) || C.row;
@@ -312,9 +319,26 @@
     // Decimal point of a finished number („1.5“) in the chosen format („1,5“)
     dec: function (s) { return String(s).replace('.', C.decimal); },
   };
+  // Temperature: number in the chosen unit (rounded), from a value in °C
+  window.PINN_REGION.temp = function (c, unit) {
+    var v = Number(c);
+    if (c === null || c === undefined || c === '' || !isFinite(v)) return null;
+    return Math.round((unit || C.tempUnit) === 'F' ? v * 9 / 5 + 32 : v);
+  };
   document.documentElement.classList.toggle('cur-before', C.before);
   try { if (sessionStorage.getItem('pinn.region.reload') === JSON.stringify(cleanSettings(readStored()))) sessionStorage.removeItem('pinn.region.reload'); } catch (e) { /* ignore */ }
 })();
+
+// Temperature for display: value in °C → „21°“ (or „70°“ with Fahrenheit); '' without a value
+function tDeg(c) {
+  const v = window.PINN_REGION && PINN_REGION.temp ? PINN_REGION.temp(c) : (isFinite(Number(c)) && c !== null && c !== '' ? Math.round(Number(c)) : null);
+  return v === null ? '' : v + '°';
+}
+// Temperature as a plain number in the chosen unit (for texts with „{t}°“)
+function tNum(c) {
+  const v = window.PINN_REGION && PINN_REGION.temp ? PINN_REGION.temp(c) : Math.round(Number(c));
+  return v === null ? '' : v;
+}
 
 // Marks this file as loaded – the start check in index.html reports missing app files
 (window.PINN_PARTS = window.PINN_PARTS || []).push('region');

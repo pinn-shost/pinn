@@ -99,6 +99,14 @@ Sempre con te: pinn. si installa su ogni iPhone e telefono Android come un’app
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 e 🇰🇷 한국어**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.118.0
+
+**Fahrenheit e rifiniture delle traduzioni**
+
+- **Temperatura in °F o °C:** Impostazioni → Lingua e regione ha la nuova impostazione **Temperatura**. *Automatico* segue il paese (USA: °F, altrimenti °C); puoi anche scegliere a mano.
+- **Panoramica:** i termini di disdetta si nascondono con uno scorrimento, come i compleanni.
+- **Traduzioni:** riquadri meteo, compleanni e termini, deposito, attività pneumatici, note dei appuntamenti, meteo vacanze e anteprima settimanale (ora anche in giapponese e coreano).
+
 ## Novità della 1.117.0
 
 **Chiavi di testo, parte 9: la campanella e le notifiche push del server**
@@ -116,15 +124,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Casa** (con difetti, segnalazione al proprietario, costi, contatori, manutenzione, giardino e messaggi della domotica), **veicoli**, **documenti** e l’**importazione di ricette** da PDF, foto e IA prendono ora i testi dai file di lingua in `pb_public/i18n/` – in tutte e nove le lingue e come casa condivisa. Nell’uso non cambia nulla.
 - Modelli, titoli dei documenti e attività per revisione e cambio gomme nascono nella lingua impostata; mesi e numeri come «1 giorno» seguono la tua lingua.
 - La campanella e i testi push del server arrivano con la 1.117.0.
-- Modificati solo file dell’app – sul server non cambia nulla.
-
-## Novità della 1.116.0
-
-**Chiavi di testo, parte 7: famiglia, localizzazione e pagina bambini**
-
-- **Famiglia** (panoramica, schede di emergenza, localizzazione, SOS e rientro a casa, scuola e asilo, animali e meteo delle vacanze), la **pagina bambini** con stelle e ricompense, il riquadro *Membri della famiglia* e *Dove sei?* prendono ora i testi dai file di lingua in `pb_public/i18n/` – in tutte e nove le lingue e come casa condivisa. Nell’uso non cambia nulla.
-- Circa 150 testi rimasti finora in tedesco sono tradotti; data e ora seguono la tua lingua; età, minuti e giorni al singolare o plurale corretto.
-- Casa, veicoli e documenti arrivano con la 1.116.1.
 - Modificati solo file dell’app – sul server non cambia nulla.
 
 ## Come funziona
@@ -155,7 +154,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.117.0` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.118.0` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

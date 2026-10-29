@@ -2,7 +2,7 @@
     <section id="weatherTileSection" class="hidden min-h-0 flex flex-col bg-white/40 border-ink/10">
       <div class="px-6 pt-4 pb-4">
         <div class="flex items-center justify-between gap-3 mb-3">
-          <h2 class="font-serif text-lg">Wetter</h2>
+          <h2 class="font-serif text-lg" data-tk="overview.tile.weather">Weather</h2>
           <span id="weatherTilePlace" class="text-xs text-ink/40 truncate"></span>
         </div>
         <div id="weatherTileBody"></div>
@@ -13,7 +13,7 @@
     <section id="birthdayTileSection" class="hidden min-h-0 flex flex-col bg-white/40 border-ink/10">
       <div class="px-6 pt-4 pb-4 min-h-0 overflow-y-auto">
         <div class="flex items-center justify-between gap-3 mb-3">
-          <h2 class="font-serif text-lg">Geburtstage</h2>
+          <h2 class="font-serif text-lg" data-tk="overview.tile.birthdays">Birthdays</h2>
           <span id="birthdayTileRange" class="text-xs text-ink/40 truncate"></span>
         </div>
         <div id="birthdayTileBody"></div>
@@ -24,7 +24,7 @@
     <section id="familyTileSection" class="hidden min-h-0 flex flex-col bg-white/40 border-ink/10">
       <div class="px-6 pt-4 pb-4 min-h-0">
         <div class="flex items-center justify-between gap-3 mb-3">
-          <h2 class="font-serif text-lg">Familienmitglieder</h2>
+          <h2 class="font-serif text-lg" data-tk="overview.tile.members">Family members</h2>
         </div>
         <div id="familyTileBody"></div>
       </div>
@@ -34,7 +34,7 @@
     <section id="contractTileSection" class="hidden min-h-0 flex flex-col bg-white/40 border-ink/10">
       <div class="px-6 pt-4 pb-4 min-h-0 overflow-y-auto">
         <div class="flex items-center justify-between gap-3 mb-3">
-          <h2 class="font-serif text-lg">Kündigungsfristen</h2>
+          <h2 class="font-serif text-lg" data-tk="overview.tile.contracts">Cancellation deadlines</h2>
           <span id="contractTileRange" class="text-xs text-ink/40 truncate"></span>
         </div>
         <div id="contractTileBody"></div>
@@ -45,8 +45,8 @@
     <section id="boardTileSection" class="hidden min-h-0 flex flex-col bg-white/40 border-ink/10">
       <div class="px-6 pt-4 pb-2 min-h-0">
         <div class="flex items-center justify-between gap-3">
-          <h2 class="font-serif text-lg">Pinnwand <span id="boardTileCount" class="text-xs font-sans text-mustard font-semibold" style="vertical-align:middle"></span></h2>
-          <button id="boardTileOpenBtn" type="button" class="text-xs text-ink/50 hover:text-pine transition whitespace-nowrap">Alle ansehen ›</button>
+          <h2 class="font-serif text-lg"><span data-tk="overview.tile.board">Pinboard</span> <span id="boardTileCount" class="text-xs font-sans text-mustard font-semibold" style="vertical-align:middle"></span></h2>
+          <button id="boardTileOpenBtn" type="button" class="text-xs text-ink/50 hover:text-pine transition whitespace-nowrap" data-tk="overview.viewAll">View all ›</button>
         </div>
         <div id="boardTileBody"></div>
       </div>

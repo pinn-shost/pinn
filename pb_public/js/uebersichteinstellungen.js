@@ -41,6 +41,13 @@ function renderOverviewSettings() {
     resetHidden.classList.toggle('opacity-40', !n);
     resetHidden.textContent = n ? tk('settings.birthdays.showHidden', { n }) : tk('settings.birthdays.noneHidden');
   }
+  const resetVt = document.getElementById('resetHiddenContractsBtn');
+  if (resetVt) {
+    const n = overviewVtHidden ? overviewVtHidden.size : 0;
+    resetVt.disabled = !n;
+    resetVt.classList.toggle('opacity-40', !n);
+    resetVt.textContent = n ? tk('settings.overview.showHiddenContracts', { n }) : tk('settings.overview.noContractsHidden');
+  }
   renderBirthdaySettingsStatus();
 }
 function renderBirthdaySettingsStatus() {
@@ -103,6 +110,10 @@ document.getElementById('overviewBdayOnlyToggle').addEventListener('change', (e)
 });
 document.getElementById('resetHiddenBirthdaysBtn').addEventListener('click', () => {
   overviewBdayHidden = new Set();
+  saveOverviewPrefs();
+});
+document.getElementById('resetHiddenContractsBtn').addEventListener('click', () => {
+  overviewVtHidden = new Set();
   saveOverviewPrefs();
 });
 document.getElementById('resetOverviewBtn').addEventListener('click', () => {

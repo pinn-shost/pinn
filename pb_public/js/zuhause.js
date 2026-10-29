@@ -1072,11 +1072,11 @@ function hsGardenTipHtml(rain) {
   const tips = [];
   const rainDay = Object.keys(rain).filter(d => rain[d] >= 4).sort().pop();
   if (rainDay) tips.push('🌧️ ' + (rainDay === today ? tk('home.wx.rainToday', { mm: hsNum(rain[rainDay], 1) }) : tk('home.wx.rained', { mm: hsNum(rain[rainDay], 1) })));
-  else if (t && Number(t.max) >= 28) tips.push('☀️ ' + tk('home.wx.hot', { t: Math.round(t.max) }));
+  else if (t && Number(t.max) >= 28) tips.push('☀️ ' + tk('home.wx.hot', { t: tNum(t.max) }));
   const next3 = w.days.filter(d => d.date >= today).slice(0, 3);
   const m = Number(today.slice(5, 7));
   const minT = next3.length ? Math.min(...next3.map(d => Number(d.min)).filter(x => isFinite(x))) : null;
-  if (minT != null && isFinite(minT) && minT <= 1 && [3, 4, 5, 9, 10, 11].includes(m)) tips.push('❄️ ' + tk('home.wx.frost', { t: Math.round(minT) }));
+  if (minT != null && isFinite(minT) && minT <= 1 && [3, 4, 5, 9, 10, 11].includes(m)) tips.push('❄️ ' + tk('home.wx.frost', { t: tNum(minT) }));
   if (!rainDay && next3.length === 3 && next3.reduce((s, d) => s + (Number(d.mm) || 0), 0) < 1 && m >= 4 && m <= 9) tips.push('🌤️ ' + tk('home.wx.dry'));
   if (!tips.length) return '';
   return `<div class="hs-wx-tip flex flex-col gap-1">${tips.map(x => `<div>${hsEsc(x)}</div>`).join('')}</div>`;

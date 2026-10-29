@@ -23,6 +23,15 @@ function getAssignedMembersForEvent(ev) {
   if (names.includes('alle')) return members;
   return members.filter(m => names.includes(memberLabel(m).toLowerCase()) || names.includes(m.name.toLowerCase()));
 }
+// Notes for display in the app language (since 1.118): the "Zugewiesen: ..." line stays German in the
+// stored data (server, iCloud and older devices read it) and is only translated here; the same for the
+// "Aus pinn. → Fahrzeuge → ..." stamp of older vehicle tasks.
+function localizeNotes(text) {
+  return String(text || '')
+    .replace(/^Zugewiesen:\s*(.+)$/m, (m, names) => tk('event.assignedLine', { names: names.split(',').map(n => n.trim()).map(n => n.toLowerCase() === 'alle' ? tk('tasks.everyone') : n).join(', ') }))
+    .replace(/^Aus pinn\. → Fahrzeuge → (.+)$/m, (m, name) => tk('vehicle.task.fromStamp', { name }))
+    .replace(/^Eingelagert:\s*(.+)$/m, (m, place) => tk('vehicle.task.storedAt', { place }));
+}
 // Removes the "Zugewiesen: ..." line from a text again (for display/the edit form).
 function stripAssignedLine(text) {
   return (text || '').replace(/\n*Zugewiesen:\s*.+/, '').trim();

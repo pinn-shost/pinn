@@ -69,10 +69,10 @@ function applyPersonalDesign() {
   syncDesignSettingsInputs();
   renderOverviewSettings();
   refreshOverviewTiles();
-  // Remember the region stored in the profile (country, currency, number format) on the device
+  // Remember the region stored in the profile (country, currency, number format, temperature unit) on the device
   let regionChanged = false;
   if (typeof w.land === 'string' && window.PINN_REGION) {
-    regionChanged = PINN_REGION.save({ land: w.land, waehrung: w.waehrung, zahlen: w.zahlen });
+    regionChanged = PINN_REGION.save({ land: w.land, waehrung: w.waehrung, zahlen: w.zahlen, temperatur: w.temperatur });
   }
   // Take over the language stored in the profile (reloads pinn. once for a different language)
   let reloading = false;
@@ -104,7 +104,7 @@ function currentDesignValues() {
     defaultViewModeDesktop, defaultViewScopeDesktop, defaultViewModeMobile, defaultViewScopeMobile,
     // Overview (tiles)
     ovOrder: overviewOrder.slice(), ovHidden: overviewHidden.slice(),
-    ovBdayDays: overviewBdayDays, ovBdayOnlyUpcoming: overviewBdayOnlyUpcoming, ovBdayHidden: bdayPackHidden(),
+    ovBdayDays: overviewBdayDays, ovBdayOnlyUpcoming: overviewBdayOnlyUpcoming, ovBdayHidden: bdayPackHidden(), ovVtHidden: bdayPackHidden(overviewVtHidden),
     // Savings: depots hidden from the total overview
     finDepotsOut: finDepotsOut.slice(0, 30),
     // Language of the app (pinnLangCode: stored on the device or currently active)

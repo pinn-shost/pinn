@@ -21,11 +21,11 @@ function readWeatherDailyCache() {
 function weatherDayLabel(dateStr, index) {
   const today = isoDate(new Date());
   const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
-  if (dateStr === today) return 'Heute';
-  if (dateStr === isoDate(tomorrow)) return 'Morgen';
+  if (dateStr === today) return tk('common.today');
+  if (dateStr === isoDate(tomorrow)) return tk('overview.tomorrow');
   const [y, m, d] = String(dateStr).split('-').map(Number);
   const dt = new Date(y, (m || 1) - 1, d || 1);
-  return isNaN(dt) ? '' : dt.toLocaleDateString('de-DE', { weekday: index > 1 ? 'long' : 'short' });
+  return isNaN(dt) ? '' : dt.toLocaleDateString(sysLocale(), { weekday: index > 1 ? 'long' : 'short' });
 }
 function renderWeatherTile() {
   try { renderWeatherTileNow(); } catch (e) { /* app not fully built yet */ }
@@ -41,20 +41,20 @@ function renderWeatherTileNow() {
   if (!days.length) {
     place.textContent = '';
     body.innerHTML = `<p class="text-sm text-ink/40 italic">${weatherNoLocation
-      ? 'Noch kein Zuhause festgelegt – Einstellungen → Zuhause.'
-      : 'Wetter wird geladen …'}</p>${wxTileTripsHtml()}`;
+      ? escapeHtml(tk('overview.weather.noHome'))
+      : escapeHtml(tk('overview.weather.loading'))}</p>${wxTileTripsHtml()}`;
     return;
   }
-  const now = weatherData && weatherData.temp != null ? `jetzt ${weatherData.temp}°` : '';
+  const now = weatherData && weatherData.temp != null ? tk('overview.weather.now', { t: tDeg(weatherData.temp) }) : '';
   place.textContent = [weatherDaily.label, now].filter(Boolean).join(' · ');
   const old = Date.now() - (Number(weatherDaily.ts) || 0) > 6 * 60 * 60 * 1000;
   body.innerHTML = `<div class="ov-weather-days" style="grid-template-columns:repeat(${days.length}, minmax(0, 1fr))">${days.map((d, i) => `
       <div class="ov-weather-day${d.date === today ? ' is-today' : ''}">
         <div class="ov-weather-label">${escapeHtml(weatherDayLabel(d.date, days.length > 3 ? 0 : i))}</div>
         <div class="ov-weather-icon">${weatherIconForCode(d.code)}</div>
-        <div class="ov-weather-temp">${d.max != null ? d.max + '°' : '–'}<span class="ov-weather-min">${d.min != null ? d.min + '°' : ''}</span></div>
+        <div class="ov-weather-temp">${d.max != null ? tDeg(d.max) : '–'}<span class="ov-weather-min">${d.min != null ? tDeg(d.min) : ''}</span></div>
         <div class="ov-weather-rain">${d.rain != null ? '💧 ' + d.rain + ' %' : ''}</div>
-      </div>`).join('')}</div>${homeSunLine() ? `<p class="ov-weather-sun">${homeSunLine()}</p>` : ''}${wxTileTripsHtml()}${old ? `<p class="ov-weather-stale">Stand: ${new Date(weatherDaily.ts).toLocaleString('de-DE', { weekday: 'short', hour: '2-digit', minute: '2-digit' })}</p>` : ''}`;
+      </div>`).join('')}</div>${homeSunLine() ? `<p class="ov-weather-sun">${homeSunLine()}</p>` : ''}${wxTileTripsHtml()}${old ? `<p class="ov-weather-stale">${escapeHtml(tk('overview.weather.asOf', { time: new Date(weatherDaily.ts).toLocaleString(sysLocale(), { weekday: 'short', hour: '2-digit', minute: '2-digit' }) }))}</p>` : ''}`;
 }
 
 /* ---------- Header weather (iPad & computer, 1.61) ----------
@@ -75,14 +75,14 @@ function renderHeaderWeather() {
   // Current conditions first, then today, tomorrow and the day after
   const now = weatherData && weatherData.temp != null ? `
     <span class="hw-day is-now">
-      <span class="hw-label">Jetzt</span>
-      <span class="hw-main"><span class="hw-icon">${weatherIconForCode(weatherData.code)}</span><span class="hw-temp">${weatherData.temp}°</span></span>
+      <span class="hw-label">${escapeHtml(tk('overview.weather.nowLabel'))}</span>
+      <span class="hw-main"><span class="hw-icon">${weatherIconForCode(weatherData.code)}</span><span class="hw-temp">${tDeg(weatherData.temp)}</span></span>
       <span class="hw-rain">${weatherData.uv != null ? 'UV ' + weatherData.uv : ''}</span>
     </span>` : '';
   el.innerHTML = now + days.map(d => `
     <span class="hw-day${d.date === today ? ' is-today' : ''}">
       <span class="hw-label">${escapeHtml(weatherDayLabel(d.date, 0))}</span>
-      <span class="hw-main"><span class="hw-icon">${weatherIconForCode(d.code)}</span><span class="hw-temp">${d.max != null ? d.max + '°' : ''}<span class="hw-min">${d.min != null ? d.min + '°' : ''}</span></span></span>
+      <span class="hw-main"><span class="hw-icon">${weatherIconForCode(d.code)}</span><span class="hw-temp">${d.max != null ? tDeg(d.max) : ''}<span class="hw-min">${d.min != null ? tDeg(d.min) : ''}</span></span></span>
       <span class="hw-rain">${d.rain != null ? '💧 ' + d.rain + ' %' : ''}</span>
     </span>`).join('');
   tickClock();

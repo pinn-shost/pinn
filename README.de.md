@@ -99,6 +99,15 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 und 🇰🇷 한국어**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.118.0
+
+**Fahrenheit und Übersetzungs-Feinschliff**
+
+- **Temperatur in °F oder °C:** Unter Einstellungen → Sprache & Region gibt es die neue Einstellung **Temperatur**. *Automatisch* richtet sich nach dem Land (USA: °F, sonst °C); Celsius oder Fahrenheit lassen sich auch von Hand wählen. Gilt für Wetter-Kachel, Kopfzeile, Wetter-Ansicht, Urlaubswetter, Wochenvorschau und Garten-Tipps.
+- **Übersicht:** Kündigungsfristen lassen sich jetzt wie Geburtstage wegwischen; zurückholen unter Einstellungen → Übersicht.
+- **Übersetzungen:** Kacheln Wetter, Geburtstage („wird 30“) und Kündigungsfristen („1 steht an“), Depot („eingezahlt“, „entnommen“, importierte Käufe und Verkäufe), Reifen-Aufgaben (Lagerort, „Aus pinn. → Fahrzeuge“), „Zugewiesen:“ in Termin-Notizen, Urlaubswetter der Packliste und Aufgaben in der Wochenvorschau. Wochen- und Monatsausblick gibt es jetzt auch auf Japanisch und Koreanisch.
+- Geändert: `index.html`, `js/region.js`, `js/sprache.js`, `js/design.js`, `js/wetterkachel.js`, `js/geburtstage.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/vertraege.js`, `js/sparen.js`, `js/finanzen.js`, `js/familie.js`, `js/ausblick.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/mitglieder.js`, `js/aufgaben.js`, `js/termindetails.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien in `i18n/` und `lang/` – am Server ändert sich nichts. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
+
 ## Neu in 1.117.0
 
 **Text-Schlüssel, Teil 9: die Glocke und die Push-Nachrichten des Servers**
@@ -129,15 +138,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Als Nächstes: Zuhause, Fahrzeuge und Dokumente folgen mit 1.116.1.
 - Geändert: nur App-Dateien (`index.html`, `js/familie.js`, `js/familienkachel.js`, `js/kinderseite.js`, `js/kinderroutine.js`, `js/sterne.js`, `js/wobistdu.js`, `js/mitglied.js`, `js/mitglieder.js`, `js/geburtstagsfeier.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien in `i18n/` und `lang/`) – am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
 
-## Neu in 1.115.0
-
-**Text-Schlüssel, Teil 6: Finanzen, Kassen und Verträge**
-
-- Die **Finanzen** (Ausgaben mit Budget, Auswertung, Verlauf und Buchungs-Popup, regelmäßige Buchungen mit der Frage „ab wann?“, Finanz-Einstellungen und CSV-Export), die **Kassen** samt *Einkauf abschließen*, Gästen und *Wer schuldet wem*, die **Verträge** mit Fristen, Kosten, Dokumenten und Kündigungsschreiben, **Sparen** mit Depots, Positionen, Import und Sparraten, das **Taschengeld** (auch auf der Kinderseite) und das Auslesen von Rechnungen aus PDFs holen ihre Texte jetzt aus den Sprachdateien in `pb_public/i18n/` – in allen neun Sprachen und als WG. An der Bedienung ändert sich nichts.
-- Kleinigkeiten: Datum, Wochentage und Monatsnamen in den Finanzen stehen im Format der eingestellten Sprache; Texte wie *Vergleich zur Vorwoche* oder *Neue regelmäßige Ausgabe* sind jetzt in jeder Sprache ganze Sätze statt zusammengesetzter Wörter; Zahlen wie „1 Buchung“ oder „1 Person“ stehen in der richtigen Einzahl oder Mehrzahl.
-- Als Nächstes: Familie, Ortung, Zuhause, Fahrzeuge und Dokumente folgen mit 1.116.0.
-- Geändert: nur App-Dateien (`index.html`, `js/finanzen.js`, `js/kassen.js`, `js/vertraege.js`, `js/sparen.js`, `js/vorrat2.js`, `js/pdflesen.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien in `i18n/` und `lang/`) – am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
-
 ## So funktioniert’s
 
 ```mermaid
@@ -166,7 +166,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.117.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.118.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

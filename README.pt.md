@@ -99,6 +99,14 @@ Sempre com você: o pinn. se instala em todo iPhone e celular Android como um ap
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 e 🇰🇷 한국어**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.118.0
+
+**Fahrenheit e ajustes de tradução**
+
+- **Temperatura em °F ou °C:** Configurações → Idioma e região tem a nova opção **Temperatura**. *Automático* segue o país (EUA: °F, senão °C); também dá para escolher à mão.
+- **Visão geral:** prazos de cancelamento somem com um deslize, como os aniversários.
+- **Traduções:** blocos de clima, aniversários e prazos, depósito, tarefas de pneus, notas de compromissos, clima de férias e prévia semanal (agora também em japonês e coreano).
+
 ## Novidades da 1.117.0
 
 **Chaves de texto, parte 9: o sino e as notificações push do servidor**
@@ -117,15 +125,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Modelos, títulos de documentos e tarefas de inspeção e troca de pneus são criados no idioma escolhido; meses e números como «1 dia» seguem o seu idioma.
 - O sino e os textos push do servidor vêm com a 1.117.0.
 - Alterados apenas arquivos do app – no servidor nada muda.
-
-## Novidades da 1.116.0
-
-**Chaves de texto, parte 7: família, localização e página infantil**
-
-- **Família** (visão geral, cartões de emergência, localização, SOS e caminho para casa, escola e creche, animais e o tempo das férias), a **página infantil** com estrelas e recompensas, o bloco *Membros da família* e *Onde você está?* agora usam os arquivos de idioma em `pb_public/i18n/` – nos nove idiomas e também como república. Nada muda no uso.
-- Cerca de 150 textos que continuavam em alemão foram traduzidos; data e hora seguem o seu idioma; idade, minutos e dias usam o singular ou plural correto.
-- Casa, veículos e documentos vêm com a 1.116.1.
-- Alterados apenas arquivos do app – nada muda no servidor.
 
 ## Como funciona
 
@@ -155,7 +154,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.117.0` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.118.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

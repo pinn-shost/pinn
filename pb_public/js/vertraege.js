@@ -1712,12 +1712,15 @@ function renderContractTile() {
   const range = document.getElementById('contractTileRange');
   if (!body || !range) return;
   if (!finance || isCurrentUserGuest()) { body.innerHTML = ''; range.textContent = ''; return; }
-  const list = vtDueList(finTodayIso());
-  range.textContent = list.length ? (list.length === 1 ? '1 steht an' : list.length + ' stehen an') : '';
+  const list = vtTileList();
+  range.textContent = list.length ? tk('contract.tile.dueN', { n: list.length }) : '';
   if (!list.length) { body.innerHTML = ('<p class="text-sm text-ink/40 italic">' + escapeHtml(tk('contract.noCancellationDeadlineDue')) + '</p>'); return; }
   body.innerHTML = `<div class="ov-bday-list">${list.slice(0, 6).map(d => {
-    const month = new Date(d.date + 'T00:00:00').toLocaleDateString('de-DE', { month: 'short' }).replace('.', '');
+    const month = new Date(d.date + 'T00:00:00').toLocaleDateString(sysLocale(), { month: 'short' }).replace('.', '');
+    const key = vtTileKey(d);
     return `
+      <div class="ov-bday-swipe" data-bday-key="${key}">
+      <button type="button" class="ov-bday-action" data-vt-hide="${key}">${escapeHtml(tk('overview.hide'))}</button>
       <button type="button" class="ov-bday-row vt-tile-row w-full text-left${d.tone === 'urgent' ? ' is-urgent' : ''}" data-vtopen="${escapeHtml(d.c.id)}">
         <div class="ov-bday-date"><b>${Number(d.date.slice(8, 10))}</b><span>${escapeHtml(month)}</span></div>
         <div class="ov-bday-text">
@@ -1725,10 +1728,31 @@ function renderContractTile() {
           <div class="ov-bday-sub">${escapeHtml(d.sub)}</div>
         </div>
         <div class="ov-bday-when"${d.tone === 'urgent' ? ' style="color:#B3302B"' : ''}>${escapeHtml(d.when)}</div>
-      </button>`;
+        <span class="ov-bday-x" role="button" tabindex="0" data-vt-hide="${key}" aria-label="${escapeHtml(tk('overview.hide'))}" title="${escapeHtml(tk('overview.hide'))}">×</span>
+      </button>
+      </div>`;
   }).join('')}</div>`;
 }
+// Hiding by swiping (like birthdays): key = contract + date, so the next deadline of the same contract shows again
+function vtTileKey(d) { return bdayKey({ n: d.c.id + '|' + (d.sub || '').slice(0, 2), m: d.date.slice(0, 7), d: d.date.slice(8) }); }
+function vtTileList() { return vtDueList(finTodayIso()).filter(d => !(overviewVtHidden && overviewVtHidden.has(vtTileKey(d)))); }
+function vtHideTileItem(key) {
+  if (!key) return;
+  const finish = () => {
+    if (!overviewVtHidden) overviewVtHidden = new Set();
+    overviewVtHidden.add(key);
+    saveOverviewPrefs();
+  };
+  const wrap = document.querySelector(`#contractTileBody .ov-bday-swipe[data-bday-key="${key}"]`);
+  if (!wrap) { finish(); return; }
+  wrap.classList.add('is-gone');
+  setTimeout(finish, 230);
+}
+attachOverviewSwipe(document.getElementById('contractTileBody'), vtHideTileItem);
 document.getElementById('contractTileBody').addEventListener('click', (e) => {
+  const hide = e.target.closest('[data-vt-hide]');
+  if (hide) { e.stopPropagation(); vtHideTileItem(hide.dataset.vtHide); return; }
+  if (e.target.closest('.ov-bday-swipe.is-open')) return;
   const row = e.target.closest('[data-vtopen]');
   if (!row) return;
   setView('finanzen');

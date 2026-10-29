@@ -312,7 +312,7 @@ function finGoalForecast(x) {
   const todayIso = finTodayIso();
   if (g.targetDate && g.targetDate > todayIso) {
     const need = rest / finMonthsUntil(g.targetDate);
-    const until = new Date(g.targetDate + 'T00:00:00').toLocaleDateString('de-DE', { month: 'short', year: 'numeric' });
+    const until = new Date(g.targetDate + 'T00:00:00').toLocaleDateString(sysLocale(), { month: 'short', year: 'numeric' });
     parts.push(tk('depot.monthUntil', { amount: fmtEur0(Math.ceil(need)), until }));
   } else if (g.targetDate) {
     parts.push(tk('depot.targetDatePassed'));
@@ -321,7 +321,7 @@ function finGoalForecast(x) {
     const d = new Date();
     d.setDate(1);
     d.setMonth(d.getMonth() + Math.ceil(rest / x.rate));
-    parts.push(tk('depot.atMonthApprox', { amount: fmtEur0(x.rate), date: d.toLocaleDateString('de-DE', { month: 'short', year: 'numeric' }) }));
+    parts.push(tk('depot.atMonthApprox', { amount: fmtEur0(x.rate), date: d.toLocaleDateString(sysLocale(), { month: 'short', year: 'numeric' }) }));
   }
   return parts.join(' · ');
 }
@@ -539,7 +539,7 @@ function finEtfDepotHtml(ov) {
       <button type="button" class="fin-etf-chip px-2.5 py-1 rounded-full border border-ink/15 text-xs ${finEtfChartSel === 'all' ? 'active' : ''}" data-sel="all">${escapeHtml(tk('errorLog.all'))}</button>
       ${slots.map(x => `<button type="button" class="fin-etf-chip px-2.5 py-1 rounded-full border border-ink/15 text-xs ${finEtfChartSel === x.goal.id ? 'active' : ''}" data-sel="${escapeHtml(x.goal.id)}">${escapeHtml((x.goal.icon ? x.goal.icon + ' ' : '') + (x.goal.name || x.goal.isin))}</button>`).join('')}
     </div>` : '';
-  const firstDate = points.length ? new Date(points[0].date + 'T00:00:00').toLocaleDateString('de-DE', { month: 'short', year: 'numeric' }) : '';
+  const firstDate = points.length ? new Date(points[0].date + 'T00:00:00').toLocaleDateString(sysLocale(), { month: 'short', year: 'numeric' }) : '';
   const chart = points.length >= 2 ? `
     <div class="mt-3 text-ink">${finEtfChartSvg(points)}</div>
     <div class="flex justify-between text-[10px] text-ink/40 mt-1"><span>${escapeHtml(firstDate)}</span><span>heute</span></div>
@@ -558,7 +558,7 @@ function finEtfDepotHtml(ov) {
     }
     const warn = !st.hasPrice ? `<span class="block text-[11px]" style="color:${FIN_RED}">${escapeHtml(tk('depot.noPriceAtCost'))}${q && q.error ? ' (' + escapeHtml(q.error.slice(0, 80)) + ')' : ''}</span>`
       : (q && q.currency && q.currency !== 'EUR') ? `<span class="block text-[11px] text-mustard">${escapeHtml(tk('depot.priceNotConvertedEuros', { v: q.currency }))}</span>` : '';
-    const imported = g.importedUntil ? `<span class="block text-[11px] text-ink/40 truncate">${escapeHtml(tk('depot.importUntilAfterwardsSavings', { date: new Date(g.importedUntil + 'T00:00:00').toLocaleDateString('de-DE') }))}</span>` : '';
+    const imported = g.importedUntil ? `<span class="block text-[11px] text-ink/40 truncate">${escapeHtml(tk('depot.importUntilAfterwardsSavings', { date: new Date(g.importedUntil + 'T00:00:00').toLocaleDateString(sysLocale()) }))}</span>` : '';
     return `
       <button type="button" class="fin-etf-row w-full flex items-center gap-3 py-2.5 border-t border-ink/10 first:border-t-0 text-left" data-goal="${escapeHtml(g.id)}">
         <span class="shrink-0 w-10 h-10 rounded-full grid place-items-center text-xl" style="background:${color}22">${escapeHtml(g.icon || '📈')}</span>
@@ -577,7 +577,7 @@ function finEtfDepotHtml(ov) {
   const fetched = slots.map(x => x.etf.q && x.etf.q.fetchedAt).filter(Boolean).sort().pop();
   const priceDates = slots.map(x => x.etf.q && x.etf.q.priceDate).filter(Boolean).sort();
   const stand = fetched
-    ? `Kurse abgerufen ${new Date(fetched).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}${priceDates.length ? ' (Kursdatum ' + new Date(priceDates[0] + 'T00:00:00').toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }) + ')' : ''}`
+    ? tk('depot.pricesFetched', { time: new Date(fetched).toLocaleString(sysLocale(), { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) }) + (priceDates.length ? ' ' + tk('depot.priceDate', { date: new Date(priceDates[0] + 'T00:00:00').toLocaleDateString(sysLocale(), { day: '2-digit', month: '2-digit' }) }) : '')
     : tk('depot.noPricesLoadedYet');
   return `
     <div class="rounded-2xl bg-white border border-ink/10 shadow-sm p-4 sm:p-5">
@@ -1049,10 +1049,10 @@ function renderImportBody() {
     const sameElsewhere = finance.savingsGoals.filter(x => x.isin === g.isin && !inDepot(x));
     const others = finance.savingsGoals.filter(x => x.isin !== g.isin && inDepot(x));
     return [
-      ...same.map(x => [x.id, `${x.icon || '📈'} ${x.name || x.isin} (gleiche ISIN)`]),
+      ...same.map(x => [x.id, `${x.icon || '📈'} ${x.name || x.isin} (${tk('depot.sameIsin')})`]),
       ['new', tk('depot.newPosition', { name: (g.name || g.isin).slice(0, 40) })],
       ...others.map(x => [x.id, `${x.icon || '🎯'} ${x.name || tk('depot.position')}${x.isin ? ' · ' + x.isin : ''}`]),
-      ...sameElsewhere.map(x => [x.id, `${x.icon || '📈'} ${x.name || x.isin} (gleiche ISIN${depotSuffix(x)})`]),
+      ...sameElsewhere.map(x => [x.id, `${x.icon || '📈'} ${x.name || x.isin} (${tk('depot.sameIsin')}${depotSuffix(x)})`]),
       ['skip', tk('depot.donTImport')],
     ].map(([v, t]) => `<option value="${escapeHtml(v)}" ${g.target === v ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('');
   };
@@ -1063,7 +1063,7 @@ function renderImportBody() {
     return `
       <label class="flex items-center gap-2 py-1 text-xs border-t border-ink/5 first:border-t-0 ${selectable ? 'cursor-pointer' : 'opacity-45'}">
         <input type="checkbox" class="fin-imp-row w-4 h-4 shrink-0" data-id="${escapeHtml(it.id)}" ${checked ? 'checked' : ''} ${selectable ? '' : 'disabled'} />
-        <span class="shrink-0 w-20">${escapeHtml(new Date(it.date + 'T00:00:00').toLocaleDateString('de-DE'))}</span>
+        <span class="shrink-0 w-20">${escapeHtml(new Date(it.date + 'T00:00:00').toLocaleDateString(sysLocale()))}</span>
         <span class="shrink-0 w-20">${escapeHtml(it.dup ? tk('depot.alreadyThere') : kindLabel[it.kind])}</span>
         <span class="flex-1 min-w-0 truncate font-mono">${escapeHtml(it.isin)}</span>
         <span class="shrink-0 w-20 text-right">${it.shares ? finFmtShares(it.shares) : '–'}</span>
@@ -1078,7 +1078,7 @@ function renderImportBody() {
     </div>
 
     <details class="mt-3 rounded-xl border border-ink/10 px-3 py-2" ${missing ? 'open' : ''}>
-      <summary class="text-sm cursor-pointer select-none">Spalten zuordnen ${missing ? '<span class="text-xs" style="color:' + FIN_RED + ('">' + escapeHtml(tk('depot.pleaseCheck')) + '</span>') : ('<span class="text-xs text-ink/45">' + escapeHtml(tk('depot.recognisedAutomatically')) + '</span>')}</summary>
+      <summary class="text-sm cursor-pointer select-none">${escapeHtml(tk('depot.mapColumns'))} ${missing ? '<span class="text-xs" style="color:' + FIN_RED + ('">' + escapeHtml(tk('depot.pleaseCheck')) + '</span>') : ('<span class="text-xs text-ink/45">' + escapeHtml(tk('depot.recognisedAutomatically')) + '</span>')}</summary>
       <div class="grid grid-cols-2 gap-2 mt-3">
         ${FIN_IMPORT_FIELDS.map(f => `
           <label class="block min-w-0">
@@ -1187,7 +1187,7 @@ function saveImportFromModal() {
   closeImportModal();
   renderFinance();
   loadEtfQuotes(true, [...new Set(trades.map(t => t.isin))]);
-  finShowToast(tk('depot.transactionsImported', { v: trades.length, v2: newGoals.length ? `, ${newGoals.length} Position${newGoals.length === 1 ? '' : 'en'} angelegt` : '' }));
+  finShowToast(tk('depot.transactionsImported', { v: trades.length, v2: newGoals.length ? ', ' + tk('depot.positionsCreatedN', { n: newGoals.length }) : '' }));
 }
 function removeGoalImports(goalId) {
   const g = finGoal(goalId);
@@ -1268,12 +1268,12 @@ function finSavingsMonthStats(ov) {
   return { monthRange, monthIn, monthOut, monthNet: finRound(monthIn - monthOut) };
 }
 function finSavingsMonthLine(ms) {
-  return `${escapeHtml(ms.monthRange.longShort)}: <span style="color:${FIN_GREEN}">+ ${fmtEur(ms.monthIn)} eingezahlt</span>${ms.monthOut > 0 ? ` · <span style="color:${FIN_RED}">− ${fmtEur(ms.monthOut)} entnommen</span>` : ''}`;
+  return `${escapeHtml(ms.monthRange.longShort)}: <span style="color:${FIN_GREEN}">${escapeHtml(tk('depot.paidInPlus', { amount: fmtEur(ms.monthIn) }))}</span>${ms.monthOut > 0 ? ` · <span style="color:${FIN_RED}">${escapeHtml(tk('depot.withdrawnMinus', { amount: fmtEur(ms.monthOut) }))}</span>` : ''}`;
 }
 function finSavingsGainLine(ov) {
   if (Math.abs(ov.total - ov.invested) < 0.005) return '';
   const pct = ov.invested > 0 ? ' (' + finFmtPct(ov.gain / ov.invested * 100) + ')' : '';
-  return `Eingezahlt ${fmtEur(ov.invested)} · <b style="color:${ov.gain >= 0 ? FIN_GREEN : FIN_RED}">${finSignedEur(ov.gain)}${pct}</b>`;
+  return `${escapeHtml(tk('depot.paidInTotal', { amount: fmtEur(ov.invested) }))} · <b style="color:${ov.gain >= 0 ? FIN_GREEN : FIN_RED}">${finSignedEur(ov.gain)}${pct}</b>`;
 }
 // Course of the last 12 months (net saved per month)
 function finSavingsBars(ov) {
@@ -1315,15 +1315,15 @@ function finSavingsBarsCard(bars) {
       </div>
       <div class="flex items-start gap-1 sm:gap-2">${bars.html}</div>
       <div class="flex items-center gap-4 mt-3 text-[11px] text-ink/50">
-        <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="background:${FIN_GREEN}"></span>mehr eingezahlt</span>
-        <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="background:${FIN_RED}"></span>mehr entnommen</span>
+        <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="background:${FIN_GREEN}"></span>${escapeHtml(tk('depot.legendMoreIn'))}</span>
+        <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="background:${FIN_RED}"></span>${escapeHtml(tk('depot.legendMoreOut'))}</span>
       </div>
     </div>`;
 }
 function finValueChartHtml(points) {
   if (points.length < 2) return '';
   const last = points[points.length - 1];
-  const firstDate = new Date(points[0].date + 'T00:00:00').toLocaleDateString('de-DE', { month: 'short', year: 'numeric' });
+  const firstDate = new Date(points[0].date + 'T00:00:00').toLocaleDateString(sysLocale(), { month: 'short', year: 'numeric' });
   return `
     <div class="mt-3 text-ink">${finEtfChartSvg(points)}</div>
     <div class="flex justify-between text-[10px] text-ink/40 mt-1"><span>${escapeHtml(firstDate)}</span><span>heute</span></div>
@@ -1341,7 +1341,7 @@ function finSavingsRecentCard(ov, showDepot) {
     const g = l && l.type === 'spar' ? finGoal(l.id) : null;
     const d = showDepot ? finDepot(finLinkDepotId(e.link)) : null;
     const color = g && /^#[0-9a-fA-F]{6}$/.test(g.color || '') ? g.color : finCategory(FIN_SAVINGS_CATEGORY).color;
-    const title = e.title || (amt < 0 ? tk('depot.withdrawal') : tk('depot.deposit'));
+    const title = finLegacyTitle(e.title) || (amt < 0 ? tk('depot.withdrawal') : tk('depot.deposit'));
     const where = (g ? (g.name || tk('depot.position')) : tk('depot.withoutPosition')) + (d ? ' · ' + (d.name || tk('depot.mainName')) : '');
     return `
       <button type="button" class="fin-save-row w-full flex items-center gap-3 px-1 py-2 rounded-xl hover:bg-ink/5 transition text-left" data-id="${escapeHtml(e.id)}" data-rec="${escapeHtml(e.recurringId || '')}" data-goal="${e.trade && g ? escapeHtml(g.id) : ''}">
@@ -1528,8 +1528,8 @@ function renderSavingsDepot(pane, d, allEntries) {
           <span class="shrink-0 w-10 h-10 rounded-full grid place-items-center text-xl" style="background:${gColor}22">${escapeHtml(g.icon || finKindInfo(kind).icon)}</span>
           <span class="flex-1 min-w-0">
             <span class="block text-sm font-medium truncate">${escapeHtml(g.name || tk('depot.position'))}</span>
-            <span class="block text-xs text-ink/50 truncate">${target ? `${fmtEur(x.balance)} von ${fmtEur0(target)}` : `${fmtEur(x.balance)} ${x.etf ? tk('depot.value') : 'gespart'}`}${kind !== 'ziel' ? ' · ' + escapeHtml(finKindInfo(kind).label) : ''}</span>
-            ${x.etf ? `<span class="block text-[11px] truncate"><span class="text-ink/45">eingezahlt ${fmtEur(x.etf.invested)} · </span><span style="color:${x.etf.gain >= 0 ? FIN_GREEN : FIN_RED}">${finSignedEur(x.etf.gain)}${x.etf.invested > 0 ? ' (' + finFmtPct(x.etf.gainPct) + ')' : ''}</span></span>` : ''}
+            <span class="block text-xs text-ink/50 truncate">${target ? tk('depot.ofTarget', { amount: fmtEur(x.balance), target: fmtEur0(target) }) : `${fmtEur(x.balance)} ${x.etf ? tk('depot.value') : tk('depot.saved')}`}${kind !== 'ziel' ? ' · ' + escapeHtml(finKindInfo(kind).label) : ''}</span>
+            ${x.etf ? `<span class="block text-[11px] truncate"><span class="text-ink/45">${escapeHtml(tk('depot.paidInLower', { amount: fmtEur(x.etf.invested) }))} · </span><span style="color:${x.etf.gain >= 0 ? FIN_GREEN : FIN_RED}">${finSignedEur(x.etf.gain)}${x.etf.invested > 0 ? ' (' + finFmtPct(x.etf.gainPct) + ')' : ''}</span></span>` : ''}
           </span>
           ${target ? `<span class="shrink-0 text-sm font-semibold" style="color:${gColor}">${reached ? '✓' : pct + ' %'}</span>` : ''}
         </div>
@@ -1680,9 +1680,9 @@ function openGoalModal(goalId = null, depotId = null) {
   if (trades.length) {
     const buys = trades.filter(t => t.type !== 'sell');
     const sum = buys.reduce((t, x) => t + (Number(x.amount) || 0), 0);
-    const until = g.importedUntil ? new Date(g.importedUntil + 'T00:00:00').toLocaleDateString('de-DE') : '';
+    const until = g.importedUntil ? new Date(g.importedUntil + 'T00:00:00').toLocaleDateString(sysLocale()) : '';
     document.getElementById('finGoalImportInfo').textContent =
-      tk('depot.importedTransactionsPurchasesSavings', { v: trades.length, v2: buys.length, amount: fmtEur(sum), v3: until ? ' bis ' + until : '' });
+      tk('depot.importedTransactionsPurchasesSavings', { v: trades.length, v2: buys.length, amount: fmtEur(sum), v3: until ? ' ' + tk('depot.untilDate', { date: until }) : '' });
   }
   // Savings instalment of the position (the first running one; others can be edited in the expenses)
   const plans = g ? finGoalRatePlans(g.id) : [];
@@ -1721,7 +1721,7 @@ function finShowIsinInfo(q, errText) {
   if (errText) { el.textContent = errText; el.style.color = FIN_RED; el.classList.remove('hidden'); return; }
   if (!q) { el.classList.add('hidden'); return; }
   if (q.price > 0) {
-    const d = q.priceDate ? new Date(q.priceDate + 'T00:00:00').toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
+    const d = q.priceDate ? new Date(q.priceDate + 'T00:00:00').toLocaleDateString(sysLocale(), { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
     el.textContent = `✓ ${q.name ? q.name + ' · ' : ''}${tk('depot.priceIs', { amount: fmtEur(q.price) })}${q.currency && q.currency !== 'EUR' ? ' (' + q.currency + ')' : ''}${d ? ' · ' + tk('depot.asOfDate', { date: d }) : ''}`;
     el.style.color = FIN_GREEN;
   } else {
@@ -2090,7 +2090,7 @@ function renderAllowances() {
       const paidYear = finAllowancePlans(m.id).reduce((s, r) => s + finRecDates(r, year + '-01-01', todayIso).reduce((t, d) => t + finRecurringAmountFor(r, d), 0), 0);
       tiles = `<div class="grid grid-cols-3 gap-2 mt-3">
         ${finTile(tk('depot.next'), next ? escapeHtml(finDayLabel(next)) : '–', next ? fmtEur(finRecurringAmountFor(plan, next)) : '')}
-        ${finTile(tk('depot.perMonth2'), fmtEur(finRecMonthly(plan, todayIso)), 'umgerechnet')}
+        ${finTile(tk('depot.perMonth2'), fmtEur(finRecMonthly(plan, todayIso)), tk('depot.converted'))}
         ${finTile(tk('depot.sinceJan'), fmtEur(finRound(paidYear)), 'ausgezahlt')}
       </div>`;
     }
@@ -2375,7 +2375,7 @@ function savePocketFromModal() {
   closePocketModal();
   renderFinance();
   if (kidPageMemberId) renderKidPage();
-  finShowToast(pocketKind === 'out' ? `${fmtEur(amount)} ausgegeben eingetragen.` : `${fmtEur(amount)} bekommen eingetragen.`);
+  finShowToast(pocketKind === 'out' ? tk('pocket.spentEntered', { amount: fmtEur(amount) }) : tk('pocket.receivedEntered', { amount: fmtEur(amount) }));
 }
 function deletePocketMove(id) {
   const l = finance.pocketLedger.find(x => x.id === id);

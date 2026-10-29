@@ -2,7 +2,7 @@
    Part of the app code that used to be a single block in index.html. Classic script, no build step:
    it is loaded right after the inline script of index.html and before the other files in js/
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
-   Contents: the language dropdown, country, currency and number format with a live preview (renderLanguageSettings,
+   Contents: the language dropdown, country, currency, number format and temperature unit with a live preview (renderLanguageSettings,
    renderRegionSettings, renderRegionPreview, initLanguageSettings) and saving them (remembered on the device, stored in the
    profile, then pinn. reloads). Also i18nT (overridden later by the definition in js/smarthome.js, as before).
    Texts: key based since 1.111.0 – tk('settings.region.…') here, data-tk in src/teile/seiten/einstellungen.html,
@@ -57,6 +57,15 @@ function renderRegionSettings() {
   fSel.innerHTML = `<option value="auto">${escapeHtml(tk('settings.region.automaticCountry') + ' – ' + R.numSample(p.land))}</option>`
     + Object.keys(R.FORMATS).map(k => `<option value="${k}">${escapeHtml(R.FORMATS[k].sample)}</option>`).join('');
   fSel.value = p.zahlen;
+  // Temperature: „Automatisch“ = Fahrenheit in the USA (and a few other countries), Celsius elsewhere
+  const tSel = document.getElementById('regionTempSelect');
+  if (tSel) {
+    const autoF = R.FAHRENHEIT && R.FAHRENHEIT.includes(p.land);
+    const unitLabel = u => tk(u === 'F' ? 'settings.region.fahrenheit' : 'settings.region.celsius');
+    tSel.innerHTML = `<option value="auto">${escapeHtml(tk('settings.region.automaticCountry') + ' – ' + unitLabel(autoF ? 'F' : 'C'))}</option>`
+      + ['C', 'F'].map(u => `<option value="${u}">${escapeHtml(unitLabel(u))}</option>`).join('');
+    tSel.value = p.temperatur || 'auto';
+  }
   renderRegionPreview();
 }
 function renderRegionPreview() {
@@ -76,7 +85,7 @@ function renderRegionPreview() {
   if (n.allgemein && ![n.polizei, n.rettung, n.feuer].includes(n.allgemein)) calls.push(call('🆘', 'emergency.general', n.allgemein));
   box.innerHTML = `
     <div class="rp-k">${escapeHtml(tk('settings.region.example'))}</div>
-    <div class="rp-money">${escapeHtml(pv.money)}</div>
+    <div class="rp-money">${escapeHtml(pv.money)} · 🌡️ ${escapeHtml(String(R.temp(21, pv.tempUnit)) + (pv.tempUnit === 'F' ? ' °F' : ' °C'))}</div>
     <div class="rp-k mt-3">${escapeHtml(tk('settings.region.emergencyNumbers'))} · ${escapeHtml((R.flag(pv.row[0]) + ' ' + R.countryName(pv.row[0])).trim())}</div>
     <div class="rp-calls">${calls.join('')}</div>
     <p class="rp-note">${escapeHtml(tk('settings.region.appliesTo'))}</p>`;
@@ -124,6 +133,12 @@ function initLanguageSettings() {
   document.getElementById('regionFormatSelect').addEventListener('change', (e) => {
     if (!regionPending) regionPending = PINN_REGION.stored();
     regionPending.zahlen = e.target.value;
+    document.getElementById('langStatus').textContent = '';
+    renderRegionPreview();
+  });
+  document.getElementById('regionTempSelect').addEventListener('change', (e) => {
+    if (!regionPending) regionPending = PINN_REGION.stored();
+    regionPending.temperatur = e.target.value;
     document.getElementById('langStatus').textContent = '';
     renderRegionPreview();
   });

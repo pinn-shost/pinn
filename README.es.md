@@ -95,6 +95,15 @@ Siempre contigo: pinn. se instala en cada iPhone y móvil Android como una app n
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 y 🇰🇷 한국어**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.118.0
+
+**Fahrenheit y pulido de traducciones**
+
+- **Temperatura en °F o °C:** Ajustes → Idioma y región tiene el nuevo ajuste **Temperatura**. *Automático* sigue al país (EE. UU.: °F, si no °C); también puedes elegir Celsius o Fahrenheit a mano.
+- **Resumen:** los plazos de cancelación se ocultan deslizando, como los cumpleaños.
+- **Traducciones:** mosaicos de tiempo, cumpleaños y plazos, depósito, tareas de neumáticos, «Asignado a:» en notas, tiempo de vacaciones y tareas de la vista semanal; vistas semanal y mensual también en japonés y coreano.
+- Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
+
 ## Novedades de la 1.117.0
 
 **Claves de texto, parte 9: la campana y las notificaciones push del servidor**
@@ -163,16 +172,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Lo siguiente: los ajustes del calendario (iCloud/Google, calendario de residuos, hogar) y la domótica llegan con la 1.113.1.
 - Cambiado: solo archivos de la app (`index.html`, `js/kalenderansicht.js`, `js/termine.js`, `js/termindetails.js`, `js/kalenderquellen.js`, `js/kalenderdatei.js`, `js/feiertage.js`, `js/muellkalender.js`, `js/aufgaben.js`, `js/aufgabendaten.js`, `js/aufgabenextras.js`, `js/haushalt.js`, `js/reihum.js`, `js/zustand.js`, `js/sprachen.js`, `js/versionslog.js`, todos los archivos de idioma en `i18n/` y `lang/`); en el servidor no cambia nada. Se instala como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
 
-## Novedades de la 1.112.1
-
-**Claves de texto, parte 2: cuenta, dispositivos, copias de seguridad y registro de errores**
-
-- La **página de cuenta** (perfil, notificaciones, PIN y dispositivos del panel, perfiles, menús de invitados, fondo del panel), la **gestión de dispositivos**, **Copias de seguridad y actualizaciones** y el **registro de errores** toman ahora sus textos de los archivos de idioma en `pb_public/i18n/`, en los nueve idiomas y también como piso compartido. También las líneas de estado de Ajustes → Sistema. El uso no cambia.
-- Los números usan ahora el singular o plural correcto en cada idioma, p. ej. «1 error abierto», «3 copias», «2 dispositivos más».
-- Pequeñas correcciones: el tiempo de bloqueo tras contraseñas incorrectas ya no termina con doble punto, los dispositivos del panel muestran la fecha en el formato de tu idioma y los roles «Admin», «Miembro» e «Invitado» están traducidos en todas partes.
-- Para colaboradores: las claves que empiezan por `maint.` no tienen variante de piso compartido.
-- Modificado: solo archivos de la app (`index.html`, `js/konto.js`, `js/profilverwaltung.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/dashboardsitzung.js`, `js/mitteilungen.js`, `js/geraete.js`, `js/fehlerprotokoll.js`, `js/sicherungen.js`, `js/speichern.js`, `js/sprachen.js`, `js/versionslog.js`, todos los archivos de idioma en `i18n/` y `lang/`) y `.github/` (CONTRIBUTING.md, `i18n-keys.js`); en el servidor no cambia nada. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
-
 ## Cómo funciona
 
 ```mermaid
@@ -199,7 +198,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.117.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.118.0` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

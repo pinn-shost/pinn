@@ -81,7 +81,7 @@ function renderTasks() {
           <button class="task-toggle-done shrink-0 w-5 h-5 rounded-full border-2 mt-0.5 ${task.done ? 'bg-pine border-pine' : 'border-ink/25'}" data-id="${task.id}" aria-label="${escapeHtml(tk('tasks.markDone'))}"></button>
           <div class="flex-1 min-w-0">
             <div class="font-serif text-base truncate ${task.done ? 'line-through' : ''}">${escapeHtml(displayTitle)}</div>
-            ${notesDisplay ? `<div class="text-xs text-ink/60 mt-0.5 whitespace-pre-line">${escapeHtml(notesDisplay)}</div>` : ''}
+            ${notesDisplay ? `<div class="text-xs text-ink/60 mt-0.5 whitespace-pre-line">${escapeHtml(localizeNotes(notesDisplay))}</div>` : ''}
             ${shoppingPlanBadgeHtml(task)}
             ${smartAuto ? `<div class="text-[11px] text-ink/50 mt-1.5">${escapeHtml(tk('tasks.autoStarts', { icon: smartAuto.device.icon, action: smartAuto.action.label, time: smartAuto.time }))}</div>` : ''}
             ${taskAct ? `<div class="flex flex-wrap gap-1.5 mt-2"><button type="button" class="task-act-btn sh-run">${escapeHtml(taskAct.label)}</button></div>` : ''}

@@ -574,7 +574,7 @@ function fzDueItems(v, today = finTodayIso(), withInfo = false) {
   const k = fzKind(v.kind);
   const name = fzShortName(v);
   const lead = fzLead(v);
-  const stamp = '\n\nAus pinn. → Fahrzeuge → ' + fzName(v);
+  const stamp = '\n\n' + tk('vehicle.task.fromStamp', { name: fzName(v) });
 
   // HU / TÜV (periodic vehicle inspection)
   if (k.hu) {
@@ -636,7 +636,7 @@ function fzDueItems(v, today = finTodayIso(), withInfo = false) {
           when: tk('vehicle.now'),
           task: {
             title: '🛞 ' + (winter ? tk('vehicle.task.fitWinterTyres', { name }) : tk('vehicle.task.fitSummerTyres', { name })), due: today, createAfter: vtAddDays(ch.start, -Math.min(Math.max(lead, 7), 21)),
-            notes: (winter ? tk('vehicle.ruleThumbOO') : tk('vehicle.winterSeasonOverSummer')) + (t.storage ? (tk('vehicle.stored') + ' ') + t.storage : '') + stamp,
+            notes: (winter ? tk('vehicle.ruleThumbOO') : tk('vehicle.winterSeasonOverSummer')) + (t.storage ? '\n' + tk('vehicle.task.storedAt', { place: t.storage }) : '') + stamp,
           },
         });
       } else {
@@ -645,7 +645,7 @@ function fzDueItems(v, today = finTodayIso(), withInfo = false) {
           title: tk('vehicle.nextTyreChange'), sub: tk('vehicle.tyresFrom', { tyres: label, month: monthName + ' ' + ch.start.slice(0, 4) }), when: fzWhen(ch.days),
           task: {
             title: '🛞 ' + (winter ? tk('vehicle.task.fitWinterTyres', { name }) : tk('vehicle.task.fitSummerTyres', { name })), due: ch.start, createAfter: vtAddDays(ch.start, -Math.min(Math.max(lead, 7), 21)),
-            notes: (winter ? tk('vehicle.ruleThumbOO2') : tk('vehicle.switchBackSummerTyres')) + (t.storage ? (tk('vehicle.stored') + ' ') + t.storage : '') + stamp,
+            notes: (winter ? tk('vehicle.ruleThumbOO2') : tk('vehicle.switchBackSummerTyres')) + (t.storage ? '\n' + tk('vehicle.task.storedAt', { place: t.storage }) : '') + stamp,
           },
         });
       }

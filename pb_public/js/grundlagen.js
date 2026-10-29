@@ -47,7 +47,7 @@ function tickClock() {
   const hw = document.getElementById('headerWeather');
   const headerWeatherShown = !!(hw && !hw.classList.contains('hidden'));
   if (weatherData && !headerWeatherShown) {
-    text += ` | ${weatherIconForCode(weatherData.code)} ${weatherData.temp}°`;
+    text += ` | ${weatherIconForCode(weatherData.code)} ${tDeg(weatherData.temp)}`;
     if (weatherData.uv !== null) text += ` | UV ${weatherData.uv}`;
   }
   document.getElementById('clock').textContent = text;

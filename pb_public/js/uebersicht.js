@@ -17,14 +17,14 @@
      tile comes before it), all other tiles next to it one below the other.
    ========================================================== */
 const OVERVIEW_TILES = [
-  { id: 'wetter', icon: '🌤️', label: 'Wetter', hint: 'Vorschau auf heute, morgen und übermorgen – am Handy als Kachel, am iPad und Computer oben neben Datum und Uhrzeit', big: false },
-  { id: 'geburtstage', icon: '🎂', label: 'Geburtstage', hint: 'Anstehende Geburtstage aus den iCloud- und Google-Kontakten', big: false },
-  { id: 'familie', icon: '👨‍👩‍👧', label: 'Familienmitglieder', hint: 'Alle Familienmitglieder mit Live-Standort, Geburtstag und Heimweg – Tipp aufs Kind öffnet die Kinderseite, auf die anderen ihre Schnellaktionen', big: false },
-  { id: 'vertraege', icon: '📄', label: 'Kündigungsfristen', hint: 'Anstehende Kündigungsfristen und Erinnerungen – nur sichtbar, wenn etwas ansteht', big: false },
-  { id: 'pinnwand', icon: '📌', label: 'Pinnwand', hint: 'Zettel für dich, Wichtiges und Neues – nur sichtbar, wenn etwas angepinnt ist', big: false },
-  { id: 'kalender', icon: '📅', label: 'Termine', hint: 'Kalender mit Tages- bzw. Wochenansicht', big: true },
-  { id: 'essen', icon: '🍽️', label: 'Essen', hint: 'Geplante Mahlzeiten', big: true },
-  { id: 'aufgaben', icon: '✅', label: 'Aufgaben', hint: 'Aufgaben der Familie', big: true },
+  { id: 'wetter', icon: '🌤️', get label() { return tk('overview.tile.weather'); }, get hint() { return tk('overview.tileHint.weather'); }, big: false },
+  { id: 'geburtstage', icon: '🎂', get label() { return tk('overview.tile.birthdays'); }, get hint() { return tk('overview.tileHint.birthdays'); }, big: false },
+  { id: 'familie', icon: '👨‍👩‍👧', get label() { return tk('overview.tile.members'); }, get hint() { return tk('overview.tileHint.members'); }, big: false },
+  { id: 'vertraege', icon: '📄', get label() { return tk('overview.tile.contracts'); }, get hint() { return tk('overview.tileHint.contracts'); }, big: false },
+  { id: 'pinnwand', icon: '📌', get label() { return tk('overview.tile.board'); }, get hint() { return tk('overview.tileHint.board'); }, big: false },
+  { id: 'kalender', icon: '📅', get label() { return tk('overview.tile.calendar'); }, get hint() { return tk('overview.tileHint.calendar'); }, big: true },
+  { id: 'essen', icon: '🍽️', get label() { return tk('overview.tile.meals'); }, get hint() { return tk('overview.tileHint.meals'); }, big: true },
+  { id: 'aufgaben', icon: '✅', get label() { return tk('overview.tile.tasks'); }, get hint() { return tk('overview.tileHint.tasks'); }, big: true },
 ];
 const OVERVIEW_DEFAULT_ORDER = OVERVIEW_TILES.map(t => t.id);
 const OVERVIEW_SECTION_IDS = {
@@ -39,6 +39,8 @@ let overviewBdayDays = 14;
 let overviewBdayOnlyUpcoming = true;
 // Birthdays hidden by swiping (short keys, stored personally). "var": may be read before this line
 var overviewBdayHidden = new Set();
+// Contract deadlines hidden by swiping on the overview (key per contract and date, since 1.118)
+var overviewVtHidden = new Set();
 let lastOverviewTileKey = '';
 let overviewGridColumns = '';
 let overviewCalendarSide = ''; // 'links' | 'rechts' | '' (no calendar next to other tiles)
@@ -59,6 +61,7 @@ function applyOverviewPrefs(w) {
   overviewBdayDays = OVERVIEW_BDAY_DAY_OPTIONS.includes(w.ovBdayDays) ? w.ovBdayDays : 14;
   overviewBdayOnlyUpcoming = typeof w.ovBdayOnlyUpcoming === 'boolean' ? w.ovBdayOnlyUpcoming : true;
   overviewBdayHidden = bdayUnpackHidden(w.ovBdayHidden);
+  overviewVtHidden = bdayUnpackHidden(w.ovVtHidden);
 }
 
 // Can the tile appear at all right now (regardless of the setting)?
@@ -70,7 +73,7 @@ function overviewTileAvailable(id) {
   }
   if (id === 'vertraege') {
     // Only if a cancellation deadline or reminder is coming up
-    try { return !isCurrentUserGuest() && isViewAllowed('finanzen') && !!finance && vtDueList().length > 0; } catch (e) { return false; }
+    try { return !isCurrentUserGuest() && isViewAllowed('finanzen') && !!finance && vtTileList().length > 0; } catch (e) { return false; }
   }
   if (id === 'familie') return !isCurrentUserGuest() && members.length > 0;
   if (id === 'pinnwand') {

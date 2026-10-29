@@ -20,6 +20,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.118', datum: '29.10.2026', titel: 'Fahrenheit und Übersetzungs-Feinschliff',
+    punkte: [
+      ['neu', 'Sprache & Region: neue Einstellung „Temperatur“ – automatisch passend zum Land (USA in °F, sonst °C) oder von Hand Celsius bzw. Fahrenheit; gilt für Wetter-Kachel, Kopfzeile, Wetter-Ansicht, Urlaubswetter, Wochenvorschau und Garten-Tipps'],
+      ['neu', 'Übersicht: Kündigungsfristen lassen sich wie Geburtstage zur Seite wischen und ausblenden – zurückholen unter Einstellungen → Übersicht'],
+      ['fix', 'Übersetzungen: Kacheln Wetter, Geburtstage („wird 30“) und Kündigungsfristen („1 steht an“), Depot („eingezahlt“, „entnommen“, importierte Käufe und Verkäufe), Reifen-Aufgaben (Lagerort, „Aus pinn. → Fahrzeuge“), „Zugewiesen:“ in Termin-Notizen, Urlaubswetter der Packliste und Aufgaben in der Wochenvorschau; Wochen- und Monatsausblick jetzt auch auf Japanisch und Koreanisch'],
+      ['info', 'Geändert: index.html und 21 Dateien in js/ (u. a. region.js, sprache.js, wetterkachel.js, geburtstage.js, vertraege.js, sparen.js, ausblick.js), alle Sprachdateien in i18n/ und lang/ – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.117', datum: '29.10.2026', titel: 'Übersetzungen mit Text-Schlüsseln: Glocke und Push-Nachrichten',
     punkte: [
       ['info', 'Die Glocke (Heimweg, offene Einkäufe, Neuigkeiten der Familie) und der Hinweis „Gehst du einkaufen?“ holen ihre Texte jetzt über Text-Schlüssel – in allen neun Sprachen, auch als WG. „Gehst du einkaufen?“ gibt es damit auch auf Japanisch und Koreanisch'],

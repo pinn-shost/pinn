@@ -73,7 +73,7 @@
     <details class="settings-accordion set-card" id="settingsLanguageAccordion">
       <summary class="set-sum">
         <span class="set-ico">🌐</span>
-        <span class="set-head"><span class="sa-title" data-tk="settings.region.title">Language &amp; region</span><small data-tk="settings.region.subtitle">Language, country, currency and emergency numbers</small></span>
+        <span class="set-head"><span class="sa-title" data-tk="settings.region.title">Language &amp; region</span><small data-tk="settings.region.subtitle">Language, country, currency, temperature and emergency numbers</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
@@ -102,6 +102,10 @@
             <span class="region-lbl" data-tk="settings.region.numberFormat">Number format</span>
             <select id="regionFormatSelect" class="region-sel" data-no-i18n></select>
           </label>
+          <label class="region-field">
+            <span class="region-lbl" data-tk="settings.region.temperature">Temperature</span>
+            <select id="regionTempSelect" class="region-sel" data-no-i18n></select>
+          </label>
         </div>
         <div id="regionPreview" class="region-preview" data-no-i18n></div>
         <div class="flex items-center gap-3 mt-4">
@@ -122,6 +126,7 @@
         <p data-tk="settings.overview.layoutHint" class="text-xs text-ink/40 mb-6">On phones and on the iPad in portrait mode, the tiles are stacked in this order. In landscape mode the calendar is on the left (or on the right if another large tile comes before it), all other tiles next to it, stacked.</p>
 
         <div class="flex items-center flex-wrap gap-3">
+          <button data-tk="settings.overview.noContractsHidden" id="resetHiddenContractsBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">No contract deadlines hidden</button>
           <button data-tk="settings.overview.reset" id="resetOverviewBtn" type="button" class="text-xs text-ink/40 hover:text-pine transition">Reset overview</button>
         </div>
       </div>
