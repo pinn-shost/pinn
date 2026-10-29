@@ -208,13 +208,14 @@
         </div>
       </div>
 
-      <!-- Dashboard PIN (optional) -->
+      <!-- Dashboard PIN (required as soon as the family has a dashboard, since 1.118.4) -->
       <div id="dashPinSection" class="set-card">
-        <div class="set-head-row"><span class="set-ico">🔢</span><div class="set-head"><h3 data-tk="account.pin.title" class="sa-title">PIN for the family dashboard</h3><small data-tk="account.pin.subtitle">Optional – protects your profile on the iPad</small></div></div>
+        <div class="set-head-row"><span class="set-ico">🔢</span><div class="set-head"><h3 data-tk="account.pin.title" class="sa-title">PIN for the family dashboard</h3><small data-tk="account.pin.subtitle">Protects your profile on the family dashboard</small></div></div>
         <div class="set-body">
 
         <p id="dashPinStatus" class="text-sm text-ink/70 mb-1"></p>
-        <p data-tk="account.pin.hint" class="text-xs text-ink/40 mb-3">On the family dashboard (e.g. the iPad in the kitchen), your profile opens with a tap on your picture. With a PIN, your code is asked for first – like on the iPhone. The PIN is optional.</p>
+        <p data-tk="account.pin.requiredNote" id="dashPinRequired" class="hidden text-xs font-medium text-mustard mb-1">Required as long as your family has a dashboard.</p>
+        <p data-tk="account.pin.hint" class="text-xs text-ink/40 mb-3">On the family dashboard (e.g. the iPad in the kitchen), your profile opens with your PIN – like on the iPhone. As soon as your family sets up a dashboard, every profile needs a PIN.</p>
         <div class="flex flex-wrap items-center gap-2">
           <button data-tk="account.pin.set" type="button" id="dashPinSetBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition">Set PIN</button>
           <button data-tk="account.pin.remove" type="button" id="dashPinRemoveBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-red-500 hover:border-red-500 transition">Remove PIN</button>
@@ -229,7 +230,7 @@
         <div class="set-body">
 
         <div id="dashDeviceSetup" class="hidden">
-          <p data-tk="account.dashDevice.hint" class="text-xs text-ink/40 mb-3">As a dashboard, this device shows the family's profiles when opened. Tapping a child opens their kids' page with tasks directly, everyone else opens their profile – with a PIN if they have set one. There are no personal notifications on a dashboard device.</p>
+          <p data-tk="account.dashDevice.hint" class="text-xs text-ink/40 mb-3">As a dashboard, this device shows the family’s profiles when opened. Every profile opens with its PIN – a child straight into their kids’ page; anyone without a PIN logs in once with the password and sets one. Guests open with a tap. There are no personal notifications on a dashboard device.</p>
           <div id="dashDeviceSetupForm" class="flex flex-wrap items-center gap-2">
             <input id="dashDeviceNameInput" type="text" autocomplete="off" maxlength="60" class="flex-1 min-w-[10rem] rounded-lg border border-ink/15 px-3 py-2 text-sm" data-tk-attr="placeholder:account.dashDevice.namePlaceholder" placeholder="Name of the device, e.g. kitchen iPad" />
             <button data-tk="account.dashDevice.activate" type="button" id="dashDeviceActivateBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition whitespace-nowrap">Set up as dashboard</button>

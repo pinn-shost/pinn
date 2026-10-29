@@ -35,6 +35,9 @@ const PINN_CHANGELOG = [
       ['neu', '1.118.3: Rezepte – Löschen fragt vorher nach und legt das Rezept 7 Tage in den Papierkorb (unten in der Rezeptliste, auf allen Geräten der Familie): wiederherstellen samt geplanter Mahlzeiten oder endgültig löschen'],
       ['neu', '1.118.3: „Diese Woche geplant“ – lange auf eine Mahlzeit drücken zeigt Optionen: Rezept ansehen, Rezept bearbeiten, verschieben oder ändern (Tag, Mahlzeit, Portionen, anderes Rezept), noch einmal planen, als gekocht markieren, aus der Essensplanung entfernen'],
       ['info', '1.118.3 geändert: index.html, js/rezepte.js, js/rezeptaktionen.js (neu), js/essenplanen.js, js/zustand.js, js/speichern.js, js/familiensync.js, css/basis.css, js/sprachen.js, js/versionslog.js, alle Sprachdateien, pinn-setup.sh und am Server pinn-bereiche.js, pinn-hinweise.js'],
+      ['neu', '1.118.4: Sicherheit – sobald die Familie ein Dashboard hat, braucht jedes Profil eine PIN: wer noch keine hat, meldet sich am Dashboard einmal mit dem Passwort an (🔑 am Profilbild) und legt direkt danach die PIN fest; auf den eigenen Geräten kommt die PIN-Eingabe gleich nach dem Start. Gäste öffnen weiter mit einem Tipp'],
+      ['fix', '1.118.4: Übersicht am Handy – nach dem Zurückkommen aus einem Rezept war der Kalender in der Listenansicht so hoch „aufgeklappt“ wie die Zeitleiste'],
+      ['info', '1.118.4 geändert: index.html, js/profilauswahl.js, js/pineingabe.js, js/dashboardkonto.js, js/appstart.js, js/uebersicht.js, css/dashboard.css, js/sprachen.js, js/versionslog.js, alle Sprachdateien und am Server dashboard.pb.js, pinn-dashboard.js'],
     ],
   },
   {

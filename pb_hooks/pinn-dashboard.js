@@ -1,37 +1,42 @@
 // pb_hooks/pinn-dashboard.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden
-// (Routen in dashboard.pb.js, Einrichtung über pinn-benutzer.js -> ensureSchema).
+// Not a *.pb.js -> NOT loaded as a hook automatically, only included via require()
+// (routes in dashboard.pb.js, setup via pinn-benutzer.js -> ensureSchema).
 //
-// Familien-Dashboard (z. B. ein iPad in der Küche):
-//  - Ein Admin der Familie richtet ein Gerät als Dashboard ein. Das Gerät bekommt dabei einen
-//    zufälligen Schlüssel. Der Server speichert davon nur den SHA-256-Wert in der gesperrten
-//    Sammlung "dashboard_geraete" (nur über die Routen erreichbar, Löschen der Familie löscht mit).
-//  - Wird dasselbe Gerät erneut als Dashboard eingerichtet (z. B. weil nach einem App-Update der
-//    Schlüssel auf dem Gerät fehlte), bekommt der vorhandene Eintrag nur einen neuen Schlüssel –
-//    es entsteht kein zweites Gerät. Erkannt wird es am Geräte-Cookie (pinn-sitzungen.js), sonst an
-//    gleichem Namen + gleichem Gerätetyp/Browser (ohne Versionsnummern), nie an der Netzwerk-Adresse.
-//    Doppelte Dashboard-Geräte von früher werden beim Serverstart zusammengeführt.
-//  - Mit diesem Schlüssel zeigt das Gerät ohne Anmeldung die Profile seiner Familie und öffnet ein
-//    Profil per Tipp - bzw. erst nach Eingabe der PIN, wenn das Profil eine hat.
-//  - PIN: freiwillig, 4 oder 6 Ziffern. Gespeichert im Profil im versteckten Feld "dashboard_pin"
-//    als "<Länge>$<Salz>$<SHA-256(Salz:PIN)>" - nie im Klartext.
-//  - Nach 5 falschen PINs wird das Profil am Dashboard gesperrt: 30 Sekunden, danach jeweils doppelt
-//    so lange, höchstens 15 Minuten. Die Zähler liegen nur im Arbeitsspeicher (kein Schreiben auf
-//    die Festplatte, nach einem Neustart wieder bei 0).
-//  - Gäste (Rolle "gast") haben kein bekanntes Passwort und keine PIN - sie kommen nur über das
-//    Dashboard in die App.
+// Family dashboard (e.g. an iPad in the kitchen):
+//  - An admin of the family sets up a device as a dashboard. The device gets a random key for it.
+//    The server only stores its SHA-256 value in the locked collection "dashboard_geraete"
+//    (reachable only via the routes; deleting the family deletes it as well).
+//  - If the same device is set up as a dashboard again (e.g. because the key was missing on the
+//    device after an app update), the existing entry only gets a new key - no second device is
+//    created. It is recognised by the device cookie (pinn-sitzungen.js), otherwise by the same name
+//    + the same device type/browser (without version numbers), never by the network address.
+//    Duplicate dashboard devices from earlier versions are merged when the server starts.
+//  - With this key the device shows the profiles of its family without a login and opens a profile
+//    after entering its PIN.
+//  - PIN: 4 or 6 digits. Stored in the profile in the hidden field "dashboard_pin" as
+//    "<length>$<salt>$<SHA-256(salt:PIN)>" - never in plain text.
+//  - Since 1.118.4 a PIN is mandatory as soon as the family has a dashboard (pinRequired): a profile
+//    without a PIN can only be opened at the dashboard with its password (login route, field
+//    "passwort"); the app then asks for a new PIN right away. Its own PIN cannot be removed while
+//    the dashboard exists (an admin can still reset someone else's PIN - that person then logs in
+//    with the password once more and sets a new one).
+//  - After 5 wrong PINs (or passwords) the profile is locked at the dashboard: 30 seconds, then twice
+//    as long each time, at most 15 minutes. The counters only live in memory (no writing to disk,
+//    back to 0 after a restart).
+//  - Guests (role "gast") have no known password and no PIN - they only enter the app via the
+//    dashboard, with a tap.
 //
-//  - Hintergrund je Familie: Ein Admin wählt unter Konto → „Dashboard-Hintergrund“ Standard, eine
-//    Farbe, einen Farbverlauf oder ein eigenes Bild. Gespeichert in der gesperrten Sammlung
-//    "dashboard_hintergruende" (ein Datensatz je Familie, Löschen der Familie löscht mit).
-//    Das Bild wird in der App verkleinert (JPEG) und als Bild-Daten gespeichert. Das Dashboard-Gerät
-//    bekommt mit den Profilen nur den kleinen Stil samt Stand und lädt das Bild selbst nur, wenn es
-//    sich geändert hat (danach liegt es auf dem Gerät - auch offline).
+//  - Background per family: an admin chooses default, a colour, a gradient or an own picture under
+//    Account → "Dashboard background". Stored in the locked collection "dashboard_hintergruende"
+//    (one record per family, deleting the family deletes it as well). The picture is shrunk in the
+//    app (JPEG) and stored as image data. Along with the profiles the dashboard device only gets the
+//    small style plus its stamp and loads the picture itself only if it changed (after that it is on
+//    the device - offline too).
 //
-// Schonend für CPU und Speicher: nur einzelne Datenbankzugriffe je Aktion, kein Zeitplan.
-// "zuletzt benutzt" wird höchstens einmal am Tag je Gerät gespeichert.
-// Stil und Stand des Hintergrunds liegen zusätzlich im Arbeitsspeicher, damit beim Öffnen des
-// Dashboards nicht jedes Mal das große Bild aus der Datenbank gelesen wird.
+// Gentle on CPU and memory: only single database accesses per action, no schedule.
+// "last used" is stored at most once a day per device.
+// Style and stamp of the background are also kept in memory, so that opening the dashboard does not
+// read the big picture from the database every time.
 
 const GERAETE = "dashboard_geraete";
 const PIN_FIELD = "dashboard_pin";
@@ -39,12 +44,12 @@ const MAX_FAILS = 5;
 const LOCK_PREFIX = "pinnPinSperre:";
 const HINTERGRUND = "dashboard_hintergruende";
 const BG_CACHE_PREFIX = "pinnDashBg:";
-const BG_MAX_CHARS = 2600000;          // Bild-Daten (Base64) höchstens ca. 1,9 MB
+const BG_MAX_CHARS = 2600000;          // image data (Base64) at most about 1.9 MB
 const BG_ARTEN = ["standard", "farbe", "verlauf", "bild"];
 const FELDER_KEY = "pinnDashFelder2";
 const NEUE_FELDER = [
-    { name: "kennung", max: 64 },   // Geräte-Cookie
-    { name: "merkmal", max: 64 },   // Gerätetyp/Browser (Prüfsumme)
+    { name: "kennung", max: 64 },   // device cookie
+    { name: "merkmal", max: 64 },   // device type/browser (checksum)
 ];
 
 function base() {
@@ -52,10 +57,10 @@ function base() {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Einrichtung
+// Setup
 // ---------------------------------------------------------------------------------------------
-// Legt die Sammlungen "dashboard_geraete" und "dashboard_hintergruende" an, falls sie fehlen.
-// true = beide vorhanden.
+// Creates the collections "dashboard_geraete" and "dashboard_hintergruende" if they are missing.
+// true = both exist.
 function ensureSchema() {
     const devices = ensureDeviceSchema();
     const bg = ensureBackgroundSchema();
@@ -65,9 +70,9 @@ function ensureSchema() {
 function hasField(col, name) {
     try { return !!col.fields.getByName(name); } catch (e) { return false; }
 }
-// Fehlende neuere Felder ergänzen (einmal je Serverstart)
+// Adds missing newer fields (once per server start)
 function ensureDeviceFields() {
-    try { if ($app.store().get(FELDER_KEY) === "1") return true; } catch (e) { /* prüfen */ }
+    try { if ($app.store().get(FELDER_KEY) === "1") return true; } catch (e) { /* check */ }
     const col = base().findCol(GERAETE);
     if (!col) return false;
     let changed = false;
@@ -80,7 +85,7 @@ function ensureDeviceFields() {
         try { $app.save(col); console.log("[Dashboard] Sammlung \"" + GERAETE + "\" um Geräte-Erkennung ergänzt."); }
         catch (err) { console.log("[Dashboard] Felder nicht gespeichert: " + err.message); return false; }
     }
-    try { $app.store().set(FELDER_KEY, "1"); } catch (e) { /* egal */ }
+    try { $app.store().set(FELDER_KEY, "1"); } catch (e) { /* ignore */ }
     return true;
 }
 
@@ -88,7 +93,7 @@ function ensureDeviceSchema() {
     const lib = base();
     if (lib.findCol(GERAETE)) { ensureDeviceFields(); return true; }
     const fam = lib.findCol(lib.FAMILIEN);
-    if (!fam) return false; // Familien-Sammlung fehlt noch - beim nächsten Aufruf erneut
+    if (!fam) return false; // family collection still missing - try again on the next call
     try {
         lib.createCollection({
             type: "base",
@@ -108,7 +113,7 @@ function ensureDeviceSchema() {
             listRule: null, viewRule: null, createRule: null, updateRule: null, deleteRule: null,
         });
         console.log("[Dashboard] Sammlung \"" + GERAETE + "\" angelegt.");
-        try { $app.store().set(FELDER_KEY, "1"); } catch (e) { /* egal */ }
+        try { $app.store().set(FELDER_KEY, "1"); } catch (e) { /* ignore */ }
         return true;
     } catch (err) {
         console.log("[Dashboard] Sammlung \"" + GERAETE + "\" nicht anlegbar: " + err.message);
@@ -146,7 +151,7 @@ function ensureBackgroundSchema() {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Geräte
+// Devices
 // ---------------------------------------------------------------------------------------------
 function hashKey(key) {
     return $security.sha256("pinn-dashboard:" + String(key));
@@ -155,14 +160,14 @@ function cleanDeviceName(v) {
     return String(v || "").replace(/\s+/g, " ").trim().slice(0, 60);
 }
 
-// Vorhandenes Dashboard-Gerät derselben Familie finden: zuerst am Geräte-Cookie, sonst an
-// gleichem Namen + gleichem Gerätetyp/Browser. Ein Eintrag mit einem anderen Cookie ist ein
-// anderes Gerät und wird nur genommen, wenn dieses Gerät gerade erst ein neues Cookie bekommen hat.
+// Finds an existing dashboard device of the same family: first by the device cookie, otherwise by
+// the same name + the same device type/browser. An entry with a different cookie is a different
+// device and is only taken if this device has only just been given a new cookie.
 function findSameDevice(familyId, name, opts) {
     const o = opts || {};
     if (!ensureDeviceFields()) return null;
     if (o.kennung && !o.kennungNeu) {
-        try { return $app.findFirstRecordByFilter(GERAETE, "familie = {:f} && kennung = {:k}", { f: familyId, k: o.kennung }); } catch (e) { /* weiter */ }
+        try { return $app.findFirstRecordByFilter(GERAETE, "familie = {:f} && kennung = {:k}", { f: familyId, k: o.kennung }); } catch (e) { /* go on */ }
     }
     if (!o.merkmal) return null;
     let recs = [];
@@ -178,9 +183,9 @@ function findSameDevice(familyId, name, opts) {
     return null;
 }
 
-// Dashboard-Gerät einrichten. Ist dasselbe Gerät schon eingetragen, bekommt es nur einen neuen
-// Schlüssel (kein zweites Gerät). Der Schlüssel wird nur hier einmal im Klartext zurückgegeben.
-// opts: { kennung, kennungNeu, merkmal } aus pinn-sitzungen.js (optional)
+// Sets up a dashboard device. If the same device is already registered, it only gets a new key
+// (no second device). The key is returned in plain text only here, once.
+// opts: { kennung, kennungNeu, merkmal } from pinn-sitzungen.js (optional)
 function newDevice(familyId, name, userId, opts) {
     if (!familyId) throw new Error("Dein Profil gehört zu keiner Familie.");
     if (!ensureDeviceSchema()) throw new Error("Die Sammlung \"" + GERAETE + "\" fehlt.");
@@ -202,9 +207,9 @@ function newDevice(familyId, name, userId, opts) {
     return { id: rec.id, key: key, name: rec.getString("name") };
 }
 
-// Doppelte Dashboard-Geräte von früher zusammenführen: gleiche Familie + gleicher Name. Es bleibt der
-// zuletzt benutzte Eintrag; ältere werden nur entfernt, wenn sie seit dem Anlegen des neueren nicht
-// mehr benutzt wurden (zwei gleichzeitig genutzte Geräte mit gleichem Namen bleiben bestehen).
+// Merges duplicate dashboard devices from earlier versions: same family + same name. The most
+// recently used entry stays; older ones are only removed if they have not been used since the newer
+// one was created (two devices with the same name used at the same time both stay).
 function msOf(v) {
     const s = String(v || "").trim();
     if (!s) return 0;
@@ -232,15 +237,15 @@ function doppelteZusammenfuehren() {
         g.sort((a, b) => aktivMs(b) - aktivMs(a));
         const keepSeit = msOf(g[0].getString("created"));
         for (let i = 1; i < g.length; i++) {
-            if (!keepSeit || aktivMs(g[i]) >= keepSeit) continue; // wird noch parallel benutzt
-            try { $app.delete(g[i]); n++; } catch (e) { /* schon weg */ }
+            if (!keepSeit || aktivMs(g[i]) >= keepSeit) continue; // still used in parallel
+            try { $app.delete(g[i]); n++; } catch (e) { /* already gone */ }
         }
     });
     if (n) console.log("[Dashboard] " + n + " doppelte Dashboard-Geräte zusammengeführt.");
     return n;
 }
 
-// Gerät zu einem Schlüssel oder null
+// Device for a key, or null
 function findDevice(key) {
     const k = String(key || "");
     if (k.length < 20 || k.length > 200) return null;
@@ -252,14 +257,14 @@ function findDevice(key) {
     }
 }
 
-// "zuletzt benutzt" höchstens einmal am Tag speichern
+// Stores "last used" at most once a day
 function touchDevice(rec) {
     const now = new Date().toISOString();
     if (rec.getString("zuletzt").slice(0, 10) === now.slice(0, 10)) return;
     try {
         rec.set("zuletzt", now);
         $app.save(rec);
-    } catch (e) { /* egal */ }
+    } catch (e) { /* ignore */ }
 }
 
 function listDevices(familyId) {
@@ -276,7 +281,7 @@ function listDevices(familyId) {
     }
 }
 
-// Gerät der eigenen Familie entfernen. Ist es schon weg, gilt das als erledigt.
+// Removes a device of the own family. If it is already gone, that counts as done.
 function removeDevice(familyId, id) {
     if (!base().findCol(GERAETE)) return;
     let rec = null;
@@ -286,13 +291,13 @@ function removeDevice(familyId, id) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Hintergrund je Familie
+// Background per family
 // ---------------------------------------------------------------------------------------------
 function cleanHex(v) {
     const s = String(v || "").trim();
     return /^#[0-9a-fA-F]{6}$/.test(s) ? s.toUpperCase() : "";
 }
-// Nur bekannte, einfache Werte übernehmen
+// Only takes known, simple values
 function cleanStyle(input) {
     const src = (input && typeof input === "object" && !Array.isArray(input)) ? input : {};
     let art = String(src.art || "standard");
@@ -308,7 +313,7 @@ function cleanStyle(input) {
         abdunkeln: dim,
     };
 }
-// Bild-Daten prüfen: nur JPEG/PNG/WebP als Base64, nicht zu groß. "" = ungültig.
+// Checks image data: only JPEG/PNG/WebP as Base64, not too big. "" = invalid.
 function cleanImage(v) {
     const s = String(v || "");
     if (!s || s.length > BG_MAX_CHARS) return "";
@@ -334,7 +339,7 @@ function parseStyle(rec) {
     } catch (e) { raw = {}; }
     return cleanStyle(raw);
 }
-// Kleine Beschreibung (ohne Bild) aus einem Datensatz
+// Small description (without the picture) of a record
 function metaOf(rec) {
     if (!rec) return { stil: cleanStyle({}), stand: "", bild: false };
     const stil = parseStyle(rec);
@@ -343,27 +348,27 @@ function metaOf(rec) {
     return { stil: stil, stand: rec.getString("stand"), bild: hasImage };
 }
 function cacheMeta(familyId, meta) {
-    try { $app.store().set(BG_CACHE_PREFIX + familyId, JSON.stringify(meta)); } catch (e) { /* egal */ }
+    try { $app.store().set(BG_CACHE_PREFIX + familyId, JSON.stringify(meta)); } catch (e) { /* ignore */ }
 }
-// Stil + Stand + "hat Bild" - aus dem Arbeitsspeicher, sonst einmal aus der Datenbank
+// Style + stamp + "has picture" - from memory, otherwise once from the database
 function backgroundMeta(familyId) {
     const fid = String(familyId || "");
     if (!fid) return metaOf(null);
     try {
         const raw = $app.store().get(BG_CACHE_PREFIX + fid);
         if (raw) return JSON.parse(String(raw));
-    } catch (e) { /* neu lesen */ }
+    } catch (e) { /* read again */ }
     const meta = metaOf(backgroundRecord(fid));
     cacheMeta(fid, meta);
     return meta;
 }
-// Stil + Bild-Daten (für die Einstellungen und das Dashboard-Gerät)
+// Style + image data (for the settings and the dashboard device)
 function backgroundFull(familyId) {
     const rec = backgroundRecord(familyId);
     const meta = metaOf(rec);
     return { stil: meta.stil, stand: meta.stand, bild: rec ? rec.getString("bild") : "" };
 }
-// Speichern. bild: undefined = unverändert lassen, "" / null = entfernen, sonst neue Bild-Daten.
+// Saves. bild: undefined = leave unchanged, "" / null = remove, otherwise new image data.
 function saveBackground(familyId, userId, stil, bild) {
     if (!familyId) throw new Error("Dein Profil gehört zu keiner Familie.");
     if (!ensureBackgroundSchema()) throw new Error("Die Sammlung \"" + HINTERGRUND + "\" fehlt.");
@@ -394,7 +399,7 @@ function saveBackground(familyId, userId, stil, bild) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Profile fürs Dashboard (nur das Nötigste, keine E-Mail o. Ä.)
+// Profiles for the dashboard (only what is needed, no e-mail address or the like)
 // ---------------------------------------------------------------------------------------------
 function profilesFor(familyId) {
     const lib = base();
@@ -417,6 +422,25 @@ function profilesFor(familyId) {
 }
 
 // ---------------------------------------------------------------------------------------------
+// PIN required (since 1.118.4)
+// ---------------------------------------------------------------------------------------------
+// true = the family has at least one dashboard device -> every profile needs a PIN
+function pinRequired(familyId) {
+    const f = String(familyId || "");
+    if (!f || !base().findCol(GERAETE)) return false;
+    try {
+        return $app.findRecordsByFilter(GERAETE, "familie = {:f}", "", 1, 0, { f: f }).length > 0;
+    } catch (e) {
+        return false;
+    }
+}
+// Profiles that must have a PIN: everyone except guests (no known password) and the main admin
+function needsPin(rec) {
+    const role = rec ? rec.getString("rolle") : "";
+    return !!rec && role !== "gast" && role !== "hauptadmin";
+}
+
+// ---------------------------------------------------------------------------------------------
 // PIN
 // ---------------------------------------------------------------------------------------------
 function parsePin(rec) {
@@ -428,7 +452,7 @@ function parsePin(rec) {
     if ((len !== 4 && len !== 6) || !parts[1] || !parts[2]) return null;
     return { len: len, salt: parts[1], hash: parts[2] };
 }
-// 0 = keine PIN, sonst 4 oder 6
+// 0 = no PIN, otherwise 4 or 6
 function pinLength(rec) {
     const p = parsePin(rec);
     return p ? p.len : 0;
@@ -439,7 +463,7 @@ function validPinFormat(pin) {
 function hashPin(salt, pin) {
     return $security.sha256(String(salt) + ":" + String(pin));
 }
-// Leere PIN = PIN entfernen. Wirft bei ungültigem Format.
+// Empty PIN = remove the PIN. Throws on an invalid format.
 function setPin(rec, pin) {
     const p = String(pin || "").trim();
     if (!p) {
@@ -450,7 +474,7 @@ function setPin(rec, pin) {
     const salt = $security.randomString(16);
     rec.set(PIN_FIELD, p.length + "$" + salt + "$" + hashPin(salt, p));
 }
-// true = PIN stimmt (oder das Profil hat gar keine PIN)
+// true = the PIN is right (or the profile has no PIN at all)
 function checkPin(rec, pin) {
     const p = parsePin(rec);
     if (!p) return true;
@@ -460,7 +484,7 @@ function checkPin(rec, pin) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Sperre nach zu vielen Fehlversuchen (nur im Arbeitsspeicher)
+// Lock after too many failed attempts (in memory only)
 // ---------------------------------------------------------------------------------------------
 function readLock(id) {
     try {
@@ -471,12 +495,12 @@ function readLock(id) {
         return { n: 0, until: 0 };
     }
 }
-// Verbleibende Sperre in Sekunden (0 = nicht gesperrt)
+// Remaining lock in seconds (0 = not locked)
 function lockedFor(id) {
     const rest = readLock(id).until - Date.now();
     return rest > 0 ? Math.ceil(rest / 1000) : 0;
 }
-// Fehlversuch zählen. Gibt die neue Sperre in Sekunden zurück (0 = noch nicht gesperrt).
+// Counts a failed attempt. Returns the new lock in seconds (0 = not locked yet).
 function registerFail(id) {
     const lock = readLock(id);
     const n = lock.n + 1;
@@ -485,11 +509,11 @@ function registerFail(id) {
         const seconds = Math.min(15 * 60, 30 * Math.pow(2, n - MAX_FAILS));
         until = Date.now() + seconds * 1000;
     }
-    try { $app.store().set(LOCK_PREFIX + id, n + "|" + until); } catch (e) { /* egal */ }
+    try { $app.store().set(LOCK_PREFIX + id, n + "|" + until); } catch (e) { /* ignore */ }
     return until ? Math.ceil((until - Date.now()) / 1000) : 0;
 }
 function clearFails(id) {
-    try { $app.store().remove(LOCK_PREFIX + id); } catch (e) { /* egal */ }
+    try { $app.store().remove(LOCK_PREFIX + id); } catch (e) { /* ignore */ }
 }
 function waitText(seconds) {
     const s = Math.max(1, Math.round(seconds));
@@ -501,7 +525,7 @@ function waitText(seconds) {
 module.exports = {
     GERAETE, PIN_FIELD, HINTERGRUND,
     ensureSchema, newDevice, findDevice, doppelteZusammenfuehren, touchDevice, listDevices, removeDevice, cleanDeviceName,
-    profilesFor, pinLength, setPin, checkPin, validPinFormat,
+    profilesFor, pinLength, setPin, checkPin, validPinFormat, pinRequired, needsPin,
     lockedFor, registerFail, clearFails, waitText,
     backgroundMeta, backgroundFull, saveBackground,
 };

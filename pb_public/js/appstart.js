@@ -36,6 +36,7 @@ async function bootApp() {
     alert('Verbindung zum PocketBase-Server (' + PB_URL + ') fehlgeschlagen. Bitte NAS/Netzwerk prüfen und Seite neu laden.');
     return;
   }
+  await enforceDashboardPin(); // the family has a dashboard and this profile has no PIN yet: set it now
 
   await loadFamilyProfiles();
   setTimeout(() => { try { kidStarsHandleUrl(); } catch (e) { /* ignore */ } }, 0);

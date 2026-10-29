@@ -24,6 +24,23 @@
   <div id="dashBusy" class="hidden dash-busy"><span data-tk="dashboard.opening" id="dashBusyText">Opening …</span></div>
 </div>
 
+<!-- Password of a profile without a PIN (dashboard, since 1.118.4) - "fixed inset-0" so that js/tastatur.js
+     moves it above the on-screen keyboard -->
+<div id="dashPwOverlay" class="hidden fixed inset-0" role="dialog" aria-modal="true" aria-label="Password" data-tk-attr="aria-label:common.password">
+  <form id="dashPwForm" class="dash-pw-box" autocomplete="off" novalidate>
+    <div id="dashPwAvatar"></div>
+    <div id="dashPwName" class="pin-title"></div>
+    <p data-tk="dashboard.noPinYet" class="pin-sub">No PIN yet – please log in once with your password, then choose your PIN.</p>
+    <input id="dashPwUser" type="text" autocomplete="username" class="hidden" tabindex="-1" aria-hidden="true" />
+    <input data-tk-attr="placeholder:common.password" id="dashPwInput" type="password" autocomplete="current-password" class="dash-pw-input" placeholder="Password" />
+    <div id="dashPwError" class="pin-error"></div>
+    <div class="dash-pw-actions">
+      <button data-tk="common.cancel" type="button" id="dashPwCancel" class="dash-pw-btn plain">Cancel</button>
+      <button data-tk="common.next" type="submit" id="dashPwSubmit" class="dash-pw-btn">Next</button>
+    </div>
+  </form>
+</div>
+
 <!-- PIN entry (dashboard and "PIN festlegen" in the account) -->
 <div id="pinPadOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="PIN entry" data-tk-attr="aria-label:dashboard.pinEntry">
   <div id="pinPadBox" class="pin-box">

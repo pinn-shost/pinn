@@ -95,6 +95,13 @@ Siempre contigo: pinn. se instala en cada iPhone y móvil Android como una app n
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 y 🇰🇷 한국어**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.118.4
+
+**Seguridad: PIN obligatorio con un panel familiar · corrección del calendario**
+
+- En cuanto la familia tiene un panel, **cada perfil necesita un PIN**: sin PIN se inicia sesión una vez con la contraseña (🔑) y después se elige; en los dispositivos propios se pide al iniciar. Los invitados siguen abriendo con un toque.
+- En el móvil, el calendario en vista de lista ya no queda «desplegado» al volver de una receta.
+
 ## Novedades de la 1.118.3
 
 **Recetas: papelera, «¿eliminar de verdad?», pulsación larga en la semana**
@@ -155,15 +162,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Próximamente: hogar, vehículos y documentos llegan con la 1.116.1.
 - Cambiado: solo archivos de la app (`index.html`, `js/familie.js`, `js/familienkachel.js`, `js/kinderseite.js`, `js/kinderroutine.js`, `js/sterne.js`, `js/wobistdu.js`, `js/mitglied.js`, `js/mitglieder.js`, `js/geburtstagsfeier.js`, `js/sprachen.js`, `js/versionslog.js`, todos los archivos de idioma en `i18n/` y `lang/`); en el servidor no cambia nada. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
 
-## Novedades de la 1.115.0
-
-**Claves de texto, parte 6: finanzas, cajas y contratos**
-
-- Las **finanzas** (gastos con presupuesto, análisis, historial y la ventana de movimientos, movimientos periódicos con la pregunta «¿desde cuándo?», ajustes de finanzas y exportación CSV), las **cajas** con *Terminar la compra*, invitados y *Quién debe a quién*, los **contratos** con plazos, costes, documentos y carta de cancelación, el **ahorro** con depósitos, posiciones, importación y aportaciones periódicas, la **paga** (también en la página infantil) y la lectura de facturas en PDF toman ahora sus textos de los archivos de idioma en `pb_public/i18n/`, en los nueve idiomas y como piso compartido. No cambia nada en el uso.
-- Pequeñas correcciones: fechas, días de la semana y nombres de meses en las finanzas siguen tu idioma; textos como *Comparado con la semana anterior* o *Nuevo gasto periódico* son ahora frases completas en cada idioma; números como «1 movimiento» o «1 persona» usan el singular o plural correcto.
-- Próximamente: familia, localización, hogar, vehículos y documentos llegan con la 1.116.0.
-- Cambiado: solo archivos de la app (`index.html`, `js/finanzen.js`, `js/kassen.js`, `js/vertraege.js`, `js/sparen.js`, `js/vorrat2.js`, `js/pdflesen.js`, `js/sprachen.js`, `js/versionslog.js`, todos los archivos de idioma en `i18n/` y `lang/`); en el servidor no cambia nada. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
-
 ## Cómo funciona
 
 ```mermaid
@@ -190,7 +188,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.118.3` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.118.4` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -1,30 +1,33 @@
 // pb_hooks/dashboard.pb.js
-// Familien-Dashboard (z. B. iPad in der Küche): Profilauswahl mit optionaler PIN.
-// Die Logik steckt in pinn-dashboard.js, die Sammlung legt pinn-benutzer.js beim Start mit an.
+// Family dashboard (e.g. an iPad in the kitchen): profile selection with a PIN.
+// The logic lives in pinn-dashboard.js, the collection is created by pinn-benutzer.js at startup.
 //
-// Ohne Anmeldung (nur mit dem Schlüssel des Dashboard-Geräts):
-//   POST /api/pinn/dashboard/profile          {key}             -> Familie + Profile (mit PIN-Länge)
-//   POST /api/pinn/dashboard/login            {key, id, pin?}   -> Anmeldung als dieses Profil
-//   POST /api/pinn/dashboard/hintergrund-bild {key}             -> Hintergrundbild der Familie
+// Without login (only with the key of the dashboard device):
+//   POST /api/pinn/dashboard/profile          {key}                        -> family + profiles (with PIN length)
+//   POST /api/pinn/dashboard/login            {key, id, pin?, passwort?}  -> login as this profile
+//        Since 1.118.4: a profile without a PIN (not a guest) needs its password ("passwort") -
+//        without it the answer is 401 { passwort: true }. The app then asks for a new PIN.
+//   POST /api/pinn/dashboard/hintergrund-bild {key}                        -> background picture of the family
 //
-// Angemeldet:
-//   POST /api/pinn/dashboard/aktivieren       {name}            (Admin) dieses Gerät als Dashboard
-//   GET  /api/pinn/dashboard/pins                               eigene PIN-Länge (+ alle Profile für Admins)
-//   POST /api/pinn/dashboard/pin              {pin}             eigene PIN setzen ("" = entfernen)
-//   POST /api/pinn/dashboard/pin-entfernen    {id}              (Admin) PIN eines Profils entfernen
-//   GET  /api/pinn/dashboard/geraete                            (Admin) Dashboard-Geräte der Familie
-//   POST /api/pinn/dashboard/geraet-entfernen {id}              (Admin) Dashboard-Gerät entfernen
-//   GET  /api/pinn/dashboard/hintergrund                        Hintergrund der eigenen Familie (mit Bild)
-//   POST /api/pinn/dashboard/hintergrund      {stil, bild?}     (Admin) Hintergrund speichern
-//        bild weglassen = Bild bleibt, bild "" = Bild entfernen, sonst neue Bild-Daten (data:image/…)
+// Logged in:
+//   POST /api/pinn/dashboard/aktivieren       {name}            (admin) this device as a dashboard
+//   GET  /api/pinn/dashboard/pins                               own PIN length, pflicht (PIN required)
+//                                                               (+ all profiles for admins)
+//   POST /api/pinn/dashboard/pin              {pin}             set the own PIN ("" = remove, not while required)
+//   POST /api/pinn/dashboard/pin-entfernen    {id}              (admin) remove the PIN of a profile
+//   GET  /api/pinn/dashboard/geraete                            (admin) dashboard devices of the family
+//   POST /api/pinn/dashboard/geraet-entfernen {id}              (admin) remove a dashboard device
+//   GET  /api/pinn/dashboard/hintergrund                        background of the own family (with picture)
+//   POST /api/pinn/dashboard/hintergrund      {stil, bild?}     (admin) save the background
+//        leave out bild = picture stays, bild "" = remove the picture, otherwise new image data (data:image/…)
 //
-// Kein Zeitplan - es läuft nur etwas, wenn jemand das Dashboard benutzt.
-// Beim Serverstart werden einmal doppelte Dashboard-Geräte zusammengeführt (frühere App-Updates
-// hatten beim erneuten Einrichten jeweils ein neues Gerät angelegt).
+// No schedule - something only runs when somebody uses the dashboard.
+// At server start duplicate dashboard devices are merged once (earlier app updates created a new
+// device each time it was set up again).
 
 onBootstrap((e) => {
     e.next();
-    try { require(`${__hooks}/pinn-schema.js`).ensureCurrent(); } catch (err) { /* egal */ }
+    try { require(`${__hooks}/pinn-schema.js`).ensureCurrent(); } catch (err) { /* ignore */ }
     try {
         const dash = require(`${__hooks}/pinn-dashboard.js`);
         if (dash.ensureSchema()) dash.doppelteZusammenfuehren();
@@ -34,7 +37,7 @@ onBootstrap((e) => {
 });
 
 // ---------------------------------------------------------------------------------------------
-// Dashboard-Gerät (ohne Anmeldung)
+// Dashboard device (without login)
 // ---------------------------------------------------------------------------------------------
 routerAdd("POST", "/api/pinn/dashboard/profile", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
@@ -58,7 +61,7 @@ routerAdd("POST", "/api/pinn/dashboard/profile", (e) => {
     });
 });
 
-// Hintergrundbild fürs Dashboard-Gerät (nur wenn sich der Stand geändert hat - die App merkt es sich)
+// Background picture for the dashboard device (only if the stamp changed - the app remembers it)
 routerAdd("POST", "/api/pinn/dashboard/hintergrund-bild", (e) => {
     const dash = require(`${__hooks}/pinn-dashboard.js`);
     e.response.header().set("Cache-Control", "no-store");
@@ -92,12 +95,33 @@ routerAdd("POST", "/api/pinn/dashboard/login", (e) => {
             return e.json(429, { error: "Zu viele Fehlversuche. Bitte in " + dash.waitText(wait) + " erneut versuchen.", sperre: wait });
         }
         if (!dash.checkPin(rec, String(body.pin || ""))) {
-            sleep(400); // bremst Durchprobieren
+            sleep(400); // slows down trying out PINs
             const lock = dash.registerFail(rec.id);
             if (lock) {
                 return e.json(429, { error: "Falsche PIN. Zu viele Fehlversuche – bitte in " + dash.waitText(lock) + " erneut versuchen.", sperre: lock });
             }
             return e.json(400, { error: "Falsche PIN.", falsch: true });
+        }
+        dash.clearFails(rec.id);
+    } else if (dash.needsPin(rec)) {
+        // No PIN yet: only with the password of the profile (the app asks for a new PIN right after)
+        const password = String(body.passwort || "");
+        if (!password) {
+            return e.json(401, { error: "Dieses Profil hat noch keine PIN. Bitte einmal mit dem Passwort anmelden.", passwort: true });
+        }
+        const wait = dash.lockedFor(rec.id);
+        if (wait) {
+            return e.json(429, { error: "Zu viele Fehlversuche. Bitte in " + dash.waitText(wait) + " erneut versuchen.", sperre: wait });
+        }
+        let ok = false;
+        try { ok = rec.validatePassword(password); } catch (err) { ok = false; }
+        if (!ok) {
+            sleep(400); // slows down trying out passwords
+            const lock = dash.registerFail(rec.id);
+            if (lock) {
+                return e.json(429, { error: "Falsches Passwort. Zu viele Fehlversuche – bitte in " + dash.waitText(lock) + " erneut versuchen.", sperre: lock });
+            }
+            return e.json(400, { error: "Falsches Passwort.", falsch: true, passwort: true });
         }
         dash.clearFails(rec.id);
     }
@@ -106,7 +130,7 @@ routerAdd("POST", "/api/pinn/dashboard/login", (e) => {
 });
 
 // ---------------------------------------------------------------------------------------------
-// Einrichten und Verwalten (angemeldet)
+// Setting up and managing (logged in)
 // ---------------------------------------------------------------------------------------------
 routerAdd("POST", "/api/pinn/dashboard/aktivieren", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
@@ -115,8 +139,8 @@ routerAdd("POST", "/api/pinn/dashboard/aktivieren", (e) => {
     if (!lib.isAdmin(e) || !familyId) return e.json(403, { error: "Nur ein Admin der Familie kann ein Dashboard einrichten." });
     const body = e.requestInfo().body;
     try {
-        // Dasselbe Gerät erneut eingerichtet? Dann wird der vorhandene Eintrag weiterverwendet
-        // (Geräte-Cookie bzw. Gerätetyp/Browser, nicht die Netzwerk-Adresse)
+        // Same device set up again? Then the existing entry is used further
+        // (device cookie or device type/browser, not the network address)
         let opts = {};
         try {
             const sitz = require(`${__hooks}/pinn-sitzungen.js`);
@@ -139,17 +163,20 @@ routerAdd("GET", "/api/pinn/dashboard/pins", (e) => {
     const dash = require(`${__hooks}/pinn-dashboard.js`);
     e.response.header().set("Cache-Control", "no-store");
     let own = 0;
-    try { own = dash.pinLength($app.findRecordById(lib.USERS, e.auth.id)); } catch (err) { own = 0; }
+    let me = null;
+    try { me = $app.findRecordById(lib.USERS, e.auth.id); own = dash.pinLength(me); } catch (err) { own = 0; }
     const profiles = {};
     const familyId = lib.familyOf(e);
+    // PIN required: the family has a dashboard and this profile is not a guest
+    const required = !!me && dash.needsPin(me) && dash.pinRequired(familyId);
     if (lib.isAdmin(e) && familyId) {
         try {
             $app.findRecordsByFilter(lib.USERS, "familie = {:f}", "", 0, 0, { f: familyId }).forEach(r => {
                 profiles[r.id] = dash.pinLength(r);
             });
-        } catch (err) { /* leer */ }
+        } catch (err) { /* empty */ }
     }
-    return e.json(200, { eigene: own, profile: profiles });
+    return e.json(200, { eigene: own, profile: profiles, pflicht: required });
 }, $apis.requireAuth("benutzer"));
 
 routerAdd("POST", "/api/pinn/dashboard/pin", (e) => {
@@ -160,6 +187,9 @@ routerAdd("POST", "/api/pinn/dashboard/pin", (e) => {
     const body = e.requestInfo().body;
     let rec = null;
     try { rec = $app.findRecordById(lib.USERS, e.auth.id); } catch (err) { return e.json(404, { error: "Profil nicht gefunden." }); }
+    if (!String(body.pin || "").trim() && dash.needsPin(rec) && dash.pinRequired(lib.familyOf(e))) {
+        return e.json(400, { error: "Solange ein Familien-Dashboard eingerichtet ist, braucht jedes Profil eine PIN.", pflicht: true });
+    }
     try {
         dash.setPin(rec, body.pin);
     } catch (err) {
@@ -208,7 +238,7 @@ routerAdd("POST", "/api/pinn/dashboard/geraet-entfernen", (e) => {
 }, $apis.requireAuth("benutzer"));
 
 // ---------------------------------------------------------------------------------------------
-// Hintergrund des Dashboards (je Familie)
+// Background of the dashboard (per family)
 // ---------------------------------------------------------------------------------------------
 routerAdd("GET", "/api/pinn/dashboard/hintergrund", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);

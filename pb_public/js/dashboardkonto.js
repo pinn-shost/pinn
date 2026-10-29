@@ -2,16 +2,18 @@
    Part of the app code that used to be a single block in index.html. Classic script, no build step:
    it is loaded right after the inline script of index.html and before the other files in js/
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
-   Contents: the dashboard parts of Settings → Account: own dashboard PIN (dashPinInfo, loadDashboardPins, renderDashPinSection, startSetOwnPin), this device as a dashboard (renderDashDeviceSection), the family's dashboard devices (renderDashDeviceList), the background editor for admins (dashBgEdit, renderDashBgPreview, renderDashBgControls, renderDashBgSettings, readDashBgImageFile) and creating a guest account (openGuestModal, closeGuestModal, saveGuestFromModal). */
+   Contents: the dashboard parts of Settings → Account: own dashboard PIN (dashPinInfo, loadDashboardPins, renderDashPinSection, startSetOwnPin,
+   since 1.118.4 enforceDashboardPin: as soon as the family has a dashboard every profile needs a PIN – asked for right after the start), this device as a dashboard (renderDashDeviceSection), the family's dashboard devices (renderDashDeviceList), the background editor for admins (dashBgEdit, renderDashBgPreview, renderDashBgControls, renderDashBgSettings, readDashBgImageFile) and creating a guest account (openGuestModal, closeGuestModal, saveGuestFromModal). */
 
 /* ---------- Account: own dashboard PIN ---------- */
-let dashPinInfo = { eigene: 0, profile: {} };
+let dashPinInfo = { eigene: 0, profile: {}, pflicht: false };
+// pflicht = the family has a dashboard and this profile is not a guest -> a PIN is required
 async function loadDashboardPins() {
   try {
     const res = await apiFetch('/api/pinn/dashboard/pins', { cache: 'no-store' });
     if (res.ok) {
       const body = await res.json();
-      dashPinInfo = { eigene: Number(body.eigene) || 0, profile: body.profile || {} };
+      dashPinInfo = { eigene: Number(body.eigene) || 0, profile: body.profile || {}, pflicht: !!body.pflicht, loaded: true };
     }
   } catch (e) { /* offline - last known state */ }
   return dashPinInfo;
@@ -25,18 +27,28 @@ function renderDashPinSection() {
     ? tk('account.pin.protected', { digits: len })
     : tk('account.pin.none');
   document.getElementById('dashPinSetBtn').textContent = tk(len ? 'account.pin.change' : 'account.pin.set');
-  document.getElementById('dashPinRemoveBtn').classList.toggle('hidden', !len);
+  // While the family has a dashboard the PIN cannot be removed
+  document.getElementById('dashPinRemoveBtn').classList.toggle('hidden', !len || !!dashPinInfo.pflicht);
+  const req = document.getElementById('dashPinRequired');
+  if (req) req.classList.toggle('hidden', !dashPinInfo.pflicht);
 }
-function startSetOwnPin() {
+// opts.required: first PIN that has to be set (see enforceDashboardPin) – "Log out" instead of "Cancel",
+// opts.onDone is called once the PIN is saved
+function startSetOwnPin(opts = {}) {
   let first = null;
-  const me = currentMember();
+  let me = null;
+  try { me = currentMember(); } catch (e) { me = null; } // members may not be loaded yet right after the start
   const u = currentUser();
+  const required = !!opts.required;
+  const firstSub = required ? tk('account.pin.requiredSub') : tk('account.pin.enterNew');
   openPinPad({
     title: tk(dashPinInfo.eigene ? 'account.pin.change' : 'account.pin.set'),
-    sub: tk('account.pin.enterNew'),
+    sub: firstSub,
     length: dashPinInfo.eigene === 6 ? 6 : 4,
     lengthChoice: true,
     avatarHtml: dashAvatarHtml(me, u ? { username: u.username, rolle: u.rolle } : null, true),
+    cancelLabel: required ? tk('common.logOut') : '',
+    onCancel: required ? () => { if (opts.onCancel) opts.onCancel(); } : null,
     onComplete: async (pin, pad) => {
       if (first === null) {
         first = pin;
@@ -47,7 +59,7 @@ function startSetOwnPin() {
       if (pin !== first) {
         first = null;
         pad.showLengthChoice(true);
-        pad.setSub(tk('account.pin.enterNew'));
+        pad.setSub(firstSub);
         pad.fail(tk('account.pin.mismatch'));
         return;
       }
@@ -56,15 +68,41 @@ function startSetOwnPin() {
       } catch (e) {
         first = null;
         pad.showLengthChoice(true);
-        pad.setSub(tk('account.pin.enterNew'));
+        pad.setSub(firstSub);
         pad.fail(e.message);
         return;
       }
       dashPinInfo.eigene = pin.length;
       pad.close();
-      renderDashPinSection();
-      document.getElementById('dashPinMsg').textContent = tk('account.pin.saved');
+      try {
+        renderDashPinSection();
+        document.getElementById('dashPinMsg').textContent = tk('account.pin.saved');
+      } catch (e) { /* account page not built yet */ }
+      if (opts.onDone) opts.onDone();
     },
+  });
+}
+
+// Right after the login (bootApp): if the family has a dashboard and this profile has no PIN yet,
+// the PIN has to be set before the app opens. Cancelling logs out. Offline or with an older server
+// nothing happens (the server itself refuses profiles without a PIN at the dashboard anyway).
+async function enforceDashboardPin() {
+  try {
+    if (isCurrentUserGuest() || isCurrentUserMainAdmin()) return;
+  } catch (e) { return; }
+  const info = await loadDashboardPins();
+  if (!info.loaded || !info.pflicht || info.eigene) return;
+  try { document.getElementById('dashBusy').classList.add('hidden'); } catch (e) { /* not shown */ }
+  await new Promise(resolve => {
+    startSetOwnPin({
+      required: true,
+      onDone: resolve,
+      onCancel: () => {
+        pb.authStore.clear();
+        try { ssSet(SS_DASH_ACTIVE, null); ssSet(SS_DASH_KID, null); } catch (e) { /* not a dashboard */ }
+        location.reload();
+      },
+    });
   });
 }
 document.getElementById('dashPinSetBtn').addEventListener('click', () => {
@@ -73,6 +111,7 @@ document.getElementById('dashPinSetBtn').addEventListener('click', () => {
 });
 document.getElementById('dashPinRemoveBtn').addEventListener('click', async () => {
   const msg = document.getElementById('dashPinMsg');
+  if (dashPinInfo.pflicht) { msg.textContent = tk('account.pin.requiredNote'); return; }
   if (!confirm(tk('account.pin.removeConfirm'))) return;
   try {
     await postJson('/api/pinn/dashboard/pin', { pin: '' });

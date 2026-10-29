@@ -31,7 +31,7 @@
        pb_public/vendor/tesseract/tesseract.min.js + worker.min.js, core/ (tesseract-core*.wasm.js),
          lang/deu.traineddata.gz (text recognition for "Foto einlesen" in recipes, only loaded when needed) -->
 <link rel="stylesheet" href="vendor/pinn.css">
-<link rel="stylesheet" href="css/ergaenzung.css?v=1.118.3">
+<link rel="stylesheet" href="css/ergaenzung.css?v=1.118.4">
 <!-- ==========================================================
      Power saving (since 0.99)
      - Recurring requests (setInterval from 1 second) only run while pinn. is visible;
@@ -41,11 +41,11 @@
        Every touch, mouse or keyboard input wakes pinn. at once and catches up on everything.
      - Short timers (< 1 s, e.g. the SOS countdown) stay unchanged.
      ========================================================== -->
-<link rel="stylesheet" href="css/energiesparen.css?v=1.118.3">
-<script src="js/ruhemodus.js?v=1.118.3"></script>
-<script src="js/textkern.js?v=1.118.3"></script>
-<script src="js/sprachen.js?v=1.118.3"></script>
-<script src="js/region.js?v=1.118.3"></script>
+<link rel="stylesheet" href="css/energiesparen.css?v=1.118.4">
+<script src="js/ruhemodus.js?v=1.118.4"></script>
+<script src="js/textkern.js?v=1.118.4"></script>
+<script src="js/sprachen.js?v=1.118.4"></script>
+<script src="js/region.js?v=1.118.4"></script>
 <script src="vendor/pocketbase/pocketbase.umd.js"></script>
 <!-- If the file sits somewhere else on the NAS or has another name: try further places -->
 <script>if (!window.PocketBase) document.write('<script src="vendor/pocketbase.umd.js"><\/script>');</script>
@@ -143,26 +143,26 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/basis.css?v=1.118.3">
-<link rel="stylesheet" href="css/mobil.css?v=1.118.3">
-<link rel="stylesheet" href="css/einstellungen.css?v=1.118.3">
-<link rel="stylesheet" href="css/seitenleiste.css?v=1.118.3">
-<link rel="stylesheet" href="css/finanzen.css?v=1.118.3">
-<link rel="stylesheet" href="css/listen.css?v=1.118.3">
-<link rel="stylesheet" href="css/vertraege.css?v=1.118.3">
-<link rel="stylesheet" href="css/fahrzeuge.css?v=1.118.3">
-<link rel="stylesheet" href="css/notfall.css?v=1.118.3">
-<link rel="stylesheet" href="css/hinweise.css?v=1.118.3">
-<link rel="stylesheet" href="css/familie.css?v=1.118.3">
-<link rel="stylesheet" href="css/dokumente.css?v=1.118.3">
-<link rel="stylesheet" href="css/sparen.css?v=1.118.3">
-<link rel="stylesheet" href="css/kinderaufgaben.css?v=1.118.3">
-<link rel="stylesheet" href="css/dashboard.css?v=1.118.3">
-<link rel="stylesheet" href="css/uebersicht.css?v=1.118.3">
-<link rel="stylesheet" href="css/wohnort.css?v=1.118.3">
-<link rel="stylesheet" href="css/familienkachel.css?v=1.118.3">
-<link rel="stylesheet" href="css/pinnwand.css?v=1.118.3">
-<link rel="stylesheet" href="css/haustierewetter.css?v=1.118.3">
+<link rel="stylesheet" href="css/basis.css?v=1.118.4">
+<link rel="stylesheet" href="css/mobil.css?v=1.118.4">
+<link rel="stylesheet" href="css/einstellungen.css?v=1.118.4">
+<link rel="stylesheet" href="css/seitenleiste.css?v=1.118.4">
+<link rel="stylesheet" href="css/finanzen.css?v=1.118.4">
+<link rel="stylesheet" href="css/listen.css?v=1.118.4">
+<link rel="stylesheet" href="css/vertraege.css?v=1.118.4">
+<link rel="stylesheet" href="css/fahrzeuge.css?v=1.118.4">
+<link rel="stylesheet" href="css/notfall.css?v=1.118.4">
+<link rel="stylesheet" href="css/hinweise.css?v=1.118.4">
+<link rel="stylesheet" href="css/familie.css?v=1.118.4">
+<link rel="stylesheet" href="css/dokumente.css?v=1.118.4">
+<link rel="stylesheet" href="css/sparen.css?v=1.118.4">
+<link rel="stylesheet" href="css/kinderaufgaben.css?v=1.118.4">
+<link rel="stylesheet" href="css/dashboard.css?v=1.118.4">
+<link rel="stylesheet" href="css/uebersicht.css?v=1.118.4">
+<link rel="stylesheet" href="css/wohnort.css?v=1.118.4">
+<link rel="stylesheet" href="css/familienkachel.css?v=1.118.4">
+<link rel="stylesheet" href="css/pinnwand.css?v=1.118.4">
+<link rel="stylesheet" href="css/haustierewetter.css?v=1.118.4">
 </head>
 <body class="font-sans text-ink antialiased">
 
@@ -336,6 +336,23 @@
     </div>
   </div>
   <div id="dashBusy" class="hidden dash-busy"><span data-tk="dashboard.opening" id="dashBusyText">Opening …</span></div>
+</div>
+
+<!-- Password of a profile without a PIN (dashboard, since 1.118.4) - "fixed inset-0" so that js/tastatur.js
+     moves it above the on-screen keyboard -->
+<div id="dashPwOverlay" class="hidden fixed inset-0" role="dialog" aria-modal="true" aria-label="Password" data-tk-attr="aria-label:common.password">
+  <form id="dashPwForm" class="dash-pw-box" autocomplete="off" novalidate>
+    <div id="dashPwAvatar"></div>
+    <div id="dashPwName" class="pin-title"></div>
+    <p data-tk="dashboard.noPinYet" class="pin-sub">No PIN yet – please log in once with your password, then choose your PIN.</p>
+    <input id="dashPwUser" type="text" autocomplete="username" class="hidden" tabindex="-1" aria-hidden="true" />
+    <input data-tk-attr="placeholder:common.password" id="dashPwInput" type="password" autocomplete="current-password" class="dash-pw-input" placeholder="Password" />
+    <div id="dashPwError" class="pin-error"></div>
+    <div class="dash-pw-actions">
+      <button data-tk="common.cancel" type="button" id="dashPwCancel" class="dash-pw-btn plain">Cancel</button>
+      <button data-tk="common.next" type="submit" id="dashPwSubmit" class="dash-pw-btn">Next</button>
+    </div>
+  </form>
 </div>
 
 <!-- PIN entry (dashboard and "PIN festlegen" in the account) -->
@@ -1455,13 +1472,14 @@
         </div>
       </div>
 
-      <!-- Dashboard PIN (optional) -->
+      <!-- Dashboard PIN (required as soon as the family has a dashboard, since 1.118.4) -->
       <div id="dashPinSection" class="set-card">
-        <div class="set-head-row"><span class="set-ico">🔢</span><div class="set-head"><h3 data-tk="account.pin.title" class="sa-title">PIN for the family dashboard</h3><small data-tk="account.pin.subtitle">Optional – protects your profile on the iPad</small></div></div>
+        <div class="set-head-row"><span class="set-ico">🔢</span><div class="set-head"><h3 data-tk="account.pin.title" class="sa-title">PIN for the family dashboard</h3><small data-tk="account.pin.subtitle">Protects your profile on the family dashboard</small></div></div>
         <div class="set-body">
 
         <p id="dashPinStatus" class="text-sm text-ink/70 mb-1"></p>
-        <p data-tk="account.pin.hint" class="text-xs text-ink/40 mb-3">On the family dashboard (e.g. the iPad in the kitchen), your profile opens with a tap on your picture. With a PIN, your code is asked for first – like on the iPhone. The PIN is optional.</p>
+        <p data-tk="account.pin.requiredNote" id="dashPinRequired" class="hidden text-xs font-medium text-mustard mb-1">Required as long as your family has a dashboard.</p>
+        <p data-tk="account.pin.hint" class="text-xs text-ink/40 mb-3">On the family dashboard (e.g. the iPad in the kitchen), your profile opens with your PIN – like on the iPhone. As soon as your family sets up a dashboard, every profile needs a PIN.</p>
         <div class="flex flex-wrap items-center gap-2">
           <button data-tk="account.pin.set" type="button" id="dashPinSetBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition">Set PIN</button>
           <button data-tk="account.pin.remove" type="button" id="dashPinRemoveBtn" class="hidden px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-red-500 hover:border-red-500 transition">Remove PIN</button>
@@ -1476,7 +1494,7 @@
         <div class="set-body">
 
         <div id="dashDeviceSetup" class="hidden">
-          <p data-tk="account.dashDevice.hint" class="text-xs text-ink/40 mb-3">As a dashboard, this device shows the family's profiles when opened. Tapping a child opens their kids' page with tasks directly, everyone else opens their profile – with a PIN if they have set one. There are no personal notifications on a dashboard device.</p>
+          <p data-tk="account.dashDevice.hint" class="text-xs text-ink/40 mb-3">As a dashboard, this device shows the family’s profiles when opened. Every profile opens with its PIN – a child straight into their kids’ page; anyone without a PIN logs in once with the password and sets one. Guests open with a tap. There are no personal notifications on a dashboard device.</p>
           <div id="dashDeviceSetupForm" class="flex flex-wrap items-center gap-2">
             <input id="dashDeviceNameInput" type="text" autocomplete="off" maxlength="60" class="flex-1 min-w-[10rem] rounded-lg border border-ink/15 px-3 py-2 text-sm" data-tk-attr="placeholder:account.dashDevice.namePlaceholder" placeholder="Name of the device, e.g. kitchen iPad" />
             <button data-tk="account.dashDevice.activate" type="button" id="dashDeviceActivateBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90 transition whitespace-nowrap">Set up as dashboard</button>
@@ -4919,7 +4937,7 @@ let lastIcsSync = null;
    because such web apps often don't reload their content by themselves)
    ========================================================== */
 // Current version – comes from src/version.txt (filled in by src/build.js); pb_hooks/pinn-system.js and pinn-wartung.sh read it here
-const APP_VERSION = '1.118.3';
+const APP_VERSION = '1.118.4';
 
 /* ==========================================================
    Settings & account: two columns of equal height (landscape from tablet width)
@@ -5047,111 +5065,111 @@ const APP_VERSION = '1.118.3';
 <!-- App parts under pb_public/js/ (classic scripts without a build step, order matters).
      ausblick.js must come last – it starts the app (bootApp). New file: add its line here and its name
      in pinn-setup.sh – src/build.js fills in the list of the start check (PINN_APP_PARTS) by itself. -->
-<script src="js/grundlagen.js?v=1.118.3"></script>
-<script src="js/popups.js?v=1.118.3"></script>
-<script src="js/verbindung.js?v=1.118.3"></script>
-<script src="js/benutzer.js?v=1.118.3"></script>
-<script src="js/mitteilungen.js?v=1.118.3"></script>
-<script src="js/serverzugriff.js?v=1.118.3"></script>
-<script src="js/tastatur.js?v=1.118.3"></script>
-<script src="js/anmeldemaske.js?v=1.118.3"></script>
-<script src="js/dashboard.js?v=1.118.3"></script>
-<script src="js/dashboardhintergrund.js?v=1.118.3"></script>
-<script src="js/profilauswahl.js?v=1.118.3"></script>
-<script src="js/pineingabe.js?v=1.118.3"></script>
-<script src="js/dashboardsitzung.js?v=1.118.3"></script>
-<script src="js/dashboardkonto.js?v=1.118.3"></script>
-<script src="js/familienverwalten.js?v=1.118.3"></script>
-<script src="js/einrichten.js?v=1.118.3"></script>
-<script src="js/exportieren.js?v=1.118.3"></script>
-<script src="js/hauptadminseite.js?v=1.118.3"></script>
-<script src="js/anmeldung.js?v=1.118.3"></script>
-<script src="js/konto.js?v=1.118.3"></script>
-<script src="js/profilverwaltung.js?v=1.118.3"></script>
-<script src="js/zustand.js?v=1.118.3"></script>
-<script src="js/bedienzustand.js?v=1.118.3"></script>
-<script src="js/rezeptbilder.js?v=1.118.3"></script>
-<script src="js/zusammenfuehren.js?v=1.118.3"></script>
-<script src="js/speichern.js?v=1.118.3"></script>
-<script src="js/design.js?v=1.118.3"></script>
-<script src="js/sprache.js?v=1.118.3"></script>
-<script src="js/uebersicht.js?v=1.118.3"></script>
-<script src="js/familienkachel.js?v=1.118.3"></script>
-<script src="js/wobistdu.js?v=1.118.3"></script>
-<script src="js/geburtstagsfeier.js?v=1.118.3"></script>
-<script src="js/wetterkachel.js?v=1.118.3"></script>
-<script src="js/geburtstage.js?v=1.118.3"></script>
-<script src="js/uebersichteinstellungen.js?v=1.118.3"></script>
-<script src="js/familiensync.js?v=1.118.3"></script>
-<script src="js/bereiche.js?v=1.118.3"></script>
-<script src="js/kalenderquellen.js?v=1.118.3"></script>
-<script src="js/icsparser.js?v=1.118.3"></script>
-<script src="js/zeitleiste.js?v=1.118.3"></script>
-<script src="js/termindetails.js?v=1.118.3"></script>
-<script src="js/kalenderdatei.js?v=1.118.3"></script>
-<script src="js/wetter.js?v=1.118.3"></script>
-<script src="js/wohnort.js?v=1.118.3"></script>
-<script src="js/feiertage.js?v=1.118.3"></script>
-<script src="js/muellkalender.js?v=1.118.3"></script>
-<script src="js/mitglieder.js?v=1.118.3"></script>
-<script src="js/profilbild.js?v=1.118.3"></script>
-<script src="js/mitglied.js?v=1.118.3"></script>
-<script src="js/kinderseite.js?v=1.118.3"></script>
-<script src="js/kinderroutine.js?v=1.118.3"></script>
-<script src="js/sterne.js?v=1.118.3"></script>
-<script src="js/kalenderansicht.js?v=1.118.3"></script>
-<script src="js/essenplanen.js?v=1.118.3"></script>
-<script src="js/rezeptparser.js?v=1.118.3"></script>
-<script src="js/rezeptdialog.js?v=1.118.3"></script>
-<script src="js/rezeptbild.js?v=1.118.3"></script>
-<script src="js/rezeptmengen.js?v=1.118.3"></script>
-<script src="js/einkauf.js?v=1.118.3"></script>
-<script src="js/einkaufslisten.js?v=1.118.3"></script>
-<script src="js/einkaufseingabe.js?v=1.118.3"></script>
-<script src="js/rezepte.js?v=1.118.3"></script>
-<script src="js/rezeptaktionen.js?v=1.118.3"></script>
-<script src="js/offline.js?v=1.118.3"></script>
-<script src="js/aufgabenextras.js?v=1.118.3"></script>
-<script src="js/appbadge.js?v=1.118.3"></script>
-<script src="js/reisen.js?v=1.118.3"></script>
-<script src="js/aufgabendaten.js?v=1.118.3"></script>
-<script src="js/haushalt.js?v=1.118.3"></script>
-<script src="js/reihum.js?v=1.118.3"></script>
-<script src="js/aufgaben.js?v=1.118.3"></script>
-<script src="js/smarthome.js?v=1.118.3"></script>
-<script src="js/sprachsteuerung.js?v=1.118.3"></script>
-<script src="js/termine.js?v=1.118.3"></script>
-<script src="js/ansichten.js?v=1.118.3"></script>
-<script src="js/versionspruefung.js?v=1.118.3"></script>
-<script src="js/sicherungen.js?v=1.118.3"></script>
-<script src="js/geraete.js?v=1.118.3"></script>
-<script src="js/fehlerprotokoll.js?v=1.118.3"></script>
-<script src="js/versionslog.js?v=1.118.3"></script>
-<script src="js/einstellungen.js?v=1.118.3"></script>
-<script src="js/kalenderkonto.js?v=1.118.3"></script>
-<script src="js/finanzen.js?v=1.118.3"></script>
-<script src="js/kassen.js?v=1.118.3"></script>
-<script src="js/vorrat.js?v=1.118.3"></script>
-<script src="js/vorrat2.js?v=1.118.3"></script>
-<script src="js/sparen.js?v=1.118.3"></script>
-<script src="js/vertraege.js?v=1.118.3"></script>
-<script src="js/fahrzeuge.js?v=1.118.3"></script>
-<script src="js/zuhause.js?v=1.118.3"></script>
-<script src="js/dokumente.js?v=1.118.3"></script>
-<script src="js/pdflesen.js?v=1.118.3"></script>
-<script src="js/appstart.js?v=1.118.3"></script>
-<script src="js/pinnwand.js?v=1.118.3"></script>
-<script src="js/listen.js?v=1.118.3"></script>
-<script src="js/familie.js?v=1.118.3"></script>
-<script src="js/hinweise.js?v=1.118.3"></script>
-<script src="js/ausblick.js?v=1.118.3"></script>
+<script src="js/grundlagen.js?v=1.118.4"></script>
+<script src="js/popups.js?v=1.118.4"></script>
+<script src="js/verbindung.js?v=1.118.4"></script>
+<script src="js/benutzer.js?v=1.118.4"></script>
+<script src="js/mitteilungen.js?v=1.118.4"></script>
+<script src="js/serverzugriff.js?v=1.118.4"></script>
+<script src="js/tastatur.js?v=1.118.4"></script>
+<script src="js/anmeldemaske.js?v=1.118.4"></script>
+<script src="js/dashboard.js?v=1.118.4"></script>
+<script src="js/dashboardhintergrund.js?v=1.118.4"></script>
+<script src="js/profilauswahl.js?v=1.118.4"></script>
+<script src="js/pineingabe.js?v=1.118.4"></script>
+<script src="js/dashboardsitzung.js?v=1.118.4"></script>
+<script src="js/dashboardkonto.js?v=1.118.4"></script>
+<script src="js/familienverwalten.js?v=1.118.4"></script>
+<script src="js/einrichten.js?v=1.118.4"></script>
+<script src="js/exportieren.js?v=1.118.4"></script>
+<script src="js/hauptadminseite.js?v=1.118.4"></script>
+<script src="js/anmeldung.js?v=1.118.4"></script>
+<script src="js/konto.js?v=1.118.4"></script>
+<script src="js/profilverwaltung.js?v=1.118.4"></script>
+<script src="js/zustand.js?v=1.118.4"></script>
+<script src="js/bedienzustand.js?v=1.118.4"></script>
+<script src="js/rezeptbilder.js?v=1.118.4"></script>
+<script src="js/zusammenfuehren.js?v=1.118.4"></script>
+<script src="js/speichern.js?v=1.118.4"></script>
+<script src="js/design.js?v=1.118.4"></script>
+<script src="js/sprache.js?v=1.118.4"></script>
+<script src="js/uebersicht.js?v=1.118.4"></script>
+<script src="js/familienkachel.js?v=1.118.4"></script>
+<script src="js/wobistdu.js?v=1.118.4"></script>
+<script src="js/geburtstagsfeier.js?v=1.118.4"></script>
+<script src="js/wetterkachel.js?v=1.118.4"></script>
+<script src="js/geburtstage.js?v=1.118.4"></script>
+<script src="js/uebersichteinstellungen.js?v=1.118.4"></script>
+<script src="js/familiensync.js?v=1.118.4"></script>
+<script src="js/bereiche.js?v=1.118.4"></script>
+<script src="js/kalenderquellen.js?v=1.118.4"></script>
+<script src="js/icsparser.js?v=1.118.4"></script>
+<script src="js/zeitleiste.js?v=1.118.4"></script>
+<script src="js/termindetails.js?v=1.118.4"></script>
+<script src="js/kalenderdatei.js?v=1.118.4"></script>
+<script src="js/wetter.js?v=1.118.4"></script>
+<script src="js/wohnort.js?v=1.118.4"></script>
+<script src="js/feiertage.js?v=1.118.4"></script>
+<script src="js/muellkalender.js?v=1.118.4"></script>
+<script src="js/mitglieder.js?v=1.118.4"></script>
+<script src="js/profilbild.js?v=1.118.4"></script>
+<script src="js/mitglied.js?v=1.118.4"></script>
+<script src="js/kinderseite.js?v=1.118.4"></script>
+<script src="js/kinderroutine.js?v=1.118.4"></script>
+<script src="js/sterne.js?v=1.118.4"></script>
+<script src="js/kalenderansicht.js?v=1.118.4"></script>
+<script src="js/essenplanen.js?v=1.118.4"></script>
+<script src="js/rezeptparser.js?v=1.118.4"></script>
+<script src="js/rezeptdialog.js?v=1.118.4"></script>
+<script src="js/rezeptbild.js?v=1.118.4"></script>
+<script src="js/rezeptmengen.js?v=1.118.4"></script>
+<script src="js/einkauf.js?v=1.118.4"></script>
+<script src="js/einkaufslisten.js?v=1.118.4"></script>
+<script src="js/einkaufseingabe.js?v=1.118.4"></script>
+<script src="js/rezepte.js?v=1.118.4"></script>
+<script src="js/rezeptaktionen.js?v=1.118.4"></script>
+<script src="js/offline.js?v=1.118.4"></script>
+<script src="js/aufgabenextras.js?v=1.118.4"></script>
+<script src="js/appbadge.js?v=1.118.4"></script>
+<script src="js/reisen.js?v=1.118.4"></script>
+<script src="js/aufgabendaten.js?v=1.118.4"></script>
+<script src="js/haushalt.js?v=1.118.4"></script>
+<script src="js/reihum.js?v=1.118.4"></script>
+<script src="js/aufgaben.js?v=1.118.4"></script>
+<script src="js/smarthome.js?v=1.118.4"></script>
+<script src="js/sprachsteuerung.js?v=1.118.4"></script>
+<script src="js/termine.js?v=1.118.4"></script>
+<script src="js/ansichten.js?v=1.118.4"></script>
+<script src="js/versionspruefung.js?v=1.118.4"></script>
+<script src="js/sicherungen.js?v=1.118.4"></script>
+<script src="js/geraete.js?v=1.118.4"></script>
+<script src="js/fehlerprotokoll.js?v=1.118.4"></script>
+<script src="js/versionslog.js?v=1.118.4"></script>
+<script src="js/einstellungen.js?v=1.118.4"></script>
+<script src="js/kalenderkonto.js?v=1.118.4"></script>
+<script src="js/finanzen.js?v=1.118.4"></script>
+<script src="js/kassen.js?v=1.118.4"></script>
+<script src="js/vorrat.js?v=1.118.4"></script>
+<script src="js/vorrat2.js?v=1.118.4"></script>
+<script src="js/sparen.js?v=1.118.4"></script>
+<script src="js/vertraege.js?v=1.118.4"></script>
+<script src="js/fahrzeuge.js?v=1.118.4"></script>
+<script src="js/zuhause.js?v=1.118.4"></script>
+<script src="js/dokumente.js?v=1.118.4"></script>
+<script src="js/pdflesen.js?v=1.118.4"></script>
+<script src="js/appstart.js?v=1.118.4"></script>
+<script src="js/pinnwand.js?v=1.118.4"></script>
+<script src="js/listen.js?v=1.118.4"></script>
+<script src="js/familie.js?v=1.118.4"></script>
+<script src="js/hinweise.js?v=1.118.4"></script>
+<script src="js/ausblick.js?v=1.118.4"></script>
 
 <!-- ==========================================================
      Changelog as a terminal (Settings → System → Versions-Log)
      Classes "fixed inset-0": the global keyboard logic fits the overlay to the visible
      area automatically, so the input line is never hidden by the keyboard.
      ========================================================== -->
-<link rel="stylesheet" href="css/terminal.css?v=1.118.3">
+<link rel="stylesheet" href="css/terminal.css?v=1.118.4">
 
 <div id="changelogTerminal" class="hidden fixed inset-0" data-no-term role="dialog" aria-modal="true" aria-label="Versions-Log">
   <div class="term-window" id="changelogTermWindow">
@@ -5179,6 +5197,6 @@ const APP_VERSION = '1.118.3';
     </div>
   </div>
 </div>
-<link rel="stylesheet" href="css/glocke.css?v=1.118.3">
+<link rel="stylesheet" href="css/glocke.css?v=1.118.4">
 </body>
 </html>

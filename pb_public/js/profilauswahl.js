@@ -2,7 +2,9 @@
    Part of the app code that used to be a single block in index.html. Classic script, no build step:
    it is loaded right after the inline script of index.html and before the other files in js/
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
-   Contents: the look of the profile selection (cached members, dashAvatarHtml), the profile tiles (buildDashboardTiles), clock and weather on the screen (tickDashboardClock) and showing/hiding it (showDashboardScreen, hideDashboardScreen). */
+   Contents: the look of the profile selection (cached members, dashAvatarHtml), the profile tiles (buildDashboardTiles), clock and weather on the screen (tickDashboardClock) and showing/hiding it (showDashboardScreen, hideDashboardScreen).
+   Since 1.118.4 every profile needs a PIN at the dashboard: a profile without one (not a guest) opens once with its password
+   (#dashPwOverlay); right after the login bootApp asks for the new PIN (enforceDashboardPin in js/dashboardkonto.js). */
 
 /* ---------- Look of the profile selection (colours/dark mode from the most recently loaded state) ---------- */
 function dashboardCachedMembers(dash) {
@@ -101,6 +103,7 @@ function showDashboardScreen(dash) {
       if (finished) return;
       finished = true;
       closePinPad();
+      closePasswordBox();
       resolve(result);
     }
     function deviceGone(message) {
@@ -167,8 +170,11 @@ function showDashboardScreen(dash) {
       tilesEl.innerHTML = tiles.map((t, i) => {
         const guest = t.profile.rolle === 'gast';
         const badge = t.kid ? escapeHtml(tk('dashboard.myTasks')) : (guest ? escapeHtml(tk('dashboard.guest')) : '');
+        const icon = t.profile.pin
+          ? '<span class="dash-lock" aria-label="' + escapeHtml(tk('dashboard.pinProtected')) + '">🔒</span>'
+          : (needsPassword(t) ? '<span class="dash-key" aria-label="' + escapeHtml(tk('dashboard.passwordFirst')) + '">🔑</span>' : '');
         return `<button type="button" class="dash-tile${t.kid ? ' kid' : ''}${guest ? ' guest' : ''}" data-tile="${i}">
-          ${t.profile.pin ? '<span class="dash-lock" aria-label="' + escapeHtml(tk('dashboard.pinProtected')) + '">🔒</span>' : ''}
+          ${icon}
           ${dashAvatarHtml(t.member, t.profile)}
           <span class="dash-name">${escapeHtml(t.name)}</span>
           ${badge ? `<span class="dash-badge">${badge}</span>` : ''}
@@ -177,12 +183,23 @@ function showDashboardScreen(dash) {
       tilesEl.querySelectorAll('.dash-tile').forEach(btn => btn.addEventListener('click', () => openTile(tiles[Number(btn.dataset.tile)])));
     }
 
-    async function login(tile, pin) {
-      const r = await postDashboard('/api/pinn/dashboard/login', { key: dash.key, id: tile.profile.id, pin: pin || '' });
+    // A profile without a PIN (not a guest) needs its password once - the PIN is set right after
+    function needsPassword(tile) {
+      return !tile.profile.pin && tile.profile.rolle !== 'gast';
+    }
+
+    async function login(tile, pin, password) {
+      const payload = { key: dash.key, id: tile.profile.id, pin: pin || '' };
+      if (password) payload.passwort = password;
+      const r = await postDashboard('/api/pinn/dashboard/login', payload);
       if (r.res.status === 404 && r.body.ungueltig) { deviceGone(r.body.error); return; }
       if (!r.res.ok || !r.body.token) {
-        const err = new Error(r.body.error || tk('dashboard.openFailed'));
+        let message = r.body.error || tk('dashboard.openFailed');
+        if (r.res.status === 400 && r.body.passwort) message = tk('dashboard.wrongPassword');
+        else if (r.res.status === 400 && r.body.falsch) message = tk('dashboard.wrongPin');
+        const err = new Error(message);
         err.status = r.res.status;
+        err.needsPassword = r.res.status === 401 && !!r.body.passwort;
         throw err;
       }
       pb.authStore.save(r.body.token, r.body.record);
@@ -194,8 +211,50 @@ function showDashboardScreen(dash) {
       finish('ok');
     }
 
+    /* ---------- Password of a profile without a PIN ---------- */
+    function closePasswordBox() {
+      document.getElementById('dashPwOverlay').classList.add('hidden');
+      document.getElementById('dashPwInput').value = '';
+    }
+    function openPasswordBox(tile) {
+      const overlay = document.getElementById('dashPwOverlay');
+      const form = document.getElementById('dashPwForm');
+      const input = document.getElementById('dashPwInput');
+      const error = document.getElementById('dashPwError');
+      const submit = document.getElementById('dashPwSubmit');
+      document.getElementById('dashPwAvatar').innerHTML = dashAvatarHtml(tile.member, tile.profile, true);
+      document.getElementById('dashPwName').textContent = tile.name;
+      document.getElementById('dashPwUser').value = tile.profile.username || '';
+      input.value = '';
+      error.textContent = '';
+      submit.disabled = false;
+      overlay.classList.remove('hidden');
+      setTimeout(() => { try { input.focus(); } catch (e) { /* ignore */ } }, 60);
+      form.onsubmit = async (ev) => {
+        ev.preventDefault();
+        const password = input.value;
+        if (!password) { input.focus(); return; }
+        submit.disabled = true;
+        error.textContent = '';
+        try {
+          await login(tile, '', password);
+          closePasswordBox();
+        } catch (e) {
+          submit.disabled = false;
+          input.value = '';
+          error.textContent = e.message;
+          form.classList.remove('shake');
+          void form.offsetWidth; // restart the animation
+          form.classList.add('shake');
+          try { input.focus(); } catch (e2) { /* ignore */ }
+        }
+      };
+      document.getElementById('dashPwCancel').onclick = closePasswordBox;
+    }
+
     function openTile(tile) {
       if (finished || !tile) return;
+      if (needsPassword(tile)) { openPasswordBox(tile); return; }
       if (tile.profile.pin) {
         openPinPad({
           title: tile.name,
@@ -216,6 +275,7 @@ function showDashboardScreen(dash) {
       busy.classList.remove('hidden');
       login(tile, '').catch(e => {
         busy.classList.add('hidden');
+        if (e.needsPassword) { openPasswordBox(tile); return; } // e.g. an older list without the PIN state
         alert(e.message);
       });
     }

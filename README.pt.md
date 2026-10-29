@@ -99,6 +99,12 @@ Sempre com você: o pinn. se instala em todo iPhone e celular Android como um ap
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 e 🇰🇷 한국어**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.118.4
+
+**Segurança: PIN obrigatório com um painel · correção do calendário**
+
+- Assim que a família tem um painel, **cada perfil precisa de um PIN** (quem não o tem inicia sessão uma vez com a palavra-passe e define-o logo); no telemóvel, o calendário em vista de lista já não fica «aberto» depois de uma receita.
+
 ## Novidades da 1.118.3
 
 **Receitas: reciclagem, «eliminar mesmo?», toque longo na semana**
@@ -110,12 +116,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 **Lista de compras: colar mensagem, despensa, mais/menos**
 
 - **Cole uma mensagem** (ex.: WhatsApp) no campo: uma janela mostra os itens reconhecidos com quantidade e avisos verdes; itens da despensa têm «🥫 Despensa» sob o nome; mais/menos segue a quantidade.
-
-## Novidades da 1.118.1
-
-**Aviso de atualização para admins**
-
-- Admins que podem instalar atualizações recebem **uma notificação por nova versão** e um **cartão no sino** todo dia até instalar; um toque abre **Configurações → Sistema**.
 
 ## Como funciona
 
@@ -145,7 +145,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.118.3` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.118.4` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

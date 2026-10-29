@@ -94,6 +94,25 @@ html.dark .dash-busy { background: rgba(27,27,24,.85); }
   color: #fff; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
 }
 #pinPadOverlay.hidden, .dash-busy.hidden { display: none !important; }
+/* Password of a profile without a PIN (since 1.118.4) - same look as the PIN pad */
+#dashPwOverlay {
+  z-index: 420; display: grid; place-items: center; overflow-y: auto;
+  padding: calc(env(safe-area-inset-top, 0px) + 1rem) 1rem calc(env(safe-area-inset-bottom, 0px) + 1rem);
+  background: rgba(24,23,21,.62); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); color: #fff;
+}
+#dashPwOverlay.hidden { display: none !important; }
+.dash-pw-box { width: 100%; max-width: 340px; text-align: center; }
+.dash-pw-box .dash-avatar { margin: 0 auto .75rem; border-color: rgba(255,255,255,.85); }
+.dash-pw-input { width: 100%; margin-top: 1.2rem; padding: .75rem 1rem; border-radius: 14px; border: 1px solid rgba(255,255,255,.45);
+  background: rgba(255,255,255,.14); color: #fff; font: inherit; font-size: 16px; text-align: center; outline: none; }
+.dash-pw-input::placeholder { color: rgba(255,255,255,.6); }
+.dash-pw-input:focus { border-color: #fff; background: rgba(255,255,255,.2); }
+.dash-pw-actions { display: flex; justify-content: center; gap: .75rem; margin-top: .9rem; }
+.dash-pw-btn { font: inherit; font-size: .95rem; padding: .6rem 1.4rem; border-radius: 999px; border: 1px solid #fff; background: #fff; color: #25231F; cursor: pointer; }
+.dash-pw-btn.plain { background: transparent; color: #fff; border-color: rgba(255,255,255,.45); }
+.dash-pw-btn:disabled { opacity: .5; }
+.dash-pw-box.shake { animation: pinShake .45s ease; }
+.dash-key { position: absolute; top: .8rem; right: .95rem; font-size: 14px; opacity: .5; }
 .pin-box { width: 100%; max-width: 340px; text-align: center; }
 .pin-box .dash-avatar { margin: 0 auto .75rem; border-color: rgba(255,255,255,.85); }
 .pin-title { font-family: 'Fraunces', Georgia, serif; font-size: 1.45rem; }

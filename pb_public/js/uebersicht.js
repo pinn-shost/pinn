@@ -172,6 +172,9 @@ function applyOverviewLayout() {
     if (hasCalendar && calendarMode !== 'day' && calendarMode !== 'week') calendarMode = 'week';
   }
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === calendarMode));
+  // The phone list view is only as high as its appointments – the fixed 65vh above is for the timeline.
+  // Without this the list stayed "unfolded" to the timeline height, e.g. after going back from a recipe (fixed in 1.118.4).
+  try { applyOverviewCalendarHeight(); } catch (e) { /* calendar not built yet */ }
   try { renderHeaderWeather(); } catch (e) { /* header not ready yet */ }
 }
 

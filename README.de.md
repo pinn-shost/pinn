@@ -99,6 +99,14 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 und 🇰🇷 한국어**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.118.4
+
+**Sicherheit: PIN-Pflicht mit Familien-Dashboard · Kalender-Fix**
+
+- **PIN-Pflicht:** Sobald die Familie ein Dashboard hat (z. B. das iPad in der Küche), braucht jedes Profil eine PIN. Ein Profil ohne PIN zeigt am Dashboard einen 🔑 und öffnet sich **einmal mit dem Passwort** – direkt danach fragt die App nach der neuen PIN. Auf den eigenen Handys und Computern kommt die PIN-Eingabe ebenfalls gleich nach dem Start („Abmelden“ statt „Abbrechen“). Die eigene PIN lässt sich nicht entfernen, solange das Dashboard besteht; ein Admin kann die PIN eines Profils weiterhin zurücksetzen (die Person meldet sich dann noch einmal mit dem Passwort an). Gäste öffnen weiter mit einem Tipp. Falsche Passwörter zählen zur selben Sperre wie falsche PINs.
+- **Kalender am Handy:** Nach dem Zurückkommen aus einem Rezept war die Listenansicht der Übersicht so hoch „aufgeklappt“ wie die Zeitleiste – jetzt behält sie ihre Höhe.
+- Geändert: `index.html`, `js/profilauswahl.js`, `js/pineingabe.js`, `js/dashboardkonto.js`, `js/appstart.js`, `js/uebersicht.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien und am Server `dashboard.pb.js`, `pinn-dashboard.js`.
+
 ## Neu in 1.118.3
 
 **Rezepte: Papierkorb, „wirklich löschen?“, langes Drücken im Wochen-Slider**
@@ -124,15 +132,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Admins, die Updates installieren dürfen, bekommen jetzt **eine Push-Nachricht je neuer pinn.-Version** (Schalter: Konto → Benachrichtigungen → Updates) und eine **Karte in der Glocke**, die jeden Tag wiederkommt, bis das Update installiert ist – Wegwischen blendet sie nur für heute aus.
 - Ein Tipp auf die Nachricht oder die Karte öffnet direkt **Einstellungen → System** mit dem Update-Popup.
 - Geändert: `index.html`, `js/sicherungen.js`, `js/mitteilungen.js`, `js/hinweise.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien, am Server `pb_hooks/system.pb.js`, `pinn-system.js`, `pinn-hinweise.js`, `pinn-push.js`, `pinn-pushtext.js`. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
-
-## Neu in 1.118.0
-
-**Fahrenheit und Übersetzungs-Feinschliff**
-
-- **Temperatur in °F oder °C:** Unter Einstellungen → Sprache & Region gibt es die neue Einstellung **Temperatur**. *Automatisch* richtet sich nach dem Land (USA: °F, sonst °C); Celsius oder Fahrenheit lassen sich auch von Hand wählen. Gilt für Wetter-Kachel, Kopfzeile, Wetter-Ansicht, Urlaubswetter, Wochenvorschau und Garten-Tipps.
-- **Übersicht:** Kündigungsfristen lassen sich jetzt wie Geburtstage wegwischen; zurückholen unter Einstellungen → Übersicht.
-- **Übersetzungen:** Kacheln Wetter, Geburtstage („wird 30“) und Kündigungsfristen („1 steht an“), Depot („eingezahlt“, „entnommen“, importierte Käufe und Verkäufe), Reifen-Aufgaben (Lagerort, „Aus pinn. → Fahrzeuge“), „Zugewiesen:“ in Termin-Notizen, Urlaubswetter der Packliste und Aufgaben in der Wochenvorschau. Wochen- und Monatsausblick gibt es jetzt auch auf Japanisch und Koreanisch.
-- Geändert: `index.html`, `js/region.js`, `js/sprache.js`, `js/design.js`, `js/wetterkachel.js`, `js/geburtstage.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/vertraege.js`, `js/sparen.js`, `js/finanzen.js`, `js/familie.js`, `js/ausblick.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/mitglieder.js`, `js/aufgaben.js`, `js/termindetails.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien in `i18n/` und `lang/` – am Server ändert sich nichts. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
 
 ## So funktioniert’s
 
@@ -162,7 +161,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.118.3` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.118.4` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

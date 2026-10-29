@@ -2,7 +2,8 @@
    Part of the app code that used to be a single block in index.html. Classic script, no build step:
    it is loaded right after the inline script of index.html and before the other files in js/
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
-   Contents: the PIN pad like on the iPhone (pinPad, renderPinPad, pinPadApi, openPinPad, closePinPad, pinPadPress) incl. the hardware keyboard. */
+   Contents: the PIN pad like on the iPhone (pinPad, renderPinPad, pinPadApi, openPinPad, closePinPad, pinPadPress) incl. the hardware keyboard.
+   openPinPad options: title, sub, length, lengthChoice, avatarHtml, cancelLabel, onComplete(pin, pad), onCancel. */
 
 /* ---------- PIN entry (like on the iPhone) ---------- */
 let pinPad = null; // { length, value, busy, lengthChoice, onComplete, onCancel }
@@ -49,6 +50,8 @@ function openPinPad(opts) {
   document.getElementById('pinPadTitle').textContent = opts.title || '';
   document.getElementById('pinPadSub').textContent = opts.sub || '';
   document.getElementById('pinPadError').textContent = '';
+  // e.g. "Log out" instead of "Cancel" when setting a PIN is required
+  document.getElementById('pinPadCancel').textContent = opts.cancelLabel || tk('common.cancel');
   const avatar = document.getElementById('pinPadAvatar');
   avatar.innerHTML = opts.avatarHtml || '';
   avatar.classList.toggle('hidden', !opts.avatarHtml);

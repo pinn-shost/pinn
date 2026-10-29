@@ -99,6 +99,12 @@ Sempre con te: pinn. si installa su ogni iPhone e telefono Android come un’app
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 e 🇰🇷 한국어**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.118.4
+
+**Sicurezza: PIN obbligatorio con una dashboard · correzione del calendario**
+
+- Appena la famiglia ha una dashboard **ogni profilo ha bisogno di un PIN** (chi non ce l’ha accede una volta con la password e lo sceglie subito); il calendario in vista elenco sul telefono non resta più «aperto» dopo una ricetta.
+
 ## Novità della 1.118.3
 
 **Ricette: cestino, «eliminare davvero?», pressione lunga nella settimana**
@@ -110,12 +116,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 **Lista della spesa: incolla un messaggio, dispensa, più/meno**
 
 - **Incolla un messaggio** (es. WhatsApp) nel campo: una finestra mostra gli articoli riconosciuti con quantità e note verdi; gli articoli della dispensa hanno «🥫 Dispensa» sotto il nome; più/meno segue la quantità.
-
-## Novità della 1.118.1
-
-**Avviso di aggiornamento per gli admin**
-
-- Gli admin che possono installare aggiornamenti ricevono **una notifica per ogni nuova versione** e una **scheda nella campanella** ogni giorno fino all'installazione; un tocco apre **Impostazioni → Sistema**.
 
 ## Come funziona
 
@@ -145,7 +145,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.118.3` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.118.4` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
