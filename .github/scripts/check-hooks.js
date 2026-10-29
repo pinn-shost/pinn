@@ -407,6 +407,11 @@ if (exists(path.join(HOOKS, 'pinn-pushtext.js'))) {
       return eq([pt.translateFor('de', 'wg', m).text, pt.translateFor('en', 'wg', { tag: 'x', titel: 'Everything for the family' }).titel],
         ['Deine WG wurde alarmiert (2 Geräte) und sieht deinen Standort.', 'Everything for the flatshare']);
     });
+    test('update notice for admins (since 1.118.1) is translated', () => {
+      const m = { tag: 'update-1.119.0', titel: '🆕 pinn. 1.119.0 ist da', text: 'Installiert ist 1.118.1. Antippen, um das Update unter Einstellungen → System zu installieren.' };
+      const r = pt.translateFor('en', 'familie', m);
+      return eq([r.titel, r.text], ['🆕 pinn. 1.119.0 is here', 'Installed: 1.118.1. Tap to install the update under Settings → System.']);
+    });
     test('every key of the push patterns exists in every language file', () => {
       const keys = new Set();
       pt.GROUPS.forEach(g => g.rules.forEach(rule => { if (typeof rule[1] === 'string') keys.add(rule[1]); }));
