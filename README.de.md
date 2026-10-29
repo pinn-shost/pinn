@@ -99,6 +99,14 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 und 🇰🇷 한국어**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.118.3
+
+**Rezepte: Papierkorb, „wirklich löschen?“, langes Drücken im Wochen-Slider**
+
+- **Papierkorb:** Beim Löschen eines Rezepts kommt jetzt eine Rückfrage. Danach bleibt das Rezept **7 Tage im Papierkorb** (Knopf unter der Rezeptliste) – auf allen Geräten der Familie, samt geplanter Mahlzeiten und Favoriten-Herz. Mit einem Tipp wiederherstellen oder endgültig löschen; nach 7 Tagen verschwindet es von selbst.
+- **Lange drücken** auf eine Mahlzeit unter „Diese Woche geplant“ (Übersicht und Rezepte) zeigt Optionen: Rezept ansehen, Rezept bearbeiten, verschieben oder ändern (Tag, Mahlzeit, Portionen, anderes Rezept), noch einmal planen, als gekocht markieren, aus der Essensplanung entfernen. Mit Kindersicherung gibt es nur „ansehen“.
+- Geändert: `index.html`, `js/rezepte.js`, `js/rezeptaktionen.js` (neu), `js/essenplanen.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/basis.css`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien, `pinn-setup.sh` und am Server `pinn-bereiche.js`, `pinn-hinweise.js`.
+
 ## Neu in 1.118.2
 
 **Einkaufsliste: Nachricht einfügen, Vorrat-Hinweis, Plus/Minus**
@@ -125,16 +133,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Übersicht:** Kündigungsfristen lassen sich jetzt wie Geburtstage wegwischen; zurückholen unter Einstellungen → Übersicht.
 - **Übersetzungen:** Kacheln Wetter, Geburtstage („wird 30“) und Kündigungsfristen („1 steht an“), Depot („eingezahlt“, „entnommen“, importierte Käufe und Verkäufe), Reifen-Aufgaben (Lagerort, „Aus pinn. → Fahrzeuge“), „Zugewiesen:“ in Termin-Notizen, Urlaubswetter der Packliste und Aufgaben in der Wochenvorschau. Wochen- und Monatsausblick gibt es jetzt auch auf Japanisch und Koreanisch.
 - Geändert: `index.html`, `js/region.js`, `js/sprache.js`, `js/design.js`, `js/wetterkachel.js`, `js/geburtstage.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/vertraege.js`, `js/sparen.js`, `js/finanzen.js`, `js/familie.js`, `js/ausblick.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/mitglieder.js`, `js/aufgaben.js`, `js/termindetails.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien in `i18n/` und `lang/` – am Server ändert sich nichts. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
-
-## Neu in 1.117.0
-
-**Text-Schlüssel, Teil 9: die Glocke und die Push-Nachrichten des Servers**
-
-- Die **Glocke** (Heimweg, offene Einkäufe, Neuigkeiten der Familie, der leere Hinweis) und der Hinweis **„Gehst du einkaufen?“** holen ihre Texte jetzt aus den Sprachdateien in `pb_public/i18n/` – in allen neun Sprachen und als WG. „Gehst du einkaufen?“ gibt es damit auch auf Japanisch und Koreanisch.
-- **Push-Nachrichten vom Server:** Die Übersetzungen stehen nicht mehr im Server-Code. Der Server liest dieselben Sprachdateien wie die App (Schlüssel `push.…`) über `pinn-textkern.js` – Einzahl, Mehrzahl und die WG-Begriffe funktionieren genau wie in der App.
-- Kleinigkeiten: Auf Englisch heißt es jetzt „Fit winter tyres“ statt „Fit Winter tyres“ (ebenso bei Sommerreifen und in den anderen Sprachen); Datum und Uhrzeit in der Glocke folgen der eingestellten Sprache; Zahlen wie „1 Artikel“ stehen in richtiger Einzahl oder Mehrzahl; doppelte Anführungszeichen in japanischen Hinweisen sind weg.
-- Als Nächstes: 1.118.0 räumt auf – der alte Übersetzer und `lang/` fallen weg.
-- Geändert: `index.html`, `js/hinweise.js`, `js/fahrzeuge.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien in `i18n/` und `lang/` sowie am Server `pb_hooks/pinn-pushtext.js`. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
 
 ## So funktioniert’s
 
@@ -164,7 +162,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.118.2` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.118.3` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

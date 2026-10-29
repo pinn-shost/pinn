@@ -148,6 +148,7 @@ function defaultFamilyData() {
     mealPlan: [],
     recipes: [],
     recipeFavorites: [], // family favourites: { id: <recipe ID or 'pub:<ID>' for public recipes of others>, at }
+    recipeTrash: [],     // deleted recipes, kept 7 days: { id: <recipe ID>, recipe, meals, favorite, deletedAt, by } (since 1.118.3)
     shoppingItems: [],
     shoppingHistory: [],
     shoppingLists: [],       // own shopping lists per store (the list "Essensplanung" is built in)
@@ -220,6 +221,7 @@ let events = []; // filled exclusively from the Apple calendar (kalender.ics), s
 let mealPlan = [];
 let recipes = [];
 let recipeFavorites = []; // { id, at } - favourites apply per family (stored in the family data record)
+let recipeTrash = [];     // deleted recipes for 7 days (js/rezeptaktionen.js), area "rezepte"
 // Shopping: self-added entries (separate from the recipe ingredients) and the history of earlier
 // entries for the suggestions. Both live in the family data record and are therefore, like everything else,
 // cached offline and synced with the other devices.

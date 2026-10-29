@@ -80,6 +80,16 @@ html.dark .recipe-fav-btn:not(.is-fav) svg { stroke: rgba(255,255,255,0.75); }
 html.dark .meal-cooked-btn { background: rgba(30,32,34,0.8); }
 html.dark .meal-cooked-btn svg { stroke: rgba(255,255,255,0.75); }
 .week-slider-card.is-leaving { transition: opacity .25s ease, transform .25s ease; opacity: 0; transform: scale(0.9); }
+/* Long press on a planned meal opens its actions (since 1.118.3): no iOS callout/text selection, slight press feedback */
+.week-slider-card { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; transition: transform .15s ease; }
+.week-slider-card.is-pressing { transform: scale(0.95); }
+.meal-action-btn { display: flex; align-items: center; gap: .75rem; width: 100%; padding: .7rem 1rem; text-align: left; font-size: .875rem; transition: background .12s; }
+.meal-action-btn:hover, .meal-action-btn:focus-visible { background: rgba(37,35,31,.05); }
+.meal-action-btn .mab-ico { width: 1.25rem; text-align: center; flex-shrink: 0; }
+.meal-action-btn.is-danger { color: #DC2626; }
+html.dark .meal-action-btn:hover, html.dark .meal-action-btn:focus-visible { background: rgba(255,255,255,.06); }
+.recipe-trash-row { display: flex; align-items: center; gap: .75rem; padding: .6rem; border-radius: .75rem; border: 1px solid rgba(37,35,31,.1); }
+html.dark .recipe-trash-row { border-color: rgba(255,255,255,.08); }
 
 .fade-in { animation: fadeIn .25s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }

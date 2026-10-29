@@ -489,7 +489,9 @@ function afterSave(familyId, oldData, newData, auth) {
 
     // --- Rezepte ---
     const oldRecipes = byId(oldData.recipes);
-    const newRecipes = recipes.filter(r => r && r.id && !oldRecipes[r.id] && r.title).map(r => ({ id: r.id, t: r.title, k: "rezept:" + r.id }));
+    // Aus dem Papierkorb wiederhergestellte Rezepte sind nicht neu (seit 1.118.3)
+    const oldTrash = byId(oldData.recipeTrash);
+    const newRecipes = recipes.filter(r => r && r.id && !oldRecipes[r.id] && !oldTrash[r.id] && r.title).map(r => ({ id: r.id, t: r.title, k: "rezept:" + r.id }));
     if (newRecipes.length && newRecipes.length <= 30) record(familyId, who, "rezept", "rezepte", "", "Rezepte", newRecipes);
 
     // --- Vorrat: neue Artikel ---

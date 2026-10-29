@@ -95,6 +95,14 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 and 🇰🇷 한국어**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.118.3
+
+**Recipes: recycle bin, "really delete?", long press in the week slider**
+
+- **Recycle bin:** deleting a recipe now asks first. The recipe then stays in the **recycle bin for 7 days** (button below the recipe list) – on every device of the family, together with its planned meals and its favourite mark. Restore it with one tap or delete it for good; after 7 days it disappears by itself.
+- **Long press** on a meal in "Planned this week" (overview and recipes tab) shows options: view recipe, edit recipe, move or change the meal (day, meal, servings, another recipe), plan it again, mark as cooked, remove it from the meal plan. With the child lock only "view" is offered.
+- Changed: `index.html`, `js/rezepte.js`, `js/rezeptaktionen.js` (new), `js/essenplanen.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/basis.css`, `js/sprachen.js`, `js/versionslog.js`, all language files, `pinn-setup.sh` and on the server `pinn-bereiche.js`, `pinn-hinweise.js`.
+
 ## What's new in 1.118.2
 
 **Shopping list: paste a message, pantry hints, plus/minus**
@@ -161,16 +169,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Next: family, location, home, vehicles and documents follow with 1.116.0.
 - Changed: app files only (`index.html`, `js/finanzen.js`, `js/kassen.js`, `js/vertraege.js`, `js/sparen.js`, `js/vorrat2.js`, `js/pdflesen.js`, `js/sprachen.js`, `js/versionslog.js`, all language files in `i18n/` and `lang/`) – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
-## What's new in 1.114.0
-
-**Text keys, part 5: lists, pantry and recipes**
-
-- **Lists** (shopping with main shop, special lists and *Plan shopping*, packing, gifts, wishes, checklists, ideas), the **pantry** with barcode scanning and *What can I cook?*, **recipes** with public recipes, **meal planning**, the **search** and the category editor now take their texts from the language files in `pb_public/i18n/` – in all nine languages and as a flatshare. Nothing changes in how you use the app.
-- **Templates in every language:** a new list from a template (holiday, hospital, birth, party …) is created in your language with about 400 translated entries; generic shops such as pharmacy, bakery or butcher get the right name. Existing lists stay as they are.
-- Small fixes: dates and prices in lists, pantry and recipes follow the format of your region; recipe recognition also finds ingredients and method under headings in the other languages; numbers such as “1 recipe” or “1 entry” use the right singular or plural.
-- Next: finances and cash boxes follow in 1.115.0.
-- Changed: app files only (`index.html`, `js/einkauf.js`, `js/einkaufslisten.js`, `js/einkaufseingabe.js`, `js/listen.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/rezepte.js`, `js/rezeptdialog.js`, `js/rezeptmengen.js`, `js/rezeptbild.js`, `js/rezeptbilder.js`, `js/rezeptparser.js`, `js/essenplanen.js`, `js/einstellungen.js`, `js/hinweise.js`, `js/finanzen.js`, `js/bedienzustand.js`, `js/sprachen.js`, `js/versionslog.js`, all language files in `i18n/` and `lang/`) – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
 ## How it works
 
 ```mermaid
@@ -197,7 +195,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.118.2` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.118.3` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

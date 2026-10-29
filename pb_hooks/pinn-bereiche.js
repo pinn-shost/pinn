@@ -7,7 +7,8 @@
 // areas no longer get in each other's way, and saving a shopping item no longer sends every recipe.
 //
 // Areas (AREAS below – later versions add more, the move itself needs no further changes):
-//   rezepte     recipes, recipeFavorites, recipeCategories        (since 1.104.0)
+//   rezepte     recipes, recipeFavorites, recipeCategories        (since 1.104.0),
+//               recipeTrash (deleted recipes, kept 7 days)        (since 1.118.3)
 //   essensplan  mealPlan                                           (since 1.104.0)
 //   einkauf     shoppingItems, shoppingHistory, shoppingLists, shoppingTransferred, shoppingPlans,
 //               shoppingListOrder, shoppingMealTarget, shoppingIngredientRules,
@@ -60,7 +61,7 @@
 
 const COL = "familien_bereiche";
 const AREAS = {
-    rezepte: ["recipes", "recipeFavorites", "recipeCategories"],
+    rezepte: ["recipes", "recipeFavorites", "recipeCategories", "recipeTrash"],
     essensplan: ["mealPlan"],
     einkauf: ["shoppingItems", "shoppingHistory", "shoppingLists", "shoppingTransferred", "shoppingPlans",
         "shoppingListOrder", "shoppingMealTarget", "shoppingIngredientRules", "shoppingCategoryOrder"],

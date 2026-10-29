@@ -32,6 +32,9 @@ const PINN_CHANGELOG = [
       ['info', '1.118.2: Vorrats-Artikel auf der Einkaufsliste mit dem Hinweis „Vorrat“ unter dem Namen (wie die Essensplanung); ohne eigenen Laden landen sie beim Stammladen statt auf der Essensplanungs-Liste'],
       ['fix', '1.118.2: Plus/Minus richtet sich nach der Menge – 30 ml minus ergibt 20 ml statt 50 ml'],
       ['info', '1.118.2 geändert: index.html, js/einkauf.js, js/einkaufseingabe.js, js/einkaufslisten.js, js/vorrat.js, css/listen.css, js/sprachen.js, js/versionslog.js, alle Sprachdateien – am Server ändert sich nichts'],
+      ['neu', '1.118.3: Rezepte – Löschen fragt vorher nach und legt das Rezept 7 Tage in den Papierkorb (unten in der Rezeptliste, auf allen Geräten der Familie): wiederherstellen samt geplanter Mahlzeiten oder endgültig löschen'],
+      ['neu', '1.118.3: „Diese Woche geplant“ – lange auf eine Mahlzeit drücken zeigt Optionen: Rezept ansehen, Rezept bearbeiten, verschieben oder ändern (Tag, Mahlzeit, Portionen, anderes Rezept), noch einmal planen, als gekocht markieren, aus der Essensplanung entfernen'],
+      ['info', '1.118.3 geändert: index.html, js/rezepte.js, js/rezeptaktionen.js (neu), js/essenplanen.js, js/zustand.js, js/speichern.js, js/familiensync.js, css/basis.css, js/sprachen.js, js/versionslog.js, alle Sprachdateien, pinn-setup.sh und am Server pinn-bereiche.js, pinn-hinweise.js'],
     ],
   },
   {

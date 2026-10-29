@@ -78,6 +78,7 @@ function applyFamilyData(data) {
     delete r.category;
   });
   recipeFavorites = Array.isArray(data.recipeFavorites) ? data.recipeFavorites.filter(x => x && typeof x.id === 'string' && x.id) : [];
+  recipeTrash = Array.isArray(data.recipeTrash) ? data.recipeTrash.filter(x => x && x.id && x.recipe && typeof x.recipe === 'object') : [];
   tasks = data.tasks || [];
   shoppingItems = Array.isArray(data.shoppingItems) ? data.shoppingItems : [];
   shoppingHistory = Array.isArray(data.shoppingHistory) ? data.shoppingHistory : [];

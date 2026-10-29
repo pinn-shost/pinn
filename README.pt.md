@@ -99,6 +99,12 @@ Sempre com você: o pinn. se instala em todo iPhone e celular Android como um ap
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 e 🇰🇷 한국어**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.118.3
+
+**Receitas: reciclagem, «eliminar mesmo?», toque longo na semana**
+
+- Ao eliminar é pedida confirmação e a receita fica **7 dias na reciclagem** (por baixo da lista), para restaurar; um toque longo numa refeição de «Planeado esta semana» mostra opções (ver, editar, mover, cozinhado, retirar).
+
 ## Novidades da 1.118.2
 
 **Lista de compras: colar mensagem, despensa, mais/menos**
@@ -110,14 +116,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 **Aviso de atualização para admins**
 
 - Admins que podem instalar atualizações recebem **uma notificação por nova versão** e um **cartão no sino** todo dia até instalar; um toque abre **Configurações → Sistema**.
-
-## Novidades da 1.118.0
-
-**Fahrenheit e ajustes de tradução**
-
-- **Temperatura em °F ou °C:** Configurações → Idioma e região tem a nova opção **Temperatura**. *Automático* segue o país (EUA: °F, senão °C); também dá para escolher à mão.
-- **Visão geral:** prazos de cancelamento somem com um deslize, como os aniversários.
-- **Traduções:** blocos de clima, aniversários e prazos, depósito, tarefas de pneus, notas de compromissos, clima de férias e prévia semanal (agora também em japonês e coreano).
 
 ## Como funciona
 
@@ -147,7 +145,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.118.2` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.118.3` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

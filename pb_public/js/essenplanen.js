@@ -3,7 +3,8 @@
    it is loaded right after the inline script of index.html and before the other files in js/
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
    Contents: the meal popup (openMealModal, closeMealModal) with meal type, recipe search with suggestions or free title,
-   servings and saving into the meal plan, plus the "add meal" button of the overview. openMealModal is one of the six
+   servings and saving into the meal plan, plus the "add meal" button of the overview. Since 1.118.3 the same popup also changes
+   a planned meal (4th parameter = ID of the meal plan entry: day, meal, servings or another recipe). openMealModal is one of the six
    functions wrapped by the child lock at DOMContentLoaded – never pass it on directly while loading. */
 
 /* ---------- Meal planning modal ---------- */
@@ -82,7 +83,12 @@ function setMealServings(n) { document.getElementById('mealServingsValue').textC
 document.getElementById('mealServingsMinusBtn').addEventListener('click', () => setMealServings(getMealServings() - 1));
 document.getElementById('mealServingsPlusBtn').addEventListener('click', () => setMealServings(getMealServings() + 1));
 
-function openMealModal(dayISO, mealType, presetRecipeId) {
+// editMealId set = change this planned meal instead of adding a new one
+let pendingMealEditId = null;
+function openMealModal(dayISO, mealType, presetRecipeId, editMealId) {
+  const editing = editMealId ? mealPlan.find(p => String(p.id) === String(editMealId)) : null;
+  pendingMealEditId = editing ? editing.id : null;
+  document.getElementById('mealModalTitle').textContent = tk(editing ? 'meal.editTitle' : 'meal.title');
   pendingMealDay = dayISO;
   setMealTypeChoice(mealType || 'mittag');
   document.getElementById('mealModalDate').value = dayISO;
@@ -91,8 +97,8 @@ function openMealModal(dayISO, mealType, presetRecipeId) {
   document.getElementById('mealRecipeSearch').value = presetRecipe ? presetRecipe.title : '';
   document.getElementById('clearMealRecipeBtn').classList.toggle('hidden', !presetRecipe);
   document.getElementById('mealRecipeSuggestions').classList.add('hidden');
-  document.getElementById('mealFreeTitle').value = '';
-  setMealServings(presetRecipe ? (presetRecipe.servings || 2) : 2);
+  document.getElementById('mealFreeTitle').value = editing && !presetRecipe ? (editing.title || '') : '';
+  setMealServings(editing && editing.servings ? editing.servings : (presetRecipe ? (presetRecipe.servings || 2) : 2));
   document.getElementById('mealModal').classList.remove('hidden');
   armModalSnapshot('mealModal');
 }
@@ -104,11 +110,24 @@ document.getElementById('saveMeal').addEventListener('click', () => {
   const freeTitle = document.getElementById('mealFreeTitle').value.trim();
   const chosenDate = document.getElementById('mealModalDate').value || pendingMealDay;
   if (!recipeId && !freeTitle) return;
-  mealPlan.push({ id: 'p' + Date.now(), date: chosenDate, mealType: pendingMealType, recipeId, title: freeTitle || null, servings: getMealServings() });
+  const editing = pendingMealEditId ? mealPlan.find(p => String(p.id) === String(pendingMealEditId)) : null;
+  pendingMealEditId = null;
+  if (editing) {
+    // Moved to another day or another recipe: counts as not cooked again
+    if (editing.date !== chosenDate || (editing.recipeId || null) !== (recipeId || null)) { delete editing.cooked; delete editing.cookedAt; }
+    editing.date = chosenDate;
+    editing.mealType = pendingMealType;
+    editing.recipeId = recipeId;
+    editing.title = recipeId ? null : (freeTitle || null);
+    editing.servings = getMealServings();
+  } else {
+    mealPlan.push({ id: 'p' + Date.now(), date: chosenDate, mealType: pendingMealType, recipeId, title: freeTitle || null, servings: getMealServings() });
+  }
   saveMealPlan();
   document.getElementById('mealModal').classList.add('hidden');
   renderCalendar();
-  if (currentView === 'uebersicht') renderRecipesForCurrentView();
+  // Recipes tab: refresh the week slider, but never close an open recipe detail page
+  if (currentView === 'uebersicht' || (currentView === 'rezepte' && document.getElementById('recipeDetailView').classList.contains('hidden'))) renderRecipesForCurrentView();
 });
 document.getElementById('addMealOverviewBtn').addEventListener('click', () => openMealModal(isoDate(new Date()), 'mittag'));
 

@@ -1,7 +1,7 @@
 <!-- Meal planning modal -->
 <div id="mealModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
   <div class="bg-white rounded-2xl p-6 w-full max-w-sm fade-in overflow-hidden">
-    <h3 data-tk="meal.title" class="font-serif text-lg mb-1">Plan meals</h3>
+    <h3 data-tk="meal.title" id="mealModalTitle" class="font-serif text-lg mb-1">Plan meals</h3>
     <label data-tk="meal.date" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Date</label>
     <input id="mealModalDate" type="date" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm mb-4" />
     <label data-tk="meal.slot" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Meal</label>
@@ -31,5 +31,20 @@
       <button data-tk="common.cancel" id="cancelMeal" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Cancel</button>
       <button data-tk="common.save" id="saveMeal" class="px-4 py-2 rounded-lg bg-mustard text-white text-sm font-medium hover:bg-mustard/90">Save</button>
     </div>
+  </div>
+</div>
+
+<!-- Actions of a planned meal: long press on a card of the week slider (js/rezeptaktionen.js, since 1.118.3) -->
+<div id="mealActionsModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[200] grid place-items-center p-6">
+  <div class="bg-white rounded-2xl w-full max-w-xs fade-in overflow-hidden">
+    <div class="flex items-center gap-3 px-4 pt-4 pb-3 border-b border-ink/10">
+      <div id="mealActionsThumb" class="w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-ink/5" style="position: relative;"></div>
+      <div class="min-w-0">
+        <div id="mealActionsTitle" class="font-serif text-base font-bold truncate"></div>
+        <div id="mealActionsMeta" class="text-xs text-ink/40"></div>
+      </div>
+    </div>
+    <div id="mealActionsList" class="flex flex-col py-1"></div>
+    <button data-tk="common.cancel" type="button" id="mealActionsCancel" class="w-full py-3 text-sm text-ink/50 hover:text-ink border-t border-ink/10 transition">Cancel</button>
   </div>
 </div>

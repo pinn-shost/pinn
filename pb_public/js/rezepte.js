@@ -5,7 +5,8 @@
    Contents: the recipe list with search and filters, favourites per family, public recipes of all families on the server
    (loading, showing, taking over as an own copy), the favourites bar, the week slider of planned meals with „Gekocht“,
    the recipe detail page and the meal list of the overview (renderOverviewMealList), plus the wiring of the recipe filters.
-   The recipe popup and the recipe parser are still in index.html. */
+   Since 1.118.3 deleting asks first and moves the recipe to the recycle bin; a long press on a card of the week slider
+   opens the meal actions – both live in js/rezeptaktionen.js. */
 
 function isPlannedThisWeek(recipeId) {
   const { monday, sunday } = actualCurrentWeekRange();
@@ -302,6 +303,7 @@ function renderRecipesForCurrentView() {
     renderRecipeFilters();
     renderFullRecipeList();
   }
+  renderRecipeTrashButton(); // only in the recipes tab, own list, with something in the recycle bin
 }
 
 // List of the public recipes of all families. Own shared recipes are marked and open
@@ -503,7 +505,7 @@ const WEEK_SLIDER_PEEK_PX = 28; // how far the card left of the target should st
    If the meal is moved later, it counts as not cooked again. */
 const MEAL_COOKED_SVG = '<svg viewBox="0 0 24 24" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
 function mealCookedButtonHtml(mealId) {
-  return `<span role="button" tabindex="0" class="meal-cooked-btn" data-meal-id="${escapeHtml(String(mealId))}" aria-label="Als gekocht markieren" title="Gekocht?">${MEAL_COOKED_SVG}</span>`;
+  return `<span role="button" tabindex="0" class="meal-cooked-btn" data-meal-id="${escapeHtml(String(mealId))}" aria-label="${escapeHtml(tk('meal.markCooked'))}" title="${escapeHtml(tk('meal.cookedQ'))}">${MEAL_COOKED_SVG}</span>`;
 }
 function markMealCooked(mealId, btnEl) {
   const entry = mealPlan.find(p => String(p.id) === String(mealId));
@@ -561,8 +563,8 @@ function renderRecipeWeekSlider() {
     const title = recipe ? recipe.title : (p.title || tk('meal.noTitle'));
     const dayLabel = new Date(p.date).toLocaleDateString(sysLocale(), { weekday: 'short' });
     return `
-      <button type="button" class="week-slider-card shrink-0 ${compactSlider ? 'is-compact' : 'w-32 p-2'} text-left rounded-xl border border-ink/10 bg-white fade-in" data-recipe-id="${recipe ? recipe.id : ''}" data-meal-id="${escapeHtml(String(p.id))}" style="scroll-snap-align: start;">
-        <div class="recipe-thumb w-full aspect-square rounded-lg overflow-hidden bg-ink/5">${mealCookedButtonHtml(p.id)}${recipe && isRecipeFavorite(recipe.id) ? recipeFavButtonHtml(recipe.id, 'recipe-fav-badge') : ''}${recipe && recipe.image ? `<img src="${recipeImageSrc(recipe.image, true, recipe.imageFrame)}" loading="lazy" class="w-full h-full object-cover" alt=""${recipeImgStyleAttr(recipe)} />` : recipe ? '<div class="w-full h-full grid place-items-center text-2xl opacity-30">🍽️</div>' : `<img src="${NO_RECIPE_MEAL_IMAGE}" class="w-full h-full object-cover opacity-70" alt="Ohne Rezept" />`}</div>
+      <button type="button" class="week-slider-card shrink-0 ${compactSlider ? 'is-compact' : 'w-32 p-2'} text-left rounded-xl border border-ink/10 bg-white fade-in" data-recipe-id="${recipe ? recipe.id : ''}" data-meal-id="${escapeHtml(String(p.id))}" title="${escapeHtml(tk('meal.longPressHint'))}" style="scroll-snap-align: start;">
+        <div class="recipe-thumb w-full aspect-square rounded-lg overflow-hidden bg-ink/5">${mealCookedButtonHtml(p.id)}${recipe && isRecipeFavorite(recipe.id) ? recipeFavButtonHtml(recipe.id, 'recipe-fav-badge') : ''}${recipe && recipe.image ? `<img src="${recipeImageSrc(recipe.image, true, recipe.imageFrame)}" loading="lazy" draggable="false" class="w-full h-full object-cover" alt=""${recipeImgStyleAttr(recipe)} />` : recipe ? '<div class="w-full h-full grid place-items-center text-2xl opacity-30">🍽️</div>' : `<img src="${NO_RECIPE_MEAL_IMAGE}" draggable="false" class="w-full h-full object-cover opacity-70" alt="" />`}</div>
         <div class="wsc-title font-serif text-sm font-bold mt-1.5 line-clamp-2 leading-tight min-h-[2.25rem]">${escapeHtml(title)}</div>
         <div class="wsc-meta text-[11px] text-ink/40 mt-0.5 min-h-[1rem]" title="${mealTypeLabel(p.mealType, true)}">${dayLabel} · ${mealTypeIcon(p.mealType)}</div>
       </button>
@@ -570,9 +572,13 @@ function renderRecipeWeekSlider() {
   }).join('') + edgeSpacer;
 
   slider.querySelectorAll('.week-slider-card').forEach(btn => {
+    // Long press (or right click) opens the meal actions; the click right after it is swallowed
+    attachMealLongPress(btn, () => openMealActions(btn.dataset.mealId, btn));
     btn.addEventListener('click', (e) => {
+      if (mealLongPressConsumed(btn)) { e.preventDefault(); return; }
       if (e.target.closest('.meal-cooked-btn')) return;
       if (btn.dataset.recipeId) openRecipeDetailPage(btn.dataset.recipeId);
+      else openMealActions(btn.dataset.mealId, btn); // meal without a recipe: nothing to open, so show the actions
     });
   });
   slider.querySelectorAll('.meal-cooked-btn[data-meal-id]').forEach(el => {
@@ -733,13 +739,10 @@ function openRecipeDetailPage(recipeId, publicEntry = null) {
   detailEditBtn.textContent = (missingQty ? '⚠️ ' : '') + tk('common.edit');
   detailEditBtn.title = missingQty ? tk('recipe.hasUnquantified') : '';
   detailEditBtn.onclick = () => openRecipeModal(r.id);
+  // Asks first and moves the recipe to the recycle bin (7 days, js/rezeptaktionen.js) – the picture stays until then
   document.getElementById('recipeDetailDeleteBtn').onclick = () => {
-    deleteRecipeImageRecord(r.imageRecordId);
-    recipes = recipes.filter(x => x.id !== r.id);
-    setRecipeFavorite(String(r.id), false);
-    saveRecipes();
-    mealPlan = mealPlan.filter(p => p.recipeId !== r.id);
-    saveMealPlan();
+    if (!confirmRecipeDelete(r)) return;
+    if (!moveRecipeToTrash(r.id)) return;
     closeRecipeDetailPage();
     renderRecipesForCurrentView();
   };
