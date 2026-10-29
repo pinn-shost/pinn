@@ -750,8 +750,8 @@ function cleanupOldMessages() {
 // pwErinnerung: Pinnwand - Erinnerungen, die an einem Zettel hängen
 // vorrat:       Vorrat - Artikel laufen bald ab (Mindesthaltbarkeit, pinn-vorrat.js)
 // muell:        Müllabfuhr - Erinnerung am Vortag zur Uhrzeit muellZeit (Müllkalender, ab 1.31)
-const DEFAULT_SETTINGS = { termine: true, vorlauf: 30, ohneZuweisung: true, tagesuebersicht: true, uhrzeit: "07:00", zuweisungen: true, alleErledigt: true, kindAufgabe: true, kindAlle: true, animation: true, pwAlle: true, pwMich: true, pwAntworten: true, pwErinnerung: true, vorrat: true, muell: true, muellZeit: "18:00" };
-const BOOL_SETTINGS = ["termine", "ohneZuweisung", "tagesuebersicht", "zuweisungen", "alleErledigt", "kindAufgabe", "kindAlle", "animation", "pwAlle", "pwMich", "pwAntworten", "pwErinnerung", "vorrat", "muell"];
+const DEFAULT_SETTINGS = { termine: true, vorlauf: 30, ohneZuweisung: true, tagesuebersicht: true, uhrzeit: "07:00", zuweisungen: true, alleErledigt: true, kindAufgabe: true, kindAlle: true, animation: true, pwAlle: true, pwMich: true, pwAntworten: true, pwErinnerung: true, vorrat: true, muell: true, muellZeit: "18:00", updates: true };
+const BOOL_SETTINGS = ["termine", "ohneZuweisung", "tagesuebersicht", "zuweisungen", "alleErledigt", "kindAufgabe", "kindAlle", "animation", "pwAlle", "pwMich", "pwAntworten", "pwErinnerung", "vorrat", "muell", "updates"];
 function normalizeSettings(raw) {
     const s = Object.assign({}, DEFAULT_SETTINGS, (raw && typeof raw === "object") ? raw : {});
     const lead = parseInt(s.vorlauf, 10);
@@ -763,7 +763,7 @@ function normalizeSettings(raw) {
         termine: s.termine, vorlauf: s.vorlauf, ohneZuweisung: s.ohneZuweisung, tagesuebersicht: s.tagesuebersicht, uhrzeit: s.uhrzeit, zuweisungen: s.zuweisungen,
         alleErledigt: s.alleErledigt, kindAufgabe: s.kindAufgabe, kindAlle: s.kindAlle, animation: s.animation,
         pwAlle: s.pwAlle, pwMich: s.pwMich, pwAntworten: s.pwAntworten, pwErinnerung: s.pwErinnerung,
-        vorrat: s.vorrat, muell: s.muell, muellZeit: s.muellZeit,
+        vorrat: s.vorrat, muell: s.muell, muellZeit: s.muellZeit, updates: s.updates,
     };
 }
 function readSettings(userRec) {

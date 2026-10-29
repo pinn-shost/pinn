@@ -273,6 +273,9 @@ function fillPushSettingsForm(st) {
   document.getElementById('pushOptPwAntworten').checked = st.pwAntworten !== false;
   document.getElementById('pushOptPwErinnerung').checked = st.pwErinnerung !== false;
   document.getElementById('pushOptVorrat').checked = st.vorrat !== false;
+  document.getElementById('pushOptUpdates').checked = st.updates !== false;
+  // Update messages only matter for admins (the server sends them only to those allowed to update)
+  document.getElementById('pushUpdatesWrap').classList.toggle('hidden', !isCurrentUserAdmin());
   document.getElementById('pushOptMuell').checked = st.muell !== false;
   document.getElementById('pushOptMuellZeit').value = st.muellZeit || '18:00';
   document.getElementById('pushOptMuellZeit').disabled = st.muell === false;
@@ -296,6 +299,7 @@ function readPushSettingsForm() {
     pwAntworten: document.getElementById('pushOptPwAntworten').checked,
     pwErinnerung: document.getElementById('pushOptPwErinnerung').checked,
     vorrat: document.getElementById('pushOptVorrat').checked,
+    updates: document.getElementById('pushOptUpdates').checked,
     muell: document.getElementById('pushOptMuell').checked,
     muellZeit: document.getElementById('pushOptMuellZeit').value || '18:00',
   };

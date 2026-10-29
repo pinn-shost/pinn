@@ -95,6 +95,13 @@ Siempre contigo: pinn. se instala en cada iPhone y móvil Android como una app n
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 y 🇰🇷 한국어**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.118.1
+
+**Aviso de actualización para admins**
+
+- Los admins que pueden instalar actualizaciones reciben **una notificación por versión nueva** (Cuenta → Notificaciones → Actualizaciones) y una **tarjeta en la campana** cada día hasta instalarla.
+- Al tocarla se abre directamente **Ajustes → Sistema** con la ventana de actualización.
+
 ## Novedades de la 1.118.0
 
 **Fahrenheit y pulido de traducciones**
@@ -162,16 +169,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Siguiente paso: listas, despensa y recetas llegan con la 1.114.0.
 - Modificado: solo archivos de la app (`index.html`, `js/kalenderkonto.js`, `js/smarthome.js`, `js/sprachen.js`, `js/versionslog.js`, todos los archivos de idioma en `i18n/` y `lang/`) – en el servidor no cambia nada. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualizar).
 
-## Novedades de la 1.113.0
-
-**Claves de texto, parte 3: calendario, tareas y hogar**
-
-- El **calendario** (día, semana, mes, año y lista), la ventana y los detalles de eventos, las **tareas** y la página **Hogar** con habitaciones, cubos, limpiezas, «Por turnos» y «¿Quién hace cuánto?» toman ahora sus textos de los archivos de idioma de `pb_public/i18n/`, en los nueve idiomas y como piso compartido. El uso no cambia.
-- Días de la semana, nombres de meses y fechas del calendario, de los festivos y de las tareas siguen ahora el formato de tu idioma.
-- Pequeñas correcciones: «Cada [n] semanas», «Ninguna» y «Hasta» son correctos en cada idioma, y números como «3 tareas creadas» usan el singular o plural correcto.
-- Lo siguiente: los ajustes del calendario (iCloud/Google, calendario de residuos, hogar) y la domótica llegan con la 1.113.1.
-- Cambiado: solo archivos de la app (`index.html`, `js/kalenderansicht.js`, `js/termine.js`, `js/termindetails.js`, `js/kalenderquellen.js`, `js/kalenderdatei.js`, `js/feiertage.js`, `js/muellkalender.js`, `js/aufgaben.js`, `js/aufgabendaten.js`, `js/aufgabenextras.js`, `js/haushalt.js`, `js/reihum.js`, `js/zustand.js`, `js/sprachen.js`, `js/versionslog.js`, todos los archivos de idioma en `i18n/` y `lang/`); en el servidor no cambia nada. Se instala como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
-
 ## Cómo funciona
 
 ```mermaid
@@ -198,7 +195,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.118.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.118.1` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -576,6 +576,23 @@ document.getElementById('sysRestoreConfirm').addEventListener('change', (e) => {
   document.getElementById('sysRestoreGo').disabled = !e.target.checked;
 });
 document.getElementById('sysRestoreGo').addEventListener('click', sysStartRestore);
+// From the update push message or bell card: /?system=update opens Settings → System with the update popup
+function sysOpenFromUrl() {
+  let v = '';
+  try { v = new URLSearchParams(location.search).get('system') || ''; } catch (e) { v = ''; }
+  if (!v) return false;
+  try {
+    const q = new URLSearchParams(location.search);
+    q.delete('system');
+    history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q.toString() : '') + location.hash);
+  } catch (e) { /* ignore */ }
+  if (!isCurrentUserAdmin() || !isViewAllowed('einstellungen')) return true;
+  setView('einstellungen');
+  const acc = document.getElementById('settingsSystemAccordion');
+  if (acc) { acc.open = true; setTimeout(() => { try { acc.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) { /* ignore */ } }, 50); }
+  openSysMaint({ pruefen: true });
+  return true;
+}
 document.getElementById('openSysMaintBtn').addEventListener('click', () => openSysMaint());
 document.getElementById('sysUpdateHintBtn').addEventListener('click', () => openSysMaint());
 document.getElementById('mainAdminSystemBtn').addEventListener('click', () => openSysMaint());

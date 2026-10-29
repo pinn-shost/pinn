@@ -15,6 +15,8 @@
 //                                           { vorab: true } installs the newest pre-release instead
 //  POST /api/pinn/system/rechte             { id, an } main admin only: a family admin may do updates and
 //                                           restores (also with several families)
+//  Cron „pinnUpdateHinweis“ (daily 10:05): push + bell card for the admins who may install updates while a
+//                                           newer version is waiting (pinn-system.js#updateHinweise, since 1.118.1)
 
 // Error responses are written directly in every handler (file-level helper functions are not
 // visible inside the isolated handlers of PocketBase).
@@ -98,3 +100,12 @@ routerAdd("POST", "/api/pinn/system/rechte", (e) => {
         return e.json(400, { error: err.message });
     }
 }, $apis.requireAuth("benutzer"));
+
+cronAdd("pinnUpdateHinweis", "5 10 * * *", () => {
+    try {
+        const r = require(`${__hooks}/pinn-system.js`).updateHinweise();
+        if (r.neuer) console.log("[System] Update " + r.version + " verfügbar – Push: " + r.push + ", Glocke: " + r.glocke);
+    } catch (err) {
+        console.log("[System] Update-Hinweis fehlgeschlagen: " + err.message);
+    }
+});

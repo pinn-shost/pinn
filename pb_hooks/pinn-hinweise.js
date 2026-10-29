@@ -327,6 +327,50 @@ function pushMirror(userId, msg) {
 }
 
 // ---------------------------------------------------------------------------------------------
+// 1b. Update-Hinweis (seit 1.118.1, aus pinn-system.js#updateHinweise): EINE Karte je Profil, die
+//     täglich aufgefrischt wird – auch wenn sie älter als einen Tag ist. Weggewischt kommt sie so am
+//     nächsten Tag wieder, bis das Update installiert ist. true = gespeichert.
+// ---------------------------------------------------------------------------------------------
+function updateNotice(userId, msg) {
+    if (!userId || !msg || !ready()) return false;
+    let user = null;
+    try { user = $app.findRecordById("benutzer", String(userId)); } catch (e) { return false; }
+    const familyId = getStr(user, "familie");
+    if (!familyId) return false;
+    const an = anText([userId]);
+    let rec = null;
+    try {
+        rec = $app.findRecordsByFilter(COL, "familie = {:f} && art = 'push' && an = {:an} && typ = 'update'", "-updated", 1, 0, { f: familyId, an: an })[0] || null;
+    } catch (e) { rec = null; }
+    if (!rec) {
+        cleanup(familyId);
+        rec = new Record($app.findCollectionByNameOrId(COL));
+        rec.set("familie", familyId);
+        rec.set("art", "push");
+        rec.set("wer", "");
+        rec.set("an", an);
+        rec.set("anzahl", 1);
+    }
+    rec.set("ziel", String(msg.tag || "update").slice(0, 80));
+    rec.set("typ", "update");
+    rec.set("titel", cleanText(msg.titel || "pinn.", 200));
+    rec.set("text", String(msg.text || "").trim().slice(0, 1900));
+    rec.set("link", String(msg.url || "/?system=update").slice(0, 400));
+    rec.set("bis", 0);
+    rec.set("eintraege", JSON.stringify([{ id: "u", t: new Date().toISOString().slice(0, 10) }]));
+    $app.save(rec);
+    return true;
+}
+// Update installiert: Update-Karten aller Profile entfernen
+function updateNoticeClear() {
+    if (!ready()) return;
+    try {
+        $app.findRecordsByFilter(COL, "art = 'push' && typ = 'update'", "", 200, 0)
+            .forEach(r => { try { $app.delete(r); } catch (e) { /* egal */ } });
+    } catch (e) { /* egal */ }
+}
+
+// ---------------------------------------------------------------------------------------------
 // 2. Nach dem Speichern der Familiendaten: alten mit neuem Stand vergleichen
 // ---------------------------------------------------------------------------------------------
 function itemLabel(it) { return it.qty ? it.name + " (" + it.qty + ")" : it.name; }
@@ -681,5 +725,5 @@ function listFor(familyId, userId) {
 
 module.exports = {
     ensureSchema, afterSave, taskCreated, taskDone, eventCreated, termKey, listFor,
-    pushMirror, expenseCreated, kasseDataSaved, documentCreated, COL,
+    pushMirror, updateNotice, updateNoticeClear, expenseCreated, kasseDataSaved, documentCreated, COL,
 };

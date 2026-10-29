@@ -330,6 +330,11 @@ const GROUPS = [
         [/^(.+) hat alle Aufgaben erledigt 🎉$/, "push.allDone.title", { name: "<1>" }],
         [/^Alle Aufgaben bis jetzt sind abgehakt – zuletzt „([\s\S]*)“\.$/, "push.allDone.lastChecked", { task: "<1>" }],
     ] },
+    // --- New pinn. version for the admins who may install updates (pinn-system.js#updateHinweise) ---
+    { tag: /^update-/, rules: [
+        [/^pinn\. (\S+) ist da$/, "push.update.title", { version: "<1>" }],
+        [/^Installiert ist (\S+)\. Antippen, um das Update unter Einstellungen → System zu installieren\.$/, "push.update.text", { installed: "<1>" }],
+    ] },
     // --- SOS ---
     { tag: /^sos-/, rules: [
         [/^SOS: (.+) braucht Hilfe!$/, "push.sos.title", { name: "{1}" }],

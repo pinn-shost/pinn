@@ -168,6 +168,18 @@
             <span data-tk="account.push.boardReminders" class="text-sm">Reminders from notes</span>
           </label>
           <p data-tk="account.push.boardHint" class="text-[11px] text-ink/40 -mt-2">The message arrives about half a minute after pinning – several reactions are combined. Your own notes and replies never notify yourself.</p>
+          <div id="pushUpdatesWrap" class="hidden flex flex-col gap-4">
+          <h4 data-tk="account.push.updatesTitle" class="text-xs uppercase tracking-wide text-ink/40 mt-2 -mb-1">Updates</h4>
+          <label class="flex items-center gap-3 cursor-pointer w-fit">
+            <span class="relative inline-block w-11 h-6 shrink-0">
+              <input id="pushOptUpdates" type="checkbox" class="push-opt peer sr-only" />
+              <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
+              <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+            </span>
+            <span data-tk="account.push.updates" class="text-sm">New pinn. version available</span>
+          </label>
+          <p data-tk="account.push.updatesHint" class="text-[11px] text-ink/40 -mt-2">Only for admins who may install updates: one message per new version. The bell shows the update every day until it is installed.</p>
+          </div>
           <h4 data-tk="nav.pantry" class="text-xs uppercase tracking-wide text-ink/40 mt-2 -mb-1">Pantry</h4>
           <label class="flex items-center gap-3 cursor-pointer w-fit">
             <span class="relative inline-block w-11 h-6 shrink-0">

@@ -99,6 +99,14 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 und 🇰🇷 한국어**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.118.1
+
+**Update-Hinweis für Admins**
+
+- Admins, die Updates installieren dürfen, bekommen jetzt **eine Push-Nachricht je neuer pinn.-Version** (Schalter: Konto → Benachrichtigungen → Updates) und eine **Karte in der Glocke**, die jeden Tag wiederkommt, bis das Update installiert ist – Wegwischen blendet sie nur für heute aus.
+- Ein Tipp auf die Nachricht oder die Karte öffnet direkt **Einstellungen → System** mit dem Update-Popup.
+- Geändert: `index.html`, `js/sicherungen.js`, `js/mitteilungen.js`, `js/hinweise.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien, am Server `pb_hooks/system.pb.js`, `pinn-system.js`, `pinn-hinweise.js`, `pinn-push.js`, `pinn-pushtext.js`. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
+
 ## Neu in 1.118.0
 
 **Fahrenheit und Übersetzungs-Feinschliff**
@@ -128,16 +136,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Als Nächstes: die Glocke und die Push-Texte des Servers folgen mit 1.117.0.
 - Geändert: nur App-Dateien (`index.html`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/dokumente.js`, `js/pdflesen.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien in `i18n/` und `lang/`) – am Server ändert sich nichts. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
 
-## Neu in 1.116.0
-
-**Text-Schlüssel, Teil 7: Familie, Ortung und Kinderseite**
-
-- Die Seite **Familie** (Übersicht, Notfallpässe, Ortung mit *Mein Standort*, Orten und der Anleitung für *Traccar Client*, SOS und Heimweg, Schule & Kita, Haustiere und Urlaubswetter), die **Kinderseite** mit Sternen und Belohnungen, die Kachel *Familienmitglieder*, *Wo bist du?* und das Mitglied-Popup holen ihre Texte jetzt aus den Sprachdateien in `pb_public/i18n/` – in allen neun Sprachen und als WG. An der Bedienung ändert sich nichts.
-- Neue Einträge in der eingestellten Sprache: Vorschläge für Kinder-Aufgaben, Schulfächer und die Packliste *Urlaub mit …* für Haustiere entstehen in der Sprache, die gerade eingestellt ist.
-- Kleinigkeiten: Rund 150 Texte, die in den anderen Sprachen bisher deutsch blieben, sind jetzt übersetzt (z. B. *Dauerhaft senden*, die Anleitung für *Traccar Client*, der SOS-Countdown); Datum und Uhrzeit stehen im Format der eingestellten Sprache; Alter, Minuten und Tage in richtiger Einzahl und Mehrzahl.
-- Als Nächstes: Zuhause, Fahrzeuge und Dokumente folgen mit 1.116.1.
-- Geändert: nur App-Dateien (`index.html`, `js/familie.js`, `js/familienkachel.js`, `js/kinderseite.js`, `js/kinderroutine.js`, `js/sterne.js`, `js/wobistdu.js`, `js/mitglied.js`, `js/mitglieder.js`, `js/geburtstagsfeier.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien in `i18n/` und `lang/`) – am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
-
 ## So funktioniert’s
 
 ```mermaid
@@ -166,7 +164,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.118.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.118.1` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

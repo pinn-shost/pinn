@@ -1409,7 +1409,7 @@ function ntActQuote(t) {
 var NT_PUSH_ICONS = {
   termin: '⏰', tagesuebersicht: '☀️', zuweisung: '📌', kind: '⭐', alle: '🎉', dokument: '📄',
   vertrag: '📝', kasse: '💶', ausgleich: '💸', pinnwand: '🧷', laden: '🛒', einkauf: '🛒',
-  ortung: '📍', sos: '🆘', aufgabe: '✅', geburtstag: '🎂', muell: '🗑️', fahrzeug: '🚗',
+  ortung: '📍', sos: '🆘', aufgabe: '✅', geburtstag: '🎂', muell: '🗑️', fahrzeug: '🚗', update: '🆕',
 };
 function ntEuro(v) { return typeof fmtEur === 'function' ? fmtEur(v) : (Math.round((v || 0) * 100) / 100).toFixed(2).replace('.', ',') + ' €'; }
 function ntKasseName(a) {
@@ -1747,6 +1747,7 @@ function ntOpenLink(url) {
       else { ntUseQuery('kasse', g('kasse')); kasseOpenFromUrl(); }
       return true;
     }
+    if (g('system')) { ntUseQuery('system', g('system')); sysOpenFromUrl(); return true; }
     if (g('dokument')) { ntUseQuery('dokument', g('dokument')); docOpenFromUrl(); return true; }
     if (g('pinnwand')) { ntUseQuery('pinnwand', g('pinnwand')); pwOpenFromUrl(); return true; }
     if (g('familie')) { ntUseQuery('familie', g('familie')); famOpenFromUrl(); return true; }

@@ -477,7 +477,68 @@ function setzeRechte(userId, an) {
     return { success: true, id: rec.id, systemrechte: !!an };
 }
 
+// ---------------------------------------------------------------------------------------------
+// Update notice for the admins who may install updates (since 1.118.1)
+// ---------------------------------------------------------------------------------------------
+// Once a day (cron in system.pb.js): while a newer version is on GitHub and not installed yet,
+//  - every entitled admin gets ONE push message per new version (only if „New pinn. version“ is switched
+//    on under Account → Notifications); skipped versions do not cause extra pushes – the message is
+//    simply about the newest one,
+//  - and one card in the bell that is refreshed daily: dismissed today, it comes back tomorrow until the
+//    update is installed. Tapping either opens Settings → System with the update popup (/?system=update).
+// Remembered per profile in pb_data/pinn_update_hinweis.json ({ <profile id>: <version last pushed> }).
+const F_UPDATE_HINWEIS = "/pb_data/pinn_update_hinweis.json";
+function berechtigteAdmins() {
+    const b = require(`${__hooks}/pinn-benutzer.js`);
+    let recs = [];
+    try { recs = $app.findRecordsByFilter(b.USERS, "rolle = 'hauptadmin' || rolle = 'admin'", "", 0, 0); } catch (e) { recs = []; }
+    const eine = familienAnzahl() <= 1;
+    return recs.filter(r => {
+        const rolle = r.getString("rolle");
+        if (rolle === "hauptadmin") return true;
+        if (!r.getString("familie")) return false;
+        if (eine) return true;
+        try { return r.getBool("systemrechte"); } catch (e) { return false; }
+    });
+}
+function updateHinweise() {
+    const info = updateInfo(false);
+    const hinweise = require(`${__hooks}/pinn-hinweise.js`);
+    if (!info.neuer || !info.version) {
+        try { hinweise.updateNoticeClear(); } catch (e) { /* bell not ready */ }
+        return { neuer: false, push: 0, glocke: 0 };
+    }
+    const push = require(`${__hooks}/pinn-push.js`);
+    let text = {};
+    try { text = JSON.parse(readText(F_UPDATE_HINWEIS) || "{}") || {}; } catch (e) { text = {}; }
+    let geaendert = false, pushes = 0, karten = 0;
+    berechtigteAdmins().forEach(u => {
+        const msg = {
+            titel: "🆕 pinn. " + info.version + " ist da",
+            text: "Installiert ist " + (info.installiert || "?") + ". Antippen, um das Update unter Einstellungen → System zu installieren.",
+            url: "/?system=update", tag: "update-" + info.version, hinweis: false,
+        };
+        let will = true;
+        try { will = push.readSettings(u).updates !== false; } catch (e) { will = true; }
+        if (will && text[u.id] !== info.version) {
+            try { if (push.notifyUser(u.id, msg) > 0) pushes++; } catch (e) { console.log("[System] Update-Push fehlgeschlagen: " + e.message); }
+            text[u.id] = info.version;
+            geaendert = true;
+        }
+        try {
+            let lokal = msg;
+            try { lokal = require(`${__hooks}/pinn-pushtext.js`).localize(u.id, msg); } catch (e) { lokal = msg; }
+            if (hinweise.updateNotice(u.id, lokal)) karten++;
+        } catch (e) { console.log("[System] Update-Hinweis für die Glocke nicht gespeichert: " + e.message); }
+    });
+    if (geaendert) {
+        try { $os.writeFile(F_UPDATE_HINWEIS, JSON.stringify(text), 0o644); } catch (e) { console.log("[System] " + F_UPDATE_HINWEIS + " nicht schreibbar: " + e.message); }
+    }
+    return { neuer: true, version: info.version, push: pushes, glocke: karten };
+}
+
 module.exports = {
+    updateHinweise,
     ensureSchema, setzeRechte,
     status, kurzStatus, rechte, sichern, wiederherstellen, update, installierteVersion, vergleiche, releasePruefen,
     vorabPruefen, vorabInfo, vorabStand,

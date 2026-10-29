@@ -99,6 +99,12 @@ Sempre com você: o pinn. se instala em todo iPhone e celular Android como um ap
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 e 🇰🇷 한국어**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.118.1
+
+**Aviso de atualização para admins**
+
+- Admins que podem instalar atualizações recebem **uma notificação por nova versão** e um **cartão no sino** todo dia até instalar; um toque abre **Configurações → Sistema**.
+
 ## Novidades da 1.118.0
 
 **Fahrenheit e ajustes de tradução**
@@ -116,15 +122,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Detalhes: em inglês aparece “Fit winter tyres” em vez de “Fit Winter tyres” (o mesmo para pneus de verão e nos outros idiomas); data e hora no sino seguem o seu idioma; números como “1 item” ficam no singular ou plural certo; sem aspas duplicadas nos avisos em japonês.
 - Em seguida: a 1.118.0 faz a limpeza – o tradutor antigo e `lang/` saem.
 - Alterado: `index.html`, `js/hinweise.js`, `js/fahrzeuge.js`, `js/sprachen.js`, `js/versionslog.js`, todos os arquivos de idioma em `i18n/` e `lang/` e no servidor `pb_hooks/pinn-pushtext.js`. Instale como de costume (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
-
-## Novidades da 1.116.1
-
-**Chaves de texto, parte 8: casa, veículos e documentos**
-
-- **Casa** (com defeitos, comunicação ao senhorio, custos, contadores, manutenção, jardim e mensagens de casa inteligente), **veículos**, **documentos** e a **importação de receitas** de PDF, foto e IA usam agora os textos dos arquivos de idioma em `pb_public/i18n/` – nas nove línguas e como casa compartilhada. No uso nada muda.
-- Modelos, títulos de documentos e tarefas de inspeção e troca de pneus são criados no idioma escolhido; meses e números como «1 dia» seguem o seu idioma.
-- O sino e os textos push do servidor vêm com a 1.117.0.
-- Alterados apenas arquivos do app – no servidor nada muda.
 
 ## Como funciona
 
@@ -154,7 +151,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.118.0` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.118.1` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -66,6 +66,7 @@ async function bootApp() {
   if (!guest) kasseOpenFromUrl(); // from a push message: open the cash box
   pwAfterBoot(); // Pinboard: tidy the archive, upload the queued photos, open the note from a push message
   docOpenFromUrl(); // from a push reminder: open the document directly
+  sysOpenFromUrl(); // from the update push message: Settings → System with the update popup
   famOpenFromUrl(); // from a location message: open Family with the person on the map
   sosStart(); // SOS from Traccar Client: check running alarms, open ?sos=<ID> from the push message
   googleReturnFromUrl(); // return from the Google login (Android calendar): open the calendar settings

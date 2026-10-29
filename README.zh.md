@@ -99,6 +99,12 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語和 🇰🇷 한국어**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.118.1 新功能
+
+**管理员更新提醒**
+
+- 可安装更新的管理员会在 **每个新版本收到一条推送**，铃铛中每天显示提醒直到安装；点按即可打开 **设置 → 系统**。
+
 ## 1.118.0 新功能
 
 **华氏度与翻译完善**
@@ -116,15 +122,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - 小改进：英文显示“Fit winter tyres”而不是“Fit Winter tyres”（夏季轮胎和其他语言同样修正）；铃铛中的日期和时间采用所选语言；“1 项”之类的数字单复数正确；日语提示中重复的引号已去除。
 - 下一步：1.118.0 进行清理——旧翻译器和 `lang/` 将被移除。
 - 已更改：`index.html`、`js/hinweise.js`、`js/fahrzeuge.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/` 和 `lang/` 中的所有语言文件，以及服务器上的 `pb_hooks/pinn-pushtext.js`。照常安装（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
-
-## 1.116.1 新功能
-
-**文本键，第 8 部分：家居、车辆和文档**
-
-- **家居**（缺陷及给房东的通知、费用、表计、维护、花园以及智能家居消息）、**车辆**、**文档**以及从 PDF、照片和 AI **导入食谱**，现在都从 `pb_public/i18n/` 中的语言文件读取文字 – 支持全部九种语言及合租模式。使用方式不变。
-- 模板、文档标题以及年检、保养和换胎任务会以当前语言创建；月份和“1 天”等数字跟随你的语言。
-- 铃铛和服务器推送文字将在 1.117.0 中跟进。
-- 仅修改了应用文件 – 服务器端无变化。
 
 ## 工作原理
 
@@ -154,7 +151,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.118.0` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.118.1` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

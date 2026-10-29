@@ -26,6 +26,8 @@ const PINN_CHANGELOG = [
       ['neu', 'Übersicht: Kündigungsfristen lassen sich wie Geburtstage zur Seite wischen und ausblenden – zurückholen unter Einstellungen → Übersicht'],
       ['fix', 'Übersetzungen: Kacheln Wetter, Geburtstage („wird 30“) und Kündigungsfristen („1 steht an“), Depot („eingezahlt“, „entnommen“, importierte Käufe und Verkäufe), Reifen-Aufgaben (Lagerort, „Aus pinn. → Fahrzeuge“), „Zugewiesen:“ in Termin-Notizen, Urlaubswetter der Packliste und Aufgaben in der Wochenvorschau; Wochen- und Monatsausblick jetzt auch auf Japanisch und Koreanisch'],
       ['info', 'Geändert: index.html und 21 Dateien in js/ (u. a. region.js, sprache.js, wetterkachel.js, geburtstage.js, vertraege.js, sparen.js, ausblick.js), alle Sprachdateien in i18n/ und lang/ – am Server ändert sich nichts'],
+      ['neu', '1.118.1: Admins, die Updates installieren dürfen, bekommen je neuer pinn.-Version eine Push-Nachricht (Schalter unter Konto → Benachrichtigungen) und eine Karte in der Glocke, die jeden Tag wiederkommt, bis das Update installiert ist; ein Tipp darauf öffnet Einstellungen → System mit dem Update-Popup'],
+      ['info', '1.118.1 geändert: index.html, js/sicherungen.js, js/mitteilungen.js, js/hinweise.js, js/appstart.js, js/sprachen.js, js/versionslog.js, alle Sprachdateien und am Server system.pb.js, pinn-system.js, pinn-hinweise.js, pinn-push.js, pinn-pushtext.js'],
     ],
   },
   {
