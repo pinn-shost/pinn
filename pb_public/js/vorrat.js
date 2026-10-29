@@ -128,7 +128,10 @@ function pantryNameKey(name) { return String(name || '').trim().toLowerCase(); }
 function pantryTargetLists(p) {
   const ids = (p.stores || []).filter(id => getShoppingList(id));
   if (ids.length) return ids;
-  return [shoppingMealMode() === 'direct' ? shoppingStammladenId() : SHOPPING_MEAL_LIST_ID];
+  // Without an own shop: onto the main shop (if one is set), not onto the meal-planning list (since 1.118.2)
+  const stamm = shoppingStammladenId();
+  if (stamm && getShoppingList(stamm)) return [stamm];
+  return [SHOPPING_MEAL_LIST_ID];
 }
 function pantryNeedText(p) {
   const need = Math.max((pantryNum(p.minQty) || 0) - (pantryNum(p.qty) || 0), 0);

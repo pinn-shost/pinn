@@ -110,3 +110,11 @@ html.dark .ls-shop-btn { border-color: rgba(255,255,255,0.12); }
 html.dark #lsListModal > div, html.dark #lsItemModal > div, html.dark #lsShopModal > div { background-color: #242320 !important; }
 .fin-tab-btn { -webkit-tap-highlight-color: transparent; white-space: nowrap; }
 .fin-tab-btn.active { background: var(--c-pine); color: #fff; }
+
+/* Paste a message (since 1.118.2): recognised items with green notes (pantry, meal planning, already on the list) */
+.shop-paste-row { display: flex; align-items: flex-start; gap: .6rem; padding: .55rem .6rem; border-radius: 12px; border: 1px solid rgba(37,35,31,.08); }
+.shop-paste-row.is-off { opacity: .45; }
+.shop-paste-tags { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .35rem; }
+.shop-paste-tags span { font-size: 11px; line-height: 1.2; padding: .2rem .5rem; border-radius: 999px; background: rgba(47,125,79,.12); color: #2F7D4F; }
+html.dark .shop-paste-row { border-color: rgba(255,255,255,.1); }
+html.dark .shop-paste-tags span { background: rgba(110,190,140,.18); color: #8fd1a8; }

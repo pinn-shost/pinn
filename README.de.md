@@ -99,6 +99,16 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 und 🇰🇷 한국어**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.118.2
+
+**Einkaufsliste: Nachricht einfügen, Vorrat-Hinweis, Plus/Minus**
+
+- **Nachricht einfügen:** Eine Nachricht wie „Kauf bitte noch Milch, 2 Packungen Butter und ein Brot“ (z. B. aus WhatsApp) kopieren und ins Eingabefeld einfügen – ein Popup zeigt die erkannten Artikel mit Menge. Grüne Hinweise zeigen, was im Vorrat ist, auch in der Essensplanung steht oder schon auf der Liste ist. Mehrere Artikel mit Komma getippt funktionieren genauso.
+- **Vorrats-Artikel** auf der Einkaufsliste haben jetzt unter dem Namen den Hinweis „🥫 Vorrat · … da“ – wie die Artikel aus der Essensplanung.
+- **Plus/Minus** richtet sich nach der Menge: 30 ml minus ergibt 20 ml (vorher sprang es auf 50 ml); kleine Mengen in 5er-/10er-Schritten, große in 50er-Schritten.
+- Vorrats-Artikel ohne eigenen Laden landen jetzt beim **Stammladen** statt auf der Essensplanungs-Liste.
+- Geändert: `index.html`, `js/einkauf.js`, `js/einkaufseingabe.js`, `js/einkaufslisten.js`, `js/vorrat.js`, `css/listen.css`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien – am Server ändert sich nichts.
+
 ## Neu in 1.118.1
 
 **Update-Hinweis für Admins**
@@ -125,16 +135,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Kleinigkeiten: Auf Englisch heißt es jetzt „Fit winter tyres“ statt „Fit Winter tyres“ (ebenso bei Sommerreifen und in den anderen Sprachen); Datum und Uhrzeit in der Glocke folgen der eingestellten Sprache; Zahlen wie „1 Artikel“ stehen in richtiger Einzahl oder Mehrzahl; doppelte Anführungszeichen in japanischen Hinweisen sind weg.
 - Als Nächstes: 1.118.0 räumt auf – der alte Übersetzer und `lang/` fallen weg.
 - Geändert: `index.html`, `js/hinweise.js`, `js/fahrzeuge.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien in `i18n/` und `lang/` sowie am Server `pb_hooks/pinn-pushtext.js`. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
-
-## Neu in 1.116.1
-
-**Text-Schlüssel, Teil 8: Zuhause, Fahrzeuge und Dokumente**
-
-- **Zuhause** (Übersicht mit der bewegten Szene, Mängel samt Mängelanzeige an den Vermieter, Kosten und Sanierung, Zähler mit Prognose und KI-Ablesung, Wartung, Garten & Pflanzen, Schlüssel und die Smarthome-Meldungen), **Fahrzeuge** (Liste, Details, Bilanz, Rechner, Fristen und automatische Aufgaben), **Dokumente** und der **Rezept-Import** aus PDF, Foto und KI holen ihre Texte jetzt aus den Sprachdateien in `pb_public/i18n/` – in allen neun Sprachen und als WG. In der Bedienung ändert sich nichts.
-- Neue Einträge in deiner Sprache: Wartungs- und Pflanzenvorlagen, Gartenkalender, Dokumenttitel und die Aufgaben für HU, Inspektion und Reifenwechsel entstehen in der gerade eingestellten Sprache. Gespeicherte Einträge bleiben, wie sie sind.
-- Kleinigkeiten: Mängelanzeige, Wetter-Tipps für Pflanzen, Fahrzeug-Rechner und Fristen sind in jeder Sprache ganze Sätze; Monatsnamen folgen der eingestellten Sprache; Zahlen wie „1 Tag“ oder „2 Zutaten“ stehen in richtiger Einzahl oder Mehrzahl.
-- Als Nächstes: die Glocke und die Push-Texte des Servers folgen mit 1.117.0.
-- Geändert: nur App-Dateien (`index.html`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/dokumente.js`, `js/pdflesen.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien in `i18n/` und `lang/`) – am Server ändert sich nichts. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
 
 ## So funktioniert’s
 
@@ -164,7 +164,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.118.1` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.118.2` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

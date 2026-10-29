@@ -95,6 +95,16 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 and 🇰🇷 한국어**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.118.2
+
+**Shopping list: paste a message, pantry hints, plus/minus**
+
+- **Paste a message:** copy a message like “Can you grab milk, 2 packs of butter and bread” (e.g. from WhatsApp) and paste it into the input bar – a popup shows the recognised items with quantity. Green notes show what is in the pantry, also in the meal plan or already on the list. Several items typed with commas work the same way.
+- **Pantry items** on a shopping list now have the note “🥫 Pantry · … in stock” below the name – like the meal-planning items.
+- **Plus/minus** follows the amount: 30 ml minus becomes 20 ml (it used to jump to 50 ml); small amounts in steps of 5/10, large ones in steps of 50.
+- Pantry items without an own shop now land on the **main shop** instead of the meal-planning list.
+- Changed: `index.html`, `js/einkauf.js`, `js/einkaufseingabe.js`, `js/einkaufslisten.js`, `js/vorrat.js`, `css/listen.css`, `js/sprachen.js`, `js/versionslog.js`, all language files – nothing changes on the server.
+
 ## What's new in 1.118.1
 
 **Update notice for admins**
@@ -161,15 +171,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Next: finances and cash boxes follow in 1.115.0.
 - Changed: app files only (`index.html`, `js/einkauf.js`, `js/einkaufslisten.js`, `js/einkaufseingabe.js`, `js/listen.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/rezepte.js`, `js/rezeptdialog.js`, `js/rezeptmengen.js`, `js/rezeptbild.js`, `js/rezeptbilder.js`, `js/rezeptparser.js`, `js/essenplanen.js`, `js/einstellungen.js`, `js/hinweise.js`, `js/finanzen.js`, `js/bedienzustand.js`, `js/sprachen.js`, `js/versionslog.js`, all language files in `i18n/` and `lang/`) – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
-## What's new in 1.113.1
-
-**Text keys, part 4: calendar settings and smart home**
-
-- **Settings → Calendar** (your own iCloud and Google accounts, calendars “For me” and “Family”, the form *Add calendar*, the former family connection), the **waste calendar**, the **home address** with public holidays and school holidays, and the whole **smart home** popup (devices, Apple Shortcuts, Home Assistant, robot vacuum with rooms and modes) now take their texts from the language files in `pb_public/i18n/` – in all nine languages and as a flatshare. Nothing changes in how you use the app.
-- Small fixes: German federal states, dates and times in these settings follow the format of your language; suggestions for a new smart home device (name and actions) appear in your language, and the robot vacuum mode and robot mower command are detected reliably; numbers such as “1 device” or “1 room” use the right singular or plural.
-- Next: lists, pantry and recipes follow in 1.114.0.
-- Changed: app files only (`index.html`, `js/kalenderkonto.js`, `js/smarthome.js`, `js/sprachen.js`, `js/versionslog.js`, all language files in `i18n/` and `lang/`) – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
 ## How it works
 
 ```mermaid
@@ -196,7 +197,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.118.1` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.118.2` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

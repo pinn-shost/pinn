@@ -28,6 +28,10 @@ const PINN_CHANGELOG = [
       ['info', 'Geändert: index.html und 21 Dateien in js/ (u. a. region.js, sprache.js, wetterkachel.js, geburtstage.js, vertraege.js, sparen.js, ausblick.js), alle Sprachdateien in i18n/ und lang/ – am Server ändert sich nichts'],
       ['neu', '1.118.1: Admins, die Updates installieren dürfen, bekommen je neuer pinn.-Version eine Push-Nachricht (Schalter unter Konto → Benachrichtigungen) und eine Karte in der Glocke, die jeden Tag wiederkommt, bis das Update installiert ist; ein Tipp darauf öffnet Einstellungen → System mit dem Update-Popup'],
       ['info', '1.118.1 geändert: index.html, js/sicherungen.js, js/mitteilungen.js, js/hinweise.js, js/appstart.js, js/sprachen.js, js/versionslog.js, alle Sprachdateien und am Server system.pb.js, pinn-system.js, pinn-hinweise.js, pinn-push.js, pinn-pushtext.js'],
+      ['neu', '1.118.2: Einkaufsliste – Nachricht (z. B. aus WhatsApp) ins Eingabefeld einfügen: ein Popup zeigt die erkannten Artikel mit Menge, grüne Hinweise zeigen Vorrat, Essensplanung und was schon auf der Liste steht; auch mehrere Artikel mit Komma getippt'],
+      ['info', '1.118.2: Vorrats-Artikel auf der Einkaufsliste mit dem Hinweis „Vorrat“ unter dem Namen (wie die Essensplanung); ohne eigenen Laden landen sie beim Stammladen statt auf der Essensplanungs-Liste'],
+      ['fix', '1.118.2: Plus/Minus richtet sich nach der Menge – 30 ml minus ergibt 20 ml statt 50 ml'],
+      ['info', '1.118.2 geändert: index.html, js/einkauf.js, js/einkaufseingabe.js, js/einkaufslisten.js, js/vorrat.js, css/listen.css, js/sprachen.js, js/versionslog.js, alle Sprachdateien – am Server ändert sich nichts'],
     ],
   },
   {

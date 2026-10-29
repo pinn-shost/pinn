@@ -287,24 +287,31 @@ function shoppingCategoriesOrdered() {
   return order.map(shoppingCategoryById);
 }
 
-// Plus/minus on a quantity: changes the leading number and keeps the unit
-// ("500 g" -> "550 g"). For g/ml in steps of 50, for kg/l in steps of 0.5, otherwise whole
-// steps. It cannot go below one step. An empty quantity counts as 1.
-function shoppingQtyStepSize(unitText) {
+// Plus/minus on a quantity: changes the leading number and keeps the unit ("500 g" -> "550 g").
+// The step follows the size of the amount (since 1.118.2 – before, "30 ml" minus jumped to "50 ml"):
+// g/ml from 100 in steps of 50, from 20 in steps of 10, below in steps of 5; kg/l from 1 in steps of 0.5,
+// below in steps of 0.25; everything else in whole steps. Going down uses the step of the next smaller
+// amount (100 ml -> 90 ml, 150 ml -> 100 ml). It never goes to 0 or below. An empty quantity counts as 1.
+function shoppingQtyStepSize(unitText, value) {
   const unit = String(unitText || '').trim().toLowerCase();
-  if (/^(g|gr|gramm|ml)\b/.test(unit)) return 50;
-  if (/^(kg|l|liter)\b/.test(unit)) return 0.5;
+  const v = Number(value);
+  if (/^(g|gr|gramm|ml)\b/.test(unit)) return !isFinite(v) || v >= 100 ? 50 : v >= 20 ? 10 : 5;
+  if (/^(kg|l|liter)\b/.test(unit)) return !isFinite(v) || v >= 1 ? 0.5 : 0.25;
   return 1;
+}
+function shoppingStepValue(value, unitText, direction) {
+  const v = Number(value) || 0;
+  const step = direction > 0 ? shoppingQtyStepSize(unitText, v) : shoppingQtyStepSize(unitText, v - 1e-9);
+  const next = Math.round((direction > 0 ? v + step : v - step) * 100) / 100;
+  return next > 0 ? next : v;
 }
 function shoppingStepQtyText(raw, direction) {
   raw = String(raw || '').trim();
   const m = raw.match(/^(\d+(?:[.,]\d+)?)\s*(.*)$/);
-  let value = m ? parseFloat(m[1].replace(',', '.')) : (raw ? 0 : 1);
+  const value = m ? parseFloat(m[1].replace(',', '.')) : (raw ? 0 : 1);
   const rest = m ? m[2].trim() : raw;
-  const step = shoppingQtyStepSize(rest);
-  value = direction > 0 ? value + step : Math.max(step, value - step);
-  value = Math.round(value * 100) / 100;
-  const numText = numDec(String(value));
+  const next = value > 0 ? shoppingStepValue(value, rest, direction) : (direction > 0 ? shoppingQtyStepSize(rest, 0) : shoppingQtyStepSize(rest, 0));
+  const numText = numDec(String(next));
   return rest ? `${numText} ${rest}` : numText;
 }
 // Recipe ingredient: display name and quantity - incl. a quantity adjusted with plus/minus
@@ -312,11 +319,13 @@ function shoppingRecipeLabelQty(item) {
   if (!item.hasQuantity) return { label: item.text, qtyText: '', unit: '' };
   const unit = extractUnitFromRest(item.unitName);
   const label = unit ? item.unitName.slice(unit.length).trim() : item.unitName;
-  const step = shoppingQtyStepSize(unit);
   const delta = Number(getShoppingItemAdjustment(item.key).delta) || 0;
   let min = item.minValue, max = item.maxValue;
   if (delta) {
-    const d = Math.max(delta * step, step - min); // not below one step
+    // Step by step from the recipe amount, like the own entries
+    let v = min;
+    for (let i = 0; i < Math.min(Math.abs(delta), 200); i++) v = shoppingStepValue(v, unit, delta > 0 ? 1 : -1);
+    const d = v - min;
     min = Math.round((min + d) * 100) / 100;
     max = Math.round((max + d) * 100) / 100;
   }

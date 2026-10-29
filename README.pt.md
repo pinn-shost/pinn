@@ -99,6 +99,12 @@ Sempre com você: o pinn. se instala em todo iPhone e celular Android como um ap
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 e 🇰🇷 한국어**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.118.2
+
+**Lista de compras: colar mensagem, despensa, mais/menos**
+
+- **Cole uma mensagem** (ex.: WhatsApp) no campo: uma janela mostra os itens reconhecidos com quantidade e avisos verdes; itens da despensa têm «🥫 Despensa» sob o nome; mais/menos segue a quantidade.
+
 ## Novidades da 1.118.1
 
 **Aviso de atualização para admins**
@@ -112,16 +118,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Temperatura em °F ou °C:** Configurações → Idioma e região tem a nova opção **Temperatura**. *Automático* segue o país (EUA: °F, senão °C); também dá para escolher à mão.
 - **Visão geral:** prazos de cancelamento somem com um deslize, como os aniversários.
 - **Traduções:** blocos de clima, aniversários e prazos, depósito, tarefas de pneus, notas de compromissos, clima de férias e prévia semanal (agora também em japonês e coreano).
-
-## Novidades da 1.117.0
-
-**Chaves de texto, parte 9: o sino e as notificações push do servidor**
-
-- O **sino** (caminho de casa, compras em aberto, novidades da família) e o aviso **“Vai fazer compras?”** agora pegam seus textos dos arquivos de idioma em `pb_public/i18n/` – nos nove idiomas e como casa compartilhada. “Vai fazer compras?” agora também existe em japonês e coreano.
-- **Notificações push do servidor:** as traduções não estão mais escritas no código do servidor. O servidor lê os mesmos arquivos de idioma do app (chaves `push.…`) via `pinn-textkern.js` – singular, plural e termos de casa compartilhada como no app.
-- Detalhes: em inglês aparece “Fit winter tyres” em vez de “Fit Winter tyres” (o mesmo para pneus de verão e nos outros idiomas); data e hora no sino seguem o seu idioma; números como “1 item” ficam no singular ou plural certo; sem aspas duplicadas nos avisos em japonês.
-- Em seguida: a 1.118.0 faz a limpeza – o tradutor antigo e `lang/` saem.
-- Alterado: `index.html`, `js/hinweise.js`, `js/fahrzeuge.js`, `js/sprachen.js`, `js/versionslog.js`, todos os arquivos de idioma em `i18n/` e `lang/` e no servidor `pb_hooks/pinn-pushtext.js`. Instale como de costume (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
 
 ## Como funciona
 
@@ -151,7 +147,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.118.1` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.118.2` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

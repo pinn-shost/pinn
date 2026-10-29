@@ -95,6 +95,13 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 et 🇰🇷 한국어**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.118.2
+
+**Liste de courses : coller un message, réserve, plus/moins**
+
+- **Coller un message** (p. ex. WhatsApp) dans le champ de saisie : une fenêtre montre les articles reconnus avec leur quantité, avec des indications vertes (réserve, planning des repas, déjà sur la liste).
+- Les articles de la réserve portent l'indication « 🥫 Réserve » sous le nom ; plus/moins suit la quantité (30 ml moins = 20 ml).
+
 ## Nouveautés de la 1.118.1
 
 **Avis de mise à jour pour les admins**
@@ -160,15 +167,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Ensuite : les finances et les caisses suivent avec la 1.115.0.
 - Modifié : uniquement des fichiers de l'app (`index.html`, `js/einkauf.js`, `js/einkaufslisten.js`, `js/einkaufseingabe.js`, `js/listen.js`, `js/vorrat.js`, `js/vorrat2.js`, `js/rezepte.js`, `js/rezeptdialog.js`, `js/rezeptmengen.js`, `js/rezeptbild.js`, `js/rezeptbilder.js`, `js/rezeptparser.js`, `js/essenplanen.js`, `js/einstellungen.js`, `js/hinweise.js`, `js/finanzen.js`, `js/bedienzustand.js`, `js/sprachen.js`, `js/versionslog.js`, tous les fichiers de langue dans `i18n/` et `lang/`) – rien ne change sur le serveur. Installation comme d'habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
-## Nouveautés de la 1.113.1
-
-**Clés de texte, partie 4 : réglages du calendrier et maison connectée**
-
-- **Réglages → Calendrier** (tes propres comptes iCloud et Google, calendriers « Pour moi » et « Famille », le formulaire *Ajouter un calendrier*, l'ancienne connexion familiale), le **calendrier des déchets**, l'**adresse du domicile** avec jours fériés et vacances scolaires ainsi que toute la fenêtre **maison connectée** (appareils, Raccourcis Apple, Home Assistant, robot aspirateur avec pièces et modes) prennent maintenant leurs textes dans les fichiers de langue de `pb_public/i18n/` – dans les neuf langues et en colocation. Rien ne change à l'utilisation.
-- Petites corrections : les Länder allemands, les dates et les heures de ces réglages suivent le format de ta langue ; les suggestions pour un nouvel appareil (nom et actions) apparaissent dans ta langue, et le mode du robot aspirateur et la commande du robot tondeuse sont reconnus de façon fiable ; les nombres comme « 1 appareil » ou « 1 pièce » sont au bon singulier ou pluriel.
-- Prochaine étape : listes, réserves et recettes arrivent avec la 1.114.0.
-- Modifié : uniquement des fichiers de l'app (`index.html`, `js/kalenderkonto.js`, `js/smarthome.js`, `js/sprachen.js`, `js/versionslog.js`, tous les fichiers de langue dans `i18n/` et `lang/`) – rien ne change sur le serveur. Installation comme d'habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
 ## Comment ça marche
 
 ```mermaid
@@ -195,7 +193,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.118.1` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.118.2` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

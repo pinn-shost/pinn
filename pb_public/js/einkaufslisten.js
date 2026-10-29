@@ -403,8 +403,9 @@ function shoppingManualRowHtml(it) {
       <button type="button" class="shopping-manual-row shop-row-main flex-1 min-w-0 flex items-center gap-3 text-left select-none" data-manual-id="${escapeHtml(it.id)}">
         <span class="shop-check" aria-hidden="true">${muted ? '✓' : ''}</span>
         <span class="flex-1 min-w-0">
-          <span class="flex items-center gap-1.5 min-w-0"><span class="shop-name truncate">${escapeHtml(truncateTitle(it.name || '', 40))}</span>${pItem ? `<span class="pantry-tag shrink-0 ${muted ? 'opacity-40' : ''}" title="${escapeHtml(tk('shop.pantryStock', { stock: pantryStockText(pItem) }))}">${escapeHtml(tk('shop.pantryTag'))}</span>` : ''}</span>
+          <span class="flex items-center gap-1.5 min-w-0"><span class="shop-name truncate">${escapeHtml(truncateTitle(it.name || '', 40))}</span></span>
           ${note ? `<span class="shop-note block truncate">${escapeHtml(note)}</span>` : ''}
+          ${pItem ? `<span class="shop-note block truncate">🥫 <span>${escapeHtml(tk('shop.fromPantry', { stock: pantryStockText(pItem) }))}</span></span>` : ''}
         </span>
       </button>
       ${shoppingQtyControlsHtml('m', it.id, qty, muted, !!pItem)}

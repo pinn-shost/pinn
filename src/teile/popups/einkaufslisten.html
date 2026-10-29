@@ -172,3 +172,19 @@
       <div id="ingredientBreakdownRows" class="font-mono text-sm"></div>
     </div>
   </div>
+
+  <!-- Paste text (e.g. a WhatsApp message): recognised items with quantity, then onto the list (since 1.118.2) -->
+  <div id="shopPasteModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4">
+    <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 fade-in flex flex-col" style="max-height:calc(100dvh - 2rem)">
+      <button data-tk-attr="aria-label:common.close" id="shopPasteCloseBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+      <h3 data-tk="shop.paste.title" class="font-serif text-lg mb-1 pr-6">Recognised from your text</h3>
+      <p data-tk="shop.paste.hint" class="text-xs text-ink/50 mb-3">Untick what you don't need – name and quantity can still be changed.</p>
+      <div id="shopPasteList" class="flex flex-col gap-2 overflow-y-auto min-h-0 -mx-1 px-1"></div>
+      <label data-tk="shop.paste.toList" class="block text-xs uppercase tracking-wide text-ink/40 mb-1 mt-3" for="shopPasteListSelect">Onto the list</label>
+      <select id="shopPasteListSelect" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base bg-white" data-no-i18n></select>
+      <div class="flex justify-end gap-2 mt-4">
+        <button data-tk="common.cancel" id="shopPasteCancelBtn" type="button" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:bg-ink/5">Cancel</button>
+        <button id="shopPasteAddBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90" data-no-i18n></button>
+      </div>
+    </div>
+  </div>
