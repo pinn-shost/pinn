@@ -18,6 +18,9 @@
       is exported by that module.
    4. Unit tests: version compare of the update check and reading APP_VERSION from the built
       pb_public/index.html (pinn-system.js) – the update button depends on both.
+      Push texts (pinn-pushtext.js, since 1.117.0): the German messages of the modules are recognised and come out
+      in the recipient's language from pb_public/i18n (text keys "push.…"), plural forms and flat share variants
+      included; a key named by a pattern exists in every language file.
    5. Database schema (pinn-schema.js, since 1.110.0): every module that creates collections or fields is part of
       the start-up checks, the migration list is ascending, unique and named, and the runner is tested against a
       simulated database (fresh install, second start, failing step, newer database, failing check). */
@@ -376,6 +379,43 @@ if (!exists(path.join(HOOKS, 'pinn-schema.js'))) {
       const st = loadModule('pinn-schema.js', db.globals).ensureCurrent();
       if (!db.calls.some(c => c.startsWith('pinn-zuhause.js'))) return 'checks after the failing one did not run';
       return eq({ ok: st.ok, pruefungen: st.pruefungen, rows: db.rows.length, logged: db.log.some(l => l.includes('kaputt')) }, { ok: false, pruefungen: ['muell'], rows: lib.MIGRATIONS.length, logged: true });
+    });
+  }
+}
+
+// Push texts of the server: patterns → text keys of pb_public/i18n (since 1.117.0)
+if (exists(path.join(HOOKS, 'pinn-pushtext.js'))) {
+  let pt = null;
+  const memStore = new Map();
+  test('pinn-pushtext.js loads and reads the language files next to the hooks', () => {
+    pt = loadModule('pinn-pushtext.js', {
+      $os: { readFile: p => { if (String(p).startsWith('/pb_public')) throw new Error('not in a container'); return fs.readFileSync(p); } },
+      toString: b => (Buffer.isBuffer(b) ? b.toString('utf8') : String(b)),
+      $app: { store: () => ({ get: k => memStore.get(k), set: (k, v) => memStore.set(k, v), remove: k => memStore.delete(k) }) },
+    });
+    return pt.tk('en', 'push.sos.title', { name: 'Anna' }) === 'SOS: Anna needs help!' ? '' : 'push.sos.title not found in en.i18n.js';
+  });
+  if (pt) {
+    test('push messages in English, French and Japanese (plural forms, names, dates)', () => {
+      const m = { tag: 'sos-1', titel: 'SOS: Anna braucht Hilfe!', text: 'Deine Familie wurde alarmiert (1 Gerät) und sieht deinen Standort.' };
+      const t = { tag: 'termin-1', titel: 'Zahnarzt um 14:30', text: 'In 15 Minuten · mit Anna, Ben und Carla' };
+      return eq([pt.translateFor('en', 'familie', m).text, pt.translateFor('fr', 'familie', t).text, pt.translateFor('ja', 'familie', { tag: 'tagesuebersicht-1', titel: 'Mo, 03.11. 09:00' }).titel],
+        ['Your family has been alerted (1 device) and can see your location.', 'Dans 15 minutes · avec Anna, Ben et Carla', '11月3日（月） 09:00']);
+    });
+    test('flat share: the "#wg" variant is used, texts without a pattern keep their words', () => {
+      const m = { tag: 'sos-1', titel: 'Dein Hilferuf wurde gesendet', text: 'Deine Familie wurde alarmiert (2 Geräte) und sieht deinen Standort.' };
+      return eq([pt.translateFor('de', 'wg', m).text, pt.translateFor('en', 'wg', { tag: 'x', titel: 'Everything for the family' }).titel],
+        ['Deine WG wurde alarmiert (2 Geräte) und sieht deinen Standort.', 'Everything for the flatshare']);
+    });
+    test('every key of the push patterns exists in every language file', () => {
+      const keys = new Set();
+      pt.GROUPS.forEach(g => g.rules.forEach(rule => { if (typeof rule[1] === 'string') keys.add(rule[1]); }));
+      pt.SHARED.forEach(rule => { if (typeof rule[1] === 'string') keys.add(rule[1]); });
+      Object.keys(pt.EXACT).forEach(w => keys.add(pt.EXACT[w]));
+      const langs = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko'];
+      const missing = [];
+      keys.forEach(k => langs.forEach(l => { if (pt.tk(l, k, { n: 2 }, false) === null) missing.push(l + ':' + k); }));
+      return missing.length ? 'missing ' + missing.slice(0, 5).join(', ') : '';
     });
   }
 }

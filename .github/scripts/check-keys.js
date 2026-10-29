@@ -13,7 +13,8 @@
       is empty or no string/plural object, a plural text lacks a form its language needs (js/textkern.js → FORMS)
       or has an unknown form, a placeholder {name} is missing or unknown, a "<key>#wg" variant has no plain key.
    5. A key used in the code – tk('key') in pb_public/js/ and pb_public/*.js, data-tk="key", data-tk-html="key",
-      data-tk-attr="name:key" in src/ – does not exist in English; the English text written inside an element
+      data-tk-attr="name:key" in src/, key literals ("push.…") in pb_hooks/ (since 1.117.0: push texts of the
+      server, pinn-pushtext.js) – does not exist in English; the English text written inside an element
       with data-tk in src/ differs from en.i18n.js (the HTML keeps the English text, so it stays readable).
    6. js/sprachen.js does not work as expected in a small simulated page (tk, data-tk, flat share variants,
       hidden languages).
@@ -123,7 +124,9 @@ else {
 const used = new Map();   // key -> first place
 const note = (key, where) => { if (!used.has(key)) used.set(key, where); };
 const codeFiles = walk(path.join(ROOT, 'pb_public', 'js'), n => n.endsWith('.js'))
-  .concat(['einrichtung.js', 'datenexport.js'].map(n => path.join(ROOT, 'pb_public', n)).filter(exists));
+  .concat(['einrichtung.js', 'datenexport.js'].map(n => path.join(ROOT, 'pb_public', n)).filter(exists))
+  // Server: the hooks read the same language files (pinn-pushtext.js → tk(lang, "push.…", …))
+  .concat(walk(path.join(ROOT, 'pb_hooks'), n => n.endsWith('.js')));
 for (const file of codeFiles) {
   const src = read(file);
   const re = /(?:^|[^\w.$])tk\(\s*(['"])([a-z][A-Za-z0-9]*(?:\.[A-Za-z0-9]+)+)\1/g;
