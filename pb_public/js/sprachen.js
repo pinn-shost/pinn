@@ -22,7 +22,8 @@
    Order of the language choice: stored on the device (or in the profile, after sign-in) →
    language of the device, if available → English (default).
    Hidden languages (hidden: true) are prepared but not offered yet; for testing they can be
-   unlocked on one device with localStorage.setItem('pinn.sprachen.alle', '1').
+   unlocked on one device with localStorage.setItem('pinn.sprachen.alle', '1'). A hidden language is translated
+   step by step, so it also loads the English file: keys it does not have yet show the English text (since 1.120.0).
    Dates: always format with PINN_I18N.language.locale (never a fixed 'de-DE').
    ========================================================== */
 window.PINN_LANGUAGES = [
@@ -44,7 +45,7 @@ window.PINN_LANGUAGES = [
     flag: '<svg viewBox="0 0 36 24" aria-hidden="true"><path d="M0,0h36v24H0z" fill="#fff"/><path d="M12,12A6,6 0 0 1 24,12A3,3 0 0 1 18,12A3,3 0 0 0 12,12z" fill="#CD2E3A"/><path d="M24,12A6,6 0 0 1 12,12A3,3 0 0 1 18,12A3,3 0 0 0 24,12z" fill="#0047A0"/><g fill="#000"><g transform="translate(6.5,4.5) rotate(-57)"><rect x="-2.5" y="-2.0" width="5" height="0.8"/><rect x="-2.5" y="-0.4" width="5" height="0.8"/><rect x="-2.5" y="1.2000000000000002" width="5" height="0.8"/></g><g transform="translate(29.5,19.5) rotate(-57)"><rect x="-2.5" y="-2.0" width="2.1" height="0.8"/><rect x="0.4" y="-2.0" width="2.1" height="0.8"/><rect x="-2.5" y="-0.4" width="2.1" height="0.8"/><rect x="0.4" y="-0.4" width="2.1" height="0.8"/><rect x="-2.5" y="1.2000000000000002" width="2.1" height="0.8"/><rect x="0.4" y="1.2000000000000002" width="2.1" height="0.8"/></g><g transform="translate(29.5,4.5) rotate(57)"><rect x="-2.5" y="-2.0" width="2.1" height="0.8"/><rect x="0.4" y="-2.0" width="2.1" height="0.8"/><rect x="-2.5" y="-0.4" width="5" height="0.8"/><rect x="-2.5" y="1.2000000000000002" width="2.1" height="0.8"/><rect x="0.4" y="1.2000000000000002" width="2.1" height="0.8"/></g><g transform="translate(6.5,19.5) rotate(57)"><rect x="-2.5" y="-2.0" width="5" height="0.8"/><rect x="-2.5" y="-0.4" width="2.1" height="0.8"/><rect x="0.4" y="-0.4" width="2.1" height="0.8"/><rect x="-2.5" y="1.2000000000000002" width="5" height="0.8"/></g></g></svg>' },
   { code: 'de', name: 'Deutsch', locale: 'de-DE',
     flag: '<svg viewBox="0 0 5 3" aria-hidden="true"><path d="M0,0h5v3H0z"/><path d="M0,1h5v2H0z" fill="#D00"/><path d="M0,2h5v1H0z" fill="#FFCE00"/></svg>' },
-  // Prepared, not offered yet: plural rules are in js/textkern.js, the texts (i18n/ru.i18n.js) are still missing
+  // Being translated step by step (since 1.120.0), not offered until i18n/ru.i18n.js is complete
   { code: 'ru', name: 'Русский', locale: 'ru-RU', hidden: true,
     flag: '<svg viewBox="0 0 9 6" aria-hidden="true"><path d="M0,0h9v6H0z" fill="#fff"/><path d="M0,2h9v4H0z" fill="#0039A6"/><path d="M0,4h9v2H0z" fill="#D52B1E"/></svg>' },
 ];
@@ -133,7 +134,7 @@ window.PINN_LANGUAGES = [
 
   // Raise with every change to a text file in i18n/, otherwise devices keep using the old file.
   // .github/scripts/check-keys.js makes sure it matches src/version.txt.
-  var FILE_VERSION = '1.119.3';
+  var FILE_VERSION = '1.120.0';
 
   // Invisible until the texts are in place (no short flash of English placeholder texts)
   var style = document.createElement('style');
@@ -156,25 +157,31 @@ window.PINN_LANGUAGES = [
      The family emoji: PINN_I18N.famIcon() in JavaScript, data-fam-ico on an element in HTML – a flat share
      gets the flatmates emoji instead (the texts of the files carry it in their "#wg" variants already). */
   var KEYS = null;     // key -> entry of the chosen language
+  var BACKUP = null;   // English entries for a hidden language that is not fully translated yet
   var FAM_ICON = '\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67';   // family
   var WG_ICON = '\uD83E\uDDD1\u200D\uD83E\uDD1D\u200D\uD83E\uDDD1';    // people holding hands (flat share)
   function famIcon(plain) { return (wohnform === 'wg' && !plain) ? WG_ICON : FAM_ICON; }
   var warned = {};
   var keysDone = typeof WeakSet === 'function' ? new WeakSet() : null;   // elements filled in already
   // plain = keep the family terms (no flat share variant), e.g. inside [data-no-term]
+  function entryOf(map, key, plain) {
+    if (!map) return undefined;
+    if (!plain && wohnform === 'wg' && map[key + '#wg'] !== undefined) return map[key + '#wg'];
+    return map[key];
+  }
   function keyEntry(key, plain) {
-    if (!KEYS) return undefined;
-    if (!plain && wohnform === 'wg' && KEYS[key + '#wg'] !== undefined) return KEYS[key + '#wg'];
-    return KEYS[key];
+    var e = entryOf(KEYS, key, plain);
+    return (e === undefined && BACKUP) ? entryOf(BACKUP, key, plain) : e;
   }
   function tk(key, vals, plain) {
-    var e = keyEntry(key, plain);
+    var e = entryOf(KEYS, key, plain), code = lang.code;
+    if (e === undefined && BACKUP) { e = entryOf(BACKUP, key, plain); code = DEFAULT; }   // English plural rules
     if (e === undefined) {
       if (!warned[key]) { warned[key] = 1; try { console.warn('[pinn.] text key missing: ' + key); } catch (x) { /* no console */ } }
       return String(key);
     }
     var K = window.PINN_TEXTKERN;
-    return K ? K.text(e, lang.code, vals) : (typeof e === 'string' ? e : '');
+    return K ? K.text(e, code, vals) : (typeof e === 'string' ? e : '');
   }
   function has(key) { return keyEntry(key) !== undefined; }
   // onlyNew = skip elements that were filled in before (their text may have been changed by the app since)
@@ -208,6 +215,7 @@ window.PINN_LANGUAGES = [
   api.apply = function (root) { applyKeys(root, false); };
   // Called by i18n/<code>.i18n.js with all texts of the language
   api.keys = function (c, data) {
+    if (lang.hidden && c === DEFAULT && c !== lang.code) { if (!BACKUP) BACKUP = data || {}; return; }
     if (c !== lang.code || KEYS) return;
     KEYS = data || {};
   };
@@ -215,6 +223,8 @@ window.PINN_LANGUAGES = [
   api.keysFail = function () { if (!KEYS) { KEYS = {}; api.keysMissing = lang.i18n; } };
   window.tk = tk;
   document.write('<script src="' + lang.i18n + '?v=' + FILE_VERSION + '" onerror="PINN_I18N.keysFail()"><\/script>');
+  // A hidden language (only for testing) is not complete yet: English fills the gaps
+  if (lang.hidden && lang.code !== DEFAULT) document.write('<script src="i18n/' + DEFAULT + '.i18n.js?v=' + FILE_VERSION + '"><\/script>');
 
   // When the page is ready: fill in what is still missing and show the page
   var ready = function () { applyKeys(document, true); reveal(); };

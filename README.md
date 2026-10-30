@@ -95,6 +95,17 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 and 🇰🇷 한국어**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.120.0
+
+**Russian – first stage**
+
+- pinn. is being translated into **Russian** step by step. The first stage covers sign-in, the dashboard, the menu, the main admin page and all settings, plus the complete setup assistant and the data export – about 500 texts, with the three Russian plural forms and the flatshare wording.
+- Russian stays **hidden** until everything is translated. To try it out on one device, run `localStorage.setItem('pinn.sprachen.alle', '1')` in the browser console and pick Русский; texts that are not translated yet appear in English.
+- Server: the setup now also accepts Russian as its language (`pb_hooks/pinn-einrichtung.js`).
+- For contributors: `i18n-keys.js` has two new commands – `todo` (the keys a language still lacks, with the English text) and `lang` (writes the translated texts of one language, checks plural forms and placeholders, adds the flatshare variant). The text check shows the progress of a hidden language in one line.
+- Next: further stages of Russian (calendar, tasks, household …).
+- Changed: `index.html`, `js/sprachen.js`, `js/einrichten.js`, `js/exportieren.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, `i18n/ru.i18n.js` (new), `i18n/versionslog.en.js`, `pb_hooks/pinn-einrichtung.js`, `.github/`. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.119.3
 
 **Clean-up: the old translator is gone**
@@ -177,16 +188,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Translations:** weather, birthday (“turns 30”) and contract tiles (“1 coming up”), the depot (“paid in”, “withdrawn”, imported purchases and sales), tyre tasks (storage place, “From pinn. → Vehicles”), “Assigned to:” in event notes, holiday weather of packing lists and tasks in the weekly preview. The weekly and monthly outlook now also exist in Japanese and Korean.
 - Changed: `index.html`, `js/region.js`, `js/sprache.js`, `js/design.js`, `js/wetterkachel.js`, `js/geburtstage.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/vertraege.js`, `js/sparen.js`, `js/finanzen.js`, `js/familie.js`, `js/ausblick.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/mitglieder.js`, `js/aufgaben.js`, `js/termindetails.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, all language files in `i18n/` and `lang/` – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
-## What's new in 1.117.0
-
-**Text keys, part 9: the bell and the push messages of the server**
-
-- The **bell** (way home, open shopping trips, family news, the empty notice) and the **“Going shopping?”** notice now take their texts from the language files in `pb_public/i18n/` – in all nine languages and as a flatshare. “Going shopping?” now also exists in Japanese and Korean.
-- **Push messages from the server:** the translations are no longer written into the server code. The server reads the same language files as the app (keys `push.…`) through `pinn-textkern.js` – singular, plural and the flatshare terms work exactly as in the app.
-- Small things: English now says “Fit winter tyres” instead of “Fit Winter tyres” (likewise for summer tyres and in the other languages); dates and times in the bell follow your language; numbers like “1 item” use the right singular or plural; doubled quotation marks in Japanese notices are gone.
-- Next: 1.118.0 tidies up – the old translator and `lang/` are removed.
-- Changed: `index.html`, `js/hinweise.js`, `js/fahrzeuge.js`, `js/sprachen.js`, `js/versionslog.js`, all language files in `i18n/` and `lang/` and on the server `pb_hooks/pinn-pushtext.js`. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
 ## How it works
 
 ```mermaid
@@ -213,7 +214,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.119.3` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.120.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

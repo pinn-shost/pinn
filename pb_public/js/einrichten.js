@@ -2,13 +2,13 @@
    Part of the app code that used to be a single block in index.html. Classic script, no build step:
    it is loaded right after the inline script of index.html and before the other files in js/
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
-   Contents: the texts of the setup in nine languages (PINN_SETUP_TEXTE, pinnSetupText) and loading and opening the assistant (loadPinnSetupScript, openPinnSetup). The assistant itself lives in pb_public/einrichtung.js and is only loaded when first opened. The notice about the open setup is in js/hauptadminseite.js. */
+   Contents: the texts of the setup in ten languages (Russian still hidden) (PINN_SETUP_TEXTE, pinnSetupText) and loading and opening the assistant (loadPinnSetupScript, openPinnSetup). The assistant itself lives in pb_public/einrichtung.js and is only loaded when first opened. The notice about the open setup is in js/hauptadminseite.js. */
 
 /* ==========================================================
    Setup (assistant for the main admin)
    ----------------------------------------------------------
    The assistant lives in pb_public/einrichtung.js and is only loaded when it is needed
-   (own texts in German, English, French, Spanish, Italian, Portuguese, Chinese, Japanese and Korean). Server: pb_hooks/einrichtung.pb.js.
+   (own texts in German, English, French, Spanish, Italian, Portuguese, Chinese, Japanese, Korean and Russian). Server: pb_hooks/einrichtung.pb.js.
    - starts by itself after login as main admin as long as the setup is still open
      ("Später" holds until the app is closed)
    - reachable at any time via Main admin → ⚙︎ Einrichtung
@@ -122,6 +122,19 @@ const PINN_SETUP_TEXTE = {
     loginBtn: '메인 관리자로 로그인',
     loginMain: '처음에는 비밀번호가 “Admin”이에요 – 그다음 내 비밀번호를 정하면 초기 설정이 시작돼요.',
     laden: '초기 설정을 불러올 수 없어요(pb_public/einrichtung.js가 없나요?).',
+  },
+  // Russian (since 1.120.0) – still hidden in the app until all texts are translated
+  ru: {
+    btn: '⚙︎ Настройка',
+    offen: 'Настройка pinn. ещё не завершена. Без неё не будут работать HTTPS, push-уведомления и приложение на главном экране.',
+    fortsetzen: 'Продолжить настройку',
+    neustart: 'Сохранённые настройки вступят в силу только после перезапуска pinn.',
+    neustartBtn: 'Применить сейчас (короткий перезапуск)',
+    neustartLaeuft: 'pinn. перезапускается …',
+    loginHint: 'Впервые здесь? Первоначальная настройка начнётся после входа главного администратора.',
+    loginBtn: 'Войти как главный администратор',
+    loginMain: 'В первый раз пароль – «Admin», затем вы зададите свой, и начнётся настройка.',
+    laden: 'Не удалось загрузить настройку (нет pb_public/einrichtung.js?).',
   },
 };
 function pinnSetupText(key) {

@@ -1,7 +1,7 @@
 /* pinn. – Einrichtungs-Assistent für den Hauptadmin (pb_public/einrichtung.js)
    ----------------------------------------------------------------------------
    Wird von index.html nur bei Bedarf nachgeladen (Hauptadmin → Einrichtung bzw. automatisch nach
-   der ersten Anmeldung als Hauptadmin). Eigene Texte in Deutsch, Englisch, Französisch, Spanisch, Italienisch, Portugiesisch, Chinesisch, Japanisch und Koreanisch –
+   der ersten Anmeldung als Hauptadmin). Eigene Texte in Deutsch, Englisch, Französisch, Spanisch, Italienisch, Portugiesisch, Chinesisch, Japanisch, Koreanisch und Russisch –
    die Übersetzungs-Schicht der App greift hier nicht ein (data-no-i18n / data-no-term).
    Server: pb_hooks/einrichtung.pb.js + pinn-einrichtung.js. Jeder Schritt wird beim Tippen auf
    „Weiter“ gespeichert; am Ende übernimmt pinn. alles mit einem kurzen Neustart. */
@@ -9,7 +9,8 @@
   'use strict';
   if (window.PinnSetup) return;
 
-  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko'];
+  // Russisch (seit 1.120.0) ist in der App noch versteckt – zur Auswahl steht es erst, wenn es dort freigeschaltet ist
+  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru'];
   var T = {};
   T.de = {
     titel: "Einrichtung", lade: "Einrichtung wird geladen …",
@@ -2012,6 +2013,216 @@
     geschafftText: "pinn. 설정이 끝났어요. 이제부터 이 주소로 pinn.을 열고 모든 휴대폰에 저장하세요(“앱과 기기” 참고). 다음으로 가족 관리에서 첫 가족을 만드세요.",
     nochmalPruefen: "다시 확인", zurVerwaltung: "가족 관리로",
   };
+  T.ru = {
+    titel: "Настройка", lade: "Загрузка настройки …",
+    weiter: "Далее", zurueck: "Назад", ueberspringen: "Пропустить", spaeter: "Позже", schliessen: "Закрыть",
+    pruefen: "Проверить", pruefe: "Проверка …", speichere: "Сохранение …", kopieren: "Копировать", kopiert: "Скопировано ✓",
+    anleitung: "Пошаговая инструкция", optional: "необязательно", erweitert: "Дополнительно", zeigen: "Показать",
+    gespeichertGeheim: "сохранено: ••••{0}", leerLassen: "оставить пустым = без изменений", ausEnv: "Значение из .env или docker-compose.yaml",
+    entfernen: "Удалить", wirdEntfernt: "будет удалено при сохранении", entfernenFrage: "Удалить это сохранённое значение?",
+    schritt: "Шаг {0} из {1}", fehlerFeld: "Пожалуйста, проверьте «{0}».", fehler: "Не получилось.", ok: "В порядке ✓",
+    fehlerNetz: "Нет связи с pinn. – пожалуйста, убедитесь, что вы в домашней сети.",
+    ordnerFehlt: "На NAS нет папки «konfig». Пожалуйста, используйте новый docker-compose.yaml и запустите скрипт pinn-setup.sh (или «docker compose up -d»). Без этой папки настройка ничего не сможет сохранить.",
+    ordnerSchreibschutz: "Папка «konfig» защищена от записи – пожалуйста, снова запустите pinn-setup.sh.",
+    serverFehlt: "На сервере ещё нет einrichtung.pb.js и pinn-einrichtung.js (pb_hooks).",
+    erkannt: "Определено по адресной строке: {0}", deineAdresse: "Ваш адрес pinn.:", ph_sub: "например, semya-ivanovy",
+    L_PORT: "Порт HTTPS", h_port: "Меняйте, только если вы изменили порт 8443 в docker-compose.yaml.",
+    pflichtInfo: "Обязательны только «Домашняя сеть» и «DuckDNS». Всё остальное можно пропустить и сделать в любое время позже: Главный администратор → Настройка.",
+    serverOk: "pinn. работает и может сохранять настройки ✓",
+    schonFertig: "Настройка уже завершена. Вы можете всё проверить и изменить – в конце примените через «Сохранить и запустить».",
+    bitteWaehlen: "Пожалуйста, выберите вариант (или «Пропустить»).",
+    skipPflicht: "Без этого шага не будут работать HTTPS, push-уведомления и приложение на главном экране. Всё равно пропустить?",
+    pflichtFehlt: "Пожалуйста, заполните поля – или нажмите «Пропустить».",
+    speichernStarten: "Сохранить и запустить", neu: "новое", nichtGesetzt: "не настроено", erledigtKurz: "готово", offen: "открыто",
+    eingerichtet: "настроено", aus: "выкл.",
+
+    t_sprache: "Добро пожаловать в pinn. 👋",
+    i_sprache: "Выберите язык настройки. Он также будет использоваться для pinn. на этом устройстве – позже каждый профиль может выбрать свой язык.",
+
+    t_start: "Что понадобится",
+    i_start: "Полная настройка pinn. занимает около 20–30 минут. Каждый шаг сохраняется при нажатии «Далее» – можно прерваться в любой момент и продолжить с того же места.",
+    l_start: [
+      "Доступ к роутеру (у FRITZ!Box: пароль на нижней стороне устройства или ваш собственный)",
+      "это устройство в домашней сети (Wi-Fi) – проще всего с компьютера, но подойдёт и телефон",
+      "аккаунт Google, GitHub или Reddit для бесплатного сервиса DuckDNS",
+      "необязательно: аккаунт Google для календарей Android и ИИ",
+    ],
+
+    t_netz: "Домашняя сеть: адрес NAS",
+    i_netz: "pinn. должен знать адрес вашего NAS в домашней сети. Чтобы этот адрес никогда не менялся, роутер закрепляет его навсегда.",
+    L_NAS_IP: "IP-адрес NAS",
+    g_netz: [
+      "Посмотрите на адресную строку браузера: если там что-то вроде `http://192.168.178.20:8090`, то число перед двоеточием – это уже IP-адрес NAS.",
+      "Иначе посмотрите в FRITZ!Box: откройте в браузере [fritz.box](http://fritz.box) и войдите с паролем FRITZ!Box.",
+      "Слева откройте «Home Network» → «Network» → вкладка «Network Connections».",
+      "Найдите в списке свой NAS (обычно «UGREEN…» или «DXP…») и нажмите справа на карандаш (изменить).",
+      "Запишите IPv4-адрес и отметьте «Always assign this network device the same IPv4 address» → «Apply».",
+      "Другие роутеры: ищите «Домашняя сеть», «LAN» или «DHCP» – часто это называется «резервирование адреса» или «статический IP». В приложении UGREEN адрес находится в разделе Панель управления → Сеть.",
+    ],
+
+    t_duckdns: "Ваш адрес с HTTPS (DuckDNS)",
+    i_duckdns: "DuckDNS – бесплатный сервис, который даёт pinn. постоянный адрес вместе с сертификатом безопасности. pinn. нужен он для push-уведомлений, приложения на главном экране и входа через Google. Проброс портов не нужен – снаружи pinn. остаётся невидимым.",
+    L_DUCKDNS_SUBDOMAIN: "Поддомен (любое имя)", L_DUCKDNS_TOKEN: "Токен DuckDNS", L_PINN_ADRESSE: "Адрес pinn.",
+    g_duckdns: [
+      "Откройте [duckdns.org](https://www.duckdns.org).",
+      "Войдите справа вверху через один из предложенных аккаунтов (например, Google, GitHub или Reddit) – своего пароля у DuckDNS нет.",
+      "Введите имя в поле «sub domain», например `semya-ivanovy` (только латинские строчные буквы, цифры и дефисы), и нажмите «add domain». Если имя занято, попробуйте другое.",
+      "Вверху страницы вы увидите свой «token» – длинную строку с дефисами. Выделите и скопируйте её.",
+      "Вставьте сюда поддомен и токен и нажмите «Проверить». pinn. сам сообщает DuckDNS адрес вашего NAS – поле «current ip» на сайте менять не нужно.",
+      "Токен – как пароль: никому его не передавайте. Если это всё же случилось: нажмите на duckdns.org «recreate token» и введите здесь новый токен.",
+    ],
+    test_duckdns_ok: "DuckDNS принял адрес ✓ – {0} теперь указывает на ваш NAS ({1}).",
+    test_duckdns_ko: "DuckDNS отказал. Пожалуйста, проверьте поддомен и токен – поддомен должен существовать в вашем аккаунте DuckDNS.",
+    test_duckdns_netz: "duckdns.org недоступен с NAS. Есть ли у NAS доступ в интернет?",
+    test_duckdns_fehlt: "Пожалуйста, введите поддомен и токен.",
+    test_duckdns_ungueltig: "Поддомен или токен выглядят неправильно.",
+    test_duckdns_ip_fehlt: "Пожалуйста, сначала введите IP-адрес NAS на шаге «Домашняя сеть».",
+
+    t_rebind: "Роутер: защита от DNS rebind",
+    i_rebind: "Ваш адрес pinn. указывает на устройство в домашней сети. Многие роутеры – в том числе FRITZ!Box – блокируют это для защиты. Тогда pinn. не откроется по этому адресу. Помогает исключение ровно для этого адреса:",
+    g_rebind: [
+      "Откройте [fritz.box](http://fritz.box) и войдите.",
+      "«Home Network» → «Network» → вкладка «Network Settings».",
+      "Прокрутите в самый низ и раскройте «additional settings».",
+      "В разделе «DNS Rebind Protection» в поле «Host name exceptions» введите эту строку: `{SUB}.duckdns.org`",
+      "Нажмите «Apply» и – если FRITZ!Box попросит – подтвердите на устройстве.",
+      "Другие роутеры: найдите в настройках «DNS rebind» и внесите тот же адрес как исключение. Если такой настройки нет, обычно ничего делать не нужно.",
+    ],
+    rebindErledigt: "Готово – исключение добавлено",
+
+    t_fern: "Вне дома (VPN)",
+    i_fern: "pinn. намеренно не открыт в интернет. Вне дома телефон безопасно подключается к дому через VPN – как будто вы в своей сети Wi-Fi. Как вы хотите это сделать?",
+    c_wg: "FRITZ!Box с WireGuard", c_wg_d: "Рекомендуется, если у вас FRITZ!Box с FRITZ!OS 7.50 или новее. Бесплатно, дополнительный аккаунт не нужен.",
+    c_ts: "Tailscale", c_ts_d: "Для других роутеров – или если WireGuard не работает (например, при подключении DS-Lite). Нужен бесплатный аккаунт на tailscale.com.",
+    c_kein: "Только дома", c_kein_d: "Использовать pinn. только в домашней сети Wi-Fi. Можно добавить в любое время.",
+    L_TS_AUTHKEY: "Ключ Tailscale (auth key)",
+    g_wireguard: [
+      "Откройте [fritz.box](http://fritz.box) и войдите. В разделе «System» → «Update» должно быть указано FRITZ!OS 7.50 или новее (если нет – обновите там).",
+      "«Internet» → «Permit Access» → вкладка «VPN (WireGuard)» → «Add connection».",
+      "Выберите «Simplified setup (recommended)» → «Next». На вопрос, нужно ли подключить отдельное устройство, ответьте «Yes».",
+      "Введите имя телефона (например, `Телефон Анны`) → «Finish». Если FRITZ!Box просит подтверждение: нажмите кнопку на устройстве или подтвердите на телефоне.",
+      "Если FRITZ!Box просит аккаунт MyFRITZ!: создайте его бесплатно – так телефон найдёт ваш роутер вне дома.",
+      "Появится QR-код. Установите на телефон приложение «WireGuard»: [iPhone](https://apps.apple.com/app/wireguard/id1441195209) · [Android](https://play.google.com/store/apps/details?id=com.wireguard.android).",
+      "В приложении WireGuard нажмите «+» → «Scan from QR code» (iPhone: «Create from QR code») → отсканируйте код с экрана → дайте имя → разрешите добавить конфигурацию VPN.",
+      "Проверка: выключите на телефоне Wi-Fi, включите WireGuard и откройте {ADRESSE}.",
+      "Повторите шаги начиная с «Add connection» для каждого другого телефона – каждому устройству своё подключение.",
+    ],
+    wgNurPinnT: "Разрешить только pinn. (например, для родственников)",
+    wgNurPinn: "Если устройство через VPN должно видеть только pinn., а не всю домашнюю сеть: в приложении WireGuard нажмите на подключение → «Edit» → в «Allowed IPs» замените всё на `{NAS_IP}/32, {ROUTER_IP}/32` → «Save». Второй адрес – это роутер (для разрешения имён). Учтите: ограничение действует на этом устройстве.",
+    wgDsLite: "Вне дома не работает? У некоторых подключений (DS-Lite, часто у кабельных и оптоволоконных) нет собственного IPv4-адреса – тогда WireGuard работает, только если у телефона вне дома есть IPv6. В этом случае используйте Tailscale.",
+    g_tailscale: [
+      "Откройте [login.tailscale.com](https://login.tailscale.com/start) и создайте бесплатный аккаунт (например, вход через Google, Microsoft или Apple).",
+      "В консоли администратора вверху «Settings» → слева «Keys» → «Generate auth key…».",
+      "Оставьте настройки по умолчанию → «Generate key» → скопируйте ключ (начинается с `tskey-auth-`) и вставьте его выше.",
+      "Нажмите «Далее». Контейнер «tailscale» на NAS войдёт с ним в течение минуты.",
+      "Снова в консоли Tailscale: вкладка «Machines» → у устройства «pinn» нажмите «…» → «Edit route settings…» → отметьте `{NAS_IP}/32` → «Save».",
+      "Там же у «pinn» в «…» выберите «Disable key expiry» – иначе NAS придётся входить заново каждые 180 дней.",
+      "Установите приложение «Tailscale» на каждый телефон ([iPhone](https://apps.apple.com/app/tailscale/id1470499037) · [Android](https://play.google.com/store/apps/details?id=com.tailscale.ipn)) и войдите с тем же аккаунтом. Родственников пригласите в консоли в разделе «Users».",
+      "Проверка: выключите на телефоне Wi-Fi, подключите Tailscale и откройте {ADRESSE}.",
+    ],
+    keinFern: "Не страшно – тогда pinn. работает в домашней сети Wi-Fi. Удалённый доступ можно добавить в любое время: Главный администратор → Настройка.",
+
+    t_google: "Google: календари и контакты Android",
+    i_google: "Необязательно. Нужно, если вы хотите видеть в pinn. календари Google (Android) или дни рождения из контактов Google. Настраивается один раз для всего сервера – затем каждый входит в pinn. со своим аккаунтом Google. Для iPhone/iCloud здесь делать ничего не нужно.",
+    googleBrauchtHttps: "Google нужен HTTPS-адрес из шага «DuckDNS».",
+    L_REDIRECT: "Redirect URI (для Google Cloud Console)",
+    L_PINN_GOOGLE_CLIENT_ID: "Client ID", L_PINN_GOOGLE_CLIENT_SECRET: "Client secret",
+    g_google: [
+      "Откройте [console.cloud.google.com](https://console.cloud.google.com) и войдите с аккаунтом Google (в первый раз примите условия использования).",
+      "Нажмите вверху на выбор проекта → «Новый проект» → имя `pinn` → «Создать». Затем выберите вверху проект «pinn».",
+      "Включите три API – откройте каждый и нажмите «Включить»: [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com) · [CalDAV API](https://console.cloud.google.com/apis/library/caldav.googleapis.com) · [People API](https://console.cloud.google.com/apis/library/people.googleapis.com).",
+      "Откройте [Google Auth Platform](https://console.cloud.google.com/auth/overview) → «Начать»: название приложения `pinn.`, email поддержки = ваш адрес → аудитория «Внешние» → контактный email → согласиться → «Создать».",
+      "Слева «Аудитория» → «Опубликовать приложение» → подтвердить. Важно: в статусе «Тестирование» каждое подключение Google истекает через 7 дней.",
+      "Слева «Клиенты» → «Создать клиента» → тип приложения «Веб-приложение», имя `pinn.`.",
+      "В «Разрешённые URI перенаправления» → «Добавить URI» и вставьте ровно этот адрес: `{REDIRECT}` → «Создать».",
+      "Скопируйте Client ID и Client secret, вставьте их сюда и нажмите «Проверить». (Google показывает секрет только один раз – иначе используйте «Добавить секрет» у клиента.)",
+      "При подключении Google позже покажет «Google не проверил это приложение». Для вашего частного приложения это нормально: «Дополнительные настройки» → «Перейти на страницу pinn.».",
+    ],
+    test_google_ok: "Google знает этого клиента ✓",
+    test_google_uri: "Client ID и секрет верны, но у клиента нет redirect URI: {0}",
+    test_google_ungueltig: "Google не узнаёт этот Client ID или секрет – пожалуйста, скопируйте их ещё раз.",
+    test_google_netz: "Google недоступен с NAS.",
+    test_google_fehlt: "Пожалуйста, введите Client ID и Client secret.",
+
+    t_ki: "ИИ для рецептов (Google Gemini)",
+    i_ki: "Необязательно. ИИ гораздо лучше считывает рецепты из текста, фотографий, PDF и ссылок и находит ваш календарь вывоза мусора. Ключ бесплатный и остаётся на NAS – приложения никогда не обращаются к Google напрямую.",
+    L_PINN_GEMINI_KEY: "API-ключ Gemini", L_PINN_GEMINI_MODELL: "Фиксированная модель",
+    h_modell: "Пусто = автоматически текущая модель Flash.",
+    g_ki: [
+      "Откройте [aistudio.google.com/apikey](https://aistudio.google.com/apikey) и войдите с аккаунтом Google.",
+      "Нажмите «Create API key». Если Google спросит проект, выберите проект «pinn» из предыдущего шага или создайте новый.",
+      "Скопируйте ключ (обычно начинается с `AIza`), вставьте его сюда и нажмите «Проверить».",
+      "Полезно знать: в бесплатном тарифе Google может использовать отправленные тексты рецептов для улучшения своих сервисов.",
+    ],
+    test_gemini_ok: "Ключ действителен ✓",
+    test_gemini_ungueltig: "Google отклоняет ключ – пожалуйста, скопируйте его ещё раз.",
+    test_gemini_gesperrt: "Ключ заблокирован для Gemini API. Пожалуйста, создайте новый ключ в AI Studio.",
+    test_gemini_netz: "Google недоступен с NAS.",
+    test_gemini_fehlt: "Пожалуйста, введите ключ.",
+
+    t_ortung: "Геолокация (Семья → местоположение)",
+    i_ortung: "Необязательно. Телефоны передают местоположение прямо в pinn. – здесь ничего вводить не нужно. Контейнер «traccar» нужен только для GPS-трекеров с SIM-картой.",
+    l_ortung: [
+      "Передача местоположения работает прямо в pinn. (Семья → Геолокация). Чтобы отправлять данные и при закрытом pinn., установите приложение «Traccar Client» – оно отправляет прямо в pinn.",
+      "Позже pinn. покажет адрес сервера и ID устройства для каждого человека в разделе Семья → ⚙︎ Геолокация.",
+      "Вне дома телефону нужен VPN из шага «Вне дома».",
+      "GPS-трекеры с SIM-картой (например, на ошейнике собаки) отправляют данные из мобильной сети – для этого нужен проброс порта в роутере. pinn. покажет инструкцию при добавлении трекера.",
+    ],
+    appTraccar: "Приложение «Traccar Client»:",
+    h_traccar: "Заполняйте, только если вы уже сами создали аккаунт в Traccar. Пусто = pinn. создаст его сам.",
+    L_PINN_TRACCAR_EMAIL: "Email Traccar", L_PINN_TRACCAR_PASSWORT: "Пароль Traccar",
+    test_traccar_ok: "Traccar работает ✓",
+    test_traccar_aus: "Контейнер «traccar» не запущен – для телефонов он не нужен. Только для GPS-трекеров: добавьте в файл .env строку COMPOSE_PROFILES=tracker.",
+
+    t_ha: "Умный дом: Home Assistant",
+    i_ha: "Необязательно. Где работает ваш Home Assistant?",
+    c_ha_kein: "Без Home Assistant",
+    c_ha_geraet: "На отдельном устройстве", c_ha_geraet_d: "например, Raspberry Pi или Home Assistant Green.",
+    c_ha_vm: "Как виртуальная машина на этом NAS", c_ha_vm_d: "Тогда pinn. настроит небольшой сетевой обход – иначе NAS не достучится до ВМ.",
+    haGeraetInfo: "Здесь ничего вводить не нужно. Каждая семья настраивает подключение в pinn. в разделе Настройки → Умный дом.",
+    L_HA_IP: "IP-адрес Home Assistant", L_HILFS_IP: "Свободный вспомогательный адрес", L_NAS_NETZWERKKARTE: "Сетевой интерфейс NAS",
+    h_karte: "«auto» = pinn. сам определит сетевой интерфейс.",
+    g_ha: [
+      "IP Home Assistant: в Home Assistant «Настройки» → «Система» → «Сеть» – или найдите устройство «homeassistant» в FRITZ!Box в разделе «Home Network» → «Network». Там же отметьте «always assign the same IPv4 address».",
+      "Вспомогательный адрес: адрес в домашней сети, который не использует ни одно устройство и который роутер никогда не выдаёт. В FRITZ!Box в «Home Network» → «Network» → «Network Settings» → «IPv4 settings» виден диапазон, который выдаёт роутер (например, от .20 до .200). Выберите адрес выше него, например `{VORSCHLAG}`.",
+      "Нажмите «Далее» – контейнер «ha-netz» настроит обход в течение минуты. «Проверить» покажет, достучится ли pinn. до Home Assistant.",
+      "Токен доступа Home Assistant каждая семья вводит позже в pinn. в разделе Настройки → Умный дом.",
+    ],
+    haAktiv: "Обход активен через {0} (вспомогательный адрес {1}) ✓", haWartet: "Обход ждёт настроек.", haFehler: "Не удалось настроить обход (сетевой интерфейс: {0}).",
+    test_homeassistant_ok: "Home Assistant доступен ✓",
+    test_homeassistant_aus: "Home Assistant (пока) недоступен. После «Далее» подождите до минуты и проверьте снова.",
+    test_homeassistant_fehlt: "Пожалуйста, введите IP-адрес Home Assistant.",
+
+    t_apps: "Приложения и устройства",
+    i_apps: "Почти готово! Вот что нужно членам семьи на телефонах:",
+    a_home_t: "pinn. на главном экране (для всех)",
+    a_home: [
+      "iPhone/iPad: откройте {ADRESSE} в Safari → значок «Поделиться» (квадрат со стрелкой) → «На экран «Домой»» → «Добавить». Только так работают push-уведомления (iOS 16.4 или новее).",
+      "Android: откройте {ADRESSE} в Chrome → ⋮ справа вверху → «Установить приложение» или «Добавить на главный экран».",
+      "Всегда используйте адрес https – не адрес с :8090.",
+    ],
+    a_vpn: "Для использования вне дома – настройка в шаге «Вне дома»:",
+    a_traccar: "Только для геолокации:",
+    a_icloud_t: "Календарь iCloud (iPhone)",
+    a_icloud: "Каждая семья сама подключает свой календарь iCloud в pinn. в разделе Настройки → Календарь. Для этого нужен пароль приложения: [account.apple.com](https://account.apple.com) → «Вход и безопасность» → «Пароли приложений» → «+» → имя `pinn.` → введите показанный пароль (xxxx-xxxx-xxxx-xxxx) в pinn.",
+    a_push_t: "Push-уведомления",
+    a_push: "Каждый включает их в pinn. в разделе Настройки → Уведомления → «Включить на этом устройстве» – на iPhone только в приложении с главного экрана.",
+
+    t_fertig: "Итог",
+    i_fertig: "Проверьте данные. По кнопке «Сохранить и запустить» pinn. применит всё и один раз ненадолго перезапустится (примерно 10–20 секунд).",
+    S_ADRESSE: "Адрес", S_REBIND: "Исключение DNS rebind", S_FERN: "Вне дома", S_KI: "ИИ", S_ORTUNG: "Геолокация",
+    L_PINN_PUSH_KONTAKT: "Контакт для push-сервисов",
+    h_push: "Apple и Google требуют контактный адрес (email) для push-уведомлений. Пусто = pinn. использует свой адрес.",
+    neustart: "pinn. перезапускается …", neustartOk: "перезапущен ✓", neustartFehler: "pinn. не отвечает. Пожалуйста, перезагрузите страницу через минуту-другую.",
+    pruefeHttps: "Проверка HTTPS …", pruefeAlles: "Проверка всего …",
+    zertifikatDauert: "Сертификат безопасности запрашивается в первый раз – это может занять 1–2 минуты …",
+    httpsOk: "{0} доступен ✓",
+    httpsFehler: "{0} пока не отвечает. Частые причины: защита от DNS rebind в роутере (шаг 5), это устройство не в домашней сети, или сертификату нужно чуть больше времени. Проверьте позже через «Проверить снова».",
+    httpsAus: "HTTPS-адрес не настроен (шаг DuckDNS).",
+    t_geschafft: "Готово! 🎉",
+    geschafftText: "pinn. настроен. Теперь открывайте pinn. по этому адресу и сохраните его на всех телефонах (см. «Приложения и устройства»). Затем создайте первую семью в управлении семьями.",
+    nochmalPruefen: "Проверить снова", zurVerwaltung: "К управлению семьями",
+  };
 
   var STEPS = [
     { id: 'sprache' },
@@ -2307,8 +2518,11 @@
   var R = {};
   R.sprache = function () {
     var langs = (window.PINN_LANGUAGES || []).slice();
-    var order = { de: 0, en: 1, fr: 2, es: 3, it: 4, pt: 5, zh: 6, ja: 7, ko: 8 };
-    langs = langs.filter(function (l) { return order[l.code] != null; }).sort(function (a, b) { return order[a.code] - order[b.code]; });
+    var order = { de: 0, en: 1, fr: 2, es: 3, it: 4, pt: 5, zh: 6, ja: 7, ko: 8, ru: 9 };
+    // Versteckte Sprachen nur, wenn sie auf diesem Gerät zum Testen freigeschaltet sind (PINN_I18N.find)
+    var I = window.PINN_I18N;
+    langs = langs.filter(function (l) { return order[l.code] != null && (!l.hidden || (I && I.find && I.find(l.code))); })
+      .sort(function (a, b) { return order[a.code] - order[b.code]; });
     var h = '<h2 class="ps-h">' + esc(t('t_sprache')) + '</h2><p class="ps-p">' + esc(t('i_sprache')) + '</p><div class="ps-langs">';
     langs.forEach(function (l) {
       h += '<button type="button" class="ps-lang' + (S.lang === l.code ? ' on' : '') + '" data-lang="' + l.code + '">' + (l.flag || '') + '<span>' + esc(l.name) + '</span></button>';

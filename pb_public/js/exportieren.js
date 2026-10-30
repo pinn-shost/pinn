@@ -8,7 +8,7 @@
    Data export (whole family as a ZIP – data + documents)
    ----------------------------------------------------------
    The module lives in pb_public/datenexport.js and is only loaded when first opened
-   (own texts in nine languages). The browser builds the ZIP; the server only delivers collections
+   (own texts in ten languages, Russian still hidden). The browser builds the ZIP; the server only delivers collections
    and files (pb_hooks/export.pb.js + pinn-export.js).
    - Settings → System → Data: "Export family" (admins, not with child lock)
    - Main admin → Families: "📦 Export" per family (complete, e.g. for moving)
@@ -23,6 +23,8 @@ const PINN_EXPORT_TEXTE = {
   zh: { btn: '📦 导出{F}', kurz: '📦 导出', text: '将{Fd}的全部数据导出为一个 ZIP 文件——包含文档、凭证和图片。例如用于迁移到另一台 NAS，或作为你自己的备份。', laden: '无法加载导出功能（缺少 pb_public/datenexport.js？）。', F: '家庭', FW: '合租', Fd: '你的家庭', FWd: '你的合租' },
   ja: { btn: '📦 {F}をエクスポート', kurz: '📦 エクスポート', text: '{Fd}のすべてのデータを1つの ZIP ファイルに。書類、領収書、画像も含みます。別の NAS への引っ越しや、自分用のバックアップなどに。', laden: 'エクスポートを読み込めませんでした（pb_public/datenexport.js がありませんか？）。', F: '家族', FW: 'ルームシェア', Fd: '家族', FWd: 'ルームシェア' },
   ko: { btn: '📦 {F} 내보내기', kurz: '📦 내보내기', text: '{Fd}의 모든 데이터를 ZIP 파일 하나로 – 문서, 영수증, 사진까지 포함해요. 다른 NAS로 옮기거나 개인 백업용으로 쓸 수 있어요.', laden: '내보내기를 불러올 수 없어요(pb_public/datenexport.js가 없나요?).', F: '가족', FW: '셰어하우스', Fd: '가족', FWd: '셰어하우스' },
+  // Russian (since 1.120.0, still hidden in the app): {F} is used in the accusative ("export the family")
+  ru: { btn: '📦 Экспортировать {F}', kurz: '📦 Экспорт', text: 'Все данные {Fd} одним ZIP-файлом – вместе с документами, чеками и изображениями. Например, для переезда на другой NAS или как собственная резервная копия.', laden: 'Не удалось загрузить экспорт (нет pb_public/datenexport.js?).', F: 'семью', FW: 'квартиру', Fd: 'вашей семьи', FWd: 'вашей квартиры' },
 };
 function pinnExportText(key) {
   const l = (window.PINN_I18N && window.PINN_I18N.current) || 'en';

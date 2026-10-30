@@ -95,6 +95,17 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 et 🇰🇷 한국어**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.120.0
+
+**Russe – première étape**
+
+- pinn. est traduit en **russe** étape par étape. La première étape couvre la connexion, le tableau de bord, le menu, la page de l’administrateur principal et tous les réglages, ainsi que l’assistant de configuration complet et l’export des données – environ 500 textes, avec les trois formes du pluriel russe et les termes de colocation.
+- Le russe reste **masqué** tant que tout n’est pas traduit. Pour l’essayer sur un appareil, saisissez `localStorage.setItem('pinn.sprachen.alle', '1')` dans la console du navigateur et choisissez Русский ; les textes pas encore traduits s’affichent en anglais.
+- Serveur : la configuration accepte maintenant aussi le russe comme langue (`pb_hooks/pinn-einrichtung.js`).
+- Pour les contributeurs : `i18n-keys.js` a deux nouvelles commandes – `todo` (les clés qui manquent encore à une langue, avec le texte anglais) et `lang` (écrit les textes traduits d’une langue, vérifie pluriels et paramètres, ajoute la variante colocation).
+- Ensuite : les étapes suivantes du russe (calendrier, tâches, ménage …).
+- Modifié : `index.html`, `js/sprachen.js`, `js/einrichten.js`, `js/exportieren.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, `i18n/ru.i18n.js` (nouveau), `i18n/versionslog.en.js`, `pb_hooks/pinn-einrichtung.js`, `.github/`. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou bouton de mise à jour).
+
 ## Nouveautés de la 1.119.3
 
 **Grand ménage : l’ancien traducteur a disparu**
@@ -170,16 +181,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Traductions :** tuiles météo, anniversaires et délais, dépôt, tâches pneus, « Attribué à : » dans les notes, météo de vacances et tâches de l'aperçu hebdomadaire ; aperçus hebdomadaire et mensuel aussi en japonais et coréen.
 - Installation comme d'habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
-## Nouveautés de la 1.117.0
-
-**Clés de texte, partie 9 : la cloche et les notifications push du serveur**
-
-- La **cloche** (trajet retour, courses en attente, nouvelles de la famille) et l’avis **« Tu fais les courses ? »** prennent maintenant leurs textes dans les fichiers de langue de `pb_public/i18n/` – dans les neuf langues et en colocation. « Tu fais les courses ? » existe désormais aussi en japonais et en coréen.
-- **Notifications push du serveur :** les traductions ne sont plus écrites dans le code du serveur. Le serveur lit les mêmes fichiers de langue que l’app (clés `push.…`) via `pinn-textkern.js` – singulier, pluriel et termes de colocation comme dans l’app.
-- Petites choses : en anglais « Fit winter tyres » au lieu de « Fit Winter tyres » (de même pour les pneus été et dans les autres langues) ; date et heure de la cloche suivent ta langue ; les nombres comme « 1 article » sont au bon singulier ou pluriel ; plus de guillemets doublés dans les avis japonais.
-- Prochaine étape : la 1.118.0 fait le ménage – l’ancien traducteur et `lang/` disparaissent.
-- Modifié : `index.html`, `js/hinweise.js`, `js/fahrzeuge.js`, `js/sprachen.js`, `js/versionslog.js`, tous les fichiers de langue dans `i18n/` et `lang/` et sur le serveur `pb_hooks/pinn-pushtext.js`. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
 ## Comment ça marche
 
 ```mermaid
@@ -206,7 +207,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.119.3` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.120.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

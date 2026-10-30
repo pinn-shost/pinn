@@ -99,6 +99,16 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語和 🇰🇷 한국어**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.120.0 新功能
+
+**俄语——第一阶段**
+
+- pinn. 正在逐步翻译成**俄语**。第一阶段包括登录、仪表板、菜单、主管理员页面和全部设置，以及完整的设置向导和数据导出——约 500 条文本，包含俄语的三种复数形式和合租用语。
+- 在全部翻译完成之前，俄语保持**隐藏**。如需在某台设备上试用，请在浏览器控制台输入 `localStorage.setItem('pinn.sprachen.alle', '1')` 并选择 Русский；尚未翻译的文本显示为英语。
+- 服务器：设置向导现在也接受俄语作为语言（`pb_hooks/pinn-einrichtung.js`）。
+- 下一步：俄语的后续阶段（日历、任务、家务……）。
+- 已更改：`index.html`, `js/sprachen.js`, `js/einrichten.js`, `js/exportieren.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, `i18n/ru.i18n.js`（新）、`i18n/versionslog.en.js`、`pb_hooks/pinn-einrichtung.js`、`.github/`。照常安装（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
+
 ## 1.119.3 新功能
 
 **清理：旧翻译器已移除**
@@ -136,12 +146,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - 下一步：1.119.1 将标准名称、服务器消息和版本日志改为文本键；1.119.2 移除旧翻译器和 `lang/`。
 - 已修改：`index.html`, `js/pinnwand.js`, `js/ausblick.js`, `js/sprachsteuerung.js`, `js/familienverwalten.js`, `js/profilbild.js`, `js/dashboardhintergrund.js`, `js/offline.js`, `js/dashboard.js`, `js/verbindung.js`, `js/vertraege.js`, `js/zustand.js`, `js/mitglieder.js`, `js/appstart.js`, `js/serverzugriff.js`, `js/popups.js`, `js/wetter.js`, `js/einrichten.js`, `js/exportieren.js`, `js/finanzen.js`, `js/sparen.js`, `js/vorrat2.js`, `js/einkaufseingabe.js`, `js/benutzer.js`, `js/icsparser.js`, `js/sprachen.js`, `js/versionslog.js`，`i18n/` 和 `lang/` 中的所有语言文件——服务器无变化。照常安装（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
 
-## 1.118.4 新功能
-
-**安全：有家庭看板时必须设置 PIN · 日历修复**
-
-- 家里一旦有看板，**每个资料都需要 PIN**（没有 PIN 的人先用密码登录一次并立即设置）；手机上从食谱返回后，列表视图的日历不再“展开”。
-
 ## 工作原理
 
 ```mermaid
@@ -170,7 +174,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.119.3` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.120.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -22,6 +22,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.120', datum: '30.10.2026', titel: 'Russisch – erste Etappe',
+    punkte: [
+      ['neu', 'Russisch kommt: pinn. wird Schritt für Schritt ins Russische übersetzt. Den Anfang machen Anmeldung, Dashboard, Menü, Hauptadmin-Seite und alle Einstellungen sowie der Einrichtungs-Assistent und der Datenexport. Die Sprache bleibt versteckt, bis alles übersetzt ist – zum Ausprobieren auf einem Gerät freischaltbar; noch fehlende Texte erscheinen dann auf Englisch'],
+      ['info', 'Geändert: index.html, js/sprachen.js, js/einrichten.js, js/exportieren.js, js/versionslog.js, einrichtung.js, datenexport.js, i18n/ru.i18n.js (neu), i18n/versionslog.en.js, am Server pb_hooks/pinn-einrichtung.js (Russisch als Sprache der Einrichtung) und für Mitwirkende .github/ (i18n-keys.js mit „todo“ und „lang“, check-keys.js zeigt den Fortschritt einer versteckten Sprache)'],
+    ],
+  },
+  {
     v: '1.119', datum: '30.10.2026', titel: 'Übersetzungen mit Text-Schlüsseln: Pinnwand und die letzten Bereiche',
     punkte: [
       ['info', 'Pinnwand (Zettel, Listen, Umfragen, Fotos, Danke, Countdown, Archiv und Antworten), Wochen- und Monatsausblick, Sprachsteuerung samt Anleitung für iPhone und Android, die Familien-Verwaltung des Hauptadmins, Profilbild-Zuschnitt und Dashboard-Hintergrund holen ihre Texte jetzt über Text-Schlüssel – in allen neun Sprachen, auch als WG'],

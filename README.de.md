@@ -99,6 +99,17 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 und 🇰🇷 한국어**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.120.0
+
+**Russisch – erste Etappe**
+
+- pinn. wird Schritt für Schritt ins **Russische** übersetzt. Die erste Etappe umfasst Anmeldung, Dashboard, Menü, die Hauptadmin-Seite und alle Einstellungen, dazu den kompletten Einrichtungs-Assistenten und den Datenexport – rund 500 Texte, mit den drei russischen Mehrzahlformen und den WG-Begriffen.
+- Russisch bleibt **versteckt**, bis alles übersetzt ist. Zum Ausprobieren auf einem Gerät in der Browser-Konsole `localStorage.setItem('pinn.sprachen.alle', '1')` eingeben und Русский wählen; noch nicht übersetzte Texte erscheinen auf Englisch.
+- Server: Die Einrichtung akzeptiert jetzt auch Russisch als Sprache (`pb_hooks/pinn-einrichtung.js`).
+- Für Mitwirkende: `i18n-keys.js` hat zwei neue Befehle – `todo` (die Schlüssel, die einer Sprache noch fehlen, mit englischem Text) und `lang` (schreibt die übersetzten Texte einer Sprache, prüft Mehrzahlformen und Platzhalter, ergänzt die WG-Variante). Die Textprüfung zeigt den Fortschritt einer versteckten Sprache in einer Zeile.
+- Als Nächstes: weitere Etappen Russisch (Kalender, Aufgaben, Haushalt …).
+- Geändert: `index.html`, `js/sprachen.js`, `js/einrichten.js`, `js/exportieren.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, `i18n/ru.i18n.js` (neu), `i18n/versionslog.en.js`, `pb_hooks/pinn-einrichtung.js`, `.github/`. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
+
 ## Neu in 1.119.3
 
 **Aufgeräumt: der alte Übersetzer ist weg**
@@ -146,14 +157,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Kalender am Handy:** Nach dem Zurückkommen aus einem Rezept war die Listenansicht der Übersicht so hoch „aufgeklappt“ wie die Zeitleiste – jetzt behält sie ihre Höhe.
 - Geändert: `index.html`, `js/profilauswahl.js`, `js/pineingabe.js`, `js/dashboardkonto.js`, `js/appstart.js`, `js/uebersicht.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien und am Server `dashboard.pb.js`, `pinn-dashboard.js`.
 
-## Neu in 1.118.3
-
-**Rezepte: Papierkorb, „wirklich löschen?“, langes Drücken im Wochen-Slider**
-
-- **Papierkorb:** Beim Löschen eines Rezepts kommt jetzt eine Rückfrage. Danach bleibt das Rezept **7 Tage im Papierkorb** (Knopf unter der Rezeptliste) – auf allen Geräten der Familie, samt geplanter Mahlzeiten und Favoriten-Herz. Mit einem Tipp wiederherstellen oder endgültig löschen; nach 7 Tagen verschwindet es von selbst.
-- **Lange drücken** auf eine Mahlzeit unter „Diese Woche geplant“ (Übersicht und Rezepte) zeigt Optionen: Rezept ansehen, Rezept bearbeiten, verschieben oder ändern (Tag, Mahlzeit, Portionen, anderes Rezept), noch einmal planen, als gekocht markieren, aus der Essensplanung entfernen. Mit Kindersicherung gibt es nur „ansehen“.
-- Geändert: `index.html`, `js/rezepte.js`, `js/rezeptaktionen.js` (neu), `js/essenplanen.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/basis.css`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien, `pinn-setup.sh` und am Server `pinn-bereiche.js`, `pinn-hinweise.js`.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -182,7 +185,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.119.3` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.120.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

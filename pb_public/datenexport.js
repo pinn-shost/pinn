@@ -12,7 +12,7 @@
    (pb_hooks/export.pb.js + pinn-export.js). Dateien werden unkomprimiert übernommen (PDFs und Fotos
    sind schon komprimiert), die JSON-Daten werden – wo der Browser es kann – komprimiert.
    Eigene Texte in Deutsch, Englisch, Französisch, Spanisch, Italienisch, Portugiesisch, Chinesisch,
-   Japanisch und Koreanisch (data-no-i18n / data-no-term).
+   Japanisch, Koreanisch und Russisch (data-no-i18n / data-no-term).
 
    Aufbau des ZIP:
      pinn-export.json                 Beschreibung: Format, Version, Familie, Inhalt, Dateiliste
@@ -24,7 +24,7 @@
   'use strict';
   if (window.PinnExport) return;
 
-  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko'];
+  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru'];
   var T = {};
   T.de = {
     F: 'Familie', FW: 'WG', Fd: 'der Familie', FWd: 'der WG',
@@ -551,6 +551,58 @@
       '大切に保管してください。',
     ],
   };
+  T.ru = {
+    F: 'семья', FW: 'квартира', Fd: 'вашей семьи', FWd: 'вашей квартиры',
+    titel: 'Экспорт данных {Fd}',
+    intro: 'Все данные {Fd} одним ZIP-файлом – вместе с документами, чеками и изображениями. Например, для переезда на другой NAS или как собственная резервная копия.',
+    lade: 'Проверка содержимого …', fehler: 'Не получилось.',
+    fehlerNetz: 'Нет связи с pinn. – пожалуйста, проверьте, что вы в домашней сети или в VPN.',
+    serverFehlt: 'На сервере ещё нет export.pb.js и pinn-export.js (pb_hooks).',
+    familieWaehlen: 'Какая {F}?', inhalt: 'Что попадёт в ZIP', eintraege: 'записей: {0}', dateienN: 'файлов: {0}',
+    dokumente: 'Файлов всего', groesse: 'Размер (примерно)',
+    nichtDrin: 'Не включено',
+    nichtDrinText: 'Пароли, PIN-коды, данные доступа к iCloud, Google и Home Assistant, устройства с выполненным входом и push-подписки. На другом NAS вы просто войдёте снова. История местоположений из Traccar тоже не включена.',
+    privat: 'Не включено, так как это личное: касс, в которых вы не участвуете – {0}, календарей «Только для меня» других профилей – {1}. Полный экспорт – например, для переезда – создаёт главный администратор.',
+    voll: 'Полный экспорт – личные кассы и календари «Только для меня» всех профилей включены.',
+    sicherheit: 'ZIP содержит финансы, документы и экстренные карты в незашифрованном виде. Пожалуйста, храните его надёжно и не отправляйте по email.',
+    gross: 'Это примерно {0}. На телефоне это может занять время – лучше экспортировать на компьютере и всё это время держать pinn. открытым.',
+    starten: 'Создать ZIP', abbrechen: 'Отмена', schliessen: 'Закрыть', nochmal: 'Попробовать снова',
+    schrittDaten: 'Данные: {0}', schrittDatei: 'Файл {0} из {1}', packe: 'Сборка ZIP …',
+    offenLassen: 'Пожалуйста, держите pinn. открытым, пока экспорт не завершится.',
+    fertig: 'Экспорт завершён ✓', fertigText: 'Записей: {0}, файлов: {1} · {2}',
+    speichern: 'Сохранить ZIP', teilen: 'Поделиться или сохранить в «Файлы»',
+    speichernTipp: 'iPhone/iPad: «Поделиться» → «Сохранить в «Файлы»». Компьютер: «Сохранить ZIP» помещает файл в папку загрузок.',
+    fehlende: 'Не удалось прочитать файлов: {0} – они перечислены в export-fehler.txt внутри ZIP.',
+    abgebrochen: 'Экспорт отменён.', zuGross: 'Экспорт больше 4 ГБ – обычный ZIP столько не вмещает.',
+    keinAdmin: 'Создавать экспорт могут только администраторы.',
+    S: {
+      familien: '{F}', benutzer: 'Профили', familien_daten: 'Календарь, списки, рецепты, участники и настройки',
+      rezept_bilder: 'Изображения рецептов', oeffentliche_rezepte: 'Общие рецепты', aufgaben: 'Задачи',
+      haushalt_verlauf: 'История хозяйства', kassen: 'Кассы, депо и договоры', ausgaben: 'Операции',
+      finanz_dokumente: 'Документы договоров', dokumente: 'Документы', pinnwand_bilder: 'Изображения доски',
+      kalender_eigene: 'Свои календари', kalender_termine: 'События', muellkalender: 'Календарь вывоза мусора',
+      ortung: 'Места и геолокация', zuhause: 'Дом', smarthome_zugaenge: 'Умный дом',
+      dashboard_hintergruende: 'Панель', apple_zugaenge: 'iCloud', google_zugaenge: 'Google',
+    },
+    liesmich: 'README.txt',
+    readme: [
+      'pinn. – экспорт данных',
+      '',
+      'Название: {0}',
+      'Создан: {1}, автор: {2} (pinn. {3})',
+      '',
+      'Содержимое:',
+      '  pinn-export.json  описание экспорта (формат, содержимое, список файлов)',
+      '  daten/            все записи по коллекциям в JSON (как хранятся в PocketBase)',
+      '  dateien/          документы, чеки и изображения: dateien/<коллекция>/<ID записи>/<файл>',
+      '',
+      'Не включено: пароли, PIN-коды, данные доступа (iCloud, Google, Home Assistant),',
+      'устройства с выполненным входом, push-подписки и история местоположений из Traccar.',
+      '',
+      'Внимание: этот файл содержит финансы, документы и экстренные карты без шифрования.',
+      'Пожалуйста, храните его надёжно.',
+    ],
+  };
   T.ko = {
     F: '가족', FW: '셰어하우스', Fd: '가족', FWd: '셰어하우스',
     titel: '{F} 내보내기',
@@ -658,7 +710,7 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
-  function locale() { return { de: 'de-DE', en: 'en-GB', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', pt: 'pt-BR', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR' }[S.lang] || 'en-GB'; }
+  function locale() { return { de: 'de-DE', en: 'en-GB', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', pt: 'pt-BR', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR', ru: 'ru-RU' }[S.lang] || 'en-GB'; }
   function zahl(n) { try { return Number(n || 0).toLocaleString(locale()); } catch (e) { return String(n || 0); } }
   function groesse(b) {
     b = Number(b) || 0;

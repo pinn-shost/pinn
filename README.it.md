@@ -99,6 +99,16 @@ Sempre con te: pinn. si installa su ogni iPhone e telefono Android come un’app
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 e 🇰🇷 한국어**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.120.0
+
+**Russo – prima tappa**
+
+- pinn. viene tradotto in **russo** passo dopo passo. La prima tappa comprende accesso, dashboard, menu, pagina dell’amministratore principale e tutte le impostazioni, oltre all’assistente di configurazione completo e all’esportazione dei dati – circa 500 testi, con le tre forme plurali del russo e i termini della casa condivisa.
+- Il russo resta **nascosto** finché non è tutto tradotto. Per provarlo su un dispositivo, digita `localStorage.setItem('pinn.sprachen.alle', '1')` nella console del browser e scegli Русский; i testi non ancora tradotti compaiono in inglese.
+- Server: la configurazione ora accetta anche il russo come lingua (`pb_hooks/pinn-einrichtung.js`).
+- Prossimamente: altre tappe del russo (calendario, attività, casa …).
+- Modificati: `index.html`, `js/sprachen.js`, `js/einrichten.js`, `js/exportieren.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, `i18n/ru.i18n.js` (nuovo), `i18n/versionslog.en.js`, `pb_hooks/pinn-einrichtung.js`, `.github/`. Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o pulsante di aggiornamento).
+
 ## Novità della 1.119.3
 
 **Pulizia: il vecchio traduttore non c’è più**
@@ -136,12 +146,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Prossimamente: 1.119.1 porta nomi standard, messaggi del server e registro versioni su chiavi; 1.119.2 rimuove il vecchio traduttore e `lang/`.
 - Modificato: `index.html`, `js/pinnwand.js`, `js/ausblick.js`, `js/sprachsteuerung.js`, `js/familienverwalten.js`, `js/profilbild.js`, `js/dashboardhintergrund.js`, `js/offline.js`, `js/dashboard.js`, `js/verbindung.js`, `js/vertraege.js`, `js/zustand.js`, `js/mitglieder.js`, `js/appstart.js`, `js/serverzugriff.js`, `js/popups.js`, `js/wetter.js`, `js/einrichten.js`, `js/exportieren.js`, `js/finanzen.js`, `js/sparen.js`, `js/vorrat2.js`, `js/einkaufseingabe.js`, `js/benutzer.js`, `js/icsparser.js`, `js/sprachen.js`, `js/versionslog.js`, tutti i file di lingua in `i18n/` e `lang/` – sul server non cambia nulla. Installare come al solito (`sudo sh pinn-*/pinn-setup.sh` o pulsante di aggiornamento).
 
-## Novità della 1.118.4
-
-**Sicurezza: PIN obbligatorio con una dashboard · correzione del calendario**
-
-- Appena la famiglia ha una dashboard **ogni profilo ha bisogno di un PIN** (chi non ce l’ha accede una volta con la password e lo sceglie subito); il calendario in vista elenco sul telefono non resta più «aperto» dopo una ricetta.
-
 ## Come funziona
 
 ```mermaid
@@ -170,7 +174,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.119.3` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.120.0` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
