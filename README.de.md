@@ -99,6 +99,15 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 und 🇰🇷 한국어**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.120.1
+
+**Russisch – zweite Etappe**
+
+- Ins Russische übersetzt: das Konto (Passwort, PIN, Profile, Gäste, Mitteilungen, Familien-Dashboard), Geräte & Anmeldung, das Fehlerprotokoll sowie Sicherungen & Updates – jetzt 874 von 6714 Texten, wieder mit den drei Mehrzahlformen und den WG-Begriffen.
+- Russisch bleibt **versteckt**, bis alles übersetzt ist (auf einem Gerät freischaltbar wie bei 1.120.0 beschrieben).
+- Als Nächstes: weitere Etappen Russisch (Kalender, Aufgaben, Haushalt …).
+- Geändert: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
+
 ## Neu in 1.120.0
 
 **Russisch – erste Etappe**
@@ -149,14 +158,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Als Nächstes: 1.119.1 stellt Standardnamen (Kategorien, Lagerorte, Einheiten), Server-Meldungen und das Versions-Log auf Schlüssel um; 1.119.2 entfernt den alten Übersetzer und `lang/`.
 - Geändert: `index.html`, `js/pinnwand.js`, `js/ausblick.js`, `js/sprachsteuerung.js`, `js/familienverwalten.js`, `js/profilbild.js`, `js/dashboardhintergrund.js`, `js/offline.js`, `js/dashboard.js`, `js/verbindung.js`, `js/vertraege.js`, `js/zustand.js`, `js/mitglieder.js`, `js/appstart.js`, `js/serverzugriff.js`, `js/popups.js`, `js/wetter.js`, `js/einrichten.js`, `js/exportieren.js`, `js/finanzen.js`, `js/sparen.js`, `js/vorrat2.js`, `js/einkaufseingabe.js`, `js/benutzer.js`, `js/icsparser.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien in `i18n/` und `lang/` – am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
 
-## Neu in 1.118.4
-
-**Sicherheit: PIN-Pflicht mit Familien-Dashboard · Kalender-Fix**
-
-- **PIN-Pflicht:** Sobald die Familie ein Dashboard hat (z. B. das iPad in der Küche), braucht jedes Profil eine PIN. Ein Profil ohne PIN zeigt am Dashboard einen 🔑 und öffnet sich **einmal mit dem Passwort** – direkt danach fragt die App nach der neuen PIN. Auf den eigenen Handys und Computern kommt die PIN-Eingabe ebenfalls gleich nach dem Start („Abmelden“ statt „Abbrechen“). Die eigene PIN lässt sich nicht entfernen, solange das Dashboard besteht; ein Admin kann die PIN eines Profils weiterhin zurücksetzen (die Person meldet sich dann noch einmal mit dem Passwort an). Gäste öffnen weiter mit einem Tipp. Falsche Passwörter zählen zur selben Sperre wie falsche PINs.
-- **Kalender am Handy:** Nach dem Zurückkommen aus einem Rezept war die Listenansicht der Übersicht so hoch „aufgeklappt“ wie die Zeitleiste – jetzt behält sie ihre Höhe.
-- Geändert: `index.html`, `js/profilauswahl.js`, `js/pineingabe.js`, `js/dashboardkonto.js`, `js/appstart.js`, `js/uebersicht.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien und am Server `dashboard.pb.js`, `pinn-dashboard.js`.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -185,7 +186,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.120.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.120.1` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

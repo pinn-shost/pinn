@@ -95,6 +95,15 @@ Siempre contigo: pinn. se instala en cada iPhone y móvil Android como una app n
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 y 🇰🇷 한국어**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.120.1
+
+**Ruso – segunda etapa**
+
+- Traducido al ruso: la cuenta (contraseña, PIN, perfiles, invitados, notificaciones, panel familiar), dispositivos e inicio de sesión, el registro de errores y copias de seguridad y actualizaciones – ya son 874 de 6714 textos, de nuevo con las tres formas de plural y los términos de piso compartido.
+- El ruso sigue **oculto** hasta que esté todo traducido (se puede activar en un dispositivo como se describe en la 1.120.0).
+- Próximo: más etapas del ruso (calendario, tareas, hogar …).
+- Modificado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – en el servidor no cambia nada. Instalar como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
+
 ## Novedades de la 1.120.0
 
 **Ruso – primera etapa**
@@ -172,15 +181,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Los admins que pueden instalar actualizaciones reciben **una notificación por versión nueva** (Cuenta → Notificaciones → Actualizaciones) y una **tarjeta en la campana** cada día hasta instalarla.
 - Al tocarla se abre directamente **Ajustes → Sistema** con la ventana de actualización.
 
-## Novedades de la 1.118.0
-
-**Fahrenheit y pulido de traducciones**
-
-- **Temperatura en °F o °C:** Ajustes → Idioma y región tiene el nuevo ajuste **Temperatura**. *Automático* sigue al país (EE. UU.: °F, si no °C); también puedes elegir Celsius o Fahrenheit a mano.
-- **Resumen:** los plazos de cancelación se ocultan deslizando, como los cumpleaños.
-- **Traducciones:** mosaicos de tiempo, cumpleaños y plazos, depósito, tareas de neumáticos, «Asignado a:» en notas, tiempo de vacaciones y tareas de la vista semanal; vistas semanal y mensual también en japonés y coreano.
-- Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
-
 ## Cómo funciona
 
 ```mermaid
@@ -207,7 +207,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.120.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.120.1` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

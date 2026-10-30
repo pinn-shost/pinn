@@ -95,6 +95,15 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 and 🇰🇷 한국어**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.120.1
+
+**Russian – second stage**
+
+- Translated into Russian: the account (password, PIN, profiles, guests, notifications, family dashboard), devices & sign-in, the error log and backups & updates – now 874 of 6714 texts, again with the three plural forms and the flatshare wording.
+- Russian stays **hidden** until everything is translated (unlock on one device as described for 1.120.0).
+- Next: further stages of Russian (calendar, tasks, household …).
+- Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.120.0
 
 **Russian – first stage**
@@ -179,15 +188,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Tapping the message or the card opens **Settings → System** directly with the update popup.
 - Changed: `index.html`, `js/sicherungen.js`, `js/mitteilungen.js`, `js/hinweise.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, all language files, on the server `pb_hooks/system.pb.js`, `pinn-system.js`, `pinn-hinweise.js`, `pinn-push.js`, `pinn-pushtext.js`. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
-## What's new in 1.118.0
-
-**Fahrenheit and translation polish**
-
-- **Temperature in °F or °C:** Settings → Language & region has a new **Temperature** setting. *Automatic* follows the country (USA: °F, otherwise °C); you can also choose Celsius or Fahrenheit by hand. It applies to the weather tile, the header, the weather view, holiday weather, the weekly preview and the garden tips.
-- **Overview:** cancellation deadlines can now be swiped away like birthdays; bring them back under Settings → Overview.
-- **Translations:** weather, birthday (“turns 30”) and contract tiles (“1 coming up”), the depot (“paid in”, “withdrawn”, imported purchases and sales), tyre tasks (storage place, “From pinn. → Vehicles”), “Assigned to:” in event notes, holiday weather of packing lists and tasks in the weekly preview. The weekly and monthly outlook now also exist in Japanese and Korean.
-- Changed: `index.html`, `js/region.js`, `js/sprache.js`, `js/design.js`, `js/wetterkachel.js`, `js/geburtstage.js`, `js/uebersicht.js`, `js/uebersichteinstellungen.js`, `js/vertraege.js`, `js/sparen.js`, `js/finanzen.js`, `js/familie.js`, `js/ausblick.js`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/mitglieder.js`, `js/aufgaben.js`, `js/termindetails.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/sprachen.js`, `js/versionslog.js`, all language files in `i18n/` and `lang/` – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
 ## How it works
 
 ```mermaid
@@ -214,7 +214,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.120.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.120.1` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

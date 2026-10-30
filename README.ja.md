@@ -99,6 +99,15 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.120.1の新機能
+
+**ロシア語 – 第2段階**
+
+- ロシア語に翻訳：アカウント（パスワード、PIN、プロフィール、ゲスト、通知、ファミリーダッシュボード）、デバイスとサインイン、エラーログ、バックアップとアップデート――これで6714件中874件のテキストが完了。今回も3つの複数形とシェアハウス用の言葉に対応しています。
+- すべて翻訳されるまで、ロシア語は**非表示**のままです（1.120.0の説明どおり1台の端末で有効にできます）。
+- 次回：ロシア語の次の段階（カレンダー、タスク、家事 …）。
+- 変更：`index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` ――サーバー側の変更はありません。いつもどおりインストールしてください（`sudo sh pinn-*/pinn-setup.sh` またはアップデートボタン）。
+
 ## 1.120.0の新機能
 
 **ロシア語――第1段階**
@@ -137,15 +146,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - 次の予定：1.119.2で古い翻訳機能と `lang/` を削除します。
 - 変更：`index.html`、`js/standardnamen.js`（新規）、`i18n/versionslog.en.js`（新規）、`js/serverzugriff.js`、`js/versionslog.js`、`js/hinweise.js` と `js/` のほか22ファイル、`i18n/` のすべての言語ファイル、`pinn-setup.sh` – サーバー側の変更はありません。いつもどおりインストールしてください（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
 
-## 1.119.0の新機能
-
-**テキストキーによる翻訳：掲示板と最後の領域**
-
-- **掲示板**（メモ、リスト、投票、写真、ありがとう、カウントダウン、アーカイブ、返信）、**週間・月間の見通し**、iPhone と Android の手順付き**音声操作**、メイン管理者の**家族管理**、**プロフィール写真の切り抜き**、**ダッシュボード背景**のテキストは `pb_public/i18n/` の言語ファイルから読み込まれるようになりました。9 言語すべて、シェアハウスにも対応。
-- 細かな点：オフライン時のメッセージ、「ログインの有効期限切れ」、キッズロックの案内、デバイス名、アバター名が言語に従います。起動チェックはシンプルな英語になりました。**キッズロック**はどの言語でも削除ボタンを認識します。掲示板の票数、カウントダウンの日数、「+ ほか 2 件」は正しい単数・複数形、日付は言語の形式です。
-- 次回：1.119.1 で標準名、サーバーメッセージ、バージョンログをキーに切り替え、1.119.2 で古い翻訳機能と `lang/` を削除します。
-- 変更：`index.html`, `js/pinnwand.js`, `js/ausblick.js`, `js/sprachsteuerung.js`, `js/familienverwalten.js`, `js/profilbild.js`, `js/dashboardhintergrund.js`, `js/offline.js`, `js/dashboard.js`, `js/verbindung.js`, `js/vertraege.js`, `js/zustand.js`, `js/mitglieder.js`, `js/appstart.js`, `js/serverzugriff.js`, `js/popups.js`, `js/wetter.js`, `js/einrichten.js`, `js/exportieren.js`, `js/finanzen.js`, `js/sparen.js`, `js/vorrat2.js`, `js/einkaufseingabe.js`, `js/benutzer.js`, `js/icsparser.js`, `js/sprachen.js`, `js/versionslog.js`、`i18n/` と `lang/` のすべての言語ファイル – サーバー側の変更はありません。いつも通りインストール（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
-
 ## しくみ
 
 ```mermaid
@@ -174,7 +174,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.120.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.120.1`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
