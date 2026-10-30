@@ -11,6 +11,8 @@
      node .github/scripts/i18n-keys.js set <key> <lang> "<text>"        one text of one language by hand
      node .github/scripts/i18n-keys.js remove <key>                     a key (and its flat share variant) everywhere
      node .github/scripts/i18n-keys.js format                           rewrite every file in the standard layout
+     node .github/scripts/i18n-keys.js todo <lang> <out.json> [prefix …] keys a language still lacks, with the English text
+     node .github/scripts/i18n-keys.js lang <lang> <map.json>           many texts of ONE language (e.g. a hidden language)
 
    put      reads a JSON file { "<key>": { "de": "…", "en": "…", "fr": "…", … }, "<old key>": null } – every
             language that is offered (not hidden) is required; hidden languages are written when given. A plural
@@ -18,6 +20,12 @@
             language needs, e.g. Russian one/few/many/other); zh, ja and ko keep only "other". null removes the key.
             The "#wg" variant is created from the flat share terms – except for keys of the areas that always keep
             the family terms (NO_WG below). An own variant can be given as "<key>#wg": { … } after the plain key.
+   todo     (since 1.120.0) writes { "<key>": <English text>, … } of every key the language does not have yet –
+            only keys starting with one of the prefixes, if given (e.g. common. nav. settings.). Translate the
+            texts in this file and write them back with "lang".
+   lang     (since 1.120.0) reads { "<key>": "<text>" | { plural forms } | null } and writes only this language –
+            for a language that is translated step by step (Russian, hidden: true in js/sprachen.js). Plural forms,
+            placeholders and unknown keys are checked against English; the "#wg" variant is created as with put.
    set      writes one text as it is (a text starting with "{" is read as JSON, e.g. plural forms); no "#wg" variant
             is created – set "<key>#wg" by hand if needed.
    Check the result with  node .github/scripts/check-keys.js. */
@@ -83,6 +91,10 @@ function writeKeys(lang, data) {
 function cap(up, s) { return up ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
 const FAM_EMOJI = /\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67(?:\u200D\uD83D\uDC66)?/g;
 const WG_EMOJI = '\uD83E\uDDD1\u200D\uD83E\uDD1D\u200D\uD83E\uDDD1';
+// Russian case endings: член семьи → сосед, семья → квартира, семейный → общий
+const RU_NEIGHBOUR = { '': '', 'а': 'а', 'у': 'у', 'ом': 'ом', 'е': 'е', 'ы': 'и', 'ов': 'ей', 'ам': 'ям', 'ами': 'ями', 'ах': 'ях' };
+const RU_FLAT = { 'ья': 'а', 'ьи': 'ы', 'ье': 'е', 'ью': 'у', 'ьёй': 'ой', 'ьей': 'ой', 'ей': '', 'ьям': 'ам', 'ьями': 'ами', 'ьях': 'ах' };
+const RU_COMMON = { 'ый': 'ий', 'ая': 'ая', 'ое': 'ее', 'ые': 'ие', 'ого': 'его', 'ому': 'ему', 'ой': 'ей', 'ом': 'ем', 'ых': 'их', 'ым': 'им', 'ую': 'ую', 'ыми': 'ими' };
 const TERMS = {
   de: { keep: /Familienstammbuch|Familienkutsche/g, rules: [
     [/\b([Jj])edes Familienmitglied\b/g, '$1eder Mitbewohner'],
@@ -180,6 +192,16 @@ const TERMS = {
     [/가족으로/g, '셰어하우스로'],
     [/가족/g, '셰어하우스'],
   ] },
+  // Russian (since 1.120.0): \b does not work for Cyrillic, so the rules use Unicode lookarounds (flag u).
+  // семья → квартира and член(ы) семьи → сосед(и) decline in parallel, so each case maps to the same case.
+  ru: { keep: /семейн\p{L}*\s+(?:врач|автомобил|бюджет)\p{L}*/giu, rules: [
+    [/(?<![\p{L}\p{N}])([Чч])лен(|а|у|ом|е|ы|ов|ам|ами|ах)(\s+(?:вашей|твоей|нашей|этой|своей|всей)?\s*)семьи(?![\p{L}\p{N}])/gu,
+      function (m, c, end) { return cap(c === 'Ч', 'сосед' + RU_NEIGHBOUR[end]); }],
+    [/(?<![\p{L}\p{N}])([Сс])ем(ья|ьи|ье|ью|ьёй|ьей|ей|ьям|ьями|ьях)(?![\p{L}\p{N}])/gu,
+      function (m, c, end) { return cap(c === 'С', 'квартир' + RU_FLAT[end]); }],
+    [/(?<![\p{L}\p{N}])([Сс])емейн(ый|ая|ое|ые|ого|ому|ой|ом|ых|ым|ую|ыми)(?![\p{L}\p{N}])/gu,
+      function (m, c, end) { return cap(c === 'С', 'общ' + RU_COMMON[end]); }],
+  ] },
 };
 
 function wgText(code, s) {
@@ -215,7 +237,9 @@ function fit(code, key, e) {
     if (typeof e[f] !== 'string') throw new Error(key + ' (' + code + '): plural form "' + f + '" missing (' + code + ' needs ' + forms.join(', ') + ')');
     out[f] = e[f];
   }
-  for (const f of Object.keys(e)) if (!forms.includes(f)) throw new Error(key + ' (' + code + '): unknown plural form "' + f + '"');
+  // "other" may always be given in addition (Russian: fractions, otherwise js/textkern.js falls back to "few")
+  if (typeof e.other === 'string' && !forms.includes('other')) out.other = e.other;
+  for (const f of Object.keys(e)) if (!forms.includes(f) && f !== 'other') throw new Error(key + ' (' + code + '): unknown plural form "' + f + '"');
   return out;
 }
 
@@ -252,6 +276,51 @@ function main() {
     if (errors.length) { errors.forEach(e => console.error('✗ ' + e)); console.error('nothing written'); process.exit(1); }
     save();
     console.log('✓ ' + Object.keys(map).length + ' key(s) written');
+  } else if (cmd === 'todo') {
+    const [, code, out, ...prefixes] = args;
+    if (!code || !out || !langs.some(l => l.code === code)) return usage();
+    const en = files.en || {};
+    const have = files[code] || {};
+    const todo = {};
+    for (const key of Object.keys(en).sort(order)) {
+      if (key.includes('#') || Object.prototype.hasOwnProperty.call(have, key)) continue;
+      if (prefixes.length && !prefixes.some(p => key.startsWith(p))) continue;
+      todo[key] = en[key];
+    }
+    fs.writeFileSync(path.resolve(out), JSON.stringify(todo, null, 1) + '\n');
+    const total = Object.keys(en).filter(k => !k.includes('#')).length;
+    const done = Object.keys(have).filter(k => !k.includes('#') && Object.prototype.hasOwnProperty.call(en, k)).length;
+    console.log('✓ ' + Object.keys(todo).length + ' key(s) to translate written to ' + out + ' (' + code + ': ' + done + ' of ' + total + ' done)');
+  } else if (cmd === 'lang') {
+    const [, code, file] = args;
+    const lang = langs.find(l => l.code === code);
+    if (!lang || !file) return usage();
+    if (code === 'en') throw new Error('English is the reference – use put for new keys');
+    const map = JSON.parse(fs.readFileSync(path.resolve(file), 'utf8'));
+    const en = files.en || {};
+    const names = e => { const s = new Set(); (typeof e === 'string' ? [e] : Object.values(e)).forEach(t => (String(t).match(/\{(\w+)\}/g) || []).forEach(n => s.add(n))); return [...s].sort().join(','); };
+    const data = files[code] = files[code] || {};
+    const errors = [];
+    for (const [key, spec] of Object.entries(map)) {
+      const plain = key.split('#')[0];
+      if (!keyOk(key)) { errors.push(key + ': keys look like area.part.name (letters and digits, dots between)'); continue; }
+      if (!Object.prototype.hasOwnProperty.call(en, plain)) { errors.push(key + ': not in en.i18n.js'); continue; }
+      if (spec === null) { delete data[key]; if (key === plain) delete data[key + '#wg']; continue; }
+      try {
+        const e = fit(code, key, spec);
+        if (names(e) !== names(en[plain])) throw new Error(key + ' (' + code + '): placeholders ' + (names(e) || '–') + ' instead of ' + (names(en[plain]) || '–'));
+        data[key] = e;
+        if (key !== plain) continue;
+        delete data[key + '#wg'];
+        const wg = noWg(key) ? null : wgEntry(code, e);
+        if (wg) data[key + '#wg'] = wg;
+      } catch (e) { errors.push(e.message); }
+    }
+    if (errors.length) { errors.forEach(e => console.error('✗ ' + e)); console.error('nothing written'); process.exit(1); }
+    writeKeys(lang, data);
+    const total = Object.keys(en).filter(k => !k.includes('#')).length;
+    const done = Object.keys(data).filter(k => !k.includes('#') && Object.prototype.hasOwnProperty.call(en, k)).length;
+    console.log('✓ ' + Object.keys(map).length + ' text(s) written to ' + code + '.i18n.js (' + done + ' of ' + total + ' keys)');
   } else if (cmd === 'set') {
     const [, key, code, text] = args;
     const lang = langs.find(l => l.code === code);
@@ -276,7 +345,9 @@ function usage() {
   console.log('usage: node .github/scripts/i18n-keys.js put <map.json>\n' +
     '       node .github/scripts/i18n-keys.js set <key> <lang> "<text>"\n' +
     '       node .github/scripts/i18n-keys.js remove <key>\n' +
-    '       node .github/scripts/i18n-keys.js format');
+    '       node .github/scripts/i18n-keys.js format\n' +
+    '       node .github/scripts/i18n-keys.js todo <lang> <out.json> [prefix …]\n' +
+    '       node .github/scripts/i18n-keys.js lang <lang> <map.json>');
   process.exitCode = 1;
 }
 

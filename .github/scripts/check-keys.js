@@ -9,7 +9,8 @@
    2. FILE_VERSION in js/sprachen.js differs from src/version.txt (devices would keep old language files).
    3. A language of PINN_LANGUAGES (not hidden) has no pb_public/i18n/<code>.i18n.js, a file cannot be loaded,
       has not exactly one PINN_I18N.keys("<code>", {…}) call or names the wrong language.
-   4. Compared with English (en.i18n.js, the reference): a key is missing (hidden languages: warning only), a text
+   4. Compared with English (en.i18n.js, the reference): a key is missing (hidden languages: one warning with the
+      progress – they are translated step by step, since 1.120.0), a text
       is empty or no string/plural object, a plural text lacks a form its language needs (js/textkern.js → FORMS)
       or has an unknown form, a placeholder {name} is missing or unknown, a "<key>#wg" variant has no plain key.
    5. A key used in the code – tk('key') in pb_public/js/ and pb_public/*.js, data-tk="key", data-tk-html="key",
@@ -17,7 +18,8 @@
       server, pinn-pushtext.js) – does not exist in English; the English text written inside an element
       with data-tk in src/ differs from en.i18n.js (the HTML keeps the English text, so it stays readable).
    6. js/sprachen.js does not work as expected in a small simulated page (tk, data-tk, flat share variants,
-      hidden languages, every language loads only its i18n file – the old dictionaries in lang/ are gone since 1.119.3).
+      hidden languages, every language loads only its i18n file – the old dictionaries in lang/ are gone since 1.119.3;
+      an unlocked hidden language also loads English, which fills the keys it does not have yet).
    Warnings: keys in en.i18n.js that no code uses, extra keys in a language, texts identical to English. */
 
 'use strict';
@@ -113,10 +115,16 @@ else {
       if (typeof v === 'string' && v === ref && v.split(' ').length > 2 && /[a-z]{4}/i.test(v)) same++;
     }
     if (lang.code !== 'en') {
+      const missing = [];
       for (const key of Object.keys(en)) {
         if (key.includes('#') || Object.prototype.hasOwnProperty.call(d, key)) continue;
-        if (lang.hidden) warnings.push(where + ': ' + key + ' missing (hidden language)');
+        if (lang.hidden) missing.push(key);
         else r.fail(where, key + ': missing');
+      }
+      if (missing.length) {
+        const total = Object.keys(en).filter(k => !k.includes('#')).length;
+        warnings.push(where + ': hidden language, ' + (total - missing.length) + ' of ' + total + ' keys translated (' +
+          Math.floor(100 * (total - missing.length) / total) + ' %) – next: ' + missing.slice(0, 3).join(', ') + ' …');
       }
     }
     if (same) warnings.push(where + ': ' + same + ' longer texts are identical to English (untranslated?)');
@@ -201,8 +209,8 @@ function simulate(opts) {
   vm.runInNewContext(read(SPRACHEN), ctx, { filename: 'sprachen.js', timeout: 5000 });
   const api = ctx.PINN_I18N;
   const src = written.map(w => (/src="([^"?]+)/.exec(w) || [])[1]).filter(Boolean);
-  if (src[0] && src[0].startsWith('i18n/') && exists(path.join(ROOT, 'pb_public', src[0]))) {
-    vm.runInNewContext(read(path.join(ROOT, 'pb_public', src[0])), ctx, { filename: src[0] });
+  for (const s of src) {
+    if (s.startsWith('i18n/') && exists(path.join(ROOT, 'pb_public', s))) vm.runInNewContext(read(path.join(ROOT, 'pb_public', s)), ctx, { filename: s });
   }
   (listeners.DOMContentLoaded || []).forEach(fn => fn());
   return { api, src, els, waiting: classes.has('pinn-i18n-wait'), ctx };
@@ -227,6 +235,14 @@ if (K && en && data.de) {
       if (s.api.available().some(l => l.code === h.code)) r.fail('js/sprachen.js', 'hidden language ' + h.code + ' is offered');
       const all = simulate({ storage: { 'pinn.sprache': h.code, 'pinn.sprachen.alle': '1' } });
       if (all.api.current !== h.code) r.fail('js/sprachen.js', 'hidden language ' + h.code + ' cannot be unlocked for testing');
+      else {
+        if (all.src[0] !== 'i18n/' + h.code + '.i18n.js' || all.src[1] !== 'i18n/en.i18n.js' || all.src.length !== 2) r.fail('js/sprachen.js', 'unlocked hidden language ' + h.code + ' should load its own file, then English (got ' + JSON.stringify(all.src) + ')');
+        const own = data[h.code] || {};
+        const hasOwn = Object.keys(own).find(k => !k.includes('#') && typeof own[k] === 'string' && !/\{/.test(own[k]));
+        const gap = Object.keys(en).find(k => !k.includes('#') && !(k in own) && typeof en[k] === 'string' && !/\{/.test(en[k]));
+        if (hasOwn && all.ctx.tk(hasOwn) !== own[hasOwn]) r.fail('js/sprachen.js', 'unlocked hidden language ' + h.code + ': tk("' + hasOwn + '") does not return its own text');
+        if (gap && all.ctx.tk(gap) !== en[gap]) r.fail('js/sprachen.js', 'unlocked hidden language ' + h.code + ': a key it does not have yet (' + gap + ') should show the English text');
+      }
     }
     const wgKey = Object.keys(data.de).find(k => /#wg$/.test(k));
     if (wgKey) {
