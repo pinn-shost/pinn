@@ -86,26 +86,38 @@ function isViewAllowed(view) {
   return !GUEST_BLOCKED_VIEWS.includes(view) && !guestHiddenViews.includes(view);
 }
 // Child lock: intercept deleting (buttons and delete confirmations)
-const CHILD_LOCK_DELETE_SELECTOR = [
+const CHILD_LOCK_DELETE_BASE = [
   '[id^="delete"]', '[id$="DeleteBtn"]', '#fzdDelete', '#fzlDelete', '#fzvDelete',
   '.del-meal', '.del-planned-meal', '.del-task', '.del-settings-member', '.rule-delete', '.kid-edit-del',
   '.ma-del-family', '.ma-del-user', '.pw-opt-del', '.pw-msg-del', '.ls-tpl-del', '.doc-tile-del',
   '[data-action="delete"]', '[data-pw-act="delete"]', '[data-doc-del]', '[data-deltpl]',
-  '[aria-label="Löschen"]', '[aria-label="Entfernen"]',
-  '[aria-label$=" löschen"]:not([aria-label="Auswahl löschen"])', '[aria-label$=" entfernen"]:not([aria-label^="Aus den"])',
-].join(', ');
+];
+// Buttons that are only recognisable by their (translated) aria-label: "Delete", "Remove", "Delete …", "… löschen"
+let childLockDeleteSel = '';
+function childLockDeleteSelector() {
+  if (childLockDeleteSel) return childLockDeleteSel;
+  const q = s => '"' + String(s).replace(/["\\]/g, '\\$&') + '"';
+  const out = CHILD_LOCK_DELETE_BASE.slice();
+  // Labels that end in "delete"/"remove" but do not delete anything (clear a selection, hide a suggestion)
+  const keep = [tk('meal.clear'), tk('shop.removeFromSuggestions')].map(x => ':not([aria-label=' + q(x) + '])').join('');
+  [tk('common.delete'), tk('common.remove')].forEach(w => {
+    out.push('[aria-label=' + q(w) + ']', '[aria-label^=' + q(w + ' ') + ']' + keep, '[aria-label$=' + q(' ' + w.toLowerCase()) + ']' + keep);
+  });
+  childLockDeleteSel = out.join(', ');
+  return childLockDeleteSel;
+}
 let childLockToastTimer = null;
 function childLockNotice() {
   let el = document.getElementById('childLockToast');
   if (!el) { el = document.createElement('div'); el.id = 'childLockToast'; document.body.appendChild(el); }
-  el.textContent = '🔒 Kindersicherung: Löschen ist für dieses Profil nicht möglich.';
+  el.textContent = tk('dashboard.childLockDeletingNot');
   el.classList.add('show');
   clearTimeout(childLockToastTimer);
   childLockToastTimer = setTimeout(() => el.classList.remove('show'), 2600);
 }
 document.addEventListener('click', (e) => {
   if (!childLockActive()) return;
-  const t = e.target && e.target.closest ? e.target.closest(CHILD_LOCK_DELETE_SELECTOR) : null;
+  const t = e.target && e.target.closest ? e.target.closest(childLockDeleteSelector()) : null;
   if (!t || t.id === 'pinPadDelete') return;
   e.preventDefault();
   e.stopImmediatePropagation();
@@ -167,7 +179,7 @@ const CHILD_LOCK_EDIT_CLICK_SELECTOR = CHILD_LOCK_EDIT_SELECTOR.filter(sel => !s
 function childLockEditNotice() {
   let el = document.getElementById('childLockToast');
   if (!el) { el = document.createElement('div'); el.id = 'childLockToast'; document.body.appendChild(el); }
-  el.textContent = '🔒 Kindersicherung: Hinzufügen und Bearbeiten ist für dieses Profil nicht möglich.';
+  el.textContent = tk('dashboard.childLockAddingEditing');
   el.classList.add('show');
   clearTimeout(childLockToastTimer);
   childLockToastTimer = setTimeout(() => el.classList.remove('show'), 2600);
@@ -204,12 +216,12 @@ window.addEventListener('DOMContentLoaded', function wrapEditorsForChildLock() {
     if (childLockActive()) { childLockEditNotice(); return; }
     return fn.apply(this, args);
   };
-  try { openTaskModal = guard(openTaskModal); } catch (e) { console.warn('Kindersicherung: openTaskModal fehlt', e); }
-  try { openEditTaskModal = guard(openEditTaskModal); } catch (e) { console.warn('Kindersicherung: openEditTaskModal fehlt', e); }
-  try { openAddEventModal = guard(openAddEventModal); } catch (e) { console.warn('Kindersicherung: openAddEventModal fehlt', e); }
-  try { openMealModal = guard(openMealModal); } catch (e) { console.warn('Kindersicherung: openMealModal fehlt', e); }
-  try { openPinboardEditor = guard(openPinboardEditor); } catch (e) { console.warn('Kindersicherung: openPinboardEditor fehlt', e); }
-  try { openKidRoutineEditor = guard(openKidRoutineEditor); } catch (e) { console.warn('Kindersicherung: openKidRoutineEditor fehlt', e); }
+  try { openTaskModal = guard(openTaskModal); } catch (e) { console.warn('Child lock: openTaskModal missing', e); }
+  try { openEditTaskModal = guard(openEditTaskModal); } catch (e) { console.warn('Child lock: openEditTaskModal missing', e); }
+  try { openAddEventModal = guard(openAddEventModal); } catch (e) { console.warn('Child lock: openAddEventModal missing', e); }
+  try { openMealModal = guard(openMealModal); } catch (e) { console.warn('Child lock: openMealModal missing', e); }
+  try { openPinboardEditor = guard(openPinboardEditor); } catch (e) { console.warn('Child lock: openPinboardEditor missing', e); }
+  try { openKidRoutineEditor = guard(openKidRoutineEditor); } catch (e) { console.warn('Child lock: openKidRoutineEditor missing', e); }
 });
 // If the calendar is hidden for guests, it is also missing in the overview (only meals and tasks there)
 function isCalendarHiddenForGuest() {

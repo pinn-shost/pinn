@@ -703,7 +703,6 @@ function vtAutoLink() {
   if (!finance || !Array.isArray(finance.recurring) || isCurrentUserGuest()) return false;
   try { if (typeof childLockActive === 'function' && childLockActive()) return false; } catch (e) { /* ignore */ }
   // Create the names in the language of the app (afterwards they are ordinary, editable entries)
-  const tr = x => { try { return (window.PINN_I18N && PINN_I18N.t) ? PINN_I18N.t(x) : x; } catch (e) { return x; } };
   const today = finTodayIso();
   const skip = new Set(finance.contractAutoSkip || []);
   let contracts = vtContracts().slice();
@@ -748,29 +747,29 @@ function vtAutoLink() {
     const contact = { phone: ll.phone || '', email: ll.email || '', web: '', address: ll.address || '' };
     if (h.mode !== 'eigentum' && h.mode !== 'vermietet') {
       attach('haus-miete:' + h.id, ['rent', 'nk', 'heat', 'stellplatz'].map(rec).filter(Boolean), () => ({
-        name: tr('Mietvertrag') + ' · ' + name, provider: ll.name || '', category: 'wohnen', termType: 'open',
+        name: tk('home.docType.mietvertrag') + ' · ' + name, provider: ll.name || '', category: 'wohnen', termType: 'open',
         notice: { value: Math.max(0, Math.min(24, Number(h.rent && h.rent.notice) || 3)), unit: 'months' },
         start: h.moveIn, contact, home: h.id,
       }));
     } else {
       const loan = (h.own && h.own.loan) || {};
       attach('haus-kredit:' + h.id, [rec('loan')].filter(Boolean), () => {
-        const f = { name: tr('Kredit') + ' · ' + name, provider: loan.bank || '', category: 'kredit', fixkosten: true, start: loan.start, home: h.id };
+        const f = { name: tk('home.group.kredit') + ' · ' + name, provider: loan.bank || '', category: 'kredit', fixkosten: true, start: loan.start, home: h.id };
         // Reminder half a year before the end of the fixed-interest period (compare follow-up financing)
-        if (vtIsIso(loan.fixedUntil)) f.extra = { date: vtAddDays(loan.fixedUntil, -180), text: tr('Zinsbindung endet') + ': ' + vtFmt(loan.fixedUntil) + ' – ' + tr('Anschlussfinanzierung vergleichen') };
+        if (vtIsIso(loan.fixedUntil)) f.extra = { date: vtAddDays(loan.fixedUntil, -180), text: tk('home.fixedInterestPeriodEnds') + ': ' + vtFmt(loan.fixedUntil) + ' – ' + tk('contract.compareFollowUpFinancing') };
         return f;
       });
       attach('haus-gebaeude:' + h.id, [rec('gebaeude')].filter(Boolean), () => ({
-        name: tr('Wohngebäudeversicherung') + ' · ' + name, category: 'versicherung', termType: 'fixed', notice: { value: 3, unit: 'months' }, remind: true, home: h.id,
+        name: tk('home.fix.gebaeude') + ' · ' + name, category: 'versicherung', termType: 'fixed', notice: { value: 3, unit: 'months' }, remind: true, home: h.id,
       }));
       attach('haus-hausgeld:' + h.id, [rec('hausgeld')].filter(Boolean), () => ({
-        name: tr('Hausgeld') + ' · ' + name, provider: ll.name || '', category: 'wohnen', fixkosten: true, contact, home: h.id,
+        name: tk('home.fix.hausgeld') + ' · ' + name, provider: ll.name || '', category: 'wohnen', fixkosten: true, contact, home: h.id,
       }));
       attach('haus-grundsteuer:' + h.id, [rec('grundsteuer')].filter(Boolean), () => ({
-        name: tr('Grundsteuer') + ' · ' + name, category: 'abgaben', fixkosten: true, home: h.id,
+        name: tk('home.fix.grundsteuer') + ' · ' + name, category: 'abgaben', fixkosten: true, home: h.id,
       }));
       attach('haus-abgaben:' + h.id, [rec('abgaben')].filter(Boolean), () => ({
-        name: tr('Müll, Abwasser & Straßenreinigung') + ' · ' + name, category: 'abgaben', fixkosten: true, home: h.id,
+        name: tk('home.fix.abgaben') + ' · ' + name, category: 'abgaben', fixkosten: true, home: h.id,
       }));
     }
   });
@@ -778,7 +777,7 @@ function vtAutoLink() {
   (typeof fzVehicles === 'function' ? fzVehicles() : []).forEach(v => {
     const r = recById(v.taxRecId);
     if (!r) return;
-    attach('fz-steuer:' + v.id, [r], () => ({ name: tr('Kfz-Steuer') + ' · ' + fzName(v), provider: tr('Hauptzollamt'), category: 'abgaben', fixkosten: true, vehicle: v.id }));
+    attach('fz-steuer:' + v.id, [r], () => ({ name: tk('vehicle.vehicleTax') + ' · ' + fzName(v), provider: tk('vehicle.customsOffice'), category: 'abgaben', fixkosten: true, vehicle: v.id }));
   });
   // Other recurring expenses that are clearly taxes or levies
   recurring.filter(r => free(r) && r.category !== FIN_SAVINGS_CATEGORY && finRecurringAmountFor(r, today) > 0 && VT_ABGABE_RE.test(String(r.title || '')))
@@ -1069,7 +1068,7 @@ function renderContractDetail() {
     </div>
 
     ${(infoRows.length || contactBtns || contact.address) ? `
-      <h4 class="vt-detail-h">👤 Vertragsdaten &amp; Kontakt</h4>
+      <h4 class="vt-detail-h">${tk('contract.contractDetailsContact')}</h4>
       <div>${infoRows.map(r => `<div class="vt-row"><span>${escapeHtml(r[0])}</span><span>${r[2] ? `<button type="button" class="font-mono text-ink/80 hover:text-pine" data-copy="${escapeHtml(r[1])}" title="${escapeHtml(tk('common.copy'))}">${escapeHtml(r[1])} ⧉</button>` : escapeHtml(r[1])}</span></div>`).join('')}</div>
       ${contactBtns ? `<div class="flex flex-wrap gap-2 mt-2">${contactBtns}</div>` : ''}
       ${contact.address ? `<p class="text-xs text-ink/55 mt-2" style="white-space:pre-line">${escapeHtml(contact.address)}</p>` : ''}` : ''}

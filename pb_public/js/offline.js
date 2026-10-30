@@ -73,7 +73,7 @@ function refreshOfflineBadge() {
 
 // Short notice when an action could only be saved on the device for now
 function notifyIfQueuedOffline() {
-  if (outboxBlocked && outboxHasPending()) finShowToast('Ohne Verbindung gespeichert – wird automatisch nachgetragen.');
+  if (outboxBlocked && outboxHasPending()) finShowToast(tk('offline.savedWithoutConnectionWill'));
 }
 
 /* ---------- Tasks: queue actions ---------- */
@@ -292,7 +292,7 @@ async function loadEventIcsForEdit(href) {
   if (result && result.ics) return result.ics;
   const cached = cachedRawEventIcs(href); // offline or server not reachable
   if (cached) return cached;
-  throw new Error('Ohne Verbindung sind die Details dieses Termins nicht verfügbar.');
+  throw new Error(tk('offline.withoutConnectionDetailsEvent'));
 }
 
 /* ---------- Sending queued actions ---------- */
@@ -343,10 +343,10 @@ async function sendOutboxOp(op) {
 function outboxOpLabel(op) {
   if (op.kind.startsWith('task-')) {
     const title = op.data ? op.data.title : ((aufgaben.find(a => a.id === op.id) || {}).title || '');
-    return 'Aufgabe' + (title ? ' "' + title + '"' : '');
+    return title ? tk('offline.taskNamed', { title }) : tk('offline.task');
   }
   const title = op.payload ? op.payload.title : '';
-  return 'Termin' + (title ? ' "' + title + '"' : '');
+  return title ? tk('offline.eventNamed', { title }) : tk('offline.event');
 }
 
 async function flushOutbox() {
@@ -379,7 +379,7 @@ async function flushOutbox() {
           blocked = true;
           break;
         }
-        finShowToast(outboxOpLabel(op) + ' konnte nicht übertragen werden: ' + r.error, true);
+        finShowToast(tk('offline.notSent', { what: outboxOpLabel(op), error: r.error }), true);
         taskChanged = taskChanged || !isEvent;
         eventChanged = eventChanged || isEvent;
       }

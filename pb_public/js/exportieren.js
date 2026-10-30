@@ -38,8 +38,8 @@ function loadPinnExportScript() {
   pinnExportLoading = new Promise((resolve, reject) => {
     const s = document.createElement('script');
     s.src = 'datenexport.js?v=' + APP_VERSION;
-    s.onload = () => (window.PinnExport ? resolve(window.PinnExport) : reject(new Error('PinnExport fehlt')));
-    s.onerror = () => { pinnExportLoading = null; s.remove(); reject(new Error('datenexport.js fehlt')); };
+    s.onload = () => (window.PinnExport ? resolve(window.PinnExport) : reject(new Error('PinnExport missing')));
+    s.onerror = () => { pinnExportLoading = null; s.remove(); reject(new Error('datenexport.js missing')); };
     document.head.appendChild(s);
   });
   return pinnExportLoading;

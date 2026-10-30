@@ -1093,7 +1093,7 @@ function renderFinanceList(range, stats) {
         if (member) subParts.push(escapeHtml(memberLabel(member)));
         const kSplit = kasseSplitLabel(e);
         if (kSplit) subParts.push(kSplit);
-        if (e.planned) subParts.unshift('<span class="fin-plan-chip">geplant</span>');
+        if (e.planned) subParts.unshift(('<span class="fin-plan-chip">' + tk('fin.plannedLower') + '</span>'));
         return `
           <button type="button" class="fin-entry w-full flex items-center gap-3 px-1 py-2 rounded-xl hover:bg-ink/5 transition text-left${e.planned ? ' fin-planned' : ''}" data-id="${escapeHtml(e.id)}" data-rec="${escapeHtml(e.recurringId || '')}">
             <span class="shrink-0 w-10 h-10 rounded-full grid place-items-center text-lg" style="background:${cat.color}22">${escapeHtml(cat.icon || '')}</span>
@@ -1236,7 +1236,7 @@ function fillFinPaidBySelect(selectId, value, kasse) {
   const gOpts = guests.map(g => `<option value="${escapeHtml(g.id)}">${escapeHtml(g.name)}</option>`).join('')
     + (old ? `<option value="${escapeHtml(old.id)}">${escapeHtml(old.name)}${old.removed ? ' (' + escapeHtml(tk('fin.removedLower')) + ')' : ''}</option>` : '');
   sel.innerHTML = '<option value="">–</option>' + members.map(m => `<option value="${escapeHtml(m.id)}">${escapeHtml(memberLabel(m))}</option>`).join('')
-    + (gOpts ? `<optgroup label="Gäste">${gOpts}</optgroup>` : '');
+    + (gOpts ? `<optgroup label="${escapeHtml(tk('fin.guests'))}">${gOpts}</optgroup>` : '');
   sel.value = (value && (memberById(value) || guests.some(g => g.id === value) || old)) ? value : '';
   sel.closest('.fin-paidby-wrap').classList.toggle('hidden', !members.length && !gOpts);
 }

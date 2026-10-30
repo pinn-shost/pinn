@@ -52,7 +52,7 @@ function renderShoppingSuggestions() {
       <button type="button" class="shopping-suggestion flex-1 min-w-0 text-left px-3 py-2 text-sm text-ink/80 truncate" data-hid="${escapeHtml(h.id)}">
         ${escapeHtml(h.name)}${h.lastQty ? `<span class="text-ink/40"> · ${escapeHtml(h.lastQty)}</span>` : ''}
       </button>
-      <button type="button" class="shopping-suggestion-remove shrink-0 w-8 h-8 mr-1 rounded-full text-ink/30 hover:text-ink hover:bg-ink/5 grid place-items-center text-base leading-none" data-hid="${escapeHtml(h.id)}" aria-label="Aus den Vorschlägen entfernen">×</button>
+      <button type="button" class="shopping-suggestion-remove shrink-0 w-8 h-8 mr-1 rounded-full text-ink/30 hover:text-ink hover:bg-ink/5 grid place-items-center text-base leading-none" data-hid="${escapeHtml(h.id)}" aria-label="${escapeHtml(tk('shop.removeFromSuggestions'))}">×</button>
     </div>
   `).join('');
   el.classList.remove('hidden');

@@ -142,7 +142,7 @@ window.PINN_LANGUAGES = [
 
   // Raise with every change to a language file (lang/ or i18n/), otherwise devices keep using the old file.
   // .github/scripts/check-lang.js makes sure it matches src/version.txt.
-  var FILE_VERSION = '1.118.4';
+  var FILE_VERSION = '1.119.0';
 
   // Invisible until the texts are in place (no short flash of other texts)
   var style = document.createElement('style');

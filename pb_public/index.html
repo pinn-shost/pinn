@@ -31,7 +31,7 @@
        pb_public/vendor/tesseract/tesseract.min.js + worker.min.js, core/ (tesseract-core*.wasm.js),
          lang/deu.traineddata.gz (text recognition for "Foto einlesen" in recipes, only loaded when needed) -->
 <link rel="stylesheet" href="vendor/pinn.css">
-<link rel="stylesheet" href="css/ergaenzung.css?v=1.118.4">
+<link rel="stylesheet" href="css/ergaenzung.css?v=1.119.0">
 <!-- ==========================================================
      Power saving (since 0.99)
      - Recurring requests (setInterval from 1 second) only run while pinn. is visible;
@@ -41,11 +41,11 @@
        Every touch, mouse or keyboard input wakes pinn. at once and catches up on everything.
      - Short timers (< 1 s, e.g. the SOS countdown) stay unchanged.
      ========================================================== -->
-<link rel="stylesheet" href="css/energiesparen.css?v=1.118.4">
-<script src="js/ruhemodus.js?v=1.118.4"></script>
-<script src="js/textkern.js?v=1.118.4"></script>
-<script src="js/sprachen.js?v=1.118.4"></script>
-<script src="js/region.js?v=1.118.4"></script>
+<link rel="stylesheet" href="css/energiesparen.css?v=1.119.0">
+<script src="js/ruhemodus.js?v=1.119.0"></script>
+<script src="js/textkern.js?v=1.119.0"></script>
+<script src="js/sprachen.js?v=1.119.0"></script>
+<script src="js/region.js?v=1.119.0"></script>
 <script src="vendor/pocketbase/pocketbase.umd.js"></script>
 <!-- If the file sits somewhere else on the NAS or has another name: try further places -->
 <script>if (!window.PocketBase) document.write('<script src="vendor/pocketbase.umd.js"><\/script>');</script>
@@ -64,18 +64,18 @@
   var PINN_APP_STYLES = ['ergaenzung', 'energiesparen', 'basis', 'mobil', 'einstellungen', 'seitenleiste', 'finanzen', 'listen', 'vertraege', 'fahrzeuge', 'notfall', 'hinweise', 'familie', 'dokumente', 'sparen', 'kinderaufgaben', 'dashboard', 'uebersicht', 'wohnort', 'familienkachel', 'pinnwand', 'haustierewetter', 'terminal', 'glocke'];
   window.addEventListener('DOMContentLoaded', function () {
     var missing = [];
-    if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – der PocketBase-Client (ohne ihn funktioniert nichts)');
+    if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – the PocketBase client (nothing works without it)');
     var probe = document.createElement('div');
     probe.className = 'hidden';
     document.body.appendChild(probe);
-    if (getComputedStyle(probe).display !== 'none') missing.push('<b>vendor/pinn.css</b> – die Gestaltung');
+    if (getComputedStyle(probe).display !== 'none') missing.push('<b>vendor/pinn.css</b> – the styles');
     probe.remove();
     var loadedParts = window.PINN_PARTS || [];
     PINN_APP_PARTS.forEach(function (part) {
-      if (loadedParts.indexOf(part) === -1) missing.push('<b>js/' + part + '.js</b> – ein Teil der App');
+      if (loadedParts.indexOf(part) === -1) missing.push('<b>js/' + part + '.js</b> – a part of the app');
     });
     // Texts of the chosen language (pb_public/i18n/<code>.i18n.js, since 1.111.0)
-    if (window.PINN_I18N && PINN_I18N.keysMissing) missing.push('<b>' + PINN_I18N.keysMissing + '</b> – die Texte der App');
+    if (window.PINN_I18N && PINN_I18N.keysMissing) missing.push('<b>' + PINN_I18N.keysMissing + '</b> – the texts of the app');
     // A CSS file counts as loaded when the browser has taken over its rules (a 404 or a delivered
     // index.html result in no stylesheet or one without rules)
     function fehlendeStyles() {
@@ -84,7 +84,7 @@
         var link = document.querySelector('link[rel="stylesheet"][href^="css/' + name + '.css"]');
         var ok = false;
         try { ok = !!(link && link.sheet && link.sheet.cssRules.length); } catch (e) { ok = false; }
-        if (!ok) out.push('<b>css/' + name + '.css</b> – ein Teil der App');
+        if (!ok) out.push('<b>css/' + name + '.css</b> – a part of the app');
       });
       return out;
     }
@@ -111,13 +111,13 @@
       var box = document.createElement('div');
       box.setAttribute('style', 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;background:#FFFBFB;font-family:system-ui,sans-serif;color:#25231F;overflow:auto;');
       box.innerHTML = '<div style="max-width:460px;line-height:1.5">'
-        + '<div style="font-size:20px;font-weight:700;margin-bottom:10px">pinn. kann nicht starten</div>'
-        + '<p style="margin:0 0 10px">Auf dem NAS fehlt im Ordner <code>pb_public/</code>:</p>'
+        + '<div style="font-size:20px;font-weight:700;margin-bottom:10px">pinn. cannot start</div>'
+        + '<p style="margin:0 0 10px">Missing on the NAS in the folder <code>pb_public/</code>:</p>'
         + '<ul style="margin:0 0 14px;padding-left:20px">' + missing.map(function (m) { return '<li>' + m + '</li>'; }).join('') + '</ul>'
-        + '<p style="margin:0 0 6px;font-size:13px;font-weight:600">So antwortet der Server:</p>'
-        + '<div id="pinnStartChecks" style="font-family:ui-monospace,Menlo,monospace;font-size:12px;margin:0 0 14px;word-break:break-all">wird geprüft …</div>'
-        + '<p style="margin:0 0 16px;font-size:14px;color:#6b6760">Erwartet: <code>pb_public/vendor/pinn.css</code>, <code>pb_public/vendor/pocketbase/pocketbase.umd.js</code> und die Dateien in <code>pb_public/js/</code> – im selben <code>pb_public</code> wie diese <code>index.html</code>. Groß-/Kleinschreibung beachten.</p>'
-        + '<button type="button" onclick="location.href=location.pathname+\'?_r=\'+Date.now()" style="padding:10px 16px;border-radius:10px;border:0;background:#00374A;color:#fff;font-size:15px">Neu laden</button>'
+        + '<p style="margin:0 0 6px;font-size:13px;font-weight:600">What the server answers:</p>'
+        + '<div id="pinnStartChecks" style="font-family:ui-monospace,Menlo,monospace;font-size:12px;margin:0 0 14px;word-break:break-all">checking …</div>'
+        + '<p style="margin:0 0 16px;font-size:14px;color:#6b6760">Expected: <code>pb_public/vendor/pinn.css</code>, <code>pb_public/vendor/pocketbase/pocketbase.umd.js</code> and the files in <code>pb_public/js/</code> – in the same <code>pb_public</code> as this <code>index.html</code>. Upper/lower case matters.</p>'
+        + '<button type="button" onclick="location.href=location.pathname+\'?_r=\'+Date.now()" style="padding:10px 16px;border-radius:10px;border:0;background:#00374A;color:#fff;font-size:15px">Reload</button>'
         + '</div>';
       document.body.appendChild(box);
       var out = document.getElementById('pinnStartChecks');
@@ -130,10 +130,10 @@
           var okType = /\.css$/.test(path) ? /css/.test(type) : /javascript|ecmascript/.test(type);
           // For unknown paths PocketBase may deliver index.html - that does not count as found
           var found = res.ok && okType;
-          lines[i] = (found ? '✅ ' : '❌ ') + path + ' → ' + res.status + (res.ok && !okType ? ' (' + (type.split(';')[0] || 'unbekannter Typ') + ', nicht die Datei)' : '');
+          lines[i] = (found ? '✅ ' : '❌ ') + path + ' → ' + res.status + (res.ok && !okType ? ' (' + (type.split(';')[0] || 'unknown type') + ', not the file)' : '');
           show();
         }).catch(function () {
-          lines[i] = '❌ ' + path + ' → keine Antwort';
+          lines[i] = '❌ ' + path + ' → no answer';
           show();
         });
       });
@@ -143,26 +143,26 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/basis.css?v=1.118.4">
-<link rel="stylesheet" href="css/mobil.css?v=1.118.4">
-<link rel="stylesheet" href="css/einstellungen.css?v=1.118.4">
-<link rel="stylesheet" href="css/seitenleiste.css?v=1.118.4">
-<link rel="stylesheet" href="css/finanzen.css?v=1.118.4">
-<link rel="stylesheet" href="css/listen.css?v=1.118.4">
-<link rel="stylesheet" href="css/vertraege.css?v=1.118.4">
-<link rel="stylesheet" href="css/fahrzeuge.css?v=1.118.4">
-<link rel="stylesheet" href="css/notfall.css?v=1.118.4">
-<link rel="stylesheet" href="css/hinweise.css?v=1.118.4">
-<link rel="stylesheet" href="css/familie.css?v=1.118.4">
-<link rel="stylesheet" href="css/dokumente.css?v=1.118.4">
-<link rel="stylesheet" href="css/sparen.css?v=1.118.4">
-<link rel="stylesheet" href="css/kinderaufgaben.css?v=1.118.4">
-<link rel="stylesheet" href="css/dashboard.css?v=1.118.4">
-<link rel="stylesheet" href="css/uebersicht.css?v=1.118.4">
-<link rel="stylesheet" href="css/wohnort.css?v=1.118.4">
-<link rel="stylesheet" href="css/familienkachel.css?v=1.118.4">
-<link rel="stylesheet" href="css/pinnwand.css?v=1.118.4">
-<link rel="stylesheet" href="css/haustierewetter.css?v=1.118.4">
+<link rel="stylesheet" href="css/basis.css?v=1.119.0">
+<link rel="stylesheet" href="css/mobil.css?v=1.119.0">
+<link rel="stylesheet" href="css/einstellungen.css?v=1.119.0">
+<link rel="stylesheet" href="css/seitenleiste.css?v=1.119.0">
+<link rel="stylesheet" href="css/finanzen.css?v=1.119.0">
+<link rel="stylesheet" href="css/listen.css?v=1.119.0">
+<link rel="stylesheet" href="css/vertraege.css?v=1.119.0">
+<link rel="stylesheet" href="css/fahrzeuge.css?v=1.119.0">
+<link rel="stylesheet" href="css/notfall.css?v=1.119.0">
+<link rel="stylesheet" href="css/hinweise.css?v=1.119.0">
+<link rel="stylesheet" href="css/familie.css?v=1.119.0">
+<link rel="stylesheet" href="css/dokumente.css?v=1.119.0">
+<link rel="stylesheet" href="css/sparen.css?v=1.119.0">
+<link rel="stylesheet" href="css/kinderaufgaben.css?v=1.119.0">
+<link rel="stylesheet" href="css/dashboard.css?v=1.119.0">
+<link rel="stylesheet" href="css/uebersicht.css?v=1.119.0">
+<link rel="stylesheet" href="css/wohnort.css?v=1.119.0">
+<link rel="stylesheet" href="css/familienkachel.css?v=1.119.0">
+<link rel="stylesheet" href="css/pinnwand.css?v=1.119.0">
+<link rel="stylesheet" href="css/haustierewetter.css?v=1.119.0">
 </head>
 <body class="font-sans text-ink antialiased">
 
@@ -696,21 +696,21 @@
     <section id="pinboardSection" class="hidden min-h-0 flex-col bg-white/40">
       <div class="px-4 sm:px-6 pt-4 pb-3 border-b border-ink/10 shrink-0">
         <div class="flex items-center justify-between gap-3">
-          <h2 class="font-serif text-lg">Pinnwand</h2>
+          <h2 data-tk="nav.board" class="font-serif text-lg">Board</h2>
           <div class="flex items-center gap-2 shrink-0">
-            <button id="pinboardArrangeBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs font-medium hover:bg-ink/5 transition whitespace-nowrap" title="Zettel verschieben – oder lange auf einen Zettel drücken">↕︎ Anordnen</button>
-            <button id="openPinboardEditorBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">+ Zettel</button>
+            <button data-tk="board.arrange" data-tk-attr="title:board.moveNotesLongPress" id="pinboardArrangeBtn" type="button" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs font-medium hover:bg-ink/5 transition whitespace-nowrap" title="Move notes – or long-press a note">↕︎ Arrange</button>
+            <button data-tk="board.note" id="openPinboardEditorBtn" type="button" class="px-3 py-1.5 rounded-lg bg-pine text-white text-xs font-medium hover:bg-pine/90 transition whitespace-nowrap">+ Note</button>
           </div>
         </div>
         <div id="pinboardChips" class="pw-chips mt-3"></div>
       </div>
       <div id="pinboardScroll" class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-6">
         <div id="pinboardQuick" class="pw-quick">
-          <input id="pinboardQuickInput" type="text" enterkeyhint="send" autocomplete="off" autocapitalize="sentences" maxlength="2000" placeholder="Schnell etwas für alle anpinnen …" aria-label="Schnell etwas anpinnen" />
-          <button id="pinboardQuickMore" type="button" aria-label="Mit Optionen anpinnen" title="Mit Optionen (Art, Farbe, für wen, Erinnerung …)">⋯</button>
-          <button id="pinboardQuickAdd" type="button" class="pw-quick-add" aria-label="Anpinnen" title="Anpinnen">+</button>
+          <input data-tk-attr="placeholder:board.quicklyPinSomethingEveryone;aria-label:board.quicklyPinSomething" id="pinboardQuickInput" type="text" enterkeyhint="send" autocomplete="off" autocapitalize="sentences" maxlength="2000" placeholder="Quickly pin something for everyone …" aria-label="Quickly pin something" />
+          <button data-tk-attr="aria-label:board.pinOptions;title:board.optionsTypeColourWhom" id="pinboardQuickMore" type="button" aria-label="Pin with options" title="With options (type, colour, for whom, reminder …)">⋯</button>
+          <button data-tk-attr="aria-label:board.pin;title:board.pin" id="pinboardQuickAdd" type="button" class="pw-quick-add" aria-label="Pin" title="Pin">+</button>
         </div>
-        <div id="pinboardArrangeHint" class="pw-arr-hint hidden">✋ Zettel ziehen und loslassen – Tipp auf eine freie Stelle oder „Fertig“ beendet</div>
+        <div data-tk="board.dragReleaseNotesTap" id="pinboardArrangeHint" class="pw-arr-hint hidden">✋ Drag and release notes – tap an empty spot or “Done” to finish</div>
         <div id="pinboardBoard"></div>
       </div>
     </section>
@@ -2880,13 +2880,13 @@
 </div>
 
 <!-- SOS: call for help from "Traccar Client" – warning popup with map, address and emergency call (content from the script) -->
-<div id="sosOverlay" class="hidden" role="alertdialog" aria-modal="true" aria-label="SOS – Hilferuf">
+<div data-tk-attr="aria-label:sos.callForHelp" id="sosOverlay" class="hidden" role="alertdialog" aria-modal="true" aria-label="SOS – call for help">
   <div id="sosCard" class="sos-card"></div>
 </div>
 <button id="sosBanner" type="button" class="hidden"></button>
 
 <!-- Way home: notice at the top ("… ist unterwegs nach Hause") and popup with map and call (content from the script) -->
-<div id="hwOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="Heimweg">
+<div data-tk-attr="aria-label:famTile.wayHome" id="hwOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="Way home">
   <div id="hwCard" class="sos-card"></div>
 </div>
 <div id="hwBanner" class="hidden" role="status"></div>
@@ -2896,9 +2896,9 @@
 
 <!-- Outlook: week preview & monthly finance outlook – notice at the top and a whole page (content from the script, own texts in four languages) -->
 <div id="abBanner" class="hidden" role="status" data-no-i18n></div>
-<div id="abOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="Ausblick" data-no-i18n>
+<div data-tk-attr="aria-label:settings.outlook.title" id="abOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="Outlook" data-no-i18n>
   <div class="ab-sheet fade-in">
-    <button id="abClose" type="button" class="ab-x" aria-label="Schließen">×</button>
+    <button data-tk-attr="aria-label:common.close" id="abClose" type="button" class="ab-x" aria-label="Close">×</button>
     <div id="abBody"></div>
   </div>
 </div>
@@ -3055,7 +3055,7 @@
         <span data-tk="contract.atEndTerm" id="cfNoticeSuffix" class="text-xs text-ink/50 min-w-0">at the end of term</span>
       </div>
       <label id="cfNoticeMonthEndWrap" class="hidden flex items-center gap-2 mt-2 text-sm normal-case tracking-normal">
-        <input id="cfNoticeMonthEnd" type="checkbox" class="vt-check" /> zum Monatsende
+        <input id="cfNoticeMonthEnd" type="checkbox" class="vt-check" /> <span data-tk="contract.toMonthEnd">at the end of the month</span>
       </label>
     </div>
     <p id="cfTermInfo" class="vt-info mb-3"></p>
@@ -3074,7 +3074,7 @@
           <option data-tk="contract.90DaysBefore" value="90">90 days before</option>
         </select>
         <label id="cfRemindLastWrap" class="flex items-center gap-2 text-sm">
-          <input id="cfRemindLast" type="checkbox" class="vt-check" /> + 3 Tage vorher nochmal
+          <input id="cfRemindLast" type="checkbox" class="vt-check" /> <span data-tk="contract.remindAgain3">+ 3 days before again</span>
         </label>
       </div>
       <span data-tk="contract.push" class="block text-xs uppercase tracking-wide text-ink/40 mb-1.5">Push to</span>
@@ -3499,62 +3499,62 @@
 <!-- Pin board: add / edit a note -->
 <div id="pinboardEditModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closePinboardEditBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 id="pinboardEditTitle" class="font-serif text-lg mb-4 pr-6">Neuer Zettel</h3>
+    <button data-tk-attr="aria-label:common.close" id="closePinboardEditBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+    <h3 data-tk="board.newNote" id="pinboardEditTitle" class="font-serif text-lg mb-4 pr-6">New note</h3>
 
     <div id="pwTypePicker" class="pw-types mb-4"></div>
 
     <div id="pwFieldTitleWrap" class="mb-3">
-      <label id="pwTitleLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pwTitleInput">Überschrift</label>
+      <label data-tk="board.heading" id="pwTitleLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pwTitleInput">Heading</label>
       <input id="pwTitleInput" type="text" autocomplete="off" maxlength="120" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
     </div>
     <div id="pwFieldPhotoWrap" class="hidden mb-3">
-      <button id="pwPhotoPickBtn" type="button" class="pw-photo-pick"><span>📷 Foto aufnehmen oder auswählen</span></button>
+      <button id="pwPhotoPickBtn" type="button" class="pw-photo-pick"><span data-tk="board.takeChoosePhoto">📷 Take or choose photo</span></button>
       <input id="pwPhotoInput" type="file" accept="image/*" class="hidden" />
     </div>
     <div id="pwFieldDateWrap" class="hidden mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pwDateInput">Wann ist es so weit?</label>
+      <label data-tk="board.when" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pwDateInput">When is it?</label>
       <input id="pwDateInput" type="date" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
     </div>
     <div id="pwFieldTextWrap" class="mb-3">
-      <label id="pwTextLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pwTextInput">Nachricht</label>
+      <label data-tk="bell.hw.message" id="pwTextLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pwTextInput">Message</label>
       <textarea id="pwTextInput" rows="4" maxlength="2000" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base"></textarea>
     </div>
     <div id="pwFieldItemsWrap" class="hidden mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pwItemsInput">Punkte – einer pro Zeile</label>
-      <textarea id="pwItemsInput" rows="5" maxlength="4000" placeholder="Badesachen&#10;Sonnencreme&#10;Ladekabel" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base"></textarea>
-      <p class="text-[11px] text-ink/40 mt-1">Jede*r kann die Punkte auf der Pinnwand abhaken und weitere hinzufügen.</p>
+      <label data-tk="board.itemsOnePerLine" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pwItemsInput">Items – one per line</label>
+      <textarea data-tk-attr="placeholder:board.ph.listItems" id="pwItemsInput" rows="5" maxlength="4000" placeholder="Swimwear&#10;Sun cream&#10;Charging cable" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base"></textarea>
+      <p data-tk="board.everyoneCanTickOff" class="text-[11px] text-ink/40 mt-1">Everyone can tick off the items on the board and add more.</p>
     </div>
     <div id="pwFieldOptionsWrap" class="hidden mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Antworten</label>
+      <label data-tk="board.replies" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Replies</label>
       <div id="pwOptionsList"></div>
-      <button id="pwAddOptionBtn" type="button" class="text-xs text-pine font-medium mt-1">+ Antwort hinzufügen</button>
+      <button data-tk="board.addReply" id="pwAddOptionBtn" type="button" class="text-xs text-pine font-medium mt-1">+ Add reply</button>
     </div>
 
-    <label id="pwToLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Für wen?</label>
+    <label data-tk="lists.item.forWhom" id="pwToLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">For whom?</label>
     <div id="pwToPicker" class="pw-people mb-1.5"></div>
     <p id="pwToHint" class="text-[11px] text-ink/40 mb-4"></p>
 
     <div id="pwColorWrap">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Farbe</label>
+      <label data-tk="account.dashBg.color" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Colour</label>
       <div id="pwColorPicker" class="pw-colors mb-4"></div>
     </div>
 
     <div class="mb-2">
-      <label class="pw-switch-row"><span class="pw-switch"><input id="pwPinnedToggle" type="checkbox" /><i></i></span><span class="pw-switch-text">📌 Oben anheften<small>Bleibt ganz oben auf der Pinnwand</small></span></label>
-      <label class="pw-switch-row"><span class="pw-switch"><input id="pwImportantToggle" type="checkbox" /><i></i></span><span class="pw-switch-text">❗ Wichtig<small>Rot markiert – die Push-Nachricht kommt auch bei allen an, die nur Zettel „an mich“ erhalten</small></span></label>
-      <label class="pw-switch-row"><span class="pw-switch"><input id="pwRemindToggle" type="checkbox" /><i></i></span><span class="pw-switch-text">⏰ Erinnern<small>Push-Nachricht zur gewählten Zeit (an die Empfänger bzw. alle)</small></span></label>
+      <label class="pw-switch-row"><span class="pw-switch"><input id="pwPinnedToggle" type="checkbox" /><i></i></span><span class="pw-switch-text"><span data-tk="board.pinTop">📌 Pin to top</span><small data-tk="board.staysVeryTopBoard">Stays at the very top of the board</small></span></label>
+      <label class="pw-switch-row"><span class="pw-switch"><input id="pwImportantToggle" type="checkbox" /><i></i></span><span class="pw-switch-text"><span data-tk="board.important">❗ Important</span><small data-tk="board.markedRedPushNotification">Marked red – the push notification also reaches everyone who only receives notes “to me”</small></span></label>
+      <label class="pw-switch-row"><span class="pw-switch"><input id="pwRemindToggle" type="checkbox" /><i></i></span><span class="pw-switch-text"><span data-tk="board.remind">⏰ Remind</span><small data-tk="board.pushNotificationChosenTime">Push notification at the chosen time (to the recipients or everyone)</small></span></label>
       <div id="pwRemindWrap" class="hidden pw-sub"><input id="pwRemindInput" type="datetime-local" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" /></div>
-      <label class="pw-switch-row"><span class="pw-switch"><input id="pwExpiresToggle" type="checkbox" /><i></i></span><span class="pw-switch-text">🗓️ Automatisch abnehmen<small>Nach diesem Tag wandert der Zettel ins Archiv</small></span></label>
+      <label class="pw-switch-row"><span class="pw-switch"><input id="pwExpiresToggle" type="checkbox" /><i></i></span><span class="pw-switch-text"><span data-tk="board.takeDownAutomatically">🗓️ Take down automatically</span><small data-tk="board.afterDayNoteMoves">After this day the note moves to the archive</small></span></label>
       <div id="pwExpiresWrap" class="hidden pw-sub"><input id="pwExpiresInput" type="date" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" /></div>
     </div>
 
     <p id="pwEditError" class="hidden text-xs text-red-500 mb-3"></p>
     <div class="flex items-center gap-2 mt-3">
-      <button id="deletePinboardNoteBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Löschen</button>
+      <button data-tk="common.delete" id="deletePinboardNoteBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Delete</button>
       <div class="flex-1"></div>
-      <button id="cancelPinboardEditBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
-      <button id="savePinboardNoteBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Anpinnen</button>
+      <button data-tk="common.cancel" id="cancelPinboardEditBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Cancel</button>
+      <button data-tk="board.pin" id="savePinboardNoteBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Pin</button>
     </div>
   </div>
 </div>
@@ -3562,13 +3562,13 @@
 <!-- Pin board: view a note (replies, reactions, actions) -->
 <div id="pinboardDetailModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closePinboardDetailBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none z-10" aria-label="Schließen">×</button>
+    <button data-tk-attr="aria-label:common.close" id="closePinboardDetailBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none z-10" aria-label="Close">×</button>
     <div id="pinboardDetailBody" class="pt-3"></div>
-    <h4 class="text-xs uppercase tracking-wide text-ink/40 mb-2 mt-1">Antworten</h4>
+    <h4 data-tk="board.replies" class="text-xs uppercase tracking-wide text-ink/40 mb-2 mt-1">Replies</h4>
     <div id="pinboardThread" class="pw-thread"></div>
     <div id="pinboardReplyWrap" class="pw-reply">
-      <textarea id="pinboardReplyInput" rows="1" maxlength="1000" enterkeyhint="send" placeholder="Antworten …" class="rounded-lg border border-ink/15 px-3 py-2 text-base"></textarea>
-      <button id="pinboardReplyBtn" type="button" class="shrink-0 px-3 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Senden</button>
+      <textarea data-tk-attr="placeholder:board.reply" id="pinboardReplyInput" rows="1" maxlength="1000" enterkeyhint="send" placeholder="Reply …" class="rounded-lg border border-ink/15 px-3 py-2 text-base"></textarea>
+      <button data-tk="board.send" id="pinboardReplyBtn" type="button" class="shrink-0 px-3 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Send</button>
     </div>
     <div id="pinboardDetailActions" class="pw-actions"></div>
   </div>
@@ -3576,7 +3576,7 @@
 
 <!-- Pin board: large photo -->
 <div id="pinboardLightbox" class="hidden fixed inset-0">
-  <button id="pinboardLightboxClose" type="button" aria-label="Schließen">✕</button>
+  <button data-tk-attr="aria-label:common.close" id="pinboardLightboxClose" type="button" aria-label="Close">✕</button>
   <img id="pinboardLightboxImg" alt="" />
 </div>
 
@@ -4937,7 +4937,7 @@ let lastIcsSync = null;
    because such web apps often don't reload their content by themselves)
    ========================================================== */
 // Current version – comes from src/version.txt (filled in by src/build.js); pb_hooks/pinn-system.js and pinn-wartung.sh read it here
-const APP_VERSION = '1.118.4';
+const APP_VERSION = '1.119.0';
 
 /* ==========================================================
    Settings & account: two columns of equal height (landscape from tablet width)
@@ -5065,111 +5065,111 @@ const APP_VERSION = '1.118.4';
 <!-- App parts under pb_public/js/ (classic scripts without a build step, order matters).
      ausblick.js must come last – it starts the app (bootApp). New file: add its line here and its name
      in pinn-setup.sh – src/build.js fills in the list of the start check (PINN_APP_PARTS) by itself. -->
-<script src="js/grundlagen.js?v=1.118.4"></script>
-<script src="js/popups.js?v=1.118.4"></script>
-<script src="js/verbindung.js?v=1.118.4"></script>
-<script src="js/benutzer.js?v=1.118.4"></script>
-<script src="js/mitteilungen.js?v=1.118.4"></script>
-<script src="js/serverzugriff.js?v=1.118.4"></script>
-<script src="js/tastatur.js?v=1.118.4"></script>
-<script src="js/anmeldemaske.js?v=1.118.4"></script>
-<script src="js/dashboard.js?v=1.118.4"></script>
-<script src="js/dashboardhintergrund.js?v=1.118.4"></script>
-<script src="js/profilauswahl.js?v=1.118.4"></script>
-<script src="js/pineingabe.js?v=1.118.4"></script>
-<script src="js/dashboardsitzung.js?v=1.118.4"></script>
-<script src="js/dashboardkonto.js?v=1.118.4"></script>
-<script src="js/familienverwalten.js?v=1.118.4"></script>
-<script src="js/einrichten.js?v=1.118.4"></script>
-<script src="js/exportieren.js?v=1.118.4"></script>
-<script src="js/hauptadminseite.js?v=1.118.4"></script>
-<script src="js/anmeldung.js?v=1.118.4"></script>
-<script src="js/konto.js?v=1.118.4"></script>
-<script src="js/profilverwaltung.js?v=1.118.4"></script>
-<script src="js/zustand.js?v=1.118.4"></script>
-<script src="js/bedienzustand.js?v=1.118.4"></script>
-<script src="js/rezeptbilder.js?v=1.118.4"></script>
-<script src="js/zusammenfuehren.js?v=1.118.4"></script>
-<script src="js/speichern.js?v=1.118.4"></script>
-<script src="js/design.js?v=1.118.4"></script>
-<script src="js/sprache.js?v=1.118.4"></script>
-<script src="js/uebersicht.js?v=1.118.4"></script>
-<script src="js/familienkachel.js?v=1.118.4"></script>
-<script src="js/wobistdu.js?v=1.118.4"></script>
-<script src="js/geburtstagsfeier.js?v=1.118.4"></script>
-<script src="js/wetterkachel.js?v=1.118.4"></script>
-<script src="js/geburtstage.js?v=1.118.4"></script>
-<script src="js/uebersichteinstellungen.js?v=1.118.4"></script>
-<script src="js/familiensync.js?v=1.118.4"></script>
-<script src="js/bereiche.js?v=1.118.4"></script>
-<script src="js/kalenderquellen.js?v=1.118.4"></script>
-<script src="js/icsparser.js?v=1.118.4"></script>
-<script src="js/zeitleiste.js?v=1.118.4"></script>
-<script src="js/termindetails.js?v=1.118.4"></script>
-<script src="js/kalenderdatei.js?v=1.118.4"></script>
-<script src="js/wetter.js?v=1.118.4"></script>
-<script src="js/wohnort.js?v=1.118.4"></script>
-<script src="js/feiertage.js?v=1.118.4"></script>
-<script src="js/muellkalender.js?v=1.118.4"></script>
-<script src="js/mitglieder.js?v=1.118.4"></script>
-<script src="js/profilbild.js?v=1.118.4"></script>
-<script src="js/mitglied.js?v=1.118.4"></script>
-<script src="js/kinderseite.js?v=1.118.4"></script>
-<script src="js/kinderroutine.js?v=1.118.4"></script>
-<script src="js/sterne.js?v=1.118.4"></script>
-<script src="js/kalenderansicht.js?v=1.118.4"></script>
-<script src="js/essenplanen.js?v=1.118.4"></script>
-<script src="js/rezeptparser.js?v=1.118.4"></script>
-<script src="js/rezeptdialog.js?v=1.118.4"></script>
-<script src="js/rezeptbild.js?v=1.118.4"></script>
-<script src="js/rezeptmengen.js?v=1.118.4"></script>
-<script src="js/einkauf.js?v=1.118.4"></script>
-<script src="js/einkaufslisten.js?v=1.118.4"></script>
-<script src="js/einkaufseingabe.js?v=1.118.4"></script>
-<script src="js/rezepte.js?v=1.118.4"></script>
-<script src="js/rezeptaktionen.js?v=1.118.4"></script>
-<script src="js/offline.js?v=1.118.4"></script>
-<script src="js/aufgabenextras.js?v=1.118.4"></script>
-<script src="js/appbadge.js?v=1.118.4"></script>
-<script src="js/reisen.js?v=1.118.4"></script>
-<script src="js/aufgabendaten.js?v=1.118.4"></script>
-<script src="js/haushalt.js?v=1.118.4"></script>
-<script src="js/reihum.js?v=1.118.4"></script>
-<script src="js/aufgaben.js?v=1.118.4"></script>
-<script src="js/smarthome.js?v=1.118.4"></script>
-<script src="js/sprachsteuerung.js?v=1.118.4"></script>
-<script src="js/termine.js?v=1.118.4"></script>
-<script src="js/ansichten.js?v=1.118.4"></script>
-<script src="js/versionspruefung.js?v=1.118.4"></script>
-<script src="js/sicherungen.js?v=1.118.4"></script>
-<script src="js/geraete.js?v=1.118.4"></script>
-<script src="js/fehlerprotokoll.js?v=1.118.4"></script>
-<script src="js/versionslog.js?v=1.118.4"></script>
-<script src="js/einstellungen.js?v=1.118.4"></script>
-<script src="js/kalenderkonto.js?v=1.118.4"></script>
-<script src="js/finanzen.js?v=1.118.4"></script>
-<script src="js/kassen.js?v=1.118.4"></script>
-<script src="js/vorrat.js?v=1.118.4"></script>
-<script src="js/vorrat2.js?v=1.118.4"></script>
-<script src="js/sparen.js?v=1.118.4"></script>
-<script src="js/vertraege.js?v=1.118.4"></script>
-<script src="js/fahrzeuge.js?v=1.118.4"></script>
-<script src="js/zuhause.js?v=1.118.4"></script>
-<script src="js/dokumente.js?v=1.118.4"></script>
-<script src="js/pdflesen.js?v=1.118.4"></script>
-<script src="js/appstart.js?v=1.118.4"></script>
-<script src="js/pinnwand.js?v=1.118.4"></script>
-<script src="js/listen.js?v=1.118.4"></script>
-<script src="js/familie.js?v=1.118.4"></script>
-<script src="js/hinweise.js?v=1.118.4"></script>
-<script src="js/ausblick.js?v=1.118.4"></script>
+<script src="js/grundlagen.js?v=1.119.0"></script>
+<script src="js/popups.js?v=1.119.0"></script>
+<script src="js/verbindung.js?v=1.119.0"></script>
+<script src="js/benutzer.js?v=1.119.0"></script>
+<script src="js/mitteilungen.js?v=1.119.0"></script>
+<script src="js/serverzugriff.js?v=1.119.0"></script>
+<script src="js/tastatur.js?v=1.119.0"></script>
+<script src="js/anmeldemaske.js?v=1.119.0"></script>
+<script src="js/dashboard.js?v=1.119.0"></script>
+<script src="js/dashboardhintergrund.js?v=1.119.0"></script>
+<script src="js/profilauswahl.js?v=1.119.0"></script>
+<script src="js/pineingabe.js?v=1.119.0"></script>
+<script src="js/dashboardsitzung.js?v=1.119.0"></script>
+<script src="js/dashboardkonto.js?v=1.119.0"></script>
+<script src="js/familienverwalten.js?v=1.119.0"></script>
+<script src="js/einrichten.js?v=1.119.0"></script>
+<script src="js/exportieren.js?v=1.119.0"></script>
+<script src="js/hauptadminseite.js?v=1.119.0"></script>
+<script src="js/anmeldung.js?v=1.119.0"></script>
+<script src="js/konto.js?v=1.119.0"></script>
+<script src="js/profilverwaltung.js?v=1.119.0"></script>
+<script src="js/zustand.js?v=1.119.0"></script>
+<script src="js/bedienzustand.js?v=1.119.0"></script>
+<script src="js/rezeptbilder.js?v=1.119.0"></script>
+<script src="js/zusammenfuehren.js?v=1.119.0"></script>
+<script src="js/speichern.js?v=1.119.0"></script>
+<script src="js/design.js?v=1.119.0"></script>
+<script src="js/sprache.js?v=1.119.0"></script>
+<script src="js/uebersicht.js?v=1.119.0"></script>
+<script src="js/familienkachel.js?v=1.119.0"></script>
+<script src="js/wobistdu.js?v=1.119.0"></script>
+<script src="js/geburtstagsfeier.js?v=1.119.0"></script>
+<script src="js/wetterkachel.js?v=1.119.0"></script>
+<script src="js/geburtstage.js?v=1.119.0"></script>
+<script src="js/uebersichteinstellungen.js?v=1.119.0"></script>
+<script src="js/familiensync.js?v=1.119.0"></script>
+<script src="js/bereiche.js?v=1.119.0"></script>
+<script src="js/kalenderquellen.js?v=1.119.0"></script>
+<script src="js/icsparser.js?v=1.119.0"></script>
+<script src="js/zeitleiste.js?v=1.119.0"></script>
+<script src="js/termindetails.js?v=1.119.0"></script>
+<script src="js/kalenderdatei.js?v=1.119.0"></script>
+<script src="js/wetter.js?v=1.119.0"></script>
+<script src="js/wohnort.js?v=1.119.0"></script>
+<script src="js/feiertage.js?v=1.119.0"></script>
+<script src="js/muellkalender.js?v=1.119.0"></script>
+<script src="js/mitglieder.js?v=1.119.0"></script>
+<script src="js/profilbild.js?v=1.119.0"></script>
+<script src="js/mitglied.js?v=1.119.0"></script>
+<script src="js/kinderseite.js?v=1.119.0"></script>
+<script src="js/kinderroutine.js?v=1.119.0"></script>
+<script src="js/sterne.js?v=1.119.0"></script>
+<script src="js/kalenderansicht.js?v=1.119.0"></script>
+<script src="js/essenplanen.js?v=1.119.0"></script>
+<script src="js/rezeptparser.js?v=1.119.0"></script>
+<script src="js/rezeptdialog.js?v=1.119.0"></script>
+<script src="js/rezeptbild.js?v=1.119.0"></script>
+<script src="js/rezeptmengen.js?v=1.119.0"></script>
+<script src="js/einkauf.js?v=1.119.0"></script>
+<script src="js/einkaufslisten.js?v=1.119.0"></script>
+<script src="js/einkaufseingabe.js?v=1.119.0"></script>
+<script src="js/rezepte.js?v=1.119.0"></script>
+<script src="js/rezeptaktionen.js?v=1.119.0"></script>
+<script src="js/offline.js?v=1.119.0"></script>
+<script src="js/aufgabenextras.js?v=1.119.0"></script>
+<script src="js/appbadge.js?v=1.119.0"></script>
+<script src="js/reisen.js?v=1.119.0"></script>
+<script src="js/aufgabendaten.js?v=1.119.0"></script>
+<script src="js/haushalt.js?v=1.119.0"></script>
+<script src="js/reihum.js?v=1.119.0"></script>
+<script src="js/aufgaben.js?v=1.119.0"></script>
+<script src="js/smarthome.js?v=1.119.0"></script>
+<script src="js/sprachsteuerung.js?v=1.119.0"></script>
+<script src="js/termine.js?v=1.119.0"></script>
+<script src="js/ansichten.js?v=1.119.0"></script>
+<script src="js/versionspruefung.js?v=1.119.0"></script>
+<script src="js/sicherungen.js?v=1.119.0"></script>
+<script src="js/geraete.js?v=1.119.0"></script>
+<script src="js/fehlerprotokoll.js?v=1.119.0"></script>
+<script src="js/versionslog.js?v=1.119.0"></script>
+<script src="js/einstellungen.js?v=1.119.0"></script>
+<script src="js/kalenderkonto.js?v=1.119.0"></script>
+<script src="js/finanzen.js?v=1.119.0"></script>
+<script src="js/kassen.js?v=1.119.0"></script>
+<script src="js/vorrat.js?v=1.119.0"></script>
+<script src="js/vorrat2.js?v=1.119.0"></script>
+<script src="js/sparen.js?v=1.119.0"></script>
+<script src="js/vertraege.js?v=1.119.0"></script>
+<script src="js/fahrzeuge.js?v=1.119.0"></script>
+<script src="js/zuhause.js?v=1.119.0"></script>
+<script src="js/dokumente.js?v=1.119.0"></script>
+<script src="js/pdflesen.js?v=1.119.0"></script>
+<script src="js/appstart.js?v=1.119.0"></script>
+<script src="js/pinnwand.js?v=1.119.0"></script>
+<script src="js/listen.js?v=1.119.0"></script>
+<script src="js/familie.js?v=1.119.0"></script>
+<script src="js/hinweise.js?v=1.119.0"></script>
+<script src="js/ausblick.js?v=1.119.0"></script>
 
 <!-- ==========================================================
      Changelog as a terminal (Settings → System → Versions-Log)
      Classes "fixed inset-0": the global keyboard logic fits the overlay to the visible
      area automatically, so the input line is never hidden by the keyboard.
      ========================================================== -->
-<link rel="stylesheet" href="css/terminal.css?v=1.118.4">
+<link rel="stylesheet" href="css/terminal.css?v=1.119.0">
 
 <div id="changelogTerminal" class="hidden fixed inset-0" data-no-term role="dialog" aria-modal="true" aria-label="Versions-Log">
   <div class="term-window" id="changelogTermWindow">
@@ -5197,6 +5197,6 @@ const APP_VERSION = '1.118.4';
     </div>
   </div>
 </div>
-<link rel="stylesheet" href="css/glocke.css?v=1.118.4">
+<link rel="stylesheet" href="css/glocke.css?v=1.119.0">
 </body>
 </html>

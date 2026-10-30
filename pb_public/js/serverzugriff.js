@@ -16,7 +16,7 @@ async function apiFetch(url, opts = {}) {
     authExpiredHandled = true;
     if (isDashboardDevice()) { returnToDashboard(); return res; } // dashboard: simply back to the profile selection
     pb.authStore.clear();
-    alert('Deine Anmeldung ist abgelaufen. Bitte melde dich erneut an.');
+    alert(tk('app.sessionHasExpiredPlease'));
     location.reload();
   }
   return res;

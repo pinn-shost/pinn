@@ -136,8 +136,8 @@ function loadPinnSetupScript() {
   pinnSetupLoading = new Promise((resolve, reject) => {
     const s = document.createElement('script');
     s.src = 'einrichtung.js?v=' + APP_VERSION;
-    s.onload = () => (window.PinnSetup ? resolve(window.PinnSetup) : reject(new Error('PinnSetup fehlt')));
-    s.onerror = () => { pinnSetupLoading = null; s.remove(); reject(new Error('einrichtung.js fehlt')); };
+    s.onload = () => (window.PinnSetup ? resolve(window.PinnSetup) : reject(new Error('PinnSetup missing')));
+    s.onerror = () => { pinnSetupLoading = null; s.remove(); reject(new Error('einrichtung.js missing')); };
     document.head.appendChild(s);
   });
   return pinnSetupLoading;

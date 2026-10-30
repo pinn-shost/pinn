@@ -542,7 +542,7 @@ function finEtfDepotHtml(ov) {
   const firstDate = points.length ? new Date(points[0].date + 'T00:00:00').toLocaleDateString(sysLocale(), { month: 'short', year: 'numeric' }) : '';
   const chart = points.length >= 2 ? `
     <div class="mt-3 text-ink">${finEtfChartSvg(points)}</div>
-    <div class="flex justify-between text-[10px] text-ink/40 mt-1"><span>${escapeHtml(firstDate)}</span><span>heute</span></div>
+    <div class="flex justify-between text-[10px] text-ink/40 mt-1"><span>${escapeHtml(firstDate)}</span><span>${tk('bell.today')}</span></div>
     <div class="flex items-center gap-4 mt-2 text-[11px] text-ink/50">
       <span class="inline-flex items-center gap-1.5"><span class="w-3 h-0.5 rounded" style="background:${points[points.length - 1].value >= points[points.length - 1].invested ? FIN_GREEN : FIN_RED}"></span>${escapeHtml(tk('depot.value'))}</span>
       <span class="inline-flex items-center gap-1.5"><span class="w-3 border-t-2 border-dashed border-ink/40"></span>${escapeHtml(tk('depot.paid'))}</span>
@@ -1326,7 +1326,7 @@ function finValueChartHtml(points) {
   const firstDate = new Date(points[0].date + 'T00:00:00').toLocaleDateString(sysLocale(), { month: 'short', year: 'numeric' });
   return `
     <div class="mt-3 text-ink">${finEtfChartSvg(points)}</div>
-    <div class="flex justify-between text-[10px] text-ink/40 mt-1"><span>${escapeHtml(firstDate)}</span><span>heute</span></div>
+    <div class="flex justify-between text-[10px] text-ink/40 mt-1"><span>${escapeHtml(firstDate)}</span><span>${tk('bell.today')}</span></div>
     <div class="flex items-center gap-4 mt-2 text-[11px] text-ink/50">
       <span class="inline-flex items-center gap-1.5"><span class="w-3 h-0.5 rounded" style="background:${last.value >= last.invested ? FIN_GREEN : FIN_RED}"></span>${escapeHtml(tk('depot.value'))}</span>
       <span class="inline-flex items-center gap-1.5"><span class="w-3 border-t-2 border-dashed border-ink/40"></span>${escapeHtml(tk('depot.paid'))}</span>

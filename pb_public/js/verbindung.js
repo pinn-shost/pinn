@@ -40,14 +40,14 @@ function pinnDeviceId() {
 }
 function pinnDeviceName() {
   const ua = navigator.userAgent || '';
-  let dev = 'Browser';
+  let dev = tk('devices.browser');
   if (/iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) dev = 'iPad';
   else if (/iPhone|iPod/.test(ua)) dev = 'iPhone';
-  else if (/Android/.test(ua)) dev = /Mobile/.test(ua) ? 'Android-Handy' : 'Android-Tablet';
+  else if (/Android/.test(ua)) dev = /Mobile/.test(ua) ? tk('devices.androidPhone') : tk('devices.androidTablet');
   else if (/Macintosh|Mac OS X/.test(ua)) dev = 'Mac';
-  else if (/Windows/.test(ua)) dev = 'Windows-PC';
+  else if (/Windows/.test(ua)) dev = tk('devices.windowsPc');
   else if (/CrOS/.test(ua)) dev = 'Chromebook';
-  else if (/Linux/.test(ua)) dev = 'Linux-PC';
+  else if (/Linux/.test(ua)) dev = tk('devices.linuxPc');
   let br = '';
   if (/EdgA?\/|EdgiOS/.test(ua)) br = 'Edge';
   else if (/SamsungBrowser/.test(ua)) br = 'Samsung Internet';
@@ -57,10 +57,10 @@ function pinnDeviceName() {
   else if (/Safari/.test(ua)) br = 'Safari';
   let standalone = false;
   try { standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; } catch (e) { standalone = false; }
-  let name = dev + (standalone ? ' · App' : (br ? ' · ' + br : ''));
+  let name = dev + (standalone ? (' ' + tk('devices.app')) : (br ? ' · ' + br : ''));
   try {
     const d = JSON.parse(localStorage.getItem('pinn.dashboard') || 'null');
-    if (d && d.key) name = 'Familien-Dashboard' + (d.name ? ' „' + String(d.name).slice(0, 40) + '“' : '') + ' · ' + dev;
+    if (d && d.key) name = tk('devices.familyDashboard') + (d.name ? ' „' + String(d.name).slice(0, 40) + '“' : '') + ' · ' + dev;
   } catch (e) { /* ignore */ }
   return name.slice(0, 100);
 }

@@ -124,7 +124,7 @@ function buildAvatarGrids() {
     AVATARS[group].forEach(([emoji, label]) => {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.title = label;
+      btn.title = tk(label);
       btn.className = 'avatar-option w-9 h-9 rounded-full border-2 border-transparent bg-ink/5 grid place-items-center text-lg hover:border-pine transition';
       btn.textContent = emoji;
       btn.addEventListener('click', () => {

@@ -16,7 +16,7 @@ function shrinkAvatarImage(src) {
     const img = new Image();
     img.onload = () => {
       const w0 = img.naturalWidth || img.width, h0 = img.naturalHeight || img.height;
-      if (!w0 || !h0) { reject(new Error('Das Bild konnte nicht gelesen werden.')); return; }
+      if (!w0 || !h0) { reject(new Error(tk('account.dashBg.unreadable'))); return; }
       let max = AVATAR_MAX_PX, quality = 0.82;
       for (let i = 0; i < 6; i++) {
         const scale = Math.min(1, max / Math.max(w0, h0));
@@ -32,9 +32,9 @@ function shrinkAvatarImage(src) {
         if (/^data:image\/jpeg;base64,/.test(data) && data.length <= AVATAR_MAX_CHARS) { resolve(data); return; }
         if (quality > 0.6) quality -= 0.1; else max = Math.round(max * 0.8);
       }
-      reject(new Error('Das Bild konnte nicht gelesen werden.'));
+      reject(new Error(tk('account.dashBg.unreadable')));
     };
-    img.onerror = () => reject(new Error('Das Bild konnte nicht gelesen werden.'));
+    img.onerror = () => reject(new Error(tk('account.dashBg.unreadable')));
     img.src = src;
   });
 }
@@ -42,7 +42,7 @@ function shrinkAvatarImage(src) {
 // Only the round frame is saved as a square – so the image looks the same everywhere.
 // Cancel rejects with err.cancelled = true (the callers then show no message).
 function readAvatarPhotoFile(file) {
-  if (!file || !/^image\//.test(file.type || 'image/')) return Promise.reject(new Error('Bitte eine Bilddatei auswählen.'));
+  if (!file || !/^image\//.test(file.type || 'image/')) return Promise.reject(new Error(tk('account.dashBg.notAnImage')));
   const url = URL.createObjectURL(file);
   return openAvatarCropper(url).then(data => shrinkAvatarImage(data)).finally(() => URL.revokeObjectURL(url));
 }
@@ -57,10 +57,10 @@ let avatarCropOpen = false;
 function openAvatarCropper(src) {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    img.onerror = () => reject(new Error('Das Bild konnte nicht gelesen werden.'));
+    img.onerror = () => reject(new Error(tk('account.dashBg.unreadable')));
     img.onload = () => {
       const w0 = img.naturalWidth || img.width, h0 = img.naturalHeight || img.height;
-      if (!w0 || !h0) { reject(new Error('Das Bild konnte nicht gelesen werden.')); return; }
+      if (!w0 || !h0) { reject(new Error(tk('account.dashBg.unreadable'))); return; }
       const k = Math.min(1, AVATAR_CROP_SRC_PX / Math.max(w0, h0));
       const W = Math.max(1, Math.round(w0 * k)), H = Math.max(1, Math.round(h0 * k));
       const srcCanvas = document.createElement('canvas');
@@ -85,19 +85,19 @@ function avatarCropUi(srcCanvas, resolve, reject) {
   wrap.innerHTML = `
     <div class="bg-white rounded-2xl p-5 w-full max-w-sm max-h-[90vh] overflow-y-auto fade-in">
       <div class="flex items-center justify-between gap-2 mb-3">
-        <h3 class="font-serif text-lg">Ausschnitt anpassen</h3>
-        <button type="button" data-avc="reset" class="text-xs text-ink/40 hover:text-pine transition">Zurücksetzen</button>
+        <h3 class="font-serif text-lg">${tk('recipe.edit.crop')}</h3>
+        <button type="button" data-avc="reset" class="text-xs text-ink/40 hover:text-pine transition">${tk('common.reset')}</button>
       </div>
-      <div class="avc-stage" tabindex="0" aria-label="Bildausschnitt: ziehen zum Verschieben, Pfeiltasten verschieben, Plus und Minus zoomen"><div class="avc-ring" aria-hidden="true"></div></div>
+      <div class="avc-stage" tabindex="0" aria-label="${escapeHtml(tk('recipe.edit.cropLabel'))}"><div class="avc-ring" aria-hidden="true"></div></div>
       <div class="flex items-center gap-3 mt-3">
         <span class="text-xs text-ink/40" aria-hidden="true">−</span>
-        <input data-avc="zoom" type="range" min="100" max="500" step="1" value="100" class="flex-1" style="accent-color: var(--c-pine);" aria-label="Zoom" />
+        <input data-avc="zoom" type="range" min="100" max="500" step="1" value="100" class="flex-1" style="accent-color: var(--c-pine);" aria-label="${escapeHtml(tk('recipe.edit.zoom'))}" />
         <span class="text-sm text-ink/40" aria-hidden="true">+</span>
       </div>
-      <p class="text-[11px] text-ink/40 mt-1.5">Bild ziehen zum Verschieben, mit dem Regler oder zwei Fingern zoomen. Genau dieser Kreis erscheint überall in pinn.</p>
+      <p class="text-[11px] text-ink/40 mt-1.5">${tk('avatar.dragPictureMoveZoom')}</p>
       <div class="flex justify-end gap-2 mt-4">
-        <button type="button" data-avc="cancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">Abbrechen</button>
-        <button type="button" data-avc="ok" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium transition">Übernehmen</button>
+        <button type="button" data-avc="cancel" class="px-3 py-2 rounded-lg text-sm text-ink/60 hover:text-ink">${tk('common.cancel')}</button>
+        <button type="button" data-avc="ok" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium transition">${tk('common.apply')}</button>
       </div>
     </div>`;
   const stage = wrap.querySelector('.avc-stage');
@@ -211,7 +211,7 @@ function avatarCropUi(srcCanvas, resolve, reject) {
     close();
     srcCanvas.width = 0; srcCanvas.height = 0;
     if (/^data:image\/jpeg;base64,/.test(data)) resolve(data);
-    else reject(new Error('Das Bild konnte nicht gelesen werden.'));
+    else reject(new Error(tk('account.dashBg.unreadable')));
   }
   // Escape only closes the cropping, not the window below
   function onKey(e) {
@@ -264,7 +264,7 @@ document.getElementById('memberPhotoFile').addEventListener('change', async (e) 
     pendingMemberAvatar = null;
     document.querySelectorAll('.avatar-option').forEach(b => b.classList.remove('border-pine'));
   } catch (err) {
-    if (!(err && err.cancelled)) alert(err && err.message ? err.message : 'Das Bild konnte nicht gelesen werden.');
+    if (!(err && err.cancelled)) alert(err && err.message ? err.message : tk('account.dashBg.unreadable'));
   } finally {
     preview.style.opacity = '';
     input.value = '';

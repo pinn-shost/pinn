@@ -161,7 +161,7 @@ function parseICS(icsText) {
           startDate: startDateStr,
           time: cur.dt.time,
           endTime,
-          title: cur.summary || 'Ohne Titel',
+          title: cur.summary || tk('common.untitled'),
           rrule: cur.rrule || null,
           exdates: cur.exdates || null,
           location: cur.location || '',

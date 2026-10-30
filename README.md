@@ -95,6 +95,15 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 and 🇰🇷 한국어**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.119.0
+
+**Translations with text keys: the board and the last areas**
+
+- The **board** (notes, lists, polls, photos, thanks, countdown, archive and replies), the **weekly and monthly outlook**, **voice control** including the iPhone and Android guide, the **family management** of the main admin, **profile picture cropping** and the **dashboard background** now take their texts from the language files in `pb_public/i18n/` – in all nine languages and as a flatshare.
+- Small things: messages without a connection, “sign-in expired”, child lock notices, device names under “Devices & sign-in” and avatar names follow your language; the start check (“pinn. cannot start”) is now in plain English. The **child lock** now recognises delete buttons in every language (before only in German). On the board, votes, countdown days and “+ 2 more” use the right singular or plural, and dates follow your language.
+- Next: 1.119.1 puts the standard names (categories, storage places, units), server messages and the version log on keys; 1.119.2 removes the old translator and `lang/`.
+- Changed: `index.html`, `js/pinnwand.js`, `js/ausblick.js`, `js/sprachsteuerung.js`, `js/familienverwalten.js`, `js/profilbild.js`, `js/dashboardhintergrund.js`, `js/offline.js`, `js/dashboard.js`, `js/verbindung.js`, `js/vertraege.js`, `js/zustand.js`, `js/mitglieder.js`, `js/appstart.js`, `js/serverzugriff.js`, `js/popups.js`, `js/wetter.js`, `js/einrichten.js`, `js/exportieren.js`, `js/finanzen.js`, `js/sparen.js`, `js/vorrat2.js`, `js/einkaufseingabe.js`, `js/benutzer.js`, `js/icsparser.js`, `js/sprachen.js`, `js/versionslog.js`, all language files in `i18n/` and `lang/` – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.118.4
 
 **Security: PIN required with a family dashboard · calendar fix**
@@ -158,16 +167,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Next: the bell and the push texts of the server follow with 1.117.0.
 - Changed: app files only (`index.html`, `js/zuhause.js`, `js/fahrzeuge.js`, `js/dokumente.js`, `js/pdflesen.js`, `js/sprachen.js`, `js/versionslog.js`, all language files in `i18n/` and `lang/`) – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
-## What's new in 1.116.0
-
-**Text keys, part 7: family, location and kids' page**
-
-- The **family** page (overview, emergency cards, location with *My location*, places and the guide for *Traccar Client*, SOS and the way home, school & daycare, pets and the holiday weather), the **kids' page** with stars and rewards, the *Family members* tile, *Where are you?* and the member popup now take their texts from the language files in `pb_public/i18n/` – in all nine languages and as a flatshare. Nothing changes in how you use it.
-- New entries in your language: suggestions for kids' tasks, school subjects and the *Holiday with …* packing list for pets are created in the language that is currently set.
-- Small things: about 150 texts that stayed German in the other languages so far are now translated (e.g. *Send permanently*, the *Traccar Client* guide, the SOS countdown); dates and times follow your language; age, minutes and days use the correct singular or plural.
-- Next: home, vehicles and documents follow with 1.116.1.
-- Changed: app files only (`index.html`, `js/familie.js`, `js/familienkachel.js`, `js/kinderseite.js`, `js/kinderroutine.js`, `js/sterne.js`, `js/wobistdu.js`, `js/mitglied.js`, `js/mitglieder.js`, `js/geburtstagsfeier.js`, `js/sprachen.js`, `js/versionslog.js`, all language files in `i18n/` and `lang/`) – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
 ## How it works
 
 ```mermaid
@@ -194,7 +193,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.118.4` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.119.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

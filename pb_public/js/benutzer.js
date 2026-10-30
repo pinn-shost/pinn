@@ -30,7 +30,7 @@ function isCurrentUserMainAdmin() {
 async function postJson(url, payload) {
   const res = await apiFetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload || {}) });
   const body = await res.json().catch(() => ({}));
-  if (!res.ok || body.error) throw new Error(body.error || body.message || 'Aktion fehlgeschlagen.');
+  if (!res.ok || body.error) throw new Error(body.error || body.message || tk('common.actionFailed'));
   return body;
 }
 

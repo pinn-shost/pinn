@@ -99,6 +99,15 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 und 🇰🇷 한국어**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.119.0
+
+**Übersetzungen mit Text-Schlüsseln: die Pinnwand und die letzten Bereiche**
+
+- Die **Pinnwand** (Zettel, Listen, Umfragen, Fotos, Danke, Countdown, Archiv und Antworten), der **Wochen- und Monatsausblick**, die **Sprachsteuerung** samt Anleitung für iPhone und Android, die **Familien-Verwaltung** des Hauptadmins, der **Profilbild-Zuschnitt** und der **Dashboard-Hintergrund** holen ihre Texte jetzt aus den Sprachdateien in `pb_public/i18n/` – in allen neun Sprachen und als WG.
+- Kleinigkeiten: Meldungen ohne Verbindung, „Anmeldung abgelaufen“, Hinweise der Kindersicherung, Gerätenamen unter „Geräte & Anmeldung“ und Avatar-Namen folgen der Sprache; die Startprüfung („pinn. kann nicht starten“) ist jetzt schlichtes Englisch. Die **Kindersicherung** erkennt Löschen-Knöpfe jetzt in jeder Sprache (vorher nur auf Deutsch). Auf der Pinnwand stehen Stimmen, Countdown-Tage und „+ 2 weitere“ in richtiger Einzahl oder Mehrzahl, das Datum im Format der Sprache.
+- Als Nächstes: 1.119.1 stellt Standardnamen (Kategorien, Lagerorte, Einheiten), Server-Meldungen und das Versions-Log auf Schlüssel um; 1.119.2 entfernt den alten Übersetzer und `lang/`.
+- Geändert: `index.html`, `js/pinnwand.js`, `js/ausblick.js`, `js/sprachsteuerung.js`, `js/familienverwalten.js`, `js/profilbild.js`, `js/dashboardhintergrund.js`, `js/offline.js`, `js/dashboard.js`, `js/verbindung.js`, `js/vertraege.js`, `js/zustand.js`, `js/mitglieder.js`, `js/appstart.js`, `js/serverzugriff.js`, `js/popups.js`, `js/wetter.js`, `js/einrichten.js`, `js/exportieren.js`, `js/finanzen.js`, `js/sparen.js`, `js/vorrat2.js`, `js/einkaufseingabe.js`, `js/benutzer.js`, `js/icsparser.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien in `i18n/` und `lang/` – am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
+
 ## Neu in 1.118.4
 
 **Sicherheit: PIN-Pflicht mit Familien-Dashboard · Kalender-Fix**
@@ -124,14 +133,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Plus/Minus** richtet sich nach der Menge: 30 ml minus ergibt 20 ml (vorher sprang es auf 50 ml); kleine Mengen in 5er-/10er-Schritten, große in 50er-Schritten.
 - Vorrats-Artikel ohne eigenen Laden landen jetzt beim **Stammladen** statt auf der Essensplanungs-Liste.
 - Geändert: `index.html`, `js/einkauf.js`, `js/einkaufseingabe.js`, `js/einkaufslisten.js`, `js/vorrat.js`, `css/listen.css`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien – am Server ändert sich nichts.
-
-## Neu in 1.118.1
-
-**Update-Hinweis für Admins**
-
-- Admins, die Updates installieren dürfen, bekommen jetzt **eine Push-Nachricht je neuer pinn.-Version** (Schalter: Konto → Benachrichtigungen → Updates) und eine **Karte in der Glocke**, die jeden Tag wiederkommt, bis das Update installiert ist – Wegwischen blendet sie nur für heute aus.
-- Ein Tipp auf die Nachricht oder die Karte öffnet direkt **Einstellungen → System** mit dem Update-Popup.
-- Geändert: `index.html`, `js/sicherungen.js`, `js/mitteilungen.js`, `js/hinweise.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien, am Server `pb_hooks/system.pb.js`, `pinn-system.js`, `pinn-hinweise.js`, `pinn-push.js`, `pinn-pushtext.js`. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
 
 ## So funktioniert’s
 
@@ -161,7 +162,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.118.4` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.119.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

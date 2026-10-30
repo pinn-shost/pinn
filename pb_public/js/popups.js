@@ -31,7 +31,7 @@ function isModalDirty(modalId) {
 // Tries to close a modal - asks first if something has changed since it was opened.
 function attemptCloseModal(modalId, closeFn) {
   if (isModalDirty(modalId)) {
-    if (!confirm('Wirklich abbrechen? Deine Eingaben gehen dabei verloren.')) return;
+    if (!confirm(tk('doc.reallyCancelEntriesWill'))) return;
   }
   closeFn();
 }

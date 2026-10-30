@@ -99,6 +99,15 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語和 🇰🇷 한국어**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.119.0 新功能
+
+**使用文本键翻译：留言板和最后的几个区域**
+
+- **留言板**（便签、清单、投票、照片、感谢、倒计时、归档和回复）、**每周与每月展望**、**语音控制**（含 iPhone 和 Android 设置指南）、主管理员的**家庭管理**、**头像裁剪**和**看板背景**现在都从 `pb_public/i18n/` 的语言文件读取文字——九种语言，合租模式同样适用。
+- 小改进：离线提示、“登录已过期”、儿童锁提示、设备名称和头像名称都跟随所选语言；启动检查现在使用简单英文。**儿童锁**现在能识别任何语言的删除按钮。留言板上的票数、倒计时天数和“+ 另外 2 项”使用正确的单复数，日期采用语言格式。
+- 下一步：1.119.1 将标准名称、服务器消息和版本日志改为文本键；1.119.2 移除旧翻译器和 `lang/`。
+- 已修改：`index.html`, `js/pinnwand.js`, `js/ausblick.js`, `js/sprachsteuerung.js`, `js/familienverwalten.js`, `js/profilbild.js`, `js/dashboardhintergrund.js`, `js/offline.js`, `js/dashboard.js`, `js/verbindung.js`, `js/vertraege.js`, `js/zustand.js`, `js/mitglieder.js`, `js/appstart.js`, `js/serverzugriff.js`, `js/popups.js`, `js/wetter.js`, `js/einrichten.js`, `js/exportieren.js`, `js/finanzen.js`, `js/sparen.js`, `js/vorrat2.js`, `js/einkaufseingabe.js`, `js/benutzer.js`, `js/icsparser.js`, `js/sprachen.js`, `js/versionslog.js`，`i18n/` 和 `lang/` 中的所有语言文件——服务器无变化。照常安装（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
+
 ## 1.118.4 新功能
 
 **安全：有家庭看板时必须设置 PIN · 日历修复**
@@ -110,12 +119,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 **食谱：回收站、删除确认、本周计划长按**
 
 - 删除食谱前会先确认，食谱在 **回收站保留 7 天**（列表下方）可恢复；长按“本周计划”中的饭菜可查看、编辑、移动、标记已做或移除。
-
-## 1.118.2 新功能
-
-**购物清单：粘贴消息、库存提示、加减**
-
-- 将消息（如 WhatsApp）**粘贴** 到输入框，弹窗显示识别出的商品和数量，并用绿色提示库存、饮食计划和已在清单中的项目；加减按数量大小调整。
 
 ## 工作原理
 
@@ -145,7 +148,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.118.4` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.119.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

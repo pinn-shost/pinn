@@ -20,6 +20,14 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.119', datum: '30.10.2026', titel: 'Übersetzungen mit Text-Schlüsseln: Pinnwand und die letzten Bereiche',
+    punkte: [
+      ['info', 'Pinnwand (Zettel, Listen, Umfragen, Fotos, Danke, Countdown, Archiv und Antworten), Wochen- und Monatsausblick, Sprachsteuerung samt Anleitung für iPhone und Android, die Familien-Verwaltung des Hauptadmins, Profilbild-Zuschnitt und Dashboard-Hintergrund holen ihre Texte jetzt über Text-Schlüssel – in allen neun Sprachen, auch als WG'],
+      ['fix', 'Kleinigkeiten: Meldungen ohne Verbindung, „Anmeldung abgelaufen“, Hinweise der Kindersicherung, Gerätenamen unter „Geräte & Anmeldung“, Avatar-Namen und die Startprüfung („pinn. kann nicht starten“, jetzt auf Englisch) folgen der eingestellten Sprache; die Kindersicherung erkennt Löschen-Knöpfe jetzt in jeder Sprache; Stimmen, Countdown-Tage und „+ 2 weitere“ auf der Pinnwand stehen in richtiger Einzahl oder Mehrzahl, das Datum im Format der Sprache'],
+      ['info', 'Geändert: index.html, js/pinnwand.js, js/ausblick.js, js/sprachsteuerung.js, js/familienverwalten.js, js/profilbild.js, js/dashboardhintergrund.js, js/offline.js, js/dashboard.js, js/verbindung.js und 17 weitere Dateien in js/, alle Sprachdateien in i18n/ und lang/ – am Server ändert sich nichts'],
+    ],
+  },
+  {
     v: '1.118', datum: '29.10.2026', titel: 'Fahrenheit und Übersetzungs-Feinschliff',
     punkte: [
       ['neu', 'Sprache & Region: neue Einstellung „Temperatur“ – automatisch passend zum Land (USA in °F, sonst °C) oder von Hand Celsius bzw. Fahrenheit; gilt für Wetter-Kachel, Kopfzeile, Wetter-Ansicht, Urlaubswetter, Wochenvorschau und Garten-Tipps'],

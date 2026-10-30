@@ -26,13 +26,13 @@ async function fetchWeather() {
   try {
     const opts = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) };
     const res = loggedIn ? await apiFetch('/api/pinn/zuhause/wetter', opts) : await fetch('/api/pinn/zuhause/wetter', opts);
-    if (res.status === 404) throw new Error('pb_hooks/zuhause.pb.js fehlt auf dem Server');
+    if (res.status === 404) throw new Error(tk('weather.pbHooksZuhausePb'));
     const data = await res.json();
     if (data.keinOrt) {
       weatherNoLocation = true;
       weatherData = null;
     } else if (data.error || !data.jetzt) {
-      throw new Error(data.error || 'keine Wetterdaten');
+      throw new Error(data.error || tk('weather.noWeatherData'));
     } else {
       weatherData = data.jetzt.temp != null ? { temp: data.jetzt.temp, code: data.jetzt.code, uv: data.jetzt.uv, gef: data.jetzt.gef, wind: data.jetzt.wind, feuchte: data.jetzt.feuchte } : null;
       // Preview for the overview (remembered on the device so it is there offline too)
@@ -47,7 +47,7 @@ async function fetchWeather() {
       weatherNoLocation = false;
     }
   } catch (err) {
-    console.error('Wetter-Abruf fehlgeschlagen', err);
+    console.error('Weather request failed', err);
   } finally {
     weatherLoading = false;
   }

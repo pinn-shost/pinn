@@ -23,7 +23,7 @@ async function bootApp() {
   }
   if (!currentUser() || !currentUser().familie) {
     hideDashboardScreen();
-    alert('Dein Profil gehört zu keiner Familie. Bitte wende dich an den Hauptadmin.');
+    alert(tk('app.profileDoesntBelongAny'));
     pb.authStore.clear();
     location.reload();
     return;
@@ -31,9 +31,9 @@ async function bootApp() {
   try {
     await loadFamilyData();
   } catch (err) {
-    console.error('Konnte Familiendaten nicht laden', err);
+    console.error('Could not load the family data', err);
     hideDashboardScreen();
-    alert('Verbindung zum PocketBase-Server (' + PB_URL + ') fehlgeschlagen. Bitte NAS/Netzwerk prüfen und Seite neu laden.');
+    alert(tk('app.serverConnectFailed', { url: PB_URL }));
     return;
   }
   await enforceDashboardPin(); // the family has a dashboard and this profile has no PIN yet: set it now

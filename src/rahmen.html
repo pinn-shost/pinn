@@ -63,18 +63,18 @@
   var PINN_APP_STYLES = [{{PINN_APP_STYLES}}];
   window.addEventListener('DOMContentLoaded', function () {
     var missing = [];
-    if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – der PocketBase-Client (ohne ihn funktioniert nichts)');
+    if (!window.PocketBase) missing.push('<b>vendor/pocketbase/pocketbase.umd.js</b> – the PocketBase client (nothing works without it)');
     var probe = document.createElement('div');
     probe.className = 'hidden';
     document.body.appendChild(probe);
-    if (getComputedStyle(probe).display !== 'none') missing.push('<b>vendor/pinn.css</b> – die Gestaltung');
+    if (getComputedStyle(probe).display !== 'none') missing.push('<b>vendor/pinn.css</b> – the styles');
     probe.remove();
     var loadedParts = window.PINN_PARTS || [];
     PINN_APP_PARTS.forEach(function (part) {
-      if (loadedParts.indexOf(part) === -1) missing.push('<b>js/' + part + '.js</b> – ein Teil der App');
+      if (loadedParts.indexOf(part) === -1) missing.push('<b>js/' + part + '.js</b> – a part of the app');
     });
     // Texts of the chosen language (pb_public/i18n/<code>.i18n.js, since 1.111.0)
-    if (window.PINN_I18N && PINN_I18N.keysMissing) missing.push('<b>' + PINN_I18N.keysMissing + '</b> – die Texte der App');
+    if (window.PINN_I18N && PINN_I18N.keysMissing) missing.push('<b>' + PINN_I18N.keysMissing + '</b> – the texts of the app');
     // A CSS file counts as loaded when the browser has taken over its rules (a 404 or a delivered
     // index.html result in no stylesheet or one without rules)
     function fehlendeStyles() {
@@ -83,7 +83,7 @@
         var link = document.querySelector('link[rel="stylesheet"][href^="css/' + name + '.css"]');
         var ok = false;
         try { ok = !!(link && link.sheet && link.sheet.cssRules.length); } catch (e) { ok = false; }
-        if (!ok) out.push('<b>css/' + name + '.css</b> – ein Teil der App');
+        if (!ok) out.push('<b>css/' + name + '.css</b> – a part of the app');
       });
       return out;
     }
@@ -110,13 +110,13 @@
       var box = document.createElement('div');
       box.setAttribute('style', 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;background:#FFFBFB;font-family:system-ui,sans-serif;color:#25231F;overflow:auto;');
       box.innerHTML = '<div style="max-width:460px;line-height:1.5">'
-        + '<div style="font-size:20px;font-weight:700;margin-bottom:10px">pinn. kann nicht starten</div>'
-        + '<p style="margin:0 0 10px">Auf dem NAS fehlt im Ordner <code>pb_public/</code>:</p>'
+        + '<div style="font-size:20px;font-weight:700;margin-bottom:10px">pinn. cannot start</div>'
+        + '<p style="margin:0 0 10px">Missing on the NAS in the folder <code>pb_public/</code>:</p>'
         + '<ul style="margin:0 0 14px;padding-left:20px">' + missing.map(function (m) { return '<li>' + m + '</li>'; }).join('') + '</ul>'
-        + '<p style="margin:0 0 6px;font-size:13px;font-weight:600">So antwortet der Server:</p>'
-        + '<div id="pinnStartChecks" style="font-family:ui-monospace,Menlo,monospace;font-size:12px;margin:0 0 14px;word-break:break-all">wird geprüft …</div>'
-        + '<p style="margin:0 0 16px;font-size:14px;color:#6b6760">Erwartet: <code>pb_public/vendor/pinn.css</code>, <code>pb_public/vendor/pocketbase/pocketbase.umd.js</code> und die Dateien in <code>pb_public/js/</code> – im selben <code>pb_public</code> wie diese <code>index.html</code>. Groß-/Kleinschreibung beachten.</p>'
-        + '<button type="button" onclick="location.href=location.pathname+\'?_r=\'+Date.now()" style="padding:10px 16px;border-radius:10px;border:0;background:#00374A;color:#fff;font-size:15px">Neu laden</button>'
+        + '<p style="margin:0 0 6px;font-size:13px;font-weight:600">What the server answers:</p>'
+        + '<div id="pinnStartChecks" style="font-family:ui-monospace,Menlo,monospace;font-size:12px;margin:0 0 14px;word-break:break-all">checking …</div>'
+        + '<p style="margin:0 0 16px;font-size:14px;color:#6b6760">Expected: <code>pb_public/vendor/pinn.css</code>, <code>pb_public/vendor/pocketbase/pocketbase.umd.js</code> and the files in <code>pb_public/js/</code> – in the same <code>pb_public</code> as this <code>index.html</code>. Upper/lower case matters.</p>'
+        + '<button type="button" onclick="location.href=location.pathname+\'?_r=\'+Date.now()" style="padding:10px 16px;border-radius:10px;border:0;background:#00374A;color:#fff;font-size:15px">Reload</button>'
         + '</div>';
       document.body.appendChild(box);
       var out = document.getElementById('pinnStartChecks');
@@ -129,10 +129,10 @@
           var okType = /\.css$/.test(path) ? /css/.test(type) : /javascript|ecmascript/.test(type);
           // For unknown paths PocketBase may deliver index.html - that does not count as found
           var found = res.ok && okType;
-          lines[i] = (found ? '✅ ' : '❌ ') + path + ' → ' + res.status + (res.ok && !okType ? ' (' + (type.split(';')[0] || 'unbekannter Typ') + ', nicht die Datei)' : '');
+          lines[i] = (found ? '✅ ' : '❌ ') + path + ' → ' + res.status + (res.ok && !okType ? ' (' + (type.split(';')[0] || 'unknown type') + ', not the file)' : '');
           show();
         }).catch(function () {
-          lines[i] = '❌ ' + path + ' → keine Antwort';
+          lines[i] = '❌ ' + path + ' → no answer';
           show();
         });
       });

@@ -1,62 +1,62 @@
 <!-- Pin board: add / edit a note -->
 <div id="pinboardEditModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closePinboardEditBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Schließen">×</button>
-    <h3 id="pinboardEditTitle" class="font-serif text-lg mb-4 pr-6">Neuer Zettel</h3>
+    <button data-tk-attr="aria-label:common.close" id="closePinboardEditBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none" aria-label="Close">×</button>
+    <h3 data-tk="board.newNote" id="pinboardEditTitle" class="font-serif text-lg mb-4 pr-6">New note</h3>
 
     <div id="pwTypePicker" class="pw-types mb-4"></div>
 
     <div id="pwFieldTitleWrap" class="mb-3">
-      <label id="pwTitleLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pwTitleInput">Überschrift</label>
+      <label data-tk="board.heading" id="pwTitleLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pwTitleInput">Heading</label>
       <input id="pwTitleInput" type="text" autocomplete="off" maxlength="120" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
     </div>
     <div id="pwFieldPhotoWrap" class="hidden mb-3">
-      <button id="pwPhotoPickBtn" type="button" class="pw-photo-pick"><span>📷 Foto aufnehmen oder auswählen</span></button>
+      <button id="pwPhotoPickBtn" type="button" class="pw-photo-pick"><span data-tk="board.takeChoosePhoto">📷 Take or choose photo</span></button>
       <input id="pwPhotoInput" type="file" accept="image/*" class="hidden" />
     </div>
     <div id="pwFieldDateWrap" class="hidden mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pwDateInput">Wann ist es so weit?</label>
+      <label data-tk="board.when" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pwDateInput">When is it?</label>
       <input id="pwDateInput" type="date" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
     </div>
     <div id="pwFieldTextWrap" class="mb-3">
-      <label id="pwTextLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pwTextInput">Nachricht</label>
+      <label data-tk="bell.hw.message" id="pwTextLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pwTextInput">Message</label>
       <textarea id="pwTextInput" rows="4" maxlength="2000" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base"></textarea>
     </div>
     <div id="pwFieldItemsWrap" class="hidden mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pwItemsInput">Punkte – einer pro Zeile</label>
-      <textarea id="pwItemsInput" rows="5" maxlength="4000" placeholder="Badesachen&#10;Sonnencreme&#10;Ladekabel" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base"></textarea>
-      <p class="text-[11px] text-ink/40 mt-1">Jede*r kann die Punkte auf der Pinnwand abhaken und weitere hinzufügen.</p>
+      <label data-tk="board.itemsOnePerLine" class="block text-xs uppercase tracking-wide text-ink/40 mb-1" for="pwItemsInput">Items – one per line</label>
+      <textarea data-tk-attr="placeholder:board.ph.listItems" id="pwItemsInput" rows="5" maxlength="4000" placeholder="Swimwear&#10;Sun cream&#10;Charging cable" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base"></textarea>
+      <p data-tk="board.everyoneCanTickOff" class="text-[11px] text-ink/40 mt-1">Everyone can tick off the items on the board and add more.</p>
     </div>
     <div id="pwFieldOptionsWrap" class="hidden mb-3">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Antworten</label>
+      <label data-tk="board.replies" class="block text-xs uppercase tracking-wide text-ink/40 mb-1">Replies</label>
       <div id="pwOptionsList"></div>
-      <button id="pwAddOptionBtn" type="button" class="text-xs text-pine font-medium mt-1">+ Antwort hinzufügen</button>
+      <button data-tk="board.addReply" id="pwAddOptionBtn" type="button" class="text-xs text-pine font-medium mt-1">+ Add reply</button>
     </div>
 
-    <label id="pwToLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Für wen?</label>
+    <label data-tk="lists.item.forWhom" id="pwToLabel" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">For whom?</label>
     <div id="pwToPicker" class="pw-people mb-1.5"></div>
     <p id="pwToHint" class="text-[11px] text-ink/40 mb-4"></p>
 
     <div id="pwColorWrap">
-      <label class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Farbe</label>
+      <label data-tk="account.dashBg.color" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Colour</label>
       <div id="pwColorPicker" class="pw-colors mb-4"></div>
     </div>
 
     <div class="mb-2">
-      <label class="pw-switch-row"><span class="pw-switch"><input id="pwPinnedToggle" type="checkbox" /><i></i></span><span class="pw-switch-text">📌 Oben anheften<small>Bleibt ganz oben auf der Pinnwand</small></span></label>
-      <label class="pw-switch-row"><span class="pw-switch"><input id="pwImportantToggle" type="checkbox" /><i></i></span><span class="pw-switch-text">❗ Wichtig<small>Rot markiert – die Push-Nachricht kommt auch bei allen an, die nur Zettel „an mich“ erhalten</small></span></label>
-      <label class="pw-switch-row"><span class="pw-switch"><input id="pwRemindToggle" type="checkbox" /><i></i></span><span class="pw-switch-text">⏰ Erinnern<small>Push-Nachricht zur gewählten Zeit (an die Empfänger bzw. alle)</small></span></label>
+      <label class="pw-switch-row"><span class="pw-switch"><input id="pwPinnedToggle" type="checkbox" /><i></i></span><span class="pw-switch-text"><span data-tk="board.pinTop">📌 Pin to top</span><small data-tk="board.staysVeryTopBoard">Stays at the very top of the board</small></span></label>
+      <label class="pw-switch-row"><span class="pw-switch"><input id="pwImportantToggle" type="checkbox" /><i></i></span><span class="pw-switch-text"><span data-tk="board.important">❗ Important</span><small data-tk="board.markedRedPushNotification">Marked red – the push notification also reaches everyone who only receives notes “to me”</small></span></label>
+      <label class="pw-switch-row"><span class="pw-switch"><input id="pwRemindToggle" type="checkbox" /><i></i></span><span class="pw-switch-text"><span data-tk="board.remind">⏰ Remind</span><small data-tk="board.pushNotificationChosenTime">Push notification at the chosen time (to the recipients or everyone)</small></span></label>
       <div id="pwRemindWrap" class="hidden pw-sub"><input id="pwRemindInput" type="datetime-local" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" /></div>
-      <label class="pw-switch-row"><span class="pw-switch"><input id="pwExpiresToggle" type="checkbox" /><i></i></span><span class="pw-switch-text">🗓️ Automatisch abnehmen<small>Nach diesem Tag wandert der Zettel ins Archiv</small></span></label>
+      <label class="pw-switch-row"><span class="pw-switch"><input id="pwExpiresToggle" type="checkbox" /><i></i></span><span class="pw-switch-text"><span data-tk="board.takeDownAutomatically">🗓️ Take down automatically</span><small data-tk="board.afterDayNoteMoves">After this day the note moves to the archive</small></span></label>
       <div id="pwExpiresWrap" class="hidden pw-sub"><input id="pwExpiresInput" type="date" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" /></div>
     </div>
 
     <p id="pwEditError" class="hidden text-xs text-red-500 mb-3"></p>
     <div class="flex items-center gap-2 mt-3">
-      <button id="deletePinboardNoteBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Löschen</button>
+      <button data-tk="common.delete" id="deletePinboardNoteBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Delete</button>
       <div class="flex-1"></div>
-      <button id="cancelPinboardEditBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Abbrechen</button>
-      <button id="savePinboardNoteBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Anpinnen</button>
+      <button data-tk="common.cancel" id="cancelPinboardEditBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:bg-ink/5 transition">Cancel</button>
+      <button data-tk="board.pin" id="savePinboardNoteBtn" type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Pin</button>
     </div>
   </div>
 </div>
@@ -64,13 +64,13 @@
 <!-- Pin board: view a note (replies, reactions, actions) -->
 <div id="pinboardDetailModal" class="hidden fixed inset-0 bg-ink/30 backdrop-blur-sm z-[300] grid place-items-center p-4 sm:p-6">
   <div class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto fade-in">
-    <button id="closePinboardDetailBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none z-10" aria-label="Schließen">×</button>
+    <button data-tk-attr="aria-label:common.close" id="closePinboardDetailBtn" type="button" class="absolute top-3 right-3 w-7 h-7 rounded-full text-ink/40 hover:text-ink hover:bg-ink/5 transition grid place-items-center text-lg leading-none select-none z-10" aria-label="Close">×</button>
     <div id="pinboardDetailBody" class="pt-3"></div>
-    <h4 class="text-xs uppercase tracking-wide text-ink/40 mb-2 mt-1">Antworten</h4>
+    <h4 data-tk="board.replies" class="text-xs uppercase tracking-wide text-ink/40 mb-2 mt-1">Replies</h4>
     <div id="pinboardThread" class="pw-thread"></div>
     <div id="pinboardReplyWrap" class="pw-reply">
-      <textarea id="pinboardReplyInput" rows="1" maxlength="1000" enterkeyhint="send" placeholder="Antworten …" class="rounded-lg border border-ink/15 px-3 py-2 text-base"></textarea>
-      <button id="pinboardReplyBtn" type="button" class="shrink-0 px-3 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Senden</button>
+      <textarea data-tk-attr="placeholder:board.reply" id="pinboardReplyInput" rows="1" maxlength="1000" enterkeyhint="send" placeholder="Reply …" class="rounded-lg border border-ink/15 px-3 py-2 text-base"></textarea>
+      <button data-tk="board.send" id="pinboardReplyBtn" type="button" class="shrink-0 px-3 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">Send</button>
     </div>
     <div id="pinboardDetailActions" class="pw-actions"></div>
   </div>
@@ -78,6 +78,6 @@
 
 <!-- Pin board: large photo -->
 <div id="pinboardLightbox" class="hidden fixed inset-0">
-  <button id="pinboardLightboxClose" type="button" aria-label="Schließen">✕</button>
+  <button data-tk-attr="aria-label:common.close" id="pinboardLightboxClose" type="button" aria-label="Close">✕</button>
   <img id="pinboardLightboxImg" alt="" />
 </div>

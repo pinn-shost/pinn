@@ -128,10 +128,11 @@ function normalizePantrySettings(raw) {
   const d = parseInt(o.mhdDays, 10);
   return { mhdDays: PANTRY_MHD_DAYS.includes(d) ? d : 3 };
 }
+// [emoji, text key of the name shown as tooltip]
 const AVATARS = {
-  pet: [['🐶','Hund'],['🐱','Katze'],['🐰','Hase'],['🐹','Hamster'],['🐦','Vogel'],['🐠','Fisch']],
-  male: [['👶🏼','Baby'],['👦🏼','Junge'],['👨🏼','Mann'],['👴🏼','Opa']],
-  female: [['👶🏼','Baby'],['👧🏼','Mädchen'],['👩🏼','Frau'],['👵🏼','Oma']],
+  pet: [['🐶','avatar.dog'],['🐱','avatar.cat'],['🐰','avatar.rabbit'],['🐹','avatar.hamster'],['🐦','avatar.bird'],['🐠','avatar.fish']],
+  male: [['👶🏼','avatar.baby'],['👦🏼','avatar.boy'],['👨🏼','avatar.man'],['👴🏼','avatar.grandpa']],
+  female: [['👶🏼','avatar.baby'],['👧🏼','avatar.girl'],['👩🏼','avatar.woman'],['👵🏼','avatar.grandma']],
 };
 
 // Former example members (Anna/Jonas/Mia) - never shown as long as no profile is linked to

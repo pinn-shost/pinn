@@ -1,11 +1,11 @@
 <!-- SOS: call for help from "Traccar Client" – warning popup with map, address and emergency call (content from the script) -->
-<div id="sosOverlay" class="hidden" role="alertdialog" aria-modal="true" aria-label="SOS – Hilferuf">
+<div data-tk-attr="aria-label:sos.callForHelp" id="sosOverlay" class="hidden" role="alertdialog" aria-modal="true" aria-label="SOS – call for help">
   <div id="sosCard" class="sos-card"></div>
 </div>
 <button id="sosBanner" type="button" class="hidden"></button>
 
 <!-- Way home: notice at the top ("… ist unterwegs nach Hause") and popup with map and call (content from the script) -->
-<div id="hwOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="Heimweg">
+<div data-tk-attr="aria-label:famTile.wayHome" id="hwOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="Way home">
   <div id="hwCard" class="sos-card"></div>
 </div>
 <div id="hwBanner" class="hidden" role="status"></div>
@@ -15,9 +15,9 @@
 
 <!-- Outlook: week preview & monthly finance outlook – notice at the top and a whole page (content from the script, own texts in four languages) -->
 <div id="abBanner" class="hidden" role="status" data-no-i18n></div>
-<div id="abOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="Ausblick" data-no-i18n>
+<div data-tk-attr="aria-label:settings.outlook.title" id="abOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="Outlook" data-no-i18n>
   <div class="ab-sheet fade-in">
-    <button id="abClose" type="button" class="ab-x" aria-label="Schließen">×</button>
+    <button data-tk-attr="aria-label:common.close" id="abClose" type="button" class="ab-x" aria-label="Close">×</button>
     <div id="abBody"></div>
   </div>
 </div>

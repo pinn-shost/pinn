@@ -35,32 +35,32 @@
    ========================================================== */
 const PW_PHOTO_COLLECTION = 'pinnwand_bilder';
 const PW_COLORS = [
-  { id: 'gelb', c: '#FFF4B8', label: 'Gelb' },
-  { id: 'rosa', c: '#FFD9E2', label: 'Rosa' },
-  { id: 'mint', c: '#D3F2E3', label: 'Mint' },
-  { id: 'himmel', c: '#D5E9FF', label: 'Himmelblau' },
-  { id: 'lavendel', c: '#E7DEFF', label: 'Lavendel' },
-  { id: 'pfirsich', c: '#FFE0C4', label: 'Pfirsich' },
-  { id: 'weiss', c: '#FFFFFF', label: 'Weiß' },
+  { id: 'gelb', c: '#FFF4B8', get label() { return tk('board.color.gelb'); } },
+  { id: 'rosa', c: '#FFD9E2', get label() { return tk('board.color.rosa'); } },
+  { id: 'mint', c: '#D3F2E3', get label() { return tk('board.color.mint'); } },
+  { id: 'himmel', c: '#D5E9FF', get label() { return tk('board.color.himmel'); } },
+  { id: 'lavendel', c: '#E7DEFF', get label() { return tk('board.color.lavendel'); } },
+  { id: 'pfirsich', c: '#FFE0C4', get label() { return tk('board.color.pfirsich'); } },
+  { id: 'weiss', c: '#FFFFFF', get label() { return tk('board.color.weiss'); } },
 ];
 const PW_TYPES = [
-  { id: 'note', icon: '📝', label: 'Notiz', color: 'gelb' },
-  { id: 'list', icon: '✅', label: 'Liste', color: 'mint' },
-  { id: 'photo', icon: '📷', label: 'Foto', color: 'weiss' },
-  { id: 'poll', icon: '📊', label: 'Umfrage', color: 'himmel' },
-  { id: 'kudos', icon: '💛', label: 'Danke', color: 'gelb' },
-  { id: 'countdown', icon: '⏳', label: 'Countdown', color: 'lavendel' },
+  { id: 'note', icon: '📝', get label() { return tk('board.type.note'); }, color: 'gelb' },
+  { id: 'list', icon: '✅', get label() { return tk('board.type.list'); }, color: 'mint' },
+  { id: 'photo', icon: '📷', get label() { return tk('board.type.photo'); }, color: 'weiss' },
+  { id: 'poll', icon: '📊', get label() { return tk('board.type.poll'); }, color: 'himmel' },
+  { id: 'kudos', icon: '💛', get label() { return tk('board.type.kudos'); }, color: 'gelb' },
+  { id: 'countdown', icon: '⏳', get label() { return tk('board.type.countdown'); }, color: 'lavendel' },
 ];
 const PW_REACTIONS = ['❤️', '👍', '😂', '😮', '🙏', '🎉'];
 const PW_FILTERS = [
-  { id: 'alle', label: 'Alle' },
-  { id: 'mich', label: '🙋 Für mich' },
-  { id: 'wichtig', label: '❗ Wichtig' },
-  { id: 'listen', label: '✅ Listen' },
-  { id: 'umfragen', label: '📊 Umfragen' },
-  { id: 'fotos', label: '📷 Fotos' },
-  { id: 'danke', label: '💛 Danke' },
-  { id: 'archiv', label: '🗄️ Archiv' },
+  { id: 'alle', get label() { return tk('board.filter.alle'); } },
+  { id: 'mich', get label() { return tk('board.filter.mich'); } },
+  { id: 'wichtig', get label() { return tk('board.filter.wichtig'); } },
+  { id: 'listen', get label() { return tk('board.filter.listen'); } },
+  { id: 'umfragen', get label() { return tk('board.filter.umfragen'); } },
+  { id: 'fotos', get label() { return tk('board.filter.fotos'); } },
+  { id: 'danke', get label() { return tk('board.filter.danke'); } },
+  { id: 'archiv', get label() { return tk('board.filter.archiv'); } },
 ];
 const PW_ARCHIVE_KEEP_DAYS = 30;
 const PW_BOARD_ITEM_LIMIT = 8;
@@ -112,10 +112,10 @@ function pwWho(key, fallback) {
     if (p) {
       const pm = p.mitglied ? memberById(p.mitglied) : null;
       if (pm) return { name: pm.name, m: pm };
-      return { name: p.username || fallback || 'Jemand', m: null };
+      return { name: p.username || fallback || tk('lists.someone'), m: null };
     }
   }
-  return { name: fallback || 'Jemand', m: null };
+  return { name: fallback || tk('lists.someone'), m: null };
 }
 function pwAvatar(key, size, fallbackName) {
   const w = pwWho(key, fallbackName);
@@ -144,26 +144,26 @@ function pwAgo(ms) {
   const t = Number(ms) || 0;
   if (!t) return '';
   const diff = Date.now() - t;
-  if (diff < 60000) return 'gerade eben';
-  if (diff < 3600000) return `vor ${Math.floor(diff / 60000)} Min.`;
+  if (diff < 60000) return tk('devices.justNow');
+  if (diff < 3600000) return tk('board.minAgo', { n: Math.floor(diff / 60000) });
   const d = new Date(t);
   const days = pwDaysBetween(isoDate(d), pwToday());
-  if (days === 0) return `vor ${Math.max(1, Math.floor(diff / 3600000))} Std.`;
-  if (days === 1) return 'gestern';
-  if (days < 7) return d.toLocaleDateString('de-DE', { weekday: 'long' });
-  return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: days > 300 ? '2-digit' : undefined });
+  if (days === 0) return tk('board.hrAgo', { n: Math.max(1, Math.floor(diff / 3600000)) });
+  if (days === 1) return tk('lists.when.yesterday');
+  if (days < 7) return d.toLocaleDateString(sysLocale(), { weekday: 'long' });
+  return d.toLocaleDateString(sysLocale(), { day: '2-digit', month: '2-digit', year: days > 300 ? '2-digit' : undefined });
 }
 function pwFmtDay(iso) {
   if (!pwIsIso(iso)) return '';
   const diff = pwDaysBetween(pwToday(), iso);
-  if (diff === 0) return 'heute';
-  if (diff === 1) return 'morgen';
-  return new Date(iso + 'T00:00:00').toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' });
+  if (diff === 0) return tk('bell.today');
+  if (diff === 1) return tk('bell.tomorrow');
+  return new Date(iso + 'T00:00:00').toLocaleDateString(sysLocale(), { weekday: 'short', day: '2-digit', month: '2-digit' });
 }
 function pwFmtRemind(ms) {
   const d = new Date(Number(ms) || 0);
   if (isNaN(d)) return '';
-  const time = d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  const time = d.toLocaleTimeString(sysLocale(), { hour: '2-digit', minute: '2-digit' });
   return `${pwFmtDay(isoDate(d))} ${time}`;
 }
 function pwLinkify(text) {
@@ -284,7 +284,7 @@ function pwVisibleNotes() {
 function pwHeadHtml(n) {
   const key = pwAuthorKey(n);
   const w = pwWho(key, n.authorName);
-  const who = n.type === 'kudos' ? `von ${escapeHtml(w.name)}` : escapeHtml(w.name);
+  const who = n.type === 'kudos' ? escapeHtml(tk('board.fromName', { name: w.name })) : escapeHtml(w.name);
   return `<div class="pw-head">${pwAvatar(key, 'sm', n.authorName)}<span class="pw-who">${who}</span><span class="pw-when">${escapeHtml(pwAgo(n.createdAt))}</span></div>`;
 }
 function pwToHtml(n) {
@@ -292,7 +292,7 @@ function pwToHtml(n) {
   return `<div class="pw-to">${n.to.map(k => {
     const w = pwWho(k);
     const done = !!(n.doneBy && n.doneBy[k]);
-    return `<span class="pw-to-chip${pwIsMe(k) ? ' me' : ''}${done ? ' done' : ''}" title="${done ? 'erledigt' : ''}">${pwAvatar(k, 'sm')}${pwIsMe(k) ? 'für dich' : 'für ' + escapeHtml(w.name)}${done ? ' ✓' : ''}</span>`;
+    return `<span class="pw-to-chip${pwIsMe(k) ? ' me' : ''}${done ? ' done' : ''}" title="${done ? escapeHtml(tk('lists.type.done')) : ''}">${pwAvatar(k, 'sm')}${pwIsMe(k) ? escapeHtml(tk('board.forYou')) : escapeHtml(tk('board.forName', { name: w.name }))}${done ? ' ✓' : ''}</span>`;
   }).join('')}</div>`;
 }
 function pwPhotoInnerHtml(n) {
@@ -302,9 +302,9 @@ function pwPhotoInnerHtml(n) {
     const url = p.rec ? pwPhotoUrls.get(p.rec) : pwLocalPhotoUrls.get(p.pending);
     return { html: `<img src="${url}" alt="" />`, loaded: true };
   }
-  if (p && p.pending) return { html: '<div class="pw-photo-wait">⏳ Foto wird hochgeladen …</div>', loaded: false };
-  if (p && p.rec) return { html: '<div class="pw-photo-wait">Foto wird geladen …</div>', loaded: false };
-  return { html: '<div class="pw-photo-wait">Kein Foto</div>', loaded: false };
+  if (p && p.pending) return { html: ('<div class="pw-photo-wait">' + tk('board.uploadingPhoto') + '</div>'), loaded: false };
+  if (p && p.rec) return { html: ('<div class="pw-photo-wait">' + tk('board.loadingPhoto') + '</div>'), loaded: false };
+  return { html: ('<div class="pw-photo-wait">' + tk('board.noPhoto') + '</div>'), loaded: false };
 }
 function pwBodyHtml(n, mode) {
   const board = mode === 'board';
@@ -318,10 +318,10 @@ function pwBodyHtml(n, mode) {
       const by = i.done && i.by ? pwWho(i.by).name : '';
       return `<button type="button" class="pw-item${i.done ? ' done' : ''}" data-pw-item="${escapeHtml(i.id)}" ${archived ? 'disabled' : ''}><span class="pw-box">${i.done ? '✓' : ''}</span><span class="pw-item-text">${escapeHtml(i.text)}</span>${by && !board ? `<span class="pw-item-by">${escapeHtml(by)}</span>` : ''}</button>`;
     }).join('');
-    const more = board && items.length > shown.length ? `<div class="text-[11px] opacity-60 mt-1">+ ${items.length - shown.length} weitere</div>` : '';
-    const add = mode === 'detail' && !archived ? `<div class="pw-add-item"><input id="pwAddItemInput" type="text" maxlength="120" enterkeyhint="done" autocomplete="off" placeholder="Punkt hinzufügen …" /><button type="button" data-pw-add-item="1" aria-label="Hinzufügen">+</button></div>` : '';
+    const more = board && items.length > shown.length ? `<div class="text-[11px] opacity-60 mt-1">${escapeHtml(tk('board.moreN', { n: items.length - shown.length }))}</div>` : '';
+    const add = mode === 'detail' && !archived ? `<div class="pw-add-item"><input id="pwAddItemInput" type="text" maxlength="120" enterkeyhint="done" autocomplete="off" placeholder="${escapeHtml(tk('board.addItem'))}" /><button type="button" data-pw-add-item="1" aria-label="${escapeHtml(tk('common.add'))}">+</button></div>` : '';
     const pct = items.length ? Math.round(done / items.length * 100) : 0;
-    return `${title || '<div class="pw-title">Liste</div>'}<div class="pw-items">${rows}</div>${more}${add}${items.length ? `<div class="pw-progress" title="${done} von ${items.length} erledigt"><i style="width:${pct}%"></i></div><div class="text-[10px] opacity-60 mt-1">${done} von ${items.length} erledigt${done === items.length && items.length ? ' 🎉' : ''}</div>` : ''}`;
+    return `${title || ('<div class="pw-title">' + tk('bell.word.list') + '</div>')}<div class="pw-items">${rows}</div>${more}${add}${items.length ? `<div class="pw-progress" title="${escapeHtml(tk('board.progress', { done, n: items.length }))}"><i style="width:${pct}%"></i></div><div class="text-[10px] opacity-60 mt-1">${escapeHtml(tk('board.progress', { done, n: items.length }))}${done === items.length && items.length ? ' 🎉' : ''}</div>` : ''}`;
   }
   if (n.type === 'photo') {
     const ph = pwPhotoInnerHtml(n);
@@ -348,26 +348,25 @@ function pwBodyHtml(n, mode) {
           <span class="pw-opt-n">${c ? c : ''}</span>
         </button>`;
     }).join('');
-    const meta = `${total} ${total === 1 ? 'Stimme' : 'Stimmen'}${closed ? ' · beendet' : (mine ? ' · nochmal tippen zum Zurücknehmen' : ' · tippe zum Abstimmen')}`;
-    return `<div class="pw-title">${escapeHtml(n.title || 'Umfrage')}</div><div class="pw-poll">${rows}</div><div class="pw-poll-meta">${meta}</div>`;
+    const meta = escapeHtml(tk('board.votesN', { n: total }) + ' · ' + tk(closed ? 'board.pollClosed' : (mine ? 'board.tapAgainUndo' : 'board.tapVote')));
+    return `<div class="pw-title">${escapeHtml(n.title || tk('bell.word.poll'))}</div><div class="pw-poll">${rows}</div><div class="pw-poll-meta">${meta}</div>`;
   }
   if (n.type === 'kudos') {
     const to = n.to || [];
-    const names = to.map(k => pwIsMe(k) ? 'dir' : pwWho(k).name);
+    const names = to.map(k => pwIsMe(k) ? tk('board.youObj') : pwWho(k).name);
     const avas = to.slice(0, 4).map(k => pwAvatar(k, to.length > 1 ? 'lg' : 'xl')).join('');
-    const head = to.length ? `Danke${names.length === 1 && names[0] === 'dir' ? ' dir' : ', ' + escapeHtml(pwJoinNames(names))}!` : 'Danke an alle!';
+    const head = escapeHtml(pwThanksHead(to));
     return `<div class="pw-kudos-hero"><div class="pw-kudos-heart">💛</div>${avas ? `<div class="pw-kudos-avas">${avas}</div>` : ''}<div class="pw-kudos-to">${head}</div></div>${n.text ? `<div class="pw-text${board ? ' pw-clamp' : ''}">${pwLinkify(n.text)}</div>` : ''}`;
   }
   if (n.type === 'countdown') {
     const diff = pwIsIso(n.date) ? pwDaysBetween(pwToday(), n.date) : null;
     let num = '–', unit = '';
     if (diff !== null) {
-      if (diff <= 0) { num = 'Heute! 🎉'; unit = ''; }
-      else if (diff === 1) { num = '1'; unit = 'Tag noch'; }
-      else { num = String(diff); unit = 'Tage noch'; }
+      if (diff <= 0) { num = escapeHtml(tk('board.todayParty')); unit = ''; }
+      else { num = String(diff); unit = escapeHtml(tk('board.daysLeftN', { n: diff })); }
     }
-    const dateText = pwIsIso(n.date) ? new Date(n.date + 'T00:00:00').toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : '';
-    return `<div class="pw-count${diff !== null && diff <= 0 ? ' today' : ''}"><div class="pw-count-n">${num}</div>${unit ? `<div class="pw-count-u">${unit}</div>` : ''}<div class="pw-count-t">${escapeHtml(n.title || 'Countdown')}</div><div class="pw-count-d">${escapeHtml(dateText)}</div></div>${n.text ? `<div class="pw-text mt-2${board ? ' pw-clamp' : ''}">${pwLinkify(n.text)}</div>` : ''}`;
+    const dateText = pwIsIso(n.date) ? new Date(n.date + 'T00:00:00').toLocaleDateString(sysLocale(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : '';
+    return `<div class="pw-count${diff !== null && diff <= 0 ? ' today' : ''}"><div class="pw-count-n">${num}</div>${unit ? `<div class="pw-count-u">${unit}</div>` : ''}<div class="pw-count-t">${escapeHtml(n.title || tk('bell.word.countdown'))}</div><div class="pw-count-d">${escapeHtml(dateText)}</div></div>${n.text ? `<div class="pw-text mt-2${board ? ' pw-clamp' : ''}">${pwLinkify(n.text)}</div>` : ''}`;
   }
   // Note
   const text = String(n.text || '');
@@ -376,7 +375,14 @@ function pwBodyHtml(n, mode) {
 }
 function pwJoinNames(list) {
   if (list.length <= 1) return list.join('');
-  return list.slice(0, -1).join(', ') + ' und ' + list[list.length - 1];
+  return tk('bell.namesAnd', { a: list.slice(0, -1).join(', '), b: list[list.length - 1] });
+}
+// Heading of a thank-you note: "Thank you!", "Thanks, Kim and Mia!" or "Thanks to everyone!"
+function pwThanksHead(to) {
+  to = to || [];
+  if (!to.length) return tk('board.thanksEveryone');
+  if (to.length === 1 && pwIsMe(to[0])) return tk('board.thanksYou');
+  return tk('board.thanksNames', { names: pwJoinNames(to.map(k => pwIsMe(k) ? tk('board.youObj') : pwWho(k).name)) });
 }
 function pwBadgesHtml(n) {
   const out = [];
@@ -384,9 +390,9 @@ function pwBadgesHtml(n) {
   if (Number(n.remindAtMs) > Date.now() && !pwIsArchived(n, today)) out.push(`<span class="pw-badge">⏰ ${escapeHtml(pwFmtRemind(n.remindAtMs))}</span>`);
   if (pwIsIso(n.expires) && !n.archived) {
     const d = pwDaysBetween(today, n.expires);
-    if (d >= 0) out.push(`<span class="pw-badge${d <= 1 ? ' warn' : ''}">🗓️ bis ${escapeHtml(pwFmtDay(n.expires))}</span>`);
+    if (d >= 0) out.push(`<span class="pw-badge${d <= 1 ? ' warn' : ''}">${tk('board.until', { date: escapeHtml(pwFmtDay(n.expires)) })}</span>`);
   }
-  if (pwIsArchived(n, today)) out.push('<span class="pw-badge">🗄️ abgenommen</span>');
+  if (pwIsArchived(n, today)) out.push(`<span class="pw-badge">${escapeHtml(tk('board.takenDown'))}</span>`);
   return out.length ? `<div class="pw-badges">${out.join('')}</div>` : '';
 }
 function pwFootHtml(n, mode) {
@@ -400,9 +406,9 @@ function pwFootHtml(n, mode) {
     return `<button type="button" class="pw-react${myEmoji === e ? ' mine' : ''}" data-pw-react-toggle="${e}" title="${escapeHtml(names)}">${e}<b>${byEmoji[e].length}</b></button>`;
   }).join('');
   const archived = pwIsArchived(n);
-  const add = archived ? '' : `<button type="button" class="pw-react pw-react-add" data-pw-react-add="1" aria-label="Reagieren" title="Reagieren">+🙂</button>`;
+  const add = archived ? '' : `<button type="button" class="pw-react pw-react-add" data-pw-react-add="1" aria-label="${escapeHtml(tk('board.react'))}" title="${escapeHtml(tk('board.react'))}">+🙂</button>`;
   const addressedToMe = pwIsForMe(n) && n.type !== 'kudos' && n.type !== 'poll' && !archived;
-  const done = addressedToMe ? `<button type="button" class="pw-done-btn${pwIsDoneByMe(n) ? ' is-done' : ''}" data-pw-done="1">${pwIsDoneByMe(n) ? '✓ Erledigt' : 'Erledigt?'}</button>` : '';
+  const done = addressedToMe ? `<button type="button" class="pw-done-btn${pwIsDoneByMe(n) ? ' is-done' : ''}" data-pw-done="1">${pwIsDoneByMe(n) ? tk('tasks.doneBtn') : tk('board.done')}</button>` : '';
   const cc = (n.comments || []).length;
   const fresh = pwHasNewComments(n);
   const comments = mode === 'board' && (cc || !archived) ? `<span class="pw-comments-n${fresh ? ' fresh' : ''}">💬${cc ? ' ' + cc : ''}${fresh ? ' •' : ''}</span>` : '';
@@ -420,7 +426,7 @@ function pwNoteHtml(n, mode) {
   const rot = board ? pwRot(n.id) : (mode === 'detail' ? pwRot(n.id) / 2 : 0);
   const style = `--pw-c:${pwColor(n)};--pw-rot:${rot}deg`;
   const deco = n.type === 'photo' ? '<span class="pw-tape l"></span><span class="pw-tape r"></span>' : '<span class="pw-pin"></span>';
-  const flag = board && pwIsNew(n) ? '<span class="pw-flag new">neu</span>' : (n.important ? '<span class="pw-flag imp">wichtig</span>' : '');
+  const flag = board && pwIsNew(n) ? `<span class="pw-flag new">${escapeHtml(tk('bell.new'))}</span>` : (n.important ? `<span class="pw-flag imp">${escapeHtml(tk('board.importantFlag'))}</span>` : '');
   const attrs = board ? ' role="button" tabindex="0"' : '';
   return `<div class="${cls.join(' ')}" style="${style}" data-pw-note="${escapeHtml(n.id)}"${attrs}>${deco}${flag}${pwHeadHtml(n)}${pwToHtml(n)}${pwBodyHtml(n, mode)}${pwBadgesHtml(n)}${pwFootHtml(n, mode)}</div>`;
 }
@@ -453,10 +459,10 @@ function renderPinboard() {
   const list = pwVisibleNotes();
   if (!list.length) {
     const text = pwFilter === 'archiv'
-      ? { art: '🗄️', h: 'Das Archiv ist leer', p: `Abgenommene und abgelaufene Zettel landen hier und werden nach ${PW_ARCHIVE_KEEP_DAYS} Tagen gelöscht.` }
+      ? { art: '🗄️', h: tk('board.archiveEmpty'), p: tk('board.removedExpiredNotesEnd', { n: PW_ARCHIVE_KEEP_DAYS }) }
       : pwFilter !== 'alle'
-        ? { art: '🔍', h: 'Hier hängt gerade nichts', p: 'Für diesen Filter gibt es keine Zettel.' }
-        : { art: '📌', h: 'Die Pinnwand ist noch leer', p: 'Pinne eine Nachricht, eine Einkaufs- oder Packliste, ein Foto, eine Umfrage („Was essen wir Samstag?“), ein Dankeschön oder einen Countdown zum nächsten Urlaub an.' };
+        ? { art: '🔍', h: tk('board.nothingPinnedHereRight'), p: tk('board.noNotesFilter') }
+        : { art: '📌', h: tk('board.boardStillEmpty'), p: tk('board.pinMessageShoppingPacking') };
     board.innerHTML = `<div class="pw-empty"><div class="pw-empty-art">${text.art}</div><h3 class="font-serif text-lg mb-1">${text.h}</h3><p class="text-sm text-ink/50">${text.p}</p></div>`;
     pwBoardRenderedOnce = true;
     pwArr.on = false;
@@ -467,12 +473,12 @@ function renderPinboard() {
   const rest = pwFilter !== 'archiv' ? list.filter(n => !n.pinned) : list;
   let html = '';
   if (pinned.length && rest.length) {
-    html += `<div class="pw-section-label">📌 Angeheftet</div><div class="pw-board">${pinned.map(n => pwNoteHtml(n, 'board')).join('')}</div><div class="pw-section-label mt-2">Weitere Zettel</div>`;
+    html += `<div class="pw-section-label">${tk('board.pinned')}</div><div class="pw-board">${pinned.map(n => pwNoteHtml(n, 'board')).join('')}</div><div class="pw-section-label mt-2">${tk('board.moreNotes')}</div>`;
     html += `<div class="pw-board">${rest.map(n => pwNoteHtml(n, 'board')).join('')}</div>`;
   } else {
     html += `<div class="pw-board">${list.map(n => pwNoteHtml(n, 'board')).join('')}</div>`;
   }
-  if (pwFilter === 'archiv') html = `<p class="pw-section-label">Wird nach ${PW_ARCHIVE_KEEP_DAYS} Tagen automatisch gelöscht</p>` + html;
+  if (pwFilter === 'archiv') html = `<p class="pw-section-label">${tk('board.deletedAutomaticallyAfterDays', { n: PW_ARCHIVE_KEEP_DAYS })}</p>` + html;
   board.innerHTML = html;
   list.forEach(n => pwRenderedIds.add(n.id));
   pwBoardRenderedOnce = true;
@@ -556,7 +562,7 @@ function pwAddComment(id, text) {
   return true;
 }
 function pwDeleteComment(id, cid) {
-  if (!confirm('Antwort löschen?')) return;
+  if (!confirm(tk('board.deleteReply'))) return;
   pwUpdate(id, n => { n.comments = (n.comments || []).filter(c => c.id !== cid); });
 }
 function pwSetArchived(id, archived) {
@@ -568,11 +574,11 @@ function pwSetArchived(id, archived) {
       if (pwIsIso(n.expires) && n.expires < pwToday()) n.expires = '';
     }
   });
-  finShowToast(archived ? 'Zettel abgenommen – er liegt jetzt im Archiv.' : 'Wieder angepinnt.');
+  finShowToast(archived ? tk('board.noteTakenDownNow') : tk('board.pinnedAgain'));
 }
 function pwDeleteNote(id) {
   const n = pwNote(id);
-  if (!n || !confirm('Diesen Zettel wirklich löschen?')) return false;
+  if (!n || !confirm(tk('board.reallyDeleteNote'))) return false;
   pinboard = pinboard.filter(x => x.id !== id);
   pwDropPhoto(n.photo);
   persistState();
@@ -589,7 +595,7 @@ let pwFlushRunning = false;
 
 function pwIdb() {
   return new Promise((resolve, reject) => {
-    if (!window.indexedDB) { reject(new Error('IndexedDB nicht verfügbar')); return; }
+    if (!window.indexedDB) { reject(new Error('IndexedDB not available')); return; }
     const req = indexedDB.open(PW_IDB_NAME, 1);
     req.onupgradeneeded = () => { try { req.result.createObjectStore(PW_IDB_STORE); } catch (e) { /* exists */ } };
     req.onsuccess = () => resolve(req.result);
@@ -696,7 +702,7 @@ async function pwFlushPhotos() {
         }
         await pwIdbDel(key);
       } catch (err) {
-        console.warn('Pinnwand: Foto konnte nicht hochgeladen werden (Sammlung "' + PW_PHOTO_COLLECTION + '" vorhanden?)', err);
+        console.warn('Pin board: photo could not be uploaded (does the collection "' + PW_PHOTO_COLLECTION + '" exist?)', err);
         break;
       }
     }
@@ -840,8 +846,8 @@ function openPinboardEditor(id, presetType, presetText) {
     photoPreview: '',
     keepPhoto: n && n.photo ? { ...n.photo } : null,
   };
-  document.getElementById('pinboardEditTitle').textContent = n ? 'Zettel bearbeiten' : 'Neuer Zettel';
-  document.getElementById('savePinboardNoteBtn').textContent = n ? 'Speichern' : 'Anpinnen';
+  document.getElementById('pinboardEditTitle').textContent = n ? tk('board.editNote') : tk('board.newNote');
+  document.getElementById('savePinboardNoteBtn').textContent = n ? tk('common.save') : tk('board.pin');
   document.getElementById('deletePinboardNoteBtn').classList.toggle('hidden', !n || !pwCanEdit(n));
   document.getElementById('pwTitleInput').value = n ? (n.title || '') : '';
   document.getElementById('pwTextInput').value = n ? (n.text || '') : (presetText || '');
@@ -892,23 +898,23 @@ function pwRenderEditor() {
   show('pwFieldItemsWrap', t === 'list');
   show('pwFieldOptionsWrap', t === 'poll');
   show('pwColorWrap', t !== 'kudos');
-  const titleLabel = { note: 'Überschrift (optional)', list: 'Titel der Liste', poll: 'Frage', countdown: 'Worauf freut ihr euch?' }[t] || 'Überschrift';
-  const titlePh = { note: 'z. B. Elternabend', list: 'z. B. Packliste Ostsee', poll: 'z. B. Was essen wir am Samstag?', countdown: 'z. B. Urlaub an der Ostsee 🏖️' }[t] || '';
+  const titleLabel = { note: tk('board.headingOptional'), list: tk('board.titleList'), poll: tk('board.question'), countdown: tk('board.whatLookingForward') }[t] || tk('board.heading');
+  const titlePh = { note: tk('board.eGParentsEvening'), list: tk('board.eGPackingList'), poll: tk('board.eGWhatWe'), countdown: tk('board.eGHolidaySeaside') }[t] || '';
   document.getElementById('pwTitleLabel').textContent = titleLabel;
   document.getElementById('pwTitleInput').placeholder = titlePh;
-  const textLabel = { note: 'Nachricht', photo: 'Bildunterschrift (optional)', kudos: 'Wofür? (optional)', countdown: 'Notiz (optional)' }[t] || 'Text';
-  const textPh = { note: 'Was soll die Familie wissen?', photo: 'z. B. Unser neuer Mitbewohner 🐢', kudos: 'z. B. fürs Tischdecken ohne Aufforderung!', countdown: 'z. B. Noch Sonnencreme kaufen' }[t] || '';
+  const textLabel = { note: tk('bell.hw.message'), photo: tk('board.captionOptional'), kudos: tk('stars.whatOptional'), countdown: tk('pet.noteOptional') }[t] || tk('recipe.ai.text');
+  const textPh = { note: tk('board.whatShouldFamilyKnow'), photo: tk('board.eGOurNew'), kudos: tk('board.eGLayingTable'), countdown: tk('board.eGStillBuy') }[t] || '';
   document.getElementById('pwTextLabel').textContent = textLabel;
   document.getElementById('pwTextInput').placeholder = textPh;
   document.getElementById('pwTextInput').rows = t === 'note' ? 4 : 2;
-  document.getElementById('pwToLabel').textContent = t === 'kudos' ? 'Danke an …' : 'Für wen?';
+  document.getElementById('pwToLabel').textContent = t === 'kudos' ? tk('board.thanks') : tk('lists.item.forWhom');
   document.getElementById('pwToHint').textContent = t === 'kudos'
-    ? 'Die Beschenkten bekommen eine Push-Nachricht. Niemand gewählt = Danke an alle.'
-    : 'Niemand gewählt = die ganze Familie. Gewählte Personen bekommen den Zettel als „für dich“ und können ihn abhaken.';
+    ? tk('board.recipientsGetPushNotification')
+    : tk('board.nobodySelectedWholeFamily');
   // People
   const to = pwDraft.to;
   const people = members.map(m => `<button type="button" class="pw-person${to.includes(m.id) ? ' active' : ''}" data-pw-to="${escapeHtml(m.id)}">${pwAvatar(m.id, 'sm')}${escapeHtml(m.name || memberLabel(m))}</button>`).join('');
-  document.getElementById('pwToPicker').innerHTML = `<button type="button" class="pw-person all${!to.length ? ' active' : ''}" data-pw-to="">${t === 'kudos' ? '💛 Alle' : '👨‍👩‍👧 Alle'}</button>${people}`;
+  document.getElementById('pwToPicker').innerHTML = `<button type="button" class="pw-person all${!to.length ? ' active' : ''}" data-pw-to="">${t === 'kudos' ? tk('board.all') : tk('board.all2')}</button>${people}`;
   // Colors
   document.getElementById('pwColorPicker').innerHTML = PW_COLORS.map(c => `<button type="button" class="pw-color${pwDraft.color === c.id ? ' active' : ''}" style="background:${c.c}" data-pw-color="${c.id}" aria-label="${c.label}" title="${c.label}"></button>`).join('');
   // Poll answers
@@ -922,8 +928,8 @@ function pwRenderPollOptions() {
   const wrap = document.getElementById('pwOptionsList');
   wrap.innerHTML = pwDraft.options.map((o, i) => `
     <div class="pw-opt-row">
-      <input type="text" data-pw-opt="${escapeHtml(o.id)}" value="${escapeHtml(o.text)}" maxlength="80" autocomplete="off" placeholder="Antwort ${i + 1}" class="rounded-lg border border-ink/15 px-3 py-2 text-base" />
-      <button type="button" class="pw-opt-del" data-pw-opt-del="${escapeHtml(o.id)}" aria-label="Antwort entfernen" ${pwDraft.options.length <= 2 ? 'disabled style="opacity:.25"' : ''}>✕</button>
+      <input type="text" data-pw-opt="${escapeHtml(o.id)}" value="${escapeHtml(o.text)}" maxlength="80" autocomplete="off" placeholder="${escapeHtml(tk('board.answerN', { n: i + 1 }))}" class="rounded-lg border border-ink/15 px-3 py-2 text-base" />
+      <button type="button" class="pw-opt-del" data-pw-opt-del="${escapeHtml(o.id)}" aria-label="${escapeHtml(tk('board.removeReply'))}" ${pwDraft.options.length <= 2 ? 'disabled style="opacity:.25"' : ''}>✕</button>
     </div>`).join('');
   document.getElementById('pwAddOptionBtn').classList.toggle('hidden', pwDraft.options.length >= 8);
 }
@@ -938,18 +944,18 @@ async function pwRenderPhotoPick() {
   const btn = document.getElementById('pwPhotoPickBtn');
   if (pwDraft.photoPreview) { btn.innerHTML = `<img src="${pwDraft.photoPreview}" alt="" />`; return; }
   if (pwDraft.keepPhoto) {
-    btn.innerHTML = '<span>Foto wird geladen …</span>';
+    btn.innerHTML = ('<span>' + tk('board.loadingPhoto') + '</span>');
     const url = await pwPhotoObjectUrl(pwDraft.keepPhoto).catch(() => null);
-    if (pwDraft && !pwDraft.photoPreview && pwDraft.keepPhoto) btn.innerHTML = url ? `<img src="${url}" alt="" />` : '<span>📷 Foto ersetzen</span>';
+    if (pwDraft && !pwDraft.photoPreview && pwDraft.keepPhoto) btn.innerHTML = url ? `<img src="${url}" alt="" />` : ('<span>' + tk('board.replacePhoto') + '</span>');
     return;
   }
-  btn.innerHTML = '<span>📷 Foto aufnehmen oder auswählen</span>';
+  btn.innerHTML = ('<span>' + tk('board.takeChoosePhoto') + '</span>');
 }
 function pwCompressPhoto(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => compressImageDataUrl(reader.result).then(resolve, reject);
-    reader.onerror = () => reject(new Error('Foto konnte nicht gelesen werden.'));
+    reader.onerror = () => reject(new Error(tk('board.photoCouldNotRead')));
     reader.readAsDataURL(file);
   });
 }
@@ -957,7 +963,7 @@ async function onPinboardPhotoChosen(e) {
   const file = e.target.files && e.target.files[0];
   if (!file || !pwDraft) return;
   const btn = document.getElementById('pwPhotoPickBtn');
-  btn.innerHTML = '<span>Foto wird vorbereitet …</span>';
+  btn.innerHTML = ('<span>' + tk('board.preparingPhoto') + '</span>');
   try {
     const blob = await pwCompressPhoto(file);
     if (!pwDraft) return;
@@ -966,8 +972,8 @@ async function onPinboardPhotoChosen(e) {
     pwDraft.photoPreview = URL.createObjectURL(blob);
     pwRenderPhotoPick();
   } catch (err) {
-    btn.innerHTML = '<span>📷 Foto aufnehmen oder auswählen</span>';
-    pwEditError(err.message || 'Foto konnte nicht verarbeitet werden.');
+    btn.innerHTML = ('<span>' + tk('board.takeChoosePhoto') + '</span>');
+    pwEditError(err.message || tk('board.photoCouldNotProcessed'));
   }
 }
 function pwEditError(text) {
@@ -991,21 +997,21 @@ async function savePinboardFromEditor() {
   const expVal = document.getElementById('pwExpiresInput').value;
   const old = pwEditingId ? pwNote(pwEditingId) : null;
 
-  if (t === 'note' && !text && !title) return pwEditError('Bitte etwas schreiben.');
-  if (t === 'list' && !itemsText.length) return pwEditError('Bitte mindestens einen Punkt eintragen.');
-  if (t === 'photo' && !pwDraft.photoBlob && !pwDraft.keepPhoto) return pwEditError('Bitte ein Foto auswählen.');
-  if (t === 'poll' && !title) return pwEditError('Bitte eine Frage eintragen.');
-  if (t === 'poll' && opts.length < 2) return pwEditError('Bitte mindestens zwei Antworten eintragen.');
-  if (t === 'countdown' && (!title || !pwIsIso(date))) return pwEditError('Bitte angeben, worauf ihr wartet, und ein Datum wählen.');
+  if (t === 'note' && !text && !title) return pwEditError(tk('board.pleaseWriteSomething'));
+  if (t === 'list' && !itemsText.length) return pwEditError(tk('board.pleaseEnterLeastOne'));
+  if (t === 'photo' && !pwDraft.photoBlob && !pwDraft.keepPhoto) return pwEditError(tk('board.pleaseSelectPhoto'));
+  if (t === 'poll' && !title) return pwEditError(tk('board.pleaseEnterQuestion'));
+  if (t === 'poll' && opts.length < 2) return pwEditError(tk('board.pleaseEnterLeastTwo'));
+  if (t === 'countdown' && (!title || !pwIsIso(date))) return pwEditError(tk('board.pleaseStateWhatWaiting'));
   let remindAtMs = 0;
   if (remindOn) {
     const d = new Date(remindVal);
-    if (!remindVal || isNaN(d)) return pwEditError('Bitte Datum und Uhrzeit für die Erinnerung wählen.');
+    if (!remindVal || isNaN(d)) return pwEditError(tk('board.pleaseChooseDateTime'));
     remindAtMs = d.getTime();
     const unchanged = old && old.remindAt === remindVal;
-    if (!unchanged && remindAtMs < Date.now() - 60000) return pwEditError('Die Erinnerung liegt in der Vergangenheit.');
+    if (!unchanged && remindAtMs < Date.now() - 60000) return pwEditError(tk('board.reminderPast'));
   }
-  if (expOn && !pwIsIso(expVal)) return pwEditError('Bitte ein Datum zum Abnehmen wählen.');
+  if (expOn && !pwIsIso(expVal)) return pwEditError(tk('board.pleaseChooseDateTaking'));
 
   const base = old ? JSON.parse(JSON.stringify(old)) : pwNewNoteBase(t);
   base.type = t;
@@ -1043,7 +1049,7 @@ async function savePinboardFromEditor() {
       try {
         await pwIdbPut(key, pwDraft.photoBlob);
       } catch (err) {
-        return pwEditError('Das Foto konnte auf diesem Gerät nicht zwischengespeichert werden.');
+        return pwEditError(tk('board.photoCouldNotCached'));
       }
       pwLocalPhotoUrls.set(key, URL.createObjectURL(pwDraft.photoBlob));
       if (base.photo) oldPhotoToDrop = base.photo;
@@ -1065,7 +1071,7 @@ async function savePinboardFromEditor() {
   if (currentView !== 'pinnwand' && wasNew) setView('pinnwand');
   pwRerenderAll();
   if (base.photo && base.photo.pending) {
-    if (!navigator.onLine) finShowToast('Offline – das Foto wird hochgeladen, sobald wieder Verbindung besteht.');
+    if (!navigator.onLine) finShowToast(tk('board.offlinePhotoWillUploaded'));
     pwFlushPhotos();
   }
   if (wasNew) {
@@ -1105,21 +1111,21 @@ function renderPinboardDetail() {
     const key = pwAuthorKey(c);
     const w = pwWho(key, c.authorName);
     const mine = pwIsCommentMine(c);
-    const del = mine || isCurrentUserAdmin() ? `<button type="button" class="pw-msg-del" data-pw-cdel="${escapeHtml(c.id)}">löschen</button>` : '';
-    return `<div class="pw-msg${mine ? ' mine' : ''}">${pwAvatar(key, '', c.authorName)}<div class="pw-msg-bubble"><div class="pw-msg-head"><b>${escapeHtml(mine ? 'Du' : w.name)}</b><span>${escapeHtml(pwAgo(c.at))}</span>${del}</div><div class="pw-msg-text">${pwLinkify(c.text)}</div></div></div>`;
-  }).join('') : '<p class="text-xs text-ink/40 italic">Noch keine Antworten.</p>';
+    const del = mine || isCurrentUserAdmin() ? `<button type="button" class="pw-msg-del" data-pw-cdel="${escapeHtml(c.id)}">${tk('board.delete')}</button>` : '';
+    return `<div class="pw-msg${mine ? ' mine' : ''}">${pwAvatar(key, '', c.authorName)}<div class="pw-msg-bubble"><div class="pw-msg-head"><b>${escapeHtml(mine ? tk('bell.you') : w.name)}</b><span>${escapeHtml(pwAgo(c.at))}</span>${del}</div><div class="pw-msg-text">${pwLinkify(c.text)}</div></div></div>`;
+  }).join('') : ('<p class="text-xs text-ink/40 italic">' + tk('board.noRepliesYet') + '</p>');
   document.getElementById('pinboardReplyWrap').classList.toggle('hidden', pwIsArchived(n));
   // Actions
   const archived = pwIsArchived(n);
   const acts = [];
-  if (pwCanEdit(n)) acts.push('<button type="button" class="pw-act" data-pw-act="edit">✎ Bearbeiten</button>');
-  if (!archived) acts.push(`<button type="button" class="pw-act" data-pw-act="pin">${n.pinned ? '📌 Lösen' : '📌 Anheften'}</button>`);
-  if (n.type === 'poll' && pwCanEdit(n) && !archived) acts.push(`<button type="button" class="pw-act" data-pw-act="close">${n.closed ? '📊 Wieder öffnen' : '📊 Umfrage beenden'}</button>`);
-  if (n.type === 'list' && !archived && (n.items || []).some(i => i.done)) acts.push('<button type="button" class="pw-act" data-pw-act="cleanup">🧹 Erledigte entfernen</button>');
+  if (pwCanEdit(n)) acts.push(('<button type="button" class="pw-act" data-pw-act="edit">' + tk('home.edit') + '</button>'));
+  if (!archived) acts.push(`<button type="button" class="pw-act" data-pw-act="pin">${n.pinned ? tk('board.unpin') : tk('board.pin2')}</button>`);
+  if (n.type === 'poll' && pwCanEdit(n) && !archived) acts.push(`<button type="button" class="pw-act" data-pw-act="close">${n.closed ? tk('board.reopen') : tk('board.endPoll')}</button>`);
+  if (n.type === 'list' && !archived && (n.items || []).some(i => i.done)) acts.push(('<button type="button" class="pw-act" data-pw-act="cleanup">' + tk('board.removeCompleted') + '</button>'));
   acts.push(archived
-    ? '<button type="button" class="pw-act" data-pw-act="unarchive">↩︎ Wieder anpinnen</button>'
-    : '<button type="button" class="pw-act" data-pw-act="archive">🗄️ Abnehmen</button>');
-  if (pwCanEdit(n)) acts.push('<button type="button" class="pw-act danger" data-pw-act="delete">Löschen</button>');
+    ? ('<button type="button" class="pw-act" data-pw-act="unarchive">' + tk('board.pinAgain') + '</button>')
+    : ('<button type="button" class="pw-act" data-pw-act="archive">' + tk('board.takeDown') + '</button>'));
+  if (pwCanEdit(n)) acts.push(('<button type="button" class="pw-act danger" data-pw-act="delete">' + tk('board.delete2') + '</button>'));
   document.getElementById('pinboardDetailActions').innerHTML = acts.join('');
   // Count this note as seen while it is open
   if (pwIsNew(n) || pwHasNewComments(n)) {
@@ -1148,17 +1154,17 @@ function pwTileNotes() {
 function pwSummary(n) {
   if (n.type === 'list') {
     const items = n.items || [];
-    return `✅ ${n.title || 'Liste'} (${items.filter(i => i.done).length}/${items.length})`;
+    return `✅ ${n.title || tk('bell.word.list')} (${items.filter(i => i.done).length}/${items.length})`;
   }
-  if (n.type === 'photo') return '📷 ' + (n.text || 'Foto');
-  if (n.type === 'poll') return '📊 ' + (n.title || 'Umfrage');
+  if (n.type === 'photo') return '📷 ' + (n.text || tk('bell.word.photo'));
+  if (n.type === 'poll') return '📊 ' + (n.title || tk('bell.word.poll'));
   if (n.type === 'kudos') {
-    const names = (n.to || []).map(k => pwIsMe(k) ? 'dir' : pwWho(k).name);
-    return `💛 Danke${names.length ? (names.length === 1 && names[0] === 'dir' ? ' dir' : ', ' + pwJoinNames(names)) : ' an alle'}! ${n.text || ''}`;
+    return `💛 ${pwThanksHead(n.to)} ${n.text || ''}`;
   }
   if (n.type === 'countdown') {
     const d = pwIsIso(n.date) ? pwDaysBetween(pwToday(), n.date) : null;
-    return `⏳ ${d === null ? '' : d <= 0 ? 'Heute: ' : d === 1 ? 'Morgen: ' : 'Noch ' + d + ' Tage: '}${n.title || ''}`;
+    const t = n.title || '';
+    return '⏳ ' + (d === null ? t : d <= 0 ? tk('board.sumToday', { title: t }) : d === 1 ? tk('board.sumTomorrow', { title: t }) : tk('board.sumInDays', { n: d, title: t }));
   }
   return (n.important ? '❗ ' : '') + (n.title ? n.title + (n.text ? ' – ' + n.text : '') : (n.text || ''));
 }
@@ -1168,21 +1174,21 @@ function renderBoardTile() {
   if (!body) return;
   const list = pwTileNotes();
   const unread = pwUnreadCount();
-  if (count) count.textContent = unread ? (unread === 1 ? '1 neu' : unread + ' neu') : '';
-  if (!list.length) { body.innerHTML = '<p class="text-sm text-ink/40 italic mt-2">Noch nichts angepinnt.</p>'; return; }
+  if (count) count.textContent = unread ? tk('board.newN', { n: unread }) : '';
+  if (!list.length) { body.innerHTML = ('<p class="text-sm text-ink/40 italic mt-2">' + tk('board.nothingPinnedYet') + '</p>'); return; }
   const shown = list.slice(0, 8);
   body.innerHTML = `<div class="pw-tile-strip">${shown.map(n => {
     const key = pwAuthorKey(n);
     const w = pwWho(key, n.authorName);
     const fresh = pwIsNew(n) || pwHasNewComments(n);
-    const meta = pwIsForMe(n) && n.type !== 'kudos' ? (pwIsDoneByMe(n) ? '✓ erledigt' : '<b>für dich</b>') : escapeHtml(w.name);
+    const meta = pwIsForMe(n) && n.type !== 'kudos' ? (pwIsDoneByMe(n) ? tk('school.done') : ('<b>' + tk('board.forYou') + '</b>')) : escapeHtml(w.name);
     return `<button type="button" class="pw-mini t-${n.type}" style="--pw-c:${pwColor(n)};--pw-rot:${pwRot(n.id) * 0.8}deg" data-pw-tile="${escapeHtml(n.id)}">
         <span class="pw-pin" style="${n.important ? '--pw-pin:#D23B2F' : (n.pinned ? '--pw-pin:var(--c-pine)' : '')}"></span>
-        ${fresh ? '<span class="pw-flag new">neu</span>' : ''}
+        ${fresh ? `<span class="pw-flag new">${escapeHtml(tk('bell.new'))}</span>` : ''}
         <div class="pw-mini-text">${escapeHtml(pwSummary(n))}</div>
         <div class="pw-mini-meta">${pwAvatar(key, 'sm', n.authorName)}<span class="truncate">${meta}</span></div>
       </button>`;
-  }).join('')}${list.length > shown.length ? `<button type="button" class="pw-mini-more" data-pw-tile-all="1">+ ${list.length - shown.length} weitere</button>` : ''}</div>`;
+  }).join('')}${list.length > shown.length ? `<button type="button" class="pw-mini-more" data-pw-tile-all="1">${escapeHtml(tk('board.moreN', { n: list.length - shown.length }))}</button>` : ''}</div>`;
 }
 
 /* ---------- Push message tapped: /?pinnwand=<ID> ---------- */
@@ -1319,7 +1325,7 @@ function pwRenderArrangeUi() {
   const root = document.getElementById('pinboardBoard');
   if (btn) {
     btn.classList.toggle('on', pwArr.on);
-    btn.textContent = pwArr.on ? 'Fertig' : '↕︎ Anordnen';
+    btn.textContent = pwArr.on ? tk('common.done') : tk('board.arrange');
     btn.classList.toggle('hidden', pwFilter === 'archiv');
   }
   if (add) add.classList.toggle('hidden', pwArr.on);

@@ -112,7 +112,7 @@ function renderPantryBarcodeList() {
   const list = document.getElementById('pantryBarcodeList');
   const codes = (pantryDraft && pantryDraft.barcodes) || [];
   wrap.classList.toggle('hidden', !codes.length);
-  list.innerHTML = codes.map(c => `<span class="pantry-bc-chip"><span class="tabular-nums">${escapeHtml(c)}</span><button type="button" class="pantry-bc-rm" data-code="${escapeHtml(c)}" aria-label="Barcode entfernen">×</button></span>`).join('');
+  list.innerHTML = codes.map(c => `<span class="pantry-bc-chip"><span class="tabular-nums">${escapeHtml(c)}</span><button type="button" class="pantry-bc-rm" data-code="${escapeHtml(c)}" aria-label="${escapeHtml(tk('pantry.removeBarcode'))}">×</button></span>`).join('');
   list.querySelectorAll('.pantry-bc-rm').forEach(b => b.addEventListener('click', () => {
     pantryDraft.barcodes = pantryDraft.barcodes.filter(x => x !== b.dataset.code);
     renderPantryBarcodeList();

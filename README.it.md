@@ -99,6 +99,15 @@ Sempre con te: pinn. si installa su ogni iPhone e telefono Android come un’app
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 e 🇰🇷 한국어**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.119.0
+
+**Traduzioni con chiavi di testo: la bacheca e le ultime aree**
+
+- La **bacheca** (note, liste, sondaggi, foto, ringraziamenti, conto alla rovescia, archivio e risposte), l’**anteprima settimanale e mensile**, il **controllo vocale** con la guida per iPhone e Android, la **gestione famiglie** dell’admin principale, il **ritaglio della foto profilo** e lo **sfondo della dashboard** prendono ora i testi da `pb_public/i18n/` – in tutte le nove lingue e come coinquilini.
+- Piccole cose: messaggi senza connessione, «accesso scaduto», avvisi del parental control, nomi dei dispositivi e degli avatar seguono la lingua; il controllo d’avvio è ora in inglese semplice. Il **parental control** riconosce i pulsanti di eliminazione in ogni lingua. Sulla bacheca voti, giorni mancanti e «+ 2 altri» al singolare o plurale giusto, date nel formato della lingua.
+- Prossimamente: 1.119.1 porta nomi standard, messaggi del server e registro versioni su chiavi; 1.119.2 rimuove il vecchio traduttore e `lang/`.
+- Modificato: `index.html`, `js/pinnwand.js`, `js/ausblick.js`, `js/sprachsteuerung.js`, `js/familienverwalten.js`, `js/profilbild.js`, `js/dashboardhintergrund.js`, `js/offline.js`, `js/dashboard.js`, `js/verbindung.js`, `js/vertraege.js`, `js/zustand.js`, `js/mitglieder.js`, `js/appstart.js`, `js/serverzugriff.js`, `js/popups.js`, `js/wetter.js`, `js/einrichten.js`, `js/exportieren.js`, `js/finanzen.js`, `js/sparen.js`, `js/vorrat2.js`, `js/einkaufseingabe.js`, `js/benutzer.js`, `js/icsparser.js`, `js/sprachen.js`, `js/versionslog.js`, tutti i file di lingua in `i18n/` e `lang/` – sul server non cambia nulla. Installare come al solito (`sudo sh pinn-*/pinn-setup.sh` o pulsante di aggiornamento).
+
 ## Novità della 1.118.4
 
 **Sicurezza: PIN obbligatorio con una dashboard · correzione del calendario**
@@ -110,12 +119,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 **Ricette: cestino, «eliminare davvero?», pressione lunga nella settimana**
 
 - L'eliminazione chiede conferma e la ricetta resta **7 giorni nel cestino** (sotto l'elenco), da ripristinare; tenendo premuto un pasto di «Pianificato questa settimana» compaiono le opzioni (vedi, modifica, sposta, cucinato, togli).
-
-## Novità della 1.118.2
-
-**Lista della spesa: incolla un messaggio, dispensa, più/meno**
-
-- **Incolla un messaggio** (es. WhatsApp) nel campo: una finestra mostra gli articoli riconosciuti con quantità e note verdi; gli articoli della dispensa hanno «🥫 Dispensa» sotto il nome; più/meno segue la quantità.
 
 ## Come funziona
 
@@ -145,7 +148,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.118.4` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.119.0` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

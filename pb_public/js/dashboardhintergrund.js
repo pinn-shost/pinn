@@ -13,14 +13,14 @@ const DASH_BG_DB = 'pinn-dashboard';
 const DASH_BG_STORE = 'hintergrund';
 const DASH_BG_MAX_CHARS = 2500000;          // image data at most this long (the server allows a bit more)
 const DASH_BG_GRADIENTS = [
-  { id: 'morgen',   label: 'Morgenrot', dark: false, css: 'linear-gradient(160deg, #FDE7C8 0%, #F7C6C7 55%, #C9D7F2 100%)' },
-  { id: 'sonne',    label: 'Sonne',     dark: false, css: 'linear-gradient(160deg, #FFF1B8 0%, #FFC98A 55%, #FF9E8A 100%)' },
-  { id: 'lavendel', label: 'Lavendel',  dark: false, css: 'linear-gradient(160deg, #EFE8FA 0%, #CFC2EE 55%, #F4D6E7 100%)' },
-  { id: 'minze',    label: 'Minze',     dark: false, css: 'linear-gradient(160deg, #E4F4EC 0%, #BFE3D2 55%, #D6ECF5 100%)' },
-  { id: 'wald',     label: 'Wald',      dark: true,  css: 'linear-gradient(160deg, #22382F 0%, #3E6154 55%, #7E9C86 100%)' },
-  { id: 'meer',     label: 'Meer',      dark: true,  css: 'linear-gradient(160deg, #173352 0%, #2A6689 55%, #5FB0C4 100%)' },
-  { id: 'abend',    label: 'Abend',     dark: true,  css: 'linear-gradient(160deg, #2B2447 0%, #6A3F6E 55%, #D07A6B 100%)' },
-  { id: 'nacht',    label: 'Nacht',     dark: true,  css: 'linear-gradient(160deg, #15161F 0%, #2C2F4A 55%, #4C426B 100%)' },
+  { id: 'morgen',   get label() { return tk('dashBg.grad.dawn'); }, dark: false, css: 'linear-gradient(160deg, #FDE7C8 0%, #F7C6C7 55%, #C9D7F2 100%)' },
+  { id: 'sonne',    get label() { return tk('dashBg.grad.sun'); },     dark: false, css: 'linear-gradient(160deg, #FFF1B8 0%, #FFC98A 55%, #FF9E8A 100%)' },
+  { id: 'lavendel', get label() { return tk('dashBg.grad.lavender'); },  dark: false, css: 'linear-gradient(160deg, #EFE8FA 0%, #CFC2EE 55%, #F4D6E7 100%)' },
+  { id: 'minze',    get label() { return tk('dashBg.grad.mint'); },     dark: false, css: 'linear-gradient(160deg, #E4F4EC 0%, #BFE3D2 55%, #D6ECF5 100%)' },
+  { id: 'wald',     get label() { return tk('dashBg.grad.forest'); },      dark: true,  css: 'linear-gradient(160deg, #22382F 0%, #3E6154 55%, #7E9C86 100%)' },
+  { id: 'meer',     get label() { return tk('dashBg.grad.sea'); },      dark: true,  css: 'linear-gradient(160deg, #173352 0%, #2A6689 55%, #5FB0C4 100%)' },
+  { id: 'abend',    get label() { return tk('dashBg.grad.evening'); },     dark: true,  css: 'linear-gradient(160deg, #2B2447 0%, #6A3F6E 55%, #D07A6B 100%)' },
+  { id: 'nacht',    get label() { return tk('dashBg.grad.night'); },     dark: true,  css: 'linear-gradient(160deg, #15161F 0%, #2C2F4A 55%, #4C426B 100%)' },
 ];
 const DASH_BG_COLORS = ['#F6F3EC', '#FFE8CC', '#DCEBF7', '#E3F1E6', '#2F4B41', '#1E3A5F', '#5B3F66', '#8A4B2A', '#25231F'];
 
@@ -87,13 +87,13 @@ function writeDashBgMeta(meta) {
 // image data on the device (IndexedDB, also works without HTTPS)
 function dashBgDb() {
   return new Promise((resolve, reject) => {
-    if (!window.indexedDB) { reject(new Error('Kein IndexedDB')); return; }
+    if (!window.indexedDB) { reject(new Error('IndexedDB not available')); return; }
     const req = indexedDB.open(DASH_BG_DB, 1);
     req.onupgradeneeded = () => {
       try { req.result.createObjectStore(DASH_BG_STORE); } catch (e) { /* already there */ }
     };
     req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error || new Error('IndexedDB nicht verfügbar'));
+    req.onerror = () => reject(req.error || new Error('IndexedDB not available'));
   });
 }
 async function dashBgImageGet() {
