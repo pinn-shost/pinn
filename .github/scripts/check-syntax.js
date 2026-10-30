@@ -4,7 +4,7 @@
    Usage:  node .github/scripts/check-syntax.js
 
    Checks without running anything:
-   - JavaScript: pb_public/js/*.js, pb_public/lang/*.js, pb_public/i18n/*.js, pb_public/*.js, pb_hooks/*.js, src/*.js and the scripts
+   - JavaScript: pb_public/js/*.js, pb_public/i18n/*.js, pb_public/*.js, pb_hooks/*.js, src/*.js and the scripts
      in .github/scripts/ – parsed as classic scripts (like the browser and PocketBase load them, no modules).
    - The inline <script> blocks of every HTML file in pb_public/ (index.html is the built page).
    - JSON files (manifest.json …) must parse.
@@ -34,7 +34,6 @@ function parse(code, filename, firstLine) {
 // 1) JavaScript files
 const jsFiles = [].concat(
   filesIn('pb_public/js', isJs),
-  filesIn('pb_public/lang', isJs),
   filesIn('pb_public/i18n', isJs),
   filesIn('pb_public', isJs),
   filesIn('pb_hooks', isJs),

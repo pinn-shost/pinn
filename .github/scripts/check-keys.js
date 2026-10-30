@@ -17,7 +17,7 @@
       server, pinn-pushtext.js) – does not exist in English; the English text written inside an element
       with data-tk in src/ differs from en.i18n.js (the HTML keeps the English text, so it stays readable).
    6. js/sprachen.js does not work as expected in a small simulated page (tk, data-tk, flat share variants,
-      hidden languages).
+      hidden languages, every language loads only its i18n file – the old dictionaries in lang/ are gone since 1.119.3).
    Warnings: keys in en.i18n.js that no code uses, extra keys in a language, texts identical to English. */
 
 'use strict';
@@ -194,12 +194,8 @@ function simulate(opts) {
     sessionStorage: { getItem: () => null, setItem() {}, removeItem() {} },
     navigator: { languages: opts.device || ['de-DE'], language: 'de-DE' },
     document, setTimeout: () => 0, console: { warn() {} },
-    // Only needed when the dictionary/flat share part starts – it is not tested here
-    MutationObserver: function () { this.observe = () => {}; },
-    CanvasRenderingContext2D: function () {},
-    alert() {}, confirm() {}, prompt() {}, Date,
+    Date,
   };
-  window.CanvasRenderingContext2D.prototype.fillText = function () {};
   window.window = window;
   const ctx = Object.assign(window, { location: { reload() {} }, Set, Map, WeakMap, WeakSet, Object, Array, String, RegExp, JSON });
   vm.runInNewContext(read(SPRACHEN), ctx, { filename: 'sprachen.js', timeout: 5000 });
@@ -222,7 +218,9 @@ if (K && en && data.de) {
     if (de.waiting) r.fail('js/sprachen.js', 'the page stays hidden after the texts are in place (German)');
     if (de.ctx.tk('no.such.key') !== 'no.such.key') r.fail('js/sprachen.js', 'a missing key should show the key itself');
     const fr = simulate({ storage: { 'pinn.sprache': 'fr' } });
-    if (fr.src[0] !== 'i18n/fr.i18n.js' || fr.src[1] !== 'lang/fr.js') r.fail('js/sprachen.js', 'French should load i18n/fr.i18n.js, then lang/fr.js (got ' + JSON.stringify(fr.src) + ')');
+    if (fr.src[0] !== 'i18n/fr.i18n.js' || fr.src.length !== 1) r.fail('js/sprachen.js', 'French should load only i18n/fr.i18n.js (got ' + JSON.stringify(fr.src) + ')');
+    if (fr.waiting) r.fail('js/sprachen.js', 'the page stays hidden after the texts are in place (French)');
+    if (fr.src.concat(de.src).some(s => /(^|\/)lang\//.test(s))) r.fail('js/sprachen.js', 'still loads an old dictionary from lang/ (removed in 1.119.3)');
     for (const h of langs.filter(l => l.hidden)) {
       const s = simulate({ storage: { 'pinn.sprache': h.code }, device: [h.code] });
       if (s.api.current === h.code) r.fail('js/sprachen.js', 'hidden language ' + h.code + ' can be chosen');

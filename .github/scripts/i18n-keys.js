@@ -1,35 +1,26 @@
 #!/usr/bin/env node
-/* pinn. – tool for the key-based language files (.github/scripts/i18n-keys.js, since 1.111.0)
+/* pinn. – tool for the key-based language files (.github/scripts/i18n-keys.js, since 1.111.0; rewritten in 1.119.3)
 
-   pb_public/i18n/<code>.i18n.js holds every text of a language under a key. While the app moves from German
-   source texts to keys (roadmap step 6), this tool takes the translations that already exist in the old
-   dictionaries (pb_public/lang/<code>.js, German text → translation) and writes them under a key into every
-   key file – German included. No translation has to be typed again and none gets lost.
+   pb_public/i18n/<code>.i18n.js holds every text of a language under a key – German included, English is the
+   reference. Since 1.119.3 the old dictionaries (pb_public/lang/) are gone, so new texts are written by hand in
+   every language. This tool writes them into the files in the standard layout (sorted, one line per key) and adds
+   the flat share variant "<key>#wg" automatically wherever the flat share terms below change the text.
 
    Usage:
-     node .github/scripts/i18n-keys.js add <key> "<German text>" [--ctx <c>] [--names a,b] [--force]
-     node .github/scripts/i18n-keys.js import <map.json> [--force]
-     node .github/scripts/i18n-keys.js set <key> <lang> "<text>"        one text by hand (e.g. a new text)
-     node .github/scripts/i18n-keys.js remove <key>
-     node .github/scripts/i18n-keys.js format                            rewrite every file in the standard layout
+     node .github/scripts/i18n-keys.js put <map.json>                  many keys in every language at once
+     node .github/scripts/i18n-keys.js set <key> <lang> "<text>"        one text of one language by hand
+     node .github/scripts/i18n-keys.js remove <key>                     a key (and its flat share variant) everywhere
+     node .github/scripts/i18n-keys.js format                           rewrite every file in the standard layout
 
-   add      looks the German text up in every old dictionary: exact texts (with the context "<c>|text" first,
-            see data-i18n-ctx) or, for texts with placeholders, the patterns. Numbered placeholders get names:
-            --names n,name turns {0} into {n} and {1} into {name}. A text ending in ":" or "…" also matches the
-            dictionary entry without it, and symbols or emojis at the start/end ("🗓 Kalender", "+ Liste") are kept
-            while the text between them is looked up – the same way the old dictionaries translate on the screen.
-            For a flat share, a variant "<key>#wg" is added wherever the flat share terms of js/sprachen.js (TERMS)
-            change the text – except for keys of the areas that always keep the family terms (NO_WG below: sign-in,
-            main admin, the switch between family and flat share, backups & updates).
-   import   the same for many keys from a JSON file:
-              { "settings.region.title": "Sprache & Region",
-                "settings.region.save": { "de": "Speichern", "ctx": "fz" },
-                "tasks.open": { "plural": { "one": "{0} offene Aufgabe", "other": "{0} offene Aufgaben" }, "names": ["n"] } }
-            For a plural text every German form is looked up on its own; languages with a single form (zh, ja, ko)
-            take the translation of "other". Forms German does not have (e.g. Russian "few") are written by hand.
-   Nothing is written if a translation is missing or uses a placeholder with a German ending ({1|s}) – such a text
-   needs a plural entry by hand. An existing key is only replaced with --force.
-   The old dictionaries are never changed (the same German text may still be used elsewhere). */
+   put      reads a JSON file { "<key>": { "de": "…", "en": "…", "fr": "…", … }, "<old key>": null } – every
+            language that is offered (not hidden) is required; hidden languages are written when given. A plural
+            text is an object of forms ({ "one": "…", "other": "…" }; js/textkern.js → FORMS says which forms a
+            language needs, e.g. Russian one/few/many/other); zh, ja and ko keep only "other". null removes the key.
+            The "#wg" variant is created from the flat share terms – except for keys of the areas that always keep
+            the family terms (NO_WG below). An own variant can be given as "<key>#wg": { … } after the plain key.
+   set      writes one text as it is (a text starting with "{" is read as JSON, e.g. plural forms); no "#wg" variant
+            is created – set "<key>#wg" by hand if needed.
+   Check the result with  node .github/scripts/check-keys.js. */
 
 'use strict';
 const fs = require('fs');
@@ -38,7 +29,6 @@ const vm = require('vm');
 const { ROOT } = require('./common');
 
 const I18N_DIR = path.join(ROOT, 'pb_public', 'i18n');
-const LANG_DIR = path.join(ROOT, 'pb_public', 'lang');
 const SPRACHEN = path.join(ROOT, 'pb_public', 'js', 'sprachen.js');
 const K = require(path.join(ROOT, 'pb_hooks', 'pinn-textkern.js'));
 // Keys of these areas never get a flat share variant: their screens keep the family terms (data-no-term).
@@ -54,7 +44,7 @@ function languages() {
   const out = [];
   const re = /\{\s*code:\s*'([a-z]{2})',\s*name:\s*'([^']*)'[^\n]*/g;
   let m;
-  while ((m = re.exec(block))) out.push({ code: m[1], name: m[2], hidden: /hidden:\s*true/.test(m[0]), file: (/file:\s*'([^']*)'/.exec(m[0]) || [])[1] || '' });
+  while ((m = re.exec(block))) out.push({ code: m[1], name: m[2], hidden: /hidden:\s*true/.test(m[0]) });
   return out;
 }
 
@@ -86,87 +76,122 @@ function writeKeys(lang, data) {
   fs.writeFileSync(keyFile(lang.code), head + body);
 }
 
-/* ---------- old dictionaries ---------- */
-const oldCache = {};
-function loadOld(code) {
-  if (code in oldCache) return oldCache[code];
-  const file = path.join(LANG_DIR, code + '.js');
-  if (!fs.existsSync(file)) return (oldCache[code] = null);
-  const calls = [];
-  const window = { PINN_I18N: { load: (c, data) => calls.push(data) } };
-  vm.runInNewContext(fs.readFileSync(file, 'utf8'), { window }, { filename: file, timeout: 20000 });
-  const d = calls[0] || { exact: {}, patterns: [] };
-  return (oldCache[code] = { exact: d.exact || {}, patterns: new Map((d.patterns || []).map(p => [p[0], p[1]])) });
-}
-// Translation of a German text in one old dictionary (null = not found)
-function lookup(code, de, ctx) {
-  const d = loadOld(code);
-  if (!d) return null;
-  const one = s => {
-    if (ctx && Object.prototype.hasOwnProperty.call(d.exact, ctx + '|' + s)) return d.exact[ctx + '|' + s];
-    if (Object.prototype.hasOwnProperty.call(d.exact, s)) return d.exact[s];
-    if (d.patterns.has(s)) return d.patterns.get(s);
-    return null;
-  };
-  const core = s => {
-    let out = one(s);
-    if (out === null) {
-      const m = /^([\s\S]*?)(\s*[:…]+)$/.exec(s);
-      if (m) { const stem = one(m[1]); if (stem !== null) out = stem + m[2]; }
-    }
-    return out;
-  };
-  let out = core(de);
-  if (out === null) {
-    // Symbols/emojis at the edges stay as they are (like trLoose in js/sprachen.js)
-    const m = /^([^A-Za-zÄÖÜäöüßÀ-ÿ0-9{]*)([\s\S]*?)([^A-Za-zÄÖÜäöüßÀ-ÿ0-9}]*)$/.exec(de);
-    if (m && (m[1] || m[3]) && m[2]) { const mid = core(m[2]); if (mid !== null) out = m[1] + mid + m[3]; }
-  }
-  return out;
-}
-// Numbered placeholders → names; texts with German endings ({1|s}) are refused
-function rename(text, names, where) {
-  if (/\{\w+\|[^{}]*\}/.test(text)) throw new Error(where + ': uses a placeholder with a German ending (' + text + ') – write a plural entry by hand');
-  return text.replace(/\{(\d+)\}/g, (all, i) => {
-    if (!names || !names[+i]) throw new Error(where + ': placeholder {' + i + '} has no name – use --names');
-    return '{' + names[+i] + '}';
-  });
-}
+/* ---------- flat share terms ----------
+   Applied to a finished text to suggest its "#wg" variant (moved here from js/sprachen.js in 1.119.3 – the app
+   itself only uses the variants in the files). keep: terms that stay (e.g. Familienstammbuch). A new language
+   needs its own entry, otherwise the German rules are used (which change nothing in other scripts). */
+function cap(up, s) { return up ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+const FAM_EMOJI = /\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67(?:\u200D\uD83D\uDC66)?/g;
+const WG_EMOJI = '\uD83E\uDDD1\u200D\uD83E\uDD1D\u200D\uD83E\uDDD1';
+const TERMS = {
+  de: { keep: /Familienstammbuch|Familienkutsche/g, rules: [
+    [/\b([Jj])edes Familienmitglied\b/g, '$1eder Mitbewohner'],
+    [/\b([Dd])as Familienmitglied\b/g, '$1er Mitbewohner'],
+    [/\b([Ee])in weiteres Familienmitglied\b/g, '$1inen weiteren Mitbewohner'],
+    [/\b(an|für|über|Bitte|bitte) ein Familienmitglied\b/g, '$1 einen Mitbewohner'],
+    [/\b([Nn])eues Familienmitglied\b/g, '$1euer Mitbewohner'],
+    [/Familienmitgliedern/g, 'Mitbewohnern'],
+    [/Familienmitglieds/g, 'Mitbewohners'],
+    [/Familienmitglieder/g, 'Mitbewohner'],
+    [/Familienmitglied/g, 'Mitbewohner'],
+    [/\b(den|allen|zwischen) Familien(?![-\wÄÖÜäöüß])/g, '$1 Haushalten'],
+    [/\bFamilien(?![-\wÄÖÜäöüß])/g, 'Haushalte'],
+    [/\b[Ff]amilien-(?=[A-Za-zÄÖÜäöü])/g, 'WG-'],
+    [/\b([Ff])amilien([a-zäöüß])/g, function (m, f, c) { return 'WG-' + (f === 'F' ? c.toUpperCase() : c); }],
+    [/\b[Ff]amilie\b/g, 'WG'],
+  ] },
+  en: { keep: /family register|[Ff]amily bus/g, rules: [
+    [/\b([Ff])amily members\b/g, function (m, f) { return cap(f === 'F', 'flatmates'); }],
+    [/\b([Ff])amily member\b/g, function (m, f) { return cap(f === 'F', 'flatmate'); }],
+    [/\b([Ff])amilies\b/g, function (m, f) { return cap(f === 'F', 'households'); }],
+    [/\b([Ff])amily\b/g, function (m, f) { return cap(f === 'F', 'flatshare'); }],
+  ] },
+  fr: { keep: /livret de famille|nom de famille|voiture familiale/g, rules: [
+    [/\b([Mm])embres de (?:la|ta|votre|cette) famille\b/g, function (m, f) { return cap(f === 'M', 'colocataires'); }],
+    [/\b([Mm])embre de (?:la|ta|votre|cette) famille\b/g, function (m, f) { return cap(f === 'M', 'colocataire'); }],
+    [/\b([Tt])outes les familles\b/g, '$1ous les foyers'],
+    [/\b([Ff])amilles\b/g, function (m, f) { return cap(f === 'F', 'foyers'); }],
+    [/\bfamili(?:aux|ales|ale|al)\b/g, 'de la colocation'],
+    [/\b([Ff])amille\b/g, function (m, f) { return cap(f === 'F', 'colocation'); }],
+  ] },
+  es: { keep: /libro de familia|coche familiar/g, rules: [
+    [/\b([Mm])iembros de (?:la|tu|esta) familia\b/g, function (m, f) { return cap(f === 'M', 'compañeros de piso'); }],
+    [/\b([Mm])iembro de (?:la|tu|esta) familia\b/g, function (m, f) { return cap(f === 'M', 'compañero de piso'); }],
+    [/\b([Tt])odas las familias\b/g, '$1odos los hogares'],
+    [/\b([Ll])as familias\b/g, '$1os hogares'],
+    [/\b([Ff])amilias\b/g, function (m, f) { return cap(f === 'F', 'hogares'); }],
+    [/\bde la familia\b/g, 'del piso compartido'],
+    [/\ba la familia\b/g, 'al piso compartido'],
+    [/\b([Tt])oda la familia\b/g, '$1odo el piso compartido'],
+    [/\b([Ll])a familia\b/g, function (m, f) { return cap(f === 'L', 'el piso compartido'); }],
+    [/\b([Uu])na familia\b/g, function (m, f) { return cap(f === 'U', 'un piso compartido'); }],
+    [/\b([Ee])sta familia\b/g, function (m, f) { return cap(f === 'E', 'este piso compartido'); }],
+    [/\b([Oo])tra familia\b/g, function (m, f) { return cap(f === 'O', 'otro piso compartido'); }],
+    [/\b([Nn])inguna familia\b/g, function (m, f) { return cap(f === 'N', 'ningún piso compartido'); }],
+    [/\bfamiliares\b/g, 'del piso'],
+    [/\bfamiliar\b/g, 'del piso'],
+    [/\b([Ff])amilia\b/g, function (m, f) { return cap(f === 'F', 'piso compartido'); }],
+  ] },
+  it: { keep: /libro di famiglia|auto di famiglia/g, rules: [
+    [/\b([Mm])embri della famiglia\b/g, function (m, f) { return cap(f === 'M', 'coinquilini'); }],
+    [/\b([Mm])embro della famiglia\b/g, function (m, f) { return cap(f === 'M', 'coinquilino'); }],
+    [/\b([Tt])utta la famiglia\b/g, '$1utta la casa'],
+    [/\b([Tt])utte le famiglie\b/g, '$1utte le case'],
+    [/\b([Ll])e famiglie\b/g, '$1e case'],
+    [/\b([Ff])amiglie\b/g, function (m, f) { return cap(f === 'F', 'case'); }],
+    [/\bfamiliari\b/g, 'coinquilini'],
+    [/\bfamiliare\b/g, 'della casa'],
+    [/\b([Ff])amiglia\b/g, function (m, f) { return cap(f === 'F', 'casa condivisa'); }],
+  ] },
+  pt: { keep: /livro de família|carro de família|carro da família/g, rules: [
+    [/\b([Mm])embros da família\b/g, function (m, f) { return cap(f === 'M', 'colegas de casa'); }],
+    [/\b([Mm])embro da família\b/g, function (m, f) { return cap(f === 'M', 'colega de casa'); }],
+    [/\b([Tt])oda a família\b/g, '$1oda a casa'],
+    [/\b([Tt])odas as famílias\b/g, '$1odas as casas'],
+    [/\b([Ff])amília toda\b/g, function (m, f) { return cap(f === 'F', 'casa toda'); }],
+    [/\b([Ff])amílias\b/g, function (m, f) { return cap(f === 'F', 'casas'); }],
+    [/\bfamiliares\b/g, 'da casa'],
+    [/\bfamiliar\b/g, 'da casa'],
+    [/\b([Ff])amília\b/g, function (m, f) { return cap(f === 'F', 'casa compartilhada'); }],
+  ] },
+  zh: { keep: /家庭医生/g, rules: [
+    [/家庭成员/g, '室友'],
+    [/全家/g, '整个合租'],
+    [/家庭/g, '合租'],
+  ] },
+  ja: { keep: /家族登録簿/g, rules: [
+    [/家族メンバー/g, 'ルームメイト'],
+    [/家族全員/g, 'ルームシェア全員'],
+    [/家族/g, 'ルームシェア'],
+  ] },
+  ko: { keep: /가족관계 등록부|가족용 밴/g, rules: [
+    [/가족 구성원이/g, '룸메이트가'],
+    [/가족 구성원은/g, '룸메이트는'],
+    [/가족 구성원을/g, '룸메이트를'],
+    [/가족 구성원과/g, '룸메이트와'],
+    [/가족 구성원으로/g, '룸메이트로'],
+    [/가족 구성원/g, '룸메이트'],
+    [/온 가족/g, '셰어하우스 전체'],
+    [/가족 전체/g, '셰어하우스 전체'],
+    [/가족이/g, '셰어하우스가'],
+    [/가족은/g, '셰어하우스는'],
+    [/가족을/g, '셰어하우스를'],
+    [/가족과/g, '셰어하우스와'],
+    [/가족으로/g, '셰어하우스로'],
+    [/가족/g, '셰어하우스'],
+  ] },
+};
 
-/* ---------- flat share terms (TERMS in js/sprachen.js) ---------- */
-let termsCache = null;
-function terms() {
-  if (termsCache) return termsCache;
-  const src = fs.readFileSync(SPRACHEN, 'utf8');
-  const grab = (start) => {
-    const i = src.indexOf(start);
-    if (i < 0) throw new Error('js/sprachen.js: "' + start + '" not found');
-    let depth = 0, j = src.indexOf('{', i);
-    for (let k = j; k < src.length; k++) {
-      if (src[k] === '{') depth++;
-      else if (src[k] === '}' && --depth === 0) return src.slice(j, k + 1);
-    }
-    throw new Error('js/sprachen.js: end of ' + start + ' not found');
-  };
-  const fam = /var FAM_EMOJI = (\/[^\n]*\/g);/.exec(src);
-  const wg = /var WG_EMOJI = ('[^']*');/.exec(src);
-  const code = 'function cap(up, s) { return up ? s.charAt(0).toUpperCase() + s.slice(1) : s; }\n' +
-    'var FAM_EMOJI = ' + fam[1] + ';\nvar WG_EMOJI = ' + wg[1] + ';\nvar TERMS = ' + grab('var TERMS = {') + ';\nout = { TERMS: TERMS, FAM_EMOJI: FAM_EMOJI, WG_EMOJI: WG_EMOJI };';
-  const box = {};
-  vm.runInNewContext(code, box);
-  return (termsCache = box.out);
-}
-// Same as term() in js/sprachen.js
 function wgText(code, s) {
-  const T = terms();
-  const t = T.TERMS[code] || T.TERMS.de;
+  const t = TERMS[code] || TERMS.de;
   const kept = [];
   s = s.replace(t.keep, m => { kept.push(m); return '\u0001' + (kept.length - 1) + '\u0002'; });
   for (const [re, rep] of t.rules) s = s.replace(re, rep);
-  s = s.replace(T.FAM_EMOJI, T.WG_EMOJI);
+  s = s.replace(FAM_EMOJI, WG_EMOJI);
   if (kept.length) s = s.replace(/\u0001(\d+)\u0002/g, (m, i) => kept[+i]);
   return s;
 }
+// Flat share variant of an entry (string or plural object), or null if nothing changes
 function wgEntry(code, entry) {
   if (typeof entry === 'string') { const w = wgText(code, entry); return w !== entry ? w : null; }
   const out = {};
@@ -175,80 +200,63 @@ function wgEntry(code, entry) {
   return changed ? out : null;
 }
 
-/* ---------- building one key for every language ---------- */
-function build(key, spec, langs) {
-  if (typeof spec === 'string') spec = { de: spec };
-  const names = spec.names || null, ctx = spec.ctx || '';
-  const result = {};
-  for (const lang of langs) {
-    if (lang.code === 'de') {
-      if (spec.plural) {
-        const o = {};
-        for (const f of K.forms('de')) o[f] = rename(spec.plural[f], names, key + ' (de)');
-        result.de = o;
-      } else result.de = rename(spec.de, names, key + ' (de)');
-      continue;
-    }
-    if (!lang.file) continue;   // no old dictionary (hidden language) – written by hand later
-    if (spec.plural) {
-      const o = {};
-      for (const f of K.forms(lang.code)) {
-        const src = spec.plural[f] || spec.plural.other;
-        const tr = lookup(lang.code, src, ctx);
-        if (tr === null) throw new Error(key + ' (' + lang.code + '): no translation for "' + src + '"');
-        o[f] = rename(tr, names, key + ' (' + lang.code + ')');
-      }
-      result[lang.code] = o;
-    } else {
-      const tr = lookup(lang.code, spec.de, ctx);
-      if (tr === null) throw new Error(key + ' (' + lang.code + '): no translation for "' + spec.de + '"');
-      result[lang.code] = rename(tr, names, key + ' (' + lang.code + ')');
-    }
+/* ---------- one entry for one language ---------- */
+function fit(code, key, e) {
+  if (typeof e === 'string') return e;
+  if (!e || typeof e !== 'object') throw new Error(key + ' (' + code + '): a text must be a string or an object of plural forms');
+  const forms = K.forms(code);
+  // zh, ja, ko have a single form: the "other" text of the given forms is kept
+  if (forms.length === 1) {
+    if (typeof e.other !== 'string') throw new Error(key + ' (' + code + '): plural form "other" missing');
+    return { other: e.other };
   }
-  return result;
+  const out = {};
+  for (const f of forms) {
+    if (typeof e[f] !== 'string') throw new Error(key + ' (' + code + '): plural form "' + f + '" missing (' + code + ' needs ' + forms.join(', ') + ')');
+    out[f] = e[f];
+  }
+  for (const f of Object.keys(e)) if (!forms.includes(f)) throw new Error(key + ' (' + code + '): unknown plural form "' + f + '"');
+  return out;
 }
 
 function main() {
   const args = process.argv.slice(2);
-  const flag = name => { const i = args.indexOf(name); if (i < 0) return null; const v = args[i + 1]; args.splice(i, 2); return v; };
-  const force = args.includes('--force');
-  if (force) args.splice(args.indexOf('--force'), 1);
   const cmd = args[0];
   const langs = languages();
   const files = {};
   for (const l of langs) { const f = loadKeys(l.code); if (f) files[l.code] = f.data; }
   const save = () => { for (const l of langs) if (files[l.code]) writeKeys(l, files[l.code]); };
-  const put = (key, spec) => {
-    if (!/^[a-z][A-Za-z0-9]*(\.[A-Za-z0-9]+)+$/.test(key)) throw new Error(key + ': keys look like area.part.name (letters and digits, dots between)');
-    if (!force && files.en && Object.prototype.hasOwnProperty.call(files.en, key)) throw new Error(key + ': exists already (use --force to replace it)');
-    const res = build(key, spec, langs);
-    for (const code of Object.keys(res)) {
-      files[code] = files[code] || {};
-      files[code][key] = res[code];
-      delete files[code][key + '#wg'];
-      const wg = noWg(key) ? null : wgEntry(code, res[code]);
-      if (wg) files[code][key + '#wg'] = wg;
-    }
-  };
+  const keyOk = key => /^[a-z][A-Za-z0-9]*(\.[A-Za-z0-9]+)+(#wg)?$/.test(key);
 
-  if (cmd === 'add') {
-    const ctx = flag('--ctx'), names = flag('--names');
-    const [, key, de] = args;
-    if (!key || de == null) return usage();
-    put(key, { de, ctx: ctx || '', names: names ? names.split(',') : null });
-    save();
-    console.log('✓ ' + key);
-  } else if (cmd === 'import') {
+  if (cmd === 'put') {
+    if (!args[1]) return usage();
     const map = JSON.parse(fs.readFileSync(path.resolve(args[1]), 'utf8'));
     const errors = [];
-    for (const [key, spec] of Object.entries(map)) { try { put(key, spec); } catch (e) { errors.push(e.message); } }
+    for (const [key, spec] of Object.entries(map)) {
+      if (!keyOk(key)) { errors.push(key + ': keys look like area.part.name (letters and digits, dots between)'); continue; }
+      if (spec === null) { for (const c of Object.keys(files)) { delete files[c][key]; delete files[c][key + '#wg']; } continue; }
+      const own = key.endsWith('#wg');
+      for (const l of langs) {
+        if (spec[l.code] === undefined) { if (!l.hidden) errors.push(key + ': text for "' + l.code + '" missing'); continue; }
+        if (!files[l.code]) { if (l.hidden) files[l.code] = {}; else { errors.push(l.code + '.i18n.js missing'); continue; } }
+        try {
+          const e = fit(l.code, key, spec[l.code]);
+          files[l.code][key] = e;
+          if (own) continue;
+          delete files[l.code][key + '#wg'];
+          const wg = noWg(key) ? null : wgEntry(l.code, e);
+          if (wg) files[l.code][key + '#wg'] = wg;
+        } catch (e) { errors.push(e.message); }
+      }
+    }
     if (errors.length) { errors.forEach(e => console.error('✗ ' + e)); console.error('nothing written'); process.exit(1); }
     save();
-    console.log('✓ ' + Object.keys(map).length + ' key(s) imported');
+    console.log('✓ ' + Object.keys(map).length + ' key(s) written');
   } else if (cmd === 'set') {
     const [, key, code, text] = args;
     const lang = langs.find(l => l.code === code);
     if (!key || !lang || text == null) return usage();
+    if (!keyOk(key)) throw new Error(key + ': keys look like area.part.name (letters and digits, dots between)');
     files[code] = files[code] || {};
     files[code][key] = /^\s*\{/.test(text) ? JSON.parse(text) : text;
     save();
@@ -265,15 +273,14 @@ function main() {
   } else usage();
 }
 function usage() {
-  console.log('usage: node .github/scripts/i18n-keys.js add <key> "<German text>" [--ctx c] [--names a,b] [--force]\n' +
-    '       node .github/scripts/i18n-keys.js import <map.json> [--force]\n' +
+  console.log('usage: node .github/scripts/i18n-keys.js put <map.json>\n' +
     '       node .github/scripts/i18n-keys.js set <key> <lang> "<text>"\n' +
     '       node .github/scripts/i18n-keys.js remove <key>\n' +
     '       node .github/scripts/i18n-keys.js format');
   process.exitCode = 1;
 }
 
-module.exports = { languages, loadKeys, writeKeys, lookup, rename, wgText, wgEntry, noWg, NO_WG, I18N_DIR };
+module.exports = { languages, loadKeys, writeKeys, wgText, wgEntry, noWg, NO_WG, I18N_DIR };
 if (require.main === module) {
   try { main(); } catch (e) { console.error('✗ ' + e.message); process.exit(1); }
 }

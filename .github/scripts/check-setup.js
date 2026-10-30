@@ -6,7 +6,8 @@
    pinn-setup.sh moves files that an earlier version installed and the app no longer uses (list OBSOLET, between
    the markers "# >>> obsolete files" and "# <<< obsolete files") to _alt/<date>/ on every install and update.
    A wrong entry would remove a file the app needs, so this script checks:
-   1. The list: every entry is a plain path below pb_public/js/, pb_public/css/, pb_public/lang/ or pb_hooks/
+   1. The list: every entry is a plain path below pb_public/js/, pb_public/css/, pb_public/lang/ (the old
+      dictionaries, removed in 1.119.3) or pb_hooks/
       (no "..", no wildcards, no data folders), appears only once, and is NOT a file of this repository,
       NOT loaded by src/rahmen.html or the built pb_public/index.html, and not a file name that pinn-setup.sh
       itself would install (function ziel).

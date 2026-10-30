@@ -19,7 +19,6 @@ const steps = [
   ['Lint', ['.github/scripts/check-lint.js']],
   ['Hooks', ['.github/scripts/check-hooks.js']],
   ['Setup clean-up list', ['.github/scripts/check-setup.js']],
-  ['Language files', ['.github/scripts/check-lang.js']],
   ['Text keys', ['.github/scripts/check-keys.js']],
 ];
 if (process.argv[2]) steps.push(['PocketBase smoke test', ['.github/scripts/smoke-pocketbase.js', path.resolve(process.argv[2])]]);
