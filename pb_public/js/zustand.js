@@ -42,7 +42,7 @@ const ALL_MENU_TABS = [
   { id: 'vorrat', icon: '🥫', key: 'nav.pantry', get label() { return tk(this.key); } },
   { id: 'einkauf', icon: '📝', key: 'nav.lists', get label() { return tk(this.key); } },
   { id: 'aufgaben', icon: '✅', key: 'nav.tasks', get label() { return tk(this.key); } },
-  { id: 'familie', icon: '👨‍👩‍👧', key: 'nav.family', get label() { return tk(this.key); } },
+  { id: 'familie', get icon() { return PINN_I18N.famIcon(); }, key: 'nav.family', get label() { return tk(this.key); } },
   { id: 'finanzen', icon: '💶', key: 'nav.finance', get label() { return tk(this.key); } },
   { id: 'dokumente', icon: '🗂️', key: 'nav.documents', get label() { return tk(this.key); } },
   { id: 'fahrzeuge', icon: '🚗', key: 'nav.vehicles', get label() { return tk(this.key); } },

@@ -19,7 +19,7 @@
 const OVERVIEW_TILES = [
   { id: 'wetter', icon: '🌤️', get label() { return tk('overview.tile.weather'); }, get hint() { return tk('overview.tileHint.weather'); }, big: false },
   { id: 'geburtstage', icon: '🎂', get label() { return tk('overview.tile.birthdays'); }, get hint() { return tk('overview.tileHint.birthdays'); }, big: false },
-  { id: 'familie', icon: '👨‍👩‍👧', get label() { return tk('overview.tile.members'); }, get hint() { return tk('overview.tileHint.members'); }, big: false },
+  { id: 'familie', get icon() { return PINN_I18N.famIcon(); }, get label() { return tk('overview.tile.members'); }, get hint() { return tk('overview.tileHint.members'); }, big: false },
   { id: 'vertraege', icon: '📄', get label() { return tk('overview.tile.contracts'); }, get hint() { return tk('overview.tileHint.contracts'); }, big: false },
   { id: 'pinnwand', icon: '📌', get label() { return tk('overview.tile.board'); }, get hint() { return tk('overview.tileHint.board'); }, big: false },
   { id: 'kalender', icon: '📅', get label() { return tk('overview.tile.calendar'); }, get hint() { return tk('overview.tileHint.calendar'); }, big: true },

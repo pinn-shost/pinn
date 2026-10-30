@@ -99,6 +99,16 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語和 🇰🇷 한국어**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.119.3 新功能
+
+**清理：旧翻译器已移除**
+
+- pinn. 的所有文字现在都直接来自 `i18n/` 中的语言文件。旧词典（`pb_public/lang/` 文件夹，约 4 MB）以及在使用过程中改写屏幕的翻译器已被移除——pinn. 启动更快、占用内存更少，在较旧的手机和平板上尤其明显。
+- 更新会把旧文件移到 NAS 上的 `_alt/<日期>/`（不会删除任何内容），并删除空的 `lang/` 文件夹。
+- 小改进：首页、仪表板、周视图、财务和“住宅”中的日期和时间直接使用你的语言格式；展望设置中的“已保存”已翻译；合租模式下，菜单、概览卡片和设置显示 🧑‍🤝‍🧑 图标；你自己写的文字（例如公告板上的便签“Hallo Familie”）在合租模式下不再被改动。
+- 下一步：俄语，分步进行（完成前保持隐藏）。
+- 已修改：`index.html`, `js/sprachen.js`, `js/zustand.js`, `js/uebersicht.js`, `js/familie.js`, `js/listen.js`, `js/sterne.js`, `js/ausblick.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wohnort.js`, `js/finanzen.js`, `js/einstellungen.js`, `js/smarthome.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pinn-setup.sh`、`.github/`——已移除：`pb_public/lang/`——服务器无变化。照常安装（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
+
 ## 1.119.2 新功能
 
 **库存扫描：用照片代替实时相机**
@@ -132,12 +142,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 
 - 家里一旦有看板，**每个资料都需要 PIN**（没有 PIN 的人先用密码登录一次并立即设置）；手机上从食谱返回后，列表视图的日历不再“展开”。
 
-## 1.118.3 新功能
-
-**食谱：回收站、删除确认、本周计划长按**
-
-- 删除食谱前会先确认，食谱在 **回收站保留 7 天**（列表下方）可恢复；长按“本周计划”中的饭菜可查看、编辑、移动、标记已做或移除。
-
 ## 工作原理
 
 ```mermaid
@@ -166,7 +170,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.119.2` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.119.3` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -264,7 +268,6 @@ pinn/
 │   ├── css/             app styles split out of index.html, plain CSS without a build step (ergaenzung.css, energiesparen.css, basis.css … haustierewetter.css, terminal.css, glocke.css)
 │   ├── einrichtung.js   setup assistant · datenexport.js  data export
 │   ├── i18n/            texts by key (de, en, fr, es, it, pt, zh, ja, ko) – English is the reference
-│   ├── lang/            old dictionaries for parts without keys yet (en, fr, es, it, pt, zh, ja, ko)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js and Tesseract are downloaded by the setup)
 ├── .github/             GitHub Actions (workflows/check.yml), checks (scripts/), CONTRIBUTING.md, SECURITY.md, images – not installed
 ├── src/                 sources of index.html (build.js, rahmen.html, teile/) – not installed

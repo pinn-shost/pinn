@@ -17,7 +17,7 @@
 #  Repository layout = installation layout (since 1.39.0): every file in the release lies at the
 #  same relative path at which it ends up in the project folder:
 #     pb_hooks/      server hooks and their helper modules  → ./pb_hooks
-#     pb_public/     the web app (index.html, icons, js/, css/, i18n/, lang/, vendor/)  → ./pb_public
+#     pb_public/     the web app (index.html, icons, js/, css/, i18n/, vendor/)  → ./pb_public
 #     caddy/         Caddyfile  → ./caddy/Caddyfile
 #     src/           sources of pb_public/index.html (put together by src/build.js before every release)
 #                    – not installed, the release already contains the built index.html
@@ -207,7 +207,6 @@ ziel() {
     index.html|manifest.json|einrichtung.js|datenexport.js|*.png|*.ico|*.svg|*.webmanifest) echo "pb_public/$1" ;;
     [a-z][a-z].i18n.js)              echo "pb_public/i18n/$1" ;;   # key-based texts (since 1.111.0)
     versionslog.en.js)               echo "pb_public/i18n/$1" ;;   # English version log (since 1.119.1)
-    [a-z][a-z].js)                   echo "pb_public/lang/$1" ;;
     pinn.css)                        echo "pb_public/vendor/pinn.css" ;;
     pocketbase_umd.js|pocketbase.umd.js|pocketbase.umd.min.js) echo "pb_public/vendor/pocketbase/pocketbase.umd.js" ;;
     pdf.min.mjs|pdf.worker.min.mjs)  echo "pb_public/vendor/pdfjs/$1" ;;
@@ -317,7 +316,8 @@ if [ "$ANZ" -gt 0 ]; then ok "$ANZ $(m sorted)"; else ok "$(m nothing)"; fi
 # happens if there is no index.html. Add a path here whenever a file is renamed or removed in a release
 # (the repository checks keep this list from ever naming a file the app still needs).
 #   pb_public/js/push.js  – renamed to js/mitteilungen.js in 1.95.1 (ad blockers blocked the old name)
-OBSOLET="pb_public/js/push.js"
+#   pb_public/lang/*.js   – the old dictionaries, replaced by the text keys in pb_public/i18n/ (removed in 1.119.3)
+OBSOLET="pb_public/js/push.js pb_public/lang/en.js pb_public/lang/fr.js pb_public/lang/es.js pb_public/lang/it.js pb_public/lang/pt.js pb_public/lang/zh.js pb_public/lang/ja.js pb_public/lang/ko.js"
 WEG=0
 if [ -f pb_public/index.html ]; then
   for f in $OBSOLET; do
@@ -330,6 +330,7 @@ if [ -f pb_public/index.html ]; then
   done
 fi
 # <<< obsolete files
+rmdir pb_public/lang 2>/dev/null   # the folder of the old dictionaries, once it is empty (since 1.119.3)
 [ "$WEG" -gt 0 ] && ok "$WEG $(m cleaned)"
 [ -d "$ALT" ] && echo "  $(m backup) $ALT"
 
@@ -338,7 +339,7 @@ if [ ! -f docker-compose.yaml ] && [ ! -f docker-compose.yml ]; then fehler "$(m
 if platzhalter pb_public/index.html; then fehler "$(m platzhalter)"; exit 1; fi
 
 # ── 3. Folders and basic files ──────────────────────────────
-mkdir -p pb_data pb_public/lang pb_public/i18n pb_public/vendor/pocketbase pb_public/vendor/pdfjs pb_public/vendor/tesseract pb_hooks \
+mkdir -p pb_data pb_public/i18n pb_public/vendor/pocketbase pb_public/vendor/pdfjs pb_public/vendor/tesseract pb_hooks \
          caddy/data caddy/config konfig backups wartung traccar/data traccar/logs tailscale
 chmod 700 konfig backups wartung 2>/dev/null
 ok "$(m dirs)"

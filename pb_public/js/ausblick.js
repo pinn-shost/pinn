@@ -719,9 +719,9 @@ async function abSavePush() {
     const r = await res.json().catch(() => ({}));
     if (!res.ok || r.error) throw new Error(r.error || ('HTTP ' + res.status));
     abServer = r;
-    st.textContent = 'Gespeichert.';
+    st.textContent = tk('common.saved');
   } catch (e) {
-    st.textContent = 'Speichern fehlgeschlagen.';
+    st.textContent = tk('common.saveFailed');
     abRenderSettings();
   }
   setTimeout(() => { if (st) st.textContent = ''; }, 2500);

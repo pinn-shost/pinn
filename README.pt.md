@@ -99,6 +99,16 @@ Sempre com você: o pinn. se instala em todo iPhone e celular Android como um ap
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 e 🇰🇷 한국어**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.119.3
+
+**Faxina: o tradutor antigo saiu**
+
+- Todos os textos do pinn. agora vêm diretamente dos arquivos de idioma em `i18n/`. Os dicionários antigos (pasta `pb_public/lang/`, cerca de 4 MB) e o tradutor que reescrevia a tela durante o uso foram removidos: o pinn. inicia mais rápido e usa menos memória, principalmente em celulares e tablets mais antigos.
+- A atualização move os arquivos antigos para `_alt/<data>/` no NAS (nada é apagado) e remove a pasta vazia `lang/`.
+- Detalhes: data e hora na tela inicial, no dashboard, na visão semanal, em Finanças e em “Casa” aparecem direto no formato do seu idioma; “Salvo” nas configurações da previsão está traduzido; numa casa compartilhada, o menu, o bloco da visão geral e as configurações mostram o ícone 🧑‍🤝‍🧑; textos escritos por você (por ex. um bilhete “Hallo Familie” no mural) não são mais alterados numa casa compartilhada.
+- A seguir: russo, passo a passo (oculto até ficar completo).
+- Alterado: `index.html`, `js/sprachen.js`, `js/zustand.js`, `js/uebersicht.js`, `js/familie.js`, `js/listen.js`, `js/sterne.js`, `js/ausblick.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wohnort.js`, `js/finanzen.js`, `js/einstellungen.js`, `js/smarthome.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pinn-setup.sh`, `.github/` – removido: `pb_public/lang/` – nada muda no servidor. Instalar como sempre (`sudo sh pinn-*/pinn-setup.sh` ou botão de atualização).
+
 ## Novidades da 1.119.2
 
 **Leitor da despensa: foto em vez da câmera ao vivo**
@@ -132,12 +142,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 
 - Assim que a família tem um painel, **cada perfil precisa de um PIN** (quem não o tem inicia sessão uma vez com a palavra-passe e define-o logo); no telemóvel, o calendário em vista de lista já não fica «aberto» depois de uma receita.
 
-## Novidades da 1.118.3
-
-**Receitas: reciclagem, «eliminar mesmo?», toque longo na semana**
-
-- Ao eliminar é pedida confirmação e a receita fica **7 dias na reciclagem** (por baixo da lista), para restaurar; um toque longo numa refeição de «Planeado esta semana» mostra opções (ver, editar, mover, cozinhado, retirar).
-
 ## Como funciona
 
 ```mermaid
@@ -166,7 +170,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.119.2` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.119.3` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -264,7 +268,6 @@ pinn/
 │   ├── css/             app styles split out of index.html, plain CSS without a build step (ergaenzung.css, energiesparen.css, basis.css … haustierewetter.css, terminal.css, glocke.css)
 │   ├── einrichtung.js   setup assistant · datenexport.js  data export
 │   ├── i18n/            texts by key (de, en, fr, es, it, pt, zh, ja, ko) – English is the reference
-│   ├── lang/            old dictionaries for parts without keys yet (en, fr, es, it, pt, zh, ja, ko)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js and Tesseract are downloaded by the setup)
 ├── .github/             GitHub Actions (workflows/check.yml), checks (scripts/), CONTRIBUTING.md, SECURITY.md, images – not installed
 ├── src/                 sources of index.html (build.js, rahmen.html, teile/) – not installed

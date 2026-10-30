@@ -922,7 +922,7 @@ function renderSmartTypePicker() {
     if (notSetUp) smartEditActions = smartDefaultActions(type.id, smartEditSystem);
     const nameInput = document.getElementById('smartDeviceName');
     const cur = nameInput.value.trim();
-    if (!cur || SMART_DEVICE_TYPES.some(t => t.label === cur || t.de === cur || i18nT(t.de) === cur)) nameInput.value = type.label;
+    if (!cur || SMART_DEVICE_TYPES.some(t => t.label === cur || t.de === cur)) nameInput.value = type.label;
     renderSmartTypePicker();
     renderSmartIconPicker();
     renderSmartActionEditor();

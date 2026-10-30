@@ -1056,7 +1056,7 @@ function finDayLabel(iso) {
   if (iso === today) return tk('common.today');
   if (iso === isoDate(y)) return tk('fin.yesterday');
   const d = new Date(iso + 'T00:00:00');
-  return d.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'long' });
+  return d.toLocaleDateString(PINN_I18N.language.locale, { weekday: 'short', day: 'numeric', month: 'long' });
 }
 
 function renderFinanceList(range, stats) {

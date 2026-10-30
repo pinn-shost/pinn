@@ -99,6 +99,17 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 und 🇰🇷 한국어**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.119.3
+
+**Aufgeräumt: der alte Übersetzer ist weg**
+
+- Alle Texte von pinn. kommen jetzt direkt aus den Sprachdateien in `i18n/`. Die alten Wörterbücher (Ordner `pb_public/lang/`, rund 4 MB) und der Übersetzer, der während der Benutzung den Bildschirm umgeschrieben hat, sind entfernt – pinn. startet schneller und braucht weniger Speicher, gerade auf älteren Handys und Tablets.
+- Das Update verschiebt die alten Dateien auf dem NAS nach `_alt/<Datum>/` (nichts wird gelöscht) und entfernt den leeren Ordner `lang/`.
+- Kleinigkeiten: Datum und Uhrzeit auf der Startseite, im Dashboard, in der Wochenanzeige, bei Finanzen und unter „Zuhause“ stehen direkt im Format deiner Sprache; „Gespeichert“ in den Ausblick-Einstellungen ist übersetzt; als WG zeigen Menü, Übersichtskachel und Einstellungen das WG-Symbol 🧑‍🤝‍🧑; selbst geschriebene Texte (z. B. ein Zettel „Hallo Familie“ auf der Pinnwand) werden als WG nicht mehr verändert.
+- Für Mitwirkende: `check-lang.js`, `translate.js` und der Workflow „Translate“ entfallen; `i18n-keys.js` schreibt neue Texte jetzt in jeder Sprache (`put`, `set`, `remove`, `format`).
+- Als Nächstes: Russisch, Schritt für Schritt (versteckt, bis es vollständig ist).
+- Geändert: `index.html`, `js/sprachen.js`, `js/zustand.js`, `js/uebersicht.js`, `js/familie.js`, `js/listen.js`, `js/sterne.js`, `js/ausblick.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wohnort.js`, `js/finanzen.js`, `js/einstellungen.js`, `js/smarthome.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pinn-setup.sh`, `.github/` – entfernt: `pb_public/lang/` – am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
+
 ## Neu in 1.119.2
 
 **Vorrat-Scanner: Foto statt Live-Kamera**
@@ -143,16 +154,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Lange drücken** auf eine Mahlzeit unter „Diese Woche geplant“ (Übersicht und Rezepte) zeigt Optionen: Rezept ansehen, Rezept bearbeiten, verschieben oder ändern (Tag, Mahlzeit, Portionen, anderes Rezept), noch einmal planen, als gekocht markieren, aus der Essensplanung entfernen. Mit Kindersicherung gibt es nur „ansehen“.
 - Geändert: `index.html`, `js/rezepte.js`, `js/rezeptaktionen.js` (neu), `js/essenplanen.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/basis.css`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien, `pinn-setup.sh` und am Server `pinn-bereiche.js`, `pinn-hinweise.js`.
 
-## Neu in 1.118.2
-
-**Einkaufsliste: Nachricht einfügen, Vorrat-Hinweis, Plus/Minus**
-
-- **Nachricht einfügen:** Eine Nachricht wie „Kauf bitte noch Milch, 2 Packungen Butter und ein Brot“ (z. B. aus WhatsApp) kopieren und ins Eingabefeld einfügen – ein Popup zeigt die erkannten Artikel mit Menge. Grüne Hinweise zeigen, was im Vorrat ist, auch in der Essensplanung steht oder schon auf der Liste ist. Mehrere Artikel mit Komma getippt funktionieren genauso.
-- **Vorrats-Artikel** auf der Einkaufsliste haben jetzt unter dem Namen den Hinweis „🥫 Vorrat · … da“ – wie die Artikel aus der Essensplanung.
-- **Plus/Minus** richtet sich nach der Menge: 30 ml minus ergibt 20 ml (vorher sprang es auf 50 ml); kleine Mengen in 5er-/10er-Schritten, große in 50er-Schritten.
-- Vorrats-Artikel ohne eigenen Laden landen jetzt beim **Stammladen** statt auf der Essensplanungs-Liste.
-- Geändert: `index.html`, `js/einkauf.js`, `js/einkaufseingabe.js`, `js/einkaufslisten.js`, `js/vorrat.js`, `css/listen.css`, `js/sprachen.js`, `js/versionslog.js`, alle Sprachdateien – am Server ändert sich nichts.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -181,7 +182,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.119.2` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.119.3` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -279,7 +280,6 @@ pinn/
 │   ├── css/             app styles split out of index.html, plain CSS without a build step (ergaenzung.css, energiesparen.css, basis.css … haustierewetter.css, terminal.css, glocke.css)
 │   ├── einrichtung.js   setup assistant · datenexport.js  data export
 │   ├── i18n/            texts by key (de, en, fr, es, it, pt, zh, ja, ko) – English is the reference
-│   ├── lang/            old dictionaries for parts without keys yet (en, fr, es, it, pt, zh, ja, ko)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js and Tesseract are downloaded by the setup)
 ├── .github/             GitHub Actions (workflows/check.yml), checks (scripts/), CONTRIBUTING.md, SECURITY.md, images – not installed
 ├── src/                 sources of index.html (build.js, rahmen.html, teile/) – not installed

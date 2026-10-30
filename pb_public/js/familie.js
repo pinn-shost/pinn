@@ -2180,7 +2180,7 @@ function famPassFilled(p) {
 function famHomeHtml() {
   const grid = members.length
     ? `<div id="famGrid" class="fam-grid"></div>`
-    : `<div class="fam-card text-center py-6"><div class="text-4xl mb-2">👨‍👩‍👧‍👦</div><div class="font-serif text-lg mb-1">${tk('family.noFamilyMembersYet')}</div><p class="text-sm text-ink/50">${tk('family.adminCreatesMembersUnder')}</p></div>`;
+    : `<div class="fam-card text-center py-6"><div class="text-4xl mb-2">${PINN_I18N.famIcon()}</div><div class="font-serif text-lg mb-1">${tk('family.noFamilyMembersYet')}</div><p class="text-sm text-ink/50">${tk('family.adminCreatesMembersUnder')}</p></div>`;
   return `${grid}
     ${skTodayCardHtml()}
     ${famQuickCardsHtml()}
@@ -4555,24 +4555,23 @@ function ptSaveRoster() {
 
 /* Pet sitter sheet */
 function ptSitterText(p) {
-  const T = x => ((window.PINN_I18N && PINN_I18N.active) ? PINN_I18N.t(x) : x);
   const L = [];
   const sp = ptSpecies(p.species);
-  L.push(`🐾 ${p.name} – ${[p.breed || T(sp.label), T(ptAgeText(p))].filter(Boolean).join(', ')}`);
+  L.push(`🐾 ${p.name} – ${[p.breed || sp.label, ptAgeText(p)].filter(Boolean).join(', ')}`);
   const f = p.feed || {};
   const times = ptFeedTimes(p);
-  if (f.brand || f.amount || times.length) L.push('', '🥣 ' + T(tk('pet.food2')) + ': ' + [f.brand, f.amount ? f.amount + ' ' + T(tk('pet.perMeal')) : '', times.length ? times.join(' & ') : ''].filter(Boolean).join(', '));
-  if (Number(p.walks) > 0) L.push('🦮 ' + T(tk('pet.walk')) + ': ' + p.walks + '× ' + T(tk('pet.day')));
+  if (f.brand || f.amount || times.length) L.push('', '🥣 ' + tk('pet.food2') + ': ' + [f.brand, f.amount ? f.amount + ' ' + tk('pet.perMeal') : '', times.length ? times.join(' & ') : ''].filter(Boolean).join(', '));
+  if (Number(p.walks) > 0) L.push('🦮 ' + tk('pet.walk') + ': ' + p.walks + '× ' + tk('pet.day'));
   const meds = (p.meds || []).filter(m => m.name);
-  if (meds.length) L.push('💊 ' + T(tk('lists.t.i.medication')) + ': ' + meds.map(m => [m.name, m.dose, m.times].filter(Boolean).join(' – ')).join('; '));
-  if (p.allergies) L.push('⚠️ ' + T(tk('family.allergies')) + ': ' + p.allergies);
-  if (p.conditions) L.push('🩺 ' + T(tk('family.illnesses')) + ': ' + p.conditions);
+  if (meds.length) L.push('💊 ' + tk('lists.t.i.medication') + ': ' + meds.map(m => [m.name, m.dose, m.times].filter(Boolean).join(' – ')).join('; '));
+  if (p.allergies) L.push('⚠️ ' + tk('family.allergies') + ': ' + p.allergies);
+  if (p.conditions) L.push('🩺 ' + tk('family.illnesses') + ': ' + p.conditions);
   if (p.notes) L.push('', '💬 ' + p.notes);
   if (p.sitter) L.push('', '📝 ' + p.sitter);
   L.push('');
-  if (p.vet || p.vetPhone) L.push('🏥 ' + T(tk('family.vet')) + ': ' + [p.vet, p.vetPhone, p.vetAddress].filter(Boolean).join(', '));
-  if (p.emergencyVet || p.emergencyVetPhone) L.push('🚨 ' + T(tk('pet.emergencyVet')) + ': ' + [p.emergencyVet, p.emergencyVetPhone].filter(Boolean).join(', '));
-  if (p.chip) L.push('🔖 ' + T(tk('family.chipNumber')) + ': ' + p.chip);
+  if (p.vet || p.vetPhone) L.push('🏥 ' + tk('family.vet') + ': ' + [p.vet, p.vetPhone, p.vetAddress].filter(Boolean).join(', '));
+  if (p.emergencyVet || p.emergencyVetPhone) L.push('🚨 ' + tk('pet.emergencyVet') + ': ' + [p.emergencyVet, p.emergencyVetPhone].filter(Boolean).join(', '));
+  if (p.chip) L.push('🔖 ' + tk('family.chipNumber') + ': ' + p.chip);
   const owners = (p.owners && p.owners.length ? p.owners : []).map(id => memberById(id)).filter(Boolean);
   const phones = owners.map(m => { const ph = (famPass(m.id) || {}).phone; return ph ? memberLabel(m) + ' ' + ph : ''; }).filter(Boolean);
   if (phones.length) L.push('📞 ' + phones.join(' · '));

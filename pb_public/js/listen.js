@@ -1425,9 +1425,9 @@ function gsCollect(q) {
   const guest = typeof isCurrentUserGuest === 'function' && isCurrentUserGuest();
   const allowed = v => typeof isViewAllowed !== 'function' || isViewAllowed(v);
   const add = (type, o, title, hay, deep) => {
-    // Other language: show and search the translated title, the original text stays findable
-    if (window.PINN_I18N && PINN_I18N.active && typeof title === 'string') {
-      const tt = PINN_I18N.t(title);
+    // Other language: show and search the translated standard name, the stored text stays findable
+    if (typeof title === 'string' && typeof i18nT === 'function') {
+      const tt = i18nT(title);
       if (tt !== title) { hay = (hay || '') + ' ' + title; title = tt; }
     }
     const score = gsScore(title, hay, words, qn, deep);

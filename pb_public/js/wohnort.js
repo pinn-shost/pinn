@@ -107,7 +107,7 @@ function homeSunTimes(date) {
   if (!homeInfo || !isFinite(homeInfo.lat) || !isFinite(homeInfo.lon)) return null;
   return sunTimesFor(date || new Date(), Number(homeInfo.lat), Number(homeInfo.lon));
 }
-function homeFmtTime(d) { return d ? d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : '–'; }
+function homeFmtTime(d) { return d ? d.toLocaleTimeString(PINN_I18N.language.locale, { hour: '2-digit', minute: '2-digit' }) : '–'; }
 function homeSunLine(date) {
   const st = homeSunTimes(date);
   if (!st || !st.auf) return '';

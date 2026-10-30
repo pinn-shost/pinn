@@ -99,6 +99,16 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.119.3の新機能
+
+**整理：古い翻訳機能を削除**
+
+- pinn. のすべてのテキストは、`i18n/` の言語ファイルから直接読み込まれるようになりました。古い辞書（`pb_public/lang/` フォルダ、約 4 MB）と、使用中に画面を書き換えていた翻訳機能は削除されました。pinn. の起動が速くなり、メモリ使用量も減ります（特に古いスマートフォンやタブレットで）。
+- アップデート時に古いファイルは NAS の `_alt/<日付>/` に移動され（何も削除されません）、空になった `lang/` フォルダは削除されます。
+- 細かな改善：ホーム画面、ダッシュボード、週表示、家計、「住まい」の日付と時刻が最初から言語に合った形式で表示されます。見通し設定の「保存しました」が翻訳されました。ルームシェアでは、メニュー・概要タイル・設定に 🧑‍🤝‍🧑 アイコンが表示されます。自分で書いたテキスト（例：掲示板のメモ「Hallo Familie」）はルームシェアでも書き換えられなくなりました。
+- 次回：ロシア語を段階的に追加します（完成までは非表示）。
+- 変更：`index.html`, `js/sprachen.js`, `js/zustand.js`, `js/uebersicht.js`, `js/familie.js`, `js/listen.js`, `js/sterne.js`, `js/ausblick.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wohnort.js`, `js/finanzen.js`, `js/einstellungen.js`, `js/smarthome.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pinn-setup.sh`、`.github/` – 削除：`pb_public/lang/` – サーバー側の変更はありません。いつも通りインストール（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
+
 ## 1.119.2の新機能
 
 **在庫スキャナー：ライブカメラの代わりに写真**
@@ -132,12 +142,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 
 - 家族にダッシュボードがあると **すべてのプロフィールにPINが必要** です（PINがない人は一度パスワードでログインしてすぐに設定）。スマホでレシピから戻ったとき、リスト表示のカレンダーが広がったままになる問題を修正しました。
 
-## 1.118.3の新機能
-
-**レシピ：ごみ箱、削除の確認、今週の予定で長押し**
-
-- レシピ削除の前に確認が出て、レシピは **ごみ箱に7日間** 残り（一覧の下）、元に戻せます。「今週の予定」の食事を長押しすると、表示・編集・移動・調理済み・削除を選べます。
-
 ## しくみ
 
 ```mermaid
@@ -166,7 +170,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.119.2`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.119.3`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -264,7 +268,6 @@ pinn/
 │   ├── css/             app styles split out of index.html, plain CSS without a build step (ergaenzung.css, energiesparen.css, basis.css … haustierewetter.css, terminal.css, glocke.css)
 │   ├── einrichtung.js   setup assistant · datenexport.js  data export
 │   ├── i18n/            texts by key (de, en, fr, es, it, pt, zh, ja, ko) – English is the reference
-│   ├── lang/            old dictionaries for parts without keys yet (en, fr, es, it, pt, zh, ja, ko)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js and Tesseract are downloaded by the setup)
 ├── .github/             GitHub Actions (workflows/check.yml), checks (scripts/), CONTRIBUTING.md, SECURITY.md, images – not installed
 ├── src/                 sources of index.html (build.js, rahmen.html, teile/) – not installed

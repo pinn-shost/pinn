@@ -99,6 +99,16 @@ Sempre con te: pinn. si installa su ogni iPhone e telefono Android come un’app
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 e 🇰🇷 한국어**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.119.3
+
+**Pulizia: il vecchio traduttore non c’è più**
+
+- Tutti i testi di pinn. arrivano ora direttamente dai file di lingua in `i18n/`. I vecchi dizionari (cartella `pb_public/lang/`, circa 4 MB) e il traduttore che riscriveva lo schermo durante l’uso sono stati rimossi: pinn. si avvia più velocemente e usa meno memoria, soprattutto su telefoni e tablet meno recenti.
+- L’aggiornamento sposta i vecchi file in `_alt/<data>/` sul NAS (nulla viene cancellato) e rimuove la cartella vuota `lang/`.
+- Piccole cose: data e ora nella schermata iniziale, nella dashboard, nella vista settimanale, in Finanze e in «Casa» sono subito nel formato della tua lingua; «Salvato» nelle impostazioni della panoramica è tradotto; in una casa condivisa menu, riquadro della panoramica e impostazioni mostrano l’icona 🧑‍🤝‍🧑; i testi scritti da te (ad es. un biglietto «Hallo Familie» sulla bacheca) non vengono più modificati in una casa condivisa.
+- Prossimamente: il russo, passo dopo passo (nascosto finché non è completo).
+- Modificato: `index.html`, `js/sprachen.js`, `js/zustand.js`, `js/uebersicht.js`, `js/familie.js`, `js/listen.js`, `js/sterne.js`, `js/ausblick.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wohnort.js`, `js/finanzen.js`, `js/einstellungen.js`, `js/smarthome.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pinn-setup.sh`, `.github/` – rimosso: `pb_public/lang/` – sul server non cambia nulla. Installare come al solito (`sudo sh pinn-*/pinn-setup.sh` o pulsante di aggiornamento).
+
 ## Novità della 1.119.2
 
 **Scanner della dispensa: foto invece della fotocamera dal vivo**
@@ -132,12 +142,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 
 - Appena la famiglia ha una dashboard **ogni profilo ha bisogno di un PIN** (chi non ce l’ha accede una volta con la password e lo sceglie subito); il calendario in vista elenco sul telefono non resta più «aperto» dopo una ricetta.
 
-## Novità della 1.118.3
-
-**Ricette: cestino, «eliminare davvero?», pressione lunga nella settimana**
-
-- L'eliminazione chiede conferma e la ricetta resta **7 giorni nel cestino** (sotto l'elenco), da ripristinare; tenendo premuto un pasto di «Pianificato questa settimana» compaiono le opzioni (vedi, modifica, sposta, cucinato, togli).
-
 ## Come funziona
 
 ```mermaid
@@ -166,7 +170,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.119.2` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.119.3` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -264,7 +268,6 @@ pinn/
 │   ├── css/             app styles split out of index.html, plain CSS without a build step (ergaenzung.css, energiesparen.css, basis.css … haustierewetter.css, terminal.css, glocke.css)
 │   ├── einrichtung.js   setup assistant · datenexport.js  data export
 │   ├── i18n/            texts by key (de, en, fr, es, it, pt, zh, ja, ko) – English is the reference
-│   ├── lang/            old dictionaries for parts without keys yet (en, fr, es, it, pt, zh, ja, ko)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js and Tesseract are downloaded by the setup)
 ├── .github/             GitHub Actions (workflows/check.yml), checks (scripts/), CONTRIBUTING.md, SECURITY.md, images – not installed
 ├── src/                 sources of index.html (build.js, rahmen.html, teile/) – not installed

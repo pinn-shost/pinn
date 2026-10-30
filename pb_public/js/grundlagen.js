@@ -26,10 +26,10 @@ function startOfWeek(date) {
   return d;
 }
 function isoDate(d) { return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`; }
-function fmtDay(d) { return d.toLocaleDateString('de-DE', { weekday: 'short' }); }
+function fmtDay(d) { return d.toLocaleDateString(PINN_I18N.language.locale, { weekday: 'short' }); }
 function fmtWeekLabel(monday, sunday) {
   const opts = { day: '2-digit', month: 'short' };
-  return monday.toLocaleDateString('de-DE', opts) + ' – ' + sunday.toLocaleDateString('de-DE', { ...opts, year: 'numeric' });
+  return monday.toLocaleDateString(PINN_I18N.language.locale, opts) + ' – ' + sunday.toLocaleDateString(PINN_I18N.language.locale, { ...opts, year: 'numeric' });
 }
 function monthGridDays(year, monthIndex) {
   const first = new Date(year, monthIndex, 1);
@@ -43,7 +43,7 @@ function monthGridDays(year, monthIndex) {
    ========================================================== */
 function tickClock() {
   const now = new Date();
-  let text = now.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' + now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  let text = now.toLocaleDateString(PINN_I18N.language.locale, { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' + now.toLocaleTimeString(PINN_I18N.language.locale, { hour: '2-digit', minute: '2-digit' });
   const hw = document.getElementById('headerWeather');
   const headerWeatherShown = !!(hw && !hw.classList.contains('hidden'));
   if (weatherData && !headerWeatherShown) {

@@ -99,6 +99,16 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.119.3의 새 소식
+
+**정리: 옛 번역기가 사라졌어요**
+
+- 이제 pinn.의 모든 텍스트는 `i18n/`의 언어 파일에서 바로 불러와요. 옛 사전(`pb_public/lang/` 폴더, 약 4 MB)과 사용 중에 화면을 고쳐 쓰던 번역기는 제거됐어요. pinn.이 더 빨리 시작하고 메모리도 덜 써요(특히 오래된 휴대폰과 태블릿에서).
+- 업데이트하면 옛 파일은 NAS의 `_alt/<날짜>/`로 옮겨지고(아무것도 삭제되지 않아요) 빈 `lang/` 폴더는 지워져요.
+- 작은 개선: 홈 화면, 대시보드, 주간 보기, 가계부, ‘집’의 날짜와 시간이 처음부터 언어에 맞는 형식으로 표시돼요. 전망 설정의 ‘저장됨’이 번역됐어요. 셰어하우스에서는 메뉴, 개요 타일, 설정에 🧑‍🤝‍🧑 아이콘이 보여요. 직접 쓴 텍스트(예: 게시판 메모 “Hallo Familie”)는 셰어하우스에서도 더 이상 바뀌지 않아요.
+- 다음: 러시아어를 단계적으로 추가해요(완성될 때까지 숨김).
+- 변경: `index.html`, `js/sprachen.js`, `js/zustand.js`, `js/uebersicht.js`, `js/familie.js`, `js/listen.js`, `js/sterne.js`, `js/ausblick.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wohnort.js`, `js/finanzen.js`, `js/einstellungen.js`, `js/smarthome.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pinn-setup.sh`, `.github/` – 제거: `pb_public/lang/` – 서버는 바뀌지 않아요. 평소처럼 설치하세요(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
+
 ## 1.119.2의 새 소식
 
 **재고 스캐너: 실시간 카메라 대신 사진**
@@ -132,12 +142,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 
 - 가족에게 대시보드가 있으면 **모든 프로필에 PIN이 필요해요**(PIN이 없으면 비밀번호로 한 번 로그인하고 바로 설정). 휴대폰에서 레시피에서 돌아올 때 목록 보기 캘린더가 펼쳐진 채로 남던 문제를 고쳤어요.
 
-## 1.118.3의 새 소식
-
-**레시피: 휴지통, 삭제 확인, 이번 주 계획 길게 누르기**
-
-- 레시피를 삭제하기 전에 확인하고, 레시피는 **휴지통에 7일** 동안 남아(목록 아래) 복원할 수 있어요. "이번 주 계획"의 식사를 길게 누르면 보기·편집·옮기기·요리 완료·제거를 고를 수 있어요.
-
 ## 작동 방식
 
 ```mermaid
@@ -166,7 +170,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.119.2` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.119.3` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
@@ -264,7 +268,6 @@ pinn/
 │   ├── css/             app styles split out of index.html, plain CSS without a build step (ergaenzung.css, energiesparen.css, basis.css … haustierewetter.css, terminal.css, glocke.css)
 │   ├── einrichtung.js   setup assistant · datenexport.js  data export
 │   ├── i18n/            texts by key (de, en, fr, es, it, pt, zh, ja, ko) – English is the reference
-│   ├── lang/            old dictionaries for parts without keys yet (en, fr, es, it, pt, zh, ja, ko)
 │   └── vendor/          pinn.css, pocketbase/ (pdf.js and Tesseract are downloaded by the setup)
 ├── .github/             GitHub Actions (workflows/check.yml), checks (scripts/), CONTRIBUTING.md, SECURITY.md, images – not installed
 ├── src/                 sources of index.html (build.js, rahmen.html, teile/) – not installed

@@ -43,7 +43,6 @@ function kidDefaultRewards() {
   ].map(([emoji, title, type, value, cost]) => {
     // Suggestions in the chosen language (the titles are stored and no longer translated)
     let t = title;
-    try { if (window.PINN_I18N && PINN_I18N.t) t = PINN_I18N.t(title) || title; } catch (e) { t = title; }
     if (type === 'geld') t = t.replace('€', kidCurSymbol());
     return { id: kidRid(), emoji, title: t, type, value, cost };
   });

@@ -12,7 +12,7 @@ function renderLastName() { document.getElementById('lastNameDisplay').textConte
 
 /* ---------- Living arrangement: family or shared flat (WG) ----------
    Stored in the family data (field "wohnform"), so it applies to all profiles and devices.
-   The language layer (PINN_I18N, see above) swaps the labels – family → WG,
+   The language layer (PINN_I18N) then uses the flat share variants of the texts ("<key>#wg") – family → WG,
    family members → flatmates etc. –; pinn. reloads once after a change. */
 function isHouseholdWG() { return householdType === 'wg'; }
 function applyHouseholdType(soft) {
