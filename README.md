@@ -95,6 +95,16 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 and 🇰🇷 한국어**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.119.1
+
+**Standard names, server messages and the version log in your language**
+
+- **Predefined names** – categories of recipes, pantry, shopping, documents, finance and contracts, storage places, kitchen appliances, units like “can” or “pack” (with singular and plural), the household fund and the titles of automatic household tasks – now appear in your language. Nothing changes in your data; renamed and own names stay as they are.
+- About 40 **messages from the server** (e.g. “Profile not found”, notes on backups, updates and devices) follow your language.
+- The **version log** now exists in German and English only: every other language shows English, older entries without a translation stay German. The English part loads only when you open it, and the terminal speaks German or English.
+- Next: 1.119.2 removes the old translator and `lang/`.
+- Changed: `index.html`, `js/standardnamen.js` (new), `i18n/versionslog.en.js` (new), `js/serverzugriff.js`, `js/versionslog.js`, `js/hinweise.js` and 22 more files in `js/`, all language files in `i18n/`, `pinn-setup.sh` – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.119.0
 
 **Translations with text keys: the board and the last areas**
@@ -193,7 +203,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.119.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.119.1` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

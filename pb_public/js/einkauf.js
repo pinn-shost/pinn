@@ -511,7 +511,7 @@ function renderShoppingMealModeOptions(containerId, current, onPick) {
       <button type="button" class="shopping-meal-mode w-full flex items-start gap-2.5 rounded-xl border px-3 py-2 text-left transition ${active ? 'border-pine bg-pine/10 ring-1 ring-pine' : 'border-ink/10 bg-white hover:border-pine/50'}" data-mode="${m.key}">
         <span class="shrink-0 w-6 text-center text-base leading-6">${m.icon}</span>
         <span class="min-w-0">
-          <span class="block text-sm font-medium ${active ? 'text-pine' : ''}">${escapeHtml(m.label)}</span>
+          <span class="block text-sm font-medium ${active ? 'text-pine' : ''}">${escapeHtml(i18nT(m.label))}</span>
           <span class="block text-[11px] text-ink/50 leading-snug">${escapeHtml(m.desc)}</span>
         </span>
       </button>`;

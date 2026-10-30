@@ -632,7 +632,7 @@ function fzDueItems(v, today = finTodayIso(), withInfo = false) {
       if (ch.days <= 0) {
         out.push({
           key: ch.key, type: 'reifen', tone: ch.days <= -30 ? 'urgent' : 'warn', icon: '🛞', date: ch.start, act: 'reifen', need: ch.need,
-          title: winter ? tk('vehicle.fitWinterTyres') : tk('vehicle.fitSummerTyres'), sub: tk('vehicle.changeDueSince', { month: monthName }) + (t.storage ? ' · ' + tk('vehicle.tyresStoredAt', { place: t.storage }) : ''),
+          title: winter ? tk('vehicle.fitWinterTyres') : tk('vehicle.fitSummerTyres'), sub: tk('vehicle.changeDueSince', { month: monthName }) + (t.storage ? ' · ' + tk('vehicle.tyresStoredAt', { place: i18nT(t.storage) }) : ''),
           when: tk('vehicle.now'),
           task: {
             title: '🛞 ' + (winter ? tk('vehicle.task.fitWinterTyres', { name }) : tk('vehicle.task.fitSummerTyres', { name })), due: today, createAfter: vtAddDays(ch.start, -Math.min(Math.max(lead, 7), 21)),

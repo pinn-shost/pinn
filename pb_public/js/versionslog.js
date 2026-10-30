@@ -4,6 +4,8 @@
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
    Contents: the version log PINN_CHANGELOG (Settings → Updates, also used for the "What's new" notes in
    js/hinweise.js) and its display as a terminal (openChangelogTerminal, commands, boot animation).
+   Languages: German (PINN_CHANGELOG) and English (pb_public/i18n/versionslog.en.js, loaded on demand) only –
+   every other app language shows English. A NEW ENTRY needs its English text in that file as well.
    NEW VERSION: add the entry at the top of PINN_CHANGELOG in THIS file; the version number itself is set in
    src/version.txt (src/build.js writes it into APP_VERSION of pb_public/index.html). */
 
@@ -25,6 +27,10 @@ const PINN_CHANGELOG = [
       ['info', 'Pinnwand (Zettel, Listen, Umfragen, Fotos, Danke, Countdown, Archiv und Antworten), Wochen- und Monatsausblick, Sprachsteuerung samt Anleitung für iPhone und Android, die Familien-Verwaltung des Hauptadmins, Profilbild-Zuschnitt und Dashboard-Hintergrund holen ihre Texte jetzt über Text-Schlüssel – in allen neun Sprachen, auch als WG'],
       ['fix', 'Kleinigkeiten: Meldungen ohne Verbindung, „Anmeldung abgelaufen“, Hinweise der Kindersicherung, Gerätenamen unter „Geräte & Anmeldung“, Avatar-Namen und die Startprüfung („pinn. kann nicht starten“, jetzt auf Englisch) folgen der eingestellten Sprache; die Kindersicherung erkennt Löschen-Knöpfe jetzt in jeder Sprache; Stimmen, Countdown-Tage und „+ 2 weitere“ auf der Pinnwand stehen in richtiger Einzahl oder Mehrzahl, das Datum im Format der Sprache'],
       ['info', 'Geändert: index.html, js/pinnwand.js, js/ausblick.js, js/sprachsteuerung.js, js/familienverwalten.js, js/profilbild.js, js/dashboardhintergrund.js, js/offline.js, js/dashboard.js, js/verbindung.js und 17 weitere Dateien in js/, alle Sprachdateien in i18n/ und lang/ – am Server ändert sich nichts'],
+      ['info', '1.119.1: Vorgegebene Namen erscheinen in der eingestellten Sprache – Kategorien von Rezepten, Vorrat, Einkauf, Dokumenten, Finanzen und Verträgen, Lagerorte, Küchengeräte, Einheiten wie „Dose“ oder „Packung“ (in Einzahl und Mehrzahl), „Haushaltskasse“ und die Titel der automatischen Haushalts-Aufgaben. Gespeichert bleibt alles wie bisher; umbenannte und eigene Namen bleiben, wie sie sind'],
+      ['info', '1.119.1: Meldungen vom Server (z. B. „Profil nicht gefunden“, Hinweise zu Sicherungen, Updates und Geräten) erscheinen in der eingestellten Sprache'],
+      ['info', '1.119.1: Das Versions-Log gibt es nur noch auf Deutsch und Englisch – alle anderen Sprachen zeigen Englisch, ältere Einträge ohne Übersetzung bleiben deutsch. Der englische Teil lädt erst beim Öffnen; auch das Terminal spricht Deutsch oder Englisch'],
+      ['info', '1.119.1 geändert: index.html, js/standardnamen.js (neu), i18n/versionslog.en.js (neu), js/serverzugriff.js, js/versionslog.js, js/hinweise.js und 22 weitere Dateien in js/, alle Sprachdateien in i18n/, pinn-setup.sh – am Server ändert sich nichts'],
     ],
   },
   {
@@ -1559,6 +1565,74 @@ const PINN_CHANGELOG = [
   },
 ];
 
+/* ---------- Language of the version log (since 1.119.1) ----------
+   The version log exists in German and English only: German for German, English for every other language.
+   The English texts live in pb_public/i18n/versionslog.en.js (loaded only when the log or the news in the bell
+   are shown): PINN_CHANGELOG_EN = { '<version>': { t: title, p: [point, …] } } in the order of PINN_CHANGELOG;
+   a missing text (older entries) shows the German original. The terminal texts are in CHANGELOG_UI. */
+function changelogLang() { return (window.PINN_I18N && PINN_I18N.current === 'de') ? 'de' : 'en'; }
+let changelogEnPromise = null;
+function changelogLoadEnglish() {
+  if (changelogLang() === 'de' || window.PINN_CHANGELOG_EN) return Promise.resolve();
+  if (!changelogEnPromise) {
+    changelogEnPromise = new Promise(res => {
+      const sc = document.createElement('script');
+      sc.src = 'i18n/versionslog.en.js?v=' + encodeURIComponent(APP_VERSION);
+      sc.onload = () => res();
+      sc.onerror = () => { changelogEnPromise = null; res(); };   // offline: German for now, try again later
+      document.head.appendChild(sc);
+    });
+  }
+  return changelogEnPromise;
+}
+// Title and points of an entry in the language of the log
+function changelogText(e) {
+  const en = changelogLang() === 'en' && window.PINN_CHANGELOG_EN ? window.PINN_CHANGELOG_EN[e.v] : null;
+  if (!en) return { titel: e.titel, punkte: e.punkte };
+  return { titel: en.t || e.titel, punkte: e.punkte.map(([typ, text], i) => [typ, (en.p && en.p[i]) || text]) };
+}
+const CHANGELOG_UI = {
+  de: {
+    dialog: 'Versions-Log', close: 'Schließen', skip: '▸ tippen zum überspringen', placeholder: 'befehl eingeben …', inputLabel: 'Terminal-Befehl',
+    chipLatest: 'neueste', chipList: 'liste', retro: 'rückblick', guest: 'gast', family: 'familie', memTest: 'speichertest', connect: 'verbinde mit nas',
+    loading: 'lade changelog', found: 'einträge gefunden', legend: 'legende:', new: 'neu', changed: 'geändert', fixed: 'behoben',
+    retroNote: 'einträge mit „rückblick“ fassen die versionen vor dem log zusammen.', type: 'tippe', forCommands: 'für befehle.',
+    commands: 'verfügbare befehle', installed: 'installiert: ', notFound: 'version „{v}“ nicht gefunden.', local: 'lokal',
+    versions: 'versionen', entries: 'einträge', resolution: 'auflösung', network: 'netz', niceTry: 'netter versuch.',
+    reported: 'dieser vorfall wird der familie gemeldet.', hello: 'hallo', denied: 'zugriff verweigert.', history: 'die geschichte bleibt, wie sie ist.',
+    unknown: 'befehl nicht gefunden: ', typeDash: '– tippe', locale: 'de-DE',
+    help: [['help', 'diese hilfe'], ['neueste', 'aktuellste version anzeigen'], ['liste', 'alle versionen kurz auflisten'], ['log', 'komplettes changelog'],
+      ['v 0.xx', 'eine bestimmte version anzeigen'], ['neofetch', 'systeminfo'], ['whoami / date', 'wer & wann'], ['clear', 'bildschirm leeren'], ['exit', 'terminal schließen']],
+  },
+  en: {
+    dialog: 'Version log', close: 'Close', skip: '▸ tap to skip', placeholder: 'enter command …', inputLabel: 'Terminal command',
+    chipLatest: 'latest', chipList: 'list', retro: 'review', guest: 'guest', family: 'family', memTest: 'memory test', connect: 'connecting to nas',
+    loading: 'loading changelog', found: 'entries found', legend: 'legend:', new: 'new', changed: 'changed', fixed: 'fixed',
+    retroNote: 'entries marked “review” summarise the versions before the log.', type: 'type', forCommands: 'for commands.',
+    commands: 'available commands', installed: 'installed: ', notFound: 'version “{v}” not found.', local: 'local',
+    versions: 'versions', entries: 'entries', resolution: 'resolution', network: 'network', niceTry: 'nice try.',
+    reported: 'this incident will be reported to the family.', hello: 'hello', denied: 'access denied.', history: 'history stays as it is.',
+    unknown: 'command not found: ', typeDash: '– type', locale: 'en-GB',
+    help: [['help', 'this help'], ['latest', 'show the newest version'], ['list', 'list all versions briefly'], ['log', 'complete changelog'],
+      ['v 0.xx', 'show a certain version'], ['neofetch', 'system info'], ['whoami / date', 'who & when'], ['clear', 'clear the screen'], ['exit', 'close the terminal']],
+  },
+};
+function clT(key) { return CHANGELOG_UI[changelogLang()][key]; }
+// Static texts of the terminal (src/teile/versionslog.html keeps the English ones)
+function changelogApplyLang() {
+  const set = (id, attr, val) => { const el = document.getElementById(id); if (el) { if (attr) el.setAttribute(attr, val); else el.textContent = val; } };
+  set('changelogTerminal', 'aria-label', clT('dialog'));
+  set('changelogTermDot', 'aria-label', clT('close'));
+  set('changelogTermClose', 'aria-label', clT('close'));
+  set('changelogTermSkip', '', clT('skip'));
+  set('changelogTermInput', 'placeholder', clT('placeholder'));
+  set('changelogTermInput', 'aria-label', clT('inputLabel'));
+  document.querySelectorAll('#changelogTermChips .term-chip').forEach(b => {
+    if (b.dataset.cmd === 'neueste') b.textContent = clT('chipLatest');
+    if (b.dataset.cmd === 'liste') b.textContent = clT('chipList');
+  });
+}
+
 const changelogTerm = {
   run: 0,          // Run number: closing/restarting cancels old animations
   fast: false,     // true = skip the animation
@@ -1575,9 +1649,9 @@ function termEsc(t) {
 function termUserName() {
   try {
     const u = currentUser();
-    const n = (u && (u.username || u.name)) || 'gast';
-    return String(n).toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9äöüß._-]/g, '') || 'gast';
-  } catch (e) { return 'gast'; }
+    const n = (u && (u.username || u.name)) || clT('guest');
+    return String(n).toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9äöüß._-]/g, '') || clT('guest');
+  } catch (e) { return clT('guest'); }
 }
 function termPromptHtml() {
   return `<span class="t-prompt-user">${termEsc(termUserName())}@pinn</span><span class="t-dim">:</span><span class="t-prompt-path">~/changelog</span><span class="t-dim">$</span>`;
@@ -1617,16 +1691,17 @@ async function termEcho(cmd, runId, animate) {
 
 function termEntryNodes(e) {
   const nodes = [];
+  const L = changelogText(e);
   const head = document.createElement('div');
   head.className = 't-ver';
-  head.innerHTML = `<span class="t-ver-num${e.rueckblick ? ' retro' : ''}">v${termEsc(e.v)}</span><span class="t-ver-rule"></span><span class="t-ver-date">${e.rueckblick ? 'rückblick' : termEsc(e.datum || '')}</span>`;
+  head.innerHTML = `<span class="t-ver-num${e.rueckblick ? ' retro' : ''}">v${termEsc(e.v)}</span><span class="t-ver-rule"></span><span class="t-ver-date">${e.rueckblick ? termEsc(clT('retro')) : termEsc(e.datum || '')}</span>`;
   nodes.push(head);
   const title = document.createElement('div');
   title.className = 't-ver-title';
-  title.textContent = '» ' + e.titel;
+  title.textContent = '» ' + L.titel;
   nodes.push(title);
   const sym = { neu: '+', fix: '*', info: '~' };
-  e.punkte.forEach(([typ, text]) => {
+  L.punkte.forEach(([typ, text]) => {
     const it = document.createElement('div');
     it.className = 't-item';
     it.innerHTML = `<span class="t-sym ${typ}">${sym[typ] || '-'}</span><span>${termEsc(text)}</span>`;
@@ -1671,9 +1746,9 @@ async function termBootSequence() {
   termScreen().innerHTML = '';
 
   const boot = [
-    ['<span class="t-dim">pinn. BIOS v' + termEsc(APP_VERSION) + ' · (c) familie</span>', 90],
-    ['<span class="t-dim">speichertest ........ </span><span class="t-ok">OK</span>', 110],
-    ['<span class="t-dim">verbinde mit nas ..... </span><span class="t-ok">OK</span>', 110],
+    ['<span class="t-dim">pinn. BIOS v' + termEsc(APP_VERSION) + ' · (c) ' + termEsc(clT('family')) + '</span>', 90],
+    ['<span class="t-dim">' + termEsc((clT('memTest') + ' ').padEnd(21, '.')) + ' </span><span class="t-ok">OK</span>', 110],
+    ['<span class="t-dim">' + termEsc((clT('connect') + ' ').padEnd(21, '.')) + ' </span><span class="t-ok">OK</span>', 110],
     ['<span class="t-dim">pocketbase ........... </span><span class="t-ok">OK</span>', 110],
   ];
   for (const [html, ms] of boot) {
@@ -1685,10 +1760,10 @@ async function termBootSequence() {
   const total = 20;
   for (let i = 0; i <= total; i++) {
     if (runId !== changelogTerm.run) return;
-    bar.innerHTML = `<span class="t-dim">lade changelog </span><span class="t-bar">[${'█'.repeat(i)}${'░'.repeat(total - i)}]</span> <span class="t-amber">${Math.round(i / total * 100)}%</span>`;
+    bar.innerHTML = `<span class="t-dim">${termEsc(clT('loading'))} </span><span class="t-bar">[${'█'.repeat(i)}${'░'.repeat(total - i)}]</span> <span class="t-amber">${Math.round(i / total * 100)}%</span>`;
     if (!(await termSleep(22, runId))) return;
   }
-  termLine('<span class="t-ok">[ OK ]</span> <span class="t-dim">' + PINN_CHANGELOG.length + ' einträge gefunden</span>');
+  termLine('<span class="t-ok">[ OK ]</span> <span class="t-dim">' + PINN_CHANGELOG.length + ' ' + termEsc(clT('found')) + '</span>');
   termLine('');
   if (!(await termSleep(150, runId))) return;
   if (!(await termEcho('cat CHANGELOG', runId, true))) return;
@@ -1696,9 +1771,9 @@ async function termBootSequence() {
   termLine('');
   if (!(await termPrintEntries(PINN_CHANGELOG, runId))) return;
   termLine('');
-  termLine('<span class="t-dim">legende: </span><span class="t-sym neu">+</span><span class="t-dim"> neu  </span><span class="t-sym info">~</span><span class="t-dim"> geändert  </span><span class="t-sym fix">*</span><span class="t-dim"> behoben</span>');
-  termLine('<span class="t-dim">einträge mit „rückblick“ fassen die versionen vor dem log zusammen.</span>');
-  termLine('<span class="t-dim">tippe </span><span class="t-cyan">help</span><span class="t-dim"> für befehle.</span>');
+  termLine(`<span class="t-dim">${termEsc(clT('legend'))} </span><span class="t-sym neu">+</span><span class="t-dim"> ${termEsc(clT('new'))}  </span><span class="t-sym info">~</span><span class="t-dim"> ${termEsc(clT('changed'))}  </span><span class="t-sym fix">*</span><span class="t-dim"> ${termEsc(clT('fixed'))}</span>`);
+  termLine(`<span class="t-dim">${termEsc(clT('retroNote'))}</span>`);
+  termLine(`<span class="t-dim">${termEsc(clT('type'))} </span><span class="t-cyan">help</span><span class="t-dim"> ${termEsc(clT('forCommands'))}</span>`);
   termLine('');
   termBootDone();
 }
@@ -1708,17 +1783,6 @@ function termBootDone() {
   if (skip) skip.style.display = 'none';
 }
 
-const TERM_HELP = [
-  ['help', 'diese hilfe'],
-  ['neueste', 'aktuellste version anzeigen'],
-  ['liste', 'alle versionen kurz auflisten'],
-  ['log', 'komplettes changelog'],
-  ['v 0.xx', 'eine bestimmte version anzeigen'],
-  ['neofetch', 'systeminfo'],
-  ['whoami / date', 'wer & wann'],
-  ['clear', 'bildschirm leeren'],
-  ['exit', 'terminal schließen'],
-];
 
 async function termRun(raw) {
   const cmdLine = String(raw || '').trim();
@@ -1736,21 +1800,21 @@ async function termRun(raw) {
   const arg = args.join(' ');
 
   if (c === 'help' || c === 'hilfe' || c === '?') {
-    termLine('<span class="t-white t-bold">verfügbare befehle</span>');
-    TERM_HELP.forEach(([k, d]) => termLine(`  <span class="t-cyan">${termEsc(k.padEnd(14, ' '))}</span><span class="t-dim">${termEsc(d)}</span>`));
+    termLine(`<span class="t-white t-bold">${termEsc(clT('commands'))}</span>`);
+    clT('help').forEach(([k, d]) => termLine(`  <span class="t-cyan">${termEsc(k.padEnd(14, ' '))}</span><span class="t-dim">${termEsc(d)}</span>`));
   } else if (c === 'neueste' || c === 'latest' || c === 'neu') {
     await termPrintEntries([PINN_CHANGELOG[0]], runId);
   } else if (c === 'liste' || c === 'ls' || c === 'list') {
-    PINN_CHANGELOG.forEach(e => termLine(`<span class="${e.rueckblick ? 't-dim' : 't-amber'}">v${termEsc(e.v).padEnd(12, ' ')}</span><span class="t-white">${termEsc(e.titel)}</span>`));
+    PINN_CHANGELOG.forEach(e => termLine(`<span class="${e.rueckblick ? 't-dim' : 't-amber'}">v${termEsc(e.v).padEnd(12, ' ')}</span><span class="t-white">${termEsc(changelogText(e).titel)}</span>`));
   } else if (c === 'log' || c === 'cat' || c === 'changelog') {
     await termPrintEntries(PINN_CHANGELOG, runId);
   } else if (c === 'v' || c === 'version' || c === 'show' || /^v?\d+\.\d+/.test(c)) {
     const q = /^v?\d+\.\d+/.test(c) ? c : arg;
-    if (!q) { termLine(`<span class="t-dim">installiert: </span><span class="t-amber">v${termEsc(APP_VERSION)}</span>`); }
+    if (!q) { termLine(`<span class="t-dim">${termEsc(clT('installed'))}</span><span class="t-amber">v${termEsc(APP_VERSION)}</span>`); }
     else {
       const e = termFindEntry(q);
       if (e) await termPrintEntries([e], runId);
-      else termLine(`<span class="t-red">version „${termEsc(q)}“ nicht gefunden.</span> <span class="t-dim">tippe</span> <span class="t-cyan">liste</span>`);
+      else termLine(`<span class="t-red">${termEsc(clT('notFound').replace('{v}', q))}</span> <span class="t-dim">${termEsc(clT('type'))}</span> <span class="t-cyan">${termEsc(clT('chipList'))}</span>`);
     }
   } else if (c === 'clear' || c === 'cls') {
     termScreen().innerHTML = '';
@@ -1762,7 +1826,7 @@ async function termRun(raw) {
   } else if (c === 'whoami') {
     termLine(`<span class="t-white">${termEsc(termUserName())}</span>`);
   } else if (c === 'date') {
-    termLine(`<span class="t-white">${termEsc(new Date().toLocaleString('de-DE', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }))}</span>`);
+    termLine(`<span class="t-white">${termEsc(new Date().toLocaleString(clT('locale'), { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }))}</span>`);
   } else if (c === 'neofetch') {
     termLine([
       '       _                ',
@@ -1775,24 +1839,24 @@ async function termRun(raw) {
     const online = navigator.onLine ? '<span class="t-ok">online</span>' : '<span class="t-amber">offline</span>';
     const info = [
       ['os', 'pinn. v' + APP_VERSION],
-      ['host', location.host || 'lokal'],
+      ['host', location.host || clT('local')],
       ['backend', 'PocketBase @ NAS'],
       ['user', termUserName()],
-      ['versionen', String(PINN_CHANGELOG.length) + ' einträge'],
-      ['auflösung', `${window.innerWidth}×${window.innerHeight}`],
+      [clT('versions'), String(PINN_CHANGELOG.length) + ' ' + clT('entries')],
+      [clT('resolution'), `${window.innerWidth}×${window.innerHeight}`],
     ];
     info.forEach(([k, v]) => termLine(`<span class="t-cyan t-bold">${termEsc(k.padEnd(10, ' '))}</span><span class="t-white">${termEsc(v)}</span>`));
-    termLine(`<span class="t-cyan t-bold">${'netz'.padEnd(10, ' ')}</span>${online}`);
+    termLine(`<span class="t-cyan t-bold">${termEsc(clT('network').padEnd(10, ' '))}</span>${online}`);
   } else if (c === 'sudo') {
-    termLine('<span class="t-red">netter versuch.</span> <span class="t-dim">dieser vorfall wird der familie gemeldet.</span>');
+    termLine(`<span class="t-red">${termEsc(clT('niceTry'))}</span> <span class="t-dim">${termEsc(clT('reported'))}</span>`);
   } else if (c === 'echo') {
     termLine(`<span class="t-white">${termEsc(arg)}</span>`);
   } else if (c === 'hallo' || c === 'hi' || c === 'hello') {
-    termLine(`<span class="t-white">hallo ${termEsc(termUserName())} 👋</span>`);
+    termLine(`<span class="t-white">${termEsc(clT('hello'))} ${termEsc(termUserName())} 👋</span>`);
   } else if (c === 'rm') {
-    termLine('<span class="t-red">zugriff verweigert.</span> <span class="t-dim">die geschichte bleibt, wie sie ist.</span>');
+    termLine(`<span class="t-red">${termEsc(clT('denied'))}</span> <span class="t-dim">${termEsc(clT('history'))}</span>`);
   } else {
-    termLine(`<span class="t-red">befehl nicht gefunden: ${termEsc(cmd)}</span> <span class="t-dim">– tippe</span> <span class="t-cyan">help</span>`);
+    termLine(`<span class="t-red">${termEsc(clT('unknown'))}${termEsc(cmd)}</span> <span class="t-dim">${termEsc(clT('typeDash'))}</span> <span class="t-cyan">help</span>`);
   }
   termLine('');
 }
@@ -1843,6 +1907,7 @@ function initChangelogTerminal() {
 
 function openChangelogTerminal() {
   initChangelogTerminal();
+  changelogApplyLang();
   const overlay = document.getElementById('changelogTerminal');
   document.getElementById('changelogTermPrompt').innerHTML = `<span class="t-prompt-user">${termEsc(termUserName())}@pinn</span><span class="t-dim">$</span>`;
   document.getElementById('changelogTermTitle').textContent = `${termUserName()}@pinn: ~/changelog`;
@@ -1854,7 +1919,8 @@ function openChangelogTerminal() {
   changelogTerm.fast = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const delay = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 380;
   changelogTerm.booting = true;
-  changelogTerm.bootPromise = new Promise(res => setTimeout(() => termBoot().then(res, res), delay));
+  // English texts are loaded first (only once, at most until the switch-on effect is over)
+  changelogTerm.bootPromise = Promise.all([changelogLoadEnglish(), new Promise(res => setTimeout(res, delay))]).then(() => termBoot()).catch(() => {});
 }
 function closeChangelogTerminal() {
   const overlay = document.getElementById('changelogTerminal');

@@ -99,6 +99,16 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.119.1의 새 소식
+
+**기본 이름, 서버 메시지, 버전 기록을 내 언어로**
+
+- **미리 정해진 이름**(레시피·식품 재고·장보기·문서·가계·계약 카테고리, 보관 장소, 주방 가전, ‘캔’·‘팩’ 같은 단위, 가계 자금, 자동 집안일의 제목)이 이제 내 언어로 표시돼요. 데이터는 바뀌지 않으며, 이름을 바꾸었거나 직접 만든 이름은 그대로예요.
+- 약 40개의 **서버 메시지**(예: ‘프로필을 찾을 수 없어요’, 백업·업데이트·기기 관련 안내)가 내 언어를 따라요.
+- **버전 기록**은 이제 독일어와 영어로만 제공돼요. 다른 언어에서는 영어가 표시되고, 번역이 없는 예전 항목은 독일어로 남아요. 영어 부분은 열 때만 불러와요.
+- 다음 단계: 1.119.2에서 예전 번역기와 `lang/`을 제거해요.
+- 변경: `index.html`, `js/standardnamen.js`(새 파일), `i18n/versionslog.en.js`(새 파일), `js/serverzugriff.js`, `js/versionslog.js`, `js/hinweise.js` 외 `js/`의 22개 파일, `i18n/`의 모든 언어 파일, `pinn-setup.sh` – 서버에는 변경이 없어요. 평소처럼 설치하세요(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
+
 ## 1.119.0의 새 소식
 
 **텍스트 키 번역: 게시판과 마지막 영역**
@@ -148,7 +158,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.119.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.119.1` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

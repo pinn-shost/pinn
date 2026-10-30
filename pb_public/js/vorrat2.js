@@ -553,7 +553,7 @@ function pantryScanShowKnown(p, code) {
         <span class="text-2xl leading-none">${escapeHtml(cat.icon || '📦')}</span>
         <div class="flex-1 min-w-0">
           <div class="font-medium truncate">${escapeHtml(p.name)}</div>
-          <div class="text-[11px] text-ink/50 truncate">${escapeHtml(tk('pantry.scan.inStock', { stock: pantryStockText(p) }))}${loc ? ' · ' + escapeHtml((loc.icon ? loc.icon + ' ' : '') + loc.label) : ''}</div>
+          <div class="text-[11px] text-ink/50 truncate">${escapeHtml(tk('pantry.scan.inStock', { stock: pantryStockText(p) }))}${loc ? ' · ' + escapeHtml((loc.icon ? loc.icon + ' ' : '') + i18nT(loc.label)) : ''}</div>
           ${d !== null ? `<div class="text-[11px] text-ink/50">${escapeHtml(tk('pantry.bestBeforeShort', { date: pantryShortDate(p.bestBefore) }))}${d <= pantrySettings.mhdDays ? ' · ' + escapeHtml(pantryExpiryLabel(d)) : ''}</div>` : ''}
         </div>
       </div>
@@ -646,14 +646,14 @@ function pantryScanShowNew(code, info) {
           <div class="min-w-0">
             <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1" for="pscanCat">${escapeHtml(tk('pantry.item.category'))}</label>
             <select id="pscanCat" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm bg-white">
-              ${pantryCategories.map(c => `<option value="${escapeHtml(c.id)}"${c.id === catId ? ' selected' : ''}>${escapeHtml((c.icon ? c.icon + ' ' : '') + c.label)}</option>`).join('')}
+              ${pantryCategories.map(c => `<option value="${escapeHtml(c.id)}"${c.id === catId ? ' selected' : ''}>${escapeHtml((c.icon ? c.icon + ' ' : '') + i18nT(c.label))}</option>`).join('')}
             </select>
           </div>
           <div class="min-w-0">
             <label class="block text-[11px] uppercase tracking-wide text-ink/40 mb-1" for="pscanLoc">${escapeHtml(tk('pantry.item.place'))}</label>
             <select id="pscanLoc" class="w-full rounded-lg border border-ink/15 px-2 py-2 text-sm bg-white">
               <option value="">–</option>
-              ${pantryLocations.map(l => `<option value="${escapeHtml(l.id)}"${l.id === locId ? ' selected' : ''}>${escapeHtml((l.icon ? l.icon + ' ' : '') + l.label)}</option>`).join('')}
+              ${pantryLocations.map(l => `<option value="${escapeHtml(l.id)}"${l.id === locId ? ' selected' : ''}>${escapeHtml((l.icon ? l.icon + ' ' : '') + i18nT(l.label))}</option>`).join('')}
             </select>
           </div>
         </div>
@@ -1273,7 +1273,7 @@ function renderPlanDoneRows() {
           <span class="text-[11px] uppercase tracking-wide text-ink/40">${escapeHtml(tk('shop.entry.category'))}</span>
           <button type="button" class="plan-cat-toggle inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs hover:border-pine transition" style="--cat:${cat.color}">
             <span class="text-base leading-none">${escapeHtml(cat.icon || '')}</span>
-            <span class="font-medium">${escapeHtml(cat.label)}</span>
+            <span class="font-medium">${escapeHtml(i18nT(cat.label))}</span>
             <span class="text-ink/40">${row.pickerOpen ? '▴' : '▾'}</span>
           </button>
         </div>
@@ -1619,7 +1619,7 @@ function renderFinCategoryEditor() {
         <div class="flex items-center gap-2">
           <input type="text" data-field="icon" value="${escapeHtml(c.icon || '')}" maxlength="4" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="${escapeHtml(tk('household.icon'))}" />
           <input type="color" data-field="color" value="${escapeHtml(c.color || '#9A9A9A')}" class="w-9 h-9 shrink-0 rounded-lg border border-ink/15 p-0.5 bg-white cursor-pointer" aria-label="${escapeHtml(tk('account.dashBg.color'))}" />
-          <input type="text" data-field="label" data-i18n-value value="${escapeHtml(c.label || '')}" maxlength="40" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm" aria-label="${escapeHtml(tk('common.name'))}" />
+          <input type="text" data-field="label" value="${escapeHtml(i18nT(c.label || ''))}" maxlength="40" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-sm" aria-label="${escapeHtml(tk('common.name'))}" />
           ${c.id === 'sonstiges' ? '' : `<button type="button" data-action="toggle" class="shrink-0 px-2 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/60 hover:border-pine transition">${escapeHtml(inactive ? tk('fin.settings.show') : tk('fin.settings.hide'))}</button>`}
           ${isDefault ? '' : `<button type="button" data-action="delete" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-red-500 hover:bg-red-50 grid place-items-center text-lg leading-none" aria-label="${escapeHtml(tk('fin.settings.deleteCat'))}">×</button>`}
         </div>
@@ -1675,8 +1675,8 @@ function renderFinRecurringEditor() {
       <button type="button" class="fin-rec-row w-full flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-ink/5 transition text-left ${ended ? 'opacity-50' : ''}" data-id="${escapeHtml(r.id)}">
         <span class="shrink-0 w-9 h-9 rounded-full grid place-items-center text-lg" style="background:${cat.color}22">${escapeHtml(cat.icon || '')}</span>
         <span class="flex-1 min-w-0">
-          <span class="block text-sm font-medium truncate">${escapeHtml(r.title || cat.label)}</span>
-          <span class="block text-xs text-ink/45 truncate">${ended ? escapeHtml(tk('contract.endedLower')) : escapeHtml(finRecDescribe(r))} · ${escapeHtml(cat.label)}${linkLabel ? ' · ' + escapeHtml(linkLabel) : ''}</span>
+          <span class="block text-sm font-medium truncate">${escapeHtml(r.title || i18nT(cat.label))}</span>
+          <span class="block text-xs text-ink/45 truncate">${ended ? escapeHtml(tk('contract.endedLower')) : escapeHtml(finRecDescribe(r))} · ${escapeHtml(i18nT(cat.label))}${linkLabel ? ' · ' + escapeHtml(linkLabel) : ''}</span>
         </span>
         ${(() => { const a = finRecurringAmountFor(r, todayIso); return a < 0 ? `<span class="shrink-0 text-sm font-semibold" style="color:${FIN_GREEN}">+ ${fmtEur(-a)}</span>` : `<span class="shrink-0 text-sm font-semibold">${fmtEur(a)}</span>`; })()}
       </button>`;

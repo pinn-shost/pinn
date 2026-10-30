@@ -99,6 +99,16 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語和 🇰🇷 한국어**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.119.1 新功能
+
+**标准名称、服务器消息和版本日志使用你的语言**
+
+- **预设名称**——食谱、储藏、购物、文件、财务和合同的分类，存放位置，厨房电器，“罐”“包”等单位，家庭资金池以及自动家务任务的标题——现在以你的语言显示。你的数据不会改变；改过名或自己建的名称保持原样。
+- 大约 40 条**服务器消息**（例如“找不到个人资料”、关于备份、更新和设备的提示）使用你的语言。
+- **版本日志**现在只有德语和英语：其他语言显示英语，没有翻译的旧条目保持德语。英语部分仅在打开时加载。
+- 下一步：1.119.2 将移除旧翻译器和 `lang/`。
+- 修改的文件：`index.html`、`js/standardnamen.js`（新）、`i18n/versionslog.en.js`（新）、`js/serverzugriff.js`、`js/versionslog.js`、`js/hinweise.js` 以及 `js/` 中另外 22 个文件、`i18n/` 中的所有语言文件、`pinn-setup.sh`——服务器端没有变化。照常安装（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
+
 ## 1.119.0 新功能
 
 **使用文本键翻译：留言板和最后的几个区域**
@@ -148,7 +158,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.119.0` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.119.1` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

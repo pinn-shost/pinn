@@ -45,7 +45,7 @@ function renderHouseholdFilters() {
   if (householdFilterCategory && householdFilterCategory !== HOUSEHOLD_FILTER_BINS && !cats.some(c => c.id === householdFilterCategory)) householdFilterCategory = '';
   roomSel.innerHTML = '<option value="">' + escapeHtml(tk('household.allRooms')) + '</option>' + rooms.map(r => `<option value="${escapeHtml(r.id)}">${escapeHtml((r.icon ? r.icon + ' ' : '') + r.name)}</option>`).join('');
   catSel.innerHTML = '<option value="">' + escapeHtml(tk('household.allCategories')) + '</option>'
-    + cats.map(c => `<option value="${escapeHtml(c.id)}">🧹 ${escapeHtml(c.label)}</option>`).join('')
+    + cats.map(c => `<option value="${escapeHtml(c.id)}">🧹 ${escapeHtml(i18nT(c.label))}</option>`).join('')
     + `<option value="${HOUSEHOLD_FILTER_BINS}">${escapeHtml(tk('household.binsFilter'))}</option>`;
   roomSel.value = householdFilterRoom;
   catSel.value = householdFilterCategory;
@@ -220,7 +220,7 @@ function renderTrashBinWasteTypePicker(selected) {
   WASTE_TYPES.forEach(w => {
     const row = document.createElement('label');
     row.className = 'flex items-center gap-2 text-sm px-2 py-1.5 rounded-lg hover:bg-ink/5 cursor-pointer';
-    row.innerHTML = `<input type="radio" name="trashBinWasteType" value="${w.id}" ${w.id === selected ? 'checked' : ''} /><span>${w.icon} ${escapeHtml(w.label)}</span>`;
+    row.innerHTML = `<input type="radio" name="trashBinWasteType" value="${w.id}" ${w.id === selected ? 'checked' : ''} /><span>${w.icon} ${escapeHtml(i18nT(w.label))}</span>`;
     wrap.appendChild(row);
   });
 }
@@ -246,7 +246,7 @@ function renderBinWeekdayPicker() {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'w-9 h-9 rounded-full text-xs font-medium border transition ' + (pendingBinScheduleWeekdays.includes(wd.id) ? 'bg-pine text-white border-pine' : 'border-ink/15 text-ink/60 hover:border-pine/50');
-    btn.textContent = wd.label;
+    btn.textContent = i18nT(wd.label);
     btn.addEventListener('click', () => {
       if (pendingBinScheduleWeekdays.includes(wd.id)) pendingBinScheduleWeekdays = pendingBinScheduleWeekdays.filter(d => d !== wd.id);
       else pendingBinScheduleWeekdays.push(wd.id);
@@ -419,7 +419,7 @@ function renderCleaningCategorySelect(selected) {
   const sel = document.getElementById('roomScheduleCategorySelect');
   const visible = cleaningCategories.filter(c => c.active !== false || c.id === selected);
   sel.innerHTML = visible.length
-    ? visible.map(c => `<option value="${c.id}">${escapeHtml(c.label)}</option>`).join('')
+    ? visible.map(c => `<option value="${c.id}">${escapeHtml(i18nT(c.label))}</option>`).join('')
     : '<option value="">' + escapeHtml(tk('household.noCategoryYet')) + '</option>';
   if (selected) sel.value = selected;
   const hint = document.getElementById('roomScheduleCategoryHint');
@@ -434,7 +434,7 @@ function renderScheduleWeekdayPicker() {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'w-9 h-9 rounded-full text-xs font-medium border transition ' + (pendingScheduleWeekdays.includes(wd.id) ? 'bg-pine text-white border-pine' : 'border-ink/15 text-ink/60 hover:border-pine/50');
-    btn.textContent = wd.label;
+    btn.textContent = i18nT(wd.label);
     btn.addEventListener('click', () => {
       if (pendingScheduleWeekdays.includes(wd.id)) pendingScheduleWeekdays = pendingScheduleWeekdays.filter(d => d !== wd.id);
       else pendingScheduleWeekdays.push(wd.id);
@@ -655,7 +655,7 @@ function pollHouseholdProgress(btn, statusEl, fallbackLabel) {
       const res = await apiFetch('/api/household-tasks-progress');
       const p = await res.json();
       if (p.active) {
-        btn.textContent = p.total > 0 ? tk('household.progress', { done: p.done, total: p.total }) : `${p.label} …`;
+        btn.textContent = p.total > 0 ? tk('household.progress', { done: p.done, total: p.total }) : `${i18nT(p.label)} …`;
       }
     } catch (err) {
       btn.textContent = fallbackLabel;
@@ -763,7 +763,7 @@ document.getElementById('regenerateHouseholdTasksBtn_kalender').addEventListener
     clearInterval(pollId);
     const res = await apiFetch('/api/household-tasks-progress');
     const p = await res.json();
-    statusEl.textContent = p.label ? p.label + '.' : 'Erledigt.';
+    statusEl.textContent = i18nT(p.label) ? i18nT(p.label) + '.' : 'Erledigt.';
   } catch (err) {
     clearInterval(pollId);
     statusEl.textContent = 'Verbindung fehlgeschlagen. Bitte NAS/Netzwerk prüfen.';

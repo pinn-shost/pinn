@@ -186,7 +186,7 @@ function kasseDisplayName(k) {
     if (u && k.owner === u.id) return k.name && k.name !== 'Privat' ? k.name : tk('fund.myFund');
     return k.name && k.name !== 'Privat' ? tk('fund.ofPerson', { fund: k.name, name: kasseProfileName(k.owner) }) : tk('fund.fundOf', { name: kasseProfileName(k.owner) });
   }
-  return k.name || tk('shop.complete.fund');
+  return i18nT(k.name) || tk('shop.complete.fund');   // "Haushaltskasse"/"Kasse" = names the server gives by default
 }
 function kasseDescribe(k) {
   const u = currentUser();

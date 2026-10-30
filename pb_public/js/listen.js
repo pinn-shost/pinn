@@ -1554,7 +1554,7 @@ function gsCollect(q) {
       if (!r || !r.title) return;
       const fav = typeof recipeFavorites !== 'undefined' && recipeFavorites.some(f => f.id === r.id);
       add('recipe', {
-        icon: fav ? '❤️' : '🍽', typeLabel: tk('search.type.recipe'), sub: (r.categories || []).join(', ') || tk('search.openRecipe'),
+        icon: fav ? '❤️' : '🍽', typeLabel: tk('search.type.recipe'), sub: (r.categories || []).map(i18nT).join(', ') || tk('search.openRecipe'),
         run: () => { setView('rezepte'); openRecipeDetailPage(r.id); },
       }, r.title, (Array.isArray(r.ingredients) ? r.ingredients : []).join(' '));
     });

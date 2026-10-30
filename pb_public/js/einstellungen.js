@@ -77,7 +77,7 @@ function renderFavoriteTabsPicker() {
       <label class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-ink/10 bg-white ${atLimit ? 'opacity-40' : 'cursor-pointer'}">
         <input type="checkbox" class="favorite-tab-check shrink-0 w-4 h-4" data-id="${tab.id}" ${isChecked ? 'checked' : ''} ${atLimit ? 'disabled' : ''} />
         <span class="text-lg">${tab.icon}</span>
-        <span class="text-sm flex-1">${escapeHtml(tab.label)}</span>
+        <span class="text-sm flex-1">${escapeHtml(i18nT(tab.label))}</span>
       </label>
     `;
   }).join('');
@@ -149,7 +149,7 @@ function renderSettingsMemberList() {
       <span class="w-8 h-8 rounded-full overflow-hidden border-2 shrink-0" style="border-color:${memberBorderColor(m)}">${memberAvatarInnerHTML(m)}</span>
       <div class="flex-1 min-w-0">
         <div class="text-sm font-medium truncate">${escapeHtml(m.name)}</div>
-        <div class="text-xs text-ink/40 truncate">${escapeHtml(m.role || '–')} · ${escapeHtml(tk(m.displayMode === 'role' ? 'settings.members.showsRole' : 'settings.members.showsName'))} ${profileText}${!admin && m.childLock ? ' · ' + escapeHtml(tk('settings.members.childLock')) : ''}</div>
+        <div class="text-xs text-ink/40 truncate">${escapeHtml(i18nT(m.role) || '–')} · ${escapeHtml(tk(m.displayMode === 'role' ? 'settings.members.showsRole' : 'settings.members.showsName'))} ${profileText}${!admin && m.childLock ? ' · ' + escapeHtml(tk('settings.members.childLock')) : ''}</div>
         ${admin && !(wgHidesKids() && !m.childLock) ? (() => {
           const me = currentMember();
           const locked = !!(profile && (profile.rolle === 'admin' || profile.rolle === 'gast')) || (me && me.id === m.id);
@@ -240,7 +240,7 @@ function renderCategoryEditor(domain) {
   let html = catEditorEntries(domain).map(e => `
     <div class="flex items-center gap-2" data-key="${escapeHtml(e.key)}">
       <div class="flex-1 min-w-0">
-        <input type="text" data-field="label" data-i18n-value value="${escapeHtml(e.label)}" maxlength="40" enterkeyhint="done" autocomplete="off" class="w-full min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base ${e.active ? '' : 'text-ink/40'}" aria-label="${escapeHtml(tk('common.name'))}" />
+        <input type="text" data-field="label" value="${escapeHtml(i18nT(e.label))}" maxlength="40" enterkeyhint="done" autocomplete="off" class="w-full min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base ${e.active ? '' : 'text-ink/40'}" aria-label="${escapeHtml(tk('common.name'))}" />
         ${e.count ? `<div class="text-[11px] text-ink/40 mt-0.5">${escapeHtml(tk(CAT_EDITOR_COUNT[domain], { n: e.count }))}</div>` : ''}
       </div>
       ${toggleHtml(e.active)}
@@ -438,7 +438,7 @@ function requestCategoryChange(domain, key, label, action, revertFn) {
   document.getElementById('categoryReassignText').textContent = tk(K.text, { name: shown, n: affected.length });
   document.getElementById('categoryReassignTargetLabel').textContent = tk(K.target);
   const targetSelect = document.getElementById('categoryReassignTarget');
-  targetSelect.innerHTML = options.map(o => `<option value="${escapeHtml(o.key)}">${escapeHtml(o.label)}</option>`).join('');
+  targetSelect.innerHTML = options.map(o => `<option value="${escapeHtml(o.key)}">${escapeHtml(i18nT(o.label))}</option>`).join('');
   document.getElementById('confirmCategoryReassign').textContent = action === 'hide' ? tk('cat.reassign.moveHide') : tk('cat.reassign.moveDelete');
   document.getElementById('categoryReassignModal').classList.remove('hidden');
   armModalSnapshot('categoryReassignModal');

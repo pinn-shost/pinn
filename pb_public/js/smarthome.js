@@ -83,8 +83,6 @@ const SMART_VAC_KEYS = {
   custom_water_flow: 'smart.vac.customWater', deep: 'smart.vac.deep', fast: 'smart.vac.fast',
 };
 const SMART_VAC_NAMES = { turbo: 'Turbo', max: 'Max', max_plus: 'Max+', smart_mode: 'SmartPlan' };
-// Text in the chosen language (old dictionaries; still used by other files – see js/sprache.js)
-function i18nT(s) { return (window.PINN_I18N && PINN_I18N.active) ? PINN_I18N.t(s) : s; }
 function smartVacLabel(o) {
   if (o === 'deep_plus') return tk('smart.vac.deep') + '+';
   return SMART_VAC_KEYS[o] ? tk(SMART_VAC_KEYS[o]) : (SMART_VAC_NAMES[o] || String(o).replace(/_/g, ' '));

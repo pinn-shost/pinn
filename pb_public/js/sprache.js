@@ -4,7 +4,8 @@
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
    Contents: the language dropdown, country, currency, number format and temperature unit with a live preview (renderLanguageSettings,
    renderRegionSettings, renderRegionPreview, initLanguageSettings) and saving them (remembered on the device, stored in the
-   profile, then pinn. reloads). Also i18nT (overridden later by the definition in js/smarthome.js, as before).
+   profile, then pinn. reloads).
+   Stored standard names (categories etc.) are translated by i18nT in js/standardnamen.js.
    Texts: key based since 1.111.0 – tk('settings.region.…') here, data-tk in src/teile/seiten/einstellungen.html,
    texts in pb_public/i18n/<code>.i18n.js. */
 
@@ -19,7 +20,6 @@ function pinnLangCode() {
 }
 let langPendingCode = '';
 let regionPending = null;
-function i18nT(s) { return window.PINN_I18N ? PINN_I18N.t(s) : s; }
 function renderLanguageSettings() {
   const btn = document.getElementById('langDdBtn');
   if (!btn || !window.PINN_LANGUAGES) return;

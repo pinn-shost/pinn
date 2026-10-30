@@ -933,7 +933,7 @@ function finDetailHtml(range, stats, budget, { isCurrent, daysElapsed }) {
           <span class="shrink-0 w-9 h-9 rounded-full grid place-items-center text-lg" style="background:${c.cat.color}22">${escapeHtml(c.cat.icon || '')}</span>
           <span class="flex-1 min-w-0">
             <span class="flex items-baseline justify-between gap-2">
-              <span class="text-sm font-medium truncate">${escapeHtml(c.cat.label)}</span>
+              <span class="text-sm font-medium truncate">${escapeHtml(i18nT(c.cat.label))}</span>
               <span class="text-sm font-semibold shrink-0">${fmtEur(c.total)}</span>
             </span>
             ${mini}
@@ -954,7 +954,7 @@ function finDetailHtml(range, stats, budget, { isCurrent, daysElapsed }) {
           <span class="shrink-0 w-9 h-9 rounded-full grid place-items-center text-lg" style="background:${c.cat.color}22">${escapeHtml(c.cat.icon || '')}</span>
           <span class="flex-1 min-w-0">
             <span class="flex items-baseline justify-between gap-2">
-              <span class="text-sm font-medium truncate">${escapeHtml(c.cat.label)}</span>
+              <span class="text-sm font-medium truncate">${escapeHtml(i18nT(c.cat.label))}</span>
               <span class="text-sm font-semibold shrink-0" style="color:${FIN_GREEN}">+ ${fmtEur(c.total)}</span>
             </span>
             <div class="flex h-1.5 rounded-full overflow-hidden mt-1.5 bg-ink/5"><div style="width:${share}%;background:${FIN_GREEN}"></div></div>
@@ -1086,7 +1086,7 @@ function renderFinanceList(range, stats) {
         const member = e.paidBy ? kassePartById(e.paidBy) : null;
         const subParts = [];
         if (e.title && e.store) subParts.push(escapeHtml(e.store));
-        subParts.push(escapeHtml(cat.label));
+        subParts.push(escapeHtml(i18nT(cat.label)));
         if (e.items && e.items.length) subParts.push(tk('fin.itemsN', { n: e.items.length }));
         const linkLabel = finLinkLabel(e.link);
         if (linkLabel) subParts.push(escapeHtml(linkLabel));
@@ -1110,7 +1110,7 @@ function renderFinanceList(range, stats) {
     <div class="rounded-2xl bg-white border border-ink/10 shadow-sm p-4 sm:p-5">
       <div class="flex items-center justify-between gap-3 mb-3">
         <h3 class="font-serif text-base">${escapeHtml(tk('fin.entries'))} <span class="text-xs text-ink/40 font-sans">${entries.length || ''}</span></h3>
-        ${filterCat ? `<button type="button" id="finClearFilterBtn" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-pine/10 text-pine">${escapeHtml(filterCat.icon + ' ' + filterCat.label)} <span class="text-sm leading-none">×</span></button>` : ''}
+        ${filterCat ? `<button type="button" id="finClearFilterBtn" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-pine/10 text-pine">${escapeHtml(filterCat.icon + ' ' + i18nT(filterCat.label))} <span class="text-sm leading-none">×</span></button>` : ''}
       </div>
       ${pendingCount ? `<p class="text-xs text-mustard mb-2">⏳ ${escapeHtml(tk('fin.pendingN', { n: pendingCount }))}</p>` : ''}
       ${entries.length ? listHtml : `<p class="text-sm text-ink/40 italic">${escapeHtml(filterCat ? tk('fin.noEntriesInCat') : tk('fin.noEntriesInPeriod'))}</p>`}
@@ -1141,7 +1141,7 @@ function renderFinCategoryPicker(containerId, selectedId, onSelect) {
   wrap.innerHTML = cats.map(c => `
     <button type="button" class="fin-cat-chip flex flex-col items-center gap-0.5 rounded-xl border border-ink/10 px-1 py-2 text-center transition ${c.id === selectedId ? 'active' : ''}" data-cat="${escapeHtml(c.id)}" style="--cat:${c.color}">
       <span class="text-xl leading-none">${escapeHtml(c.icon || '')}</span>
-      <span class="text-[10px] leading-tight text-ink/70 w-full truncate">${escapeHtml(c.label)}</span>
+      <span class="text-[10px] leading-tight text-ink/70 w-full truncate">${escapeHtml(i18nT(c.label))}</span>
     </button>`).join('') + `
     <button type="button" class="fin-cat-chip fin-cat-add flex flex-col items-center gap-0.5 rounded-xl border border-ink/25 px-1 py-2 text-center text-ink/50 hover:text-pine hover:border-pine transition" data-action="add">
       <span class="text-xl leading-none">＋</span>
@@ -1226,7 +1226,7 @@ function finCreateCategoryFromForm(containerId) {
   const onSelect = finPickerHandlers[containerId];
   renderFinCategoryPicker(containerId, cat.id, onSelect);
   if (onSelect) onSelect(cat.id, true);
-  finShowToast(tk('fin.cat.created', { name: cat.label }));
+  finShowToast(tk('fin.cat.created', { name: i18nT(cat.label) }));
 }
 // kasse (optional): its guests without a profile are offered in addition
 function fillFinPaidBySelect(selectId, value, kasse) {

@@ -452,7 +452,7 @@ function shoppingGroupedBodyHtml(manual, recipeItems, showRoute) {
   })).filter(g => g.manual.length || g.recipe.length);
   const groupHtml = groups.map(g => `
     <div class="shop-group">
-      <h3 class="shop-group-head"><span class="text-sm">${escapeHtml(g.cat.icon || '')}</span>${escapeHtml(g.cat.label)}<span class="text-ink/30 normal-case tracking-normal">· ${g.manual.length + g.recipe.length}</span></h3>
+      <h3 class="shop-group-head"><span class="text-sm">${escapeHtml(g.cat.icon || '')}</span>${escapeHtml(i18nT(g.cat.label))}<span class="text-ink/30 normal-case tracking-normal">· ${g.manual.length + g.recipe.length}</span></h3>
       <div class="flex flex-col gap-1.5">${g.manual.map(shoppingManualRowHtml).join('')}${g.recipe.map(i => shoppingRecipeRowHtml(i, showRoute)).join('')}</div>
     </div>`).join('');
   const doneCount = doneManual.length + doneRecipe.length;
@@ -992,7 +992,7 @@ function renderShoppingCategorySettings() {
     <div class="shop-cat-row ${c.id === shopCatFreshId ? 'shop-cat-fresh' : ''}" data-cat="${escapeHtml(c.id)}">
       <span class="w-6 text-center text-[11px] text-ink/35 shrink-0">${i + 1}.</span>
       <span class="text-base shrink-0">${escapeHtml(c.icon || '')}</span>
-      <span class="flex-1 min-w-0 text-sm truncate">${escapeHtml(c.label)}</span>
+      <span class="flex-1 min-w-0 text-sm truncate">${escapeHtml(i18nT(c.label))}</span>
       <button type="button" class="shop-cat-move" data-move="-1" ${i === 0 ? 'disabled' : ''} aria-label="${escapeHtml(tk('common.moveUp'))}">▲</button>
       <button type="button" class="shop-cat-move" data-move="1" ${i === cats.length - 1 ? 'disabled' : ''} aria-label="${escapeHtml(tk('common.moveDown'))}">▼</button>
     </div>`).join('');

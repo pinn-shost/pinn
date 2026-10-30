@@ -62,7 +62,7 @@ function renderTasks() {
     const notesDisplay = stripAssignedLine(task.description);
     // How often a household task was not done before - as a separate field at the bottom right.
     const missCount = task.missed || 0;
-    const displayTitle = task.title;
+    const displayTitle = i18nT(task.title);
     // Smart home: start buttons of the linked cleaning task or bin
     const smartStart = task.done ? [] : smartStartActionsForTask(task);
     const smartAuto = task.done ? null : smartAutoForTask(task);

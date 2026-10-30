@@ -19,7 +19,7 @@
    - The push message comes from the server (ausblick.pb.js), link: /?ausblick=woche or /?ausblick=monat.
    - Settings → Outlook: open both pages at any time, push on/off per profile.
    Everything is calculated from data pinn. has already loaded – works offline as well.
-   Texts come from the text keys outlook.* (pb_public/i18n); categories and the like go through abTx.
+   Texts come from the text keys outlook.* (pb_public/i18n); categories and the like go through abTx (= i18nT, js/standardnamen.js).
    ========================================================== */
 // Text keys of this page (pb_public/i18n, prefix outlook.) – abT('w_title') → tk('outlook.wTitle')
 const AB_KEYS = {
@@ -54,7 +54,7 @@ function abLocale() { return sysLocale(); }
 // Own text in the selected language (flat share wording comes from the #wg variants of the keys)
 function abT(k, vars) { return tk(AB_KEYS[k] || ('outlook.' + k), vars); }
 // Translate labels from the app (categories, waste types …) via the dictionary
-function abTx(s) { try { return (window.PINN_I18N && PINN_I18N.active && typeof s === 'string') ? PINN_I18N.t(s) : s; } catch (e) { return s; } }
+function abTx(s) { return i18nT(s); }   // stored standard names and task titles (js/standardnamen.js)
 function abEsc(s) { return escapeHtml(s == null ? '' : String(s)); }
 function abDate(iso) { return new Date(iso + 'T00:00:00'); }
 function abFmt(iso, opts) { try { return abDate(iso).toLocaleDateString(abLocale(), opts); } catch (e) { return iso; } }
@@ -336,7 +336,7 @@ function abHouseholdOn(iso, todayIso) {
     const room = rooms.find(r => r.id === s.roomId);
     const cat = cleaningCategoryById(s.category);
     const ms = (s.assignedMemberIds || []).map(memberById).filter(Boolean);
-    out.push({ title: abTx(cat ? cat.label : 'Reinigung') + ': ' + (room ? room.name : ''), ms: s.rotate ? [] : ms, rotate: !!s.rotate && ms.length > 1, msAll: ms });
+    out.push({ title: abTx(cat ? cat.label : 'Reinigung') + ': ' + (room ? abTx(room.name) : ''), ms: s.rotate ? [] : ms, rotate: !!s.rotate && ms.length > 1, msAll: ms });
   });
   trashBins.forEach(b => {
     if (!b.schedule || !abSchedOn(b.schedule, iso)) return;

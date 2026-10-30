@@ -529,7 +529,7 @@ function docRowHtml(d, today) {
   if (d.aussteller) meta.push(d.aussteller);
   if (vtIsIso(d.datum)) meta.push(vtFmt(d.datum));
   const chips = [];
-  if (dl) chips.push(`<span class="vt-chip ${dl.tone}">${escapeHtml(dl.label)}</span>`);
+  if (dl) chips.push(`<span class="vt-chip ${dl.tone}">${escapeHtml(i18nT(dl.label))}</span>`);
   if (d.betrag > 0) chips.push(`<span class="text-[11px] text-ink/45">${escapeHtml(fmtEur(d.betrag))}</span>`);
   if (d.pending) chips.push(`<span class="vt-chip muted">${docUploadingKey === d.id ? tk('home.transferring') : (navigator.onLine ? tk('doc.waiting') : tk('home.willSubmitted'))}</span>`);
   return `
@@ -583,7 +583,7 @@ function renderDocFilters() {
   const finCount = (!isCurrentUserGuest() && typeof finDocs !== 'undefined') ? finDocs.length : 0;
   if (docFilterCategory && docFilterCategory !== DOC_FIN_FILTER && !cats.some(c => c.id === docFilterCategory)) docFilterCategory = '';
   catSel.innerHTML = ('<option value="">' + tk('household.allCategories') + '</option>')
-    + cats.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml((c.icon ? c.icon + ' ' : '') + c.label)}</option>`).join('')
+    + cats.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml((c.icon ? c.icon + ' ' : '') + i18nT(c.label))}</option>`).join('')
     + (finCount ? `<option value="${DOC_FIN_FILTER}">${tk('doc.fromFinanceContractsReceipts')}</option>` : '');
   catSel.value = docFilterCategory;
   if (docFilterMember && docFilterMember !== '__familie' && !memberById(docFilterMember)) docFilterMember = '';
@@ -758,7 +758,7 @@ function renderDocDetail() {
   const cat = docCategory(d.kategorie);
   const dl = docDeadline(d, today);
   const who = docMemberName(d.mitglied);
-  const sub = [cat.label, who ? tk('doc.forWho', { name: who }) : tk('doc.wholeFamily2'), vtIsIso(d.datum) ? vtFmt(d.datum) : ''].filter(Boolean).join(' · ');
+  const sub = [i18nT(cat.label), who ? tk('doc.forWho', { name: who }) : tk('doc.wholeFamily2'), vtIsIso(d.datum) ? vtFmt(d.datum) : ''].filter(Boolean).join(' · ');
 
   const files = [
     ...(d.dateien || []).map((name, i) => ({ kind: 'server', name, key: 's' + i })),
@@ -810,7 +810,7 @@ function renderDocDetail() {
         ${d.kasse ? `<div class="text-[11px] text-ink/50 mt-0.5">${tk('doc.fund', { docKasseName: escapeHtml(docKasseName(d.kasse)) })}</div>` : ''}
       </div>
     </div>
-    ${dl ? `<div class="vt-status-box ${dl.tone === 'ok' ? '' : dl.tone} mb-3"><div class="text-sm font-semibold">${escapeHtml(dl.label)}</div><div class="text-xs opacity-80">${escapeHtml(dl.tone === 'ok' ? (dl.field === 'gueltig_bis' ? tk('doc.dl.expiresLower', { when: docInText(dl.days) }) : tk('doc.dl.endsLower', { when: docInText(dl.days) })) : dl.long + ' ' + vtFmt(dl.date))}</div></div>` : ''}
+    ${dl ? `<div class="vt-status-box ${dl.tone === 'ok' ? '' : dl.tone} mb-3"><div class="text-sm font-semibold">${escapeHtml(i18nT(dl.label))}</div><div class="text-xs opacity-80">${escapeHtml(dl.tone === 'ok' ? (dl.field === 'gueltig_bis' ? tk('doc.dl.expiresLower', { when: docInText(dl.days) }) : tk('doc.dl.endsLower', { when: docInText(dl.days) })) : dl.long + ' ' + vtFmt(dl.date))}</div></div>` : ''}
     ${d.pending ? `<p class="vt-info mb-3">${navigator.onLine ? tk('doc.beingTransferredNas') : tk('doc.notNasYetWill')}</p>` : ''}
     <div class="doc-file-grid mb-1">${tiles}</div>
     ${files.length ? '' : ('<p class="text-xs text-ink/45 italic">' + tk('doc.noFiles') + '</p>')}
@@ -1082,7 +1082,7 @@ function attemptCloseDocEdit() {
 function renderDocCategoryPicker() {
   const wrap = document.getElementById('docCategoryPicker');
   wrap.innerHTML = docCategories().map(c => `
-    <button type="button" class="pantry-chip px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 transition ${c.id === docDraft.catId ? 'active' : ''}" data-id="${escapeHtml(c.id)}">${escapeHtml((c.icon ? c.icon + ' ' : '') + c.label)}</button>`).join('');
+    <button type="button" class="pantry-chip px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 transition ${c.id === docDraft.catId ? 'active' : ''}" data-id="${escapeHtml(c.id)}">${escapeHtml((c.icon ? c.icon + ' ' : '') + i18nT(c.label))}</button>`).join('');
   wrap.querySelectorAll('.pantry-chip').forEach(b => b.addEventListener('click', () => {
     docDraft.catId = b.dataset.id;
     docDraft.catTouched = true;
@@ -1308,8 +1308,8 @@ async function saveDocFromModal() {
   renderDocuments();
   const extra = fzNotes.length ? ' ' + tk('doc.vehicleUpdated', { notes: fzNotes.join(', ') }) : '';
   if (!navigator.onLine) finShowToast(tk('doc.savedOffline') + extra);
-  else if (isNew && fzTyp) finShowToast(tk('doc.filedVehicle', { label: cat.label }) + extra);
-  else if (isNew && docHsRef) finShowToast(`${tk('doc.filedUnderDocumentsHome', { label: cat.label })}`);
+  else if (isNew && fzTyp) finShowToast(tk('doc.filedVehicle', { label: i18nT(cat.label) }) + extra);
+  else if (isNew && docHsRef) finShowToast(`${tk('doc.filedUnderDocumentsHome', { label: i18nT(cat.label) })}`);
   else finShowToast((isNew ? tk('doc.documentFiled') : tk('doc.documentSaved')) + extra);
   docFlush();
 }
@@ -1344,7 +1344,7 @@ function renderDocCategoryEditor() {
   wrap.innerHTML = docCatDraft.map((c, i) => `
     <div class="doc-cat-row flex items-center gap-2" data-idx="${i}">
       <input type="text" data-field="icon" value="${escapeHtml(c.icon || '')}" maxlength="4" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="${escapeHtml(tk('household.icon'))}" />
-      <input type="text" data-field="label" data-i18n-value value="${escapeHtml(c.label || '')}" maxlength="40" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="${escapeHtml(tk('common.name'))}" />
+      <input type="text" data-field="label" value="${escapeHtml(i18nT(c.label || ''))}" maxlength="40" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="${escapeHtml(tk('common.name'))}" />
       <select data-field="fields" class="w-20 shrink-0 rounded-lg border border-ink/15 px-1.5 py-2 text-xs bg-white" aria-label="${escapeHtml(tk('doc.additionalFields'))}">
         <option value=""${c.fields ? '' : ' selected'}>–</option>
         <option value="kauf"${c.fields === 'kauf' ? ' selected' : ''}>${tk('doc.purchase')}</option>
@@ -1362,7 +1362,7 @@ function renderDocCategoryEditor() {
     if (del) del.addEventListener('click', () => {
       const c = docCatDraft[i];
       const n = used.get(c.id) || 0;
-      if (n && !confirm(tk('doc.confirmDeleteCat', { name: c.label, n }))) return;
+      if (n && !confirm(tk('doc.confirmDeleteCat', { name: i18nT(c.label), n }))) return;
       docCatDraft.splice(i, 1);
       renderDocCategoryEditor();
     });

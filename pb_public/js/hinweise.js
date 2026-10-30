@@ -1509,14 +1509,14 @@ function ntActText(a) {
       return {
         ico: t.icon,
         main: n === 1 ? ntK('bell.act.listAdded', { name: nm, item: q(first.t), list: q(a.titel) }) : ntK('bell.act.listAddedN', { name: nm, n, list: q(a.titel) }),
-        sub: n === 1 ? escapeHtml(t.label) : listNames(),
+        sub: n === 1 ? escapeHtml(i18nT(t.label)) : listNames(),
       };
     }
     case 'liste-ab':
       return {
         ico: t.icon,
         main: n === 1 ? ntK('bell.act.listChecked', { name: nm, item: q(first.t), list: q(a.titel) }) : ntK('bell.act.listCheckedN', { name: nm, n, list: q(a.titel) }),
-        sub: n === 1 ? escapeHtml(t.label) : listNames(),
+        sub: n === 1 ? escapeHtml(i18nT(t.label)) : listNames(),
       };
     case 'essen':
       return {
@@ -1594,7 +1594,7 @@ function ntActText(a) {
       return {
         ico: (cat && cat.icon) || '📄',
         main: n === 1 ? ntK('bell.act.document', { name: nm, title: q(first.t) }) : ntK('bell.act.documentN', { name: nm, n }),
-        sub: n === 1 ? escapeHtml(cat && cat.label ? i18nT(cat.label) : '') : listNames(),
+        sub: n === 1 ? escapeHtml(cat && i18nT(cat.label) ? i18nT(cat.label) : '') : listNames(),
       };
     }
     default:
@@ -1927,13 +1927,16 @@ function ntBuyCardHtml(b) {
 }
 function ntNewsHtml(e) {
   const sym = { neu: '+', info: '~', fix: '*' };
+  // Version log in German or English (js/versionslog.js); the English texts are loaded once, then drawn again
+  if (changelogLang() === 'en' && !window.PINN_CHANGELOG_EN) changelogLoadEnglish().then(() => { if (window.PINN_CHANGELOG_EN) ntRenderPanel(); });
+  const L = changelogText(e);
   return `<div class="nt-card news" data-ntact="log" data-ntkey="news:${escapeHtml(e.v)}" role="button" tabindex="0" title="${escapeHtml(tk('bell.viewInLog'))}">
     <button type="button" class="nt-del" data-ntact="del" aria-label="${escapeHtml(tk('bell.removeNotice'))}" title="${escapeHtml(tk('common.remove'))}">×</button>
     <div class="flex items-baseline justify-between gap-2">
-      <span class="text-sm font-medium">${escapeHtml(e.titel)}</span>
+      <span class="text-sm font-medium">${escapeHtml(L.titel)}</span>
       <span class="text-[11px] text-ink/40 shrink-0">v${escapeHtml(e.v)} · ${escapeHtml(e.datum || '')}</span>
     </div>
-    <ul class="nt-pts">${(e.punkte || []).map(p => `<li class="t-${escapeHtml(p[0])}"><span>${sym[p[0]] || '·'}</span><span>${escapeHtml(p[1])}</span></li>`).join('')}</ul>
+    <ul class="nt-pts">${(L.punkte || []).map(p => `<li class="t-${escapeHtml(p[0])}"><span>${sym[p[0]] || '·'}</span><span>${escapeHtml(p[1])}</span></li>`).join('')}</ul>
   </div>`;
 }
 // Trips home (running and ended in the last hour) – stay available here even if the banner was removed

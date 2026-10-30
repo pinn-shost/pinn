@@ -285,7 +285,7 @@ function renderKidPage() {
         <button type="button" class="kid-card${kidIsDone(m, t.id, today) ? ' done' : ''}" data-task="${kidAttr(t.id)}" style="--kc:${KID_CARD_COLORS[i % KID_CARD_COLORS.length]}">
           <span class="kid-check">✓</span>
           <span class="kid-card-emoji">${escapeHtml(t.emoji)}</span>
-          <span class="kid-card-title">${escapeHtml(t.title)}</span>
+          <span class="kid-card-title">${escapeHtml(i18nT(t.title))}</span>
         </button>`).join('')}
     </div>
     ${kidHomeworkHtml(m)}

@@ -95,6 +95,16 @@ Siempre contigo: pinn. se instala en cada iPhone y móvil Android como una app n
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 y 🇰🇷 한국어**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.119.1
+
+**Nombres estándar, mensajes del servidor y registro de versiones en tu idioma**
+
+- Los **nombres predefinidos** – categorías de recetas, despensa, compras, documentos, finanzas y contratos, lugares de almacenamiento, aparatos de cocina, unidades como «lata» o «paquete» (en singular y plural), la caja del hogar y los títulos de las tareas domésticas automáticas – aparecen ahora en tu idioma. Tus datos no cambian; los nombres cambiados o propios se quedan como están.
+- Unos 40 **mensajes del servidor** (p. ej. «Perfil no encontrado», avisos sobre copias de seguridad, actualizaciones y dispositivos) siguen tu idioma.
+- El **registro de versiones** existe ahora solo en alemán e inglés: los demás idiomas muestran inglés y las entradas antiguas sin traducción quedan en alemán. La parte inglesa se carga solo al abrirla.
+- Próximo paso: la 1.119.2 elimina el traductor antiguo y `lang/`.
+- Modificado: `index.html`, `js/standardnamen.js` (nuevo), `i18n/versionslog.en.js` (nuevo), `js/serverzugriff.js`, `js/versionslog.js`, `js/hinweise.js` y 22 archivos más en `js/`, todos los archivos de idioma de `i18n/`, `pinn-setup.sh` – en el servidor no cambia nada. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
+
 ## Novedades de la 1.119.0
 
 **Traducciones con claves de texto: el tablón y las últimas áreas**
@@ -187,7 +197,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.119.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.119.1` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

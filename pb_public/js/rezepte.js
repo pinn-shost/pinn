@@ -264,8 +264,8 @@ function renderRecipeFilters() {
   const tools = kitchenTools.filter(t => t.active !== false);
   if (recipeFilterCategory && !cats.includes(recipeFilterCategory)) recipeFilterCategory = '';
   if (recipeFilterTool && !tools.some(t => t.id === recipeFilterTool)) recipeFilterTool = '';
-  catSel.innerHTML = '<option value="">' + escapeHtml(tk('pantry.allCategories')) + '</option>' + cats.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
-  toolSel.innerHTML = '<option value="">' + escapeHtml(tk('recipe.allTools')) + '</option>' + tools.map(t => `<option value="${escapeHtml(t.id)}">${escapeHtml(t.label)}</option>`).join('');
+  catSel.innerHTML = '<option value="">' + escapeHtml(tk('pantry.allCategories')) + '</option>' + cats.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(i18nT(c))}</option>`).join('');
+  toolSel.innerHTML = '<option value="">' + escapeHtml(tk('recipe.allTools')) + '</option>' + tools.map(t => `<option value="${escapeHtml(t.id)}">${escapeHtml(i18nT(t.label))}</option>`).join('');
   catSel.value = recipeFilterCategory;
   toolSel.value = recipeFilterTool;
   toolSel.classList.toggle('hidden', !tools.length);
@@ -675,7 +675,7 @@ function openRecipeDetailPage(recipeId, publicEntry = null) {
   document.getElementById('recipeDetailMeta').innerHTML = metaParts.map(p => `<span>${p}</span>`).join('');
 
   const catWrap = document.getElementById('recipeDetailCategories');
-  catWrap.innerHTML = (r.categories || []).map(c => `<span class="px-2.5 py-1 rounded-full text-[11px] font-medium bg-pine/10 text-pine">${escapeHtml(c)}</span>`).join('');
+  catWrap.innerHTML = (r.categories || []).map(c => `<span class="px-2.5 py-1 rounded-full text-[11px] font-medium bg-pine/10 text-pine">${escapeHtml(i18nT(c))}</span>`).join('');
 
   const toolLabels = isForeign
     ? (r.tools || []).filter(Boolean)

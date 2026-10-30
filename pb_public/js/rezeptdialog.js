@@ -116,7 +116,7 @@ function renderRecipeToolsPicker() {
     const chip = document.createElement('button');
     chip.type = 'button';
     chip.className = 'px-3 py-1.5 rounded-full text-xs font-medium border transition ' + (isSelected ? 'bg-pine text-white border-pine' : 'bg-white text-ink/60 border-ink/15 hover:border-pine hover:text-pine');
-    chip.textContent = tool.label;
+    chip.textContent = i18nT(tool.label);
     chip.addEventListener('click', () => {
       if (pendingRecipeTools.includes(tool.id)) pendingRecipeTools = pendingRecipeTools.filter(id => id !== tool.id);
       else pendingRecipeTools.push(tool.id);
@@ -141,7 +141,7 @@ function renderRecipeCategoriesPicker() {
     const chip = document.createElement('button');
     chip.type = 'button';
     chip.className = 'px-3 py-1.5 rounded-full text-xs font-medium border transition ' + (isSelected ? 'bg-pine text-white border-pine' : 'bg-white text-ink/60 border-ink/15 hover:border-pine hover:text-pine');
-    chip.textContent = cat;
+    chip.textContent = i18nT(cat);
     chip.addEventListener('click', () => {
       if (pendingRecipeCategories.includes(cat)) pendingRecipeCategories = pendingRecipeCategories.filter(c => c !== cat);
       else pendingRecipeCategories.push(cat);

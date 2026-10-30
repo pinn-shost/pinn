@@ -798,7 +798,7 @@ function renderContracts() {
   const catSel = document.getElementById('contractCategoryFilter');
   const cats = vtCategories();
   if (vtFilterCategory && !cats.some(c => c.id === vtFilterCategory)) vtFilterCategory = '';
-  catSel.innerHTML = ('<option value="">' + escapeHtml(tk('household.allCategories')) + '</option>') + cats.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml((c.icon ? c.icon + ' ' : '') + c.label)}</option>`).join('');
+  catSel.innerHTML = ('<option value="">' + escapeHtml(tk('household.allCategories')) + '</option>') + cats.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml((c.icon ? c.icon + ' ' : '') + i18nT(c.label))}</option>`).join('');
   catSel.value = vtFilterCategory;
   document.getElementById('contractSortSelect').value = vtSort;
   const searchInp = document.getElementById('contractSearchInput');
@@ -835,7 +835,7 @@ function renderContracts() {
       ${catRows.length ? `<div class="flex flex-col gap-2 mt-4">${catRows.map(e => `
         <button type="button" class="vt-cat-row w-full text-left" data-vtcat="${escapeHtml(e.cat.id)}">
           <div class="flex items-center justify-between gap-2 text-xs mb-1">
-            <span class="truncate">${escapeHtml((e.cat.icon ? e.cat.icon + ' ' : '') + e.cat.label)} <span class="text-ink/40">· ${e.n}</span></span>
+            <span class="truncate">${escapeHtml((e.cat.icon ? e.cat.icon + ' ' : '') + i18nT(e.cat.label))} <span class="text-ink/40">· ${e.n}</span></span>
             <span class="shrink-0 font-medium">${fmtEur(e.total)}</span>
           </div>
           <div class="vt-bar"><span style="width:${maxCat ? Math.max(4, Math.round(e.total / maxCat * 100)) : 0}%;background:${vtCatColor(e.cat)}"></span></div>
@@ -863,7 +863,7 @@ function renderContracts() {
       <p class="text-xs text-ink/50 mt-2 mb-2">${escapeHtml(tk('contract.tappingCreatesContractFrom'))}</p>
       <div class="flex flex-wrap gap-1.5">${unlinked.slice(0, 20).map(r => {
         const cat = finCategory(r.category);
-        return `<button type="button" class="pantry-chip px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 transition" data-vtfromrec="${escapeHtml(r.id)}">${escapeHtml((cat.icon ? cat.icon + ' ' : '') + (r.title || cat.label))} · ${fmtEur(finRecurringAmountFor(r, today))}</button>`;
+        return `<button type="button" class="pantry-chip px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 transition" data-vtfromrec="${escapeHtml(r.id)}">${escapeHtml((cat.icon ? cat.icon + ' ' : '') + (r.title || i18nT(cat.label)))} · ${fmtEur(finRecurringAmountFor(r, today))}</button>`;
       }).join('')}</div>
     </details>` : '';
 
@@ -900,7 +900,7 @@ function renderContracts() {
           <span class="block text-sm font-medium truncate">${escapeHtml(c.name || tk('contract.docType.doc'))}</span>
           <span class="block text-xs text-ink/45 truncate">${sub || '&nbsp;'}</span>
           <span class="flex items-center gap-1.5 mt-1.5 flex-wrap">
-            <span class="vt-chip ${x.v.tone}">${escapeHtml(x.v.label)}</span>
+            <span class="vt-chip ${x.v.tone}">${escapeHtml(i18nT(x.v.label))}</span>
             ${x.v.sub ? `<span class="text-[11px] text-ink/45 truncate">${escapeHtml(x.v.sub)}</span>` : ''}
           </span>
         </span>
@@ -990,7 +990,7 @@ function renderContractDetail() {
       </div>
       <p class="text-xs text-ink/50 mt-2">${cost.next ? `${escapeHtml(tk('contract.nextDebit'))} <b>${escapeHtml(finDayLabel(cost.next))}</b> · ` : (cost.running ? '' : escapeHtml(tk('contract.debitEnded')) + ' · ')}${escapeHtml(tk('contract.expenseCatLabel', { cat: (fcat.icon ? fcat.icon + ' ' : '') + i18nT(fcat.label) }))}${cost.r.paidBy && memberById(cost.r.paidBy) ? ' · ' + escapeHtml(tk('contract.paidByName', { name: memberLabel(memberById(cost.r.paidBy)) })) : ''}</p>
       ${histHtml}
-      ${cost.parts && cost.parts.length > 1 ? `<div class="mt-2">${cost.parts.map(p => `<div class="vt-row"><span>${escapeHtml(p.title || finCategory(p.category).label)}</span><span><span class="vt-amt">${fmtEur(finRecurringAmountFor(p, today))}</span> <span class="text-ink/45">${escapeHtml(vtIntervalLabel(finRecInterval(p)))}${finRecIsRunning(p, today) ? '' : (' ' + tk('contract.ended'))}</span></span></div>`).join('')}</div>` : ''}`;
+      ${cost.parts && cost.parts.length > 1 ? `<div class="mt-2">${cost.parts.map(p => `<div class="vt-row"><span>${escapeHtml(p.title || i18nT(finCategory(p.category).label))}</span><span><span class="vt-amt">${fmtEur(finRecurringAmountFor(p, today))}</span> <span class="text-ink/45">${escapeHtml(vtIntervalLabel(finRecInterval(p)))}${finRecIsRunning(p, today) ? '' : (' ' + tk('contract.ended'))}</span></span></div>`).join('')}</div>` : ''}`;
   }
 
   const rows = [];
@@ -1036,7 +1036,7 @@ function renderContractDetail() {
   let defType = docs.length ? 'rechnung' : 'vertrag';
   if (c.cancel && !docs.some(d => d.typ === 'kuendigung')) defType = 'kuendigung';
   if (c.cancel && !c.cancel.confirmed) defType = 'bestaetigung';
-  const docTypeOpts = FIN_DOC_TYPES.filter(t => t.id !== 'beleg' && !t.fz).map(t => `<option value="${t.id}"${t.id === defType ? ' selected' : ''}>${escapeHtml(t.icon + ' ' + t.label)}</option>`).join('');
+  const docTypeOpts = FIN_DOC_TYPES.filter(t => t.id !== 'beleg' && !t.fz).map(t => `<option value="${t.id}"${t.id === defType ? ' selected' : ''}>${escapeHtml(t.icon + ' ' + i18nT(t.label))}</option>`).join('');
   const docRows = finDocRowsHtml(docs, bezug);
 
   const canCancel = s.state === 'aktiv' && kind !== 'once' && !c.fixkosten;
@@ -1047,12 +1047,12 @@ function renderContractDetail() {
       <span class="shrink-0 w-12 h-12 rounded-full grid place-items-center text-2xl" style="background:${vtCatColor(cat)}22">${escapeHtml(cat.icon || '📄')}</span>
       <div class="flex-1 min-w-0">
         <h3 class="font-serif text-lg leading-tight">${escapeHtml(c.name || tk('contract.docType.doc'))}</h3>
-        <div class="text-xs text-ink/50 truncate">${escapeHtml([c.provider, cat.label].filter(Boolean).join(' · '))}</div>
+        <div class="text-xs text-ink/50 truncate">${escapeHtml([c.provider, i18nT(cat.label)].filter(Boolean).join(' · '))}</div>
       </div>
     </div>
     ${c.vehicle && fzVehicle(c.vehicle) ? `<button type="button" data-act="fz-open" class="mb-3 inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 hover:text-pine hover:border-pine transition">${escapeHtml(fzKind(fzVehicle(c.vehicle).kind).icon)} ${escapeHtml(fzShortName(fzVehicle(c.vehicle)))} ›</button>` : ''}
     <div class="vt-status-box ${v.tone} mb-4">
-      <div class="text-sm font-semibold">${escapeHtml(v.label)}</div>
+      <div class="text-sm font-semibold">${escapeHtml(i18nT(v.label))}</div>
       ${v.sub ? `<div class="text-xs opacity-80">${escapeHtml(v.sub)}</div>` : ''}
       ${s.state === 'aktiv' && kind === 'fixed' && s.missed ? `<div class="text-xs opacity-80 mt-1">${escapeHtml(tk('contract.missedExtends', { date: vtFmt(s.termEnd), end: vtFmt(s.nextEnd) }))}</div>` : ''}
     </div>
@@ -1278,7 +1278,7 @@ function vtGuessCategory(r) {
 function renderVtCategoryPicker() {
   const wrap = document.getElementById('cfCategoryPicker');
   wrap.innerHTML = vtCategories().map(c => `
-    <button type="button" class="pantry-chip px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 transition ${c.id === vtDraftCategory ? 'active' : ''}" data-id="${escapeHtml(c.id)}">${escapeHtml((c.icon ? c.icon + ' ' : '') + c.label)}</button>`).join('');
+    <button type="button" class="pantry-chip px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 transition ${c.id === vtDraftCategory ? 'active' : ''}" data-id="${escapeHtml(c.id)}">${escapeHtml((c.icon ? c.icon + ' ' : '') + i18nT(c.label))}</button>`).join('');
   wrap.querySelectorAll('.pantry-chip').forEach(b => b.addEventListener('click', () => {
     vtDraftCategory = b.dataset.id;
     wrap.querySelectorAll('.pantry-chip').forEach(x => x.classList.toggle('active', x === b));
@@ -1293,7 +1293,7 @@ function vtFillFinCatSelect(selected) {
   const cats = finActiveCategories().filter(c => c.id !== FIN_INCOME_CATEGORY && c.id !== FIN_SAVINGS_CATEGORY);
   const cur = finCategory(selected);
   if (cur && !cats.some(c => c.id === cur.id)) cats.push(cur);
-  sel.innerHTML = cats.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml((c.icon ? c.icon + ' ' : '') + c.label)}</option>`).join('');
+  sel.innerHTML = cats.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml((c.icon ? c.icon + ' ' : '') + i18nT(c.label))}</option>`).join('');
   sel.value = cur ? cur.id : (cats[0] ? cats[0].id : 'sonstiges');
 }
 function vtFillLinkRecSelect(contract) {
@@ -1309,7 +1309,7 @@ function vtFillLinkRecSelect(contract) {
   const today = finTodayIso();
   sel.innerHTML = ('<option value="">' + escapeHtml(tk('contract.createNew')) + '</option>') + options.map(r => {
     const cat = finCategory(r.category);
-    return `<option value="${escapeHtml(r.id)}">${escapeHtml((r.title || cat.label) + ' · ' + fmtEur(finRecurringAmountFor(r, today)) + ' ' + vtIntervalLabel(finRecInterval(r)))}</option>`;
+    return `<option value="${escapeHtml(r.id)}">${escapeHtml((r.title || i18nT(cat.label)) + ' · ' + fmtEur(finRecurringAmountFor(r, today)) + ' ' + vtIntervalLabel(finRecInterval(r)))}</option>`;
   }).join('');
   sel.value = vtLinkRecId || '';
   wrap.classList.remove('hidden');
@@ -1665,7 +1665,7 @@ function renderContractCategoryEditor() {
     <div class="rounded-xl border border-ink/10 p-2" data-idx="${i}">
       <div class="flex items-center gap-2">
         <input type="text" data-field="icon" value="${escapeHtml(c.icon || '')}" maxlength="4" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="${escapeHtml(tk('household.icon'))}" />
-        <input type="text" data-field="label" data-i18n-value value="${escapeHtml(c.label || '')}" maxlength="40" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="${escapeHtml(tk('common.name'))}" />
+        <input type="text" data-field="label" value="${escapeHtml(i18nT(c.label || ''))}" maxlength="40" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="${escapeHtml(tk('common.name'))}" />
         ${c.id === 'sonstiges' ? '<span class="w-8 shrink-0"></span>' : ('<button type="button" data-action="delete" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-red-500 hover:bg-red-50 grid place-items-center text-lg leading-none" aria-label="' + escapeHtml(tk('common.delete')) + '">×</button>')}
       </div>
       <div class="flex items-center gap-2 mt-1.5">
@@ -1682,7 +1682,7 @@ function renderContractCategoryEditor() {
     if (del) del.addEventListener('click', () => {
       const item = vtCatDraft[i];
       const used = vtContracts().filter(c => c.category === item.id).length;
-      if (used && !confirm(tk('contract.catUsedN', { name: item.label, n: used }))) return;
+      if (used && !confirm(tk('contract.catUsedN', { name: i18nT(item.label), n: used }))) return;
       vtCatDraft.splice(i, 1);
       renderContractCategoryEditor();
     });

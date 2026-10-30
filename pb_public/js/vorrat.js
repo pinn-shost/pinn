@@ -45,7 +45,8 @@ let pantryDraft = null;
    Units are free text. Known package units (German, English, French, Spanish) are shown in
    singular or plural depending on the quantity – no matter whether "Dose", "Dosen" or "Dose(n)"
    was entered. Unknown words stay as they are (German words ending in -e/-ung get the usual
-   ending). Weights and measures (g, kg, ml, l, EL …) never change. */
+   ending). Weights and measures (g, kg, ml, l, EL …) never change. German package units are shown in the
+   app language (stdUnit, js/standardnamen.js). */
 const UNIT_FORMS = [
   ['Stück', 'Stück'], ['Dose', 'Dosen'], ['Packung', 'Packungen'], ['Flasche', 'Flaschen'], ['Kiste', 'Kisten'], ['Rolle', 'Rollen'],
   ['Tube', 'Tuben'], ['Glas', 'Gläser'], ['Tüte', 'Tüten'], ['Tafel', 'Tafeln'], ['Schachtel', 'Schachteln'], ['Beutel', 'Beutel'],
@@ -86,12 +87,13 @@ function unitForCount(unit, n) {
   const paren = raw.match(/^(.*?)\s*\(([a-zäöüé]{1,3})\)$/i);
   if (paren) {
     const f = UNIT_SG.get(paren[1].trim().toLowerCase());
-    if (f) return keepCase(raw, one ? f[0] : f[1]);
+    if (f) return stdUnit(f[0], n) || keepCase(raw, one ? f[0] : f[1]);
     return one ? paren[1].trim() : paren[1].trim() + paren[2];
   }
   const low = raw.toLowerCase();
   const f = UNIT_SG.get(low) || UNIT_PL.get(low);
-  if (f) return keepCase(raw, one ? f[0] : f[1]);
+  // Known German unit in another app language: translated (js/standardnamen.js), the data stays German
+  if (f) return stdUnit(f[0], n) || keepCase(raw, one ? f[0] : f[1]);
   // Unknown German noun: "Pipette" -> "Pipetten", "Füllung" -> "Füllungen"
   if (!one && /^[A-ZÄÖÜ][a-zäöüß]+$/.test(raw)) {
     if (/e$/.test(raw)) return raw + 'n';
@@ -225,8 +227,8 @@ function pantryCommit() {
 function renderPantryFilters() {
   const locSel = document.getElementById('pantryLocationFilter');
   const catSel = document.getElementById('pantryCategoryFilter');
-  locSel.innerHTML = '<option value="">' + escapeHtml(tk('pantry.allPlaces')) + '</option>' + pantryLocations.map(l => `<option value="${escapeHtml(l.id)}">${escapeHtml((l.icon ? l.icon + ' ' : '') + l.label)}</option>`).join('');
-  catSel.innerHTML = '<option value="">' + escapeHtml(tk('pantry.allCategories')) + '</option>' + pantryCategories.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml((c.icon ? c.icon + ' ' : '') + c.label)}</option>`).join('');
+  locSel.innerHTML = '<option value="">' + escapeHtml(tk('pantry.allPlaces')) + '</option>' + pantryLocations.map(l => `<option value="${escapeHtml(l.id)}">${escapeHtml((l.icon ? l.icon + ' ' : '') + i18nT(l.label))}</option>`).join('');
+  catSel.innerHTML = '<option value="">' + escapeHtml(tk('pantry.allCategories')) + '</option>' + pantryCategories.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml((c.icon ? c.icon + ' ' : '') + i18nT(c.label))}</option>`).join('');
   if (pantryFilterLocation && !pantryLocation(pantryFilterLocation)) pantryFilterLocation = '';
   if (pantryFilterCategory && !pantryCategories.some(c => c.id === pantryFilterCategory)) pantryFilterCategory = '';
   locSel.value = pantryFilterLocation;
@@ -249,8 +251,8 @@ function pantryRowHtml(p) {
   const inCart = shoppingItems.some(it => it.pantryId === p.id && it.done);
   const min = pantryNum(p.minQty);
   const meta = [];
-  if (pantryGroupMode !== 'category') meta.push(`${cat.icon || ''} ${cat.label}`);
-  if (pantryGroupMode !== 'location' && loc) meta.push(`${loc.icon || ''} ${loc.label}`);
+  if (pantryGroupMode !== 'category') meta.push(`${cat.icon || ''} ${i18nT(cat.label)}`);
+  if (pantryGroupMode !== 'location' && loc) meta.push(`${loc.icon || ''} ${i18nT(loc.label)}`);
   if (min !== null && min > 0) meta.push(tk('pantry.minShort', { qty: fmtQtyUnit(min, p.unit) }));
   const expD = pantryExpiryDays(p);
   if (expD !== null && expD > pantrySettings.mhdDays) meta.push(tk('pantry.bestBeforeShort', { date: pantryShortDate(p.bestBefore) }));
@@ -337,11 +339,11 @@ function renderPantry() {
     groups = [...map.entries()].sort((a, b) => a[0].localeCompare(b[0])).map(([k, v]) => ({ title: k, icon: '', items: v }));
   } else if (pantryGroupMode === 'location') {
     groups = [...pantryLocations, { id: '', label: tk('pantry.noPlace'), icon: '❔' }]
-      .map(l => ({ title: l.label, icon: l.icon, items: items.filter(p => (l.id ? p.location === l.id : !pantryLocation(p.location))) }))
+      .map(l => ({ title: i18nT(l.label), icon: l.icon, items: items.filter(p => (l.id ? p.location === l.id : !pantryLocation(p.location))) }))
       .filter(g => g.items.length);
   } else {
     groups = pantryCategories
-      .map(c => ({ title: c.label, icon: c.icon, items: items.filter(p => pantryCategory(p.category).id === c.id) }))
+      .map(c => ({ title: i18nT(c.label), icon: c.icon, items: items.filter(p => pantryCategory(p.category).id === c.id) }))
       .filter(g => g.items.length);
   }
 
@@ -382,7 +384,7 @@ function pantryAdjust(id, dir) {
 function renderPantryChips(containerId, list, selectedId, onSelect) {
   const wrap = document.getElementById(containerId);
   wrap.innerHTML = list.map(c => `
-    <button type="button" class="pantry-chip px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 transition ${c.id === selectedId ? 'active' : ''}" data-id="${escapeHtml(c.id)}">${escapeHtml((c.icon ? c.icon + ' ' : '') + c.label)}</button>`).join('');
+    <button type="button" class="pantry-chip px-2.5 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 transition ${c.id === selectedId ? 'active' : ''}" data-id="${escapeHtml(c.id)}">${escapeHtml((c.icon ? c.icon + ' ' : '') + i18nT(c.label))}</button>`).join('');
   wrap.querySelectorAll('.pantry-chip').forEach(b => b.addEventListener('click', () => {
     wrap.querySelectorAll('.pantry-chip').forEach(x => x.classList.toggle('active', x === b));
     onSelect(b.dataset.id);
@@ -499,7 +501,7 @@ function renderPantrySettingsEditors() {
     wrap.innerHTML = pantrySettingsDraft[key].map((c, i) => `
       <div class="flex items-center gap-2" data-idx="${i}">
         <input type="text" data-field="icon" value="${escapeHtml(c.icon || '')}" maxlength="4" class="w-11 shrink-0 rounded-lg border border-ink/15 px-1 py-1.5 text-center text-lg" aria-label="${escapeHtml(tk('lists.modal.icon'))}" />
-        <input type="text" data-field="label" data-i18n-value value="${escapeHtml(c.label || '')}" maxlength="40" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="${escapeHtml(tk('common.name'))}" />
+        <input type="text" data-field="label" value="${escapeHtml(i18nT(c.label || ''))}" maxlength="40" class="flex-1 min-w-0 rounded-lg border border-ink/15 px-2.5 py-1.5 text-base" aria-label="${escapeHtml(tk('common.name'))}" />
         ${c.id === 'sonstiges' && key === 'categories' ? '<span class="w-8 shrink-0"></span>' : `<button type="button" data-action="delete" class="shrink-0 w-8 h-8 rounded-lg text-ink/40 hover:text-red-500 hover:bg-red-50 grid place-items-center text-lg leading-none" aria-label="${escapeHtml(tk('common.delete'))}">×</button>`}
       </div>`).join('');
     wrap.querySelectorAll('[data-idx]').forEach(row => {
@@ -510,7 +512,7 @@ function renderPantrySettingsEditors() {
         const item = pantrySettingsDraft[key][i];
         const field = key === 'locations' ? 'location' : 'category';
         const used = pantryItems.filter(p => p[field] === item.id).length;
-        if (used && !confirm(tk(key === 'locations' ? 'pantry.settings.confirmDeletePlace' : 'pantry.settings.confirmDeleteCat', { name: item.label, n: used, other: i18nT(pantryCategory('sonstiges').label) }))) return;
+        if (used && !confirm(tk(key === 'locations' ? 'pantry.settings.confirmDeletePlace' : 'pantry.settings.confirmDeleteCat', { name: i18nT(item.label), n: used, other: i18nT(pantryCategory('sonstiges').label) }))) return;
         pantrySettingsDraft[key].splice(i, 1);
         renderPantrySettingsEditors();
       });

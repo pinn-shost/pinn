@@ -358,7 +358,7 @@ function ofsSheetHtml(m) {
   if (!pet) {
     const rows = [];
     today.evs.slice(0, 4).forEach(ev => rows.push(`<button type="button" class="ofs-row" data-ofs="termine"><span class="ofs-time">${escapeHtml(ev.time || 'ganztags')}</span><span class="min-w-0 flex-1 truncate text-sm">${escapeHtml(ev.title)}</span></button>`));
-    today.tasks.slice(0, 4).forEach(t => rows.push(`<button type="button" class="ofs-row" data-ofs="aufgabe" data-id="${famAttr(t.id)}"><span class="ofs-time">☐</span><span class="min-w-0 flex-1 truncate text-sm">${escapeHtml(t.title)}</span></button>`));
+    today.tasks.slice(0, 4).forEach(t => rows.push(`<button type="button" class="ofs-row" data-ofs="aufgabe" data-id="${famAttr(t.id)}"><span class="ofs-time">☐</span><span class="min-w-0 flex-1 truncate text-sm">${escapeHtml(i18nT(t.title))}</span></button>`));
     const more = Math.max(0, today.evs.length - 4) + Math.max(0, today.tasks.length - 4);
     out.push(`<div class="fam-card">
       <div class="fz-h">${tk('famTile.today2')}</div>
