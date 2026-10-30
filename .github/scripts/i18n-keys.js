@@ -43,7 +43,8 @@ const SPRACHEN = path.join(ROOT, 'pb_public', 'js', 'sprachen.js');
 const K = require(path.join(ROOT, 'pb_hooks', 'pinn-textkern.js'));
 // Keys of these areas never get a flat share variant: their screens keep the family terms (data-no-term).
 // maint.* = backups & updates: they always concern every family on the server.
-const NO_WG = ['login.', 'mainAdmin.', 'settings.household.', 'maint.'];
+// std.* = standard names of stored data (categories, places, units …): shown as they are, see js/standardnamen.js.
+const NO_WG = ['login.', 'mainAdmin.', 'settings.household.', 'maint.', 'std.'];
 const noWg = key => NO_WG.some(p => key.startsWith(p));
 
 /* ---------- languages (from PINN_LANGUAGES in js/sprachen.js) ---------- */

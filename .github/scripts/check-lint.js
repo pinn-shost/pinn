@@ -26,8 +26,8 @@ const path = require('path');
 const { ROOT, rel, read, exists, filesIn, walk, lineOf, inlineScripts, scan, reporter } = require('./common');
 
 // Functions that are declared twice on purpose / for historical reasons (the later one wins).
-//   i18nT: js/sprache.js and js/smarthome.js – the later definition in smarthome.js is the one in use.
-const KNOWN_DUPLICATE_FUNCTIONS = ['i18nT'];
+// Empty since 1.119.1 (i18nT now lives only in js/standardnamen.js).
+const KNOWN_DUPLICATE_FUNCTIONS = [];
 
 const r = reporter('Lint');
 const INDEX = path.join(ROOT, 'pb_public', 'index.html');
