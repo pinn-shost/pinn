@@ -74,7 +74,9 @@ for (const lang of langs) {
   } catch (e) { r.fail(rel(file), e.message); }
 }
 for (const f of fs.existsSync(I18N_DIR) ? fs.readdirSync(I18N_DIR) : []) {
-  if (f === 'versionslog.en.js') continue;   // English version log (js/versionslog.js loads it on demand, since 1.119.1)
+  // Translated version logs (versionslog.<code>.js, e.g. versionslog.en.js since 1.119.1) are loaded on demand by
+  // js/versionslog.js – they are not text-key files and are checked by the syntax step only.
+  if (/^versionslog\.[a-z]{2}\.js$/.test(f)) continue;
   const m = /^([a-z]{2})\.i18n\.js$/.exec(f);
   if (!m || !langs.some(l => l.code === m[1])) r.fail('pb_public/i18n/' + f, 'not a language of PINN_LANGUAGES (js/sprachen.js)');
 }
