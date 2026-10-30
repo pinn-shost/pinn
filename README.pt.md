@@ -99,6 +99,14 @@ Sempre com você: o pinn. se instala em todo iPhone e celular Android como um ap
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 e 🇰🇷 한국어**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.119.2
+
+**Leitor da despensa: foto em vez da câmera ao vivo**
+
+- Se o pinn. for aberto por `http://…` em vez do endereço HTTPS, os navegadores não liberam a câmera ao vivo – no iPhone e no iPad nunca. Antes o leitor mostrava uma imagem preta; agora explica que a câmera ao vivo precisa do endereço HTTPS e oferece **📷 Fotografar o código de barras**: tire uma foto e o pinn. lê o código. Também funciona se a câmera estiver bloqueada ou não iniciar.
+- A seguir: 1.119.3 remove o tradutor antigo e `lang/`.
+- Alterado: `index.html`, `js/vorrat2.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos os arquivos de idioma em `i18n/`, para contribuidores `.github/scripts/check-keys.js` – nada muda no servidor.
+
 ## Novidades da 1.119.1
 
 **Nomes padrão, mensagens do servidor e registro de versões no seu idioma**
@@ -158,7 +166,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.119.1` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.119.2` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

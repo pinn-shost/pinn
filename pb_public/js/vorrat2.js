@@ -307,13 +307,24 @@ function pantryScanSetStatus(text, isError = false) {
   el.classList.toggle('text-red-500', isError);
   el.classList.toggle('text-ink/50', !isError);
 }
-function pantryScanSetCamMsg(text, withResume = false) {
+// withPhoto (since 1.119.2): offers "Take a photo of the barcode" – a plain file input with the camera, which also
+// works where the live camera is not available (http:// address, camera blocked or failing).
+function pantryScanSetCamMsg(text, withResume = false, withPhoto = false) {
   const el = document.getElementById('pantryScanCamMsg');
   if (!text) { el.classList.add('hidden'); el.innerHTML = ''; return; }
-  el.innerHTML = `<span>${escapeHtml(text)}</span>${withResume ? '<button type="button" id="pantryScanResume" class="mt-2 px-3 py-1.5 rounded-lg bg-white text-pine text-xs font-medium">' + escapeHtml(tk('pantry.scan.resume')) + '</button>' : ''}`;
+  const btnCls = 'mt-2 px-3 py-1.5 rounded-lg bg-white text-pine text-xs font-medium';
+  el.innerHTML = `<span>${escapeHtml(text)}</span>`
+    + (withResume ? `<button type="button" id="pantryScanResume" class="${btnCls}">${escapeHtml(tk('pantry.scan.resume'))}</button>` : '')
+    + (withPhoto ? `<button type="button" id="pantryScanPhotoBtn" class="${btnCls}">${escapeHtml(tk('pantry.scan.photo'))}</button>` : '');
   el.classList.remove('hidden');
   const btn = document.getElementById('pantryScanResume');
   if (btn) btn.addEventListener('click', () => { pantryScanSetCamMsg(''); pantryScanStartCamera(); });
+  const photoBtn = document.getElementById('pantryScanPhotoBtn');
+  if (photoBtn) photoBtn.addEventListener('click', () => {
+    const input = document.getElementById('pantryScanPhotoInput');
+    input.value = '';
+    input.click();
+  });
 }
 function pantryScanRenderMode() {
   document.querySelectorAll('.pscan-mode').forEach(b => {
@@ -350,8 +361,14 @@ async function pantryScanStartCamera() {
   pantryScanStopCamera();
   pantryScanSetCamMsg('');
   const video = document.getElementById('pantryScanVideo');
+  // Browsers only give the live camera to pages opened via https:// (iPhone and iPad without exception) –
+  // via http://…:8090 navigator.mediaDevices does not even exist. A photo still works.
+  if (window.isSecureContext === false) {
+    pantryScanSetCamMsg(tk('pantry.scan.needsHttps'), false, true);
+    return;
+  }
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    pantryScanSetCamMsg(tk('pantry.scan.noCamera'));
+    pantryScanSetCamMsg(tk('pantry.scan.noCamera'), false, true);
     return;
   }
   try {
@@ -363,7 +380,7 @@ async function pantryScanStartCamera() {
     const denied = e && (e.name === 'NotAllowedError' || e.name === 'SecurityError');
     pantryScanSetCamMsg(denied
       ? tk('pantry.scan.denied')
-      : tk('pantry.scan.startFailed'));
+      : tk('pantry.scan.startFailed'), false, true);
     return;
   }
   if (!pantryScanModalOpen()) { pantryScanStopCamera(); return; }
@@ -386,20 +403,89 @@ async function pantryScanStartCamera() {
       if (caps && caps.torch) torchBtn.classList.remove('hidden'); // (already shown above)
     } catch (e) { /* ignore */ }
   }
-  if (!pantryScan.detectorTried) {
-    pantryScan.detectorTried = true;
-    try {
-      if ('BarcodeDetector' in window) {
-        const formats = await window.BarcodeDetector.getSupportedFormats();
-        const want = ['ean_13', 'ean_8', 'upc_a', 'upc_e'].filter(f => formats.includes(f));
-        if (want.includes('ean_13')) pantryScan.detector = new window.BarcodeDetector({ formats: want });
-      }
-    } catch (e) { pantryScan.detector = null; }
-  }
+  await pantryScanEnsureDetector();
   pantryScanWake(true);
   pantryScanArmIdle();
   pantryScanLoop();
 }
+// Built-in detector of the browser (Android/Chrome), tried once – otherwise PinnEan does the work
+async function pantryScanEnsureDetector() {
+  if (pantryScan.detectorTried) return pantryScan.detector;
+  pantryScan.detectorTried = true;
+  try {
+    if ('BarcodeDetector' in window) {
+      const formats = await window.BarcodeDetector.getSupportedFormats();
+      const want = ['ean_13', 'ean_8', 'upc_a', 'upc_e'].filter(f => formats.includes(f));
+      if (want.includes('ean_13')) pantryScan.detector = new window.BarcodeDetector({ formats: want });
+    }
+  } catch (e) { pantryScan.detector = null; }
+  return pantryScan.detector;
+}
+
+/* ---------- Barcode from a photo (since 1.119.2) ----------
+   Fallback when the live camera is not available. The photo is read like a video frame: first the built-in
+   detector (if any), then PinnEan on the whole picture and on centred crops, because a barcode often fills only
+   a small part of a photo. One hit is enough here (the check digit has to match); the code found most often wins. */
+function pantryScanLoadImage(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('image')); };
+    img.src = url;
+  });
+}
+async function pantryScanDecodePhoto(img) {
+  const iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height;
+  if (!iw || !ih) return '';
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  const draw = (sx, sy, sw, sh, maxSide) => {
+    const scale = Math.min(maxSide / Math.max(sw, sh), 3);
+    canvas.width = Math.max(80, Math.round(sw * scale));
+    canvas.height = Math.max(80, Math.round(sh * scale));
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+  };
+  const detector = await pantryScanEnsureDetector();
+  if (detector) {
+    try {
+      draw(0, 0, iw, ih, 1600);
+      const found = await detector.detect(canvas);
+      const hit = (found || []).map(f => pantryNormCode(f.rawValue)).find(c => c && pantryCodeValid(c));
+      if (hit) return hit;
+    } catch (e) { /* fall back to PinnEan */ }
+  }
+  const hits = {};
+  // [share of the picture, longest side in pixels]
+  for (const [part, side] of [[1, 1400], [0.7, 1200], [0.45, 1000], [0.3, 900]]) {
+    const sw = Math.round(iw * part), sh = Math.round(ih * part);
+    draw(Math.round((iw - sw) / 2), Math.round((ih - sh) / 2), sw, sh, side);
+    const res = PinnEan.scan(ctx.getImageData(0, 0, canvas.width, canvas.height), canvas.width, canvas.height);
+    if (res) {
+      const code = pantryNormCode(res.code);
+      if (code && pantryCodeValid(code)) hits[code] = (hits[code] || 0) + res.count;
+    }
+    await new Promise(r => setTimeout(r, 0)); // keep the page responsive between the passes
+  }
+  let best = '', cnt = 0;
+  Object.keys(hits).forEach(c => { if (hits[c] > cnt) { best = c; cnt = hits[c]; } });
+  return best;
+}
+async function pantryScanFromPhoto(file) {
+  if (!file || !pantryScanModalOpen()) return;
+  pantryScanStopCamera();
+  pantryScan.paused = false;
+  pantryScan.current = null;
+  document.getElementById('pantryScanResult').classList.add('hidden');
+  document.getElementById('pantryScanResult').innerHTML = '';
+  pantryScanSetStatus(tk('pantry.scan.photoReading'));
+  let code = '';
+  try { code = await pantryScanDecodePhoto(await pantryScanLoadImage(file)); } catch (e) { code = ''; }
+  if (!pantryScanModalOpen()) return;
+  if (!code) { pantryScanSetStatus(tk('pantry.scan.photoNone'), true); return; }
+  pantryScanAccept(code);
+}
+
 function pantryScanStopCamera() {
   pantryScanWake(false);
   clearTimeout(pantryScan.timer);
@@ -1004,6 +1090,11 @@ document.getElementById('pantryScanTorch').addEventListener('click', async () =>
   }
 });
 document.getElementById('pantryScanCodeBtn').addEventListener('click', pantryScanManualLookup);
+document.getElementById('pantryScanPhotoInput').addEventListener('change', (e) => {
+  const file = e.target.files && e.target.files[0];
+  e.target.value = '';
+  pantryScanFromPhoto(file);
+});
 document.getElementById('pantryScanCodeInput').addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); pantryScanManualLookup(); } });
 document.getElementById('pantryCookClose').addEventListener('click', closePantryCook);
 document.getElementById('pantryCookModal').addEventListener('click', (e) => { if (e.target.id === 'pantryCookModal') closePantryCook(); });

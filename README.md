@@ -95,6 +95,15 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 and 🇰🇷 한국어**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.119.2
+
+**Pantry scanner: photo instead of live camera**
+
+- If pinn. is opened via `http://…` instead of its HTTPS address, browsers do not release the live camera – on iPhone and iPad never. The scanner used to show a black picture with “The camera isn’t available here”; it now explains that the live camera needs the HTTPS address and offers **📷 Take a photo of the barcode**: take a picture and pinn. reads the barcode from it. This also works when the camera is blocked or does not start.
+- Tip: open pinn. via its HTTPS address (set up in the setup assistant) – then the live camera and push notifications work as well.
+- Next: 1.119.3 removes the old translator and `lang/`.
+- Changed: `index.html`, `js/vorrat2.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all language files in `i18n/`, for contributors `.github/scripts/check-keys.js` (the text-key check skips translated version logs) – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.119.1
 
 **Standard names, server messages and the version log in your language**
@@ -203,7 +212,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.119.1` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.119.2` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

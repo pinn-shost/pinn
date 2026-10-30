@@ -99,6 +99,14 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.119.2の新機能
+
+**在庫スキャナー：ライブカメラの代わりに写真**
+
+- pinn. を HTTPS アドレスではなく `http://…` で開くと、ブラウザはライブカメラを使わせません（iPhone と iPad では常に）。これまでスキャナーは黒い画面を表示していましたが、ライブカメラには HTTPS アドレスが必要だと説明し、**📷 バーコードを撮影** を表示するようになりました。撮影すると pinn. が写真からバーコードを読み取ります。カメラがブロックされている、または起動しない場合にも使えます。
+- 次回：1.119.3 で古い翻訳機能と `lang/` を削除します。
+- 変更：`index.html`、`js/vorrat2.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`i18n/` のすべての言語ファイル、コントリビューター向けに `.github/scripts/check-keys.js` – サーバー側の変更はありません。
+
 ## 1.119.1の新機能
 
 **標準の名前、サーバーメッセージ、バージョンログをあなたの言語で**
@@ -158,7 +166,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.119.1`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.119.2`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -31,6 +31,8 @@ const PINN_CHANGELOG = [
       ['info', '1.119.1: Meldungen vom Server (z. B. „Profil nicht gefunden“, Hinweise zu Sicherungen, Updates und Geräten) erscheinen in der eingestellten Sprache'],
       ['info', '1.119.1: Das Versions-Log gibt es nur noch auf Deutsch und Englisch – alle anderen Sprachen zeigen Englisch, ältere Einträge ohne Übersetzung bleiben deutsch. Der englische Teil lädt erst beim Öffnen; auch das Terminal spricht Deutsch oder Englisch'],
       ['info', '1.119.1 geändert: index.html, js/standardnamen.js (neu), i18n/versionslog.en.js (neu), js/serverzugriff.js, js/versionslog.js, js/hinweise.js und 22 weitere Dateien in js/, alle Sprachdateien in i18n/, pinn-setup.sh – am Server ändert sich nichts'],
+      ['fix', '1.119.2: Vorrat-Scanner – wird pinn. über http://… statt über die HTTPS-Adresse geöffnet, gibt der Browser die Live-Kamera nicht frei (auf iPhone und iPad nie). Der Scanner sagt das jetzt klar und bietet „📷 Barcode fotografieren“ an: Foto aufnehmen, pinn. liest den Barcode daraus – das geht auch, wenn die Kamera blockiert ist oder nicht startet'],
+      ['info', '1.119.2 geändert: index.html, js/vorrat2.js, js/sprachen.js, js/versionslog.js, i18n/versionslog.en.js, alle Sprachdateien in i18n/ und für Mitwirkende .github/scripts/check-keys.js – am Server ändert sich nichts'],
     ],
   },
   {

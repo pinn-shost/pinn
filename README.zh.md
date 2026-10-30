@@ -99,6 +99,14 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語和 🇰🇷 한국어**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.119.2 新功能
+
+**库存扫描：用照片代替实时相机**
+
+- 如果通过 `http://…` 而不是 HTTPS 地址打开 pinn.，浏览器不会开放实时相机——在 iPhone 和 iPad 上从不开放。以前扫描器只显示黑色画面；现在会说明实时相机需要 HTTPS 地址，并提供 **📷 拍摄条形码**：拍一张照片，pinn. 会从中读取条形码。相机被阻止或无法启动时也可以使用。
+- 下一步：1.119.3 移除旧翻译器和 `lang/`。
+- 更改：`index.html`、`js/vorrat2.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`i18n/` 中的所有语言文件，以及面向贡献者的 `.github/scripts/check-keys.js`——服务器端无变化。
+
 ## 1.119.1 新功能
 
 **标准名称、服务器消息和版本日志使用你的语言**
@@ -158,7 +166,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.119.1` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.119.2` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
