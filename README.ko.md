@@ -99,6 +99,15 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.120.3의 새 소식
+
+**러시아어 – 네 번째 단계**
+
+- 러시아어로 번역: 목록(짐 싸기, 선물, 위시, 체크리스트, 아이디어 – 모든 템플릿 포함), 장보기, 스캐너와 „무엇을 요리할 수 있을까?“가 있는 재고, 가져오기·공개 레시피·휴지통이 있는 레시피 – 이제 6714개 중 2656개 텍스트가 완료됐어요.
+- 모두 번역될 때까지 러시아어는 **숨겨져** 있어요(1.120.0에 설명한 대로 기기 한 대에서 켤 수 있어요).
+- 다음: 러시아어 다음 단계(재정, 금고, 증권 계좌, 계약 …).
+- 변경: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – 서버는 바뀌지 않아요. 평소처럼 설치하세요(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
+
 ## 1.120.2의 새 소식
 
 **러시아어 – 세 번째 단계**
@@ -137,14 +146,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - 다음: 러시아어를 단계적으로 추가해요(완성될 때까지 숨김).
 - 변경: `index.html`, `js/sprachen.js`, `js/zustand.js`, `js/uebersicht.js`, `js/familie.js`, `js/listen.js`, `js/sterne.js`, `js/ausblick.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wohnort.js`, `js/finanzen.js`, `js/einstellungen.js`, `js/smarthome.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pinn-setup.sh`, `.github/` – 제거: `pb_public/lang/` – 서버는 바뀌지 않아요. 평소처럼 설치하세요(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
 
-## 1.119.2의 새 소식
-
-**재고 스캐너: 실시간 카메라 대신 사진**
-
-- pinn.을 HTTPS 주소가 아닌 `http://…`로 열면 브라우저가 실시간 카메라를 허용하지 않아요(iPhone과 iPad에서는 절대). 예전에는 스캐너에 검은 화면만 보였는데, 이제 실시간 카메라에는 HTTPS 주소가 필요하다고 알려 주고 **📷 바코드 촬영**을 제안해요. 사진을 찍으면 pinn.이 바코드를 읽어요. 카메라가 차단되었거나 시작되지 않을 때도 쓸 수 있어요.
-- 다음: 1.119.3에서 옛 번역기와 `lang/`을 제거해요.
-- 변경: `index.html`, `js/vorrat2.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`의 모든 언어 파일, 기여자용 `.github/scripts/check-keys.js` – 서버는 바뀌지 않아요.
-
 ## 작동 방식
 
 ```mermaid
@@ -173,7 +174,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.120.2` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.120.3` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

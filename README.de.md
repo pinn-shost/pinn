@@ -99,6 +99,15 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 und 🇰🇷 한국어**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.120.3
+
+**Russisch – vierte Etappe**
+
+- Ins Russische übersetzt: Listen (Packen, Geschenke, Wünsche, Checklisten, Ideen – samt aller Vorlagen), Einkauf, Vorrat mit Scanner und „Was kann ich kochen?“ sowie Rezepte mit Import, öffentlichen Rezepten und Papierkorb – jetzt 2656 von 6714 Texten.
+- Russisch bleibt **versteckt**, bis alles übersetzt ist (auf einem Gerät freischaltbar wie bei 1.120.0 beschrieben).
+- Als Nächstes: weitere Etappen Russisch (Finanzen, Kassen, Depot, Verträge …).
+- Geändert: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
+
 ## Neu in 1.120.2
 
 **Russisch – dritte Etappe**
@@ -148,16 +157,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Als Nächstes: 1.119.3 entfernt den alten Übersetzer und `lang/`.
 - Geändert: `index.html`, `js/vorrat2.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle Sprachdateien in `i18n/`, für Mitwirkende `.github/scripts/check-keys.js` (die Prüfung der Text-Schlüssel überspringt übersetzte Versions-Logs) – am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
 
-## Neu in 1.119.1
-
-**Standardnamen, Server-Meldungen und Versions-Log in deiner Sprache**
-
-- **Vorgegebene Namen** – Kategorien von Rezepten, Vorrat, Einkauf, Dokumenten, Finanzen und Verträgen, Lagerorte, Küchengeräte, Einheiten wie „Dose“ oder „Packung“ (mit Einzahl und Mehrzahl), die Haushaltskasse und die Titel der automatischen Haushalts-Aufgaben – erscheinen jetzt in deiner Sprache. An deinen Daten ändert sich nichts; umbenannte und eigene Namen bleiben, wie sie sind.
-- Rund 40 **Meldungen vom Server** (z. B. „Profil nicht gefunden“, Hinweise zu Sicherungen, Updates und Geräten) folgen deiner Sprache.
-- Das **Versions-Log** gibt es nur noch auf Deutsch und Englisch: Alle anderen Sprachen zeigen Englisch, ältere Einträge ohne Übersetzung bleiben deutsch. Der englische Teil lädt erst beim Öffnen, und das Terminal spricht Deutsch oder Englisch.
-- Als Nächstes: 1.119.2 entfernt den alten Übersetzer und `lang/`.
-- Geändert: `index.html`, `js/standardnamen.js` (neu), `i18n/versionslog.en.js` (neu), `js/serverzugriff.js`, `js/versionslog.js`, `js/hinweise.js` und 22 weitere Dateien in `js/`, alle Sprachdateien in `i18n/`, `pinn-setup.sh` – am Server ändert sich nichts. Installation wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder der Update-Knopf).
-
 ## So funktioniert’s
 
 ```mermaid
@@ -186,7 +185,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.120.2` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.120.3` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

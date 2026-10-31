@@ -95,6 +95,15 @@ Siempre contigo: pinn. se instala en cada iPhone y móvil Android como una app n
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 y 🇰🇷 한국어**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.120.3
+
+**Ruso – cuarta etapa**
+
+- Traducido al ruso: listas (equipaje, regalos, deseos, checklists, ideas – con todas las plantillas), la compra, la despensa con el escáner y «¿Qué puedo cocinar?», y las recetas con importación, recetas públicas y papelera – ya son 2656 de 6714 textos.
+- El ruso sigue **oculto** hasta que esté todo traducido (se puede activar en un dispositivo como se describe en la 1.120.0).
+- Próximo: más etapas del ruso (finanzas, cajas, depósito, contratos …).
+- Modificado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – en el servidor no cambia nada. Instalar como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
+
 ## Novedades de la 1.120.2
 
 **Ruso – tercera etapa**
@@ -176,13 +185,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Al eliminar una receta se pide confirmación; después queda **7 días en la papelera** (debajo de la lista, en todos los dispositivos), con sus comidas planificadas: restaurarla o eliminarla definitivamente.
 - **Pulsación larga** en una comida de «Planificado esta semana»: ver, editar la receta, mover o cambiar la comida, planificar otra vez, marcar como cocinado, quitar.
 
-## Novedades de la 1.118.2
-
-**Lista de la compra: pegar un mensaje, despensa, más/menos**
-
-- **Pega un mensaje** (p. ej. de WhatsApp) en el campo de entrada: una ventana muestra los artículos reconocidos con cantidad y avisos verdes (despensa, plan de comidas, ya en la lista).
-- Los artículos de la despensa llevan «🥫 Despensa» bajo el nombre; más/menos sigue la cantidad (30 ml menos = 20 ml).
-
 ## Cómo funciona
 
 ```mermaid
@@ -209,7 +211,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.120.2` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.120.3` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

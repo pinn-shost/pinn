@@ -95,6 +95,15 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 and 🇰🇷 한국어**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.120.3
+
+**Russian – fourth stage**
+
+- Translated into Russian: lists (packing, gifts, wishes, checklists, ideas – including all templates), shopping, the pantry with the scanner and “What can I cook?”, and recipes with import, public recipes and the recycle bin – now 2656 of 6714 texts.
+- Russian stays **hidden** until everything is translated (unlock on one device as described for 1.120.0).
+- Next: further stages of Russian (finance, funds, depot, contracts …).
+- Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.120.2
 
 **Russian – third stage**
@@ -179,16 +188,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Long press** on a meal in "Planned this week" (overview and recipes tab) shows options: view recipe, edit recipe, move or change the meal (day, meal, servings, another recipe), plan it again, mark as cooked, remove it from the meal plan. With the child lock only "view" is offered.
 - Changed: `index.html`, `js/rezepte.js`, `js/rezeptaktionen.js` (new), `js/essenplanen.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/basis.css`, `js/sprachen.js`, `js/versionslog.js`, all language files, `pinn-setup.sh` and on the server `pinn-bereiche.js`, `pinn-hinweise.js`.
 
-## What's new in 1.118.2
-
-**Shopping list: paste a message, pantry hints, plus/minus**
-
-- **Paste a message:** copy a message like “Can you grab milk, 2 packs of butter and bread” (e.g. from WhatsApp) and paste it into the input bar – a popup shows the recognised items with quantity. Green notes show what is in the pantry, also in the meal plan or already on the list. Several items typed with commas work the same way.
-- **Pantry items** on a shopping list now have the note “🥫 Pantry · … in stock” below the name – like the meal-planning items.
-- **Plus/minus** follows the amount: 30 ml minus becomes 20 ml (it used to jump to 50 ml); small amounts in steps of 5/10, large ones in steps of 50.
-- Pantry items without an own shop now land on the **main shop** instead of the meal-planning list.
-- Changed: `index.html`, `js/einkauf.js`, `js/einkaufseingabe.js`, `js/einkaufslisten.js`, `js/vorrat.js`, `css/listen.css`, `js/sprachen.js`, `js/versionslog.js`, all language files – nothing changes on the server.
-
 ## How it works
 
 ```mermaid
@@ -215,7 +214,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.120.2` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.120.3` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

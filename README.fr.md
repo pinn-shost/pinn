@@ -95,6 +95,15 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 et 🇰🇷 한국어**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.120.3
+
+**Russe – quatrième étape**
+
+- Traduits en russe : les listes (bagages, cadeaux, souhaits, checklists, idées – avec tous les modèles), les courses, les provisions avec le scanner et « Que puis-je cuisiner ? », ainsi que les recettes avec l’import, les recettes publiques et la corbeille – désormais 2656 textes sur 6714.
+- Le russe reste **masqué** jusqu’à ce que tout soit traduit (activable sur un appareil comme décrit pour la 1.120.0).
+- Ensuite : d’autres étapes du russe (finances, caisses, dépôt, contrats …).
+- Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou bouton de mise à jour).
+
 ## Nouveautés de la 1.120.2
 
 **Russe – troisième étape**
@@ -176,13 +185,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - La suppression d'une recette demande confirmation ; la recette reste ensuite **7 jours dans la corbeille** (sous la liste, sur tous les appareils), avec ses repas prévus – restaurer ou supprimer définitivement.
 - **Appui long** sur un repas de « Prévu cette semaine » : voir, modifier la recette, déplacer ou modifier le repas, planifier à nouveau, marquer comme cuisiné, retirer.
 
-## Nouveautés de la 1.118.2
-
-**Liste de courses : coller un message, réserve, plus/moins**
-
-- **Coller un message** (p. ex. WhatsApp) dans le champ de saisie : une fenêtre montre les articles reconnus avec leur quantité, avec des indications vertes (réserve, planning des repas, déjà sur la liste).
-- Les articles de la réserve portent l'indication « 🥫 Réserve » sous le nom ; plus/moins suit la quantité (30 ml moins = 20 ml).
-
 ## Comment ça marche
 
 ```mermaid
@@ -209,7 +211,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.120.2` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.120.3` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

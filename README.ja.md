@@ -99,6 +99,15 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.120.3の新機能
+
+**ロシア語 – 第4段階**
+
+- ロシア語に翻訳：リスト（持ち物、プレゼント、ほしい物、チェックリスト、アイデア――すべてのテンプレートを含む）、買い物、スキャナーと「何が作れる？」付きのストック、インポート・公開レシピ・ゴミ箱付きのレシピ――これで6714件中2656件のテキストが完了。
+- すべて翻訳されるまで、ロシア語は**非表示**のままです（1.120.0の説明どおり1台の端末で有効にできます）。
+- 次回：ロシア語の次の段階（家計、財布、証券口座、契約 …）。
+- 変更：`index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` ――サーバー側の変更はありません。いつもどおりインストールしてください（`sudo sh pinn-*/pinn-setup.sh` またはアップデートボタン）。
+
 ## 1.120.2の新機能
 
 **ロシア語 – 第3段階**
@@ -137,14 +146,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - 次回：ロシア語を段階的に追加します（完成までは非表示）。
 - 変更：`index.html`, `js/sprachen.js`, `js/zustand.js`, `js/uebersicht.js`, `js/familie.js`, `js/listen.js`, `js/sterne.js`, `js/ausblick.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wohnort.js`, `js/finanzen.js`, `js/einstellungen.js`, `js/smarthome.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pinn-setup.sh`、`.github/` – 削除：`pb_public/lang/` – サーバー側の変更はありません。いつも通りインストール（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
 
-## 1.119.2の新機能
-
-**在庫スキャナー：ライブカメラの代わりに写真**
-
-- pinn. を HTTPS アドレスではなく `http://…` で開くと、ブラウザはライブカメラを使わせません（iPhone と iPad では常に）。これまでスキャナーは黒い画面を表示していましたが、ライブカメラには HTTPS アドレスが必要だと説明し、**📷 バーコードを撮影** を表示するようになりました。撮影すると pinn. が写真からバーコードを読み取ります。カメラがブロックされている、または起動しない場合にも使えます。
-- 次回：1.119.3 で古い翻訳機能と `lang/` を削除します。
-- 変更：`index.html`、`js/vorrat2.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`i18n/` のすべての言語ファイル、コントリビューター向けに `.github/scripts/check-keys.js` – サーバー側の変更はありません。
-
 ## しくみ
 
 ```mermaid
@@ -173,7 +174,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.120.2`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.120.3`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

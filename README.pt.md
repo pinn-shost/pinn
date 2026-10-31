@@ -99,6 +99,15 @@ Sempre com você: o pinn. se instala em todo iPhone e celular Android como um ap
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 e 🇰🇷 한국어**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.120.3
+
+**Russo – quarta etapa**
+
+- Traduzidos para russo: as listas (mala, presentes, desejos, checklists, ideias – com todos os modelos), as compras, a despensa com o scanner e «O que posso cozinhar?», e as receitas com importação, receitas públicas e lixeira – agora 2656 de 6714 textos.
+- O russo continua **oculto** até tudo estar traduzido (dá para ativar em um dispositivo como descrito na 1.120.0).
+- A seguir: outras etapas do russo (finanças, caixas, carteira, contratos …).
+- Alterados: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – nada muda no servidor. Instale como sempre (`sudo sh pinn-*/pinn-setup.sh` ou botão de atualização).
+
 ## Novidades da 1.120.2
 
 **Russo – terceira etapa**
@@ -137,14 +146,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - A seguir: russo, passo a passo (oculto até ficar completo).
 - Alterado: `index.html`, `js/sprachen.js`, `js/zustand.js`, `js/uebersicht.js`, `js/familie.js`, `js/listen.js`, `js/sterne.js`, `js/ausblick.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wohnort.js`, `js/finanzen.js`, `js/einstellungen.js`, `js/smarthome.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pinn-setup.sh`, `.github/` – removido: `pb_public/lang/` – nada muda no servidor. Instalar como sempre (`sudo sh pinn-*/pinn-setup.sh` ou botão de atualização).
 
-## Novidades da 1.119.2
-
-**Leitor da despensa: foto em vez da câmera ao vivo**
-
-- Se o pinn. for aberto por `http://…` em vez do endereço HTTPS, os navegadores não liberam a câmera ao vivo – no iPhone e no iPad nunca. Antes o leitor mostrava uma imagem preta; agora explica que a câmera ao vivo precisa do endereço HTTPS e oferece **📷 Fotografar o código de barras**: tire uma foto e o pinn. lê o código. Também funciona se a câmera estiver bloqueada ou não iniciar.
-- A seguir: 1.119.3 remove o tradutor antigo e `lang/`.
-- Alterado: `index.html`, `js/vorrat2.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos os arquivos de idioma em `i18n/`, para contribuidores `.github/scripts/check-keys.js` – nada muda no servidor.
-
 ## Como funciona
 
 ```mermaid
@@ -173,7 +174,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.120.2` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.120.3` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
