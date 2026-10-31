@@ -99,6 +99,16 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語和 🇰🇷 한국어**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.120.5 新功能
+
+**俄语 – 第六阶段**
+
+- 已译成俄语：家庭区域（急救卡、带实时位置的家庭概览、“我在回家的路上”）、宠物（档案、喂食、遛狗、预防与疫苗、寻宠海报、宠物保姆）、学校与托儿所（课表、作业、家长信、停课日、AI 识别）、定位（共享、地点、商店、GPS 追踪器、SOS）、带星星奖励的儿童页面、家庭成员、SOS 以及“你在哪里？”——现已完成 6713 条文本中的 4417 条。
+- 已修复（所有语言）：在德语以外的语言中，“你在哪里？”的提问显示了错误的姓名；宠物生日和预防中的“还有……天”以及上学日概览中的“接”原本是写死的文本，现在会被翻译。
+- 在全部翻译完成之前，俄语仍然**隐藏**（可按 1.120.0 中的说明在单台设备上启用）。
+- 下一步：俄语的后续阶段（住所、文档、车辆、智能家居 …）。
+- 已更改：`index.html`, `js/sprachen.js`, `js/familie.js`, `js/familienkachel.js`, `js/wobistdu.js`, `js/versionslog.js`, `i18n/*.i18n.js`（所有语言，包括 `ru.i18n.js`）, `i18n/versionslog.en.js` —— 服务器端没有变化。照常安装（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
+
 ## 1.120.4 新功能
 
 **俄语 – 第五阶段**
@@ -173,7 +183,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.120.4` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.120.5` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

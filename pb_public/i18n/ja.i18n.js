@@ -4365,7 +4365,6 @@ window.PINN_I18N && window.PINN_I18N.keys("ja", {
   "pet.comingUp": "🗓️ 今後の予定",
   "pet.cosyBlanket": "居心地のよいブランケット",
   "pet.day": "1日",
-  "pet.days": "日",
   "pet.days2": "{days}日後",
   "pet.deepCleanCage": "かごを徹底清掃",
   "pet.deepCleanHutch": "ケージを徹底清掃",

@@ -99,6 +99,16 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 und 🇰🇷 한국어**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.120.5
+
+**Russisch – sechste Etappe**
+
+- Ins Russische übersetzt: der Familienbereich (Notfallpässe, Familienübersicht mit Live-Standorten, „Ich bin auf dem Heimweg“), Haustiere (Profil, Füttern, Gassi, Vorsorge und Impfungen, Vermisstenplakat, Tiersitter), Schule & Kita (Stundenplan, Hausaufgaben, Elternbriefe, Schließtage, KI-Lesen), Ortung (Teilen, Orte, Geschäfte, GPS-Tracker, SOS), die Kinderseite mit Sterne-Belohnungen, Familienmitglieder, SOS und „Wo bist du?“ – jetzt 4417 von 6713 Texten.
+- Behoben (alle Sprachen): Die Frage „Wo bist du?“ zeigte außerhalb von Deutsch den falschen Namen; „in … Tagen“ bei Haustier-Geburtstagen und Vorsorge sowie „holt“ in der Schultag-Übersicht waren fest eingebaute Texte und werden jetzt übersetzt.
+- Russisch bleibt **versteckt**, bis alles übersetzt ist (auf einem Gerät freischaltbar wie bei 1.120.0 beschrieben).
+- Als Nächstes: weitere Etappen Russisch (Zuhause, Dokumente, Fahrzeuge, Smarthome …).
+- Geändert: `index.html`, `js/sprachen.js`, `js/familie.js`, `js/familienkachel.js`, `js/wobistdu.js`, `js/versionslog.js`, `i18n/*.i18n.js` (alle Sprachen, auch `ru.i18n.js`), `i18n/versionslog.en.js` – am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
+
 ## Neu in 1.120.4
 
 **Russisch – fünfte Etappe**
@@ -146,17 +156,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Als Nächstes: weitere Etappen Russisch (Kalender, Aufgaben, Haushalt …).
 - Geändert: `index.html`, `js/sprachen.js`, `js/einrichten.js`, `js/exportieren.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, `i18n/ru.i18n.js` (neu), `i18n/versionslog.en.js`, `pb_hooks/pinn-einrichtung.js`, `.github/`. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
 
-## Neu in 1.119.3
-
-**Aufgeräumt: der alte Übersetzer ist weg**
-
-- Alle Texte von pinn. kommen jetzt direkt aus den Sprachdateien in `i18n/`. Die alten Wörterbücher (Ordner `pb_public/lang/`, rund 4 MB) und der Übersetzer, der während der Benutzung den Bildschirm umgeschrieben hat, sind entfernt – pinn. startet schneller und braucht weniger Speicher, gerade auf älteren Handys und Tablets.
-- Das Update verschiebt die alten Dateien auf dem NAS nach `_alt/<Datum>/` (nichts wird gelöscht) und entfernt den leeren Ordner `lang/`.
-- Kleinigkeiten: Datum und Uhrzeit auf der Startseite, im Dashboard, in der Wochenanzeige, bei Finanzen und unter „Zuhause“ stehen direkt im Format deiner Sprache; „Gespeichert“ in den Ausblick-Einstellungen ist übersetzt; als WG zeigen Menü, Übersichtskachel und Einstellungen das WG-Symbol 🧑‍🤝‍🧑; selbst geschriebene Texte (z. B. ein Zettel „Hallo Familie“ auf der Pinnwand) werden als WG nicht mehr verändert.
-- Für Mitwirkende: `check-lang.js`, `translate.js` und der Workflow „Translate“ entfallen; `i18n-keys.js` schreibt neue Texte jetzt in jeder Sprache (`put`, `set`, `remove`, `format`).
-- Als Nächstes: Russisch, Schritt für Schritt (versteckt, bis es vollständig ist).
-- Geändert: `index.html`, `js/sprachen.js`, `js/zustand.js`, `js/uebersicht.js`, `js/familie.js`, `js/listen.js`, `js/sterne.js`, `js/ausblick.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wohnort.js`, `js/finanzen.js`, `js/einstellungen.js`, `js/smarthome.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pinn-setup.sh`, `.github/` – entfernt: `pb_public/lang/` – am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
-
 ## So funktioniert’s
 
 ```mermaid
@@ -185,7 +184,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.120.4` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.120.5` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

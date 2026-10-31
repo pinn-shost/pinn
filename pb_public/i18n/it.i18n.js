@@ -4375,7 +4375,6 @@ window.PINN_I18N && window.PINN_I18N.keys("it", {
   "pet.comingUp": "🗓️ In arrivo",
   "pet.cosyBlanket": "Copertina",
   "pet.day": "al giorno",
-  "pet.days": "Giorni",
   "pet.days2": "in {days} giorni",
   "pet.deepCleanCage": "Pulisci a fondo la gabbia",
   "pet.deepCleanHutch": "Pulisci a fondo la stalla",

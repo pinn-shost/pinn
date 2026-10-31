@@ -116,7 +116,7 @@ function ofsSubLine(st) {
   if (st.bday && st.bday.today) return { cls: 'bday', t: tk('famTile.birthday') };
   if (st.live) return { cls: 'live', t: st.place ? st.place.name : 'unterwegs' };
   if (st.bday && st.bday.diff === 1) return { cls: '', t: tk('famTile.tomorrow') };
-  if (st.bday && st.bday.diff <= 7) return { cls: '', t: '🎁 in ' + st.bday.diff + (' ' + tk('pet.days')) };
+  if (st.bday && st.bday.diff <= 7) return { cls: '', t: '🎁 ' + tk('pet.days2', { days: st.bday.diff }) };
   if (st.kid && st.kid.total) return { cls: '', t: st.kid.done + '/' + st.kid.total + ' ✓' };
   return null;
 }

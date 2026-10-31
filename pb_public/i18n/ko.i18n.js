@@ -4375,7 +4375,6 @@ window.PINN_I18N && window.PINN_I18N.keys("ko", {
   "pet.comingUp": "🗓️ 다가오는 일정",
   "pet.cosyBlanket": "포근한 담요",
   "pet.day": "하루",
-  "pet.days": "일",
   "pet.days2": "{days}일 후",
   "pet.deepCleanCage": "새장 대청소",
   "pet.deepCleanHutch": "우리 대청소",

@@ -2435,7 +2435,7 @@ function skDayLine(p, info) {
   if (info.from && info.to) parts.push(info.from + '–' + info.to);
   if (info.lessons.length) parts.push(`${tk('school.hr', { n: info.lessons.length })}`);
   if (info.bring) parts.push((tk('school.dropsOff') + ' ') + memberLabel(memberById(info.bring)));
-  if (info.pick) parts.push('holt ' + memberLabel(memberById(info.pick)));
+  if (info.pick) parts.push((tk('school.picksUp').toLowerCase() + ' ') + memberLabel(memberById(info.pick)));
   if (!parts.length) return skIsKita(p) ? tk('school.noCareHoursEntered') : tk('school.noLessonsEntered');
   return parts.join(' · ');
 }
@@ -3665,7 +3665,7 @@ function ptCareDueText(c) {
   if (d < 0) return d === -1 ? tk('pet.dueSinceYesterday') : tk('pet.overdueDays', { n: -d });
   if (d === 0) return tk('pet.dueToday');
   if (d === 1) return tk('pet.dueTomorrow');
-  if (d <= 60) return 'in ' + d + (' ' + tk('pet.days'));
+  if (d <= 60) return tk('pet.days2', { days: d });
   return 'am ' + famFmtDate(ptCareNext(c));
 }
 function ptOverdue(p) { return p.gone ? [] : (Array.isArray(p.care) ? p.care : []).filter(c => ['over', 'today'].includes(ptCareState(c))); }
@@ -3827,7 +3827,7 @@ function ptProfileHtml(p) {
     <div class="fam-hero-body">
       <div class="flex items-center gap-2 flex-wrap">
         <div class="font-serif text-xl">${escapeHtml(p.name)}</div>
-        ${bd === 0 ? ('<span class="pt-pill bday">🎂 <span>' + tk('pet.birthday') + '</span></span>') : bd !== null && bd <= 14 ? `<span class="pt-pill">🎂 <span>${escapeHtml(bd === 1 ? tk('contract.tomorrow') : 'in ' + bd + (' ' + tk('pet.days')))}</span></span>` : ''}
+        ${bd === 0 ? ('<span class="pt-pill bday">🎂 <span>' + tk('pet.birthday') + '</span></span>') : bd !== null && bd <= 14 ? `<span class="pt-pill">🎂 <span>${escapeHtml(bd === 1 ? tk('contract.tomorrow') : tk('pet.days2', { days: bd }))}</span></span>` : ''}
       </div>
       <div class="text-xs text-ink/50 mt-0.5">${escapeHtml(ptSubLine(p))}</div>
       ${btns.length ? `<div class="flex gap-2 mt-3">${btns.join('')}</div>` : ''}

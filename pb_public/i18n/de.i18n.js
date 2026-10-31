@@ -4375,7 +4375,6 @@ window.PINN_I18N && window.PINN_I18N.keys("de", {
   "pet.comingUp": "🗓️ Steht an",
   "pet.cosyBlanket": "Kuscheldecke",
   "pet.day": "am Tag",
-  "pet.days": "Tagen",
   "pet.days2": "in {days} Tagen",
   "pet.deepCleanCage": "Käfig gründlich reinigen",
   "pet.deepCleanHutch": "Stall gründlich reinigen",

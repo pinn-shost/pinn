@@ -99,6 +99,16 @@ Sempre con te: pinn. si installa su ogni iPhone e telefono Android come un’app
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 e 🇰🇷 한국어**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.120.5
+
+**Russo – sesta tappa**
+
+- Tradotti in russo: l’area famiglia (schede di emergenza, panoramica famiglia con posizioni in tempo reale, «Sto tornando a casa»), gli animali (profilo, pasti, passeggiate, prevenzione e vaccini, volantino di scomparsa, pet sitter), scuola e asilo (orario, compiti, lettere ai genitori, giorni di chiusura, lettura con IA), la posizione (condivisione, luoghi, negozi, tracker GPS, SOS), la pagina bambini con premi a stelle, i membri della famiglia, l’SOS e «Dove sei?» – ora 4417 testi su 6713.
+- Corretto (tutte le lingue): la domanda «Dove sei?» mostrava il nome sbagliato fuori dal tedesco; «tra … giorni» per compleanni e prevenzione degli animali e «ritira» nella panoramica della giornata scolastica erano testi fissi e ora vengono tradotti.
+- Il russo resta **nascosto** finché non è tutto tradotto (attivabile su un dispositivo come descritto per la 1.120.0).
+- Prossimamente: altre tappe del russo (casa, documenti, veicoli, smart home …).
+- Modificati: `index.html`, `js/sprachen.js`, `js/familie.js`, `js/familienkachel.js`, `js/wobistdu.js`, `js/versionslog.js`, `i18n/*.i18n.js` (tutte le lingue, compreso `ru.i18n.js`), `i18n/versionslog.en.js` – sul server non cambia nulla. Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o pulsante di aggiornamento).
+
 ## Novità della 1.120.4
 
 **Russo – quinta tappa**
@@ -173,7 +183,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.120.4` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.120.5` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

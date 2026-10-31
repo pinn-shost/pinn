@@ -95,6 +95,16 @@ Siempre contigo: pinn. se instala en cada iPhone y móvil Android como una app n
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 y 🇰🇷 한국어**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.120.5
+
+**Ruso – sexta etapa**
+
+- Traducido al ruso: el área familiar (fichas de emergencia, resumen familiar con ubicaciones en vivo, «Voy de camino a casa»), mascotas (perfil, comida, paseos, prevención y vacunas, cartel de desaparecido, cuidador), colegio y guardería (horario, deberes, cartas a los padres, días de cierre, lectura con IA), ubicación (compartir, lugares, tiendas, rastreadores GPS, SOS), la página infantil con recompensas de estrellas, miembros de la familia, SOS y «¿Dónde estás?» – ya son 4417 de 6713 textos.
+- Corregido (todos los idiomas): la pregunta «¿Dónde estás?» mostraba el nombre equivocado fuera del alemán; «en … días» en cumpleaños y prevención de mascotas y «recoge» en el resumen del día escolar eran textos fijos y ahora se traducen.
+- El ruso sigue **oculto** hasta que esté todo traducido (se puede activar en un dispositivo como se describe en la 1.120.0).
+- Próximo: más etapas del ruso (hogar, documentos, vehículos, casa inteligente …).
+- Modificado: `index.html`, `js/sprachen.js`, `js/familie.js`, `js/familienkachel.js`, `js/wobistdu.js`, `js/versionslog.js`, `i18n/*.i18n.js` (todos los idiomas, incluido `ru.i18n.js`), `i18n/versionslog.en.js` – en el servidor no cambia nada. Instalar como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
+
 ## Novedades de la 1.120.4
 
 **Ruso – quinta etapa**
@@ -180,13 +190,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Próximo: 1.119.1 pasa nombres estándar, mensajes del servidor y el registro de versiones a claves; 1.119.2 retira el traductor antiguo y `lang/`.
 - Cambiado: `index.html`, `js/pinnwand.js`, `js/ausblick.js`, `js/sprachsteuerung.js`, `js/familienverwalten.js`, `js/profilbild.js`, `js/dashboardhintergrund.js`, `js/offline.js`, `js/dashboard.js`, `js/verbindung.js`, `js/vertraege.js`, `js/zustand.js`, `js/mitglieder.js`, `js/appstart.js`, `js/serverzugriff.js`, `js/popups.js`, `js/wetter.js`, `js/einrichten.js`, `js/exportieren.js`, `js/finanzen.js`, `js/sparen.js`, `js/vorrat2.js`, `js/einkaufseingabe.js`, `js/benutzer.js`, `js/icsparser.js`, `js/sprachen.js`, `js/versionslog.js`, todos los archivos de idioma en `i18n/` y `lang/` – nada cambia en el servidor. Instalar como siempre (`sudo sh pinn-*/pinn-setup.sh` o botón de actualización).
 
-## Novedades de la 1.118.4
-
-**Seguridad: PIN obligatorio con un panel familiar · corrección del calendario**
-
-- En cuanto la familia tiene un panel, **cada perfil necesita un PIN**: sin PIN se inicia sesión una vez con la contraseña (🔑) y después se elige; en los dispositivos propios se pide al iniciar. Los invitados siguen abriendo con un toque.
-- En el móvil, el calendario en vista de lista ya no queda «desplegado» al volver de una receta.
-
 ## Cómo funciona
 
 ```mermaid
@@ -213,7 +216,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.120.4` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.120.5` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

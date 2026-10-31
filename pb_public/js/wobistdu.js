@@ -101,7 +101,7 @@ async function wbOpen(id) {
 }
 // View for the person asked
 function wbRenderAsk(x) {
-  const name = wbName(x, tk('family.of'));
+  const name = wbName(x, 'von');
   const vm = x.vonMitglied ? memberById(x.vonMitglied) : null;
   const html = `<div class="ofs">
     <div class="ofs-head">

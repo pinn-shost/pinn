@@ -4375,7 +4375,6 @@ window.PINN_I18N && window.PINN_I18N.keys("en", {
   "pet.comingUp": "🗓️ Coming up",
   "pet.cosyBlanket": "Cosy blanket",
   "pet.day": "a day",
-  "pet.days": "days",
   "pet.days2": "in {days} days",
   "pet.deepCleanCage": "Deep-clean the cage",
   "pet.deepCleanHutch": "Deep-clean the hutch",

@@ -4358,7 +4358,6 @@ window.PINN_I18N && window.PINN_I18N.keys("zh", {
   "pet.comingUp": "🗓️ 即将到来",
   "pet.cosyBlanket": "舒适的毯子",
   "pet.day": "每天",
-  "pet.days": "天",
   "pet.days2": "{days} 天后",
   "pet.deepCleanCage": "彻底清洁笼子",
   "pet.deepCleanHutch": "彻底清洁兔舍",

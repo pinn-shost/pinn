@@ -4372,7 +4372,6 @@ window.PINN_I18N && window.PINN_I18N.keys("es", {
   "pet.comingUp": "🗓️ Próximamente",
   "pet.cosyBlanket": "Mantita",
   "pet.day": "al día",
-  "pet.days": "días",
   "pet.days2": "en {days} días",
   "pet.deepCleanCage": "Limpiar a fondo la jaula",
   "pet.deepCleanHutch": "Limpiar a fondo la jaula",

@@ -95,6 +95,16 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 and 🇰🇷 한국어**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.120.5
+
+**Russian – sixth stage**
+
+- Translated into Russian: the family area (emergency cards, family overview with live locations, “I'm on my way”), pets (profile, feeding, walks, prevention and vaccinations, missing poster, pet sitter), school & daycare (timetable, homework, parent letters, closure days, AI reading), location (sharing, places, shops, GPS trackers, SOS), the kids' page with star rewards, family members, SOS and “Where are you?” – now 4417 of 6713 texts.
+- Fixed (all languages): the question “Where are you?” showed the wrong name outside German; “in … days” for pet birthdays and prevention and “picks up” in the school day overview were fixed texts and are now translated.
+- Russian stays **hidden** until everything is translated (unlock on one device as described for 1.120.0).
+- Next: further stages of Russian (home, documents, vehicles, smart home …).
+- Changed: `index.html`, `js/sprachen.js`, `js/familie.js`, `js/familienkachel.js`, `js/wobistdu.js`, `js/versionslog.js`, `i18n/*.i18n.js` (all languages, including `ru.i18n.js`), `i18n/versionslog.en.js` – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.120.4
 
 **Russian – fifth stage**
@@ -181,14 +191,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Next: 1.119.1 puts the standard names (categories, storage places, units), server messages and the version log on keys; 1.119.2 removes the old translator and `lang/`.
 - Changed: `index.html`, `js/pinnwand.js`, `js/ausblick.js`, `js/sprachsteuerung.js`, `js/familienverwalten.js`, `js/profilbild.js`, `js/dashboardhintergrund.js`, `js/offline.js`, `js/dashboard.js`, `js/verbindung.js`, `js/vertraege.js`, `js/zustand.js`, `js/mitglieder.js`, `js/appstart.js`, `js/serverzugriff.js`, `js/popups.js`, `js/wetter.js`, `js/einrichten.js`, `js/exportieren.js`, `js/finanzen.js`, `js/sparen.js`, `js/vorrat2.js`, `js/einkaufseingabe.js`, `js/benutzer.js`, `js/icsparser.js`, `js/sprachen.js`, `js/versionslog.js`, all language files in `i18n/` and `lang/` – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
-## What's new in 1.118.4
-
-**Security: PIN required with a family dashboard · calendar fix**
-
-- **PIN required:** as soon as the family has a dashboard (e.g. the iPad in the kitchen), every profile needs a PIN. A profile without one shows a 🔑 on the dashboard and opens **once with its password** – right after that, the app asks for the new PIN. On own phones and computers the PIN entry also appears right after the start ("Log out" instead of "Cancel"). The own PIN cannot be removed while the dashboard exists; an admin can still reset someone's PIN (that person then logs in with the password once more). Guests still open with a tap. Wrong passwords count towards the same lock as wrong PINs.
-- **Calendar on the phone:** after going back from a recipe in the overview, the list view was "unfolded" as high as the timeline – it now keeps its height.
-- Changed: `index.html`, `js/profilauswahl.js`, `js/pineingabe.js`, `js/dashboardkonto.js`, `js/appstart.js`, `js/uebersicht.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, all language files and on the server `dashboard.pb.js`, `pinn-dashboard.js`.
-
 ## How it works
 
 ```mermaid
@@ -215,7 +217,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.120.4` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.120.5` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
