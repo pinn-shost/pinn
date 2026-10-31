@@ -99,6 +99,16 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 und 🇰🇷 한국어**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.120.6
+
+**Russisch – siebte Etappe**
+
+- Ins Russische übersetzt: Zuhause (Wohnungen und Häuser zur Miete, im Eigentum und zur Vermietung, Mängel samt Mängelanzeige an den Vermieter, Zähler mit Ablesen per Foto und Prognose, Fixkosten und Kredit, Renovierung und Projekte, Wartungsplan, Garten und Pflanzen mit Gartenjahr, Schlüssel) und Dokumente (Fristen, Garantie und Gewährleistung, Erinnerungen, mehrseitige Dokumente, Offline-Ablage) – jetzt 5230 von 6715 Texten.
+- Behoben (alle Sprachen): „archiviert“ bei Fahrzeugen im Dokumentenformular, „Nr.“ und „zuletzt“ bei Zählern und Wartungen sowie „vom“ im automatischen Dokumenttitel waren fest eingebaute Texte und werden jetzt übersetzt.
+- Russisch bleibt **versteckt**, bis alles übersetzt ist (auf einem Gerät freischaltbar wie bei 1.120.0 beschrieben).
+- Als Nächstes: weitere Etappen Russisch (Fahrzeuge, Smarthome …).
+- Geändert: `index.html`, `js/sprachen.js`, `js/dokumente.js`, `js/zuhause.js`, `js/versionslog.js`, `i18n/*.i18n.js` (alle Sprachen, auch `ru.i18n.js`), `i18n/versionslog.en.js` – am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
+
 ## Neu in 1.120.5
 
 **Russisch – sechste Etappe**
@@ -134,15 +144,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Ins Russische übersetzt: der Kalender (Termine, Kalender hinzufügen, iCloud/Google), Aufgaben, Haushalt samt Reihum, der Essensplan, die Übersicht mit ihren Kacheln, Wetter und Urlaubswetter, Feiertage und Schulferien, die Suche und die Profilbilder – jetzt 1545 von 6714 Texten.
 - Russisch bleibt **versteckt**, bis alles übersetzt ist (auf einem Gerät freischaltbar wie bei 1.120.0 beschrieben).
 - Als Nächstes: weitere Etappen Russisch (Listen, Vorrat, Rezepte …).
-- Geändert: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
-
-## Neu in 1.120.1
-
-**Russisch – zweite Etappe**
-
-- Ins Russische übersetzt: das Konto (Passwort, PIN, Profile, Gäste, Mitteilungen, Familien-Dashboard), Geräte & Anmeldung, das Fehlerprotokoll sowie Sicherungen & Updates – jetzt 874 von 6714 Texten, wieder mit den drei Mehrzahlformen und den WG-Begriffen.
-- Russisch bleibt **versteckt**, bis alles übersetzt ist (auf einem Gerät freischaltbar wie bei 1.120.0 beschrieben).
-- Als Nächstes: weitere Etappen Russisch (Kalender, Aufgaben, Haushalt …).
 - Geändert: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
 
 ## Neu in 1.120.0
@@ -184,7 +185,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.120.5` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.120.6` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

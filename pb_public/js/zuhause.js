@@ -1823,7 +1823,7 @@ function hsMeterCardHtml(m) {
         <span class="fz-icon" style="--fz:${t.color}">${t.icon}</span>
         <div class="min-w-0">
           <div class="text-sm font-medium truncate">${hsEsc(m.name || t.label)}</div>
-          <div class="text-xs text-ink/45 truncate">${hsEsc([m.number ? 'Nr. ' + m.number : '', last ? 'zuletzt ' + vtFmt(last.date) : tk('home.noReadingYet')].filter(Boolean).join(' · '))}</div>
+          <div class="text-xs text-ink/45 truncate">${hsEsc([m.number ? tk('home.meterNoShort', { number: m.number }) : '', last ? tk('home.lastOn', { date: vtFmt(last.date) }) : tk('home.noReadingYet')].filter(Boolean).join(' · '))}</div>
           ${last ? `<div class="font-serif text-lg leading-tight mt-0.5">${hsEsc(hsNum(last.value, unit === 'kWh' ? 1 : 3) + ' ' + unit)}</div>` : ''}
         </div>
       </div>
@@ -1851,7 +1851,7 @@ function hsMaintListHtml(compact, which = 'all') {
     const t = hsMaintDueTone(next);
     const open = hsMaintOpen(m);
     const who = (m.assignedMemberIds || []).map(id => memberById(id)).filter(Boolean).map(memberLabel);
-    const sub = [hsMaintEvery(m.months), who.length ? (m.rotate && who.length > 1 ? '🔄 ' + who.join(', ') : who.join(', ')) : tk('errorLog.all'), vtIsIso(m.last) ? 'zuletzt ' + vtFmt(m.last) : ''].filter(Boolean).join(' · ');
+    const sub = [hsMaintEvery(m.months), who.length ? (m.rotate && who.length > 1 ? '🔄 ' + who.join(', ') : who.join(', ')) : tk('errorLog.all'), vtIsIso(m.last) ? tk('home.lastOn', { date: vtFmt(m.last) }) : ''].filter(Boolean).join(' · ');
     return `
       <div class="fz-due-row${m.active === false ? '' : ' ' + t.tone}" role="button" tabindex="0" data-hsact="maint-edit" data-id="${hsEsc(m.id)}"${m.active === false ? ' style="opacity:.5"' : ''}>
         <span class="fz-due-ic">${hsEsc(m.icon || '🔧')}</span>

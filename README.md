@@ -95,6 +95,16 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 and 🇰🇷 한국어**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.120.6
+
+**Russian – seventh stage**
+
+- Translated into Russian: home (flats and houses for renting, owning and letting, defects with the defect notice to the landlord, meters with reading by photo and forecast, fixed costs and loan, renovation and projects, maintenance plan, garden and plants with the garden year, keys) and documents (deadlines, warranty and guarantee, reminders, multi-page documents, offline filing) – now 5230 of 6715 texts.
+- Fixed (all languages): “archived” for vehicles in the document form, “No.” and “last” for meters and maintenance, and “of” in the automatic document title were fixed texts and are now translated.
+- Russian stays **hidden** until everything is translated (unlock on one device as described for 1.120.0).
+- Next: further stages of Russian (vehicles, smart home …).
+- Changed: `index.html`, `js/sprachen.js`, `js/dokumente.js`, `js/zuhause.js`, `js/versionslog.js`, `i18n/*.i18n.js` (all languages, including `ru.i18n.js`), `i18n/versionslog.en.js` – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.120.5
 
 **Russian – sixth stage**
@@ -182,15 +192,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Next: 1.119.2 removes the old translator and `lang/`.
 - Changed: `index.html`, `js/standardnamen.js` (new), `i18n/versionslog.en.js` (new), `js/serverzugriff.js`, `js/versionslog.js`, `js/hinweise.js` and 22 more files in `js/`, all language files in `i18n/`, `pinn-setup.sh` – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
-## What's new in 1.119.0
-
-**Translations with text keys: the board and the last areas**
-
-- The **board** (notes, lists, polls, photos, thanks, countdown, archive and replies), the **weekly and monthly outlook**, **voice control** including the iPhone and Android guide, the **family management** of the main admin, **profile picture cropping** and the **dashboard background** now take their texts from the language files in `pb_public/i18n/` – in all nine languages and as a flatshare.
-- Small things: messages without a connection, “sign-in expired”, child lock notices, device names under “Devices & sign-in” and avatar names follow your language; the start check (“pinn. cannot start”) is now in plain English. The **child lock** now recognises delete buttons in every language (before only in German). On the board, votes, countdown days and “+ 2 more” use the right singular or plural, and dates follow your language.
-- Next: 1.119.1 puts the standard names (categories, storage places, units), server messages and the version log on keys; 1.119.2 removes the old translator and `lang/`.
-- Changed: `index.html`, `js/pinnwand.js`, `js/ausblick.js`, `js/sprachsteuerung.js`, `js/familienverwalten.js`, `js/profilbild.js`, `js/dashboardhintergrund.js`, `js/offline.js`, `js/dashboard.js`, `js/verbindung.js`, `js/vertraege.js`, `js/zustand.js`, `js/mitglieder.js`, `js/appstart.js`, `js/serverzugriff.js`, `js/popups.js`, `js/wetter.js`, `js/einrichten.js`, `js/exportieren.js`, `js/finanzen.js`, `js/sparen.js`, `js/vorrat2.js`, `js/einkaufseingabe.js`, `js/benutzer.js`, `js/icsparser.js`, `js/sprachen.js`, `js/versionslog.js`, all language files in `i18n/` and `lang/` – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
 ## How it works
 
 ```mermaid
@@ -217,7 +218,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.120.5` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.120.6` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

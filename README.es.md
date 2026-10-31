@@ -95,6 +95,16 @@ Siempre contigo: pinn. se instala en cada iPhone y móvil Android como una app n
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 y 🇰🇷 한국어**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.120.6
+
+**Ruso – séptima etapa**
+
+- Traducido al ruso: el hogar (pisos y casas en alquiler, en propiedad y para alquilar, defectos con la notificación al arrendador, contadores con lectura por foto y previsión, costes fijos y préstamo, reformas y proyectos, plan de mantenimiento, jardín y plantas con el año del jardín, llaves) y los documentos (plazos, garantía, recordatorios, documentos de varias páginas, archivo sin conexión) – ya son 5230 de 6715 textos.
+- Corregido (todos los idiomas): «archivado» en los vehículos del formulario de documentos, «N.º» y «última vez» en contadores y mantenimiento, y «del» en el título automático del documento eran textos fijos y ahora se traducen.
+- El ruso sigue **oculto** hasta que esté todo traducido (se puede activar en un dispositivo como se describe en la 1.120.0).
+- Próximo: más etapas del ruso (vehículos, casa inteligente …).
+- Modificado: `index.html`, `js/sprachen.js`, `js/dokumente.js`, `js/zuhause.js`, `js/versionslog.js`, `i18n/*.i18n.js` (todos los idiomas, incluido `ru.i18n.js`), `i18n/versionslog.en.js` – en el servidor no cambia nada. Instalar como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
+
 ## Novedades de la 1.120.5
 
 **Ruso – sexta etapa**
@@ -181,15 +191,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Próximo paso: la 1.119.2 elimina el traductor antiguo y `lang/`.
 - Modificado: `index.html`, `js/standardnamen.js` (nuevo), `i18n/versionslog.en.js` (nuevo), `js/serverzugriff.js`, `js/versionslog.js`, `js/hinweise.js` y 22 archivos más en `js/`, todos los archivos de idioma de `i18n/`, `pinn-setup.sh` – en el servidor no cambia nada. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
 
-## Novedades de la 1.119.0
-
-**Traducciones con claves de texto: el tablón y las últimas áreas**
-
-- El **tablón** (notas, listas, encuestas, fotos, agradecimientos, cuenta atrás, archivo y respuestas), la **vista semanal y mensual**, el **control por voz** con la guía para iPhone y Android, la **gestión de familias** del admin principal, el **recorte de la foto de perfil** y el **fondo del panel** toman ahora sus textos de `pb_public/i18n/` – en los nueve idiomas y como piso compartido.
-- Detalles: mensajes sin conexión, «sesión caducada», avisos del control parental, nombres de dispositivos y de avatares siguen el idioma; la comprobación de inicio está ahora en inglés sencillo. El **control parental** reconoce los botones de borrar en cualquier idioma. En el tablón, votos, días de cuenta atrás y «+ 2 más» en singular o plural correcto, fechas en el formato del idioma.
-- Próximo: 1.119.1 pasa nombres estándar, mensajes del servidor y el registro de versiones a claves; 1.119.2 retira el traductor antiguo y `lang/`.
-- Cambiado: `index.html`, `js/pinnwand.js`, `js/ausblick.js`, `js/sprachsteuerung.js`, `js/familienverwalten.js`, `js/profilbild.js`, `js/dashboardhintergrund.js`, `js/offline.js`, `js/dashboard.js`, `js/verbindung.js`, `js/vertraege.js`, `js/zustand.js`, `js/mitglieder.js`, `js/appstart.js`, `js/serverzugriff.js`, `js/popups.js`, `js/wetter.js`, `js/einrichten.js`, `js/exportieren.js`, `js/finanzen.js`, `js/sparen.js`, `js/vorrat2.js`, `js/einkaufseingabe.js`, `js/benutzer.js`, `js/icsparser.js`, `js/sprachen.js`, `js/versionslog.js`, todos los archivos de idioma en `i18n/` y `lang/` – nada cambia en el servidor. Instalar como siempre (`sudo sh pinn-*/pinn-setup.sh` o botón de actualización).
-
 ## Cómo funciona
 
 ```mermaid
@@ -216,7 +217,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.120.5` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.120.6` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

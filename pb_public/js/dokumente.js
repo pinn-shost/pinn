@@ -795,7 +795,7 @@ function renderDocDetail() {
     <div class="flex flex-col gap-1.5">${vlinks.map(v => `
       <button type="button" class="fin-doc-row flex items-center gap-2.5 rounded-xl border border-ink/10 px-2.5 py-2 text-left w-full" data-docveh="${escapeHtml(v.id)}">
         <span class="text-xl leading-none shrink-0">${escapeHtml(fzKind(v.kind).icon)}</span>
-        <span class="min-w-0 flex-1"><span class="block text-sm font-medium truncate">${escapeHtml(fzName(v))}</span><span class="block text-[11px] text-ink/45 truncate">${escapeHtml([v.plate ? fzPlateText(v.plate) : '', fzIsArchived(v) ? 'archiviert' : '', tk('doc.openVehicle')].filter(Boolean).join(' · '))}</span></span>
+        <span class="min-w-0 flex-1"><span class="block text-sm font-medium truncate">${escapeHtml(fzName(v))}</span><span class="block text-[11px] text-ink/45 truncate">${escapeHtml([v.plate ? fzPlateText(v.plate) : '', fzIsArchived(v) ? tk('doc.archived') : '', tk('doc.openVehicle')].filter(Boolean).join(' · '))}</span></span>
         <span class="shrink-0 text-ink/30 text-sm">›</span>
       </button>`).join('')}</div>` : '';
   const canShare = !!(navigator.share && d.dateien && d.dateien.length && !d.pending);
@@ -1257,7 +1257,7 @@ async function saveDocFromModal() {
   const cat = docCategory(docDraft.catId);
   let titel = docVal('docTitleInput').replace(/\s+/g, ' ').trim().slice(0, 200);
   const datum = vtIsIso(docVal('docDateInput')) ? docVal('docDateInput') : '';
-  if (!titel) titel = `${cat.label}${datum ? ' vom ' + vtFmt(datum) : ''}`;
+  if (!titel) titel = datum ? tk('doc.titleDated', { cat: cat.label, date: vtFmt(datum) }) : cat.label;
   const fields = {
     titel,
     kategorie: cat.id,
