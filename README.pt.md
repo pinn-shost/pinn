@@ -99,6 +99,16 @@ Sempre com você: o pinn. se instala em todo iPhone e celular Android como um ap
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 e 🇰🇷 한국어**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.120.7
+
+**Russo – oitava etapa**
+
+- Traduzido para russo: veículos (lista e detalhes, abastecimento, carregamento, oficina, jogos de pneus com idade e piso, prazos de inspeção e revisão, matrículas de seguro, calculadoras para elétrico ou combustão, GPL, bicicleta em vez de carro, desvio para um posto mais barato) e casa inteligente (dispositivos, ações, Atalhos da Apple, Home Assistant, automação, divisões do robô aspirador) – agora 5954 de 6716 textos.
+- Corrigido (todos os idiomas): «poupado» e «a mais» na calculadora do desvio, «último» no campo do conta-quilómetros e «opcional» em dois campos eram textos fixos e agora são traduzidos.
+- O russo continua **oculto** até estar tudo traduzido (pode ser ativado num dispositivo, como descrito na 1.120.0).
+- A seguir: mais etapas do russo (notificações, mural, perspetivas, nomes padrão …).
+- Alterado: `index.html`, `js/sprachen.js`, `js/fahrzeuge.js`, `js/versionslog.js`, `i18n/*.i18n.js` (todos os idiomas, incluindo `ru.i18n.js`), `i18n/versionslog.en.js` – o servidor não muda. Instale como de costume (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
+
 ## Novidades da 1.120.6
 
 **Russo – sétima etapa**
@@ -135,15 +145,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Traduzidos para russo: as listas (mala, presentes, desejos, checklists, ideias – com todos os modelos), as compras, a despensa com o scanner e «O que posso cozinhar?», e as receitas com importação, receitas públicas e lixeira – agora 2656 de 6714 textos.
 - O russo continua **oculto** até tudo estar traduzido (dá para ativar em um dispositivo como descrito na 1.120.0).
 - A seguir: outras etapas do russo (finanças, caixas, carteira, contratos …).
-- Alterados: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – nada muda no servidor. Instale como sempre (`sudo sh pinn-*/pinn-setup.sh` ou botão de atualização).
-
-## Novidades da 1.120.2
-
-**Russo – terceira etapa**
-
-- Traduzidos para russo: o calendário (eventos, adicionar calendários, iCloud/Google), as tarefas, a casa com o rodízio, o plano de refeições, a visão geral com seus blocos, o clima e o clima das férias, feriados e férias escolares, a busca e as fotos de perfil – agora 1545 de 6714 textos.
-- O russo continua **oculto** até tudo estar traduzido (dá para ativar em um dispositivo como descrito na 1.120.0).
-- A seguir: outras etapas do russo (listas, despensa, receitas …).
 - Alterados: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – nada muda no servidor. Instale como sempre (`sudo sh pinn-*/pinn-setup.sh` ou botão de atualização).
 
 ## Novidades da 1.120.0
@@ -184,7 +185,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.120.6` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.120.7` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -1542,7 +1542,7 @@ function fzCalc() {
     const gain = qty5 * diff5 / 100;
     const cost5 = km5 * (n('fzT5Cons') || 0) / 100 * (n('fzT5Price') || 0);
     const net = gain - cost5;
-    set('fzResDetour', `${tk('vehicle.savingWhenFuellingDetour', { fzEur: fzEur(gain), fzEur2: fzEur(cost5) })}<br>${net > 0.2 ? `${tk('vehicle.worth')} <b>${fzEur(net)}</b> gespart` : net > 0 ? tk('vehicle.hardlyWorthOnlyFew') : `${tk('vehicle.notWorth')} <b>${fzEur(-net)}</b> drauf`}`, net > 0.2 ? 'good' : 'bad');
+    set('fzResDetour', `${tk('vehicle.savingWhenFuellingDetour', { fzEur: fzEur(gain), fzEur2: fzEur(cost5) })}<br>${net > 0.2 ? tk('vehicle.detourWorth', { amount: `<b>${fzEur(net)}</b>` }) : net > 0 ? tk('vehicle.hardlyWorthOnlyFew') : tk('vehicle.detourNotWorth', { amount: `<b>${fzEur(-net)}</b>` })}`, net > 0.2 ? 'good' : 'bad');
   } else set('fzResDetour', tk('vehicle.enterValues'));
 }
 
@@ -1987,7 +1987,7 @@ function fzOpenLogModal({ vehicleId = '', logId = '', type = '', fromDue = null 
 
     <div class="fz-grid2">
       ${fzIn('fzlDate', tk('fin.csv.date'), vtIsIso(l.date) ? l.date : today, { type: 'date' })}
-      ${fzIn('fzlOdo', tk('vehicle.odometerReading'), Number(l.odo) > 0 ? fzNum(l.odo) : '', { mode: 'numeric', unit: 'km', ph: lastOdo ? 'zuletzt ' + fzNum(lastOdo) : '' })}
+      ${fzIn('fzlOdo', tk('vehicle.odometerReading'), Number(l.odo) > 0 ? fzNum(l.odo) : '', { mode: 'numeric', unit: 'km', ph: lastOdo ? tk('vehicle.lastOdoPh', { odo: fzNum(lastOdo) }) : '' })}
     </div>
     <div id="fzlMoney">
       <div class="fz-grid2">
@@ -1996,7 +1996,7 @@ function fzOpenLogModal({ vehicleId = '', logId = '', type = '', fromDue = null 
       </div>
       <label class="fz-check"><input type="checkbox" id="fzlBooked"${l.booked !== false ? ' checked' : ''} /> <span>${tk('vehicle.alsoBookExpenseFinance')} <span class="text-ink/45" id="fzlBookedHint"></span></span></label>
     </div>
-    ${fzIn('fzlNote', tk('fin.csv.note'), l.note || '', { ph: 'optional', max: 500 })}
+    ${fzIn('fzlNote', tk('fin.csv.note'), l.note || '', { ph: tk('doc.optional'), max: 500 })}
     <div id="fzlDocsWrap">
       <div class="flex items-center justify-between gap-2 mb-1.5"><span class="fz-lbl" style="margin:0">${tk('contract.docType.receipt')}</span><button type="button" id="fzlDocAdd" class="fz-mini-btn">${tk('vehicle.photoPdf')}</button></div>
       <div id="fzlDocs" class="flex flex-col gap-1.5 mb-2"></div>
@@ -2275,7 +2275,7 @@ function fzOpenArchive(vid) {
   fzOpenModal2(`
     <h3 class="font-serif text-lg mb-1 pr-6">${tk('vehicle.soldDeregistered3')}</h3>
     <p class="text-xs text-ink/50 mb-3">${tk('vehicle.movesArchiveHistoryKept', { fzShortName: escapeHtml(fzShortName(v)) })}</p>
-    <div class="fz-grid2">${fzIn('fzaDate', tk('vehicle.since'), today, { type: 'date' })}${fzIn('fzaPrice', tk('vehicle.salePrice'), '', { mode: 'decimal', unit: curSym(), ph: 'optional' })}</div>
+    <div class="fz-grid2">${fzIn('fzaDate', tk('vehicle.since'), today, { type: 'date' })}${fzIn('fzaPrice', tk('vehicle.salePrice'), '', { mode: 'decimal', unit: curSym(), ph: tk('doc.optional') })}</div>
     <label class="fz-check"><input type="checkbox" id="fzaBook" checked /> <span>${tk('vehicle.bookSalePriceIncome')}</span></label>
     ${active.length ? `<div class="vt-info warn mb-2">${escapeHtml(tk('vehicle.runningContracts', { n: active.length, names: active.map(c => c.name).join(', ') }))}</div>` : ''}
     <p id="fzaError" class="hidden text-xs text-red-500 mb-2"></p>
