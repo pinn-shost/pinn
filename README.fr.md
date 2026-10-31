@@ -95,6 +95,15 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 et 🇰🇷 한국어**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.120.4
+
+**Russe – cinquième étape**
+
+- Traduits en russe : les finances (dépenses, revenus, budget, catégories, opérations récurrentes, statistiques), les caisses avec partage et règlement, le dépôt (positions, plans d’épargne, import CSV/PDF, cours), les contrats (durée, résiliation avec lettre de résiliation, rappels, documents) et l’argent de poche – désormais 3524 textes sur 6714.
+- Le russe reste **masqué** jusqu’à ce que tout soit traduit (activable sur un appareil comme décrit pour la 1.120.0).
+- Ensuite : d’autres étapes du russe (famille, animaux, école, localisation, page enfant …).
+- Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou bouton de mise à jour).
+
 ## Nouveautés de la 1.120.3
 
 **Russe – quatrième étape**
@@ -178,13 +187,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Dès que la famille a un tableau de bord, **chaque profil a besoin d’un PIN** : sans PIN, on se connecte une fois avec le mot de passe (🔑), puis on choisit le PIN ; sur ses propres appareils, la saisie arrive juste après le démarrage. Les invités ouvrent toujours d’un toucher.
 - Sur téléphone, l’agenda en vue liste ne reste plus « déplié » après le retour d’une recette.
 
-## Nouveautés de la 1.118.3
-
-**Recettes : corbeille, « supprimer vraiment ? », appui long dans la semaine**
-
-- La suppression d'une recette demande confirmation ; la recette reste ensuite **7 jours dans la corbeille** (sous la liste, sur tous les appareils), avec ses repas prévus – restaurer ou supprimer définitivement.
-- **Appui long** sur un repas de « Prévu cette semaine » : voir, modifier la recette, déplacer ou modifier le repas, planifier à nouveau, marquer comme cuisiné, retirer.
-
 ## Comment ça marche
 
 ```mermaid
@@ -211,7 +213,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.120.3` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.120.4` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

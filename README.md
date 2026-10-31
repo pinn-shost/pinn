@@ -95,6 +95,15 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 and 🇰🇷 한국어**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.120.4
+
+**Russian – fifth stage**
+
+- Translated into Russian: finance (expenses, income, budget, categories, recurring transactions, statistics), funds with splitting and settling up, the depot (positions, savings plans, import from CSV/PDF, prices), contracts (term, cancellation including the cancellation letter, reminders, documents) and pocket money – now 3524 of 6714 texts.
+- Russian stays **hidden** until everything is translated (unlock on one device as described for 1.120.0).
+- Next: further stages of Russian (family, pets, school, location, kids' page …).
+- Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.120.3
 
 **Russian – fourth stage**
@@ -180,14 +189,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Calendar on the phone:** after going back from a recipe in the overview, the list view was "unfolded" as high as the timeline – it now keeps its height.
 - Changed: `index.html`, `js/profilauswahl.js`, `js/pineingabe.js`, `js/dashboardkonto.js`, `js/appstart.js`, `js/uebersicht.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, all language files and on the server `dashboard.pb.js`, `pinn-dashboard.js`.
 
-## What's new in 1.118.3
-
-**Recipes: recycle bin, "really delete?", long press in the week slider**
-
-- **Recycle bin:** deleting a recipe now asks first. The recipe then stays in the **recycle bin for 7 days** (button below the recipe list) – on every device of the family, together with its planned meals and its favourite mark. Restore it with one tap or delete it for good; after 7 days it disappears by itself.
-- **Long press** on a meal in "Planned this week" (overview and recipes tab) shows options: view recipe, edit recipe, move or change the meal (day, meal, servings, another recipe), plan it again, mark as cooked, remove it from the meal plan. With the child lock only "view" is offered.
-- Changed: `index.html`, `js/rezepte.js`, `js/rezeptaktionen.js` (new), `js/essenplanen.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/basis.css`, `js/sprachen.js`, `js/versionslog.js`, all language files, `pinn-setup.sh` and on the server `pinn-bereiche.js`, `pinn-hinweise.js`.
-
 ## How it works
 
 ```mermaid
@@ -214,7 +215,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.120.3` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.120.4` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
