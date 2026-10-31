@@ -95,6 +95,15 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 et 🇰🇷 한국어**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.120.2
+
+**Russe – troisième étape**
+
+- Traduits en russe : le calendrier (événements, ajout de calendriers, iCloud/Google), les tâches, le ménage avec le tour de rôle, le planning des repas, l’aperçu et ses tuiles, la météo et la météo des vacances, jours fériés et vacances scolaires, la recherche et les photos de profil – désormais 1545 textes sur 6714.
+- Le russe reste **masqué** jusqu’à ce que tout soit traduit (activable sur un appareil comme décrit pour la 1.120.0).
+- Ensuite : d’autres étapes du russe (listes, provisions, recettes …).
+- Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou bouton de mise à jour).
+
 ## Nouveautés de la 1.120.1
 
 **Russe – deuxième étape**
@@ -174,13 +183,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Coller un message** (p. ex. WhatsApp) dans le champ de saisie : une fenêtre montre les articles reconnus avec leur quantité, avec des indications vertes (réserve, planning des repas, déjà sur la liste).
 - Les articles de la réserve portent l'indication « 🥫 Réserve » sous le nom ; plus/moins suit la quantité (30 ml moins = 20 ml).
 
-## Nouveautés de la 1.118.1
-
-**Avis de mise à jour pour les admins**
-
-- Les admins autorisés à installer les mises à jour reçoivent **une notification par nouvelle version** (Compte → Notifications → Mises à jour) et une **carte dans la cloche**, chaque jour jusqu'à l'installation.
-- Un toucher ouvre directement **Réglages → Système** avec la fenêtre de mise à jour.
-
 ## Comment ça marche
 
 ```mermaid
@@ -207,7 +209,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.120.1` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.120.2` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -95,6 +95,15 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 and 🇰🇷 한국어**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.120.2
+
+**Russian – third stage**
+
+- Translated into Russian: the calendar (events, adding calendars, iCloud/Google), tasks, the household including taking turns, the meal plan, the overview with its tiles, weather and holiday weather, public and school holidays, search and profile pictures – now 1545 of 6714 texts.
+- Russian stays **hidden** until everything is translated (unlock on one device as described for 1.120.0).
+- Next: further stages of Russian (lists, pantry, recipes …).
+- Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
 ## What's new in 1.120.1
 
 **Russian – second stage**
@@ -180,14 +189,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Pantry items without an own shop now land on the **main shop** instead of the meal-planning list.
 - Changed: `index.html`, `js/einkauf.js`, `js/einkaufseingabe.js`, `js/einkaufslisten.js`, `js/vorrat.js`, `css/listen.css`, `js/sprachen.js`, `js/versionslog.js`, all language files – nothing changes on the server.
 
-## What's new in 1.118.1
-
-**Update notice for admins**
-
-- Admins who may install updates now get **one push message per new pinn. version** (switch: Account → Notifications → Updates) and a **card in the bell** that comes back every day until the update is installed – dismissing it only hides it for today.
-- Tapping the message or the card opens **Settings → System** directly with the update popup.
-- Changed: `index.html`, `js/sicherungen.js`, `js/mitteilungen.js`, `js/hinweise.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, all language files, on the server `pb_hooks/system.pb.js`, `pinn-system.js`, `pinn-hinweise.js`, `pinn-push.js`, `pinn-pushtext.js`. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
 ## How it works
 
 ```mermaid
@@ -214,7 +215,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.120.1` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.120.2` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
