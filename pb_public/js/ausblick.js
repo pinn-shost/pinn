@@ -25,9 +25,9 @@
 const AB_KEYS = {
   w_kicker: 'outlook.wKicker', w_title: 'outlook.wTitle', w_sub: 'outlook.wSub', b_w: 'outlook.bW',
   b_w_s: 'outlook.bWS', m_kicker: 'outlook.mKicker', m_title: 'outlook.mTitle', b_m: 'outlook.bM',
-  b_m_s: 'outlook.bMS', c_termine: 'outlook.cTermine', c_termin: 'outlook.cTermin',
-  c_aufgaben: 'outlook.cAufgaben', c_aufgabe: 'outlook.cAufgabe', c_essen: 'outlook.cEssen',
-  c_geb: 'outlook.cGeb', c_gebs: 'outlook.cGebs', c_muell: 'outlook.cMuell', c_muells: 'outlook.cMuells',
+  b_m_s: 'outlook.bMS', c_termine: 'outlook.chipEvents',
+  c_aufgaben: 'outlook.chipTasks', c_essen: 'outlook.chipMeals',
+  c_geb: 'outlook.chipBirthdays', c_muell: 'outlook.chipBins',
   s_wetter: 'outlook.sWetter', s_merken: 'outlook.sMerken', s_tage: 'outlook.sTage', s_rueck: 'outlook.sRueck',
   s_offen: 'outlook.sOffen', heute: 'outlook.heute', morgen: 'outlook.morgen', frei: 'outlook.frei',
   ganz: 'outlook.ganz', fruehstueck: 'outlook.fruehstueck', mittag: 'outlook.mittag', abend: 'outlook.abend',
@@ -422,12 +422,13 @@ async function abRenderWeek(body, mondayIso) {
 
   const kw = finIsoWeek(abDate(mondayIso));
   const nTasks = tasksWeek.length + hhCount;
-  const chip = (n, one, many, ic) => n ? `<span class="ab-chip">${ic} <b>${n}</b> ${abEsc(abT(n === 1 ? one : many))}</span>` : '';
+  // The text of a chip holds the number and its noun (plural forms per language); the number is set in bold
+  const chip = (n, key, ic) => n ? `<span class="ab-chip">${ic} ${abEsc(abT(key, { n })).replace(String(n), '<b>' + n + '</b>')}</span>` : '';
   let html = `<div class="ab-hero">
     <div class="ab-kicker">${abEsc(abT('w_kicker'))}</div>
     <div class="ab-h1">${abEsc(abT('w_title'))}</div>
     <div class="ab-hsub">${abEsc(abT('w_sub', { kw, range: abRange(mondayIso) }))}</div>
-    <div class="ab-chips">${chip(evNormal.length, 'c_termin', 'c_termine', '📅')}${chip(nTasks, 'c_aufgabe', 'c_aufgaben', '✅')}${meals.length ? `<span class="ab-chip">🍽️ <b>${meals.length}</b> ${abEsc(abT('c_essen'))}</span>` : ''}${chip(bdays.length, 'c_geb', 'c_gebs', '🎂')}${chip(evMuell.length, 'c_muell', 'c_muells', '🗑️')}</div>
+    <div class="ab-chips">${chip(evNormal.length, 'c_termine', '📅')}${chip(nTasks, 'c_aufgaben', '✅')}${chip(meals.length, 'c_essen', '🍽️')}${chip(bdays.length, 'c_geb', '🎂')}${chip(evMuell.length, 'c_muell', '🗑️')}</div>
   </div><div class="ab-wrap">`;
 
   // Weather

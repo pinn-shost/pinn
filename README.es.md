@@ -95,6 +95,17 @@ Siempre contigo: pinn. se instala en cada iPhone y móvil Android como una app n
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 y 🇰🇷 한국어**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.120.8
+
+**Ruso – novena etapa**
+
+- Traducido al ruso: la campana de notificaciones (actividad de la familia, caminos a casa, compras, SOS), el tablón (notas, listas, encuestas, cuentas atrás, agradecimientos, fotos, archivo), la previsión (vista semanal y previsión financiera mensual), el control por voz (atajo de Siri, HTTP Shortcuts), la lectura de PDF y tickets, los nombres de las categorías estándar, lugares de almacenamiento, unidades, aparatos, cajas y tipos de residuos, así como los mensajes del servidor – ya 6565 de 6712 textos.
+- Mejorado (todos los idiomas): los pequeños contadores de la vista semanal («3 citas», «2 tareas» …) ahora son textos completos con sus propias formas de plural (el ruso lo necesita) – cinco textos nuevos sustituyen a nueve antiguos.
+- El ruso sigue **oculto** hasta que todo esté traducido (se puede activar en un dispositivo como se describe en la 1.120.0).
+- Próximamente: la última etapa del ruso (notificaciones push del servidor) y la activación del ruso.
+- Modificado: `index.html`, `js/sprachen.js`, `js/ausblick.js`, `js/versionslog.js`, `i18n/*.i18n.js` (todos los idiomas, incluido `ru.i18n.js`), `i18n/versionslog.en.js` – en el servidor no cambia nada. Instala como de costumbre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
+
+
 ## Novedades de la 1.120.7
 
 **Ruso – octava etapa**
@@ -183,14 +194,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Próximo: ruso, paso a paso (oculto hasta que esté completo).
 - Cambiado: `index.html`, `js/sprachen.js`, `js/zustand.js`, `js/uebersicht.js`, `js/familie.js`, `js/listen.js`, `js/sterne.js`, `js/ausblick.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wohnort.js`, `js/finanzen.js`, `js/einstellungen.js`, `js/smarthome.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pinn-setup.sh`, `.github/` – eliminado: `pb_public/lang/` – nada cambia en el servidor. Instalar como siempre (`sudo sh pinn-*/pinn-setup.sh` o botón de actualización).
 
-## Novedades de la 1.119.2
-
-**Escáner de la despensa: foto en lugar de cámara en directo**
-
-- Si pinn. se abre con `http://…` en lugar de su dirección HTTPS, los navegadores no dan acceso a la cámara en directo – en iPhone y iPad nunca. Antes el escáner mostraba una imagen negra; ahora explica que la cámara en directo necesita la dirección HTTPS y ofrece **📷 Fotografiar el código de barras**: haz una foto y pinn. lee el código. También funciona si la cámara está bloqueada o no arranca.
-- Próximo: 1.119.3 retira el traductor antiguo y `lang/`.
-- Cambiado: `index.html`, `js/vorrat2.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos los archivos de idioma en `i18n/`, para colaboradores `.github/scripts/check-keys.js` – nada cambia en el servidor.
-
 ## Cómo funciona
 
 ```mermaid
@@ -217,7 +220,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.120.7` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.120.8` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
