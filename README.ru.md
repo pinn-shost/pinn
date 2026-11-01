@@ -30,7 +30,66 @@ pinn. – это одно приложение для всего, что нуж�
 
 Никаких облачных аккаунтов. Никаких подписок. Ни рекламы, ни слежки. Данные вашей семьи не покидают ваш дом.
 
-> Это краткое описание. Полное описание с картинками, FAQ и структурой репозитория – в [English README](README.md) и [Deutsch](README.de.md).
+> Это краткое описание. Полное описание с FAQ и структурой репозитория – в [English README](README.md) и [Deutsch](README.de.md).
+
+<a id="screenshots"></a>
+
+## Скриншоты
+
+### На iPad
+
+На стене или на кухонном столе: общий iPad показывает всю семью сразу.
+
+<table>
+  <tr>
+    <td align="center" width="50%"><a href=".github/assets/screenshots/dashboard.png"><img src=".github/assets/screenshots/dashboard.png" alt="Панель pinn.: профили семьи на выбор" width="400"></a><br><sub><b>Панель</b> – каждый нажимает на свою картинку, при желании с PIN</sub></td>
+    <td align="center" width="50%"><a href=".github/assets/screenshots/ipad-overview.png"><img src=".github/assets/screenshots/ipad-overview.png" alt="Обзор pinn. на iPad с плитками погоды, календаря, задач и семьи" width="400"></a><br><sub><b>Обзор</b> – погода, встречи, задачи, еда и семья одним взглядом</sub></td>
+  </tr>
+</table>
+
+### На телефоне
+
+Всегда под рукой: pinn. устанавливается на любой iPhone и телефон с Android как обычное приложение.
+
+<table>
+  <tr>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Главная страница с погодой, задачами и встречами на сегодня" width="240"></a><br><sub><b>Обзор</b> – ваш день одним взглядом</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Семейный календарь в недельном виде" width="240"></a><br><sub><b>Календарь</b> – iCloud и Google в одном виде</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Меню на неделю с рецептами" width="240"></a><br><sub><b>Еда</b> – планируйте неделю, покупайте в одно касание</sub></td>
+  </tr>
+  <tr>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Список покупок по магазинам" width="240"></a><br><sub><b>Списки</b> – покупки, кладовая, сборы</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Обзор бюджета с расходами по категориям" width="240"></a><br><sub><b>Финансы</b> – бюджет, сбережения, карманные деньги</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Детская страница с распорядком дня" width="240"></a><br><sub><b>Дети</b> – игровой распорядок дня</sub></td>
+  </tr>
+</table>
+
+### Другие экраны
+
+Нажмите на картинку, чтобы открыть её в полном размере.
+
+<details>
+<summary><b>Показать другие скриншоты</b></summary>
+
+<br>
+
+<table>
+  <tr>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Страница «Дом»: жильё, ежемесячные расходы, кредит и данные о покупке" width="200"></a><br><sub><b>Дом</b> – жильё, расходы, кредит, дефекты и счётчики в одном месте</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Список задач с автоматическими напоминаниями о транспорте" width="200"></a><br><sub><b>Задачи</b> – автоматические напоминания, например о техосмотре и смене шин, с кнопкой быстрого перехода</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Страница автомобиля с номером, уведомлениями и событиями" width="200"></a><br><sub><b>Транспорт</b> – техосмотр, шины, заправка и зарядка</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="Сканер штрихкодов для кладовой: название, категория, место хранения и срок годности" width="200"></a><br><sub><b>Скан кладовой</b> – отсканируйте штрихкод, уберите на склад или спишите</sub></td>
+  </tr>
+  <tr>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Обзор недели с погодой и открытыми задачами" width="200"></a><br><sub><b>Обзор недели</b> – погода и то, что ещё не сделано</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Обзор недели по дням: уборка, день вывоза мусора и платежи" width="200"></a><br><sub><b>Обзор недели</b> – день за днём: уборка, мусор, платежи</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Итоги прошлой недели с быстрыми переходами к календарю и задачам" width="200"></a><br><sub><b>Прошлая неделя вкратце</b> – события, еда, расходы – и быстрые переходы</sub></td>
+  </tr>
+</table>
+
+</details>
+
+<sub>📁 <a href=".github/assets/screenshots">Все картинки в одной папке</a></sub>
 
 ## Что умеет pinn.
 
@@ -44,6 +103,15 @@ pinn. – это одно приложение для всего, что нуж�
 - 🔔 **Уведомления** – личные push-сообщения на iPhone, iPad и Android и колокольчик со всеми изменениями в семье
 
 pinn. говорит на **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 и 🇷🇺 Русский**, подстраивает валюту и номера экстренных служб под ваш регион и переключается между терминами **«семья»** и **«совместная квартира»**. Один сервер может вести несколько семей, у каждой свои администраторы.
+
+## Что нового в 1.121.1
+
+**Больше скриншотов**
+
+- В разделе «Скриншоты» появилась раскрывающаяся область **«Показать другие скриншоты»** ещё с семью картинками: «Дом», «Задачи», «Транспорт», скан кладовой и обзор недели (три картинки). Каждая картинка открывается в полном размере по клику, а папка со всеми картинками дана ссылкой.
+- Такая же галерея есть во всех README на других языках.
+- Само приложение работает как раньше – новыми стали только номер версии и запись в журнале версий.
+- Изменено: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js` и все README. На сервере ничего не меняется. Установка как обычно (`sudo sh pinn-*/pinn-setup.sh` или кнопка обновления).
 
 ## Что нового в 1.121.0
 
@@ -64,7 +132,7 @@ pinn. говорит на **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Españo
 ## Установка
 
 1. Скачайте ZIP [последнего релиза](https://github.com/pinn-shost/pinn/releases/latest) и распакуйте его.
-2. Создайте на NAS папку, например `/volume1/docker/Pocketbase`, и положите в неё распакованную папку (например, `pinn-1.121.0` или `pinn-main`) как есть.
+2. Создайте на NAS папку, например `/volume1/docker/Pocketbase`, и положите в неё распакованную папку (например, `pinn-1.121.1` или `pinn-main`) как есть.
 3. Подключитесь по SSH и выполните:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

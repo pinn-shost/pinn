@@ -49,11 +49,11 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 <table>
   <tr>
     <td align="center" width="50%">
-      <img src=".github/assets/screenshots/dashboard.png" alt="pinn. 仪表板：可选择的家庭成员档案" width="400"><br>
+      <a href=".github/assets/screenshots/dashboard.png"><img src=".github/assets/screenshots/dashboard.png" alt="pinn. 仪表板：可选择的家庭成员档案" width="400"></a><br>
       <sub><b>仪表板</b>：每个人点击自己的头像，可选 PIN 码</sub>
     </td>
     <td align="center" width="50%">
-      <img src=".github/assets/screenshots/ipad-overview.png" alt="iPad 上的 pinn. 概览，含天气、日历、任务和家庭磁贴" width="400"><br>
+      <a href=".github/assets/screenshots/ipad-overview.png"><img src=".github/assets/screenshots/ipad-overview.png" alt="iPad 上的 pinn. 概览，含天气、日历、任务和家庭磁贴" width="400"></a><br>
       <sub><b>概览</b>：天气、日程、任务、餐食和家人一目了然</sub>
     </td>
   </tr>
@@ -65,16 +65,43 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 <table>
   <tr>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/home.png" alt="含今日天气、任务和日程的主页" width="240"><br><sub><b>概览</b>：你的一天一目了然</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/calendar.png" alt="周视图的家庭日历" width="240"><br><sub><b>日历</b>：iCloud 和 Google 合在一个视图</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/meals.png" alt="含食谱的每周餐食计划" width="240"><br><sub><b>餐食</b>：规划一周，一键购物</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="含今日天气、任务和日程的主页" width="240"></a><br><sub><b>概览</b>：你的一天一目了然</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="周视图的家庭日历" width="240"></a><br><sub><b>日历</b>：iCloud 和 Google 合在一个视图</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="含食谱的每周餐食计划" width="240"></a><br><sub><b>餐食</b>：规划一周，一键购物</sub></td>
   </tr>
   <tr>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/lists.png" alt="按商店整理的购物清单" width="240"><br><sub><b>清单</b>：购物、储备、打包</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/finance.png" alt="按类别显示支出的预算概览" width="240"><br><sub><b>财务</b>：预算、储蓄、零花钱</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/kids.png" alt="含每日作息的儿童页面" width="240"><br><sub><b>儿童</b>：有趣的每日作息</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="按商店整理的购物清单" width="240"></a><br><sub><b>清单</b>：购物、储备、打包</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="按类别显示支出的预算概览" width="240"></a><br><sub><b>财务</b>：预算、储蓄、零花钱</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="含每日作息的儿童页面" width="240"></a><br><sub><b>儿童</b>：有趣的每日作息</sub></td>
   </tr>
 </table>
+
+### 更多界面
+
+点击任意图片可查看大图。
+
+<details>
+<summary><b>显示更多截图</b></summary>
+
+<br>
+
+<table>
+  <tr>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="住宅页面：房屋、每月费用、贷款和购买信息" width="200"></a><br><sub><b>住宅</b> – 房屋、费用、贷款、缺陷和读表集中管理</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="带有车辆自动提醒的任务列表" width="200"></a><br><sub><b>任务</b> – 自动提醒，例如车检和换轮胎，带快捷按钮</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="车辆页面：车牌、提醒和事件" width="200"></a><br><sub><b>车辆</b> – 车检、轮胎、加油和充电</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="储物条形码扫描：名称、分类、存放位置和保质期" width="200"></a><br><sub><b>扫描储物</b> – 扫描条形码，入库或用完</sub></td>
+  </tr>
+  <tr>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="每周预览：天气和未完成的任务" width="200"></a><br><sub><b>每周预览</b> – 天气和尚未完成的事项</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="每周预览：逐日显示清洁、垃圾日和付款" width="200"></a><br><sub><b>每周预览</b> – 逐日查看：清洁、垃圾、付款</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="上周回顾：含日历和任务的快捷入口" width="200"></a><br><sub><b>上周回顾</b> – 日程、餐食、支出——以及快捷入口</sub></td>
+  </tr>
+</table>
+
+</details>
+
+<sub>📁 <a href=".github/assets/screenshots">所有图片都在这个文件夹里</a></sub>
 
 <a id="what-pinn-does"></a>
 
@@ -99,6 +126,15 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 | 🧩 **其他功能** | 带可移动便签的家庭公告板、全局搜索、带自动同步的离线模式、深色模式、带个人 PIN 的 iPad 仪表板、访客账户、儿童锁。 |
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어和 🇷🇺 Русский**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
+
+## 1.121.1 新功能
+
+**更多截图**
+
+- 在“截图”下新增了可折叠的 **“显示更多截图”** 区域，再多七张图片：住宅、任务、车辆、扫描储物和每周预览（三张）。点击任意图片即可查看大图，并附有包含所有图片的文件夹链接。
+- 所有语言的 README（包括俄语）都有同样的图库。
+- App 本身的功能与之前完全相同，只有版本号和版本日志中的条目是新的。
+- 已更改：`index.html`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js` 以及所有 README。服务器端没有变化。安装方式照旧（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
 
 ## 1.121.0 新功能
 
@@ -140,16 +176,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - 下一步：俄语的后续阶段（通知、留言板、展望、标准名称 …）。
 - 已更改：`index.html`, `js/sprachen.js`, `js/fahrzeuge.js`, `js/versionslog.js`, `i18n/*.i18n.js`（所有语言，包括 `ru.i18n.js`）, `i18n/versionslog.en.js` —— 服务器端没有变化。照常安装（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
 
-## 1.120.6 新功能
-
-**俄语 – 第七阶段**
-
-- 已译成俄语：住所（租住、自有和出租的公寓与房屋、含向房东发出缺陷通知的缺陷记录、可拍照读数并带预测的表计、固定费用与贷款、装修与项目、维护计划、含花园年历的花园与植物、钥匙）以及文档（期限、保修与质保、提醒、多页文档、离线归档）——现已完成 6715 条文本中的 5230 条。
-- 已修复（所有语言）：文档表单中车辆的“已归档”、表计与维护中的“编号”和“上次”，以及自动文档标题中的“于”原本是写死的文本，现在会被翻译。
-- 在全部翻译完成之前，俄语仍然**隐藏**（可按 1.120.0 中的说明在单台设备上启用）。
-- 下一步：俄语的后续阶段（车辆、智能家居 …）。
-- 已更改：`index.html`, `js/sprachen.js`, `js/dokumente.js`, `js/zuhause.js`, `js/versionslog.js`, `i18n/*.i18n.js`（所有语言，包括 `ru.i18n.js`）, `i18n/versionslog.en.js` —— 服务器端没有变化。照常安装（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
-
 ## 1.120.0 新功能
 
 **俄语——第一阶段**
@@ -188,7 +214,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.121.0` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.121.1` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

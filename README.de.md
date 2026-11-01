@@ -49,11 +49,11 @@ An die Wand gehängt oder auf den Küchentisch gelegt: Das gemeinsame iPad zeigt
 <table>
   <tr>
     <td align="center" width="50%">
-      <img src=".github/assets/screenshots/dashboard.png" alt="pinn. Dashboard: die Profile der Familie zur Auswahl" width="400"><br>
+      <a href=".github/assets/screenshots/dashboard.png"><img src=".github/assets/screenshots/dashboard.png" alt="pinn. Dashboard: die Profile der Familie zur Auswahl" width="400"></a><br>
       <sub><b>Dashboard</b> – alle tippen auf ihr eigenes Bild, optional mit PIN</sub>
     </td>
     <td align="center" width="50%">
-      <img src=".github/assets/screenshots/ipad-overview.png" alt="pinn. Übersicht auf dem iPad mit Kacheln für Wetter, Kalender, Aufgaben und Familie" width="400"><br>
+      <a href=".github/assets/screenshots/ipad-overview.png"><img src=".github/assets/screenshots/ipad-overview.png" alt="pinn. Übersicht auf dem iPad mit Kacheln für Wetter, Kalender, Aufgaben und Familie" width="400"></a><br>
       <sub><b>Übersicht</b> – Wetter, Termine, Aufgaben, Essen und die Familie auf einen Blick</sub>
     </td>
   </tr>
@@ -65,16 +65,43 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 
 <table>
   <tr>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/home.png" alt="Startseite mit Wetter, Aufgaben und Terminen von heute" width="240"><br><sub><b>Übersicht</b> – dein Tag auf einen Blick</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/calendar.png" alt="Familienkalender in der Wochenansicht" width="240"><br><sub><b>Kalender</b> – iCloud und Google in einer Ansicht</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/meals.png" alt="Wochenplan mit Rezepten" width="240"><br><sub><b>Essen</b> – die Woche planen, mit einem Tipp einkaufen</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Startseite mit Wetter, Aufgaben und Terminen von heute" width="240"></a><br><sub><b>Übersicht</b> – dein Tag auf einen Blick</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Familienkalender in der Wochenansicht" width="240"></a><br><sub><b>Kalender</b> – iCloud und Google in einer Ansicht</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Wochenplan mit Rezepten" width="240"></a><br><sub><b>Essen</b> – die Woche planen, mit einem Tipp einkaufen</sub></td>
   </tr>
   <tr>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/lists.png" alt="Einkaufsliste nach Geschäft sortiert" width="240"><br><sub><b>Listen</b> – Einkauf, Vorrat, Packen</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/finance.png" alt="Budgetübersicht mit Ausgaben nach Kategorie" width="240"><br><sub><b>Finanzen</b> – Budget, Sparen, Taschengeld</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/kids.png" alt="Kinderseite mit dem Tagesablauf" width="240"><br><sub><b>Kinder</b> – ein spielerischer Tagesablauf</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Einkaufsliste nach Geschäft sortiert" width="240"></a><br><sub><b>Listen</b> – Einkauf, Vorrat, Packen</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Budgetübersicht mit Ausgaben nach Kategorie" width="240"></a><br><sub><b>Finanzen</b> – Budget, Sparen, Taschengeld</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Kinderseite mit dem Tagesablauf" width="240"></a><br><sub><b>Kinder</b> – ein spielerischer Tagesablauf</sub></td>
   </tr>
 </table>
+
+### Weitere Screens
+
+Ein Klick auf ein Bild öffnet es in voller Größe.
+
+<details>
+<summary><b>Weitere Screenshots anzeigen</b></summary>
+
+<br>
+
+<table>
+  <tr>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Zuhause-Seite mit Haus, monatlichen Kosten, Kredit und Kaufdaten" width="200"></a><br><sub><b>Zuhause</b> – Haus, Kosten, Kredit, Mängel und Zähler an einem Ort</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Aufgabenliste mit automatischen Fahrzeug-Erinnerungen" width="200"></a><br><sub><b>Aufgaben</b> – automatische Erinnerungen, z. B. an TÜV und Reifenwechsel, mit Direkt-Button</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Fahrzeugseite mit Kennzeichen, Hinweisen und Ereignissen" width="200"></a><br><sub><b>Fahrzeuge</b> – TÜV, Reifen, Tanken und Laden</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="Strichcode-Scanner für den Vorrat mit Name, Kategorie, Lagerort und Haltbarkeit" width="200"></a><br><sub><b>Vorrat scannen</b> – Strichcode scannen, einlagern oder verbrauchen</sub></td>
+  </tr>
+  <tr>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Wochenvorschau mit Wetter und offenen Aufgaben" width="200"></a><br><sub><b>Wochenvorschau</b> – Wetter und was noch offen ist</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Wochenvorschau Tag für Tag mit Putzen, Mülltag und Zahlungen" width="200"></a><br><sub><b>Wochenvorschau</b> – Tag für Tag: Putzen, Müll, Zahlungen</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Rückblick auf die letzte Woche mit Abkürzungen zu Kalender und Aufgaben" width="200"></a><br><sub><b>Letzte Woche kompakt</b> – Termine, Essen, Ausgaben – und Abkürzungen</sub></td>
+  </tr>
+</table>
+
+</details>
+
+<sub>📁 <a href=".github/assets/screenshots">Alle Bilder in einem Ordner</a></sub>
 
 <a id="what-pinn-does"></a>
 
@@ -99,6 +126,15 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
 | 🧩 **Und mehr** | Familien-Pinnwand mit verschiebbaren Zetteln, globale Suche, Offline-Modus mit automatischem Abgleich, Dunkelmodus, iPad-Dashboard mit Profil-PINs, Gastzugang, Kindersicherung. |
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 und 🇷🇺 Русский**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
+
+## Neu in 1.121.1
+
+**Mehr Screenshots**
+
+- Unter „Screenshots“ gibt es jetzt einen aufklappbaren Bereich **„Weitere Screenshots anzeigen“** mit sieben weiteren Bildern: Zuhause, Aufgaben, Fahrzeuge, Vorrat scannen und die Wochenvorschau (drei Bilder). Jedes Bild öffnet sich per Klick in voller Größe; der Ordner mit allen Bildern ist verlinkt.
+- Dieselbe Galerie steht in allen Sprach-READMEs, auch im russischen.
+- Die App selbst funktioniert unverändert – neu sind nur die Versionsnummer und der Eintrag im Versions-Log.
+- Geändert: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js` und alle READMEs. Am Server ändert sich nichts. Installation wie immer (`sudo sh pinn-*/pinn-setup.sh` oder per Update-Button).
 
 ## Neu in 1.121.0
 
@@ -140,16 +176,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Als Nächstes: weitere Etappen Russisch (Mitteilungen, Pinnwand, Ausblick, Standardnamen …).
 - Geändert: `index.html`, `js/sprachen.js`, `js/fahrzeuge.js`, `js/versionslog.js`, `i18n/*.i18n.js` (alle Sprachen, auch `ru.i18n.js`), `i18n/versionslog.en.js` – am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
 
-## Neu in 1.120.6
-
-**Russisch – siebte Etappe**
-
-- Ins Russische übersetzt: Zuhause (Wohnungen und Häuser zur Miete, im Eigentum und zur Vermietung, Mängel samt Mängelanzeige an den Vermieter, Zähler mit Ablesen per Foto und Prognose, Fixkosten und Kredit, Renovierung und Projekte, Wartungsplan, Garten und Pflanzen mit Gartenjahr, Schlüssel) und Dokumente (Fristen, Garantie und Gewährleistung, Erinnerungen, mehrseitige Dokumente, Offline-Ablage) – jetzt 5230 von 6715 Texten.
-- Behoben (alle Sprachen): „archiviert“ bei Fahrzeugen im Dokumentenformular, „Nr.“ und „zuletzt“ bei Zählern und Wartungen sowie „vom“ im automatischen Dokumenttitel waren fest eingebaute Texte und werden jetzt übersetzt.
-- Russisch bleibt **versteckt**, bis alles übersetzt ist (auf einem Gerät freischaltbar wie bei 1.120.0 beschrieben).
-- Als Nächstes: weitere Etappen Russisch (Fahrzeuge, Smarthome …).
-- Geändert: `index.html`, `js/sprachen.js`, `js/dokumente.js`, `js/zuhause.js`, `js/versionslog.js`, `i18n/*.i18n.js` (alle Sprachen, auch `ru.i18n.js`), `i18n/versionslog.en.js` – am Server ändert sich nichts. Einspielen wie gewohnt (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
-
 ## Neu in 1.120.0
 
 **Russisch – erste Etappe**
@@ -189,7 +215,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.121.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.121.1` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

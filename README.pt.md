@@ -49,11 +49,11 @@ Pendurado na parede ou apoiado na mesa da cozinha: o iPad compartilhado mostra a
 <table>
   <tr>
     <td align="center" width="50%">
-      <img src=".github/assets/screenshots/dashboard.png" alt="Painel do pinn.: os perfis da família para escolher" width="400"><br>
+      <a href=".github/assets/screenshots/dashboard.png"><img src=".github/assets/screenshots/dashboard.png" alt="Painel do pinn.: os perfis da família para escolher" width="400"></a><br>
       <sub><b>Painel</b> – cada um toca na própria foto, com PIN opcional</sub>
     </td>
     <td align="center" width="50%">
-      <img src=".github/assets/screenshots/ipad-overview.png" alt="Visão geral do pinn. no iPad com blocos de clima, calendário, tarefas e família" width="400"><br>
+      <a href=".github/assets/screenshots/ipad-overview.png"><img src=".github/assets/screenshots/ipad-overview.png" alt="Visão geral do pinn. no iPad com blocos de clima, calendário, tarefas e família" width="400"></a><br>
       <sub><b>Visão geral</b> – clima, compromissos, tarefas, refeições e a família num relance</sub>
     </td>
   </tr>
@@ -65,16 +65,43 @@ Sempre com você: o pinn. se instala em todo iPhone e celular Android como um ap
 
 <table>
   <tr>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/home.png" alt="Página inicial com clima, tarefas e compromissos de hoje" width="240"><br><sub><b>Visão geral</b> – o seu dia num relance</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/calendar.png" alt="Calendário da família na visualização semanal" width="240"><br><sub><b>Calendário</b> – iCloud e Google numa só visualização</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/meals.png" alt="Plano semanal de refeições com receitas" width="240"><br><sub><b>Refeições</b> – planeje a semana, faça as compras com um toque</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Página inicial com clima, tarefas e compromissos de hoje" width="240"></a><br><sub><b>Visão geral</b> – o seu dia num relance</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Calendário da família na visualização semanal" width="240"></a><br><sub><b>Calendário</b> – iCloud e Google numa só visualização</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Plano semanal de refeições com receitas" width="240"></a><br><sub><b>Refeições</b> – planeje a semana, faça as compras com um toque</sub></td>
   </tr>
   <tr>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/lists.png" alt="Lista de compras organizada por loja" width="240"><br><sub><b>Listas</b> – compras, despensa, mala</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/finance.png" alt="Visão geral do orçamento com gastos por categoria" width="240"><br><sub><b>Finanças</b> – orçamento, poupança, mesada</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/kids.png" alt="Página das crianças com a rotina diária" width="240"><br><sub><b>Crianças</b> – uma rotina diária divertida</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Lista de compras organizada por loja" width="240"></a><br><sub><b>Listas</b> – compras, despensa, mala</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Visão geral do orçamento com gastos por categoria" width="240"></a><br><sub><b>Finanças</b> – orçamento, poupança, mesada</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Página das crianças com a rotina diária" width="240"></a><br><sub><b>Crianças</b> – uma rotina diária divertida</sub></td>
   </tr>
 </table>
+
+### Mais telas
+
+Toque em qualquer imagem para abri-la em tamanho real.
+
+<details>
+<summary><b>Mostrar mais capturas</b></summary>
+
+<br>
+
+<table>
+  <tr>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Página da casa com o imóvel, custos mensais, financiamento e dados da compra" width="200"></a><br><sub><b>Casa</b> – casa, custos, financiamento, defeitos e medidores num só lugar</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Lista de tarefas com lembretes automáticos do veículo" width="200"></a><br><sub><b>Tarefas</b> – lembretes automáticos, p. ex. inspeção veicular e troca de pneus, com botão direto</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Página do veículo com placa, avisos e eventos" width="200"></a><br><sub><b>Veículos</b> – inspeção, pneus, abastecimento e recarga</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="Leitor de código de barras da despensa com nome, categoria, local e validade" width="200"></a><br><sub><b>Escanear a despensa</b> – escaneie o código de barras, guarde ou consuma</sub></td>
+  </tr>
+  <tr>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Prévia da semana com o tempo e as tarefas em aberto" width="200"></a><br><sub><b>Prévia da semana</b> – tempo e o que ainda está em aberto</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Prévia da semana dia a dia com limpeza, dia do lixo e pagamentos" width="200"></a><br><sub><b>Prévia da semana</b> – dia a dia: limpeza, lixo, pagamentos</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Resumo da semana passada com atalhos para calendário e tarefas" width="200"></a><br><sub><b>A semana passada em resumo</b> – compromissos, refeições, gastos – e atalhos</sub></td>
+  </tr>
+</table>
+
+</details>
+
+<sub>📁 <a href=".github/assets/screenshots">Todas as imagens numa pasta</a></sub>
 
 <a id="what-pinn-does"></a>
 
@@ -99,6 +126,15 @@ Sempre com você: o pinn. se instala em todo iPhone e celular Android como um ap
 | 🧩 **E mais** | Mural da família com notas móveis, busca global, modo offline com sincronização automática, modo escuro, painel no iPad com PINs de perfil, conta de convidado, bloqueio infantil. |
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 e 🇷🇺 Русский**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
+
+## Novidades da 1.121.1
+
+**Mais capturas**
+
+- Em «Capturas de tela» há agora uma área expansível **«Mostrar mais capturas»** com mais sete imagens: Casa, Tarefas, Veículos, Escanear a despensa e a prévia da semana (três imagens). Cada imagem abre em tamanho real com um clique, e a pasta com todas as imagens está vinculada.
+- A mesma galeria está em todos os README de idiomas, inclusive no russo.
+- O app funciona exatamente como antes – só o número da versão e a entrada no registro de versões são novos.
+- Alterados: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js` e todos os README. Nada muda no servidor. Instalação como sempre (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
 
 ## Novidades da 1.121.0
 
@@ -140,16 +176,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - A seguir: mais etapas do russo (notificações, mural, perspetivas, nomes padrão …).
 - Alterado: `index.html`, `js/sprachen.js`, `js/fahrzeuge.js`, `js/versionslog.js`, `i18n/*.i18n.js` (todos os idiomas, incluindo `ru.i18n.js`), `i18n/versionslog.en.js` – o servidor não muda. Instale como de costume (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
 
-## Novidades da 1.120.6
-
-**Russo – sétima etapa**
-
-- Traduzidos para russo: a casa (apartamentos e casas alugados, próprios e para alugar, defeitos com a notificação ao senhorio, medidores com leitura por foto e previsão, custos fixos e financiamento, reformas e projetos, plano de manutenção, jardim e plantas com o ano do jardim, chaves) e os documentos (prazos, garantia, lembretes, documentos de várias páginas, arquivo offline) – agora 5230 de 6715 textos.
-- Corrigido (todos os idiomas): «arquivado» nos veículos do formulário de documentos, «n.º» e «última vez» em medidores e manutenção e «de» no título automático do documento eram textos fixos e agora são traduzidos.
-- O russo continua **oculto** até tudo estar traduzido (dá para ativar em um dispositivo como descrito na 1.120.0).
-- A seguir: outras etapas do russo (veículos, casa inteligente …).
-- Alterados: `index.html`, `js/sprachen.js`, `js/dokumente.js`, `js/zuhause.js`, `js/versionslog.js`, `i18n/*.i18n.js` (todos os idiomas, incluindo `ru.i18n.js`), `i18n/versionslog.en.js` – nada muda no servidor. Instale como sempre (`sudo sh pinn-*/pinn-setup.sh` ou botão de atualização).
-
 ## Novidades da 1.120.0
 
 **Russo – primeira etapa**
@@ -188,7 +214,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.121.0` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.121.1` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

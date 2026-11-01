@@ -29,6 +29,7 @@ const PINN_CHANGELOG = [
       ['neu', 'Sprachsteuerung versteht jetzt auch Russisch („Добавь молоко и яйца в список покупок“, „Напомни завтра вынести мусор“, „Что в списке покупок?“, „Что запланировано на сегодня?“) und antwortet auf Russisch.'],
       ['fix', 'Kleinigkeiten: Die Sprachsteuerung erkennt doppelte Einträge jetzt auch bei kyrillischen Namen richtig; der Hinweis „Auch auf …“ unter der Sprachsteuerung nennt Russisch.'],
       ['info', 'Geändert: index.html, js/sprachen.js, js/region.js, js/fahrzeuge.js, js/familie.js, js/hinweise.js, js/zuhause.js, js/sprachsteuerung.js, js/versionslog.js, einrichtung.js, alle zehn Sprachdateien in i18n/, i18n/versionslog.en.js, am Server pb_hooks/pinn-sprache.js, -ausblick.js, -familie-geburtstag.js, -haustiere.js, -ortung.js, -wobistdu.js.'],
+      ['info', '1.121.1: Mehr Screenshots in der Projektbeschreibung auf GitHub – ein aufklappbarer Bereich „Weitere Screenshots“ mit Zuhause, Aufgaben, Fahrzeugen, Vorrat scannen und der Wochenvorschau, in allen Sprach-READMEs. Die App selbst bleibt unverändert. Geändert: index.html, js/sprachen.js, js/versionslog.js, i18n/versionslog.en.js – am Server ändert sich nichts'],
     ],
   },
   {

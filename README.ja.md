@@ -49,11 +49,11 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 <table>
   <tr>
     <td align="center" width="50%">
-      <img src=".github/assets/screenshots/dashboard.png" alt="pinn.のダッシュボード：選べる家族のプロフィール" width="400"><br>
+      <a href=".github/assets/screenshots/dashboard.png"><img src=".github/assets/screenshots/dashboard.png" alt="pinn.のダッシュボード：選べる家族のプロフィール" width="400"></a><br>
       <sub><b>ダッシュボード</b>：それぞれが自分の写真をタップ、PINは任意</sub>
     </td>
     <td align="center" width="50%">
-      <img src=".github/assets/screenshots/ipad-overview.png" alt="天気、カレンダー、タスク、家族のタイルを表示したiPadのpinn.概要" width="400"><br>
+      <a href=".github/assets/screenshots/ipad-overview.png"><img src=".github/assets/screenshots/ipad-overview.png" alt="天気、カレンダー、タスク、家族のタイルを表示したiPadのpinn.概要" width="400"></a><br>
       <sub><b>概要</b>：天気、予定、タスク、食事、家族がひと目でわかる</sub>
     </td>
   </tr>
@@ -65,16 +65,43 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 <table>
   <tr>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/home.png" alt="今日の天気、タスク、予定を表示したホーム画面" width="240"><br><sub><b>概要</b>：あなたの一日がひと目でわかる</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/calendar.png" alt="週表示の家族カレンダー" width="240"><br><sub><b>カレンダー</b>：iCloudとGoogleをひとつの画面で</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/meals.png" alt="レシピ付きの週間献立" width="240"><br><sub><b>食事</b>：一週間を計画して、ワンタップで買い物</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="今日の天気、タスク、予定を表示したホーム画面" width="240"></a><br><sub><b>概要</b>：あなたの一日がひと目でわかる</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="週表示の家族カレンダー" width="240"></a><br><sub><b>カレンダー</b>：iCloudとGoogleをひとつの画面で</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="レシピ付きの週間献立" width="240"></a><br><sub><b>食事</b>：一週間を計画して、ワンタップで買い物</sub></td>
   </tr>
   <tr>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/lists.png" alt="お店ごとに並べた買い物リスト" width="240"><br><sub><b>リスト</b>：買い物、ストック、荷造り</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/finance.png" alt="カテゴリ別の支出を示す予算の概要" width="240"><br><sub><b>家計</b>：予算、貯蓄、お小遣い</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/kids.png" alt="毎日の流れを表示した子どものページ" width="240"><br><sub><b>子ども</b>：楽しい毎日の流れ</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="お店ごとに並べた買い物リスト" width="240"></a><br><sub><b>リスト</b>：買い物、ストック、荷造り</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="カテゴリ別の支出を示す予算の概要" width="240"></a><br><sub><b>家計</b>：予算、貯蓄、お小遣い</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="毎日の流れを表示した子どものページ" width="240"></a><br><sub><b>子ども</b>：楽しい毎日の流れ</sub></td>
   </tr>
 </table>
+
+### そのほかの画面
+
+画像をタップすると大きく表示されます。
+
+<details>
+<summary><b>そのほかのスクリーンショットを表示</b></summary>
+
+<br>
+
+<table>
+  <tr>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="住宅、月々の費用、ローン、購入情報を表示した住まいのページ" width="200"></a><br><sub><b>住まい</b> – 住宅・費用・ローン・不具合・メーターを一か所に</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="車両の自動リマインダー付きタスク一覧" width="200"></a><br><sub><b>タスク</b> – 車検やタイヤ交換などの自動リマインダーとワンタップのボタン</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="ナンバー、通知、イベントを表示した車両ページ" width="200"></a><br><sub><b>車両</b> – 車検、タイヤ、給油と充電</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="名前、カテゴリ、保管場所、賞味期限を表示するストックのバーコードスキャン" width="200"></a><br><sub><b>ストックのスキャン</b> – バーコードを読み取って、しまう・使い切る</sub></td>
+  </tr>
+  <tr>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="天気と未完了のタスクを表示した週のプレビュー" width="200"></a><br><sub><b>週のプレビュー</b> – 天気とまだ終わっていないこと</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="掃除、ごみの日、支払いを日ごとに表示した週のプレビュー" width="200"></a><br><sub><b>週のプレビュー</b> – 日ごとに：掃除、ごみ、支払い</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="カレンダーとタスクへのショートカット付き先週のまとめ" width="200"></a><br><sub><b>先週のまとめ</b> – 予定、食事、支出——とショートカット</sub></td>
+  </tr>
+</table>
+
+</details>
+
+<sub>📁 <a href=".github/assets/screenshots">すべての画像はこのフォルダにあります</a></sub>
 
 <a id="what-pinn-does"></a>
 
@@ -99,6 +126,15 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 | 🧩 **そのほか** | 動かせるメモ付きの家族の掲示板、全体検索、自動同期付きのオフラインモード、ダークモード、プロフィールPIN付きのiPadダッシュボード、ゲストアカウント、チャイルドロック。 |
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
+
+## 1.121.1の新機能
+
+**スクリーンショットを追加**
+
+- 「スクリーンショット」の下に、折りたたみ式の **「そのほかのスクリーンショットを表示」** を追加しました。住まい、タスク、車両、ストックのスキャン、週のプレビュー（3枚）の7枚です。画像をクリックすると大きく表示され、すべての画像があるフォルダへのリンクも付いています。
+- 同じギャラリーをすべての言語のREADME（ロシア語を含む）に入れています。
+- アプリ自体の動作はこれまでと同じです。新しいのはバージョン番号とバージョンログの項目だけです。
+- 変更：`index.html`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、すべてのREADME。サーバー側の変更はありません。インストールはいつもどおり（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
 
 ## 1.121.0の新機能
 
@@ -140,16 +176,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - 次回：ロシア語の続きの段階（通知、掲示板、見通し、標準名 …）。
 - 変更：`index.html`, `js/sprachen.js`, `js/fahrzeuge.js`, `js/versionslog.js`, `i18n/*.i18n.js`（ru.i18n.jsを含む全言語）、`i18n/versionslog.en.js` – サーバーは変更なし。いつもどおりインストールしてください（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
 
-## 1.120.6の新機能
-
-**ロシア語 – 第7段階**
-
-- ロシア語に翻訳：住まい（賃貸・持ち家・賃貸に出している住宅、大家への不具合通知付きの不具合管理、写真で読み取れる予測付きメーター、固定費とローン、リフォームとプロジェクト、メンテナンス計画、ガーデンイヤー付きの庭と植物、鍵）と書類（期限、保証、リマインダー、複数ページの書類、オフライン保管）――これで6715件中5230件のテキストが完了。
-- 修正（全言語）：書類フォームの乗り物の「アーカイブ済み」、メーターとメンテナンスの「No.」と「前回」、書類タイトル自動生成の「の」が固定の文字だった問題を修正し、翻訳されるようにしました。
-- すべて翻訳されるまで、ロシア語は**非表示**のままです（1.120.0の説明どおり1台の端末で有効にできます）。
-- 次回：ロシア語の次の段階（乗り物、スマートホーム …）。
-- 変更：`index.html`, `js/sprachen.js`, `js/dokumente.js`, `js/zuhause.js`, `js/versionslog.js`, `i18n/*.i18n.js`（`ru.i18n.js`を含む全言語）, `i18n/versionslog.en.js` ――サーバー側の変更はありません。いつもどおりインストールしてください（`sudo sh pinn-*/pinn-setup.sh` またはアップデートボタン）。
-
 ## 1.120.0の新機能
 
 **ロシア語――第1段階**
@@ -188,7 +214,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.121.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.121.1`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

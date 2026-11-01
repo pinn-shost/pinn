@@ -47,11 +47,11 @@ Hung on the wall or lying on the kitchen table: the shared iPad shows the whole 
 <table>
   <tr>
     <td align="center" width="50%">
-      <img src=".github/assets/screenshots/dashboard.png" alt="pinn. dashboard: the family's profiles to choose from" width="400"><br>
+      <a href=".github/assets/screenshots/dashboard.png"><img src=".github/assets/screenshots/dashboard.png" alt="pinn. dashboard: the family's profiles to choose from" width="400"></a><br>
       <sub><b>Dashboard</b> – everyone taps their own picture, with an optional PIN</sub>
     </td>
     <td align="center" width="50%">
-      <img src=".github/assets/screenshots/ipad-overview.png" alt="pinn. overview on the iPad with tiles for weather, calendar, tasks and family" width="400"><br>
+      <a href=".github/assets/screenshots/ipad-overview.png"><img src=".github/assets/screenshots/ipad-overview.png" alt="pinn. overview on the iPad with tiles for weather, calendar, tasks and family" width="400"></a><br>
       <sub><b>Overview</b> – weather, appointments, tasks, meals and the family at a glance</sub>
     </td>
   </tr>
@@ -63,16 +63,43 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 
 <table>
   <tr>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/home.png" alt="Home page with weather, today's tasks and appointments" width="240"><br><sub><b>Overview</b> – your day at a glance</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/calendar.png" alt="Family calendar in week view" width="240"><br><sub><b>Calendar</b> – iCloud and Google in one view</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/meals.png" alt="Weekly meal plan with recipes" width="240"><br><sub><b>Meals</b> – plan the week, shop with one tap</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Home page with weather, today's tasks and appointments" width="240"></a><br><sub><b>Overview</b> – your day at a glance</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Family calendar in week view" width="240"></a><br><sub><b>Calendar</b> – iCloud and Google in one view</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Weekly meal plan with recipes" width="240"></a><br><sub><b>Meals</b> – plan the week, shop with one tap</sub></td>
   </tr>
   <tr>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/lists.png" alt="Shopping list sorted by shop" width="240"><br><sub><b>Lists</b> – shopping, pantry, packing</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/finance.png" alt="Budget overview with spending by category" width="240"><br><sub><b>Finance</b> – budget, savings, pocket money</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/kids.png" alt="Kids' page with the daily routine" width="240"><br><sub><b>Kids</b> – a playful daily routine</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Shopping list sorted by shop" width="240"></a><br><sub><b>Lists</b> – shopping, pantry, packing</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Budget overview with spending by category" width="240"></a><br><sub><b>Finance</b> – budget, savings, pocket money</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Kids' page with the daily routine" width="240"></a><br><sub><b>Kids</b> – a playful daily routine</sub></td>
   </tr>
 </table>
+
+### More screens
+
+Tap any picture to open it in full size.
+
+<details>
+<summary><b>Show more screenshots</b></summary>
+
+<br>
+
+<table>
+  <tr>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Home page with the house, monthly costs, loan and purchase details" width="200"></a><br><sub><b>Home</b> – house, costs, loan, defects and meters in one place</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Task list with automatic vehicle reminders" width="200"></a><br><sub><b>Tasks</b> – automatic reminders, e.g. inspection and tyre change, with a shortcut button</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Vehicle page with licence plate, notifications and events" width="200"></a><br><sub><b>Vehicles</b> – inspection, tyres, fuelling and charging</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="Barcode scanner for the pantry with name, category, storage location and best-before date" width="200"></a><br><sub><b>Pantry scan</b> – scan the barcode, put away or use up</sub></td>
+  </tr>
+  <tr>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Weekly preview with weather and open tasks" width="200"></a><br><sub><b>Weekly preview</b> – weather and what is still open</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Weekly preview, day by day with cleaning, bin day and payments" width="200"></a><br><sub><b>Weekly preview</b> – day by day: cleaning, bins, payments</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Summary of last week with shortcuts to calendar and tasks" width="200"></a><br><sub><b>Last week in brief</b> – events, meals, spending – and shortcuts</sub></td>
+  </tr>
+</table>
+
+</details>
+
+<sub>📁 <a href=".github/assets/screenshots">All pictures in one folder</a></sub>
 
 ## What pinn. does
 
@@ -95,6 +122,15 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
 | 🧩 **Everything else** | Family board with movable notes, global search, offline mode with automatic sync, dark mode, iPad dashboard with profile PINs, guest account, child lock. |
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 and 🇷🇺 Русский**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
+
+## What's new in 1.121.1
+
+**More screenshots**
+
+- Under “Screenshots” there is now a collapsible area **“Show more screenshots”** with seven more pictures: Home, Tasks, Vehicles, Pantry scan and the Weekly preview (three pictures). Every picture opens in full size when you click it, and the folder with all pictures is linked.
+- The same gallery is in every language README, including the Russian one.
+- The app itself works exactly as before – only the version number and the entry in the version log are new.
+- Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js` and all READMEs. Nothing changes on the server. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 ## What's new in 1.121.0
 
@@ -174,15 +210,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Next: further stages of Russian (finance, funds, depot, contracts …).
 - Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
-## What's new in 1.120.2
-
-**Russian – third stage**
-
-- Translated into Russian: the calendar (events, adding calendars, iCloud/Google), tasks, the household including taking turns, the meal plan, the overview with its tiles, weather and holiday weather, public and school holidays, search and profile pictures – now 1545 of 6714 texts.
-- Russian stays **hidden** until everything is translated (unlock on one device as described for 1.120.0).
-- Next: further stages of Russian (lists, pantry, recipes …).
-- Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – nothing changes on the server. Install as usual (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
 ## What's new in 1.120.0
 
 **Russian – first stage**
@@ -220,7 +247,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.121.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.121.1` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

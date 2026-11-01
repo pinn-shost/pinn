@@ -49,11 +49,11 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 <table>
   <tr>
     <td align="center" width="50%">
-      <img src=".github/assets/screenshots/dashboard.png" alt="pinn. 대시보드: 선택할 수 있는 가족 프로필" width="400"><br>
+      <a href=".github/assets/screenshots/dashboard.png"><img src=".github/assets/screenshots/dashboard.png" alt="pinn. 대시보드: 선택할 수 있는 가족 프로필" width="400"></a><br>
       <sub><b>대시보드</b>: 각자 자기 사진을 누르고, PIN은 선택 사항</sub>
     </td>
     <td align="center" width="50%">
-      <img src=".github/assets/screenshots/ipad-overview.png" alt="날씨, 캘린더, 할 일, 가족 타일이 있는 iPad의 pinn. 개요" width="400"><br>
+      <a href=".github/assets/screenshots/ipad-overview.png"><img src=".github/assets/screenshots/ipad-overview.png" alt="날씨, 캘린더, 할 일, 가족 타일이 있는 iPad의 pinn. 개요" width="400"></a><br>
       <sub><b>개요</b>: 날씨, 일정, 할 일, 식사, 가족을 한눈에</sub>
     </td>
   </tr>
@@ -65,16 +65,43 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 <table>
   <tr>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/home.png" alt="오늘의 날씨, 할 일, 일정이 있는 홈 화면" width="240"><br><sub><b>개요</b>: 오늘 하루를 한눈에</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/calendar.png" alt="주 보기의 가족 캘린더" width="240"><br><sub><b>캘린더</b>: iCloud와 Google을 한 화면에</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/meals.png" alt="레시피가 있는 주간 식단" width="240"><br><sub><b>식단</b>: 한 주를 계획하고 한 번에 장보기</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="오늘의 날씨, 할 일, 일정이 있는 홈 화면" width="240"></a><br><sub><b>개요</b>: 오늘 하루를 한눈에</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="주 보기의 가족 캘린더" width="240"></a><br><sub><b>캘린더</b>: iCloud와 Google을 한 화면에</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="레시피가 있는 주간 식단" width="240"></a><br><sub><b>식단</b>: 한 주를 계획하고 한 번에 장보기</sub></td>
   </tr>
   <tr>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/lists.png" alt="가게별로 정리한 장보기 목록" width="240"><br><sub><b>목록</b>: 장보기, 비축품, 짐 싸기</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/finance.png" alt="카테고리별 지출이 있는 예산 개요" width="240"><br><sub><b>가계</b>: 예산, 저축, 용돈</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/kids.png" alt="하루 일과가 있는 아이 페이지" width="240"><br><sub><b>아이</b>: 재미있는 하루 일과</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="가게별로 정리한 장보기 목록" width="240"></a><br><sub><b>목록</b>: 장보기, 비축품, 짐 싸기</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="카테고리별 지출이 있는 예산 개요" width="240"></a><br><sub><b>가계</b>: 예산, 저축, 용돈</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="하루 일과가 있는 아이 페이지" width="240"></a><br><sub><b>아이</b>: 재미있는 하루 일과</sub></td>
   </tr>
 </table>
+
+### 다른 화면
+
+이미지를 누르면 크게 볼 수 있어요.
+
+<details>
+<summary><b>스크린샷 더 보기</b></summary>
+
+<br>
+
+<table>
+  <tr>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="집, 월별 비용, 대출, 구입 정보가 있는 집 페이지" width="200"></a><br><sub><b>집</b> – 집, 비용, 대출, 하자, 계량기를 한곳에서</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="차량 자동 알림이 있는 할 일 목록" width="200"></a><br><sub><b>할 일</b> – 자동 알림(예: 차검과 타이어 교체)과 바로가기 버튼</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="번호판, 알림, 이벤트가 있는 차량 페이지" width="200"></a><br><sub><b>차량</b> – 차검, 타이어, 주유와 충전</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="이름, 카테고리, 보관 위치, 유통기한이 있는 비축품 바코드 스캔" width="200"></a><br><sub><b>비축품 스캔</b> – 바코드를 스캔해 보관하거나 소진</sub></td>
+  </tr>
+  <tr>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="날씨와 남은 할 일이 있는 주간 미리보기" width="200"></a><br><sub><b>주간 미리보기</b> – 날씨와 아직 남은 일</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="청소, 쓰레기 배출일, 결제를 하루씩 보여 주는 주간 미리보기" width="200"></a><br><sub><b>주간 미리보기</b> – 하루씩: 청소, 쓰레기, 결제</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="캘린더와 할 일로 가는 바로가기가 있는 지난주 요약" width="200"></a><br><sub><b>지난주 요약</b> – 일정, 식사, 지출 – 그리고 바로가기</sub></td>
+  </tr>
+</table>
+
+</details>
+
+<sub>📁 <a href=".github/assets/screenshots">모든 이미지는 이 폴더에 있어요</a></sub>
 
 <a id="what-pinn-does"></a>
 
@@ -99,6 +126,15 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 | 🧩 **그 밖에** | 옮길 수 있는 메모가 있는 가족 게시판, 전체 검색, 자동 동기화되는 오프라인 모드, 다크 모드, 프로필 PIN이 있는 iPad 대시보드, 손님 계정, 아이 보호 잠금. |
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
+
+## 1.121.1의 새 소식
+
+**스크린샷 추가**
+
+- “스크린샷” 아래에 접을 수 있는 **“스크린샷 더 보기”** 영역이 생겼고, 이미지 7장이 더 들어 있어요: 집, 할 일, 차량, 비축품 스캔, 주간 미리보기(3장). 이미지를 클릭하면 크게 열리고, 모든 이미지가 있는 폴더 링크도 있어요.
+- 같은 갤러리가 러시아어를 포함한 모든 언어 README에 들어 있어요.
+- 앱 자체는 이전과 똑같이 작동해요. 버전 번호와 버전 로그 항목만 새로워졌어요.
+- 변경: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, 모든 README. 서버는 바뀌지 않아요. 설치는 평소와 같아요(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
 
 ## 1.121.0의 새 소식
 
@@ -140,16 +176,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - 다음 예정: 러시아어의 이후 단계(알림, 게시판, 전망, 표준 이름 …).
 - 변경됨: `index.html`, `js/sprachen.js`, `js/fahrzeuge.js`, `js/versionslog.js`, `i18n/*.i18n.js`(ru.i18n.js 포함 모든 언어), `i18n/versionslog.en.js` – 서버는 변경 없음. 평소처럼 설치하세요(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
 
-## 1.120.6의 새 소식
-
-**러시아어 – 일곱 번째 단계**
-
-- 러시아어로 번역: 집(월세·자가·임대 주택, 집주인에게 보내는 하자 통보가 있는 하자 관리, 사진으로 읽고 예측하는 계량기, 고정비와 대출, 리모델링과 프로젝트, 유지보수 계획, 정원 달력이 있는 정원과 식물, 열쇠)과 문서(기한, 보증, 알림, 여러 쪽 문서, 오프라인 보관) – 이제 6715개 중 5230개 텍스트가 완료됐어요.
-- 수정(모든 언어): 문서 양식의 차량 “보관됨”, 계량기와 유지보수의 “번호”와 “마지막”, 문서 제목 자동 생성의 “날짜” 연결어가 고정 문구였던 문제를 고쳐 이제 번역돼요.
-- 모두 번역될 때까지 러시아어는 **숨겨져** 있어요(1.120.0에 설명한 대로 기기 한 대에서 켤 수 있어요).
-- 다음: 러시아어 다음 단계(차량, 스마트홈 …).
-- 변경: `index.html`, `js/sprachen.js`, `js/dokumente.js`, `js/zuhause.js`, `js/versionslog.js`, `i18n/*.i18n.js`(`ru.i18n.js` 포함 모든 언어), `i18n/versionslog.en.js` – 서버는 바뀌지 않아요. 평소처럼 설치하세요(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
-
 ## 1.120.0의 새 소식
 
 **러시아어 – 첫 단계**
@@ -188,7 +214,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.121.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.121.1` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -47,11 +47,11 @@ Accroché au mur ou posé sur la table de la cuisine : l’iPad partagé montre 
 <table>
   <tr>
     <td align="center" width="50%">
-      <img src=".github/assets/screenshots/dashboard.png" alt="Tableau de bord pinn. : les profils de la famille à choisir" width="400"><br>
+      <a href=".github/assets/screenshots/dashboard.png"><img src=".github/assets/screenshots/dashboard.png" alt="Tableau de bord pinn. : les profils de la famille à choisir" width="400"></a><br>
       <sub><b>Tableau de bord</b> – chacun touche sa propre photo, avec PIN facultatif</sub>
     </td>
     <td align="center" width="50%">
-      <img src=".github/assets/screenshots/ipad-overview.png" alt="Aperçu pinn. sur l’iPad avec des tuiles météo, calendrier, tâches et famille" width="400"><br>
+      <a href=".github/assets/screenshots/ipad-overview.png"><img src=".github/assets/screenshots/ipad-overview.png" alt="Aperçu pinn. sur l’iPad avec des tuiles météo, calendrier, tâches et famille" width="400"></a><br>
       <sub><b>Aperçu</b> – météo, rendez-vous, tâches, repas et la famille d’un coup d’œil</sub>
     </td>
   </tr>
@@ -63,16 +63,43 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 <table>
   <tr>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/home.png" alt="Page d’accueil avec la météo, les tâches et les rendez-vous du jour" width="240"><br><sub><b>Aperçu</b> – ta journée d’un coup d’œil</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/calendar.png" alt="Calendrier familial en vue semaine" width="240"><br><sub><b>Calendrier</b> – iCloud et Google dans une seule vue</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/meals.png" alt="Plan de repas de la semaine avec recettes" width="240"><br><sub><b>Repas</b> – planifier la semaine, faire les courses d’un toucher</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/home.png"><img src=".github/assets/screenshots/home.png" alt="Page d’accueil avec la météo, les tâches et les rendez-vous du jour" width="240"></a><br><sub><b>Aperçu</b> – ta journée d’un coup d’œil</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/calendar.png"><img src=".github/assets/screenshots/calendar.png" alt="Calendrier familial en vue semaine" width="240"></a><br><sub><b>Calendrier</b> – iCloud et Google dans une seule vue</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/meals.png"><img src=".github/assets/screenshots/meals.png" alt="Plan de repas de la semaine avec recettes" width="240"></a><br><sub><b>Repas</b> – planifier la semaine, faire les courses d’un toucher</sub></td>
   </tr>
   <tr>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/lists.png" alt="Liste de courses triée par magasin" width="240"><br><sub><b>Listes</b> – courses, stock, bagages</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/finance.png" alt="Aperçu du budget avec les dépenses par catégorie" width="240"><br><sub><b>Finances</b> – budget, épargne, argent de poche</sub></td>
-    <td align="center" width="33%"><img src=".github/assets/screenshots/kids.png" alt="Page enfant avec la routine quotidienne" width="240"><br><sub><b>Enfants</b> – une routine quotidienne ludique</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Liste de courses triée par magasin" width="240"></a><br><sub><b>Listes</b> – courses, stock, bagages</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Aperçu du budget avec les dépenses par catégorie" width="240"></a><br><sub><b>Finances</b> – budget, épargne, argent de poche</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Page enfant avec la routine quotidienne" width="240"></a><br><sub><b>Enfants</b> – une routine quotidienne ludique</sub></td>
   </tr>
 </table>
+
+### Plus d’écrans
+
+Touche une image pour l’ouvrir en taille réelle.
+
+<details>
+<summary><b>Afficher plus de captures</b></summary>
+
+<br>
+
+<table>
+  <tr>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/house.png"><img src=".github/assets/screenshots/house.png" alt="Page maison avec la maison, les coûts mensuels, le prêt et les données d’achat" width="200"></a><br><sub><b>Maison</b> – maison, coûts, prêt, défauts et compteurs au même endroit</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/tasks.png"><img src=".github/assets/screenshots/tasks.png" alt="Liste de tâches avec rappels automatiques du véhicule" width="200"></a><br><sub><b>Tâches</b> – rappels automatiques, p. ex. contrôle technique et changement de pneus, avec bouton direct</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/vehicles.png"><img src=".github/assets/screenshots/vehicles.png" alt="Page du véhicule avec plaque, notifications et événements" width="200"></a><br><sub><b>Véhicules</b> – contrôle technique, pneus, plein et recharge</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/scan_pantry.png"><img src=".github/assets/screenshots/scan_pantry.png" alt="Lecteur de code-barres pour le stock avec nom, catégorie, emplacement et date limite" width="200"></a><br><sub><b>Scanner le stock</b> – scanne le code-barres, range ou consomme</sub></td>
+  </tr>
+  <tr>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Aperçu de la semaine avec la météo et les tâches ouvertes" width="200"></a><br><sub><b>Aperçu de la semaine</b> – la météo et ce qui reste à faire</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Aperçu de la semaine jour par jour avec ménage, poubelles et paiements" width="200"></a><br><sub><b>Aperçu de la semaine</b> – jour par jour : ménage, poubelles, paiements</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Résumé de la semaine dernière avec raccourcis vers le calendrier et les tâches" width="200"></a><br><sub><b>La semaine dernière en bref</b> – rendez-vous, repas, dépenses – et raccourcis</sub></td>
+  </tr>
+</table>
+
+</details>
+
+<sub>📁 <a href=".github/assets/screenshots">Toutes les images dans un dossier</a></sub>
 
 ## Ce que fait pinn.
 
@@ -95,6 +122,15 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 | 🧩 **Tout le reste** | Tableau familial avec notes déplaçables, recherche globale, mode hors ligne avec synchronisation automatique, mode sombre, tableau de bord iPad avec PIN par profil, compte invité, contrôle parental. |
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 et 🇷🇺 Русский**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
+
+## Nouveautés de la 1.121.1
+
+**Plus de captures**
+
+- Sous « Captures d’écran », une zone dépliable **« Afficher plus de captures »** propose sept images de plus : Maison, Tâches, Véhicules, Scanner le stock et l’aperçu de la semaine (trois images). Chaque image s’ouvre en taille réelle d’un clic, et le dossier contenant toutes les images est lié.
+- La même galerie figure dans tous les README de langue, y compris le russe.
+- L’appli fonctionne exactement comme avant : seuls le numéro de version et l’entrée du journal des versions sont nouveaux.
+- Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js` et tous les README. Rien ne change côté serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
 ## Nouveautés de la 1.121.0
 
@@ -174,15 +210,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Ensuite : d’autres étapes du russe (finances, caisses, dépôt, contrats …).
 - Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou bouton de mise à jour).
 
-## Nouveautés de la 1.120.2
-
-**Russe – troisième étape**
-
-- Traduits en russe : le calendrier (événements, ajout de calendriers, iCloud/Google), les tâches, le ménage avec le tour de rôle, le planning des repas, l’aperçu et ses tuiles, la météo et la météo des vacances, jours fériés et vacances scolaires, la recherche et les photos de profil – désormais 1545 textes sur 6714.
-- Le russe reste **masqué** jusqu’à ce que tout soit traduit (activable sur un appareil comme décrit pour la 1.120.0).
-- Ensuite : d’autres étapes du russe (listes, provisions, recettes …).
-- Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou bouton de mise à jour).
-
 ## Nouveautés de la 1.120.0
 
 **Russe – première étape**
@@ -220,7 +247,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.121.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.121.1` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
