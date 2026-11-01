@@ -459,6 +459,32 @@ if (exists(path.join(HOOKS, 'pinn-pushtext.js'))) {
   }
 }
 
+// Voice control (pinn-sprache.js): Russian sentences (since 1.121.0), the other languages keep working
+if (exists(path.join(HOOKS, 'pinn-sprache.js'))) {
+  let vs = null;
+  test('pinn-sprache.js loads and still understands German and English', () => {
+    vs = loadModule('pinn-sprache.js', {});
+    return eq([vs.intentOf('Milch und Eier auf die Einkaufsliste').art, vs.intentOf('Add milk and eggs to the shopping list').items.length], ['kaufen', 2]);
+  });
+  if (vs) {
+    test('voice control in Russian: shopping list, quantities, list name, read list, task, day overview', () => {
+      const a = vs.intentOf('Добавь молоко и яйца в список покупок');
+      const b = vs.intentOf('Добавь две пачки макарон в список Пятёрочка');
+      const c = vs.intentOf('Добавь 2 кг картофеля и 1 литр молока в список покупок');
+      const t = vs.intentOf('Напомни завтра вынести мусор');
+      const bad = [];
+      if (a.art !== 'kaufen' || a.items.map(x => x.name).join() !== 'Молоко,Яйца') bad.push('add');
+      if (b.items[0].qty !== '2 пачки' || b.items[0].name !== 'Макароны' || b.laden !== 'Пятёрочка') bad.push('pack/list name');
+      if (c.items.map(x => x.qty + ' ' + x.name).join() !== '2 кг Картофель,1 л Молоко') bad.push('kg/litre');
+      if (vs.intentOf('Что в списке покупок').art !== 'liste' || vs.intentOf('Что нужно купить').art !== 'liste') bad.push('read list');
+      if (t.art !== 'aufgabe' || t.rest !== 'Вынести мусор' || !t.iso) bad.push('task');
+      if (vs.intentOf('Что запланировано на сегодня').offset !== 0 || vs.intentOf('Что у нас завтра').offset !== 1) bad.push('day');
+      if (vs.intentOf('Милая песня').art !== 'hilfe') bad.push('help');
+      return bad.length ? 'wrong: ' + bad.join(', ') : '';
+    });
+  }
+}
+
 r.info(tests + ' unit tests');
 
 r.done();

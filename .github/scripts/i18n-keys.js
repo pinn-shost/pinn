@@ -24,7 +24,7 @@
             only keys starting with one of the prefixes, if given (e.g. common. nav. settings.). Translate the
             texts in this file and write them back with "lang".
    lang     (since 1.120.0) reads { "<key>": "<text>" | { plural forms } | null } and writes only this language –
-            for a language that is translated step by step (Russian, hidden: true in js/sprachen.js). Plural forms,
+            for a language that is translated step by step (a language with hidden: true in js/sprachen.js; Russian until 1.120.9). Plural forms,
             placeholders and unknown keys are checked against English; the "#wg" variant is created as with put.
    set      writes one text as it is (a text starting with "{" is read as JSON, e.g. plural forms); no "#wg" variant
             is created – set "<key>#wg" by hand if needed.
