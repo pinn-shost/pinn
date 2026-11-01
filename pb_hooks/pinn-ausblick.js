@@ -118,7 +118,7 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -145,7 +145,11 @@ const MONTHS = {
     zh: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
     ja: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
     ko: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
+    ru: ["январь", "февраль", "март", "апрель", "май", "июнь", "июль", "август", "сентябрь", "октябрь", "ноябрь", "декабрь"],
 };
+// Russisch braucht für Datumsbereiche den Genitiv und für „im Monat“ den Präpositiv (die Liste oben ist der Nominativ)
+const MONTHS_RU_GEN = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
+const MONTHS_RU_PREP = ["январе", "феврале", "марте", "апреле", "мае", "июне", "июле", "августе", "сентябре", "октябре", "ноябре", "декабре"];
 function rangeText(lang, mondayIso) {
     const a = mondayIso.split("-").map(Number);
     const b = isoAddDays(mondayIso, 6).split("-").map(Number);
@@ -158,6 +162,10 @@ function rangeText(lang, mondayIso) {
     if (lang === "zh") return a[1] === b[1] ? (M[b[1] - 1] + a[2] + "日–" + b[2] + "日") : (M[a[1] - 1] + a[2] + "日–" + M[b[1] - 1] + b[2] + "日");
     if (lang === "ja") return a[1] === b[1] ? (M[b[1] - 1] + a[2] + "日～" + b[2] + "日") : (M[a[1] - 1] + a[2] + "日～" + M[b[1] - 1] + b[2] + "日");
     if (lang === "ko") return a[1] === b[1] ? (M[b[1] - 1] + " " + a[2] + "일~" + b[2] + "일") : (M[a[1] - 1] + " " + a[2] + "일~" + M[b[1] - 1] + " " + b[2] + "일");
+    if (lang === "ru") {
+        const from = (a[2] === 2 ? "со " : "с ") + a[2];   // „со 2 по 8 ноября“ (read as „со второго“)
+        return a[1] === b[1] ? (from + " по " + b[2] + " " + MONTHS_RU_GEN[b[1] - 1]) : (from + " " + MONTHS_RU_GEN[a[1] - 1] + " по " + b[2] + " " + MONTHS_RU_GEN[b[1] - 1]);
+    }
     return a[1] === b[1] ? ("du " + a[2] + " au " + b[2] + " " + M[b[1] - 1]) : ("du " + a[2] + " " + M[a[1] - 1] + " au " + b[2] + " " + M[b[1] - 1]);
 }
 function weekMessage(lang, mondayIso) {
@@ -170,6 +178,7 @@ function weekMessage(lang, mondayIso) {
     if (lang === "zh") return { titel: "🗓️ 你们的一周来了", text: r + "的日程、任务、餐食等——一目了然。" };
     if (lang === "ja") return { titel: "🗓️ 今週の予定が届きました", text: r + "の予定、タスク、食事など – ひと目でわかります。" };
     if (lang === "ko") return { titel: "🗓️ 이번 주가 준비됐어요", text: r + "의 일정, 할 일, 식사 등 – 한눈에 확인하세요." };
+    if (lang === "ru") return { titel: "🗓️ Ваша неделя готова", text: "События, задачи, питание и многое другое на период " + r + " – всё на одном экране." };
     return { titel: "🗓️ Your week is ready", text: "Events, tasks, meals and more for " + r + " – all at a glance." };
 }
 function monthMessage(lang, key) {
@@ -184,6 +193,7 @@ function monthMessage(lang, key) {
     if (lang === "zh") return { titel: "💶 财务展望：" + next, text: "接下来" + next + "有什么——以及" + prev + "的情况。" };
     if (lang === "ja") return { titel: "💶 家計の見通し：" + next, text: next + "の予定と、" + prev + "の振り返り。" };
     if (lang === "ko") return { titel: "💶 재정 전망: " + next, text: next + "에 예정된 일 – 그리고 " + prev + "은 어땠는지." };
+    if (lang === "ru") return { titel: "💶 Финансовый прогноз: " + next, text: "Что ждёт в " + MONTHS_RU_PREP[m - 1] + " – и как прошёл " + prev + "." };
     return { titel: "💶 Finance outlook: " + next.charAt(0).toUpperCase() + next.slice(1), text: "What's coming up in " + next + " – and how " + prev + " went." };
 }
 

@@ -2065,7 +2065,7 @@ function langOfUser(userId) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign($app.findRecordById(USERS, userId)).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -2097,6 +2097,8 @@ const LADEN_TEXT = {
           geplant: "予定：{titel}", tipp1: "タップすると買い物リストを開きます。", tippN: "タップすると買い物リストを開きます。", und: "と" },
     ko: { bei: "{laden}에 있어요", frage: "장 볼까요?", artikel1: "목록에 1개", artikel: "목록에 {n}개",
           geplant: "계획: {titel}", tipp1: "여기를 탭하면 장보기 목록이 열려요.", tippN: "여기를 탭하면 장보기 목록이 열려요.", und: ", " },
+    ru: { bei: "Вы здесь: {laden}", frage: "идёте за покупками?", artikel1: "в списке 1 позиция", artikel: "в списке позиций: {n}",
+          geplant: "Запланировано: {titel}", tipp1: "Нажмите, чтобы открыть список покупок.", tippN: "Нажмите, чтобы открыть списки покупок.", und: " и " },
 };
 function ladenPushText(lang, items, geraetId) {
     const T = LADEN_TEXT[lang] || LADEN_TEXT.en;

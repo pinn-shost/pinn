@@ -13,14 +13,14 @@
 // placeholders are filled by pinn-textkern.js – the same table the app uses. A flat share uses the variant
 // "<key>#wg" of the language file (created by .github/scripts/i18n-keys.js from the TERMS of js/sprachen.js).
 //
-//  - Language: from the profile (personal design, value "sprache": de, en, fr, es, it, pt, zh, ja, ko). Without one: German.
+//  - Language: from the profile (personal design, value "sprache": de, en, fr, es, it, pt, zh, ja, ko, ru). Without one: German.
 //  - Household type: from the family settings (field "wohnform": 'familie' or 'wg'). Only this one field is read
 //    via SQL (json_extract), not the big family data; the result stays cached until the family data changes.
 //  - Freely entered content (names, event titles, note texts, addresses) stays unchanged. Whatever matches no
 //    pattern stays as it is (German, or already translated by the module itself) – an unknown message is never lost.
 //    For a flat share such texts still get the flat share terms (applyTerms, same rules as TERMS in js/sprachen.js).
 
-const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko"];
+const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru"];
 
 // ---------------------------------------------------------------------------------------------
 // Language and household type of the recipient
@@ -64,6 +64,12 @@ function wohnformOf(familyId) {
 function cap(up, s) { return up ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
 const FAM_EMOJI = /\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67(?:\u200D\uD83D\uDC66)?/g;
 const WG_EMOJI = "\uD83E\uDDD1\u200D\uD83E\uDD1D\u200D\uD83E\uDDD1";
+// Russian (since 1.120.9): the endings of "член семьи" / "семья" / "семейный" map case by case to "сосед" / "квартира" / "общий"
+// (same tables as .github/scripts/i18n-keys.js). The pattern engine of PocketBase has no Unicode lookbehind and no \p{L},
+// so the rules use explicit Cyrillic classes: a captured character in front (re-inserted) and a lookahead behind the word.
+const RU_NEIGHBOUR = { "": "", "а": "а", "у": "у", "ом": "ом", "е": "е", "ы": "и", "ов": "ей", "ам": "ям", "ами": "ями", "ах": "ях" };
+const RU_FLAT = { "ья": "а", "ьи": "ы", "ье": "е", "ью": "у", "ьёй": "ой", "ьей": "ой", "ей": "", "ьям": "ам", "ьями": "ами", "ьях": "ах" };
+const RU_COMMON = { "ый": "ий", "ая": "ая", "ое": "ее", "ые": "ие", "ого": "его", "ому": "ему", "ой": "ей", "ом": "ем", "ых": "их", "ым": "им", "ую": "ую", "ыми": "ими" };
 const TERMS = {
     de: { keep: /Familienstammbuch|Familienkutsche/g, rules: [
         [/\b([Jj])edes Familienmitglied\b/g, "$1eder Mitbewohner"],
@@ -161,8 +167,16 @@ const TERMS = {
         [/가족으로/g, "셰어하우스로"],
         [/가족/g, "셰어하우스"],
     ] },
+    ru: { keep: /[Сс]емейн[А-Яа-яЁё]*\s+(?:врач|автомобил|бюджет)[А-Яа-яЁё]*/g, rules: [
+        [/(^|[^А-Яа-яЁё0-9])([Чч])лен(|а|у|ом|е|ы|ов|ам|ами|ах)(\s+(?:вашей|твоей|нашей|этой|своей|всей)?\s*)семьи(?![А-Яа-яЁё0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "Ч", "сосед" + RU_NEIGHBOUR[end])],
+        [/(^|[^А-Яа-яЁё0-9])([Сс])ем(ья|ьи|ье|ью|ьёй|ьей|ей|ьям|ьями|ьях)(?![А-Яа-яЁё0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "С", "квартир" + RU_FLAT[end])],
+        [/(^|[^А-Яа-яЁё0-9])([Сс])емейн(ый|ая|ое|ые|ого|ому|ой|ом|ых|ым|ую|ыми)(?![А-Яа-яЁё0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "С", "общ" + RU_COMMON[end])],
+    ] },
 };
-const TERM_HINT = /[Ff]amil|[Ff]am\u00EDli|[Ff]amigli|\u5BB6\u5EAD|\u5168\u5BB6|\u5BB6\u65CF|\uAC00\uC871|\uD83D\uDC68\u200D\uD83D\uDC69/;
+const TERM_HINT = /[Ff]amil|[Ff]am\u00EDli|[Ff]amigli|\u5BB6\u5EAD|\u5168\u5BB6|\u5BB6\u65CF|\uAC00\uC871|\uD83D\uDC68\u200D\uD83D\uDC69|[\u0421\u0441]\u0435\u043C|[\u0427\u0447]\u043B\u0435\u043D/;
 function applyTerms(s, lang) {
     const T = TERMS[lang] || TERMS.de;
     if (!s || !TERM_HINT.test(s)) return s;

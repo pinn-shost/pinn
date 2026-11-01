@@ -95,6 +95,15 @@ Toujours avec toi : pinn. s’installe sur chaque iPhone et téléphone Android 
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 et 🇰🇷 한국어**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.120.9
+
+**Russe – dixième étape : notifications push**
+
+- Traduit en russe : toutes les notifications push du serveur (147 textes) – résumé du jour, rendez-vous, tâches, demandes de récompense, anniversaires, animaux, courses, SOS, localisation, « Où es-tu ? », listes de bagages, aperçu de la semaine et perspectives financières, tableau d’affichage, documents, contrats et réserve – y compris avec le vocabulaire de colocation. Le russe est ainsi complet : 6712 textes sur 6712.
+- Le serveur envoie désormais les notifications push en russe (jusqu’ici un profil russe les recevait en anglais) : le module des textes push connaît le russe (trois formes de pluriel, termes de colocation en cyrillique), tout comme les textes des anniversaires, animaux, courses, « Où es-tu ? », listes de bagages, perspectives hebdomadaires et mensuelles et demandes de récompense.
+- Le russe reste **masqué** pour l’instant (activable sur un appareil comme décrit pour la 1.120.0). Prochainement : activer le russe pour tout le monde.
+- Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-pushtext.js`, `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-familie-geburtstag.js`, `pb_hooks/pinn-haustiere.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-wobistdu.js`, `pb_hooks/pinn-packliste.js`, `pb_hooks/pinn-aufgaben.js`, `.github/`. Installe comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
+
 ## Nouveautés de la 1.120.8
 
 **Russe – neuvième étape**
@@ -183,17 +192,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Ensuite : les étapes suivantes du russe (calendrier, tâches, ménage …).
 - Modifié : `index.html`, `js/sprachen.js`, `js/einrichten.js`, `js/exportieren.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, `i18n/ru.i18n.js` (nouveau), `i18n/versionslog.en.js`, `pb_hooks/pinn-einrichtung.js`, `.github/`. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou bouton de mise à jour).
 
-## Nouveautés de la 1.119.3
-
-**Grand ménage : l’ancien traducteur a disparu**
-
-- Tous les textes de pinn. viennent désormais directement des fichiers de langue dans `i18n/`. Les anciens dictionnaires (dossier `pb_public/lang/`, environ 4 Mo) et le traducteur qui réécrivait l’écran pendant l’utilisation sont supprimés : pinn. démarre plus vite et utilise moins de mémoire, surtout sur les téléphones et tablettes plus anciens.
-- La mise à jour déplace les anciens fichiers vers `_alt/<date>/` sur le NAS (rien n’est supprimé) et retire le dossier vide `lang/`.
-- Petits détails : la date et l’heure sur l’écran d’accueil, le dashboard, la vue semaine, les Finances et « Maison » sont directement au format de ta langue ; « Enregistré » dans les réglages de l’aperçu est traduit ; en colocation, le menu, la tuile d’aperçu et les réglages affichent l’icône 🧑‍🤝‍🧑 ; les textes que tu as écrits toi-même (p. ex. une note « Hallo Familie » sur le tableau) ne sont plus modifiés en colocation.
-- Pour les contributeurs : `check-lang.js`, `translate.js` et le workflow « Translate » disparaissent ; `i18n-keys.js` écrit désormais les nouveaux textes dans chaque langue (`put`, `set`, `remove`, `format`).
-- Ensuite : le russe, étape par étape (masqué jusqu’à ce qu’il soit complet).
-- Modifié : `index.html`, `js/sprachen.js`, `js/zustand.js`, `js/uebersicht.js`, `js/familie.js`, `js/listen.js`, `js/sterne.js`, `js/ausblick.js`, `js/grundlagen.js`, `js/profilauswahl.js`, `js/wohnort.js`, `js/finanzen.js`, `js/einstellungen.js`, `js/smarthome.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pinn-setup.sh`, `.github/` – supprimé : `pb_public/lang/` – rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou bouton de mise à jour).
-
 ## Comment ça marche
 
 ```mermaid
@@ -220,7 +218,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.120.8` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.120.9` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

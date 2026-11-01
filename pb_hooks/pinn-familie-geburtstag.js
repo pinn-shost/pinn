@@ -115,7 +115,7 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -130,7 +130,7 @@ function langOf(u) {
 }
 function joinNames(lang, names) {
     if (names.length <= 1) return names[0] || "";
-    const und = { de: " und ", en: " and ", fr: " et ", es: " y ", it: " e ", pt: " e ", zh: "和", ja: "と", ko: ", " }[lang] || " and ";
+    const und = { de: " und ", en: " and ", fr: " et ", es: " y ", it: " e ", pt: " e ", zh: "和", ja: "と", ko: ", ", ru: " и " }[lang] || " and ";
     return names.slice(0, -1).join(", ") + und + names[names.length - 1];
 }
 function message(lang, list) {
@@ -145,6 +145,8 @@ function message(lang, list) {
         if (lang === "zh") return { titel: "🎂 今天是 " + n + " 的生日！", text: (b.alter ? n + " 今天满 " + b.alter + " 岁。" : "") + "别忘了送上祝福 🎉" };
         if (lang === "ja") return { titel: "🎂 今日は" + n + "の誕生日です！", text: (b.alter ? n + "は今日で" + b.alter + "歳になります。" : "") + "お祝いを忘れずに 🎉" };
         if (lang === "ko") return { titel: "🎂 오늘은 " + n + "님의 생일이에요!", text: (b.alter ? n + "님이 오늘 " + b.alter + "살이 돼요. " : "") + "축하 인사 잊지 마세요 🎉" };
+        // Russian: names are never declined, ages are written as an ordinal ("25-й день рождения") to avoid the plural of "год/года/лет"
+        if (lang === "ru") return { titel: "🎂 Сегодня день рождения: " + n + "!", text: (b.alter ? "Отмечает " + b.alter + "-й день рождения. " : "") + "Не забудьте поздравить 🎉" };
         return { titel: "🎂 It's " + n + "'s birthday today!", text: (b.alter ? n + " turns " + b.alter + " today. " : "") + "Don't forget to say happy birthday 🎉" };
     }
     const names = joinNames(lang, list.map(b => b.name));
@@ -156,6 +158,7 @@ function message(lang, list) {
     if (lang === "zh") return { titel: "🎂 今天过生日的人：" + names, text: "别忘了送上祝福 🎉" };
     if (lang === "ja") return { titel: "🎂 今日が誕生日の人：" + names, text: "お祝いを忘れずに 🎉" };
     if (lang === "ko") return { titel: "🎂 오늘 생일인 사람: " + names, text: "축하 인사 잊지 마세요 🎉" };
+    if (lang === "ru") return { titel: "🎂 Сегодня день рождения: " + names, text: "Не забудьте поздравить 🎉" };
     return { titel: "🎂 Birthdays today: " + names, text: "Don't forget to say happy birthday 🎉" };
 }
 
