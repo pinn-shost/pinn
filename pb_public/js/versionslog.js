@@ -29,6 +29,8 @@ const PINN_CHANGELOG = [
       ['info', 'Geändert: index.html, js/sprachen.js, js/speichern.js, js/versionslog.js, i18n/versionslog.en.js, pb_hooks/pinn-bereiche.js, pinn-schema.js, pinn-kassen.js, pinn-smarthome.js und alle READMEs.'],
       ['fix', '1.122.1: Sicherheit – Fundstellen des GitHub-Codescanners behoben: Texte aus Eingabefeldern (Namen, Avatare, Reaktionen, Fotoadressen) werden überall sicher in die Seite eingesetzt, auch in Anführungszeichen; der Zwischenspeicher der Geburtstage liegt nicht mehr im Klartext in localStorage; neue Termine bekommen ihre Kennung aus dem sicheren Zufallsgenerator; die Google-Prüfung der Kalender-Freigabe, die Erkennung von Einkaufs-Nachrichten und das Zusammenführen alter Daten sind abgesichert. Das Aussehen ändert sich nicht.'],
       ['info', '1.122.1 geändert: index.html, js/grundlagen.js, js/mitglieder.js, js/pinnwand.js, js/sprachen.js, js/einkaufseingabe.js, js/geburtstage.js, js/versionslog.js, i18n/versionslog.en.js, pb_hooks/pinn-kalender.js, calendar-sync.js, pinn-google.js, pinn-ki.js, pinn-bereiche.js, pinn-kassen.js, .github/scripts/common.js, check-hooks.js und alle READMEs.'],
+      ['fix', '1.122.2: Sicherheit – letzte Meldung des GitHub-Codescanners behoben: der ungenutzte Weg, Markup aus den Sprachdateien in die Seite einzusetzen (data-tk-html), ist entfernt; Texte aus den Sprachdateien werden nur noch als reiner Text gesetzt. Sichtbar ändert sich nichts.'],
+      ['info', '1.122.2 geändert: index.html, js/sprachen.js, js/versionslog.js, i18n/versionslog.en.js und alle READMEs.'],
     ],
   },
   {

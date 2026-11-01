@@ -127,6 +127,14 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 e 🇷🇺 Русский**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.122.2
+
+**Correção de segurança**
+
+- **Corrigido o último alerta do verificador de código do GitHub.** O caminho sem uso para inserir marcação dos arquivos de idioma na página (`data-tk-html`) foi removido; os textos dos arquivos de idioma agora são inseridos apenas como texto simples.
+- Nada muda visualmente.
+- Alterados: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js` e todos os README. Instalação como sempre (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
+
 ## Novidades da 1.122.1
 
 **Correções de segurança**
@@ -174,17 +182,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - O russo continua **oculto** por enquanto (ativável em um dispositivo como descrito na 1.120.0). Próximos passos: ativar o russo para todos.
 - Alterado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-pushtext.js`, `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-familie-geburtstag.js`, `pb_hooks/pinn-haustiere.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-wobistdu.js`, `pb_hooks/pinn-packliste.js`, `pb_hooks/pinn-aufgaben.js`, `.github/`. Instale como de costume (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
 
-## Novidades da 1.120.8
-
-**Russo – nona etapa**
-
-- Traduzido para russo: o sino de notificações (atividade da família, caminhos para casa, compras, SOS), o mural (notas, listas, enquetes, contagens regressivas, agradecimentos, fotos, arquivo), as perspectivas (prévia da semana e perspectiva financeira mensal), o controle por voz (atalho da Siri, HTTP Shortcuts), a leitura de PDFs e cupons, os nomes das categorias padrão, locais de armazenamento, unidades, aparelhos, caixas e tipos de lixo, além das mensagens do servidor – agora 6565 de 6712 textos.
-- Melhorado (todos os idiomas): os pequenos contadores da prévia da semana («3 compromissos», «2 tarefas» …) agora são textos completos com formas de plural próprias (o russo precisa disso) – cinco textos novos substituem nove antigos.
-- O russo continua **oculto** até que tudo esteja traduzido (ativável em um dispositivo como descrito na 1.120.0).
-- Próximos passos: a última etapa do russo (notificações push do servidor) e a ativação do russo.
-- Alterado: `index.html`, `js/sprachen.js`, `js/ausblick.js`, `js/versionslog.js`, `i18n/*.i18n.js` (todos os idiomas, incluindo `ru.i18n.js`), `i18n/versionslog.en.js` – no servidor nada muda. Instale como de costume (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
-
-
 ## Como funciona
 
 ```mermaid
@@ -213,7 +210,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.122.1` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.122.2` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

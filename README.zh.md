@@ -127,6 +127,14 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어和 🇷🇺 Русский**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.122.2 新功能
+
+**安全修复**
+
+- **GitHub 代码扫描的最后一处问题已修复。** 从语言文件向页面插入标记的未使用途径（`data-tk-html`）已移除；语言文件中的文字现在只会作为纯文本设置。
+- 外观没有任何变化。
+- 已更改：`index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js` 以及所有 README。安装方式照旧（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
+
 ## 1.122.1 新功能
 
 **安全修复**
@@ -174,17 +182,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - 俄语暂时仍然**隐藏**（可按 1.120.0 中的说明在单台设备上启用）。下一步：向所有人启用俄语。
 - 已更改：`index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-pushtext.js`, `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-familie-geburtstag.js`, `pb_hooks/pinn-haustiere.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-wobistdu.js`, `pb_hooks/pinn-packliste.js`, `pb_hooks/pinn-aufgaben.js`, `.github/`。照常安装（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
 
-## 1.120.8 新功能
-
-**俄语 – 第九阶段**
-
-- 已译成俄语：通知铃铛（家人动态、回家路上、购物、SOS）、留言板（便签、清单、投票、倒计时、感谢、照片、归档）、展望（每周预览和每月财务展望）、语音控制（Siri 快捷指令、HTTP Shortcuts）、PDF 和小票的读取、标准类别、存放位置、单位、设备、账户和垃圾类型的名称，以及服务器消息——现已完成 6712 条文本中的 6565 条。
-- 已改进（所有语言）：每周预览中的小计数（“3 个日程”“2 个任务” …）现在是带各自复数形式的完整文本（俄语需要）——五条新文本取代九条旧文本。
-- 在全部翻译完成之前，俄语仍然**隐藏**（可按 1.120.0 中的说明在单台设备上启用）。
-- 下一步：俄语的最后阶段（服务器的推送通知）以及启用俄语。
-- 已更改：`index.html`, `js/sprachen.js`, `js/ausblick.js`, `js/versionslog.js`, `i18n/*.i18n.js`（所有语言，包括 `ru.i18n.js`）, `i18n/versionslog.en.js` —— 服务器端没有变化。照常安装（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
-
-
 ## 工作原理
 
 ```mermaid
@@ -213,7 +210,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.122.1` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.122.2` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
