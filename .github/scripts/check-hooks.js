@@ -64,6 +64,9 @@ function callerLine(file) {
   return n ? file + ':' + n[1] : file;
 }
 
+// Escapes every character with a special meaning in a regular expression (backslash included)
+function reEscape(text) { return String(text).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&'); }
+
 const PB_NAMES = ['$app', '$apis', '$os', '$http', '$security', '$dbx', '$filesystem', '$mails', '$template', '$tokens',
   'DynamicModel', 'Record', 'Collection', 'ApiError', 'BadRequestError', 'NotFoundError', 'ForbiddenError',
   'UnauthorizedError', 'TooManyRequestsError', 'InternalServerError', 'MailerMessage', 'Cookie', 'SubscriptionMessage',
@@ -220,11 +223,11 @@ filesIn('pb_hooks', n => n.endsWith('.js')).forEach(file => {
     const alias = m[2], mod = m[3] || m[4];
     let scopeFrom = m.index;
     if (!m[1]) { // plain assignment: the variable was declared earlier (let x = null; … x = require(…))
-      const decl = bare.slice(0, m.index).search(new RegExp(String.raw`(?:let|var)\s+` + alias.replace(/\$/g, '\\$') + String.raw`\b(?![\s\S]*(?:let|var)\s+` + alias.replace(/\$/g, '\\$') + String.raw`\b)`));
+      const decl = bare.slice(0, m.index).search(new RegExp(String.raw`(?:let|var)\s+` + reEscape(alias) + String.raw`\b(?![\s\S]*(?:let|var)\s+` + reEscape(alias) + String.raw`\b)`));
       if (decl >= 0) scopeFrom = decl;
     }
     const end = blockEnd(bare, scopeFrom);
-    const use = new RegExp(String.raw`(?<![\w$.])` + alias.replace(/\$/g, '\\$') + String.raw`\s*\.\s*([A-Za-z_$][\w$]*)`, 'g');
+    const use = new RegExp(String.raw`(?<![\w$.])` + reEscape(alias) + String.raw`\s*\.\s*([A-Za-z_$][\w$]*)`, 'g');
     use.lastIndex = m.index + m[0].length;
     let u;
     while ((u = use.exec(bare)) && u.index < end) check([mod], u[1], u.index);

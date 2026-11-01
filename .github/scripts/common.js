@@ -46,7 +46,7 @@ function lineOf(text, index) { return text.slice(0, index).split('\n').length; }
 // The inline <script> blocks of an HTML file (no src, JavaScript only) with their first line number
 function inlineScripts(html) {
   const out = [];
-  const re = /<script\b([^>]*)>([\s\S]*?)<\/script>/gi;
+  const re = /<script\b([^>]*)>([\s\S]*?)<\/script[^>]*>/gi;
   let m;
   while ((m = re.exec(html))) {
     const attrs = m[1];
