@@ -134,7 +134,7 @@ window.PINN_LANGUAGES = [
 
   // Raise with every change to a text file in i18n/, otherwise devices keep using the old file.
   // .github/scripts/check-keys.js makes sure it matches src/version.txt.
-  var FILE_VERSION = '1.122.0';
+  var FILE_VERSION = '1.122.1';
 
   // Invisible until the texts are in place (no short flash of English placeholder texts)
   var style = document.createElement('style');
@@ -184,6 +184,25 @@ window.PINN_LANGUAGES = [
     return K ? K.text(e, code, vals) : (typeof e === 'string' ? e : '');
   }
   function has(key) { return keyEntry(key) !== undefined; }
+  // Puts markup from the language file into an element without assigning innerHTML: the markup is parsed in an
+  // inert document, scripts, embedded content, event handlers and script URLs are removed, then the nodes move over.
+  var MARKUP_BAD_TAGS = /^(script|style|iframe|frame|frameset|object|embed|link|meta|base|form|svg|math|template|noscript)$/i;
+  var MARKUP_URL_ATTRS = /^(href|src|xlink:href|action|formaction|srcset|data|poster)$/i;
+  function setMarkup(el, html) {
+    var doc = new DOMParser().parseFromString('<body>' + String(html == null ? '' : html), 'text/html');
+    var all = Array.prototype.slice.call(doc.body.querySelectorAll('*'));
+    for (var i = 0; i < all.length; i++) {
+      var node = all[i];
+      if (MARKUP_BAD_TAGS.test(node.tagName)) { if (node.parentNode) node.parentNode.removeChild(node); continue; }
+      var attrs = Array.prototype.slice.call(node.attributes);
+      for (var a = 0; a < attrs.length; a++) {
+        var an = attrs[a].name, av = attrs[a].value;
+        if (/^on/i.test(an) || (MARKUP_URL_ATTRS.test(an) && /^[\s\u0000-\u0020]*(javascript|data|vbscript):/i.test(av))) node.removeAttribute(an);
+      }
+    }
+    while (el.firstChild) el.removeChild(el.firstChild);
+    while (doc.body.firstChild) el.appendChild(document.adoptNode(doc.body.firstChild)); // moves the node out of doc.body
+  }
   // onlyNew = skip elements that were filled in before (their text may have been changed by the app since)
   function applyKeys(root, onlyNew) {
     if (!KEYS || !root) return;
@@ -199,7 +218,7 @@ window.PINN_LANGUAGES = [
       var k = el.getAttribute('data-tk');
       if (k && has(k)) el.textContent = tk(k, null, plain);
       k = el.getAttribute('data-tk-html');
-      if (k && has(k)) el.innerHTML = tk(k, null, plain);
+      if (k && has(k)) setMarkup(el, tk(k, null, plain));
       var pairs = (el.getAttribute('data-tk-attr') || '').split(';');
       for (var j = 0; j < pairs.length; j++) {
         var c = pairs[j].indexOf(':');

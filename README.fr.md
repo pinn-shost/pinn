@@ -123,6 +123,16 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 et 🇷🇺 Русский**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.122.1
+
+**Corrections de sécurité**
+
+- **Les 20 alertes de l’analyseur de code de GitHub sont corrigées.** Les textes des champs de saisie (noms, avatars, réactions, adresses de photos) sont désormais toujours insérés dans les pages de façon sûre, y compris entre guillemets.
+- Le cache des anniversaires n’est plus conservé en clair dans `localStorage` (il se trouve maintenant dans la base de données de l’appareil ; les anciennes entrées sont supprimées une fois).
+- Les nouveaux événements reçoivent leur identifiant du générateur aléatoire sécurisé. Également renforcés : la vérification par Google de l’autorisation du calendrier, la reconnaissance des messages de courses, la fusion des anciennes données et la conversion des textes des pages de recettes.
+- Rien ne change visuellement.
+- Modifié : `index.html`, `js/grundlagen.js`, `js/mitglieder.js`, `js/pinnwand.js`, `js/sprachen.js`, `js/einkaufseingabe.js`, `js/geburtstage.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-kalender.js`, `pb_hooks/calendar-sync.js`, `pb_hooks/pinn-google.js`, `pb_hooks/pinn-ki.js`, `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-kassen.js`, `.github/scripts/common.js`, `.github/scripts/check-hooks.js` et tous les README. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
+
 ## Nouveautés de la 1.122.0
 
 **Rangement en coulisses**
@@ -210,15 +220,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Ensuite : d’autres étapes du russe (famille, animaux, école, localisation, page enfant …).
 - Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou bouton de mise à jour).
 
-## Nouveautés de la 1.120.3
-
-**Russe – quatrième étape**
-
-- Traduits en russe : les listes (bagages, cadeaux, souhaits, checklists, idées – avec tous les modèles), les courses, les provisions avec le scanner et « Que puis-je cuisiner ? », ainsi que les recettes avec l’import, les recettes publiques et la corbeille – désormais 2656 textes sur 6714.
-- Le russe reste **masqué** jusqu’à ce que tout soit traduit (activable sur un appareil comme décrit pour la 1.120.0).
-- Ensuite : d’autres étapes du russe (finances, caisses, dépôt, contrats …).
-- Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou bouton de mise à jour).
-
 ## Comment ça marche
 
 ```mermaid
@@ -245,7 +246,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.122.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.122.1` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

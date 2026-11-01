@@ -43,17 +43,17 @@ function stripAssignedLine(text) {
 function assignedMembersBarHtml(ev) {
   const assigned = getAssignedMembersForEvent(ev);
   if (!assigned.length) return '';
-  const segments = assigned.map(m => `<span class="flex-1" style="background:${m.color}"></span>`).join('');
+  const segments = assigned.map(m => `<span class="flex-1" style="background:${escapeHtml(m.color)}"></span>`).join('');
   return `<div class="absolute left-0 top-0 bottom-0 w-1 flex flex-col overflow-hidden">${segments}</div>`;
 }
 function memberLabel(m) { return (m.displayMode === 'role' && m.role) ? m.role : m.name; }
 
 function memberAvatarInnerHTML(m) {
-  if (m.photo) return `<img src="${m.photo}" class="w-full h-full object-cover" alt="" />`;
-  if (m.avatar) return `<span class="flex items-center justify-center w-full h-full text-base leading-none">${m.avatar}</span>`;
+  if (m.photo) return `<img src="${escapeHtml(m.photo)}" class="w-full h-full object-cover" alt="" />`;
+  if (m.avatar) return `<span class="flex items-center justify-center w-full h-full text-base leading-none">${escapeHtml(m.avatar)}</span>`;
   const bg = (!m.color || m.color === 'transparent') ? '#9A9A92' : m.color;
   const initial = (m.name || '?').trim().charAt(0).toUpperCase() || '?';
-  return `<span class="flex items-center justify-center w-full h-full text-white text-xs font-semibold" style="background:${bg}">${initial}</span>`;
+  return `<span class="flex items-center justify-center w-full h-full text-white text-xs font-semibold" style="background:${escapeHtml(bg)}">${escapeHtml(initial)}</span>`;
 }
 function memberBorderColor(m) { return (!m.color || m.color === 'transparent') ? 'transparent' : m.color; }
 

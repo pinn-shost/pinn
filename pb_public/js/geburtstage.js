@@ -38,11 +38,46 @@ function normalizeBirthdayData(body) {
     },
   };
 }
+// Device cache of the birthday list: kept in IndexedDB (not in localStorage, since 1.122.1); the old localStorage
+// entries are removed as soon as the page loads
+const BDAY_IDB_NAME = 'pinn-geburtstage';
+const BDAY_IDB_STORE = 'cache';
+function bdayIdbDo(mode, fn) {
+  return new Promise((resolve, reject) => {
+    if (!window.indexedDB) { reject(new Error('IndexedDB not available')); return; }
+    const req = indexedDB.open(BDAY_IDB_NAME, 1);
+    req.onupgradeneeded = () => { try { req.result.createObjectStore(BDAY_IDB_STORE); } catch (e) { /* exists */ } };
+    req.onerror = () => reject(req.error);
+    req.onsuccess = () => {
+      const db = req.result;
+      try {
+        const tx = db.transaction(BDAY_IDB_STORE, mode);
+        let result;
+        const r = fn(tx.objectStore(BDAY_IDB_STORE));
+        if (r) r.onsuccess = () => { result = r.result; };
+        tx.oncomplete = () => { db.close(); resolve(result); };
+        tx.onerror = () => { db.close(); reject(tx.error); };
+      } catch (e) { db.close(); reject(e); }
+    };
+  });
+}
+function bdayCacheRead(key) { return bdayIdbDo('readonly', s => s.get(key)).catch(() => null); }
 function writeBirthdayCache() {
   const k = birthdayCacheKey();
   if (!k) return;
-  try { localStorage.setItem(k, JSON.stringify(birthdayData)); } catch (e) { /* full */ }
+  bdayIdbDo('readwrite', s => s.put(birthdayData, k)).catch(() => { /* no storage - not needed */ });
 }
+// Remove birthday lists that an older version left in localStorage
+(function removeOldBirthdayStorage() {
+  try {
+    const old = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.indexOf(LS_BIRTHDAYS_PREFIX) === 0) old.push(k);
+    }
+    old.forEach(k => localStorage.removeItem(k));
+  } catch (e) { /* no storage */ }
+})();
 function isLeapYear(y) { return (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0; }
 function birthdayInYear(y, m, d) {
   if (m === 2 && d === 29 && !isLeapYear(y)) return new Date(y, 1, 28);
@@ -230,8 +265,8 @@ async function loadBirthdays(force) {
     birthdayLoadedFor = key;
     birthdayLastFetch = 0;
     birthdayTileExpanded = false;
-    let cached = null;
-    try { cached = JSON.parse(localStorage.getItem(key) || 'null'); } catch (e) { cached = null; }
+    const cached = await bdayCacheRead(key);
+    if (birthdayLoadedFor !== key) return; // another profile was loaded in the meantime
     birthdayData = cached ? normalizeBirthdayData(cached) : { geladen: false, eingerichtet: false, stand: '', liste: [], fehler: '', quellen: { apple: false, google: false }, anzahl: { apple: 0, google: 0 } };
     refreshOverviewTiles();
     renderBirthdaySettingsStatus();

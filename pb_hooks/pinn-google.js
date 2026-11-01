@@ -45,6 +45,14 @@ const ADDRESS_ENV = "PINN_ADRESSE";
 const CALLBACK_PATH = "/api/pinn/google/callback";
 const SCOPE = "https://www.googleapis.com/auth/calendar";
 const CONTACTS_SCOPE = "https://www.googleapis.com/auth/contacts.readonly";
+// Prüft, ob ein Scope in der von Google gelieferten Liste (durch Leerzeichen getrennt) genau so vorkommt.
+function scopeGranted(scopeText, wanted) {
+    const list = String(scopeText || wanted).split(/\s+/);
+    for (let i = 0; i < list.length; i++) {
+        if (list[i] === wanted) return true;
+    }
+    return false;
+}
 const PEOPLE_URL = "https://people.googleapis.com/v1/people/me/connections";
 const PEOPLE_MAX_PAGES = 10;
 const AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";
@@ -613,8 +621,7 @@ function exchangeCode(code, redirectUri) {
     if (!body.refresh_token) {
         throw new Error("Google hat keinen dauerhaften Zugang erteilt. Bitte unter myaccount.google.com → Sicherheit → Drittanbieter-Apps den Zugriff von pinn. entfernen und erneut verbinden.");
     }
-    const granted = String(body.scope || SCOPE).split(/\s+/);
-    if (granted.indexOf(SCOPE) === -1) {
+    if (!scopeGranted(body.scope, SCOPE)) {
         throw new Error("Bitte bei der Google-Anmeldung den Zugriff auf den Kalender erlauben (Haken setzen) und erneut verbinden.");
     }
     return body;
@@ -697,8 +704,7 @@ function finishAuth(state, code) {
     if (!body.refresh_token) {
         throw new Error("Google hat keinen dauerhaften Zugang erteilt. Bitte unter myaccount.google.com → Sicherheit → Drittanbieter-Apps den Zugriff von pinn. entfernen und erneut verbinden.");
     }
-    const granted = String(body.scope || SCOPE).split(/\s+/);
-    if (granted.indexOf(SCOPE) === -1) {
+    if (!scopeGranted(body.scope, SCOPE)) {
         throw new Error("Bitte bei der Google-Anmeldung den Zugriff auf den Kalender erlauben (Haken setzen) und erneut verbinden.");
     }
 

@@ -449,6 +449,7 @@ function unionMerge(target, source, stats) {
     }
     if (isObj(target) && isObj(source)) {
         Object.keys(source).forEach(k => {
+            if (k === "__proto__" || k === "constructor" || k === "prototype") return; // Prototyp-Schlüssel nie übernehmen
             const tv = target[k];
             const sv = source[k];
             if (isEmptyVal(tv)) {

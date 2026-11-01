@@ -339,13 +339,24 @@ function utcStampNow() {
     return now.getUTCFullYear() + pad(now.getUTCMonth() + 1) + pad(now.getUTCDate()) +
         'T' + pad(now.getUTCHours()) + pad(now.getUTCMinutes()) + pad(now.getUTCSeconds()) + 'Z';
 }
+// Zufallsteil einer neuen UID: sicherer Zufallsgenerator von PocketBase (kein einfacher Zufall); der Zähler
+// hält UIDs eindeutig, falls der Generator je nicht verfügbar wäre.
+let uidCounter = 0;
+function uidSuffix() {
+    try {
+        const s = $security.randomStringWithAlphabet(10, "abcdefghijklmnopqrstuvwxyz0123456789");
+        if (typeof s === 'string' && s.length >= 4) return s;
+    } catch (e) { /* fall through */ }
+    uidCounter += 1;
+    return 'c' + uidCounter.toString(36) + Date.now().toString(36);
+}
 function newEventUid(ev) {
     // Die App kann die UID mitbringen (ev.clientUid, bei offline angelegten Terminen). Dann landet ein
     // erneut gesendeter Termin in derselben Ressource statt doppelt im Kalender.
     const clientUid = (ev && typeof ev.clientUid === 'string') ? ev.clientUid : '';
     return /^pinn-[A-Za-z0-9-]{4,80}$/.test(clientUid)
         ? clientUid
-        : 'pinn-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
+        : 'pinn-' + Date.now() + '-' + uidSuffix();
 }
 function resourceUrlFor(acc, cal, uid) {
     return collectionUrl(acc, cal) + encodeURIComponent(uid) + '.ics';

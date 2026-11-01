@@ -166,13 +166,14 @@ function absoluteUrl(base, rel) {
 }
 function decodeEntities(s) {
     return String(s)
-        .replace(/&nbsp;/gi, " ").replace(/&amp;/gi, "&").replace(/&quot;/gi, "\"").replace(/&#39;|&apos;/gi, "'")
+        .replace(/&nbsp;/gi, " ").replace(/&quot;/gi, "\"").replace(/&#39;|&apos;/gi, "'")
         .replace(/&lt;/gi, "<").replace(/&gt;/gi, ">")
         .replace(/&frac12;/gi, "1/2").replace(/&frac14;/gi, "1/4").replace(/&frac34;/gi, "3/4")
         .replace(/&auml;/g, "ä").replace(/&ouml;/g, "ö").replace(/&uuml;/g, "ü")
         .replace(/&Auml;/g, "Ä").replace(/&Ouml;/g, "Ö").replace(/&Uuml;/g, "Ü").replace(/&szlig;/g, "ß")
         .replace(/&#(\d+);/g, (x, n) => { try { return String.fromCharCode(parseInt(n, 10)); } catch (e) { return ""; } })
-        .replace(/&#x([0-9a-f]+);/gi, (x, n) => { try { return String.fromCharCode(parseInt(n, 16)); } catch (e) { return ""; } });
+        .replace(/&#x([0-9a-f]+);/gi, (x, n) => { try { return String.fromCharCode(parseInt(n, 16)); } catch (e) { return ""; } })
+        .replace(/&amp;/gi, "&"); // zuletzt, damit aus "&amp;lt;" nicht "<" wird (kein doppeltes Entschlüsseln)
 }
 // Lädt die Rezeptseite. Manche Seiten (z. B. Chefkoch) blocken wiederholte Abrufe kurzzeitig -
 // dann einmal kurz warten und mit einer Desktop-Browser-Kennung erneut versuchen.

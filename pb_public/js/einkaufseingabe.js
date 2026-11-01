@@ -308,7 +308,7 @@ const SHOP_PASTE_NUMWORDS = {
 };
 const SHOP_PASTE_UNITS = 'g|gr|gramm|kg|kilo|mg|ml|cl|l|liter|litre|stk|stück|st|pck|pkg|packung|packungen|packs?|päckchen|dose|dosen|can|cans|flasche|flaschen|bottles?|glas|gläser|becher|bund|bunch|tüte|tüten|beutel|bags?|kiste|kisten|netz|rolle|rollen|tafel|tafeln|scheiben|kopf|köpfe|x';
 const SHOP_PASTE_FILLER = [
-  /\b(kauf|kaufe|kaufst|besorg|besorge|besorgst|hol|hole|holst|bring|bringe|bringst)\b(\s+(du|mir|uns))?(\s+(bitte|bitte noch|noch|auch|mal))*\b/gi,
+  /\b(kauf|kaufe|kaufst|besorg|besorge|besorgst|hol|hole|holst|bring|bringe|bringst)\b(\s+(du|mir|uns))?(\s+(?:bitte|noch|auch|mal))*\b/gi,
   /\b(kannst du|könntest du|wir brauchen|ich brauche|es fehlt|es fehlen|fehlt|fehlen|brauchen noch|wir haben kein(e|en)?)\b/gi,
   /\b(mitbringen|mitnehmen|einkaufen|besorgen|kaufen|holen)\b/gi,
   /\b(mit|ein|mal)\s*$/gi,

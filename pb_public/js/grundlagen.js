@@ -9,10 +9,9 @@
    ========================================================== */
 let weatherData = null; // { temp, code, uv } - reloaded periodically from Open-Meteo
 
+// Escapes text for HTML (text and quoted attribute values): & < > " ' and the backtick
 function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str == null ? '' : String(str);
-  return div.innerHTML;
+  return (str == null ? '' : String(str)).replace(/[&<>"'`]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '`': '&#96;' }[ch]));
 }
 
 /* ==========================================================

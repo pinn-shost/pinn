@@ -176,6 +176,8 @@ function pwRot(id) {
   String(id || '').split('').forEach(ch => { h = (h * 31 + ch.charCodeAt(0)) | 0; });
   return ((Math.abs(h) % 7) - 3) * 0.55;
 }
+// Note type as a safe CSS class part (letters, digits, hyphen only)
+function pwTypeClass(n) { return String((n && n.type) || 'note').replace(/[^A-Za-z0-9_-]/g, ''); }
 function pwType(id) { return PW_TYPES.find(t => t.id === id) || PW_TYPES[0]; }
 function pwNote(id) { return pinboard.find(n => n && n.id === id) || null; }
 
@@ -300,7 +302,7 @@ function pwPhotoInnerHtml(n) {
   const ready = p && ((p.rec && pwPhotoUrls.has(p.rec)) || (p.pending && pwLocalPhotoUrls.has(p.pending)));
   if (ready) {
     const url = p.rec ? pwPhotoUrls.get(p.rec) : pwLocalPhotoUrls.get(p.pending);
-    return { html: `<img src="${url}" alt="" />`, loaded: true };
+    return { html: `<img src="${escapeHtml(url)}" alt="" />`, loaded: true };
   }
   if (p && p.pending) return { html: ('<div class="pw-photo-wait">' + tk('board.uploadingPhoto') + '</div>'), loaded: false };
   if (p && p.rec) return { html: ('<div class="pw-photo-wait">' + tk('board.loadingPhoto') + '</div>'), loaded: false };
@@ -403,7 +405,7 @@ function pwFootHtml(n, mode) {
   const myEmoji = pwMyKeys().map(k => reactions[k]).find(Boolean) || '';
   const chips = PW_REACTIONS.concat(Object.keys(byEmoji).filter(e => !PW_REACTIONS.includes(e))).filter(e => byEmoji[e]).map(e => {
     const names = byEmoji[e].map(k => pwWho(k).name).join(', ');
-    return `<button type="button" class="pw-react${myEmoji === e ? ' mine' : ''}" data-pw-react-toggle="${e}" title="${escapeHtml(names)}">${e}<b>${byEmoji[e].length}</b></button>`;
+    return `<button type="button" class="pw-react${myEmoji === e ? ' mine' : ''}" data-pw-react-toggle="${escapeHtml(e)}" title="${escapeHtml(names)}">${escapeHtml(e)}<b>${byEmoji[e].length}</b></button>`;
   }).join('');
   const archived = pwIsArchived(n);
   const add = archived ? '' : `<button type="button" class="pw-react pw-react-add" data-pw-react-add="1" aria-label="${escapeHtml(tk('board.react'))}" title="${escapeHtml(tk('board.react'))}">+🙂</button>`;
@@ -417,7 +419,7 @@ function pwFootHtml(n, mode) {
 }
 function pwNoteHtml(n, mode) {
   const board = mode === 'board';
-  const cls = ['pw-note', 't-' + (n.type || 'note')];
+  const cls = ['pw-note', 't-' + pwTypeClass(n)];
   if (n.pinned) cls.push('is-pinned');
   if (n.important) cls.push('is-important');
   if (pwIsArchived(n)) cls.push('is-archived');
@@ -441,7 +443,7 @@ function renderPinboardChips() {
   wrap.innerHTML = PW_FILTERS.map(f => {
     const c = count(f.id);
     if (f.id !== 'alle' && f.id !== pwFilter && !c) return '';
-    return `<button type="button" class="pw-chip${pwFilter === f.id ? ' active' : ''}" data-pw-filter="${f.id}">${f.label}${c ? ` <b>${c}</b>` : ''}</button>`;
+    return `<button type="button" class="pw-chip${pwFilter === f.id ? ' active' : ''}" data-pw-filter="${escapeHtml(f.id)}">${escapeHtml(f.label)}${c ? ` <b>${Number(c)}</b>` : ''}</button>`;
   }).join('');
 }
 function renderPinboard() {
@@ -1182,7 +1184,7 @@ function renderBoardTile() {
     const w = pwWho(key, n.authorName);
     const fresh = pwIsNew(n) || pwHasNewComments(n);
     const meta = pwIsForMe(n) && n.type !== 'kudos' ? (pwIsDoneByMe(n) ? tk('school.done') : ('<b>' + tk('board.forYou') + '</b>')) : escapeHtml(w.name);
-    return `<button type="button" class="pw-mini t-${n.type}" style="--pw-c:${pwColor(n)};--pw-rot:${pwRot(n.id) * 0.8}deg" data-pw-tile="${escapeHtml(n.id)}">
+    return `<button type="button" class="pw-mini t-${pwTypeClass(n)}" style="--pw-c:${pwColor(n)};--pw-rot:${pwRot(n.id) * 0.8}deg" data-pw-tile="${escapeHtml(n.id)}">
         <span class="pw-pin" style="${n.important ? '--pw-pin:#D23B2F' : (n.pinned ? '--pw-pin:var(--c-pine)' : '')}"></span>
         ${fresh ? `<span class="pw-flag new">${escapeHtml(tk('bell.new'))}</span>` : ''}
         <div class="pw-mini-text">${escapeHtml(pwSummary(n))}</div>
