@@ -3,8 +3,8 @@
 //
 // Sprachsteuerung (Einstellungen → Sprachsteuerung): Jedes Profil kann einen persönlichen, geheimen
 // Link erzeugen. Ein Siri-Kurzbefehl (bzw. unter Android „HTTP Shortcuts“) schickt den gesprochenen
-// Satz dorthin; pinn. versteht ihn (Deutsch, Englisch, Französisch, Spanisch) und antwortet mit einem
-// Satz zum Vorlesen – in der Sprache des Profils.
+// Satz dorthin; pinn. versteht ihn (Deutsch, Englisch, Französisch, Spanisch, Russisch) und antwortet mit einem
+// Satz zum Vorlesen – in der Sprache des Profils (seit 1.121.0 versteht pinn. auch Russisch).
 //
 // Befehle:
 //   - Einkaufsliste ergänzen:  „Milch und zwei Packungen Eier auf die Einkaufsliste (bei Rewe)“
@@ -71,12 +71,13 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "ru"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
     if (["FR", "BE", "MC"].indexOf(land) >= 0) return "fr";
     if (["ES", "MX", "AR", "CO", "CL", "PE"].indexOf(land) >= 0) return "es";
+    if (["RU"].indexOf(land) >= 0) return "ru";
     return "en";
 }
 function isChildLocked(u, data) {
@@ -172,6 +173,18 @@ const T = {
         listName: "la lista de la compra", listNamed: "la lista {n}", and: "y",
         days: ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"],
     },
+    ru: {
+        help: "Я могу добавлять товары в список покупок, зачитывать список, создавать задачи и говорить, что запланировано на сегодня. Скажите, например: добавь молоко и яйца в список покупок.",
+        added: "{l}, добавлено: {i}.", already: "{l}: уже есть – {i}.", addedSome: "{l}, добавлено: {i}. Уже было: {d}.",
+        listEmpty: "{l} пуст.", listHas: "{l}: {i}.", more: "и ещё {n}",
+        task: "Задача создана: {t}{d}.", due: " {d}",
+        today: "на сегодня", tomorrow: "на завтра", dayLead: { 0: "Сегодня", 1: "Завтра" },
+        nothing: "{w} ничего не запланировано.", events: "События: {e}.", tasks: "Открытые задачи: {t}.", allday: "весь день",
+        childLock: "В детском режиме я могу только зачитывать, что запланировано.", noItems: "Не удалось понять, что добавить в список.",
+        noTask: "Не удалось понять, какую задачу создать.", error: "К сожалению, не получилось: {m}",
+        listName: "Список покупок", listNamed: "Список {n}", and: "и",
+        days: ["на воскресенье", "на понедельник", "на вторник", "на среду", "на четверг", "на пятницу", "на субботу"],
+    },
 };
 function fill(s, v) { return String(s).replace(/\{(\w)\}/g, (m, k) => (v[k] != null ? v[k] : "")); }
 function joinList(arr, L) {
@@ -218,17 +231,30 @@ const NUM = {
     one: 1, a: 1, an: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, twelve: 12,
     un: 1, une: 1, deux: 2, trois: 3, quatre: 4, cinq: 5, sept: 7, huit: 8, neuf: 9, dix: 10, douze: 12,
     uno: 1, una: 1, dos: 2, tres: 3, cuatro: 4, cinco: 5, seis: 6, siete: 7, ocho: 8, nueve: 9, diez: 10, doce: 12,
+    "один": 1, "одна": 1, "одно": 1, "одну": 1, "два": 2, "две": 2, "три": 3, "четыре": 4, "пять": 5, "шесть": 6, "семь": 7, "восемь": 8, "девять": 9, "десять": 10, "двенадцать": 12,
 };
-const UNITS = "kg|g|gramm|kilo|l|liter|litres?|litros?|ml|packungen|packung|päckchen|pck|dosen|dose|flaschen|flasche|gläser|glas|tüten|tüte|beutel|becher|stück|bund|kisten|kiste|rollen|rolle|tuben|tube|tafeln|tafel|netze|netz|packs?|packets?|cans?|tins?|bottles?|jars?|bags?|boxes|box|loaves|loaf|pieces?|cartons?|paquets?|bouteilles?|boîtes?|pots?|sachets?|canettes?|paquetes?|botellas?|latas?|botes?|bolsas?|cajas?|tarros?";
-const ARTICLES = /^(?:noch\s+|bitte\s+|etwas\s+|neue[nsrm]?\s+|frische[nsrm]?\s+|ein(?:e[nsm]?)?\s+|die\s+|der\s+|das\s+|den\s+|some\s+|more\s+|the\s+|an?\s+|du\s+|de\s+la\s+|de\s+l'|des\s+|de\s+|d'|la\s+|le\s+|les\s+|l'|un\s+|une\s+|el\s+|los\s+|las\s+|unos\s+|unas\s+|algo\s+de\s+|más\s+)+/i;
+const UNITS = "kg|g|gramm|kilo|l|liter|litres?|litros?|ml|packungen|packung|päckchen|pck|dosen|dose|flaschen|flasche|gläser|glas|tüten|tüte|beutel|becher|stück|bund|kisten|kiste|rollen|rolle|tuben|tube|tafeln|tafel|netze|netz|packs?|packets?|cans?|tins?|bottles?|jars?|bags?|boxes|box|loaves|loaf|pieces?|cartons?|paquets?|bouteilles?|boîtes?|pots?|sachets?|canettes?|paquetes?|botellas?|latas?|botes?|bolsas?|cajas?|tarros?|кг|килограмм(?:а|ов)?|кило|г|грамм(?:а|ов)?|л|литр(?:а|ов)?|мл|миллилитр(?:а|ов)?|упаковк[аиу]|упаковок|пачк[аиу]|пачек|банк[аиу]|банок|бутылк[аиу]|бутылок|пакет(?:а|ов)?|штук[аи]?|коробк[аиу]|коробок|буханк[аиу]|буханок";
+const ARTICLES = /^(?:noch\s+|bitte\s+|etwas\s+|neue[nsrm]?\s+|frische[nsrm]?\s+|ein(?:e[nsm]?)?\s+|die\s+|der\s+|das\s+|den\s+|some\s+|more\s+|the\s+|an?\s+|du\s+|de\s+la\s+|de\s+l'|des\s+|de\s+|d'|la\s+|le\s+|les\s+|l'|un\s+|une\s+|el\s+|los\s+|las\s+|unos\s+|unas\s+|algo\s+de\s+|más\s+|ещё\s+|еще\s+|пожалуйста\s+|немного\s+)+/i;
 
 function cleanSentence(text) {
-    return String(text || "").replace(/[\u0000-\u001f]/g, " ").replace(/\s+/g, " ").trim().replace(/^(?:hey\s+siri,?\s*|ok(?:ay)?\s+google,?\s*)?(?:pinn[.,:]?\s*)?/i, "").replace(/[.!?¡¿]+$/g, "").trim();
+    return String(text || "").replace(/[\u0000-\u001f]/g, " ").replace(/\s+/g, " ").trim().replace(/^(?:hey\s+siri,?\s*|ok(?:ay)?\s+google,?\s*|привет,?\s+siri,?\s*|окей,?\s+google,?\s*)?(?:pinn[.,:]?\s*)?/i, "").replace(/[.!?¡¿]+$/g, "").trim();
 }
 function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
 
+// Russisch: nach einer Mengenangabe steht der Name im Genitiv („2 литра молока“) – für gängige Waren zurück in die Grundform,
+// damit die Liste „Молоко“ zeigt und doppelte Einträge erkannt werden. Unbekannte Wörter bleiben, wie gesprochen.
+const RU_NOM = {
+    "молока": "молоко", "масла": "масло", "хлеба": "хлеб", "сахара": "сахар", "соли": "соль", "картофеля": "картофель", "яиц": "яйца",
+    "макарон": "макароны", "сыра": "сыр", "мяса": "мясо", "муки": "мука", "воды": "вода", "сока": "сок", "риса": "рис", "помидоров": "помидоры",
+    "огурцов": "огурцы", "яблок": "яблоки", "бананов": "бананы", "печенья": "печенье", "чая": "чай", "колбасы": "колбаса", "пива": "пиво",
+    "вина": "вино", "йогурта": "йогурт", "творога": "творог", "сметаны": "сметана", "кефира": "кефир", "лука": "лук", "моркови": "морковь",
+    "шоколада": "шоколад", "конфет": "конфеты", "апельсинов": "апельсины", "крупы": "крупа", "гречки": "гречка", "курицы": "курица",
+    "рыбы": "рыба", "сосисок": "сосиски", "салфеток": "салфетки", "туалетной бумаги": "туалетная бумага", "кофе": "кофе",
+};
+function ruNominative(name) { const k = String(name || "").toLowerCase(); return Object.prototype.hasOwnProperty.call(RU_NOM, k) ? RU_NOM[k] : name; }
+
 function parseItems(raw) {
-    const parts = String(raw || "").split(/\s*(?:,|;|\bund\b|\bsowie\b|\band\b|\bet\b|\by\b|\be\b|\bplus\b)\s*/i).map(x => x.trim()).filter(Boolean);
+    const parts = String(raw || "").split(/\s*(?:,|;|\bund\b|\bsowie\b|\band\b|\bet\b|\by\b|\be\b|\bplus\b|\s+и\s+|\s+а\s+также\s+|\s+плюс\s+)\s*/i).map(x => x.trim()).filter(Boolean);
     const out = [];
     parts.forEach(part => {
         let p = part.replace(/^(?:noch|bitte|also|auch|also|then)\s+/i, "");
@@ -241,9 +267,13 @@ function parseItems(raw) {
             else if (/^(kilo)$/.test(u)) qty = n + " kg";
             else if (/^(liter|litres?|litros?)$/.test(u)) qty = n + " l";
             else if (/^(kg|g|l|ml)$/.test(u)) qty = n + " " + u;
+            else if (/^(?:кг|килограмм(?:а|ов)?|кило)$/.test(u)) qty = n + " кг";
+            else if (/^(?:г|грамм(?:а|ов)?)$/.test(u)) qty = n + " г";
+            else if (/^(?:л|литр(?:а|ов)?)$/.test(u)) qty = n + " л";
+            else if (/^(?:мл|миллилитр(?:а|ов)?)$/.test(u)) qty = n + " мл";
             else if (u) qty = n + " " + (/^(dosen?|packung(en)?|päckchen|flaschen?|gläser|glas|tüten?|beutel|becher|stück|bund|kisten?|rollen?|tuben?|tafeln?|netze?)$/.test(u) ? cap(u) : u);
             else if (Number(n.replace(",", ".")) > 1) qty = n;
-            p = m[3];
+            p = ruNominative(m[3]);
         }
         p = p.replace(ARTICLES, "").trim();
         if (p && p.length <= 80) out.push({ name: cap(p), qty: qty });
@@ -257,20 +287,20 @@ function parseDate(text) {
     const t = todayIso();
     let iso = "";
     const rules = [
-        [/\s(?:übermorgen|day after tomorrow|après-demain|pasado mañana)\s/i, 2],
-        [/\s(?:morgen|tomorrow|demain|mañana)\s/i, 1],
-        [/\s(?:heute|today|aujourd'hui|hoy)\s/i, 0],
+        [/\s(?:übermorgen|day after tomorrow|après-demain|pasado mañana|послезавтра)\s/i, 2],
+        [/\s(?:morgen|tomorrow|demain|mañana|завтра)\s/i, 1],
+        [/\s(?:heute|today|aujourd'hui|hoy|сегодня)\s/i, 0],
     ];
     for (const [re, n] of rules) { if (re.test(s)) { iso = addDays(t, n); s = s.replace(re, " "); break; } }
     if (!iso) {
         const names = [
-            ["sonntag", "sunday", "dimanche", "domingo"], ["montag", "monday", "lundi", "lunes"], ["dienstag", "tuesday", "mardi", "martes"],
-            ["mittwoch", "wednesday", "mercredi", "miércoles"], ["donnerstag", "thursday", "jeudi", "jueves"], ["freitag", "friday", "vendredi", "viernes"],
-            ["samstag", "saturday", "samedi", "sábado"],
+            ["sonntag", "sunday", "dimanche", "domingo", "воскресенье"], ["montag", "monday", "lundi", "lunes", "понедельник"], ["dienstag", "tuesday", "mardi", "martes", "вторник"],
+            ["mittwoch", "wednesday", "mercredi", "miércoles", "среду", "среда"], ["donnerstag", "thursday", "jeudi", "jueves", "четверг"], ["freitag", "friday", "vendredi", "viernes", "пятницу", "пятница"],
+            ["samstag", "saturday", "samedi", "sábado", "субботу", "суббота"],
         ];
         for (let wd = 0; wd < 7 && !iso; wd++) {
             for (const nm of names[wd]) {
-                const re = new RegExp("\\s(?:am\\s+|on\\s+|le\\s+|el\\s+|this\\s+|next\\s+|nächsten\\s+|kommenden\\s+)?" + nm + "\\s", "i");
+                const re = new RegExp("\\s(?:am\\s+|on\\s+|le\\s+|el\\s+|this\\s+|next\\s+|nächsten\\s+|kommenden\\s+|в\\s+|во\\s+|на\\s+)?" + nm + "\\s", "i");
                 if (re.test(s)) {
                     let d = (wd - weekday(t) + 7) % 7;
                     if (d === 0) d = 7;
@@ -282,7 +312,7 @@ function parseDate(text) {
         }
     }
     let rest = s.replace(/\s+/g, " ").trim()
-        .replace(/^(?:daran,?\s*|an\s+(?:den|die|das)?\s*|dass\s+(?:ich|wir)\s+|to\s+|that\s+|de\s+|d'|que\s+)/i, "")
+        .replace(/^(?:daran,?\s*|an\s+(?:den|die|das)?\s*|dass\s+(?:ich|wir)\s+|to\s+|that\s+|de\s+|d'|que\s+|про\s+|о\s+|об\s+|что\s+|чтобы\s+)/i, "")
         .replace(/\s+(?:zu\s+)?(?:erledigen|machen)$/i, "")
         .trim();
     return { iso, rest: cap(rest) };
@@ -290,6 +320,10 @@ function parseDate(text) {
 
 function intentOf(text) {
     const s = text.toLowerCase();
+    // Russisch: Liste vorlesen („Что в списке покупок?“, „Прочитай список“, „Что нужно купить?“, optional mit Laden: „… для Лидл“).
+    // Achtung: Die Server-Regex (goja) kennt kein \b für Kyrillisch und kein Lookbehind – deshalb Leerzeichen/Zeilenanfang statt \b.
+    const ruList = s.match(/^(?:что\s+(?:сейчас\s+|ещё\s+|еще\s+)?(?:есть\s+)?(?:у\s+нас\s+|у\s+меня\s+)?(?:в|на)\s+(?:моём\s+|моем\s+|нашем\s+)?списк[еа]|(?:прочитай|прочти|зачитай|озвучь|назови|покажи)\s+(?:мне\s+)?(?:мой\s+|наш\s+)?список|что\s+(?:мне\s+|нам\s+)?(?:ещё\s+|еще\s+)?(?:нужно|надо)\s+купить)(?:\s+покупок)?(?:\s+(?:для|из|в)?\s*(.+))?$/);
+    if (ruList) return { art: "liste", laden: ruList[1] ? ruList[1].trim() : "" };
     // Einkaufsliste vorlesen
     if (/(was|welche).*\b(auf|steht|stehen)\b.*liste\b|liste vorlesen|lies? .*liste|was (muss|soll|müssen) (ich|wir) (noch )?(ein)?kaufen|what'?s on (the |my |our )?(shopping )?list|read (out )?(the |my )?(shopping )?list|what do (i|we) need to buy|qu'?est-ce qu'?il y a sur la liste|lis la liste|qu'?est-ce que (je dois|nous devons|on doit) acheter|qu[eé] hay en la lista|lee la lista|qu[eé] (tengo|tenemos|hay) que comprar/.test(s)) {
         const shop = s.match(/\b(?:bei|von|at|from|chez|de|en|para)\s+([a-zäöüéèàñ0-9][\wäöüéèàñ' -]{1,30})$/i);
@@ -305,6 +339,8 @@ function intentOf(text) {
         /^(?:il (?:nous|me) faut|achète|acheter)\s+(.+?)(?:\s+chez\s+(.+))?$/i,
         /^(?:añade|agrega|pon|apunta)\s+(.+?)\s+(?:a|en)\s+la\s+lista(?:\s+de\s+la\s+compra)?(?:\s+(?:de|para|en)\s+(.+))?$/i,
         /^(?:necesitamos|necesito|compra|comprar)\s+(.+?)(?:\s+en\s+(.+))?$/i,
+        /^(?:пожалуйста,?\s+)?(?:добавь|добавьте|запиши|поставь|положи|внеси)\s+(.+?)\s+(?:в|на)\s+(?:мой\s+|наш\s+)?(?:список|покупки)(?:\s+покупок)?(?:\s+(?:для|из|в)?\s*(.+))?$/i,
+        /^(?:(?:нам|мне)\s+(?:нужно|надо)(?:\s+купить)?|нам\s+нужны|мне\s+нужны|нужно\s+купить|надо\s+купить|купи|купить)\s+(.+?)(?:\s+(?:в|из)\s+(.+))?$/i,
     ];
     for (const re of add) {
         const m = text.match(re);
@@ -320,14 +356,16 @@ function intentOf(text) {
         /^(?:nouvelle\s+|ajoute\s+(?:une\s+)?)?tâche[:\s]+(.+)$/i,
         /^recu[eé]rda(?:me|nos)\s+(.+)$/i,
         /^(?:nueva\s+|añade\s+(?:una\s+)?)?tarea[:\s]+(.+)$/i,
+        /^напомни(?:\s+(?:мне|нам))?\s+(.+)$/i,
+        /^(?:новая\s+задача|добавь\s+задачу|создай\s+задачу|задачу|задача)[:\s]+(.+)$/i,
     ];
     for (const re of task) {
         const m = text.match(re);
         if (m) return Object.assign({ art: "aufgabe" }, parseDate(m[1]));
     }
     // Tagesüberblick
-    if (/(was|welche).*(heute|morgen)|termine (heute|morgen)|mein tag|tagesüberblick|was (ist|gibt'?s) (heute|morgen)|what'?s (on|happening|planned|up)|(today|tomorrow)'?s? (plan|agenda|schedule)|my day|agenda|qu'?est-ce qu'?il y a|programme|ma journée|qu'?est-ce que j'?ai|qu[eé] (tengo|hay|tenemos)|mi día|mi agenda/.test(s)) {
-        const morgen = /(\bmorgen\b|tomorrow|demain|mañana)/.test(s) && !/(übermorgen|pasado mañana|après-demain)/.test(s);
+    if (/(was|welche).*(heute|morgen)|termine (heute|morgen)|mein tag|tagesüberblick|was (ist|gibt'?s) (heute|morgen)|what'?s (on|happening|planned|up)|(today|tomorrow)'?s? (plan|agenda|schedule)|my day|agenda|qu'?est-ce qu'?il y a|programme|ma journée|qu'?est-ce que j'?ai|qu[eé] (tengo|hay|tenemos)|mi día|mi agenda|(?:что|какие|какой)\s.*(?:сегодня|завтра)|что\s+запланировано|что\s+по\s+плану|мой\s+день|расписание/.test(s)) {
+        const morgen = /(\bmorgen\b|tomorrow|demain|mañana|завтра)/.test(s) && !/(übermorgen|pasado mañana|après-demain|послезавтра)/.test(s);
         return { art: "tag", offset: morgen ? 1 : 0 };
     }
     return { art: "hilfe" };
@@ -336,7 +374,7 @@ function intentOf(text) {
 // ---------------------------------------------------------------------------------------------
 // Einkaufsliste
 // ---------------------------------------------------------------------------------------------
-function norm(s) { return String(s || "").toLowerCase().replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss").replace(/[^a-z0-9]/g, ""); }
+function norm(s) { return String(s || "").toLowerCase().replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss").replace(/ё/g, "е").replace(/[^a-z0-9а-я]/g, ""); }
 function targetList(data, laden) {
     const lists = Array.isArray(data.shoppingLists) ? data.shoppingLists.filter(l => l && l.id && l.id !== "essensplanung") : [];
     if (laden) {

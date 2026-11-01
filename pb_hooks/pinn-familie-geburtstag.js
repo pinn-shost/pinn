@@ -126,6 +126,7 @@ function langOf(u) {
     if (["CN"].indexOf(land) >= 0) return "zh";
     if (["JP"].indexOf(land) >= 0) return "ja";
     if (["KR"].indexOf(land) >= 0) return "ko";
+    if (["RU"].indexOf(land) >= 0) return "ru";
     return "en";
 }
 function joinNames(lang, names) {

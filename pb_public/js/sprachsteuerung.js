@@ -40,7 +40,7 @@ function renderVoiceSettings() {
   const st = voiceState || {};
   if (st.error) { box.innerHTML = `<p class="text-xs text-red-500">${escapeHtml(st.error)}</p>`; return; }
   const examples = [tk('voice.addMilkEggsShopping'), tk('voice.addTwoPacksPasta'), tk('voice.whatsShoppingList'), tk('voice.remindMeTakeOut'), tk('voice.whatsToday')];
-  const exHtml = `<div class="rounded-xl bg-ink/5 p-3"><p class="text-xs font-medium mb-1">${tk('voice.whatPinnUnderstands')}</p><div class="flex flex-col gap-0.5 text-[11px] text-ink/60">${examples.map(x => `<span>${escapeHtml(x)}</span>`).join('')}</div><p class="text-[11px] text-ink/45 mt-1.5">${tk('voice.alsoGermanFrenchSpanish')}</p></div>`;
+  const exHtml = `<div class="rounded-xl bg-ink/5 p-3"><p class="text-xs font-medium mb-1">${tk('voice.whatPinnUnderstands')}</p><div class="flex flex-col gap-0.5 text-[11px] text-ink/60">${examples.map(x => `<span>${escapeHtml(x)}</span>`).join('')}</div><p class="text-[11px] text-ink/45 mt-1.5">${tk('voice.alsoOtherLanguages')}</p></div>`;
   if (!st.aktiv) {
     box.innerHTML = `
       <p class="text-xs text-ink/60">${tk('voice.sayHeySiriPinn')}</p>

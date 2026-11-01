@@ -61,6 +61,7 @@
     ['LV', 'lv-LV', 'EUR', '110', '113', '112', '112'],
     ['LT', 'lt-LT', 'EUR', '112', '112', '112', '112'],
     ['UA', 'uk-UA', 'UAH', '102', '103', '101', '112'],
+    ['RU', 'ru-RU', 'RUB', '102', '103', '101', '112'],
     ['US', 'en-US', 'USD', '911', '911', '911', '911'],
     ['CA', 'en-CA', 'CAD', '911', '911', '911', '911'],
     ['MX', 'es-MX', 'MXN', '911', '911', '911', '911'],
@@ -93,7 +94,7 @@
   // Countries that show temperatures in Fahrenheit by default (everything else: Celsius)
   var FAHRENHEIT = ['US', 'LR', 'BS', 'BZ', 'KY', 'PW', 'FM', 'MH'];
   // Additional selectable currencies (all national currencies above are included anyway)
-  var EXTRA_CURRENCIES = ['RUB'];
+  var EXTRA_CURRENCIES = [];
   // Number format: thousands and decimal separator (auto = as usual in the chosen country)
   var FORMATS = {
     de: { group: '.', decimal: ',', sample: '1.234,56' },
@@ -120,7 +121,7 @@
       var m = /^[a-z]{2,3}[-_]([A-Za-z]{2})\b/.exec(String(list[i] || ''));
       if (m && findCountry(m[1].toUpperCase())) return m[1].toUpperCase();
     }
-    var byLang = { de: 'DE', fr: 'FR', es: 'ES', it: 'IT', nl: 'NL', pt: 'PT', pl: 'PL', da: 'DK', sv: 'SE', nb: 'NO', fi: 'FI', cs: 'CZ', hu: 'HU', el: 'GR', tr: 'TR', ja: 'JP', zh: 'CN', ko: 'KR' };
+    var byLang = { de: 'DE', fr: 'FR', es: 'ES', it: 'IT', nl: 'NL', pt: 'PT', pl: 'PL', da: 'DK', sv: 'SE', nb: 'NO', fi: 'FI', cs: 'CZ', hu: 'HU', el: 'GR', tr: 'TR', ja: 'JP', zh: 'CN', ko: 'KR', ru: 'RU' };
     for (var j = 0; j < list.length; j++) { var l = String(list[j] || '').slice(0, 2).toLowerCase(); if (byLang[l]) return byLang[l]; }
     return 'DE';
   }
@@ -299,6 +300,14 @@
     numSample: function (land) {
       var row = findCountry(land) || C.row;
       return partsOf(new NF(localeOf(row), { minimumFractionDigits: 2, useGrouping: true }), 1234.56).map(function (p) { return p.value; }).join('');
+    },
+    // Unit signs in the chosen language: „l/100 km“ → „л/100 км“ (texts unit.* in i18n/<code>.i18n.js; other languages keep the Latin signs).
+    // Only for pure unit strings (never whole sentences): a sign counts only when no letter, digit, ² or ³ is next to it.
+    unit: function (s) {
+      var K = { 'km/h': 'unit.kmh', kWh: 'unit.kWh', km: 'unit.km', cm: 'unit.cm', mm: 'unit.mm', kg: 'unit.kg', 'm\u00b3': 'unit.m3', ct: 'unit.ct', l: 'unit.l', m: 'unit.m' };
+      return String(s == null ? '' : s).replace(/(^|[^A-Za-z\u00b5\u00b2\u00b3])(km\/h|kWh|km|cm|mm|kg|m\u00b3|ct|l|m)(?![A-Za-z0-9\u00b2\u00b3])/g, function (all, pre, u) {
+        return pre + (typeof tk === 'function' ? tk(K[u]) : u);
+      });
     },
     country: findCountry, flag: flag,
     countryName: function (c) { return nameOf('region', c); },

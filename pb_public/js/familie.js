@@ -629,8 +629,8 @@ function famRenderInfo() {
     live ? ('<span class="text-red-600 font-medium">' + tk('family.live') + '</span>') : '',
     famAgo(p.zeit),
     p.akku != null ? (p.laedt ? '🔌 ' : '🔋 ') + p.akku + ' %' : '',
-    p.tempo ? '🏃 ' + p.tempo + ' km/h' : '',
-    p.genau ? '± ' + p.genau + ' m' : '',
+    p.tempo ? '🏃 ' + p.tempo + ' ' + PINN_REGION.unit('km/h') : '',
+    p.genau ? '± ' + p.genau + ' ' + PINN_REGION.unit('m') : '',
   ].filter(Boolean).join(' · ');
   const nav = isAppleMobile()
     ? `https://maps.apple.com/?ll=${p.lat},${p.lon}&q=${encodeURIComponent(famDeviceName(g))}`
@@ -810,9 +810,9 @@ function famDetailHtml(m) {
   const doc = !pet && p.doctorPhone ? `<a class="fz-act-btn" href="${famAttr(famTel(p.doctorPhone))}"><span class="fz-ti">🩺</span>${tk('family.doctor')}</a>` : '';
 
   const medCard = pet
-    ? [famRow(tk('family.speciesBreed'), p.species), famRow(tk('family.dateBirth'), famFmtDate(p.birth)), famRow(tk('family.chipNumber'), p.chip), famRow(tk('family.weight'), p.weight ? p.weight + ' kg' : ''),
+    ? [famRow(tk('family.speciesBreed'), p.species), famRow(tk('family.dateBirth'), famFmtDate(p.birth)), famRow(tk('family.chipNumber'), p.chip), famRow(tk('family.weight'), p.weight ? p.weight + ' ' + PINN_REGION.unit('kg') : ''),
        famRow(tk('family.allergiesIntolerances'), p.allergies), famRow(tk('family.illnesses'), p.conditions), famRow(tk('family.vaccinations'), p.vaccinations)].join('')
-    : [famRow(tk('family.dateBirth'), famFmtDate(p.birth)), famRow(tk('family.bloodType'), p.blood), famRow(tk('family.heightWeight'), [p.height ? p.height + ' cm' : '', p.weight ? p.weight + ' kg' : ''].filter(Boolean).join(' · ')),
+    : [famRow(tk('family.dateBirth'), famFmtDate(p.birth)), famRow(tk('family.bloodType'), p.blood), famRow(tk('family.heightWeight'), [p.height ? p.height + ' ' + PINN_REGION.unit('cm') : '', p.weight ? p.weight + ' ' + PINN_REGION.unit('kg') : ''].filter(Boolean).join(' · ')),
        famRow(tk('family.allergies'), p.allergies), famRow(tk('family.preExistingConditions'), p.conditions), famRow(tk('family.vaccinations'), p.vaccinations),
        famRow(tk('family.organDonation'), p.organDonor ? { ja: tk('family.yesIdAvailable'), nein: tk('family.no'), teilweise: tk('family.partiallySeeCard') }[p.organDonor] || p.organDonor : ''), famRow(tk('family.livingWill'), p.livingWill)].join('');
   const medsHtml = meds.length ? `<div class="fam-row"><div class="fam-k">${tk('lists.t.i.medication')}</div><div class="fam-v">${meds.map(x => `<div>💊 <b>${escapeHtml(x.name || '')}</b>${x.dose ? ' · ' + escapeHtml(x.dose) : ''}</div>`).join('')}</div></div>` : '';
@@ -1977,7 +1977,7 @@ function sosUpdate(a) {
     } else {
       const live = a.aktiv && famNow() - Number(c.zeit || 0) < 2 * 60 * 1000;
       const acc = c.genau ? `(± ${escapeHtml(String(c.genau))} m)` : tk('sos.accuracyUnknown');
-      const extra = [live ? ('<span class="sos-live">' + tk('family.live') + '</span>') : (a.aktiv ? escapeHtml(famAgo(c.zeit)) : ''), c.akku != null ? '🔋 ' + escapeHtml(String(c.akku)) + ' %' : '', c.tempo ? '🏃 ' + escapeHtml(String(c.tempo)) + ' km/h' : ''].filter(Boolean).join(' · ');
+      const extra = [live ? ('<span class="sos-live">' + tk('family.live') + '</span>') : (a.aktiv ? escapeHtml(famAgo(c.zeit)) : ''), c.akku != null ? '🔋 ' + escapeHtml(String(c.akku)) + ' %' : '', c.tempo ? '🏃 ' + escapeHtml(String(c.tempo)) + ' ' + PINN_REGION.unit('km/h') : ''].filter(Boolean).join(' · ');
       loc.innerHTML = `<div class="sos-addr">📍 ${escapeHtml(sosAddress(a))}</div>
         <div class="sos-when">🕒 ${escapeHtml(sosClock(c.zeit))} <span class="acc">${acc}</span>${extra ? ' · ' + extra : ''}</div>
         ${a.aktuell && a.pos && a.adresse && a.adresse !== a.aktuell.adresse ? `<div class="sos-when">${tk('sos.trigger', { adresse: escapeHtml(a.adresse) })}</div>` : ''}`;
@@ -2107,7 +2107,7 @@ function sosStart() {
         if (!a) break;
         const c = sosCurrent(a);
         if (!c) break;
-        famCopy(sosAddress(a) + ' (' + Number(c.lat).toFixed(5) + ', ' + Number(c.lon).toFixed(5) + (c.genau ? ', ± ' + c.genau + ' m' : '') + ')');
+        famCopy(sosAddress(a) + ' (' + Number(c.lat).toFixed(5) + ', ' + Number(c.lon).toFixed(5) + (c.genau ? ', ± ' + c.genau + ' ' + PINN_REGION.unit('m') : '') + ')');
         break;
       }
       case 'pass': {
@@ -3976,10 +3976,10 @@ function ptWeightHtml(p) {
     const line = pts.map((q, i) => (i ? 'L' : 'M') + q[0] + ' ' + q[1]).join(' ');
     const area = line + ` L${pts[pts.length - 1][0]} ${H} L${pts[0][0]} ${H} Z`;
     chart = `<svg class="pt-wchart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path class="a" d="${area}"/><path class="l" d="${line}"/>${pts.map(q => `<circle cx="${q[0]}" cy="${q[1]}" r="2.6"/>`).join('')}</svg>
-      <div class="pt-wscale"><span>${escapeHtml(famFmtDate(ws[0].date))}</span><span>${escapeHtml(fmt(kMin))}–${escapeHtml(fmt(kMax))} kg</span><span>${escapeHtml(famFmtDate(last.date))}</span></div>`;
+      <div class="pt-wscale"><span>${escapeHtml(famFmtDate(ws[0].date))}</span><span>${escapeHtml(fmt(kMin))}–${escapeHtml(fmt(kMax))} ${PINN_REGION.unit('kg')}</span><span>${escapeHtml(famFmtDate(last.date))}</span></div>`;
   }
   return `<div class="fam-card">${head}
-    <div class="pt-wnow"><b>${escapeHtml(fmt(last.kg))}</b> <span>kg</span>${prev ? `<span class="pt-wdiff ${diff > 0 ? 'up' : diff < 0 ? 'down' : ''}">${diff > 0 ? '▲' : diff < 0 ? '▼' : '='} ${escapeHtml(fmt(Math.abs(diff)))} kg</span>` : ''}<small>${escapeHtml(famFmtDate(last.date))}</small></div>
+    <div class="pt-wnow"><b>${escapeHtml(fmt(last.kg))}</b> <span>${PINN_REGION.unit('kg')}</span>${prev ? `<span class="pt-wdiff ${diff > 0 ? 'up' : diff < 0 ? 'down' : ''}">${diff > 0 ? '▲' : diff < 0 ? '▼' : '='} ${escapeHtml(fmt(Math.abs(diff)))} ${PINN_REGION.unit('kg')}</span>` : ''}<small>${escapeHtml(famFmtDate(last.date))}</small></div>
     ${chart}
     ${can && ws.length ? `<button type="button" class="pt-suggest" data-pt="weights" data-id="${famAttr(p.id)}"><span>${tk('pet.allValues')}</span> (${ws.length})</button>` : ''}
   </div>`;
@@ -4456,7 +4456,7 @@ function ptOpenWeights(petId) {
   if (!p) return;
   const ws = (p.weights || []).slice().sort((a, b) => b.date.localeCompare(a.date));
   const html = `<h3 class="font-serif text-lg mb-3"><span>${tk('family.weight')}</span> · ${escapeHtml(p.name)}</h3>
-    <div class="flex flex-col">${ws.map(w => `<div class="fam-row"><div class="fam-v">${escapeHtml(famFmtDate(w.date))}</div><b class="text-sm">${escapeHtml(Number(w.kg).toLocaleString(sysLocale()))} kg</b>${ptCanEdit() ? `<button type="button" class="fam-x" data-ptm="wdel" data-v="${famAttr(w.id)}" aria-label="${escapeHtml(tk('common.remove'))}">×</button>` : ''}</div>`).join('')}</div>
+    <div class="flex flex-col">${ws.map(w => `<div class="fam-row"><div class="fam-v">${escapeHtml(famFmtDate(w.date))}</div><b class="text-sm">${escapeHtml(Number(w.kg).toLocaleString(sysLocale()))} ${PINN_REGION.unit('kg')}</b>${ptCanEdit() ? `<button type="button" class="fam-x" data-ptm="wdel" data-v="${famAttr(w.id)}" aria-label="${escapeHtml(tk('common.remove'))}">×</button>` : ''}</div>`).join('')}</div>
     <div class="flex justify-end mt-3"><button type="button" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium" data-ptm="cancel">${tk('common.done')}</button></div>`;
   ptOpenModal(html, { kind: 'weights', petId });
 }
@@ -5089,14 +5089,14 @@ function wxDetailHtml(d, placeKey, kind) {
   if (kind === 'klima') {
     return `<p class="wx-dd"><span>${tk('wx.typicalValue')}</span> – <span>${tk('wx.whatDayWasLike')}</span>${d.jahre ? ` (${tk('wx.yearsN', { n: d.jahre })})` : ''}.</p>
       <div class="wx-tiles">${wxTile('🌡️', tk('wx.avgHigh'), tDeg(d.max))}${wxTile('🌙', tk('wx.avgLow'), d.min != null ? tDeg(d.min) : null)}
-      ${wxTile('💧', tk('wx.rain'), d.mm != null ? escapeHtml(String(d.mm).replace('.', ',')) + ' mm' : null, d.rain != null ? `<b>${d.rain}</b> % <span>${tk('wx.rainyDays')}</span>` : '')}
+      ${wxTile('💧', tk('wx.rain'), d.mm != null ? escapeHtml(String(d.mm).replace('.', ',')) + ' ' + PINN_REGION.unit('mm') : null, d.rain != null ? `<b>${d.rain}</b> % <span>${tk('wx.rainyDays')}</span>` : '')}
       ${wxTile('☀️', tk('wx.sun'), d.sonne != null ? escapeHtml(String(d.sonne).replace('.', ',')) + ' h' : null)}</div>`;
   }
   const arrow = d.richtung != null ? `<span class="wx-arrow" style="transform:rotate(${(d.richtung + 180) % 360}deg)">↑</span>` : '';
   const tiles = [
     wxTile('🌡️', tk('wx.feelsLike2'), d.gefMax != null ? (d.gefMin != null ? tDeg(d.gefMin) + ' / ' : '') + tDeg(d.gefMax) : null),
-    wxTile('💧', tk('wx.rain'), d.mm != null ? escapeHtml(String(d.mm).replace('.', ',')) + ' mm' : null, d.regenStd ? `<b>${d.regenStd}</b> <span>${tk('family.hr')}</span>` : (d.rain != null ? `<b>${d.rain}</b> %` : '')),
-    wxTile('💨', tk('wx.wind'), d.wind != null ? `${arrow}${d.wind} km/h` : null, d.boeen != null ? `<span>${tk('wx.gusts')}</span> <b>${d.boeen}</b>` : ''),
+    wxTile('💧', tk('wx.rain'), d.mm != null ? escapeHtml(String(d.mm).replace('.', ',')) + ' ' + PINN_REGION.unit('mm') : null, d.regenStd ? `<b>${d.regenStd}</b> <span>${tk('family.hr')}</span>` : (d.rain != null ? `<b>${d.rain}</b> %` : '')),
+    wxTile('💨', tk('wx.wind'), d.wind != null ? `${arrow}${d.wind} ${PINN_REGION.unit('km/h')}` : null, d.boeen != null ? `<span>${tk('wx.gusts')}</span> <b>${d.boeen}</b>` : ''),
     wxTile('🕶️', tk('wx.uvIndex'), d.uv != null ? String(Math.round(d.uv)) : null, d.uv != null ? escapeHtml(wxUvLabel(d.uv)) : ''),
     wxTile('☀️', tk('wx.sun'), d.sonne != null ? escapeHtml(String(d.sonne).replace('.', ',')) + ' h' : null),
     wxTile('🌅', tk('wx.sunriseSunset'), d.auf ? d.auf + ' · ' + (d.unter || '') : null),

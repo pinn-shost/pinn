@@ -22,6 +22,16 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.121', datum: '01.11.2026', titel: 'Russisch freigeschaltet',
+    punkte: [
+      ['neu', 'Русский ist jetzt für alle da: In Einstellungen → Sprache & Region lässt sich Russisch wählen. Alle 6.722 Texte der App, die Push-Mitteilungen des Servers, der Einrichtungs-Assistent und der Datenexport sind auf Russisch.'],
+      ['neu', 'Region Russland (Rubel, Notrufnummern 102/103/101/112) und russische Einheitenzeichen (км, л, мм, кг, кВт·ч, км/ч) bei Fahrzeugen, Zuhause, Familie, Wetter und Hinweisen. Ein Konto mit Land Russland bekommt Push-Mitteilungen automatisch auf Russisch.'],
+      ['neu', 'Sprachsteuerung versteht jetzt auch Russisch („Добавь молоко и яйца в список покупок“, „Напомни завтра вынести мусор“, „Что в списке покупок?“, „Что запланировано на сегодня?“) und antwortet auf Russisch.'],
+      ['fix', 'Kleinigkeiten: Die Sprachsteuerung erkennt doppelte Einträge jetzt auch bei kyrillischen Namen richtig; der Hinweis „Auch auf …“ unter der Sprachsteuerung nennt Russisch.'],
+      ['info', 'Geändert: index.html, js/sprachen.js, js/region.js, js/fahrzeuge.js, js/familie.js, js/hinweise.js, js/zuhause.js, js/sprachsteuerung.js, js/versionslog.js, einrichtung.js, alle zehn Sprachdateien in i18n/, i18n/versionslog.en.js, am Server pb_hooks/pinn-sprache.js, -ausblick.js, -familie-geburtstag.js, -haustiere.js, -ortung.js, -wobistdu.js.'],
+    ],
+  },
+  {
     v: '1.120', datum: '30.10.2026', titel: 'Russisch – erste Etappe',
     punkte: [
       ['neu', 'Russisch kommt: pinn. wird Schritt für Schritt ins Russische übersetzt. Den Anfang machen Anmeldung, Dashboard, Menü, Hauptadmin-Seite und alle Einstellungen sowie der Einrichtungs-Assistent und der Datenexport. Die Sprache bleibt versteckt, bis alles übersetzt ist – zum Ausprobieren auf einem Gerät freischaltbar; noch fehlende Texte erscheinen dann auf Englisch'],

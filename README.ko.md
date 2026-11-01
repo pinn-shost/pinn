@@ -20,6 +20,7 @@
   <a href="README.pt.md">🇧🇷 Português</a> ·
   <a href="README.zh.md">🇨🇳 中文</a> ·
   <a href="README.ja.md">🇯🇵 日本語</a> ·
+  <a href="README.ru.md">🇷🇺 Русский</a>
   <b>🇰🇷 한국어</b>
 </p>
 
@@ -97,7 +98,17 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 | 🔔 **알림** | iPhone, iPad, Android에서 받는 개인 푸시 메시지와, 가족의 모든 변경을 모아 주는 알림 벨. |
 | 🧩 **그 밖에** | 옮길 수 있는 메모가 있는 가족 게시판, 전체 검색, 자동 동기화되는 오프라인 모드, 다크 모드, 프로필 PIN이 있는 iPad 대시보드, 손님 계정, 아이 보호 잠금. |
 
-pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
+pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
+
+## 1.121.0의 새 소식
+
+**러시아어 공개**
+
+- **Русский를 이제 누구나 쓸 수 있어요**: 설정 → 언어 및 지역에서 고르세요. 앱의 모든 텍스트 6,722개, 서버의 푸시 알림, 설정 도우미, 데이터 내보내기가 러시아어로 되어 있어요.
+- 지역에 **러시아**(루블, 긴급 번호 102/103/101/112)를 추가하고, 차량·집·가족·날씨·알림에 러시아어 단위 기호(км, л, мм, кг, кВт·ч, км/ч)를 써요. 국가가 러시아인 계정은 푸시 알림을 자동으로 러시아어로 받아요.
+- **음성 제어가 러시아어를 알아들어요**(«Добавь молоко и яйца в список покупок», «Напомни завтра вынести мусор», «Что в списке покупок?», «Что запланировано на сегодня?») 그리고 러시아어로 답해요.
+- 자잘한 것: 음성 제어가 키릴 문자 이름의 중복 항목을 알아보고, 음성 제어 아래 "다른 언어도" 안내에 러시아어가 들어갔어요.
+- 변경: `index.html`, `js/sprachen.js`, `js/region.js`, `js/fahrzeuge.js`, `js/familie.js`, `js/hinweise.js`, `js/zuhause.js`, `js/sprachsteuerung.js`, `js/versionslog.js`, `einrichtung.js`, `i18n/*.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-sprache.js`, `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-familie-geburtstag.js`, `pb_hooks/pinn-haustiere.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-wobistdu.js`. 설치는 늘 하던 대로(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼). 업데이트 후 러시아어로 테스트 푸시를 보내 주세요(설정 → 알림 → 테스트).
 
 ## 1.120.9의 새 소식
 
@@ -139,16 +150,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - 다음: 러시아어 다음 단계(차량, 스마트홈 …).
 - 변경: `index.html`, `js/sprachen.js`, `js/dokumente.js`, `js/zuhause.js`, `js/versionslog.js`, `i18n/*.i18n.js`(`ru.i18n.js` 포함 모든 언어), `i18n/versionslog.en.js` – 서버는 바뀌지 않아요. 평소처럼 설치하세요(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
 
-## 1.120.5의 새 소식
-
-**러시아어 – 여섯 번째 단계**
-
-- 러시아어로 번역: 가족 영역(응급 카드, 실시간 위치가 있는 가족 개요, “집에 가는 중이에요”), 반려동물(프로필, 먹이, 산책, 예방과 접종, 실종 포스터, 펫시터), 학교·어린이집(시간표, 숙제, 가정통신문, 휴원일, AI 읽기), 위치(공유, 장소, 가게, GPS 트래커, SOS), 별 보상이 있는 아이 페이지, 가족 구성원, SOS, “어디야?” – 이제 6713개 중 4417개 텍스트가 완료됐어요.
-- 수정(모든 언어): 독일어 외의 언어에서 “어디야?” 질문에 잘못된 이름이 표시되던 문제, 반려동물 생일·예방의 “…일 후”와 학교 하루 개요의 “데리러 감”이 고정 문구였던 문제를 고쳐 이제 번역돼요.
-- 모두 번역될 때까지 러시아어는 **숨겨져** 있어요(1.120.0에 설명한 대로 기기 한 대에서 켤 수 있어요).
-- 다음: 러시아어 다음 단계(집, 문서, 차량, 스마트홈 …).
-- 변경: `index.html`, `js/sprachen.js`, `js/familie.js`, `js/familienkachel.js`, `js/wobistdu.js`, `js/versionslog.js`, `i18n/*.i18n.js`(`ru.i18n.js` 포함 모든 언어), `i18n/versionslog.en.js` – 서버는 바뀌지 않아요. 평소처럼 설치하세요(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
-
 ## 1.120.0의 새 소식
 
 **러시아어 – 첫 단계**
@@ -187,7 +188,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.120.9` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.121.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

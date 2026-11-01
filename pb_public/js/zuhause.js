@@ -1779,9 +1779,9 @@ function hsMeterCardHtml(m) {
   const today = finTodayIso();
   const lines = [];
   if (fc.annual != null) {
-    lines.push(hsRow(t.income ? tk('home.yieldPerYear') : tk('home.consumptionPerYear'), hsEsc((st.reliable ? '' : '≈ ') + hsNum(fc.annual, unit === 'kWh' ? 0 : 1) + ' ' + unit + (hsFactor(m) !== 1 ? ' (' + hsNum(fc.annual * hsFactor(m), 0) + ' ' + hsBillUnit(m) + ')' : ''))));
-    if (Number(h_area()) > 0 && (t.id === 'gas' || t.id === 'waerme' || t.id === 'heizstrom')) lines.push(hsRow(tk('home.perM2'), hsEsc(hsNum(fc.annual * hsFactor(m) / h_area(), 0) + ' kWh')));
-    lines.push(hsRow(tk('home.soFarPeriod'), hsEsc(hsNum(fc.used, unit === 'kWh' ? 0 : 1) + ' ' + unit + ' · ' + tk('home.sinceDate', { date: vtFmt(fc.per.start) }))));
+    lines.push(hsRow(t.income ? tk('home.yieldPerYear') : tk('home.consumptionPerYear'), hsEsc((st.reliable ? '' : '≈ ') + hsNum(fc.annual, unit === 'kWh' ? 0 : 1) + ' ' + PINN_REGION.unit(unit) + (hsFactor(m) !== 1 ? ' (' + hsNum(fc.annual * hsFactor(m), 0) + ' ' + PINN_REGION.unit(hsBillUnit(m)) + ')' : ''))));
+    if (Number(h_area()) > 0 && (t.id === 'gas' || t.id === 'waerme' || t.id === 'heizstrom')) lines.push(hsRow(tk('home.perM2'), hsEsc(hsNum(fc.annual * hsFactor(m) / h_area(), 0) + ' ' + PINN_REGION.unit('kWh'))));
+    lines.push(hsRow(tk('home.soFarPeriod'), hsEsc(hsNum(fc.used, unit === 'kWh' ? 0 : 1) + ' ' + PINN_REGION.unit(unit) + ' · ' + tk('home.sinceDate', { date: vtFmt(fc.per.start) }))));
     lines.push(hsRow(t.income ? tk('home.feedPaymentForecast') : tk('home.costsForecast'), hsEsc(fmtEur0(fc.cost) + ' · ' + tk('home.untilDate', { date: vtFmt(fc.per.end) }))));
   }
   let verdict = '';
@@ -1802,7 +1802,7 @@ function hsMeterCardHtml(m) {
     const vals = mo.map(x => x.val != null ? x.val : (x.est || 0));
     const colors = mo.map(x => x.val != null ? t.color : t.color + '55');
     const labels = mo.map(x => fzMonthName(Number(x.ym.slice(5, 7)) - 1, 'short'));
-    chart = `<div class="mt-3">${fzBarsHtml(vals, labels, t.color, { colors, height: 80, short: v => hsNum(v, 0), fmt: v => hsNum(v, 1) + ' ' + unit })}</div>
+    chart = `<div class="mt-3">${fzBarsHtml(vals, labels, t.color, { colors, height: 80, short: v => hsNum(v, 0), fmt: v => hsNum(v, 1) + ' ' + PINN_REGION.unit(unit) })}</div>
       <p class="text-[10px] text-ink/40 mt-1">${tk('home.lightEstimatedNoReading')}</p>`;
   }
   const rs = st.rs.slice().reverse();
@@ -1813,7 +1813,7 @@ function hsMeterCardHtml(m) {
     return `
       <button type="button" class="fz-log-row" data-hsact="reading-edit" data-id="${hsEsc(r.id)}">
         <span class="fz-log-ic">${r.source === 'ki' ? '✨' : (r.reset ? '🔁' : '📍')}</span>
-        <span class="flex-1 min-w-0"><span class="block text-sm font-medium truncate">${hsEsc(hsNum(r.value, unit === 'kWh' ? 1 : 3) + ' ' + unit)}</span><span class="block text-xs text-ink/45 truncate">${hsEsc([vtFmt(r.date), r.reset ? tk('home.meterReplaced') : '', r.note].filter(Boolean).join(' · '))}</span></span>
+        <span class="flex-1 min-w-0"><span class="block text-sm font-medium truncate">${hsEsc(hsNum(r.value, unit === 'kWh' ? 1 : 3) + ' ' + PINN_REGION.unit(unit))}</span><span class="block text-xs text-ink/45 truncate">${hsEsc([vtFmt(r.date), r.reset ? tk('home.meterReplaced') : '', r.note].filter(Boolean).join(' · '))}</span></span>
         ${delta != null ? `<span class="shrink-0 text-xs text-ink/50">${hsEsc('+ ' + hsNum(delta, unit === 'kWh' ? 0 : 1))}</span>` : ''}
       </button>`;
   }).join('');
@@ -1824,7 +1824,7 @@ function hsMeterCardHtml(m) {
         <div class="min-w-0">
           <div class="text-sm font-medium truncate">${hsEsc(m.name || t.label)}</div>
           <div class="text-xs text-ink/45 truncate">${hsEsc([m.number ? tk('home.meterNoShort', { number: m.number }) : '', last ? tk('home.lastOn', { date: vtFmt(last.date) }) : tk('home.noReadingYet')].filter(Boolean).join(' · '))}</div>
-          ${last ? `<div class="font-serif text-lg leading-tight mt-0.5">${hsEsc(hsNum(last.value, unit === 'kWh' ? 1 : 3) + ' ' + unit)}</div>` : ''}
+          ${last ? `<div class="font-serif text-lg leading-tight mt-0.5">${hsEsc(hsNum(last.value, unit === 'kWh' ? 1 : 3) + ' ' + PINN_REGION.unit(unit))}</div>` : ''}
         </div>
       </div>
       ${hsCanEdit() ? `<div class="flex flex-col gap-1.5 shrink-0">
@@ -2530,7 +2530,7 @@ function hsOpenMeterModal(id, typePreset) {
       document.getElementById('hsmFactorWrap').classList.toggle('hidden', !t.factor);
       document.getElementById('hsmAdvWrap').classList.toggle('hidden', !!t.income);
       const pu = document.querySelector('#hsmPrice + span');
-      if (pu) pu.textContent = curSym() + '/' + (t.billUnit || t.unit);
+      if (pu) pu.textContent = curSym() + '/' + PINN_REGION.unit(t.billUnit || t.unit);
       document.getElementById('hsmPrice').placeholder = hsDecInput(t.price, 2);
       document.querySelector('label[for="hsmPrice"]').textContent = t.income ? tk('home.feedTariff') : tk('home.unitPrice');
     };
@@ -2611,10 +2611,10 @@ function hsOpenReadingModal({ meterId = '', id = '', fromRun = false } = {}) {
       const m = hsMeterById(hsModalState.meter);
       const t = hsMeterType(m.type);
       const unitEl = document.querySelector('#hsrValue + span');
-      if (unitEl) unitEl.textContent = t.unit;
+      if (unitEl) unitEl.textContent = PINN_REGION.unit(t.unit);
       const rs = hsReadings(m.id).filter(x => !r || x.id !== r.id);
       const last = rs.length ? rs[rs.length - 1] : null;
-      document.getElementById('hsrLast').textContent = last ? tk('home.lastReadingValue', { value: hsNum(last.value, t.unit === 'kWh' ? 1 : 3) + ' ' + t.unit, date: vtFmt(last.date) }) : tk('home.noReadingEnteredYet');
+      document.getElementById('hsrLast').textContent = last ? tk('home.lastReadingValue', { value: hsNum(last.value, t.unit === 'kWh' ? 1 : 3) + ' ' + PINN_REGION.unit(t.unit), date: vtFmt(last.date) }) : tk('home.noReadingEnteredYet');
       const ki = !!(recipeKiStatus && recipeKiStatus.aktiv);
       document.getElementById('hsrKi').classList.toggle('hidden', !ki);
     };
@@ -2665,7 +2665,7 @@ async function hsReadMeterPhoto(file) {
     hsModalState.source = 'ki';
     if (z.nummer && !m.number) hsModalState.number = z.nummer;
     const warnNr = z.nummer && m.number && String(z.nummer).replace(/\W/g, '') !== String(m.number).replace(/\W/g, '');
-    const parts = [tk('home.aiRead', { value: hsNum(z.stand, 3) + ' ' + t.unit }) + (z.sicher < 0.7 ? (' ' + tk('home.pleaseCheckCarefully')) : (' ' + tk('home.pleaseCheckBriefly')))];
+    const parts = [tk('home.aiRead', { value: hsNum(z.stand, 3) + ' ' + PINN_REGION.unit(t.unit) }) + (z.sicher < 0.7 ? (' ' + tk('home.pleaseCheckCarefully')) : (' ' + tk('home.pleaseCheckBriefly')))];
     if (warnNr) parts.push(tk('home.meterNumberMismatch', { read: z.nummer, saved: m.number }));
     if (z.hinweis) parts.push(z.hinweis);
     show(parts.join(' '), z.sicher < 0.7 || warnNr);

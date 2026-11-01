@@ -20,7 +20,8 @@
   <a href="README.pt.md">🇧🇷 Português</a> ·
   <b>🇨🇳 中文</b> ·
   <a href="README.ja.md">🇯🇵 日本語</a> ·
-  <a href="README.ko.md">🇰🇷 한국어</a>
+  <a href="README.ko.md">🇰🇷 한국어</a> ·
+  <a href="README.ru.md">🇷🇺 Русский</a>
 </p>
 
 <p align="center">
@@ -97,7 +98,17 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 | 🔔 **通知** | iPhone、iPad 和 Android 上的个人推送消息，以及汇总家庭中每项变动的通知铃。 |
 | 🧩 **其他功能** | 带可移动便签的家庭公告板、全局搜索、带自动同步的离线模式、深色模式、带个人 PIN 的 iPad 仪表板、访客账户、儿童锁。 |
 
-pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語和 🇰🇷 한국어**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
+pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어和 🇷🇺 Русский**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
+
+## 1.121.0 新功能
+
+**俄语已开放**
+
+- **Русский 现已向所有人开放**：在“设置 → 语言和地区”中选择。应用的全部 6,722 条文字、服务器的推送通知、设置向导和数据导出均已有俄语。
+- 新增**俄罗斯**地区（卢布，紧急号码 102/103/101/112），车辆、住宅、家庭、天气和提示中使用俄语单位符号（км、л、мм、кг、кВт·ч、км/ч）。国家为俄罗斯的账户会自动收到俄语推送通知。
+- **语音控制现在听得懂俄语**（«Добавь молоко и яйца в список покупок»、«Напомни завтра вынести мусор»、«Что в списке покупок?»、«Что запланировано на сегодня?»），并用俄语回答。
+- 小改进：语音控制现在能识别使用西里尔字母名称的重复条目；语音控制下方的“也支持…”提示已加入俄语。
+- 已更改：`index.html`, `js/sprachen.js`, `js/region.js`, `js/fahrzeuge.js`, `js/familie.js`, `js/hinweise.js`, `js/zuhause.js`, `js/sprachsteuerung.js`, `js/versionslog.js`, `einrichtung.js`, `i18n/*.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-sprache.js`, `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-familie-geburtstag.js`, `pb_hooks/pinn-haustiere.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-wobistdu.js`。安装方式不变（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。更新后请发送一条俄语测试推送（设置 → 通知 → 测试）。
 
 ## 1.120.9 新功能
 
@@ -139,16 +150,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - 下一步：俄语的后续阶段（车辆、智能家居 …）。
 - 已更改：`index.html`, `js/sprachen.js`, `js/dokumente.js`, `js/zuhause.js`, `js/versionslog.js`, `i18n/*.i18n.js`（所有语言，包括 `ru.i18n.js`）, `i18n/versionslog.en.js` —— 服务器端没有变化。照常安装（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
 
-## 1.120.5 新功能
-
-**俄语 – 第六阶段**
-
-- 已译成俄语：家庭区域（急救卡、带实时位置的家庭概览、“我在回家的路上”）、宠物（档案、喂食、遛狗、预防与疫苗、寻宠海报、宠物保姆）、学校与托儿所（课表、作业、家长信、停课日、AI 识别）、定位（共享、地点、商店、GPS 追踪器、SOS）、带星星奖励的儿童页面、家庭成员、SOS 以及“你在哪里？”——现已完成 6713 条文本中的 4417 条。
-- 已修复（所有语言）：在德语以外的语言中，“你在哪里？”的提问显示了错误的姓名；宠物生日和预防中的“还有……天”以及上学日概览中的“接”原本是写死的文本，现在会被翻译。
-- 在全部翻译完成之前，俄语仍然**隐藏**（可按 1.120.0 中的说明在单台设备上启用）。
-- 下一步：俄语的后续阶段（住所、文档、车辆、智能家居 …）。
-- 已更改：`index.html`, `js/sprachen.js`, `js/familie.js`, `js/familienkachel.js`, `js/wobistdu.js`, `js/versionslog.js`, `i18n/*.i18n.js`（所有语言，包括 `ru.i18n.js`）, `i18n/versionslog.en.js` —— 服务器端没有变化。照常安装（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
-
 ## 1.120.0 新功能
 
 **俄语——第一阶段**
@@ -187,14 +188,14 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.120.9` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.121.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    脚本会把每个文件复制到位，下载 PDF 导入和照片文字识别所需的库，并启动 pinn.。
 4. 打开 `http://<NAS-IP>:8090` → **以主管理员身份登录** → 密码 `Admin` → 设置你自己的密码。
-5. **设置向导**会带你完成其余步骤——HTTPS、通过 WireGuard 或 Tailscale 远程访问、Google、AI、位置和 Home Assistant——一步一步，支持九种语言。
+5. **设置向导**会带你完成其余步骤——HTTPS、通过 WireGuard 或 Tailscale 远程访问、Google、AI、位置和 Home Assistant——一步一步，支持十种语言。
 6. 在每部手机上通过 HTTPS 地址打开 pinn.，并添加到主屏幕：
    - **iPhone/iPad（Safari）：** 分享 → *添加到主屏幕*（通知需要 iOS 16.4 或更高版本）
    - **Android（Chrome）：** 设置 → 通知 → *将 pinn. 安装为应用*，或 Chrome 菜单 ⋮ → *安装应用*

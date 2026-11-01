@@ -20,7 +20,8 @@
   <a href="README.pt.md">🇧🇷 Português</a> ·
   <a href="README.zh.md">🇨🇳 中文</a> ·
   <b>🇯🇵 日本語</b> ·
-  <a href="README.ko.md">🇰🇷 한국어</a>
+  <a href="README.ko.md">🇰🇷 한국어</a> ·
+  <a href="README.ru.md">🇷🇺 Русский</a>
 </p>
 
 <p align="center">
@@ -97,7 +98,17 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 | 🔔 **通知** | iPhone、iPad、Androidに届く個人向けのプッシュメッセージと、家族内のあらゆる変更を集めるベル。 |
 | 🧩 **そのほか** | 動かせるメモ付きの家族の掲示板、全体検索、自動同期付きのオフラインモード、ダークモード、プロフィールPIN付きのiPadダッシュボード、ゲストアカウント、チャイルドロック。 |
 
-pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
+pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
+
+## 1.121.0の新機能
+
+**ロシア語を公開**
+
+- **Русский がすべての人に使えるようになりました**：設定 → 言語と地域で選べます。アプリの全 6,722 件のテキスト、サーバーのプッシュ通知、セットアップアシスタント、データのエクスポートがロシア語になっています。
+- 地域に**ロシア**（ルーブル、緊急番号 102/103/101/112）を追加し、車両・住まい・家族・天気・お知らせでロシア語の単位記号（км、л、мм、кг、кВт·ч、км/ч）を使います。国がロシアのアカウントには、プッシュ通知が自動でロシア語で届きます。
+- **音声操作がロシア語に対応**（«Добавь молоко и яйца в список покупок»、«Напомни завтра вынести мусор»、«Что в списке покупок?»、«Что запланировано на сегодня?»）し、ロシア語で答えます。
+- 細かな点：音声操作がキリル文字の名前の重複を認識するようになり、音声操作の下の「他の言語にも対応」の注記にロシア語を追加しました。
+- 変更：`index.html`, `js/sprachen.js`, `js/region.js`, `js/fahrzeuge.js`, `js/familie.js`, `js/hinweise.js`, `js/zuhause.js`, `js/sprachsteuerung.js`, `js/versionslog.js`, `einrichtung.js`, `i18n/*.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-sprache.js`, `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-familie-geburtstag.js`, `pb_hooks/pinn-haustiere.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-wobistdu.js`。インストールはいつも通り（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。更新後にロシア語でテストプッシュを送ってください（設定 → 通知 → テスト）。
 
 ## 1.120.9の新機能
 
@@ -139,16 +150,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - 次回：ロシア語の次の段階（乗り物、スマートホーム …）。
 - 変更：`index.html`, `js/sprachen.js`, `js/dokumente.js`, `js/zuhause.js`, `js/versionslog.js`, `i18n/*.i18n.js`（`ru.i18n.js`を含む全言語）, `i18n/versionslog.en.js` ――サーバー側の変更はありません。いつもどおりインストールしてください（`sudo sh pinn-*/pinn-setup.sh` またはアップデートボタン）。
 
-## 1.120.5の新機能
-
-**ロシア語 – 第6段階**
-
-- ロシア語に翻訳：家族エリア（緊急カード、ライブ位置付きの家族の概要、「今から帰ります」）、ペット（プロフィール、ごはん、散歩、予防と予防接種、迷子ポスター、ペットシッター）、学校・保育園（時間割、宿題、保護者向けお便り、休園日、AIによる読み取り）、位置情報（共有、場所、お店、GPSトラッカー、SOS）、スター報酬付きのキッズページ、家族メンバー、SOS、「どこにいる？」――これで6713件中4417件のテキストが完了。
-- 修正（全言語）：ドイツ語以外で「どこにいる？」の質問に誤った名前が表示されていた問題、ペットの誕生日や予防の「あと…日」、学校の1日の概要の「迎え」が固定の文字だった問題を修正し、翻訳されるようにしました。
-- すべて翻訳されるまで、ロシア語は**非表示**のままです（1.120.0の説明どおり1台の端末で有効にできます）。
-- 次回：ロシア語の次の段階（住まい、書類、乗り物、スマートホーム …）。
-- 変更：`index.html`, `js/sprachen.js`, `js/familie.js`, `js/familienkachel.js`, `js/wobistdu.js`, `js/versionslog.js`, `i18n/*.i18n.js`（`ru.i18n.js`を含む全言語）, `i18n/versionslog.en.js` ――サーバー側の変更はありません。いつもどおりインストールしてください（`sudo sh pinn-*/pinn-setup.sh` またはアップデートボタン）。
-
 ## 1.120.0の新機能
 
 **ロシア語――第1段階**
@@ -187,14 +188,14 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.120.9`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.121.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    スクリプトがすべてのファイルを所定の場所にコピーし、PDF取り込みと写真の文字認識に必要なライブラリをダウンロードして、pinn.を起動します。
 4. `http://<NASのIP>:8090`を開き、**メイン管理者としてログイン** → パスワード`Admin` → 自分のパスワードを設定します。
-5. **セットアップアシスタント**が、HTTPS、WireGuardまたはTailscaleでのリモートアクセス、Google、AI、位置情報、Home Assistantといった残りの設定を、9つの言語で順番に案内します。
+5. **セットアップアシスタント**が、HTTPS、WireGuardまたはTailscaleでのリモートアクセス、Google、AI、位置情報、Home Assistantといった残りの設定を、10の言語で順番に案内します。
 6. 各スマートフォンでHTTPSアドレスからpinn.を開き、ホーム画面に追加します：
    - **iPhone/iPad（Safari）：** 共有 → *ホーム画面に追加*（通知にはiOS 16.4以降が必要）
    - **Android（Chrome）：** 設定 → 通知 → *pinn.をアプリとしてインストール*、またはChromeのメニュー ⋮ → *アプリをインストール*

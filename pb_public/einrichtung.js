@@ -9,7 +9,7 @@
   'use strict';
   if (window.PinnSetup) return;
 
-  // Russisch (seit 1.120.0) ist in der App noch versteckt – zur Auswahl steht es erst, wenn es dort freigeschaltet ist
+  // Russisch (seit 1.120.0 vorbereitet, seit 1.121.0 freigeschaltet); versteckte Sprachen stehen nur zur Auswahl, wenn die App sie anbietet
   var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru'];
   var T = {};
   T.de = {

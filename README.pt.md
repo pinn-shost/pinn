@@ -20,7 +20,8 @@
   <b>🇧🇷 Português</b> ·
   <a href="README.zh.md">🇨🇳 中文</a> ·
   <a href="README.ja.md">🇯🇵 日本語</a> ·
-  <a href="README.ko.md">🇰🇷 한국어</a>
+  <a href="README.ko.md">🇰🇷 한국어</a> ·
+  <a href="README.ru.md">🇷🇺 Русский</a>
 </p>
 
 <p align="center">
@@ -97,7 +98,17 @@ Sempre com você: o pinn. se instala em todo iPhone e celular Android como um ap
 | 🔔 **Notificações** | Mensagens push pessoais no iPhone, iPad e Android, além de um sino que reúne cada mudança na família. |
 | 🧩 **E mais** | Mural da família com notas móveis, busca global, modo offline com sincronização automática, modo escuro, painel no iPad com PINs de perfil, conta de convidado, bloqueio infantil. |
 
-O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語 e 🇰🇷 한국어**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
+O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 e 🇷🇺 Русский**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
+
+## Novidades da 1.121.0
+
+**Russo liberado**
+
+- **Русский agora está disponível para todos**: escolha em Configurações → Idioma e região. Todos os 6.722 textos do app, as notificações push do servidor, o assistente de configuração e a exportação de dados estão em russo.
+- Região **Rússia** (rublo, números de emergência 102/103/101/112) e sinais de unidades russos (км, л, мм, кг, кВт·ч, км/ч) em veículos, casa, família, clima e avisos. Uma conta com o país Rússia recebe as notificações push em russo automaticamente.
+- O **controle por voz entende russo** («Добавь молоко и яйца в список покупок», «Напомни завтра вынести мусор», «Что в списке покупок?», «Что запланировано на сегодня?») e responde em russo.
+- Pequenos detalhes: o controle por voz agora reconhece entradas duplicadas com nomes em cirílico; a nota «Também em …» sob o controle por voz menciona o russo.
+- Alterados: `index.html`, `js/sprachen.js`, `js/region.js`, `js/fahrzeuge.js`, `js/familie.js`, `js/hinweise.js`, `js/zuhause.js`, `js/sprachsteuerung.js`, `js/versionslog.js`, `einrichtung.js`, `i18n/*.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-sprache.js`, `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-familie-geburtstag.js`, `pb_hooks/pinn-haustiere.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-wobistdu.js`. Instalação como sempre (`sudo sh pinn-*/pinn-setup.sh` ou botão de atualização). Após a atualização, envie uma notificação de teste em russo (Configurações → Notificações → Teste).
 
 ## Novidades da 1.120.9
 
@@ -139,16 +150,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - A seguir: outras etapas do russo (veículos, casa inteligente …).
 - Alterados: `index.html`, `js/sprachen.js`, `js/dokumente.js`, `js/zuhause.js`, `js/versionslog.js`, `i18n/*.i18n.js` (todos os idiomas, incluindo `ru.i18n.js`), `i18n/versionslog.en.js` – nada muda no servidor. Instale como sempre (`sudo sh pinn-*/pinn-setup.sh` ou botão de atualização).
 
-## Novidades da 1.120.5
-
-**Russo – sexta etapa**
-
-- Traduzidos para russo: a área da família (fichas de emergência, visão geral da família com localizações ao vivo, «Estou a caminho de casa»), animais (perfil, alimentação, passeios, prevenção e vacinas, cartaz de desaparecido, cuidador), escola e creche (horário, lição de casa, cartas aos pais, dias de fechamento, leitura por IA), localização (compartilhar, lugares, lojas, rastreadores GPS, SOS), a página das crianças com recompensas de estrelas, membros da família, SOS e «Onde você está?» – agora 4417 de 6713 textos.
-- Corrigido (todos os idiomas): a pergunta «Onde você está?» mostrava o nome errado fora do alemão; «em … dias» em aniversários e prevenção dos animais e «busca» na visão geral do dia escolar eram textos fixos e agora são traduzidos.
-- O russo continua **oculto** até tudo estar traduzido (dá para ativar em um dispositivo como descrito na 1.120.0).
-- A seguir: outras etapas do russo (casa, documentos, veículos, casa inteligente …).
-- Alterados: `index.html`, `js/sprachen.js`, `js/familie.js`, `js/familienkachel.js`, `js/wobistdu.js`, `js/versionslog.js`, `i18n/*.i18n.js` (todos os idiomas, incluindo `ru.i18n.js`), `i18n/versionslog.en.js` – nada muda no servidor. Instale como sempre (`sudo sh pinn-*/pinn-setup.sh` ou botão de atualização).
-
 ## Novidades da 1.120.0
 
 **Russo – primeira etapa**
@@ -187,14 +188,14 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.120.9` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.121.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    O script copia cada arquivo para o lugar certo, baixa as bibliotecas para importação de PDF e reconhecimento de texto em fotos e inicia o pinn.
 4. Abra `http://<IP-do-NAS>:8090` → **Entrar como administrador principal** → senha `Admin` → escolha a sua própria senha.
-5. O **assistente de configuração** guia você pelo resto – HTTPS, acesso remoto por WireGuard ou Tailscale, Google, IA, localização e Home Assistant – passo a passo, em nove idiomas.
+5. O **assistente de configuração** guia você pelo resto – HTTPS, acesso remoto por WireGuard ou Tailscale, Google, IA, localização e Home Assistant – passo a passo, em dez idiomas.
 6. Abra o pinn. pelo endereço HTTPS em cada celular e adicione-o à tela inicial:
    - **iPhone/iPad (Safari):** Compartilhar → *Adicionar à Tela de Início* (iOS 16.4 ou posterior para notificações)
    - **Android (Chrome):** Configurações → Notificações → *Instalar o pinn. como app*, ou menu do Chrome ⋮ → *Instalar app*
