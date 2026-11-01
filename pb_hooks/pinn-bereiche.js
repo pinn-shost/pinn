@@ -28,8 +28,9 @@
 //   haushalt    rooms, roomSchedules, trashBins, cleaningCategories, smartDevices (since 1.109.0)
 //   kalender    appleCalendar (calendar selection and colours – never the Apple ID or password,
 //               see cleanArea)                                     (since 1.109.0)
-// Still in familien_daten: only the old finance block (before the funds) and old default views
-// (defaultViewMode / defaultViewScope).
+// Nothing of the app's own data stays in familien_daten any more: the old finance block moved into the
+// funds (pinn-kassen.js) and the old default views (defaultViewMode / defaultViewScope, from before the
+// desktop/mobile split) are moved into the settings area once (cleanLegacyAll, schema step 2, since 1.122.0).
 //
 // Server code reads the family data through pinn-benutzer.js: loadFamilyDataFor() contains the areas
 // (overlay) and familyDataStamp() changes with every area as well, so caches built on it stay correct.
@@ -88,6 +89,11 @@ const CONTEXT = { essensplan: ["rezepte"], notfall: ["mitglieder"] };
 const GUEST_LOCKED = { einstellungen: ["guestHiddenViews"] };
 const DATA_MAX = 50 * 1024 * 1024;   // same limit as familien_daten (recipe photos of old versions are embedded)
 const COPY_DAYS = 30;
+// Old default-view keys (before the desktop/mobile split) -> the keys of the settings area that replace them
+const LEGACY_VIEW = {
+    defaultViewMode: ["defaultViewModeDesktop", "defaultViewModeMobile"],
+    defaultViewScope: ["defaultViewScopeDesktop", "defaultViewScopeMobile"],
+};
 const BACKUP_DIR = "/pb_data/pinn_umzug";
 const CHECK_KEY = "pinnBereicheCheck_";  // app store: stamp of familien_daten at the last leftover check
 
@@ -482,6 +488,68 @@ function absorb(familyId, incoming) {
     }
     return added;
 }
+// ---------------------------------------------------------------------------------------------
+// Clean-up of old keys in familien_daten (schema step 2, since 1.122.0)
+// ---------------------------------------------------------------------------------------------
+// Moves the old default-view keys into the settings area (only where the new key is still empty), then removes
+// them from the family record. Before anything is changed the family record is written to
+// pb_data/pinn_umzug (like the move). Safe to repeat. -> { moved: number of values, removed: [keys] }
+function cleanLegacyFamily(familyId) {
+    const result = { moved: 0, removed: [] };
+    if (!validFamily(familyId)) return result;
+    let famRec = null;
+    try { famRec = $app.findFirstRecordByFilter("familien_daten", "familie = {:f}", { f: String(familyId) }); } catch (e) { famRec = null; }
+    if (!famRec) return result;
+    const legacy = Object.keys(LEGACY_VIEW).filter(k => Object.prototype.hasOwnProperty.call(parse(famRec.get("data")), k));
+    if (!legacy.length) return result;
+    if (!areaRecord(familyId, "einstellungen")) migrateFamily(familyId);
+    if (!areaRecord(familyId, "einstellungen")) throw new Error("Bereich einstellungen fehlt für Familie " + familyId);
+    if (!backupFamilyData(familyId, famRec, ["altlasten"])) throw new Error("Sicherung für Familie " + familyId + " nicht möglich");
+    $app.runInTransaction((tx) => {
+        const fr = tx.findFirstRecordByFilter("familien_daten", "familie = {:f}", { f: String(familyId) });
+        const data = parse(fr.get("data"));
+        const rec = areaRecord(familyId, "einstellungen", tx);
+        if (!rec) throw new Error("Bereich einstellungen fehlt für Familie " + familyId);
+        const current = parse(rec.get("data"));
+        const area = isObj(current) ? current : {};
+        let changed = false;
+        legacy.forEach(k => {
+            if (!Object.prototype.hasOwnProperty.call(data, k)) return;
+            LEGACY_VIEW[k].forEach(target => {
+                if (isEmptyVal(area[target]) && !isEmptyVal(data[k])) { area[target] = data[k]; changed = true; result.moved++; }
+            });
+            delete data[k];
+            result.removed.push(k);
+        });
+        if (changed) { rec.set("data", area); tx.save(rec); }
+        fr.set("data", data);
+        tx.save(fr);
+    });
+    return result;
+}
+// All families; throws if one failed (the schema step is then not recorded and runs again at the next start)
+function cleanLegacyAll() {
+    if (!ensureSchema()) throw new Error("Sammlung familien_bereiche fehlt");
+    let families = [];
+    try { families = $app.findRecordsByFilter("familien", "", "created", 0, 0); } catch (e) { families = []; }
+    let failed = 0;
+    let moved = 0;
+    let removed = 0;
+    families.forEach(f => {
+        try {
+            const r = cleanLegacyFamily(f.id);
+            moved += r.moved;
+            removed += r.removed.length;
+        } catch (e) {
+            failed++;
+            console.log("[Bereiche] Alte Ansichts-Einstellungen von Familie " + f.id + " nicht aufgeräumt: " + e.message);
+        }
+    });
+    if (failed) throw new Error(failed + " Familie(n) nicht aufgeräumt");
+    if (removed) console.log("[Bereiche] Alte Ansichts-Einstellungen aufgeräumt (" + removed + " Schlüssel, " + moved + " Werte übernommen).");
+    return true;
+}
+
 // Copies of the move are only kept for COPY_DAYS days
 function expireCopies() {
     if (!findCol(COL)) return;
@@ -691,7 +759,7 @@ function httpFail(e, where, ex, status) {
 
 module.exports = {
     COL, AREAS, COPY_DAYS, GUEST_LOCKED,
-    ensureSchema, migrateAll, migrateFamily, ensureFamily, expireCopies, takeLeftovers, absorb,
+    ensureSchema, migrateAll, migrateFamily, ensureFamily, expireCopies, takeLeftovers, absorb, cleanLegacyFamily, cleanLegacyAll,
     names, keysOf, allKeys, areaOfKey, cleanArea, scrubSecrets, movedNames, isMoved, readMany, overlay, fieldText, kitchenToolsOf, leftoverKeys,
     list, save, afterSave, syncPublicRecipes, unionMerge, knownAreas, unknownAreas, updateArea, areasStamp,
     httpSend, httpBody, httpFamily, httpFail,

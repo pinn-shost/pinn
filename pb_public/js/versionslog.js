@@ -22,6 +22,14 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.122', datum: '01.11.2026', titel: 'Aufräumen im Hintergrund',
+    punkte: [
+      ['fix', 'Pflanzen mit Smarthome-Aktion (Zuhause → Garten & Pflanzen): Der Server liest sie jetzt aus den Kassen, wo sie seit der Einführung der Kassen liegen. Vorher suchte er im alten Familien-Datensatz, sodass die automatische Bewässerung und das Mähen per Home Assistant sie übersehen konnten.'],
+      ['info', 'Aufgeräumt: Die alten Ansichts-Einstellungen aus der Zeit vor der Trennung in Desktop und Handy wurden einmalig in die Einstellungen übernommen und aus dem alten Familien-Datensatz entfernt. Vorher legt der Server eine Sicherung in pb_data/pinn_umzug ab (30 Tage). Sichtbar ändert sich nichts.'],
+      ['info', 'Geändert: index.html, js/sprachen.js, js/speichern.js, js/versionslog.js, i18n/versionslog.en.js, pb_hooks/pinn-bereiche.js, pinn-schema.js, pinn-kassen.js, pinn-smarthome.js und alle READMEs.'],
+    ],
+  },
+  {
     v: '1.121', datum: '01.11.2026', titel: 'Russisch freigeschaltet',
     punkte: [
       ['neu', 'Русский ist jetzt für alle da: In Einstellungen → Sprache & Region lässt sich Russisch wählen. Alle 6.722 Texte der App, die Push-Mitteilungen des Servers, der Einrichtungs-Assistent und der Datenexport sind auf Russisch.'],

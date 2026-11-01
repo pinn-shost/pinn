@@ -112,6 +112,8 @@ function baseline() {
 
 const MIGRATIONS = [
     { version: 1, name: "Grundbestand", up: baseline },
+    // 1.122.0: old default-view keys of the family record move into the settings area (backup file first)
+    { version: 2, name: "Familiendaten-Altlasten", up: () => require(`${__hooks}/pinn-bereiche.js`).cleanLegacyAll() },
 ];
 
 function latest() {

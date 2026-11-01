@@ -212,15 +212,19 @@ function newToken() {
 // ---------------------------------------------------------------------------------------------
 // Family data (only the smart home part, cached until the next change)
 // Since 1.109 rooms, rules and devices live in the area "haushalt" (pinn-bereiche.js): it is put on top of
-// familien_daten (only that area – the plants still come from the old finance block), and the stamp of
-// pinn-benutzer.familyDataStamp() changes with every area, so the cache stays correct.
+// familien_daten (only that area). Since 1.122.0 the plants come from the funds (pinn-kassen.plantsOfFamily);
+// the old finance block of familien_daten is only a fallback for families that have not moved yet. The cache
+// stamp contains the area stamp (pinn-benutzer.familyDataStamp) and the stamp of the funds.
 // ---------------------------------------------------------------------------------------------
 function familyStamp(familyId) {
     try { return String(require(`${__hooks}/pinn-benutzer.js`).familyDataStamp(familyId) || ""); } catch (e) { return ""; }
 }
+function fundsStamp(familyId) {
+    try { return String(require(`${__hooks}/pinn-kassen.js`).dataStamp(familyId) || ""); } catch (e) { return ""; }
+}
 function familyData(familyId) {
     const key = "pinnSmartData:" + familyId;
-    const stamp = familyStamp(familyId);
+    const stamp = familyStamp(familyId) + "|" + fundsStamp(familyId);
     try {
         const c = $app.store().get(key);
         if (c && stamp && c.stamp === stamp) return c.data;
@@ -231,6 +235,9 @@ function familyData(familyId) {
         full = require(`${__hooks}/calendar-sync.js`).parseRecordData(rec.get("data")) || {};
     } catch (e) { full = {}; }
     try { require(`${__hooks}/pinn-bereiche.js`).overlay(familyId, full, ["haushalt"]); } catch (e) { /* no areas yet */ }
+    let plants = [];
+    try { plants = require(`${__hooks}/pinn-kassen.js`).plantsOfFamily(familyId); } catch (e) { plants = []; }
+    if (!plants.length && full.finance && Array.isArray(full.finance.homePlants)) plants = full.finance.homePlants.filter(p => p && p.id && p.smart);
     const data = {
         rooms: Array.isArray(full.rooms) ? full.rooms : [],
         cleaningCategories: Array.isArray(full.cleaningCategories) ? full.cleaningCategories : [],
@@ -238,7 +245,7 @@ function familyData(familyId) {
         trashBins: Array.isArray(full.trashBins) ? full.trashBins : [],
         smartDevices: Array.isArray(full.smartDevices) ? full.smartDevices : [],
         // Home → garden & plants (1.62): watering / mowing with a smart action
-        plants: full.finance && Array.isArray(full.finance.homePlants) ? full.finance.homePlants.filter(p => p && p.id && p.smart) : [],
+        plants: plants,
     };
     try { $app.store().set(key, { stamp: stamp, data: data }); } catch (e) { /* ignore */ }
     return data;

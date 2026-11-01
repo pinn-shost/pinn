@@ -127,6 +127,15 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.122.0의 새 소식
+
+**보이지 않는 곳 정리**
+
+- **스마트 동작이 있는 식물**(집 → 정원과 식물): 이제 서버가 식물을 자금에서 읽어요. 자금이 생긴 뒤로 식물은 그곳에 저장되어 있어요. 예전에는 오래된 가족 데이터 기록에서 찾았기 때문에 Home Assistant로 하는 자동 물주기와 잔디 깎기가 식물을 놓칠 수 있었어요.
+- 데스크톱과 휴대폰이 나뉘기 전의 오래된 보기 설정을 한 번만 설정으로 옮기고 오래된 가족 데이터 기록에서 지워요. 그 전에 가족 데이터 기록의 백업본을 `pb_data/pinn_umzug`에 저장해요(30일 보관). 눈에 보이는 변화는 없어요.
+- 앞으로: 아주 오래된 앱 버전에 대한 호환은 2026년 11월 22일쯤(이전 후 30일)까지 남겨 두어야 해요. 이것이 다음 단계예요.
+- 변경: `index.html`, `js/sprachen.js`, `js/speichern.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-schema.js`, `pb_hooks/pinn-kassen.js`, `pb_hooks/pinn-smarthome.js`, 모든 README. 설치는 평소와 같아요(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
+
 ## 1.121.1의 새 소식
 
 **스크린샷 추가**
@@ -176,16 +185,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - 다음 예정: 러시아어의 이후 단계(알림, 게시판, 전망, 표준 이름 …).
 - 변경됨: `index.html`, `js/sprachen.js`, `js/fahrzeuge.js`, `js/versionslog.js`, `i18n/*.i18n.js`(ru.i18n.js 포함 모든 언어), `i18n/versionslog.en.js` – 서버는 변경 없음. 평소처럼 설치하세요(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
 
-## 1.120.0의 새 소식
-
-**러시아어 – 첫 단계**
-
-- pinn.을 단계적으로 **러시아어**로 번역하고 있어요. 첫 단계는 로그인, 대시보드, 메뉴, 메인 관리자 페이지와 모든 설정, 그리고 초기 설정 마법사 전체와 데이터 내보내기예요 – 약 500개의 텍스트로, 러시아어의 세 가지 복수형과 셰어하우스 표현도 포함돼요.
-- 모두 번역될 때까지 러시아어는 **숨겨져** 있어요. 기기 한 대에서 써 보려면 브라우저 콘솔에 `localStorage.setItem('pinn.sprachen.alle', '1')`을 입력하고 Русский를 고르세요. 아직 번역되지 않은 텍스트는 영어로 보여요.
-- 서버: 초기 설정이 이제 러시아어도 언어로 받아들여요(`pb_hooks/pinn-einrichtung.js`).
-- 다음: 러시아어의 다음 단계(캘린더, 할 일, 집안일 …).
-- 변경: `index.html`, `js/sprachen.js`, `js/einrichten.js`, `js/exportieren.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, `i18n/ru.i18n.js`(신규), `i18n/versionslog.en.js`, `pb_hooks/pinn-einrichtung.js`, `.github/`. 평소처럼 설치하세요(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
-
 ## 작동 방식
 
 ```mermaid
@@ -214,7 +213,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.121.1` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.122.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

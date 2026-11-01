@@ -144,12 +144,11 @@ function applyFamilyData(data) {
     ? data.guestHiddenViews.filter(id => GUEST_SELECTABLE_VIEWS.includes(id))
     : [];
   kassenOnFamilyData(data); // Finance data comes from the fund shown (section „Kassen“)
-  // Backwards compatible: if the old device-independent setting is still stored,
-  // take it as the starting value for BOTH (iPad/desktop and phone).
-  defaultViewModeDesktop = data.defaultViewModeDesktop || data.defaultViewMode || 'timeline';
-  defaultViewScopeDesktop = data.defaultViewScopeDesktop || data.defaultViewScope || 'both';
-  defaultViewModeMobile = data.defaultViewModeMobile || data.defaultViewMode || 'timeline';
-  defaultViewScopeMobile = data.defaultViewScopeMobile || data.defaultViewScope || 'both';
+  // The old device-independent keys (defaultViewMode / defaultViewScope) were moved into these keys by the server (1.122.0)
+  defaultViewModeDesktop = data.defaultViewModeDesktop || 'timeline';
+  defaultViewScopeDesktop = data.defaultViewScopeDesktop || 'both';
+  defaultViewModeMobile = data.defaultViewModeMobile || 'timeline';
+  defaultViewScopeMobile = data.defaultViewScopeMobile || 'both';
   // Design (colours, dark mode, default views) applies per profile. The values from the family data
   // are only the default for profiles that have not set anything of their own yet.
   captureFamilyDesign(data);

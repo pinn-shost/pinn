@@ -127,6 +127,15 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 e 🇷🇺 Русский**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.122.0
+
+**Ordine dietro le quinte**
+
+- **Piante con azione smart** (Casa → Giardino e piante): il server ora le legge dalle casse, dove si trovano da quando esistono le casse. Prima cercava nel vecchio record della famiglia, quindi l’irrigazione e lo sfalcio automatici con Home Assistant potevano non trovarle.
+- Le vecchie impostazioni di visualizzazione, di prima della separazione tra desktop e telefono, vengono spostate una volta nelle impostazioni e rimosse dal vecchio record della famiglia. Prima viene salvata una copia di sicurezza del record in `pb_data/pinn_umzug` (conservata 30 giorni). A prima vista non cambia nulla.
+- Ancora da fare: la compatibilità con versioni molto vecchie dell’app deve restare fino a circa il 22 novembre 2026 (30 giorni dopo il trasferimento); è il passo successivo.
+- Modificati: `index.html`, `js/sprachen.js`, `js/speichern.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-schema.js`, `pb_hooks/pinn-kassen.js`, `pb_hooks/pinn-smarthome.js` e tutti i README. Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o il pulsante di aggiornamento).
+
 ## Novità della 1.121.1
 
 **Più screenshot**
@@ -176,16 +185,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Prossimamente: altre tappe del russo (notifiche, bacheca, prospettive, nomi standard …).
 - Modificato: `index.html`, `js/sprachen.js`, `js/fahrzeuge.js`, `js/versionslog.js`, `i18n/*.i18n.js` (tutte le lingue, incluso `ru.i18n.js`), `i18n/versionslog.en.js` – sul server non cambia nulla. Installa come di consueto (`sudo sh pinn-*/pinn-setup.sh` o il pulsante di aggiornamento).
 
-## Novità della 1.120.0
-
-**Russo – prima tappa**
-
-- pinn. viene tradotto in **russo** passo dopo passo. La prima tappa comprende accesso, dashboard, menu, pagina dell’amministratore principale e tutte le impostazioni, oltre all’assistente di configurazione completo e all’esportazione dei dati – circa 500 testi, con le tre forme plurali del russo e i termini della casa condivisa.
-- Il russo resta **nascosto** finché non è tutto tradotto. Per provarlo su un dispositivo, digita `localStorage.setItem('pinn.sprachen.alle', '1')` nella console del browser e scegli Русский; i testi non ancora tradotti compaiono in inglese.
-- Server: la configurazione ora accetta anche il russo come lingua (`pb_hooks/pinn-einrichtung.js`).
-- Prossimamente: altre tappe del russo (calendario, attività, casa …).
-- Modificati: `index.html`, `js/sprachen.js`, `js/einrichten.js`, `js/exportieren.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, `i18n/ru.i18n.js` (nuovo), `i18n/versionslog.en.js`, `pb_hooks/pinn-einrichtung.js`, `.github/`. Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o pulsante di aggiornamento).
-
 ## Come funziona
 
 ```mermaid
@@ -214,7 +213,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.121.1` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.122.0` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

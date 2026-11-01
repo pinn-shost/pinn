@@ -692,6 +692,34 @@ function contractsOfFamily(familyId) {
     return out;
 }
 
+// Pflanzen mit Smarthome-Aktion aus allen Kassen einer Familie (Zuhause → Garten & Pflanzen liegt in den
+// Finanzdaten der Kasse, seit 1.122.0 liest der Smarthome-Server sie von hier statt aus dem alten Familien-Datensatz)
+function plantsOfFamily(familyId) {
+    const out = [];
+    const seen = {};
+    metaList(familyId).forEach(k => {
+        let rec = null;
+        try { rec = $app.findRecordById(KASSEN, k.id); } catch (e) { rec = null; }
+        if (!rec) return;
+        const d = parseJson(rec.get("daten"), {}) || {};
+        (Array.isArray(d.homePlants) ? d.homePlants : []).forEach(p => {
+            if (!p || typeof p.id !== "string" || !p.id || !p.smart || seen[p.id]) return;
+            seen[p.id] = true;
+            out.push(p);
+        });
+    });
+    return out;
+}
+// Änderungsstand aller Kassen einer Familie (Anzahl + jüngste Änderung), ohne die Finanzdaten zu laden
+function dataStamp(familyId) {
+    if (!familyId || !findCol(KASSEN)) return "";
+    try {
+        const m = new DynamicModel({ u: "", n: 0 });
+        $app.db().newQuery("SELECT COALESCE(MAX(updated), '') AS u, COUNT(*) AS n FROM " + KASSEN + " WHERE familie = {:f}").bind({ f: String(familyId) }).one(m);
+        return String(m.n || 0) + ":" + String(m.u || "");
+    } catch (e) { return ""; }
+}
+
 // ---------------------------------------------------------------------------------------------
 // Für die App
 // ---------------------------------------------------------------------------------------------
@@ -965,7 +993,7 @@ function httpFail(e, where, ex, status) {
 module.exports = {
     httpSend, httpGuard, httpBody, httpFail,
     KASSEN, ensureSchema, migrateAll, ensureFamily, ensureFamilyGroup, ensurePrivate, familyMigrated, cleanupEmpty,
-    metaList, isMember, canManage, access, defaultKasse, memberUserIds, contractsOfFamily, familyUsers, meaningful,
+    metaList, isMember, canManage, access, defaultKasse, memberUserIds, contractsOfFamily, plantsOfFamily, dataStamp, familyUsers, meaningful,
     list, saveData, saveSettings, remove, leave,
     rescueFinance, repairFamily, restoreBackup, hasContent, parseDaten: parseJson,
 };

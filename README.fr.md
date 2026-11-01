@@ -123,6 +123,15 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 et 🇷🇺 Русский**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.122.0
+
+**Rangement en coulisses**
+
+- **Plantes avec action intelligente** (Maison → Jardin et plantes) : le serveur les lit désormais dans les caisses, où elles se trouvent depuis l’introduction des caisses. Avant, il cherchait dans l’ancien enregistrement familial, si bien que l’arrosage et la tonte automatiques via Home Assistant pouvaient les manquer.
+- Les anciens réglages de vue, d’avant la séparation entre ordinateur et téléphone, sont repris une fois dans les réglages et retirés de l’ancien enregistrement familial. Une copie de sauvegarde de l’enregistrement familial est d’abord écrite dans `pb_data/pinn_umzug` (conservée 30 jours). Rien ne change à l’écran.
+- À venir : la compatibilité avec les très anciennes versions de l’appli doit rester jusqu’au 22 novembre 2026 environ (30 jours après le déplacement) ; c’est l’étape suivante.
+- Modifié : `index.html`, `js/sprachen.js`, `js/speichern.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-schema.js`, `pb_hooks/pinn-kassen.js`, `pb_hooks/pinn-smarthome.js` et tous les README. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
+
 ## Nouveautés de la 1.121.1
 
 **Plus de captures**
@@ -210,17 +219,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Ensuite : d’autres étapes du russe (finances, caisses, dépôt, contrats …).
 - Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou bouton de mise à jour).
 
-## Nouveautés de la 1.120.0
-
-**Russe – première étape**
-
-- pinn. est traduit en **russe** étape par étape. La première étape couvre la connexion, le tableau de bord, le menu, la page de l’administrateur principal et tous les réglages, ainsi que l’assistant de configuration complet et l’export des données – environ 500 textes, avec les trois formes du pluriel russe et les termes de colocation.
-- Le russe reste **masqué** tant que tout n’est pas traduit. Pour l’essayer sur un appareil, saisissez `localStorage.setItem('pinn.sprachen.alle', '1')` dans la console du navigateur et choisissez Русский ; les textes pas encore traduits s’affichent en anglais.
-- Serveur : la configuration accepte maintenant aussi le russe comme langue (`pb_hooks/pinn-einrichtung.js`).
-- Pour les contributeurs : `i18n-keys.js` a deux nouvelles commandes – `todo` (les clés qui manquent encore à une langue, avec le texte anglais) et `lang` (écrit les textes traduits d’une langue, vérifie pluriels et paramètres, ajoute la variante colocation).
-- Ensuite : les étapes suivantes du russe (calendrier, tâches, ménage …).
-- Modifié : `index.html`, `js/sprachen.js`, `js/einrichten.js`, `js/exportieren.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, `i18n/ru.i18n.js` (nouveau), `i18n/versionslog.en.js`, `pb_hooks/pinn-einrichtung.js`, `.github/`. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou bouton de mise à jour).
-
 ## Comment ça marche
 
 ```mermaid
@@ -247,7 +245,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.121.1` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.122.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

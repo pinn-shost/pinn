@@ -123,6 +123,15 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 y 🇷🇺 Русский**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.122.0
+
+**Orden entre bastidores**
+
+- **Plantas con acción inteligente** (Hogar → Jardín y plantas): el servidor ahora las lee de las cajas, donde están guardadas desde que existen las cajas. Antes buscaba en el registro familiar antiguo, así que el riego y el corte de césped automáticos con Home Assistant podían pasarlas por alto.
+- Los ajustes de vista antiguos, de antes de separar escritorio y móvil, se pasan una vez a los ajustes y se quitan del registro familiar antiguo. Antes se guarda una copia de seguridad del registro familiar en `pb_data/pinn_umzug` (se conserva 30 días). A simple vista no cambia nada.
+- Pendiente: la compatibilidad con versiones muy antiguas de la app debe mantenerse hasta aproximadamente el 22 de noviembre de 2026 (30 días después del traslado); ese es el siguiente paso.
+- Cambiado: `index.html`, `js/sprachen.js`, `js/speichern.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-schema.js`, `pb_hooks/pinn-kassen.js`, `pb_hooks/pinn-smarthome.js` y todos los README. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
+
 ## Novedades de la 1.121.1
 
 **Más capturas**
@@ -210,17 +219,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Próximo: más etapas del ruso (finanzas, cajas, depósito, contratos …).
 - Modificado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js` – en el servidor no cambia nada. Instalar como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
 
-## Novedades de la 1.120.0
-
-**Ruso – primera etapa**
-
-- pinn. se está traduciendo al **ruso** paso a paso. La primera etapa abarca el inicio de sesión, el panel, el menú, la página del administrador principal y todos los ajustes, además del asistente de configuración completo y la exportación de datos – unos 500 textos, con las tres formas de plural del ruso y los términos de piso compartido.
-- El ruso sigue **oculto** hasta que esté todo traducido. Para probarlo en un dispositivo, escribe `localStorage.setItem('pinn.sprachen.alle', '1')` en la consola del navegador y elige Русский; los textos aún sin traducir aparecen en inglés.
-- Servidor: la configuración acepta ahora también el ruso como idioma (`pb_hooks/pinn-einrichtung.js`).
-- Para colaboradores: `i18n-keys.js` tiene dos comandos nuevos – `todo` (las claves que le faltan a un idioma, con el texto en inglés) y `lang` (escribe los textos traducidos de un idioma, comprueba plurales y marcadores, añade la variante de piso compartido).
-- Próximo: más etapas del ruso (calendario, tareas, hogar …).
-- Cambiado: `index.html`, `js/sprachen.js`, `js/einrichten.js`, `js/exportieren.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, `i18n/ru.i18n.js` (nuevo), `i18n/versionslog.en.js`, `pb_hooks/pinn-einrichtung.js`, `.github/`. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
-
 ## Cómo funciona
 
 ```mermaid
@@ -247,7 +245,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.121.1` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.122.0` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

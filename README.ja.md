@@ -127,6 +127,15 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.122.0の新機能
+
+**裏側の整理**
+
+- **スマート操作つきの植物**（住まい → 庭と植物）：サーバーは植物を財布から読み込むようになりました。財布の導入以降、植物はそこに保存されています。以前は古い家族データを探していたため、Home Assistantによる自動の水やりや芝刈りが植物を見落とすことがありました。
+- デスクトップとスマホの設定が分かれる前の古い表示設定を、一度だけ設定へ移し、古い家族データから取り除きます。その前に、家族データのバックアップを `pb_data/pinn_umzug` に保存します（30日間保管）。見た目の変化はありません。
+- これから：とても古いバージョンのアプリへの互換性は、2026年11月22日ごろ（移行から30日後）まで残す必要があります。これが次のステップです。
+- 変更：`index.html`, `js/sprachen.js`, `js/speichern.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-schema.js`, `pb_hooks/pinn-kassen.js`, `pb_hooks/pinn-smarthome.js`、すべてのREADME。インストールはいつもどおり（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
+
 ## 1.121.1の新機能
 
 **スクリーンショットを追加**
@@ -176,16 +185,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - 次回：ロシア語の続きの段階（通知、掲示板、見通し、標準名 …）。
 - 変更：`index.html`, `js/sprachen.js`, `js/fahrzeuge.js`, `js/versionslog.js`, `i18n/*.i18n.js`（ru.i18n.jsを含む全言語）、`i18n/versionslog.en.js` – サーバーは変更なし。いつもどおりインストールしてください（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
 
-## 1.120.0の新機能
-
-**ロシア語――第1段階**
-
-- pinn. を段階的に**ロシア語**へ翻訳しています。第1段階は、ログイン、ダッシュボード、メニュー、メイン管理者ページ、すべての設定、さらに初期設定ウィザード全体とデータのエクスポートです（約500件のテキスト、ロシア語の3つの複数形とルームシェアの表現を含む）。
-- すべての翻訳が終わるまで、ロシア語は**非表示**のままです。1台の端末で試すには、ブラウザのコンソールで `localStorage.setItem('pinn.sprachen.alle', '1')` を入力し、Русский を選んでください。まだ翻訳されていないテキストは英語で表示されます。
-- サーバー：初期設定でロシア語も言語として受け付けるようになりました（`pb_hooks/pinn-einrichtung.js`）。
-- 次回：ロシア語の次の段階（カレンダー、タスク、家事 …）。
-- 変更：`index.html`, `js/sprachen.js`, `js/einrichten.js`, `js/exportieren.js`, `js/versionslog.js`, `einrichtung.js`, `datenexport.js`, `i18n/ru.i18n.js`（新規）、`i18n/versionslog.en.js`、`pb_hooks/pinn-einrichtung.js`、`.github/`。いつも通りインストール（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
-
 ## しくみ
 
 ```mermaid
@@ -214,7 +213,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.121.1`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.122.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
