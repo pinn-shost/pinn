@@ -412,12 +412,46 @@ if (exists(path.join(HOOKS, 'pinn-pushtext.js'))) {
       const r = pt.translateFor('en', 'familie', m);
       return eq([r.titel, r.text], ['🆕 pinn. 1.119.0 is here', 'Installed: 1.118.1. Tap to install the update under Settings → System.']);
     });
+    // Russian (since 1.120.9): three plural forms, dates, quotation marks «…», flat share terms with Cyrillic endings
+    test('push messages in Russian (plural forms one/few/many, dates, names stay unchanged)', () => {
+      const sos = n => pt.translateFor('ru', 'familie', { tag: 'sos-1', titel: 'SOS: Anna braucht Hilfe!', text: 'Deine Familie wurde alarmiert (' + n + ' Gerät' + (n === 1 ? '' : 'e') + ') und sieht deinen Standort.' });
+      const pantry = pt.translateFor('ru', 'familie', { tag: 'vorrat-1', titel: '3 Vorrats-Artikel laufen bald ab', text: 'Milch (in 2 Tagen) · Joghurt (seit 21 Tagen abgelaufen) · Käse (seit gestern abgelaufen)' });
+      const day = pt.translateFor('ru', 'familie', { tag: 'tagesuebersicht-1', titel: 'Mo, 03.11. 09:00', text: 'Mittag: Pizza' });
+      const board = pt.translateFor('ru', 'familie', { tag: 'pinnwand-1', titel: 'Noch 21 Tage – Urlaub', text: 'Einfach so. 💛' });
+      const ev = pt.translateFor('ru', 'familie', { tag: 'termin-1', titel: 'Zahnarzt um 14:30', text: 'In 15 Minuten · mit Anna, Ben und Carla' });
+      const kid = pt.translateFor('ru', 'familie', { tag: 'kind-1', titel: 'Max hat alles geschafft! 🏆', text: 'Alle Aufgaben für heute Abend sind erledigt – zuletzt „Zähne putzen“.' });
+      return eq([sos(1).text, sos(3).text, sos(5).text, pantry.titel, pantry.text, day.titel + ' / ' + day.text, board.titel, ev.titel + ' / ' + ev.text, kid.text],
+        ['Ваша семья оповещена (1 устройство) и видит ваше местоположение.', 'Ваша семья оповещена (3 устройства) и видит ваше местоположение.', 'Ваша семья оповещена (5 устройств) и видит ваше местоположение.',
+          '3 позиции в запасах: срок годности скоро истекает', 'Milch (через 2 дня) · Joghurt (срок истёк 21 день назад) · Käse (срок истёк вчера)',
+          'Пн, 3.11. 09:00 / Обед: Pizza', 'Остался 21 день – Urlaub', 'Zahnarzt в 14:30 / Через 15 минут · участники: Anna, Ben и Carla',
+          'Все задачи выполнены (сегодня вечером) – последняя: «Zähne putzen».']);
+    });
+    test('Russian contract notice: the month count uses the plural form of the number', () => {
+      const c = n => pt.translateFor('ru', 'familie', { tag: 'vertrag-1', titel: 'x', text: 'Kündigung bis 30.11.2026 (in 5 Tagen) zum 31.12.2026 – sonst verlängert er sich um ' + (n === 1 ? 'einen Monat' : n + ' Monate') + '.' }).text;
+      return eq([c(1), c(3), c(12)], [
+        'Расторгните до 30.11.2026 (через 5 дней), чтобы договор закончился 31.12.2026, – иначе он продлится ещё на 1 месяц.',
+        'Расторгните до 30.11.2026 (через 5 дней), чтобы договор закончился 31.12.2026, – иначе он продлится ещё на 3 месяца.',
+        'Расторгните до 30.11.2026 (через 5 дней), чтобы договор закончился 31.12.2026, – иначе он продлится ещё на 12 месяцев.']);
+    });
+    test('Russian flat share: "#wg" variants and the Cyrillic flat share terms (cases are kept, "семейный врач" stays)', () => {
+      const m = { tag: 'sos-1', titel: 'x', text: 'Kein Gerät deiner Familie ist für Push angemeldet – bitte zusätzlich anrufen (112).' };
+      const free = pt.translateFor('ru', 'wg', { tag: 'x', titel: 'Члены семьи и семейный врач', text: 'Вся семья, всей семье, семьёй. Семейный бюджет и Семейные дела' });
+      return eq([pt.translateFor('ru', 'wg', m).text, free.titel, free.text, pt.applyTerms('Для семьи: новые члены семьи', 'ru'), pt.applyTerms('Член семьи, членов семьи', 'ru'), pt.applyTerms('Семья и членам семьи', 'ru')],
+        ['Ни одно устройство вашей квартиры не подключено к уведомлениям – позвоните дополнительно (112).', 'Соседи и семейный врач', 'Вся квартира, всей квартире, квартирой. Семейный бюджет и Общие дела',
+          'Для квартиры: новые соседи', 'Сосед, соседей', 'Квартира и соседям']);
+    });
+    test('every push text of English exists as its own text in the Russian language file', () => {
+      const keysOf = code => new Set((fs.readFileSync(path.join(ROOT, 'pb_public/i18n/' + code + '.i18n.js'), 'utf8').match(/^  "push\.[^"#]+":/gm) || []).map(x => x.replace(/^\s*"|":$/g, '')));
+      const en = keysOf('en'), ru = keysOf('ru');
+      const missing = [...en].filter(k => !ru.has(k));
+      return missing.length ? 'missing in ru: ' + missing.slice(0, 5).join(', ') : '';
+    });
     test('every key of the push patterns exists in every language file', () => {
       const keys = new Set();
       pt.GROUPS.forEach(g => g.rules.forEach(rule => { if (typeof rule[1] === 'string') keys.add(rule[1]); }));
       pt.SHARED.forEach(rule => { if (typeof rule[1] === 'string') keys.add(rule[1]); });
       Object.keys(pt.EXACT).forEach(w => keys.add(pt.EXACT[w]));
-      const langs = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko'];
+      const langs = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru'];
       const missing = [];
       keys.forEach(k => langs.forEach(l => { if (pt.tk(l, k, { n: 2 }, false) === null) missing.push(l + ':' + k); }));
       return missing.length ? 'missing ' + missing.slice(0, 5).join(', ') : '';
