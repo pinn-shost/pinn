@@ -123,6 +123,15 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 et 🇷🇺 Русский**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.123.5
+
+**Néerlandais – sixième étape**
+
+- **Encore plus de pinn. en néerlandais.** La famille (carte d’urgence, positions en direct, « Je rentre à la maison », carte et lieux), les membres de la famille, la page enfants, les étoiles et récompenses, les animaux (avec prévention, promenades et infos pour le gardien), l’école et la crèche (emploi du temps, devoirs, lettres aux parents, jours de fermeture), la localisation (lieux, magasins, Traccar, traceur GPS), le SOS et « Où es-tu ? » sont maintenant traduits (4507 textes sur 6722).
+- Le néerlandais reste **masqué** tant que tout n’est pas traduit (activable sur un appareil pour l’essayer ; les textes manquants apparaissent alors en anglais). Rien ne change de visible pour les autres.
+- Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` et tous les README. Installation comme toujours (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
+
+
 ## Nouveautés de la 1.123.4
 
 **Néerlandais – cinquième étape**
@@ -210,15 +219,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Petits détails : la commande vocale reconnaît maintenant les doublons avec des noms en cyrillique ; la note « Aussi en … » sous la commande vocale mentionne le russe.
 - Modifié : `index.html`, `js/sprachen.js`, `js/region.js`, `js/fahrzeuge.js`, `js/familie.js`, `js/hinweise.js`, `js/zuhause.js`, `js/sprachsteuerung.js`, `js/versionslog.js`, `einrichtung.js`, `i18n/*.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-sprache.js`, `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-familie-geburtstag.js`, `pb_hooks/pinn-haustiere.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-wobistdu.js`. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou bouton de mise à jour). Après la mise à jour, envoie une notification de test en russe (Réglages → Notifications → Test).
 
-## Nouveautés de la 1.120.9
-
-**Russe – dixième étape : notifications push**
-
-- Traduit en russe : toutes les notifications push du serveur (147 textes) – résumé du jour, rendez-vous, tâches, demandes de récompense, anniversaires, animaux, courses, SOS, localisation, « Où es-tu ? », listes de bagages, aperçu de la semaine et perspectives financières, tableau d’affichage, documents, contrats et réserve – y compris avec le vocabulaire de colocation. Le russe est ainsi complet : 6712 textes sur 6712.
-- Le serveur envoie désormais les notifications push en russe (jusqu’ici un profil russe les recevait en anglais) : le module des textes push connaît le russe (trois formes de pluriel, termes de colocation en cyrillique), tout comme les textes des anniversaires, animaux, courses, « Où es-tu ? », listes de bagages, perspectives hebdomadaires et mensuelles et demandes de récompense.
-- Le russe reste **masqué** pour l’instant (activable sur un appareil comme décrit pour la 1.120.0). Prochainement : activer le russe pour tout le monde.
-- Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-pushtext.js`, `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-familie-geburtstag.js`, `pb_hooks/pinn-haustiere.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-wobistdu.js`, `pb_hooks/pinn-packliste.js`, `pb_hooks/pinn-aufgaben.js`, `.github/`. Installe comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
 ## Comment ça marche
 
 ```mermaid
@@ -245,7 +245,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.123.4` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.123.5` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

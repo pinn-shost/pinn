@@ -127,6 +127,15 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 e 🇷🇺 Русский**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.123.5
+
+**Neerlandês – sexta etapa**
+
+- **Ainda mais pinn. em neerlandês.** Família (cartão de emergência, localizações em direto, «Estou a caminho de casa», mapa e locais), membros da família, a página infantil, estrelas e recompensas, animais (com prevenção, passeios e informações para o cuidador), escola e creche (horário, trabalhos de casa, cartas aos pais, dias de encerramento), localização (locais, lojas, Traccar, rastreador GPS), SOS e «Onde estás?» já estão traduzidos (4507 de 6722 textos).
+- O neerlandês permanece **oculto** até estar tudo traduzido (pode ser ativado num dispositivo para experimentar; os textos que ainda faltam aparecem em inglês). Para os outros nada muda de visível.
+- Alterado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` e todos os README. Instalação como sempre (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
+
+
 ## Novidades da 1.123.4
 
 **Neerlandês – quinta etapa**
@@ -176,16 +185,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Nada muda visualmente.
 - Alterados: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js` e todos os README. Instalação como sempre (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
 
-## Novidades da 1.122.1
-
-**Correções de segurança**
-
-- **Corrigidos todos os 20 alertas do verificador de código do GitHub.** Os textos dos campos de entrada (nomes, avatares, reações, endereços de fotos) agora são sempre inseridos nas páginas com segurança, inclusive entre aspas.
-- O cache de aniversários não é mais guardado em texto simples no `localStorage` (agora fica no banco de dados do dispositivo; as entradas antigas são removidas uma vez).
-- Os novos eventos recebem o ID do gerador aleatório seguro. Também reforçados: a verificação do Google da permissão do calendário, o reconhecimento de mensagens de compras, a junção de dados antigos e a conversão de textos de páginas de receitas.
-- Nada muda visualmente.
-- Alterados: `index.html`, `js/grundlagen.js`, `js/mitglieder.js`, `js/pinnwand.js`, `js/sprachen.js`, `js/einkaufseingabe.js`, `js/geburtstage.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-kalender.js`, `pb_hooks/calendar-sync.js`, `pb_hooks/pinn-google.js`, `pb_hooks/pinn-ki.js`, `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-kassen.js`, `.github/scripts/common.js`, `.github/scripts/check-hooks.js` e todos os README. Instalação como sempre (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
-
 ## Como funciona
 
 ```mermaid
@@ -214,7 +213,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.123.4` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.123.5` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

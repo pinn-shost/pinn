@@ -127,6 +127,15 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어和 🇷🇺 Русский**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.123.5 新功能
+
+**荷兰语——第六阶段**
+
+- **pinn. 的荷兰语版本又多了一部分。** 家庭（急救卡、实时位置、“我在回家的路上”、地图和地点）、家庭成员、儿童页面、星星和奖励、宠物（含预防、遛弯和宠物保姆信息）、学校和托儿所（课程表、作业、家长通知、停课日）、定位（地点、商店、Traccar、GPS 追踪器）、SOS 以及“你在哪？”现已翻译（6722 条文本中的 4507 条）。
+- 荷兰语在全部翻译完成之前仍然**隐藏**（可在一台设备上解锁试用；尚未翻译的文本会以英语显示）。对其他人没有任何可见变化。
+- 更改：`index.html`、`js/sprachen.js`、`js/versionslog.js`、`i18n/nl.i18n.js`、`i18n/versionslog.en.js` 以及所有 README。安装方式不变（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
+
+
 ## 1.123.4 新功能
 
 **荷兰语——第五阶段**
@@ -176,16 +185,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - 外观没有任何变化。
 - 已更改：`index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js` 以及所有 README。安装方式照旧（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
 
-## 1.122.1 新功能
-
-**安全修复**
-
-- **GitHub 代码扫描发现的 20 处问题已全部修复。** 输入框中的文字（名称、头像、表情回应、照片地址）现在在所有位置都会被安全地放入页面，包括引号内。
-- 生日缓存不再以明文保存在 `localStorage` 中（现在保存在设备数据库中；旧条目会被一次性清除）。
-- 新日程的 ID 来自安全的随机数生成器。另外还加强了：Google 日历权限检查、购物消息识别、旧数据合并，以及食谱网页文本的转换。
-- 外观没有任何变化。
-- 已更改：`index.html`, `js/grundlagen.js`, `js/mitglieder.js`, `js/pinnwand.js`, `js/sprachen.js`, `js/einkaufseingabe.js`, `js/geburtstage.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-kalender.js`, `pb_hooks/calendar-sync.js`, `pb_hooks/pinn-google.js`, `pb_hooks/pinn-ki.js`, `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-kassen.js`, `.github/scripts/common.js`, `.github/scripts/check-hooks.js` 以及所有 README。安装方式照旧（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
-
 ## 工作原理
 
 ```mermaid
@@ -214,7 +213,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.123.4` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.123.5` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

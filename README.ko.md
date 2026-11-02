@@ -127,6 +127,15 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.123.5의 새 소식
+
+**네덜란드어 – 여섯 번째 단계**
+
+- **pinn.의 네덜란드어가 더 늘었습니다.** 가족(응급 카드, 실시간 위치, “집에 가는 중이에요”, 지도와 장소), 가족 구성원, 아이 페이지, 별과 보상, 반려동물(예방, 산책, 펫시터 정보 포함), 학교·어린이집(시간표, 숙제, 가정통신문, 휴원일), 위치(장소, 상점, Traccar, GPS 트래커), SOS, “어디야?”가 번역되었습니다(6722개 중 4507개).
+- 네덜란드어는 모든 번역이 끝날 때까지 **숨김** 상태로 유지됩니다(시험용으로 한 기기에서 켤 수 있으며, 아직 없는 텍스트는 영어로 표시됩니다). 다른 사람에게는 눈에 보이는 변화가 없습니다.
+- 변경: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` 및 모든 README. 설치는 평소와 같습니다(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
+
+
 ## 1.123.4의 새 소식
 
 **네덜란드어 – 다섯 번째 단계**
@@ -176,16 +185,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - 눈에 보이는 변화는 없어요.
 - 변경: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, 모든 README. 설치는 평소와 같아요(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
 
-## 1.122.1의 새 소식
-
-**보안 수정**
-
-- **GitHub 코드 스캐너가 찾은 20건을 모두 수정했어요.** 입력란의 글자(이름, 아바타, 반응, 사진 주소)는 따옴표 안을 포함해 어디서나 안전하게 페이지에 들어가요.
-- 생일 캐시를 더 이상 평문으로 `localStorage`에 저장하지 않아요(이제 기기 데이터베이스에 저장되며, 예전 항목은 한 번 삭제돼요).
-- 새 일정의 ID는 안전한 난수 생성기에서 만들어져요. 그 밖에 Google 캘린더 권한 확인, 장보기 메시지 인식, 오래된 데이터 병합, 레시피 페이지 글 변환도 강화했어요.
-- 눈에 보이는 변화는 없어요.
-- 변경: `index.html`, `js/grundlagen.js`, `js/mitglieder.js`, `js/pinnwand.js`, `js/sprachen.js`, `js/einkaufseingabe.js`, `js/geburtstage.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-kalender.js`, `pb_hooks/calendar-sync.js`, `pb_hooks/pinn-google.js`, `pb_hooks/pinn-ki.js`, `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-kassen.js`, `.github/scripts/common.js`, `.github/scripts/check-hooks.js`, 모든 README. 설치는 평소와 같아요(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
-
 ## 작동 방식
 
 ```mermaid
@@ -214,7 +213,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.123.4` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.123.5` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
