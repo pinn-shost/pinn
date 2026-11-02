@@ -192,6 +192,20 @@ const TERMS = {
     [/가족으로/g, '셰어하우스로'],
     [/가족/g, '셰어하우스'],
   ] },
+  // Dutch (since 1.123.0): gezin → woongroep, gezinslid → huisgenoot
+  nl: { keep: /gezinsarts|gezinsauto|stamboek/gi, rules: [
+    [/\b([Gg])ezinsleden\b/g, function (m, f) { return cap(f === 'G', 'huisgenoten'); }],
+    [/\b([Gg])ezinslid\b/g, function (m, f) { return cap(f === 'G', 'huisgenoot'); }],
+    [/\b([Hh])et hele gezin\b/g, '$1et hele huis'],
+    [/\b([Aa])lle gezinnen\b/g, '$1lle woongroepen'],
+    [/\b([Dd])it gezin\b/g, function (m, f) { return f === 'D' ? 'Deze woongroep' : 'deze woongroep'; }],
+    [/\b([Ee])lk gezin\b/g, function (m, f) { return f === 'E' ? 'Elke woongroep' : 'elke woongroep'; }],
+    [/\bgeen enkel gezin\b/g, 'geen enkele woongroep'],
+    [/\b([Hh])et gezin\b/g, function (m, f) { return f === 'H' ? 'De woongroep' : 'de woongroep'; }],
+    [/\b([Gg])ezinnen\b/g, function (m, f) { return cap(f === 'G', 'woongroepen'); }],
+    [/\b([Gg])ezins(?=[a-z])/g, function (m, f) { return cap(f === 'G', 'huis'); }],
+    [/\b([Gg])ezin\b/g, function (m, f) { return cap(f === 'G', 'woongroep'); }],
+  ] },
   // Russian (since 1.120.0): \b does not work for Cyrillic, so the rules use Unicode lookarounds (flag u).
   // семья → квартира and член(ы) семьи → сосед(и) decline in parallel, so each case maps to the same case.
   ru: { keep: /семейн\p{L}*\s+(?:врач|автомобил|бюджет)\p{L}*/giu, rules: [
