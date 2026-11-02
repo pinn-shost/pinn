@@ -123,6 +123,14 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 y 🇷🇺 Русский**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.123.0
+
+**Neerlandés – primera etapa**
+
+- **Llega el neerlandés.** pinn. se traduce al neerlandés paso a paso. Se empieza por el inicio de sesión, el panel, el menú, la página del administrador principal y todos los ajustes (504 de 6722 textos).
+- El neerlandés permanece **oculto** hasta que todo esté traducido (se puede activar en un dispositivo para probarlo; los textos que aún faltan aparecen en inglés). Para los demás no cambia nada visible.
+- Cambiado: `index.html`, `js/sprachen.js`, `js/textkern.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-textkern.js`, `.github/scripts/i18n-keys.js` y todos los README. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
+
 ## Novedades de la 1.122.2
 
 **Corrección de seguridad**
@@ -209,16 +217,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Próximo: más etapas del ruso (vehículos, casa inteligente …).
 - Modificado: `index.html`, `js/sprachen.js`, `js/dokumente.js`, `js/zuhause.js`, `js/versionslog.js`, `i18n/*.i18n.js` (todos los idiomas, incluido `ru.i18n.js`), `i18n/versionslog.en.js` – en el servidor no cambia nada. Instalar como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
 
-## Novedades de la 1.120.5
-
-**Ruso – sexta etapa**
-
-- Traducido al ruso: el área familiar (fichas de emergencia, resumen familiar con ubicaciones en vivo, «Voy de camino a casa»), mascotas (perfil, comida, paseos, prevención y vacunas, cartel de desaparecido, cuidador), colegio y guardería (horario, deberes, cartas a los padres, días de cierre, lectura con IA), ubicación (compartir, lugares, tiendas, rastreadores GPS, SOS), la página infantil con recompensas de estrellas, miembros de la familia, SOS y «¿Dónde estás?» – ya son 4417 de 6713 textos.
-- Corregido (todos los idiomas): la pregunta «¿Dónde estás?» mostraba el nombre equivocado fuera del alemán; «en … días» en cumpleaños y prevención de mascotas y «recoge» en el resumen del día escolar eran textos fijos y ahora se traducen.
-- El ruso sigue **oculto** hasta que esté todo traducido (se puede activar en un dispositivo como se describe en la 1.120.0).
-- Próximo: más etapas del ruso (hogar, documentos, vehículos, casa inteligente …).
-- Modificado: `index.html`, `js/sprachen.js`, `js/familie.js`, `js/familienkachel.js`, `js/wobistdu.js`, `js/versionslog.js`, `i18n/*.i18n.js` (todos los idiomas, incluido `ru.i18n.js`), `i18n/versionslog.en.js` – en el servidor no cambia nada. Instalar como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
-
 ## Cómo funciona
 
 ```mermaid
@@ -245,7 +243,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.122.2` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.123.0` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

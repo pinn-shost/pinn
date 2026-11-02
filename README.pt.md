@@ -127,6 +127,14 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 e 🇷🇺 Русский**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.123.0
+
+**Neerlandês – primeira etapa**
+
+- **O neerlandês está chegando.** O pinn. está sendo traduzido para o neerlandês passo a passo. Começa por login, painel, menu, a página do administrador principal e todas as configurações (504 de 6722 textos).
+- O neerlandês continua **oculto** até que tudo esteja traduzido (pode ser ativado em um dispositivo para testar; os textos que ainda faltam aparecem em inglês). Para os demais, nada muda visivelmente.
+- Alterado: `index.html`, `js/sprachen.js`, `js/textkern.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-textkern.js`, `.github/scripts/i18n-keys.js` e todos os README. Instalação como sempre (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
+
 ## Novidades da 1.122.2
 
 **Correção de segurança**
@@ -173,15 +181,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Pequenos detalhes: o controle por voz agora reconhece entradas duplicadas com nomes em cirílico; a nota «Também em …» sob o controle por voz menciona o russo.
 - Alterados: `index.html`, `js/sprachen.js`, `js/region.js`, `js/fahrzeuge.js`, `js/familie.js`, `js/hinweise.js`, `js/zuhause.js`, `js/sprachsteuerung.js`, `js/versionslog.js`, `einrichtung.js`, `i18n/*.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-sprache.js`, `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-familie-geburtstag.js`, `pb_hooks/pinn-haustiere.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-wobistdu.js`. Instalação como sempre (`sudo sh pinn-*/pinn-setup.sh` ou botão de atualização). Após a atualização, envie uma notificação de teste em russo (Configurações → Notificações → Teste).
 
-## Novidades da 1.120.9
-
-**Russo – décima etapa: notificações push**
-
-- Traduzido para russo: todas as notificações push do servidor (147 textos) – resumo do dia, compromissos, tarefas, pedidos de recompensa, aniversários, animais, compras, SOS, localização, «Onde você está?», listas de mala, prévia da semana e perspectiva financeira, mural, documentos, contratos e despensa – também com os termos de casa compartilhada. O russo fica assim completo: 6712 de 6712 textos.
-- O servidor agora envia as notificações push em russo (até agora um perfil russo as recebia em inglês): o módulo de textos push conhece o russo (três formas de plural, termos de casa compartilhada em cirílico), assim como os textos de aniversários, animais, compras, «Onde você está?», listas de mala, perspectivas semanais e mensais e pedidos de recompensa.
-- O russo continua **oculto** por enquanto (ativável em um dispositivo como descrito na 1.120.0). Próximos passos: ativar o russo para todos.
-- Alterado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-pushtext.js`, `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-familie-geburtstag.js`, `pb_hooks/pinn-haustiere.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-wobistdu.js`, `pb_hooks/pinn-packliste.js`, `pb_hooks/pinn-aufgaben.js`, `.github/`. Instale como de costume (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
-
 ## Como funciona
 
 ```mermaid
@@ -210,7 +209,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.122.2` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.123.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

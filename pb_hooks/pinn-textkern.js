@@ -29,6 +29,7 @@
     de: oneIfOneInt,
     en: oneIfOneInt,
     it: oneIfOneInt,
+    nl: oneIfOneInt,
     es: function (n) { return n === 1 ? 'one' : 'other'; },
     fr: oneIfZeroOrOne,
     pt: oneIfZeroOrOne,          // Brazilian Portuguese (CLDR "pt"): 0 and 1 are singular
@@ -47,7 +48,7 @@
 
   // Categories a language file must contain for every plural text
   var FORMS = {
-    de: ['one', 'other'], en: ['one', 'other'], it: ['one', 'other'], es: ['one', 'other'],
+    de: ['one', 'other'], en: ['one', 'other'], it: ['one', 'other'], es: ['one', 'other'], nl: ['one', 'other'],
     fr: ['one', 'other'], pt: ['one', 'other'],
     zh: ['other'], ja: ['other'], ko: ['other'],
     ru: ['one', 'few', 'many'],   // "other" (fractions) is optional and falls back to "few" (genitive singular)

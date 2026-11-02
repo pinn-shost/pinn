@@ -22,6 +22,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.123', datum: '01.11.2026', titel: 'Niederländisch – erste Etappe',
+    punkte: [
+      ['neu', 'Niederländisch kommt: pinn. wird Schritt für Schritt ins Niederländische übersetzt. Den Anfang machen Anmeldung, Dashboard, Menü, Hauptadmin-Seite und alle Einstellungen (504 von 6722 Texten). Die Sprache bleibt versteckt, bis alles übersetzt ist – zum Ausprobieren auf einem Gerät freischaltbar; noch fehlende Texte erscheinen dann auf Englisch'],
+      ['info', 'Geändert: index.html, js/sprachen.js, js/textkern.js, js/versionslog.js, i18n/nl.i18n.js (neu), i18n/versionslog.en.js, am Server pb_hooks/pinn-textkern.js (Mehrzahlregel) und für Mitwirkende .github/scripts/i18n-keys.js (Begriffe für Wohngemeinschaften auf Niederländisch) und alle READMEs.'],
+    ],
+  },
+  {
     v: '1.122', datum: '01.11.2026', titel: 'Aufräumen im Hintergrund',
     punkte: [
       ['fix', 'Pflanzen mit Smarthome-Aktion (Zuhause → Garten & Pflanzen): Der Server liest sie jetzt aus den Kassen, wo sie seit der Einführung der Kassen liegen. Vorher suchte er im alten Familien-Datensatz, sodass die automatische Bewässerung und das Mähen per Home Assistant sie übersehen konnten.'],

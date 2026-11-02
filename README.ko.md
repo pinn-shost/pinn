@@ -127,6 +127,14 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.123.0의 새 소식
+
+**네덜란드어 – 1단계**
+
+- **네덜란드어가 곧 옵니다.** pinn.을 네덜란드어로 단계별로 번역하고 있습니다. 로그인, 대시보드, 메뉴, 주 관리자 페이지와 모든 설정부터 시작합니다(6722개 중 504개 문구).
+- 네덜란드어는 모두 번역될 때까지 **숨김** 상태입니다(한 기기에서 잠금 해제하여 시험해 볼 수 있으며, 아직 없는 문구는 영어로 표시됩니다). 다른 사용자에게는 눈에 보이는 변화가 없습니다.
+- 변경: `index.html`, `js/sprachen.js`, `js/textkern.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-textkern.js`, `.github/scripts/i18n-keys.js` 및 모든 README. 설치는 평소와 같습니다(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
+
 ## 1.122.2의 새 소식
 
 **보안 수정**
@@ -173,15 +181,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - 자잘한 것: 음성 제어가 키릴 문자 이름의 중복 항목을 알아보고, 음성 제어 아래 "다른 언어도" 안내에 러시아어가 들어갔어요.
 - 변경: `index.html`, `js/sprachen.js`, `js/region.js`, `js/fahrzeuge.js`, `js/familie.js`, `js/hinweise.js`, `js/zuhause.js`, `js/sprachsteuerung.js`, `js/versionslog.js`, `einrichtung.js`, `i18n/*.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-sprache.js`, `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-familie-geburtstag.js`, `pb_hooks/pinn-haustiere.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-wobistdu.js`. 설치는 늘 하던 대로(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼). 업데이트 후 러시아어로 테스트 푸시를 보내 주세요(설정 → 알림 → 테스트).
 
-## 1.120.9의 새 소식
-
-**러시아어 – 열 번째 단계: 푸시 알림**
-
-- 러시아어로 번역됨: 서버의 모든 푸시 알림(147개) – 오늘의 요약, 일정, 할 일, 보상 요청, 생일, 반려동물, 장보기, SOS, 위치, “어디야?”, 짐 싸기 목록, 주간 미리보기와 재정 전망, 게시판, 문서, 계약, 비축 식품 – 셰어하우스 용어도 포함. 이제 러시아어가 완성되었어요: 6712개 중 6712개.
-- 서버가 이제 푸시 알림을 러시아어로 보내요(지금까지 러시아어 프로필은 영어로 받았어요): 푸시 문구 모듈이 러시아어(세 가지 복수형, 키릴 문자 셰어하우스 용어)를 알고, 생일, 반려동물, 장보기, “어디야?”, 짐 싸기 목록, 주간·월간 전망, 보상 요청 문구도 마찬가지예요.
-- 러시아어는 당분간 **숨겨져** 있어요(1.120.0에 설명한 대로 한 기기에서 켤 수 있어요). 다음: 러시아어를 모두에게 공개.
-- 변경: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-pushtext.js`, `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-familie-geburtstag.js`, `pb_hooks/pinn-haustiere.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-wobistdu.js`, `pb_hooks/pinn-packliste.js`, `pb_hooks/pinn-aufgaben.js`, `.github/` – 평소처럼 설치하세요(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
-
 ## 작동 방식
 
 ```mermaid
@@ -210,7 +209,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.122.2` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.123.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

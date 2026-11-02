@@ -127,6 +127,14 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.123.0の新機能
+
+**オランダ語 – 第1段階**
+
+- **オランダ語が登場します。** pinn.は少しずつオランダ語に翻訳されています。まずはログイン、ダッシュボード、メニュー、メイン管理者ページ、すべての設定から始まります（6722件中504件）。
+- オランダ語はすべて翻訳されるまで**非表示**です（1台の端末で解除して試せます。未翻訳の文章は英語で表示されます）。ほかの人には見た目の変化はありません。
+- 変更：`index.html`, `js/sprachen.js`, `js/textkern.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-textkern.js`, `.github/scripts/i18n-keys.js`、およびすべてのREADME。インストールはいつもどおり（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
+
 ## 1.122.2の新機能
 
 **セキュリティ修正**
@@ -173,15 +181,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - 細かな点：音声操作がキリル文字の名前の重複を認識するようになり、音声操作の下の「他の言語にも対応」の注記にロシア語を追加しました。
 - 変更：`index.html`, `js/sprachen.js`, `js/region.js`, `js/fahrzeuge.js`, `js/familie.js`, `js/hinweise.js`, `js/zuhause.js`, `js/sprachsteuerung.js`, `js/versionslog.js`, `einrichtung.js`, `i18n/*.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-sprache.js`, `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-familie-geburtstag.js`, `pb_hooks/pinn-haustiere.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-wobistdu.js`。インストールはいつも通り（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。更新後にロシア語でテストプッシュを送ってください（設定 → 通知 → テスト）。
 
-## 1.120.9の新機能
-
-**ロシア語 – 第10段階：プッシュ通知**
-
-- ロシア語に翻訳済み：サーバーのすべてのプッシュ通知（147件）– 今日のまとめ、予定、タスク、ごほうびのリクエスト、誕生日、ペット、買い物、SOS、位置情報、「今どこ？」、持ち物リスト、週のプレビューと家計見通し、掲示板、書類、契約、ストック – ルームシェア向けの用語にも対応。これでロシア語は完成です：6712件中6712件。
-- サーバーがプッシュ通知をロシア語で送るようになりました（これまでロシア語のプロフィールには英語で届いていました）：プッシュ文のモジュールがロシア語（3つの複数形、キリル文字のルームシェア用語）に対応し、誕生日、ペット、買い物、「今どこ？」、持ち物リスト、週・月の見通し、ごほうびのリクエストの文も同様です。
-- ロシア語は当面**非表示**のままです（1.120.0の説明どおり、1台の端末で有効にできます）。次回：ロシア語を全員に公開。
-- 変更：`index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-pushtext.js`, `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-familie-geburtstag.js`, `pb_hooks/pinn-haustiere.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-wobistdu.js`, `pb_hooks/pinn-packliste.js`, `pb_hooks/pinn-aufgaben.js`, `.github/` – いつもどおりインストールしてください（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
-
 ## しくみ
 
 ```mermaid
@@ -210,7 +209,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.122.2`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.123.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
