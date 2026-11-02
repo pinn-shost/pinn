@@ -127,6 +127,14 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어和 🇷🇺 Русский**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.123.3 新功能
+
+**荷兰语——第四阶段**
+
+- **pinn. 的荷兰语版本又多了一部分。** 清单（打包、礼物、心愿、检查清单和创意，含所有模板）、购物（购物清单、完成购物、特别清单、主要商店）、食品储备（含扫码和“我能做什么菜？”）以及食谱（含导入、公开食谱和回收站）现已翻译（6722 条文本中的 2656 条）。
+- 荷兰语在全部翻译完成之前仍然**隐藏**（可在一台设备上解锁试用；尚未翻译的文本会以英语显示）。对其他人没有任何可见变化。
+- 更改：`index.html`、`js/sprachen.js`、`js/versionslog.js`、`i18n/nl.i18n.js`、`i18n/versionslog.en.js` 以及所有 README。安装方式不变（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
+
 ## 1.123.2 新功能
 
 **荷兰语——第三阶段**
@@ -206,7 +214,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.123.2` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.123.3` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
