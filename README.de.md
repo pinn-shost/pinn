@@ -127,6 +127,15 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 und 🇷🇺 Русский**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.123.4
+
+**Niederländisch – fünfte Etappe**
+
+- **Noch mehr von pinn. auf Niederländisch.** Finanzen (Budget, Kategorien, wiederkehrende Buchungen, Taschengeld, Export), Kassen (mit Ausgaben teilen und Verrechnen), Depots (mit Import, Sparplänen und Sparzielen), Verträge (mit Kündigungsschreiben und Fristen) und der Wochen- und Monatsausblick sind jetzt übersetzt (3614 von 6722 Texten).
+- Niederländisch bleibt **versteckt**, bis alles übersetzt ist (zum Ausprobieren auf einem Gerät freischaltbar; noch fehlende Texte erscheinen dann auf Englisch). Für alle anderen ändert sich nichts Sichtbares.
+- Geändert: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` und alle READMEs. Installation wie immer (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
+
+
 ## Neu in 1.123.3
 
 **Niederländisch – vierte Etappe**
@@ -177,15 +186,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Sichtbar ändert sich nichts.
 - Geändert: `index.html`, `js/grundlagen.js`, `js/mitglieder.js`, `js/pinnwand.js`, `js/sprachen.js`, `js/einkaufseingabe.js`, `js/geburtstage.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-kalender.js`, `pb_hooks/calendar-sync.js`, `pb_hooks/pinn-google.js`, `pb_hooks/pinn-ki.js`, `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-kassen.js`, `.github/scripts/common.js`, `.github/scripts/check-hooks.js` und alle READMEs. Installation wie immer (`sudo sh pinn-*/pinn-setup.sh` oder per Update-Button).
 
-## Neu in 1.122.0
-
-**Aufräumen im Hintergrund**
-
-- **Pflanzen mit Smarthome-Aktion** (Zuhause → Garten & Pflanzen): Der Server liest sie jetzt aus den Kassen, wo sie seit der Einführung der Kassen liegen. Vorher suchte er im alten Familien-Datensatz, sodass die automatische Bewässerung und das Mähen per Home Assistant sie übersehen konnten.
-- Die alten Ansichts-Einstellungen aus der Zeit vor der Trennung in Desktop und Handy werden einmalig in die Einstellungen übernommen und aus dem alten Familien-Datensatz entfernt. Vorher wird eine Sicherung des Familien-Datensatzes in `pb_data/pinn_umzug` abgelegt (30 Tage aufbewahrt). Sichtbar ändert sich nichts.
-- Noch offen: Die Verträglichkeit für sehr alte App-Versionen muss bis etwa 22. November 2026 (30 Tage nach dem Umzug) bleiben – das ist der nächste Schritt.
-- Geändert: `index.html`, `js/sprachen.js`, `js/speichern.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-schema.js`, `pb_hooks/pinn-kassen.js`, `pb_hooks/pinn-smarthome.js` und alle READMEs. Installation wie immer (`sudo sh pinn-*/pinn-setup.sh` oder per Update-Button).
-
 ## So funktioniert’s
 
 ```mermaid
@@ -214,7 +214,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.123.3` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.123.4` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

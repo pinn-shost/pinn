@@ -123,6 +123,15 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 y 🇷🇺 Русский**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.123.4
+
+**Neerlandés – quinta etapa**
+
+- **Aún más de pinn. en neerlandés.** Finanzas (presupuesto, categorías, movimientos recurrentes, paga, exportación), cajas (con reparto de gastos y liquidación), depósitos de valores (con importación, planes de ahorro y objetivos de ahorro), contratos (con cartas de baja y plazos) y la vista previa semanal y mensual ya están traducidos (3614 de 6722 textos).
+- El neerlandés permanece **oculto** hasta que todo esté traducido (se puede activar en un dispositivo para probarlo; los textos que aún faltan aparecen en inglés). Para los demás no cambia nada visible.
+- Cambiado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` y todos los README. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
+
+
 ## Novedades de la 1.123.3
 
 **Neerlandés – cuarta etapa**
@@ -210,17 +219,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - El ruso sigue **oculto** por ahora (se puede activar en un dispositivo como se describe en la 1.120.0). Próximamente: activar el ruso para todos.
 - Modificado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-pushtext.js`, `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-familie-geburtstag.js`, `pb_hooks/pinn-haustiere.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-wobistdu.js`, `pb_hooks/pinn-packliste.js`, `pb_hooks/pinn-aufgaben.js`, `.github/`. Instala como de costumbre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
 
-## Novedades de la 1.120.8
-
-**Ruso – novena etapa**
-
-- Traducido al ruso: la campana de notificaciones (actividad de la familia, caminos a casa, compras, SOS), el tablón (notas, listas, encuestas, cuentas atrás, agradecimientos, fotos, archivo), la previsión (vista semanal y previsión financiera mensual), el control por voz (atajo de Siri, HTTP Shortcuts), la lectura de PDF y tickets, los nombres de las categorías estándar, lugares de almacenamiento, unidades, aparatos, cajas y tipos de residuos, así como los mensajes del servidor – ya 6565 de 6712 textos.
-- Mejorado (todos los idiomas): los pequeños contadores de la vista semanal («3 citas», «2 tareas» …) ahora son textos completos con sus propias formas de plural (el ruso lo necesita) – cinco textos nuevos sustituyen a nueve antiguos.
-- El ruso sigue **oculto** hasta que todo esté traducido (se puede activar en un dispositivo como se describe en la 1.120.0).
-- Próximamente: la última etapa del ruso (notificaciones push del servidor) y la activación del ruso.
-- Modificado: `index.html`, `js/sprachen.js`, `js/ausblick.js`, `js/versionslog.js`, `i18n/*.i18n.js` (todos los idiomas, incluido `ru.i18n.js`), `i18n/versionslog.en.js` – en el servidor no cambia nada. Instala como de costumbre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
-
-
 ## Cómo funciona
 
 ```mermaid
@@ -247,7 +245,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.123.3` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.123.4` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

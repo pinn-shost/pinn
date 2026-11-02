@@ -123,6 +123,15 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 et 🇷🇺 Русский**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.123.4
+
+**Néerlandais – cinquième étape**
+
+- **Encore plus de pinn. en néerlandais.** Les finances (budget, catégories, opérations récurrentes, argent de poche, export), les caisses (avec partage des dépenses et règlement), les portefeuilles titres (avec import, plans d’épargne et objectifs d’épargne), les contrats (avec lettres de résiliation et échéances) et l’aperçu hebdomadaire et mensuel sont maintenant traduits (3614 textes sur 6722).
+- Le néerlandais reste **masqué** tant que tout n’est pas traduit (activable sur un appareil pour l’essayer ; les textes manquants apparaissent alors en anglais). Rien ne change de visible pour les autres.
+- Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` et tous les README. Installation comme toujours (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
+
+
 ## Nouveautés de la 1.123.3
 
 **Néerlandais – quatrième étape**
@@ -210,17 +219,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Le russe reste **masqué** pour l’instant (activable sur un appareil comme décrit pour la 1.120.0). Prochainement : activer le russe pour tout le monde.
 - Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/ru.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-pushtext.js`, `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-familie-geburtstag.js`, `pb_hooks/pinn-haustiere.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-wobistdu.js`, `pb_hooks/pinn-packliste.js`, `pb_hooks/pinn-aufgaben.js`, `.github/`. Installe comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
-## Nouveautés de la 1.120.8
-
-**Russe – neuvième étape**
-
-- Traduit en russe : la cloche de notifications (activité de la famille, retours à la maison, courses, SOS), le tableau d’affichage (notes, listes, sondages, comptes à rebours, remerciements, photos, archives), les perspectives (aperçu de la semaine et perspectives financières du mois), la commande vocale (raccourci Siri, HTTP Shortcuts), la lecture des PDF et tickets de caisse, les noms des catégories standard, lieux de stockage, unités, appareils, caisses et types de déchets ainsi que les messages du serveur – désormais 6565 textes sur 6712.
-- Amélioré (toutes les langues) : les petits compteurs de l’aperçu de la semaine (« 3 rendez-vous », « 2 tâches » …) sont désormais des textes complets avec leurs propres formes de pluriel (le russe en a besoin) – cinq nouveaux textes remplacent neuf anciens.
-- Le russe reste **masqué** tant que tout n’est pas traduit (activable sur un appareil comme décrit pour la 1.120.0).
-- Prochainement : la dernière étape du russe (notifications push du serveur) et l’activation du russe.
-- Modifié : `index.html`, `js/sprachen.js`, `js/ausblick.js`, `js/versionslog.js`, `i18n/*.i18n.js` (toutes les langues, y compris `ru.i18n.js`), `i18n/versionslog.en.js` – rien ne change sur le serveur. Installe comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
-
 ## Comment ça marche
 
 ```mermaid
@@ -247,7 +245,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.123.3` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.123.4` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

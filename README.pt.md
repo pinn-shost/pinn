@@ -127,6 +127,15 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 e 🇷🇺 Русский**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.123.4
+
+**Neerlandês – quinta etapa**
+
+- **Ainda mais pinn. em neerlandês.** Finanças (orçamento, categorias, lançamentos recorrentes, mesada, exportação), caixas (com divisão de despesas e acerto de contas), carteiras de títulos (com importação, planos de poupança e metas de poupança), contratos (com cartas de rescisão e prazos) e a previsão semanal e mensal já estão traduzidos (3614 de 6722 textos).
+- O neerlandês permanece **oculto** até estar tudo traduzido (pode ser ativado num dispositivo para experimentar; os textos que ainda faltam aparecem em inglês). Para os outros nada muda de visível.
+- Alterado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` e todos os README. Instalação como sempre (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
+
+
 ## Novidades da 1.123.3
 
 **Neerlandês – quarta etapa**
@@ -177,15 +186,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Nada muda visualmente.
 - Alterados: `index.html`, `js/grundlagen.js`, `js/mitglieder.js`, `js/pinnwand.js`, `js/sprachen.js`, `js/einkaufseingabe.js`, `js/geburtstage.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-kalender.js`, `pb_hooks/calendar-sync.js`, `pb_hooks/pinn-google.js`, `pb_hooks/pinn-ki.js`, `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-kassen.js`, `.github/scripts/common.js`, `.github/scripts/check-hooks.js` e todos os README. Instalação como sempre (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
 
-## Novidades da 1.122.0
-
-**Arrumação nos bastidores**
-
-- **Plantas com ação inteligente** (Casa → Jardim e plantas): o servidor agora as lê das caixas, onde elas ficam desde que as caixas existem. Antes ele procurava no registro familiar antigo, então a irrigação e o corte de grama automáticos com o Home Assistant podiam não encontrá-las.
-- As configurações de visualização antigas, de antes da separação entre computador e celular, são passadas uma vez para as configurações e removidas do registro familiar antigo. Antes, uma cópia de segurança do registro familiar é gravada em `pb_data/pinn_umzug` (mantida por 30 dias). Visualmente nada muda.
-- Ainda por vir: a compatibilidade com versões muito antigas do app precisa continuar até cerca de 22 de novembro de 2026 (30 dias após a mudança); esse é o próximo passo.
-- Alterados: `index.html`, `js/sprachen.js`, `js/speichern.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-schema.js`, `pb_hooks/pinn-kassen.js`, `pb_hooks/pinn-smarthome.js` e todos os README. Instalação como sempre (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
-
 ## Como funciona
 
 ```mermaid
@@ -214,7 +214,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.123.3` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.123.4` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
