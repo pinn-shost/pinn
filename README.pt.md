@@ -127,6 +127,14 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 e 🇷🇺 Русский**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.123.1
+
+**Neerlandês – segunda etapa**
+
+- **Mais do pinn. em neerlandês.** Conta (perfis, PIN, dispositivo painel, convidados, notificações), dispositivos e login, registro de erros e backups e atualizações agora estão traduzidos (874 de 6722 textos).
+- O neerlandês continua **oculto** até que tudo esteja traduzido (pode ser ativado em um dispositivo para testar; os textos que ainda faltam aparecem em inglês). Para os demais, nada muda visivelmente.
+- Alterado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` e todos os README. Instalação como sempre (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
+
 ## Novidades da 1.123.0
 
 **Neerlandês – primeira etapa**
@@ -171,16 +179,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - O app funciona exatamente como antes – só o número da versão e a entrada no registro de versões são novos.
 - Alterados: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js` e todos os README. Nada muda no servidor. Instalação como sempre (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
 
-## Novidades da 1.121.0
-
-**Russo liberado**
-
-- **Русский agora está disponível para todos**: escolha em Configurações → Idioma e região. Todos os 6.722 textos do app, as notificações push do servidor, o assistente de configuração e a exportação de dados estão em russo.
-- Região **Rússia** (rublo, números de emergência 102/103/101/112) e sinais de unidades russos (км, л, мм, кг, кВт·ч, км/ч) em veículos, casa, família, clima e avisos. Uma conta com o país Rússia recebe as notificações push em russo automaticamente.
-- O **controle por voz entende russo** («Добавь молоко и яйца в список покупок», «Напомни завтра вынести мусор», «Что в списке покупок?», «Что запланировано на сегодня?») e responde em russo.
-- Pequenos detalhes: o controle por voz agora reconhece entradas duplicadas com nomes em cirílico; a nota «Também em …» sob o controle por voz menciona o russo.
-- Alterados: `index.html`, `js/sprachen.js`, `js/region.js`, `js/fahrzeuge.js`, `js/familie.js`, `js/hinweise.js`, `js/zuhause.js`, `js/sprachsteuerung.js`, `js/versionslog.js`, `einrichtung.js`, `i18n/*.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-sprache.js`, `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-familie-geburtstag.js`, `pb_hooks/pinn-haustiere.js`, `pb_hooks/pinn-ortung.js`, `pb_hooks/pinn-wobistdu.js`. Instalação como sempre (`sudo sh pinn-*/pinn-setup.sh` ou botão de atualização). Após a atualização, envie uma notificação de teste em russo (Configurações → Notificações → Teste).
-
 ## Como funciona
 
 ```mermaid
@@ -209,7 +207,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.123.0` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.123.1` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

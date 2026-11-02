@@ -123,6 +123,14 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 y 🇷🇺 Русский**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.123.1
+
+**Neerlandés – segunda etapa**
+
+- **Más de pinn. en neerlandés.** Cuenta (perfiles, PIN, dispositivo panel, invitados, notificaciones), dispositivos e inicio de sesión, registro de errores y copias de seguridad y actualizaciones ya están traducidos (874 de 6722 textos).
+- El neerlandés permanece **oculto** hasta que todo esté traducido (se puede activar en un dispositivo para probarlo; los textos que aún faltan aparecen en inglés). Para los demás no cambia nada visible.
+- Cambiado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` y todos los README. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
+
 ## Novedades de la 1.123.0
 
 **Neerlandés – primera etapa**
@@ -207,16 +215,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Próximamente: más etapas del ruso (avisos, tablón, perspectivas, nombres estándar …).
 - Cambiado: `index.html`, `js/sprachen.js`, `js/fahrzeuge.js`, `js/versionslog.js`, `i18n/*.i18n.js` (todos los idiomas, incluido `ru.i18n.js`), `i18n/versionslog.en.js` – el servidor no cambia. Instálalo como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
 
-## Novedades de la 1.120.6
-
-**Ruso – séptima etapa**
-
-- Traducido al ruso: el hogar (pisos y casas en alquiler, en propiedad y para alquilar, defectos con la notificación al arrendador, contadores con lectura por foto y previsión, costes fijos y préstamo, reformas y proyectos, plan de mantenimiento, jardín y plantas con el año del jardín, llaves) y los documentos (plazos, garantía, recordatorios, documentos de varias páginas, archivo sin conexión) – ya son 5230 de 6715 textos.
-- Corregido (todos los idiomas): «archivado» en los vehículos del formulario de documentos, «N.º» y «última vez» en contadores y mantenimiento, y «del» en el título automático del documento eran textos fijos y ahora se traducen.
-- El ruso sigue **oculto** hasta que esté todo traducido (se puede activar en un dispositivo como se describe en la 1.120.0).
-- Próximo: más etapas del ruso (vehículos, casa inteligente …).
-- Modificado: `index.html`, `js/sprachen.js`, `js/dokumente.js`, `js/zuhause.js`, `js/versionslog.js`, `i18n/*.i18n.js` (todos los idiomas, incluido `ru.i18n.js`), `i18n/versionslog.en.js` – en el servidor no cambia nada. Instalar como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
-
 ## Cómo funciona
 
 ```mermaid
@@ -243,7 +241,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.123.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.123.1` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
