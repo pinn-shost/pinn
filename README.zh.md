@@ -127,6 +127,15 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어和 🇷🇺 Русский**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.123.6 新功能
+
+**荷兰语——第七阶段**
+
+- **pinn. 的荷兰语版本又多了一部分。** 住所（租房、自有住房和出租、含向房东发送缺陷通知的缺陷管理、可拍照抄表并带预测的表计、固定费用与贷款、装修与项目、维护计划、带园艺年历的花园与植物、钥匙）现已翻译（6722 条文本中的 5157 条）。
+- 荷兰语在全部翻译完成之前仍然**隐藏**（可在一台设备上解锁试用；尚未翻译的文本会以英语显示）。对其他人没有任何可见变化。
+- 更改：`index.html`、`js/sprachen.js`、`js/versionslog.js`、`i18n/nl.i18n.js`、`i18n/versionslog.en.js` 以及所有 README。安装方式不变（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
+
+
 ## 1.123.5 新功能
 
 **荷兰语——第六阶段**
@@ -177,14 +186,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - 在全部翻译完成之前，荷兰语保持**隐藏**（可在一台设备上解锁试用；尚缺的文本会显示为英文）。对其他人没有任何可见变化。
 - 已更改：`index.html`, `js/sprachen.js`, `js/textkern.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-textkern.js`, `.github/scripts/i18n-keys.js` 以及所有 README。安装方式不变（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
 
-## 1.122.2 新功能
-
-**安全修复**
-
-- **GitHub 代码扫描的最后一处问题已修复。** 从语言文件向页面插入标记的未使用途径（`data-tk-html`）已移除；语言文件中的文字现在只会作为纯文本设置。
-- 外观没有任何变化。
-- 已更改：`index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js` 以及所有 README。安装方式照旧（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
-
 ## 工作原理
 
 ```mermaid
@@ -213,7 +214,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.123.5` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.123.6` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

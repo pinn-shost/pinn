@@ -127,6 +127,15 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.123.6의 새 소식
+
+**네덜란드어 – 일곱 번째 단계**
+
+- **pinn.의 네덜란드어가 더 늘었습니다.** 집(임대, 소유, 임대 놓기, 집주인에게 보내는 하자 통지를 포함한 하자 관리, 사진 검침과 예측이 있는 계량기, 고정비와 대출, 리모델링과 프로젝트, 유지보수 계획, 정원 달력이 있는 정원과 식물, 열쇠)이 번역되었습니다(6722개 중 5157개).
+- 네덜란드어는 모든 번역이 끝날 때까지 **숨김** 상태로 유지됩니다(시험용으로 한 기기에서 켤 수 있으며, 아직 없는 텍스트는 영어로 표시됩니다). 다른 사람에게는 눈에 보이는 변화가 없습니다.
+- 변경: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` 및 모든 README. 설치는 평소와 같습니다(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
+
+
 ## 1.123.5의 새 소식
 
 **네덜란드어 – 여섯 번째 단계**
@@ -177,14 +186,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - 네덜란드어는 모두 번역될 때까지 **숨김** 상태입니다(한 기기에서 잠금 해제하여 시험해 볼 수 있으며, 아직 없는 문구는 영어로 표시됩니다). 다른 사용자에게는 눈에 보이는 변화가 없습니다.
 - 변경: `index.html`, `js/sprachen.js`, `js/textkern.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-textkern.js`, `.github/scripts/i18n-keys.js` 및 모든 README. 설치는 평소와 같습니다(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
 
-## 1.122.2의 새 소식
-
-**보안 수정**
-
-- **GitHub 코드 스캐너의 마지막 지적을 수정했어요.** 언어 파일의 마크업을 페이지에 넣는 사용되지 않던 경로(`data-tk-html`)를 없앴고, 언어 파일의 글자는 이제 순수한 텍스트로만 들어가요.
-- 눈에 보이는 변화는 없어요.
-- 변경: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, 모든 README. 설치는 평소와 같아요(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
-
 ## 작동 방식
 
 ```mermaid
@@ -213,7 +214,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.123.5` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.123.6` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

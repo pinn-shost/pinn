@@ -1,4 +1,4 @@
-/* pinn. – version log in English (pb_public/i18n/versionslog.en.js)
+/* pinn. – ve,\"1.123.6: Dutch, seventh stage – home (renting, owning and letting out, defects with the defect notice to the landlord, meters with reading by photo and forecast, fixed costs and loan, renovation and projects, maintenance plan, garden and plants with the garden year, keys) is translated (5,157 of 6,722 texts). The language stays hidden. Changed: index.html, js/sprachen.js, js/versionslog.js, i18n/nl.i18n.js, i18n/versionslog.en.js and all READMEs.\"rsion log in English (pb_public/i18n/versionslog.en.js)
    Since 1.119.1. Loaded by js/versionslog.js only when the version log or the news in the bell are shown in a
    language other than German. One entry per version of PINN_CHANGELOG: t = title, p = points in the same order
    (null = no translation, the German text is shown). Older versions are not translated. */

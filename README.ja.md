@@ -127,6 +127,15 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.123.6の新機能
+
+**オランダ語 – 第7段階**
+
+- **pinn.のオランダ語対応がさらに進みました。** 住まい（賃貸・持ち家・貸し出し、大家への不具合通知を含む不具合管理、写真での検針と予測つきのメーター、固定費とローン、リフォームとプロジェクト、メンテナンス計画、庭年間カレンダー付きの庭と植物、鍵）が翻訳されました（6722件中5157件）。
+- オランダ語はすべての翻訳が終わるまで**非表示**のままです（試用のため1台のデバイスで有効にできます。未翻訳のテキストは英語で表示されます）。ほかの方には目に見える変更はありません。
+- 変更：`index.html`、`js/sprachen.js`、`js/versionslog.js`、`i18n/nl.i18n.js`、`i18n/versionslog.en.js`、すべてのREADME。インストールはいつもどおりです（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
+
+
 ## 1.123.5の新機能
 
 **オランダ語 – 第6段階**
@@ -177,14 +186,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - オランダ語はすべて翻訳されるまで**非表示**です（1台の端末で解除して試せます。未翻訳の文章は英語で表示されます）。ほかの人には見た目の変化はありません。
 - 変更：`index.html`, `js/sprachen.js`, `js/textkern.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-textkern.js`, `.github/scripts/i18n-keys.js`、およびすべてのREADME。インストールはいつもどおり（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
 
-## 1.122.2の新機能
-
-**セキュリティ修正**
-
-- **GitHubのコードスキャナーの最後の指摘を修正しました。** 言語ファイルからページにマークアップを挿入する未使用の経路（`data-tk-html`）を削除し、言語ファイルの文字は純粋なテキストとしてのみ設定されます。
-- 見た目は変わりません。
-- 変更：`index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`、すべてのREADME。インストールはいつもどおり（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
-
 ## しくみ
 
 ```mermaid
@@ -213,7 +214,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.123.5`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.123.6`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
