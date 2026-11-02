@@ -123,6 +123,14 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 et 🇷🇺 Русский**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.123.2
+
+**Néerlandais – troisième étape**
+
+- **Encore plus de pinn. en néerlandais.** Le calendrier (rendez-vous, comptes de calendrier, jours fériés, vacances scolaires, collecte des déchets), le plan des repas, les tâches, la maison, l’aperçu (tuiles de la famille, anniversaires), la météo et la recherche sont maintenant traduits (1545 textes sur 6722).
+- Le néerlandais reste **masqué** tant que tout n’est pas traduit (activable sur un appareil pour l’essayer ; les textes manquants apparaissent alors en anglais). Rien ne change de visible pour les autres.
+- Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` et tous les README. Installation comme toujours (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
+
 ## Nouveautés de la 1.123.1
 
 **Néerlandais – deuxième étape**
@@ -205,16 +213,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Modifié : `index.html`, `js/sprachen.js`, `js/ausblick.js`, `js/versionslog.js`, `i18n/*.i18n.js` (toutes les langues, y compris `ru.i18n.js`), `i18n/versionslog.en.js` – rien ne change sur le serveur. Installe comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
 
-## Nouveautés de la 1.120.7
-
-**Russe – huitième étape**
-
-- Traduit en russe : véhicules (liste et détails, pleins, recharges, garage, jeux de pneus avec âge et sculptures, échéances de contrôle technique et d’entretien, plaques d’assurance, calculateurs électrique ou thermique, GPL, vélo au lieu de la voiture, détour vers une station moins chère) et maison connectée (appareils, actions, Raccourcis Apple, Home Assistant, automatisation, pièces de l’aspirateur robot) – désormais 5954 textes sur 6716.
-- Corrigé (toutes les langues) : « économisés » et « de plus » dans le calculateur de détour, « dernier » dans le champ du compteur kilométrique et « facultatif » dans deux champs étaient des textes figés et sont maintenant traduits.
-- Le russe reste **masqué** tant que tout n’est pas traduit (activable sur un appareil comme décrit pour la 1.120.0).
-- Prochainement : d’autres étapes du russe (notifications, tableau d’affichage, aperçu, noms standard …).
-- Modifié : `index.html`, `js/sprachen.js`, `js/fahrzeuge.js`, `js/versionslog.js`, `i18n/*.i18n.js` (toutes les langues, y compris `ru.i18n.js`), `i18n/versionslog.en.js` – rien ne change sur le serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou bouton de mise à jour).
-
 ## Comment ça marche
 
 ```mermaid
@@ -241,7 +239,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.123.1` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.123.2` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

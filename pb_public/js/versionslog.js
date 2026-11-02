@@ -27,6 +27,7 @@ const PINN_CHANGELOG = [
       ['neu', 'Niederländisch kommt: pinn. wird Schritt für Schritt ins Niederländische übersetzt. Den Anfang machen Anmeldung, Dashboard, Menü, Hauptadmin-Seite und alle Einstellungen (504 von 6722 Texten). Die Sprache bleibt versteckt, bis alles übersetzt ist – zum Ausprobieren auf einem Gerät freischaltbar; noch fehlende Texte erscheinen dann auf Englisch'],
       ['info', 'Geändert: index.html, js/sprachen.js, js/textkern.js, js/versionslog.js, i18n/nl.i18n.js (neu), i18n/versionslog.en.js, am Server pb_hooks/pinn-textkern.js (Mehrzahlregel) und für Mitwirkende .github/scripts/i18n-keys.js (Begriffe für Wohngemeinschaften auf Niederländisch) und alle READMEs.'],
       ['info', '1.123.1: Niederländisch, zweite Etappe – Konto (Profile, PIN, Dashboard-Gerät, Gäste, Benachrichtigungen), Geräte & Anmeldung, Fehlerprotokoll und Sicherungen & Updates sind übersetzt (874 von 6722 Texten). Die Sprache bleibt weiter versteckt. Geändert: index.html, js/sprachen.js, js/versionslog.js, i18n/nl.i18n.js, i18n/versionslog.en.js und alle READMEs.'],
+      ['info', '1.123.2: Niederländisch, dritte Etappe – Kalender (Termine, Kalender-Konten, Feiertage, Schulferien, Müllabfuhr), Essensplan, Aufgaben, Haushalt, Übersicht (Familienkacheln, Geburtstage), Wetter und Suche sind übersetzt (1545 von 6722 Texten). Die Sprache bleibt weiter versteckt. Geändert: index.html, js/sprachen.js, js/versionslog.js, i18n/nl.i18n.js, i18n/versionslog.en.js und alle READMEs.'],
     ],
   },
   {

@@ -127,6 +127,14 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 e 🇷🇺 Русский**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.123.2
+
+**Olandese – terza tappa**
+
+- **Ancora più pinn. in olandese.** Calendario (appuntamenti, account del calendario, festività, vacanze scolastiche, raccolta rifiuti), piano dei pasti, attività, casa, panoramica (riquadri della famiglia, compleanni), meteo e ricerca sono ora tradotti (1545 testi su 6722).
+- L’olandese resta **nascosto** finché non è tutto tradotto (attivabile su un dispositivo per provarlo; i testi mancanti compaiono in inglese). Per tutti gli altri non cambia nulla di visibile.
+- Modificato: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` e tutti i README. Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o il pulsante di aggiornamento).
+
 ## Novità della 1.123.1
 
 **Olandese – seconda tappa**
@@ -170,15 +178,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Ancora da fare: la compatibilità con versioni molto vecchie dell’app deve restare fino a circa il 22 novembre 2026 (30 giorni dopo il trasferimento); è il passo successivo.
 - Modificati: `index.html`, `js/sprachen.js`, `js/speichern.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-schema.js`, `pb_hooks/pinn-kassen.js`, `pb_hooks/pinn-smarthome.js` e tutti i README. Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o il pulsante di aggiornamento).
 
-## Novità della 1.121.1
-
-**Più screenshot**
-
-- Sotto «Screenshot» c’è ora un’area espandibile **«Mostra altri screenshot»** con altre sette immagini: Casa, Attività, Veicoli, Scansione dispensa e l’anteprima settimanale (tre immagini). Ogni immagine si apre a dimensione intera con un clic e la cartella con tutte le immagini è collegata.
-- La stessa galleria è in tutti i README delle lingue, anche in quello russo.
-- L’app funziona esattamente come prima: sono nuovi solo il numero di versione e la voce nel registro delle versioni.
-- Modificati: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js` e tutti i README. Il server non cambia. Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o il pulsante di aggiornamento).
-
 ## Come funziona
 
 ```mermaid
@@ -207,7 +206,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.123.1` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.123.2` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -127,6 +127,14 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.123.2の新機能
+
+**オランダ語 – 第3段階**
+
+- **pinn.のオランダ語対応がさらに進みました。** カレンダー（予定、カレンダーアカウント、祝日、学校の休み、ごみ収集）、食事プラン、タスク、家事、概要（家族タイル、誕生日）、天気、検索が翻訳されました（6722件中1545件）。
+- オランダ語はすべての翻訳が終わるまで**非表示**のままです（試用のため1台のデバイスで有効にできます。未翻訳のテキストは英語で表示されます）。ほかの方には目に見える変更はありません。
+- 変更：`index.html`、`js/sprachen.js`、`js/versionslog.js`、`i18n/nl.i18n.js`、`i18n/versionslog.en.js`、すべてのREADME。インストールはいつもどおりです（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
+
 ## 1.123.1の新機能
 
 **オランダ語 – 第2段階**
@@ -170,15 +178,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - これから：とても古いバージョンのアプリへの互換性は、2026年11月22日ごろ（移行から30日後）まで残す必要があります。これが次のステップです。
 - 変更：`index.html`, `js/sprachen.js`, `js/speichern.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-schema.js`, `pb_hooks/pinn-kassen.js`, `pb_hooks/pinn-smarthome.js`、すべてのREADME。インストールはいつもどおり（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
 
-## 1.121.1の新機能
-
-**スクリーンショットを追加**
-
-- 「スクリーンショット」の下に、折りたたみ式の **「そのほかのスクリーンショットを表示」** を追加しました。住まい、タスク、車両、ストックのスキャン、週のプレビュー（3枚）の7枚です。画像をクリックすると大きく表示され、すべての画像があるフォルダへのリンクも付いています。
-- 同じギャラリーをすべての言語のREADME（ロシア語を含む）に入れています。
-- アプリ自体の動作はこれまでと同じです。新しいのはバージョン番号とバージョンログの項目だけです。
-- 変更：`index.html`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、すべてのREADME。サーバー側の変更はありません。インストールはいつもどおり（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
-
 ## しくみ
 
 ```mermaid
@@ -207,7 +206,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.123.1`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.123.2`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
