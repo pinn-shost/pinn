@@ -20,7 +20,7 @@
 //    pattern stays as it is (German, or already translated by the module itself) – an unknown message is never lost.
 //    For a flat share such texts still get the flat share terms (applyTerms, same rules as TERMS in js/sprachen.js).
 
-const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru"];
+const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl"];
 
 // ---------------------------------------------------------------------------------------------
 // Language and household type of the recipient

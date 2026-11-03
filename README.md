@@ -123,6 +123,15 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 and 🇷🇺 Русский**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.123.10
+
+**Dutch – eleventh stage**
+
+- **Even more of pinn. in Dutch.** The notifications (push) are now translated as well: tasks and events, board, contracts, documents, pantry, places and “on the way home”, SOS, waste, shopping, settlements, the daily overview and app updates – all 6,722 texts are done. The server now sends notifications in Dutch too. Still missing: the setup assistant and the data export texts.
+- Dutch stays **hidden** until everything is translated (it can be unlocked on one device for trying it out; texts that are still missing then appear in English). Nothing changes visibly for anyone else.
+- Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js`, on the server `pb_hooks/pinn-pushtext.js` and all READMEs. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
+
 ## What's new in 1.123.9
 
 **Dutch – tenth stage**
@@ -208,14 +217,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Dutch is coming.** pinn. is being translated into Dutch step by step. It starts with sign-in, dashboard, menu, the main admin page and all settings (504 of 6,722 texts).
 - Dutch stays **hidden** until everything is translated (it can be unlocked on one device for trying it out; texts that are still missing then appear in English). Nothing changes visibly for anyone else.
 - Changed: `index.html`, `js/sprachen.js`, `js/textkern.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-textkern.js`, `.github/scripts/i18n-keys.js` and all READMEs. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
-## What's new in 1.122.2
-
-**Security fix**
-
-- **Last finding of GitHub's code scanner fixed.** The unused way of inserting markup from the language files into the page (`data-tk-html`) is removed; texts from the language files are now only set as plain text.
-- Nothing changes visibly.
-- Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js` and all READMEs. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 ## How it works
 

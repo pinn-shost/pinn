@@ -127,6 +127,15 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 e 🇷🇺 Русский**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.123.10
+
+**Neerlandês – décima primeira etapa**
+
+- **Ainda mais pinn. em neerlandês.** Agora as notificações (push) também estão traduzidas: tarefas e eventos, quadro, contratos, documentos, despensa, locais e «a caminho de casa», SOS, lixo, compras, acertos, resumo do dia e atualizações da app – os 6722 textos estão prontos. O servidor passa a enviar as notificações também em neerlandês. Só faltam o assistente de configuração e os textos da exportação de dados.
+- O neerlandês permanece **oculto** até estar tudo traduzido (pode ser ativado num dispositivo para experimentar; os textos que ainda faltam aparecem em inglês). Para os outros nada muda de visível.
+- Alterado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js`, no servidor `pb_hooks/pinn-pushtext.js` e todos os README. Instalação como sempre (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
+
+
 ## Novidades da 1.123.9
 
 **Neerlandês – décima etapa**
@@ -180,14 +189,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - O neerlandês permanece **oculto** até estar tudo traduzido (pode ser ativado num dispositivo para experimentar; os textos que ainda faltam aparecem em inglês). Para os outros nada muda de visível.
 - Alterado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` e todos os README. Instalação como sempre (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
 
-
-## Novidades da 1.123.3
-
-**Neerlandês – quarta etapa**
-
-- **Ainda mais pinn. em neerlandês.** Listas (bagagem, presentes, desejos, listas de verificação e ideias, com todos os modelos), compras (listas de compras, concluir as compras, listas especiais, loja principal), despensa (com leitura de códigos e «O que posso cozinhar?») e receitas (com importação, receitas públicas e reciclagem) já estão traduzidas (2656 de 6722 textos).
-- O neerlandês permanece **oculto** até estar tudo traduzido (pode ser ativado num dispositivo para experimentar; os textos que ainda faltam aparecem em inglês). Para os outros nada muda de visível.
-- Alterado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` e todos os README. Instalação como sempre (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
 
 ## Como funciona
 

@@ -123,6 +123,15 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 et 🇷🇺 Русский**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.123.10
+
+**Néerlandais – onzième étape**
+
+- **Encore plus de pinn. en néerlandais.** Les notifications (push) sont maintenant traduites aussi : tâches et événements, tableau d’affichage, contrats, documents, garde-manger, lieux et « en route vers la maison », SOS, déchets, courses, compensations, aperçu du jour et mises à jour de l’appli – les 6722 textes sont faits. Le serveur envoie désormais aussi les notifications en néerlandais. Il ne manque plus que l’assistant d’installation et les textes de l’export de données.
+- Le néerlandais reste **masqué** tant que tout n’est pas traduit (activable sur un appareil pour l’essayer ; les textes manquants apparaissent alors en anglais). Rien ne change de visible pour les autres.
+- Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js`, sur le serveur `pb_hooks/pinn-pushtext.js` et tous les README. Installation comme toujours (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
+
+
 ## Nouveautés de la 1.123.9
 
 **Néerlandais – dixième étape**
@@ -208,14 +217,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Le néerlandais arrive.** pinn. est traduit en néerlandais pas à pas. On commence par la connexion, le tableau de bord, le menu, la page de l’administrateur principal et tous les réglages (504 textes sur 6722).
 - Le néerlandais reste **masqué** tant que tout n’est pas traduit (activable sur un appareil pour l’essayer ; les textes manquants s’affichent alors en anglais). Pour les autres, rien ne change visiblement.
 - Modifié : `index.html`, `js/sprachen.js`, `js/textkern.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-textkern.js`, `.github/scripts/i18n-keys.js` et tous les README. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
-## Nouveautés de la 1.122.2
-
-**Correction de sécurité**
-
-- **Dernière alerte de l’analyseur de code de GitHub corrigée.** La voie inutilisée pour insérer du balisage des fichiers de langue dans la page (`data-tk-html`) est supprimée ; les textes des fichiers de langue ne sont plus insérés que comme texte brut.
-- Rien ne change visuellement.
-- Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js` et tous les README. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
 ## Comment ça marche
 
