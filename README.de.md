@@ -127,6 +127,15 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 und 🇷🇺 Русский**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.123.8
+
+**Niederländisch – neunte Etappe**
+
+- **Noch mehr von pinn. auf Niederländisch.** Die Glocke (Meldungen, Einkaufsrunden ohne Ausgaben, „Auf dem Weg nach Hause“ mit SOS-Alarm und Anruf-Knöpfen, Neuigkeiten), Dokumente (Fristen, Garantie, Erinnerungen, Sichtbarkeit, Kategorien, Dateien und Offline-Warteschlange) und die Pinnwand (Notizen, Listen, Fotos, Umfragen, Danke und Countdowns, Archiv) sind jetzt übersetzt (6352 von 6722 Texten).
+- Niederländisch bleibt **versteckt**, bis alles übersetzt ist (zum Ausprobieren auf einem Gerät freischaltbar; noch fehlende Texte erscheinen dann auf Englisch). Für alle anderen ändert sich nichts Sichtbares.
+- Geändert: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` und alle READMEs. Installation wie immer (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
+
+
 ## Neu in 1.123.7
 
 **Niederländisch – achte Etappe**
@@ -179,14 +188,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Niederländisch bleibt **versteckt**, bis alles übersetzt ist (zum Ausprobieren auf einem Gerät freischaltbar; noch fehlende Texte erscheinen dann auf Englisch). Für alle anderen ändert sich nichts Sichtbares.
 - Geändert: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` und alle READMEs. Installation wie immer (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
 
-## Neu in 1.123.1
-
-**Niederländisch – zweite Etappe**
-
-- **Mehr von pinn. auf Niederländisch.** Konto (Profile, PIN, Dashboard-Gerät, Gäste, Benachrichtigungen), Geräte & Anmeldung, Fehlerprotokoll sowie Sicherungen & Updates sind jetzt übersetzt (874 von 6722 Texten).
-- Niederländisch bleibt **versteckt**, bis alles übersetzt ist (zum Ausprobieren auf einem Gerät freischaltbar; noch fehlende Texte erscheinen dann auf Englisch). Für alle anderen ändert sich nichts Sichtbares.
-- Geändert: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` und alle READMEs. Installation wie immer (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
-
 ## So funktioniert’s
 
 ```mermaid
@@ -215,7 +216,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.123.7` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.123.8` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
