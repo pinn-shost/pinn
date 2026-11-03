@@ -127,6 +127,15 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 e 🇷🇺 Русский**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.123.9
+
+**Olandese – decima tappa**
+
+- **Ancora più pinn. in olandese.** I nomi standard (categorie per finanze, contratti, documenti, dispensa, ricette e pulizie, luoghi, ruoli, elettrodomestici da cucina, tipi di rifiuti e unità di misura), il controllo vocale (comando rapido Siri e Android), la lettura di PDF e ricevute, i messaggi del server e le unità sono ora tradotti (6575 testi su 6722). Mancano solo le notifiche (push).
+- L’olandese resta **nascosto** finché non è tutto tradotto (attivabile su un dispositivo per provarlo; i testi mancanti compaiono in inglese). Per tutti gli altri non cambia nulla di visibile.
+- Modificato: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` e tutti i README. Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o il pulsante di aggiornamento).
+
+
 ## Novità della 1.123.8
 
 **Olandese – nona tappa**
@@ -177,14 +186,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 **Olandese – quarta tappa**
 
 - **Ancora più pinn. in olandese.** Elenchi (valigia, regali, desideri, checklist e idee, con tutti i modelli), spesa (liste della spesa, concludere la spesa, liste speciali, negozio principale), dispensa (con scansione e «Cosa posso cucinare?») e ricette (con importazione, ricette pubbliche e cestino) sono ora tradotti (2656 testi su 6722).
-- L’olandese resta **nascosto** finché non è tutto tradotto (attivabile su un dispositivo per provarlo; i testi mancanti compaiono in inglese). Per tutti gli altri non cambia nulla di visibile.
-- Modificato: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` e tutti i README. Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o il pulsante di aggiornamento).
-
-## Novità della 1.123.2
-
-**Olandese – terza tappa**
-
-- **Ancora più pinn. in olandese.** Calendario (appuntamenti, account del calendario, festività, vacanze scolastiche, raccolta rifiuti), piano dei pasti, attività, casa, panoramica (riquadri della famiglia, compleanni), meteo e ricerca sono ora tradotti (1545 testi su 6722).
 - L’olandese resta **nascosto** finché non è tutto tradotto (attivabile su un dispositivo per provarlo; i testi mancanti compaiono in inglese). Per tutti gli altri non cambia nulla di visibile.
 - Modificato: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` e tutti i README. Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o il pulsante di aggiornamento).
 

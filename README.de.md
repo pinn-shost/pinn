@@ -127,6 +127,15 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 und 🇷🇺 Русский**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.123.9
+
+**Niederländisch – zehnte Etappe**
+
+- **Noch mehr von pinn. auf Niederländisch.** Die Standardnamen (Kategorien für Finanzen, Verträge, Dokumente, Vorrat, Rezepte und Putzen, Orte, Rollen, Küchengeräte, Mülltonnen und Mengeneinheiten), die Sprachsteuerung (Siri-Kurzbefehl und Android), das Auslesen von PDFs und Belegen, die Meldungen des Servers und die Einheiten sind jetzt übersetzt (6575 von 6722 Texten). Es fehlen nur noch die Mitteilungen (Push).
+- Niederländisch bleibt **versteckt**, bis alles übersetzt ist (zum Ausprobieren auf einem Gerät freischaltbar; noch fehlende Texte erscheinen dann auf Englisch). Für alle anderen ändert sich nichts Sichtbares.
+- Geändert: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` und alle READMEs. Installation wie immer (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
+
+
 ## Neu in 1.123.8
 
 **Niederländisch – neunte Etappe**
@@ -177,14 +186,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 **Niederländisch – vierte Etappe**
 
 - **Noch mehr von pinn. auf Niederländisch.** Listen (Packen, Geschenke, Wünsche, Checklisten und Ideen samt allen Vorlagen), Einkauf (Einkaufslisten, Einkauf abschließen, Sonderlisten, Hauptladen), Vorrat (mit Scannen und „Was kann ich kochen?“) und Rezepte (mit Import, öffentlichen Rezepten und Papierkorb) sind jetzt übersetzt (2656 von 6722 Texten).
-- Niederländisch bleibt **versteckt**, bis alles übersetzt ist (zum Ausprobieren auf einem Gerät freischaltbar; noch fehlende Texte erscheinen dann auf Englisch). Für alle anderen ändert sich nichts Sichtbares.
-- Geändert: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` und alle READMEs. Installation wie immer (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
-
-## Neu in 1.123.2
-
-**Niederländisch – dritte Etappe**
-
-- **Noch mehr von pinn. auf Niederländisch.** Kalender (Termine, Kalender-Konten, Feiertage, Schulferien, Müllabfuhr), Essensplan, Aufgaben, Haushalt, Übersicht (Familienkacheln, Geburtstage), Wetter und Suche sind jetzt übersetzt (1545 von 6722 Texten).
 - Niederländisch bleibt **versteckt**, bis alles übersetzt ist (zum Ausprobieren auf einem Gerät freischaltbar; noch fehlende Texte erscheinen dann auf Englisch). Für alle anderen ändert sich nichts Sichtbares.
 - Geändert: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` und alle READMEs. Installation wie immer (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
 

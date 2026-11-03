@@ -123,6 +123,15 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 et 🇷🇺 Русский**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.123.9
+
+**Néerlandais – dixième étape**
+
+- **Encore plus de pinn. en néerlandais.** Les noms standard (catégories pour les finances, les contrats, les documents, le garde-manger, les recettes et le ménage, lieux, rôles, appareils de cuisine, types de déchets et unités de mesure), la commande vocale (raccourci Siri et Android), la lecture des PDF et des justificatifs, les messages du serveur et les unités sont maintenant traduits (6575 textes sur 6722). Il ne manque plus que les notifications (push).
+- Le néerlandais reste **masqué** tant que tout n’est pas traduit (activable sur un appareil pour l’essayer ; les textes manquants apparaissent alors en anglais). Rien ne change de visible pour les autres.
+- Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` et tous les README. Installation comme toujours (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
+
+
 ## Nouveautés de la 1.123.8
 
 **Néerlandais – neuvième étape**
@@ -207,16 +216,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Dernière alerte de l’analyseur de code de GitHub corrigée.** La voie inutilisée pour insérer du balisage des fichiers de langue dans la page (`data-tk-html`) est supprimée ; les textes des fichiers de langue ne sont plus insérés que comme texte brut.
 - Rien ne change visuellement.
 - Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js` et tous les README. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
-## Nouveautés de la 1.122.1
-
-**Corrections de sécurité**
-
-- **Les 20 alertes de l’analyseur de code de GitHub sont corrigées.** Les textes des champs de saisie (noms, avatars, réactions, adresses de photos) sont désormais toujours insérés dans les pages de façon sûre, y compris entre guillemets.
-- Le cache des anniversaires n’est plus conservé en clair dans `localStorage` (il se trouve maintenant dans la base de données de l’appareil ; les anciennes entrées sont supprimées une fois).
-- Les nouveaux événements reçoivent leur identifiant du générateur aléatoire sécurisé. Également renforcés : la vérification par Google de l’autorisation du calendrier, la reconnaissance des messages de courses, la fusion des anciennes données et la conversion des textes des pages de recettes.
-- Rien ne change visuellement.
-- Modifié : `index.html`, `js/grundlagen.js`, `js/mitglieder.js`, `js/pinnwand.js`, `js/sprachen.js`, `js/einkaufseingabe.js`, `js/geburtstage.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-kalender.js`, `pb_hooks/calendar-sync.js`, `pb_hooks/pinn-google.js`, `pb_hooks/pinn-ki.js`, `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-kassen.js`, `.github/scripts/common.js`, `.github/scripts/check-hooks.js` et tous les README. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
 ## Comment ça marche
 

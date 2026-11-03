@@ -123,6 +123,15 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 and 🇷🇺 Русский**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.123.9
+
+**Dutch – tenth stage**
+
+- **Even more of pinn. in Dutch.** The standard names (categories for finances, contracts, documents, pantry, recipes and cleaning, places, roles, kitchen appliances, waste types and units of measure), voice control (Siri shortcut and Android), reading PDFs and receipts, the server messages and the units are now translated (6,575 of 6,722 texts). Only the notifications (push) are still missing.
+- Dutch stays **hidden** until everything is translated (it can be unlocked on one device for trying it out; texts that are still missing then appear in English). Nothing changes visibly for anyone else.
+- Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` and all READMEs. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
+
 ## What's new in 1.123.8
 
 **Dutch – ninth stage**
@@ -207,16 +216,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Last finding of GitHub's code scanner fixed.** The unused way of inserting markup from the language files into the page (`data-tk-html`) is removed; texts from the language files are now only set as plain text.
 - Nothing changes visibly.
 - Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js` and all READMEs. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
-## What's new in 1.122.1
-
-**Security fixes**
-
-- **All 20 findings of GitHub's code scanner fixed.** Texts from input fields (names, avatars, reactions, photo addresses) are now inserted into pages safely everywhere – including inside quotation marks.
-- The birthday cache is no longer kept in clear text in `localStorage` (it now lives in the device database; old entries are removed once).
-- New calendar events get their ID from the secure random generator. Also hardened: the Google check of the calendar permission, the recognition of shopping messages, the merging of old data and the decoding of texts from recipe pages.
-- Nothing changes visibly.
-- Changed: `index.html`, `js/grundlagen.js`, `js/mitglieder.js`, `js/pinnwand.js`, `js/sprachen.js`, `js/einkaufseingabe.js`, `js/geburtstage.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-kalender.js`, `pb_hooks/calendar-sync.js`, `pb_hooks/pinn-google.js`, `pb_hooks/pinn-ki.js`, `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-kassen.js`, `.github/scripts/common.js`, `.github/scripts/check-hooks.js` and all READMEs. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 ## How it works
 
