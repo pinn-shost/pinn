@@ -123,6 +123,15 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 et 🇷🇺 Русский**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.123.7
+
+**Néerlandais – huitième étape**
+
+- **Encore plus de pinn. en néerlandais.** Les véhicules (voitures, voitures électriques, motos, vélos électriques et vélos avec plein & recharge, consommation, garage, pneus, contrôle technique et entretien, plaques d’assurance, calculateurs et bilan des coûts) et la maison connectée (appareils et actions via Raccourcis d’Apple ou Home Assistant, robot aspirateur et robot tondeuse, automatisation) sont maintenant traduits (5881 textes sur 6722).
+- Le néerlandais reste **masqué** tant que tout n’est pas traduit (activable sur un appareil pour l’essayer ; les textes manquants apparaissent alors en anglais). Rien ne change de visible pour les autres.
+- Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` et tous les README. Installation comme toujours (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
+
+
 ## Nouveautés de la 1.123.6
 
 **Néerlandais – septième étape**
@@ -209,15 +218,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - À venir : la compatibilité avec les très anciennes versions de l’appli doit rester jusqu’au 22 novembre 2026 environ (30 jours après le déplacement) ; c’est l’étape suivante.
 - Modifié : `index.html`, `js/sprachen.js`, `js/speichern.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-schema.js`, `pb_hooks/pinn-kassen.js`, `pb_hooks/pinn-smarthome.js` et tous les README. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
-## Nouveautés de la 1.121.1
-
-**Plus de captures**
-
-- Sous « Captures d’écran », une zone dépliable **« Afficher plus de captures »** propose sept images de plus : Maison, Tâches, Véhicules, Scanner le stock et l’aperçu de la semaine (trois images). Chaque image s’ouvre en taille réelle d’un clic, et le dossier contenant toutes les images est lié.
-- La même galerie figure dans tous les README de langue, y compris le russe.
-- L’appli fonctionne exactement comme avant : seuls le numéro de version et l’entrée du journal des versions sont nouveaux.
-- Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js` et tous les README. Rien ne change côté serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
 ## Comment ça marche
 
 ```mermaid
@@ -244,7 +244,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.123.6` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.123.7` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

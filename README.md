@@ -123,6 +123,15 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 and 🇷🇺 Русский**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.123.7
+
+**Dutch – eighth stage**
+
+- **Even more of pinn. in Dutch.** Vehicles (cars, e-cars, motorbikes, e-bikes and bicycles with fuelling & charging, consumption, workshop, tyres, MOT and service dates, insurance plates, calculators and cost balance) and smart home (devices and actions via Apple Shortcuts or Home Assistant, robot vacuum and robot mower, automation) are now translated (5,881 of 6,722 texts).
+- Dutch stays **hidden** until everything is translated (it can be unlocked on one device for trying it out; texts that are still missing then appear in English). Nothing changes visibly for anyone else.
+- Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` and all READMEs. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
+
 ## What's new in 1.123.6
 
 **Dutch – seventh stage**
@@ -209,15 +218,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Still to come: removing the compatibility for very old app versions. It has to stay until about 22 November 2026 (30 days after the move) – that is the next step.
 - Changed: `index.html`, `js/sprachen.js`, `js/speichern.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `pb_hooks/pinn-bereiche.js`, `pb_hooks/pinn-schema.js`, `pb_hooks/pinn-kassen.js`, `pb_hooks/pinn-smarthome.js` and all READMEs. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
-## What's new in 1.121.1
-
-**More screenshots**
-
-- Under “Screenshots” there is now a collapsible area **“Show more screenshots”** with seven more pictures: Home, Tasks, Vehicles, Pantry scan and the Weekly preview (three pictures). Every picture opens in full size when you click it, and the folder with all pictures is linked.
-- The same gallery is in every language README, including the Russian one.
-- The app itself works exactly as before – only the version number and the entry in the version log are new.
-- Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js` and all READMEs. Nothing changes on the server. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
 ## How it works
 
 ```mermaid
@@ -244,7 +244,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.123.6` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.123.7` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
