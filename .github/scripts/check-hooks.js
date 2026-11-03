@@ -454,7 +454,7 @@ if (exists(path.join(HOOKS, 'pinn-pushtext.js'))) {
       pt.GROUPS.forEach(g => g.rules.forEach(rule => { if (typeof rule[1] === 'string') keys.add(rule[1]); }));
       pt.SHARED.forEach(rule => { if (typeof rule[1] === 'string') keys.add(rule[1]); });
       Object.keys(pt.EXACT).forEach(w => keys.add(pt.EXACT[w]));
-      const langs = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru'];
+      const langs = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl'];
       const missing = [];
       keys.forEach(k => langs.forEach(l => { if (pt.tk(l, k, { n: 2 }, false) === null) missing.push(l + ':' + k); }));
       return missing.length ? 'missing ' + missing.slice(0, 5).join(', ') : '';
@@ -486,6 +486,31 @@ if (exists(path.join(HOOKS, 'pinn-sprache.js'))) {
       return bad.length ? 'wrong: ' + bad.join(', ') : '';
     });
   }
+}
+
+// Dutch (since 1.123.12): every hook with its own language list or text table must know "nl", otherwise it sends English
+{
+  const hooksWithTexts = {
+    'pinn-ausblick.js': [/"ru", "nl"\]/, /\n    nl: \["januari"/, /lang === "nl"\) return \{ titel: "🗓️/, /lang === "nl"\) return \{ titel: "💶/],
+    'pinn-familie-geburtstag.js': [/"ru", "nl"\]/, /nl: " en "/, /lang === "nl"\) return \{ titel: "🎂 " \+ n/, /lang === "nl"\) return \{ titel: "🎂 Vandaag jarig/],
+    'pinn-haustiere.js': [/"ru", "nl"\]/, /\n    nl: \{ futter:/],
+    'pinn-ortung.js': [/"ru", "nl"\]/, /\n    nl: \{ bei:/],
+    'pinn-wobistdu.js': [/"ru", "nl"\]/, /\n    nl: \{ zuhause:/, /nl: "Iemand"/, /lang === "nl"\) return \{ titel: "📍 " \+ n \+ " vraagt/, /lang === "nl"\) return \{ titel: "📍 " \+ n \+ " heeft geantwoord/],
+    'pinn-packliste.js': [/\n    nl: \{ titel:/],
+    'pinn-aufgaben.js': [/\n    nl: \{ t: "⭐ Beloning/],
+  };
+  Object.keys(hooksWithTexts).forEach(name => {
+    if (!exists(path.join(HOOKS, name))) return;
+    test(name + ' knows Dutch (language list and texts)', () => {
+      const src = read(path.join(HOOKS, name));
+      const missing = hooksWithTexts[name].filter(re => !re.test(src)).length;
+      return missing ? missing + ' of ' + hooksWithTexts[name].length + ' Dutch parts missing' : '';
+    });
+  });
+  test('country codes of the Dutch-speaking regions give Dutch (NL), Belgium stays French', () => {
+    const src = read(path.join(HOOKS, 'pinn-wobistdu.js'));
+    return /\["NL", "SR", "AW", "CW", "SX"\]\.indexOf\(land\) >= 0\) return "nl"/.test(src) && /\["FR", "BE", "MC"\]/.test(src) ? '' : 'country mapping for nl missing';
+  });
 }
 
 r.info(tests + ' unit tests');
