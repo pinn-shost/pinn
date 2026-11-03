@@ -127,6 +127,16 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.123.11の新機能
+
+**オランダ語 – 第12段階**
+
+- **オランダ語の翻訳がすべて完了しました。** セットアップアシスタント（ホームネットワーク、DuckDNS、ルーター、VPN、Google、AI、位置情報、Home Assistant、アプリのステップごとの手順）とデータエクスポート（すべてのデータ、書類、画像を含むZIP）もオランダ語になり、メイン管理者向けのセットアップのお知らせも同様です。サーバーもセットアップでオランダ語を受け付けます。あとは公開（有効化）だけです。
+- オランダ語は当面**非表示**のままです（試用のため1台のデバイスで有効にできます）。ほかの方には目に見える変更はありません。
+- 変更：`index.html`, `js/sprachen.js`, `js/versionslog.js`, `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`, `i18n/versionslog.en.js`、サーバー側の `pb_hooks/pinn-einrichtung.js`、すべてのREADME。インストールはいつもどおりです（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
+
+
+
 ## 1.123.10の新機能
 
 **オランダ語 – 第11段階**
@@ -181,15 +191,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - 変更：`index.html`、`js/sprachen.js`、`js/versionslog.js`、`i18n/nl.i18n.js`、`i18n/versionslog.en.js`、すべてのREADME。インストールはいつもどおりです（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
 
 
-## 1.123.4の新機能
-
-**オランダ語 – 第5段階**
-
-- **pinn.のオランダ語対応がさらに進みました。** 家計（予算、カテゴリ、定期的な取引、おこづかい、エクスポート）、共有の財布（支出の分担と精算を含む）、証券口座（取り込み、積立プラン、貯金目標を含む）、契約（解約通知書と期限を含む）、週間・月間の見通しが翻訳されました（6722件中3614件）。
-- オランダ語はすべての翻訳が終わるまで**非表示**のままです（試用のため1台のデバイスで有効にできます。未翻訳のテキストは英語で表示されます）。ほかの方には目に見える変更はありません。
-- 変更：`index.html`、`js/sprachen.js`、`js/versionslog.js`、`i18n/nl.i18n.js`、`i18n/versionslog.en.js`、すべてのREADME。インストールはいつもどおりです（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
-
-
 ## しくみ
 
 ```mermaid
@@ -218,7 +219,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.123.8`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.123.11`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

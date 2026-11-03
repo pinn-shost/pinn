@@ -12,7 +12,7 @@
    (pb_hooks/export.pb.js + pinn-export.js). Dateien werden unkomprimiert übernommen (PDFs und Fotos
    sind schon komprimiert), die JSON-Daten werden – wo der Browser es kann – komprimiert.
    Eigene Texte in Deutsch, Englisch, Französisch, Spanisch, Italienisch, Portugiesisch, Chinesisch,
-   Japanisch, Koreanisch und Russisch (data-no-i18n / data-no-term).
+   Japanisch, Koreanisch, Russisch und Niederländisch (data-no-i18n / data-no-term).
 
    Aufbau des ZIP:
      pinn-export.json                 Beschreibung: Format, Version, Familie, Inhalt, Dateiliste
@@ -24,7 +24,7 @@
   'use strict';
   if (window.PinnExport) return;
 
-  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru'];
+  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl'];
   var T = {};
   T.de = {
     F: 'Familie', FW: 'WG', Fd: 'der Familie', FWd: 'der WG',
@@ -682,6 +682,59 @@
       '안전하게 보관하세요.',
     ],
   };
+  // Niederländisch (seit 1.123.11 vorbereitet, noch versteckt in der App)
+  T.nl = {
+    F: 'gezin', FW: 'woongroep', Fd: 'van je gezin', FWd: 'van je woongroep',
+    titel: 'Gegevens {Fd} exporteren',
+    intro: 'Alle gegevens {Fd} als ZIP-bestand – inclusief documenten, bonnetjes en afbeeldingen. Bijvoorbeeld voor de verhuizing naar een andere NAS of als eigen back-up.',
+    lade: 'Inhoud controleren …', fehler: 'Dat is niet gelukt.',
+    fehlerNetz: 'Geen verbinding met pinn. – controleer of je op je thuisnetwerk of via de VPN verbonden bent.',
+    serverFehlt: 'Op de server ontbreken nog export.pb.js en pinn-export.js (pb_hooks).',
+    familieWaehlen: 'Kies een {F}', inhalt: 'Dit komt in de ZIP', eintraege: '{0} items', dateienN: '{0} bestanden',
+    dokumente: 'Bestanden in totaal', groesse: 'Grootte (ongeveer)',
+    nichtDrin: 'Niet inbegrepen',
+    nichtDrinText: 'Wachtwoorden, pincodes, toegangsgegevens voor iCloud, Google en Home Assistant, ingelogde apparaten en pushabonnementen. Op een andere NAS log je gewoon opnieuw in. De locatiegeschiedenis uit Traccar is ook niet inbegrepen.',
+    privat: 'Niet inbegrepen omdat privé: {0} kas(sen) waarvan je geen lid bent en {1} agenda(’s) “Alleen voor mij” van andere profielen. Een volledige export – bijv. voor een verhuizing – maakt de hoofdbeheerder.',
+    voll: 'Volledige export – privékassen en agenda’s “Alleen voor mij” van alle profielen zijn inbegrepen.',
+    sicherheit: 'De ZIP bevat financiën, documenten en noodpassen onversleuteld. Bewaar hem veilig en verstuur hem niet per e-mail.',
+    gross: 'Dat is ongeveer {0}. Op een telefoon kan dit even duren – exporteer liever op een computer en laat pinn. ondertussen open staan.',
+    starten: 'ZIP maken', abbrechen: 'Annuleren', schliessen: 'Sluiten', nochmal: 'Opnieuw proberen',
+    schrittDaten: 'Gegevens: {0}', schrittDatei: 'Bestand {0} van {1}', packe: 'ZIP samenstellen …',
+    offenLassen: 'Laat pinn. open staan tot de export klaar is.',
+    fertig: 'Export klaar ✓', fertigText: '{0} items en {1} bestanden · {2}',
+    speichern: 'ZIP opslaan', teilen: 'Delen of opslaan in Bestanden',
+    speichernTipp: 'iPhone/iPad: “Deel” → “Bewaar in Bestanden”. Computer: “ZIP opslaan” zet het bestand in je downloadmap.',
+    fehlende: '{0} bestand(en) konden niet worden gelezen – ze staan vermeld in export-fehler.txt in de ZIP.',
+    abgebrochen: 'Export geannuleerd.', zuGross: 'De export is groter dan 4 GB – een gewone ZIP kan dat niet bevatten.',
+    keinAdmin: 'Alleen beheerders kunnen de export maken.',
+    S: {
+      familien: '{F}', benutzer: 'Profielen', familien_daten: 'Agenda, lijsten, recepten, leden & instellingen',
+      rezept_bilder: 'Receptafbeeldingen', oeffentliche_rezepte: 'Gedeelde recepten', aufgaben: 'Taken',
+      haushalt_verlauf: 'Huishoudgeschiedenis', kassen: 'Kassen, depots & contracten', ausgaben: 'Boekingen',
+      finanz_dokumente: 'Contractdocumenten', dokumente: 'Documenten', pinnwand_bilder: 'Prikbordafbeeldingen',
+      kalender_eigene: 'Eigen agenda’s', kalender_termine: 'Afspraken', muellkalender: 'Afvalkalender',
+      ortung: 'Plaatsen & locatie', zuhause: 'Thuis', smarthome_zugaenge: 'Smart home',
+      dashboard_hintergruende: 'Dashboard', apple_zugaenge: 'iCloud', google_zugaenge: 'Google',
+    },
+    liesmich: 'README.txt',
+    readme: [
+      'pinn. – gegevensexport',
+      '',
+      '{F}: {0}',
+      'Gemaakt: {1} door {2} (pinn. {3})',
+      '',
+      'Inhoud:',
+      '  pinn-export.json  beschrijving van de export (indeling, inhoud, bestandslijst)',
+      '  daten/            alle records per collectie als JSON (zoals opgeslagen in PocketBase)',
+      '  dateien/          documenten, bonnetjes en afbeeldingen: dateien/<collectie>/<record-ID>/<bestand>',
+      '',
+      'Niet inbegrepen: wachtwoorden, pincodes, toegangsgegevens (iCloud, Google, Home Assistant),',
+      'ingelogde apparaten, pushabonnementen en de locatiegeschiedenis uit Traccar.',
+      '',
+      'Let op: dit bestand bevat financiën, documenten en noodpassen onversleuteld.',
+      'Bewaar het veilig.',
+    ],
+  };
 
   var S = { opts: {}, lang: 'en', wg: false, info: null, familie: '', laeuft: false, abbruch: false, ergebnis: null, url: '' };
 
@@ -710,7 +763,7 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
-  function locale() { return { de: 'de-DE', en: 'en-GB', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', pt: 'pt-BR', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR', ru: 'ru-RU' }[S.lang] || 'en-GB'; }
+  function locale() { return { de: 'de-DE', en: 'en-GB', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', pt: 'pt-BR', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR', ru: 'ru-RU', nl: 'nl-NL' }[S.lang] || 'en-GB'; }
   function zahl(n) { try { return Number(n || 0).toLocaleString(locale()); } catch (e) { return String(n || 0); } }
   function groesse(b) {
     b = Number(b) || 0;

@@ -1,7 +1,7 @@
 /* pinn. – Einrichtungs-Assistent für den Hauptadmin (pb_public/einrichtung.js)
    ----------------------------------------------------------------------------
    Wird von index.html nur bei Bedarf nachgeladen (Hauptadmin → Einrichtung bzw. automatisch nach
-   der ersten Anmeldung als Hauptadmin). Eigene Texte in Deutsch, Englisch, Französisch, Spanisch, Italienisch, Portugiesisch, Chinesisch, Japanisch, Koreanisch und Russisch –
+   der ersten Anmeldung als Hauptadmin). Eigene Texte in Deutsch, Englisch, Französisch, Spanisch, Italienisch, Portugiesisch, Chinesisch, Japanisch, Koreanisch, Russisch und Niederländisch –
    die Übersetzungs-Schicht der App greift hier nicht ein (data-no-i18n / data-no-term).
    Server: pb_hooks/einrichtung.pb.js + pinn-einrichtung.js. Jeder Schritt wird beim Tippen auf
    „Weiter“ gespeichert; am Ende übernimmt pinn. alles mit einem kurzen Neustart. */
@@ -10,7 +10,7 @@
   if (window.PinnSetup) return;
 
   // Russisch (seit 1.120.0 vorbereitet, seit 1.121.0 freigeschaltet); versteckte Sprachen stehen nur zur Auswahl, wenn die App sie anbietet
-  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru'];
+  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl'];
   var T = {};
   T.de = {
     titel: "Einrichtung", lade: "Einrichtung wird geladen …",
@@ -2224,6 +2224,218 @@
     nochmalPruefen: "Проверить снова", zurVerwaltung: "К управлению семьями",
   };
 
+  // Niederländisch (seit 1.123.11 vorbereitet, noch versteckt in der App)
+  T.nl = {
+    titel: "Installatie", lade: "Installatie wordt geladen …",
+    weiter: "Volgende", zurueck: "Terug", ueberspringen: "Overslaan", spaeter: "Later", schliessen: "Sluiten",
+    pruefen: "Controleren", pruefe: "Controleren …", speichere: "Opslaan …", kopieren: "Kopiëren", kopiert: "Gekopieerd ✓",
+    anleitung: "Stap-voor-stap-handleiding", optional: "optioneel", erweitert: "Geavanceerd", zeigen: "Tonen",
+    gespeichertGeheim: "opgeslagen: ••••{0}", leerLassen: "leeg laten = ongewijzigd", ausEnv: "Waarde uit de .env of docker-compose.yaml",
+    entfernen: "Verwijderen", wirdEntfernt: "wordt bij het opslaan verwijderd", entfernenFrage: "Deze opgeslagen waarde verwijderen?",
+    schritt: "Stap {0} van {1}", fehlerFeld: "Controleer “{0}”.", fehler: "Dat is niet gelukt.", ok: "In orde ✓",
+    fehlerNetz: "Geen verbinding met pinn. – controleer of je op je thuisnetwerk zit.",
+    ordnerFehlt: "De map “konfig” ontbreekt op de NAS. Gebruik de nieuwe docker-compose.yaml en start het script pinn-setup.sh (of “docker compose up -d”). Zonder deze map kan de installatie niets opslaan.",
+    ordnerSchreibschutz: "De map “konfig” is alleen-lezen – start pinn-setup.sh opnieuw.",
+    serverFehlt: "Op de server ontbreken nog einrichtung.pb.js en pinn-einrichtung.js (pb_hooks).",
+    erkannt: "Herkend uit de adresbalk: {0}", deineAdresse: "Jouw pinn.-adres:", ph_sub: "bijv. familie-jansen",
+    L_PORT: "HTTPS-poort", h_port: "Wijzig dit alleen als je poort 8443 in de docker-compose.yaml hebt aangepast.",
+    pflichtInfo: "Alleen “Thuisnetwerk” en “DuckDNS” zijn verplicht. Al het andere kun je overslaan en altijd later doen: hoofdbeheerder → Installatie.",
+    serverOk: "pinn. draait en kan de instellingen opslaan ✓",
+    schonFertig: "De installatie is al afgerond. Je kunt alles controleren en wijzigen – bevestig het aan het eind met “Opslaan & starten”.",
+    bitteWaehlen: "Kies een mogelijkheid (of “Overslaan”).",
+    skipPflicht: "Zonder deze stap werken HTTPS, pushmeldingen en de app op het beginscherm niet. Toch overslaan?",
+    pflichtFehlt: "Vul de velden in – of kies “Overslaan”.",
+    speichernStarten: "Opslaan & starten", neu: "nieuw", nichtGesetzt: "niet ingesteld", erledigtKurz: "klaar", offen: "open",
+    eingerichtet: "ingesteld", aus: "uit",
+
+    t_sprache: "Welkom bij pinn. 👋",
+    i_sprache: "Kies de taal voor de installatie. Die geldt daarna ook voor pinn. op dit apparaat – elk profiel kan later zijn eigen taal kiezen.",
+
+    t_start: "Wat je nodig hebt",
+    i_start: "pinn. is in ongeveer 20–30 minuten helemaal ingesteld. Elke stap wordt opgeslagen zodra je op “Volgende” tikt – je kunt dus op elk moment stoppen en later verdergaan waar je gebleven was.",
+    l_start: [
+      "Toegang tot je router (bij een FRITZ!Box: het wachtwoord onder op de box of je eigen wachtwoord)",
+      "dit apparaat op je thuisnetwerk (wifi) – een computer is het makkelijkst, maar een telefoon werkt ook",
+      "een Google-, GitHub- of Reddit-account voor de gratis dienst DuckDNS",
+      "optioneel: een Google-account voor Android-agenda’s en de AI",
+    ],
+
+    t_netz: "Thuisnetwerk: adres van de NAS",
+    i_netz: "pinn. moet het adres van je NAS op je thuisnetwerk kennen. Zodat dit adres nooit verandert, reserveert de router het blijvend.",
+    L_NAS_IP: "IP-adres van de NAS",
+    g_netz: [
+      "Kijk in de adresbalk van je browser: staat daar iets als `http://192.168.178.20:8090`, dan is het getal vóór de dubbele punt al het IP-adres van de NAS.",
+      "Anders kijk je in je FRITZ!Box: open [fritz.box](http://fritz.box) in de browser en log in met het FRITZ!Box-wachtwoord.",
+      "Open links “Thuisnetwerk” → “Netwerk” → tabblad “Netwerkverbindingen”.",
+      "Zoek je NAS in de lijst (meestal “UGREEN…” of “DXP…”) en tik rechts op het potlood (bewerken).",
+      "Noteer het IPv4-adres en vink “Dit netwerkapparaat altijd hetzelfde IPv4-adres toewijzen” aan → “Toepassen”.",
+      "Andere routers: zoek naar “Thuisnetwerk”, “LAN” of “DHCP” – vaak heet het “adres reserveren” of “vast IP-adres”. In de UGREEN-app vind je het adres onder Configuratiescherm → Netwerk.",
+    ],
+
+    t_duckdns: "Jouw adres met HTTPS (DuckDNS)",
+    i_duckdns: "DuckDNS is een gratis dienst die pinn. een vast adres met beveiligingscertificaat geeft. pinn. heeft dit nodig voor pushmeldingen, de app op het beginscherm en inloggen met Google. Poorten openzetten in de router is niet nodig – pinn. blijft van buitenaf onzichtbaar.",
+    L_DUCKDNS_SUBDOMAIN: "Subdomein (een naam naar keuze)", L_DUCKDNS_TOKEN: "DuckDNS-token", L_PINN_ADRESSE: "pinn.-adres",
+    g_duckdns: [
+      "Open [duckdns.org](https://www.duckdns.org).",
+      "Log rechtsboven in met een van de aangeboden accounts (bijv. Google, GitHub of Reddit) – DuckDNS heeft geen eigen wachtwoord.",
+      "Typ een naam in het veld “sub domain”, bijv. `familie-jansen` (alleen kleine letters, cijfers en streepjes), en tik op “add domain”. Is de naam al vergeven, probeer dan een andere.",
+      "Bovenaan de pagina zie je je “token” – een lange reeks met streepjes. Selecteer en kopieer die.",
+      "Plak subdomein en token hier en tik op “Controleren”. pinn. meldt het adres van je NAS zelf bij DuckDNS aan – het veld “current ip” op de website hoef je niet te wijzigen.",
+      "Het token is net een wachtwoord – deel het niet. Is dat toch gebeurd: tik op duckdns.org op “recreate token” en vul hier het nieuwe token in.",
+    ],
+    test_duckdns_ok: "DuckDNS heeft het adres geaccepteerd ✓ – {0} wijst nu naar je NAS ({1}).",
+    test_duckdns_ko: "DuckDNS weigerde. Controleer subdomein en token – het subdomein moet in je DuckDNS-account bestaan.",
+    test_duckdns_netz: "duckdns.org is vanaf de NAS niet bereikbaar. Heeft de NAS internettoegang?",
+    test_duckdns_fehlt: "Vul subdomein en token in.",
+    test_duckdns_ungueltig: "Subdomein of token lijkt niet te kloppen.",
+    test_duckdns_ip_fehlt: "Vul eerst in de stap “Thuisnetwerk” het IP-adres van de NAS in.",
+
+    t_rebind: "Router: DNS-rebind-bescherming",
+    i_rebind: "Je pinn.-adres wijst naar een apparaat op je thuisnetwerk. Veel routers – ook de FRITZ!Box – blokkeren dat ter bescherming. Dan opent pinn. niet via het adres. Een uitzondering voor precies dit adres lost dat op:",
+    g_rebind: [
+      "Open [fritz.box](http://fritz.box) en log in.",
+      "“Thuisnetwerk” → “Netwerk” → tabblad “Netwerkinstellingen”.",
+      "Scrol helemaal naar beneden en klap “Extra instellingen” open.",
+      "Vul bij “DNS-rebind-bescherming” onder “Hostnaamuitzonderingen” deze regel in: `{SUB}.duckdns.org`",
+      "Tik op “Toepassen” en bevestig – als de FRITZ!Box erom vraagt – op de box.",
+      "Andere routers: zoek in de instellingen naar “DNS rebind” en voer hetzelfde adres in als uitzondering. Bestaat zo’n instelling niet, dan hoef je meestal niets te doen.",
+    ],
+    rebindErledigt: "Klaar – de uitzondering is toegevoegd",
+
+    t_fern: "Onderweg gebruiken (VPN)",
+    i_fern: "pinn. staat bewust niet open naar internet. Onderweg maakt de telefoon via VPN een veilige verbinding met je huis – alsof je op je wifi zit. Hoe wil je dat doen?",
+    c_wg: "FRITZ!Box met WireGuard", c_wg_d: "Aanbevolen met een FRITZ!Box met FRITZ!OS 7.50 of nieuwer. Gratis, geen extra account nodig.",
+    c_ts: "Tailscale", c_ts_d: "Voor andere routers – of als WireGuard niet werkt (bijv. bij DS-Lite-aansluitingen). Vereist een gratis account op tailscale.com.",
+    c_kein: "Alleen thuis", c_kein_d: "pinn. alleen op je thuiswifi gebruiken. Is altijd later toe te voegen.",
+    L_TS_AUTHKEY: "Tailscale-sleutel (auth key)",
+    g_wireguard: [
+      "Open [fritz.box](http://fritz.box) en log in. Onder “Systeem” → “Update” moet FRITZ!OS 7.50 of nieuwer staan (update anders eerst).",
+      "“Internet” → “Toegang toestaan” → tabblad “VPN (WireGuard)” → “Verbinding toevoegen”.",
+      "Kies “Vereenvoudigde instelling (aanbevolen)” → “Volgende”. Op de vraag of één apparaat moet worden verbonden kies je “Ja”.",
+      "Geef de telefoon een naam (bijv. `Telefoon van Anna`) → “Voltooien”. Vraagt de FRITZ!Box om bevestiging: druk op een knop op de box of bevestig op de telefoon.",
+      "Vraagt de FRITZ!Box om een MyFRITZ!-account: maak die gratis aan – zo vindt de telefoon je box onderweg.",
+      "Er verschijnt een QR-code. Installeer de app “WireGuard” op de telefoon: [iPhone](https://apps.apple.com/app/wireguard/id1441195209) · [Android](https://play.google.com/store/apps/details?id=com.wireguard.android).",
+      "Tik in de WireGuard-app op “+” → “Scan from QR code” (iPhone: “Create from QR code”) → scan de code op het scherm → geef de verbinding een naam → sta toe dat de VPN-configuratie wordt toegevoegd.",
+      "Test: zet wifi op de telefoon uit, zet WireGuard aan en open {ADRESSE}.",
+      "Herhaal de stappen vanaf “Verbinding toevoegen” voor elke andere telefoon – elk apparaat krijgt zijn eigen verbinding.",
+    ],
+    wgNurPinnT: "Alleen pinn. toestaan (bijv. voor familieleden)",
+    wgNurPinn: "Moet een apparaat via de VPN alleen pinn. kunnen bereiken en niet je hele thuisnetwerk: tik in de WireGuard-app op de verbinding → “Bewerken” → vervang onder “Allowed IPs” alles door `{NAS_IP}/32, {ROUTER_IP}/32` → “Opslaan”. Het tweede adres is de router (voor naamomzetting). Let op: de beperking geldt op dat apparaat.",
+    wgDsLite: "Werkt het onderweg niet? Sommige aansluitingen (DS-Lite, gangbaar bij kabel en glasvezel) hebben geen eigen IPv4-adres – dan werkt WireGuard alleen als de telefoon onderweg IPv6 heeft. Gebruik in dat geval Tailscale.",
+    g_tailscale: [
+      "Open [login.tailscale.com](https://login.tailscale.com/start) en maak een gratis account aan (bijv. inloggen met Google, Microsoft of Apple).",
+      "Kies in de beheerconsole bovenaan “Settings” → links “Keys” → “Generate auth key…”.",
+      "Laat de standaardwaarden staan → “Generate key” → kopieer de sleutel (begint met `tskey-auth-`) en plak die hierboven.",
+      "Tik op “Volgende”. De container “tailscale” op de NAS gebruikt de sleutel om binnen een minuut in te loggen.",
+      "Terug in de Tailscale-beheerconsole: tabblad “Machines” → tik bij het apparaat “pinn” op “…” → “Edit route settings…” → vink `{NAS_IP}/32` aan → “Save”.",
+      "Kies bij “pinn” onder “…” ook “Disable key expiry” – anders moet de NAS elke 180 dagen opnieuw inloggen.",
+      "Installeer de app “Tailscale” op elke telefoon ([iPhone](https://apps.apple.com/app/tailscale/id1470499037) · [Android](https://play.google.com/store/apps/details?id=com.tailscale.ipn)) en log in met hetzelfde account. Nodig familieleden uit onder “Users” in de beheerconsole.",
+      "Test: zet wifi op de telefoon uit, maak verbinding met Tailscale en open {ADRESSE}.",
+    ],
+    keinFern: "Geen probleem – pinn. werkt dan op je thuiswifi. Toegang van buitenaf kun je altijd toevoegen onder hoofdbeheerder → Installatie.",
+
+    t_google: "Google: Android-agenda’s & contacten",
+    i_google: "Optioneel. Nodig als je Google-agenda’s (Android) of verjaardagen uit Google-contacten in pinn. wilt zien. Dit wordt één keer voor de hele server ingesteld – daarna logt ieder met zijn eigen Google-account in bij pinn. Voor iPhone/iCloud hoef je hier niets te doen.",
+    googleBrauchtHttps: "Google heeft het HTTPS-adres uit de stap “DuckDNS” nodig.",
+    L_REDIRECT: "Redirect-URI (voor de Google Cloud Console)",
+    L_PINN_GOOGLE_CLIENT_ID: "Client-ID", L_PINN_GOOGLE_CLIENT_SECRET: "Client secret",
+    g_google: [
+      "Open [console.cloud.google.com](https://console.cloud.google.com) en log in met een Google-account (accepteer de eerste keer de gebruiksvoorwaarden).",
+      "Tik bovenaan op de projectkiezer → “Nieuw project” → naam `pinn` → “Maken”. Selecteer daarna bovenaan het project “pinn”.",
+      "Schakel drie API’s in – open ze stuk voor stuk en tik op “Inschakelen”: [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com) · [CalDAV API](https://console.cloud.google.com/apis/library/caldav.googleapis.com) · [People API](https://console.cloud.google.com/apis/library/people.googleapis.com).",
+      "Open [Google Auth Platform](https://console.cloud.google.com/auth/overview) → “Aan de slag”: appnaam `pinn.`, e-mailadres voor ondersteuning = jouw adres → doelgroep “Extern” → contact-e-mailadres → akkoord → “Maken”.",
+      "Kies links “Doelgroep” → “App publiceren” → bevestig. Belangrijk: in de status “Testen” verloopt elke Google-verbinding na 7 dagen.",
+      "Kies links “Clients” → “Client maken” → toepassingstype “Webtoepassing”, naam `pinn.`.",
+      "Kies onder “Geautoriseerde omleidings-URI’s” → “URI toevoegen” en plak precies dit adres: `{REDIRECT}` → “Maken”.",
+      "Kopieer client-ID en client secret, plak ze hier en tik op “Controleren”. (Google toont het secret maar één keer – gebruik anders “Secret toevoegen” bij de client.)",
+      "Bij het later verbinden toont Google “Google heeft deze app niet geverifieerd”. Dat is normaal voor je eigen privé-app: “Geavanceerd” → “Doorgaan naar pinn.”.",
+    ],
+    test_google_ok: "Google kent deze client ✓",
+    test_google_uri: "Client-ID en secret kloppen, maar de redirect-URI ontbreekt in de client: {0}",
+    test_google_ungueltig: "Google herkent deze client-ID of dit secret niet – kopieer ze opnieuw.",
+    test_google_netz: "Google is vanaf de NAS niet bereikbaar.",
+    test_google_fehlt: "Vul client-ID en client secret in.",
+
+    t_ki: "AI voor recepten (Google Gemini)",
+    i_ki: "Optioneel. De AI leest recepten uit tekst, foto’s, pdf’s en links veel beter uit en vindt je afvalkalender. De sleutel is gratis en blijft op de NAS – de apps praten nooit rechtstreeks met Google.",
+    L_PINN_GEMINI_KEY: "Gemini-API-sleutel", L_PINN_GEMINI_MODELL: "Vast model",
+    h_modell: "Leeg = automatisch het actuele Flash-model.",
+    g_ki: [
+      "Open [aistudio.google.com/apikey](https://aistudio.google.com/apikey) en log in met een Google-account.",
+      "Tik op “Create API key”. Vraagt Google om een project, kies dan het project “pinn” uit de vorige stap of maak een nieuw project aan.",
+      "Kopieer de sleutel (begint meestal met `AIza`), plak die hier en tik op “Controleren”.",
+      "Goed om te weten: in de gratis variant mag Google de ingestuurde receptteksten gebruiken om zijn diensten te verbeteren.",
+    ],
+    test_gemini_ok: "Sleutel is geldig ✓",
+    test_gemini_ungueltig: "Google weigert de sleutel – kopieer hem opnieuw.",
+    test_gemini_gesperrt: "De sleutel is geblokkeerd voor de Gemini-API. Maak in AI Studio een nieuwe sleutel aan.",
+    test_gemini_netz: "Google is vanaf de NAS niet bereikbaar.",
+    test_gemini_fehlt: "Vul de sleutel in.",
+
+    t_ortung: "Locatie (Gezin → live locaties)",
+    i_ortung: "Optioneel. Telefoons delen hun locatie rechtstreeks in pinn. – hier hoef je niets in te vullen. De container “traccar” is alleen nodig voor gps-trackers met een simkaart.",
+    l_ortung: [
+      "Locatie delen werkt rechtstreeks in pinn. (Gezin → Locatie). Wil je blijven doorsturen terwijl pinn. gesloten is, installeer dan de app “Traccar Client” – die stuurt rechtstreeks naar pinn.",
+      "pinn. toont later per persoon het serveradres en de apparaat-ID onder Gezin → ⚙︎ Locatie.",
+      "Onderweg heeft de telefoon de VPN uit de stap “Onderweg gebruiken” nodig.",
+      "Gps-trackers met een simkaart (bijv. aan een hondenhalsband) sturen via het mobiele netwerk – dat vereist poortdoorsturing in de router. pinn. toont de instructies zodra je de tracker toevoegt.",
+    ],
+    appTraccar: "App “Traccar Client”:",
+    h_traccar: "Alleen invullen als je zelf al een account in Traccar hebt aangemaakt. Leeg = pinn. maakt er zelf een.",
+    L_PINN_TRACCAR_EMAIL: "Traccar-e-mailadres", L_PINN_TRACCAR_PASSWORT: "Traccar-wachtwoord",
+    test_traccar_ok: "Traccar draait ✓",
+    test_traccar_aus: "De container “traccar” draait niet – voor telefoons is die niet nodig. Alleen voor gps-trackers: voeg COMPOSE_PROFILES=tracker toe aan het bestand .env.",
+
+    t_ha: "Smart home: Home Assistant",
+    i_ha: "Optioneel. Waar draait je Home Assistant?",
+    c_ha_kein: "Geen Home Assistant",
+    c_ha_geraet: "Op een apart apparaat", c_ha_geraet_d: "bijv. Raspberry Pi of Home Assistant Green.",
+    c_ha_vm: "Als virtuele machine op deze NAS", c_ha_vm_d: "Dan richt pinn. een kleine netwerkomweg in – anders kan de NAS de VM niet bereiken.",
+    haGeraetInfo: "Hier hoef je niets in te vullen. Elk gezin stelt de verbinding in pinn. in onder Instellingen → Smart home.",
+    L_HA_IP: "IP-adres van Home Assistant", L_HILFS_IP: "Vrij hulpadres", L_NAS_NETZWERKKARTE: "Netwerkinterface van de NAS",
+    h_karte: "“auto” = pinn. herkent de netwerkinterface zelf.",
+    g_ha: [
+      "IP van Home Assistant: in Home Assistant “Instellingen” → “Systeem” → “Netwerk” – of zoek het apparaat “homeassistant” in de FRITZ!Box onder “Thuisnetwerk” → “Netwerk”. Vink daar ook “altijd hetzelfde IPv4-adres toewijzen” aan.",
+      "Hulpadres: een adres op je thuisnetwerk dat geen enkel apparaat gebruikt en dat de router nooit uitdeelt. In de FRITZ!Box toont “Thuisnetwerk” → “Netwerk” → “Netwerkinstellingen” → “IPv4-instellingen” het bereik dat de router uitdeelt (bijv. .20 tot .200). Kies een adres erboven, bijv. `{VORSCHLAG}`.",
+      "Tik op “Volgende” – de container “ha-netz” richt de omweg binnen een minuut in. “Controleren” toont of pinn. Home Assistant kan bereiken.",
+      "Elk gezin voert het toegangstoken van Home Assistant later in pinn. in onder Instellingen → Smart home.",
+    ],
+    haAktiv: "Omweg actief via {0} (hulpadres {1}) ✓", haWartet: "De omweg wacht op de instellingen.", haFehler: "De omweg kon niet worden ingericht (netwerkinterface: {0}).",
+    test_homeassistant_ok: "Home Assistant is bereikbaar ✓",
+    test_homeassistant_aus: "Home Assistant is (nog) niet bereikbaar. Wacht na “Volgende” maximaal een minuut en controleer opnieuw.",
+    test_homeassistant_fehlt: "Vul het IP-adres van Home Assistant in.",
+
+    t_apps: "Apps & apparaten",
+    i_apps: "Bijna klaar! Dit hebben gezinsleden nodig op hun telefoon:",
+    a_home_t: "pinn. op het beginscherm (voor iedereen)",
+    a_home: [
+      "iPhone/iPad: open {ADRESSE} in Safari → deelicoon (vierkant met pijl) → “Zet op beginscherm” → “Voeg toe”. Alleen zo werken pushmeldingen (iOS 16.4 of nieuwer).",
+      "Android: open {ADRESSE} in Chrome → ⋮ rechtsboven → “App installeren” of “Toevoegen aan startscherm”.",
+      "Gebruik altijd het https-adres – niet het adres met :8090.",
+    ],
+    a_vpn: "Voor onderweg – instellen zie stap “Onderweg gebruiken”:",
+    a_traccar: "Alleen voor locatiebepaling:",
+    a_icloud_t: "iCloud-agenda (iPhone)",
+    a_icloud: "Elk gezin koppelt zijn iCloud-agenda zelf in pinn. onder Instellingen → Agenda. Hiervoor is een app-specifiek wachtwoord nodig: [account.apple.com](https://account.apple.com) → “Inloggen en beveiliging” → “App-specifieke wachtwoorden” → “+” → naam `pinn.` → voer het getoonde wachtwoord (xxxx-xxxx-xxxx-xxxx) in pinn. in.",
+    a_push_t: "Pushmeldingen",
+    a_push: "Ieder schakelt ze zelf in pinn. in onder Instellingen → Meldingen → “Op dit apparaat activeren” – op de iPhone alleen in de app vanaf het beginscherm.",
+
+    t_fertig: "Samenvatting",
+    i_fertig: "Controleer de gegevens. Met “Opslaan & starten” past pinn. alles toe en start één keer kort opnieuw op (ongeveer 10–20 seconden).",
+    S_ADRESSE: "Adres", S_REBIND: "DNS-rebind-uitzondering", S_FERN: "Onderweg", S_KI: "AI", S_ORTUNG: "Locatie",
+    L_PINN_PUSH_KONTAKT: "Contactadres voor pushdiensten",
+    h_push: "Apple en Google vereisen voor pushmeldingen een contactadres (e-mail). Leeg = pinn. gebruikt een eigen adres.",
+    neustart: "pinn. start opnieuw op …", neustartOk: "opnieuw opgestart ✓", neustartFehler: "pinn. reageert niet. Laad de pagina over een minuut of twee opnieuw.",
+    pruefeHttps: "HTTPS controleren …", pruefeAlles: "Alles controleren …",
+    zertifikatDauert: "Het beveiligingscertificaat wordt de eerste keer opgehaald – dat kan 1–2 minuten duren …",
+    httpsOk: "{0} is bereikbaar ✓",
+    httpsFehler: "{0} reageert nog niet. Vaak voorkomende oorzaken: DNS-rebind-bescherming in de router (stap 5), dit apparaat zit niet op het thuisnetwerk, of het certificaat heeft nog even nodig. Test later opnieuw met “Opnieuw controleren”.",
+    httpsAus: "Geen HTTPS-adres ingesteld (stap DuckDNS).",
+    t_geschafft: "Gelukt! 🎉",
+    geschafftText: "pinn. is ingesteld. Open pinn. voortaan via dit adres en bewaar het op alle telefoons (zie “Apps & apparaten”). Maak daarna in het gezinsbeheer je eerste gezin aan.",
+    nochmalPruefen: "Opnieuw controleren", zurVerwaltung: "Naar gezinsbeheer",
+  };
+
   var STEPS = [
     { id: 'sprache' },
     { id: 'start' },
@@ -2518,7 +2730,7 @@
   var R = {};
   R.sprache = function () {
     var langs = (window.PINN_LANGUAGES || []).slice();
-    var order = { de: 0, en: 1, fr: 2, es: 3, it: 4, pt: 5, zh: 6, ja: 7, ko: 8, ru: 9 };
+    var order = { de: 0, en: 1, fr: 2, es: 3, it: 4, pt: 5, zh: 6, ja: 7, ko: 8, ru: 9, nl: 10 };
     // Versteckte Sprachen nur, wenn sie auf diesem Gerät zum Testen freigeschaltet sind (PINN_I18N.find)
     var I = window.PINN_I18N;
     langs = langs.filter(function (l) { return order[l.code] != null && (!l.hidden || (I && I.find && I.find(l.code))); })

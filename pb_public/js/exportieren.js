@@ -8,7 +8,7 @@
    Data export (whole family as a ZIP – data + documents)
    ----------------------------------------------------------
    The module lives in pb_public/datenexport.js and is only loaded when first opened
-   (own texts in ten languages, Russian still hidden). The browser builds the ZIP; the server only delivers collections
+   (own texts in eleven languages, Dutch still hidden). The browser builds the ZIP; the server only delivers collections
    and files (pb_hooks/export.pb.js + pinn-export.js).
    - Settings → System → Data: "Export family" (admins, not with child lock)
    - Main admin → Families: "📦 Export" per family (complete, e.g. for moving)
@@ -25,6 +25,8 @@ const PINN_EXPORT_TEXTE = {
   ko: { btn: '📦 {F} 내보내기', kurz: '📦 내보내기', text: '{Fd}의 모든 데이터를 ZIP 파일 하나로 – 문서, 영수증, 사진까지 포함해요. 다른 NAS로 옮기거나 개인 백업용으로 쓸 수 있어요.', laden: '내보내기를 불러올 수 없어요(pb_public/datenexport.js가 없나요?).', F: '가족', FW: '셰어하우스', Fd: '가족', FWd: '셰어하우스' },
   // Russian (since 1.120.0, still hidden in the app): {F} is used in the accusative ("export the family")
   ru: { btn: '📦 Экспортировать {F}', kurz: '📦 Экспорт', text: 'Все данные {Fd} одним ZIP-файлом – вместе с документами, чеками и изображениями. Например, для переезда на другой NAS или как собственная резервная копия.', laden: 'Не удалось загрузить экспорт (нет pb_public/datenexport.js?).', F: 'семью', FW: 'квартиру', Fd: 'вашей семьи', FWd: 'вашей квартиры' },
+  // Dutch (since 1.123.11, still hidden in the app): {F} is the bare noun ("export the family" = "gezin exporteren")
+  nl: { btn: '📦 {F} exporteren', kurz: '📦 Export', text: 'Alle gegevens {Fd} als ZIP-bestand – inclusief documenten, bonnetjes en afbeeldingen. Bijvoorbeeld voor de verhuizing naar een andere NAS of als eigen back-up.', laden: 'De export kon niet worden geladen (ontbreekt pb_public/datenexport.js?).', F: 'gezin', FW: 'woongroep', Fd: 'van je gezin', FWd: 'van je woongroep' },
 };
 function pinnExportText(key) {
   const l = (window.PINN_I18N && window.PINN_I18N.current) || 'en';

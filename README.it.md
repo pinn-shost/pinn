@@ -127,6 +127,16 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 e 🇷🇺 Русский**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.123.11
+
+**Olandese – dodicesima tappa**
+
+- **L’olandese è ora tradotto completamente.** Anche la procedura guidata di configurazione (guide passo passo per rete domestica, DuckDNS, router, VPN, Google, IA, posizione, Home Assistant e app) e l’esportazione dei dati (ZIP con tutti i dati, i documenti e le immagini) sono ora in olandese, così come gli avvisi di configurazione per l’amministratore principale. Il server accetta l’olandese anche nella configurazione. Manca solo l’attivazione.
+- Per ora l’olandese resta **nascosto** (attivabile su un dispositivo per provarlo). Per tutti gli altri non cambia nulla di visibile.
+- Modificato: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`, `i18n/versionslog.en.js`, sul server `pb_hooks/pinn-einrichtung.js` e tutti i README. Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o il pulsante di aggiornamento).
+
+
+
 ## Novità della 1.123.10
 
 **Olandese – undicesima tappa**
@@ -181,15 +191,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Modificato: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` e tutti i README. Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o il pulsante di aggiornamento).
 
 
-## Novità della 1.123.4
-
-**Olandese – quinta tappa**
-
-- **Ancora più pinn. in olandese.** Finanze (budget, categorie, movimenti ricorrenti, paghetta, esportazione), casse (con ripartizione delle spese e saldo dei conti), depositi titoli (con importazione, piani di risparmio e obiettivi di risparmio), contratti (con lettere di disdetta e scadenze) e l’anteprima settimanale e mensile sono ora tradotti (3614 testi su 6722).
-- L’olandese resta **nascosto** finché non è tutto tradotto (attivabile su un dispositivo per provarlo; i testi mancanti compaiono in inglese). Per tutti gli altri non cambia nulla di visibile.
-- Modificato: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` e tutti i README. Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o il pulsante di aggiornamento).
-
-
 ## Come funziona
 
 ```mermaid
@@ -218,7 +219,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.123.8` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.123.11` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
