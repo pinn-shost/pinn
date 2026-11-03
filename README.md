@@ -21,7 +21,8 @@
   <a href="README.zh.md">🇨🇳 中文</a> ·
   <a href="README.ja.md">🇯🇵 日本語</a> ·
   <a href="README.ko.md">🇰🇷 한국어</a> ·
-  <a href="README.ru.md">🇷🇺 Русский</a>
+  <a href="README.ru.md">🇷🇺 Русский</a> ·
+  <a href="README.nl.md">🇳🇱 Nederlands</a>
 </p>
 
 <p align="center">
@@ -121,7 +122,17 @@ Tap any picture to open it in full size.
 | 🔔 **Notifications** | Personal push messages on iPhone, iPad and Android, plus a notification bell that collects every change in the family. |
 | 🧩 **Everything else** | Family board with movable notes, global search, offline mode with automatic sync, dark mode, iPad dashboard with profile PINs, guest account, child lock. |
 
-pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 and 🇷🇺 Русский**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
+pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский and 🇳🇱 Nederlands**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
+
+## What's new in 1.123.12
+
+**Dutch – unlocked**
+
+- **Dutch is open to everyone.** Choose it under Settings → Language & region – all 6722 texts, the setup assistant, the data export and the notifications are in Dutch. Devices set to Dutch pick it up automatically. Nothing changes for anyone else.
+- **The server speaks Dutch too:** week preview, finance outlook, birthdays, pet reminders, shop notices, “Where are you?” messages, packing list suggestions and reward requests – for profiles set to Dutch and for the countries Netherlands, Suriname, Aruba, Curaçao and Sint Maarten. Voice control (Siri) still answers in English when the app is set to Dutch.
+- Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, on the server `pb_hooks/pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-wobistdu.js`, `pinn-packliste.js`, `pinn-aufgaben.js` and all READMEs (new: `README.nl.md`). Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
+
 
 ## What's new in 1.123.11
 
@@ -212,14 +223,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Dutch stays **hidden** until everything is translated (it can be unlocked on one device for trying it out; texts that are still missing then appear in English). Nothing changes visibly for anyone else.
 - Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` and all READMEs. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
-## What's new in 1.123.1
-
-**Dutch – second stage**
-
-- **More of pinn. in Dutch.** Account (profiles, PIN, dashboard device, guests, notifications), devices & sign-in, error log and backups & updates are now translated (874 of 6,722 texts).
-- Dutch stays **hidden** until everything is translated (it can be unlocked on one device for trying it out; texts that are still missing then appear in English). Nothing changes visibly for anyone else.
-- Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` and all READMEs. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
 ## How it works
 
 ```mermaid
@@ -246,14 +249,14 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.123.11` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.123.12` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    The script copies every file into place, downloads the libraries for PDF import and photo text recognition, and starts pinn.
 4. Open `http://<NAS-IP>:8090` → **Log in as main admin** → password `Admin` → choose your own password.
-5. The **setup assistant** walks you through the rest – HTTPS, remote access via WireGuard or Tailscale, Google, AI, location and Home Assistant – step by step, in ten languages.
+5. The **setup assistant** walks you through the rest – HTTPS, remote access via WireGuard or Tailscale, Google, AI, location and Home Assistant – step by step, in eleven languages.
 6. Open pinn. via its HTTPS address on each phone and add it to the home screen:
    - **iPhone/iPad (Safari):** Share → *Add to Home Screen* (iOS 16.4 or later for notifications)
    - **Android (Chrome):** Settings → Notifications → *Install pinn. as an app*, or Chrome menu ⋮ → *Install app*

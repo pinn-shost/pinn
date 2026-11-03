@@ -49,7 +49,7 @@ window.PINN_LANGUAGES = [
   { code: 'ru', name: 'Русский', locale: 'ru-RU',
     flag: '<svg viewBox="0 0 9 6" aria-hidden="true"><path d="M0,0h9v6H0z" fill="#fff"/><path d="M0,2h9v4H0z" fill="#0039A6"/><path d="M0,4h9v2H0z" fill="#D52B1E"/></svg>' },
   // Being translated step by step (since 1.123.0), not offered until i18n/nl.i18n.js is complete
-  { code: 'nl', name: 'Nederlands', locale: 'nl-NL', hidden: true,
+  { code: 'nl', name: 'Nederlands', locale: 'nl-NL',
     flag: '<svg viewBox="0 0 9 6" aria-hidden="true"><path d="M0,0h9v6H0z" fill="#21468B"/><path d="M0,0h9v4H0z" fill="#fff"/><path d="M0,0h9v2H0z" fill="#AE1C28"/></svg>' },
 ];
 (function () {
@@ -137,7 +137,7 @@ window.PINN_LANGUAGES = [
 
   // Raise with every change to a text file in i18n/, otherwise devices keep using the old file.
   // .github/scripts/check-keys.js makes sure it matches src/version.txt.
-  var FILE_VERSION = '1.123.11';
+  var FILE_VERSION = '1.123.12';
 
   // Invisible until the texts are in place (no short flash of English placeholder texts)
   var style = document.createElement('style');

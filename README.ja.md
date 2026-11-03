@@ -21,7 +21,8 @@
   <a href="README.zh.md">🇨🇳 中文</a> ·
   <b>🇯🇵 日本語</b> ·
   <a href="README.ko.md">🇰🇷 한국어</a> ·
-  <a href="README.ru.md">🇷🇺 Русский</a>
+  <a href="README.ru.md">🇷🇺 Русский</a> ·
+  <a href="README.nl.md">🇳🇱 Nederlands</a>
 </p>
 
 <p align="center">
@@ -125,7 +126,17 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 | 🔔 **通知** | iPhone、iPad、Androidに届く個人向けのプッシュメッセージと、家族内のあらゆる変更を集めるベル。 |
 | 🧩 **そのほか** | 動かせるメモ付きの家族の掲示板、全体検索、自動同期付きのオフラインモード、ダークモード、プロフィールPIN付きのiPadダッシュボード、ゲストアカウント、チャイルドロック。 |
 
-pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
+pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
+
+## 1.123.12の新機能
+
+**オランダ語 – 公開**
+
+- **オランダ語がすべての方に公開されました。** 「設定 → 言語と地域」から選べます。6722のテキストすべて、セットアップアシスタント、データエクスポート、通知がオランダ語になりました。デバイスの言語がオランダ語なら自動的に切り替わります。ほかの方には変更はありません。
+- **サーバーもオランダ語を話します：** 週のプレビュー、家計の見通し、誕生日、ペットのリマインダー、お店のお知らせ、「どこにいる？」メッセージ、持ち物リストの提案、ごほうびのリクエストが、言語をオランダ語にしたプロファイルと、オランダ、スリナム、アルバ、キュラソー、シント・マールテンの各国で、オランダ語で届きます。音声操作（Siri）は、アプリがオランダ語のときはまだ英語で答えます。
+- 変更：`index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`、サーバー側の`pb_hooks/pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-wobistdu.js`, `pinn-packliste.js`, `pinn-aufgaben.js`、すべてのREADME（新規：`README.nl.md`）。インストールはいつもどおりです（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
+
+
 
 ## 1.123.11の新機能
 
@@ -182,15 +193,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - 変更：`index.html`、`js/sprachen.js`、`js/versionslog.js`、`i18n/nl.i18n.js`、`i18n/versionslog.en.js`、すべてのREADME。インストールはいつもどおりです（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
 
 
-## 1.123.5の新機能
-
-**オランダ語 – 第6段階**
-
-- **pinn.のオランダ語対応がさらに進みました。** 家族（緊急カード、リアルタイムの位置情報、「家に向かっています」、地図と場所）、家族メンバー、子ども用ページ、星とごほうび、ペット（予防、散歩、ペットシッター向け情報を含む）、学校・保育園（時間割、宿題、保護者向けのお便り、休園日）、位置情報（場所、お店、Traccar、GPSトラッカー）、SOS、「いまどこ？」が翻訳されました（6722件中4507件）。
-- オランダ語はすべての翻訳が終わるまで**非表示**のままです（試用のため1台のデバイスで有効にできます。未翻訳のテキストは英語で表示されます）。ほかの方には目に見える変更はありません。
-- 変更：`index.html`、`js/sprachen.js`、`js/versionslog.js`、`i18n/nl.i18n.js`、`i18n/versionslog.en.js`、すべてのREADME。インストールはいつもどおりです（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
-
-
 ## しくみ
 
 ```mermaid
@@ -219,14 +221,14 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.123.11`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.123.12`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    スクリプトがすべてのファイルを所定の場所にコピーし、PDF取り込みと写真の文字認識に必要なライブラリをダウンロードして、pinn.を起動します。
 4. `http://<NASのIP>:8090`を開き、**メイン管理者としてログイン** → パスワード`Admin` → 自分のパスワードを設定します。
-5. **セットアップアシスタント**が、HTTPS、WireGuardまたはTailscaleでのリモートアクセス、Google、AI、位置情報、Home Assistantといった残りの設定を、10の言語で順番に案内します。
+5. **セットアップアシスタント**が、HTTPS、WireGuardまたはTailscaleでのリモートアクセス、Google、AI、位置情報、Home Assistantといった残りの設定を、11の言語で順番に案内します。
 6. 各スマートフォンでHTTPSアドレスからpinn.を開き、ホーム画面に追加します：
    - **iPhone/iPad（Safari）：** 共有 → *ホーム画面に追加*（通知にはiOS 16.4以降が必要）
    - **Android（Chrome）：** 設定 → 通知 → *pinn.をアプリとしてインストール*、またはChromeのメニュー ⋮ → *アプリをインストール*

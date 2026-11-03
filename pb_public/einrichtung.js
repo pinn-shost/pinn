@@ -2224,7 +2224,7 @@
     nochmalPruefen: "Проверить снова", zurVerwaltung: "К управлению семьями",
   };
 
-  // Niederländisch (seit 1.123.11 vorbereitet, noch versteckt in der App)
+  // Niederländisch (seit 1.123.11, in der App freigeschaltet seit 1.123.12)
   T.nl = {
     titel: "Installatie", lade: "Installatie wordt geladen …",
     weiter: "Volgende", zurueck: "Terug", ueberspringen: "Overslaan", spaeter: "Later", schliessen: "Sluiten",

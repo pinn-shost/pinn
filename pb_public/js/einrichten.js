@@ -136,7 +136,7 @@ const PINN_SETUP_TEXTE = {
     loginMain: 'В первый раз пароль – «Admin», затем вы зададите свой, и начнётся настройка.',
     laden: 'Не удалось загрузить настройку (нет pb_public/einrichtung.js?).',
   },
-  // Dutch (since 1.123.11) – still hidden in the app until all texts are translated
+  // Dutch (since 1.123.11, offered in the app since 1.123.12)
   nl: {
     btn: '⚙︎ Installatie',
     offen: 'De installatie van pinn. is nog niet afgerond. Zonder installatie ontbreken HTTPS, pushmeldingen en de app op het beginscherm.',

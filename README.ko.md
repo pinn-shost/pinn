@@ -20,7 +20,8 @@
   <a href="README.pt.md">🇧🇷 Português</a> ·
   <a href="README.zh.md">🇨🇳 中文</a> ·
   <a href="README.ja.md">🇯🇵 日本語</a> ·
-  <a href="README.ru.md">🇷🇺 Русский</a>
+  <a href="README.ru.md">🇷🇺 Русский</a> ·
+  <a href="README.nl.md">🇳🇱 Nederlands</a>
   <b>🇰🇷 한국어</b>
 </p>
 
@@ -125,7 +126,17 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 | 🔔 **알림** | iPhone, iPad, Android에서 받는 개인 푸시 메시지와, 가족의 모든 변경을 모아 주는 알림 벨. |
 | 🧩 **그 밖에** | 옮길 수 있는 메모가 있는 가족 게시판, 전체 검색, 자동 동기화되는 오프라인 모드, 다크 모드, 프로필 PIN이 있는 iPad 대시보드, 손님 계정, 아이 보호 잠금. |
 
-pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
+pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
+
+## 1.123.12의 새 소식
+
+**네덜란드어 – 공개**
+
+- **네덜란드어를 이제 모두가 쓸 수 있어요.** 설정 → 언어 및 지역에서 고르세요. 6722개 텍스트 전부, 설정 도우미, 데이터 내보내기, 알림이 네덜란드어로 준비되어 있어요. 기기 언어가 네덜란드어면 자동으로 적용돼요. 다른 분들에게는 달라지는 게 없어요.
+- **서버도 네덜란드어로 말해요:** 주간 미리보기, 재정 전망, 생일, 반려동물 알림, 매장 안내, “어디야?” 메시지, 짐 싸기 목록 제안, 보상 요청이 네덜란드어로 설정한 프로필과 네덜란드, 수리남, 아루바, 퀴라소, 신트마르턴 지역에 네덜란드어로 전달돼요. 음성 제어(Siri)는 앱이 네덜란드어일 때 아직 영어로 답해요.
+- 변경: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, 서버의 `pb_hooks/pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-wobistdu.js`, `pinn-packliste.js`, `pinn-aufgaben.js` 및 모든 README(신규: `README.nl.md`). 설치는 평소와 같습니다(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
+
+
 
 ## 1.123.11의 새 소식
 
@@ -182,15 +193,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - 변경: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` 및 모든 README. 설치는 평소와 같습니다(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
 
 
-## 1.123.5의 새 소식
-
-**네덜란드어 – 여섯 번째 단계**
-
-- **pinn.의 네덜란드어가 더 늘었습니다.** 가족(응급 카드, 실시간 위치, “집에 가는 중이에요”, 지도와 장소), 가족 구성원, 아이 페이지, 별과 보상, 반려동물(예방, 산책, 펫시터 정보 포함), 학교·어린이집(시간표, 숙제, 가정통신문, 휴원일), 위치(장소, 상점, Traccar, GPS 트래커), SOS, “어디야?”가 번역되었습니다(6722개 중 4507개).
-- 네덜란드어는 모든 번역이 끝날 때까지 **숨김** 상태로 유지됩니다(시험용으로 한 기기에서 켤 수 있으며, 아직 없는 텍스트는 영어로 표시됩니다). 다른 사람에게는 눈에 보이는 변화가 없습니다.
-- 변경: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` 및 모든 README. 설치는 평소와 같습니다(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
-
-
 ## 작동 방식
 
 ```mermaid
@@ -219,14 +221,14 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.123.11` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.123.12` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    스크립트가 모든 파일을 제자리에 복사하고, PDF 가져오기와 사진 문자 인식에 필요한 라이브러리를 내려받고, pinn.을 시작해요.
 4. `http://<NAS-IP>:8090`을 열고 → **메인 관리자로 로그인** → 비밀번호 `Admin` → 나만의 비밀번호를 정해요.
-5. **설정 도우미**가 나머지를 안내해 줘요. HTTPS, WireGuard 또는 Tailscale을 통한 원격 접속, Google, AI, 위치, Home Assistant를 아홉 가지 언어로 차례대로요.
+5. **설정 도우미**가 나머지를 안내해 줘요. HTTPS, WireGuard 또는 Tailscale을 통한 원격 접속, Google, AI, 위치, Home Assistant를 열한 가지 언어로 차례대로요.
 6. 각 휴대폰에서 HTTPS 주소로 pinn.을 열고 홈 화면에 추가해요:
    - **iPhone/iPad(Safari):** 공유 → *홈 화면에 추가*(알림에는 iOS 16.4 이상 필요)
    - **Android(Chrome):** 설정 → 알림 → *pinn.을 앱으로 설치*, 또는 Chrome 메뉴 ⋮ → *앱 설치*

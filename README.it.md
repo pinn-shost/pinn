@@ -21,7 +21,8 @@
   <a href="README.zh.md">🇨🇳 中文</a> ·
   <a href="README.ja.md">🇯🇵 日本語</a> ·
   <a href="README.ko.md">🇰🇷 한국어</a> ·
-  <a href="README.ru.md">🇷🇺 Русский</a>
+  <a href="README.ru.md">🇷🇺 Русский</a> ·
+  <a href="README.nl.md">🇳🇱 Nederlands</a>
 </p>
 
 <p align="center">
@@ -125,7 +126,17 @@ Tocca un’immagine per aprirla a dimensione intera.
 | 🔔 **Notifiche** | Messaggi push personali su iPhone, iPad e Android, più una campanella che raccoglie ogni modifica in famiglia. |
 | 🧩 **Tutto il resto** | Bacheca di famiglia con note spostabili, ricerca globale, modalità offline con sincronizzazione automatica, modalità scura, dashboard su iPad con PIN dei profili, account ospite, blocco bambini. |
 
-pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어 e 🇷🇺 Русский**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
+pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский e 🇳🇱 Nederlands**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
+
+## Novità della 1.123.12
+
+**Olandese – sbloccato**
+
+- **L’olandese è aperto a tutti.** Sceglilo in Impostazioni → Lingua e regione: tutti i 6722 testi, l’assistente di configurazione, l’esportazione dei dati e le notifiche sono in olandese. I dispositivi impostati sull’olandese lo usano in automatico. Per tutti gli altri non cambia nulla.
+- **Anche il server parla olandese:** anteprima della settimana, previsione finanziaria, compleanni, promemoria per gli animali, avvisi dei negozi, messaggi «Dove sei?», proposte di liste dei bagagli e richieste di premio – per i profili impostati sull’olandese e per i paesi Paesi Bassi, Suriname, Aruba, Curaçao e Sint Maarten. Il controllo vocale (Siri) risponde ancora in inglese quando l’app è in olandese.
+- Modificato: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, sul server `pb_hooks/pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-wobistdu.js`, `pinn-packliste.js`, `pinn-aufgaben.js` e tutti i README (nuovo: `README.nl.md`). Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o il pulsante di aggiornamento).
+
+
 
 ## Novità della 1.123.11
 
@@ -182,15 +193,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Modificato: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` e tutti i README. Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o il pulsante di aggiornamento).
 
 
-## Novità della 1.123.5
-
-**Olandese – sesta tappa**
-
-- **Ancora più pinn. in olandese.** Famiglia (scheda di emergenza, posizioni in tempo reale, «Sto tornando a casa», mappa e luoghi), membri della famiglia, la pagina dei bambini, stelle e premi, animali (con prevenzione, passeggiate e info per il pet sitter), scuola e asilo (orario, compiti, lettere ai genitori, giorni di chiusura), localizzazione (luoghi, negozi, Traccar, tracker GPS), SOS e «Dove sei?» sono ora tradotti (4507 testi su 6722).
-- L’olandese resta **nascosto** finché non è tutto tradotto (attivabile su un dispositivo per provarlo; i testi mancanti compaiono in inglese). Per tutti gli altri non cambia nulla di visibile.
-- Modificato: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` e tutti i README. Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o il pulsante di aggiornamento).
-
-
 ## Come funziona
 
 ```mermaid
@@ -219,14 +221,14 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.123.11` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.123.12` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    Lo script copia ogni file al suo posto, scarica le librerie per l’importazione dei PDF e il riconoscimento del testo nelle foto e avvia pinn.
 4. Apri `http://<IP-NAS>:8090` → **Accedi come amministratore principale** → password `Admin` → scegli la tua password.
-5. L’**assistente di configurazione** ti guida nel resto – HTTPS, accesso remoto con WireGuard o Tailscale, Google, IA, posizione e Home Assistant – passo dopo passo, in dieci lingue.
+5. L’**assistente di configurazione** ti guida nel resto – HTTPS, accesso remoto con WireGuard o Tailscale, Google, IA, posizione e Home Assistant – passo dopo passo, in undici lingue.
 6. Apri pinn. dal suo indirizzo HTTPS su ogni telefono e aggiungilo alla schermata Home:
    - **iPhone/iPad (Safari):** Condividi → *Aggiungi alla schermata Home* (iOS 16.4 o successivo per le notifiche)
    - **Android (Chrome):** Impostazioni → Notifiche → *Installa pinn. come app*, oppure menu di Chrome ⋮ → *Installa app*

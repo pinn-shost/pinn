@@ -2065,7 +2065,7 @@ function langOfUser(userId) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign($app.findRecordById(USERS, userId)).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -2077,6 +2077,7 @@ function langOfUser(userId) {
     if (["JP"].indexOf(land) >= 0) return "ja";
     if (["KR"].indexOf(land) >= 0) return "ko";
     if (["RU"].indexOf(land) >= 0) return "ru";
+    if (["NL", "SR", "AW", "CW", "SX"].indexOf(land) >= 0) return "nl";
     return "en";
 }
 const LADEN_TEXT = {
@@ -2100,6 +2101,8 @@ const LADEN_TEXT = {
           geplant: "계획: {titel}", tipp1: "여기를 탭하면 장보기 목록이 열려요.", tippN: "여기를 탭하면 장보기 목록이 열려요.", und: ", " },
     ru: { bei: "Вы здесь: {laden}", frage: "идёте за покупками?", artikel1: "в списке 1 позиция", artikel: "в списке позиций: {n}",
           geplant: "Запланировано: {titel}", tipp1: "Нажмите, чтобы открыть список покупок.", tippN: "Нажмите, чтобы открыть списки покупок.", und: " и " },
+    nl: { bei: "Je bent bij {laden}", frage: "ga je boodschappen doen?", artikel1: "1 artikel op de lijst", artikel: "{n} artikelen op de lijst",
+          geplant: "Gepland: {titel}", tipp1: "Tik hier voor de boodschappenlijst.", tippN: "Tik hier voor de boodschappenlijsten.", und: " en " },
 };
 function ladenPushText(lang, items, geraetId) {
     const T = LADEN_TEXT[lang] || LADEN_TEXT.en;

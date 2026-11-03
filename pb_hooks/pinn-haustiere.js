@@ -128,7 +128,7 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -140,6 +140,7 @@ function langOf(u) {
     if (["JP"].indexOf(land) >= 0) return "ja";
     if (["KR"].indexOf(land) >= 0) return "ko";
     if (["RU"].indexOf(land) >= 0) return "ru";
+    if (["NL", "SR", "AW", "CW", "SX"].indexOf(land) >= 0) return "nl";
     return "en";
 }
 const T = {
@@ -164,6 +165,8 @@ const T = {
     // Russian: numbers without inflection (word before the number), pet ages as ordinal ("5-й день рождения")
     ru: { futter: "Наполнить кормушку", futterHeute: "наполнить сегодня", futterUeber: "не наполнено дней: {n}", leer: "Кормушка почти пуста", leerText: "Уровень {v} – пожалуйста, наполните.", leerText0: "Пожалуйста, наполните.", heute: "срок – сегодня", in3: "срок – через 3 дня", ueber: "просрочено дней: {n}", geb: "Сегодня день рождения: {name}!", gebAlt: "{name} отмечает {n}-й день рождения 🐾",
           gebText: "Сегодня – дополнительное лакомство 🦴", mehr: "🐾 Для ваших питомцев есть дела", kurzHeute: "сегодня", kurzIn3: "через 3 дня", kurzUeber: "просрочено" },
+    nl: { futter: "Voerautomaat bijvullen", futterHeute: "vandaag bijvullen", futterUeber: "al {n} dagen aan de beurt", leer: "Voerautomaat bijna leeg", leerText: "Vulniveau {v} – graag bijvullen.", leerText0: "Graag bijvullen.", heute: "vandaag aan de beurt", in3: "over 3 dagen aan de beurt", ueber: "{n} dagen te laat", geb: "{name} is vandaag jarig!", gebAlt: "{name} wordt vandaag {n} 🐾",
+          gebText: "Vandaag een extra snoepje 🦴", mehr: "🐾 Er staat iets op de planning voor jullie huisdieren", kurzHeute: "vandaag", kurzIn3: "over 3 dagen", kurzUeber: "te laat" },
 };
 function tx(lang, k, vars) {
     let s = (T[lang] || T.en)[k] || T.en[k] || k;

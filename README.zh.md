@@ -21,7 +21,8 @@
   <b>🇨🇳 中文</b> ·
   <a href="README.ja.md">🇯🇵 日本語</a> ·
   <a href="README.ko.md">🇰🇷 한국어</a> ·
-  <a href="README.ru.md">🇷🇺 Русский</a>
+  <a href="README.ru.md">🇷🇺 Русский</a> ·
+  <a href="README.nl.md">🇳🇱 Nederlands</a>
 </p>
 
 <p align="center">
@@ -125,7 +126,17 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 | 🔔 **通知** | iPhone、iPad 和 Android 上的个人推送消息，以及汇总家庭中每项变动的通知铃。 |
 | 🧩 **其他功能** | 带可移动便签的家庭公告板、全局搜索、带自动同步的离线模式、深色模式、带个人 PIN 的 iPad 仪表板、访客账户、儿童锁。 |
 
-pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어和 🇷🇺 Русский**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
+pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский和 🇳🇱 Nederlands**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
+
+## 1.123.12 新功能
+
+**荷兰语——正式开放**
+
+- **荷兰语现已向所有人开放。** 在“设置 → 语言与地区”中即可选择——全部 6722 条文本、设置向导、数据导出和通知都已是荷兰语。系统语言为荷兰语的设备会自动使用。其他人不受影响。
+- **服务器也会说荷兰语：** 每周预览、财务展望、生日、宠物提醒、商店提示、“你在哪里？”消息、打包清单建议和奖励申请——适用于语言设为荷兰语的档案，以及荷兰、苏里南、阿鲁巴、库拉索和荷属圣马丁。语音控制（Siri）在应用为荷兰语时仍以英语回答。
+- 更改：`index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`、服务器上的`pb_hooks/pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-wobistdu.js`, `pinn-packliste.js`, `pinn-aufgaben.js`以及所有 README（新增：`README.nl.md`）。安装方式不变（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
+
+
 
 ## 1.123.11 新功能
 
@@ -182,15 +193,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - 更改：`index.html`、`js/sprachen.js`、`js/versionslog.js`、`i18n/nl.i18n.js`、`i18n/versionslog.en.js` 以及所有 README。安装方式不变（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
 
 
-## 1.123.5 新功能
-
-**荷兰语——第六阶段**
-
-- **pinn. 的荷兰语版本又多了一部分。** 家庭（急救卡、实时位置、“我在回家的路上”、地图和地点）、家庭成员、儿童页面、星星和奖励、宠物（含预防、遛弯和宠物保姆信息）、学校和托儿所（课程表、作业、家长通知、停课日）、定位（地点、商店、Traccar、GPS 追踪器）、SOS 以及“你在哪？”现已翻译（6722 条文本中的 4507 条）。
-- 荷兰语在全部翻译完成之前仍然**隐藏**（可在一台设备上解锁试用；尚未翻译的文本会以英语显示）。对其他人没有任何可见变化。
-- 更改：`index.html`、`js/sprachen.js`、`js/versionslog.js`、`i18n/nl.i18n.js`、`i18n/versionslog.en.js` 以及所有 README。安装方式不变（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
-
-
 ## 工作原理
 
 ```mermaid
@@ -219,14 +221,14 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.123.11` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.123.12` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    脚本会把每个文件复制到位，下载 PDF 导入和照片文字识别所需的库，并启动 pinn.。
 4. 打开 `http://<NAS-IP>:8090` → **以主管理员身份登录** → 密码 `Admin` → 设置你自己的密码。
-5. **设置向导**会带你完成其余步骤——HTTPS、通过 WireGuard 或 Tailscale 远程访问、Google、AI、位置和 Home Assistant——一步一步，支持十种语言。
+5. **设置向导**会带你完成其余步骤——HTTPS、通过 WireGuard 或 Tailscale 远程访问、Google、AI、位置和 Home Assistant——一步一步，支持十一种语言。
 6. 在每部手机上通过 HTTPS 地址打开 pinn.，并添加到主屏幕：
    - **iPhone/iPad（Safari）：** 分享 → *添加到主屏幕*（通知需要 iOS 16.4 或更高版本）
    - **Android（Chrome）：** 设置 → 通知 → *将 pinn. 安装为应用*，或 Chrome 菜单 ⋮ → *安装应用*

@@ -682,7 +682,7 @@
       '안전하게 보관하세요.',
     ],
   };
-  // Niederländisch (seit 1.123.11 vorbereitet, noch versteckt in der App)
+  // Niederländisch (seit 1.123.11, in der App freigeschaltet seit 1.123.12)
   T.nl = {
     F: 'gezin', FW: 'woongroep', Fd: 'van je gezin', FWd: 'van je woongroep',
     titel: 'Gegevens {Fd} exporteren',

@@ -117,6 +117,7 @@ const T = {
     ja: { titel: "🧳 「{t}」の持ち物リストを作りますか？", heute: "今日出発です", morgen: "明日出発です", tage: "{n}日後に出発です", text: "{w} – タップすると日程入りで作成します。" },
     ko: { titel: "🧳 “{t}” 짐 싸기 목록을 만들까요?", heute: "오늘 출발해요", morgen: "내일 출발해요", tage: "{n}일 후에 출발해요", text: "{w} – 탭하면 날짜가 채워진 목록이 만들어져요." },
     ru: { titel: "🧳 Создать список вещей для «{t}»?", heute: "Отправление сегодня", morgen: "Отправление завтра", tage: "Отправление через {n} дн.", text: "{w} – нажмите, чтобы создать список с уже заполненными датами." },
+    nl: { titel: "🧳 Paklijst maken voor “{t}”?", heute: "Het begint vandaag", morgen: "Het begint morgen", tage: "Het begint over {n} dagen", text: "{w} – tik om de lijst te maken met de data al ingevuld." },
 };
 function tx(lang, k, vars) {
     let s = (T[lang] || T.en)[k] || T.en[k];
