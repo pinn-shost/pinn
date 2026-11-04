@@ -128,6 +128,18 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский e 🇳🇱 Nederlands**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.124.0
+
+**Ajuda e tutorial**
+
+- **Ajuda para cada menu.** Uma nova página de ajuda explica cada página do pinn. – como passeio rápido (“Rápido”) ou em detalhes (“Detalhado”). Fica em Ajustes → Ajuda e tutorial e na busca.
+- **Tutorial dos primeiros passos.** Perfis novos são guiados em sete passos pelas páginas mais importantes. Ele começa sozinho uma vez e pode ser repetido a qualquer momento em Ajustes → Ajuda e tutorial.
+- **Ajuda na busca.** Os temas de ajuda aparecem numa seção própria, “Ajuda”, bem separada das suas entradas (compromissos, documentos, receitas …).
+- Todos os textos de ajuda e o tutorial existem nos onze idiomas.
+- Alterado: `index.html`, `js/hilfe.js` (novo), `css/hilfe.css` (novo), `js/listen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos os `i18n/*.i18n.js`, `pinn-setup.sh` e todos os README. O servidor não muda. Instalação como sempre (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
+
+
+
 ## Novidades da 1.123.12
 
 **Neerlandês – liberado**
@@ -184,15 +196,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Alterado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` e todos os README. Instalação como sempre (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
 
 
-## Novidades da 1.123.6
-
-**Neerlandês – sétima etapa**
-
-- **Ainda mais pinn. em neerlandês.** Casa (arrendar, possuir e dar de arrendamento, defeitos com a notificação de defeitos ao senhorio, contadores com leitura por foto e previsão, custos fixos e empréstimo, renovação e projetos, plano de manutenção, jardim e plantas com o ano do jardim, chaves) já está traduzida (5157 de 6722 textos).
-- O neerlandês permanece **oculto** até estar tudo traduzido (pode ser ativado num dispositivo para experimentar; os textos que ainda faltam aparecem em inglês). Para os outros nada muda de visível.
-- Alterado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` e todos os README. Instalação como sempre (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
-
-
 ## Como funciona
 
 ```mermaid
@@ -221,7 +224,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.123.12` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.124.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

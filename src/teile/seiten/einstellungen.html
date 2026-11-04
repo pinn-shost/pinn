@@ -470,6 +470,21 @@
         <div id="voiceSettingsBody" class="flex flex-col gap-3"><p data-tk="common.loading" class="text-xs text-ink/50">Loading …</p></div>
       </div>
     </details>
+    <!-- Help & tutorial: short guides per menu and the first-steps tutorial (js/hilfe.js) -->
+    <details class="settings-accordion set-card" id="settingsHelpAccordion">
+      <summary class="set-sum">
+        <span class="set-ico">💡</span>
+        <span class="set-head"><span data-tk="help.settings.title" class="sa-title">Help &amp; tutorial</span><small data-tk="help.settings.subtitle">Short guides for every menu and the first-steps tutorial</small></span>
+        <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+      </summary>
+      <div class="set-body">
+        <p data-tk="help.settings.intro" class="text-sm text-ink/70 leading-relaxed">Find quick answers for every menu – as a fast run-through or explained in detail. The tutorial walks you through the first steps and can be started again at any time.</p>
+        <div class="flex flex-wrap items-center gap-2 mt-3">
+          <button data-tk="help.open" id="hlpOpenBtn" type="button" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90">Open help</button>
+          <button data-tk="help.tourStart" id="hlpTourStartBtn" type="button" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/60 hover:text-pine hover:border-pine transition">Start tutorial</button>
+        </div>
+      </div>
+    </details>
     <details class="settings-accordion set-card" id="settingsSystemAccordion">
       <summary class="set-sum">
         <span class="set-ico">🔄</span>

@@ -124,6 +124,18 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский y 🇳🇱 Nederlands**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.124.0
+
+**Ayuda y tutorial**
+
+- **Ayuda para cada menú.** Una nueva página de ayuda explica cada página de pinn. – como repaso rápido («Breve») o al detalle («Detallado»). Está en Ajustes → Ayuda y tutorial y en la búsqueda.
+- **Tutorial de primeros pasos.** Los perfiles nuevos reciben un recorrido de siete pasos por las páginas más importantes. Empieza una vez por sí solo y se puede repetir en Ajustes → Ayuda y tutorial.
+- **Ayuda en la búsqueda.** Los temas de ayuda aparecen en su propia sección «Ayuda», separada de tus entradas (eventos, documentos, recetas …).
+- Todos los textos de ayuda y el tutorial están en los once idiomas.
+- Cambiado: `index.html`, `js/hilfe.js` (nuevo), `css/hilfe.css` (nuevo), `js/listen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos los `i18n/*.i18n.js`, `pinn-setup.sh` y todos los README. El servidor no cambia. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
+
+
+
 ## Novedades de la 1.123.12
 
 **Neerlandés – desbloqueado**
@@ -215,14 +227,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - El neerlandés permanece **oculto** hasta que todo esté traducido (se puede activar en un dispositivo para probarlo; los textos que aún faltan aparecen en inglés). Para los demás no cambia nada visible.
 - Cambiado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` y todos los README. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
 
-## Novedades de la 1.123.2
-
-**Neerlandés – tercera etapa**
-
-- **Aún más de pinn. en neerlandés.** Calendario (citas, cuentas de calendario, festivos, vacaciones escolares, recogida de basura), plan de comidas, tareas, hogar, resumen (tarjetas de la familia, cumpleaños), tiempo y búsqueda ya están traducidos (1545 de 6722 textos).
-- El neerlandés permanece **oculto** hasta que todo esté traducido (se puede activar en un dispositivo para probarlo; los textos que aún faltan aparecen en inglés). Para los demás no cambia nada visible.
-- Cambiado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` y todos los README. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
-
 ## Cómo funciona
 
 ```mermaid
@@ -249,7 +253,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.123.12` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.124.0` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

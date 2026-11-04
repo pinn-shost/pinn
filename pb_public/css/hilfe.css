@@ -1,0 +1,92 @@
+/* pinn. – Help & tutorial (css/hilfe.css, since 1.124.0)
+   Styles of the help page (#hlpOverlay), the tutorial card (#hlpTour) and the group headers in the global search.
+   Only own classes (hlp-…) are used here: the ready-built Tailwind file (vendor/pinn.css) only contains the
+   classes that existed when it was built. Used by js/hilfe.js. */
+
+body.hlp-open { overflow: hidden; }
+
+/* ---------- Help page ---------- */
+#hlpOverlay { position: fixed; inset: 0; z-index: 320; display: grid; place-items: center; background: rgba(37,35,31,0.32); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+#hlpOverlay.hidden { display: none; }
+.hlp-sheet { position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; background: var(--c-paper, #FFFBFB); color: #25231F; padding-top: env(safe-area-inset-top, 0px); }
+@media (min-width: 640px) {
+  #hlpOverlay { padding: 24px; }
+  .hlp-sheet { max-width: 44rem; height: auto; max-height: calc(100vh - 48px); border-radius: 22px; box-shadow: 0 24px 60px rgba(20,20,15,0.25); overflow: hidden; padding-top: 0; }
+}
+.hlp-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.9rem 1rem 0.5rem 1.25rem; flex-shrink: 0; }
+.hlp-head-title { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
+.hlp-x { width: 2.25rem; height: 2.25rem; border-radius: 9999px; border: 0; font-size: 1.5rem; line-height: 1; cursor: pointer; background: rgba(37,35,31,0.07); color: inherit; display: grid; place-items: center; }
+.hlp-x:hover { background: rgba(37,35,31,0.14); }
+.hlp-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.6rem; padding: 0.25rem 1.25rem 0.75rem; flex-shrink: 0; }
+.hlp-seg { display: inline-flex; padding: 3px; border-radius: 0.75rem; background: rgba(37,35,31,0.07); }
+.hlp-seg-btn { border: 0; background: transparent; color: inherit; font-size: 0.85rem; padding: 0.4rem 0.9rem; border-radius: 0.6rem; cursor: pointer; }
+.hlp-seg-btn.hlp-on { background: var(--c-pine); color: #fff; }
+.hlp-tour-btn { border: 1px solid rgba(37,35,31,0.15); background: transparent; color: var(--c-pine); font-size: 0.85rem; padding: 0.45rem 0.9rem; border-radius: 0.75rem; cursor: pointer; }
+.hlp-tour-btn:hover { border-color: var(--c-pine); }
+.hlp-body { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 0 1.25rem calc(env(safe-area-inset-bottom, 0px) + 1.5rem); }
+.hlp-intro { font-size: 0.85rem; line-height: 1.5; color: rgba(37,35,31,0.6); margin: 0 0 0.9rem; }
+
+.hlp-ch { border: 1px solid rgba(37,35,31,0.1); border-radius: 0.9rem; background: rgba(255,255,255,0.7); margin-bottom: 0.55rem; scroll-margin-top: 0.5rem; }
+.hlp-sum { display: flex; align-items: center; gap: 0.7rem; padding: 0.75rem 0.9rem; cursor: pointer; list-style: none; }
+.hlp-sum::-webkit-details-marker, .hlp-sum::marker { display: none; content: ''; }
+.hlp-ico { width: 2rem; height: 2rem; border-radius: 0.6rem; display: grid; place-items: center; font-size: 1.05rem; background: color-mix(in srgb, var(--c-pine) 9%, transparent); flex-shrink: 0; }
+.hlp-ch-title { flex: 1; font-size: 0.95rem; font-weight: 600; }
+.hlp-chev { font-size: 1.3rem; line-height: 1; color: rgba(37,35,31,0.3); transition: transform .15s ease; }
+.hlp-ch[open] > .hlp-sum .hlp-chev { transform: rotate(90deg); }
+.hlp-ch-body { padding: 0 0.95rem 0.9rem 0.95rem; }
+.hlp-quick { margin: 0 0 0.6rem; padding-left: 1.2rem; font-size: 0.88rem; line-height: 1.5; }
+.hlp-quick li { margin-bottom: 0.3rem; }
+.hlp-detail { display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 0.7rem; }
+.hlp-item { scroll-margin-top: 0.75rem; border-left: 3px solid color-mix(in srgb, var(--c-pine) 30%, transparent); padding-left: 0.7rem; }
+.hlp-item-title { margin: 0 0 0.15rem; font-size: 0.88rem; font-weight: 600; color: var(--c-pine); }
+.hlp-item-text { margin: 0; font-size: 0.86rem; line-height: 1.5; color: rgba(37,35,31,0.78); }
+.hlp-link { display: inline-block; border: 0; background: transparent; padding: 0.2rem 0; margin-right: 0.9rem; font-size: 0.82rem; color: var(--c-pine); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.hlp-go { border: 1px solid rgba(37,35,31,0.15); background: transparent; color: var(--c-pine); font-size: 0.82rem; padding: 0.4rem 0.85rem; border-radius: 0.65rem; cursor: pointer; }
+.hlp-go:hover { border-color: var(--c-pine); }
+
+/* ---------- Tutorial card ---------- */
+#hlpTour { position: fixed; inset: 0; z-index: 330; display: grid; place-items: center; padding: 1rem; background: rgba(37,35,31,0.42); }
+#hlpTour.hidden { display: none; }
+.hlp-card { width: 100%; max-width: 26rem; background: var(--c-paper, #FFFBFB); color: #25231F; border-radius: 1.4rem; padding: 1.1rem 1.25rem 1.2rem; box-shadow: 0 24px 60px rgba(20,20,15,0.3); text-align: center; }
+.hlp-card-top { display: flex; align-items: center; justify-content: space-between; min-height: 1.6rem; }
+.hlp-card-progress { font-size: 0.72rem; color: rgba(37,35,31,0.5); }
+.hlp-card-skip { border: 0; background: transparent; color: rgba(37,35,31,0.55); font-size: 0.8rem; cursor: pointer; padding: 0.2rem 0.4rem; }
+.hlp-card-skip:hover { color: var(--c-pine); }
+.hlp-card-icon { font-size: 2.4rem; line-height: 1; margin: 0.4rem 0 0.5rem; }
+.hlp-card-title { margin: 0 0 0.5rem; font-size: 1.15rem; font-weight: 600; }
+.hlp-card-text { margin: 0 0 0.9rem; font-size: 0.9rem; line-height: 1.55; color: rgba(37,35,31,0.75); }
+.hlp-dots { display: flex; justify-content: center; gap: 0.35rem; margin-bottom: 1rem; }
+.hlp-dot { width: 0.42rem; height: 0.42rem; border-radius: 9999px; background: rgba(37,35,31,0.15); }
+.hlp-dot-on { background: var(--c-pine); width: 1.1rem; }
+.hlp-card-actions { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.hlp-btn { border-radius: 0.75rem; font-size: 0.88rem; padding: 0.55rem 1rem; cursor: pointer; border: 1px solid transparent; }
+.hlp-btn-main { background: var(--c-pine); color: #fff; margin-left: auto; }
+.hlp-btn-ghost { background: transparent; color: var(--c-pine); border-color: rgba(37,35,31,0.15); }
+.hlp-btn-ghost:hover { border-color: var(--c-pine); }
+.hlp-inv { visibility: hidden; }
+
+/* ---------- Group headers in the global search (own entries | help) ---------- */
+.gs-group { flex-shrink: 0; padding: 0.4rem 0.85rem 0.3rem; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(37,35,31,0.5); background: rgba(37,35,31,0.045); border-top: 1px solid rgba(37,35,31,0.07); border-bottom: 1px solid rgba(37,35,31,0.07); }
+.gs-group-help { color: var(--c-pine); }
+
+@media (prefers-reduced-motion: reduce) { .hlp-chev { transition: none; } }
+
+/* ---------- Dark mode ---------- */
+html.dark #hlpOverlay { background: rgba(0,0,0,0.5); }
+html.dark .hlp-sheet, html.dark .hlp-card { background: #24221F; color: #EDEAE2; }
+html.dark .hlp-x { background: rgba(255,255,255,0.08); }
+html.dark .hlp-x:hover { background: rgba(255,255,255,0.16); }
+html.dark .hlp-seg { background: rgba(255,255,255,0.08); }
+html.dark .hlp-tour-btn, html.dark .hlp-go, html.dark .hlp-btn-ghost { border-color: rgba(255,255,255,0.18); color: var(--c-mustard); }
+html.dark .hlp-intro, html.dark .hlp-card-progress, html.dark .hlp-card-skip { color: rgba(237,234,226,0.55); }
+html.dark .hlp-ch { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1); }
+html.dark .hlp-ico { background: rgba(255,255,255,0.07); }
+html.dark .hlp-chev { color: rgba(237,234,226,0.35); }
+html.dark .hlp-item-title, html.dark .hlp-link { color: var(--c-mustard); }
+html.dark .hlp-item { border-left-color: color-mix(in srgb, var(--c-mustard) 40%, transparent); }
+html.dark .hlp-item-text, html.dark .hlp-card-text { color: rgba(237,234,226,0.78); }
+html.dark .hlp-dot { background: rgba(255,255,255,0.18); }
+html.dark .hlp-dot-on { background: var(--c-mustard); }
+html.dark #hlpTour { background: rgba(0,0,0,0.6); }
+html.dark .gs-group { color: rgba(237,234,226,0.55); background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.08); }
+html.dark .gs-group-help { color: var(--c-mustard); }

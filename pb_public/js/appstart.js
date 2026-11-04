@@ -60,6 +60,7 @@ async function bootApp() {
   attachSwipeNavigation(document.getElementById('calendarBody'));
   checkForAppUpdate(false); // set the base value for the update detection
   setView('uebersicht');
+  setTimeout(() => { try { hlpTourMaybeStart(); } catch (e) { /* ignore */ } }, 1800); // tutorial for a new profile (js/hilfe.js)
   openDashboardKidPageIfNeeded(); // child profile on the dashboard: go straight to the kids page
   setTimeout(() => { try { bdayCheck(); } catch (e) { /* ignore */ } }, 1500); // birthday: play Happy Birthday once
   setTimeout(() => { try { if (!new URLSearchParams(location.search).get('wobistdu')) wbCheckIncoming(); } catch (e) { /* ignore */ } }, 2500); // open "Where are you?" question

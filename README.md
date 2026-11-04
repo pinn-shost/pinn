@@ -124,6 +124,18 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский and 🇳🇱 Nederlands**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.124.0
+
+**Help & tutorial**
+
+- **Help for every menu.** A new help page explains each page of pinn. – as a quick run-through (“Quick”) or in detail (“In detail”). Open it under Settings → Help & tutorial or through the search.
+- **Tutorial for the first steps.** New profiles are guided through the most important pages in seven short steps. It starts once on its own and can be restarted any time under Settings → Help & tutorial.
+- **Help in the search.** Help topics appear in their own “Help” section, clearly separated from your own entries (events, documents, recipes …).
+- All help texts and the tutorial come in all eleven languages.
+- Changed: `index.html`, `js/hilfe.js` (new), `css/hilfe.css` (new), `js/listen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `pinn-setup.sh` and all READMEs. Nothing changes on the server. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
+
+
 ## What's new in 1.123.12
 
 **Dutch – unlocked**
@@ -215,14 +227,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Dutch stays **hidden** until everything is translated (it can be unlocked on one device for trying it out; texts that are still missing then appear in English). Nothing changes visibly for anyone else.
 - Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` and all READMEs. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
-## What's new in 1.123.2
-
-**Dutch – third stage**
-
-- **Even more of pinn. in Dutch.** Calendar (events, calendar accounts, public holidays, school holidays, waste collection), meal plan, tasks, household, overview (family tiles, birthdays), weather and search are now translated (1,545 of 6,722 texts).
-- Dutch stays **hidden** until everything is translated (it can be unlocked on one device for trying it out; texts that are still missing then appear in English). Nothing changes visibly for anyone else.
-- Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` and all READMEs. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
 ## How it works
 
 ```mermaid
@@ -249,7 +253,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.123.12` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.124.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

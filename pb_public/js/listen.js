@@ -1444,6 +1444,7 @@ function gsCollect(q) {
     add('menu', { icon: '👤', typeLabel: tk('search.type.menu'), sub: tk('search.accountSub'), run: () => setView('konto') }, tk('search.account'), 'profil passwort pin abmelden benutzer');
     if (allowed('einstellungen')) add('menu', { icon: '⚙️', typeLabel: tk('search.type.menu'), sub: tk('search.settingsSub'), run: () => setView('einstellungen') }, tk('search.settings'), 'optionen design');
     add('menu', { icon: '📜', typeLabel: tk('search.type.menu'), sub: tk('search.changelogSub'), run: () => openChangelogTerminal() }, tk('search.changelog'), 'changelog updates version neuigkeiten');
+    add('menu', { icon: '💡', typeLabel: tk('search.type.menu'), sub: tk('help.subtitle'), run: () => hlpOpen({}) }, tk('help.title'), 'hilfe help anleitung tutorial ayuda aide');
   });
 
   // Settings: collapsible sections (their content is searched too)
@@ -1723,6 +1724,10 @@ function gsCollect(q) {
     res.push(r);
     if (res.length >= GS_MAX_RESULTS) break;
   }
+  // Help topics (js/hilfe.js): shown as their own group below the user's own entries
+  try {
+    if (typeof hlpSearch === 'function') hlpSearch(words, qn).forEach(h => res.push(h));
+  } catch (e) { /* help is optional */ }
   return res;
 }
 
@@ -1750,8 +1755,9 @@ function gsRender() {
   if (!gsResults.length) {
     box.innerHTML = `<div class="gs-empty">${escapeHtml(tk('search.noHits', { q: q.trim() }))}</div>`;
   } else {
-    // column-reverse: the first (best) hit is at the bottom, right above the search field
-    box.innerHTML = gsResults.map((r, i) => `
+    // column-reverse: the first (best) hit is at the bottom, right above the search field.
+    // Help topics come last in the list and therefore sit above the user's own entries, under their own header.
+    const rowHtml = (r, i) => `
       <button type="button" class="gs-row${i === gsActive ? ' gs-active' : ''}" role="option" data-gs="${i}">
         <span class="gs-ico">${escapeHtml(r.icon || '•')}</span>
         <span class="gs-txt">
@@ -1759,7 +1765,16 @@ function gsRender() {
           <span class="gs-sub"><span class="gs-type">${escapeHtml(r.typeLabel)}</span>${r.sub ? ' · ' + escapeHtml(r.sub) : ''}</span>
         </span>
         <span class="gs-chev" aria-hidden="true">›</span>
-      </button>`).join('');
+      </button>`;
+    const ownRows = [];
+    const helpRows = [];
+    gsResults.forEach((r, i) => (r.group === 'help' ? helpRows : ownRows).push(rowHtml(r, i)));
+    let html = ownRows.join('');
+    if (helpRows.length) {
+      if (ownRows.length) html += `<div class="gs-group">${escapeHtml(tk('search.group.own'))}</div>`;
+      html += helpRows.join('') + `<div class="gs-group gs-group-help">${escapeHtml(tk('search.group.help'))}</div>`;
+    }
+    box.innerHTML = html;
   }
   box.classList.add('gs-show');
   box.scrollTop = box.scrollHeight;

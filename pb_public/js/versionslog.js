@@ -22,6 +22,16 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.124', datum: '03.11.2026', titel: 'Hilfe & Tutorial',
+    punkte: [
+      ['neu', 'Hilfe-Seite mit kurzen Anleitungen zu jedem Menüpunkt – wahlweise als schneller Durchlauf („Kurz“) oder ausführlich („Ausführlich“) erklärt. Zu finden unter Einstellungen → Hilfe & Tutorial und über die Suche.'],
+      ['neu', 'Tutorial für die ersten Schritte: startet für neue Profile einmal von selbst, bleibt unter Einstellungen → Hilfe & Tutorial jederzeit abrufbar und führt in sieben kurzen Schritten durch die wichtigsten Seiten.'],
+      ['neu', 'Die Suche zeigt Hilfe-Treffer in einem eigenen Bereich „Hilfe“, deutlich getrennt von den eigenen Einträgen (Termine, Dokumente, Rezepte …).'],
+      ['info', 'Alle Hilfetexte und das Tutorial gibt es in allen elf Sprachen.'],
+      ['info', 'Geändert: index.html, js/hilfe.js (neu), css/hilfe.css (neu), js/listen.js, js/appstart.js, js/sprachen.js, js/versionslog.js, i18n/versionslog.en.js, alle i18n/*.i18n.js, pinn-setup.sh und alle READMEs. Nur Dateien im Repository, kein Server-Teil.'],
+    ],
+  },
+  {
     v: '1.123', datum: '01.11.2026', titel: 'Niederländisch – erste Etappe',
     punkte: [
       ['neu', 'Niederländisch kommt: pinn. wird Schritt für Schritt ins Niederländische übersetzt. Den Anfang machen Anmeldung, Dashboard, Menü, Hauptadmin-Seite und alle Einstellungen (504 von 6722 Texten). Die Sprache bleibt versteckt, bis alles übersetzt ist – zum Ausprobieren auf einem Gerät freischaltbar; noch fehlende Texte erscheinen dann auf Englisch'],

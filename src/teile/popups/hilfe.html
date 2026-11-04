@@ -1,0 +1,36 @@
+<!-- Help: short guides per menu, quick or in detail (content built by js/hilfe.js) -->
+<div id="hlpOverlay" class="hidden" role="dialog" aria-modal="true" aria-label="Help" data-tk-attr="aria-label:help.title">
+  <div class="hlp-sheet">
+    <div class="hlp-head">
+      <span class="hlp-head-title" data-tk="help.title">Help</span>
+      <button id="hlpClose" type="button" class="hlp-x" aria-label="Close" data-tk-attr="aria-label:common.close">×</button>
+    </div>
+    <div class="hlp-bar">
+      <div class="hlp-seg">
+        <button id="hlpModeQuick" type="button" class="hlp-seg-btn hlp-on" data-tk="help.mode.quick">Quick</button>
+        <button id="hlpModeDetail" type="button" class="hlp-seg-btn" data-tk="help.mode.detail">In detail</button>
+      </div>
+      <button id="hlpTourBtn" type="button" class="hlp-tour-btn" data-tk="help.tourStart">Start tutorial</button>
+    </div>
+    <div id="hlpBody" class="hlp-body"></div>
+  </div>
+</div>
+
+<!-- Tutorial for the first steps: a card over the page, one step after the other (content built by js/hilfe.js) -->
+<div id="hlpTour" class="hidden" role="dialog" aria-modal="true" aria-label="Help" data-tk-attr="aria-label:help.title">
+  <div class="hlp-card">
+    <div class="hlp-card-top">
+      <span id="hlpTourProgress" class="hlp-card-progress"></span>
+      <button id="hlpTourSkip" type="button" class="hlp-card-skip" data-tk="help.tour.skip">Skip</button>
+    </div>
+    <div id="hlpTourIcon" class="hlp-card-icon" aria-hidden="true"></div>
+    <h3 id="hlpTourTitle" class="hlp-card-title"></h3>
+    <p id="hlpTourText" class="hlp-card-text"></p>
+    <div id="hlpTourDots" class="hlp-dots" aria-hidden="true"></div>
+    <div class="hlp-card-actions">
+      <button id="hlpTourBack" type="button" class="hlp-btn hlp-btn-ghost" data-tk="help.tour.back">Back</button>
+      <button id="hlpTourShow" type="button" class="hlp-btn hlp-btn-ghost" data-tk="help.tour.show">Show me</button>
+      <button id="hlpTourNext" type="button" class="hlp-btn hlp-btn-main" data-tk="help.tour.next">Next</button>
+    </div>
+  </div>
+</div>
