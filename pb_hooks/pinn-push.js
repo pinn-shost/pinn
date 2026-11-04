@@ -742,6 +742,7 @@ function cleanupOldMessages() {
 // =============================================================================================
 // alleErledigt: Hinweis, wenn jemand (kein Kind) alle bis jetzt fälligen Aufgaben erledigt hat
 // kindAufgabe:  Hinweis, wenn ein Kind eine Aufgabe erledigt (Kinderseite oder Aufgabenliste)
+// tagesHaushalt: Haushaltsaufgaben (Reihum/Putzplan) in die Tagesübersicht aufnehmen (Standard: ja)
 // kindAlle:     Hinweis, wenn ein Kind alle Aufgaben erledigt hat
 // animation:    Feier-Animation in der App, wenn man selbst alle Aufgaben erledigt hat (kein Push)
 // pwAlle:       Pinnwand - neuer Zettel für die ganze Familie
@@ -750,8 +751,8 @@ function cleanupOldMessages() {
 // pwErinnerung: Pinnwand - Erinnerungen, die an einem Zettel hängen
 // vorrat:       Vorrat - Artikel laufen bald ab (Mindesthaltbarkeit, pinn-vorrat.js)
 // muell:        Müllabfuhr - Erinnerung am Vortag zur Uhrzeit muellZeit (Müllkalender, ab 1.31)
-const DEFAULT_SETTINGS = { termine: true, vorlauf: 30, ohneZuweisung: true, tagesuebersicht: true, uhrzeit: "07:00", zuweisungen: true, alleErledigt: true, kindAufgabe: true, kindAlle: true, animation: true, pwAlle: true, pwMich: true, pwAntworten: true, pwErinnerung: true, vorrat: true, muell: true, muellZeit: "18:00", updates: true };
-const BOOL_SETTINGS = ["termine", "ohneZuweisung", "tagesuebersicht", "zuweisungen", "alleErledigt", "kindAufgabe", "kindAlle", "animation", "pwAlle", "pwMich", "pwAntworten", "pwErinnerung", "vorrat", "muell", "updates"];
+const DEFAULT_SETTINGS = { termine: true, vorlauf: 30, ohneZuweisung: true, tagesuebersicht: true, uhrzeit: "07:00", tagesHaushalt: true, zuweisungen: true, alleErledigt: true, kindAufgabe: true, kindAlle: true, animation: true, pwAlle: true, pwMich: true, pwAntworten: true, pwErinnerung: true, vorrat: true, muell: true, muellZeit: "18:00", updates: true };
+const BOOL_SETTINGS = ["termine", "ohneZuweisung", "tagesuebersicht", "tagesHaushalt", "zuweisungen", "alleErledigt", "kindAufgabe", "kindAlle", "animation", "pwAlle", "pwMich", "pwAntworten", "pwErinnerung", "vorrat", "muell", "updates"];
 function normalizeSettings(raw) {
     const s = Object.assign({}, DEFAULT_SETTINGS, (raw && typeof raw === "object") ? raw : {});
     const lead = parseInt(s.vorlauf, 10);
@@ -760,7 +761,7 @@ function normalizeSettings(raw) {
     s.muellZeit = /^([01]\d|2[0-3]):[0-5]\d$/.test(String(s.muellZeit)) ? String(s.muellZeit) : DEFAULT_SETTINGS.muellZeit;
     BOOL_SETTINGS.forEach(k => { s[k] = !!s[k]; });
     return {
-        termine: s.termine, vorlauf: s.vorlauf, ohneZuweisung: s.ohneZuweisung, tagesuebersicht: s.tagesuebersicht, uhrzeit: s.uhrzeit, zuweisungen: s.zuweisungen,
+        termine: s.termine, vorlauf: s.vorlauf, ohneZuweisung: s.ohneZuweisung, tagesuebersicht: s.tagesuebersicht, uhrzeit: s.uhrzeit, tagesHaushalt: s.tagesHaushalt, zuweisungen: s.zuweisungen,
         alleErledigt: s.alleErledigt, kindAufgabe: s.kindAufgabe, kindAlle: s.kindAlle, animation: s.animation,
         pwAlle: s.pwAlle, pwMich: s.pwMich, pwAntworten: s.pwAntworten, pwErinnerung: s.pwErinnerung,
         vorrat: s.vorrat, muell: s.muell, muellZeit: s.muellZeit, updates: s.updates,
@@ -1148,6 +1149,7 @@ function buildDigest(person, ctx, events, taskCal, dayWall, hour) {
     taskRecs.forEach(r => {
         const assign = assigneesFromText(r.getString("notizen"), ctx.members);
         if (!isRelevantFor(person, assign)) return;
+        if (r.getString("haushalt") && !person.settings.tagesHaushalt) return; // household chores only if wanted
         const missed = r.getInt("verpasst");
         const von = r.getString("von");
         aufgaben.push((von ? von + " " : "") + r.getString("titel") + (missed > 0 ? " (" + missed + "x nicht erledigt)" : ""));

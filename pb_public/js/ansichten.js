@@ -4,7 +4,6 @@
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
    Contents: side menu (setSidebar, closing on taps outside the open menu without triggering the page behind it),
    switching pages (setView – locked menus for guests, overview tiles, default list/calendar view, tasks | household),
-   the mobile tab bar with its drawer (renderBottomTabBar, open/close/toggleBottomTabDrawer, swipe on the bar),
    responsive mode (MOBILE_BREAKPOINT, isMobile, isPortraitOrientation, mobile overview tabs, updateResponsiveMode
    on resize/rotation) and swipe navigation in the calendar (attachSwipeNavigation).
    setView, isMobile and the other functions are called by the inline script and most files in js/ – only at
@@ -24,12 +23,8 @@ function setSidebar(open) {
     const active = document.activeElement;
     if (active && active !== document.body && !sidebar.contains(active)) active.blur(); // Close the keyboard/focus of the page
   }
-  ['appShell', 'bottomTabBar'].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    if (open) el.setAttribute('inert', ''); else el.removeAttribute('inert');
-  });
-  if (open && typeof closeBottomTabDrawer === 'function') closeBottomTabDrawer();
+  const shell = document.getElementById('appShell');
+  if (shell) { if (open) shell.setAttribute('inert', ''); else shell.removeAttribute('inert'); }
 }
 document.getElementById('menuToggle').addEventListener('click', () => setSidebar(!sidebarOpen));
 
@@ -44,9 +39,7 @@ function isOutsideSidebarOnPage(target) {
   if (sidebar.contains(target)) return false;
   // Open dialogs/overlays outside the page (e.g. search, PIN) stay usable
   const appRoot = document.getElementById('appRoot');
-  const bottomTabBar = document.getElementById('bottomTabBar');
-  return appRoot.contains(target) || (bottomTabBar && bottomTabBar.contains(target))
-    || target === document.body || target === document.documentElement;
+  return appRoot.contains(target) || target === document.body || target === document.documentElement;
 }
 function sidebarBlockEvent(e) {
   if (e.cancelable) e.preventDefault();
@@ -84,7 +77,6 @@ document.addEventListener('click', (e) => {
 function setView(view) {
   if (!isViewAllowed(view)) view = firstAllowedView(); // Guests: locked menus
   if (view !== 'pinnwand' && typeof pwArr !== 'undefined' && pwArr.on) pwArrangeEnd(); // Board: end arranging
-  closeBottomTabDrawer();
   const isNavigatingToNewView = view !== currentView;
   if (isNavigatingToNewView && (view === 'uebersicht' || view === 'rezepte')) {
     weekSliderNeedsAutoScroll = true;
@@ -380,74 +372,6 @@ document.querySelectorAll('.nav-item').forEach(btn => btn.addEventListener('clic
 document.querySelectorAll('.task-kind-tabs .ls-tab').forEach(btn => btn.addEventListener('click', () => {
   if (btn.dataset.taskKind !== currentView) setView(btn.dataset.taskKind);
 }));
-
-/* ---------- Mobile tab bar: 4 selectable favourites + settings, drawer for the rest ---------- */
-function renderBottomTabBar() {
-  const mainRow = document.getElementById('bottomTabMainRow');
-  const drawerGrid = document.getElementById('bottomTabDrawerGrid');
-  const buildBtn = (tab) => `
-    <button type="button" data-view="${tab.id}" class="bottom-tab-item flex flex-col items-center gap-0.5 py-2 text-ink/50">
-      <span class="text-lg leading-none">${tab.icon}</span>
-      <span class="text-[10px]">${tab.label}</span>
-    </button>
-  `;
-  // Guests see neither finance nor settings - their account takes the place of settings
-  const einstellungenTab = isCurrentUserGuest()
-    ? { id: 'konto', icon: '👤', label: tk('nav.account') }
-    : { id: 'einstellungen', icon: '⚙️', label: tk('nav.settings') };
-  const allowedTabs = ALL_MENU_TABS.filter(t => isViewAllowed(t.id));
-  const favorites = favoriteTabs.map(id => allowedTabs.find(t => t.id === id)).filter(Boolean);
-  const rest = allowedTabs.filter(t => !favorites.includes(t));
-  while (favorites.length < 4 && rest.length) favorites.push(rest.shift());
-
-  mainRow.innerHTML = favorites.map(buildBtn).join('') + buildBtn(einstellungenTab);
-  drawerGrid.innerHTML = rest.map(buildBtn).join('');
-
-  document.querySelectorAll('#bottomTabMainRow .bottom-tab-item, #bottomTabDrawerGrid .bottom-tab-item').forEach(btn => {
-    btn.addEventListener('click', () => {
-      closeBottomTabDrawer();
-      setView(btn.dataset.view);
-    });
-  });
-  document.querySelectorAll('.bottom-tab-item').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.view === (currentView === 'haushalt' ? 'aufgaben' : currentView));
-  });
-  try { pwUpdateBadges(); } catch (e) { /* Board not ready yet */ }
-}
-
-function openBottomTabDrawer() {
-  document.getElementById('bottomTabDrawer').classList.remove('hidden');
-  document.getElementById('bottomTabBackdrop').classList.remove('hidden');
-}
-function closeBottomTabDrawer() {
-  document.getElementById('bottomTabDrawer').classList.add('hidden');
-  document.getElementById('bottomTabBackdrop').classList.add('hidden');
-}
-function toggleBottomTabDrawer() {
-  if (document.getElementById('bottomTabDrawer').classList.contains('hidden')) openBottomTabDrawer();
-  else closeBottomTabDrawer();
-}
-document.getElementById('bottomTabHandle').addEventListener('click', toggleBottomTabDrawer);
-document.getElementById('bottomTabBackdrop').addEventListener('click', closeBottomTabDrawer);
-
-// Pushing up (swiping up) on the bar opens the drawer, pushing down on the
-// open drawer closes it again - in addition to tapping the handle.
-(function attachBottomTabSwipe() {
-  const bar = document.getElementById('bottomTabBar');
-  let startY = null;
-  bar.addEventListener('touchstart', (e) => {
-    if (e.touches.length !== 1) return;
-    startY = e.touches[0].clientY;
-  }, { passive: true });
-  bar.addEventListener('touchend', (e) => {
-    if (startY === null) return;
-    const dy = e.changedTouches[0].clientY - startY;
-    startY = null;
-    const isOpen = !document.getElementById('bottomTabDrawer').classList.contains('hidden');
-    if (dy < -30 && !isOpen) openBottomTabDrawer();
-    else if (dy > 30 && isOpen) closeBottomTabDrawer();
-  }, { passive: true });
-})();
 
 /* ---------- Mobile mode (iPhone): responsive detection, calendar/recipe tabs, swipe navigation ---------- */
 const MOBILE_BREAKPOINT = 768;

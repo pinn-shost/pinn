@@ -53,7 +53,6 @@ async function bootApp() {
   document.querySelector('.mode-btn[data-mode="week"]').classList.add('active');
   document.querySelector('.recipe-input-mode-btn[data-mode="freitext"]').classList.add('active');
   document.querySelector('.display-mode-btn[data-display="name"]').classList.add('active');
-  renderBottomTabBar();
   renderLastName();
   renderMemberChips();
   document.body.classList.toggle('mobile-mode', isMobile());

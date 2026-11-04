@@ -31,10 +31,11 @@ const HLP_CHAPTERS = [
   { id: 'einstellungen', view: 'einstellungen', icon: '⚙️', title: 'nav.settings', quick: 'help.ch.einstellungen.quick', detail: 'help.ch.einstellungen.detail' },
 ];
 
-// Tutorial steps: the page that is shown behind the card (null = stay where you are)
+// Tutorial steps: the page that is shown behind the card (null = stay where you are);
+// menu: true = the side menu is opened behind the card for this step (and closed again afterwards)
 const HLP_TOUR_STEPS = [
   { icon: '👋', view: 'uebersicht', title: 'help.tour.s1.title', text: 'help.tour.s1.text' },
-  { icon: '🧭', view: null, title: 'help.tour.s2.title', text: 'help.tour.s2.text' },
+  { icon: '🧭', view: null, menu: true, title: 'help.tour.s2.title', text: 'help.tour.s2.text' },
   { icon: '🏠', view: 'uebersicht', title: 'help.tour.s3.title', text: 'help.tour.s3.text' },
   { icon: '📅', view: 'termine', title: 'help.tour.s4.title', text: 'help.tour.s4.text' },
   { icon: '🍽', view: 'rezepte', title: 'help.tour.s5.title', text: 'help.tour.s5.text' },
@@ -51,6 +52,7 @@ let hlpMode = 'quick';
 let hlpOpenState = false;
 let hlpTourIndex = -1;
 let hlpTourSteps = [];
+let hlpTourMenuOpened = false; // the tutorial itself opened the side menu
 
 /* ---------- small helpers ---------- */
 function hlpEl(tag, cls, text) {
@@ -134,7 +136,6 @@ function hlpOpen(opts) {
   opts = opts || {};
   if (typeof closeGlobalSearch === 'function') closeGlobalSearch();
   if (typeof setSidebar === 'function') setSidebar(false);
-  if (typeof closeBottomTabDrawer === 'function') closeBottomTabDrawer();
   if (hlpTourIndex >= 0) hlpTourClose(false);
   if (opts.mode === 'quick' || opts.mode === 'detail') {
     hlpMode = opts.mode;
@@ -196,6 +197,13 @@ function hlpTourRender() {
   if (step.view && typeof currentView !== 'undefined' && currentView !== step.view) {
     try { setView(step.view); } catch (e) { /* the page is not available right now */ }
   }
+  // The menu step shows the opened side menu (same on phone, tablet and computer); every other step closes it again
+  const wantMenu = !!step.menu;
+  if (typeof setSidebar === 'function' && (wantMenu || hlpTourMenuOpened)) {
+    try { setSidebar(wantMenu); } catch (e) { /* the menu is not available right now */ }
+    hlpTourMenuOpened = wantMenu;
+  }
+  document.getElementById('hlpTour').classList.toggle('hlp-tour-menu', wantMenu);
 }
 
 function hlpTourOpen(index) {
@@ -213,6 +221,11 @@ function hlpTourOpen(index) {
 function hlpTourClose(done) {
   if (hlpTourIndex < 0) return;
   hlpTourIndex = -1;
+  if (hlpTourMenuOpened) {
+    hlpTourMenuOpened = false;
+    try { if (typeof setSidebar === 'function') setSidebar(false); } catch (e) { /* ignore */ }
+  }
+  document.getElementById('hlpTour').classList.remove('hlp-tour-menu');
   document.getElementById('hlpTour').classList.add('hidden');
   if (!hlpOpenState) document.body.classList.remove('hlp-open');
   if (done) hlpTourMarkSeen();
@@ -294,7 +307,7 @@ function hlpSearch(words, qn) {
   on('hlpTourNext', () => hlpTourStep(1));
   on('hlpTourBack', () => hlpTourStep(-1));
   on('hlpTourSkip', () => hlpTourClose(true));
-  on('hlpTourShow', () => hlpTourClose(true)); // stay on the page that is shown behind the card
+  on('hlpTourShow', () => hlpTourClose(true)); // "Pause": hide the card and stay on the page behind it
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
     if (hlpTourIndex >= 0) { hlpTourClose(true); return; }

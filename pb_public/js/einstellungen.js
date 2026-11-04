@@ -67,35 +67,6 @@ document.querySelectorAll('.household-type-btn').forEach(btn => {
   });
 });
 
-function renderFavoriteTabsPicker() {
-  const wrap = document.getElementById('favoriteTabsPicker');
-  document.getElementById('favoriteTabsCount').textContent = tk('settings.favorites.selected', { n: favoriteTabs.length });
-  wrap.innerHTML = ALL_MENU_TABS.map(tab => {
-    const isChecked = favoriteTabs.includes(tab.id);
-    const atLimit = favoriteTabs.length >= 4 && !isChecked;
-    return `
-      <label class="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-ink/10 bg-white ${atLimit ? 'opacity-40' : 'cursor-pointer'}">
-        <input type="checkbox" class="favorite-tab-check shrink-0 w-4 h-4" data-id="${tab.id}" ${isChecked ? 'checked' : ''} ${atLimit ? 'disabled' : ''} />
-        <span class="text-lg">${tab.icon}</span>
-        <span class="text-sm flex-1">${escapeHtml(i18nT(tab.label))}</span>
-      </label>
-    `;
-  }).join('');
-  wrap.querySelectorAll('.favorite-tab-check').forEach(cb => {
-    cb.addEventListener('change', () => {
-      if (cb.checked) {
-        if (favoriteTabs.length >= 4) { cb.checked = false; return; }
-        favoriteTabs.push(cb.dataset.id);
-      } else {
-        favoriteTabs = favoriteTabs.filter(id => id !== cb.dataset.id);
-      }
-      renderFavoriteTabsPicker();
-      renderBottomTabBar();
-      persistState();
-    });
-  });
-}
-
 function renderSettings() {
   renderAccountSettings();
   document.getElementById('settingsLastName').value = lastName;
@@ -174,7 +145,6 @@ function renderSettingsMemberList() {
     saveMembers();
     renderSettingsMemberList();
     applyRoleRestrictions();
-    renderBottomTabBar();
   }));
   const hint = document.getElementById('childLockHint');
   if (hint) hint.classList.toggle('hidden', !admin || (wgHidesKids() && !members.some(x => x.childLock)));

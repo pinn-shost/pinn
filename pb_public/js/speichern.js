@@ -131,14 +131,6 @@ function applyFamilyData(data) {
     cleaningCategories = cleaningCategories.filter(c => !(oldDefaults[c.id] === c.label && !usedIds.has(c.id)));
   })();
   kitchenTools = (data.kitchenTools && data.kitchenTools.length) ? data.kitchenTools : defaultFamilyData().kitchenTools;
-  // Only take over known tab IDs (in case the offer has changed since) and cap at exactly 4
-  // „Haushalt“ is now part of „Aufgaben“ - rewrite old favourites and fill up to 4
-  const validFavorites = (data.favoriteTabs || []).map(id => id === 'haushalt' ? 'aufgaben' : id)
-    .filter((id, i, a) => ALL_MENU_TABS.some(t => t.id === id) && a.indexOf(id) === i);
-  if (validFavorites.length) {
-    [...DEFAULT_FAVORITE_TABS, ...ALL_MENU_TABS.map(t => t.id)].forEach(id => { if (validFavorites.length < 4 && !validFavorites.includes(id)) validFavorites.push(id); });
-  }
-  favoriteTabs = validFavorites.length === 4 ? validFavorites.slice(0, 4) : [...DEFAULT_FAVORITE_TABS];
   doneTaskCleanupDays = [2, 1, 0].includes(data.doneTaskCleanupDays) ? data.doneTaskCleanupDays : 2;
   guestHiddenViews = Array.isArray(data.guestHiddenViews)
     ? data.guestHiddenViews.filter(id => GUEST_SELECTABLE_VIEWS.includes(id))

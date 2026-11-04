@@ -7,9 +7,9 @@
    Utility classes (Tailwind) live in vendor/pinn.css, not here. */
 
 /* ---------- Sidebar open: the page behind it is locked ----------
-   Buttons, fields, swiping and scrolling of the page (and the tab bar at the bottom) do not react.
+   Buttons, fields, swiping and scrolling of the page do not react.
    A tap lands on #appRoot instead and pushes menu and page back to the left. */
-body.sidebar-open #appShell, body.sidebar-open #bottomTabBar { pointer-events: none !important; user-select: none; -webkit-user-select: none; }
+body.sidebar-open #appShell { pointer-events: none !important; user-select: none; -webkit-user-select: none; }
 body.sidebar-open #appRoot { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 body.sidebar-open #sidebar { cursor: auto; }
 /* ---------- Sidebar (hamburger menu): menu items scroll when the window is too low ---------- */
@@ -19,9 +19,6 @@ body.sidebar-open #sidebar { cursor: auto; }
 .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.28); border-radius: 999px; }
 .sidebar-scroll > * { flex-shrink: 0; }
 .sidebar-foot { flex-shrink: 0; }
-/* More menu items on the phone (pulled-up menu sheet): scrollable in case there are more */
-#bottomTabDrawerGrid { max-height: 55vh; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
-
 /* Login, password and main admin screens: scrollable and aligned to the top, so input fields
    are not covered while the keyboard is open (incl. the bar above the keyboard). Height and position
    follow the visible area by JS (visualViewport). */
@@ -53,4 +50,3 @@ body.sidebar-open #sidebar { cursor: auto; }
    be at most as high as this area and scrolls internally, so the field stays visible. */
 .fixed.inset-0.kb-fit { bottom: auto !important; padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
 .fixed.inset-0.kb-fit > div { max-height: 100% !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
-body.kb-open #bottomTabBar, body.kb-open #bottomTabBackdrop { display: none !important; }

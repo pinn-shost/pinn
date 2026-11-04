@@ -105,15 +105,15 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский en 🇳🇱 Nederlands**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
-## Nieuw in 1.124.0
+## Nieuw in 1.125.0
 
-**Help & tutorial**
+**Tutorial, dagelijks overzicht & kentekens**
 
-- **Help bij elk menu.** Een nieuwe helppagina legt elke pagina van pinn. uit – als snelle rondgang (‘Kort’) of uitgebreid (‘Uitgebreid’). Te vinden onder Instellingen → Help & tutorial en via zoeken.
-- **Tutorial voor de eerste stappen.** Nieuwe profielen worden in zeven korte stappen langs de belangrijkste pagina’s geleid. Het start één keer vanzelf en is altijd opnieuw te starten onder Instellingen → Help & tutorial.
-- **Help bij het zoeken.** Helponderwerpen staan in een eigen onderdeel ‘Help’, duidelijk gescheiden van je eigen items (afspraken, documenten, recepten …).
-- Alle helpteksten en de tutorial zijn er in alle elf talen.
-- Gewijzigd: `index.html`, `js/hilfe.js` (nieuw), `css/hilfe.css` (nieuw), `js/listen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `pinn-setup.sh` en alle README’s. Aan de serverkant verandert niets. Installatie zoals altijd (`sudo sh pinn-*/pinn-setup.sh` of de updateknop).
+- **Tutorial herzien.** De knop “Laat zien” heet nu **“Onderbreken”**. De tweede stap opent het ☰-menu en legt het uit (de balk onderaan de telefoon bestaat niet meer). De laatste stap verwijst naar de helppagina en naar de GitHub Discussions voor vragen aan de ontwikkelaar.
+- **Dagelijks push-overzicht: huishoudtaken naar keuze.** Onder Account → Meldingen kies je of huishoudtaken in het dagelijks overzicht staan. Standaard: ja, dus er verandert niets zolang je het niet uitzet.
+- **Kentekens van voertuigen.** De blauwe strook toont nu de EU-sterrenkrans in plaats van “D”. Kentekens voor andere regio’s volgen.
+- Opgeruimd: ongebruikte code van de oude telefoonbalk is verwijderd.
+- Gewijzigd: `index.html`, bestanden in `js/`, `css/` en `i18n/`, op de server `pb_hooks/pinn-push.js` en `src/` (het onderdeel `menueleiste.html` vervalt). Installatie zoals altijd (`sudo sh pinn-*/pinn-setup.sh` of de updateknop).
 
 
 
@@ -126,7 +126,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.124.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.125.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

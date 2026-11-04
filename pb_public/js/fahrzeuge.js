@@ -250,9 +250,27 @@ function fzName(v) {
 }
 function fzShortName(v) { return fzName(v) + (v && v.plate ? ' (' + fzPlateText(v.plate) + ')' : ''); }
 function fzPlateText(p) { return String(p || '').toUpperCase().replace(/\s+/g, ' ').trim(); }
+// Blue strip of the plate: circle of 12 five-pointed stars (EU symbol), built once as an inline SVG
+const FZ_EU_STARS = (() => {
+  const star = (cx, cy, ro, ri) => {
+    const pts = [];
+    for (let i = 0; i < 10; i++) {
+      const a = -Math.PI / 2 + i * Math.PI / 5;
+      const r = i % 2 ? ri : ro;
+      pts.push((cx + r * Math.cos(a)).toFixed(2) + ',' + (cy + r * Math.sin(a)).toFixed(2));
+    }
+    return '<polygon points="' + pts.join(' ') + '"/>';
+  };
+  let stars = '';
+  for (let i = 0; i < 12; i++) {
+    const a = i * Math.PI / 6 - Math.PI / 2;
+    stars += star(12 + 8.4 * Math.cos(a), 12 + 8.4 * Math.sin(a), 2.7, 1.1);
+  }
+  return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + stars + '</svg>';
+})();
 function fzPlateHtml(p, big) {
   if (!p) return '';
-  return `<span class="fz-plate${big ? ' big' : ''}"><span class="fz-plate-eu">D</span><span class="fz-plate-txt">${escapeHtml(fzPlateText(p))}</span></span>`;
+  return `<span class="fz-plate${big ? ' big' : ''}"><span class="fz-plate-eu">${FZ_EU_STARS}</span><span class="fz-plate-txt">${escapeHtml(fzPlateText(p))}</span></span>`;
 }
 function fzTypesFor(v) {
   const k = fzKind(v.kind);

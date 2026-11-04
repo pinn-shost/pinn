@@ -1832,7 +1832,6 @@ function gsSyncLayout() {
 function openGlobalSearch() {
   if (!familyRecordId) return;
   if (typeof setSidebar === 'function') setSidebar(false);
-  if (typeof closeBottomTabDrawer === 'function') closeBottomTabDrawer();
   const wrap = document.getElementById('globalSearch');
   const input = document.getElementById('globalSearchInput');
   gsOpen = true;

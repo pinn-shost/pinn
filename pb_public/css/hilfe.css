@@ -47,6 +47,9 @@ body.hlp-open { overflow: hidden; }
 /* ---------- Tutorial card ---------- */
 #hlpTour { position: fixed; inset: 0; z-index: 330; display: grid; place-items: center; padding: 1rem; background: rgba(37,35,31,0.42); }
 #hlpTour.hidden { display: none; }
+/* Menu step: the opened side menu stays visible – the card sits at the bottom (phone) or to the right of the menu (wide screens) */
+#hlpTour.hlp-tour-menu { place-items: end center; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem); background: rgba(37,35,31,0.18); }
+@media (min-width: 640px) { #hlpTour.hlp-tour-menu { place-items: center; padding-bottom: 1rem; padding-left: calc(16rem + 1rem); } }
 .hlp-card { width: 100%; max-width: 26rem; background: var(--c-paper, #FFFBFB); color: #25231F; border-radius: 1.4rem; padding: 1.1rem 1.25rem 1.2rem; box-shadow: 0 24px 60px rgba(20,20,15,0.3); text-align: center; }
 .hlp-card-top { display: flex; align-items: center; justify-content: space-between; min-height: 1.6rem; }
 .hlp-card-progress { font-size: 0.72rem; color: rgba(37,35,31,0.5); }
@@ -88,5 +91,6 @@ html.dark .hlp-item-text, html.dark .hlp-card-text { color: rgba(237,234,226,0.7
 html.dark .hlp-dot { background: rgba(255,255,255,0.18); }
 html.dark .hlp-dot-on { background: var(--c-mustard); }
 html.dark #hlpTour { background: rgba(0,0,0,0.6); }
+html.dark #hlpTour.hlp-tour-menu { background: rgba(0,0,0,0.35); }
 html.dark .gs-group { color: rgba(237,234,226,0.55); background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.08); }
 html.dark .gs-group-help { color: var(--c-mustard); }

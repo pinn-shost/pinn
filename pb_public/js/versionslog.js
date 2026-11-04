@@ -22,6 +22,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.125', datum: '04.11.2026', titel: 'Tutorial, Tagesübersicht & Kennzeichen',
+    punkte: [
+      ['info', 'Tutorial überarbeitet: Der Knopf „Zeig mir“ heißt jetzt „Unterbrechen“. Der zweite Schritt öffnet das Menü ☰ und erklärt es (die Leiste unten am Handy gibt es nicht mehr), der letzte verweist auf die Hilfe-Seite und die GitHub-Diskussionen für Fragen an den Entwickler.'],
+      ['neu', 'Push-Tagesübersicht: Unter Konto → Benachrichtigungen lässt sich wählen, ob Haushaltsaufgaben in der Tagesübersicht mitgeschickt werden (Standard: ja, wie bisher).'],
+      ['info', 'Kennzeichen bei Fahrzeugen: Im blauen Streifen steht statt „D“ jetzt der EU-Sternenkreis. Kennzeichen für andere Regionen folgen.'],
+      ['info', 'Aufgeräumt: nicht mehr genutzter Code der alten Handy-Leiste entfernt. Geändert: index.html, js/ und css/ (hilfe, ansichten, mitteilungen, fahrzeuge u. a.), alle i18n/*.i18n.js, i18n/versionslog.en.js, am Server pb_hooks/pinn-push.js und die READMEs.'],
+    ],
+  },
+  {
     v: '1.124', datum: '03.11.2026', titel: 'Hilfe & Tutorial',
     punkte: [
       ['neu', 'Hilfe-Seite mit kurzen Anleitungen zu jedem Menüpunkt – wahlweise als schneller Durchlauf („Kurz“) oder ausführlich („Ausführlich“) erklärt. Zu finden unter Einstellungen → Hilfe & Tutorial und über die Suche.'],

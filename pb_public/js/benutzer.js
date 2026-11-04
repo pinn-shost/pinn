@@ -43,7 +43,7 @@ async function loadFamilyProfiles() {
   try {
     familyProfiles = await pb.collection(PINN_USERS).getFullList({ sort: 'username' });
     try { localStorage.setItem('pinn.profileCache', JSON.stringify({ familie: (currentUser() && currentUser().familie) || '', list: familyProfiles })); } catch (e2) { /* ignore */ }
-    try { if (familyRecordId) { applyRoleRestrictions(); renderBottomTabBar(); } } catch (e4) { /* app not fully built yet */ }
+    try { if (familyRecordId) { applyRoleRestrictions(); } } catch (e4) { /* app not fully built yet */ }
     return true;
   } catch (e) {
     // offline: keep the last state or take the cached one

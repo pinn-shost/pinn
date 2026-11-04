@@ -250,12 +250,6 @@ function pwUpdateBadges() {
     nav.textContent = count > 9 ? '9+' : String(count);
     nav.classList.toggle('hidden', !count);
   }
-  document.querySelectorAll('.bottom-tab-item[data-view="pinnwand"]').forEach(btn => {
-    let dot = btn.querySelector('.pw-tab-dot');
-    if (!count) { if (dot) dot.remove(); return; }
-    if (!dot) { dot = document.createElement('span'); dot.className = 'pw-tab-dot'; btn.appendChild(dot); }
-    dot.textContent = count > 9 ? '9+' : String(count);
-  });
 }
 
 /* ---------- Filtering & sorting ---------- */

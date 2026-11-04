@@ -14,7 +14,7 @@
 // Complete state of the app (family record + areas)
 function collectFamilyState() {
   const payload = {
-    members, mealPlan, recipes, recipeFavorites, recipeTrash, shoppingItems, shoppingHistory, shoppingLists, shoppingTransferred, shoppingPlans, shoppingListOrder, shoppingMealTarget, shoppingIngredientRules, shoppingCategoryOrder, pantryItems, pantryCategories, pantryLocations, pantrySettings, pinboard, familyLists, listTemplates, documentCategories, emergencyPasses, schoolProfiles, schoolHomework, schoolLetters, schoolClosures, pets, petLog, tasks, lastName, wohnform: householdType, themeColors, categoryActive, recipeCategories, appleCalendar, weatherLocation, rooms, roomSchedules, trashBins, smartDevices, houseMaintenance, cleaningCategories, kitchenTools, favoriteTabs, guestHiddenViews, doneTaskCleanupDays, finance,
+    members, mealPlan, recipes, recipeFavorites, recipeTrash, shoppingItems, shoppingHistory, shoppingLists, shoppingTransferred, shoppingPlans, shoppingListOrder, shoppingMealTarget, shoppingIngredientRules, shoppingCategoryOrder, pantryItems, pantryCategories, pantryLocations, pantrySettings, pinboard, familyLists, listTemplates, documentCategories, emergencyPasses, schoolProfiles, schoolHomework, schoolLetters, schoolClosures, pets, petLog, tasks, lastName, wohnform: householdType, themeColors, categoryActive, recipeCategories, appleCalendar, weatherLocation, rooms, roomSchedules, trashBins, smartDevices, houseMaintenance, cleaningCategories, kitchenTools, guestHiddenViews, doneTaskCleanupDays, finance,
     defaultViewModeDesktop, defaultViewScopeDesktop, defaultViewModeMobile, defaultViewScopeMobile,
     darkMode: document.documentElement.classList.contains('dark'),
   };
@@ -50,7 +50,7 @@ function composeFamilyState(familyPart) {
 // without disturbing an open recipe detail page or the settings.
 function rerenderAfterRemoteChange() {
   try {
-    applyRoleRestrictions(); renderBottomTabBar(); // Guest menus and child lock
+    applyRoleRestrictions(); // Guest menus and child lock
     renderLastName();
     renderMemberChips();
     try { rebuildEvents(); } catch (e) { /* ignore */ } // Closing days & deadlines (school & daycare) from other devices

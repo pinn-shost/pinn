@@ -128,6 +128,18 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский e 🇳🇱 Nederlands**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.125.0
+
+**Tutorial, panoramica giornaliera e targhe**
+
+- **Tutorial rivisto.** Il pulsante «Mostrami» ora si chiama **«Interrompi»**. Il secondo passo apre il menu ☰ e lo spiega (la barra in basso sul telefono non esiste più). L’ultimo passo rimanda alla pagina della guida e alle Discussioni di GitHub per le domande allo sviluppatore.
+- **Panoramica giornaliera push: faccende domestiche a scelta.** In Account → Notifiche puoi scegliere se le faccende domestiche sono incluse nella panoramica giornaliera. Predefinito: sì, quindi non cambia nulla finché non lo disattivi.
+- **Targhe dei veicoli.** La fascia blu mostra ora il cerchio di stelle dell’UE al posto della «D». Le targhe di altre regioni seguiranno.
+- Pulizia: rimosso il codice non più usato della vecchia barra del telefono.
+- Modificato: `index.html`, file in `js/`, `css/` e `i18n/`, sul server `pb_hooks/pinn-push.js` e `src/` (la parte `menueleiste.html` viene eliminata). Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o il pulsante di aggiornamento).
+
+
+
 ## Novità della 1.124.0
 
 **Guida e tutorial**
@@ -187,15 +199,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Modificato: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` e tutti i README. Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o il pulsante di aggiornamento).
 
 
-## Novità della 1.123.7
-
-**Olandese – ottava tappa**
-
-- **Ancora più pinn. in olandese.** Veicoli (auto, auto elettriche, moto, e-bike e biciclette con rifornimento & ricarica, consumi, officina, pneumatici, revisione e tagliandi, targhe assicurative, calcolatori e bilancio dei costi) e smart home (dispositivi e azioni tramite Comandi Rapidi di Apple o Home Assistant, robot aspirapolvere e robot tagliaerba, automazione) sono ora tradotti (5881 testi su 6722).
-- L’olandese resta **nascosto** finché non è tutto tradotto (attivabile su un dispositivo per provarlo; i testi mancanti compaiono in inglese). Per tutti gli altri non cambia nulla di visibile.
-- Modificato: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` e tutti i README. Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o il pulsante di aggiornamento).
-
-
 ## Come funziona
 
 ```mermaid
@@ -224,7 +227,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.124.0` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.125.0` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

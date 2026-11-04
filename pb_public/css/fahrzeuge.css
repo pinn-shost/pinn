@@ -115,10 +115,11 @@ html.dark .hs-wx-tip { background: rgba(59,126,161,0.18); }
 /* Shopping list: hide the unit of pantry items on the phone (weight/amount stays) */
 @media (max-width: 639px) { .sq-u-hide { display: none; } }
 .fz-plate { display: inline-flex; align-items: stretch; height: 22px; border: 1.5px solid #1b1b1b; border-radius: 4px; background: #fff; color: #111; overflow: hidden; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700; font-size: 12px; letter-spacing: .06em; white-space: nowrap; }
-.fz-plate-eu { display: grid; place-items: center; width: 14px; background: #1E4AA8; color: #fff; font-size: 8px; font-family: Inter, system-ui, sans-serif; letter-spacing: 0; }
+.fz-plate-eu { display: grid; place-items: center; width: 16px; background: #1E4AA8; }
+.fz-plate-eu svg { display: block; width: 100%; height: auto; fill: #FFCC00; }
 .fz-plate-txt { display: flex; align-items: center; padding: 0 6px; }
 .fz-plate.big { height: 30px; font-size: 16px; }
-.fz-plate.big .fz-plate-eu { width: 18px; font-size: 10px; }
+.fz-plate.big .fz-plate-eu { width: 22px; }
 .fz-h { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(37,35,31,0.5); margin-bottom: 0.6rem; }
 .fz-kind-btn, .fz-drive-btn, .fz-type-chip, .fz-member-chip, .fz-filter-chip { border: 1px solid rgba(37,35,31,0.15); border-radius: 12px; background: #fff; transition: background .15s, border-color .15s, color .15s; }
 .fz-kind-btn.active, .fz-drive-btn.active, .fz-type-chip.active, .fz-member-chip.active, .fz-filter-chip.active { border-color: var(--c-pine); background: color-mix(in srgb, var(--c-pine) 12%, transparent); color: var(--c-pine); box-shadow: 0 0 0 1px var(--c-pine) inset; }

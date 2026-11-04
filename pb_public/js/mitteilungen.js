@@ -263,6 +263,7 @@ function fillPushSettingsForm(st) {
   document.getElementById('pushOptVorlauf').value = String(st.vorlauf);
   document.getElementById('pushOptTages').checked = !!st.tagesuebersicht;
   document.getElementById('pushOptUhrzeit').value = st.uhrzeit || '07:00';
+  document.getElementById('pushOptTagesHaushalt').checked = st.tagesHaushalt !== false;
   document.getElementById('pushOptZuweisungen').checked = !!st.zuweisungen;
   document.getElementById('pushOptOhneZuweisung').checked = !!st.ohneZuweisung;
   document.getElementById('pushOptAlleErledigt').checked = st.alleErledigt !== false;
@@ -281,6 +282,7 @@ function fillPushSettingsForm(st) {
   document.getElementById('pushOptMuellZeit').disabled = st.muell === false;
   document.getElementById('pushOptVorlauf').disabled = !st.termine;
   document.getElementById('pushOptUhrzeit').disabled = !st.tagesuebersicht;
+  document.getElementById('pushOptTagesHaushalt').disabled = !st.tagesuebersicht;
 }
 function readPushSettingsForm() {
   return {
@@ -288,6 +290,7 @@ function readPushSettingsForm() {
     vorlauf: parseInt(document.getElementById('pushOptVorlauf').value, 10),
     tagesuebersicht: document.getElementById('pushOptTages').checked,
     uhrzeit: document.getElementById('pushOptUhrzeit').value || '07:00',
+    tagesHaushalt: document.getElementById('pushOptTagesHaushalt').checked,
     zuweisungen: document.getElementById('pushOptZuweisungen').checked,
     ohneZuweisung: document.getElementById('pushOptOhneZuweisung').checked,
     animation: !(pushConfig && pushConfig.settings && pushConfig.settings.animation === false), // set under Settings → task animation

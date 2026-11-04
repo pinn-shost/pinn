@@ -21,12 +21,6 @@ html.dark #pinboardScroll { background-image: radial-gradient(rgba(255,255,255,0
   background: var(--c-mustard); color: #fff; vertical-align: 1px;
 }
 .pw-nav-badge.hidden { display: none; }
-.bottom-tab-item { position: relative; }
-.pw-tab-dot {
-  position: absolute; top: 0.3rem; left: calc(50% + 0.45rem); min-width: 0.95rem; height: 0.95rem; padding: 0 0.22rem;
-  border-radius: 999px; background: var(--c-mustard); color: #fff; font-size: 0.58rem; font-weight: 700;
-  display: flex; align-items: center; justify-content: center; line-height: 1;
-}
 
 /* Filter chips */
 .pw-chips { display: flex; gap: 0.4rem; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }

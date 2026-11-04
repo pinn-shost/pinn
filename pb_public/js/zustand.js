@@ -95,7 +95,6 @@ const FIN_STORE_CATEGORY = {
   getraenke: 'lebensmittel', dm: 'drogerie', rossmann: 'drogerie', mueller: 'drogerie', obi: 'baumarkt',
   hornbach: 'baumarkt', bauhaus: 'baumarkt', ikea: 'haushalt', apotheke: 'gesundheit', eigener: 'sonstiges',
 };
-const DEFAULT_FAVORITE_TABS = ['uebersicht', 'termine', 'rezepte', 'aufgaben'];
 // Pantry: default categories and storage locations (can be changed/extended in the pantry settings)
 const PANTRY_DEFAULT_CATEGORIES = [
   { id: 'obst_gemuese', label: 'Obst & Gemüse', icon: '🥕' },
@@ -197,7 +196,6 @@ function defaultFamilyData() {
       { id: 'airfryer', label: 'Heißluftfritteuse', active: true },
       { id: 'grill', label: 'Grill', active: true },
     ],
-    favoriteTabs: [...DEFAULT_FAVORITE_TABS],
     guestHiddenViews: [],
     finance: defaultFinance(), // budget, categories, recurring expenses (the expenses themselves live in the "ausgaben" collection)
     doneTaskCleanupDays: 2, // 2 | 1 | 0 (immediately) - how long completed tasks stay visible
@@ -268,7 +266,6 @@ let trashBins = [];
 let smartDevices = []; // smart home devices with actions (Apple Shortcuts)
 let cleaningCategories = [];
 let kitchenTools = [];
-let favoriteTabs = [...DEFAULT_FAVORITE_TABS];
 let guestHiddenViews = []; // menus an admin has additionally hidden for guest accounts
 let finance = null; // set in applyFamilyData() (normalizeFinance)
 let doneTaskCleanupDays = 2;
