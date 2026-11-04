@@ -236,6 +236,7 @@ async function chatLoadRoster() {
   S.mineSrv = d.mein;
   S.me = S.roster.find(p => p.id === S.uid) || null;
   S.receipts = !d.mein || d.mein.lese !== false;
+  S.keep = d.aufbewahrung || null; S.storage = d.speicher != null ? d.speicher : null; S.isAdmin = !!d.admin;
   chatPinsSync();
 }
 
@@ -422,10 +423,16 @@ async function chatRefreshPreviews() {
     const cached = S.prev.get(room);
     if (cached && cached.id === o.letzte.id && cached.g === !!o.letzte.geloescht) continue;
     const p = await chatPlain(o.letzte);
-    S.prev.set(room, { id: o.letzte.id, g: !!o.letzte.geloescht, text: p.msg ? String(p.msg.x || '') : '', err: p.err || '', del: !!p.del });
+    S.prev.set(room, { id: o.letzte.id, g: !!o.letzte.geloescht, text: p.msg ? chatPlainText(p.msg) : '', err: p.err || '', del: !!p.del });
     changed = true;
   }
   if (changed) chatRenderList();
+}
+// Text of a message for lists and quotes: the caption, or a label for a photo or video
+function chatPlainText(msg) {
+  const cap = String((msg && msg.x) || '');
+  if (msg && msg.m) return (msg.m.k === 'vid' ? '🎥 ' + tk('chat.media.video') : '📷 ' + tk('chat.media.photo')) + (cap ? ' ' + cap : '');
+  return cap;
 }
 function chatUpdateBadge() {
   const n = chatS ? Array.from(chatS.ov.values()).reduce((a, o) => a + (o.ungelesen || 0), 0) : 0;
@@ -471,6 +478,7 @@ function chatEnterReady() {
   S.pollTimer = setInterval(chatPoll, CHAT_POLL_MS);
 }
 function chatLeave() {
+  if (typeof chatMRelease === 'function') chatMRelease();
   if (chatS && chatS.pollTimer) { clearInterval(chatS.pollTimer); chatS.pollTimer = null; }
 }
 async function chatPoll() {
@@ -651,6 +659,7 @@ function chatBuildConv() {
   const msgs = chatEl('div', 'chat-msgs'); msgs.id = 'chatMsgs'; conv.appendChild(msgs);
   const ctx = chatEl('div', 'chat-ctx hidden'); ctx.id = 'chatCtx'; conv.appendChild(ctx);
   const bar = chatEl('div', 'chat-composer');
+  if (typeof chatMBuildAttach === 'function') chatMBuildAttach(bar); // photos and videos (js/chatmedien.js)
   const input = chatEl('textarea', 'chat-input'); input.id = 'chatInput'; input.rows = 1; input.maxLength = 4000;
   input.placeholder = tk('chat.placeholder'); input.setAttribute('aria-label', tk('chat.placeholder')); input.setAttribute('enterkeyhint', 'send'); input.autocapitalize = 'sentences';
   input.addEventListener('input', () => chatGrow(input));
@@ -742,9 +751,8 @@ function chatBubble(m, p, first, group) {
       r.onclick = (e) => { e.stopPropagation(); chatOpenRef(x.r); };
       b.appendChild(r);
     }
-    const t = chatEl('div', 'chat-text');
-    chatLinkify(t, String(x.x || ''));
-    b.appendChild(t);
+    if (x.m && typeof chatMBubble === 'function') b.appendChild(chatMBubble(x.m, m));
+    if (x.x || !x.m) { const t = chatEl('div', 'chat-text'); chatLinkify(t, String(x.x || '')); b.appendChild(t); }
   }
   const meta = chatEl('div', 'chat-meta');
   meta.appendChild(chatEl('span', 'chat-time', chatTime(m.zeit)));
@@ -806,9 +814,9 @@ function chatMessageSheet(m, p) {
   const S = chatS;
   const card = chatSheetShell('');
   const act = (label, fn, danger) => { const b = chatEl('button', 'chat-sheet-act' + (danger ? ' danger' : ''), label); b.type = 'button'; b.onclick = () => { chatCloseSheet(); fn(); }; card.appendChild(b); };
-  const text = p.msg ? String(p.msg.x || '') : '';
+  const text = p.msg ? chatPlainText(p.msg) : '';
   act('↩︎ ' + tk('chat.reply'), () => { S.reply = { id: m.id, uid: m.von, text }; S.ref = null; chatRenderContext(); const i = document.getElementById('chatInput'); if (i) i.focus(); });
-  act('⧉ ' + tk('chat.copy'), async () => { try { await navigator.clipboard.writeText(text); } catch (e) { /* clipboard blocked */ } });
+  if (p.msg && p.msg.x) act('⧉ ' + tk('chat.copy'), async () => { try { await navigator.clipboard.writeText(text); } catch (e) { /* clipboard blocked */ } });
   if (m.von === S.uid) act('🗑 ' + tk('chat.delete'), () => { if (confirm(tk('chat.deleteConfirm'))) chatDelete(m); }, true);
   if (m.von === S.uid) {
     const readers = chatRecipients(m).filter(id => m.gelesen && m.gelesen[id]).map(id => chatName(S.roster.find(r => r.id === id)));
@@ -839,6 +847,7 @@ async function chatRenderSheet() {
   rec.appendChild(cb);
   const lab = chatEl('span', 'chat-switch-text'); lab.appendChild(chatEl('span', 'chat-switch-title', tk('chat.info.receipts'))); lab.appendChild(chatEl('span', 'chat-switch-help', tk('chat.info.receiptsHelp')));
   rec.appendChild(lab); card.appendChild(rec);
+  if (typeof chatMRetentionUi === 'function') chatMRetentionUi(card);
   const code = chatEl('button', 'chat-sheet-act', '🔑 ' + tk('chat.info.newCode')); code.type = 'button';
   code.onclick = async () => { try { await chatNewRecoveryCode(); } catch (e) { alert(tk('chat.error.send')); } };
   card.appendChild(code);

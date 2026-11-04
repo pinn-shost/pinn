@@ -22,14 +22,19 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
-    v: '1.127', datum: '04.11.2026', titel: 'Chat – Ende-zu-Ende verschlüsselt',
+    v: '1.127', datum: '04.11.2026', titel: 'Chat – Ende-zu-Ende verschlüsselt, mit Fotos und Videos',
     punkte: [
+      ['neu', '1.127.1: Fotos und Videos im Chat – Büroklammer-Knopf, Vorschau mit Beschriftung. Wie bei WhatsApp entscheidest du jedes Mal selbst mit dem HD-Knopf: Standard verkleinert Fotos (ca. 0,3 MB statt mehrerer MB), HD sendet das Original (Fotos bis 20 MB, Videos bis 50 MB). Videos werden verkleinert, wo das Gerät es kann, sonst geht das Original raus.'],
+      ['neu', 'Auch Fotos und Videos sind Ende-zu-Ende verschlüsselt (eigener Schlüssel je Datei; der NAS sieht weder Bild noch Dateinamen). Ansicht direkt im Chat mit Vollbild, Teilen (WhatsApp, E-Mail …) und Speichern auf dem Gerät.'],
+      ['neu', '„In pinn. ablegen“: ein Foto als Dokument speichern oder gleich einer Immobilie, einem Mangel oder einem Fahrzeug zuordnen (z. B. Schaden in der Wohnung → Mangel). Videos lassen sich teilen und speichern, aber nicht als Dokument ablegen.'],
+      ['neu', 'Automatisches Löschen: Admins stellen unter „Chat-Sicherheit“ ein, nach wie vielen Tagen Nachrichten und/oder Fotos und Videos nachts für alle gelöscht werden (Standard: nie). Dort steht auch, wie viel Platz Fotos und Videos belegen.'],
       ['neu', 'Familienchat und private Chats zwischen einzelnen Familienmitgliedern – im Menü unter „Chat“, im Look eines Messengers und in den Farben von pinn. Antworten auf einzelne Nachrichten, Links zum Antippen, Datumstrenner, Ungelesen-Zähler im Menü und in der Chatliste.'],
       ['neu', 'Ende-zu-Ende verschlüsselt: Nachrichten werden auf dem Gerät verschlüsselt und können nur von den Personen im Chat gelesen werden – der Server (dein NAS) sieht nur, wer wann schreibt, nie den Inhalt. Beim ersten Öffnen entsteht ein Schlüssel und ein Wiederherstellungscode, mit dem du den Chat auf einem neuen Gerät entsperrst. Über „Chat-Sicherheit“ vergleicht ihr Sicherheitsnummern; ändert sich ein Schlüssel, stoppt das Senden, bis die neue Nummer akzeptiert ist.'],
       ['neu', 'Haken wie im Messenger: ein Haken = ist auf dem Server gelandet, zwei Haken (farbig) = gelesen. Im Familienchat erst, wenn alle gelesen haben; wer „gelesen von“ wissen will, tippt auf die Nachricht. Lesebestätigungen lassen sich ausschalten.'],
       ['neu', 'Push für neue Nachrichten („💬 Name – Neue Nachricht“; der Text selbst bleibt geheim, weil der Server ihn nicht lesen kann), einstellbar unter Konto → Benachrichtigungen → Chat. Ein Tipp auf die Mitteilung öffnet den richtigen Chat.'],
       ['info', 'Vorbereitet für den nächsten Schritt: Nachrichten können einen Bezug tragen (Aufgabe, Pinnwand-Zettel, Kündigung …), der als Karte in der Nachricht erscheint – pinnChat.compose(Chat, Bezug). Nicht für Gäste und nicht auf dem Dashboard.'],
       ['info', 'Geändert: index.html, js/chat.js (neu), css/chat.css (neu), js/ansichten.js, js/appstart.js, js/hinweise.js, js/dashboard.js, js/zustand.js, js/mitteilungen.js, js/sprachen.js, js/versionslog.js, i18n/versionslog.en.js, alle i18n/*.i18n.js, pinn-setup.sh, src/ und alle READMEs. Server-Teil: pb_hooks/chat.pb.js (neu), pb_hooks/pinn-chat.js (neu), pb_hooks/pinn-push.js, pb_hooks/pinn-schema.js – beim Update die Hooks mit austauschen; zwei neue Sammlungen werden beim Start automatisch angelegt.'],
+      ['info', 'Geändert in 1.127.1: js/chatmedien.js (neu), css/chat.css, js/chat.js, js/sprachen.js, js/versionslog.js, i18n/versionslog.en.js, alle i18n/*.i18n.js, pinn-setup.sh, src/ und alle READMEs. Server-Teil: pb_hooks/chat.pb.js und pb_hooks/pinn-chat.js – die Hooks mit austauschen; zwei weitere Sammlungen werden beim Start automatisch angelegt.'],
     ],
   },
   {

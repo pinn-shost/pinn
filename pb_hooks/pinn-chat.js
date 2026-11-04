@@ -1,7 +1,7 @@
 // pb_hooks/pinn-chat.js
 // Not a *.pb.js file -> not loaded as a hook by itself, only through require() (routes: chat.pb.js).
 //
-// Family chat with end-to-end encryption (since 1.127.0).
+// Family chat with end-to-end encryption (since 1.127.0; photos and videos since 1.127.1).
 //
 // What the SERVER sees and what it never sees:
 //   - never: the text of a message, who is mentioned in it, what it links to (all of that is inside the
@@ -13,6 +13,8 @@
 // Collections (locked: only reachable through the routes of this module):
 //   chat_schluessel   one record per profile: public key, encrypted backup of the private key, read-receipt choice
 //   chat_nachrichten  one record per message: room, sender, time, encrypted package, recipients, read marks
+//   chat_dateien      (1.127.1) one record per photo/video: the ENCRYPTED file (protected, only reachable through the routes)
+//   chat_familie      (1.127.1) per family: automatic deletion of old messages / old photos and videos (days, 0 = keep)
 //
 // Rooms: "familie" (everybody of the family with a profile) and "dm:<idA>:<idB>" (two profile IDs, sorted).
 //
@@ -23,7 +25,12 @@
 
 const KEYS = "chat_schluessel";
 const MSGS = "chat_nachrichten";
-const MAX_DATA = 40000;          // size of one encrypted package
+const MAX_DATA = 100000;         // size of one encrypted package (a message with a photo carries a small preview)
+const FILES = "chat_dateien";
+const FAM = "chat_familie";
+const MAX_FILE = 60 * 1024 * 1024; // one encrypted photo/video
+const KEEP_CHOICES = [0, 7, 30, 90, 180, 365]; // days, 0 = keep for ever
+const ORPHAN_MS = 24 * 60 * 60 * 1000;     // uploaded but never sent
 const MAX_BACKUP = 8000;         // size of the encrypted private key copy
 const MAX_RECIPIENTS = 40;
 const UNREAD_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
@@ -43,7 +50,7 @@ const PUSH_TEXT = {
     nl: { group: "Nieuw bericht in de groepschat", dm: "Nieuw bericht" },
 };
 
-module.exports = { ensureSchema, roster, saveKey, saveBackup, saveSettings, overview, list, send, markRead, remove };
+module.exports = { ensureSchema, roster, saveKey, saveBackup, saveSettings, overview, list, send, markRead, remove, upload, download, saveRetention, cleanup };
 
 function findCol(name) {
     try { return $app.findCollectionByNameOrId(name); } catch (e) { return null; }
@@ -105,7 +112,54 @@ function ensureSchema() {
             console.log("[Chat] Konnte Sammlung \"" + MSGS + "\" nicht anlegen: " + err.message);
         }
     }
-    return !!(findCol(KEYS) && findCol(MSGS));
+    if (!findCol(FILES)) {
+        try {
+            $app.save(new Collection({
+                type: "base",
+                name: FILES,
+                fields: [
+                    { name: "datei", type: "file", maxSelect: 1, maxSize: MAX_FILE, protected: true },
+                    { name: "familie", type: "text", max: 40, required: true },
+                    { name: "raum", type: "text", max: 100 },
+                    { name: "von", type: "text", max: 40 },
+                    { name: "zeit", type: "number" },
+                    { name: "groesse", type: "number" },
+                    { name: "nachricht", type: "text", max: 40 },
+                    { name: "created", type: "autodate", onCreate: true, onUpdate: false },
+                    { name: "updated", type: "autodate", onCreate: true, onUpdate: true },
+                ],
+                indexes: [
+                    "CREATE INDEX `idx_chat_dateien_familie` ON `" + FILES + "` (`familie`, `zeit`)",
+                    "CREATE INDEX `idx_chat_dateien_nachricht` ON `" + FILES + "` (`nachricht`)",
+                ],
+                listRule: null, viewRule: null, createRule: null, updateRule: null, deleteRule: null,
+            }));
+            console.log("[Chat] Sammlung \"" + FILES + "\" angelegt.");
+        } catch (err) {
+            console.log("[Chat] Konnte Sammlung \"" + FILES + "\" nicht anlegen: " + err.message);
+        }
+    }
+    if (!findCol(FAM)) {
+        try {
+            $app.save(new Collection({
+                type: "base",
+                name: FAM,
+                fields: [
+                    { name: "familie", type: "text", max: 40, required: true },
+                    { name: "text_tage", type: "number" },
+                    { name: "medien_tage", type: "number" },
+                    { name: "created", type: "autodate", onCreate: true, onUpdate: false },
+                    { name: "updated", type: "autodate", onCreate: true, onUpdate: true },
+                ],
+                indexes: ["CREATE UNIQUE INDEX `idx_chat_familie_familie` ON `" + FAM + "` (`familie`)"],
+                listRule: null, viewRule: null, createRule: null, updateRule: null, deleteRule: null,
+            }));
+            console.log("[Chat] Sammlung \"" + FAM + "\" angelegt.");
+        } catch (err) {
+            console.log("[Chat] Konnte Sammlung \"" + FAM + "\" nicht anlegen: " + err.message);
+        }
+    }
+    return !!(findCol(KEYS) && findCol(MSGS) && findCol(FILES) && findCol(FAM));
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -186,7 +240,34 @@ function roster(e) {
         lese: keys[x.id] ? !keys[x.id].getBool("lese_aus") : true,
     }));
     const mine = keys[u.id] ? { oeffentlich: keys[u.id].getString("oeffentlich"), gesichert: keys[u.id].getString("gesichert"), lese: !keys[u.id].getBool("lese_aus") } : null;
-    return { ich: u.id, profile: profiles, mein: mine, jetzt: Date.now() };
+    const keep = retentionOf(fam);
+    return { ich: u.id, profile: profiles, mein: mine, jetzt: Date.now(), aufbewahrung: keep, speicher: storageOf(fam), admin: u.getString("rolle") === "admin" };
+}
+function famRec(familyId) {
+    try { return $app.findFirstRecordByFilter(FAM, "familie = {:f}", { f: familyId }); } catch (err) { return null; }
+}
+function retentionOf(familyId) {
+    const r = famRec(familyId);
+    return { text: r ? Number(r.get("text_tage") || 0) : 0, medien: r ? Number(r.get("medien_tage") || 0) : 0 };
+}
+// Space used by the photos and videos of a family (bytes of the encrypted files)
+function storageOf(familyId) {
+    let sum = 0;
+    try { $app.findRecordsByFilter(FILES, "familie = {:f}", "", 20000, 0, { f: familyId }).forEach(r => { sum += Number(r.get("groesse") || 0); }); } catch (err) { /* none */ }
+    return sum;
+}
+// Only admins of the family set the automatic deletion
+function saveRetention(e, body) {
+    const u = authUser(e);
+    if (u.getString("rolle") !== "admin") throw new Error("Nur für Admins.");
+    const text = Number(body && body.text), medien = Number(body && body.medien);
+    if (KEEP_CHOICES.indexOf(text) < 0 || KEEP_CHOICES.indexOf(medien) < 0) throw new Error("Wert ungültig.");
+    let rec = famRec(u.getString("familie"));
+    if (!rec) { rec = new Record($app.findCollectionByNameOrId(FAM)); rec.set("familie", u.getString("familie")); }
+    rec.set("text_tage", text);
+    rec.set("medien_tage", medien);
+    $app.save(rec);
+    return { ok: true, aufbewahrung: { text, medien } };
 }
 // Store the public key and the encrypted backup of the private key.
 // An existing key is only replaced with ersetzen = true (then older messages can no longer be read by this profile).
@@ -329,6 +410,13 @@ function send(e, body) {
     if (empf.indexOf(u.id) < 0) throw new Error("Nachricht ungültig.");
     const mine = keyRec(u.id);
     if (!mine || mine.getString("oeffentlich") !== pack.sp) throw new Error("Der Chat-Schlüssel ist nicht aktuell.");
+    // optional photo/video: an uploaded file of this profile for this room that is not attached yet
+    let fileRec = null;
+    const fileId = String((body && body.datei) || "");
+    if (fileId) {
+        try { fileRec = $app.findRecordById(FILES, fileId); } catch (err) { fileRec = null; }
+        if (!fileRec || fileRec.getString("von") !== u.id || fileRec.getString("raum") !== room || fileRec.getString("nachricht")) throw new Error("Datei ungültig.");
+    }
     const now = Date.now();
     const rec = new Record($app.findCollectionByNameOrId(MSGS));
     rec.set("familie", u.getString("familie"));
@@ -340,6 +428,7 @@ function send(e, body) {
     rec.set("empf", "," + empf.join(",") + ",");
     rec.set("gelesen", "{}");
     $app.save(rec);
+    if (fileRec) { fileRec.set("nachricht", rec.id); $app.save(fileRec); }
     let pushed = 0;
     try { pushed = notify(u.getString("familie"), u, room, members.filter(m => m.id !== u.id && empf.indexOf(m.id) >= 0)); } catch (err) { console.log("[Chat] Push: " + err.message); }
     return { id: rec.id, zeit: now, push: pushed };
@@ -376,5 +465,73 @@ function remove(e, body) {
     rec.set("geloescht", true);
     rec.set("aktualisiert", Date.now());
     $app.save(rec);
+    dropFiles(rec.id);
     return { ok: true };
+}
+function dropFiles(messageId) {
+    try { $app.findRecordsByFilter(FILES, "nachricht = {:m}", "", 20, 0, { m: messageId }).forEach(f => { try { $app.delete(f); } catch (err) { /* next */ } }); } catch (err) { /* none */ }
+}
+
+// ---------------------------------------------------------------------------------------------
+// Photos and videos (encrypted in the app; the server only stores and hands out the encrypted bytes)
+// ---------------------------------------------------------------------------------------------
+function upload(e) {
+    const u = authUser(e);
+    const room = String(e.request.url.query().get("raum") || "");
+    roomMembers(u, room);
+    const files = e.findUploadedFiles("datei");
+    if (!files || !files.length) throw new Error("Keine Datei.");
+    const f = files[0];
+    if (Number(f.size) > MAX_FILE) throw new Error("Datei zu groß.");
+    const rec = new Record($app.findCollectionByNameOrId(FILES));
+    rec.set("familie", u.getString("familie"));
+    rec.set("raum", room);
+    rec.set("von", u.id);
+    rec.set("zeit", Date.now());
+    rec.set("groesse", Number(f.size) || 0);
+    rec.set("datei", f);
+    $app.save(rec);
+    return { id: rec.id };
+}
+// Hands out one encrypted file to somebody who may see the room
+function download(e) {
+    const u = authUser(e);
+    let rec = null;
+    try { rec = $app.findRecordById(FILES, String(e.request.url.query().get("id") || "")); } catch (err) { rec = null; }
+    if (!rec || rec.getString("familie") !== u.getString("familie") || !canSeeRoom(u.id, rec.getString("raum")) || !rec.getString("datei")) throw new Error("Nicht gefunden.");
+    const fsys = $app.newFilesystem();
+    try {
+        fsys.serve(e.response, e.request, rec.baseFilesPath() + "/" + rec.getString("datei"), "chat.bin");
+    } finally {
+        try { fsys.close(); } catch (err) { /* ignore */ }
+    }
+    return true;
+}
+
+// Every night: delete what the families asked to be deleted, plus uploads that were never sent
+function cleanup() {
+    if (!ensureSchema()) return;
+    const now = Date.now();
+    let msgs = 0, files = 0;
+    try {
+        $app.findRecordsByFilter(FAM, "text_tage > 0 || medien_tage > 0", "", 500, 0, {}).forEach(f => {
+            const fam = f.getString("familie");
+            const textDays = Number(f.get("text_tage") || 0), mediaDays = Number(f.get("medien_tage") || 0);
+            if (textDays > 0) {
+                $app.findRecordsByFilter(MSGS, "familie = {:f} && zeit < {:z}", "zeit", 500, 0, { f: fam, z: now - textDays * 86400000 }).forEach(m => {
+                    dropFiles(m.id);
+                    try { $app.delete(m); msgs++; } catch (err) { /* next */ }
+                });
+            }
+            if (mediaDays > 0) {
+                $app.findRecordsByFilter(FILES, "familie = {:f} && zeit < {:z}", "zeit", 500, 0, { f: fam, z: now - mediaDays * 86400000 }).forEach(r => {
+                    try { $app.delete(r); files++; } catch (err) { /* next */ }
+                });
+            }
+        });
+    } catch (err) { console.log("[Chat] Aufräumen: " + err.message); }
+    try {
+        $app.findRecordsByFilter(FILES, "nachricht = '' && zeit < {:z}", "zeit", 500, 0, { z: now - ORPHAN_MS }).forEach(r => { try { $app.delete(r); files++; } catch (err) { /* next */ } });
+    } catch (err) { /* none */ }
+    if (msgs || files) console.log("[Chat] Aufgeräumt: " + msgs + " Nachrichten, " + files + " Dateien.");
 }

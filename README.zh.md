@@ -129,6 +129,17 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский和 🇳🇱 Nederlands**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.127.1 新功能
+
+**聊天中的照片和视频**
+
+- **发送照片和视频:** 用回形针按钮,带预览和说明文字。和 WhatsApp 一样,用 **HD 按钮** 每次自己选择:标准会把照片压缩到约 0.3 MB,HD 发送原图(照片最大 20 MB,视频最大 50 MB)。设备支持时会压缩视频,否则发送原视频。
+- **同样端到端加密:** 每个文件都有独立密钥,你的 NAS 看不到图片,也看不到文件名。聊天内全屏查看,可 **分享**(WhatsApp、邮件等)或 **保存到设备**。
+- **存入 pinn.:** 把照片存为文档,或关联到住宅、缺陷或车辆。视频可分享和保存,但不能存为文档。
+- **自动删除:** 管理员在“聊天安全”中设置多少天后,在夜间为所有人删除消息和/或照片与视频(默认:从不)。
+- 变更:`js/chatmedien.js`(新)、`css/chat.css`、`js/chat.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、所有 `i18n/*.i18n.js`、`pinn-setup.sh`、`src/` 和所有 README。**服务器部分:** `pb_hooks/chat.pb.js` 和 `pb_hooks/pinn-chat.js`——更新时请一并替换 hooks。
+
+
 ## 1.127.0 新功能
 
 **聊天——端到端加密**
@@ -195,15 +206,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 
 
 
-## 1.123.10 新功能
-
-**荷兰语——第十一阶段**
-
-- **pinn. 的荷兰语版本又多了一部分。** 通知（推送）现在也已翻译：任务和日程、留言板、合同、文档、储备、地点和“正在回家的路上”、SOS、垃圾、购物、结算、每日概览以及应用更新——全部 6722 条文本已完成。服务器现在也会以荷兰语发送通知。现在只差设置向导和数据导出的文本。
-- 荷兰语在全部翻译完成之前仍然**隐藏**（可在一台设备上解锁试用；尚未翻译的文本会以英语显示）。对其他人没有任何可见变化。
-- 更改：`index.html`、`js/sprachen.js`、`js/versionslog.js`、`i18n/nl.i18n.js`、`i18n/versionslog.en.js`、服务器上的 `pb_hooks/pinn-pushtext.js` 以及所有 README。安装方式不变（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
-
-
 ## 工作原理
 
 ```mermaid
@@ -232,7 +234,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.127.0` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.127.1` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -106,6 +106,17 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский en 🇳🇱 Nederlands**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.127.1
+
+**Foto’s en video’s in de chat**
+
+- **Foto’s en video’s versturen** met de paperclipknop, met voorbeeld en bijschrift. Net als in WhatsApp kies je elke keer met de **HD-knop**: Standaard verkleint foto’s tot ongeveer 0,3 MB, HD verstuurt het origineel (foto’s tot 20 MB, video’s tot 50 MB). Video’s worden verkleind waar het apparaat dat kan, anders gaat het origineel mee.
+- **Ook end-to-end versleuteld:** elk bestand heeft een eigen sleutel; je NAS ziet noch het beeld noch de naam. Volledig scherm in de chat, **delen** (WhatsApp, e-mail …) of **op het apparaat bewaren**.
+- **Opslaan in pinn.:** bewaar een foto als document of koppel hem aan een woning, een gebrek of een voertuig. Video’s kun je delen en bewaren, niet als document opslaan.
+- **Automatisch verwijderen:** beheerders kiezen onder “Chatbeveiliging” na hoeveel dagen berichten en/of foto’s en video’s ’s nachts voor iedereen worden verwijderd (standaard: nooit).
+- Gewijzigd: `js/chatmedien.js` (nieuw), `css/chat.css`, `js/chat.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `pinn-setup.sh`, `src/` en alle README’s. **Serverdeel:** `pb_hooks/chat.pb.js` en `pb_hooks/pinn-chat.js` – vervang ook de hooks.
+
+
 ## Nieuw in 1.127.0
 
 **Chat – end-to-end versleuteld**
@@ -136,7 +147,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.127.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.127.1` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

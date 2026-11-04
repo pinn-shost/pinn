@@ -125,6 +125,17 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский y 🇳🇱 Nederlands**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.127.1
+
+**Fotos y vídeos en el chat**
+
+- **Enviar fotos y vídeos** con el botón del clip, con vista previa y pie. Como en WhatsApp, un **botón HD** te deja elegir cada vez: Estándar reduce las fotos a unos 0,3 MB; HD envía el original (fotos hasta 20 MB, vídeos hasta 50 MB). Los vídeos se reducen donde el dispositivo puede; si no, se envía el original.
+- **También con cifrado de extremo a extremo:** cada archivo tiene su propia clave; tu NAS no ve ni la imagen ni su nombre. Visor a pantalla completa en el chat, **compartir** (WhatsApp, correo …) o **guardar en el dispositivo**.
+- **Guardar en pinn.:** guarda una foto como documento o asígnala a una vivienda, un defecto o un vehículo. Los vídeos se comparten o guardan, no se archivan como documentos.
+- **Borrado automático:** los administradores eligen en «Seguridad del chat» tras cuántos días se borran, cada noche y para todos, los mensajes y/o las fotos y vídeos (por defecto: nunca).
+- Cambios: `js/chatmedien.js` (nuevo), `css/chat.css`, `js/chat.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos los `i18n/*.i18n.js`, `pinn-setup.sh`, `src/` y todos los README. **Parte del servidor:** `pb_hooks/chat.pb.js` y `pb_hooks/pinn-chat.js`; hay que sustituir también los hooks.
+
+
 ## Novedades de la 1.127.0
 
 **Chat con cifrado de extremo a extremo**
@@ -227,15 +238,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Cambiado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` y todos los README. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
 
 
-## Novedades de la 1.123.6
-
-**Neerlandés – séptima etapa**
-
-- **Aún más de pinn. en neerlandés.** Hogar (alquiler, propiedad y alquiler a terceros, defectos con la notificación de defectos al arrendador, contadores con lectura por foto y previsión, gastos fijos y préstamo, reformas y proyectos, plan de mantenimiento, jardín y plantas con el año del jardín, llaves) ya está traducido (5157 de 6722 textos).
-- El neerlandés permanece **oculto** hasta que todo esté traducido (se puede activar en un dispositivo para probarlo; los textos que aún faltan aparecen en inglés). Para los demás no cambia nada visible.
-- Cambiado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` y todos los README. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
-
-
 ## Cómo funciona
 
 ```mermaid
@@ -262,7 +264,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.127.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.127.1` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

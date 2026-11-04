@@ -129,6 +129,17 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.127.1 새 기능
+
+**채팅에서 사진과 동영상**
+
+- **사진·동영상 보내기:** 클립 버튼으로, 미리보기와 설명을 붙여서. WhatsApp처럼 **HD 버튼**으로 매번 직접 고를 수 있어요. 표준은 사진을 약 0.3MB로 줄이고, HD는 원본을 보내요(사진 20MB, 동영상 50MB까지). 동영상은 기기가 지원하면 줄이고, 아니면 원본을 보내요.
+- **이것도 종단 간 암호화:** 파일마다 고유 키가 있어서 NAS는 사진도 파일 이름도 볼 수 없어요. 채팅 안에서 전체 화면으로 보고, **공유**(WhatsApp, 이메일 등)하거나 **기기에 저장**할 수 있어요.
+- **pinn.에 보관:** 사진을 문서로 저장하거나 부동산, 하자, 차량에 연결할 수 있어요. 동영상은 공유와 저장만 되고 문서로는 보관할 수 없어요.
+- **자동 삭제:** 관리자가 ‘채팅 보안’에서 며칠 뒤에 메시지나 사진·동영상을 밤에 모두에게서 삭제할지 정해요(기본: 안 함).
+- 변경: `js/chatmedien.js`(신규), `css/chat.css`, `js/chat.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, 모든 `i18n/*.i18n.js`, `pinn-setup.sh`, `src/`, 모든 README. **서버 부분:** `pb_hooks/chat.pb.js`, `pb_hooks/pinn-chat.js` – hooks도 함께 교체하세요.
+
+
 ## 1.127.0 새 기능
 
 **채팅(종단 간 암호화)**
@@ -195,15 +206,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 
 
 
-## 1.123.10의 새 소식
-
-**네덜란드어 – 열한 번째 단계**
-
-- **pinn.의 네덜란드어가 더 늘었습니다.** 알림(푸시)도 번역되었습니다: 작업과 일정, 게시판, 계약, 문서, 비축품, 장소와 “집으로 가는 중”, SOS, 쓰레기, 장보기, 정산, 오늘의 요약, 앱 업데이트. 6722개 텍스트가 모두 끝났습니다. 서버도 이제 네덜란드어로 알림을 보냅니다. 이제 설정 도우미와 데이터 내보내기 텍스트만 남았습니다.
-- 네덜란드어는 모든 번역이 끝날 때까지 **숨김** 상태로 유지됩니다(시험용으로 한 기기에서 켤 수 있으며, 아직 없는 텍스트는 영어로 표시됩니다). 다른 사람에게는 눈에 보이는 변화가 없습니다.
-- 변경: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js`, 서버의 `pb_hooks/pinn-pushtext.js` 및 모든 README. 설치는 평소와 같습니다(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
-
-
 ## 작동 방식
 
 ```mermaid
@@ -232,7 +234,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.127.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.127.1` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
