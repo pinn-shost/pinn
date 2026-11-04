@@ -129,6 +129,16 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский e 🇳🇱 Nederlands**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.127.2
+
+**Chat: parlare di attività, note della bacheca e scadenze dei contratti**
+
+- **💬 «Discutine in chat»** su un’attività, in una nota della bacheca e in un contratto (ad es. una scadenza di disdetta imminente): scegli la chat di famiglia o una persona e la chat si apre con l’elemento come scheda nella riga di scrittura. Aggiungi qualche parola o invialo e basta.
+- **La scheda apre l’elemento:** un tocco nel messaggio porta all’attività (lampeggia un attimo nell’elenco), alla nota o al contratto. Se non esiste più o non hai accesso, un breve avviso lo segnala.
+- **Sempre crittografato end-to-end:** la scheda è crittografata come il testo; il tuo NAS non ne vede nulla.
+- Modificato: `js/chat.js`, `css/chat.css`, `js/aufgaben.js`, `js/pinnwand.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, tutti gli `i18n/*.i18n.js`, `index.html`, `src/` e tutti i README. **Nessuna parte server:** gli hook restano invariati.
+
+
 ## Novità della 1.127.1
 
 **Foto e video nella chat**
@@ -196,16 +206,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 
 
 
-## Novità della 1.123.11
-
-**Olandese – dodicesima tappa**
-
-- **L’olandese è ora tradotto completamente.** Anche la procedura guidata di configurazione (guide passo passo per rete domestica, DuckDNS, router, VPN, Google, IA, posizione, Home Assistant e app) e l’esportazione dei dati (ZIP con tutti i dati, i documenti e le immagini) sono ora in olandese, così come gli avvisi di configurazione per l’amministratore principale. Il server accetta l’olandese anche nella configurazione. Manca solo l’attivazione.
-- Per ora l’olandese resta **nascosto** (attivabile su un dispositivo per provarlo). Per tutti gli altri non cambia nulla di visibile.
-- Modificato: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`, `i18n/versionslog.en.js`, sul server `pb_hooks/pinn-einrichtung.js` e tutti i README. Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o il pulsante di aggiornamento).
-
-
-
 ## Come funziona
 
 ```mermaid
@@ -234,7 +234,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.127.1` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.127.2` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

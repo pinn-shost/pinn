@@ -129,6 +129,16 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.127.2の新機能
+
+**チャット：タスク、掲示板のメモ、契約の期限について話せます**
+
+- **💬「チャットで相談」**がタスク、掲示板のメモ、契約（例：解約期限が近いもの）に付きました。家族チャットか個人を選ぶと、その項目がカードとして入力欄に入った状態でチャットが開きます。ひとこと添えるか、そのまま送信できます。
+- **カードから項目を開けます：**メッセージ内のカードをタップすると、タスク（一覧で一瞬点滅）、メモ、契約へ移動します。項目がすでにない場合やアクセス権がない場合は、短いメッセージでお知らせします。
+- **これまでどおりエンドツーエンド暗号化：**カードもテキストと同じく暗号化され、NASには何も見えません。
+- 変更：`js/chat.js`、`css/chat.css`、`js/aufgaben.js`、`js/pinnwand.js`、`js/vertraege.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、すべての `i18n/*.i18n.js`、`index.html`、`src/`、すべてのREADME。**サーバー側の変更なし**（hooksはそのままです）。
+
+
 ## 1.127.1 の新機能
 
 **チャットで写真と動画**
@@ -196,16 +206,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 
 
 
-## 1.123.11の新機能
-
-**オランダ語 – 第12段階**
-
-- **オランダ語の翻訳がすべて完了しました。** セットアップアシスタント（ホームネットワーク、DuckDNS、ルーター、VPN、Google、AI、位置情報、Home Assistant、アプリのステップごとの手順）とデータエクスポート（すべてのデータ、書類、画像を含むZIP）もオランダ語になり、メイン管理者向けのセットアップのお知らせも同様です。サーバーもセットアップでオランダ語を受け付けます。あとは公開（有効化）だけです。
-- オランダ語は当面**非表示**のままです（試用のため1台のデバイスで有効にできます）。ほかの方には目に見える変更はありません。
-- 変更：`index.html`, `js/sprachen.js`, `js/versionslog.js`, `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`, `i18n/versionslog.en.js`、サーバー側の `pb_hooks/pinn-einrichtung.js`、すべてのREADME。インストールはいつもどおりです（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
-
-
-
 ## しくみ
 
 ```mermaid
@@ -234,7 +234,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.127.1`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.127.2`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

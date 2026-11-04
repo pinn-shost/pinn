@@ -14,7 +14,8 @@
      safety number - protection against a server that swaps keys. People compare the safety numbers in person or by phone.
 
    Messages are plain objects { x: text, q: { i, u, x } reply, r: { k, id, ti } reference to a task, note, ... }.
-   Other parts of the app can open a chat with a reference: pinnChat.compose(room, { k: 'task', id, ti }).
+   Other parts of the app can open a chat with a reference: pinnChat.compose(room, { k: 'task', id, ti }), or let the person
+   pick the chat first: pinnChat.share({ k: 'task', id, ti }, onPick) (used by the "discuss in chat" buttons).
    All visible text comes from tk('chat.*'); user text is only ever put into the page with textContent (no innerHTML). */
 
 const CHAT_API = '/api/pinn/chat/';
@@ -360,7 +361,7 @@ async function chatSend() {
   const S = chatS;
   const input = document.getElementById('chatInput');
   const text = input ? input.value.trim() : '';
-  if (!text || S.busy || !S.room || S.phase !== 'ready') return;
+  if ((!text && !S.ref) || S.busy || !S.room || S.phase !== 'ready') return;
   const members = chatRoomMembers(S.room);
   if (members.some(p => p.changed)) { chatRenderConv(); return; }
   const payload = { x: text.slice(0, 4000) };
@@ -431,6 +432,7 @@ async function chatRefreshPreviews() {
 // Text of a message for lists and quotes: the caption, or a label for a photo or video
 function chatPlainText(msg) {
   const cap = String((msg && msg.x) || '');
+  if (msg && msg.r && !cap && !msg.m) return (CHAT_REF_ICONS[msg.r.k] || '🔗') + ' ' + String(msg.r.ti || '');
   if (msg && msg.m) return (msg.m.k === 'vid' ? '🎥 ' + tk('chat.media.video') : '📷 ' + tk('chat.media.photo')) + (cap ? ' ' + cap : '');
   return cap;
 }
@@ -506,16 +508,93 @@ async function chatOpenRoom(room, keep) {
   chatRenderConv(true);
   chatMarkRead();
 }
-// For other parts of the app: open a chat with a reference to a task, note, ... in the input line
+// For other parts of the app: open a chat with a reference to a task, note, ... in the input line.
+// The reference lives in the state, so it survives the start-up of the chat (loading, unlocking with the code).
 function chatCompose(room, ref) {
+  if (!chatEnabled()) return;
+  if (!chatS || chatS.uid !== currentUser().id) chatS = chatNewState(currentUser().id);
+  chatS.ref = ref && ref.k && ref.id ? { k: String(ref.k), id: String(ref.id), ti: String(ref.ti || '').replace(/\s+/g, ' ').trim().slice(0, 120) } : null;
+  chatS.reply = null;
   chatOpenRoom(room || 'familie');
-  setTimeout(() => { if (chatS) { chatS.ref = ref || null; chatRenderConv(); const i = document.getElementById('chatInput'); if (i) i.focus(); } }, 600);
 }
-window.pinnChat = { open: chatOpenRoom, compose: chatCompose };
+// Small message at the bottom (the target of a reference is gone, no access, ...)
+function chatToast(text) {
+  const old = document.getElementById('chatToast');
+  if (old) old.remove();
+  const t = chatEl('div', 'chat-toast', text); t.id = 'chatToast'; t.setAttribute('role', 'status');
+  document.body.appendChild(t);
+  setTimeout(() => { if (t.parentNode) t.remove(); }, 3200);
+}
+// Scrolls to an element and lets it flash once
+function chatFlash(el) {
+  if (!el) return;
+  try { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) { el.scrollIntoView(); }
+  el.classList.add('chat-ref-flash');
+  setTimeout(() => el.classList.remove('chat-ref-flash'), 1800);
+}
+// Opens the task of a reference in the task list; false if it does not exist any more
+function chatOpenTask(id) {
+  setView('aufgaben');
+  let found = false;
+  try { found = typeof deriveTasks === 'function' && deriveTasks().some(t => String(t.id) === String(id)); } catch (e) { found = false; }
+  if (!found) return false;
+  setTimeout(() => {
+    const btn = document.querySelector('#taskList .task-toggle-done[data-id="' + CSS.escape(String(id)) + '"]');
+    chatFlash(btn ? btn.closest('.fade-in') || btn.parentNode : null);
+  }, 150);
+  return true;
+}
 function chatOpenRef(r) {
+  if (!r) return;
   const view = CHAT_REF_VIEWS[r.k];
-  if (view && isViewAllowed(view)) setView(view);
+  if (!view) return;
+  if (!isViewAllowed(view)) { chatToast(tk('chat.ref.noAccess')); return; }
+  let ok = true;
+  try {
+    if (r.k === 'task') ok = chatOpenTask(r.id);
+    else if (r.k === 'pin' && typeof pwOpenNote === 'function') ok = pwOpenNote(r.id);
+    else if (r.k === 'contract' && typeof vtOpenContract === 'function') ok = vtOpenContract(r.id);
+    else setView(view);
+  } catch (e) { setView(view); }
+  if (!ok) chatToast(tk('chat.ref.gone'));
 }
+
+/* ---------------------------------------------------------------- "discuss in chat": pick the chat, then compose */
+// true if the "discuss in chat" buttons should be shown to this person
+function chatCanShare() { return chatEnabled(); }
+// Shows the list of chats (family chat + one per person) on top of the current page; onPick runs before the chat opens
+async function chatShare(ref, onPick) {
+  if (!chatEnabled() || !ref || !ref.k || !ref.id) return;
+  if (document.getElementById('chatPick')) return;
+  const uid = currentUser().id;
+  let profiles = [];
+  // Only the list of people is read here: the key pins of the chat page stay untouched
+  try { const d = await chatApi('keys'); profiles = d.profile || []; } catch (e) { chatToast(tk('chat.error.load')); return; }
+  const rooms = [{ id: 'familie', group: true, title: tk('chat.familyChat'), person: null }];
+  profiles.filter(p => p.id !== uid).sort((a, b) => chatName(a).localeCompare(chatName(b))).forEach(p => {
+    rooms.push({ id: chatDmId(uid, p.id), group: false, title: chatName(p), person: p });
+  });
+  const back = chatEl('div', 'chat-pick-back'); back.id = 'chatPick';
+  const close = () => { back.remove(); document.removeEventListener('keydown', onKey); };
+  const onKey = (e) => { if (e.key === 'Escape') close(); };
+  document.addEventListener('keydown', onKey);
+  back.onclick = (e) => { if (e.target === back) close(); };
+  const card = chatEl('div', 'chat-sheet'); card.setAttribute('role', 'dialog'); card.setAttribute('aria-label', tk('chat.pickTitle'));
+  card.appendChild(chatEl('h3', 'chat-sheet-title', tk('chat.pickTitle')));
+  card.appendChild(chatEl('div', 'chat-sheet-note chat-pick-ref', (CHAT_REF_ICONS[ref.k] || '🔗') + ' ' + String(ref.ti || '')));
+  rooms.forEach(r => {
+    const b = chatEl('button', 'chat-sheet-act chat-pick-row'); b.type = 'button';
+    b.appendChild(chatAvatar(r.person, r.group, 36));
+    b.appendChild(chatEl('span', 'chat-pick-name', r.title));
+    b.onclick = () => { close(); if (typeof onPick === 'function') { try { onPick(); } catch (e) { /* ignore */ } } chatCompose(r.id, ref); };
+    card.appendChild(b);
+  });
+  const cancel = chatEl('button', 'chat-sheet-act muted', tk('chat.cancel')); cancel.type = 'button'; cancel.onclick = close;
+  card.appendChild(cancel);
+  back.appendChild(card);
+  document.body.appendChild(back);
+}
+window.pinnChat = { open: chatOpenRoom, compose: chatCompose, share: chatShare, canShare: chatCanShare };
 
 /* ---------------------------------------------------------------- display */
 function chatAvatar(p, group, size) {
@@ -644,7 +723,7 @@ function chatBuildConv() {
   }
   const head = chatEl('div', 'chat-conv-head');
   const back = chatEl('button', 'chat-icon-btn chat-back'); back.type = 'button'; back.setAttribute('aria-label', tk('chat.back')); back.appendChild(chatSvg('M15 18l-6-6 6-6', 22));
-  back.onclick = () => { S.room = ''; S.reply = null; chatRender(); chatLoadOverview(); };
+  back.onclick = () => { S.room = ''; S.reply = null; S.ref = null; chatRender(); chatLoadOverview(); };
   head.appendChild(back);
   head.appendChild(chatAvatar(room.person, room.group, 38));
   const t = chatEl('span', 'chat-conv-title');
@@ -752,7 +831,7 @@ function chatBubble(m, p, first, group) {
       b.appendChild(r);
     }
     if (x.m && typeof chatMBubble === 'function') b.appendChild(chatMBubble(x.m, m));
-    if (x.x || !x.m) { const t = chatEl('div', 'chat-text'); chatLinkify(t, String(x.x || '')); b.appendChild(t); }
+    if (x.x || (!x.m && !x.r)) { const t = chatEl('div', 'chat-text'); chatLinkify(t, String(x.x || '')); b.appendChild(t); }
   }
   const meta = chatEl('div', 'chat-meta');
   meta.appendChild(chatEl('span', 'chat-time', chatTime(m.zeit)));

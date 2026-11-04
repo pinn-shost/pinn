@@ -1065,6 +1065,7 @@ function renderContractDetail() {
     <div class="flex flex-wrap gap-2 mt-3">
       ${canCancel ? ('<button type="button" data-act="cancel" class="px-3 py-1.5 rounded-lg border border-red-300 text-xs text-red-500 hover:bg-red-50 transition">' + escapeHtml(tk('contract.cancel')) + '</button>') : ''}
       ${isCancelled ? '<button type="button" data-act="cancel" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 hover:text-pine hover:border-pine transition">✉️ ' + escapeHtml(tk('contract.cancelAndLetter')) + '</button>' : ''}
+      ${(typeof chatCanShare === 'function' && chatCanShare()) ? '<button type="button" data-act="chat" class="px-3 py-1.5 rounded-lg border border-ink/15 text-xs text-ink/70 hover:text-pine hover:border-pine transition">💬 ' + escapeHtml(tk('chat.discuss')) + '</button>' : ''}
     </div>
 
     ${(infoRows.length || contactBtns || contact.address) ? `
@@ -1091,6 +1092,8 @@ function renderContractDetail() {
 
   body.querySelectorAll('[data-act="cancel"]').forEach(b => b.addEventListener('click', () => openContractCancel(c.id)));
   body.querySelector('[data-act="edit"]').addEventListener('click', () => openContractModal({ contract: c }));
+  const chatBtn = body.querySelector('[data-act="chat"]');
+  if (chatBtn) chatBtn.addEventListener('click', () => window.pinnChat.share({ k: 'contract', id: c.id, ti: [c.name, i18nT(v.label)].filter(Boolean).join(' · ') }, closeContractDetail));
   body.querySelector('[data-act="close"]').addEventListener('click', closeContractDetail);
   const fzBtn = body.querySelector('[data-act="fz-open"]');
   if (fzBtn) fzBtn.addEventListener('click', () => { const vid = c.vehicle; closeContractDetail(); fzOpenVehicle(vid); });
@@ -1758,6 +1761,15 @@ document.getElementById('contractTileBody').addEventListener('click', (e) => {
   finSetTab('vertraege');
   openContractDetail(row.dataset.vtopen);
 });
+// Opens a contract (also from a chat reference); false if it does not exist any more
+function vtOpenContract(id) {
+  if (isCurrentUserGuest()) return false;
+  setView('finanzen');
+  finSetTab('vertraege');
+  if (!vtContract(id)) return false;
+  openContractDetail(id);
+  return true;
+}
 // Push message tapped: /?vertrag=<ID> opens the contract
 function vtOpenFromUrl() {
   let id = '';

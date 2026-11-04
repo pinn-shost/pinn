@@ -129,6 +129,16 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский und 🇳🇱 Nederlands**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.127.2
+
+**Chat: über Aufgaben, Pinnwand-Zettel und Kündigungen sprechen**
+
+- **💬 „Im Chat besprechen“** bei einer Aufgabe, in einem Pinnwand-Zettel und in einem Vertrag (z. B. eine anstehende Kündigungsfrist): Familienchat oder eine Person wählen, schon öffnet sich der Chat mit dem Eintrag als Karte in der Eingabezeile. Ein paar Worte dazuschreiben oder einfach abschicken.
+- **Die Karte öffnet den Eintrag:** ein Tipp in der Nachricht springt zur Aufgabe (sie blinkt kurz in der Liste), zum Pinnwand-Zettel oder zum Vertrag. Gibt es ihn nicht mehr oder fehlt der Zugriff, sagt eine kurze Meldung das.
+- **Weiterhin Ende-zu-Ende verschlüsselt** – die Karte ist wie der Text verschlüsselt, dein NAS sieht davon nichts.
+- Geändert: `js/chat.js`, `css/chat.css`, `js/aufgaben.js`, `js/pinnwand.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `index.html`, `src/` und alle READMEs. **Kein Server-Teil** – die Hooks bleiben, wie sie sind.
+
+
 ## Neu in 1.127.1
 
 **Fotos und Videos im Chat**
@@ -196,16 +206,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 
 
 
-## Neu in 1.123.11
-
-**Niederländisch – zwölfte Etappe**
-
-- **Niederländisch ist jetzt vollständig übersetzt.** Auch der Einrichtungs-Assistent (Schritt-für-Schritt-Anleitungen für Heimnetz, DuckDNS, Router, VPN, Google, KI, Ortung, Home Assistant und Apps) und der Datenexport (ZIP mit allen Daten, Dokumenten und Bildern) sind jetzt auf Niederländisch, ebenso die Hinweise zur Einrichtung für den Hauptadmin. Der Server nimmt Niederländisch auch bei der Einrichtung an. Es fehlt nur noch das Freischalten.
-- Niederländisch bleibt vorerst **versteckt** (zum Ausprobieren auf einem Gerät freischaltbar). Für alle anderen ändert sich nichts Sichtbares.
-- Geändert: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`, `i18n/versionslog.en.js`, auf dem Server `pb_hooks/pinn-einrichtung.js` und alle READMEs. Installation wie immer (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
-
-
-
 ## So funktioniert’s
 
 ```mermaid
@@ -234,7 +234,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.127.1` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.127.2` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

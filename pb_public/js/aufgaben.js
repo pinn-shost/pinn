@@ -94,6 +94,7 @@ function renderTasks() {
             ${task.pending && outboxBlocked ? `<div class="text-[10px] text-mustard font-medium mt-0.5">${PENDING_MARK}${escapeHtml(tk('tasks.pendingSync'))}</div>` : ''}
           </div>
           <div class="flex items-center gap-2 shrink-0">
+            ${(!task.pending && typeof chatCanShare === 'function' && chatCanShare()) ? `<button class="chat-task text-ink/30 hover:text-pine text-xs" data-id="${task.id}" aria-label="${escapeHtml(tk('chat.discuss'))}" title="${escapeHtml(tk('chat.discuss'))}">💬</button>` : ''}
             <button class="edit-task text-ink/30 hover:text-pine text-xs" data-id="${task.id}">${escapeHtml(tk('common.edit'))}</button>
             <button class="del-task text-ink/30 hover:text-red-500 text-xs" data-id="${task.id}">×</button>
           </div>
@@ -123,6 +124,8 @@ function renderTasks() {
       });
     }
     card.querySelector('.edit-task').addEventListener('click', () => openEditTaskModal(task));
+    const chatTaskBtn = card.querySelector('.chat-task');
+    if (chatTaskBtn) chatTaskBtn.addEventListener('click', () => window.pinnChat.share({ k: 'task', id: task.id, ti: displayTitle }));
     card.querySelector('.del-task').addEventListener('click', async () => {
       if (!confirm(tk('tasks.confirmDelete', { title: task.title }))) return;
       // Remove right away; the deletion on the NAS is submitted (possibly later)

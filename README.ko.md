@@ -129,6 +129,16 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.127.2의 새 소식
+
+**채팅: 할 일, 게시판 메모, 계약 기한에 대해 이야기하기**
+
+- **💬 “채팅에서 이야기하기”** 버튼이 할 일, 게시판 메모, 계약(예: 곧 다가오는 해지 기한)에 생겼습니다. 가족 채팅이나 한 사람을 고르면 해당 항목이 카드로 입력줄에 담긴 채 채팅이 열립니다. 몇 마디 덧붙이거나 그대로 보내면 됩니다.
+- **카드를 누르면 항목이 열립니다:** 메시지에서 카드를 누르면 할 일(목록에서 잠깐 깜박임), 메모 또는 계약으로 이동합니다. 항목이 더 이상 없거나 접근 권한이 없으면 짧은 안내가 나옵니다.
+- **여전히 종단 간 암호화:** 카드도 텍스트처럼 암호화되며 NAS는 아무것도 볼 수 없습니다.
+- 변경: `js/chat.js`, `css/chat.css`, `js/aufgaben.js`, `js/pinnwand.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, 모든 `i18n/*.i18n.js`, `index.html`, `src/`, 모든 README. **서버 부분 없음** – hooks는 그대로입니다.
+
+
 ## 1.127.1 새 기능
 
 **채팅에서 사진과 동영상**
@@ -196,16 +206,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 
 
 
-## 1.123.11의 새 소식
-
-**네덜란드어 – 열두 번째 단계**
-
-- **네덜란드어 번역이 모두 끝났습니다.** 설정 도우미(홈 네트워크, DuckDNS, 공유기, VPN, Google, AI, 위치, Home Assistant, 앱에 대한 단계별 안내)와 데이터 내보내기(모든 데이터, 문서, 사진이 담긴 ZIP)도 이제 네덜란드어이며, 메인 관리자를 위한 설정 안내도 마찬가지입니다. 서버도 설정에서 네덜란드어를 받아들입니다. 이제 공개(활성화)만 남았습니다.
-- 네덜란드어는 당분간 **숨김** 상태로 유지됩니다(시험용으로 한 기기에서 켤 수 있습니다). 다른 사람에게는 눈에 보이는 변화가 없습니다.
-- 변경: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`, `i18n/versionslog.en.js`, 서버의 `pb_hooks/pinn-einrichtung.js` 및 모든 README. 설치는 평소와 같습니다(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
-
-
-
 ## 작동 방식
 
 ```mermaid
@@ -234,7 +234,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.127.1` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.127.2` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -106,6 +106,16 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский en 🇳🇱 Nederlands**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.127.2
+
+**Chat: praten over taken, prikbordbriefjes en contractdeadlines**
+
+- **💬 “Bespreken in de chat”** bij een taak, in een prikbordbriefje en in een contract (bijv. een aanstaande opzegtermijn): kies de gezinschat of één persoon en de chat opent met het item als kaart in de invoerregel. Voeg een paar woorden toe of verstuur het gewoon.
+- **De kaart opent het item:** een tik in het bericht springt naar de taak (die knippert even in de lijst), het briefje of het contract. Bestaat het niet meer of heb je geen toegang, dan zegt een korte melding dat.
+- **Nog steeds end-to-end versleuteld:** de kaart wordt net als de tekst versleuteld; je NAS ziet er niets van.
+- Gewijzigd: `js/chat.js`, `css/chat.css`, `js/aufgaben.js`, `js/pinnwand.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `index.html`, `src/` en alle README’s. **Geen serverdeel** – de hooks blijven zoals ze zijn.
+
+
 ## Nieuw in 1.127.1
 
 **Foto’s en video’s in de chat**
@@ -127,17 +137,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Serverdeel: `pb_hooks/chat.pb.js`, `pb_hooks/pinn-chat.js` (nieuw), `pb_hooks/pinn-push.js`, `pb_hooks/pinn-schema.js` – vervang ook de hooks.
 
 
-## Nieuw in 1.126.0
-
-**Kentekens per land**
-
-- **Kentekens zoals in je eigen land.** In de EU toont de blauwe strook de sterrenkrans met de landcode (D, A, NL, F, I, DK …), met de passende kleuren: geel in Nederland en Luxemburg, een rode rand in Denemarken, rode letters in België, rood-wit-rode randen in Oostenrijk en een strook rechts in Frankrijk, Italië en Portugal.
-- **Wereldwijd.** Ook het Verenigd Koninkrijk, Zwitserland, Noorwegen, Turkije, Oekraïne, de VS, Canada, Mexico, Brazilië, Argentinië, Israël, India, China, Japan, Korea, Singapore, Australië, Nieuw-Zeeland en meer – alle 67 landen die je onder Taal & regio kunt kiezen.
-- **Automatisch of met de hand.** Het kenteken volgt het land onder Instellingen → Taal & regio. Per voertuig kun je onder ‘Kentekenstijl’ een ander land of ‘Neutraal’ kiezen – met een voorbeeldweergave en een passend voorbeeld in het invoerveld. De landnamen verschijnen in elke app-taal.
-- Gewijzigd: `index.html`, `js/kennzeichen.js` (nieuw), `js/fahrzeuge.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `pinn-setup.sh` en alle READMEs. Op de server verandert niets. Installatie zoals altijd (`sudo sh pinn-*/pinn-setup.sh` of de updateknop).
-
-
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -147,7 +146,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.127.1` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.127.2` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

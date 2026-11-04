@@ -174,3 +174,16 @@ html.dark .chat-link-a { color: #9ad0e0; }
 .chat-select { padding: 0.6rem 0.6rem; border: 1px solid rgba(37,35,31,0.2); border-radius: 0.6rem; background: transparent; font: inherit; font-size: 16px; color: inherit; }
 html.dark .chat-compose-cap, html.dark .chat-select { border-color: rgba(255,255,255,0.2); }
 html.dark .chat-select option { background: #26292b; }
+
+/* "Discuss in chat": picker of chats on top of any page, small message, flash of the opened item */
+.chat-pick-back { position: fixed; inset: 0; z-index: 500; display: flex; align-items: flex-end; justify-content: center; background: rgba(0,0,0,0.4); }
+@media (min-width: 640px) { .chat-pick-back { align-items: center; } .chat-pick-back .chat-sheet { border-radius: 1rem; } }
+.chat-pick-back .chat-sheet { color: var(--c-ink, #25231f); }
+.chat-pick-ref { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.chat-pick-row { display: flex; align-items: center; gap: 0.7rem; }
+.chat-pick-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chat-toast { position: fixed; left: 50%; bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 600; max-width: 90%; padding: 0.6rem 1rem; border-radius: 0.7rem; background: #25231f; color: #fff; font-size: 0.85rem; box-shadow: 0 4px 16px rgba(0,0,0,0.25); }
+.chat-ref-flash { animation: chatRefFlash 1.8s ease-out 1; }
+@keyframes chatRefFlash { 0%, 30% { box-shadow: 0 0 0 3px var(--c-mustard); } 100% { box-shadow: 0 0 0 3px transparent; } }
+html.dark .chat-pick-back .chat-sheet { color: #e9e9e6; }
+html.dark .chat-pick-ref { color: rgba(233,233,230,0.65); }

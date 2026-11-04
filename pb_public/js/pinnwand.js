@@ -1115,6 +1115,7 @@ function renderPinboardDetail() {
   const archived = pwIsArchived(n);
   const acts = [];
   if (pwCanEdit(n)) acts.push(('<button type="button" class="pw-act" data-pw-act="edit">' + tk('home.edit') + '</button>'));
+  if (typeof chatCanShare === 'function' && chatCanShare()) acts.push('<button type="button" class="pw-act" data-pw-act="chat">💬 ' + escapeHtml(tk('chat.discuss')) + '</button>');
   if (!archived) acts.push(`<button type="button" class="pw-act" data-pw-act="pin">${n.pinned ? tk('board.unpin') : tk('board.pin2')}</button>`);
   if (n.type === 'poll' && pwCanEdit(n) && !archived) acts.push(`<button type="button" class="pw-act" data-pw-act="close">${n.closed ? tk('board.reopen') : tk('board.endPoll')}</button>`);
   if (n.type === 'list' && !archived && (n.items || []).some(i => i.done)) acts.push(('<button type="button" class="pw-act" data-pw-act="cleanup">' + tk('board.removeCompleted') + '</button>'));
@@ -1194,12 +1195,21 @@ function pwOpenFromUrl() {
   if (!id) return;
   try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) { /* ignore */ }
   if (!isViewAllowed('pinnwand')) return;
+  pwOpenNote(id);
+}
+// Opens a note in the pinboard (also from a chat reference); false if it does not exist any more
+function pwOpenNote(id) {
   setView('pinnwand');
   const n = pwNote(id);
-  if (n) {
-    if (pwIsArchived(n)) { pwFilter = 'archiv'; renderPinboard(); }
-    openPinboardDetail(id);
-  }
+  if (!n) return false;
+  if (pwIsArchived(n)) { pwFilter = 'archiv'; renderPinboard(); }
+  openPinboardDetail(id);
+  return true;
+}
+// Short title of a note for a chat reference
+function pwChatTitle(n) {
+  const t = String(n.title || n.text || '').replace(/\s+/g, ' ').trim();
+  return t || pwSummary(n);
 }
 
 /* ---------- Maintenance after start ---------- */
@@ -1584,6 +1594,7 @@ function pwSaveOrder(id, order) {
     if (!b || !n) return;
     const act = b.dataset.pwAct;
     if (act === 'edit') { closePinboardDetail(); openPinboardEditor(n.id); }
+    else if (act === 'chat') window.pinnChat.share({ k: 'pin', id: n.id, ti: pwChatTitle(n) }, closePinboardDetail);
     else if (act === 'pin') pwUpdate(n.id, x => { x.pinned = !x.pinned; });
     else if (act === 'close') pwUpdate(n.id, x => { x.closed = !x.closed; });
     else if (act === 'cleanup') pwUpdate(n.id, x => { x.items = (x.items || []).filter(i => !i.done); });

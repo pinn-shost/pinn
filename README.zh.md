@@ -129,6 +129,16 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский和 🇳🇱 Nederlands**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.127.2 新功能
+
+**聊天：围绕任务、公告板便签和合同期限展开讨论**
+
+- **💬“在聊天中讨论”**：任务、公告板便签和合同（例如即将到期的解约期限）上都有此按钮。选择家庭群聊或某一位成员，聊天随即打开，该条目会以卡片形式出现在输入栏中。可再补充几句话，也可以直接发送。
+- **点击卡片即可打开对应条目：**在消息中点一下，就会跳转到该任务（列表中会短暂闪烁）、该便签或该合同。如果条目已不存在或你没有权限，会弹出简短提示。
+- **仍然是端到端加密：**卡片与文字一样被加密，你的 NAS 看不到其中任何内容。
+- 已更改：`js/chat.js`、`css/chat.css`、`js/aufgaben.js`、`js/pinnwand.js`、`js/vertraege.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、所有 `i18n/*.i18n.js`、`index.html`、`src/` 以及所有 README。**无服务器部分**——hooks 保持不变。
+
+
 ## 1.127.1 新功能
 
 **聊天中的照片和视频**
@@ -196,16 +206,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 
 
 
-## 1.123.11 新功能
-
-**荷兰语——第十二阶段**
-
-- **荷兰语现已全部翻译完成。** 设置向导（家庭网络、DuckDNS、路由器、VPN、Google、AI、位置、Home Assistant 和应用的分步指南）和数据导出（包含全部数据、文档和图片的 ZIP）现在也有荷兰语，面向主管理员的设置提示同样如此。服务器在设置时也接受荷兰语。只差解锁了。
-- 荷兰语暂时仍然**隐藏**（可在一台设备上解锁试用）。对其他人没有任何可见变化。
-- 更改：`index.html`, `js/sprachen.js`, `js/versionslog.js`, `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`, `i18n/versionslog.en.js`、服务器上的 `pb_hooks/pinn-einrichtung.js` 以及所有 README。安装方式不变（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
-
-
-
 ## 工作原理
 
 ```mermaid
@@ -234,7 +234,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.127.1` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.127.2` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

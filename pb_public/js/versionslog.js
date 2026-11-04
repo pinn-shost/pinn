@@ -24,6 +24,7 @@ const PINN_CHANGELOG = [
   {
     v: '1.127', datum: '04.11.2026', titel: 'Chat – Ende-zu-Ende verschlüsselt, mit Fotos und Videos',
     punkte: [
+      ['neu', '1.127.2: „Im Chat besprechen“ (💬) bei jeder Aufgabe, in jedem Pinnwand-Zettel und in jedem Vertrag (z. B. bei einer anstehenden Kündigungsfrist): Familienchat oder eine Person wählen, der Chat öffnet sich mit dem Eintrag als Karte in der Eingabezeile – ein paar Worte dazuschreiben oder einfach abschicken. Ein Tipp auf die Karte in der Nachricht öffnet den Eintrag (die Aufgabe blinkt kurz in der Liste); gibt es ihn nicht mehr oder fehlt der Zugriff, sagt eine kurze Meldung das. Die Karte ist wie der Text Ende-zu-Ende verschlüsselt.'],
       ['neu', '1.127.1: Fotos und Videos im Chat – Büroklammer-Knopf, Vorschau mit Beschriftung. Wie bei WhatsApp entscheidest du jedes Mal selbst mit dem HD-Knopf: Standard verkleinert Fotos (ca. 0,3 MB statt mehrerer MB), HD sendet das Original (Fotos bis 20 MB, Videos bis 50 MB). Videos werden verkleinert, wo das Gerät es kann, sonst geht das Original raus.'],
       ['neu', 'Auch Fotos und Videos sind Ende-zu-Ende verschlüsselt (eigener Schlüssel je Datei; der NAS sieht weder Bild noch Dateinamen). Ansicht direkt im Chat mit Vollbild, Teilen (WhatsApp, E-Mail …) und Speichern auf dem Gerät.'],
       ['neu', '„In pinn. ablegen“: ein Foto als Dokument speichern oder gleich einer Immobilie, einem Mangel oder einem Fahrzeug zuordnen (z. B. Schaden in der Wohnung → Mangel). Videos lassen sich teilen und speichern, aber nicht als Dokument ablegen.'],
@@ -35,6 +36,7 @@ const PINN_CHANGELOG = [
       ['info', 'Vorbereitet für den nächsten Schritt: Nachrichten können einen Bezug tragen (Aufgabe, Pinnwand-Zettel, Kündigung …), der als Karte in der Nachricht erscheint – pinnChat.compose(Chat, Bezug). Nicht für Gäste und nicht auf dem Dashboard.'],
       ['info', 'Geändert: index.html, js/chat.js (neu), css/chat.css (neu), js/ansichten.js, js/appstart.js, js/hinweise.js, js/dashboard.js, js/zustand.js, js/mitteilungen.js, js/sprachen.js, js/versionslog.js, i18n/versionslog.en.js, alle i18n/*.i18n.js, pinn-setup.sh, src/ und alle READMEs. Server-Teil: pb_hooks/chat.pb.js (neu), pb_hooks/pinn-chat.js (neu), pb_hooks/pinn-push.js, pb_hooks/pinn-schema.js – beim Update die Hooks mit austauschen; zwei neue Sammlungen werden beim Start automatisch angelegt.'],
       ['info', 'Geändert in 1.127.1: js/chatmedien.js (neu), css/chat.css, js/chat.js, js/sprachen.js, js/versionslog.js, i18n/versionslog.en.js, alle i18n/*.i18n.js, pinn-setup.sh, src/ und alle READMEs. Server-Teil: pb_hooks/chat.pb.js und pb_hooks/pinn-chat.js – die Hooks mit austauschen; zwei weitere Sammlungen werden beim Start automatisch angelegt.'],
+      ['info', 'Geändert in 1.127.2: js/chat.js, css/chat.css, js/aufgaben.js, js/pinnwand.js, js/vertraege.js, js/sprachen.js, js/versionslog.js, i18n/versionslog.en.js, alle i18n/*.i18n.js, index.html, src/ und alle READMEs. Kein Server-Teil.'],
     ],
   },
   {
