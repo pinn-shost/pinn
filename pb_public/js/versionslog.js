@@ -22,6 +22,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.126', datum: '04.11.2026', titel: 'Kennzeichen nach Land',
+    punkte: [
+      ['neu', 'Kennzeichen sehen jetzt aus wie im jeweiligen Land: In der EU zeigt der blaue Streifen den Sternenkreis mit der Länderkennung (D, A, NL, F, I, DK …), dazu die passenden Farben – gelb in den Niederlanden und Luxemburg, rote Umrandung in Dänemark, rote Schrift in Belgien, rot-weiß-rote Ränder in Österreich, Streifen rechts in Frankreich, Italien und Portugal.'],
+      ['neu', 'Auch außerhalb der EU und weltweit: u. a. Großbritannien, Schweiz, Norwegen, Türkei, Ukraine, USA, Kanada, Mexiko, Brasilien, Argentinien, Israel, Indien, China, Japan, Korea, Singapur, Australien und Neuseeland – 67 Länder insgesamt – alle Länder, die unter Sprache & Region wählbar sind.'],
+      ['neu', 'Automatisch nach dem Land unter Einstellungen → Sprache & Region. Beim Fahrzeug lässt sich unter „Kennzeichen-Stil“ ein anderes Land oder „Neutral“ wählen – mit Vorschau und passendem Beispiel im Eingabefeld. Ländernamen in allen App-Sprachen.'],
+      ['info', 'Geändert: index.html, js/kennzeichen.js (neu), js/fahrzeuge.js, css/fahrzeuge.css, js/sprachen.js, js/versionslog.js, i18n/versionslog.en.js, alle i18n/*.i18n.js, pinn-setup.sh und alle READMEs. Kein Server-Teil.'],
+    ],
+  },
+  {
     v: '1.125', datum: '04.11.2026', titel: 'Tutorial, Tagesübersicht & Kennzeichen',
     punkte: [
       ['info', 'Tutorial überarbeitet: Der Knopf „Zeig mir“ heißt jetzt „Unterbrechen“. Der zweite Schritt öffnet das Menü ☰ und erklärt es (die Leiste unten am Handy gibt es nicht mehr), der letzte verweist auf die Hilfe-Seite und die GitHub-Diskussionen für Fragen an den Entwickler.'],

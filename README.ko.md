@@ -128,6 +128,17 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.126.0의 새 소식
+
+**국가별 번호판**
+
+- **우리나라 모양 그대로의 번호판.** EU에서는 파란 띠에 국가 코드(D, A, NL, F, I, DK …)가 들어간 별 원이 표시되고 색도 나라에 맞춥니다: 네덜란드와 룩셈부르크는 노란색, 덴마크는 빨간 테두리, 벨기에는 빨간 글자, 오스트리아는 빨강-흰색-빨강 테두리, 프랑스·이탈리아·포르투갈은 오른쪽 띠.
+- **전 세계.** 영국, 스위스, 노르웨이, 튀르키예, 우크라이나, 미국, 캐나다, 멕시코, 브라질, 아르헨티나, 이스라엘, 인도, 중국, 일본, 한국, 싱가포르, 호주, 뉴질랜드 등 언어 및 지역에서 고를 수 있는 67개국 전부.
+- **자동 또는 직접 선택.** 번호판은 설정 → 언어 및 지역의 국가를 따릅니다. 차량마다 ‘번호판 스타일’에서 다른 국가나 ‘중립’을 고를 수 있으며, 미리보기와 입력란의 예시도 함께 바뀝니다. 국가 이름은 앱의 모든 언어로 표시됩니다.
+- 변경: `index.html`, `js/kennzeichen.js`(새 파일), `js/fahrzeuge.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, 모든 `i18n/*.i18n.js`, `pinn-setup.sh`, 모든 README. 서버에는 변경이 없습니다. 설치는 평소처럼(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
+
+
+
 ## 1.125.0의 새 소식
 
 **튜토리얼, 일일 요약, 번호판**
@@ -190,15 +201,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - 변경: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` 및 모든 README. 설치는 평소와 같습니다(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
 
 
-## 1.123.8의 새 소식
-
-**네덜란드어 – 아홉 번째 단계**
-
-- **pinn.의 네덜란드어가 더 늘었습니다.** 알림 벨(알림, 지출이 입력되지 않은 장보기, SOS 알람과 전화 버튼이 있는 ‘귀가 중’, 새 소식), 문서(기한, 보증, 알림, 공개 범위, 카테고리, 파일, 오프라인 대기열), 게시판(메모, 목록, 사진, 투표, 감사, 카운트다운, 보관함)이 번역되었습니다(6722개 중 6352개).
-- 네덜란드어는 모든 번역이 끝날 때까지 **숨김** 상태로 유지됩니다(시험용으로 한 기기에서 켤 수 있으며, 아직 없는 텍스트는 영어로 표시됩니다). 다른 사람에게는 눈에 보이는 변화가 없습니다.
-- 변경: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` 및 모든 README. 설치는 평소와 같습니다(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
-
-
 ## 작동 방식
 
 ```mermaid
@@ -227,7 +229,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.125.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.126.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

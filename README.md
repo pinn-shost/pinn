@@ -124,6 +124,17 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский and 🇳🇱 Nederlands**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.126.0
+
+**Number plates by country**
+
+- **Plates like in your country.** In the EU the blue strip shows the circle of stars with the country code (D, A, NL, F, I, DK …), with the matching colours: yellow in the Netherlands and Luxembourg, a red border in Denmark, red letters in Belgium, red-white-red edges in Austria, a strip on the right in France, Italy and Portugal.
+- **Worldwide.** Also the United Kingdom, Switzerland, Norway, Turkey, Ukraine, USA, Canada, Mexico, Brazil, Argentina, Israel, India, China, Japan, Korea, Singapore, Australia, New Zealand and more – all 67 countries you can pick under Language & region.
+- **Automatic or by hand.** The plate follows the country under Settings → Language & region. For each vehicle you can pick another country or “Neutral” under “Plate style” – with a preview and a matching example in the input field. Country names appear in every app language.
+- Changed: `index.html`, `js/kennzeichen.js` (new), `js/fahrzeuge.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `pinn-setup.sh` and all READMEs. Nothing changes on the server. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
+
+
+
 ## What's new in 1.125.0
 
 **Tutorial, daily summary & number plates**
@@ -222,15 +233,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` and all READMEs. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 
-## What's new in 1.123.4
-
-**Dutch – fifth stage**
-
-- **Even more of pinn. in Dutch.** Finance (budget, categories, recurring transactions, pocket money, export), funds (with splitting expenses and settling up), depots (with import, savings plans and savings goals), contracts (with cancellation letters and deadlines) and the weekly and monthly outlook are now translated (3,614 of 6,722 texts).
-- Dutch stays **hidden** until everything is translated (it can be unlocked on one device for trying it out; texts that are still missing then appear in English). Nothing changes visibly for anyone else.
-- Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` and all READMEs. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
-
 ## How it works
 
 ```mermaid
@@ -257,7 +259,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.125.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.126.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

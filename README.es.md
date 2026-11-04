@@ -124,6 +124,17 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский y 🇳🇱 Nederlands**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.126.0
+
+**Matrículas según el país**
+
+- **Matrículas como en tu país.** En la UE la franja azul muestra el círculo de estrellas con el código del país (D, A, NL, F, I, DK …) y los colores correspondientes: amarillo en Países Bajos y Luxemburgo, borde rojo en Dinamarca, letras rojas en Bélgica, bordes rojo-blanco-rojo en Austria y una franja a la derecha en Francia, Italia y Portugal.
+- **En todo el mundo.** También Reino Unido, Suiza, Noruega, Turquía, Ucrania, EE. UU., Canadá, México, Brasil, Argentina, Israel, India, China, Japón, Corea, Singapur, Australia, Nueva Zelanda y más: los 67 países que se pueden elegir en Idioma y región.
+- **Automático o a mano.** La matrícula sigue el país de Ajustes → Idioma y región. En cada vehículo puedes elegir otro país o «Neutro» en «Estilo de matrícula», con vista previa y un ejemplo adecuado en el campo. Los nombres de los países aparecen en todos los idiomas de la app.
+- Cambiado: `index.html`, `js/kennzeichen.js` (nuevo), `js/fahrzeuge.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos los `i18n/*.i18n.js`, `pinn-setup.sh` y todos los README. En el servidor no cambia nada. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
+
+
+
 ## Novedades de la 1.125.0
 
 **Tutorial, resumen diario y matrículas**
@@ -222,15 +233,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Cambiado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` y todos los README. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
 
 
-## Novedades de la 1.123.4
-
-**Neerlandés – quinta etapa**
-
-- **Aún más de pinn. en neerlandés.** Finanzas (presupuesto, categorías, movimientos recurrentes, paga, exportación), cajas (con reparto de gastos y liquidación), depósitos de valores (con importación, planes de ahorro y objetivos de ahorro), contratos (con cartas de baja y plazos) y la vista previa semanal y mensual ya están traducidos (3614 de 6722 textos).
-- El neerlandés permanece **oculto** hasta que todo esté traducido (se puede activar en un dispositivo para probarlo; los textos que aún faltan aparecen en inglés). Para los demás no cambia nada visible.
-- Cambiado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` y todos los README. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
-
-
 ## Cómo funciona
 
 ```mermaid
@@ -257,7 +259,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.125.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.126.0` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

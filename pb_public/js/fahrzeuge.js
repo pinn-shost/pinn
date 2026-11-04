@@ -14,7 +14,7 @@
    - Link between vehicles and documents (both directions), takeover of older vehicle documents from Finanzen
    - Popups for vehicle, entry, deadline, sale, contracts and documents, and the wiring of the buttons
    - Since 1.56.0: the animated street scene in the header of the detail view (fzSceneHtml)
-   131 functions and 30 variables. index.html only calls these functions later (when the user acts or from
+   132 functions and 29 variables (the plate itself is drawn by js/kennzeichen.js since 1.126.0). index.html only calls these functions later (when the user acts or from
    bootApp), never while it is still loading – that is why this file may come after the inline script.
    One statement runs while this file loads (initVehiclesUi); it only registers listeners on the vehicles
    page and its popups. */
@@ -32,6 +32,7 @@
                   mounted: 'sommer' (summer) | 'winter', toWinter, toSummer, size,
                   storage, sets: { sommer|winter|ganzjahr: { dot, tread } } },
          taxRecId (recurring booking for the vehicle tax), vk (insurance plate), vkDoneYear,
+         plateStyle ('' = automatic from the region, 'neutral' or a country code – js/kennzeichen.js),
          deadlines: [{ id, label, date }], docLinks: [document IDs from "Dokumente"],
          autoTasks: { on, days, to: [member IDs], made: { <key>: { id, at } } },
          archived: { date, price } | null, created, updated }
@@ -250,28 +251,9 @@ function fzName(v) {
 }
 function fzShortName(v) { return fzName(v) + (v && v.plate ? ' (' + fzPlateText(v.plate) + ')' : ''); }
 function fzPlateText(p) { return String(p || '').toUpperCase().replace(/\s+/g, ' ').trim(); }
-// Blue strip of the plate: circle of 12 five-pointed stars (EU symbol), built once as an inline SVG
-const FZ_EU_STARS = (() => {
-  const star = (cx, cy, ro, ri) => {
-    const pts = [];
-    for (let i = 0; i < 10; i++) {
-      const a = -Math.PI / 2 + i * Math.PI / 5;
-      const r = i % 2 ? ri : ro;
-      pts.push((cx + r * Math.cos(a)).toFixed(2) + ',' + (cy + r * Math.sin(a)).toFixed(2));
-    }
-    return '<polygon points="' + pts.join(' ') + '"/>';
-  };
-  let stars = '';
-  for (let i = 0; i < 12; i++) {
-    const a = i * Math.PI / 6 - Math.PI / 2;
-    stars += star(12 + 8.4 * Math.cos(a), 12 + 8.4 * Math.sin(a), 2.7, 1.1);
-  }
-  return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + stars + '</svg>';
-})();
-function fzPlateHtml(p, big) {
-  if (!p) return '';
-  return `<span class="fz-plate${big ? ' big' : ''}"><span class="fz-plate-eu">${FZ_EU_STARS}</span><span class="fz-plate-txt">${escapeHtml(fzPlateText(p))}</span></span>`;
-}
+// The plate itself (colours, strip and country letters per country) is drawn by js/kennzeichen.js
+// Insurance plates (e-scooter, moped) are always drawn plain, without country strip
+function fzVehiclePlateStyle(v) { return v && fzKind(v.kind).plate ? v.plateStyle : 'neutral'; }
 function fzTypesFor(v) {
   const k = fzKind(v.kind);
   return FZ_LOG_TYPES.filter(t => {
@@ -991,7 +973,7 @@ function renderVehicleList(pane) {
           <span class="block text-sm font-medium truncate">${escapeHtml(fzName(v))}</span>
           <span class="block text-xs text-ink/45 truncate">${sub || escapeHtml(fzKind(v.kind).label)}</span>
           <span class="flex items-center gap-1.5 mt-1.5 flex-wrap">
-            ${fzPlateHtml(v.plate)}
+            ${fzPlateHtml(v.plate, false, fzVehiclePlateStyle(v))}
             ${firstDue ? `<span class="vt-chip ${firstDue.tone}">${escapeHtml(firstDue.icon + ' ' + firstDue.title)}</span>` : ('<span class="vt-chip">' + tk('vehicle.everythingFine') + '</span>')}
           </span>
         </span>
@@ -1067,7 +1049,7 @@ function renderVehicleDetail(pane, v) {
             <h3 class="font-serif text-xl leading-tight truncate">${escapeHtml(fzName(v))}</h3>
             <div class="text-xs text-ink/50 truncate">${escapeHtml([[v.make, v.model].filter(Boolean).join(' '), k.label].filter(Boolean).join(' · '))}</div>
           </div>
-          ${fzPlateHtml(v.plate, true)}
+          ${fzPlateHtml(v.plate, true, fzVehiclePlateStyle(v))}
         </div>
         <div class="flex items-center gap-1.5 flex-wrap mt-2">
           ${d.id ? `<span class="vt-chip">${escapeHtml(d.icon + ' ' + d.label)}</span>` : ''}
@@ -1684,8 +1666,13 @@ function fzOpenVehicleModal(id, kindPreset) {
     ${fzIn('fzvName', tk('common.name'), draft.name || '', { ph: tk('vehicle.eGFamilyBus'), max: 60 })}
     <div class="fz-grid2">${fzIn('fzvMake', tk('vehicle.make'), draft.make || '', { ph: tk('vehicle.eGVw'), max: 40 })}${fzIn('fzvModel', tk('vehicle.model'), draft.model || '', { ph: tk('vehicle.eGGolf8'), max: 60 })}</div>
     <div class="fz-grid2">
-      ${fzIn('fzvPlate', tk('vehicle.licencePlate'), draft.plate || '', { ph: 'z. B. KS AB 123', max: 16, wrapId: 'fzvPlateWrap' })}
+      ${fzIn('fzvPlate', tk('vehicle.licencePlate'), draft.plate || '', { ph: fzPlateSample(draft.plateStyle), max: 16, wrapId: 'fzvPlateWrap' })}
       ${fzSel('fzvHolder', tk('vehicle.keeperMainDriver'), fzMemberOptions(), draft.holder || '')}
+    </div>
+    <div id="fzvPlateStyleWrap">
+      ${fzSel('fzvPlateStyle', tk('vehicle.plateStyle'), fzPlateStyleOptions(), fzPlateStyleCode(draft.plateStyle))}
+      <div class="fz-plate-preview" id="fzvPlatePreview" aria-hidden="true"></div>
+      <p class="text-[11px] text-ink/45 -mt-1 mb-3">${escapeHtml(tk('vehicle.plateStyleHint'))}</p>
     </div>
     <span class="fz-lbl">${tk('account.dashBg.color')}</span>
     <div class="flex flex-wrap gap-2 mb-3" id="fzvColors">${FZ_COLORS.map(c => `<button type="button" class="fz-color-btn${c === fzColor(draft) ? ' active' : ''}" style="background:${c}" data-color="${c}" aria-label="${escapeHtml(tk('vehicle.colourN', { c }))}"></button>`).join('')}</div>
@@ -1792,6 +1779,8 @@ function fzOpenVehicleModal(id, kindPreset) {
     body.querySelectorAll('#fzvAutoTo .fz-member-chip').forEach(b => b.addEventListener('click', () => b.classList.toggle('active')));
     taskRemindWire('fzv');
     ['fzvTireMode', 'fzvAutoOn'].forEach(id => document.getElementById(id).addEventListener('change', fzVehicleFormUi));
+    document.getElementById('fzvPlate').addEventListener('input', fzPlatePreviewUi);
+    document.getElementById('fzvPlateStyle').addEventListener('change', fzPlatePreviewUi);
     document.getElementById('fzvCancel').addEventListener('click', () => attemptCloseModal('fzModal', fzCloseModal));
     document.getElementById('fzvSave').addEventListener('click', fzSaveVehicle);
     const del = document.getElementById('fzvDelete');
@@ -1815,6 +1804,8 @@ function fzVehicleFormUi() {
   show('fzvTankWrap', fuels.some(f => f !== 'strom'));
   show('fzvBatteryWrap', fuels.includes('strom'));
   show('fzvPlateWrap', !k.bike);
+  show('fzvPlateStyleWrap', !!k.plate);
+  fzPlatePreviewUi();
   document.querySelector('label[for="fzvPlate"]').textContent = k.plate ? tk('vehicle.licencePlate') : tk('vehicle.insurancePlate');
   show('fzvHuWrap', !!k.hu);
   show('fzvTireWrap', !!k.tires);
@@ -1829,6 +1820,17 @@ function fzVehicleFormUi() {
   document.querySelector('label[for="fzvFirstReg_m"]').textContent = k.bike ? tk('vehicle.yearManufactureMonth') : tk('vehicle.firstRegistration');
   document.querySelector('label[for="fzvVin"]').textContent = k.bike ? tk('vehicle.frameNumber') : tk('vehicle.vinVehicleIdentificationNumber');
   show('fzvAutoWrap', fzChecked('fzvAutoOn'));
+}
+// Live preview of the plate in the vehicle popup (built from DOM nodes, the typed text only via textContent)
+function fzPlatePreviewUi() {
+  const box = document.getElementById('fzvPlatePreview');
+  const inp = document.getElementById('fzvPlate');
+  const sel = document.getElementById('fzvPlateStyle');
+  if (!box || !inp || !sel) return;
+  const code = fzPlateStyleCode(sel.value);
+  inp.placeholder = fzPlateSample(code);
+  box.replaceChildren(fzPlateNode(inp.value || fzPlateStyle(code).sample, code, true));
+  box.classList.toggle('is-sample', !inp.value);
 }
 function fzSaveVehicle() {
   const st = fzModalState;
@@ -1879,6 +1881,7 @@ function fzSaveVehicle() {
     ...(existing || {}),
     id, kind: d.kind, name, make, model,
     plate: k.bike ? '' : fzPlateText(fzVal('fzvPlate')).slice(0, 16),
+    plateStyle: k.plate ? fzPlateStyleCode(fzVal('fzvPlateStyle')) : '',
     color: fzColor(d), drive: k.drives.length ? d.drive : '',
     tank: tank === '' ? '' : Math.round(tank * 10) / 10, battery: battery === '' ? '' : Math.round(battery * 10) / 10,
     holder: fzVal('fzvHolder'),

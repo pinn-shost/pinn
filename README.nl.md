@@ -105,15 +105,14 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский en 🇳🇱 Nederlands**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
-## Nieuw in 1.125.0
+## Nieuw in 1.126.0
 
-**Tutorial, dagelijks overzicht & kentekens**
+**Kentekens per land**
 
-- **Tutorial herzien.** De knop “Laat zien” heet nu **“Onderbreken”**. De tweede stap opent het ☰-menu en legt het uit (de balk onderaan de telefoon bestaat niet meer). De laatste stap verwijst naar de helppagina en naar de GitHub Discussions voor vragen aan de ontwikkelaar.
-- **Dagelijks push-overzicht: huishoudtaken naar keuze.** Onder Account → Meldingen kies je of huishoudtaken in het dagelijks overzicht staan. Standaard: ja, dus er verandert niets zolang je het niet uitzet.
-- **Kentekens van voertuigen.** De blauwe strook toont nu de EU-sterrenkrans in plaats van “D”. Kentekens voor andere regio’s volgen.
-- Opgeruimd: ongebruikte code van de oude telefoonbalk is verwijderd.
-- Gewijzigd: `index.html`, bestanden in `js/`, `css/` en `i18n/`, op de server `pb_hooks/pinn-push.js` en `src/` (het onderdeel `menueleiste.html` vervalt). Installatie zoals altijd (`sudo sh pinn-*/pinn-setup.sh` of de updateknop).
+- **Kentekens zoals in je eigen land.** In de EU toont de blauwe strook de sterrenkrans met de landcode (D, A, NL, F, I, DK …), met de passende kleuren: geel in Nederland en Luxemburg, een rode rand in Denemarken, rode letters in België, rood-wit-rode randen in Oostenrijk en een strook rechts in Frankrijk, Italië en Portugal.
+- **Wereldwijd.** Ook het Verenigd Koninkrijk, Zwitserland, Noorwegen, Turkije, Oekraïne, de VS, Canada, Mexico, Brazilië, Argentinië, Israël, India, China, Japan, Korea, Singapore, Australië, Nieuw-Zeeland en meer – alle 67 landen die je onder Taal & regio kunt kiezen.
+- **Automatisch of met de hand.** Het kenteken volgt het land onder Instellingen → Taal & regio. Per voertuig kun je onder ‘Kentekenstijl’ een ander land of ‘Neutraal’ kiezen – met een voorbeeldweergave en een passend voorbeeld in het invoerveld. De landnamen verschijnen in elke app-taal.
+- Gewijzigd: `index.html`, `js/kennzeichen.js` (nieuw), `js/fahrzeuge.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `pinn-setup.sh` en alle READMEs. Op de server verandert niets. Installatie zoals altijd (`sudo sh pinn-*/pinn-setup.sh` of de updateknop).
 
 
 
@@ -126,7 +125,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.125.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.126.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
