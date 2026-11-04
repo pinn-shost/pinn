@@ -129,6 +129,17 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский und 🇳🇱 Nederlands**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.127.3
+
+**Chat: eigene Gruppen, angepinnte Chats, Wischen und Chat-Bilder**
+
+- **Eigene Gruppen erstellen.** Der neue Personen-Knopf neben dem Schild: Gruppe benennen und ankreuzen, wer dabei sein soll – die Leute sind sofort in der Gruppe, **ohne Einladung**. Ersteller und Admins ändern Name, Mitglieder und Bild; jeder kann die Gruppe verlassen. Wer später dazukommt, liest nur neuere Nachrichten.
+- **Reihenfolge und Anpinnen.** Oben steht die neueste Nachricht – gesendet oder empfangen; Chats lassen sich **anpinnen**, dann bleiben sie oben. **Einen Chat nach links wischen** zeigt zwei Knöpfe: Anpinnen/Lösen und Als gelesen/ungelesen markieren (je nach Zustand). Am Computer öffnet der „⋯“-Knopf oder ein Rechtsklick dasselbe. Ein von dir als ungelesen markierter Chat zeigt einen Punkt, bis du ihn öffnest; Pins und Markierungen sind auf jedem Gerät gleich.
+- **Bilder.** Der Familien-Admin tippt im geöffneten Familienchat auf das Bild und wählt ein Foto, rund zugeschnitten wie beim Profilbild; Ersteller und Admins einer Gruppe machen das Gleiche für die Gruppe.
+- Namen und Bilder von Gruppen sind nicht Ende-zu-Ende verschlüsselt (der Server braucht die Mitglieder für die Schlüssel); die Nachrichten bleiben es.
+- Geändert: `js/chatgruppen.js` (neu), `js/chat.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `index.html`, `pinn-setup.sh`, `src/` und alle READMEs. **Server-Teil:** `pb_hooks/chat.pb.js` und `pb_hooks/pinn-chat.js` – die Hooks mit austauschen; drei weitere Sammlungen entstehen automatisch.
+
+
 ## Neu in 1.127.2
 
 **Chat: über Aufgaben, Pinnwand-Zettel und Kündigungen sprechen**
@@ -196,16 +207,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 
 
 
-## Neu in 1.123.12
-
-**Niederländisch – freigeschaltet**
-
-- **Niederländisch ist für alle da.** Wählbar unter Einstellungen → Sprache & Region – alle 6722 Texte, der Einrichtungs-Assistent, der Datenexport und die Mitteilungen sind auf Niederländisch. Geräte, die auf Niederländisch eingestellt sind, bekommen es automatisch. Für alle anderen ändert sich nichts.
-- **Auch der Server spricht Niederländisch:** Wochenvorschau, Finanz-Ausblick, Geburtstage, Haustier-Erinnerungen, Laden-Hinweise, „Wo bist du?“-Nachrichten, Packlisten-Vorschläge und Belohnungs-Anfragen – für Profile mit der Sprache Niederländisch und für die Länder Niederlande, Suriname, Aruba, Curaçao und Sint Maarten. Die Sprachsteuerung (Siri) antwortet auf Niederländisch noch auf Englisch.
-- Geändert: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, auf dem Server `pb_hooks/pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-wobistdu.js`, `pinn-packliste.js`, `pinn-aufgaben.js` und alle READMEs (neu: `README.nl.md`). Installation wie immer (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
-
-
-
 ## So funktioniert’s
 
 ```mermaid
@@ -234,7 +235,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.127.2` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.127.3` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

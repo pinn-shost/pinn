@@ -129,6 +129,17 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.127.3의 새 소식
+
+**채팅: 직접 만드는 그룹, 채팅 고정, 밀어서 조작, 채팅 사진**
+
+- **그룹을 직접 만들 수 있어요.** 방패 옆의 새 사람 버튼: 그룹 이름을 정하고 함께할 사람을 선택하면 **초대 없이** 바로 그룹에 들어갑니다. 만든 사람과 관리자가 이름·멤버·사진을 바꿀 수 있고, 누구나 나갈 수 있습니다. 나중에 들어온 사람은 그 이후의 메시지만 읽습니다.
+- **순서와 고정.** 보내거나 받은 가장 최근 메시지가 맨 위에 옵니다. 채팅을 **고정**하면 계속 위에 남습니다. **채팅을 왼쪽으로 밀면** 두 버튼이 나옵니다: 고정/해제, 그리고 읽음/읽지 않음 표시(상태에 따라). 컴퓨터에서는 “⋯” 버튼이나 오른쪽 클릭으로 같은 메뉴가 열립니다. 읽지 않음으로 표시한 채팅은 열 때까지 점이 보이며, 고정과 표시는 모든 기기에서 같습니다.
+- **사진.** 가족 관리자가 열린 가족 채팅에서 사진을 누르고 사진을 고르면 프로필 사진처럼 동그랗게 잘립니다. 그룹을 만든 사람과 관리자도 그룹에서 똑같이 할 수 있습니다.
+- 그룹 이름과 사진은 종단 간 암호화되지 않습니다(키 준비에 서버가 멤버를 알아야 하기 때문). 메시지는 계속 암호화됩니다.
+- 변경: `js/chatgruppen.js`(새 파일), `js/chat.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, 모든 `i18n/*.i18n.js`, `index.html`, `pinn-setup.sh`, `src/`, 모든 README. **서버 부분:** `pb_hooks/chat.pb.js`와 `pb_hooks/pinn-chat.js` – hooks도 함께 교체하세요. 컬렉션 세 개가 자동으로 추가됩니다.
+
+
 ## 1.127.2의 새 소식
 
 **채팅: 할 일, 게시판 메모, 계약 기한에 대해 이야기하기**
@@ -196,16 +207,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 
 
 
-## 1.123.12의 새 소식
-
-**네덜란드어 – 공개**
-
-- **네덜란드어를 이제 모두가 쓸 수 있어요.** 설정 → 언어 및 지역에서 고르세요. 6722개 텍스트 전부, 설정 도우미, 데이터 내보내기, 알림이 네덜란드어로 준비되어 있어요. 기기 언어가 네덜란드어면 자동으로 적용돼요. 다른 분들에게는 달라지는 게 없어요.
-- **서버도 네덜란드어로 말해요:** 주간 미리보기, 재정 전망, 생일, 반려동물 알림, 매장 안내, “어디야?” 메시지, 짐 싸기 목록 제안, 보상 요청이 네덜란드어로 설정한 프로필과 네덜란드, 수리남, 아루바, 퀴라소, 신트마르턴 지역에 네덜란드어로 전달돼요. 음성 제어(Siri)는 앱이 네덜란드어일 때 아직 영어로 답해요.
-- 변경: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, 서버의 `pb_hooks/pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-wobistdu.js`, `pinn-packliste.js`, `pinn-aufgaben.js` 및 모든 README(신규: `README.nl.md`). 설치는 평소와 같습니다(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
-
-
-
 ## 작동 방식
 
 ```mermaid
@@ -234,7 +235,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.127.2` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.127.3` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

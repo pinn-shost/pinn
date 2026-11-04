@@ -187,3 +187,39 @@ html.dark .chat-select option { background: #26292b; }
 @keyframes chatRefFlash { 0%, 30% { box-shadow: 0 0 0 3px var(--c-mustard); } 100% { box-shadow: 0 0 0 3px transparent; } }
 html.dark .chat-pick-back .chat-sheet { color: #e9e9e6; }
 html.dark .chat-pick-ref { color: rgba(233,233,230,0.65); }
+
+/* 1.127.3: groups, pinned chats, swipe actions, chat pictures */
+.chat-list-tools { display: inline-flex; align-items: center; gap: 0.15rem; }
+.chat-head-avatar { flex-shrink: 0; display: inline-flex; padding: 0; border: 0; border-radius: 999px; background: transparent; cursor: pointer; position: relative; }
+.chat-head-avatar:hover::after { content: ''; position: absolute; inset: 0; border-radius: 999px; background: rgba(255,255,255,0.18); }
+.chat-item-badges { display: inline-flex; align-items: center; gap: 0.3rem; }
+.chat-pin-ico { font-size: 0.72rem; opacity: 0.65; line-height: 1; }
+.chat-unread-dot { min-width: 0.7rem; width: 0.7rem; height: 0.7rem; padding: 0; }
+.chat-swipe { position: relative; overflow: hidden; border-bottom: 1px solid rgba(37,35,31,0.06); }
+.chat-swipe .chat-item { border-bottom: 0; }
+.chat-swipe-acts { position: absolute; top: 0; bottom: 0; right: 0; width: 150px; display: flex; visibility: hidden; }
+.chat-swipe-btn { flex: 1; min-width: 0; padding: 0 0.3rem; border: 0; color: #fff; font: inherit; font-size: 0.72rem; font-weight: 600; line-height: 1.15; cursor: pointer; }
+.chat-swipe-btn.pin { background: var(--c-mustard); }
+.chat-swipe-btn.read { background: var(--c-pine); }
+.chat-swipe-row { position: relative; background: var(--c-paper); touch-action: pan-y; will-change: transform; }
+.chat-swipe-row:hover, .chat-swipe-row.active { background: color-mix(in srgb, var(--c-pine) 8%, var(--c-paper)); }
+.chat-swipe-more { position: absolute; right: 0.4rem; top: 50%; transform: translateY(-50%); width: 1.8rem; height: 1.8rem; border: 0; border-radius: 999px; background: var(--c-paper); color: rgba(37,35,31,0.7); font-size: 1.1rem; line-height: 1; cursor: pointer; opacity: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.18); }
+@media (hover: hover) and (pointer: fine) { .chat-swipe:hover .chat-swipe-more, .chat-swipe-more:focus-visible { opacity: 1; } }
+.chat-group-name { width: 100%; box-sizing: border-box; margin: 0.25rem 0 0.4rem; padding: 0.6rem 0.8rem; border: 1px solid rgba(37,35,31,0.2); border-radius: 0.6rem; background: #fff; font: inherit; color: #25231f; }
+.chat-group-pick { display: flex; flex-direction: column; max-height: 38vh; overflow-y: auto; margin: 0.25rem 0; }
+.chat-group-row { display: flex; align-items: center; gap: 0.7rem; padding: 0.45rem 0.3rem; cursor: pointer; border-radius: 0.5rem; }
+.chat-group-row:hover { background: color-mix(in srgb, var(--c-pine) 8%, transparent); }
+.chat-group-row input { width: 1.1rem; height: 1.1rem; accent-color: var(--c-pine); }
+.chat-group-name-txt { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chat-group-tag { font-size: 0.7rem; color: rgba(37,35,31,0.55); }
+.chat-group-err { color: #c0392b; min-height: 1.1rem; padding-top: 0; padding-bottom: 0; }
+.chat-sheet-primary { background: var(--c-pine); color: #fff; text-align: center; font-weight: 600; }
+.chat-sheet-primary:hover { background: color-mix(in srgb, var(--c-pine) 88%, #000); }
+.chat-sheet-primary:disabled { opacity: 0.55; cursor: default; }
+.chat-sheet-pic { display: flex; justify-content: center; padding: 0.3rem 0 0.4rem; }
+html.dark .chat-swipe-row { background: #26292b; }
+html.dark .chat-swipe-row:hover, html.dark .chat-swipe-row.active { background: color-mix(in srgb, var(--c-pine) 18%, #26292b); }
+html.dark .chat-swipe-more { background: #2f3335; color: #e9e9e6; }
+html.dark .chat-group-name { background: #1f2224; color: #e9e9e6; border-color: rgba(233,233,230,0.25); }
+html.dark .chat-group-tag { color: rgba(233,233,230,0.6); }
+

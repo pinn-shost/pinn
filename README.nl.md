@@ -106,6 +106,17 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский en 🇳🇱 Nederlands**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.127.3
+
+**Chat: eigen groepen, vastgezette chats, vegen en chatafbeeldingen**
+
+- **Maak je eigen groepen.** De nieuwe personenknop naast het schild: geef de groep een naam en vink aan wie erbij hoort – ze zijn meteen lid, **zonder uitnodiging**. De maker en beheerders wijzigen naam, leden en afbeelding; iedereen kan de groep verlaten. Wie later wordt toegevoegd, leest alleen nieuwere berichten.
+- **Volgorde en vastzetten.** Bovenaan staat het nieuwste bericht, verzonden of ontvangen; chats kun je **vastzetten** zodat ze bovenaan blijven. **Veeg een chat naar links** voor twee knoppen: vastzetten / losmaken en markeren als gelezen / ongelezen (afhankelijk van de toestand). Op een computer opent de knop “⋯” of een rechtermuisklik hetzelfde. Een chat die je als ongelezen markeert, toont een stip tot je hem opent; vastgezette chats en markeringen zijn op elk apparaat gelijk.
+- **Afbeeldingen.** De gezinsbeheerder tikt in de geopende gezinschat op de afbeelding en kiest een foto, rond bijgesneden zoals een profielfoto; de maker en beheerders van een groep doen hetzelfde voor de groep.
+- Namen en afbeeldingen van groepen zijn niet end-to-end versleuteld (de server heeft de leden nodig voor de sleutels); de berichten wel.
+- Gewijzigd: `js/chatgruppen.js` (nieuw), `js/chat.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `index.html`, `pinn-setup.sh`, `src/` en alle README’s. **Serverdeel:** `pb_hooks/chat.pb.js` en `pb_hooks/pinn-chat.js` – vervang ook de hooks; er worden automatisch drie collecties aangemaakt.
+
+
 ## Nieuw in 1.127.2
 
 **Chat: praten over taken, prikbordbriefjes en contractdeadlines**
@@ -127,16 +138,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Gewijzigd: `js/chatmedien.js` (nieuw), `css/chat.css`, `js/chat.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `pinn-setup.sh`, `src/` en alle README’s. **Serverdeel:** `pb_hooks/chat.pb.js` en `pb_hooks/pinn-chat.js` – vervang ook de hooks.
 
 
-## Nieuw in 1.127.0
-
-**Chat – end-to-end versleuteld**
-
-- **Gezinschat en privéchats** in de kleuren van pinn.: antwoorden, links, vinkjes (één = op de server, twee gekleurd = gelezen).
-- **End-to-end versleuteld:** je NAS ziet alleen wie wanneer schrijft, niet de tekst. Een herstelcode ontgrendelt de chat op een nieuw apparaat; veiligheidsnummers zijn te vergelijken.
-- **Push** “Nieuw bericht” zonder tekst. Nog geen afbeeldingen (1.127.1).
-- Serverdeel: `pb_hooks/chat.pb.js`, `pb_hooks/pinn-chat.js` (nieuw), `pb_hooks/pinn-push.js`, `pb_hooks/pinn-schema.js` – vervang ook de hooks.
-
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -146,7 +147,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.127.2` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.127.3` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

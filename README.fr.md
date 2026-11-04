@@ -125,6 +125,17 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский et 🇳🇱 Nederlands**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.127.3
+
+**Chat : groupes personnels, chats épinglés, balayage et images du chat**
+
+- **Crée tes propres groupes.** Le nouveau bouton de personnes à côté du bouclier : donne un nom au groupe et coche qui en fait partie – les personnes y sont tout de suite, **sans invitation**. Le créateur et les admins modifient le nom, les membres et l’image ; chacun peut quitter le groupe. Les personnes ajoutées plus tard ne lisent que les messages plus récents.
+- **Ordre et épinglage.** Le message le plus récent, envoyé ou reçu, est en haut ; les chats peuvent être **épinglés** pour rester en haut. **Balaie un chat vers la gauche** pour deux boutons : épingler / détacher et marquer comme lu / non lu (selon l’état). Sur ordinateur, le bouton « ⋯ » ou un clic droit ouvre la même chose. Un chat marqué comme non lu montre un point jusqu’à son ouverture ; épingles et marques sont les mêmes sur tous les appareils.
+- **Images.** L’admin de la famille touche l’image dans le chat familial ouvert et choisit une photo, découpée en rond comme une photo de profil ; le créateur et les admins d’un groupe font de même pour le groupe.
+- Les noms et images des groupes ne sont pas chiffrés de bout en bout (le serveur a besoin des membres pour les clés) ; les messages le restent.
+- Modifié : `js/chatgruppen.js` (nouveau), `js/chat.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, tous les `i18n/*.i18n.js`, `index.html`, `pinn-setup.sh`, `src/` et tous les README. **Partie serveur :** `pb_hooks/chat.pb.js` et `pb_hooks/pinn-chat.js` – remplace aussi les hooks ; trois collections de plus sont créées automatiquement.
+
+
 ## Nouveautés de la 1.127.2
 
 **Chat : parler des tâches, des notes du tableau et des échéances de contrats**
@@ -230,15 +241,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` et tous les README. Installation comme toujours (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
 
-## Nouveautés de la 1.123.8
-
-**Néerlandais – neuvième étape**
-
-- **Encore plus de pinn. en néerlandais.** La cloche (avis, courses sans dépenses saisies, « en route vers la maison » avec alarme SOS et boutons d’appel, nouveautés), les documents (échéances, garantie, rappels, visibilité, catégories, fichiers et file d’attente hors ligne) et le tableau d’affichage (notes, listes, photos, sondages, remerciements et comptes à rebours, archives) sont maintenant traduits (6352 textes sur 6722).
-- Le néerlandais reste **masqué** tant que tout n’est pas traduit (activable sur un appareil pour l’essayer ; les textes manquants apparaissent alors en anglais). Rien ne change de visible pour les autres.
-- Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` et tous les README. Installation comme toujours (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
-
 ## Comment ça marche
 
 ```mermaid
@@ -265,7 +267,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.127.2` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.127.3` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

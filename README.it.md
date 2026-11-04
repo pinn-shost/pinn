@@ -129,6 +129,17 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский e 🇳🇱 Nederlands**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.127.3
+
+**Chat: gruppi propri, chat fissate, scorrimento e immagini della chat**
+
+- **Crea i tuoi gruppi.** Il nuovo pulsante delle persone accanto allo scudo: dai un nome al gruppo e spunta chi ne fa parte – le persone entrano subito, **senza invito**. Il creatore e gli admin cambiano nome, membri e immagine; tutti possono uscire. Chi viene aggiunto dopo legge solo i messaggi più recenti.
+- **Ordine e fissare.** In alto c’è il messaggio più recente, inviato o ricevuto; le chat si possono **fissare** e restano in alto. **Scorri una chat verso sinistra** per due pulsanti: fissa / rimuovi e segna come letto / non letto (secondo lo stato). Sul computer il pulsante «⋯» o un clic destro apre lo stesso. Una chat segnata come non letta mostra un punto finché non la apri; fissate e segni sono uguali su ogni dispositivo.
+- **Immagini.** L’admin della famiglia tocca l’immagine nella chat di famiglia aperta e sceglie una foto, ritagliata in cerchio come la foto del profilo; il creatore e gli admin di un gruppo fanno lo stesso per il gruppo.
+- Nomi e immagini dei gruppi non sono crittografati end-to-end (il server ha bisogno dei membri per le chiavi); i messaggi sì.
+- Modificato: `js/chatgruppen.js` (nuovo), `js/chat.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, tutti gli `i18n/*.i18n.js`, `index.html`, `pinn-setup.sh`, `src/` e tutti i README. **Parte server:** `pb_hooks/chat.pb.js` e `pb_hooks/pinn-chat.js` – sostituisci anche gli hook; vengono create automaticamente altre tre raccolte.
+
+
 ## Novità della 1.127.2
 
 **Chat: parlare di attività, note della bacheca e scadenze dei contratti**
@@ -196,16 +207,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 
 
 
-## Novità della 1.123.12
-
-**Olandese – sbloccato**
-
-- **L’olandese è aperto a tutti.** Sceglilo in Impostazioni → Lingua e regione: tutti i 6722 testi, l’assistente di configurazione, l’esportazione dei dati e le notifiche sono in olandese. I dispositivi impostati sull’olandese lo usano in automatico. Per tutti gli altri non cambia nulla.
-- **Anche il server parla olandese:** anteprima della settimana, previsione finanziaria, compleanni, promemoria per gli animali, avvisi dei negozi, messaggi «Dove sei?», proposte di liste dei bagagli e richieste di premio – per i profili impostati sull’olandese e per i paesi Paesi Bassi, Suriname, Aruba, Curaçao e Sint Maarten. Il controllo vocale (Siri) risponde ancora in inglese quando l’app è in olandese.
-- Modificato: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, sul server `pb_hooks/pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-wobistdu.js`, `pinn-packliste.js`, `pinn-aufgaben.js` e tutti i README (nuovo: `README.nl.md`). Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o il pulsante di aggiornamento).
-
-
-
 ## Come funziona
 
 ```mermaid
@@ -234,7 +235,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.127.2` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.127.3` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

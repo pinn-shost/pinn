@@ -1,7 +1,8 @@
 // pb_hooks/pinn-chat.js
 // Not a *.pb.js file -> not loaded as a hook by itself, only through require() (routes: chat.pb.js).
 //
-// Family chat with end-to-end encryption (since 1.127.0; photos and videos since 1.127.1).
+// Family chat with end-to-end encryption (since 1.127.0; photos and videos since 1.127.1; own groups, pinned chats and
+// chat pictures since 1.127.3).
 //
 // What the SERVER sees and what it never sees:
 //   - never: the text of a message, who is mentioned in it, what it links to (all of that is inside the
@@ -15,8 +16,13 @@
 //   chat_nachrichten  one record per message: room, sender, time, encrypted package, recipients, read marks
 //   chat_dateien      (1.127.1) one record per photo/video: the ENCRYPTED file (protected, only reachable through the routes)
 //   chat_familie      (1.127.1) per family: automatic deletion of old messages / old photos and videos (days, 0 = keep)
+//   chat_gruppen      (1.127.3) groups made by the family members: name, members (profile IDs), creator
+//   chat_markierungen (1.127.3) per profile: pinned chats and chats marked as unread (JSON { room: { p, u } })
+//   chat_bilder       (1.127.3) picture of the family chat / of a group (small JPEG as a data URL)
 //
-// Rooms: "familie" (everybody of the family with a profile) and "dm:<idA>:<idB>" (two profile IDs, sorted).
+// Rooms: "familie" (everybody of the family with a profile), "dm:<idA>:<idB>" (two profile IDs, sorted) and
+// "gr:<ID of the group record>" (the members chosen by the creator - they are in the group right away, no invitation).
+// Names and pictures of groups are NOT encrypted (the server needs the members for the keys); messages still are.
 //
 // The encrypted package ("daten", JSON) is made and opened in the app (js/chat.js):
 //   { v: 1, s: <sender profile ID>, sp: <sender public key>, salt, iv, ct, w: { <profile ID>: { iv, k } } }
@@ -33,6 +39,14 @@ const KEEP_CHOICES = [0, 7, 30, 90, 180, 365]; // days, 0 = keep for ever
 const ORPHAN_MS = 24 * 60 * 60 * 1000;     // uploaded but never sent
 const MAX_BACKUP = 8000;         // size of the encrypted private key copy
 const MAX_RECIPIENTS = 40;
+const GROUPS = "chat_gruppen";
+const MARKS = "chat_markierungen";
+const PICS = "chat_bilder";
+const MAX_GROUP_NAME = 40;
+const MAX_PIC = 130000;          // a chat picture: small JPEG as a data URL (the app makes about 15-40 KB)
+const MAX_MARKS = 300;
+const DM_RE = /^dm:([a-z0-9]{15}):([a-z0-9]{15})$/;
+const GR_RE = /^gr:([a-z0-9]{15})$/;
 const UNREAD_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
 const PAGE = 60;
 const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl"];
@@ -50,7 +64,8 @@ const PUSH_TEXT = {
     nl: { group: "Nieuw bericht in de groepschat", dm: "Nieuw bericht" },
 };
 
-module.exports = { ensureSchema, roster, saveKey, saveBackup, saveSettings, overview, list, send, markRead, remove, upload, download, saveRetention, cleanup };
+module.exports = { ensureSchema, roster, saveKey, saveBackup, saveSettings, overview, list, send, markRead, remove, upload, download, saveRetention, cleanup,
+    saveGroup, leaveGroup, setRoomMark, getPicture, savePicture };
 
 function findCol(name) {
     try { return $app.findCollectionByNameOrId(name); } catch (e) { return null; }
@@ -159,7 +174,70 @@ function ensureSchema() {
             console.log("[Chat] Konnte Sammlung \"" + FAM + "\" nicht anlegen: " + err.message);
         }
     }
-    return !!(findCol(KEYS) && findCol(MSGS) && findCol(FILES) && findCol(FAM));
+    if (!findCol(GROUPS)) {
+        try {
+            $app.save(new Collection({
+                type: "base",
+                name: GROUPS,
+                fields: [
+                    { name: "familie", type: "text", max: 40, required: true },
+                    { name: "name", type: "text", max: 120, required: true },
+                    { name: "mitglieder", type: "text", max: 3000 },
+                    { name: "ersteller", type: "text", max: 40 },
+                    { name: "zeit", type: "number" },
+                    { name: "created", type: "autodate", onCreate: true, onUpdate: false },
+                    { name: "updated", type: "autodate", onCreate: true, onUpdate: true },
+                ],
+                indexes: ["CREATE INDEX `idx_chat_gruppen_familie` ON `" + GROUPS + "` (`familie`)"],
+                listRule: null, viewRule: null, createRule: null, updateRule: null, deleteRule: null,
+            }));
+            console.log("[Chat] Sammlung \"" + GROUPS + "\" angelegt.");
+        } catch (err) {
+            console.log("[Chat] Konnte Sammlung \"" + GROUPS + "\" nicht anlegen: " + err.message);
+        }
+    }
+    if (!findCol(MARKS)) {
+        try {
+            $app.save(new Collection({
+                type: "base",
+                name: MARKS,
+                fields: [
+                    { name: "benutzer", type: "text", max: 40, required: true },
+                    { name: "familie", type: "text", max: 40, required: true },
+                    { name: "daten", type: "text", max: 20000 },
+                    { name: "created", type: "autodate", onCreate: true, onUpdate: false },
+                    { name: "updated", type: "autodate", onCreate: true, onUpdate: true },
+                ],
+                indexes: ["CREATE UNIQUE INDEX `idx_chat_markierungen_benutzer` ON `" + MARKS + "` (`benutzer`)"],
+                listRule: null, viewRule: null, createRule: null, updateRule: null, deleteRule: null,
+            }));
+            console.log("[Chat] Sammlung \"" + MARKS + "\" angelegt.");
+        } catch (err) {
+            console.log("[Chat] Konnte Sammlung \"" + MARKS + "\" nicht anlegen: " + err.message);
+        }
+    }
+    if (!findCol(PICS)) {
+        try {
+            $app.save(new Collection({
+                type: "base",
+                name: PICS,
+                fields: [
+                    { name: "familie", type: "text", max: 40, required: true },
+                    { name: "raum", type: "text", max: 100, required: true },
+                    { name: "bild", type: "text", max: MAX_PIC + 100 },
+                    { name: "zeit", type: "number" },
+                    { name: "created", type: "autodate", onCreate: true, onUpdate: false },
+                    { name: "updated", type: "autodate", onCreate: true, onUpdate: true },
+                ],
+                indexes: ["CREATE UNIQUE INDEX `idx_chat_bilder_raum` ON `" + PICS + "` (`familie`, `raum`)"],
+                listRule: null, viewRule: null, createRule: null, updateRule: null, deleteRule: null,
+            }));
+            console.log("[Chat] Sammlung \"" + PICS + "\" angelegt.");
+        } catch (err) {
+            console.log("[Chat] Konnte Sammlung \"" + PICS + "\" nicht anlegen: " + err.message);
+        }
+    }
+    return !!(findCol(KEYS) && findCol(MSGS) && findCol(FILES) && findCol(FAM) && findCol(GROUPS) && findCol(MARKS) && findCol(PICS));
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -187,21 +265,56 @@ function cleanB64(v, min, max) {
 function parseObj(text) {
     try { const o = JSON.parse(String(text || "{}")); return (o && typeof o === "object" && !Array.isArray(o)) ? o : {}; } catch (err) { return {}; }
 }
+// ---- groups (1.127.3)
+function groupRec(id) {
+    try { return $app.findRecordById(GROUPS, String(id)); } catch (err) { return null; }
+}
+function groupIds(rec) {
+    try { const a = JSON.parse(rec.getString("mitglieder") || "[]"); return Array.isArray(a) ? a.filter(x => typeof x === "string") : []; } catch (err) { return []; }
+}
+function groupOut(rec) {
+    return { id: rec.id, raum: "gr:" + rec.id, name: rec.getString("name"), mitglieder: groupIds(rec), ersteller: rec.getString("ersteller"), zeit: Number(rec.get("zeit") || 0) };
+}
+// The groups this profile is a member of
+function groupsOf(u) {
+    let recs = [];
+    try { recs = $app.findRecordsByFilter(GROUPS, "familie = {:f}", "-zeit", 0, 0, { f: u.getString("familie") }); } catch (err) { recs = []; }
+    return recs.filter(r => groupIds(r).indexOf(u.id) >= 0);
+}
 // Members of a room (user records) or an error when this profile may not use the room
 function roomMembers(u, room) {
     const fam = u.getString("familie");
     const all = familyUsers(fam);
     if (room === "familie") return all;
-    const m = /^dm:([a-z0-9]{15}):([a-z0-9]{15})$/.exec(String(room || ""));
+    const g = GR_RE.exec(String(room || ""));
+    if (g) {
+        const rec = groupRec(g[1]);
+        if (!rec || rec.getString("familie") !== fam || groupIds(rec).indexOf(u.id) < 0) throw new Error("Unbekannter Chat.");
+        const ids = groupIds(rec);
+        const members = all.filter(x => ids.indexOf(x.id) >= 0);
+        if (!members.length) throw new Error("Unbekannter Chat.");
+        return members;
+    }
+    const m = DM_RE.exec(String(room || ""));
     if (!m || m[1] >= m[2] || (m[1] !== u.id && m[2] !== u.id)) throw new Error("Unbekannter Chat.");
     const members = all.filter(x => x.id === m[1] || x.id === m[2]);
     if (members.length !== 2) throw new Error("Unbekannter Chat.");
     return members;
 }
-function canSeeRoom(userId, room) {
+// cache: optional object, so that a loop over many messages looks up each group only once
+function canSeeRoom(u, room, cache) {
+    room = String(room || "");
     if (room === "familie") return true;
-    const m = /^dm:([a-z0-9]{15}):([a-z0-9]{15})$/.exec(String(room || ""));
-    return !!m && (m[1] === userId || m[2] === userId);
+    const m = DM_RE.exec(room);
+    if (m) return m[1] === u.id || m[2] === u.id;
+    const g = GR_RE.exec(room);
+    if (!g) return false;
+    const c = cache || {};
+    if (!(room in c)) {
+        const rec = groupRec(g[1]);
+        c[room] = !!rec && rec.getString("familie") === u.getString("familie") && groupIds(rec).indexOf(u.id) >= 0;
+    }
+    return c[room];
 }
 function hasId(list, id) { return String(list || "").indexOf("," + id + ",") >= 0; }
 function msgOut(rec, me, receipts) {
@@ -241,7 +354,8 @@ function roster(e) {
     }));
     const mine = keys[u.id] ? { oeffentlich: keys[u.id].getString("oeffentlich"), gesichert: keys[u.id].getString("gesichert"), lese: !keys[u.id].getBool("lese_aus") } : null;
     const keep = retentionOf(fam);
-    return { ich: u.id, profile: profiles, mein: mine, jetzt: Date.now(), aufbewahrung: keep, speicher: storageOf(fam), admin: u.getString("rolle") === "admin" };
+    return { ich: u.id, profile: profiles, mein: mine, jetzt: Date.now(), aufbewahrung: keep, speicher: storageOf(fam), admin: u.getString("rolle") === "admin",
+        gruppen: groupsOf(u).map(groupOut), bilder: pictureVersions(u) };
 }
 function famRec(familyId) {
     try { return $app.findFirstRecordByFilter(FAM, "familie = {:f}", { f: familyId }); } catch (err) { return null; }
@@ -322,9 +436,10 @@ function overview(e) {
         recs = $app.findRecordsByFilter(MSGS, "familie = {:f} && zeit > {:z}", "-zeit", 1500, 0, { f: fam, z: Date.now() - UNREAD_WINDOW_MS });
     } catch (err) { recs = []; }
     const rooms = {};
+    const seen = {};
     recs.forEach(r => {
         const room = r.getString("raum");
-        if (!canSeeRoom(u.id, room)) return;
+        if (!canSeeRoom(u, room, seen)) return;
         if (!hasId(r.getString("empf"), u.id) && r.getString("von") !== u.id) return;
         const o = rooms[room] || (rooms[room] = { raum: room, letzte: null, ungelesen: 0 });
         if (!o.letzte) o.letzte = msgOut(r, u.id, receipts);
@@ -332,7 +447,7 @@ function overview(e) {
         if (!mine && !r.getBool("geloescht") && hasId(r.getString("empf"), u.id) && !parseObj(r.getString("gelesen"))[u.id]) o.ungelesen++;
     });
     const list = Object.keys(rooms).map(k => rooms[k]);
-    return { raeume: list, gesamt: list.reduce((n, x) => n + x.ungelesen, 0), jetzt: Date.now() };
+    return { raeume: list, gesamt: list.reduce((n, x) => n + x.ungelesen, 0), jetzt: Date.now(), markierungen: marksOf(u) };
 }
 // Messages of a room. seit = only what changed since that time (new, read, deleted; ">=" because several changes can share
 // one millisecond - the app ignores what it already has);
@@ -389,7 +504,7 @@ function notify(familyId, sender, room, recipients) {
             if (push.readSettings(r).chat === false) return;
             const t = PUSH_TEXT[langOf(r)] || PUSH_TEXT.en;
             sent += push.notifyUser(r.id, {
-                titel: "💬 " + name, text: room === "familie" ? t.group : t.dm,
+                titel: "💬 " + name, text: (room === "familie" || room.indexOf("gr:") === 0) ? t.group : t.dm,
                 url: "/?chat=" + encodeURIComponent(room), tag: "chat-" + room, urgency: "high", hinweis: false,
             }) || 0;
         } catch (err) { /* next recipient */ }
@@ -498,7 +613,7 @@ function download(e) {
     const u = authUser(e);
     let rec = null;
     try { rec = $app.findRecordById(FILES, String(e.request.url.query().get("id") || "")); } catch (err) { rec = null; }
-    if (!rec || rec.getString("familie") !== u.getString("familie") || !canSeeRoom(u.id, rec.getString("raum")) || !rec.getString("datei")) throw new Error("Nicht gefunden.");
+    if (!rec || rec.getString("familie") !== u.getString("familie") || !canSeeRoom(u, rec.getString("raum")) || !rec.getString("datei")) throw new Error("Nicht gefunden.");
     const fsys = $app.newFilesystem();
     try {
         fsys.serve(e.response, e.request, rec.baseFilesPath() + "/" + rec.getString("datei"), "chat.bin");
@@ -506,6 +621,150 @@ function download(e) {
         try { fsys.close(); } catch (err) { /* ignore */ }
     }
     return true;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Groups, pinned / unread-marked chats, chat pictures (1.127.3)
+// ---------------------------------------------------------------------------------------------
+function isAdmin(u) { return u.getString("rolle") === "admin"; }
+// Make a group (id empty) or change name / members of one. Everybody chosen is a member right away.
+// Changing: the creator and admins of the family; the person changing always stays in (others use "leave").
+function saveGroup(e, body) {
+    const u = authUser(e);
+    const fam = u.getString("familie");
+    const name = String((body && body.name) || "").replace(/\s+/g, " ").trim().slice(0, MAX_GROUP_NAME);
+    if (!name) throw new Error("Der Gruppenname fehlt.");
+    const valid = {};
+    familyUsers(fam).forEach(x => { valid[x.id] = true; });
+    let ids = [];
+    ((body && Array.isArray(body.mitglieder)) ? body.mitglieder : []).forEach(id => { if (typeof id === "string" && valid[id] && ids.indexOf(id) < 0) ids.push(id); });
+    if (ids.indexOf(u.id) < 0) ids.unshift(u.id);
+    if (ids.length < 2) throw new Error("Eine Gruppe braucht mindestens zwei Personen.");
+    if (ids.length > MAX_RECIPIENTS) throw new Error("Zu viele Personen.");
+    const id = String((body && body.id) || "");
+    let rec = null;
+    if (id) {
+        rec = groupRec(id);
+        if (!rec || rec.getString("familie") !== fam || groupIds(rec).indexOf(u.id) < 0) throw new Error("Unbekannter Chat.");
+        if (rec.getString("ersteller") !== u.id && !isAdmin(u)) throw new Error("Nur der Ersteller oder ein Admin darf die Gruppe ändern.");
+    } else {
+        rec = new Record($app.findCollectionByNameOrId(GROUPS));
+        rec.set("familie", fam);
+        rec.set("ersteller", u.id);
+        rec.set("zeit", Date.now());
+    }
+    rec.set("name", name);
+    rec.set("mitglieder", JSON.stringify(ids));
+    $app.save(rec);
+    return { ok: true, gruppe: groupOut(rec) };
+}
+// Leave a group. The last person leaving deletes the group with its messages, files and picture.
+function leaveGroup(e, body) {
+    const u = authUser(e);
+    const rec = groupRec(String((body && body.id) || ""));
+    if (!rec || rec.getString("familie") !== u.getString("familie") || groupIds(rec).indexOf(u.id) < 0) throw new Error("Unbekannter Chat.");
+    const rest = groupIds(rec).filter(x => x !== u.id);
+    if (!rest.length) { dropGroup(rec); return { ok: true, geloescht: true }; }
+    rec.set("mitglieder", JSON.stringify(rest));
+    if (rec.getString("ersteller") === u.id) rec.set("ersteller", rest[0]);
+    $app.save(rec);
+    return { ok: true, geloescht: false };
+}
+function dropGroup(rec) {
+    const fam = rec.getString("familie");
+    const room = "gr:" + rec.id;
+    for (let i = 0; i < 40; i++) {
+        let msgs = [];
+        try { msgs = $app.findRecordsByFilter(MSGS, "familie = {:f} && raum = {:r}", "zeit", 500, 0, { f: fam, r: room }); } catch (err) { msgs = []; }
+        if (!msgs.length) break;
+        msgs.forEach(m => { dropFiles(m.id); try { $app.delete(m); } catch (err) { /* next */ } });
+    }
+    const pic = picRec(fam, room);
+    if (pic) { try { $app.delete(pic); } catch (err) { /* ignore */ } }
+    try { $app.delete(rec); } catch (err) { /* ignore */ }
+}
+function marksRec(userId) {
+    try { return $app.findFirstRecordByFilter(MARKS, "benutzer = {:u}", { u: String(userId) }); } catch (err) { return null; }
+}
+// { room: { p: 1 = pinned, u: 1 = marked as unread } } - only for rooms this profile can still see
+function marksOf(u) {
+    const rec = marksRec(u.id);
+    const o = rec ? parseObj(rec.getString("daten")) : {};
+    const out = {};
+    const seen = {};
+    Object.keys(o).forEach(room => { if (canSeeRoom(u, room, seen)) out[room] = { p: o[room] && o[room].p ? 1 : 0, u: o[room] && o[room].u ? 1 : 0 }; });
+    return out;
+}
+// Pin a chat / mark it as unread (or take the mark away): { raum, p?, u? } with true / false
+function setRoomMark(e, body) {
+    const u = authUser(e);
+    const room = String((body && body.raum) || "");
+    if (!canSeeRoom(u, room)) throw new Error("Unbekannter Chat.");
+    let rec = marksRec(u.id);
+    if (!rec) {
+        rec = new Record($app.findCollectionByNameOrId(MARKS));
+        rec.set("benutzer", u.id);
+        rec.set("familie", u.getString("familie"));
+    }
+    const o = parseObj(rec.getString("daten"));
+    const cur = o[room] || {};
+    if (body && typeof body.p === "boolean") cur.p = body.p ? 1 : 0;
+    if (body && typeof body.u === "boolean") cur.u = body.u ? 1 : 0;
+    if (!cur.p && !cur.u) delete o[room]; else o[room] = { p: cur.p ? 1 : 0, u: cur.u ? 1 : 0 };
+    if (Object.keys(o).length > MAX_MARKS) throw new Error("Zu viele Markierungen.");
+    rec.set("daten", JSON.stringify(o));
+    $app.save(rec);
+    return { ok: true, markierungen: marksOf(u) };
+}
+function picRec(familyId, room) {
+    try { return $app.findFirstRecordByFilter(PICS, "familie = {:f} && raum = {:r}", { f: familyId, r: String(room) }); } catch (err) { return null; }
+}
+// Version (time of the last change) of every picture this profile can see: the app only loads a picture again when it changed
+function pictureVersions(u) {
+    const out = {};
+    const seen = {};
+    let recs = [];
+    try { recs = $app.findRecordsByFilter(PICS, "familie = {:f}", "", 0, 0, { f: u.getString("familie") }); } catch (err) { recs = []; }
+    recs.forEach(r => { const room = r.getString("raum"); if (canSeeRoom(u, room, seen)) out[room] = Number(r.get("zeit") || 0); });
+    return out;
+}
+function getPicture(e, query) {
+    const u = authUser(e);
+    const room = String((query && query.raum) || "");
+    if (!canSeeRoom(u, room)) throw new Error("Unbekannter Chat.");
+    const rec = picRec(u.getString("familie"), room);
+    return { bild: rec ? rec.getString("bild") : "", zeit: rec ? Number(rec.get("zeit") || 0) : 0 };
+}
+// Picture of the family chat: only admins of the family. Picture of a group: its creator and admins. bild = null removes it.
+function savePicture(e, body) {
+    const u = authUser(e);
+    const fam = u.getString("familie");
+    const room = String((body && body.raum) || "");
+    if (room === "familie") {
+        if (!isAdmin(u)) throw new Error("Nur für Admins.");
+    } else {
+        const g = GR_RE.exec(room);
+        const grp = g ? groupRec(g[1]) : null;
+        if (!grp || grp.getString("familie") !== fam || groupIds(grp).indexOf(u.id) < 0) throw new Error("Unbekannter Chat.");
+        if (grp.getString("ersteller") !== u.id && !isAdmin(u)) throw new Error("Nur der Ersteller oder ein Admin darf das Bild ändern.");
+    }
+    const bild = body ? body.bild : null;
+    let rec = picRec(fam, room);
+    if (bild === null || bild === undefined || bild === "") {
+        if (rec) { try { $app.delete(rec); } catch (err) { /* ignore */ } }
+        return { ok: true, zeit: 0 };
+    }
+    if (typeof bild !== "string" || bild.length > MAX_PIC || !/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(bild)) throw new Error("Bild ungültig.");
+    if (!rec) {
+        rec = new Record($app.findCollectionByNameOrId(PICS));
+        rec.set("familie", fam);
+        rec.set("raum", room);
+    }
+    const now = Date.now();
+    rec.set("bild", bild);
+    rec.set("zeit", now);
+    $app.save(rec);
+    return { ok: true, zeit: now };
 }
 
 // Every night: delete what the families asked to be deleted, plus uploads that were never sent

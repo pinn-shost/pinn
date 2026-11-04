@@ -14,6 +14,8 @@
      safety number - protection against a server that swaps keys. People compare the safety numbers in person or by phone.
 
    Messages are plain objects { x: text, q: { i, u, x } reply, r: { k, id, ti } reference to a task, note, ... }.
+   Since 1.127.3: own groups (room "gr:<id>"), pinned chats, "mark as unread", swipe actions in the list and the pictures of the family
+   chat / groups live in js/chatgruppen.js; this file calls it through the functions chatG... and chatPic....
    Other parts of the app can open a chat with a reference: pinnChat.compose(room, { k: 'task', id, ti }), or let the person
    pick the chat first: pinnChat.share({ k: 'task', id, ti }, onPick) (used by the "discuss in chat" buttons).
    All visible text comes from tk('chat.*'); user text is only ever put into the page with textContent (no innerHTML). */
@@ -34,6 +36,7 @@ function chatNewState(uid) {
   return {
     uid, phase: 'loading', roster: [], me: null, mineSrv: null, priv: null, pub: '', pins: {}, code: '', err: '',
     rooms: new Map(), room: '', ov: new Map(), plain: new Map(), prev: new Map(), reply: null, ref: null,
+    groups: [], bilder: {}, mark: {}, swipeOpen: '', drag: false, listDirty: false,
     pollTimer: null, tick: 0, sheet: null, busy: false, receipts: true,
   };
 }
@@ -193,17 +196,31 @@ function chatMemberOf(p) { return p && p.mitglied && typeof memberById === 'func
 function chatDmId(a, b) { return 'dm:' + [a, b].sort().join(':'); }
 function chatRoomMembers(room) {
   if (room === 'familie') return chatS.roster;
+  if (String(room).indexOf('gr:') === 0) {
+    const g = (chatS.groups || []).find(x => x.raum === room);
+    return g ? chatS.roster.filter(p => g.mitglieder.indexOf(p.id) >= 0) : [];
+  }
   const parts = String(room).split(':');
   return chatS.roster.filter(p => p.id === parts[1] || p.id === parts[2]);
 }
 function chatRoomList() {
   const S = chatS;
-  const rooms = [{ id: 'familie', group: true, title: tk('chat.familyChat'), person: null }];
-  S.roster.filter(p => p.id !== S.uid).sort((a, b) => chatName(a).localeCompare(chatName(b))).forEach(p => {
-    rooms.push({ id: chatDmId(S.uid, p.id), group: false, title: chatName(p), person: p });
+  const rooms = [{ id: 'familie', group: true, title: tk('chat.familyChat'), person: null, rank: 0, born: 0 }];
+  (S.groups || []).slice().sort((x, y) => String(x.name).localeCompare(String(y.name))).forEach(g => {
+    rooms.push({ id: g.raum, group: true, isGroup: true, title: g.name, person: null, g, rank: 1, born: g.zeit || 0 });
   });
-  rooms.forEach(r => { const o = S.ov.get(r.id); r.last = o && o.letzte ? o.letzte : null; r.unread = o ? o.ungelesen : 0; });
-  rooms.sort((a, b) => (b.last ? b.last.zeit : 0) - (a.last ? a.last.zeit : 0) || (a.group ? -1 : b.group ? 1 : 0));
+  S.roster.filter(p => p.id !== S.uid).sort((a, b) => chatName(a).localeCompare(chatName(b))).forEach(p => {
+    rooms.push({ id: chatDmId(S.uid, p.id), group: false, title: chatName(p), person: p, rank: 2, born: 0 });
+  });
+  const marks = S.mark || {};
+  rooms.forEach(r => {
+    const o = S.ov.get(r.id);
+    r.last = o && o.letzte ? o.letzte : null; r.unread = o ? o.ungelesen : 0;
+    r.pinned = !!(marks[r.id] && marks[r.id].p); r.flagged = !!(marks[r.id] && marks[r.id].u);
+    r.sortTime = r.last ? r.last.zeit : r.born; // newest message sent or received; a new group without messages counts from its creation
+  });
+  // pinned chats first, then the newest message (sent or received) on top
+  rooms.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || b.sortTime - a.sortTime || a.rank - b.rank);
   return rooms;
 }
 function chatRoomById(id) { return chatRoomList().find(r => r.id === id) || null; }
@@ -238,7 +255,11 @@ async function chatLoadRoster() {
   S.me = S.roster.find(p => p.id === S.uid) || null;
   S.receipts = !d.mein || d.mein.lese !== false;
   S.keep = d.aufbewahrung || null; S.storage = d.speicher != null ? d.speicher : null; S.isAdmin = !!d.admin;
+  S.groups = Array.isArray(d.gruppen) ? d.gruppen : []; S.bilder = d.bilder && typeof d.bilder === 'object' ? d.bilder : {};
   chatPinsSync();
+  if (typeof chatPicsSync === 'function') chatPicsSync();
+  // a group this profile was taken out of (or that is gone) cannot stay open
+  if (S.room && S.room.indexOf('gr:') === 0 && !S.groups.some(g => g.raum === S.room)) { S.room = ''; S.reply = null; S.ref = null; if (S.phase === 'ready' && currentView === 'chat') chatRender(); }
 }
 
 /* ---------------------------------------------------------------- start: keys on this device */
@@ -411,6 +432,7 @@ async function chatLoadOverview() {
   try {
     const d = await chatApi('overview');
     S.ov = new Map((d.raeume || []).map(r => [r.raum, r]));
+    S.mark = d.markierungen && typeof d.markierungen === 'object' ? d.markierungen : {};
     chatUpdateBadge();
     chatRenderList();
     chatRefreshPreviews();
@@ -437,7 +459,8 @@ function chatPlainText(msg) {
   return cap;
 }
 function chatUpdateBadge() {
-  const n = chatS ? Array.from(chatS.ov.values()).reduce((a, o) => a + (o.ungelesen || 0), 0) : 0;
+  let n = chatS ? Array.from(chatS.ov.values()).reduce((a, o) => a + (o.ungelesen || 0), 0) : 0;
+  if (chatS && chatS.mark) Object.keys(chatS.mark).forEach(room => { const o = chatS.ov.get(room); if (chatS.mark[room].u && !(o && o.ungelesen)) n++; });
   const el = document.getElementById('navChatBadge');
   if (el) { el.textContent = n > 9 ? '9+' : String(n); el.classList.toggle('hidden', !n); }
 }
@@ -446,7 +469,7 @@ async function chatBadgeTick() {
   if (!chatEnabled() || document.hidden) return;
   if (!chatS || chatS.uid !== currentUser().id) chatS = chatNewState(currentUser().id);
   if (currentView === 'chat') return;
-  try { const d = await chatApi('overview'); chatS.ov = new Map((d.raeume || []).map(r => [r.raum, r])); chatUpdateBadge(); } catch (e) { /* offline */ }
+  try { const d = await chatApi('overview'); chatS.ov = new Map((d.raeume || []).map(r => [r.raum, r])); chatS.mark = d.markierungen && typeof d.markierungen === 'object' ? d.markierungen : {}; chatUpdateBadge(); } catch (e) { /* offline */ }
 }
 
 /* ---------------------------------------------------------------- opening and leaving the page */
@@ -507,6 +530,7 @@ async function chatOpenRoom(room, keep) {
   try { await chatLoadRoom(room, false); } catch (e) { /* shown empty */ }
   chatRenderConv(true);
   chatMarkRead();
+  if (S.mark && S.mark[room] && S.mark[room].u && typeof chatSetMark === 'function') chatSetMark(room, { u: false });
 }
 // For other parts of the app: open a chat with a reference to a task, note, ... in the input line.
 // The reference lives in the state, so it survives the start-up of the chat (loading, unlocking with the code).
@@ -567,10 +591,11 @@ async function chatShare(ref, onPick) {
   if (!chatEnabled() || !ref || !ref.k || !ref.id) return;
   if (document.getElementById('chatPick')) return;
   const uid = currentUser().id;
-  let profiles = [];
-  // Only the list of people is read here: the key pins of the chat page stay untouched
-  try { const d = await chatApi('keys'); profiles = d.profile || []; } catch (e) { chatToast(tk('chat.error.load')); return; }
+  let profiles = [], groups = [];
+  // Only the list of people and groups is read here: the key pins of the chat page stay untouched
+  try { const d = await chatApi('keys'); profiles = d.profile || []; groups = d.gruppen || []; } catch (e) { chatToast(tk('chat.error.load')); return; }
   const rooms = [{ id: 'familie', group: true, title: tk('chat.familyChat'), person: null }];
+  groups.slice().sort((a, b) => String(a.name).localeCompare(String(b.name))).forEach(g => rooms.push({ id: g.raum, group: true, isGroup: true, title: g.name, person: null }));
   profiles.filter(p => p.id !== uid).sort((a, b) => chatName(a).localeCompare(chatName(b))).forEach(p => {
     rooms.push({ id: chatDmId(uid, p.id), group: false, title: chatName(p), person: p });
   });
@@ -584,7 +609,7 @@ async function chatShare(ref, onPick) {
   card.appendChild(chatEl('div', 'chat-sheet-note chat-pick-ref', (CHAT_REF_ICONS[ref.k] || '🔗') + ' ' + String(ref.ti || '')));
   rooms.forEach(r => {
     const b = chatEl('button', 'chat-sheet-act chat-pick-row'); b.type = 'button';
-    b.appendChild(chatAvatar(r.person, r.group, 36));
+    b.appendChild(chatRoomAvatar(r, 36));
     b.appendChild(chatEl('span', 'chat-pick-name', r.title));
     b.onclick = () => { close(); if (typeof onPick === 'function') { try { onPick(); } catch (e) { /* ignore */ } } chatCompose(r.id, ref); };
     card.appendChild(b);
@@ -608,6 +633,17 @@ function chatAvatar(p, group, size) {
   box.style.background = (m && m.color && m.color !== 'transparent') ? m.color : '#9A9A92';
   box.classList.add('chat-avatar-initial');
   return box;
+}
+// Avatar of a chat: its picture if it has one (family chat, group), else the group symbol / the person
+function chatRoomAvatar(r, size) {
+  const url = typeof chatPicUrl === 'function' ? chatPicUrl(r.id) : '';
+  if (url) {
+    const box = chatEl('span', 'chat-avatar'); box.style.width = box.style.height = (size || 40) + 'px';
+    const img = document.createElement('img'); img.src = url; img.alt = ''; box.appendChild(img);
+    return box;
+  }
+  if (r.isGroup) { const box = chatAvatar(null, true, size); box.textContent = '👥'; return box; }
+  return chatAvatar(r.person, r.group, size);
 }
 function chatRoot() { return document.getElementById('chatRoot'); }
 function chatRender() {
@@ -665,9 +701,15 @@ function chatBuildList() {
   const list = chatEl('div', 'chat-list');
   const head = chatEl('div', 'chat-list-head');
   head.appendChild(chatEl('h2', 'chat-list-title', tk('chat.title')));
+  const tools = chatEl('span', 'chat-list-tools');
+  const add = chatEl('button', 'chat-icon-btn'); add.type = 'button'; add.id = 'chatNewGroupBtn'; add.setAttribute('aria-label', tk('chat.group.new')); add.title = tk('chat.group.new');
+  add.appendChild(chatSvg('M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2 M9 11a4 4 0 100-8 4 4 0 000 8z M19 8v6 M22 11h-6', 20));
+  add.onclick = () => { if (typeof chatGEditSheet === 'function') chatGEditSheet(null); };
+  tools.appendChild(add);
   const info = chatEl('button', 'chat-icon-btn'); info.type = 'button'; info.setAttribute('aria-label', tk('chat.info.title')); info.appendChild(chatSvg('M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5l8-3z M9 12l2 2 4-4', 20));
   info.onclick = () => { chatS.sheet = 'info'; chatRenderSheet(); };
-  head.appendChild(info);
+  tools.appendChild(info);
+  head.appendChild(tools);
   list.appendChild(head);
   const items = chatEl('div', 'chat-items'); items.id = 'chatItems';
   list.appendChild(items);
@@ -686,28 +728,48 @@ function chatPreviewText(room) {
   if (room.group && !mine && pv && !pv.err && !pv.del) { const p = S.roster.find(x => x.id === o.letzte.von); text = chatName(p) + ': ' + text; }
   return { text: text.replace(/\s+/g, ' '), mine, ticks: mine ? chatTicks(o.letzte) : 0 };
 }
+// One row of the list of chats (without the swipe actions)
+function chatListRow(r) {
+  const row = chatEl('button', 'chat-item' + (chatS.room === r.id ? ' active' : '')); row.type = 'button';
+  row.appendChild(chatRoomAvatar(r, 46));
+  const mid = chatEl('span', 'chat-item-mid');
+  mid.appendChild(chatEl('span', 'chat-item-title', r.title));
+  const pv = chatPreviewText(r);
+  const line = chatEl('span', 'chat-item-prev');
+  if (pv.mine) line.appendChild(chatEl('span', 'chat-ticks' + (pv.ticks === 2 ? ' read' : ''), pv.ticks === 2 ? '✓✓' : '✓'));
+  line.appendChild(document.createTextNode(pv.text));
+  mid.appendChild(line);
+  row.appendChild(mid);
+  const side = chatEl('span', 'chat-item-side');
+  const unread = r.unread > 0 || r.flagged;
+  if (r.last) side.appendChild(chatEl('span', 'chat-item-time' + (unread ? ' unread' : ''), chatTime(r.last.zeit)));
+  const badges = chatEl('span', 'chat-item-badges');
+  if (r.pinned) { const pin = chatEl('span', 'chat-pin-ico', '📌'); pin.setAttribute('aria-label', tk('chat.pinned')); badges.appendChild(pin); }
+  if (r.unread) badges.appendChild(chatEl('span', 'chat-unread', r.unread > 99 ? '99+' : String(r.unread)));
+  else if (r.flagged) { const dot = chatEl('span', 'chat-unread chat-unread-dot'); dot.setAttribute('aria-label', tk('chat.markUnread')); badges.appendChild(dot); }
+  if (badges.childNodes.length) side.appendChild(badges);
+  row.appendChild(side);
+  row.onclick = () => chatOpenRoom(r.id);
+  return row;
+}
 function chatRenderList() {
   const box = document.getElementById('chatItems');
   if (!box || !chatS || chatS.phase !== 'ready') return;
+  if (chatS.drag) { chatS.listDirty = true; return; } // a finger is swiping a row: do not rebuild the list under it
+  chatS.listDirty = false;
   box.replaceChildren();
-  chatRoomList().forEach(r => {
-    const row = chatEl('button', 'chat-item' + (chatS.room === r.id ? ' active' : '')); row.type = 'button';
-    row.appendChild(chatAvatar(r.person, r.group, 46));
-    const mid = chatEl('span', 'chat-item-mid');
-    mid.appendChild(chatEl('span', 'chat-item-title', r.title));
-    const pv = chatPreviewText(r);
-    const line = chatEl('span', 'chat-item-prev');
-    if (pv.mine) line.appendChild(chatEl('span', 'chat-ticks' + (pv.ticks === 2 ? ' read' : ''), pv.ticks === 2 ? '✓✓' : '✓'));
-    line.appendChild(document.createTextNode(pv.text));
-    mid.appendChild(line);
-    row.appendChild(mid);
-    const side = chatEl('span', 'chat-item-side');
-    if (r.last) side.appendChild(chatEl('span', 'chat-item-time' + (r.unread ? ' unread' : ''), chatTime(r.last.zeit)));
-    if (r.unread) side.appendChild(chatEl('span', 'chat-unread', r.unread > 99 ? '99+' : String(r.unread)));
-    row.appendChild(side);
-    row.onclick = () => chatOpenRoom(r.id);
-    box.appendChild(row);
-  });
+  chatRoomList().forEach(r => box.appendChild(typeof chatGRow === 'function' ? chatGRow(r) : chatListRow(r)));
+}
+// Picture in the header of a conversation: a button for whoever may change it (admins for the family chat, creator/admins for a group)
+function chatHeadAvatar(room) {
+  const av = chatRoomAvatar(room, 38);
+  let out = av;
+  if (typeof chatGCanPicture === 'function' && chatGCanPicture(room)) {
+    out = chatEl('button', 'chat-head-avatar'); out.type = 'button'; out.setAttribute('aria-label', tk('chat.pic.change')); out.title = tk('chat.pic.change');
+    out.appendChild(av); out.onclick = () => chatGPictureMenu(room.id);
+  }
+  out.dataset.headAv = '1';
+  return out;
 }
 function chatBuildConv() {
   const S = chatS;
@@ -725,13 +787,13 @@ function chatBuildConv() {
   const back = chatEl('button', 'chat-icon-btn chat-back'); back.type = 'button'; back.setAttribute('aria-label', tk('chat.back')); back.appendChild(chatSvg('M15 18l-6-6 6-6', 22));
   back.onclick = () => { S.room = ''; S.reply = null; S.ref = null; chatRender(); chatLoadOverview(); };
   head.appendChild(back);
-  head.appendChild(chatAvatar(room.person, room.group, 38));
+  head.appendChild(chatHeadAvatar(room));
   const t = chatEl('span', 'chat-conv-title');
   t.appendChild(chatEl('span', 'chat-conv-name', room.title));
   t.appendChild(chatEl('span', 'chat-conv-sub', '🔒 ' + tk('chat.e2ee')));
   head.appendChild(t);
   const info = chatEl('button', 'chat-icon-btn'); info.type = 'button'; info.setAttribute('aria-label', tk('chat.info.title')); info.appendChild(chatSvg('M12 16v-4 M12 8h.01 M12 22a10 10 0 100-20 10 10 0 000 20z', 22));
-  info.onclick = () => { S.sheet = 'info'; chatRenderSheet(); };
+  info.onclick = () => { if (room.isGroup && typeof chatGInfoSheet === 'function') chatGInfoSheet(room.id); else { S.sheet = 'info'; chatRenderSheet(); } };
   head.appendChild(info);
   conv.appendChild(head);
   const banners = chatEl('div', 'chat-banners'); banners.id = 'chatBanners'; conv.appendChild(banners);

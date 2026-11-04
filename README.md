@@ -125,6 +125,17 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский and 🇳🇱 Nederlands**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.127.3
+
+**Chat: your own groups, pinned chats, swipe actions and chat pictures**
+
+- **Make your own groups.** The new people button next to the shield: give the group a name and tick who belongs to it – they are in the group right away, **no invitation**. The creator and admins change name, members and picture; everybody can leave. People added later can only read newer messages.
+- **Order and pinning.** The newest message – sent or received – is on top; chats can be **pinned** so they stay on top. **Swipe a chat to the left** for two buttons: pin / unpin and mark as read / unread (depending on the state). On a computer the “⋯” button or a right click opens the same. A chat you marked as unread shows a dot until you open it; pins and marks are the same on every device.
+- **Pictures.** The family admin taps the picture in the open family chat and chooses a photo, cropped round like a profile picture; the creator and admins of a group do the same for the group.
+- Names and pictures of groups are not end-to-end encrypted (the server needs the members to prepare the keys); the messages still are.
+- Changed: `js/chatgruppen.js` (new), `js/chat.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `index.html`, `pinn-setup.sh`, `src/` and all READMEs. **Server part:** `pb_hooks/chat.pb.js` and `pb_hooks/pinn-chat.js` – replace the hooks too; three more collections are created automatically.
+
+
 ## What's new in 1.127.2
 
 **Chat: talk about tasks, board notes and contract deadlines**
@@ -230,15 +241,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` and all READMEs. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 
-## What's new in 1.123.8
-
-**Dutch – ninth stage**
-
-- **Even more of pinn. in Dutch.** The bell (notices, shopping trips without expenses, “on the way home” with SOS alarm and call buttons, news), documents (deadlines, warranty, reminders, visibility, categories, files and the offline queue) and the board (notes, lists, photos, polls, thanks and countdowns, archive) are now translated (6,352 of 6,722 texts).
-- Dutch stays **hidden** until everything is translated (it can be unlocked on one device for trying it out; texts that are still missing then appear in English). Nothing changes visibly for anyone else.
-- Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` and all READMEs. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
-
 ## How it works
 
 ```mermaid
@@ -265,7 +267,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.127.2` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.127.3` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
