@@ -119,10 +119,22 @@ Tap any picture to open it in full size.
 | 🌦️ **Weather & holidays** | Tap the weather (a tile on the phone, at the top next to date and time on iPad and computer) for 14 days with details for every day. Packing lists with destination and dates show the holiday weather – forecast or typical values – and suggest what to pack. |
 | 🏠 **Smart home** | Start Apple Shortcuts or Home Assistant actions from a task – the robot vacuum cleans the kitchen when the chore is due, the robot mower and the watering follow the garden plan, the pet feeder reports when it runs empty. |
 | 🎙️ **Voice control** | "Hey Siri, pinn": add to the shopping list, read it out, create tasks and hear what's on today – also on Android. |
+| 💬 **Chat** | Family chat and private chats, end-to-end encrypted, with push, read ticks and replies. |
 | 🔔 **Notifications** | Personal push messages on iPhone, iPad and Android, plus a notification bell that collects every change in the family. |
 | 🧩 **Everything else** | Family board with movable notes, global search, offline mode with automatic sync, dark mode, iPad dashboard with profile PINs, guest account, child lock. |
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский and 🇳🇱 Nederlands**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
+
+## What's new in 1.127.0
+
+**Chat – end-to-end encrypted**
+
+- **Family chat and private chats.** A messenger look in the colours of pinn., with replies, links, date separators and unread counters. One tick means it reached the server, two coloured ticks mean it was read (read receipts can be switched off).
+- **End-to-end encrypted.** Messages are encrypted on the device; your NAS only sees who writes when, never the content. The first time you open the chat a key and a recovery code are created – the code unlocks the chat on a new device. “Chat security” shows safety numbers to compare; if a key changes, sending stops until the new number is accepted.
+- **Push.** “New message” without the text (the server cannot read it), adjustable under Account → Notifications → Chat; a tap opens the right chat. Not for guests and not on the dashboard.
+- **Prepared for the next step:** messages can carry a reference (task, board note, contract termination …) shown as a card. Limits: no forward secrecy, people who have not opened the chat yet can only read newer messages, no pictures yet (planned for 1.127.1).
+- Changed: `index.html`, `js/chat.js` and `css/chat.css` (new), several `js/*.js`, all `i18n/*.i18n.js`, `pinn-setup.sh` and all READMEs. **Server part:** `pb_hooks/chat.pb.js` and `pb_hooks/pinn-chat.js` (new), `pb_hooks/pinn-push.js`, `pb_hooks/pinn-schema.js` – replace the hooks too; two new collections are created automatically. Installation as always.
+
 
 ## What's new in 1.126.0
 
@@ -224,15 +236,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` and all READMEs. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 
-## What's new in 1.123.5
-
-**Dutch – sixth stage**
-
-- **Even more of pinn. in Dutch.** Family (emergency card, live locations, “I’m on my way home”, map & places), family members, the kids’ page, stars and rewards, pets (with prevention, walks and pet sitter info), school & daycare (timetable, homework, parent letters, closure days), location (places, shops, Traccar, GPS tracker), SOS and “Where are you?” are now translated (4,507 of 6,722 texts).
-- Dutch stays **hidden** until everything is translated (it can be unlocked on one device for trying it out; texts that are still missing then appear in English). Nothing changes visibly for anyone else.
-- Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` and all READMEs. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
-
 ## How it works
 
 ```mermaid
@@ -259,7 +262,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.126.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.127.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

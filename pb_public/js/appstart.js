@@ -65,6 +65,7 @@ async function bootApp() {
   setTimeout(() => { try { if (!new URLSearchParams(location.search).get('wobistdu')) wbCheckIncoming(); } catch (e) { /* ignore */ } }, 2500); // open "Where are you?" question
   vtOpenFromUrl(); // from a push reminder: open the contract directly
   if (!guest) kasseOpenFromUrl(); // from a push message: open the cash box
+  chatStart(); // Chat: menu badge, open the chat from a push message (?chat=<room>)
   pwAfterBoot(); // Pinboard: tidy the archive, upload the queued photos, open the note from a push message
   docOpenFromUrl(); // from a push reminder: open the document directly
   sysOpenFromUrl(); // from the update push message: Settings → System with the update popup

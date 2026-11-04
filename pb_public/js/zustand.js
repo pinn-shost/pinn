@@ -37,6 +37,7 @@ const NO_RECIPE_MEAL_IMAGE = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQACWAJYAAD
 const ALL_MENU_TABS = [
   { id: 'uebersicht', icon: '🏠', key: 'nav.overview', get label() { return tk(this.key); } },
   { id: 'pinnwand', icon: '📌', key: 'nav.board', get label() { return tk(this.key); } },
+  { id: 'chat', icon: '💬', key: 'nav.chat', get label() { return tk(this.key); } },
   { id: 'termine', icon: '📅', key: 'nav.calendar', get label() { return tk(this.key); } },
   { id: 'rezepte', icon: '🍽', key: 'nav.recipes', get label() { return tk(this.key); } },
   { id: 'vorrat', icon: '🥫', key: 'nav.pantry', get label() { return tk(this.key); } },

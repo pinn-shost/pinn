@@ -95,6 +95,7 @@ function setView(view) {
   const financeSection = document.getElementById('financeSection');
   const pantrySection = document.getElementById('pantrySection');
   const pinboardSection = document.getElementById('pinboardSection');
+  const chatSection = document.getElementById('chatSection');
   const documentsSection = document.getElementById('documentsSection');
   const vehiclesSection = document.getElementById('vehiclesSection');
   const houseSection = document.getElementById('houseSection');
@@ -146,6 +147,9 @@ function setView(view) {
   pantrySection.classList.remove('flex');
   pinboardSection.classList.add('hidden');
   pinboardSection.classList.remove('flex');
+  chatSection.classList.add('hidden');
+  chatSection.classList.remove('flex');
+  if (view !== 'chat' && typeof chatLeave === 'function') chatLeave();
   documentsSection.classList.add('hidden');
   documentsSection.classList.remove('flex');
   vehiclesSection.classList.add('hidden');
@@ -262,6 +266,17 @@ function setView(view) {
     calendarModeToggle.classList.remove('flex');
     renderPinboard();
     pwScheduleMarkSeen();
+  } else if (view === 'chat') {
+    mainGrid.classList.remove('lg:grid-cols-[1.1fr_0.8fr_0.8fr]', 'grid-cols-[1.1fr_0.8fr_0.8fr]', 'grid-cols-[1.3fr_1fr]', 'grid-cols-[1.3fr_minmax(0,1fr)]');
+    mainGrid.classList.add('grid-cols-1');
+    taskSection.classList.add('hidden');
+    calendarSection.classList.add('hidden');
+    recipeSection.classList.add('hidden');
+    chatSection.classList.remove('hidden');
+    chatSection.classList.add('flex');
+    calendarModeToggle.classList.add('hidden');
+    calendarModeToggle.classList.remove('flex');
+    chatEnter();
   } else if (view === 'finanzen') {
     mainGrid.classList.remove('lg:grid-cols-[1.1fr_0.8fr_0.8fr]', 'grid-cols-[1.1fr_0.8fr_0.8fr]', 'grid-cols-[1.3fr_1fr]', 'grid-cols-[1.3fr_minmax(0,1fr)]');
     mainGrid.classList.add('grid-cols-1');

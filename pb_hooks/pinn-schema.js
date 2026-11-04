@@ -73,6 +73,7 @@ function checks() {
         ["smarthome", () => require(`${__hooks}/pinn-smarthome.js`).ensureSchema()],
         ["sprache", () => require(`${__hooks}/pinn-sprache.js`).ensureSchema()],
         ["zuhause", () => require(`${__hooks}/pinn-zuhause.js`).ensureSchema()],
+        ["chat", () => require(`${__hooks}/pinn-chat.js`).ensureSchema()],
     ];
 }
 

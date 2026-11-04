@@ -123,10 +123,22 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 | 🌦️ **天气与假期** | 点按天气（手机上是一个磁贴，iPad 和电脑上位于日期和时间旁边的顶部），查看 14 天及每天的详情。带目的地和日期的打包清单会显示假期天气——预报或典型值——并建议带什么。 |
 | 🏠 **智能家居** | 从任务启动 Apple 快捷指令或 Home Assistant 动作——家务到期时扫地机器人清扫厨房，割草机器人和浇水按花园计划运行，喂食器快空时会提醒。 |
 | 🎙️ **语音控制** | “嘿 Siri，pinn”：添加到购物清单、朗读清单、创建任务并听取今天的安排——Android 上也可使用。 |
+| 💬 **聊天** | 家庭群聊和私聊,端到端加密,支持推送、已读勾和回复。 |
 | 🔔 **通知** | iPhone、iPad 和 Android 上的个人推送消息，以及汇总家庭中每项变动的通知铃。 |
 | 🧩 **其他功能** | 带可移动便签的家庭公告板、全局搜索、带自动同步的离线模式、深色模式、带个人 PIN 的 iPad 仪表板、访客账户、儿童锁。 |
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский和 🇳🇱 Nederlands**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
+
+## 1.127.0 新功能
+
+**聊天——端到端加密**
+
+- **家庭群聊和私聊。** 采用 pinn. 配色的聊天界面,支持回复、链接、日期分隔和未读数。一个勾表示已到达服务器,两个彩色勾表示已读(可关闭已读回执)。
+- **端到端加密。** 消息在设备上加密;你的 NAS 只能看到谁在何时发送,看不到内容。首次打开聊天时会生成密钥和恢复码,恢复码用于在新设备上解锁聊天。“聊天安全”显示可核对的安全码;密钥变化时会暂停发送,直到接受新的安全码。
+- **推送。** 推送只显示“新消息”,不含正文(服务器无法读取),可在 账户 → 通知 → 聊天 中设置。访客和仪表盘不可用。
+- **为下一步做好准备:** 消息可附带关联内容(任务、便签、合同解约……),以卡片显示。限制:无前向保密,暂不支持图片(计划于 1.127.1)。
+- 变更:`index.html`、`js/chat.js` 和 `css/chat.css`(新)、多个 `js/*.js`、所有 `i18n/*.i18n.js`、`pinn-setup.sh` 和所有 README。**服务器部分:** `pb_hooks/chat.pb.js` 和 `pb_hooks/pinn-chat.js`(新)、`pb_hooks/pinn-push.js`、`pb_hooks/pinn-schema.js`——更新时请一并替换 hooks。
+
 
 ## 1.126.0 新功能
 
@@ -192,15 +204,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - 更改：`index.html`、`js/sprachen.js`、`js/versionslog.js`、`i18n/nl.i18n.js`、`i18n/versionslog.en.js`、服务器上的 `pb_hooks/pinn-pushtext.js` 以及所有 README。安装方式不变（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
 
 
-## 1.123.9 新功能
-
-**荷兰语——第十阶段**
-
-- **pinn. 的荷兰语版本又多了一部分。** 标准名称（财务、合同、文档、储备、食谱和清洁的分类，地点，角色，厨房电器，垃圾类型和计量单位）、语音控制（Siri 快捷指令和 Android）、PDF 与单据的读取、服务器消息以及单位现已翻译（6722 条文本中的 6575 条）。现在只差通知（推送）。
-- 荷兰语在全部翻译完成之前仍然**隐藏**（可在一台设备上解锁试用；尚未翻译的文本会以英语显示）。对其他人没有任何可见变化。
-- 更改：`index.html`、`js/sprachen.js`、`js/versionslog.js`、`i18n/nl.i18n.js`、`i18n/versionslog.en.js` 以及所有 README。安装方式不变（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
-
-
 ## 工作原理
 
 ```mermaid
@@ -229,7 +232,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.126.0` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.127.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -24,7 +24,7 @@ const LS_DASHBOARD = 'pinn.dashboard';      // { key, id, name, familie, familyN
 const SS_DASH_ACTIVE = 'pinn.dashSession';  // profile was opened via the dashboard
 const SS_DASH_KID = 'pinn.dashKid';         // kid profile: member whose kids' page is open
 const DASH_DEFAULT_TIMEOUT = 5;             // minutes without interaction until the profile selection
-const GUEST_BLOCKED_VIEWS = ['finanzen', 'dokumente', 'fahrzeuge', 'haus', 'einstellungen']; // always locked for guests
+const GUEST_BLOCKED_VIEWS = ['chat', 'finanzen', 'dokumente', 'fahrzeuge', 'haus', 'einstellungen']; // always locked for guests
 // menus an admin can additionally hide for guests (without the always locked ones)
 const GUEST_SELECTABLE_VIEWS = ['uebersicht', 'pinnwand', 'termine', 'aufgaben', 'rezepte', 'vorrat', 'einkauf', 'familie'];
 // child lock (per family member): these menus are locked, deleting is not possible
@@ -81,6 +81,7 @@ let childLockTasksState = null; // most recently applied state (to rebuild on a 
 function isViewAllowed(view) {
   if (view === 'haushalt') view = 'aufgaben'; // household is part of "Aufgaben"
   if (view === 'konto') return true;
+  if (view === 'chat' && (isDashboardDevice() || (typeof dashSession !== 'undefined' && dashSession))) return false; // no chat on a shared dashboard
   if (CHILD_BLOCKED_VIEWS.includes(view) && childLockActive()) return false;
   if (!isCurrentUserGuest()) return true;
   return !GUEST_BLOCKED_VIEWS.includes(view) && !guestHiddenViews.includes(view);

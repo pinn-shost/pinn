@@ -270,6 +270,7 @@ function fillPushSettingsForm(st) {
   document.getElementById('pushOptKindAufgabe').checked = st.kindAufgabe !== false;
   document.getElementById('pushOptKindAlle').checked = st.kindAlle !== false;
   document.getElementById('pushOptPwMich').checked = st.pwMich !== false;
+  document.getElementById('pushOptChat').checked = st.chat !== false;
   document.getElementById('pushOptPwAlle').checked = st.pwAlle !== false;
   document.getElementById('pushOptPwAntworten').checked = st.pwAntworten !== false;
   document.getElementById('pushOptPwErinnerung').checked = st.pwErinnerung !== false;
@@ -298,6 +299,7 @@ function readPushSettingsForm() {
     kindAufgabe: document.getElementById('pushOptKindAufgabe').checked,
     kindAlle: document.getElementById('pushOptKindAlle').checked,
     pwMich: document.getElementById('pushOptPwMich').checked,
+    chat: document.getElementById('pushOptChat').checked,
     pwAlle: document.getElementById('pushOptPwAlle').checked,
     pwAntworten: document.getElementById('pushOptPwAntworten').checked,
     pwErinnerung: document.getElementById('pushOptPwErinnerung').checked,

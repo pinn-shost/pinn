@@ -1686,6 +1686,10 @@ function ntOpenLink(url) {
   const real = v => v && v !== '1';
   try {
     if (g('ausblick')) { abOpen(g('ausblick') === 'monat' ? 'monat' : 'woche'); return true; }
+    if (g('chat')) {
+      if (!isCurrentUserGuest()) setTimeout(() => chatOpenRoom(g('chat')), 100);
+      return true;
+    }
     if (g('wobistdu')) {
       if (!isCurrentUserGuest()) setTimeout(() => wbOpen(g('wobistdu')), 150);
       return true;

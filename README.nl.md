@@ -101,9 +101,20 @@ Tik op een plaatje om het op volledige grootte te openen.
 - 👨‍👩‍👧 **Gezin** – noodpassen, locatie, SOS, “Ik ga naar huis”, huisdieren, school en opvang
 - 🏠 **Huis & voertuigen** – meterstanden, kosten, renovatie, auto’s met tanken en APK, slim huis
 - 🎙️ **Spraakbesturing** – “Hé Siri, pinn”: toevoegen aan de boodschappenlijst, voorlezen, taken maken, horen wat er vandaag op het programma staat (met de app in het Nederlands antwoordt Siri voorlopig nog in het Engels)
+- 💬 **Chat** – gezins- en privéchat, end-to-end versleuteld, met push en leesvinkjes
 - 🔔 **Meldingen** – persoonlijke pushberichten op iPhone, iPad en Android en een meldingenbel met alle wijzigingen in het gezin
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский en 🇳🇱 Nederlands**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
+
+## Nieuw in 1.127.0
+
+**Chat – end-to-end versleuteld**
+
+- **Gezinschat en privéchats** in de kleuren van pinn.: antwoorden, links, vinkjes (één = op de server, twee gekleurd = gelezen).
+- **End-to-end versleuteld:** je NAS ziet alleen wie wanneer schrijft, niet de tekst. Een herstelcode ontgrendelt de chat op een nieuw apparaat; veiligheidsnummers zijn te vergelijken.
+- **Push** “Nieuw bericht” zonder tekst. Nog geen afbeeldingen (1.127.1).
+- Serverdeel: `pb_hooks/chat.pb.js`, `pb_hooks/pinn-chat.js` (nieuw), `pb_hooks/pinn-push.js`, `pb_hooks/pinn-schema.js` – vervang ook de hooks.
+
 
 ## Nieuw in 1.126.0
 
@@ -125,7 +136,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.126.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.127.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

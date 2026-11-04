@@ -22,6 +22,17 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.127', datum: '04.11.2026', titel: 'Chat – Ende-zu-Ende verschlüsselt',
+    punkte: [
+      ['neu', 'Familienchat und private Chats zwischen einzelnen Familienmitgliedern – im Menü unter „Chat“, im Look eines Messengers und in den Farben von pinn. Antworten auf einzelne Nachrichten, Links zum Antippen, Datumstrenner, Ungelesen-Zähler im Menü und in der Chatliste.'],
+      ['neu', 'Ende-zu-Ende verschlüsselt: Nachrichten werden auf dem Gerät verschlüsselt und können nur von den Personen im Chat gelesen werden – der Server (dein NAS) sieht nur, wer wann schreibt, nie den Inhalt. Beim ersten Öffnen entsteht ein Schlüssel und ein Wiederherstellungscode, mit dem du den Chat auf einem neuen Gerät entsperrst. Über „Chat-Sicherheit“ vergleicht ihr Sicherheitsnummern; ändert sich ein Schlüssel, stoppt das Senden, bis die neue Nummer akzeptiert ist.'],
+      ['neu', 'Haken wie im Messenger: ein Haken = ist auf dem Server gelandet, zwei Haken (farbig) = gelesen. Im Familienchat erst, wenn alle gelesen haben; wer „gelesen von“ wissen will, tippt auf die Nachricht. Lesebestätigungen lassen sich ausschalten.'],
+      ['neu', 'Push für neue Nachrichten („💬 Name – Neue Nachricht“; der Text selbst bleibt geheim, weil der Server ihn nicht lesen kann), einstellbar unter Konto → Benachrichtigungen → Chat. Ein Tipp auf die Mitteilung öffnet den richtigen Chat.'],
+      ['info', 'Vorbereitet für den nächsten Schritt: Nachrichten können einen Bezug tragen (Aufgabe, Pinnwand-Zettel, Kündigung …), der als Karte in der Nachricht erscheint – pinnChat.compose(Chat, Bezug). Nicht für Gäste und nicht auf dem Dashboard.'],
+      ['info', 'Geändert: index.html, js/chat.js (neu), css/chat.css (neu), js/ansichten.js, js/appstart.js, js/hinweise.js, js/dashboard.js, js/zustand.js, js/mitteilungen.js, js/sprachen.js, js/versionslog.js, i18n/versionslog.en.js, alle i18n/*.i18n.js, pinn-setup.sh, src/ und alle READMEs. Server-Teil: pb_hooks/chat.pb.js (neu), pb_hooks/pinn-chat.js (neu), pb_hooks/pinn-push.js, pb_hooks/pinn-schema.js – beim Update die Hooks mit austauschen; zwei neue Sammlungen werden beim Start automatisch angelegt.'],
+    ],
+  },
+  {
     v: '1.126', datum: '04.11.2026', titel: 'Kennzeichen nach Land',
     punkte: [
       ['neu', 'Kennzeichen sehen jetzt aus wie im jeweiligen Land: In der EU zeigt der blaue Streifen den Sternenkreis mit der Länderkennung (D, A, NL, F, I, DK …), dazu die passenden Farben – gelb in den Niederlanden und Luxemburg, rote Umrandung in Dänemark, rote Schrift in Belgien, rot-weiß-rote Ränder in Österreich, Streifen rechts in Frankreich, Italien und Portugal.'],
