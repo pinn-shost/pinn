@@ -1,21 +1,21 @@
 // pb_hooks/pinn-muell.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden.
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require().
 //
-// Müllkalender der Familie (Einstellungen → Kalender → Müllkalender)
+// The family's waste calendar (Settings → Calendar → Waste calendar)
 //
-// - Genau EIN Müllkalender je Familie. Wird ein neuer übernommen, ersetzt er den alten vollständig.
-// - Suche mit KI: Der Server fragt Google Gemini (mit Google-Suche) nach der iCal-/ICS-Datei des
-//   örtlichen Entsorgers für die Adresse (Zuhause der Familie oder von Hand eingegeben). Jeder
-//   gefundene Link wird vom Server selbst heruntergeladen und geprüft – angeboten werden nur echte
-//   Kalenderdateien mit Abfuhrterminen. Zusätzlich durchsucht der Server die gefundenen Seiten der
-//   Entsorger nach ICS-Links. Findet sich keine Datei, gibt es die Seiten zum Selbst-Herunterladen.
-// - Ohne KI (kein PINN_GEMINI_KEY in der .env) oder als Ersatz: Link zur ICS-Datei einfügen oder
-//   die heruntergeladene .ics-Datei hochladen.
-// - Kalender mit Link prüft der Server einmal pro Woche selbst neu (neue Termine fürs nächste Jahr).
+// - EXACTLY ONE waste calendar per family. If a new one is adopted, it replaces the old one completely.
+// - Search with AI: the server asks Google Gemini (with Google Search) for the iCal/ICS file of the
+//   local waste disposal company for the address (the family's Home or entered by hand). Every
+//   link found is downloaded and checked by the server itself - only real
+//   calendar files with collection dates are offered. In addition, the server searches the found pages of the
+//   disposal companies for ICS links. If no file is found, the pages are offered for downloading yourself.
+// - Without AI (no PINN_GEMINI_KEY in the .env) or as a fallback: paste a link to the ICS file or
+//   upload the downloaded .ics file.
+// - Calendars with a link are re-checked by the server itself once a week (new events for next year).
 //
-// Die App spricht nie mit fremden Servern – nur dieser Server lädt herunter.
+// The app never talks to third-party servers - only this server downloads.
 //
-// Daten je Familie: Sammlung „muellkalender“ (gesperrt, nur über die Routen in muell.pb.js), Feld „daten“:
+// Data per family: collection "muellkalender" (locked, only via the routes in muell.pb.js), field "daten":
 //   { quelle: { art: "link"|"datei", url, anbieter, titel, adresse, dateiname },
 //     termine: [{ d: "2026-10-05", t: "Restmüll" }], arten: [{ name, farbe, anzahl }],
 //     ausgeblendet: [name], anzeigen: true, stand, geprueft, fehler, von }
@@ -24,9 +24,9 @@ const COL = "muellkalender";
 const UA_BROWSER = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15";
 const MAX_ICS_BYTES = 6 * 1024 * 1024;
 const MAX_TERMINE = 1500;
-const VERGANGEN_TAGE = 45;       // so weit zurück bleiben Termine erhalten
-const ZUKUNFT_TAGE = 550;        // so weit voraus werden Wiederholungen ausgerechnet
-const SUCHE_BUDGET_MS = 125000;  // die App wartet bis zu 150 s
+const VERGANGEN_TAGE = 45;       // events are kept this far back
+const ZUKUNFT_TAGE = 550;        // recurrences are calculated this far ahead
+const SUCHE_BUDGET_MS = 125000;  // the app waits up to 150 s
 const MAX_KANDIDATEN = 10;
 const MAX_SEITEN = 5;
 const REFRESH_TAGE = 6;
@@ -49,21 +49,21 @@ function cleanText(v, max) {
     return String(v == null ? "" : v).replace(/[\u0000-\u001f]/g, " ").replace(/\s+/g, " ").trim().slice(0, max || 160);
 }
 function pause(ms) {
-    try { if (typeof sleep === "function") sleep(ms); } catch (e) { /* egal */ }
+    try { if (typeof sleep === "function") sleep(ms); } catch (e) { /* ignore */ }
 }
 function bodyText(res) {
-    try { if (typeof res.raw === "string" && res.raw) return res.raw; } catch (e) { /* weiter */ }
-    try { return toString(res.body); } catch (e) { /* weiter */ }
+    try { if (typeof res.raw === "string" && res.raw) return res.raw; } catch (e) { /* continue */ }
+    try { return toString(res.body); } catch (e) { /* continue */ }
     return "";
 }
 function bytesOf(res) {
     let b = null;
     try { b = res.body; } catch (e) { b = null; }
     if (!b || typeof b === "string") return null;
-    try { if (typeof ArrayBuffer !== "undefined" && b instanceof ArrayBuffer) return new Uint8Array(b); } catch (e) { /* weiter */ }
+    try { if (typeof ArrayBuffer !== "undefined" && b instanceof ArrayBuffer) return new Uint8Array(b); } catch (e) { /* continue */ }
     return b;
 }
-// ICS-Dateien mancher Entsorger sind noch in ISO-8859-1 gespeichert – dann selbst umwandeln
+// ICS files of some disposal companies are still stored in ISO-8859-1 - then convert them ourselves
 function textOf(res) {
     let t = bodyText(res);
     if (t && t.indexOf("\uFFFD") >= 0) {
@@ -82,15 +82,15 @@ function textOf(res) {
     return t;
 }
 function parseJsonRes(res) {
-    try { return JSON.parse(bodyText(res) || ""); } catch (e) { /* weiter */ }
-    try { if (res.json && typeof res.json === "object") return res.json; } catch (e) { /* egal */ }
+    try { return JSON.parse(bodyText(res) || ""); } catch (e) { /* continue */ }
+    try { if (res.json && typeof res.json === "object") return res.json; } catch (e) { /* ignore */ }
     return {};
 }
 function isoDate(d) {
     return d.getUTCFullYear() + "-" + String(d.getUTCMonth() + 1).padStart(2, "0") + "-" + String(d.getUTCDate()).padStart(2, "0");
 }
 function todayIso() {
-    // Datum in Deutschland (Server läuft meist in UTC)
+    // Date in Germany (the server mostly runs in UTC)
     return isoDate(new Date(Date.now() + 2 * 3600 * 1000));
 }
 function addDays(iso, n) {
@@ -98,7 +98,7 @@ function addDays(iso, n) {
     return isoDate(new Date(Date.UTC(p[0], p[1] - 1, p[2] + n)));
 }
 
-// Nur öffentliche Adressen – nie das Heimnetz
+// Public addresses only - never the home network
 function hostOf(url) {
     const m = String(url).match(/^https?:\/\/(?:[^@\/]*@)?(\[[^\]]+\]|[^\/:?#]+)/i);
     return m ? m[1] : "";
@@ -134,7 +134,7 @@ function absoluteUrl(base, rel) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Müllarten: Farbe nach Stichwort (wie die Tonnen in Deutschland)
+// Waste types: colour by keyword (like the bins in Germany)
 // ---------------------------------------------------------------------------------------------
 const FARBEN = [
     [/schadstoff|sondermüll|problemabfall|giftmobil|umweltmobil/i, "#C0392B"],
@@ -159,12 +159,12 @@ function sauberTitel(s) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// ICS lesen (inkl. einfacher Wiederholungen)
+// Reading ICS (including simple recurrences)
 // ---------------------------------------------------------------------------------------------
 function unfold(text) {
     return String(text || "").replace(/\r\n/g, "\n").replace(/\r/g, "\n").replace(/\n[ \t]/g, "").split("\n");
 }
-// Datum (YYYY-MM-DD) aus DTSTART-Wert; UTC-Zeiten auf deutsche Zeit (+2 h Näherung) schieben
+// Date (YYYY-MM-DD) from the DTSTART value; shift UTC times to German time (+2 h approximation)
 function icsDate(value) {
     const v = String(value || "").trim();
     const m = v.match(/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})?(Z)?)?/);
@@ -210,7 +210,7 @@ function expandRule(start, rule, exdates, von, bis) {
         }
     } else if (freq === "WEEKLY") {
         const startDow = new Date(startMs).getUTCDay();
-        const wkStart = startMs - ((startDow + 6) % 7) * 86400000; // Montag der Startwoche
+        const wkStart = startMs - ((startDow + 6) % 7) * 86400000; // Monday of the starting week
         for (let w = 0; w < 600; w += interval) {
             let stop = false;
             for (let k = 0; k < 7; k++) {
@@ -229,7 +229,7 @@ function expandRule(start, rule, exdates, von, bis) {
             const d = freq === "MONTHLY"
                 ? new Date(Date.UTC(p[0], p[1] - 1 + i * interval, p[2]))
                 : new Date(Date.UTC(p[0] + i * interval, p[1] - 1, p[2]));
-            if (d.getUTCDate() !== p[2]) continue; // 31. im Februar o. Ä. auslassen
+            if (d.getUTCDate() !== p[2]) continue; // skip 31 February and the like
             const iso = isoDate(d);
             if (iso > ende || (count && n >= count)) break;
             push(iso);
@@ -301,7 +301,7 @@ function zusammenfassung(termine) {
     };
 }
 
-// Lädt eine ICS-Datei vom Entsorger und wertet sie aus (wirft bei Fehlern)
+// Loads an ICS file from the disposal company and evaluates it (throws on errors)
 function ladeIcs(url, timeoutSek) {
     const u = normalizeUrl(url);
     if (!u) throw new Error("Ungültiger oder nicht erlaubter Link.");
@@ -325,7 +325,7 @@ function ladeIcs(url, timeoutSek) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Sammlung „muellkalender“ (je Familie ein Datensatz)
+// Collection "muellkalender" (one record per family)
 // ---------------------------------------------------------------------------------------------
 function ensureSchema() {
     if (findCol(COL)) return;
@@ -379,7 +379,7 @@ function publicInfo(d) {
         fehler: d.fehler || "",
     };
 }
-// Für die App. stand = bekannter Stand des Geräts -> bei gleichem Stand nur { unveraendert: true }
+// For the app. stand = the device's known state -> with the same state only { unveraendert: true }
 function forFamily(familyId, stand) {
     const d = readData(loadRec(familyId));
     if (!d) return { kalender: null, termine: [], stand: 0 };
@@ -388,8 +388,8 @@ function forFamily(familyId, stand) {
     return { kalender: publicInfo(d), termine: (d.termine || []).filter(x => x.d >= von), stand: Number(d.stand) || 0 };
 }
 
-// Abholungen an einem Tag (JJJJ-MM-TT) -> ["Restmüll", "Gelber Sack"]; ausgeblendete Müllarten zählen nicht.
-// Für die Haushalts-Aufgaben am Vortag (pinn-aufgaben.js) und die Erinnerung (pinn-push.js).
+// Collections on a day (YYYY-MM-DD) -> ["Restmüll", "Gelber Sack"]; hidden waste types do not count.
+// For the household tasks on the day before (pinn-aufgaben.js) and the reminder (pinn-push.js).
 function termineAm(familyId, iso) {
     const d = readData(loadRec(familyId));
     if (!d || !Array.isArray(d.termine)) return [];
@@ -398,9 +398,9 @@ function termineAm(familyId, iso) {
     d.termine.forEach(x => { if (x && x.d === iso && x.t && hidden.indexOf(x.t) === -1 && out.indexOf(x.t) === -1) out.push(x.t); });
     return out;
 }
-// Nach einer Änderung sofort die Haushalts-Aufgaben prüfen (sonst erst beim nächsten Stundenlauf)
+// After a change, check the household tasks immediately (otherwise only at the next hourly run)
 function aufgabenAnstossen(familyId) {
-    try { require(`${__hooks}/pinn-aufgaben.js`).runHouseholdNow(familyId); } catch (e) { /* egal */ }
+    try { require(`${__hooks}/pinn-aufgaben.js`).runHouseholdNow(familyId); } catch (e) { /* ignore */ }
 }
 
 function requireAdmin(e) {
@@ -411,7 +411,7 @@ function requireAdmin(e) {
     return familyId;
 }
 
-// Neuer Müllkalender -> ersetzt den bisherigen der Familie
+// New waste calendar -> replaces the family's previous one
 function speichern(familyId, quelle, termine, vonId) {
     const alt = readData(loadRec(familyId)) || {};
     const namen = {};
@@ -484,7 +484,7 @@ function entfernen(e) {
     return { kalender: null, termine: [], stand: 0 };
 }
 
-// Kalender mit Link neu laden. Fehler -> alte Termine bleiben, Fehler wird vermerkt.
+// Reload a calendar with a link. Error -> old events stay, the error is noted.
 function neuLaden(familyId) {
     const d = readData(loadRec(familyId));
     if (!d) throw new Error("Es ist noch kein Müllkalender eingerichtet.");
@@ -517,19 +517,19 @@ function aktualisieren(e) {
         const last = $app.store().get(key);
         if (last && Date.now() - last < 2 * 60 * 1000) throw new Error("Gerade erst aktualisiert – bitte in zwei Minuten noch einmal.");
     } catch (err) { if (/Gerade erst/.test(err.message)) throw err; }
-    try { $app.store().set(key, Date.now()); } catch (err) { /* egal */ }
+    try { $app.store().set(key, Date.now()); } catch (err) { /* ignore */ }
     const r = neuLaden(familyId);
     const out = forFamily(familyId, 0);
     out.geaendert = r.geaendert;
     return out;
 }
 
-// Admin-Fehlerprotokoll (pinn-protokoll.js) – fehlt die Datei, bleibt es beim Docker-Log
+// Admin error log (pinn-protokoll.js) - if the file is missing, it stays with the Docker log
 function plog(art, bereich, meldung, opts) {
-    try { require(`${__hooks}/pinn-protokoll.js`)[art](bereich, meldung, opts || {}); } catch (e) { /* Protokoll nicht verfügbar */ }
+    try { require(`${__hooks}/pinn-protokoll.js`)[art](bereich, meldung, opts || {}); } catch (e) { /* log not available */ }
 }
 
-// Wöchentlich: alle Kalender mit Link nacheinander prüfen
+// Weekly: check all calendars with a link one after another
 function runCron() {
     if (!findCol(COL)) return;
     let recs = [];
@@ -552,7 +552,7 @@ function runCron() {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Suche mit KI (Gemini + Google-Suche), Ergebnis wird vom Server geprüft
+// Search with AI (Gemini + Google Search), result is checked by the server
 // ---------------------------------------------------------------------------------------------
 function suchPrompt(adresse) {
     return [
@@ -594,7 +594,7 @@ function geminiSuche(adresse, deadline) {
     });
     let lastError = "", quota = false, busy = false;
     for (let i = 0; i < list.length; i++) {
-        const left = Math.floor((deadline - Date.now()) / 1000) - 25; // Zeit fürs Prüfen der Links lassen
+        const left = Math.floor((deadline - Date.now()) / 1000) - 25; // leave time for checking the links
         if (left < 15) break;
         let res;
         try {
@@ -619,7 +619,7 @@ function geminiSuche(adresse, deadline) {
         try {
             const gm = cand.groundingMetadata || {};
             (gm.groundingChunks || []).forEach(c => { if (c && c.web && c.web.uri) quellen.push({ url: c.web.uri, titel: cleanText(c.web.title, 100) }); });
-        } catch (err) { /* ohne Quellen */ }
+        } catch (err) { /* without sources */ }
         const obj = jsonAusText(text) || {};
         obj.__quellen = quellen;
         obj.__modell = list[i];
@@ -630,7 +630,7 @@ function geminiSuche(adresse, deadline) {
     throw new Error("Die KI-Suche hat nicht geklappt (" + (lastError || "keine Antwort") + ").");
 }
 
-// Seite des Entsorgers laden und nach ICS-/Webcal-Links durchsuchen
+// Load the disposal company's page and search it for ICS/webcal links
 function icsLinksAufSeite(url, deadline) {
     const left = Math.floor((deadline - Date.now()) / 1000);
     if (left < 8) return { links: [], basis: "" };
@@ -641,7 +641,7 @@ function icsLinksAufSeite(url, deadline) {
     } catch (err) { return { links: [], basis: "" }; }
     if (res.statusCode < 200 || res.statusCode >= 300) return { links: [], basis: "" };
     const html = String(bodyText(res) || "").slice(0, 2 * 1024 * 1024);
-    // Kalenderdatei statt Seite?
+    // Calendar file instead of a page?
     if (/BEGIN:VCALENDAR/i.test(html.slice(0, 2000))) return { links: [url], basis: url, istIcs: true };
     let basis = url;
     const canon = html.match(/<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)["']/i)
@@ -675,20 +675,20 @@ function suche(e, body) {
         } catch (err) { adresse = ""; }
     }
     if (adresse.length < 3 || !/[a-zäöüß]{2}|\d{5}/i.test(adresse)) throw new Error("Bitte mindestens den Ort oder die Postleitzahl angeben.");
-    // nicht mehrfach gleichzeitig / zu oft
+    // not several times at once / too often
     const lockKey = "pinnMuellSuche:" + familyId;
     try {
         const last = $app.store().get(lockKey);
         if (last && Date.now() - last < 20000) throw new Error("Die Suche läuft schon – bitte einen Moment warten.");
     } catch (err) { if (/läuft schon/.test(err.message)) throw err; }
-    try { $app.store().set(lockKey, Date.now()); } catch (err) { /* egal */ }
+    try { $app.store().set(lockKey, Date.now()); } catch (err) { /* ignore */ }
 
     const started = Date.now();
     const deadline = started + SUCHE_BUDGET_MS;
     const ki = geminiSuche(adresse, deadline);
     const entsorger = cleanText(ki.entsorger, 100);
 
-    // Kandidaten: ICS-Links der KI, dann Links aus den gefundenen Seiten
+    // Candidates: ICS links from the AI, then links from the found pages
     const kandidaten = [];
     const beschreibung = {};
     const addK = (u, besch) => {
@@ -708,7 +708,7 @@ function suche(e, body) {
     (Array.isArray(ki.seiten) ? ki.seiten : []).forEach(x => addS(x && (x.url || x), x && x.titel));
     const quellen = Array.isArray(ki.__quellen) ? ki.__quellen : [];
 
-    // Seiten nach ICS-Links durchsuchen (KI-Seiten zuerst, dann die Suchquellen von Google)
+    // Search pages for ICS links (AI pages first, then Google's search sources)
     const zuScannen = seiten.map(s => s.url).concat(quellen.map(q => q.url)).slice(0, MAX_SEITEN + 3);
     let gescannt = 0;
     for (let i = 0; i < zuScannen.length && gescannt < MAX_SEITEN && kandidaten.length < MAX_KANDIDATEN; i++) {
@@ -716,14 +716,14 @@ function suche(e, body) {
         const r = icsLinksAufSeite(zuScannen[i], deadline);
         gescannt++;
         r.links.forEach(l => addK(l, ""));
-        // Suchquellen (Weiterleitungs-Adressen von Google) als echte Seite merken
+        // Remember search sources (redirect addresses from Google) as the real page
         if (i >= seiten.length && r.basis && r.basis !== zuScannen[i]) {
             const q = quellen[i - seiten.length];
             addS(r.basis, q && q.titel);
         }
     }
 
-    // Jeden Kandidaten herunterladen und prüfen
+    // Download and check every candidate
     const treffer = [];
     const gleich = {};
     for (let i = 0; i < kandidaten.length; i++) {
@@ -741,9 +741,9 @@ function suche(e, body) {
                 titel: beschreibung[kandidaten[i]] || g.name || "Abfallkalender",
                 anzahl: z.anzahl, bis: z.bis, naechste: z.naechste, arten: z.arten,
             });
-        } catch (err) { /* kein gültiger Kalender */ }
+        } catch (err) { /* not a valid calendar */ }
     }
-    // reine Google-Weiterleitungen nicht als Seite anbieten
+    // do not offer pure Google redirects as a page
     const seitenOut = seiten.filter(s => !/vertexaisearch\.cloud\.google\.com|grounding-api-redirect/i.test(s.url)).slice(0, 5);
     console.log("[Müll] Suche „" + adresse + "“: " + treffer.length + " Kalender, " + seitenOut.length + " Seiten ("
         + Math.round((Date.now() - started) / 100) / 10 + " s, " + ki.__modell + ").");

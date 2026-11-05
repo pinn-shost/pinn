@@ -1,43 +1,43 @@
 // pb_hooks/save_family_data.pb.js
-// Speichert die Familiendaten nur, wenn der Datensatz seit dem letzten Laden durch diesen Client
-// NICHT von jemand anderem geändert wurde ("expectedUpdated" = Zeitstempel, den der Client zuletzt
-// gesehen hat). Wurde er zwischenzeitlich geändert, wird NICHT überschrieben, sondern der aktuelle
-// Stand zurückgegeben (Status 409) - der Client führt dann beide Stände zusammen und versucht es
-// erneut. Prüfen und Speichern laufen in einer Transaktion, damit sich zwei gleichzeitige
-// Speichervorgänge nicht dazwischen drängen können.
-// Apple-Zugangsdaten (appleCalendar.email / appleCalendar.appPassword) werden grundsätzlich
-// verworfen - sie gehören in die .env, nicht in familien_daten.
-// Gespeichert wird nur in den Datensatz der EIGENEN Familie.
-// Nach erfolgreichem Speichern werden die als öffentlich markierten Rezepte in die Sammlung
-// "oeffentliche_rezepte" gespiegelt (pinn-rezepte.js) - mit den gerade empfangenen Daten, ohne die
-// großen Familiendaten erneut zu lesen. Ein Fehler dabei verhindert nie das Speichern.
-// Ebenso bekommt die Pinnwand (pinn-pinnwand.js) die gerade gespeicherten Daten: sie merkt sich neue
-// Zettel, Antworten, Reaktionen und Erinnerungen und schickt die Push-Nachrichten kurz darauf über
-// ihren eigenen Zeitplan - das Speichern selbst wartet nie auf den Versand.
+// Saves the family data only if the record has NOT been changed by someone else since this client
+// last loaded it ("expectedUpdated" = timestamp the client last saw). If it was changed in the
+// meantime, it is NOT overwritten, but the current state is returned (status 409) - the client
+// then merges both states and tries again. Checking and saving run in one transaction, so that
+// two simultaneous save operations cannot push in
+// between.
+// Apple credentials (appleCalendar.email / appleCalendar.appPassword) are always
+// discarded - they belong in the .env, not in familien_daten.
+// Data is only saved into the record of the OWN family.
+// After a successful save, the recipes marked as public are mirrored into the collection
+// "oeffentliche_rezepte" (pinn-rezepte.js) - with the data just received, without reading the
+// large family data again. An error there never prevents saving.
+// Likewise the pinboard (pinn-pinnwand.js) gets the data that was just saved: it remembers new
+// notes, replies, reactions and reminders and sends the push messages shortly afterwards via
+// its own schedule - saving itself never waits for the sending.
 //
-// Kassen (pinn-kassen.js): Sobald die Familie ihre Haushaltskasse hat, liegen die Finanzdaten nur noch
-// in den Kassen. Ein mitgeschicktes "finance" (z. B. von einem noch nicht aktualisierten Gerät) wird
-// dann verworfen und nie mehr im Familien-Datensatz gespeichert - sonst sähe jedes Profil sie wieder.
+// Funds (pinn-kassen.js): as soon as the family has its household fund, the finance data only lives
+// in the funds. A "finance" sent along (e.g. from a device that has not been updated yet) is
+// then discarded and never stored in the family record again - otherwise every profile would see it again.
 //
-// Bereiche (pinn-bereiche.js, ab 1.104.0): Rezepte, Essensplan, Einkauf, Vorrat, Pinnwand, Listen,
-// Schule & Kita, Haustiere, Wartungsplan, ab 1.108.0 Mitglieder, Notfallpässe und Einstellungen und ab 1.109.0
-// Aufgaben, Haushalt (Räume, Putzpläne, Mülleimer, Smart-Home-Geräte) und die Kalender-Auswahl liegen in eigenen
-// Datensätzen ("familien_bereiche") und werden über /api/pinn/bereiche/speichern gespeichert. Die App
-// schickt mit, welche Bereiche sie selbst verwaltet ("bereiche": Liste der Namen; 1.104 schickte true =
-// Rezepte und Essensplan). Was ein Gerät trotzdem noch im großen Block schickt, wird in die Bereiche
-// übernommen (löscht nie etwas) und hier verworfen. Bei einem Konflikt und beim Abruf bekommt jedes Gerät
-// die Bereiche mitgeliefert, die es noch nicht kennt (?bereiche=<Namen>), damit es bis zu seinem Update
-// weiter alles sieht.
+// Areas (pinn-bereiche.js, since 1.104.0): recipes, meal plan, shopping, pantry, pinboard, lists,
+// school & daycare, pets, maintenance plan, since 1.108.0 members, emergency passes and settings and since 1.109.0
+// tasks, household (rooms, cleaning plans, trash bins, smart home devices) and the calendar selection live in their own
+// records ("familien_bereiche") and are saved via /api/pinn/bereiche/speichern. The app
+// sends along which areas it manages itself ("bereiche": list of names; 1.104 sent true =
+// recipes and meal plan). What a device still sends in the large block anyway is taken over into the areas
+// (never deletes anything) and discarded here. On a conflict and on retrieval, every device gets
+// the areas it does not know yet delivered along (?bereiche=<names>), so that until its update it
+// keeps seeing everything.
 //
-// Familienmitglieder: Die früheren Beispiel-Mitglieder (Anna/Jonas/Mia) werden beim Speichern
-// verworfen, solange kein Profil mit ihnen verknüpft ist (pinn-benutzer.js).
+// Family members: the former example members (Anna/Jonas/Mia) are discarded when saving
+// as long as no profile is linked to them (pinn-benutzer.js).
 //
-// Gastkonten (Rolle "gast", nur über das Familien-Dashboard):
-// - sehen die Finanz-Einstellungen (Schlüssel "finance": Budget, Kategorien, regelmäßige Ausgaben)
-//   nicht - sie werden beim Abruf der Familiendaten entfernt (onRecordEnrich unten)
-// - können sie beim Speichern nicht ändern: der gespeicherte Stand bleibt erhalten
-// - können auch die vom Admin gewählten Gast-Menüs (Schlüssel "guestHiddenViews") nicht ändern
-// - dürfen die Familiendaten nur über diese Route ändern, nicht direkt über die Sammlungs-API
+// Guest accounts (role "gast", only via the family dashboard):
+// - do not see the finance settings (key "finance": budget, categories, recurring expenses)
+//   - they are removed when the family data is retrieved (onRecordEnrich below)
+// - cannot change them when saving: the stored state is kept
+// - also cannot change the guest menus chosen by the admin (key "guestHiddenViews")
+// - may only change the family data via this route, not directly via the collection API
 
 routerAdd("POST", "/api/pinn/save", (e) => {
     const body = e.requestInfo().body;
@@ -52,19 +52,19 @@ routerAdd("POST", "/api/pinn/save", (e) => {
     let kassenAktiv = false;
     try { kassenAktiv = require(`${__hooks}/pinn-kassen.js`).familyMigrated(e.auth.getString("familie")); } catch (err) { kassenAktiv = false; }
     if (kassenAktiv && incoming.finance !== undefined) {
-        // Ältere Geräte schicken die Finanzdaten noch mit: Fehlendes in die Haushaltskasse übernehmen
-        // (löscht nie etwas, nur in den ersten 30 Tagen nach dem Umzug), dann verwerfen
-        try { require(`${__hooks}/pinn-kassen.js`).rescueFinance(e.auth.getString("familie"), incoming.finance, { quelle: "Familiendaten eines älteren Geräts" }); } catch (err) { /* egal */ }
+        // Older devices still send the finance data along: take over what is missing into the household fund
+        // (never deletes anything, only in the first 30 days after the migration), then discard it
+        try { require(`${__hooks}/pinn-kassen.js`).rescueFinance(e.auth.getString("familie"), incoming.finance, { quelle: "Familiendaten eines älteren Geräts" }); } catch (err) { /* ignore */ }
         delete incoming.finance;
     }
 
-    // Beispiel-Mitglieder (Anna/Jonas/Mia) von älteren Geräten nie wieder speichern
-    try { require(`${__hooks}/pinn-benutzer.js`).stripExampleMembers(e.auth.getString("familie"), incoming); } catch (err) { /* egal */ }
+    // never store example members (Anna/Jonas/Mia) from older devices again
+    try { require(`${__hooks}/pinn-benutzer.js`).stripExampleMembers(e.auth.getString("familie"), incoming); } catch (err) { /* ignore */ }
 
-    // Gäste ändern die Gast-Menüs nie - auch nicht über die Bereiche (ab 1.108 im Bereich „einstellungen“)
+    // Guests never change the guest menus - also not via the areas (since 1.108 in the area "einstellungen")
     if (guest) delete incoming.guestHiddenViews;
 
-    // Bereiche (Rezepte, Essensplan …) gehören nicht mehr in den Familien-Datensatz
+    // Areas (recipes, meal plan ...) no longer belong in the family record
     let bekannt = [];
     try { bekannt = require(`${__hooks}/pinn-bereiche.js`).knownAreas(body.bereiche); } catch (err) { bekannt = []; }
     try { require(`${__hooks}/pinn-bereiche.js`).absorb(e.auth.getString("familie"), incoming); } catch (err) { console.log("[Bereiche] " + err.message); }
@@ -85,13 +85,13 @@ routerAdd("POST", "/api/pinn/save", (e) => {
                 const current = calendarSync.parseRecordData(record.get("data"));
                 calendarSync.stripAppleSecrets(current);
                 if ((guest || kassenAktiv) && current) delete current.finance;
-                // Bereiche, die das Gerät noch nicht kennt, mitliefern - sonst verschwänden dort z. B. die Rezepte
+                // Also deliver the areas the device does not know yet - otherwise e.g. the recipes would disappear there
                 if (current) {
                     try {
                         const B = require(`${__hooks}/pinn-bereiche.js`);
                         const fehlen = B.unknownAreas(ownFamily, bekannt);
                         if (fehlen.length) B.overlay(ownFamily, current, fehlen);
-                    } catch (err) { /* egal */ }
+                    } catch (err) { /* ignore */ }
                 }
                 result = {
                     status: 409,
@@ -103,7 +103,7 @@ routerAdd("POST", "/api/pinn/save", (e) => {
             previous = stored;
             if (kassenAktiv) delete incoming.finance;
             if (guest) {
-                // Finanz-Einstellungen und Gast-Menüs kann ein Gast nicht ändern: gespeicherten Stand behalten
+                // A guest cannot change finance settings and guest menus: keep the stored state
                 ["finance", "guestHiddenViews"].forEach(key => {
                     if (stored[key] !== undefined) incoming[key] = stored[key];
                     else delete incoming[key];
@@ -123,14 +123,14 @@ routerAdd("POST", "/api/pinn/save", (e) => {
             if (!bereiche.isMoved(savedFamily, "rezepte")) {
                 require(`${__hooks}/pinn-rezepte.js`).syncFamily(savedFamily, incoming);
             } else if (JSON.stringify((previous && previous.kitchenTools) || null) !== JSON.stringify(incoming.kitchenTools || null)) {
-                // Rezepte liegen im eigenen Bereich - hier nur, wenn sich die Küchengeräte geändert haben
+                // Recipes live in their own area - here only if the kitchen appliances have changed
                 bereiche.syncPublicRecipes(savedFamily, incoming.kitchenTools);
             }
         } catch (err) {
             console.log("[Rezepte] Abgleich öffentlicher Rezepte fehlgeschlagen: " + err.message);
         }
         try {
-            // Pinnwand liegt seit 1.106 im eigenen Bereich (Auswertung dort) - hier nur, solange noch nicht umgezogen
+            // The pinboard has lived in its own area since 1.106 (evaluation there) - here only as long as not migrated yet
             if (incoming.pinboard !== undefined) require(`${__hooks}/pinn-pinnwand.js`).afterSave(savedFamily, incoming, e.auth.id);
         } catch (err) {
             console.log("[Pinnwand] Auswertung nach dem Speichern fehlgeschlagen: " + err.message);
@@ -145,11 +145,11 @@ routerAdd("POST", "/api/pinn/save", (e) => {
 }, $apis.requireAuth("benutzer"));
 
 // ---------------------------------------------------------------------------------------------
-// Gastkonten: Finanz-Einstellungen beim Abruf entfernen, direkte Änderungen über die API sperren
+// Guest accounts: remove finance settings on retrieval, block direct changes via the API
 // ---------------------------------------------------------------------------------------------
 onRecordEnrich((e) => {
-    // Bereiche (Rezepte, Essensplan, Einkauf, Vorrat …), die das Gerät noch nicht selbst lädt, mitliefern
-    // (?bereiche=<Namen>; 1.104 schickte ?bereiche=1, ältere Versionen gar nichts)
+    // Also deliver the areas (recipes, meal plan, shopping, pantry ...) that the device does not load itself yet
+    // (?bereiche=<names>; 1.104 sent ?bereiche=1, older versions nothing at all)
     try {
         let query = null;
         try { query = e.requestInfo ? e.requestInfo.query : null; } catch (err) { query = null; }

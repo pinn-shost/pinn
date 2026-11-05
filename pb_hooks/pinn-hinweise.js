@@ -1,57 +1,57 @@
 // pb_hooks/pinn-hinweise.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden
-// (Einrichtung, Abruf und Dokumente-Hook in hinweise.pb.js; Aufrufe aus save_family_data.pb.js,
-// aufgaben.pb.js, create_calendar_event.pb.js, pinn-push.js, pinn-finanzen.js und pinn-kassen.js).
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require()
+// (set-up, retrieval and documents hook in hinweise.pb.js; calls from save_family_data.pb.js,
+// aufgaben.pb.js, create_calendar_event.pb.js, pinn-push.js, pinn-finanzen.js and pinn-kassen.js).
 //
-// Alles, was unter der 🔔 Glocke in der App erscheint (außer Heimwegen, offenen Einkaufs-Beträgen
-// und Versions-Neuerungen, die die App selbst kennt):
+// Everything that appears under the 🔔 bell in the app (except ways home, open shopping amounts
+// and version news, which the app knows itself):
 //
-//   1. Push-Nachrichten (Art "push"): JEDE persönliche Push-Nachricht landet zusätzlich als Hinweis
-//      beim Empfänger - auch wenn auf seinem Gerät gerade keine Mitteilung ankommt. Mit Link zur
-//      passenden Stelle (dieselbe Adresse wie beim Antippen der Mitteilung). Gleiche Meldungen
-//      (gleicher Tag/"tag") am selben Tag ersetzen sich, Erinnerungen verfallen nach ihrem Termin.
-//   2. Neuigkeiten der Familie - was die anderen eintragen oder ändern:
-//      - Einkauf:   neue Artikel, abgehakte/entfernte Artikel, neue/umbenannte/gelöschte Einkaufslisten
-//      - Listen:    Packliste / Checkliste / Ideenliste / Wunschzettel: neu, umbenannt, gelöscht,
-//                   neue und abgehakte Einträge (Geschenkelisten und private Listen NIE - Überraschungen
-//                   bleiben geheim; bei Wunschzetteln nur, was die Person selbst auf ihren Zettel setzt)
-//      - Essen:     neu geplante Mahlzeiten         - Rezepte:  neue Rezepte
-//      - Aufgaben:  neu angelegte und erledigte Aufgaben
-//      - Termine:   neu eingetragene Termine        - Vorrat:   neue Vorrats-Artikel
-//      - Pinnwand:  neue Zettel und Antworten       - Familie:  neue Familienmitglieder, Notfallpass geändert
-//      - Finanzen:  neue Buchungen (Einkauf mit Betrag, Tanken & Co. aus „Fahrzeuge“, Ausgleiche) -
-//                   NUR an die Mitglieder der jeweiligen Kasse; wer wem noch etwas schuldet, rechnet
-//                   die App beim Anzeigen aus den Buchungen der Kasse
-//      - Verträge & Fahrzeuge: neu angelegt (nur Mitglieder der Kasse)
-//      - Dokumente: neu abgelegt (nur, wer das Dokument sehen darf)
+//   1. Push messages (kind "push"): EVERY personal push message additionally ends up as a notice
+//      for the recipient - even if no notification is arriving on their device right now. With a link to the
+//      matching place (the same address as when tapping the notification). Identical messages
+//      (same day/"tag") on the same day replace each other, reminders expire after their event.
+//   2. Family news - what the others enter or change:
+//      - Shopping:  new items, ticked-off/removed items, new/renamed/deleted shopping lists
+//      - Lists:     packing list / checklist / idea list / wish list: new, renamed, deleted,
+//                   new and ticked-off entries (gift lists and private lists NEVER - surprises
+//                   stay secret; for wish lists only what the person puts on their own list themselves)
+//      - Meals:     newly planned meals             - Recipes:  new recipes
+//      - Tasks:     newly created and completed tasks
+//      - Events:    newly entered events            - Pantry:   new pantry items
+//      - Board:     new notes and replies           - Family:   new family members, emergency pass changed
+//      - Finance:   new bookings (shopping with an amount, fuel & co. from "Vehicles", settlements) -
+//                   ONLY to the members of the respective fund; who still owes whom something is calculated
+//                   by the app when displaying, from the fund's bookings
+//      - Contracts & vehicles: newly created (only members of the fund)
+//      - Documents: newly filed (only whoever may see the document)
 //
-// Gespeichert in der Sammlung "hinweise" (Zugriff nur über /api/pinn/hinweise, Sammlungs-API gesperrt):
-//   art, ziel, typ, wer (Profil-ID), mitglied (Mitglieds-ID), name (Benutzername als Rückfall),
-//   titel, text (Push-Text), link (Push-Adresse), an (",Profil-ID,Profil-ID," = nur für diese
-//   Profile; leer = ganze Familie), bis (ms - danach nicht mehr zeigen; 0 = nie), anzahl,
-//   eintraege (JSON-Text: [{ id, t, d?, z?, k?, b?, f? }]), familie, created, updated
-//   k = Schlüssel gegen Doppelungen ("aufgabe:<ID>"): hat jemand zur selben Sache schon eine
-//       persönliche Push-Nachricht in der Glocke, entfällt für ihn der allgemeine Familien-Hinweis.
+// Stored in the collection "hinweise" (access only via /api/pinn/hinweise, collection API locked):
+//   art, ziel, typ, wer (profile ID), mitglied (member ID), name (user name as a fallback),
+//   titel, text (push text), link (push address), an (",profile ID,profile ID," = only for these
+//   profiles; empty = whole family), bis (ms - do not show after that; 0 = never), anzahl,
+//   eintraege (JSON text: [{ id, t, d?, z?, k?, b?, f? }]), familie, created, updated
+//   k = key against duplicates ("aufgabe:<ID>"): if someone already has a personal push message
+//       in the bell for the same thing, the general family notice is dropped for them.
 //
-// Schonend für CPU und Speicher:
-//   - Die Familiendaten werden nicht zusätzlich gelesen: verglichen wird nur der alte mit dem gerade
-//     empfangenen Stand, den save_family_data.pb.js ohnehin in der Hand hat (Nachschlagen über Maps).
-//   - Mehrere Änderungen derselben Person an derselben Stelle innerhalb von 20 Minuten werden zu
-//     EINEM Hinweis zusammengefasst ("Anna hat 5 Artikel auf Rewe gesetzt").
-//   - Hinweise älter als 4 Tage werden beim Anlegen neuer Hinweise der Familie gelöscht - kein Zeitplan.
-//   - Ein Fehler hier verhindert nie das Speichern bzw. den Versand selbst.
+// Gentle on CPU and memory:
+//   - The family data is not additionally read: only the old state is compared with the one just
+//     received, which save_family_data.pb.js has in hand anyway (lookup via maps).
+//   - Several changes by the same person at the same place within 20 minutes are merged into
+//     ONE notice ("Anna put 5 items on Rewe").
+//   - Notices older than 4 days are deleted when new notices of the family are created - no schedule.
+//   - An error here never prevents the saving or the sending itself.
 
 const COL = "hinweise";
 const MIN_MS = 60000, HOUR_MS = 3600000, DAY_MS = 86400000;
-const MERGE_MS = 20 * MIN_MS;     // zusammenfassen innerhalb von 20 Minuten
-const PUSH_MERGE_MS = 14 * HOUR_MS; // gleiche Push-Meldung (gleicher tag) ersetzt die vorige
-const KEEP_MS = 4 * DAY_MS;       // auf dem Server aufbewahren
+const MERGE_MS = 20 * MIN_MS;     // merge within 20 minutes
+const PUSH_MERGE_MS = 14 * HOUR_MS; // an identical push message (same tag) replaces the previous one
+const KEEP_MS = 4 * DAY_MS;       // keep on the server
 const SHOW_MS = 3 * DAY_MS;       // an die App liefern
-const MAX_ENTRIES = 40;           // gespeicherte Einträge je Hinweis
-const ITEM_MAX_AGE = 3 * DAY_MS;  // ältere Artikel (z. B. nach langem Offline-Abgleich) nicht melden
-// Diese Push-Nachrichten zeigt die Glocke schon auf eigene Weise (Heimweg-Karte, Einkauf nachtragen)
+const MAX_ENTRIES = 40;           // stored entries per notice
+const ITEM_MAX_AGE = 3 * DAY_MS;  // do not report older items (e.g. after a long offline sync)
+// The bell already shows these push messages in its own way (way-home card, add shopping amount)
 const PUSH_SKIP_URL = /[?&](heimweg|hinweise)=/;
-// Reihenfolge, nach der aus einer Push-Adresse der Schlüssel gegen Doppelungen gebildet wird
+// Order in which the key against duplicates is formed from a push address
 const DK_KEYS = ["aufgabe", "ausgabe", "dokument", "vertrag", "pinnwand", "rezept", "mitglied", "sos", "fahrzeug"];
 
 const EXTRA_FIELDS = [
@@ -75,7 +75,7 @@ function makeField(def) {
 function ensureSchema() {
     let col = findCol(COL);
     if (col) {
-        // Felder späterer Versionen nachrüsten
+        // Add fields of later versions
         let changed = false;
         EXTRA_FIELDS.forEach(def => {
             if (hasField(col, def.name)) return;
@@ -152,7 +152,7 @@ function niceDate(ymd) {
     return WD[d.getUTCDay()] + " " + m[3] + "." + m[2] + ".";
 }
 function todayYmd() {
-    // Server läuft meist in UTC - ein Tag Puffer reicht für "nicht in der Vergangenheit"
+    // The server mostly runs in UTC - a day's buffer is enough for "not in the past"
     return new Date(Date.now() - DAY_MS).toISOString().slice(0, 10);
 }
 function readEntries(rec) {
@@ -170,13 +170,13 @@ function authInfo(auth) {
     };
 }
 function getStr(rec, name) { try { return rec.getString(name); } catch (e) { return ""; } }
-// Empfänger-Liste -> ",id1,id2," (leer = ganze Familie)
+// Recipient list -> ",id1,id2," (empty = whole family)
 function anText(ids) {
     const list = arr(ids).map(x => String(x || "")).filter(x => /^[a-z0-9]{15}$/.test(x));
     const uniq = list.filter((x, i) => list.indexOf(x) === i);
     return uniq.length ? ("," + uniq.join(",") + ",").slice(0, 2000) : "";
 }
-// Schlüssel gegen Doppelungen aus einer App-Adresse ("/?aufgabe=abc" -> "aufgabe:abc")
+// Key against duplicates from an app address ("/?aufgabe=abc" -> "aufgabe:abc")
 function dkFromUrl(url) {
     const q = String(url || "").split("?")[1] || "";
     const params = {};
@@ -200,19 +200,19 @@ function cleanEntry(x) {
     return o;
 }
 
-// Alte Hinweise der Familie entfernen (nur beim Anlegen eines neuen Hinweises, max. 60 auf einmal)
+// Remove old notices of the family (only when creating a new notice, 60 at once at most)
 function cleanup(familyId) {
     let old = [];
     try {
         old = $app.findRecordsByFilter(COL, "familie = {:f} && updated < {:d}", "", 60, 0, { f: familyId, d: pbDate(Date.now() - KEEP_MS) });
     } catch (e) { old = []; }
-    old.forEach(r => { try { $app.delete(r); } catch (e) { /* egal */ } });
+    old.forEach(r => { try { $app.delete(r); } catch (e) { /* ignore */ } });
 }
 
 // ---------------------------------------------------------------------------------------------
-// Hinweis anlegen oder mit einem frischen Hinweis derselben Person zusammenfassen
+// Create a notice or merge it with a fresh notice of the same person
 // items: [{ id, t, d?, z?, k?, b?, f? }]
-// opts:  { an: [Profil-IDs] (nur für diese), replace: true (Einträge ersetzen statt anhängen) }
+// opts:  { an: [profile IDs] (only for these), replace: true (replace entries instead of appending) }
 // ---------------------------------------------------------------------------------------------
 function record(familyId, who, art, ziel, typ, titel, items, opts) {
     if (!familyId || !who || !who.id) return;
@@ -221,7 +221,7 @@ function record(familyId, who, art, ziel, typ, titel, items, opts) {
     if (!list.length) return;
     if (!ready()) return;
     const an = o.an ? anText(o.an) : "";
-    if (o.an && !an) return; // niemand sonst darf es sehen
+    if (o.an && !an) return; // nobody else may see it
     let rec = null;
     try {
         const found = $app.findRecordsByFilter(COL,
@@ -259,7 +259,7 @@ function record(familyId, who, art, ziel, typ, titel, items, opts) {
     $app.save(rec);
 }
 
-// Einen Eintrag wieder herausnehmen (z. B. Häkchen gleich wieder entfernt)
+// Take an entry out again (e.g. tick removed again right away)
 function unrecord(familyId, who, art, entryId) {
     if (!familyId || !who || !who.id || !entryId || !ready()) return;
     let recs = [];
@@ -276,12 +276,12 @@ function unrecord(familyId, who, art, entryId) {
             rec.set("eintraege", JSON.stringify(rest));
             rec.set("anzahl", Math.max(rest.length, (rec.getInt("anzahl") || old.length) - 1));
             $app.save(rec);
-        } catch (e) { /* egal */ }
+        } catch (e) { /* ignore */ }
     });
 }
 
 // ---------------------------------------------------------------------------------------------
-// 1. Push-Nachricht in die Glocke des Empfängers spiegeln (aus pinn-push.js#notifyUserDetailed)
+// 1. Mirror a push message into the recipient's bell (from pinn-push.js#notifyUserDetailed)
 // msg: { titel, text, url, tag, bis? (ms), dk? }
 // ---------------------------------------------------------------------------------------------
 function pushMirror(userId, msg) {
@@ -327,9 +327,9 @@ function pushMirror(userId, msg) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// 1b. Update-Hinweis (seit 1.118.1, aus pinn-system.js#updateHinweise): EINE Karte je Profil, die
-//     täglich aufgefrischt wird – auch wenn sie älter als einen Tag ist. Weggewischt kommt sie so am
-//     nächsten Tag wieder, bis das Update installiert ist. true = gespeichert.
+// 1b. Update notice (since 1.118.1, from pinn-system.js#updateHinweise): ONE card per profile that is
+//     refreshed daily - even if it is older than a day. Swiped away, it comes back the
+//     next day until the update is installed. true = saved.
 // ---------------------------------------------------------------------------------------------
 function updateNotice(userId, msg) {
     if (!userId || !msg || !ready()) return false;
@@ -361,17 +361,17 @@ function updateNotice(userId, msg) {
     $app.save(rec);
     return true;
 }
-// Update installiert: Update-Karten aller Profile entfernen
+// Update installed: remove the update cards of all profiles
 function updateNoticeClear() {
     if (!ready()) return;
     try {
         $app.findRecordsByFilter(COL, "art = 'push' && typ = 'update'", "", 200, 0)
-            .forEach(r => { try { $app.delete(r); } catch (e) { /* egal */ } });
-    } catch (e) { /* egal */ }
+            .forEach(r => { try { $app.delete(r); } catch (e) { /* ignore */ } });
+    } catch (e) { /* ignore */ }
 }
 
 // ---------------------------------------------------------------------------------------------
-// 2. Nach dem Speichern der Familiendaten: alten mit neuem Stand vergleichen
+// 2. After saving the family data: compare the old with the new state
 // ---------------------------------------------------------------------------------------------
 function itemLabel(it) { return it.qty ? it.name + " (" + it.qty + ")" : it.name; }
 function afterSave(familyId, oldData, newData, auth) {
@@ -381,7 +381,7 @@ function afterSave(familyId, oldData, newData, auth) {
     const now = Date.now();
     const fresh = it => !it.createdAt || Number(it.createdAt) >= now - ITEM_MAX_AGE;
 
-    // --- Einkaufslisten: neu, umbenannt, gelöscht ---
+    // --- Shopping lists: new, renamed, deleted ---
     const oldListMap = byId(oldData.shoppingLists);
     const lists = arr(newData.shoppingLists);
     const newListMap = byId(lists);
@@ -406,7 +406,7 @@ function afterSave(familyId, oldData, newData, auth) {
         });
     }
 
-    // --- Einkauf: neue, abgehakte und entfernte Artikel, je Liste zusammengefasst ---
+    // --- Shopping: new, ticked-off and removed items, merged per list ---
     const oldItems = byId(oldData.shoppingItems);
     const newItems = arr(newData.shoppingItems);
     const newItemMap = byId(newItems);
@@ -426,34 +426,34 @@ function afterSave(familyId, oldData, newData, auth) {
         arr(oldData.shoppingItems).forEach(it => {
             if (!it || !it.id || !it.name || it.done || newItemMap[it.id]) return;
             const lid = it.listId || "essensplanung";
-            if (lid !== "essensplanung" && !newListMap[lid]) return; // ganze Liste gelöscht - steht schon oben
+            if (lid !== "essensplanung" && !newListMap[lid]) return; // whole list deleted - already reported above
             push(removed, lid, { id: it.id, t: itemLabel(it) });
         });
     }
     const each = (map, art) => Object.keys(map).forEach(lid => {
         const title = listName(lid);
-        if (!title) return; // Liste gibt es nicht (mehr)
+        if (!title) return; // the list does not exist (any more)
         record(familyId, who, art, lid, "einkauf", title, map[lid]);
     });
     each(added, "einkauf");
     each(ticked, "einkauf-ab");
     each(removed, "einkauf-weg");
 
-    // --- Weitere Listen (Packen, Checklisten, Ideen, Wünsche) ---
+    // --- Further lists (packing, checklists, ideas, wishes) ---
     const oldFam = byId(oldData.familyLists);
     const newFamMap = byId(newData.familyLists);
     const secret = l => !l || l.type === "gift" || !!l.privateTo || (l.type === "wish" && (!who.mitglied || l.memberId !== who.mitglied));
     arr(newData.familyLists).forEach(l => {
-        if (!l || !l.id || !l.type || secret(l)) return; // Geschenke & Privates bleiben geheim, nur eigene Wünsche
+        if (!l || !l.id || !l.type || secret(l)) return; // Gifts & private stuff stay secret, only own wishes
         const prev = oldFam[l.id];
         if (!prev) {
-            // neue Liste (nur, wenn es vorher überhaupt schon Listen-Daten gab)
+            // new list (only if there was list data at all before)
             if (Array.isArray(oldData.familyLists)) {
                 record(familyId, who, "liste-neu", l.id, l.type, l.name || "Liste", [{ id: l.id, t: l.name || "Liste" }]);
             }
             return;
         }
-        if (prev.privateTo) return; // war privat - Änderungen daraus nicht melden
+        if (prev.privateTo) return; // was private - do not report changes from it
         if (cleanText(prev.name, 80) && cleanText(l.name, 80) && cleanText(prev.name, 80) !== cleanText(l.name, 80)) {
             record(familyId, who, "liste-um", l.id, l.type, l.name, [{ id: l.id + ":" + cleanText(l.name, 40), t: l.name, z: prev.name }]);
         }
@@ -475,7 +475,7 @@ function afterSave(familyId, oldData, newData, auth) {
         });
     }
 
-    // --- Essensplanung ---
+    // --- Meal planning ---
     const oldMeals = byId(oldData.mealPlan);
     const recipes = arr(newData.recipes);
     const recipeMap = byId(recipes);
@@ -489,12 +489,12 @@ function afterSave(familyId, oldData, newData, auth) {
 
     // --- Rezepte ---
     const oldRecipes = byId(oldData.recipes);
-    // Aus dem Papierkorb wiederhergestellte Rezepte sind nicht neu (seit 1.118.3)
+    // Recipes restored from the recycle bin are not new (since 1.118.3)
     const oldTrash = byId(oldData.recipeTrash);
     const newRecipes = recipes.filter(r => r && r.id && !oldRecipes[r.id] && !oldTrash[r.id] && r.title).map(r => ({ id: r.id, t: r.title, k: "rezept:" + r.id }));
     if (newRecipes.length && newRecipes.length <= 30) record(familyId, who, "rezept", "rezepte", "", "Rezepte", newRecipes);
 
-    // --- Vorrat: neue Artikel ---
+    // --- Pantry: new items ---
     if (Array.isArray(oldData.pantryItems)) {
         const oldPantry = byId(oldData.pantryItems);
         const newPantry = arr(newData.pantryItems).filter(p => p && p.id && p.name && !oldPantry[p.id])
@@ -502,7 +502,7 @@ function afterSave(familyId, oldData, newData, auth) {
         if (newPantry.length && newPantry.length <= 40) record(familyId, who, "vorrat", "vorrat", "", "Vorrat", newPantry);
     }
 
-    // --- Familie: neue Mitglieder ---
+    // --- Family: new members ---
     if (Array.isArray(oldData.members)) {
         const oldMembers = byId(oldData.members);
         const newMembers = arr(newData.members).filter(m => m && m.id && m.name && !oldMembers[m.id])
@@ -510,7 +510,7 @@ function afterSave(familyId, oldData, newData, auth) {
         if (newMembers.length) record(familyId, who, "mitglied", "familie", "", "Familie", newMembers);
     }
 
-    // --- Notfallpass geändert (je Mitglied) ---
+    // --- Emergency pass changed (per member) ---
     const oldPasses = (oldData.emergencyPasses && typeof oldData.emergencyPasses === "object") ? oldData.emergencyPasses : null;
     const newPasses = (newData.emergencyPasses && typeof newData.emergencyPasses === "object") ? newData.emergencyPasses : null;
     if (oldPasses && newPasses) {
@@ -525,7 +525,7 @@ function afterSave(familyId, oldData, newData, auth) {
         });
     }
 
-    // --- Pinnwand: neue Zettel und Antworten ---
+    // --- Board: new notes and replies ---
     if (Array.isArray(oldData.pinboard)) {
         const oldNotes = byId(oldData.pinboard);
         const fresh2 = ms => !ms || Number(ms) >= now - ITEM_MAX_AGE;
@@ -548,7 +548,7 @@ function afterSave(familyId, oldData, newData, auth) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Aufgaben (aus aufgaben.pb.js) - Haushalts-Aufgaben legt der Zeitplan an, die werden nicht gemeldet
+// Tasks (from aufgaben.pb.js) - household tasks are created by the schedule, those are not reported
 // ---------------------------------------------------------------------------------------------
 function taskCreated(familyId, task, auth) {
     if (!task || !task.id || !task.title || task.household) return;
@@ -556,7 +556,7 @@ function taskCreated(familyId, task, auth) {
     if (!who) return;
     record(familyId, who, "aufgabe", "aufgaben", "", "Aufgaben", [{ id: task.id, t: task.title, d: task.dueDate || "", k: "aufgabe:" + task.id }]);
 }
-// Aufgabe abgehakt (done = true) bzw. Häkchen wieder entfernt
+// Task ticked off (done = true) or tick removed again
 function taskDone(familyId, task, auth, done) {
     if (!task || !task.id || !task.title) return;
     const who = authInfo(auth);
@@ -565,7 +565,7 @@ function taskDone(familyId, task, auth, done) {
     record(familyId, who, "aufgabe-ab", "aufgaben", task.household ? "haushalt" : "", "Aufgaben", [{ id: task.id, t: task.title }]);
 }
 
-// Neuer Termin (aus create_calendar_event.pb.js)
+// New event (from create_calendar_event.pb.js)
 function eventCreated(familyId, body, auth) {
     if (!body || !body.title) return;
     const who = authInfo(auth);
@@ -575,11 +575,11 @@ function eventCreated(familyId, body, auth) {
     const when = [niceDate(body.startDate), (!body.allDay && body.startTime) ? String(body.startTime).slice(0, 5) + " Uhr" : ""].filter(Boolean).join(", ");
     record(familyId, who, "termin", "kalender", "", "Kalender", [{ id: id, t: body.title, d: day, z: when, k: termKey(day, body.title) }]);
 }
-// Gleicher Schlüssel wie bei der Zuweisungs-Push (pinn-push.js)
+// Same key as for the assignment push (pinn-push.js)
 function termKey(day, title) { return "termin:" + String(day || "").slice(0, 10) + ":" + cleanText(title, 40); }
 
 // ---------------------------------------------------------------------------------------------
-// Finanzen: neue Buchung (aus pinn-finanzen.js) - nur an die Mitglieder der Kasse
+// Finance: new booking (from pinn-finanzen.js) - only to the members of the fund
 // ---------------------------------------------------------------------------------------------
 function kasseInfo(familyId, kasseId) {
     if (!kasseId) return null;
@@ -598,7 +598,7 @@ function expenseCreated(rec, user) {
     if (!info) return;
     const who = authInfo(user);
     const an = info.userIds.filter(id => id !== who.id);
-    if (!an.length) return; // eigene Kasse - niemand sonst
+    if (!an.length) return; // own fund - nobody else
     const betrag = Math.round(rec.getFloat("betrag") * 100) / 100;
     const kat = getStr(rec, "kategorie");
     const laden = cleanText(getStr(rec, "laden"), 60);
@@ -614,7 +614,7 @@ function expenseCreated(rec, user) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Kassen-Daten gespeichert (aus pinn-kassen.js#saveData): neue Verträge und Fahrzeuge
+// Fund data saved (from pinn-kassen.js#saveData): new contracts and vehicles
 // ---------------------------------------------------------------------------------------------
 function kasseDataSaved(meta, oldDaten, newDaten, user) {
     if (!meta || !user || !oldDaten || !newDaten || typeof oldDaten !== "object" || typeof newDaten !== "object") return;
@@ -640,8 +640,8 @@ function kasseDataSaved(meta, oldDaten, newDaten, user) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Dokument neu abgelegt (aus hinweise.pb.js, nach dem Anlegen über die Sammlungs-API)
-// Empfänger: Profile der Familie (keine Gäste), eingeschränkt auf "sichtbar" und die Kasse
+// Document newly filed (from hinweise.pb.js, after creating it via the collection API)
+// Recipients: profiles of the family (no guests), restricted to "visible" and the fund
 // ---------------------------------------------------------------------------------------------
 function documentCreated(rec, auth) {
     if (!rec || !auth) return;
@@ -668,9 +668,9 @@ function documentCreated(rec, auth) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Abruf für die App: Hinweise der letzten 3 Tage, ohne die eigenen - nur, was für dieses Profil
-// bestimmt ist; Familien-Hinweise zu Dingen, zu denen das Profil schon eine Push-Nachricht in der
-// Glocke hat, entfallen (Schlüssel k)
+// Retrieval for the app: notices of the last 3 days, without the own ones - only what is meant for this profile;
+// family notices about things for which the profile already has a push message in the
+// bell are dropped (key k)
 // ---------------------------------------------------------------------------------------------
 function listFor(familyId, userId) {
     if (!familyId) return [];
@@ -684,7 +684,7 @@ function listFor(familyId, userId) {
             "-updated", 100, 0,
             { f: familyId, w: me, s: pbDate(now - SHOW_MS), me: "," + me + ",", n: now });
     } catch (e) {
-        // Rückfall, falls die neuen Felder (noch) fehlen
+        // Fallback in case the new fields are (still) missing
         try {
             recs = $app.findRecordsByFilter(COL, "familie = {:f} && wer != {:w} && updated >= {:s}", "-updated", 80, 0,
                 { f: familyId, w: me, s: pbDate(now - SHOW_MS) });
@@ -703,7 +703,7 @@ function listFor(familyId, userId) {
         if (art !== "push") {
             const before = eintraege.length;
             eintraege = eintraege.filter(x => !(x && x.k && pushKeys[x.k]));
-            if (!eintraege.length && before) return; // alles schon als persönliche Nachricht da
+            if (!eintraege.length && before) return; // everything is already there as a personal message
             anzahl = Math.max(eintraege.length, anzahl - (before - eintraege.length));
         }
         out.push({

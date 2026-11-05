@@ -1,40 +1,40 @@
 // pb_hooks/push.pb.js
-// Routen und Zeitplan für persönliche Push-Benachrichtigungen. Die Logik steckt in pinn-push.js.
+// Routes and schedule for personal push notifications. The logic lives in pinn-push.js.
 //
-// Routen:
-//   GET  /api/pinn/push/config         (angemeldet) öffentlicher Schlüssel, Status, eigene Einstellungen
-//   POST /api/pinn/push/abo            (angemeldet) dieses Gerät für das eigene Profil anmelden
-//   POST /api/pinn/push/abo-loeschen   (angemeldet) dieses Gerät abmelden
-//   POST /api/pinn/push/einstellungen  (angemeldet) eigene Benachrichtigungs-Einstellungen speichern
-//   POST /api/pinn/push/test           (angemeldet) Test-Benachrichtigung an die eigenen Geräte
-//   POST /api/pinn/push/kinderseite    (angemeldet) auf der Kinderseite wurde etwas abgehakt ->
-//                                      Hinweis an die anderen Profile der Familie (10 Sek. verzögert,
-//                                      {done:false} verwirft eine noch nicht verschickte Meldung)
-//   POST /api/pinn/push/faellige       (angemeldet) fällige verzögerte Erledigt-Meldungen der eigenen
-//                                      Familie jetzt verschicken (die App fragt 10 Sek. nach dem Abhaken)
-//   POST /api/pinn/push/abholen        (ohne Anmeldung) der Service Worker holt die wartende
-//                                      Nachricht seines Geräts ab - nur mit der geheimen Geräte-
-//                                      Adresse (endpoint) möglich, die nur das Gerät selbst kennt.
-//                                      Antwort enthält zusätzlich "badge" = offene, fällige Aufgaben
-//                                      des Profils für die Zahl am App-Symbol, und "ersatz" =
-//                                      allgemeiner Hinweistext in der Sprache des Profils.
-//                                      Texte kommen in der Sprache des Profils und passend zur
-//                                      Wohnform (Familie/WG) an - siehe pinn-pushtext.js.
-//   GET  /api/pinn/push/schluessel     (ohne Anmeldung) öffentlicher Schlüssel für den Service
-//                                      Worker, wenn er das Gerät selbst neu anmelden muss
-//   POST /api/pinn/push/abo-erneuern   (ohne Anmeldung) der Service Worker meldet eine neue Push-
-//                                      Adresse seines Geräts - nur mit der alten, geheimen Adresse.
+// Routes:
+//   GET  /api/pinn/push/config         (signed in) public key, status, own settings
+//   POST /api/pinn/push/abo            (signed in) register this device for the own profile
+//   POST /api/pinn/push/abo-loeschen   (signed in) unregister this device
+//   POST /api/pinn/push/einstellungen  (signed in) save own notification settings
+//   POST /api/pinn/push/test           (signed in) test notification to the own devices
+//   POST /api/pinn/push/kinderseite    (signed in) something was ticked off on the kids' page ->
+//                                      notice to the other profiles of the family (10 sec. delayed,
+//                                      {done:false} discards a message that has not been sent yet)
+//   POST /api/pinn/push/faellige       (signed in) send due delayed completion messages of the own
+//                                      family now (the app asks 10 sec. after ticking off)
+//   POST /api/pinn/push/abholen        (without sign-in) the service worker fetches the waiting
+//                                      message of its device - only possible with the secret device
+//                                      address (endpoint), which only the device itself knows.
+//                                      The response additionally contains "badge" = open, due tasks
+//                                      of the profile for the number on the app icon, and "ersatz" =
+//                                      generic notice text in the profile's language.
+//                                      Texts arrive in the profile's language and matching the
+//                                      living arrangement (family/flat share) - see pinn-pushtext.js.
+//   GET  /api/pinn/push/schluessel     (without sign-in) public key for the service
+//                                      worker if it has to register the device again itself
+//   POST /api/pinn/push/abo-erneuern   (without sign-in) the service worker reports a new push
+//                                      address of its device - only with the old, secret address.
 //
-// Geräteverwaltung: Die Push-Adresse eines Geräts wird seiner Sitzung zugeordnet (pinn-sitzungen.js) –
-// wird das Gerät abgemeldet, bekommt es keine Benachrichtigungen mehr. Fehler landen zusätzlich im
-// Admin-Fehlerprotokoll (pinn-protokoll.js).
+// Device management: a device's push address is assigned to its session (pinn-sitzungen.js) -
+// if the device is signed out, it gets no notifications any more. Errors additionally end up in the
+// admin error log (pinn-protokoll.js).
 //
-// Nach einem Neustart oder Update bleiben alle Geräte angemeldet: Geräte stehen in der Datenbank,
-// der Schlüssel in pb_data. Vorgemerkte Meldungen und Sperren werden beim Start wiederhergestellt.
+// After a restart or update, all devices stay signed in: devices are in the database,
+// the key in pb_data. Queued messages and locks are restored on start.
 
 onBootstrap((e) => {
     e.next();
-    // Push-Sammlungen legt die Datenbank-Einrichtung an (pinn-schema.js)
+    // The push collections are created by the database set-up (pinn-schema.js)
     try { require(`${__hooks}/pinn-schema.js`).ensureCurrent(); } catch (err) { console.log("[Push] Einrichtung: " + err.message); }
     try {
         const push = require(`${__hooks}/pinn-push.js`);
@@ -42,27 +42,27 @@ onBootstrap((e) => {
         if (r.verzoegert) console.log("[Push] " + r.verzoegert + " vorgemerkte Meldung(en) nach dem Neustart wiederhergestellt.");
     } catch (err) {
         console.log("[Push] Wiederherstellen fehlgeschlagen: " + err.message);
-        try { require(`${__hooks}/pinn-protokoll.js`).fehler("push", "Vorgemerkte Meldungen nach dem Neustart nicht wiederhergestellt: " + err.message); } catch (e2) { /* egal */ }
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("push", "Vorgemerkte Meldungen nach dem Neustart nicht wiederhergestellt: " + err.message); } catch (e2) { /* ignore */ }
     }
     try {
         const push = require(`${__hooks}/pinn-push.js`);
         const t = push.selfTest();
-        try { $app.store().set("pinnPushSelfTest", t); } catch (err) { /* egal */ }
+        try { $app.store().set("pinnPushSelfTest", t); } catch (err) { /* ignore */ }
         console.log("[Push] " + (t.ok ? "Bereit - " + push.countSubscriptions() + " Gerät(e) angemeldet." : "Nicht verfügbar: " + t.message));
-        if (!t.ok) try { require(`${__hooks}/pinn-protokoll.js`).fehler("push", "Push ist auf dem Server nicht verfügbar: " + t.message); } catch (e2) { /* egal */ }
+        if (!t.ok) try { require(`${__hooks}/pinn-protokoll.js`).fehler("push", "Push ist auf dem Server nicht verfügbar: " + t.message); } catch (e2) { /* ignore */ }
     } catch (err) {
         console.log("[Push] Selbsttest fehlgeschlagen: " + err.message);
-        try { require(`${__hooks}/pinn-protokoll.js`).fehler("push", "Push-Selbsttest fehlgeschlagen: " + err.message); } catch (e2) { /* egal */ }
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("push", "Push-Selbsttest fehlgeschlagen: " + err.message); } catch (e2) { /* ignore */ }
     }
 });
 
-// Verzögerte Erledigt-Meldungen, falls die App vor Ablauf der 10 Sekunden geschlossen wurde
+// Delayed completion messages, in case the app was closed before the 10 seconds were over
 cronAdd("pinnPushVerzoegert", "* * * * *", () => {
     try {
         require(`${__hooks}/pinn-push.js`).runDelayed("");
     } catch (err) {
         console.log("[Push] Verzögerte Meldungen: " + err.message);
-        try { require(`${__hooks}/pinn-protokoll.js`).fehler("push", "Verzögerte Meldungen: " + err.message); } catch (e2) { /* egal */ }
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("push", "Verzögerte Meldungen: " + err.message); } catch (e2) { /* ignore */ }
     }
 });
 
@@ -71,7 +71,7 @@ cronAdd("pinnPush", "*/5 * * * *", () => {
         require(`${__hooks}/pinn-push.js`).runPushCron();
     } catch (err) {
         console.log("[Push] Zeitplan-Fehler: " + err.message);
-        try { require(`${__hooks}/pinn-protokoll.js`).fehler("push", "Push-Zeitplan fehlgeschlagen: " + err.message); } catch (e2) { /* egal */ }
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("push", "Push-Zeitplan fehlgeschlagen: " + err.message); } catch (e2) { /* ignore */ }
     }
 });
 
@@ -81,7 +81,7 @@ routerAdd("GET", "/api/pinn/push/config", (e) => {
     try { test = $app.store().get("pinnPushSelfTest"); } catch (err) { test = null; }
     if (!test || !test.ok) {
         test = push.selfTest();
-        try { $app.store().set("pinnPushSelfTest", test); } catch (err) { /* egal */ }
+        try { $app.store().set("pinnPushSelfTest", test); } catch (err) { /* ignore */ }
     }
     let settings = push.normalizeSettings(null);
     try { settings = push.readSettings($app.findRecordById("benutzer", e.auth.id)); } catch (err) { /* Standard */ }
@@ -107,12 +107,12 @@ routerAdd("POST", "/api/pinn/push/abo", (e) => {
         try { rec = $app.findFirstRecordByFilter(push.PUSH_ABOS, "endpoint = {:e}", { e: endpoint }); } catch (err) { rec = null; }
         if (!rec) rec = new Record(abosCol);
         rec.set("endpoint", endpoint);
-        rec.set("benutzer", e.auth.id); // meldet sich jemand anderes auf dem Gerät an, wandert das Abo mit
+        rec.set("benutzer", e.auth.id); // if someone else signs in on the device, the subscription moves along
         rec.set("geraet", String(body.geraet || "").slice(0, 200));
         $app.save(rec);
         push.rememberSubjectFromRequest(e);
-        // Geräteverwaltung: Push-Adresse der Sitzung dieses Geräts zuordnen
-        try { require(`${__hooks}/pinn-sitzungen.js`).merkePush(e, endpoint); } catch (err2) { /* egal */ }
+        // Device management: assign the push address to this device's session
+        try { require(`${__hooks}/pinn-sitzungen.js`).merkePush(e, endpoint); } catch (err2) { /* ignore */ }
         return e.json(200, { success: true });
     } catch (err) {
         return e.json(500, { error: "Gerät konnte nicht angemeldet werden: " + err.message });
@@ -125,8 +125,8 @@ routerAdd("POST", "/api/pinn/push/abo-loeschen", (e) => {
     try {
         const rec = $app.findFirstRecordByFilter(push.PUSH_ABOS, "endpoint = {:e}", { e: String(body.endpoint || "") });
         if (rec.getString("benutzer") === e.auth.id) $app.delete(rec);
-    } catch (err) { /* nicht vorhanden */ }
-    try { require(`${__hooks}/pinn-sitzungen.js`).vergissPush(String(body.endpoint || "")); } catch (err) { /* egal */ }
+    } catch (err) { /* does not exist */ }
+    try { require(`${__hooks}/pinn-sitzungen.js`).vergissPush(String(body.endpoint || "")); } catch (err) { /* ignore */ }
     return e.json(200, { success: true });
 }, $apis.requireAuth("benutzer"));
 
@@ -134,26 +134,26 @@ routerAdd("POST", "/api/pinn/push/einstellungen", (e) => {
     const push = require(`${__hooks}/pinn-push.js`);
     const body = e.requestInfo().body;
     const settings = push.normalizeSettings(body.settings);
-    try { push.ensurePushCollections(); } catch (err) { /* Fehler zeigt sich unten */ }
+    try { push.ensurePushCollections(); } catch (err) { /* the error shows up below */ }
     const rec = $app.findRecordById("benutzer", e.auth.id);
     let before = null;
     try { before = push.readSettings(rec); } catch (err) { before = null; }
     rec.set("push_einstellungen", settings);
     $app.save(rec);
-    // Zurücklesen, damit die App sieht, was wirklich gespeichert ist
+    // Read back so that the app sees what was really saved
     let saved = settings;
     try { saved = push.readSettings($app.findRecordById("benutzer", e.auth.id)); } catch (err) { saved = settings; }
     if (JSON.stringify(saved) !== JSON.stringify(settings)) {
         return e.json(200, { error: "Einstellungen wurden nicht gespeichert (Feld \"push_einstellungen\" fehlt im Profil)." });
     }
-    // Neue Uhrzeit: die Tagesübersicht darf heute noch einmal kommen
+    // New time: the daily overview may come once more today
     if (!before || before.uhrzeit !== saved.uhrzeit || !before.tagesuebersicht) try {
         const status = push.loadPushStatus();
         if (status.tagesuebersicht && status.tagesuebersicht[e.auth.id]) {
             delete status.tagesuebersicht[e.auth.id];
             push.savePushStatus(status);
         }
-    } catch (err) { /* egal */ }
+    } catch (err) { /* ignore */ }
     return e.json(200, { success: true, settings: saved });
 }, $apis.requireAuth("benutzer"));
 
@@ -217,12 +217,12 @@ routerAdd("POST", "/api/pinn/push/abholen", (e) => {
     const msg = push.takeMessage(endpoint);
     let badge = null;
     try { badge = push.badgeForEndpoint(endpoint); } catch (err) { badge = null; }
-    // Ersatztext in der Sprache des Profils (falls nichts mehr abzuholen ist); der Worker merkt ihn
-    // sich auch für Weckrufe, bei denen der Server gerade nicht erreichbar ist.
+    // Fallback text in the profile's language (in case there is nothing left to fetch); the worker also remembers it
+    // for wake-up calls when the server is currently not reachable.
     let ersatz = null;
     try { ersatz = require(`${__hooks}/pinn-pushtext.js`).fallbackForEndpoint(endpoint); } catch (err) { ersatz = null; }
     e.response.header().set("Cache-Control", "no-store");
-    // badge: Zahl offener Aufgaben fürs App-Symbol (null = unbekannt, Worker ändert nichts)
+    // badge: number of open tasks for the app icon (null = unknown, the worker changes nothing)
     return e.json(200, { nachricht: msg, badge: badge, ersatz: ersatz });
 });
 
@@ -239,7 +239,7 @@ routerAdd("POST", "/api/pinn/push/abo-erneuern", (e) => {
     const body = e.requestInfo().body;
     try {
         const r = push.renewSubscription(body.alt, body.neu);
-        if (r.ok) { try { require(`${__hooks}/pinn-sitzungen.js`).erneuerePush(String(body.alt || ""), String(body.neu || "")); } catch (err2) { /* egal */ } }
+        if (r.ok) { try { require(`${__hooks}/pinn-sitzungen.js`).erneuerePush(String(body.alt || ""), String(body.neu || "")); } catch (err2) { /* ignore */ } }
         return e.json(200, r.ok ? { success: true } : { success: false, error: r.grund });
     } catch (err) {
         console.log("[Push] Adresse erneuern: " + err.message);

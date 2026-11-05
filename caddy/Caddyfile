@@ -1,16 +1,16 @@
-# pinn. – Caddy (HTTPS über DuckDNS, Zertifikat per DNS-Prüfung, keine Portfreigabe nötig)
-# Gehört nach <Projekt>/caddy/Caddyfile. Subdomain und Token kommen aus der Einrichtung in pinn.
-# (konfig/pinn.env) bzw. den Vorgaben in der docker-compose.yaml – hier muss nichts eingetragen werden.
-# Caddy startet erst, wenn DuckDNS eingerichtet ist, und startet nach Änderungen selbst neu.
+# pinn. – Caddy (HTTPS via DuckDNS, certificate via DNS challenge, no port forwarding needed)
+# Belongs in <project>/caddy/Caddyfile. Subdomain and token come from the set-up in pinn.
+# (konfig/pinn.env) or the defaults in docker-compose.yaml – nothing has to be entered here.
+# Caddy only starts once DuckDNS is set up, and restarts itself after changes.
 {
-	# Port 80 ist nicht nach außen freigegeben – keine Umleitung von http auf https nötig
+	# Port 80 is not opened to the outside – no redirect from http to https needed
 	auto_https disable_redirects
 }
 
 {$DUCKDNS_SUBDOMAIN}.duckdns.org {
 	tls {
 		dns duckdns {$DUCKDNS_TOKEN}
-		# Prüft die DNS-Einträge über öffentliche Server – der Router (DNS-Rebind-Schutz) stört so nicht
+		# Checks the DNS records via public servers – so the router (DNS rebind protection) does not interfere
 		resolvers 1.1.1.1 9.9.9.9
 	}
 	encode zstd gzip

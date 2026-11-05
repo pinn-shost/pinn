@@ -1,55 +1,55 @@
 # ─────────────────────────────────────────────────────────────
-#  pinn. – Docker-Projekt (PocketBase + HTTPS über Caddy/DuckDNS + Umweg zur Home-Assistant-VM
-#  + optional Tailscale + optional Traccar für GPS-Tracker + Wartung: Backups & Updates per Knopf)
-#  Keine Portfreigabe nötig – Zertifikat per DNS-Prüfung.
+#  pinn. – Docker project (PocketBase + HTTPS via Caddy/DuckDNS + detour to the Home Assistant VM
+#  + optional Tailscale + optional Traccar for GPS trackers + maintenance: backups & updates at the push of a button)
+#  No port forwarding needed – certificate via DNS challenge.
 #
-#  EINRICHTUNG: Alles Nötige (DuckDNS, Google, KI, Home Assistant, Tailscale …) trägst du in pinn.
-#  selbst ein: http://<NAS-IP>:8090 öffnen → „Als Hauptadmin anmelden“ → der Einrichtungs-Assistent
-#  startet. Die Werte landen im Ordner ./konfig (pinn.env) und werden von allen Containern gelesen –
-#  hier und in der .env muss dafür nichts mehr geändert werden.
+#  SET-UP: Everything needed (DuckDNS, Google, AI, Home Assistant, Tailscale …) you enter in pinn.
+#  itself: open http://<NAS-IP>:8090 → "Sign in as main admin" → the set-up wizard
+#  starts. The values end up in the folder ./konfig (pinn.env) and are read by all containers –
+#  nothing has to be changed here or in the .env for that any more.
 #
-#  Die Werte unten und in der .env sind nur noch Vorgaben: Was im Assistenten gespeichert ist, gilt.
-#  Erstinstallation: sudo sh pinn-setup.sh (sortiert alle Dateien und startet pinn.)
-#  Updates danach per Knopf in pinn. (Einstellungen → System) oder wie bisher mit pinn-setup.sh.
-#  Projekt & Anleitung: https://github.com/pinn-shost/pinn
+#  The values below and in the .env are only defaults now: whatever is saved in the wizard applies.
+#  First installation: sudo sh pinn-setup.sh (sorts all files and starts pinn.)
+#  Updates afterwards by button in pinn. (Settings → System) or, as before, with pinn-setup.sh.
+#  Project & guide: https://github.com/pinn-shost/pinn
 # ─────────────────────────────────────────────────────────────
 x-pinn-config: &pinn-config
-  DUCKDNS_SUBDOMAIN: ""                     # Vorgabe – kommt aus der Einrichtung in pinn.
-  DUCKDNS_TOKEN: "${DUCKDNS_TOKEN:-}"       # Vorgabe aus der .env (optional)
-  NAS_IP: ""                                # Vorgabe – lokale IP des NAS (leer = Einrichtung erkennt sie)
+  DUCKDNS_SUBDOMAIN: ""                     # default – comes from the set-up in pinn.
+  DUCKDNS_TOKEN: "${DUCKDNS_TOKEN:-}"       # default from the .env (optional)
+  NAS_IP: ""                                # default – local IP of the NAS (empty = the set-up detects it)
 
 x-ha-netz-config: &ha-netz-config
-  NAS_NETZWERKKARTE: "auto"                 # Vorgabe – „auto“ = selbst erkennen
-  HA_IP: ""                                 # Vorgabe – Home Assistant (VM auf dem NAS), leer = kein Umweg
-  HILFS_IP: ""                              # Vorgabe – freie Adresse im Heimnetz, außerhalb des DHCP-Bereichs
+  NAS_NETZWERKKARTE: "auto"                 # default – "auto" = detect by itself
+  HA_IP: ""                                 # default – Home Assistant (VM on the NAS), empty = no detour
+  HILFS_IP: ""                              # default – free address in the home network, outside the DHCP range
 
-# PocketBase-Version: wird beim Start direkt aus den offiziellen GitHub-Releases gebaut
-# (Prüfsumme wird kontrolliert). Neue Version = Zahl ändern + "docker compose up -d".
-# Vor jedem Versionssprung läuft am besten das Skript ./pinn-pocketbase-update.sh
-# (sichert vorher, prüft die Hooks und zeigt Fehler an).
+# PocketBase version: is built on start directly from the official GitHub releases
+# (checksum is verified). New version = change the number + "docker compose up -d".
+# Before every version jump it is best to run the script ./pinn-pocketbase-update.sh
+# (backs up beforehand, checks the hooks and shows errors).
 x-pocketbase-version: &pb-version "0.40.3"
 
 x-backup-config: &backup-config
-  BACKUP_UHRZEIT: "03:30"                   # tägliche Sicherung um diese Uhrzeit
-  BACKUP_TAGE: "7"                          # alle Sicherungen der letzten 7 Tage bleiben …
-  BACKUP_WOCHEN: "4"                        # … danach je Woche eine, 4 Wochen lang
+  BACKUP_UHRZEIT: "03:30"                   # daily backup at this time
+  BACKUP_TAGE: "7"                          # all backups of the last 7 days are kept …
+  BACKUP_WOCHEN: "4"                        # … then one per week, for 4 weeks
   TZ: "Europe/Berlin"
 # ─────────────────────────────────────────────────────────────
-#  Sicherungen landen als pinn_JJJJ-MM-TT_HHMM.tar.gz im Ordner ./backups
-#  (enthält Datenbank, hochgeladene Dateien, pb_public, pb_hooks, Caddy, Traccar, konfig, Tailscale,
-#   .env und diese Datei – nur für root lesbar, nicht weitergeben).
-#  Wiederherstellen: in pinn. unter Einstellungen → System → Sicherungen & Updates (oder als Hauptadmin
-#  „🛟 Sicherungen & Updates“). Ohne App: docker compose down → Archiv im Projektordner entpacken
+#  Backups end up as pinn_YYYY-MM-DD_HHMM.tar.gz in the folder ./backups
+#  (contains database, uploaded files, pb_public, pb_hooks, Caddy, Traccar, konfig, Tailscale,
+#   .env and this file – readable by root only, do not pass on).
+#  Restore: in pinn. under Settings → System → Backups & updates (or as main admin
+#  "🛟 Backups & updates"). Without the app: docker compose down → unpack the archive in the project folder
 #  (tar -xzf backups/pinn_….tar.gz) → docker compose up -d
 # ─────────────────────────────────────────────────────────────
 
 services:
 
   pocketbase:
-    # Eigenes, schlankes Image aus der offiziellen PocketBase-Datei (kein fremdes Docker-Image mehr).
-    # Wird nur neu gebaut, wenn sich oben die Version ändert – sonst kommt es sofort aus dem Cache.
+    # Own, slim image from the official PocketBase file (no third-party Docker image any more).
+    # Is only rebuilt when the version above changes – otherwise it comes straight from the cache.
     build:
-      context: ./pb_hooks          # nur als Platzhalter nötig, es wird nichts daraus kopiert
+      context: ./pb_hooks          # only needed as a placeholder, nothing is copied from it
       dockerfile_inline: |
         FROM alpine:3.20
         ARG PB_VERSION
@@ -77,8 +77,8 @@ services:
     pull_policy: build
     container_name: pocketbase
     restart: unless-stopped
-    # Liest beim Start die Werte aus der Einrichtung (konfig/pinn.env) – sie gelten vor .env und Vorgaben.
-    # Nach dem Speichern im Assistenten startet sich pinn. selbst neu, Docker holt es sofort zurück.
+    # Reads the values from the set-up (konfig/pinn.env) on start – they take precedence over .env and defaults.
+    # After saving in the wizard, pinn. restarts itself, Docker brings it straight back.
     entrypoint: ["/bin/sh", "-c"]
     command:
       - |
@@ -89,17 +89,17 @@ services:
         fi
         exec pocketbase serve --http=0.0.0.0:80 --dir=/pb_data --publicDir=/pb_public --hooksDir=/pb_hooks --hooksWatch=false
     env_file:
-      - .env               # optionale Vorgaben (Schlüssel, Google, KI, Traccar) – die Einrichtung in pinn. hat Vorrang
+      - .env               # optional defaults (key, Google, AI, Traccar) – the set-up in pinn. takes precedence
     environment:
-      <<: [*pinn-config, *ha-netz-config]   # Vorgaben, damit der Assistent sie anzeigen kann
+      <<: [*pinn-config, *ha-netz-config]   # defaults, so that the wizard can show them
     ports:
-      - "8090:80"          # nur im Heimnetz: http://<NAS-IP>:8090 (Ersteinrichtung, Notzugang)
+      - "8090:80"          # only in the home network: http://<NAS-IP>:8090 (first set-up, emergency access)
     volumes:
       - ./pb_data:/pb_data
       - ./pb_public:/pb_public
       - ./pb_hooks:/pb_hooks
-      - ./konfig:/pinn_konfig            # Werte aus der Einrichtung (pinn.env, einrichtung.json)
-      - ./wartung:/pinn_wartung          # Austausch mit dem Container „wartung“ (Sicherungen, Updates)
+      - ./konfig:/pinn_konfig            # values from the set-up (pinn.env, einrichtung.json)
+      - ./wartung:/pinn_wartung          # exchange with the container "wartung" (backups, updates)
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:80/api/health >/dev/null 2>&1 || exit 1"]
       interval: 60s
@@ -108,7 +108,7 @@ services:
       start_period: 30s
 
   caddy:
-    image: serfriz/caddy-duckdns:latest   # fertiges Caddy mit DuckDNS-Modul, kein Build nötig
+    image: serfriz/caddy-duckdns:latest   # ready-made Caddy with the DuckDNS module, no build needed
     container_name: caddy
     restart: unless-stopped
     environment: *pinn-config
@@ -117,11 +117,11 @@ services:
       - "8443:443/udp"
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
-      - ./caddy/data:/data        # Zertifikate – nicht löschen
+      - ./caddy/data:/data        # certificates – do not delete
       - ./caddy/config:/config
       - ./konfig:/pinn_konfig:ro
-    # Startet Caddy erst, wenn DuckDNS eingerichtet ist, und startet es neu, sobald sich Subdomain
-    # oder Token in der Einrichtung ändern. Log ansehen: docker logs caddy
+    # Starts Caddy only once DuckDNS is set up, and restarts it as soon as the subdomain
+    # or token change in the set-up. View the log: docker logs caddy
     entrypoint: ["/bin/sh", "-c"]
     command:
       - |
@@ -152,40 +152,40 @@ services:
     depends_on:
       - pocketbase
 
-  # OPTIONAL – nur für GPS-Tracker mit SIM-Karte (z. B. am Hundehalsband).
-  # Handys brauchen diesen Container NICHT: Sie teilen ihren Standort direkt in pinn. bzw. senden mit
-  # der App „Traccar Client“ an pinn. (https://<pinn.>/api/pinn/ortung/osmand) – pinn. speichert selbst.
-  # Startet deshalb nicht mehr automatisch. Einschalten: in der .env die Zeile
+  # OPTIONAL – only for GPS trackers with a SIM card (e.g. on a dog collar).
+  # Phones do NOT need this container: they share their location directly in pinn. or send with
+  # the "Traccar Client" app to pinn. (https://<pinn.>/api/pinn/ortung/osmand) – pinn. stores it itself.
+  # Therefore it no longer starts automatically. To switch on: add the line
   #   COMPOSE_PROFILES=tracker
-  # ergänzen und „docker compose up -d“ ausführen. Ausschalten: Zeile entfernen und
-  # „docker rm -f traccar“. Die Daten in ./traccar bleiben erhalten.
-  # Traccar-Weboberfläche: nur auf dem NAS (siehe Ports unten), für pinn. nicht gebraucht.
+  # to the .env and run "docker compose up -d". To switch off: remove the line and
+  # "docker rm -f traccar". The data in ./traccar is kept.
+  # Traccar web interface: only on the NAS (see ports below), not needed for pinn.
   traccar:
     image: traccar/traccar:latest
     container_name: traccar
     restart: unless-stopped
     profiles: ["tracker"]
     ports:
-      # Weboberfläche und OsmAnd nur auf dem NAS selbst (pinn. spricht intern über das Docker-Netz).
-      # Handys senden über pinn. (https://<pinn.>/api/pinn/ortung/osmand) – mit SOS-Erkennung.
-      # Weboberfläche bei Bedarf per SSH-Tunnel: ssh -L 8082:127.0.0.1:8082 <NAS> → http://localhost:8082
-      - "127.0.0.1:8082:8082" # Weboberfläche / API
+      # Web interface and OsmAnd only on the NAS itself (pinn. talks internally via the Docker network).
+      # Phones send via pinn. (https://<pinn.>/api/pinn/ortung/osmand) – with SOS detection.
+      # Web interface if needed via SSH tunnel: ssh -L 8082:127.0.0.1:8082 <NAS> → http://localhost:8082
+      - "127.0.0.1:8082:8082" # web interface / API
       - "127.0.0.1:5055:5055" # OsmAnd
-      - "5023:5023"           # GT06 (viele Hunde-/Auto-GPS-Tracker)
+      - "5023:5023"           # GT06 (many dog/car GPS trackers)
       - "5013:5013"           # H02
-      - "5093:5093"           # Watch (Kinder-/Tier-Uhren, 3G/4G-Tracker)
+      - "5093:5093"           # Watch (children's/pet watches, 3G/4G trackers)
       - "5027:5027"           # Teltonika
     volumes:
       - ./traccar/data:/opt/traccar/data
       - ./traccar/logs:/opt/traccar/logs
 
-  # Hält die DuckDNS-Adresse aktuell (zeigt auf die Heimnetz-IP des NAS). Liest Subdomain, Token und
-  # NAS-IP aus der Einrichtung, meldet stündlich und sofort nach jeder Änderung. Log: docker logs duckdns
+  # Keeps the DuckDNS address current (points to the NAS's home network IP). Reads subdomain, token and
+  # NAS IP from the set-up, reports hourly and immediately after every change. Log: docker logs duckdns
   duckdns:
     image: curlimages/curl:latest
     container_name: duckdns
     restart: unless-stopped
-    user: "0:0"            # darf konfig/pinn.env lesen (nur für root lesbar, enthält den Token)
+    user: "0:0"            # may read konfig/pinn.env (readable by root only, contains the token)
     environment: *pinn-config
     volumes:
       - ./konfig:/pinn_konfig:ro
@@ -212,14 +212,14 @@ services:
           sleep 30
         done
 
-  # Umweg zur Home-Assistant-VM: Die VM hängt per macvtap direkt an der Netzwerkkarte – dabei
-  # blockt Linux den Verkehr zwischen NAS (und damit allen Containern) und der VM. Dieser Container
-  # legt beim Start eine zweite virtuelle Netzwerkkarte (ha-shim, macvlan im Bridge-Modus) mit der
-  # Hilfs-IP an und leitet den Verkehr zur VM darüber. Beim Beenden wird alles wieder entfernt.
-  # Werte aus der Einrichtung in pinn. (Smarthome: Home Assistant), sonst aus „x-ha-netz-config“ oben.
-  # Ohne HA_IP wartet der Container nur. Der Zustand steht für pinn. in konfig/ha-netz.status.
+  # Detour to the Home Assistant VM: the VM is attached via macvtap directly to the network card – in doing so
+  # Linux blocks the traffic between the NAS (and thus all containers) and the VM. This container
+  # creates a second virtual network card on start (ha-shim, macvlan in bridge mode) with the
+  # helper IP and routes the traffic to the VM over it. When it ends, everything is removed again.
+  # Values from the set-up in pinn. (Smart home: Home Assistant), otherwise from "x-ha-netz-config" above.
+  # Without HA_IP the container only waits. The state is in konfig/ha-netz.status for pinn.
   # Log ansehen: docker logs ha-netz
-  # Test: docker exec pocketbase wget -qO- http://<HA_IP>:8123/api/   -> „401 Unauthorized“ = erreichbar
+  # Test: docker exec pocketbase wget -qO- http://<HA_IP>:8123/api/   -> "401 Unauthorized" = reachable
   ha-netz:
     image: alpine:3.20
     container_name: ha-netz
@@ -281,8 +281,8 @@ services:
         else
           status fehler "$$KARTE"
         fi
-        # Läuft weiter: prüft alle 30 s, ob sich die Einrichtung geändert hat (dann Neustart des
-        # Containers mit den neuen Werten), und alle 5 Minuten, ob der Umweg noch steht.
+        # Keeps running: checks every 30 s whether the set-up has changed (then restarts the
+        # container with the new values), and every 5 minutes whether the detour is still in place.
         T=0
         while true; do
           sleep 30 &
@@ -301,10 +301,10 @@ services:
           fi
         done
 
-  # Optional: Tailscale – Alternative zum WireGuard-VPN der FRITZ!Box (z. B. bei anderen Routern oder
-  # DS-Lite). Bleibt aus, bis in pinn. unter Einrichtung → „Unterwegs nutzen“ ein Tailscale-Schlüssel
-  # eingetragen ist. Gibt im Tailscale-Netz nur die NAS-Adresse frei (Subnet-Route <NAS_IP>/32),
-  # läuft ohne Zusatzrechte (userspace). Log: docker logs tailscale
+  # Optional: Tailscale – alternative to the WireGuard VPN of the FRITZ!Box (e.g. with other routers or
+  # DS-Lite). Stays off until a Tailscale key is entered in pinn. under Set-up → "Use on the go".
+  # Shares only the NAS address in the Tailscale network (subnet route <NAS_IP>/32),
+  # runs without extra privileges (userspace). Log: docker logs tailscale
   tailscale:
     image: tailscale/tailscale:latest
     container_name: tailscale
@@ -345,13 +345,13 @@ services:
         done
         exit 1
 
-  # Wartung: tägliche Sicherung im laufenden Betrieb (rotierend: 7 Tage + 4 Wochen, siehe oben),
-  # Wiederherstellen und Updates per Knopf in pinn. (Einstellungen → System → Sicherungen & Updates).
-  # Die Arbeit macht das Skript pinn-wartung.sh im Projektordner. Für Wiederherstellen und Updates
-  # braucht der Container Zugriff auf Docker (pinn. kurz anhalten, Update einspielen) – deshalb ist
-  # /var/run/docker.sock eingebunden. Aufträge kommen nur aus pinn. über den Ordner ./wartung;
-  # Updates nur aus dem offiziellen GitHub-Repository (PINN_REPO).
-  # Log ansehen: docker logs wartung · Sicherung von Hand: docker exec wartung sh /projekt/pinn-wartung.sh sichern
+  # Maintenance: daily backup during operation (rotating: 7 days + 4 weeks, see above),
+  # restore and updates by button in pinn. (Settings → System → Backups & updates).
+  # The work is done by the script pinn-wartung.sh in the project folder. For restore and updates
+  # the container needs access to Docker (stop pinn. briefly, apply the update) – that is why
+  # /var/run/docker.sock is mounted. Jobs only come from pinn. via the folder ./wartung;
+  # updates only from the official GitHub repository (PINN_REPO).
+  # View the log: docker logs wartung · Backup by hand: docker exec wartung sh /projekt/pinn-wartung.sh sichern
   wartung:
     image: docker:cli
     container_name: wartung

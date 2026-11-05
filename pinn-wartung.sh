@@ -1,30 +1,30 @@
 #!/bin/sh
 # ─────────────────────────────────────────────────────────────
-#  pinn. – Wartung (läuft im Container „wartung“, siehe docker-compose.yaml)
+#  pinn. – Maintenance (runs in the container "wartung", see docker-compose.yaml)
 #
-#  Aufgaben:
-#   • Tägliche Sicherung im laufenden Betrieb (Datenbanken konsistent über SQLite gesichert)
-#     Aufbewahrung rotierend: alle Sicherungen der letzten BACKUP_TAGE Tage (Standard 7),
-#     danach je Kalenderwoche eine für BACKUP_WOCHEN Wochen (Standard 4).
-#     Sicherungen vor einem Update bzw. vor einer Wiederherstellung: die letzten 3 bleiben.
-#   • Aufträge aus der App (Einstellungen → System → Sicherungen & Updates):
-#       sichern           – Sicherung sofort
-#       wiederherstellen  – Sicherung zurückspielen (pinn. ist dafür etwa eine Minute weg)
-#       update            – neues GitHub-Release laden und mit pinn-setup.sh einspielen
-#                           (auch Vorabversionen mit Tags wie v1.67.0-beta.1, ab 1.66.0)
+#  Tasks:
+#   • Daily backup during operation (databases backed up consistently via SQLite)
+#     Rotating retention: all backups of the last BACKUP_TAGE days (default 7),
+#     then one per calendar week for BACKUP_WOCHEN weeks (default 4).
+#     Backups before an update or before a restore: the last 3 are kept.
+#   • Jobs from the app (Settings → System → Backups & updates):
+#       sichern           – back up right now
+#       wiederherstellen  – restore a backup (pinn. is gone for about a minute)
+#       update            – download the new GitHub release and apply it with pinn-setup.sh
+#                           (also pre-releases with tags like v1.67.0-beta.1, since 1.66.0)
 #
-#  Ablage (im Projektordner):
-#     backups/pinn_JJJJ-MM-TT_HHMM[_art].tar.gz   die Sicherungen (nur für root lesbar)
-#     wartung/                                    Austausch mit pinn. (Auftrag, Status, Liste, Protokoll)
+#  Storage (in the project folder):
+#     backups/pinn_YYYY-MM-DD_HHMM[_kind].tar.gz  the backups (readable by root only)
+#     wartung/                                    exchange with pinn. (job, status, list, log)
 #
-#  Die App schreibt nur wartung/auftrag.json – alles andere prüft dieses Skript selbst noch einmal
-#  (Dateiname der Sicherung, Versionsnummer). Updates kommen ausschließlich aus dem Repository
-#  PINN_REPO (Standard: pinn-shost/pinn) über https://github.com.
+#  The app only writes wartung/auftrag.json – this script checks everything else again itself
+#  (file name of the backup, version number). Updates come exclusively from the repository
+#  PINN_REPO (default: pinn-shost/pinn) via https://github.com.
 #
-#  Von Hand (per SSH):
-#     docker exec wartung sh /projekt/pinn-wartung.sh sichern          Sicherung jetzt
-#     docker logs wartung                                               Protokoll ansehen
-#  Wiederherstellen ohne App: docker compose down → tar -xzf backups/pinn_….tar.gz → docker compose up -d
+#  By hand (via SSH):
+#     docker exec wartung sh /projekt/pinn-wartung.sh sichern          back up now
+#     docker logs wartung                                               view the log
+#  Restore without the app: docker compose down → tar -xzf backups/pinn_….tar.gz → docker compose up -d
 # ─────────────────────────────────────────────────────────────
 
 P=${PINN_PROJEKT:-/projekt}
@@ -43,7 +43,7 @@ umask 077
 mkdir -p "$B" "$W"
 chmod 700 "$B" "$W" 2>/dev/null
 
-# ── Kleinkram ───────────────────────────────────────────────
+# ── Odds and ends ───────────────────────────────────────────
 jetzt() { date '+%d.%m.%Y %H:%M:%S'; }
 log() {
   echo "$(jetzt) $*"
@@ -70,7 +70,7 @@ version_installiert() {
 }
 md5() { md5sum "$1" 2>/dev/null | cut -d' ' -f1; }
 
-# Sperre, damit nie zwei Sicherungen/Aufträge gleichzeitig laufen
+# Lock, so that two backups/jobs never run at the same time
 sperren() {
   i=0
   until mkdir "$W/.sperre" 2>/dev/null; do
@@ -82,9 +82,9 @@ sperren() {
 }
 entsperren() { rmdir "$W/.sperre" 2>/dev/null; }
 
-# ── Status für die App ──────────────────────────────────────
+# ── Status for the app ──────────────────────────────────────
 AUFTRAG_ID=""; AUFTRAG_ART=""; AUFTRAG_DATEI=""; AUFTRAG_VERSION=""; AUFTRAG_UMFANG=""; AUFTRAG_START=0
-status() {  # status <zustand: wartet|laeuft|fertig|fehler> <schritt> [fehlercode] [meldung]
+status() {  # status <state: wartet|laeuft|fertig|fehler> <step> [error code] [message]
   jq -n --arg id "$AUFTRAG_ID" --arg art "$AUFTRAG_ART" --arg z "$1" --arg s "$2" \
         --arg f "${3:-}" --arg m "${4:-}" --arg datei "$AUFTRAG_DATEI" --arg version "$AUFTRAG_VERSION" \
         --arg umfang "$AUFTRAG_UMFANG" --argjson start "${AUFTRAG_START:-0}" --argjson zeit "$(date +%s)" \
@@ -100,7 +100,7 @@ lebenszeichen() {
         > "$W/lebt.json.neu" 2>/dev/null && mv "$W/lebt.json.neu" "$W/lebt.json"
 }
 
-# Liste der Sicherungen für die App (neueste zuerst)
+# List of the backups for the app (newest first)
 liste() {
   (
     for F in "$B"/pinn_*.tar.gz; do
@@ -118,14 +118,14 @@ liste() {
   ) | jq -s 'sort_by(-.zeit)' > "$W/backups.json.neu" 2>/dev/null && mv "$W/backups.json.neu" "$W/backups.json"
 }
 
-# ── Sicherung ───────────────────────────────────────────────
+# ── Backup ──────────────────────────────────────────────────
 LETZTE_SICHERUNG=""
 sichern() {  # sichern [manuell|vor-update|vor-wiederherstellung]
   TYP="$1"
   TS=$(date +%Y-%m-%d_%H%M)
   if [ -n "$TYP" ]; then NAME="pinn_${TS}_$TYP"; else NAME="pinn_$TS"; fi
   if [ -e "$B/$NAME.tar.gz" ]; then
-    # gleiche Minute: kurz warten, damit nichts überschrieben wird
+    # same minute: wait briefly so that nothing is overwritten
     S=$(date +%S | sed 's/^0//'); sleep $((61 - ${S:-0}))
     TS=$(date +%Y-%m-%d_%H%M)
     if [ -n "$TYP" ]; then NAME="pinn_${TS}_$TYP"; else NAME="pinn_$TS"; fi
@@ -166,13 +166,13 @@ sichern() {  # sichern [manuell|vor-update|vor-wiederherstellung]
   return 1
 }
 
-# Aufbewahrung: alle Sicherungen der letzten $TAGE Tage, danach je Woche die neueste für $WOCHEN Wochen
+# Retention: all backups of the last $TAGE days, then the newest per week for $WOCHEN weeks
 rotieren() {
   TAGE_LISTE=" "; NT=0; WOCHEN_LISTE=" "; NW=0
   for F in $(ls -1 "$B"/pinn_*.tar.gz 2>/dev/null | sort -r); do
     N=$(basename "$F")
     D=$(echo "$N" | sed -n 's/^pinn_\([0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}\)_[0-9]\{4\}\(_manuell\)\{0,1\}\.tar\.gz$/\1/p')
-    [ -n "$D" ] || continue                       # Sicherungen vor Update/Wiederherstellung: siehe unten
+    [ -n "$D" ] || continue                       # backups before update/restore: see below
     case "$TAGE_LISTE" in *" $D "*) continue ;; esac
     if [ "$NT" -lt "$TAGE" ]; then TAGE_LISTE="$TAGE_LISTE$D "; NT=$((NT + 1)); continue; fi
     WO=$(date -d "$D" +%G-%V 2>/dev/null)
@@ -183,26 +183,26 @@ rotieren() {
     if [ "$NW" -lt "$WOCHEN" ]; then WOCHEN_LISTE="$WOCHEN_LISTE$WO "; NW=$((NW + 1)); continue; fi
     rm -f "$F"; log "Aufgeräumt: $N"
   done
-  # Sicherungen vor Update bzw. Wiederherstellung: die neuesten $VORHER_BEHALTEN bleiben
+  # Backups before update or restore: the newest $VORHER_BEHALTEN are kept
   ls -1t "$B"/pinn_*vor-*.tar.gz 2>/dev/null | tail -n +$((VORHER_BEHALTEN + 1)) | while read -r F; do
     rm -f "$F"; log "Aufgeräumt: $(basename "$F")"
   done
 }
 
-# Tägliche Sicherung fällig?
+# Daily backup due?
 faellig() {
   HEUTE=$(date +%Y-%m-%d)
   [ "$(cat "$W/.letzte-tagessicherung" 2>/dev/null)" = "$HEUTE" ] && return 1
   if [ -f "$W/.fehlversuch" ]; then
     FV=$(cat "$W/.fehlversuch" 2>/dev/null); [ -n "$FV" ] || FV=0
-    [ $(($(date +%s) - FV)) -lt 1800 ] && return 1   # nach einem Fehler erst in 30 Minuten wieder
+    [ $(($(date +%s) - FV)) -lt 1800 ] && return 1   # after an error only again in 30 minutes
   fi
   if ls "$B"/pinn_"${HEUTE}"_[0-9][0-9][0-9][0-9].tar.gz >/dev/null 2>&1; then
     echo "$HEUTE" > "$W/.letzte-tagessicherung"; return 1
   fi
   H=$(date +%H%M); Z=$(echo "$UHRZEIT" | tr -d ':')
   [ "$H" -ge "$Z" ] 2>/dev/null && return 0
-  # vor der Uhrzeit nur, wenn es noch überhaupt keine Sicherung gibt
+  # before the set time only if there is no backup at all yet
   ls "$B"/pinn_*.tar.gz >/dev/null 2>&1 && return 1
   return 0
 }
@@ -217,7 +217,7 @@ tagessicherung() {
   liste
 }
 
-# ── PocketBase anhalten/starten ─────────────────────────────
+# ── Stop/start PocketBase ───────────────────────────────────
 warte_pb() {
   i=0
   while [ "$i" -lt 90 ]; do
@@ -227,13 +227,13 @@ warte_pb() {
   return 1
 }
 
-# Inhalte eines Ordners austauschen (der Ordner selbst bleibt – andere Container haben ihn eingebunden)
-leeren_nach() {  # leeren_nach <quelle> <ziel>
+# Replace the contents of a folder (the folder itself stays – other containers have it mounted)
+leeren_nach() {  # leeren_nach <source> <target>
   mkdir -p "$2"
   find "$1" -mindepth 1 -maxdepth 1 -exec mv {} "$2"/ \; 2>/dev/null
 }
 
-# ── Auftrag: Sicherung ──────────────────────────────────────
+# ── Job: backup ─────────────────────────────────────────────
 job_sichern() {
   status laeuft sichern
   if sichern manuell; then
@@ -246,7 +246,7 @@ job_sichern() {
   fi
 }
 
-# ── Auftrag: Wiederherstellung ──────────────────────────────
+# ── Job: restore ────────────────────────────────────────────
 job_wiederherstellen() {
   D="$AUFTRAG_DATEI"
   if ! echo "$D" | grep -qE '^pinn_[A-Za-z0-9_.-]+\.tar\.gz$' || [ ! -f "$B/$D" ]; then
@@ -259,12 +259,12 @@ job_wiederherstellen() {
   if ! docker_ok; then status fehler start docker; return; fi
   log "Wiederherstellung von $D ($AUFTRAG_UMFANG)"
 
-  # 1. Jetzigen Stand sichern
+  # 1. Back up the current state
   status laeuft sichern
   if ! sichern vor-wiederherstellung; then liste; status fehler sichern sichern; return; fi
   rotieren; liste
 
-  # 2. Entpacken und prüfen
+  # 2. Unpack and check
   status laeuft entpacken
   WH="$W/.wiederherstellung"; ALT="$W/.vorher"
   rm -rf "$WH" "$ALT"; mkdir -p "$WH" "$ALT"
@@ -281,7 +281,7 @@ job_wiederherstellen() {
     rm -rf "$WH" "$ALT"; status fehler entpacken defekt; return
   fi
 
-  # 3. pinn. anhalten, austauschen, starten
+  # 3. Stop pinn., replace, start
   status laeuft stoppen
   docker stop -t 30 "$PB" >/dev/null 2>&1
   status laeuft einspielen
@@ -298,7 +298,7 @@ job_wiederherstellen() {
     return
   fi
 
-  # 4. Startet nicht: alten Stand zurück
+  # 4. Does not start: restore the old state
   log "FEHLER: pinn. startet mit der Sicherung nicht – alter Stand wird zurückgeholt"
   docker stop -t 30 "$PB" >/dev/null 2>&1
   for T in $AUSWAHL; do
@@ -313,7 +313,7 @@ job_wiederherstellen() {
   status fehler starten start
 }
 
-# ── Auftrag: Update ─────────────────────────────────────────
+# ── Job: update ─────────────────────────────────────────────
 job_update() {
   TAG="$AUFTRAG_TAG"
   if ! echo "$TAG" | grep -qE '^v?[0-9]+(\.[0-9]+){1,3}(-[0-9A-Za-z][0-9A-Za-z.]*)?$'; then status fehler start tag; return; fi
@@ -321,12 +321,12 @@ job_update() {
   if ! docker_ok; then status fehler start docker; return; fi
   log "Update auf $AUFTRAG_VERSION ($REPO $TAG)"
 
-  # 1. Sicherung vorher
+  # 1. Backup beforehand
   status laeuft sichern
   if ! sichern vor-update; then liste; status fehler sichern sichern; return; fi
   rotieren; liste
 
-  # 2. Release laden und entpacken
+  # 2. Download and unpack the release
   status laeuft laden
   U="$W/.update"; rm -rf "$U"; mkdir -p "$U"
   if ! curl -fsSL --retry 2 --connect-timeout 20 --max-time 900 -o "$U/pinn.tar.gz" \
@@ -336,8 +336,8 @@ job_update() {
   status laeuft entpacken
   if ! tar -xzf "$U/pinn.tar.gz" -C "$U"; then rm -rf "$U"; status fehler entpacken entpacken; return; fi
   Q=$(find "$U" -mindepth 1 -maxdepth 1 -type d | head -1)
-  # Ab 1.39.0 liegt die App im Release unter pb_public/index.html (Aufbau wie auf dem NAS);
-  # ältere Releases haben sie noch ganz oben.
+  # Since 1.39.0 the app lies in the release at pb_public/index.html (layout as on the NAS);
+  # older releases still have it at the very top.
   if [ -z "$Q" ] || [ ! -f "$Q/pinn-setup.sh" ] || [ ! -f "$Q/docker-compose.yaml" ] \
      || { [ ! -f "$Q/pb_public/index.html" ] && [ ! -f "$Q/index.html" ]; }; then
     rm -rf "$U"; status fehler entpacken paket; return
@@ -347,8 +347,8 @@ job_update() {
   mv "$Q" "$P/$ORDNER"
   rm -rf "$U"
 
-  # 3. pinn-setup.sh in einem eigenen Hilfs-Container starten – er läuft weiter, auch wenn dabei
-  #    dieser Container neu erstellt wird (docker compose up), und meldet sein Ergebnis in wartung/.
+  # 3. Start pinn-setup.sh in a helper container of its own – it keeps running even if this
+  #    container is recreated in the process (docker compose up), and reports its result in wartung/.
   status laeuft installieren
   HOST=$(docker inspect -f '{{range .Mounts}}{{if eq .Destination "/projekt"}}{{.Source}}{{end}}{{end}}' "$SELBST" 2>/dev/null)
   PN=$(docker inspect -f '{{index .Config.Labels "com.docker.compose.project"}}' "$SELBST" 2>/dev/null)
@@ -368,7 +368,7 @@ job_update() {
   update_abschluss
 }
 
-# Wartet auf das Ende von pinn-setup.sh (auch nach einem Neustart dieses Containers)
+# Waits for pinn-setup.sh to finish (also after a restart of this container)
 update_abschluss() {
   [ -f "$W/update.laeuft" ] || return 0
   AUFTRAG_ART=update
@@ -395,7 +395,7 @@ update_abschluss() {
   rm -rf "${P:?}/pinn-$AUFTRAG_VERSION"
   if [ "$C" = "0" ]; then
     status laeuft neustart
-    # Neue Hooks laden (PocketBase liest pb_hooks nur beim Start)
+    # Load new hooks (PocketBase only reads pb_hooks on start)
     docker restart -t 30 "$PB" >/dev/null 2>&1
     warte_pb
     log "Update fertig: pinn. $AUFTRAG_VERSION"
@@ -405,7 +405,7 @@ update_abschluss() {
     status fehler installieren setup "$(tail -n 3 "$W/update.log" 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' | tr '\n' ' ' | cut -c1-300)"
   fi
   liste
-  # Wurde dieses Skript selbst erneuert? Dann neu starten (Docker holt den Container sofort zurück).
+  # Was this script itself renewed? Then restart (Docker brings the container straight back).
   if [ -n "$SKRIPT_MD5" ] && [ "$(md5 "$SKRIPT")" != "$SKRIPT_MD5" ]; then
     log "Wartungs-Skript wurde erneuert – Neustart"
     entsperren
@@ -414,7 +414,7 @@ update_abschluss() {
   return 0
 }
 
-# ── Aufträge der App ────────────────────────────────────────
+# ── Jobs from the app ───────────────────────────────────────
 auftrag() {
   mv "$W/auftrag.json" "$W/auftrag.laeuft" 2>/dev/null || return 0
   A="$W/auftrag.laeuft"
@@ -436,14 +436,14 @@ auftrag() {
   entsperren
 }
 
-# ── Dienst ──────────────────────────────────────────────────
+# ── Service ─────────────────────────────────────────────────
 dienst() {
   pakete
   SKRIPT_MD5=$(md5 "$SKRIPT")
   rm -rf "$W/.sperre" "$W/.sicherung" "$W/.update"
   rm -f "$B"/*.part "$B"/*.part.gz "$W"/*.neu
   chmod 600 "$B"/pinn_*.tar.gz 2>/dev/null
-  # Unterbrochene Wiederherstellung (Container während des Austauschs beendet): alten Stand zurück
+  # Interrupted restore (container ended during the replacement): restore the old state
   if [ -d "$W/.vorher" ] && [ -n "$(ls -A "$W/.vorher" 2>/dev/null)" ]; then
     log "Unterbrochene Wiederherstellung gefunden – alter Stand wird zurückgeholt"
     docker stop -t 30 "$PB" >/dev/null 2>&1

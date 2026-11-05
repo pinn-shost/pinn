@@ -1,22 +1,22 @@
 // pb_hooks/pinn-kalender-konten.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden.
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require().
 //
-// Persönliche Kalender-Konten JE PROFIL (iCloud und Google).
+// Personal calendar accounts PER PROFILE (iCloud and Google).
 //
-// Jedes Profil (außer Gästen) verbindet sein EIGENES iCloud- und/oder Google-Konto und hakt die
-// Kalender daraus an (pinn-kalender.js): „Für mich“ (nur dieses Profil sieht sie) oder „Familie“
-// (alle Profile der Familie sehen und nutzen sie). Die übrige Familie erfährt vom Konto nur eine
-// unkenntlich gemachte Adresse (maskAccount, z. B. m**l@g***l.com) – nie Passwort oder Token.
-// Die früheren Familien-Konten (pinn-apple.js / pinn-google.js, „Bearbeiten“) laufen unverändert weiter.
+// Every profile (except guests) connects their OWN iCloud and/or Google account and ticks the
+// calendars from it (pinn-kalender.js): "For me" (only this profile sees them) or "Family"
+// (all profiles of the family see and use them). The rest of the family only learns of the account
+// a masked address (maskAccount, e.g. m**l@g***l.com) - never the password or token.
+// The former family accounts (pinn-apple.js / pinn-google.js, "Edit") keep running unchanged.
 //
-//  - iCloud: Apple-ID + App-spezifisches Passwort (wird vor dem Speichern bei iCloud geprüft)
-//  - Google: Anmeldung über Google (OAuth, startPersonalAuth in pinn-google.js); gespeichert wird nur
-//    der dauerhafte Zugangsschlüssel (Refresh-Token)
+//  - iCloud: Apple ID + app-specific password (checked at iCloud before saving)
+//  - Google: sign-in via Google (OAuth, startPersonalAuth in pinn-google.js); only
+//    the permanent access key (refresh token) is stored
 //
-// Speicherort: gesperrte Sammlung "kalender_konten" (legt sich selbst an, alle API-Regeln null, Felder
-// hidden). Passwort bzw. Token liegen verschlüsselt darin – gleicher Schlüssel wie bei den
-// Familien-Konten (pinn-apple.js). Wird ein Profil gelöscht, verschwinden seine Konten mit
-// (cascadeDelete); beim Trennen eines Google-Kontos wird der Zugang bei Google widerrufen.
+// Storage location: locked collection "kalender_konten" (creates itself, all API rules null, fields
+// hidden). The password or token is stored encrypted in it - same key as with the
+// family accounts (pinn-apple.js). If a profile is deleted, its accounts disappear with it
+// (cascadeDelete); when disconnecting a Google account, the access is revoked at Google.
 
 const COL = "kalender_konten";
 const ARTEN = ["apple", "google"];
@@ -43,7 +43,7 @@ function label(art) { return art === "google" ? "Google" : "iCloud"; }
 
 function storeGet(key) { try { return $app.store().get(key); } catch (e) { return null; } }
 function storeSet(key, value) { try { $app.store().set(key, value); } catch (e) { /* optional */ } }
-function storeRemove(key) { try { $app.store().remove(key); } catch (e) { /* egal */ } }
+function storeRemove(key) { try { $app.store().remove(key); } catch (e) { /* ignore */ } }
 
 function errKey(userId, art) { return "pinnKalKontoErr:" + userId + ":" + art; }
 function setError(userId, art, msg) { storeSet(errKey(userId, art), String(msg || "")); }
@@ -58,7 +58,7 @@ function clearCaches(userId, art) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Sammlung
+// collection
 // ---------------------------------------------------------------------------------------------
 function ensureCollection() {
     let col = findCol(COL);
@@ -100,14 +100,14 @@ function findRec(userId, art) {
     try { return $app.findFirstRecordByFilter(COL, "benutzer = {:u} && art = {:a}", { u: String(userId), a: String(art) }); } catch (e) { return null; }
 }
 
-// Entschlüsseltes Passwort/Token oder "" (stellt bei Bedarf auf den aktuellen Schlüssel um)
+// Decrypted password/token or "" (switches to the current key if needed)
 function secretOf(rec) {
     if (!rec || !rec.getString("geheimnis")) return "";
     let res = null;
     try { res = apple().decrypt(rec.getString("geheimnis")); } catch (e) { res = null; }
     if (!res) return "";
     if (!res.current) {
-        try { rec.set("geheimnis", apple().encrypt(res.text)); $app.save(rec); } catch (e) { /* beim nächsten Mal */ }
+        try { rec.set("geheimnis", apple().encrypt(res.text)); $app.save(rec); } catch (e) { /* next time */ }
     }
     return res.text;
 }
@@ -129,7 +129,7 @@ function upsert(userId, art, konto, secret) {
 // ---------------------------------------------------------------------------------------------
 // iCloud
 // ---------------------------------------------------------------------------------------------
-// Apple-ID speichern (vorher bei iCloud geprüft). Rückgabe: Kalenderliste des Kontos.
+// Save an Apple ID (checked at iCloud beforehand). Returns: calendar list of the account.
 function saveApple(userId, appleIdRaw, pwRaw) {
     if (!validId(userId)) throw new Error("Ungültiges Profil.");
     const a = apple();
@@ -204,7 +204,7 @@ function googleAccount(userId, forceFresh) {
             items = g.fetchCalendarItems(token);
         } catch (e) {
             if (e.status !== 401) { setError(userId, "google", e.message); throw e; }
-            token = googleToken(userId, true); // Zugriffsschlüssel abgelaufen -> einmal neu holen
+            token = googleToken(userId, true); // Access key expired -> fetch once anew
             items = g.fetchCalendarItems(token);
         }
         calendars = g.calendarsFromItems(items);
@@ -218,7 +218,7 @@ function googleAccount(userId, forceFresh) {
     };
 }
 
-// Von pinn-google.js nach der Google-Anmeldung aufgerufen
+// Called by pinn-google.js after the Google sign-in
 function saveGoogle(userId, accountName, refreshToken, accessToken, ttlMs, calendars) {
     if (!validId(userId)) throw new Error("Ungültiges Profil.");
     const old = findRec(userId, "google");
@@ -227,14 +227,14 @@ function saveGoogle(userId, accountName, refreshToken, accessToken, ttlMs, calen
     clearCaches(userId, "google");
     storeSet("pinnGoogleUTok:" + userId, { token: String(accessToken), exp: Date.now() + (ttlMs || 3600000) });
     storeSet("pinnGoogleUCals:" + userId, { ts: Date.now(), calendars: calendars || [] });
-    // Anderes Google-Konto als vorher? Alten Zugang bei Google widerrufen.
+    // A different Google account than before? Revoke the old access at Google.
     if (oldToken && oldToken !== refreshToken && old.getString("konto") !== String(accountName || "")) {
         try { google().revokeToken(oldToken); } catch (e) { /* optional */ }
     }
 }
 
 // ---------------------------------------------------------------------------------------------
-// Allgemein
+// General
 // ---------------------------------------------------------------------------------------------
 function account(userId, art, forceFresh) {
     if (art === "google") return googleAccount(userId, forceFresh);
@@ -245,12 +245,12 @@ function account(userId, art, forceFresh) {
 function displayName(acc, name) {
     let n = String(name || "");
     if (acc && acc.kind === "google") {
-        try { if (google().isGoogleName(n)) n = n.slice(0, n.length - google().NAME_SUFFIX.length); } catch (e) { /* so lassen */ }
+        try { if (google().isGoogleName(n)) n = n.slice(0, n.length - google().NAME_SUFFIX.length); } catch (e) { /* leave as is */ }
     }
     return n;
 }
 
-// Kalender eines Kontos für die App: [{ name, href, nurLesen }]
+// Calendars of an account for the app: [{ name, href, nurLesen }]
 function calendarsOut(acc) {
     return (acc.calendars || []).map(c => ({
         name: displayName(acc, c.name),
@@ -268,8 +268,8 @@ function isConnected(userId, art) {
     return !!(rec && rec.getString("geheimnis"));
 }
 
-// Status für die App (nie Passwort oder Token). origin: Adresse der App (für die Weiterleitungs-URI,
-// die bei fehlender Google-Einrichtung angezeigt wird)
+// Status for the app (never the password or token). origin: address of the app (for the redirect URI
+// that is shown if Google is not set up)
 function status(userId, origin) {
     const a = findRec(userId, "apple");
     const g = findRec(userId, "google");
@@ -286,13 +286,13 @@ function status(userId, origin) {
     };
 }
 
-// Konto-Name (Apple-ID bzw. Google-Adresse) eines Profils – für die Kalenderliste
+// Account name (Apple ID or Google address) of a profile - for the calendar list
 function kontoName(userId, art) {
     const rec = findRec(userId, art);
     return rec ? rec.getString("konto") : "";
 }
 
-// Konto für andere Familienmitglieder unkenntlich machen: name@gmail.com -> n**e@g***l.com
+// Mask the account for other family members: name@gmail.com -> n**e@g***l.com
 function maskAccount(raw) {
     const s = String(raw || "").trim();
     if (!s) return "";
@@ -310,7 +310,7 @@ function maskAccount(raw) {
     return star(local, 2) + "@" + star(host, 3) + tld;
 }
 
-// Konto trennen (Google: Zugang bei Google widerrufen)
+// Disconnect an account (Google: revoke the access at Google)
 function remove(userId, art) {
     const rec = findRec(userId, art);
     if (rec) {
@@ -324,7 +324,7 @@ function remove(userId, art) {
 }
 
 function removeAll(userId) {
-    ARTEN.forEach(art => { try { remove(userId, art); } catch (e) { /* egal */ } });
+    ARTEN.forEach(art => { try { remove(userId, art); } catch (e) { /* ignore */ } });
 }
 
 function setup() {

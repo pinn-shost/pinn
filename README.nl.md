@@ -106,6 +106,13 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский en 🇳🇱 Nederlands**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.129.0
+
+**Engelse opmerkingen in alle bestanden**
+
+- **Opmerkingen in het Engels.** Alle code-opmerkingen in het project zijn nu Engels: serverdelen, installatie- en onderhoudsscripts, `docker-compose.yaml`, de `.env`-sjabloon, de Caddyfile en de app-bestanden. Aan de app, de teksten en het gedrag verandert niets.
+- Gewijzigd: `pb_hooks/` (alle bestanden), `pinn-setup.sh`, `pinn-wartung.sh`, `pinn-pocketbase-update.sh`, `docker-compose.yaml`, `env.txt`, `caddy/Caddyfile`, `js/sprachen.js`, `datenexport.js`, `einrichtung.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) en alle README’s. Serverdeel: de hook-bestanden – vervang die ook.
+
 ## Nieuw in 1.128.0
 
 **Spraakbesturing in alle app-talen**
@@ -124,16 +131,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Beveiliging.** De drie codescanner-meldingen ‘DOM text reinterpreted as HTML’ in de foto- en videovoorbeelden van de chat (`js/chatmedien.js`) zijn opgelost: objectadressen worden streng gecontroleerd en voor HTML gemaskeerd.
 - Gewijzigd: `js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `src/` (`index.html`) en alle README’s. Serverdeel: `pb_hooks/pinn-chat.js` – vervang ook de hooks; één veld wordt bij het starten automatisch toegevoegd.
 
-## Nieuw in 1.127.5
-
-**Chat: snellere polls, financiën in de chat, veiligheid**
-
-- **Polls reageren sneller.** Een chatpoll die ook op het prikbord staat, wordt nu binnen ongeveer 10 seconden bij iedereen bijgewerkt in plaats van pas na maximaal een minuut.
-- **Financiën in de chat.** Uitgaven, inkomsten, terugkerende posten en spaarposities hebben nu een **Chat**-knop (💬) in hun venster: kies een chat, de post komt aan als kaart en een tik erop opent hem weer.
-- **Kortere knoppen.** “Bespreken in de chat” heet overal nog gewoon **Chat**.
-- **Veiligheid.** De drie meldingen van de codescanner “DOM text reinterpreted as HTML” in de foto- en videovoorvertoning van de chat zijn opgelost.
-- Gewijzigd: `js/chatmedien.js`, `js/chatstimme.js`, `js/chat.js`, `js/chatextras.js`, `js/finanzen.js`, `js/sparen.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `src/` (`index.html`) en alle README's. Geen serverdeel.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -143,7 +140,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.128.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.129.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

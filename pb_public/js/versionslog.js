@@ -22,6 +22,12 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.129', datum: '05.11.2026', titel: 'Englische Kommentare in allen Dateien',
+    punkte: [
+      ['info', 'Alle Code-Kommentare im Projekt sind jetzt durchgehend Englisch: Server-Teile (pb_hooks), Installations- und Wartungsskripte, docker-compose.yaml, die .env-Vorlage, die Caddyfile und die App-Dateien. An der App, ihren Texten und ihrem Verhalten ändert sich nichts.'],
+    ],
+  },
+  {
     v: '1.128', datum: '05.11.2026', titel: 'Sprachsteuerung in allen App-Sprachen',
     punkte: [
       ['neu', 'Sprachsteuerung (Siri, „HTTP Shortcuts“) versteht jetzt alle elf App-Sprachen: neu dazu kommen Niederländisch, Italienisch, Portugiesisch, Chinesisch, Japanisch und Koreanisch. Einkaufsliste ergänzen, Liste vorlesen, Aufgabe anlegen und „Was steht heute an?“ – die Antwort kommt in der Sprache des Profils. Ein neuer Kurzbefehl ist nicht nötig, der bestehende Link funktioniert weiter.'],

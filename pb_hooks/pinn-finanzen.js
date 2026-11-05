@@ -1,30 +1,30 @@
 // pb_hooks/pinn-finanzen.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden.
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require().
 //
-// Finanzen: Ausgaben und Einnahmen (Einnahme = negativer Betrag) liegen in einer eigenen PocketBase-Sammlung "ausgaben" (nicht in
-// familien_daten), damit der Familien-Datensatz nicht mit jedem Einkauf wächst.
-// Budget, Kategorien und regelmäßige Ausgaben sind klein und liegen weiter in familien_daten
-// (Schlüssel "finance") - sie werden dort wie alles andere zwischen den Geräten abgeglichen.
+// Finance: expenses and income (income = negative amount) live in a dedicated PocketBase collection "ausgaben" (not in
+// familien_daten), so that the family record does not grow with every purchase.
+// Budget, categories and recurring expenses are small and still live in familien_daten
+// (key "finance") - there they are synchronised between the devices like everything else.
 //
-// Schonend für CPU und Speicher:
-//  - nur einzelne Datenbank-Zugriffe je Aktion, kein Zeitplan, keine Hintergrundarbeit
-//  - Auswertungen (Wochen/Monate/Jahre, Kategorien) rechnet die App selbst
-//  - die App erzeugt die ID eines neuen Eintrags selbst; ein erneut gesendeter Eintrag (z. B. nach
-//    einem Verbindungsabbruch im Laden) wird daher nur aktualisiert, nie doppelt angelegt
+// Gentle on CPU and memory:
+//  - only single database accesses per action, no schedule, no background work
+//  - evaluations (weeks/months/years, categories) are calculated by the app itself
+//  - the app generates the ID of a new entry itself; an entry sent again (e.g. after
+//    a connection loss in the store) is therefore only updated, never created twice
 //
-// Felder der Sammlung "ausgaben":
-//   betrag (Euro, 2 Nachkommastellen; negativ = Einnahme), datum (JJJJ-MM-TT), kategorie (Kategorie-ID aus der App),
-//   titel, laden, liste (ID der Einkaufsliste, falls aus dem Einkauf gebucht),
-//   artikel (gekaufte Artikel, eine Zeile je Artikel), bezahlt_von (ID des Familienmitglieds),
-//   notiz, erstellt_von (Profil-ID), familie (Relation - jede Familie sieht nur ihre eigenen),
-//   bezug (Zuordnung: "spar:<Positions-ID>" bzw. "depot:<Depot-ID>" bei Kategorie Sparen,
-//          "kind:<Mitglied-ID>" bei Kategorie Kinder, "fahrzeug:<Fahrzeug-ID>" bei Einträgen aus „Fahrzeuge“),
-//   kasse (ID der Kasse, siehe pinn-kassen.js - leer = Haushaltskasse),
-//   aufteilung (Mitglied-IDs, auf die eine Ausgabe in einer geteilten Kasse aufgeteilt wird; leer = alle;
-//               bei einem Ausgleich (Kategorie "ausgleich") die Person, die das Geld bekommen hat)
-// Zugriff nur über die angemeldeten Routen in finanzen.pb.js (Sammlungs-API gesperrt).
-// Jedes Profil sieht nur die Buchungen der Kassen, in denen es Mitglied ist.
-// Neue Buchungen erscheinen bei den übrigen Mitgliedern der Kasse unter der 🔔 Glocke (pinn-hinweise.js).
+// Fields of the collection "ausgaben":
+//   betrag (euro, 2 decimal places; negative = income), datum (YYYY-MM-DD), kategorie (category ID from the app),
+//   titel, laden, liste (ID of the shopping list, if booked from shopping),
+//   artikel (purchased items, one line per item), bezahlt_von (ID of the family member),
+//   notiz, erstellt_von (profile ID), familie (relation - each family only sees its own),
+//   bezug (assignment: "spar:<position ID>" or "depot:<depot ID>" for the category Savings,
+//          "kind:<member ID>" for the category Children, "fahrzeug:<vehicle ID>" for entries from "Vehicles"),
+//   kasse (ID of the fund, see pinn-kassen.js - empty = household fund),
+//   aufteilung (member IDs among whom an expense in a shared fund is split; empty = all;
+//               for a settlement (category "ausgleich") the person who received the money)
+// Access only via the signed-in routes in finanzen.pb.js (collection API locked).
+// Every profile only sees the bookings of the funds of which it is a member.
+// New bookings appear for the other members of the fund under the 🔔 bell (pinn-hinweise.js).
 
 const AUSGABEN = "ausgaben";
 
@@ -42,8 +42,8 @@ function familyRelationDef(famCol) {
     return { name: "familie", type: "relation", collectionId: famCol.id, cascadeDelete: true, maxSelect: 1, minSelect: 0, required: false };
 }
 
-// Sammlung anlegen, falls sie fehlt; Feld "familie" nachrüsten, falls die Sammlung vor der
-// Familien-Sammlung entstanden ist.
+// Create the collection if it is missing; add the field "familie" if the collection was created before the
+// families collection.
 function ensureSchema() {
     const fam = findCol("familien");
     let col = findCol(AUSGABEN);
@@ -92,7 +92,7 @@ function ensureSchema() {
             console.log("[Finanzen] Feld \"familie\" nicht anlegbar: " + err.message);
         }
     }
-    // Zuordnung zu Sparziel bzw. Kind (Sparen / Taschengeld) nachrüsten
+    // Add the assignment to a savings goal or child (Savings / Pocket money)
     if (!hasField(col, "bezug")) {
         try {
             col = findCol(AUSGABEN);
@@ -103,7 +103,7 @@ function ensureSchema() {
             console.log("[Finanzen] Feld \"bezug\" nicht anlegbar: " + err.message);
         }
     }
-    // Kassen: Zuordnung der Buchung und Aufteilung nachrüsten
+    // Funds: add the assignment of the booking and the splitting
     [{ name: "kasse", type: "text", max: 30 }, { name: "aufteilung", type: "text", max: 600 }].forEach(def => {
         col = findCol(AUSGABEN);
         if (!col || hasField(col, def.name)) return;
@@ -130,7 +130,7 @@ function cleanSplit(v) {
     return arr.map(x => String(x || "").trim()).filter((x, i, a) => /^[A-Za-z0-9_-]{1,40}$/.test(x) && a.indexOf(x) === i).slice(0, 30);
 }
 function kassen() { return require(`${__hooks}/pinn-kassen.js`); }
-// Kasse einer Buchung (alte Buchungen ohne Kasse gehören zur Haushaltskasse)
+// Fund of a booking (old bookings without a fund belong to the household fund)
 function kasseOf(rec, acc) { return rec.getString("kasse") || acc.haushaltAll || ""; }
 
 function toClient(r) {
@@ -154,7 +154,7 @@ function toClient(r) {
     };
 }
 
-// Alle Buchungen der Kassen, in denen das Profil Mitglied ist
+// All bookings of the funds of which the profile is a member
 function listAll(user) {
     const familyId = user ? user.getString("familie") : "";
     if (!familyId) return [];
@@ -173,11 +173,11 @@ function listAll(user) {
     });
 }
 
-// Legt eine Ausgabe/Einnahme an oder ändert sie (die ID vergibt die App).
-// body: {id, amount (negativ = Einnahme), date, category, title?, store?, listId?, items?, paidBy?, note?, link?, kasse?, split?}
-// link und split werden nur geändert, wenn sie mitgeschickt werden (ältere App-Stände schicken sie nicht).
-// kasse: Kasse, in die gebucht wird (muss eine eigene sein); fehlt sie, landet die Buchung in der
-// Haushaltskasse, sonst in der eigenen bzw. ersten Kasse und ohne Kasse in der Familien-Gruppe.
+// Creates an expense/income or changes it (the ID is assigned by the app).
+// body: {id, amount (negative = income), date, category, title?, store?, listId?, items?, paidBy?, note?, link?, kasse?, split?}
+// link and split are only changed if they are sent along (older app versions do not send them).
+// kasse: fund to book into (must be an own one); if it is missing, the booking ends up in the
+// household fund, otherwise in the own or first fund and, without a fund, in the family group.
 function saveExpense(body, user) {
     const familyId = user ? user.getString("familie") : "";
     const actorUserId = user ? user.id : "";
@@ -188,7 +188,7 @@ function saveExpense(body, user) {
     const id = String(body.id || "");
     if (!isRecordId(id)) throw new Error("Ungültige ID.");
     const amount = Math.round(Number(body.amount) * 100) / 100;
-    // Negativer Betrag = Einnahme (in der App: Minus vor der Summe)
+    // Negative amount = income (in the app: minus in front of the sum)
     if (!isFinite(amount) || amount === 0 || Math.abs(amount) > 1000000) throw new Error("Bitte einen gültigen Betrag eingeben.");
     const date = String(body.date || "");
     if (!isIsoDate(date)) throw new Error("Bitte ein Datum angeben.");
@@ -226,7 +226,7 @@ function saveExpense(body, user) {
     if (body.split !== undefined && hasField(rec.collection(), "aufteilung")) rec.set("aufteilung", cleanSplit(body.split).join(","));
     $app.save(rec);
     if (isNew && category === "ausgleich") notifySettlement(user, rec);
-    // Übrige Mitglieder der Kasse sehen die neue Buchung unter der 🔔 Glocke (pinn-hinweise.js)
+    // The other members of the fund see the new booking under the 🔔 bell (pinn-hinweise.js)
     if (isNew) {
         try { require(`${__hooks}/pinn-hinweise.js`).expenseCreated(rec, user); }
         catch (e) { console.log("[Hinweise] Buchung: " + e.message); }
@@ -234,9 +234,9 @@ function saveExpense(body, user) {
     return toClient(rec);
 }
 
-// Betrag im Format, das ein Profil in pinn. eingestellt hat (Einstellungen → Sprache & Region: Währung,
-// Symbol davor/dahinter, Dezimal- und Tausendertrenner – liegen mit dem persönlichen Design im Profil).
-// Ohne Angabe wie bisher: 1.234,56 €
+// Amount in the format a profile has set in pinn. (Settings → Language & region: currency,
+// symbol before/after, decimal and thousands separator - stored in the profile together with the personal design).
+// Without a setting as before: 1.234,56 €
 function formatBetrag(amount, userId) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign($app.findRecordById("benutzer", userId)).werte || {}; } catch (e) { w = {}; }
@@ -248,12 +248,12 @@ function formatBetrag(amount, userId) {
     const fixed = Math.abs(amount).toFixed(nk).split(".");
     const ganz = fixed[0].replace(/\B(?=(\d{3})+(?!\d))/g, tsd);
     const zahl = ganz + (nk ? dez + fixed[1] : "");
-    const einzeln = sym.length > 1 && /[A-Za-z]$/.test(sym); // „CHF“, „kr“ → mit Leerzeichen
+    const einzeln = sym.length > 1 && /[A-Za-z]$/.test(sym); // "CHF", "kr" → with a space
     const mitSym = vorne ? sym + (einzeln ? " " : "") + zahl : zahl + " " + sym;
     return (neg ? "-" : "") + mitSym;
 }
 
-// Ausgleich in einer geteilten Kasse: die Person, die das Geld bekommt, per Push benachrichtigen
+// Settlement in a shared fund: notify the person who gets the money by push
 function notifySettlement(user, rec) {
     try {
         const toMember = cleanSplit(rec.getString("aufteilung"))[0];
@@ -269,10 +269,10 @@ function notifySettlement(user, rec) {
             tag: "ausgleich-" + rec.id,
             urgency: "normal",
         });
-    } catch (e) { /* Push ist nur ein Extra */ }
+    } catch (e) { /* push is just an extra */ }
 }
 
-// Löscht eine Ausgabe aus einer eigenen Kasse. Ist sie schon weg, gilt das als erledigt.
+// Deletes an expense from an own fund. If it is already gone, that counts as done.
 function removeExpense(user, id) {
     const familyId = user ? user.getString("familie") : "";
     if (!familyId) throw new Error("Dein Profil gehört zu keiner Familie.");

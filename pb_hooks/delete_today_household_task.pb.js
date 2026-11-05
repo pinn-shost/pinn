@@ -1,9 +1,9 @@
 // pb_hooks/delete_today_household_task.pb.js
-// Löscht - falls vorhanden - die HEUTIGE Haushalts-Aufgabe einer Regel (Titel = Regel-Schlüssel).
-// Wird aufgerufen, wenn eine Haushalts-Regel geändert oder gelöscht wird. Erwartet POST mit
-// {title: "..."} im Body.
-// NEU: Aufgaben liegen in der PocketBase-Sammlung "aufgaben" (pinn-aufgaben.js), nicht mehr im
-// Apple-Aufgaben-Kalender. Die bisherige Kalender-Variante steht unten ausgeklammert.
+// Deletes - if present - TODAY's household task of a rule (title = rule key).
+// Called when a household rule is changed or deleted. Expects a POST with
+// {title: "..."} in the body.
+// NEW: tasks live in the PocketBase collection "aufgaben" (pinn-aufgaben.js), no longer in the
+// Apple tasks calendar. The previous calendar variant is commented out below.
 
 routerAdd("POST", "/api/delete-today-household-task", (e) => {
     const body = e.requestInfo().body;
@@ -16,13 +16,13 @@ routerAdd("POST", "/api/delete-today-household-task", (e) => {
     }
 }, $apis.requireAuth("benutzer"));
 
-/* ===== AUSGEKLAMMERT: bisherige Variante über den Apple-Aufgaben-Kalender =====
+/* ===== COMMENTED OUT: previous variant via the Apple tasks calendar =====
 // pb_hooks/delete_today_household_task.pb.js
-// Löscht - falls vorhanden - die HEUTIGE Aufgabe mit genau dem übergebenen Titel-Präfix. Wird
-// aufgerufen, wenn eine Haushalts-Regel so bearbeitet wird, dass sich ihr Titel ändert (z.B.
-// andere Kategorie gewählt) - die dadurch verwaiste, alte Aufgabe von heute soll nicht liegen
-// bleiben, bis der nächste reguläre Takt läuft. Erwartet POST mit {title: "..."} im Body.
-// Apple-Zugangsdaten kommen aus der .env (calendarSync.loadAppleConfig), nicht aus familien_daten.
+// Deletes - if present - TODAY's task with exactly the given title prefix. Called
+// when a household rule is edited in a way that changes its title (e.g.
+// a different category was chosen) - the old task from today that is thereby orphaned should not stay
+// around until the next regular cycle runs. Expects a POST with {title: "..."} in the body.
+// Apple credentials come from the .env (calendarSync.loadAppleConfig), not from familien_daten.
 
 routerAdd("POST", "/api/delete-today-household-task", (e) => {
     const body = e.requestInfo().body;
@@ -41,10 +41,10 @@ routerAdd("POST", "/api/delete-today-household-task", (e) => {
         }
 
         const deleted = calendarSync.deleteTodayHouseholdTask(config.email, config.appPassword, config.taskCalendarName, title);
-        calendarSync.syncCalendarFileOnly(); // nur Kalenderdatei aktualisieren - KEINE Haushalts-Erkennung (sonst kommt die gerade geloeschte Aufgabe sofort wieder)
+        calendarSync.syncCalendarFileOnly(); // only update the calendar file - NO household detection (otherwise the task that was just deleted comes right back)
         return e.json(200, { success: true, deleted: deleted });
     } catch (err) {
         return e.json(200, { error: err.message });
     }
 }, $apis.requireAuth("benutzer"));
-===== ENDE AUSGEKLAMMERT ===== */
+===== END COMMENTED OUT ===== */

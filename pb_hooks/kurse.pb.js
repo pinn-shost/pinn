@@ -1,11 +1,11 @@
 // pb_hooks/kurse.pb.js
-// Kurse für ETFs / Wertpapiere, die in „Sparen“ bespart werden. Die Logik steckt in pinn-kurse.js.
+// Prices for ETFs / securities that are saved for in "Savings". The logic lives in pinn-kurse.js.
 //
-// Route (nur angemeldet, nicht für Gastkonten):
-//   POST /api/pinn/kurse   { isins: [{ isin, ab: "JJJJ-MM-TT", bis: "JJJJ-MM-TT" }], frisch: false }
+// Route (signed in only, not for guest accounts):
+//   POST /api/pinn/kurse   { isins: [{ isin, ab: "YYYY-MM-DD", bis: "YYYY-MM-DD" }], frisch: false }
 //     -> { kurse: { <ISIN>: { name, currency, price, priceDate, prev, source, fetchedAt, histFrom, delta, history, error } } }
 //
-// Kein Zeitplan - Kurse werden nur geholt, wenn jemand in der App „Sparen“ ansieht.
+// No schedule - prices are only fetched when someone views "Savings" in the app.
 
 routerAdd("POST", "/api/pinn/kurse", (e) => {
     e.response.header().set("Cache-Control", "no-store");

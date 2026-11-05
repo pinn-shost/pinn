@@ -1,43 +1,43 @@
 // pb_hooks/pinn-kalender.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden.
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require().
 //
-// Kalender je Profil (Einstellungen → Kalender → Kalender hinzufügen)
+// Calendars per profile (Settings → Calendar → Add calendar)
 //
-// - Jedes Profil einer Familie (außer Gästen) meldet sich mit SEINEM iCloud- oder Google-Konto an und
-//   hakt die Kalender daraus in zwei Spalten an:
-//     geteilt = false  „Für mich“ – nur dieses Profil sieht den Kalender und seine Termine
-//     geteilt = true   „Familie“  – alle Profile der Familie (auch Gäste) sehen und nutzen ihn; die
-//                      übrigen sehen in den Einstellungen nur einen Hinweis mit unkenntlich gemachtem
-//                      Konto (z. B. m**l@g***l.com)
-//   (saveSelection). Kalender ohne Konto (Termine nur auf dem pinn.-Server) gibt es weiterhin.
-//   Die früheren Familienkalender aus iCloud/Google (calendar-sync.js) laufen unverändert weiter.
-// - Die Termine liegen auf diesem Server. In der App heißen die Kalender „pinn:<id>“ (X-PINN-CALNAME),
-//   ihre Termine „pinn-termin:<id>“ (X-PINN-HREF).
-// - Kalender aus dem PERSÖNLICHEN iCloud- oder Google-Konto des Profils sind verknüpft
-//   (quelle = "apple" | "google", Konten: pinn-kalender-konten.js).
-//   Dann ist iCloud/Google der Speicherort: Anlegen, Ändern und Löschen gehen direkt dorthin, und alle
-//   15 Minuten (bzw. bei „Jetzt aktualisieren“) holt syncLinkedCalendar() den Stand von dort und
-//   spiegelt ihn in „kalender_termine“ (Feld extern = Adresse der Ressource bei iCloud/Google). So
-//   funktionieren Kalenderdatei, Offline-Anzeige, Verschieben und Push für diese Termine genau wie bei
-//   allen anderen eigenen Kalendern. „Entfernen“ bzw. Haken raus löscht nur die Verknüpfung in pinn.,
-//   nie den Kalender in iCloud/Google. Termine in Familien-Kalendern eines Kontos legt pinn. über das
-//   Konto des Besitzers an.
-// - GET /api/pinn/kalender (benutzer.pb.js) hängt an die Kalenderdatei der Familie die Termine an,
-//   die das angemeldete Profil sehen darf, und davor je Kalender eine Zeile
-//   X-PINN-KALENDER:{"id","name","farbe","geteilt","mein","von","darf"} – so kommt die Liste mit
-//   derselben Anfrage und steht auch offline (zwischengespeicherte Kalenderdatei) zur Verfügung.
-// - Anlegen/Ändern/Löschen/Rohtext von Terminen laufen über die bekannten Routen
-//   (create_/update_/delete_calendar_event.pb.js, get_calendar_event_raw.pb.js), die bei „pinn:“-
-//   Kalendern bzw. „pinn-termin:“-Adressen hierher verzweigen. Verschieben zwischen iCloud/Google und
-//   eigenen Kalendern geht in beide Richtungen.
-// - Push (pinn-push.js) liest über icsAllForFamily() alle Termine der Familie; private tragen
-//   X-PINN-OWNER und gehen nur an ihr Profil.
+// - Every profile of a family (except guests) signs in with THEIR iCloud or Google account and
+//   ticks the calendars from it in two columns:
+//     geteilt = false  "For me" - only this profile sees the calendar and its events
+//     geteilt = true   "Family" - all profiles of the family (also guests) see and use it; the
+//                      others only see a note in the settings with a masked
+//                      account (e.g. m**l@g***l.com)
+//   (saveSelection). Calendars without an account (events only on the pinn. server) still exist.
+//   The former family calendars from iCloud/Google (calendar-sync.js) keep running unchanged.
+// - The events live on this server. In the app the calendars are called "pinn:<id>" (X-PINN-CALNAME),
+//   their events "pinn-termin:<id>" (X-PINN-HREF).
+// - Calendars from the profile's PERSONAL iCloud or Google account are linked
+//   (quelle = "apple" | "google", accounts: pinn-kalender-konten.js).
+//   Then iCloud/Google is the storage location: creating, changing and deleting go directly there, and every
+//   15 minutes (or on "Refresh now") syncLinkedCalendar() fetches the state from there and
+//   mirrors it into "kalender_termine" (field extern = address of the resource at iCloud/Google). This way
+//   the calendar file, offline display, moving and push work for these events exactly as for
+//   all other own calendars. "Remove" or unticking only deletes the link in pinn.,
+//   never the calendar in iCloud/Google. Events in family calendars of an account are created by pinn. via the
+//   owner's account.
+// - GET /api/pinn/kalender (benutzer.pb.js) appends to the family's calendar file the events
+//   that the signed-in profile may see, and before them one line per calendar
+//   X-PINN-KALENDER:{"id","name","farbe","geteilt","mein","von","darf"} - so the list arrives with
+//   the same request and is also available offline (cached calendar file).
+// - Creating/changing/deleting/raw text of events run via the known routes
+//   (create_/update_/delete_calendar_event.pb.js, get_calendar_event_raw.pb.js), which branch here for "pinn:"
+//   calendars or "pinn-termin:" addresses. Moving between iCloud/Google and
+//   own calendars works in both directions.
+// - Push (pinn-push.js) reads all events of the family via icsAllForFamily(); private ones carry
+//   X-PINN-OWNER and only go to their profile.
 //
-// Sammlungen (gesperrt, nur über die Routen):
-//   kalender_eigene:  familie, besitzer (Profil-ID), name, farbe, geteilt,
-//                     quelle ("" | "apple" | "google"), extern (Kalender-Adresse), extern_name, nur_lesen
-//   kalender_termine: familie, kalender (ID aus kalender_eigene), uid, ics (nur VEVENT-Blöcke),
-//                     extern (Adresse der Termin-Ressource bei iCloud/Google, nur bei verknüpften Kalendern)
+// Collections (locked, only via the routes):
+//   kalender_eigene:  familie, besitzer (profile ID), name, farbe, geteilt,
+//                     quelle ("" | "apple" | "google"), extern (calendar address), extern_name, nur_lesen
+//   kalender_termine: familie, kalender (ID from kalender_eigene), uid, ics (VEVENT blocks only),
+//                     extern (address of the event resource at iCloud/Google, only for linked calendars)
 
 const COL_KAL = "kalender_eigene";
 const COL_TER = "kalender_termine";
@@ -88,8 +88,8 @@ function hrefPath(url) {
     return String(url || "").replace(/^https?:\/\/[^\/]+/i, "");
 }
 function syncErrKey(calId) { return "pinnKalSyncErr:" + calId; }
-function setSyncError(calId, msg) { try { $app.store().set(syncErrKey(calId), String(msg || "")); } catch (e) { /* egal */ } }
-function clearSyncError(calId) { try { $app.store().remove(syncErrKey(calId)); } catch (e) { /* egal */ } }
+function setSyncError(calId, msg) { try { $app.store().set(syncErrKey(calId), String(msg || "")); } catch (e) { /* ignore */ } }
+function clearSyncError(calId) { try { $app.store().remove(syncErrKey(calId)); } catch (e) { /* ignore */ } }
 function getSyncError(calId) { try { const v = $app.store().get(syncErrKey(calId)); return v ? String(v) : ""; } catch (e) { return ""; } }
 function nameOfUser(id) {
     if (!id) return "";
@@ -155,7 +155,7 @@ function ensureSchema() {
             console.log("[Kalender] Konnte Sammlung \"" + COL_TER + "\" nicht anlegen: " + err.message);
         }
     }
-    // Felder für verknüpfte Kalender (iCloud/Google) in bestehenden Sammlungen ergänzen
+    // Add fields for linked calendars (iCloud/Google) to existing collections
     addFields(COL_KAL, [
         { name: "quelle", type: "text", max: 10 },
         { name: "extern", type: "text", max: 1000 },
@@ -187,7 +187,7 @@ function ready() {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Kalender: Sichtbarkeit und Rechte
+// Calendars: visibility and permissions
 // ---------------------------------------------------------------------------------------------
 function calRecord(id) {
     if (!ID_RE.test(String(id || ""))) return null;
@@ -197,7 +197,7 @@ function canSee(rec, familyId, userId) {
     if (!rec || !familyId || rec.getString("familie") !== familyId) return false;
     return rec.getBool("geteilt") || (!!userId && rec.getString("besitzer") === userId);
 }
-// Ändern/Löschen: der Besitzer immer; geteilte Kalender zusätzlich die Admins der Familie
+// Change/delete: always the owner; for shared calendars additionally the admins of the family
 function canManage(e, rec) {
     const lib = benutzerLib();
     const familyId = lib.familyOf(e);
@@ -255,16 +255,16 @@ function listFor(e) {
     return visibleCalendars(familyId, userId).map(r => calJson(r, userId, isAdmin, isGuest, names));
 }
 
-// Kalender im persönlichen Konto suchen (über seine Adresse)
+// Find a calendar in the personal account (via its address)
 function findExternCal(acc, href) {
     const want = cs().normUrl(href);
     return (acc.calendars || []).find(c => cs().normUrl(c.href) === want) || null;
 }
 
-// Kalender anlegen oder ändern: { id?, name, farbe, geteilt?, quelle?, extern? }
-// quelle/extern nur beim Anlegen: verknüpft den neuen Kalender mit einem Kalender aus dem persönlichen
-// iCloud- (quelle "apple") oder Google-Konto (quelle "google"). Beim Ändern bleibt „geteilt“, wenn es
-// nicht mitgeschickt wird.
+// Create or change a calendar: { id?, name, farbe, geteilt?, quelle?, extern? }
+// quelle/extern only when creating: links the new calendar with a calendar from the personal
+// iCloud (quelle "apple") or Google account (quelle "google"). When changing, "geteilt" stays as it is if it is
+// not sent along.
 function saveCalendar(e, body) {
     const lib = benutzerLib();
     const familyId = lib.familyOf(e);
@@ -282,7 +282,7 @@ function saveCalendar(e, body) {
         rec = calRecord(body.id);
         if (!rec || !canSee(rec, familyId, userId)) throw new Error("Kalender nicht gefunden.");
         if (!canManage(e, rec)) throw new Error("Diesen Kalender kann nur sein Besitzer (bzw. bei geteilten Kalendern ein Admin) ändern.");
-        // Nur der Besitzer entscheidet, ob ein Kalender „Für mich“ oder „Familie“ ist
+        // Only the owner decides whether a calendar is "For me" or "Family"
         if (rec.getString("besitzer") === userId && typeof body.geteilt === "boolean") rec.set("geteilt", body.geteilt);
     } else {
         rec = new Record(findCol(COL_KAL));
@@ -314,7 +314,7 @@ function saveCalendar(e, body) {
     $app.save(rec);
     let hinweis = "";
     if (neuVerknuepft) {
-        // Termine gleich holen, damit der Kalender nicht bis zum nächsten Abgleich leer ist
+        // Fetch events right away so that the calendar is not empty until the next sync
         try {
             const n = syncLinkedCalendar(rec);
             hinweis = n + " Termin" + (n === 1 ? "" : "e") + " aus " + kontenLib().label(rec.getString("quelle")) + " übernommen.";
@@ -331,11 +331,11 @@ function findLinked(userId, quelle, href) {
     return recs.find(r => cs().normUrl(r.getString("extern")) === want) || null;
 }
 
-// Auswahl aus einem Konto übernehmen (Häkchen „Für mich“ / „Familie“):
+// Take over the selection from an account (ticks "For me" / "Family"):
 //   { art: "apple"|"google", auswahl: [{ href, ziel: "ich" | "familie" | "" }] }
-// Neu angehakt -> Kalender verknüpfen (Name aus dem Konto, freie Farbe) und Termine gleich holen;
-// Spalte gewechselt -> nur „geteilt“ umstellen; Haken raus -> Verknüpfung in pinn. entfernen (im Konto
-// bleibt alles). Kalender, die in der Auswahl nicht vorkommen, bleiben unverändert.
+// Newly ticked -> link the calendar (name from the account, free colour) and fetch events right away;
+// column changed -> only switch "geteilt"; tick removed -> remove the link in pinn. (everything
+// in the account stays). Calendars that do not appear in the selection stay unchanged.
 function saveSelection(e, body) {
     const p = requireOwnProfile(e);
     ensureSchema();
@@ -359,7 +359,7 @@ function saveSelection(e, body) {
         const ziel = item.ziel === "ich" || item.ziel === "familie" ? item.ziel : "";
         const rec = findLinked(p.userId, art, href);
         if (!ziel) {
-            if (rec) { try { removeCalendarWithEvents(rec); removed++; } catch (err) { /* nächstes Mal */ } }
+            if (rec) { try { removeCalendarWithEvents(rec); removed++; } catch (err) { /* next time */ } }
             return;
         }
         const geteilt = ziel === "familie";
@@ -368,7 +368,7 @@ function saveSelection(e, body) {
             return;
         }
         const ext = findExternCal(acc, href);
-        if (!ext) return; // nicht (mehr) im Konto
+        if (!ext) return; // not (any more) in the account
         const farbe = FARBEN.find(c => usedColors.indexOf(c.toUpperCase()) === -1) || FARBEN[(mine.length + added) % FARBEN.length];
         usedColors.push(farbe.toUpperCase());
         const extName = cleanText(konten.displayName(acc, ext.name), 200);
@@ -386,7 +386,7 @@ function saveSelection(e, body) {
         neu.push(r);
         added++;
     });
-    // Termine der neuen Kalender gleich holen, damit sie nicht bis zum nächsten Abgleich leer sind
+    // Fetch the events of the new calendars right away so that they are not empty until the next sync
     let termine = 0;
     const fehler = [];
     neu.forEach(r => {
@@ -401,8 +401,8 @@ function saveSelection(e, body) {
     return { kalender: listFor(e), hinweis: hinweis };
 }
 
-// Kalender mit allen seinen Terminen löschen. Bei verknüpften Kalendern nur die Verknüpfung in pinn. –
-// der Kalender und seine Termine in iCloud/Google bleiben unangetastet.
+// Delete a calendar with all its events. For linked calendars only the link in pinn. -
+// the calendar and its events in iCloud/Google stay untouched.
 function deleteCalendar(e, body) {
     const lib = benutzerLib();
     const familyId = lib.familyOf(e);
@@ -415,35 +415,35 @@ function deleteCalendar(e, body) {
 function removeCalendarWithEvents(rec) {
     let terms = [];
     try { terms = $app.findRecordsByFilter(COL_TER, "kalender = {:k}", "", 0, 0, { k: rec.id }); } catch (e) { terms = []; }
-    terms.forEach(t => { try { $app.delete(t); } catch (e) { /* nächstes Mal */ } });
+    terms.forEach(t => { try { $app.delete(t); } catch (e) { /* next time */ } });
     clearSyncError(rec.id);
     $app.delete(rec);
 }
 
-// Aufräumen: Profil gelöscht -> seine privaten Kalender (geteilte bleiben der Familie erhalten) und
-// seine persönlichen Konten
+// Clean up: profile deleted -> its private calendars (shared ones stay with the family) and
+// its personal accounts
 function cleanupUser(userId) {
     if (!userId) return;
     if (ready()) {
         let recs = [];
-        // private Kalender und alle mit einem Konto des Profils verknüpften (das Konto geht mit)
+        // private calendars and all linked to an account of the profile (the account goes with it)
         try { recs = $app.findRecordsByFilter(COL_KAL, "besitzer = {:u} && (geteilt = false || quelle = 'apple' || quelle = 'google')", "", 0, 0, { u: String(userId) }); } catch (e) { recs = []; }
-        recs.forEach(r => { try { removeCalendarWithEvents(r); } catch (e) { /* egal */ } });
+        recs.forEach(r => { try { removeCalendarWithEvents(r); } catch (e) { /* ignore */ } });
     }
-    try { kontenLib().removeAll(userId); } catch (e) { /* schon mit dem Profil gelöscht */ }
+    try { kontenLib().removeAll(userId); } catch (e) { /* already deleted with the profile */ }
 }
-// Familie gelöscht -> alles dieser Familie
+// Family deleted -> everything of this family
 function cleanupFamily(familyId) {
     if (!familyId || !ready()) return;
     [COL_TER, COL_KAL].forEach(col => {
         let recs = [];
         try { recs = $app.findRecordsByFilter(col, "familie = {:f}", "", 0, 0, { f: String(familyId) }); } catch (e) { recs = []; }
-        recs.forEach(r => { try { $app.delete(r); } catch (e) { /* egal */ } });
+        recs.forEach(r => { try { $app.delete(r); } catch (e) { /* ignore */ } });
     });
 }
 
 // ---------------------------------------------------------------------------------------------
-// Persönliche Konten (iCloud/Google) – Routen der Einstellungen
+// Personal accounts (iCloud/Google) - routes of the settings
 // ---------------------------------------------------------------------------------------------
 function requireOwnProfile(e) {
     const lib = benutzerLib();
@@ -456,11 +456,11 @@ function requireOwnProfile(e) {
 function accountStatus(e, origin) {
     const p = requireOwnProfile(e);
     const st = kontenLib().status(p.userId, origin);
-    // Google-Zugang (OAuth-Client) in der App hinterlegen dürfen Admins – nur wenn er nicht in der .env steht
+    // Admins may store the Google access (OAuth client) in the app - only if it is not in the .env
     st.google.einrichtbar = st.google.client !== "env" && benutzerLib().isAdmin(e);
     return st;
 }
-// OAuth-Client von Google in der App hinterlegen (Admins; nur wenn er nicht in der .env steht)
+// Store Google's OAuth client in the app (admins; only if it is not in the .env)
 function saveGoogleClient(e, body) {
     const lib = benutzerLib();
     if (!lib.isAdmin(e)) throw new Error("Den Google-Zugang für pinn. kann nur ein Admin hinterlegen.");
@@ -473,8 +473,8 @@ function connectApple(e, body) {
     const p = requireOwnProfile(e);
     const konten = kontenLib();
     konten.saveApple(p.userId, body.appleId, body.appPassword);
-    // Bereits verknüpfte iCloud-Kalender gleich wieder abgleichen (z. B. nach neuem Passwort)
-    try { syncLinkedForUser(p.userId, "apple"); } catch (err) { /* nächster Abgleich */ }
+    // Sync already linked iCloud calendars again right away (e.g. after a new password)
+    try { syncLinkedForUser(p.userId, "apple"); } catch (err) { /* next sync */ }
     let extern = [];
     try { extern = accountCalendars(e, { art: "apple" }).extern; } catch (err) { extern = []; }
     return { konten: accountStatus(e, body.origin), extern: extern };
@@ -484,7 +484,7 @@ function accountCalendars(e, body) {
     const art = String(body.art || "");
     const konten = kontenLib();
     if (!konten.validArt(art)) throw new Error("Unbekannte Kontoart.");
-    // Je Kalender: aktuelle Auswahl („ich“ / „familie“ / „“) aus den verknüpften Kalendern des Profils
+    // Per calendar: current selection ("ich" / "familie" / "") from the profile's linked calendars
     let linked = [];
     try { linked = $app.findRecordsByFilter(COL_KAL, "besitzer = {:u} && quelle = {:q}", "", 0, 0, { u: p.userId, q: art }); } catch (err) { linked = []; }
     const byHref = {};
@@ -499,7 +499,7 @@ function startGoogle(e, body) {
     const p = requireOwnProfile(e);
     return { url: require(`${__hooks}/pinn-google.js`).startPersonalAuth(p.familyId, p.userId, body.origin) };
 }
-// Konto trennen: verknüpfte Kalender dieses Kontos verschwinden aus pinn. (in iCloud/Google bleiben sie)
+// Disconnect an account: linked calendars of this account disappear from pinn. (they stay in iCloud/Google)
 function disconnect(e, body) {
     const p = requireOwnProfile(e);
     const art = String(body.art || "");
@@ -508,7 +508,7 @@ function disconnect(e, body) {
     if (ready()) {
         let recs = [];
         try { recs = $app.findRecordsByFilter(COL_KAL, "besitzer = {:u} && quelle = {:q}", "", 0, 0, { u: p.userId, q: art }); } catch (err) { recs = []; }
-        recs.forEach(r => { try { removeCalendarWithEvents(r); } catch (err) { /* egal */ } });
+        recs.forEach(r => { try { removeCalendarWithEvents(r); } catch (err) { /* ignore */ } });
     }
     konten.remove(p.userId, art);
     console.log("[Kalender-Konten] " + konten.label(art) + "-Konto von Profil " + p.userId + " getrennt.");
@@ -516,7 +516,7 @@ function disconnect(e, body) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Abgleich verknüpfter Kalender (iCloud/Google -> Spiegelung in kalender_termine)
+// Sync of linked calendars (iCloud/Google -> mirror in kalender_termine)
 // ---------------------------------------------------------------------------------------------
 function linkedAccount(cal) {
     return kontenLib().account(cal.getString("besitzer"), cal.getString("quelle"));
@@ -535,8 +535,8 @@ function uidOfIcs(ics) {
     return m ? cleanUid(m[1]) : "";
 }
 
-// Einen verknüpften Kalender abgleichen. Rückgabe: Anzahl Termine. Wirft bei Fehlern (der bisherige
-// Stand bleibt dann stehen, statt Termine zu verlieren).
+// Sync one linked calendar. Returns: number of events. Throws on errors (the previous
+// state then stays in place instead of losing events).
 function syncLinkedCalendar(cal) {
     if (!isLinked(cal)) return 0;
     try {
@@ -552,13 +552,13 @@ function syncLinkedCalendar(cal) {
             }
             throw err;
         }
-        // Name/Schreibrecht bei iCloud/Google geändert? Mitziehen.
+        // Name/write permission changed at iCloud/Google? Follow along.
         const extName = cleanText(kontenLib().displayName(t.acc, t.c.name), 200);
         const ro = t.acc.kind === "google" && t.c.writable === false;
         if (extName !== cal.getString("extern_name") || ro !== cal.getBool("nur_lesen")) {
             cal.set("extern_name", extName);
             cal.set("nur_lesen", ro);
-            try { $app.save(cal); } catch (err) { /* nächstes Mal */ }
+            try { $app.save(cal); } catch (err) { /* next time */ }
         }
         let existing = [];
         try { existing = $app.findRecordsByFilter(COL_TER, "kalender = {:k}", "", 0, 0, { k: cal.id }); } catch (err) { existing = []; }
@@ -572,10 +572,10 @@ function syncLinkedCalendar(cal) {
             if (!key || seen[key]) return;
             seen[key] = true;
             const ics = res.veventBlocks.join("\r\n");
-            if (ics.length > MAX_ICS) return; // zu groß – bisherigen Stand (falls vorhanden) behalten
+            if (ics.length > MAX_ICS) return; // too large - keep the previous state (if there is one)
             count++;
             let rec = byExt[key];
-            if (rec && rec.getString("ics") === ics) return; // unverändert
+            if (rec && rec.getString("ics") === ics) return; // unchanged
             if (!rec) {
                 rec = new Record(col);
                 rec.set("familie", cal.getString("familie"));
@@ -586,10 +586,10 @@ function syncLinkedCalendar(cal) {
             rec.set("ics", ics);
             try { $app.save(rec); } catch (err) { console.log("[Kalender] Termin nicht übernommen: " + err.message); }
         });
-        // Bei iCloud/Google gelöscht -> hier auch (Termine ohne extern sind noch nicht hochgeladen: bleiben)
+        // Deleted at iCloud/Google -> here too (events without extern are not uploaded yet: they stay)
         existing.forEach(r => {
             const k = cs().normUrl(r.getString("extern"));
-            if (k && !seen[k]) { try { $app.delete(r); } catch (err) { /* nächstes Mal */ } }
+            if (k && !seen[k]) { try { $app.delete(r); } catch (err) { /* next time */ } }
         });
         clearSyncError(cal.id);
         return count;
@@ -603,9 +603,9 @@ function linkedCalendars(filter, params) {
     if (!ready()) return [];
     try { return $app.findRecordsByFilter(COL_KAL, filter, "created", 0, 0, params || {}); } catch (e) { return []; }
 }
-// Admin-Fehlerprotokoll (pinn-protokoll.js) – fehlt die Datei, bleibt es beim Docker-Log
+// Admin error log (pinn-protokoll.js) - if the file is missing, it stays with the Docker log
 function plog(art, bereich, meldung, opts) {
-    try { require(`${__hooks}/pinn-protokoll.js`)[art](bereich, meldung, opts || {}); } catch (e) { /* Protokoll nicht verfügbar */ }
+    try { require(`${__hooks}/pinn-protokoll.js`)[art](bereich, meldung, opts || {}); } catch (e) { /* log not available */ }
 }
 function syncList(cals) {
     cals.forEach(c => {
@@ -621,17 +621,17 @@ function syncList(cals) {
         }
     });
 }
-// Cron: alle verknüpften Kalender aller Familien
+// Cron: all linked calendars of all families
 function syncAllLinked() {
     syncList(linkedCalendars("quelle = 'apple' || quelle = 'google'"));
 }
-// „Jetzt aktualisieren“: die verknüpften Kalender, die ein Profil sieht (eigene + Familien-Kalender anderer)
+// "Refresh now": the linked calendars that a profile sees (own + family calendars of others)
 function syncLinkedVisible(familyId, userId) {
     if (!familyId) { syncLinkedForUser(userId); return; }
     syncList(linkedCalendars("familie = {:f} && (quelle = 'apple' || quelle = 'google') && (geteilt = true || besitzer = {:u})",
         { f: String(familyId), u: String(userId || "-") }));
 }
-// Nach (Neu-)Verbinden: die verknüpften Kalender eines Profils
+// After (re)connecting: the linked calendars of a profile
 function syncLinkedForUser(userId, art) {
     if (!userId) return;
     const q = art ? "besitzer = {:u} && quelle = {:q}" : "besitzer = {:u} && (quelle = 'apple' || quelle = 'google')";
@@ -650,8 +650,8 @@ function utcStampNow() {
     return now.getUTCFullYear() + pad(now.getUTCMonth() + 1) + pad(now.getUTCDate()) +
         'T' + pad(now.getUTCHours()) + pad(now.getUTCMinutes()) + pad(now.getUTCSeconds()) + 'Z';
 }
-// Zufallsteil einer neuen UID: sicherer Zufallsgenerator von PocketBase (kein einfacher Zufall); der Zähler
-// hält UIDs eindeutig, falls der Generator je nicht verfügbar wäre.
+// Random part of a new UID: PocketBase's secure random generator (not a simple random); the counter
+// keeps UIDs unique should the generator ever be unavailable.
 let uidCounter = 0;
 function uidSuffix() {
     try {
@@ -674,8 +674,8 @@ function cleanUid(uid) {
 function validDate(s) { return /^\d{4}-\d{2}-\d{2}$/.test(String(s || "")); }
 function validTime(s) { return /^\d{2}:\d{2}$/.test(String(s || "")); }
 
-// VEVENT-Block wie in calendar-sync.js (buildVEventICS) – „floating“ lokale Zeit, ganztägig mit
-// exklusivem DTEND, Wiederholung und Erinnerung.
+// VEVENT block as in calendar-sync.js (buildVEventICS) - "floating" local time, all-day with
+// exclusive DTEND, repeat and reminder.
 function buildVEvent(uid, ev) {
     if (!validDate(ev.startDate) || !validDate(ev.endDate)) throw new Error("Start- und Enddatum sind erforderlich.");
     const lines = [];
@@ -721,7 +721,7 @@ function buildVEvent(uid, ev) {
     return ics;
 }
 
-// Kalender, in den das angemeldete Profil schreiben darf (sonst Fehler)
+// Calendar the signed-in profile may write to (otherwise an error)
 function writableCalendar(e, calendarName) {
     const familyId = benutzerLib().familyOf(e);
     const rec = isPinnCalName(calendarName) ? calRecord(String(calendarName).slice(CAL_PREFIX.length)) : null;
@@ -729,7 +729,7 @@ function writableCalendar(e, calendarName) {
     if (isLinked(rec) && rec.getBool("nur_lesen")) throw new Error("Der Kalender „" + (rec.getString("name") || "Kalender") + "“ ist in " + kontenLib().label(rec.getString("quelle")) + " nur lesbar.");
     return rec;
 }
-// Termin, den das angemeldete Profil sehen darf (sonst Fehler)
+// Event the signed-in profile may see (otherwise an error)
 function accessibleTerm(e, href) {
     const familyId = benutzerLib().familyOf(e);
     let term = null;
@@ -746,9 +746,9 @@ function findTermInCal(calId, uid) {
     try { return $app.findFirstRecordByFilter(COL_TER, "kalender = {:k} && uid = {:u}", { k: String(calId), u: String(uid) }); } catch (e) { return null; }
 }
 
-// Termin in einen Kalender schreiben. term = vorhandener Datensatz in DIESEM Kalender (ändern) oder
-// null (neu). Verknüpfte Kalender: zuerst bei iCloud/Google anlegen bzw. ändern, dann hier spiegeln
-// (der nächste Abgleich holt dort die endgültige Fassung).
+// Write an event into a calendar. term = existing record in THIS calendar (change) or
+// null (new). Linked calendars: first create/change at iCloud/Google, then mirror here
+// (the next sync fetches the final version from there).
 function writeTerm(familyId, cal, uid, ev, term) {
     if (!term) {
         term = new Record(findCol(COL_TER));
@@ -776,7 +776,7 @@ function writeTerm(familyId, cal, uid, ev, term) {
     return term;
 }
 
-// Termin entfernen – bei verknüpften Kalendern auch bei iCloud/Google
+// Remove an event - for linked calendars also at iCloud/Google
 function removeTerm(term, cal) {
     if (cal && isLinked(cal) && term.getString("extern")) {
         if (cal.getBool("nur_lesen")) throw new Error("Der Kalender „" + (cal.getString("name") || "Kalender") + "“ ist nur lesbar.");
@@ -785,21 +785,21 @@ function removeTerm(term, cal) {
     $app.delete(term);
 }
 
-// Neuer Termin in einem eigenen Kalender. Rückgabe { privat } – private Termine lösen keine
-// Hinweise/Pushs an die übrige Familie aus.
+// New event in an own calendar. Returns { privat } - private events trigger no
+// notices/pushes to the rest of the family.
 function createEvent(e, ev) {
     const familyId = benutzerLib().familyOf(e);
     if (!familyId) throw new Error("Eigene Kalender gibt es nur für Profile einer Familie.");
     if (!ev || !ev.title || !ev.startDate || !ev.endDate) throw new Error("Titel, Start- und Enddatum sind erforderlich.");
     const cal = writableCalendar(e, ev.calendarName);
     const uid = newUid(ev);
-    // Offline vorgemerkter Termin, der erneut gesendet wird: denselben Datensatz aktualisieren
+    // Event queued offline that is sent again: update the same record
     writeTerm(familyId, cal, uid, ev, findTermInCal(cal.id, uid));
     return { privat: !cal.getBool("geteilt") };
 }
 
-// Bestehenden Termin ändern – auch zwischen eigenen (lokalen und verknüpften) Kalendern und den
-// Familienkalendern aus iCloud/Google verschieben.
+// Change an existing event - also move between own (local and linked) calendars and the
+// family calendars from iCloud/Google.
 function updateEvent(e, href, uid, ev) {
     const familyId = benutzerLib().familyOf(e);
     if (!familyId) throw new Error("Eigene Kalender gibt es nur für Profile einer Familie.");
@@ -815,38 +815,38 @@ function updateEvent(e, href, uid, ev) {
         if (src.cal.id === cal.id) {
             writeTerm(familyId, cal, u, ev, src.term);
         } else if (!isLinked(src.cal) && !isLinked(cal)) {
-            // zwischen zwei Kalendern auf diesem Server: Datensatz einfach umhängen
+            // between two calendars on this server: simply re-attach the record
             src.term.set("kalender", cal.id);
             src.term.set("ics", buildVEvent(u, ev));
             $app.save(src.term);
         } else {
-            // iCloud/Google beteiligt: im Ziel anlegen, dann die alte Fassung entfernen
+            // iCloud/Google involved: create in the target, then remove the old version
             writeTerm(familyId, cal, u, ev, findTermInCal(cal.id, u));
             try { removeTerm(src.term, src.cal); } catch (err) { throw partial(err); }
         }
         return { privat: !cal.getBool("geteilt") };
     }
     if (srcPinn && !dstPinn) {
-        // Eigener Kalender -> Familienkalender (iCloud/Google): dort anlegen, dann hier löschen
+        // Own calendar -> family calendar (iCloud/Google): create there, then delete here
         const src = accessibleTerm(e, href);
         const u = cleanUid(src.term.getString("uid"));
         calendarSync.createEventForFamily(familyId, ev.calendarName, Object.assign({}, ev, { clientUid: u }));
         try { removeTerm(src.term, src.cal); } catch (err) { throw partial(err); }
-        try { calendarSync.syncCalendarFileOnly(familyId); } catch (err) { /* nächster Sync */ }
+        try { calendarSync.syncCalendarFileOnly(familyId); } catch (err) { /* next sync */ }
         return { privat: false };
     }
     if (!srcPinn && dstPinn) {
-        // Familienkalender -> eigener Kalender: hier anlegen (gleiche UID), dann dort löschen
+        // Family calendar -> own calendar: create here (same UID), then delete there
         const cal = writableCalendar(e, ev.calendarName);
         const u = cleanUid(uid) || newUid(ev);
         const rec = writeTerm(familyId, cal, u, ev, findTermInCal(cal.id, u));
         try {
             calendarSync.deleteEventForFamily(familyId, href);
         } catch (err) {
-            try { removeTerm(rec, cal); } catch (e2) { /* egal */ }
+            try { removeTerm(rec, cal); } catch (e2) { /* ignore */ }
             throw new Error("Verschieben fehlgeschlagen: " + err.message);
         }
-        try { calendarSync.syncCalendarFileOnly(familyId); } catch (err) { /* nächster Sync */ }
+        try { calendarSync.syncCalendarFileOnly(familyId); } catch (err) { /* next sync */ }
         return { privat: !cal.getBool("geteilt") };
     }
     throw new Error("Kein eigener Kalender beteiligt.");
@@ -864,19 +864,19 @@ function rawEvent(e, href) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Kalenderdatei
+// Calendar file
 // ---------------------------------------------------------------------------------------------
 function blockWithMeta(term, cal, owner) {
     const head = 'BEGIN:VEVENT\r\nX-PINN-HREF:' + HREF_PREFIX + term.id + '\r\nX-PINN-CALNAME:' + CAL_PREFIX + cal.id
         + (owner ? '\r\nX-PINN-OWNER:' + owner : '');
-    // Eine Ressource kann mehrere VEVENT-Blöcke haben (Ausnahmen einer Serie) – jeden kennzeichnen
+    // A resource can have several VEVENT blocks (exceptions of a series) - mark each one
     return String(term.getString("ics") || "").split('BEGIN:VEVENT').join(head);
 }
 function termsOfFamily(familyId) {
     try { return $app.findRecordsByFilter(COL_TER, "familie = {:f}", "", 0, 0, { f: String(familyId) }); } catch (e) { return []; }
 }
 
-// Zeilen für die Kalenderdatei des angemeldeten Profils (Kalenderliste + sichtbare Termine)
+// Lines for the signed-in profile's calendar file (calendar list + visible events)
 function icsLinesFor(e) {
     const lib = benutzerLib();
     const familyId = lib.familyOf(e);
@@ -899,7 +899,7 @@ function icsLinesFor(e) {
     return out.join("\r\n");
 }
 
-// Kalenderdatei der Familie um die eigenen Kalender des Profils ergänzen
+// Extend the family's calendar file with the profile's own calendars
 function mergeInto(text, e) {
     let extra = "";
     try { extra = icsLinesFor(e); } catch (err) { extra = ""; }
@@ -910,7 +910,7 @@ function mergeInto(text, e) {
     return t + extra + "\r\nEND:VCALENDAR\r\n";
 }
 
-// Für Push: alle Termine der Familie in eigenen Kalendern; private mit X-PINN-OWNER
+// For push: all events of the family in own calendars; private ones with X-PINN-OWNER
 function icsAllForFamily(familyId) {
     if (!familyId || !ready()) return "";
     let cals = [];
@@ -930,7 +930,7 @@ function icsAllForFamily(familyId) {
 module.exports = {
     ensureSchema, ready, isPinnCalName, isPinnHref, listFor, saveCalendar, deleteCalendar, cleanupUser, cleanupFamily,
     createEvent, updateEvent, deleteEvent, rawEvent, mergeInto, icsAllForFamily, FARBEN,
-    // persönliche Konten + verknüpfte Kalender (iCloud/Google)
+    // personal accounts + linked calendars (iCloud/Google)
     accountStatus, connectApple, accountCalendars, startGoogle, disconnect, saveSelection, saveGoogleClient,
     syncLinkedCalendar, syncAllLinked, syncLinkedForUser, syncLinkedVisible,
 };

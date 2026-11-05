@@ -1,23 +1,23 @@
 // pb_hooks/ki.pb.js
-// KI-Auswertung mit Google Gemini (Rezepte, Zählerstände, Stundenpläne, Elternbriefe). Die Logik steckt in pinn-ki.js.
+// AI evaluation with Google Gemini (recipes, meter readings, timetables, parent letters). The logic lives in pinn-ki.js.
 //
-// Routen (nur angemeldete Profile einer Familie):
-//   GET  /api/pinn/ki/status   { aktiv, modell } - ist auf dem Server ein Gemini-Schlüssel eingetragen?
+// Routes (signed-in profiles of a family only):
+//   GET  /api/pinn/ki/status   { aktiv, modell } - is a Gemini key entered on the server?
 //   POST /api/pinn/ki/rezept   { text, dateien: [{ mime, daten }], kategorien[], geraete[] }
 //                              -> { rezept: { title, ingredients, steps, servings, prepTime, cookTime,
 //                                              categories, tools, bild, quelle } }
-//                              Fehler -> { error } mit Status 4xx/5xx; die App wertet dann wie bisher
-//                              selbst aus.
+//                              Error -> { error } with status 4xx/5xx; the app then evaluates
+//                              by itself as before.
 //   POST /api/pinn/ki/zaehler  { dateien: [{ mime, daten }], art, einheit, letzter, nummer }
-//                              -> { zaehler: { stand, nummer, sicher, hinweis } }  (Menü „Haus“ → Zähler;
-//                              nicht für Gastkonten)
+//                              -> { zaehler: { stand, nummer, sicher, hinweis } }  (menu "House" → Meters;
+//                              not for guest accounts)
 //   POST /api/pinn/ki/stundenplan  { dateien: [{ mime, daten }], kind, klasse }
 //                              -> { stundenplan: { zeiten: [{ von, bis }], stunden: [{ tag, stunde, fach, raum }], hinweis } }
 //   POST /api/pinn/ki/elternbrief  { dateien: [{ mime, daten }], heute, kinder[], einrichtungen[] }
 //                              -> { brief: { titel, absender, aktion, frist, betrag, zusammenfassung,
 //                                            schliesstage: [{ von, bis, grund }], hinweis } }
-//                              (Familie → Schule & Kita; nicht für Gastkonten)
-// Der Gemini-Schlüssel steht nur in der .env (PINN_GEMINI_KEY) und wird nie ausgeliefert.
+//                              (Family → School & daycare; not for guest accounts)
+// The Gemini key is only in the .env (PINN_GEMINI_KEY) and is never delivered.
 
 routerAdd("GET", "/api/pinn/ki/status", (e) => {
     e.response.header().set("Cache-Control", "no-store");

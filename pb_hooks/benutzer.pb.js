@@ -1,37 +1,37 @@
 // pb_hooks/benutzer.pb.js
-// Anmeldung, Familien, Profile und Verknüpfung Profil <-> Familienmitglied für pinn.
+// Sign-in, families, profiles and the link profile <-> family member for pinn.
 //
-// Beim Start (siehe pinn-benutzer.js):
-// - legt die Sammlungen "benutzer" und "familien" an bzw. ergänzt sie
-// - macht das Profil "Admin" zum Hauptadmin (ohne Familie) bzw. legt es an ("Admin"/"Admin")
-// - übernimmt bei einer bestehenden Installation alle Daten in die Familie "Familie"
-// - trennt familien_daten und rezept_bilder je Familie
-// - legt die Push-Sammlungen "push_abos" und "push_nachrichten" an
-// Die Apple-Kalender-Zugangsdaten je Familie verwaltet apple_credentials.pb.js (pinn-apple.js),
-// das Google-Konto (Android-Kalender) je Familie google_credentials.pb.js (pinn-google.js).
-// Familien-Dashboard (Profilauswahl, PIN): dashboard.pb.js / pinn-dashboard.js.
+// On start (see pinn-benutzer.js):
+// - creates the collections "benutzer" and "familien" or completes them
+// - makes the profile "Admin" the main admin (without a family) or creates it ("Admin"/"Admin")
+// - on an existing installation, takes over all data into the family "Familie"
+// - separates familien_daten and rezept_bilder per family
+// - creates the push collections "push_abos" and "push_nachrichten"
+// The Apple calendar credentials per family are managed by apple_credentials.pb.js (pinn-apple.js),
+// the Google account (Android calendar) per family by google_credentials.pb.js (pinn-google.js).
+// Family dashboard (profile selection, PIN): dashboard.pb.js / pinn-dashboard.js.
 //
-// Familienmitglieder: Jedes Profil (außer Gast/Hauptadmin) ist genau ein Familienmitglied. Legt der
-// Hauptadmin eine Familie oder Profile an, entstehen die Mitglieder mit den Profilnamen sofort mit
-// (syncFamilyMembers in pinn-benutzer.js) - es gibt keine Beispiel-Mitglieder mehr. Wird ein Profil
-// gelöscht, verschwindet auch sein Mitglied.
+// Family members: every profile (except guest/main admin) is exactly one family member. When the
+// main admin creates a family or profiles, the members are created right away with the profile names
+// (syncFamilyMembers in pinn-benutzer.js) - there are no example members any more. If a profile is
+// deleted, its member disappears too.
 //
-// Gastkonten (Rolle "gast"): legt ein Admin an (/api/pinn/users/create-gast). Sie haben ein
-// zufälliges, niemandem bekanntes Passwort, erscheinen nicht in der Anmeldemaske und kommen nur
-// über das Familien-Dashboard in die App - ohne Zugriff auf die Finanzen.
+// Guest accounts (role "gast"): created by an admin (/api/pinn/users/create-gast). They have a
+// random password known to nobody, do not appear in the sign-in form and only get into the app
+// via the family dashboard - without access to the finances.
 //
-// Geräteverwaltung (sitzungen.pb.js / pinn-sitzungen.js): Jede Anmeldung bekommt eine Sitzung je
-// Gerät. Fehlversuche zählen zusätzlich je Netzwerk-Adresse (auch unbekannte Familien und Profile);
-// wird ein Profil gesperrt, bekommen die Admins eine Push-Nachricht und es steht im Fehlerprotokoll.
-// Passwort ändern bzw. zurücksetzen meldet alle anderen Geräte des Profils ab.
+// Device management (sitzungen.pb.js / pinn-sitzungen.js): every sign-in gets a session per
+// device. Failed attempts also count per network address (also unknown families and profiles);
+// if a profile is locked, the admins get a push message and it appears in the error log.
+// Changing or resetting the password signs out all other devices of the profile.
 //
-// Alles ist defensiv gebaut: Ein Fehler hier wird nur geloggt und verhindert nie den Serverstart.
+// Everything is built defensively: an error here is only logged and never prevents the server from starting.
 
 onBootstrap((e) => {
     e.next();
-    // Datenbank-Einrichtung (pinn-schema.js, darin auch pinn-benutzer.ensureSchema)
+    // Database set-up (pinn-schema.js, which also contains pinn-benutzer.ensureSchema)
     try { require(`${__hooks}/pinn-schema.js`).ensureCurrent(); } catch (err) { console.log("[Anmeldung] Einrichtung fehlgeschlagen: " + err.message); }
-    // Jedes Profil ist ein Familienmitglied: fehlende Mitglieder anlegen, Beispiel-Mitglieder entfernen
+    // Every profile is a family member: create missing members, remove example members
     try {
         require(`${__hooks}/pinn-benutzer.js`).syncAllFamilyMembers();
     } catch (err) {
@@ -40,11 +40,11 @@ onBootstrap((e) => {
 });
 
 // ---------------------------------------------------------------------------------------------
-// Anmeldemaske (ohne Anmeldung)
+// Sign-in form (without signing in)
 // ---------------------------------------------------------------------------------------------
 
-// Familie prüfen und ihre Profilnamen liefern. Gibt NUR den Familiennamen, die Profilnamen und die
-// Wohnform ('familie' oder 'wg') heraus - die Anmeldemaske zeigt damit „Familie“ bzw. „WG“.
+// Check the family and return its profile names. Returns ONLY the family name, the profile names and the
+// living arrangement ('familie' or 'wg') - the sign-in form uses it to show "Family" or "Flat share".
 routerAdd("GET", "/api/pinn/familie", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     let sitz = null;
@@ -60,13 +60,13 @@ routerAdd("GET", "/api/pinn/familie", (e) => {
     const fam = lib.findFamily(name);
     if (!fam) {
         sleep(300);
-        if (sitz) sitz.ipFehlversuch(e); // Durchprobieren von Familiennamen bremsen
+        if (sitz) sitz.ipFehlversuch(e); // Slow down brute-forcing of family names
         return e.json(404, { error: "Diese Familie gibt es nicht. Bitte den Namen prüfen." });
     }
     let names = [];
     try {
         names = $app.findRecordsByFilter(lib.USERS, "familie = {:f}", "", 0, 0, { f: fam.id })
-            .filter(r => r.getString("rolle") !== "gast") // Gäste nur über das Dashboard
+            .filter(r => r.getString("rolle") !== "gast") // Guests only via the dashboard
             .map(r => r.getString("username"))
             .sort((a, b) => a.localeCompare(b));
     } catch (err) { names = []; }
@@ -75,16 +75,16 @@ routerAdd("GET", "/api/pinn/familie", (e) => {
     return e.json(200, { name: fam.getString("name"), profiles: names, wohnform: wohnform });
 });
 
-// Geräteverwaltung (pinn-sitzungen.js) – fehlt die Datei, läuft die Anmeldung wie bisher.
-// WICHTIG: Jeder Handler läuft in PocketBase abgeschottet – Hilfsfunktionen oben in dieser Datei
-// sind darin NICHT sichtbar. Deshalb wird pinn-sitzungen.js in jedem Handler direkt geholt.
+// Device management (pinn-sitzungen.js) - if the file is missing, the sign-in works as before.
+// IMPORTANT: in PocketBase every handler runs isolated - helper functions at the top of this file
+// are NOT visible in it. That is why pinn-sitzungen.js is fetched directly in every handler.
 
-// Anmelden: {familie, username, password} oder {hauptadmin: true, password}
-// Schutz gegen Durchprobieren: nach 5 Fehlversuchen für dasselbe Profil wird es gesperrt
-// (30 s, danach jeweils doppelt so lang, höchstens 15 Minuten) – gleiche Regel wie bei der
-// Dashboard-PIN. Die Sperre liegt nur im Arbeitsspeicher und gilt nur für existierende Profile.
-// Zusätzlich zählen alle Fehlversuche (auch für unbekannte Profile) je Netzwerk-Adresse – ab 20
-// innerhalb von 30 Minuten ist die Adresse gesperrt (1 Minute, dann länger, höchstens 30 Minuten).
+// Sign in: {familie, username, password} or {hauptadmin: true, password}
+// Protection against brute-forcing: after 5 failed attempts for the same profile it is locked
+// (30 s, then each time twice as long, 15 minutes at most) - same rule as for the
+// dashboard PIN. The lock only lives in memory and only applies to existing profiles.
+// In addition, all failed attempts (also for unknown profiles) count per network address - from 20
+// within 30 minutes the address is locked (1 minute, then longer, 30 minutes at most).
 routerAdd("POST", "/api/pinn/login", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const dash = require(`${__hooks}/pinn-dashboard.js`);
@@ -129,14 +129,14 @@ routerAdd("POST", "/api/pinn/login", (e) => {
 
     const rec = password ? (candidates.find(r => r.validatePassword(password)) || null) : null;
     if (!rec) {
-        sleep(700); // bremst Durchprobieren von Passwörtern
+        sleep(700); // slows down brute-forcing of passwords
         const ipLock = sitz ? sitz.ipFehlversuch(e) : 0;
         if (known) {
             const lock = dash.registerFail(lockId);
             if (lock) {
                 console.log("[Anmeldung] Zu viele Fehlversuche – Profil für " + dash.waitText(lock) + " gesperrt.");
                 if (sitz) {
-                    try { sitz.meldeSperre(lockFamily, candidates[0].getString("username"), lock); } catch (err) { /* egal */ }
+                    try { sitz.meldeSperre(lockFamily, candidates[0].getString("username"), lock); } catch (err) { /* ignore */ }
                 }
                 return e.json(429, { error: "Anmeldung fehlgeschlagen. Zu viele Fehlversuche – bitte in " + dash.waitText(lock) + " erneut versuchen.", sperre: lock });
             }
@@ -147,7 +147,7 @@ routerAdd("POST", "/api/pinn/login", (e) => {
         return e.json(400, { error: "Anmeldung fehlgeschlagen. Bitte Profil und Passwort prüfen." });
     }
     dash.clearFails(lockId);
-    // Mitglieder der Familie mit ihren Profilen abgleichen (legt z. B. das eigene Mitglied an)
+    // Reconcile the family's members with their profiles (e.g. creates the own member)
     let authRec = rec;
     const famId = rec.getString("familie");
     if (famId) {
@@ -159,12 +159,12 @@ routerAdd("POST", "/api/pinn/login", (e) => {
 });
 
 // ---------------------------------------------------------------------------------------------
-// Eigenes Konto
+// Own account
 // ---------------------------------------------------------------------------------------------
 
-// Eigenes Passwort ändern. Gibt eine neue Anmeldung zurück, weil PocketBase alte Anmeldungen
-// beim Passwortwechsel ungültig macht. Alle anderen Geräte des Profils sind danach abgemeldet
-// (auch ihre Push-Benachrichtigungen) – dieses Gerät bleibt angemeldet.
+// Change the own password. Returns a new sign-in, because PocketBase invalidates old sign-ins
+// on a password change. All other devices of the profile are signed out afterwards
+// (including their push notifications) - this device stays signed in.
 routerAdd("POST", "/api/pinn/password", (e) => {
     if (e.auth.getString("rolle") === "gast") return e.json(403, { error: "Gastkonten haben kein Passwort." });
     const body = e.requestInfo().body;
@@ -176,20 +176,20 @@ routerAdd("POST", "/api/pinn/password", (e) => {
     if (!rec.validatePassword(oldPassword)) return e.json(400, { error: "Das aktuelle Passwort ist nicht korrekt." });
     rec.setPassword(newPassword);
     rec.set("mustChangePassword", false);
-    try { rec.refreshTokenKey(); } catch (err) { /* setPassword erneuert ihn ohnehin */ }
+    try { rec.refreshTokenKey(); } catch (err) { /* setPassword renews it anyway */ }
     $app.save(rec);
     let sitz = null;
     try { sitz = require(`${__hooks}/pinn-sitzungen.js`); } catch (err) { sitz = null; }
-    if (sitz) { try { sitz.entferneAndere(rec.id, sitz.sidOf(e)); } catch (err) { /* egal */ } }
+    if (sitz) { try { sitz.entferneAndere(rec.id, sitz.sidOf(e)); } catch (err) { /* ignore */ } }
     return $apis.recordAuthResponse(e, rec);
 }, $apis.requireAuth("benutzer"));
 
 // ---------------------------------------------------------------------------------------------
-// Profile verwalten (Familien-Admins für ihre Familie, Hauptadmin für alle Familien)
+// Manage profiles (family admins for their family, main admin for all families)
 // ---------------------------------------------------------------------------------------------
 
-// Profil anlegen. Familien-Admins legen immer in ihrer eigenen Familie an, der Hauptadmin gibt
-// die Familie mit ("familie"). Optional direkt mit einem Familienmitglied verknüpft ("mitglied").
+// Create a profile. Family admins always create in their own family, the main admin passes
+// the family along ("familie"). Optionally linked directly to a family member ("mitglied").
 routerAdd("POST", "/api/pinn/users/create", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     if (!lib.isAdmin(e)) return e.json(403, { error: "Nur Admins können Profile anlegen." });
@@ -218,8 +218,8 @@ routerAdd("POST", "/api/pinn/users/create", (e) => {
         rec.set("mitglied", mitglied);
         rec.setPassword(password);
         $app.save(rec);
-        // Ohne mitgeschicktes Mitglied (z. B. vom Hauptadmin angelegt): Mitglied mit dem Profilnamen
-        // sofort anlegen und verknüpfen. Mit Mitglied legt es die App selbst an.
+        // Without a member sent along (e.g. created by the main admin): create a member with the profile name
+        // right away and link it. With a member, the app creates it itself.
         if (!mitglied) lib.syncFamilyMembers(familyId);
         return e.json(200, { success: true, id: rec.id });
     } catch (err) {
@@ -227,8 +227,8 @@ routerAdd("POST", "/api/pinn/users/create", (e) => {
     }
 }, $apis.requireAuth("benutzer"));
 
-// Gastkonto anlegen: {username} (Hauptadmin zusätzlich {familie}). Kein Familienmitglied, kein
-// bekanntes Passwort - geöffnet wird es nur über das Familien-Dashboard.
+// Create a guest account: {username} (main admin additionally {familie}). No family member, no
+// known password - it is only opened via the family dashboard.
 routerAdd("POST", "/api/pinn/users/create-gast", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     if (!lib.isAdmin(e)) return e.json(403, { error: "Nur Admins können Gastkonten anlegen." });
@@ -258,7 +258,7 @@ routerAdd("POST", "/api/pinn/users/create-gast", (e) => {
     }
 }, $apis.requireAuth("benutzer"));
 
-// Bestehendes Profil mit einem Familienmitglied verknüpfen bzw. die Verknüpfung lösen.
+// Link an existing profile to a family member or remove the link.
 routerAdd("POST", "/api/pinn/users/link", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     if (!lib.isAdmin(e)) return e.json(403, { error: "Nur Admins können Profile verknüpfen." });
@@ -287,13 +287,13 @@ routerAdd("POST", "/api/pinn/users/reset-password", (e) => {
     if (rec.getString("rolle") === "gast") return e.json(400, { error: "Gastkonten haben kein Passwort – sie werden nur über das Familien-Dashboard geöffnet." });
     rec.setPassword(password);
     rec.set("mustChangePassword", true);
-    try { rec.refreshTokenKey(); } catch (err) { /* setPassword erneuert ihn ohnehin */ }
+    try { rec.refreshTokenKey(); } catch (err) { /* setPassword renews it anyway */ }
     $app.save(rec);
-    // Neues Passwort: das Profil ist auf allen Geräten abgemeldet (samt Push)
+    // New password: the profile is signed out on all devices (including push)
     let sitz = null;
     try { sitz = require(`${__hooks}/pinn-sitzungen.js`); } catch (err) { sitz = null; }
-    if (sitz) { try { sitz.entferneAndere(rec.id, ""); } catch (err) { /* egal */ } }
-    try { require(`${__hooks}/pinn-dashboard.js`).clearFails("login:" + rec.getString("familie") + ":" + rec.getString("username")); } catch (err) { /* egal */ }
+    if (sitz) { try { sitz.entferneAndere(rec.id, ""); } catch (err) { /* ignore */ } }
+    try { require(`${__hooks}/pinn-dashboard.js`).clearFails("login:" + rec.getString("familie") + ":" + rec.getString("username")); } catch (err) { /* ignore */ }
     return e.json(200, { success: true });
 }, $apis.requireAuth("benutzer"));
 
@@ -306,7 +306,7 @@ routerAdd("POST", "/api/pinn/users/set-role", (e) => {
     try { rec = $app.findRecordById(lib.USERS, String(body.id || "")); } catch (err) { return e.json(404, { error: "Profil nicht gefunden." }); }
     if (!lib.canManage(e, rec)) return e.json(403, { error: "Dieses Profil gehört zu einer anderen Familie." });
     if (rec.getString("rolle") === "gast") return e.json(400, { error: "Die Rolle eines Gastkontos kann nicht geändert werden." });
-    // Familien-Admins müssen mindestens einen Admin übrig lassen; der Hauptadmin darf das ändern
+    // Family admins must leave at least one admin; the main admin may change that
     if (!lib.isMainAdmin(e) && rolle === "mitglied" && rec.getString("rolle") === "admin" && lib.adminCount(rec.getString("familie")) <= 1) {
         return e.json(400, { error: "Es muss mindestens ein Admin in der Familie bestehen bleiben." });
     }
@@ -315,7 +315,7 @@ routerAdd("POST", "/api/pinn/users/set-role", (e) => {
     return e.json(200, { success: true });
 }, $apis.requireAuth("benutzer"));
 
-// Profil löschen. Seine Push-Abos werden automatisch mit entfernt.
+// Delete a profile. Its push subscriptions are removed automatically.
 routerAdd("POST", "/api/pinn/users/delete", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     if (!lib.isAdmin(e)) return e.json(403, { error: "Nur Admins können Profile löschen." });
@@ -331,20 +331,20 @@ routerAdd("POST", "/api/pinn/users/delete", (e) => {
     const recFamily = rec.getString("familie");
     const recMember = rec.getString("mitglied");
     $app.delete(rec);
-    // Das zugehörige Familienmitglied verschwindet mit dem Profil
+    // The associated family member disappears with the profile
     if (recFamily && recMember) lib.removeFamilyMember(recFamily, recMember);
     return e.json(200, { success: true });
 }, $apis.requireAuth("benutzer"));
 
 // ---------------------------------------------------------------------------------------------
-// Familien verwalten (nur Hauptadmin)
+// Manage families (main admin only)
 // ---------------------------------------------------------------------------------------------
 
 routerAdd("GET", "/api/pinn/familien", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     if (!lib.isMainAdmin(e)) return e.json(403, { error: "Nur der Hauptadmin kann Familien verwalten." });
     e.response.header().set("Cache-Control", "no-store");
-    // Einrichtung ggf. nachholen und bestehende Profile/Daten ohne Familie übernehmen
+    // Catch up on the set-up if necessary and take over existing profiles/data without a family
     const problem = lib.ensureReady();
     if (!problem) {
         lib.migrateOrphans();
@@ -372,9 +372,9 @@ routerAdd("GET", "/api/pinn/familien", (e) => {
     return e.json(200, { familien: result, warnung: problem });
 }, $apis.requireAuth("benutzer"));
 
-// Neue Familie samt erstem Familien-Admin: {name, adminName, adminPassword, wohnform}
-// wohnform: 'familie' (Standard) oder 'wg' - steht danach in den Familiendaten (Feld „wohnform“)
-// und lässt sich später unter Einstellungen → Familienmitglieder → Wohnform ändern.
+// New family including the first family admin: {name, adminName, adminPassword, wohnform}
+// wohnform: 'familie' (default) or 'wg' - is afterwards in the family data (field "wohnform")
+// and can later be changed under Settings → Family members → Living arrangement.
 routerAdd("POST", "/api/pinn/familien/create", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     if (!lib.isMainAdmin(e)) return e.json(403, { error: "Nur der Hauptadmin kann Familien anlegen." });
@@ -402,7 +402,7 @@ routerAdd("POST", "/api/pinn/familien/create", (e) => {
             step = "Familiendaten anlegen";
             const fd = new Record(tx.findCollectionByNameOrId("familien_daten"));
             fd.set("familie", fam.id);
-            // Keine Beispiel-Mitglieder: Die Familie startet nur mit ihrem Admin als Mitglied
+            // No example members: the family starts with only its admin as a member
             const startData = {
                 members: [{ id: adminMember, name: adminName, role: "", color: lib.MEMBER_COLORS[0], displayMode: "name" }],
                 lastName: lib.lastNameFromFamily(name),
@@ -442,7 +442,7 @@ routerAdd("POST", "/api/pinn/familien/rename", (e) => {
     return e.json(200, { success: true });
 }, $apis.requireAuth("benutzer"));
 
-// Familie löschen: Profile, Familiendaten, Rezeptbilder und Aufgaben werden mit gelöscht.
+// Delete a family: profiles, family data, recipe images and tasks are deleted with it.
 routerAdd("POST", "/api/pinn/familien/delete", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     if (!lib.isMainAdmin(e)) return e.json(403, { error: "Nur der Hauptadmin kann Familien löschen." });
@@ -451,21 +451,21 @@ routerAdd("POST", "/api/pinn/familien/delete", (e) => {
     try { fam = $app.findRecordById(lib.FAMILIEN, String(body.id || "")); } catch (err) { return e.json(404, { error: "Familie nicht gefunden." }); }
     const famId = fam.id;
     try {
-        $app.delete(fam); // Apple-Zugangsdaten der Familie werden automatisch mit gelöscht
+        $app.delete(fam); // The family's Apple credentials are deleted automatically
     } catch (err) {
         return e.json(400, { error: "Familie konnte nicht gelöscht werden: " + err.message });
     }
-    // Kalenderdatei der gelöschten Familie entfernen
-    try { require(`${__hooks}/calendar-sync.js`).removeCalendarFile(famId); } catch (err) { /* egal */ }
-    try { $app.store().remove("pinnAppleSync:" + famId); } catch (err) { /* egal */ }
+    // Remove the calendar file of the deleted family
+    try { require(`${__hooks}/calendar-sync.js`).removeCalendarFile(famId); } catch (err) { /* ignore */ }
+    try { $app.store().remove("pinnAppleSync:" + famId); } catch (err) { /* ignore */ }
     return e.json(200, { success: true });
 }, $apis.requireAuth("benutzer"));
 
 // ---------------------------------------------------------------------------------------------
-// Kalenderdatei der EIGENEN Familie, nur für Angemeldete. Sie liegt in pb_data statt im
-// öffentlichen pb_public. Jede Familie bekommt ausschließlich ihre eigene Datei.
-// Dazu kommen die eigenen Kalender (pinn-kalender.js), die das angemeldete Profil sehen darf:
-// geteilte der Familie und die eigenen privaten - samt Kalenderliste (X-PINN-KALENDER).
+// Calendar file of the OWN family, only for signed-in users. It lives in pb_data instead of the
+// public pb_public. Each family gets only its own file.
+// In addition come the own calendars (pinn-kalender.js) that the signed-in profile may see:
+// shared ones of the family and the own private ones - including the calendar list (X-PINN-KALENDER).
 // ---------------------------------------------------------------------------------------------
 routerAdd("GET", "/api/pinn/kalender", (e) => {
     let text = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nEND:VCALENDAR\r\n";
@@ -475,10 +475,10 @@ routerAdd("GET", "/api/pinn/kalender", (e) => {
             const own = require(`${__hooks}/calendar-sync.js`).readCalendarText(familyId);
             if (own) text = own;
         }
-    } catch (err) { /* noch nicht erzeugt */ }
+    } catch (err) { /* not generated yet */ }
     try {
         text = require(`${__hooks}/pinn-kalender.js`).mergeInto(text, e);
-    } catch (err) { /* pinn-kalender.js (noch) nicht vorhanden */ }
+    } catch (err) { /* pinn-kalender.js not available (yet) */ }
     e.response.header().set("Content-Type", "text/calendar; charset=utf-8");
     e.response.header().set("Cache-Control", "no-store");
     return e.string(200, text);

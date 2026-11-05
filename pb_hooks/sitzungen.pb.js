@@ -1,30 +1,30 @@
 // pb_hooks/sitzungen.pb.js
-// Geräteverwaltung: angemeldete Geräte je Profil mit „Abmelden“. Die Logik steckt in pinn-sitzungen.js.
+// Device management: signed-in devices per profile with "Sign out". The logic lives in pinn-sitzungen.js.
 //
-// Beim Start: legt die gesperrte Sammlung "sitzungen" an (ein Datensatz je Gerät und Profil),
-//   ergänzt bei Bedarf die Felder für die Geräte-Erkennung und führt doppelte Geräte zusammen
-//   (z. B. von früheren App-Updates, die jeweils ein neues Gerät angelegt hatten).
+// On start: creates the locked collection "sitzungen" (one record per device and profile),
+//   adds the fields for device recognition if needed and merges duplicate devices
+//   (e.g. from earlier app updates that each created a new device).
 //
-// Bei jeder Anmeldung eines Profils (Passwort, Familien-Dashboard, Verlängern beim App-Start):
-//   Sitzung anlegen bzw. weiterverwenden und das Token mit der Sitzungs-ID ausstellen.
-// Bei jeder Anfrage mit Token: gibt es die Sitzung nicht mehr, antwortet pinn. mit 401 und
-//   „X-Pinn-Abgemeldet: 1“ – die App löscht dann ihre Daten auf dem Gerät.
+// On every sign-in of a profile (password, family dashboard, renewal at app start):
+//   create or reuse a session and issue the token with the session ID.
+// On every request with a token: if the session no longer exists, pinn. answers with 401 and
+//   "X-Pinn-Abgemeldet: 1" - the app then deletes its data on the device.
 //
-// Angemeldet (eigenes Profil; Familien-Admins für Profile ihrer Familie; Hauptadmin für alle):
+// Signed in (own profile; family admins for profiles of their family; main admin for all):
 //   GET  /api/pinn/sitzungen?benutzer=          { benutzer, eigenes, sitzungen[], sperre? }
-//   GET  /api/pinn/sitzungen/uebersicht?familie= (Admins) je Profil: Anzahl Geräte und Sperre
-//   POST /api/pinn/sitzungen/abmelden           { id }  Sitzungs-ID oder "dieses"
-//   POST /api/pinn/sitzungen/alle-abmelden      { benutzer? }  eigenes Profil: alle anderen Geräte
-//                                               (Antwort: neue Anmeldung für dieses Gerät),
-//                                               anderes Profil: überall abmelden
-//   POST /api/pinn/sitzungen/entsperren         { benutzer }  (Admins) Sperre nach Fehlversuchen aufheben
+//   GET  /api/pinn/sitzungen/uebersicht?familie= (admins) per profile: number of devices and lock
+//   POST /api/pinn/sitzungen/abmelden           { id }  session ID or "dieses"
+//   POST /api/pinn/sitzungen/alle-abmelden      { benutzer? }  own profile: all other devices
+//                                               (response: new sign-in for this device),
+//                                               other profile: sign out everywhere
+//   POST /api/pinn/sitzungen/entsperren         { benutzer }  (admins) lift the lock after failed attempts
 //
-// Zeitplan: nachts 03:52 Uhr – doppelte Geräte zusammenführen und Sitzungen löschen, deren
-//   Anmeldung längst abgelaufen ist.
+// Schedule: at night 03:52 - merge duplicate devices and delete sessions whose
+//   sign-in expired long ago.
 
 onBootstrap((e) => {
     e.next();
-    try { require(`${__hooks}/pinn-schema.js`).ensureCurrent(); } catch (err) { /* egal */ }
+    try { require(`${__hooks}/pinn-schema.js`).ensureCurrent(); } catch (err) { /* ignore */ }
     try {
         const sitz = require(`${__hooks}/pinn-sitzungen.js`);
         if (sitz.ensureSchema()) sitz.doppelteZusammenfuehren();
@@ -33,7 +33,7 @@ onBootstrap((e) => {
     }
 });
 
-// Jede Anfrage mit Token: Sitzung noch gültig? (schonend, siehe pinn-sitzungen.js)
+// Every request with a token: is the session still valid? (gentle, see pinn-sitzungen.js)
 routerUse((e) => {
     if (e.auth) {
         let ok = true;
@@ -47,7 +47,7 @@ routerUse((e) => {
     return e.next();
 });
 
-// Anmeldung: Sitzung anlegen und das Token mit der Sitzungs-ID ausstellen
+// Sign-in: create the session and issue the token with the session ID
 onRecordAuthRequest((e) => {
     try {
         require(`${__hooks}/pinn-sitzungen.js`).beimAnmelden(e);
@@ -102,7 +102,7 @@ routerAdd("POST", "/api/pinn/sitzungen/alle-abmelden", (e) => {
     } catch (err) {
         return e.json(400, { error: err.message });
     }
-    // Eigenes Profil: dieses Gerät bekommt eine neue, gültige Anmeldung (gleiche Sitzung)
+    // Own profile: this device gets a new, valid sign-in (same session)
     if (r.own && r.rec) return $apis.recordAuthResponse(e, r.rec);
     return e.json(200, { success: true, abgemeldet: r.anzahl });
 }, $apis.requireAuth("benutzer"));

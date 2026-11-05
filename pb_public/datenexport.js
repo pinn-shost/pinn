@@ -1,25 +1,25 @@
-/* pinn. – Datenexport (pb_public/datenexport.js)
+/* pinn. – Data export (pb_public/datenexport.js)
    ----------------------------------------------------------------------------
-   Komplette Familie (bzw. WG) als ZIP: alle Daten als JSON + alle Dokumente, Belege und Bilder.
-   Gedacht für den Umzug auf ein anderes NAS, als eigene Sicherung oder zum Weiterverarbeiten.
+   Complete family (or flat share) as a ZIP: all data as JSON + all documents, receipts and images.
+   Meant for moving to another NAS, as your own backup or for further processing.
 
-   Wird von index.html nur bei Bedarf nachgeladen (Einstellungen → Daten → „Familie exportieren“,
-   Hauptadmin → Familien). Aufruf:  PinnExport.open({ apiFetch, familie?, onClose? })
-     apiFetch – fetch mit Anmeldung (wie beim Einrichtungs-Assistenten)
-     familie  – nur für den Hauptadmin: vorausgewählte Familie
+   Loaded by index.html only when needed (Settings → Data → "Export family",
+   main admin → Families). Call:  PinnExport.open({ apiFetch, familie?, onClose? })
+     apiFetch – fetch with sign-in (as in the set-up wizard)
+     familie  – main admin only: preselected family
 
-   Das ZIP entsteht hier im Browser – der Server liefert nur Sammlung für Sammlung und Datei für Datei
-   (pb_hooks/export.pb.js + pinn-export.js). Dateien werden unkomprimiert übernommen (PDFs und Fotos
-   sind schon komprimiert), die JSON-Daten werden – wo der Browser es kann – komprimiert.
-   Eigene Texte in Deutsch, Englisch, Französisch, Spanisch, Italienisch, Portugiesisch, Chinesisch,
-   Japanisch, Koreanisch, Russisch und Niederländisch (data-no-i18n / data-no-term).
+   The ZIP is built here in the browser – the server only delivers collection by collection and file by file
+   (pb_hooks/export.pb.js + pinn-export.js). Files are taken over uncompressed (PDFs and photos
+   are already compressed), the JSON data is compressed – where the browser can do it.
+   Own texts in German, English, French, Spanish, Italian, Portuguese, Chinese,
+   Japanese, Korean, Russian and Dutch (data-no-i18n / data-no-term).
 
-   Aufbau des ZIP:
-     pinn-export.json                 Beschreibung: Format, Version, Familie, Inhalt, Dateiliste
-     LIESMICH.txt / README.txt        kurze Erklärung
-     daten/<sammlung>.json            Datensätze je Sammlung (wie in PocketBase, ohne Passwörter)
-     dateien/<sammlung>/<id>/<datei>  Dokumente, Belege, Rezept- und Pinnwand-Bilder
-     export-fehler.txt                nur falls Dateien nicht lesbar waren */
+   Structure of the ZIP:
+     pinn-export.json                 description: format, version, family, content, file list
+     LIESMICH.txt / README.txt        short explanation
+     daten/<sammlung>.json            records per collection (as in PocketBase, without passwords)
+     dateien/<sammlung>/<id>/<datei>  documents, receipts, recipe and pinboard images
+     export-fehler.txt                only if files could not be read */
 (function () {
   'use strict';
   if (window.PinnExport) return;
@@ -682,7 +682,7 @@
       '안전하게 보관하세요.',
     ],
   };
-  // Niederländisch (seit 1.123.11, in der App freigeschaltet seit 1.123.12)
+  // Dutch (since 1.123.11, enabled in the app since 1.123.12)
   T.nl = {
     F: 'gezin', FW: 'woongroep', Fd: 'van je gezin', FWd: 'van je woongroep',
     titel: 'Gegevens {Fd} exporteren',
@@ -803,7 +803,7 @@
       .map(function (k) { return encodeURIComponent(k) + '=' + encodeURIComponent(obj[k]); }).join('&');
   }
 
-  /* ---------- ZIP (im Browser) ---------- */
+  /* ---------- ZIP (in the browser) ---------- */
   var CRC_T = (function () {
     var tbl = new Uint32Array(256);
     for (var n = 0; n < 256; n++) {
@@ -835,7 +835,7 @@
     };
   }
   function Zip() { this.parts = []; this.zentral = []; this.offset = 0; this.anzahl = 0; this.dz = dosZeit(new Date()); }
-  // name: Pfad im ZIP; u8: Inhalt; packen: komprimieren versuchen
+  // name: path in the ZIP; u8: content; packen: try to compress
   Zip.prototype.add = function (name, u8, packen) {
     var self = this;
     var crc = crc32(u8);
@@ -922,7 +922,7 @@
       });
     });
 
-    // 2) Dateien – nacheinander, damit NAS und Akku entspannt bleiben
+    // 2) Files – one after another, so that the NAS and battery stay relaxed
     kette = kette.then(function () {
       var i = 0, n = dateiListe.length;
       function naechste() {
@@ -991,7 +991,7 @@
     try {
       var file = new File([r.blob], r.name, { type: 'application/zip' });
       navigator.share({ files: [file], title: r.name }).catch(function () { /* abgebrochen */ });
-    } catch (e) { /* nicht möglich */ }
+    } catch (e) { /* not possible */ }
   }
   function kannTeilen() {
     try {
@@ -1000,7 +1000,7 @@
     } catch (e) { return false; }
   }
 
-  /* ---------- Oberfläche ---------- */
+  /* ---------- User interface ---------- */
   var CSS =
     '#pxScreen{position:fixed;inset:0;z-index:9990;display:flex;align-items:flex-end;justify-content:center;background:rgba(20,20,18,.42);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}' +
     '#pxScreen.hidden{display:none}' +

@@ -1,17 +1,17 @@
 // pb_hooks/dokumente.pb.js
-// Menüpunkt „Dokumente“: Sammlung für Dokumente und Erinnerungen an Ablaufdaten/Garantien.
-// Die Logik steckt in pinn-dokumente.js.
+// Menu item "Documents": collection for documents and reminders of expiry dates/warranties.
+// The logic lives in pinn-dokumente.js.
 //
-// Beim Start (über pinn-schema.js): legt die Sammlung "dokumente" an (Fotos/PDFs als geschützte Dateien, nur für die
-// eigene Familie, nicht für Gastkonten). Hoch-/runtergeladen wird direkt über die PocketBase-
-// Sammlungs-API mit Anmeldung bzw. Datei-Token.
+// On start (via pinn-schema.js): creates the collection "dokumente" (photos/PDFs as protected files, only for the
+// own family, not for guest accounts). Uploading/downloading goes directly via the PocketBase
+// collection API with sign-in or a file token.
 //
-// Route (nur angemeldet, nicht für Gastkonten):
-//   POST /api/pinn/dokumente/pruefen   fällige Erinnerungen der eigenen Familie jetzt verschicken
-//                                      (die App ruft das nach dem Speichern eines Dokuments mit
-//                                      Erinnerung auf; nur zwischen 8 und 21 Uhr, nichts doppelt)
+// Route (signed in only, not for guest accounts):
+//   POST /api/pinn/dokumente/pruefen   send due reminders of the own family now
+//                                      (the app calls this after saving a document with
+//                                      a reminder; only between 8 a.m. and 9 p.m., nothing twice)
 //
-// Zeitplan: stündlich (Minute 27) - die eigentliche Prüfung läuft aber nur einmal am Tag ab 8 Uhr.
+// Schedule: hourly (minute 27) - the actual check only runs once a day from 8 a.m.
 
 cronAdd("pinnDokumente", "27 * * * *", () => {
     try {

@@ -1,18 +1,18 @@
 // pb_hooks/pinnwand.pb.js
-// Pinnwand der Familie (Logik: pinn-pinnwand.js).
+// The family's pinboard (logic: pinn-pinnwand.js).
 //
-// Beim Start (über pinn-schema.js): legt die Sammlung "pinnwand_bilder" an (Fotos der Zettel; geschützte Dateien, nur für
-// die eigene Familie). Hoch-/runtergeladen wird direkt über die PocketBase-Sammlungs-API mit
-// Anmeldung bzw. Datei-Token.
+// On start (via pinn-schema.js): creates the collection "pinnwand_bilder" (photos of the notes; protected files, only for
+// the own family). Uploading/downloading goes directly via the PocketBase collection API with
+// sign-in or a file token.
 //
-// Die Zettel selbst liegen in den Familiendaten (Schlüssel "pinboard") und werden über
-// /api/pinn/save gespeichert - dort wird nach jedem Speichern pinn-pinnwand.js#afterSave aufgerufen,
-// das neue Zettel, Antworten, Reaktionen und Erinnerungen für den Push-Versand vormerkt.
+// The notes themselves live in the family data (key "pinboard") and are saved via
+// /api/pinn/save - there pinn-pinnwand.js#afterSave is called after every save,
+// which queues new notes, replies, reactions and reminders for the push sending.
 //
-// Zeitplan: jede Minute - verschickt Vorgemerktes (ca. 20 Sekunden nach dem Speichern) und fällige
-// Zettel-Erinnerungen. Liest dafür nur einen kleinen Stand aus dem Zwischenspeicher; die
-// Familiendaten werden nur gelesen, wenn wirklich etwas zu verschicken ist. Einmal täglich (ab 3 Uhr)
-// werden Fotos gelöscht, die zu keinem Zettel mehr gehören.
+// Schedule: every minute - sends what was queued (about 20 seconds after saving) and due
+// note reminders. It only reads a small state from the cache for this; the
+// family data is only read if there is really something to send. Once a day (from 3 a.m.)
+// photos that no longer belong to any note are deleted.
 
 cronAdd("pinnPinnwand", "* * * * *", () => {
     try {

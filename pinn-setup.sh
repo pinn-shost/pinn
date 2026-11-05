@@ -401,7 +401,7 @@ if [ ! -s "$V/pdfjs/pdf.min.mjs" ] || [ ! -s "$V/pdfjs/pdf.worker.min.mjs" ] || 
   for c in tesseract-core tesseract-core-simd tesseract-core-lstm tesseract-core-simd-lstm; do
     hole "$CDN/tesseract.js-core@$TESSERACT_CORE_VERSION/$c.wasm.js" "$V/tesseract/core/$c.wasm.js" || LF=1
   done
-  for c in tesseract-core-relaxedsimd tesseract-core-relaxedsimd-lstm; do   # nur neuere Versionen
+  for c in tesseract-core-relaxedsimd tesseract-core-relaxedsimd-lstm; do   # newer versions only
     hole "$CDN/tesseract.js-core@$TESSERACT_CORE_VERSION/$c.wasm.js" "$V/tesseract/core/$c.wasm.js" || true
   done
   hole "$CDN/@tesseract.js-data/deu@$TESSERACT_DEU_VERSION/4.0.0_best_int/deu.traineddata.gz" "$V/tesseract/lang/deu.traineddata.gz" || LF=1

@@ -1,21 +1,21 @@
 // pb_hooks/hinweise.pb.js
-// Alles für die 🔔 Glocke (Logik: pinn-hinweise.js).
+// Everything for the 🔔 bell (logic: pinn-hinweise.js).
 //
-// Beim Start (über pinn-schema.js): legt die Sammlung "hinweise" an bzw. ergänzt neue Felder (Sammlungs-API gesperrt,
-// Zugriff nur über diese Route).
-// Angelegt werden die Hinweise:
-//   - bei jeder persönlichen Push-Nachricht (pinn-push.js) - als Hinweis für den Empfänger
-//   - nach dem Speichern der Familiendaten (save_family_data.pb.js)
-//   - beim Anlegen und Abhaken von Aufgaben (aufgaben.pb.js) und Anlegen von Terminen
+// On start (via pinn-schema.js): creates the collection "hinweise" or adds new fields (collection API locked,
+// access only via this route).
+// The notices are created:
+//   - with every personal push message (pinn-push.js) - as a notice for the recipient
+//   - after saving the family data (save_family_data.pb.js)
+//   - when creating and ticking off tasks (aufgaben.pb.js) and creating events
 //     (create_calendar_event.pb.js)
-//   - bei neuen Buchungen (pinn-finanzen.js) und neuen Verträgen/Fahrzeugen (pinn-kassen.js)
-//   - bei neuen Dokumenten (Hook unten - Dokumente werden direkt über die Sammlungs-API angelegt)
+//   - for new bookings (pinn-finanzen.js) and new contracts/vehicles (pinn-kassen.js)
+//   - for new documents (hook below - documents are created directly via the collection API)
 //
-// Route (nur angemeldet, jede Familie sieht nur ihre eigenen Hinweise):
-//   GET /api/pinn/hinweise   Hinweise der letzten 3 Tage - ohne die, die man selbst ausgelöst hat,
-//                            und nur die, die für das eigene Profil bestimmt sind
+// Route (signed in only, each family only sees its own notices):
+//   GET /api/pinn/hinweise   notices of the last 3 days - without those one triggered oneself,
+//                            and only those meant for the own profile
 //
-// Kein Zeitplan - alte Hinweise werden beim Anlegen neuer Hinweise mit aufgeräumt.
+// No schedule - old notices are cleaned up when new notices are created.
 
 routerAdd("GET", "/api/pinn/hinweise", (e) => {
     e.response.header().set("Cache-Control", "no-store");
@@ -26,7 +26,7 @@ routerAdd("GET", "/api/pinn/hinweise", (e) => {
     }
 }, $apis.requireAuth("benutzer"));
 
-// Neues Dokument: Hinweis für alle, die es sehen dürfen (erst NACH dem erfolgreichen Speichern)
+// New document: notice for everyone who may see it (only AFTER it was saved successfully)
 onRecordCreateRequest((e) => {
     e.next();
     try {

@@ -1,30 +1,30 @@
 // pb_hooks/pinn-zuhause.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden.
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require().
 //
-// „Zuhause“ der Familie (Einstellungen → Zuhause)
+// The family's "Home" (Settings → Home)
 //
-// Wozu:
-//  - Wetter (Übersicht, Uhrzeile, Dashboard) nutzt nur noch diese Koordinaten – die App fragt beim
-//    Start nicht mehr nach dem Standort (iOS merkt sich die Freigabe für Home-Bildschirm-Apps nicht).
-//  - Bundesland -> gesetzliche Feiertage (rechnet die App selbst) und Schulferien (hier über den
-//    Server, OpenHolidays API) im Kalender.
-//  - Sonnenauf-/-untergang (rechnet die App selbst aus den Koordinaten, auch offline).
-//  - Ortung: Ort „Zuhause“ für Push bei Ankunft/Verlassen wird automatisch angelegt bzw. verschoben
-//    (pinn-ortung.js -> syncHome), die Familienkarte startet auf Zuhause.
+// What it is for:
+//  - Weather (overview, clock line, dashboard) only uses these coordinates now - the app no longer asks for the
+//    location on start (iOS does not remember the permission for home screen apps).
+//  - Federal state -> statutory public holidays (calculated by the app itself) and school holidays (here via the
+//    server, OpenHolidays API) in the calendar.
+//  - Sunrise/sunset (calculated by the app itself from the coordinates, also offline).
+//  - Location: the place "Home" for push on arrival/departure is created or moved automatically
+//    (pinn-ortung.js -> syncHome), the family map starts at Home.
 //
-// Fremde Server spricht nur dieser Server an, nie die App:
-//  - Adressvorschläge beim Tippen: Photon (photon.komoot.io, OpenStreetMap, für Suche-beim-Tippen gemacht),
-//    ersatzweise Nominatim.
-//  - Wetter: Open-Meteo (ohne Schlüssel), 15 Minuten zwischengespeichert je Ort. 16 Tage Vorschau mit
-//    Details (gefühlt, Wind, Böen, UV, Sonnenstunden, Regenmenge); Stundenverlauf eines Tages nur auf
-//    Abruf (Tipp auf den Tag, 30 Min. zwischengespeichert).
-//  - Urlaubswetter (Packliste mit Ziel und Zeitraum): bis 16 Tage im Voraus die Vorhersage, danach
-//    Erfahrungswerte – Durchschnitt derselben Tage der letzten drei Jahre (Open-Meteo-Archiv,
-//    7 Tage zwischengespeichert). Am Meer zusätzlich die Wassertemperatur (Open-Meteo Marine).
-//  - Schulferien: OpenHolidays API (openholidaysapi.org), je Bundesland und Jahr in pb_data/pinn_ferien
-//    zwischengespeichert (14 Tage, ohne Verbindung bleibt der letzte Stand).
+// Only this server talks to third-party servers, never the app:
+//  - Address suggestions while typing: Photon (photon.komoot.io, OpenStreetMap, made for search-as-you-type),
+//    as a fallback Nominatim.
+//  - Weather: Open-Meteo (without a key), cached for 15 minutes per place. 16-day preview with
+//    details (feels-like, wind, gusts, UV, sunshine hours, rainfall); the hourly course of a day only on
+//    request (tap on the day, cached for 30 min.).
+//  - Holiday weather (packing list with destination and period): up to 16 days ahead the forecast, after that
+//    empirical values - the average of the same days of the last three years (Open-Meteo archive,
+//    cached for 7 days). At the seaside additionally the water temperature (Open-Meteo Marine).
+//  - School holidays: OpenHolidays API (openholidaysapi.org), cached per federal state and year in pb_data/pinn_ferien
+//    (14 days, without a connection the last state is kept).
 //
-// Daten je Familie: Sammlung „zuhause“ (gesperrt, nur über die Routen in zuhause.pb.js), Feld „daten“:
+// Data per family: collection "zuhause" (locked, only via the routes in zuhause.pb.js), field "daten":
 //   { lat, lon, titel, zusatz, adresse, ort, plz, land, bundesland, bundeslandName,
 //     kalender: { feiertage, ferien }, von, stand }
 
@@ -41,7 +41,7 @@ const LAENDER = {
     HE: "Hessen", MV: "Mecklenburg-Vorpommern", NI: "Niedersachsen", NW: "Nordrhein-Westfalen",
     RP: "Rheinland-Pfalz", SL: "Saarland", SN: "Sachsen", ST: "Sachsen-Anhalt", SH: "Schleswig-Holstein", TH: "Thüringen",
 };
-// weitere Schreibweisen (englisch, ohne Umlaute), wie sie Photon/Nominatim manchmal liefern
+// further spellings (English, without umlauts) as Photon/Nominatim sometimes return them
 const LAENDER_ALIAS = {
     "bavaria": "BY", "lower saxony": "NI", "north rhine-westphalia": "NW", "north rhine westphalia": "NW",
     "rhineland-palatinate": "RP", "saxony": "SN", "saxony-anhalt": "ST", "thuringia": "TH", "hesse": "HE",
@@ -56,13 +56,13 @@ function findCol(name) {
     try { return $app.findCollectionByNameOrId(name); } catch (e) { return null; }
 }
 function bodyText(res) {
-    try { if (typeof res.raw === "string" && res.raw) return res.raw; } catch (e) { /* weiter */ }
-    try { return toString(res.body); } catch (e) { /* weiter */ }
+    try { if (typeof res.raw === "string" && res.raw) return res.raw; } catch (e) { /* continue */ }
+    try { return toString(res.body); } catch (e) { /* continue */ }
     return "";
 }
 function parseJson(res) {
-    try { return JSON.parse(bodyText(res) || ""); } catch (e) { /* weiter */ }
-    try { if (res.json !== undefined && res.json !== null) return res.json; } catch (e) { /* egal */ }
+    try { return JSON.parse(bodyText(res) || ""); } catch (e) { /* continue */ }
+    try { if (res.json !== undefined && res.json !== null) return res.json; } catch (e) { /* ignore */ }
     return null;
 }
 function readText(path) {
@@ -87,11 +87,11 @@ function cacheGet(key, ttl) {
     try {
         const c = $app.store().get(key);
         if (c && Date.now() - c.ts < ttl) return c.data;
-    } catch (e) { /* weiter */ }
+    } catch (e) { /* continue */ }
     return null;
 }
 function cacheSet(key, data) {
-    try { $app.store().set(key, { ts: Date.now(), data: data }); } catch (e) { /* egal */ }
+    try { $app.store().set(key, { ts: Date.now(), data: data }); } catch (e) { /* ignore */ }
 }
 function httpGet(url, timeout) {
     return $http.send({ url: url, method: "GET", headers: { "User-Agent": UA, "Accept": "application/json", "Accept-Language": "de-DE,de;q=0.9" }, timeout: timeout || 12 });
@@ -112,7 +112,7 @@ function stateCode(name) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Sammlung „zuhause“ (je Familie ein Datensatz)
+// Collection "zuhause" (one record per family)
 // ---------------------------------------------------------------------------------------------
 function ensureSchema() {
     if (findCol(COL)) return;
@@ -133,7 +133,7 @@ function ensureSchema() {
     } catch (err) {
         console.log("[Zuhause] Konnte Sammlung nicht anlegen: " + err.message);
     }
-    try { $os.mkdirAll(FERIEN_DIR, 493); } catch (e) { /* egal */ }
+    try { $os.mkdirAll(FERIEN_DIR, 493); } catch (e) { /* ignore */ }
 }
 
 function loadRec(familyId) {
@@ -149,13 +149,13 @@ function readData(rec) {
 }
 function defaultKalender() { return { feiertage: true, ferien: true }; }
 
-// Zuhause der Familie (oder null). kalender ist immer gesetzt, auch ohne Adresse.
+// The family's Home (or null). kalender is always set, even without an address.
 function get(familyId) {
     const d = readData(loadRec(familyId));
     if (!d || !validCoords(d.lat, d.lon)) return null;
     return publicHome(d);
 }
-// Kalender-Optionen und Bundesland - gibt es auch ohne Adresse (Bundesland von Hand gewählt)
+// Calendar options and federal state - also exist without an address (federal state chosen by hand)
 function optionsOf(familyId) {
     const d = readData(loadRec(familyId)) || {};
     const bl = LAENDER[d.bundesland] ? d.bundesland : "";
@@ -189,7 +189,7 @@ function writeData(familyId, data) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Speichern / Optionen / Entfernen (nur Admins der Familie)
+// Save / options / remove (family admins only)
 // ---------------------------------------------------------------------------------------------
 function requireAdmin(e) {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
@@ -214,7 +214,7 @@ function save(e, body) {
         von: e.auth ? e.auth.id : "", stand: Date.now(),
     };
     d.adresse = cleanText(b.adresse, 300) || [d.titel, d.zusatz].filter(Boolean).join(", ");
-    // Bundesland/Land fehlen (z. B. „Aktuellen Standort übernehmen“ ohne Adresse) -> selbst nachschlagen
+    // Federal state/country missing (e.g. "Use current location" without an address) -> look it up ourselves
     if (!d.land || (d.land === "DE" && !d.bundesland)) {
         try {
             const hit = reverse(d.lat, d.lon).treffer[0];
@@ -223,7 +223,7 @@ function save(e, body) {
                 if (!d.bundesland) d.bundesland = hit.bundesland;
                 if (!d.titel) { d.titel = hit.titel; d.zusatz = hit.zusatz; d.ort = hit.ort; d.plz = hit.plz; d.adresse = hit.adresse; }
             }
-        } catch (err) { /* ohne Bundesland speichern - in den Einstellungen wählbar */ }
+        } catch (err) { /* save without a federal state - selectable in the settings */ }
     }
     if (!d.titel) d.titel = "Zuhause";
     writeData(familyId, d);
@@ -252,7 +252,7 @@ function setOptions(e, body) {
 function remove(e) {
     const familyId = requireAdmin(e);
     const d = readData(loadRec(familyId)) || {};
-    // Kalender-Optionen und Bundesland bleiben (Feiertage weiter anzeigbar)
+    // Calendar options and federal state stay (public holidays can still be shown)
     const keep = { kalender: Object.assign(defaultKalender(), d.kalender || {}), bundesland: d.bundesland || "", land: d.land || "", stand: Date.now() };
     writeData(familyId, keep);
     return info(familyId);
@@ -264,7 +264,7 @@ function afterChange(familyId) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Adresssuche (Vorschläge beim Tippen) und Adresse zu Koordinaten
+// Address search (suggestions while typing) and address to coordinates
 // ---------------------------------------------------------------------------------------------
 function hitFromParts(p) {
     const street = p.street ? (p.street + (p.housenumber ? " " + p.housenumber : "")) : "";
@@ -320,7 +320,7 @@ function uniqueHits(list) {
 function suggest(e, q, weit) {
     const text = cleanText(q, 160);
     if (text.length < 3) return { treffer: [] };
-    // Zur Gewichtung: vorhandenes Zuhause der Familie (Treffer in der Nähe zuerst) – nicht bei Reisezielen
+    // For weighting: the family's existing Home (nearby hits first) - not for travel destinations
     let bias = "";
     if (!weit) try {
         const home = get(require(`${__hooks}/pinn-benutzer.js`).familyOf(e));
@@ -339,7 +339,7 @@ function suggest(e, q, weit) {
         } else fehler = "Status " + res.statusCode;
     } catch (err) { fehler = err.message; }
     if (!treffer.length && fehler) {
-        // Ersatz: Nominatim (nur wenn Photon nicht antwortet - Nominatim ist nicht für Suche-beim-Tippen gedacht)
+        // Fallback: Nominatim (only if Photon does not respond - Nominatim is not meant for search-as-you-type)
         try {
             const res = httpGet("https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=6&accept-language=de&q=" + encodeURIComponent(text), 10);
             if (res.statusCode === 200) {
@@ -347,7 +347,7 @@ function suggest(e, q, weit) {
                 treffer = uniqueHits((Array.isArray(j) ? j : []).map(fromNominatim));
                 fehler = "";
             }
-        } catch (err) { /* bleibt beim Fehler */ }
+        } catch (err) { /* stays on error */ }
     }
     if (fehler && !treffer.length) throw new Error("Adresssuche gerade nicht möglich – bitte später noch einmal versuchen.");
     const data = { treffer: treffer.slice(0, 6) };
@@ -379,9 +379,9 @@ function reverse(lat, lon) {
                     if (validCoords(h.lat, h.lon)) treffer = [h].concat(treffer);
                 }
             }
-        } catch (err) { /* egal */ }
+        } catch (err) { /* ignore */ }
     }
-    // Koordinaten des Geräts behalten (nicht die der gefundenen Hausnummer)
+    // Keep the device's coordinates (not those of the house number found)
     treffer = treffer.slice(0, 1).map(h => Object.assign({}, h, { lat: la, lon: lo }));
     const data = { treffer: treffer };
     if (treffer.length) cacheSet(key, data);
@@ -389,13 +389,13 @@ function reverse(lat, lon) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Wetter (Open-Meteo, über den Server)
+// Weather (Open-Meteo, via the server)
 // ---------------------------------------------------------------------------------------------
 const DAILY_FIELDS = "weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min," +
     "precipitation_probability_max,precipitation_sum,precipitation_hours,wind_speed_10m_max,wind_gusts_10m_max," +
     "wind_direction_10m_dominant,uv_index_max,sunshine_duration,sunrise,sunset";
 const FORECAST_DAYS = 16;
-const PAST_DAYS = 2;       // Zuhause → Garten & Pflanzen: hat es gestern/vorgestern geregnet?
+const PAST_DAYS = 2;       // Home → Garden & plants: did it rain yesterday/the day before?
 const DAY_MS = 24 * 60 * 60 * 1000;
 function numAt(arr, i, digits) {
     if (!Array.isArray(arr) || arr[i] == null || !isFinite(arr[i])) return null;
@@ -412,9 +412,9 @@ function daysBetween(a, b) {
     const pa = a.split("-").map(Number), pb = b.split("-").map(Number);
     return Math.round((Date.UTC(pb[0], pb[1] - 1, pb[2]) - Date.UTC(pa[0], pa[1] - 1, pa[2])) / DAY_MS);
 }
-// Heutiges Datum (Europa) – reicht für die Grenze zwischen Vorhersage und Erfahrungswerten
+// Today's date (Europe) - enough for the boundary between forecast and empirical values
 function todayIso() { return new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString().slice(0, 10); }
-// Tageswerte aus einer Open-Meteo-Antwort (daily)
+// Daily values from an Open-Meteo response (daily)
 function dailyRows(dly, limit) {
     const time = Array.isArray(dly && dly.time) ? dly.time : [];
     return time.slice(0, limit || time.length).map((t, i) => ({
@@ -446,7 +446,7 @@ function placeOf(familyId, fallbackLat, fallbackLon) {
 function weather(familyId, fallbackLat, fallbackLon) {
     const pl = placeOf(familyId, fallbackLat, fallbackLon);
     if (!pl) return { keinOrt: true };
-    // auf ~1 km runden: gleicher Zwischenspeicher für alle, und das Wetter braucht es nicht genauer
+    // round to ~1 km: same cache for everyone, and the weather does not need to be more exact
     const rl = Math.round(pl.lat * 100) / 100, ro = Math.round(pl.lon * 100) / 100;
     const key = "pinnWetter16p:" + rl + "," + ro;
     let data = cacheGet(key, WETTER_TTL_MS);
@@ -467,7 +467,7 @@ function weather(familyId, fallbackLat, fallbackLon) {
                 wind: isFinite(cur.wind_speed_10m) ? Math.round(cur.wind_speed_10m) : null,
                 feuchte: isFinite(cur.relative_humidity_2m) ? Math.round(cur.relative_humidity_2m) : null,
             },
-            // die ersten PAST_DAYS Zeilen sind vergangene Tage (Regenmenge für Garten & Pflanzen)
+            // the first PAST_DAYS rows are past days (rainfall for Garden & plants)
             tage: dailyRows(j.daily || {}).slice(PAST_DAYS, PAST_DAYS + FORECAST_DAYS),
             vergangen: dailyRows(j.daily || {}).slice(0, PAST_DAYS).map(r => ({ date: r.date, mm: r.mm, max: r.max, min: r.min })),
         };
@@ -476,7 +476,7 @@ function weather(familyId, fallbackLat, fallbackLon) {
     return Object.assign({ ort: pl.label, zuhause: pl.home }, data);
 }
 
-// Stundenverlauf eines Tages (nur auf Abruf: Tipp auf einen Tag in der Wetter-Ansicht)
+// Hourly course of a day (only on request: tap on a day in the weather view)
 function weatherDay(familyId, datum, lat, lon) {
     const day = isoDay(datum);
     if (!day) throw new Error("Ungültiges Datum.");
@@ -517,7 +517,7 @@ function weatherDay(familyId, datum, lat, lon) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Urlaubswetter: Vorhersage (bis 16 Tage) + Erfahrungswerte (Ø der letzten drei Jahre)
+// Holiday weather: forecast (up to 16 days) + empirical values (average of the last three years)
 // ---------------------------------------------------------------------------------------------
 function shiftYear(iso, years) {
     const y = Number(iso.slice(0, 4)) + years;
@@ -531,7 +531,7 @@ function modeOf(list) {
     list.forEach(v => { if (v == null) return; c[v] = (c[v] || 0) + 1; if (c[v] > n) { n = c[v]; best = v; } });
     return best == null ? null : Number(best);
 }
-// typischer Wetter-Code aus Regenmenge und Sonnenstunden (das Archiv kennt nur gemessene Werte)
+// typical weather code from rainfall and sunshine hours (the archive only knows measured values)
 function codeFromClimate(mm, sonne, max) {
     if (mm != null && mm >= 4) return (max != null && max <= 1) ? 73 : 63;
     if (mm != null && mm >= 1) return (max != null && max <= 1) ? 71 : 61;
@@ -565,7 +565,7 @@ function climateDays(lat, lon, from, to) {
                 if (Array.isArray(d.sunshine_duration) && isFinite(d.sunshine_duration[i])) o.sonne.push(Number(d.sunshine_duration[i]) / 3600);
             });
             ok++;
-        } catch (e) { /* nächstes Jahr */ }
+        } catch (e) { /* next year */ }
     }
     if (!ok) throw new Error("Erfahrungswerte gerade nicht abrufbar.");
     const avg = a => a.length ? a.reduce((s, v) => s + v, 0) / a.length : null;
@@ -611,7 +611,7 @@ function seaTemps(lat, lon, from, to) {
             });
             Object.keys(out).forEach(k => { out[k] = Math.round(out[k]); });
         }
-    } catch (e) { /* kein Meer oder Dienst nicht erreichbar */ }
+    } catch (e) { /* no sea or service not reachable */ }
     cacheSet(key, out);
     return out;
 }
@@ -653,7 +653,7 @@ function tripWeather(lat, lon, von, bis) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Schulferien (OpenHolidays API, über den Server, je Bundesland und Jahr zwischengespeichert)
+// School holidays (OpenHolidays API, via the server, cached per federal state and year)
 // ---------------------------------------------------------------------------------------------
 function nameOf(arr) {
     if (!Array.isArray(arr) || !arr.length) return "";
@@ -665,14 +665,14 @@ function schoolHolidays(bundesland, jahr) {
     const y = parseInt(jahr, 10);
     if (!bl) return { bundesland: "", jahr: y, ferien: [] };
     if (!(y >= 2000 && y <= 2100)) throw new Error("Ungültiges Jahr.");
-    try { $os.mkdirAll(FERIEN_DIR, 493); } catch (e) { /* egal */ }
+    try { $os.mkdirAll(FERIEN_DIR, 493); } catch (e) { /* ignore */ }
     const path = FERIEN_DIR + "/DE-" + bl + "_" + y + ".json";
     const cached = readJsonFile(path);
     const ttl = cached && Array.isArray(cached.ferien) && cached.ferien.length ? FERIEN_TTL_MS : FERIEN_LEER_TTL_MS;
     if (cached && Array.isArray(cached.ferien) && Date.now() - Number(cached.ts || 0) < ttl) {
         return { bundesland: bl, jahr: y, ferien: cached.ferien, stand: cached.ts };
     }
-    // nicht bei jedem Aufruf neu versuchen, wenn der Dienst gerade nicht antwortet
+    // do not retry on every call if the service is currently not responding
     const lockKey = "pinnFerienVersuch:" + bl + ":" + y;
     if (cacheGet(lockKey, 30 * 60 * 1000) && cached) {
         return { bundesland: bl, jahr: y, ferien: cached.ferien || [], stand: cached.ts, alt: true };

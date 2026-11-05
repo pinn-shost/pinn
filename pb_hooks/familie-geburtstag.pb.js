@@ -1,20 +1,20 @@
 // pb_hooks/familie-geburtstag.pb.js
-// Geburtstage in der Familie (Geburtsdatum aus dem Notfallpass). Die Logik steckt in
+// Birthdays in the family (date of birth from the emergency pass). The logic lives in
 // pinn-familie-geburtstag.js.
 //
-// Zeitplan: alle 5 Minuten – Push „… hat heute Geburtstag“ an die anderen Profile der Familie, zur
-// Uhrzeit ihrer Tagesübersicht (Standard 07:00), je Profil und Tag nur einmal.
+// Schedule: every 5 minutes - push "... has a birthday today" to the other profiles of the family, at the
+// time of their daily overview (default 07:00), only once per profile and day.
 //
-// Routen (nur angemeldet):
-//   GET  /api/pinn/geburtstag          { heute, gesehen: [<Mitglied-ID>, …] }  Geburtstags-Animation schon gezeigt?
-//   POST /api/pinn/geburtstag/gesehen  { mitglied }                            Animation gezeigt (alle Geräte)
+// Routes (signed in only):
+//   GET  /api/pinn/geburtstag          { heute, gesehen: [<member ID>, ...] }  birthday animation already shown?
+//   POST /api/pinn/geburtstag/gesehen  { mitglied }                            animation shown (all devices)
 
 cronAdd("pinnFamilieGeburtstag", "*/5 * * * *", () => {
     try {
         require(`${__hooks}/pinn-familie-geburtstag.js`).runCron();
     } catch (err) {
         console.log("[Geburtstag] Zeitplan-Fehler: " + err.message);
-        try { require(`${__hooks}/pinn-protokoll.js`).fehler("push", "Geburtstage in der Familie: " + err.message); } catch (e2) { /* egal */ }
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("push", "Geburtstage in der Familie: " + err.message); } catch (e2) { /* ignore */ }
     }
 });
 

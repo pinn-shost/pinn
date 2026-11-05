@@ -1,17 +1,17 @@
 #!/bin/sh
 # ─────────────────────────────────────────────────────────────
-#  pinn. – PocketBase aktualisieren und Hooks wieder zum Laufen bringen
+#  pinn. – Update PocketBase and get the hooks running again
 #
-#  Liegt neben der docker-compose.yaml in /volume1/docker/Pocketbase.
-#  Aufruf per SSH:   cd /volume1/docker/Pocketbase && sudo sh pinn-pocketbase-update.sh
+#  Lies next to docker-compose.yaml in /volume1/docker/Pocketbase.
+#  Call via SSH:   cd /volume1/docker/Pocketbase && sudo sh pinn-pocketbase-update.sh
 #
-#  Ablauf:
-#   1. Prüft Docker Compose
-#   2. Erstellt sofort ein Backup (Container „wartung“)
-#   3. Repariert Hook-Dateinamen in pb_hooks (z. B. kurse_pb.js -> kurse.pb.js)
-#   4. Prüft, ob alle per require() eingebundenen Hilfsdateien vorhanden sind
-#   5. Baut PocketBase in der Version aus der docker-compose.yaml und startet neu
-#   6. Prüft Erreichbarkeit, Hooks und Log – und zeigt bei Fehlern, wie es zurückgeht
+#  Flow:
+#   1. Checks Docker Compose
+#   2. Creates a backup right away (container "wartung")
+#   3. Repairs hook file names in pb_hooks (e.g. kurse_pb.js -> kurse.pb.js)
+#   4. Checks that all helper files pulled in via require() are present
+#   5. Builds PocketBase in the version from docker-compose.yaml and restarts
+#   6. Checks reachability, hooks and log – and shows how to go back on errors
 # ─────────────────────────────────────────────────────────────
 
 cd "$(dirname "$0")" || exit 1
@@ -25,7 +25,7 @@ if [ ! -f docker-compose.yaml ]; then
   exit 1
 fi
 
-# ── 1. Docker Compose prüfen ────────────────────────────────
+# ── 1. Check Docker Compose ─────────────────────────────────
 CV=$(docker compose version --short 2>/dev/null | sed 's/^v//')
 if [ -z "$CV" ]; then
   fehler "„docker compose“ nicht verfügbar."
@@ -74,9 +74,9 @@ else
   fi
 fi
 
-# ── 3. Hook-Dateinamen reparieren ───────────────────────────
-# PocketBase lädt in pb_hooks nur Dateien, die auf „.pb.js“ enden.
-# Beim Herunterladen werden daraus manchmal „_pb.js“ oder „.pb (1).js“.
+# ── 3. Repair hook file names ───────────────────────────────
+# PocketBase only loads files in pb_hooks that end in ".pb.js".
+# When downloading, they sometimes become "_pb.js" or ".pb (1).js".
 mkdir -p pb_hooks/_alt
 UMB=0
 for f in pb_hooks/*_pb.js pb_hooks/*.pb\ \(*\).js pb_hooks/*.pb.js.txt; do
@@ -84,7 +84,7 @@ for f in pb_hooks/*_pb.js pb_hooks/*.pb\ \(*\).js pb_hooks/*.pb.js.txt; do
   base=$(basename "$f")
   ziel=$(echo "$base" | sed -e 's/_pb\.js$/.pb.js/' -e 's/\.pb ([0-9]*)\.js$/.pb.js/' -e 's/\.pb\.js\.txt$/.pb.js/')
   if [ -f "pb_hooks/$ziel" ]; then
-    # beide vorhanden: die neuere Datei gewinnt, die ältere wandert nach pb_hooks/_alt
+    # both present: the newer file wins, the older one moves to pb_hooks/_alt
     if [ "$f" -nt "pb_hooks/$ziel" ]; then
       mv "pb_hooks/$ziel" "pb_hooks/_alt/$ziel.$(date +%s)"
       mv "$f" "pb_hooks/$ziel"
@@ -97,7 +97,7 @@ for f in pb_hooks/*_pb.js pb_hooks/*.pb\ \(*\).js pb_hooks/*.pb.js.txt; do
   echo "  $base → $ziel"
   UMB=$((UMB + 1))
 done
-# Hilfsdateien mit Download-Zusatz wie „pinn-push (1).js“
+# Helper files with a download suffix like "pinn-push (1).js"
 for f in pb_hooks/*\ \([0-9]*\).js; do
   [ -f "$f" ] || continue
   base=$(basename "$f"); ziel=$(echo "$base" | sed 's/ ([0-9]*)\.js$/.js/')
@@ -114,14 +114,14 @@ if [ "$HOOKS" -eq 0 ]; then
 fi
 ok "$HOOKS Hook-Dateien (*.pb.js) gefunden"
 
-# Hook-Dateien, die versehentlich in pb_public liegen
+# Hook files that accidentally lie in pb_public
 FALSCH=$(ls pb_public/*.pb.js pb_public/*_pb.js pb_public/calendar-sync.js 2>/dev/null)
 if [ -n "$FALSCH" ]; then
   warn "Diese Dateien liegen in pb_public, gehören aber nach pb_hooks:"
   echo "$FALSCH" | sed 's/^/    /'
 fi
 
-# ── 4. Eingebundene Hilfsdateien prüfen ─────────────────────
+# ── 4. Check included helper files ──────────────────────────
 FEHLT=""
 for m in $(grep -ho 'require(`${__hooks}/[^`]*`)' pb_hooks/*.pb.js pb_hooks/*.js 2>/dev/null \
            | sed 's/.*__hooks}\/\([^`]*\)`)/\1/' | sort -u); do
@@ -135,7 +135,7 @@ if [ -n "$FEHLT" ]; then
 fi
 ok "Alle eingebundenen Hilfsdateien vorhanden"
 
-# ── 5. Bauen und starten ────────────────────────────────────
+# ── 5. Build and start ──────────────────────────────────────
 echo "  PocketBase $PB_SOLL wird gebaut und gestartet …"
 START=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 if ! docker compose up -d --build pocketbase; then
@@ -143,7 +143,7 @@ if ! docker compose up -d --build pocketbase; then
   exit 1
 fi
 
-# ── 6. Prüfen ───────────────────────────────────────────────
+# ── 6. Check ────────────────────────────────────────────────
 echo "  Warte auf PocketBase …"
 LAEUFT=0
 for i in $(seq 1 30); do
@@ -156,7 +156,7 @@ HOOKFEHLER=$(echo "$LOG" | grep -iE 'error|panic|failed|exception|referenceerror
 
 if [ "$LAEUFT" -eq 1 ]; then
   ok "PocketBase $(docker exec pocketbase pocketbase --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+') läuft"
-  # /sw.js wird von einem Hook ausgeliefert – antwortet er, sind die Hooks geladen
+  # /sw.js is delivered by a hook – if it answers, the hooks are loaded
   if docker exec pocketbase wget -qO- http://127.0.0.1:80/sw.js 2>/dev/null | grep -q "pinn. Service Worker"; then
     ok "Hooks sind geladen (Testroute /sw.js antwortet)"
   else

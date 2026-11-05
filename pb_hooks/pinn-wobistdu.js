@@ -1,17 +1,17 @@
 // pb_hooks/pinn-wobistdu.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden.
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require().
 //
-// „Wo bist du?“ (Übersicht → Kachel „Familienmitglieder“ → Person antippen):
-//   - Jemand fragt eine Person, die gerade keinen Live-Standort teilt. Alle Profile, die mit diesem
-//     Familienmitglied verknüpft sind, bekommen eine Push-Nachricht (Link /?wobistdu=<ID>).
-//   - Die Person antwortet in pinn. mit ihrem aktuellen Standort (einmalig aus dem Browser – es wird
-//     nichts dauerhaft geteilt) oder mit einer kurzen Antwort („Bin zu Hause“, „Bin gleich da“ …).
-//   - Wer gefragt hat, bekommt die Antwort als Push-Nachricht und sieht sie in pinn. auf einer Karte.
+// "Where are you?" (Overview → tile "Family members" → tap a person):
+//   - Someone asks a person who is currently not sharing a live location. All profiles that are linked to this
+//     family member get a push message (link /?wobistdu=<ID>).
+//   - The person answers in pinn. with their current location (once from the browser - nothing
+//     is shared permanently) or with a short reply ("At home", "Be there soon" ...).
+//   - Whoever asked gets the reply as a push message and sees it in pinn. on a map.
 //
-// Daten: pb_data/pinn_wobistdu.json – nur die letzten 24 Stunden, ältere Anfragen werden verworfen.
-//   [{ id, familie, von (Profil-ID), vonMitglied, vonName, an (Mitglied-ID), anName, zeit,
-//      antwort: { zeit, lat, lon, genau, text, wer (Profil-ID) } }]
-// Höchstens eine offene Frage je Fragendem und Person in 2 Minuten (kein Push-Gewitter).
+// Data: pb_data/pinn_wobistdu.json - only the last 24 hours, older requests are discarded.
+//   [{ id, familie, von (profile ID), vonMitglied, vonName, an (member ID), anName, zeit,
+//      antwort: { zeit, lat, lon, genau, text, wer (profile ID) } }]
+// At most one open question per asker and person within 2 minutes (no push storm).
 
 const FILE = "/pb_data/pinn_wobistdu.json";
 const KEEP_MS = 24 * 60 * 60 * 1000;
@@ -25,7 +25,7 @@ function readAll() {
         const calendarSync = require(`${__hooks}/calendar-sync.js`);
         const o = JSON.parse(calendarSync.bytesToText($os.readFile(FILE)));
         if (Array.isArray(o)) return o.filter(x => x && x.id && Date.now() - Number(x.zeit || 0) < KEEP_MS);
-    } catch (e) { /* noch keine Datei */ }
+    } catch (e) { /* no file yet */ }
     return [];
 }
 function writeAll(list) {
@@ -102,7 +102,7 @@ function targetsFor(familyId, memberId) {
     } catch (e) { return []; }
 }
 
-// Frage stellen
+// Ask a question
 function ask(e, body) {
     const u = e.auth;
     const fam = u.getString("familie");
@@ -127,7 +127,7 @@ function ask(e, body) {
         const push = require(`${__hooks}/pinn-push.js`);
         targets.forEach(t => {
             const msg = askMessage(langOf(t), item.vonName);
-            try { sent += push.notifyUser(t.id, { titel: msg.titel, text: msg.text, url: "/?wobistdu=" + item.id, tag: "wobistdu-" + item.id, urgency: "high" }) || 0; } catch (err) { /* nächstes Profil */ }
+            try { sent += push.notifyUser(t.id, { titel: msg.titel, text: msg.text, url: "/?wobistdu=" + item.id, tag: "wobistdu-" + item.id, urgency: "high" }) || 0; } catch (err) { /* next profile */ }
         });
     } catch (err) {
         console.log("[Wo bist du] Push: " + err.message);
@@ -135,7 +135,7 @@ function ask(e, body) {
     return { id: item.id, push: sent };
 }
 
-// Antworten (nur die gefragte Person)
+// Answer (only the person asked)
 function answer(e, body) {
     const u = e.auth;
     const fam = u.getString("familie");
@@ -171,7 +171,7 @@ function answer(e, body) {
     return { ok: true, push: sent };
 }
 
-// Für die App: eigene Fragen (mit Antworten) und Fragen an mich, letzte 24 Stunden
+// For the app: own questions (with answers) and questions to me, last 24 hours
 function listFor(e) {
     const u = e.auth;
     const fam = u.getString("familie");

@@ -1,21 +1,21 @@
 // pb_hooks/pinn-protokoll.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden
-// (Routen und Zeitplan in protokoll.pb.js).
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require()
+// (routes and schedule in protokoll.pb.js).
 //
-// Admin-Fehlerprotokoll: Fehler der Server-Hooks (Kalender-Sync, Push, Müllkalender, Anmeldung …)
-// landen zusätzlich zum Docker-Log in der gesperrten Sammlung "protokoll". Admins sehen sie in der
-// App unter Einstellungen → System → „Fehlerprotokoll“, der Hauptadmin über „🧾 Fehlerprotokoll“.
+// Admin error log: errors of the server hooks (calendar sync, push, waste calendar, sign-in ...)
+// end up, in addition to the Docker log, in the locked collection "protokoll". Admins see them in the
+// app under Settings → System → "Error log", the main admin via "🧾 Error log".
 //
-//  - Gleiche Meldungen (gleicher Bereich, gleiche Familie, gleicher Text) innerhalb von 24 Stunden
-//    werden zu EINEM Eintrag zusammengefasst – mit Zähler („12×“) und Zeitpunkt des letzten Auftretens.
-//    So füllt ein Sync-Fehler, der alle 15 Minuten wiederkommt, nicht die Datenbank.
-//  - behoben(bereich, familie): klappt etwas wieder (z. B. der nächste Sync), werden die offenen
-//    Fehler dieses Bereichs als „wieder ok“ markiert. Damit das nicht bei jedem erfolgreichen Lauf
-//    die Datenbank fragt, merkt sich der Arbeitsspeicher, ob es überhaupt offene Fehler gibt.
-//  - Aufbewahrung: 30 Tage, höchstens 1000 Einträge (Aufräumen nachts, siehe protokoll.pb.js).
-//  - Sichtbarkeit: Hauptadmin alles; Familien-Admins die Einträge ihrer Familie – und die Einträge
-//    ohne Familie (Server allgemein), wenn es auf dem Server nur eine Familie gibt.
-//  - Ein Fehler beim Protokollieren selbst wird nur geloggt und ändert nie den eigentlichen Ablauf.
+//  - Identical messages (same area, same family, same text) within 24 hours
+//    are merged into ONE entry - with a counter ("12×") and the time of the last occurrence.
+//    This way a sync error that returns every 15 minutes does not fill the database.
+//  - behoben(bereich, familie): if something works again (e.g. the next sync), the open
+//    errors of this area are marked as "ok again". So that this does not query
+//    the database on every successful run, the memory remembers whether there are any open errors at all.
+//  - Retention: 30 days, 1000 entries at most (cleaned up at night, see protokoll.pb.js).
+//  - Visibility: main admin everything; family admins the entries of their family - and the entries
+//    without a family (server in general) if there is only one family on the server.
+//  - An error while logging itself is only logged and never changes the actual flow.
 
 const COL = "protokoll";
 const BEREICHE = ["sync", "push", "muell", "anmeldung", "system"];
@@ -34,9 +34,9 @@ function findCol(name) {
 // Einrichtung
 // ---------------------------------------------------------------------------------------------
 function ensureSchema() {
-    try { if ($app.store().get(SCHEMA_KEY) === "1") return true; } catch (e) { /* neu prüfen */ }
+    try { if ($app.store().get(SCHEMA_KEY) === "1") return true; } catch (e) { /* check again */ }
     if (findCol(COL)) {
-        try { $app.store().set(SCHEMA_KEY, "1"); } catch (e) { /* egal */ }
+        try { $app.store().set(SCHEMA_KEY, "1"); } catch (e) { /* ignore */ }
         return true;
     }
     try {
@@ -65,7 +65,7 @@ function ensureSchema() {
             listRule: null, viewRule: null, createRule: null, updateRule: null, deleteRule: null,
         }));
         console.log("[Protokoll] Sammlung \"" + COL + "\" angelegt.");
-        try { $app.store().set(SCHEMA_KEY, "1"); } catch (e) { /* egal */ }
+        try { $app.store().set(SCHEMA_KEY, "1"); } catch (e) { /* ignore */ }
         return true;
     } catch (err) {
         console.log("[Protokoll] Sammlung \"" + COL + "\" nicht anlegbar: " + err.message);
@@ -74,12 +74,12 @@ function ensureSchema() {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Schreiben
+// Writing
 // ---------------------------------------------------------------------------------------------
 function clean(s, max) {
     return String(s === undefined || s === null ? "" : s).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").trim().slice(0, max);
 }
-// Für das Zusammenfassen: lange Zahlen (Zeitstempel, Größen) und IDs zählen nicht als Unterschied
+// For merging: long numbers (timestamps, sizes) and IDs do not count as a difference
 function normForKey(s) {
     return String(s || "").toLowerCase().replace(/\d{4,}/g, "#").replace(/[a-z0-9]{15}/g, "~").replace(/\s+/g, " ").trim();
 }
@@ -131,7 +131,7 @@ function eintrag(bereich, stufe, meldung, opts) {
         }
         $app.save(rec);
         if (st === "fehler") {
-            try { $app.store().set(OFFEN_PREFIX + b + ":" + fam, "1"); } catch (e) { /* egal */ }
+            try { $app.store().set(OFFEN_PREFIX + b + ":" + fam, "1"); } catch (e) { /* ignore */ }
         }
     } catch (err) {
         console.log("[Protokoll] Eintrag nicht gespeichert: " + err.message);
@@ -141,9 +141,9 @@ function fehler(bereich, meldung, opts) { eintrag(bereich, "fehler", meldung, op
 function warnung(bereich, meldung, opts) { eintrag(bereich, "warnung", meldung, opts); }
 function info(bereich, meldung, opts) { eintrag(bereich, "info", meldung, opts); }
 
-// Es hat wieder geklappt: offene Fehler dieses Bereichs (und dieser Familie) als „wieder ok“ markieren.
-// Fragt die Datenbank nur, wenn seit dem Start ein Fehler dieses Bereichs protokolliert wurde – oder
-// einmal nach einem Neustart (dann ist der Arbeitsspeicher leer und es könnten alte offene geben).
+// It worked again: mark open errors of this area (and this family) as "ok again".
+// Only queries the database if an error of this area has been logged since the start - or
+// once after a restart (then the memory is empty and there could be old open ones).
 function behoben(bereich, familie) {
     const fam = clean(familie, 40);
     const key = OFFEN_PREFIX + bereich + ":" + fam;
@@ -155,7 +155,7 @@ function behoben(bereich, familie) {
             const recs = $app.findRecordsByFilter(COL, "bereich = {:b} && familie = {:f} && stufe = 'fehler' && behoben = false", "", 200, 0, { b: bereich, f: fam });
             recs.forEach(r => {
                 r.set("behoben", true);
-                try { $app.save(r); } catch (e) { /* nächstes Mal */ }
+                try { $app.save(r); } catch (e) { /* next time */ }
             });
         }
         $app.store().set(key, "0");
@@ -165,12 +165,12 @@ function behoben(bereich, familie) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Lesen (für die Routen)
+// Reading (for the routes)
 // ---------------------------------------------------------------------------------------------
 function nurEineFamilie() {
     try { return $app.countRecords("familien") <= 1; } catch (e) { return false; }
 }
-// Filter (SQL-artig für PocketBase) für das, was der Angemeldete sehen darf. null = nichts.
+// Filter (SQL-like for PocketBase) for what the signed-in user may see. null = nothing.
 function sichtFilter(e) {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     if (lib.isMainAdmin(e)) return { filter: "id != ''", params: {}, alle: true };
@@ -183,7 +183,7 @@ function sichtFilter(e) {
 
 function familienNamen() {
     const out = {};
-    try { $app.findRecordsByFilter("familien", "", "", 0, 0).forEach(f => { out[f.id] = f.getString("name"); }); } catch (e) { /* egal */ }
+    try { $app.findRecordsByFilter("familien", "", "", 0, 0).forEach(f => { out[f.id] = f.getString("name"); }); } catch (e) { /* ignore */ }
     return out;
 }
 
@@ -222,7 +222,7 @@ function liste(e, opts) {
     };
 }
 
-// Kurzfassung für Einstellungen → System: offene Fehler der letzten 7 Tage und der neueste Eintrag
+// Short version for Settings → System: open errors of the last 7 days and the latest entry
 function kurz(e) {
     const sicht = sichtFilter(e);
     if (!sicht) return { darf: false };
@@ -234,11 +234,11 @@ function kurz(e) {
         warnungen = $app.findRecordsByFilter(COL, sicht.filter + " && stufe = 'warnung' && zuletzt >= {:s}", "", 0, 0, Object.assign({ s: seit }, sicht.params)).length;
         const last = $app.findRecordsByFilter(COL, sicht.filter, "-zuletzt", 1, 0, sicht.params);
         if (last.length) neueste = last[0].getString("zuletzt");
-    } catch (err) { /* leer lassen */ }
+    } catch (err) { /* leave empty */ }
     return { darf: true, offen: offen, warnungen: warnungen, neueste: neueste };
 }
 
-// Löschen: art = "behoben" (nur wieder ok / Warnungen / Hinweise), "alle" oder eine einzelne id
+// Delete: art = "behoben" (only ok again / warnings / notices), "alle" or a single id
 function leeren(e, art, id) {
     const sicht = sichtFilter(e);
     if (!sicht) throw new Error("Das Fehlerprotokoll sehen nur Admins.");
@@ -250,13 +250,13 @@ function leeren(e, art, id) {
     let n = 0;
     try {
         $app.findRecordsByFilter(COL, filter, "", 2000, 0, params).forEach(r => {
-            try { $app.delete(r); n++; } catch (err) { /* egal */ }
+            try { $app.delete(r); n++; } catch (err) { /* ignore */ }
         });
-    } catch (err) { /* egal */ }
+    } catch (err) { /* ignore */ }
     return n;
 }
 
-// Nachts: alte Einträge löschen, Gesamtzahl begrenzen
+// At night: delete old entries, limit the total number
 function aufraeumen() {
     if (!findCol(COL)) return;
     try {

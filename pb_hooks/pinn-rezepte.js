@@ -1,34 +1,34 @@
 // pb_hooks/pinn-rezepte.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden.
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require().
 //
-// Öffentliche Rezepte: Rezepte, bei denen in der Rezept-Bearbeitung der Haken "Rezept öffentlich
-// teilen" gesetzt ist (Feld "oeffentlich" im Rezept), werden in die eigene Sammlung
-// "oeffentliche_rezepte" gespiegelt. Dort können ALLE Familien des Servers sie lesen und in ihre
-// eigenen Rezepte übernehmen (Kopie - das Original bleibt bei der teilenden Familie).
+// Public recipes: recipes for which the tick "Share recipe publicly" is set in the recipe editor
+// (field "oeffentlich" in the recipe) are mirrored into the dedicated collection
+// "oeffentliche_rezepte". There ALL families of the server can read them and take them over into their
+// own recipes (a copy - the original stays with the sharing family).
 //
-// Sammlung "oeffentliche_rezepte" (wird automatisch angelegt):
-//   familie      Relation auf "familien" (OHNE Mitlöschen - siehe "Rezepte Familie" unten)
-//   rezept_id    ID des Rezepts in den Familiendaten der teilenden Familie
-//   herkunft     Name der teilenden Familie (bleibt erhalten, auch wenn die Familie gelöscht wird)
-//   bild_id      ID des Bild-Datensatzes in "rezept_bilder" (damit das Bild erhalten bleibt)
-//   titel        Titel (für Sortierung/Übersicht im PocketBase-Dashboard)
-//   data         Rezept-Inhalt: title, ingredients, steps, servings, prepTime, cookTime,
-//                categories (Namen), tools (Namen statt familieneigener IDs), image (Pfad),
-//                imageFrame (gewählter Bildausschnitt { x, y, z }, nur wenn gesetzt), createdAt
-//   fingerprint  Prüfsumme des Inhalts - gespeichert wird nur, wenn sich wirklich etwas geändert hat
+// Collection "oeffentliche_rezepte" (is created automatically):
+//   familie      relation to "familien" (WITHOUT cascade delete - see "Rezepte Familie" below)
+//   rezept_id    ID of the recipe in the family data of the sharing family
+//   herkunft     name of the sharing family (is kept even if the family is deleted)
+//   bild_id      ID of the image record in "rezept_bilder" (so that the image is kept)
+//   titel        title (for sorting/overview in the PocketBase dashboard)
+//   data         recipe content: title, ingredients, steps, servings, prepTime, cookTime,
+//                categories (names), tools (names instead of family-specific IDs), image (path),
+//                imageFrame (chosen image section { x, y, z }, only if set), createdAt
+//   fingerprint  checksum of the content - it is only saved if something has really changed
 //   created / updated
-// Zugriff nur über die angemeldete Route in rezepte.pb.js (Sammlungs-API gesperrt), geschrieben
-// wird ausschließlich vom Server beim Speichern der Familiendaten (save_family_data.pb.js).
+// Access only via the signed-in route in rezepte.pb.js (collection API locked), written
+// exclusively by the server when saving the family data (save_family_data.pb.js).
 //
-// Schonend für CPU: Abgeglichen wird nur beim Speichern, mit den ohnehin schon empfangenen Daten -
-// die großen Familiendaten werden dafür nie aus der Datenbank gelesen oder dekodiert.
+// Gentle on CPU: reconciliation happens only when saving, with the data received anyway -
+// the large family data is never read or decoded from the database for it.
 //
-// "Rezepte Familie": Wird eine Familie gelöscht, bleiben ihre öffentlichen Rezepte erhalten. Sie
-// verlieren nur die Zuordnung zur Familie (familie = leer) und erscheinen danach für alle unter
-// "Rezepte Familie". Das ist bewusst KEINE echte Familie in "familien" - so taucht sie weder in der
-// Anmeldung noch in der Familienverwaltung auf, bekommt nie den Apple-Kalender und kann nicht
-// versehentlich samt Rezepten gelöscht werden. Die zugehörigen Bilder werden ebenfalls von der
-// Familie gelöst, damit sie beim Löschen nicht mitgelöscht werden.
+// "Rezepte Familie": if a family is deleted, its public recipes are kept. They
+// only lose the assignment to the family (familie = empty) and afterwards appear for everyone under
+// "Rezepte Familie". This is deliberately NOT a real family in "familien" - so it appears neither in the
+// sign-in nor in the family management, never gets the Apple calendar and cannot be
+// deleted by accident together with its recipes. The associated images are also detached from the
+// family so that they are not deleted along with it.
 
 const OEFFENTLICH = "oeffentliche_rezepte";
 const FAMILIEN = "familien";
@@ -41,16 +41,16 @@ function hasField(col, name) {
     try { return !!col.fields.getByName(name); } catch (e) { return false; }
 }
 
-// Rezeptbilder: zusätzlich zur quadratischen, mittig beschnittenen Miniatur (400x400) eine
-// unbeschnittene (600x600f) erlauben. Die braucht die App für Rezepte mit verschobenem
-// Bildausschnitt, sonst würde die Miniatur den gewählten Ausschnitt verfälschen. Erzeugt wird sie
-// von PocketBase erst beim ersten Abruf (einmalig je Bild) - schonend für die CPU.
+// Recipe images: in addition to the square, centre-cropped thumbnail (400x400), allow an
+// uncropped one (600x600f). The app needs it for recipes with a shifted
+// image section, otherwise the thumbnail would distort the chosen section. It is generated by
+// PocketBase only on the first request (once per image) - gentle on the CPU.
 const REZEPT_BILDER = "rezept_bilder";
 const REZEPT_BILD_THUMBS = ["400x400", "600x600f"];
 let thumbsChecked = false;
 function ensureImageThumbsOnce() {
     if (thumbsChecked) return;
-    if (!findCol(REZEPT_BILDER)) return; // Sammlung noch nicht da - beim nächsten Aufruf erneut
+    if (!findCol(REZEPT_BILDER)) return; // Collection not there yet - again on the next call
     thumbsChecked = true;
     ensureImageThumbs();
 }
@@ -75,8 +75,8 @@ function ensureImageThumbs() {
     }
 }
 
-// Legt die Sammlung an bzw. ergänzt fehlende Felder. Gibt die Sammlung zurück (oder null, solange
-// es die Familien-Sammlung noch nicht gibt - dann wird es beim nächsten Aufruf erneut versucht).
+// Creates the collection or adds missing fields. Returns the collection (or null as long as
+// the families collection does not exist yet - it is then tried again on the next call).
 function ensureSchema() {
     ensureImageThumbsOnce();
     const famCol = findCol(FAMILIEN);
@@ -117,7 +117,7 @@ function ensureSchema() {
         col = findCol(OEFFENTLICH);
     }
     if (!col) return null;
-    // Fehlende Felder ergänzen (z. B. wenn die Sammlung von Hand angelegt wurde)
+    // Add missing fields (e.g. if the collection was created by hand)
     const wanted = [
         { name: "familie", type: "relation", collectionId: famCol.id, cascadeDelete: false, maxSelect: 1, minSelect: 0, required: false },
         { name: "rezept_id", type: "text", max: 100 },
@@ -141,7 +141,7 @@ function ensureSchema() {
             console.log("[Rezepte] Felder in \"" + OEFFENTLICH + "\" nicht ergänzbar: " + err.message);
         }
     }
-    // Bestehende Sammlung (ältere Version): Rezepte beim Löschen einer Familie NICHT mehr mitlöschen
+    // Existing collection (older version): NO longer delete recipes when a family is deleted
     try {
         const famField = col.fields.getByName("familie");
         if (famField && famField.cascadeDelete) {
@@ -178,7 +178,7 @@ function cleanNumber(v, max) {
     return Math.min(Math.round(n), max);
 }
 
-// "/api/files/rezept_bilder/<id>/<datei>" -> "<id>" (nur Bilder aus der Sammlung rezept_bilder)
+// "/api/files/rezept_bilder/<id>/<file>" -> "<id>" (only images from the collection rezept_bilder)
 function imageRecordIdFromPath(path) {
     const parts = String(path || "").split("?")[0].split("/");
     // ["", "api", "files", "rezept_bilder", "<id>", "<datei>"]
@@ -188,8 +188,8 @@ function imageRecordIdFromPath(path) {
     return "";
 }
 
-// Bildausschnitt { x, y, z }: x/y 0-100 (Prozent), z 1-4 (Zoom). Mitte ohne Zoom = undefined,
-// damit unveränderte Rezepte dieselbe Prüfsumme behalten wie bisher.
+// Image section { x, y, z }: x/y 0-100 (percent), z 1-4 (zoom). Centre without zoom = undefined,
+// so that unchanged recipes keep the same checksum as before.
 function cleanFrame(f) {
     if (!f || typeof f !== "object") return undefined;
     const num = (v, d, lo, hi) => { const n = Number(v); return Math.min(hi, Math.max(lo, isFinite(n) ? n : d)); };
@@ -200,7 +200,7 @@ function cleanFrame(f) {
     return { x: x, y: y, z: z };
 }
 
-// Einfache, schnelle Prüfsumme (djb2) - reicht zum Erkennen von Änderungen
+// Simple, fast checksum (djb2) - enough to detect changes
 function fingerprint(obj) {
     const s = JSON.stringify(obj);
     let h = 5381;
@@ -208,9 +208,9 @@ function fingerprint(obj) {
     return s.length + "-" + h.toString(16);
 }
 
-// Alle als öffentlich markierten Rezepte der Familiendaten in das Austauschformat bringen.
-// Küchengeräte werden als Namen übergeben, weil ihre IDs nur innerhalb einer Familie gelten.
-// Eingebettete Alt-Bilder (data:...) werden nicht geteilt - nur ausgelagerte Bilddateien.
+// Bring all recipes marked as public in the family data into the exchange format.
+// Kitchen appliances are passed as names, because their IDs only apply within a family.
+// Embedded old images (data:...) are not shared - only outsourced image files.
 function publicRecipesFrom(data) {
     const recipes = data && Array.isArray(data.recipes) ? data.recipes : [];
     const tools = data && Array.isArray(data.kitchenTools) ? data.kitchenTools : [];
@@ -251,9 +251,9 @@ function publicRecipesFrom(data) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Abgleich beim Speichern der Familiendaten
+// Reconciliation when saving the family data
 // ---------------------------------------------------------------------------------------------
-// Neue/geänderte öffentliche Rezepte eintragen, nicht mehr öffentliche bzw. gelöschte entfernen.
+// Enter new/changed public recipes, remove ones that are no longer public or were deleted.
 function syncFamily(familyId, data) {
     if (!familyId || !data || typeof data !== "object") return;
     const col = ensureSchema();
@@ -272,8 +272,8 @@ function syncFamily(familyId, data) {
     existing.forEach(rec => {
         const key = rec.getString("rezept_id");
         if (byRecipe[key]) {
-            // doppelter Eintrag (sollte nicht vorkommen) - aufräumen
-            try { $app.delete(rec); } catch (e) { /* egal */ }
+            // duplicate entry (should not occur) - clean up
+            try { $app.delete(rec); } catch (e) { /* ignore */ }
             return;
         }
         byRecipe[key] = rec;
@@ -307,7 +307,7 @@ function syncFamily(familyId, data) {
         }
     });
     Object.keys(byRecipe).forEach(k => {
-        try { $app.delete(byRecipe[k]); removed++; } catch (err) { /* egal */ }
+        try { $app.delete(byRecipe[k]); removed++; } catch (err) { /* ignore */ }
     });
     if (added || changed || removed) {
         console.log("[Rezepte] Öffentliche Rezepte abgeglichen: " + added + " neu, " + changed + " geändert, " + removed + " entfernt.");
@@ -315,12 +315,12 @@ function syncFamily(familyId, data) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Familie wird gelöscht: öffentliche Rezepte in die "Rezepte Familie" verschieben
+// Family is deleted: move public recipes to the "Rezepte Familie"
 // ---------------------------------------------------------------------------------------------
-// Läuft VOR dem eigentlichen Löschen (onRecordDelete in rezepte.pb.js), damit die Bilder nicht
-// über das Mitlöschen von "rezept_bilder" verloren gehen. Direkte SQL-Befehle: schnell und ohne
-// erneute Prüfung/Hooks. rezept_id bekommt die alte Familien-ID vorangestellt, damit sich Rezepte
-// verschiedener gelöschter Familien nie in die Quere kommen.
+// Runs BEFORE the actual deletion (onRecordDelete in rezepte.pb.js), so that the images are not
+// lost through the cascade delete of "rezept_bilder". Direct SQL commands: fast and without
+// renewed checks/hooks. rezept_id gets the old family ID prepended so that recipes of
+// different deleted families never get in each other's way.
 function detachFamily(app, familyId) {
     const a = app || $app;
     const f = String(familyId || "");
@@ -332,15 +332,15 @@ function detachFamily(app, familyId) {
         count = Number(m.n || 0);
     } catch (e) { count = 0; }
     if (!count) return 0;
-    // Name der Familie festhalten, falls er noch nicht eingetragen ist
+    // Record the family's name if it has not been entered yet
     try {
         const name = cleanText(a.findRecordById(FAMILIEN, f).getString("name"), 60);
         if (name) {
             a.db().newQuery("UPDATE " + OEFFENTLICH + " SET herkunft = {:n} WHERE familie = {:f} AND (herkunft = '' OR herkunft IS NULL)")
                 .bind({ n: name, f: f }).execute();
         }
-    } catch (e) { /* egal */ }
-    // Bilder der öffentlichen Rezepte von der Familie lösen (sonst würden sie mitgelöscht)
+    } catch (e) { /* ignore */ }
+    // Detach the images of the public recipes from the family (otherwise they would be deleted too)
     try {
         a.db().newQuery("UPDATE rezept_bilder SET familie = '' WHERE id IN (SELECT bild_id FROM " + OEFFENTLICH + " WHERE familie = {:f} AND bild_id != '')")
             .bind({ f: f }).execute();
@@ -354,7 +354,7 @@ function detachFamily(app, familyId) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Lesen (für alle angemeldeten Familien)
+// Reading (for all signed-in families)
 // ---------------------------------------------------------------------------------------------
 function parseData(raw) {
     try { return require(`${__hooks}/calendar-sync.js`).parseRecordData(raw) || {}; } catch (e) { return {}; }
@@ -366,7 +366,7 @@ function listPublic(ownFamilyId) {
     const names = {};
     try {
         $app.findRecordsByFilter(FAMILIEN, "", "", 0, 0).forEach(f => { names[f.id] = f.getString("name"); });
-    } catch (e) { /* ohne Namen */ }
+    } catch (e) { /* without names */ }
     let recs = [];
     try { recs = $app.findRecordsByFilter(OEFFENTLICH, "", "-updated", 500, 0); } catch (e) { recs = []; }
     const own = String(ownFamilyId || "");

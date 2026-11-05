@@ -1,10 +1,10 @@
 // pb_hooks/wobistdu.pb.js
-// „Wo bist du?“ – eine Person nach ihrem Standort fragen. Die Logik steckt in pinn-wobistdu.js.
+// "Where are you?" - ask a person for their location. The logic lives in pinn-wobistdu.js.
 //
-// Routen (nur angemeldet):
-//   GET  /api/pinn/wobistdu          eigene Fragen (mit Antworten) und Fragen an mich, letzte 24 Std.
-//   POST /api/pinn/wobistdu          { an: <Mitglied-ID>, name, anName }   fragen (Push an die Person)
-//   POST /api/pinn/wobistdu/antwort  { id, lat, lon, genau } oder { id, text } antworten (Push zurück)
+// Routes (signed in only):
+//   GET  /api/pinn/wobistdu          own questions (with answers) and questions to me, last 24 hours
+//   POST /api/pinn/wobistdu          { an: <member ID>, name, anName }   ask (push to the person)
+//   POST /api/pinn/wobistdu/antwort  { id, lat, lon, genau } or { id, text } answer (push back)
 
 routerAdd("GET", "/api/pinn/wobistdu", (e) => {
     e.response.header().set("Cache-Control", "no-store");

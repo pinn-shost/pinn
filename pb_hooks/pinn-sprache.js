@@ -1023,7 +1023,7 @@ function befehl(token, text) {
         return Object.assign({ ok: true, art: intent.art }, r);
     } catch (err) {
         console.log("[Sprache] " + err.message);
-        try { require(`${__hooks}/pinn-protokoll.js`).fehler("Sprachsteuerung", err.message, {}); } catch (e) { /* Protokoll nicht verfügbar */ }
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("Sprachsteuerung", err.message, {}); } catch (e) { /* log not available */ }
         return { ok: false, status: 200, antwort: fill(L.error, { m: err.message }) };
     }
 }

@@ -1,41 +1,41 @@
 // pb_hooks/kassen.pb.js
-// Kassen: getrennte Finanzbereiche (z. B. Haushalts-, WG-, Paar- oder eigene Kasse) plus die
-// Familien-Gruppe für Verträge und Dokumente ohne eigene Kasse. Die Logik steckt in pinn-kassen.js.
+// Funds: separate finance areas (e.g. household, flat-share, couple's or own fund) plus the
+// family group for contracts and documents without a fund of their own. The logic lives in pinn-kassen.js.
 //
-// Beim Start: legt die Sammlung "kassen" an, zieht alte Finanzdaten (von vor den Kassen) in eine
-// Haushaltskasse um, entfernt leere, früher automatisch angelegte Kassen und gibt jeder Familie ihre
-// Familien-Gruppe. Neue Familien haben danach keine Kasse - die legt man in Finanzen selbst an.
+// On start: creates the collection "kassen", moves old finance data (from before the funds) into a
+// household fund, removes empty funds that were created automatically in the past and gives every family its
+// family group. New families then have no fund - you create it yourself in Finance.
 //
-// Routen (alle nur angemeldet, nicht für Gastkonten):
-//   POST /api/pinn/kassen                 { stand: { <ID>: '<updated>' } } -> alle Kassen, in denen man
-//                                         Mitglied ist (Finanzdaten nur, wenn sie sich geändert haben)
-//   POST /api/pinn/kassen/speichern       { id, expectedUpdated, daten } -> 200 | 409 (Konflikt, aktueller Stand)
-//   POST /api/pinn/kassen/einstellungen   { id?, name, icon, color, members, all, split } - anlegen/ändern
-//   POST /api/pinn/kassen/loeschen        { id } - Kasse samt Buchungen löschen (nur wer sie verwaltet)
-//   POST /api/pinn/kassen/verlassen       { id } - Kasse verlassen
-//   POST /api/pinn/kassen/retten          { daten } - fehlende Finanzdaten aus einem älteren Stand eines
-//                                         Geräts in die Haushaltskasse ergänzen (löscht nie etwas)
-//   POST /api/pinn/kassen/sicherung       { id } - Tages-Sicherung einer Kasse zurückholen (ergänzt nur)
-//   POST /api/pinn/kassen/diagnose        { schritt, index? } - prüft das Laden Schritt für Schritt
-//                                         (App: Finanzen → „Fehlerdetails“). Jeder Schritt ist eine
-//                                         eigene Anfrage - so zeigt sich auch, welcher Schritt den Server
-//                                         abstürzen lässt.
+// Routes (all signed-in only, not for guest accounts):
+//   POST /api/pinn/kassen                 { stand: { <ID>: '<updated>' } } -> all funds of which one is a
+//                                         member (finance data only if it has changed)
+//   POST /api/pinn/kassen/speichern       { id, expectedUpdated, daten } -> 200 | 409 (conflict, current state)
+//   POST /api/pinn/kassen/einstellungen   { id?, name, icon, color, members, all, split } - create/change
+//   POST /api/pinn/kassen/loeschen        { id } - delete a fund including its bookings (only whoever manages it)
+//   POST /api/pinn/kassen/verlassen       { id } - leave a fund
+//   POST /api/pinn/kassen/retten          { daten } - add missing finance data from an older state of a
+//                                         device to the household fund (never deletes anything)
+//   POST /api/pinn/kassen/sicherung       { id } - restore the daily backup of a fund (only adds)
+//   POST /api/pinn/kassen/diagnose        { schritt, index? } - checks the loading step by step
+//                                         (app: Finance → "Error details"). Every step is its
+//                                         own request - so it also shows which step makes the server
+//                                         crash.
 //
-// WICHTIG: PocketBase führt jeden Routen-Handler isoliert aus - Funktionen auf Dateiebene dieser Datei
-// sind im Handler nicht sichtbar (das war die Ursache für „Something went wrong …“). Alle Hilfen
-// (httpSend, httpGuard, httpBody, httpFail) liegen deshalb in pinn-kassen.js.
+// IMPORTANT: PocketBase runs every route handler in isolation - functions at file level of this file
+// are not visible in the handler (that was the cause of "Something went wrong ..."). All helpers
+// (httpSend, httpGuard, httpBody, httpFail) therefore live in pinn-kassen.js.
 //
-// Antworten werden in JavaScript selbst in JSON umgewandelt (JSON.stringify) und als Text verschickt -
-// nicht über die Go-Umwandlung von e.json(). Jede Route fängt Fehler selbst ab und antwortet mit
-// { error: '…' }; Fehler stehen zusätzlich im Log (docker logs pocketbase).
+// Responses are converted to JSON in JavaScript itself (JSON.stringify) and sent as text -
+// not via the Go conversion of e.json(). Every route catches errors itself and answers with
+// { error: '…' }; errors are additionally in the log (docker logs pocketbase).
 //
-// Kein Zeitplan - es läuft nur etwas, wenn jemand die Finanzen öffnet oder etwas ändert.
+// No schedule - something only runs when someone opens the finances or changes something.
 
 onBootstrap((e) => {
     e.next();
     try {
-        // Buchungen, Belege und Dokumente brauchen das Feld "kasse", bevor die Kassen sie übernehmen –
-        // die Datenbank-Einrichtung (pinn-schema.js) legt sie in dieser Reihenfolge an
+        // Bookings, receipts and documents need the field "kasse" before the funds take them over -
+        // the database set-up (pinn-schema.js) creates them in this order
         try { require(`${__hooks}/pinn-schema.js`).ensureCurrent(); } catch (err) { console.log("[Kassen] Einrichtung: " + err.message); }
         require(`${__hooks}/pinn-kassen.js`).migrateAll();
         try { require(`${__hooks}/pinn-dokumente.js`).ensureSchema(); } catch (err) { console.log("[Kassen] Dokumente: " + err.message); }
@@ -134,7 +134,7 @@ routerAdd("POST", "/api/pinn/kassen/sicherung", (e) => {
     }
 }, $apis.requireAuth("benutzer"));
 
-// Fehlersuche: ein Schritt je Anfrage (verrät keine Finanzdaten, nur Größen, Arten und Schlüssel)
+// Troubleshooting: one step per request (reveals no finance data, only sizes, kinds and keys)
 routerAdd("POST", "/api/pinn/kassen/diagnose", (e) => {
     const K = require(`${__hooks}/pinn-kassen.js`);
     const t0 = Date.now();

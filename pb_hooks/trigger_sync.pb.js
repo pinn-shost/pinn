@@ -1,10 +1,10 @@
 // pb_hooks/trigger_sync.pb.js
-// Löst einen sofortigen Kalender-Sync für die EIGENE Familie aus, statt bis zu 15 Minuten auf den
-// nächsten Cron-Durchlauf zu warten. Wird von der App direkt nach dem Speichern der
-// Kalenderauswahl bzw. der Apple-ID in den Einstellungen aufgerufen. Gleicht außerdem die mit
-// iCloud/Google verknüpften Kalender ab, die das Profil sieht – eigene und Familien-Kalender (pinn-kalender.js).
+// Triggers an immediate calendar sync for the OWN family instead of waiting up to 15 minutes for the
+// next cron run. Called by the app right after saving the
+// calendar selection or the Apple ID in the settings. Also syncs the calendars linked with
+// iCloud/Google that the profile sees - own and family calendars (pinn-kalender.js).
 
-// Nur für Profile einer Familie (siehe pinn-benutzer.js).
+// Only for profiles of a family (see pinn-benutzer.js).
 routerAdd("POST", "/api/sync-calendar-now", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const denied = lib.calendarDenied(e);
@@ -12,8 +12,8 @@ routerAdd("POST", "/api/sync-calendar-now", (e) => {
     try {
         const calendarSync = require(`${__hooks}/calendar-sync.js`);
         calendarSync.runCronSync(lib.familyOf(e));
-        // Mit iCloud/Google verknüpfte Kalender, die das Profil sieht (eigene + Familien-Kalender), gleich mit abgleichen
-        try { require(`${__hooks}/pinn-kalender.js`).syncLinkedVisible(lib.familyOf(e), e.auth.id); } catch (err) { /* nächster Cron-Lauf */ }
+        // Also sync the calendars linked with iCloud/Google that the profile sees (own + family calendars)
+        try { require(`${__hooks}/pinn-kalender.js`).syncLinkedVisible(lib.familyOf(e), e.auth.id); } catch (err) { /* next cron run */ }
         return e.json(200, { success: true });
     } catch (err) {
         return e.json(200, { error: err.message });

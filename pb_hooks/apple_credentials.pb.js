@@ -1,24 +1,24 @@
 // pb_hooks/apple_credentials.pb.js
-// Apple-Kalender-Zugangsdaten JE FAMILIE (Apple-ID + App-spezifisches Passwort).
-// Sie liegen verschlüsselt in der gesperrten Sammlung "apple_zugaenge" (Logik: pinn-apple.js).
+// Apple calendar credentials PER FAMILY (Apple ID + app-specific password).
+// They are stored encrypted in the locked collection "apple_zugaenge" (logic: pinn-apple.js).
 //
-// Diese Datei
-// - legt beim Start die gesperrte Sammlung an, prüft den Schlüssel und übernimmt einmalig
-//   Zugangsdaten, die noch in der .env stehen (PINN_APPLE_ID / PINN_APPLE_APP_PASSWORD),
-// - entfernt beim Start alte, im Klartext in familien_daten gespeicherte Zugangsdaten
+// This file
+// - creates the locked collection on start, checks the key and takes over once
+//   credentials that are still in the .env (PINN_APPLE_ID / PINN_APPLE_APP_PASSWORD),
+// - removes on start old credentials stored in plain text in familien_daten
 //   (appleCalendar.email / appleCalendar.appPassword),
-// - verhindert, dass sie über die normale Sammlungs-API wieder hineingeschrieben werden,
-// - stellt die Routen für die Einstellungen bereit:
-//     GET  /api/pinn/apple-status          Status der eigenen Familie (nie das Passwort)
-//     POST /api/pinn/apple-zugang          {appleId, appPassword} speichern (nur Familien-Admins,
-//                                          wird vorher bei iCloud geprüft)
-//     POST /api/pinn/apple-zugang/loeschen Zugangsdaten der eigenen Familie entfernen (nur Admins)
+// - prevents them from being written back in via the normal collection API,
+// - provides the routes for the settings:
+//     GET  /api/pinn/apple-status          status of the own family (never the password)
+//     POST /api/pinn/apple-zugang          {appleId, appPassword} save (family admins only,
+//                                          checked at iCloud beforehand)
+//     POST /api/pinn/apple-zugang/loeschen remove the own family's credentials (admins only)
 //
-// Alles defensiv: Ein Fehler hier wird nur geloggt und verhindert nie den Serverstart.
+// Everything defensive: an error here is only logged and never prevents the server from starting.
 
 onBootstrap((e) => {
     e.next();
-    try { require(`${__hooks}/pinn-schema.js`).ensureCurrent(); } catch (err) { /* egal */ }
+    try { require(`${__hooks}/pinn-schema.js`).ensureCurrent(); } catch (err) { /* ignore */ }
     try {
         require(`${__hooks}/pinn-apple.js`).setup();
     } catch (err) {
@@ -43,9 +43,9 @@ onBootstrap((e) => {
     }
 });
 
-// Schutz für direkte Schreibzugriffe über die Sammlungs-API (z.B. Fallback-Speichern der App).
-// Logik bewusst in jedem Handler selbst: Hook-Handler laufen isoliert und sehen keine
-// Top-Level-Funktionen dieser Datei.
+// Protection for direct write access via the collection API (e.g. the app's fallback saving).
+// Logic deliberately in every handler itself: hook handlers run isolated and do not see any
+// top-level functions of this file.
 onRecordCreateRequest((e) => {
     try {
         const calendarSync = require(`${__hooks}/calendar-sync.js`);
@@ -68,8 +68,8 @@ onRecordUpdateRequest((e) => {
     return e.next();
 }, "familien_daten");
 
-// Status für die Einstellungen: ob Zugangsdaten gesetzt sind, welche Apple-ID, letzter Sync und ob
-// der Angemeldete sie ändern darf. Das Passwort wird NIE ausgeliefert.
+// Status for the settings: whether credentials are set, which Apple ID, last sync and whether
+// the signed-in user may change them. The password is NEVER delivered.
 routerAdd("GET", "/api/pinn/apple-status", (e) => {
     e.response.header().set("Cache-Control", "no-store");
     try {
@@ -84,8 +84,8 @@ routerAdd("GET", "/api/pinn/apple-status", (e) => {
     }
 }, $apis.requireAuth("benutzer"));
 
-// Zugangsdaten der eigenen Familie speichern. Vorher wird die Anmeldung bei iCloud geprüft, damit
-// keine falschen Daten gespeichert werden. Antwort enthält direkt die Kalenderliste.
+// Save the own family's credentials. Beforehand, the sign-in at iCloud is checked so that
+// no wrong data is saved. The response directly contains the calendar list.
 routerAdd("POST", "/api/pinn/apple-zugang", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const denied = lib.calendarDenied(e);
@@ -113,7 +113,7 @@ routerAdd("POST", "/api/pinn/apple-zugang", (e) => {
     return e.json(200, { success: true, calendars: calendars });
 }, $apis.requireAuth("benutzer"));
 
-// Zugangsdaten der eigenen Familie entfernen (Termine eines verbundenen Google-Kontos bleiben).
+// Remove the own family's credentials (events of a connected Google account stay).
 routerAdd("POST", "/api/pinn/apple-zugang/loeschen", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const denied = lib.calendarDenied(e);
@@ -122,9 +122,9 @@ routerAdd("POST", "/api/pinn/apple-zugang/loeschen", (e) => {
     const familyId = lib.familyOf(e);
     try {
         require(`${__hooks}/pinn-apple.js`).deleteCredentials(familyId);
-        try { $app.store().remove("pinnAppleSync:" + familyId); } catch (err) { /* egal */ }
-        // Kalenderdatei neu schreiben: ohne Google-Konto wird sie geleert, mit Google-Konto
-        // bleiben dessen Termine erhalten (calendar-sync.js)
+        try { $app.store().remove("pinnAppleSync:" + familyId); } catch (err) { /* ignore */ }
+        // Rewrite the calendar file: without a Google account it is emptied, with a Google account
+        // its events are kept (calendar-sync.js)
         const calendarSync = require(`${__hooks}/calendar-sync.js`);
         try { calendarSync.syncFamily(familyId); } catch (err) { calendarSync.writeEmptyCalendar(familyId); }
     } catch (err) {

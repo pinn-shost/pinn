@@ -1,18 +1,18 @@
 // pb_hooks/vertraege.pb.js
-// Finanzen → Verträge: Dokumente-Sammlung und Erinnerungen an Kündigungsfristen.
-// Die Logik steckt in pinn-vertraege.js.
+// Finance → Contracts: documents collection and reminders of notice periods.
+// The logic lives in pinn-vertraege.js.
 //
-// Beim Start (über pinn-schema.js): legt die Sammlung "finanz_dokumente" an (Vertragsdokumente und Belege zu Ausgaben;
-// geschützte Dateien, nur für die eigene Familie, nicht für Gastkonten). Hoch-/runtergeladen wird
-// direkt über die PocketBase-Sammlungs-API mit Anmeldung bzw. Datei-Token.
+// On start (via pinn-schema.js): creates the collection "finanz_dokumente" (contract documents and receipts for expenses;
+// protected files, only for the own family, not for guest accounts). Uploading/downloading goes
+// directly via the PocketBase collection API with sign-in or a file token.
 //
-// Route (nur angemeldet, nicht für Gastkonten):
-//   POST /api/pinn/vertraege/pruefen   fällige Erinnerungen der eigenen Familie jetzt verschicken
-//                                      (die App ruft das nach dem Speichern eines Vertrags auf;
-//                                      nur zwischen 8 und 21 Uhr, nichts wird doppelt geschickt)
+// Route (signed in only, not for guest accounts):
+//   POST /api/pinn/vertraege/pruefen   send due reminders of the own family now
+//                                      (the app calls this after saving a contract;
+//                                      only between 8 a.m. and 9 p.m., nothing is sent twice)
 //
-// Zeitplan: stündlich (Minute 23) - die eigentliche Prüfung aller Familien läuft aber nur einmal am
-// Tag ab 8 Uhr.
+// Schedule: hourly (minute 23) - the actual check of all families only runs once a
+// day from 8 a.m.
 
 cronAdd("pinnVertraege", "23 * * * *", () => {
     try {

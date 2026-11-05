@@ -1,31 +1,31 @@
 // pb_hooks/kalender.pb.js
-// Eigene Kalender je Profil (Einstellungen → Kalender → Eigene Kalender). Die Logik steckt in pinn-kalender.js.
+// Own calendars per profile (Settings → Calendar → Own calendars). The logic lives in pinn-kalender.js.
 //
-// Beim Start (über pinn-schema.js): legt die gesperrten Sammlungen "kalender_eigene" und "kalender_termine" an.
+// On start (via pinn-schema.js): creates the locked collections "kalender_eigene" and "kalender_termine".
 //
-// Angemeldet (Profile einer Familie):
+// Signed in (profiles of a family):
 //   GET  /api/pinn/kalender/eigene            { kalender: [{ id, name, farbe, geteilt, mein, von, darf }] }
-// Angemeldet, keine Gäste:
+// Signed in, no guests:
 //   POST /api/pinn/kalender/eigene/speichern  { id?, name, farbe, geteilt }  -> { kalender, id }
-//   POST /api/pinn/kalender/eigene/loeschen   { id }                         -> { kalender }  (mit allen Terminen)
+//   POST /api/pinn/kalender/eigene/loeschen   { id }                         -> { kalender }  (with all events)
 //
-// Persönliche Konten je Profil (iCloud/Google, pinn-kalender-konten.js), keine Gäste:
+// Personal accounts per profile (iCloud/Google, pinn-kalender-konten.js), no guests:
 //   GET  /api/pinn/kalender/konten?origin=…        { apple: {verbunden, konto, fehler},
 //                                                    google: {verfuegbar, verbunden, konto, fehler, client, weiterleitung, einrichtbar} }
 //   POST /api/pinn/kalender/konten/apple           { appleId, appPassword }  -> { konten, extern }
 //   POST /api/pinn/kalender/konten/liste           { art }                   -> { extern: [{name, href, nurLesen, ziel, id}] }
 //   POST /api/pinn/kalender/konten/auswahl         { art, auswahl: [{href, ziel: "ich"|"familie"|""}] } -> { kalender, hinweis }
-//   POST /api/pinn/kalender/konten/google/start    { origin }                -> { url }      (Rückkehr über /api/pinn/google/callback)
+//   POST /api/pinn/kalender/konten/google/start    { origin }                -> { url }      (return via /api/pinn/google/callback)
 //   POST /api/pinn/kalender/konten/trennen         { art }                   -> { konten, kalender }
-//   POST /api/pinn/kalender/konten/google-client   { clientId, clientSecret, origin } -> { konten }  (nur Admins, nur ohne .env-Eintrag)
-// Abgleich der verknüpften Kalender: Cron alle 15 Minuten (versetzt zum Familien-Abgleich) und bei
-// „Jetzt aktualisieren“ (trigger_sync.pb.js).
+//   POST /api/pinn/kalender/konten/google-client   { clientId, clientSecret, origin } -> { konten }  (admins only, only without an .env entry)
+// Sync of the linked calendars: cron every 15 minutes (offset from the family sync) and on
+// "Refresh now" (trigger_sync.pb.js).
 //
-// Die Termine selbst laufen über die bekannten Termin-Routen (create_/update_/delete_calendar_event.pb.js,
-// get_calendar_event_raw.pb.js); die Kalenderdatei /api/pinn/kalender (benutzer.pb.js) enthält sie.
+// The events themselves run via the known event routes (create_/update_/delete_calendar_event.pb.js,
+// get_calendar_event_raw.pb.js); the calendar file /api/pinn/kalender (benutzer.pb.js) contains them.
 //
-// Aufräumen: wird ein Profil gelöscht, verschwinden seine privaten Kalender (geteilte bleiben der
-// Familie erhalten); wird eine Familie gelöscht, alle ihre eigenen Kalender.
+// Clean-up: if a profile is deleted, its private calendars disappear (shared ones stay with the
+// family); if a family is deleted, all its own calendars.
 
 onRecordAfterDeleteSuccess((e) => {
     try { require(`${__hooks}/pinn-kalender.js`).cleanupUser(e.record.id); } catch (err) { console.log("[Kalender] Aufräumen (Profil) fehlgeschlagen: " + err.message); }
@@ -62,11 +62,11 @@ routerAdd("POST", "/api/pinn/kalender/eigene/loeschen", (e) => {
     }
 }, $apis.requireAuth("benutzer"));
 
-// Verknüpfte Kalender (iCloud/Google) aller Profile abgleichen – versetzt zum Familien-Cron (*/15)
+// Sync linked calendars (iCloud/Google) of all profiles - offset from the family cron (*/15)
 cronAdd("pinnEigeneKalenderSync", "7,22,37,52 * * * *", () => {
     try { require(`${__hooks}/pinn-kalender.js`).syncAllLinked(); } catch (err) {
         console.log("[Kalender] Abgleich verknüpfter Kalender fehlgeschlagen: " + err.message);
-        try { require(`${__hooks}/pinn-protokoll.js`).fehler("sync", "Abgleich verknüpfter Kalender fehlgeschlagen: " + err.message); } catch (e2) { /* egal */ }
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("sync", "Abgleich verknüpfter Kalender fehlgeschlagen: " + err.message); } catch (e2) { /* ignore */ }
     }
 });
 

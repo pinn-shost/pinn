@@ -1,24 +1,24 @@
 // pb_hooks/pinn-ausblick.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden.
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require().
 //
-// Ausblick: Wochenvorschau (jeden Sonntag ab 18 Uhr) und Monatsausblick Finanzen (am letzten Tag des
-// Monats ab 18 Uhr). Was drinsteht, rechnet die App selbst aus den Daten, die sie ohnehin hat – der
-// Server kümmert sich nur um
-//   - die Push-Nachricht (einmal je Woche bzw. Monat und Profil, in der Sprache des Profils),
-//   - den Merker „schon angesehen“ je Profil, damit das Banner auf allen Geräten nur einmal erscheint,
-//   - die persönlichen Schalter „Wochenvorschau per Push“ / „Monatsausblick per Push“.
+// Outlook: weekly preview (every Sunday from 6 p.m.) and monthly finance outlook (on the last day of the
+// month from 6 p.m.). What is in it is calculated by the app itself from the data it has anyway - the
+// server only takes care of
+//   - the push message (once per week or month and profile, in the profile's language),
+//   - the "already seen" marker per profile, so that the banner only appears once on all devices,
+//   - the personal switches "Weekly preview by push" / "Monthly outlook by push".
 //
-// Schonend für CPU und Speicher:
-//   - Der Zeitplan läuft alle 10 Minuten, tut aber nur sonntags bzw. am Monatsletzten zwischen 18 und
-//     22 Uhr etwas – und dann genau einmal (Merker in pb_data/pinn_ausblick.json).
-//   - Keine eigene Sammlung, keine Familiendaten beim Versand (nur für den Monatsausblick einmal je
-//     Familie, um Kinder mit Kindersicherung auszunehmen).
+// Gentle on CPU and memory:
+//   - The schedule runs every 10 minutes, but only does something on Sundays or on the last day of the month between 6 and
+//     10 p.m. - and then exactly once (marker in pb_data/pinn_ausblick.json).
+//   - No collection of its own, no family data when sending (only for the monthly outlook once per
+//     family, to exclude children with parental controls).
 //
-// Uhrzeit: wie die übrigen Erinnerungen in Europe/Berlin (Sommer-/Winterzeit wird selbst berechnet).
+// Time: like the other reminders in Europe/Berlin (summer/winter time is calculated itself).
 
 const STATUS_FILE = "/pb_data/pinn_ausblick.json";
 const SEND_FROM_HOUR = 18;
-const SEND_UNTIL_HOUR = 22; // nach 22 Uhr (z. B. Server war aus) keine Push mehr – das Banner kommt trotzdem
+const SEND_UNTIL_HOUR = 22; // after 10 p.m. (e.g. server was off) no more push - the banner still comes
 
 // ---------------------------------------------------------------------------------------------
 // Uhrzeit (Europe/Berlin)
@@ -45,12 +45,12 @@ function isoAddDays(iso, n) {
     return d.getUTCFullYear() + "-" + pad2(d.getUTCMonth() + 1) + "-" + pad2(d.getUTCDate());
 }
 function daysInMonth(y, m) { return new Date(Date.UTC(y, m, 0)).getUTCDate(); }
-// Woche, um die es gerade geht: ab Sonntag 18 Uhr die kommende, sonst die laufende (Montag als ISO)
+// Week in question: from Sunday 6 p.m. the coming one, otherwise the current one (Monday as ISO)
 function weekKey(w) {
     if (w.wd === 0 && w.hour >= SEND_FROM_HOUR) return isoAddDays(w.iso, 1);
     return isoAddDays(w.iso, -((w.wd + 6) % 7));
 }
-// Monat, um den es gerade geht: am Monatsletzten ab 18 Uhr der nächste, sonst der laufende (JJJJ-MM)
+// Month in question: on the last day of the month from 6 p.m. the next one, otherwise the current one (YYYY-MM)
 function monthKey(w) {
     if (w.d === daysInMonth(w.y, w.m) && w.hour >= SEND_FROM_HOUR) {
         const ny = w.m === 12 ? w.y + 1 : w.y, nm = w.m === 12 ? 1 : w.m + 1;
@@ -71,7 +71,7 @@ function readStatus() {
             if (!o.nutzer || typeof o.nutzer !== "object") o.nutzer = {};
             return o;
         }
-    } catch (e) { /* noch keine Datei */ }
+    } catch (e) { /* no file yet */ }
     return { gesendet: { woche: "", monat: "" }, nutzer: {} };
 }
 function writeStatus(s) {
@@ -90,7 +90,7 @@ function userState(s, userId) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Wer bekommt was?
+// Who gets what?
 // ---------------------------------------------------------------------------------------------
 function role(u) { return u.getString("rolle"); }
 function isChildLocked(u, membersByFamily) {
@@ -113,7 +113,7 @@ function hasFinances(u) {
         return role(u) !== "gast";
     }
 }
-// Sprache des Profils (Einstellungen → Sprache & Region); ohne Angabe nach dem Land, sonst Englisch
+// Language of the profile (Settings → Language & region); without a setting by the country, otherwise English
 function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
@@ -150,7 +150,7 @@ const MONTHS = {
     ru: ["январь", "февраль", "март", "апрель", "май", "июнь", "июль", "август", "сентябрь", "октябрь", "ноябрь", "декабрь"],
     nl: ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"],
 };
-// Russisch braucht für Datumsbereiche den Genitiv und für „im Monat“ den Präpositiv (die Liste oben ist der Nominativ)
+// Russian needs the genitive for date ranges and the prepositional case for "in the month" (the list above is the nominative)
 const MONTHS_RU_GEN = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
 const MONTHS_RU_PREP = ["январе", "феврале", "марте", "апреле", "мае", "июне", "июле", "августе", "сентябре", "октябре", "ноябре", "декабре"];
 function rangeText(lang, mondayIso) {
@@ -251,7 +251,7 @@ function runCron() {
     if (isSunday) {
         const key = weekKey(w);
         if (status.gesendet.woche !== key) {
-            // zuerst merken: auch bei einem Fehler unterwegs kommt die Nachricht nie doppelt
+            // remember first: even on an error along the way, the message never comes twice
             status.gesendet.woche = key;
             writeStatus(status);
             out.woche = sendWeek(key, status);
@@ -271,7 +271,7 @@ function runCron() {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Für die App
+// For the app
 // ---------------------------------------------------------------------------------------------
 function stateFor(user) {
     const w = wallNow();
@@ -290,7 +290,7 @@ function markSeen(user, art, key) {
     if (art === "monat" && !/^\d{4}-\d{2}$/.test(key)) throw new Error("Ungültiger Monat.");
     const s = readStatus();
     const cur = s.nutzer[user.id] && typeof s.nutzer[user.id] === "object" ? s.nutzer[user.id] : {};
-    // nie zurück auf eine ältere Woche bzw. einen älteren Monat
+    // never back to an older week or month
     if (!cur[art] || String(cur[art]) < key) cur[art] = key;
     s.nutzer[user.id] = cur;
     writeStatus(s);
@@ -305,7 +305,7 @@ function savePush(user, body) {
     writeStatus(s);
     return stateFor(user);
 }
-// Gelöschte Profile aus dem Merker entfernen (einmal beim Start)
+// Remove deleted profiles from the marker (once on start)
 function pruneUsers() {
     const s = readStatus();
     const ids = Object.keys(s.nutzer);

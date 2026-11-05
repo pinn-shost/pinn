@@ -1,58 +1,58 @@
 // pb_hooks/pinn-sitzungen.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden
-// (Routen, Anmelde-Hook und Prüfung je Anfrage in sitzungen.pb.js).
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require()
+// (routes, sign-in hook and per-request check in sitzungen.pb.js).
 //
-// Geräteverwaltung: Jede Anmeldung eines Profils (Passwort, Familien-Dashboard, Verlängern beim
-// App-Start) gehört zu einer „Sitzung“ in der gesperrten Sammlung "sitzungen" – ein Datensatz je
-// Gerät und Profil. In der App: Konto → „Angemeldete Geräte“ (eigene) bzw. für Admins unter
-// Profil verwalten → „Geräte & Anmeldung“, für den Hauptadmin auf seinem Bildschirm.
+// Device management: every sign-in of a profile (password, family dashboard, renewal at
+// app start) belongs to a "session" in the locked collection "sitzungen" - one record per
+// device and profile. In the app: Account → "Signed-in devices" (own ones) or, for admins, under
+// Manage profile → "Devices & sign-in", for the main admin on their screen.
 //
-//  - Die Sitzungs-ID steckt als zusätzlicher Wert „sid“ im Anmelde-Token (gleiche Signatur wie bei
-//    PocketBase, Token bleibt für PocketBase ganz normal gültig). Jede Anfrage mit Token prüft, ob
-//    es die Sitzung noch gibt – „Abmelden“ eines Geräts löscht sie, das Gerät bekommt danach nur
-//    noch 401 mit dem Kopf „X-Pinn-Abgemeldet: 1“ und löscht seine pinn.-Daten.
-//  - Die Prüfung je Anfrage ist schonend: das Ergebnis bleibt 60 Sekunden im Arbeitsspeicher,
-//    „zuletzt aktiv“ wird höchstens alle 5 Minuten gespeichert.
-//  - Ein Gerät meldet sich mit einer zufälligen Geräte-Kennung (X-Pinn-Geraet-Id) und einem
-//    lesbaren Namen (X-Pinn-Geraet, z. B. „iPhone · App“). Meldet sich dasselbe Gerät mit demselben
-//    Profil erneut an (z. B. am Familien-Dashboard), wird die vorhandene Sitzung weiterverwendet.
-//  - Wiedererkennen eines Geräts (ohne Netzwerk-Adresse – die wechselt ständig), in dieser Reihenfolge:
-//      1. Sitzungs-ID im bisherigen Token
-//      2. Geräte-Cookie „pinn_geraet“ – setzt der Server selbst (HttpOnly, 400 Tage). Es übersteht
-//         App-Updates und das Leeren des App-Speichers, weil die App es weder lesen noch löschen kann.
-//      3. Geräte-Kennung der App (X-Pinn-Geraet-Id)
-//      4. Gerätemerkmale: Profil + Art (App/Dashboard) + Gerätename + Gerätetyp/Browser (ohne
-//         Versionsnummern, damit auch ein iOS- oder Browser-Update nichts ändert)
-//    Damit legt ein Update der App kein neues Gerät mehr an.
-//  - Die Netzwerk-Adresse (IP) wird für Geräte weder gespeichert noch angezeigt – sie spielt für die
-//    Erkennung keine Rolle. Alte gespeicherte Adressen werden beim Serverstart geleert.
-//  - Meldet sich dieselbe Push-Adresse für eine weitere Sitzung desselben Profils, ist es dasselbe
-//    Gerät: der ältere Eintrag wird mit dem aktuellen zusammengeführt (statt doppelt zu bleiben).
-//  - Doppelte Einträge von früher (gleiche Gerätemerkmale, das ältere seitdem nicht mehr benutzt)
-//    werden beim Serverstart und nachts zusammengeführt – die Push-Adresse wandert dabei mit.
-//  - Push: Die Push-Adresse eines Geräts wird seiner Sitzung zugeordnet. Wird das Gerät abgemeldet,
-//    bekommt es auch keine Benachrichtigungen mehr.
-//  - „Überall abmelden“ erneuert zusätzlich den Token-Schlüssel des Profils – damit sind auch ältere
-//    Anmeldungen ohne Sitzungs-ID sofort ungültig.
-//  - Anmeldungen von vor diesem Update haben noch keine Sitzungs-ID; sie bekommen eine beim
-//    nächsten Öffnen der App (die App verlängert die Anmeldung bei jedem Start).
+//  - The session ID is stored as an additional value "sid" in the sign-in token (same signature as with
+//    PocketBase, the token stays perfectly valid for PocketBase). Every request with a token checks whether
+//    the session still exists - "Sign out" of a device deletes it, after which the device only gets
+//    401 with the header "X-Pinn-Abgemeldet: 1" and deletes its pinn. data.
+//  - The check per request is gentle: the result stays in memory for 60 seconds,
+//    "last active" is saved at most every 5 minutes.
+//  - A device signs in with a random device identifier (X-Pinn-Geraet-Id) and a
+//    readable name (X-Pinn-Geraet, e.g. "iPhone · App"). If the same device signs in again with the same
+//    profile (e.g. at the family dashboard), the existing session is reused.
+//  - Recognising a device (without a network address - it changes constantly), in this order:
+//      1. Session ID in the previous token
+//      2. Device cookie "pinn_geraet" - set by the server itself (HttpOnly, 400 days). It survives
+//         app updates and clearing the app storage, because the app can neither read nor delete it.
+//      3. Device identifier of the app (X-Pinn-Geraet-Id)
+//      4. Device characteristics: profile + kind (app/dashboard) + device name + device type/browser (without
+//         version numbers, so that even an iOS or browser update changes nothing)
+//    This way an app update no longer creates a new device.
+//  - The network address (IP) is neither stored nor shown for devices - it plays no role in
+//    the recognition. Old stored addresses are cleared on server start.
+//  - If the same push address registers for another session of the same profile, it is the same
+//    device: the older entry is merged with the current one (instead of staying as a duplicate).
+//  - Duplicate entries from earlier (same device characteristics, the older one not used since)
+//    are merged on server start and at night - the push address moves along in the process.
+//  - Push: a device's push address is assigned to its session. If the device is signed out,
+//    it also gets no notifications any more.
+//  - "Sign out everywhere" additionally renews the profile's token key - so older
+//    sign-ins without a session ID become invalid immediately as well.
+//  - Sign-ins from before this update have no session ID yet; they get one the
+//    next time the app is opened (the app renews the sign-in on every start).
 //
-// Schutz gegen Durchprobieren (zusätzlich zur Sperre je Profil in pinn-dashboard.js):
-//  - Einzige Stelle, an der die Netzwerk-Adresse noch zählt (nur im Arbeitsspeicher):
-//    Zählt fehlgeschlagene Anmeldungen und unbekannte Familiennamen je Netzwerk-Adresse (IP).
-//    Ab 20 Fehlversuchen innerhalb von 30 Minuten wird die Adresse gesperrt: 1 Minute, danach jeweils
-//    doppelt so lang, höchstens 30 Minuten. Nur im Arbeitsspeicher, nach einem Neustart wieder bei 0.
-//  - Wird ein Profil wegen zu vieler falscher Passwörter gesperrt, bekommen die Admins der Familie
-//    (bzw. der Hauptadmin) eine Push-Nachricht und es steht im Fehlerprotokoll (Bereich „Anmeldung“).
-//    Ein Admin kann die Sperre in der Geräteverwaltung des Profils aufheben.
+// Protection against brute-forcing (in addition to the lock per profile in pinn-dashboard.js):
+//  - The only place where the network address still counts (in memory only):
+//    counts failed sign-ins and unknown family names per network address (IP).
+//    After 20 failed attempts within 30 minutes the address is blocked: 1 minute, then each time
+//    twice as long, 30 minutes at most. In memory only, back to 0 after a restart.
+//  - If a profile is locked because of too many wrong passwords, the admins of the family
+//    (or the main admin) get a push message and it appears in the error log (area "Sign-in").
+//    An admin can lift the lock in the profile's device management.
 
 const COL = "sitzungen";
 const USERS = "benutzer";
 const CACHE_PREFIX = "pinnSitz:";
 const SCHEMA_KEY = "pinnSitzSchema";
-const CHECK_MS = 60 * 1000;          // Sitzung höchstens einmal je Minute in der Datenbank prüfen
-const TOUCH_MS = 5 * 60 * 1000;      // „zuletzt aktiv“ höchstens alle 5 Minuten speichern
-const PIN_LOCK_PREFIX = "pinnPinSperre:"; // wie in pinn-dashboard.js
+const CHECK_MS = 60 * 1000;          // Check the session in the database at most once per minute
+const TOUCH_MS = 5 * 60 * 1000;      // save "last active" at most every 5 minutes
+const PIN_LOCK_PREFIX = "pinnPinSperre:"; // as in pinn-dashboard.js
 const IP_PREFIX = "pinnIpSperre:";
 const IP_MAX = 20;
 const IP_FENSTER_MS = 30 * 60 * 1000;
@@ -61,10 +61,10 @@ const MELDUNG_PREFIX = "pinnSperrMeldung:";
 const FELDER_KEY = "pinnSitzFelder2";
 const COOKIE = "pinn_geraet";
 const COOKIE_TAGE = 400;
-// Felder, die nach der ersten Version dazugekommen sind (werden bei Bedarf ergänzt)
+// Fields that were added after the first version (are added when needed)
 const NEUE_FELDER = [
-    { name: "kennung", max: 64 },   // Geräte-Cookie
-    { name: "merkmal", max: 64 },   // Gerätemerkmale (Prüfsumme)
+    { name: "kennung", max: 64 },   // Device cookie
+    { name: "merkmal", max: 64 },   // Device characteristics (checksum)
 ];
 
 function findCol(name) {
@@ -76,17 +76,17 @@ function nowIso() { return new Date().toISOString(); }
 // Einrichtung
 // ---------------------------------------------------------------------------------------------
 function schemaReady() {
-    try { if ($app.store().get(SCHEMA_KEY) === "1") return true; } catch (e) { /* prüfen */ }
+    try { if ($app.store().get(SCHEMA_KEY) === "1") return true; } catch (e) { /* check */ }
     const ok = !!findCol(COL);
-    if (ok) { try { $app.store().set(SCHEMA_KEY, "1"); } catch (e) { /* egal */ } }
+    if (ok) { try { $app.store().set(SCHEMA_KEY, "1"); } catch (e) { /* ignore */ } }
     return ok;
 }
 function hasField(col, name) {
     try { return !!col.fields.getByName(name); } catch (e) { return false; }
 }
-// Fehlende neuere Felder ergänzen (einmal je Serverstart)
+// Add missing newer fields (once per server start)
 function ensureFelder() {
-    try { if ($app.store().get(FELDER_KEY) === "1") return true; } catch (e) { /* prüfen */ }
+    try { if ($app.store().get(FELDER_KEY) === "1") return true; } catch (e) { /* check */ }
     const col = findCol(COL);
     if (!col) return false;
     let changed = false;
@@ -99,7 +99,7 @@ function ensureFelder() {
         try { $app.save(col); console.log("[Geräte] Sammlung \"" + COL + "\" um Geräte-Erkennung ergänzt."); }
         catch (err) { console.log("[Geräte] Felder nicht gespeichert: " + err.message); return false; }
     }
-    try { $app.store().set(FELDER_KEY, "1"); } catch (e) { /* egal */ }
+    try { $app.store().set(FELDER_KEY, "1"); } catch (e) { /* ignore */ }
     return true;
 }
 function ensureSchema() {
@@ -133,8 +133,8 @@ function ensureSchema() {
             listRule: null, viewRule: null, createRule: null, updateRule: null, deleteRule: null,
         }));
         console.log("[Geräte] Sammlung \"" + COL + "\" angelegt.");
-        try { $app.store().set(SCHEMA_KEY, "1"); } catch (e) { /* egal */ }
-        try { $app.store().set(FELDER_KEY, "1"); } catch (e) { /* egal */ }
+        try { $app.store().set(SCHEMA_KEY, "1"); } catch (e) { /* ignore */ }
+        try { $app.store().set(FELDER_KEY, "1"); } catch (e) { /* ignore */ }
         return true;
     } catch (err) {
         console.log("[Geräte] Sammlung \"" + COL + "\" nicht anlegbar: " + err.message);
@@ -149,7 +149,7 @@ function protokoll() {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Anfrage: Token, Sitzungs-ID, Gerät, Adresse
+// Request: token, session ID, device, address
 // ---------------------------------------------------------------------------------------------
 function header(e, name) {
     try { return String(e.request.header.get(name) || ""); } catch (err) { return ""; }
@@ -167,14 +167,14 @@ function cleanSid(v) {
     const s = String(v || "");
     return /^[a-z0-9]{15}$/.test(s) ? s : "";
 }
-// Sitzungs-ID aus dem Token der Anfrage ("" = keine)
+// Session ID from the request's token ("" = none)
 function sidOf(e) {
     const c = claimsOf(tokenOf(e));
     return c ? cleanSid(c.sid) : "";
 }
 function clientIp(e) {
     let ip = "";
-    // Caddy setzt X-Forwarded-For selbst (eingehende Werte von außen verwirft es) -> letzter Eintrag
+    // Caddy sets X-Forwarded-For itself (it discards incoming values from outside) -> last entry
     const xff = header(e, "X-Forwarded-For");
     if (xff) {
         const parts = xff.split(",").map(s => s.trim()).filter(Boolean);
@@ -190,10 +190,10 @@ function cleanDeviceId(v) {
 }
 function cleanName(v) {
     let s = String(v || "");
-    try { s = decodeURIComponent(s); } catch (err) { /* so lassen */ }
+    try { s = decodeURIComponent(s); } catch (err) { /* leave as is */ }
     return s.replace(/[\u0000-\u001F<>]/g, "").replace(/\s+/g, " ").trim().slice(0, 100);
 }
-// Lesbarer Name aus dem Browser-Kennzeichen (falls die App keinen mitschickt, z. B. ältere Version)
+// Readable name from the browser identifier (in case the app sends none, e.g. an older version)
 function nameFromAgent(ua) {
     const s = String(ua || "");
     let dev = "Browser";
@@ -215,7 +215,7 @@ function nameFromAgent(ua) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Geräte-Cookie und Gerätemerkmale (Wiedererkennen ohne Netzwerk-Adresse)
+// Device cookie and device characteristics (recognition without a network address)
 // ---------------------------------------------------------------------------------------------
 function cookieValue(e, name) {
     const raw = header(e, "Cookie");
@@ -235,10 +235,10 @@ function isHttps(e) {
 function setzeCookie(e, id) {
     const parts = [COOKIE + "=" + id, "Path=/", "Max-Age=" + (COOKIE_TAGE * 86400), "HttpOnly", "SameSite=Lax"];
     if (isHttps(e)) parts.push("Secure");
-    try { e.response.header().add("Set-Cookie", parts.join("; ")); } catch (err) { /* egal */ }
+    try { e.response.header().add("Set-Cookie", parts.join("; ")); } catch (err) { /* ignore */ }
 }
-// Geräte-Cookie lesen bzw. neu vergeben. Rückgabe { id, neu }.
-// Das Cookie wird bei jeder Anmeldung erneuert, damit es nicht abläuft.
+// Read the device cookie or assign a new one. Returns { id, neu }.
+// The cookie is renewed on every sign-in so that it does not expire.
 function geraetKennung(e) {
     let id = cleanDeviceId(cookieValue(e, COOKIE));
     let neu = false;
@@ -249,11 +249,11 @@ function geraetKennung(e) {
     if (id) setzeCookie(e, id);
     return { id: id, neu: neu };
 }
-// Browser-Kennzeichen ohne Versionsnummern (ein iOS-/Browser-Update ändert damit nichts)
+// Browser identifier without version numbers (an iOS/browser update thus changes nothing)
 function agentOhneVersion(ua) {
     return String(ua || "").replace(/\d+(?:[._]\d+)*/g, "#").replace(/\s+/g, " ").trim().slice(0, 400);
 }
-// Prüfsumme der Gerätemerkmale: Art + Gerätename + Browser-Kennzeichen (ohne Versionen)
+// Checksum of the device characteristics: kind + device name + browser identifier (without versions)
 function merkmalOf(art, name, agent) {
     const key = String(art || "app") + "|" + String(name || "").toLowerCase() + "|" + agentOhneVersion(agent);
     try { return String($security.sha256("pinn-geraet:" + key)).slice(0, 48); } catch (err) { return ""; }
@@ -261,7 +261,7 @@ function merkmalOf(art, name, agent) {
 function merkmalVon(rec) {
     return rec.getString("merkmal") || merkmalOf(rec.getString("art") || "app", rec.getString("name") || nameFromAgent(rec.getString("agent")), rec.getString("agent"));
 }
-// PocketBase-Datum ("2026-10-08 10:00:00.000Z") oder ISO-Text -> Millisekunden (0 = unbekannt)
+// PocketBase date ("2026-10-08 10:00:00.000Z") or ISO text -> milliseconds (0 = unknown)
 function msOf(v) {
     const s = String(v || "").trim();
     if (!s) return 0;
@@ -273,7 +273,7 @@ function aktivMs(rec) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Zwischenspeicher je Sitzung: "1|<geprüft ms>|<zuletzt gespeichert ms>|<benutzer>" oder "0" (abgemeldet)
+// Cache per session: "1|<checked ms>|<last saved ms>|<user>" or "0" (signed out)
 // ---------------------------------------------------------------------------------------------
 function readCache(sid) {
     try {
@@ -285,10 +285,10 @@ function readCache(sid) {
     } catch (e) { return null; }
 }
 function writeCache(sid, checked, touched, user) {
-    try { $app.store().set(CACHE_PREFIX + sid, "1|" + checked + "|" + touched + "|" + user); } catch (e) { /* egal */ }
+    try { $app.store().set(CACHE_PREFIX + sid, "1|" + checked + "|" + touched + "|" + user); } catch (e) { /* ignore */ }
 }
 function markRevoked(sid) {
-    try { $app.store().set(CACHE_PREFIX + sid, "0"); } catch (e) { /* egal */ }
+    try { $app.store().set(CACHE_PREFIX + sid, "0"); } catch (e) { /* ignore */ }
 }
 
 function findSession(sid) {
@@ -297,14 +297,14 @@ function findSession(sid) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Prüfung je Anfrage (Middleware in sitzungen.pb.js). false = Sitzung abgemeldet -> 401
+// Check per request (middleware in sitzungen.pb.js). false = session signed out -> 401
 // ---------------------------------------------------------------------------------------------
 function pruefe(e) {
     const a = e.auth;
     if (!a) return true;
     try { if (a.collection().name !== USERS) return true; } catch (err) { return true; }
     const sid = sidOf(e);
-    if (!sid) return true;                 // Anmeldung von vor der Geräteverwaltung
+    if (!sid) return true;                 // Sign-in from before the device management
     if (!schemaReady()) return true;
     const now = Date.now();
     const c = readCache(sid);
@@ -333,7 +333,7 @@ function saveTouch(rec, e, now) {
         rec.set("zuletzt", new Date(now).toISOString());
         if (rec.getString("ip")) rec.set("ip", "");
         $app.save(rec);
-    } catch (err) { /* nächstes Mal */ }
+    } catch (err) { /* next time */ }
 }
 function touch(sid, e, userId, now) {
     const rec = findSession(sid);
@@ -343,7 +343,7 @@ function touch(sid, e, userId, now) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Anmeldung (onRecordAuthRequest): Sitzung anlegen bzw. weiterverwenden, Token mit "sid" ausstellen
+// Sign-in (onRecordAuthRequest): create or reuse a session, issue a token with "sid"
 // ---------------------------------------------------------------------------------------------
 function signedToken(rec, baseToken, sid) {
     try {
@@ -358,7 +358,7 @@ function signedToken(rec, baseToken, sid) {
         Object.keys(claims).forEach(k => { if (k !== "exp" && k !== "iat" && k !== "nbf") payload[k] = claims[k]; });
         payload.sid = sid;
         const tok = $security.createJWT(payload, rec.tokenKey() + secret, rest);
-        // Gegenprobe: akzeptiert PocketBase das Token? Sonst bleibt es beim normalen Token.
+        // Cross-check: does PocketBase accept the token? Otherwise it stays with the normal token.
         const check = $app.findAuthRecordByToken(tok, "auth");
         return (check && check.id === rec.id) ? tok : "";
     } catch (err) {
@@ -376,7 +376,7 @@ function beimAnmelden(e) {
     try { path = String(e.request.url.path || ""); } catch (err) { path = ""; }
     const isDashboard = path.indexOf("/api/pinn/dashboard/") === 0;
 
-    // 1) Dieselbe Sitzung weiterführen (Verlängern, Passwort ändern, „andere abmelden“)
+    // 1) Continue the same session (renewing, changing the password, "sign out others")
     let sess = null;
     const oldSid = sidOf(e);
     if (oldSid) {
@@ -388,18 +388,18 @@ function beimAnmelden(e) {
     const agent = header(e, "User-Agent").slice(0, 400);
     const headerName = cleanName(header(e, "X-Pinn-Geraet"));
     const art = isDashboard ? "dashboard" : "app";
-    // 2) Geräte-Cookie – übersteht App-Updates und das Leeren des App-Speichers
+    // 2) Device cookie - survives app updates and clearing the app storage
     if (!sess && felder && kennung.id && !kennung.neu) {
         try { sess = $app.findFirstRecordByFilter(COL, "benutzer = {:u} && kennung = {:k}", { u: userId, k: kennung.id }); } catch (err) { sess = null; }
     }
-    // 3) Geräte-Kennung der App (z. B. Familien-Dashboard, erneute Anmeldung)
+    // 3) Device identifier of the app (e.g. family dashboard, signing in again)
     const deviceId = cleanDeviceId(header(e, "X-Pinn-Geraet-Id"));
     if (!sess && deviceId) {
         try { sess = $app.findFirstRecordByFilter(COL, "benutzer = {:u} && geraet_id = {:d}", { u: userId, d: deviceId }); } catch (err) { sess = null; }
     }
-    // 4) Gerätemerkmale: gleiches Profil, gleiche Art, gleicher Gerätename und Browser
-    //    (ohne Versionsnummern). Hat das Gerät schon ein eigenes Cookie, zählen nur Einträge
-    //    ohne bzw. mit genau diesem Cookie – ein zweites, baugleiches Gerät bleibt so getrennt.
+    // 4) Device characteristics: same profile, same kind, same device name and browser
+    //    (without version numbers). If the device already has its own cookie, only entries
+    //    without or with exactly this cookie count - a second, identical device thus stays separate.
     if (!sess && felder) {
         const m = merkmalOf(art, headerName || nameFromAgent(agent), agent);
         let kandidaten = [];
@@ -440,7 +440,7 @@ function beimAnmelden(e) {
     }
     if (bound !== sess.getBool("gebunden")) {
         sess.set("gebunden", bound);
-        try { $app.save(sess); } catch (err) { /* egal */ }
+        try { $app.save(sess); } catch (err) { /* ignore */ }
     }
     if (!bound) {
         protokoll().warnung("system", "Geräteverwaltung: Eine Anmeldung konnte nicht mit ihrem Gerät verknüpft werden – einzelnes Abmelden geht dafür nur über „Überall abmelden“.", { benutzer: userId });
@@ -449,7 +449,7 @@ function beimAnmelden(e) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Rechte: eigenes Profil; Familien-Admins die Profile ihrer Familie; Hauptadmin alle
+// Rights: own profile; family admins the profiles of their family; main admin all
 // ---------------------------------------------------------------------------------------------
 function targetUser(e, id) {
     const want = String(id || "").trim();
@@ -463,7 +463,7 @@ function targetUser(e, id) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Sperren (Anzeige und Aufheben)
+// Locks (display and lifting)
 // ---------------------------------------------------------------------------------------------
 function lockIdsOf(userRec) {
     const ids = [];
@@ -500,7 +500,7 @@ function entsperren(e, userId) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Liste und Abmelden
+// List and sign out
 // ---------------------------------------------------------------------------------------------
 function rowOf(r, currentSid) {
     return {
@@ -533,7 +533,7 @@ function liste(e, userId) {
     return out;
 }
 
-// Übersicht für „Profile verwalten“: je Profil der Familie Anzahl Geräte + Sperre
+// Overview for "Manage profiles": per profile of the family the number of devices + lock
 function uebersicht(e, familyId) {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     if (!lib.isAdmin(e)) throw new Error("Nur für Admins.");
@@ -556,18 +556,18 @@ function uebersicht(e, familyId) {
     return { profile: out };
 }
 
-// Push-Abos einer Sitzung entfernen (das Gerät bekommt dann keine Benachrichtigungen mehr)
+// Remove the push subscriptions of a session (the device then gets no notifications any more)
 function removePushOf(sess) {
     const endpoint = sess.getString("push");
     if (!endpoint) return;
     try {
         const abo = $app.findFirstRecordByFilter("push_abos", "endpoint = {:e}", { e: endpoint });
         if (abo.getString("benutzer") === sess.getString("benutzer")) $app.delete(abo);
-    } catch (err) { /* schon weg */ }
+    } catch (err) { /* already gone */ }
 }
 
-// Echtzeit-Verbindungen eines Profils trennen – die anderen Geräte verbinden sich sofort neu,
-// ein abgemeldetes Gerät bekommt dabei keinen Zugang mehr.
+// Disconnect a profile's real-time connections - the other devices reconnect immediately,
+// a signed-out device gets no access any more in the process.
 function trenneEchtzeit(userId) {
     try {
         const clients = $app.subscriptionsBroker().clients();
@@ -576,18 +576,18 @@ function trenneEchtzeit(userId) {
                 const c = clients[k];
                 const a = c.get("auth");
                 if (a && a.id === userId) c.discard();
-            } catch (err) { /* egal */ }
+            } catch (err) { /* ignore */ }
         });
-    } catch (err) { /* nicht verfügbar */ }
+    } catch (err) { /* not available */ }
 }
 
 function deleteSession(sess) {
     removePushOf(sess);
     markRevoked(sess.id);
-    try { $app.delete(sess); } catch (err) { /* schon weg */ }
+    try { $app.delete(sess); } catch (err) { /* already gone */ }
 }
 
-// Ein Gerät abmelden. id = Sitzungs-ID oder "dieses" (das anfragende Gerät)
+// Sign out one device. id = session ID or "dieses" (the requesting device)
 function abmelden(e, id) {
     const want = String(id || "");
     const sid = want === "dieses" ? sidOf(e) : cleanSid(want);
@@ -597,7 +597,7 @@ function abmelden(e, id) {
     }
     const sess = findSession(sid);
     if (!sess) { markRevoked(sid); return { success: true }; }
-    targetUser(e, sess.getString("benutzer")); // Rechte prüfen (wirft)
+    targetUser(e, sess.getString("benutzer")); // Check the rights (throws)
     const userId = sess.getString("benutzer");
     const gebunden = sess.getBool("gebunden");
     deleteSession(sess);
@@ -605,8 +605,8 @@ function abmelden(e, id) {
     return { success: true, dieses: sid === sidOf(e), gebunden: gebunden };
 }
 
-// Alle Geräte eines Profils abmelden. Eigenes Profil: das anfragende Gerät bleibt angemeldet und
-// bekommt eine neue Anmeldung (Rückgabe rec, die Route schickt sie per recordAuthResponse zurück).
+// Sign out all devices of a profile. Own profile: the requesting device stays signed in and
+// gets a new sign-in (returns rec, the route sends it back via recordAuthResponse).
 function alleAbmelden(e, userId) {
     const rec = targetUser(e, userId);
     const own = rec.id === e.auth.id;
@@ -622,14 +622,14 @@ function alleAbmelden(e, userId) {
             n++;
         });
     }
-    // Übrige Push-Abos des Profils (z. B. von Geräten ohne Sitzung) ebenfalls entfernen
+    // Also remove the remaining push subscriptions of the profile (e.g. from devices without a session)
     try {
         $app.findRecordsByFilter("push_abos", "benutzer = {:u}", "", 0, 0, { u: rec.id }).forEach(a => {
             if (keepPush && a.getString("endpoint") === keepPush) return;
-            try { $app.delete(a); } catch (err) { /* egal */ }
+            try { $app.delete(a); } catch (err) { /* ignore */ }
         });
-    } catch (err) { /* keine Push-Sammlung */ }
-    // Token-Schlüssel erneuern: alle bisherigen Anmeldungen (auch ohne Sitzungs-ID) werden ungültig
+    } catch (err) { /* no push collection */ }
+    // Renew the token key: all previous sign-ins (also without a session ID) become invalid
     try {
         rec.refreshTokenKey();
         $app.save(rec);
@@ -640,7 +640,7 @@ function alleAbmelden(e, userId) {
     return { rec: own ? $app.findRecordById(USERS, rec.id) : null, anzahl: n, own: own };
 }
 
-// Nach einer Passwortänderung bzw. einem Zurücksetzen: andere Sitzungen samt Push entfernen
+// After a password change or a reset: remove other sessions including push
 function entferneAndere(userId, keepSid) {
     if (!schemaReady()) return;
     try {
@@ -648,21 +648,21 @@ function entferneAndere(userId, keepSid) {
             if (keepSid && s.id === keepSid) return;
             deleteSession(s);
         });
-    } catch (err) { /* egal */ }
+    } catch (err) { /* ignore */ }
     trenneEchtzeit(String(userId));
 }
 
 // ---------------------------------------------------------------------------------------------
-// Push-Adresse der Sitzung zuordnen (push.pb.js)
+// Assign the push address to the session (push.pb.js)
 // ---------------------------------------------------------------------------------------------
 function merkePush(e, endpoint) {
     const sid = sidOf(e);
     if (!sid || !endpoint) return;
     const sess = findSession(sid);
     if (!sess || sess.getString("benutzer") !== e.auth.id) return;
-    // Dieselbe Push-Adresse bei einer anderen Sitzung:
-    //  - gleiches Profil -> dasselbe Gerät (z. B. Eintrag von vor einem App-Update): zusammenführen
-    //  - anderes Profil auf demselben Gerät -> dort nur die Push-Adresse entfernen
+    // The same push address on a different session:
+    //  - same profile -> same device (e.g. an entry from before an app update): merge
+    //  - different profile on the same device -> only remove the push address there
     let changed = false;
     try {
         $app.findRecordsByFilter(COL, "push = {:p} && id != {:id}", "", 20, 0, { p: endpoint, id: sid }).forEach(s => {
@@ -670,37 +670,37 @@ function merkePush(e, endpoint) {
                 if (!sess.getString("kennung") && s.getString("kennung")) { sess.set("kennung", s.getString("kennung")); changed = true; }
                 if (!sess.getString("geraet_id") && s.getString("geraet_id")) { sess.set("geraet_id", s.getString("geraet_id")); changed = true; }
                 markRevoked(s.id);
-                try { $app.delete(s); } catch (err) { /* schon weg */ }
+                try { $app.delete(s); } catch (err) { /* already gone */ }
                 return;
             }
             s.set("push", "");
-            try { $app.save(s); } catch (err) { /* egal */ }
+            try { $app.save(s); } catch (err) { /* ignore */ }
         });
-    } catch (err) { /* egal */ }
+    } catch (err) { /* ignore */ }
     if (sess.getString("push") !== endpoint) { sess.set("push", endpoint); changed = true; }
-    if (changed) { try { $app.save(sess); } catch (err) { /* egal */ } }
+    if (changed) { try { $app.save(sess); } catch (err) { /* ignore */ } }
 }
 function vergissPush(endpoint) {
     if (!endpoint || !schemaReady()) return;
     try {
         $app.findRecordsByFilter(COL, "push = {:p}", "", 20, 0, { p: String(endpoint) }).forEach(s => {
             s.set("push", "");
-            try { $app.save(s); } catch (err) { /* egal */ }
+            try { $app.save(s); } catch (err) { /* ignore */ }
         });
-    } catch (err) { /* egal */ }
+    } catch (err) { /* ignore */ }
 }
 function erneuerePush(alt, neu) {
     if (!alt || !neu || !schemaReady()) return;
     try {
         $app.findRecordsByFilter(COL, "push = {:p}", "", 20, 0, { p: String(alt) }).forEach(s => {
             s.set("push", String(neu));
-            try { $app.save(s); } catch (err) { /* egal */ }
+            try { $app.save(s); } catch (err) { /* ignore */ }
         });
-    } catch (err) { /* egal */ }
+    } catch (err) { /* ignore */ }
 }
 
 // ---------------------------------------------------------------------------------------------
-// Schutz je Netzwerk-Adresse
+// protection per network address
 // ---------------------------------------------------------------------------------------------
 function readIp(ip) {
     try {
@@ -708,7 +708,7 @@ function readIp(ip) {
         return { n: parseInt(p[0], 10) || 0, until: parseInt(p[1], 10) || 0, last: parseInt(p[2], 10) || 0, locks: parseInt(p[3], 10) || 0 };
     } catch (e) { return { n: 0, until: 0, last: 0, locks: 0 }; }
 }
-// Verbleibende Sperre der Adresse in Sekunden (0 = frei)
+// Remaining lock of the address in seconds (0 = free)
 function ipGesperrt(e) {
     const ip = clientIp(e);
     if (!ip) return 0;
@@ -716,7 +716,7 @@ function ipGesperrt(e) {
     const rest = l.until - Date.now();
     return rest > 0 ? Math.ceil(rest / 1000) : 0;
 }
-// Fehlversuch der Adresse zählen. Rückgabe: neue Sperre in Sekunden (0 = noch nicht gesperrt)
+// Count a failed attempt of the address. Returns: new lock in seconds (0 = not locked yet)
 function ipFehlversuch(e) {
     const ip = clientIp(e);
     if (!ip) return 0;
@@ -729,10 +729,10 @@ function ipFehlversuch(e) {
         const seconds = Math.min(IP_MAX_SPERRE_S, 60 * Math.pow(2, locks));
         until = now + seconds * 1000;
         locks++;
-        n = 0; // nach Ablauf der Sperre zählt es neu – die nächste Sperre wird länger
+        n = 0; // after the lock expires it counts afresh - the next lock gets longer
         protokoll().warnung("anmeldung", "Viele fehlgeschlagene Anmeldungen von der Adresse " + ip + " – für " + waitText(seconds) + " gesperrt.");
     }
-    try { $app.store().set(IP_PREFIX + ip, n + "|" + until + "|" + now + "|" + locks); } catch (err) { /* egal */ }
+    try { $app.store().set(IP_PREFIX + ip, n + "|" + until + "|" + now + "|" + locks); } catch (err) { /* ignore */ }
     return until ? Math.ceil((until - now) / 1000) : 0;
 }
 function waitText(seconds) {
@@ -740,8 +740,8 @@ function waitText(seconds) {
     catch (e) { return Math.max(1, Math.round(seconds)) + " Sekunden"; }
 }
 
-// Profil wurde wegen falscher Passwörter gesperrt: Fehlerprotokoll + Push an die Admins
-// (höchstens einmal je 15 Minuten und Profil)
+// A profile was locked because of wrong passwords: error log + push to the admins
+// (at most once per 15 minutes and profile)
 function meldeSperre(familyId, username, seconds) {
     const fam = String(familyId || "");
     const who = String(username || "");
@@ -751,7 +751,7 @@ function meldeSperre(familyId, username, seconds) {
         const last = parseInt(String($app.store().get(key) || "0"), 10) || 0;
         if (Date.now() - last < 15 * 60 * 1000) return;
         $app.store().set(key, String(Date.now()));
-    } catch (e) { /* egal */ }
+    } catch (e) { /* ignore */ }
     let admins = [];
     try {
         admins = fam
@@ -770,22 +770,22 @@ function meldeSperre(familyId, username, seconds) {
                 tag: "sicherheit-sperre-" + (fam || "hauptadmin"),
                 urgency: "high",
             });
-        } catch (e) { /* egal */ }
+        } catch (e) { /* ignore */ }
     });
 }
 
 // ---------------------------------------------------------------------------------------------
-// Aufräumen (nachts): Sitzungen, deren Anmeldung sicher abgelaufen ist
+// Clean up (at night): sessions whose sign-in has surely expired
 // ---------------------------------------------------------------------------------------------
-// Doppelte Einträge zusammenführen: gleiches Profil + gleiche Gerätemerkmale. Der zuletzt benutzte
-// Eintrag bleibt; ältere werden nur entfernt, wenn sie seit dem Anlegen des neueren nicht mehr
-// benutzt wurden (zwei wirklich gleichzeitig genutzte, baugleiche Geräte bleiben also getrennt).
-// Die Push-Adresse wandert zum bleibenden Eintrag, wenn der noch keine hat.
-// Früher gespeicherte Netzwerk-Adressen entfernen (ein einziger, schneller Datenbankbefehl)
+// Merge duplicate entries: same profile + same device characteristics. The most recently used
+// entry stays; older ones are only removed if they have not been used since the newer one was created
+// (two really simultaneously used, identical devices thus stay separate).
+// The push address moves to the remaining entry if it does not have one yet.
+// Remove network addresses stored earlier (a single, fast database command)
 function ipsLeeren() {
     if (!schemaReady()) return;
     try { $app.db().newQuery("UPDATE `" + COL + "` SET ip = '' WHERE ip != ''").execute(); }
-    catch (err) { /* Feld fehlt o. Ä. – egal */ }
+    catch (err) { /* field missing or similar - ignore */ }
 }
 
 function doppelteZusammenfuehren() {
@@ -810,7 +810,7 @@ function doppelteZusammenfuehren() {
         let keepChanged = false;
         for (let i = 1; i < g.length; i++) {
             const alt = g[i];
-            if (!keepSeit || aktivMs(alt) >= keepSeit) continue; // wird noch parallel benutzt
+            if (!keepSeit || aktivMs(alt) >= keepSeit) continue; // is still being used in parallel
             const altPush = alt.getString("push");
             let pushUebernommen = false;
             if (altPush && !keep.getString("push")) {
@@ -822,10 +822,10 @@ function doppelteZusammenfuehren() {
             if (!keep.getString("geraet_id") && alt.getString("geraet_id")) { keep.set("geraet_id", alt.getString("geraet_id")); keepChanged = true; }
             if (!pushUebernommen && altPush && altPush !== keep.getString("push")) removePushOf(alt);
             markRevoked(alt.id);
-            try { $app.delete(alt); n++; } catch (err) { /* schon weg */ }
+            try { $app.delete(alt); n++; } catch (err) { /* already gone */ }
         }
         if (!keep.getString("merkmal")) { keep.set("merkmal", merkmalVon(keep)); keepChanged = true; }
-        if (keepChanged) { try { $app.save(keep); } catch (err) { /* egal */ } }
+        if (keepChanged) { try { $app.save(keep); } catch (err) { /* ignore */ } }
     });
     if (n) console.log("[Geräte] " + n + " doppelte Geräte-Einträge zusammengeführt.");
     return n;

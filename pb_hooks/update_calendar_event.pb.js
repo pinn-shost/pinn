@@ -1,17 +1,17 @@
 // pb_hooks/update_calendar_event.pb.js
-// Aktualisiert einen BESTEHENDEN Termin WIRKLICH im Kalender (PUT auf dieselbe Ressource/UID) - in
-// iCloud oder im verbundenen Google-Konto (Android). Wird der Kalender gewechselt, wird der Termin
-// verschoben, auch zwischen iCloud und Google.
-// Eigene Kalender (pinn-kalender.js): Termine mit der Adresse "pinn-termin:<id>" bzw. Zielkalender
-// "pinn:<id>" werden auf diesem Server geändert - Verschieben zwischen eigenen Kalendern und
-// iCloud/Google geht in beide Richtungen.
-// Erwartet POST mit {href, uid, ...Termin-Feldern wie beim Anlegen} im Body. Löst danach sofort
-// einen neuen Sync aus, damit die Kalenderdatei aktuell ist.
-// Wer durch die Änderung NEU zugewiesen wurde, bekommt eine Push-Benachrichtigung (bereits
-// Zugewiesene nicht erneut - z. B. beim Abhaken einer Aufgabe). Nicht bei privaten Kalendern.
-// Es werden immer die Zugangsdaten der EIGENEN Familie verwendet (calendarSync.updateEventForFamily).
+// Updates an EXISTING event FOR REAL in the calendar (PUT to the same resource/UID) - in
+// iCloud or in the connected Google account (Android). If the calendar is changed, the event is
+// moved, also between iCloud and Google.
+// Own calendars (pinn-kalender.js): events with the address "pinn-termin:<id>" or target calendar
+// "pinn:<id>" are changed on this server - moving between own calendars and
+// iCloud/Google works in both directions.
+// Expects a POST with {href, uid, ...event fields as when creating} in the body. Afterwards immediately triggers
+// a new sync so that the calendar file is up to date.
+// Whoever was NEWLY assigned by the change gets a push notification (not again for those
+// already assigned - e.g. when ticking off a task). Not for private calendars.
+// The credentials of the OWN family are always used (calendarSync.updateEventForFamily).
 
-// Nur für Profile einer Familie (siehe pinn-benutzer.js).
+// Only for profiles of a family (see pinn-benutzer.js).
 routerAdd("POST", "/api/update-calendar-event", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const denied = lib.calendarDenied(e);
@@ -31,7 +31,7 @@ routerAdd("POST", "/api/update-calendar-event", (e) => {
     let privat = false;
     const pinnInvolved = /^pinn-termin:[a-z0-9]{15}$/.test(String(body.href)) || /^pinn:[a-z0-9]{15}$/.test(String(body.calendarName || ""));
     if (pinnInvolved) {
-        // Eigener Kalender beteiligt (ändern oder verschieben)
+        // Own calendar involved (change or move)
         try {
             privat = require(`${__hooks}/pinn-kalender.js`).updateEvent(e, body.href, body.uid, body).privat;
         } catch (err) {
@@ -41,7 +41,7 @@ routerAdd("POST", "/api/update-calendar-event", (e) => {
         try {
             const calendarSync = require(`${__hooks}/calendar-sync.js`);
             calendarSync.updateEventForFamily(familyId, body.href, body.uid, body);
-            calendarSync.syncCalendarFileOnly(familyId); // nur Kalenderdatei aktualisieren - KEINE Haushalts-Erkennung (sonst kommen geloeschte, aber "heute noch faellige" Aufgaben sofort wieder)
+            calendarSync.syncCalendarFileOnly(familyId); // only update the calendar file - NO household detection (otherwise deleted tasks that are "still due today" come right back)
         } catch (err) {
             return e.json(200, { error: err.message });
         }

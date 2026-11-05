@@ -1,42 +1,42 @@
 // pb_hooks/pinn-ki.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden.
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require().
 //
-// KI-Auswertung mit Google Gemini: Rezepte (Rezept-Popup), Zählerstände (Menü „Haus“ → Zähler),
-// Stundenpläne und Elternbriefe (Familie → Schule & Kita).
-// Die App spricht NIE direkt mit Google: Text, Fotos, PDFs oder ein Rezept-Link gehen an den
-// eigenen Server (ki.pb.js), der sie mit dem Gemini-Schlüssel aus der .env an Google schickt und
-// nur das fertig sortierte Rezept zurückgibt. Der Schlüssel verlässt den Server nicht.
+// AI evaluation with Google Gemini: recipes (recipe popup), meter readings (menu "House" → Meters),
+// timetables and parent letters (Family → School & daycare).
+// The app NEVER talks to Google directly: text, photos, PDFs or a recipe link go to the
+// own server (ki.pb.js), which sends them to Google with the Gemini key from the .env and
+// returns only the finished, sorted recipe. The key never leaves the server.
 //
-// Einrichtung (einmalig für den ganzen Server) in der .env neben der docker-compose.yaml:
-//   PINN_GEMINI_KEY=<API-Schlüssel aus https://aistudio.google.com/apikey>
-//   PINN_GEMINI_MODELL=            (optional, leer = automatisch das aktuelle Flash-Modell)
-// Ohne Schlüssel ist die KI aus und die App nutzt wie bisher ihren eigenen Auswerter.
+// Set-up (once for the whole server) in the .env next to docker-compose.yaml:
+//   PINN_GEMINI_KEY=<API key from https://aistudio.google.com/apikey>
+//   PINN_GEMINI_MODELL=            (optional, empty = automatically the current Flash model)
+// Without a key the AI is off and the app uses its own evaluator as before.
 //
-// Ergebnis (immer in diesem Format, passend zum Rezept-Formular):
+// Result (always in this format, matching the recipe form):
 //   { title, ingredients[], steps[], servings, prepTime, cookTime, categories[], tools[], bild, quelle }
-//   ingredients: "Menge Einheit Zutat" (z. B. "200 g Spaghetti"), Zwischenüberschriften mit ":"
-//   categories/tools: nur Namen, die es in der Familie schon gibt
-//   bild: bei Rezept-Links das Rezeptbild als data:-URL (falls ladbar), sonst ""
+//   ingredients: "amount unit ingredient" (e.g. "200 g Spaghetti"), subheadings with ":"
+//   categories/tools: only names that already exist in the family
+//   bild: for recipe links the recipe image as a data: URL (if loadable), otherwise ""
 
 const KEY_ENV = "PINN_GEMINI_KEY";
 const MODEL_ENV = "PINN_GEMINI_MODELL";
-// "gemini-flash-latest" zeigt bei Google immer auf das aktuelle Flash-Modell; die festen Namen
-// dienen als Ersatz, falls der Alias einmal nicht verfügbar ist.
-// Die Lite-Modelle sind bei Google deutlich seltener überlastet und reichen fürs Sortieren eines
-// Rezepts völlig aus. Modelle, die es (nicht mehr) gibt, werden automatisch übersprungen.
+// At Google, "gemini-flash-latest" always points to the current Flash model; the fixed names
+// serve as a fallback in case the alias is ever unavailable.
+// The Lite models are overloaded much less often at Google and are entirely sufficient for sorting
+// a recipe. Models that do not (or no longer) exist are skipped automatically.
 const DEFAULT_MODELS = [
     "gemini-flash-latest", "gemini-2.5-flash",
     "gemini-flash-lite-latest", "gemini-2.5-flash-lite",
     "gemini-2.0-flash", "gemini-2.0-flash-lite",
 ];
-// Wartezeiten bei "überlastet" (503/500) vor dem 2. und 3. Versuch desselben Modells
+// Waiting times on "overloaded" (503/500) before the 2nd and 3rd attempt with the same model
 const BUSY_WAITS = [2000, 5000];
-// Gesamtzeit für alle Gemini-Versuche zusammen (die App bricht nach 150 s ab)
+// Total time for all Gemini attempts together (the app gives up after 150 s)
 const GEMINI_BUDGET_MS = 110000;
 const API_BASE = "https://generativelanguage.googleapis.com/v1beta/models/";
 
 const MAX_FILES = 6;
-const MAX_TOTAL_BASE64 = 18 * 1024 * 1024;   // Google erlaubt ~20 MB je Anfrage
+const MAX_TOTAL_BASE64 = 18 * 1024 * 1024;   // Google allows ~20 MB per request
 const MAX_TEXT = 60000;
 const MAX_PAGE_TEXT = 45000;
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
@@ -76,13 +76,13 @@ function cleanNumber(v, max) {
 }
 
 function bodyText(res) {
-    try { if (typeof res.raw === "string" && res.raw) return res.raw; } catch (e) { /* weiter */ }
-    try { return toString(res.body); } catch (e) { /* weiter */ }
+    try { if (typeof res.raw === "string" && res.raw) return res.raw; } catch (e) { /* continue */ }
+    try { return toString(res.body); } catch (e) { /* continue */ }
     return "";
 }
 function parseJson(res) {
-    try { return JSON.parse(bodyText(res) || ""); } catch (e) { /* weiter */ }
-    try { if (res.json && typeof res.json === "object") return res.json; } catch (e) { /* egal */ }
+    try { return JSON.parse(bodyText(res) || ""); } catch (e) { /* continue */ }
+    try { if (res.json && typeof res.json === "object") return res.json; } catch (e) { /* ignore */ }
     return {};
 }
 function googleError(obj, status) {
@@ -99,19 +99,19 @@ function headerValue(res, name) {
                 return String(Array.isArray(v) ? v[0] : v || "");
             }
         }
-    } catch (e) { /* egal */ }
+    } catch (e) { /* ignore */ }
     return "";
 }
 
 // ---------------------------------------------------------------------------------------------
-// Base64 (Goja hat kein btoa) - für das Rezeptbild aus einem Link
+// Base64 (Goja has no btoa) - for the recipe image from a link
 // ---------------------------------------------------------------------------------------------
 const B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 function bytesOf(res) {
     let b = null;
     try { b = res.body; } catch (e) { b = null; }
     if (!b) return null;
-    try { if (typeof ArrayBuffer !== "undefined" && b instanceof ArrayBuffer) return new Uint8Array(b); } catch (e) { /* weiter */ }
+    try { if (typeof ArrayBuffer !== "undefined" && b instanceof ArrayBuffer) return new Uint8Array(b); } catch (e) { /* continue */ }
     if (typeof b === "string") return null;
     return b;
 }
@@ -134,7 +134,7 @@ function base64FromBytes(bytes) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Rezept-Link: Seite auf dem Server laden (nur öffentliche Adressen, nie das Heimnetz)
+// Recipe link: load the page on the server (public addresses only, never the home network)
 // ---------------------------------------------------------------------------------------------
 function isUrl(text) {
     return /^https?:\/\/[^\s]+$/i.test(String(text || "").trim());
@@ -142,9 +142,9 @@ function isUrl(text) {
 function isPrivateHost(host) {
     const h = String(host || "").toLowerCase().replace(/^\[|\]$/g, "");
     if (!h || h === "localhost" || /\.(local|lan|home|internal|fritz\.box|duckdns\.org)$/.test(h) || h === "fritz.box") return true;
-    if (h.indexOf(":") >= 0) return true; // IPv6-Adressen direkt: nicht erlaubt
+    if (h.indexOf(":") >= 0) return true; // IPv6 addresses directly: not allowed
     const m = h.match(/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/);
-    if (!m) return /^[a-z0-9-]+$/.test(h); // einzelner Rechnername ohne Punkt = Heimnetz
+    if (!m) return /^[a-z0-9-]+$/.test(h); // a single host name without a dot = home network
     const a = +m[1], b = +m[2];
     return a === 10 || a === 127 || a === 0 || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31)
         || (a === 192 && b === 168) || (a === 100 && b >= 64 && b <= 127) || a >= 224;
@@ -173,10 +173,10 @@ function decodeEntities(s) {
         .replace(/&Auml;/g, "Ä").replace(/&Ouml;/g, "Ö").replace(/&Uuml;/g, "Ü").replace(/&szlig;/g, "ß")
         .replace(/&#(\d+);/g, (x, n) => { try { return String.fromCharCode(parseInt(n, 10)); } catch (e) { return ""; } })
         .replace(/&#x([0-9a-f]+);/gi, (x, n) => { try { return String.fromCharCode(parseInt(n, 16)); } catch (e) { return ""; } })
-        .replace(/&amp;/gi, "&"); // zuletzt, damit aus "&amp;lt;" nicht "<" wird (kein doppeltes Entschlüsseln)
+        .replace(/&amp;/gi, "&"); // last, so that "&amp;lt;" does not become "<" (no double decoding)
 }
-// Lädt die Rezeptseite. Manche Seiten (z. B. Chefkoch) blocken wiederholte Abrufe kurzzeitig -
-// dann einmal kurz warten und mit einer Desktop-Browser-Kennung erneut versuchen.
+// Loads the recipe page. Some pages (e.g. Chefkoch) briefly block repeated requests -
+// then wait a moment and try again with a desktop browser identifier.
 const PAGE_AGENTS = [
     "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15",
@@ -202,16 +202,16 @@ function fetchText(url) {
         }
         if (res.statusCode >= 200 && res.statusCode < 300) return bodyText(res);
         lastStatus = res.statusCode;
-        if (res.statusCode === 404 || res.statusCode === 410) break; // gibt es nicht - kein zweiter Versuch
+        if (res.statusCode === 404 || res.statusCode === 410) break; // does not exist - no second attempt
     }
     if (lastStatus === 404 || lastStatus === 410) throw new Error("Die Rezeptseite gibt es nicht (mehr) – bitte den Link prüfen.");
     if (lastStatus === 403 || lastStatus === 429) throw new Error("Die Rezeptseite blockt gerade den Abruf (Status " + lastStatus + ") – bitte in ein paar Minuten noch einmal versuchen.");
     throw new Error("Die Rezeptseite antwortet nicht (Status " + lastStatus + ").");
 }
 function pause(ms) {
-    try { if (typeof sleep === "function") sleep(ms); } catch (e) { /* egal */ }
+    try { if (typeof sleep === "function") sleep(ms); } catch (e) { /* ignore */ }
 }
-// Aus der Seite: strukturierte Rezeptdaten (JSON-LD), Bild-Adresse und lesbarer Text
+// From the page: structured recipe data (JSON-LD), image address and readable text
 function pageContent(url) {
     const html = String(fetchText(url) || "").slice(0, 3 * 1024 * 1024);
     if (!html) throw new Error("Die Rezeptseite war leer.");
@@ -257,9 +257,9 @@ function pageContent(url) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Ersatz ohne KI: Rezept direkt aus den strukturierten Daten der Seite (schema.org/Recipe)
-// Fast alle großen Rezeptseiten liefern diese mit. Wird genutzt, wenn Gemini überlastet ist
-// oder das Kontingent aufgebraucht ist - dann gibt es das Rezept trotzdem (nur ohne Übersetzung).
+// Fallback without AI: recipe directly from the page's structured data (schema.org/Recipe)
+// Almost all large recipe sites provide it. It is used if Gemini is overloaded
+// or the quota is used up - then the recipe is still delivered (just without translation).
 // ---------------------------------------------------------------------------------------------
 function findLdRecipe(o, depth) {
     if (!o || typeof o !== "object" || depth > 6) return null;
@@ -279,7 +279,7 @@ function ldText(v) {
         .replace(/[ \t\r\f\v]+/g, " ").replace(/ ([.,;:!?])/g, "$1").trim();
 }
 function ldMinutes(v) {
-    // ISO 8601: PT1H30M, P0DT0H20M, PT45M ... oder schon eine Zahl
+    // ISO 8601: PT1H30M, P0DT0H20M, PT45M ... or already a number
     if (typeof v === "number") return v;
     const s = String(v || "").trim().toUpperCase();
     const m = s.match(/^P(?:(\d+(?:\.\d+)?)D)?(?:T(?:(\d+(?:\.\d+)?)H)?(?:(\d+(?:\.\d+)?)M)?(?:(\d+(?:\.\d+)?)S)?)?$/);
@@ -321,7 +321,7 @@ function recipeFromLd(page, categories) {
         .map(ldText).map(normalizeIngredient).filter(Boolean).slice(0, 300);
     const steps = ldSteps(r.recipeInstructions, [], 0).map(normalizeStep).filter(Boolean).slice(0, 200);
     if (!ingredients.length || !steps.length) return null;
-    // Kategorien: nur vorhandene Familien-Kategorien, die in Kategorie/Küche/Stichworten der Seite vorkommen
+    // Categories: only existing family categories that occur in the page's category/cuisine/keywords
     const hay = [].concat(r.recipeCategory || [], r.recipeCuisine || [], r.keywords || [])
         .map(ldText).join(", ").toLowerCase();
     const cats = hay ? categories.filter(c => hay.indexOf(c.toLowerCase()) >= 0).slice(0, 3) : [];
@@ -341,7 +341,7 @@ function recipeFromLd(page, categories) {
         __modell: "Seitendaten (ohne KI)",
     };
 }
-// Rezeptbild als data:-URL (für das Bild-Feld im Formular). Fehler = kein Bild.
+// Recipe image as a data: URL (for the image field in the form). Error = no image.
 function fetchImageDataUrl(url) {
     try {
         if (!url || !/^https?:\/\//i.test(url) || isPrivateHost(hostOf(url))) return "";
@@ -412,7 +412,7 @@ function schema(categories, tools) {
     };
 }
 
-// custom = { system, schema } für andere Auswertungen als Rezepte (z. B. Zählerstände)
+// custom = { system, schema } for evaluations other than recipes (e.g. meter readings)
 function callGemini(parts, categories, tools, custom) {
     const key = apiKey();
     if (!key) throw new Error("Die KI ist auf dem Server nicht eingerichtet (PINN_GEMINI_KEY fehlt in der .env).");
@@ -435,8 +435,8 @@ function callGemini(parts, categories, tools, custom) {
     for (let i = 0; i < list.length && !timeUp; i++) {
         const model = list[i];
         let res = null;
-        // Ausgelastet (503/500) kommt bei Gemini oft nur kurz vor: kurz warten und dasselbe
-        // Modell erneut versuchen (bis zu 3-mal), danach das nächste Modell.
+        // "Overloaded" (503/500) with Gemini often only lasts briefly: wait a moment and try the same
+        // model again (up to 3 times), then the next model.
         for (let attempt = 0; attempt <= BUSY_WAITS.length; attempt++) {
             if (attempt > 0) {
                 if (Date.now() + BUSY_WAITS[attempt - 1] + 10000 > deadline) break;
@@ -452,7 +452,7 @@ function callGemini(parts, categories, tools, custom) {
                     body: payload,
                 });
             } catch (err) {
-                // Zeitüberschreitung/Netzfehler bei einem Modell: nächstes Modell probieren
+                // Timeout/network error with a model: try the next model
                 res = null;
                 netError = err.message;
                 console.log("[KI] " + model + " nicht erreichbar: " + err.message);
@@ -470,7 +470,7 @@ function callGemini(parts, categories, tools, custom) {
         if (res.statusCode === 400 && /schema|enum|propertyOrdering/i.test(googleError(body, 400)) && i < list.length - 1) {
             lastError = googleError(body, 400); continue;
         }
-        // Kontingent gilt bei Google je Modell - erst die übrigen Modelle probieren
+        // At Google the quota applies per model - try the remaining models first
         if (res.statusCode === 429) { quotaHit = true; lastError = "Kontingent von " + model + " aufgebraucht"; continue; }
         if (res.statusCode === 403) {
             throw new Error("Google lehnt den Zugriff ab (403): " + googleError(body, 403)
@@ -501,7 +501,7 @@ function callGemini(parts, categories, tools, custom) {
     throw new Error("Kein Gemini-Modell verfügbar (" + lastError + ").");
 }
 
-// Kategorien/Geräte nur übernehmen, wenn es sie in der Familie gibt (gleiche Schreibweise wie dort)
+// Only take over categories/devices if they exist in the family (same spelling as there)
 function matchNames(list, allowed) {
     const byLower = {};
     allowed.forEach(a => { byLower[a.toLowerCase()] = a; });
@@ -524,9 +524,9 @@ function normalizeStep(line) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Einstieg für die Route
+// Entry point for the route
 // ---------------------------------------------------------------------------------------------
-// input: { text, dateien: [{ mime, daten (base64 ohne data:-Präfix), name }], kategorien[], geraete[] }
+// input: { text, dateien: [{ mime, daten (base64 without the data: prefix), name }], kategorien[], geraete[] }
 function analyzeRecipe(input) {
     const data = input && typeof input === "object" ? input : {};
     const categories = cleanList(data.kategorien, 80, 60);
@@ -574,7 +574,7 @@ function analyzeRecipe(input) {
     try {
         r = callGemini(parts, categories, tools);
     } catch (err) {
-        // Rezept-Link und Gemini klappt gerade nicht: Rezept aus den Seitendaten übernehmen
+        // Recipe link and Gemini is currently not working: take over the recipe from the page data
         const fallback = page ? recipeFromLd(page, categories) : null;
         if (!fallback) throw err;
         console.log("[KI] Gemini nicht nutzbar (" + err.message + ") – Rezept aus den Seitendaten übernommen.");
@@ -601,9 +601,9 @@ function analyzeRecipe(input) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Zählerstand vom Foto (Menü „Haus“ → Zähler)
+// Meter reading from a photo (menu "House" → Meters)
 // ---------------------------------------------------------------------------------------------
-// input: { dateien: [{ mime, daten }], art (z. B. "Strom"), einheit ("kWh" | "m³"), letzter (Zahl), nummer }
+// input: { dateien: [{ mime, daten }], art (e.g. "Strom"), einheit ("kWh" | "m³"), letzter (number), nummer }
 // -> { stand, nummer, sicher (0..1), hinweis }
 function meterInstructions(art, unit, last, number) {
     return [
@@ -669,7 +669,7 @@ function analyzeMeter(input) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Schule & Kita: gemeinsame Dateiprüfung (Fotos und PDF)
+// School & daycare: shared file check (photos and PDF)
 // ---------------------------------------------------------------------------------------------
 function schoolParts(data, maxFiles) {
     const files = Array.isArray(data.dateien) ? data.dateien.slice(0, maxFiles) : [];
@@ -693,10 +693,10 @@ function isHm(s) { return /^([01]\d|2[0-3]):[0-5]\d$/.test(String(s || "")); }
 function isIso(s) { return /^\d{4}-\d{2}-\d{2}$/.test(String(s || "")); }
 
 // ---------------------------------------------------------------------------------------------
-// Stundenplan vom Foto (Familie → Schule & Kita)
+// Timetable from a photo (Family → School & daycare)
 // ---------------------------------------------------------------------------------------------
 // input: { dateien: [{ mime, daten }], kind, klasse }
-// -> { zeiten: [{ von, bis }], stunden: [{ tag 1–5, stunde ab 1, fach, raum }], hinweis }
+// -> { zeiten: [{ von, bis }], stunden: [{ tag 1–5, stunde from 1, fach, raum }], hinweis }
 function timetableInstructions(kind, klasse) {
     return [
         "Du liest Stundenpläne für die Familien-App pinn. von einem Foto oder PDF ab.",
@@ -739,9 +739,9 @@ function analyzeTimetable(input) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Elternbrief vom Foto oder PDF (Familie → Schule & Kita)
+// Parent letter from a photo or PDF (Family → School & daycare)
 // ---------------------------------------------------------------------------------------------
-// input: { dateien: [{ mime, daten }], heute (JJJJ-MM-TT), kinder[], einrichtungen[] }
+// input: { dateien: [{ mime, daten }], heute (YYYY-MM-DD), kinder[], einrichtungen[] }
 // -> { titel, absender, aktion, frist, betrag, zusammenfassung, schliesstage: [{ von, bis, grund }], hinweis }
 const LETTER_ACTIONS = ["unterschreiben", "bezahlen", "mitbringen", "anmelden", "lesen"];
 function letterInstructions(today, kids, places) {

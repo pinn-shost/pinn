@@ -1,23 +1,23 @@
 // pb_hooks/aufgaben.pb.js
-// Aufgaben auf dem NAS (PocketBase-Sammlung "aufgaben") statt im Apple-Aufgaben-Kalender.
-// Die Logik steckt in pinn-aufgaben.js.
+// Tasks on the NAS (PocketBase collection "aufgaben") instead of in the Apple tasks calendar.
+// The logic lives in pinn-aufgaben.js.
 //
-// Routen (alle nur angemeldet, jede Familie sieht nur ihre eigenen Aufgaben):
-//   GET  /api/pinn/aufgaben                  alle Aufgaben
+// Routes (all signed-in only, each family only sees its own tasks):
+//   GET  /api/pinn/aufgaben                  all tasks
 //   POST /api/pinn/aufgaben/speichern        {id?, title, notes, dueDate, fromTime?, toTime?, neu?}
-//                                            neu = true: Hinweis für die Glocke der übrigen Familie
+//                                            neu = true: notice for the bell of the rest of the family
 //                                            (pinn-hinweise.js)
 //   POST /api/pinn/aufgaben/erledigt         {id, done}  -> {aufgabe, alleErledigt}
-//                                            beim Abhaken: Benachrichtigung "alle erledigt" bzw.
-//                                            Fortschritt eines Kindes (pinn-push.js); die übrige
-//                                            Familie sieht es unter der Glocke (pinn-hinweise.js)
+//                                            when ticking off: notification "all completed" or
+//                                            a child's progress (pinn-push.js); the rest of the
+//                                            family sees it under the bell (pinn-hinweise.js)
 //   POST /api/pinn/aufgaben/loeschen         {id}
-//   POST /api/pinn/aufgaben/haushalt-jetzt   Haushalts-Aufgaben sofort prüfen/anlegen
-//   GET  /api/pinn/aufgaben/statistik?tage=30|90|365   „Wer macht wie viel?“ (Haushalt, inkl. Reihum)
-//   POST /api/pinn/aufgaben/belohnung        {memberId, titel, sterne} Kind möchte Sterne eintauschen ->
-//                                            Benachrichtigung an die Eltern (Kinderseite)
+//   POST /api/pinn/aufgaben/haushalt-jetzt   check/create household tasks immediately
+//   GET  /api/pinn/aufgaben/statistik?tage=30|90|365   "Who does how much?" (household, incl. rotation)
+//   POST /api/pinn/aufgaben/belohnung        {memberId, titel, sterne} child wants to exchange stars ->
+//                                            notification to the parents (kids' page)
 //
-// Zeitplan: einmal pro Stunde (Minute 7) für alle Familien Haushalts-Aufgaben prüfen und erledigte aufräumen.
+// Schedule: once per hour (minute 7) check household tasks for all families and clean up completed ones.
 
 cronAdd("pinnAufgaben", "7 * * * *", () => {
     try {

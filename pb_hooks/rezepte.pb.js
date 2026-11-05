@@ -1,20 +1,20 @@
 // pb_hooks/rezepte.pb.js
-// Öffentliche Rezepte über alle Familien hinweg. Die Logik steckt in pinn-rezepte.js.
+// Public recipes across all families. The logic lives in pinn-rezepte.js.
 //
-// Beim Start (über pinn-schema.js): legt die Sammlung "oeffentliche_rezepte" an bzw. ergänzt fehlende Felder.
-// Befüllt wird sie beim Speichern der Familiendaten (save_family_data.pb.js) - jedes Rezept mit
-// gesetztem Haken "Rezept öffentlich teilen" landet dort, entfernte Haken/gelöschte Rezepte
-// verschwinden wieder.
+// On start (via pinn-schema.js): creates the collection "oeffentliche_rezepte" or adds missing fields.
+// It is filled when saving the family data (save_family_data.pb.js) - every recipe with the
+// tick "Share recipe publicly" set ends up there, removed ticks/deleted recipes
+// disappear again.
 //
-// Wird eine Familie gelöscht, bleiben ihre öffentlichen Rezepte (samt Bildern) erhalten und
-// erscheinen danach für alle unter "Rezepte Familie" (siehe pinn-rezepte.js, detachFamily).
+// If a family is deleted, its public recipes (including images) are kept and
+// afterwards appear for everyone under "Rezepte Familie" (see pinn-rezepte.js, detachFamily).
 //
-// Route (nur angemeldet):
-//   GET /api/pinn/rezepte/oeffentlich   alle öffentlichen Rezepte aller Familien
-//                                        (eigene sind mit "eigene: true" gekennzeichnet)
+// Route (signed in only):
+//   GET /api/pinn/rezepte/oeffentlich   all public recipes of all families
+//                                        (own ones are marked with "eigene: true")
 
-// Vor dem Löschen einer Familie: öffentliche Rezepte in die "Rezepte Familie" verschieben.
-// Ein Fehler hier wird nur geloggt und verhindert das Löschen nicht.
+// Before deleting a family: move public recipes into the "Rezepte Familie".
+// An error here is only logged and does not prevent the deletion.
 onRecordDelete((e) => {
     try {
         require(`${__hooks}/pinn-rezepte.js`).detachFamily(e.app, e.record.id);

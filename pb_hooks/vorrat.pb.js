@@ -1,14 +1,14 @@
 // pb_hooks/vorrat.pb.js
-// Vorrat 2.0: Mindesthaltbarkeit (Push) und Barcode-Abfrage. Die Logik steckt in pinn-vorrat.js.
+// Pantry 2.0: best-before date (push) and barcode lookup. The logic lives in pinn-vorrat.js.
 //
-// Routen (nur angemeldet, nicht für Gastkonten):
-//   GET  /api/pinn/vorrat/barcode?code=4006381333931   Produktname, Marke, Menge, Kategorie-Hinweis
-//                                                      aus Open Food / Beauty / Products / Pet Food Facts
-//   POST /api/pinn/vorrat/pruefen                      fällige MHD-Erinnerungen der eigenen Familie jetzt
-//                                                      verschicken (die App ruft das nach dem Speichern auf;
-//                                                      nur zwischen 9 und 21 Uhr, nichts wird doppelt geschickt)
+// Routes (signed in only, not for guest accounts):
+//   GET  /api/pinn/vorrat/barcode?code=4006381333931   product name, brand, quantity, category hint
+//                                                      from Open Food / Beauty / Products / Pet Food Facts
+//   POST /api/pinn/vorrat/pruefen                      send due BBD reminders of the own family now
+//                                                      (the app calls this after saving;
+//                                                      only between 9 a.m. and 9 p.m., nothing is sent twice)
 //
-// Zeitplan: stündlich (Minute 41) - die eigentliche Prüfung aller Familien läuft nur einmal am Tag ab 9 Uhr.
+// Schedule: hourly (minute 41) - the actual check of all families only runs once a day from 9 a.m.
 
 cronAdd("pinnVorrat", "41 * * * *", () => {
     try {

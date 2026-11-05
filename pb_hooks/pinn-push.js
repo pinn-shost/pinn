@@ -1,37 +1,37 @@
 // pb_hooks/pinn-push.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden.
-// Persönliche Push-Benachrichtigungen für pinn.:
-//  - Terminerinnerungen (Vorlaufzeit je Profil einstellbar)
-//  - Tagesübersicht zur Wunschzeit (eigene Termine, Aufgaben, Essen des Tages) - Aufgaben kommen
-//    aus der PocketBase-Sammlung "aufgaben" (pinn-aufgaben.js), nicht mehr aus dem Kalender
-//  - Hinweis, wenn einem jemand einen Termin / eine Aufgabe zuweist
-//  - Hinweis, wenn jemand alle bis jetzt fälligen Aufgaben erledigt hat
-//  - Hinweis, wenn ein Kind eine Aufgabe (Kinderseite oder Aufgabenliste) bzw. alle erledigt hat
-//  - Pinnwand: neue Zettel, Antworten/Reaktionen und Zettel-Erinnerungen (Versand in pinn-pinnwand.js,
-//    die Einstellungen pwAlle / pwMich / pwAntworten / pwErinnerung liegen hier mit den übrigen)
-//    Erledigt-Meldungen gehen erst 10 Sekunden nach dem Abhaken raus (versehentliches Abhaken
-//    wird so nicht gemeldet). Wird eine Aufgabe zurückgesetzt und neu abgehakt, kommt die
-//    Meldung erneut.
-//  - Sprache und Wohnform: Jede Nachricht wird vor dem Versand für den Empfänger umgeschrieben
-//    (Sprache seines Profils, Familie/WG aus den Familiendaten) - Übersetzungen in pinn-pushtext.js.
-//  - Jede Nachricht erscheint zusätzlich unter der 🔔 Glocke des Empfängers (pinn-hinweise.js#pushMirror),
-//    mit Link zur passenden Stelle (?termin=, ?aufgabe= …) - Terminerinnerungen und Tagesübersicht
-//    verschwinden dort wieder, wenn sie vorbei sind.
-// Zugeordnet wird über die "Zugewiesen: ..."-Zeile der Termine und die Verknüpfung
-// Profil (Sammlung "benutzer", Feld "mitglied") <-> Familienmitglied.
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require().
+// Personal push notifications for pinn.:
+//  - Event reminders (lead time adjustable per profile)
+//  - Daily overview at the desired time (own events, tasks, the day's meals) - tasks come
+//    from the PocketBase collection "aufgaben" (pinn-aufgaben.js), no longer from the calendar
+//  - Notice when someone assigns you an event / a task
+//  - Notice when someone has completed all tasks that are due so far
+//  - Notice when a child has completed a task (kids' page or task list) or all of them
+//  - Pinboard: new notes, replies/reactions and note reminders (sent in pinn-pinnwand.js,
+//    the settings pwAlle / pwMich / pwAntworten / pwErinnerung live here with the others)
+//    Completion messages only go out 10 seconds after ticking off (accidental ticking off
+//    is thus not reported). If a task is reset and ticked off again, the
+//    message comes again.
+//  - Language and living arrangement: every message is rewritten for the recipient before sending
+//    (language of their profile, family/flat share from the family data) - translations in pinn-pushtext.js.
+//  - Every message additionally appears under the recipient's 🔔 bell (pinn-hinweise.js#pushMirror),
+//    with a link to the matching place (?termin=, ?aufgabe= ...) - event reminders and daily overview
+//    disappear there again once they are over.
+// Assignment works via the "Zugewiesen: ..." line of the events and the link
+// profile (collection "benutzer", field "mitglied") <-> family member.
 //
-// Technik: Standard-Web-Push (VAPID, ES256). Die Signatur wird hier in reinem JavaScript
-// gerechnet, weil PocketBase dafür keine eingebaute Funktion hat. Gesendet wird nur ein
-// inhaltsloser "Weckruf"; der Service Worker (pb_public/sw.js) holt den Text anschließend selbst
-// über /api/pinn/push/abholen ab. Dadurch entfällt die aufwendige Payload-Verschlüsselung und es
-// liegen keine Inhalte bei Apple/Google.
-// Zeiten: Kalenderzeiten werden als mitteleuropäische Zeit (MEZ/MESZ) behandelt.
-// Neustart/Update: Geräte-Anmeldungen (Sammlung push_abos) und der Schlüssel (pb_data) bleiben
-// erhalten. Zusätzlich werden vorgemerkte Meldungen, "schon gesendet"-Sperren und das Zeitfenster
-// der Terminerinnerungen in pb_data gesichert, damit nach einem Neustart nichts verloren geht,
-// nichts doppelt kommt und Erinnerungen aus der Ausfallzeit (bis 30 Min.) nachgeholt werden.
-// Tauscht ein Gerät seine Push-Adresse aus, meldet der Service Worker das über
-// /api/pinn/push/abo-erneuern - das Gerät bleibt so ohne erneutes Aktivieren angemeldet.
+// Technology: standard web push (VAPID, ES256). The signature is computed here in plain JavaScript,
+// because PocketBase has no built-in function for it. Only a content-free
+// "wake-up call" is sent; the service worker (pb_public/sw.js) then fetches the text itself
+// via /api/pinn/push/abholen. This removes the complex payload encryption and
+// no content lies with Apple/Google.
+// Times: calendar times are treated as Central European Time (CET/CEST).
+// Restart/update: device registrations (collection push_abos) and the key (pb_data) are
+// kept. In addition, queued messages, "already sent" locks and the time window
+// of the event reminders are backed up in pb_data, so that nothing is lost after a restart,
+// nothing comes twice and reminders from the downtime (up to 30 min.) are made up for.
+// If a device swaps its push address, the service worker reports this via
+// /api/pinn/push/abo-erneuern - the device thus stays registered without activating again.
 
 // --- P-256 / ES256 (reines JavaScript, BigInt) ---
 function big(v) { return BigInt(v); }
@@ -51,7 +51,7 @@ function einv(a, m) {
     }
     return emod(lm, m);
 }
-// Jacobi-Koordinaten [X, Y, Z]
+// Jacobian coordinates [X, Y, Z]
 function jDouble(p) {
     const X = p[0], Y = p[1], Z = p[2];
     if (Y === B0) return [B0, B1, B0];
@@ -133,8 +133,8 @@ function ecdsaSign(hashHex, d, randHex) {
     throw new Error("Signatur fehlgeschlagen");
 }
 
-// --- Zeit & Kalender ---
-// --- Zeit (Mitteleuropa, feste EU-Sommerzeitregel) ---
+// --- Time & calendar ---
+// --- Time (Central Europe, fixed EU daylight saving rule) ---
 const MIN_MS = 60000, HOUR_MS = 3600000, DAY_MS = 86400000;
 function lastSundayUtc(year, month) {
     const last = new Date(Date.UTC(year, month + 1, 0));
@@ -189,7 +189,7 @@ function parseIcsEvents(text) {
             else if (name === "STATUS") ev.status = value.trim().toUpperCase();
             else if (name === "X-PINN-CALNAME") ev.calName = value.trim();
             else if (name === "X-PINN-HREF") ev.href = value.trim();
-            else if (name === "X-PINN-OWNER") ev.owner = value.trim(); // privater eigener Kalender (pinn-kalender.js)
+            else if (name === "X-PINN-OWNER") ev.owner = value.trim(); // private own calendar (pinn-kalender.js)
             else if (name === "EXDATE") value.split(",").forEach(x => { const d = parseIcsDate(x, params); if (d) ev.exdates[d.allDay ? wallIsoDate(d.wall) : String(d.wall)] = true; });
         });
         if (ev.start && ev.title) events.push(ev);
@@ -220,7 +220,7 @@ function nthWeekdayOfMonth(y, m, wd, nth) {
     const day = dim - ((lastWd - wd + 7) % 7) + (nth + 1) * 7;
     return day >= 1 ? day : null;
 }
-// Liefert alle Beginn-Zeitpunkte (Wandzeit-ms) eines Termins im Bereich [fromWall, toWall].
+// Returns all start points in time (wall-clock ms) of an event within the range [fromWall, toWall].
 function occurrencesInRange(ev, fromWall, toWall) {
     const start = ev.start.wall;
     const out = [];
@@ -245,7 +245,7 @@ function occurrencesInRange(ev, fromWall, toWall) {
     } else if (freq === "WEEKLY" || (freq === "DAILY" && r.BYDAY)) {
         const byday = (r.BYDAY ? r.BYDAY.split(",") : [RR_DAYS[wallParts(start).wd]]).map(x => RR_DAYS.indexOf(x.replace(/^[+-]?\d+/, "").toUpperCase())).filter(x => x >= 0).sort((a, b) => ((a + 6) % 7) - ((b + 6) % 7));
         const sp = wallParts(start);
-        const weekStart = start - ((sp.wd + 6) % 7) * DAY_MS; // Montag der Startwoche
+        const weekStart = start - ((sp.wd + 6) % 7) * DAY_MS; // Monday of the starting week
         const stepWeeks = freq === "DAILY" ? 1 : interval;
         let w = 0;
         if (!count && fromWall > start) w = Math.max(0, Math.floor((fromWall - weekStart) / (stepWeeks * 7 * DAY_MS)) - 1);
@@ -277,7 +277,7 @@ function occurrencesInRange(ev, fromWall, toWall) {
 }
 
 // =============================================================================================
-// Web-Push: Schlüssel, Versand, Warteschlange
+// Web push: keys, sending, queue
 // =============================================================================================
 const PUSH_ABOS = "push_abos";
 const PUSH_NACHRICHTEN = "push_nachrichten";
@@ -285,12 +285,12 @@ const PINN_USERS_P = "benutzer";
 const VAPID_FILE = "/pb_data/pinn_push_vapid.json";
 const HEX = "0123456789abcdef";
 
-// Legt die Sammlungen "push_abos" und "push_nachrichten" an, falls sie fehlen.
-// Wirft einen verständlichen Fehler, wenn das nicht klappt.
+// Creates the collections "push_abos" and "push_nachrichten" if they are missing.
+// Throws an understandable error if that does not work.
 function findCollectionOrNull(name) {
     try { return $app.findCollectionByNameOrId(name); } catch (e) { return null; }
 }
-// Neue Sammlung im Format der PocketBase-JavaScript-Umgebung (new Collection({...})).
+// New collection in the format of the PocketBase JavaScript environment (new Collection({...})).
 function newBaseCollection(def) {
     if (typeof Collection === "function") return new Collection(Object.assign({ type: "base" }, def));
     throw new Error("Diese PocketBase-Version kann aus Hooks keine Sammlungen anlegen.");
@@ -298,7 +298,7 @@ function newBaseCollection(def) {
 function hasFieldNamed(col, name) {
     try { return !!col.fields.getByName(name); } catch (e) { return false; }
 }
-// Feld "push_einstellungen" im Profil sicherstellen - sonst werden Uhrzeit & Co. nicht gespeichert
+// Make sure the field "push_einstellungen" exists in the profile - otherwise time & co. are not saved
 function ensureSettingsField() {
     let users = findCollectionOrNull(PINN_USERS_P);
     if (!users || hasFieldNamed(users, "push_einstellungen")) return;
@@ -363,7 +363,7 @@ function ensurePushCollections() {
             throw new Error("Sammlung \"" + PUSH_NACHRICHTEN + "\" konnte nicht angelegt werden: " + e.message);
         }
     }
-    // 1.127.4: optionales Bild einer Mitteilung (Foto-Vorschau im Chat, wenn der Familienchat nicht Ende-zu-Ende verschlüsselt ist)
+    // 1.127.4: optional image of a notification (photo preview in the chat when the family chat is not end-to-end encrypted)
     try {
         const nm = findCollectionOrNull(PUSH_NACHRICHTEN);
         if (nm && !hasFieldNamed(nm, "bild")) {
@@ -378,9 +378,9 @@ function ensurePushCollections() {
     return abos;
 }
 
-// Admin-Fehlerprotokoll (pinn-protokoll.js) – fehlt die Datei, bleibt es beim Docker-Log
+// Admin error log (pinn-protokoll.js) - if the file is missing, it stays with the Docker log
 function plog(art, bereich, meldung, opts) {
-    try { require(`${__hooks}/pinn-protokoll.js`)[art](bereich, meldung, opts || {}); } catch (e) { /* Protokoll nicht verfügbar */ }
+    try { require(`${__hooks}/pinn-protokoll.js`)[art](bereich, meldung, opts || {}); } catch (e) { /* log not available */ }
 }
 
 const STATUS_FILE = "/pb_data/pinn_push_status.json";
@@ -394,7 +394,7 @@ function savePushStatus(s) {
     try { $os.writeFile(STATUS_FILE, JSON.stringify(s)); } catch (e) { console.log("[Push] Status nicht speicherbar: " + e.message); plog("fehler", "push", "Push-Status konnte nicht gespeichert werden (pb_data).", { details: e.message }); }
 }
 
-// --- Dauerhafte Sicherung (übersteht Neustarts und Updates) ---
+// --- Persistent backup (survives restarts and updates) ---
 const DELAYED_FILE = "/pb_data/pinn_push_verzoegert.json";
 const SENT_FILE = "/pb_data/pinn_push_gesendet.json";
 const WINDOW_FILE = "/pb_data/pinn_push_fenster.json";
@@ -414,19 +414,19 @@ function pruneSent(map) {
     Object.keys(map).forEach(k => { if (typeof map[k] !== "number" || map[k] < cutoff) delete map[k]; });
     return map;
 }
-// Beim Start: gesicherte Vormerkungen, Sperren und Zeitfenster in den Zwischenspeicher laden
+// On start: load backed-up queued entries, locks and time windows into the cache
 function restorePersisted() {
     const store = $app.store();
     const info = { verzoegert: 0, gesendet: 0, fenster: false };
     const delayed = readJsonFile(DELAYED_FILE);
     if (delayed && Object.keys(delayed).length) {
-        try { store.set(DELAY_KEY, JSON.stringify(delayed)); info.verzoegert = Object.keys(delayed).length; } catch (e) { /* egal */ }
+        try { store.set(DELAY_KEY, JSON.stringify(delayed)); info.verzoegert = Object.keys(delayed).length; } catch (e) { /* ignore */ }
     }
     const sent = pruneSent(readJsonFile(SENT_FILE) || {});
-    try { store.set(SENT_KEY, JSON.stringify(sent)); info.gesendet = Object.keys(sent).length; } catch (e) { /* egal */ }
+    try { store.set(SENT_KEY, JSON.stringify(sent)); info.gesendet = Object.keys(sent).length; } catch (e) { /* ignore */ }
     const win = readJsonFile(WINDOW_FILE);
     if (win && typeof win.bis === "number") {
-        try { store.set(WINDOW_KEY, win.bis); info.fenster = true; } catch (e) { /* egal */ }
+        try { store.set(WINDOW_KEY, win.bis); info.fenster = true; } catch (e) { /* ignore */ }
     }
     return info;
 }
@@ -434,8 +434,8 @@ function countSubscriptions() {
     try { return $app.findAllRecords(PUSH_ABOS).length; } catch (e) { return 0; }
 }
 
-// Der Service Worker meldet eine neue Push-Adresse seines Geräts (der Browser hat sie getauscht).
-// Nur wer die alte, geheime Adresse kennt, kann sie ersetzen - also nur das Gerät selbst.
+// The service worker reports a new push address of its device (the browser swapped it).
+// Only whoever knows the old, secret address can replace it - i.e. only the device itself.
 function renewSubscription(oldEndpoint, newEndpoint) {
     const alt = String(oldEndpoint || ""), neu = String(newEndpoint || "");
     if (!alt || !/^https:\/\//i.test(neu) || neu.length > 2000) return { ok: false, grund: "Ungültige Geräte-Adresse." };
@@ -469,8 +469,8 @@ function engineSupportsPush() {
     try { return typeof BigInt === "function" && BigInt("0x10") + BigInt(1) === BigInt(17); } catch (e) { return false; }
 }
 
-// VAPID-Schlüsselpaar: wird beim ersten Bedarf zufällig erzeugt und in pb_data abgelegt (nicht in
-// der Datenbank, nicht im Code). Wer die Datei löscht, muss Push auf allen Geräten neu aktivieren.
+// VAPID key pair: generated randomly on first need and stored in pb_data (not in
+// the database, not in the code). Whoever deletes the file has to activate push again on all devices.
 function loadVapid(createIfMissing) {
     let v = null;
     try { v = JSON.parse(readTextFile(VAPID_FILE)); } catch (e) { v = null; }
@@ -482,9 +482,9 @@ function loadVapid(createIfMissing) {
     console.log("[Push] Neues VAPID-Schlüsselpaar erzeugt.");
     return v;
 }
-// Apple (web.push.apple.com) lehnt den Weckruf mit "403 BadJwtToken" ab, wenn der Absender (sub)
-// keine echte Domain nennt - z. B. eine IP-Adresse, localhost, *.local oder example.org.
-// Deshalb wird nur ein Absender verwendet, den Apple akzeptiert.
+// Apple (web.push.apple.com) rejects the wake-up call with "403 BadJwtToken" if the sender (sub)
+// does not name a real domain - e.g. an IP address, localhost, *.local or example.org.
+// Therefore only a sender that Apple accepts is used.
 const FALLBACK_SUBJECT = "https://pocketbase.io";
 function isUsableSubject(s) {
     s = String(s || "").trim();
@@ -502,7 +502,7 @@ function isUsableSubject(s) {
     if (/(^|\.)example\.(com|org|net)$/.test(host)) return false;
     return /\.[a-z]{2,}$/.test(host);
 }
-// Aus einer Adresse wie "https://deine-subdomain.duckdns.org:8443" wird "https://deine-subdomain.duckdns.org"
+// An address like "https://deine-subdomain.duckdns.org:8443" becomes "https://deine-subdomain.duckdns.org"
 function subjectFromOrigin(origin) {
     const m = String(origin || "").trim().match(/^(?:https?:\/\/)?([^\/:?#\s,]+)/i);
     if (!m) return "";
@@ -517,7 +517,7 @@ function saveVapidSubject(subject) {
     $os.writeFile(VAPID_FILE, JSON.stringify(v));
     console.log("[Push] Absender für Push-Dienste: " + subject);
 }
-// Merkt sich die öffentliche Adresse von pinn. aus einer App-Anfrage (Origin bzw. Proxy-Header)
+// Remembers the public address of pinn. from an app request (Origin or proxy header)
 function rememberSubjectFromRequest(e) {
     const header = name => { try { return String(e.request.header.get(name) || ""); } catch (err) { return ""; } };
     let host = "";
@@ -526,7 +526,7 @@ function rememberSubjectFromRequest(e) {
         subjectFromOrigin(header("Referer")) ||
         subjectFromOrigin(header("X-Forwarded-Host").split(",")[0]) ||
         subjectFromOrigin(host);
-    if (s) { try { saveVapidSubject(s); } catch (err) { /* egal */ } }
+    if (s) { try { saveVapidSubject(s); } catch (err) { /* ignore */ } }
 }
 function vapidSubject(v) {
     let env = "";
@@ -539,7 +539,7 @@ function vapidSubject(v) {
     return FALLBACK_SUBJECT;
 }
 
-// Selbsttest beim Start: Schlüssel erzeugen/laden, signieren und die Signatur wieder prüfen.
+// Self-test on start: generate/load the key, sign and verify the signature again.
 function selfTest() {
     if (!engineSupportsPush()) return { ok: false, message: "Die JavaScript-Umgebung von PocketBase unterstützt kein BigInt - Push ist mit dieser PocketBase-Version nicht möglich." };
     try {
@@ -568,18 +568,18 @@ function vapidAuthHeader(endpoint) {
     try {
         const cached = store.get(cacheKey);
         if (cached && cached.exp - 3600 > nowSec) return cached.header;
-    } catch (e) { /* kein Cache */ }
+    } catch (e) { /* no cache */ }
     const exp = nowSec + 12 * 3600;
     const input = b64urlText(JSON.stringify({ typ: "JWT", alg: "ES256" })) + "." +
         b64urlText(JSON.stringify({ aud: aud, exp: exp, sub: sub }));
     const sig = ecdsaSign($security.sha256(input), big("0x" + v.privateHex), randHex);
     const header = "vapid t=" + input + "." + b64url(sig) + ", k=" + v.publicKey;
-    try { store.set(cacheKey, { header: header, exp: exp }); } catch (e) { /* egal */ }
+    try { store.set(cacheKey, { header: header, exp: exp }); } catch (e) { /* ignore */ }
     return header;
 }
 
-// Schickt einen (inhaltslosen) Weckruf an ein Gerät. Den eigentlichen Text holt sich der Service
-// Worker danach selbst über /api/pinn/push/abholen - so ist keine Payload-Verschlüsselung nötig.
+// Sends a (content-free) wake-up call to a device. The service worker then fetches the actual
+// text itself via /api/pinn/push/abholen - so no payload encryption is needed.
 function sendWakeup(endpoint, urgency) {
     const res = $http.send({
         url: endpoint,
@@ -613,19 +613,19 @@ function describeFailure(endpoint, status, body) {
     return text;
 }
 
-// Legt die Nachricht für jedes Gerät des Profils in die Warteschlange und weckt das Gerät.
-// Ergebnis: { sent, geraete, fehler: [Text, ...] }
+// Puts the message into the queue for each device of the profile and wakes the device.
+// Result: { sent, geraete, fehler: [text, ...] }
 function notifyUserDetailed(userId, msg) {
     const result = { sent: 0, geraete: 0, fehler: [] };
-    // Text in der Sprache des Empfängers und passend zur Wohnform (Familie/WG) – siehe pinn-pushtext.js.
-    // Gilt für das Handy und die 🔔 Glocke; bei einem Fehler bleibt der deutsche Text.
-    // msg.roh = true: von einer Person getippter Text (Chat ohne Ende-zu-Ende-Verschlüsselung) - wird nie übersetzt
+    // Text in the recipient's language and matching the living arrangement (family/flat share) - see pinn-pushtext.js.
+    // Applies to the phone and the 🔔 bell; on an error, the German text stays.
+    // msg.roh = true: text typed by a person (chat without end-to-end encryption) - is never translated
     if (!(msg && msg.roh === true)) {
         try { msg = require(`${__hooks}/pinn-pushtext.js`).localize(userId, msg); }
         catch (e) { console.log("[Push] Übersetzung nicht verfügbar: " + e.message); }
     }
-    // Jede Nachricht erscheint zusätzlich als Hinweis unter der 🔔 Glocke des Empfängers (auch ohne
-    // angemeldetes Gerät). msg.hinweis = false verhindert das (z. B. Test-Nachricht).
+    // Every message additionally appears as a notice under the recipient's 🔔 bell (even without a
+    // registered device). msg.hinweis = false prevents this (e.g. test message).
     if (msg && msg.hinweis !== false) {
         try { require(`${__hooks}/pinn-hinweise.js`).pushMirror(userId, msg); }
         catch (e) { console.log("[Push] Hinweis für die Glocke nicht gespeichert: " + e.message); }
@@ -645,7 +645,7 @@ function notifyUserDetailed(userId, msg) {
             rec.set("text", String(msg.text || "").slice(0, 1000));
             rec.set("url", String(msg.url || "/").slice(0, 300));
             rec.set("tag", String(msg.tag || "").slice(0, 200));
-            if (msg.bild) { try { rec.set("bild", String(msg.bild).slice(0, 300)); } catch (e4) { /* alte Installation ohne das Feld */ } }
+            if (msg.bild) { try { rec.set("bild", String(msg.bild).slice(0, 300)); } catch (e4) { /* old installation without the field */ } }
             $app.save(rec);
             const endpoint = abo.getString("endpoint");
             const r = sendWakeup(endpoint, msg.urgency);
@@ -654,13 +654,13 @@ function notifyUserDetailed(userId, msg) {
                 console.log("[Push] Gerät abgemeldet (Status " + status + "), Abo wird entfernt.");
                 result.fehler.push("Gerät ist beim " + pushServiceName(endpoint) + "-Dienst nicht mehr angemeldet - bitte neu aktivieren");
                 $app.delete(abo);
-                try { $app.delete(rec); } catch (e2) { /* egal */ }
+                try { $app.delete(rec); } catch (e2) { /* ignore */ }
             } else if (status < 200 || status >= 300) {
                 const text = describeFailure(endpoint, status, r.body);
                 console.log("[Push] Versand fehlgeschlagen: " + text + " | Antwort: " + r.body);
                 plog("fehler", "push", "Push-Versand fehlgeschlagen: " + text, { benutzer: userId, details: r.body });
                 result.fehler.push(text);
-                try { $app.delete(rec); } catch (e2) { /* egal */ }
+                try { $app.delete(rec); } catch (e2) { /* ignore */ }
             } else {
                 result.sent++;
             }
@@ -668,7 +668,7 @@ function notifyUserDetailed(userId, msg) {
             console.log("[Push] Fehler beim Versand: " + e.message);
             plog("fehler", "push", "Push-Dienst nicht erreichbar: " + e.message, { benutzer: userId });
             result.fehler.push("Server erreicht den Push-Dienst nicht: " + e.message);
-            if (rec) { try { $app.delete(rec); } catch (e3) { /* egal */ } }
+            if (rec) { try { $app.delete(rec); } catch (e3) { /* ignore */ } }
         }
     });
     return result;
@@ -677,21 +677,21 @@ function notifyUser(userId, msg) {
     return notifyUserDetailed(userId, msg).sent;
 }
 
-// Holt die NEUESTE wartende Nachricht eines Geräts ab (und entfernt sie aus der Warteschlange).
-// Früher wurde die älteste genommen: ging ein Weckruf einmal verloren (Gerät aus, iOS hat ihn
-// verworfen), blieb dessen Nachricht liegen und jeder folgende Weckruf zeigte die vorherige
-// Meldung - z. B. heute die Tagesübersicht von gestern. Liegengebliebene Meldungen, die älter als
-// STALE_MS sind, werden deshalb verworfen und nie mehr angezeigt.
+// Fetches the NEWEST waiting message of a device (and removes it from the queue).
+// Formerly the oldest was taken: if a wake-up call got lost once (device off, iOS discarded
+// it), its message stayed around and every following wake-up call showed the previous
+// message - e.g. today the daily overview of yesterday. Leftover messages that are older than
+// STALE_MS are therefore discarded and never shown any more.
 const STALE_MS = 6 * HOUR_MS;
 function pbDate(ms) { return new Date(ms).toISOString().replace("T", " "); }
 function takeMessage(endpoint) {
     let abo = null;
     try { abo = $app.findFirstRecordByFilter(PUSH_ABOS, "endpoint = {:e}", { e: String(endpoint || "") }); } catch (e) { return null; }
-    // Veraltete Meldungen dieses Geräts verwerfen
+    // Discard outdated messages of this device
     try {
         $app.findRecordsByFilter(PUSH_NACHRICHTEN, "abo = {:a} && created < {:c}", "", 200, 0, { a: abo.id, c: pbDate(Date.now() - STALE_MS) })
-            .forEach(r => { try { $app.delete(r); } catch (e) { /* egal */ } });
-    } catch (e) { /* egal */ }
+            .forEach(r => { try { $app.delete(r); } catch (e) { /* ignore */ } });
+    } catch (e) { /* ignore */ }
     let recs = [];
     try { recs = $app.findRecordsByFilter(PUSH_NACHRICHTEN, "abo = {:a}", "-created", 1, 0, { a: abo.id }); } catch (e) { recs = []; }
     if (!recs.length) return null;
@@ -700,14 +700,14 @@ function takeMessage(endpoint) {
     let picture = "";
     try { picture = r.getString("bild"); } catch (e) { picture = ""; }
     if (picture) out.bild = picture;
-    try { $app.delete(r); } catch (e) { /* egal */ }
+    try { $app.delete(r); } catch (e) { /* ignore */ }
     return out;
 }
 
 // =============================================================================================
-// App-Badge: offene, bis jetzt fällige Aufgaben eines Profils (gleiche Regel wie in der App:
-// frühere Tage + heute, mit Zeitfenster erst ab Beginn, nur zugewiesene bzw. "Alle").
-// Der Service Worker bekommt die Zahl beim Abholen einer Meldung mit und setzt sie am App-Symbol.
+// App badge: open tasks of a profile that are due so far (same rule as in the app:
+// earlier days + today, with a time window only from its start, only assigned ones or "All").
+// The service worker receives the number when fetching a message and sets it on the app icon.
 // =============================================================================================
 function openTaskCountForUser(userRec) {
     if (!userRec) return 0;
@@ -737,7 +737,7 @@ function openTaskCountForUser(userRec) {
     });
     return n;
 }
-// Zahl für das Gerät mit dieser Push-Adresse; null, wenn unbekannt (dann lässt der Worker sie stehen)
+// Number for the device with this push address; null if unknown (then the worker leaves it as it is)
 function badgeForEndpoint(endpoint) {
     try {
         const abo = $app.findFirstRecordByFilter(PUSH_ABOS, "endpoint = {:e}", { e: String(endpoint || "") });
@@ -753,24 +753,24 @@ function badgeForEndpoint(endpoint) {
 function cleanupOldMessages() {
     try {
         const old = $app.findRecordsByFilter(PUSH_NACHRICHTEN, "created < {:c}", "", 200, 0, { c: pbDate(Date.now() - STALE_MS) });
-        old.forEach(r => { try { $app.delete(r); } catch (e) { /* egal */ } });
-    } catch (e) { /* egal */ }
+        old.forEach(r => { try { $app.delete(r); } catch (e) { /* ignore */ } });
+    } catch (e) { /* ignore */ }
 }
 
 // =============================================================================================
-// Persönliche Einstellungen
+// Personal settings
 // =============================================================================================
-// alleErledigt: Hinweis, wenn jemand (kein Kind) alle bis jetzt fälligen Aufgaben erledigt hat
-// kindAufgabe:  Hinweis, wenn ein Kind eine Aufgabe erledigt (Kinderseite oder Aufgabenliste)
-// tagesHaushalt: Haushaltsaufgaben (Reihum/Putzplan) in die Tagesübersicht aufnehmen (Standard: ja)
-// kindAlle:     Hinweis, wenn ein Kind alle Aufgaben erledigt hat
-// animation:    Feier-Animation in der App, wenn man selbst alle Aufgaben erledigt hat (kein Push)
-// pwAlle:       Pinnwand - neuer Zettel für die ganze Familie
-// pwMich:       Pinnwand - Zettel an mich, Dankeschöns an mich und wichtige Zettel
-// pwAntworten:  Pinnwand - Antworten, Reaktionen und Stimmen zu meinen Zetteln
-// pwErinnerung: Pinnwand - Erinnerungen, die an einem Zettel hängen
-// vorrat:       Vorrat - Artikel laufen bald ab (Mindesthaltbarkeit, pinn-vorrat.js)
-// muell:        Müllabfuhr - Erinnerung am Vortag zur Uhrzeit muellZeit (Müllkalender, ab 1.31)
+// alleErledigt: notice when someone (not a child) has completed all tasks that are due so far
+// kindAufgabe:  notice when a child has completed a task (kids' page or task list)
+// tagesHaushalt: include household tasks (rotation/cleaning plan) in the daily overview (default: yes)
+// kindAlle:     notice when a child has completed all tasks
+// animation:    celebration animation in the app when you have completed all tasks yourself (no push)
+// pwAlle:       pinboard - new note for the whole family
+// pwMich:       pinboard - notes to me, thank-yous to me and important notes
+// pwAntworten:  pinboard - replies, reactions and votes on my notes
+// pwErinnerung: pinboard - reminders attached to a note
+// vorrat:       pantry - items expire soon (best-before date, pinn-vorrat.js)
+// muell:        waste collection - reminder on the day before at the time muellZeit (waste calendar, since 1.31)
 const DEFAULT_SETTINGS = { termine: true, vorlauf: 30, ohneZuweisung: true, tagesuebersicht: true, uhrzeit: "07:00", tagesHaushalt: true, zuweisungen: true, alleErledigt: true, kindAufgabe: true, kindAlle: true, animation: true, pwAlle: true, pwMich: true, pwAntworten: true, pwErinnerung: true, chat: true, vorrat: true, muell: true, muellZeit: "18:00", updates: true };
 const BOOL_SETTINGS = ["termine", "ohneZuweisung", "tagesuebersicht", "tagesHaushalt", "zuweisungen", "alleErledigt", "kindAufgabe", "kindAlle", "animation", "pwAlle", "pwMich", "pwAntworten", "pwErinnerung", "chat", "vorrat", "muell", "updates"];
 function normalizeSettings(raw) {
@@ -797,8 +797,8 @@ function readSettings(userRec) {
 // =============================================================================================
 function memberLabelServer(m) { return (m.displayMode === "role" && m.role) ? m.role : m.name; }
 
-// Mitglieder und Profile EINER Familie inkl. ihrer Kalender-Einstellungen (Auswahl, Aufgaben-
-// Kalender). Zugangsdaten werden hier nicht gebraucht und deshalb auch nicht entschlüsselt.
+// Members and profiles of ONE family including their calendar settings (selection, tasks
+// calendar). Credentials are not needed here and are therefore not decrypted either.
 function loadPeople(familyId) {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const data = familyId ? (lib.loadFamilyDataFor(familyId) || {}) : {};
@@ -821,7 +821,7 @@ function loadPeople(familyId) {
     return { familyId: familyId || "", data: data, config: config, members: members, people: people };
 }
 
-// Liest die "Zugewiesen: ..."-Zeile. Ergebnis: { line: bool, all: bool, memberIds: [] }
+// Reads the "Zugewiesen: ..." line. Result: { line: bool, all: bool, memberIds: [] }
 function assigneesFromText(text, members) {
     const match = String(text || "").match(/Zugewiesen:\s*(.+)/);
     if (!match) return { line: false, all: false, memberIds: [] };
@@ -844,20 +844,20 @@ function otherNames(person, assign, members) {
 }
 
 // =============================================================================================
-// Kalender lesen
+// Reading the calendar
 // =============================================================================================
 const DONE_PREFIX = "\u2705 ";
-// Termine aus der Kalenderdatei EINER Familie
+// Events from the calendar file of ONE family
 function loadCalendarEvents(familyId) {
     const calendarSync = require(`${__hooks}/calendar-sync.js`);
     const path = calendarSync.kalenderPfad(familyId);
     if (!path) return [];
     let text = "";
     try { text = readTextFile(path); } catch (e) { text = ""; }
-    // Eigene Kalender der Familie (geteilte und private - private nur für ihr Profil, X-PINN-OWNER)
-    try { text += "\n" + require(`${__hooks}/pinn-kalender.js`).icsAllForFamily(familyId); } catch (e) { /* nicht vorhanden */ }
+    // The family's own calendars (shared and private - private ones only for their profile, X-PINN-OWNER)
+    try { text += "\n" + require(`${__hooks}/pinn-kalender.js`).icsAllForFamily(familyId); } catch (e) { /* does not exist */ }
     const events = parseIcsEvents(text).filter(ev => ev.status !== "CANCELLED");
-    // Abweichend bearbeitete Einzeltermine einer Serie (RECURRENCE-ID) ersetzen den Serientermin
+    // Individually edited events of a series (RECURRENCE-ID) replace the series event
     const overrides = {};
     events.forEach(ev => {
         if (ev.recurrenceId && ev.uid) {
@@ -886,10 +886,10 @@ function leadText(min) {
 }
 
 // =============================================================================================
-// Cron: Terminerinnerungen + Tagesübersicht (alle 5 Minuten)
+// Cron: event reminders + daily overview (every 5 minutes)
 // =============================================================================================
 const WINDOW_KEY = "pinnPushWindowUntil";
-const HALF_STEP = 150000; // 2,5 Minuten - der Cron läuft alle 5 Minuten, jeder Lauf deckt ±2,5 Min ab
+const HALF_STEP = 150000; // 2.5 minutes - the cron runs every 5 minutes, each run covers ±2.5 min
 
 function runPushCron() {
     const now = Date.now();
@@ -897,13 +897,13 @@ function runPushCron() {
     let last = null;
     try { last = store.get(WINDOW_KEY); } catch (e) { last = null; }
     if (typeof last !== "number") {
-        // Zwischenspeicher leer (z. B. nach einem Neustart) -> gesichertes Zeitfenster verwenden
+        // Cache empty (e.g. after a restart) -> use the backed-up time window
         const win = readJsonFile(WINDOW_FILE);
         last = win && typeof win.bis === "number" ? win.bis : null;
     }
     if (typeof last !== "number" || last < now - 30 * 60000 || last > now + 10 * 60000) last = now - HALF_STEP;
     const until = now + HALF_STEP;
-    try { store.set(WINDOW_KEY, until); } catch (e) { /* egal */ }
+    try { store.set(WINDOW_KEY, until); } catch (e) { /* ignore */ }
     writeJsonFile(WINDOW_FILE, { bis: until });
     if (until <= last) return;
 
@@ -917,13 +917,13 @@ function runPushCron() {
     const subscribedIds = Object.keys(subscribed);
     if (!subscribedIds.length) return;
 
-    // Familien mit angemeldeten Geräten ermitteln - jede Familie hat ihre eigenen Daten
+    // Determine families with registered devices - each family has its own data
     const families = {};
     subscribedIds.forEach(id => {
         try {
             const fam = $app.findRecordById(PINN_USERS_P, id).getString("familie");
             if (fam) families[fam] = true;
-        } catch (e) { /* Profil gelöscht */ }
+        } catch (e) { /* profile deleted */ }
     });
     const familyIds = Object.keys(families);
     if (!familyIds.length) return;
@@ -937,7 +937,7 @@ function runPushCron() {
             const ctx = loadPeople(familyId);
             const people = ctx.people.filter(p => subscribed[p.userId]);
             if (!people.length) return;
-            const events = loadCalendarEvents(familyId); // jede Familie hat ihre eigene Kalenderdatei
+            const events = loadCalendarEvents(familyId); // each family has its own calendar file
             if (runFamilyReminders(ctx, people, events, last, until, now, status)) statusChanged = true;
         } catch (e) {
             console.log("[Push] Fehler bei einer Familie: " + e.message);
@@ -947,8 +947,8 @@ function runPushCron() {
     if (statusChanged) savePushStatus(status);
 }
 
-// Terminerinnerungen + Tagesübersicht für die angemeldeten Profile EINER Familie.
-// Gibt true zurück, wenn sich der Tagesübersicht-Status geändert hat.
+// Event reminders + daily overview for the registered profiles of ONE family.
+// Returns true if the daily overview status has changed.
 function runFamilyReminders(ctx, people, events, last, until, now, status) {
     const taskCal = ctx.config.taskCalendarName || "";
 
@@ -964,11 +964,11 @@ function runFamilyReminders(ctx, people, events, last, until, now, status) {
             const assign = assigneesFromText(ev.description, ctx.members);
             occurrencesInRange(ev, fromWall, toWall).forEach(w => {
                 const startUtc = wallToUtc(w);
-                if (startUtc < now - 60000) return; // Termin hat (während eines Neustarts) schon begonnen
+                if (startUtc < now - 60000) return; // The event has already started (during a restart)
                 reminderPeople.forEach(p => {
                     const fireAt = startUtc - p.settings.vorlauf * 60000;
                     if (fireAt <= last || fireAt > until) return;
-                    if (ev.owner ? ev.owner !== p.userId : !isRelevantFor(p, assign)) return; // private Kalender nur für ihr Profil
+                    if (ev.owner ? ev.owner !== p.userId : !isRelevantFor(p, assign)) return; // private calendars only for their profile
                     const others = otherNames(p, assign, ctx.members);
                     const parts = [leadText(p.settings.vorlauf) + (p.settings.vorlauf >= 1440 ? ", " + fmtWallDate(w) : "")];
                     if (ev.location) parts.push(ev.location);
@@ -979,7 +979,7 @@ function runFamilyReminders(ctx, people, events, last, until, now, status) {
                         url: "/?termin=" + wallIsoDate(w),
                         tag: "termin-" + (ev.uid || ev.title) + "-" + w,
                         urgency: "high",
-                        bis: startUtc + HOUR_MS, // in der Glocke nur bis eine Stunde nach Beginn
+                        bis: startUtc + HOUR_MS, // in the bell only until one hour after the start
                     });
                 });
             });
@@ -989,10 +989,10 @@ function runFamilyReminders(ctx, people, events, last, until, now, status) {
         plog("fehler", "push", "Terminerinnerungen fehlgeschlagen: " + e.message, { familie: ctx && ctx.familyId ? ctx.familyId : "" });
     }
 
-    // --- Tagesübersicht ---
-    // Wird geschickt, sobald die Wunschzeit erreicht ist und sie heute noch nicht rausging
-    // (bis zu 3 Stunden nachgeholt, z. B. nach einem Neustart oder wenn ein Lauf ausfiel).
-    // Welcher Tag schon verschickt wurde, steht in pb_data/pinn_push_status.json.
+    // --- Daily overview ---
+    // Is sent as soon as the desired time is reached and it has not gone out yet today
+    // (made up for up to 3 hours, e.g. after a restart or when a run was skipped).
+    // Which day has already been sent is stored in pb_data/pinn_push_status.json.
     let changed = false;
     try {
         const nowWall = utcToWall(now);
@@ -1003,8 +1003,8 @@ function runFamilyReminders(ctx, people, events, last, until, now, status) {
             if (status.tagesuebersicht[p.userId] === todayIso) return;
             const hm = p.settings.uhrzeit.split(":");
             const fireWall = dayWall + (+hm[0]) * HOUR_MS + (+hm[1]) * MIN_MS;
-            if (nowWall + HALF_STEP < fireWall) return;      // noch nicht so weit
-            if (nowWall - fireWall > 3 * HOUR_MS) return;     // zu lange her -> morgen wieder
+            if (nowWall + HALF_STEP < fireWall) return;      // not yet time
+            if (nowWall - fireWall > 3 * HOUR_MS) return;     // too long ago -> again tomorrow
             const msg = buildDigest(p, ctx, events, taskCal, dayWall, +hm[0]);
             const r = notifyUserDetailed(p.userId, msg);
             if (r.sent > 0 || !r.geraete) {
@@ -1020,14 +1020,14 @@ function runFamilyReminders(ctx, people, events, last, until, now, status) {
         console.log("[Push] Tagesübersicht fehlgeschlagen: " + e.message);
         plog("fehler", "push", "Tagesübersicht fehlgeschlagen: " + e.message, { familie: ctx && ctx.familyId ? ctx.familyId : "" });
     }
-    // --- Extra-Erinnerung an Aufgaben (ab 1.57) ---
+    // --- Extra reminder for tasks (since 1.57) ---
     try {
         if (runTaskReminders(ctx, people, now, status)) changed = true;
     } catch (e) {
         console.log("[Push] Aufgaben-Erinnerung fehlgeschlagen: " + e.message);
         plog("fehler", "push", "Aufgaben-Erinnerung fehlgeschlagen: " + e.message, { familie: ctx && ctx.familyId ? ctx.familyId : "" });
     }
-    // --- Müllabfuhr am Vortag ---
+    // --- Waste collection on the day before ---
     try {
         if (runMuellReminder(ctx, people, now, status)) changed = true;
     } catch (e) {
@@ -1037,10 +1037,10 @@ function runFamilyReminders(ctx, people, events, last, until, now, status) {
     return changed;
 }
 
-// Extra-Erinnerung (ab 1.57): offene Aufgaben mit Uhrzeit im Feld „erinnerung“, die heute fällig sind.
-// Empfänger: die Zugewiesenen; bei „Alle“ bzw. ohne Zuweisung alle Erwachsenen (Kinder nur, wenn sie
-// ausdrücklich zugewiesen sind). Je Aufgabe, Profil und Tag einmal (status.aufgabenErinnerung);
-// nachgeholt wird bis zu 3 Stunden, z. B. nach einem Neustart.
+// Extra reminder (since 1.57): open tasks with a time in the field "erinnerung" that are due today.
+// Recipients: the assigned ones; for "All" or without assignment all adults (children only if they are
+// explicitly assigned). Once per task, profile and day (status.aufgabenErinnerung);
+// made up for up to 3 hours, e.g. after a restart.
 function runTaskReminders(ctx, people, now, status) {
     if (!people.length) return false;
     const nowWall = utcToWall(now);
@@ -1078,9 +1078,9 @@ function runTaskReminders(ctx, people, now, status) {
     return changed;
 }
 
-// Erinnerung am Vortag der Müllabfuhr zur eigenen Uhrzeit (Einstellung muellZeit). Erwachsene bekommen
-// sie immer (wenn eingeschaltet), Kinder nur, wenn sie mit Rausbringen dran sind. Je Profil und Tag einmal
-// (status.muell); nachgeholt wird bis zu 3 Stunden. Steht morgen nichts an, gilt der Tag als erledigt.
+// Reminder on the day before the waste collection at the own time (setting muellZeit). Adults always
+// get it (if switched on), children only if it is their turn to take it out. Once per profile and day
+// (status.muell); made up for up to 3 hours. If nothing is due tomorrow, the day counts as done.
 function runMuellReminder(ctx, people, now, status) {
     const list = people.filter(p => p.settings.muell);
     if (!list.length) return false;
@@ -1102,7 +1102,7 @@ function runMuellReminder(ctx, people, now, status) {
         if (!info.namen.length) { status.muell[p.userId] = todayIso; changed = true; return; }
         const member = p.memberId ? ctx.members.find(m => m.id === p.memberId) : null;
         const isChild = !!(member && (isChildMember(member) || member.childLock));
-        // Wer ist dran? (offene Müll-Aufgaben von heute, ausdrücklich zugewiesen)
+        // Whose turn is it? (open waste tasks of today, explicitly assigned)
         const mine = [], others = [];
         info.aufgaben.filter(a => !a.erledigt).forEach(a => {
             const as = assigneesFromText(a.notizen, ctx.members);
@@ -1124,7 +1124,7 @@ function runMuellReminder(ctx, people, now, status) {
             text: lines.join("\n"),
             url: mine.length ? "/?aufgabe=" + encodeURIComponent(mine[0].id) : "/?termin=" + info.morgen,
             tag: "muell-" + info.morgen,
-            bis: wallToUtc(morgenWall + 12 * HOUR_MS), // in der Glocke bis zur Abholung
+            bis: wallToUtc(morgenWall + 12 * HOUR_MS), // in the bell until the collection
         });
         if (r.sent > 0 || !r.geraete) {
             status.muell[p.userId] = todayIso;
@@ -1140,18 +1140,18 @@ function buildDigest(person, ctx, events, taskCal, dayWall, hour) {
     const dayEnd = dayWall + DAY_MS - 1;
     const iso = wallIsoDate(dayWall);
     const termine = [], aufgaben = [];
-    // Ein evtl. noch eingestellter (alter) Aufgaben-Kalender wird in der App nicht als Termine
-    // angezeigt - hier genauso, außer "auch als Termine anzeigen" ist gesetzt.
+    // A possibly still configured (old) tasks calendar is not shown as events in the app -
+    // the same here, unless "also show as events" is set.
     const hideTaskCal = taskCal && !ctx.config.showTaskCalendarAsEvents;
     events.forEach(ev => {
         if (hideTaskCal && ev.calName === taskCal) return;
         const assign = assigneesFromText(ev.description, ctx.members);
-        if (ev.owner ? ev.owner !== person.userId : !isRelevantFor(person, assign)) return; // private Kalender nur für ihr Profil
+        if (ev.owner ? ev.owner !== person.userId : !isRelevantFor(person, assign)) return; // private calendars only for their profile
         occurrencesInRange(ev, dayWall, dayEnd).forEach(w => {
             termine.push({ w: w, text: (ev.start.allDay ? "" : wallHHMM(w) + " ") + ev.title, allDay: ev.start.allDay });
         });
     });
-    /* ===== AUSGEKLAMMERT: Aufgaben aus dem Aufgaben-Kalender =====
+    /* ===== COMMENTED OUT: tasks from the tasks calendar =====
     events.forEach(ev => {
         const isTask = taskCal && ev.calName === taskCal;
         if (isTask && ev.title.indexOf(DONE_PREFIX) === 0) return;
@@ -1162,8 +1162,8 @@ function buildDigest(person, ctx, events, taskCal, dayWall, hour) {
             else termine.push({ w: w, text: (ev.start.allDay ? "" : wallHHMM(w) + " ") + ev.title, allDay: ev.start.allDay });
         });
     });
-    ===== ENDE AUSGEKLAMMERT ===== */
-    // Aufgaben des Tages aus der Datenbank (nur offene)
+    ===== END COMMENTED OUT ===== */
+    // Tasks of the day from the database (open ones only)
     let taskRecs = [];
     if (ctx.familyId) try { taskRecs = $app.findRecordsByFilter("aufgaben", "familie = {:f} && faellig = {:d} && erledigt = false", "von", 0, 0, { f: ctx.familyId, d: iso }); } catch (e) { taskRecs = []; }
     taskRecs.forEach(r => {
@@ -1176,8 +1176,8 @@ function buildDigest(person, ctx, events, taskCal, dayWall, hour) {
     });
     termine.sort((a, b) => (a.allDay === b.allDay ? a.w - b.w : (a.allDay ? -1 : 1)));
 
-    // Essensplan und Rezepte liegen seit 1.104 in eigenen Datensätzen (pinn-bereiche.js) - je Familie nur
-    // einmal lesen, die Rezepte nur, wenn heute ein Essen mit Rezept geplant ist
+    // Meal plan and recipes have lived in their own records since 1.104 (pinn-bereiche.js) - read only
+    // once per family, the recipes only if a meal with a recipe is planned today
     if (ctx.bereichPlan === undefined) {
         ctx.bereichPlan = null;
         try { ctx.bereichPlan = require(`${__hooks}/pinn-bereiche.js`).readMany(ctx.familyId, ["essensplan"]).mealPlan || null; } catch (e) { ctx.bereichPlan = null; }
@@ -1207,15 +1207,15 @@ function buildDigest(person, ctx, events, taskCal, dayWall, hour) {
         text: lines.join("\n"),
         url: "/?termin=" + iso,
         tag: "tagesuebersicht-" + iso,
-        bis: wallToUtc(dayWall + DAY_MS), // in der Glocke nur bis Mitternacht
+        bis: wallToUtc(dayWall + DAY_MS), // in the bell only until midnight
     };
 }
 
 // =============================================================================================
-// Neue Zuweisung (Termin/Aufgabe in der App angelegt oder bearbeitet)
+// New assignment (event/task created or edited in the app)
 // =============================================================================================
-// Mitglieds-IDs, die dem Termin mit dieser href bisher zugewiesen waren (aus der Kalenderdatei).
-// Für Aufgaben (Datenbank) wird statt einer ID-Liste der bisherige Notiztext übergeben.
+// Member IDs that were previously assigned to the event with this href (from the calendar file).
+// For tasks (database), the previous notes text is passed instead of an ID list.
 function assigneesForHref(href, familyId) {
     try {
         if (!familyId) return [];
@@ -1226,7 +1226,7 @@ function assigneesForHref(href, familyId) {
     } catch (e) { return []; }
 }
 
-// Schlüssel gegen doppelte Karten in der Glocke (gleich wie pinn-hinweise.js#termKey)
+// Key against duplicate cards in the bell (same as pinn-hinweise.js#termKey)
 function termKeyFor(day, title) {
     try { return require(`${__hooks}/pinn-hinweise.js`).termKey(day, title); } catch (e) { return ""; }
 }
@@ -1268,9 +1268,9 @@ function notifyAssignment(body, actorUserId, previousMemberIds) {
 }
 
 // =============================================================================================
-// Erledigte Aufgaben: "Alle Aufgaben erledigt" und Fortschritt der Kinder
+// Completed tasks: "All tasks completed" and the children's progress
 // =============================================================================================
-// Kind = Mitglied mit aktivierter Kinderseite oder mit der Rolle "Kind" / "Tochter" / "Sohn"
+// Child = member with the kids' page activated or with the role "Kind" / "Tochter" / "Sohn"
 function isChildMember(m) {
     if (!m) return false;
     if (m.kid && m.kid.enabled) return true;
@@ -1278,8 +1278,8 @@ function isChildMember(m) {
 }
 function todayWallIso() { return wallIsoDate(utcToWall(Date.now())); }
 
-// Profile der Familie mit angemeldetem Gerät - leicht: ohne die großen Familiendaten zu laden,
-// die Mitglieder werden mitgegeben.
+// Profiles of the family with a registered device - lightweight: without loading the large family data,
+// the members are passed along.
 function subscribedPeople(familyId, members) {
     if (!familyId) return [];
     let users = [];
@@ -1296,9 +1296,9 @@ function subscribedPeople(familyId, members) {
     });
 }
 
-// Einmal-Sperre im Zwischenspeicher, damit mehrfaches An-/Abhaken nicht mehrfach benachrichtigt.
-// Gesperrt wird erst NACH einem erfolgreichen Versand - schlägt er fehl, klappt es beim nächsten Mal.
-// Die Sperren werden zusätzlich in pb_data gesichert, damit nach einem Neustart nichts doppelt kommt.
+// One-time lock in the cache, so that ticking on/off several times does not notify several times.
+// It is only locked AFTER a successful send - if that fails, it works the next time.
+// The locks are additionally backed up in pb_data, so that nothing comes twice after a restart.
 function loadSentMap() {
     let raw = null;
     try { raw = $app.store().get(SENT_KEY); } catch (e) { raw = null; }
@@ -1306,10 +1306,10 @@ function loadSentMap() {
         try {
             const o = JSON.parse(String(raw));
             if (o && typeof o === "object") return o;
-        } catch (e) { /* neu laden */ }
+        } catch (e) { /* reload */ }
     }
     const m = pruneSent(readJsonFile(SENT_FILE) || {});
-    try { $app.store().set(SENT_KEY, JSON.stringify(m)); } catch (e) { /* egal */ }
+    try { $app.store().set(SENT_KEY, JSON.stringify(m)); } catch (e) { /* ignore */ }
     return m;
 }
 function alreadySent(key) {
@@ -1318,13 +1318,13 @@ function alreadySent(key) {
 function markSent(key) {
     const m = pruneSent(loadSentMap());
     m[key] = Date.now();
-    try { $app.store().set(SENT_KEY, JSON.stringify(m)); } catch (e) { /* egal */ }
+    try { $app.store().set(SENT_KEY, JSON.stringify(m)); } catch (e) { /* ignore */ }
     writeJsonFile(SENT_FILE, m);
 }
 
-// Fortschritt eines Kindes an die anderen Profile der Familie (nie an das Kind selbst).
+// A child's progress to the other profiles of the family (never to the child themselves).
 // info: { title, emoji, taskKey, allDone, allText, excludeUserId, singleKey, allKey }
-// Ergebnis: { sent, empfaenger }
+// Result: { sent, empfaenger }
 function sendChildProgress(familyId, members, child, info) {
     const result = { sent: 0, empfaenger: 0 };
     if (!engineSupportsPush() || !child) return result;
@@ -1361,7 +1361,7 @@ function sendChildProgress(familyId, members, child, info) {
         if (msg === all) sentAll += r.sent; else sentSingle += r.sent;
         if (!r.sent) console.log("[Push] " + child.name + " -> " + p.name + " nicht zugestellt: " + (r.fehler.join(" | ") || "kein Gerät"));
     });
-    // Als gesendet merken, sobald mindestens ein Gerät erreicht wurde (oder niemand es haben wollte)
+    // Remember as sent as soon as at least one device was reached (or nobody wanted it)
     if (wantSingle && (sentSingle > 0 || sentAll > 0 || !result.empfaenger)) markSent(info.singleKey);
     if (wantAll && (sentAll > 0 || !result.empfaenger)) markSent(info.allKey);
     result.sent = sentSingle + sentAll;
@@ -1369,11 +1369,11 @@ function sendChildProgress(familyId, members, child, info) {
     return result;
 }
 
-// Nach dem Abhaken einer Aufgabe in der Aufgabenliste.
+// After ticking off a task in the task list.
 // ctx: { familyId, members, actorUserId, actorMemberId, task: {id, title},
-//        taskIsOwn, allDone, allSignature,           <- für die abhakende Person
-//        children: [{ memberId, allDone, signature }] <- Kinder, denen die Aufgabe gehört }
-// Kinder-Hinweise kommen auch, wenn Mama/Papa die Aufgabe des Kindes auf dem eigenen Handy abhakt.
+//        taskIsOwn, allDone, allSignature,           <- for the person ticking off
+//        children: [{ memberId, allDone, signature }] <- children to whom the task belongs }
+// Child notices also come when mum/dad tick off the child's task on their own phone.
 function notifyTaskDone(ctx) {
     try {
         if (!engineSupportsPush() || !ctx.familyId) return;
@@ -1394,7 +1394,7 @@ function notifyTaskDone(ctx) {
             });
         });
 
-        // "Alle erledigt" für Erwachsene
+        // "All completed" for adults
         const actor = ctx.actorMemberId ? members.find(m => m.id === ctx.actorMemberId) : null;
         if (!actor || isChildMember(actor) || !ctx.taskIsOwn || !ctx.allDone) return;
         const key = "pinnAlleErledigt:" + actor.id + ":" + today + ":" + ctx.allSignature;
@@ -1419,9 +1419,9 @@ function notifyTaskDone(ctx) {
 }
 
 const KID_PERIOD_LABELS = { morgens: "heute Morgen", mittags: "heute Mittag", nachmittags: "heute Nachmittag", abends: "heute Abend" };
-// Nach dem Abhaken auf der Kinderseite. body: { memberId, taskId, allDone, period }
-// Die Kinderseite läuft meist auf dem Gerät von Mama/Papa - deshalb bekommt hier auch das
-// angemeldete Profil den Hinweis (auf seinen anderen Geräten sowieso).
+// After ticking off on the kids' page. body: { memberId, taskId, allDone, period }
+// The kids' page mostly runs on mum's/dad's device - therefore the
+// signed-in profile gets the notice here as well (on its other devices anyway).
 function notifyKidPage(familyId, members, body) {
     if (!engineSupportsPush()) return { ok: false, grund: "Push auf dem Server nicht verfügbar" };
     const child = (members || []).find(m => m.id === String(body.memberId || ""));
@@ -1441,13 +1441,13 @@ function notifyKidPage(familyId, members, body) {
 }
 
 // =============================================================================================
-// Verzögerte Erledigt-Meldungen (10 Sekunden)
+// Delayed completion messages (10 seconds)
 // =============================================================================================
-// Beim Abhaken wird die Meldung nur vorgemerkt. Wird das Häkchen innerhalb der 10 Sekunden wieder
-// entfernt, wird sie verworfen. Verschickt wird, sobald die App nach Ablauf nachfragt
-// (/api/pinn/push/faellige) - spätestens aber beim minütlichen Zeitplan (App geschlossen).
-// Die Vormerkungen liegen im Zwischenspeicher und werden zusätzlich in pb_data gesichert. Nach
-// einem Neustart werden sie vom minütlichen Zeitplan verschickt (älter als 30 Minuten: verworfen).
+// When ticking off, the message is only queued. If the tick is removed again within the 10 seconds,
+// it is discarded. It is sent as soon as the app asks after the time has passed
+// (/api/pinn/push/faellige) - at the latest by the per-minute schedule (app closed).
+// The queued entries live in the cache and are additionally backed up in pb_data. After
+// a restart they are sent by the per-minute schedule (older than 30 minutes: discarded).
 const DELAY_KEY = "pinnPushVerzoegert";
 const DELAY_MS = 10000;
 const DELAY_MAX_AGE = 30 * 60000;
@@ -1467,17 +1467,17 @@ function saveDelayed(map) {
     try {
         if (!empty) $app.store().set(DELAY_KEY, JSON.stringify(map));
         else $app.store().remove(DELAY_KEY);
-    } catch (e) { /* egal */ }
+    } catch (e) { /* ignore */ }
     writeJsonFile(DELAYED_FILE, map);
 }
-// Meldung vormerken (ersetzt eine ältere Vormerkung mit demselben Schlüssel)
+// Queue a message (replaces an older queued entry with the same key)
 function queueDelayed(key, entry) {
     const map = loadDelayed();
     entry.dueAt = Date.now() + DELAY_MS;
     map[key] = entry;
     saveDelayed(map);
 }
-// Vormerkung verwerfen. adjust(entry) darf andere Vormerkungen anpassen und gibt dann true zurück.
+// Discard a queued entry. adjust(entry) may adjust other queued entries and then returns true.
 function cancelDelayed(key, adjust) {
     const map = loadDelayed();
     let changed = false;
@@ -1485,7 +1485,7 @@ function cancelDelayed(key, adjust) {
     if (adjust) Object.keys(map).forEach(k => { if (adjust(map[k])) changed = true; });
     if (changed) saveDelayed(map);
 }
-// Fällige Vormerkungen verschicken - familyId leer = alle Familien (Zeitplan)
+// Send due queued entries - familyId empty = all families (schedule)
 function runDelayed(familyId) {
     const map = loadDelayed();
     const now = Date.now();
@@ -1521,7 +1521,7 @@ function runDelayed(familyId) {
     return processed;
 }
 
-// Kinderseite: Abhaken vormerken bzw. Häkchen entfernen.
+// Kids' page: queue ticking off or remove the tick.
 // body: { memberId, taskId, allDone, period, done }
 function queueKidPage(familyId, body) {
     const memberId = String(body.memberId || "");
@@ -1529,8 +1529,8 @@ function queueKidPage(familyId, body) {
     if (!familyId || !memberId || !taskId) return false;
     const key = "kinderseite:" + memberId + ":" + taskId;
     if (body.done === false) {
-        // Häkchen entfernt: Meldung verwerfen und bei den anderen vorgemerkten Aufgaben dieses
-        // Kindes "alles geschafft" zurücknehmen
+        // Tick removed: discard the message and, for the other queued tasks of this
+        // child, take back "all done"
         cancelDelayed(key, e => {
             if (!e || e.type !== "kinderseite" || !e.body || e.body.memberId !== memberId || !e.body.allDone) return false;
             e.body.allDone = false;

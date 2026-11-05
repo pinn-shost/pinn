@@ -1,19 +1,19 @@
 // pb_hooks/ausblick.pb.js
-// Wochenvorschau und Monatsausblick Finanzen. Die Logik steckt in pinn-ausblick.js, die Inhalte
-// rechnet die App selbst (index.html, Abschnitt „Ausblick“).
+// Weekly preview and monthly finance outlook. The logic lives in pinn-ausblick.js, the contents are
+// calculated by the app itself (index.html, section "Outlook").
 //
-// Routen (nur angemeldet):
-//   GET  /api/pinn/ausblick              aktuelle Woche/Monat, „schon angesehen“ und Push-Schalter des Profils
-//   POST /api/pinn/ausblick/gesehen      {art: 'woche'|'monat', key}  Banner auf allen Geräten ausblenden
-//   POST /api/pinn/ausblick/push         {woche?: bool, monat?: bool} persönliche Push-Schalter
+// Routes (signed in only):
+//   GET  /api/pinn/ausblick              current week/month, "already seen" and push switches of the profile
+//   POST /api/pinn/ausblick/gesehen      {art: 'woche'|'monat', key}  hide the banner on all devices
+//   POST /api/pinn/ausblick/push         {woche?: bool, monat?: bool} personal push switches
 //
-// Zeitplan: alle 10 Minuten – arbeitet aber nur sonntags bzw. am Monatsletzten zwischen 18 und 22 Uhr,
-// und dann nur einmal (Merker in pb_data/pinn_ausblick.json).
+// Schedule: every 10 minutes - but only works on Sundays or on the last day of the month between 6 and 10 p.m.,
+// and then only once (marker in pb_data/pinn_ausblick.json).
 
 onBootstrap((e) => {
     e.next();
-    try { require(`${__hooks}/pinn-schema.js`).ensureCurrent(); } catch (err) { /* egal */ }
-    try { require(`${__hooks}/pinn-ausblick.js`).pruneUsers(); } catch (err) { /* egal */ }
+    try { require(`${__hooks}/pinn-schema.js`).ensureCurrent(); } catch (err) { /* ignore */ }
+    try { require(`${__hooks}/pinn-ausblick.js`).pruneUsers(); } catch (err) { /* ignore */ }
 });
 
 cronAdd("pinnAusblick", "*/10 * * * *", () => {
@@ -21,7 +21,7 @@ cronAdd("pinnAusblick", "*/10 * * * *", () => {
         require(`${__hooks}/pinn-ausblick.js`).runCron();
     } catch (err) {
         console.log("[Ausblick] Zeitplan-Fehler: " + err.message);
-        try { require(`${__hooks}/pinn-protokoll.js`).fehler("push", "Ausblick (Wochenvorschau/Monatsausblick): " + err.message); } catch (e2) { /* egal */ }
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("push", "Ausblick (Wochenvorschau/Monatsausblick): " + err.message); } catch (e2) { /* ignore */ }
     }
 });
 

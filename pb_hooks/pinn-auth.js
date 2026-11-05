@@ -1,7 +1,7 @@
 // pb_hooks/pinn-auth.js
-// Gemeinsame Konstanten und Hilfsfunktionen für die Anmeldung. Wird von benutzer.pb.js per
-// require() geladen: In PocketBase läuft jeder Handler in einer eigenen, abgeschotteten Umgebung,
-// Variablen von oben in einer .pb.js-Datei sind darin NICHT sichtbar.
+// Shared constants and helper functions for the sign-in. Loaded by benutzer.pb.js via
+// require(): in PocketBase every handler runs in its own, isolated environment,
+// variables from above in a .pb.js file are NOT visible in it.
 
 const USERS = "benutzer";
 const AUTH_RULE = "@request.auth.id != ''";

@@ -1,24 +1,24 @@
 // pb_hooks/zuhause.pb.js
-// Einstellungen → Zuhause (je Familie). Die Logik steckt in pinn-zuhause.js.
+// Settings → Home (per family). The logic lives in pinn-zuhause.js.
 //
-// Beim Start (über pinn-schema.js): legt die gesperrte Sammlung "zuhause" an.
+// On start (via pinn-schema.js): creates the locked collection "zuhause".
 //
-// Angemeldet:
+// Signed in:
 //   GET  /api/pinn/zuhause                       { zuhause, optionen, darfAendern }
-//   POST /api/pinn/zuhause                       Adresse (Treffer aus der Suche) speichern       (nur Admins)
-//   POST /api/pinn/zuhause/optionen              { feiertage?, ferien?, bundesland? }            (nur Admins)
-//   POST /api/pinn/zuhause/entfernen                                                              (nur Admins)
-//   GET  /api/pinn/zuhause/suche?q=...(&weit=1)  Adressvorschläge beim Tippen (weit: Reiseziele)  (keine Gäste)
-//   GET  /api/pinn/zuhause/adresse?lat=&lon=     Adresse zum aktuellen Standort                  (keine Gäste)
-//   GET  /api/pinn/zuhause/ferien?jahr=2026      Schulferien des Bundeslands der Familie
-//   POST /api/pinn/zuhause/wetter-tag            { datum, lat?, lon? }  Stundenverlauf eines Tages (ohne lat/lon: Zuhause)
-//   POST /api/pinn/zuhause/reisewetter           { lat, lon, von, bis } Urlaubswetter: Vorhersage + Erfahrungswerte
+//   POST /api/pinn/zuhause                       save the address (hit from the search)          (admins only)
+//   POST /api/pinn/zuhause/optionen              { feiertage?, ferien?, bundesland? }            (admins only)
+//   POST /api/pinn/zuhause/entfernen                                                              (admins only)
+//   GET  /api/pinn/zuhause/suche?q=...(&weit=1)  address suggestions while typing (weit: travel destinations)  (no guests)
+//   GET  /api/pinn/zuhause/adresse?lat=&lon=     address for the current location                (no guests)
+//   GET  /api/pinn/zuhause/ferien?jahr=2026      school holidays of the family's federal state
+//   POST /api/pinn/zuhause/wetter-tag            { datum, lat?, lon? }  hourly course of a day (without lat/lon: Home)
+//   POST /api/pinn/zuhause/reisewetter           { lat, lon, von, bis } holiday weather: forecast + empirical values
 //
-// Angemeldet ODER mit dem Schlüssel des Familien-Dashboards (Wetter schon vor der Profilauswahl):
-//   POST /api/pinn/zuhause/wetter                { key?, lat?, lon? }  lat/lon nur, solange kein Zuhause festgelegt ist
+// Signed in OR with the key of the family dashboard (weather even before the profile selection):
+//   POST /api/pinn/zuhause/wetter                { key?, lat?, lon? }  lat/lon only as long as no Home is set
 //
-// Kein Zeitplan - es läuft nur etwas, wenn die App fragt (Wetter 15 Min., Stundenverlauf und Reisewetter 30 Min.,
-// Erfahrungswerte 7 Tage, Ferien 14 Tage zwischengespeichert).
+// No schedule - something only runs when the app asks (weather 15 min., hourly course and holiday weather 30 min.,
+// empirical values 7 days, holidays 14 days cached).
 
 routerAdd("GET", "/api/pinn/zuhause", (e) => {
     e.response.header().set("Cache-Control", "no-store");
@@ -114,7 +114,7 @@ routerAdd("POST", "/api/pinn/zuhause/wetter", (e) => {
     if (angemeldet) {
         familyId = lib.familyOf(e);
     } else {
-        // Familien-Dashboard vor der Profilauswahl: nur mit gültigem Geräte-Schlüssel
+        // Family dashboard before the profile selection: only with a valid device key
         const dev = require(`${__hooks}/pinn-dashboard.js`).findDevice(body.key);
         if (!dev) {
             sleep(300);

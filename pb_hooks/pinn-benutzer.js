@@ -1,28 +1,28 @@
 // pb_hooks/pinn-benutzer.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden.
-// Gemeinsame Funktionen für Anmeldung, Familien, Profile und die Verknüpfung Profil <-> Familienmitglied.
-// (PocketBase führt jeden Hook-Handler isoliert aus - Hilfsfunktionen auf Dateiebene einer
-// *.pb.js wären dort nicht sichtbar. Deshalb liegen sie hier und werden per require() geholt.)
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require().
+// Shared functions for sign-in, families, profiles and the link profile <-> family member.
+// (PocketBase runs every hook handler in isolation - helper functions at file level of a
+// *.pb.js would not be visible there. That is why they live here and are fetched via require().)
 //
-// Familien:
-//  - Sammlung "familien" (name, kalender). Jede Familie hat ihre eigenen Profile, Familiendaten,
-//    Rezeptbilder und Aufgaben (Feld "familie" in benutzer / familien_daten / rezept_bilder / aufgaben).
-//    Öffentlich geteilte Rezepte (und ihre Bilder) bleiben beim Löschen einer Familie erhalten und
-//    landen in der "Rezepte Familie" (siehe pinn-rezepte.js).
-//  - Der Hauptadmin (Rolle "hauptadmin", Profil "Admin" vom Anfang) gehört zu keiner Familie. Er legt
-//    Familien an, benennt sie um, löscht sie und vergibt den ersten Familien-Admin.
-//  - Familien-Admins (Rolle "admin" mit Familie) verwalten nur ihre eigene Familie. Es kann
-//    mehrere Admins je Familie geben.
-//  - Jede Familie kann ihren eigenen Apple-Kalender anbinden: Die Familien-Admins hinterlegen
-//    Apple-ID und App-spezifisches Passwort in den Einstellungen; gespeichert wird verschlüsselt in
-//    der gesperrten Sammlung "apple_zugaenge" (pinn-apple.js). Das Feld "kalender" in "familien"
-//    wird nur noch für den einmaligen Umzug der alten .env-Zugangsdaten gebraucht.
-//  - Benutzernamen sind nur innerhalb einer Familie eindeutig. Angemeldet wird über die eigene
-//    Route /api/pinn/login (Familie + Profil + Passwort).
-//  - Gäste (Rolle "gast") gehören zu einer Familie, haben aber kein bekanntes Passwort und kein
-//    Familienmitglied. Sie kommen nur über das Familien-Dashboard in die App (pinn-dashboard.js)
-//    und haben keinen Zugriff auf die Finanzen.
-//  - Optionale Dashboard-PIN je Profil im versteckten Feld "dashboard_pin" (pinn-dashboard.js).
+// Families:
+//  - Collection "familien" (name, kalender). Each family has its own profiles, family data,
+//    recipe images and tasks (field "familie" in benutzer / familien_daten / rezept_bilder / aufgaben).
+//    Publicly shared recipes (and their images) are kept when a family is deleted and
+//    end up in the "Rezepte Familie" (see pinn-rezepte.js).
+//  - The main admin (role "hauptadmin", profile "Admin" from the beginning) belongs to no family. They create
+//    families, rename them, delete them and assign the first family admin.
+//  - Family admins (role "admin" with a family) only manage their own family. There can be
+//    several admins per family.
+//  - Each family can connect its own Apple calendar: the family admins store
+//    Apple ID and app-specific password in the settings; it is stored encrypted in
+//    the locked collection "apple_zugaenge" (pinn-apple.js). The field "kalender" in "familien"
+//    is now only needed for the one-time migration of the old .env credentials.
+//  - Usernames are only unique within a family. Sign-in goes through the dedicated
+//    route /api/pinn/login (family + profile + password).
+//  - Guests (role "gast") belong to a family, but have no known password and no
+//    family member. They only get into the app via the family dashboard (pinn-dashboard.js)
+//    and have no access to the finances.
+//  - Optional dashboard PIN per profile in the hidden field "dashboard_pin" (pinn-dashboard.js).
 
 const USERS = "benutzer";
 const FAMILIEN = "familien";
@@ -34,7 +34,7 @@ const FAMILIEN_READ_RULE = "@request.auth.id != '' && id = @request.auth.familie
 const CALENDAR_OTHER_FAMILY = "Der Apple-Kalender ist nur für Profile einer Familie verfügbar (der Hauptadmin gehört zu keiner Familie).";
 
 // ---------------------------------------------------------------------------------------------
-// Rollen und Rechte
+// Roles and permissions
 // ---------------------------------------------------------------------------------------------
 function isUsersAuth(e) {
     try { return !!(e.auth && e.auth.collection().name === USERS); } catch (err) { return false; }
@@ -42,7 +42,7 @@ function isUsersAuth(e) {
 function isMainAdmin(e) {
     return isUsersAuth(e) && e.auth.getString("rolle") === "hauptadmin";
 }
-// Familien-Admin (eigene Familie) oder Hauptadmin
+// Family admin (own family) or main admin
 function isAdmin(e) {
     if (!isUsersAuth(e)) return false;
     const r = e.auth.getString("rolle");
@@ -51,15 +51,15 @@ function isAdmin(e) {
 function familyOf(e) {
     return isUsersAuth(e) ? e.auth.getString("familie") : "";
 }
-// Gastkonto (nur über das Dashboard, ohne Finanzen)
+// Guest account (only via the dashboard, without finances)
 function isGuest(e) {
     return isUsersAuth(e) && e.auth.getString("rolle") === "gast";
 }
-// Dasselbe für einen beliebigen Profil-Datensatz (z. B. requestInfo.auth in onRecordEnrich)
+// The same for any profile record (e.g. requestInfo.auth in onRecordEnrich)
 function isGuestRecord(rec) {
     try { return !!(rec && rec.collection().name === USERS && rec.getString("rolle") === "gast"); } catch (e) { return false; }
 }
-// Darf der Angemeldete dieses Profil verwalten? (Hauptadmin-Profile nie über diese Routen)
+// May the signed-in user manage this profile? (main admin profiles never via these routes)
 function canManage(e, rec) {
     if (!rec || rec.getString("rolle") === "hauptadmin") return false;
     if (isMainAdmin(e)) return true;
@@ -78,7 +78,7 @@ function cleanMemberId(v) {
 function cleanFamilyName(v) {
     return String(v || "").replace(/\s+/g, " ").trim().slice(0, 60);
 }
-// Profil derselben Familie, das bereits mit diesem Familienmitglied verknüpft ist (außer exceptId), sonst null.
+// Profile of the same family that is already linked to this family member (except exceptId), otherwise null.
 function profileLinkedTo(familyId, memberId, exceptId) {
     if (!memberId) return null;
     try {
@@ -88,12 +88,12 @@ function profileLinkedTo(familyId, memberId, exceptId) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Familien
+// Families
 // ---------------------------------------------------------------------------------------------
 function allFamilies() {
     try { return $app.findRecordsByFilter(FAMILIEN, "", "created", 0, 0); } catch (e) { return []; }
 }
-// Familie per Name (Groß-/Kleinschreibung egal) oder per ID
+// Family by name (case-insensitive) or by ID
 function findFamily(nameOrId) {
     const v = cleanFamilyName(nameOrId);
     if (!v) return null;
@@ -101,15 +101,15 @@ function findFamily(nameOrId) {
     const list = allFamilies();
     return list.find(f => f.id === v) || list.find(f => f.getString("name").toLowerCase() === lower) || null;
 }
-// Nur noch für den Umzug der alten .env-Zugangsdaten: Familie, der der Apple-Kalender früher gehörte.
+// Only for the migration of the old .env credentials: the family that formerly owned the Apple calendar.
 function calendarFamilyId() {
     try { return $app.findFirstRecordByFilter(FAMILIEN, "kalender = true").id; } catch (e) { return ""; }
 }
-// Jedes Profil einer Familie darf den Apple-Kalender seiner eigenen Familie nutzen.
+// Every profile of a family may use the Apple calendar of its own family.
 function isCalendarUser(e) {
     return !!familyOf(e);
 }
-// Leerer Text = erlaubt, sonst Fehlermeldung
+// Empty text = allowed, otherwise an error message
 function calendarDenied(e) {
     return isCalendarUser(e) ? "" : CALENDAR_OTHER_FAMILY;
 }
@@ -117,9 +117,9 @@ function familyDataRecord(familyId) {
     if (!familyId) return null;
     try { return $app.findFirstRecordByFilter("familien_daten", "familie = {:f}", { f: String(familyId) }); } catch (e) { return null; }
 }
-// Familiendaten samt Bereichen (Rezepte, Einkauf, Pinnwand … liegen seit 1.104 in "familien_bereiche",
-// pinn-bereiche.js) - so sehen alle Server-Funktionen weiter den vollständigen Stand. Nur zum Lesen:
-// geschrieben wird familien_daten immer über familyDataRecord() bzw. die Bereiche über pinn-bereiche.js.
+// Family data including areas (recipes, shopping, board ... have lived in "familien_bereiche" since 1.104,
+// pinn-bereiche.js) - so all server functions keep seeing the complete state. For reading only:
+// familien_daten is always written via familyDataRecord() and the areas via pinn-bereiche.js.
 function loadFamilyDataFor(familyId) {
     const rec = familyDataRecord(familyId);
     let data = {};
@@ -127,10 +127,10 @@ function loadFamilyDataFor(familyId) {
         try { data = require(`${__hooks}/calendar-sync.js`).parseRecordData(rec.get("data")) || {}; } catch (e) { data = {}; }
     }
     if (!familyId) return data;
-    try { require(`${__hooks}/pinn-bereiche.js`).overlay(familyId, data); } catch (e) { /* noch ohne Bereiche */ }
+    try { require(`${__hooks}/pinn-bereiche.js`).overlay(familyId, data); } catch (e) { /* without areas yet */ }
     return data;
 }
-// Änderungszeitpunkt der Familiendaten (inkl. Bereiche), ohne die (großen) Daten selbst zu laden
+// Change time of the family data (incl. areas), without loading the (large) data itself
 function familyDataStamp(familyId) {
     if (!familyId) return "";
     let stamp = "";
@@ -154,7 +154,7 @@ function hasIndex(collection, name) {
     try {
         const list = collection.indexes || [];
         for (let i = 0; i < list.length; i++) { if (String(list[i]).indexOf(name) !== -1) return true; }
-    } catch (e) { /* egal */ }
+    } catch (e) { /* ignore */ }
     return false;
 }
 function findCol(name) {
@@ -168,7 +168,7 @@ function setRules(col, rules) {
     return changed;
 }
 
-// Fehler der Einrichtung merken (für die Anzeige beim Hauptadmin) und loggen
+// Remember errors of the set-up (for the display at the main admin) and log them
 const SETUP_ERRORS_KEY = "pinnSetupErrors";
 function setupError(msg) {
     console.log("[Familien] " + msg);
@@ -178,7 +178,7 @@ function setupError(msg) {
         for (let i = 0; i < list.length; i++) arr.push(String(list[i]));
         if (arr.indexOf(msg) === -1) arr.push(msg);
         $app.store().set(SETUP_ERRORS_KEY, arr.slice(-10));
-    } catch (e) { /* egal */ }
+    } catch (e) { /* ignore */ }
 }
 function setupErrors() {
     try {
@@ -189,18 +189,18 @@ function setupErrors() {
     } catch (e) { return []; }
 }
 function clearSetupErrors() {
-    try { $app.store().remove(SETUP_ERRORS_KEY); } catch (e) { /* egal */ }
+    try { $app.store().remove(SETUP_ERRORS_KEY); } catch (e) { /* ignore */ }
 }
 
-// Neue Sammlung im Format der PocketBase-JavaScript-Umgebung: new Collection({type, name, fields, ...}).
-// (So legt auch pinn-push.js seine Sammlungen an - das funktioniert in dieser Installation.)
+// New collection in the format of the PocketBase JavaScript environment: new Collection({type, name, fields, ...}).
+// (pinn-push.js creates its collections this way as well - it works in this installation.)
 function createCollection(def) {
     $app.save(new Collection(def));
     const c = findCol(def.name);
     if (!c) throw new Error("Sammlung \"" + def.name + "\" wurde nicht gespeichert.");
     return c;
 }
-// Einzelnes Feld aus einer Definition erzeugen (über eine nie gespeicherte Hilfs-Sammlung)
+// Create a single field from a definition (via a helper collection that is never saved)
 function makeField(def) {
     const tmp = new Collection({ type: "base", name: "pinn_tmp_" + def.name, fields: [def] });
     return tmp.fields.getByName(def.name);
@@ -225,7 +225,7 @@ function familyRelationDef(famCol) {
 const CLOSED = { listRule: null, viewRule: null, createRule: null, updateRule: null, deleteRule: null };
 const ROLES = ["hauptadmin", "admin", "mitglied", "gast"];
 
-// Fehlende Rollen ("hauptadmin", "gast") im Auswahlfeld "rolle" ergänzen. true = alle vorhanden.
+// Add missing roles ("hauptadmin", "gast") to the select field "rolle". true = all present.
 function ensureRoles() {
     const users = findCol(USERS);
     if (!users) return false;
@@ -245,17 +245,17 @@ function ensureRoles() {
         return false;
     }
 }
-// Vor dem Anlegen eines Gastkontos: gibt es die Rolle "gast" schon?
+// Before creating a guest account: does the role "gast" exist yet?
 function ensureGuestRole() {
     return ensureRoles();
 }
 
-// Legt Sammlungen/Felder an bzw. ergänzt sie. Läuft beim Start (und bei Bedarf aus den Routen);
-// ein Fehler wird nur geloggt bzw. für den Hauptadmin gemerkt.
+// Creates collections/fields or completes them. Runs on start (and when needed from the routes);
+// an error is only logged or remembered for the main admin.
 function ensureSchema() {
     clearSetupErrors();
 
-    // 1) Profil-Sammlung (nur bei Neuinstallation)
+    // 1) Profile collection (only on a fresh install)
     let users = findCol(USERS);
     if (!users) {
         try {
@@ -269,7 +269,7 @@ function ensureSchema() {
                 ],
                 passwordAuth: { enabled: true, identityFields: ["email"] },
             }, CLOSED, { listRule: AUTH_RULE, viewRule: AUTH_RULE }));
-            try { users.fields.getByName("email").required = false; users.fields.getByName("password").min = 5; $app.save(users); } catch (e2) { /* je nach Version */ }
+            try { users.fields.getByName("email").required = false; users.fields.getByName("password").min = 5; $app.save(users); } catch (e2) { /* depending on the version */ }
             users = findCol(USERS);
             console.log("[Anmeldung] Profil-Sammlung \"" + USERS + "\" angelegt.");
         } catch (err) {
@@ -277,8 +277,8 @@ function ensureSchema() {
         }
     }
 
-    // 2) Familien-Sammlung. Regeln erst in Schritt 9 - "@request.auth.familie" gibt es erst, wenn
-    //    das Feld "familie" im Profil existiert.
+    // 2) Family collection. Rules only in step 9 - "@request.auth.familie" only exists once
+    //    the field "familie" exists in the profile.
     let famCol = findCol(FAMILIEN);
     if (!famCol) {
         const build = (withIndex) => Object.assign({
@@ -305,7 +305,7 @@ function ensureSchema() {
         }
     }
 
-    // 3) Familiendaten + Rezeptbilder (nur bei Neuinstallation)
+    // 3) Family data + recipe images (only on a fresh install)
     if (!findCol("familien_daten")) {
         try {
             createCollection(Object.assign({
@@ -339,12 +339,12 @@ function ensureSchema() {
         }
     }
 
-    // 4) Feld "familie" überall ergänzen (Löschen einer Familie löscht die Datensätze mit)
+    // 4) Add the field "familie" everywhere (deleting a family also deletes the records)
     if (famCol) {
         [USERS, "familien_daten", "rezept_bilder", "aufgaben"].forEach(n => addField(n, familyRelationDef(famCol)));
     }
 
-    // 5) Profil-Sammlung: Felder, Rolle "hauptadmin", Anmeldung je Familie
+    // 5) Profile collection: fields, role "hauptadmin", sign-in per family
     users = findCol(USERS);
     if (users) {
         addField(USERS, { name: "mitglied", type: "text", max: 100 });
@@ -353,12 +353,12 @@ function ensureSchema() {
         ensureRoles();
         users = findCol(USERS);
 
-        // Benutzernamen nur noch je Familie eindeutig; Anmeldung läuft über /api/pinn/login
+        // Usernames only unique per family now; sign-in goes through /api/pinn/login
         users = findCol(USERS);
         if (users && hasField(users, "familie") && !hasIndex(users, "idx_benutzer_familie_username")) {
             try {
                 users.passwordAuth = { enabled: true, identityFields: ["email"] };
-                try { users.removeIndex("idx_benutzer_username"); } catch (err2) { /* nicht vorhanden */ }
+                try { users.removeIndex("idx_benutzer_username"); } catch (err2) { /* does not exist */ }
                 users.addIndex("idx_benutzer_familie_username", true, "`familie`, `username`", "");
                 $app.save(users);
                 console.log("[Anmeldung] Benutzernamen sind jetzt je Familie eindeutig.");
@@ -368,8 +368,8 @@ function ensureSchema() {
         }
     }
 
-    // 6) Hauptadmin sicherstellen: bisheriges Profil "Admin" wird zum Hauptadmin (ohne Familie),
-    //    fehlt es, wird "Admin"/"Admin" angelegt (Passwort muss beim ersten Anmelden geändert werden).
+    // 6) Ensure the main admin: the existing profile "Admin" becomes the main admin (without a family),
+    //    if it is missing, "Admin"/"Admin" is created (the password must be changed on the first sign-in).
     users = findCol(USERS);
     if (users) {
         try {
@@ -402,15 +402,15 @@ function ensureSchema() {
         }
     }
 
-    // 7) Umzug einer bestehenden Installation: alle Profile (außer dem Hauptadmin), Familiendaten,
-    //    Rezeptbilder und Aufgaben ohne Familie kommen in die Familie "Familie". Läuft bei jedem Start,
-    //    solange es noch Datensätze ohne Familie gibt - auch wenn schon andere Familien existieren.
+    // 7) Migration of an existing installation: all profiles (except the main admin), family data,
+    //    recipe images and tasks without a family go into the family "Familie". Runs on every start
+    //    as long as there are still records without a family - even if other families already exist.
     migrateOrphans();
 
-    // 8) Apple-Kalender: jede Familie hinterlegt ihre eigenen Zugangsdaten (pinn-apple.js) - hier
-    //    ist keine Zuordnung mehr nötig.
+    // 8) Apple calendar: every family stores its own credentials (pinn-apple.js) - no
+    //    assignment is needed here any more.
 
-    // 9) Zugriffsregeln: jede Familie sieht nur ihre eigenen Daten
+    // 9) Access rules: every family only sees its own data
     try {
         const u = findCol(USERS);
         if (u && hasField(u, "familie") && setRules(u, {
@@ -438,12 +438,12 @@ function ensureSchema() {
         } catch (err) { setupError("Regeln für \"" + name + "\" nicht setzbar: " + err.message); }
     });
 
-    // 10) Alte, öffentlich abrufbare Kalenderdatei entfernen
-    try { $os.remove("/pb_public/kalender.ics"); } catch (err) { /* nicht vorhanden */ }
+    // 10) Remove the old, publicly retrievable calendar file
+    try { $os.remove("/pb_public/kalender.ics"); } catch (err) { /* does not exist */ }
 
-    // 11) Push-Sammlungen legt pinn-push.js an (ensurePushCollections beim Start von push.pb.js)
+    // 11) pinn-push.js creates the push collections (ensurePushCollections on the start of push.pb.js)
 
-    // 12) Familien-Dashboard: Sammlung der eingerichteten Dashboard-Geräte (pinn-dashboard.js)
+    // 12) Family dashboard: collection of the set-up dashboard devices (pinn-dashboard.js)
     try {
         require(`${__hooks}/pinn-dashboard.js`).ensureSchema();
     } catch (err) {
@@ -451,8 +451,8 @@ function ensureSchema() {
     }
 }
 
-// Alles ohne Familie (außer dem Hauptadmin) in die Familie "Familie" übernehmen.
-// Gibt die Anzahl übernommener Profile + Familiendaten zurück.
+// Take over everything without a family (except the main admin) into the family "Familie".
+// Returns the number of taken-over profiles + family data.
 function migrateOrphans() {
     const users = findCol(USERS);
     const famCol = findCol(FAMILIEN);
@@ -476,20 +476,20 @@ function migrateOrphans() {
             fam.set("name", "Familie");
             $app.save(fam);
         }
-        const upd = (sql) => { try { $app.db().newQuery(sql).bind({ f: fam.id }).execute(); } catch (e) { /* Sammlung/Feld fehlt */ } };
+        const upd = (sql) => { try { $app.db().newQuery(sql).bind({ f: fam.id }).execute(); } catch (e) { /* collection/field is missing */ } };
         upd("UPDATE benutzer SET familie = {:f} WHERE (familie = '' OR familie IS NULL) AND (rolle IS NULL OR rolle != 'hauptadmin')");
         upd("UPDATE familien_daten SET familie = {:f} WHERE familie = '' OR familie IS NULL");
-        // Bilder öffentlicher Rezepte gelöschter Familien ("Rezepte Familie") bleiben ohne Familie -
-        // sonst würden sie beim Löschen der Familie "Familie" mitgelöscht.
+        // Images of public recipes of deleted families ("Rezepte Familie") stay without a family -
+        // otherwise they would be deleted along with the family "Familie" when it is deleted.
         try {
             $app.db().newQuery("UPDATE rezept_bilder SET familie = {:f} WHERE (familie = '' OR familie IS NULL) AND id NOT IN (SELECT bild_id FROM oeffentliche_rezepte WHERE bild_id != '')").bind({ f: fam.id }).execute();
         } catch (e) {
-            // Sammlung "oeffentliche_rezepte" gibt es (noch) nicht -> es gibt auch keine zu schützenden Bilder
+            // The collection "oeffentliche_rezepte" does not exist (yet) -> there are no images to protect either
             upd("UPDATE rezept_bilder SET familie = {:f} WHERE familie = '' OR familie IS NULL");
         }
         upd("UPDATE aufgaben SET familie = {:f} WHERE familie = '' OR familie IS NULL");
-        // Die bisherigen Daten enthalten die Apple-Kalender-Auswahl -> alte .env-Zugangsdaten gehören
-        // dieser Familie (Umzug in pinn-apple.js)
+        // The previous data contains the Apple calendar selection -> old .env credentials belong to
+        // this family (migration in pinn-apple.js)
         if (orphanData > 0) {
             try {
                 $app.findRecordsByFilter(FAMILIEN, "kalender = true", "", 0, 0).forEach(f => {
@@ -498,7 +498,7 @@ function migrateOrphans() {
                 const again = $app.findRecordById(FAMILIEN, fam.id);
                 again.set("kalender", true);
                 $app.save(again);
-            } catch (e) { /* egal */ }
+            } catch (e) { /* ignore */ }
         }
         console.log("[Familien] " + orphanUsers + " Profil(e) und " + orphanData + " Familiendaten in die Familie \"Familie\" übernommen.");
         return orphanUsers + orphanData;
@@ -508,7 +508,7 @@ function migrateOrphans() {
     }
 }
 
-// Prüft, ob alles für Familien Nötige vorhanden ist. Leerer Text = alles da.
+// Checks whether everything needed for families is present. Empty text = everything there.
 function setupProblem() {
     const missing = [];
     const users = findCol(USERS);
@@ -520,7 +520,7 @@ function setupProblem() {
     return missing.length ? ("Einrichtung unvollständig: " + missing.join(", ") + " fehlt.") : "";
 }
 
-// Einrichtung nachholen, falls etwas fehlt (z. B. wenn der Start-Hook nicht durchlief)
+// Catch up on the set-up if something is missing (e.g. if the start hook did not run)
 function ensureReady() {
     if (!setupProblem()) return "";
     try { ensureSchema(); } catch (err) { setupError("Einrichtung fehlgeschlagen: " + err.message); }
@@ -531,10 +531,10 @@ function ensureReady() {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Familienmitglieder <-> Profile
-// Jedes Profil (außer Gast und Hauptadmin) ist genau ein Familienmitglied. Fehlt das Mitglied,
-// wird es mit dem Profilnamen angelegt und verknüpft. Die früheren Beispiel-Mitglieder
-// (Anna/Jonas/Mia) werden entfernt, solange kein Profil mit ihnen verknüpft ist.
+// Family members <-> profiles
+// Every profile (except guest and main admin) is exactly one family member. If the member is missing,
+// it is created with the profile name and linked. The former example members
+// (Anna/Jonas/Mia) are removed as long as no profile is linked to them.
 // ---------------------------------------------------------------------------------------------
 const MEMBER_COLORS = ["#2F4B41", "#B9842E", "#7A5C8E", "#B85C5C", "#3E7CA6", "#5C8A3E"];
 const EXAMPLE_MEMBERS = {
@@ -550,13 +550,13 @@ function isExampleMember(m) {
 function familyMemberProfiles(familyId) {
     if (!familyId) return [];
     try {
-        // Ohne Sortierung: Die Profil-Sammlung hat (je nach Installation) kein Feld "created" - eine
-        // Sortierung danach lässt die Abfrage scheitern und es würden keine Mitglieder angelegt.
+        // Without sorting: the profile collection has (depending on the installation) no field "created" - sorting
+        // by it makes the query fail and no members would be created.
         return $app.findRecordsByFilter(USERS, "familie = {:f}", "", 0, 0, { f: String(familyId) })
             .filter(r => r.getString("rolle") !== "gast" && r.getString("rolle") !== "hauptadmin");
     } catch (e) { return []; }
 }
-// Entfernt Beispiel-Mitglieder ohne Profil aus data.members. true = geändert.
+// Removes example members without a profile from data.members. true = changed.
 function stripExampleMembers(familyId, data) {
     if (!data || !Array.isArray(data.members) || !data.members.some(isExampleMember)) return false;
     const linked = {};
@@ -565,7 +565,7 @@ function stripExampleMembers(familyId, data) {
     data.members = data.members.filter(m => !isExampleMember(m) || linked[m.id]);
     return data.members.length !== before;
 }
-// Familienname ohne vorangestelltes "Familie" bzw. "WG" (für die Überschrift "Familie <Name>")
+// Family name without a leading "Familie" or "WG" (for the heading "Family <name>")
 function lastNameFromFamily(name) {
     return String(name || "").replace(/^(familie|family|famille|familia|wg)\s+/i, "").trim();
 }
@@ -576,12 +576,12 @@ function newMemberId(taken) {
     taken[id] = true;
     return id;
 }
-// Bereiche-Modul (pinn-bereiche.js) - null, wenn es (noch) nicht geladen werden kann
+// Areas module (pinn-bereiche.js) - null if it cannot be loaded (yet)
 function areasLib() {
     try { return require(`${__hooks}/pinn-bereiche.js`); } catch (e) { return null; }
 }
-// Profile ohne verknüpftes Mitglied bekommen eine neue Mitglieds-ID (wird am Profil gespeichert).
-// Läuft immer AUSSERHALB einer Transaktion. -> Liste der Profile der Familie
+// Profiles without a linked member get a new member ID (saved on the profile).
+// Always runs OUTSIDE a transaction. -> list of the family's profiles
 function linkProfilesToMembers(familyId, members) {
     const used = {};
     (members || []).forEach(m => { if (m && m.id) used[String(m.id)] = true; });
@@ -593,7 +593,7 @@ function linkProfilesToMembers(familyId, members) {
     });
     return profiles;
 }
-// Ergänzt in einer Mitgliederliste die Mitglieder der Profile, die noch fehlen. true = etwas ergänzt.
+// Adds to a member list the members of the profiles that are still missing. true = something added.
 function addProfileMembers(list, profiles) {
     const ids = {};
     list.forEach(m => { if (m && m.id) ids[String(m.id)] = true; });
@@ -613,9 +613,9 @@ function addProfileMembers(list, profiles) {
     });
     return changed;
 }
-// Gleicht die Familienmitglieder einer Familie mit ihren Profilen ab. true = etwas geändert.
-// Ab 1.108 liegen die Mitglieder im Bereich „mitglieder“ und der Familienname im Bereich „einstellungen“
-// (pinn-bereiche.js); solange eine Familie noch nicht umgezogen ist, gilt der alte Weg über familien_daten.
+// Reconciles a family's members with their profiles. true = something changed.
+// Since 1.108 the members live in the area "mitglieder" and the family name in the area "einstellungen"
+// (pinn-bereiche.js); as long as a family has not been migrated yet, the old way via familien_daten applies.
 function syncFamilyMembers(familyId) {
     if (!familyId) return false;
     const B = areasLib();
@@ -654,8 +654,8 @@ function syncFamilyMembers(familyId) {
         return false;
     }
 }
-// Abgleich über die Bereiche. Alles, was andere Datensätze liest oder schreibt (Profile, Beispiel-Mitglieder),
-// passiert vorher - in der Transaktion von updateArea wird nur noch die Liste geändert.
+// Reconciliation via the areas. Everything that reads or writes other records (profiles, example members)
+// happens beforehand - in the transaction of updateArea only the list is changed.
 function syncFamilyMembersArea(B, familyId) {
     try {
         let fam = null;
@@ -696,8 +696,8 @@ function syncFamilyMembersArea(B, familyId) {
 function syncAllFamilyMembers() {
     allFamilies().forEach(f => syncFamilyMembers(f.id));
 }
-// Mitglied (samt Notfallpass) aus den Familiendaten entfernen, z. B. wenn sein Profil gelöscht wurde.
-// Ab 1.108 aus den Bereichen „mitglieder“ und „notfall“, sonst (noch nicht umgezogen) aus familien_daten.
+// Remove a member (including emergency pass) from the family data, e.g. when their profile was deleted.
+// Since 1.108 from the areas "mitglieder" and "notfall", otherwise (not migrated yet) from familien_daten.
 function removeFamilyMember(familyId, memberId) {
     if (!familyId || !memberId) return false;
     const B = areasLib();

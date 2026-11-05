@@ -1,30 +1,30 @@
 // pb_hooks/pinn-vorrat.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden.
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require().
 //
-// Vorrat 2.0 (pinn. 1.30)
-//  1. Erinnerung an das Mindesthaltbarkeitsdatum (MHD):
-//     - Die Vorrats-Artikel liegen seit 1.105 im eigenen Bereich "vorrat" (pinn-bereiche.js; pantryItems, Feld "bestBefore",
-//       ISO-Datum). Wie viele Tage vorher erinnert wird, steht in pantrySettings.mhdDays (1–14, Standard 3).
-//     - Je Familie EINE Sammel-Nachricht am Morgen (ab 9 Uhr): einmal, wenn ein Artikel in den
-//       Vorlauf kommt, und einmal am Tag des Ablaufs. Ist ein Artikel schon abgelaufen, ohne dass es
-//       je eine Meldung gab (z. B. abgelaufen eingetragen), kommt einmal „abgelaufen“ (bis 3 Tage danach).
-//     - Empfänger: alle Profile der Familie außer Gästen und Kindern, die unter Einstellungen →
-//       Benachrichtigungen „Vorrat läuft ab“ eingeschaltet haben (Standard: an).
-//     - Gemerkt wird in pb_data/pinn_vorrat_erinnert.json - nach einem Neustart kommt nichts doppelt.
-//  2. Barcode-Abfrage: Produktname, Marke, Menge und eine passende Vorrats-Kategorie aus den freien
-//     Datenbanken Open Food Facts, Open Beauty Facts, Open Products Facts und Open Pet Food Facts.
-//     Abgefragt wird nur die Barcode-Nummer. Treffer werden 60 Tage, Fehlanzeigen 3 Tage im
-//     Zwischenspeicher (pb_data/pinn_barcodes.json, höchstens 3000 Einträge) gehalten.
+// Pantry 2.0 (pinn. 1.30)
+//  1. Reminder of the best-before date (BBD):
+//     - Since 1.105 the pantry items live in the own area "vorrat" (pinn-bereiche.js; pantryItems, field "bestBefore",
+//       ISO date). How many days beforehand to remind is in pantrySettings.mhdDays (1–14, default 3).
+//     - ONE collective message per family in the morning (from 9 a.m.): once when an item enters the
+//       lead time, and once on the day of expiry. If an item has already expired without there ever
+//       having been a message (e.g. entered as expired), "expired" comes once (up to 3 days afterwards).
+//     - Recipients: all profiles of the family except guests and children who have switched on
+//       "Pantry expiring" under Settings → Notifications (default: on).
+//     - It is remembered in pb_data/pinn_vorrat_erinnert.json - nothing comes twice after a restart.
+//  2. Barcode lookup: product name, brand, quantity and a matching pantry category from the free
+//     databases Open Food Facts, Open Beauty Facts, Open Products Facts and Open Pet Food Facts.
+//     Only the barcode number is queried. Hits are kept in the cache for 60 days, misses for 3 days
+//     (pb_data/pinn_barcodes.json, 3000 entries at most).
 //
-// Schonend für CPU und Speicher: der Zeitplan läuft stündlich, arbeitet aber nur einmal am Tag
-// wirklich (dann wird jeder Familien-Datensatz genau einmal gelesen). Nach dem Speichern prüft die App
-// nur die eigene Familie (9–21 Uhr); gemeldet wird dann nur, was noch nicht gemeldet wurde.
+// Gentle on CPU and memory: the schedule runs hourly, but only really works once a day
+// (then every family record is read exactly once). After saving, the app only checks the own family
+// (9 a.m.–9 p.m.); only what has not been reported yet is reported then.
 
 const STATUS_FILE = "/pb_data/pinn_vorrat_erinnert.json";
 const CACHE_FILE = "/pb_data/pinn_barcodes.json";
 const CACHE_STORE_KEY = "pinnBarcodeCache";
 const CACHE_MAX = 3000;
-const CACHE_VERSION = 2; // 2: Kategorien von der genauesten Angabe her (1.30.1) – ältere Einträge werden neu abgefragt
+const CACHE_VERSION = 2; // 2: categories from the most precise specification (1.30.1) - older entries are queried again
 const HIT_TTL_MS = 60 * 24 * 3600 * 1000;
 const MISS_TTL_MS = 3 * 24 * 3600 * 1000;
 const SEND_FROM_HOUR = 9;
@@ -33,7 +33,7 @@ const MHD_DAYS = [1, 2, 3, 5, 7, 14];
 const UA = "pinn/1.30.1 (self-hosted family organizer; https://github.com/pinn-shost/pinn)";
 
 // ---------------------------------------------------------------------------------------------
-// Zeit (Mitteleuropa, feste EU-Sommerzeitregel - wie pinn-push.js / pinn-vertraege.js)
+// Time (Central Europe, fixed EU daylight saving rule - like pinn-push.js / pinn-vertraege.js)
 // ---------------------------------------------------------------------------------------------
 function pad2(n) { return (n < 10 ? "0" : "") + n; }
 function lastSundayUtc(year, month) {
@@ -58,7 +58,7 @@ function addDays(iso, n) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Dateien
+// Files
 // ---------------------------------------------------------------------------------------------
 function readJson(path) {
     try {
@@ -82,7 +82,7 @@ function pruneStatus(s, today) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// MHD-Erinnerungen
+// BBD reminders
 // ---------------------------------------------------------------------------------------------
 function num(v) { const n = parseFloat(String(v == null ? "" : v).replace(",", ".")); return isNaN(n) ? 0 : n; }
 function isChild(m) {
@@ -103,7 +103,7 @@ function whenText(d) {
     return "in " + d + " Tagen";
 }
 
-// Was ist für diese Familie heute fällig? -> [{ item, days, keys }]
+// What is due today for this family? -> [{ item, days, keys }]
 function dueItems(familyId, data, today, status) {
     const lead = leadDays(data);
     const items = Array.isArray(data.pantryItems) ? data.pantryItems : [];
@@ -173,7 +173,7 @@ function remindFamily(familyId, today, status) {
             delivered += push.notifyUser(u.id, { titel: msg.titel, text: msg.text, url: "/?vorrat=ablauf", tag: "vorrat-ablauf-" + today, urgency: "normal" });
         } catch (e) { console.log("[Vorrat] Push fehlgeschlagen: " + e.message); }
     });
-    // Auch ohne angemeldetes Gerät als erledigt merken - sonst käme sie Tage später nach
+    // Also remember as done without a registered device - otherwise it would come days later
     due.forEach(x => x.keys.forEach(k => { status.sent[k] = today; }));
     return delivered;
 }
@@ -204,7 +204,7 @@ function runReminders(opts) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Barcode-Abfrage
+// Barcode lookup
 // ---------------------------------------------------------------------------------------------
 const SOURCES = [
     { id: "off", host: "https://world.openfoodfacts.org" },
@@ -214,11 +214,11 @@ const SOURCES = [
 ];
 const FIELDS = "product_name,product_name_de,product_name_en,generic_name,generic_name_de,abbreviated_product_name,brands,quantity,categories_tags";
 
-// Kategorie-Hinweis (IDs der Standard-Kategorien in der App, index.html → PANTRY_DEFAULT_CATEGORIES)
-// Die Datenbanken liefern Kategorien vom Allgemeinen zum Genauen, z. B. für Cornflakes:
-// plant-based-foods-and-beverages → … → breakfast-cereals → corn-flakes. Ausgewertet wird deshalb
-// von hinten (die genaueste Angabe zuerst); reine Oberbegriffe wie „Pflanzliche Lebensmittel und
-// Getränke“ werden übersprungen – sonst landeten Cornflakes, Nudeln & Co. bei den Getränken.
+// Category hint (IDs of the default categories in the app, index.html → PANTRY_DEFAULT_CATEGORIES)
+// The databases return categories from general to specific, e.g. for cornflakes:
+// plant-based-foods-and-beverages → … → breakfast-cereals → corn-flakes. They are therefore evaluated
+// from the back (the most precise specification first); pure umbrella terms like "Plant-based foods and
+// beverages" are skipped - otherwise cornflakes, pasta & co. would end up with the beverages.
 const GENERIC_TAGS = [
     "plant-based-foods-and-beverages", "plant-based-foods", "foods", "food", "groceries",
     "non-food-products", "open-beauty-facts", "products", "animal-foods", "fresh-foods",
@@ -255,13 +255,13 @@ function categoryHint(source, tags) {
 function clean(v, max) { return String(v == null ? "" : v).replace(/\s+/g, " ").trim().slice(0, max); }
 
 function bodyText(res) {
-    try { if (typeof res.raw === "string" && res.raw) return res.raw; } catch (e) { /* weiter */ }
-    try { return toString(res.body); } catch (e) { /* weiter */ }
+    try { if (typeof res.raw === "string" && res.raw) return res.raw; } catch (e) { /* continue */ }
+    try { return toString(res.body); } catch (e) { /* continue */ }
     return "";
 }
 function parseJson(res) {
-    try { return JSON.parse(bodyText(res) || ""); } catch (e) { /* weiter */ }
-    try { if (res.json !== undefined && res.json !== null) return res.json; } catch (e) { /* egal */ }
+    try { return JSON.parse(bodyText(res) || ""); } catch (e) { /* continue */ }
+    try { if (res.json !== undefined && res.json !== null) return res.json; } catch (e) { /* ignore */ }
     return null;
 }
 
@@ -269,9 +269,9 @@ function loadCache() {
     try {
         const raw = $app.store().get(CACHE_STORE_KEY);
         if (raw && typeof raw === "object") return raw;
-    } catch (e) { /* aus der Datei */ }
+    } catch (e) { /* from the file */ }
     const o = readJson(CACHE_FILE) || {};
-    try { $app.store().set(CACHE_STORE_KEY, o); } catch (e) { /* egal */ }
+    try { $app.store().set(CACHE_STORE_KEY, o); } catch (e) { /* ignore */ }
     return o;
 }
 function saveCache(c) {
@@ -280,7 +280,7 @@ function saveCache(c) {
         keys.sort((a, b) => (c[a].ts || 0) - (c[b].ts || 0));
         keys.slice(0, keys.length - CACHE_MAX).forEach(k => { delete c[k]; });
     }
-    try { $app.store().set(CACHE_STORE_KEY, c); } catch (e) { /* egal */ }
+    try { $app.store().set(CACHE_STORE_KEY, c); } catch (e) { /* ignore */ }
     writeJson(CACHE_FILE, c);
 }
 
@@ -340,7 +340,7 @@ function lookupBarcode(rawCode) {
         }
     }
     const miss = { gefunden: false };
-    // Nur merken, wenn wirklich alle geantwortet haben (sonst später noch einmal versuchen)
+    // Only remember if really all have answered (otherwise try again later)
     if (!failures) {
         cache[code] = { v: CACHE_VERSION, ts: Date.now(), d: miss };
         saveCache(cache);

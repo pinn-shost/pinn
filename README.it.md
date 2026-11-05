@@ -129,6 +129,13 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский e 🇳🇱 Nederlands**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.129.0
+
+**Commenti in inglese in tutti i file**
+
+- **Commenti in inglese.** Tutti i commenti del codice del progetto sono ora in inglese: parti del server, script di installazione e manutenzione, `docker-compose.yaml`, il modello `.env`, il Caddyfile e i file dell’app. Nell’app, nei suoi testi e nel suo comportamento non cambia nulla.
+- Modificato: `pb_hooks/` (tutti i file), `pinn-setup.sh`, `pinn-wartung.sh`, `pinn-pocketbase-update.sh`, `docker-compose.yaml`, `env.txt`, `caddy/Caddyfile`, `js/sprachen.js`, `datenexport.js`, `einrichtung.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) e tutti i README. Parte server: i file degli hook – sostituiscili anche.
+
 ## Novità della 1.128.0
 
 **Controllo vocale in tutte le lingue dell’app**
@@ -192,17 +199,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Modificato: `js/chat.js`, `css/chat.css`, `js/aufgaben.js`, `js/pinnwand.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, tutti gli `i18n/*.i18n.js`, `index.html`, `src/` e tutti i README. **Nessuna parte server:** gli hook restano invariati.
 
 
-## Novità della 1.127.1
-
-**Foto e video nella chat**
-
-- **Invia foto e video** con il pulsante graffetta, con anteprima e didascalia. Come in WhatsApp, un **pulsante HD** ti lascia scegliere ogni volta: Standard riduce le foto a circa 0,3 MB, HD invia l’originale (foto fino a 20 MB, video fino a 50 MB). I video vengono ridotti dove il dispositivo può, altrimenti si invia l’originale.
-- **Anche con crittografia end-to-end:** ogni file ha la sua chiave; il tuo NAS non vede né l’immagine né il nome. Visualizzatore a schermo intero nella chat, **condivisione** (WhatsApp, e-mail …) o **salvataggio sul dispositivo**.
-- **Archivia in pinn.:** salva una foto come documento o assegnala a un’abitazione, un difetto o un veicolo. I video si condividono e si salvano, ma non si archiviano come documenti.
-- **Eliminazione automatica:** gli amministratori scelgono in «Sicurezza della chat» dopo quanti giorni messaggi e/o foto e video vengono eliminati per tutti, di notte (predefinito: mai).
-- Modificato: `js/chatmedien.js` (nuovo), `css/chat.css`, `js/chat.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, tutti gli `i18n/*.i18n.js`, `pinn-setup.sh`, `src/` e tutti i README. **Lato server:** `pb_hooks/chat.pb.js` e `pb_hooks/pinn-chat.js` – sostituire anche gli hook.
-
-
 ## Come funziona
 
 ```mermaid
@@ -231,7 +227,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.128.0` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.129.0` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

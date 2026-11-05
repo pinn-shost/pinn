@@ -1,53 +1,53 @@
 // pb_hooks/pinn-export.js
-// Datenexport: eine komplette Familie (bzw. WG) als ZIP – Daten + Dokumente.
-// Kein *.pb.js -> wird nur per require() aus export.pb.js eingebunden.
+// Data export: a complete family (or flat share) as a ZIP - data + documents.
+// Not a *.pb.js file -> only pulled in via require() from export.pb.js.
 //
-// Der Server packt nichts selbst: Er liefert die Daten Sammlung für Sammlung als JSON und jede Datei
-// einzeln aus. Das ZIP baut die App im Browser (pb_public/datenexport.js). So entstehen auf dem NAS
-// weder Zwischendateien noch Last durch Komprimieren, und der Container „wartung“ wird nicht gebraucht.
+// The server does not pack anything itself: it delivers the data collection by collection as JSON and every file
+// individually. The ZIP is built by the app in the browser (pb_public/datenexport.js). This way the NAS gets
+// neither intermediate files nor load from compressing, and the container "wartung" is not needed.
 //
-// Welche Sammlungen? Automatisch alle eigenen Sammlungen mit einem Feld „familie“ (Relation oder Text)
-// plus der Datensatz in „familien“ selbst. Kommt später eine neue Sammlung dazu, ist sie ohne
-// Änderung hier mit im Export. Ausgenommen sind nur Dinge, die an diesen Server oder an Geräte
-// gebunden bzw. geheim sind (siehe AUSSCHLUSS) – sie würden auf einem anderen NAS ohnehin nicht
-// funktionieren (verschlüsselt mit dem Schlüssel dieses Servers) oder gehören nicht in eine Datei.
+// Which collections? Automatically all own collections with a field "familie" (relation or text)
+// plus the record in "familien" itself. If a new collection is added later, it is part of the export without
+// any change here. Only things that are bound to this server or to devices
+// or are secret are excluded (see AUSSCHLUSS) - they would not work on another NAS anyway
+// (encrypted with this server's key) or do not belong in a file.
 //
-// Rechte:
-//   - Hauptadmin: jede Familie, vollständig (auch private Kassen und „Nur für mich“-Kalender) –
-//     gedacht für den Umzug auf ein anderes NAS.
-//   - Familien-Admin: nur die eigene Familie und nur, was er auch in der App sehen darf. Kassen, in
-//     denen er nicht Mitglied ist (samt Buchungen, Belegen und Dokumenten dieser Kassen), und
-//     „Nur für mich“-Kalender anderer Profile bleiben draußen. Die App zeigt an, wie viel fehlt.
-//   - Alle anderen: kein Export.
+// Permissions:
+//   - Main admin: every family, complete (also private funds and "only for me" calendars) -
+//     intended for moving to another NAS.
+//   - Family admin: only the own family and only what they may see in the app, too. Funds of
+//     which they are not a member (including bookings, receipts and documents of these funds) and
+//     "only for me" calendars of other profiles stay out. The app shows how much is missing.
+//   - Everyone else: no export.
 //
-// Nie im Export: Passwörter (auch nicht als Prüfsumme), Anmelde-Schlüssel, Dashboard-PINs,
-// Zugangsdaten zu iCloud/Google/Home Assistant, angemeldete Geräte, Push-Abos, Fehlerprotokoll.
+// Never in the export: passwords (not even as a checksum), sign-in keys, dashboard PINs,
+// credentials for iCloud/Google/Home Assistant, signed-in devices, push subscriptions, error log.
 
 const FORMAT = "pinn-familien-export";
 const FORMAT_VERSION = 1;
 
-// Sammlungen, die nie exportiert werden
+// Collections that are never exported
 const AUSSCHLUSS = {
-    apple_zugaenge: "zugang",        // iCloud-Zugangsdaten (verschlüsselt mit dem Schlüssel dieses Servers)
+    apple_zugaenge: "zugang",        // iCloud credentials (encrypted with this server's key)
     google_zugaenge: "zugang",       // Google-Anmeldungen
-    google_client: "zugang",         // OAuth-Daten des Servers
-    kalender_konten: "zugang",       // Kalender-Konten je Profil (Zugangsdaten)
-    sitzungen: "geraet",             // angemeldete Geräte
-    push_abos: "geraet",             // Push-Abos der Geräte
+    google_client: "zugang",         // OAuth data of the server
+    kalender_konten: "zugang",       // Calendar accounts per profile (credentials)
+    sitzungen: "geraet",             // signed-in devices
+    push_abos: "geraet",             // push subscriptions of the devices
     push_nachrichten: "geraet",      // zugestellte Push-Texte
-    dashboard_geraete: "geraet",     // freigeschaltete Dashboard-Geräte
-    protokoll: "server",             // Fehlerprotokoll
-    hinweise: "server",              // Glocke – kurzlebige Meldungen
-    kurse: "server",                 // Kurs-Zwischenspeicher (gilt für alle Familien, lädt sich neu)
+    dashboard_geraete: "geraet",     // enabled dashboard devices
+    protokoll: "server",             // error log
+    hinweise: "server",              // bell - short-lived messages
+    kurse: "server",                 // price cache (applies to all families, reloads itself)
 };
 
-// Felder, die nie exportiert werden (zusätzlich zu Passwort und tokenKey jeder Profil-Sammlung)
+// Fields that are never exported (in addition to password and tokenKey of every profile collection)
 const FELD_AUSSCHLUSS = {
     benutzer: ["dashboard_pin", "systemrechte"],
     smarthome_zugaenge: ["token", "ha"],
 };
 
-// Reihenfolge im Export (Rest alphabetisch dahinter)
+// order in the export (the rest alphabetically after it)
 const ZUERST = ["familien", "benutzer", "familien_daten"];
 
 // ---------------------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ function fehler(status, text, code) {
 }
 function benutzer() { return require(`${__hooks}/pinn-benutzer.js`); }
 
-// Felder einer Sammlung: [{ name, typ, hidden }]
+// fields of a collection: [{ name, typ, hidden }]
 function feldInfos(col) {
     const out = [];
     const add = (f) => {
@@ -94,12 +94,12 @@ function feldInfos(col) {
     try {
         const list = col.fields;
         for (let i = 0; i < list.length; i++) add(list[i]);
-    } catch (e) { /* nichts */ }
+    } catch (e) { /* nothing */ }
     return out;
 }
 
 // ---------------------------------------------------------------------------------------------
-// Welche Sammlungen gehören zur Familie?
+// Which collections belong to the family?
 // ---------------------------------------------------------------------------------------------
 function sammlungen() {
     let cols = [];
@@ -153,7 +153,7 @@ function zugriff(e, wunsch) {
     return { familie: own, name: name, vollstaendig: false, user: e.auth, familien: null };
 }
 
-// Was ein Familien-Admin nicht sehen darf: { kassen: {id:1}, kalender: {id:1}, anzahl: {kassen, kalender} }
+// What a family admin may not see: { kassen: {id:1}, kalender: {id:1}, anzahl: {kassen, kalender} }
 function sperren(z) {
     const s = { kassen: {}, kalender: {}, anzahl: { kassen: 0, kalender: 0 } };
     if (z.vollstaendig) return s;
@@ -184,28 +184,28 @@ function erlaubt(name, rec, sp) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Datensätze lesen
+// Reading records
 // ---------------------------------------------------------------------------------------------
 function datensaetze(info, familie) {
     const filter = info.feld === "id" ? "id = {:f}" : "familie = {:f}";
     try { return $app.findRecordsByFilter(info.name, filter, "", 0, 0, { f: familie }); } catch (e) { return []; }
 }
 
-// Ein Datensatz als reines Objekt – ohne Passwörter, Schlüssel und gesperrte Felder,
-// aber mit den übrigen verborgenen Feldern (z. B. persönliche Design-Einstellungen).
+// A record as a plain object - without passwords, keys and locked fields,
+// but with the remaining hidden fields (e.g. personal design settings).
 function alsObjekt(rec, infos, sperrFelder) {
     const weg = sperrFelder.concat(["password", "tokenKey"]);
     infos.forEach(f => { if (f.typ === "password") weg.push(f.name); });
     const zeigen = infos.filter(f => f.hidden && weg.indexOf(f.name) < 0).map(f => f.name);
-    try { rec.ignoreEmailVisibility(true); } catch (e) { /* keine Profil-Sammlung */ }
-    if (zeigen.length) { try { rec.unhide.apply(rec, zeigen); } catch (e) { /* ältere Version */ } }
+    try { rec.ignoreEmailVisibility(true); } catch (e) { /* not a profile collection */ }
+    if (zeigen.length) { try { rec.unhide.apply(rec, zeigen); } catch (e) { /* older version */ } }
     let obj = null;
     try { obj = JSON.parse(JSON.stringify(rec)); } catch (e) { obj = null; }
     if (!obj || typeof obj !== "object") {
         obj = { id: rec.id };
         infos.forEach(f => {
             if (weg.indexOf(f.name) >= 0) return;
-            try { obj[f.name] = rec.get(f.name); } catch (e2) { /* egal */ }
+            try { obj[f.name] = rec.get(f.name); } catch (e2) { /* ignore */ }
         });
     }
     weg.forEach(n => { delete obj[n]; });
@@ -213,7 +213,7 @@ function alsObjekt(rec, infos, sperrFelder) {
     return obj;
 }
 
-// Dateinamen eines Datensatzes: [{ feld, name }]
+// file names of a record: [{ feld, name }]
 function dateienVon(obj, infos) {
     const out = [];
     infos.forEach(f => {
@@ -233,12 +233,12 @@ function dateiGroesse(rec, name) {
     } catch (e) {
         return 0;
     } finally {
-        try { if (fsys) fsys.close(); } catch (e) { /* egal */ }
+        try { if (fsys) fsys.close(); } catch (e) { /* ignore */ }
     }
 }
 
 // ---------------------------------------------------------------------------------------------
-// Routen-Inhalte
+// Route contents
 // ---------------------------------------------------------------------------------------------
 function version() {
     try { return require(`${__hooks}/pinn-system.js`).installierteVersion(); } catch (e) { return ""; }
@@ -247,7 +247,7 @@ function wohnform(familie) {
     try { return require(`${__hooks}/pinn-pushtext.js`).wohnformOf(familie); } catch (e) { return "familie"; }
 }
 
-// Übersicht: was steckt im Export?
+// Overview: what is in the export?
 function uebersicht(e, wunsch) {
     const z = zugriff(e, wunsch);
     const sp = sperren(z);
@@ -289,7 +289,7 @@ function uebersicht(e, wunsch) {
     };
 }
 
-// Eine Sammlung: { name, datensaetze, dateien: [{ datensatz, feld, name, groesse }] }
+// One collection: { name, datensaetze, dateien: [{ datensatz, feld, name, groesse }] }
 function sammlung(e, wunsch, name) {
     const z = zugriff(e, wunsch);
     const info = sammlungInfo(str(name));
@@ -312,7 +312,7 @@ function sammlung(e, wunsch, name) {
     return out;
 }
 
-// Eine Datei ausliefern (nach Prüfung, ob sie zur Familie gehört und freigegeben ist)
+// Deliver a file (after checking whether it belongs to the family and is released)
 const MIME = {
     pdf: "application/pdf", jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", gif: "image/gif",
     heic: "image/heic", heif: "image/heif", svg: "image/svg+xml", txt: "text/plain", csv: "text/csv", json: "application/json",
@@ -352,9 +352,9 @@ function datei(e, wunsch, name, datensatz, dateiname) {
     } catch (err) {
         console.log("[Export] Datei über das Dateisystem nicht lesbar (" + err.message + ") – lese direkt.");
     } finally {
-        try { if (fsys) fsys.close(); } catch (err) { /* egal */ }
+        try { if (fsys) fsys.close(); } catch (err) { /* ignore */ }
     }
-    // Rückfallweg: lokaler Speicher von PocketBase
+    // Fallback: PocketBase's local storage
     let bytes = null;
     try { bytes = $os.readFile("/pb_data/storage/" + key); } catch (err) { bytes = null; }
     if (!bytes) throw fehler(404, "Diese Datei fehlt auf dem NAS.", "fehlt");

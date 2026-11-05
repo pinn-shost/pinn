@@ -1,29 +1,29 @@
 // pb_hooks/muell.pb.js
-// Müllkalender der Familie (Einstellungen → Kalender → Müllkalender). Die Logik steckt in pinn-muell.js.
+// The family's waste calendar (Settings → Calendar → Waste calendar). The logic lives in pinn-muell.js.
 //
-// Beim Start (über pinn-schema.js): legt die gesperrte Sammlung "muellkalender" an (je Familie genau ein Kalender).
+// On start (via pinn-schema.js): creates the locked collection "muellkalender" (exactly one calendar per family).
 //
-// Angemeldet (alle Profile der Familie, auch Gäste – nur lesen):
+// Signed in (all profiles of the family, also guests - read only):
 //   GET  /api/pinn/muell?stand=...           { kalender, termine[{d,t}], stand, darfAendern, ki }
-//                                            bei gleichem stand nur { unveraendert: true }
-// Nur Admins der Familie:
+//                                            with the same stand only { unveraendert: true }
+// Family admins only:
 //   POST /api/pinn/muell/suche               { adresse? | strasse, plz, ort | zuhause: true }
-//                                            -> { adresse, entsorger, treffer[], seiten[], hinweis }  (KI, dauert bis ~2 Min.)
-//   POST /api/pinn/muell/uebernehmen         { url, anbieter?, titel?, adresse? }  ersetzt den bisherigen Kalender
-//   POST /api/pinn/muell/datei               { name, text, adresse? }              ICS-Datei hochladen, ersetzt den bisherigen
+//                                            -> { adresse, entsorger, treffer[], seiten[], hinweis }  (AI, takes up to ~2 min.)
+//   POST /api/pinn/muell/uebernehmen         { url, anbieter?, titel?, adresse? }  replaces the previous calendar
+//   POST /api/pinn/muell/datei               { name, text, adresse? }              upload an ICS file, replaces the previous one
 //   POST /api/pinn/muell/optionen            { anzeigen?, ausgeblendet?[] }
-//   POST /api/pinn/muell/aktualisieren       Link sofort neu laden (höchstens alle 2 Minuten)
+//   POST /api/pinn/muell/aktualisieren       reload the link immediately (at most every 2 minutes)
 //   POST /api/pinn/muell/entfernen
 //
-// Fehler stehen zusätzlich im Admin-Fehlerprotokoll (pinn-protokoll.js).
-// Zeitplan: montags 5:15 Uhr – Kalender mit Link, die älter als 6 Tage geprüft sind, neu laden.
+// Errors are additionally in the admin error log (pinn-protokoll.js).
+// Schedule: Mondays 5:15 a.m. - reload calendars with a link that were last checked more than 6 days ago.
 
 cronAdd("pinnMuellCron", "15 5 * * 1", () => {
     try {
         require(`${__hooks}/pinn-muell.js`).runCron();
     } catch (err) {
         console.log("[Müll] Zeitplan fehlgeschlagen: " + err.message);
-        try { require(`${__hooks}/pinn-protokoll.js`).fehler("muell", "Müllkalender-Zeitplan fehlgeschlagen: " + err.message); } catch (e2) { /* egal */ }
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("muell", "Müllkalender-Zeitplan fehlgeschlagen: " + err.message); } catch (e2) { /* ignore */ }
     }
 });
 
@@ -48,7 +48,7 @@ routerAdd("POST", "/api/pinn/muell/suche", (e) => {
         return e.json(200, require(`${__hooks}/pinn-muell.js`).suche(e, e.requestInfo().body || {}));
     } catch (err) {
         console.log("[Müll] Suche fehlgeschlagen: " + err.message);
-        try { require(`${__hooks}/pinn-protokoll.js`).warnung("muell", "Müllkalender-Suche fehlgeschlagen: " + err.message, { familie: e.auth.getString("familie") }); } catch (e2) { /* egal */ }
+        try { require(`${__hooks}/pinn-protokoll.js`).warnung("muell", "Müllkalender-Suche fehlgeschlagen: " + err.message, { familie: e.auth.getString("familie") }); } catch (e2) { /* ignore */ }
         return e.json(422, { error: err.message });
     }
 }, $apis.requireAuth("benutzer"));

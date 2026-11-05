@@ -1,17 +1,17 @@
 // pb_hooks/export.pb.js
-// Datenexport: komplette Familie (bzw. WG) als ZIP – Daten + Dokumente.
-// Einstellungen → Daten → „Familie exportieren“ (Admins) bzw. Hauptadmin → Familien.
-// Die Logik steckt in pinn-export.js, das ZIP baut die App selbst (pb_public/datenexport.js).
+// Data export: complete family (or flat share) as a ZIP - data + documents.
+// Settings → Data → "Export family" (admins) or main admin → Families.
+// The logic lives in pinn-export.js, the ZIP is built by the app itself (pb_public/datenexport.js).
 //
-//  GET /api/pinn/export/uebersicht?familie=<id>                      Inhalt, Anzahl, Größe
-//  GET /api/pinn/export/sammlung?familie=<id>&name=<sammlung>        Datensätze einer Sammlung + Dateiliste
-//  GET /api/pinn/export/datei?familie=<id>&sammlung=<s>&datensatz=<id>&name=<datei>   eine Datei
+//  GET /api/pinn/export/uebersicht?familie=<id>                      content, count, size
+//  GET /api/pinn/export/sammlung?familie=<id>&name=<collection>      records of a collection + file list
+//  GET /api/pinn/export/datei?familie=<id>&sammlung=<s>&datensatz=<id>&name=<file>   one file
 //
-// „familie“ ist nur für den Hauptadmin nötig (Familien-Admins exportieren immer ihre eigene Familie).
-// Kein Zeitplan – es läuft nur etwas, wenn jemand einen Export startet.
+// "familie" is only needed for the main admin (family admins always export their own family).
+// No schedule - something only runs when someone starts an export.
 
-// Hinweis: PocketBase führt jeden Handler isoliert aus – Hilfen stehen deshalb im Handler selbst
-// bzw. in pinn-export.js.
+// Note: PocketBase runs every handler in isolation - helpers therefore live in the handler itself
+// or in pinn-export.js.
 
 routerAdd("GET", "/api/pinn/export/uebersicht", (e) => {
     e.response.header().set("Cache-Control", "no-store");

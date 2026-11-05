@@ -129,6 +129,13 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.129.0の新機能
+
+**すべてのファイルのコメントを英語に**
+
+- **コメントは英語に。** プロジェクト内のすべてのコードコメントが英語になりました（サーバー部分、インストール・メンテナンス用スクリプト、`docker-compose.yaml`、`.env`テンプレート、Caddyfile、アプリのファイル）。アプリ本体、表示テキスト、動作は何も変わりません。
+- 変更：`pb_hooks/`（全ファイル）、`pinn-setup.sh`、`pinn-wartung.sh`、`pinn-pocketbase-update.sh`、`docker-compose.yaml`、`env.txt`、`caddy/Caddyfile`、`js/sprachen.js`、`datenexport.js`、`einrichtung.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）、すべてのREADME。サーバー部分：hookファイルも置き換えてください。
+
 ## 1.128.0の新機能
 
 **すべてのアプリ言語で音声操作**
@@ -192,17 +199,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - 変更：`js/chat.js`、`css/chat.css`、`js/aufgaben.js`、`js/pinnwand.js`、`js/vertraege.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、すべての `i18n/*.i18n.js`、`index.html`、`src/`、すべてのREADME。**サーバー側の変更なし**（hooksはそのままです）。
 
 
-## 1.127.1 の新機能
-
-**チャットで写真と動画**
-
-- **写真と動画を送信:** クリップのボタンから、プレビューとキャプション付きで。WhatsApp のように **HD ボタン** で毎回選べます。標準は写真を約 0.3 MB に縮小、HD は元のまま(写真は 20 MB、動画は 50 MB まで)。動画は端末が対応していれば縮小し、そうでなければ元の動画を送ります。
-- **こちらもエンドツーエンド暗号化:** ファイルごとに専用の鍵があり、NAS には画像もファイル名も見えません。チャット内で全画面表示、**共有**(WhatsApp、メールなど)や **端末への保存** ができます。
-- **pinn. に保存:** 写真を書類として保存したり、物件・不具合・車両に紐付けたりできます。動画は共有と保存のみで、書類にはできません。
-- **自動削除:** 管理者が「チャットのセキュリティ」で、何日後にメッセージや写真・動画を夜間に全員分削除するか設定します(標準:しない)。
-- 変更:`js/chatmedien.js`(新規)、`css/chat.css`、`js/chat.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、すべての `i18n/*.i18n.js`、`pinn-setup.sh`、`src/`、すべての README。**サーバー側:** `pb_hooks/chat.pb.js` と `pb_hooks/pinn-chat.js` – フックも入れ替えてください。
-
-
 ## しくみ
 
 ```mermaid
@@ -231,7 +227,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.128.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.129.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -1,16 +1,16 @@
 // pb_hooks/protokoll.pb.js
-// Admin-Fehlerprotokoll – Fehler der Server-Hooks (Kalender-Sync, Push, Müllkalender, Anmeldung …)
-// in der App statt nur im Docker-Log. Die Logik steckt in pinn-protokoll.js.
+// Admin error log - errors of the server hooks (calendar sync, push, waste calendar, sign-in ...)
+// in the app instead of only in the Docker log. The logic lives in pinn-protokoll.js.
 //
-// Beim Start (über pinn-schema.js): legt die gesperrte Sammlung "protokoll" an.
+// On start (via pinn-schema.js): creates the locked collection "protokoll".
 //
-// Nur Admins (Hauptadmin: alles; Familien-Admins: ihre Familie, bei nur einer Familie auch die
-// allgemeinen Server-Einträge):
+// Admins only (main admin: everything; family admins: their family, with only one family also the
+// general server entries):
 //   GET  /api/pinn/protokoll?bereich=&limit=   { eintraege[], alle, hauptadmin }
 //   GET  /api/pinn/protokoll/kurz              { darf, offen, warnungen, neueste }
-//   POST /api/pinn/protokoll/leeren            { art: "behoben" | "alle" } oder { id }
+//   POST /api/pinn/protokoll/leeren            { art: "behoben" | "alle" } or { id }
 //
-// Zeitplan: nachts 03:47 Uhr – Einträge älter als 30 Tage löschen, höchstens 1000 behalten.
+// Schedule: at night 03:47 - delete entries older than 30 days, keep 1000 at most.
 
 cronAdd("pinnProtokollAufraeumen", "47 3 * * *", () => {
     try {

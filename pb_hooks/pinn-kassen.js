@@ -1,48 +1,48 @@
 // pb_hooks/pinn-kassen.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden.
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require().
 //
-// Kassen: getrennte Finanzbereiche innerhalb einer Familie (bzw. WG)
+// Funds: separate finance areas within a family (or flat share)
 // ---------------------------------------------------------------------------------------------
-// Jede Kasse hat eigene Finanzdaten (Budget, Kategorien, regelmäßige Buchungen, Depots, Taschengeld,
-// Verträge, Fahrzeuge …) und eigene Buchungen (Sammlung "ausgaben", Feld "kasse"). Wer kein Mitglied
-// einer Kasse ist, bekommt von ihr NICHTS - weder die Daten noch die Buchungen noch die Belege.
+// Each fund has its own finance data (budget, categories, recurring bookings, depots, pocket money,
+// contracts, vehicles ...) and its own bookings (collection "ausgaben", field "kasse"). Whoever is not a member
+// of a fund gets NOTHING from it - neither the data nor the bookings nor the receipts.
 //
-//   art "gemeinsam" - jede neu angelegte Kasse (z. B. Haushalts-, WG-, Urlaubs-, Paar- oder eigene
-//                     Kasse). Mitglieder wählt, wer sie angelegt hat (Besitzer); nur für sich selbst =
-//                     nur der Besitzer als Mitglied. Mitglieder können sie verlassen.
-//   art "familie"   - die Familien-Gruppe (genau eine je Familie, legt sich von selbst an, gehört
-//                     automatisch allen Profilen außer Gästen). Hier landen Verträge, die keiner Kasse
-//                     zugeordnet sind. In Ausgaben und Sparen erscheint sie nicht als Kasse.
-//   art "haushalt"  - (älterer Stand) die frühere Haushaltskasse mit den Finanzdaten von vor den
-//                     Kassen. Gibt es nur noch, wenn sie tatsächlich Daten enthält.
-//   art "privat"    - (älterer Stand) die frühere automatisch angelegte eigene Kasse. Wird nicht mehr
-//                     angelegt; leere werden beim Start entfernt.
+//   art "gemeinsam" - every newly created fund (e.g. household, flat-share, holiday, couple's or own
+//                     fund). The members are chosen by whoever created it (owner); only for oneself =
+//                     only the owner as a member. Members can leave it.
+//   art "familie"   - the family group (exactly one per family, creates itself, belongs
+//                     automatically to all profiles except guests). Contracts that are not assigned to
+//                     any fund end up here. It does not appear as a fund in Expenses and Savings.
+//   art "haushalt"  - (older state) the former household fund with the finance data from before the
+//                     funds. Only exists if it actually contains data.
+//   art "privat"    - (older state) the former automatically created own fund. Is no longer
+//                     created; empty ones are removed on start.
 //
-// Neue Familien haben keine Kasse: Finanzen → Ausgaben/Sparen zeigt dann nur den Hinweis, zuerst eine
-// Kasse anzulegen.
+// New families have no fund: Finance → Expenses/Savings then only shows the hint to create a
+// fund first.
 //
-// "aufteilen" = Ausgaben werden zwischen den Mitgliedern aufgeteilt (wer hat bezahlt, wer schuldet
-// wem) - die Rechnung macht die App aus den Buchungen (Felder "bezahlt_von" und "aufteilung").
+// "aufteilen" = expenses are split between the members (who paid, who owes
+// whom) - the calculation is done by the app from the bookings (fields "bezahlt_von" and "aufteilung").
 //
-// Felder der Sammlung "kassen":
-//   familie (Relation), name, symbol (Emoji), farbe, art, mitglieder (JSON: Profil-IDs), alle (bool),
-//   besitzer (Profil-ID), aufteilen (bool), daten (JSON: Finanzdaten der Kasse, wie früher "finance"
-//   im Familien-Datensatz), gaeste (JSON: Gäste ohne Profil - [{ id: 'gast-…', name, color, removed? }]),
+// Fields of the collection "kassen":
+//   familie (relation), name, symbol (emoji), farbe, art, mitglieder (JSON: profile IDs), alle (bool),
+//   besitzer (profile ID), aufteilen (bool), daten (JSON: finance data of the fund, as formerly "finance"
+//   in the family record), gaeste (JSON: guests without a profile - [{ id: 'gast-…', name, color, removed? }]),
 //   created, updated
 //
-// Gäste: Personen ohne Profil in der Familie (z. B. Freunde im Urlaub). Sie sehen die Kasse nicht, zählen
-// aber beim Aufteilen wie Mitglieder - ihre ID steht in "bezahlt_von" bzw. "aufteilung" der Buchungen.
-// Entfernte Gäste bleiben mit removed: true erhalten, damit alte Buchungen ihren Namen behalten.
-// Zugriff nur über die Routen in kassen.pb.js (Sammlungs-API gesperrt).
+// Guests: people without a profile in the family (e.g. friends on holiday). They do not see the fund, but
+// count like members when splitting - their ID is in "bezahlt_von" or "aufteilung" of the bookings.
+// Removed guests are kept with removed: true so that old bookings keep their name.
+// Access only via the routes in kassen.pb.js (collection API locked).
 //
-// Umzug: Beim ersten Start nach dem Update bekommt jede Familie ihre Haushaltskasse. Die bisherigen
-// Finanzdaten (familien_daten → "finance") wandern hinein, alle bisherigen Buchungen und Belege werden
-// ihr zugeordnet, und "finance" wird aus dem Familien-Datensatz entfernt. Mitglieder: alle Profile -
-// damit sieht nach dem Update jeder genau das, was er vorher gesehen hat.
+// Migration: on the first start after the update, every family gets its household fund. The previous
+// finance data (familien_daten → "finance") moves into it, all previous bookings and receipts are
+// assigned to it, and "finance" is removed from the family record. Members: all profiles -
+// so after the update everyone sees exactly what they saw before.
 //
-// Schonend für CPU und Speicher: Für Berechtigungen wird nur die kleine Mitgliederliste gelesen (nie die
-// Finanzdaten). Die App schickt mit, welchen Stand sie schon hat - Finanzdaten gehen nur über die
-// Leitung, wenn sie sich geändert haben.
+// Gentle on CPU and memory: for permissions only the small member list is read (never the
+// finance data). The app sends along which state it already has - finance data only goes over the
+// wire if it has changed.
 
 const KASSEN = "kassen";
 const ARTEN = ["haushalt", "privat", "gemeinsam", "familie"];
@@ -50,7 +50,7 @@ const DATA_MAX = 8 * 1024 * 1024;
 const FARBEN_STANDARD = { haushalt: "#2F4B41", privat: "#7A5C8E", gemeinsam: "#B9842E", familie: "#5B7B6F" };
 const SYMBOL_STANDARD = { haushalt: "🏠", privat: "👤", gemeinsam: "👥", familie: "👨‍👩‍👧" };
 const FAMILIE_NAME = "Familie";
-// Finanzdaten mit echtem Inhalt (nur Kategorien o. Ä. zählen nicht)
+// Finance data with real content (only categories or the like do not count)
 const INHALT_LISTEN = ["vehicles", "contracts", "recurring", "depots", "savingsGoals", "pocketMoney", "pocketLedger"];
 function meaningful(fin) {
     if (!fin || typeof fin !== "object" || Array.isArray(fin)) return false;
@@ -69,11 +69,11 @@ function hasField(col, name) {
 // Einrichtung
 // ---------------------------------------------------------------------------------------------
 const EXTRA_FIELDS = [
-    { name: "sicherung", type: "json", maxSize: DATA_MAX },   // Stand vor der ersten Änderung des Tages
+    { name: "sicherung", type: "json", maxSize: DATA_MAX },   // State before the first change of the day
     { name: "sicherung_tag", type: "text", max: 10 },
-    { name: "altbestand", type: "json", maxSize: DATA_MAX },  // alle geretteten Finanzdaten von vor dem Umzug (wird nie gelöscht)
-    { name: "altbestand_stufe", type: "number" },             // Version der Zusammenführung, mit der der Altbestand eingespielt wurde
-    { name: "gaeste", type: "json", maxSize: 20000 },         // Gäste ohne Profil (nur fürs Aufteilen)
+    { name: "altbestand", type: "json", maxSize: DATA_MAX },  // all rescued finance data from before the migration (is never deleted)
+    { name: "altbestand_stufe", type: "number" },             // Version of the merge with which the old data was imported
+    { name: "gaeste", type: "json", maxSize: 20000 },         // Guests without a profile (only for splitting)
 ];
 function makeField(def) {
     const tmp = new Collection({ type: "base", name: "pinn_tmp_" + def.name, fields: [def] });
@@ -139,7 +139,7 @@ function parseJson(raw, fallback) {
     try {
         const v = require(`${__hooks}/calendar-sync.js`).parseRecordData(raw);
         if (v !== null && v !== undefined) return v;
-    } catch (e) { /* weiter unten */ }
+    } catch (e) { /* further below */ }
     if (typeof raw === "string") { try { return JSON.parse(raw); } catch (e) { return fallback; } }
     return fallback;
 }
@@ -156,10 +156,10 @@ function cleanColor(v, fb) { const s = String(v || ""); return /^#[0-9a-fA-F]{6}
 function cleanSymbol(v, fb) { const s = String(v || "").trim(); return s ? s.slice(0, 16) : fb; }
 function isId(v) { return /^[a-z0-9]{15}$/.test(String(v || "")); }
 
-// Gäste ohne Profil: [{ id: 'gast-…', name, color, removed? }]
+// Guests without a profile: [{ id: 'gast-…', name, color, removed? }]
 const GAST_ID = /^gast-[a-z0-9]{6,20}$/;
-const GAESTE_MAX = 30;      // aktive Gäste je Kasse
-const GAESTE_GESAMT = 60;   // inkl. entfernter (für die Namen alter Buchungen)
+const GAESTE_MAX = 30;      // active guests per fund
+const GAESTE_GESAMT = 60;   // including removed ones (for the names in old bookings)
 function parseGuests(raw) {
     let v;
     if (Array.isArray(raw)) v = raw;
@@ -187,14 +187,14 @@ function isFinanceUser(user) {
 }
 function isFamilyAdmin(user) { return isFinanceUser(user) && userRole(user) === "admin"; }
 
-// Alle Profile der Familie, die Finanzen haben können (keine Gäste)
+// All profiles of the family that can have finances (no guests)
 function familyUsers(familyId) {
     let list = [];
     try { list = $app.findRecordsByFilter("benutzer", "familie = {:f}", "username", 0, 0, { f: String(familyId) }); } catch (e) { list = []; }
     return list.filter(u => userRole(u) !== "gast" && userRole(u) !== "hauptadmin");
 }
 
-// Kleine Übersicht aller Kassen einer Familie - OHNE die (großen) Finanzdaten
+// Small overview of all funds of a family - WITHOUT the (large) finance data
 function metaList(familyId, app) {
     if (!familyId || !findCol(KASSEN)) return [];
     const a = app || $app;
@@ -204,7 +204,7 @@ function metaList(familyId, app) {
     try {
         a.db().newQuery("SELECT id, name, symbol, farbe, art, COALESCE(mitglieder, '[]') AS mitglieder, alle, besitzer, aufteilen, updated, created, COALESCE(sicherung_tag, '') AS sicherung_tag, COALESCE(gaeste, '[]') AS gaeste FROM " + KASSEN + " WHERE familie = {:f} ORDER BY created, id").bind({ f: String(familyId) }).all(rows);
     } catch (e) {
-        // Rückfallweg (z. B. Feld fehlt noch): normale Datensätze lesen - langsamer, aber sicher
+        // Fallback (e.g. field does not exist yet): read normal records - slower, but safe
         console.log("[Kassen] Kurz-Übersicht nicht lesbar (" + e.message + ") - lese Datensätze.");
         try {
             return a.findRecordsByFilter(KASSEN, "familie = {:f}", "created", 0, 0, { f: String(familyId) }).map(metaOfRecord);
@@ -262,7 +262,7 @@ function canManage(k, user) {
     return k.besitzer === user.id;
 }
 
-// Liegen die Finanzdaten der Familie schon in den Kassen? (Haushaltskasse oder Familien-Gruppe vorhanden)
+// Is the family's finance data already in the funds? (household fund or family group present)
 function familyMigrated(familyId) {
     if (!familyId || !findCol(KASSEN)) return false;
     try {
@@ -273,8 +273,8 @@ function familyMigrated(familyId) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Haushaltskasse - nur noch für den Umzug alter Finanzdaten (vor den Kassen). Ohne alte Daten wird
-// keine Kasse angelegt: Neue Familien legen ihre Kassen selbst an.
+// Household fund - only still there for migrating old finance data (before the funds). Without old data,
+// no fund is created: new families create their funds themselves.
 // ---------------------------------------------------------------------------------------------
 function legacyFinance(familyId) {
     try {
@@ -291,7 +291,7 @@ function ensureFamily(familyId) {
     let created = null;
     try {
         $app.runInTransaction((tx) => {
-            // im Vorgang nochmal prüfen - zwei gleichzeitige Anfragen legen sonst zwei Kassen an
+            // check again within the operation - two simultaneous requests would otherwise create two funds
             const again = metaList(familyId, tx).find(k => k.art === "haushalt");
             if (again) { created = again; return; }
             let finance = null;
@@ -315,19 +315,19 @@ function ensureFamily(familyId) {
             rec.set("daten", finance || {});
             if (finance && hasField(rec.collection(), "altbestand")) { rec.set("altbestand", finance); rec.set("altbestand_stufe", MERGE_STUFE); }
             tx.save(rec);
-            // bisherige Buchungen und Belege gehören ab jetzt zur Haushaltskasse
+            // previous bookings and receipts now belong to the household fund
             try {
                 const aus = tx.findCollectionByNameOrId("ausgaben");
                 if (hasField(aus, "kasse")) {
                     tx.db().newQuery("UPDATE ausgaben SET kasse = {:k} WHERE familie = {:f} AND (kasse = '' OR kasse IS NULL)").bind({ k: rec.id, f: String(familyId) }).execute();
                 }
-            } catch (e) { /* Sammlung fehlt noch - neue Buchungen bekommen die Kasse beim Speichern */ }
+            } catch (e) { /* collection does not exist yet - new bookings get the fund when saved */ }
             try {
                 const docs = tx.findCollectionByNameOrId("finanz_dokumente");
                 if (hasField(docs, "kasse")) {
                     tx.db().newQuery("UPDATE finanz_dokumente SET kasse = {:k} WHERE familie = {:f} AND (kasse = '' OR kasse IS NULL)").bind({ k: rec.id, f: String(familyId) }).execute();
                 }
-            } catch (e) { /* egal */ }
+            } catch (e) { /* ignore */ }
             if (famRec && famData && famData.finance !== undefined) {
                 delete famData.finance;
                 famRec.set("data", famData);
@@ -343,8 +343,8 @@ function ensureFamily(familyId) {
     return created;
 }
 
-// Familien-Gruppe: gehört automatisch allen Profilen der Familie (außer Gästen). Ablage für Verträge
-// ohne eigene Kasse. Wird bei Bedarf angelegt (genau eine je Familie).
+// Family group: belongs automatically to all profiles of the family (except guests). Storage for contracts
+// without their own fund. Created when needed (exactly one per family).
 function ensureFamilyGroup(familyId) {
     if (!familyId || !ensureSchema()) return null;
     const existing = metaList(familyId).find(k => k.art === "familie");
@@ -376,9 +376,9 @@ function ensureFamilyGroup(familyId) {
     return created;
 }
 
-// Beim Start: leere, früher automatisch angelegte Kassen (Haushaltskasse ohne Daten, eigene Kassen)
-// entfernen - damit Finanzen wieder mit dem Hinweis „zuerst eine Kasse anlegen“ beginnt. Entfernt wird
-// nur, wo weder Finanzdaten noch Buchungen, Belege oder Dokumente dranhängen.
+// On start: remove empty funds that were created automatically in the past (household fund without data, own funds)
+// - so that Finance starts again with the hint "create a fund first". Only removed
+// where no finance data, bookings, receipts or documents are attached.
 function countRefs(coll, kasseId) {
     try {
         const c = findCol(coll);
@@ -386,7 +386,7 @@ function countRefs(coll, kasseId) {
         const m = new DynamicModel({ n: 0 });
         $app.db().newQuery("SELECT COUNT(*) AS n FROM " + coll + " WHERE kasse = {:k}").bind({ k: String(kasseId) }).one(m);
         return Number(m.n) || 0;
-    } catch (e) { return 1; } // im Zweifel behalten
+    } catch (e) { return 1; } // keep when in doubt
 }
 function cleanupEmpty(familyId) {
     metaList(familyId).forEach(k => {
@@ -402,23 +402,23 @@ function cleanupEmpty(familyId) {
     });
 }
 
-// Nach dem Update: Buchungen/Belege ohne Kasse (z. B. von einem noch nicht aktualisierten Gerät) der
-// Haushaltskasse zuordnen. Läuft nur beim Start.
+// After the update: assign bookings/receipts without a fund (e.g. from a device that has not been updated yet) to the
+// household fund. Runs only on start.
 function assignOrphans(familyId, haushaltId) {
     try {
         const aus = findCol("ausgaben");
         if (aus && hasField(aus, "kasse")) $app.db().newQuery("UPDATE ausgaben SET kasse = {:k} WHERE familie = {:f} AND (kasse = '' OR kasse IS NULL)").bind({ k: haushaltId, f: String(familyId) }).execute();
-    } catch (e) { /* egal */ }
+    } catch (e) { /* ignore */ }
     try {
         const docs = findCol("finanz_dokumente");
         if (docs && hasField(docs, "kasse")) $app.db().newQuery("UPDATE finanz_dokumente SET kasse = {:k} WHERE familie = {:f} AND (kasse = '' OR kasse IS NULL)").bind({ k: haushaltId, f: String(familyId) }).execute();
-    } catch (e) { /* egal */ }
+    } catch (e) { /* ignore */ }
 }
 
 // ---------------------------------------------------------------------------------------------
-// Rettung: Fehlende Einträge aus einem älteren Stand ergänzen - es wird NIE etwas gelöscht.
-// Listen mit IDs: fehlende Einträge kommen dazu, vorhandene werden um fehlende Angaben ergänzt.
-// Einzelwerte: nur, wo der aktuelle Stand leer ist (fehlt, '', 0, false).
+// Rescue: add missing entries from an older state - NOTHING is ever deleted.
+// Lists with IDs: missing entries are added, existing ones are completed with missing details.
+// Single values: only where the current state is empty (missing, '', 0, false).
 // ---------------------------------------------------------------------------------------------
 function isObj(v) { return !!v && typeof v === "object" && !Array.isArray(v); }
 function isEmptyVal(v) { return v === undefined || v === null || v === "" || v === 0 || v === false; }
@@ -426,7 +426,7 @@ const MERGE_STUFE = 2;
 function idOf(x) { return (isObj(x) && x.id !== undefined && x.id !== null && x.id !== "") ? String(x.id) : ""; }
 function unionMerge(target, source, stats) {
     if (Array.isArray(target) && Array.isArray(source)) {
-        // Listen von Objekten: über die ID (als Text) abgleichen - Einträge ohne ID über ihren Inhalt
+        // Lists of objects: match via the ID (as text) - entries without an ID via their content
         if (source.some(isObj) || target.some(isObj)) {
             const byId = {};
             const seen = {};
@@ -443,13 +443,13 @@ function unionMerge(target, source, stats) {
             });
             return target;
         }
-        // einfache Listen (Texte, Zahlen): fehlende Werte ergänzen
+        // simple lists (texts, numbers): add missing values
         source.forEach(x => { if (target.indexOf(x) < 0) { target.push(x); stats.n++; } });
         return target;
     }
     if (isObj(target) && isObj(source)) {
         Object.keys(source).forEach(k => {
-            if (k === "__proto__" || k === "constructor" || k === "prototype") return; // Prototyp-Schlüssel nie übernehmen
+            if (k === "__proto__" || k === "constructor" || k === "prototype") return; // never take over prototype keys
             const tv = target[k];
             const sv = source[k];
             if (isEmptyVal(tv)) {
@@ -472,8 +472,8 @@ function hasContent(fin) {
     });
 }
 const RESCUE_DAYS = 30;
-// Fehlende Finanzdaten in die Haushaltskasse übernehmen. opts.force: auch nach der Frist
-// -> Anzahl ergänzter Einträge (-1 = Frist vorbei, keine Haushaltskasse)
+// Take over missing finance data into the household fund. opts.force: also after the deadline
+// -> number of entries added (-1 = deadline over, no household fund)
 function rescueFinance(familyId, fin, opts) {
     const o = opts || {};
     if (!familyId || !hasContent(fin)) return 0;
@@ -490,7 +490,7 @@ function rescueFinance(familyId, fin, opts) {
             const d = parseJson(rec.get("daten"), {}) || {};
             const stats = { n: 0 };
             const merged = unionMerge(isObj(d) ? d : {}, JSON.parse(JSON.stringify(fin)), stats);
-            // Altbestand: jede Quelle wird zusätzlich aufbewahrt (für spätere, bessere Zusammenführung)
+            // Old data: every source is additionally kept (for a later, better merge)
             let altChanged = false;
             if (hasField(rec.collection(), "altbestand")) {
                 const alt = parseJson(rec.get("altbestand"), {}) || {};
@@ -510,8 +510,8 @@ function rescueFinance(familyId, fin, opts) {
     if (added) console.log("[Kassen] " + added + " fehlende Finanz-Einträge in der Haushaltskasse der Familie " + familyId + " ergänzt" + (o.quelle ? " (aus " + o.quelle + ")." : "."));
     return added;
 }
-// Beim Start: doppelte Haushalts-/eigene Kassen zusammenlegen, Reste von "finance" aus dem
-// Familien-Datensatz übernehmen
+// On start: merge duplicate household/own funds, take over leftovers of "finance" from the
+// family record
 function repairFamily(familyId) {
     const list = metaList(familyId);
     const groups = {};
@@ -533,7 +533,7 @@ function repairFamily(familyId) {
                     const oRec = tx.findRecordById(KASSEN, other.id);
                     unionMerge(d, parseJson(oRec.get("daten"), {}) || {}, stats);
                     ["ausgaben", "finanz_dokumente"].forEach(coll => {
-                        try { tx.db().newQuery("UPDATE " + coll + " SET kasse = {:k} WHERE kasse = {:o}").bind({ k: keep.id, o: other.id }).execute(); } catch (e) { /* egal */ }
+                        try { tx.db().newQuery("UPDATE " + coll + " SET kasse = {:k} WHERE kasse = {:o}").bind({ k: keep.id, o: other.id }).execute(); } catch (e) { /* ignore */ }
                     });
                     tx.delete(oRec);
                 });
@@ -545,7 +545,7 @@ function repairFamily(familyId) {
             console.log("[Kassen] Zusammenlegen fehlgeschlagen: " + err.message);
         }
     });
-    // Altbestand mit der aktuellen Zusammenführung erneut einspielen (einmal je Stufe)
+    // Import the old data again with the current merge (once per level)
     try {
         const h = metaList(familyId).find(k => k.art === "haushalt");
         if (h) {
@@ -566,7 +566,7 @@ function repairFamily(familyId) {
             });
         }
     } catch (e) { console.log("[Kassen] Altbestand nicht einspielbar: " + e.message); }
-    // "finance" noch im Familien-Datensatz (z. B. Umzug abgebrochen)? -> ergänzen und entfernen
+    // "finance" still in the family record (e.g. migration aborted)? -> add and remove
     try {
         const famRec = $app.findFirstRecordByFilter("familien_daten", "familie = {:f}", { f: String(familyId) });
         const data = parseJson(famRec.get("data"), {}) || {};
@@ -578,10 +578,10 @@ function repairFamily(familyId) {
                 $app.save(famRec);
             }
         }
-    } catch (e) { /* keine Familiendaten */ }
+    } catch (e) { /* no family data */ }
 }
 
-// Sicherung (Stand vor der ersten Änderung des Tages) zurückholen - ergänzt nur, löscht nichts
+// Restore the backup (state before the first change of the day) - only adds, deletes nothing
 function restoreBackup(user, id) {
     let rec = null;
     try { rec = $app.findRecordById(KASSEN, String(id || "")); } catch (e) { rec = null; }
@@ -621,7 +621,7 @@ function migrateAll() {
     });
 }
 
-// (älterer Stand) eigene Kasse - wird nicht mehr automatisch angelegt
+// (older state) own fund - is no longer created automatically
 function ensurePrivate(user) {
     if (!isFinanceUser(user) || !ensureSchema()) return null;
     const fam = userFamily(user);
@@ -648,10 +648,10 @@ function ensurePrivate(user) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Für die anderen Server-Teile (Buchungen, Belege, Verträge)
+// For the other server parts (bookings, receipts, contracts)
 // ---------------------------------------------------------------------------------------------
-// Kassen, auf die das Profil Zugriff hat -> { ids: [...], haushalt: '<ID>'|'' (nur wenn Mitglied), privat: '<ID>'|'' }
-// familie: '<ID der Familien-Gruppe>', real: [IDs der eigentlichen Kassen ohne Familien-Gruppe]
+// Funds the profile has access to -> { ids: [...], haushalt: '<ID>'|'' (only if a member), privat: '<ID>'|'' }
+// familie: '<ID of the family group>', real: [IDs of the actual funds without the family group]
 function access(user) {
     const out = { ids: [], haushalt: "", privat: "", haushaltAll: "", familie: "", real: [] };
     if (!isFinanceUser(user)) return out;
@@ -668,17 +668,17 @@ function access(user) {
     });
     return out;
 }
-// Standard-Kasse für Buchungen ohne Angabe: Haushaltskasse, eigene Kasse, erste Kasse, Familien-Gruppe
+// Default fund for bookings without a specification: household fund, own fund, first fund, family group
 function defaultKasse(acc) {
     return acc.haushalt || acc.privat || acc.real[0] || acc.familie || acc.ids[0] || "";
 }
-// Profil-IDs, die eine Kasse sehen dürfen (für Push-Nachrichten)
+// Profile IDs that may see a fund (for push messages)
 function memberUserIds(k) {
     if (!k) return [];
     if (k.art === "familie" || (k.art === "haushalt" && k.alle)) return familyUsers(k.familie).map(u => u.id);
     return k.mitglieder.slice();
 }
-// Verträge aller Kassen einer Familie: [{ kasse: meta, contracts: [...], userIds: [...] }]
+// Contracts of all funds of a family: [{ kasse: meta, contracts: [...], userIds: [...] }]
 function contractsOfFamily(familyId) {
     const out = [];
     metaList(familyId).forEach(k => {
@@ -693,8 +693,8 @@ function contractsOfFamily(familyId) {
     return out;
 }
 
-// Pflanzen mit Smarthome-Aktion aus allen Kassen einer Familie (Zuhause → Garten & Pflanzen liegt in den
-// Finanzdaten der Kasse, seit 1.122.0 liest der Smarthome-Server sie von hier statt aus dem alten Familien-Datensatz)
+// Plants with a smart home action from all funds of a family (Home → Garden & plants lives in the
+// finance data of the fund; since 1.122.0 the smart home server reads them from here instead of from the old family record)
 function plantsOfFamily(familyId) {
     const out = [];
     const seen = {};
@@ -711,7 +711,7 @@ function plantsOfFamily(familyId) {
     });
     return out;
 }
-// Änderungsstand aller Kassen einer Familie (Anzahl + jüngste Änderung), ohne die Finanzdaten zu laden
+// Change state of all funds of a family (count + latest change), without loading the finance data
 function dataStamp(familyId) {
     if (!familyId || !findCol(KASSEN)) return "";
     try {
@@ -722,7 +722,7 @@ function dataStamp(familyId) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Für die App
+// For the app
 // ---------------------------------------------------------------------------------------------
 function toClient(k, user, data) {
     const out = {
@@ -744,7 +744,7 @@ function toClient(k, user, data) {
     return out;
 }
 
-// stand: { <Kassen-ID>: '<updated, den die App schon hat>' } - nur geänderte Finanzdaten werden geschickt
+// stand: { <fund ID>: '<updated that the app already has>' } - only changed finance data is sent
 function list(user, stand) {
     if (!isFinanceUser(user)) return [];
     const fam = userFamily(user);
@@ -768,8 +768,8 @@ function list(user, stand) {
     return out;
 }
 
-// Finanzdaten einer Kasse speichern - nur, wenn sich der Stand seit dem letzten Laden nicht geändert
-// hat (expectedUpdated). Sonst kommt der aktuelle Stand zurück (409), die App führt zusammen.
+// Save the finance data of a fund - only if the state has not changed since the last load
+// (expectedUpdated). Otherwise the current state comes back (409), the app merges.
 function saveData(user, body) {
     const id = String(body.id || "");
     let hinweisVorher = null, hinweisMeta = null;
@@ -788,15 +788,15 @@ function saveData(user, body) {
                 result = { status: 409, body: { conflict: true, updated: cur, data: parseJson(rec.get("daten"), {}) || {} } };
                 return;
             }
-            // Tages-Sicherung: der Stand vor der ersten Änderung des Tages bleibt erhalten
+            // Daily backup: the state before the first change of the day is kept
             try {
                 const today = new Date().toISOString().slice(0, 10);
                 if (hasField(rec.collection(), "sicherung") && rec.getString("sicherung_tag") !== today) {
                     const before = parseJson(rec.get("daten"), {}) || {};
                     if (hasContent(before)) { rec.set("sicherung", before); rec.set("sicherung_tag", today); }
                 }
-            } catch (e) { /* Sicherung ist nur ein Extra */ }
-            // Für die Glocke: nur Vertrags- und Fahrzeug-IDs des alten Stands merken (klein)
+            } catch (e) { /* the backup is just an extra */ }
+            // For the bell: remember only contract and vehicle IDs of the old state (small)
             try {
                 const prev = parseJson(rec.get("daten"), {}) || {};
                 hinweisVorher = {
@@ -812,7 +812,7 @@ function saveData(user, body) {
     } catch (err) {
         return { status: 500, body: { error: err.message } };
     }
-    // Neue Verträge und Fahrzeuge: Hinweis für die übrigen Mitglieder der Kasse (🔔 Glocke)
+    // New contracts and vehicles: notice for the other members of the fund (🔔 bell)
     if (result && result.status === 200 && hinweisVorher && hinweisMeta) {
         try { require(`${__hooks}/pinn-hinweise.js`).kasseDataSaved(hinweisMeta, hinweisVorher, body.daten, user); }
         catch (e) { console.log("[Hinweise] Kasse: " + e.message); }
@@ -820,8 +820,8 @@ function saveData(user, body) {
     return result;
 }
 
-// Kasse anlegen oder Name/Symbol/Farbe/Mitglieder/Aufteilen ändern
-// body: { id?, name, icon, color, members: [Profil-IDs], all (nur Haushalt), split, guests?: [{ id, name, color, removed? }] }
+// Create a fund or change name/icon/colour/members/splitting
+// body: { id?, name, icon, color, members: [profile IDs], all (household only), split, guests?: [{ id, name, color, removed? }] }
 function saveSettings(user, body) {
     if (!isFinanceUser(user)) throw new Error("Kein Zugriff auf die Finanzen.");
     ensureSchema();
@@ -841,7 +841,7 @@ function saveSettings(user, body) {
         if (!canManage(k, user)) throw new Error(k.art === "haushalt" ? "Die Haushaltskasse können nur Admins einstellen." : "Nur wer die Kasse angelegt hat, kann sie einstellen.");
         before = memberUserIds(k);
     } else {
-        // neue Kasse - höchstens 30 je Familie
+        // new fund - 30 per family at most
         if (metaList(fam).filter(x => x.art !== "familie").length >= 30) throw new Error("Es gibt schon 30 Kassen.");
         rec = new Record($app.findCollectionByNameOrId(KASSEN));
         rec.set("familie", fam);
@@ -866,21 +866,21 @@ function saveSettings(user, body) {
         rec.set("alle", all);
         rec.set("mitglieder", all ? [] : wanted);
     } else {
-        // Besitzer gehört immer dazu
+        // the owner always belongs to it
         const owner = rec.getString("besitzer") || user.id;
         const list = [owner].concat(wanted.filter(x => x !== owner));
         rec.set("alle", false);
         rec.set("mitglieder", list.slice(0, 30));
     }
-    // Gäste ohne Profil (ältere App-Stände schicken keine - dann bleibt alles, wie es ist)
+    // Guests without a profile (older app versions send none - then everything stays as it is)
     if (Array.isArray(body.guests) && hasField(rec.collection(), "gaeste")) {
         const incoming = parseGuests(body.guests);
         if (incoming.filter(g => !g.removed).length > GAESTE_MAX) throw new Error("Höchstens " + GAESTE_MAX + " Gäste je Kasse.");
-        // Gäste, die in der Liste fehlen, bleiben als entfernt erhalten (Namen in alten Buchungen)
+        // Guests missing from the list are kept as removed (names in old bookings)
         (Array.isArray(k.gaeste) ? k.gaeste : []).forEach(g => {
             if (!incoming.some(x => x.id === g.id)) incoming.push(Object.assign({}, g, { removed: true }));
         });
-        // Platz knapp: zuerst die ältesten entfernten Gäste weglassen
+        // Space is tight: leave out the oldest removed guests first
         let list = incoming;
         while (list.length > GAESTE_GESAMT) {
             const i = list.findIndex(g => g.removed);
@@ -891,7 +891,7 @@ function saveSettings(user, body) {
     }
     $app.save(rec);
     const meta = metaOfRecord(rec);
-    // Neu hinzugekommene Personen per Push benachrichtigen
+    // Notify newly added people by push
     try {
         const after = memberUserIds(meta);
         const added = after.filter(x => before.indexOf(x) < 0 && x !== user.id);
@@ -907,16 +907,16 @@ function saveSettings(user, body) {
                         tag: "kasse-" + meta.id,
                         urgency: "normal",
                     });
-                } catch (e) { /* Push ist nur ein Extra */ }
+                } catch (e) { /* push is just an extra */ }
             });
         }
-    } catch (e) { /* egal */ }
+    } catch (e) { /* ignore */ }
     return toClient(meta, user, id ? undefined : {});
 }
 
-// Kasse löschen (samt ihrer Buchungen und Belege) - nur wer sie verwalten darf. Dokumente (Menü
-// „Dokumente“) der Kasse werden nicht gelöscht, sondern sind danach nur noch für die Person sichtbar,
-// die die Kasse gelöscht hat (damit nichts Privates plötzlich für alle sichtbar wird).
+// Delete a fund (including its bookings and receipts) - only whoever may manage it. Documents (menu
+// "Documents") of the fund are not deleted, but afterwards are only visible to the person
+// who deleted the fund (so that nothing private suddenly becomes visible to everyone).
 function remove(user, id) {
     let rec = null;
     try { rec = $app.findRecordById(KASSEN, String(id || "")); } catch (e) { return; }
@@ -927,10 +927,10 @@ function remove(user, id) {
     $app.runInTransaction((tx) => {
         try {
             tx.findRecordsByFilter("ausgaben", "kasse = {:k}", "", 0, 0, { k: k.id }).forEach(r => tx.delete(r));
-        } catch (e) { /* keine */ }
+        } catch (e) { /* none */ }
         try {
             tx.findRecordsByFilter("finanz_dokumente", "kasse = {:k}", "", 0, 0, { k: k.id }).forEach(r => tx.delete(r));
-        } catch (e) { /* keine */ }
+        } catch (e) { /* none */ }
         try {
             const docs = findCol("dokumente");
             if (docs && hasField(docs, "kasse")) {
@@ -940,12 +940,12 @@ function remove(user, id) {
                     tx.save(r);
                 });
             }
-        } catch (e) { /* keine */ }
+        } catch (e) { /* none */ }
         tx.delete(tx.findRecordById(KASSEN, k.id));
     });
 }
 
-// Eine Kasse verlassen (gemeinsame oder eine mit dir geteilte eigene Kasse eines anderen)
+// Leave a fund (a shared one or someone else's own fund shared with you)
 function leave(user, id) {
     let rec = null;
     try { rec = $app.findRecordById(KASSEN, String(id || "")); } catch (e) { return; }
@@ -959,12 +959,12 @@ function leave(user, id) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Hilfen für die Routen in kassen.pb.js
-// (PocketBase führt jeden Routen-Handler isoliert aus - Funktionen, die in kassen.pb.js auf
-// Dateiebene stehen, sind im Handler NICHT sichtbar. Deshalb liegen sie hier und werden per
-// require() geholt.)
+// Helpers for the routes in kassen.pb.js
+// (PocketBase runs every route handler in isolation - functions that sit at file level
+// in kassen.pb.js are NOT visible in the handler. That is why they live here and are fetched
+// via require().)
 // ---------------------------------------------------------------------------------------------
-// Antwort als JSON-Text (eigene Umwandlung statt e.json)
+// Response as JSON text (own conversion instead of e.json)
 function httpSend(e, status, obj) {
     let text = "";
     try { text = JSON.stringify(obj); }
@@ -973,7 +973,7 @@ function httpSend(e, status, obj) {
         status = 500;
         text = JSON.stringify({ error: "Antwort nicht umwandelbar: " + err.message });
     }
-    try { e.response.header().set("Cache-Control", "no-store"); } catch (err) { /* egal */ }
+    try { e.response.header().set("Cache-Control", "no-store"); } catch (err) { /* ignore */ }
     return e.string(status, text);
 }
 function httpGuard(e) {

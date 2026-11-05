@@ -1,34 +1,34 @@
 // pb_hooks/pinn-dokumente.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden.
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require().
 //
-// Dokumente (Menüpunkt „Dokumente“)
-//  - Kasse (Feld "kasse"): Jedes Dokument kann einer Kasse zugeordnet werden (siehe pinn-kassen.js).
-//    Dann sehen es nur die Mitglieder dieser Kasse - auch die Dateien und Erinnerungen. Leer = Familie:
-//    alle Profile der Familie, die Dokumente öffnen dürfen (keine Gäste).
-//  - Jedes Dokument ist ein Datensatz in der Sammlung "dokumente": Titel, Kategorie, Person, Datum,
-//    Aussteller/Händler, Notiz und - je nach Art - Kaufdaten (Kaufdatum, Preis, Gewährleistung,
-//    Herstellergarantie) oder ein Ablaufdatum („gültig bis“, z. B. Ausweis, TÜV).
-//  - Die Seiten liegen als geschützte Dateien im Feld "dateien" (bis zu 20 Fotos/PDFs je Dokument).
-//    Abrufbar nur mit Anmeldung bzw. kurzlebigem Datei-Token - nie öffentlich, nur für die eigene
-//    Familie und nicht für Gastkonten.
-//  - Die Kategorien selbst liegen klein im Familien-Datensatz (documentCategories) und werden wie
-//    alles andere offline-fähig zwischen den Geräten abgeglichen.
-//  - Erinnerungen: Ist bei einem Dokument „Erinnern X Tage vorher“ gesetzt, kommt eine persönliche
-//    Push-Nachricht vor dem Ablaufdatum bzw. vor dem Ende von Garantie/Gewährleistung - an das
-//    zugeordnete erwachsene Familienmitglied, sonst an alle Erwachsenen der Familie.
+// Documents (menu item "Documents")
+//  - Fund (field "kasse"): every document can be assigned to a fund (see pinn-kassen.js).
+//    Then only the members of this fund see it - also the files and reminders. Empty = family:
+//    all profiles of the family that may open documents (no guests).
+//  - Every document is a record in the collection "dokumente": title, category, person, date,
+//    issuer/merchant, note and - depending on the kind - purchase data (purchase date, price, statutory warranty,
+//    manufacturer's warranty) or an expiry date ("valid until", e.g. ID card, vehicle inspection).
+//  - The pages are stored as protected files in the field "dateien" (up to 20 photos/PDFs per document).
+//    Retrievable only with sign-in or a short-lived file token - never public, only for the own
+//    family and not for guest accounts.
+//  - The categories themselves are stored small in the family record (documentCategories) and, like
+//    everything else, are synchronised between the devices offline-capable.
+//  - Reminders: if "Remind X days before" is set on a document, a personal push message comes
+//    before the expiry date or before the end of the warranty/guarantee - to the assigned adult
+//    family member, otherwise to all adults of the family.
 //
-// Schonend für CPU und Speicher:
-//  - Der Zeitplan läuft stündlich, arbeitet aber nur einmal am Tag (ab 8 Uhr) wirklich. Gelesen werden
-//    dann nur die Dokumente mit gesetzter Erinnerung (kleine Datensätze, keine Dateien).
-//  - Die großen Familiendaten werden nur gelesen, wenn tatsächlich eine Erinnerung fällig ist
-//    (um Kinder als Empfänger auszuschließen) - und je Familie höchstens einmal pro Durchlauf.
-//  - Gesendete Erinnerungen werden in pb_data gemerkt (pinn_dokumente_erinnert.json), damit nach
-//    einem Neustart nichts doppelt kommt.
+// Gentle on CPU and memory:
+//  - The schedule runs hourly, but only really works once a day (from 8 a.m.). Only the documents
+//    with a reminder set are read then (small records, no files).
+//  - The large family data is only read if a reminder is actually due
+//    (to exclude children as recipients) - and at most once per run per family.
+//  - Sent reminders are remembered in pb_data (pinn_dokumente_erinnert.json), so that nothing comes
+//    twice after a restart.
 
 const DOKS = "dokumente";
 const STATUS_FILE = "/pb_data/pinn_dokumente_erinnert.json";
-const SEND_FROM_HOUR = 8;   // frühestens um 8 Uhr erinnern
-const SEND_UNTIL_HOUR = 21; // sofortige Prüfung nach dem Speichern nur bis 21 Uhr
+const SEND_FROM_HOUR = 8;   // remind at 8 a.m. at the earliest
+const SEND_UNTIL_HOUR = 21; // immediate check after saving only until 9 p.m.
 const MAX_FILES = 20;
 const MAX_BYTES = 25 * 1024 * 1024;
 const MIME_TYPES = [
@@ -43,19 +43,19 @@ const MIME_TYPES = [
 ];
 
 // ---------------------------------------------------------------------------------------------
-// Einrichtung: Sammlung "dokumente"
+// Set-up: collection "dokumente"
 // ---------------------------------------------------------------------------------------------
-// Sichtbarkeit (Feld "sichtbar"): leer = ganze Familie, sonst die Profil-IDs (durch Komma getrennt), die
-// das Dokument sehen dürfen - z. B. nur man selbst. Wer nicht dabei ist, bekommt es vom Server nicht
-// (auch nicht die Dateien) und keine Erinnerung dazu. Eintragen kann man nur sich selbst einschließend.
+// Visibility (field "sichtbar"): empty = whole family, otherwise the profile IDs (separated by commas) that
+// may see the document - e.g. only oneself. Whoever is not included does not get it from the server
+// (not even the files) and no reminder about it. You can only enter yourself inclusively.
 const BASE_RULE = "@request.auth.id != '' && @request.auth.familie != '' && @request.auth.rolle != 'gast' && familie = @request.auth.familie";
 const VIS_RULE = "(sichtbar = '' || sichtbar ~ @request.auth.id)";
 const BODY_VIS_RULE = "(@request.body.sichtbar:isset = false || @request.body.sichtbar = '' || @request.body.sichtbar ~ @request.auth.id)";
 const READ_RULE = BASE_RULE + " && " + VIS_RULE;
 const CREATE_RULE = "@request.auth.id != '' && @request.auth.familie != '' && @request.auth.rolle != 'gast' && @request.body.familie = @request.auth.familie && " + BODY_VIS_RULE;
 const UPDATE_RULE = READ_RULE + " && (@request.body.familie:isset = false || @request.body.familie = @request.auth.familie) && " + BODY_VIS_RULE;
-// Regeln ohne Sichtbarkeit - falls das Feld (noch) nicht angelegt werden kann
-// Kasse: leer = ganze Familie, sonst nur Mitglieder der Kasse (alle = true: alle Profile der Familie)
+// Rules without visibility - in case the field cannot be created (yet)
+// Fund: empty = whole family, otherwise only members of the fund (all = true: all profiles of the family)
 const KASSE_RULE = "(kasse = '' || (@collection.kassen:dk.id ?= kasse && (@collection.kassen:dk.alle ?= true || @collection.kassen:dk.mitglieder ?~ @request.auth.id)))";
 const BODY_KASSE_RULE = "(@request.body.kasse:isset = false || @request.body.kasse = '' || (@collection.kassen:ck.id ?= @request.body.kasse && (@collection.kassen:ck.alle ?= true || @collection.kassen:ck.mitglieder ?~ @request.auth.id)))";
 const K_READ_RULE = READ_RULE + " && " + KASSE_RULE;
@@ -65,7 +65,7 @@ const OLD_READ_RULE = BASE_RULE;
 const OLD_CREATE_RULE = "@request.auth.id != '' && @request.auth.familie != '' && @request.auth.rolle != 'gast' && @request.body.familie = @request.auth.familie";
 const OLD_UPDATE_RULE = BASE_RULE + " && (@request.body.familie:isset = false || @request.body.familie = @request.auth.familie)";
 
-// Alle Felder außer Datei und Familie (werden bei älteren Ständen nachgerüstet)
+// All fields except file and family (are added on older states)
 const PLAIN_FIELDS = [
     { name: "titel", type: "text", max: 200 },
     { name: "kategorie", type: "text", max: 40 },
@@ -141,8 +141,8 @@ function ensureSchema() {
             console.log("[Dokumente] Feld \"" + def.name + "\" nicht anlegbar: " + err.message);
         }
     });
-    // Regeln aktuell halten (z. B. nach einer Änderung von Hand) - mit Sichtbarkeit und Kassen, sobald
-    // es die Felder (und die Sammlung "kassen") gibt
+    // Keep the rules up to date (e.g. after a manual change) - with visibility and funds as soon as
+    // the fields (and the collection "kassen") exist
     try {
         col = findCol(DOKS);
         const vis = hasField(col, "sichtbar");
@@ -170,7 +170,7 @@ function ensureSchema() {
             col = findCol(DOKS);
             col.listRule = OLD_READ_RULE; col.viewRule = OLD_READ_RULE; col.createRule = OLD_CREATE_RULE; col.updateRule = OLD_UPDATE_RULE; col.deleteRule = OLD_READ_RULE;
             $app.save(col);
-        } catch (e2) { /* egal */ }
+        } catch (e2) { /* ignore */ }
     }
 }
 
@@ -193,7 +193,7 @@ function diffDays(a, b) {
 function fmtDe(iso) { return isIso(iso) ? iso.slice(8, 10) + "." + iso.slice(5, 7) + "." + iso.slice(0, 4) : ""; }
 function inDays(n) { return n <= 0 ? "heute" : n === 1 ? "morgen" : "in " + n + " Tagen"; }
 
-// Mitteleuropäische Zeit (feste EU-Sommerzeitregel - wie pinn-push.js)
+// Central European Time (fixed EU daylight saving rule - like pinn-push.js)
 function lastSundayUtc(year, month) {
     const last = new Date(Date.UTC(year, month + 1, 0));
     return Date.UTC(year, month, last.getUTCDate() - last.getUTCDay(), 1, 0, 0);
@@ -219,7 +219,7 @@ function readStatus() {
             if (!o.sent || typeof o.sent !== "object") o.sent = {};
             return o;
         }
-    } catch (e) { /* noch keine Datei */ }
+    } catch (e) { /* no file yet */ }
     return { lastDaily: "", sent: {} };
 }
 function writeStatus(s) {
@@ -231,7 +231,7 @@ function pruneStatus(s, today) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Erinnerungen
+// Reminders
 // ---------------------------------------------------------------------------------------------
 const DEADLINES = [
     { field: "gueltig_bis", kind: "gueltig" },
@@ -245,7 +245,7 @@ function isChild(m) {
     return /^(kind|tochter|sohn)$/i.test(String(m.role || "").trim());
 }
 
-// Welche Erinnerungen sind für ein Dokument heute fällig? -> [{ key, titel, text }]
+// Which reminders are due today for a document? -> [{ key, titel, text }]
 function dueMessages(familyId, doc, today) {
     const out = [];
     const days = Math.max(0, Math.min(365, Math.round(Number(doc.get("erinnern")) || 0)));
@@ -275,12 +275,12 @@ function dueMessages(familyId, doc, today) {
     return out;
 }
 
-// Empfänger: das zugeordnete erwachsene Familienmitglied (wenn es ein Profil hat), sonst alle
-// Erwachsenen der Familie (keine Gäste, keine Kinder).
+// Recipients: the assigned adult family member (if they have a profile), otherwise all
+// adults of the family (no guests, no children).
 function recipientsFor(doc, users, members, kasseIds) {
-    // Nur Mitglieder der Kasse des Dokuments (kasseIds = null: keine Kasse -> ganze Familie)
+    // Only members of the document's fund (kasseIds = null: no fund -> whole family)
     if (Array.isArray(kasseIds)) users = users.filter(u => kasseIds.indexOf(u.id) >= 0);
-    // Nur Profile, die das Dokument sehen dürfen
+    // Only profiles that may see the document
     const vis = String(doc.getString("sichtbar") || "").split(",").map(x => x.trim()).filter(Boolean);
     if (vis.length) return users.filter(u => vis.indexOf(u.id) >= 0 && u.getString("rolle") !== "gast");
     const byMember = {};
@@ -327,7 +327,7 @@ function remindDocs(docs, today, status) {
                     sent += push.notifyUser(u.id, { titel: msg.titel, text: msg.text, url: "/?dokument=" + encodeURIComponent(doc.id), tag: "dokument-" + doc.id, urgency: "normal" });
                 } catch (e) { console.log("[Dokumente] Push fehlgeschlagen: " + e.message); }
             });
-            // Auch ohne angemeldetes Gerät als erledigt merken - sonst käme sie Tage später nach
+            // Also remember as done without a registered device - otherwise it would come days later
             status.sent[msg.key] = today;
         });
     });

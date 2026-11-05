@@ -1,53 +1,53 @@
 // pb_hooks/pinn-pinnwand.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden
-// (Einrichtung und Zeitplan in pinnwand.pb.js, Aufruf nach dem Speichern in save_family_data.pb.js).
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require()
+// (set-up and schedule in pinnwand.pb.js, call after saving in save_family_data.pb.js).
 //
-// Pinnwand der Familie
-//  - Die Zettel selbst liegen klein im Familien-Datensatz (Schlüssel "pinboard") und werden wie alles
-//    andere zwischen den Geräten abgeglichen - offline anleg- und änderbar:
+// The family's pinboard
+//  - The notes themselves are stored small in the family record (key "pinboard") and are synchronised
+//    between the devices like everything else - can be created and changed offline:
 //      { id, type: 'note'|'list'|'photo'|'poll'|'kudos'|'countdown', title, text, color,
-//        author (Mitglied), authorUser (Profil), authorName, createdAt, updatedAt,
-//        to: [Mitglied, ...] (leer = ganze Familie), pinned, important, archived,
-//        remindAt ('JJJJ-MM-TTTHH:MM'), remindAtMs, expires ('JJJJ-MM-TT'), date (Countdown),
-//        items: [{ id, text, done, by, at }], options: [{ id, text }], votes: { <Wer>: <Option> },
-//        closed, photo: { rec, file } | { pending }, reactions: { <Wer>: <Emoji> },
-//        comments: [{ id, author, authorUser, authorName, text, at }], doneBy: { <Wer>: <ms> } }
-//    <Wer> = Mitglieds-ID bzw. "u:<Profil-ID>" für Profile ohne Mitglied (z. B. Gäste).
-//  - Fotos liegen als geschützte Dateien in der Sammlung "pinnwand_bilder" (nur die eigene Familie,
-//    Abruf nur mit Anmeldung bzw. kurzlebigem Datei-Token).
+//        author (member), authorUser (profile), authorName, createdAt, updatedAt,
+//        to: [member, ...] (empty = whole family), pinned, important, archived,
+//        remindAt ('YYYY-MM-DDTHH:MM'), remindAtMs, expires ('YYYY-MM-DD'), date (countdown),
+//        items: [{ id, text, done, by, at }], options: [{ id, text }], votes: { <who>: <option> },
+//        closed, photo: { rec, file } | { pending }, reactions: { <who>: <emoji> },
+//        comments: [{ id, author, authorUser, authorName, text, at }], doneBy: { <who>: <ms> } }
+//    <who> = member ID or "u:<profile ID>" for profiles without a member (e.g. guests).
+//  - Photos are stored as protected files in the collection "pinnwand_bilder" (own family only,
+//    retrieval only with sign-in or a short-lived file token).
 //
-// Push-Nachrichten (persönliche Einstellungen in pinn-push.js):
-//  - pwAlle:       neuer Zettel für die ganze Familie
-//  - pwMich:       Zettel an mich, Dankeschöns an mich und wichtige Zettel
-//  - pwAntworten:  Antworten, Reaktionen und Stimmen zu meinen Zetteln (bzw. Zetteln, auf die ich
-//                  geantwortet habe)
-//  - pwErinnerung: Erinnerung eines Zettels zur eingestellten Zeit (an die Adressaten bzw. alle)
+// Push messages (personal settings in pinn-push.js):
+//  - pwAlle:       new note for the whole family
+//  - pwMich:       notes to me, thank-yous to me and important notes
+//  - pwAntworten:  replies, reactions and votes on my notes (or notes I have
+//                  replied to)
+//  - pwErinnerung: reminder of a note at the set time (to the addressees or everyone)
 //
-// Schonend für CPU und Speicher:
-//  - Nach jedem Speichern der Familiendaten vergleicht afterSave() die gerade empfangenen Daten mit
-//    einer kleinen Liste bereits bekannter Zettel/Antworten/Reaktionen (keine erneute Datenbankabfrage).
-//    Neues wird nur vorgemerkt - verschickt wird ca. 20 Sekunden später vom minütlichen Zeitplan.
-//    So kommt nichts, wenn ein Zettel gleich wieder gelöscht wird, und mehrere Reaktionen werden zu
-//    einer Nachricht zusammengefasst. Das Speichern wartet nie auf den Push-Versand.
-//  - Der minütliche Zeitplan liest nur diesen kleinen Stand aus dem Zwischenspeicher. Die (großen)
-//    Familiendaten werden nur gelesen, wenn für diese Familie wirklich etwas zu verschicken ist.
-//  - Einmal täglich (ab 3 Uhr) werden Fotos gelöscht, die zu keinem Zettel mehr gehören.
-//  - Der Stand wird zusätzlich in pb_data gesichert (pinn_pinnwand.json), damit nach einem Neustart
-//    nichts doppelt kommt.
+// Gentle on CPU and memory:
+//  - After every save of the family data, afterSave() compares the data just received with
+//    a small list of already known notes/replies/reactions (no further database query).
+//    New things are only queued - sending happens about 20 seconds later via the per-minute schedule.
+//    So nothing comes if a note is deleted again right away, and several reactions are merged into
+//    one message. Saving never waits for the push sending.
+//  - The per-minute schedule only reads this small state from the cache. The (large)
+//    family data is only read if there is really something to send for this family.
+//  - Once a day (from 3 a.m.) photos that no longer belong to any note are deleted.
+//  - The state is additionally backed up in pb_data (pinn_pinnwand.json), so that nothing comes
+//    twice after a restart.
 
 const COL = "pinnwand_bilder";
 const STATE_FILE = "/pb_data/pinn_pinnwand.json";
 const STORE_KEY = "pinnPinnwandStand";
 const MIN_MS = 60000, HOUR_MS = 3600000, DAY_MS = 86400000;
-const SEND_DELAY_MS = 20000;          // Vormerkung -> Versand frühestens nach 20 Sekunden
-const QUEUE_MAX_AGE = 6 * HOUR_MS;    // ältere Vormerkungen verwerfen (z. B. nach langem Ausfall)
-const NEW_MAX_AGE = 3 * DAY_MS;       // nur Zettel/Antworten der letzten 3 Tage melden
-const REMIND_LATE_MS = 30 * MIN_MS;   // Erinnerungen bis 30 Minuten nach der Zeit noch nachholen
+const SEND_DELAY_MS = 20000;          // Queued -> sent after 20 seconds at the earliest
+const QUEUE_MAX_AGE = 6 * HOUR_MS;    // discard older queued entries (e.g. after a long outage)
+const NEW_MAX_AGE = 3 * DAY_MS;       // only report notes/replies of the last 3 days
+const REMIND_LATE_MS = 30 * MIN_MS;   // still make up for reminders up to 30 minutes after the time
 const PHOTO_MIME = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/heic", "image/heif"];
 const PHOTO_MAX_BYTES = 15 * 1024 * 1024;
 
 // ---------------------------------------------------------------------------------------------
-// Einrichtung: Sammlung "pinnwand_bilder"
+// Set-up: collection "pinnwand_bilder"
 // ---------------------------------------------------------------------------------------------
 const READ_RULE = "@request.auth.id != '' && @request.auth.familie != '' && familie = @request.auth.familie";
 const CREATE_RULE = "@request.auth.id != '' && @request.auth.familie != '' && @request.body.familie = @request.auth.familie";
@@ -98,9 +98,9 @@ function ensureSchema() {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Kleiner Stand (Zwischenspeicher + pb_data)
-// { families: { <Familie>: { seen: { key: 1 }, reminders: [{ note, at }], sent: { key: ms } } },
-//   queue: { key: { familyId, typ, note, ..., dueAt, createdAt } }, cleanupDay: 'JJJJ-MM-TT' }
+// Small state (cache + pb_data)
+// { families: { <family>: { seen: { key: 1 }, reminders: [{ note, at }], sent: { key: ms } } },
+//   queue: { key: { familyId, typ, note, ..., dueAt, createdAt } }, cleanupDay: 'YYYY-MM-DD' }
 // ---------------------------------------------------------------------------------------------
 function readText(path) {
     try {
@@ -121,18 +121,18 @@ function readState() {
     try {
         const raw = $app.store().get(STORE_KEY);
         if (raw) return normState(JSON.parse(String(raw)));
-    } catch (e) { /* aus der Datei */ }
+    } catch (e) { /* from the file */ }
     let s = emptyState();
     const txt = readText(STATE_FILE);
     if (txt) {
         try { s = normState(JSON.parse(txt)); } catch (e) { s = emptyState(); }
     }
-    try { $app.store().set(STORE_KEY, JSON.stringify(s)); } catch (e) { /* egal */ }
+    try { $app.store().set(STORE_KEY, JSON.stringify(s)); } catch (e) { /* ignore */ }
     return s;
 }
 function writeState(s) {
     const txt = JSON.stringify(s);
-    try { $app.store().set(STORE_KEY, txt); } catch (e) { /* egal */ }
+    try { $app.store().set(STORE_KEY, txt); } catch (e) { /* ignore */ }
     try { $os.writeFile(STATE_FILE, txt, 420); } catch (e) {
         console.log("[Pinnwand] Stand konnte nicht gesichert werden: " + e.message);
     }
@@ -144,7 +144,7 @@ function writeState(s) {
 function str(v, max) { return String(v == null ? "" : v).slice(0, max || 200); }
 function cleanId(v) { return String(v || "").replace(/[^A-Za-z0-9_:\-]/g, "").slice(0, 40); }
 function todayBerlin() {
-    // grobe, aber für "abgelaufen?" ausreichende Tagesgrenze in Mitteleuropa
+    // rough day boundary in Central Europe, but sufficient for "expired?"
     const d = new Date(Date.now() + berlinOffset(Date.now()));
     const p = n => (n < 10 ? "0" : "") + n;
     return d.getUTCFullYear() + "-" + p(d.getUTCMonth() + 1) + "-" + p(d.getUTCDate());
@@ -183,7 +183,7 @@ function joinNames(list) {
     return l.slice(0, -1).join(", ") + " und " + l[l.length - 1];
 }
 
-// Name zu <Wer> (Mitglied oder "u:<Profil>")
+// Name for <who> (member or "u:<profile>")
 function whoName(key, members, fallback) {
     const k = String(key || "");
     if (k.indexOf("u:") === 0) {
@@ -192,7 +192,7 @@ function whoName(key, members, fallback) {
     const m = (members || []).find(x => x.id === k);
     return m ? (m.name || "Jemand") : (fallback || "Jemand");
 }
-// <Wer>-Schlüssel eines Empfängers
+// <who> key of a recipient
 function personKeys(p) {
     const keys = ["u:" + p.userId];
     if (p.memberId) keys.push(p.memberId);
@@ -210,7 +210,7 @@ function isAddressed(p, n) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Nach dem Speichern: Neues erkennen und vormerken
+// After saving: detect new things and queue them
 // ---------------------------------------------------------------------------------------------
 function afterSave(familyId, data, actorUserId) {
     if (!familyId || !data || typeof data !== "object") return;
@@ -221,8 +221,8 @@ function afterSave(familyId, data, actorUserId) {
     if (!fam.seen || typeof fam.seen !== "object") fam.seen = {};
     const now = Date.now();
     const today = todayBerlin();
-    // Beim allerersten Mal (Umstellung) alles Vorhandene als bekannt übernehmen - nur ganz frisch
-    // Angelegtes (letzte 2 Minuten) wird noch gemeldet.
+    // The very first time (switch-over) take over everything existing as known - only freshly
+    // created things (last 2 minutes) are still reported.
     const recentLimit = first ? now - 2 * MIN_MS : now - NEW_MAX_AGE;
     const seenNow = {};
     const reminders = [];
@@ -279,7 +279,7 @@ function afterSave(familyId, data, actorUserId) {
 
     fam.seen = seenNow;
     fam.reminders = reminders.sort((a, b) => a.at - b.at).slice(0, 200);
-    // gesendete Erinnerungen 7 Tage merken
+    // remember sent reminders for 7 days
     const sent = fam.sent && typeof fam.sent === "object" ? fam.sent : {};
     Object.keys(sent).forEach(k => { if (!(sent[k] > now - 7 * DAY_MS)) delete sent[k]; });
     fam.sent = sent;
@@ -289,7 +289,7 @@ function afterSave(familyId, data, actorUserId) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Nachrichten bauen
+// Build messages
 // ---------------------------------------------------------------------------------------------
 function noteHeadline(n) {
     if (n.type === "list") return str(n.title, 80) || "Liste";
@@ -335,7 +335,7 @@ function newNoteMessage(n, members, today) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Zeitplan (jede Minute): Vormerkungen und Erinnerungen verschicken
+// Schedule (every minute): send queued entries and reminders
 // ---------------------------------------------------------------------------------------------
 function runCron() {
     const state = readState();
@@ -379,7 +379,7 @@ function runCron() {
         }
     });
 
-    // Neu einlesen (zwischendurch kann gespeichert worden sein) und nur das Erledigte austragen
+    // Read in again (saving may have happened in between) and only remove what was handled
     const fresh = readState();
     processedKeys.forEach(k => {
         const q = fresh.queue[k];
@@ -436,7 +436,7 @@ function sendForFamily(familyId, due, sentReminders) {
     due.queue.forEach(x => {
         const q = x.entry;
         const n = byId[q.note];
-        if (!n || isArchived(n, today)) return; // inzwischen gelöscht oder abgenommen
+        if (!n || isArchived(n, today)) return; // meanwhile deleted or taken down
 
         if (q.typ === "neu") {
             const msg = newNoteMessage(n, members, today);
@@ -448,7 +448,7 @@ function sendForFamily(familyId, due, sentReminders) {
                 let ok = false;
                 if (addressed || n.important) ok = s.pwMich !== false;
                 if (!ok && forAll) ok = s.pwAlle !== false;
-                if (!forAll && !addressed) ok = false; // Zettel an andere: nicht stören
+                if (!forAll && !addressed) ok = false; // Note to others: do not disturb
                 if (ok) deliver(p, n, msg, n.important ? "high" : "normal");
             });
         } else if (q.typ === "antwort") {
@@ -485,7 +485,7 @@ function sendForFamily(familyId, due, sentReminders) {
     due.reminders.forEach(r => {
         sentReminders[familyId].push(r.note + "|" + r.at);
         const n = byId[r.note];
-        if (!n || isArchived(n, today) || Number(n.remindAtMs) !== r.at) return; // geändert/gelöscht
+        if (!n || isArchived(n, today) || Number(n.remindAtMs) !== r.at) return; // changed/deleted
         const forAll = !Array.isArray(n.to) || !n.to.length;
         const headline = n.type === "note" || !n.type ? snippet(n.title || n.text, 70) : noteHeadline(n);
         const msg = {
@@ -502,7 +502,7 @@ function sendForFamily(familyId, due, sentReminders) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Einmal täglich: Fotos ohne Zettel löschen (älter als 1 Tag, damit Offline-Uploads Zeit haben)
+// Once a day: delete photos without a note (older than 1 day, so that offline uploads have time)
 // ---------------------------------------------------------------------------------------------
 function dailyCleanup(state) {
     const today = todayBerlin();
@@ -533,7 +533,7 @@ function dailyCleanup(state) {
         }
         const refs = refsByFamily[fid];
         if (!refs || refs[rec.id]) return;
-        try { $app.delete(rec); removed++; } catch (e) { /* nächstes Mal */ }
+        try { $app.delete(rec); removed++; } catch (e) { /* next time */ }
     });
     if (removed) console.log("[Pinnwand] " + removed + " Foto(s) ohne Zettel gelöscht.");
 }

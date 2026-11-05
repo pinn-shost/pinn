@@ -1,23 +1,23 @@
 // pb_hooks/google_credentials.pb.js
-// Google-Kalender (Android) JE FAMILIE - Gegenstück zu apple_credentials.pb.js.
-// Die Logik steckt in pinn-google.js, der Zugang liegt verschlüsselt in der gesperrten Sammlung
+// Google calendar (Android) PER FAMILY - counterpart to apple_credentials.pb.js.
+// The logic lives in pinn-google.js, the access is stored encrypted in the locked collection
 // "google_zugaenge".
 //
-// Diese Datei
-// - legt beim Start die gesperrte Sammlung an,
-// - stellt die Routen für die Einstellungen bereit:
-//     GET  /api/pinn/google-status       Status der eigenen Familie (nie den Token)
-//     POST /api/pinn/google/start        {origin} -> {url} Google-Anmeldung starten (nur Familien-Admins)
-//     GET  /api/pinn/google/callback     Rückkehr von Google (ohne pinn.-Anmeldung, abgesichert über
-//                                        einen einmaligen, 15 Minuten gültigen "state") – auch für die
-//                                        persönlichen Google-Konten der eigenen Kalender (kalender.pb.js)
-//     POST /api/pinn/google/loeschen     Verbindung der eigenen Familie trennen (nur Admins)
+// This file
+// - creates the locked collection on start,
+// - provides the routes for the settings:
+//     GET  /api/pinn/google-status       status of the own family (never the token)
+//     POST /api/pinn/google/start        {origin} -> {url} start the Google sign-in (family admins only)
+//     GET  /api/pinn/google/callback     return from Google (without pinn. sign-in, secured via
+//                                        a one-time "state" valid for 15 minutes) - also for the
+//                                        personal Google accounts of the own calendars (kalender.pb.js)
+//     POST /api/pinn/google/loeschen     disconnect the own family's connection (admins only)
 //
-// Alles defensiv: Ein Fehler hier wird nur geloggt und verhindert nie den Serverstart.
+// Everything defensive: an error here is only logged and never prevents the server from starting.
 
 onBootstrap((e) => {
     e.next();
-    try { require(`${__hooks}/pinn-schema.js`).ensureCurrent(); } catch (err) { /* egal */ }
+    try { require(`${__hooks}/pinn-schema.js`).ensureCurrent(); } catch (err) { /* ignore */ }
     try {
         const google = require(`${__hooks}/pinn-google.js`);
         google.setup();
@@ -28,7 +28,7 @@ onBootstrap((e) => {
     }
 });
 
-// Status für die Einstellungen. Der Token wird NIE ausgeliefert.
+// Status for the settings. The token is NEVER delivered.
 routerAdd("GET", "/api/pinn/google-status", (e) => {
     e.response.header().set("Cache-Control", "no-store");
     const empty = { available: false, configured: false, account: "", error: "", redirectUri: "", lastSync: null, canEdit: false };
@@ -46,7 +46,7 @@ routerAdd("GET", "/api/pinn/google-status", (e) => {
     }
 }, $apis.requireAuth("benutzer"));
 
-// Google-Anmeldung starten. Antwort: Adresse, zu der die App weiterleitet.
+// Start the Google sign-in. Response: address to which the app redirects.
 routerAdd("POST", "/api/pinn/google/start", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const denied = lib.calendarDenied(e);
@@ -61,8 +61,8 @@ routerAdd("POST", "/api/pinn/google/start", (e) => {
     }
 }, $apis.requireAuth("benutzer"));
 
-// Rückkehr von Google. Läuft im Browser als normale Seite (ohne pinn.-Anmeldung) und leitet danach
-// zurück in die App: /?google=verbunden bzw. /?google=fehler&grund=...
+// Return from Google. Runs in the browser as a normal page (without pinn. sign-in) and then redirects
+// back into the app: /?google=verbunden or /?google=fehler&grund=...
 routerAdd("GET", "/api/pinn/google/callback", (e) => {
     e.response.header().set("Cache-Control", "no-store");
     let q = {};
@@ -79,8 +79,8 @@ routerAdd("GET", "/api/pinn/google/callback", (e) => {
         '<body><div class="k"><h1>' + esc(title) + '</h1><p>' + esc(text) + '</p><a href="' + esc(target) + '">Zurück zu pinn.</a></div>' +
         '<script>setTimeout(function(){location.replace(' + JSON.stringify(target) + ')},1200)</script></body></html>';
 
-    // Persönliche Anmeldung (eigene Kalender „Nur für mich“)? Dann führt die Rückkehr zu den eigenen
-    // Kalendern statt zu den Familienkalendern (&privat=1).
+    // Personal sign-in (own "only for me" calendars)? Then the return leads to the own
+    // calendars instead of the family calendars (&privat=1).
     let personal = false;
     try { personal = require(`${__hooks}/pinn-google.js`).isPersonalState(q.state); } catch (err) { personal = false; }
     const tail = personal ? "&privat=1" : "";
@@ -96,20 +96,20 @@ routerAdd("GET", "/api/pinn/google/callback", (e) => {
         return e.html(200, page("Nicht verbunden", err.message, "/?google=fehler&grund=" + encodeURIComponent(err.message) + tail));
     }
     if (result.personal) {
-        // Bereits verknüpfte eigene Google-Kalender gleich abgleichen (z. B. nach erneutem Verbinden)
-        try { require(`${__hooks}/pinn-kalender.js`).syncLinkedForUser(result.userId, "google"); } catch (err) { /* nächster Cron-Lauf */ }
+        // Sync already linked own Google calendars right away (e.g. after reconnecting)
+        try { require(`${__hooks}/pinn-kalender.js`).syncLinkedForUser(result.userId, "google"); } catch (err) { /* next cron run */ }
         let ptarget = "/?google=verbunden&privat=1";
         if (result.warning) ptarget += "&hinweis=" + encodeURIComponent(result.warning);
         return e.html(200, page("Google verbunden", "Verbunden mit " + result.account + ". Jetzt in pinn. einen Google-Kalender für dich auswählen.", ptarget));
     }
-    // Bestehende Kalenderauswahl gleich abgleichen (z. B. nach erneutem Verbinden)
-    try { require(`${__hooks}/calendar-sync.js`).syncFamily(result.familyId); } catch (err) { /* nächster Cron-Lauf */ }
+    // Sync the existing calendar selection right away (e.g. after reconnecting)
+    try { require(`${__hooks}/calendar-sync.js`).syncFamily(result.familyId); } catch (err) { /* next cron run */ }
     let target = "/?google=verbunden";
     if (result.warning) target += "&hinweis=" + encodeURIComponent(result.warning);
     return e.html(200, page("Google-Kalender verbunden", "Verbunden mit " + result.account + ". Jetzt in pinn. die Kalender auswählen.", target));
 });
 
-// Verbindung der eigenen Familie trennen und die Kalenderdatei neu schreiben (iCloud-Termine bleiben).
+// Disconnect the own family's connection and rewrite the calendar file (iCloud events stay).
 routerAdd("POST", "/api/pinn/google/loeschen", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const denied = lib.calendarDenied(e);
@@ -121,7 +121,7 @@ routerAdd("POST", "/api/pinn/google/loeschen", (e) => {
     } catch (err) {
         return e.json(200, { error: err.message });
     }
-    try { require(`${__hooks}/calendar-sync.js`).syncFamily(familyId); } catch (err) { /* egal */ }
+    try { require(`${__hooks}/calendar-sync.js`).syncFamily(familyId); } catch (err) { /* ignore */ }
     console.log("[Google-Zugang] Google-Konto für Familie " + familyId + " getrennt.");
     return e.json(200, { success: true });
 }, $apis.requireAuth("benutzer"));

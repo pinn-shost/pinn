@@ -1,7 +1,7 @@
 // pb_hooks/household_tasks_progress.pb.js
-// Liefert den aktuellen Fortschritt einer laufenden Haushalts-Operation (Löschen oder Neu-
-// Generieren) zurück, damit die Einstellungen-Seite einen Live-Zähler ("X von Y") anzeigen kann.
-// Wird von der App per Abfrage (alle ~1 Sekunde) aufgerufen, solange eine Operation läuft.
+// Returns the current progress of a running household operation (deleting or re-
+// generating) so that the settings page can show a live counter ("X of Y").
+// Called by the app by polling (about every second) as long as an operation is running.
 
 routerAdd("GET", "/api/household-tasks-progress", (e) => {
     try {

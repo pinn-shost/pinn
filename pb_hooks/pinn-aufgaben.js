@@ -1,62 +1,62 @@
 // pb_hooks/pinn-aufgaben.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden.
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require().
 //
-// Aufgaben liegen jetzt direkt auf dem NAS in der PocketBase-Sammlung "aufgaben" - nicht mehr im
-// Apple-Aufgaben-Kalender. Die bisherige Kalender-Variante ist in calendar-sync.js ausgeklammert
-// (Suche nach "AUSGEKLAMMERT"), falls sie noch einmal gebraucht wird.
+// Tasks now live directly on the NAS in the PocketBase collection "aufgaben" - no longer in the
+// Apple tasks calendar. The former calendar variant is commented out in calendar-sync.js
+// (search for "AUSGEKLAMMERT") in case it is needed once more.
 //
-// Schonend für CPU und Speicher:
-//  - kein iCloud-Zugriff: Anlegen, Abhaken, Bearbeiten und Löschen sind einzelne Datenbank-Zugriffe
-//  - Haushalts-Aufgaben (Reinigung, Mülleimer, Abholtermine) werden nur einmal pro Stunde geprüft
-//    (plus sofort, wenn eine Haushalts-Regel geändert wird)
-//  - die Familiendaten werden nur neu gelesen, wenn sie sich geändert haben (Zwischenspeicher)
-//  - der Kalender wird für die Abholtermin-Erkennung nur aus der ohnehin vorhandenen Datei gelesen
-//    und nur dann zerlegt, wenn für morgen überhaupt etwas darin steht
-//  - erledigte Aufgaben werden je nach Einstellung spätestens nach 2 Tagen gelöscht
+// Gentle on CPU and memory:
+//  - no iCloud access: creating, ticking off, editing and deleting are single database accesses
+//  - household tasks (cleaning, trash bin, collection dates) are only checked once per hour
+//    (plus immediately when a household rule is changed)
+//  - the family data is only re-read when it has changed (cache)
+//  - for the collection date detection, the calendar is only read from the file that exists anyway
+//    and only parsed if there is anything in it for tomorrow
+//  - completed tasks are deleted after 2 days at the latest, depending on the setting
 //
-// Felder der Sammlung "aufgaben":
-//   titel, notizen (inkl. "Zugewiesen: ..."-Zeile wie bisher), faellig (JJJJ-MM-TT),
-//   von/bis (HH:MM, leer = ganztägig), erledigt, erledigt_am (ISO-Zeit),
-//   haushalt (Regel-Schlüssel bei automatisch erzeugten Aufgaben, sonst leer),
-//   verpasst (wie oft die Haushalts-Aufgabe vorher nicht erledigt wurde),
-//   familie (zu welcher Familie die Aufgabe gehört - jede Familie sieht nur ihre eigenen)
-// Zugriff nur über die angemeldeten Routen in aufgaben.pb.js (Sammlungs-API gesperrt).
+// Fields of the collection "aufgaben":
+//   titel, notizen (incl. "Zugewiesen: ..." line as before), faellig (YYYY-MM-DD),
+//   von/bis (HH:MM, empty = all day), erledigt, erledigt_am (ISO time),
+//   haushalt (rule key for automatically generated tasks, otherwise empty),
+//   verpasst (how often the household task was not completed before),
+//   familie (which family the task belongs to - each family only sees its own)
+// Access only via the signed-in routes in aufgaben.pb.js (collection API locked).
 //
-// Reihum & Statistik (ab 1.26): Sammlung "haushalt_verlauf" – je erzeugter Haushalts-Aufgabe ein kleiner
-// Eintrag (regel, titel, aufgabe, faellig, zustaendig, erledigt_von, status: offen|erledigt|verpasst).
-// Er bleibt, auch wenn die Aufgabe selbst nach dem Abhaken gelöscht wird (Einträge älter als 400 Tage
-// räumt der stündliche Lauf weg). Daraus ergeben sich:
-//  - Reihum (Regel mit rotate = 'reihum' | 'fair' und mindestens zwei Zuständigen): jede neue Aufgabe
-//    geht an genau eine Person – der Reihe nach bzw. an die, die in den letzten 30 Tagen am wenigsten
-//    erledigt hat. Wurde die vorige Aufgabe verpasst, bleibt dieselbe Person dran.
-//  - Statistik „Wer macht wie viel?“ (GET /api/pinn/aufgaben/statistik).
+// Rotation & statistics (since 1.26): collection "haushalt_verlauf" - one small entry per generated household task
+// (regel, titel, aufgabe, faellig, zustaendig, erledigt_von, status: offen|erledigt|verpasst).
+// It stays even if the task itself is deleted after ticking off (entries older than 400 days
+// are cleared away by the hourly run). From it result:
+//  - Rotation (rule with rotate = 'reihum' | 'fair' and at least two responsible people): each new task
+//    goes to exactly one person - in turn, or to whoever has completed the least
+//    in the last 30 days. If the previous task was missed, the same person stays responsible.
+//  - Statistics "Who does how much?" (GET /api/pinn/aufgaben/statistik).
 //
-// Wartungsplan (ab 1.28, Menü „Haus“): familien_daten → houseMaintenance
-//   [{ id, title, icon, months, next ('JJJJ-MM-TT', von Hand gesetzte nächste Fälligkeit), nextSet (wann gesetzt),
-//      last (zuletzt erledigt, pflegt die App), lead (Tage vorher anlegen), assignedMemberIds, rotate, active }]
-//   Anders als Reinigung/Müll: die Aufgabe bleibt offen, bis sie erledigt ist (kein „verpasst“). Die nächste
-//   Fälligkeit zählt ab dem Erledigt-Tag (+ Intervall in Monaten). Verlauf-Einträge mit regel „w:<ID>“;
-//   wird eine Wartungsaufgabe gelöscht, gilt sie als übersprungen (status „uebersprungen“) – sie kommt dann
-//   erst im nächsten Zyklus wieder.
+// Maintenance plan (since 1.28, menu "House"): familien_daten → houseMaintenance
+//   [{ id, title, icon, months, next ('YYYY-MM-DD', next due date set by hand), nextSet (when it was set),
+//      last (last completed, maintained by the app), lead (create this many days beforehand), assignedMemberIds, rotate, active }]
+//   Unlike cleaning/waste: the task stays open until it is completed (no "missed"). The next
+//   due date counts from the completion day (+ interval in months). History entries with rule "w:<ID>";
+//   if a maintenance task is deleted, it counts as skipped (status "uebersprungen") - it then
+//   only comes back in the next cycle.
 //
-// Müllabfuhr (ab 1.31): Abholtermine kommen aus dem Müllkalender der Familie (pinn-muell.js) UND wie
-// bisher aus der Kalenderdatei. Für jeden Mülleimer, dessen Müllart morgen abgeholt wird, entsteht heute
-// (am Vortag) die Aufgabe „… rausbringen“. Ist die Abholung vorbei (Abholtag ab 12 Uhr), wird die noch
-// offene Aufgabe automatisch abgehakt – sie gilt dann nicht als verpasst (im Verlauf: erledigt von der
-// zuständigen Person). Die Erinnerung am Vortag verschickt pinn-push.js (muellInfo).
+// Waste collection (since 1.31): collection dates come from the family's waste calendar (pinn-muell.js) AND as
+// before from the calendar file. For every bin whose waste type is collected tomorrow, the task
+// "... take out" is created today (on the day before). Once the collection is over (collection day from 12 o'clock), the still
+// open task is ticked off automatically - it then does not count as missed (in the history: completed by the
+// responsible person). The reminder on the day before is sent by pinn-push.js (muellInfo).
 //
-// Extra-Erinnerung (ab 1.57): Feld „erinnerung“ (HH:MM, leer = aus). Am Fälligkeitstag schickt
-// pinn-push.js (runTaskReminders) zu dieser Uhrzeit eine Push an die Zuständigen. Automatisch erzeugte
-// Aufgaben übernehmen die Uhrzeit beim Anlegen aus ihrer Regel (remindAt bei Reinigung, Mülleimer und
-// Wartung); Fahrzeug-Aufgaben bringen sie von der App mit. Danach lässt sie sich je Aufgabe ändern.
+// Extra reminder (since 1.57): field "erinnerung" (HH:MM, empty = off). On the due date,
+// pinn-push.js (runTaskReminders) sends a push to the responsible people at this time. Automatically generated
+// tasks take over the time from their rule when created (remindAt for cleaning, trash bin and
+// maintenance); vehicle tasks bring it along from the app. After that it can be changed per task.
 
 const AUFGABEN = "aufgaben";
 const HOUR_MS = 3600000, DAY_MS = 86400000;
-const FAMILY_CACHE_KEY = "pinnAufgabenFamilie:"; // + Familien-ID
+const FAMILY_CACHE_KEY = "pinnAufgabenFamilie:"; // + family ID
 const LOCK_KEY = "pinnAufgabenLock";
 const VERLAUF = "haushalt_verlauf";
 
-// --- Zeit (Mitteleuropa, feste EU-Sommerzeitregel - unabhängig von der Zeitzone des Containers) ---
+// --- Time (Central Europe, fixed EU daylight saving rule - independent of the container's time zone) ---
 function lastSundayUtc(year, month) {
     const last = new Date(Date.UTC(year, month + 1, 0));
     return Date.UTC(year, month, last.getUTCDate() - last.getUTCDay(), 1, 0, 0);
@@ -73,15 +73,15 @@ function isIsoDate(s) { return /^\d{4}-\d{2}-\d{2}$/.test(String(s || "")); }
 function isTime(s) { return /^([01]\d|2[0-3]):[0-5]\d$/.test(String(s || "")); }
 
 // =============================================================================================
-// Sammlung anlegen (beim Start, nur wenn sie fehlt)
+// Create the collection (on start, only if it is missing)
 // =============================================================================================
 function familyCollection() {
     try { return $app.findCollectionByNameOrId("familien"); } catch (e) { return null; }
 }
 
-// Sammlung anlegen, falls sie fehlt. Das Feld "familie" bei bestehender Sammlung ergänzt
-// pinn-benutzer.js. Angelegt wird im Format new Collection({...}) - das funktioniert in dieser
-// PocketBase-Version zuverlässig.
+// Create the collection if it is missing. The field "familie" on an existing collection is added by
+// pinn-benutzer.js. It is created in the format new Collection({...}) - this works reliably in this
+// PocketBase version.
 function ensureSchema() {
     ensureVerlauf();
     let col = null;
@@ -104,7 +104,7 @@ function ensureSchema() {
             { name: "updated", type: "autodate", onCreate: true, onUpdate: true },
         ];
         if (fam) fields.push({ name: "familie", type: "relation", collectionId: fam.id, cascadeDelete: true, maxSelect: 1, minSelect: 0, required: false });
-        // Nur über die geprüften Routen erreichbar
+        // Reachable only via the checked routes
         $app.save(new Collection({
             type: "base",
             name: AUFGABEN,
@@ -121,10 +121,10 @@ function ensureSchema() {
     }
 }
 
-// Feld „erinnerung“ (ab 1.57) bei einer schon bestehenden Sammlung ergänzen
+// Add the field "erinnerung" (since 1.57) to an already existing collection
 function ensureReminderField(col) {
     try {
-        try { if (col.fields.getByName("erinnerung")) return; } catch (e) { /* fehlt */ }
+        try { if (col.fields.getByName("erinnerung")) return; } catch (e) { /* missing */ }
         let field = null;
         try { if (typeof TextField === "function") field = new TextField({ name: "erinnerung", max: 5 }); } catch (e) { field = null; }
         if (!field) {
@@ -143,9 +143,9 @@ function hasReminderField(rec) {
     try { return !!rec.collection().fields.getByName("erinnerung"); } catch (e) { return false; }
 }
 
-// Verlauf der Haushalts-Aufgaben (Reihum & Statistik) – nur anlegen, wenn er fehlt
+// History of the household tasks (rotation & statistics) - only create if it is missing
 function ensureVerlauf() {
-    try { if ($app.findCollectionByNameOrId(VERLAUF)) return true; } catch (err) { /* fehlt */ }
+    try { if ($app.findCollectionByNameOrId(VERLAUF)) return true; } catch (err) { /* missing */ }
     try {
         const fam = familyCollection();
         const fields = [
@@ -207,19 +207,19 @@ function verlaufAdd(familyId, data) {
         return null;
     }
 }
-// Offene Verlaufs-Einträge gelöschter Aufgaben entfernen (erledigte bleiben für die Statistik)
+// Remove open history entries of deleted tasks (completed ones stay for the statistics)
 function verlaufDropOpen(familyId, taskId) {
     const v = verlaufFor(familyId, taskId);
-    if (v && v.getString("status") === "offen") { try { $app.delete(v); } catch (e) { /* egal */ } }
+    if (v && v.getString("status") === "offen") { try { $app.delete(v); } catch (e) { /* ignore */ } }
 }
-// Mitglied hinter einem Profil
+// Member behind a profile
 function memberOfUser(userId) {
     if (!userId) return "";
     try { return $app.findRecordById("benutzer", userId).getString("mitglied"); } catch (e) { return ""; }
 }
 
 // =============================================================================================
-// Lesen / Schreiben
+// Reading / writing
 // =============================================================================================
 function toClient(r) {
     return {
@@ -244,14 +244,14 @@ function listAll(familyId) {
     return recs.map(toClient);
 }
 
-// Aufgabe nur finden, wenn sie zur angegebenen Familie gehört
+// Only find a task if it belongs to the given family
 function findOwn(familyId, id) {
     const rec = $app.findRecordById(AUFGABEN, String(id || ""));
     if (!familyId || rec.getString("familie") !== familyId) throw new Error("Aufgabe nicht gefunden.");
     return rec;
 }
 
-// Legt eine Aufgabe an oder ändert sie. body: {id?, neu?, title, notes, dueDate, fromTime?, toTime?}
+// Creates a task or changes it. body: {id?, neu?, title, notes, dueDate, fromTime?, toTime?}
 function saveTask(body, actorUserId, familyId) {
     if (!familyId) throw new Error("Dein Profil gehört zu keiner Familie.");
     const title = String(body.title || "").trim().slice(0, 300);
@@ -263,10 +263,10 @@ function saveTask(body, actorUserId, familyId) {
     const hasWindow = !!(fromTime && toTime);
     const notes = String(body.notes || "").slice(0, 5000);
 
-    // Neue Aufgaben können ihre Kennung schon von der App mitbringen (body.neu + body.id), damit sie
-    // offline angelegt und später ohne Doppelte nachgetragen werden können: Gibt es die Aufgabe mit
-    // dieser Kennung schon (z. B. weil die erste Übertragung ankam, die Antwort aber nicht), wird sie
-    // nur aktualisiert.
+    // New tasks can bring their identifier along from the app (body.neu + body.id), so that they can
+    // be created offline and submitted later without duplicates: if a task with this identifier
+    // already exists (e.g. because the first transmission arrived but the response did not), it is
+    // only updated.
     let rec = null;
     let previousNotes = "";
     let isUpdate = false;
@@ -294,7 +294,7 @@ function saveTask(body, actorUserId, familyId) {
     rec.set("faellig", dueDate);
     rec.set("von", hasWindow ? fromTime : "");
     rec.set("bis", hasWindow ? toTime : "");
-    // Extra-Erinnerung: nur ändern, wenn die App sie mitschickt (ältere Geräte lassen sie stehen)
+    // Extra reminder: only change it if the app sends it along (older devices leave it as it is)
     if (body.remindAt !== undefined && body.remindAt !== null && hasReminderField(rec)) rec.set("erinnerung", remindOf(body.remindAt));
     $app.save(rec);
 
@@ -314,15 +314,15 @@ function saveTask(body, actorUserId, familyId) {
     return toClient(rec);
 }
 
-// Abhaken / Häkchen entfernen. Beim Abhaken wird geprüft, ob die Person (Mitglied des angemeldeten
-// Profils) damit alle Aufgaben erledigt hat, die bis jetzt fällig sind:
-//  - fällig an einem früheren Tag oder heute
-//  - heute mit Zeitfenster: nur, wenn das Zeitfenster schon begonnen hat
-//  - der Person zugewiesen oder "Alle"
-// Das Ergebnis geht sofort an die App (Animation). Die Benachrichtigungen (pinn-push.js) gehen erst
-// 10 Sekunden später raus - wird das Häkchen vorher wieder entfernt, entfällt die Meldung.
-// Wird eine Aufgabe später zurückgesetzt und erneut abgehakt, wird wieder benachrichtigt
-// (die Sperre gegen Doppelmeldungen hängt am Abhak-Zeitpunkt "erledigt_am").
+// Tick off / remove the tick. When ticking off, it is checked whether the person (member of the signed-in
+// profile) has thereby completed all tasks that are due so far:
+//  - due on an earlier day or today
+//  - today with a time window: only if the time window has already started
+//  - assigned to the person or "All"
+// The result goes to the app immediately (animation). The notifications (pinn-push.js) only go out
+// 10 seconds later - if the tick is removed again before that, the message is dropped.
+// If a task is reset later and ticked off again, a notification is sent again
+// (the lock against duplicate messages hangs on the ticking-off time "erledigt_am").
 function setDone(familyId, id, done, actorUserId) {
     const rec = findOwn(familyId, id);
     rec.set("erledigt", !!done);
@@ -337,8 +337,8 @@ function setDone(familyId, id, done, actorUserId) {
     try { push = require(`${__hooks}/pinn-push.js`); } catch (err) { push = null; }
     const key = "aufgabe:" + rec.id;
     if (!done) {
-        // Noch nicht verschickte Meldung zu dieser Aufgabe verwerfen
-        if (push) try { push.cancelDelayed(key); } catch (err) { /* egal */ }
+        // Discard a not yet sent message for this task
+        if (push) try { push.cancelDelayed(key); } catch (err) { /* ignore */ }
         return out;
     }
     try {
@@ -361,7 +361,7 @@ function setDone(familyId, id, done, actorUserId) {
     return out;
 }
 
-// Haushalts-Aufgabe abgehakt: im Verlauf vermerken, wer es war (ohne verknüpftes Mitglied: wer dran war)
+// Household task ticked off: note in the history who it was (without a linked member: whoever was responsible)
 function verlaufDone(familyId, rec, done, actorUserId) {
     if (!verlaufOk()) return;
     let v = verlaufFor(familyId, rec.id);
@@ -378,8 +378,8 @@ function verlaufDone(familyId, rec, done, actorUserId) {
     $app.save(v);
 }
 
-// Wer hat abgehakt, gehört die Aufgabe ihm/ihr, sind damit alle fälligen Aufgaben erledigt
-// und welche Kinder sind betroffen? withChildren = false spart die Kinder-Prüfung (nur für die App).
+// Who ticked off, does the task belong to them, are all due tasks thereby completed
+// and which children are affected? withChildren = false skips the children check (only for the app).
 function evaluateDone(familyId, rec, actorUserId, withChildren) {
     const members = loadHouseholdData(familyId).members || [];
     if (!members.length) return null;
@@ -397,8 +397,8 @@ function evaluateDone(familyId, rec, actorUserId, withChildren) {
     const taskIsOwn = !!memberId && assign.memberIds.indexOf(memberId) !== -1;
     const own = taskIsOwn ? allDoneUntilNow(familyId, assignedTo(memberId)) : { allDone: false, signature: "" };
 
-    // Kinder, denen die Aufgabe gehört: ausdrücklich zugewiesen - oder bei "Alle" das Kind,
-    // das selbst abhakt
+    // Children to whom the task belongs: explicitly assigned - or, for "All", the child
+    // who ticks it off themselves
     const children = !withChildren ? [] : members.filter(m => push.isChildMember(m) && (
         (!assign.all && assign.memberIds.indexOf(m.id) !== -1) || (assign.all && m.id === memberId)
     )).map(m => {
@@ -408,8 +408,8 @@ function evaluateDone(familyId, rec, actorUserId, withChildren) {
     return { members: members, memberId: memberId, taskIsOwn: taskIsOwn, own: own, children: children };
 }
 
-// Vorgemerkte Meldung nach Ablauf der 10 Sekunden verschicken (aufgerufen aus pinn-push.js).
-// Nur, wenn die Aufgabe noch genau so abgehakt ist wie beim Vormerken.
+// Send the queued message after the 10 seconds have passed (called from pinn-push.js).
+// Only if the task is still ticked off exactly as when it was queued.
 function notifyDoneDelayed(entry) {
     let rec = null;
     try { rec = findOwn(entry.familyId, entry.taskId); } catch (e) { return false; }
@@ -430,7 +430,7 @@ function notifyDoneDelayed(entry) {
     return true;
 }
 
-// Sind alle bis jetzt fälligen Aufgaben dieser Person erledigt? (nur eine Datenbank-Abfrage)
+// Are all tasks of this person that are due so far completed? (just one database query)
 function allDoneUntilNow(familyId, assigned) {
     const nowWall = wallNow();
     const todayIso = wallIso(nowWall);
@@ -444,16 +444,16 @@ function allDoneUntilNow(familyId, assigned) {
         const due = r.getString("faellig");
         if (!isIsoDate(due) || due > todayIso) continue;
         const from = r.getString("von");
-        if (due === todayIso && from && from > hm) continue; // Zeitfenster hat noch nicht begonnen
+        if (due === todayIso && from && from > hm) continue; // time window has not started yet
         if (!assigned(r)) continue;
         if (!r.getBool("erledigt")) return { allDone: false, signature: "" };
-        ids.push(r.id + "@" + r.getString("erledigt_am")); // neu abgehakt = neue Signatur = neue Meldung
+        ids.push(r.id + "@" + r.getString("erledigt_am")); // newly ticked off = new signature = new message
     }
     ids.sort();
     return { allDone: ids.length > 0, signature: ids.join(",") };
 }
 
-// Mitglieder der Familie (aus dem Zwischenspeicher) - z. B. für die Kinderseiten-Benachrichtigung
+// Members of the family (from the cache) - e.g. for the kids' page notification
 function familyMembers(familyId) {
     if (!familyId) return [];
     return loadHouseholdData(familyId).members || [];
@@ -463,41 +463,41 @@ function removeTask(familyId, id) {
     try {
         const rec = findOwn(familyId, id);
         if (rec.getString("haushalt")) {
-            // Wartungsaufgabe gelöscht = diesen Zyklus überspringen (sonst käme sie sofort wieder)
+            // Maintenance task deleted = skip this cycle (otherwise it would come right back)
             const v = verlaufFor(familyId, rec.id);
             if (v && v.getString("status") === "offen" && v.getString("regel").indexOf("w:") === 0) {
-                try { v.set("status", "uebersprungen"); $app.save(v); } catch (e) { /* egal */ }
+                try { v.set("status", "uebersprungen"); $app.save(v); } catch (e) { /* ignore */ }
             } else verlaufDropOpen(familyId, rec.id);
         }
         $app.delete(rec);
-    } catch (e) { /* schon weg */ }
+    } catch (e) { /* already gone */ }
     return true;
 }
 
-// Alle automatisch erzeugten Haushalts-Aufgaben löschen (selbst angelegte bleiben).
+// Delete all automatically generated household tasks (self-created ones stay).
 function deleteHouseholdTasks(familyId) {
     if (!familyId) return 0;
     let recs = [];
     try { recs = $app.findRecordsByFilter(AUFGABEN, "familie = {:f} && haushalt != ''", "", 0, 0, { f: familyId }); } catch (e) { recs = []; }
     let count = 0;
-    recs.forEach(r => { try { verlaufDropOpen(familyId, r.id); $app.delete(r); count++; } catch (e) { /* egal */ } });
+    recs.forEach(r => { try { verlaufDropOpen(familyId, r.id); $app.delete(r); count++; } catch (e) { /* ignore */ } });
     return count;
 }
 
-// Die HEUTIGE Aufgabe einer Haushalts-Regel löschen (Regel geändert oder gelöscht).
+// Delete TODAY's task of a household rule (rule changed or deleted).
 function deleteTodayHouseholdTask(familyId, baseTitle) {
     const key = String(baseTitle || "");
     if (!key || !familyId) return false;
     let recs = [];
     try { recs = $app.findRecordsByFilter(AUFGABEN, "familie = {:f} && haushalt = {:k} && faellig = {:d}", "", 0, 0, { f: familyId, k: key, d: wallIso(wallNow()) }); } catch (e) { recs = []; }
-    recs.forEach(r => { try { verlaufDropOpen(familyId, r.id); $app.delete(r); } catch (e) { /* egal */ } });
+    recs.forEach(r => { try { verlaufDropOpen(familyId, r.id); $app.delete(r); } catch (e) { /* ignore */ } });
     return recs.length > 0;
 }
 
 // =============================================================================================
-// Familiendaten (nur der Teil, den die Haushalts-Erkennung braucht) - je Familie zwischengespeichert,
-// solange sich der Datensatz nicht ändert. Den Änderungszeitpunkt fragen wir direkt per SQL ab, ohne
-// die (großen) Daten selbst zu laden.
+// Family data (only the part that the household detection needs) - cached per family
+// as long as the record does not change. We query the change time directly via SQL, without
+// loading the (large) data itself.
 // =============================================================================================
 function loadHouseholdData(familyId) {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
@@ -507,7 +507,7 @@ function loadHouseholdData(familyId) {
         try {
             const cached = $app.store().get(key);
             if (cached && cached.stamp === stamp) return JSON.parse(cached.json);
-        } catch (e) { /* ohne Zwischenspeicher weiter */ }
+        } catch (e) { /* continue without cache */ }
     }
     const data = lib.loadFamilyDataFor(familyId) || {};
     const sub = {
@@ -520,13 +520,13 @@ function loadHouseholdData(familyId) {
         houseMaintenance: Array.isArray(data.houseMaintenance) ? data.houseMaintenance : [],
     };
     if (stamp) {
-        try { $app.store().set(key, { stamp: stamp, json: JSON.stringify(sub) }); } catch (e) { /* egal */ }
+        try { $app.store().set(key, { stamp: stamp, json: JSON.stringify(sub) }); } catch (e) { /* ignore */ }
     }
     return sub;
 }
 
 // =============================================================================================
-// Haushalts-Aufgaben (gleiche Regeln wie bisher im Kalender)
+// Household tasks (same rules as before in the calendar)
 // =============================================================================================
 const WASTE_TYPES = [
     { id: 'restmuell', icon: '\ud83d\uddd1\ufe0f', taskLabel: 'Restmüll', keywords: ['restmüll', 'restabfall', 'restmülltonne', 'hausmüll', 'graue tonne', 'schwarze tonne', 'rest-'] },
@@ -535,7 +535,7 @@ const WASTE_TYPES = [
     { id: 'gelbersack', icon: '\u267b\ufe0f', taskLabel: 'Gelber Sack', keywords: ['gelber sack', 'gelbe tonne', 'gelbe säcke', 'verpackung', 'wertstoff', 'leichtverpackung', 'lvp'] },
     { id: 'glas', icon: '\ud83c\udf7e', taskLabel: 'Altglas', keywords: ['altglas', 'glas'] },
 ];
-const WEEKDAY_IDS = ["so", "mo", "di", "mi", "do", "fr", "sa"]; // Index = getUTCDay() der Wandzeit
+const WEEKDAY_IDS = ["so", "mo", "di", "mi", "do", "fr", "sa"]; // index = getUTCDay() of the wall time
 
 function isScheduleDue(sched, todayIso, todayWeekday) {
     if (!sched) return false;
@@ -566,13 +566,13 @@ function cleaningTitle(sched, rooms, categories) {
     return (cat ? cat.label : "Reinigung") + ": " + roomName(rooms, sched.roomId);
 }
 
-// Müllarten zu einem Titel ("Gelbe Tonne" -> gelbersack)
+// Waste types for a title ("Gelbe Tonne" -> gelbersack)
 function wasteTypesOf(title) {
     const t = String(title || "").toLowerCase();
     return WASTE_TYPES.filter(wt => wt.keywords.some(kw => t.indexOf(kw) !== -1)).map(wt => wt.id);
 }
-// Abholungen an einem Tag: { types: { <Müllart>: true }, names: ["Restmüll", …] }
-// Quellen: Müllkalender der Familie (Einstellungen → Kalender) und die Kalenderdatei (iCloud/Google).
+// Collections on a day: { types: { <waste type>: true }, names: ["Restmüll", ...] }
+// Sources: the family's waste calendar (Settings → Calendar) and the calendar file (iCloud/Google).
 function pickupsFor(dateIso, familyId) {
     const out = { types: {}, names: [] };
     try {
@@ -580,7 +580,7 @@ function pickupsFor(dateIso, familyId) {
             if (out.names.indexOf(name) === -1) out.names.push(name);
             wasteTypesOf(name).forEach(id => { out.types[id] = true; });
         });
-    } catch (e) { /* kein Müllkalender */ }
+    } catch (e) { /* no waste calendar */ }
     const cal = pickupTypesFor(dateIso, familyId);
     Object.keys(cal).forEach(id => {
         if (out.types[id]) return;
@@ -590,8 +590,8 @@ function pickupsFor(dateIso, familyId) {
     });
     return out;
 }
-// Müllarten, für die laut Kalenderdatei der Familie MORGEN eine Abholung ansteht. Liest nur die
-// ohnehin vorhandene Datei (kein iCloud-Zugriff) und zerlegt sie nur, wenn das Datum überhaupt vorkommt.
+// Waste types for which the family's calendar file shows a collection TOMORROW. Reads only the
+// file that exists anyway (no iCloud access) and only parses it if the date occurs at all.
 function pickupTypesFor(dateIso, familyId) {
     const found = {};
     let text = "";
@@ -605,7 +605,7 @@ function pickupTypesFor(dateIso, familyId) {
     blocks.forEach(raw => {
         if (raw.indexOf(digits) === -1) return;
         const block = raw.replace(/\r?\n[ \t]/g, "");
-        if (/(^|\n)RRULE[:;]/.test(block)) return; // wiederkehrende Termine wie bisher nicht berücksichtigen
+        if (/(^|\n)RRULE[:;]/.test(block)) return; // do not take recurring events into account, as before
         const start = block.match(/(?:^|\n)DTSTART[^:\n]*:(\d{8})/);
         if (!start || start[1] !== digits) return;
         const sum = block.match(/(?:^|\n)SUMMARY[^:\n]*:([^\r\n]*)/);
@@ -618,9 +618,9 @@ function pickupTypesFor(dateIso, familyId) {
     return found;
 }
 
-// Reihum: Wer ist als Nächstes dran? ids = Zuständige in ihrer Reihenfolge, mode 'reihum' | 'fair'.
-// 'fair' nimmt die Person mit den wenigsten erledigten Haushalts-Aufgaben der letzten 30 Tage (bei
-// Gleichstand der Reihe nach).
+// Rotation: who is next? ids = responsible people in their order, mode 'reihum' | 'fair'.
+// 'fair' takes the person with the fewest completed household tasks of the last 30 days (in
+// case of a tie, in turn).
 function lastAssignee(familyId, ruleId) {
     if (!ruleId || !verlaufOk()) return null;
     try {
@@ -642,7 +642,7 @@ function pickNext(familyId, rule, members, counts) {
     if (!ids.length) return "";
     const last = lastAssignee(familyId, rule.id);
     const lastId = last ? last.getString("zustaendig") : "";
-    const start = ids.indexOf(lastId) + 1; // -1 + 1 = 0: Beginn bei der ersten Person
+    const start = ids.indexOf(lastId) + 1; // -1 + 1 = 0: start with the first person
     const order = i => ids[(start + i) % ids.length];
     if (rule.rotate !== "fair") return order(0);
     const c = counts || doneCounts(familyId, 30);
@@ -657,26 +657,26 @@ function isRotating(rule) {
     return !!(rule && (rule.rotate === "reihum" || rule.rotate === "fair") && (rule.ids || []).length >= 2);
 }
 
-// Genau EINE Aufgabe pro Regel und Zyklus. Wurde die vorige bis zur Frist (Fälligkeitstag + 1 Tag,
-// 4 Uhr morgens) nicht erledigt, wird sie ersetzt und der Zähler "verpasst" erhöht.
-// Reihum: die neue Aufgabe bekommt genau eine zuständige Person; nach einer verpassten Aufgabe dieselbe.
+// EXACTLY ONE task per rule and cycle. If the previous one was not completed by its deadline (due date + 1 day,
+// 4 a.m.), it is replaced and the counter "verpasst" is increased.
+// Rotation: the new task gets exactly one responsible person; after a missed task the same one.
 function processRule(byKey, rule, todayIso, nowWall, col, familyId, members) {
     const key = rule.key;
     const list = byKey[key] || [];
     if (list.some(r => r.getString("faellig") === todayIso)) return 0;
-    const last = list[0]; // absteigend nach Fälligkeit sortiert
+    const last = list[0]; // sorted by due date, descending
     let missed = 0;
     let stay = "";
     if (last && !last.getBool("erledigt")) {
         const lastDue = last.getString("faellig");
-        if (isIsoDate(lastDue) && nowWall < isoToWall(lastDue) + DAY_MS + 4 * HOUR_MS) return 0; // Frist läuft noch
+        if (isIsoDate(lastDue) && nowWall < isoToWall(lastDue) + DAY_MS + 4 * HOUR_MS) return 0; // deadline is still running
         missed = last.getInt("verpasst") + 1;
         const v = verlaufFor(familyId, last.id);
         if (v) {
             stay = v.getString("zustaendig");
-            try { v.set("status", "verpasst"); $app.save(v); } catch (e) { /* egal */ }
+            try { v.set("status", "verpasst"); $app.save(v); } catch (e) { /* ignore */ }
         }
-        try { $app.delete(last); } catch (e) { /* egal */ }
+        try { $app.delete(last); } catch (e) { /* ignore */ }
     }
     let zust = "";
     let notes = rule.notes;
@@ -712,7 +712,7 @@ function runHousehold(familyId, data) {
     const tomorrowIso = wallIso(nowWall + DAY_MS);
     const weekday = WEEKDAY_IDS[new Date(nowWall).getUTCDay()];
 
-    // Fällige Regeln sammeln (Schlüssel = Aufgabentitel wie bisher)
+    // Collect due rules (key = task title as before)
     const rules = [];
     const seen = {};
     const add = (key, ids, src) => {
@@ -727,13 +727,13 @@ function runHousehold(familyId, data) {
     bins.forEach(b => {
         if (b.schedule && isScheduleDue(b.schedule, todayIso, weekday)) add(binTitle(b, data.rooms), b.assignedMemberIds, b);
     });
-    // Abholtermine: Müllkalender der Familie und Kalenderdatei (iCloud/Google)
+    // Collection dates: the family's waste calendar and the calendar file (iCloud/Google)
     if (bins.length) {
         const pickups = pickupsFor(tomorrowIso, familyId).types;
         bins.forEach(b => { if (pickups[b.wasteType]) add(binTitle(b, data.rooms), b.assignedMemberIds, b); });
     }
-    // Gleich benannte Wartungen hätten denselben Schlüssel und teilten sich ihre Aufgabe – nur die erste zählt
-    // (die App benennt doppelte Einträge seit 1.57 selbst um, z. B. „Rasen düngen (2)“)
+    // Maintenance tasks with the same name would have the same key and share their task - only the first counts
+    // (since 1.57 the app renames duplicate entries itself, e.g. "Mow the lawn (2)")
     const maintSeen = {};
     const maint = (data.houseMaintenance || []).filter(maintActive).filter(m => {
         const k = maintKey(m).toLowerCase();
@@ -748,7 +748,7 @@ function runHousehold(familyId, data) {
     }
     const byKey = {};
     existing.forEach(r => { const k = r.getString("haushalt"); (byKey[k] = byKey[k] || []).push(r); });
-    // Vorbei: offene Müll-Aufgaben nach der Abholung abhaken (bevor neue angelegt werden)
+    // Over: tick off open waste tasks after the collection (before new ones are created)
     if (bins.length) {
         try { closePassedBinTasks(familyId, data, byKey, nowWall, seen); } catch (e) { console.log("[Haushalt-Aufgabe] Müll abhaken: " + e.message); }
     }
@@ -767,8 +767,8 @@ function runHousehold(familyId, data) {
     return created;
 }
 
-// Offene Müll-Aufgabe (fällig D) ist vorbei, wenn an D+1 laut Kalender ihre Müllart abgeholt wurde und
-// es Abholtag 12 Uhr ist – oder wenn für denselben Eimer heute schon die nächste Aufgabe fällig wird.
+// An open waste task (due D) is over if on D+1 its waste type was collected according to the calendar and
+// it is collection day 12 o'clock - or if the next task for the same bin becomes due today.
 const BIN_CLOSE_HOUR = 12;
 function closePassedBinTasks(familyId, data, byKey, nowWall, dueKeys) {
     const todayIso = wallIso(nowWall);
@@ -781,18 +781,18 @@ function closePassedBinTasks(familyId, data, byKey, nowWall, dueKeys) {
         (byKey[key] || []).forEach(rec => {
             if (rec.getBool("erledigt")) return;
             const due = rec.getString("faellig");
-            if (!isIsoDate(due) || due >= todayIso) return; // frühestens am Abholtag
+            if (!isIsoDate(due) || due >= todayIso) return; // at the earliest on the collection day
             const pickupDay = wallIso(isoToWall(due) + DAY_MS);
             const passed = nowWall >= isoToWall(pickupDay) + BIN_CLOSE_HOUR * HOUR_MS || !!(dueKeys && dueKeys[key]);
             if (!passed) return;
             const types = pick(pickupDay);
-            if (!keyTypes[key].some(t => types[t])) return; // keine Abholung -> normale Regel (verpasst)
+            if (!keyTypes[key].some(t => types[t])) return; // no collection -> normal rule (missed)
             rec.set("erledigt", true);
             rec.set("erledigt_am", new Date().toISOString());
             $app.save(rec);
             const v = verlaufFor(familyId, rec.id);
             if (v) {
-                try { v.set("status", "erledigt"); v.set("erledigt_von", v.getString("zustaendig")); $app.save(v); } catch (e) { /* egal */ }
+                try { v.set("status", "erledigt"); v.set("erledigt_von", v.getString("zustaendig")); $app.save(v); } catch (e) { /* ignore */ }
             }
             closed++;
             console.log("[Haushalt-Aufgabe] Nach der Abholung abgehakt: " + key);
@@ -801,8 +801,8 @@ function closePassedBinTasks(familyId, data, byKey, nowWall, dueKeys) {
     return closed;
 }
 
-// Für die Erinnerung am Vortag (pinn-push.js): Was wird morgen abgeholt und welche Müll-Aufgaben sind
-// heute fällig? -> { morgen, namen: [..], aufgaben: [{ id, titel, typ, notizen, erledigt }] }
+// For the reminder on the day before (pinn-push.js): what is collected tomorrow and which waste tasks are
+// due today? -> { morgen, namen: [..], aufgaben: [{ id, titel, typ, notizen, erledigt }] }
 function muellInfo(familyId, data) {
     const nowWall = wallNow();
     const todayIso = wallIso(nowWall);
@@ -827,24 +827,24 @@ function muellInfo(familyId, data) {
     return out;
 }
 
-// Für die Extra-Erinnerung (pinn-push.js): offene Aufgaben mit Erinnerung, die heute fällig sind
+// For the extra reminder (pinn-push.js): open tasks with a reminder that are due today
 // -> [{ id, titel, notizen, erinnerung }]
 function remindersDue(familyId, todayIso) {
     if (!familyId) return [];
     let recs = [];
     try {
         recs = $app.findRecordsByFilter(AUFGABEN, "familie = {:f} && erledigt = false && faellig = {:d} && erinnerung != ''", "", 200, 0, { f: familyId, d: todayIso });
-    } catch (e) { return []; } // Feld fehlt noch (vor dem ersten Start mit 1.57)
+    } catch (e) { return []; } // Field does not exist yet (before the first start with 1.57)
     return recs.map(r => ({ id: r.id, titel: r.getString("titel"), notizen: r.getString("notizen"), erinnerung: remindOf(r.getString("erinnerung")) })).filter(x => x.erinnerung);
 }
 
 // =============================================================================================
-// Wartungsplan (Menü „Haus“): wiederkehrende Haushalts-Aufgaben in Monaten
+// Maintenance plan (menu "House"): recurring household tasks in months
 // =============================================================================================
 function maintActive(m) {
     return !!(m && m.id && m.active !== false && String(m.title || "").trim() && Number(m.months) > 0);
 }
-// Aufgabentitel = Schlüssel (wie bei den übrigen Haushalts-Aufgaben)
+// Task title = key (as with the other household tasks)
 function maintKey(m) {
     const icon = String(m.icon || "").trim();
     return ((icon ? icon + " " : "") + String(m.title || "").trim()).slice(0, 300);
@@ -861,8 +861,8 @@ function isoOfStamp(s) {
     const t = Date.parse(String(s || "").replace(" ", "T"));
     return isFinite(t) ? wallIso(t + tzOffsetMs(t)) : "";
 }
-// Letzter Abschluss: aus dem Verlauf (erledigt = Tag des Abhakens, übersprungen = Fälligkeit),
-// aus noch vorhandenen erledigten Aufgaben und aus „last“, das die App pflegt
+// Last completion: from the history (completed = day of ticking off, skipped = due date),
+// from still existing completed tasks and from "last", which the app maintains
 function maintLastDone(familyId, item, list) {
     let best = isIsoDate(item.last) ? item.last : "";
     const take = d => { if (isIsoDate(d) && d > best) best = d; };
@@ -871,7 +871,7 @@ function maintLastDone(familyId, item, list) {
         try {
             const recs = $app.findRecordsByFilter(VERLAUF, "familie = {:f} && regel = {:r} && (status = 'erledigt' || status = 'uebersprungen')", "-updated", 3, 0, { f: familyId, r: "w:" + item.id });
             recs.forEach(v => take(v.getString("status") === "erledigt" ? (isoOfStamp(v.getString("updated")) || v.getString("faellig")) : v.getString("faellig")));
-        } catch (e) { /* egal */ }
+        } catch (e) { /* ignore */ }
     }
     return best;
 }
@@ -883,7 +883,7 @@ function maintNextDue(item, lastDone, todayIso) {
     if (lastDone) return isoAddMonths(lastDone, months);
     return manual || todayIso;
 }
-// Höchstens EINE offene Aufgabe je Wartung; sie bleibt stehen, bis sie erledigt ist
+// At most ONE open task per maintenance; it stays until it is completed
 function processMaintenance(byKey, item, todayIso, col, familyId, members) {
     const key = maintKey(item);
     const list = byKey[key] || [];
@@ -923,9 +923,9 @@ function processMaintenance(byKey, item, todayIso, col, familyId, members) {
     return 1;
 }
 
-// Erledigte Aufgaben löschen: 0 = sofort, 1 oder 2 Tage nach dem Abhaken (Standard 2).
-// Haushalts-Aufgaben von heute bleiben bis morgen stehen - daran erkennt die Erkennung, dass die
-// heutige Aufgabe schon erledigt ist (sonst würde sie sofort neu angelegt).
+// Delete completed tasks: 0 = immediately, 1 or 2 days after ticking off (default 2).
+// Household tasks from today stay until tomorrow - this is how the detection recognises that
+// today's task is already completed (otherwise it would be created again immediately).
 function cleanupDone(familyId, days) {
     const d = (days === 0 || days === 1 || days === 2) ? days : 2;
     const cutoff = new Date(Date.now() - d * DAY_MS).toISOString();
@@ -935,14 +935,14 @@ function cleanupDone(familyId, days) {
     let count = 0;
     recs.forEach(r => {
         if (r.getString("haushalt") && r.getString("faellig") >= todayIso) return;
-        try { $app.delete(r); count++; } catch (e) { /* egal */ }
+        try { $app.delete(r); count++; } catch (e) { /* ignore */ }
     });
     if (count) console.log("[Aufgaben-Aufraeumen] " + count + " erledigte Aufgabe(n) gelöscht.");
     return count;
 }
 
-// Verhindert, dass stündlicher Lauf und ein Sofort-Lauf aus der App gleichzeitig Aufgaben für
-// DIESELBE Familie anlegen. Die Sperre gilt je Familie - ein Lauf bei Familie A blockiert Familie B nicht.
+// Prevents the hourly run and an immediate run from the app from creating tasks for the
+// SAME family at the same time. The lock applies per family - a run for family A does not block family B.
 function lockKey(familyId) {
     return LOCK_KEY + ":" + String(familyId || "");
 }
@@ -952,14 +952,14 @@ function withLock(familyId, fn) {
     let t = null;
     try { t = store.get(key); } catch (e) { t = null; }
     if (typeof t === "number" && Date.now() - t < 60000) return null;
-    try { store.set(key, Date.now()); } catch (e) { /* egal */ }
+    try { store.set(key, Date.now()); } catch (e) { /* ignore */ }
     try { return fn(); }
-    finally { try { store.remove(key); } catch (e) { /* egal */ } }
+    finally { try { store.remove(key); } catch (e) { /* ignore */ } }
 }
 
-// Stündlicher Lauf: für jede Familie Haushalts-Aufgaben prüfen + erledigte aufräumen.
-// Jede Familie bekommt ihre eigene Sperre; ist eine Familie gerade durch einen Sofort-Lauf belegt,
-// wird nur sie in diesem Durchlauf übersprungen (der nächste stündliche Lauf holt es nach).
+// Hourly run: check household tasks for every family + clean up completed ones.
+// Each family gets its own lock; if a family is currently busy because of an immediate run,
+// only that one is skipped in this pass (the next hourly run catches up).
 function runCron() {
     let families = [];
     try { families = $app.findRecordsByFilter("familien", "", "created", 0, 0); } catch (e) { families = []; }
@@ -978,28 +978,28 @@ function runCron() {
             console.log("[Aufgaben] Fehler bei Familie \"" + f.getString("name") + "\": " + e.message);
         }
     });
-    // Verlauf älter als 400 Tage aufräumen (höchstens 500 je Lauf)
+    // Clean up history older than 400 days (500 per run at most)
     if (verlaufOk()) {
         try {
             const cut = wallIso(wallNow() - 400 * DAY_MS);
-            $app.findRecordsByFilter(VERLAUF, "faellig != '' && faellig < {:d}", "", 500, 0, { d: cut }).forEach(r => { try { $app.delete(r); } catch (e) { /* egal */ } });
-        } catch (e) { /* egal */ }
+            $app.findRecordsByFilter(VERLAUF, "faellig != '' && faellig < {:d}", "", 500, 0, { d: cut }).forEach(r => { try { $app.delete(r); } catch (e) { /* ignore */ } });
+        } catch (e) { /* ignore */ }
     }
-    // Ältere Aufgaben ohne Familie (sollten nach dem Umzug nicht mehr vorkommen) aufräumen
+    // Clean up older tasks without a family (should no longer occur after the migration)
     try {
-        $app.findRecordsByFilter(AUFGABEN, "familie = '' && erledigt = true", "", 200, 0).forEach(r => { try { $app.delete(r); } catch (e) { /* egal */ } });
-    } catch (e) { /* egal */ }
+        $app.findRecordsByFilter(AUFGABEN, "familie = '' && erledigt = true", "", 200, 0).forEach(r => { try { $app.delete(r); } catch (e) { /* ignore */ } });
+    } catch (e) { /* ignore */ }
     return { created: created, removed: removed };
 }
 
-// Sofort-Lauf aus der App (nach Änderung einer Haushalts-Regel / "Jetzt neu generieren").
+// Immediate run from the app (after changing a household rule / "Regenerate now").
 function runHouseholdNow(familyId) {
     const r = withLock(familyId, () => ({ created: runHousehold(familyId, loadHouseholdData(familyId)) }));
     return r || { created: 0, busy: true };
 }
 
 // =============================================================================================
-// Statistik „Wer macht wie viel?“ (Haushalt-Seite)
+// Statistics "Who does how much?" (household page)
 // =============================================================================================
 function statistik(familyId, tage) {
     const days = [30, 90, 365].indexOf(Number(tage)) !== -1 ? Number(tage) : 30;
@@ -1028,7 +1028,7 @@ function statistik(familyId, tage) {
         const last = lastAssignee(familyId, rule.id);
         const lastSt = last ? last.getString("status") : "";
         const jetzt = last && (lastSt === "offen" || lastSt === "verpasst") ? last.getString("zustaendig") : "";
-        // Nach einer verpassten Aufgabe bleibt dieselbe Person dran – „danach“ zeigt dann die übernächste
+        // After a missed task the same person stays responsible - "danach" then shows the one after next
         const naechster = pickNext(familyId, rule, members, counts);
         out.regeln.push({ id: rule.id, titel: rule.titel, jetzt: jetzt, naechster: naechster !== jetzt ? naechster : "", art: rule.rotate });
     });
@@ -1036,8 +1036,8 @@ function statistik(familyId, tage) {
 }
 
 // =============================================================================================
-// Kinderseite: Kind möchte Sterne eintauschen -> Benachrichtigung an die Eltern
-// (alle Profile der Familie außer dem Kind selbst, Kindern, Kindersicherung und Gästen)
+// Kids' page: child wants to exchange stars -> notification to the parents
+// (all profiles of the family except the child themselves, children, parental controls and guests)
 // =============================================================================================
 const REWARD_TEXT = {
     de: { t: "⭐ Belohnung angefragt", b: "{k} möchte „{w}“ für {n} Sterne eintauschen." },

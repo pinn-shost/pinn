@@ -1,51 +1,51 @@
 // pb_hooks/ortung.pb.js
-// Familie → Ortung. Die Logik steckt in pinn-ortung.js.
+// Family → Location. The logic lives in pinn-ortung.js.
 //
-// Beim Start (über pinn-schema.js): legt die gesperrte Sammlung "ortung" an (je Familie Geräte, Orte, Heimweg).
+// On start (via pinn-schema.js): creates the locked collection "ortung" (per family devices, places, way home).
 //
-// Routen (angemeldet, nicht für Gastkonten):
-//   GET  /api/pinn/ortung/status          Geräte, Orte, aktuelle Positionen (nur bei geteiltem Standort)
-//   POST /api/pinn/ortung/geraet          { id?, memberId, name, emoji, typ, uniqueId }   (nur Admins)
-//   POST /api/pinn/ortung/geraet-loeschen { id }                                          (nur Admins)
-//   POST /api/pinn/ortung/teilen          { id, an }      Standort teilen (die Person selbst oder Admins)
+// Routes (signed in, not for guest accounts):
+//   GET  /api/pinn/ortung/status          devices, places, current positions (only with a shared location)
+//   POST /api/pinn/ortung/geraet          { id?, memberId, name, emoji, typ, uniqueId }   (admins only)
+//   POST /api/pinn/ortung/geraet-loeschen { id }                                          (admins only)
+//   POST /api/pinn/ortung/teilen          { id, an }      share location (the person themselves or admins)
 //   POST /api/pinn/ortung/standort-teilen { an, minuten, zuhause, push, lat?, lon?, genau? }
-//                                         eigene Freigabe mit Dauer starten/beenden (legt bei Bedarf das
-//                                         eigene Handy an – ohne Traccar) -> { ok, id, bis, endeZuhause }
-//   POST /api/pinn/ortung/standort-einmal { lat, lon, genau?, push }  „Einmalig senden“: genau dieser Standort,
-//                                         1 Std. sichtbar, ohne dauerhaft zu teilen -> { ok, id, bis }
-//   POST /api/pinn/ortung/standort        { lat, lon, genau?, tempo?, kurs? }  neuer Standort aus der offenen
-//                                         pinn.-App (nur bei laufender Freigabe)
-//   POST /api/pinn/ortung/ort             { ort: {...} }  bekannten Ort anlegen/ändern
-//   POST /api/pinn/ortung/ort-loeschen    { id } bzw. { laden: <Listen-ID> } (alle Filialen des Ladens)
-//   POST /api/pinn/ortung/laden           { laden: <Listen-ID>, name, filialen: [{ id, lat, lon, adresse }],
+//                                         start/stop the own share with a duration (creates the
+//                                         own phone if needed - without Traccar) -> { ok, id, bis, endeZuhause }
+//   POST /api/pinn/ortung/standort-einmal { lat, lon, genau?, push }  "Send once": exactly this location,
+//                                         visible for 1 hour, without sharing permanently -> { ok, id, bis }
+//   POST /api/pinn/ortung/standort        { lat, lon, genau?, tempo?, kurs? }  new location from the open
+//                                         pinn. app (only while a share is running)
+//   POST /api/pinn/ortung/ort             { ort: {...} }  create/change a known place
+//   POST /api/pinn/ortung/ort-loeschen    { id } or { laden: <list ID> } (all branches of the store)
+//   POST /api/pinn/ortung/laden           { laden: <list ID>, name, filialen: [{ id, lat, lon, adresse }],
 //                                           verweil, abhaken, erledigtPush, erinnern, ankunft }
-//                                         Laden mit allen Filialen (mehrere Adressen, z. B. zwei Rewe) speichern
-//                                         Läden: /ort mit { ort: { laden: <Listen-ID>, adresse, verweil, abhaken, erinnern, erledigtPush, ... } }
-//   POST /api/pinn/ortung/einkaeufe       { plaene: [{ aufgabe, titel, listen }] }  offene „Einkauf planen“-Aufgaben
-//                                         -> { erledigt: [...] }  vom Server abgehakte Einkäufe (für die Glocke)
-//   POST /api/pinn/ortung/unterwegs       { an }          „Ich bin unterwegs“ (eigenes Gerät) -> { ok, id }
-//   POST /api/pinn/ortung/spur            { geraet, stunden }  Verlauf eines Geräts
-//   GET  /api/pinn/ortung/suche?q=...     Adresssuche (bzw. ?lat=&lon= für die Adresse eines Punkts)
-//   GET  /api/pinn/ortung/sos             laufende (und gerade beendete) SOS der Familie mit aktuellem Standort
-//                                         + heimwege: laufende (und gerade beendete) Heimwege mit Standort
-//   POST /api/pinn/ortung/sos-ende        { id }          Entwarnung – Push an alle
-//   POST /api/pinn/ortung/sos-ausloesen   { lat?, lon?, genau? }  SOS-Knopf in pinn. (eigenes Gerät) -> { ok, id }
-//   POST /api/pinn/ortung/sos-test        { geraet }      SOS-Test, Push und Popup nur für mich  (nur Admins)
-//   GET  /api/pinn/ortung/protokoll       letzte Meldungen der eigenen Geräte (Felder, Alarm, SOS erkannt) (nur Admins)
+//                                         save a store with all branches (several addresses, e.g. two Rewe)
+//                                         Stores: /ort with { ort: { laden: <list ID>, adresse, verweil, abhaken, erinnern, erledigtPush, ... } }
+//   POST /api/pinn/ortung/einkaeufe       { plaene: [{ aufgabe, titel, listen }] }  open "plan shopping" tasks
+//                                         -> { erledigt: [...] }  shopping trips ticked off by the server (for the bell)
+//   POST /api/pinn/ortung/unterwegs       { an }          "I'm on my way" (own device) -> { ok, id }
+//   POST /api/pinn/ortung/spur            { geraet, stunden }  history of a device
+//   GET  /api/pinn/ortung/suche?q=...     address search (or ?lat=&lon= for the address of a point)
+//   GET  /api/pinn/ortung/sos             running (and just finished) SOS of the family with the current location
+//                                         + heimwege: running (and just finished) ways home with location
+//   POST /api/pinn/ortung/sos-ende        { id }          all-clear - push to all
+//   POST /api/pinn/ortung/sos-ausloesen   { lat?, lon?, genau? }  SOS button in pinn. (own device) -> { ok, id }
+//   POST /api/pinn/ortung/sos-test        { geraet }      SOS test, push and popup only for me  (admins only)
+//   GET  /api/pinn/ortung/protokoll       latest reports of the own devices (fields, alarm, SOS detected) (admins only)
 //
-// Ohne Anmeldung:
-//   GET  /api/pinn/ortung/kachel/{z}/{x}/{y}   Kartenkachel (OpenStreetMap, zwischengespeichert)
-//   GET|POST /api/pinn/ortung/osmand           Positionen der App „Traccar Client“ -> speichert pinn. selbst
-//                                              (zusätzlich an Traccar, Port 5055, falls der Container läuft)
-//                                              alarm=sos (SOS-Knopf) -> sofort Push an die ganze Familie
-//   GET|POST /?id=...&lat=...&alarm=sos         dasselbe, wenn in Traccar Client nur die pinn.-Adresse steht
+// Without sign-in:
+//   GET  /api/pinn/ortung/kachel/{z}/{x}/{y}   map tile (OpenStreetMap, cached)
+//   GET|POST /api/pinn/ortung/osmand           positions from the "Traccar Client" app -> pinn. stores them itself
+//                                              (additionally to Traccar, port 5055, if the container is running)
+//                                              alarm=sos (SOS button) -> immediate push to the whole family
+//   GET|POST /?id=...&lat=...&alarm=sos         the same if only the pinn. address is entered in Traccar Client
 //
-// Zeitplan: jede Minute SOS-Ereignisse aus Traccar prüfen (Tracker, direkt gesendete Handys),
-//           Ankommen/Verlassen der Orte (nur wenn Orte oder Heimwege bestehen),
-//           Verweilen in Läden -> geplanten Einkauf abhaken.
+// Schedule: every minute check SOS events from Traccar (trackers, phones sending directly),
+//           arriving at/leaving places (only if places or ways home exist),
+//           dwelling in stores -> tick off the planned shopping trip.
 
-// Meldungen von „Traccar Client“ an der Hauptadresse abfangen (z. B. /?id=123456&lat=..&lon=..&alarm=sos),
-// bevor sie als normale Seite ausgeliefert werden.
+// Intercept reports from "Traccar Client" at the main address (e.g. /?id=123456&lat=..&lon=..&alarm=sos)
+// before they are delivered as a normal page.
 routerUse((e) => {
     let lib = null;
     try { lib = require(`${__hooks}/pinn-ortung.js`); } catch (err) { return e.next(); }

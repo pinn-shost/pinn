@@ -1,23 +1,23 @@
 // pb_hooks/pinn-familie-geburtstag.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden.
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require().
 //
-// Geburtstage in der Familie (Geburtsdatum aus dem Notfallpass, Familiendaten → emergencyPasses):
-//   - Push an alle ANDEREN Profile der Familie: „🎂 Malea hat heute Geburtstag!“ – zur selben Uhrzeit
-//     wie die eigene Tagesübersicht (Einstellungen → Benachrichtigungen, Standard 07:00). Das
-//     Geburtstagskind selbst bekommt keine Nachricht (es bekommt in der App die Geburtstags-Animation),
-//     ebenso keine Gastkonten und nicht der Hauptadmin. Mehrere Geburtstage am selben Tag kommen in
-//     einer gemeinsamen Nachricht. Link: /?geburtstag=<Mitglied-ID> öffnet die Person in pinn.
-//   - „Animation schon gesehen“ je Mitglied und Tag (auf allen Geräten nur einmal):
-//       GET  /api/pinn/geburtstag          { heute, gesehen: [<Mitglied-ID>, …] }
+// Birthdays in the family (date of birth from the emergency pass, family data → emergencyPasses):
+//   - Push to all OTHER profiles of the family: "🎂 Malea has a birthday today!" - at the same time
+//     as the own daily overview (Settings → Notifications, default 07:00). The
+//     birthday child themselves gets no message (they get the birthday animation in the app),
+//     nor do guest accounts or the main admin. Several birthdays on the same day come in
+//     one joint message. Link: /?geburtstag=<member ID> opens the person in pinn.
+//   - "Animation already seen" per member and day (only once on all devices):
+//       GET  /api/pinn/geburtstag          { heute, gesehen: [<member ID>, ...] }
 //       POST /api/pinn/geburtstag/gesehen  { mitglied }
 //
-// Schonend:
-//   - Der Zeitplan läuft alle 5 Minuten. Die (großen) Familiendaten liest er höchstens einmal am Tag je
-//     Familie – und nur neu, wenn sich die Familiendaten seitdem geändert haben (Änderungszeitpunkt).
-//   - Merker in pb_data/pinn_familie_geburtstag.json, ältere Tage werden verworfen.
-//   - Nach 21 Uhr (z. B. Server war aus) keine Nachricht mehr für den Tag.
+// Gentle:
+//   - The schedule runs every 5 minutes. It reads the (large) family data at most once a day per
+//     family - and only anew if the family data has changed since then (change time).
+//   - Marker in pb_data/pinn_familie_geburtstag.json, older days are discarded.
+//   - After 9 p.m. (e.g. server was off) no more message for the day.
 //
-// Uhrzeit: wie die übrigen Erinnerungen in Europe/Berlin (Sommer-/Winterzeit wird selbst berechnet).
+// Time: like the other reminders in Europe/Berlin (summer/winter time is calculated itself).
 
 const STATUS_FILE = "/pb_data/pinn_familie_geburtstag.json";
 const SEND_UNTIL_HOUR = 21;
@@ -69,14 +69,14 @@ function writeStatus(s) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Wer hat heute Geburtstag?
+// Who has a birthday today?
 // ---------------------------------------------------------------------------------------------
 function memberName(m) {
     if (!m) return "";
     if (m.displayMode === "role" && m.role) return String(m.role);
     return String(m.name || m.role || "");
 }
-// Liste aus den Familiendaten: [{ id, name, alter }]
+// List from the family data: [{ id, name, alter }]
 function birthdaysFromData(data, w) {
     const members = Array.isArray(data && data.members) ? data.members : [];
     const passes = (data && data.emergencyPasses && typeof data.emergencyPasses === "object") ? data.emergencyPasses : {};
@@ -87,14 +87,14 @@ function birthdaysFromData(data, w) {
         const mm = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String((p && p.birth) || ""));
         if (!mm) return;
         let bm = Number(mm[2]), bd = Number(mm[3]);
-        if (bm === 2 && bd === 29 && !isLeap(w.y)) bd = 28; // 29. Februar: in anderen Jahren am 28.
+        if (bm === 2 && bd === 29 && !isLeap(w.y)) bd = 28; // 29 February: in other years on the 28th
         if (bm !== w.m || bd !== w.d) return;
         const alter = w.y - Number(mm[1]);
         out.push({ id: String(m.id), name: memberName(m), alter: alter > 0 && alter < 130 ? alter : null });
     });
     return out;
 }
-// Mit Zwischenspeicher: Familiendaten nur lesen, wenn sie sich heute geändert haben
+// With a cache: only read the family data if it has changed today
 function birthdaysToday(familyId, status, w) {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const stamp = lib.familyDataStamp(familyId);
@@ -109,7 +109,7 @@ function birthdaysToday(familyId, status, w) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Texte (Sprache des Profils)
+// Texts (language of the profile)
 // ---------------------------------------------------------------------------------------------
 function langOf(u) {
     let w = {};
@@ -203,13 +203,13 @@ function runCron() {
         if (!liste.length) return;
         byFamily[familyId].forEach(u => {
             const me = u.getString("mitglied");
-            const others = liste.filter(b => b.id !== me); // das Geburtstagskind selbst bekommt nichts
+            const others = liste.filter(b => b.id !== me); // the birthday child themselves gets nothing
             if (!others.length) return;
             const key = u.id + "|" + others.map(b => b.id).sort().join(",");
             if (status.gesendet[key]) return;
             if (!push) push = require(`${__hooks}/pinn-push.js`);
             if (nowMin < sendTime(push, u)) return;
-            // zuerst merken: auch bei einem Fehler unterwegs kommt die Nachricht nie doppelt
+            // remember first: even on an error along the way, the message never comes twice
             status.gesendet[key] = Date.now();
             status.dirty = true;
             const msg = message(langOf(u), others);
@@ -231,7 +231,7 @@ function runCron() {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Für die App: Geburtstags-Animation nur einmal je Mitglied und Tag (auf allen Geräten)
+// For the app: birthday animation only once per member and day (on all devices)
 // ---------------------------------------------------------------------------------------------
 function stateFor(user) {
     const w = wallNow();

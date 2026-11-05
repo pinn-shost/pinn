@@ -1,10 +1,10 @@
 // pb_hooks/design.pb.js
-// Persönliche Design-Einstellungen je Profil, geräteübergreifend (Hilfsfunktionen: pinn-design.js).
+// Personal design settings per profile, across devices (helper functions: pinn-design.js).
 //
 //   GET  /api/pinn/design   -> { design: { werte, stand } }
 //   POST /api/pinn/design   { werte, stand } -> { success, uebernommen, design }
-//        uebernommen = false: auf einem anderen Gerät wurde später geändert; "design" enthält dann
-//        den gültigen (neueren) Stand, den die App übernehmen soll.
+//        uebernommen = false: changed later on another device; "design" then contains
+//        the valid (newer) state that the app should take over.
 
 routerAdd("GET", "/api/pinn/design", (e) => {
     const lib = require(`${__hooks}/pinn-design.js`);

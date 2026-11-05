@@ -1,31 +1,31 @@
 // pb_hooks/pinn-vertraege.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden.
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require().
 //
-// Finanzen → Verträge
-//  - Die Verträge selbst (Name, Anbieter, Kategorie, Laufzeit, Kündigungsfrist, Erinnerung, Kontakt …)
-//    liegen in den Finanzdaten ihrer Kasse (pinn-kassen.js, daten.contracts) und werden wie alles
-//    andere zwischen den Geräten abgeglichen - offline-fähig. Erinnerungen bekommen nur Mitglieder
-//    der Kasse; Dokumente einer Kasse (Feld "kasse") sehen nur ihre Mitglieder.
-//  - Die Kosten eines Vertrags sind eine ganz normale regelmäßige Buchung (finance.recurring, Feld
-//    "contract" = Vertrags-ID) und erscheinen dadurch automatisch in den Ausgaben. Wird ein Vertrag
-//    gekündigt, endet die Buchung zum Vertragsende.
-//  - Dokumente (Vertrag, Rechnung, Kündigung, Bestätigung …) und Belege zu einzelnen Ausgaben liegen
-//    als Dateien in der Sammlung "finanz_dokumente" (geschützte Dateien, nur für die eigene Familie,
-//    nicht für Gastkonten). Feld "bezug": "vertrag:<Vertrags-ID>" bzw. "ausgabe:<Ausgaben-ID>".
-//  - Erinnerungen an Kündigungsfristen kommen als persönliche Push-Nachricht (pinn-push.js).
+// Finance → Contracts
+//  - The contracts themselves (name, provider, category, term, notice period, reminder, contact ...)
+//    live in the finance data of their fund (pinn-kassen.js, daten.contracts) and, like everything
+//    else, are synchronised between the devices - offline-capable. Only members of the fund get
+//    reminders; documents of a fund (field "kasse") are only seen by its members.
+//  - The costs of a contract are a perfectly normal recurring booking (finance.recurring, field
+//    "contract" = contract ID) and thereby appear automatically in the expenses. If a contract
+//    is cancelled, the booking ends at the end of the contract.
+//  - Documents (contract, invoice, cancellation, confirmation ...) and receipts for individual expenses are stored
+//    as files in the collection "finanz_dokumente" (protected files, only for the own family,
+//    not for guest accounts). Field "bezug": "vertrag:<contract ID>" or "ausgabe:<expense ID>".
+//  - Reminders of notice periods come as a personal push message (pinn-push.js).
 //
-// Schonend für CPU und Speicher:
-//  - Der Zeitplan läuft stündlich, arbeitet aber nur einmal am Tag (ab 8 Uhr) wirklich: dann werden
-//    die Familiendaten jeder Familie genau einmal gelesen.
-//  - Nach dem Speichern eines Vertrags prüft die App nur die eigene Familie sofort (zwischen 8 und
-//    21 Uhr) - so kommt eine schon fällige Erinnerung nicht erst am nächsten Morgen.
-//  - Gesendete Erinnerungen werden in pb_data gemerkt (pinn_vertraege_erinnert.json), damit nach
-//    einem Neustart nichts doppelt kommt.
+// Gentle on CPU and memory:
+//  - The schedule runs hourly, but only really works once a day (from 8 a.m.): then
+//    each family's family data is read exactly once.
+//  - After saving a contract, the app immediately checks only the own family (between 8 a.m. and
+//    9 p.m.) - so a reminder that is already due does not come only the next morning.
+//  - Sent reminders are remembered in pb_data (pinn_vertraege_erinnert.json), so that nothing comes
+//    twice after a restart.
 
 const DOKS = "finanz_dokumente";
 const STATUS_FILE = "/pb_data/pinn_vertraege_erinnert.json";
-const SEND_FROM_HOUR = 8;   // frühestens um 8 Uhr erinnern
-const SEND_UNTIL_HOUR = 21; // sofortige Prüfung nach dem Speichern nur bis 21 Uhr
+const SEND_FROM_HOUR = 8;   // remind at 8 a.m. at the earliest
+const SEND_UNTIL_HOUR = 21; // immediate check after saving only until 9 p.m.
 const DOC_MIME_TYPES = [
     "application/pdf",
     "image/jpeg", "image/png", "image/webp", "image/gif", "image/heic", "image/heif",
@@ -40,14 +40,14 @@ const DOC_MIME_TYPES = [
 const DOC_MAX_BYTES = 25 * 1024 * 1024;
 
 // ---------------------------------------------------------------------------------------------
-// Einrichtung: Sammlung "finanz_dokumente"
+// Set-up: collection "finanz_dokumente"
 // ---------------------------------------------------------------------------------------------
 const DOC_BASE_RULE = "@request.auth.id != '' && @request.auth.familie != '' && @request.auth.rolle != 'gast' && familie = @request.auth.familie";
 const DOC_READ_RULE = DOC_BASE_RULE + " && (kasse = '' || (@collection.kassen:dk.id ?= kasse && (@collection.kassen:dk.alle ?= true || @collection.kassen:dk.mitglieder ?~ @request.auth.id)))";
 const DOC_CREATE_RULE = "@request.auth.id != '' && @request.auth.familie != '' && @request.auth.rolle != 'gast' && @request.body.familie = @request.auth.familie"
     + " && (@request.body.kasse:isset = false || @request.body.kasse = '' || (@collection.kassen:ck.id ?= @request.body.kasse && (@collection.kassen:ck.alle ?= true || @collection.kassen:ck.mitglieder ?~ @request.auth.id)))";
 const DOC_UPDATE_RULE = DOC_READ_RULE + " && (@request.body.familie:isset = false || @request.body.familie = @request.auth.familie) && @request.body.kasse:isset = false";
-// Ältere Regeln ohne Kassen - falls die neuen (noch) nicht gespeichert werden können
+// Older rules without funds - in case the new ones cannot be saved (yet)
 const DOC_FALLBACK = { listRule: DOC_BASE_RULE, viewRule: DOC_BASE_RULE, createRule: "@request.auth.id != '' && @request.auth.familie != '' && @request.auth.rolle != 'gast' && @request.body.familie = @request.auth.familie", updateRule: DOC_BASE_RULE + " && (@request.body.familie:isset = false || @request.body.familie = @request.auth.familie)", deleteRule: DOC_BASE_RULE };
 
 function findCol(name) {
@@ -100,7 +100,7 @@ function ensureSchema() {
         }
         return;
     }
-    // Feld "kasse" (Kassen) vor den Regeln anlegen - die Regeln verwenden es
+    // Create the field "kasse" (funds) before the rules - the rules use it
     if (!hasField(col, "kasse")) {
         try {
             col = findCol(DOKS);
@@ -112,7 +112,7 @@ function ensureSchema() {
         }
         col = findCol(DOKS);
     }
-    // Regeln aktuell halten (z. B. nach einer Änderung von Hand); Kassen-Regeln erst, wenn es Kassen gibt
+    // Keep the rules up to date (e.g. after a manual change); fund rules only once there are funds
     if (!findCol("kassen") || !hasField(col, "kasse")) {
         try {
             let changed = false;
@@ -130,7 +130,7 @@ function ensureSchema() {
             col = findCol(DOKS);
             Object.keys(DOC_FALLBACK).forEach(k => { col[k] = DOC_FALLBACK[k]; });
             $app.save(col);
-        } catch (e2) { /* egal */ }
+        } catch (e2) { /* ignore */ }
     }
     [{ name: "groesse", type: "number" }, { name: "erstellt_von", type: "text", max: 30 }].forEach(def => {
         const name = def.name;
@@ -147,7 +147,7 @@ function ensureSchema() {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Datumsrechnung (identisch zur App, reine Texte "JJJJ-MM-TT")
+// Date arithmetic (identical to the app, plain texts "YYYY-MM-DD")
 // ---------------------------------------------------------------------------------------------
 function vtIsIso(s) { return /^\d{4}-\d{2}-\d{2}$/.test(String(s || "")); }
 function vtParts(iso) { return [Number(iso.slice(0, 4)), Number(iso.slice(5, 7)), Number(iso.slice(8, 10))]; }
@@ -159,7 +159,7 @@ function vtAddDays(iso, n) {
     const t = new Date(Date.UTC(p[0], p[1] - 1, p[2] + n));
     return vtIso(t.getUTCFullYear(), t.getUTCMonth() + 1, t.getUTCDate());
 }
-// keepEom: liegt der Tag auf dem Monatsletzten, bleibt er auf dem Monatsletzten (31.12. + 3 Monate = 31.03.)
+// keepEom: if the day falls on the last day of the month, it stays on the last day of the month (31.12. + 3 months = 31.03.)
 function vtAddMonths(iso, n, keepEom) {
     const p = vtParts(iso);
     const eom = keepEom && p[2] === vtDim(p[0], p[1]);
@@ -202,7 +202,7 @@ function vtRenew(c) {
     const r = parseInt(c.renewMonths, 10);
     return [1, 3, 6, 12, 24, 36].indexOf(r) >= 0 ? r : 12;
 }
-// Zustand eines Vertrags an einem Tag.
+// State of a contract on a day.
 // { state: 'aktiv'|'gekuendigt'|'beendet', kind, end, termEnd, nextEnd, deadline, daysLeft, earliestEnd, unknown }
 function vtStatus(c, today) {
     const kind = vtTermType(c);
@@ -242,7 +242,7 @@ function vtReminder(c) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Zeit (Mitteleuropa, feste EU-Sommerzeitregel - wie pinn-push.js)
+// Time (Central Europe, fixed EU daylight saving rule - like pinn-push.js)
 // ---------------------------------------------------------------------------------------------
 function lastSundayUtc(year, month) {
     const last = new Date(Date.UTC(year, month + 1, 0));
@@ -271,7 +271,7 @@ function readStatus() {
             if (!o.sent || typeof o.sent !== "object") o.sent = {};
             return o;
         }
-    } catch (e) { /* noch keine Datei */ }
+    } catch (e) { /* no file yet */ }
     return { lastDaily: "", sent: {} };
 }
 function writeStatus(s) {
@@ -283,14 +283,14 @@ function pruneStatus(s, today) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Erinnerungen
+// Reminders
 // ---------------------------------------------------------------------------------------------
 function isChild(m) {
     if (!m) return false;
     if (m.kid && m.kid.enabled) return true;
     return /^(kind|tochter|sohn)$/i.test(String(m.role || "").trim());
 }
-// Empfänger: gewählte Mitglieder; sonst der Vertragsinhaber; sonst alle Erwachsenen (keine Gäste, keine Kinder)
+// Recipients: chosen members; otherwise the contract holder; otherwise all adults (no guests, no children)
 function recipientsFor(c, users, members, allowedIds) {
     if (allowedIds) users = users.filter(u => allowedIds.indexOf(u.id) >= 0);
     const rem = vtReminder(c);
@@ -302,7 +302,7 @@ function recipientsFor(c, users, members, allowedIds) {
     return ids.map(id => byMember[id]).filter(u => u && u.getString("rolle") !== "gast");
 }
 
-// Welche Erinnerungen sind für einen Vertrag heute fällig? -> [{ key, titel, text }]
+// Which reminders are due today for a contract? -> [{ key, titel, text }]
 function dueMessages(familyId, c, today) {
     const out = [];
     const name = String(c.name || "Vertrag").slice(0, 80);
@@ -335,12 +335,12 @@ function dueMessages(familyId, c, today) {
 function remindFamily(familyId, today, status) {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const push = require(`${__hooks}/pinn-push.js`);
-    // Verträge je Kasse - Erinnerungen nur an Mitglieder der jeweiligen Kasse
+    // Contracts per fund - reminders only to members of the respective fund
     let groups = [];
     try { groups = require(`${__hooks}/pinn-kassen.js`).contractsOfFamily(familyId); } catch (e) { groups = []; }
     let data = null;
     if (!groups.length) {
-        // Familie noch ohne Kassen: wie bisher aus dem Familien-Datensatz
+        // Family still without funds: as before from the family record
         data = lib.loadFamilyDataFor(familyId) || {};
         const fin = (data.finance && typeof data.finance === "object") ? data.finance : {};
         const list = Array.isArray(fin.contracts) ? fin.contracts.filter(c => c && typeof c.id === "string" && c.id) : [];
@@ -364,7 +364,7 @@ function remindFamily(familyId, today, status) {
                     delivered += push.notifyUser(u.id, { titel: msg.titel, text: msg.text, url: "/?vertrag=" + encodeURIComponent(c.id), tag: "vertrag-" + c.id, urgency: "normal" });
                 } catch (e) { console.log("[Verträge] Push fehlgeschlagen: " + e.message); }
             });
-            // Auch ohne angemeldetes Gerät als erledigt merken - sonst käme sie Tage später nach
+            // Also remember as done without a registered device - otherwise it would come days later
             msg.keys.forEach(k => { status.sent[k] = today; });
             sent += delivered;
         });

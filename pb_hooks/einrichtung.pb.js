@@ -1,13 +1,13 @@
 // pb_hooks/einrichtung.pb.js
-// Ersteinrichtung von pinn. – Routen für den Einrichtungs-Assistenten des Hauptadmins.
-// Die eigentliche Arbeit steckt in pinn-einrichtung.js (Speichern, Prüfen, Neustart).
+// Initial set-up of pinn. - routes for the main admin's set-up wizard.
+// The actual work lives in pinn-einrichtung.js (saving, checking, restart).
 //
-//  GET  /api/pinn/einrichtung/offen        ohne Anmeldung: nur { offen, fertig } für die Anmeldemaske
-//  GET  /api/pinn/einrichtung              Hauptadmin: alle Werte (Schlüssel nur maskiert), Status
-//  POST /api/pinn/einrichtung/speichern    Hauptadmin: { werte, meta } zwischenspeichern
-//  POST /api/pinn/einrichtung/test         Hauptadmin: { art, werte } – DuckDNS, Google, KI, Traccar, Home Assistant
-//  POST /api/pinn/einrichtung/abschliessen Hauptadmin: { werte, meta } speichern, fertig markieren, neu starten
-//  POST /api/pinn/einrichtung/neustart     Hauptadmin: pinn. neu starten (übernimmt gespeicherte Werte)
+//  GET  /api/pinn/einrichtung/offen        without sign-in: only { offen, fertig } for the sign-in form
+//  GET  /api/pinn/einrichtung              main admin: all values (keys only masked), status
+//  POST /api/pinn/einrichtung/speichern    main admin: { werte, meta } store temporarily
+//  POST /api/pinn/einrichtung/test         main admin: { art, werte } - DuckDNS, Google, AI, Traccar, Home Assistant
+//  POST /api/pinn/einrichtung/abschliessen main admin: { werte, meta } save, mark as finished, restart
+//  POST /api/pinn/einrichtung/neustart     main admin: restart pinn. (takes over stored values)
 
 onBootstrap((e) => {
     e.next();
@@ -23,7 +23,7 @@ onBootstrap((e) => {
     }
 });
 
-// Fallback, falls der sofortige Neustart nicht geklappt hat
+// Fallback in case the immediate restart did not work
 cronAdd("pinnEinrichtungNeustart", "* * * * *", () => {
     try {
         const lib = require(`${__hooks}/pinn-einrichtung.js`);
@@ -32,11 +32,11 @@ cronAdd("pinnEinrichtungNeustart", "* * * * *", () => {
             lib.neustartErledigt();
             $os.exit(0);
         }
-    } catch (err) { /* egal */ }
+    } catch (err) { /* ignore */ }
 });
 
-// Fehlerantwort: steht direkt in jedem Handler (Hilfsfunktionen auf Dateiebene sind in den
-// abgeschotteten Handlern von PocketBase nicht sichtbar).
+// Error response: is directly in every handler (helper functions at file level are not visible in
+// PocketBase's isolated handlers).
 
 routerAdd("GET", "/api/pinn/einrichtung/offen", (e) => {
     e.response.header().set("Cache-Control", "no-store");

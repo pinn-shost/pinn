@@ -125,6 +125,13 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский and 🇳🇱 Nederlands**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.129.0
+
+**English comments in all files**
+
+- **Comments in English.** All code comments in the project are now written in English: server parts, installation and maintenance scripts, `docker-compose.yaml`, the `.env` template, the Caddyfile and the app files. Nothing changes in the app, its texts or its behaviour.
+- Changed: `pb_hooks/` (all files), `pinn-setup.sh`, `pinn-wartung.sh`, `pinn-pocketbase-update.sh`, `docker-compose.yaml`, `env.txt`, `caddy/Caddyfile`, `js/sprachen.js`, `datenexport.js`, `einrichtung.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) and all READMEs. Server part: the hook files – replace them too.
+
 ## What's new in 1.128.0
 
 **Voice control in all app languages**
@@ -232,15 +239,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Changed: `index.html`, `js/hilfe.js` (new), `css/hilfe.css` (new), `js/listen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `pinn-setup.sh` and all READMEs. Nothing changes on the server. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 
-## What's new in 1.123.12
-
-**Dutch – unlocked**
-
-- **Dutch is open to everyone.** Choose it under Settings → Language & region – all 6722 texts, the setup assistant, the data export and the notifications are in Dutch. Devices set to Dutch pick it up automatically. Nothing changes for anyone else.
-- **The server speaks Dutch too:** week preview, finance outlook, birthdays, pet reminders, shop notices, “Where are you?” messages, packing list suggestions and reward requests – for profiles set to Dutch and for the countries Netherlands, Suriname, Aruba, Curaçao and Sint Maarten. Voice control (Siri) still answers in English when the app is set to Dutch.
-- Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, on the server `pb_hooks/pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-wobistdu.js`, `pinn-packliste.js`, `pinn-aufgaben.js` and all READMEs (new: `README.nl.md`). Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
-
 ## How it works
 
 ```mermaid
@@ -267,7 +265,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.128.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.129.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

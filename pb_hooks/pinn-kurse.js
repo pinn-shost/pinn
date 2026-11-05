@@ -1,27 +1,27 @@
 // pb_hooks/pinn-kurse.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden.
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require().
 //
-// Kurse für ETFs / Wertpapiere (Sparen → Sparziel mit ISIN).
-// Die App fragt nur die ISINs an, die eine Familie bespart, und nur, wenn jemand „Sparen“ ansieht -
-// es gibt keinen Zeitplan und keine Hintergrundarbeit.
+// Prices for ETFs / securities (Savings → savings goal with ISIN).
+// The app only requests the ISINs that a family is saving for, and only when someone views "Savings" -
+// there is no schedule and no background work.
 //
-// Zwischenspeicher: Sammlung "kurse" (für alle Familien gemeinsam, Kurse sind öffentlich; Sammlungs-API
-// gesperrt, Zugriff nur über die Route in kurse.pb.js). Je ISIN ein Datensatz:
-//   isin, name, waehrung, kurs, kurs_datum, vortag, quelle, abgerufen (ISO-Zeit des letzten Kursabrufs),
-//   verlauf (JSON-Text: [["JJJJ-MM-TT", Schlusskurs], ...]), verlauf_ab (ab diesem Tag vollständig geladen),
-//   verlauf_geprueft (Tag des letzten Verlauf-Abrufs), versuch (ISO-Zeit des letzten fehlgeschlagenen Abrufs),
-//   fehler (letzte Fehlermeldung)
+// Cache: collection "kurse" (shared by all families, prices are public; collection API
+// locked, access only via the route in kurse.pb.js). One record per ISIN:
+//   isin, name, waehrung, kurs, kurs_datum, vortag, quelle, abgerufen (ISO time of the last price retrieval),
+//   verlauf (JSON text: [["YYYY-MM-DD", closing price], ...]), verlauf_ab (completely loaded from this day on),
+//   verlauf_geprueft (day of the last history retrieval), versuch (ISO time of the last failed retrieval),
+//   fehler (last error message)
 //
-// Schonend:
-//  - aktueller Kurs höchstens alle 15 Minuten neu (mit „frisch“ höchstens jede Minute)
-//  - Kursverlauf höchstens einmal am Tag nachgeladen (nur die letzten Tage), komplett nur, wenn eine
-//    frühere Einzahlung weiter zurückliegt als der bisher geladene Verlauf
-//  - nach einem Fehler 15 Minuten Pause für diese ISIN
+// Gentle:
+//  - current price renewed at most every 15 minutes (with "fresh" at most every minute)
+//  - price history reloaded at most once a day (only the last days), completely only if an
+//    earlier deposit lies further back than the history loaded so far
+//  - after an error a 15-minute pause for this ISIN
 //
-// Quellen (ohne API-Schlüssel, inoffiziell - können sich ändern):
-//  1. justETF (ETFs, direkt in Euro): /api/etfs/<ISIN>/quote und /api/etfs/<ISIN>/performance-chart
-//  2. Rückfall Yahoo Finance (auch Aktien): Suche nach der ISIN, dann Kursverlauf der Börse in Euro
-//     (bevorzugt Xetra/deutsche Börsenplätze)
+// Sources (without an API key, unofficial - may change):
+//  1. justETF (ETFs, directly in euro): /api/etfs/<ISIN>/quote and /api/etfs/<ISIN>/performance-chart
+//  2. Fallback Yahoo Finance (also shares): search for the ISIN, then price history of the exchange in euro
+//     (preferring Xetra/German trading venues)
 
 const KURSE = "kurse";
 const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15";
@@ -129,7 +129,7 @@ function mergeHistory(oldArr, newArr) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Quelle 1: justETF (Euro)
+// Source 1: justETF (euro)
 // ---------------------------------------------------------------------------------------------
 function justEtfQuote(isin) {
     const d = httpJson("https://www.justetf.com/api/etfs/" + isin + "/quote?locale=de&currency=EUR");
@@ -210,14 +210,14 @@ function yahooChart(symbol, from) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Abruf mit Zwischenspeicher
+// Retrieval with a cache
 // ---------------------------------------------------------------------------------------------
 function findRecord(isin) {
     try { return $app.findFirstRecordByFilter(KURSE, "isin = {:i}", { i: isin }); } catch (e) { return null; }
 }
 
-// Holt Kurs und Verlauf einer ISIN (aus dem Zwischenspeicher oder neu) und liefert sie für die App.
-// ab: ab diesem Tag wird der Verlauf gebraucht; bis: bis zu diesem Tag hat die App den Verlauf schon.
+// Fetches price and history of an ISIN (from the cache or anew) and delivers it for the app.
+// ab: the history is needed from this day on; bis: the app already has the history up to this day.
 function getKurs(isin, ab, bis, frisch) {
     if (!findCol(KURSE)) ensureSchema();
     let rec = findRecord(isin);
@@ -285,7 +285,7 @@ function getKurs(isin, ab, bis, frisch) {
         }
     }
 
-    // Aktueller Kurs (falls nicht eben schon über Yahoo mitgekommen)
+    // Current price (unless it just came along via Yahoo)
     const quoteFresh = now - (Date.parse(rec.getString("abgerufen") || "") || 0) < FRESH_TTL_MS;
     if (needQuote && !quoteFresh) {
         let q = null;
@@ -314,13 +314,13 @@ function getKurs(isin, ab, bis, frisch) {
         }
     }
 
-    // Namen einmalig nachschlagen (nur für die Anzeige)
+    // Look up the name once (for display only)
     if (!rec.getString("name") && !paused && (isNew || changed)) {
         try {
             const f = yahooFind(isin);
             if (f.name) { rec.set("name", f.name); changed = true; }
             if (!rec.getString("symbol")) rec.set("symbol", f.symbol);
-        } catch (err) { /* Name ist nicht wichtig */ }
+        } catch (err) { /* the name is not important */ }
     }
 
     const hasPrice = rec.getFloat("kurs") > 0;
@@ -335,7 +335,7 @@ function getKurs(isin, ab, bis, frisch) {
         try { $app.save(rec); } catch (err) { console.log("[Kurse] Speichern fehlgeschlagen (" + isin + "): " + err.message); }
     }
 
-    // Antwort: nur den Teil des Verlaufs, den die App noch nicht hat
+    // Response: only the part of the history that the app does not have yet
     let sendFrom = need;
     if (isIso(bis) && bis >= need) sendFrom = addDays(bis, -10);
     return {

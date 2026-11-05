@@ -1,14 +1,14 @@
 // pb_hooks/finanzen.pb.js
-// Finanzen: Ausgaben auf dem NAS (PocketBase-Sammlung "ausgaben"). Die Logik steckt in pinn-finanzen.js.
+// Finance: expenses on the NAS (PocketBase collection "ausgaben"). The logic lives in pinn-finanzen.js.
 //
-// Routen (alle nur angemeldet; jedes Profil sieht nur die Buchungen der Kassen, in denen es Mitglied
-// ist - siehe pinn-kassen.js):
-//   GET  /api/pinn/finanzen             alle Ausgaben der Familie
+// Routes (all signed-in only; every profile only sees the bookings of the funds of which it is a
+// member - see pinn-kassen.js):
+//   GET  /api/pinn/finanzen             all expenses of the family
 //   POST /api/pinn/finanzen/speichern   {id, amount, date, category, title?, store?, listId?, items?, paidBy?, note?, link?, kasse?, split?}
 //   POST /api/pinn/finanzen/loeschen    {id}
 //
-// Kein Zeitplan - es läuft nur etwas, wenn jemand in der App eine Ausgabe bucht oder ansieht.
-// Gastkonten (Rolle "gast") haben keinen Zugriff auf die Finanzen.
+// No schedule - something only runs when someone books or views an expense in the app.
+// Guest accounts (role "gast") have no access to the finances.
 
 routerAdd("GET", "/api/pinn/finanzen", (e) => {
     e.response.header().set("Cache-Control", "no-store");

@@ -1,16 +1,16 @@
 // pb_hooks/create_calendar_event.pb.js
-// Legt einen neuen Termin WIRKLICH im Kalender an (nicht nur bei uns in der App) - in iCloud oder,
-// bei Kalendern mit dem Zusatz " (Google)", im verbundenen Google-Konto (Android). Erwartet POST mit
-// den Termin-Feldern aus dem "Termin hinzufügen"-Formular im Body. Löst danach sofort einen neuen
-// Sync aus, damit der neue Termin gleich in der Kalenderdatei auftaucht.
-// Eigene Kalender (Name "pinn:<id>", siehe pinn-kalender.js) speichern den Termin auf diesem Server.
-// Zugewiesene Familienmitglieder (außer der Person, die den Termin anlegt) bekommen eine
-// Push-Benachrichtigung, sofern sie das in ihren Einstellungen nicht abgeschaltet haben.
-// Es werden immer die Zugangsdaten der EIGENEN Familie verwendet (calendarSync.createEventForFamily).
-// Die übrige Familie sieht den neuen Termin außerdem unter der Glocke (pinn-hinweise.js) - außer bei
-// Terminen in privaten Kalendern ("Nur für mich").
+// Creates a new event FOR REAL in the calendar (not just on our side in the app) - in iCloud or,
+// for calendars with the suffix " (Google)", in the connected Google account (Android). Expects a POST with
+// the event fields from the "Add event" form in the body. Afterwards immediately triggers a new
+// sync so that the new event shows up in the calendar file right away.
+// Own calendars (name "pinn:<id>", see pinn-kalender.js) store the event on this server.
+// Assigned family members (except the person creating the event) get a
+// push notification, unless they have switched it off in their settings.
+// The credentials of the OWN family are always used (calendarSync.createEventForFamily).
+// The rest of the family additionally sees the new event under the bell (pinn-hinweise.js) - except for
+// events in private calendars ("Only for me").
 
-// Nur für Profile einer Familie (siehe pinn-benutzer.js).
+// Only for profiles of a family (see pinn-benutzer.js).
 routerAdd("POST", "/api/create-calendar-event", (e) => {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const denied = lib.calendarDenied(e);
@@ -24,7 +24,7 @@ routerAdd("POST", "/api/create-calendar-event", (e) => {
 
     let privat = false;
     if (/^pinn:[a-z0-9]{15}$/.test(String(body.calendarName))) {
-        // Eigener Kalender auf dem pinn.-Server
+        // Own calendar on the pinn. server
         try {
             privat = require(`${__hooks}/pinn-kalender.js`).createEvent(e, body).privat;
         } catch (err) {
@@ -34,7 +34,7 @@ routerAdd("POST", "/api/create-calendar-event", (e) => {
         try {
             const calendarSync = require(`${__hooks}/calendar-sync.js`);
             calendarSync.createEventForFamily(familyId, body.calendarName, body);
-            calendarSync.syncCalendarFileOnly(familyId); // nur Kalenderdatei aktualisieren - KEINE Haushalts-Erkennung (sonst kommen geloeschte, aber "heute noch faellige" Aufgaben sofort wieder)
+            calendarSync.syncCalendarFileOnly(familyId); // only update the calendar file - NO household detection (otherwise deleted tasks that are "still due today" come right back)
         } catch (err) {
             return e.json(200, { error: err.message });
         }

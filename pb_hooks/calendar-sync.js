@@ -1,15 +1,15 @@
 // pb_hooks/calendar-sync.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden.
-// Enthält die komplette CalDAV-Logik als wiederverwendbare Funktionen - genutzt sowohl vom
-// Kalenderlisten-Endpunkt (discover_calendars.pb.js) als auch vom Cron-Sync (cron_calendar.pb.js).
-// Die Apple-Zugangsdaten liegen JE FAMILIE verschlüsselt in der gesperrten Sammlung "apple_zugaenge"
-// (pinn-apple.js), siehe getAppleCredentials() weiter unten.
-// Zusätzlich kann jede Familie ein Google-Konto (Android-Kalender) verbinden (pinn-google.js, Sammlung
-// "google_zugaenge"). Die Konto-Funktionen (appleAccount, createEventInAccount …) nutzt außerdem
-// pinn-kalender.js für eigene Kalender „Nur für mich“, die mit dem persönlichen iCloud-/Google-Konto
-// eines Profils verknüpft sind (pinn-kalender-konten.js).
-// Google spricht ebenfalls CalDAV - alle Termin-Funktionen arbeiten deshalb mit
-// einem "Konto"-Objekt (siehe Abschnitt "Konten" weiter unten), egal ob iCloud oder Google.
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require().
+// Contains the complete CalDAV logic as reusable functions - used both by the
+// calendar list endpoint (discover_calendars.pb.js) and by the cron sync (cron_calendar.pb.js).
+// The Apple credentials are stored PER FAMILY, encrypted, in the locked collection "apple_zugaenge"
+// (pinn-apple.js), see getAppleCredentials() further below.
+// In addition, each family can connect a Google account (Android calendar) (pinn-google.js, collection
+// "google_zugaenge"). The account functions (appleAccount, createEventInAccount ...) are also used by
+// pinn-kalender.js for private "only for me" calendars that are linked to the personal iCloud/Google
+// account of a profile (pinn-kalender-konten.js).
+// Google speaks CalDAV as well - so all event functions work with
+// an "account" object (see the section "Accounts" further below), whether iCloud or Google.
 
 function base64Encode(input) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
@@ -34,28 +34,28 @@ function resolveHref(host, href) {
     return host + href;
 }
 
-// Schritt 1+2+3: Principal -> calendar-home-set -> Kalenderliste.
-// Gibt { host, xmlHeaders, calendars: [{name, href}] } zurück oder wirft einen Error mit
-// einer für Endnutzer verständlichen Meldung.
-// Fragt ALLE Sammlungen im Konto ab (Kalender UND Erinnerungslisten laufen technisch über
-// dasselbe CalDAV-Protokoll) und liest zusätzlich ab, ob eine Sammlung Termine (VEVENT) oder
-// Erinnerungen (VTODO) enthält - damit wir beides sauber auseinanderhalten können, statt sie in
-// einer Liste zu vermischen.
-// Die Kalender-Suche (3 Anfragen an iCloud) ändert sich praktisch nie, lief aber bei JEDEM Vorgang
-// (Abhaken, Bearbeiten, Anlegen, Sync) mehrfach. Ergebnis deshalb 10 Minuten im gemeinsamen
-// App-Speicher von PocketBase merken. Die Einstellungen-Seite ("Kalender laden") fragt immer frisch.
-// Die erzeugten Kalenderdateien (eine je Familie, siehe kalenderPfad()) liegen in pb_data (nicht
-// öffentlich) und werden nur über die angemeldete Route /api/pinn/kalender (benutzer.pb.js) an die
-// eigene Familie ausgeliefert.
+// Steps 1+2+3: principal -> calendar-home-set -> calendar list.
+// Returns { host, xmlHeaders, calendars: [{name, href}] } or throws an Error with
+// a message that end users can understand.
+// Queries ALL collections in the account (calendars AND reminder lists technically use
+// the same CalDAV protocol) and additionally reads whether a collection contains events (VEVENT) or
+// reminders (VTODO) - so that we can keep the two apart cleanly instead of mixing them in
+// one list.
+// The calendar discovery (3 requests to iCloud) practically never changes, but ran several times on EVERY
+// operation (ticking off, editing, creating, sync). The result is therefore kept for 10 minutes in the shared
+// PocketBase app store. The settings page ("Load calendars") always asks afresh.
+// The generated calendar files (one per family, see kalenderPfad()) live in pb_data (not
+// public) and are only delivered to the family itself through the signed-in route /api/pinn/kalender
+// (benutzer.pb.js).
 
-// Byte-Array (z.B. von $os.readFile) in Text umwandeln: bevorzugt nativ, sonst per JavaScript.
+// Convert a byte array (e.g. from $os.readFile) into text: natively if possible, otherwise via JavaScript.
 function bytesToText(raw) {
     try {
         if (typeof toString === "function") {
             const t = toString(raw);
             if (typeof t === "string" && t.indexOf("[object") !== 0) return t;
         }
-    } catch (e) { /* weiter mit JS-Variante */ }
+    } catch (e) { /* continue with the JS variant */ }
     return bytesToUtf8String(raw);
 }
 
@@ -68,19 +68,19 @@ function discoverAllCollections(email, password, forceFresh) {
             if (cached && (Date.now() - cached.ts) < DISCOVERY_CACHE_MS) {
                 return { host: cached.host, xmlHeaders: cached.xmlHeaders, collections: cached.collections };
             }
-        } catch (e) { /* ohne Cache weiter */ }
+        } catch (e) { /* continue without cache */ }
     }
     const fresh = discoverAllCollectionsUncached(email, password);
     try {
         $app.store().set(cacheKey, { ts: Date.now(), host: fresh.host, xmlHeaders: fresh.xmlHeaders, collections: fresh.collections });
-    } catch (e) { /* Cache ist optional */ }
+    } catch (e) { /* the cache is optional */ }
     return fresh;
 }
 
 function discoverAllCollectionsUncached(email, password) {
-    // Einstiegspunkt für die Principal-Discovery. Der TATSÄCHLICHE Server für die Kalender
-    // (z.B. p182 statt p102) wird danach automatisch aus der calendar-home-set-Antwort übernommen -
-    // das muss man nicht mehr manuell herausfinden.
+    // Entry point for the principal discovery. The ACTUAL server for the calendars
+    // (e.g. p182 instead of p102) is then taken automatically from the calendar-home-set response -
+    // there is no need to find it out manually any more.
     const ENTRY_HOST = "https://p102-caldav.icloud.com";
     const authHeader = authHeaderFor(email, password);
     const xmlHeaders = { "Content-Type": "text/xml; charset=utf-8", "Authorization": authHeader };
@@ -105,7 +105,7 @@ function discoverAllCollectionsUncached(email, password) {
     }
     const principalPath = principalMatch[1];
 
-    // Schritt 2: calendar-home-set (liefert oft einen ANDEREN Host als ENTRY_HOST)
+    // Step 2: calendar-home-set (often returns a DIFFERENT host than ENTRY_HOST)
     const homeSetRes = $http.send({
         url: resolveHref(ENTRY_HOST, principalPath),
         method: "PROPFIND",
@@ -125,7 +125,7 @@ function discoverAllCollectionsUncached(email, password) {
     const realHost = hostMatch ? hostMatch[0] : ENTRY_HOST;
     const calendarHomePath = calendarHomeUrl.replace(/^https?:\/\/[^\/]+/, '');
 
-    // Schritt 3: alle Sammlungen im echten Ordner abfragen, inkl. unterstützter Komponenten-Art
+    // Step 3: query all collections in the real folder, including the supported component type
     const calRes = $http.send({
         url: calendarHomeUrl,
         method: "PROPFIND",
@@ -144,9 +144,9 @@ function discoverAllCollectionsUncached(email, password) {
         const hrefMatch = seg.match(/<[^>]*href[^>]*>(.*?)<\/[^>]*href[^>]*>/);
         if (nameMatch && hrefMatch && nameMatch[1].trim()) {
             const itemPath = hrefMatch[1].replace(/^https?:\/\/[^\/]+/, '');
-            // Depth:1 liefert bei manchen Servern den abgefragten Ordner selbst mit zurück (hier
-            // erkennbar am Namen des Kontos statt eines echten Kalender-/Listennamens) - das ist
-            // keine echte Sammlung und muss rausgefiltert werden.
+            // With some servers, Depth:1 also returns the queried folder itself (recognisable here
+            // by the account name instead of a real calendar/list name) - that is
+            // not a real collection and must be filtered out.
             if (itemPath === calendarHomePath) continue;
             collections.push({
                 name: nameMatch[1].trim(),
@@ -160,36 +160,36 @@ function discoverAllCollectionsUncached(email, password) {
     return { host: realHost, xmlHeaders, collections };
 }
 
-// Nur die Kalender (Termine, VEVENT) aus der Sammlung herausfiltern.
+// Filter out only the calendars (events, VEVENT) from the collection.
 function discoverCalendarList(email, password, forceFresh) {
     const { host, xmlHeaders, collections } = discoverAllCollections(email, password, forceFresh);
     const calendars = collections.filter(c => c.supportsVevent).map(c => ({ name: c.name, href: c.href }));
     return { host, xmlHeaders, calendars };
 }
 
-// Nur die Erinnerungslisten (Aufgaben, VTODO) aus der Sammlung herausfiltern.
+// Filter out only the reminder lists (tasks, VTODO) from the collection.
 function discoverReminderLists(email, password) {
     const { host, xmlHeaders, collections } = discoverAllCollections(email, password);
     const lists = collections.filter(c => c.supportsVtodo).map(c => ({ name: c.name, href: c.href }));
     return { host, xmlHeaders, lists };
 }
 
-// Für den Einstellungen-Dialog: nur die Namen der verfügbaren Kalender.
+// For the settings dialog: only the names of the available calendars.
 function discoverCalendars(email, password) {
-    const { calendars } = discoverCalendarList(email, password, true); // Einstellungen: immer frisch
+    const { calendars } = discoverCalendarList(email, password, true); // settings: always fresh
     return calendars.map(c => c.name);
 }
 
-// Für den Einstellungen-Dialog: nur die Namen der verfügbaren Erinnerungslisten.
+// For the settings dialog: only the names of the available reminder lists.
 function discoverReminders(email, password) {
     const { lists } = discoverReminderLists(email, password);
     return lists.map(l => l.name);
 }
 
-// Lädt Termine und gibt sie GRUPPIERT NACH RESSOURCE zurück (href + die VEVENT-Blöcke darin) -
-// wichtig, damit wir später gezielt genau DIESE eine Ressource in iCloud löschen können. Eine
-// Ressource kann mehrere VEVENT-Blöcke enthalten (z.B. bei wiederkehrenden Terminen mit
-// Ausnahme-Terminen), die teilen sich dann dieselbe href.
+// Loads events and returns them GROUPED BY RESOURCE (href + the VEVENT blocks in it) -
+// important so that we can later delete exactly THIS one resource in iCloud. One
+// resource can contain several VEVENT blocks (e.g. for recurring events with
+// exception events), which then share the same href.
 function downloadCalendarEvents(host, xmlHeaders, href) {
     const icsRes = $http.send({
         url: resolveHref(host, href),
@@ -208,7 +208,7 @@ function downloadCalendarEvents(host, xmlHeaders, href) {
         throw err;
     }
     const raw = icsRes.raw || "";
-    // Grob nach einzelnen <d:response>-Blöcken aufteilen, damit href und calendar-data zusammenbleiben
+    // Roughly split into single <d:response> blocks so that href and calendar-data stay together
     const responseChunks = raw.split(/<\/[^>]*response>/i);
     const resources = [];
     responseChunks.forEach(chunk => {
@@ -224,12 +224,12 @@ function downloadCalendarEvents(host, xmlHeaders, href) {
     return resources;
 }
 
-// Für den Cron-Sync: lädt Termine aller AUSGEWÄHLTEN Kalender und schreibt sie zusammen in eine ICS-Datei.
-// Jeder VEVENT-Block bekommt zusätzlich zwei eigene X-Properties (X-PINN-HREF, X-PINN-CALNAME)
-// eingebettet - Standard-Kalenderprogramme ignorieren unbekannte X-Properties einfach, aber unsere
-// eigene App liest sie aus: X-PINN-HREF, um zu wissen, welche iCloud-Ressource beim Bearbeiten/
-// Abhaken/Löschen angesprochen werden muss, X-PINN-CALNAME, um Aufgaben vom Aufgaben-Kalender
-// zu erkennen. NICHT entfernen - ohne diese Zeilen funktionieren Aufgaben und Bearbeiten nicht.
+// For the cron sync: loads events of all SELECTED calendars and writes them together into one ICS file.
+// Each VEVENT block additionally gets two custom X properties (X-PINN-HREF, X-PINN-CALNAME)
+// embedded - standard calendar programs simply ignore unknown X properties, but our
+// own app reads them: X-PINN-HREF, to know which iCloud resource has to be addressed when
+// editing/ticking off/deleting, X-PINN-CALNAME, to recognise tasks from the tasks calendar.
+// DO NOT remove - without these lines, tasks and editing do not work.
 function syncSelectedCalendars(email, password, selectedNames, outputPath) {
     const result = { blocks: [], synced: [], skipped: [] };
     collectAccountBlocks(appleAccount(email, password), selectedNames, result);
@@ -238,11 +238,11 @@ function syncSelectedCalendars(email, password, selectedNames, outputPath) {
     return { syncedCalendars: result.synced, eventCount: result.blocks.length, veventBlocks: result.blocks };
 }
 
-// Lädt die Termine der ausgewählten Kalender EINES Kontos (iCloud oder Google) und hängt sie mit
-// X-PINN-HREF / X-PINN-CALNAME an result.blocks an. Bei Google werden einzelne Kalender, die sich
-// grundsätzlich nicht per CalDAV lesen lassen (z. B. manche abonnierten Sonderkalender, Status
-// 403/404/405), übersprungen statt den ganzen Abgleich abzubrechen. Netzwerk- oder Serverfehler
-// brechen weiterhin ab - dann bleibt die bisherige Kalenderdatei stehen, statt Termine zu verlieren.
+// Loads the events of the selected calendars of ONE account (iCloud or Google) and appends them with
+// X-PINN-HREF / X-PINN-CALNAME to result.blocks. With Google, individual calendars that fundamentally
+// cannot be read via CalDAV (e.g. some subscribed special calendars, status
+// 403/404/405) are skipped instead of aborting the whole sync. Network or server errors
+// still abort - the previous calendar file then stays in place instead of losing events.
 function collectAccountBlocks(acc, selectedNames, result) {
     acc.calendars.forEach(cal => {
         if (selectedNames.indexOf(cal.name) === -1) return;
@@ -275,13 +275,13 @@ function collectAccountBlocks(acc, selectedNames, result) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Konten: iCloud (Apple-ID) und Google (Android)
-// Ein Konto-Objekt { kind: "apple"|"google", host, xmlHeaders, calendars: [{name, href, timeZone}] }
-// kapselt den Unterschied (Anmeldung per App-Passwort bzw. per Google-Zugriffsschlüssel, eigene
-// Kalenderliste). Anlegen, Ändern, Löschen, Rohtext und Sync arbeiten nur noch mit diesem Objekt.
-// Welches Konto zuständig ist, ergibt sich
-//  - bei bestehenden Terminen aus der Adresse (X-PINN-HREF): Google-Termine liegen unter /caldav/v2/
-//  - bei Kalendernamen am Zusatz " (Google)" (pinn-google.js)
+// Accounts: iCloud (Apple ID) and Google (Android)
+// An account object { kind: "apple"|"google", host, xmlHeaders, calendars: [{name, href, timeZone}] }
+// encapsulates the difference (sign-in via app password or via Google access key, own
+// calendar list). Creating, changing, deleting, raw text and sync only work with this object.
+// Which account is responsible is derived
+//  - for existing events from the address (X-PINN-HREF): Google events live under /caldav/v2/
+//  - for calendar names from the suffix " (Google)" (pinn-google.js)
 // ---------------------------------------------------------------------------------------------
 function googleLib() {
     return require(`${__hooks}/pinn-google.js`);
@@ -308,11 +308,11 @@ function appleAccountForFamily(familyId) {
 function googleAccountForFamily(familyId, forceFresh) {
     return googleLib().account(familyId, forceFresh);
 }
-// Konto zu einem bestehenden Termin (anhand seiner Adresse)
+// Account for an existing event (based on its address)
 function accountForHref(familyId, href) {
     return isGoogleHref(href) ? googleAccountForFamily(familyId) : appleAccountForFamily(familyId);
 }
-// Konto zu einem Kalendernamen
+// account for a calendar name
 function accountForCalendar(familyId, calendarName) {
     return isGoogleCalendarName(calendarName) ? googleAccountForFamily(familyId) : appleAccountForFamily(familyId);
 }
@@ -327,10 +327,10 @@ function collectionUrl(acc, cal) {
     if (url.charAt(url.length - 1) !== '/') url += '/';
     return url;
 }
-// Adressen vergleichbar machen (Google liefert z. B. "@" mal als %40, mal direkt)
+// Make addresses comparable (Google returns "@" sometimes as %40, sometimes directly)
 function normUrl(u) {
     let s = String(u || "");
-    try { s = decodeURIComponent(s); } catch (e) { /* so lassen */ }
+    try { s = decodeURIComponent(s); } catch (e) { /* leave as is */ }
     return s.toLowerCase();
 }
 function utcStampNow() {
@@ -339,8 +339,8 @@ function utcStampNow() {
     return now.getUTCFullYear() + pad(now.getUTCMonth() + 1) + pad(now.getUTCDate()) +
         'T' + pad(now.getUTCHours()) + pad(now.getUTCMinutes()) + pad(now.getUTCSeconds()) + 'Z';
 }
-// Zufallsteil einer neuen UID: sicherer Zufallsgenerator von PocketBase (kein einfacher Zufall); der Zähler
-// hält UIDs eindeutig, falls der Generator je nicht verfügbar wäre.
+// Random part of a new UID: PocketBase's secure random generator (not a simple random); the counter
+// keeps UIDs unique should the generator ever be unavailable.
 let uidCounter = 0;
 function uidSuffix() {
     try {
@@ -351,8 +351,8 @@ function uidSuffix() {
     return 'c' + uidCounter.toString(36) + Date.now().toString(36);
 }
 function newEventUid(ev) {
-    // Die App kann die UID mitbringen (ev.clientUid, bei offline angelegten Terminen). Dann landet ein
-    // erneut gesendeter Termin in derselben Ressource statt doppelt im Kalender.
+    // The app can bring the UID along (ev.clientUid, for events created offline). Then an event
+    // that is sent again ends up in the same resource instead of appearing twice in the calendar.
     const clientUid = (ev && typeof ev.clientUid === 'string') ? ev.clientUid : '';
     return /^pinn-[A-Za-z0-9-]{4,80}$/.test(clientUid)
         ? clientUid
@@ -383,7 +383,7 @@ function sendDelete(acc, url) {
     return res;
 }
 
-// --- Termin-Funktionen je Konto ---
+// --- Event functions per account ---
 
 function createEventInAccount(acc, calendarName, ev) {
     const cal = calendarIn(acc, calendarName);
@@ -416,7 +416,7 @@ function deleteEventInAccount(acc, eventHref) {
     console.log("[Kalender-Loeschen] Sende DELETE (" + providerLabel(acc) + ") an: " + fullUrl);
     const res = sendDelete(acc, fullUrl);
     console.log("[Kalender-Loeschen] Antwort-Status: " + res.statusCode + " - Body: " + (res.raw || "").slice(0, 300));
-    // 404/410 = schon nicht mehr vorhanden -> für uns auch ein Erfolg (Ziel "ist weg" ist erreicht)
+    // 404/410 = already gone -> a success for us as well (the goal "it is gone" is reached)
     if (res.statusCode !== 204 && res.statusCode !== 200 && res.statusCode !== 404 && res.statusCode !== 410) {
         if (acc.kind === "google" && googleLib().isApiDisabled(res.raw)) throw new Error(googleLib().CALDAV_DISABLED_MESSAGE);
         throw new Error("Löschen in " + providerLabel(acc) + " fehlgeschlagen (Status " + res.statusCode + ").");
@@ -425,9 +425,9 @@ function deleteEventInAccount(acc, eventHref) {
     return true;
 }
 
-// Aktualisiert einen bestehenden Termin. src = Konto, in dem der Termin liegt, dst = Konto des
-// Zielkalenders (ev.calendarName). Gleicher Kalender: einfach überschreiben. Anderer Kalender (auch
-// zwischen iCloud und Google): im Zielkalender neu anlegen (gleiche UID) und danach den alten löschen.
+// Updates an existing event. src = account in which the event lives, dst = account of the
+// target calendar (ev.calendarName). Same calendar: simply overwrite. Different calendar (also
+// between iCloud and Google): create anew in the target calendar (same UID) and then delete the old one.
 function updateEventAcrossAccounts(src, dst, eventHref, uid, ev) {
     const targetCal = calendarIn(dst, ev.calendarName);
     const targetCalUrl = collectionUrl(dst, targetCal);
@@ -436,7 +436,7 @@ function updateEventAcrossAccounts(src, dst, eventHref, uid, ev) {
     const sameAccount = src.kind === dst.kind;
 
     if (sameAccount && normUrl(oldFullUrl).indexOf(normUrl(targetCalUrl)) === 0) {
-        // Normalfall: Kalender bleibt gleich, Termin einfach überschreiben.
+        // Normal case: the calendar stays the same, simply overwrite the event.
         try {
             putIcs(dst, oldFullUrl, icsBody);
         } catch (e) {
@@ -445,16 +445,16 @@ function updateEventAcrossAccounts(src, dst, eventHref, uid, ev) {
         return true;
     }
 
-    // Kalender wurde geändert: CalDAV kennt kein direktes "Verschieben" zwischen Kalendern (und
-    // schon gar nicht zwischen iCloud und Google) - deshalb im Zielkalender neu anlegen (gleiche UID)
-    // und danach die alte Ressource im ursprünglichen Kalender löschen.
+    // The calendar was changed: CalDAV has no direct "move" between calendars (and
+    // certainly not between iCloud and Google) - so create anew in the target calendar (same UID)
+    // and then delete the old resource in the original calendar.
     const newUrl = resourceUrlFor(dst, targetCal, uid);
     try {
         putIcs(dst, newUrl, icsBody);
     } catch (e) {
         throw new Error(e.status ? "Verschieben fehlgeschlagen (Anlegen im neuen Kalender, Status " + e.status + ")." : e.message);
     }
-    if (sameAccount && normUrl(newUrl) === normUrl(oldFullUrl)) return true; // Sicherheitsnetz: nie den gerade geschriebenen Termin löschen
+    if (sameAccount && normUrl(newUrl) === normUrl(oldFullUrl)) return true; // Safety net: never delete the event that was just written
     const deleteRes = sendDelete(src, oldFullUrl);
     if (deleteRes.statusCode !== 204 && deleteRes.statusCode !== 200 && deleteRes.statusCode !== 404 && deleteRes.statusCode !== 410) {
         throw new Error("Verschieben nur teilweise gelungen: im neuen Kalender angelegt, aber die alte Version im ursprünglichen Kalender konnte nicht gelöscht werden (Status " + deleteRes.statusCode + "). Bitte den alten Termin manuell im " + (src.kind === "google" ? "Google" : "Apple") + "-Kalender löschen.");
@@ -462,7 +462,7 @@ function updateEventAcrossAccounts(src, dst, eventHref, uid, ev) {
     return true;
 }
 
-// --- Termin-Funktionen je Familie (wählen das passende Konto selbst) ---
+// --- Event functions per family (they choose the matching account themselves) ---
 
 function createEventForFamily(familyId, calendarName, ev) {
     return createEventInAccount(accountForCalendar(familyId, calendarName), calendarName, ev);
@@ -480,8 +480,8 @@ function fetchRawEventForFamily(familyId, href) {
     return fetchRawEventInAccount(accountForHref(familyId, href), href);
 }
 
-// Alle Kalendernamen der Familie (iCloud + Google) für die Einstellungen. Ist nur eines der beiden
-// Konten verbunden oder schlägt eines fehl, kommen die übrigen trotzdem - der Fehler steht in "warning".
+// All calendar names of the family (iCloud + Google) for the settings. If only one of the two
+// accounts is connected or one of them fails, the others still come through - the error is in "warning".
 function discoverCalendarsForFamily(familyId) {
     const names = [];
     const problems = [];
@@ -506,11 +506,11 @@ function discoverCalendarsForFamily(familyId) {
     return { calendars: names, warning: problems.join(" ") };
 }
 
-/* ===== AUSGEKLAMMERT: Aufgaben über den Apple-Aufgaben-Kalender =====
-   Aufgaben liegen jetzt in der PocketBase-Sammlung "aufgaben" (pinn-aufgaben.js).
-   Dieser Block bleibt nur zur Sicherheit erhalten, falls die Kalender-Variante noch gebraucht wird.
-// Gängige Müllarten (gespiegelt aus der App, da beide Seiten unabhängig laufen) - "keywords" dienen
-// dazu, Abholtermine anhand ihres Titels im synchronisierten Kalender zu erkennen.
+/* ===== COMMENTED OUT: tasks via the Apple tasks calendar =====
+   Tasks now live in the PocketBase collection "aufgaben" (pinn-aufgaben.js).
+   This block is only kept for safety in case the calendar variant is still needed.
+// Common waste types (mirrored from the app, since both sides run independently) - "keywords" serve
+// to recognise collection dates by their title in the synchronised calendar.
 const WASTE_TYPE_KEYWORDS_SERVER = [
     { id: 'restmuell', label: 'Restmüll', icon: '\ud83d\uddd1\ufe0f', taskLabel: 'Restmüll', keywords: ['restmüll', 'restabfall', 'restmülltonne', 'hausmüll'] },
     { id: 'biomuell', label: 'Biomüll', icon: '\ud83c\udf42', taskLabel: 'Biomüll', keywords: ['biomüll', 'bioabfall', 'biotonne'] },
@@ -519,8 +519,8 @@ const WASTE_TYPE_KEYWORDS_SERVER = [
     { id: 'glas', label: 'Glas', icon: '\ud83c\udf7e', taskLabel: 'Altglas', keywords: ['glas', 'altglas'] },
 ];
 
-// Liest aus rohen VEVENT-Blöcken Titel+Datum NICHT wiederkehrender Termine heraus (für einfache,
-// je Tag einzeln eingetragene Termine, wie sie kommunale Abfuhrkalender typischerweise liefern).
+// Extracts title+date of NON-recurring events from raw VEVENT blocks (for simple events
+// entered individually per day, as municipal waste collection calendars typically provide them).
 function extractSimpleEventSummaries(veventBlocks) {
     const results = [];
     veventBlocks.forEach(block => {
@@ -547,13 +547,13 @@ function extractSimpleEventSummaries(veventBlocks) {
                 dtstampRaw = line.slice('DTSTAMP:'.length).trim();
             }
         });
-        if (hasRrule) return; // wiederkehrende Termine hier bewusst nicht berücksichtigen
+        if (hasRrule) return; // deliberately ignore recurring events here
         if (summary !== null && dtstartRaw) {
             results.push({
                 title: summary.trim(),
                 date: dtstartRaw.slice(0, 4) + '-' + dtstartRaw.slice(4, 6) + '-' + dtstartRaw.slice(6, 8),
-                // Zeitpunkt der letzten Änderung - beim Abhaken schreibt die App den Termin neu, damit
-                // ist das der Erledigt-Zeitpunkt (Grundlage fürs automatische Löschen).
+                // Time of the last change - when ticking off, the app rewrites the event, so
+                // this is the completion time (basis for the automatic deletion).
                 changedRaw: lastModifiedRaw || dtstampRaw,
             });
         }
@@ -561,13 +561,13 @@ function extractSimpleEventSummaries(veventBlocks) {
     return results;
 }
 
-===== ENDE AUSGEKLAMMERT ===== */
+===== END COMMENTED OUT ===== */
 
-// Emoji-Praefix fuer erledigte Aufgaben (muss zum Client-seitigen DONE_EMOJI passen).
-// Einfacher Fortschritts-Zustand fuer lang laufende Haushalts-Operationen (Löschen/Neu-Generieren),
-// damit die Einstellungen-Seite per Abfrage einen Live-Zähler anzeigen kann. Lebt nur im
-// Server-Prozess-Speicher (kein DB-Feld noetig) - geht bei einem Neustart verloren, was fuer eine
-// laufende Operation ohnehin bedeutungslos waere.
+// Emoji prefix for completed tasks (must match the client-side DONE_EMOJI).
+// Simple progress state for long-running household operations (deleting/regenerating),
+// so that the settings page can show a live counter by polling. Lives only in the
+// server process memory (no DB field needed) - it is lost on a restart, which would be
+// meaningless for a running operation anyway.
 let householdProgress = { active: false, label: "", total: 0, done: 0 };
 function setHouseholdProgress(label, total, done) {
     householdProgress = { active: true, label: label, total: total, done: done };
@@ -582,16 +582,16 @@ function getHouseholdProgress() {
     return householdProgress;
 }
 
-/* ===== AUSGEKLAMMERT: Aufgaben über den Apple-Aufgaben-Kalender =====
-   Aufgaben liegen jetzt in der PocketBase-Sammlung "aufgaben" (pinn-aufgaben.js).
-   Dieser Block bleibt nur zur Sicherheit erhalten, falls die Kalender-Variante noch gebraucht wird.
+/* ===== COMMENTED OUT: tasks via the Apple tasks calendar =====
+   Tasks now live in the PocketBase collection "aufgaben" (pinn-aufgaben.js).
+   This block is only kept for safety in case the calendar variant is still needed.
 const DONE_EMOJI_SERVER = "\u2705 ";
 function stripDoneEmojiServer(title) {
     return title.indexOf(DONE_EMOJI_SERVER) === 0 ? title.slice(DONE_EMOJI_SERVER.length) : title;
 }
 
-// Laedt ALLE Termine (Titel+Datum+href) aus dem Aufgaben-Kalender - Basis fuer die
-// Haushalts-Aufgaben-Erzeugung unten (einmal pro Cron-Durchlauf geladen, nicht pro Regel).
+// Loads ALL events (title+date+href) from the tasks calendar - basis for the
+// household task generation below (loaded once per cron run, not per rule).
 function getAllTaskCalendarEvents(config) {
     const { host, xmlHeaders, calendars } = discoverCalendarList(config.email, config.appPassword);
     const taskCal = calendars.find(c => c.name === config.taskCalendarName);
@@ -610,14 +610,14 @@ function getAllTaskCalendarEvents(config) {
     return result;
 }
 
-// Legt fuer eine faellige Haushalts-Regel (Reinigung/Muelleimer) GENAU EINE Aufgabe pro Zyklus an -
-// kein Aufstapeln mehrerer offener Aufgaben. Wurde die vorherige Aufgabe bis zur Frist (Tagesende
-// + 4 Stunden, d.h. 4 Uhr morgens des Folgetags) nicht erledigt, wird sie geloescht und durch die
-// neue ersetzt, dabei zaehlt ein Rueckstands-Counter im Titel mit ("(2x nicht erledigt)").
-// Baut die "Zugewiesen: Name, Name"-Notizzeile aus gespeicherten Mitglieds-IDs - identische
-// Konvention wie clientseitig bei normalen Terminen (index.html), damit die App die Zuweisung
-// beim Anzeigen/Filtern genauso erkennt. Keine (oder keine mehr gültigen) IDs -> "Alle", damit die
-// Aufgabe nicht verschwindet, wenn man nach einer bestimmten Person filtert.
+// Creates EXACTLY ONE task per cycle for a due household rule (cleaning/trash bin) -
+// no piling up of several open tasks. If the previous task was not completed by its deadline (end of day
+// + 4 hours, i.e. 4 a.m. on the following day), it is deleted and replaced by the
+// new one, with a backlog counter in the title ("(2x not done)").
+// Builds the "Zugewiesen: Name, Name" notes line from stored member IDs - same
+// convention as on the client side for normal events (index.html), so that the app recognises the assignment
+// the same way when displaying/filtering. No (or no longer valid) IDs -> "All", so that the
+// task does not disappear when filtering by a specific person.
 function buildAssignedNotesServer(assignedMemberIds, membersList) {
     const labels = (assignedMemberIds || []).map(id => {
         const m = (membersList || []).find(mm => mm.id === id);
@@ -627,7 +627,7 @@ function buildAssignedNotesServer(assignedMemberIds, membersList) {
     return "Zugewiesen: " + (labels.length ? labels.join(", ") : "Alle");
 }
 
-// Wandelt einen ICS-Zeitstempel (z.B. "20260922T205211Z") in Millisekunden um.
+// Converts an ICS timestamp (e.g. "20260922T205211Z") to milliseconds.
 function icsStampToMs(raw) {
     const m = (raw || "").match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z?)$/);
     if (!m) return null;
@@ -635,12 +635,12 @@ function icsStampToMs(raw) {
     return new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6]).getTime();
 }
 
-// Löscht erledigte (✅) Aufgaben aus iCloud, sobald sie laut Einstellung lange genug erledigt sind
-// (0 = sofort, 1 oder 2 Tage). Nutzt die ohnehin geladene Aufgabenliste - KEIN zusätzlicher Download.
-// WICHTIG: Aufgaben mit dem Datum von HEUTE werden nie gelöscht, auch nicht bei "Sofort". Die
-// Haushalts-Erkennung erkennt an genau dieser erledigten Aufgabe, dass die heutige Reinigung schon
-// erledigt ist - wäre sie weg, würde sie beim nächsten Durchlauf sofort neu angelegt. Bei "Sofort"
-// blendet die App erledigte Aufgaben deshalb direkt aus, gelöscht werden sie am Folgetag.
+// Deletes completed (✅) tasks from iCloud as soon as they have been completed long enough according to the setting
+// (0 = immediately, 1 or 2 days). Uses the task list that is loaded anyway - NO additional download.
+// IMPORTANT: tasks dated TODAY are never deleted, not even with "Immediately". The
+// household detection recognises from exactly this completed task that today's cleaning is already
+// done - if it were gone, it would be created again immediately on the next run. With "Immediately"
+// the app therefore hides completed tasks right away; they are deleted the following day.
 function cleanupDoneTasks(config, cleanupDays, allTasks, todayIso) {
     const days = (cleanupDays === 0 || cleanupDays === 1 || cleanupDays === 2) ? cleanupDays : 2;
     const cutoffMs = Date.now() - days * 24 * 60 * 60 * 1000;
@@ -667,10 +667,10 @@ function processHouseholdSchedule(config, allTasks, baseTitle, todayIso, notes) 
     bumpHouseholdProgress();
     const matching = allTasks.filter(t => stripDoneEmojiServer(t.title).indexOf(baseTitle) === 0);
     if (matching.length) console.log("[Haushalt-Diagnose] \"" + baseTitle + "\": " + matching.length + " bereits vorhanden - " + JSON.stringify(matching.map(t => t.date)));
-    if (matching.some(t => t.date === todayIso)) return; // fuer heute existiert schon eine (Duplikat-Schutz)
+    if (matching.some(t => t.date === todayIso)) return; // a task for today already exists (duplicate protection)
 
-    // Notbremse: sollte der Duplikat-Schutz aus irgendeinem Grund nicht greifen (wird gerade
-    // untersucht), lieber NICHTS weiter anlegen, als den Kalender mit Dutzenden Kopien zu fluten.
+    // Emergency brake: should the duplicate protection fail for any reason (currently
+    // being investigated), rather create NOTHING more than flood the calendar with dozens of copies.
     if (matching.length >= 3) {
         console.log("[Haushalt-Diagnose] NOTBREMSE: bereits " + matching.length + " Aufgaben mit dem Titel \"" + baseTitle + "\" vorhanden - lege trotz Fälligkeit keine weitere an, bis das geklärt ist.");
         return;
@@ -684,19 +684,19 @@ function processHouseholdSchedule(config, allTasks, baseTitle, todayIso, notes) 
         const isDone = last.title.indexOf(DONE_EMOJI_SERVER) === 0;
         if (!isDone) {
             const deadline = new Date(last.date + "T04:00:00");
-            deadline.setDate(deadline.getDate() + 1); // Tagesende + 4h = 4 Uhr des Folgetags
-            if (new Date() < deadline) return; // Frist der vorherigen Aufgabe laeuft noch - abwarten
+            deadline.setDate(deadline.getDate() + 1); // end of day + 4h = 4 a.m. of the following day
+            if (new Date() < deadline) return; // deadline of the previous task is still running - wait
             const counterMatch = stripDoneEmojiServer(last.title).match(/\((\d+)x nicht erledigt\)$/);
             missCount = counterMatch ? parseInt(counterMatch[1], 10) + 1 : 1;
             try {
                 deleteCalendarEvent(config.email, config.appPassword, last.href);
                 const idx = allTasks.indexOf(last);
-                if (idx !== -1) allTasks.splice(idx, 1); // Live-Stand aktualisieren, damit nachfolgende Regeln im selben Durchlauf das sehen
+                if (idx !== -1) allTasks.splice(idx, 1); // update the live state so that subsequent rules in the same run see it
             } catch (e) {
                 console.log("[Haushalt-Aufgabe] Konnte ueberfaellige Aufgabe nicht loeschen: " + e.message);
             }
         }
-        // war sie erledigt: missCount bleibt 0, ganz normal neu anlegen
+        // if it was completed: missCount stays 0, simply create anew as usual
     }
 
     const title = missCount > 0 ? baseTitle + " (" + missCount + "x nicht erledigt)" : baseTitle;
@@ -708,17 +708,17 @@ function processHouseholdSchedule(config, allTasks, baseTitle, todayIso, notes) 
             repeat: "none", repeatInterval: 1, repeatEnd: "never", repeatCount: 10, repeatUntil: "",
             alert: "none",
         });
-        allTasks.push({ title, date: todayIso, href: null }); // Live-Stand aktualisieren (href unbekannt, wird beim naechsten echten Sync nachgeladen)
+        allTasks.push({ title, date: todayIso, href: null }); // update the live state (href unknown, reloaded on the next real sync)
         console.log("[Haushalt-Aufgabe] Angelegt: " + title);
     } catch (e) {
         console.log("[Haushalt-Aufgabe] Fehler beim Anlegen (" + title + "): " + e.message);
     }
 }
 
-// Prueft, ob morgen laut Kalender eine Muelltonnen-Abholung ansteht (anhand des Termin-Titels), und
-// legt dafuer - pro betroffenem Muelleimer - eine Aufgabe "Muelleimer rausbringen: <Raum>
-// (<Muellart>)" fuer HEUTE an (ueber processHouseholdSchedule, also mit Rueckstands-Zaehler statt
-// Aufstapeln, falls die letzte noch offen war).
+// Checks whether the calendar shows a waste bin collection for tomorrow (based on the event title), and
+// creates for it - per affected bin - a task "Take out bin: <room>
+// (<waste type>)" for TODAY (via processHouseholdSchedule, i.e. with a backlog counter instead of
+// piling up if the last one was still open).
 function runTrashDetection(veventBlocks, config, rooms, trashBins, allTasks, membersList) {
     if (!config.taskCalendarName || !trashBins || !trashBins.length) return;
 
@@ -751,7 +751,7 @@ function runTrashDetection(veventBlocks, config, rooms, trashBins, allTasks, mem
     });
 }
 
-const WEEKDAY_IDS_SERVER = ["so", "mo", "di", "mi", "do", "fr", "sa"]; // Index entspricht JS Date.getDay() (0=Sonntag)
+const WEEKDAY_IDS_SERVER = ["so", "mo", "di", "mi", "do", "fr", "sa"]; // index corresponds to JS Date.getDay() (0 = Sunday)
 
 function isScheduleDueToday(sched, todayIso, todayMidnight, todayWeekday) {
     if (sched.scheduleType === "weekdays") {
@@ -767,9 +767,9 @@ function isScheduleDueToday(sched, todayIso, todayMidnight, todayWeekday) {
     return false;
 }
 
-// Legt fuer jede faellige Raum-Reinigung (Wochentage- oder Intervall-Regel) eine Aufgabe
-// "<Kategorie>: <Raum>" an - ueber processHouseholdSchedule (genau eine pro Zyklus, mit
-// Rueckstands-Zaehler statt Aufstapeln).
+// Creates a task "<category>: <room>" for each due room cleaning (weekday or interval rule)
+// - via processHouseholdSchedule (exactly one per cycle, with a
+// backlog counter instead of piling up).
 function runCleaningDetection(config, roomsList, roomSchedules, cleaningCategories, allTasks, membersList) {
     if (!config.taskCalendarName || !roomSchedules || !roomSchedules.length) {
         console.log("[Reinigung-Diagnose] Kein Aufgaben-Kalender oder keine Reinigungen hinterlegt (Reinigungen: " + ((roomSchedules || []).length) + ").");
@@ -795,9 +795,9 @@ function runCleaningDetection(config, roomsList, roomSchedules, cleaningCategori
     });
 }
 
-// Legt fuer Muelleimer mit manuell gesetztem Rausbring-Rhythmus (Wochentage/Intervall) dieselbe
-// Aufgabe an wie die automatische Abholungs-Erkennung (gleicher Titel -> derselbe
-// Rueckstands-Mechanismus wirkt fuer beide Ausloeser gemeinsam).
+// For bins with a manually set take-out rhythm (weekdays/interval), creates the same
+// task as the automatic collection detection (same title -> the same
+// backlog mechanism works for both triggers together).
 function runTrashBinScheduleDetection(config, roomsList, trashBins, allTasks, membersList) {
     const dueBins = (trashBins || []).filter(b => b.schedule);
     if (!config.taskCalendarName || !dueBins.length) {
@@ -824,28 +824,28 @@ function runTrashBinScheduleDetection(config, roomsList, trashBins, allTasks, me
     });
 }
 
-===== ENDE AUSGEKLAMMERT ===== */
+===== END COMMENTED OUT ===== */
 
-// Löscht einen Termin WIRKLICH in iCloud (nicht nur bei uns). Bei wiederkehrenden Terminen wird
-// die komplette Ressource gelöscht - das entfernt die GESAMTE Serie, nicht nur einen einzelnen Tag
-// daraus (das wäre ein größeres, separates Feature). Die App warnt den Nutzer vorher entsprechend.
-// (Nur noch für iCloud mit festen Zugangsdaten - die Endpunkte nutzen deleteEventForFamily.)
+// Deletes an event FOR REAL in iCloud (not just on our side). For recurring events, the
+// complete resource is deleted - this removes the ENTIRE series, not just a single day
+// of it (that would be a larger, separate feature). The app warns the user beforehand.
+// (Only for iCloud with fixed credentials - the endpoints use deleteEventForFamily.)
 function deleteCalendarEvent(email, password, eventHref) {
     console.log("[Kalender-Loeschen] Angefragt für href: " + eventHref);
     return deleteEventInAccount(appleAccount(email, password), eventHref);
 }
 
-// Für den Cron-Job: liest die Zugangsdaten/Auswahl direkt aus PocketBase und synct.
-// WICHTIG: muss hier im Modul stehen und nicht als Top-Level-Funktion in cron_calendar.pb.js,
-// da onBootstrap/cronAdd-Handler jeweils in einer isolierten Umgebung laufen und keine
-// Top-Level-Funktionen aus derselben .pb.js-Datei sehen (siehe bereits bekannter Bug).
-// Wandelt ein UTF-8-Byte-Array (so liefert record.get() JSON-Felder in dieser PocketBase-Version -
-// als Zahlen-Array der Rohbytes, nicht als String oder fertiges Objekt) korrekt in einen JS-String
-// um, inkl. mehrbytiger Zeichen wie Umlaute und Emojis.
-// Dekodiert das Byte-Array des JSON-Felds zu einem String. WICHTIG: Zeichen werden erst in Blöcken
-// gesammelt und dann einmal zusammengefügt - NICHT per "result += ..." Zeichen für Zeichen. Das
-// alte Vorgehen hatte quadratische Laufzeit: Seit die Familiendaten durch Rezeptfotos mehrere MB
-// groß sind, hing jeder Sync (und jeder Endpunkt, der die Daten liest) minutenlang bei 99 % CPU.
+// For the cron job: reads the credentials/selection directly from PocketBase and syncs.
+// IMPORTANT: must live here in the module and not as a top-level function in cron_calendar.pb.js,
+// since onBootstrap/cronAdd handlers each run in an isolated environment and do not see any
+// top-level functions from the same .pb.js file (see the already known bug).
+// Converts a UTF-8 byte array (this is how record.get() returns JSON fields in this PocketBase version -
+// as a number array of the raw bytes, not as a string or finished object) correctly into a JS string,
+// including multi-byte characters such as umlauts and emojis.
+// Decodes the byte array of the JSON field to a string. IMPORTANT: characters are first collected in chunks
+// and then joined once - NOT via "result += ..." character by character. The
+// old approach had quadratic runtime: since the family data became several MB large through recipe photos,
+// every sync (and every endpoint that reads the data) hung for minutes at 99 % CPU.
 function bytesToUtf8String(bytes) {
     const len = bytes.length;
     const parts = [];
@@ -877,16 +877,16 @@ function bytesToUtf8String(bytes) {
 }
 function parseRecordData(raw) {
     if (raw && typeof raw === "object" && typeof raw.length === "number") {
-        // Byte-Array. Bevorzugt PocketBases eingebaute toString()-Hilfe (läuft nativ in Go und ist
-        // um ein Vielfaches schneller als das Dekodieren Byte für Byte in JavaScript - wichtig, weil
-        // die Familiendaten durch Rezeptfotos mehrere MB groß sind und bei jedem Vorgang gelesen
-        // werden). Nur wenn die Hilfe fehlt oder etwas Unerwartetes liefert, greift die JS-Variante.
+        // Byte array. Prefers PocketBase's built-in toString() helper (runs natively in Go and is
+        // many times faster than decoding byte by byte in JavaScript - important because
+        // the family data is several MB large due to recipe photos and is read on every
+        // operation). Only if the helper is missing or returns something unexpected does the JS variant kick in.
         try {
             if (typeof toString === "function") {
                 const text = toString(raw);
                 if (typeof text === "string" && text.charAt(0) === "{") return JSON.parse(text);
             }
-        } catch (e) { /* weiter mit der JS-Variante */ }
+        } catch (e) { /* continue with the JS variant */ }
         try { return JSON.parse(bytesToUtf8String(raw)); } catch (e) { return {}; }
     }
     if (typeof raw === "string") {
@@ -899,20 +899,20 @@ function parseRecordData(raw) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Apple-Zugangsdaten JE FAMILIE. Sie liegen verschlüsselt in der gesperrten Sammlung
-// "apple_zugaenge" (siehe pinn-apple.js) - nie in familien_daten, nie im Browser.
-// Jede Familie hat ihre eigene Kalenderdatei (pb_data/pinn_kalender_<Familien-ID>.ics).
+// Apple credentials PER FAMILY. They are stored encrypted in the locked collection
+// "apple_zugaenge" (see pinn-apple.js) - never in familien_daten, never in the browser.
+// Each family has its own calendar file (pb_data/pinn_kalender_<family ID>.ics).
 // ---------------------------------------------------------------------------------------------
-const LEGACY_KALENDER_FILE_PATH = "/pb_data/pinn_kalender.ics"; // bisherige gemeinsame Datei (wird beim Start entfernt)
+const LEGACY_KALENDER_FILE_PATH = "/pb_data/pinn_kalender.ics"; // previous shared file (is removed on start)
 const EMPTY_ICS = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nEND:VCALENDAR\r\n";
 
-// Pfad der Kalenderdatei einer Familie ("" bei ungültiger ID - dann wird nichts geschrieben)
+// Path of a family's calendar file ("" for an invalid ID - then nothing is written)
 function kalenderPfad(familyId) {
     const id = String(familyId || "");
     return /^[a-z0-9]{15}$/.test(id) ? "/pb_data/pinn_kalender_" + id + ".ics" : "";
 }
 
-// Kalenderdatei einer Familie als Text ("" wenn noch nicht vorhanden)
+// Calendar file of a family as text ("" if it does not exist yet)
 function readCalendarText(familyId) {
     const path = kalenderPfad(familyId);
     if (!path) return "";
@@ -926,15 +926,15 @@ function writeEmptyCalendar(familyId) {
 
 function removeCalendarFile(familyId) {
     const path = kalenderPfad(familyId);
-    if (path) try { $os.remove(path); } catch (e) { /* nicht vorhanden */ }
+    if (path) try { $os.remove(path); } catch (e) { /* does not exist */ }
 }
 
 function getAppleCredentials(familyId) {
     return require(`${__hooks}/pinn-apple.js`).getCredentials(familyId);
 }
 
-// Entfernt Zugangsdaten aus einem Familiendaten-Objekt (in place). Gibt true zurück, wenn etwas
-// entfernt wurde.
+// Removes credentials from a family data object (in place). Returns true if something was
+// removed.
 function stripAppleSecrets(data) {
     if (!data || typeof data !== "object" || !data.appleCalendar || typeof data.appleCalendar !== "object") return false;
     let changed = false;
@@ -947,9 +947,9 @@ function stripAppleSecrets(data) {
     return changed;
 }
 
-// Liest Familiendaten + Kalenderauswahl EINER Familie und ergänzt deren Zugangsdaten.
-// config enthält danach wie gewohnt email/appPassword - alle Aufrufer können unverändert damit
-// arbeiten. Wirft keinen Fehler, wenn der Datensatz fehlt.
+// Reads family data + calendar selection of ONE family and adds its credentials.
+// config then contains email/appPassword as usual - all callers can keep working
+// with it unchanged. Does not throw an error if the record is missing.
 function loadAppleConfig(familyId) {
     let data = {};
     try {
@@ -958,10 +958,10 @@ function loadAppleConfig(familyId) {
             data = parseRecordData(record.get("data")) || {};
         }
     } catch (e) { data = {}; }
-    // Familienmitglieder liegen ab 1.108 im Bereich „mitglieder“, Aufgaben, Haushalt und die Kalender-Auswahl
-    // (appleCalendar) ab 1.109 in „aufgaben“, „haushalt“ und „kalender“ (pinn-bereiche.js) - nur zum Lesen ergänzen
+    // From 1.108, family members live in the area "mitglieder"; tasks, household and the calendar selection
+    // (appleCalendar) from 1.109 in "aufgaben", "haushalt" and "kalender" (pinn-bereiche.js) - only added for reading
     if (familyId) {
-        try { require(`${__hooks}/pinn-bereiche.js`).overlay(familyId, data, ["mitglieder", "aufgaben", "haushalt", "kalender"]); } catch (e) { /* noch ohne Bereiche */ }
+        try { require(`${__hooks}/pinn-bereiche.js`).overlay(familyId, data, ["mitglieder", "aufgaben", "haushalt", "kalender"]); } catch (e) { /* without areas yet */ }
     }
     const creds = getAppleCredentials(familyId);
     const stored = (data && data.appleCalendar && typeof data.appleCalendar === "object") ? data.appleCalendar : {};
@@ -972,20 +972,20 @@ function loadAppleConfig(familyId) {
 const MISSING_CREDENTIALS_MESSAGE = "Für deine Familie ist noch keine Apple-ID hinterlegt (Einstellungen → Kalender → Bearbeiten).";
 const NO_ACCOUNT_MESSAGE = "Für deine Familie ist noch kein Kalender verbunden – unter Einstellungen → Kalender → Bearbeiten eine Apple-ID hinterlegen oder ein Google-Konto verbinden.";
 
-// Ergebnis des letzten Syncs je Familie - im gemeinsamen Server-Speicher (gilt für alle Hook-Umgebungen),
-// für die Statusanzeige in den Einstellungen.
+// Result of the last sync per family - in the shared server memory (applies to all hook environments),
+// for the status display in the settings.
 function setLastSync(familyId, ok, message) {
-    try { $app.store().set("pinnAppleSync:" + familyId, { at: new Date().toISOString(), ok: ok, message: message || "" }); } catch (e) { /* egal */ }
+    try { $app.store().set("pinnAppleSync:" + familyId, { at: new Date().toISOString(), ok: ok, message: message || "" }); } catch (e) { /* does not matter */ }
 }
 function getLastSync(familyId) {
     try {
         const s = $app.store().get("pinnAppleSync:" + familyId);
         if (s && s.at) return { at: String(s.at), ok: s.ok, message: String(s.message || "") };
-    } catch (e) { /* egal */ }
+    } catch (e) { /* does not matter */ }
     return { at: "", ok: null, message: "" };
 }
 
-// Status für die Einstellungen (ohne Passwort!).
+// Status for the settings (without password!).
 function getAppleStatus(familyId) {
     const creds = getAppleCredentials(familyId);
     return {
@@ -998,8 +998,8 @@ function getAppleStatus(familyId) {
     };
 }
 
-// E-Mail-Adressen in Logs nur gekürzt ausgeben (z.B. "name@example.com" -> "na***@***"), damit
-// Logs gefahrlos geteilt werden können.
+// Log e-mail addresses only in shortened form (e.g. "name@example.com" -> "na***@***") so that
+// logs can be shared safely.
 function maskEmail(email) {
     const s = String(email || "");
     const at = s.indexOf("@");
@@ -1007,13 +1007,13 @@ function maskEmail(email) {
     return s.slice(0, Math.min(2, at)) + "***@***";
 }
 
-// Kalenderdatei EINER Familie neu schreiben - aus iCloud UND Google (je nachdem, was verbunden und
-// ausgewählt ist), bzw. leeren, wenn nichts verbunden oder keine Kalender ausgewählt sind.
-// Schlägt der Abruf fehl, bleibt die bisherige Datei stehen. Die Haushalts-Erkennung läuft nicht
-// hier (siehe pinn-aufgaben.js).
-// Admin-Fehlerprotokoll (pinn-protokoll.js) – fehlt die Datei, bleibt es beim Docker-Log
+// Rewrite the calendar file of ONE family - from iCloud AND Google (depending on what is connected and
+// selected), or empty it if nothing is connected or no calendars are selected.
+// If the retrieval fails, the previous file stays in place. The household detection does not run
+// here (see pinn-aufgaben.js).
+// Admin error log (pinn-protokoll.js) - if the file is missing, it stays with the Docker log
 function plog(art, bereich, meldung, opts) {
-    try { require(`${__hooks}/pinn-protokoll.js`)[art](bereich, meldung, opts || {}); } catch (e) { /* Protokoll nicht verfügbar */ }
+    try { require(`${__hooks}/pinn-protokoll.js`)[art](bereich, meldung, opts || {}); } catch (e) { /* log not available */ }
 }
 
 function syncFamily(familyId) {
@@ -1025,17 +1025,17 @@ function syncFamily(familyId) {
         let googleConnected = false;
         try { google = googleLib(); googleConnected = google.hasCredentials(familyId); } catch (e) { googleConnected = false; }
         const selected = (config.selectedCalendars || []).slice();
-        // AUSGEKLAMMERT: Aufgaben laufen nicht mehr über den Aufgaben-Kalender (siehe pinn-aufgaben.js).
+        // COMMENTED OUT: tasks no longer run via the tasks calendar (see pinn-aufgaben.js).
         // const hasTaskCalendar = config.taskCalendarName;
 
         if (!configured && !googleConnected) {
-            // Kein Konto verbunden: Kalenderdatei leeren, statt veraltete Termine stehen zu lassen.
+            // No account connected: empty the calendar file instead of leaving outdated events in place.
             $os.writeFile(path, EMPTY_ICS, 420);
             setLastSync(familyId, false, error || MISSING_CREDENTIALS_MESSAGE);
             return;
         }
         if (!selected.length) {
-            // Keine Kalender ausgewählt (z.B. nach "Auswahl zurücksetzen")
+            // No calendars selected (e.g. after "Reset selection")
             $os.writeFile(path, EMPTY_ICS, 420);
             setLastSync(familyId, true, "Keine Kalender ausgewählt.");
             return;
@@ -1059,12 +1059,12 @@ function syncFamily(familyId) {
         let msg = result.blocks.length + " Termine aus " + result.synced.length + " Kalender(n)";
         if (result.skipped.length) msg += " – nicht lesbar: " + result.skipped.join(", ");
         setLastSync(familyId, true, msg);
-        if (googleConnected && googleNames.length) { try { google.clearError(familyId); } catch (e) { /* egal */ } }
+        if (googleConnected && googleNames.length) { try { google.clearError(familyId); } catch (e) { /* does not matter */ } }
         console.log("[Kalender-Sync] Familie " + familyId + " erfolgreich: " + result.synced.join(", ") + " (" + result.blocks.length + " Termine)");
         plog("behoben", "sync", familyId);
         if (result.skipped.length) plog("warnung", "sync", "Kalender-Sync: nicht lesbar und übersprungen: " + result.skipped.join(", "), { familie: familyId });
 
-        /* ===== AUSGEKLAMMERT: Haushalts-Erkennung über den Aufgaben-Kalender (jetzt pinn-aufgaben.js) =====
+        /* ===== COMMENTED OUT: household detection via the tasks calendar (now pinn-aufgaben.js) =====
         try {
             let allTasks = [];
             if (hasTaskCalendar) {
@@ -1080,9 +1080,9 @@ function syncFamily(familyId) {
                 }
             }
 
-            // Grobe Gesamtzahl fuer den Live-Zähler ermitteln (Reinigungen + Mülleimer-Zeitpläne,
-            // die heute fällig sind - die Mülltonnen-Abholungserkennung ist unabhängig vom Datum
-            // eines gespeicherten Zeitplans und wird hier bewusst nicht mitgezählt).
+            // Rough total count for the live counter (cleanings + trash bin schedules
+            // that are due today - the bin collection detection is independent of the date
+            // of a stored schedule and is deliberately not counted here).
             const nowP = new Date();
             const padP = n => String(n).padStart(2, "0");
             const todayIsoP = nowP.getFullYear() + "-" + padP(nowP.getMonth() + 1) + "-" + padP(nowP.getDate());
@@ -1098,10 +1098,10 @@ function syncFamily(familyId) {
 
             finishHouseholdProgress(householdProgress.done + " Regel" + (householdProgress.done === 1 ? "" : "n") + " geprüft");
 
-            // Die Kalenderdatei wurde oben VOR der Erkennung geschrieben - falls dabei gerade neue
-            // Aufgaben angelegt wurden, fehlen die in dieser Datei noch. Jetzt, wo alles Nötige
-            // angelegt ist, die Datei ein zweites Mal schreiben, damit die App sie sofort sieht statt
-            // erst beim naechsten Durchlauf.
+            // The calendar file was written above BEFORE the detection - if new tasks
+            // were just created in the process, they are still missing in that file. Now that everything needed
+            // has been created, write the file a second time so that the app sees it immediately instead of
+            // only on the next run.
             try {
                 const result2 = syncSelectedCalendars(config.email, config.appPassword, namesToSync, path);
                 console.log("[Kalender-Sync] Datei nach Haushalts-Erkennung aktualisiert: " + result2.eventCount + " Termine.");
@@ -1112,7 +1112,7 @@ function syncFamily(familyId) {
             console.log("[Muell-Erkennung] Fehler: " + e.message);
             finishHouseholdProgress("Fehler: " + e.message);
         }
-        ===== ENDE AUSGEKLAMMERT ===== */
+        ===== END COMMENTED OUT ===== */
     } catch (e) {
         setLastSync(familyId, false, e.message);
         console.log("[Kalender-Sync] Familie " + familyId + " - Fehler: " + e.message);
@@ -1120,23 +1120,23 @@ function syncFamily(familyId) {
     }
 }
 
-// Aktualisiert NUR die Kalenderdatei einer Familie (kein Auslösen der Haushalts-Erkennung) - für
-// Aufrufe direkt nach Anlegen/Ändern/Löschen eines einzelnen Termins, damit die Anzeige sofort
-// aktuell ist.
+// Updates ONLY the calendar file of a family (does not trigger the household detection) - for
+// calls directly after creating/changing/deleting a single event, so that the display is
+// up to date immediately.
 function syncCalendarFileOnly(familyId) {
     syncFamily(familyId);
 }
 
-// Cron-Takt (alle 15 Min.) und "Jetzt aktualisieren". Mit Familien-ID nur diese Familie, sonst
-// alle Familien: mit Apple-ID und/oder Google-Konto -> Abgleich, ohne -> Kalenderdatei leeren (kein
-// Zugriff nach außen, kein Laden der Familiendaten).
+// Cron tick (every 15 min) and "Refresh now". With a family ID only that family, otherwise
+// all families: with Apple ID and/or Google account -> sync, without -> empty the calendar file (no
+// outbound access, no loading of the family data).
 function runCronSync(familyId) {
     if (familyId) return syncFamily(familyId);
     let withCreds = [];
     try { withCreds = require(`${__hooks}/pinn-apple.js`).familiesWithCredentials(); } catch (e) { withCreds = []; }
     try {
         googleLib().familiesWithCredentials().forEach(id => { if (withCreds.indexOf(id) === -1) withCreds.push(id); });
-    } catch (e) { /* Google nicht eingerichtet */ }
+    } catch (e) { /* Google not set up */ }
     let all = [];
     try { all = $app.findRecordsByFilter("familien", "", "", 0, 0).map(f => f.id); } catch (e) { all = []; }
     all.forEach(id => {
@@ -1145,21 +1145,21 @@ function runCronSync(familyId) {
         } else {
             try {
                 if (readCalendarText(id) !== EMPTY_ICS) writeEmptyCalendar(id);
-            } catch (e) { /* egal */ }
+            } catch (e) { /* does not matter */ }
         }
     });
 }
 
-// Escaped Sonderzeichen für ICS-Textfelder (Backslash, Semikolon, Komma, Zeilenumbruch) nach RFC 5545.
+// Escapes special characters for ICS text fields (backslash, semicolon, comma, line break) per RFC 5545.
 function escapeICSText(s) {
     return String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
 }
 
-// Baut den VEVENT-Text aus den Formular-Daten der App. Für iCloud bewusst "floating" lokale Zeit
-// (kein Z, kein TZID) statt eines vollen VTIMEZONE-Blocks - einfacher und für unseren Zweck
-// ausreichend, da sowohl die App als auch iCloud dieselbe Systemzeit annehmen.
-// Für Google wird die Zeitzone des Zielkalenders mitgegeben (tzid, z. B. "Europe/Berlin"), weil
-// Google Zeiten ohne Zeitzone sonst je nach Kalender anders deuten kann.
+// Builds the VEVENT text from the app's form data. For iCloud deliberately "floating" local time
+// (no Z, no TZID) instead of a full VTIMEZONE block - simpler and sufficient for our purpose,
+// since both the app and iCloud assume the same system time.
+// For Google, the time zone of the target calendar is passed along (tzid, e.g. "Europe/Berlin"), because
+// Google may otherwise interpret times without a time zone differently depending on the calendar.
 function buildVEventICS(uid, dtstampUtc, ev, tzid) {
     const tzParam = (tzid && /^[A-Za-z0-9_+\-\/]{2,64}$/.test(tzid)) ? ';TZID=' + tzid : '';
     const lines = [];
@@ -1172,8 +1172,8 @@ function buildVEventICS(uid, dtstampUtc, ev, tzid) {
     lines.push('SUMMARY:' + escapeICSText(ev.title));
     if (ev.allDay) {
         lines.push('DTSTART;VALUE=DATE:' + ev.startDate.replace(/-/g, ''));
-        // DTEND ist bei ganztägigen Terminen exklusiv (s. Lese-Seite) - +1 Tag gegenüber dem
-        // vom Nutzer gewählten letzten Tag.
+        // DTEND is exclusive for all-day events (see the read side) - +1 day compared to the
+        // last day chosen by the user.
         const endD = new Date(ev.endDate + 'T00:00:00');
         endD.setDate(endD.getDate() + 1);
         const pad = n => String(n).padStart(2, '0');
@@ -1205,44 +1205,44 @@ function buildVEventICS(uid, dtstampUtc, ev, tzid) {
     return lines.join('\r\n');
 }
 
-// Die folgenden drei Funktionen arbeiten nur mit festen iCloud-Zugangsdaten und bleiben aus
-// Kompatibilitätsgründen erhalten. Die Endpunkte nutzen createEventForFamily / fetchRawEventForFamily /
-// updateEventForFamily (oben, Abschnitt "Konten"), die iCloud UND Google beherrschen.
+// The following three functions only work with fixed iCloud credentials and are kept for
+// compatibility reasons. The endpoints use createEventForFamily / fetchRawEventForFamily /
+// updateEventForFamily (above, section "Accounts"), which handle iCloud AND Google.
 
-// Legt einen neuen Termin WIRKLICH in iCloud an (nicht nur bei uns). Gibt die neu vergebene UID zurück.
+// Creates a new event FOR REAL in iCloud (not just on our side). Returns the newly assigned UID.
 function createCalendarEvent(email, password, calendarName, ev) {
     return createEventInAccount(appleAccount(email, password), calendarName, ev);
 }
 
-// Lädt den rohen ICS-Text einer einzelnen Termin-Ressource (für "Bearbeiten" - damit die App
-// Wiederholung/Erinnerung/Link auslesen und beim Speichern nicht versehentlich verwerfen kann).
+// Loads the raw ICS text of a single event resource (for "Edit" - so that the app can read
+// repeat/reminder/link and does not accidentally discard them when saving).
 function fetchRawEvent(email, password, href) {
     return fetchRawEventInAccount(appleAccount(email, password), href);
 }
 
-// Aktualisiert einen BESTEHENDEN Termin in iCloud (PUT auf dieselbe Ressource, dieselbe UID -
-// das ersetzt seinen Inhalt, statt einen neuen Termin anzulegen).
+// Updates an EXISTING event in iCloud (PUT to the same resource, same UID -
+// this replaces its content instead of creating a new event).
 function updateCalendarEvent(email, password, eventHref, uid, ev) {
     const acc = appleAccount(email, password);
     return updateEventAcrossAccounts(acc, acc, eventHref, uid, ev);
 }
 
-// Nur die Erinnerungslisten (falls doch mal gebraucht) - Achtung: moderne, in der App genutzte
-// Erinnerungen sind seit iOS 13 NICHT mehr über CalDAV erreichbar (Apple hat sie auf einen
-// privaten CloudKit-Speicher umgestellt). Diese Funktion findet daher i.d.R. nur verwaiste
-// Alt-Listen, keine echten aktuell genutzten Listen. "Aufgaben" laufen deshalb in pinn über einen
-// normalen (zweiten) Kalender statt über Erinnerungen - siehe createCalendarEvent/updateCalendarEvent.
+// Only the reminder lists (in case they are needed after all) - note: modern reminders as used in the app
+// have NOT been reachable via CalDAV since iOS 13 (Apple moved them to a
+// private CloudKit store). This function therefore usually only finds orphaned
+// legacy lists, no really used current lists. In pinn, "tasks" therefore run via a
+// normal (second) calendar instead of via reminders - see createCalendarEvent/updateCalendarEvent.
 
-/* ===== AUSGEKLAMMERT: Aufgaben über den Apple-Aufgaben-Kalender =====
-   Aufgaben liegen jetzt in der PocketBase-Sammlung "aufgaben" (pinn-aufgaben.js).
-   Dieser Block bleibt nur zur Sicherheit erhalten, falls die Kalender-Variante noch gebraucht wird.
-// Löscht ALLE vom Haushalt-Feature automatisch erzeugten Aufgaben (Reinigungen/Aufräumen/
-// Mülleimer-rausbringen) aus dem Aufgaben-Kalender - erkannt am Titel-Präfix. Normale, manuell
-// angelegte Aufgaben bleiben unangetastet. Gibt zurück, wie viele gelöscht wurden.
-// Löscht - falls vorhanden - die HEUTIGE Aufgabe mit genau diesem Titel (Präfix-Vergleich wie
-// sonst auch, damit ein Rückstands-Zähler im Titel nicht stört). Wird genutzt, wenn eine Regel so
-// bearbeitet wird, dass sich ihr Titel ändert (z.B. andere Kategorie) - die alte, jetzt verwaiste
-// Aufgabe von heute soll nicht einfach liegen bleiben.
+/* ===== COMMENTED OUT: tasks via the Apple tasks calendar =====
+   Tasks now live in the PocketBase collection "aufgaben" (pinn-aufgaben.js).
+   This block is only kept for safety in case the calendar variant is still needed.
+// Deletes ALL tasks automatically generated by the household feature (cleanings/tidying/
+// taking out bins) from the tasks calendar - recognised by the title prefix. Normal, manually
+// created tasks stay untouched. Returns how many were deleted.
+// Deletes - if present - TODAY's task with exactly this title (prefix comparison as
+// usual, so that a backlog counter in the title does not interfere). Used when a rule is
+// edited in a way that changes its title (e.g. a different category) - the old, now orphaned
+// task from today should not simply stay around.
 function deleteTodayHouseholdTask(email, password, taskCalendarName, baseTitle) {
     const now = new Date();
     const pad = n => String(n).padStart(2, "0");
@@ -1279,15 +1279,15 @@ function deleteHouseholdTasks(email, password, taskCalendarName, cleaningCategor
     const taskCal = calendars.find(c => c.name === taskCalendarName);
     if (!taskCal) throw new Error('Aufgaben-Kalender "' + taskCalendarName + '" wurde nicht gefunden.');
 
-    // Die Mülleimer-Präfixe sind jetzt je Müllart unterschiedlich ("Papiermüll rausbringen:",
-    // "Biomüll rausbringen:" usw.) - alle Varianten aus WASTE_TYPE_KEYWORDS_SERVER ableiten, statt
-    // eines einzelnen festen Textes.
+    // The bin prefixes now differ per waste type ("Paper waste take-out:",
+    // "Organic waste take-out:" etc.) - derive all variants from WASTE_TYPE_KEYWORDS_SERVER instead
+    // of a single fixed text.
     const prefixes = (cleaningCategories || []).map(c => c.label + ':')
         .concat(WASTE_TYPE_KEYWORDS_SERVER.map(wt => wt.icon + ' ' + wt.taskLabel + ' rausbringen:'));
     const resources = downloadCalendarEvents(host, xmlHeaders, taskCal.href);
 
-    // Erst ALLE betroffenen Ressourcen ermitteln, damit die Gesamtzahl von Anfang an feststeht
-    // (fuer den Live-Zähler "X von Y gelöscht" in den Einstellungen).
+    // First determine ALL affected resources so that the total is known from the start
+    // (for the live counter "X of Y deleted" in the settings).
     const toDelete = [];
     resources.forEach(res => {
         res.veventBlocks.forEach(block => {
@@ -1319,7 +1319,7 @@ function deleteHouseholdTasks(email, password, taskCalendarName, cleaningCategor
     return deletedCount;
 }
 
-===== ENDE AUSGEKLAMMERT ===== */
+===== END COMMENTED OUT ===== */
 
 module.exports = {
     discoverCalendars, syncSelectedCalendars, runCronSync, syncCalendarFileOnly, syncFamily, deleteCalendarEvent, createCalendarEvent, updateCalendarEvent, fetchRawEvent, parseRecordData, bytesToText,
@@ -1330,7 +1330,7 @@ module.exports = {
     // iCloud + Google (Android)
     isGoogleHref, isGoogleCalendarName, createEventForFamily, updateEventForFamily, deleteEventForFamily,
     fetchRawEventForFamily, discoverCalendarsForFamily,
-    // Konto-Funktionen für persönliche Konten (eigene Kalender „Nur für mich“, pinn-kalender.js)
+    // Account functions for personal accounts (private "only for me" calendars, pinn-kalender.js)
     appleAccount, downloadCalendarEvents, createEventInAccount, updateEventAcrossAccounts, deleteEventInAccount,
     fetchRawEventInAccount, resourceUrlFor, normUrl,
 };

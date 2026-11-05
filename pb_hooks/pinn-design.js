@@ -1,19 +1,19 @@
 // pb_hooks/pinn-design.js
-// Kein *.pb.js -> wird NICHT automatisch als Hook geladen, sondern nur per require() eingebunden.
-// Persönliche Design-Einstellungen je Profil (geräteübergreifend).
+// Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require().
+// Personal design settings per profile (across devices).
 //
-// Gespeichert wird im Profil (Sammlung "benutzer") im versteckten JSON-Feld "design_einstellungen":
-//   { werte: { schluessel: wert, ... }, stand: <Zeitstempel in ms> }
-// "stand" ist der Zeitpunkt der letzten Änderung auf dem Gerät. Der Server behält immer den
-// neueren Stand - so überschreibt ein Gerät, das offline alte Einstellungen nachträgt, keine
-// neueren Änderungen von einem anderen Gerät.
+// Stored in the profile (collection "benutzer") in the hidden JSON field "design_einstellungen":
+//   { werte: { schluessel: wert, ... }, stand: <timestamp in ms> }
+// "stand" is the time of the last change on the device. The server always keeps the
+// newer state - so a device that submits old settings after being offline does not overwrite any
+// newer changes from another device.
 
 const FIELD = "design_einstellungen";
 const MAX_KEYS = 60;
 const MAX_KEY_LEN = 40;
 const MAX_STRING_LEN = 300;
 
-// Feld im Profil sicherstellen. true = vorhanden.
+// Make sure the field exists in the profile. true = present.
 function ensureField() {
     const lib = require(`${__hooks}/pinn-benutzer.js`);
     const col = lib.findCol(lib.USERS);
@@ -30,7 +30,7 @@ function ensureField() {
     }
 }
 
-// Nur einfache Werte zulassen (Text, Zahl, Ja/Nein, Listen aus Text/Zahlen).
+// Only allow simple values (text, number, yes/no, lists of text/numbers).
 function cleanValue(v) {
     if (typeof v === "boolean") return v;
     if (typeof v === "number") return isFinite(v) ? v : undefined;
@@ -63,7 +63,7 @@ function cleanDesign(input) {
     });
     let stand = parseInt(src.stand, 10);
     if (!isFinite(stand) || stand < 0) stand = 0;
-    // Uhrzeit eines Geräts, die weit in der Zukunft liegt, nicht übernehmen
+    // Do not take over a device time that lies far in the future
     const maxStand = Date.now() + 24 * 60 * 60 * 1000;
     if (stand > maxStand) stand = maxStand;
     return { werte: werte, stand: stand };
@@ -77,7 +77,7 @@ function readDesign(userRec) {
     return cleanDesign(raw);
 }
 
-// Speichert, wenn der neue Stand nicht älter ist. Gibt { design, uebernommen, fehler } zurück.
+// Saves if the new state is not older. Returns { design, uebernommen, fehler }.
 function saveDesign(userId, input) {
     const incoming = cleanDesign(input);
     if (!incoming.stand) incoming.stand = Date.now();
@@ -85,7 +85,7 @@ function saveDesign(userId, input) {
     const rec = $app.findRecordById("benutzer", userId);
     const current = readDesign(rec);
     if (current.stand > incoming.stand) {
-        // Auf einem anderen Gerät wurde später geändert -> dieser Stand gilt
+        // Changed later on another device -> that state applies
         return { design: current, uebernommen: false, fehler: "" };
     }
     rec.set(FIELD, incoming);

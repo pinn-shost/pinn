@@ -1,15 +1,15 @@
-/* pinn. – Einrichtungs-Assistent für den Hauptadmin (pb_public/einrichtung.js)
+/* pinn. – Set-up wizard for the main admin (pb_public/einrichtung.js)
    ----------------------------------------------------------------------------
-   Wird von index.html nur bei Bedarf nachgeladen (Hauptadmin → Einrichtung bzw. automatisch nach
-   der ersten Anmeldung als Hauptadmin). Eigene Texte in Deutsch, Englisch, Französisch, Spanisch, Italienisch, Portugiesisch, Chinesisch, Japanisch, Koreanisch, Russisch und Niederländisch –
-   die Übersetzungs-Schicht der App greift hier nicht ein (data-no-i18n / data-no-term).
-   Server: pb_hooks/einrichtung.pb.js + pinn-einrichtung.js. Jeder Schritt wird beim Tippen auf
-   „Weiter“ gespeichert; am Ende übernimmt pinn. alles mit einem kurzen Neustart. */
+   Loaded by index.html only when needed (main admin → Set-up, or automatically after
+   the first sign-in as main admin). Own texts in German, English, French, Spanish, Italian, Portuguese, Chinese, Japanese, Korean, Russian and Dutch –
+   the app's translation layer does not interfere here (data-no-i18n / data-no-term).
+   Server: pb_hooks/einrichtung.pb.js + pinn-einrichtung.js. Every step is saved when tapping
+   "Weiter" (Next); at the end pinn. takes over everything with a short restart. */
 (function () {
   'use strict';
   if (window.PinnSetup) return;
 
-  // Russisch (seit 1.120.0 vorbereitet, seit 1.121.0 freigeschaltet); versteckte Sprachen stehen nur zur Auswahl, wenn die App sie anbietet
+  // Russian (prepared since 1.120.0, enabled since 1.121.0); hidden languages are only selectable if the app offers them
   var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl'];
   var T = {};
   T.de = {
@@ -2224,7 +2224,7 @@
     nochmalPruefen: "Проверить снова", zurVerwaltung: "К управлению семьями",
   };
 
-  // Niederländisch (seit 1.123.11, in der App freigeschaltet seit 1.123.12)
+  // Dutch (since 1.123.11, enabled in the app since 1.123.12)
   T.nl = {
     titel: "Installatie", lade: "Installatie wordt geladen …",
     weiter: "Volgende", zurueck: "Terug", ueberspringen: "Overslaan", spaeter: "Later", schliessen: "Sluiten",
@@ -2489,7 +2489,7 @@
     var el = S.root && S.root.querySelector('[data-key="' + key + '"]');
     return el ? String(el.value || '').trim() : null;
   }
-  // aktueller (evtl. gerade getippter) Wert eines normalen Feldes
+  // current (possibly just typed) value of a normal field
   function cur(key) {
     var v = inputVal(key);
     if (v !== null) return v;
@@ -2537,7 +2537,7 @@
       VORSCHLAG: hilfsVorschlag(),
     };
   }
-  // Text mit Platzhaltern {NAS_IP}, Links [Text](https://…) und Code `…` (antippen = kopieren)
+  // Text with placeholders {NAS_IP}, links [Text](https://…) and code `…` (tap = copy)
   function rich(s) {
     var c = ctx();
     var out = esc(s);
@@ -2612,7 +2612,7 @@
     });
   }
 
-  /* ---------- Werte des aktuellen Schritts einsammeln ---------- */
+  /* ---------- Collect the values of the current step ---------- */
   function collect(step) {
     var werte = {};
     (step.keys || []).forEach(function (k) {
@@ -2620,7 +2620,7 @@
       if (GEHEIM[k]) {
         if (S.leeren[k]) werte[k] = '';
         else if (v) werte[k] = v;
-        else werte[k] = null; // unverändert
+        else werte[k] = null; // unchanged
       } else if (v !== null) {
         werte[k] = v;
       }
@@ -2731,7 +2731,7 @@
   R.sprache = function () {
     var langs = (window.PINN_LANGUAGES || []).slice();
     var order = { de: 0, en: 1, fr: 2, es: 3, it: 4, pt: 5, zh: 6, ja: 7, ko: 8, ru: 9, nl: 10 };
-    // Versteckte Sprachen nur, wenn sie auf diesem Gerät zum Testen freigeschaltet sind (PINN_I18N.find)
+    // Hidden languages only if they are enabled on this device for testing (PINN_I18N.find)
     var I = window.PINN_I18N;
     langs = langs.filter(function (l) { return order[l.code] != null && (!l.hidden || (I && I.find && I.find(l.code))); })
       .sort(function (a, b) { return order[a.code] - order[b.code]; });
@@ -2902,7 +2902,7 @@
     return h;
   }
 
-  /* ---------- Prüfen ---------- */
+  /* ---------- Check ---------- */
   function runTest(art) {
     if (S.tests[art] === 'laeuft') return;
     var step = STEPS[S.step];
@@ -2963,7 +2963,7 @@
     });
   }
   function keepDraft() {
-    // Getippte, noch nicht gespeicherte Werte beim Zurückblättern nicht verlieren
+    // Do not lose typed values that are not saved yet when paging back
     var step = STEPS[S.step];
     S.draft = S.draft || {};
     (step.keys || []).forEach(function (k) {
@@ -2983,7 +2983,7 @@
     if (b) { b.disabled = on; b.textContent = on ? t('speichere') : (S.step === STEPS.length - 1 ? t('speichernStarten') : t('weiter')); }
   }
 
-  /* ---------- Abschließen ---------- */
+  /* ---------- Finish ---------- */
   function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
   function fetchTimeout(url, ms) {
     var ctrl = window.AbortController ? new AbortController() : null;
@@ -3181,7 +3181,7 @@
     if (!S.root) return;
     var wrap = S.root.querySelector('#ps_wrap');
     var scroll = S.root.scrollTop;
-    // Getippte Werte nicht verlieren, wenn neu gezeichnet wird (z. B. nach „Prüfen“)
+    // Do not lose typed values when redrawing (e.g. after "Check")
     var typed = {};
     S.root.querySelectorAll('[data-key]').forEach(function (el) { typed[el.getAttribute('data-key')] = el.value; });
     var portEl = S.root.querySelector('#ps_port');
@@ -3219,7 +3219,7 @@
   function onClick(ev) {
     var el = ev.target.closest('button, .ps-code, a');
     if (!el || !S.root.contains(el)) return;
-    if (el.tagName === 'A') return; // Links öffnen normal
+    if (el.tagName === 'A') return; // links open normally
     if (el.classList.contains('ps-code')) { copyText(el.getAttribute('data-copy') || el.textContent, null); el.style.outline = '2px solid #2ea043'; setTimeout(function () { el.style.outline = ''; }, 700); return; }
     var d = el.dataset || {};
     if (d.copy != null) { copyText(d.copy, el); return; }
@@ -3248,7 +3248,7 @@
       if (a) a.textContent = adresse() || '–';
     }
     if (k && S.tests && STEPS[S.step]) {
-      // nach einer Änderung gilt das alte Prüfergebnis nicht mehr
+      // after a change the old check result no longer applies
       var art = { DUCKDNS_SUBDOMAIN: 'duckdns', DUCKDNS_TOKEN: 'duckdns', PINN_GOOGLE_CLIENT_ID: 'google', PINN_GOOGLE_CLIENT_SECRET: 'google', PINN_GEMINI_KEY: 'gemini', HA_IP: 'homeassistant' }[k];
       if (art && S.tests[art] && S.tests[art] !== 'laeuft') delete S.tests[art];
     }
@@ -3289,7 +3289,7 @@
     });
   }
 
-  // Für index.html: Status abfragen (z. B. für den Hinweis beim Hauptadmin)
+  // For index.html: query the status (e.g. for the notice for the main admin)
   function status(apiFetch) {
     S.opts.apiFetch = apiFetch || S.opts.apiFetch;
     return api('/api/pinn/einrichtung', { cache: 'no-store' });

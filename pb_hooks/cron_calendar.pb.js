@@ -1,11 +1,11 @@
 // pb_hooks/cron_calendar.pb.js
-// Registriert nur den 15-Minuten-Cron. Die eigentliche Logik steckt in calendar-sync.js und
-// gleicht nacheinander jede Familie mit hinterlegter Apple-ID ab (eigene Kalenderdatei je Familie).
-// Bewusst KEIN Sync mehr beim Start (onBootstrap): Der lief synchron VOR dem Serverstart und hat
-// damit den kompletten Start (inkl. Dashboard /_/ und "superuser upsert") blockiert, solange er
-// lief. Einen Sofort-Sync gibt es weiterhin ueber die App (trigger_sync.pb.js).
-// Fehler einzelner Familien protokolliert calendar-sync.js selbst; ein Fehler im ganzen Lauf landet
-// hier zusätzlich im Admin-Fehlerprotokoll (pinn-protokoll.js).
+// Only registers the 15-minute cron. The actual logic lives in calendar-sync.js and
+// syncs every family with a stored Apple ID one after another (own calendar file per family).
+// Deliberately NO sync on start any more (onBootstrap): it ran synchronously BEFORE the server start and
+// thereby blocked the whole start (including the dashboard /_/ and "superuser upsert") for as long as it
+// ran. An immediate sync is still available via the app (trigger_sync.pb.js).
+// Errors of individual families are logged by calendar-sync.js itself; an error in the whole run additionally
+// ends up here in the admin error log (pinn-protokoll.js).
 
 cronAdd("syncAppleCalendarCron", "*/15 * * * *", () => {
     try {
@@ -13,6 +13,6 @@ cronAdd("syncAppleCalendarCron", "*/15 * * * *", () => {
         calendarSync.runCronSync();
     } catch (err) {
         console.log("[Kalender-Sync] Zeitplan-Fehler: " + err.message);
-        try { require(`${__hooks}/pinn-protokoll.js`).fehler("sync", "Kalender-Sync-Zeitplan fehlgeschlagen: " + err.message); } catch (e2) { /* egal */ }
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("sync", "Kalender-Sync-Zeitplan fehlgeschlagen: " + err.message); } catch (e2) { /* ignore */ }
     }
 });
