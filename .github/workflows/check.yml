@@ -7,6 +7,7 @@
 #   4. hooks in a sandbox: they load, routes and cron jobs are unique and valid, used exports exist, unit tests
 #   5. clean-up list of pinn-setup.sh: never names a file the app still needs, the shell block works (since 1.102.1)
 #   6. text keys (i18n/, since 1.111.0; the old dictionaries in lang/ were removed in 1.119.3)
+#   7. every code comment is English (since 1.129.1)
 # Job "pocketbase" starts a real PocketBase (version from docker-compose.yaml) with an empty, temporary database,
 # pb_hooks/ and pb_public/, and sends a request to every route.
 # Every step of "check" runs even if an earlier one failed, so one run shows all problems.
@@ -62,6 +63,10 @@ jobs:
       - name: Text keys (i18n files, keys in the code, plural rules)
         if: success() || failure()
         run: node .github/scripts/check-keys.js
+
+      - name: Comments in English
+        if: success() || failure()
+        run: node .github/scripts/check-comments.js
 
   pocketbase:
     name: Routes on a real PocketBase

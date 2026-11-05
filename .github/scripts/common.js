@@ -1,6 +1,7 @@
 /* pinn. – shared helpers for the repository checks (.github/scripts/common.js, since 1.102.0)
 
-   Used by check-syntax.js, check-lint.js and check-hooks.js (scan() is the lexer shared by lint and hooks). Only Node.js is needed (no npm packages),
+   Used by check-syntax.js, check-lint.js, check-hooks.js and check-comments.js (scan() is the lexer shared by lint, hooks and
+   comments). Only Node.js is needed (no npm packages),
    so every contributor can run the same checks as GitHub Actions:  node .github/scripts/check-all.js */
 
 'use strict';
@@ -65,6 +66,7 @@ function inlineScripts(html) {
 //   bare      like masked, but the contents of strings, template strings and regular expressions are blanked too
 //   topLines  line numbers (0-based) that start outside of every block, string and comment
 //   clean     false if the lexer did not end at the top level (then the results may be incomplete)
+//   comments  [{ start, end }] – character ranges of every comment (// … without the line break, /* … */), since 1.129.1
 const REGEX_BEFORE = new Set('(,=:[!&|?{};+-*%<>~^'.split(''));
 const REGEX_WORDS = new Set(['return', 'typeof', 'instanceof', 'in', 'of', 'new', 'delete', 'void', 'throw', 'case', 'do', 'else', 'yield', 'await']);
 function scan(code) {
@@ -74,16 +76,18 @@ function scan(code) {
   const blank = i => { if (code[i] !== '\n') bare[i] = ' '; };
   let depth = 0, mode = 'code', lastSig = '', lastWord = '', inClass = false, line = 0;
   const topLines = new Set([0]);
+  const comments = [];
+  let commentStart = 0;
   for (let i = 0; i < code.length; i++) {
     const c = code[i], n = code[i + 1];
     if (c === '\n') {
       line++;
-      if (mode === 'line') mode = 'code';
+      if (mode === 'line') { comments.push({ start: commentStart, end: i }); mode = 'code'; }
       if (mode === 'code' && depth === 0 && !stack.length) topLines.add(line);
       continue;
     }
     if (mode === 'line') { masked[i] = bare[i] = ' '; continue; }
-    if (mode === 'block') { masked[i] = bare[i] = ' '; if (c === '*' && n === '/') { masked[i + 1] = bare[i + 1] = ' '; mode = 'code'; i++; } continue; }
+    if (mode === 'block') { masked[i] = bare[i] = ' '; if (c === '*' && n === '/') { masked[i + 1] = bare[i + 1] = ' '; comments.push({ start: commentStart, end: i + 2 }); mode = 'code'; i++; } continue; }
     if (mode === "'" || mode === '"') { blank(i); if (c === '\\') { blank(i + 1); i++; } else if (c === mode) { mode = 'code'; lastSig = 'x'; } continue; }
     if (mode === 'regex') {
       blank(i);
@@ -101,8 +105,8 @@ function scan(code) {
       continue;
     }
     // code
-    if (c === '/' && n === '/') { masked[i] = masked[i + 1] = bare[i] = bare[i + 1] = ' '; mode = 'line'; i++; continue; }
-    if (c === '/' && n === '*') { masked[i] = masked[i + 1] = bare[i] = bare[i + 1] = ' '; mode = 'block'; i++; continue; }
+    if (c === '/' && n === '/') { masked[i] = masked[i + 1] = bare[i] = bare[i + 1] = ' '; commentStart = i; mode = 'line'; i++; continue; }
+    if (c === '/' && n === '*') { masked[i] = masked[i + 1] = bare[i] = bare[i + 1] = ' '; commentStart = i; mode = 'block'; i++; continue; }
     if (c === "'" || c === '"') { blank(i); mode = c; continue; }
     if (c === '`') { blank(i); mode = 'tpl'; continue; }
     if (c === '/') {
@@ -121,8 +125,9 @@ function scan(code) {
     }
     if (!/\s/.test(c)) lastSig = c;
   }
+  if (mode === 'line') comments.push({ start: commentStart, end: code.length });
   const clean = depth === 0 && !stack.length && (mode === 'code' || mode === 'line');
-  return { masked: masked.join(''), bare: bare.join(''), topLines, clean };
+  return { masked: masked.join(''), bare: bare.join(''), topLines, clean, comments };
 }
 
 // Collects problems and prints a summary; exit code 1 if there was at least one
