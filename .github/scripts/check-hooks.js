@@ -462,7 +462,7 @@ if (exists(path.join(HOOKS, 'pinn-pushtext.js'))) {
   }
 }
 
-// Voice control (pinn-sprache.js): Russian sentences (since 1.121.0), the other languages keep working
+// Voice control (pinn-sprache.js): Russian sentences (since 1.121.0), nl/it/pt/zh/ja/ko (since 1.128.0), the other languages keep working
 if (exists(path.join(HOOKS, 'pinn-sprache.js'))) {
   let vs = null;
   test('pinn-sprache.js loads and still understands German and English', () => {
@@ -483,6 +483,28 @@ if (exists(path.join(HOOKS, 'pinn-sprache.js'))) {
       if (t.art !== 'aufgabe' || t.rest !== 'Вынести мусор' || !t.iso) bad.push('task');
       if (vs.intentOf('Что запланировано на сегодня').offset !== 0 || vs.intentOf('Что у нас завтра').offset !== 1) bad.push('day');
       if (vs.intentOf('Милая песня').art !== 'hilfe') bad.push('help');
+      return bad.length ? 'wrong: ' + bad.join(', ') : '';
+    });
+    // Dutch, Italian, Portuguese, Chinese, Japanese, Korean (since 1.128.0): one sentence per command and language
+    test('voice control in nl, it, pt, zh, ja, ko: add, read the list, task, day overview, answer texts', () => {
+      const bad = [];
+      const cs = vs.cleanSentence;
+      const items = r => (r.items || []).map(x => (x.qty ? x.qty + ' ' : '') + x.name).join('|');
+      const addCases = [
+        ['Zet twee pakken pasta op het lijstje van Albert Heijn', '2 pakken Pasta'], ['Aggiungi latte e uova alla lista della spesa', 'Latte|Uova'],
+        ['Adicione dois pacotes de macarrão à lista do mercado', '2 pacotes Macarrão'], ['把两包意大利面加到超市清单', '2包 意大利面'],
+        ['イオンのリストにパスタを2袋追加して', '2袋 パスタ'], ['이마트 목록에 파스타 두 봉지 추가해 줘', '2봉지 파스타'],
+      ];
+      addCases.forEach(c => { const r = vs.intentOf(cs(c[0])); if (r.art !== 'kaufen' || items(r) !== c[1]) bad.push('add ' + c[0]); });
+      ['Wat staat er op het boodschappenlijstje?', 'Cosa c’è nella lista della spesa?', 'O que tem na lista de compras?', '购物清单上有什么？', '買い物リストには何がある？', '장보기 목록에 뭐가 있어?']
+        .forEach(t => { if (vs.intentOf(cs(t)).art !== 'liste') bad.push('list ' + t); });
+      ['Herinner me morgen aan het afval', 'Ricordami domani di portare fuori i bidoni', 'Lembre-me de levar as lixeiras para fora amanhã', '提醒我明天把垃圾桶拿出去', '明日ごみ出しを思い出させて', '내일 쓰레기 내놓는 거 알려 줘']
+        .forEach(t => { const r = vs.intentOf(cs(t)); if (r.art !== 'aufgabe' || !r.iso || !r.rest) bad.push('task ' + t); });
+      ['Wat staat er vandaag op het programma?', 'Cosa c’è in programma oggi?', 'O que tem para hoje?', '今天有什么安排？', '今日の予定は？', '오늘 일정이 뭐야?']
+        .forEach(t => { const r = vs.intentOf(cs(t)); if (r.art !== 'tag' || r.offset !== 0) bad.push('day ' + t); });
+      if (vs.intentOf('Zwei Decken auf die Einkaufsliste').items[0].name !== 'Decken') bad.push('Decken');
+      const en = vs.texts.en;
+      Object.keys(vs.texts).forEach(l => { const miss = Object.keys(en).filter(k => !(k in vs.texts[l])); if (miss.length) bad.push(l + ' lacks ' + miss.join('/')); });
       return bad.length ? 'wrong: ' + bad.join(', ') : '';
     });
   }
