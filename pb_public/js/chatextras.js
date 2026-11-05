@@ -4,7 +4,8 @@
    - the "+" menu of the composer (photo/video, PDF, location, poll)
    - polls: a poll is a message { p: { q, o: [{ id, t }], mu, pn } }. Votes are small silent messages { v: { p: <poll message id>, s: [option ids] } }
      (the newest vote of a person counts; silent = no push, never unread, not shown). A poll that is also on the pin board (pn = note id)
-     reads and writes the votes of that pin board note instead, so the result is the same in both places.
+     reads and writes the votes of that pin board note instead, so the result is the same in both places. When that note is deleted
+     on the pin board, the bubble only says "the poll was deleted" (1.127.6).
    - locations: { l: { la, lo, ac, n } } with a small map in the bubble and a viewer with "show on the location map" (js/familie.js, famShowPoint)
    - search inside a conversation (client side: the messages are only readable on the device)
    - muting a chat, the switch "end-to-end encryption on/off" (admins), dissolving a group
@@ -102,16 +103,25 @@ function chatXVoteMap(pollId) {
   });
   return out;
 }
-// true if the open chat holds a poll that is also on the pin board
+// the pin board note a message depends on: a poll that is also on the pin board, or a reference to a note (since 1.127.6)
+function chatXBoardNoteOf(pl) {
+  const x = pl && pl.msg;
+  if (!x) return '';
+  if (x.p && x.p.pn) return String(x.p.pn);
+  if (x.r && x.r.k === 'pin' && x.r.id) return String(x.r.id);
+  return '';
+}
+// true if the open chat holds a poll that is also on the pin board or a reference to a pin board note
 function chatXHasBoardPoll(room) {
   const S = chatS;
-  return chatRoomState(room).msgs.some(m => { const pl = S.plain.get(m.id); return !!(pl && pl.msg && pl.msg.p && pl.msg.p.pn); });
+  return chatRoomState(room).msgs.some(m => !m.geloescht && !!chatXBoardNoteOf(S.plain.get(m.id)));
 }
-// the votes of all board-linked polls of the open chat as one string (to notice a change)
+// the votes (and the existence) of all pin board notes of the open chat as one string (to notice a change)
 function chatXBoardSig(room) {
   const S = chatS; let out = '';
   chatRoomState(room).msgs.forEach(m => {
-    const pl = S.plain.get(m.id), pn = pl && pl.msg && pl.msg.p && pl.msg.p.pn;
+    if (m.geloescht) return;
+    const pn = chatXBoardNoteOf(S.plain.get(m.id));
     if (!pn) return;
     try { const n = pinboard.find(x => x && x.id === pn); out += pn + ':' + JSON.stringify(n ? [n.votes || {}, !!n.closed] : null) + ';'; } catch (e) { /* ignore */ }
   });
@@ -129,12 +139,17 @@ function chatXPollBubble(p, m) {
   }
   // who voted for what: option id -> [voter ids]
   const per = {}; let mine = [], voters = 0, closed = false, readOnly = false, gone = false;
+  if (boardOn && !note) { try { gone = isViewAllowed('pinnwand') && pinboardLoadedOk(); } catch (e) { gone = false; } }
+  if (gone) { // the note was deleted on the pin board: the poll is gone everywhere (1.127.6)
+    box.replaceChildren(chatEl('div', 'chat-text chat-muted', '🚫 ' + tk('chat.pollDeleted')));
+    return box;
+  }
   if (boardOn) {
     if (note) {
       const votes = note.votes || {}; closed = !!note.closed;
       Object.keys(votes).forEach(k => { if (opts.some(o => o.id === votes[k])) { (per[votes[k]] = per[votes[k]] || []).push(k); voters++; } });
       try { mine = pwMyKeys().map(k => votes[k]).filter(Boolean).slice(0, 1); } catch (e) { mine = []; }
-    } else { readOnly = true; try { gone = isViewAllowed('pinnwand') && typeof pinboard !== 'undefined' && pinboardLoadedOk(); } catch (e) { gone = false; } }
+    } else readOnly = true;
   } else {
     const vm = chatXVoteMap(m.id);
     Object.keys(vm).forEach(u => { const s = vm[u].s.filter(id => opts.some(o => o.id === id)); if (s.length) voters++; s.forEach(id => { (per[id] = per[id] || []).push(u); }); });
@@ -152,12 +167,17 @@ function chatXPollBubble(p, m) {
     box.appendChild(b);
   });
   let hint;
-  if (readOnly) hint = gone ? tk('chat.poll.gone') : tk('chat.poll.noBoard');
+  if (readOnly) hint = tk('chat.poll.noBoard');
   else hint = tk('board.votesN', { n: voters }) + ' · ' + (closed ? tk('board.pollClosed') : (p.mu ? tk('chat.poll.multiHint') : tk('chat.poll.tapVote'))) + (boardOn ? ' · 📌 ' + tk('chat.poll.onBoard') : '');
   box.appendChild(chatEl('div', 'chat-poll-meta', hint));
   return box;
 }
-function pinboardLoadedOk() { return typeof pinboard !== 'undefined' && Array.isArray(pinboard) && pinboard.length > 0; }
+// true once the pin board of the family is known (also when it is empty - an empty board means a note was deleted)
+function pinboardLoadedOk() {
+  if (typeof pinboard === 'undefined' || !Array.isArray(pinboard)) return false;
+  if (pinboard.length > 0) return true;
+  try { return typeof familyRecordId !== 'undefined' && !!familyRecordId; } catch (e) { return false; }
+}
 function chatXVote(m, p, optId, current) {
   if (p.pn) { try { pwVote(p.pn, optId); } catch (e) { /* no access */ } chatRenderConv(); return; }
   let next;

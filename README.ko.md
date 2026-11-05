@@ -129,6 +129,15 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.127.6의 새 소식
+
+**채팅: 삭제한 메시지 자리에 안내 표시, 보안**
+
+- **삭제해도 표시가 남아요.** 삭제한 채팅 메시지가 그냥 사라지지 않아요. 그 자리에 모두에게 “이 메시지는 삭제되었어요”, 투표라면 “이 투표는 삭제되었어요”가 보여요.
+- **게시판에서 삭제.** 게시판에도 올린 투표를 게시판에서 삭제하면 채팅에도 “이 투표는 삭제되었어요”가 보여요. 삭제된 게시판 글로 가는 카드도 아무 데로도 안 가는 대신 삭제되었다고 알려 줘요.
+- **보안.** 채팅 사진·동영상 미리보기(`js/chatmedien.js`)의 코드 스캔 경고 “DOM text reinterpreted as HTML” 세 건을 해결했어요. 객체 주소를 엄격하게 확인하고 HTML용으로 이스케이프해요.
+- 변경: `js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, 모든 `i18n/*.i18n.js`, `src/` (`index.html`) 및 모든 README. 서버 부분: `pb_hooks/pinn-chat.js` – 훅도 함께 바꿔 주세요. 시작할 때 필드 하나가 자동으로 추가돼요.
+
 ## 1.127.5의 새 소식
 
 **채팅: 더 빠른 투표, 가계를 채팅으로, 보안**
@@ -196,17 +205,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - 변경: `index.html`, `js/chat.js`·`css/chat.css`(신규), 여러 `js/*.js`, 모든 `i18n/*.i18n.js`, `pinn-setup.sh`, 모든 README. **서버 부분:** `pb_hooks/chat.pb.js`·`pb_hooks/pinn-chat.js`(신규), `pb_hooks/pinn-push.js`, `pb_hooks/pinn-schema.js` – hooks도 함께 교체하세요.
 
 
-## 1.126.0의 새 소식
-
-**국가별 번호판**
-
-- **우리나라 모양 그대로의 번호판.** EU에서는 파란 띠에 국가 코드(D, A, NL, F, I, DK …)가 들어간 별 원이 표시되고 색도 나라에 맞춥니다: 네덜란드와 룩셈부르크는 노란색, 덴마크는 빨간 테두리, 벨기에는 빨간 글자, 오스트리아는 빨강-흰색-빨강 테두리, 프랑스·이탈리아·포르투갈은 오른쪽 띠.
-- **전 세계.** 영국, 스위스, 노르웨이, 튀르키예, 우크라이나, 미국, 캐나다, 멕시코, 브라질, 아르헨티나, 이스라엘, 인도, 중국, 일본, 한국, 싱가포르, 호주, 뉴질랜드 등 언어 및 지역에서 고를 수 있는 67개국 전부.
-- **자동 또는 직접 선택.** 번호판은 설정 → 언어 및 지역의 국가를 따릅니다. 차량마다 ‘번호판 스타일’에서 다른 국가나 ‘중립’을 고를 수 있으며, 미리보기와 입력란의 예시도 함께 바뀝니다. 국가 이름은 앱의 모든 언어로 표시됩니다.
-- 변경: `index.html`, `js/kennzeichen.js`(새 파일), `js/fahrzeuge.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, 모든 `i18n/*.i18n.js`, `pinn-setup.sh`, 모든 README. 서버에는 변경이 없습니다. 설치는 평소처럼(`sudo sh pinn-*/pinn-setup.sh` 또는 업데이트 버튼).
-
-
-
 ## 작동 방식
 
 ```mermaid
@@ -235,7 +233,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.127.5` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.127.6` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

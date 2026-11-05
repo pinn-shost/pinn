@@ -125,6 +125,15 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский and 🇳🇱 Nederlands**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.127.6
+
+**Chat: deleted messages keep their place, security**
+
+- **Deleted stays visible.** A deleted chat message no longer simply disappears: in its place everybody sees “This message was deleted”, for a poll “The poll was deleted”.
+- **Deleted on the pin board.** If a poll that is also on the pin board is deleted there, the chat says “The poll was deleted” too; a card for a deleted pin board note says “The pin board note … was deleted” instead of leading nowhere.
+- **Security.** The three code-scanning alerts “DOM text reinterpreted as HTML” in the photo and video preview of the chat (`js/chatmedien.js`) are fixed for good: object addresses are checked strictly and escaped for HTML before they reach the page.
+- Changed: `js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `src/` (`index.html`) and all READMEs. Server part: `pb_hooks/pinn-chat.js` – replace the hooks too; one field is added automatically at start.
+
 ## What's new in 1.127.5
 
 **Chat: faster polls, finance in the chat, security**
@@ -202,7 +211,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Changed: `index.html`, `js/kennzeichen.js` (new), `js/fahrzeuge.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `pinn-setup.sh` and all READMEs. Nothing changes on the server. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 
-
 ## What's new in 1.125.0
 
 **Tutorial, daily summary & number plates**
@@ -212,7 +220,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Vehicle number plates.** The blue strip now shows the EU circle of stars instead of “D”. Plates for other regions will follow.
 - Tidied up: unused code of the old phone bar removed.
 - Changed: `index.html`, `js/hilfe.js`, `css/hilfe.css`, `js/ansichten.js`, `js/mitteilungen.js`, `js/fahrzeuge.js`, `css/fahrzeuge.css`, `css/seitenleiste.css`, `css/pinnwand.css`, `js/listen.js`, `js/appstart.js`, `js/benutzer.js`, `js/familiensync.js`, `js/einstellungen.js`, `js/pinnwand.js`, `js/speichern.js`, `js/zustand.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, on the server `pb_hooks/pinn-push.js`, and `src/` (the part `menueleiste.html` is gone). Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
 
 
 ## What's new in 1.124.0
@@ -226,7 +233,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Changed: `index.html`, `js/hilfe.js` (new), `css/hilfe.css` (new), `js/listen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `pinn-setup.sh` and all READMEs. Nothing changes on the server. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 
-
 ## What's new in 1.123.12
 
 **Dutch – unlocked**
@@ -234,17 +240,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Dutch is open to everyone.** Choose it under Settings → Language & region – all 6722 texts, the setup assistant, the data export and the notifications are in Dutch. Devices set to Dutch pick it up automatically. Nothing changes for anyone else.
 - **The server speaks Dutch too:** week preview, finance outlook, birthdays, pet reminders, shop notices, “Where are you?” messages, packing list suggestions and reward requests – for profiles set to Dutch and for the countries Netherlands, Suriname, Aruba, Curaçao and Sint Maarten. Voice control (Siri) still answers in English when the app is set to Dutch.
 - Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, on the server `pb_hooks/pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-wobistdu.js`, `pinn-packliste.js`, `pinn-aufgaben.js` and all READMEs (new: `README.nl.md`). Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
-
-
-## What's new in 1.123.11
-
-**Dutch – twelfth stage**
-
-- **Dutch is now translated completely.** The setup assistant (step-by-step guides for home network, DuckDNS, router, VPN, Google, AI, location, Home Assistant and apps) and the data export (ZIP with all data, documents and pictures) are in Dutch now, as are the setup notices for the main admin. The server accepts Dutch in the setup as well. Only unlocking is still to do.
-- Dutch stays **hidden** for now (it can be unlocked on one device for trying it out). Nothing changes visibly for anyone else.
-- Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`, `i18n/versionslog.en.js`, on the server `pb_hooks/pinn-einrichtung.js` and all READMEs. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
 
 
 ## How it works
@@ -273,7 +268,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.127.5` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.127.6` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

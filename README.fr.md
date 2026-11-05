@@ -125,6 +125,15 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский et 🇳🇱 Nederlands**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.127.6
+
+**Chat : les messages supprimés laissent une trace, sécurité**
+
+- **Supprimé reste visible.** Un message supprimé ne disparaît plus simplement : à sa place, tout le monde voit « Ce message a été supprimé », pour un sondage « Le sondage a été supprimé ».
+- **Supprimé sur le tableau.** Si un sondage aussi affiché sur le tableau y est supprimé, le chat indique aussi « Le sondage a été supprimé » ; une carte vers une note supprimée du tableau le dit au lieu de ne mener nulle part.
+- **Sécurité.** Les trois alertes du scanner de code « DOM text reinterpreted as HTML » dans l’aperçu des photos et vidéos du chat (`js/chatmedien.js`) sont corrigées : les adresses d’objet sont vérifiées strictement et échappées pour le HTML.
+- Modifié : `js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, tous les `i18n/*.i18n.js`, `src/` (`index.html`) et tous les README. Partie serveur: `pb_hooks/pinn-chat.js` – remplace aussi les hooks ; un champ est ajouté automatiquement au démarrage.
+
 ## Nouveautés de la 1.127.5
 
 **Chat : sondages plus rapides, finances dans le chat, sécurité**
@@ -202,7 +211,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Modifié : `index.html`, `js/kennzeichen.js` (nouveau), `js/fahrzeuge.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, tous les `i18n/*.i18n.js`, `pinn-setup.sh` et tous les README. Rien ne change côté serveur. Installation comme toujours (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
 
-
 ## Nouveautés de la 1.125.0
 
 **Tutoriel, résumé du jour et plaques d'immatriculation**
@@ -212,7 +220,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Plaques d’immatriculation des véhicules.** La bande bleue affiche maintenant le cercle d’étoiles de l’UE au lieu de « D ». Les plaques d’autres régions suivront.
 - Nettoyage : le code inutilisé de l’ancienne barre du téléphone a été supprimé.
 - Modifié : `index.html`, fichiers de `js/`, `css/` et `i18n/`, côté serveur `pb_hooks/pinn-push.js` et `src/` (la partie `menueleiste.html` disparaît). Installation comme toujours (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
 
 
 ## Nouveautés de la 1.124.0
@@ -226,7 +233,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Modifié : `index.html`, `js/hilfe.js` (nouveau), `css/hilfe.css` (nouveau), `js/listen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, tous les `i18n/*.i18n.js`, `pinn-setup.sh` et tous les README. Rien ne change côté serveur. Installation comme d’habitude (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
 
-
 ## Nouveautés de la 1.123.12
 
 **Néerlandais – débloqué**
@@ -234,17 +240,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Le néerlandais est ouvert à tous.** Choisis-le dans Réglages → Langue et région : les 6722 textes, l’assistant de configuration, l’export des données et les notifications sont en néerlandais. Les appareils réglés sur le néerlandais l’utilisent automatiquement. Rien ne change pour les autres.
 - **Le serveur parle aussi néerlandais :** aperçu de la semaine, perspectives financières, anniversaires, rappels pour les animaux, avis de magasin, messages « Où es-tu ? », suggestions de listes de bagages et demandes de récompense – pour les profils réglés sur le néerlandais et pour les pays Pays-Bas, Suriname, Aruba, Curaçao et Saint-Martin (partie néerlandaise). La commande vocale (Siri) répond encore en anglais quand l’appli est en néerlandais.
 - Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, sur le serveur `pb_hooks/pinn-ausblick.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-wobistdu.js`, `pinn-packliste.js`, `pinn-aufgaben.js` et tous les README (nouveau : `README.nl.md`). Installation comme toujours (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
-
-
-## Nouveautés de la 1.123.11
-
-**Néerlandais – douzième étape**
-
-- **Le néerlandais est maintenant entièrement traduit.** L’assistant d’installation (guides pas à pas pour le réseau domestique, DuckDNS, le routeur, le VPN, Google, l’IA, la localisation, Home Assistant et les applis) et l’export de données (ZIP avec toutes les données, tous les documents et toutes les images) sont désormais en néerlandais, tout comme les messages d’installation pour l’administrateur principal. Le serveur accepte aussi le néerlandais lors de l’installation. Il ne reste plus qu’à l’activer.
-- Le néerlandais reste **masqué** pour l’instant (activable sur un appareil pour l’essayer). Rien ne change de visible pour les autres.
-- Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`, `i18n/versionslog.en.js`, sur le serveur `pb_hooks/pinn-einrichtung.js` et tous les README. Installation comme toujours (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
 
 
 ## Comment ça marche
@@ -273,7 +268,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.127.5` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.127.6` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

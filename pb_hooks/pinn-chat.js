@@ -28,6 +28,9 @@
 //         preview picture that the push message links to (GET vorschau, protected by a random token). Switching the mode
 //         never changes old messages. Silent messages ("leise", used for poll votes) never push and never count as unread.
 //
+// 1.127.6 - a deleted message keeps its place (geloescht = true, daten wiped); "dart" = "p" when the sender deleted a poll,
+// so the app can show "the poll was deleted".
+//
 // Rooms: "familie" (everybody of the family with a profile), "dm:<idA>:<idB>" (two profile IDs, sorted) and
 // "gr:<ID of the group record>" (the members chosen by the creator - they are in the group right away, no invitation).
 // Names and pictures of groups are NOT encrypted (the server needs the members for the keys); messages still are.
@@ -248,7 +251,7 @@ function ensureSchema() {
         }
     }
     // 1.127.4: fields that older installations do not have yet
-    addFields(MSGS, [{ name: "leise", type: "bool" }, { name: "vtoken", type: "text", max: 40 }]);
+    addFields(MSGS, [{ name: "leise", type: "bool" }, { name: "vtoken", type: "text", max: 40 }, { name: "dart", type: "text", max: 4 }]);
     addFields(FAM, [{ name: "klartext", type: "bool" }]);
     addFields(FILES, [{ name: "art", type: "text", max: 4 }]);
     return !!(findCol(KEYS) && findCol(MSGS) && findCol(FILES) && findCol(FAM) && findCol(GROUPS) && findCol(MARKS) && findCol(PICS));
@@ -360,6 +363,7 @@ function msgOut(rec, me, receipts) {
         id: rec.id, raum: rec.getString("raum"), von: rec.getString("von"), zeit: Number(rec.get("zeit") || 0),
         aktualisiert: Number(rec.get("aktualisiert") || 0), daten: deleted ? "" : rec.getString("daten"),
         empf: rec.getString("empf"), gelesen: shown, geloescht: deleted, leise: rec.getBool("leise"),
+        dart: deleted ? rec.getString("dart") : "",
     };
 }
 // Who counts for read marks: profiles that did not switch read receipts off
@@ -702,6 +706,9 @@ function remove(e, body) {
     if (!rec || rec.getString("familie") !== u.getString("familie") || rec.getString("von") !== u.id) throw new Error("Nicht gefunden.");
     rec.set("daten", "");
     rec.set("geloescht", true);
+    // kind of the deleted message, told by the sender (the server cannot read it): "p" = poll, so the chat can say
+    // "the poll was deleted" instead of "this message was deleted"
+    if (String((body && body.art) || "") === "p") rec.set("dart", "p");
     rec.set("aktualisiert", Date.now());
     $app.save(rec);
     dropFiles(rec.id);

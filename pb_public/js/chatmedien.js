@@ -16,9 +16,16 @@ const CHATM = { PDF_MAX: 20 * 1024 * 1024, SIDE: 1600, Q: 0.8, THUMB: 240, THUMB
 const chatMBlobs = new Map();   // file id -> { blob, url } of everything opened in this session
 
 /* ---------------------------------------------------------------- small helpers */
-// Only object URLs made by this page may be put into a src attribute: anything else becomes an empty string.
-// The result is built from a fixed prefix, so no text from a file can ever turn into another kind of address.
-function chatMBlobSrc(u) { const s = String(u || ''); return s.indexOf('blob:') === 0 ? 'blob:' + s.slice(5) : ''; }
+// Only object URLs made by this page may be put into a src/href attribute: anything else becomes an empty string.
+// An object URL looks like blob:<origin>/<id>; it never contains spaces, quotes, angle brackets or the ampersand, so the
+// HTML escaping at the end changes nothing for a real one - it only makes sure that no file text can ever reach the
+// page as markup (this is what the code scanner checks, 1.127.6).
+const CHATM_BLOB_RE = /^blob:[A-Za-z0-9.:/_~%+-]{1,300}$/;
+function chatMBlobSrc(u) {
+  const s = String(u || '');
+  if (!CHATM_BLOB_RE.test(s) || s.indexOf('/') < 0) return '';
+  return escapeHtml(s);
+}
 function chatMSize(n) {
   const mb = Number(n) / (1024 * 1024);
   let f; try { f = new Intl.NumberFormat(chatLocale(), { maximumFractionDigits: 1 }); } catch (e) { f = { format: x => String(Math.round(x * 10) / 10) }; }

@@ -129,6 +129,15 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский和 🇳🇱 Nederlands**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.127.6 新功能
+
+**聊天：删除的消息会留下提示，安全**
+
+- **删除后仍有提示。** 删除的聊天消息不再直接消失：所有人都会在原位置看到“此消息已被删除”，投票则显示“此投票已被删除”。
+- **在布告板上删除。** 同时显示在布告板上的投票如果在那里被删除，聊天中也会显示“此投票已被删除”；指向已删除布告板条目的卡片会说明这一点，而不是点了没反应。
+- **安全。** 聊天照片和视频预览（`js/chatmedien.js`）中的三条代码扫描警告“DOM text reinterpreted as HTML”已修复：对象地址会被严格检查并做 HTML 转义。
+- 已更改：`js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, 所有 `i18n/*.i18n.js`, `src/` (`index.html`) 和 所有 README. 服务器部分: `pb_hooks/pinn-chat.js` – 请一并替换 hooks；启动时会自动添加一个字段。
+
 ## 1.127.5 新功能
 
 **聊天：投票更快、财务可在聊天中讨论、安全修复**
@@ -196,17 +205,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - 变更:`index.html`、`js/chat.js` 和 `css/chat.css`(新)、多个 `js/*.js`、所有 `i18n/*.i18n.js`、`pinn-setup.sh` 和所有 README。**服务器部分:** `pb_hooks/chat.pb.js` 和 `pb_hooks/pinn-chat.js`(新)、`pb_hooks/pinn-push.js`、`pb_hooks/pinn-schema.js`——更新时请一并替换 hooks。
 
 
-## 1.126.0 新功能
-
-**按国家显示车牌**
-
-- **车牌和你所在国家的一样。** 在欧盟，蓝色条带显示带国家代码的星环（D、A、NL、F、I、DK……），并配上相应的颜色：荷兰和卢森堡为黄色，丹麦为红色边框，比利时为红色字母，奥地利为红白红边条，法国、意大利和葡萄牙右侧有条带。
-- **覆盖全球。** 还包括英国、瑞士、挪威、土耳其、乌克兰、美国、加拿大、墨西哥、巴西、阿根廷、以色列、印度、中国、日本、韩国、新加坡、澳大利亚、新西兰等——即在“语言与地区”中可选的全部 67 个国家。
-- **自动或手动。** 车牌会跟随 设置 → 语言与地区 中的国家。每辆车都可以在“车牌样式”中选择其他国家或“通用”——带预览，输入框中也会显示相应的示例。国家名称会以所有应用语言显示。
-- 已更改：`index.html`、`js/kennzeichen.js`（新增）、`js/fahrzeuge.js`、`css/fahrzeuge.css`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、所有 `i18n/*.i18n.js`、`pinn-setup.sh` 以及所有 README。服务器端没有变化。安装方式照旧（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
-
-
-
 ## 工作原理
 
 ```mermaid
@@ -235,7 +233,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.127.5` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.127.6` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

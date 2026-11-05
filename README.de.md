@@ -129,6 +129,15 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский und 🇳🇱 Nederlands**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.127.6
+
+**Chat: gelöschte Nachrichten bleiben sichtbar, Sicherheit**
+
+- **Gelöscht bleibt sichtbar.** Eine gelöschte Chat-Nachricht verschwindet nicht mehr einfach: an ihrer Stelle steht für alle „Diese Nachricht wurde gelöscht“, bei einer Abstimmung „Die Umfrage wurde gelöscht“.
+- **Auf der Pinnwand gelöscht.** Wird eine Umfrage, die auch auf der Pinnwand steht, dort gelöscht, steht im Chat ebenfalls „Die Umfrage wurde gelöscht“; eine Karte zu einem gelöschten Pinnwand-Eintrag sagt „Der Pinnwand-Eintrag … wurde gelöscht“, statt ins Leere zu führen.
+- **Sicherheit.** Die drei Codescanner-Meldungen „DOM text reinterpreted as HTML“ in der Foto- und Video-Vorschau des Chats (`js/chatmedien.js`) sind endgültig behoben: Objekt-Adressen werden streng geprüft und für HTML maskiert, bevor sie in die Seite kommen.
+- Geändert: `js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `src/` (`index.html`) und alle READMEs. Server-Teil: `pb_hooks/pinn-chat.js` – die Hooks mit austauschen; ein Feld wird beim Start automatisch ergänzt.
+
 ## Neu in 1.127.5
 
 **Chat: schnellere Abstimmungen, Finanzen im Chat, Sicherheit**
@@ -196,17 +205,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Geändert: `index.html`, `js/chat.js` und `css/chat.css` (neu), mehrere `js/*.js`, alle `i18n/*.i18n.js`, `pinn-setup.sh` und alle READMEs. **Server-Teil:** `pb_hooks/chat.pb.js` und `pb_hooks/pinn-chat.js` (neu), `pb_hooks/pinn-push.js`, `pb_hooks/pinn-schema.js` – die Hooks mit austauschen; zwei neue Sammlungen entstehen automatisch. Installation wie immer.
 
 
-## Neu in 1.126.0
-
-**Kennzeichen nach Land**
-
-- **Kennzeichen wie im eigenen Land.** In der EU zeigt der blaue Streifen den Sternenkreis mit der Länderkennung (D, A, NL, F, I, DK …), dazu die passenden Farben: gelb in den Niederlanden und Luxemburg, rote Umrandung in Dänemark, rote Schrift in Belgien, rot-weiß-rote Ränder in Österreich, Streifen rechts in Frankreich, Italien und Portugal.
-- **Weltweit.** Außerdem Großbritannien, Schweiz, Norwegen, Türkei, Ukraine, USA, Kanada, Mexiko, Brasilien, Argentinien, Israel, Indien, China, Japan, Korea, Singapur, Australien, Neuseeland und mehr – alle 67 Länder, die unter Sprache & Region wählbar sind.
-- **Automatisch oder von Hand.** Das Kennzeichen richtet sich nach dem Land unter Einstellungen → Sprache & Region. Beim Fahrzeug lässt sich unter „Kennzeichen-Stil“ ein anderes Land oder „Neutral“ wählen – mit Vorschau und passendem Beispiel im Eingabefeld. Die Ländernamen erscheinen in jeder App-Sprache.
-- Geändert: `index.html`, `js/kennzeichen.js` (neu), `js/fahrzeuge.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `pinn-setup.sh` und alle READMEs. Am Server ändert sich nichts. Installation wie immer (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
-
-
-
 ## So funktioniert’s
 
 ```mermaid
@@ -235,7 +233,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.127.5` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.127.6` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

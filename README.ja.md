@@ -129,6 +129,15 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.127.6の新機能
+
+**チャット：削除したメッセージに表示が残る、セキュリティ**
+
+- **削除しても表示が残ります。** 削除したチャットメッセージがそのまま消えることはなくなりました。その場所に全員に「このメッセージは削除されました」、アンケートなら「このアンケートは削除されました」と表示されます。
+- **掲示板で削除。** 掲示板にも載っているアンケートを掲示板で削除すると、チャットにも「このアンケートは削除されました」と表示されます。削除された掲示板の投稿へのカードもその旨を表示します。
+- **セキュリティ。** チャットの写真・動画プレビュー（`js/chatmedien.js`）にあったコードスキャンの警告「DOM text reinterpreted as HTML」3件を解決しました。オブジェクトアドレスを厳しく確認し、HTML用にエスケープします。
+- 変更：`js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, すべての `i18n/*.i18n.js`, `src/` (`index.html`) 、 すべてのREADME. サーバー部分: `pb_hooks/pinn-chat.js` – フックも置き換えてください。起動時にフィールドが1つ自動で追加されます。
+
 ## 1.127.5の新機能
 
 **チャット：投票の高速化、家計をチャットで相談、セキュリティ**
@@ -196,17 +205,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - 変更:`index.html`、`js/chat.js` と `css/chat.css`(新規)、複数の `js/*.js`、すべての `i18n/*.i18n.js`、`pinn-setup.sh`、すべての README。**サーバー側:** `pb_hooks/chat.pb.js` と `pb_hooks/pinn-chat.js`(新規)、`pb_hooks/pinn-push.js`、`pb_hooks/pinn-schema.js` – フックも入れ替えてください。
 
 
-## 1.126.0の新機能
-
-**国ごとのナンバープレート**
-
-- **その国らしいナンバープレート。** EU では青い帯に国コード（D、A、NL、F、I、DK など）付きの星の輪が表示され、色も国に合わせます：オランダとルクセンブルクは黄色、デンマークは赤い枠、ベルギーは赤い文字、オーストリアは赤白赤の縁、フランス・イタリア・ポルトガルは右側に帯。
-- **世界中に対応。** イギリス、スイス、ノルウェー、トルコ、ウクライナ、アメリカ、カナダ、メキシコ、ブラジル、アルゼンチン、イスラエル、インド、中国、日本、韓国、シンガポール、オーストラリア、ニュージーランドなど、言語と地域で選べる全 67 か国。
-- **自動でも手動でも。** プレートは 設定 → 言語と地域 の国に合わせます。車両ごとに「ナンバープレートの様式」で別の国や「ニュートラル」を選べます。プレビュー付きで、入力欄の例も変わります。国名はアプリのすべての言語で表示されます。
-- 変更: `index.html`、`js/kennzeichen.js`（新規）、`js/fahrzeuge.js`、`css/fahrzeuge.css`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、すべての `i18n/*.i18n.js`、`pinn-setup.sh`、すべての README。サーバー側の変更はありません。インストールはこれまでどおり（`sudo sh pinn-*/pinn-setup.sh` または更新ボタン）。
-
-
-
 ## しくみ
 
 ```mermaid
@@ -235,7 +233,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.127.5`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.127.6`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

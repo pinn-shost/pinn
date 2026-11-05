@@ -364,7 +364,7 @@ async function chatLoadOlder(quiet) {
 }
 async function chatPlain(m) {
   const S = chatS;
-  if (m.geloescht || (!m.daten && !m.pending)) return { del: true };
+  if (m.geloescht || (!m.daten && !m.pending)) return { del: true, dk: m.dart === 'p' ? 'p' : '' }; // dk 'p': it was a poll
   if (S.plain.has(m.id)) return S.plain.get(m.id);
   let out;
   try {
@@ -436,7 +436,9 @@ async function chatDeliver(room, tmp, payload, extra) {
   chatRenderConv(true);
 }
 async function chatDelete(m) {
-  try { await chatPost('delete', { id: m.id }); m.geloescht = true; m.daten = ''; chatS.plain.delete(m.id); chatRenderConv(); } catch (e) { alert(tk('chat.error.send')); }
+  // tell the server what kind of message it was (only "p" = poll), so everybody sees "the poll was deleted"
+  const pl = chatS.plain.get(m.id), art = pl && pl.msg && pl.msg.p ? 'p' : '';
+  try { await chatPost('delete', art ? { id: m.id, art } : { id: m.id }); m.geloescht = true; m.daten = ''; m.dart = art; chatS.plain.delete(m.id); chatRenderConv(); } catch (e) { alert(tk('chat.error.send')); }
 }
 async function chatMarkRead() {
   const S = chatS;
@@ -471,7 +473,7 @@ async function chatRefreshPreviews() {
     const cached = S.prev.get(room);
     if (cached && cached.id === o.letzte.id && cached.g === !!o.letzte.geloescht) continue;
     const p = await chatPlain(o.letzte);
-    S.prev.set(room, { id: o.letzte.id, g: !!o.letzte.geloescht, text: p.msg ? chatPlainText(p.msg) : '', err: p.err || '', del: !!p.del });
+    S.prev.set(room, { id: o.letzte.id, g: !!o.letzte.geloescht, text: p.msg ? chatPlainText(p.msg) : '', err: p.err || '', del: !!p.del, dk: p.dk || '' });
     changed = true;
   }
   if (changed) chatRenderList();
@@ -773,7 +775,7 @@ function chatPreviewText(room) {
   const pv = S.prev.get(room.id);
   const mine = o.letzte.von === S.uid;
   let text = '';
-  if (pv) text = pv.del ? tk('chat.deleted') : (pv.err ? tk('chat.cantRead') : pv.text);
+  if (pv) text = pv.del ? chatDeletedText(pv.dk) : (pv.err ? tk('chat.cantRead') : pv.text);
   else text = '…';
   if (room.group && !mine && pv && !pv.err && !pv.del) { const p = S.roster.find(x => x.id === o.letzte.von); text = chatName(p) + ': ' + text; }
   return { text: text.replace(/\s+/g, ' '), mine, ticks: mine ? chatTicks(o.letzte) : 0 };
@@ -930,7 +932,7 @@ function chatBubble(m, p, first, group) {
     if (mem && mem.color && mem.color !== 'transparent') n.style.color = mem.color;
     b.appendChild(n);
   }
-  if (p.del) b.appendChild(chatEl('div', 'chat-text chat-muted', '🚫 ' + tk('chat.deleted')));
+  if (p.del) b.appendChild(chatEl('div', 'chat-text chat-muted', '🚫 ' + chatDeletedText(p.dk)));
   else if (p.err) b.appendChild(chatEl('div', 'chat-text chat-muted', p.err === 'locked' ? '🔒 ' + tk('chat.locked') : p.err === 'nokey' ? '🔒 ' + tk('chat.nokey') : p.err === 'unverified' ? '⚠️ ' + tk('chat.unverified') : '🔒 ' + tk('chat.cantRead')));
   else {
     const x = p.msg || {};
@@ -942,7 +944,8 @@ function chatBubble(m, p, first, group) {
       q.onclick = (e) => { e.stopPropagation(); const t = document.querySelector('#chatMsgs [data-id="' + CSS.escape(String(x.q.i || '')) + '"]'); if (t) { t.scrollIntoView({ block: 'center', behavior: 'smooth' }); t.classList.add('flash'); setTimeout(() => t.classList.remove('flash'), 1200); } };
       b.appendChild(q);
     }
-    if (x.r) {
+    if (x.r && chatRefDeleted(x.r)) b.appendChild(chatEl('div', 'chat-text chat-muted', '🚫 ' + tk('chat.ref.pinDeleted', { t: String(x.r.ti || '') })));
+    else if (x.r) {
       const r = chatEl('button', 'chat-ref'); r.type = 'button';
       r.appendChild(chatEl('span', 'chat-ref-ico', CHAT_REF_ICONS[x.r.k] || '🔗'));
       r.appendChild(chatEl('span', 'chat-ref-title', String(x.r.ti || '')));
@@ -968,6 +971,16 @@ function chatBubble(m, p, first, group) {
   };
   row.appendChild(b);
   return row;
+}
+// Text for a deleted message: "the poll was deleted" for a poll, else "this message was deleted" (1.127.6)
+function chatDeletedText(dk) { return dk === 'p' ? tk('chat.pollDeleted') : tk('chat.deleted'); }
+// true if a reference points to a pin board note that was deleted (only checked when the pin board is loaded and allowed)
+function chatRefDeleted(r) {
+  if (!r || r.k !== 'pin') return false;
+  try {
+    if (!isViewAllowed('pinnwand') || typeof pinboardLoadedOk !== 'function' || !pinboardLoadedOk()) return false;
+    return !pinboard.some(n => n && n.id === r.id);
+  } catch (e) { return false; }
 }
 function chatRenderBanners() {
   const box = document.getElementById('chatBanners');

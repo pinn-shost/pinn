@@ -129,6 +129,15 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский e 🇳🇱 Nederlands**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.127.6
+
+**Chat: i messaggi eliminati lasciano traccia, sicurezza**
+
+- **Eliminato resta visibile.** Un messaggio eliminato non sparisce più e basta: al suo posto tutti vedono «Questo messaggio è stato eliminato», per un sondaggio «Il sondaggio è stato eliminato».
+- **Eliminato in bacheca.** Se un sondaggio presente anche in bacheca viene eliminato lì, anche la chat dice «Il sondaggio è stato eliminato»; una scheda di una nota eliminata dalla bacheca lo segnala invece di non portare da nessuna parte.
+- **Sicurezza.** I tre avvisi dello scanner di codice «DOM text reinterpreted as HTML» nell’anteprima di foto e video della chat (`js/chatmedien.js`) sono risolti: gli indirizzi oggetto vengono controllati rigorosamente ed escapati per l’HTML.
+- Modificati: `js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, tutti i `i18n/*.i18n.js`, `src/` (`index.html`) e tutti i README. Parte server: `pb_hooks/pinn-chat.js` – sostituisci anche gli hook; un campo viene aggiunto automaticamente all’avvio.
+
 ## Novità della 1.127.5
 
 **Chat: sondaggi più veloci, finanze in chat, sicurezza**
@@ -196,17 +205,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Modificato: `index.html`, `js/chat.js` e `css/chat.css` (nuovi), diversi `js/*.js`, tutti gli `i18n/*.i18n.js`, `pinn-setup.sh` e tutti i README. **Lato server:** `pb_hooks/chat.pb.js` e `pb_hooks/pinn-chat.js` (nuovi), `pb_hooks/pinn-push.js`, `pb_hooks/pinn-schema.js` – sostituire anche gli hook.
 
 
-## Novità della 1.126.0
-
-**Targhe per paese**
-
-- **Targhe come nel tuo paese.** Nell'UE la striscia blu mostra il cerchio di stelle con la sigla del paese (D, A, NL, F, I, DK …) e i colori giusti: gialla nei Paesi Bassi e in Lussemburgo, bordo rosso in Danimarca, lettere rosse in Belgio, bordi rosso-bianco-rosso in Austria, striscia a destra in Francia, Italia e Portogallo.
-- **In tutto il mondo.** Anche Regno Unito, Svizzera, Norvegia, Turchia, Ucraina, USA, Canada, Messico, Brasile, Argentina, Israele, India, Cina, Giappone, Corea, Singapore, Australia, Nuova Zelanda e altri – tutti i 67 paesi selezionabili in Lingua e regione.
-- **Automatico o a mano.** La targa segue il paese scelto in Impostazioni → Lingua e regione. Per ogni veicolo puoi scegliere un altro paese o «Neutro» in «Stile della targa», con anteprima e un esempio adatto nel campo. I nomi dei paesi compaiono in tutte le lingue dell'app.
-- Modificato: `index.html`, `js/kennzeichen.js` (nuovo), `js/fahrzeuge.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, tutti gli `i18n/*.i18n.js`, `pinn-setup.sh` e tutti i README. Sul server non cambia nulla. Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o il pulsante di aggiornamento).
-
-
-
 ## Come funziona
 
 ```mermaid
@@ -235,7 +233,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.127.5` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.127.6` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
