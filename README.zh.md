@@ -129,6 +129,20 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский和 🇳🇱 Nederlands**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.127.4 新功能
+
+**聊天：语音消息、位置、投票、PDF、搜索、静音——以及可关闭的加密**
+
+- **语音消息。** 未输入文字时，麦克风按钮代替发送按钮：点按、说话、发送（最长 5 分钟）。带波形、播放/暂停、1×/1.5×/2× 倍速，点按波形可跳转。与照片一样端到端加密。
+- **回形针现在是菜单：** 照片/视频、**PDF 文档**（最大 20 MB；可打开/分享/保存/归档到 pinn.）、**位置**和**投票**。
+- **位置。** 带地图预览和备注（会建议位置地图中已保存的地点，如“家”）。点按可查看地图：**“在位置地图上显示”** 会打开“家庭 → 位置”并标出标记，“在地图应用中打开”可开始导航。
+- **投票。** 一个问题、最多 8 个答案，可选择每人多选。勾选 **“同时显示在布告板上”** 会同时创建布告板投票——在这里或那里投票，结果都一样。
+- 聊天内**搜索**（顶部放大镜）、按聊天**静音**（8 小时、1 周、始终；无通知，也不计入菜单“聊天”后的数字）以及**解散群组**（创建者和管理员）。
+- **加密可关闭**（按家庭，管理员在“聊天安全”中设置）。关闭后通知会显示文字（Android 上照片还有预览），无需恢复码。默认仍为端到端加密。
+- “在聊天中讨论”（💬）现在也适用于日程、文档和车辆。已修复：“归档到 pinn.”曾显示在照片下方；聊天标题使用应用字体；菜单中的数字更新更可靠。
+- 更改：`js/chatextras.js` 和 `js/chatstimme.js`（新）、`js/chat.js`、`js/chatmedien.js`、`js/chatgruppen.js`、`js/familie.js`、`js/pinnwand.js`、`js/termindetails.js`、`js/dokumente.js`、`js/fahrzeuge.js`、`js/hinweise.js`、`css/chat.css`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、所有 `i18n/*.i18n.js`、`pinn-setup.sh`、`src/` 以及所有 README。**服务器部分：** `pb_hooks/chat.pb.js`、`pinn-chat.js`、`pinn-push.js` 和 `sw.pb.js`——请一并替换 hooks；启动时会自动补充一些字段。
+
+
 ## 1.127.3 新功能
 
 **聊天：自建群组、置顶聊天、滑动操作和聊天图片**
@@ -195,18 +209,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 
 
 
-## 1.124.0 新功能
-
-**帮助与教程**
-
-- **每个菜单都有帮助。** 新的帮助页面讲解 pinn. 的每个页面——可快速浏览（“简要”）或详细阅读（“详细”）。位于 设置 → 帮助与教程，也可通过搜索找到。
-- **上手教程。** 新用户会通过七个简短步骤了解最重要的页面。它会自动启动一次，之后随时可在 设置 → 帮助与教程 中重新开始。
-- **搜索中的帮助。** 帮助主题显示在单独的“帮助”区域，与你自己的条目（日程、文档、食谱……）清楚分开。
-- 所有帮助文字和教程都提供全部十一种语言。
-- 已更改：`index.html`、`js/hilfe.js`（新）、`css/hilfe.css`（新）、`js/listen.js`、`js/appstart.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、所有 `i18n/*.i18n.js`、`pinn-setup.sh` 和所有 README。服务器端无变化。安装方式照旧（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
-
-
-
 ## 工作原理
 
 ```mermaid
@@ -235,7 +237,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.127.3` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.127.4` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

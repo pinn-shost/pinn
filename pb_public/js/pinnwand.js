@@ -806,6 +806,17 @@ function pwNewNoteBase(type) {
     remindAt: '', remindAtMs: 0, expires: '', reactions: {}, comments: [], doneBy: {},
   };
 }
+// Makes a poll note (single choice) from code - "also on the pin board" in the chat poll (1.127.4). Returns the note.
+function pwCreatePoll(title, texts) {
+  const n = pwNewNoteBase('poll');
+  n.title = String(title || '').slice(0, 120); n.text = '';
+  n.options = texts.map(t => ({ id: pwId('po'), text: String(t).slice(0, 80) }));
+  n.votes = {};
+  pinboard = [n, ...pinboard];
+  persistState();
+  pwRerenderAll();
+  return n;
+}
 function pwQuickAdd() {
   const input = document.getElementById('pinboardQuickInput');
   const text = input.value.trim();

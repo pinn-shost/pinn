@@ -129,6 +129,20 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский e 🇳🇱 Nederlands**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.127.4
+
+**Chat: messaggi vocali, posizione, sondaggi, PDF, ricerca, silenziamento – e crittografia disattivabile**
+
+- **Messaggi vocali.** Un pulsante microfono sostituisce quello di invio finché non si scrive nulla: tocca, parla, invia (fino a 5 minuti). Forma d’onda, riproduzione/pausa, 1×/1,5×/2× e salto toccando l’onda. Crittografati end-to-end come le foto.
+- **La graffetta ora è un menu:** foto/video, **documento PDF** (fino a 20 MB; apri / condividi / salva / archivia in pinn.), **posizione** e **sondaggio**.
+- **Posizione.** Anteprima della mappa ed etichetta (viene suggerito un luogo salvato della mappa di localizzazione, ad es. «Casa»). Toccandola si vede la mappa: **«Mostra sulla mappa di localizzazione»** apre Famiglia → Localizzazione con un segnaposto; «Apri nell’app mappe» avvia la navigazione.
+- **Sondaggi.** Una domanda e fino a 8 risposte, più risposte per persona se si vuole. Con la casella **«Mostra anche in bacheca»** si crea contemporaneamente un sondaggio in bacheca: si vota qui o là, il risultato è lo stesso.
+- **Ricerca** nella chat (lente in alto), **silenziamento** per chat (8 ore, 1 settimana, sempre; nessuna notifica e non conta nel numero accanto a «Chat» nel menu) e **scioglimento di un gruppo** (creatore e admin).
+- **Crittografia disattivabile** per famiglia (admin, «Sicurezza della chat»). Le notifiche mostrano allora il testo (su Android anche un’anteprima delle foto) e nessuno ha bisogno di un codice di recupero. Per impostazione predefinita resta la crittografia end-to-end.
+- «Discuti in chat» (💬) ora anche per appuntamenti, documenti e veicoli. Corretto: «Archivia in pinn.» si apriva sotto la foto, i titoli della chat usano il carattere dell’app, il numero nel menu si aggiorna in modo più affidabile.
+- Modificato: `js/chatextras.js` e `js/chatstimme.js` (nuovi), `js/chat.js`, `js/chatmedien.js`, `js/chatgruppen.js`, `js/familie.js`, `js/pinnwand.js`, `js/termindetails.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/hinweise.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, tutti i `i18n/*.i18n.js`, `pinn-setup.sh`, `src/` e tutti i README. **Parte server:** `pb_hooks/chat.pb.js`, `pinn-chat.js`, `pinn-push.js` e `sw.pb.js` – sostituisci anche gli hook; alcuni campi vengono aggiunti automaticamente all’avvio.
+
+
 ## Novità della 1.127.3
 
 **Chat: gruppi propri, chat fissate, scorrimento e immagini della chat**
@@ -195,18 +209,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 
 
 
-## Novità della 1.124.0
-
-**Guida e tutorial**
-
-- **Una guida per ogni menu.** Una nuova pagina di guida spiega ogni pagina di pinn. – come giro veloce («In breve») o nel dettaglio («Nel dettaglio»). La trovi in Impostazioni → Guida e tutorial e nella ricerca.
-- **Tutorial dei primi passi.** I nuovi profili vengono guidati in sette passaggi attraverso le pagine più importanti. Parte da solo una volta e si può riavviare quando vuoi in Impostazioni → Guida e tutorial.
-- **La guida nella ricerca.** Gli argomenti della guida compaiono in una sezione «Guida» a parte, ben separata dalle tue voci (eventi, documenti, ricette …).
-- Tutti i testi della guida e il tutorial sono disponibili in tutte e undici le lingue.
-- Modificato: `index.html`, `js/hilfe.js` (nuovo), `css/hilfe.css` (nuovo), `js/listen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, tutti gli `i18n/*.i18n.js`, `pinn-setup.sh` e tutti i README. Il server non cambia. Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o il pulsante di aggiornamento).
-
-
-
 ## Come funziona
 
 ```mermaid
@@ -235,7 +237,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.127.3` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.127.4` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

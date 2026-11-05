@@ -125,6 +125,20 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский and 🇳🇱 Nederlands**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.127.4
+
+**Chat: voice messages, locations, polls, PDF files, search, muting – and encryption you can switch off**
+
+- **Voice messages.** A microphone button replaces the send button while nothing is typed: tap, speak, send (up to 5 minutes). Waveform, play/pause, 1×/1.5×/2× and jumping by tapping the waveform. End-to-end encrypted like photos.
+- **The paperclip is now a menu:** photo/video, **PDF document** (up to 20 MB, open / share / save / file in pinn.), **location** and **poll**.
+- **Location.** Map preview and label (a saved place of the location map, e.g. “Home”, is suggested). Tap it for the map: **“Show on the location map”** opens Family → Location with a marker, “Open in maps app” starts navigation.
+- **Polls.** A question and up to 8 answers, several answers per person if you like. With the tick **“Also show on the pin board”** a pin board poll is made at the same time – vote here or there, the result is the same everywhere.
+- **Search** in a chat (magnifier at the top), **mute** per chat (8 hours, 1 week, always – no notification, not counted in the number behind “Chat” in the menu) and **dissolve a group** (creator and admins).
+- **Encryption can be switched off** per family (admins, “Chat security”). Then notifications show the text (on Android also a preview of photos) and nobody needs a recovery code. The default stays: end-to-end encrypted.
+- “Discuss in chat” (💬) now also on appointments, documents and vehicles. Fixed: “File in pinn.” opened under the photo, the chat headings now use the app font, the number behind “Chat” in the menu updates more reliably.
+- Changed: `js/chatextras.js` and `js/chatstimme.js` (new), `js/chat.js`, `js/chatmedien.js`, `js/chatgruppen.js`, `js/familie.js`, `js/pinnwand.js`, `js/termindetails.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/hinweise.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `pinn-setup.sh`, `src/` and all READMEs. **Server part:** `pb_hooks/chat.pb.js`, `pinn-chat.js`, `pinn-push.js` and `sw.pb.js` – replace the hooks too; a few fields are added automatically at start.
+
+
 ## What's new in 1.127.3
 
 **Chat: your own groups, pinned chats, swipe actions and chat pictures**
@@ -232,15 +246,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js`, on the server `pb_hooks/pinn-pushtext.js` and all READMEs. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 
-## What's new in 1.123.9
-
-**Dutch – tenth stage**
-
-- **Even more of pinn. in Dutch.** The standard names (categories for finances, contracts, documents, pantry, recipes and cleaning, places, roles, kitchen appliances, waste types and units of measure), voice control (Siri shortcut and Android), reading PDFs and receipts, the server messages and the units are now translated (6,575 of 6,722 texts). Only the notifications (push) are still missing.
-- Dutch stays **hidden** until everything is translated (it can be unlocked on one device for trying it out; texts that are still missing then appear in English). Nothing changes visibly for anyone else.
-- Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` and all READMEs. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
-
 ## How it works
 
 ```mermaid
@@ -267,7 +272,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.127.3` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.127.4` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

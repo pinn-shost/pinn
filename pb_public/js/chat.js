@@ -14,6 +14,9 @@
      safety number - protection against a server that swaps keys. People compare the safety numbers in person or by phone.
 
    Messages are plain objects { x: text, q: { i, u, x } reply, r: { k, id, ti } reference to a task, note, ... }.
+   Since 1.127.4: voice messages (js/chatstimme.js), polls, locations, PDF files, search, muting, the switch for end-to-end encryption
+   (js/chatextras.js). Messages are { x, q, r, m: { k: img|vid|aud|pdf ... }, l: location, p: poll, v: vote }. In the mode without
+   end-to-end encryption (an admin switches it off for the family) a message is { v: 2, s, p: <message object> } and needs no key.
    Since 1.127.3: own groups (room "gr:<id>"), pinned chats, "mark as unread", swipe actions in the list and the pictures of the family
    chat / groups live in js/chatgruppen.js; this file calls it through the functions chatG... and chatPic....
    Other parts of the app can open a chat with a reference: pinnChat.compose(room, { k: 'task', id, ti }), or let the person
@@ -24,7 +27,7 @@ const CHAT_API = '/api/pinn/chat/';
 const CHAT_PBKDF2 = 200000;
 const CHAT_CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 32 characters, no I, O, 0, 1
 const CHAT_POLL_MS = 3000;
-const CHAT_BADGE_MS = 45000;
+const CHAT_BADGE_MS = 20000;
 const CHAT_REF_VIEWS = { task: 'aufgaben', pin: 'pinnwand', contract: 'finanzen', event: 'termine', doc: 'dokumente', vehicle: 'fahrzeuge' };
 const CHAT_REF_ICONS = { task: '✅', pin: '📌', contract: '📄', event: '📅', doc: '🗂️', vehicle: '🚗' };
 const chatEnc = new TextEncoder();
@@ -36,7 +39,7 @@ function chatNewState(uid) {
   return {
     uid, phase: 'loading', roster: [], me: null, mineSrv: null, priv: null, pub: '', pins: {}, code: '', err: '',
     rooms: new Map(), room: '', ov: new Map(), plain: new Map(), prev: new Map(), reply: null, ref: null,
-    groups: [], bilder: {}, mark: {}, swipeOpen: '', drag: false, listDirty: false,
+    groups: [], bilder: {}, mark: {}, swipeOpen: '', drag: false, listDirty: false, plainMode: false,
     pollTimer: null, tick: 0, sheet: null, busy: false, receipts: true,
   };
 }
@@ -217,6 +220,7 @@ function chatRoomList() {
     const o = S.ov.get(r.id);
     r.last = o && o.letzte ? o.letzte : null; r.unread = o ? o.ungelesen : 0;
     r.pinned = !!(marks[r.id] && marks[r.id].p); r.flagged = !!(marks[r.id] && marks[r.id].u);
+    r.muted = typeof chatXMuted === 'function' && chatXMuted(r.id);
     r.sortTime = r.last ? r.last.zeit : r.born; // newest message sent or received; a new group without messages counts from its creation
   });
   // pinned chats first, then the newest message (sent or received) on top
@@ -256,10 +260,13 @@ async function chatLoadRoster() {
   S.receipts = !d.mein || d.mein.lese !== false;
   S.keep = d.aufbewahrung || null; S.storage = d.speicher != null ? d.speicher : null; S.isAdmin = !!d.admin;
   S.groups = Array.isArray(d.gruppen) ? d.gruppen : []; S.bilder = d.bilder && typeof d.bilder === 'object' ? d.bilder : {};
+  S.plainMode = d.klartext === true;
   chatPinsSync();
   if (typeof chatPicsSync === 'function') chatPicsSync();
   // a group this profile was taken out of (or that is gone) cannot stay open
   if (S.room && S.room.indexOf('gr:') === 0 && !S.groups.some(g => g.raum === S.room)) { S.room = ''; S.reply = null; S.ref = null; if (S.phase === 'ready' && currentView === 'chat') chatRender(); }
+  // an admin switched the end-to-end encryption on again and this device has no key yet: set it up now
+  if (S.phase === 'ready' && !S.plainMode && !S.priv && currentView === 'chat') chatBoot();
 }
 
 /* ---------------------------------------------------------------- start: keys on this device */
@@ -275,6 +282,7 @@ async function chatBoot() {
     // The key on this device does not match the one of the server (new key made elsewhere, or the server lost it): drop it
     if (local && (!S.mineSrv || !S.mineSrv.oeffentlich || local.pub !== S.mineSrv.oeffentlich)) { try { await chatKeyDel(S.uid); } catch (e) { /* ignore */ } local = null; }
     if (local) { S.priv = local.priv; S.pub = local.pub; S.phase = 'ready'; }
+    else if (S.plainMode) { S.priv = null; S.pub = ''; S.phase = 'ready'; } // no key needed without end-to-end encryption (older encrypted messages stay locked)
     else if (S.mineSrv && S.mineSrv.oeffentlich) S.phase = 'unlock';
     else { await chatSetupNew(false); return; }
   } catch (err) { S.phase = 'error'; S.err = err.message; }
@@ -345,29 +353,39 @@ async function chatLoadRoom(room, onlyNew) {
   if (!rs.loaded) { rs.more = !!d.mehr; rs.loaded = true; return true; }
   return changed;
 }
-async function chatLoadOlder() {
+async function chatLoadOlder(quiet) {
   const rs = chatRoomState(chatS.room);
   const first = rs.msgs.find(m => !m.pending);
   if (!first) return;
   const d = await chatApi('messages?raum=' + encodeURIComponent(chatS.room) + '&vor=' + first.zeit);
   chatMerge(chatS.room, d.nachrichten || []);
   rs.more = !!d.mehr;
-  chatRenderConv(true);
+  if (!quiet) chatRenderConv(true);
 }
 async function chatPlain(m) {
   const S = chatS;
   if (m.geloescht || (!m.daten && !m.pending)) return { del: true };
   if (S.plain.has(m.id)) return S.plain.get(m.id);
   let out;
-  try { out = { msg: await chatOpenPackage(m, S.uid, S.priv, chatAccepted) }; }
-  catch (e) { out = { err: ['nokey', 'unverified'].indexOf(e.message) >= 0 ? e.message : 'fail' }; }
-  if (!out.err || out.err !== 'unverified') S.plain.set(m.id, out); // "unverified" may change when a key is accepted
+  try {
+    const o = JSON.parse(m.daten);
+    if (o && o.v === 2) { // readable mode (no end-to-end encryption)
+      if (o.s !== m.von || !o.p || typeof o.p !== 'object' || Array.isArray(o.p)) throw new Error('bad');
+      out = { msg: o.p };
+    } else if (!S.priv) out = { err: 'locked' };
+    else out = { msg: await chatOpenPackage(m, S.uid, S.priv, chatAccepted) };
+  } catch (e) { out = { err: ['nokey', 'unverified'].indexOf(e.message) >= 0 ? e.message : 'fail' }; }
+  if (!out.err || (out.err !== 'unverified' && out.err !== 'locked')) S.plain.set(m.id, out); // "unverified" / "locked" may change later
   return out;
 }
 function chatRecipients(m) {
   if (m._recips) return m._recips;
   let ids = [];
-  try { ids = Object.keys(JSON.parse(m.daten).w || {}); } catch (e) { ids = []; }
+  try {
+    const o = JSON.parse(m.daten);
+    if (o && o.v === 2) ids = String(m.empf || (',' + chatRoomMembers(m.raum).map(p => p.id).join(',') + ',')).split(',').filter(Boolean);
+    else ids = Object.keys(o.w || {});
+  } catch (e) { ids = []; }
   m._recips = ids.filter(id => id !== m.von);
   return m._recips;
 }
@@ -384,7 +402,7 @@ async function chatSend() {
   const text = input ? input.value.trim() : '';
   if ((!text && !S.ref) || S.busy || !S.room || S.phase !== 'ready') return;
   const members = chatRoomMembers(S.room);
-  if (members.some(p => p.changed)) { chatRenderConv(); return; }
+  if (!S.plainMode && members.some(p => p.changed)) { chatRenderConv(); return; }
   const payload = { x: text.slice(0, 4000) };
   if (S.reply) payload.q = { i: S.reply.id, u: S.reply.uid, x: S.reply.text.slice(0, 120) };
   if (S.ref) payload.r = { k: S.ref.k, id: S.ref.id, ti: String(S.ref.ti || '').slice(0, 120) };
@@ -396,18 +414,25 @@ async function chatSend() {
   chatRenderConv(true);
   await chatDeliver(S.room, tmp, payload);
 }
-async function chatDeliver(room, tmp, payload) {
+// The message package: encrypted, or readable when the family switched the encryption off
+function chatPackFor(room, payload) {
+  const S = chatS;
+  if (S.plainMode) return Promise.resolve(JSON.stringify({ v: 2, s: S.uid, p: payload }));
+  return chatEncrypt(room, payload, chatRoomMembers(room), S.uid, S.priv, S.pub);
+}
+// extra: more fields for the server, e.g. { leise: true } for silent messages (poll votes)
+async function chatDeliver(room, tmp, payload, extra) {
   const S = chatS;
   try {
-    const daten = await chatEncrypt(room, payload, chatRoomMembers(room), S.uid, S.priv, S.pub);
-    const r = await chatPost('send', { raum: room, daten });
+    const daten = await chatPackFor(room, payload);
+    const r = await chatPost('send', Object.assign({ raum: room, daten }, extra || {}));
     const rs = chatRoomState(room);
     rs.byId.delete(tmp.id); rs.msgs = rs.msgs.filter(m => m.id !== tmp.id);
     S.plain.delete(tmp.id); S.plain.set(r.id, { msg: payload });
-    chatMerge(room, [{ id: r.id, raum: room, von: S.uid, zeit: r.zeit, aktualisiert: r.zeit, daten, gelesen: {}, geloescht: false }]);
+    chatMerge(room, [{ id: r.id, raum: room, von: S.uid, zeit: r.zeit, aktualisiert: r.zeit, daten, gelesen: {}, geloescht: false, leise: !!(extra && extra.leise), empf: ',' + chatRoomMembers(room).map(p => p.id).join(',') + ',' }]);
     S.prev.delete(room);
     chatLoadOverview();
-  } catch (err) { tmp.failed = true; tmp.retry = () => { tmp.failed = false; chatRenderConv(); chatDeliver(room, tmp, payload); }; }
+  } catch (err) { tmp.failed = true; tmp.retry = () => { tmp.failed = false; chatRenderConv(); chatDeliver(room, tmp, payload, extra); }; }
   chatRenderConv(true);
 }
 async function chatDelete(m) {
@@ -417,7 +442,7 @@ async function chatMarkRead() {
   const S = chatS;
   if (!S.room || document.hidden || currentView !== 'chat') return;
   const rs = chatRoomState(S.room);
-  const unread = rs.msgs.some(m => m.von !== S.uid && !m.pending && !m.geloescht && !(m.gelesen && m.gelesen[S.uid]));
+  const unread = rs.msgs.some(m => m.von !== S.uid && !m.pending && !m.geloescht && !m.leise && !(m.gelesen && m.gelesen[S.uid]));
   const ov = S.ov.get(S.room);
   if (!unread && !(ov && ov.ungelesen)) return;
   try {
@@ -455,14 +480,23 @@ async function chatRefreshPreviews() {
 function chatPlainText(msg) {
   const cap = String((msg && msg.x) || '');
   if (msg && msg.r && !cap && !msg.m) return (CHAT_REF_ICONS[msg.r.k] || '🔗') + ' ' + String(msg.r.ti || '');
-  if (msg && msg.m) return (msg.m.k === 'vid' ? '🎥 ' + tk('chat.media.video') : '📷 ' + tk('chat.media.photo')) + (cap ? ' ' + cap : '');
+  if (msg && msg.m) {
+    const k = msg.m.k;
+    if (k === 'aud') return '🎤 ' + tk('chat.voice.label') + (msg.m.d ? ' ' + chatMDuration(msg.m.d) : '');
+    if (k === 'pdf') return '📄 ' + String(msg.m.n || tk('chat.file.pdf')) + (cap ? ' ' + cap : '');
+    return (k === 'vid' ? '🎥 ' + tk('chat.media.video') : '📷 ' + tk('chat.media.photo')) + (cap ? ' ' + cap : '');
+  }
+  if (msg && msg.l) return '📍 ' + (msg.l.n ? String(msg.l.n) : tk('chat.loc.label'));
+  if (msg && msg.p) return '📊 ' + String(msg.p.q || tk('chat.poll.label'));
   return cap;
 }
+// Number behind "Chat" in the menu: unread messages of all chats that are not muted, plus chats marked as unread by hand
 function chatUpdateBadge() {
-  let n = chatS ? Array.from(chatS.ov.values()).reduce((a, o) => a + (o.ungelesen || 0), 0) : 0;
-  if (chatS && chatS.mark) Object.keys(chatS.mark).forEach(room => { const o = chatS.ov.get(room); if (chatS.mark[room].u && !(o && o.ungelesen)) n++; });
+  const muted = (room) => typeof chatXMuted === 'function' && chatXMuted(room);
+  let n = chatS ? Array.from(chatS.ov.values()).reduce((a, o) => a + (muted(o.raum) ? 0 : (o.ungelesen || 0)), 0) : 0;
+  if (chatS && chatS.mark) Object.keys(chatS.mark).forEach(room => { const o = chatS.ov.get(room); if (chatS.mark[room].u && !muted(room) && !(o && o.ungelesen)) n++; });
   const el = document.getElementById('navChatBadge');
-  if (el) { el.textContent = n > 9 ? '9+' : String(n); el.classList.toggle('hidden', !n); }
+  if (el) { el.textContent = n > 99 ? '99+' : String(n); el.classList.toggle('hidden', !n); }
 }
 // Menu badge while the chat page is not open: only counts, nothing is decrypted
 async function chatBadgeTick() {
@@ -476,10 +510,11 @@ async function chatBadgeTick() {
 function chatStart() {
   const nav = document.querySelector('#sidebar [data-view="chat"]');
   if (nav) nav.classList.toggle('hidden', !chatEnabled());
-  if (!chatEnabled()) return;
+  // the timer always runs (the tick itself checks whether the chat may be used), so the number in the menu never depends on the start-up order
   if (chatBadgeTimer) clearInterval(chatBadgeTimer);
   chatBadgeTimer = setInterval(chatBadgeTick, CHAT_BADGE_MS);
-  setTimeout(chatBadgeTick, 3000);
+  setTimeout(chatBadgeTick, 1500);
+  if (!chatEnabled()) return;
   try {
     const room = new URLSearchParams(location.search).get('chat');
     if (room) {
@@ -503,6 +538,8 @@ function chatEnterReady() {
   S.pollTimer = setInterval(chatPoll, CHAT_POLL_MS);
 }
 function chatLeave() {
+  if (typeof chatVStopAll === 'function') chatVStopAll();
+  if (typeof chatXSearchReset === 'function') chatXSearchReset();
   if (typeof chatMRelease === 'function') chatMRelease();
   if (chatS && chatS.pollTimer) { clearInterval(chatS.pollTimer); chatS.pollTimer = null; }
 }
@@ -578,6 +615,9 @@ function chatOpenRef(r) {
     if (r.k === 'task') ok = chatOpenTask(r.id);
     else if (r.k === 'pin' && typeof pwOpenNote === 'function') ok = pwOpenNote(r.id);
     else if (r.k === 'contract' && typeof vtOpenContract === 'function') ok = vtOpenContract(r.id);
+    else if (r.k === 'doc' && typeof docById === 'function') { setView('dokumente'); ok = !!docById(r.id); if (ok) openDocDetail(r.id); }
+    else if (r.k === 'vehicle' && typeof fzVehicle === 'function') { ok = !!fzVehicle(r.id); if (ok) fzOpenVehicle(r.id); else setView('fahrzeuge'); }
+    else if (r.k === 'event') { const d = String(r.id).slice(0, 10); setView('termine'); if (/^\d{4}-\d{2}-\d{2}$/.test(d) && typeof jumpToDayView === 'function') jumpToDayView(d); }
     else setView(view);
   } catch (e) { setView(view); }
   if (!ok) chatToast(tk('chat.ref.gone'));
@@ -649,6 +689,8 @@ function chatRoot() { return document.getElementById('chatRoot'); }
 function chatRender() {
   const root = chatRoot();
   if (!root || !chatS) return;
+  if (typeof chatVCancel === 'function') chatVCancel(true); // the composer is rebuilt: a running voice recording ends
+  if (typeof chatXSearchReset === 'function') chatXSearchReset();
   const S = chatS;
   root.replaceChildren();
   if (S.phase === 'ready') {
@@ -742,10 +784,11 @@ function chatListRow(r) {
   row.appendChild(mid);
   const side = chatEl('span', 'chat-item-side');
   const unread = r.unread > 0 || r.flagged;
-  if (r.last) side.appendChild(chatEl('span', 'chat-item-time' + (unread ? ' unread' : ''), chatTime(r.last.zeit)));
+  if (r.last) side.appendChild(chatEl('span', 'chat-item-time' + (unread && !r.muted ? ' unread' : ''), chatTime(r.last.zeit)));
   const badges = chatEl('span', 'chat-item-badges');
+  if (r.muted) { const mu = chatEl('span', 'chat-pin-ico', '🔕'); mu.setAttribute('aria-label', tk('chat.muted')); badges.appendChild(mu); }
   if (r.pinned) { const pin = chatEl('span', 'chat-pin-ico', '📌'); pin.setAttribute('aria-label', tk('chat.pinned')); badges.appendChild(pin); }
-  if (r.unread) badges.appendChild(chatEl('span', 'chat-unread', r.unread > 99 ? '99+' : String(r.unread)));
+  if (r.unread) badges.appendChild(chatEl('span', 'chat-unread' + (r.muted ? ' muted' : ''), r.unread > 99 ? '99+' : String(r.unread)));
   else if (r.flagged) { const dot = chatEl('span', 'chat-unread chat-unread-dot'); dot.setAttribute('aria-label', tk('chat.markUnread')); badges.appendChild(dot); }
   if (badges.childNodes.length) side.appendChild(badges);
   row.appendChild(side);
@@ -790,8 +833,12 @@ function chatBuildConv() {
   head.appendChild(chatHeadAvatar(room));
   const t = chatEl('span', 'chat-conv-title');
   t.appendChild(chatEl('span', 'chat-conv-name', room.title));
-  t.appendChild(chatEl('span', 'chat-conv-sub', '🔒 ' + tk('chat.e2ee')));
+  t.appendChild(chatEl('span', 'chat-conv-sub', S.plainMode ? '🔓 ' + tk('chat.plain') : '🔒 ' + tk('chat.e2ee')));
   head.appendChild(t);
+  const find = chatEl('button', 'chat-icon-btn'); find.type = 'button'; find.id = 'chatSearchBtn'; find.setAttribute('aria-label', tk('chat.search.placeholder')); find.title = tk('chat.search.placeholder');
+  find.appendChild(chatSvg('M11 19a8 8 0 100-16 8 8 0 000 16z M21 21l-4.35-4.35', 20));
+  find.onclick = () => { if (typeof chatXSearchToggle === 'function') chatXSearchToggle(); };
+  head.appendChild(find);
   const info = chatEl('button', 'chat-icon-btn'); info.type = 'button'; info.setAttribute('aria-label', tk('chat.info.title')); info.appendChild(chatSvg('M12 16v-4 M12 8h.01 M12 22a10 10 0 100-20 10 10 0 000 20z', 22));
   info.onclick = () => { if (room.isGroup && typeof chatGInfoSheet === 'function') chatGInfoSheet(room.id); else { S.sheet = 'info'; chatRenderSheet(); } };
   head.appendChild(info);
@@ -813,10 +860,11 @@ function chatBuildConv() {
   send.onmousedown = (e) => e.preventDefault(); // keeps the keyboard open
   send.onclick = () => { chatSend(); };
   bar.appendChild(send);
+  if (typeof chatXBuildMic === 'function') chatXBuildMic(bar, send, input); // microphone instead of the send button while nothing is typed (js/chatstimme.js)
   conv.appendChild(bar);
   return conv;
 }
-function chatGrow(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 130) + 'px'; }
+function chatGrow(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 130) + 'px'; if (typeof window.chatXSyncMic === 'function') window.chatXSyncMic(); }
 function chatScrollEnd() { const m = document.getElementById('chatMsgs'); if (m) m.scrollTop = m.scrollHeight; }
 function chatLinkify(parent, text) {
   const re = /(https?:\/\/[^\s<>"']+)/g;
@@ -847,9 +895,10 @@ async function chatRenderConv(forceBottom) {
   const oldTop = box.scrollTop, oldHeight = box.scrollHeight;
   box.replaceChildren();
   if (rs.more) { const more = chatEl('button', 'chat-more', tk('chat.loadOlder')); more.type = 'button'; more.onclick = () => chatLoadOlder(); box.appendChild(more); }
-  if (!items.length && rs.loaded) box.appendChild(chatEl('div', 'chat-empty', tk('chat.e2eeNote')));
+  if (!items.length && rs.loaded) box.appendChild(chatEl('div', 'chat-empty', S.plainMode ? tk('chat.plainNote') : tk('chat.e2eeNote')));
   let prev = null;
   items.forEach(({ m, p }) => {
+    if (m.leise) return; // poll votes are counted, never shown
     if (!prev || chatDayKey(prev.zeit) !== chatDayKey(m.zeit)) box.appendChild(chatEl('div', 'chat-day', chatDayLabel(m.zeit)));
     const first = !prev || prev.von !== m.von || m.zeit - prev.zeit > 5 * 60000 || chatDayKey(prev.zeit) !== chatDayKey(m.zeit);
     box.appendChild(chatBubble(m, p, first, !!(room && room.group)));
@@ -874,7 +923,7 @@ function chatBubble(m, p, first, group) {
     b.appendChild(n);
   }
   if (p.del) b.appendChild(chatEl('div', 'chat-text chat-muted', '🚫 ' + tk('chat.deleted')));
-  else if (p.err) b.appendChild(chatEl('div', 'chat-text chat-muted', p.err === 'nokey' ? '🔒 ' + tk('chat.nokey') : p.err === 'unverified' ? '⚠️ ' + tk('chat.unverified') : '🔒 ' + tk('chat.cantRead')));
+  else if (p.err) b.appendChild(chatEl('div', 'chat-text chat-muted', p.err === 'locked' ? '🔒 ' + tk('chat.locked') : p.err === 'nokey' ? '🔒 ' + tk('chat.nokey') : p.err === 'unverified' ? '⚠️ ' + tk('chat.unverified') : '🔒 ' + tk('chat.cantRead')));
   else {
     const x = p.msg || {};
     if (x.q) {
@@ -893,7 +942,9 @@ function chatBubble(m, p, first, group) {
       b.appendChild(r);
     }
     if (x.m && typeof chatMBubble === 'function') b.appendChild(chatMBubble(x.m, m));
-    if (x.x || (!x.m && !x.r)) { const t = chatEl('div', 'chat-text'); chatLinkify(t, String(x.x || '')); b.appendChild(t); }
+    if (x.l && typeof chatXLocBubble === 'function') b.appendChild(chatXLocBubble(x.l));
+    if (x.p && typeof chatXPollBubble === 'function') b.appendChild(chatXPollBubble(x.p, m));
+    if (x.x || (!x.m && !x.r && !x.l && !x.p)) { const t = chatEl('div', 'chat-text'); chatLinkify(t, String(x.x || '')); b.appendChild(t); }
   }
   const meta = chatEl('div', 'chat-meta');
   meta.appendChild(chatEl('span', 'chat-time', chatTime(m.zeit)));
@@ -903,7 +954,10 @@ function chatBubble(m, p, first, group) {
   }
   b.appendChild(meta);
   if (m.failed) { const f = chatEl('div', 'chat-retry', tk('chat.notSent')); f.onclick = (e) => { e.stopPropagation(); if (m.retry) m.retry(); }; b.appendChild(f); }
-  b.onclick = () => { if (!p.del && !m.pending && !m.failed) chatMessageSheet(m, p); };
+  b.onclick = () => {
+    if (p.err === 'locked') { S.phase = 'unlock'; chatRender(); return; } // older encrypted message: unlock with the recovery code
+    if (!p.del && !m.pending && !m.failed) chatMessageSheet(m, p);
+  };
   row.appendChild(b);
   return row;
 }
@@ -924,6 +978,7 @@ function chatRenderBanners() {
 function chatRenderContext() {
   const S = chatS;
   const ctx = document.getElementById('chatCtx');
+  if (typeof window.chatXSyncMic === 'function') window.chatXSyncMic();
   if (!ctx) return;
   ctx.replaceChildren();
   const item = S.reply ? { title: S.reply.uid === S.uid ? tk('chat.you') : chatName(S.roster.find(r => r.id === S.reply.uid)), text: S.reply.text, drop: () => { S.reply = null; chatRenderContext(); } }
@@ -988,7 +1043,10 @@ async function chatRenderSheet() {
   rec.appendChild(cb);
   const lab = chatEl('span', 'chat-switch-text'); lab.appendChild(chatEl('span', 'chat-switch-title', tk('chat.info.receipts'))); lab.appendChild(chatEl('span', 'chat-switch-help', tk('chat.info.receiptsHelp')));
   rec.appendChild(lab); card.appendChild(rec);
+  if (typeof chatXModeUi === 'function') chatXModeUi(card);
   if (typeof chatMRetentionUi === 'function') chatMRetentionUi(card);
+  const cur = chatRoomById(S.room);
+  if (cur && typeof chatXMuteSheet === 'function') { const mu = chatEl('button', 'chat-sheet-act', (chatXMuted(cur.id) ? '🔕 ' : '🔔 ') + tk('chat.mute.title')); mu.type = 'button'; mu.onclick = () => chatXMuteSheet(cur); card.appendChild(mu); }
   const code = chatEl('button', 'chat-sheet-act', '🔑 ' + tk('chat.info.newCode')); code.type = 'button';
   code.onclick = async () => { try { await chatNewRecoveryCode(); } catch (e) { alert(tk('chat.error.send')); } };
   card.appendChild(code);
@@ -999,6 +1057,11 @@ async function chatRenderSheet() {
 }
 
 // Reload when the page becomes visible again (new messages came in while the phone was asleep)
-document.addEventListener('visibilitychange', () => { if (!document.hidden && chatS && chatS.phase === 'ready' && typeof currentView !== 'undefined' && currentView === 'chat') chatPoll(); });
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) return;
+  if (chatS && chatS.phase === 'ready' && typeof currentView !== 'undefined' && currentView === 'chat') chatPoll();
+  else chatBadgeTick(); // back in the app: refresh the number in the menu right away
+});
+window.addEventListener('focus', () => { if (typeof currentView !== 'undefined' && currentView !== 'chat') chatBadgeTick(); });
 
 (window.PINN_PARTS = window.PINN_PARTS || []).push('chat');

@@ -300,6 +300,8 @@ async function showNextNotification(event) {
     badge: '/pinn-badge.png', // single-colour icon for the Android status bar
     data: { url: msg.url || '/' },
   };
+  // Picture preview (chat photo, only when the family chat is not end-to-end encrypted); only Android shows it
+  if (msg.bild && String(msg.bild).indexOf('/api/pinn/chat/vorschau?') === 0) opts.image = msg.bild;
   if (sos) {
     // Emergency call: stays until someone reacts, vibrates long and alerts again
     opts.requireInteraction = true;

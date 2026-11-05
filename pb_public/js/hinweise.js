@@ -2360,6 +2360,7 @@ function ntStart() {
     if (navigator.serviceWorker) navigator.serviceWorker.addEventListener('message', (ev) => {
       const d = ev.data || {};
       if (d.type === 'pinn-push') {
+        try { if (typeof chatBadgeTick === 'function') setTimeout(chatBadgeTick, 800); } catch (e) { /* chat not loaded */ }
         if (ntStarted) setTimeout(() => ntActFetch(true), 1200);
         return;
       }

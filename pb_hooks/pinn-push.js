@@ -354,6 +354,7 @@ function ensurePushCollections() {
                     { name: "text", type: "text", max: 1000 },
                     { name: "url", type: "text", max: 300 },
                     { name: "tag", type: "text", max: 200 },
+                    { name: "bild", type: "text", max: 300 },
                     { name: "created", type: "autodate", onCreate: true, onUpdate: false },
                 ],
             }, closed)));
@@ -362,6 +363,18 @@ function ensurePushCollections() {
             throw new Error("Sammlung \"" + PUSH_NACHRICHTEN + "\" konnte nicht angelegt werden: " + e.message);
         }
     }
+    // 1.127.4: optionales Bild einer Mitteilung (Foto-Vorschau im Chat, wenn der Familienchat nicht Ende-zu-Ende verschlüsselt ist)
+    try {
+        const nm = findCollectionOrNull(PUSH_NACHRICHTEN);
+        if (nm && !hasFieldNamed(nm, "bild")) {
+            let field = null;
+            try { if (typeof TextField === "function") field = new TextField({ name: "bild", max: 300 }); } catch (e) { field = null; }
+            if (!field) field = newBaseCollection({ name: "pinn_tmp_feld", fields: [{ name: "bild", type: "text", max: 300 }] }).fields.getByName("bild");
+            nm.fields.add(field);
+            $app.save(nm);
+            console.log("[Push] Feld \"bild\" in \"" + PUSH_NACHRICHTEN + "\" angelegt.");
+        }
+    } catch (e) { console.log("[Push] Feld bild nicht anlegbar: " + e.message); }
     return abos;
 }
 
@@ -606,8 +619,11 @@ function notifyUserDetailed(userId, msg) {
     const result = { sent: 0, geraete: 0, fehler: [] };
     // Text in der Sprache des Empfängers und passend zur Wohnform (Familie/WG) – siehe pinn-pushtext.js.
     // Gilt für das Handy und die 🔔 Glocke; bei einem Fehler bleibt der deutsche Text.
-    try { msg = require(`${__hooks}/pinn-pushtext.js`).localize(userId, msg); }
-    catch (e) { console.log("[Push] Übersetzung nicht verfügbar: " + e.message); }
+    // msg.roh = true: von einer Person getippter Text (Chat ohne Ende-zu-Ende-Verschlüsselung) - wird nie übersetzt
+    if (!(msg && msg.roh === true)) {
+        try { msg = require(`${__hooks}/pinn-pushtext.js`).localize(userId, msg); }
+        catch (e) { console.log("[Push] Übersetzung nicht verfügbar: " + e.message); }
+    }
     // Jede Nachricht erscheint zusätzlich als Hinweis unter der 🔔 Glocke des Empfängers (auch ohne
     // angemeldetes Gerät). msg.hinweis = false verhindert das (z. B. Test-Nachricht).
     if (msg && msg.hinweis !== false) {
@@ -629,6 +645,7 @@ function notifyUserDetailed(userId, msg) {
             rec.set("text", String(msg.text || "").slice(0, 1000));
             rec.set("url", String(msg.url || "/").slice(0, 300));
             rec.set("tag", String(msg.tag || "").slice(0, 200));
+            if (msg.bild) { try { rec.set("bild", String(msg.bild).slice(0, 300)); } catch (e4) { /* alte Installation ohne das Feld */ } }
             $app.save(rec);
             const endpoint = abo.getString("endpoint");
             const r = sendWakeup(endpoint, msg.urgency);
@@ -680,6 +697,9 @@ function takeMessage(endpoint) {
     if (!recs.length) return null;
     const r = recs[0];
     const out = { titel: r.getString("titel"), text: r.getString("text"), url: r.getString("url") || "/", tag: r.getString("tag") };
+    let picture = "";
+    try { picture = r.getString("bild"); } catch (e) { picture = ""; }
+    if (picture) out.bild = picture;
     try { $app.delete(r); } catch (e) { /* egal */ }
     return out;
 }

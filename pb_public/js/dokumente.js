@@ -821,6 +821,7 @@ function renderDocDetail() {
     ${hint}
     <div class="flex items-center gap-2 mt-5">
       ${canShare ? `<button type="button" id="docShareBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">${shareLabel}</button>` : ''}
+      ${(typeof chatCanShare === 'function' && chatCanShare() && !d.pending) ? `<button type="button" id="docChatBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm text-ink/70 hover:text-pine hover:border-pine transition">💬 ${escapeHtml(tk('chat.discuss'))}</button>` : ''}
       <div class="flex-1"></div>
       <button type="button" id="docDetailEditBtn" class="px-4 py-2 rounded-lg bg-pine text-white text-sm font-medium hover:bg-pine/90 transition">${tk('home.edit')}</button>
     </div>`;
@@ -833,6 +834,8 @@ function renderDocDetail() {
   body.querySelectorAll('[data-docveh]').forEach(b => b.addEventListener('click', () => { const vid = b.dataset.docveh; closeDocDetail(); fzOpenVehicle(vid); }));
   const shareBtn = document.getElementById('docShareBtn');
   if (shareBtn) shareBtn.addEventListener('click', () => docShare(d, shareBtn));
+  const docChatBtn = document.getElementById('docChatBtn');
+  if (docChatBtn) docChatBtn.addEventListener('click', () => window.pinnChat.share({ k: 'doc', id: d.id, ti: d.titel || tk('search.type.doc') }, closeDocDetail));
 }
 // Open file: images in the viewer, everything else (PDF) in a new window
 async function docOpenFile(d, f, files) {

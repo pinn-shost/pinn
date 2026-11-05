@@ -125,6 +125,20 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский et 🇳🇱 Nederlands**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.127.4
+
+**Chat : messages vocaux, position, sondages, PDF, recherche, sourdine – et chiffrement désactivable**
+
+- **Messages vocaux.** Un bouton micro remplace le bouton d’envoi tant que rien n’est saisi : toucher, parler, envoyer (jusqu’à 5 minutes). Forme d’onde, lecture/pause, 1×/1,5×/2× et saut en touchant l’onde. Chiffrés de bout en bout comme les photos.
+- **Le trombone est désormais un menu :** photo/vidéo, **document PDF** (jusqu’à 20 Mo ; ouvrir / partager / enregistrer / classer dans pinn.), **position** et **sondage**.
+- **Position.** Aperçu de la carte et légende (un lieu enregistré de la carte de localisation, p. ex. « Maison », est proposé). Toucher affiche la carte : **« Afficher sur la carte de localisation »** ouvre Famille → Localisation avec un repère ; « Ouvrir dans l’app de cartes » lance la navigation.
+- **Sondages.** Une question et jusqu’à 8 réponses, plusieurs par personne si souhaité. Avec la case **« Afficher aussi sur le tableau d’affichage »**, un sondage du tableau est créé en même temps : on vote ici ou là, le résultat est identique.
+- **Recherche** dans le chat (loupe en haut), **sourdine** par chat (8 heures, 1 semaine, toujours ; pas de notification et non compté dans le nombre à côté de « Chat » dans le menu) et **dissolution d’un groupe** (créateur et admins).
+- **Chiffrement désactivable** par famille (admins, « Sécurité du chat »). Les notifications affichent alors le texte (sur Android aussi un aperçu des photos) et personne n’a besoin de code de récupération. Par défaut : chiffré de bout en bout.
+- « Discuter dans le chat » (💬) aussi pour les rendez-vous, documents et véhicules. Corrigé : « Classer dans pinn. » s’ouvrait sous la photo, les titres du chat utilisent la police de l’app, le nombre du menu se met à jour plus fiablement.
+- Modifié : `js/chatextras.js` et `js/chatstimme.js` (nouveaux), `js/chat.js`, `js/chatmedien.js`, `js/chatgruppen.js`, `js/familie.js`, `js/pinnwand.js`, `js/termindetails.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/hinweise.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, tous les `i18n/*.i18n.js`, `pinn-setup.sh`, `src/` et tous les README. **Partie serveur :** `pb_hooks/chat.pb.js`, `pinn-chat.js`, `pinn-push.js` et `sw.pb.js` – remplacez aussi les hooks ; quelques champs sont ajoutés automatiquement au démarrage.
+
+
 ## Nouveautés de la 1.127.3
 
 **Chat : groupes personnels, chats épinglés, balayage et images du chat**
@@ -232,15 +246,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js`, sur le serveur `pb_hooks/pinn-pushtext.js` et tous les README. Installation comme toujours (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
 
 
-## Nouveautés de la 1.123.9
-
-**Néerlandais – dixième étape**
-
-- **Encore plus de pinn. en néerlandais.** Les noms standard (catégories pour les finances, les contrats, les documents, le garde-manger, les recettes et le ménage, lieux, rôles, appareils de cuisine, types de déchets et unités de mesure), la commande vocale (raccourci Siri et Android), la lecture des PDF et des justificatifs, les messages du serveur et les unités sont maintenant traduits (6575 textes sur 6722). Il ne manque plus que les notifications (push).
-- Le néerlandais reste **masqué** tant que tout n’est pas traduit (activable sur un appareil pour l’essayer ; les textes manquants apparaissent alors en anglais). Rien ne change de visible pour les autres.
-- Modifié : `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js` et tous les README. Installation comme toujours (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
-
 ## Comment ça marche
 
 ```mermaid
@@ -267,7 +272,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.127.3` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.127.4` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

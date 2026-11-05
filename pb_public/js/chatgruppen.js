@@ -128,6 +128,7 @@ function chatGRoomMenu(r) {
   const act = (label, fn) => { const b = chatEl('button', 'chat-sheet-act', label); b.type = 'button'; b.onclick = () => { chatCloseSheet(); fn(); }; card.appendChild(b); };
   act('📌 ' + (r.pinned ? tk('chat.unpin') : tk('chat.pin')), () => chatGTogglePin(r));
   act((unread ? '✓ ' + tk('chat.markRead') : '● ' + tk('chat.markUnread')), () => chatGToggleRead(r));
+  if (typeof chatXMuteSheet === 'function') act((r.muted ? '🔕 ' : '🔔 ') + tk('chat.mute.title'), () => chatXMuteSheet(r));
   const close = chatEl('button', 'chat-sheet-act muted', tk('chat.close')); close.type = 'button'; close.onclick = chatCloseSheet; card.appendChild(close);
 }
 
@@ -281,7 +282,9 @@ function chatGInfoSheet(roomId) {
     act('🖼 ' + tk('chat.pic.change'), () => { chatCloseSheet(); chatGPickPicture(roomId); });
   }
   act('🛡 ' + tk('chat.info.title'), () => { S.sheet = 'info'; chatRenderSheet(); });
+  if (typeof chatXMuteSheet === 'function') act((chatXMuted(roomId) ? '🔕 ' : '🔔 ') + tk('chat.mute.title'), () => { chatCloseSheet(); chatXMuteSheet({ id: roomId, title: g.name }); });
   act('🚪 ' + tk('chat.group.leave'), () => { if (confirm(tk('chat.group.leaveConfirm'))) chatGLeave(g); }, true);
+  if (chatGCanEdit(g) && typeof chatXDissolve === 'function') act('🗑 ' + tk('chat.group.dissolve'), () => { if (confirm(tk('chat.group.dissolveConfirm', { name: g.name }))) chatXDissolve(g); }, true);
   const close = chatEl('button', 'chat-sheet-act muted', tk('chat.close')); close.type = 'button'; close.onclick = chatCloseSheet; card.appendChild(close);
 }
 async function chatGLeave(g) {

@@ -12,7 +12,7 @@
    to 20 MB, videos up to 50 MB. The user chooses per sending (HD button, like in WhatsApp). Files are encrypted as a whole,
    so the viewer loads the complete file before it shows it. */
 
-const CHATM = { SIDE: 1600, Q: 0.8, THUMB: 240, THUMB_Q: 0.6, IMG_MAX: 20 * 1024 * 1024, VID_MAX: 50 * 1024 * 1024, VID_BITS: 1500000, VID_SHRINK_MAX_S: 300, FILES_MAX: 10 };
+const CHATM = { PDF_MAX: 20 * 1024 * 1024, SIDE: 1600, Q: 0.8, THUMB: 240, THUMB_Q: 0.6, IMG_MAX: 20 * 1024 * 1024, VID_MAX: 50 * 1024 * 1024, VID_BITS: 1500000, VID_SHRINK_MAX_S: 300, FILES_MAX: 10 };
 const chatMBlobs = new Map();   // file id -> { blob, url } of everything opened in this session
 
 /* ---------------------------------------------------------------- small helpers */
@@ -25,13 +25,14 @@ function chatMKind(file) {
   const t = String(file.type || ''), n = String(file.name || '');
   if (/^image\//.test(t) || /\.(jpe?g|png|webp|gif|heic|heif)$/i.test(n)) return 'img';
   if (/^video\//.test(t) || /\.(mp4|mov|m4v|webm)$/i.test(n)) return 'vid';
+  if (t === 'application/pdf' || /\.pdf$/i.test(n)) return 'pdf';
   return '';
 }
 function chatMDuration(s) { s = Math.max(0, Math.round(Number(s) || 0)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
 function chatMErr(code, extra) { const e = new Error(code); Object.assign(e, extra || {}); return e; }
 function chatMToBlob(canvas, type, q) { return new Promise(res => canvas.toBlob(b => res(b), type, q)); }
 function chatMName(mm) {
-  const ext = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif', 'image/heic': 'heic', 'video/mp4': 'mp4', 'video/quicktime': 'mov', 'video/webm': 'webm' }[mm.mt] || (mm.k === 'vid' ? 'mp4' : 'jpg');
+  const ext = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif', 'image/heic': 'heic', 'video/mp4': 'mp4', 'video/quicktime': 'mov', 'video/webm': 'webm', 'application/pdf': 'pdf', 'audio/mp4': 'm4a', 'audio/wav': 'wav' }[mm.mt] || (mm.k === 'vid' ? 'mp4' : mm.k === 'pdf' ? 'pdf' : mm.k === 'aud' ? 'm4a' : 'jpg');
   const n = String(mm.n || '').trim();
   if (n && /\.[a-z0-9]{2,4}$/i.test(n)) return n;
   return 'pinn-' + new Date().toISOString().slice(0, 10) + '.' + ext;
@@ -153,15 +154,16 @@ async function chatMEncryptFile(blob) {
   const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv, additionalData: chatEnc.encode('pinn.chat.file.v1') }, key, await blob.arrayBuffer());
   return { cipher: new Blob([ct], { type: 'application/octet-stream' }), key: chatB64e(await crypto.subtle.exportKey('raw', key)), iv: chatB64e(iv) };
 }
-function chatMUpload(cipher, room, onProgress) {
+// art = 'v': a small preview picture that is stored readable (only for the push message, only without end-to-end encryption)
+function chatMUpload(cipher, room, onProgress, art) {
   return new Promise((res, rej) => {
     const x = new XMLHttpRequest();
-    x.open('POST', CHAT_API + 'upload?raum=' + encodeURIComponent(room));
+    x.open('POST', CHAT_API + 'upload?raum=' + encodeURIComponent(room) + (art ? '&art=' + art : ''));
     if (pb.authStore.token) x.setRequestHeader('Authorization', pb.authStore.token);
     x.upload.onprogress = (e) => { if (e.lengthComputable && onProgress) onProgress(e.loaded / e.total); };
     x.onload = () => { let j = {}; try { j = JSON.parse(x.responseText); } catch (e) { /* no JSON */ } if (x.status >= 200 && x.status < 300 && j.id) res(j.id); else rej(new Error(j.error || ('HTTP ' + x.status))); };
     x.onerror = () => rej(new Error('network'));
-    const form = new FormData(); form.append('datei', cipher, 'chat.bin');
+    const form = new FormData(); form.append('datei', cipher, art ? 'vorschau.jpg' : 'chat.bin');
     x.send(form);
   });
 }
@@ -211,22 +213,35 @@ async function chatMSendOne(room, it, caption, hd) {
     try {
       if (!tmp.prep) {
         chatMUpdateProgress(tmp.id, tk('chat.media.preparing'));
-        tmp.prep = it.kind === 'vid'
+        if (it.prep) tmp.prep = it.prep; // voice message: already recorded (js/chatstimme.js)
+        else if (it.kind === 'pdf') {
+          if (it.file.size > CHATM.PDF_MAX) throw chatMErr('toobig', { max: CHATM.PDF_MAX, name: it.file.name });
+          tmp.prep = { blob: it.file, mt: 'application/pdf', w: 0, h: 0, th: '', hd: true };
+        } else tmp.prep = it.kind === 'vid'
           ? await chatMPrepareVideo(it.file, hd, p => chatMUpdateProgress(tmp.id, tk('chat.media.shrinking', { percent: Math.round(p * 100) })), ctl)
           : (!hd && it.std ? it.std : await chatMPrepareImage(it.file, hd));
         Object.assign(meta, { th: tmp.prep.th, w: tmp.prep.w, h: tmp.prep.h, d: tmp.prep.d || 0, hd: !!tmp.prep.hd, mt: tmp.prep.mt, s: tmp.prep.blob.size });
+        if (tmp.prep.pk) meta.pk = tmp.prep.pk;
+        if (it.kind === 'aud' || it.kind === 'pdf') delete meta.hd;
         if (tmp.prep.note === 'noshrink') chatMToast(tk('chat.media.noShrink'));
         chatRenderConv();
       }
       if (!tmp.enc) tmp.enc = await chatMEncryptFile(tmp.prep.blob);
       if (!tmp.fileId) tmp.fileId = await chatMUpload(tmp.enc.cipher, room, p => chatMUpdateProgress(tmp.id, Math.round(p * 100) + '%'));
+      // without end-to-end encryption the push message of a photo/video may carry a small preview picture (stored readable)
+      if (S.plainMode && meta.th && (it.kind === 'img' || it.kind === 'vid') && !tmp.pvId) {
+        try {
+          const bin = chatB64d(meta.th);
+          tmp.pvId = await chatMUpload(new Blob([bin], { type: 'image/jpeg' }), room, null, 'v');
+        } catch (e) { tmp.pvId = ''; }
+      }
       const msg = Object.assign({}, payload, { m: Object.assign({}, meta, { f: tmp.fileId, key: tmp.enc.key, iv: tmp.enc.iv }) });
-      const daten = await chatEncrypt(room, msg, chatRoomMembers(room), S.uid, S.priv, S.pub);
-      const r = await chatPost('send', { raum: room, daten, datei: tmp.fileId });
+      const daten = await chatPackFor(room, msg);
+      const r = await chatPost('send', Object.assign({ raum: room, daten, datei: tmp.fileId }, tmp.pvId ? { vorschau: tmp.pvId } : {}));
       const rs = chatRoomState(room);
       rs.byId.delete(tmp.id); rs.msgs = rs.msgs.filter(m => m.id !== tmp.id);
       S.plain.delete(tmp.id); S.plain.set(r.id, { msg });
-      chatMerge(room, [{ id: r.id, raum: room, von: S.uid, zeit: r.zeit, aktualisiert: r.zeit, daten, gelesen: {}, geloescht: false }]);
+      chatMerge(room, [{ id: r.id, raum: room, von: S.uid, zeit: r.zeit, aktualisiert: r.zeit, daten, gelesen: {}, geloescht: false, empf: ',' + chatRoomMembers(room).map(p => p.id).join(',') + ',' }]);
       S.prev.delete(room);
       chatLoadOverview();
     } catch (err) {
@@ -245,15 +260,24 @@ function chatMBuildAttach(bar) {
   const input = document.createElement('input');
   input.type = 'file'; input.accept = 'image/*,video/*'; input.multiple = true; input.className = 'hidden'; input.id = 'chatFileInput';
   input.onchange = () => { const files = Array.from(input.files || []); input.value = ''; if (files.length) chatMCompose(files); };
+  const pdf = document.createElement('input');
+  pdf.type = 'file'; pdf.accept = 'application/pdf,.pdf'; pdf.multiple = true; pdf.className = 'hidden'; pdf.id = 'chatPdfInput';
+  pdf.onchange = () => {
+    const files = Array.from(pdf.files || []).filter(f => chatMKind(f) === 'pdf').slice(0, CHATM.FILES_MAX); pdf.value = '';
+    const big = files.find(f => f.size > CHATM.PDF_MAX);
+    if (big) { alert(tk('chat.media.tooBig', { name: big.name, max: chatMSize(CHATM.PDF_MAX) })); return; }
+    if (files.length && chatS.room) chatMSendItems(files.map(f => ({ file: f, kind: 'pdf' })), '', true);
+  };
   const btn = chatEl('button', 'chat-attach'); btn.type = 'button'; btn.setAttribute('aria-label', tk('chat.attach'));
   btn.appendChild(chatSvg('M21.4 11.1l-9.2 9.2a6 6 0 01-8.5-8.5l9.2-9.2a4 4 0 015.7 5.7l-9.2 9.2a2 2 0 01-2.8-2.8l8.5-8.5', 22));
   btn.onmousedown = (e) => e.preventDefault();
-  btn.onclick = () => input.click();
-  bar.appendChild(input); bar.appendChild(btn);
+  // the menu offers photo/video, PDF, location and poll (js/chatextras.js); without it the button opens the photo choice directly
+  btn.onclick = () => { if (typeof chatXAttachMenu === 'function') chatXAttachMenu({ photo: () => input.click(), pdf: () => pdf.click() }); else input.click(); };
+  bar.appendChild(input); bar.appendChild(pdf); bar.appendChild(btn);
 }
 function chatMCompose(files) {
   const S = chatS;
-  const items = files.slice(0, CHATM.FILES_MAX).map(f => ({ file: f, kind: chatMKind(f) })).filter(it => it.kind);
+  const items = files.slice(0, CHATM.FILES_MAX).map(f => ({ file: f, kind: chatMKind(f) })).filter(it => it.kind === 'img' || it.kind === 'vid');
   if (!items.length || !S.room) return;
   let hd = false;
   const card = chatSheetShell(tk('chat.media.title'));
@@ -304,6 +328,8 @@ function chatMCompose(files) {
 
 /* ---------------------------------------------------------------- bubble and viewer */
 function chatMBubble(mm, m) {
+  if (mm.k === 'aud' && typeof chatVBubble === 'function') return chatVBubble(mm, m);
+  if (mm.k === 'pdf' && typeof chatXPdfBubble === 'function') return chatXPdfBubble(mm, m);
   const box = chatEl('div', 'chat-media' + (mm.k === 'vid' ? ' vid' : ''));
   const ratio = (mm.w && mm.h) ? Math.min(1.8, Math.max(0.6, mm.w / mm.h)) : 1.33;
   box.style.aspectRatio = String(ratio);
@@ -339,10 +365,14 @@ function chatMOpen(mm, m) {
   chatMFetch(mm, p => { status.textContent = tk('chat.media.loading', { percent: Math.round(p * 100) }); }).then(entry => {
     stage.replaceChildren();
     let el;
-    if (mm.k === 'vid') { el = document.createElement('video'); el.controls = true; el.playsInline = true; el.setAttribute('playsinline', ''); el.src = entry.url; }
+    if (mm.k === 'pdf') {
+      el = chatEl('div', 'chat-viewer-doc'); el.appendChild(chatEl('div', 'chat-viewer-doc-ico', '📄'));
+      el.appendChild(chatEl('div', 'chat-viewer-doc-name', String(mm.n || tk('chat.file.pdf')))); el.appendChild(chatEl('div', 'chat-viewer-doc-size', chatMSize(entry.blob.size)));
+    } else if (mm.k === 'vid') { el = document.createElement('video'); el.controls = true; el.playsInline = true; el.setAttribute('playsinline', ''); el.src = entry.url; }
     else { el = document.createElement('img'); el.src = entry.url; el.alt = ''; }
     stage.appendChild(el);
     const act = (label, fn) => { const b = chatEl('button', 'chat-viewer-act', label); b.type = 'button'; b.onclick = fn; bar.appendChild(b); };
+    if (mm.k === 'pdf') act('↗ ' + tk('chat.pdf.open'), () => { const w = window.open(entry.url, '_blank'); if (!w) chatMSave(entry.blob, mm); });
     act('⇪ ' + tk('chat.media.share'), () => chatMShare(entry.blob, mm));
     act('⤓ ' + tk('chat.media.save'), () => chatMSave(entry.blob, mm));
     act('📥 ' + tk('chat.media.toPinn'), () => chatMPinnSheet(entry.blob, mm, m));
@@ -389,8 +419,9 @@ function chatMPinnTargets() {
 }
 function chatMPinnSheet(blob, mm, m) {
   const card = chatSheetShell(tk('chat.media.pinn.title'));
+  card.classList.add('chat-sheet-top');
   const targets = chatMPinnTargets();
-  if (mm.k === 'vid' || !/^image\//.test(mm.mt || '')) { card.appendChild(chatEl('p', 'chat-sheet-text', tk('chat.media.pinn.videoNo'))); }
+  if (mm.k === 'vid' || mm.k === 'aud' || !/^(image\/|application\/pdf)/.test(mm.mt || '')) { card.appendChild(chatEl('p', 'chat-sheet-text', tk('chat.media.pinn.videoNo'))); }
   else if (!targets.length) { card.appendChild(chatEl('p', 'chat-sheet-text', tk('chat.media.pinn.nothing'))); }
   else {
     const mk = (labelKey, el) => { const w = chatEl('label', 'chat-field'); w.appendChild(chatEl('span', 'chat-field-lbl', tk(labelKey))); w.appendChild(el); card.appendChild(w); return w; };
@@ -400,7 +431,7 @@ function chatMPinnSheet(blob, mm, m) {
     const cat = chatEl('select', 'chat-select'); (typeof docCategories === 'function' ? docCategories() : []).forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = (c.icon || '') + ' ' + c.label; cat.appendChild(o); });
     const catW = mk('chat.media.pinn.category', cat);
     const title = chatEl('input', 'chat-compose-cap'); title.type = 'text'; title.maxLength = 200; title.setAttribute('aria-label', tk('chat.media.pinn.name'));
-    title.value = (m && chatS.plain.get(m.id) && chatS.plain.get(m.id).msg && chatS.plain.get(m.id).msg.x) ? String(chatS.plain.get(m.id).msg.x).slice(0, 80) : tk('chat.media.photo') + ' ' + chatDayLabel(Date.now());
+    title.value = (m && chatS.plain.get(m.id) && chatS.plain.get(m.id).msg && chatS.plain.get(m.id).msg.x) ? String(chatS.plain.get(m.id).msg.x).slice(0, 80) : (mm.k === 'pdf' && mm.n ? String(mm.n).replace(/\.pdf$/i, '') : tk('chat.media.photo') + ' ' + chatDayLabel(Date.now()));
     mk('chat.media.pinn.name', title);
     const preset = (id, hint) => { const c = (typeof docCategories === 'function' ? docCategories() : []).find(x => x.id === hint); if (c) cat.value = c.id; };
     const sync = () => {

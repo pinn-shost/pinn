@@ -17,6 +17,9 @@
 //   POST /api/pinn/chat/gruppe               { id?, name, mitglieder: [Profil-IDs] }  make / change a group (1.127.3); room "gr:<id>"
 //   POST /api/pinn/chat/gruppe-verlassen     { id }  leave a group (the last one out deletes it)
 //   POST /api/pinn/chat/raum                 { raum, p?, u? }  pin a chat / mark it as unread (or take the mark away)
+//   POST /api/pinn/chat/modus                { klartext }  admins: chat WITHOUT end-to-end encryption (push with text/preview) on or off (1.127.4)
+//   POST /api/pinn/chat/gruppe-aufloesen     { id }  creator / admins: dissolve a group for everybody (1.127.4)
+//   GET  /api/pinn/chat/vorschau             ?m=&t=  preview picture of a photo push message (no login, random token; plain mode only)
 //   GET  /api/pinn/chat/bild                 ?raum=  picture of the family chat or of a group
 //   POST /api/pinn/chat/bild                 { raum, bild }  set the picture (family chat: admins; group: creator, admins); bild null = remove
 // Every night at 03:23: automatic deletion as set by the families, plus uploads that were never sent.
@@ -96,6 +99,18 @@ routerAdd("GET", "/api/pinn/chat/bild", (e) => {
 routerAdd("POST", "/api/pinn/chat/bild", (e) => {
     try { return e.json(200, require(`${__hooks}/pinn-chat.js`).savePicture(e, e.requestInfo().body || {})); } catch (err) { return e.json(400, { error: err.message }); }
 }, $apis.bodyLimit(400 * 1024), $apis.requireAuth("benutzer"));
+
+routerAdd("POST", "/api/pinn/chat/modus", (e) => {
+    try { return e.json(200, require(`${__hooks}/pinn-chat.js`).saveMode(e, e.requestInfo().body || {})); } catch (err) { return e.json(400, { error: err.message }); }
+}, $apis.requireAuth("benutzer"));
+
+routerAdd("POST", "/api/pinn/chat/gruppe-aufloesen", (e) => {
+    try { return e.json(200, require(`${__hooks}/pinn-chat.js`).dissolveGroup(e, e.requestInfo().body || {})); } catch (err) { return e.json(400, { error: err.message }); }
+}, $apis.requireAuth("benutzer"));
+
+routerAdd("GET", "/api/pinn/chat/vorschau", (e) => {
+    try { return require(`${__hooks}/pinn-chat.js`).preview(e); } catch (err) { return e.json(404, { error: err.message }); }
+});
 
 cronAdd("pinnChatCleanup", "23 3 * * *", () => {
     try {

@@ -2,7 +2,8 @@
 // Not a *.pb.js file -> not loaded as a hook by itself, only through require() (routes: chat.pb.js).
 //
 // Family chat with end-to-end encryption (since 1.127.0; photos and videos since 1.127.1; own groups, pinned chats and
-// chat pictures since 1.127.3).
+// chat pictures since 1.127.3; since 1.127.4: voice messages, locations, polls, PDF files, muting, dissolving groups and an
+// optional "no end-to-end encryption" mode per family).
 //
 // What the SERVER sees and what it never sees:
 //   - never: the text of a message, who is mentioned in it, what it links to (all of that is inside the
@@ -19,6 +20,13 @@
 //   chat_gruppen      (1.127.3) groups made by the family members: name, members (profile IDs), creator
 //   chat_markierungen (1.127.3) per profile: pinned chats and chats marked as unread (JSON { room: { p, u } })
 //   chat_bilder       (1.127.3) picture of the family chat / of a group (small JPEG as a data URL)
+//
+// 1.127.4 - the mode of a family (chat_familie.klartext, set by an admin):
+//   default (false): end-to-end encrypted as described above, the push message only says "someone wrote".
+//   true: messages are stored readable ("daten" = { v: 2, s: <sender>, p: <message object> }), everybody of the room gets them
+//         (also profiles without a chat key) and the push message carries the text; for photos/videos the app uploads a small
+//         preview picture that the push message links to (GET vorschau, protected by a random token). Switching the mode
+//         never changes old messages. Silent messages ("leise", used for poll votes) never push and never count as unread.
 //
 // Rooms: "familie" (everybody of the family with a profile), "dm:<idA>:<idB>" (two profile IDs, sorted) and
 // "gr:<ID of the group record>" (the members chosen by the creator - they are in the group right away, no invitation).
@@ -50,22 +58,24 @@ const GR_RE = /^gr:([a-z0-9]{15})$/;
 const UNREAD_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
 const PAGE = 60;
 const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl"];
+const MAX_PREVIEW = 200 * 1024;  // preview picture of a photo/video push message (plain mode only)
+const MUTE_MAX_MS = 400 * 24 * 60 * 60 * 1000;
 const PUSH_TEXT = {
-    de: { group: "Neue Nachricht im Gruppenchat", dm: "Neue Nachricht" },
-    en: { group: "New message in the group chat", dm: "New message" },
-    fr: { group: "Nouveau message dans le chat de groupe", dm: "Nouveau message" },
-    es: { group: "Mensaje nuevo en el chat grupal", dm: "Mensaje nuevo" },
-    it: { group: "Nuovo messaggio nella chat di gruppo", dm: "Nuovo messaggio" },
-    pt: { group: "Nova mensagem no chat em grupo", dm: "Nova mensagem" },
-    zh: { group: "群聊中有新消息", dm: "新消息" },
-    ja: { group: "グループチャットに新しいメッセージ", dm: "新しいメッセージ" },
-    ko: { group: "그룹 채팅에 새 메시지", dm: "새 메시지" },
-    ru: { group: "Новое сообщение в групповом чате", dm: "Новое сообщение" },
-    nl: { group: "Nieuw bericht in de groepschat", dm: "Nieuw bericht" },
+    de: { group: "Neue Nachricht im Gruppenchat", dm: "Neue Nachricht", photo: "Foto", video: "Video", voice: "Sprachnachricht", file: "Datei", loc: "Standort", poll: "Umfrage" },
+    en: { group: "New message in the group chat", dm: "New message", photo: "Photo", video: "Video", voice: "Voice message", file: "File", loc: "Location", poll: "Poll" },
+    fr: { group: "Nouveau message dans le chat de groupe", dm: "Nouveau message", photo: "Photo", video: "Vidéo", voice: "Message vocal", file: "Fichier", loc: "Position", poll: "Sondage" },
+    es: { group: "Mensaje nuevo en el chat grupal", dm: "Mensaje nuevo", photo: "Foto", video: "Vídeo", voice: "Mensaje de voz", file: "Archivo", loc: "Ubicación", poll: "Encuesta" },
+    it: { group: "Nuovo messaggio nella chat di gruppo", dm: "Nuovo messaggio", photo: "Foto", video: "Video", voice: "Messaggio vocale", file: "File", loc: "Posizione", poll: "Sondaggio" },
+    pt: { group: "Nova mensagem no chat em grupo", dm: "Nova mensagem", photo: "Foto", video: "Vídeo", voice: "Mensagem de voz", file: "Arquivo", loc: "Localização", poll: "Enquete" },
+    zh: { group: "群聊中有新消息", dm: "新消息", photo: "照片", video: "视频", voice: "语音消息", file: "文件", loc: "位置", poll: "投票" },
+    ja: { group: "グループチャットに新しいメッセージ", dm: "新しいメッセージ", photo: "写真", video: "動画", voice: "ボイスメッセージ", file: "ファイル", loc: "位置情報", poll: "アンケート" },
+    ko: { group: "그룹 채팅에 새 메시지", dm: "새 메시지", photo: "사진", video: "동영상", voice: "음성 메시지", file: "파일", loc: "위치", poll: "투표" },
+    ru: { group: "Новое сообщение в групповом чате", dm: "Новое сообщение", photo: "Фото", video: "Видео", voice: "Голосовое сообщение", file: "Файл", loc: "Местоположение", poll: "Опрос" },
+    nl: { group: "Nieuw bericht in de groepschat", dm: "Nieuw bericht", photo: "Foto", video: "Video", voice: "Spraakbericht", file: "Bestand", loc: "Locatie", poll: "Peiling" },
 };
 
 module.exports = { ensureSchema, roster, saveKey, saveBackup, saveSettings, overview, list, send, markRead, remove, upload, download, saveRetention, cleanup,
-    saveGroup, leaveGroup, setRoomMark, getPicture, savePicture };
+    saveGroup, leaveGroup, setRoomMark, getPicture, savePicture, saveMode, dissolveGroup, preview };
 
 function findCol(name) {
     try { return $app.findCollectionByNameOrId(name); } catch (e) { return null; }
@@ -237,7 +247,31 @@ function ensureSchema() {
             console.log("[Chat] Konnte Sammlung \"" + PICS + "\" nicht anlegen: " + err.message);
         }
     }
+    // 1.127.4: fields that older installations do not have yet
+    addFields(MSGS, [{ name: "leise", type: "bool" }, { name: "vtoken", type: "text", max: 40 }]);
+    addFields(FAM, [{ name: "klartext", type: "bool" }]);
+    addFields(FILES, [{ name: "art", type: "text", max: 4 }]);
     return !!(findCol(KEYS) && findCol(MSGS) && findCol(FILES) && findCol(FAM) && findCol(GROUPS) && findCol(MARKS) && findCol(PICS));
+}
+function makeField(def) {
+    try { if (def.type === "bool" && typeof BoolField === "function") return new BoolField({ name: def.name }); } catch (e) { /* use the fallback */ }
+    try { if (def.type === "text" && typeof TextField === "function") return new TextField({ name: def.name, max: def.max }); } catch (e) { /* use the fallback */ }
+    return new Collection({ type: "base", name: "pinn_tmp_chat_feld", fields: [def] }).fields.getByName(def.name);
+}
+// Adds fields to a collection that already exists (cheap when everything is there: this runs with every request)
+function addFields(name, defs) {
+    const col = findCol(name);
+    if (!col) return;
+    let changed = false;
+    defs.forEach(def => {
+        let has = false;
+        try { has = !!col.fields.getByName(def.name); } catch (e) { has = false; }
+        if (has) return;
+        try { col.fields.add(makeField(def)); changed = true; } catch (err) { console.log("[Chat] Feld \"" + def.name + "\" nicht anlegbar: " + err.message); }
+    });
+    if (changed) {
+        try { $app.save(col); console.log("[Chat] Felder in \"" + name + "\" ergänzt."); } catch (err) { console.log("[Chat] Felder in \"" + name + "\" nicht gespeichert: " + err.message); }
+    }
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -325,7 +359,7 @@ function msgOut(rec, me, receipts) {
     return {
         id: rec.id, raum: rec.getString("raum"), von: rec.getString("von"), zeit: Number(rec.get("zeit") || 0),
         aktualisiert: Number(rec.get("aktualisiert") || 0), daten: deleted ? "" : rec.getString("daten"),
-        empf: rec.getString("empf"), gelesen: shown, geloescht: deleted,
+        empf: rec.getString("empf"), gelesen: shown, geloescht: deleted, leise: rec.getBool("leise"),
     };
 }
 // Who counts for read marks: profiles that did not switch read receipts off
@@ -355,7 +389,23 @@ function roster(e) {
     const mine = keys[u.id] ? { oeffentlich: keys[u.id].getString("oeffentlich"), gesichert: keys[u.id].getString("gesichert"), lese: !keys[u.id].getBool("lese_aus") } : null;
     const keep = retentionOf(fam);
     return { ich: u.id, profile: profiles, mein: mine, jetzt: Date.now(), aufbewahrung: keep, speicher: storageOf(fam), admin: u.getString("rolle") === "admin",
-        gruppen: groupsOf(u).map(groupOut), bilder: pictureVersions(u) };
+        gruppen: groupsOf(u).map(groupOut), bilder: pictureVersions(u), klartext: isPlain(fam) };
+}
+// true = this family chose to run the chat without end-to-end encryption (push messages with text / picture preview)
+function isPlain(familyId) {
+    const r = famRec(familyId);
+    return !!r && r.getBool("klartext");
+}
+// Only admins of the family switch the mode; it only applies to new messages
+function saveMode(e, body) {
+    const u = authUser(e);
+    if (u.getString("rolle") !== "admin") throw new Error("Nur für Admins.");
+    if (!body || typeof body.klartext !== "boolean") throw new Error("Wert ungültig.");
+    let rec = famRec(u.getString("familie"));
+    if (!rec) { rec = new Record($app.findCollectionByNameOrId(FAM)); rec.set("familie", u.getString("familie")); }
+    rec.set("klartext", body.klartext);
+    $app.save(rec);
+    return { ok: true, klartext: body.klartext };
 }
 function famRec(familyId) {
     try { return $app.findFirstRecordByFilter(FAM, "familie = {:f}", { f: familyId }); } catch (err) { return null; }
@@ -441,6 +491,7 @@ function overview(e) {
         const room = r.getString("raum");
         if (!canSeeRoom(u, room, seen)) return;
         if (!hasId(r.getString("empf"), u.id) && r.getString("von") !== u.id) return;
+        if (r.getBool("leise")) return; // poll votes: never the latest message, never unread
         const o = rooms[room] || (rooms[room] = { raum: room, letzte: null, ungelesen: 0 });
         if (!o.letzte) o.letzte = msgOut(r, u.id, receipts);
         const mine = r.getString("von") === u.id;
@@ -493,48 +544,112 @@ function langOf(u) {
     const hit = Object.keys(map).find(k => map[k].indexOf(land) >= 0);
     return hit || "en";
 }
-// Push: only "someone wrote" - the text is encrypted, so the server cannot put it into the message
-function notify(familyId, sender, room, recipients) {
+// Text for a push message of a message that is readable on the server (plain mode only)
+function plainPushText(p, t) {
+    const clip = (v, n) => String(v || "").replace(/\s+/g, " ").trim().slice(0, n);
+    const cap = clip(p && p.x, 140);
+    if (!p || typeof p !== "object") return "";
+    if (p.p && typeof p.p === "object") return "📊 " + t.poll + (p.p.q ? ": " + clip(p.p.q, 100) : "");
+    if (p.l && typeof p.l === "object") return "📍 " + t.loc + (p.l.n ? ": " + clip(p.l.n, 80) : "");
+    if (p.m && typeof p.m === "object") {
+        const k = p.m.k;
+        if (k === "aud") return "🎤 " + t.voice;
+        if (k === "pdf") return "📄 " + (clip(p.m.n, 60) || t.file) + (cap ? " – " + cap : "");
+        if (k === "vid") return "🎥 " + (cap || t.video);
+        return "📷 " + (cap || t.photo);
+    }
+    if (cap) return cap;
+    if (p.r && typeof p.r === "object") return clip(p.r.ti, 100);
+    return "";
+}
+function isMuted(userId, room, now) {
+    const rec = marksRec(userId);
+    if (!rec) return false;
+    const o = parseObj(rec.getString("daten"))[room];
+    return !!(o && o.m && (Number(o.m) === 1 || Number(o.m) > now));
+}
+// Push: end-to-end encrypted chat = only "someone wrote" (the server cannot read the text). Plain mode = the text (info.plain)
+// and for photos/videos a link to the preview picture (info.preview = { id, token }).
+function notify(familyId, sender, room, recipients, info) {
     let push = null;
     try { push = require(`${__hooks}/pinn-push.js`); } catch (err) { return 0; }
+    info = info || {};
     const name = senderName(familyId, sender);
+    let title = "💬 " + name;
+    if (room.indexOf("gr:") === 0) {
+        const g = GR_RE.exec(room);
+        const rec = g ? groupRec(g[1]) : null;
+        if (rec && info.plain) title += " · " + rec.getString("name").slice(0, 40);
+    }
+    const now = Date.now();
     let sent = 0;
     recipients.forEach(r => {
         try {
             if (push.readSettings(r).chat === false) return;
+            if (isMuted(r.id, room, now)) return;
             const t = PUSH_TEXT[langOf(r)] || PUSH_TEXT.en;
-            sent += push.notifyUser(r.id, {
-                titel: "💬 " + name, text: (room === "familie" || room.indexOf("gr:") === 0) ? t.group : t.dm,
-                url: "/?chat=" + encodeURIComponent(room), tag: "chat-" + room, urgency: "high", hinweis: false,
-            }) || 0;
+            let text = (room === "familie" || room.indexOf("gr:") === 0) ? t.group : t.dm;
+            const msg = { titel: title, text: text, url: "/?chat=" + encodeURIComponent(room), tag: "chat-" + room, urgency: "high", hinweis: false };
+            if (info.plain) {
+                const own = plainPushText(info.plain, t);
+                if (own) { msg.text = own; msg.roh = true; }
+                if (info.preview) msg.bild = "/api/pinn/chat/vorschau?m=" + encodeURIComponent(info.preview.msgId) + "&t=" + encodeURIComponent(info.preview.token);
+            }
+            sent += push.notifyUser(r.id, msg) || 0;
         } catch (err) { /* next recipient */ }
     });
     return sent;
 }
+function randomToken() {
+    try { if (typeof $security !== "undefined" && $security.randomString) return $security.randomString(24); } catch (err) { /* fall back */ }
+    let t = "";
+    for (let i = 0; i < 24; i++) t += "abcdefghijklmnopqrstuvwxyz0123456789".charAt(Math.floor(Math.random() * 36));
+    return t;
+}
+// An uploaded file of this profile for this room that is not attached to a message yet (art: "" = the encrypted file, "v" = preview picture)
+function freeFile(u, room, id, art) {
+    let rec = null;
+    try { rec = $app.findRecordById(FILES, id); } catch (err) { rec = null; }
+    if (!rec || rec.getString("von") !== u.id || rec.getString("raum") !== room || rec.getString("nachricht") || rec.getString("art") !== art) throw new Error("Datei ungültig.");
+    return rec;
+}
 function send(e, body) {
     const u = authUser(e);
+    const fam = u.getString("familie");
     const room = String((body && body.raum) || "");
     const members = roomMembers(u, room);
     const daten = String((body && body.daten) || "");
     if (!daten || daten.length > MAX_DATA) throw new Error("Nachricht ungültig.");
     let pack = null;
     try { pack = JSON.parse(daten); } catch (err) { pack = null; }
-    if (!pack || pack.v !== 1 || pack.s !== u.id || typeof pack.ct !== "string" || typeof pack.iv !== "string" || typeof pack.salt !== "string" || typeof pack.sp !== "string" || !pack.w || typeof pack.w !== "object") throw new Error("Nachricht ungültig.");
-    const ids = members.map(m => m.id);
-    const empf = Object.keys(pack.w).filter(id => ids.indexOf(id) >= 0).slice(0, MAX_RECIPIENTS);
-    if (empf.indexOf(u.id) < 0) throw new Error("Nachricht ungültig.");
-    const mine = keyRec(u.id);
-    if (!mine || mine.getString("oeffentlich") !== pack.sp) throw new Error("Der Chat-Schlüssel ist nicht aktuell.");
-    // optional photo/video: an uploaded file of this profile for this room that is not attached yet
+    const plain = !!pack && pack.v === 2;
+    let empf = [];
+    if (plain) {
+        // readable mode: only allowed when the family switched it on; everybody of the room receives it
+        if (!isPlain(fam)) throw new Error("Nachricht ungültig.");
+        if (pack.s !== u.id || !pack.p || typeof pack.p !== "object" || Array.isArray(pack.p)) throw new Error("Nachricht ungültig.");
+        empf = members.map(m => m.id).slice(0, MAX_RECIPIENTS);
+        if (empf.indexOf(u.id) < 0) throw new Error("Nachricht ungültig.");
+    } else {
+        if (!pack || pack.v !== 1 || pack.s !== u.id || typeof pack.ct !== "string" || typeof pack.iv !== "string" || typeof pack.salt !== "string" || typeof pack.sp !== "string" || !pack.w || typeof pack.w !== "object") throw new Error("Nachricht ungültig.");
+        const ids = members.map(m => m.id);
+        empf = Object.keys(pack.w).filter(id => ids.indexOf(id) >= 0).slice(0, MAX_RECIPIENTS);
+        if (empf.indexOf(u.id) < 0) throw new Error("Nachricht ungültig.");
+        const mine = keyRec(u.id);
+        if (!mine || mine.getString("oeffentlich") !== pack.sp) throw new Error("Der Chat-Schlüssel ist nicht aktuell.");
+    }
+    // optional photo/video/voice/PDF: an uploaded file of this profile for this room that is not attached yet
     let fileRec = null;
     const fileId = String((body && body.datei) || "");
-    if (fileId) {
-        try { fileRec = $app.findRecordById(FILES, fileId); } catch (err) { fileRec = null; }
-        if (!fileRec || fileRec.getString("von") !== u.id || fileRec.getString("raum") !== room || fileRec.getString("nachricht")) throw new Error("Datei ungültig.");
-    }
+    if (fileId) fileRec = freeFile(u, room, fileId, "");
+    // optional preview picture for the push message (plain mode only)
+    let previewRec = null;
+    const previewId = String((body && body.vorschau) || "");
+    if (previewId && plain) previewRec = freeFile(u, room, previewId, "v");
+    const quiet = !!(body && body.leise === true);
     const now = Date.now();
     const rec = new Record($app.findCollectionByNameOrId(MSGS));
-    rec.set("familie", u.getString("familie"));
+    rec.set("familie", fam);
     rec.set("raum", room);
     rec.set("von", u.id);
     rec.set("zeit", now);
@@ -542,10 +657,19 @@ function send(e, body) {
     rec.set("daten", daten);
     rec.set("empf", "," + empf.join(",") + ",");
     rec.set("gelesen", "{}");
+    if (quiet) rec.set("leise", true);
+    let token = "";
+    if (previewRec) { token = randomToken(); rec.set("vtoken", token); }
     $app.save(rec);
     if (fileRec) { fileRec.set("nachricht", rec.id); $app.save(fileRec); }
+    if (previewRec) { previewRec.set("nachricht", rec.id); $app.save(previewRec); }
     let pushed = 0;
-    try { pushed = notify(u.getString("familie"), u, room, members.filter(m => m.id !== u.id && empf.indexOf(m.id) >= 0)); } catch (err) { console.log("[Chat] Push: " + err.message); }
+    if (!quiet) {
+        try {
+            pushed = notify(fam, u, room, members.filter(m => m.id !== u.id && empf.indexOf(m.id) >= 0),
+                plain ? { plain: pack.p, preview: previewRec ? { msgId: rec.id, token } : null } : null);
+        } catch (err) { console.log("[Chat] Push: " + err.message); }
+    }
     return { id: rec.id, zeit: now, push: pushed };
 }
 // Mark everything in a room as read by this profile
@@ -592,13 +716,18 @@ function dropFiles(messageId) {
 // ---------------------------------------------------------------------------------------------
 function upload(e) {
     const u = authUser(e);
-    const room = String(e.request.url.query().get("raum") || "");
+    const query = e.request.url.query();
+    const room = String(query.get("raum") || "");
     roomMembers(u, room);
+    // art=v: small preview picture of a photo/video for the push message (plain mode only, stored readable)
+    const art = String(query.get("art") || "") === "v" ? "v" : "";
+    if (art && !isPlain(u.getString("familie"))) throw new Error("Nicht erlaubt.");
     const files = e.findUploadedFiles("datei");
     if (!files || !files.length) throw new Error("Keine Datei.");
     const f = files[0];
-    if (Number(f.size) > MAX_FILE) throw new Error("Datei zu groß.");
+    if (Number(f.size) > (art ? MAX_PREVIEW : MAX_FILE)) throw new Error("Datei zu groß.");
     const rec = new Record($app.findCollectionByNameOrId(FILES));
+    if (art) rec.set("art", "v");
     rec.set("familie", u.getString("familie"));
     rec.set("raum", room);
     rec.set("von", u.id);
@@ -617,6 +746,26 @@ function download(e) {
     const fsys = $app.newFilesystem();
     try {
         fsys.serve(e.response, e.request, rec.baseFilesPath() + "/" + rec.getString("datei"), "chat.bin");
+    } finally {
+        try { fsys.close(); } catch (err) { /* ignore */ }
+    }
+    return true;
+}
+
+// The preview picture of a photo/video push message: no login (the notification fetches it), the random token of the message is the key
+function preview(e) {
+    const q = e.request.url.query();
+    let msg = null;
+    try { msg = $app.findRecordById(MSGS, String(q.get("m") || "")); } catch (err) { msg = null; }
+    const token = String(q.get("t") || "");
+    if (!msg || !token || msg.getString("vtoken") !== token || msg.getBool("geloescht")) throw new Error("Nicht gefunden.");
+    let rec = null;
+    try { rec = $app.findFirstRecordByFilter(FILES, "nachricht = {:m} && art = 'v'", { m: msg.id }); } catch (err) { rec = null; }
+    if (!rec || !rec.getString("datei")) throw new Error("Nicht gefunden.");
+    e.response.header().set("Cache-Control", "private, max-age=3600");
+    const fsys = $app.newFilesystem();
+    try {
+        fsys.serve(e.response, e.request, rec.baseFilesPath() + "/" + rec.getString("datei"), "vorschau.jpg");
     } finally {
         try { fsys.close(); } catch (err) { /* ignore */ }
     }
@@ -670,6 +819,15 @@ function leaveGroup(e, body) {
     $app.save(rec);
     return { ok: true, geloescht: false };
 }
+// The creator or an admin of the family dissolves the group for everybody (messages, files and picture are deleted)
+function dissolveGroup(e, body) {
+    const u = authUser(e);
+    const rec = groupRec(String((body && body.id) || ""));
+    if (!rec || rec.getString("familie") !== u.getString("familie")) throw new Error("Unbekannter Chat.");
+    if (rec.getString("ersteller") !== u.id && !isAdmin(u)) throw new Error("Nur der Ersteller oder ein Admin darf die Gruppe auflösen.");
+    dropGroup(rec);
+    return { ok: true };
+}
 function dropGroup(rec) {
     const fam = rec.getString("familie");
     const room = "gr:" + rec.id;
@@ -692,10 +850,16 @@ function marksOf(u) {
     const o = rec ? parseObj(rec.getString("daten")) : {};
     const out = {};
     const seen = {};
-    Object.keys(o).forEach(room => { if (canSeeRoom(u, room, seen)) out[room] = { p: o[room] && o[room].p ? 1 : 0, u: o[room] && o[room].u ? 1 : 0 }; });
+    const now = Date.now();
+    Object.keys(o).forEach(room => {
+        if (!canSeeRoom(u, room, seen)) return;
+        const mute = o[room] && o[room].m ? Number(o[room].m) : 0; // 0 = not muted, 1 = for ever, else until that time
+        out[room] = { p: o[room] && o[room].p ? 1 : 0, u: o[room] && o[room].u ? 1 : 0, m: (mute === 1 || mute > now) ? mute : 0 };
+    });
     return out;
 }
-// Pin a chat / mark it as unread (or take the mark away): { raum, p?, u? } with true / false
+// Pin a chat / mark it as unread / mute it (or take the mark away): { raum, p?, u? } with true / false, m: 0 = sound on,
+// 1 = muted for ever, a time in ms = muted until then
 function setRoomMark(e, body) {
     const u = authUser(e);
     const room = String((body && body.raum) || "");
@@ -710,7 +874,13 @@ function setRoomMark(e, body) {
     const cur = o[room] || {};
     if (body && typeof body.p === "boolean") cur.p = body.p ? 1 : 0;
     if (body && typeof body.u === "boolean") cur.u = body.u ? 1 : 0;
-    if (!cur.p && !cur.u) delete o[room]; else o[room] = { p: cur.p ? 1 : 0, u: cur.u ? 1 : 0 };
+    if (body && body.m !== undefined) {
+        const m = Number(body.m);
+        if (m === 0 || m === 1) cur.m = m;
+        else if (isFinite(m) && m > Date.now() && m < Date.now() + MUTE_MAX_MS) cur.m = Math.round(m);
+        else throw new Error("Wert ungültig.");
+    }
+    if (!cur.p && !cur.u && !cur.m) delete o[room]; else o[room] = { p: cur.p ? 1 : 0, u: cur.u ? 1 : 0, m: cur.m ? cur.m : 0 };
     if (Object.keys(o).length > MAX_MARKS) throw new Error("Zu viele Markierungen.");
     rec.set("daten", JSON.stringify(o));
     $app.save(rec);

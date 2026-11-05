@@ -1267,12 +1267,15 @@ function renderVehicleDetail(pane, v) {
     ${v.note ? `<p class="text-sm text-ink/70 mt-3" style="white-space:pre-line">${escapeHtml(v.note)}</p>` : ''}
     <div class="flex flex-wrap gap-2 mt-4">
       <button type="button" class="fz-mini-btn" data-fzact="edit" data-v="${escapeHtml(v.id)}">${tk('home.edit')}</button>
+      ${(typeof chatCanShare === 'function' && chatCanShare()) ? '<button type="button" class="fz-mini-btn" data-fzchat="1">💬 ' + escapeHtml(tk('chat.discuss')) + '</button>' : ''}
       ${archived ? '' : `<button type="button" class="fz-mini-btn" data-fzact="archive" data-v="${escapeHtml(v.id)}">${tk('vehicle.soldDeregistered2')}</button>`}
     </div>`);
 
   pane.innerHTML = `
     <button type="button" class="self-start text-sm text-ink/55 hover:text-pine -mb-1" data-fzact="back">${tk('vehicle.allVehicles')}</button>
     ${hero}${dueHtml}${tiles}${chart}${termine}${vertraege}${kosten}${verlauf}${dokumente}${daten}`;
+  const chatBtn = pane.querySelector('[data-fzchat]');
+  if (chatBtn) chatBtn.addEventListener('click', () => window.pinnChat.share({ k: 'vehicle', id: v.id, ti: fzName(v) }));
 }
 
 /* ---------- Balance ---------- */

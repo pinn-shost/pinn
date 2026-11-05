@@ -121,6 +121,18 @@ function showEventDetail(ev, anchorEl) {
   const linkedApple = !!(pinnCalByName(ev.pinnCalName) && pinnCalByName(ev.pinnCalName).quelle === 'apple');
   document.getElementById('eventDetailCalendarLink').classList.toggle('hidden', isHoliday || (isPinnCalName(ev.pinnCalName) && !linkedApple)); // own calendars only exist in Apple's Calendar app if they are linked with iCloud
   const editBtn = document.getElementById('eventDetailEditBtn');
+  // "discuss in chat" (1.127.4): the reference is the day and the title; the chat opens the calendar at that day
+  let evChatBtn = document.getElementById('eventDetailChatBtn');
+  if (!evChatBtn && editBtn.parentElement) {
+    evChatBtn = document.createElement('button'); evChatBtn.id = 'eventDetailChatBtn'; evChatBtn.type = 'button';
+    evChatBtn.className = 'text-xs text-pine hover:underline font-medium mr-3';
+    editBtn.parentElement.insertBefore(evChatBtn, editBtn);
+  }
+  if (evChatBtn) {
+    evChatBtn.textContent = '💬 ' + tk('chat.discuss');
+    evChatBtn.classList.toggle('hidden', isHoliday || !(typeof chatCanShare === 'function' && chatCanShare()));
+    evChatBtn.onclick = () => window.pinnChat.share({ k: 'event', id: ev.date + '|' + (ev.title || ''), ti: (ev.title || '') + ' · ' + dateStr }, closeEventDetail);
+  }
   editBtn.classList.toggle('hidden', isHoliday);
   if (editBtn.parentElement) editBtn.parentElement.classList.toggle('hidden', isHoliday);
 

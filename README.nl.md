@@ -106,6 +106,20 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский en 🇳🇱 Nederlands**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.127.4
+
+**Chat: spraakberichten, locatie, peilingen, PDF, zoeken, dempen – en versleuteling die je kunt uitzetten**
+
+- **Spraakberichten.** Een microfoonknop vervangt de verzendknop zolang er niets getypt is: tikken, spreken, versturen (tot 5 minuten). Golfvorm, afspelen/pauze, 1×/1,5×/2× en springen door op de golfvorm te tikken. End-to-end-versleuteld zoals foto’s.
+- **De paperclip is nu een menu:** foto/video, **PDF-document** (tot 20 MB; openen / delen / bewaren / opslaan in pinn.), **locatie** en **peiling**.
+- **Locatie.** Kaartvoorbeeld en label (een opgeslagen plek van de locatiekaart, bijv. “Thuis”, wordt voorgesteld). Tikken toont de kaart: **“Tonen op de locatiekaart”** opent Gezin → Locatie met een markering, “Openen in kaarten-app” start de navigatie.
+- **Peilingen.** Een vraag en tot 8 antwoorden, desgewenst meerdere antwoorden per persoon. Met het vinkje **“Ook op het prikbord tonen”** ontstaat tegelijk een prikbordpeiling – je stemt hier of daar, de uitslag is overal gelijk.
+- **Zoeken** in de chat (vergrootglas bovenin), **dempen** per chat (8 uur, 1 week, altijd – geen melding en niet meegeteld in het getal achter “Chat” in het menu) en **een groep opheffen** (maker en beheerders).
+- **Versleuteling uitzetten** per gezin (beheerders, “Chatbeveiliging”). Meldingen tonen dan de tekst (op Android ook een voorbeeld van foto’s) en niemand heeft een herstelcode nodig. Standaard blijft: end-to-end-versleuteld.
+- “Bespreken in de chat” (💬) nu ook bij afspraken, documenten en voertuigen. Opgelost: “Opslaan in pinn.” opende onder de foto, de chatkoppen gebruiken het lettertype van de app, het getal in het menu wordt betrouwbaarder bijgewerkt.
+- Gewijzigd: `js/chatextras.js` en `js/chatstimme.js` (nieuw), `js/chat.js`, `js/chatmedien.js`, `js/chatgruppen.js`, `js/familie.js`, `js/pinnwand.js`, `js/termindetails.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/hinweise.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `pinn-setup.sh`, `src/` en alle README’s. **Servergedeelte:** `pb_hooks/chat.pb.js`, `pinn-chat.js`, `pinn-push.js` en `sw.pb.js` – vervang ook de hooks; enkele velden worden bij het starten automatisch toegevoegd.
+
+
 ## Nieuw in 1.127.3
 
 **Chat: eigen groepen, vastgezette chats, vegen en chatafbeeldingen**
@@ -127,17 +141,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Gewijzigd: `js/chat.js`, `css/chat.css`, `js/aufgaben.js`, `js/pinnwand.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `index.html`, `src/` en alle README’s. **Geen serverdeel** – de hooks blijven zoals ze zijn.
 
 
-## Nieuw in 1.127.1
-
-**Foto’s en video’s in de chat**
-
-- **Foto’s en video’s versturen** met de paperclipknop, met voorbeeld en bijschrift. Net als in WhatsApp kies je elke keer met de **HD-knop**: Standaard verkleint foto’s tot ongeveer 0,3 MB, HD verstuurt het origineel (foto’s tot 20 MB, video’s tot 50 MB). Video’s worden verkleind waar het apparaat dat kan, anders gaat het origineel mee.
-- **Ook end-to-end versleuteld:** elk bestand heeft een eigen sleutel; je NAS ziet noch het beeld noch de naam. Volledig scherm in de chat, **delen** (WhatsApp, e-mail …) of **op het apparaat bewaren**.
-- **Opslaan in pinn.:** bewaar een foto als document of koppel hem aan een woning, een gebrek of een voertuig. Video’s kun je delen en bewaren, niet als document opslaan.
-- **Automatisch verwijderen:** beheerders kiezen onder “Chatbeveiliging” na hoeveel dagen berichten en/of foto’s en video’s ’s nachts voor iedereen worden verwijderd (standaard: nooit).
-- Gewijzigd: `js/chatmedien.js` (nieuw), `css/chat.css`, `js/chat.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `pinn-setup.sh`, `src/` en alle README’s. **Serverdeel:** `pb_hooks/chat.pb.js` en `pb_hooks/pinn-chat.js` – vervang ook de hooks.
-
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -147,7 +150,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.127.3` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.127.4` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

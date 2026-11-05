@@ -581,6 +581,7 @@ function famDrawMap() {
   if (!famMap || !document.getElementById('famMapSlot')) return;
   const devs = famVisibleDevices();
   const placeMarks = famPlaces().map(o => ({ lat: o.lat, lon: o.lon, html: `<div class="fm-place">${escapeHtml(o.emoji || '📍')}</div>`, cls: 'is-place' }));
+  if (famPin) placeMarks.push({ lat: famPin.lat, lon: famPin.lon, html: `<div class="fm-place">📍</div><div class="fm-mk-lbl">${escapeHtml(famPin.label || tk('chat.loc.label'))}</div>`, cls: 'is-place' });
   const devMarks = devs.slice().sort((a, b) => (a.id === famSelected) - (b.id === famSelected)).map(g => ({ id: g.id, lat: g.position.lat, lon: g.position.lon, html: famMarkerHtml(g) }));
   famMap.setMarkers(placeMarks.concat(devMarks));
   famMap.setCircles(famPlaces().map(o => ({ lat: o.lat, lon: o.lon, r: Number(o.radius) || 150, color: o.zuhause ? '#2F7D4F' : '#00374A', dash: !o.zuhause })));
@@ -592,7 +593,8 @@ function famDrawMap() {
   if (!g) famFollowFree = false;
   famMap.showCenter(!!g && famFollowFree);
   if (g && g.position) { if (!famFollowFree) famMap.setView(g.position.lat, g.position.lon, Math.max(famMap.zoom(), 15)); }
-  else if (!famFitted && famStatus) { famFitted = true; famStartView(); }
+  else if (!famFitted && famStatus && !famPin) { famFitted = true; famStartView(); }
+  if (famPin && famPinFocus) { famPinFocus = false; famMap.setView(famPin.lat, famPin.lon, 16); }
 }
 
 function famRenderChips() {
@@ -620,6 +622,12 @@ function famRenderInfo() {
   const box = document.getElementById('famInfo');
   if (!box) return;
   const g = famSelected ? famDevice(famSelected) : null;
+  if (famPin && !(g && g.position && g.teilen)) {
+    box.innerHTML = `<div class="fam-info"><div class="flex items-start gap-3"><div class="min-w-0 flex-1"><div class="font-medium text-sm">📍 ${escapeHtml(famPin.label || tk('chat.loc.label'))}</div><div class="text-xs text-ink/60 mt-0.5">${escapeHtml(tk('chat.loc.fromChat'))}</div></div></div><div class="flex flex-wrap gap-2 mt-2"><button type="button" class="fz-mini-btn" data-famact="pin-clear">${escapeHtml(tk('chat.loc.removePin'))}</button></div></div>`;
+    const clr = box.querySelector('[data-famact="pin-clear"]');
+    if (clr) clr.addEventListener('click', () => { famPin = null; famDrawMap(); famRenderInfo(); });
+    return;
+  }
   if (!g || !g.position || !g.teilen) { box.innerHTML = ''; return; }
   const p = g.position;
   const pl = famPlace(p.ort);
@@ -2151,6 +2159,15 @@ function sosStart() {
      The emergency pass itself opens directly from the SOS popup, the "Emergency" tab and the map.
    - Locations are only polled continuously on "Overview", "Location" and in the profile.
    ========================================================== */
+var famPin = null;          // { lat, lon, label } a location sent in the chat (1.127.4), shown on the map until it is removed
+var famPinFocus = false;
+// Shows a location from the chat on the location map (opens Family -> Location and centres the map there)
+function famShowPoint(lat, lon, label) {
+  famPin = { lat: Number(lat), lon: Number(lon), label: String(label || '').slice(0, 80) };
+  famPinFocus = true; famFollow = ''; famFollowFree = true; famSelected = ''; famDetailId = null; famTab = 'ortung';
+  setView('familie');
+  setTimeout(() => { try { famDrawMap(); famRenderInfo(); } catch (e) { /* map not ready: the next redraw shows it */ } }, 250);
+}
 var famTab = 'uebersicht';      // 'uebersicht' | 'schule' | 'tiere' | 'ortung' | 'notfall'
 var famDetailMode = 'profil';   // 'profil' | 'pass'
 var famPassFrom = '';           // 'profil' = back to the profile, otherwise to the list

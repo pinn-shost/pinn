@@ -129,6 +129,20 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский und 🇳🇱 Nederlands**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.127.4
+
+**Chat: Sprachnachrichten, Standort, Abstimmungen, PDF, Suche, Stummschalten – und Verschlüsselung zum Abwählen**
+
+- **Sprachnachrichten.** Ein Mikrofon-Knopf ersetzt den Senden-Knopf, solange nichts getippt ist: antippen, sprechen, absenden (bis 5 Minuten). Wellenform, Abspielen/Pause, 1×/1,5×/2× und Springen per Tipp auf die Wellenform. Wie Fotos Ende-zu-Ende verschlüsselt.
+- **Die Büroklammer ist jetzt ein Menü:** Foto/Video, **PDF-Dokument** (bis 20 MB, öffnen / teilen / speichern / in pinn. ablegen), **Standort** und **Abstimmung**.
+- **Standort.** Kartenvorschau und Beschriftung (ein gespeicherter Ort der Ortung, z. B. „Zuhause“, wird vorgeschlagen). Antippen zeigt die Karte: **„Auf der Ortungskarte zeigen“** öffnet Familie → Ortung mit einer Markierung, „In Karten-App öffnen“ startet die Navigation.
+- **Abstimmungen.** Frage und bis zu 8 Antworten, auf Wunsch mehrere Antworten pro Person. Mit dem Haken **„Auch auf der Pinnwand zeigen“** entsteht zugleich eine Pinnwand-Umfrage – abgestimmt wird hier oder dort, das Ergebnis ist überall gleich.
+- **Suche** im Chat (Lupe oben), **Stummschalten** pro Chat (8 Stunden, 1 Woche, immer – keine Benachrichtigung, zählt nicht in der Zahl hinter „Chat“ im Menü) und **Gruppe auflösen** (Ersteller und Admins).
+- **Verschlüsselung abwählbar** pro Familie (Admins, „Chat-Sicherheit“). Dann zeigen Benachrichtigungen den Text (Android bei Fotos auch eine Vorschau), und niemand braucht einen Wiederherstellungscode. Standard bleibt: Ende-zu-Ende verschlüsselt.
+- „Im Chat besprechen“ (💬) jetzt auch bei Termin, Dokument und Fahrzeug. Behoben: „In pinn. ablegen“ öffnete sich unter dem Foto, die Chat-Überschriften haben die Schrift der App, die Zahl hinter „Chat“ im Menü wird zuverlässiger aktualisiert.
+- Geändert: `js/chatextras.js` und `js/chatstimme.js` (neu), `js/chat.js`, `js/chatmedien.js`, `js/chatgruppen.js`, `js/familie.js`, `js/pinnwand.js`, `js/termindetails.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/hinweise.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `pinn-setup.sh`, `src/` und alle READMEs. **Server-Teil:** `pb_hooks/chat.pb.js`, `pinn-chat.js`, `pinn-push.js` und `sw.pb.js` – die Hooks mit austauschen; einige Felder werden beim Start automatisch ergänzt.
+
+
 ## Neu in 1.127.3
 
 **Chat: eigene Gruppen, angepinnte Chats, Wischen und Chat-Bilder**
@@ -195,18 +209,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 
 
 
-## Neu in 1.124.0
-
-**Hilfe & Tutorial**
-
-- **Hilfe zu jedem Menüpunkt.** Eine neue Hilfe-Seite erklärt jede Seite von pinn. – wahlweise als schneller Durchlauf („Kurz“) oder ausführlich („Ausführlich“). Zu finden unter Einstellungen → Hilfe & Tutorial und über die Suche.
-- **Tutorial für die ersten Schritte.** Neue Profile werden in sieben kurzen Schritten durch die wichtigsten Seiten geführt. Es startet einmal von selbst und lässt sich jederzeit unter Einstellungen → Hilfe & Tutorial neu starten.
-- **Hilfe in der Suche.** Hilfe-Themen erscheinen in einem eigenen Bereich „Hilfe“, klar getrennt von den eigenen Einträgen (Termine, Dokumente, Rezepte …).
-- Alle Hilfetexte und das Tutorial gibt es in allen elf Sprachen.
-- Geändert: `index.html`, `js/hilfe.js` (neu), `css/hilfe.css` (neu), `js/listen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `pinn-setup.sh` und alle READMEs. Am Server ändert sich nichts. Installation wie immer (`sudo sh pinn-*/pinn-setup.sh` oder Update-Knopf).
-
-
-
 ## So funktioniert’s
 
 ```mermaid
@@ -235,7 +237,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.127.3` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.127.4` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
