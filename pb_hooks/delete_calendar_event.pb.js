@@ -35,6 +35,11 @@ routerAdd("POST", "/api/delete-calendar-event", (e) => {
 
     try {
         const calendarSync = require(`${__hooks}/calendar-sync.js`);
+        // Validate eventHref to prevent SSRF
+        if (!/^https?:\/\//.test(eventHref)) {
+            console.log("[Kalender-Loeschen] Fehler: Ungültiges href-Format. Nur HTTP(S)-URLs sind erlaubt.");
+            return e.json(400, { error: "Ungültiges href-Format." });
+        }
         calendarSync.deleteEventForFamily(familyId, eventHref);
         calendarSync.syncCalendarFileOnly(familyId); // nur Kalenderdatei aktualisieren - KEINE Haushalts-Erkennung (sonst kommen geloeschte, aber "heute noch faellige" Aufgaben sofort wieder)
         console.log("[Kalender-Loeschen] Endpunkt erfolgreich abgeschlossen.");
