@@ -28,8 +28,8 @@ const CHAT_PBKDF2 = 200000;
 const CHAT_CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 32 characters, no I, O, 0, 1
 const CHAT_POLL_MS = 3000;
 const CHAT_BADGE_MS = 20000;
-const CHAT_REF_VIEWS = { task: 'aufgaben', pin: 'pinnwand', contract: 'finanzen', event: 'termine', doc: 'dokumente', vehicle: 'fahrzeuge' };
-const CHAT_REF_ICONS = { task: '✅', pin: '📌', contract: '📄', event: '📅', doc: '🗂️', vehicle: '🚗' };
+const CHAT_REF_VIEWS = { task: 'aufgaben', pin: 'pinnwand', contract: 'finanzen', event: 'termine', doc: 'dokumente', vehicle: 'fahrzeuge', expense: 'finanzen', goal: 'finanzen' };
+const CHAT_REF_ICONS = { task: '✅', pin: '📌', contract: '📄', event: '📅', doc: '🗂️', vehicle: '🚗', expense: '💶', goal: '🎯' };
 const chatEnc = new TextEncoder();
 const chatDec = new TextDecoder();
 let chatS = null;          // state of the logged-in profile (see chatNewState)
@@ -551,6 +551,12 @@ async function chatPoll() {
     if (S.room) {
       const changed = await chatLoadRoom(S.room, true);
       if (changed) { chatRenderConv(); chatMarkRead(); }
+      // polls that are also on the pin board live in the family data: fetch them every third round (about 9 s) instead of once a minute
+      if (S.tick % 3 === 0 && typeof areasPull === 'function' && chatXHasBoardPoll(S.room)) {
+        const before = chatXBoardSig(S.room);
+        await areasPull();
+        if (chatXBoardSig(S.room) !== before) chatRenderConv();
+      }
     }
     if (S.tick % 4 === 0) { chatLoadOverview(); chatLoadRoster().then(() => chatRenderConv()).catch(() => { /* ignore */ }); }
   } catch (e) { /* offline: try again */ }
@@ -617,6 +623,8 @@ function chatOpenRef(r) {
     else if (r.k === 'contract' && typeof vtOpenContract === 'function') ok = vtOpenContract(r.id);
     else if (r.k === 'doc' && typeof docById === 'function') { setView('dokumente'); ok = !!docById(r.id); if (ok) openDocDetail(r.id); }
     else if (r.k === 'vehicle' && typeof fzVehicle === 'function') { ok = !!fzVehicle(r.id); if (ok) fzOpenVehicle(r.id); else setView('fahrzeuge'); }
+    else if (r.k === 'expense' && typeof finOpenExpenseRef === 'function') ok = finOpenExpenseRef(r.id);
+    else if (r.k === 'goal' && typeof finOpenGoalRef === 'function') ok = finOpenGoalRef(r.id);
     else if (r.k === 'event') { const d = String(r.id).slice(0, 10); setView('termine'); if (/^\d{4}-\d{2}-\d{2}$/.test(d) && typeof jumpToDayView === 'function') jumpToDayView(d); }
     else setView(view);
   } catch (e) { setView(view); }

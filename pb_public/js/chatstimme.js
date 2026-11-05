@@ -186,7 +186,7 @@ async function chatVToggle(mm, m, box) {
   try {
     const entry = await chatMFetch(mm);
     if (chatVPlay.f !== mm.f) return;
-    a.src = entry.url; a.playbackRate = chatVPlay.speed;
+    a.src = chatMBlobSrc(entry.url); a.playbackRate = chatVPlay.speed;
     await a.play();
   } catch (e) { chatVPlay.f = ''; chatToast(e && e.gone ? tk('chat.media.gone') : tk('chat.media.loadFailed')); }
   finally { chatVPlay.loading = ''; document.querySelectorAll('#chatMsgs .chat-voice.loading').forEach(b => b.classList.remove('loading')); chatVPaint(); }

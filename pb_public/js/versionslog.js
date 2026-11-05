@@ -24,6 +24,9 @@ const PINN_CHANGELOG = [
   {
     v: '1.127', datum: '04.11.2026', titel: 'Chat – Ende-zu-Ende verschlüsselt, mit Fotos und Videos',
     punkte: [
+      ['neu', '1.127.5: Finanzen im Chat – Ausgaben, Einnahmen, Daueraufträge und Sparpositionen haben im Fenster einen Chat-Knopf (💬): Chat wählen, der Eintrag kommt als Karte an, ein Tipp darauf öffnet ihn wieder.'],
+      ['fix', '1.127.5 behoben: Chat-Abstimmungen, die auch auf der Pinnwand stehen, werden bei allen nach etwa 10 Sekunden aktualisiert (vorher bis zu einer Minute). Sicherheit: drei Codescanner-Meldungen in der Foto- und Video-Vorschau des Chats geschlossen.'],
+      ['info', '1.127.5 geändert: Der Knopf „Im Chat besprechen“ heißt überall nur noch „Chat“.'],
       ['neu', '1.127.4: Sprachnachrichten – Mikrofon-Knopf statt Senden-Knopf, solange nichts getippt ist: antippen, sprechen, absenden (bis 5 Minuten). Mit Wellenform, Abspielen/Pause, 1×/1,5×/2× und Antippen der Wellenform zum Springen. Wie Fotos Ende-zu-Ende verschlüsselt.'],
       ['neu', 'Der Büroklammer-Knopf öffnet jetzt ein Menü: Foto/Video, PDF-Dokument, Standort, Abstimmung. PDFs (bis 20 MB) lassen sich öffnen, teilen, speichern und in pinn. ablegen.'],
       ['neu', 'Standort senden: mit Kartenvorschau und Beschriftung (liegt der Standort in einem gespeicherten Ort der Ortung, z. B. „Zuhause“, wird der Name vorgeschlagen). Antippen zeigt die Karte; „Auf der Ortungskarte zeigen“ öffnet Familie → Ortung mit einer Markierung, „In Karten-App öffnen“ startet die Navigation.'],

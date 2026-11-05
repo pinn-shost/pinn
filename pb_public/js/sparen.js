@@ -1696,6 +1696,7 @@ function openGoalModal(goalId = null, depotId = null) {
   updateGoalRateInfo();
   document.getElementById('finGoalError').classList.add('hidden');
   document.getElementById('deleteFinGoalBtn').classList.toggle('hidden', !g);
+  document.getElementById('chatFinGoalBtn').classList.toggle('hidden', !(g && typeof chatCanShare === 'function' && chatCanShare()));
   renderGoalIconPicker();
   document.getElementById('finGoalModal').classList.remove('hidden');
   armModalSnapshot('finGoalModal');
@@ -1768,6 +1769,15 @@ function renderGoalIconPicker() {
     document.getElementById('finGoalIcon').value = b.dataset.icon;
     renderGoalIconPicker();
   }));
+}
+// Opens the savings position of a chat reference; false if it does not exist any more
+function finOpenGoalRef(id) {
+  const g = finGoal(id);
+  setView('finanzen');
+  finSetTab('sparen');
+  if (!g) return false;
+  openGoalModal(g.id);
+  return true;
 }
 function closeGoalModal() {
   document.getElementById('finGoalModal').classList.add('hidden');
@@ -2432,6 +2442,10 @@ function initSavingsAndAllowanceUi() {
   document.getElementById('finGoalRateInterval').addEventListener('change', updateGoalRateInfo);
   document.getElementById('finGoalRateStart').addEventListener('change', updateGoalRateInfo);
   document.getElementById('deleteFinGoalBtn').addEventListener('click', deleteGoalFromModal);
+  document.getElementById('chatFinGoalBtn').addEventListener('click', () => {
+    const g = editingGoalId ? finGoal(editingGoalId) : null;
+    if (g) window.pinnChat.share({ k: 'goal', id: g.id, ti: String(g.name || '').trim() }, closeGoalModal);
+  });
   document.getElementById('finGoalIcon').addEventListener('input', renderGoalIconPicker);
   document.getElementById('finGoalKind').addEventListener('change', () => {
     updateGoalEtfUi();

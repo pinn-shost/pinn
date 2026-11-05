@@ -788,7 +788,7 @@ window.PINN_I18N && window.PINN_I18N.keys("pt", {
   "chat.delete": "Apagar para todos",
   "chat.deleteConfirm": "Apagar esta mensagem para todos?",
   "chat.deleted": "Esta mensagem foi apagada",
-  "chat.discuss": "Falar sobre isto no chat",
+  "chat.discuss": "Chat",
   "chat.e2ee": "Criptografia de ponta a ponta",
   "chat.e2eeNote": "As mensagens são criptografadas no seu dispositivo. Só as pessoas deste chat podem lê-las – nem mesmo o servidor.",
   "chat.error.load": "O chat não está acessível no momento.",

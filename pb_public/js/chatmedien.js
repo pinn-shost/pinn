@@ -16,6 +16,9 @@ const CHATM = { PDF_MAX: 20 * 1024 * 1024, SIDE: 1600, Q: 0.8, THUMB: 240, THUMB
 const chatMBlobs = new Map();   // file id -> { blob, url } of everything opened in this session
 
 /* ---------------------------------------------------------------- small helpers */
+// Only object URLs made by this page may be put into a src attribute: anything else becomes an empty string.
+// The result is built from a fixed prefix, so no text from a file can ever turn into another kind of address.
+function chatMBlobSrc(u) { const s = String(u || ''); return s.indexOf('blob:') === 0 ? 'blob:' + s.slice(5) : ''; }
 function chatMSize(n) {
   const mb = Number(n) / (1024 * 1024);
   let f; try { f = new Intl.NumberFormat(chatLocale(), { maximumFractionDigits: 1 }); } catch (e) { f = { format: x => String(Math.round(x * 10) / 10) }; }
@@ -47,7 +50,7 @@ async function chatMDecode(file) {
     const url = URL.createObjectURL(file), img = new Image();
     img.onload = () => res({ src: img, w: img.naturalWidth, h: img.naturalHeight, close: () => URL.revokeObjectURL(url) });
     img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('decode')); };
-    img.src = url;
+    img.src = chatMBlobSrc(url);
   });
 }
 async function chatMScale(dec, side, q) {
@@ -85,7 +88,7 @@ async function chatMPrepareImage(file, hd) {
 function chatMVideoOpen(file) {
   return new Promise((res, rej) => {
     const url = URL.createObjectURL(file), v = document.createElement('video');
-    v.preload = 'auto'; v.playsInline = true; v.setAttribute('playsinline', ''); v.src = url;
+    v.preload = 'auto'; v.playsInline = true; v.setAttribute('playsinline', ''); v.src = chatMBlobSrc(url);
     v.onloadedmetadata = () => res({ v, url, d: isFinite(v.duration) ? v.duration : 0, w: v.videoWidth || 0, h: v.videoHeight || 0 });
     v.onerror = () => { URL.revokeObjectURL(url); rej(new Error('decode')); };
   });
@@ -285,8 +288,8 @@ function chatMCompose(files) {
   const prev = chatEl('div', 'chat-compose-prev');
   const first = items[0];
   const url = URL.createObjectURL(first.file);
-  if (first.kind === 'img') { const im = document.createElement('img'); im.src = url; im.alt = ''; prev.appendChild(im); }
-  else { const v = document.createElement('video'); v.src = url; v.muted = true; v.playsInline = true; v.preload = 'metadata'; prev.appendChild(v); prev.appendChild(chatEl('span', 'chat-media-play', '▶')); }
+  if (first.kind === 'img') { const im = document.createElement('img'); im.src = chatMBlobSrc(url); im.alt = ''; prev.appendChild(im); }
+  else { const v = document.createElement('video'); v.src = chatMBlobSrc(url); v.muted = true; v.playsInline = true; v.preload = 'metadata'; prev.appendChild(v); prev.appendChild(chatEl('span', 'chat-media-play', '▶')); }
   if (items.length > 1) prev.appendChild(chatEl('span', 'chat-compose-count', '+' + (items.length - 1)));
   card.appendChild(prev);
   const cap = chatEl('input', 'chat-compose-cap'); cap.type = 'text'; cap.maxLength = 1000; cap.placeholder = tk('chat.media.caption'); cap.setAttribute('aria-label', tk('chat.media.caption')); cap.setAttribute('enterkeyhint', 'send');
@@ -368,8 +371,8 @@ function chatMOpen(mm, m) {
     if (mm.k === 'pdf') {
       el = chatEl('div', 'chat-viewer-doc'); el.appendChild(chatEl('div', 'chat-viewer-doc-ico', '📄'));
       el.appendChild(chatEl('div', 'chat-viewer-doc-name', String(mm.n || tk('chat.file.pdf')))); el.appendChild(chatEl('div', 'chat-viewer-doc-size', chatMSize(entry.blob.size)));
-    } else if (mm.k === 'vid') { el = document.createElement('video'); el.controls = true; el.playsInline = true; el.setAttribute('playsinline', ''); el.src = entry.url; }
-    else { el = document.createElement('img'); el.src = entry.url; el.alt = ''; }
+    } else if (mm.k === 'vid') { el = document.createElement('video'); el.controls = true; el.playsInline = true; el.setAttribute('playsinline', ''); el.src = chatMBlobSrc(entry.url); }
+    else { el = document.createElement('img'); el.src = chatMBlobSrc(entry.url); el.alt = ''; }
     stage.appendChild(el);
     const act = (label, fn) => { const b = chatEl('button', 'chat-viewer-act', label); b.type = 'button'; b.onclick = fn; bar.appendChild(b); };
     if (mm.k === 'pdf') act('↗ ' + tk('chat.pdf.open'), () => { const w = window.open(entry.url, '_blank'); if (!w) chatMSave(entry.blob, mm); });
@@ -389,7 +392,7 @@ async function chatMShare(blob, mm) {
 }
 function chatMSave(blob, mm) {
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = chatMName(mm);
+  a.href = chatMBlobSrc(URL.createObjectURL(blob)); a.download = chatMName(mm);
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 10000);
 }

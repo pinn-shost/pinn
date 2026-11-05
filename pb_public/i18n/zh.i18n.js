@@ -779,7 +779,7 @@ window.PINN_I18N && window.PINN_I18N.keys("zh", {
   "chat.delete": "为所有人删除",
   "chat.deleteConfirm": "为所有人删除这条消息？",
   "chat.deleted": "此消息已被删除",
-  "chat.discuss": "在聊天中讨论",
+  "chat.discuss": "聊天",
   "chat.e2ee": "端到端加密",
   "chat.e2eeNote": "消息在你的设备上加密。只有此聊天中的人才能阅读，连服务器也不能。",
   "chat.error.load": "暂时无法连接聊天。",

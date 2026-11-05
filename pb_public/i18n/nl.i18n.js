@@ -788,7 +788,7 @@ window.PINN_I18N && window.PINN_I18N.keys("nl", {
   "chat.delete": "Voor iedereen verwijderen",
   "chat.deleteConfirm": "Dit bericht voor iedereen verwijderen?",
   "chat.deleted": "Dit bericht is verwijderd",
-  "chat.discuss": "Bespreken in de chat",
+  "chat.discuss": "Chat",
   "chat.e2ee": "End-to-end versleuteld",
   "chat.e2eeNote": "Berichten worden op je apparaat versleuteld. Alleen de mensen in deze chat kunnen ze lezen – zelfs de server niet.",
   "chat.error.load": "De chat is nu niet bereikbaar.",

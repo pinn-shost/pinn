@@ -102,6 +102,21 @@ function chatXVoteMap(pollId) {
   });
   return out;
 }
+// true if the open chat holds a poll that is also on the pin board
+function chatXHasBoardPoll(room) {
+  const S = chatS;
+  return chatRoomState(room).msgs.some(m => { const pl = S.plain.get(m.id); return !!(pl && pl.msg && pl.msg.p && pl.msg.p.pn); });
+}
+// the votes of all board-linked polls of the open chat as one string (to notice a change)
+function chatXBoardSig(room) {
+  const S = chatS; let out = '';
+  chatRoomState(room).msgs.forEach(m => {
+    const pl = S.plain.get(m.id), pn = pl && pl.msg && pl.msg.p && pl.msg.p.pn;
+    if (!pn) return;
+    try { const n = pinboard.find(x => x && x.id === pn); out += pn + ':' + JSON.stringify(n ? [n.votes || {}, !!n.closed] : null) + ';'; } catch (e) { /* ignore */ }
+  });
+  return out;
+}
 function chatXPollBubble(p, m) {
   const S = chatS;
   const box = chatEl('div', 'chat-poll');

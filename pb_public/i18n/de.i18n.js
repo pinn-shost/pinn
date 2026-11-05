@@ -788,7 +788,7 @@ window.PINN_I18N && window.PINN_I18N.keys("de", {
   "chat.delete": "Für alle löschen",
   "chat.deleteConfirm": "Diese Nachricht für alle löschen?",
   "chat.deleted": "Diese Nachricht wurde gelöscht",
-  "chat.discuss": "Im Chat besprechen",
+  "chat.discuss": "Chat",
   "chat.e2ee": "Ende-zu-Ende verschlüsselt",
   "chat.e2eeNote": "Nachrichten werden auf deinem Gerät verschlüsselt. Nur die Personen in diesem Chat können sie lesen – nicht einmal der Server.",
   "chat.error.load": "Der Chat ist gerade nicht erreichbar.",

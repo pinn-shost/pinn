@@ -106,6 +106,16 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский en 🇳🇱 Nederlands**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.127.5
+
+**Chat: snellere polls, financiën in de chat, veiligheid**
+
+- **Polls reageren sneller.** Een chatpoll die ook op het prikbord staat, wordt nu binnen ongeveer 10 seconden bij iedereen bijgewerkt in plaats van pas na maximaal een minuut.
+- **Financiën in de chat.** Uitgaven, inkomsten, terugkerende posten en spaarposities hebben nu een **Chat**-knop (💬) in hun venster: kies een chat, de post komt aan als kaart en een tik erop opent hem weer.
+- **Kortere knoppen.** “Bespreken in de chat” heet overal nog gewoon **Chat**.
+- **Veiligheid.** De drie meldingen van de codescanner “DOM text reinterpreted as HTML” in de foto- en videovoorvertoning van de chat zijn opgelost.
+- Gewijzigd: `js/chatmedien.js`, `js/chatstimme.js`, `js/chat.js`, `js/chatextras.js`, `js/finanzen.js`, `js/sparen.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `src/` (`index.html`) en alle README's. Geen serverdeel.
+
 ## Nieuw in 1.127.4
 
 **Chat: spraakberichten, locatie, peilingen, PDF, zoeken, dempen – en versleuteling die je kunt uitzetten**
@@ -131,16 +141,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Gewijzigd: `js/chatgruppen.js` (nieuw), `js/chat.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `index.html`, `pinn-setup.sh`, `src/` en alle README’s. **Serverdeel:** `pb_hooks/chat.pb.js` en `pb_hooks/pinn-chat.js` – vervang ook de hooks; er worden automatisch drie collecties aangemaakt.
 
 
-## Nieuw in 1.127.2
-
-**Chat: praten over taken, prikbordbriefjes en contractdeadlines**
-
-- **💬 “Bespreken in de chat”** bij een taak, in een prikbordbriefje en in een contract (bijv. een aanstaande opzegtermijn): kies de gezinschat of één persoon en de chat opent met het item als kaart in de invoerregel. Voeg een paar woorden toe of verstuur het gewoon.
-- **De kaart opent het item:** een tik in het bericht springt naar de taak (die knippert even in de lijst), het briefje of het contract. Bestaat het niet meer of heb je geen toegang, dan zegt een korte melding dat.
-- **Nog steeds end-to-end versleuteld:** de kaart wordt net als de tekst versleuteld; je NAS ziet er niets van.
-- Gewijzigd: `js/chat.js`, `css/chat.css`, `js/aufgaben.js`, `js/pinnwand.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `index.html`, `src/` en alle README’s. **Geen serverdeel** – de hooks blijven zoals ze zijn.
-
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -150,7 +150,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.127.4` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.127.5` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -787,7 +787,7 @@ window.PINN_I18N && window.PINN_I18N.keys("fr", {
   "chat.delete": "Supprimer pour tous",
   "chat.deleteConfirm": "Supprimer ce message pour tous ?",
   "chat.deleted": "Ce message a été supprimé",
-  "chat.discuss": "En discuter dans le chat",
+  "chat.discuss": "Chat",
   "chat.e2ee": "Chiffré de bout en bout",
   "chat.e2eeNote": "Les messages sont chiffrés sur ton appareil. Seules les personnes de cette discussion peuvent les lire – même pas le serveur.",
   "chat.error.load": "Le chat est injoignable pour le moment.",

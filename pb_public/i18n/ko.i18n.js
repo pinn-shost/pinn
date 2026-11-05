@@ -788,7 +788,7 @@ window.PINN_I18N && window.PINN_I18N.keys("ko", {
   "chat.delete": "모두에게서 삭제",
   "chat.deleteConfirm": "이 메시지를 모두에게서 삭제할까요?",
   "chat.deleted": "이 메시지는 삭제되었어요",
-  "chat.discuss": "채팅에서 이야기하기",
+  "chat.discuss": "채팅",
   "chat.e2ee": "종단 간 암호화",
   "chat.e2eeNote": "메시지는 내 기기에서 암호화돼요. 이 채팅의 참여자만 읽을 수 있고 서버도 읽을 수 없어요.",
   "chat.error.load": "지금은 채팅에 연결할 수 없어요.",

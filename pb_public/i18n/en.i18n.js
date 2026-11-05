@@ -788,7 +788,7 @@ window.PINN_I18N && window.PINN_I18N.keys("en", {
   "chat.delete": "Delete for everyone",
   "chat.deleteConfirm": "Delete this message for everyone?",
   "chat.deleted": "This message was deleted",
-  "chat.discuss": "Discuss in chat",
+  "chat.discuss": "Chat",
   "chat.e2ee": "End-to-end encrypted",
   "chat.e2eeNote": "Messages are encrypted on your device. Only the people in this chat can read them – not even the server.",
   "chat.error.load": "The chat can’t be reached right now.",

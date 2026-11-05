@@ -125,6 +125,16 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский and 🇳🇱 Nederlands**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.127.5
+
+**Chat: faster polls, finance in the chat, security**
+
+- **Polls respond faster.** A chat poll that is also on the pin board now updates for everybody within about 10 seconds instead of up to a minute.
+- **Finance in the chat.** Expenses, income, recurring entries and savings positions now have a **Chat** button (💬) in their pop-up: pick a chat, the entry arrives as a card, a tap on it opens the entry again.
+- **Shorter buttons.** “Discuss in chat” is now simply **Chat** everywhere (tasks, notes, contracts, appointments, documents, vehicles and the new finance entries).
+- **Security.** The three code-scanning alerts “DOM text reinterpreted as HTML” in the photo and video preview of the chat are closed: only own object addresses are accepted in `src`.
+- Changed: `js/chatmedien.js`, `js/chatstimme.js`, `js/chat.js`, `js/chatextras.js`, `js/finanzen.js`, `js/sparen.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `src/` (`index.html`) and all READMEs. No server part.
+
 ## What's new in 1.127.4
 
 **Chat: voice messages, locations, polls, PDF files, search, muting – and encryption you can switch off**
@@ -237,15 +247,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 
 
 
-## What's new in 1.123.10
-
-**Dutch – eleventh stage**
-
-- **Even more of pinn. in Dutch.** The notifications (push) are now translated as well: tasks and events, board, contracts, documents, pantry, places and “on the way home”, SOS, waste, shopping, settlements, the daily overview and app updates – all 6,722 texts are done. The server now sends notifications in Dutch too. Still missing: the setup assistant and the data export texts.
-- Dutch stays **hidden** until everything is translated (it can be unlocked on one device for trying it out; texts that are still missing then appear in English). Nothing changes visibly for anyone else.
-- Changed: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js`, on the server `pb_hooks/pinn-pushtext.js` and all READMEs. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
-
 ## How it works
 
 ```mermaid
@@ -272,7 +273,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.127.4` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.127.5` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

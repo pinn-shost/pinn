@@ -1314,6 +1314,7 @@ function openExpenseModal({ expense = null, recurring = null, asRecurring = fals
   document.getElementById('expenseItemsList').innerHTML = items.map(n => `<span class="inline-block px-2 py-0.5 rounded-full bg-ink/5 text-xs">${escapeHtml(n)}</span>`).join(' ');
 
   document.getElementById('deleteExpenseBtn').classList.toggle('hidden', !expense && !recurring);
+  document.getElementById('chatExpenseBtn').classList.toggle('hidden', !((expense || recurring) && typeof chatCanShare === 'function' && chatCanShare()));
   document.getElementById('endRecurringBtn').classList.toggle('hidden', !recurring || !!recurring.until);
   document.getElementById('expenseModalError').classList.add('hidden');
 
@@ -1474,6 +1475,32 @@ function updateExpenseRecurringUi() {
   } else {
     info.classList.add('hidden');
   }
+}
+// Chat reference of an entry (an expense, or a recurring entry with the prefix "r:"): the title shown in the chat card
+function finChatRef() {
+  const rec = editingRecurringId ? finance.recurring.find(x => x.id === editingRecurringId) : null;
+  const e = !rec && editingExpenseId ? ausgaben.find(x => x.id === editingExpenseId) : null;
+  const src = rec || e;
+  if (!src) return null;
+  const amount = rec ? finRecurringAmountFor(rec, finTodayIso()) : src.amount;
+  const title = String(src.title || src.store || '').trim();
+  return { k: 'expense', id: rec ? 'r:' + rec.id : String(src.id), ti: [title, fmtEur(Math.abs(Number(amount) || 0))].filter(Boolean).join(' · ') };
+}
+// Opens the entry of a chat reference; false if it does not exist any more
+function finOpenExpenseRef(id) {
+  setView('finanzen');
+  finSetTab('ausgaben');
+  const s = String(id);
+  if (s.indexOf('r:') === 0) {
+    const r = finance.recurring.find(x => x.id === s.slice(2));
+    if (!r) return false;
+    openExpenseModal({ recurring: r });
+    return true;
+  }
+  const e = ausgaben.find(x => x.id === s);
+  if (!e) return false;
+  openExpenseModal({ expense: e });
+  return true;
 }
 function closeExpenseModal() {
   document.getElementById('expenseModal').classList.add('hidden');

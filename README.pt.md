@@ -129,6 +129,16 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский e 🇳🇱 Nederlands**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.127.5
+
+**Chat: votações mais rápidas, finanças no chat, segurança**
+
+- **As votações reagem mais depressa.** Uma votação do chat que também está no mural é atualizada para todos em cerca de 10 segundos, em vez de até um minuto.
+- **Finanças no chat.** Despesas, receitas, lançamentos recorrentes e posições de poupança têm agora um botão **Chat** (💬) na janela: escolha um chat, o lançamento chega como cartão e, ao tocar nele, abre-se de novo.
+- **Botões mais curtos.** «Falar sobre isto no chat» passa a ser simplesmente **Chat** em todo o lado.
+- **Segurança.** Corrigidos os três alertas do analisador de código «DOM text reinterpreted as HTML» na pré-visualização de fotos e vídeos do chat.
+- Alterado: `js/chatmedien.js`, `js/chatstimme.js`, `js/chat.js`, `js/chatextras.js`, `js/finanzen.js`, `js/sparen.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos os `i18n/*.i18n.js`, `src/` (`index.html`) e todos os README. Sem parte de servidor.
+
 ## Novidades da 1.127.4
 
 **Chat: mensagens de voz, localização, enquetes, PDF, pesquisa, silenciar – e encriptação desativável**
@@ -197,18 +207,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 
 
 
-## Novidades da 1.125.0
-
-**Tutorial, resumo diário e placas**
-
-- **Tutorial revisado.** O botão «Mostre-me» agora se chama **«Interromper»**. O segundo passo abre o menu ☰ e o explica (a barra inferior do celular não existe mais). O último passo aponta para a página de ajuda e para as Discussões do GitHub para perguntas ao desenvolvedor.
-- **Resumo diário por push: tarefas domésticas opcionais.** Em Conta → Notificações você escolhe se as tarefas domésticas entram no resumo diário. Padrão: sim, então nada muda enquanto você não desativar.
-- **Placas de veículos.** A faixa azul agora mostra o círculo de estrelas da UE em vez de «D». Placas de outras regiões virão depois.
-- Limpeza: o código não utilizado da antiga barra do celular foi removido.
-- Alterado: `index.html`, arquivos em `js/`, `css/` e `i18n/`, no servidor `pb_hooks/pinn-push.js` e `src/` (a parte `menueleiste.html` deixa de existir). Instalação como sempre (`sudo sh pinn-*/pinn-setup.sh` ou o botão de atualização).
-
-
-
 ## Como funciona
 
 ```mermaid
@@ -237,7 +235,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.127.4` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.127.5` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

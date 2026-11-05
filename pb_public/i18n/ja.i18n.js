@@ -782,7 +782,7 @@ window.PINN_I18N && window.PINN_I18N.keys("ja", {
   "chat.delete": "全員から削除",
   "chat.deleteConfirm": "このメッセージを全員から削除しますか？",
   "chat.deleted": "このメッセージは削除されました",
-  "chat.discuss": "チャットで相談",
+  "chat.discuss": "チャット",
   "chat.e2ee": "エンドツーエンド暗号化",
   "chat.e2eeNote": "メッセージはお使いの端末で暗号化されます。このチャットの参加者だけが読めます。サーバーにも読めません。",
   "chat.error.load": "今はチャットに接続できません。",

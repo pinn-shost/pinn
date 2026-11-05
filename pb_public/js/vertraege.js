@@ -1881,6 +1881,7 @@ function vtOpenFromUrl() {
   document.getElementById('cancelExpenseBtn').addEventListener('click', closeExpenseModal);
   document.getElementById('saveExpenseBtn').addEventListener('click', saveExpenseFromModal);
   document.getElementById('deleteExpenseBtn').addEventListener('click', deleteFromExpenseModal);
+  document.getElementById('chatExpenseBtn').addEventListener('click', () => { const ref = finChatRef(); if (ref) window.pinnChat.share(ref, closeExpenseModal); });
   document.getElementById('endRecurringBtn').addEventListener('click', endRecurringFromModal);
   document.getElementById('expenseRepeatSelect').addEventListener('change', updateExpenseRecurringUi);
   document.getElementById('expenseLinkSelect').addEventListener('change', (e) => { expenseModalLink = e.target.value; expenseLinkAuto = false; expenseLinkTouched = true; expenseDepotTouched = true; });

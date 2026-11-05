@@ -129,6 +129,16 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский e 🇳🇱 Nederlands**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.127.5
+
+**Chat: sondaggi più veloci, finanze in chat, sicurezza**
+
+- **I sondaggi reagiscono più in fretta.** Un sondaggio della chat che è anche in bacheca si aggiorna per tutti in circa 10 secondi invece che fino a un minuto.
+- **Finanze in chat.** Spese, entrate, voci ricorrenti e posizioni di risparmio hanno ora un pulsante **Chat** (💬) nella finestra: scegli una chat, la voce arriva come scheda e toccandola si riapre.
+- **Pulsanti più corti.** «Discutine in chat» ora è semplicemente **Chat** ovunque.
+- **Sicurezza.** Chiusi i tre avvisi dello scanner di codice «DOM text reinterpreted as HTML» nell'anteprima di foto e video della chat.
+- Modificato: `js/chatmedien.js`, `js/chatstimme.js`, `js/chat.js`, `js/chatextras.js`, `js/finanzen.js`, `js/sparen.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, tutti gli `i18n/*.i18n.js`, `src/` (`index.html`) e tutti i README. Nessuna parte server.
+
 ## Novità della 1.127.4
 
 **Chat: messaggi vocali, posizione, sondaggi, PDF, ricerca, silenziamento – e crittografia disattivabile**
@@ -197,18 +207,6 @@ pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 
 
 
-## Novità della 1.125.0
-
-**Tutorial, panoramica giornaliera e targhe**
-
-- **Tutorial rivisto.** Il pulsante «Mostrami» ora si chiama **«Interrompi»**. Il secondo passo apre il menu ☰ e lo spiega (la barra in basso sul telefono non esiste più). L’ultimo passo rimanda alla pagina della guida e alle Discussioni di GitHub per le domande allo sviluppatore.
-- **Panoramica giornaliera push: faccende domestiche a scelta.** In Account → Notifiche puoi scegliere se le faccende domestiche sono incluse nella panoramica giornaliera. Predefinito: sì, quindi non cambia nulla finché non lo disattivi.
-- **Targhe dei veicoli.** La fascia blu mostra ora il cerchio di stelle dell’UE al posto della «D». Le targhe di altre regioni seguiranno.
-- Pulizia: rimosso il codice non più usato della vecchia barra del telefono.
-- Modificato: `index.html`, file in `js/`, `css/` e `i18n/`, sul server `pb_hooks/pinn-push.js` e `src/` (la parte `menueleiste.html` viene eliminata). Installazione come sempre (`sudo sh pinn-*/pinn-setup.sh` o il pulsante di aggiornamento).
-
-
-
 ## Come funziona
 
 ```mermaid
@@ -237,7 +235,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.127.4` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.127.5` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -125,6 +125,16 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский y 🇳🇱 Nederlands**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.127.5
+
+**Chat: votaciones más rápidas, finanzas en el chat, seguridad**
+
+- **Las votaciones reaccionan más rápido.** Una votación del chat que también está en el tablón se actualiza para todos en unos 10 segundos en lugar de hasta un minuto.
+- **Finanzas en el chat.** Gastos, ingresos, entradas periódicas y posiciones de ahorro tienen ahora un botón **Chat** (💬) en su ventana: elige un chat, la entrada llega como tarjeta y al tocarla se abre de nuevo.
+- **Botones más cortos.** «Comentar en el chat» ahora es simplemente **Chat** en todas partes.
+- **Seguridad.** Se han cerrado las tres alertas del escáner de código «DOM text reinterpreted as HTML» en la vista previa de fotos y vídeos del chat.
+- Cambiado: `js/chatmedien.js`, `js/chatstimme.js`, `js/chat.js`, `js/chatextras.js`, `js/finanzen.js`, `js/sparen.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos los `i18n/*.i18n.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
+
 ## Novedades de la 1.127.4
 
 **Chat: mensajes de voz, ubicación, encuestas, PDF, búsqueda, silenciar – y cifrado desactivable**
@@ -237,15 +247,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 
 
 
-## Novedades de la 1.123.10
-
-**Neerlandés – undécima etapa**
-
-- **Aún más de pinn. en neerlandés.** Ahora también están traducidas las notificaciones (push): tareas y eventos, tablón, contratos, documentos, despensa, lugares y «de camino a casa», SOS, residuos, compras, compensaciones, el resumen diario y las actualizaciones de la app; los 6722 textos están completos. El servidor ya envía las notificaciones también en neerlandés. Solo faltan el asistente de configuración y los textos de la exportación de datos.
-- El neerlandés permanece **oculto** hasta que todo esté traducido (se puede activar en un dispositivo para probarlo; los textos que aún faltan aparecen en inglés). Para los demás no cambia nada visible.
-- Cambiado: `index.html`, `js/sprachen.js`, `js/versionslog.js`, `i18n/nl.i18n.js`, `i18n/versionslog.en.js`, en el servidor `pb_hooks/pinn-pushtext.js` y todos los README. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
-
-
 ## Cómo funciona
 
 ```mermaid
@@ -272,7 +273,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.127.4` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.127.5` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

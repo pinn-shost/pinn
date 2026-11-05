@@ -129,6 +129,16 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский和 🇳🇱 Nederlands**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.127.5 新功能
+
+**聊天：投票更快、财务可在聊天中讨论、安全修复**
+
+- **投票响应更快。** 同时贴在公告板上的聊天投票，现在约 10 秒内即可为所有人更新，而不是最多一分钟。
+- **财务进入聊天。** 支出、收入、定期条目和储蓄项目的弹窗里现在有 **聊天** 按钮（💬）：选择聊天，条目会以卡片形式送达，点按卡片即可再次打开。
+- **按钮更简短。** “在聊天中讨论”现在统一为 **聊天**。
+- **安全。** 已修复代码扫描器针对聊天照片和视频预览的三条“DOM text reinterpreted as HTML”警报。
+- 已更改：`js/chatmedien.js`、`js/chatstimme.js`、`js/chat.js`、`js/chatextras.js`、`js/finanzen.js`、`js/sparen.js`、`js/vertraege.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、所有 `i18n/*.i18n.js`、`src/`（`index.html`）以及所有 README。无服务器部分。
+
 ## 1.127.4 新功能
 
 **聊天：语音消息、位置、投票、PDF、搜索、静音——以及可关闭的加密**
@@ -197,18 +207,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 
 
 
-## 1.125.0 新功能
-
-**教程、每日摘要与车牌**
-
-- **教程改进。** “带我看看”按钮现在叫**“中断”**。第二步会打开 ☰ 菜单并加以说明（手机底部的栏已不存在）。最后一步指向帮助页面，并说明可在 GitHub Discussions 向开发者提问。
-- **推送每日摘要：家务任务可选。** 在 账号 → 通知 中可选择是否把家务任务放进每日摘要。默认：是，所以不关闭就没有任何变化。
-- **车辆车牌。** 蓝色条现在显示欧盟星环，而不是“D”。其他地区的车牌将陆续加入。
-- 整理：移除了旧手机底栏中不再使用的代码。
-- 已更改：`index.html`、`js/`、`css/` 和 `i18n/` 中的文件，服务器上的 `pb_hooks/pinn-push.js` 以及 `src/`（部分 `menueleiste.html` 已删除）。安装方式照旧（`sudo sh pinn-*/pinn-setup.sh` 或更新按钮）。
-
-
-
 ## 工作原理
 
 ```mermaid
@@ -237,7 +235,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.127.4` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.127.5` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
