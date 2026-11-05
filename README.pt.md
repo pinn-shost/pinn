@@ -129,6 +129,15 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский e 🇳🇱 Nederlands**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.128.0
+
+**Controle por voz em todos os idiomas do app**
+
+- **Onze idiomas.** A Siri («HTTP Shortcuts» no Android) agora também entende neerlandês, italiano, português, chinês, japonês e coreano: adicionar à lista de compras, ler a lista, criar uma tarefa, «O que tem para hoje?». A resposta vem no idioma do perfil. O atalho e o link existentes continuam funcionando.
+- **Exemplos.** “Zet melk en eieren op het boodschappenlijstje”, “Aggiungi latte e uova alla lista della spesa”, “Adicione leite e ovos à lista de compras”, “把牛奶和鸡蛋加到购物清单”, “買い物リストに牛乳と卵を追加して”, “장보기 목록에 우유랑 달걀 추가해 줘”.
+- **Pequenas correções.** Apóstrofos do ditado («c’è») e pontuação no fim da frase (。！？) são tratados, e quantidades como «2 Decken» não são mais cortadas.
+- Alterado: `pb_hooks/pinn-sprache.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos os `i18n/*.i18n.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js` and todos os READMEs. Parte do servidor: `pb_hooks/pinn-sprache.js` – substitua também os hooks.
+
 ## Novidades da 1.127.6
 
 **Chat: mensagens apagadas deixam aviso, segurança**
@@ -194,17 +203,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Alterado: `js/chatmedien.js` (novo), `css/chat.css`, `js/chat.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos os `i18n/*.i18n.js`, `pinn-setup.sh`, `src/` e todos os README. **Parte do servidor:** `pb_hooks/chat.pb.js` e `pb_hooks/pinn-chat.js` – substitua também os hooks.
 
 
-## Novidades da 1.127.0
-
-**Chat com criptografia de ponta a ponta**
-
-- **Chat da família e chats privados.** Visual de mensageiro nas cores do pinn., com respostas, links, separadores de data e contadores de não lidas. Um visto = chegou ao servidor; dois vistos coloridos = lida (as confirmações de leitura podem ser desativadas).
-- **Criptografia de ponta a ponta.** As mensagens são criptografadas no dispositivo; o seu NAS só vê quem escreve e quando, nunca o conteúdo. Na primeira abertura são criados uma chave e um código de recuperação, que desbloqueia o chat num dispositivo novo. “Segurança do chat” mostra números de segurança para comparar; se uma chave mudar, o envio para até o novo número ser aceito.
-- **Notificações push.** “Nova mensagem” sem o texto (o servidor não consegue lê-lo), ajustável em Conta → Notificações → Chat. Não para convidados nem no painel.
-- **Preparado para o próximo passo:** as mensagens podem trazer uma referência (tarefa, nota, cancelamento …) como cartão. Limites: sem forward secrecy, ainda sem imagens (previstas para a 1.127.1).
-- Alterado: `index.html`, `js/chat.js` e `css/chat.css` (novos), vários `js/*.js`, todos os `i18n/*.i18n.js`, `pinn-setup.sh` e todos os README. **Parte do servidor:** `pb_hooks/chat.pb.js` e `pb_hooks/pinn-chat.js` (novos), `pb_hooks/pinn-push.js`, `pb_hooks/pinn-schema.js` – substitua também os hooks.
-
-
 ## Como funciona
 
 ```mermaid
@@ -233,7 +231,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.127.6` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.128.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

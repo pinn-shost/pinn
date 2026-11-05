@@ -125,6 +125,15 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский y 🇳🇱 Nederlands**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.128.0
+
+**Control por voz en todos los idiomas de la app**
+
+- **Once idiomas.** Siri («HTTP Shortcuts» en Android) ahora también entiende neerlandés, italiano, portugués, chino, japonés y coreano: añadir a la lista de la compra, leer la lista, crear una tarea, «¿Qué hay hoy?». La respuesta llega en el idioma del perfil. El atajo y el enlace existentes siguen funcionando.
+- **Ejemplos.** “Zet melk en eieren op het boodschappenlijstje”, “Aggiungi latte e uova alla lista della spesa”, “Adicione leite e ovos à lista de compras”, “把牛奶和鸡蛋加到购物清单”, “買い物リストに牛乳と卵を追加して”, “장보기 목록에 우유랑 달걀 추가해 줘”.
+- **Pequeñas correcciones.** Se entienden los apóstrofos del dictado («c’è») y los signos al final de la frase (。！？), y cantidades como «2 Decken» ya no se cortan.
+- Cambiado: `pb_hooks/pinn-sprache.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos los `i18n/*.i18n.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js` and todos los READMEs. Parte del servidor: `pb_hooks/pinn-sprache.js` – sustituye también los hooks.
+
 ## Novedades de la 1.127.6
 
 **Chat: los mensajes borrados dejan constancia, seguridad**
@@ -201,16 +210,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Cambios: `index.html`, `js/chat.js` y `css/chat.css` (nuevos), varios `js/*.js`, todos los `i18n/*.i18n.js`, `pinn-setup.sh` y todos los README. **Parte del servidor:** `pb_hooks/chat.pb.js` y `pb_hooks/pinn-chat.js` (nuevos), `pb_hooks/pinn-push.js`, `pb_hooks/pinn-schema.js`; hay que sustituir también los hooks.
 
 
-## Novedades de la 1.126.0
-
-**Matrículas según el país**
-
-- **Matrículas como en tu país.** En la UE la franja azul muestra el círculo de estrellas con el código del país (D, A, NL, F, I, DK …) y los colores correspondientes: amarillo en Países Bajos y Luxemburgo, borde rojo en Dinamarca, letras rojas en Bélgica, bordes rojo-blanco-rojo en Austria y una franja a la derecha en Francia, Italia y Portugal.
-- **En todo el mundo.** También Reino Unido, Suiza, Noruega, Turquía, Ucrania, EE. UU., Canadá, México, Brasil, Argentina, Israel, India, China, Japón, Corea, Singapur, Australia, Nueva Zelanda y más: los 67 países que se pueden elegir en Idioma y región.
-- **Automático o a mano.** La matrícula sigue el país de Ajustes → Idioma y región. En cada vehículo puedes elegir otro país o «Neutro» en «Estilo de matrícula», con vista previa y un ejemplo adecuado en el campo. Los nombres de los países aparecen en todos los idiomas de la app.
-- Cambiado: `index.html`, `js/kennzeichen.js` (nuevo), `js/fahrzeuge.js`, `css/fahrzeuge.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos los `i18n/*.i18n.js`, `pinn-setup.sh` y todos los README. En el servidor no cambia nada. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
-
-
 ## Novedades de la 1.125.0
 
 **Tutorial, resumen diario y matrículas**
@@ -268,7 +267,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.127.6` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.128.0` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

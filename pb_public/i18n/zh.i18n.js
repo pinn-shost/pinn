@@ -6993,7 +6993,7 @@ window.PINN_I18N && window.PINN_I18N.keys("zh", {
   "vehicle.yyyy": "YYYY",
   "voice.addMilkEggsShopping": "“把牛奶和鸡蛋加到购物清单”",
   "voice.addTwoPacksPasta": "“把两包意大利面加到超市清单”",
-  "voice.alsoOtherLanguages": "也支持德语、英语、法语、西班牙语和俄语。回答会用你的语言。",
+  "voice.alsoOtherLanguages": "支持应用的所有语言。回答会用你的语言。",
   "voice.and1": "从 Play 商店安装免费应用 <b>HTTP Shortcuts</b>。",
   "voice.and2": "新建快捷方式：方法 <b>POST</b>，URL = 上方链接，请求正文 <b>JSON</b>：{code}——同时创建类型为<b>文本输入</b>的变量“{var}”（用键盘麦克风说话）。",
   "voice.and3": "在“响应”中选择<b>以对话框显示</b>，并将快捷方式添加到主屏幕。",

@@ -7016,7 +7016,7 @@ window.PINN_I18N && window.PINN_I18N.keys("ko", {
   "vehicle.yyyy": "YYYY",
   "voice.addMilkEggsShopping": "“장보기 목록에 우유랑 달걀 추가해 줘”",
   "voice.addTwoPacksPasta": "“이마트 목록에 파스타 두 봉지 추가해 줘”",
-  "voice.alsoOtherLanguages": "독일어, 영어, 프랑스어, 스페인어, 러시아어로도 가능해요. 답변은 내 언어로 와요.",
+  "voice.alsoOtherLanguages": "앱의 모든 언어로 가능해요. 답변은 내 언어로 와요.",
   "voice.and1": "Play 스토어에서 무료 앱 <b>HTTP Shortcuts</b>를 설치하세요.",
   "voice.and2": "새 바로가기 만들기: 방법 <b>POST</b>, URL = 위 링크, 요청 본문 <b>JSON</b>: {code} – 유형이 <b>텍스트 입력</b>인 변수 ‘{var}’을 만드세요(키보드 마이크로 말하기).",
   "voice.and3": "‘응답’에서 <b>대화상자로 표시</b>를 선택하고 바로가기를 홈 화면에 추가하세요.",

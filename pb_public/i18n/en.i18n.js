@@ -7016,7 +7016,7 @@ window.PINN_I18N && window.PINN_I18N.keys("en", {
   "vehicle.yyyy": "YYYY",
   "voice.addMilkEggsShopping": "“Add milk and eggs to the shopping list”",
   "voice.addTwoPacksPasta": "“Add two packs of pasta to the Tesco list”",
-  "voice.alsoOtherLanguages": "Also in German, French, Spanish and Russian. The answer comes in your language.",
+  "voice.alsoOtherLanguages": "Works in every app language. The answer comes in your language.",
   "voice.and1": "Install the free app <b>HTTP Shortcuts</b> from the Play Store.",
   "voice.and2": "Create a new shortcut: method <b>POST</b>, URL = link above, request body <b>JSON</b>: {code} – create a variable “{var}” of type <b>Text input</b> (speak with the keyboard microphone).",
   "voice.and3": "Under “Response” choose <b>show as dialog</b> and put the shortcut on the home screen.",

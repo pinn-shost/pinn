@@ -129,6 +129,15 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский und 🇳🇱 Nederlands**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.128.0
+
+**Sprachsteuerung in allen App-Sprachen**
+
+- **Elf Sprachen.** Siri („HTTP Shortcuts“ auf Android) versteht jetzt auch Niederländisch, Italienisch, Portugiesisch, Chinesisch, Japanisch und Koreanisch – Einkaufsliste ergänzen, Liste vorlesen, Aufgabe anlegen, „Was steht heute an?“ – und antwortet in der Sprache des Profils. Der bestehende Kurzbefehl und Link funktionieren weiter.
+- **Beispiele.** “Zet melk en eieren op het boodschappenlijstje”, “Aggiungi latte e uova alla lista della spesa”, “Adicione leite e ovos à lista de compras”, “把牛奶和鸡蛋加到购物清单”, “買い物リストに牛乳と卵を追加して”, “장보기 목록에 우유랑 달걀 추가해 줘”.
+- **Kleine Korrekturen.** Apostrophe aus dem Diktat („c’è“) und Satzzeichen am Satzende (。！？) werden verstanden, und Mengen wie „2 Decken“ werden nicht mehr zerschnitten.
+- Geändert: `pb_hooks/pinn-sprache.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js` und alle READMEs. Serverteil: `pb_hooks/pinn-sprache.js` – die Hooks bitte auch ersetzen.
+
 ## Neu in 1.127.6
 
 **Chat: gelöschte Nachrichten bleiben sichtbar, Sicherheit**
@@ -194,17 +203,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Geändert: `js/chatmedien.js` (neu), `css/chat.css`, `js/chat.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `pinn-setup.sh`, `src/` und alle READMEs. **Server-Teil:** `pb_hooks/chat.pb.js` und `pb_hooks/pinn-chat.js` – die Hooks mit austauschen; zwei weitere Sammlungen entstehen automatisch.
 
 
-## Neu in 1.127.0
-
-**Chat – Ende-zu-Ende verschlüsselt**
-
-- **Familienchat und private Chats.** Messenger-Look in den Farben von pinn., mit Antworten, Links, Datumstrennern und Ungelesen-Zählern. Ein Haken heißt: auf dem Server angekommen, zwei farbige Haken: gelesen (Lesebestätigungen lassen sich ausschalten).
-- **Ende-zu-Ende verschlüsselt.** Nachrichten werden auf dem Gerät verschlüsselt; dein NAS sieht nur, wer wann schreibt, nie den Inhalt. Beim ersten Öffnen entstehen ein Schlüssel und ein Wiederherstellungscode – damit entsperrst du den Chat auf einem neuen Gerät. „Chat-Sicherheit“ zeigt Sicherheitsnummern zum Vergleichen; ändert sich ein Schlüssel, stoppt das Senden, bis die neue Nummer akzeptiert ist.
-- **Push.** „Neue Nachricht“ ohne Text (der Server kann ihn nicht lesen), einstellbar unter Konto → Benachrichtigungen → Chat; ein Tipp öffnet den richtigen Chat. Nicht für Gäste und nicht auf dem Dashboard.
-- **Vorbereitet für den nächsten Schritt:** Nachrichten können einen Bezug tragen (Aufgabe, Pinnwand-Zettel, Kündigung …), der als Karte erscheint. Grenzen: kein Forward Secrecy, wer den Chat noch nicht geöffnet hat, liest nur neuere Nachrichten, noch keine Bilder (geplant für 1.127.1).
-- Geändert: `index.html`, `js/chat.js` und `css/chat.css` (neu), mehrere `js/*.js`, alle `i18n/*.i18n.js`, `pinn-setup.sh` und alle READMEs. **Server-Teil:** `pb_hooks/chat.pb.js` und `pb_hooks/pinn-chat.js` (neu), `pb_hooks/pinn-push.js`, `pb_hooks/pinn-schema.js` – die Hooks mit austauschen; zwei neue Sammlungen entstehen automatisch. Installation wie immer.
-
-
 ## So funktioniert’s
 
 ```mermaid
@@ -233,7 +231,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.127.6` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.128.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

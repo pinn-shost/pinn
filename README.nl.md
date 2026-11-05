@@ -106,6 +106,15 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский en 🇳🇱 Nederlands**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.128.0
+
+**Spraakbesturing in alle app-talen**
+
+- **Elf talen.** Siri (“HTTP Shortcuts” op Android) begrijpt nu ook Nederlands, Italiaans, Portugees, Chinees, Japans en Koreaans: aan het boodschappenlijstje toevoegen, het lijstje voorlezen, een taak aanmaken, “Wat staat er vandaag op het programma?”. Het antwoord komt in de taal van het profiel. De bestaande snelkoppeling en link blijven werken.
+- **Voorbeelden.** “Zet melk en eieren op het boodschappenlijstje”, “Aggiungi latte e uova alla lista della spesa”, “Adicione leite e ovos à lista de compras”, “把牛奶和鸡蛋加到购物清单”, “買い物リストに牛乳と卵を追加して”, “장보기 목록에 우유랑 달걀 추가해 줘”.
+- **Kleine verbeteringen.** Apostrofs uit dictaat (“c’è”) en leestekens aan het einde van een zin (。！？) worden verwerkt, en hoeveelheden zoals “2 Decken” worden niet meer opgeknipt.
+- Gewijzigd: `pb_hooks/pinn-sprache.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js` en alle README’s. Serverdeel: `pb_hooks/pinn-sprache.js` – vervang ook de hooks.
+
 ## Nieuw in 1.127.6
 
 **Chat: verwijderde berichten laten een melding achter, beveiliging**
@@ -125,20 +134,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Veiligheid.** De drie meldingen van de codescanner “DOM text reinterpreted as HTML” in de foto- en videovoorvertoning van de chat zijn opgelost.
 - Gewijzigd: `js/chatmedien.js`, `js/chatstimme.js`, `js/chat.js`, `js/chatextras.js`, `js/finanzen.js`, `js/sparen.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `src/` (`index.html`) en alle README's. Geen serverdeel.
 
-## Nieuw in 1.127.4
-
-**Chat: spraakberichten, locatie, peilingen, PDF, zoeken, dempen – en versleuteling die je kunt uitzetten**
-
-- **Spraakberichten.** Een microfoonknop vervangt de verzendknop zolang er niets getypt is: tikken, spreken, versturen (tot 5 minuten). Golfvorm, afspelen/pauze, 1×/1,5×/2× en springen door op de golfvorm te tikken. End-to-end-versleuteld zoals foto’s.
-- **De paperclip is nu een menu:** foto/video, **PDF-document** (tot 20 MB; openen / delen / bewaren / opslaan in pinn.), **locatie** en **peiling**.
-- **Locatie.** Kaartvoorbeeld en label (een opgeslagen plek van de locatiekaart, bijv. “Thuis”, wordt voorgesteld). Tikken toont de kaart: **“Tonen op de locatiekaart”** opent Gezin → Locatie met een markering, “Openen in kaarten-app” start de navigatie.
-- **Peilingen.** Een vraag en tot 8 antwoorden, desgewenst meerdere antwoorden per persoon. Met het vinkje **“Ook op het prikbord tonen”** ontstaat tegelijk een prikbordpeiling – je stemt hier of daar, de uitslag is overal gelijk.
-- **Zoeken** in de chat (vergrootglas bovenin), **dempen** per chat (8 uur, 1 week, altijd – geen melding en niet meegeteld in het getal achter “Chat” in het menu) en **een groep opheffen** (maker en beheerders).
-- **Versleuteling uitzetten** per gezin (beheerders, “Chatbeveiliging”). Meldingen tonen dan de tekst (op Android ook een voorbeeld van foto’s) en niemand heeft een herstelcode nodig. Standaard blijft: end-to-end-versleuteld.
-- “Bespreken in de chat” (💬) nu ook bij afspraken, documenten en voertuigen. Opgelost: “Opslaan in pinn.” opende onder de foto, de chatkoppen gebruiken het lettertype van de app, het getal in het menu wordt betrouwbaarder bijgewerkt.
-- Gewijzigd: `js/chatextras.js` en `js/chatstimme.js` (nieuw), `js/chat.js`, `js/chatmedien.js`, `js/chatgruppen.js`, `js/familie.js`, `js/pinnwand.js`, `js/termindetails.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/hinweise.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `pinn-setup.sh`, `src/` en alle README’s. **Servergedeelte:** `pb_hooks/chat.pb.js`, `pinn-chat.js`, `pinn-push.js` en `sw.pb.js` – vervang ook de hooks; enkele velden worden bij het starten automatisch toegevoegd.
-
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -148,7 +143,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.127.6` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.128.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

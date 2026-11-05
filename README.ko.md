@@ -129,6 +129,15 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.128.0의 새 소식
+
+**모든 앱 언어에서 음성 제어**
+
+- **11개 언어.** Siri(Android에서는 “HTTP Shortcuts”)가 이제 네덜란드어, 이탈리아어, 포르투갈어, 중국어, 일본어, 한국어도 알아들어요. 장보기 목록에 추가, 목록 읽기, 할 일 만들기, “오늘 일정이 뭐야?”에 프로필 언어로 답해요. 기존 단축어와 링크는 그대로 작동해요.
+- **예시.** “Zet melk en eieren op het boodschappenlijstje”, “Aggiungi latte e uova alla lista della spesa”, “Adicione leite e ovos à lista de compras”, “把牛奶和鸡蛋加到购物清单”, “買い物リストに牛乳と卵を追加して”, “장보기 목록에 우유랑 달걀 추가해 줘”.
+- **작은 수정.** 받아쓰기의 아포스트로피(“c’è”)와 문장 끝 문장부호(。！？)를 처리하고, “2 Decken” 같은 수량이 더 이상 쪼개지지 않아요.
+- 변경: `pb_hooks/pinn-sprache.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, 모든 README. 서버 부분: `pb_hooks/pinn-sprache.js` – hooks도 함께 교체해 주세요.
+
 ## 1.127.6의 새 소식
 
 **채팅: 삭제한 메시지 자리에 안내 표시, 보안**
@@ -194,17 +203,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - 변경: `js/chatmedien.js`(신규), `css/chat.css`, `js/chat.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, 모든 `i18n/*.i18n.js`, `pinn-setup.sh`, `src/`, 모든 README. **서버 부분:** `pb_hooks/chat.pb.js`, `pb_hooks/pinn-chat.js` – hooks도 함께 교체하세요.
 
 
-## 1.127.0 새 기능
-
-**채팅(종단 간 암호화)**
-
-- **가족 채팅과 개인 채팅.** pinn. 색상의 메신저 화면, 답장·링크·날짜 구분선·읽지 않음 표시를 지원해요. 체크 1개는 서버에 도착, 색이 있는 체크 2개는 읽음이에요(읽음 표시는 끌 수 있어요).
-- **종단 간 암호화.** 메시지는 기기에서 암호화돼요. NAS는 누가 언제 썼는지만 볼 수 있고 내용은 볼 수 없어요. 처음 열면 키와 복구 코드가 만들어지고, 복구 코드로 새 기기에서 채팅을 열 수 있어요. ‘채팅 보안’에서 보안 번호를 비교할 수 있고, 키가 바뀌면 새 번호를 수락할 때까지 전송이 멈춰요.
-- **푸시.** 본문 없이 ‘새 메시지’만 표시돼요(서버가 읽을 수 없어요). 계정 → 알림 → 채팅에서 설정해요. 게스트와 대시보드에서는 사용할 수 없어요.
-- **다음 단계 준비:** 메시지에 연결 항목(할 일, 게시판 메모, 계약 해지 등)을 카드로 붙일 수 있어요. 한계: 전방 비밀성 없음, 사진은 아직 없음(1.127.1 예정).
-- 변경: `index.html`, `js/chat.js`·`css/chat.css`(신규), 여러 `js/*.js`, 모든 `i18n/*.i18n.js`, `pinn-setup.sh`, 모든 README. **서버 부분:** `pb_hooks/chat.pb.js`·`pb_hooks/pinn-chat.js`(신규), `pb_hooks/pinn-push.js`, `pb_hooks/pinn-schema.js` – hooks도 함께 교체하세요.
-
-
 ## 작동 방식
 
 ```mermaid
@@ -233,7 +231,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.127.6` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.128.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

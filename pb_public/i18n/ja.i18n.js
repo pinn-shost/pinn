@@ -7006,7 +7006,7 @@ window.PINN_I18N && window.PINN_I18N.keys("ja", {
   "vehicle.yyyy": "YYYY",
   "voice.addMilkEggsShopping": "「買い物リストに牛乳と卵を追加して」",
   "voice.addTwoPacksPasta": "「イオンのリストにパスタを2袋追加して」",
-  "voice.alsoOtherLanguages": "ドイツ語、英語、フランス語、スペイン語、ロシア語にも対応しています。応答はお使いの言語で返ります。",
+  "voice.alsoOtherLanguages": "アプリのすべての言語に対応しています。応答はお使いの言語で返ります。",
   "voice.and1": "Play ストアから無料アプリ <b>HTTP Shortcuts</b> をインストールします。",
   "voice.and2": "新しいショートカットを作成：方法 <b>POST</b>、URL = 上のリンク、本文 <b>JSON</b>：{code} – 種類<b>テキスト入力</b>の変数「{var}」を作成します（キーボードのマイクで話します）。",
   "voice.and3": "「レスポンス」で<b>ダイアログとして表示</b>を選び、ショートカットをホーム画面に置きます。",

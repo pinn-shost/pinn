@@ -22,6 +22,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.128', datum: '05.11.2026', titel: 'Sprachsteuerung in allen App-Sprachen',
+    punkte: [
+      ['neu', 'Sprachsteuerung (Siri, „HTTP Shortcuts“) versteht jetzt alle elf App-Sprachen: neu dazu kommen Niederländisch, Italienisch, Portugiesisch, Chinesisch, Japanisch und Koreanisch. Einkaufsliste ergänzen, Liste vorlesen, Aufgabe anlegen und „Was steht heute an?“ – die Antwort kommt in der Sprache des Profils. Ein neuer Kurzbefehl ist nicht nötig, der bestehende Link funktioniert weiter.'],
+      ['neu', 'Beispiele: „Zet melk en eieren op het boodschappenlijstje“, „Aggiungi latte e uova alla lista della spesa“, „Adicione leite e ovos à lista de compras“, „把牛奶和鸡蛋加到购物清单“, „買い物リストに牛乳と卵を追加して“, „장보기 목록에 우유랑 달걀 추가해 줘“.'],
+      ['fix', 'Sprachsteuerung: typografische Apostrophe aus dem Diktat („c’è“) werden erkannt, Satzzeichen am Ende (auch 。！？) stören nicht mehr, und Mengen wie „2 Decken“ werden nicht mehr als „2 de“ + „cken“ zerlegt.'],
+      ['info', 'Der Hinweis unter „Was pinn. versteht“ nennt jetzt alle App-Sprachen.'],
+    ],
+  },
+  {
     v: '1.127', datum: '05.11.2026', titel: 'Chat – Ende-zu-Ende verschlüsselt, mit Fotos und Videos',
     punkte: [
       ['fix', '1.127.6 behoben: Gelöschte Chat-Nachrichten verschwinden nicht mehr spurlos – an ihrer Stelle steht „Diese Nachricht wurde gelöscht“, bei einer Abstimmung „Die Umfrage wurde gelöscht“ (auch wenn sie auf der Pinnwand gelöscht wurde); eine Karte zu einem gelöschten Pinnwand-Eintrag sagt das ebenfalls. Sicherheit: die drei Codescanner-Meldungen in der Foto- und Video-Vorschau des Chats endgültig geschlossen.'],

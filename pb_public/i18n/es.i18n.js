@@ -7013,7 +7013,7 @@ window.PINN_I18N && window.PINN_I18N.keys("es", {
   "vehicle.yyyy": "AAAA",
   "voice.addMilkEggsShopping": "«Añade leche y huevos a la lista»",
   "voice.addTwoPacksPasta": "«Añade dos paquetes de pasta a la lista de Mercadona»",
-  "voice.alsoOtherLanguages": "También en alemán, inglés, francés y ruso. La respuesta llega en tu idioma.",
+  "voice.alsoOtherLanguages": "Funciona en todos los idiomas de la app. La respuesta llega en tu idioma.",
   "voice.and1": "Instala la app gratuita <b>HTTP Shortcuts</b> desde Play Store.",
   "voice.and2": "Crea un atajo nuevo: método <b>POST</b>, URL = enlace de arriba, cuerpo <b>JSON</b>: {code} – crea una variable «{var}» de tipo <b>Entrada de texto</b> (habla con el micrófono del teclado).",
   "voice.and3": "En «Respuesta» elige <b>mostrar como diálogo</b> y coloca el atajo en la pantalla de inicio.",

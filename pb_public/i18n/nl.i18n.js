@@ -7017,7 +7017,7 @@ window.PINN_I18N && window.PINN_I18N.keys("nl", {
   "vehicle.yyyy": "JJJJ",
   "voice.addMilkEggsShopping": "“Zet melk en eieren op het boodschappenlijstje”",
   "voice.addTwoPacksPasta": "“Zet twee pakken pasta op het lijstje van Albert Heijn”",
-  "voice.alsoOtherLanguages": "Ook in het Engels, Duits, Frans, Spaans en Russisch. Het antwoord komt in jouw taal.",
+  "voice.alsoOtherLanguages": "Werkt in alle app-talen. Het antwoord komt in jouw taal.",
   "voice.and1": "Installeer de gratis app <b>HTTP Shortcuts</b> uit de Play Store.",
   "voice.and2": "Maak een nieuwe shortcut: methode <b>POST</b>, URL = de link hierboven, berichttekst <b>JSON</b>: {code} – maak daarbij een variabele “{var}” van het type <b>Tekstinvoer</b> (spreek met de microfoon van het toetsenbord).",
   "voice.and3": "Kies onder “Antwoord” de optie <b>weergeven als dialoogvenster</b> en zet de shortcut op het beginscherm.",

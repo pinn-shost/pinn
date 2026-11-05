@@ -7018,7 +7018,7 @@ window.PINN_I18N && window.PINN_I18N.keys("pt", {
   "vehicle.yyyy": "AAAA",
   "voice.addMilkEggsShopping": "“Adicione leite e ovos à lista de compras”",
   "voice.addTwoPacksPasta": "“Adicione dois pacotes de macarrão à lista do mercado”",
-  "voice.alsoOtherLanguages": "Também em alemão, inglês, francês, espanhol e russo. A resposta vem no seu idioma.",
+  "voice.alsoOtherLanguages": "Funciona em todos os idiomas do app. A resposta vem no seu idioma.",
   "voice.and1": "Instale o app gratuito <b>HTTP Shortcuts</b> pela Play Store.",
   "voice.and2": "Crie um novo atalho: método <b>POST</b>, URL = link acima, corpo <b>JSON</b>: {code} – crie uma variável “{var}” do tipo <b>Entrada de texto</b> (fale com o microfone do teclado).",
   "voice.and3": "Em “Resposta”, escolha <b>mostrar como diálogo</b> e coloque o atalho na tela inicial.",

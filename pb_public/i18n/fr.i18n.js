@@ -7013,7 +7013,7 @@ window.PINN_I18N && window.PINN_I18N.keys("fr", {
   "vehicle.yyyy": "AAAA",
   "voice.addMilkEggsShopping": "« Ajoute du lait et des œufs à la liste »",
   "voice.addTwoPacksPasta": "« Ajoute deux paquets de pâtes à la liste chez Carrefour »",
-  "voice.alsoOtherLanguages": "Aussi en allemand, anglais, espagnol et russe. La réponse arrive dans votre langue.",
+  "voice.alsoOtherLanguages": "Fonctionne dans toutes les langues de l’appli. La réponse arrive dans votre langue.",
   "voice.and1": "Installez l’app gratuite <b>HTTP Shortcuts</b> depuis le Play Store.",
   "voice.and2": "Créez un nouveau raccourci : méthode <b>POST</b>, URL = lien ci-dessus, corps <b>JSON</b> : {code} – créez une variable « {var} » de type <b>Saisie de texte</b> (dictez avec le micro du clavier).",
   "voice.and3": "Sous « Réponse », choisissez <b>afficher en boîte de dialogue</b> et placez le raccourci sur l’écran d’accueil.",

@@ -7015,7 +7015,7 @@ window.PINN_I18N && window.PINN_I18N.keys("de", {
   "vehicle.yyyy": "JJJJ",
   "voice.addMilkEggsShopping": "„Milch und Eier auf die Einkaufsliste“",
   "voice.addTwoPacksPasta": "„Zwei Packungen Nudeln auf die Liste bei Rewe“",
-  "voice.alsoOtherLanguages": "Auch auf Englisch, Französisch, Spanisch und Russisch. Die Antwort kommt in deiner Sprache.",
+  "voice.alsoOtherLanguages": "Funktioniert in allen App-Sprachen. Die Antwort kommt in deiner Sprache.",
   "voice.and1": "Die kostenlose App <b>HTTP Shortcuts</b> aus dem Play Store installieren.",
   "voice.and2": "Neuen Shortcut anlegen: Methode <b>POST</b>, URL = Link oben, Anfragetext <b>JSON</b>: {code} – dabei eine Variable „{var}“ vom Typ <b>Texteingabe</b> anlegen (mit dem Mikrofon der Tastatur sprechen).",
   "voice.and3": "Unter „Antwort“ <b>als Dialog anzeigen</b> wählen und den Shortcut auf den Startbildschirm legen.",
