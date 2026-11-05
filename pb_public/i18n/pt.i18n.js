@@ -916,6 +916,7 @@ window.PINN_I18N && window.PINN_I18N.keys("pt", {
   "chat.poll.onBoard": "também no mural",
   "chat.poll.option": "Resposta {n}",
   "chat.poll.question": "Pergunta",
+  "chat.poll.syncing": "Sincronizando com o mural …",
   "chat.poll.tapVote": "Toque numa resposta para votar",
   "chat.poll.title": "Criar uma enquete",
   "chat.pollDeleted": "A enquete foi apagada",

@@ -261,7 +261,7 @@ function fmtDe(iso) { return vtIsIso(iso) ? iso.slice(8, 10) + "." + iso.slice(5
 function inDays(n) { return n <= 0 ? "heute" : n === 1 ? "morgen" : "in " + n + " Tagen"; }
 
 // ---------------------------------------------------------------------------------------------
-// Merkliste gesendeter Erinnerungen
+// Record of reminders already sent
 // ---------------------------------------------------------------------------------------------
 function readStatus() {
     try {
@@ -372,7 +372,7 @@ function remindFamily(familyId, today, status) {
     return sent;
 }
 
-// opts: { familyId: nur diese Familie (sofortige Prüfung nach dem Speichern) }
+// opts: { familyId: only this family (immediate check after saving) }
 function runReminders(opts) {
     const o = opts || {};
     const now = wallNow();

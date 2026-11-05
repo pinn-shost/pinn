@@ -71,7 +71,7 @@ Siempre contigo: pinn. se instala en cada iPhone y móvil Android como una app n
   <tr>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Lista de la compra ordenada por tienda" width="240"></a><br><sub><b>Listas</b> – compra, despensa, equipaje</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Resumen del presupuesto con gastos por categoría" width="240"></a><br><sub><b>Finanzas</b> – presupuesto, ahorro, paga</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Página infantil con la rutina diaria" width="240"></a><br><sub><b>Niños</b> – una rutina diaria divertida</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Chat familiar con un mensaje, una ubicación compartida y un mensaje de voz" width="240"></a><br><sub><b>Chat</b> – cifrado de extremo a extremo, con mensajes de voz y ubicación</sub></td>
   </tr>
 </table>
 
@@ -95,6 +95,7 @@ Pulsa cualquier imagen para verla en tamaño completo.
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Vista semanal con el tiempo y las tareas pendientes" width="200"></a><br><sub><b>Vista semanal</b> – el tiempo y lo que sigue pendiente</sub></td>
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Vista semanal día a día con limpieza, día de basura y pagos" width="200"></a><br><sub><b>Vista semanal</b> – día a día: limpieza, basura, pagos</sub></td>
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Resumen de la semana pasada con accesos directos al calendario y las tareas" width="200"></a><br><sub><b>La semana pasada en breve</b> – citas, comidas, gastos – y accesos directos</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Página infantil con la rutina diaria" width="200"></a><br><sub><b>Niños</b> – una rutina diaria divertida</sub></td>
   </tr>
 </table>
 
@@ -124,6 +125,16 @@ Pulsa cualquier imagen para verla en tamaño completo.
 | 🧩 **Todo lo demás** | Tablón familiar con notas movibles, búsqueda global, modo sin conexión con sincronización automática, modo oscuro, panel para iPad con PIN por perfil, cuenta de invitado, control parental. |
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский y 🇳🇱 Nederlands**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
+
+## Novedades de la 1.129.1
+
+**Correcciones del chat y los últimos comentarios en inglés**
+
+- **Encuestas en el chat.** Una encuesta compartida en el chat que también está en el tablón ya no aparece a los demás durante unos 20 segundos como «La encuesta se ha eliminado». Hasta que llega la nota del tablón se ve brevemente «Sincronizando con el tablón …» y la encuesta aparece a los pocos segundos.
+- **Fotos nítidas en el chat.** Las fotos se ven nítidas antes de abrirlas: la vista previa es el doble de grande y, en cuanto una foto es visible, pinn. carga la imagen real en segundo plano, también en mensajes antiguos.
+- **Comentarios en inglés.** Se convirtieron los últimos comentarios en alemán. Una nueva comprobación automática (`check-comments.js`, parte de las comprobaciones de GitHub) vigila que todos sigan en inglés.
+- **README.** Nueva captura del chat al principio; la página de los niños pasó a las capturas adicionales.
+- Cambiado: `js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (todos los idiomas), `src/` (`index.html`), comentarios en algunos hooks, `datenexport.js`, `einrichtung.js`, `.github/` (nueva comprobación) y todos los README. Servidor: solo cambian comentarios; aun así, conviene sustituir los hooks.
 
 ## Novedades de la 1.129.0
 
@@ -228,17 +239,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Cambiado: `index.html`, archivos de `js/`, `css/` e `i18n/`, en el servidor `pb_hooks/pinn-push.js` y `src/` (la parte `menueleiste.html` desaparece). Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
 
 
-## Novedades de la 1.124.0
-
-**Ayuda y tutorial**
-
-- **Ayuda para cada menú.** Una nueva página de ayuda explica cada página de pinn. – como repaso rápido («Breve») o al detalle («Detallado»). Está en Ajustes → Ayuda y tutorial y en la búsqueda.
-- **Tutorial de primeros pasos.** Los perfiles nuevos reciben un recorrido de siete pasos por las páginas más importantes. Empieza una vez por sí solo y se puede repetir en Ajustes → Ayuda y tutorial.
-- **Ayuda en la búsqueda.** Los temas de ayuda aparecen en su propia sección «Ayuda», separada de tus entradas (eventos, documentos, recetas …).
-- Todos los textos de ayuda y el tutorial están en los once idiomas.
-- Cambiado: `index.html`, `js/hilfe.js` (nuevo), `css/hilfe.css` (nuevo), `js/listen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos los `i18n/*.i18n.js`, `pinn-setup.sh` y todos los README. El servidor no cambia. Instalación como siempre (`sudo sh pinn-*/pinn-setup.sh` o el botón de actualización).
-
-
 ## Cómo funciona
 
 ```mermaid
@@ -265,7 +265,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.129.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.129.1` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

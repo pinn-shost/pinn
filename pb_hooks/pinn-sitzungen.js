@@ -549,7 +549,7 @@ function uebersicht(e, familyId) {
                 const u = r.getString("benutzer");
                 counts[u] = (counts[u] || 0) + 1;
             });
-        } catch (err) { /* leer */ }
+        } catch (err) { /* ignore */ }
     }
     const out = {};
     users.forEach(u => { out[u.id] = { geraete: counts[u.id] || 0, sperre: lockStatus(u) }; });

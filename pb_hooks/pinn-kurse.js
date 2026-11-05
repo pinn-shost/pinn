@@ -68,7 +68,7 @@ function ensureSchema() {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Hilfen
+// Helpers
 // ---------------------------------------------------------------------------------------------
 function isValidIsin(s) {
     s = String(s || "");
@@ -161,7 +161,7 @@ function justEtfHistory(isin, from, to) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Quelle 2: Yahoo Finance
+// Source 2: Yahoo Finance
 // ---------------------------------------------------------------------------------------------
 const YAHOO_EUR_SUFFIX = [".DE", ".F", ".SG", ".MU", ".DU", ".BE", ".HM", ".HA", ".AS", ".PA", ".MI", ".VI", ".MC", ".BR", ".LS", ".IR"];
 function yahooFind(isin) {
@@ -245,7 +245,7 @@ function getKurs(isin, ab, bis, frisch) {
     let changed = false;
     const errors = [];
 
-    // Kursverlauf
+    // Price history
     if (needFull || needUpdate) {
         const from = needFull ? (histAb && histAb < need ? histAb : need)
             : addDays(history.length ? history[history.length - 1][0] : need, -10);

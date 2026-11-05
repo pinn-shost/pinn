@@ -916,6 +916,7 @@ window.PINN_I18N && window.PINN_I18N.keys("ko", {
   "chat.poll.onBoard": "게시판에도",
   "chat.poll.option": "답변 {n}",
   "chat.poll.question": "질문",
+  "chat.poll.syncing": "게시판과 동기화하는 중…",
   "chat.poll.tapVote": "답변을 눌러 투표하세요",
   "chat.poll.title": "투표 만들기",
   "chat.pollDeleted": "이 투표는 삭제되었어요",

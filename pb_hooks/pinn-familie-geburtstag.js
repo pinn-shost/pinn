@@ -26,7 +26,7 @@ const DEFAULT_TIME = "07:00";
 module.exports = { runCron, stateFor, markSeen, birthdaysToday };
 
 // ---------------------------------------------------------------------------------------------
-// Uhrzeit (Europe/Berlin)
+// Time of day (Europe/Berlin)
 // ---------------------------------------------------------------------------------------------
 function pad2(n) { return (n < 10 ? "0" : "") + n; }
 function lastSundayUtc(year, month) {
@@ -50,7 +50,7 @@ function toMin(hhmm) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Merker in pb_data
+// Markers in pb_data
 // ---------------------------------------------------------------------------------------------
 function readStatus(today) {
     let o = null;
@@ -167,7 +167,7 @@ function message(lang, list) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Versand
+// Sending
 // ---------------------------------------------------------------------------------------------
 function allUsers() {
     try { return $app.findRecordsByFilter("benutzer", "familie != ''", "", 0, 0); } catch (e) { return []; }

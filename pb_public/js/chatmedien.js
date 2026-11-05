@@ -10,9 +10,17 @@
 
    Limits (decided with the NAS in mind): photos are shrunk to 1600 px (about 0.3 MB) unless HD is switched on; HD photos up
    to 20 MB, videos up to 50 MB. The user chooses per sending (HD button, like in WhatsApp). Files are encrypted as a whole,
-   so the viewer loads the complete file before it shows it. */
+   so the viewer loads the complete file before it shows it.
 
-const CHATM = { PDF_MAX: 20 * 1024 * 1024, SIDE: 1600, Q: 0.8, THUMB: 240, THUMB_Q: 0.6, IMG_MAX: 20 * 1024 * 1024, VID_MAX: 50 * 1024 * 1024, VID_BITS: 1500000, VID_SHRINK_MAX_S: 300, FILES_MAX: 10 };
+   Pictures in the bubble (1.129.1): the preview inside the message is 480 px (was 240 px, which looked pixelated on phones;
+   kept below THUMB_MAX characters so the message stays small). As soon as a photo bubble scrolls into view, the photo itself
+   is loaded in the background (at most two at a time, only photos up to INLINE_MAX) and replaces the preview - this also
+   makes the photos of older messages sharp. */
+
+const CHATM = { PDF_MAX: 20 * 1024 * 1024, SIDE: 1600, Q: 0.8, THUMB: 480, THUMB_Q: 0.72, THUMB_MAX: 48000, IMG_MAX: 20 * 1024 * 1024, VID_MAX: 50 * 1024 * 1024, VID_BITS: 1500000, VID_SHRINK_MAX_S: 300, FILES_MAX: 10,
+  INLINE_MAX: 3 * 1024 * 1024, INLINE_PARALLEL: 2 };
+// preview sizes tried one after another until the preview fits into THUMB_MAX characters (1.129.1)
+const CHATM_THUMB_STEPS = [[CHATM.THUMB, CHATM.THUMB_Q], [400, 0.66], [320, 0.62], [240, 0.6]];
 const chatMBlobs = new Map();   // file id -> { blob, url } of everything opened in this session
 
 /* ---------------------------------------------------------------- small helpers */
@@ -67,9 +75,20 @@ async function chatMScale(dec, side, q) {
   const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); ctx.drawImage(dec.src, 0, 0, w, h);
   return { canvas: c, w, h, blob: q ? await chatMToBlob(c, 'image/jpeg', q) : null };
 }
+// JPEG preview of a canvas source (w x h) as base64: the largest step that fits into THUMB_MAX characters
+function chatMThumbOf(src, w, h) {
+  let out = '';
+  for (const [side, q] of CHATM_THUMB_STEPS) {
+    const k = Math.min(1, side / Math.max(w || 1, h || 1));
+    const c = document.createElement('canvas'); c.width = Math.max(1, Math.round((w || 1) * k)); c.height = Math.max(1, Math.round((h || 1) * k));
+    const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height); ctx.drawImage(src, 0, 0, c.width, c.height);
+    out = c.toDataURL('image/jpeg', q).split(',')[1] || '';
+    if (out.length <= CHATM.THUMB_MAX) return out;
+  }
+  return out.length <= CHATM.THUMB_MAX ? out : '';
+}
 async function chatMThumb(dec) {
-  const s = await chatMScale(dec, CHATM.THUMB, 0);
-  return s.canvas.toDataURL('image/jpeg', CHATM.THUMB_Q).split(',')[1] || '';
+  return chatMThumbOf(dec.src, dec.w, dec.h);
 }
 // hd = true keeps the original bytes. Returns { blob, mt, w, h, th, hd }
 async function chatMPrepareImage(file, hd) {
@@ -103,10 +122,7 @@ function chatMVideoOpen(file) {
 async function chatMVideoThumb(v) {
   try {
     await new Promise((res) => { const done = () => { v.removeEventListener('seeked', done); res(); }; v.addEventListener('seeked', done); v.currentTime = Math.min(0.3, (isFinite(v.duration) && v.duration ? v.duration : 1) / 2); setTimeout(done, 1500); });
-    const k = Math.min(1, CHATM.THUMB / Math.max(v.videoWidth || 1, v.videoHeight || 1));
-    const c = document.createElement('canvas'); c.width = Math.max(1, Math.round((v.videoWidth || 1) * k)); c.height = Math.max(1, Math.round((v.videoHeight || 1) * k));
-    c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
-    return c.toDataURL('image/jpeg', CHATM.THUMB_Q).split(',')[1] || '';
+    return chatMThumbOf(v, v.videoWidth || 1, v.videoHeight || 1);
   } catch (e) { return ''; }
 }
 function chatMShrinkMime() {
@@ -196,7 +212,55 @@ async function chatMFetch(mm, onProgress) {
   chatMBlobs.set(mm.f, entry);
   return entry;
 }
-function chatMRelease() { chatMBlobs.forEach(e => { try { URL.revokeObjectURL(e.url); } catch (err) { /* ignore */ } }); chatMBlobs.clear(); }
+function chatMRelease() {
+  chatMInlineStop();
+  chatMBlobs.forEach(e => { try { URL.revokeObjectURL(e.url); } catch (err) { /* ignore */ } }); chatMBlobs.clear();
+}
+
+/* ---------------------------------------------------------------- sharp photos in the bubble (1.129.1) */
+let chatMInlineObs = null;          // IntersectionObserver for photo bubbles
+const chatMInlineQueue = [];        // [{ mm, img }] waiting to be loaded
+const chatMInlineFailed = new Set(); // file ids that could not be loaded (not tried again in this session)
+let chatMInlineBusy = 0;
+// true if the photo of a bubble may be loaded in the background (photos only, not too big)
+function chatMInlineOk(mm) {
+  if (!mm || mm.k !== 'img' || !mm.f || !mm.key || !mm.iv || chatMInlineFailed.has(mm.f)) return false;
+  if (Number(mm.s) > 0) return Number(mm.s) <= CHATM.INLINE_MAX;
+  return !mm.hd; // older messages without a size: a standard photo is about 0.3 MB
+}
+function chatMInlineWatch(mm, img) {
+  if (!chatMInlineOk(mm)) return;
+  if (typeof IntersectionObserver !== 'function') { chatMInlineQueue.push({ mm, img }); chatMInlineNext(); return; }
+  if (!chatMInlineObs) {
+    chatMInlineObs = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        if (!en.isIntersecting) return;
+        chatMInlineObs.unobserve(en.target);
+        const job = en.target._chatM;
+        en.target._chatM = null;
+        if (job) { chatMInlineQueue.push(job); chatMInlineNext(); }
+      });
+    }, { rootMargin: '300px 0px' });
+  }
+  img._chatM = { mm, img };
+  chatMInlineObs.observe(img);
+}
+function chatMInlineNext() {
+  while (chatMInlineBusy < CHATM.INLINE_PARALLEL && chatMInlineQueue.length) {
+    const job = chatMInlineQueue.shift();
+    if (!job.img.isConnected && !chatMBlobs.has(job.mm.f)) continue; // bubble was redrawn meanwhile
+    chatMInlineBusy++;
+    chatMFetch(job.mm).then(entry => {
+      const src = chatMBlobSrc(entry.url);
+      if (src) document.querySelectorAll('#chatMsgs img[data-file="' + CSS.escape(job.mm.f) + '"]').forEach(im => { im.src = src; im.classList.add('full'); });
+    }).catch(() => { chatMInlineFailed.add(job.mm.f); })
+      .finally(() => { chatMInlineBusy--; chatMInlineNext(); });
+  }
+}
+function chatMInlineStop() {
+  if (chatMInlineObs) { try { chatMInlineObs.disconnect(); } catch (e) { /* ignore */ } chatMInlineObs = null; }
+  chatMInlineQueue.length = 0;
+}
 
 /* ---------------------------------------------------------------- sending */
 function chatMUpdateProgress(id, text) { const el = document.querySelector('#chatMsgs [data-id="' + CSS.escape(id) + '"] .chat-media-prog'); if (el) el.textContent = text; }
@@ -343,7 +407,16 @@ function chatMBubble(mm, m) {
   const box = chatEl('div', 'chat-media' + (mm.k === 'vid' ? ' vid' : ''));
   const ratio = (mm.w && mm.h) ? Math.min(1.8, Math.max(0.6, mm.w / mm.h)) : 1.33;
   box.style.aspectRatio = String(ratio);
-  if (mm.th) { const im = document.createElement('img'); im.src = 'data:image/jpeg;base64,' + mm.th; im.alt = ''; box.appendChild(im); }
+  const cached = mm.k === 'img' && mm.f && chatMBlobs.has(mm.f) ? chatMBlobSrc(chatMBlobs.get(mm.f).url) : '';
+  if (cached || mm.th) {
+    const im = document.createElement('img'); im.alt = '';
+    if (cached) { im.src = cached; im.className = 'full'; }
+    else {
+      im.src = 'data:image/jpeg;base64,' + mm.th;
+      if (mm.f && !m.pending && !m.failed) { im.dataset.file = mm.f; chatMInlineWatch(mm, im); }
+    }
+    box.appendChild(im);
+  }
   else box.appendChild(chatEl('span', 'chat-media-ph', mm.k === 'vid' ? '🎞️' : '🖼️'));
   if (mm.k === 'vid') box.appendChild(chatEl('span', 'chat-media-play', '▶'));
   if (mm.k === 'vid' && mm.d) box.appendChild(chatEl('span', 'chat-media-dur', chatMDuration(mm.d)));

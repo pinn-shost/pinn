@@ -916,6 +916,7 @@ window.PINN_I18N && window.PINN_I18N.keys("it", {
   "chat.poll.onBoard": "anche in bacheca",
   "chat.poll.option": "Risposta {n}",
   "chat.poll.question": "Domanda",
+  "chat.poll.syncing": "Sincronizzazione con la bacheca …",
   "chat.poll.tapVote": "Tocca una risposta per votare",
   "chat.poll.title": "Crea un sondaggio",
   "chat.pollDeleted": "Il sondaggio è stato eliminato",

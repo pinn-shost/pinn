@@ -61,7 +61,7 @@ Altijd bij je: pinn. installeer je op elke iPhone en Android-telefoon als een ge
   <tr>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Boodschappenlijst per winkel" width="240"></a><br><sub><b>Lijsten</b> – boodschappen, voorraad, paklijsten</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Budgetoverzicht met uitgaven per categorie" width="240"></a><br><sub><b>Financiën</b> – budget, sparen, zakgeld</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Kinderpagina met de dagroutine" width="240"></a><br><sub><b>Kinderen</b> – een speelse dagroutine</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Gezinschat met een bericht, een gedeelde locatie en een spraakbericht" width="240"></a><br><sub><b>Chat</b> – end-to-end versleuteld, met spraakberichten en locatie</sub></td>
   </tr>
 </table>
 
@@ -85,6 +85,7 @@ Tik op een plaatje om het op volledige grootte te openen.
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Weekoverzicht met weer en openstaande taken" width="200"></a><br><sub><b>Weekoverzicht</b> – het weer en wat er nog moet gebeuren</sub></td>
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Weekoverzicht per dag met schoonmaak, afvaldag en betalingen" width="200"></a><br><sub><b>Weekoverzicht</b> – dag voor dag: schoonmaak, afval, betalingen</sub></td>
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Samenvatting van vorige week met snelkoppelingen naar agenda en taken" width="200"></a><br><sub><b>Vorige week in het kort</b> – afspraken, maaltijden, uitgaven – en snelkoppelingen</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Kinderpagina met de dagroutine" width="200"></a><br><sub><b>Kinderen</b> – een speelse dagroutine</sub></td>
   </tr>
 </table>
 
@@ -106,6 +107,14 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский en 🇳🇱 Nederlands**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.129.1
+
+**Chatcorrecties en de laatste Engelse opmerkingen**
+
+- **Peilingen in de chat.** Een in de chat gedeelde peiling die ook op het prikbord staat, verschijnt bij de anderen niet meer zo’n 20 seconden als „De peiling is verwijderd”. Tot het prikbordbriefje is aangekomen staat er kort „Wordt gesynchroniseerd met het prikbord …”, na een paar seconden verschijnt de peiling.
+- **Scherpe foto’s in de chat.** Foto’s zijn al scherp voordat je ze opent: het voorbeeld is twee keer zo groot en zodra een foto zichtbaar is, laadt pinn. de echte afbeelding op de achtergrond – ook bij oudere berichten.
+- **Engelse opmerkingen.** De laatste Duitse opmerkingen in de code zijn omgezet; een nieuwe automatische controle (`check-comments.js`) zorgt dat alles Engels blijft. Nieuwe chatscreenshot in de README.
+
 ## Nieuw in 1.129.0
 
 **Engelse opmerkingen in alle bestanden**
@@ -122,15 +131,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Kleine verbeteringen.** Apostrofs uit dictaat (“c’è”) en leestekens aan het einde van een zin (。！？) worden verwerkt, en hoeveelheden zoals “2 Decken” worden niet meer opgeknipt.
 - Gewijzigd: `pb_hooks/pinn-sprache.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js` en alle README’s. Serverdeel: `pb_hooks/pinn-sprache.js` – vervang ook de hooks.
 
-## Nieuw in 1.127.6
-
-**Chat: verwijderde berichten laten een melding achter, beveiliging**
-
-- **Verwijderd blijft zichtbaar.** Een verwijderd chatbericht verdwijnt niet meer zomaar: op zijn plek ziet iedereen ‘Dit bericht is verwijderd’, bij een peiling ‘De peiling is verwijderd’.
-- **Verwijderd op het prikbord.** Wordt een peiling die ook op het prikbord staat daar verwijderd, dan staat in de chat ook ‘De peiling is verwijderd’; een kaart naar een verwijderd prikbordbericht zegt dat, in plaats van nergens heen te leiden.
-- **Beveiliging.** De drie codescanner-meldingen ‘DOM text reinterpreted as HTML’ in de foto- en videovoorbeelden van de chat (`js/chatmedien.js`) zijn opgelost: objectadressen worden streng gecontroleerd en voor HTML gemaskeerd.
-- Gewijzigd: `js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `src/` (`index.html`) en alle README’s. Serverdeel: `pb_hooks/pinn-chat.js` – vervang ook de hooks; één veld wordt bij het starten automatisch toegevoegd.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -140,7 +140,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.129.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.129.1` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

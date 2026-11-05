@@ -127,7 +127,7 @@ const MAX_OFFEN = 80;                         // Listen in „offen“
 const EMOJI_ORT = ["🏠", "🏫", "🏢", "🌳", "🐕", "🏥", "🛒", "⚽", "👵", "🏊", "🎵", "⛪", "🚉", "📍"];
 
 // ---------------------------------------------------------------------------------------------
-// Hilfen
+// Helpers
 // ---------------------------------------------------------------------------------------------
 function env(name) {
     try { return String($os.getenv(name) || "").trim(); } catch (e) { return ""; }
@@ -290,7 +290,7 @@ function allCfgs() {
     try { recs = $app.findAllRecords(COL); } catch (e) { recs = []; }
     return recs.map(r => {
         let cfg = emptyCfg();
-        try { cfg = normalizeCfg(JSON.parse(r.getString("daten") || "{}")); } catch (e) { /* leer */ }
+        try { cfg = normalizeCfg(JSON.parse(r.getString("daten") || "{}")); } catch (e) { /* ignore */ }
         return { familyId: r.getString("familie"), cfg: cfg };
     });
 }
@@ -570,7 +570,7 @@ function positionsAll(fresh) {
                 zeit: Date.parse(p.fixTime || p.deviceTime || p.serverTime) || 0,
                 server: Date.parse(p.serverTime || "") || 0, // Arrival at Traccar (the GPS time can be old)
                 genau: isFinite(p.accuracy) ? Math.round(Number(p.accuracy)) : null,
-                tempo: isFinite(p.speed) ? Math.round(Number(p.speed) * 1.852) : null, // Knoten -> km/h
+                tempo: isFinite(p.speed) ? Math.round(Number(p.speed) * 1.852) : null, // knots -> km/h
                 kurs: isFinite(p.course) ? Math.round(Number(p.course)) : null,
                 akku: akku,
                 laedt: !!a.charge,
@@ -1397,7 +1397,7 @@ function osmandPosition(m, raw) {
     if (!uid || !isFinite(lat) || !isFinite(lon)) return { uid: uid, pos: null };
     let tempo = NaN;
     if (isFinite(firstNum(coords.speed))) tempo = Number(coords.speed) * 3.6;           // m/s
-    else if (isFinite(firstNum(m.speed))) tempo = Number(m.speed) * 1.852;               // Knoten
+    else if (isFinite(firstNum(m.speed))) tempo = Number(m.speed) * 1.852;               // knots
     let akku = NaN;
     if (isFinite(firstNum(bat.level))) akku = Number(bat.level) <= 1 ? Number(bat.level) * 100 : Number(bat.level);
     else akku = firstNum(m.batt, m.battery, m.batteryLevel);

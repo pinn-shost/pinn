@@ -2459,7 +2459,7 @@
     busy: false, opts: {}, root: null, done: false, msg: null, port: '8443',
   };
 
-  /* ---------- Hilfen ---------- */
+  /* ---------- Helpers ---------- */
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -2570,7 +2570,7 @@
     };
     try {
       if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text); done(); }); return; }
-    } catch (e) { /* weiter */ }
+    } catch (e) { /* continue */ }
     fallbackCopy(text); done();
   }
   function fallbackCopy(text) {
@@ -2578,7 +2578,7 @@
       var ta = document.createElement('textarea');
       ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
       document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-    } catch (e) { /* egal */ }
+    } catch (e) { /* ignore */ }
   }
 
   /* ---------- Server ---------- */
@@ -2658,7 +2658,7 @@
     if (!S.root) return;
     S.root.querySelectorAll('.ps-inwrap.err').forEach(function (el) { el.classList.remove('err'); });
     var el = key && S.root.querySelector('[data-key="' + key + '"]');
-    if (el && el.parentNode) { el.parentNode.classList.add('err'); try { el.focus(); } catch (e) { /* egal */ } }
+    if (el && el.parentNode) { el.parentNode.classList.add('err'); try { el.focus(); } catch (e) { /* ignore */ } }
   }
   function errText(e) {
     if (e.code === 'ungueltig' && e.feld) return t('fehlerFeld', t('L_' + e.feld));
@@ -2667,7 +2667,7 @@
     return e.message || t('fehler');
   }
 
-  /* ---------- Felder ---------- */
+  /* ---------- Fields ---------- */
   function field(key, o) {
     o = o || {};
     var f = feld(key);
@@ -2726,7 +2726,7 @@
     return '<span class="ps-stores"><a href="' + L[0] + '" target="_blank" rel="noopener">iPhone</a> · <a href="' + L[1] + '" target="_blank" rel="noopener">Android</a></span>';
   }
 
-  /* ---------- Schritte ---------- */
+  /* ---------- Steps ---------- */
   var R = {};
   R.sprache = function () {
     var langs = (window.PINN_LANGUAGES || []).slice();
@@ -2917,7 +2917,7 @@
     }).then(function () { render(true); });
   }
 
-  /* ---------- Speichern & Weiter ---------- */
+  /* ---------- Save & continue ---------- */
   function saveStep(step) {
     var werte = collect(step);
     var meta = metaFor(step);
@@ -2953,7 +2953,7 @@
       S.busy = false;
       S.step = next;
       S.maxStep = Math.max(S.maxStep, next);
-      try { localStorage.setItem(LS_STEP, String(S.step)); } catch (e) { /* egal */ }
+      try { localStorage.setItem(LS_STEP, String(S.step)); } catch (e) { /* ignore */ }
       render();
     }, function (e) {
       S.busy = false;
@@ -2976,7 +2976,7 @@
     var el = S.root && S.root.querySelector('#ps_flash');
     if (!el) return;
     el.innerHTML = msg('err', esc(text));
-    try { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) { /* egal */ }
+    try { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) { /* ignore */ }
   }
   function setNavBusy(on) {
     var b = S.root && S.root.querySelector('[data-nav="weiter"]');
@@ -2987,7 +2987,7 @@
   function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
   function fetchTimeout(url, ms) {
     var ctrl = window.AbortController ? new AbortController() : null;
-    var timer = setTimeout(function () { try { ctrl && ctrl.abort(); } catch (e) { /* egal */ } }, ms);
+    var timer = setTimeout(function () { try { ctrl && ctrl.abort(); } catch (e) { /* ignore */ } }, ms);
     return fetch(url, { cache: 'no-store', mode: 'cors', signal: ctrl ? ctrl.signal : undefined }).then(function (r) {
       clearTimeout(timer); return r;
     }, function (e) { clearTimeout(timer); throw e; });
@@ -3042,7 +3042,7 @@
     }).then(function () {
       S.busy = false;
       S.checksBusy = '';
-      try { localStorage.removeItem(LS_STEP); } catch (e) { /* egal */ }
+      try { localStorage.removeItem(LS_STEP); } catch (e) { /* ignore */ }
       if (S.done) render();
     });
   }
@@ -3072,7 +3072,7 @@
     });
   }
 
-  /* ---------- Darstellung ---------- */
+  /* ---------- Rendering ---------- */
   var CSS = '' +
     '#setupScreen{z-index:405;background:var(--c-paper,#FFFBFB);color:#25231F;font-family:Inter,system-ui,-apple-system,sans-serif}' +
     'html.dark #setupScreen{background:#16181a;color:#ECE9E4}' +
@@ -3225,7 +3225,7 @@
     if (d.copy != null) { copyText(d.copy, el); return; }
     if (d.lang) {
       S.lang = d.lang;
-      try { window.PINN_I18N && window.PINN_I18N.switchTo(d.lang, true); } catch (e) { /* egal */ }
+      try { window.PINN_I18N && window.PINN_I18N.switchTo(d.lang, true); } catch (e) { /* ignore */ }
       render(true); return;
     }
     if (d.choice) { keepDraft(); S.meta[d.choice] = d.value; render(true); return; }
@@ -3259,12 +3259,12 @@
 
   function close() {
     if (S.busy && !S.done) return;
-    if (!S.done) { try { sessionStorage.setItem(SS_LATER, '1'); } catch (e) { /* egal */ } }
+    if (!S.done) { try { sessionStorage.setItem(SS_LATER, '1'); } catch (e) { /* ignore */ } }
     if (S.root) S.root.classList.add('hidden');
     var cb = S.opts.onClose;
     var langChanged = window.PINN_I18N && window.PINN_I18N.current !== S.lang;
-    if (langChanged) { try { window.PINN_I18N.switchTo(S.lang); return; } catch (e) { /* weiter */ } }
-    if (typeof cb === 'function') { try { cb({ fertig: S.done }); } catch (e) { /* egal */ } }
+    if (langChanged) { try { window.PINN_I18N.switchTo(S.lang); return; } catch (e) { /* continue */ } }
+    if (typeof cb === 'function') { try { cb({ fertig: S.done }); } catch (e) { /* ignore */ } }
   }
 
   function open(opts) {

@@ -1001,8 +1001,8 @@ function renderAppleCalList(names) {
   wrap.querySelectorAll('.apple-cal-checkbox').forEach(cb => {
     cb.addEventListener('change', () => {
       pendingSelectedCalendars = [...wrap.querySelectorAll('.apple-cal-checkbox:checked')].map(c => c.value);
-      // Link: if the checkbox concerns exactly the task calendar, update the "Auch als Termine
-      // anzeigen" tick as well instead of risking two independent states.
+      // Link: if the checkbox concerns exactly the task calendar, update the tick
+      // "Auch als Termine anzeigen" as well instead of risking two independent states.
       if (cb.value === pendingTaskCalendarName) {
         pendingShowTaskCalendarAsEvents = cb.checked;
         const showCb = document.getElementById('showTaskCalendarAsEventsCheckbox');

@@ -56,7 +56,7 @@ const META = {
 };
 
 // ---------------------------------------------------------------------------------------------
-// Kleinkram
+// Small helpers
 // ---------------------------------------------------------------------------------------------
 function textOf(raw) {
     try { return require(`${__hooks}/calendar-sync.js`).bytesToText(raw); } catch (e) { return String(raw || ""); }

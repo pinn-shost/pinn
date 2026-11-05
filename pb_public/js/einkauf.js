@@ -129,7 +129,7 @@ function formatQuantityRange(min, max) {
 
 // Shows the breakdown like a written addition: recipe (shortened) on the left, quantity on the right,
 // from the second line on with "+" in front, below it a line and the sum.
-// Extracts the bare unit (g, kg, ml, l, Stück ...) from the remaining text of an ingredient
+// Extracts the bare unit (g, kg, ml, l, "Stück" ...) from the remaining text of an ingredient
 // (e.g. "g Spaghetti" -> "g"), so it can stand next to every single quantity in the breakdown
 // without repeating the whole remaining text (incl. the food name). EL/TL no longer occur
 // here, because they are already converted to ml when parsed.

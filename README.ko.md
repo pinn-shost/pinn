@@ -73,7 +73,7 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
   <tr>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="가게별로 정리한 장보기 목록" width="240"></a><br><sub><b>목록</b>: 장보기, 비축품, 짐 싸기</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="카테고리별 지출이 있는 예산 개요" width="240"></a><br><sub><b>가계</b>: 예산, 저축, 용돈</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="하루 일과가 있는 아이 페이지" width="240"></a><br><sub><b>아이</b>: 재미있는 하루 일과</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="메시지, 공유된 위치, 음성 메시지가 있는 가족 채팅" width="240"></a><br><sub><b>채팅</b>: 종단 간 암호화, 음성 메시지와 위치 공유</sub></td>
   </tr>
 </table>
 
@@ -97,6 +97,7 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="날씨와 남은 할 일이 있는 주간 미리보기" width="200"></a><br><sub><b>주간 미리보기</b> – 날씨와 아직 남은 일</sub></td>
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="청소, 쓰레기 배출일, 결제를 하루씩 보여 주는 주간 미리보기" width="200"></a><br><sub><b>주간 미리보기</b> – 하루씩: 청소, 쓰레기, 결제</sub></td>
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="캘린더와 할 일로 가는 바로가기가 있는 지난주 요약" width="200"></a><br><sub><b>지난주 요약</b> – 일정, 식사, 지출 – 그리고 바로가기</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="하루 일과가 있는 아이 페이지" width="200"></a><br><sub><b>아이</b>: 재미있는 하루 일과</sub></td>
   </tr>
 </table>
 
@@ -128,6 +129,14 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 | 🧩 **그 밖에** | 옮길 수 있는 메모가 있는 가족 게시판, 전체 검색, 자동 동기화되는 오프라인 모드, 다크 모드, 프로필 PIN이 있는 iPad 대시보드, 손님 계정, 아이 보호 잠금. |
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
+
+## 1.129.1의 새 소식
+
+**채팅 수정과 마지막 영어 주석**
+
+- **채팅 투표.** 게시판에도 올린 투표를 채팅에서 공유하면 다른 사람에게 약 20초 동안 „투표가 삭제되었습니다“로 보이던 문제를 고쳤어요. 게시판 메모가 도착할 때까지는 잠깐 „게시판과 동기화하는 중…“이 보이고, 몇 초 뒤 투표가 나타나요.
+- **채팅 사진이 선명해요.** 열기 전에도 사진이 선명해요. 미리보기가 두 배로 커졌고, 사진이 화면에 보이면 pinn.이 원본 이미지를 백그라운드에서 불러와요(이전 메시지도).
+- **영어 주석.** 마지막 독일어 주석을 영어로 바꿨어요. 새 자동 검사(`check-comments.js`)가 모든 주석이 영어로 유지되는지 확인해요. README에 채팅 스크린샷을 추가했어요.
 
 ## 1.129.0의 새 소식
 
@@ -189,16 +198,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - 변경: `js/chatgruppen.js`(새 파일), `js/chat.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, 모든 `i18n/*.i18n.js`, `index.html`, `pinn-setup.sh`, `src/`, 모든 README. **서버 부분:** `pb_hooks/chat.pb.js`와 `pb_hooks/pinn-chat.js` – hooks도 함께 교체하세요. 컬렉션 세 개가 자동으로 추가됩니다.
 
 
-## 1.127.2의 새 소식
-
-**채팅: 할 일, 게시판 메모, 계약 기한에 대해 이야기하기**
-
-- **💬 “채팅에서 이야기하기”** 버튼이 할 일, 게시판 메모, 계약(예: 곧 다가오는 해지 기한)에 생겼습니다. 가족 채팅이나 한 사람을 고르면 해당 항목이 카드로 입력줄에 담긴 채 채팅이 열립니다. 몇 마디 덧붙이거나 그대로 보내면 됩니다.
-- **카드를 누르면 항목이 열립니다:** 메시지에서 카드를 누르면 할 일(목록에서 잠깐 깜박임), 메모 또는 계약으로 이동합니다. 항목이 더 이상 없거나 접근 권한이 없으면 짧은 안내가 나옵니다.
-- **여전히 종단 간 암호화:** 카드도 텍스트처럼 암호화되며 NAS는 아무것도 볼 수 없습니다.
-- 변경: `js/chat.js`, `css/chat.css`, `js/aufgaben.js`, `js/pinnwand.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, 모든 `i18n/*.i18n.js`, `index.html`, `src/`, 모든 README. **서버 부분 없음** – hooks는 그대로입니다.
-
-
 ## 작동 방식
 
 ```mermaid
@@ -227,7 +226,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.129.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.129.1` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

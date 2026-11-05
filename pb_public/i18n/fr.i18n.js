@@ -915,6 +915,7 @@ window.PINN_I18N && window.PINN_I18N.keys("fr", {
   "chat.poll.onBoard": "aussi sur le tableau d’affichage",
   "chat.poll.option": "Réponse {n}",
   "chat.poll.question": "Question",
+  "chat.poll.syncing": "Synchronisation avec le tableau d’affichage …",
   "chat.poll.tapVote": "Touchez une réponse pour voter",
   "chat.poll.title": "Créer un sondage",
   "chat.pollDeleted": "Le sondage a été supprimé",

@@ -22,8 +22,11 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
-    v: '1.129', datum: '05.11.2026', titel: 'Englische Kommentare in allen Dateien',
+    v: '1.129', datum: '06.11.2026', titel: 'Englische Kommentare in allen Dateien',
     punkte: [
+      ['fix', '1.129.1 behoben: Eine im Chat geteilte Abstimmung, die auch auf der Pinnwand steht, erschien bei den anderen etwa 20 Sekunden lang als „Die Umfrage wurde gelöscht“. Jetzt steht dort kurz „Wird mit der Pinnwand abgeglichen …“, und die Abstimmung erscheint nach wenigen Sekunden.'],
+      ['fix', '1.129.1 behoben: Fotos im Chat sind schon vor dem Öffnen scharf – die Vorschau ist doppelt so groß, und sobald ein Foto sichtbar wird, lädt pinn. das eigentliche Bild nach (auch bei älteren Nachrichten).'],
+      ['info', '1.129.1: Letzte deutsche Kommentare umgestellt; eine neue automatische Prüfung achtet künftig darauf, dass alle Kommentare Englisch bleiben.'],
       ['info', 'Alle Code-Kommentare im Projekt sind jetzt durchgehend Englisch: Server-Teile (pb_hooks), Installations- und Wartungsskripte, docker-compose.yaml, die .env-Vorlage, die Caddyfile und die App-Dateien. An der App, ihren Texten und ihrem Verhalten ändert sich nichts.'],
     ],
   },

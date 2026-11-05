@@ -393,7 +393,7 @@ function evaluateDone(familyId, rec, actorUserId, withChildren) {
     const assign = assignOf(rec);
     const assignedTo = mid => r => assignOf(r).memberIds.indexOf(mid) !== -1;
 
-    // Abhakende Person
+    // Person who ticked it off
     const taskIsOwn = !!memberId && assign.memberIds.indexOf(memberId) !== -1;
     const own = taskIsOwn ? allDoneUntilNow(familyId, assignedTo(memberId)) : { allDone: false, signature: "" };
 

@@ -178,7 +178,7 @@ function remindFamily(familyId, today, status) {
     return delivered;
 }
 
-// opts: { familyId: nur diese Familie (sofortige Prüfung nach dem Speichern) }
+// opts: { familyId: only this family (immediate check after saving) }
 function runReminders(opts) {
     const o = opts || {};
     const now = wallNow();

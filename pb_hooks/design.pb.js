@@ -10,7 +10,7 @@ routerAdd("GET", "/api/pinn/design", (e) => {
     const lib = require(`${__hooks}/pinn-design.js`);
     e.response.header().set("Cache-Control", "no-store");
     let design = { werte: {}, stand: 0 };
-    try { design = lib.readDesign($app.findRecordById("benutzer", e.auth.id)); } catch (err) { /* Standard */ }
+    try { design = lib.readDesign($app.findRecordById("benutzer", e.auth.id)); } catch (err) { /* keep the defaults */ }
     return e.json(200, { design: design });
 }, $apis.requireAuth("benutzer"));
 

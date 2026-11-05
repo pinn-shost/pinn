@@ -29,12 +29,12 @@ const FORMAT_VERSION = 1;
 // Collections that are never exported
 const AUSSCHLUSS = {
     apple_zugaenge: "zugang",        // iCloud credentials (encrypted with this server's key)
-    google_zugaenge: "zugang",       // Google-Anmeldungen
+    google_zugaenge: "zugang",       // Google sign-ins
     google_client: "zugang",         // OAuth data of the server
     kalender_konten: "zugang",       // Calendar accounts per profile (credentials)
     sitzungen: "geraet",             // signed-in devices
     push_abos: "geraet",             // push subscriptions of the devices
-    push_nachrichten: "geraet",      // zugestellte Push-Texte
+    push_nachrichten: "geraet",      // delivered push texts
     dashboard_geraete: "geraet",     // enabled dashboard devices
     protokoll: "server",             // error log
     hinweise: "server",              // bell - short-lived messages
@@ -51,7 +51,7 @@ const FELD_AUSSCHLUSS = {
 const ZUERST = ["familien", "benutzer", "familien_daten"];
 
 // ---------------------------------------------------------------------------------------------
-// Kleinkram
+// Small helpers
 // ---------------------------------------------------------------------------------------------
 function findCol(name) {
     try { return $app.findCollectionByNameOrId(name); } catch (e) { return null; }
@@ -129,9 +129,9 @@ function sammlungInfo(name) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Rechte
+// Permissions
 // ---------------------------------------------------------------------------------------------
-// -> { familie, name, vollstaendig, user, familien (nur Hauptadmin) }
+// -> { familie, name, vollstaendig, user, familien (main admin only) }
 function zugriff(e, wunsch) {
     const b = benutzer();
     if (!b.isAdmin(e)) throw fehler(403, "Den Export können nur Admins erstellen.", "admin");

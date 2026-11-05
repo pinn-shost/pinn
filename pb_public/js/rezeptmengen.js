@@ -40,7 +40,7 @@ function applyUnitConversion(min, max, rest) {
 
 // Recognises the leading quantity of an ingredient line. Returns {min, max, rest} - for a
 // fixed number min===max, for a range ("1-2 Zwiebeln") min<max, so ranges are carried on correctly
-// when summing over several recipes (3 + (1 bis 2) = 4-5). Also recognises
+// when summing over several recipes (3 + "1 bis 2" = 4-5). Also recognises
 // mixed numbers ("2 1/2"), plain fractions ("1/2"), decimals (point or comma), a
 // leading "oder" (alternative ingredient: "oder 200g Butter") and "Prise(n)" with a fixed
 // conversion to g.

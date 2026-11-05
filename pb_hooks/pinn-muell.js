@@ -34,7 +34,7 @@ const API_BASE = "https://generativelanguage.googleapis.com/v1beta/models/";
 const MODELLE = ["gemini-flash-latest", "gemini-2.5-flash", "gemini-flash-lite-latest", "gemini-2.5-flash-lite", "gemini-2.0-flash"];
 
 // ---------------------------------------------------------------------------------------------
-// Hilfen
+// Helpers
 // ---------------------------------------------------------------------------------------------
 function findCol(name) {
     try { return $app.findCollectionByNameOrId(name); } catch (e) { return null; }
@@ -732,7 +732,7 @@ function suche(e, body) {
         try {
             const g = ladeIcs(kandidaten[i], Math.min(12, left - 2));
             const sig = JSON.stringify(g.termine.slice(0, 30));
-            if (gleich[sig]) continue; // dieselben Termine unter anderem Link
+            if (gleich[sig]) continue; // the same dates under another link
             gleich[sig] = true;
             const z = zusammenfassung(g.termine);
             if (!z.anzahl) continue;

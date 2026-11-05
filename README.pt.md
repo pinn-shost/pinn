@@ -73,7 +73,7 @@ Sempre com você: o pinn. se instala em todo iPhone e celular Android como um ap
   <tr>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Lista de compras organizada por loja" width="240"></a><br><sub><b>Listas</b> – compras, despensa, mala</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Visão geral do orçamento com gastos por categoria" width="240"></a><br><sub><b>Finanças</b> – orçamento, poupança, mesada</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Página das crianças com a rotina diária" width="240"></a><br><sub><b>Crianças</b> – uma rotina diária divertida</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Chat da família com uma mensagem, uma localização partilhada e uma mensagem de voz" width="240"></a><br><sub><b>Chat</b> – criptografado de ponta a ponta, com mensagens de voz e localização</sub></td>
   </tr>
 </table>
 
@@ -97,6 +97,7 @@ Toque em qualquer imagem para abri-la em tamanho real.
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Prévia da semana com o tempo e as tarefas em aberto" width="200"></a><br><sub><b>Prévia da semana</b> – tempo e o que ainda está em aberto</sub></td>
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Prévia da semana dia a dia com limpeza, dia do lixo e pagamentos" width="200"></a><br><sub><b>Prévia da semana</b> – dia a dia: limpeza, lixo, pagamentos</sub></td>
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Resumo da semana passada com atalhos para calendário e tarefas" width="200"></a><br><sub><b>A semana passada em resumo</b> – compromissos, refeições, gastos – e atalhos</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Página das crianças com a rotina diária" width="200"></a><br><sub><b>Crianças</b> – uma rotina diária divertida</sub></td>
   </tr>
 </table>
 
@@ -128,6 +129,14 @@ Toque em qualquer imagem para abri-la em tamanho real.
 | 🧩 **E mais** | Mural da família com notas móveis, busca global, modo offline com sincronização automática, modo escuro, painel no iPad com PINs de perfil, conta de convidado, bloqueio infantil. |
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский e 🇳🇱 Nederlands**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
+
+## Novidades da 1.129.1
+
+**Correções do chat e os últimos comentários em inglês**
+
+- **Votações no chat.** Uma votação partilhada no chat que também está no mural já não aparece aos outros durante cerca de 20 segundos como «A votação foi apagada». Até a nota do mural chegar, aparece brevemente «Sincronizando com o mural …» e a votação surge em poucos segundos.
+- **Fotos nítidas no chat.** As fotos ficam nítidas antes de serem abertas: a pré-visualização é duas vezes maior e, assim que uma foto fica visível, o pinn. carrega a imagem real em segundo plano – também em mensagens antigas.
+- **Comentários em inglês.** Os últimos comentários em alemão foram convertidos; uma nova verificação automática (`check-comments.js`) garante que todos continuam em inglês. Nova captura do chat no README.
 
 ## Novidades da 1.129.0
 
@@ -189,16 +198,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Alterado: `js/chatgruppen.js` (novo), `js/chat.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos os `i18n/*.i18n.js`, `index.html`, `pinn-setup.sh`, `src/` e todos os README. **Parte de servidor:** `pb_hooks/chat.pb.js` e `pb_hooks/pinn-chat.js` – troque também os hooks; mais três coleções são criadas automaticamente.
 
 
-## Novidades da 1.127.2
-
-**Chat: conversar sobre tarefas, notas do mural e prazos de contratos**
-
-- **💬 “Falar sobre isto no chat”** em uma tarefa, em uma nota do mural e em um contrato (p. ex. um prazo de cancelamento próximo): escolha o chat da família ou uma pessoa e o chat abre com o item como cartão na linha de digitação. Acrescente algumas palavras ou simplesmente envie.
-- **O cartão abre o item:** um toque na mensagem leva à tarefa (ela pisca por um instante na lista), à nota ou ao contrato. Se não existir mais ou você não tiver acesso, uma mensagem curta avisa.
-- **Continua criptografado de ponta a ponta:** o cartão é criptografado como o texto; seu NAS não vê nada.
-- Alterado: `js/chat.js`, `css/chat.css`, `js/aufgaben.js`, `js/pinnwand.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos os `i18n/*.i18n.js`, `index.html`, `src/` e todos os README. **Sem parte de servidor:** os hooks ficam como estão.
-
-
 ## Como funciona
 
 ```mermaid
@@ -227,7 +226,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.129.0` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.129.1` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

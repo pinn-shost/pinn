@@ -29,7 +29,7 @@ const BROKEN_SECRET = "Die gespeicherten Zugangsdaten können nicht entschlüsse
 const REVOKED_GOOGLE = "Die Verbindung zu deinem Google-Konto ist abgelaufen oder wurde widerrufen. Bitte unter Einstellungen → Kalender → Eigene Kalender neu mit Google verbinden.";
 
 // ---------------------------------------------------------------------------------------------
-// Hilfen
+// Helpers
 // ---------------------------------------------------------------------------------------------
 function findCol(name) {
     try { return $app.findCollectionByNameOrId(name); } catch (e) { return null; }

@@ -907,6 +907,7 @@ window.PINN_I18N && window.PINN_I18N.keys("zh", {
   "chat.poll.onBoard": "也在布告板上",
   "chat.poll.option": "答案 {n}",
   "chat.poll.question": "问题",
+  "chat.poll.syncing": "正在与布告板同步…",
   "chat.poll.tapVote": "点按答案即可投票",
   "chat.poll.title": "创建投票",
   "chat.pollDeleted": "此投票已被删除",

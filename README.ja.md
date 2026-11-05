@@ -73,7 +73,7 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
   <tr>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="お店ごとに並べた買い物リスト" width="240"></a><br><sub><b>リスト</b>：買い物、ストック、荷造り</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="カテゴリ別の支出を示す予算の概要" width="240"></a><br><sub><b>家計</b>：予算、貯蓄、お小遣い</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="毎日の流れを表示した子どものページ" width="240"></a><br><sub><b>子ども</b>：楽しい毎日の流れ</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="メッセージ、共有した位置情報、ボイスメッセージのある家族チャット" width="240"></a><br><sub><b>チャット</b>：エンドツーエンド暗号化、ボイスメッセージと位置情報つき</sub></td>
   </tr>
 </table>
 
@@ -97,6 +97,7 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="天気と未完了のタスクを表示した週のプレビュー" width="200"></a><br><sub><b>週のプレビュー</b> – 天気とまだ終わっていないこと</sub></td>
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="掃除、ごみの日、支払いを日ごとに表示した週のプレビュー" width="200"></a><br><sub><b>週のプレビュー</b> – 日ごとに：掃除、ごみ、支払い</sub></td>
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="カレンダーとタスクへのショートカット付き先週のまとめ" width="200"></a><br><sub><b>先週のまとめ</b> – 予定、食事、支出——とショートカット</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="毎日の流れを表示した子どものページ" width="200"></a><br><sub><b>子ども</b>：楽しい毎日の流れ</sub></td>
   </tr>
 </table>
 
@@ -128,6 +129,14 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 | 🧩 **そのほか** | 動かせるメモ付きの家族の掲示板、全体検索、自動同期付きのオフラインモード、ダークモード、プロフィールPIN付きのiPadダッシュボード、ゲストアカウント、チャイルドロック。 |
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
+
+## 1.129.1の新機能
+
+**チャットの修正と最後の英語コメント**
+
+- **チャットの投票。** 掲示板にも載せた投票をチャットで共有すると、他の人には約20秒間「投票は削除されました」と表示されていましたが、これを修正しました。掲示板のメモが届くまでは「掲示板と同期しています…」と短く表示され、数秒後に投票が表示されます。
+- **チャットの写真が鮮明に。** 開く前から写真が鮮明です。プレビューは2倍の大きさになり、写真が画面に入るとpinn.が元の画像をバックグラウンドで読み込みます（古いメッセージも）。
+- **英語のコメント。** 最後のドイツ語コメントを英語にしました。新しい自動チェック（`check-comments.js`）で、すべてのコメントが英語のままか確認します。READMEにチャットのスクリーンショットを追加しました。
 
 ## 1.129.0の新機能
 
@@ -189,16 +198,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - 変更：`js/chatgruppen.js`（新規）、`js/chat.js`、`css/chat.css`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、すべての `i18n/*.i18n.js`、`index.html`、`pinn-setup.sh`、`src/`、すべてのREADME。**サーバー側：** `pb_hooks/chat.pb.js` と `pb_hooks/pinn-chat.js` も入れ替えてください。コレクションが3つ自動で追加されます。
 
 
-## 1.127.2の新機能
-
-**チャット：タスク、掲示板のメモ、契約の期限について話せます**
-
-- **💬「チャットで相談」**がタスク、掲示板のメモ、契約（例：解約期限が近いもの）に付きました。家族チャットか個人を選ぶと、その項目がカードとして入力欄に入った状態でチャットが開きます。ひとこと添えるか、そのまま送信できます。
-- **カードから項目を開けます：**メッセージ内のカードをタップすると、タスク（一覧で一瞬点滅）、メモ、契約へ移動します。項目がすでにない場合やアクセス権がない場合は、短いメッセージでお知らせします。
-- **これまでどおりエンドツーエンド暗号化：**カードもテキストと同じく暗号化され、NASには何も見えません。
-- 変更：`js/chat.js`、`css/chat.css`、`js/aufgaben.js`、`js/pinnwand.js`、`js/vertraege.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、すべての `i18n/*.i18n.js`、`index.html`、`src/`、すべてのREADME。**サーバー側の変更なし**（hooksはそのままです）。
-
-
 ## しくみ
 
 ```mermaid
@@ -227,7 +226,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.129.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.129.1`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

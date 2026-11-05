@@ -926,6 +926,7 @@ window.PINN_I18N && window.PINN_I18N.keys("ru", {
   "chat.poll.onBoard": "также на доске",
   "chat.poll.option": "Ответ {n}",
   "chat.poll.question": "Вопрос",
+  "chat.poll.syncing": "Синхронизация с доской …",
   "chat.poll.tapVote": "Нажмите на ответ, чтобы проголосовать",
   "chat.poll.title": "Создать опрос",
   "chat.pollDeleted": "Опрос удалён",

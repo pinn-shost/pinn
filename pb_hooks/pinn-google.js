@@ -76,7 +76,7 @@ const CONTACTS_SCOPE_MESSAGE = "Das Google-Konto hat pinn. noch keinen Lesezugri
 const CALENDAR_API_DISABLED_MESSAGE = "Im Google-Cloud-Projekt ist die „Google Calendar API“ noch nicht aktiviert (console.cloud.google.com → APIs und Dienste → Bibliothek → „Google Calendar API“ → Aktivieren).";
 
 // ---------------------------------------------------------------------------------------------
-// Kleinkram
+// Small helpers
 // ---------------------------------------------------------------------------------------------
 function readEnv(name) {
     try { return String($os.getenv(name) || "").trim(); } catch (e) { return ""; }
@@ -391,7 +391,7 @@ function revokeToken(token) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Kalenderliste (Google Calendar API)
+// Calendar list (Google Calendar API)
 // ---------------------------------------------------------------------------------------------
 function fetchCalendarItems(token) {
     const items = [];

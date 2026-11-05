@@ -84,7 +84,7 @@ routerAdd("GET", "/api/pinn/push/config", (e) => {
         try { $app.store().set("pinnPushSelfTest", test); } catch (err) { /* ignore */ }
     }
     let settings = push.normalizeSettings(null);
-    try { settings = push.readSettings($app.findRecordById("benutzer", e.auth.id)); } catch (err) { /* Standard */ }
+    try { settings = push.readSettings($app.findRecordById("benutzer", e.auth.id)); } catch (err) { /* keep the defaults */ }
     let geraete = 0;
     try { geraete = $app.findRecordsByFilter(push.PUSH_ABOS, "benutzer = {:u}", "", 0, 0, { u: e.auth.id }).length; } catch (err) { geraete = 0; }
     const v = test.ok ? push.loadVapid(true) : null;
@@ -165,7 +165,7 @@ routerAdd("POST", "/api/pinn/push/test", (e) => {
         const members = (lib.loadFamilyDataFor(e.auth.getString("familie")) || {}).members || [];
         const m = members.find(x => x.id === e.auth.getString("mitglied"));
         if (m) name = m.name;
-    } catch (err) { /* Profilname */ }
+    } catch (err) { /* keep the profile name */ }
     push.rememberSubjectFromRequest(e);
     const r = push.notifyUserDetailed(e.auth.id, {
         titel: "Hallo " + name + "! 👋",

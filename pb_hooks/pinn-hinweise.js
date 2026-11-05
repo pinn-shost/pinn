@@ -46,7 +46,7 @@ const MIN_MS = 60000, HOUR_MS = 3600000, DAY_MS = 86400000;
 const MERGE_MS = 20 * MIN_MS;     // merge within 20 minutes
 const PUSH_MERGE_MS = 14 * HOUR_MS; // an identical push message (same tag) replaces the previous one
 const KEEP_MS = 4 * DAY_MS;       // keep on the server
-const SHOW_MS = 3 * DAY_MS;       // an die App liefern
+const SHOW_MS = 3 * DAY_MS;       // deliver to the app
 const MAX_ENTRIES = 40;           // stored entries per notice
 const ITEM_MAX_AGE = 3 * DAY_MS;  // do not report older items (e.g. after a long offline sync)
 // The bell already shows these push messages in its own way (way-home card, add shopping amount)
@@ -129,7 +129,7 @@ function ready() {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Hilfen
+// Helpers
 // ---------------------------------------------------------------------------------------------
 function pbDate(ms) { return new Date(ms).toISOString().replace("T", " "); }
 function parseDate(s) {

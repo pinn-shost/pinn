@@ -73,7 +73,7 @@ Immer dabei: pinn. lässt sich auf jedem iPhone und Android-Handy wie eine echte
   <tr>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Einkaufsliste nach Geschäft sortiert" width="240"></a><br><sub><b>Listen</b> – Einkauf, Vorrat, Packen</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Budgetübersicht mit Ausgaben nach Kategorie" width="240"></a><br><sub><b>Finanzen</b> – Budget, Sparen, Taschengeld</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Kinderseite mit dem Tagesablauf" width="240"></a><br><sub><b>Kinder</b> – ein spielerischer Tagesablauf</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Familienchat mit Nachricht, geteiltem Standort und Sprachnachricht" width="240"></a><br><sub><b>Chat</b> – Ende-zu-Ende verschlüsselt, mit Sprachnachrichten und Standort</sub></td>
   </tr>
 </table>
 
@@ -97,6 +97,7 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Wochenvorschau mit Wetter und offenen Aufgaben" width="200"></a><br><sub><b>Wochenvorschau</b> – Wetter und was noch offen ist</sub></td>
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Wochenvorschau Tag für Tag mit Putzen, Mülltag und Zahlungen" width="200"></a><br><sub><b>Wochenvorschau</b> – Tag für Tag: Putzen, Müll, Zahlungen</sub></td>
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Rückblick auf die letzte Woche mit Abkürzungen zu Kalender und Aufgaben" width="200"></a><br><sub><b>Letzte Woche kompakt</b> – Termine, Essen, Ausgaben – und Abkürzungen</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Kinderseite mit dem Tagesablauf" width="200"></a><br><sub><b>Kinder</b> – ein spielerischer Tagesablauf</sub></td>
   </tr>
 </table>
 
@@ -128,6 +129,16 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 | 🧩 **Und mehr** | Familien-Pinnwand mit verschiebbaren Zetteln, globale Suche, Offline-Modus mit automatischem Abgleich, Dunkelmodus, iPad-Dashboard mit Profil-PINs, Gastzugang, Kindersicherung. |
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский und 🇳🇱 Nederlands**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
+
+## Neu in 1.129.1
+
+**Chat-Korrekturen und die letzten englischen Kommentare**
+
+- **Abstimmungen im Chat.** Eine im Chat geteilte Abstimmung, die auch auf der Pinnwand steht, erscheint bei den anderen nicht mehr etwa 20 Sekunden lang als „Die Umfrage wurde gelöscht“. Bis der Pinnwand-Zettel angekommen ist, steht kurz „Wird mit der Pinnwand abgeglichen …“, nach wenigen Sekunden ist die Abstimmung da.
+- **Scharfe Fotos im Chat.** Fotos sind schon vor dem Öffnen scharf: die Vorschau ist doppelt so groß, und sobald ein Foto sichtbar ist, lädt pinn. das eigentliche Bild im Hintergrund nach – auch bei älteren Nachrichten.
+- **Englische Kommentare.** Die letzten deutschen Kommentare sind umgestellt. Eine neue automatische Prüfung (`check-comments.js`, Teil der GitHub-Prüfungen) achtet darauf, dass alle Kommentare Englisch bleiben.
+- **README.** Neuer Chat-Screenshot vorne; die Kinderseite ist zu den weiteren Screenshots gewandert.
+- Geändert: `js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (alle Sprachdateien), `src/` (`index.html`), Kommentare in einigen Hook-Dateien, `datenexport.js`, `einrichtung.js`, `.github/` (neue Prüfung) und alle READMEs. Server-Teil: nur Kommentare geändert – die Hook-Dateien trotzdem ersetzen.
 
 ## Neu in 1.129.0
 
@@ -189,16 +200,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Geändert: `js/chatgruppen.js` (neu), `js/chat.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `index.html`, `pinn-setup.sh`, `src/` und alle READMEs. **Server-Teil:** `pb_hooks/chat.pb.js` und `pb_hooks/pinn-chat.js` – die Hooks mit austauschen; drei weitere Sammlungen entstehen automatisch.
 
 
-## Neu in 1.127.2
-
-**Chat: über Aufgaben, Pinnwand-Zettel und Kündigungen sprechen**
-
-- **💬 „Im Chat besprechen“** bei einer Aufgabe, in einem Pinnwand-Zettel und in einem Vertrag (z. B. eine anstehende Kündigungsfrist): Familienchat oder eine Person wählen, schon öffnet sich der Chat mit dem Eintrag als Karte in der Eingabezeile. Ein paar Worte dazuschreiben oder einfach abschicken.
-- **Die Karte öffnet den Eintrag:** ein Tipp in der Nachricht springt zur Aufgabe (sie blinkt kurz in der Liste), zum Pinnwand-Zettel oder zum Vertrag. Gibt es ihn nicht mehr oder fehlt der Zugriff, sagt eine kurze Meldung das.
-- **Weiterhin Ende-zu-Ende verschlüsselt** – die Karte ist wie der Text verschlüsselt, dein NAS sieht davon nichts.
-- Geändert: `js/chat.js`, `css/chat.css`, `js/aufgaben.js`, `js/pinnwand.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `index.html`, `src/` und alle READMEs. **Kein Server-Teil** – die Hooks bleiben, wie sie sind.
-
-
 ## So funktioniert’s
 
 ```mermaid
@@ -227,7 +228,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.129.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.129.1` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

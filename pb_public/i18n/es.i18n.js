@@ -915,6 +915,7 @@ window.PINN_I18N && window.PINN_I18N.keys("es", {
   "chat.poll.onBoard": "también en el tablón",
   "chat.poll.option": "Respuesta {n}",
   "chat.poll.question": "Pregunta",
+  "chat.poll.syncing": "Sincronizando con el tablón …",
   "chat.poll.tapVote": "Toca una respuesta para votar",
   "chat.poll.title": "Crear una encuesta",
   "chat.pollDeleted": "La encuesta fue eliminada",

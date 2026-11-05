@@ -916,6 +916,7 @@ window.PINN_I18N && window.PINN_I18N.keys("en", {
   "chat.poll.onBoard": "also on the pin board",
   "chat.poll.option": "Answer {n}",
   "chat.poll.question": "Question",
+  "chat.poll.syncing": "Syncing with the pin board …",
   "chat.poll.tapVote": "Tap an answer to vote",
   "chat.poll.title": "Create a poll",
   "chat.pollDeleted": "The poll was deleted",

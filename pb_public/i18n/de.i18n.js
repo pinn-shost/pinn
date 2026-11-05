@@ -916,6 +916,7 @@ window.PINN_I18N && window.PINN_I18N.keys("de", {
   "chat.poll.onBoard": "auch auf der Pinnwand",
   "chat.poll.option": "Antwort {n}",
   "chat.poll.question": "Frage",
+  "chat.poll.syncing": "Wird mit der Pinnwand abgeglichen …",
   "chat.poll.tapVote": "Tippe auf eine Antwort zum Abstimmen",
   "chat.poll.title": "Abstimmung erstellen",
   "chat.pollDeleted": "Die Umfrage wurde gelöscht",

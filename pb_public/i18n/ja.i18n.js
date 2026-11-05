@@ -910,6 +910,7 @@ window.PINN_I18N && window.PINN_I18N.keys("ja", {
   "chat.poll.onBoard": "掲示板にも",
   "chat.poll.option": "回答 {n}",
   "chat.poll.question": "質問",
+  "chat.poll.syncing": "掲示板と同期しています…",
   "chat.poll.tapVote": "回答をタップして投票",
   "chat.poll.title": "アンケートを作成",
   "chat.pollDeleted": "このアンケートは削除されました",

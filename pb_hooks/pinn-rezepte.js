@@ -64,7 +64,7 @@ function ensureImageThumbs() {
         try {
             const t = f.thumbs || [];
             for (let i = 0; i < t.length; i++) have.push(String(t[i]));
-        } catch (e) { /* leer */ }
+        } catch (e) { /* ignore */ }
         const missing = REZEPT_BILD_THUMBS.filter(t => have.indexOf(t) < 0);
         if (!missing.length) return;
         f.thumbs = have.concat(missing);
@@ -158,7 +158,7 @@ function ensureSchema() {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Aufbereitung
+// Preparing the data
 // ---------------------------------------------------------------------------------------------
 function cleanText(v, max) {
     return String(v === undefined || v === null ? "" : v).trim().slice(0, max);

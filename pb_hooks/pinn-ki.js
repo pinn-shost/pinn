@@ -43,7 +43,7 @@ const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 const ALLOWED_MIME = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif", "application/pdf"];
 
 // ---------------------------------------------------------------------------------------------
-// Kleinkram
+// Small helpers
 // ---------------------------------------------------------------------------------------------
 function readEnv(name) {
     try { return String($os.getenv(name) || "").trim(); } catch (e) { return ""; }

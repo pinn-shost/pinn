@@ -48,7 +48,7 @@ function ensureSchema() {
     }
 }
 function newToken() {
-    try { return $security.randomString(40); } catch (e) { /* weiter */ }
+    try { return $security.randomString(40); } catch (e) { /* continue */ }
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     let s = "";
     for (let i = 0; i < 40; i++) s += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -124,7 +124,7 @@ function ausschalten(auth) {
 }
 function cleanupUser(userId) {
     const rec = recOfUser(userId);
-    if (rec) { try { $app.delete(rec); } catch (e) { /* egal */ } }
+    if (rec) { try { $app.delete(rec); } catch (e) { /* ignore */ } }
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -846,7 +846,7 @@ function createTask(familyId, auth, intent, L) {
     if (!title) return { antwort: L.noTask };
     const lib = require(`${__hooks}/pinn-aufgaben.js`);
     const task = lib.saveTask({ title: title, notes: "", dueDate: intent.iso || "", neu: true }, auth.id, familyId);
-    try { require(`${__hooks}/pinn-hinweise.js`).taskCreated(familyId, task, auth); } catch (err) { /* egal */ }
+    try { require(`${__hooks}/pinn-hinweise.js`).taskCreated(familyId, task, auth); } catch (err) { /* ignore */ }
     return { antwort: fill(L.task, { t: title, d: intent.iso ? fill(L.due, { d: dayWord(intent.iso, L) }) : "" }), geaendert: true };
 }
 
@@ -939,8 +939,8 @@ function occursOn(ev, day) {
 }
 function eventsOn(familyId, userId, day) {
     let text = "";
-    try { text += require(`${__hooks}/calendar-sync.js`).readCalendarText(familyId) || ""; } catch (e) { /* egal */ }
-    try { text += "\n" + (require(`${__hooks}/pinn-kalender.js`).icsAllForFamily(familyId) || ""); } catch (e) { /* egal */ }
+    try { text += require(`${__hooks}/calendar-sync.js`).readCalendarText(familyId) || ""; } catch (e) { /* ignore */ }
+    try { text += "\n" + (require(`${__hooks}/pinn-kalender.js`).icsAllForFamily(familyId) || ""); } catch (e) { /* ignore */ }
     const evs = parseEvents(text).filter(ev => !ev.cancelled && (!ev.owner || ev.owner === userId));
     const overridden = {};
     evs.filter(ev => ev.recur && ev.uid).forEach(ev => { overridden[ev.uid + "|" + ev.recur.date] = true; });
@@ -1003,7 +1003,7 @@ function befehl(token, text) {
         const n = Number($app.store().get(k) || 0) + 1;
         $app.store().set(k, n);
         if (n > LIMIT_PER_MIN) return { ok: false, status: 429, antwort: fill(L.error, { m: "429" }) };
-    } catch (e) { /* egal */ }
+    } catch (e) { /* ignore */ }
 
     const sentence = cleanSentence(text);
     if (!sentence) return { ok: true, antwort: L.help };

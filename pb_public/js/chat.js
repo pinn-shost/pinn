@@ -41,6 +41,7 @@ function chatNewState(uid) {
     rooms: new Map(), room: '', ov: new Map(), plain: new Map(), prev: new Map(), reply: null, ref: null,
     groups: [], bilder: {}, mark: {}, swipeOpen: '', drag: false, listDirty: false, plainMode: false,
     pollTimer: null, tick: 0, sheet: null, busy: false, receipts: true,
+    boardSeen: new Set(), boardWait: new Map(), boardPullAt: 0, boardPending: false,
   };
 }
 
@@ -553,11 +554,15 @@ async function chatPoll() {
     if (S.room) {
       const changed = await chatLoadRoom(S.room, true);
       if (changed) { chatRenderConv(); chatMarkRead(); }
-      // polls that are also on the pin board live in the family data: fetch them every third round (about 9 s) instead of once a minute
-      if (S.tick % 3 === 0 && typeof areasPull === 'function' && chatXHasBoardPoll(S.room)) {
+      // polls that are also on the pin board live in the family data: fetch them every third round (about 9 s) instead of once a minute;
+      // every round (3 s) while a new note has not arrived yet (1.129.1)
+      if ((S.boardPending || S.tick % 3 === 0) && typeof areasPull === 'function' && chatXHasBoardPoll(S.room)) {
         const before = chatXBoardSig(S.room);
         await areasPull();
-        if (chatXBoardSig(S.room) !== before) chatRenderConv();
+        S.boardPullAt = Date.now();
+        const waiting = S.boardPending;
+        S.boardPending = false;
+        if (waiting || chatXBoardSig(S.room) !== before) chatRenderConv();
       }
     }
     if (S.tick % 4 === 0) { chatLoadOverview(); chatLoadRoster().then(() => chatRenderConv()).catch(() => { /* ignore */ }); }
@@ -944,7 +949,7 @@ function chatBubble(m, p, first, group) {
       q.onclick = (e) => { e.stopPropagation(); const t = document.querySelector('#chatMsgs [data-id="' + CSS.escape(String(x.q.i || '')) + '"]'); if (t) { t.scrollIntoView({ block: 'center', behavior: 'smooth' }); t.classList.add('flash'); setTimeout(() => t.classList.remove('flash'), 1200); } };
       b.appendChild(q);
     }
-    if (x.r && chatRefDeleted(x.r)) b.appendChild(chatEl('div', 'chat-text chat-muted', '🚫 ' + tk('chat.ref.pinDeleted', { t: String(x.r.ti || '') })));
+    if (x.r && chatRefDeleted(x.r, m)) b.appendChild(chatEl('div', 'chat-text chat-muted', '🚫 ' + tk('chat.ref.pinDeleted', { t: String(x.r.ti || '') })));
     else if (x.r) {
       const r = chatEl('button', 'chat-ref'); r.type = 'button';
       r.appendChild(chatEl('span', 'chat-ref-ico', CHAT_REF_ICONS[x.r.k] || '🔗'));
@@ -975,11 +980,13 @@ function chatBubble(m, p, first, group) {
 // Text for a deleted message: "the poll was deleted" for a poll, else "this message was deleted" (1.127.6)
 function chatDeletedText(dk) { return dk === 'p' ? tk('chat.pollDeleted') : tk('chat.deleted'); }
 // true if a reference points to a pin board note that was deleted (only checked when the pin board is loaded and allowed)
-function chatRefDeleted(r) {
+// A note that has not reached this device yet is not taken for deleted (chatXBoardGone, 1.129.1).
+function chatRefDeleted(r, m) {
   if (!r || r.k !== 'pin') return false;
   try {
     if (!isViewAllowed('pinnwand') || typeof pinboardLoadedOk !== 'function' || !pinboardLoadedOk()) return false;
-    return !pinboard.some(n => n && n.id === r.id);
+    if (pinboard.some(n => n && n.id === r.id)) { chatXBoardSeen(r.id); return false; }
+    return chatXBoardGone(r.id, m);
   } catch (e) { return false; }
 }
 function chatRenderBanners() {

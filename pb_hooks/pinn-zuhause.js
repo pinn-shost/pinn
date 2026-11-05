@@ -50,7 +50,7 @@ const LAENDER_ALIAS = {
 };
 
 // ---------------------------------------------------------------------------------------------
-// Hilfen
+// Helpers
 // ---------------------------------------------------------------------------------------------
 function findCol(name) {
     try { return $app.findCollectionByNameOrId(name); } catch (e) { return null; }

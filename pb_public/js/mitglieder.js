@@ -13,8 +13,8 @@
 function memberById(id) { return members.find(m => m.id === id); }
 
 // Reads the "Zugewiesen: Name, Name" line from the appointment description (if present) and
-// returns the matching family members - this way appointments created via "+ Termin
-// hinzufügen" with people assigned can be marked in colour (see eventDetailModal).
+// returns the matching family members - this way appointments created via
+// "+ Termin hinzufügen" with people assigned can be marked in colour (see eventDetailModal).
 function getAssignedMembersForEvent(ev) {
   if (!ev || !ev.description) return [];
   const match = ev.description.match(/Zugewiesen:\s*(.+)/);
@@ -102,8 +102,8 @@ function memberFilterSortWeight(item) {
   return matchesActiveMemberFilter(item) ? 0 : 1;
 }
 // Appointments from the calendar marked as "Aufgaben-Kalender" by default appear ONLY with the
-// tasks, not additionally as normal calendar entries - unless the checkbox "Auch als Termine
-// anzeigen" is set in the settings.
+// tasks, not additionally as normal calendar entries - unless the checkbox
+// "Auch als Termine anzeigen" is set in the settings.
 function isEventVisibleAsCalendarEntry(ev) {
   if (appleCalendar.taskCalendarName && ev.pinnCalName === appleCalendar.taskCalendarName && !appleCalendar.showTaskCalendarAsEvents) {
     return false;

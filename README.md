@@ -71,7 +71,7 @@ Always with you: pinn. installs on every iPhone and Android phone like a native 
   <tr>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Shopping list sorted by shop" width="240"></a><br><sub><b>Lists</b> – shopping, pantry, packing</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Budget overview with spending by category" width="240"></a><br><sub><b>Finance</b> – budget, savings, pocket money</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Kids' page with the daily routine" width="240"></a><br><sub><b>Kids</b> – a playful daily routine</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Family chat with a message, a shared location and a voice message" width="240"></a><br><sub><b>Chat</b> – end-to-end encrypted, with voice messages and locations</sub></td>
   </tr>
 </table>
 
@@ -95,6 +95,7 @@ Tap any picture to open it in full size.
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Weekly preview with weather and open tasks" width="200"></a><br><sub><b>Weekly preview</b> – weather and what is still open</sub></td>
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Weekly preview, day by day with cleaning, bin day and payments" width="200"></a><br><sub><b>Weekly preview</b> – day by day: cleaning, bins, payments</sub></td>
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Summary of last week with shortcuts to calendar and tasks" width="200"></a><br><sub><b>Last week in brief</b> – events, meals, spending – and shortcuts</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Kids' page with the daily routine" width="200"></a><br><sub><b>Kids</b> – a playful daily routine</sub></td>
   </tr>
 </table>
 
@@ -124,6 +125,16 @@ Tap any picture to open it in full size.
 | 🧩 **Everything else** | Family board with movable notes, global search, offline mode with automatic sync, dark mode, iPad dashboard with profile PINs, guest account, child lock. |
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский and 🇳🇱 Nederlands**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
+
+## What's new in 1.129.1
+
+**Chat fixes and the last English comments**
+
+- **Polls in the chat.** A poll shared in the chat that is also on the pin board no longer shows up as “The poll was deleted” for the others for about 20 seconds. Until the pin board note has arrived it briefly says “Syncing with the pin board …”, and the poll appears after a few seconds.
+- **Sharp photos in the chat.** Photos look sharp before you open them: the preview is twice as large, and as soon as a photo is visible pinn. loads the picture itself in the background – older messages too.
+- **English comments.** The last German comments were converted. A new automatic check (`check-comments.js`, part of the GitHub checks) makes sure every comment stays English.
+- **README.** New chat screenshot at the top; the kids' page moved to the further screenshots.
+- Changed: `js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (all language files), `src/` (`index.html`), comments in some hook files, `datenexport.js`, `einrichtung.js`, `.github/` (new check) and all READMEs. Server part: only comments changed – replacing the hook files is still recommended.
 
 ## What's new in 1.129.0
 
@@ -228,17 +239,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Changed: `index.html`, `js/hilfe.js`, `css/hilfe.css`, `js/ansichten.js`, `js/mitteilungen.js`, `js/fahrzeuge.js`, `css/fahrzeuge.css`, `css/seitenleiste.css`, `css/pinnwand.css`, `js/listen.js`, `js/appstart.js`, `js/benutzer.js`, `js/familiensync.js`, `js/einstellungen.js`, `js/pinnwand.js`, `js/speichern.js`, `js/zustand.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, on the server `pb_hooks/pinn-push.js`, and `src/` (the part `menueleiste.html` is gone). Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
 
 
-## What's new in 1.124.0
-
-**Help & tutorial**
-
-- **Help for every menu.** A new help page explains each page of pinn. – as a quick run-through (“Quick”) or in detail (“In detail”). Open it under Settings → Help & tutorial or through the search.
-- **Tutorial for the first steps.** New profiles are guided through the most important pages in seven short steps. It starts once on its own and can be restarted any time under Settings → Help & tutorial.
-- **Help in the search.** Help topics appear in their own “Help” section, clearly separated from your own entries (events, documents, recipes …).
-- All help texts and the tutorial come in all eleven languages.
-- Changed: `index.html`, `js/hilfe.js` (new), `css/hilfe.css` (new), `js/listen.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `pinn-setup.sh` and all READMEs. Nothing changes on the server. Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
-
 ## How it works
 
 ```mermaid
@@ -265,7 +265,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.129.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.129.1` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

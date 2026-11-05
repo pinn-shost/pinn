@@ -61,7 +61,7 @@ pinn. – это одно приложение для всего, что нуж�
   <tr>
     <td align="center" width="33%"><a href=".github/assets/screenshots/lists.png"><img src=".github/assets/screenshots/lists.png" alt="Список покупок по магазинам" width="240"></a><br><sub><b>Списки</b> – покупки, кладовая, сборы</sub></td>
     <td align="center" width="33%"><a href=".github/assets/screenshots/finance.png"><img src=".github/assets/screenshots/finance.png" alt="Обзор бюджета с расходами по категориям" width="240"></a><br><sub><b>Финансы</b> – бюджет, сбережения, карманные деньги</sub></td>
-    <td align="center" width="33%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Детская страница с распорядком дня" width="240"></a><br><sub><b>Дети</b> – игровой распорядок дня</sub></td>
+    <td align="center" width="33%"><a href=".github/assets/screenshots/chat.png"><img src=".github/assets/screenshots/chat.png" alt="Семейный чат с сообщением, отправленным местоположением и голосовым сообщением" width="240"></a><br><sub><b>Чат</b> – сквозное шифрование, голосовые сообщения и местоположение</sub></td>
   </tr>
 </table>
 
@@ -85,6 +85,7 @@ pinn. – это одно приложение для всего, что нуж�
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_1.png"><img src=".github/assets/screenshots/weekly_summary_1.png" alt="Обзор недели с погодой и открытыми задачами" width="200"></a><br><sub><b>Обзор недели</b> – погода и то, что ещё не сделано</sub></td>
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_2.png"><img src=".github/assets/screenshots/weekly_summary_2.png" alt="Обзор недели по дням: уборка, день вывоза мусора и платежи" width="200"></a><br><sub><b>Обзор недели</b> – день за днём: уборка, мусор, платежи</sub></td>
     <td align="center" width="25%"><a href=".github/assets/screenshots/weekly_summary_3.png"><img src=".github/assets/screenshots/weekly_summary_3.png" alt="Итоги прошлой недели с быстрыми переходами к календарю и задачам" width="200"></a><br><sub><b>Прошлая неделя вкратце</b> – события, еда, расходы – и быстрые переходы</sub></td>
+    <td align="center" width="25%"><a href=".github/assets/screenshots/kids.png"><img src=".github/assets/screenshots/kids.png" alt="Детская страница с распорядком дня" width="200"></a><br><sub><b>Дети</b> – игровой распорядок дня</sub></td>
   </tr>
 </table>
 
@@ -105,6 +106,14 @@ pinn. – это одно приложение для всего, что нуж�
 - 🔔 **Уведомления** – личные push-сообщения на iPhone, iPad и Android и колокольчик со всеми изменениями в семье
 
 pinn. говорит на **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский и 🇳🇱 Nederlands**, подстраивает валюту и номера экстренных служб под ваш регион и переключается между терминами **«семья»** и **«совместная квартира»**. Один сервер может вести несколько семей, у каждой свои администраторы.
+
+## Что нового в 1.129.1
+
+**Исправления в чате и последние английские комментарии**
+
+- **Опросы в чате.** Опрос, отправленный в чат и размещённый также на доске, больше не показывается другим около 20 секунд как «Опрос удалён». Пока заметка с доски не пришла, коротко видно «Синхронизация с доской …», а через несколько секунд появляется опрос.
+- **Чёткие фото в чате.** Фото выглядят чётко ещё до открытия: превью стало вдвое больше, а как только фото видно на экране, pinn. в фоне загружает само изображение — и для старых сообщений тоже.
+- **Комментарии на английском.** Последние немецкие комментарии переведены; новая автоматическая проверка (`check-comments.js`) следит, чтобы все комментарии оставались английскими. В README — новый скриншот чата.
 
 ## Что нового в 1.129.0
 
@@ -131,16 +140,6 @@ pinn. говорит на **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Españo
 - **Безопасность.** Три предупреждения сканера кода «DOM text reinterpreted as HTML» в предпросмотре фото и видео чата (`js/chatmedien.js`) устранены: адреса объектов строго проверяются и экранируются для HTML.
 - Изменено: `js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, все `i18n/*.i18n.js`, `src/` (`index.html`) и все README. Серверная часть: `pb_hooks/pinn-chat.js` — замените и хуки; одно поле добавляется автоматически при запуске.
 
-## Что нового в 1.127.5
-
-**Чат: быстрые опросы, финансы в чате, безопасность**
-
-- **Опросы реагируют быстрее.** Опрос из чата, который есть и на доске, теперь обновляется у всех примерно за 10 секунд, а не за минуту.
-- **Финансы в чате.** В окне расхода, дохода, регулярной записи и накопительной позиции появилась кнопка **Чат** (💬): выберите чат, запись придёт карточкой, по нажатию на неё она откроется снова.
-- **Короче кнопки.** «Обсудить в чате» теперь везде просто **Чат**.
-- **Безопасность.** Исправлены три предупреждения сканера кода «DOM text reinterpreted as HTML» в предпросмотре фото и видео чата.
-- Изменено: `js/chatmedien.js`, `js/chatstimme.js`, `js/chat.js`, `js/chatextras.js`, `js/finanzen.js`, `js/sparen.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, все `i18n/*.i18n.js`, `src/` (`index.html`) и все README. Серверной части нет.
-
 ## Требования
 
 - NAS или мини-ПК с **Docker** и **Docker Compose** (например, Synology, UGREEN, QNAP или обычный Linux-сервер)
@@ -150,7 +149,7 @@ pinn. говорит на **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Españo
 ## Установка
 
 1. Скачайте ZIP [последнего релиза](https://github.com/pinn-shost/pinn/releases/latest) и распакуйте его.
-2. Создайте на NAS папку, например `/volume1/docker/Pocketbase`, и положите в неё распакованную папку (например, `pinn-1.129.0` или `pinn-main`) как есть.
+2. Создайте на NAS папку, например `/volume1/docker/Pocketbase`, и положите в неё распакованную папку (например, `pinn-1.129.1` или `pinn-main`) как есть.
 3. Подключитесь по SSH и выполните:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

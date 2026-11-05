@@ -5,13 +5,17 @@
    - polls: a poll is a message { p: { q, o: [{ id, t }], mu, pn } }. Votes are small silent messages { v: { p: <poll message id>, s: [option ids] } }
      (the newest vote of a person counts; silent = no push, never unread, not shown). A poll that is also on the pin board (pn = note id)
      reads and writes the votes of that pin board note instead, so the result is the same in both places. When that note is deleted
-     on the pin board, the bubble only says "the poll was deleted" (1.127.6).
+     on the pin board, the bubble only says "the poll was deleted" (1.127.6). Until the note of a new poll has reached this device,
+     the bubble shows the poll greyed out with "syncing with the pin board" instead of "deleted" (1.129.1, chatXBoardGone).
    - locations: { l: { la, lo, ac, n } } with a small map in the bubble and a viewer with "show on the location map" (js/familie.js, famShowPoint)
    - search inside a conversation (client side: the messages are only readable on the device)
    - muting a chat, the switch "end-to-end encryption on/off" (admins), dissolving a group
    All visible text comes from tk('chat.*'); user text is only ever put into the page with textContent (no innerHTML). */
 
-const CHATX = { OPTS_MAX: 8, OPT_LEN: 60, Q_LEN: 120, PDF_MAX: 20 * 1024 * 1024, MAP_Z: 16 };
+const CHATX = { OPTS_MAX: 8, OPT_LEN: 60, Q_LEN: 120, PDF_MAX: 20 * 1024 * 1024, MAP_Z: 16,
+  BOARD_GRACE_MS: 45000,     // a pin board note that is missing this long after a refresh of the board counts as deleted (1.129.1)
+  BOARD_OLD_MS: 10 * 60000,  // older messages: one refresh of the board is enough
+  SAVE_WAIT_MS: 5000 };      // the sender waits at most this long for the new pin board note to reach the server
 let chatXSrch = null;      // running search { q, hits: [message ids], idx, token }
 
 /* ---------------------------------------------------------------- sending any kind of message */
@@ -84,6 +88,8 @@ function chatXPollSheet() {
     if (board && board.cb.checked) {
       try { const n = pwCreatePoll(question, texts); poll.pn = n.id; poll.mu = 0; poll.o = n.options.map(o => ({ id: o.id, t: o.text })); }
       catch (e) { err.textContent = tk('chat.error.send'); send.disabled = false; return; }
+      // first bring the new note to the server, so the others find it as soon as the message arrives (1.129.1)
+      try { if (typeof areasSettle === 'function') await Promise.race([areasSettle(), new Promise(res => setTimeout(res, CHATX.SAVE_WAIT_MS))]); } catch (e) { /* send anyway */ }
     }
     chatCloseSheet();
     chatXSendPayload({ x: '', p: poll });
@@ -110,6 +116,31 @@ function chatXBoardNoteOf(pl) {
   if (x.p && x.p.pn) return String(x.p.pn);
   if (x.r && x.r.k === 'pin' && x.r.id) return String(x.r.id);
   return '';
+}
+// Is the pin board note id (needed by message m) really deleted? A new note may simply not have reached this device yet:
+// it only counts as deleted when this device has seen it before, or when the board was refreshed in the open chat and the
+// note is still missing (older message: one refresh; new message: a refresh at least BOARD_GRACE_MS after it was first shown).
+// Otherwise S.boardPending is set and js/chat.js refreshes the board every round (1.129.1).
+function chatXBoardGone(id, m) {
+  const S = chatS;
+  if (!S || !id) return false;
+  if (!S.boardSeen) S.boardSeen = new Set();
+  if (!S.boardWait) S.boardWait = new Map();
+  if (S.boardSeen.has(id)) return true;
+  if (!S.boardWait.has(id)) S.boardWait.set(id, Date.now());
+  const first = S.boardWait.get(id), pulled = S.boardPullAt || 0;
+  const old = m && Number(m.zeit) > 0 && Date.now() - Number(m.zeit) > CHATX.BOARD_OLD_MS;
+  if (pulled && (old ? pulled >= first : pulled - first >= CHATX.BOARD_GRACE_MS)) return true;
+  S.boardPending = true;
+  return false;
+}
+// remembers that a pin board note was present on this device (its later absence then means: deleted)
+function chatXBoardSeen(id) {
+  const S = chatS;
+  if (!S || !id) return;
+  if (!S.boardSeen) S.boardSeen = new Set();
+  S.boardSeen.add(id);
+  if (S.boardWait) S.boardWait.delete(id);
 }
 // true if the open chat holds a poll that is also on the pin board or a reference to a pin board note
 function chatXHasBoardPoll(room) {
@@ -138,8 +169,13 @@ function chatXPollBubble(p, m) {
     try { if (typeof pinboard !== 'undefined' && isViewAllowed('pinnwand')) note = pinboard.find(n => n && n.id === p.pn) || null; } catch (e) { note = null; }
   }
   // who voted for what: option id -> [voter ids]
-  const per = {}; let mine = [], voters = 0, closed = false, readOnly = false, gone = false;
-  if (boardOn && !note) { try { gone = isViewAllowed('pinnwand') && pinboardLoadedOk(); } catch (e) { gone = false; } }
+  const per = {}; let mine = [], voters = 0, closed = false, readOnly = false, gone = false, syncing = false;
+  if (boardOn && note) chatXBoardSeen(p.pn);
+  if (boardOn && !note) {
+    let loaded = false;
+    try { loaded = isViewAllowed('pinnwand') && pinboardLoadedOk(); } catch (e) { loaded = false; }
+    if (loaded) { gone = chatXBoardGone(p.pn, m); syncing = !gone; }
+  }
   if (gone) { // the note was deleted on the pin board: the poll is gone everywhere (1.127.6)
     box.replaceChildren(chatEl('div', 'chat-text chat-muted', '🚫 ' + tk('chat.pollDeleted')));
     return box;
@@ -167,7 +203,8 @@ function chatXPollBubble(p, m) {
     box.appendChild(b);
   });
   let hint;
-  if (readOnly) hint = tk('chat.poll.noBoard');
+  if (syncing) hint = '📌 ' + tk('chat.poll.syncing');
+  else if (readOnly) hint = tk('chat.poll.noBoard');
   else hint = tk('board.votesN', { n: voters }) + ' · ' + (closed ? tk('board.pollClosed') : (p.mu ? tk('chat.poll.multiHint') : tk('chat.poll.tapVote'))) + (boardOn ? ' · 📌 ' + tk('chat.poll.onBoard') : '');
   box.appendChild(chatEl('div', 'chat-poll-meta', hint));
   return box;

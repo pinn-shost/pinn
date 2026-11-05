@@ -85,7 +85,7 @@ function discoverAllCollectionsUncached(email, password) {
     const authHeader = authHeaderFor(email, password);
     const xmlHeaders = { "Content-Type": "text/xml; charset=utf-8", "Authorization": authHeader };
 
-    // Schritt 1: current-user-principal
+    // Step 1: current-user-principal
     const principalRes = $http.send({
         url: ENTRY_HOST + "/",
         method: "PROPFIND",

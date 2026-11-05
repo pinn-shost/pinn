@@ -916,6 +916,7 @@ window.PINN_I18N && window.PINN_I18N.keys("nl", {
   "chat.poll.onBoard": "ook op het prikbord",
   "chat.poll.option": "Antwoord {n}",
   "chat.poll.question": "Vraag",
+  "chat.poll.syncing": "Wordt gesynchroniseerd met het prikbord …",
   "chat.poll.tapVote": "Tik op een antwoord om te stemmen",
   "chat.poll.title": "Peiling maken",
   "chat.pollDeleted": "De peiling is verwijderd",

@@ -952,7 +952,7 @@ function runPushCron() {
 function runFamilyReminders(ctx, people, events, last, until, now, status) {
     const taskCal = ctx.config.taskCalendarName || "";
 
-    // --- Terminerinnerungen ---
+    // --- Event reminders ---
     const reminderPeople = people.filter(p => p.settings.termine);
     if (reminderPeople.length && events.length) try {
         const maxLead = Math.max.apply(null, reminderPeople.map(p => p.settings.vorlauf)) * 60000;
@@ -1459,7 +1459,7 @@ function loadDelayed() {
             const o = JSON.parse(String(raw));
             if (o && typeof o === "object") return o;
         }
-    } catch (e) { /* leer */ }
+    } catch (e) { /* ignore */ }
     return {};
 }
 function saveDelayed(map) {

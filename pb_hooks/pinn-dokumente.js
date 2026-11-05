@@ -175,7 +175,7 @@ function ensureSchema() {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Datumsrechnung (reine Texte "JJJJ-MM-TT")
+// Date arithmetic (plain texts "YYYY-MM-DD")
 // ---------------------------------------------------------------------------------------------
 function isIso(s) { return /^\d{4}-\d{2}-\d{2}$/.test(String(s || "")); }
 function parts(iso) { return [Number(iso.slice(0, 4)), Number(iso.slice(5, 7)), Number(iso.slice(8, 10))]; }
@@ -209,7 +209,7 @@ function wallNow() {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Merkliste gesendeter Erinnerungen
+// Record of reminders already sent
 // ---------------------------------------------------------------------------------------------
 function readStatus() {
     try {
@@ -334,7 +334,7 @@ function remindDocs(docs, today, status) {
     return sent;
 }
 
-// opts: { familyId: nur diese Familie (sofortige Prüfung nach dem Speichern) }
+// opts: { familyId: only this family (immediate check after saving) }
 function runReminders(opts) {
     const o = opts || {};
     const now = wallNow();

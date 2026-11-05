@@ -21,7 +21,7 @@ const SEND_FROM_HOUR = 18;
 const SEND_UNTIL_HOUR = 22; // after 10 p.m. (e.g. server was off) no more push - the banner still comes
 
 // ---------------------------------------------------------------------------------------------
-// Uhrzeit (Europe/Berlin)
+// Time of day (Europe/Berlin)
 // ---------------------------------------------------------------------------------------------
 function pad2(n) { return (n < 10 ? "0" : "") + n; }
 function lastSundayUtc(year, month) {
@@ -32,7 +32,7 @@ function tzOffsetMs(utcMs) {
     const y = new Date(utcMs).getUTCFullYear();
     return (utcMs >= lastSundayUtc(y, 2) && utcMs < lastSundayUtc(y, 9)) ? 7200000 : 3600000;
 }
-// Wanduhr: { y, m (1-12), d, wd (0 = Sonntag), hour, iso }
+// Wall clock: { y, m (1-12), d, wd (0 = Sunday), hour, iso }
 function wallNow() {
     const now = Date.now();
     const d = new Date(now + tzOffsetMs(now));
@@ -60,7 +60,7 @@ function monthKey(w) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Merker in pb_data
+// Markers in pb_data
 // ---------------------------------------------------------------------------------------------
 function readStatus() {
     try {
@@ -135,7 +135,7 @@ function langOf(u) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Texte
+// Texts
 // ---------------------------------------------------------------------------------------------
 const MONTHS = {
     de: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
@@ -204,7 +204,7 @@ function monthMessage(lang, key) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Versand
+// Sending
 // ---------------------------------------------------------------------------------------------
 function allUsers() {
     try { return $app.findRecordsByFilter("benutzer", "familie != ''", "", 0, 0); } catch (e) { return []; }

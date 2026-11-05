@@ -7,8 +7,8 @@
 /* ==========================================================
    Family dashboard (iPad): profile selection with optional PIN
    ----------------------------------------------------------
-   An admin sets up a device (e.g. the iPad in the kitchen) under Account → "Familien-Dashboard auf
-   diesem Gerät". For this the server hands out a device key (pb_hooks/dashboard.pb.js)
+   An admin sets up a device (e.g. the iPad in the kitchen) under Account →
+   "Familien-Dashboard auf diesem Gerät". For this the server hands out a device key (pb_hooks/dashboard.pb.js)
    that is only stored on this device.
    - When pinn. opens, the family's profile selection appears instead of the login.
    - Kids (members with a kids' page) land directly on their kids' page with their tasks;

@@ -738,7 +738,7 @@
 
   var S = { opts: {}, lang: 'en', wg: false, info: null, familie: '', laeuft: false, abbruch: false, ergebnis: null, url: '' };
 
-  /* ---------- Texte ---------- */
+  /* ---------- Texts ---------- */
   function terms(s) {
     var L = T[S.lang] || T.en;
     var F = S.wg ? L.FW : L.F, Fd = S.wg ? L.FWd : L.Fd;
@@ -905,7 +905,7 @@
     var listeS = (info.sammlungen || []).slice();
     var stop = function () { if (S.abbruch) { var e = new Error(t('abgebrochen')); e.code = 'abbruch'; throw e; } };
 
-    // 1) Sammlungen
+    // 1) Collections
     var kette = Promise.resolve();
     listeS.forEach(function (s) {
       kette = kette.then(function () {
@@ -946,7 +946,7 @@
       return naechste();
     });
 
-    // 3) Beschreibung, Liesmich, ZIP
+    // 3) Description, read-me, ZIP
     kette = kette.then(function () {
       stop();
       fortschritt(t('packe'), 1);
@@ -982,7 +982,7 @@
   }
 
   function freigeben() {
-    if (S.url) { try { URL.revokeObjectURL(S.url); } catch (e) { /* egal */ } }
+    if (S.url) { try { URL.revokeObjectURL(S.url); } catch (e) { /* ignore */ } }
     S.url = '';
   }
   function teilen() {
@@ -990,7 +990,7 @@
     if (!r) return;
     try {
       var file = new File([r.blob], r.name, { type: 'application/zip' });
-      navigator.share({ files: [file], title: r.name }).catch(function () { /* abgebrochen */ });
+      navigator.share({ files: [file], title: r.name }).catch(function () { /* cancelled */ });
     } catch (e) { /* not possible */ }
   }
   function kannTeilen() {
@@ -1172,7 +1172,7 @@
     if (S.root) S.root.classList.add('hidden');
     freigeben();
     S.ergebnis = null;
-    if (typeof S.opts.onClose === 'function') { try { S.opts.onClose(); } catch (e) { /* egal */ } }
+    if (typeof S.opts.onClose === 'function') { try { S.opts.onClose(); } catch (e) { /* ignore */ } }
   }
 
   function open(opts) {

@@ -816,7 +816,7 @@ function pantryScanManualLookup() {
   pantryScanHandleCode(code);
 }
 
-/* ---------- Was kann ich kochen? (what can I cook?) ---------- */
+/* ---------- What can I cook? ---------- */
 const PCOOK_UNITS = new Set(['g', 'gr', 'gramm', 'kg', 'kilo', 'mg', 'ml', 'l', 'liter', 'cl', 'dl', 'el', 'tl', 'msp', 'messerspitze', 'messerspitzen', 'prise', 'prisen', 'pck', 'päckchen', 'packung', 'packungen', 'pkg', 'dose', 'dosen', 'glas', 'gläser', 'becher', 'bund', 'stück', 'stk', 'st', 'zehe', 'zehen', 'scheibe', 'scheiben', 'tasse', 'tassen', 'tropfen', 'handvoll', 'zweig', 'zweige', 'stiel', 'stiele', 'blatt', 'blätter', 'würfel', 'beutel', 'flasche', 'flaschen', 'kopf', 'köpfe', 'stange', 'stangen', 'knolle', 'knollen', 'tüte', 'tüten', 'schuss', 'spritzer', 'cup', 'cups', 'tbsp', 'tsp', 'oz', 'lb', 'can', 'cans', 'pinch', 'clove', 'cloves']);
 const PCOOK_STOP = new Set(['frisch', 'frische', 'frischer', 'frisches', 'gross', 'grosse', 'grosser', 'grosses', 'klein', 'kleine', 'kleiner', 'kleines', 'mittelgross', 'mittelgrosse', 'gehackt', 'gehackte', 'gehackter', 'gerieben', 'geriebene', 'geriebener', 'gewurfelt', 'gewurfelte', 'weich', 'weiche', 'kalt', 'kalte', 'kaltes', 'warm', 'warme', 'reif', 'reife', 'fein', 'feine', 'grob', 'grobe', 'getrocknet', 'getrocknete', 'gemahlen', 'gemahlene', 'geschalt', 'geschalte', 'zimmerwarm', 'zimmerwarme', 'etwas', 'evtl', 'und', 'oder', 'mit', 'vom', 'von', 'der', 'die', 'das', 'den', 'fur', 'zum', 'zur', 'nach', 'belieben', 'bio', 'tiefgekuhlt', 'tiefgekuhlte', 'ca', 'circa', 'gut', 'nicht', 'ohne', 'aus', 'dem', 'ein', 'eine', 'einer', 'fresh', 'large', 'small', 'chopped']);
 const PCOOK_BASICS = new Set(['salz', 'pfeffer', 'wasser', 'leitungswasser', 'eiswurfel', 'salt', 'pepper', 'water']);
@@ -844,8 +844,8 @@ function pcookWordMatch(a, b) {
   if (a === b) return true;
   const short = a.length <= b.length ? a : b, long = a.length <= b.length ? b : a;
   if (short.length < 4) return false;
-  if (long.endsWith(short)) return true; // Weizenmehl ↔ Mehl
-  if (long.startsWith(short) && PCOOK_FORMS.includes(long.slice(short.length))) return true; // Knoblauchzehe ↔ Knoblauch
+  if (long.endsWith(short)) return true; // "Weizenmehl" ↔ "Mehl"
+  if (long.startsWith(short) && PCOOK_FORMS.includes(long.slice(short.length))) return true; // "Knoblauchzehe" ↔ "Knoblauch"
   return false;
 }
 // Ingredient line -> { core, qty, unit, optional, basic }
