@@ -75,7 +75,7 @@ function order(a, b) {
 function writeKeys(lang, data) {
   const keys = Object.keys(data).sort(order);
   const lines = keys.map((k, i) => '  ' + JSON.stringify(k) + ': ' + JSON.stringify(data[k]) + (i < keys.length - 1 ? ',' : ''));
-  const head = '/* pinn. – texts ' + lang.name + ' (' + lang.code + '), key based – pb_public/i18n/' + lang.code + '.i18n.js\n' +
+  const head = '/* pinn. – texts ' + (/[äöüÄÖÜß]/.test(lang.name) ? '"' + lang.name + '"' : lang.name) + ' (' + lang.code + '), key based – pb_public/i18n/' + lang.code + '.i18n.js\n' +
     '   One line per key, sorted. A text is a string or an object with plural forms (' + K.forms(lang.code).join(', ') + ').\n' +
     '   Placeholders {name} are filled by the app. "<key>#wg" = variant for a flat share.\n' +
     '   English (en) is the reference. How to add or change texts: .github/CONTRIBUTING.md → "Texts". */\n';
@@ -95,6 +95,12 @@ const WG_EMOJI = '\uD83E\uDDD1\u200D\uD83E\uDD1D\u200D\uD83E\uDDD1';
 const RU_NEIGHBOUR = { '': '', 'а': 'а', 'у': 'у', 'ом': 'ом', 'е': 'е', 'ы': 'и', 'ов': 'ей', 'ам': 'ям', 'ами': 'ями', 'ах': 'ях' };
 const RU_FLAT = { 'ья': 'а', 'ьи': 'ы', 'ье': 'е', 'ью': 'у', 'ьёй': 'ой', 'ьей': 'ой', 'ей': '', 'ьям': 'ам', 'ьями': 'ами', 'ьях': 'ах' };
 const RU_COMMON = { 'ый': 'ий', 'ая': 'ая', 'ое': 'ее', 'ые': 'ие', 'ого': 'его', 'ому': 'ему', 'ой': 'ей', 'ом': 'ем', 'ых': 'их', 'ым': 'им', 'ую': 'ую', 'ыми': 'ими' };
+// Turkish endings: aile + ending → ev + ending (vowel harmony and the buffer letters y/s/n change)
+const TR_HOME = { nin: 'in', ndeki: 'indeki', nde: 'inde', nden: 'inden', ne: 'ine', ni: 'ini', n: 'in',
+  sinin: 'inin', sine: 'ine', sini: 'ini', sinde: 'inde', sinden: 'inden', si: 'i', ye: 'e', yi: 'i', yle: 'le' };
+// "aile üyesi" + ending → "ev arkadaşı" + ending
+const TR_MATE = { si: 'ı', leri: 'ları', sinin: 'ının', lerinin: 'larının', sine: 'ına', lerine: 'larına', sini: 'ını', lerini: 'larını',
+  sinde: 'ında', lerinde: 'larında', sinden: 'ından', lerinden: 'larından' };
 const TERMS = {
   de: { keep: /Familienstammbuch|Familienkutsche/g, rules: [
     [/\b([Jj])edes Familienmitglied\b/g, '$1eder Mitbewohner'],
@@ -205,6 +211,16 @@ const TERMS = {
     [/\b([Gg])ezinnen\b/g, function (m, f) { return cap(f === 'G', 'woongroepen'); }],
     [/\b([Gg])ezins(?=[a-z])/g, function (m, f) { return cap(f === 'G', 'huis'); }],
     [/\b([Gg])ezin\b/g, function (m, f) { return cap(f === 'G', 'woongroep'); }],
+  ] },
+  // Turkish (since 1.130.0): "aile" → "ortak ev", "aile üyesi" → "ev arkadaşı". Turkish adds endings to the word, so the
+  // endings of "aile" are mapped to the matching endings of "ev" ("ailenin" → "ortak evin", "aileye" → "ortak eve",
+  // "ailen" → "ortak evin", "ailesi" → "ortak evi"). The lookarounds replace \b, which does not work for "ç ğ ı ö ş ü".
+  tr: { keep: /(?<![\p{L}\p{N}])aile\s+(?:doktor|hekim|araba|bütçe)\p{L}*/giu, rules: [
+    [/(?<![\p{L}\p{N}])([Aa])ile üye(sinin|lerinin|sine|lerine|sini|lerini|sinde|lerinde|sinden|lerinden|leri|si)(?![\p{L}\p{N}])/gu,
+      function (m, c, end) { return cap(c === 'A', 'ev arkadaş' + TR_MATE[end]); }],
+    [/(?<![\p{L}\p{N}])([Tt])üm aile(?![\p{L}\p{N}])/gu, function (m, c) { return cap(c === 'T', 'tüm ev'); }],
+    [/(?<![\p{L}\p{N}])([Aa])ile(nin|ndeki|nde|nden|ne|ni|n|sinin|sine|sini|sinde|sinden|si|ye|yi|yle|de|den|deki|ler|lerin|lere|leri|lerde)?(?![\p{L}\p{N}])/gu,
+      function (m, c, end) { return cap(c === 'A', 'ortak ' + (end === undefined ? 'ev' : 'ev' + (TR_HOME[end] === undefined ? end : TR_HOME[end]))); }],
   ] },
   // Russian (since 1.120.0): \b does not work for Cyrillic, so the rules use Unicode lookarounds (flag u).
   // семья → квартира and член(ы) семьи → сосед(и) decline in parallel, so each case maps to the same case.
