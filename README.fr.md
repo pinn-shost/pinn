@@ -126,6 +126,13 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский et 🇳🇱 Nederlands**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.129.2
+
+**Analyse du code : vérification des commentaires sans motifs de recherche fragiles**
+
+- **Sécurité.** L’alerte de l’analyse du code « Bad HTML filtering regexp » dans `.github/scripts/check-comments.js` est corrigée : la vérification trouve désormais les marqueurs de commentaire, les commentaires HTML (y compris ceux qui se terminent par `--!>`) et les blocs `<script>`/`<style>` intégrés avec de simples opérations sur le texte au lieu d’expressions régulières. Elle trouve exactement les mêmes commentaires qu’avant.
+- Modifié : `.github/scripts/check-comments.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) et tous les README. Pas de partie serveur – rien ne change dans l’app.
+
 ## Nouveautés de la 1.129.1
 
 **Corrections du chat et derniers commentaires en anglais**
@@ -228,17 +235,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Modifié : `index.html`, `js/chat.js` et `css/chat.css` (nouveaux), plusieurs `js/*.js`, tous les `i18n/*.i18n.js`, `pinn-setup.sh` et tous les README. **Côté serveur :** `pb_hooks/chat.pb.js` et `pb_hooks/pinn-chat.js` (nouveaux), `pb_hooks/pinn-push.js`, `pb_hooks/pinn-schema.js` – remplacer aussi les hooks.
 
 
-## Nouveautés de la 1.125.0
-
-**Tutoriel, résumé du jour et plaques d'immatriculation**
-
-- **Tutoriel revu.** Le bouton « Montre-moi » s’appelle désormais **« Interrompre »**. La deuxième étape ouvre le menu ☰ et l’explique (la barre du bas sur téléphone n’existe plus). La dernière étape renvoie à la page d’aide et aux Discussions GitHub pour poser des questions au développeur.
-- **Résumé du jour par push : tâches ménagères au choix.** Sous Compte → Notifications, vous choisissez si les tâches ménagères figurent dans le résumé du jour. Par défaut : oui, rien ne change tant que vous ne le désactivez pas.
-- **Plaques d’immatriculation des véhicules.** La bande bleue affiche maintenant le cercle d’étoiles de l’UE au lieu de « D ». Les plaques d’autres régions suivront.
-- Nettoyage : le code inutilisé de l’ancienne barre du téléphone a été supprimé.
-- Modifié : `index.html`, fichiers de `js/`, `css/` et `i18n/`, côté serveur `pb_hooks/pinn-push.js` et `src/` (la partie `menueleiste.html` disparaît). Installation comme toujours (`sudo sh pinn-*/pinn-setup.sh` ou le bouton de mise à jour).
-
-
 ## Comment ça marche
 
 ```mermaid
@@ -265,7 +261,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.129.1` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.129.2` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

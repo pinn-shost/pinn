@@ -130,6 +130,13 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский und 🇳🇱 Nederlands**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.129.2
+
+**Code-Prüfung: Kommentar-Prüfung ohne anfällige Suchmuster**
+
+- **Sicherheit.** Der Hinweis „Bad HTML filtering regexp“ der Code-Prüfung in `.github/scripts/check-comments.js` ist behoben: Die Prüfung erkennt Kommentarzeichen, HTML-Kommentare (auch solche, die mit `--!>` enden) sowie eingebettete `<script>`-/`<style>`-Bereiche jetzt mit einfachen Textvergleichen statt mit regulären Ausdrücken. Sie findet genau dieselben Kommentare wie vorher.
+- Geändert: `.github/scripts/check-comments.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) und alle READMEs. Kein Server-Teil – an der App ändert sich nichts.
+
 ## Neu in 1.129.1
 
 **Chat-Korrekturen und die letzten englischen Kommentare**
@@ -189,17 +196,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Geändert: `js/chatextras.js` und `js/chatstimme.js` (neu), `js/chat.js`, `js/chatmedien.js`, `js/chatgruppen.js`, `js/familie.js`, `js/pinnwand.js`, `js/termindetails.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/hinweise.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `pinn-setup.sh`, `src/` und alle READMEs. **Server-Teil:** `pb_hooks/chat.pb.js`, `pinn-chat.js`, `pinn-push.js` und `sw.pb.js` – die Hooks mit austauschen; einige Felder werden beim Start automatisch ergänzt.
 
 
-## Neu in 1.127.3
-
-**Chat: eigene Gruppen, angepinnte Chats, Wischen und Chat-Bilder**
-
-- **Eigene Gruppen erstellen.** Der neue Personen-Knopf neben dem Schild: Gruppe benennen und ankreuzen, wer dabei sein soll – die Leute sind sofort in der Gruppe, **ohne Einladung**. Ersteller und Admins ändern Name, Mitglieder und Bild; jeder kann die Gruppe verlassen. Wer später dazukommt, liest nur neuere Nachrichten.
-- **Reihenfolge und Anpinnen.** Oben steht die neueste Nachricht – gesendet oder empfangen; Chats lassen sich **anpinnen**, dann bleiben sie oben. **Einen Chat nach links wischen** zeigt zwei Knöpfe: Anpinnen/Lösen und Als gelesen/ungelesen markieren (je nach Zustand). Am Computer öffnet der „⋯“-Knopf oder ein Rechtsklick dasselbe. Ein von dir als ungelesen markierter Chat zeigt einen Punkt, bis du ihn öffnest; Pins und Markierungen sind auf jedem Gerät gleich.
-- **Bilder.** Der Familien-Admin tippt im geöffneten Familienchat auf das Bild und wählt ein Foto, rund zugeschnitten wie beim Profilbild; Ersteller und Admins einer Gruppe machen das Gleiche für die Gruppe.
-- Namen und Bilder von Gruppen sind nicht Ende-zu-Ende verschlüsselt (der Server braucht die Mitglieder für die Schlüssel); die Nachrichten bleiben es.
-- Geändert: `js/chatgruppen.js` (neu), `js/chat.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, alle `i18n/*.i18n.js`, `index.html`, `pinn-setup.sh`, `src/` und alle READMEs. **Server-Teil:** `pb_hooks/chat.pb.js` und `pb_hooks/pinn-chat.js` – die Hooks mit austauschen; drei weitere Sammlungen entstehen automatisch.
-
-
 ## So funktioniert’s
 
 ```mermaid
@@ -228,7 +224,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.129.1` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.129.2` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

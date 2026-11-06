@@ -126,6 +126,13 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский and 🇳🇱 Nederlands**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.129.2
+
+**Code scanning: comment check without fragile search patterns**
+
+- **Security.** The code-scanning alert “Bad HTML filtering regexp” in `.github/scripts/check-comments.js` is fixed: the check now finds comment markers, HTML comments (also those ending in `--!>`) and inline `<script>`/`<style>` blocks with plain string operations instead of regular expressions. It finds exactly the same comments as before.
+- Changed: `.github/scripts/check-comments.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) and all READMEs. No server part – nothing changes in the app.
+
 ## What's new in 1.129.1
 
 **Chat fixes and the last English comments**
@@ -228,17 +235,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Changed: `index.html`, `js/chat.js` and `css/chat.css` (new), several `js/*.js`, all `i18n/*.i18n.js`, `pinn-setup.sh` and all READMEs. **Server part:** `pb_hooks/chat.pb.js` and `pb_hooks/pinn-chat.js` (new), `pb_hooks/pinn-push.js`, `pb_hooks/pinn-schema.js` – replace the hooks too; two new collections are created automatically. Installation as always.
 
 
-## What's new in 1.125.0
-
-**Tutorial, daily summary & number plates**
-
-- **Tutorial revised.** The “Show me” button is now called **“Pause”**. The second step opens the ☰ menu and explains it – the bar at the bottom of the phone no longer exists. The last step points to the help page and to GitHub Discussions for questions to the developer.
-- **Daily push summary: household chores optional.** Under Account → Notifications you can now choose whether household chores are included in the daily summary. Default: yes, so nothing changes unless you switch it off.
-- **Vehicle number plates.** The blue strip now shows the EU circle of stars instead of “D”. Plates for other regions will follow.
-- Tidied up: unused code of the old phone bar removed.
-- Changed: `index.html`, `js/hilfe.js`, `css/hilfe.css`, `js/ansichten.js`, `js/mitteilungen.js`, `js/fahrzeuge.js`, `css/fahrzeuge.css`, `css/seitenleiste.css`, `css/pinnwand.css`, `js/listen.js`, `js/appstart.js`, `js/benutzer.js`, `js/familiensync.js`, `js/einstellungen.js`, `js/pinnwand.js`, `js/speichern.js`, `js/zustand.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, on the server `pb_hooks/pinn-push.js`, and `src/` (the part `menueleiste.html` is gone). Installation as always (`sudo sh pinn-*/pinn-setup.sh` or the update button).
-
-
 ## How it works
 
 ```mermaid
@@ -265,7 +261,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.129.1` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.129.2` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

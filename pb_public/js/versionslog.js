@@ -22,8 +22,9 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
-    v: '1.129', datum: '06.11.2026', titel: 'Englische Kommentare in allen Dateien',
+    v: '1.129', datum: '07.11.2026', titel: 'Englische Kommentare in allen Dateien',
     punkte: [
+      ['fix', '1.129.2: Sicherheitshinweis aus der Code-Prüfung behoben – die Kommentar-Prüfung erkennt HTML-Kommentare und Skript-Bereiche jetzt ohne anfällige Suchmuster. An der App ändert sich nichts.'],
       ['fix', '1.129.1 behoben: Eine im Chat geteilte Abstimmung, die auch auf der Pinnwand steht, erschien bei den anderen etwa 20 Sekunden lang als „Die Umfrage wurde gelöscht“. Jetzt steht dort kurz „Wird mit der Pinnwand abgeglichen …“, und die Abstimmung erscheint nach wenigen Sekunden.'],
       ['fix', '1.129.1 behoben: Fotos im Chat sind schon vor dem Öffnen scharf – die Vorschau ist doppelt so groß, und sobald ein Foto sichtbar wird, lädt pinn. das eigentliche Bild nach (auch bei älteren Nachrichten).'],
       ['info', '1.129.1: Letzte deutsche Kommentare umgestellt; eine neue automatische Prüfung achtet künftig darauf, dass alle Kommentare Englisch bleiben.'],

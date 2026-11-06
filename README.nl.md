@@ -107,6 +107,13 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский en 🇳🇱 Nederlands**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.129.2
+
+**Codescan: commentaarcontrole zonder kwetsbare zoekpatronen**
+
+- **Beveiliging.** De codescan-melding “Bad HTML filtering regexp” in `.github/scripts/check-comments.js` is opgelost: de controle vindt commentaartekens, HTML-commentaar (ook dat eindigt op `--!>`) en ingebedde `<script>`-/`<style>`-blokken nu met eenvoudige tekstbewerkingen in plaats van reguliere expressies. Ze vindt precies dezelfde opmerkingen als voorheen.
+- Gewijzigd: `.github/scripts/check-comments.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) en alle READMEs. Geen serverdeel – aan de app verandert niets.
+
 ## Nieuw in 1.129.1
 
 **Chatcorrecties en de laatste Engelse opmerkingen**
@@ -122,15 +129,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Opmerkingen in het Engels.** Alle code-opmerkingen in het project zijn nu Engels: serverdelen, installatie- en onderhoudsscripts, `docker-compose.yaml`, de `.env`-sjabloon, de Caddyfile en de app-bestanden. Aan de app, de teksten en het gedrag verandert niets.
 - Gewijzigd: `pb_hooks/` (alle bestanden), `pinn-setup.sh`, `pinn-wartung.sh`, `pinn-pocketbase-update.sh`, `docker-compose.yaml`, `env.txt`, `caddy/Caddyfile`, `js/sprachen.js`, `datenexport.js`, `einrichtung.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) en alle README’s. Serverdeel: de hook-bestanden – vervang die ook.
 
-## Nieuw in 1.128.0
-
-**Spraakbesturing in alle app-talen**
-
-- **Elf talen.** Siri (“HTTP Shortcuts” op Android) begrijpt nu ook Nederlands, Italiaans, Portugees, Chinees, Japans en Koreaans: aan het boodschappenlijstje toevoegen, het lijstje voorlezen, een taak aanmaken, “Wat staat er vandaag op het programma?”. Het antwoord komt in de taal van het profiel. De bestaande snelkoppeling en link blijven werken.
-- **Voorbeelden.** “Zet melk en eieren op het boodschappenlijstje”, “Aggiungi latte e uova alla lista della spesa”, “Adicione leite e ovos à lista de compras”, “把牛奶和鸡蛋加到购物清单”, “買い物リストに牛乳と卵を追加して”, “장보기 목록에 우유랑 달걀 추가해 줘”.
-- **Kleine verbeteringen.** Apostrofs uit dictaat (“c’è”) en leestekens aan het einde van een zin (。！？) worden verwerkt, en hoeveelheden zoals “2 Decken” worden niet meer opgeknipt.
-- Gewijzigd: `pb_hooks/pinn-sprache.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js` en alle README’s. Serverdeel: `pb_hooks/pinn-sprache.js` – vervang ook de hooks.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -140,7 +138,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.129.1` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.129.2` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

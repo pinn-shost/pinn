@@ -130,6 +130,13 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.129.2の新機能
+
+**コードスキャン：脆弱な検索パターンを使わないコメントチェック**
+
+- **セキュリティ。** `.github/scripts/check-comments.js` のコードスキャン警告「Bad HTML filtering regexp」を修正しました。チェックは正規表現の代わりにシンプルな文字列操作で、コメント記号、HTMLコメント（`--!>` で終わるものも含む）、埋め込みの `<script>`/`<style>` ブロックを見つけます。見つかるコメントは以前とまったく同じです。
+- 変更：`.github/scripts/check-comments.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) とすべてのREADME。サーバー部分なし――アプリ自体は何も変わりません。
+
 ## 1.129.1の新機能
 
 **チャットの修正と最後の英語コメント**
@@ -187,17 +194,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - 変更：`js/chatextras.js` と `js/chatstimme.js`（新規）、`js/chat.js`、`js/chatmedien.js`、`js/chatgruppen.js`、`js/familie.js`、`js/pinnwand.js`、`js/termindetails.js`、`js/dokumente.js`、`js/fahrzeuge.js`、`js/hinweise.js`、`css/chat.css`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、すべての `i18n/*.i18n.js`、`pinn-setup.sh`、`src/`、すべての README。**サーバー側：** `pb_hooks/chat.pb.js`、`pinn-chat.js`、`pinn-push.js`、`sw.pb.js` ――フックも入れ替えてください。起動時にいくつかのフィールドが自動で追加されます。
 
 
-## 1.127.3の新機能
-
-**チャット：自分でグループ作成、ピン留め、スワイプ操作、チャット画像**
-
-- **自分でグループを作れます。** 盾アイコンの隣に新しい「人」ボタン：グループに名前を付け、入れる人にチェックを付けると、**招待なしで**すぐに参加します。作成者と管理者が名前・メンバー・画像を変更でき、誰でも退出できます。後から加わった人は、それ以降のメッセージだけ読めます。
-- **並び順とピン留め。** 送受信にかかわらず最新のメッセージが一番上に来ます。チャットは**ピン留め**して上に固定できます。**チャットを左にスワイプ**すると、ピン留め／解除と、既読／未読にする（状態に応じて）の2つのボタンが出ます。パソコンでは「⋯」ボタンか右クリックで同じ操作ができます。未読にしたチャットは、開くまで点が表示されます。ピン留めと印はどの端末でも同じです。
-- **画像。** 家族の管理者が開いた家族チャットで画像をタップして写真を選ぶと、プロフィール画像と同じように丸く切り抜けます。グループの作成者と管理者も、グループで同じことができます。
-- グループの名前と画像はエンドツーエンド暗号化されません（鍵の準備にサーバーがメンバーを必要とするため）。メッセージは引き続き暗号化されます。
-- 変更：`js/chatgruppen.js`（新規）、`js/chat.js`、`css/chat.css`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、すべての `i18n/*.i18n.js`、`index.html`、`pinn-setup.sh`、`src/`、すべてのREADME。**サーバー側：** `pb_hooks/chat.pb.js` と `pb_hooks/pinn-chat.js` も入れ替えてください。コレクションが3つ自動で追加されます。
-
-
 ## しくみ
 
 ```mermaid
@@ -226,7 +222,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.129.1`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.129.2`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

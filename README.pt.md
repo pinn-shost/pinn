@@ -130,6 +130,13 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский e 🇳🇱 Nederlands**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.129.2
+
+**Análise de código: verificação de comentários sem padrões de busca frágeis**
+
+- **Segurança.** O alerta da análise de código “Bad HTML filtering regexp” em `.github/scripts/check-comments.js` foi corrigido: a verificação agora encontra os marcadores de comentário, os comentários HTML (também os que terminam em `--!>`) e os blocos `<script>`/`<style>` incorporados com operações de texto simples em vez de expressões regulares. Ela encontra exatamente os mesmos comentários de antes.
+- Alterado: `.github/scripts/check-comments.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) e todos os README. Sem parte de servidor – nada muda no app.
+
 ## Novidades da 1.129.1
 
 **Correções do chat e os últimos comentários em inglês**
@@ -187,17 +194,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Alterado: `js/chatextras.js` e `js/chatstimme.js` (novos), `js/chat.js`, `js/chatmedien.js`, `js/chatgruppen.js`, `js/familie.js`, `js/pinnwand.js`, `js/termindetails.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/hinweise.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos os `i18n/*.i18n.js`, `pinn-setup.sh`, `src/` e todos os README. **Parte do servidor:** `pb_hooks/chat.pb.js`, `pinn-chat.js`, `pinn-push.js` e `sw.pb.js` – substitua também os hooks; alguns campos são acrescentados automaticamente no arranque.
 
 
-## Novidades da 1.127.3
-
-**Chat: grupos próprios, chats fixados, deslizar e imagens do chat**
-
-- **Crie seus próprios grupos.** O novo botão de pessoas ao lado do escudo: dê um nome ao grupo e marque quem deve participar – as pessoas entram na hora, **sem convite**. O criador e os admins alteram nome, membros e imagem; qualquer um pode sair. Quem entrar depois só lê as mensagens mais novas.
-- **Ordem e fixar.** No topo fica a mensagem mais recente, enviada ou recebida; os chats podem ser **fixados** para ficar no topo. **Deslize um chat para a esquerda** e aparecem dois botões: fixar / desafixar e marcar como lido / não lido (conforme o estado). No computador, o botão «⋯» ou um clique direito abre o mesmo. Um chat marcado como não lido mostra um ponto até você abri-lo; fixados e marcas são iguais em todos os aparelhos.
-- **Imagens.** O admin da família toca na imagem no chat da família aberto e escolhe uma foto, recortada em círculo como a foto de perfil; o criador e os admins de um grupo fazem o mesmo para o grupo.
-- Nomes e imagens dos grupos não têm criptografia de ponta a ponta (o servidor precisa dos membros para as chaves); as mensagens têm.
-- Alterado: `js/chatgruppen.js` (novo), `js/chat.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos os `i18n/*.i18n.js`, `index.html`, `pinn-setup.sh`, `src/` e todos os README. **Parte de servidor:** `pb_hooks/chat.pb.js` e `pb_hooks/pinn-chat.js` – troque também os hooks; mais três coleções são criadas automaticamente.
-
-
 ## Como funciona
 
 ```mermaid
@@ -226,7 +222,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.129.1` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.129.2` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
