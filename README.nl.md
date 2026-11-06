@@ -107,6 +107,13 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский en 🇳🇱 Nederlands**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.130.0
+
+**Turks in voorbereiding**
+
+- **Turks.** Turks wordt voorbereid als extra app-taal en stap voor stap vertaald – eerst het kader, inloggen, navigatie en alle instellingen (503 van 6989 teksten). De taal is nog verborgen en nog niet te kiezen; aan de app verandert er voor jou niets.
+- Gewijzigd: `js/sprachen.js`, `js/textkern.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `.github/scripts/i18n-keys.js`, `pb_hooks/pinn-textkern.js`, `src/` (`index.html`) en alle READMEs. Serverdeel: `pb_hooks/pinn-textkern.js` (meervoudsregel voor Turks) – vervang ook de hooks.
+
 ## Nieuw in 1.129.2
 
 **Codescan: commentaarcontrole zonder kwetsbare zoekpatronen**
@@ -122,13 +129,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Scherpe foto’s in de chat.** Foto’s zijn al scherp voordat je ze opent: het voorbeeld is twee keer zo groot en zodra een foto zichtbaar is, laadt pinn. de echte afbeelding op de achtergrond – ook bij oudere berichten.
 - **Engelse opmerkingen.** De laatste Duitse opmerkingen in de code zijn omgezet; een nieuwe automatische controle (`check-comments.js`) zorgt dat alles Engels blijft. Nieuwe chatscreenshot in de README.
 
-## Nieuw in 1.129.0
-
-**Engelse opmerkingen in alle bestanden**
-
-- **Opmerkingen in het Engels.** Alle code-opmerkingen in het project zijn nu Engels: serverdelen, installatie- en onderhoudsscripts, `docker-compose.yaml`, de `.env`-sjabloon, de Caddyfile en de app-bestanden. Aan de app, de teksten en het gedrag verandert niets.
-- Gewijzigd: `pb_hooks/` (alle bestanden), `pinn-setup.sh`, `pinn-wartung.sh`, `pinn-pocketbase-update.sh`, `docker-compose.yaml`, `env.txt`, `caddy/Caddyfile`, `js/sprachen.js`, `datenexport.js`, `einrichtung.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) en alle README’s. Serverdeel: de hook-bestanden – vervang die ook.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -138,7 +138,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.129.2` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.130.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

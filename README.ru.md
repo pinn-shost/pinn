@@ -107,6 +107,13 @@ pinn. – это одно приложение для всего, что нуж�
 
 pinn. говорит на **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский и 🇳🇱 Nederlands**, подстраивает валюту и номера экстренных служб под ваш регион и переключается между терминами **«семья»** и **«совместная квартира»**. Один сервер может вести несколько семей, у каждой свои администраторы.
 
+## Что нового в 1.130.0
+
+**Турецкий язык в подготовке**
+
+- **Турецкий.** Турецкий готовится как ещё один язык приложения и переводится шаг за шагом: сначала каркас, вход, навигация и все настройки (503 из 6989 текстов). Язык пока скрыт и недоступен для выбора; в приложении для тебя ничего не меняется.
+- Изменено: `js/sprachen.js`, `js/textkern.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `.github/scripts/i18n-keys.js`, `pb_hooks/pinn-textkern.js`, `src/` (`index.html`) и все README. Серверная часть: `pb_hooks/pinn-textkern.js` (правило множественного числа для турецкого) – замени и хуки.
+
 ## Что нового в 1.129.2
 
 **Сканирование кода: проверка комментариев без ненадёжных шаблонов поиска**
@@ -129,15 +136,6 @@ pinn. говорит на **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Españo
 - **Комментарии на английском.** Все комментарии в коде проекта теперь на английском: серверные части, скрипты установки и обслуживания, `docker-compose.yaml`, шаблон `.env`, Caddyfile и файлы приложения. В самом приложении, его текстах и поведении ничего не меняется.
 - Изменено: `pb_hooks/` (все файлы), `pinn-setup.sh`, `pinn-wartung.sh`, `pinn-pocketbase-update.sh`, `docker-compose.yaml`, `env.txt`, `caddy/Caddyfile`, `js/sprachen.js`, `datenexport.js`, `einrichtung.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) и все README. Серверная часть: файлы hooks – замените и их.
 
-## Что нового в 1.128.0
-
-**Голосовое управление на всех языках приложения**
-
-- **Одиннадцать языков.** Siri («HTTP Shortcuts» на Android) теперь понимает также нидерландский, итальянский, португальский, китайский, японский и корейский: добавить в список покупок, зачитать список, создать задачу, «Что запланировано на сегодня?». Ответ приходит на языке профиля. Существующая команда и ссылка продолжают работать.
-- **Примеры.** “Zet melk en eieren op het boodschappenlijstje”, “Aggiungi latte e uova alla lista della spesa”, “Adicione leite e ovos à lista de compras”, “把牛奶和鸡蛋加到购物清单”, “買い物リストに牛乳と卵を追加して”, “장보기 목록에 우유랑 달걀 추가해 줘”.
-- **Мелкие исправления.** Апострофы при диктовке («c’è») и знаки в конце фразы (。！？) обрабатываются, а количества вроде «2 Decken» больше не разрезаются.
-- Изменено: `pb_hooks/pinn-sprache.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js` и все README. Серверная часть: `pb_hooks/pinn-sprache.js` – замените и хуки.
-
 ## Требования
 
 - NAS или мини-ПК с **Docker** и **Docker Compose** (например, Synology, UGREEN, QNAP или обычный Linux-сервер)
@@ -147,7 +145,7 @@ pinn. говорит на **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Españo
 ## Установка
 
 1. Скачайте ZIP [последнего релиза](https://github.com/pinn-shost/pinn/releases/latest) и распакуйте его.
-2. Создайте на NAS папку, например `/volume1/docker/Pocketbase`, и положите в неё распакованную папку (например, `pinn-1.129.2` или `pinn-main`) как есть.
+2. Создайте на NAS папку, например `/volume1/docker/Pocketbase`, и положите в неё распакованную папку (например, `pinn-1.130.0` или `pinn-main`) как есть.
 3. Подключитесь по SSH и выполните:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

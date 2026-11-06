@@ -130,6 +130,13 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.130.0의 새 소식
+
+**튀르키예어 준비 중**
+
+- **튀르키예어.** 튀르키예어를 새 앱 언어로 준비하며 단계별로 번역하고 있어요. 먼저 기본 틀, 로그인, 내비게이션, 모든 설정입니다(6989개 중 503개). 아직 숨겨져 있어 선택할 수 없고, 앱은 바뀌지 않아요.
+- 변경: `js/sprachen.js`, `js/textkern.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `.github/scripts/i18n-keys.js`, `pb_hooks/pinn-textkern.js`, `src/` (`index.html`) 및 모든 README. 서버 부분: `pb_hooks/pinn-textkern.js`(튀르키예어 복수형 규칙) – hooks도 함께 교체하세요.
+
 ## 1.129.2의 새 소식
 
 **코드 스캔: 취약한 검색 패턴 없는 주석 검사**
@@ -180,20 +187,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **보안.** 채팅 사진·동영상 미리보기에서 코드 스캐너가 보고한 “DOM text reinterpreted as HTML” 경고 3건을 해결했습니다.
 - 변경: `js/chatmedien.js`, `js/chatstimme.js`, `js/chat.js`, `js/chatextras.js`, `js/finanzen.js`, `js/sparen.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, 모든 `i18n/*.i18n.js`, `src/`(`index.html`), 모든 README. 서버 부분은 없음.
 
-## 1.127.4의 새 소식
-
-**채팅: 음성 메시지, 위치, 투표, PDF, 검색, 알림 끄기 – 그리고 끌 수 있는 암호화**
-
-- **음성 메시지.** 아무것도 입력하지 않았을 때는 보내기 버튼 대신 마이크 버튼이 나타납니다: 누르고, 말하고, 보내기(최대 5분). 파형, 재생/일시정지, 1×/1.5×/2×, 파형을 눌러 이동. 사진처럼 종단 간 암호화됩니다.
-- **클립 버튼이 메뉴가 되었습니다:** 사진/동영상, **PDF 문서**(최대 20MB, 열기/공유/저장/pinn.에 보관), **위치**, **투표**.
-- **위치.** 지도 미리보기와 이름 표시(위치 지도에 저장된 장소, 예: “집”을 제안). 누르면 지도가 열립니다: **“위치 지도에서 보기”**는 가족 → 위치를 열어 표시를 보여 주고, “지도 앱에서 열기”는 길 안내를 시작합니다.
-- **투표.** 질문과 최대 8개의 답변, 원하면 1인당 복수 선택. **“게시판에도 표시”**를 체크하면 게시판 투표도 함께 만들어지며, 어디서 투표하든 결과는 같습니다.
-- 채팅 **검색**(위쪽 돋보기), 채팅별 **알림 끄기**(8시간, 1주일, 항상 – 알림 없음, 메뉴의 “채팅” 옆 숫자에도 포함되지 않음), **그룹 해산**(만든 사람과 관리자).
-- **암호화를 끌 수 있습니다**(가족별, 관리자가 “채팅 보안”에서 설정). 끄면 알림에 텍스트가 표시되고(Android에서는 사진 미리보기도) 복구 코드가 필요 없습니다. 기본값은 종단 간 암호화입니다.
-- “채팅에서 이야기하기”(💬)가 일정, 문서, 차량에도 추가되었습니다. 수정: “pinn.에 보관”이 사진 아래에 열리던 문제, 채팅 제목을 앱 글꼴로 통일, 메뉴 숫자를 더 안정적으로 갱신.
-- 변경: `js/chatextras.js` 및 `js/chatstimme.js`(신규), `js/chat.js`, `js/chatmedien.js`, `js/chatgruppen.js`, `js/familie.js`, `js/pinnwand.js`, `js/termindetails.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/hinweise.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, 모든 `i18n/*.i18n.js`, `pinn-setup.sh`, `src/`, 모든 README. **서버 부분:** `pb_hooks/chat.pb.js`, `pinn-chat.js`, `pinn-push.js`, `sw.pb.js` – 훅도 함께 교체하세요. 시작 시 일부 필드가 자동으로 추가됩니다.
-
-
 ## 작동 방식
 
 ```mermaid
@@ -222,7 +215,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.129.2` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.130.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

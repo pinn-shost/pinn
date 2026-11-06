@@ -22,6 +22,12 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.130', datum: '07.11.2026', titel: 'Türkisch in Vorbereitung',
+    punkte: [
+      ['info', '1.130.0: Türkisch wird als weitere App-Sprache vorbereitet und Schritt für Schritt übersetzt. Zuerst sind Rahmen, Anmeldung, Navigation, alle Einstellungen dran (503 von 6989 Texten). Die Sprache ist noch versteckt und noch nicht wählbar – an der App ändert sich für dich nichts.'],
+    ],
+  },
+  {
     v: '1.129', datum: '07.11.2026', titel: 'Englische Kommentare in allen Dateien',
     punkte: [
       ['fix', '1.129.2: Sicherheitshinweis aus der Code-Prüfung behoben – die Kommentar-Prüfung erkennt HTML-Kommentare und Skript-Bereiche jetzt ohne anfällige Suchmuster. An der App ändert sich nichts.'],

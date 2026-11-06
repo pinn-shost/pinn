@@ -130,6 +130,13 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский e 🇳🇱 Nederlands**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.130.0
+
+**Turco em preparação**
+
+- **Turco.** O turco está sendo preparado como mais um idioma do app e traduzido passo a passo: primeiro a estrutura, o login, a navegação e todas as configurações (503 de 6989 textos). O idioma ainda está oculto e não pode ser escolhido; para você o app não muda.
+- Alterado: `js/sprachen.js`, `js/textkern.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `.github/scripts/i18n-keys.js`, `pb_hooks/pinn-textkern.js`, `src/` (`index.html`) e todos os README. Parte do servidor: `pb_hooks/pinn-textkern.js` (regra de plural para o turco) – substitua também os hooks.
+
 ## Novidades da 1.129.2
 
 **Análise de código: verificação de comentários sem padrões de busca frágeis**
@@ -180,20 +187,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Segurança.** Corrigidos os três alertas do analisador de código «DOM text reinterpreted as HTML» na pré-visualização de fotos e vídeos do chat.
 - Alterado: `js/chatmedien.js`, `js/chatstimme.js`, `js/chat.js`, `js/chatextras.js`, `js/finanzen.js`, `js/sparen.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos os `i18n/*.i18n.js`, `src/` (`index.html`) e todos os README. Sem parte de servidor.
 
-## Novidades da 1.127.4
-
-**Chat: mensagens de voz, localização, enquetes, PDF, pesquisa, silenciar – e encriptação desativável**
-
-- **Mensagens de voz.** Um botão de microfone substitui o de enviar enquanto nada é escrito: tocar, falar, enviar (até 5 minutos). Forma de onda, reproduzir/pausa, 1×/1,5×/2× e saltar tocando na onda. Encriptadas ponta a ponta como as fotos.
-- **O clipe é agora um menu:** foto/vídeo, **documento PDF** (até 20 MB; abrir / partilhar / guardar / arquivar no pinn.), **localização** e **enquete**.
-- **Localização.** Pré-visualização do mapa e legenda (é sugerido um local guardado do mapa de localização, p. ex. «Casa»). Ao tocar vê-se o mapa: **«Mostrar no mapa de localização»** abre Família → Localização com um marcador; «Abrir na app de mapas» inicia a navegação.
-- **Enquetes.** Uma pergunta e até 8 respostas, várias por pessoa se quiser. Com a caixa **«Mostrar também no mural»** cria-se ao mesmo tempo uma enquete no mural: vota-se aqui ou lá e o resultado é o mesmo.
-- **Pesquisa** no chat (lupa no topo), **silenciar** por chat (8 horas, 1 semana, sempre; sem notificação e sem contar no número junto a «Chat» no menu) e **dissolver um grupo** (criador e administradores).
-- **Encriptação desativável** por família (administradores, «Segurança do chat»). As notificações passam a mostrar o texto (no Android também uma pré-visualização das fotos) e ninguém precisa de código de recuperação. Por defeito continua encriptado ponta a ponta.
-- «Comentar no chat» (💬) agora também em compromissos, documentos e veículos. Corrigido: «Arquivar no pinn.» abria por baixo da foto, os títulos do chat usam o tipo de letra da app, o número no menu atualiza com mais fiabilidade.
-- Alterado: `js/chatextras.js` e `js/chatstimme.js` (novos), `js/chat.js`, `js/chatmedien.js`, `js/chatgruppen.js`, `js/familie.js`, `js/pinnwand.js`, `js/termindetails.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/hinweise.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos os `i18n/*.i18n.js`, `pinn-setup.sh`, `src/` e todos os README. **Parte do servidor:** `pb_hooks/chat.pb.js`, `pinn-chat.js`, `pinn-push.js` e `sw.pb.js` – substitua também os hooks; alguns campos são acrescentados automaticamente no arranque.
-
-
 ## Como funciona
 
 ```mermaid
@@ -222,7 +215,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.129.2` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.130.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

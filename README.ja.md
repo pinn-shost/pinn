@@ -130,6 +130,13 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.130.0の新機能
+
+**トルコ語を準備中**
+
+- **トルコ語。** トルコ語を新しいアプリ言語として準備し、少しずつ翻訳しています。まずは枠組み、ログイン、ナビゲーション、すべての設定（6989件中503件）です。この言語はまだ非表示で選べません。アプリ自体は何も変わりません。
+- 変更：`js/sprachen.js`, `js/textkern.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `.github/scripts/i18n-keys.js`, `pb_hooks/pinn-textkern.js`, `src/` (`index.html`) とすべてのREADME。サーバー部分：`pb_hooks/pinn-textkern.js`（トルコ語の複数形ルール）――hooksも置き換えてください。
+
 ## 1.129.2の新機能
 
 **コードスキャン：脆弱な検索パターンを使わないコメントチェック**
@@ -180,20 +187,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **セキュリティ。** チャットの写真・動画プレビューに関するコードスキャナーの警告「DOM text reinterpreted as HTML」3件を修正しました。
 - 変更：`js/chatmedien.js`、`js/chatstimme.js`、`js/chat.js`、`js/chatextras.js`、`js/finanzen.js`、`js/sparen.js`、`js/vertraege.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、すべての `i18n/*.i18n.js`、`src/`（`index.html`）、すべての README。サーバー側の変更はありません。
 
-## 1.127.4の新機能
-
-**チャット：ボイスメッセージ、位置情報、アンケート、PDF、検索、ミュート――暗号化はオフにも可能**
-
-- **ボイスメッセージ。** 何も入力していない間は送信ボタンの代わりにマイクボタンが表示されます。タップして話し、送信（最長5分）。波形、再生/一時停止、1×/1.5×/2×、波形をタップしてジャンプ。写真と同じくエンドツーエンド暗号化。
-- **クリップボタンがメニューになりました：** 写真/動画、**PDF書類**（20 MBまで。開く／共有／保存／pinn.に保存）、**位置情報**、**アンケート**。
-- **位置情報。** 地図プレビューとラベル付き（位置情報マップに保存した場所、例：「自宅」を提案）。タップで地図を表示：**「位置情報マップで表示」** で「家族 → 位置情報」を開いて印を表示、「マップアプリで開く」でナビを開始。
-- **アンケート。** 質問と最大8つの回答、希望すれば1人が複数回答可。**「掲示板にも表示」** にチェックすると掲示板のアンケートも同時に作成され、どちらで投票しても結果は同じです。
-- チャット内**検索**（上部の虫眼鏡）、チャットごとの**ミュート**（8時間・1週間・常に。通知なし、メニューの「チャット」横の数にも含まれません）、**グループの解散**（作成者と管理者）。
-- **暗号化をオフにできます**（家族ごと、管理者が「チャットのセキュリティ」で設定）。オフにすると通知にテキストが表示され（Androidでは写真のプレビューも）、復元コードは不要です。標準はエンドツーエンド暗号化のままです。
-- 「チャットで話す」（💬）が予定・書類・車両にも追加されました。修正：「pinn.に保存」が写真の下に開いていた問題、チャットの見出しをアプリのフォントに統一、メニューの数をより確実に更新。
-- 変更：`js/chatextras.js` と `js/chatstimme.js`（新規）、`js/chat.js`、`js/chatmedien.js`、`js/chatgruppen.js`、`js/familie.js`、`js/pinnwand.js`、`js/termindetails.js`、`js/dokumente.js`、`js/fahrzeuge.js`、`js/hinweise.js`、`css/chat.css`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、すべての `i18n/*.i18n.js`、`pinn-setup.sh`、`src/`、すべての README。**サーバー側：** `pb_hooks/chat.pb.js`、`pinn-chat.js`、`pinn-push.js`、`sw.pb.js` ――フックも入れ替えてください。起動時にいくつかのフィールドが自動で追加されます。
-
-
 ## しくみ
 
 ```mermaid
@@ -222,7 +215,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.129.2`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.130.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
