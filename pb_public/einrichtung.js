@@ -1,7 +1,7 @@
 /* pinn. – Set-up wizard for the main admin (pb_public/einrichtung.js)
    ----------------------------------------------------------------------------
    Loaded by index.html only when needed (main admin → Set-up, or automatically after
-   the first sign-in as main admin). Own texts in German, English, French, Spanish, Italian, Portuguese, Chinese, Japanese, Korean, Russian and Dutch –
+   the first sign-in as main admin). Own texts in German, English, French, Spanish, Italian, Portuguese, Chinese, Japanese, Korean, Russian, Dutch and Turkish –
    the app's translation layer does not interfere here (data-no-i18n / data-no-term).
    Server: pb_hooks/einrichtung.pb.js + pinn-einrichtung.js. Every step is saved when tapping
    "Weiter" (Next); at the end pinn. takes over everything with a short restart. */
@@ -10,7 +10,7 @@
   if (window.PinnSetup) return;
 
   // Russian (prepared since 1.120.0, enabled since 1.121.0); hidden languages are only selectable if the app offers them
-  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl'];
+  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl', 'tr'];
   var T = {};
   T.de = {
     titel: "Einrichtung", lade: "Einrichtung wird geladen …",
@@ -2436,6 +2436,218 @@
     nochmalPruefen: "Opnieuw controleren", zurVerwaltung: "Naar gezinsbeheer",
   };
 
+  // Turkish (since 1.130.12, still hidden in the app until it is enabled)
+  T.tr = {
+    titel: "Kurulum", lade: "Kurulum yükleniyor …",
+    weiter: "İleri", zurueck: "Geri", ueberspringen: "Atla", spaeter: "Sonra", schliessen: "Kapat",
+    pruefen: "Kontrol et", pruefe: "Kontrol ediliyor …", speichere: "Kaydediliyor …", kopieren: "Kopyala", kopiert: "Kopyalandı ✓",
+    anleitung: "Adım adım kılavuz", optional: "isteğe bağlı", erweitert: "Gelişmiş", zeigen: "Göster",
+    gespeichertGeheim: "kayıtlı: ••••{0}", leerLassen: "boş bırak = değişmez", ausEnv: ".env veya docker-compose.yaml dosyasındaki değer",
+    entfernen: "Kaldır", wirdEntfernt: "kaydederken kaldırılacak", entfernenFrage: "Bu kayıtlı değer kaldırılsın mı?",
+    schritt: "Adım {0} / {1}", fehlerFeld: "Lütfen “{0}” alanını kontrol et.", fehler: "Olmadı.", ok: "Tamam ✓",
+    fehlerNetz: "pinn. ile bağlantı yok – lütfen ev ağında olduğundan emin ol.",
+    ordnerFehlt: "NAS'ta “konfig” klasörü yok. Lütfen yeni docker-compose.yaml dosyasını kullan ve pinn-setup.sh betiğini çalıştır (veya “docker compose up -d”). Bu klasör olmadan kurulum hiçbir şeyi kaydedemez.",
+    ordnerSchreibschutz: "“konfig” klasörü salt okunur – lütfen pinn-setup.sh betiğini yeniden çalıştır.",
+    serverFehlt: "einrichtung.pb.js ve pinn-einrichtung.js (pb_hooks) sunucuda hâlâ eksik.",
+    erkannt: "Adres çubuğundan algılandı: {0}", deineAdresse: "pinn. adresin:", ph_sub: "örn. yilmaz-ailesi",
+    L_PORT: "HTTPS bağlantı noktası", h_port: "Bunu yalnızca docker-compose.yaml içindeki 8443 numaralı bağlantı noktasını değiştirdiysen değiştir.",
+    pflichtInfo: "Yalnızca “Ev ağı” ve “DuckDNS” zorunludur. Diğer her şeyi atlayıp istediğin zaman geri dönebilirsin: Ana yönetici → Kurulum.",
+    serverOk: "pinn. çalışıyor ve ayarları kaydedebiliyor ✓",
+    schonFertig: "Kurulum zaten tamamlandı. Her şeyi kontrol edip değiştirebilirsin – en sonda “Kaydet ve başlat” ile uygula.",
+    bitteWaehlen: "Lütfen bir seçenek seç (veya “Atla”).",
+    skipPflicht: "Bu adım olmadan HTTPS, anlık bildirimler ve ana ekran uygulaması çalışmaz. Yine de atlansın mı?",
+    pflichtFehlt: "Lütfen alanları doldur – ya da “Atla” düğmesine dokun.",
+    speichernStarten: "Kaydet ve başlat", neu: "yeni", nichtGesetzt: "kurulmadı", erledigtKurz: "tamam", offen: "açık",
+    eingerichtet: "kuruldu", aus: "kapalı",
+
+    t_sprache: "pinn.'e hoş geldin 👋",
+    i_sprache: "Kurulum için dili seç. Bu dil, bu cihazdaki pinn. için de kullanılır – her profil daha sonra kendi dilini seçebilir.",
+
+    t_start: "İhtiyacın olanlar",
+    i_start: "pinn. yaklaşık 20–30 dakikada tamamen kurulur. Her adım “İleri” düğmesine dokunduğunda kaydedilir – yani istediğin zaman durup kaldığın yerden devam edebilirsin.",
+    l_start: [
+      "Yönlendiricine erişim (FRITZ!Box için: kutunun altındaki şifre veya kendi şifren)",
+      "ev ağına (Wi-Fi) bağlı bu cihaz – en kolayı bilgisayar, ama telefon da olur",
+      "ücretsiz DuckDNS hizmeti için bir Google, GitHub veya Reddit hesabı",
+      "isteğe bağlı: Android takvimleri ve yapay zekâ için bir Google hesabı",
+    ],
+
+    t_netz: "Ev ağı: NAS adresi",
+    i_netz: "pinn.'in ev ağındaki NAS adresini bilmesi gerekir. Bu adres hiç değişmesin diye yönlendirici onu kalıcı olarak ayırır.",
+    L_NAS_IP: "NAS'ın IP adresi",
+    g_netz: [
+      "Tarayıcının adres çubuğuna bak: `http://192.168.178.20:8090` gibi bir şey görüyorsan, iki nokta üst üstenin önündeki sayı zaten NAS'ın IP adresidir.",
+      "Aksi halde FRITZ!Box'ına bak: tarayıcıda [fritz.box](http://fritz.box) adresini aç ve FRITZ!Box şifresiyle giriş yap.",
+      "Solda “Ev Ağı” → “Ağ” → “Ağ Bağlantıları” sekmesini aç.",
+      "Listede NAS'ını bul (genelde “UGREEN…” veya “DXP…”) ve sağdaki kalem simgesine (düzenle) dokun.",
+      "IPv4 adresini not al ve “Bu ağ cihazına her zaman aynı IPv4 adresini ata” kutusunu işaretle → “Uygula”.",
+      "Diğer yönlendiriciler: “Ev ağı”, “LAN” veya “DHCP” bölümüne bak – genelde “adres ayır” veya “sabit IP” denir. UGREEN uygulamasında adresi Denetim Masası → Ağ altında bulursun.",
+    ],
+
+    t_duckdns: "HTTPS'li adresin (DuckDNS)",
+    i_duckdns: "DuckDNS, pinn.'e güvenlik sertifikasıyla birlikte sabit bir adres veren ücretsiz bir hizmettir. pinn. buna anlık bildirimler, ana ekran uygulaması ve Google ile giriş için ihtiyaç duyar. Bağlantı noktası yönlendirmesi gerekmez – pinn. dışarıdan görünmez kalır.",
+    L_DUCKDNS_SUBDOMAIN: "Alt alan adı (istediğin bir ad)", L_DUCKDNS_TOKEN: "DuckDNS belirteci (token)", L_PINN_ADRESSE: "pinn. adresi",
+    g_duckdns: [
+      "[duckdns.org](https://www.duckdns.org) adresini aç.",
+      "Sağ üstten sunulan hesaplardan biriyle giriş yap (örn. Google, GitHub veya Reddit) – DuckDNS'in kendi şifresi yoktur.",
+      "“sub domain” alanına bir ad yaz, örn. `yilmaz-ailesi` (yalnızca küçük harf, rakam ve tire) ve “add domain” düğmesine dokun. Ad alınmışsa başka bir tane dene.",
+      "Sayfanın en üstünde “token” değerini göreceksin – tirelerle ayrılmış uzun bir metin. Seçip kopyala.",
+      "Alt alan adını ve belirteci buraya yapıştır ve “Kontrol et” düğmesine dokun. pinn., NAS'ının adresini DuckDNS'e kendisi kaydeder – web sitesindeki “current ip” alanını değiştirmen gerekmez.",
+      "Belirteç bir şifre gibidir – kimseyle paylaşma. Paylaştıysan: duckdns.org'da “recreate token” düğmesine dokun ve yeni belirteci buraya gir.",
+    ],
+    test_duckdns_ok: "DuckDNS adresi kabul etti ✓ – {0} artık NAS'ına ({1}) yönleniyor.",
+    test_duckdns_ko: "DuckDNS reddetti. Lütfen alt alan adını ve belirteci kontrol et – alt alan adı DuckDNS hesabında bulunmalı.",
+    test_duckdns_netz: "duckdns.org'a NAS'tan ulaşılamıyor. NAS'ın internet erişimi var mı?",
+    test_duckdns_fehlt: "Lütfen alt alan adını ve belirteci gir.",
+    test_duckdns_ungueltig: "Alt alan adı veya belirteç doğru görünmüyor.",
+    test_duckdns_ip_fehlt: "Lütfen önce “Ev ağı” adımında NAS'ın IP adresini gir.",
+
+    t_rebind: "Yönlendirici: DNS rebind koruması",
+    i_rebind: "pinn. adresin ev ağındaki bir cihazı gösterir. FRITZ!Box dahil birçok yönlendirici bunu koruma amacıyla engeller. O zaman pinn. bu adres üzerinden açılmaz. Tam olarak bu adres için bir istisna tanımlamak sorunu çözer:",
+    g_rebind: [
+      "[fritz.box](http://fritz.box) adresini aç ve giriş yap.",
+      "“Ev Ağı” → “Ağ” → “Ağ Ayarları” sekmesi.",
+      "En alta kadar kaydır ve “ek ayarlar” bölümünü aç.",
+      "“DNS Rebind Koruması” bölümünde, “Ana bilgisayar adı istisnaları” altına şu satırı gir: `{SUB}.duckdns.org`",
+      "“Uygula” düğmesine dokun ve – FRITZ!Box isterse – kutu üzerinden onayla.",
+      "Diğer yönlendiriciler: ayarlarda “DNS rebind” ara ve aynı adresi istisna olarak gir. Böyle bir ayar yoksa genelde yapılacak bir şey yoktur.",
+    ],
+    rebindErledigt: "Tamam – istisna eklendi",
+
+    t_fern: "Dışarıdayken kullan (VPN)",
+    i_fern: "pinn. bilerek internete açık değildir. Dışarıdayken telefon, sanki Wi-Fi'ndaymış gibi VPN üzerinden eve güvenli şekilde bağlanır. Bunu nasıl yapmak istersin?",
+    c_wg: "WireGuard'lı FRITZ!Box", c_wg_d: "FRITZ!OS 7.50 veya daha yenisini kullanan bir FRITZ!Box'ın varsa önerilir. Ücretsiz, ek hesap gerekmez.",
+    c_ts: "Tailscale", c_ts_d: "Diğer yönlendiriciler için – veya WireGuard çalışmazsa (örn. DS-Lite bağlantılarında). tailscale.com'da ücretsiz bir hesap gerekir.",
+    c_kein: "Yalnızca evde", c_kein_d: "pinn.'i yalnızca ev Wi-Fi ağında kullan. İstediğin zaman eklenebilir.",
+    L_TS_AUTHKEY: "Tailscale anahtarı (auth key)",
+    g_wireguard: [
+      "[fritz.box](http://fritz.box) adresini aç ve giriş yap. “Sistem” → “Güncelleme” altında FRITZ!OS 7.50 veya daha yenisi yazmalı (yazmıyorsa oradan güncelle).",
+      "“İnternet” → “Erişime İzin Ver” → “VPN (WireGuard)” sekmesi → “Bağlantı ekle”.",
+      "“Basitleştirilmiş kurulum (önerilir)” seçeneğini seç → “İleri”. Tek bir cihazın bağlanıp bağlanmayacağı sorulunca “Evet” seç.",
+      "Telefon için bir ad gir (örn. `Ayşe'nin telefonu`) → “Bitir”. FRITZ!Box onay isterse: kutudaki bir tuşa bas veya telefonda onayla.",
+      "FRITZ!Box bir MyFRITZ! hesabı isterse: ücretsiz kur – telefon, dışarıdayken kutunu böyle bulur.",
+      "Bir QR kod belirir. Telefona “WireGuard” uygulamasını kur: [iPhone](https://apps.apple.com/app/wireguard/id1441195209) · [Android](https://play.google.com/store/apps/details?id=com.wireguard.android).",
+      "WireGuard uygulamasında “+” → “QR koddan tara” (iPhone: “QR koddan oluştur”) öğesine dokun → ekrandaki kodu tara → bir ad ver → VPN yapılandırmasının eklenmesine izin ver.",
+      "Test: telefonda Wi-Fi'ı kapat, WireGuard'ı aç ve {ADRESSE} adresini aç.",
+      "Diğer her telefon için “Bağlantı ekle” adımından itibaren aynı adımları tekrarla – her cihaz kendi bağlantısını alır.",
+    ],
+    wgNurPinnT: "Yalnızca pinn.'e izin ver (örn. akrabalar için)",
+    wgNurPinn: "Bir cihaz VPN üzerinden tüm ev ağına değil yalnızca pinn.'e ulaşsın istiyorsan: WireGuard uygulamasında bağlantıya dokun → “Düzenle” → “İzin verilen IP'ler” altındaki her şeyi `{NAS_IP}/32, {ROUTER_IP}/32` ile değiştir → “Kaydet”. İkinci adres yönlendiricidir (ad çözümlemesi için). Not: kısıtlama o cihazda geçerlidir.",
+    wgDsLite: "Dışarıdayken çalışmıyor mu? Bazı bağlantıların (DS-Lite; kablo ve fiberde yaygın) kendine ait IPv4 adresi yoktur – o zaman WireGuard yalnızca telefonun dışarıdayken IPv6'sı varsa çalışır. Bu durumda Tailscale kullan.",
+    g_tailscale: [
+      "[login.tailscale.com](https://login.tailscale.com/start) adresini aç ve ücretsiz bir hesap oluştur (örn. Google, Microsoft veya Apple ile giriş yap).",
+      "Yönetim konsolunda üstten “Settings” → solda “Keys” → “Generate auth key…”.",
+      "Varsayılan ayarları değiştirme → “Generate key” → anahtarı (`tskey-auth-` ile başlar) kopyala ve yukarıya yapıştır.",
+      "“İleri” düğmesine dokun. NAS'taki “tailscale” kapsayıcısı bir dakika içinde bununla oturum açar.",
+      "Tailscale yönetim konsoluna geri dön: “Machines” sekmesi → “pinn” cihazında “…” düğmesine dokun → “Edit route settings…” → `{NAS_IP}/32` kutusunu işaretle → “Save”.",
+      "Yine “pinn” cihazında “…” altından “Disable key expiry” seç – aksi halde NAS her 180 günde bir yeniden oturum açmak zorunda kalır.",
+      "Her telefona “Tailscale” uygulamasını kur ([iPhone](https://apps.apple.com/app/tailscale/id1470499037) · [Android](https://play.google.com/store/apps/details?id=com.tailscale.ipn)) ve aynı hesapla giriş yap. Akrabalarını yönetim konsolunda “Users” altından davet et.",
+      "Test: telefonda Wi-Fi'ı kapat, Tailscale'e bağlan ve {ADRESSE} adresini aç.",
+    ],
+    keinFern: "Sorun değil – pinn. o zaman ev Wi-Fi ağında çalışır. Uzaktan erişimi istediğin zaman Ana yönetici → Kurulum altından ekleyebilirsin.",
+
+    t_google: "Google: Android takvimleri ve kişiler",
+    i_google: "İsteğe bağlı. pinn.'de Google takvimlerini (Android) veya Google Kişiler'deki doğum günlerini görmek istiyorsan gerekir. Tüm sunucu için bir kez kurulur – sonrasında herkes pinn.'e kendi Google hesabıyla giriş yapar. iPhone/iCloud için burada yapılacak bir şey yok.",
+    googleBrauchtHttps: "Google, “DuckDNS” adımındaki HTTPS adresine ihtiyaç duyar.",
+    L_REDIRECT: "Yönlendirme URI'si (Google Cloud Console için)",
+    L_PINN_GOOGLE_CLIENT_ID: "İstemci kimliği (Client ID)", L_PINN_GOOGLE_CLIENT_SECRET: "İstemci gizli anahtarı (Client secret)",
+    g_google: [
+      "[console.cloud.google.com](https://console.cloud.google.com) adresini aç ve bir Google hesabıyla giriş yap (ilk seferde hizmet şartlarını kabul et).",
+      "Üstteki proje seçiciye dokun → “Yeni proje” → adı `pinn` → “Oluştur”. Sonra üstten “pinn” projesini seç.",
+      "Üç API'yi etkinleştir – her birini aç ve “Etkinleştir” düğmesine dokun: [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com) · [CalDAV API](https://console.cloud.google.com/apis/library/caldav.googleapis.com) · [People API](https://console.cloud.google.com/apis/library/people.googleapis.com).",
+      "[Google Auth Platform](https://console.cloud.google.com/auth/overview) sayfasını aç → “Başlayın”: uygulama adı `pinn.`, destek e-postası = senin adresin → kitle “Harici” → iletişim e-postası → kabul et → “Oluştur”.",
+      "Solda “Kitle” → “Uygulamayı yayınla” → onayla. Önemli: “Test” durumunda her Google bağlantısı 7 gün sonra sona erer.",
+      "Solda “İstemciler” → “İstemci oluştur” → uygulama türü “Web uygulaması”, ad `pinn.`.",
+      "“Yetkili yönlendirme URI'leri” altında “URI ekle” düğmesine dokun ve tam olarak şu adresi yapıştır: `{REDIRECT}` → “Oluştur”.",
+      "İstemci kimliğini ve gizli anahtarı kopyala, buraya yapıştır ve “Kontrol et” düğmesine dokun. (Google gizli anahtarı yalnızca bir kez gösterir – aksi halde istemcide “Gizli anahtar ekle” seçeneğini kullan.)",
+      "Daha sonra bağlanırken Google “Google bu uygulamayı doğrulamadı” der. Kendi özel uygulaman için bu normaldir: “Gelişmiş” → “pinn. uygulamasına git”.",
+    ],
+    test_google_ok: "Google bu istemciyi tanıyor ✓",
+    test_google_uri: "İstemci kimliği ve gizli anahtar doğru, ancak yönlendirme URI'si istemcide eksik: {0}",
+    test_google_ungueltig: "Google bu istemci kimliğini veya gizli anahtarı tanımıyor – lütfen tekrar kopyala.",
+    test_google_netz: "Google'a NAS'tan ulaşılamıyor.",
+    test_google_fehlt: "Lütfen istemci kimliğini ve gizli anahtarı gir.",
+
+    t_ki: "Tarifler için yapay zekâ (Google Gemini)",
+    i_ki: "İsteğe bağlı. Yapay zekâ; metinlerden, fotoğraflardan, PDF'lerden ve bağlantılardan tarifleri çok daha iyi okur ve atık toplama takvimini bulur. Anahtar ücretsizdir ve NAS'ta kalır – uygulamalar Google ile hiçbir zaman doğrudan konuşmaz.",
+    L_PINN_GEMINI_KEY: "Gemini API anahtarı", L_PINN_GEMINI_MODELL: "Sabit model",
+    h_modell: "Boş = otomatik olarak güncel Flash modeli.",
+    g_ki: [
+      "[aistudio.google.com/apikey](https://aistudio.google.com/apikey) adresini aç ve bir Google hesabıyla giriş yap.",
+      "“Create API key” düğmesine dokun. Google bir proje sorarsa önceki adımdaki “pinn” projesini seç veya yeni bir tane oluştur.",
+      "Anahtarı kopyala (genelde `AIza` ile başlar), buraya yapıştır ve “Kontrol et” düğmesine dokun.",
+      "Bilmekte fayda var: ücretsiz kullanımda Google, gönderilen tarif metinlerini hizmetlerini geliştirmek için kullanabilir.",
+    ],
+    test_gemini_ok: "Anahtar geçerli ✓",
+    test_gemini_ungueltig: "Google anahtarı reddediyor – lütfen tekrar kopyala.",
+    test_gemini_gesperrt: "Anahtar Gemini API için engellenmiş. Lütfen AI Studio'da yeni bir anahtar oluştur.",
+    test_gemini_netz: "Google'a NAS'tan ulaşılamıyor.",
+    test_gemini_fehlt: "Lütfen anahtarı gir.",
+
+    t_ortung: "Konum (Aile → canlı konumlar)",
+    i_ortung: "İsteğe bağlı. Telefonlar konumlarını doğrudan pinn.'de paylaşır – burada girilecek bir şey yok. “traccar” kapsayıcısı yalnızca SIM kartlı GPS izleyiciler için gerekir.",
+    l_ortung: [
+      "Konum paylaşımı doğrudan pinn.'de çalışır (Aile → Konum). pinn. kapalıyken de göndermeye devam etmesi için “Traccar Client” uygulamasını kur – doğrudan pinn.'e gönderir.",
+      "pinn. daha sonra her kişi için sunucu adresini ve cihaz kimliğini Aile → ⚙︎ Konum altında gösterir.",
+      "Dışarıdayken telefonun “Dışarıdayken kullan” adımındaki VPN'e ihtiyacı vardır.",
+      "SIM kartlı GPS izleyiciler (örn. köpek tasmasında) mobil ağdan gönderir – bunun için yönlendiricide bağlantı noktası yönlendirmesi gerekir. pinn., izleyiciyi eklediğinde kılavuzu gösterir.",
+    ],
+    appTraccar: "“Traccar Client” uygulaması:",
+    h_traccar: "Yalnızca Traccar'da kendin bir hesap oluşturduysan doldur. Boş = pinn. kendisi bir tane oluşturur.",
+    L_PINN_TRACCAR_EMAIL: "Traccar e-postası", L_PINN_TRACCAR_PASSWORT: "Traccar şifresi",
+    test_traccar_ok: "Traccar çalışıyor ✓",
+    test_traccar_aus: "“traccar” kapsayıcısı çalışmıyor – telefonlar için gerekmez. Yalnızca GPS izleyiciler için: .env dosyasına COMPOSE_PROFILES=tracker ekle.",
+
+    t_ha: "Akıllı ev: Home Assistant",
+    i_ha: "İsteğe bağlı. Home Assistant'ın nerede çalışıyor?",
+    c_ha_kein: "Home Assistant yok",
+    c_ha_geraet: "Ayrı bir cihazda", c_ha_geraet_d: "örn. Raspberry Pi veya Home Assistant Green.",
+    c_ha_vm: "Bu NAS'ta sanal makine olarak", c_ha_vm_d: "O zaman pinn. küçük bir ağ dolambacı kurar – aksi halde NAS sanal makineye ulaşamaz.",
+    haGeraetInfo: "Burada girilecek bir şey yok. Her aile bağlantıyı pinn.'de Ayarlar → Akıllı ev altından kurar.",
+    L_HA_IP: "Home Assistant'ın IP adresi", L_HILFS_IP: "Boş yardımcı adres", L_NAS_NETZWERKKARTE: "NAS ağ arayüzü",
+    h_karte: "“auto” = pinn. ağ arayüzünü kendisi algılar.",
+    g_ha: [
+      "Home Assistant'ın IP'si: Home Assistant'ta “Ayarlar” → “Sistem” → “Ağ” – veya FRITZ!Box'ta “Ev Ağı” → “Ağ” altında “homeassistant” cihazını bul. Orada ayrıca “her zaman aynı IPv4 adresini ata” kutusunu işaretle.",
+      "Yardımcı adres: ev ağında hiçbir cihazın kullanmadığı ve yönlendiricinin hiç dağıtmadığı bir adres. FRITZ!Box'ta “Ev Ağı” → “Ağ” → “Ağ Ayarları” → “IPv4 ayarları” altında yönlendiricinin dağıttığı aralık görünür (örn. .20 ile .200 arası). Bunun üzerinde bir adres seç, örn. `{VORSCHLAG}`.",
+      "“İleri” düğmesine dokun – “ha-netz” kapsayıcısı dolambacı bir dakika içinde kurar. “Kontrol et”, pinn.'in Home Assistant'a ulaşıp ulaşamadığını gösterir.",
+      "Her aile Home Assistant erişim belirtecini daha sonra pinn.'de Ayarlar → Akıllı ev altında girer.",
+    ],
+    haAktiv: "Dolambaç etkin: {0} üzerinden (yardımcı adres: {1}) ✓", haWartet: "Dolambaç ayarları bekliyor.", haFehler: "Dolambaç kurulamadı (ağ arayüzü: {0}).",
+    test_homeassistant_ok: "Home Assistant'a ulaşılabiliyor ✓",
+    test_homeassistant_aus: "Home Assistant'a (henüz) ulaşılamıyor. “İleri” düğmesinden sonra bir dakikaya kadar bekle ve tekrar kontrol et.",
+    test_homeassistant_fehlt: "Lütfen Home Assistant'ın IP adresini gir.",
+
+    t_apps: "Uygulamalar ve cihazlar",
+    i_apps: "Neredeyse bitti! Aile üyelerinin telefonlarında şunlar gerekir:",
+    a_home_t: "Ana ekranda pinn. (herkes için)",
+    a_home: [
+      "iPhone/iPad: Safari'de {ADRESSE} adresini aç → paylaş simgesi (oklu kare) → “Ana Ekrana Ekle” → “Ekle”. Anlık bildirimler yalnızca bu şekilde çalışır (iOS 16.4 veya üzeri).",
+      "Android: Chrome'da {ADRESSE} adresini aç → sağ üstteki ⋮ → “Uygulamayı yükle” veya “Ana ekrana ekle”.",
+      "Her zaman https adresini kullan – :8090 içeren adresi değil.",
+    ],
+    a_vpn: "Dışarıdayken için – kurulum için “Dışarıdayken kullan” adımına bak:",
+    a_traccar: "Yalnızca konum takibi için:",
+    a_icloud_t: "iCloud takvimi (iPhone)",
+    a_icloud: "Her aile iCloud takvimini pinn.'de Ayarlar → Takvim altından kendisi bağlar. Bunun için uygulamaya özel bir şifre gerekir: [account.apple.com](https://account.apple.com) → “Oturum Açma ve Güvenlik” → “Uygulamaya Özel Şifreler” → “+” → ad `pinn.` → görüntülenen şifreyi (xxxx-xxxx-xxxx-xxxx) pinn.'e gir.",
+    a_push_t: "Anlık bildirimler",
+    a_push: "Her kişi bunları pinn.'de Ayarlar → Bildirimler → “Bu cihazda etkinleştir” altından açar – iPhone'da yalnızca ana ekrandaki uygulamada.",
+
+    t_fertig: "Özet",
+    i_fertig: "Ayrıntıları kontrol et. “Kaydet ve başlat” ile pinn. her şeyi uygular ve bir kez kısaca yeniden başlar (yaklaşık 10–20 saniye).",
+    S_ADRESSE: "Adres", S_REBIND: "DNS rebind istisnası", S_FERN: "Dışarıdayken", S_KI: "Yapay zekâ", S_ORTUNG: "Konum",
+    L_PINN_PUSH_KONTAKT: "Anlık bildirim hizmetleri için iletişim",
+    h_push: "Apple ve Google, anlık bildirimler için bir iletişim adresi (e-posta) ister. Boş = pinn. kendi adresini kullanır.",
+    neustart: "pinn. yeniden başlıyor …", neustartOk: "yeniden başladı ✓", neustartFehler: "pinn. yanıt vermiyor. Lütfen bir iki dakika sonra sayfayı yenile.",
+    pruefeHttps: "HTTPS kontrol ediliyor …", pruefeAlles: "Her şey kontrol ediliyor …",
+    zertifikatDauert: "Güvenlik sertifikası ilk seferde alınır – bu 1–2 dakika sürebilir …",
+    httpsOk: "Ulaşılabiliyor: {0} ✓",
+    httpsFehler: "Henüz yanıt vermiyor: {0}. Sık nedenler: yönlendiricideki DNS rebind koruması (5. adım), bu cihazın ev ağında olmaması veya sertifikanın biraz daha zamana ihtiyaç duyması. Daha sonra “Tekrar kontrol et” ile dene.",
+    httpsAus: "HTTPS adresi kurulmadı (DuckDNS adımı).",
+    t_geschafft: "Tamam! 🎉",
+    geschafftText: "pinn. kuruldu. Bundan sonra pinn.'i bu adresten aç ve tüm telefonlara kaydet (“Uygulamalar ve cihazlar” adımına bak). Ardından aile yönetiminde ilk aileni oluştur.",
+    nochmalPruefen: "Tekrar kontrol et", zurVerwaltung: "Aile yönetimine git",
+  };
+
   var STEPS = [
     { id: 'sprache' },
     { id: 'start' },
@@ -2730,7 +2942,7 @@
   var R = {};
   R.sprache = function () {
     var langs = (window.PINN_LANGUAGES || []).slice();
-    var order = { de: 0, en: 1, fr: 2, es: 3, it: 4, pt: 5, zh: 6, ja: 7, ko: 8, ru: 9, nl: 10 };
+    var order = { de: 0, en: 1, fr: 2, es: 3, it: 4, pt: 5, zh: 6, ja: 7, ko: 8, ru: 9, nl: 10, tr: 11 };
     // Hidden languages only if they are enabled on this device for testing (PINN_I18N.find)
     var I = window.PINN_I18N;
     langs = langs.filter(function (l) { return order[l.code] != null && (!l.hidden || (I && I.find && I.find(l.code))); })

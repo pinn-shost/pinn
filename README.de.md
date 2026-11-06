@@ -22,7 +22,8 @@
   <a href="README.ja.md">🇯🇵 日本語</a> ·
   <a href="README.ko.md">🇰🇷 한국어</a> ·
   <a href="README.ru.md">🇷🇺 Русский</a> ·
-  <a href="README.nl.md">🇳🇱 Nederlands</a>
+  <a href="README.nl.md">🇳🇱 Nederlands</a> ·
+  <a href="README.tr.md">🇹🇷 Türkçe</a>
 </p>
 
 <p align="center">
@@ -130,6 +131,13 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский und 🇳🇱 Nederlands**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.130.12
+
+**Türkisch – Etappe 13**
+
+- **Türkisch.** Der Einrichtungs-Assistent und der Datenexport sind übersetzt, dazu gibt es eine Kurz-README auf Türkisch (`README.tr.md`, in allen READMEs verlinkt). Die Sprache ist noch versteckt und nicht wählbar; an der App ändert sich für dich nichts. Notrufnummer für die Türkei geprüft: 112 stimmt (Polizei, Rettung und Feuerwehr).
+- Geändert: `js/sprachen.js`, `js/versionslog.js`, `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), alle READMEs (neu: `README.tr.md`) und die türkischen Texte. Server-Teil: `pb_hooks/pinn-einrichtung.js` (Sprachliste der Einrichtung) – `pinn-setup.sh` installiert ihn und startet PocketBase wie gewohnt neu.
+
 ## Neu in 1.130.11
 
 **Türkisch – Etappe 12**
@@ -172,13 +180,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Türkisch.** Das Zuhause (Miete und Kauf, Zähler, Mängel, Schlüssel, Wartung, Garten und Pflanzen) ist übersetzt (insgesamt 4285 von 6989 Texten). Die Sprache ist noch versteckt und nicht wählbar; an der App ändert sich für dich nichts.
 - Geändert: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) und alle READMEs. Kein Server-Teil.
 
-## Neu in 1.130.5
-
-**Türkisch – Etappe 6**
-
-- **Türkisch.** Rezepte, Finanzen, Kassen, Depots, Verträge, Taschengeld, Sterne und Kinderseite sind übersetzt (insgesamt 3635 von 6989 Texten). Die Sprache ist noch versteckt und nicht wählbar; an der App ändert sich für dich nichts.
-- Geändert: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) und alle READMEs. Kein Server-Teil.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -207,7 +208,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.130.11` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.130.12` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

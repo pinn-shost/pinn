@@ -36,6 +36,7 @@ const PINN_CHANGELOG = [
       ['info', '1.130.9: Türkisch Etappe 10 – Benachrichtigungen, Pinnwand, Chat sowie Wochen- und Monatsausblick; insgesamt 6373 von 6989 Texten.'],
       ['info', '1.130.10: Türkisch Etappe 11 – Hilfe und Einführung, Smart Home, Sprachsteuerung und die restlichen App-Texte (alles außer den Push-Nachrichten); insgesamt 6842 von 6989 Texten.'],
       ['info', '1.130.11: Türkisch Etappe 12 – Push-Nachrichten und Server-Texte; damit sind alle 6989 Texte übersetzt. Server-Teil: Push-Texte und Sprachlisten der Hooks.'],
+      ['info', '1.130.12: Türkisch Etappe 13 – Einrichtungs-Assistent und Datenexport sowie eine Kurz-README auf Türkisch; Notrufnummer für die Türkei geprüft. Server-Teil: Sprachliste der Einrichtung.'],
     ],
   },
   {

@@ -21,7 +21,8 @@
   <a href="README.zh.md">🇨🇳 中文</a> ·
   <a href="README.ja.md">🇯🇵 日本語</a> ·
   <a href="README.ru.md">🇷🇺 Русский</a> ·
-  <a href="README.nl.md">🇳🇱 Nederlands</a>
+  <a href="README.nl.md">🇳🇱 Nederlands</a> ·
+  <a href="README.tr.md">🇹🇷 Türkçe</a> ·
   <b>🇰🇷 한국어</b>
 </p>
 
@@ -130,6 +131,13 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.130.12의 새 소식
+
+**튀르키예어 – 13단계**
+
+- **튀르키예어.** 초기 설정 마법사와 데이터 내보내기를 번역했고, 튀르키예어 짧은 README(`README.tr.md`, 모든 README에서 링크)도 생겼어요. 아직 숨겨져 있어 선택할 수 없고, 앱은 바뀌지 않아요. 튀르키예의 긴급 전화번호도 확인했어요. 112가 맞아요(경찰, 구급, 소방).
+- 변경: `js/sprachen.js`, `js/versionslog.js`, `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), 모든 README(신규: `README.tr.md`)와 튀르키예어 텍스트. 서버 부분: `pb_hooks/pinn-einrichtung.js`(초기 설정의 언어 목록) – `pinn-setup.sh`가 평소처럼 설치하고 PocketBase를 다시 시작해요.
+
 ## 1.130.11의 새 소식
 
 **튀르키예어 – 12단계**
@@ -172,13 +180,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **튀르키예어.** 집(임대·구매, 계량기, 하자, 열쇠, 유지보수, 정원과 식물)을 번역했어요(6989개 중 총 4285개). 아직 숨겨져 있어 선택할 수 없고, 앱은 바뀌지 않아요.
 - 변경: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) 및 모든 README. 서버 부분 없음.
 
-## 1.130.5의 새 소식
-
-**튀르키예어 – 6단계**
-
-- **튀르키예어.** 레시피, 재무, 공동 금고, 포트폴리오, 계약, 용돈, 별, 어린이 페이지를 번역했어요(6989개 중 총 3635개). 아직 숨겨져 있어 선택할 수 없고, 앱은 바뀌지 않아요.
-- 변경: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) 및 모든 README. 서버 부분 없음.
-
 ## 작동 방식
 
 ```mermaid
@@ -207,7 +208,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.130.11` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.130.12` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

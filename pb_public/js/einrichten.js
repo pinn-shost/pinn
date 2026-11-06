@@ -2,13 +2,13 @@
    Part of the app code that used to be a single block in index.html. Classic script, no build step:
    it is loaded right after the inline script of index.html and before the other files in js/
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
-   Contents: the texts of the setup in eleven languages (Dutch still hidden) (PINN_SETUP_TEXTE, pinnSetupText) and loading and opening the assistant (loadPinnSetupScript, openPinnSetup). The assistant itself lives in pb_public/einrichtung.js and is only loaded when first opened. The notice about the open setup is in js/hauptadminseite.js. */
+   Contents: the texts of the setup in twelve languages (Turkish still hidden) (PINN_SETUP_TEXTE, pinnSetupText) and loading and opening the assistant (loadPinnSetupScript, openPinnSetup). The assistant itself lives in pb_public/einrichtung.js and is only loaded when first opened. The notice about the open setup is in js/hauptadminseite.js. */
 
 /* ==========================================================
    Setup (assistant for the main admin)
    ----------------------------------------------------------
    The assistant lives in pb_public/einrichtung.js and is only loaded when it is needed
-   (own texts in German, English, French, Spanish, Italian, Portuguese, Chinese, Japanese, Korean, Russian and Dutch). Server: pb_hooks/einrichtung.pb.js.
+   (own texts in German, English, French, Spanish, Italian, Portuguese, Chinese, Japanese, Korean, Russian, Dutch and Turkish). Server: pb_hooks/einrichtung.pb.js.
    - starts by itself after login as main admin as long as the setup is still open
      ("Später" holds until the app is closed)
    - reachable at any time via Main admin → ⚙︎ Einrichtung
@@ -148,6 +148,19 @@ const PINN_SETUP_TEXTE = {
     loginBtn: 'Inloggen als hoofdbeheerder',
     loginMain: 'De eerste keer is het wachtwoord “Admin” – daarna stel je je eigen wachtwoord in en begint de installatie.',
     laden: 'De installatie kon niet worden geladen (ontbreekt pb_public/einrichtung.js?).',
+  },
+  // Turkish (since 1.130.12, still hidden in the app until it is enabled)
+  tr: {
+    btn: '⚙︎ Kurulum',
+    offen: 'pinn. kurulumu henüz tamamlanmadı. Kurulum olmadan HTTPS, anlık bildirimler ve ana ekran uygulaması çalışmaz.',
+    fortsetzen: 'Kuruluma devam et',
+    neustart: 'Kaydedilen ayarlar ancak pinn. yeniden başladıktan sonra geçerli olur.',
+    neustartBtn: 'Şimdi uygula (kısa yeniden başlatma)',
+    neustartLaeuft: 'pinn. yeniden başlıyor …',
+    loginHint: 'Burada yeni misin? İlk kurulum, ana yönetici olarak giriş yaptıktan sonra başlar.',
+    loginBtn: 'Ana yönetici olarak giriş yap',
+    loginMain: 'İlk seferde şifre “Admin” – sonra kendi şifreni belirlersin ve kurulum başlar.',
+    laden: 'Kurulum yüklenemedi (pb_public/einrichtung.js eksik mi?).',
   },
 };
 function pinnSetupText(key) {

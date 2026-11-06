@@ -27,6 +27,8 @@ const PINN_EXPORT_TEXTE = {
   ru: { btn: '📦 Экспортировать {F}', kurz: '📦 Экспорт', text: 'Все данные {Fd} одним ZIP-файлом – вместе с документами, чеками и изображениями. Например, для переезда на другой NAS или как собственная резервная копия.', laden: 'Не удалось загрузить экспорт (нет pb_public/datenexport.js?).', F: 'семью', FW: 'квартиру', Fd: 'вашей семьи', FWd: 'вашей квартиры' },
   // Dutch (since 1.123.11, offered in the app since 1.123.12): {F} is the bare noun ("export the family" = "gezin exporteren")
   nl: { btn: '📦 {F} exporteren', kurz: '📦 Export', text: 'Alle gegevens {Fd} als ZIP-bestand – inclusief documenten, bonnetjes en afbeeldingen. Bijvoorbeeld voor de verhuizing naar een andere NAS of als eigen back-up.', laden: 'De export kon niet worden geladen (ontbreekt pb_public/datenexport.js?).', F: 'gezin', FW: 'woongroep', Fd: 'van je gezin', FWd: 'van je woongroep' },
+  // Turkish (since 1.130.12, still hidden in the app): {F} is the bare noun ("export: family" = "Dışa aktar: aile")
+  tr: { btn: '📦 Dışa aktar: {F}', kurz: '📦 Dışa aktar', text: 'ZIP dosyası olarak {Fd} tüm verileri – belgeler, fişler ve resimler dahil. Örneğin başka bir NAS\'a taşınmak veya kendi yedeğin için.', laden: 'Dışa aktarım yüklenemedi (pb_public/datenexport.js eksik mi?).', F: 'aile', FW: 'ortak ev', Fd: 'ailenin', FWd: 'ortak evin' },
 };
 function pinnExportText(key) {
   const l = (window.PINN_I18N && window.PINN_I18N.current) || 'en';

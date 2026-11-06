@@ -12,7 +12,7 @@
    (pb_hooks/export.pb.js + pinn-export.js). Files are taken over uncompressed (PDFs and photos
    are already compressed), the JSON data is compressed – where the browser can do it.
    Own texts in German, English, French, Spanish, Italian, Portuguese, Chinese,
-   Japanese, Korean, Russian and Dutch (data-no-i18n / data-no-term).
+   Japanese, Korean, Russian, Dutch and Turkish (data-no-i18n / data-no-term).
 
    Structure of the ZIP:
      pinn-export.json                 description: format, version, family, content, file list
@@ -24,7 +24,7 @@
   'use strict';
   if (window.PinnExport) return;
 
-  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl'];
+  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl', 'tr'];
   var T = {};
   T.de = {
     F: 'Familie', FW: 'WG', Fd: 'der Familie', FWd: 'der WG',
@@ -736,6 +736,60 @@
     ],
   };
 
+  // Turkish (since 1.130.12, still hidden in the app until it is enabled)
+  T.tr = {
+    F: "aile", FW: "ortak ev", Fd: "ailenin", FWd: "ortak evin",
+    titel: "Dışa aktar: {F}",
+    intro: "ZIP dosyası olarak {Fd} tüm verileri – belgeler, fişler ve resimler dahil. Örneğin başka bir NAS'a taşınmak veya kendi yedeğin için.",
+    lade: "İçerik kontrol ediliyor …", fehler: "Olmadı.",
+    fehlerNetz: "pinn. ile bağlantı yok – lütfen ev ağında veya VPN'de olduğundan emin ol.",
+    serverFehlt: "export.pb.js ve pinn-export.js (pb_hooks) sunucuda hâlâ eksik.",
+    familieWaehlen: "Hangi {F}?", inhalt: "ZIP'in içinde neler var", eintraege: "{0} kayıt", dateienN: "{0} dosya",
+    dokumente: "Toplam dosya", groesse: "Boyut (yaklaşık)",
+    nichtDrin: "Dahil değil",
+    nichtDrinText: "Şifreler, PIN'ler, iCloud, Google ve Home Assistant erişim bilgileri, oturum açmış cihazlar ve anlık bildirim abonelikleri. Başka bir NAS'ta yalnızca yeniden giriş yaparsın. Traccar'daki konum geçmişi de dahil değildir.",
+    privat: "Özel olduğu için dahil değil: üyesi olmadığın {0} kasa ve diğer profillere ait {1} “Yalnızca ben” takvimi. Taşınma gibi durumlar için tam dışa aktarımı ana yönetici oluşturur.",
+    voll: "Tam dışa aktarım – özel kasalar ve tüm profillerin “Yalnızca ben” takvimleri dahildir.",
+    sicherheit: "ZIP; finans bilgilerini, belgeleri ve acil durum kartlarını şifrelenmemiş olarak içerir. Lütfen güvenli sakla ve e-postayla gönderme.",
+    gross: "Bu yaklaşık {0} eder. Telefonda bu biraz sürebilir – dışa aktarımı tercihen bilgisayarda yap ve pinn. bu sırada açık kalsın.",
+    starten: "ZIP oluştur", abbrechen: "İptal", schliessen: "Kapat", nochmal: "Tekrar dene",
+    schrittDaten: "Veriler: {0}", schrittDatei: "Dosya {0} / {1}", packe: "ZIP hazırlanıyor …",
+    offenLassen: "Lütfen dışa aktarım bitene kadar pinn. açık kalsın.",
+    fertig: "Dışa aktarım tamamlandı ✓", fertigText: "{0} kayıt ve {1} dosya · {2}",
+    speichern: "ZIP'i kaydet", teilen: "Paylaş veya Dosyalar'a kaydet",
+    speichernTipp: "iPhone/iPad: “Paylaş” → “Dosyalar'a Kaydet”. Bilgisayar: “ZIP'i kaydet” dosyayı indirilenler klasörüne koyar.",
+    fehlende: "{0} dosya okunamadı – bunlar ZIP içindeki export-fehler.txt dosyasında listelenir.",
+    abgebrochen: "Dışa aktarım iptal edildi.", zuGross: "Dışa aktarım 4 GB'tan büyük – düz bir ZIP bunu taşıyamaz.",
+    keinAdmin: "Dışa aktarımı yalnızca yöneticiler oluşturabilir.",
+    S: {
+      familien: "{F}", benutzer: "Profiller", familien_daten: "Takvim, listeler, tarifler, üyeler ve ayarlar",
+      rezept_bilder: "Tarif resimleri", oeffentliche_rezepte: "Paylaşılan tarifler", aufgaben: "Görevler",
+      haushalt_verlauf: "Ev işi geçmişi", kassen: "Kasalar, portföyler ve sözleşmeler", ausgaben: "İşlemler",
+      finanz_dokumente: "Sözleşme belgeleri", dokumente: "Belgeler", pinnwand_bilder: "Pano resimleri",
+      kalender_eigene: "Kendi takvimleri", kalender_termine: "Etkinlikler", muellkalender: "Atık takvimi",
+      ortung: "Yerler ve konum", zuhause: "Ev", smarthome_zugaenge: "Akıllı ev",
+      dashboard_hintergruende: "Gösterge paneli", apple_zugaenge: "iCloud", google_zugaenge: "Google",
+    },
+    liesmich: "README.txt",
+    readme: [
+      "pinn. – veri dışa aktarımı",
+      "",
+      "{F}: {0}",
+      "Oluşturulma: {1}, oluşturan: {2} (pinn. {3})",
+      "",
+      "İçerik:",
+      "  pinn-export.json  dışa aktarımın açıklaması (biçim, içerik, dosya listesi)",
+      "  daten/            her koleksiyon için tüm kayıtlar JSON olarak (PocketBase'de saklandığı gibi)",
+      "  dateien/          belgeler, fişler ve resimler: dateien/<koleksiyon>/<kayıt kimliği>/<dosya>",
+      "",
+      "Dahil değil: şifreler, PIN'ler, erişim bilgileri (iCloud, Google, Home Assistant),",
+      "oturum açmış cihazlar, anlık bildirim abonelikleri ve Traccar'daki konum geçmişi.",
+      "",
+      "Dikkat: bu dosya finans bilgilerini, belgeleri ve acil durum kartlarını şifrelenmemiş olarak içerir.",
+      "Lütfen güvenli sakla.",
+    ],
+  };
+
   var S = { opts: {}, lang: 'en', wg: false, info: null, familie: '', laeuft: false, abbruch: false, ergebnis: null, url: '' };
 
   /* ---------- Texts ---------- */
@@ -763,7 +817,7 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
-  function locale() { return { de: 'de-DE', en: 'en-GB', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', pt: 'pt-BR', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR', ru: 'ru-RU', nl: 'nl-NL' }[S.lang] || 'en-GB'; }
+  function locale() { return { de: 'de-DE', en: 'en-GB', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', pt: 'pt-BR', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR', ru: 'ru-RU', nl: 'nl-NL', tr: 'tr-TR' }[S.lang] || 'en-GB'; }
   function zahl(n) { try { return Number(n || 0).toLocaleString(locale()); } catch (e) { return String(n || 0); } }
   function groesse(b) {
     b = Number(b) || 0;
