@@ -27,6 +27,7 @@ const PINN_CHANGELOG = [
       ['info', '1.130.0: Türkisch wird als weitere App-Sprache vorbereitet und Schritt für Schritt übersetzt. Zuerst sind Rahmen, Anmeldung, Navigation, alle Einstellungen dran (503 von 6989 Texten). Die Sprache ist noch versteckt und noch nicht wählbar – an der App ändert sich für dich nichts.'],
       ['info', '1.130.1: Türkisch Etappe 2 – Konto, Geräte, Fehlerprotokoll sowie Sicherungen & Updates (insgesamt 875 von 6989 Texten). Außerdem „Dashboard“ im Türkischen durchgehend als „Gösterge paneli“ (die Pinnwand heißt „Pano“).'],
       ['info', '1.130.2: Türkisch Etappe 3 – Kalender, Aufgaben, Haushalt, Übersicht, Wetter, Suche und Feiertage (insgesamt 1365 von 6989 Texten).'],
+      ['info', '1.130.3: Türkisch Etappe 4 – alle Listen (Packlisten, Wunschlisten, Geschenke, Checklisten, Vorlagen); insgesamt 1926 von 6989 Texten.'],
     ],
   },
   {

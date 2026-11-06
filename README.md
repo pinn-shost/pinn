@@ -126,6 +126,13 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский and 🇳🇱 Nederlands**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.130.3
+
+**Turkish – stage 4**
+
+- **Turkish.** All lists (packing lists, wish lists, gifts, checklists, templates) are translated (1926 of 6989 texts in total). The language is still hidden and cannot be chosen yet; nothing changes in the app for you.
+- Changed: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) and all READMEs. No server part.
+
 ## What's new in 1.130.2
 
 **Turkish – stage 3**
@@ -213,17 +220,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Changed: `js/chatextras.js` and `js/chatstimme.js` (new), `js/chat.js`, `js/chatmedien.js`, `js/chatgruppen.js`, `js/familie.js`, `js/pinnwand.js`, `js/termindetails.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/hinweise.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `pinn-setup.sh`, `src/` and all READMEs. **Server part:** `pb_hooks/chat.pb.js`, `pinn-chat.js`, `pinn-push.js` and `sw.pb.js` – replace the hooks too; a few fields are added automatically at start.
 
 
-## What's new in 1.127.3
-
-**Chat: your own groups, pinned chats, swipe actions and chat pictures**
-
-- **Make your own groups.** The new people button next to the shield: give the group a name and tick who belongs to it – they are in the group right away, **no invitation**. The creator and admins change name, members and picture; everybody can leave. People added later can only read newer messages.
-- **Order and pinning.** The newest message – sent or received – is on top; chats can be **pinned** so they stay on top. **Swipe a chat to the left** for two buttons: pin / unpin and mark as read / unread (depending on the state). On a computer the “⋯” button or a right click opens the same. A chat you marked as unread shows a dot until you open it; pins and marks are the same on every device.
-- **Pictures.** The family admin taps the picture in the open family chat and chooses a photo, cropped round like a profile picture; the creator and admins of a group do the same for the group.
-- Names and pictures of groups are not end-to-end encrypted (the server needs the members to prepare the keys); the messages still are.
-- Changed: `js/chatgruppen.js` (new), `js/chat.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `index.html`, `pinn-setup.sh`, `src/` and all READMEs. **Server part:** `pb_hooks/chat.pb.js` and `pb_hooks/pinn-chat.js` – replace the hooks too; three more collections are created automatically.
-
-
 ## How it works
 
 ```mermaid
@@ -250,7 +246,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.130.2` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.130.3` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
