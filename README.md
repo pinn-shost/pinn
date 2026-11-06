@@ -126,6 +126,13 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский and 🇳🇱 Nederlands**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.130.8
+
+**Turkish – stage 9**
+
+- **Turkish.** Pets, school and daycare, family members, location, SOS and the family tile are translated (5779 of 6989 texts in total). The language is still hidden and cannot be chosen yet; nothing changes in the app for you.
+- Changed: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) and all READMEs. No server part.
+
 ## What's new in 1.130.7
 
 **Turkish – stage 8**
@@ -199,13 +206,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **README.** New chat screenshot at the top; the kids' page moved to the further screenshots.
 - Changed: `js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (all language files), `src/` (`index.html`), comments in some hook files, `datenexport.js`, `einrichtung.js`, `.github/` (new check) and all READMEs. Server part: only comments changed – replacing the hook files is still recommended.
 
-## What's new in 1.129.0
-
-**English comments in all files**
-
-- **Comments in English.** All code comments in the project are now written in English: server parts, installation and maintenance scripts, `docker-compose.yaml`, the `.env` template, the Caddyfile and the app files. Nothing changes in the app, its texts or its behaviour.
-- Changed: `pb_hooks/` (all files), `pinn-setup.sh`, `pinn-wartung.sh`, `pinn-pocketbase-update.sh`, `docker-compose.yaml`, `env.txt`, `caddy/Caddyfile`, `js/sprachen.js`, `datenexport.js`, `einrichtung.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) and all READMEs. Server part: the hook files – replace them too.
-
 ## How it works
 
 ```mermaid
@@ -232,7 +232,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.130.7` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.130.8` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

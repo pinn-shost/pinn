@@ -32,6 +32,7 @@ const PINN_CHANGELOG = [
       ['info', '1.130.5: Türkisch Etappe 6 – Rezepte, Finanzen, Kassen, Depots, Verträge, Taschengeld, Sterne und Kinderseite; insgesamt 3635 von 6989 Texten.'],
       ['info', '1.130.6: Türkisch Etappe 7 – Zuhause (Miete und Kauf, Zähler, Mängel, Schlüssel, Wartung, Garten und Pflanzen); insgesamt 4285 von 6989 Texten.'],
       ['info', '1.130.7: Türkisch Etappe 8 – Fahrzeuge, Dokumente und PDF-Einlesen; insgesamt 4944 von 6989 Texten.'],
+      ['info', '1.130.8: Türkisch Etappe 9 – Haustiere, Schule und Kita, Familienmitglieder, Ortung, SOS und Familienkachel; insgesamt 5779 von 6989 Texten.'],
     ],
   },
   {
