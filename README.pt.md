@@ -130,6 +130,13 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский e 🇳🇱 Nederlands**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.130.10
+
+**Turco – etapa 11**
+
+- **Turco.** Ajuda e tutorial, casa inteligente, controle por voz e os demais textos do app estão traduzidos (tudo exceto as notificações push) (6842 de 6989 textos no total). O idioma ainda está oculto e não pode ser escolhido; para você o app não muda.
+- Alterado: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) e todos os README. Sem parte de servidor.
+
 ## Novidades da 1.130.9
 
 **Turco – etapa 10**
@@ -172,13 +179,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Turco.** Compras, despensa, plano de refeições, categorias, unidades e nomes padrão estão traduzidos (2489 de 6989 textos no total). O idioma ainda está oculto e não pode ser escolhido; para você o app não muda.
 - Alterado: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) e todos os README. Sem parte de servidor.
 
-## Novidades da 1.130.3
-
-**Turco – etapa 4**
-
-- **Turco.** Todas as listas (mala, desejos, presentes, checklists, modelos) estão traduzidas (1926 de 6989 textos no total). O idioma ainda está oculto e não pode ser escolhido; para você o app não muda.
-- Alterado: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) e todos os README. Sem parte de servidor.
-
 ## Como funciona
 
 ```mermaid
@@ -207,7 +207,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.130.9` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.130.10` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
