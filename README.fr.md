@@ -126,6 +126,13 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский et 🇳🇱 Nederlands**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.130.9
+
+**Turc – étape 10**
+
+- **Turc.** Notifications, tableau d’affichage, chat et aperçus hebdomadaire et mensuel sont traduits (6373 textes sur 6989 au total). La langue reste masquée et ne peut pas encore être choisie ; pour toi, l’app ne change pas.
+- Modifié : `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) et tous les README. Pas de partie serveur.
+
 ## Nouveautés de la 1.130.8
 
 **Turc – étape 9**
@@ -196,16 +203,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Sécurité.** L’alerte de l’analyse du code « Bad HTML filtering regexp » dans `.github/scripts/check-comments.js` est corrigée : la vérification trouve désormais les marqueurs de commentaire, les commentaires HTML (y compris ceux qui se terminent par `--!>`) et les blocs `<script>`/`<style>` intégrés avec de simples opérations sur le texte au lieu d’expressions régulières. Elle trouve exactement les mêmes commentaires qu’avant.
 - Modifié : `.github/scripts/check-comments.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) et tous les README. Pas de partie serveur – rien ne change dans l’app.
 
-## Nouveautés de la 1.129.1
-
-**Corrections du chat et derniers commentaires en anglais**
-
-- **Sondages dans le chat.** Un sondage partagé dans le chat et aussi affiché sur le tableau n’apparaît plus aux autres pendant environ 20 secondes comme « Le sondage a été supprimé ». Tant que la note du tableau n’est pas arrivée, on lit brièvement « Synchronisation avec le tableau d’affichage … », puis le sondage apparaît en quelques secondes.
-- **Photos nettes dans le chat.** Les photos sont nettes avant même d’être ouvertes : l’aperçu est deux fois plus grand et, dès qu’une photo est visible, pinn. charge l’image elle-même en arrière-plan – aussi pour les anciens messages.
-- **Commentaires en anglais.** Les derniers commentaires en allemand ont été convertis. Une nouvelle vérification automatique (`check-comments.js`, dans les vérifications GitHub) veille à ce qu’ils restent tous en anglais.
-- **README.** Nouvelle capture du chat en tête ; la page des enfants a rejoint les captures supplémentaires.
-- Modifié : `js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (toutes les langues), `src/` (`index.html`), commentaires de quelques hooks, `datenexport.js`, `einrichtung.js`, `.github/` (nouvelle vérification) et tous les README. Serveur : seuls des commentaires changent – remplacez quand même les hooks.
-
 ## Comment ça marche
 
 ```mermaid
@@ -232,7 +229,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.130.8` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.130.9` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

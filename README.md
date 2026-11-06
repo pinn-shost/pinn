@@ -126,6 +126,13 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский and 🇳🇱 Nederlands**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.130.9
+
+**Turkish – stage 10**
+
+- **Turkish.** Notifications, pin board, chat and the weekly and monthly outlook are translated (6373 of 6989 texts in total). The language is still hidden and cannot be chosen yet; nothing changes in the app for you.
+- Changed: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) and all READMEs. No server part.
+
 ## What's new in 1.130.8
 
 **Turkish – stage 9**
@@ -196,16 +203,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Security.** The code-scanning alert “Bad HTML filtering regexp” in `.github/scripts/check-comments.js` is fixed: the check now finds comment markers, HTML comments (also those ending in `--!>`) and inline `<script>`/`<style>` blocks with plain string operations instead of regular expressions. It finds exactly the same comments as before.
 - Changed: `.github/scripts/check-comments.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) and all READMEs. No server part – nothing changes in the app.
 
-## What's new in 1.129.1
-
-**Chat fixes and the last English comments**
-
-- **Polls in the chat.** A poll shared in the chat that is also on the pin board no longer shows up as “The poll was deleted” for the others for about 20 seconds. Until the pin board note has arrived it briefly says “Syncing with the pin board …”, and the poll appears after a few seconds.
-- **Sharp photos in the chat.** Photos look sharp before you open them: the preview is twice as large, and as soon as a photo is visible pinn. loads the picture itself in the background – older messages too.
-- **English comments.** The last German comments were converted. A new automatic check (`check-comments.js`, part of the GitHub checks) makes sure every comment stays English.
-- **README.** New chat screenshot at the top; the kids' page moved to the further screenshots.
-- Changed: `js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (all language files), `src/` (`index.html`), comments in some hook files, `datenexport.js`, `einrichtung.js`, `.github/` (new check) and all READMEs. Server part: only comments changed – replacing the hook files is still recommended.
-
 ## How it works
 
 ```mermaid
@@ -232,7 +229,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.130.8` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.130.9` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
