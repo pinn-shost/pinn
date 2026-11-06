@@ -126,6 +126,13 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский et 🇳🇱 Nederlands**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.130.7
+
+**Turc – étape 8**
+
+- **Turc.** Véhicules, documents et lecture de PDF sont traduits (4944 textes sur 6989 au total). La langue reste masquée et ne peut pas encore être choisie ; pour toi, l’app ne change pas.
+- Modifié : `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) et tous les README. Pas de partie serveur.
+
 ## Nouveautés de la 1.130.6
 
 **Turc – étape 7**
@@ -199,15 +206,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Commentaires en anglais.** Tous les commentaires de code du projet sont désormais en anglais : parties serveur, scripts d’installation et de maintenance, `docker-compose.yaml`, le modèle `.env`, le Caddyfile et les fichiers de l’app. Rien ne change dans l’app, ses textes ni son comportement.
 - Modifié : `pb_hooks/` (tous les fichiers), `pinn-setup.sh`, `pinn-wartung.sh`, `pinn-pocketbase-update.sh`, `docker-compose.yaml`, `env.txt`, `caddy/Caddyfile`, `js/sprachen.js`, `datenexport.js`, `einrichtung.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) et tous les README. Partie serveur : les fichiers de hooks – à remplacer aussi.
 
-## Nouveautés de la 1.128.0
-
-**Commande vocale dans toutes les langues de l’appli**
-
-- **Onze langues.** Siri (« HTTP Shortcuts » sur Android) comprend désormais aussi le néerlandais, l’italien, le portugais, le chinois, le japonais et le coréen : ajouter à la liste de courses, lire la liste, créer une tâche, « Qu’y a-t-il aujourd’hui ? ». La réponse arrive dans la langue du profil. Le raccourci et le lien existants continuent de fonctionner.
-- **Exemples.** “Zet melk en eieren op het boodschappenlijstje”, “Aggiungi latte e uova alla lista della spesa”, “Adicione leite e ovos à lista de compras”, “把牛奶和鸡蛋加到购物清单”, “買い物リストに牛乳と卵を追加して”, “장보기 목록에 우유랑 달걀 추가해 줘”.
-- **Petites corrections.** Les apostrophes de la dictée (« c’è ») et la ponctuation en fin de phrase (。！？) sont gérées, et des quantités comme « 2 Decken » ne sont plus coupées.
-- Modifié : `pb_hooks/pinn-sprache.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, tous les `i18n/*.i18n.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js` and tous les READMEs. Partie serveur : `pb_hooks/pinn-sprache.js` – remplace aussi les hooks.
-
 ## Comment ça marche
 
 ```mermaid
@@ -234,7 +232,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.130.6` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.130.7` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

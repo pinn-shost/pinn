@@ -130,6 +130,13 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский和 🇳🇱 Nederlands**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.130.7 新功能
+
+**土耳其语——第 8 阶段**
+
+- **土耳其语。** 车辆、文档和 PDF 读取已翻译完成（共 6989 条文本中的 4944 条）。该语言目前仍处于隐藏状态，暂时无法选择；对你来说应用没有变化。
+- 更改：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) 以及所有 README。无服务器部分。
+
 ## 1.130.6 新功能
 
 **土耳其语——第 7 阶段**
@@ -172,13 +179,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **土耳其语。** 账户、设备、错误日志以及备份与更新已翻译完成（共 6989 条文本中的 875 条）。该语言目前仍处于隐藏状态，暂时无法选择；对你来说应用没有变化。
 - 更改：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) 以及所有 README。无服务器部分。
 
-## 1.130.0 新功能
-
-**土耳其语筹备中**
-
-- **土耳其语。** 土耳其语正作为新的应用语言筹备并逐步翻译——先是界面框架、登录、导航和全部设置（6989 条文本中的 503 条）。该语言目前仍处于隐藏状态，暂时无法选择；对你来说应用没有变化。
-- 更改：`js/sprachen.js`, `js/textkern.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `.github/scripts/i18n-keys.js`, `pb_hooks/pinn-textkern.js`, `src/` (`index.html`) 以及所有 README。服务器部分：`pb_hooks/pinn-textkern.js`（土耳其语复数规则）——请一并替换 hooks。
-
 ## 工作原理
 
 ```mermaid
@@ -207,7 +207,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.130.6` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.130.7` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -130,6 +130,13 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.130.7の新機能
+
+**トルコ語――第8段階**
+
+- **トルコ語。** 車両、書類、PDF読み取りを翻訳しました（6989件中、合計4944件）。この言語はまだ非表示で選べません。アプリ自体は何も変わりません。
+- 変更：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) とすべてのREADME。サーバー部分なし。
+
 ## 1.130.6の新機能
 
 **トルコ語――第7段階**
@@ -172,13 +179,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **トルコ語。** アカウント、デバイス、エラーログ、バックアップとアップデートを翻訳しました（6989件中、合計875件）。この言語はまだ非表示で選べません。アプリ自体は何も変わりません。
 - 変更：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) とすべてのREADME。サーバー部分なし。
 
-## 1.130.0の新機能
-
-**トルコ語を準備中**
-
-- **トルコ語。** トルコ語を新しいアプリ言語として準備し、少しずつ翻訳しています。まずは枠組み、ログイン、ナビゲーション、すべての設定（6989件中503件）です。この言語はまだ非表示で選べません。アプリ自体は何も変わりません。
-- 変更：`js/sprachen.js`, `js/textkern.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `.github/scripts/i18n-keys.js`, `pb_hooks/pinn-textkern.js`, `src/` (`index.html`) とすべてのREADME。サーバー部分：`pb_hooks/pinn-textkern.js`（トルコ語の複数形ルール）――hooksも置き換えてください。
-
 ## しくみ
 
 ```mermaid
@@ -207,7 +207,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.130.6`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.130.7`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
