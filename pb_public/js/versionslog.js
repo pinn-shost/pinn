@@ -25,6 +25,7 @@ const PINN_CHANGELOG = [
     v: '1.130', datum: '07.11.2026', titel: 'Türkisch in Vorbereitung',
     punkte: [
       ['info', '1.130.0: Türkisch wird als weitere App-Sprache vorbereitet und Schritt für Schritt übersetzt. Zuerst sind Rahmen, Anmeldung, Navigation, alle Einstellungen dran (503 von 6989 Texten). Die Sprache ist noch versteckt und noch nicht wählbar – an der App ändert sich für dich nichts.'],
+      ['info', '1.130.1: Türkisch Etappe 2 – Konto, Geräte, Fehlerprotokoll sowie Sicherungen & Updates (insgesamt 875 von 6989 Texten). Außerdem „Dashboard“ im Türkischen durchgehend als „Gösterge paneli“ (die Pinnwand heißt „Pano“).'],
     ],
   },
   {

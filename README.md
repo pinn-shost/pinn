@@ -126,6 +126,13 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский and 🇳🇱 Nederlands**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.130.1
+
+**Turkish – stage 2**
+
+- **Turkish.** Account, devices, error log and backups & updates are translated (875 of 6989 texts in total). The language is still hidden and cannot be chosen yet; nothing changes in the app for you.
+- Changed: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) and all READMEs. No server part.
+
 ## What's new in 1.130.0
 
 **Turkish in preparation**
@@ -220,17 +227,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Changed: `js/chat.js`, `css/chat.css`, `js/aufgaben.js`, `js/pinnwand.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `index.html`, `src/` and all READMEs. **No server part** – the hooks stay as they are.
 
 
-## What's new in 1.127.1
-
-**Photos and videos in the chat**
-
-- **Send photos and videos** with the paperclip button, with a preview and a caption. Like in WhatsApp, an **HD button** lets you choose every time: Standard shrinks photos to about 0.3 MB, HD sends the original (photos up to 20 MB, videos up to 50 MB). Videos are shrunk where the device can do it, otherwise the original is sent.
-- **End-to-end encrypted as well** – every file gets its own key; your NAS sees neither the picture nor its name. Full-screen viewer right in the chat, **share** (WhatsApp, email …) or **save on the device**.
-- **File in pinn.:** save a photo as a document or assign it to a home, a defect or a vehicle (e.g. damage in the flat → defect). Videos can be shared and saved, not filed as documents.
-- **Automatic deletion:** admins choose under “Chat security” after how many days messages and/or photos and videos are deleted for everyone at night (default: never); the space used is shown there.
-- Changed: `js/chatmedien.js` (new), `css/chat.css`, `js/chat.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `pinn-setup.sh`, `src/` and all READMEs. **Server part:** `pb_hooks/chat.pb.js` and `pb_hooks/pinn-chat.js` – replace the hooks too; two more collections are created automatically.
-
-
 ## How it works
 
 ```mermaid
@@ -257,7 +253,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.130.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.130.1` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

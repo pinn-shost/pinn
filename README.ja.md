@@ -130,6 +130,13 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.130.1の新機能
+
+**トルコ語――第2段階**
+
+- **トルコ語。** アカウント、デバイス、エラーログ、バックアップとアップデートを翻訳しました（6989件中、合計875件）。この言語はまだ非表示で選べません。アプリ自体は何も変わりません。
+- 変更：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) とすべてのREADME。サーバー部分なし。
+
 ## 1.130.0の新機能
 
 **トルコ語を準備中**
@@ -177,16 +184,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **セキュリティ。** チャットの写真・動画プレビュー（`js/chatmedien.js`）にあったコードスキャンの警告「DOM text reinterpreted as HTML」3件を解決しました。オブジェクトアドレスを厳しく確認し、HTML用にエスケープします。
 - 変更：`js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, すべての `i18n/*.i18n.js`, `src/` (`index.html`) 、 すべてのREADME. サーバー部分: `pb_hooks/pinn-chat.js` – フックも置き換えてください。起動時にフィールドが1つ自動で追加されます。
 
-## 1.127.5の新機能
-
-**チャット：投票の高速化、家計をチャットで相談、セキュリティ**
-
-- **投票の反応が速くなりました。** 掲示板にも載せたチャットの投票は、最大1分ではなく約10秒で全員に反映されます。
-- **家計もチャットで。** 支出・収入・定期項目・貯蓄項目のポップアップに **チャット** ボタン（💬）が付きました。チャットを選ぶと項目がカードとして届き、タップするとまた開けます。
-- **ボタンを短く。** 「チャットで相談」はすべて **チャット** になりました。
-- **セキュリティ。** チャットの写真・動画プレビューに関するコードスキャナーの警告「DOM text reinterpreted as HTML」3件を修正しました。
-- 変更：`js/chatmedien.js`、`js/chatstimme.js`、`js/chat.js`、`js/chatextras.js`、`js/finanzen.js`、`js/sparen.js`、`js/vertraege.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、すべての `i18n/*.i18n.js`、`src/`（`index.html`）、すべての README。サーバー側の変更はありません。
-
 ## しくみ
 
 ```mermaid
@@ -215,7 +212,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.130.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.130.1`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
