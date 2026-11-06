@@ -513,11 +513,11 @@ if (exists(path.join(HOOKS, 'pinn-sprache.js'))) {
 // Dutch (since 1.123.12): every hook with its own language list or text table must know "nl", otherwise it sends English
 {
   const hooksWithTexts = {
-    'pinn-ausblick.js': [/"ru", "nl"\]/, /\n    nl: \["januari"/, /lang === "nl"\) return \{ titel: "🗓️/, /lang === "nl"\) return \{ titel: "💶/],
-    'pinn-familie-geburtstag.js': [/"ru", "nl"\]/, /nl: " en "/, /lang === "nl"\) return \{ titel: "🎂 " \+ n/, /lang === "nl"\) return \{ titel: "🎂 Vandaag jarig/],
-    'pinn-haustiere.js': [/"ru", "nl"\]/, /\n    nl: \{ futter:/],
-    'pinn-ortung.js': [/"ru", "nl"\]/, /\n    nl: \{ bei:/],
-    'pinn-wobistdu.js': [/"ru", "nl"\]/, /\n    nl: \{ zuhause:/, /nl: "Iemand"/, /lang === "nl"\) return \{ titel: "📍 " \+ n \+ " vraagt/, /lang === "nl"\) return \{ titel: "📍 " \+ n \+ " heeft geantwoord/],
+    'pinn-ausblick.js': [/"ru", "nl"(?:, "tr")?\]/, /\n    nl: \["januari"/, /lang === "nl"\) return \{ titel: "🗓️/, /lang === "nl"\) return \{ titel: "💶/],
+    'pinn-familie-geburtstag.js': [/"ru", "nl"(?:, "tr")?\]/, /nl: " en "/, /lang === "nl"\) return \{ titel: "🎂 " \+ n/, /lang === "nl"\) return \{ titel: "🎂 Vandaag jarig/],
+    'pinn-haustiere.js': [/"ru", "nl"(?:, "tr")?\]/, /\n    nl: \{ futter:/],
+    'pinn-ortung.js': [/"ru", "nl"(?:, "tr")?\]/, /\n    nl: \{ bei:/],
+    'pinn-wobistdu.js': [/"ru", "nl"(?:, "tr")?\]/, /\n    nl: \{ zuhause:/, /nl: "Iemand"/, /lang === "nl"\) return \{ titel: "📍 " \+ n \+ " vraagt/, /lang === "nl"\) return \{ titel: "📍 " \+ n \+ " heeft geantwoord/],
     'pinn-packliste.js': [/\n    nl: \{ titel:/],
     'pinn-aufgaben.js': [/\n    nl: \{ t: "⭐ Beloning/],
   };
@@ -532,6 +532,29 @@ if (exists(path.join(HOOKS, 'pinn-sprache.js'))) {
   test('country codes of the Dutch-speaking regions give Dutch (NL), Belgium stays French', () => {
     const src = read(path.join(HOOKS, 'pinn-wobistdu.js'));
     return /\["NL", "SR", "AW", "CW", "SX"\]\.indexOf\(land\) >= 0\) return "nl"/.test(src) && /\["FR", "BE", "MC"\]/.test(src) ? '' : 'country mapping for nl missing';
+  });
+}
+
+// Turkish (since 1.130.11): the same hooks must know "tr" (language list, country TR and the texts)
+{
+  const hooksWithTurkish = {
+    'pinn-ausblick.js': [/"nl", "tr"\]/, /\n    tr: \["Ocak"/, /lang === "tr"\) return \{ titel: "🗓️/, /lang === "tr"\) return \{ titel: "💶/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
+    'pinn-familie-geburtstag.js': [/"nl", "tr"\]/, /tr: " ve "/, /lang === "tr"\) return \{ titel: "🎂 Bugün doğum günü: "/, /lang === "tr"\) return \{ titel: "🎂 Bugün doğum günü olanlar/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
+    'pinn-haustiere.js': [/"nl", "tr"\]/, /\n    tr: \{ futter:/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
+    'pinn-ortung.js': [/"nl", "tr"\]/, /\n    tr: \{ bei:/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
+    'pinn-wobistdu.js': [/"nl", "tr"\]/, /\n    tr: \{ zuhause:/, /tr: "Biri"/, /lang === "tr"\) return \{ titel: "📍 " \+ n \+ " soruyor/, /lang === "tr"\) return \{ titel: "📍 " \+ n \+ " yanıtladı/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
+    'pinn-packliste.js': [/\n    tr: \{ titel:/],
+    'pinn-aufgaben.js': [/\n    tr: \{ t: "⭐ Ödül/],
+    'pinn-chat.js': [/"nl", "tr"\]/, /\n    tr: \{ group:/, /tr: \["TR"\]/],
+    'pinn-pushtext.js': [/"nl", "tr"\]/, /\n    tr: \{ keep:/, /TR_HOME/, /TR_MATE/],
+  };
+  Object.keys(hooksWithTurkish).forEach(name => {
+    if (!exists(path.join(HOOKS, name))) return;
+    test(name + ' knows Turkish (language list and texts)', () => {
+      const src = read(path.join(HOOKS, name));
+      const missing = hooksWithTurkish[name].filter(re => !re.test(src)).length;
+      return missing ? missing + ' of ' + hooksWithTurkish[name].length + ' Turkish parts missing' : '';
+    });
   });
 }
 
