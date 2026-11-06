@@ -130,6 +130,13 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский e 🇳🇱 Nederlands**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.130.2
+
+**Turco – etapa 3**
+
+- **Turco.** Calendário, tarefas, casa, visão geral, clima, busca e feriados estão traduzidos (1365 de 6989 textos no total). O idioma ainda está oculto e não pode ser escolhido; para você o app não muda.
+- Alterado: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) e todos os README. Sem parte de servidor.
+
 ## Novidades da 1.130.1
 
 **Turco – etapa 2**
@@ -175,15 +182,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Pequenas correções.** Apóstrofos do ditado («c’è») e pontuação no fim da frase (。！？) são tratados, e quantidades como «2 Decken» não são mais cortadas.
 - Alterado: `pb_hooks/pinn-sprache.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos os `i18n/*.i18n.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js` and todos os READMEs. Parte do servidor: `pb_hooks/pinn-sprache.js` – substitua também os hooks.
 
-## Novidades da 1.127.6
-
-**Chat: mensagens apagadas deixam aviso, segurança**
-
-- **Apagado continua visível.** Uma mensagem apagada já não some simplesmente: no lugar dela todos veem “Esta mensagem foi apagada”, numa enquete “A enquete foi apagada”.
-- **Apagado no mural.** Se uma enquete que também está no mural for apagada lá, o chat também diz “A enquete foi apagada”; um cartão de uma nota apagada do mural avisa isso em vez de não levar a lugar nenhum.
-- **Segurança.** Os três alertas do scanner de código “DOM text reinterpreted as HTML” na pré-visualização de fotos e vídeos do chat (`js/chatmedien.js`) foram resolvidos: os endereços de objeto são verificados com rigor e escapados para HTML.
-- Alterados: `js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos os `i18n/*.i18n.js`, `src/` (`index.html`) e todos os README. Parte do servidor: `pb_hooks/pinn-chat.js` – substitua também os hooks; um campo é adicionado automaticamente ao iniciar.
-
 ## Como funciona
 
 ```mermaid
@@ -212,7 +210,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.130.1` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.130.2` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -126,6 +126,13 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский et 🇳🇱 Nederlands**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.130.2
+
+**Turc – étape 3**
+
+- **Turc.** Le calendrier, les tâches, le ménage, l’aperçu, la météo, la recherche et les jours fériés sont traduits (1365 textes sur 6989 au total). La langue reste masquée et ne peut pas encore être choisie ; pour toi, l’app ne change pas.
+- Modifié : `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) et tous les README. Pas de partie serveur.
+
 ## Nouveautés de la 1.130.1
 
 **Turc – étape 2**
@@ -217,16 +224,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - Modifié : `js/chatgruppen.js` (nouveau), `js/chat.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, tous les `i18n/*.i18n.js`, `index.html`, `pinn-setup.sh`, `src/` et tous les README. **Partie serveur :** `pb_hooks/chat.pb.js` et `pb_hooks/pinn-chat.js` – remplace aussi les hooks ; trois collections de plus sont créées automatiquement.
 
 
-## Nouveautés de la 1.127.2
-
-**Chat : parler des tâches, des notes du tableau et des échéances de contrats**
-
-- **💬 « En discuter dans le chat »** sur une tâche, dans une note du tableau et dans un contrat (p. ex. une échéance de résiliation proche) : choisis le chat familial ou une personne, et le chat s’ouvre avec l’élément sous forme de carte dans la ligne de saisie. Ajoute quelques mots ou envoie-le simplement.
-- **La carte ouvre l’élément :** un appui dans le message mène à la tâche (elle clignote brièvement dans la liste), à la note ou au contrat. S’il n’existe plus ou si tu n’y as pas accès, un court message l’indique.
-- **Toujours chiffré de bout en bout** – la carte est chiffrée comme le texte ; ton NAS n’en voit rien.
-- Modifié : `js/chat.js`, `css/chat.css`, `js/aufgaben.js`, `js/pinnwand.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, tous les `i18n/*.i18n.js`, `index.html`, `src/` et tous les README. **Pas de partie serveur** – les hooks restent inchangés.
-
-
 ## Comment ça marche
 
 ```mermaid
@@ -253,7 +250,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.130.1` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.130.2` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

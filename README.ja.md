@@ -130,6 +130,13 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.130.2の新機能
+
+**トルコ語――第3段階**
+
+- **トルコ語。** カレンダー、タスク、家事、概要、天気、検索、祝日を翻訳しました（6989件中、合計1365件）。この言語はまだ非表示で選べません。アプリ自体は何も変わりません。
+- 変更：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) とすべてのREADME。サーバー部分なし。
+
 ## 1.130.1の新機能
 
 **トルコ語――第2段階**
@@ -175,15 +182,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **小さな修正。** 音声入力のアポストロフィ（「c’è」）や文末の句読点（。！？）に対応し、「2 Decken」のような数量が分割されなくなりました。
 - 変更：`pb_hooks/pinn-sprache.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`、すべてのREADME。サーバー側：`pb_hooks/pinn-sprache.js` – hooksも置き換えてください。
 
-## 1.127.6の新機能
-
-**チャット：削除したメッセージに表示が残る、セキュリティ**
-
-- **削除しても表示が残ります。** 削除したチャットメッセージがそのまま消えることはなくなりました。その場所に全員に「このメッセージは削除されました」、アンケートなら「このアンケートは削除されました」と表示されます。
-- **掲示板で削除。** 掲示板にも載っているアンケートを掲示板で削除すると、チャットにも「このアンケートは削除されました」と表示されます。削除された掲示板の投稿へのカードもその旨を表示します。
-- **セキュリティ。** チャットの写真・動画プレビュー（`js/chatmedien.js`）にあったコードスキャンの警告「DOM text reinterpreted as HTML」3件を解決しました。オブジェクトアドレスを厳しく確認し、HTML用にエスケープします。
-- 変更：`js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, すべての `i18n/*.i18n.js`, `src/` (`index.html`) 、 すべてのREADME. サーバー部分: `pb_hooks/pinn-chat.js` – フックも置き換えてください。起動時にフィールドが1つ自動で追加されます。
-
 ## しくみ
 
 ```mermaid
@@ -212,7 +210,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.130.1`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.130.2`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

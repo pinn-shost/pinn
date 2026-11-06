@@ -130,6 +130,13 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский和 🇳🇱 Nederlands**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.130.2 新功能
+
+**土耳其语——第 3 阶段**
+
+- **土耳其语。** 日历、任务、家务、概览、天气、搜索和公共假日已翻译完成（共 6989 条文本中的 1365 条）。该语言目前仍处于隐藏状态，暂时无法选择；对你来说应用没有变化。
+- 更改：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) 以及所有 README。无服务器部分。
+
 ## 1.130.1 新功能
 
 **土耳其语——第 2 阶段**
@@ -175,15 +182,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **小修复。** 听写中的撇号（“c’è”）和句末标点（。！？）可正确处理，“2 Decken”这样的数量不再被拆开。
 - 已更改：`pb_hooks/pinn-sprache.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`和所有 README。服务器部分：`pb_hooks/pinn-sprache.js` – 请同时替换 hooks。
 
-## 1.127.6 新功能
-
-**聊天：删除的消息会留下提示，安全**
-
-- **删除后仍有提示。** 删除的聊天消息不再直接消失：所有人都会在原位置看到“此消息已被删除”，投票则显示“此投票已被删除”。
-- **在布告板上删除。** 同时显示在布告板上的投票如果在那里被删除，聊天中也会显示“此投票已被删除”；指向已删除布告板条目的卡片会说明这一点，而不是点了没反应。
-- **安全。** 聊天照片和视频预览（`js/chatmedien.js`）中的三条代码扫描警告“DOM text reinterpreted as HTML”已修复：对象地址会被严格检查并做 HTML 转义。
-- 已更改：`js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, 所有 `i18n/*.i18n.js`, `src/` (`index.html`) 和 所有 README. 服务器部分: `pb_hooks/pinn-chat.js` – 请一并替换 hooks；启动时会自动添加一个字段。
-
 ## 工作原理
 
 ```mermaid
@@ -212,7 +210,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.130.1` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.130.2` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

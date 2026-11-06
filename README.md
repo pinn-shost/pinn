@@ -126,6 +126,13 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский and 🇳🇱 Nederlands**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.130.2
+
+**Turkish – stage 3**
+
+- **Turkish.** Calendar, tasks, household, overview, weather, search and public holidays are translated (1365 of 6989 texts in total). The language is still hidden and cannot be chosen yet; nothing changes in the app for you.
+- Changed: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) and all READMEs. No server part.
+
 ## What's new in 1.130.1
 
 **Turkish – stage 2**
@@ -217,16 +224,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - Changed: `js/chatgruppen.js` (new), `js/chat.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `index.html`, `pinn-setup.sh`, `src/` and all READMEs. **Server part:** `pb_hooks/chat.pb.js` and `pb_hooks/pinn-chat.js` – replace the hooks too; three more collections are created automatically.
 
 
-## What's new in 1.127.2
-
-**Chat: talk about tasks, board notes and contract deadlines**
-
-- **💬 “Discuss in chat”** on a task, in a board note and in a contract (e.g. an upcoming cancellation deadline): pick the family chat or one person and the chat opens with the item as a card in the input line. Add a few words or simply send it.
-- **The card opens the item:** a tap in the message jumps to the task (it flashes in the list), the board note or the contract. If it no longer exists or you have no access, a short message says so.
-- **Still end-to-end encrypted** – the card is encrypted like the text; your NAS sees nothing of it.
-- Changed: `js/chat.js`, `css/chat.css`, `js/aufgaben.js`, `js/pinnwand.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `index.html`, `src/` and all READMEs. **No server part** – the hooks stay as they are.
-
-
 ## How it works
 
 ```mermaid
@@ -253,7 +250,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.130.1` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.130.2` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
