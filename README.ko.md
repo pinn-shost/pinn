@@ -130,6 +130,13 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.130.6의 새 소식
+
+**튀르키예어 – 7단계**
+
+- **튀르키예어.** 집(임대·구매, 계량기, 하자, 열쇠, 유지보수, 정원과 식물)을 번역했어요(6989개 중 총 4285개). 아직 숨겨져 있어 선택할 수 없고, 앱은 바뀌지 않아요.
+- 변경: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) 및 모든 README. 서버 부분 없음.
+
 ## 1.130.5의 새 소식
 
 **튀르키예어 – 6단계**
@@ -172,13 +179,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **튀르키예어.** 튀르키예어를 새 앱 언어로 준비하며 단계별로 번역하고 있어요. 먼저 기본 틀, 로그인, 내비게이션, 모든 설정입니다(6989개 중 503개). 아직 숨겨져 있어 선택할 수 없고, 앱은 바뀌지 않아요.
 - 변경: `js/sprachen.js`, `js/textkern.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `.github/scripts/i18n-keys.js`, `pb_hooks/pinn-textkern.js`, `src/` (`index.html`) 및 모든 README. 서버 부분: `pb_hooks/pinn-textkern.js`(튀르키예어 복수형 규칙) – hooks도 함께 교체하세요.
 
-## 1.129.2의 새 소식
-
-**코드 스캔: 취약한 검색 패턴 없는 주석 검사**
-
-- **보안.** `.github/scripts/check-comments.js`의 코드 스캔 경고 “Bad HTML filtering regexp”를 고쳤어요. 이제 검사는 정규 표현식 대신 간단한 문자열 처리로 주석 기호, HTML 주석(`--!>`로 끝나는 것도 포함), 내장된 `<script>`/`<style>` 블록을 찾아요. 찾는 주석은 이전과 똑같아요.
-- 변경: `.github/scripts/check-comments.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) 및 모든 README. 서버 부분 없음 – 앱은 바뀌지 않아요.
-
 ## 작동 방식
 
 ```mermaid
@@ -207,7 +207,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.130.5` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.130.6` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

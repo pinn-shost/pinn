@@ -126,6 +126,13 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский y 🇳🇱 Nederlands**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.130.6
+
+**Turco – etapa 7**
+
+- **Turco.** El hogar (alquiler y compra, contadores, defectos, llaves, mantenimiento, jardín y plantas) está traducido (4285 de 6989 textos en total). El idioma sigue oculto y aún no se puede elegir; para ti la app no cambia.
+- Cambiado: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
+
 ## Novedades de la 1.130.5
 
 **Turco – etapa 6**
@@ -201,15 +208,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Pequeñas correcciones.** Se entienden los apóstrofos del dictado («c’è») y los signos al final de la frase (。！？), y cantidades como «2 Decken» ya no se cortan.
 - Cambiado: `pb_hooks/pinn-sprache.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos los `i18n/*.i18n.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js` and todos los READMEs. Parte del servidor: `pb_hooks/pinn-sprache.js` – sustituye también los hooks.
 
-## Novedades de la 1.127.6
-
-**Chat: los mensajes borrados dejan constancia, seguridad**
-
-- **Lo borrado sigue visible.** Un mensaje borrado ya no desaparece sin más: en su lugar todos ven «Este mensaje fue eliminado» y, en una encuesta, «La encuesta fue eliminada».
-- **Borrado en el tablón.** Si una encuesta que también está en el tablón se borra allí, el chat también dice «La encuesta fue eliminada»; una tarjeta de una nota borrada del tablón lo indica en vez de no llevar a ninguna parte.
-- **Seguridad.** Las tres alertas del escáner de código «DOM text reinterpreted as HTML» en la vista previa de fotos y vídeos del chat (`js/chatmedien.js`) quedan resueltas: las direcciones de objeto se comprueban de forma estricta y se escapan para HTML.
-- Cambiado: `js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos los `i18n/*.i18n.js`, `src/` (`index.html`) y todos los README. Parte del servidor: `pb_hooks/pinn-chat.js` – sustituye también los hooks; un campo se añade automáticamente al arrancar.
-
 ## Cómo funciona
 
 ```mermaid
@@ -236,7 +234,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.130.5` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.130.6` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

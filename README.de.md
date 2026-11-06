@@ -130,6 +130,13 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский und 🇳🇱 Nederlands**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.130.6
+
+**Türkisch – Etappe 7**
+
+- **Türkisch.** Das Zuhause (Miete und Kauf, Zähler, Mängel, Schlüssel, Wartung, Garten und Pflanzen) ist übersetzt (insgesamt 4285 von 6989 Texten). Die Sprache ist noch versteckt und nicht wählbar; an der App ändert sich für dich nichts.
+- Geändert: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) und alle READMEs. Kein Server-Teil.
+
 ## Neu in 1.130.5
 
 **Türkisch – Etappe 6**
@@ -172,13 +179,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Türkisch.** Türkisch wird als weitere App-Sprache vorbereitet und Schritt für Schritt übersetzt – zuerst Rahmen, Anmeldung, Navigation und alle Einstellungen (503 von 6989 Texten). Die Sprache ist noch versteckt und nicht wählbar; an der App ändert sich für dich nichts.
 - Geändert: `js/sprachen.js`, `js/textkern.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `.github/scripts/i18n-keys.js`, `pb_hooks/pinn-textkern.js`, `src/` (`index.html`) und alle READMEs. Server-Teil: `pb_hooks/pinn-textkern.js` (Mehrzahlregel für Türkisch) – die Hook-Dateien auch ersetzen.
 
-## Neu in 1.129.2
-
-**Code-Prüfung: Kommentar-Prüfung ohne anfällige Suchmuster**
-
-- **Sicherheit.** Der Hinweis „Bad HTML filtering regexp“ der Code-Prüfung in `.github/scripts/check-comments.js` ist behoben: Die Prüfung erkennt Kommentarzeichen, HTML-Kommentare (auch solche, die mit `--!>` enden) sowie eingebettete `<script>`-/`<style>`-Bereiche jetzt mit einfachen Textvergleichen statt mit regulären Ausdrücken. Sie findet genau dieselben Kommentare wie vorher.
-- Geändert: `.github/scripts/check-comments.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) und alle READMEs. Kein Server-Teil – an der App ändert sich nichts.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -207,7 +207,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.130.5` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.130.6` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

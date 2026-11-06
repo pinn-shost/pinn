@@ -30,6 +30,7 @@ const PINN_CHANGELOG = [
       ['info', '1.130.3: Türkisch Etappe 4 – alle Listen (Packlisten, Wunschlisten, Geschenke, Checklisten, Vorlagen); insgesamt 1926 von 6989 Texten.'],
       ['info', '1.130.4: Türkisch Etappe 5 – Einkauf, Vorrat, Essensplan, Kategorien, Einheiten und Standardnamen; insgesamt 2489 von 6989 Texten.'],
       ['info', '1.130.5: Türkisch Etappe 6 – Rezepte, Finanzen, Kassen, Depots, Verträge, Taschengeld, Sterne und Kinderseite; insgesamt 3635 von 6989 Texten.'],
+      ['info', '1.130.6: Türkisch Etappe 7 – Zuhause (Miete und Kauf, Zähler, Mängel, Schlüssel, Wartung, Garten und Pflanzen); insgesamt 4285 von 6989 Texten.'],
     ],
   },
   {
