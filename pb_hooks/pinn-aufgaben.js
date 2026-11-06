@@ -1051,6 +1051,7 @@ const REWARD_TEXT = {
     ko: { t: "⭐ 보상 요청", b: "{k}님이 별 {n}개를 “{w}”(으)로 바꾸고 싶어 해요." },
     ru: { t: "⭐ Запрос награды", b: "{k} хочет обменять {n} ⭐ на «{w}»." },
     nl: { t: "⭐ Beloning aangevraagd", b: "{k} wil {n} sterren inwisselen voor “{w}”." },
+    tr: { t: "⭐ Ödül istendi", b: "{k}, {n} yıldızı “{w}” ile takas etmek istiyor." },
 };
 function notifyReward(familyId, actorUserId, body) {
     if (!familyId) return 0;

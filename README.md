@@ -126,6 +126,13 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский and 🇳🇱 Nederlands**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.130.11
+
+**Turkish – stage 12**
+
+- **Turkish.** Push messages and the texts of the server are translated – all 6989 texts are now done. The language is still hidden and cannot be chosen yet; nothing changes in the app for you.
+- Changed: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) and all READMEs. Server part: `pb_hooks/` (push texts and language lists) – `pinn-setup.sh` installs it and restarts PocketBase as usual.
+
 ## What's new in 1.130.10
 
 **Turkish – stage 11**
@@ -196,13 +203,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Turkish.** Account, devices, error log and backups & updates are translated (875 of 6989 texts in total). The language is still hidden and cannot be chosen yet; nothing changes in the app for you.
 - Changed: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) and all READMEs. No server part.
 
-## What's new in 1.130.0
-
-**Turkish in preparation**
-
-- **Turkish.** Turkish is being prepared as another app language and translated step by step – first the frame, sign-in, navigation and all settings (503 of 6989 texts). The language is still hidden and cannot be chosen yet; nothing changes in the app for you.
-- Changed: `js/sprachen.js`, `js/textkern.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `.github/scripts/i18n-keys.js`, `pb_hooks/pinn-textkern.js`, `src/` (`index.html`) and all READMEs. Server part: `pb_hooks/pinn-textkern.js` (plural rule for Turkish) – replace the hooks too.
-
 ## How it works
 
 ```mermaid
@@ -229,7 +229,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.130.10` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.130.11` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

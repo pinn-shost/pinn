@@ -126,6 +126,13 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский y 🇳🇱 Nederlands**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.130.11
+
+**Turco – etapa 12**
+
+- **Turco.** Las notificaciones push y los textos del servidor están traducidos – ya están los 6989 textos. El idioma sigue oculto y aún no se puede elegir; para ti la app no cambia.
+- Cambiado: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Parte de servidor: `pb_hooks/` (textos push y listas de idiomas) – `pinn-setup.sh` la instala y reinicia PocketBase como siempre.
+
 ## Novedades de la 1.130.10
 
 **Turco – etapa 11**
@@ -196,13 +203,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Turco.** Cuenta, dispositivos, registro de errores y copias de seguridad y actualizaciones están traducidos (875 de 6989 textos en total). El idioma sigue oculto y aún no se puede elegir; para ti la app no cambia.
 - Cambiado: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
 
-## Novedades de la 1.130.0
-
-**Turco en preparación**
-
-- **Turco.** El turco se está preparando como otro idioma de la app y se traduce paso a paso: primero el marco, el inicio de sesión, la navegación y todos los ajustes (503 de 6989 textos). El idioma sigue oculto y aún no se puede elegir; para ti la app no cambia.
-- Cambiado: `js/sprachen.js`, `js/textkern.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `.github/scripts/i18n-keys.js`, `pb_hooks/pinn-textkern.js`, `src/` (`index.html`) y todos los README. Parte de servidor: `pb_hooks/pinn-textkern.js` (regla de plural para el turco): sustituye también los hooks.
-
 ## Cómo funciona
 
 ```mermaid
@@ -229,7 +229,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.130.10` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.130.11` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

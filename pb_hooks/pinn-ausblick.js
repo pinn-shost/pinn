@@ -118,7 +118,7 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -131,6 +131,7 @@ function langOf(u) {
     if (["KR"].indexOf(land) >= 0) return "ko";
     if (["RU"].indexOf(land) >= 0) return "ru";
     if (["NL", "SR", "AW", "CW", "SX"].indexOf(land) >= 0) return "nl";
+    if (["TR"].indexOf(land) >= 0) return "tr";
     return "en";
 }
 
@@ -149,6 +150,7 @@ const MONTHS = {
     ko: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
     ru: ["январь", "февраль", "март", "апрель", "май", "июнь", "июль", "август", "сентябрь", "октябрь", "ноябрь", "декабрь"],
     nl: ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"],
+    tr: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"],
 };
 // Russian needs the genitive for date ranges and the prepositional case for "in the month" (the list above is the nominative)
 const MONTHS_RU_GEN = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
@@ -166,6 +168,7 @@ function rangeText(lang, mondayIso) {
     if (lang === "ja") return a[1] === b[1] ? (M[b[1] - 1] + a[2] + "日～" + b[2] + "日") : (M[a[1] - 1] + a[2] + "日～" + M[b[1] - 1] + b[2] + "日");
     if (lang === "ko") return a[1] === b[1] ? (M[b[1] - 1] + " " + a[2] + "일~" + b[2] + "일") : (M[a[1] - 1] + " " + a[2] + "일~" + M[b[1] - 1] + " " + b[2] + "일");
     if (lang === "nl") return a[1] === b[1] ? (a[2] + "–" + b[2] + " " + M[b[1] - 1]) : (a[2] + " " + M[a[1] - 1] + " – " + b[2] + " " + M[b[1] - 1]);
+    if (lang === "tr") return a[1] === b[1] ? (a[2] + "–" + b[2] + " " + M[b[1] - 1]) : (a[2] + " " + M[a[1] - 1] + " – " + b[2] + " " + M[b[1] - 1]);
     if (lang === "ru") {
         const from = (a[2] === 2 ? "со " : "с ") + a[2];   // „со 2 по 8 ноября“ (read as „со второго“)
         return a[1] === b[1] ? (from + " по " + b[2] + " " + MONTHS_RU_GEN[b[1] - 1]) : (from + " " + MONTHS_RU_GEN[a[1] - 1] + " по " + b[2] + " " + MONTHS_RU_GEN[b[1] - 1]);
@@ -184,6 +187,7 @@ function weekMessage(lang, mondayIso) {
     if (lang === "ko") return { titel: "🗓️ 이번 주가 준비됐어요", text: r + "의 일정, 할 일, 식사 등 – 한눈에 확인하세요." };
     if (lang === "ru") return { titel: "🗓️ Ваша неделя готова", text: "События, задачи, питание и многое другое на период " + r + " – всё на одном экране." };
     if (lang === "nl") return { titel: "🗓️ Jullie week staat klaar", text: "Afspraken, taken, maaltijden en meer voor " + r + " – alles in één oogopslag." };
+    if (lang === "tr") return { titel: "🗓️ Haftan hazır", text: r + " için etkinlikler, görevler, yemekler ve daha fazlası – hepsi bir bakışta." };
     return { titel: "🗓️ Your week is ready", text: "Events, tasks, meals and more for " + r + " – all at a glance." };
 }
 function monthMessage(lang, key) {
@@ -200,6 +204,7 @@ function monthMessage(lang, key) {
     if (lang === "ko") return { titel: "💶 재정 전망: " + next, text: next + "에 예정된 일 – 그리고 " + prev + "은 어땠는지." };
     if (lang === "ru") return { titel: "💶 Финансовый прогноз: " + next, text: "Что ждёт в " + MONTHS_RU_PREP[m - 1] + " – и как прошёл " + prev + "." };
     if (lang === "nl") return { titel: "💶 Financiële vooruitblik: " + next, text: "Wat er in " + next + " op jullie wacht – en hoe " + prev + " is verlopen." };
+    if (lang === "tr") return { titel: "💶 Finans ön bakışı: " + next, text: next + " ayında neler var – ve " + prev + " ayı nasıl geçti." };
     return { titel: "💶 Finance outlook: " + next.charAt(0).toUpperCase() + next.slice(1), text: "What's coming up in " + next + " – and how " + prev + " went." };
 }
 

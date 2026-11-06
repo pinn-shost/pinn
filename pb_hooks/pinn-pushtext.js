@@ -13,14 +13,14 @@
 // placeholders are filled by pinn-textkern.js – the same table the app uses. A flat share uses the variant
 // "<key>#wg" of the language file (created by .github/scripts/i18n-keys.js from the TERMS of js/sprachen.js).
 //
-//  - Language: from the profile (personal design, value "sprache": de, en, fr, es, it, pt, zh, ja, ko, ru). Without one: German.
+//  - Language: from the profile (personal design, value "sprache": de, en, fr, es, it, pt, zh, ja, ko, ru, nl, tr). Without one: German.
 //  - Household type: from the family settings (field "wohnform": 'familie' or 'wg'). Only this one field is read
 //    via SQL (json_extract), not the big family data; the result stays cached until the family data changes.
 //  - Freely entered content (names, event titles, note texts, addresses) stays unchanged. Whatever matches no
 //    pattern stays as it is (German, or already translated by the module itself) – an unknown message is never lost.
 //    For a flat share such texts still get the flat share terms (applyTerms, same rules as TERMS in js/sprachen.js).
 
-const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl"];
+const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr"];
 
 // ---------------------------------------------------------------------------------------------
 // Language and household type of the recipient
@@ -70,6 +70,11 @@ const WG_EMOJI = "\uD83E\uDDD1\u200D\uD83E\uDD1D\u200D\uD83E\uDDD1";
 const RU_NEIGHBOUR = { "": "", "а": "а", "у": "у", "ом": "ом", "е": "е", "ы": "и", "ов": "ей", "ам": "ям", "ами": "ями", "ах": "ях" };
 const RU_FLAT = { "ья": "а", "ьи": "ы", "ье": "е", "ью": "у", "ьёй": "ой", "ьей": "ой", "ей": "", "ьям": "ам", "ьями": "ами", "ьях": "ах" };
 const RU_COMMON = { "ый": "ий", "ая": "ая", "ое": "ее", "ые": "ие", "ого": "его", "ому": "ему", "ой": "ей", "ом": "ем", "ых": "их", "ым": "им", "ую": "ую", "ыми": "ими" };
+// Turkish endings (same tables as .github/scripts/i18n-keys.js): aile + ending -> ev + ending
+const TR_HOME = { nin: "in", ndeki: "indeki", nde: "inde", nden: "inden", ne: "ine", ni: "ini", n: "in",
+    sinin: "inin", sine: "ine", sini: "ini", sinde: "inde", sinden: "inden", si: "i", ye: "e", yi: "i", yle: "le" };
+const TR_MATE = { si: "ı", leri: "ları", sinin: "ının", lerinin: "larının", sine: "ına", lerine: "larına", sini: "ını", lerini: "larını",
+    sinde: "ında", lerinde: "larında", sinden: "ından", lerinden: "larından" };
 const TERMS = {
     de: { keep: /Familienstammbuch|Familienkutsche/g, rules: [
         [/\b([Jj])edes Familienmitglied\b/g, "$1eder Mitbewohner"],
@@ -175,8 +180,19 @@ const TERMS = {
         [/(^|[^А-Яа-яЁё0-9])([Сс])емейн(ый|ая|ое|ые|ого|ому|ой|ом|ых|ым|ую|ыми)(?![А-Яа-яЁё0-9])/g,
             (m, pre, c, end) => pre + cap(c === "С", "общ" + RU_COMMON[end])],
     ] },
+    // Turkish (since 1.130.11): "aile" -> "ortak ev", "aile üyesi" -> "ev arkadaşı". Turkish adds endings to the word, so the
+    // endings of "aile" are mapped to the matching endings of "ev" ("ailenin" -> "ortak evin", "aileye" -> "ortak eve",
+    // "ailesi" -> "ortak evi"). No Unicode lookbehind here: a captured character in front (re-inserted) and a lookahead behind.
+    tr: { keep: /[Aa]ile\s+(?:doktor|hekim|araba|bütçe)[A-Za-zÇĞİÖŞÜçğıöşüâîû]*/g, rules: [
+        [/(^|[^A-Za-zÇĞİÖŞÜçğıöşüâîû0-9])([Aa])ile üye(sinin|lerinin|sine|lerine|sini|lerini|sinde|lerinde|sinden|lerinden|leri|si)(?![A-Za-zÇĞİÖŞÜçğıöşüâîû0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "A", "ev arkadaş" + TR_MATE[end])],
+        [/(^|[^A-Za-zÇĞİÖŞÜçğıöşüâîû0-9])([Tt])üm aile(?![A-Za-zÇĞİÖŞÜçğıöşüâîû0-9])/g,
+            (m, pre, c) => pre + cap(c === "T", "tüm ev")],
+        [/(^|[^A-Za-zÇĞİÖŞÜçğıöşüâîû0-9])([Aa])ile(nin|ndeki|nde|nden|ne|ni|n|sinin|sine|sini|sinde|sinden|si|ye|yi|yle|de|den|deki|ler|lerin|lere|leri|lerde)?(?![A-Za-zÇĞİÖŞÜçğıöşüâîû0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "A", "ortak " + (end === undefined ? "ev" : "ev" + (TR_HOME[end] === undefined ? end : TR_HOME[end])))],
+    ] },
 };
-const TERM_HINT = /[Ff]amil|[Ff]am\u00EDli|[Ff]amigli|\u5BB6\u5EAD|\u5168\u5BB6|\u5BB6\u65CF|\uAC00\uC871|\uD83D\uDC68\u200D\uD83D\uDC69|[\u0421\u0441]\u0435\u043C|[\u0427\u0447]\u043B\u0435\u043D/;
+const TERM_HINT = /[Aa]ile|[Ff]amil|[Ff]am\u00EDli|[Ff]amigli|\u5BB6\u5EAD|\u5168\u5BB6|\u5BB6\u65CF|\uAC00\uC871|\uD83D\uDC68\u200D\uD83D\uDC69|[\u0421\u0441]\u0435\u043C|[\u0427\u0447]\u043B\u0435\u043D/;
 function applyTerms(s, lang) {
     const T = TERMS[lang] || TERMS.de;
     if (!s || !TERM_HINT.test(s)) return s;

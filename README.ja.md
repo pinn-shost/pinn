@@ -130,6 +130,13 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.130.11の新機能
+
+**トルコ語――第12段階**
+
+- **トルコ語。** プッシュ通知とサーバー側のテキストを翻訳しました。これで6989件すべてが完了です。この言語はまだ非表示で選べません。アプリ自体は何も変わりません。
+- 変更：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) とすべてのREADME。サーバー部分：`pb_hooks/`（プッシュ通知のテキストと言語リスト）。`pinn-setup.sh` がいつも通りインストールし、PocketBaseを再起動します。
+
 ## 1.130.10の新機能
 
 **トルコ語――第11段階**
@@ -172,13 +179,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **トルコ語。** レシピ、家計、共有財布、ポートフォリオ、契約、お小遣い、スター、キッズページを翻訳しました（6989件中、合計3635件）。この言語はまだ非表示で選べません。アプリ自体は何も変わりません。
 - 変更：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) とすべてのREADME。サーバー部分なし。
 
-## 1.130.4の新機能
-
-**トルコ語――第5段階**
-
-- **トルコ語。** 買い物、ストック、食事プラン、カテゴリ、単位、標準名を翻訳しました（6989件中、合計2489件）。この言語はまだ非表示で選べません。アプリ自体は何も変わりません。
-- 変更：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) とすべてのREADME。サーバー部分なし。
-
 ## しくみ
 
 ```mermaid
@@ -207,7 +207,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.130.10`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.130.11`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

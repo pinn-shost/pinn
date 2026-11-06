@@ -118,6 +118,7 @@ const T = {
     ko: { titel: "🧳 “{t}” 짐 싸기 목록을 만들까요?", heute: "오늘 출발해요", morgen: "내일 출발해요", tage: "{n}일 후에 출발해요", text: "{w} – 탭하면 날짜가 채워진 목록이 만들어져요." },
     ru: { titel: "🧳 Создать список вещей для «{t}»?", heute: "Отправление сегодня", morgen: "Отправление завтра", tage: "Отправление через {n} дн.", text: "{w} – нажмите, чтобы создать список с уже заполненными датами." },
     nl: { titel: "🧳 Paklijst maken voor “{t}”?", heute: "Het begint vandaag", morgen: "Het begint morgen", tage: "Het begint over {n} dagen", text: "{w} – tik om de lijst te maken met de data al ingevuld." },
+    tr: { titel: "🧳 “{t}” için bavul listesi oluşturulsun mu?", heute: "Bugün başlıyor", morgen: "Yarın başlıyor", tage: "{n} gün sonra başlıyor", text: "{w} – dokun, tarihler zaten doldurulmuş olarak oluşturulsun." },
 };
 function tx(lang, k, vars) {
     let s = (T[lang] || T.en)[k] || T.en[k];

@@ -60,7 +60,7 @@ const DM_RE = /^dm:([a-z0-9]{15}):([a-z0-9]{15})$/;
 const GR_RE = /^gr:([a-z0-9]{15})$/;
 const UNREAD_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
 const PAGE = 60;
-const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl"];
+const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr"];
 const MAX_PREVIEW = 200 * 1024;  // preview picture of a photo/video push message (plain mode only)
 const MUTE_MAX_MS = 400 * 24 * 60 * 60 * 1000;
 const PUSH_TEXT = {
@@ -75,6 +75,7 @@ const PUSH_TEXT = {
     ko: { group: "그룹 채팅에 새 메시지", dm: "새 메시지", photo: "사진", video: "동영상", voice: "음성 메시지", file: "파일", loc: "위치", poll: "투표" },
     ru: { group: "Новое сообщение в групповом чате", dm: "Новое сообщение", photo: "Фото", video: "Видео", voice: "Голосовое сообщение", file: "Файл", loc: "Местоположение", poll: "Опрос" },
     nl: { group: "Nieuw bericht in de groepschat", dm: "Nieuw bericht", photo: "Foto", video: "Video", voice: "Spraakbericht", file: "Bestand", loc: "Locatie", poll: "Peiling" },
+    tr: { group: "Grup sohbetinde yeni mesaj", dm: "Yeni mesaj", photo: "Fotoğraf", video: "Video", voice: "Sesli mesaj", file: "Dosya", loc: "Konum", poll: "Anket" },
 };
 
 module.exports = { ensureSchema, roster, saveKey, saveBackup, saveSettings, overview, list, send, markRead, remove, upload, download, saveRetention, cleanup,
@@ -544,7 +545,7 @@ function langOf(u) {
     if (LANGS.indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
-    const map = { de: ["DE", "AT", "CH", "LI", "LU"], fr: ["FR", "BE", "MC"], es: ["ES", "MX", "AR", "CO", "CL", "PE"], it: ["IT", "SM", "VA"], pt: ["BR", "PT", "AO", "MZ"], zh: ["CN"], ja: ["JP"], ko: ["KR"], ru: ["RU"], nl: ["NL", "SR", "AW", "CW", "SX"] };
+    const map = { de: ["DE", "AT", "CH", "LI", "LU"], fr: ["FR", "BE", "MC"], es: ["ES", "MX", "AR", "CO", "CL", "PE"], it: ["IT", "SM", "VA"], pt: ["BR", "PT", "AO", "MZ"], zh: ["CN"], ja: ["JP"], ko: ["KR"], ru: ["RU"], nl: ["NL", "SR", "AW", "CW", "SX"], tr: ["TR"] };
     const hit = Object.keys(map).find(k => map[k].indexOf(land) >= 0);
     return hit || "en";
 }

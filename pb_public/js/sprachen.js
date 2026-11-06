@@ -140,7 +140,7 @@ window.PINN_LANGUAGES = [
 
   // Raise with every change to a text file in i18n/, otherwise devices keep using the old file.
   // .github/scripts/check-keys.js makes sure it matches src/version.txt.
-  var FILE_VERSION = '1.130.10';
+  var FILE_VERSION = '1.130.11';
 
   // Invisible until the texts are in place (no short flash of English placeholder texts)
   var style = document.createElement('style');
