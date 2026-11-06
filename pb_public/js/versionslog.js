@@ -28,6 +28,7 @@ const PINN_CHANGELOG = [
       ['info', '1.130.1: Türkisch Etappe 2 – Konto, Geräte, Fehlerprotokoll sowie Sicherungen & Updates (insgesamt 875 von 6989 Texten). Außerdem „Dashboard“ im Türkischen durchgehend als „Gösterge paneli“ (die Pinnwand heißt „Pano“).'],
       ['info', '1.130.2: Türkisch Etappe 3 – Kalender, Aufgaben, Haushalt, Übersicht, Wetter, Suche und Feiertage (insgesamt 1365 von 6989 Texten).'],
       ['info', '1.130.3: Türkisch Etappe 4 – alle Listen (Packlisten, Wunschlisten, Geschenke, Checklisten, Vorlagen); insgesamt 1926 von 6989 Texten.'],
+      ['info', '1.130.4: Türkisch Etappe 5 – Einkauf, Vorrat, Essensplan, Kategorien, Einheiten und Standardnamen; insgesamt 2489 von 6989 Texten.'],
     ],
   },
   {

@@ -126,6 +126,13 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский et 🇳🇱 Nederlands**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.130.4
+
+**Turc – étape 5**
+
+- **Turc.** Courses, garde-manger, plan de repas, catégories, unités et noms standard sont traduits (2489 textes sur 6989 au total). La langue reste masquée et ne peut pas encore être choisie ; pour toi, l’app ne change pas.
+- Modifié : `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) et tous les README. Pas de partie serveur.
+
 ## Nouveautés de la 1.130.3
 
 **Turc – étape 4**
@@ -206,20 +213,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Sécurité.** Les trois alertes de l'analyseur de code « DOM text reinterpreted as HTML » dans l'aperçu des photos et vidéos du chat sont corrigées.
 - Modifié : `js/chatmedien.js`, `js/chatstimme.js`, `js/chat.js`, `js/chatextras.js`, `js/finanzen.js`, `js/sparen.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, tous les `i18n/*.i18n.js`, `src/` (`index.html`) et tous les README. Pas de partie serveur.
 
-## Nouveautés de la 1.127.4
-
-**Chat : messages vocaux, position, sondages, PDF, recherche, sourdine – et chiffrement désactivable**
-
-- **Messages vocaux.** Un bouton micro remplace le bouton d’envoi tant que rien n’est saisi : toucher, parler, envoyer (jusqu’à 5 minutes). Forme d’onde, lecture/pause, 1×/1,5×/2× et saut en touchant l’onde. Chiffrés de bout en bout comme les photos.
-- **Le trombone est désormais un menu :** photo/vidéo, **document PDF** (jusqu’à 20 Mo ; ouvrir / partager / enregistrer / classer dans pinn.), **position** et **sondage**.
-- **Position.** Aperçu de la carte et légende (un lieu enregistré de la carte de localisation, p. ex. « Maison », est proposé). Toucher affiche la carte : **« Afficher sur la carte de localisation »** ouvre Famille → Localisation avec un repère ; « Ouvrir dans l’app de cartes » lance la navigation.
-- **Sondages.** Une question et jusqu’à 8 réponses, plusieurs par personne si souhaité. Avec la case **« Afficher aussi sur le tableau d’affichage »**, un sondage du tableau est créé en même temps : on vote ici ou là, le résultat est identique.
-- **Recherche** dans le chat (loupe en haut), **sourdine** par chat (8 heures, 1 semaine, toujours ; pas de notification et non compté dans le nombre à côté de « Chat » dans le menu) et **dissolution d’un groupe** (créateur et admins).
-- **Chiffrement désactivable** par famille (admins, « Sécurité du chat »). Les notifications affichent alors le texte (sur Android aussi un aperçu des photos) et personne n’a besoin de code de récupération. Par défaut : chiffré de bout en bout.
-- « Discuter dans le chat » (💬) aussi pour les rendez-vous, documents et véhicules. Corrigé : « Classer dans pinn. » s’ouvrait sous la photo, les titres du chat utilisent la police de l’app, le nombre du menu se met à jour plus fiablement.
-- Modifié : `js/chatextras.js` et `js/chatstimme.js` (nouveaux), `js/chat.js`, `js/chatmedien.js`, `js/chatgruppen.js`, `js/familie.js`, `js/pinnwand.js`, `js/termindetails.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/hinweise.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, tous les `i18n/*.i18n.js`, `pinn-setup.sh`, `src/` et tous les README. **Partie serveur :** `pb_hooks/chat.pb.js`, `pinn-chat.js`, `pinn-push.js` et `sw.pb.js` – remplacez aussi les hooks ; quelques champs sont ajoutés automatiquement au démarrage.
-
-
 ## Comment ça marche
 
 ```mermaid
@@ -246,7 +239,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.130.3` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.130.4` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

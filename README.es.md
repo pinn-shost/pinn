@@ -126,6 +126,13 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский y 🇳🇱 Nederlands**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.130.4
+
+**Turco – etapa 5**
+
+- **Turco.** Compras, despensa, plan de comidas, categorías, unidades y nombres estándar están traducidos (2489 de 6989 textos en total). El idioma sigue oculto y aún no se puede elegir; para ti la app no cambia.
+- Cambiado: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
+
 ## Novedades de la 1.130.3
 
 **Turco – etapa 4**
@@ -206,20 +213,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Seguridad.** Se han cerrado las tres alertas del escáner de código «DOM text reinterpreted as HTML» en la vista previa de fotos y vídeos del chat.
 - Cambiado: `js/chatmedien.js`, `js/chatstimme.js`, `js/chat.js`, `js/chatextras.js`, `js/finanzen.js`, `js/sparen.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos los `i18n/*.i18n.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
 
-## Novedades de la 1.127.4
-
-**Chat: mensajes de voz, ubicación, encuestas, PDF, búsqueda, silenciar – y cifrado desactivable**
-
-- **Mensajes de voz.** Un botón de micrófono sustituye al de enviar mientras no se escribe nada: tocar, hablar, enviar (hasta 5 minutos). Forma de onda, reproducir/pausa, 1×/1,5×/2× y saltar tocando la onda. Cifrados de extremo a extremo como las fotos.
-- **El clip ahora es un menú:** foto/vídeo, **documento PDF** (hasta 20 MB; abrir / compartir / guardar / archivar en pinn.), **ubicación** y **encuesta**.
-- **Ubicación.** Vista previa del mapa y etiqueta (se sugiere un lugar guardado del mapa de ubicación, p. ej. «Casa»). Al tocarla se ve el mapa: **«Mostrar en el mapa de ubicación»** abre Familia → Ubicación con una marca; «Abrir en la app de mapas» inicia la navegación.
-- **Encuestas.** Una pregunta y hasta 8 respuestas, varias por persona si se desea. Con la casilla **«Mostrar también en el tablón»** se crea a la vez una encuesta del tablón: se vota aquí o allí y el resultado es el mismo.
-- **Búsqueda** en el chat (lupa arriba), **silenciar** por chat (8 horas, 1 semana, siempre; sin notificación y sin contar en el número junto a «Chat» del menú) y **disolver un grupo** (creador y administradores).
-- **Cifrado desactivable** por familia (administradores, «Seguridad del chat»). Entonces las notificaciones muestran el texto (en Android también una vista previa de las fotos) y nadie necesita código de recuperación. Por defecto sigue cifrado de extremo a extremo.
-- «Comentar en el chat» (💬) también en citas, documentos y vehículos. Corregido: «Archivar en pinn.» se abría bajo la foto, los títulos del chat usan la fuente de la app y el número del menú se actualiza con más fiabilidad.
-- Cambiado: `js/chatextras.js` y `js/chatstimme.js` (nuevos), `js/chat.js`, `js/chatmedien.js`, `js/chatgruppen.js`, `js/familie.js`, `js/pinnwand.js`, `js/termindetails.js`, `js/dokumente.js`, `js/fahrzeuge.js`, `js/hinweise.js`, `css/chat.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, todos los `i18n/*.i18n.js`, `pinn-setup.sh`, `src/` y todos los README. **Parte del servidor:** `pb_hooks/chat.pb.js`, `pinn-chat.js`, `pinn-push.js` y `sw.pb.js`: sustituye también los hooks; algunos campos se añaden solos al arrancar.
-
-
 ## Cómo funciona
 
 ```mermaid
@@ -246,7 +239,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.130.3` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.130.4` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

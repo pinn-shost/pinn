@@ -130,6 +130,13 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский和 🇳🇱 Nederlands**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.130.4 新功能
+
+**土耳其语——第 5 阶段**
+
+- **土耳其语。** 购物、储藏室、餐食计划、分类、单位和标准名称已翻译完成（共 6989 条文本中的 2489 条）。该语言目前仍处于隐藏状态，暂时无法选择；对你来说应用没有变化。
+- 更改：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) 以及所有 README。无服务器部分。
+
 ## 1.130.3 新功能
 
 **土耳其语——第 4 阶段**
@@ -173,13 +180,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **聊天中的清晰照片。** 照片在打开前就很清晰：预览图大了一倍，照片一出现在屏幕上，pinn. 就会在后台加载原图——旧消息也一样。
 - **英文注释。** 最后的德语注释已改为英文；新的自动检查（`check-comments.js`）确保所有注释保持英文。README 中新增聊天截图。
 
-## 1.129.0 新功能
-
-**所有文件的代码注释改为英文**
-
-- **注释改为英文。** 项目中所有代码注释现在均为英文：服务器部分、安装与维护脚本、`docker-compose.yaml`、`.env` 模板、Caddyfile 以及应用文件。应用本身、界面文字和行为没有任何变化。
-- 已更改：`pb_hooks/`（全部文件）、`pinn-setup.sh`、`pinn-wartung.sh`、`pinn-pocketbase-update.sh`、`docker-compose.yaml`、`env.txt`、`caddy/Caddyfile`、`js/sprachen.js`、`datenexport.js`、`einrichtung.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）以及所有 README。服务器部分：hook 文件，请一并替换。
-
 ## 工作原理
 
 ```mermaid
@@ -208,7 +208,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.130.3` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.130.4` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

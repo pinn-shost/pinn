@@ -130,6 +130,13 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.130.4의 새 소식
+
+**튀르키예어 – 5단계**
+
+- **튀르키예어.** 장보기, 식료품 저장, 식단, 카테고리, 단위, 기본 이름을 번역했어요(6989개 중 총 2489개). 아직 숨겨져 있어 선택할 수 없고, 앱은 바뀌지 않아요.
+- 변경: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) 및 모든 README. 서버 부분 없음.
+
 ## 1.130.3의 새 소식
 
 **튀르키예어 – 4단계**
@@ -173,13 +180,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **채팅 사진이 선명해요.** 열기 전에도 사진이 선명해요. 미리보기가 두 배로 커졌고, 사진이 화면에 보이면 pinn.이 원본 이미지를 백그라운드에서 불러와요(이전 메시지도).
 - **영어 주석.** 마지막 독일어 주석을 영어로 바꿨어요. 새 자동 검사(`check-comments.js`)가 모든 주석이 영어로 유지되는지 확인해요. README에 채팅 스크린샷을 추가했어요.
 
-## 1.129.0의 새 소식
-
-**모든 파일의 코드 주석을 영어로**
-
-- **주석을 영어로.** 프로젝트의 모든 코드 주석이 이제 영어입니다(서버 부분, 설치·유지보수 스크립트, `docker-compose.yaml`, `.env` 템플릿, Caddyfile, 앱 파일). 앱 자체와 화면 텍스트, 동작은 달라지지 않습니다.
-- 변경됨: `pb_hooks/`(모든 파일), `pinn-setup.sh`, `pinn-wartung.sh`, `pinn-pocketbase-update.sh`, `docker-compose.yaml`, `env.txt`, `caddy/Caddyfile`, `js/sprachen.js`, `datenexport.js`, `einrichtung.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`(`index.html`), 모든 README. 서버 부분: hook 파일도 함께 교체해 주세요.
-
 ## 작동 방식
 
 ```mermaid
@@ -208,7 +208,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.130.3` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.130.4` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

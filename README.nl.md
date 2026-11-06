@@ -107,6 +107,13 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский en 🇳🇱 Nederlands**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.130.4
+
+**Turks – stap 5**
+
+- **Turks.** Boodschappen, voorraad, eetplan, categorieën, eenheden en standaardnamen zijn vertaald (2489 van 6989 teksten in totaal). De taal is nog verborgen en nog niet te kiezen; aan de app verandert er voor jou niets.
+- Gewijzigd: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) en alle READMEs. Geen serverdeel.
+
 ## Nieuw in 1.130.3
 
 **Turks – stap 4**
@@ -121,13 +128,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Turks.** Agenda, taken, huishouden, overzicht, weer, zoeken en feestdagen zijn vertaald (1365 van 6989 teksten in totaal). De taal is nog verborgen en nog niet te kiezen; aan de app verandert er voor jou niets.
 - Gewijzigd: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) en alle READMEs. Geen serverdeel.
 
-## Nieuw in 1.130.1
-
-**Turks – stap 2**
-
-- **Turks.** Account, apparaten, foutenlogboek en back-ups & updates zijn vertaald (875 van 6989 teksten in totaal). De taal is nog verborgen en nog niet te kiezen; aan de app verandert er voor jou niets.
-- Gewijzigd: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) en alle READMEs. Geen serverdeel.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -137,7 +137,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.130.3` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.130.4` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
