@@ -126,6 +126,13 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский and 🇳🇱 Nederlands**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.130.5
+
+**Turkish – stage 6**
+
+- **Turkish.** Recipes, finances, funds, depots, contracts, pocket money, stars and the kids' page are translated (3635 of 6989 texts in total). The language is still hidden and cannot be chosen yet; nothing changes in the app for you.
+- Changed: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) and all READMEs. No server part.
+
 ## What's new in 1.130.4
 
 **Turkish – stage 5**
@@ -203,16 +210,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Security.** The three code-scanning alerts “DOM text reinterpreted as HTML” in the photo and video preview of the chat (`js/chatmedien.js`) are fixed for good: object addresses are checked strictly and escaped for HTML before they reach the page.
 - Changed: `js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `src/` (`index.html`) and all READMEs. Server part: `pb_hooks/pinn-chat.js` – replace the hooks too; one field is added automatically at start.
 
-## What's new in 1.127.5
-
-**Chat: faster polls, finance in the chat, security**
-
-- **Polls respond faster.** A chat poll that is also on the pin board now updates for everybody within about 10 seconds instead of up to a minute.
-- **Finance in the chat.** Expenses, income, recurring entries and savings positions now have a **Chat** button (💬) in their pop-up: pick a chat, the entry arrives as a card, a tap on it opens the entry again.
-- **Shorter buttons.** “Discuss in chat” is now simply **Chat** everywhere (tasks, notes, contracts, appointments, documents, vehicles and the new finance entries).
-- **Security.** The three code-scanning alerts “DOM text reinterpreted as HTML” in the photo and video preview of the chat are closed: only own object addresses are accepted in `src`.
-- Changed: `js/chatmedien.js`, `js/chatstimme.js`, `js/chat.js`, `js/chatextras.js`, `js/finanzen.js`, `js/sparen.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, all `i18n/*.i18n.js`, `src/` (`index.html`) and all READMEs. No server part.
-
 ## How it works
 
 ```mermaid
@@ -239,7 +236,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.130.4` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.130.5` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

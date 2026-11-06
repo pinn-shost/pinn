@@ -130,6 +130,13 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.130.5의 새 소식
+
+**튀르키예어 – 6단계**
+
+- **튀르키예어.** 레시피, 재무, 공동 금고, 포트폴리오, 계약, 용돈, 별, 어린이 페이지를 번역했어요(6989개 중 총 3635개). 아직 숨겨져 있어 선택할 수 없고, 앱은 바뀌지 않아요.
+- 변경: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) 및 모든 README. 서버 부분 없음.
+
 ## 1.130.4의 새 소식
 
 **튀르키예어 – 5단계**
@@ -172,14 +179,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **보안.** `.github/scripts/check-comments.js`의 코드 스캔 경고 “Bad HTML filtering regexp”를 고쳤어요. 이제 검사는 정규 표현식 대신 간단한 문자열 처리로 주석 기호, HTML 주석(`--!>`로 끝나는 것도 포함), 내장된 `<script>`/`<style>` 블록을 찾아요. 찾는 주석은 이전과 똑같아요.
 - 변경: `.github/scripts/check-comments.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) 및 모든 README. 서버 부분 없음 – 앱은 바뀌지 않아요.
 
-## 1.129.1의 새 소식
-
-**채팅 수정과 마지막 영어 주석**
-
-- **채팅 투표.** 게시판에도 올린 투표를 채팅에서 공유하면 다른 사람에게 약 20초 동안 „투표가 삭제되었습니다“로 보이던 문제를 고쳤어요. 게시판 메모가 도착할 때까지는 잠깐 „게시판과 동기화하는 중…“이 보이고, 몇 초 뒤 투표가 나타나요.
-- **채팅 사진이 선명해요.** 열기 전에도 사진이 선명해요. 미리보기가 두 배로 커졌고, 사진이 화면에 보이면 pinn.이 원본 이미지를 백그라운드에서 불러와요(이전 메시지도).
-- **영어 주석.** 마지막 독일어 주석을 영어로 바꿨어요. 새 자동 검사(`check-comments.js`)가 모든 주석이 영어로 유지되는지 확인해요. README에 채팅 스크린샷을 추가했어요.
-
 ## 작동 방식
 
 ```mermaid
@@ -208,7 +207,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.130.4` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.130.5` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

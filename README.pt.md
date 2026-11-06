@@ -130,6 +130,13 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский e 🇳🇱 Nederlands**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.130.5
+
+**Turco – etapa 6**
+
+- **Turco.** Receitas, finanças, caixas, carteiras, contratos, mesada, estrelas e página infantil estão traduzidos (3635 de 6989 textos no total). O idioma ainda está oculto e não pode ser escolhido; para você o app não muda.
+- Alterado: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) e todos os README. Sem parte de servidor.
+
 ## Novidades da 1.130.4
 
 **Turco – etapa 5**
@@ -172,14 +179,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Segurança.** O alerta da análise de código “Bad HTML filtering regexp” em `.github/scripts/check-comments.js` foi corrigido: a verificação agora encontra os marcadores de comentário, os comentários HTML (também os que terminam em `--!>`) e os blocos `<script>`/`<style>` incorporados com operações de texto simples em vez de expressões regulares. Ela encontra exatamente os mesmos comentários de antes.
 - Alterado: `.github/scripts/check-comments.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) e todos os README. Sem parte de servidor – nada muda no app.
 
-## Novidades da 1.129.1
-
-**Correções do chat e os últimos comentários em inglês**
-
-- **Votações no chat.** Uma votação partilhada no chat que também está no mural já não aparece aos outros durante cerca de 20 segundos como «A votação foi apagada». Até a nota do mural chegar, aparece brevemente «Sincronizando com o mural …» e a votação surge em poucos segundos.
-- **Fotos nítidas no chat.** As fotos ficam nítidas antes de serem abertas: a pré-visualização é duas vezes maior e, assim que uma foto fica visível, o pinn. carrega a imagem real em segundo plano – também em mensagens antigas.
-- **Comentários em inglês.** Os últimos comentários em alemão foram convertidos; uma nova verificação automática (`check-comments.js`) garante que todos continuam em inglês. Nova captura do chat no README.
-
 ## Como funciona
 
 ```mermaid
@@ -208,7 +207,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.130.4` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.130.5` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

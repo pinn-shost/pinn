@@ -126,6 +126,13 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский et 🇳🇱 Nederlands**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.130.5
+
+**Turc – étape 6**
+
+- **Turc.** Recettes, finances, caisses, portefeuilles, contrats, argent de poche, étoiles et page enfants sont traduits (3635 textes sur 6989 au total). La langue reste masquée et ne peut pas encore être choisie ; pour toi, l’app ne change pas.
+- Modifié : `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) et tous les README. Pas de partie serveur.
+
 ## Nouveautés de la 1.130.4
 
 **Turc – étape 5**
@@ -203,16 +210,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Sécurité.** Les trois alertes du scanner de code « DOM text reinterpreted as HTML » dans l’aperçu des photos et vidéos du chat (`js/chatmedien.js`) sont corrigées : les adresses d’objet sont vérifiées strictement et échappées pour le HTML.
 - Modifié : `js/chat.js`, `js/chatextras.js`, `js/chatmedien.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, tous les `i18n/*.i18n.js`, `src/` (`index.html`) et tous les README. Partie serveur: `pb_hooks/pinn-chat.js` – remplace aussi les hooks ; un champ est ajouté automatiquement au démarrage.
 
-## Nouveautés de la 1.127.5
-
-**Chat : sondages plus rapides, finances dans le chat, sécurité**
-
-- **Les sondages réagissent plus vite.** Un sondage du chat qui figure aussi sur le tableau d'affichage se met à jour pour tout le monde en 10 secondes environ au lieu d'une minute.
-- **Finances dans le chat.** Dépenses, revenus, opérations récurrentes et positions d'épargne ont maintenant un bouton **Chat** (💬) dans leur fenêtre : choisissez un chat, l'entrée arrive sous forme de carte, un appui dessus l'ouvre à nouveau.
-- **Boutons plus courts.** « En discuter dans le chat » devient simplement **Chat** partout.
-- **Sécurité.** Les trois alertes de l'analyseur de code « DOM text reinterpreted as HTML » dans l'aperçu des photos et vidéos du chat sont corrigées.
-- Modifié : `js/chatmedien.js`, `js/chatstimme.js`, `js/chat.js`, `js/chatextras.js`, `js/finanzen.js`, `js/sparen.js`, `js/vertraege.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, tous les `i18n/*.i18n.js`, `src/` (`index.html`) et tous les README. Pas de partie serveur.
-
 ## Comment ça marche
 
 ```mermaid
@@ -239,7 +236,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.130.4` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.130.5` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

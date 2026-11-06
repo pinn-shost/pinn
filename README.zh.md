@@ -130,6 +130,13 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский和 🇳🇱 Nederlands**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.130.5 新功能
+
+**土耳其语——第 6 阶段**
+
+- **土耳其语。** 食谱、财务、资金池、投资组合、合同、零花钱、星星和儿童页面已翻译完成（共 6989 条文本中的 3635 条）。该语言目前仍处于隐藏状态，暂时无法选择；对你来说应用没有变化。
+- 更改：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) 以及所有 README。无服务器部分。
+
 ## 1.130.4 新功能
 
 **土耳其语——第 5 阶段**
@@ -172,14 +179,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **安全。** 修复了 `.github/scripts/check-comments.js` 中代码扫描提示“Bad HTML filtering regexp”：检查现在用简单的文本操作代替正则表达式来识别注释符号、HTML 注释（包括以 `--!>` 结尾的注释）以及内嵌的 `<script>`/`<style>` 块，找到的注释与之前完全相同。
 - 更改：`.github/scripts/check-comments.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) 以及所有 README。无服务器部分——应用本身没有任何变化。
 
-## 1.129.1 新功能
-
-**聊天修复以及最后的英文注释**
-
-- **聊天中的投票。** 在聊天中分享且同时显示在布告板上的投票，其他人不会再在约 20 秒内看到“投票已删除”。在布告板便签到达之前会短暂显示“正在与布告板同步…”，几秒后投票就会出现。
-- **聊天中的清晰照片。** 照片在打开前就很清晰：预览图大了一倍，照片一出现在屏幕上，pinn. 就会在后台加载原图——旧消息也一样。
-- **英文注释。** 最后的德语注释已改为英文；新的自动检查（`check-comments.js`）确保所有注释保持英文。README 中新增聊天截图。
-
 ## 工作原理
 
 ```mermaid
@@ -208,7 +207,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.130.4` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.130.5` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
