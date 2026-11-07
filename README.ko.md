@@ -129,7 +129,14 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 | 🔔 **알림** | iPhone, iPad, Android에서 받는 개인 푸시 메시지와, 가족의 모든 변경을 모아 주는 알림 벨. |
 | 🧩 **그 밖에** | 옮길 수 있는 메모가 있는 가족 게시판, 전체 검색, 자동 동기화되는 오프라인 모드, 다크 모드, 프로필 PIN이 있는 iPad 대시보드, 손님 계정, 아이 보호 잠금. |
 
-pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
+pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
+
+## 1.131.0의 새 소식
+
+**튀르키예어를 이제 선택할 수 있어요**
+
+- **튀르키예어.** 이제 설정 → 언어 및 지역에서 🇹🇷 Türkçe를 고를 수 있어요(브라우저가 튀르키예어이면 자동으로 선택돼요). 텍스트 6989개 전부, 푸시 알림, 초기 설정 마법사, 데이터 내보내기가 튀르키예어로 준비되어 있고, 튀르키예의 긴급 번호는 112예요. 이제 pinn.은 열두 가지 언어를 지원해요.
+- 변경: `js/sprachen.js`(언어 숨김 해제), `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`(`index.html`), 모든 README(언어 목록, “열두 가지 언어”); 주석만: `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`. 서버 쪽 변경은 없어요.
 
 ## 1.130.12의 새 소식
 
@@ -173,13 +180,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **튀르키예어.** 차량, 문서, PDF 읽기를 번역했어요(6989개 중 총 4944개). 아직 숨겨져 있어 선택할 수 없고, 앱은 바뀌지 않아요.
 - 변경: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) 및 모든 README. 서버 부분 없음.
 
-## 1.130.6의 새 소식
-
-**튀르키예어 – 7단계**
-
-- **튀르키예어.** 집(임대·구매, 계량기, 하자, 열쇠, 유지보수, 정원과 식물)을 번역했어요(6989개 중 총 4285개). 아직 숨겨져 있어 선택할 수 없고, 앱은 바뀌지 않아요.
-- 변경: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) 및 모든 README. 서버 부분 없음.
-
 ## 작동 방식
 
 ```mermaid
@@ -208,14 +208,14 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.130.12` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.131.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    스크립트가 모든 파일을 제자리에 복사하고, PDF 가져오기와 사진 문자 인식에 필요한 라이브러리를 내려받고, pinn.을 시작해요.
 4. `http://<NAS-IP>:8090`을 열고 → **메인 관리자로 로그인** → 비밀번호 `Admin` → 나만의 비밀번호를 정해요.
-5. **설정 도우미**가 나머지를 안내해 줘요. HTTPS, WireGuard 또는 Tailscale을 통한 원격 접속, Google, AI, 위치, Home Assistant를 열한 가지 언어로 차례대로요.
+5. **설정 도우미**가 나머지를 안내해 줘요. HTTPS, WireGuard 또는 Tailscale을 통한 원격 접속, Google, AI, 위치, Home Assistant를 열두 가지 언어로 차례대로요.
 6. 각 휴대폰에서 HTTPS 주소로 pinn.을 열고 홈 화면에 추가해요:
    - **iPhone/iPad(Safari):** 공유 → *홈 화면에 추가*(알림에는 iOS 16.4 이상 필요)
    - **Android(Chrome):** 설정 → 알림 → *pinn.을 앱으로 설치*, 또는 Chrome 메뉴 ⋮ → *앱 설치*

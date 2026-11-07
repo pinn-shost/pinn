@@ -106,7 +106,14 @@ Tam boyutta açmak için bir resme dokun.
 - 💬 **Sohbet** – aile ve özel sohbet, uçtan uca şifreli, anlık bildirim ve okundu işaretiyle
 - 🔔 **Bildirimler** – iPhone, iPad ve Android'de kişiye özel anlık bildirimler ve ailedeki tüm değişiklikleri gösteren bir bildirim zili
 
-pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский ve 🇳🇱 Nederlands**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir. **Türkçe** uygulama dili hazırlanıyor – çeviri tamamlandı, deneme süreci sürüyor; yakında seçilebilir olacak.
+pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands ve 🇹🇷 Türkçe**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
+
+## 1.131.0 sürümündeki yenilikler
+
+**Türkçe artık seçilebiliyor**
+
+- **Türkçe.** 🇹🇷 Türkçe artık Ayarlar → Dil ve bölge altında seçilebiliyor (tarayıcın Türkçeyse kendiliğinden seçilir). 6989 metnin tamamı, anlık bildirimler, kurulum sihirbazı ve veri dışa aktarımı Türkçe; Türkiye için acil durum numarası 112. Böylece pinn. on iki dil konuşuyor.
+- Değişenler: `js/sprachen.js` (dil artık gizli değil), `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), tüm README dosyaları (dil listesi, “on iki dil”); yalnızca yorumlar: `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`. Sunucu kısmı yok.
 
 ## 1.130.12 sürümündeki yenilikler
 
@@ -122,13 +129,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Türkçe.** Anlık bildirimler ve sunucunun metinleri çevrildi – böylece 6989 metnin tamamı hazır. Dil hâlâ gizli ve henüz seçilemiyor; uygulamada senin için hiçbir şey değişmez.
 - Değişenler: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) ve tüm README dosyaları. Sunucu kısmı: `pb_hooks/` (bildirim metinleri ve dil listeleri) – `pinn-setup.sh` bunu kurar ve PocketBase'i her zamanki gibi yeniden başlatır.
 
-## 1.130.10 sürümündeki yenilikler
-
-**Türkçe – 11. aşama**
-
-- **Türkçe.** Yardım ve tanıtım turu, akıllı ev, sesli kontrol ve kalan uygulama metinleri çevrildi (anlık bildirimler hariç her şey); toplamda 6989 metinden 6842'si hazır. Dil hâlâ gizli ve henüz seçilemiyor; uygulamada senin için hiçbir şey değişmez.
-- Değişenler: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) ve tüm README dosyaları. Sunucu kısmı yok.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -138,13 +138,13 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.130.12` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.131.0` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
 4. `http://<NAS'ın IP adresi>:8090` adresini aç → **Ana yönetici olarak giriş yap** → şifre `Admin` → kendi şifreni belirle.
-5. **Kurulum sihirbazı** gerisinde sana adım adım rehberlik eder – HTTPS, uzaktan erişim, Google, yapay zekâ, konum ve Home Assistant – 11 dilde.
+5. **Kurulum sihirbazı** gerisinde sana adım adım rehberlik eder – HTTPS, uzaktan erişim, Google, yapay zekâ, konum ve Home Assistant – 12 dilde.
 6. pinn.'i her telefonda HTTPS adresinden aç ve ana ekrana ekle:
    - **iPhone/iPad (Safari):** “Paylaş” → *Ana Ekrana Ekle* (bildirimler için iOS 16.4 veya daha yenisi gerekir)
    - **Android (Chrome):** Ayarlar → Bildirimler → *pinn.'i uygulama olarak yükle* veya Chrome menüsü ⋮ → *Uygulamayı yükle*

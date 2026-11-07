@@ -129,7 +129,14 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 | 🔔 **通知** | iPhone、iPad 和 Android 上的个人推送消息，以及汇总家庭中每项变动的通知铃。 |
 | 🧩 **其他功能** | 带可移动便签的家庭公告板、全局搜索、带自动同步的离线模式、深色模式、带个人 PIN 的 iPad 仪表板、访客账户、儿童锁。 |
 
-pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский和 🇳🇱 Nederlands**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
+pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands和 🇹🇷 Türkçe**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
+
+## 1.131.0 新功能
+
+**现已支持土耳其语**
+
+- **土耳其语。** 现在可以在“设置 → 语言与地区”中选择 🇹🇷 Türkçe（浏览器语言为土耳其语时会自动选用）。全部 6989 条文本、推送消息、设置向导和数据导出都已提供土耳其语；土耳其的紧急号码为 112。这样 pinn. 就支持十二种语言。
+- 更改：`js/sprachen.js`（语言不再隐藏）, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`（`index.html`）、所有 README（语言列表、“十二种语言”）；仅注释：`js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`。无服务器部分。
 
 ## 1.130.12 新功能
 
@@ -173,13 +180,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **土耳其语。** 车辆、文档和 PDF 读取已翻译完成（共 6989 条文本中的 4944 条）。该语言目前仍处于隐藏状态，暂时无法选择；对你来说应用没有变化。
 - 更改：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) 以及所有 README。无服务器部分。
 
-## 1.130.6 新功能
-
-**土耳其语——第 7 阶段**
-
-- **土耳其语。** 住宅（租赁与购买、仪表、缺陷、钥匙、维护、花园与植物）已翻译完成（共 6989 条文本中的 4285 条）。该语言目前仍处于隐藏状态，暂时无法选择；对你来说应用没有变化。
-- 更改：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) 以及所有 README。无服务器部分。
-
 ## 工作原理
 
 ```mermaid
@@ -208,14 +208,14 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.130.12` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.131.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    脚本会把每个文件复制到位，下载 PDF 导入和照片文字识别所需的库，并启动 pinn.。
 4. 打开 `http://<NAS-IP>:8090` → **以主管理员身份登录** → 密码 `Admin` → 设置你自己的密码。
-5. **设置向导**会带你完成其余步骤——HTTPS、通过 WireGuard 或 Tailscale 远程访问、Google、AI、位置和 Home Assistant——一步一步，支持十一种语言。
+5. **设置向导**会带你完成其余步骤——HTTPS、通过 WireGuard 或 Tailscale 远程访问、Google、AI、位置和 Home Assistant——一步一步，支持十二种语言。
 6. 在每部手机上通过 HTTPS 地址打开 pinn.，并添加到主屏幕：
    - **iPhone/iPad（Safari）：** 分享 → *添加到主屏幕*（通知需要 iOS 16.4 或更高版本）
    - **Android（Chrome）：** 设置 → 通知 → *将 pinn. 安装为应用*，或 Chrome 菜单 ⋮ → *安装应用*

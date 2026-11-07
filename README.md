@@ -125,7 +125,14 @@ Tap any picture to open it in full size.
 | 🔔 **Notifications** | Personal push messages on iPhone, iPad and Android, plus a notification bell that collects every change in the family. |
 | 🧩 **Everything else** | Family board with movable notes, global search, offline mode with automatic sync, dark mode, iPad dashboard with profile PINs, guest account, child lock. |
 
-pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский and 🇳🇱 Nederlands**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
+pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands and 🇹🇷 Türkçe**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
+
+## What's new in 1.131.0
+
+**Turkish is now available**
+
+- **Turkish.** 🇹🇷 Türkçe can now be chosen under Settings → Language & region (and is selected automatically if the browser is set to Turkish). All 6989 texts, the push messages, the setup assistant and the data export are in Turkish; for Turkey the emergency number is 112. pinn. now speaks twelve languages.
+- Changed: `js/sprachen.js` (language no longer hidden), `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), all READMEs (language list, “twelve languages”); comments only: `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`. No server part.
 
 ## What's new in 1.130.12
 
@@ -197,13 +204,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Turkish.** All lists (packing lists, wish lists, gifts, checklists, templates) are translated (1926 of 6989 texts in total). The language is still hidden and cannot be chosen yet; nothing changes in the app for you.
 - Changed: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) and all READMEs. No server part.
 
-## What's new in 1.130.2
-
-**Turkish – stage 3**
-
-- **Turkish.** Calendar, tasks, household, overview, weather, search and public holidays are translated (1365 of 6989 texts in total). The language is still hidden and cannot be chosen yet; nothing changes in the app for you.
-- Changed: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) and all READMEs. No server part.
-
 ## How it works
 
 ```mermaid
@@ -230,14 +230,14 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.130.12` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.131.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    The script copies every file into place, downloads the libraries for PDF import and photo text recognition, and starts pinn.
 4. Open `http://<NAS-IP>:8090` → **Log in as main admin** → password `Admin` → choose your own password.
-5. The **setup assistant** walks you through the rest – HTTPS, remote access via WireGuard or Tailscale, Google, AI, location and Home Assistant – step by step, in eleven languages.
+5. The **setup assistant** walks you through the rest – HTTPS, remote access via WireGuard or Tailscale, Google, AI, location and Home Assistant – step by step, in twelve languages.
 6. Open pinn. via its HTTPS address on each phone and add it to the home screen:
    - **iPhone/iPad (Safari):** Share → *Add to Home Screen* (iOS 16.4 or later for notifications)
    - **Android (Chrome):** Settings → Notifications → *Install pinn. as an app*, or Chrome menu ⋮ → *Install app*

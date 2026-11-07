@@ -22,6 +22,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.131', datum: '07.11.2026', titel: 'Türkisch freigeschaltet',
+    punkte: [
+      ['neu', 'Türkisch ist jetzt für alle da: In Einstellungen → Sprache & Region lässt sich Türkçe wählen; bei türkischer Browsersprache stellt pinn. es automatisch ein. Alle 6989 Texte der App, die Push-Nachrichten des Servers, der Einrichtungs-Assistent und der Datenexport sind auf Türkisch. Für die Türkei gilt die Notrufnummer 112. pinn. spricht damit zwölf Sprachen.'],
+      ['info', 'Geändert: js/sprachen.js (Türkisch nicht mehr versteckt), js/versionslog.js, i18n/versionslog.en.js, alle READMEs (Sprachliste, „zwölf Sprachen“); nur Kommentare: js/einrichten.js, js/exportieren.js, einrichtung.js, datenexport.js. Kein Server-Teil.'],
+    ],
+  },
+  {
     v: '1.130', datum: '07.11.2026', titel: 'Türkisch in Vorbereitung',
     punkte: [
       ['info', '1.130.0: Türkisch wird als weitere App-Sprache vorbereitet und Schritt für Schritt übersetzt. Zuerst sind Rahmen, Anmeldung, Navigation, alle Einstellungen dran (503 von 6989 Texten). Die Sprache ist noch versteckt und noch nicht wählbar – an der App ändert sich für dich nichts.'],

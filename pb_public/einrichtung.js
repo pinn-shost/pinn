@@ -2436,7 +2436,7 @@
     nochmalPruefen: "Opnieuw controleren", zurVerwaltung: "Naar gezinsbeheer",
   };
 
-  // Turkish (since 1.130.12, still hidden in the app until it is enabled)
+  // Turkish (since 1.130.12, enabled in the app since 1.131.0)
   T.tr = {
     titel: "Kurulum", lade: "Kurulum yükleniyor …",
     weiter: "İleri", zurueck: "Geri", ueberspringen: "Atla", spaeter: "Sonra", schliessen: "Kapat",

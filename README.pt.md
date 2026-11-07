@@ -129,7 +129,14 @@ Toque em qualquer imagem para abri-la em tamanho real.
 | 🔔 **Notificações** | Mensagens push pessoais no iPhone, iPad e Android, além de um sino que reúne cada mudança na família. |
 | 🧩 **E mais** | Mural da família com notas móveis, busca global, modo offline com sincronização automática, modo escuro, painel no iPad com PINs de perfil, conta de convidado, bloqueio infantil. |
 
-O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский e 🇳🇱 Nederlands**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
+O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands e 🇹🇷 Türkçe**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
+
+## Novidades da 1.131.0
+
+**Turco agora disponível**
+
+- **Turco.** 🇹🇷 Türkçe agora pode ser escolhido em Configurações → Idioma e região (e é definido automaticamente quando o navegador está em turco). Todos os 6989 textos, as notificações push, o assistente de configuração e a exportação de dados estão em turco; para a Turquia o número de emergência é 112. Assim, o pinn. fala doze idiomas.
+- Alterado: `js/sprachen.js` (idioma não mais oculto), `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), todos os README (lista de idiomas, “doze idiomas”); somente comentários: `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`. Sem parte de servidor.
 
 ## Novidades da 1.130.12
 
@@ -173,13 +180,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Turco.** Veículos, documentos e leitura de PDF estão traduzidos (4944 de 6989 textos no total). O idioma ainda está oculto e não pode ser escolhido; para você o app não muda.
 - Alterado: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) e todos os README. Sem parte de servidor.
 
-## Novidades da 1.130.6
-
-**Turco – etapa 7**
-
-- **Turco.** A casa (aluguel e compra, medidores, defeitos, chaves, manutenção, jardim e plantas) está traduzida (4285 de 6989 textos no total). O idioma ainda está oculto e não pode ser escolhido; para você o app não muda.
-- Alterado: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) e todos os README. Sem parte de servidor.
-
 ## Como funciona
 
 ```mermaid
@@ -208,14 +208,14 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.130.12` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.131.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    O script copia cada arquivo para o lugar certo, baixa as bibliotecas para importação de PDF e reconhecimento de texto em fotos e inicia o pinn.
 4. Abra `http://<IP-do-NAS>:8090` → **Entrar como administrador principal** → senha `Admin` → escolha a sua própria senha.
-5. O **assistente de configuração** guia você pelo resto – HTTPS, acesso remoto por WireGuard ou Tailscale, Google, IA, localização e Home Assistant – passo a passo, em onze idiomas.
+5. O **assistente de configuração** guia você pelo resto – HTTPS, acesso remoto por WireGuard ou Tailscale, Google, IA, localização e Home Assistant – passo a passo, em doze idiomas.
 6. Abra o pinn. pelo endereço HTTPS em cada celular e adicione-o à tela inicial:
    - **iPhone/iPad (Safari):** Compartilhar → *Adicionar à Tela de Início* (iOS 16.4 ou posterior para notificações)
    - **Android (Chrome):** Configurações → Notificações → *Instalar o pinn. como app*, ou menu do Chrome ⋮ → *Instalar app*

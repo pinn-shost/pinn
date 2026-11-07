@@ -125,7 +125,14 @@ Touche une image pour l’ouvrir en taille réelle.
 | 🔔 **Notifications** | Messages push personnels sur iPhone, iPad et Android, plus une cloche qui rassemble chaque changement dans la famille. |
 | 🧩 **Tout le reste** | Tableau familial avec notes déplaçables, recherche globale, mode hors ligne avec synchronisation automatique, mode sombre, tableau de bord iPad avec PIN par profil, compte invité, contrôle parental. |
 
-pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский et 🇳🇱 Nederlands**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
+pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands et 🇹🇷 Türkçe**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
+
+## Nouveautés de la 1.131.0
+
+**Le turc est désormais disponible**
+
+- **Turc.** 🇹🇷 Türkçe peut maintenant être choisi dans Réglages → Langue et région (et se règle tout seul quand le navigateur est en turc). Les 6989 textes, les notifications push, l’assistant de configuration et l’export des données sont en turc ; pour la Turquie, le numéro d’urgence est le 112. pinn. parle ainsi douze langues.
+- Modifié : `js/sprachen.js` (langue plus masquée), `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), tous les README (liste des langues, « douze langues ») ; uniquement des commentaires : `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`. Pas de partie serveur.
 
 ## Nouveautés de la 1.130.12
 
@@ -197,13 +204,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Turc.** Toutes les listes (valises, souhaits, cadeaux, check-lists, modèles) sont traduites (1926 textes sur 6989 au total). La langue reste masquée et ne peut pas encore être choisie ; pour toi, l’app ne change pas.
 - Modifié : `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) et tous les README. Pas de partie serveur.
 
-## Nouveautés de la 1.130.2
-
-**Turc – étape 3**
-
-- **Turc.** Le calendrier, les tâches, le ménage, l’aperçu, la météo, la recherche et les jours fériés sont traduits (1365 textes sur 6989 au total). La langue reste masquée et ne peut pas encore être choisie ; pour toi, l’app ne change pas.
-- Modifié : `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) et tous les README. Pas de partie serveur.
-
 ## Comment ça marche
 
 ```mermaid
@@ -230,14 +230,14 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.130.12` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.131.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    Le script met chaque fichier à sa place, télécharge les bibliothèques pour l’import PDF et la reconnaissance de texte sur photo, et démarre pinn.
 4. Ouvre `http://<IP-du-NAS>:8090` → **Se connecter en admin principal** → mot de passe `Admin` → choisis ton propre mot de passe.
-5. L’**assistant de configuration** t’accompagne pour le reste – HTTPS, accès à distance via WireGuard ou Tailscale, Google, IA, localisation et Home Assistant – étape par étape, en onze langues.
+5. L’**assistant de configuration** t’accompagne pour le reste – HTTPS, accès à distance via WireGuard ou Tailscale, Google, IA, localisation et Home Assistant – étape par étape, en douze langues.
 6. Ouvre pinn. sur chaque téléphone via son adresse HTTPS et ajoute-le à l’écran d’accueil :
    - **iPhone/iPad (Safari) :** Partager → *Sur l’écran d’accueil* (iOS 16.4 ou plus récent pour les notifications)
    - **Android (Chrome) :** Réglages → Notifications → *Installer pinn. comme app*, ou menu Chrome ⋮ → *Installer l’application*

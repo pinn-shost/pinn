@@ -106,7 +106,14 @@ Tik op een plaatje om het op volledige grootte te openen.
 - 💬 **Chat** – gezins- en privéchat, end-to-end versleuteld, met push en leesvinkjes
 - 🔔 **Meldingen** – persoonlijke pushberichten op iPhone, iPad en Android en een meldingenbel met alle wijzigingen in het gezin
 
-pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский en 🇳🇱 Nederlands**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
+pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands en 🇹🇷 Türkçe**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
+
+## Nieuw in 1.131.0
+
+**Turks is nu beschikbaar**
+
+- **Turks.** 🇹🇷 Türkçe is nu te kiezen onder Instellingen → Taal & regio (en wordt vanzelf gekozen als je browser op Turks staat). Alle 6989 teksten, de pushberichten, de installatiewizard en de gegevensexport zijn in het Turks; voor Turkije geldt alarmnummer 112. pinn. spreekt daarmee twaalf talen.
+- Gewijzigd: `js/sprachen.js` (taal niet meer verborgen), `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), alle README’s (taallijst, „twaalf talen”); alleen commentaar: `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`. Geen serverdeel.
 
 ## Nieuw in 1.130.12
 
@@ -122,13 +129,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Turks.** Pushmeldingen en de teksten van de server zijn vertaald – daarmee zijn alle 6989 teksten klaar. De taal is nog verborgen en nog niet te kiezen; aan de app verandert er voor jou niets.
 - Gewijzigd: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) en alle READMEs. Serverdeel: `pb_hooks/` (pushteksten en talenlijsten) – `pinn-setup.sh` installeert het en herstart PocketBase zoals gewoonlijk.
 
-## Nieuw in 1.130.10
-
-**Turks – stap 11**
-
-- **Turks.** Help en rondleiding, slimme woning, spraakbediening en de overige app-teksten zijn vertaald (alles behalve de pushmeldingen) (6842 van 6989 teksten in totaal). De taal is nog verborgen en nog niet te kiezen; aan de app verandert er voor jou niets.
-- Gewijzigd: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) en alle READMEs. Geen serverdeel.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -138,13 +138,13 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.130.12` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.131.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
 4. Open `http://<IP-adres van de NAS>:8090` → **Inloggen als hoofdbeheerder** → wachtwoord `Admin` → stel je eigen wachtwoord in.
-5. De **installatiewizard** leidt je door de rest – HTTPS, toegang op afstand, Google, AI, locatie en Home Assistant – stap voor stap, in elf talen.
+5. De **installatiewizard** leidt je door de rest – HTTPS, toegang op afstand, Google, AI, locatie en Home Assistant – stap voor stap, in twaalf talen.
 6. Open pinn. op elke telefoon via het HTTPS-adres en voeg het toe aan het beginscherm:
    - **iPhone/iPad (Safari):** “Deel” → *Zet op beginscherm* (voor meldingen is iOS 16.4 of nieuwer nodig)
    - **Android (Chrome):** Instellingen → Meldingen → *pinn. als app installeren* of Chrome-menu ⋮ → *App installeren*

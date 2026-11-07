@@ -736,7 +736,7 @@
     ],
   };
 
-  // Turkish (since 1.130.12, still hidden in the app until it is enabled)
+  // Turkish (since 1.130.12, enabled in the app since 1.131.0)
   T.tr = {
     F: "aile", FW: "ortak ev", Fd: "ailenin", FWd: "ortak evin",
     titel: "Dışa aktar: {F}",
