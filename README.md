@@ -126,7 +126,14 @@ Tap any picture to open it in full size.
 | 🔔 **Notifications** | Personal push messages on iPhone, iPad and Android, plus a notification bell that collects every change in the family. |
 | 🧩 **Everything else** | Family board with movable notes, global search, offline mode with automatic sync, dark mode, iPad dashboard with profile PINs, guest account, child lock. |
 
-pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands and 🇹🇷 Türkçe**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
+pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe and 🇵🇱 Polski**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
+
+## What's new in 1.133.0
+
+**Polish enabled**
+
+- **Polish.** Polish is now available for everyone: choose Polski under Settings → Language & region; if the browser is set to Polish, pinn. selects it automatically. All 6989 texts of the app, the push messages of the server, the setup assistant and the data export are in Polish. For Poland the emergency numbers are 112, 997, 998 and 999. pinn. now speaks thirteen languages.
+- Changed: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), all READMEs (language list, “thirteen languages”); comments only: `pb_public/einrichtung.js`, `pb_public/datenexport.js`, `js/einrichten.js`, `js/exportieren.js`. No server part.
 
 ## What's new in 1.132.17
 
@@ -198,13 +205,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Polish.** The first half of the home section (tenancy and purchase, meters, defects, keys, garden) is translated (3965 of 6989 texts in total). The language is still hidden and cannot be chosen yet; nothing changes in the app for you.
 - Changed: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) and all READMEs. No server part.
 
-## What's new in 1.132.7
-
-**Polish – stage 8**
-
-- **Polish.** Contracts and depots are translated (3635 of 6989 texts in total). The language is still hidden and cannot be chosen yet; nothing changes in the app for you.
-- Changed: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) and all READMEs. No server part.
-
 ## How it works
 
 ```mermaid
@@ -231,14 +231,14 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.132.17` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.133.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    The script copies every file into place, downloads the libraries for PDF import and photo text recognition, and starts pinn.
 4. Open `http://<NAS-IP>:8090` → **Log in as main admin** → password `Admin` → choose your own password.
-5. The **setup assistant** walks you through the rest – HTTPS, remote access via WireGuard or Tailscale, Google, AI, location and Home Assistant – step by step, in twelve languages.
+5. The **setup assistant** walks you through the rest – HTTPS, remote access via WireGuard or Tailscale, Google, AI, location and Home Assistant – step by step, in thirteen languages.
 6. Open pinn. via its HTTPS address on each phone and add it to the home screen:
    - **iPhone/iPad (Safari):** Share → *Add to Home Screen* (iOS 16.4 or later for notifications)
    - **Android (Chrome):** Settings → Notifications → *Install pinn. as an app*, or Chrome menu ⋮ → *Install app*

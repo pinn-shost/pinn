@@ -107,9 +107,14 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 - 💬 **Czat** – czat rodzinny i prywatny, szyfrowany end-to-end, z powiadomieniami push i potwierdzeniem odczytu
 - 🔔 **Powiadomienia** – osobiste powiadomienia push na iPhonie, iPadzie i Androidzie oraz dzwonek powiadomień ze wszystkimi zmianami w rodzinie
 
-pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands i 🇹🇷 Türkçe**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
+pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe i 🇵🇱 Polski**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
-> Polski jako język aplikacji jest jeszcze w przygotowaniu: wszystkie teksty są już przetłumaczone, ale język pojawi się na liście wyboru dopiero w jednej z kolejnych wersji.
+## Nowości w 1.133.0
+
+**Polski odblokowany**
+
+- **Polski.** Polski jest teraz dostępny dla wszystkich: wybierz Polski w Ustawienia → Język i region; jeśli przeglądarka jest ustawiona na polski, pinn. wybierze go automatycznie. Wszystkie 6989 tekstów aplikacji, powiadomienia push serwera, kreator konfiguracji i eksport danych są po polsku. Dla Polski obowiązują numery alarmowe 112, 997, 998 i 999. pinn. mówi teraz w trzynastu językach.
+- Zmienione: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), wszystkie pliki README (lista języków, „trzynaście języków”); tylko komentarze: `pb_public/einrichtung.js`, `pb_public/datenexport.js`, `js/einrichten.js`, `js/exportieren.js`. Bez części serwerowej.
 
 ## Nowości w 1.132.17
 
@@ -125,13 +130,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Polski.** Przetłumaczono teksty powiadomień push (tym samym wszystkie 6989 tekstów jest gotowych), a hooki serwera znają teraz polski (listy języków, kraj PL, teksty, reguły liczby mnogiej i wspólnego mieszkania). Język jest nadal ukryty i nie można go jeszcze wybrać; w aplikacji dla ciebie nic się nie zmienia.
 - Zmienione: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, wszystkie pliki README. Część serwerowa (wymień hooki): `pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js` – `pinn-setup.sh` instaluje je i jak zwykle uruchamia PocketBase ponownie.
 
-## Nowości w 1.132.15
-
-**Polski – etap 16**
-
-- **Polski.** Przetłumaczono pozostałe małe obszary (komunikaty serwera, kraje związkowe, kolejność dyżurów, powtarzanie, awatary, powiadomienia offline), łącznie 6842 z 6989 tekstów. Język jest nadal ukryty i nie można go jeszcze wybrać; w aplikacji dla ciebie nic się nie zmienia.
-- Zmienione: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) i wszystkie pliki README. Bez części serwerowej.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -141,13 +139,13 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.132.17` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.133.0` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
 4. Otwórz `http://<adres IP NAS-a>:8090` → **Zaloguj się jako główny administrator** → hasło `Admin` → ustaw własne hasło.
-5. **Kreator konfiguracji** poprowadzi cię krok po kroku przez resztę – HTTPS, dostęp z zewnątrz, Google, sztuczną inteligencję, lokalizację i Home Assistant – w 12 językach.
+5. **Kreator konfiguracji** poprowadzi cię krok po kroku przez resztę – HTTPS, dostęp z zewnątrz, Google, sztuczną inteligencję, lokalizację i Home Assistant – w 13 językach.
 6. Otwórz pinn. na każdym telefonie pod adresem HTTPS i dodaj do ekranu głównego:
    - **iPhone/iPad (Safari):** „Udostępnij” → *Dodaj do ekranu początkowego* (powiadomienia wymagają iOS 16.4 lub nowszego)
    - **Android (Chrome):** Ustawienia → Powiadomienia → *zainstaluj pinn. jako aplikację* albo menu Chrome ⋮ → *Zainstaluj aplikację*

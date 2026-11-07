@@ -130,7 +130,14 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 | 🔔 **通知** | iPhone、iPad、Androidに届く個人向けのプッシュメッセージと、家族内のあらゆる変更を集めるベル。 |
 | 🧩 **そのほか** | 動かせるメモ付きの家族の掲示板、全体検索、自動同期付きのオフラインモード、ダークモード、プロフィールPIN付きのiPadダッシュボード、ゲストアカウント、チャイルドロック。 |
 
-pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
+pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
+
+## 1.133.0の新機能
+
+**ポーランド語を解放**
+
+- **ポーランド語。** ポーランド語がすべての人に使えるようになりました。「設定 → 言語と地域」でPolskiを選べます。ブラウザの言語がポーランド語の場合は、pinn.が自動的に選びます。アプリの全6989件のテキスト、サーバーのプッシュ通知、セットアップアシスタント、データのエクスポートがポーランド語になりました。ポーランドの緊急番号は112、997、998、999です。pinn.は13の言語に対応しました。
+- 変更：`js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)、すべてのREADME（言語リスト、「13の言語」）。コメントのみ：`pb_public/einrichtung.js`、`pb_public/datenexport.js`、`js/einrichten.js`、`js/exportieren.js`。サーバー側の変更はありません。
 
 ## 1.132.17の新機能
 
@@ -174,13 +181,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **ポーランド語。** 家族、メンバー、家族タイル、位置情報、SOS、「今どこ？」を翻訳しました（累計で全6989件中5779件）。この言語はまだ非表示で選べません。アプリの使い方に変化はありません。
 - 変更：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）、すべてのREADME。サーバー側の変更はありません。
 
-## 1.132.11の新機能
-
-**ポーランド語 ― 第12段階**
-
-- **ポーランド語。** 書類、PDFの読み取り、ペット、学校と保育園を翻訳しました（累計で全6989件中5326件）。この言語はまだ非表示で選べません。アプリの使い方に変化はありません。
-- 変更：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）、すべてのREADME。サーバー側の変更はありません。
-
 ## しくみ
 
 ```mermaid
@@ -209,14 +209,14 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.132.17`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.133.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    スクリプトがすべてのファイルを所定の場所にコピーし、PDF取り込みと写真の文字認識に必要なライブラリをダウンロードして、pinn.を起動します。
 4. `http://<NASのIP>:8090`を開き、**メイン管理者としてログイン** → パスワード`Admin` → 自分のパスワードを設定します。
-5. **セットアップアシスタント**が、HTTPS、WireGuardまたはTailscaleでのリモートアクセス、Google、AI、位置情報、Home Assistantといった残りの設定を、12の言語で順番に案内します。
+5. **セットアップアシスタント**が、HTTPS、WireGuardまたはTailscaleでのリモートアクセス、Google、AI、位置情報、Home Assistantといった残りの設定を、13の言語で順番に案内します。
 6. 各スマートフォンでHTTPSアドレスからpinn.を開き、ホーム画面に追加します：
    - **iPhone/iPad（Safari）：** 共有 → *ホーム画面に追加*（通知にはiOS 16.4以降が必要）
    - **Android（Chrome）：** 設定 → 通知 → *pinn.をアプリとしてインストール*、またはChromeのメニュー ⋮ → *アプリをインストール*

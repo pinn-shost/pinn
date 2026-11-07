@@ -130,7 +130,14 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 | 🔔 **通知** | iPhone、iPad 和 Android 上的个人推送消息，以及汇总家庭中每项变动的通知铃。 |
 | 🧩 **其他功能** | 带可移动便签的家庭公告板、全局搜索、带自动同步的离线模式、深色模式、带个人 PIN 的 iPad 仪表板、访客账户、儿童锁。 |
 
-pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands和 🇹🇷 Türkçe**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
+pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe和 🇵🇱 Polski**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
+
+## 1.133.0 新功能
+
+**波兰语已开放**
+
+- **波兰语。** 波兰语现已向所有人开放：在“设置 → 语言和地区”中选择 Polski；如果浏览器语言是波兰语，pinn. 会自动选用。应用的全部 6989 条文本、服务器的推送消息、设置向导和数据导出均已提供波兰语。波兰的紧急号码为 112、997、998 和 999。pinn. 现在支持十三种语言。
+- 更改：`js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)、所有 README（语言列表、“十三种语言”）；仅注释：`pb_public/einrichtung.js`、`pb_public/datenexport.js`、`js/einrichten.js`、`js/exportieren.js`。无服务器部分。
 
 ## 1.132.17 新功能
 
@@ -174,13 +181,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **波兰语。** 家庭、成员、家庭卡片、定位、SOS 和“你在哪里？”已翻译（累计 5779 条，共 6989 条）。该语言仍处于隐藏状态，暂时无法选择；应用对你来说没有任何变化。
 - 更改：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）和所有 README。无服务器部分。
 
-## 1.132.11 新功能
-
-**波兰语——第 12 阶段**
-
-- **波兰语。** 文档、PDF 读取、宠物以及学校与托儿所已翻译（累计 5326 条，共 6989 条）。该语言仍处于隐藏状态，暂时无法选择；应用对你来说没有任何变化。
-- 更改：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）和所有 README。无服务器部分。
-
 ## 工作原理
 
 ```mermaid
@@ -209,7 +209,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.132.17` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.133.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

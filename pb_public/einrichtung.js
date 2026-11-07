@@ -2648,7 +2648,7 @@
     nochmalPruefen: "Tekrar kontrol et", zurVerwaltung: "Aile yönetimine git",
   };
 
-  // Polish (since 1.132.17, hidden in the app until it is enabled)
+  // Polish (since 1.132.17, enabled in the app since 1.133.0)
   T.pl = {
     titel: "Konfiguracja", lade: "Ładowanie konfiguracji …",
     weiter: "Dalej", zurueck: "Wstecz", ueberspringen: "Pomiń", spaeter: "Później", schliessen: "Zamknij",

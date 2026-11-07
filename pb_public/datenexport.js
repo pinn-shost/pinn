@@ -790,7 +790,7 @@
     ],
   };
 
-  // Polish (since 1.132.17, hidden in the app until it is enabled)
+  // Polish (since 1.132.17, enabled in the app since 1.133.0)
   T.pl = {
     F: "rodzina", FW: "wspólne mieszkanie", Fd: "rodziny", FWd: "wspólnego mieszkania",
     titel: "Eksport: {F}",

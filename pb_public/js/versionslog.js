@@ -22,6 +22,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.133', datum: '07.11.2026', titel: 'Polnisch freigeschaltet',
+    punkte: [
+      ['neu', 'Polnisch ist jetzt für alle da: In Einstellungen → Sprache & Region lässt sich Polski wählen; bei polnischer Browsersprache stellt pinn. es automatisch ein. Alle 6989 Texte der App, die Push-Nachrichten des Servers, der Einrichtungs-Assistent und der Datenexport sind auf Polnisch. Für Polen gelten die Notrufnummern 112, 997, 998 und 999. pinn. spricht damit dreizehn Sprachen.'],
+      ['info', 'Geändert: js/sprachen.js (Polnisch nicht mehr versteckt), js/versionslog.js, i18n/versionslog.en.js, alle READMEs (Sprachliste, „dreizehn Sprachen“); nur Kommentare: einrichtung.js, datenexport.js, js/einrichten.js, js/exportieren.js. Kein Server-Teil. Siri antwortet bei Polnisch zunächst auf Englisch.'],
+    ],
+  },
+  {
     v: '1.132', datum: '07.11.2026', titel: 'Polnisch in Vorbereitung',
     punkte: [
       ['info', '1.132.0: Polnisch wird als weitere App-Sprache vorbereitet und Schritt für Schritt übersetzt. Zuerst sind Rahmen, Anmeldung, Navigation, alle Einstellungen dran (503 von 6989 Texten). Die Sprache ist noch versteckt und kann noch nicht gewählt werden – in der App ändert sich für dich nichts.'],

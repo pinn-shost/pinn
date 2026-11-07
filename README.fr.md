@@ -126,7 +126,14 @@ Touche une image pour l’ouvrir en taille réelle.
 | 🔔 **Notifications** | Messages push personnels sur iPhone, iPad et Android, plus une cloche qui rassemble chaque changement dans la famille. |
 | 🧩 **Tout le reste** | Tableau familial avec notes déplaçables, recherche globale, mode hors ligne avec synchronisation automatique, mode sombre, tableau de bord iPad avec PIN par profil, compte invité, contrôle parental. |
 
-pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands et 🇹🇷 Türkçe**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
+pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe et 🇵🇱 Polski**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
+
+## Nouveautés de la 1.133.0
+
+**Polonais activé**
+
+- **Polonais.** Le polonais est désormais disponible pour tous : choisis Polski dans Réglages → Langue et région ; si le navigateur est en polonais, pinn. le sélectionne automatiquement. Les 6989 textes de l’appli, les messages push du serveur, l’assistant d’installation et l’export des données sont en polonais. Pour la Pologne, les numéros d’urgence sont 112, 997, 998 et 999. pinn. parle donc treize langues.
+- Modifié : `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), tous les README (liste des langues, « treize langues ») ; commentaires uniquement : `pb_public/einrichtung.js`, `pb_public/datenexport.js`, `js/einrichten.js`, `js/exportieren.js`. Pas de partie serveur.
 
 ## Nouveautés de la 1.132.17
 
@@ -198,13 +205,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Polonais.** La première moitié de la section Logement (location et achat, compteurs, défauts, clés, jardin) est traduite (3965 textes sur 6989 au total). La langue est encore masquée et ne peut pas encore être choisie ; rien ne change dans l’appli pour toi.
 - Modifié : `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) et tous les README. Pas de partie serveur.
 
-## Nouveautés de la 1.132.7
-
-**Polonais – étape 8**
-
-- **Polonais.** Contrats et portefeuilles titres sont traduits (3635 textes sur 6989 au total). La langue est encore masquée et ne peut pas encore être choisie ; rien ne change dans l’appli pour toi.
-- Modifié : `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) et tous les README. Pas de partie serveur.
-
 ## Comment ça marche
 
 ```mermaid
@@ -231,7 +231,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.132.17` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.133.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

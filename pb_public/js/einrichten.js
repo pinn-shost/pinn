@@ -2,7 +2,7 @@
    Part of the app code that used to be a single block in index.html. Classic script, no build step:
    it is loaded right after the inline script of index.html and before the other files in js/
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
-   Contents: the texts of the setup in thirteen languages (Polish still hidden) (PINN_SETUP_TEXTE, pinnSetupText) and loading and opening the assistant (loadPinnSetupScript, openPinnSetup). The assistant itself lives in pb_public/einrichtung.js and is only loaded when first opened. The notice about the open setup is in js/hauptadminseite.js. */
+   Contents: the texts of the setup in thirteen languages (PINN_SETUP_TEXTE, pinnSetupText) and loading and opening the assistant (loadPinnSetupScript, openPinnSetup). The assistant itself lives in pb_public/einrichtung.js and is only loaded when first opened. The notice about the open setup is in js/hauptadminseite.js. */
 
 /* ==========================================================
    Setup (assistant for the main admin)
@@ -162,7 +162,7 @@ const PINN_SETUP_TEXTE = {
     loginMain: 'İlk seferde şifre “Admin” – sonra kendi şifreni belirlersin ve kurulum başlar.',
     laden: 'Kurulum yüklenemedi (pb_public/einrichtung.js eksik mi?).',
   },
-  // Polish (since 1.132.17, hidden in the app until it is enabled)
+  // Polish (since 1.132.17, offered in the app since 1.133.0)
   pl: {
     btn: '⚙︎ Konfiguracja',
     offen: 'Konfiguracja pinn. nie jest jeszcze zakończona. Bez niej nie działają HTTPS, powiadomienia push ani aplikacja na ekranie głównym.',

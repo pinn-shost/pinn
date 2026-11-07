@@ -130,7 +130,14 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 | 🔔 **Benachrichtigungen** | Persönliche Push-Nachrichten auf iPhone, iPad und Android sowie eine Glocke, die jede Änderung in der Familie sammelt. |
 | 🧩 **Und mehr** | Familien-Pinnwand mit verschiebbaren Zetteln, globale Suche, Offline-Modus mit automatischem Abgleich, Dunkelmodus, iPad-Dashboard mit Profil-PINs, Gastzugang, Kindersicherung. |
 
-pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands und 🇹🇷 Türkçe**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
+pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe und 🇵🇱 Polski**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
+
+## Neu in 1.133.0
+
+**Polnisch freigeschaltet**
+
+- **Polnisch.** Polnisch ist jetzt für alle da: unter Einstellungen → Sprache & Region lässt sich Polski wählen; bei polnischer Browsersprache stellt pinn. es automatisch ein. Alle 6989 Texte der App, die Push-Nachrichten des Servers, der Einrichtungsassistent und der Datenexport sind auf Polnisch. Für Polen gelten die Notrufnummern 112, 997, 998 und 999. pinn. spricht damit dreizehn Sprachen.
+- Geändert: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), alle READMEs (Sprachliste, „dreizehn Sprachen“); nur Kommentare: `pb_public/einrichtung.js`, `pb_public/datenexport.js`, `js/einrichten.js`, `js/exportieren.js`. Kein Server-Teil.
 
 ## Neu in 1.132.17
 
@@ -174,13 +181,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Polnisch.** Familie, Mitglieder, Familienkachel, Ortung, SOS und „Wo bist du?“ sind übersetzt (insgesamt 5779 von 6989 Texten). Die Sprache ist noch versteckt und kann noch nicht gewählt werden; in der App ändert sich für dich nichts.
 - Geändert: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) und alle READMEs. Kein Server-Teil.
 
-## Neu in 1.132.11
-
-**Polnisch – Etappe 12**
-
-- **Polnisch.** Dokumente, PDF-Lesen, Haustiere sowie Schule & Kita sind übersetzt (insgesamt 5326 von 6989 Texten). Die Sprache ist noch versteckt und kann noch nicht gewählt werden; in der App ändert sich für dich nichts.
-- Geändert: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) und alle READMEs. Kein Server-Teil.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -209,14 +209,14 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.132.17` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.133.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
    Das Skript kopiert jede Datei an ihren Platz, lädt die Bibliotheken für PDF-Import und Texterkennung in Fotos herunter und startet pinn.
 4. Öffne `http://<NAS-IP>:8090` → **Als Hauptadmin anmelden** → Passwort `Admin` → wähle dein eigenes Passwort.
-5. Der **Einrichtungsassistent** führt dich durch den Rest – HTTPS, Fernzugriff über WireGuard oder Tailscale, Google, KI, Standort und Home Assistant – Schritt für Schritt, in zwölf Sprachen.
+5. Der **Einrichtungsassistent** führt dich durch den Rest – HTTPS, Fernzugriff über WireGuard oder Tailscale, Google, KI, Standort und Home Assistant – Schritt für Schritt, in dreizehn Sprachen.
 6. Öffne pinn. auf jedem Handy über die HTTPS-Adresse und füge es zum Home-Bildschirm hinzu:
    - **iPhone/iPad (Safari):** Teilen → *Zum Home-Bildschirm* (für Benachrichtigungen iOS 16.4 oder neuer)
    - **Android (Chrome):** Einstellungen → Benachrichtigungen → *pinn. als App installieren* oder Chrome-Menü ⋮ → *App installieren*

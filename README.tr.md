@@ -107,7 +107,14 @@ Tam boyutta açmak için bir resme dokun.
 - 💬 **Sohbet** – aile ve özel sohbet, uçtan uca şifreli, anlık bildirim ve okundu işaretiyle
 - 🔔 **Bildirimler** – iPhone, iPad ve Android'de kişiye özel anlık bildirimler ve ailedeki tüm değişiklikleri gösteren bir bildirim zili
 
-pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands ve 🇹🇷 Türkçe**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
+pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe ve 🇵🇱 Polski**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
+
+## 1.133.0 sürümündeki yenilikler
+
+**Lehçe açıldı**
+
+- **Lehçe.** Lehçe artık herkes için hazır: Ayarlar → Dil ve bölge altından Polski seçilebilir; tarayıcı dili Lehçeyse pinn. onu kendisi seçer. Uygulamanın 6989 metninin tamamı, sunucunun anlık bildirimleri, kurulum sihirbazı ve veri dışa aktarımı Lehçe. Polonya için acil durum numaraları 112, 997, 998 ve 999. pinn. artık on üç dil konuşuyor.
+- Değişenler: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), tüm README dosyaları (dil listesi, “on üç dil”); yalnızca yorumlar: `pb_public/einrichtung.js`, `pb_public/datenexport.js`, `js/einrichten.js`, `js/exportieren.js`. Sunucu kısmı yok.
 
 ## 1.132.17 sürümündeki yenilikler
 
@@ -123,13 +130,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Lehçe.** Anlık bildirim metinleri çevrildi (böylece 6989 metnin hepsi tamam) ve sunucu kancaları artık Lehçeyi biliyor (dil listeleri, ülke PL, metinler, çoğul ve ortak ev kuralları). Dil hâlâ gizli ve henüz seçilemiyor; uygulamada senin için hiçbir şey değişmiyor.
 - Değişenler: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, tüm README dosyaları. Sunucu kısmı (kancaları değiştir): `pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js` – `pinn-setup.sh` onları her zamanki gibi kurar ve PocketBase'i yeniden başlatır.
 
-## 1.132.15 sürümündeki yenilikler
-
-**Lehçe – 16. aşama**
-
-- **Lehçe.** Kalan küçük bölümler (sunucu iletileri, eyaletler, sırayla, tekrar, avatarlar, çevrimdışı bildirimler) çevrildi (toplam 6989 metnin 6842'si). Dil hâlâ gizli ve henüz seçilemiyor; uygulamada senin için hiçbir şey değişmiyor.
-- Değişenler: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) ve tüm README dosyaları. Sunucu kısmı yok.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -139,13 +139,13 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.132.17` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.133.0` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
 4. `http://<NAS'ın IP adresi>:8090` adresini aç → **Ana yönetici olarak giriş yap** → şifre `Admin` → kendi şifreni belirle.
-5. **Kurulum sihirbazı** gerisinde sana adım adım rehberlik eder – HTTPS, uzaktan erişim, Google, yapay zekâ, konum ve Home Assistant – 12 dilde.
+5. **Kurulum sihirbazı** gerisinde sana adım adım rehberlik eder – HTTPS, uzaktan erişim, Google, yapay zekâ, konum ve Home Assistant – 13 dilde.
 6. pinn.'i her telefonda HTTPS adresinden aç ve ana ekrana ekle:
    - **iPhone/iPad (Safari):** “Paylaş” → *Ana Ekrana Ekle* (bildirimler için iOS 16.4 veya daha yenisi gerekir)
    - **Android (Chrome):** Ayarlar → Bildirimler → *pinn.'i uygulama olarak yükle* veya Chrome menüsü ⋮ → *Uygulamayı yükle*
