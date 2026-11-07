@@ -23,6 +23,7 @@
   <a href="README.ru.md">🇷🇺 Русский</a> ·
   <a href="README.nl.md">🇳🇱 Nederlands</a> ·
   <a href="README.tr.md">🇹🇷 Türkçe</a> ·
+  <a href="README.pl.md">🇵🇱 Polski</a> ·
   <b>🇰🇷 한국어</b>
 </p>
 
@@ -131,6 +132,13 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.132.17의 새 소식
+
+**폴란드어 – 18단계**
+
+- **폴란드어.** 설정 도우미, 데이터 내보내기, 로그인 화면의 설정 안내를 번역했어요. 짧은 폴란드어 README(`README.pl.md`)도 추가했고, 모든 README에서 링크해요. 이 언어는 아직 숨겨져 있어 선택할 수 없고, 앱에서 달라지는 점은 없어요.
+- 변경: `pb_public/einrichtung.js`, `pb_public/datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), 모든 README, 새 파일 `README.pl.md`. 서버 쪽 변경은 없어요.
+
 ## 1.132.16의 새 소식
 
 **폴란드어 – 17단계**
@@ -173,13 +181,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **폴란드어.** 문서, PDF 읽기, 반려동물, 학교와 어린이집을 번역했어요(누적 6989개 중 5326개). 이 언어는 아직 숨겨져 있어 선택할 수 없고, 앱에서 달라지는 점은 없어요.
 - 변경: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`(`index.html`), 모든 README. 서버 쪽 변경은 없어요.
 
-## 1.132.10의 새 소식
-
-**폴란드어 – 11단계**
-
-- **폴란드어.** 차량(주유와 충전, 정비소, 정기검사, 타이어, 보험, 계산기)을 번역했어요(누적 6989개 중 4755개). 이 언어는 아직 숨겨져 있어 선택할 수 없고, 앱에서 달라지는 점은 없어요.
-- 변경: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`(`index.html`), 모든 README. 서버 쪽 변경은 없어요.
-
 ## 작동 방식
 
 ```mermaid
@@ -208,7 +209,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.132.16` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.132.17` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

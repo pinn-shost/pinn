@@ -23,7 +23,8 @@
   <a href="README.ko.md">🇰🇷 한국어</a> ·
   <a href="README.ru.md">🇷🇺 Русский</a> ·
   <a href="README.nl.md">🇳🇱 Nederlands</a> ·
-  <b>🇹🇷 Türkçe</b>
+  <b>🇹🇷 Türkçe</b> ·
+  <a href="README.pl.md">🇵🇱 Polski</a>
 </p>
 
 ---
@@ -108,6 +109,13 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands ve 🇹🇷 Türkçe**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.132.17 sürümündeki yenilikler
+
+**Lehçe – 18. aşama**
+
+- **Lehçe.** Kurulum sihirbazı, veri dışa aktarımı ve giriş sayfasındaki kurulum ipuçları çevrildi; ayrıca kısa bir Lehçe README (`README.pl.md`) eklendi ve tüm README dosyalarından bağlantı verildi. Dil hâlâ gizli ve henüz seçilemiyor; uygulamada senin için hiçbir şey değişmiyor.
+- Değişenler: `pb_public/einrichtung.js`, `pb_public/datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), tüm README dosyaları, yeni `README.pl.md`. Sunucu kısmı yok.
+
 ## 1.132.16 sürümündeki yenilikler
 
 **Lehçe – 17. aşama**
@@ -122,13 +130,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Lehçe.** Kalan küçük bölümler (sunucu iletileri, eyaletler, sırayla, tekrar, avatarlar, çevrimdışı bildirimler) çevrildi (toplam 6989 metnin 6842'si). Dil hâlâ gizli ve henüz seçilemiyor; uygulamada senin için hiçbir şey değişmiyor.
 - Değişenler: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) ve tüm README dosyaları. Sunucu kısmı yok.
 
-## 1.132.14 sürümündeki yenilikler
-
-**Lehçe – 15. aşama**
-
-- **Lehçe.** Akıllı ev, ön bakış, yardım ve eğitim ile sesli kontrol çevrildi (toplam 6989 metnin 6727'si). Dil hâlâ gizli ve henüz seçilemiyor; uygulamada senin için hiçbir şey değişmiyor.
-- Değişenler: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) ve tüm README dosyaları. Sunucu kısmı yok.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -138,7 +139,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.132.16` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.132.17` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

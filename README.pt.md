@@ -23,7 +23,8 @@
   <a href="README.ko.md">🇰🇷 한국어</a> ·
   <a href="README.ru.md">🇷🇺 Русский</a> ·
   <a href="README.nl.md">🇳🇱 Nederlands</a> ·
-  <a href="README.tr.md">🇹🇷 Türkçe</a>
+  <a href="README.tr.md">🇹🇷 Türkçe</a> ·
+  <a href="README.pl.md">🇵🇱 Polski</a>
 </p>
 
 <p align="center">
@@ -131,6 +132,13 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands e 🇹🇷 Türkçe**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.132.17
+
+**Polonês – etapa 18**
+
+- **Polonês.** O assistente de configuração, a exportação de dados e os avisos de configuração na página de login estão traduzidos; há também um README curto em polonês (`README.pl.md`), com link em todos os README. O idioma ainda está oculto e não pode ser escolhido; no app nada muda para você.
+- Alterado: `pb_public/einrichtung.js`, `pb_public/datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), todos os README, novo `README.pl.md`. Sem parte de servidor.
+
 ## Novidades da 1.132.16
 
 **Polonês – etapa 17**
@@ -173,13 +181,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Polonês.** Documentos, leitura de PDF, animais de estimação e escola e creche estão traduzidos (5326 de 6989 textos no total). O idioma ainda está oculto e não pode ser escolhido; no app nada muda para você.
 - Alterado: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) e todos os README. Sem parte de servidor.
 
-## Novidades da 1.132.10
-
-**Polonês – etapa 11**
-
-- **Polonês.** Os veículos (abastecimento e carga, oficina, inspeção, pneus, seguro, calculadoras) estão traduzidos (4755 de 6989 textos no total). O idioma ainda está oculto e não pode ser escolhido; no app nada muda para você.
-- Alterado: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) e todos os README. Sem parte de servidor.
-
 ## Como funciona
 
 ```mermaid
@@ -208,7 +209,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.132.16` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.132.17` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -1,7 +1,7 @@
 /* pinn. – Set-up wizard for the main admin (pb_public/einrichtung.js)
    ----------------------------------------------------------------------------
    Loaded by index.html only when needed (main admin → Set-up, or automatically after
-   the first sign-in as main admin). Own texts in German, English, French, Spanish, Italian, Portuguese, Chinese, Japanese, Korean, Russian, Dutch and Turkish –
+   the first sign-in as main admin). Own texts in German, English, French, Spanish, Italian, Portuguese, Chinese, Japanese, Korean, Russian, Dutch, Turkish and Polish –
    the app's translation layer does not interfere here (data-no-i18n / data-no-term).
    Server: pb_hooks/einrichtung.pb.js + pinn-einrichtung.js. Every step is saved when tapping
    "Weiter" (Next); at the end pinn. takes over everything with a short restart. */
@@ -10,7 +10,7 @@
   if (window.PinnSetup) return;
 
   // Russian (prepared since 1.120.0, enabled since 1.121.0); hidden languages are only selectable if the app offers them
-  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl', 'tr'];
+  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl', 'tr', 'pl'];
   var T = {};
   T.de = {
     titel: "Einrichtung", lade: "Einrichtung wird geladen …",
@@ -2648,6 +2648,218 @@
     nochmalPruefen: "Tekrar kontrol et", zurVerwaltung: "Aile yönetimine git",
   };
 
+  // Polish (since 1.132.17, hidden in the app until it is enabled)
+  T.pl = {
+    titel: "Konfiguracja", lade: "Ładowanie konfiguracji …",
+    weiter: "Dalej", zurueck: "Wstecz", ueberspringen: "Pomiń", spaeter: "Później", schliessen: "Zamknij",
+    pruefen: "Sprawdź", pruefe: "Sprawdzanie …", speichere: "Zapisywanie …", kopieren: "Kopiuj", kopiert: "Skopiowano ✓",
+    anleitung: "Instrukcja krok po kroku", optional: "opcjonalnie", erweitert: "Zaawansowane", zeigen: "Pokaż",
+    gespeichertGeheim: "zapisano: ••••{0}", leerLassen: "puste = bez zmian", ausEnv: "wartość z pliku .env lub docker-compose.yaml",
+    entfernen: "Usuń", wirdEntfernt: "zostanie usunięte przy zapisie", entfernenFrage: "Usunąć tę zapisaną wartość?",
+    schritt: "Krok {0} z {1}", fehlerFeld: "Sprawdź pole „{0}”.", fehler: "Nie udało się.", ok: "Gotowe ✓",
+    fehlerNetz: "Brak połączenia z pinn. – upewnij się, że jesteś w sieci domowej.",
+    ordnerFehlt: "Na NAS-ie brakuje folderu „konfig”. Użyj nowego pliku docker-compose.yaml i uruchom skrypt pinn-setup.sh (albo „docker compose up -d”). Bez tego folderu konfiguracja niczego nie zapisze.",
+    ordnerSchreibschutz: "Folder „konfig” jest tylko do odczytu – uruchom ponownie skrypt pinn-setup.sh.",
+    serverFehlt: "Na serwerze nadal brakuje plików einrichtung.pb.js i pinn-einrichtung.js (pb_hooks).",
+    erkannt: "Rozpoznano z paska adresu: {0}", deineAdresse: "Twój adres pinn.:", ph_sub: "np. rodzina-kowalskich",
+    L_PORT: "Port HTTPS", h_port: "Zmieniaj tylko wtedy, gdy port 8443 w pliku docker-compose.yaml jest inny.",
+    pflichtInfo: "Obowiązkowe są tylko „Sieć domowa” i „DuckDNS”. Resztę możesz pominąć i wrócić w dowolnej chwili: Główny administrator → Konfiguracja.",
+    serverOk: "pinn. działa i może zapisywać ustawienia ✓",
+    schonFertig: "Konfiguracja jest już zakończona. Możesz wszystko sprawdzić i zmienić – na końcu zastosuj zmiany przyciskiem „Zapisz i uruchom”.",
+    bitteWaehlen: "Wybierz opcję (albo „Pomiń”).",
+    skipPflicht: "Bez tego kroku nie będą działać HTTPS, powiadomienia push ani aplikacja na ekranie głównym. Pominąć mimo to?",
+    pflichtFehlt: "Wypełnij pola – albo dotknij „Pomiń”.",
+    speichernStarten: "Zapisz i uruchom", neu: "nowe", nichtGesetzt: "nie skonfigurowano", erledigtKurz: "gotowe", offen: "do zrobienia",
+    eingerichtet: "skonfigurowano", aus: "wyłączone",
+
+    t_sprache: "Witaj w pinn. 👋",
+    i_sprache: "Wybierz język konfiguracji. Będzie on też używany w pinn. na tym urządzeniu – każdy profil może później wybrać własny język.",
+
+    t_start: "Czego potrzebujesz",
+    i_start: "Pełna konfiguracja pinn. zajmuje ok. 20–30 minut. Każdy krok zapisuje się po dotknięciu „Dalej” – możesz więc przerwać w dowolnej chwili i wrócić w to samo miejsce.",
+    l_start: [
+      "dostęp do routera (w FRITZ!Box: hasło z dołu urządzenia albo własne hasło)",
+      "to urządzenie połączone z siecią domową (Wi-Fi) – najwygodniej komputer, ale telefon też się nada",
+      "konto Google, GitHub lub Reddit do bezpłatnej usługi DuckDNS",
+      "opcjonalnie: konto Google do kalendarzy Androida i sztucznej inteligencji",
+    ],
+
+    t_netz: "Sieć domowa: adres NAS-a",
+    i_netz: "pinn. musi znać adres NAS-a w sieci domowej. Router rezerwuje go na stałe, żeby nigdy się nie zmieniał.",
+    L_NAS_IP: "Adres IP NAS-a",
+    g_netz: [
+      "Spójrz na pasek adresu przeglądarki: jeśli widzisz coś w rodzaju `http://192.168.178.20:8090`, liczba przed dwukropkiem jest już adresem IP NAS-a.",
+      "W przeciwnym razie zajrzyj do FRITZ!Box: otwórz w przeglądarce [fritz.box](http://fritz.box) i zaloguj się hasłem FRITZ!Box.",
+      "Po lewej otwórz „Sieć domowa” → „Sieć” → zakładka „Połączenia sieciowe”.",
+      "Znajdź NAS-a na liście (zwykle „UGREEN…” lub „DXP…”) i dotknij ikony ołówka (edytuj) po prawej.",
+      "Zanotuj adres IPv4 i zaznacz „Zawsze przypisuj temu urządzeniu sieciowemu ten sam adres IPv4” → „Zastosuj”.",
+      "Inne routery: poszukaj w sekcji „Sieć domowa”, „LAN” lub „DHCP” – zwykle nazywa się to „rezerwacja adresu” albo „stały adres IP”. W aplikacji UGREEN adres znajdziesz w Panelu sterowania → Sieć.",
+    ],
+
+    t_duckdns: "Twój adres z HTTPS (DuckDNS)",
+    i_duckdns: "DuckDNS to bezpłatna usługa, która daje pinn. stały adres wraz z certyfikatem bezpieczeństwa. pinn. potrzebuje go do powiadomień push, aplikacji na ekranie głównym i logowania przez Google. Nie trzeba przekierowywać portów – pinn. pozostaje niewidoczny z zewnątrz.",
+    L_DUCKDNS_SUBDOMAIN: "Subdomena (dowolna nazwa)", L_DUCKDNS_TOKEN: "Token DuckDNS", L_PINN_ADRESSE: "Adres pinn.",
+    g_duckdns: [
+      "Otwórz [duckdns.org](https://www.duckdns.org).",
+      "Zaloguj się jednym z kont widocznych w prawym górnym rogu (np. Google, GitHub lub Reddit) – DuckDNS nie ma własnego hasła.",
+      "W polu „sub domain” wpisz nazwę, np. `rodzina-kowalskich` (tylko małe litery, cyfry i myślniki) i dotknij „add domain”. Jeśli nazwa jest zajęta, spróbuj innej.",
+      "Na samej górze strony zobaczysz „token” – długi ciąg znaków rozdzielony myślnikami. Zaznacz go i skopiuj.",
+      "Wklej tutaj subdomenę i token, a potem dotknij „Sprawdź”. pinn. sam zapisze w DuckDNS adres Twojego NAS-a – nie musisz zmieniać pola „current ip” na stronie.",
+      "Token jest jak hasło – nie udostępniaj go nikomu. Jeśli jednak trafił w niepowołane ręce: dotknij na duckdns.org „recreate token” i wpisz tu nowy token.",
+    ],
+    test_duckdns_ok: "DuckDNS zaakceptował adres ✓ – {0} wskazuje teraz na Twój NAS ({1}).",
+    test_duckdns_ko: "DuckDNS odrzucił dane. Sprawdź subdomenę i token – subdomena musi istnieć na koncie DuckDNS.",
+    test_duckdns_netz: "NAS nie może połączyć się z duckdns.org. Czy NAS ma dostęp do internetu?",
+    test_duckdns_fehlt: "Wpisz subdomenę i token.",
+    test_duckdns_ungueltig: "Subdomena lub token wyglądają na nieprawidłowe.",
+    test_duckdns_ip_fehlt: "Najpierw wpisz adres IP NAS-a w kroku „Sieć domowa”.",
+
+    t_rebind: "Router: ochrona przed DNS rebind",
+    i_rebind: "Twój adres pinn. wskazuje urządzenie w sieci domowej. Wiele routerów, w tym FRITZ!Box, blokuje to ze względów bezpieczeństwa. Wtedy pinn. nie otworzy się pod tym adresem. Rozwiązaniem jest wyjątek dokładnie dla tego adresu:",
+    g_rebind: [
+      "Otwórz [fritz.box](http://fritz.box) i zaloguj się.",
+      "„Sieć domowa” → „Sieć” → zakładka „Ustawienia sieciowe”.",
+      "Przewiń na sam dół i otwórz „Dodatkowe ustawienia”.",
+      "W sekcji „Ochrona przed DNS rebind” w polu „Wyjątki nazw hostów” wpisz ten wiersz: `{SUB}.duckdns.org`",
+      "Dotknij „Zastosuj” i – jeśli FRITZ!Box o to poprosi – potwierdź na urządzeniu.",
+      "Inne routery: poszukaj w ustawieniach „DNS rebind” i dodaj ten sam adres jako wyjątek. Jeśli takiego ustawienia nie ma, zwykle nic nie trzeba robić.",
+    ],
+    rebindErledigt: "Gotowe – wyjątek dodany",
+
+    t_fern: "Korzystanie poza domem (VPN)",
+    i_fern: "pinn. celowo nie jest dostępny z internetu. Poza domem telefon łączy się z domem bezpiecznie przez VPN – tak, jakby był w Twoim Wi-Fi. Jak chcesz to zrobić?",
+    c_wg: "FRITZ!Box z WireGuard", c_wg_d: "Polecane, jeśli masz FRITZ!Box z FRITZ!OS 7.50 lub nowszym. Bezpłatne, bez dodatkowego konta.",
+    c_ts: "Tailscale", c_ts_d: "Dla innych routerów – albo gdy WireGuard nie działa (np. przy łączach DS-Lite). Wymaga bezpłatnego konta na tailscale.com.",
+    c_kein: "Tylko w domu", c_kein_d: "Używaj pinn. tylko w domowej sieci Wi-Fi. Można dodać w każdej chwili.",
+    L_TS_AUTHKEY: "Klucz Tailscale (auth key)",
+    g_wireguard: [
+      "Otwórz [fritz.box](http://fritz.box) i zaloguj się. W „System” → „Aktualizacja” powinna być wersja FRITZ!OS 7.50 lub nowsza (jeśli nie, zaktualizuj ją tam).",
+      "„Internet” → „Dostęp zezwalający” → zakładka „VPN (WireGuard)” → „Dodaj połączenie”.",
+      "Wybierz „Uproszczona konfiguracja (zalecana)” → „Dalej”. Na pytanie, czy łączy się pojedyncze urządzenie, odpowiedz „Tak”.",
+      "Wpisz nazwę telefonu (np. `Telefon Ani`) → „Zakończ”. Jeśli FRITZ!Box poprosi o potwierdzenie: naciśnij przycisk na urządzeniu albo potwierdź na telefonie.",
+      "Jeśli FRITZ!Box zażąda konta MyFRITZ!: załóż je bezpłatnie – dzięki niemu telefon znajdzie Twoje urządzenie poza domem.",
+      "Pojawi się kod QR. Zainstaluj na telefonie aplikację „WireGuard”: [iPhone](https://apps.apple.com/app/wireguard/id1441195209) · [Android](https://play.google.com/store/apps/details?id=com.wireguard.android).",
+      "W aplikacji WireGuard dotknij „+” → „Skanuj kod QR” (iPhone: „Utwórz z kodu QR”) → zeskanuj kod z ekranu → nadaj nazwę → zezwól na dodanie konfiguracji VPN.",
+      "Test: wyłącz Wi-Fi w telefonie, włącz WireGuard i otwórz {ADRESSE}.",
+      "Dla każdego kolejnego telefonu powtórz kroki od „Dodaj połączenie” – każde urządzenie dostaje własne połączenie.",
+    ],
+    wgNurPinnT: "Zezwól tylko na pinn. (np. dla krewnych)",
+    wgNurPinn: "Jeśli urządzenie ma docierać przez VPN tylko do pinn., a nie do całej sieci domowej: w aplikacji WireGuard dotknij połączenia → „Edytuj” → w polu „Dozwolone adresy IP” zastąp wszystko tym: `{NAS_IP}/32, {ROUTER_IP}/32` → „Zapisz”. Drugi adres to router (do rozpoznawania nazw). Uwaga: ograniczenie dotyczy tylko tego urządzenia.",
+    wgDsLite: "Nie działa poza domem? Niektóre łącza (DS-Lite; często w kablówce i światłowodzie) nie mają własnego adresu IPv4 – wtedy WireGuard działa tylko wtedy, gdy telefon ma poza domem IPv6. W takim przypadku użyj Tailscale.",
+    g_tailscale: [
+      "Otwórz [login.tailscale.com](https://login.tailscale.com/start) i załóż bezpłatne konto (np. logując się przez Google, Microsoft lub Apple).",
+      "W konsoli administracyjnej wybierz u góry „Settings” → po lewej „Keys” → „Generate auth key…”.",
+      "Nie zmieniaj ustawień domyślnych → „Generate key” → skopiuj klucz (zaczyna się od `tskey-auth-`) i wklej go powyżej.",
+      "Dotknij „Dalej”. Kontener „tailscale” na NAS-ie zaloguje się tym kluczem w ciągu minuty.",
+      "Wróć do konsoli Tailscale: zakładka „Machines” → przy urządzeniu „pinn” dotknij „…” → „Edit route settings…” → zaznacz `{NAS_IP}/32` → „Save”.",
+      "Przy urządzeniu „pinn” wybierz też w „…” opcję „Disable key expiry” – w przeciwnym razie NAS musiałby logować się ponownie co 180 dni.",
+      "Zainstaluj na każdym telefonie aplikację „Tailscale” ([iPhone](https://apps.apple.com/app/tailscale/id1470499037) · [Android](https://play.google.com/store/apps/details?id=com.tailscale.ipn)) i zaloguj się tym samym kontem. Krewnych zaproś w konsoli w sekcji „Users”.",
+      "Test: wyłącz Wi-Fi w telefonie, połącz się z Tailscale i otwórz {ADRESSE}.",
+    ],
+    keinFern: "W porządku – pinn. działa wtedy w domowej sieci Wi-Fi. Dostęp z zewnątrz możesz dodać w każdej chwili w: Główny administrator → Konfiguracja.",
+
+    t_google: "Google: kalendarze Androida i kontakty",
+    i_google: "Opcjonalnie. Potrzebne, jeśli chcesz widzieć w pinn. kalendarze Google (Android) albo urodziny z Kontaktów Google. Konfiguruje się raz dla całego serwera – potem każdy loguje się do pinn. własnym kontem Google. Dla iPhone'a i iCloud nie trzeba tu nic robić.",
+    googleBrauchtHttps: "Google wymaga adresu HTTPS z kroku „DuckDNS”.",
+    L_REDIRECT: "URI przekierowania (dla Google Cloud Console)",
+    L_PINN_GOOGLE_CLIENT_ID: "Identyfikator klienta (Client ID)", L_PINN_GOOGLE_CLIENT_SECRET: "Tajny klucz klienta (Client secret)",
+    g_google: [
+      "Otwórz [console.cloud.google.com](https://console.cloud.google.com) i zaloguj się kontem Google (za pierwszym razem zaakceptuj regulamin).",
+      "Dotknij selektora projektu u góry → „Nowy projekt” → nazwa `pinn` → „Utwórz”. Potem wybierz u góry projekt „pinn”.",
+      "Włącz trzy API – otwórz każde i dotknij „Włącz”: [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com) · [CalDAV API](https://console.cloud.google.com/apis/library/caldav.googleapis.com) · [People API](https://console.cloud.google.com/apis/library/people.googleapis.com).",
+      "Otwórz [Google Auth Platform](https://console.cloud.google.com/auth/overview) → „Rozpocznij”: nazwa aplikacji `pinn.`, adres e-mail pomocy = Twój adres → odbiorcy „Zewnętrzni” → adres e-mail kontaktowy → zaakceptuj → „Utwórz”.",
+      "Po lewej „Odbiorcy” → „Opublikuj aplikację” → potwierdź. Ważne: w stanie „Testowanie” każde połączenie z Google wygasa po 7 dniach.",
+      "Po lewej „Klienci” → „Utwórz klienta” → typ aplikacji „Aplikacja internetowa”, nazwa `pinn.`.",
+      "W sekcji „Autoryzowane identyfikatory URI przekierowania” dotknij „Dodaj URI” i wklej dokładnie ten adres: `{REDIRECT}` → „Utwórz”.",
+      "Skopiuj identyfikator klienta i tajny klucz, wklej je tutaj i dotknij „Sprawdź”. (Google pokazuje tajny klucz tylko raz – w razie potrzeby użyj w kliencie opcji „Dodaj tajny klucz”.)",
+      "Przy późniejszym łączeniu Google napisze „Google nie zweryfikowało tej aplikacji”. Dla Twojej własnej aplikacji to normalne: „Zaawansowane” → „Przejdź do pinn.”.",
+    ],
+    test_google_ok: "Google rozpoznaje tego klienta ✓",
+    test_google_uri: "Identyfikator klienta i tajny klucz są poprawne, ale w kliencie brakuje URI przekierowania: {0}",
+    test_google_ungueltig: "Google nie rozpoznaje tego identyfikatora klienta lub tajnego klucza – skopiuj je ponownie.",
+    test_google_netz: "NAS nie może połączyć się z Google.",
+    test_google_fehlt: "Wpisz identyfikator klienta i tajny klucz.",
+
+    t_ki: "Sztuczna inteligencja do przepisów (Google Gemini)",
+    i_ki: "Opcjonalnie. Sztuczna inteligencja znacznie lepiej odczytuje przepisy z tekstów, zdjęć, plików PDF i linków oraz znajduje kalendarz odpadów. Klucz jest bezpłatny i zostaje na NAS-ie – aplikacje nigdy nie łączą się z Google bezpośrednio.",
+    L_PINN_GEMINI_KEY: "Klucz API Gemini", L_PINN_GEMINI_MODELL: "Stały model",
+    h_modell: "Puste = automatycznie aktualny model Flash.",
+    g_ki: [
+      "Otwórz [aistudio.google.com/apikey](https://aistudio.google.com/apikey) i zaloguj się kontem Google.",
+      "Dotknij „Create API key”. Jeśli Google zapyta o projekt, wybierz projekt „pinn” z poprzedniego kroku albo utwórz nowy.",
+      "Skopiuj klucz (zwykle zaczyna się od `AIza`), wklej go tutaj i dotknij „Sprawdź”.",
+      "Warto wiedzieć: w bezpłatnym użyciu Google może wykorzystywać przesyłane teksty przepisów do ulepszania swoich usług.",
+    ],
+    test_gemini_ok: "Klucz jest ważny ✓",
+    test_gemini_ungueltig: "Google odrzuca klucz – skopiuj go ponownie.",
+    test_gemini_gesperrt: "Klucz jest zablokowany dla API Gemini. Utwórz nowy klucz w AI Studio.",
+    test_gemini_netz: "NAS nie może połączyć się z Google.",
+    test_gemini_fehlt: "Wpisz klucz.",
+
+    t_ortung: "Lokalizacja (Rodzina → lokalizacje na żywo)",
+    i_ortung: "Opcjonalnie. Telefony udostępniają swoją lokalizację bezpośrednio w pinn. – nic tu nie trzeba wpisywać. Kontener „traccar” jest potrzebny tylko dla lokalizatorów GPS z kartą SIM.",
+    l_ortung: [
+      "Udostępnianie lokalizacji działa bezpośrednio w pinn. (Rodzina → Lokalizacja). Aby wysyłanie trwało także przy zamkniętym pinn., zainstaluj aplikację „Traccar Client” – wysyła dane wprost do pinn.",
+      "pinn. pokaże później dla każdej osoby adres serwera i identyfikator urządzenia w: Rodzina → ⚙︎ Lokalizacja.",
+      "Poza domem telefon potrzebuje VPN z kroku „Korzystanie poza domem”.",
+      "Lokalizatory GPS z kartą SIM (np. na obroży psa) wysyłają dane przez sieć komórkową – wymaga to przekierowania portów na routerze. pinn. pokaże instrukcję przy dodawaniu lokalizatora.",
+    ],
+    appTraccar: "Aplikacja „Traccar Client”:",
+    h_traccar: "Wypełnij tylko wtedy, gdy samodzielnie założono konto w Traccar. Puste = pinn. utworzy je sam.",
+    L_PINN_TRACCAR_EMAIL: "E-mail Traccar", L_PINN_TRACCAR_PASSWORT: "Hasło Traccar",
+    test_traccar_ok: "Traccar działa ✓",
+    test_traccar_aus: "Kontener „traccar” nie działa – dla telefonów nie jest potrzebny. Tylko dla lokalizatorów GPS: dodaj do pliku .env wiersz COMPOSE_PROFILES=tracker.",
+
+    t_ha: "Inteligentny dom: Home Assistant",
+    i_ha: "Opcjonalnie. Gdzie działa Twój Home Assistant?",
+    c_ha_kein: "Nie mam Home Assistant",
+    c_ha_geraet: "Na osobnym urządzeniu", c_ha_geraet_d: "np. Raspberry Pi lub Home Assistant Green.",
+    c_ha_vm: "Jako maszyna wirtualna na tym NAS-ie", c_ha_vm_d: "Wtedy pinn. tworzy mały objazd sieciowy – w przeciwnym razie NAS nie dosięgnie maszyny wirtualnej.",
+    haGeraetInfo: "Nie trzeba tu nic wpisywać. Każda rodzina konfiguruje połączenie w pinn. w: Ustawienia → Inteligentny dom.",
+    L_HA_IP: "Adres IP Home Assistant", L_HILFS_IP: "Wolny adres pomocniczy", L_NAS_NETZWERKKARTE: "Interfejs sieciowy NAS-a",
+    h_karte: "„auto” = pinn. sam rozpozna interfejs sieciowy.",
+    g_ha: [
+      "IP Home Assistant: w Home Assistant „Ustawienia” → „System” → „Sieć” – albo w FRITZ!Box w „Sieć domowa” → „Sieć” znajdź urządzenie „homeassistant”. Zaznacz tam też „zawsze przypisuj ten sam adres IPv4”.",
+      "Adres pomocniczy: adres w sieci domowej, którego nie używa żadne urządzenie i którego router nigdy nie przydziela. W FRITZ!Box zakres przydzielany przez router widać w „Sieć domowa” → „Sieć” → „Ustawienia sieciowe” → „Ustawienia IPv4” (np. od .20 do .200). Wybierz adres powyżej tego zakresu, np. `{VORSCHLAG}`.",
+      "Dotknij „Dalej” – kontener „ha-netz” skonfiguruje objazd w ciągu minuty. „Sprawdź” pokaże, czy pinn. łączy się z Home Assistant.",
+      "Token dostępu do Home Assistant każda rodzina wpisze później w pinn. w: Ustawienia → Inteligentny dom.",
+    ],
+    haAktiv: "Objazd aktywny: przez {0} (adres pomocniczy: {1}) ✓", haWartet: "Ustawienia objazdu oczekują na zastosowanie.", haFehler: "Nie udało się skonfigurować objazdu (interfejs sieciowy: {0}).",
+    test_homeassistant_ok: "Home Assistant jest osiągalny ✓",
+    test_homeassistant_aus: "Home Assistant jest (jeszcze) nieosiągalny. Po „Dalej” poczekaj do minuty i sprawdź ponownie.",
+    test_homeassistant_fehlt: "Wpisz adres IP Home Assistant.",
+
+    t_apps: "Aplikacje i urządzenia",
+    i_apps: "Prawie gotowe! Na telefonach członków rodziny potrzebne są:",
+    a_home_t: "pinn. na ekranie głównym (dla wszystkich)",
+    a_home: [
+      "iPhone/iPad: otwórz {ADRESSE} w Safari → ikona udostępniania (kwadrat ze strzałką) → „Dodaj do ekranu początkowego” → „Dodaj”. Powiadomienia push działają tylko w ten sposób (iOS 16.4 lub nowszy).",
+      "Android: otwórz {ADRESSE} w Chrome → ⋮ w prawym górnym rogu → „Zainstaluj aplikację” albo „Dodaj do ekranu głównego”.",
+      "Zawsze używaj adresu https – nie adresu z :8090.",
+    ],
+    a_vpn: "Poza domem – instrukcja w kroku „Korzystanie poza domem”:",
+    a_traccar: "Tylko do śledzenia lokalizacji:",
+    a_icloud_t: "Kalendarz iCloud (iPhone)",
+    a_icloud: "Każda rodzina łączy swój kalendarz iCloud samodzielnie w pinn. w: Ustawienia → Kalendarz. Potrzebne jest do tego hasło aplikacji: [account.apple.com](https://account.apple.com) → „Logowanie i bezpieczeństwo” → „Hasła aplikacji” → „+” → nazwa `pinn.` → wyświetlone hasło (xxxx-xxxx-xxxx-xxxx) wpisz w pinn.",
+    a_push_t: "Powiadomienia push",
+    a_push: "Każda osoba włącza je w pinn. w: Ustawienia → Powiadomienia → „Włącz na tym urządzeniu” – na iPhonie tylko w aplikacji z ekranu głównego.",
+
+    t_fertig: "Podsumowanie",
+    i_fertig: "Sprawdź szczegóły. Po „Zapisz i uruchom” pinn. zastosuje wszystko i na krótko uruchomi się ponownie (ok. 10–20 sekund).",
+    S_ADRESSE: "Adres", S_REBIND: "Wyjątek DNS rebind", S_FERN: "Poza domem", S_KI: "Sztuczna inteligencja", S_ORTUNG: "Lokalizacja",
+    L_PINN_PUSH_KONTAKT: "Kontakt dla usług powiadomień push",
+    h_push: "Apple i Google wymagają adresu kontaktowego (e-mail) dla powiadomień push. Puste = pinn. użyje własnego adresu.",
+    neustart: "pinn. uruchamia się ponownie …", neustartOk: "uruchomiono ponownie ✓", neustartFehler: "pinn. nie odpowiada. Odśwież stronę po minucie lub dwóch.",
+    pruefeHttps: "Sprawdzanie HTTPS …", pruefeAlles: "Sprawdzanie wszystkiego …",
+    zertifikatDauert: "Certyfikat bezpieczeństwa jest pobierany za pierwszym razem – może to potrwać 1–2 minuty …",
+    httpsOk: "Osiągalny: {0} ✓",
+    httpsFehler: "Jeszcze nie odpowiada: {0}. Częste przyczyny: ochrona przed DNS rebind w routerze (krok 5), urządzenie poza siecią domową albo certyfikat potrzebuje jeszcze chwili. Spróbuj później przez „Sprawdź ponownie”.",
+    httpsAus: "Adres HTTPS nie został skonfigurowany (krok DuckDNS).",
+    t_geschafft: "Gotowe! 🎉",
+    geschafftText: "pinn. jest skonfigurowany. Od teraz otwieraj pinn. pod tym adresem i zapisz go na wszystkich telefonach (zobacz krok „Aplikacje i urządzenia”). Następnie utwórz w zarządzaniu rodzinami swoją pierwszą rodzinę.",
+    nochmalPruefen: "Sprawdź ponownie", zurVerwaltung: "Przejdź do zarządzania rodzinami",
+  };
+
   var STEPS = [
     { id: 'sprache' },
     { id: 'start' },
@@ -2942,7 +3154,7 @@
   var R = {};
   R.sprache = function () {
     var langs = (window.PINN_LANGUAGES || []).slice();
-    var order = { de: 0, en: 1, fr: 2, es: 3, it: 4, pt: 5, zh: 6, ja: 7, ko: 8, ru: 9, nl: 10, tr: 11 };
+    var order = { de: 0, en: 1, fr: 2, es: 3, it: 4, pt: 5, zh: 6, ja: 7, ko: 8, ru: 9, nl: 10, tr: 11, pl: 12 };
     // Hidden languages only if they are enabled on this device for testing (PINN_I18N.find)
     var I = window.PINN_I18N;
     langs = langs.filter(function (l) { return order[l.code] != null && (!l.hidden || (I && I.find && I.find(l.code))); })

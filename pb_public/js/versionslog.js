@@ -41,6 +41,7 @@ const PINN_CHANGELOG = [
       ['info', '1.132.14: Polnisch Etappe 15 – Smarthome, Ausblick, Hilfe & Tutorial und Sprachsteuerung; insgesamt 6727 von 6989 Texten.'],
       ['info', '1.132.15: Polnisch Etappe 16 – übrige kleine Bereiche (Server-Meldungen, Bundesländer, Reihum, Wiederholung, Avatare, Offline-Hinweise); insgesamt 6842 von 6989 Texten.'],
       ['info', '1.132.16: Polnisch Etappe 17 – Push-Texte (damit sind alle 6989 Texte übersetzt) und Server-Hooks (Sprachlisten, Land PL, Texte, Mehrzahl- und WG-Regeln). Server-Teil: Hooks ersetzen.'],
+      ['info', '1.132.17: Polnisch Etappe 18 – Einrichtungs-Assistent, Datenexport und Einrichtungs-Hinweise auf der Anmeldeseite; dazu eine kurze polnische README. Die Sprache ist noch versteckt – in der App ändert sich für dich nichts.'],
     ],
   },
   {

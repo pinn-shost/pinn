@@ -23,7 +23,8 @@
   <a href="README.ko.md">🇰🇷 한국어</a> ·
   <a href="README.ru.md">🇷🇺 Русский</a> ·
   <a href="README.nl.md">🇳🇱 Nederlands</a> ·
-  <a href="README.tr.md">🇹🇷 Türkçe</a>
+  <a href="README.tr.md">🇹🇷 Türkçe</a> ·
+  <a href="README.pl.md">🇵🇱 Polski</a>
 </p>
 
 <p align="center">
@@ -127,6 +128,13 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands and 🇹🇷 Türkçe**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.132.17
+
+**Polish – stage 18**
+
+- **Polish.** The setup assistant, the data export and the setup notes on the sign-in page are translated; there is also a short Polish README (`README.pl.md`), linked from all READMEs. The language is still hidden and cannot be chosen yet; nothing changes in the app for you.
+- Changed: `pb_public/einrichtung.js`, `pb_public/datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), all READMEs, new `README.pl.md`. No server part.
+
 ## What's new in 1.132.16
 
 **Polish – stage 17**
@@ -197,13 +205,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Polish.** Contracts and depots are translated (3635 of 6989 texts in total). The language is still hidden and cannot be chosen yet; nothing changes in the app for you.
 - Changed: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) and all READMEs. No server part.
 
-## What's new in 1.132.6
-
-**Polish – stage 7**
-
-- **Polish.** Finances, funds, pocket money, stars and the kids’ page are translated (3118 of 6989 texts in total). The language is still hidden and cannot be chosen yet; nothing changes in the app for you.
-- Changed: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) and all READMEs. No server part.
-
 ## How it works
 
 ```mermaid
@@ -230,7 +231,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.132.16` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.132.17` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

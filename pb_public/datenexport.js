@@ -12,7 +12,7 @@
    (pb_hooks/export.pb.js + pinn-export.js). Files are taken over uncompressed (PDFs and photos
    are already compressed), the JSON data is compressed – where the browser can do it.
    Own texts in German, English, French, Spanish, Italian, Portuguese, Chinese,
-   Japanese, Korean, Russian, Dutch and Turkish (data-no-i18n / data-no-term).
+   Japanese, Korean, Russian, Dutch, Turkish and Polish (data-no-i18n / data-no-term).
 
    Structure of the ZIP:
      pinn-export.json                 description: format, version, family, content, file list
@@ -24,7 +24,7 @@
   'use strict';
   if (window.PinnExport) return;
 
-  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl', 'tr'];
+  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl', 'tr', 'pl'];
   var T = {};
   T.de = {
     F: 'Familie', FW: 'WG', Fd: 'der Familie', FWd: 'der WG',
@@ -790,6 +790,60 @@
     ],
   };
 
+  // Polish (since 1.132.17, hidden in the app until it is enabled)
+  T.pl = {
+    F: "rodzina", FW: "wspólne mieszkanie", Fd: "rodziny", FWd: "wspólnego mieszkania",
+    titel: "Eksport: {F}",
+    intro: "Wszystkie dane {Fd} jako plik ZIP – razem z dokumentami, paragonami i obrazami. Na przykład do przeniesienia na inny NAS albo jako własna kopia zapasowa.",
+    lade: "Sprawdzanie zawartości …", fehler: "Nie udało się.",
+    fehlerNetz: "Brak połączenia z pinn. – upewnij się, że jesteś w sieci domowej lub przez VPN.",
+    serverFehlt: "Na serwerze nadal brakuje plików export.pb.js i pinn-export.js (pb_hooks).",
+    familieWaehlen: "Wybierz z listy ({F})", inhalt: "Co trafi do pliku ZIP", eintraege: "Wpisy: {0}", dateienN: "Pliki: {0}",
+    dokumente: "Pliki łącznie", groesse: "Rozmiar (ok.)",
+    nichtDrin: "Nie uwzględniono",
+    nichtDrinText: "Hasła, kody PIN, dane dostępowe do iCloud, Google i Home Assistant, zalogowane urządzenia i subskrypcje powiadomień push. Na innym NAS-ie po prostu zalogujesz się ponownie. Historia lokalizacji z Traccar również nie jest uwzględniona.",
+    privat: "Nie uwzględniono, bo prywatne: kasy, do których nie należysz (liczba: {0}), oraz kalendarze „Tylko dla mnie” innych profili (liczba: {1}). Pełny eksport – np. na potrzeby przeprowadzki – tworzy główny administrator.",
+    voll: "Pełny eksport – wraz z prywatnymi kasami i kalendarzami „Tylko dla mnie” wszystkich profili.",
+    sicherheit: "Plik ZIP zawiera finanse, dokumenty i karty awaryjne bez szyfrowania. Przechowuj go bezpiecznie i nie wysyłaj e-mailem.",
+    gross: "To ok. {0}. Na telefonie może to chwilę potrwać – lepiej wyeksportować na komputerze i zostawić pinn. otwarty.",
+    starten: "Utwórz ZIP", abbrechen: "Anuluj", schliessen: "Zamknij", nochmal: "Spróbuj ponownie",
+    schrittDaten: "Dane: {0}", schrittDatei: "Plik {0} z {1}", packe: "Przygotowywanie pliku ZIP …",
+    offenLassen: "Zostaw pinn. otwarty, dopóki eksport się nie zakończy.",
+    fertig: "Eksport zakończony ✓", fertigText: "Wpisy: {0} · pliki: {1} · {2}",
+    speichern: "Zapisz ZIP", teilen: "Udostępnij lub zapisz w Plikach",
+    speichernTipp: "iPhone/iPad: „Udostępnij” → „Zachowaj w Plikach”. Komputer: „Zapisz ZIP” umieszcza plik w folderze pobranych.",
+    fehlende: "Nie udało się odczytać plików (liczba: {0}) – są wymienione w pliku export-fehler.txt wewnątrz ZIP-a.",
+    abgebrochen: "Eksport anulowany.", zuGross: "Eksport jest większy niż 4 GB – zwykły plik ZIP tego nie pomieści.",
+    keinAdmin: "Eksport mogą tworzyć tylko administratorzy.",
+    S: {
+      familien: "{F}", benutzer: "Profile", familien_daten: "Kalendarz, listy, przepisy, członkowie i ustawienia",
+      rezept_bilder: "Obrazy przepisów", oeffentliche_rezepte: "Udostępnione przepisy", aufgaben: "Zadania",
+      haushalt_verlauf: "Historia obowiązków domowych", kassen: "Kasy, portfele i umowy", ausgaben: "Transakcje",
+      finanz_dokumente: "Dokumenty umów", dokumente: "Dokumenty", pinnwand_bilder: "Obrazy z tablicy",
+      kalender_eigene: "Własne kalendarze", kalender_termine: "Wydarzenia", muellkalender: "Kalendarz odpadów",
+      ortung: "Miejsca i lokalizacja", zuhause: "Dom", smarthome_zugaenge: "Inteligentny dom",
+      dashboard_hintergruende: "Panel", apple_zugaenge: "iCloud", google_zugaenge: "Google",
+    },
+    liesmich: "README.txt",
+    readme: [
+      "pinn. – eksport danych",
+      "",
+      "{F}: {0}",
+      "Utworzono: {1}, przez: {2} (pinn. {3})",
+      "",
+      "Zawartość:",
+      "  pinn-export.json  opis eksportu (format, zawartość, lista plików)",
+      "  daten/            wszystkie rekordy każdej kolekcji jako JSON (tak jak w PocketBase)",
+      "  dateien/          dokumenty, paragony i obrazy: dateien/<kolekcja>/<identyfikator rekordu>/<plik>",
+      "",
+      "Nie uwzględniono: haseł, kodów PIN, danych dostępowych (iCloud, Google, Home Assistant),",
+      "zalogowanych urządzeń, subskrypcji powiadomień push i historii lokalizacji z Traccar.",
+      "",
+      "Uwaga: ten plik zawiera finanse, dokumenty i karty awaryjne bez szyfrowania.",
+      "Przechowuj go bezpiecznie.",
+    ],
+  };
+
   var S = { opts: {}, lang: 'en', wg: false, info: null, familie: '', laeuft: false, abbruch: false, ergebnis: null, url: '' };
 
   /* ---------- Texts ---------- */
@@ -817,7 +871,7 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
-  function locale() { return { de: 'de-DE', en: 'en-GB', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', pt: 'pt-BR', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR', ru: 'ru-RU', nl: 'nl-NL', tr: 'tr-TR' }[S.lang] || 'en-GB'; }
+  function locale() { return { de: 'de-DE', en: 'en-GB', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', pt: 'pt-BR', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR', ru: 'ru-RU', nl: 'nl-NL', tr: 'tr-TR', pl: 'pl-PL' }[S.lang] || 'en-GB'; }
   function zahl(n) { try { return Number(n || 0).toLocaleString(locale()); } catch (e) { return String(n || 0); } }
   function groesse(b) {
     b = Number(b) || 0;

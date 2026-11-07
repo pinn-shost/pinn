@@ -8,7 +8,7 @@
    Data export (whole family as a ZIP – data + documents)
    ----------------------------------------------------------
    The module lives in pb_public/datenexport.js and is only loaded when first opened
-   (own texts in twelve languages). The browser builds the ZIP; the server only delivers collections
+   (own texts in thirteen languages, Polish still hidden). The browser builds the ZIP; the server only delivers collections
    and files (pb_hooks/export.pb.js + pinn-export.js).
    - Settings → System → Data: "Export family" (admins, not with child lock)
    - Main admin → Families: "📦 Export" per family (complete, e.g. for moving)
@@ -29,6 +29,8 @@ const PINN_EXPORT_TEXTE = {
   nl: { btn: '📦 {F} exporteren', kurz: '📦 Export', text: 'Alle gegevens {Fd} als ZIP-bestand – inclusief documenten, bonnetjes en afbeeldingen. Bijvoorbeeld voor de verhuizing naar een andere NAS of als eigen back-up.', laden: 'De export kon niet worden geladen (ontbreekt pb_public/datenexport.js?).', F: 'gezin', FW: 'woongroep', Fd: 'van je gezin', FWd: 'van je woongroep' },
   // Turkish (since 1.130.12, offered in the app since 1.131.0): {F} is the bare noun ("export: family" = "Dışa aktar: aile")
   tr: { btn: '📦 Dışa aktar: {F}', kurz: '📦 Dışa aktar', text: 'ZIP dosyası olarak {Fd} tüm verileri – belgeler, fişler ve resimler dahil. Örneğin başka bir NAS\'a taşınmak veya kendi yedeğin için.', laden: 'Dışa aktarım yüklenemedi (pb_public/datenexport.js eksik mi?).', F: 'aile', FW: 'ortak ev', Fd: 'ailenin', FWd: 'ortak evin' },
+  // Polish (since 1.132.17, hidden in the app until it is enabled): {F} is the bare noun ("export: family" = "Eksport: rodzina")
+  pl: { btn: '📦 Eksport: {F}', kurz: '📦 Eksport', text: 'Wszystkie dane {Fd} jako plik ZIP – razem z dokumentami, paragonami i obrazami. Na przykład do przeniesienia na inny NAS albo jako własna kopia zapasowa.', laden: 'Nie udało się wczytać eksportu (brakuje pb_public/datenexport.js?).', F: 'rodzina', FW: 'wspólne mieszkanie', Fd: 'rodziny', FWd: 'wspólnego mieszkania' },
 };
 function pinnExportText(key) {
   const l = (window.PINN_I18N && window.PINN_I18N.current) || 'en';

@@ -23,7 +23,8 @@
   <a href="README.ko.md">🇰🇷 한국어</a> ·
   <a href="README.ru.md">🇷🇺 Русский</a> ·
   <b>🇳🇱 Nederlands</b> ·
-  <a href="README.tr.md">🇹🇷 Türkçe</a>
+  <a href="README.tr.md">🇹🇷 Türkçe</a> ·
+  <a href="README.pl.md">🇵🇱 Polski</a>
 </p>
 
 ---
@@ -108,6 +109,13 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands en 🇹🇷 Türkçe**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.132.17
+
+**Pools – fase 18**
+
+- **Pools.** De installatie-assistent, de data-export en de installatiehints op de inlogpagina zijn vertaald; er is ook een korte Poolse README (`README.pl.md`), waarnaar alle README’s linken. De taal is nog verborgen en kan nog niet worden gekozen; in de app verandert er niets voor je.
+- Gewijzigd: `pb_public/einrichtung.js`, `pb_public/datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), alle README’s, nieuw `README.pl.md`. Geen serverdeel.
+
 ## Nieuw in 1.132.16
 
 **Pools – fase 17**
@@ -122,13 +130,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Pools.** De overige kleine onderdelen (servermeldingen, deelstaten, beurtrol, herhaling, avatars, offline-meldingen) zijn vertaald (in totaal 6842 van 6989 teksten). De taal is nog verborgen en kan nog niet worden gekozen; in de app verandert er niets voor je.
 - Gewijzigd: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) en alle README’s. Geen serverdeel.
 
-## Nieuw in 1.132.14
-
-**Pools – fase 15**
-
-- **Pools.** Slimme woning, vooruitblik, help & tutorial en spraakbesturing zijn vertaald (in totaal 6727 van 6989 teksten). De taal is nog verborgen en kan nog niet worden gekozen; in de app verandert er niets voor je.
-- Gewijzigd: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) en alle README’s. Geen serverdeel.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -138,7 +139,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.132.16` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.132.17` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
