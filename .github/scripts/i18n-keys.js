@@ -101,6 +101,19 @@ const TR_HOME = { nin: 'in', ndeki: 'indeki', nde: 'inde', nden: 'inden', ne: 'i
 // "aile üyesi" + ending → "ev arkadaşı" + ending
 const TR_MATE = { si: 'ı', leri: 'ları', sinin: 'ının', lerinin: 'larının', sine: 'ına', lerine: 'larına', sini: 'ını', lerini: 'larını',
   sinde: 'ında', lerinde: 'larında', sinden: 'ından', lerinden: 'larından' };
+// Polish (since 1.132.0): "rodzina" + case ending → "wspólne mieszkanie" in the same case; "członek rodziny" → "współlokator"
+const PL_HOME = { '': 'wspólnych mieszkań', a: 'wspólne mieszkanie', y: 'wspólnego mieszkania', ie: 'wspólnym mieszkaniu', 'ę': 'wspólne mieszkanie',
+  'ą': 'wspólnym mieszkaniem', o: 'wspólne mieszkanie', om: 'wspólnym mieszkaniom', ami: 'wspólnymi mieszkaniami', ach: 'wspólnych mieszkaniach' };
+const PL_MATE = { ek: 'współlokator', ka: 'współlokatora', kowi: 'współlokatorowi', kiem: 'współlokatorem', ku: 'współlokatorze',
+  kowie: 'współlokatorzy', 'ków': 'współlokatorów', kom: 'współlokatorom', kami: 'współlokatorami', kach: 'współlokatorach' };
+// Polish: a feminine determiner before "rodzina" (twoja, cała, każda, ta …) becomes neuter in the case of the noun
+// ("całej rodziny" → "całego wspólnego mieszkania", "twojej rodzinie" → "twoim wspólnym mieszkaniu")
+function plDet(stem, end) {
+  const kind = end === undefined || end === 'a' || end === 'o' || end === 'ę' ? 'nom' : end === 'y' ? 'gen' : 'loc';
+  if (kind === 'nom') return stem === 't' ? 'to' : stem === 'jedn' ? 'jedno' : stem + 'e';
+  if (kind === 'gen') return stem + 'ego';
+  return stem === 'twoj' ? 'twoim' : stem + 'ym';
+}
 const TERMS = {
   de: { keep: /Familienstammbuch|Familienkutsche/g, rules: [
     [/\b([Jj])edes Familienmitglied\b/g, '$1eder Mitbewohner'],
@@ -231,6 +244,23 @@ const TERMS = {
       function (m, c, end) { return cap(c === 'С', 'квартир' + RU_FLAT[end]); }],
     [/(?<![\p{L}\p{N}])([Сс])емейн(ый|ая|ое|ые|ого|ому|ой|ом|ых|ым|ую|ыми)(?![\p{L}\p{N}])/gu,
       function (m, c, end) { return cap(c === 'С', 'общ' + RU_COMMON[end]); }],
+  ] },
+  // Polish (since 1.132.0): \b does not work for ą ć ę ł ń ó ś ź ż, so the rules use Unicode lookarounds (flag u).
+  // Adjectives (rodzinny → wspólny) keep their ending; "rodzina" becomes a neuter noun, so a few sentences read slightly
+  // different in the flat share variant – the texts are written so that this stays correct.
+  pl: { keep: /(?<![\p{L}\p{N}])(?:rodzinn\p{L}*\s+(?:lekarz|samoch|budżet)\p{L}*|(?:lekarz|samochód|budżet)\p{L}*\s+rodzinn\p{L}*)/giu, rules: [
+    [/(?<![\p{L}\p{N}])([Cc])złon(ek|ka|kowi|kiem|ku|kowie|ków|kom|kami|kach)\s+(?:(?:Twojej|twojej|waszej|naszej|tej|całej)\s+)?rodziny(?![\p{L}\p{N}])/gu,
+      function (m, c, end) { return cap(c === 'C', PL_MATE[end]); }],
+    [/(?<![\p{L}\p{N}])([Tt]woj|[Cc]ał|[Kk]ażd|[Nn]asz|[Ww]asz|[Jj]edn|[Żż]adn)(?:a|ą|ej)\s+([Rr])odzin(a|y|ie|ę|ą|o)?(?![\p{L}\p{N}])/gu,
+      function (m, stem, c, end) { return cap(stem.charAt(0) === stem.charAt(0).toUpperCase(), plDet(stem.toLowerCase(), end)) + ' ' + PL_HOME[end === undefined ? '' : end]; }],
+    [/(?<![\p{L}\p{N}])([Tt])(?:a|ę|ą|ej)\s+([Rr])odzin(a|y|ie|ę|ą|o)?(?![\p{L}\p{N}])/gu,
+      function (m, t, c, end) { return cap(t === 'T', plDet('t', end)) + ' ' + PL_HOME[end === undefined ? '' : end]; }],
+    [/(?<![\p{L}\p{N}])([Rr])odzin(a|y|ie|ę|ą|o|om|ami|ach)?(?![\p{L}\p{N}])/gu,
+      function (m, c, end) { return cap(c === 'R', PL_HOME[end === undefined ? '' : end]); }],
+    [/(?<![\p{L}\p{N}])([Rr])odzinn(y|a|e|ego|ej|emu|ym|ą|ych|ymi)(?![\p{L}\p{N}])/gu,
+      function (m, c, end) { return cap(c === 'R', 'wspólny'.slice(0, -1) + end); }],
+    // "w" / "z" before the new words need a vowel ("w wspólnym" → "we wspólnym", "z współlokatorem" → "ze współlokatorem")
+    [/(?<![\p{L}\p{N}])([WwZz]) (wspóln\p{L}*|współlokator\p{L}*)/gu, function (m, c, word) { return c + 'e ' + word; }],
   ] },
 };
 

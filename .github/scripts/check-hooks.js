@@ -513,11 +513,11 @@ if (exists(path.join(HOOKS, 'pinn-sprache.js'))) {
 // Dutch (since 1.123.12): every hook with its own language list or text table must know "nl", otherwise it sends English
 {
   const hooksWithTexts = {
-    'pinn-ausblick.js': [/"ru", "nl"(?:, "tr")?\]/, /\n    nl: \["januari"/, /lang === "nl"\) return \{ titel: "🗓️/, /lang === "nl"\) return \{ titel: "💶/],
-    'pinn-familie-geburtstag.js': [/"ru", "nl"(?:, "tr")?\]/, /nl: " en "/, /lang === "nl"\) return \{ titel: "🎂 " \+ n/, /lang === "nl"\) return \{ titel: "🎂 Vandaag jarig/],
-    'pinn-haustiere.js': [/"ru", "nl"(?:, "tr")?\]/, /\n    nl: \{ futter:/],
-    'pinn-ortung.js': [/"ru", "nl"(?:, "tr")?\]/, /\n    nl: \{ bei:/],
-    'pinn-wobistdu.js': [/"ru", "nl"(?:, "tr")?\]/, /\n    nl: \{ zuhause:/, /nl: "Iemand"/, /lang === "nl"\) return \{ titel: "📍 " \+ n \+ " vraagt/, /lang === "nl"\) return \{ titel: "📍 " \+ n \+ " heeft geantwoord/],
+    'pinn-ausblick.js': [/"ru", "nl"(?:, "tr")?(?:, "pl")?\]/, /\n    nl: \["januari"/, /lang === "nl"\) return \{ titel: "🗓️/, /lang === "nl"\) return \{ titel: "💶/],
+    'pinn-familie-geburtstag.js': [/"ru", "nl"(?:, "tr")?(?:, "pl")?\]/, /nl: " en "/, /lang === "nl"\) return \{ titel: "🎂 " \+ n/, /lang === "nl"\) return \{ titel: "🎂 Vandaag jarig/],
+    'pinn-haustiere.js': [/"ru", "nl"(?:, "tr")?(?:, "pl")?\]/, /\n    nl: \{ futter:/],
+    'pinn-ortung.js': [/"ru", "nl"(?:, "tr")?(?:, "pl")?\]/, /\n    nl: \{ bei:/],
+    'pinn-wobistdu.js': [/"ru", "nl"(?:, "tr")?(?:, "pl")?\]/, /\n    nl: \{ zuhause:/, /nl: "Iemand"/, /lang === "nl"\) return \{ titel: "📍 " \+ n \+ " vraagt/, /lang === "nl"\) return \{ titel: "📍 " \+ n \+ " heeft geantwoord/],
     'pinn-packliste.js': [/\n    nl: \{ titel:/],
     'pinn-aufgaben.js': [/\n    nl: \{ t: "⭐ Beloning/],
   };
@@ -538,15 +538,15 @@ if (exists(path.join(HOOKS, 'pinn-sprache.js'))) {
 // Turkish (since 1.130.11): the same hooks must know "tr" (language list, country TR and the texts)
 {
   const hooksWithTurkish = {
-    'pinn-ausblick.js': [/"nl", "tr"\]/, /\n    tr: \["Ocak"/, /lang === "tr"\) return \{ titel: "🗓️/, /lang === "tr"\) return \{ titel: "💶/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
-    'pinn-familie-geburtstag.js': [/"nl", "tr"\]/, /tr: " ve "/, /lang === "tr"\) return \{ titel: "🎂 Bugün doğum günü: "/, /lang === "tr"\) return \{ titel: "🎂 Bugün doğum günü olanlar/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
-    'pinn-haustiere.js': [/"nl", "tr"\]/, /\n    tr: \{ futter:/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
-    'pinn-ortung.js': [/"nl", "tr"\]/, /\n    tr: \{ bei:/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
-    'pinn-wobistdu.js': [/"nl", "tr"\]/, /\n    tr: \{ zuhause:/, /tr: "Biri"/, /lang === "tr"\) return \{ titel: "📍 " \+ n \+ " soruyor/, /lang === "tr"\) return \{ titel: "📍 " \+ n \+ " yanıtladı/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
+    'pinn-ausblick.js': [/"nl", "tr"(?:, "pl")?\]/, /\n    tr: \["Ocak"/, /lang === "tr"\) return \{ titel: "🗓️/, /lang === "tr"\) return \{ titel: "💶/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
+    'pinn-familie-geburtstag.js': [/"nl", "tr"(?:, "pl")?\]/, /tr: " ve "/, /lang === "tr"\) return \{ titel: "🎂 Bugün doğum günü: "/, /lang === "tr"\) return \{ titel: "🎂 Bugün doğum günü olanlar/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
+    'pinn-haustiere.js': [/"nl", "tr"(?:, "pl")?\]/, /\n    tr: \{ futter:/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
+    'pinn-ortung.js': [/"nl", "tr"(?:, "pl")?\]/, /\n    tr: \{ bei:/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
+    'pinn-wobistdu.js': [/"nl", "tr"(?:, "pl")?\]/, /\n    tr: \{ zuhause:/, /tr: "Biri"/, /lang === "tr"\) return \{ titel: "📍 " \+ n \+ " soruyor/, /lang === "tr"\) return \{ titel: "📍 " \+ n \+ " yanıtladı/, /\["TR"\]\.indexOf\(land\) >= 0\) return "tr"/],
     'pinn-packliste.js': [/\n    tr: \{ titel:/],
     'pinn-aufgaben.js': [/\n    tr: \{ t: "⭐ Ödül/],
-    'pinn-chat.js': [/"nl", "tr"\]/, /\n    tr: \{ group:/, /tr: \["TR"\]/],
-    'pinn-pushtext.js': [/"nl", "tr"\]/, /\n    tr: \{ keep:/, /TR_HOME/, /TR_MATE/],
+    'pinn-chat.js': [/"nl", "tr"(?:, "pl")?\]/, /\n    tr: \{ group:/, /tr: \["TR"\]/],
+    'pinn-pushtext.js': [/"nl", "tr"(?:, "pl")?\]/, /\n    tr: \{ keep:/, /TR_HOME/, /TR_MATE/],
   };
   Object.keys(hooksWithTurkish).forEach(name => {
     if (!exists(path.join(HOOKS, name))) return;
@@ -555,6 +555,47 @@ if (exists(path.join(HOOKS, 'pinn-sprache.js'))) {
       const missing = hooksWithTurkish[name].filter(re => !re.test(src)).length;
       return missing ? missing + ' of ' + hooksWithTurkish[name].length + ' Turkish parts missing' : '';
     });
+  });
+}
+
+// Polish (since 1.132.16): the same hooks must know "pl" (language list, country PL and the texts)
+{
+  const hooksWithPolish = {
+    'pinn-ausblick.js': [/"tr", "pl"\]/, /\n    pl: \["styczeń"/, /lang === "pl"\) return \{ titel: "🗓️/, /lang === "pl"\) return \{ titel: "💶/, /\["PL"\]\.indexOf\(land\) >= 0\) return "pl"/, /MONTHS_PL_GEN/, /MONTHS_PL_LOC/],
+    'pinn-familie-geburtstag.js': [/"tr", "pl"\]/, /pl: " i "/, /lang === "pl"\) return \{ titel: "🎂 Dziś urodziny: "/, /lang === "pl"\) return \{ titel: "🎂 Dziś urodziny mają/, /\["PL"\]\.indexOf\(land\) >= 0\) return "pl"/],
+    'pinn-haustiere.js': [/"tr", "pl"\]/, /\n    pl: \{ futter:/, /\["PL"\]\.indexOf\(land\) >= 0\) return "pl"/],
+    'pinn-ortung.js': [/"tr", "pl"\]/, /\n    pl: \{ bei:/, /\["PL"\]\.indexOf\(land\) >= 0\) return "pl"/],
+    'pinn-wobistdu.js': [/"tr", "pl"\]/, /\n    pl: \{ zuhause:/, /pl: "Ktoś"/, /lang === "pl"\) return \{ titel: "📍 " \+ n \+ " pyta/, /lang === "pl"\) return \{ titel: "📍 " \+ n \+ ": odpowiedź/, /\["PL"\]\.indexOf\(land\) >= 0\) return "pl"/],
+    'pinn-packliste.js': [/\n    pl: \{ titel:/],
+    'pinn-aufgaben.js': [/\n    pl: \{ t: "⭐ Prośba/],
+    'pinn-chat.js': [/"tr", "pl"\]/, /\n    pl: \{ group:/, /pl: \["PL"\]/],
+    'pinn-pushtext.js': [/"tr", "pl"\]/, /\n    pl: \{ keep:/, /PL_HOME/, /PL_MATE/, /plDet/],
+    'pinn-einrichtung.js': [/"tr", "pl", ""\]/],
+  };
+  Object.keys(hooksWithPolish).forEach(name => {
+    if (!exists(path.join(HOOKS, name))) return;
+    test(name + ' knows Polish (language list and texts)', () => {
+      const src = read(path.join(HOOKS, name));
+      const missing = hooksWithPolish[name].filter(re => !re.test(src)).length;
+      return missing ? missing + ' of ' + hooksWithPolish[name].length + ' Polish parts missing' : '';
+    });
+  });
+  // The flat share rules for Polish must work without lookbehind (the pattern engine of PocketBase has none)
+  test('pinn-pushtext.js: Polish flat share rules work (case endings, determiners, "w" -> "we")', () => {
+    const src = read(path.join(HOOKS, 'pinn-pushtext.js'));
+    const a = src.indexOf('function cap('), b = src.indexOf('function applyTerms');
+    if (a < 0 || b < 0) return 'rules not found';
+    let T;
+    try { T = (new Function(src.slice(a, b) + ';return {TERMS, TERM_HINT};'))(); } catch (e) { return 'rules not runnable: ' + e.message; }
+    const run = (s) => { const x = T.TERMS.pl; if (!T.TERM_HINT.test(s)) return s; const kept = []; s = s.replace(x.keep, m => { kept.push(m); return '\u0001' + (kept.length - 1) + '\u0002'; }); x.rules.forEach(q => { s = s.replace(q[0], q[1]); }); return s.replace(/\u0001(\d+)\u0002/g, (m, i) => kept[+i]); };
+    const cases = [
+      ['Rodzina ma nowego członka rodziny.', 'Wspólne mieszkanie ma nowego współlokatora.'],
+      ['Wszyscy członkowie rodziny w rodzinie.', 'Wszyscy współlokatorzy we wspólnym mieszkaniu.'],
+      ['Dla całej rodziny: kalendarz rodzinny.', 'Dla całego wspólnego mieszkania: kalendarz wspólny.'],
+      ['Każda rodzina ma lekarz rodzinny.', 'Każde wspólne mieszkanie ma lekarz rodzinny.'],
+    ];
+    for (const c of cases) { const got = run(c[0]); if (got !== c[1]) return 'got "' + got + '" instead of "' + c[1] + '"'; }
+    return '';
   });
 }
 
