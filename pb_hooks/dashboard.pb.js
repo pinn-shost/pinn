@@ -7,6 +7,7 @@
 //   POST /api/pinn/dashboard/login            {key, id, pin?, passwort?}  -> login as this profile
 //        Since 1.118.4: a profile without a PIN (not a guest) needs its password ("passwort") -
 //        without it the answer is 401 { passwort: true }. The app then asks for a new PIN.
+//        Since 1.134.0: a kid with "kids' page only" opens with a tap (no PIN, no password).
 //   POST /api/pinn/dashboard/hintergrund-bild {key}                        -> background picture of the family
 //
 // Logged in:
@@ -88,6 +89,11 @@ routerAdd("POST", "/api/pinn/dashboard/login", (e) => {
     try { rec = $app.findRecordById(lib.USERS, String(body.id || "")); } catch (err) { rec = null; }
     if (!rec || rec.getString("familie") !== dev.getString("familie") || rec.getString("rolle") === "hauptadmin") {
         return e.json(404, { error: "Dieses Profil gibt es nicht (mehr)." });
+    }
+    if (dash.kidsOnlyProfile(rec)) {
+        // Kids' page only: no PIN and no password - the app shows nothing but the kids' page
+        dash.touchDevice(dev);
+        return $apis.recordAuthResponse(e, rec);
     }
     if (dash.pinLength(rec) > 0) {
         const wait = dash.lockedFor(rec.id);

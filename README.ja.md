@@ -132,6 +132,15 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.134.0の新機能
+
+**ダッシュボード：プロフィール写真、大人または子ども**
+
+- **大人または子ども。** 「設定 → 家族メンバー」で、メンバーごとに「大人」か「子ども」を選べます。子どもにはチャイルドロックがかかり、ダッシュボードではこれまで通りパスワードとPINで開きます。「子どものページのみ」にすると、子どもは自分のページだけを見ます。ダッシュボードではタップひとつで開き、パスワードもPINも不要です。閉じるとプロフィール選択に戻ります。
+- **ダッシュボード。** プロフィール写真が再び円の中に表示され、周りのタイルは少し透けるようになりました。
+- **注意：** すでに子どものページが有効だったメンバーは「子ども – 子どものページのみ」になります。アプリ全体を使い続ける場合は「子ども」または「大人」に切り替えてください。
+- 変更（サーバー）：`pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js` – アップデートでPocketBaseが再起動します。アプリ：`js/dashboard.js`, `js/dashboardsitzung.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `js/kinderseite.js`, `js/mitglied.js`, `js/hilfe.js`, `js/sprachen.js`, `js/versionslog.js`, `css/dashboard.css`, `css/mobil.css`, `i18n/*.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。
+
 ## 1.133.0の新機能
 
 **ポーランド語を解放**
@@ -174,13 +183,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **ポーランド語。** 掲示板、チャット、通知ベルを翻訳しました（累計で全6989件中6283件）。この言語はまだ非表示で選べません。アプリの使い方に変化はありません。
 - 変更：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）、すべてのREADME。サーバー側の変更はありません。
 
-## 1.132.12の新機能
-
-**ポーランド語 ― 第13段階**
-
-- **ポーランド語。** 家族、メンバー、家族タイル、位置情報、SOS、「今どこ？」を翻訳しました（累計で全6989件中5779件）。この言語はまだ非表示で選べません。アプリの使い方に変化はありません。
-- 変更：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）、すべてのREADME。サーバー側の変更はありません。
-
 ## しくみ
 
 ```mermaid
@@ -209,7 +211,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.133.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.134.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

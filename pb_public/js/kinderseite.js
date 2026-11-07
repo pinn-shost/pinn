@@ -390,6 +390,7 @@ function openKidPage(memberId) {
   const m = memberById(memberId);
   if (!m || !isKidPageEnabled(m)) return;
   kidPageMemberId = memberId;
+  try { updateKidPageCloseButton(); } catch (e) { /* default button */ }
   renderKidPage();
   document.getElementById('kidPage').scrollTop = 0;
   setTimeout(() => { try { bdayCheck(memberId); } catch (e) { /* ignore */ } }, 700); // Birthday: Happy Birthday once
@@ -399,6 +400,15 @@ function openKidPage(memberId) {
 function closeKidPage() {
   // Child profile on the family dashboard: closing leads back to the profile selection
   if (isDashboardKidSession()) { returnToDashboard(); return; }
+  // Kids' page only (since 1.134.0): there is nothing else to see - back to the profiles or log out
+  if (kidsOnlyActive() && kidPageMemberId) {
+    const me = currentMember();
+    if (me && me.id === kidPageMemberId && isKidPageEnabled(me)) {
+      if (isDashboardSession()) { returnToDashboard(); return; }
+      if (confirm(tk('kid.logOutQ'))) logout();
+      return;
+    }
+  }
   kidPageMemberId = null;
   kidPageStateKey = '';
   clearInterval(kidPageTimer);
@@ -428,7 +438,7 @@ document.getElementById('kidPageSound').addEventListener('click', () => {
   kidUpdateSoundButton();
   kidPlaySound('done');
 });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && kidPageMemberId) { if (kidShopView) kidCloseShop(); else closeKidPage(); } });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && kidPageMemberId) { if (kidShopView) kidCloseShop(); else if (!kidsOnlyActive()) closeKidPage(); } });
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') kidTick(); });
 
 // Marks this file as loaded – the start check in index.html reports missing app files

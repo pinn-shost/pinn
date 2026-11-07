@@ -4,15 +4,44 @@
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
    Contents: the look of the profile selection (cached members, dashAvatarHtml), the profile tiles (buildDashboardTiles), clock and weather on the screen (tickDashboardClock) and showing/hiding it (showDashboardScreen, hideDashboardScreen).
    Since 1.118.4 every profile needs a PIN at the dashboard: a profile without one (not a guest) opens once with its password
-   (#dashPwOverlay); right after the login bootApp asks for the new PIN (enforceDashboardPin in js/dashboardkonto.js). */
+   (#dashPwOverlay); right after the login bootApp asks for the new PIN (enforceDashboardPin in js/dashboardkonto.js).
+   Since 1.134.0 kids with "kids' page only" open with a tap (no PIN, no password) and only see their kids' page; the
+   pictures come from the members area on the device (the members moved out of the family record with 1.108). */
 
 /* ---------- Look of the profile selection (colours/dark mode from the most recently loaded state) ---------- */
+// Current value of an area from the device storage (js/bereiche.js): own pending change first, then
+// the last server state. null = not on this device.
+function dashboardAreaData(familyId, name) {
+  try {
+    const raw = localStorage.getItem(LS_AREAS_PENDING_KEY);
+    const all = raw ? JSON.parse(raw) : null;
+    const p = all && all[name];
+    if (p && p.familie === familyId && p.local && typeof p.local === 'object') return p.local;
+  } catch (e) { /* no pending changes */ }
+  try {
+    const raw = localStorage.getItem(LS_AREAS_KEY);
+    const c = raw ? JSON.parse(raw) : null;
+    if (!c || c.familie !== familyId || !c.areas || !c.areas[name]) return null;
+    const b = c.areas[name].base;
+    return (b && typeof b === 'object') ? b : null;
+  } catch (e) { return null; }
+}
 function dashboardCachedMembers(dash) {
   const cache = readCache();
-  if (!cache || !cache.data || (cache.familie && cache.familie !== dash.familie)) return [];
-  let data = cache.data;
-  const pending = readPending();
-  if (pending && pending.recordId === cache.recordId && pending.local) data = pending.local;
+  let data = {};
+  if (cache && cache.data && (!cache.familie || cache.familie === dash.familie)) {
+    data = cache.data;
+    const pending = readPending();
+    if (pending && pending.recordId === cache.recordId && pending.local) data = pending.local;
+  }
+  // Members and settings live in their own areas since 1.108 - those win over the old family record
+  const fam = String(dash.familie || (cache && cache.familie) || '');
+  if (fam) {
+    const settings = dashboardAreaData(fam, 'einstellungen');
+    const people = dashboardAreaData(fam, 'mitglieder');
+    data = { ...data, ...(settings || {}) };
+    if (people && Array.isArray(people.members)) data.members = people.members;
+  }
   try {
     themeColors = { ...defaultFamilyData().themeColors, ...(data.themeColors || {}) };
     applyTheme();
@@ -44,12 +73,14 @@ function buildDashboardTiles(profiles, members) {
     const p = profiles.find(x => x.mitglied === m.id && !used.has(x.id));
     if (!p) return;
     used.add(p.id);
-    tiles.push({ profile: p, member: m, kid: isKidPageEnabled(m), name: m.name || p.username });
+    // kids' page only: the server says it (kinderseite); an older server without the field -> own data
+    const kid = typeof p.kinderseite === 'boolean' ? p.kinderseite : ((p.rolle || 'mitglied') === 'mitglied' && memberKidsOnly(m));
+    tiles.push({ profile: p, member: m, kid, name: m.name || p.username });
   });
   profiles
     .filter(p => !used.has(p.id))
     .sort((a, b) => ((a.rolle === 'gast') - (b.rolle === 'gast')) || a.username.localeCompare(b.username))
-    .forEach(p => tiles.push({ profile: p, member: null, kid: false, name: p.username }));
+    .forEach(p => tiles.push({ profile: p, member: null, kid: p.kinderseite === true, name: p.username }));
   return tiles;
 }
 
@@ -170,7 +201,7 @@ function showDashboardScreen(dash) {
       tilesEl.innerHTML = tiles.map((t, i) => {
         const guest = t.profile.rolle === 'gast';
         const badge = t.kid ? escapeHtml(tk('dashboard.myTasks')) : (guest ? escapeHtml(tk('dashboard.guest')) : '');
-        const icon = t.profile.pin
+        const icon = t.kid ? '' : t.profile.pin
           ? '<span class="dash-lock" aria-label="' + escapeHtml(tk('dashboard.pinProtected')) + '">🔒</span>'
           : (needsPassword(t) ? '<span class="dash-key" aria-label="' + escapeHtml(tk('dashboard.passwordFirst')) + '">🔑</span>' : '');
         return `<button type="button" class="dash-tile${t.kid ? ' kid' : ''}${guest ? ' guest' : ''}" data-tile="${i}">
@@ -183,9 +214,9 @@ function showDashboardScreen(dash) {
       tilesEl.querySelectorAll('.dash-tile').forEach(btn => btn.addEventListener('click', () => openTile(tiles[Number(btn.dataset.tile)])));
     }
 
-    // A profile without a PIN (not a guest) needs its password once - the PIN is set right after
+    // A profile without a PIN (not a guest, not kids' page only) needs its password once - the PIN is set right after
     function needsPassword(tile) {
-      return !tile.profile.pin && tile.profile.rolle !== 'gast';
+      return !tile.kid && !tile.profile.pin && tile.profile.rolle !== 'gast';
     }
 
     async function login(tile, pin, password) {
@@ -252,30 +283,33 @@ function showDashboardScreen(dash) {
       document.getElementById('dashPwCancel').onclick = closePasswordBox;
     }
 
+    function openPinFor(tile) {
+      openPinPad({
+        title: tile.name,
+        sub: tk('dashboard.enterPin'),
+        length: tile.profile.pin,
+        avatarHtml: dashAvatarHtml(tile.member, tile.profile, true),
+        onComplete: async (pin, pad) => {
+          try {
+            await login(tile, pin);
+          } catch (e) {
+            pad.fail(e.message);
+          }
+        },
+      });
+    }
+
     function openTile(tile) {
       if (finished || !tile) return;
       if (needsPassword(tile)) { openPasswordBox(tile); return; }
-      if (tile.profile.pin) {
-        openPinPad({
-          title: tile.name,
-          sub: tk('dashboard.enterPin'),
-          length: tile.profile.pin,
-          avatarHtml: dashAvatarHtml(tile.member, tile.profile, true),
-          onComplete: async (pin, pad) => {
-            try {
-              await login(tile, pin);
-            } catch (e) {
-              pad.fail(e.message);
-            }
-          },
-        });
-        return;
-      }
-      busyText.textContent = tk('dashboard.opening');
+      if (tile.profile.pin && !tile.kid) { openPinFor(tile); return; }
+      // Guests and kids' page only: open with a tap
+      busyText.textContent = tile.kid ? tk('dashboard.helloKid', { name: tile.name }) : tk('dashboard.opening');
       busy.classList.remove('hidden');
       login(tile, '').catch(e => {
         busy.classList.add('hidden');
         if (e.needsPassword) { openPasswordBox(tile); return; } // e.g. an older list without the PIN state
+        if (tile.kid && tile.profile.pin && e.status === 400) { openPinFor(tile); return; } // older server: still asks for the PIN
         alert(e.message);
       });
     }

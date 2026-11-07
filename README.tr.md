@@ -109,6 +109,15 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe ve 🇵🇱 Polski**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.134.0 sürümündeki yenilikler
+
+**Gösterge paneli: profil fotoğrafları, yetişkin veya çocuk**
+
+- **Yetişkin veya çocuk.** Ayarlar → Aile üyeleri altında her üye için “Yetişkin” veya “Çocuk” seçilir. Çocukta çocuk kilidi açıktır ve gösterge panelini eskisi gibi şifre ve PIN ile açar. “Yalnızca çocuk sayfası” ile çocuk sadece kendi çocuk sayfasını görür: gösterge panelinde tek dokunuşla, şifresiz ve PIN’siz açılır; kapatınca profil seçimine dönülür.
+- **Gösterge paneli.** Profil fotoğrafları yeniden dairelerin içinde görünüyor, etraflarındaki kutular hafif saydam.
+- **Not:** çocuk sayfası zaten açık olan üyeler artık “Çocuk – yalnızca çocuk sayfası” sayılır; uygulamanın tamamını kullanmaya devam etmesi gerekenleri “Çocuk” veya “Yetişkin” yap.
+- Değişenler (sunucu): `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js` – güncelleme PocketBase’i yeniden başlatır. Uygulama: `js/dashboard.js`, `js/dashboardsitzung.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `js/kinderseite.js`, `js/mitglied.js`, `js/hilfe.js`, `js/sprachen.js`, `js/versionslog.js`, `css/dashboard.css`, `css/mobil.css`, `i18n/*.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`).
+
 ## 1.133.0 sürümündeki yenilikler
 
 **Lehçe açıldı**
@@ -123,13 +132,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Lehçe.** Kurulum sihirbazı, veri dışa aktarımı ve giriş sayfasındaki kurulum ipuçları çevrildi; ayrıca kısa bir Lehçe README (`README.pl.md`) eklendi ve tüm README dosyalarından bağlantı verildi. Dil hâlâ gizli ve henüz seçilemiyor; uygulamada senin için hiçbir şey değişmiyor.
 - Değişenler: `pb_public/einrichtung.js`, `pb_public/datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), tüm README dosyaları, yeni `README.pl.md`. Sunucu kısmı yok.
 
-## 1.132.16 sürümündeki yenilikler
-
-**Lehçe – 17. aşama**
-
-- **Lehçe.** Anlık bildirim metinleri çevrildi (böylece 6989 metnin hepsi tamam) ve sunucu kancaları artık Lehçeyi biliyor (dil listeleri, ülke PL, metinler, çoğul ve ortak ev kuralları). Dil hâlâ gizli ve henüz seçilemiyor; uygulamada senin için hiçbir şey değişmiyor.
-- Değişenler: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, tüm README dosyaları. Sunucu kısmı (kancaları değiştir): `pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js` – `pinn-setup.sh` onları her zamanki gibi kurar ve PocketBase'i yeniden başlatır.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -139,7 +141,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.133.0` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.134.0` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -22,19 +22,22 @@
 .dash-tile {
   flex: 0 1 190px; min-width: 150px; box-sizing: border-box;
   position: relative; display: flex; flex-direction: column; align-items: center; gap: .7rem;
-  padding: 1.6rem 1rem 1.3rem; border-radius: 1.6rem; background: #fff; cursor: pointer;
-  border: 1px solid rgba(37,35,31,.08); box-shadow: 0 8px 24px rgba(37,35,31,.07);
+  padding: 1.6rem 1rem 1.3rem; border-radius: 1.6rem; background: rgba(255,255,255,.72); cursor: pointer;
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.45); box-shadow: 0 8px 24px rgba(37,35,31,.07);
   transition: transform .15s ease, box-shadow .15s ease; font: inherit; color: inherit;
 }
 .dash-tile:active { transform: scale(.95); box-shadow: 0 3px 10px rgba(37,35,31,.08); }
-.dash-tile.kid { background: linear-gradient(160deg, #FFF3C4 0%, #FFDDE6 100%); border-color: rgba(0,0,0,0); }
-.dash-tile.guest { background: color-mix(in srgb, var(--c-pine) 6%, white); }
+/* The tiles are slightly see-through (since 1.134.0), so the background of the dashboard shines through */
+.dash-tile.kid { background: linear-gradient(160deg, rgba(255,243,196,.78) 0%, rgba(255,221,230,.78) 100%); border-color: rgba(255,255,255,.45); }
+.dash-tile.guest { background: color-mix(in srgb, color-mix(in srgb, var(--c-pine) 6%, white) 72%, transparent); }
 .dash-avatar {
-  width: 116px; height: 116px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+  position: relative; width: 116px; height: 116px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
   border: 4px solid #fff; background: #F1EEE8; display: grid; place-items: center;
   box-shadow: 0 6px 16px rgba(0,0,0,.12); font-size: 60px; line-height: 1;
 }
-.dash-avatar img { width: 100%; height: 100%; object-fit: cover; }
+/* Picture fills the circle - absolutely positioned, because Safari stretches an image in a grid */
+.dash-avatar img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: center; }
 .dash-avatar .dash-initial { width: 100%; height: 100%; display: grid; place-items: center; color: #fff; font-weight: 600; font-size: 46px; }
 .dash-avatar.small { width: 84px; height: 84px; font-size: 44px; }
 .dash-avatar.small .dash-initial { font-size: 34px; }
@@ -78,9 +81,9 @@ html.dark .dash-bg-preview-tile span { background: #3A3833; }
 html.dark .dash-bg-art-btn { border-color: rgba(255,255,255,.15); }
 html.dark .dash-bg-swatch { border-color: rgba(255,255,255,.15); }
 .dash-busy { position: fixed; inset: 0; z-index: 2; display: grid; place-items: center; background: color-mix(in srgb, var(--c-paper) 85%, transparent); font-size: .95rem; }
-html.dark .dash-tile { background: #2A2825; border-color: rgba(255,255,255,.07); box-shadow: none; }
-html.dark .dash-tile.kid { background: linear-gradient(160deg, #4A3F1E 0%, #4A2733 100%); }
-html.dark .dash-tile.guest { background: #25302F; }
+html.dark .dash-tile { background: rgba(42,40,37,.72); border-color: rgba(255,255,255,.07); box-shadow: none; }
+html.dark .dash-tile.kid { background: linear-gradient(160deg, rgba(74,63,30,.78) 0%, rgba(74,39,51,.78) 100%); }
+html.dark .dash-tile.guest { background: rgba(37,48,47,.72); }
 html.dark .dash-avatar { border-color: #3A3833; background: #34312C; }
 html.dark .dash-badge { background: rgba(255,255,255,.1); color: rgba(237,234,226,.7); }
 html.dark .dash-tile.kid .dash-badge { background: rgba(0,0,0,.25); color: #FFD98A; }

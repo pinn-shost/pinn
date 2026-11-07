@@ -128,6 +128,15 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe and 🇵🇱 Polski**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.134.0
+
+**Dashboard: profile pictures, adult or child**
+
+- **Adult or child.** Under Settings → Family members you choose “Adult” or “Child” for every member. A child has the child lock and opens the dashboard with password and PIN as before. With “Kids' page only” the child only sees their kids' page – at the dashboard it opens with a tap, without password and PIN; closing leads back to the profile selection.
+- **Dashboard.** The profile pictures are shown in the circles again, and the tiles around them are slightly see-through.
+- **Note:** members whose kids' page was already on now count as “Child – kids' page only”; switch them to “Child” or “Adult” if they should keep using the whole app.
+- Changed (server): `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js` – the update restarts PocketBase. App: `js/dashboard.js`, `js/dashboardsitzung.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `js/kinderseite.js`, `js/mitglied.js`, `js/hilfe.js`, `js/sprachen.js`, `js/versionslog.js`, `css/dashboard.css`, `css/mobil.css`, `i18n/*.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`).
+
 ## What's new in 1.133.0
 
 **Polish enabled**
@@ -198,13 +207,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Polish.** The second half of the home section (maintenance plan, plants and lawn, renovation, rental, tax tips) is translated (4285 of 6989 texts in total). The language is still hidden and cannot be chosen yet; nothing changes in the app for you.
 - Changed: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) and all READMEs. No server part.
 
-## What's new in 1.132.8
-
-**Polish – stage 9**
-
-- **Polish.** The first half of the home section (tenancy and purchase, meters, defects, keys, garden) is translated (3965 of 6989 texts in total). The language is still hidden and cannot be chosen yet; nothing changes in the app for you.
-- Changed: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) and all READMEs. No server part.
-
 ## How it works
 
 ```mermaid
@@ -231,7 +233,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.133.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.134.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

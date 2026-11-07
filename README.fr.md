@@ -128,6 +128,15 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe et 🇵🇱 Polski**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.134.0
+
+**Tableau de bord : photos de profil, adulte ou enfant**
+
+- **Adulte ou enfant.** Dans Réglages → Membres de la famille, tu choisis « Adulte » ou « Enfant » pour chaque membre. Un enfant a le contrôle parental et ouvre le tableau de bord avec mot de passe et code PIN comme avant. Avec « Page enfant uniquement », l’enfant ne voit que sa page enfant : au tableau de bord elle s’ouvre d’un appui, sans mot de passe ni code PIN ; la fermer ramène à la sélection des profils.
+- **Tableau de bord.** Les photos de profil s’affichent de nouveau dans les cercles et les tuiles autour sont légèrement transparentes.
+- **Remarque :** les membres dont la page enfant était déjà activée comptent désormais comme « Enfant – page enfant uniquement » ; passe-les en « Enfant » ou « Adulte » s’ils doivent garder toute l’appli.
+- Modifié (serveur) : `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js` – la mise à jour redémarre PocketBase. Appli : `js/dashboard.js`, `js/dashboardsitzung.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `js/kinderseite.js`, `js/mitglied.js`, `js/hilfe.js`, `js/sprachen.js`, `js/versionslog.js`, `css/dashboard.css`, `css/mobil.css`, `i18n/*.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`).
+
 ## Nouveautés de la 1.133.0
 
 **Polonais activé**
@@ -198,13 +207,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Polonais.** La seconde moitié de la section Logement (plan d’entretien, plantes et pelouse, rénovation, location, conseils fiscaux) est traduite (4285 textes sur 6989 au total). La langue est encore masquée et ne peut pas encore être choisie ; rien ne change dans l’appli pour toi.
 - Modifié : `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) et tous les README. Pas de partie serveur.
 
-## Nouveautés de la 1.132.8
-
-**Polonais – étape 9**
-
-- **Polonais.** La première moitié de la section Logement (location et achat, compteurs, défauts, clés, jardin) est traduite (3965 textes sur 6989 au total). La langue est encore masquée et ne peut pas encore être choisie ; rien ne change dans l’appli pour toi.
-- Modifié : `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) et tous les README. Pas de partie serveur.
-
 ## Comment ça marche
 
 ```mermaid
@@ -231,7 +233,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.133.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.134.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

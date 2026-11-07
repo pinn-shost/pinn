@@ -109,6 +109,15 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe en 🇵🇱 Polski**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.134.0
+
+**Dashboard: profielfoto’s, volwassene of kind**
+
+- **Volwassene of kind.** Onder Instellingen → Gezinsleden kies je per lid “Volwassene” of “Kind”. Een kind heeft het kinderslot en opent het dashboard zoals voorheen met wachtwoord en pincode. Met “Alleen kinderpagina” ziet het kind alleen de eigen kinderpagina: op het dashboard opent die met één tik, zonder wachtwoord en pincode; sluiten gaat terug naar de profielkeuze.
+- **Dashboard.** De profielfoto’s staan weer in de cirkels en de tegels eromheen zijn licht doorzichtig.
+- **Let op:** leden bij wie de kinderpagina al aan stond, gelden nu als “Kind – alleen kinderpagina”; zet ze op “Kind” of “Volwassene” als ze de hele app moeten blijven gebruiken.
+- Gewijzigd (server): `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js` – de update herstart PocketBase. App: `js/dashboard.js`, `js/dashboardsitzung.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `js/kinderseite.js`, `js/mitglied.js`, `js/hilfe.js`, `js/sprachen.js`, `js/versionslog.js`, `css/dashboard.css`, `css/mobil.css`, `i18n/*.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`).
+
 ## Nieuw in 1.133.0
 
 **Pools vrijgegeven**
@@ -123,13 +132,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Pools.** De installatie-assistent, de data-export en de installatiehints op de inlogpagina zijn vertaald; er is ook een korte Poolse README (`README.pl.md`), waarnaar alle README’s linken. De taal is nog verborgen en kan nog niet worden gekozen; in de app verandert er niets voor je.
 - Gewijzigd: `pb_public/einrichtung.js`, `pb_public/datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), alle README’s, nieuw `README.pl.md`. Geen serverdeel.
 
-## Nieuw in 1.132.16
-
-**Pools – fase 17**
-
-- **Pools.** De teksten van de pushmeldingen zijn vertaald (daarmee zijn alle 6989 teksten klaar) en de serverhooks kennen nu Pools (taallijsten, land PL, teksten, meervouds- en woongroepregels). De taal is nog verborgen en kan nog niet worden gekozen; in de app verandert er niets voor je.
-- Gewijzigd: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, alle README’s. Serverdeel (hooks vervangen): `pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js` – `pinn-setup.sh` installeert ze en herstart PocketBase zoals altijd.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -139,7 +141,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.133.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.134.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

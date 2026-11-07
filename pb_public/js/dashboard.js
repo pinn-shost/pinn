@@ -2,7 +2,7 @@
    Part of the app code that used to be a single block in index.html. Classic script, no build step:
    it is loaded right after the inline script of index.html and before the other files in js/
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
-   Contents: the dashboard configuration of this device (LS_DASHBOARD, readDashboardConfig, isDashboardDevice, isDashboardSession …), guest and child lock rules (GUEST_ and CHILD_ lists, isCurrentUserGuest, childLockActive, childLockTaskVisible, isViewAllowed, the delete and edit guards incl. the stylesheet), wrapEditorsForChildLock (runs at DOMContentLoaded, after all files in js/ – it wraps the six edit dialogs), firstAllowedView, roleLabel, canBeDashboardDevice, dashboardTimeoutMinutes and returnToDashboard. */
+   Contents: the dashboard configuration of this device (LS_DASHBOARD, readDashboardConfig, isDashboardDevice, isDashboardSession …), guest and child lock rules (GUEST_ and CHILD_ lists, isCurrentUserGuest, memberKidsOnly, kidsOnlyActive, childLockActive, childLockTaskVisible, isViewAllowed, the delete and edit guards incl. the stylesheet), wrapEditorsForChildLock (runs at DOMContentLoaded, after all files in js/ – it wraps the six edit dialogs), firstAllowedView, roleLabel, canBeDashboardDevice, dashboardTimeoutMinutes and returnToDashboard. */
 
 /* ==========================================================
    Family dashboard (iPad): profile selection with optional PIN
@@ -11,8 +11,11 @@
    "Familien-Dashboard auf diesem Gerät". For this the server hands out a device key (pb_hooks/dashboard.pb.js)
    that is only stored on this device.
    - When pinn. opens, the family's profile selection appears instead of the login.
-   - Kids (members with a kids' page) land directly on their kids' page with their tasks;
-     closing it leads back to the profile selection.
+   - Kids with "kids' page only" (Settings → family members: Child + kids' page only) open with a tap,
+     without PIN or password, and land directly on their kids' page - there is no way into the rest of
+     the app; closing it leads back to the profile selection (since 1.134.0).
+   - Kids with child lock only use PIN and password like everyone else and see the app with the
+     child lock rules.
    - Everyone else opens their profile with one tap – or after entering their PIN, if they set
      one under Account (4 or 6 digits, like on the iPhone).
    - Guest accounts (role "gast") open without a PIN; finances, documents and settings are locked for them.
@@ -61,13 +64,28 @@ function isCurrentUserGuest() {
   const u = currentUser();
   return !!(u && u.rolle === 'gast');
 }
-// Child lock active for the logged-in profile? (never for admins and guests)
+// "Kids' page only" for a member: kids' page switched on and not explicitly switched off
+// (kidsOnly: false). Older data without the field counts as kids' page only. Same rule on the server
+// (memberKidsOnly in pb_hooks/pinn-dashboard.js).
+function memberKidsOnly(m) {
+  return !!(m && isKidPageEnabled(m) && m.kidsOnly !== false);
+}
+// Kids' page only for the logged-in profile? (only members, never admins and guests)
+function kidsOnlyActive() {
+  try {
+    const u = currentUser();
+    if (!u || u.rolle === 'gast' || isCurrentUserAdmin()) return false;
+    return memberKidsOnly(currentMember());
+  } catch (e) { return false; }
+}
+// Child lock active for the logged-in profile? (never for admins and guests; kids' page only
+// always includes the child lock)
 function childLockActive() {
   try {
     const u = currentUser();
     if (!u || u.rolle === 'gast' || isCurrentUserAdmin()) return false;
     const m = currentMember();
-    return !!(m && m.childLock);
+    return !!(m && (m.childLock || memberKidsOnly(m)));
   } catch (e) { return false; }
 }
 // Child lock: the profile only sees tasks assigned to it (or to "Alle")

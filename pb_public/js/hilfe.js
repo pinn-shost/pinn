@@ -248,6 +248,7 @@ function hlpTourMaybeStart() {
     if (typeof isCurrentUserGuest === 'function' && isCurrentUserGuest()) return;
     if (typeof isDashboardSession === 'function' && isDashboardSession()) return;
     if (typeof isDashboardDevice === 'function' && isDashboardDevice()) return;
+    if (typeof kidsOnlyActive === 'function' && kidsOnlyActive()) return; // kids' page only: no tour
     const u = typeof currentUser === 'function' ? currentUser() : null;
     if (!u || !u.id) return;
     const key = hlpTourKeyFor(u.id);

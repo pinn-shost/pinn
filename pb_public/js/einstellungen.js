@@ -38,7 +38,7 @@ function renderHouseholdTypeSetting() {
    The data itself is always kept. */
 function wgHidesKids() { return isHouseholdWG(); }
 function wgHasKidData() {
-  try { return members.some(m => isKidPageEnabled(m) || m.childLock || /^(kind|tochter|sohn)$/i.test(String(m.role || '').trim())); } catch (e) { return false; }
+  try { return members.some(m => isKidPageEnabled(m) || memberIsChild(m) || /^(kind|tochter|sohn)$/i.test(String(m.role || '').trim())); } catch (e) { return false; }
 }
 function wgShowAllowanceTab() {
   if (!wgHidesKids()) return true;
@@ -120,16 +120,8 @@ function renderSettingsMemberList() {
       <span class="w-8 h-8 rounded-full overflow-hidden border-2 shrink-0" style="border-color:${memberBorderColor(m)}">${memberAvatarInnerHTML(m)}</span>
       <div class="flex-1 min-w-0">
         <div class="text-sm font-medium truncate">${escapeHtml(m.name)}</div>
-        <div class="text-xs text-ink/40 truncate">${escapeHtml(i18nT(m.role) || '–')} · ${escapeHtml(tk(m.displayMode === 'role' ? 'settings.members.showsRole' : 'settings.members.showsName'))} ${profileText}${!admin && m.childLock ? ' · ' + escapeHtml(tk('settings.members.childLock')) : ''}</div>
-        ${admin && !(wgHidesKids() && !m.childLock) ? (() => {
-          const me = currentMember();
-          const locked = !!(profile && (profile.rolle === 'admin' || profile.rolle === 'gast')) || (me && me.id === m.id);
-          const why = me && me.id === m.id ? tk('settings.members.lockSelf') : tk('settings.members.lockAdmin');
-          return `<label class="member-lock-row${locked ? ' is-disabled' : ''}" title="${escapeHtml(locked ? why : tk('settings.members.lockTitle'))}">
-            <span class="ov-set-switch"><input type="checkbox" data-child-lock="${m.id}" ${m.childLock && !locked ? 'checked' : ''} ${locked ? 'disabled' : ''} /><span class="ov-track"></span><span class="ov-knob"></span></span>
-            <span>${escapeHtml(tk('settings.members.childLock'))}</span>
-          </label>`;
-        })() : ''}
+        <div class="text-xs text-ink/40 truncate">${escapeHtml(i18nT(m.role) || '–')} · ${escapeHtml(tk(m.displayMode === 'role' ? 'settings.members.showsRole' : 'settings.members.showsName'))} ${profileText}${!admin && memberIsChild(m) ? ' · ' + escapeHtml(tk(memberKidsOnly(m) ? 'settings.members.kidsPageOnly' : 'settings.members.childLock')) : ''}</div>
+        ${admin && !(wgHidesKids() && !memberIsChild(m)) ? memberTypeHtml(m, profile) : ''}
       </div>
       ${canEditMember(m) ? `<button class="edit-settings-member text-ink/30 hover:text-pine text-xs shrink-0" data-id="${m.id}">${escapeHtml(tk('common.edit'))}</button>` : ''}
       ${admin ? `<button class="del-settings-member text-ink/30 hover:text-red-500 text-xs shrink-0" data-id="${m.id}">${escapeHtml(tk('common.remove'))}</button>` : ''}
@@ -138,17 +130,71 @@ function renderSettingsMemberList() {
   });
   list.querySelectorAll('.edit-settings-member').forEach(btn => btn.addEventListener('click', () => openMemberModal(btn.dataset.id)));
   list.querySelectorAll('.del-settings-member').forEach(btn => btn.addEventListener('click', () => removeMemberWithProfile(btn.dataset.id)));
-  list.querySelectorAll('[data-child-lock]').forEach(cb => cb.addEventListener('change', () => {
-    const m = memberById(cb.dataset.childLock);
-    if (!m || !isCurrentUserAdmin()) return;
-    if (cb.checked) m.childLock = true; else delete m.childLock;
-    saveMembers();
-    renderSettingsMemberList();
-    applyRoleRestrictions();
+  list.querySelectorAll('[data-member-type]').forEach(btn => btn.addEventListener('click', () => {
+    if (btn.disabled) return;
+    setMemberType(btn.dataset.memberType, btn.dataset.memberTypeFor);
+  }));
+  list.querySelectorAll('[data-kids-only]').forEach(cb => cb.addEventListener('change', () => {
+    setMemberType(cb.checked ? 'kidsOnly' : 'child', cb.dataset.kidsOnly);
   }));
   const hint = document.getElementById('childLockHint');
-  if (hint) hint.classList.toggle('hidden', !admin || (wgHidesKids() && !members.some(x => x.childLock)));
+  if (hint) hint.classList.toggle('hidden', !admin || (wgHidesKids() && !members.some(memberIsChild)));
   applyWgKidVisibility();
+}
+
+/* ---------- Adult or child (since 1.134.0) ----------
+   Adult: no restrictions. Child: child lock (PIN and password like everyone else, the app with the child
+   lock rules). Child + "kids' page only": nothing but the kids' page, opens at the dashboard with a tap
+   (no PIN, no password). Stored in the member: childLock, kidsOnly (false = explicitly off) and kid.enabled. */
+function memberIsChild(m) { return !!(m && (m.childLock || memberKidsOnly(m))); }
+function memberTypeHtml(m, profile) {
+  const me = currentMember();
+  const self = !!(me && me.id === m.id);
+  const locked = !!(profile && (profile.rolle === 'admin' || profile.rolle === 'gast')) || self;
+  const why = self ? tk('settings.members.lockSelf') : tk('settings.members.lockAdmin');
+  const child = !locked && memberIsChild(m);
+  const only = child && memberKidsOnly(m);
+  const id = kidAttr(m.id);
+  const dis = locked ? ' disabled' : '';
+  return `<div class="member-type-wrap${locked ? ' is-disabled' : ''}" title="${escapeHtml(locked ? why : tk('settings.members.lockTitle'))}">
+      <div class="member-type-seg" role="group" aria-label="${escapeHtml(tk('settings.members.accountType'))}">
+        <button type="button" class="member-type-btn${child ? '' : ' active'}" data-member-type="adult" data-member-type-for="${id}"${dis}>${escapeHtml(tk('settings.members.adult'))}</button>
+        <button type="button" class="member-type-btn${child ? ' active' : ''}" data-member-type="child" data-member-type-for="${id}"${dis}>${escapeHtml(tk('settings.members.child'))}</button>
+      </div>
+      ${child ? `<label class="member-lock-row">
+        <span class="ov-set-switch"><input type="checkbox" data-kids-only="${id}" ${only ? 'checked' : ''} /><span class="ov-track"></span><span class="ov-knob"></span></span>
+        <span>${escapeHtml(tk('settings.members.kidsPageOnly'))}</span>
+      </label>` : ''}
+    </div>`;
+}
+// type: 'adult' | 'child' | 'kidsOnly'
+function setMemberType(type, memberId) {
+  const m = memberById(memberId);
+  if (!m || !isCurrentUserAdmin()) return;
+  const profile = profileForMember(m.id);
+  const me = currentMember();
+  if ((profile && (profile.rolle === 'admin' || profile.rolle === 'gast')) || (me && me.id === m.id)) return;
+  if (type === 'adult') {
+    delete m.childLock;
+    m.kidsOnly = false;
+  } else if (type === 'child') {
+    m.childLock = true;
+    m.kidsOnly = false;
+  } else if (type === 'kidsOnly') {
+    m.childLock = true;
+    m.kidsOnly = true;
+    // the kids' page must exist - switch it on (with the default tasks if there are none yet)
+    if (!isKidPageEnabled(m)) {
+      const cfg = normalizeKidConfig(m.kid);
+      cfg.enabled = true;
+      if (!cfg.tasks.length) cfg.tasks = kidDefaultTasks();
+      m.kid = { ...(m.kid || {}), ...cfg };
+    }
+  }
+  saveMembers();
+  renderSettingsMemberList();
+  renderMemberChips();
+  applyRoleRestrictions();
 }
 
 async function removeMemberWithProfile(memberId) {

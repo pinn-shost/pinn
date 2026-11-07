@@ -132,6 +132,15 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe e 🇵🇱 Polski**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.134.0
+
+**Painel: fotos de perfil, adulto ou criança**
+
+- **Adulto ou criança.** Em Ajustes → Membros da família você escolhe “Adulto” ou “Criança” para cada membro. Uma criança tem o controle parental e abre o painel com senha e PIN como antes. Com “Apenas página infantil” a criança só vê a sua página infantil: no painel ela abre com um toque, sem senha e sem PIN; fechar volta à escolha de perfis.
+- **Painel.** As fotos de perfil voltam a aparecer nos círculos e os blocos em volta ficam levemente transparentes.
+- **Observação:** membros que já tinham a página infantil ativada agora contam como “Criança – apenas página infantil”; mude para “Criança” ou “Adulto” quem deve continuar usando o app inteiro.
+- Alterado (servidor): `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js` – a atualização reinicia o PocketBase. App: `js/dashboard.js`, `js/dashboardsitzung.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `js/kinderseite.js`, `js/mitglied.js`, `js/hilfe.js`, `js/sprachen.js`, `js/versionslog.js`, `css/dashboard.css`, `css/mobil.css`, `i18n/*.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`).
+
 ## Novidades da 1.133.0
 
 **Polonês liberado**
@@ -174,13 +183,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Polonês.** O quadro de avisos, o chat e o sino de notificações estão traduzidos (6283 de 6989 textos no total). O idioma ainda está oculto e não pode ser escolhido; no app nada muda para você.
 - Alterado: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) e todos os README. Sem parte de servidor.
 
-## Novidades da 1.132.12
-
-**Polonês – etapa 13**
-
-- **Polonês.** Família, membros, bloco da família, localização, SOS e “Onde você está?” estão traduzidos (5779 de 6989 textos no total). O idioma ainda está oculto e não pode ser escolhido; no app nada muda para você.
-- Alterado: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) e todos os README. Sem parte de servidor.
-
 ## Como funciona
 
 ```mermaid
@@ -209,7 +211,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.133.0` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.134.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

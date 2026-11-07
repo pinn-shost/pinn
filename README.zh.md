@@ -132,6 +132,15 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe和 🇵🇱 Polski**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.134.0 新功能
+
+**家庭面板：头像、成人或儿童**
+
+- **成人或儿童。** 在“设置 → 家庭成员”中，可以为每位成员选择“成人”或“儿童”。儿童启用儿童锁，在家庭面板上照旧使用密码和 PIN。选择“仅儿童页面”后，孩子只能看到自己的儿童页面：在家庭面板上轻点即可打开，无需密码和 PIN；关闭后返回账户选择。
+- **家庭面板。** 头像重新显示在圆圈中，周围的卡片略微透明。
+- **注意：** 已开启儿童页面的成员现在算作“儿童 – 仅儿童页面”；如需继续使用完整应用，请改为“儿童”或“成人”。
+- 更改（服务器）：`pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js` —— 更新会重启 PocketBase。应用：`js/dashboard.js`, `js/dashboardsitzung.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `js/kinderseite.js`, `js/mitglied.js`, `js/hilfe.js`, `js/sprachen.js`, `js/versionslog.js`, `css/dashboard.css`, `css/mobil.css`, `i18n/*.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。
+
 ## 1.133.0 新功能
 
 **波兰语已开放**
@@ -174,13 +183,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **波兰语。** 公告板、聊天和通知铃已翻译（累计 6283 条，共 6989 条）。该语言仍处于隐藏状态，暂时无法选择；应用对你来说没有任何变化。
 - 更改：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）和所有 README。无服务器部分。
 
-## 1.132.12 新功能
-
-**波兰语——第 13 阶段**
-
-- **波兰语。** 家庭、成员、家庭卡片、定位、SOS 和“你在哪里？”已翻译（累计 5779 条，共 6989 条）。该语言仍处于隐藏状态，暂时无法选择；应用对你来说没有任何变化。
-- 更改：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）和所有 README。无服务器部分。
-
 ## 工作原理
 
 ```mermaid
@@ -209,7 +211,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.133.0` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.134.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -25,6 +25,9 @@
 //    back to 0 after a restart).
 //  - Guests (role "gast") have no known password and no PIN - they only enter the app via the
 //    dashboard, with a tap.
+//  - Since 1.134.0: kids with "kids' page only" (member with the kids' page switched on and not
+//    kidsOnly: false, profile role "mitglied") open with a tap as well - no PIN, no password. They
+//    only ever see their kids' page (the app takes care of that); kidsOnlyProfile() decides it here.
 //
 //  - Background per family: an admin chooses default, a colour, a gradient or an own picture under
 //    Account → "Dashboard background". Stored in the locked collection "dashboard_hintergruende"
@@ -399,6 +402,39 @@ function saveBackground(familyId, userId, stil, bild) {
 }
 
 // ---------------------------------------------------------------------------------------------
+// Kids' page only (since 1.134.0)
+// ---------------------------------------------------------------------------------------------
+// Family members (only the "mitglieder" area, the rest of the family data is not loaded)
+function membersOf(familyId) {
+    const fid = String(familyId || "");
+    if (!fid) return [];
+    try {
+        const area = require(`${__hooks}/pinn-bereiche.js`).readMany(fid, ["mitglieder"]);
+        if (area && Array.isArray(area.members)) return area.members;
+    } catch (e) { /* not moved yet - read the family data */ }
+    try {
+        const data = base().loadFamilyDataFor(fid) || {};
+        return Array.isArray(data.members) ? data.members : [];
+    } catch (e) {
+        return [];
+    }
+}
+// Same rule as memberKidsOnly() in js/dashboard.js: kids' page on and not explicitly switched off
+function memberKidsOnly(m) {
+    return !!(m && m.kid && m.kid.enabled && m.kidsOnly !== false);
+}
+// true = this profile is a kid with "kids' page only" (never admins, guests or the main admin)
+function kidsOnlyProfile(rec, members) {
+    if (!rec) return false;
+    const role = rec.getString("rolle") || "mitglied";
+    if (role !== "mitglied") return false;
+    const mid = rec.getString("mitglied");
+    if (!mid) return false;
+    const list = Array.isArray(members) ? members : membersOf(rec.getString("familie"));
+    return list.some(m => m && m.id === mid && memberKidsOnly(m));
+}
+
+// ---------------------------------------------------------------------------------------------
 // Profiles for the dashboard (only what is needed, no e-mail address or the like)
 // ---------------------------------------------------------------------------------------------
 function profilesFor(familyId) {
@@ -409,6 +445,7 @@ function profilesFor(familyId) {
     } catch (e) {
         recs = [];
     }
+    const members = membersOf(familyId);
     return recs
         .filter(r => r.getString("rolle") !== "hauptadmin")
         .map(r => ({
@@ -417,6 +454,7 @@ function profilesFor(familyId) {
             rolle: r.getString("rolle") || "mitglied",
             mitglied: r.getString("mitglied"),
             pin: pinLength(r),
+            kinderseite: kidsOnlyProfile(r, members),
         }))
         .sort((a, b) => a.username.localeCompare(b.username));
 }
@@ -434,10 +472,11 @@ function pinRequired(familyId) {
         return false;
     }
 }
-// Profiles that must have a PIN: everyone except guests (no known password) and the main admin
+// Profiles that must have a PIN: everyone except guests (no known password), the main admin and
+// kids with "kids' page only"
 function needsPin(rec) {
     const role = rec ? rec.getString("rolle") : "";
-    return !!rec && role !== "gast" && role !== "hauptadmin";
+    return !!rec && role !== "gast" && role !== "hauptadmin" && !kidsOnlyProfile(rec);
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -525,7 +564,7 @@ function waitText(seconds) {
 module.exports = {
     GERAETE, PIN_FIELD, HINTERGRUND,
     ensureSchema, newDevice, findDevice, doppelteZusammenfuehren, touchDevice, listDevices, removeDevice, cleanDeviceName,
-    profilesFor, pinLength, setPin, checkPin, validPinFormat, pinRequired, needsPin,
+    profilesFor, pinLength, setPin, checkPin, validPinFormat, pinRequired, needsPin, membersOf, memberKidsOnly, kidsOnlyProfile,
     lockedFor, registerFail, clearFails, waitText,
     backgroundMeta, backgroundFull, saveBackground,
 };

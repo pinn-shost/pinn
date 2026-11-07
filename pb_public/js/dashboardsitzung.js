@@ -2,7 +2,7 @@
    Part of the app code that used to be a single block in index.html. Classic script, no build step:
    it is loaded right after the inline script of index.html and before the other files in js/
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
-   Contents: back to the profile selection after inactivity (noteDashboardActivity, checkDashboardIdle, startDashboardIdleWatch), the dashboard chrome (applyDashboardChrome, openDashboardKidPageIfNeeded), applying guest and child lock restrictions to the menus and tasks (applyRoleRestrictions) and choosing the guest menus (renderGuestMenuSettings). */
+   Contents: back to the profile selection after inactivity (noteDashboardActivity, checkDashboardIdle, startDashboardIdleWatch), the dashboard chrome (applyDashboardChrome, updateKidPageCloseButton, openKidsOnlyPageIfNeeded, openDashboardKidPageIfNeeded), applying guest and child lock restrictions to the menus and tasks (applyRoleRestrictions) and choosing the guest menus (renderGuestMenuSettings). */
 
 /* ---------- Inside an opened profile: back to the profile selection, automatically after inactivity ---------- */
 let dashLastActivity = Date.now();
@@ -27,20 +27,44 @@ function applyDashboardChrome() {
   const dashSession = isDashboardSession();
   document.getElementById('dashHomeBtn').classList.toggle('hidden', !dashSession);
   document.getElementById('logoutBtn').textContent = tk(dashSession ? 'app.toProfileSelection' : 'common.logOut');
+  updateKidPageCloseButton();
+}
+// Close button of the kids' page: kids' page only -> back to the profiles (dashboard) or log out
+// (own device), otherwise the normal "close"
+function updateKidPageCloseButton() {
   const kidClose = document.getElementById('kidPageClose');
-  if (isDashboardKidSession()) {
+  if (!kidClose) return;
+  if (isDashboardKidSession() || (isDashboardSession() && kidsOnlyActive())) {
     kidClose.textContent = '🏠';
     kidClose.setAttribute('aria-label', tk('dashboard.backToProfiles'));
+  } else if (kidsOnlyActive()) {
+    kidClose.textContent = '🚪';
+    kidClose.setAttribute('aria-label', tk('common.logOut'));
+  } else {
+    kidClose.textContent = '✕';
+    kidClose.setAttribute('aria-label', tk('kid.closeKidsPage'));
   }
 }
 document.getElementById('dashHomeBtn').addEventListener('click', returnToDashboard);
+// Kids' page only: the profile sees nothing but its kids' page - at the dashboard and on its own device
+function openKidsOnlyPageIfNeeded() {
+  if (!kidsOnlyActive() || kidPageMemberId) return;
+  const me = currentMember();
+  if (me) openKidPage(me.id);
+}
 // kid profile at the dashboard: open the kids' page right away
 function openDashboardKidPageIfNeeded() {
   const kidId = dashboardKidMemberId();
-  if (!kidId) return;
-  const m = memberById(kidId);
-  if (m && isKidPageEnabled(m)) openKidPage(kidId);
-  else ssSet(SS_DASH_KID, null); // the kids' page does not exist (any more) - normal profile
+  if (kidId) {
+    const m = memberById(kidId);
+    if (m && memberKidsOnly(m) && !kidPageMemberId) { openKidPage(kidId); return; }
+    if (!m || !memberKidsOnly(m)) {
+      // opened with a tap, but no longer "kids' page only": back to the profile selection (then PIN/password)
+      returnToDashboard();
+      return;
+    }
+  }
+  openKidsOnlyPageIfNeeded();
 }
 // guests: hide finances, settings and the menus chosen by the admin
 function applyRoleRestrictions() {
@@ -64,6 +88,8 @@ function applyRoleRestrictions() {
     const laterVisible = items.slice(i + 1).some(x => !x.classList.contains('nav-divider') && !x.classList.contains('hidden'));
     el.classList.toggle('hidden', !(seenVisible && laterVisible));
   });
+  // kids' page only switched on meanwhile (e.g. by an admin on another device): show the kids' page
+  try { if (familyRecordId) openKidsOnlyPageIfNeeded(); updateKidPageCloseButton(); } catch (e) { /* kids' page not ready yet */ }
   if (typeof currentView !== 'undefined' && currentView && familyRecordId && !isViewAllowed(currentView)) setView(firstAllowedView());
   // overview open and the admin just showed or hid the calendar for guests: rebuild it
   else if (typeof currentView !== 'undefined' && currentView === 'uebersicht' && familyRecordId &&

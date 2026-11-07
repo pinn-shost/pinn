@@ -13,14 +13,14 @@ function canEditMember(m) {
   if (!m || isCurrentUserGuest()) return false;
   if (isCurrentUserAdmin()) return true;
   const me = currentMember();
-  return !!(me && me.id === m.id && !m.childLock);
+  return !!(me && me.id === m.id && !m.childLock && !memberKidsOnly(m));
 }
 
 function openMemberModal(existingId = null) {
   if (isCurrentUserGuest()) return; // Guests don't edit family members
   if (existingId && !canEditMember(memberById(existingId))) {
     const target = memberById(existingId);
-    alert(target && target.childLock && currentMember() && currentMember().id === target.id
+    alert(target && (target.childLock || memberKidsOnly(target)) && currentMember() && currentMember().id === target.id
       ? tk('member.onlyAdminCanEdit')
       : tk('member.canOnlyEditOwn'));
     return;

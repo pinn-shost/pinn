@@ -109,6 +109,15 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe i 🇵🇱 Polski**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.134.0
+
+**Panel: zdjęcia profilowe, dorosły lub dziecko**
+
+- **Dorosły lub dziecko.** W Ustawienia → Członkowie rodziny wybierasz dla każdego „Dorosły” lub „Dziecko”. Dziecko ma blokadę rodzicielską i otwiera panel jak dotąd hasłem i PIN-em. Z opcją „Tylko strona dla dzieci” dziecko widzi tylko swoją stronę: na panelu otwiera się jednym dotknięciem, bez hasła i PIN-u; zamknięcie prowadzi z powrotem do wyboru profilu.
+- **Panel.** Zdjęcia profilowe znów są widoczne w kółkach, a kafelki wokół nich są lekko przezroczyste.
+- **Uwaga:** członkowie, którzy mieli już włączoną stronę dla dzieci, liczą się teraz jako „Dziecko – tylko strona dla dzieci”; przestaw ich na „Dziecko” lub „Dorosły”, jeśli mają dalej korzystać z całej aplikacji.
+- Zmienione (serwer): `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js` – aktualizacja uruchamia ponownie PocketBase. Aplikacja: `js/dashboard.js`, `js/dashboardsitzung.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `js/kinderseite.js`, `js/mitglied.js`, `js/hilfe.js`, `js/sprachen.js`, `js/versionslog.js`, `css/dashboard.css`, `css/mobil.css`, `i18n/*.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`).
+
 ## Nowości w 1.133.0
 
 **Polski odblokowany**
@@ -123,13 +132,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Polski.** Przetłumaczono kreatora konfiguracji, eksport danych oraz wskazówki konfiguracyjne na stronie logowania; dodano też krótki polski README (`README.pl.md`) z odnośnikiem we wszystkich plikach README. Język jest nadal ukryty i nie można go jeszcze wybrać; w aplikacji dla ciebie nic się nie zmienia.
 - Zmienione: `pb_public/einrichtung.js`, `pb_public/datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), wszystkie pliki README, nowy `README.pl.md`. Bez części serwerowej.
 
-## Nowości w 1.132.16
-
-**Polski – etap 17**
-
-- **Polski.** Przetłumaczono teksty powiadomień push (tym samym wszystkie 6989 tekstów jest gotowych), a hooki serwera znają teraz polski (listy języków, kraj PL, teksty, reguły liczby mnogiej i wspólnego mieszkania). Język jest nadal ukryty i nie można go jeszcze wybrać; w aplikacji dla ciebie nic się nie zmienia.
-- Zmienione: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, wszystkie pliki README. Część serwerowa (wymień hooki): `pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js` – `pinn-setup.sh` instaluje je i jak zwykle uruchamia PocketBase ponownie.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -139,7 +141,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.133.0` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.134.0` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -22,6 +22,14 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.134', datum: '07.11.2026', titel: 'Dashboard: Profilbilder, Erwachsen oder Kind',
+    punkte: [
+      ['neu', 'Familienmitglieder: Unter Einstellungen → Familienmitglieder wählst du für jedes Mitglied „Erwachsen“ oder „Kind“. Ein Kind hat die Kindersicherung (wie bisher mit Passwort und PIN). Mit „Nur Kinderseite“ sieht das Kind nur noch seine Kinderseite – am Dashboard öffnet sie sich mit einem Tipp, ohne Passwort und ohne PIN; schließen führt zurück zur Profilauswahl, auf dem eigenen Gerät zum Abmelden.'],
+      ['fix', 'Dashboard: Die Profilbilder erscheinen wieder in den Kreisen (sie wurden seit dem Umzug der Mitglieder in eigene Bereiche nicht mehr gefunden), die Kacheln um die Bilder sind leicht durchsichtig, damit der Hintergrund durchscheint.'],
+      ['info', 'Hinweis: Mitglieder, bei denen die Kinderseite schon eingeschaltet war, gelten automatisch als „Kind – nur Kinderseite“. Wer weiter die ganze App nutzen soll, bekommt in den Einstellungen „Kind“ ohne „Nur Kinderseite“ oder „Erwachsen“. Geändert: pb_hooks/pinn-dashboard.js, pb_hooks/dashboard.pb.js (Server), dazu App-Dateien.'],
+    ],
+  },
+  {
     v: '1.133', datum: '07.11.2026', titel: 'Polnisch freigeschaltet',
     punkte: [
       ['neu', 'Polnisch ist jetzt für alle da: In Einstellungen → Sprache & Region lässt sich Polski wählen; bei polnischer Browsersprache stellt pinn. es automatisch ein. Alle 6989 Texte der App, die Push-Nachrichten des Servers, der Einrichtungs-Assistent und der Datenexport sind auf Polnisch. Für Polen gelten die Notrufnummern 112, 997, 998 und 999. pinn. spricht damit dreizehn Sprachen.'],

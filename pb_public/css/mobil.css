@@ -246,6 +246,16 @@ body.child-lock #settingsGithubAccordion { display: none; }
 .member-lock-row .ov-set-switch { transform: scale(0.8); transform-origin: left center; margin-right: -0.4rem; }
 .member-lock-row.is-disabled { opacity: 0.45; cursor: default; }
 html.dark .member-lock-row { color: rgba(237,234,226,0.7); }
+/* Adult or child per family member (settings, since 1.134.0) */
+.member-type-wrap { margin-top: 0.45rem; }
+.member-type-wrap.is-disabled { opacity: 0.45; }
+.member-type-seg { display: inline-flex; align-items: center; gap: 0.15rem; padding: 0.15rem; border-radius: 999px; background: rgba(37,35,31,0.06); font-size: 0.72rem; }
+.member-type-btn { font: inherit; border: 0; background: transparent; color: rgba(37,35,31,0.65); padding: 0.2rem 0.7rem; border-radius: 999px; cursor: pointer; transition: background .15s, color .15s; }
+.member-type-btn.active { background: var(--c-pine); color: #fff; }
+.member-type-btn:disabled { cursor: default; }
+html.dark .member-type-seg { background: rgba(255,255,255,0.08); }
+html.dark .member-type-btn { color: rgba(237,234,226,0.7); }
+html.dark .member-type-btn.active { color: #fff; }
 /* Keep shopping lists on the phone visibly narrower than the screen instead of simply
    filling the whole available width - should look like a single sheet of paper. */
 /* Planned shopping: several lists merged - each list as its own, colour-marked note */
