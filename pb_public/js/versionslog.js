@@ -22,6 +22,28 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.132', datum: '07.11.2026', titel: 'Polnisch in Vorbereitung',
+    punkte: [
+      ['info', '1.132.0: Polnisch wird als weitere App-Sprache vorbereitet und Schritt für Schritt übersetzt. Zuerst sind Rahmen, Anmeldung, Navigation, alle Einstellungen dran (503 von 6989 Texten). Die Sprache ist noch versteckt und kann noch nicht gewählt werden – in der App ändert sich für dich nichts.'],
+      ['info', '1.132.1: Polnisch Etappe 2 – Konto, Geräte, Fehlerprotokoll sowie Sicherungen & Updates (insgesamt 875 von 6989 Texten).'],
+      ['info', '1.132.2: Polnisch Etappe 3 – Kalender, Aufgaben, Haushalt, Übersicht, Wetter, Suche und Feiertage (insgesamt 1365 von 6989 Texten).'],
+      ['info', '1.132.3: Polnisch Etappe 4 – alle Listen (Packlisten, Wunschlisten, Geschenke, Checklisten, Vorlagen); insgesamt 1926 von 6989 Texten.'],
+      ['info', '1.132.4: Polnisch Etappe 5 – Einkauf, Vorrat, Essensplan, Kategorien und Einheiten; insgesamt 2373 von 6989 Texten.'],
+      ['info', '1.132.5: Polnisch Etappe 6 – Rezepte und Standardnamen (Kategorien, Orte, Einheiten, Rollen, Abfallarten); insgesamt 2666 von 6989 Texten.'],
+      ['info', '1.132.6: Polnisch Etappe 7 – Finanzen, Kassen, Taschengeld, Sterne und Kinderseite; insgesamt 3118 von 6989 Texten.'],
+      ['info', '1.132.7: Polnisch Etappe 8 – Verträge und Depots; insgesamt 3635 von 6989 Texten.'],
+      ['info', '1.132.8: Polnisch Etappe 9 – Zuhause, erste Hälfte (Miete und Kauf, Zähler, Mängel, Schlüssel, Garten); insgesamt 3965 von 6989 Texten.'],
+      ['info', '1.132.9: Polnisch Etappe 10 – Zuhause, zweite Hälfte (Wartungsplan, Pflanzen und Rasen, Renovierung, Vermietung, Steuertipps); insgesamt 4285 von 6989 Texten.'],
+      ['info', '1.132.10: Polnisch Etappe 11 – Fahrzeuge (Tanken und Laden, Werkstatt, HU, Reifen, Versicherung, Rechner); insgesamt 4755 von 6989 Texten.'],
+      ['info', '1.132.11: Polnisch Etappe 12 – Dokumente, PDF-Lesen, Haustiere sowie Schule & Kita; insgesamt 5326 von 6989 Texten.'],
+      ['info', '1.132.12: Polnisch Etappe 13 – Familie, Mitglieder, Familienkachel, Ortung, SOS und „Wo bist du?“; insgesamt 5779 von 6989 Texten.'],
+      ['info', '1.132.13: Polnisch Etappe 14 – Pinnwand, Chat und Glocke; insgesamt 6283 von 6989 Texten.'],
+      ['info', '1.132.14: Polnisch Etappe 15 – Smarthome, Ausblick, Hilfe & Tutorial und Sprachsteuerung; insgesamt 6727 von 6989 Texten.'],
+      ['info', '1.132.15: Polnisch Etappe 16 – übrige kleine Bereiche (Server-Meldungen, Bundesländer, Reihum, Wiederholung, Avatare, Offline-Hinweise); insgesamt 6842 von 6989 Texten.'],
+      ['info', '1.132.16: Polnisch Etappe 17 – Push-Texte (damit sind alle 6989 Texte übersetzt) und Server-Hooks (Sprachlisten, Land PL, Texte, Mehrzahl- und WG-Regeln). Server-Teil: Hooks ersetzen.'],
+    ],
+  },
+  {
     v: '1.131', datum: '07.11.2026', titel: 'Türkisch freigeschaltet',
     punkte: [
       ['neu', 'Türkisch ist jetzt für alle da: In Einstellungen → Sprache & Region lässt sich Türkçe wählen; bei türkischer Browsersprache stellt pinn. es automatisch ein. Alle 6989 Texte der App, die Push-Nachrichten des Servers, der Einrichtungs-Assistent und der Datenexport sind auf Türkisch. Für die Türkei gilt die Notrufnummer 112. pinn. spricht damit zwölf Sprachen.'],

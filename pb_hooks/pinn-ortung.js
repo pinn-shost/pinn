@@ -2065,7 +2065,7 @@ function langOfUser(userId) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign($app.findRecordById(USERS, userId)).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -2079,6 +2079,7 @@ function langOfUser(userId) {
     if (["RU"].indexOf(land) >= 0) return "ru";
     if (["NL", "SR", "AW", "CW", "SX"].indexOf(land) >= 0) return "nl";
     if (["TR"].indexOf(land) >= 0) return "tr";
+    if (["PL"].indexOf(land) >= 0) return "pl";
     return "en";
 }
 const LADEN_TEXT = {
@@ -2106,6 +2107,8 @@ const LADEN_TEXT = {
           geplant: "Gepland: {titel}", tipp1: "Tik hier voor de boodschappenlijst.", tippN: "Tik hier voor de boodschappenlijsten.", und: " en " },
     tr: { bei: "Buradasın: {laden}", frage: "alışverişe mi çıkıyorsun?", artikel1: "listede 1 ürün", artikel: "listede {n} ürün",
           geplant: "Planlanan: {titel}", tipp1: "Alışveriş listesi için buraya dokun.", tippN: "Alışveriş listeleri için buraya dokun.", und: " ve " },
+    pl: { bei: "Jesteś w: {laden}", frage: "idziesz na zakupy?", artikel1: "1 pozycja na liście", artikel: "pozycje na liście: {n}",
+          geplant: "Zaplanowano: {titel}", tipp1: "Dotknij, aby zobaczyć listę zakupów.", tippN: "Dotknij, aby zobaczyć listy zakupów.", und: " i " },
 };
 function ladenPushText(lang, items, geraetId) {
     const T = LADEN_TEXT[lang] || LADEN_TEXT.en;

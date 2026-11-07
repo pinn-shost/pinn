@@ -45,6 +45,14 @@
       if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return 'few';
       return 'many';
     },
+    // Polish (CLDR): 1 → one · 2–4, 22–24 … → few · 0, 5–21, 25–31 … → many · fractions → other
+    pl: function (n, i, v) {
+      if (v !== 0) return 'other';
+      if (i === 1) return 'one';
+      var m10 = i % 10, m100 = i % 100;
+      if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return 'few';
+      return 'many';
+    },
   };
 
   // Categories a language file must contain for every plural text
@@ -53,9 +61,10 @@
     fr: ['one', 'other'], pt: ['one', 'other'],
     zh: ['other'], ja: ['other'], ko: ['other'],
     ru: ['one', 'few', 'many'],   // "other" (fractions) is optional and falls back to "few" (genitive singular)
+    pl: ['one', 'few', 'many'],   // "other" (fractions) is optional and falls back to "many"
   };
   // Where to look when a form is missing in a text
-  var FALLBACK = { ru: { other: ['few', 'many'] } };
+  var FALLBACK = { ru: { other: ['few', 'many'] }, pl: { other: ['many', 'few'] } };
 
   // Operands of a number: integer part, count of visible fraction digits, absolute value
   function operands(x) {

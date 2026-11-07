@@ -131,54 +131,54 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands und 🇹🇷 Türkçe**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
-## Neu in 1.131.0
+## Neu in 1.132.16
 
-**Türkisch ist jetzt wählbar**
+**Polnisch – Etappe 17**
 
-- **Türkisch.** 🇹🇷 Türkçe lässt sich jetzt unter Einstellungen → Sprache & Region wählen (und wird bei türkischer Browsersprache automatisch eingestellt). Alle 6989 Texte, die Push-Nachrichten, der Einrichtungs-Assistent und der Datenexport sind auf Türkisch; für die Türkei gilt die Notrufnummer 112. pinn. spricht damit zwölf Sprachen.
-- Geändert: `js/sprachen.js` (Sprache nicht mehr versteckt), `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), alle READMEs (Sprachliste, „zwölf Sprachen“); nur Kommentare: `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`. Kein Server-Teil.
+- **Polnisch.** Die Push-Texte sind übersetzt (damit sind alle 6989 Texte fertig) und die Server-Hooks kennen jetzt Polnisch (Sprachlisten, Land PL, Texte, Mehrzahl- und WG-Regeln). Die Sprache ist noch versteckt und kann noch nicht gewählt werden; in der App ändert sich für dich nichts.
+- Geändert: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, alle READMEs. Server-Teil (Hooks ersetzen): `pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js` – `pinn-setup.sh` installiert sie und startet PocketBase wie gewohnt neu.
 
-## Neu in 1.130.12
+## Neu in 1.132.15
 
-**Türkisch – Etappe 13**
+**Polnisch – Etappe 16**
 
-- **Türkisch.** Der Einrichtungs-Assistent und der Datenexport sind übersetzt, dazu gibt es eine Kurz-README auf Türkisch (`README.tr.md`, in allen READMEs verlinkt). Die Sprache ist noch versteckt und nicht wählbar; an der App ändert sich für dich nichts. Notrufnummer für die Türkei geprüft: 112 stimmt (Polizei, Rettung und Feuerwehr).
-- Geändert: `js/sprachen.js`, `js/versionslog.js`, `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), alle READMEs (neu: `README.tr.md`) und die türkischen Texte. Server-Teil: `pb_hooks/pinn-einrichtung.js` (Sprachliste der Einrichtung) – `pinn-setup.sh` installiert ihn und startet PocketBase wie gewohnt neu.
+- **Polnisch.** Die übrigen kleinen Bereiche (Server-Meldungen, Bundesländer, Reihum, Wiederholung, Avatare, Offline-Hinweise) sind übersetzt (insgesamt 6842 von 6989 Texten). Die Sprache ist noch versteckt und kann noch nicht gewählt werden; in der App ändert sich für dich nichts.
+- Geändert: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) und alle READMEs. Kein Server-Teil.
 
-## Neu in 1.130.11
+## Neu in 1.132.14
 
-**Türkisch – Etappe 12**
+**Polnisch – Etappe 15**
 
-- **Türkisch.** Push-Nachrichten und die Server-Texte sind übersetzt – damit sind alle 6989 Texte fertig. Die Sprache ist noch versteckt und nicht wählbar; an der App ändert sich für dich nichts.
-- Geändert: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) und alle READMEs. Server-Teil: `pb_hooks/` (Push-Texte und Sprachlisten) – `pinn-setup.sh` installiert ihn und startet PocketBase wie gewohnt neu.
+- **Polnisch.** Smarthome, Ausblick, Hilfe & Tutorial und Sprachsteuerung sind übersetzt (insgesamt 6727 von 6989 Texten). Die Sprache ist noch versteckt und kann noch nicht gewählt werden; in der App ändert sich für dich nichts.
+- Geändert: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) und alle READMEs. Kein Server-Teil.
 
-## Neu in 1.130.10
+## Neu in 1.132.13
 
-**Türkisch – Etappe 11**
+**Polnisch – Etappe 14**
 
-- **Türkisch.** Hilfe und Einführung, Smart Home, Sprachsteuerung und die restlichen App-Texte sind übersetzt (alles außer den Push-Nachrichten) (insgesamt 6842 von 6989 Texten). Die Sprache ist noch versteckt und nicht wählbar; an der App ändert sich für dich nichts.
-- Geändert: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) und alle READMEs. Kein Server-Teil.
+- **Polnisch.** Pinnwand, Chat und Glocke sind übersetzt (insgesamt 6283 von 6989 Texten). Die Sprache ist noch versteckt und kann noch nicht gewählt werden; in der App ändert sich für dich nichts.
+- Geändert: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) und alle READMEs. Kein Server-Teil.
 
-## Neu in 1.130.9
+## Neu in 1.132.12
 
-**Türkisch – Etappe 10**
+**Polnisch – Etappe 13**
 
-- **Türkisch.** Benachrichtigungen, Pinnwand, Chat sowie Wochen- und Monatsausblick sind übersetzt (insgesamt 6373 von 6989 Texten). Die Sprache ist noch versteckt und nicht wählbar; an der App ändert sich für dich nichts.
-- Geändert: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) und alle READMEs. Kein Server-Teil.
+- **Polnisch.** Familie, Mitglieder, Familienkachel, Ortung, SOS und „Wo bist du?“ sind übersetzt (insgesamt 5779 von 6989 Texten). Die Sprache ist noch versteckt und kann noch nicht gewählt werden; in der App ändert sich für dich nichts.
+- Geändert: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) und alle READMEs. Kein Server-Teil.
 
-## Neu in 1.130.8
+## Neu in 1.132.11
 
-**Türkisch – Etappe 9**
+**Polnisch – Etappe 12**
 
-- **Türkisch.** Haustiere, Schule und Kita, Familienmitglieder, Ortung, SOS und die Familienkachel sind übersetzt (insgesamt 5779 von 6989 Texten). Die Sprache ist noch versteckt und nicht wählbar; an der App ändert sich für dich nichts.
-- Geändert: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) und alle READMEs. Kein Server-Teil.
+- **Polnisch.** Dokumente, PDF-Lesen, Haustiere sowie Schule & Kita sind übersetzt (insgesamt 5326 von 6989 Texten). Die Sprache ist noch versteckt und kann noch nicht gewählt werden; in der App ändert sich für dich nichts.
+- Geändert: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) und alle READMEs. Kein Server-Teil.
 
-## Neu in 1.130.7
+## Neu in 1.132.10
 
-**Türkisch – Etappe 8**
+**Polnisch – Etappe 11**
 
-- **Türkisch.** Fahrzeuge, Dokumente und PDF-Einlesen sind übersetzt (insgesamt 4944 von 6989 Texten). Die Sprache ist noch versteckt und nicht wählbar; an der App ändert sich für dich nichts.
-- Geändert: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) und alle READMEs. Kein Server-Teil.
+- **Polnisch.** Fahrzeuge (Tanken und Laden, Werkstatt, HU, Reifen, Versicherung, Rechner) sind übersetzt (insgesamt 4755 von 6989 Texten). Die Sprache ist noch versteckt und kann noch nicht gewählt werden; in der App ändert sich für dich nichts.
+- Geändert: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) und alle READMEs. Kein Server-Teil.
 
 ## So funktioniert’s
 
@@ -208,7 +208,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.131.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.132.16` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

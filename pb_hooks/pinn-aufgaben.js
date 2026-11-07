@@ -1052,6 +1052,7 @@ const REWARD_TEXT = {
     ru: { t: "⭐ Запрос награды", b: "{k} хочет обменять {n} ⭐ на «{w}»." },
     nl: { t: "⭐ Beloning aangevraagd", b: "{k} wil {n} sterren inwisselen voor “{w}”." },
     tr: { t: "⭐ Ödül istendi", b: "{k}, {n} yıldızı “{w}” ile takas etmek istiyor." },
+    pl: { t: "⭐ Prośba o nagrodę", b: "{k} chce wymienić gwiazdki ({n}) na „{w}”." },
 };
 function notifyReward(familyId, actorUserId, body) {
     if (!familyId) return 0;

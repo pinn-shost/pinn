@@ -108,26 +108,26 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands en 🇹🇷 Türkçe**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
-## Nieuw in 1.131.0
+## Nieuw in 1.132.16
 
-**Turks is nu beschikbaar**
+**Pools – fase 17**
 
-- **Turks.** 🇹🇷 Türkçe is nu te kiezen onder Instellingen → Taal & regio (en wordt vanzelf gekozen als je browser op Turks staat). Alle 6989 teksten, de pushberichten, de installatiewizard en de gegevensexport zijn in het Turks; voor Turkije geldt alarmnummer 112. pinn. spreekt daarmee twaalf talen.
-- Gewijzigd: `js/sprachen.js` (taal niet meer verborgen), `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), alle README’s (taallijst, „twaalf talen”); alleen commentaar: `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`. Geen serverdeel.
+- **Pools.** De teksten van de pushmeldingen zijn vertaald (daarmee zijn alle 6989 teksten klaar) en de serverhooks kennen nu Pools (taallijsten, land PL, teksten, meervouds- en woongroepregels). De taal is nog verborgen en kan nog niet worden gekozen; in de app verandert er niets voor je.
+- Gewijzigd: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, alle README’s. Serverdeel (hooks vervangen): `pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js` – `pinn-setup.sh` installeert ze en herstart PocketBase zoals altijd.
 
-## Nieuw in 1.130.12
+## Nieuw in 1.132.15
 
-**Turks – stap 13**
+**Pools – fase 16**
 
-- **Turks.** De installatiewizard en de gegevensexport zijn vertaald, en er is een korte README in het Turks (`README.tr.md`, gelinkt vanuit alle README’s). De taal is nog verborgen en nog niet te kiezen; aan de app verandert er voor jou niets. Alarmnummer voor Turkije gecontroleerd: 112 klopt (politie, ambulance en brandweer).
-- Gewijzigd: `js/sprachen.js`, `js/versionslog.js`, `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), alle README’s (nieuw: `README.tr.md`) en de Turkse teksten. Serverdeel: `pb_hooks/pinn-einrichtung.js` (talenlijst van de installatie) – `pinn-setup.sh` installeert het en herstart PocketBase zoals gewoonlijk.
+- **Pools.** De overige kleine onderdelen (servermeldingen, deelstaten, beurtrol, herhaling, avatars, offline-meldingen) zijn vertaald (in totaal 6842 van 6989 teksten). De taal is nog verborgen en kan nog niet worden gekozen; in de app verandert er niets voor je.
+- Gewijzigd: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) en alle README’s. Geen serverdeel.
 
-## Nieuw in 1.130.11
+## Nieuw in 1.132.14
 
-**Turks – stap 12**
+**Pools – fase 15**
 
-- **Turks.** Pushmeldingen en de teksten van de server zijn vertaald – daarmee zijn alle 6989 teksten klaar. De taal is nog verborgen en nog niet te kiezen; aan de app verandert er voor jou niets.
-- Gewijzigd: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) en alle READMEs. Serverdeel: `pb_hooks/` (pushteksten en talenlijsten) – `pinn-setup.sh` installeert het en herstart PocketBase zoals gewoonlijk.
+- **Pools.** Slimme woning, vooruitblik, help & tutorial en spraakbesturing zijn vertaald (in totaal 6727 van 6989 teksten). De taal is nog verborgen en kan nog niet worden gekozen; in de app verandert er niets voor je.
+- Gewijzigd: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) en alle README’s. Geen serverdeel.
 
 ## Vereisten
 
@@ -138,7 +138,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.131.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.132.16` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -108,26 +108,26 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands ve 🇹🇷 Türkçe**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
-## 1.131.0 sürümündeki yenilikler
+## 1.132.16 sürümündeki yenilikler
 
-**Türkçe artık seçilebiliyor**
+**Lehçe – 17. aşama**
 
-- **Türkçe.** 🇹🇷 Türkçe artık Ayarlar → Dil ve bölge altında seçilebiliyor (tarayıcın Türkçeyse kendiliğinden seçilir). 6989 metnin tamamı, anlık bildirimler, kurulum sihirbazı ve veri dışa aktarımı Türkçe; Türkiye için acil durum numarası 112. Böylece pinn. on iki dil konuşuyor.
-- Değişenler: `js/sprachen.js` (dil artık gizli değil), `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), tüm README dosyaları (dil listesi, “on iki dil”); yalnızca yorumlar: `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`. Sunucu kısmı yok.
+- **Lehçe.** Anlık bildirim metinleri çevrildi (böylece 6989 metnin hepsi tamam) ve sunucu kancaları artık Lehçeyi biliyor (dil listeleri, ülke PL, metinler, çoğul ve ortak ev kuralları). Dil hâlâ gizli ve henüz seçilemiyor; uygulamada senin için hiçbir şey değişmiyor.
+- Değişenler: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, tüm README dosyaları. Sunucu kısmı (kancaları değiştir): `pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js` – `pinn-setup.sh` onları her zamanki gibi kurar ve PocketBase'i yeniden başlatır.
 
-## 1.130.12 sürümündeki yenilikler
+## 1.132.15 sürümündeki yenilikler
 
-**Türkçe – 13. aşama**
+**Lehçe – 16. aşama**
 
-- **Türkçe.** Kurulum sihirbazı ve veri dışa aktarımı çevrildi; ayrıca Türkçe kısa bir README var (`README.tr.md`, tüm README dosyalarından bağlantılı). Dil hâlâ gizli ve henüz seçilemiyor; uygulamada senin için hiçbir şey değişmez. Türkiye için acil durum numarası kontrol edildi: 112 doğru (polis, ambulans ve itfaiye).
-- Değişenler: `js/sprachen.js`, `js/versionslog.js`, `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), tüm README dosyaları (yeni: `README.tr.md`) ve Türkçe metinler. Sunucu kısmı: `pb_hooks/pinn-einrichtung.js` (kurulumun dil listesi) – `pinn-setup.sh` bunu kurar ve PocketBase'i her zamanki gibi yeniden başlatır.
+- **Lehçe.** Kalan küçük bölümler (sunucu iletileri, eyaletler, sırayla, tekrar, avatarlar, çevrimdışı bildirimler) çevrildi (toplam 6989 metnin 6842'si). Dil hâlâ gizli ve henüz seçilemiyor; uygulamada senin için hiçbir şey değişmiyor.
+- Değişenler: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) ve tüm README dosyaları. Sunucu kısmı yok.
 
-## 1.130.11 sürümündeki yenilikler
+## 1.132.14 sürümündeki yenilikler
 
-**Türkçe – 12. aşama**
+**Lehçe – 15. aşama**
 
-- **Türkçe.** Anlık bildirimler ve sunucunun metinleri çevrildi – böylece 6989 metnin tamamı hazır. Dil hâlâ gizli ve henüz seçilemiyor; uygulamada senin için hiçbir şey değişmez.
-- Değişenler: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) ve tüm README dosyaları. Sunucu kısmı: `pb_hooks/` (bildirim metinleri ve dil listeleri) – `pinn-setup.sh` bunu kurar ve PocketBase'i her zamanki gibi yeniden başlatır.
+- **Lehçe.** Akıllı ev, ön bakış, yardım ve eğitim ile sesli kontrol çevrildi (toplam 6989 metnin 6727'si). Dil hâlâ gizli ve henüz seçilemiyor; uygulamada senin için hiçbir şey değişmiyor.
+- Değişenler: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) ve tüm README dosyaları. Sunucu kısmı yok.
 
 ## Gereksinimler
 
@@ -138,7 +138,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.131.0` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.132.16` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

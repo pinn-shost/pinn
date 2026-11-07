@@ -127,82 +127,82 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands y 🇹🇷 Türkçe**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
-## Novedades de la 1.131.0
+## Novedades de la 1.132.16
 
-**El turco ya se puede elegir**
+**Polaco – etapa 17**
 
-- **Turco.** 🇹🇷 Türkçe ya se puede elegir en Ajustes → Idioma y región (y se activa solo si el navegador está en turco). Los 6989 textos, las notificaciones push, el asistente de configuración y la exportación de datos están en turco; para Turquía el número de emergencias es el 112. Así, pinn. habla doce idiomas.
-- Cambiado: `js/sprachen.js` (el idioma ya no está oculto), `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), todos los README (lista de idiomas, «doce idiomas»); solo comentarios: `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`. Sin parte de servidor.
+- **Polaco.** Los textos de las notificaciones push están traducidos (con ello están los 6989 textos) y los hooks del servidor ya conocen el polaco (listas de idiomas, país PL, textos, reglas de plural y de piso compartido). El idioma sigue oculto y todavía no se puede elegir; en la app no cambia nada para ti.
+- Cambiado: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, todos los README. Parte de servidor (sustituir los hooks): `pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`: `pinn-setup.sh` los instala y reinicia PocketBase como siempre.
 
-## Novedades de la 1.130.12
+## Novedades de la 1.132.15
 
-**Turco – etapa 13**
+**Polaco – etapa 16**
 
-- **Turco.** El asistente de configuración y la exportación de datos están traducidos, y hay un README breve en turco (`README.tr.md`, enlazado desde todos los README). El idioma sigue oculto y aún no se puede elegir; para ti la app no cambia. Número de emergencias de Turquía comprobado: el 112 es correcto (policía, ambulancia y bomberos).
-- Cambiado: `js/sprachen.js`, `js/versionslog.js`, `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), todos los README (nuevo: `README.tr.md`) y los textos en turco. Parte de servidor: `pb_hooks/pinn-einrichtung.js` (lista de idiomas de la configuración) – `pinn-setup.sh` la instala y reinicia PocketBase como siempre.
+- **Polaco.** Las demás áreas pequeñas (mensajes del servidor, estados federados, turnos, repetición, avatares, avisos sin conexión) están traducidas (6842 de 6989 textos en total). El idioma sigue oculto y todavía no se puede elegir; en la app no cambia nada para ti.
+- Cambiado: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
 
-## Novedades de la 1.130.11
+## Novedades de la 1.132.14
 
-**Turco – etapa 12**
+**Polaco – etapa 15**
 
-- **Turco.** Las notificaciones push y los textos del servidor están traducidos – ya están los 6989 textos. El idioma sigue oculto y aún no se puede elegir; para ti la app no cambia.
-- Cambiado: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Parte de servidor: `pb_hooks/` (textos push y listas de idiomas) – `pinn-setup.sh` la instala y reinicia PocketBase como siempre.
+- **Polaco.** El hogar inteligente, las previsiones, la ayuda y el tutorial y el control por voz están traducidos (6727 de 6989 textos en total). El idioma sigue oculto y todavía no se puede elegir; en la app no cambia nada para ti.
+- Cambiado: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
 
-## Novedades de la 1.130.10
+## Novedades de la 1.132.13
 
-**Turco – etapa 11**
+**Polaco – etapa 14**
 
-- **Turco.** Ayuda y tutorial, casa inteligente, control por voz y el resto de textos de la app están traducidos (todo salvo las notificaciones push) (6842 de 6989 textos en total). El idioma sigue oculto y aún no se puede elegir; para ti la app no cambia.
-- Cambiado: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
+- **Polaco.** El tablón, el chat y la campana de avisos están traducidos (6283 de 6989 textos en total). El idioma sigue oculto y todavía no se puede elegir; en la app no cambia nada para ti.
+- Cambiado: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
 
-## Novedades de la 1.130.9
+## Novedades de la 1.132.12
 
-**Turco – etapa 10**
+**Polaco – etapa 13**
 
-- **Turco.** Notificaciones, tablón, chat y la vista previa semanal y mensual están traducidos (6373 de 6989 textos en total). El idioma sigue oculto y aún no se puede elegir; para ti la app no cambia.
-- Cambiado: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
+- **Polaco.** Familia, miembros, el mosaico de la familia, ubicación, SOS y «¿Dónde estás?» están traducidos (5779 de 6989 textos en total). El idioma sigue oculto y todavía no se puede elegir; en la app no cambia nada para ti.
+- Cambiado: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
 
-## Novedades de la 1.130.8
+## Novedades de la 1.132.11
 
-**Turco – etapa 9**
+**Polaco – etapa 12**
 
-- **Turco.** Mascotas, colegio y guardería, miembros de la familia, ubicación, SOS y el mosaico familiar están traducidos (5779 de 6989 textos en total). El idioma sigue oculto y aún no se puede elegir; para ti la app no cambia.
-- Cambiado: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
+- **Polaco.** Documentos, lectura de PDF, mascotas y colegio y guardería están traducidos (5326 de 6989 textos en total). El idioma sigue oculto y todavía no se puede elegir; en la app no cambia nada para ti.
+- Cambiado: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
 
-## Novedades de la 1.130.7
+## Novedades de la 1.132.10
 
-**Turco – etapa 8**
+**Polaco – etapa 11**
 
-- **Turco.** Vehículos, documentos y lectura de PDF están traducidos (4944 de 6989 textos en total). El idioma sigue oculto y aún no se puede elegir; para ti la app no cambia.
-- Cambiado: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
+- **Polaco.** Los vehículos (repostaje y carga, taller, ITV, neumáticos, seguro, calculadoras) están traducidos (4755 de 6989 textos en total). El idioma sigue oculto y todavía no se puede elegir; en la app no cambia nada para ti.
+- Cambiado: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
 
-## Novedades de la 1.130.6
+## Novedades de la 1.132.9
 
-**Turco – etapa 7**
+**Polaco – etapa 10**
 
-- **Turco.** El hogar (alquiler y compra, contadores, defectos, llaves, mantenimiento, jardín y plantas) está traducido (4285 de 6989 textos en total). El idioma sigue oculto y aún no se puede elegir; para ti la app no cambia.
-- Cambiado: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
+- **Polaco.** La segunda mitad de la sección Casa (plan de mantenimiento, plantas y césped, reformas, alquiler a terceros, consejos fiscales) está traducida (4285 de 6989 textos en total). El idioma sigue oculto y todavía no se puede elegir; en la app no cambia nada para ti.
+- Cambiado: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
 
-## Novedades de la 1.130.5
+## Novedades de la 1.132.8
 
-**Turco – etapa 6**
+**Polaco – etapa 9**
 
-- **Turco.** Recetas, finanzas, cajas, carteras, contratos, paga, estrellas y la página infantil están traducidos (3635 de 6989 textos en total). El idioma sigue oculto y aún no se puede elegir; para ti la app no cambia.
-- Cambiado: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
+- **Polaco.** La primera mitad de la sección Casa (alquiler y compra, contadores, defectos, llaves, jardín) está traducida (3965 de 6989 textos en total). El idioma sigue oculto y todavía no se puede elegir; en la app no cambia nada para ti.
+- Cambiado: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
 
-## Novedades de la 1.130.4
+## Novedades de la 1.132.7
 
-**Turco – etapa 5**
+**Polaco – etapa 8**
 
-- **Turco.** Compras, despensa, plan de comidas, categorías, unidades y nombres estándar están traducidos (2489 de 6989 textos en total). El idioma sigue oculto y aún no se puede elegir; para ti la app no cambia.
-- Cambiado: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
+- **Polaco.** Contratos y carteras de valores están traducidos (3635 de 6989 textos en total). El idioma sigue oculto y todavía no se puede elegir; en la app no cambia nada para ti.
+- Cambiado: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
 
-## Novedades de la 1.130.3
+## Novedades de la 1.132.6
 
-**Turco – etapa 4**
+**Polaco – etapa 7**
 
-- **Turco.** Todas las listas (equipaje, deseos, regalos, listas de control, plantillas) están traducidas (1926 de 6989 textos en total). El idioma sigue oculto y aún no se puede elegir; para ti la app no cambia.
-- Cambiado: `js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
+- **Polaco.** Finanzas, cajas, paga, estrellas y la página infantil están traducidas (3118 de 6989 textos en total). El idioma sigue oculto y todavía no se puede elegir; en la app no cambia nada para ti.
+- Cambiado: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) y todos los README. Sin parte de servidor.
 
 ## Cómo funciona
 
@@ -230,7 +230,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.131.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.132.16` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

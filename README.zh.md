@@ -131,54 +131,54 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands和 🇹🇷 Türkçe**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
-## 1.131.0 新功能
+## 1.132.16 新功能
 
-**现已支持土耳其语**
+**波兰语——第 17 阶段**
 
-- **土耳其语。** 现在可以在“设置 → 语言与地区”中选择 🇹🇷 Türkçe（浏览器语言为土耳其语时会自动选用）。全部 6989 条文本、推送消息、设置向导和数据导出都已提供土耳其语；土耳其的紧急号码为 112。这样 pinn. 就支持十二种语言。
-- 更改：`js/sprachen.js`（语言不再隐藏）, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`（`index.html`）、所有 README（语言列表、“十二种语言”）；仅注释：`js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`。无服务器部分。
+- **波兰语。** 推送通知文本已翻译（至此全部 6989 条文本完成），服务器钩子现在也支持波兰语（语言列表、国家 PL、文本、复数与合租规则）。该语言仍处于隐藏状态，暂时无法选择；应用对你来说没有任何变化。
+- 更改：`i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`、所有 README。服务器部分（替换钩子）：`pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`——`pinn-setup.sh` 会照常安装它们并重启 PocketBase。
 
-## 1.130.12 新功能
+## 1.132.15 新功能
 
-**土耳其语——第 13 阶段**
+**波兰语——第 16 阶段**
 
-- **土耳其语。** 设置向导和数据导出已翻译完成，另外新增了土耳其语简短 README（`README.tr.md`，所有 README 中都有链接）。该语言目前仍处于隐藏状态，暂时无法选择；对你来说应用没有变化。已核对土耳其的紧急电话：112 正确（警察、救护车和消防）。
-- 更改：`js/sprachen.js`, `js/versionslog.js`, `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)、所有 README（新增：`README.tr.md`）以及土耳其语文本。服务器部分：`pb_hooks/pinn-einrichtung.js`（设置向导的语言列表）——`pinn-setup.sh` 会照常安装并重启 PocketBase。
+- **波兰语。** 其余小板块（服务器消息、联邦州、轮流、重复、头像、离线提示）已翻译（累计 6842 条，共 6989 条）。该语言仍处于隐藏状态，暂时无法选择；应用对你来说没有任何变化。
+- 更改：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）和所有 README。无服务器部分。
 
-## 1.130.11 新功能
+## 1.132.14 新功能
 
-**土耳其语——第 12 阶段**
+**波兰语——第 15 阶段**
 
-- **土耳其语。** 推送通知和服务器文本已翻译完成——至此全部 6989 条文本均已完成。该语言目前仍处于隐藏状态，暂时无法选择；对你来说应用没有变化。
-- 更改：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) 以及所有 README。服务器部分：`pb_hooks/`（推送文本和语言列表）——`pinn-setup.sh` 会照常安装并重启 PocketBase。
+- **波兰语。** 智能家居、展望、帮助与教程以及语音控制已翻译（累计 6727 条，共 6989 条）。该语言仍处于隐藏状态，暂时无法选择；应用对你来说没有任何变化。
+- 更改：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）和所有 README。无服务器部分。
 
-## 1.130.10 新功能
+## 1.132.13 新功能
 
-**土耳其语——第 11 阶段**
+**波兰语——第 14 阶段**
 
-- **土耳其语。** 帮助与教程、智能家居、语音控制以及其余应用文本已翻译完成（推送通知除外）（共 6989 条文本中的 6842 条）。该语言目前仍处于隐藏状态，暂时无法选择；对你来说应用没有变化。
-- 更改：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) 以及所有 README。无服务器部分。
+- **波兰语。** 公告板、聊天和通知铃已翻译（累计 6283 条，共 6989 条）。该语言仍处于隐藏状态，暂时无法选择；应用对你来说没有任何变化。
+- 更改：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）和所有 README。无服务器部分。
 
-## 1.130.9 新功能
+## 1.132.12 新功能
 
-**土耳其语——第 10 阶段**
+**波兰语——第 13 阶段**
 
-- **土耳其语。** 通知、公告板、聊天以及每周和每月展望已翻译完成（共 6989 条文本中的 6373 条）。该语言目前仍处于隐藏状态，暂时无法选择；对你来说应用没有变化。
-- 更改：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) 以及所有 README。无服务器部分。
+- **波兰语。** 家庭、成员、家庭卡片、定位、SOS 和“你在哪里？”已翻译（累计 5779 条，共 6989 条）。该语言仍处于隐藏状态，暂时无法选择；应用对你来说没有任何变化。
+- 更改：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）和所有 README。无服务器部分。
 
-## 1.130.8 新功能
+## 1.132.11 新功能
 
-**土耳其语——第 9 阶段**
+**波兰语——第 12 阶段**
 
-- **土耳其语。** 宠物、学校与托育、家庭成员、定位、SOS 和家庭卡片已翻译完成（共 6989 条文本中的 5779 条）。该语言目前仍处于隐藏状态，暂时无法选择；对你来说应用没有变化。
-- 更改：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) 以及所有 README。无服务器部分。
+- **波兰语。** 文档、PDF 读取、宠物以及学校与托儿所已翻译（累计 5326 条，共 6989 条）。该语言仍处于隐藏状态，暂时无法选择；应用对你来说没有任何变化。
+- 更改：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）和所有 README。无服务器部分。
 
-## 1.130.7 新功能
+## 1.132.10 新功能
 
-**土耳其语——第 8 阶段**
+**波兰语——第 11 阶段**
 
-- **土耳其语。** 车辆、文档和 PDF 读取已翻译完成（共 6989 条文本中的 4944 条）。该语言目前仍处于隐藏状态，暂时无法选择；对你来说应用没有变化。
-- 更改：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) 以及所有 README。无服务器部分。
+- **波兰语。** 车辆（加油与充电、修理厂、年检、轮胎、保险、计算器）已翻译（累计 4755 条，共 6989 条）。该语言仍处于隐藏状态，暂时无法选择；应用对你来说没有任何变化。
+- 更改：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）和所有 README。无服务器部分。
 
 ## 工作原理
 
@@ -208,7 +208,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.131.0` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.132.16` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

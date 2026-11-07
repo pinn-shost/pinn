@@ -13,14 +13,14 @@
 // placeholders are filled by pinn-textkern.js – the same table the app uses. A flat share uses the variant
 // "<key>#wg" of the language file (created by .github/scripts/i18n-keys.js from the TERMS of js/sprachen.js).
 //
-//  - Language: from the profile (personal design, value "sprache": de, en, fr, es, it, pt, zh, ja, ko, ru, nl, tr). Without one: German.
+//  - Language: from the profile (personal design, value "sprache": de, en, fr, es, it, pt, zh, ja, ko, ru, nl, tr, pl). Without one: German.
 //  - Household type: from the family settings (field "wohnform": 'familie' or 'wg'). Only this one field is read
 //    via SQL (json_extract), not the big family data; the result stays cached until the family data changes.
 //  - Freely entered content (names, event titles, note texts, addresses) stays unchanged. Whatever matches no
 //    pattern stays as it is (German, or already translated by the module itself) – an unknown message is never lost.
 //    For a flat share such texts still get the flat share terms (applyTerms, same rules as TERMS in js/sprachen.js).
 
-const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr"];
+const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl"];
 
 // ---------------------------------------------------------------------------------------------
 // Language and household type of the recipient
@@ -75,6 +75,21 @@ const TR_HOME = { nin: "in", ndeki: "indeki", nde: "inde", nden: "inden", ne: "i
     sinin: "inin", sine: "ine", sini: "ini", sinde: "inde", sinden: "inden", si: "i", ye: "e", yi: "i", yle: "le" };
 const TR_MATE = { si: "ı", leri: "ları", sinin: "ının", lerinin: "larının", sine: "ına", lerine: "larına", sini: "ını", lerini: "larını",
     sinde: "ında", lerinde: "larında", sinden: "ından", lerinden: "larından" };
+// Polish (since 1.132.16): "rodzina" + case ending -> "wspolne mieszkanie" in the same case, "czlonek rodziny" -> "wspollokator"
+// (same tables as .github/scripts/i18n-keys.js). No Unicode lookbehind and no \\p{L} in this engine: explicit Polish letter classes,
+// a captured character in front (re-inserted) and a lookahead behind the word.
+const PL_HOME = { "": "wspólnych mieszkań", a: "wspólne mieszkanie", y: "wspólnego mieszkania", ie: "wspólnym mieszkaniu", "ę": "wspólne mieszkanie",
+    "ą": "wspólnym mieszkaniem", o: "wspólne mieszkanie", om: "wspólnym mieszkaniom", ami: "wspólnymi mieszkaniami", ach: "wspólnych mieszkaniach" };
+const PL_MATE = { ek: "współlokator", ka: "współlokatora", kowi: "współlokatorowi", kiem: "współlokatorem", ku: "współlokatorze",
+    kowie: "współlokatorzy", "ków": "współlokatorów", kom: "współlokatorom", kami: "współlokatorami", kach: "współlokatorach" };
+// A feminine determiner in front of "rodzina" (twoja, cala, kazda, ta ...) becomes neuter in the case of the noun
+function plDet(stem, end) {
+    const kind = end === undefined || end === "a" || end === "o" || end === "ę" ? "nom" : end === "y" ? "gen" : "loc";
+    if (kind === "nom") return stem === "t" ? "to" : stem === "jedn" ? "jedno" : stem + "e";
+    if (kind === "gen") return stem + "ego";
+    return stem === "twoj" ? "twoim" : stem + "ym";
+}
+const PL_L = "A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9";
 const TERMS = {
     de: { keep: /Familienstammbuch|Familienkutsche/g, rules: [
         [/\b([Jj])edes Familienmitglied\b/g, "$1eder Mitbewohner"],
@@ -191,8 +206,23 @@ const TERMS = {
         [/(^|[^A-Za-zÇĞİÖŞÜçğıöşüâîû0-9])([Aa])ile(nin|ndeki|nde|nden|ne|ni|n|sinin|sine|sini|sinde|sinden|si|ye|yi|yle|de|den|deki|ler|lerin|lere|leri|lerde)?(?![A-Za-zÇĞİÖŞÜçğıöşüâîû0-9])/g,
             (m, pre, c, end) => pre + cap(c === "A", "ortak " + (end === undefined ? "ev" : "ev" + (TR_HOME[end] === undefined ? end : TR_HOME[end])))],
     ] },
+    // Polish (since 1.132.16): same rules as the app (TERMS.pl in .github/scripts/i18n-keys.js), written without lookbehind
+    pl: { keep: /[Rr]odzinn[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż]*\s+(?:lekarz|samoch|budżet)[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż]*|(?:lekarz|samoch|budżet)[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż]*\s+rodzinn[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż]*/g, rules: [
+        [/(^|[^A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])([Cc])złon(ek|ka|kowi|kiem|ku|kowie|ków|kom|kami|kach)\s+(?:(?:Twojej|twojej|waszej|naszej|tej|całej)\s+)?rodziny(?![A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "C", PL_MATE[end])],
+        [/(^|[^A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])([Tt]woj|[Cc]ał|[Kk]ażd|[Nn]asz|[Ww]asz|[Jj]edn|[Żż]adn)(?:a|ą|ej)\s+[Rr]odzin(a|y|ie|ę|ą|o)?(?![A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])/g,
+            (m, pre, stem, end) => pre + cap(stem.charAt(0) === stem.charAt(0).toUpperCase(), plDet(stem.toLowerCase(), end)) + " " + PL_HOME[end === undefined ? "" : end]],
+        [/(^|[^A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])([Tt])(?:a|ę|ą|ej)\s+[Rr]odzin(a|y|ie|ę|ą|o)?(?![A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])/g,
+            (m, pre, t, end) => pre + cap(t === "T", plDet("t", end)) + " " + PL_HOME[end === undefined ? "" : end]],
+        [/(^|[^A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])([Rr])odzin(a|y|ie|ę|ą|o|om|ami|ach)?(?![A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "R", PL_HOME[end === undefined ? "" : end])],
+        [/(^|[^A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])([Rr])odzinn(y|a|e|ego|ej|emu|ym|ą|ych|ymi)(?![A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "R", "wspóln" + end)],
+        // "w" / "z" in front of the new words need a vowel ("w wspolnym" -> "we wspolnym")
+        [/(^|[^A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])([WwZz]) (wspóln[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż]*|współlokator[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż]*)/g, (m, pre, c, word) => pre + c + "e " + word],
+    ] },
 };
-const TERM_HINT = /[Aa]ile|[Ff]amil|[Ff]am\u00EDli|[Ff]amigli|\u5BB6\u5EAD|\u5168\u5BB6|\u5BB6\u65CF|\uAC00\uC871|\uD83D\uDC68\u200D\uD83D\uDC69|[\u0421\u0441]\u0435\u043C|[\u0427\u0447]\u043B\u0435\u043D/;
+const TERM_HINT = /[Aa]ile|[Ff]amil|[Ff]am\u00EDli|[Ff]amigli|\u5BB6\u5EAD|\u5168\u5BB6|\u5BB6\u65CF|\uAC00\uC871|\uD83D\uDC68\u200D\uD83D\uDC69|[\u0421\u0441]\u0435\u043C|[\u0427\u0447]\u043B\u0435\u043D|[Rr]odzin|[Cc]z\u0142on/;
 function applyTerms(s, lang) {
     const T = TERMS[lang] || TERMS.de;
     if (!s || !TERM_HINT.test(s)) return s;

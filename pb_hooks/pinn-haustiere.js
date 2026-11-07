@@ -128,7 +128,7 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -142,6 +142,7 @@ function langOf(u) {
     if (["RU"].indexOf(land) >= 0) return "ru";
     if (["NL", "SR", "AW", "CW", "SX"].indexOf(land) >= 0) return "nl";
     if (["TR"].indexOf(land) >= 0) return "tr";
+    if (["PL"].indexOf(land) >= 0) return "pl";
     return "en";
 }
 const T = {
@@ -170,6 +171,9 @@ const T = {
           gebText: "Vandaag een extra snoepje 🦴", mehr: "🐾 Er staat iets op de planning voor jullie huisdieren", kurzHeute: "vandaag", kurzIn3: "over 3 dagen", kurzUeber: "te laat" },
     tr: { futter: "Mama makinesini doldur", futterHeute: "bugün doldur", futterUeber: "{n} gündür bekliyor", leer: "Mama makinesi neredeyse boş", leerText: "Doluluk {v} – lütfen doldur.", leerText0: "Lütfen doldur.", heute: "bugün vadesi geliyor", in3: "3 gün sonra vadesi geliyor", ueber: "{n} gün gecikmiş", geb: "Bugün doğum günü: {name}!", gebAlt: "{name} bugün {n} yaşına giriyor 🐾",
           gebText: "Bugün fazladan bir ödül zamanı 🦴", mehr: "🐾 Evcil hayvanların için bir şeyler yaklaşıyor", kurzHeute: "bugün", kurzIn3: "3 gün sonra", kurzUeber: "gecikmiş" },
+    // Polish: numbers without inflection ("dni: {n}"), pet ages as "wiek: {n}"
+    pl: { futter: "Uzupełnij karmnik", futterHeute: "uzupełnij dziś", futterUeber: "zaległe (dni: {n})", leer: "Karmnik prawie pusty", leerText: "Poziom {v} – uzupełnij, proszę.", leerText0: "Uzupełnij, proszę.", heute: "termin dzisiaj", in3: "termin za 3 dni", ueber: "zaległe (dni: {n})", geb: "Dziś urodziny: {name}!", gebAlt: "{name} – wiek: {n} 🐾",
+          gebText: "Dziś dodatkowy smakołyk 🦴", mehr: "🐾 Dla waszych zwierząt coś się zbliża", kurzHeute: "dzisiaj", kurzIn3: "za 3 dni", kurzUeber: "zaległe" },
 };
 function tx(lang, k, vars) {
     let s = (T[lang] || T.en)[k] || T.en[k] || k;

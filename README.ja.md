@@ -131,54 +131,54 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
-## 1.131.0の新機能
+## 1.132.16の新機能
 
-**トルコ語が選べるようになりました**
+**ポーランド語 ― 第17段階**
 
-- **トルコ語。** 「設定 → 言語と地域」で 🇹🇷 Türkçe を選べるようになりました（ブラウザがトルコ語なら自動で選ばれます）。全6989件のテキスト、プッシュ通知、セットアップウィザード、データのエクスポートがトルコ語に対応し、トルコの緊急番号は112です。これでpinn.は12の言語に対応します。
-- 変更：`js/sprachen.js`（言語を非表示から解除）, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`（`index.html`）、すべてのREADME（言語リスト、「12の言語」）。コメントのみ：`js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`。サーバー側の変更はありません。
+- **ポーランド語。** プッシュ通知の文言を翻訳しました（これで全6989件が完了）。サーバーのフックもポーランド語に対応しました（言語リスト、国PL、文言、複数形とルームシェアのルール）。この言語はまだ非表示で選べません。アプリの使い方に変化はありません。
+- 変更：`i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`、すべてのREADME。サーバー側（フックの置き換え）：`pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`。`pinn-setup.sh` がこれまでどおりインストールし、PocketBaseを再起動します。
 
-## 1.130.12の新機能
+## 1.132.15の新機能
 
-**トルコ語――第13段階**
+**ポーランド語 ― 第16段階**
 
-- **トルコ語。** セットアップウィザードとデータのエクスポートを翻訳し、トルコ語の短いREADME（`README.tr.md`、すべてのREADMEからリンク）も加わりました。この言語はまだ非表示で選べません。アプリ自体は何も変わりません。トルコの緊急通報番号も確認しました。112で正しいです（警察・救急・消防）。
-- 変更：`js/sprachen.js`, `js/versionslog.js`, `js/einrichten.js`, `js/exportieren.js`, `einrichtung.js`, `datenexport.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)、すべてのREADME（新規：`README.tr.md`）とトルコ語のテキスト。サーバー部分：`pb_hooks/pinn-einrichtung.js`（セットアップの言語リスト）。`pinn-setup.sh` がいつも通りインストールし、PocketBaseを再起動します。
+- **ポーランド語。** 残りの小さな部分（サーバーメッセージ、州、持ち回り、繰り返し、アバター、オフライン通知）を翻訳しました（累計で全6989件中6842件）。この言語はまだ非表示で選べません。アプリの使い方に変化はありません。
+- 変更：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）、すべてのREADME。サーバー側の変更はありません。
 
-## 1.130.11の新機能
+## 1.132.14の新機能
 
-**トルコ語――第12段階**
+**ポーランド語 ― 第15段階**
 
-- **トルコ語。** プッシュ通知とサーバー側のテキストを翻訳しました。これで6989件すべてが完了です。この言語はまだ非表示で選べません。アプリ自体は何も変わりません。
-- 変更：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) とすべてのREADME。サーバー部分：`pb_hooks/`（プッシュ通知のテキストと言語リスト）。`pinn-setup.sh` がいつも通りインストールし、PocketBaseを再起動します。
+- **ポーランド語。** スマートホーム、見通し、ヘルプとチュートリアル、音声操作を翻訳しました（累計で全6989件中6727件）。この言語はまだ非表示で選べません。アプリの使い方に変化はありません。
+- 変更：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）、すべてのREADME。サーバー側の変更はありません。
 
-## 1.130.10の新機能
+## 1.132.13の新機能
 
-**トルコ語――第11段階**
+**ポーランド語 ― 第14段階**
 
-- **トルコ語。** ヘルプとチュートリアル、スマートホーム、音声操作、残りのアプリ内テキスト（プッシュ通知を除くすべて）を翻訳しました（6989件中、合計6842件）。この言語はまだ非表示で選べません。アプリ自体は何も変わりません。
-- 変更：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) とすべてのREADME。サーバー部分なし。
+- **ポーランド語。** 掲示板、チャット、通知ベルを翻訳しました（累計で全6989件中6283件）。この言語はまだ非表示で選べません。アプリの使い方に変化はありません。
+- 変更：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）、すべてのREADME。サーバー側の変更はありません。
 
-## 1.130.9の新機能
+## 1.132.12の新機能
 
-**トルコ語――第10段階**
+**ポーランド語 ― 第13段階**
 
-- **トルコ語。** 通知、ピンボード、チャット、週次・月次の見通しを翻訳しました（6989件中、合計6373件）。この言語はまだ非表示で選べません。アプリ自体は何も変わりません。
-- 変更：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) とすべてのREADME。サーバー部分なし。
+- **ポーランド語。** 家族、メンバー、家族タイル、位置情報、SOS、「今どこ？」を翻訳しました（累計で全6989件中5779件）。この言語はまだ非表示で選べません。アプリの使い方に変化はありません。
+- 変更：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）、すべてのREADME。サーバー側の変更はありません。
 
-## 1.130.8の新機能
+## 1.132.11の新機能
 
-**トルコ語――第9段階**
+**ポーランド語 ― 第12段階**
 
-- **トルコ語。** ペット、学校・保育園、家族メンバー、位置情報、SOS、ファミリータイルを翻訳しました（6989件中、合計5779件）。この言語はまだ非表示で選べません。アプリ自体は何も変わりません。
-- 変更：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) とすべてのREADME。サーバー部分なし。
+- **ポーランド語。** 書類、PDFの読み取り、ペット、学校と保育園を翻訳しました（累計で全6989件中5326件）。この言語はまだ非表示で選べません。アプリの使い方に変化はありません。
+- 変更：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）、すべてのREADME。サーバー側の変更はありません。
 
-## 1.130.7の新機能
+## 1.132.10の新機能
 
-**トルコ語――第8段階**
+**ポーランド語 ― 第11段階**
 
-- **トルコ語。** 車両、書類、PDF読み取りを翻訳しました（6989件中、合計4944件）。この言語はまだ非表示で選べません。アプリ自体は何も変わりません。
-- 変更：`js/sprachen.js`, `js/versionslog.js`, `i18n/tr.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) とすべてのREADME。サーバー部分なし。
+- **ポーランド語。** 車両（給油と充電、整備工場、車検、タイヤ、保険、計算機）を翻訳しました（累計で全6989件中4755件）。この言語はまだ非表示で選べません。アプリの使い方に変化はありません。
+- 変更：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）、すべてのREADME。サーバー側の変更はありません。
 
 ## しくみ
 
@@ -208,7 +208,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.131.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.132.16`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
