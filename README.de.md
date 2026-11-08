@@ -133,6 +133,13 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.137.0
+
+**Sprachsteuerung auf Türkisch, Polnisch und Ukrainisch**
+
+- **Sprachsteuerung.** „Hey Siri, pinn“ (auf Android HTTP Shortcuts) versteht jetzt auch Türkisch, Polnisch und Ukrainisch und antwortet in der Sprache deines Profils: auf die Einkaufsliste setzen (mit Menge und Geschäft), Liste vorlesen, Aufgabe anlegen und hören, was heute oder morgen ansteht. Siri antwortet bei Ukrainisch nicht mehr auf Englisch. Die Einrichtung des Kurzbefehls bleibt gleich.
+- Geändert: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, alle READMEs. Server (Hook ersetzen, PocketBase startet neu): `pb_hooks/pinn-sprache.js`.
+
 ## Neu in 1.136.0
 
 **Ukrainisch freigeschaltet**
@@ -175,13 +182,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Ukrainisch.** Ukrainisch ist weiter übersetzt: Chat (Rest), Haustiere und Orte (Standortfreigabe, GPS-Tracker) (5958 von 6994 Texten). Die Sprache ist noch versteckt – in der App ändert sich nichts.
 - Geändert: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Kein Server-Teil.
 
-## Neu in 1.135.12
-
-**Ukrainisch – Etappe 13**
-
-- **Ukrainisch.** Ukrainisch ist weiter übersetzt: Meldungen (Aktivitäten, Weg nach Hause, SOS) und Chat, erster Teil (5508 von 6994 Texten). Die Sprache ist noch versteckt – in der App ändert sich nichts.
-- Geändert: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Kein Server-Teil.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -210,7 +210,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.136.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.137.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -22,6 +22,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.137', datum: '08.11.2026', titel: 'Sprachsteuerung auf Türkisch, Polnisch und Ukrainisch',
+    punkte: [
+      ['neu', 'Die Sprachsteuerung („Hey Siri, pinn“, auf Android HTTP Shortcuts) versteht jetzt auch Türkisch, Polnisch und Ukrainisch und antwortet in der Sprache deines Profils: auf die Einkaufsliste setzen (mit Menge und Geschäft), Liste vorlesen, Aufgabe anlegen („Erinnere mich morgen an den Müll“) und sagen, was heute oder morgen ansteht. Damit antwortet Siri bei Ukrainisch nicht mehr auf Englisch. Alle vierzehn App-Sprachen sind jetzt auch für die Sprachsteuerung da.'],
+      ['info', 'Geändert: pb_hooks/pinn-sprache.js (Server-Teil: Hook ersetzen, PocketBase startet neu), js/sprachen.js, js/versionslog.js, i18n/versionslog.en.js, src/ (index.html), .github/scripts/check-hooks.js, alle READMEs. Die Einrichtung des Kurzbefehls bleibt unverändert.'],
+    ],
+  },
+  {
     v: '1.136', datum: '08.11.2026', titel: 'Ukrainisch freigeschaltet',
     punkte: [
       ['neu', 'Ukrainisch ist jetzt für alle da: In Einstellungen → Sprache & Region lässt sich Українська wählen; bei ukrainischer Browsersprache stellt pinn. es automatisch ein. Alle 6994 Texte der App, die Push-Nachrichten des Servers, der Einrichtungs-Assistent und der Datenexport sind auf Ukrainisch. Für die Ukraine gelten die Notrufnummern 102, 103, 101 und 112. pinn. spricht damit vierzehn Sprachen.'],

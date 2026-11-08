@@ -110,6 +110,13 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.137.0 sürümündeki yenilikler
+
+**Türkçe, Lehçe ve Ukraynaca sesli komut**
+
+- **Sesli komut.** “Hey Siri, pinn” (Android’de HTTP Shortcuts) artık Türkçe, Lehçe ve Ukraynacayı da anlıyor ve profilinin dilinde yanıt veriyor: alışveriş listesine ekleme (miktar ve mağazayla), listeyi okuma, görev oluşturma ve bugün ya da yarın neler olduğunu duyma. Siri Ukraynacada artık İngilizce yanıt vermiyor. Kısayolun kurulumu aynı kalıyor.
+- Değişenler: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, tüm README dosyaları. Sunucu (kancayı değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-sprache.js`.
+
 ## 1.136.0 sürümündeki yenilikler
 
 **Ukraynaca kullanıma açıldı**
@@ -124,13 +131,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Ukraynaca.** Kurulum sihirbazı ve veri dışa aktarımı artık Ukraynaca konuşuyor: tüm adım adım kılavuzlar (ev ağı, DuckDNS, VPN, Google, yapay zekâ, konum, Home Assistant, uygulamalar) ve dışa aktarımın tüm metinleri. Ukrayna acil durum numaraları (102, 103, 101 ve 112) kontrol edildi. Yeni, kısa bir `README.uk.md` eklendi. Dil henüz gizli – uygulamada hiçbir şey değişmiyor.
 - Değişenler: `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `README.uk.md`. Sunucu bölümü yok.
 
-## 1.135.16 sürümündeki yenilikler
-
-**Ukraynaca – 17. aşama**
-
-- **Ukraynaca.** 6994 metnin tamamı artık çevrildi; push bildirimleri de dahil (sunucu metinleri, ortak ev terimleri ve bildirim kancalarında Ukrayna ülkesi). Dil henüz gizli – uygulamada hiçbir şey değişmiyor.
-- Değişenler: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`. Sunucu (kancaları değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -140,7 +140,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.136.0` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.137.0` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

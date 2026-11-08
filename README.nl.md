@@ -110,6 +110,13 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.137.0
+
+**Spraakbesturing in het Turks, Pools en Oekraïens**
+
+- **Spraakbesturing.** “Hey Siri, pinn” (op Android HTTP Shortcuts) begrijpt nu ook Turks, Pools en Oekraïens en antwoordt in de taal van je profiel: op het boodschappenlijstje zetten (met hoeveelheid en winkel), het lijstje voorlezen, een taak aanmaken en horen wat er vandaag of morgen op het programma staat. Siri antwoordt bij Oekraïens niet meer in het Engels. Het instellen van de opdracht blijft hetzelfde.
+- Gewijzigd: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, alle README’s. Server (hook vervangen, PocketBase herstart): `pb_hooks/pinn-sprache.js`.
+
 ## Nieuw in 1.136.0
 
 **Oekraïens beschikbaar**
@@ -124,13 +131,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Oekraïens.** De installatie-assistent en de data-export spreken nu Oekraïens: alle stapsgewijze handleidingen (thuisnetwerk, DuckDNS, VPN, Google, AI, locatie, Home Assistant, apps) en alle exportteksten. De Oekraïense alarmnummers (102, 103, 101 en 112) zijn gecontroleerd. Nieuw is een korte `README.uk.md`. De taal is nog verborgen – in de app verandert er niets.
 - Gewijzigd: `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `README.uk.md`. Geen serverdeel.
 
-## Nieuw in 1.135.16
-
-**Oekraïens – fase 17**
-
-- **Oekraïens.** Alle 6994 teksten zijn nu vertaald, ook de pushmeldingen (servertekst, woongroepbegrippen en land Oekraïne in de meldingshooks). De taal is nog verborgen – in de app verandert er niets.
-- Gewijzigd: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`. Server (hooks vervangen, PocketBase herstart): `pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -140,7 +140,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.136.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.137.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

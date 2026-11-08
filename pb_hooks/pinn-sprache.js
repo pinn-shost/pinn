@@ -3,8 +3,9 @@
 //
 // Voice control (Settings -> Sprachsteuerung): every profile can create a personal, secret link. A Siri shortcut
 // (on Android "HTTP Shortcuts") sends the spoken sentence there; pinn. understands it (German, English, French, Spanish,
-// Russian, Dutch, Italian, Portuguese, Chinese, Japanese, Korean) and answers with one sentence to be read aloud -
-// in the language of the profile (Russian since 1.121.0, the other six since 1.128.0).
+// Russian, Dutch, Italian, Portuguese, Chinese, Japanese, Korean, Turkish, Polish, Ukrainian) and answers with one
+// sentence to be read aloud - in the language of the profile (Russian since 1.121.0, nl/it/pt/zh/ja/ko since 1.128.0,
+// Turkish, Polish and Ukrainian since 1.137.0).
 //
 // Commands:
 //   - add to the shopping list:  "Milch und zwei Packungen Eier auf die Einkaufsliste (bei Rewe)"
@@ -71,7 +72,7 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "ru", "nl", "it", "pt", "zh", "ja", "ko"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "ru", "nl", "it", "pt", "zh", "ja", "ko", "tr", "pl", "uk"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -84,6 +85,9 @@ function langOf(u) {
     if (["CN", "TW", "HK", "MO"].indexOf(land) >= 0) return "zh";
     if (["JP"].indexOf(land) >= 0) return "ja";
     if (["KR"].indexOf(land) >= 0) return "ko";
+    if (["TR"].indexOf(land) >= 0) return "tr";
+    if (["PL"].indexOf(land) >= 0) return "pl";
+    if (["UA"].indexOf(land) >= 0) return "uk";
     return "en";
 }
 function isChildLocked(u, data) {
@@ -192,7 +196,9 @@ const T = {
         days: ["на воскресенье", "на понедельник", "на вторник", "на среду", "на четверг", "на пятницу", "на субботу"],
     },
     // Optional per-language settings: lc = keep the list name lower case in the middle of a sentence, sep / lastSep = list
-    // separators (default ", " and " <and> "), colon / glue = joiner of the daily overview (default ":" and " ")
+    // separators (default ", " and " <and> "), colon / glue = joiner of the daily overview (default ":" and " "),
+    // listNameN / listNamedN / listNameP / listNamedP = list name as subject ({N}) and after "on/in" ({P}) for languages with
+    // cases (default: the same as listName / listNamed = {l}), tr = Turkish capital letters (i -> İ)
     nl: {
         help: "Ik kan dingen op het boodschappenlijstje zetten, het lijstje voorlezen, taken aanmaken en vertellen wat er vandaag op het programma staat. Zeg bijvoorbeeld: zet melk en eieren op het boodschappenlijstje.",
         added: "Toegevoegd aan {l}: {i}.", already: "{i} staat al op {l}.", addedSome: "Toegevoegd aan {l}: {i}. Stond er al op: {d}.",
@@ -270,6 +276,45 @@ const T = {
         listName: "장보기 목록", listNamed: "{n} 목록", and: "그리고",
         days: ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"],
     },
+    tr: {
+        tr: true,
+        help: "Alışveriş listesine ürün ekleyebilir, listeyi sesli okuyabilir, görev oluşturabilir ve bugün neler olduğunu söyleyebilirim. Örneğin şunu söyle: alışveriş listesine süt ve yumurta ekle.",
+        added: "{l}ne eklendi: {i}.", already: "{i} zaten {l}nde var.", addedSome: "{l}ne eklendi: {i}. Zaten vardı: {d}.",
+        listEmpty: "{l} boş.", listHas: "{l}nde: {i}.", more: "ve {n} tane daha",
+        task: "Görev oluşturuldu: {t}{d}.", due: ", son tarih {d}",
+        today: "bugün", tomorrow: "yarın", dayLead: { 0: "Bugün", 1: "Yarın" },
+        nothing: "{w} için planlanmış bir şey yok.", events: "Randevular: {e}.", tasks: "Açık görevler: {t}.", allday: "tüm gün",
+        childLock: "Çocuk kilidi açıkken yalnızca programı sesli okuyabilirim.", noItems: "Listeye neyin ekleneceğini anlayamadım.",
+        noTask: "Hangi görevin oluşturulacağını anlayamadım.", error: "Maalesef olmadı: {m}",
+        listName: "alışveriş listesi", listNamed: "{n} listesi", and: "ve",
+        days: ["pazar", "pazartesi", "salı", "çarşamba", "perşembe", "cuma", "cumartesi"],
+    },
+    pl: {
+        help: "Mogę dodawać produkty do listy zakupów, odczytywać listę, tworzyć zadania i mówić, co jest dziś w planie. Powiedz na przykład: dodaj mleko i jajka do listy zakupów.",
+        added: "Dodano do {l}: {i}.", already: "Na {P} już jest: {i}.", addedSome: "Dodano do {l}: {i}. Już było: {d}.",
+        listEmpty: "{N} jest pusta.", listHas: "Na {P}: {i}.", more: "i jeszcze {n}",
+        task: "Dodano zadanie: {t}{d}.", due: ", termin: {d}",
+        today: "dzisiaj", tomorrow: "jutro", dayLead: { 0: "Na dziś", 1: "Na jutro" },
+        nothing: "{w} nic nie zaplanowano.", events: "Spotkania: {e}.", tasks: "Otwarte zadania: {t}.", allday: "cały dzień",
+        childLock: "Przy włączonej blokadzie dziecięcej mogę tylko odczytać, co jest w planie.", noItems: "Nie udało mi się zrozumieć, co dodać do listy.",
+        noTask: "Nie udało mi się zrozumieć, jakie zadanie utworzyć.", error: "Niestety to się nie udało: {m}",
+        listName: "listy zakupów", listNamed: "listy {n}", and: "i",
+        listNameN: "lista zakupów", listNamedN: "lista {n}", listNameP: "liście zakupów", listNamedP: "liście {n}",
+        days: ["w niedzielę", "w poniedziałek", "we wtorek", "w środę", "w czwartek", "w piątek", "w sobotę"],
+    },
+    uk: {
+        help: "Я можу додавати товари до списку покупок, зачитувати список, створювати завдання й розповідати, що заплановано на сьогодні. Скажіть, наприклад: додай молоко і яйця до списку покупок.",
+        added: "До {l} додано: {i}.", already: "У {l} уже є: {i}.", addedSome: "До {l} додано: {i}. Уже було: {d}.",
+        listEmpty: "{N} порожній.", listHas: "У {P}: {i}.", more: "і ще {n}",
+        task: "Завдання створено: {t}{d}.", due: ", термін: {d}",
+        today: "сьогодні", tomorrow: "завтра", dayLead: { 0: "Сьогодні", 1: "Завтра" },
+        nothing: "{w} нічого не заплановано.", events: "Події: {e}.", tasks: "Відкриті завдання: {t}.", allday: "увесь день",
+        childLock: "У дитячому режимі я можу лише зачитувати, що заплановано.", noItems: "Не вдалося зрозуміти, що додати до списку.",
+        noTask: "Не вдалося зрозуміти, яке завдання створити.", error: "На жаль, не вийшло: {m}",
+        listName: "списку покупок", listNamed: "списку {n}", and: "і",
+        listNameN: "список покупок", listNamedN: "список {n}", listNameP: "списку покупок", listNamedP: "списку {n}",
+        days: ["у неділю", "у понеділок", "у вівторок", "у середу", "у четвер", "у п’ятницю", "у суботу"],
+    },
 };
 function fill(s, v) { return String(s).replace(/\{(\w)\}/g, (m, k) => (v[k] != null ? v[k] : "")); }
 function joinList(arr, L) {
@@ -278,7 +323,7 @@ function joinList(arr, L) {
     const last = L.lastSep != null ? L.lastSep : " " + L.and + " ";
     return arr.slice(0, -1).join(sep) + last + arr[arr.length - 1];
 }
-function capL(s, L) { return L.lc ? s : cap(s); }
+function capL(s, L) { return L.lc ? s : cap(s, L.tr); }
 
 // ---------------------------------------------------------------------------------------------
 // Date (Europe/Berlin, like the other reminders)
@@ -328,12 +373,28 @@ const NUM = {
     due: 2, tre: 3, quattro: 4, cinque: 5, sei: 6, sette: 7, otto: 8, nove: 9, dieci: 10, dodici: 12,
     // Portuguese
     um: 1, uma: 1, dois: 2, duas: 2, "três": 3, sete: 7, oito: 8, dez: 10, doze: 12,
+    // Turkish (the dotted capital \u0130 of \"\u0130ki\" is handled in numOf)
+    bir: 1, iki: 2, "üç": 3, "dört": 4, "beş": 5, "altı": 6, yedi: 7, sekiz: 8, dokuz: 9, on: 10, oniki: 12,
+    // Polish
+    jeden: 1, jedna: 1, jedno: 1, dwa: 2, dwie: 2, trzy: 3, cztery: 4, "pięć": 5, "sześć": 6, siedem: 7, osiem: 8, "dziewięć": 9, "dziesięć": 10, "dwanaście": 12,
+    // Ukrainian (one / two / three ... as in Russian are already there)
+    "дві": 2, "чотири": 4, "п'ять": 5, "шість": 6, "сім": 7, "вісім": 8, "дев'ять": 9, "десять": 10, "дванадцять": 12,
 };
+function numOf(tok) {
+    const t = String(tok);
+    if (Object.prototype.hasOwnProperty.call(NUM, t)) return NUM[t];
+    const l = t.toLowerCase().replace(/i\u0307/g, "i");
+    return Object.prototype.hasOwnProperty.call(NUM, l) ? NUM[l] : 1;
+}
 const UNITS = "kg|g|gramm|kilo|l|liter|litres?|litros?|ml|packungen|packung|päckchen|pck|dosen|dose|flaschen|flasche|gläser|glas|tüten|tüte|beutel|becher|stück|bund|kisten|kiste|rollen|rolle|tuben|tube|tafeln|tafel|netze|netz|packs?|packets?|cans?|tins?|bottles?|jars?|bags?|boxes|box|loaves|loaf|pieces?|cartons?|paquets?|bouteilles?|boîtes?|pots?|sachets?|canettes?|paquetes?|botellas?|latas?|botes?|bolsas?|cajas?|tarros?|кг|килограмм(?:а|ов)?|кило|г|грамм(?:а|ов)?|л|литр(?:а|ов)?|мл|миллилитр(?:а|ов)?|упаковк[аиу]|упаковок|пачк[аиу]|пачек|банк[аиу]|банок|бутылк[аиу]|бутылок|пакет(?:а|ов)?|штук[аи]?|коробк[аиу]|коробок|буханк[аиу]|буханок"
     // Dutch, Italian, Portuguese
     + "|pakken|pak|pakjes|pakje|blikken|blik|flessen|fles|potten|pot|zakken|zak|dozen|doos|bossen|bosje|bosjes|stuks|stuk|bakken|bak|kratten|krat|gram|"
     + "litri|litro|chilo|chili|etti|etto|confezioni|confezione|scatole|scatola|lattine|lattina|bottiglie|bottiglia|barattoli|barattolo|sacchetti|sacchetto|pacchetti|pacchetto|pacchi|pacco|pezzi|pezzo|vasetti|vasetto|cartoni|cartone|rotoli|rotolo|"
-    + "pacotes|pacote|caixas|caixa|garrafas|garrafa|potes|pote|sacos|saco|sacolas|sacola|unidades|unidade|quilos|quilo|gramas|grama|dúzias|dúzia|maços|maço|rolos|tubos";
+    + "pacotes|pacote|caixas|caixa|garrafas|garrafa|potes|pote|sacos|saco|sacolas|sacola|unidades|unidade|quilos|quilo|gramas|grama|dúzias|dúzia|maços|maço|rolos|tubos|"
+    // Turkish, Polish, Ukrainian
+    + "paketler|paket|kutular|kutu|şişeler|şişe|kavanozlar|kavanoz|poşetler|poşet|torbalar|torba|adet|tane|demetler|demet|kasalar|kasa|koliler|koli|kilogram|litre|"
+    + "opakowania|opakowanie|opakowań|butelki|butelka|butelek|puszki|puszka|puszek|słoiki|słoik|słoików|paczki|paczka|paczek|torebki|torebka|torebek|kostki|kostka|kostek|sztuki|sztuka|sztuk|szt|bochenki|bochenek|bochenków|pęczki|pęczek|pęczków|kilogramy|kilogram|litry|litr|litrów|kartony|karton|kartonów|rolki|rolka|rolek|skrzynki|skrzynka|skrzynek|worki|worek|worków|tabliczki|tabliczka|tabliczek|"
+    + "пакети|пакет|пакетів|пачки|пачка|пачок|пляшки|пляшка|пляшок|банки|банка|банок|упаковки|упаковка|упаковок|кілограми|кілограм|кілограмів|кг|грами|грам|грамів|літри|літр|літрів|мл|штуки|штука|штук|шт|ящики|ящик|ящиків|коробки|коробка|коробок|рулони|рулон|рулонів|буханки|буханка|буханок|пучки|пучок|пучків|десяток|дюжина";
 const ARTICLES = /^(?:noch\s+|bitte\s+|etwas\s+|neue[nsrm]?\s+|frische[nsrm]?\s+|ein(?:e[nsm]?)?\s+|die\s+|der\s+|das\s+|den\s+|some\s+|more\s+|the\s+|an?\s+|du\s+|de\s+la\s+|de\s+l'|des\s+|de\s+|d'|la\s+|le\s+|les\s+|l'|un\s+|une\s+|el\s+|los\s+|las\s+|unos\s+|unas\s+|algo\s+de\s+|más\s+|ещё\s+|еще\s+|пожалуйста\s+|немного\s+|het\s+|een\s+|wat\s+|nog\s+|meer\s+|verse\s+|il\s+|lo\s+|gli\s+|i\s+|dei\s+|degli\s+|delle\s+|del\s+|dello\s+|della\s+|dell'\s*|un'\s*|uno\s+|una\s+|po'\s+di\s+|ancora\s+|altro\s+|altra\s+|os\s+|as\s+|o\s+|uns\s+|umas\s+|uma\s+|um\s+pouco\s+de\s+|um\s+|pouco\s+de\s+)+/i;
 
 function cleanSentence(text) {
@@ -342,11 +403,16 @@ function cleanSentence(text) {
         .replace(/[\u2018\u2019\u02bc`\u00b4]/g, "'")   // typographic apostrophes from dictation -> '
         .replace(/\u3000/g, " ")                        // ideographic space
         .replace(/\s+/g, " ").trim()
-        .replace(/^(?:hey\s+siri,?\s*|ok(?:ay)?\s+google,?\s*|привет,?\s+siri,?\s*|окей,?\s+google,?\s*)?(?:pinn[.,:]?\s*)?/i, "")
+        .replace(/^(?:he[yj]\s+siri,?\s*|(?:ok(?:ay|ej)?|tamam)\s+google,?\s*|привет,?\s+siri,?\s*|привіт,?\s+siri,?\s*|окей,?\s+google,?\s*|окей,?\s+гугл,?\s*)?(?:pinn[.,:]?\s*)?/i, "")
         .replace(/[.!?¡¿。！？…、，]+$/g, "")
         .trim();
 }
-function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+// tr = Turkish: dotted i -> İ (toUpperCase would give a plain I)
+function cap(s, tr) {
+    if (!s) return s;
+    const c = s.charAt(0);
+    return (tr && c === "i" ? "\u0130" : c.toUpperCase()) + s.slice(1);
+}
 
 // Russian: after a quantity the name stands in the genitive ("2 литра молока") – for common goods it is turned back into the
 // basic form, so the list shows "Молоко" and duplicates are recognised. Unknown words stay as spoken.
@@ -358,7 +424,35 @@ const RU_NOM = {
     "шоколада": "шоколад", "конфет": "конфеты", "апельсинов": "апельсины", "крупы": "крупа", "гречки": "гречка", "курицы": "курица",
     "рыбы": "рыба", "сосисок": "сосиски", "салфеток": "салфетки", "туалетной бумаги": "туалетная бумага", "кофе": "кофе",
 };
-function ruNominative(name) { const k = String(name || "").toLowerCase(); return Object.prototype.hasOwnProperty.call(RU_NOM, k) ? RU_NOM[k] : name; }
+
+// Polish and Ukrainian: after a quantity the name stands in the genitive (\"dwie butelki mleka\", \"два літри молока\") - common
+// goods are turned back into the basic form, unknown words stay as spoken. Turkish: accusative (\"sütü\", \"yumurtayı\").
+const PL_NOM = {
+    "mleka": "mleko", "jajek": "jajka", "chleba": "chleb", "masła": "masło", "cukru": "cukier", "soli": "sól", "makaronu": "makaron", "sera": "ser",
+    "wody": "woda", "soku": "sok", "ryżu": "ryż", "mąki": "mąka", "kawy": "kawa", "herbaty": "herbata", "piwa": "piwo", "wina": "wino",
+    "jogurtu": "jogurt", "śmietany": "śmietana", "jabłek": "jabłka", "bananów": "banany", "pomidorów": "pomidory", "ogórków": "ogórki",
+    "ziemniaków": "ziemniaki", "cebuli": "cebula", "marchewki": "marchewka", "czekolady": "czekolada", "mięsa": "mięso", "kurczaka": "kurczak",
+    "ryby": "ryba", "parówek": "parówki", "chusteczek": "chusteczki", "papieru toaletowego": "papier toaletowy", "płynu do naczyń": "płyn do naczyń",
+    "proszku do prania": "proszek do prania", "bułek": "bułki", "serków": "serki", "pieczywa": "pieczywo", "oleju": "olej", "szynki": "szynka",
+};
+const UK_NOM = {
+    "молока": "молоко", "яєць": "яйця", "хліба": "хліб", "масла": "масло", "цукру": "цукор", "солі": "сіль", "макаронів": "макарони", "сиру": "сир",
+    "води": "вода", "соку": "сік", "рису": "рис", "борошна": "борошно", "кави": "кава", "чаю": "чай", "пива": "пиво", "вина": "вино",
+    "йогурту": "йогурт", "сметани": "сметана", "яблук": "яблука", "бананів": "банани", "помідорів": "помідори", "огірків": "огірки",
+    "картоплі": "картопля", "цибулі": "цибуля", "моркви": "морква", "шоколаду": "шоколад", "м’яса": "м’ясо", "курки": "курка", "риби": "риба",
+    "сосисок": "сосиски", "серветок": "серветки", "туалетного паперу": "туалетний папір", "олії": "олія", "шинки": "шинка", "печива": "печиво",
+};
+const TR_NOM = {
+    "sütü": "süt", "yumurtayı": "yumurta", "ekmeği": "ekmek", "peyniri": "peynir", "tereyağını": "tereyağı", "makarnayı": "makarna", "suyu": "su",
+    "şekeri": "şeker", "tuzu": "tuz", "unu": "un", "pirinci": "pirinç", "domatesi": "domates", "salatalığı": "salatalık", "elmayı": "elma",
+    "muzu": "muz", "portakalı": "portakal", "çayı": "çay", "kahveyi": "kahve", "yoğurdu": "yoğurt", "soğanı": "soğan", "havucu": "havuç",
+    "patatesi": "patates", "tavuğu": "tavuk", "balığı": "balık", "yağı": "yağ", "bisküviyi": "bisküvi", "çikolatayı": "çikolata", "birayı": "bira",
+};
+function nomOf(name, lang) {
+    const k = String(name || "").toLowerCase().replace(/i\u0307/g, "i");
+    const map = lang === "pl" ? PL_NOM : (lang === "uk" ? UK_NOM : (lang === "tr" ? TR_NOM : RU_NOM));
+    return Object.prototype.hasOwnProperty.call(map, k) ? map[k] : name;
+}
 
 // ---- CJK quantities (Chinese, Japanese, Korean) ----
 const CJK_NUMS = { "一": 1, "二": 2, "两": 2, "兩": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "八": 8, "九": 9, "十": 10, "十一": 11, "十二": 12, "半": 0.5,
@@ -467,15 +561,20 @@ function parseItemsCjk(raw, lang) {
 function parseItems(raw, lang) {
     if (lang === "ja" || lang === "zh" || lang === "ko") return parseItemsCjk(raw, lang);
     // Dutch "en" is only a separator in Dutch sentences (in French/Spanish it is a preposition: "tomates en boîte")
-    const splitRe = new RegExp("\\s*(?:,|;|\\bund\\b|\\bsowie\\b|\\band\\b|\\bet\\b|\\by\\b|\\be\\b|\\bplus\\b|\\s+и\\s+|\\s+а\\s+также\\s+|\\s+плюс\\s+" + (lang === "nl" ? "|\\ben\\b" : "") + ")\\s*", "i");
+    // \"en\" (nl), \"i\" / \"oraz\" (pl), \"ve\" / \"ile\" (tr), \"і\" / \"й\" / \"та\" (uk) only separate in sentences of that language
+    const extraSep = lang === "nl" ? "|\\ben\\b" : (lang === "pl" ? "|\\s+i\\s+|\\s+oraz\\s+|\\s+a\\s+także\\s+" : (lang === "tr" ? "|\\s+ve\\s+|\\s+ile\\s+|\\s+ayrıca\\s+" : (lang === "uk" ? "|\\s+і\\s+|\\s+й\\s+|\\s+та\\s+|\\s+а\\s+також\\s+" : "")));
+    const splitRe = new RegExp("\\s*(?:,|;|\\bund\\b|\\bsowie\\b|\\band\\b|\\bet\\b|\\by\\b|\\be\\b|\\bplus\\b|\\s+и\\s+|\\s+а\\s+также\\s+|\\s+плюс\\s+" + extraSep + ")\\s*", "i");
     const parts = String(raw || "").split(splitRe).map(x => x.trim()).filter(Boolean);
     const out = [];
     parts.forEach(part => {
         let p = part.replace(/^(?:noch|bitte|also|auch|then|nog|ook|anche|também)\s+/i, "");
+        if (lang === "pl") p = p.replace(/^(?:jeszcze|też|także|proszę|trochę|więcej)\s+/i, "");
+        else if (lang === "tr") p = p.replace(/^(?:(?:bize|bana)\s+)?(?:biraz\s+|birkaç\s+|daha\s+|yine\s+|lütfen\s+)?/i, "");
+        else if (lang === "uk") p = p.replace(/^(?:ще|також|будь\s+ласка|трохи|більше)\s+/i, "");
         let qty = "";
-        const m = p.match(new RegExp("^(\\d+(?:[.,]\\d+)?|" + Object.keys(NUM).join("|") + ")\\s+(?:(" + UNITS + ")\\s+)?(?:(?:(?:of|de|di|do|da|van)\\s+)|d')?(.+)$", "i"));
+        const m = p.match(new RegExp("^(\\d+(?:[.,]\\d+)?|\\u0130ki|" + Object.keys(NUM).join("|") + ")\\s+(?:(" + UNITS + ")\\s+)?(?:(?:(?:of|de|di|do|da|van)\\s+)|d')?(.+)$", "i"));
         if (m) {
-            const n = /^\d/.test(m[1]) ? m[1].replace(".", ",") : String(NUM[m[1].toLowerCase()]);
+            const n = /^\d/.test(m[1]) ? m[1].replace(".", ",") : String(numOf(m[1]));
             const u = (m[2] || "").toLowerCase();
             if (/^(gramm?|grama|gramas)$/.test(u)) qty = n + " g";
             else if (/^(kilo|quilos?|chilo|chili)$/.test(u)) qty = n + " kg";
@@ -486,40 +585,49 @@ function parseItems(raw, lang) {
             else if (/^(?:г|грамм(?:а|ов)?)$/.test(u)) qty = n + " г";
             else if (/^(?:л|литр(?:а|ов)?)$/.test(u)) qty = n + " л";
             else if (/^(?:мл|миллилитр(?:а|ов)?)$/.test(u)) qty = n + " мл";
+            else if (/^(?:кілограм(?:и|ів)?)$/.test(u)) qty = n + " кг";
+            else if (/^(?:грам(?:и|ів)?)$/.test(u)) qty = n + " г";
+            else if (/^(?:літр(?:и|ів)?)$/.test(u)) qty = n + " л";
+            else if (/^(?:kilogram|kilogramy)$/.test(u)) qty = n + " kg";
+            else if (/^(?:litr|litry|litrów)$/.test(u)) qty = n + " l";
+            else if (/^(?:adet|tane|szt|sztuk|sztuka|sztuki|шт|штук|штука|штуки)$/.test(u)) qty = n;
             else if (u) qty = n + " " + (/^(dosen?|packung(en)?|päckchen|flaschen?|gläser|glas|tüten?|beutel|becher|stück|bund|kisten?|rollen?|tuben?|tafeln?|netze?)$/.test(u) ? cap(u) : u);
             else if (Number(n.replace(",", ".")) > 1) qty = n;
-            p = ruNominative(m[3]);
+            p = nomOf(m[3], lang);
+        } else if (lang === "tr") {
+            p = nomOf(p, lang);
         }
         p = p.replace(ARTICLES, "").trim();
-        if (p && p.length <= 80) out.push({ name: cap(p), qty: qty });
+        if (lang === "tr" || lang === "pl" || lang === "uk") p = nomOf(p, lang);
+        if (p && p.length <= 80) out.push({ name: cap(p, lang === "tr"), qty: qty });
     });
     return out;
 }
 
 // Split a date word off a task sentence -> { iso, rest }
-function parseDate(text) {
+function parseDate(text, lang) {
     let s = " " + text + " ";
     const t = todayIso();
     let iso = "";
     const rules = [
-        [/\s(?:übermorgen|overmorgen|day after tomorrow|après-demain|pasado mañana|dopodomani|depois de amanhã|depois de amanha|послезавтра)\s/i, 2],
-        [/\s(?:morgen|tomorrow|demain|mañana|domani|amanhã|amanha|завтра)\s/i, 1],
-        [/\s(?:heute|vandaag|today|aujourd'hui|hoy|oggi|hoje|сегодня)\s/i, 0],
+        [/\s(?:übermorgen|overmorgen|day after tomorrow|après-demain|pasado mañana|dopodomani|depois de amanhã|depois de amanha|послезавтра|pojutrze|післязавтра|позавтра|öbür\s+gün|ertesi\s+gün)\s/i, 2],
+        [/\s(?:(?:na|do|на)\s+)?(?:morgen|tomorrow|demain|mañana|domani|amanhã|amanha|завтра|jutro|jutra|yar[ıi]n(?:a|ki)?)\s/i, 1],
+        [/\s(?:(?:na|на)\s+)?(?:heute|vandaag|today|aujourd'hui|hoy|oggi|hoje|сегодня|dzisiaj|dziś|dzis|сьогодні|bugün(?:e|kü)?)\s/i, 0],
     ];
     for (const [re, n] of rules) { if (re.test(s)) { iso = addDays(t, n); s = s.replace(re, " "); break; } }
     if (!iso) {
         const names = [
-            ["sonntag", "sunday", "dimanche", "domingo", "воскресенье", "zondag", "domenica"],
-            ["montag", "monday", "lundi", "lunes", "понедельник", "maandag", "lunedì", "lunedi", "segunda-feira", "segunda"],
-            ["dienstag", "tuesday", "mardi", "martes", "вторник", "dinsdag", "martedì", "martedi", "terça-feira", "terca-feira", "terça", "terca"],
-            ["mittwoch", "wednesday", "mercredi", "miércoles", "среду", "среда", "woensdag", "mercoledì", "mercoledi", "quarta-feira", "quarta"],
-            ["donnerstag", "thursday", "jeudi", "jueves", "четверг", "donderdag", "giovedì", "giovedi", "quinta-feira", "quinta"],
-            ["freitag", "friday", "vendredi", "viernes", "пятницу", "пятница", "vrijdag", "venerdì", "venerdi", "sexta-feira", "sexta"],
-            ["samstag", "saturday", "samedi", "sábado", "субботу", "суббота", "zaterdag", "sabato", "sabado"],
+            ["sonntag", "sunday", "dimanche", "domingo", "воскресенье", "zondag", "domenica", "niedziela", "niedzielę", "неділя", "неділю", "pazar", "pazara"],
+            ["montag", "monday", "lundi", "lunes", "понедельник", "maandag", "lunedì", "lunedi", "segunda-feira", "segunda", "poniedziałek", "понеділок", "pazartesi", "pazartesiye"],
+            ["dienstag", "tuesday", "mardi", "martes", "вторник", "dinsdag", "martedì", "martedi", "terça-feira", "terca-feira", "terça", "terca", "wtorek", "вівторок", "salı", "salıya"],
+            ["mittwoch", "wednesday", "mercredi", "miércoles", "среду", "среда", "woensdag", "mercoledì", "mercoledi", "quarta-feira", "quarta", "środa", "środę", "середа", "середу", "çarşamba", "çarşambaya"],
+            ["donnerstag", "thursday", "jeudi", "jueves", "четверг", "donderdag", "giovedì", "giovedi", "quinta-feira", "quinta", "czwartek", "четвер", "perşembe", "perşembeye"],
+            ["freitag", "friday", "vendredi", "viernes", "пятницу", "пятница", "vrijdag", "venerdì", "venerdi", "sexta-feira", "sexta", "piątek", "п'ятниця", "п'ятницю", "cuma", "cumaya"],
+            ["samstag", "saturday", "samedi", "sábado", "субботу", "суббота", "zaterdag", "sabato", "sabado", "sobota", "sobotę", "субота", "суботу", "cumartesi", "cumartesiye"],
         ];
         for (let wd = 0; wd < 7 && !iso; wd++) {
             for (const nm of names[wd]) {
-                const re = new RegExp("\\s(?:am\\s+|on\\s+|le\\s+|el\\s+|this\\s+|next\\s+|nächsten\\s+|kommenden\\s+|в\\s+|во\\s+|на\\s+|op\\s+|aanstaande\\s+|komende\\s+|volgende\\s+|di\\s+|il\\s+|prossimo\\s+|prossima\\s+|na\\s+|no\\s+|em\\s+|nesta\\s+|neste\\s+|próxima\\s+|próximo\\s+)?" + nm + "\\s", "i");
+                const re = new RegExp("\\s(?:am\\s+|on\\s+|le\\s+|el\\s+|this\\s+|next\\s+|nächsten\\s+|kommenden\\s+|в\\s+|во\\s+|на\\s+|op\\s+|aanstaande\\s+|komende\\s+|volgende\\s+|di\\s+|il\\s+|prossimo\\s+|prossima\\s+|na\\s+|no\\s+|em\\s+|nesta\\s+|neste\\s+|próxima\\s+|próximo\\s+|w\\s+|we\\s+|do\\s+|у\\s+|następn\\S*\\s+|przyszł\\S*\\s+|najbliższ\\S*\\s+|наступн\\S*\\s+|цього\\s+|gelecek\\s+|önümüzdeki\\s+)?" + nm + "\\s", "i");
                 if (re.test(s)) {
                     let d = (wd - weekday(t) + 7) % 7;
                     if (d === 0) d = 7;
@@ -534,7 +642,11 @@ function parseDate(text) {
         .replace(/^(?:daran,?\s*|an\s+(?:den|die|das)?\s*|dass\s+(?:ich|wir)\s+|to\s+|that\s+|de\s+|d'|que\s+|про\s+|о\s+|об\s+|что\s+|чтобы\s+|aan\s+(?:het\s+|de\s+|een\s+)?|eraan\s+(?:dat\s+)?(?:ik\s+|we\s+)?|om\s+|di\s+(?:che\s+)?|che\s+|para\s+)/i, "")
         .replace(/\s+(?:zu\s+)?(?:erledigen|machen)$/i, "")
         .trim();
-    return { iso, rest: cap(rest) };
+    // Turkish / Polish / Ukrainian: little words that stay behind after the date word was cut out
+    if (lang === "tr") rest = rest.replace(/^(?:(?:günü|gün|için)\s+)/i, "");
+    else if (lang === "pl") rest = rest.replace(/^(?:(?:że|żeby|aby|by)\s+)/i, "");
+    else if (lang === "uk") rest = rest.replace(/^(?:(?:про|що|щоб|аби)\s+)/i, "");
+    return { iso, rest: cap(rest.trim(), lang === "tr") };
 }
 
 // Chinese / Japanese / Korean: date words stand inside the sentence without spaces
@@ -573,6 +685,9 @@ function parseDateCjk(text, lang) {
 function cleanStore(s, lang) {
     const v = String(s || "").trim();
     if (!v) return "";
+    if (lang === "tr" && /^(?:alışveriş|market|benim|bizim|alışveriş\s+listesi)$/i.test(v)) return "";
+    if (lang === "pl" && /^(?:zakupów|zakupowej|moja|moją|nasza|naszą|moja\s+lista|zakupy)$/i.test(v)) return "";
+    if (lang === "uk" && /^(?:покупок|покупки|мій|наш|мого|нашого)$/i.test(v)) return "";
     if (lang === "ko" && /^(?:장보기|쇼핑|구매|마트|내|우리|나의|저의|제|장보기용)$/.test(v)) return "";
     if (lang === "zh" && /^(?:我|我们|我的|我们的|购物|超市|采购)$/.test(v)) return "";
     if (lang === "ja" && /^(?:私|私の|我が家|うち|買い物|買物)$/.test(v)) return "";
@@ -595,6 +710,16 @@ const LIST_MORE = [
     [/^(?:(.+?)\s+)?(?:장보기|쇼핑|구매)?\s*(?:목록|리스트)(?:에|에는|엔|에서|이|가)?\s*(?:뭐|무엇|뭘|어떤 게)/, "ko", 1],
     [/^(?:(.+?)\s+)?(?:장보기|쇼핑|구매)?\s*(?:목록|리스트)\s*(?:을|를)?\s*(?:읽어|알려|말해|보여|확인)/, "ko", 1],
     [/^(?:우리\s*)?(?:뭐|뭘|무엇을?)\s*(?:를\s*)?(?:더\s*)?(?:사야|살까|사면)/, "ko", 0],
+    // Turkish: \"Alışveriş listesinde ne var?\", \"Migros listesinde neler var?\", \"Listeyi oku\", \"Ne almam lazım?\"
+    [/^(?:(.+?)\s+)?(?:alışveriş\s+|market\s+)?listesinde\s+(?:ne|neler|neler\s+var|ne\s+var)(?:\s+var|\s+yazıyor|\s+yazılı)?(?:\s+acaba)?$/, "tr", 1],
+    [/^(?:(.+?)\s+)?(?:alışveriş\s+|market\s+)?(?:listesini|listeyi|listemizi|listemi)\s+(?:oku|okur\s+musun|okuyabilir\s+misin|sesli\s+oku|söyle|söyler\s+misin|göster)$/, "tr", 1],
+    [/^ne(?:ler)?\s+(?:almam|almamız|almalıyım|almalıyız|alacağız|alalım|eksik)(?:\s+(?:lazım|gerek|gerekiyor))?$|^(?:neye|nelere)\s+ihtiyacımız\s+var$|^ne\s+lazım$/, "tr", 0],
+    // Polish: \"Co jest na liście zakupów?\", \"Przeczytaj listę zakupów\", \"Co muszę kupić?\"
+    [/^co\s+(?:jeszcze\s+)?(?:jest|mamy|mam|znajduje\s+się|się\s+znajduje|figuruje|zapisano|wpisano)\s+(?:jeszcze\s+)?(?:na|w)\s+(?:mojej\s+|naszej\s+)?(?:liście|listy)(?:\s+zakupów|\s+zakupowej)?(?:\s+(?:w|z|dla)?\s*(.+))?$/, "pl", 1],
+    [/^(?:przeczytaj|odczytaj|powiedz|pokaż)\s+(?:mi\s+)?(?:moją\s+|naszą\s+)?list[ęa](?:\s+zakupów|\s+zakupową)?(?:\s+(?:w|z|dla)?\s*(.+))?$/, "pl", 1],
+    [/^co\s+(?:muszę|musimy|mam|mamy|trzeba|powinienem|powinniśmy|jeszcze\s+muszę|jeszcze\s+musimy)\s+(?:jeszcze\s+)?kupić$|^(?:co|czego)\s+(?:jeszcze\s+)?(?:potrzebuję|potrzebujemy|brakuje)$/, "pl", 0],
+    // Ukrainian: \"Що в списку покупок?\", \"Зачитай список\", \"Що треба купити?\"
+    [/^(?:що\s+(?:зараз\s+|ще\s+)?(?:є\s+)?(?:у\s+нас\s+|у\s+мене\s+)?(?:в|у|на)\s+(?:моєму\s+|нашому\s+)?списку|(?:прочитай|зачитай|озвучи|назви|покажи|скажи)\s+(?:мені\s+)?(?:мій\s+|наш\s+)?список|що\s+(?:мені\s+|нам\s+)?(?:ще\s+)?(?:потрібно|треба|слід)\s+купити)(?:\s+покупок)?(?:\s+(?:для|з|в|у)?\s*(.+))?$/, "uk", 1],
 ];
 // "Add to the list" sentences of the newer languages: [pattern, language, item group, store group (0 = none)]
 const ADD_MORE = [
@@ -622,6 +747,20 @@ const ADD_MORE = [
     [/^(?:(.+?)\s+)?(?:장보기|쇼핑|구매|마트)?\s*(?:목록|리스트)(?:에|에다|에다가)\s*(\S.*?)\s*(?:을|를)?\s*(?:추가|넣|적어|적|써|올려|등록|더해|메모)\S*(?:\s*(?:줘|주세요|줄래|줘요))?$/, "ko", 2, 1],
     [/^(.+?)\s*(?:을|를)?\s+(?:(?:내|우리)\s+)?(?:장보기|쇼핑|구매|마트)?\s*(?:목록|리스트)(?:에|에다|에다가)\s*(?:추가|넣|적어|적|써|올려|등록|더해|메모)\S*(?:\s*(?:줘|주세요|줄래|줘요))?$/, "ko", 1, 0],
     [/^(.+?)\s+(?:필요해요?|필요합니다|필요하다|있어야 해요?|사야 해요?|사야 돼요?|사야돼|사야지|사야겠다|사야겠어요?|사야 한다|사야 합니다|떨어졌어요?)$/, "ko", 1, 0],
+    // Turkish (the object stands before the verb: \"Süt ve yumurtayı alışveriş listesine ekle\")
+    [/^(?:(.+?)\s+)?(?:alışveriş\s+|market\s+)?(?:listesine|listeye|listemize|listeme)\s+(.+?)\s+(?:ekle|ekler\s+misin|ekleyin|ekleyebilir\s+misin|ekler\s+misiniz|yaz|yazar\s+mısın|koy|ilave\s+et)$/i, "tr", 2, 1],
+    [/^(.+?)\s+(?:alışveriş\s+|market\s+)?(?:listesine|listeye|listemize|listeme)\s+(?:ekle|ekler\s+misin|ekleyin|ekleyebilir\s+misin|ekler\s+misiniz|yaz|yazar\s+mısın|koy|ilave\s+et)$/i, "tr", 1, 0],
+    [/^(.+?)\s+(?:almam|almamız|almalıyım|almalıyız|alalım|alınacak|alınması)(?:\s+(?:lazım|gerek|gerekiyor))?$/i, "tr", 1, 0],
+    [/^(.+?)\s+(?:lazım|gerekli|gerek|lazımdı|gerekiyor)$/i, "tr", 1, 0],
+    [/^(.+?)\s+satın\s+al(?:ır\s+mısın)?$/i, "tr", 1, 0],
+    // Polish
+    [/^(?:proszę\s+)?(?:dodaj|dopisz|wpisz|zapisz|dorzuć|dołóż|wstaw|umieść)\s+(?:do|na)\s+(?:mojej\s+|naszej\s+|moją\s+|naszą\s+)?list[yęa](?:\s+zakupów|\s+zakupowej)?\s+(.+)$/i, "pl", 1, 0],
+    [/^(?:proszę\s+)?(?:dodaj|dopisz|wpisz|zapisz|dorzuć|dołóż|wstaw|umieść)\s+(.+?)\s+(?:do|na)\s+(?:mojej\s+|naszej\s+|moją\s+|naszą\s+)?list[yęa](?:\s+zakupów|\s+zakupowej)?(?:\s+(?:(?:w|z|dla)\s+)?(.+))?$/i, "pl", 1, 2],
+    [/^(?:potrzebujemy|potrzebuję|potrzebuje|brakuje\s+nam|brakuje\s+mi|musimy\s+kupić|muszę\s+kupić|trzeba\s+kupić|kup|kupić|kupmy)\s+(.+?)(?:\s+(?:w|z)\s+(.+))?$/i, "pl", 1, 2],
+    // Ukrainian (\"до списку\" = genitive, \"у список\" = accusative)
+    [/^(?:будь\s+ласка,?\s+)?(?:додай|додайте|запиши|занеси|внеси|впиши|поклади|постав|допиши)\s+(?:в|у|до|на)\s+(?:мій\s+|наш\s+|мого\s+|нашого\s+|моєму\s+|нашому\s+)?(?:списку|список|покупки)(?:\s+покупок)?\s+(.+)$/i, "uk", 1, 0],
+    [/^(?:будь\s+ласка,?\s+)?(?:додай|додайте|запиши|занеси|внеси|впиши|поклади|постав|допиши)\s+(.+?)\s+(?:в|у|до|на)\s+(?:мій\s+|наш\s+|мого\s+|нашого\s+|моєму\s+|нашому\s+)?(?:списку|список|покупки)(?:\s+покупок)?(?:\s+(?:для|з|в|у)?\s*(.+))?$/i, "uk", 1, 2],
+    [/^(?:(?:нам|мені)\s+(?:потрібно|треба|потрібні|потрібен|потрібна|потрібне)(?:\s+купити)?|(?:потрібно|треба|слід)\s+купити|купи|купити|придбай|купімо)\s+(.+?)(?:\s+(?:в|у|з)\s+(.+))?$/i, "uk", 1, 2],
 ];
 // "Create a task" sentences of the newer languages: [pattern, language]
 const TASK_MORE = [
@@ -640,6 +779,12 @@ const TASK_MORE = [
     [/^(?:새\s*)?(?:할\s*일|태스크|todo)\s*(?:추가)?[:：\s]+(.+)$/i, "ko"],
     [/^(.+?)\s*(?:알려\s*(?:줘|주세요|줄래)|알림\s*(?:해|설정해)\s*(?:줘|주세요)|리마인드\s*(?:해\s*)?(?:줘|주세요)|상기시켜\s*(?:줘|주세요)|잊지\s*않게\s*(?:해\s*)?(?:줘|주세요)|까먹지\s*않게\s*(?:해\s*)?(?:줘|주세요))$/, "ko"],
     [/^(?:리마인더|알림)\s*[:：]\s*(.+)$/, "ko"],
+    [/^(?:(?:bana|bize)\s+)?(.+?)\s+(?:hatırlat|hatırlatır\s+mısın|hatırlatır\s+mısınız|hatırlatabilir\s+misin|hatırlatın)$/i, "tr"],
+    [/^(?:yeni\s+)?(?:görev|yapılacak)(?:\s+ekle)?[:\s]+(.+)$/i, "tr"],
+    [/^przypomnij\s+(?:mi|nam)[,:]?\s+(.+)$/i, "pl"],
+    [/^(?:nowe\s+|dodaj\s+(?:nowe\s+)?)?(?:zadanie|przypomnienie)[:\s]+(.+)$/i, "pl"],
+    [/^нагадай(?:\s+(?:мені|нам))?[,:]?\s+(.+)$/i, "uk"],
+    [/^(?:нове\s+завдання|додай\s+завдання|створи\s+завдання|завдання)[:\s]+(.+)$/i, "uk"],
 ];
 // "What is on today / tomorrow" of the newer languages -> 0 (today), 1 (tomorrow) or -1 (not such a sentence)
 function dayOfMore(s) {
@@ -655,11 +800,23 @@ function dayOfMore(s) {
     else if (has(/(?:今天|明天|今日|明日)[^，。]*(?:安排|日程|计划|行程|事|活动|任务|待办)|(?:今天|明天)的(?:日程|安排)|我的一天|我的日程|日程安排|有什么安排/)) { hit = true; tomorrow = has(/明天|明日/) && !has(/后天|後天/); }
     else if (has(/(?:今日|明日|あした|あす|きょう)(?:の)?(?:予定|スケジュール|用事|アジェンダ)|(?:今日|明日|あした|あす|きょう)(?:は|って)?(?:何|なに|どんな).*(?:ある|予定|入って)|私の一日|予定(?:を)?教えて|スケジュール(?:を)?教えて|^予定は/)) { hit = true; tomorrow = has(/明日|あした|あす/) && !has(/明後日|あさって/); }
     else if (has(/(?:오늘|내일)\s*(?:의\s*)?(?:일정|스케줄|계획|할\s*일|약속)|(?:오늘|내일)\s*은?\s*(?:뭐|무슨|어떤)|^(?:내\s*)?하루\s*(?:일정|뭐)/)) { hit = true; tomorrow = has(/내일/) && !has(/모레/); }
+    if (!hit) {
+        // Turkish, Polish, Ukrainian
+        if (has(/(?:^|\s)(?:bugün|bugünkü|yarın|yarınki|bugünün|yarının)(?:\s|$)/) && has(/program|takvim|randevu|plan|gündem|görev|etkinlik|neler|ne\s+var|ne\s+yapıyoruz|ne\s+yapacağız/)) { hit = true; tomorrow = has(/(?:^|\s)(?:yarın|yarınki|yarının)(?:\s|$)/) && !has(/öbür\s+gün|ertesi\s+gün/); }
+        else if (has(/(?:^|\s)(?:günüm|günlük\s+özet|bugünkü\s+programım)(?:\s|$)/)) { hit = true; tomorrow = false; }
+        else if (has(/(?:^|\s)(?:dzisiaj|dziś|dzis|dzisiejsz\S*|jutro|jutrzejsz\S*)(?:\s|$)/) && (has(/plan|kalendarz|agend|terminy|spotkani|zadani|do\s+zrobienia|harmonogram/) || has(/^co\s+(?:mam|mamy|jest|się\s+dzieje|robimy|na)\s/))) { hit = true; tomorrow = has(/(?:^|\s)(?:jutro|jutrzejsz\S*)(?:\s|$)/) && !has(/pojutrze/); }
+        else if (has(/^(?:mój\s+dzień|mój\s+plan\s+dnia|mój\s+kalendarz)/)) { hit = true; tomorrow = false; }
+        else if (has(/(?:^|\s)(?:сьогодні|завтра)(?:\s|$)/) && (has(/план|розклад|календар|заплановано|завдан|зустріч|справ|подій|що\s+(?:в|у|на|мені|нам|маємо|є)\s|які\s/))) { hit = true; tomorrow = has(/(?:^|\s)завтра(?:\s|$)/) && !has(/післязавтра|позавтра/); }
+        else if (has(/^(?:мій\s+день|мій\s+розклад)/)) { hit = true; tomorrow = false; }
+    }
     return hit ? (tomorrow ? 1 : 0) : -1;
 }
 
-function intentOf(text) {
-    const s = text.toLowerCase();
+function intentOf(text, pref) {
+    const s = text.toLowerCase().replace(/i\u0307/g, "i");
+    // Ukrainian sentences: \"Купи хліб і молоко\" would also fit the Russian patterns, which do not know \"і\" as a separator -
+    // so the Ukrainian patterns come first when the profile speaks Ukrainian or the sentence has a Ukrainian letter
+    const ukFirst = pref === "uk" || /[іїєґ]/i.test(text);
     // Russian: read the list ("Что в списке покупок?", "Прочитай список", "Что нужно купить?", optionally with a shop: "… для Лидл").
     // Note: the server regex (goja) has no \b for Cyrillic and no look-behind – hence whitespace / start of line instead of \b.
     const ruList = s.match(/^(?:что\s+(?:сейчас\s+|ещё\s+|еще\s+)?(?:есть\s+)?(?:у\s+нас\s+|у\s+меня\s+)?(?:в|на)\s+(?:моём\s+|моем\s+|нашем\s+)?списк[еа]|(?:прочитай|прочти|зачитай|озвучь|назови|покажи)\s+(?:мне\s+)?(?:мой\s+|наш\s+)?список|что\s+(?:мне\s+|нам\s+)?(?:ещё\s+|еще\s+)?(?:нужно|надо)\s+купить)(?:\s+покупок)?(?:\s+(?:для|из|в)?\s*(.+))?$/);
@@ -669,7 +826,7 @@ function intentOf(text) {
         const shop = s.match(/\b(?:bei|von|at|from|chez|de|en|para)\s+([a-zäöüéèàñ0-9][\wäöüéèàñ' -]{1,30})$/i);
         return { art: "liste", laden: shop ? shop[1] : "" };
     }
-    // Read the shopping list (Dutch, Italian, Portuguese, Chinese, Japanese, Korean)
+    // Read the shopping list (Dutch, Italian, Portuguese, Chinese, Japanese, Korean, Turkish, Polish, Ukrainian)
     for (const [re, lang, si] of LIST_MORE) {
         const m = s.match(re);
         if (!m) continue;
@@ -682,6 +839,13 @@ function intentOf(text) {
     }
     // Korean: "what's on today – tell me" must not be taken for a reminder ("… 알려 줘")
     if (/[가-힣]/.test(s)) { const d = dayOfMore(s); if (d >= 0) return { art: "tag", offset: d }; }
+    if (ukFirst) {
+        for (const [re, lang, ii, si] of ADD_MORE) {
+            if (lang !== "uk") continue;
+            const m = text.match(re);
+            if (m) return { art: "kaufen", items: parseItems(m[ii], lang), laden: si ? cleanStore(m[si], lang) : "" };
+        }
+    }
     // Add to the shopping list
     const add = [
         /^(?:bitte\s+)?(?:setz(?:e)?|schreib(?:e)?|pack(?:e)?|füg(?:e)?|trag(?:e)?|tu)?\s*(.+?)\s+(?:auf|zur|in die|zu der)\s+(?:die\s+|meine\s+|unsere\s+)?(?:einkaufsliste|liste|einkaufszettel)(?:\s+(?:bei|für|von)\s+(.+?))?(?:\s+(?:hinzu|ein|dazu|drauf))?$/i,
@@ -723,7 +887,7 @@ function intentOf(text) {
     for (const [re, lang] of TASK_MORE) {
         const m = text.match(re);
         if (!m) continue;
-        return Object.assign({ art: "aufgabe" }, (lang === "zh" || lang === "ja" || lang === "ko") ? parseDateCjk(m[1], lang) : parseDate(m[1]));
+        return Object.assign({ art: "aufgabe" }, (lang === "zh" || lang === "ja" || lang === "ko") ? parseDateCjk(m[1], lang) : parseDate(m[1], lang));
     }
     // Daily overview
     if (/(was|welche).*(heute|morgen)|termine (heute|morgen)|mein tag|tagesüberblick|was (ist|gibt'?s) (heute|morgen)|what'?s (on|happening|planned|up)|(today|tomorrow)'?s? (plan|agenda|schedule)|my day|agenda|qu'?est-ce qu'?il y a|programme|ma journée|qu'?est-ce que j'?ai|qu[eé] (tengo|hay|tenemos)|mi día|mi agenda|(?:что|какие|какой)\s.*(?:сегодня|завтра)|что\s+запланировано|что\s+по\s+плану|мой\s+день|расписание/.test(s)) {
@@ -738,19 +902,40 @@ function intentOf(text) {
 // ---------------------------------------------------------------------------------------------
 // Shopping list
 // ---------------------------------------------------------------------------------------------
-function norm(s) { return String(s || "").toLowerCase().replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss").replace(/ё/g, "е").replace(/[^a-z0-9а-я]/g, ""); }
+function norm(s) {
+    return String(s || "").toLowerCase().replace(/i\u0307/g, "i").replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss").replace(/ё/g, "е")
+        .replace(/[ąáàâ]/g, "a").replace(/[ćç]/g, "c").replace(/[ęéèê]/g, "e").replace(/ł/g, "l").replace(/ń/g, "n").replace(/[óòô]/g, "o").replace(/ś/g, "s")
+        .replace(/[źż]/g, "z").replace(/ğ/g, "g").replace(/ı/g, "i").replace(/ş/g, "s")
+        .replace(/[^a-z0-9а-яіїєґ]/g, "");
+}
+// Inflected shop names (Polish \"w Biedronce\" - list \"Biedronka\"): same beginning, only the ending differs
+function sameStem(a, b) {
+    const n = Math.min(a.length, b.length);
+    if (n < 5) return false;
+    let p = 0;
+    while (p < n && a.charAt(p) === b.charAt(p)) p++;
+    return p >= 4 && p >= n - 2;
+}
 function targetList(data, laden) {
     const lists = Array.isArray(data.shoppingLists) ? data.shoppingLists.filter(l => l && l.id && l.id !== "essensplanung") : [];
     if (laden) {
         const k = norm(laden);
-        const hit = lists.find(l => norm(l.name) === k) || lists.find(l => k && (norm(l.name).indexOf(k) >= 0 || k.indexOf(norm(l.name)) >= 0));
+        const hit = lists.find(l => norm(l.name) === k) || lists.find(l => k && (norm(l.name).indexOf(k) >= 0 || k.indexOf(norm(l.name)) >= 0))
+            || lists.find(l => k && sameStem(norm(l.name), k));
         if (hit) return hit;
     }
     const tgt = data.shoppingMealTarget && data.shoppingMealTarget.listId;
     const main = tgt ? lists.find(l => l.id === tgt) : null;
     return main || { id: "essensplanung", name: "" };
 }
-function listLabel(list, L) { return list && list.name ? fill(L.listNamed, { n: list.name }) : L.listName; }
+function listLabel(list, L, form) {
+    const named = !!(list && list.name);
+    const f = form || "";
+    const tpl = L[(named ? "listNamed" : "listName") + f] || L[named ? "listNamed" : "listName"];
+    return named ? fill(tpl, { n: list.name }) : tpl;
+}
+// Placeholders of the answer texts: {l} list name, {N} as subject, {P} after "on/in" (see the note at the texts)
+function lv(list, L, v) { return Object.assign({ l: listLabel(list, L), N: capL(listLabel(list, L, "N"), L), P: listLabel(list, L, "P") }, v); }
 function itemText(it) { return (it.qty ? it.qty + " " : "") + it.name; }
 
 function addItems(familyId, auth, intent, L) {
@@ -785,9 +970,9 @@ function addItems(familyId, auth, intent, L) {
             tx.save(rec);
             changed = true;
             after = data;
-            reply = dup.length ? fill(L.addedSome, { l: ll, i: joinList(added, L), d: joinList(dup, L) }) : fill(L.added, { l: ll, i: joinList(added, L) });
+            reply = dup.length ? fill(L.addedSome, lv(list, L, { i: joinList(added, L), d: joinList(dup, L) })) : fill(L.added, lv(list, L, { i: joinList(added, L) }));
         } else {
-            reply = fill(L.already, { l: ll, i: joinList(dup, L) });
+            reply = fill(L.already, lv(list, L, { i: joinList(dup, L) }));
         }
     });
     if (changed) {
@@ -814,8 +999,8 @@ function addItemsArea(bereiche, familyId, auth, intent, L) {
         });
         data.shoppingItems = items;
         const ll = listLabel(list, L);
-        if (!added.length) { reply = fill(L.already, { l: ll, i: joinList(dup, L) }); return false; }
-        reply = dup.length ? fill(L.addedSome, { l: ll, i: joinList(added, L), d: joinList(dup, L) }) : fill(L.added, { l: ll, i: joinList(added, L) });
+        if (!added.length) { reply = fill(L.already, lv(list, L, { i: joinList(dup, L) })); return false; }
+        reply = dup.length ? fill(L.addedSome, lv(list, L, { i: joinList(added, L), d: joinList(dup, L) })) : fill(L.added, lv(list, L, { i: joinList(added, L) }));
         return true;
     });
     if (r.changed) {
@@ -832,10 +1017,11 @@ function readList(familyId, intent, L) {
         open = items.filter(x => (x.listId || "essensplanung") === list.id);
     }
     const ll = list ? listLabel(list, L) : capL(L.listName, L);
-    if (!open.length) return { antwort: fill(L.listEmpty, { l: capL(ll, L) }) };
+    const lvl = lv(list, L, {});
+    if (!open.length) return { antwort: fill(L.listEmpty, Object.assign(lvl, { l: capL(ll, L) })) };
     const names = open.slice(0, 15).map(itemText);
     if (open.length > 15) names.push(fill(L.more, { n: open.length - 15 }));
-    return { antwort: fill(L.listHas, { l: ll, i: joinList(names, L) }) };
+    return { antwort: fill(L.listHas, Object.assign(lvl, { l: ll, i: joinList(names, L) })) };
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -1007,7 +1193,7 @@ function befehl(token, text) {
 
     const sentence = cleanSentence(text);
     if (!sentence) return { ok: true, antwort: L.help };
-    const intent = intentOf(sentence);
+    const intent = intentOf(sentence, lang);
     try {
         if (intent.art === "kaufen" || intent.art === "aufgabe") {
             let locked = false;
@@ -1020,6 +1206,7 @@ function befehl(token, text) {
         else if (intent.art === "aufgabe") r = createTask(familyId, user, intent, L);
         else if (intent.art === "tag") r = dayOverview(familyId, user, intent, L);
         else r = { antwort: L.help };
+        if (L.tr && r && r.antwort) r.antwort = cap(r.antwort, true); // Turkish: first letter İ / I, not i
         return Object.assign({ ok: true, art: intent.art }, r);
     } catch (err) {
         console.log("[Sprache] " + err.message);

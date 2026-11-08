@@ -133,6 +133,13 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.137.0の新機能
+
+**音声操作がトルコ語・ポーランド語・ウクライナ語に対応**
+
+- **音声操作。** 「Hey Siri、pinn」（AndroidではHTTP Shortcuts）が、トルコ語・ポーランド語・ウクライナ語も理解し、プロフィールの言語で答えるようになりました。買い物リストへの追加（数量・店舗つき）、リストの読み上げ、タスクの作成、今日・明日の予定の確認ができます。ウクライナ語でもSiriが英語で答えることはなくなりました。ショートカットの設定は変わりません。
+- 変更：`js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`、すべてのREADME。サーバー（フックを置き換え、PocketBaseが再起動します）：`pb_hooks/pinn-sprache.js`。
+
 ## 1.136.0の新機能
 
 **ウクライナ語を公開**
@@ -175,13 +182,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **ウクライナ語。** ウクライナ語の翻訳が進みました：チャット（残り）、ペットと場所（位置共有、GPSトラッカー）（6994件中5958件）。この言語はまだ非表示です。アプリの動作は変わりません。
 - 変更：`i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。サーバー側の変更はありません。
 
-## 1.135.12の新機能
-
-**ウクライナ語——ステージ13**
-
-- **ウクライナ語。** ウクライナ語の翻訳が進みました：通知（アクティビティ、帰宅中、SOS）とチャットの前半（6994件中5508件）。この言語はまだ非表示です。アプリの動作は変わりません。
-- 変更：`i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。サーバー側の変更はありません。
-
 ## しくみ
 
 ```mermaid
@@ -210,7 +210,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.136.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.137.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

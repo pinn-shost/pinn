@@ -133,6 +133,13 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.137.0 新功能
+
+**语音控制支持土耳其语、波兰语和乌克兰语**
+
+- **语音控制。** “嘿 Siri，pinn”（Android 上为 HTTP Shortcuts）现在也能听懂土耳其语、波兰语和乌克兰语，并用你个人资料的语言回答：添加到购物清单（含数量和商店）、朗读清单、创建任务，以及听取今天或明天的安排。乌克兰语时 Siri 不再用英语回答。快捷指令的设置保持不变。
+- 更改：`js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`，所有 README。服务器（替换挂钩，PocketBase 会重启）：`pb_hooks/pinn-sprache.js`。
+
 ## 1.136.0 新功能
 
 **乌克兰语正式开放**
@@ -175,13 +182,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **乌克兰语。** 乌克兰语又翻译了一部分：聊天（其余部分）、宠物和地点（位置共享、GPS 追踪器）（6994 条文本中的 5958 条）。该语言仍处于隐藏状态——应用中不会有任何变化。
 - 更改：`i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。无服务器部分。
 
-## 1.135.12 新功能
-
-**乌克兰语——第 13 阶段**
-
-- **乌克兰语。** 乌克兰语又翻译了一部分：通知（动态、回家路上、SOS）和聊天第一部分（6994 条文本中的 5508 条）。该语言仍处于隐藏状态——应用中不会有任何变化。
-- 更改：`i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。无服务器部分。
-
 ## 工作原理
 
 ```mermaid
@@ -210,7 +210,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.136.0` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.137.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

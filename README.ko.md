@@ -133,6 +133,13 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.137.0의 새 소식
+
+**튀르키예어·폴란드어·우크라이나어 음성 제어**
+
+- **음성 제어.** “헤이 Siri, pinn”(Android에서는 HTTP Shortcuts)이 이제 튀르키예어, 폴란드어, 우크라이나어도 알아듣고 프로필 언어로 답해요. 장보기 목록에 추가(수량·가게 포함), 목록 읽어 주기, 할 일 만들기, 오늘·내일 일정 듣기를 할 수 있어요. 우크라이나어에서도 Siri가 더 이상 영어로 답하지 않아요. 단축어 설정은 그대로예요.
+- 변경: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, 모든 README. 서버(훅 교체, PocketBase 재시작): `pb_hooks/pinn-sprache.js`.
+
 ## 1.136.0의 새 소식
 
 **우크라이나어 공개**
@@ -175,13 +182,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **우크라이나어.** 우크라이나어 번역이 더 진행됐어요: 채팅(나머지), 반려동물과 장소(위치 공유, GPS 트래커)(6994개 중 5958개). 이 언어는 아직 숨겨져 있어요. 앱에서 달라지는 것은 없어요.
 - 변경: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). 서버 변경 없음.
 
-## 1.135.12의 새 소식
-
-**우크라이나어 – 13단계**
-
-- **우크라이나어.** 우크라이나어 번역이 더 진행됐어요: 알림(활동, 귀가 중, SOS)과 채팅 1부(6994개 중 5508개). 이 언어는 아직 숨겨져 있어요. 앱에서 달라지는 것은 없어요.
-- 변경: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). 서버 변경 없음.
-
 ## 작동 방식
 
 ```mermaid
@@ -210,7 +210,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.136.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.137.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
