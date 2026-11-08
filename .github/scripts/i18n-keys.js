@@ -101,6 +101,10 @@ const TR_HOME = { nin: 'in', ndeki: 'indeki', nde: 'inde', nden: 'inden', ne: 'i
 // "aile üyesi" + ending → "ev arkadaşı" + ending
 const TR_MATE = { si: 'ı', leri: 'ları', sinin: 'ının', lerinin: 'larının', sine: 'ına', lerine: 'larına', sini: 'ını', lerini: 'larını',
   sinde: 'ında', lerinde: 'larında', sinden: 'ından', lerinden: 'larından' };
+// Ukrainian (since 1.135.0): "сім’я" + case ending → "квартира" in the same case; "член сім’ї" → "співмешканець"
+const UK_MATE = { '': 'співмешканець', 'а': 'співмешканця', 'у': 'співмешканцю', 'ом': 'співмешканцем', 'і': 'співмешканці', 'ові': 'співмешканцеві',
+  'и': 'співмешканці', 'ів': 'співмешканців', 'ам': 'співмешканцям', 'ами': 'співмешканцями', 'ах': 'співмешканцях' };
+const UK_FLAT = { 'я': 'а', 'ї': 'и', 'ю': 'у', 'єю': 'ою', 'ям': 'ам', 'ями': 'ами', 'ях': 'ах', 'ей': '' };
 // Polish (since 1.132.0): "rodzina" + case ending → "wspólne mieszkanie" in the same case; "członek rodziny" → "współlokator"
 const PL_HOME = { '': 'wspólnych mieszkań', a: 'wspólne mieszkanie', y: 'wspólnego mieszkania', ie: 'wspólnym mieszkaniu', 'ę': 'wspólne mieszkanie',
   'ą': 'wspólnym mieszkaniem', o: 'wspólne mieszkanie', om: 'wspólnym mieszkaniom', ami: 'wspólnymi mieszkaniami', ach: 'wspólnych mieszkaniach' };
@@ -261,6 +265,23 @@ const TERMS = {
       function (m, c, end) { return cap(c === 'R', 'wspólny'.slice(0, -1) + end); }],
     // "w" / "z" before the new words need a vowel ("w wspólnym" → "we wspólnym", "z współlokatorem" → "ze współlokatorem")
     [/(?<![\p{L}\p{N}])([WwZz]) (wspóln\p{L}*|współlokator\p{L}*)/gu, function (m, c, word) { return c + 'e ' + word; }],
+  ] },
+  // Ukrainian (since 1.135.0): \b does not work for Cyrillic, so the rules use Unicode lookarounds (flag u).
+  // сім’я → квартира and член сім’ї → співмешканець decline in parallel; both nouns are feminine/masculine like the originals,
+  // so determiners (вашої, цієї, кожної …) stay unchanged. "сім’ї" is genitive singular and nominative plural alike → "квартири";
+  // only after у/в/на/при/по it is the locative and becomes "квартирі" (write source texts so that a dative "сім’ї" does not occur).
+  uk: { keep: /сімейн\p{L}*\s+(?:лікар|автомобіл|авто|бюджет)\p{L}*/giu, rules: [
+    [/(?<![\p{L}\p{N}])([Чч])лен(|а|у|ом|і|ові|и|ів|ам|ами|ах)(\s+(?:вашої|твоєї|нашої|цієї|своєї|усієї|всієї|цілої|кожної)?\s*)сім[’'ʼ]ї(?![\p{L}\p{N}])/gu,
+      function (m, c, end) { return cap(c === 'Ч', UK_MATE[end]); }],
+    [/(?<![\p{L}\p{N}])([Уу]|[Вв]|[Пп]ри|[Нн]а|[Пп]о)(\s+(?:вашій|твоїй|нашій|цій|своїй|усій|всій|цілій|кожній)?\s*)сім[’'ʼ]ї(?![\p{L}\p{N}])/gu,
+      function (m, prep, det) { return prep + det + 'квартирі'; }],
+    [/(?<![\p{L}\p{N}])([Сс])ім[’'ʼ](я|ї|ю|єю|ям|ями|ях)(?![\p{L}\p{N}])/gu,
+      function (m, c, end) { return cap(c === 'С', 'квартир' + UK_FLAT[end]); }],
+    [/(?<![\p{L}\p{N}])([Сс])імей(?![\p{L}\p{N}])/gu, function (m, c) { return cap(c === 'С', 'квартир'); }],
+    [/(?<![\p{L}\p{N}])([Сс])імейн(ий|а|е|і|ого|ому|ої|ій|ім|им|их|у|ою|ими)(?![\p{L}\p{N}])/gu,
+      function (m, c, end) { return cap(c === 'С', 'спільн' + end); }],
+    // "з" before the new words needs a vowel ("з співмешканцями" → "зі співмешканцями")
+    [/(?<![\p{L}\p{N}])([Зз]) (співмешканц\p{L}*|спільн\p{L}*)/gu, function (m, c, word) { return c + 'і ' + word; }],
   ] },
 };
 

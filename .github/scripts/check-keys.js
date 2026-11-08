@@ -49,7 +49,7 @@ else {
     for (let n = 0; n <= 2000; n++) {
       for (const s of [String(n), n + '.5', n + '.0']) {
         let want = (s.endsWith('.0') ? prDec : pr).select(Number(s));
-        if (want === 'many' && code !== 'ru' && code !== 'pl') want = 'other';   // round millions, left out on purpose (ru and pl really use "many")
+        if (want === 'many' && code !== 'ru' && code !== 'pl' && code !== 'uk') want = 'other';   // round millions, left out on purpose (ru, pl and uk really use "many")
         if (K.plural(code, s) !== want && ++bad <= 5) r.fail('textkern', code + ' ' + s + ': ' + K.plural(code, s) + ', expected ' + want);
       }
     }
