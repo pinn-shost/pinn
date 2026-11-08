@@ -45,6 +45,14 @@
       if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return 'few';
       return 'many';
     },
+    // Ukrainian (CLDR): same pattern as Russian – 1, 21, 31 … → one · 2–4, 22–24 … → few · 0, 5–20, 25–30 … → many · fractions → other
+    uk: function (n, i, v) {
+      if (v !== 0) return 'other';
+      var m10 = i % 10, m100 = i % 100;
+      if (m10 === 1 && m100 !== 11) return 'one';
+      if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return 'few';
+      return 'many';
+    },
     // Polish (CLDR): 1 → one · 2–4, 22–24 … → few · 0, 5–21, 25–31 … → many · fractions → other
     pl: function (n, i, v) {
       if (v !== 0) return 'other';
@@ -62,9 +70,10 @@
     zh: ['other'], ja: ['other'], ko: ['other'],
     ru: ['one', 'few', 'many'],   // "other" (fractions) is optional and falls back to "few" (genitive singular)
     pl: ['one', 'few', 'many'],   // "other" (fractions) is optional and falls back to "many"
+    uk: ['one', 'few', 'many'],   // "other" (fractions) is optional and falls back to "few" (genitive singular)
   };
   // Where to look when a form is missing in a text
-  var FALLBACK = { ru: { other: ['few', 'many'] }, pl: { other: ['many', 'few'] } };
+  var FALLBACK = { ru: { other: ['few', 'many'] }, pl: { other: ['many', 'few'] }, uk: { other: ['few', 'many'] } };
 
   // Operands of a number: integer part, count of visible fraction digits, absolute value
   function operands(x) {

@@ -8,7 +8,7 @@
    Data export (whole family as a ZIP – data + documents)
    ----------------------------------------------------------
    The module lives in pb_public/datenexport.js and is only loaded when first opened
-   (own texts in thirteen languages). The browser builds the ZIP; the server only delivers collections
+   (own texts in fourteen languages). The browser builds the ZIP; the server only delivers collections
    and files (pb_hooks/export.pb.js + pinn-export.js).
    - Settings → System → Data: "Export family" (admins, not with child lock)
    - Main admin → Families: "📦 Export" per family (complete, e.g. for moving)
@@ -31,6 +31,8 @@ const PINN_EXPORT_TEXTE = {
   tr: { btn: '📦 Dışa aktar: {F}', kurz: '📦 Dışa aktar', text: 'ZIP dosyası olarak {Fd} tüm verileri – belgeler, fişler ve resimler dahil. Örneğin başka bir NAS\'a taşınmak veya kendi yedeğin için.', laden: 'Dışa aktarım yüklenemedi (pb_public/datenexport.js eksik mi?).', F: 'aile', FW: 'ortak ev', Fd: 'ailenin', FWd: 'ortak evin' },
   // Polish (since 1.132.17, offered in the app since 1.133.0): {F} is the bare noun ("export: family" = "Eksport: rodzina")
   pl: { btn: '📦 Eksport: {F}', kurz: '📦 Eksport', text: 'Wszystkie dane {Fd} jako plik ZIP – razem z dokumentami, paragonami i obrazami. Na przykład do przeniesienia na inny NAS albo jako własna kopia zapasowa.', laden: 'Nie udało się wczytać eksportu (brakuje pb_public/datenexport.js?).', F: 'rodzina', FW: 'wspólne mieszkanie', Fd: 'rodziny', FWd: 'wspólnego mieszkania' },
+  // Ukrainian (since 1.135.17, offered in the app since the release that enables it): {F} is the bare noun ("export: family" = "Експорт: сім’я"), {Fd} the genitive form
+  uk: { btn: '📦 Експорт: {F}', kurz: '📦 Експорт', text: 'Усі дані {Fd} як файл ZIP – разом із документами, чеками та зображеннями. Наприклад, щоб перенести на інший NAS або як власну резервну копію.', laden: 'Не вдалося завантажити експорт (бракує pb_public/datenexport.js?).', F: 'сім’я', FW: 'спільна квартира', Fd: 'сім’ї', FWd: 'спільної квартири' },
 };
 function pinnExportText(key) {
   const l = (window.PINN_I18N && window.PINN_I18N.current) || 'en';

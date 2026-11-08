@@ -24,7 +24,8 @@
   <a href="README.ru.md">🇷🇺 Русский</a> ·
   <a href="README.nl.md">🇳🇱 Nederlands</a> ·
   <a href="README.tr.md">🇹🇷 Türkçe</a> ·
-  <a href="README.pl.md">🇵🇱 Polski</a>
+  <a href="README.pl.md">🇵🇱 Polski</a> ·
+  <a href="README.uk.md">🇺🇦 Українська</a>
 </p>
 
 <p align="center">
@@ -132,56 +133,54 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe e 🇵🇱 Polski**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
-## Novidades da 1.134.0
+## Novidades da 1.135.17
 
-**Painel: fotos de perfil, adulto ou criança**
+**Ucraniano – etapa 18**
 
-- **Adulto ou criança.** Em Ajustes → Membros da família você escolhe “Adulto” ou “Criança” para cada membro. Uma criança tem o controle parental e abre o painel com senha e PIN como antes. Com “Apenas página infantil” a criança só vê a sua página infantil: no painel ela abre com um toque, sem senha e sem PIN; fechar volta à escolha de perfis.
-- **Painel.** As fotos de perfil voltam a aparecer nos círculos e os blocos em volta ficam levemente transparentes.
-- **Observação:** membros que já tinham a página infantil ativada agora contam como “Criança – apenas página infantil”; mude para “Criança” ou “Adulto” quem deve continuar usando o app inteiro.
-- Alterado (servidor): `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js` – a atualização reinicia o PocketBase. App: `js/dashboard.js`, `js/dashboardsitzung.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `js/kinderseite.js`, `js/mitglied.js`, `js/hilfe.js`, `js/sprachen.js`, `js/versionslog.js`, `css/dashboard.css`, `css/mobil.css`, `i18n/*.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`).
+- **Ucraniano.** O assistente de configuração e a exportação de dados já falam ucraniano: todos os guias passo a passo (rede doméstica, DuckDNS, VPN, Google, IA, localização, Home Assistant, apps) e todos os textos da exportação. Os números de emergência da Ucrânia (102, 103, 101 e 112) foram verificados. Há um novo `README.uk.md` curto. O idioma ainda está oculto – no app nada muda.
+- Alterado: `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `README.uk.md`. Sem parte de servidor.
 
-## Novidades da 1.133.0
+## Novidades da 1.135.16
 
-**Polonês liberado**
+**Ucraniano – etapa 17**
 
-- **Polonês.** O polonês agora está disponível para todos: escolha Polski em Ajustes → Idioma e região; se o navegador estiver em polonês, o pinn. o seleciona automaticamente. Todos os 6989 textos do app, as mensagens push do servidor, o assistente de configuração e a exportação de dados estão em polonês. Para a Polônia, os números de emergência são 112, 997, 998 e 999. O pinn. agora fala treze idiomas.
-- Alterado: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), todos os README (lista de idiomas, “treze idiomas”); somente comentários: `pb_public/einrichtung.js`, `pb_public/datenexport.js`, `js/einrichten.js`, `js/exportieren.js`. Sem parte de servidor.
+- **Ucraniano.** Todos os 6994 textos já estão traduzidos, incluindo as notificações push (textos do servidor, termos de república e o país Ucrânia nos hooks de notificação). O idioma ainda está oculto – no app nada muda.
+- Alterado: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
 
-## Novidades da 1.132.17
+## Novidades da 1.135.15
 
-**Polonês – etapa 18**
+**Ucraniano – etapa 16**
 
-- **Polonês.** O assistente de configuração, a exportação de dados e os avisos de configuração na página de login estão traduzidos; há também um README curto em polonês (`README.pl.md`), com link em todos os README. O idioma ainda está oculto e não pode ser escolhido; no app nada muda para você.
-- Alterado: `pb_public/einrichtung.js`, `pb_public/datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), todos os README, novo `README.pl.md`. Sem parte de servidor.
+- **Ucraniano.** O ucraniano foi traduzido mais um pouco: previsão, ajuda e tutorial, cartão da família, membros, mensagens do servidor, SOS, controle por voz e as demais áreas pequenas (6847 de 6994 textos). O idioma ainda está oculto – no app nada muda.
+- Alterado: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Sem parte de servidor.
 
-## Novidades da 1.132.16
+## Novidades da 1.135.14
 
-**Polonês – etapa 17**
+**Ucraniano – etapa 15**
 
-- **Polonês.** Os textos das notificações push estão traduzidos (com isso todos os 6989 textos estão prontos) e os hooks do servidor agora conhecem o polonês (listas de idiomas, país PL, textos, regras de plural e de casa compartilhada). O idioma ainda está oculto e não pode ser escolhido; no app nada muda para você.
-- Alterado: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, todos os README. Parte de servidor (substituir os hooks): `pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js` – o `pinn-setup.sh` os instala e reinicia o PocketBase como de costume.
+- **Ucraniano.** O ucraniano foi traduzido mais um pouco: escola e creche, família (cartões de emergência, localizações) e mural (6404 de 6994 textos). O idioma ainda está oculto – no app nada muda.
+- Alterado: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Sem parte de servidor.
 
-## Novidades da 1.132.15
+## Novidades da 1.135.13
 
-**Polonês – etapa 16**
+**Ucraniano – etapa 14**
 
-- **Polonês.** As demais áreas pequenas (mensagens do servidor, estados federados, revezamento, repetição, avatares, avisos offline) estão traduzidas (6842 de 6989 textos no total). O idioma ainda está oculto e não pode ser escolhido; no app nada muda para você.
-- Alterado: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) e todos os README. Sem parte de servidor.
+- **Ucraniano.** O ucraniano foi traduzido mais um pouco: chat (restante), animais de estimação e locais (compartilhamento de localização, rastreadores GPS) (5958 de 6994 textos). O idioma ainda está oculto – no app nada muda.
+- Alterado: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Sem parte de servidor.
 
-## Novidades da 1.132.14
+## Novidades da 1.135.12
 
-**Polonês – etapa 15**
+**Ucraniano – etapa 13**
 
-- **Polonês.** A casa inteligente, as previsões, a ajuda e o tutorial e o controle por voz estão traduzidos (6727 de 6989 textos no total). O idioma ainda está oculto e não pode ser escolhido; no app nada muda para você.
-- Alterado: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) e todos os README. Sem parte de servidor.
+- **Ucraniano.** O ucraniano foi traduzido mais um pouco: avisos (atividade, caminho de casa, SOS) e chat, primeira parte (5508 de 6994 textos). O idioma ainda está oculto – no app nada muda.
+- Alterado: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Sem parte de servidor.
 
-## Novidades da 1.132.13
+## Novidades da 1.135.11
 
-**Polonês – etapa 14**
+**Ucraniano – etapa 12**
 
-- **Polonês.** O quadro de avisos, o chat e o sino de notificações estão traduzidos (6283 de 6989 textos no total). O idioma ainda está oculto e não pode ser escolhido; no app nada muda para você.
-- Alterado: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) e todos os README. Sem parte de servidor.
+- **Ucraniano.** O ucraniano foi traduzido mais um pouco: casa inteligente, documentos e leitura de PDF (5208 de 6994 textos). O idioma ainda está oculto – no app nada muda.
+- Alterado: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Sem parte de servidor.
 
 ## Como funciona
 
@@ -211,7 +210,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.134.0` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.135.17` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -128,7 +128,7 @@ function langOf(u) {
     let w = {};
     try { w = require(`${__hooks}/pinn-design.js`).readDesign(u).werte || {}; } catch (e) { w = {}; }
     const s = String(w.sprache || "");
-    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl"].indexOf(s) >= 0) return s;
+    if (["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk"].indexOf(s) >= 0) return s;
     if (/^[a-z]{2}$/.test(s)) return "en";
     const land = String(w.land || "").toUpperCase();
     if (["DE", "AT", "CH", "LI", "LU"].indexOf(land) >= 0) return "de";
@@ -143,6 +143,7 @@ function langOf(u) {
     if (["NL", "SR", "AW", "CW", "SX"].indexOf(land) >= 0) return "nl";
     if (["TR"].indexOf(land) >= 0) return "tr";
     if (["PL"].indexOf(land) >= 0) return "pl";
+    if (["UA"].indexOf(land) >= 0) return "uk";
     return "en";
 }
 const T = {
@@ -174,6 +175,9 @@ const T = {
     // Polish: numbers without inflection ("dni: {n}"), pet ages as "wiek: {n}"
     pl: { futter: "Uzupełnij karmnik", futterHeute: "uzupełnij dziś", futterUeber: "zaległe (dni: {n})", leer: "Karmnik prawie pusty", leerText: "Poziom {v} – uzupełnij, proszę.", leerText0: "Uzupełnij, proszę.", heute: "termin dzisiaj", in3: "termin za 3 dni", ueber: "zaległe (dni: {n})", geb: "Dziś urodziny: {name}!", gebAlt: "{name} – wiek: {n} 🐾",
           gebText: "Dziś dodatkowy smakołyk 🦴", mehr: "🐾 Dla waszych zwierząt coś się zbliża", kurzHeute: "dzisiaj", kurzIn3: "za 3 dni", kurzUeber: "zaległe" },
+    // Ukrainian: numbers without inflection (word before the number), pet ages as "вік: {n}"
+    uk: { futter: "Наповнити годівницю", futterHeute: "наповнити сьогодні", futterUeber: "прострочено днів: {n}", leer: "Годівниця майже порожня", leerText: "Рівень {v} – будь ласка, наповни.", leerText0: "Будь ласка, наповни.", heute: "термін – сьогодні", in3: "термін – через 3 дні", ueber: "прострочено днів: {n}", geb: "Сьогодні день народження: {name}!", gebAlt: "{name} – вік: {n} 🐾",
+          gebText: "Сьогодні – додаткові ласощі 🦴", mehr: "🐾 Для твоїх улюбленців є справи", kurzHeute: "сьогодні", kurzIn3: "через 3 дні", kurzUeber: "прострочено" },
 };
 function tx(lang, k, vars) {
     let s = (T[lang] || T.en)[k] || T.en[k] || k;

@@ -24,7 +24,8 @@
   <a href="README.ru.md">🇷🇺 Русский</a> ·
   <a href="README.nl.md">🇳🇱 Nederlands</a> ·
   <a href="README.tr.md">🇹🇷 Türkçe</a> ·
-  <a href="README.pl.md">🇵🇱 Polski</a>
+  <a href="README.pl.md">🇵🇱 Polski</a> ·
+  <a href="README.uk.md">🇺🇦 Українська</a>
 </p>
 
 <p align="center">
@@ -132,56 +133,54 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
-## 1.134.0の新機能
+## 1.135.17の新機能
 
-**ダッシュボード：プロフィール写真、大人または子ども**
+**ウクライナ語 – 第18段階**
 
-- **大人または子ども。** 「設定 → 家族メンバー」で、メンバーごとに「大人」か「子ども」を選べます。子どもにはチャイルドロックがかかり、ダッシュボードではこれまで通りパスワードとPINで開きます。「子どものページのみ」にすると、子どもは自分のページだけを見ます。ダッシュボードではタップひとつで開き、パスワードもPINも不要です。閉じるとプロフィール選択に戻ります。
-- **ダッシュボード。** プロフィール写真が再び円の中に表示され、周りのタイルは少し透けるようになりました。
-- **注意：** すでに子どものページが有効だったメンバーは「子ども – 子どものページのみ」になります。アプリ全体を使い続ける場合は「子ども」または「大人」に切り替えてください。
-- 変更（サーバー）：`pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js` – アップデートでPocketBaseが再起動します。アプリ：`js/dashboard.js`, `js/dashboardsitzung.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `js/kinderseite.js`, `js/mitglied.js`, `js/hilfe.js`, `js/sprachen.js`, `js/versionslog.js`, `css/dashboard.css`, `css/mobil.css`, `i18n/*.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。
+- **ウクライナ語。** セットアップウィザードとデータエクスポートがウクライナ語に対応しました：すべての手順ガイド（ホームネットワーク、DuckDNS、VPN、Google、AI、位置情報、Home Assistant、アプリ）とエクスポートのすべてのテキスト。ウクライナの緊急通報番号（102、103、101、112）を確認しました。短い `README.uk.md` を追加しました。言語はまだ非表示です – アプリには何も変更がありません。
+- 変更：`einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `README.uk.md`. サーバー側の変更はありません。
 
-## 1.133.0の新機能
+## 1.135.16の新機能
 
-**ポーランド語を解放**
+**ウクライナ語——ステージ17**
 
-- **ポーランド語。** ポーランド語がすべての人に使えるようになりました。「設定 → 言語と地域」でPolskiを選べます。ブラウザの言語がポーランド語の場合は、pinn.が自動的に選びます。アプリの全6989件のテキスト、サーバーのプッシュ通知、セットアップアシスタント、データのエクスポートがポーランド語になりました。ポーランドの緊急番号は112、997、998、999です。pinn.は13の言語に対応しました。
-- 変更：`js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)、すべてのREADME（言語リスト、「13の言語」）。コメントのみ：`pb_public/einrichtung.js`、`pb_public/datenexport.js`、`js/einrichten.js`、`js/exportieren.js`。サーバー側の変更はありません。
+- **ウクライナ語。** 全6994件のテキストの翻訳が完了しました（プッシュ通知を含む：サーバーのテキスト、シェアハウス用語、通知フックのウクライナ国設定）。この言語はまだ非表示です。アプリの動作は変わりません。
+- 変更：`i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`。サーバー（フックを置き換え、PocketBaseが再起動します）：`pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`。
 
-## 1.132.17の新機能
+## 1.135.15の新機能
 
-**ポーランド語 ― 第18段階**
+**ウクライナ語——ステージ16**
 
-- **ポーランド語。** セットアップアシスタント、データのエクスポート、ログインページのセットアップの案内を翻訳しました。短いポーランド語のREADME（`README.pl.md`）も追加し、すべてのREADMEからリンクしています。この言語はまだ非表示で選べません。アプリの使い方に変化はありません。
-- 変更：`pb_public/einrichtung.js`, `pb_public/datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)、すべてのREADME、新規 `README.pl.md`。サーバー側の変更はありません。
+- **ウクライナ語。** ウクライナ語の翻訳が進みました：見通し、ヘルプとチュートリアル、家族タイル、メンバー、サーバーのメッセージ、SOS、音声操作、その他の小さな項目（6994件中6847件）。この言語はまだ非表示です。アプリの動作は変わりません。
+- 変更：`i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。サーバー側の変更はありません。
 
-## 1.132.16の新機能
+## 1.135.14の新機能
 
-**ポーランド語 ― 第17段階**
+**ウクライナ語——ステージ15**
 
-- **ポーランド語。** プッシュ通知の文言を翻訳しました（これで全6989件が完了）。サーバーのフックもポーランド語に対応しました（言語リスト、国PL、文言、複数形とルームシェアのルール）。この言語はまだ非表示で選べません。アプリの使い方に変化はありません。
-- 変更：`i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`、すべてのREADME。サーバー側（フックの置き換え）：`pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`。`pinn-setup.sh` がこれまでどおりインストールし、PocketBaseを再起動します。
+- **ウクライナ語。** ウクライナ語の翻訳が進みました：学校・保育園、家族（緊急カード、位置情報）、掲示板（6994件中6404件）。この言語はまだ非表示です。アプリの動作は変わりません。
+- 変更：`i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。サーバー側の変更はありません。
 
-## 1.132.15の新機能
+## 1.135.13の新機能
 
-**ポーランド語 ― 第16段階**
+**ウクライナ語——ステージ14**
 
-- **ポーランド語。** 残りの小さな部分（サーバーメッセージ、州、持ち回り、繰り返し、アバター、オフライン通知）を翻訳しました（累計で全6989件中6842件）。この言語はまだ非表示で選べません。アプリの使い方に変化はありません。
-- 変更：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）、すべてのREADME。サーバー側の変更はありません。
+- **ウクライナ語。** ウクライナ語の翻訳が進みました：チャット（残り）、ペットと場所（位置共有、GPSトラッカー）（6994件中5958件）。この言語はまだ非表示です。アプリの動作は変わりません。
+- 変更：`i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。サーバー側の変更はありません。
 
-## 1.132.14の新機能
+## 1.135.12の新機能
 
-**ポーランド語 ― 第15段階**
+**ウクライナ語——ステージ13**
 
-- **ポーランド語。** スマートホーム、見通し、ヘルプとチュートリアル、音声操作を翻訳しました（累計で全6989件中6727件）。この言語はまだ非表示で選べません。アプリの使い方に変化はありません。
-- 変更：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）、すべてのREADME。サーバー側の変更はありません。
+- **ウクライナ語。** ウクライナ語の翻訳が進みました：通知（アクティビティ、帰宅中、SOS）とチャットの前半（6994件中5508件）。この言語はまだ非表示です。アプリの動作は変わりません。
+- 変更：`i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。サーバー側の変更はありません。
 
-## 1.132.13の新機能
+## 1.135.11の新機能
 
-**ポーランド語 ― 第14段階**
+**ウクライナ語——ステージ12**
 
-- **ポーランド語。** 掲示板、チャット、通知ベルを翻訳しました（累計で全6989件中6283件）。この言語はまだ非表示で選べません。アプリの使い方に変化はありません。
-- 変更：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）、すべてのREADME。サーバー側の変更はありません。
+- **ウクライナ語。** ウクライナ語の翻訳が進みました：スマートホーム、書類、PDFの読み取り（6994件中5208件）。この言語はまだ非表示です。アプリの動作は変わりません。
+- 変更：`i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。サーバー側の変更はありません。
 
 ## しくみ
 
@@ -211,7 +210,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.134.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.135.17`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

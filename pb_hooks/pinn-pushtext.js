@@ -13,14 +13,14 @@
 // placeholders are filled by pinn-textkern.js – the same table the app uses. A flat share uses the variant
 // "<key>#wg" of the language file (created by .github/scripts/i18n-keys.js from the TERMS of js/sprachen.js).
 //
-//  - Language: from the profile (personal design, value "sprache": de, en, fr, es, it, pt, zh, ja, ko, ru, nl, tr, pl). Without one: German.
+//  - Language: from the profile (personal design, value "sprache": de, en, fr, es, it, pt, zh, ja, ko, ru, nl, tr, pl, uk). Without one: German.
 //  - Household type: from the family settings (field "wohnform": 'familie' or 'wg'). Only this one field is read
 //    via SQL (json_extract), not the big family data; the result stays cached until the family data changes.
 //  - Freely entered content (names, event titles, note texts, addresses) stays unchanged. Whatever matches no
 //    pattern stays as it is (German, or already translated by the module itself) – an unknown message is never lost.
 //    For a flat share such texts still get the flat share terms (applyTerms, same rules as TERMS in js/sprachen.js).
 
-const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl"];
+const LANGS = ["de", "en", "fr", "es", "it", "pt", "zh", "ja", "ko", "ru", "nl", "tr", "pl", "uk"];
 
 // ---------------------------------------------------------------------------------------------
 // Language and household type of the recipient
@@ -90,6 +90,13 @@ function plDet(stem, end) {
     return stem === "twoj" ? "twoim" : stem + "ym";
 }
 const PL_L = "A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9";
+// Ukrainian (since 1.135.16): "сім’я" -> "квартира", "член сім’ї" -> "співмешканець" in the same case (same tables as
+// .github/scripts/i18n-keys.js). No Unicode lookbehind and no \p{L} in this engine: explicit Cyrillic letter class,
+// a captured character in front (re-inserted) and a lookahead behind the word.
+const UK_MATE = { "": "співмешканець", "а": "співмешканця", "у": "співмешканцю", "ом": "співмешканцем", "і": "співмешканці", "ові": "співмешканцеві",
+    "и": "співмешканці", "ів": "співмешканців", "ам": "співмешканцям", "ами": "співмешканцями", "ах": "співмешканцях" };
+const UK_FLAT = { "я": "а", "ї": "и", "ю": "у", "єю": "ою", "ям": "ам", "ями": "ами", "ях": "ах", "ей": "" };
+const UK_L = "А-Яа-яЁёІіЇїЄєҐґ";
 const TERMS = {
     de: { keep: /Familienstammbuch|Familienkutsche/g, rules: [
         [/\b([Jj])edes Familienmitglied\b/g, "$1eder Mitbewohner"],
@@ -221,8 +228,22 @@ const TERMS = {
         // "w" / "z" in front of the new words need a vowel ("w wspolnym" -> "we wspolnym")
         [/(^|[^A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9])([WwZz]) (wspóln[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż]*|współlokator[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż]*)/g, (m, pre, c, word) => pre + c + "e " + word],
     ] },
+    // Ukrainian (since 1.135.16): same rules as the app (TERMS.uk in .github/scripts/i18n-keys.js), written without lookbehind
+    uk: { keep: /[Сс]імейн[А-Яа-яЁёІіЇїЄєҐґ]*\s+(?:лікар|автомобіл|авто|бюджет)[А-Яа-яЁёІіЇїЄєҐґ]*/g, rules: [
+        [/(^|[^А-Яа-яЁёІіЇїЄєҐґ0-9])([Чч])лен(|а|у|ом|і|ові|и|ів|ам|ами|ах)(\s+(?:вашої|твоєї|нашої|цієї|своєї|усієї|всієї|цілої|кожної)?\s*)сім[’'ʼ]ї(?![А-Яа-яЁёІіЇїЄєҐґ0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "Ч", UK_MATE[end])],
+        [/(^|[^А-Яа-яЁёІіЇїЄєҐґ0-9])([Уу]|[Вв]|[Пп]ри|[Нн]а|[Пп]о)(\s+(?:вашій|твоїй|нашій|цій|своїй|усій|всій|цілій|кожній)?\s*)сім[’'ʼ]ї(?![А-Яа-яЁёІіЇїЄєҐґ0-9])/g,
+            (m, pre, prep, det) => pre + prep + det + "квартирі"],
+        [/(^|[^А-Яа-яЁёІіЇїЄєҐґ0-9])([Сс])ім[’'ʼ](я|ї|ю|єю|ям|ями|ях)(?![А-Яа-яЁёІіЇїЄєҐґ0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "С", "квартир" + UK_FLAT[end])],
+        [/(^|[^А-Яа-яЁёІіЇїЄєҐґ0-9])([Сс])імей(?![А-Яа-яЁёІіЇїЄєҐґ0-9])/g, (m, pre, c) => pre + cap(c === "С", "квартир")],
+        [/(^|[^А-Яа-яЁёІіЇїЄєҐґ0-9])([Сс])імейн(ий|а|е|і|ого|ому|ої|ій|ім|им|их|у|ою|ими)(?![А-Яа-яЁёІіЇїЄєҐґ0-9])/g,
+            (m, pre, c, end) => pre + cap(c === "С", "спільн" + end)],
+        // "з" before the new words needs a vowel ("з співмешканцями" -> "зі співмешканцями")
+        [/(^|[^А-Яа-яЁёІіЇїЄєҐґ0-9])([Зз]) (співмешканц[А-Яа-яЁёІіЇїЄєҐґ]*|спільн[А-Яа-яЁёІіЇїЄєҐґ]*)/g, (m, pre, c, word) => pre + c + "і " + word],
+    ] },
 };
-const TERM_HINT = /[Aa]ile|[Ff]amil|[Ff]am\u00EDli|[Ff]amigli|\u5BB6\u5EAD|\u5168\u5BB6|\u5BB6\u65CF|\uAC00\uC871|\uD83D\uDC68\u200D\uD83D\uDC69|[\u0421\u0441]\u0435\u043C|[\u0427\u0447]\u043B\u0435\u043D|[Rr]odzin|[Cc]z\u0142on/;
+const TERM_HINT = /[Aa]ile|[Ff]amil|[Ff]am\u00EDli|[Ff]amigli|\u5BB6\u5EAD|\u5168\u5BB6|\u5BB6\u65CF|\uAC00\uC871|\uD83D\uDC68\u200D\uD83D\uDC69|[\u0421\u0441]\u0435\u043C|[\u0427\u0447]\u043B\u0435\u043D|[Rr]odzin|[Cc]z\u0142on|[\u0421\u0441]\u0456\u043C/;
 function applyTerms(s, lang) {
     const T = TERMS[lang] || TERMS.de;
     if (!s || !TERM_HINT.test(s)) return s;

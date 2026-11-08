@@ -120,6 +120,7 @@ const T = {
     nl: { titel: "🧳 Paklijst maken voor “{t}”?", heute: "Het begint vandaag", morgen: "Het begint morgen", tage: "Het begint over {n} dagen", text: "{w} – tik om de lijst te maken met de data al ingevuld." },
     tr: { titel: "🧳 “{t}” için bavul listesi oluşturulsun mu?", heute: "Bugün başlıyor", morgen: "Yarın başlıyor", tage: "{n} gün sonra başlıyor", text: "{w} – dokun, tarihler zaten doldurulmuş olarak oluşturulsun." },
     pl: { titel: "🧳 Utworzyć listę pakowania dla „{t}”?", heute: "Zaczyna się dzisiaj", morgen: "Zaczyna się jutro", tage: "Zaczyna się za {n} dni", text: "{w} – dotknij, a lista powstanie od razu z datami." },
+    uk: { titel: "🧳 Створити список речей для «{t}»?", heute: "Виїзд сьогодні", morgen: "Виїзд завтра", tage: "Виїзд через {n} дн.", text: "{w} – торкнись, щоб створити список із уже заповненими датами." },
 };
 function tx(lang, k, vars) {
     let s = (T[lang] || T.en)[k] || T.en[k];

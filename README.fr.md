@@ -24,7 +24,8 @@
   <a href="README.ru.md">🇷🇺 Русский</a> ·
   <a href="README.nl.md">🇳🇱 Nederlands</a> ·
   <a href="README.tr.md">🇹🇷 Türkçe</a> ·
-  <a href="README.pl.md">🇵🇱 Polski</a>
+  <a href="README.pl.md">🇵🇱 Polski</a> ·
+  <a href="README.uk.md">🇺🇦 Українська</a>
 </p>
 
 <p align="center">
@@ -128,84 +129,82 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe et 🇵🇱 Polski**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
-## Nouveautés de la 1.134.0
+## Nouveautés de la 1.135.17
 
-**Tableau de bord : photos de profil, adulte ou enfant**
+**Ukrainien – étape 18**
 
-- **Adulte ou enfant.** Dans Réglages → Membres de la famille, tu choisis « Adulte » ou « Enfant » pour chaque membre. Un enfant a le contrôle parental et ouvre le tableau de bord avec mot de passe et code PIN comme avant. Avec « Page enfant uniquement », l’enfant ne voit que sa page enfant : au tableau de bord elle s’ouvre d’un appui, sans mot de passe ni code PIN ; la fermer ramène à la sélection des profils.
-- **Tableau de bord.** Les photos de profil s’affichent de nouveau dans les cercles et les tuiles autour sont légèrement transparentes.
-- **Remarque :** les membres dont la page enfant était déjà activée comptent désormais comme « Enfant – page enfant uniquement » ; passe-les en « Enfant » ou « Adulte » s’ils doivent garder toute l’appli.
-- Modifié (serveur) : `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js` – la mise à jour redémarre PocketBase. Appli : `js/dashboard.js`, `js/dashboardsitzung.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `js/kinderseite.js`, `js/mitglied.js`, `js/hilfe.js`, `js/sprachen.js`, `js/versionslog.js`, `css/dashboard.css`, `css/mobil.css`, `i18n/*.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`).
+- **Ukrainien.** L’assistant de configuration et l’export des données parlent désormais ukrainien : tous les guides pas à pas (réseau domestique, DuckDNS, VPN, Google, IA, localisation, Home Assistant, applis) et tous les textes de l’export. Les numéros d’urgence ukrainiens (102, 103, 101 et 112) ont été vérifiés. Un court `README.uk.md` est nouveau. La langue est encore masquée – rien ne change dans l’appli.
+- Modifié : `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `README.uk.md`. Pas de partie serveur.
 
-## Nouveautés de la 1.133.0
+## Nouveautés de la 1.135.16
 
-**Polonais activé**
+**Ukrainien – étape 17**
 
-- **Polonais.** Le polonais est désormais disponible pour tous : choisis Polski dans Réglages → Langue et région ; si le navigateur est en polonais, pinn. le sélectionne automatiquement. Les 6989 textes de l’appli, les messages push du serveur, l’assistant d’installation et l’export des données sont en polonais. Pour la Pologne, les numéros d’urgence sont 112, 997, 998 et 999. pinn. parle donc treize langues.
-- Modifié : `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), tous les README (liste des langues, « treize langues ») ; commentaires uniquement : `pb_public/einrichtung.js`, `pb_public/datenexport.js`, `js/einrichten.js`, `js/exportieren.js`. Pas de partie serveur.
+- **Ukrainien.** Les 6994 textes sont désormais traduits, y compris les notifications push (textes du serveur, termes de colocation et pays Ukraine dans les hooks de notification). La langue est encore masquée – rien ne change dans l’appli.
+- Modifié : `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
 
-## Nouveautés de la 1.132.17
+## Nouveautés de la 1.135.15
 
-**Polonais – étape 18**
+**Ukrainien – étape 16**
 
-- **Polonais.** L’assistant d’installation, l’export des données et les messages d’installation de la page de connexion sont traduits ; il y a aussi un court README en polonais (`README.pl.md`), lié depuis tous les README. La langue est encore masquée et ne peut pas encore être choisie ; rien ne change dans l’appli pour toi.
-- Modifié : `pb_public/einrichtung.js`, `pb_public/datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), tous les README, nouveau `README.pl.md`. Pas de partie serveur.
+- **Ukrainien.** L’ukrainien est traduit plus loin : aperçu, aide et tutoriel, tuile famille, membres, messages du serveur, SOS, commande vocale et les derniers petits domaines (6847 textes sur 6994). La langue est encore masquée – rien ne change dans l’appli.
+- Modifié : `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Pas de partie serveur.
 
-## Nouveautés de la 1.132.16
+## Nouveautés de la 1.135.14
 
-**Polonais – étape 17**
+**Ukrainien – étape 15**
 
-- **Polonais.** Les textes des notifications push sont traduits (les 6989 textes sont donc terminés) et les hooks du serveur connaissent désormais le polonais (listes de langues, pays PL, textes, règles de pluriel et de colocation). La langue est encore masquée et ne peut pas encore être choisie ; rien ne change dans l’appli pour toi.
-- Modifié : `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, tous les README. Partie serveur (remplacer les hooks) : `pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js` – `pinn-setup.sh` les installe et redémarre PocketBase comme d’habitude.
+- **Ukrainien.** L’ukrainien est traduit plus loin : école et crèche, famille (cartes d’urgence, positions) et tableau d’affichage (6404 textes sur 6994). La langue est encore masquée – rien ne change dans l’appli.
+- Modifié : `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Pas de partie serveur.
 
-## Nouveautés de la 1.132.15
+## Nouveautés de la 1.135.13
 
-**Polonais – étape 16**
+**Ukrainien – étape 14**
 
-- **Polonais.** Les autres petites zones (messages du serveur, Länder, rotation, répétition, avatars, avis hors ligne) sont traduites (6842 textes sur 6989 au total). La langue est encore masquée et ne peut pas encore être choisie ; rien ne change dans l’appli pour toi.
-- Modifié : `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) et tous les README. Pas de partie serveur.
+- **Ukrainien.** L’ukrainien est traduit plus loin : chat (suite), animaux et lieux (partage de position, traceurs GPS) (5958 textes sur 6994). La langue est encore masquée – rien ne change dans l’appli.
+- Modifié : `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Pas de partie serveur.
 
-## Nouveautés de la 1.132.14
+## Nouveautés de la 1.135.12
 
-**Polonais – étape 15**
+**Ukrainien – étape 13**
 
-- **Polonais.** La maison connectée, les perspectives, l’aide et le tutoriel ainsi que la commande vocale sont traduits (6727 textes sur 6989 au total). La langue est encore masquée et ne peut pas encore être choisie ; rien ne change dans l’appli pour toi.
-- Modifié : `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) et tous les README. Pas de partie serveur.
+- **Ukrainien.** L’ukrainien est traduit plus loin : notifications (activité, trajet vers la maison, SOS) et chat, première partie (5508 textes sur 6994). La langue est encore masquée – rien ne change dans l’appli.
+- Modifié : `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Pas de partie serveur.
 
-## Nouveautés de la 1.132.13
+## Nouveautés de la 1.135.11
 
-**Polonais – étape 14**
+**Ukrainien – étape 12**
 
-- **Polonais.** Le tableau d’affichage, le chat et la cloche de notifications sont traduits (6283 textes sur 6989 au total). La langue est encore masquée et ne peut pas encore être choisie ; rien ne change dans l’appli pour toi.
-- Modifié : `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) et tous les README. Pas de partie serveur.
+- **Ukrainien.** L’ukrainien est traduit plus loin : maison connectée, documents et lecture de PDF (5208 textes sur 6994). La langue est encore masquée – rien ne change dans l’appli.
+- Modifié : `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Pas de partie serveur.
 
-## Nouveautés de la 1.132.12
+## Nouveautés de la 1.135.10
 
-**Polonais – étape 13**
+**Ukrainien – étape 11**
 
-- **Polonais.** Famille, membres, tuile famille, localisation, SOS et « Tu es où ? » sont traduits (5779 textes sur 6989 au total). La langue est encore masquée et ne peut pas encore être choisie ; rien ne change dans l’appli pour toi.
-- Modifié : `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) et tous les README. Pas de partie serveur.
+- **Ukrainien.** L’ukrainien est traduit plus loin : véhicules (plein et recharge, consommation, garage, pneus, contrôle technique/entretien, plaque d’assurance, calculateurs) (4760 textes sur 6994). La langue est encore masquée – rien ne change dans l’appli.
+- Modifié : `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Pas de partie serveur.
 
-## Nouveautés de la 1.132.11
+## Nouveautés de la 1.135.9
 
-**Polonais – étape 12**
+**Ukrainien – étape 10**
 
-- **Polonais.** Documents, lecture de PDF, animaux de compagnie ainsi qu’école et crèche sont traduits (5326 textes sur 6989 au total). La langue est encore masquée et ne peut pas encore être choisie ; rien ne change dans l’appli pour toi.
-- Modifié : `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) et tous les README. Pas de partie serveur.
+- **Ukrainien.** L’ukrainien est traduit plus loin : maison, deuxième partie (plan d’entretien, compteurs, plantes, loyer, achat et financement, conseils météo) (4290 textes sur 6994). La langue est encore masquée – rien ne change dans l’appli.
+- Modifié : `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Pas de partie serveur.
 
-## Nouveautés de la 1.132.10
+## Nouveautés de la 1.135.8
 
-**Polonais – étape 11**
+**Ukrainien – étape 9**
 
-- **Polonais.** Les véhicules (carburant et recharge, garage, contrôle technique, pneus, assurance, calculateurs) sont traduits (4755 textes sur 6989 au total). La langue est encore masquée et ne peut pas encore être choisie ; rien ne change dans l’appli pour toi.
-- Modifié : `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) et tous les README. Pas de partie serveur.
+- **Ukrainien.** L’ukrainien est traduit plus loin : maison, première partie (adresses, compteurs, loyer, défauts, clés, charges fixes, cultures du jardin) (3965 textes sur 6994). La langue est encore masquée – rien ne change dans l’appli.
+- Modifié : `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Pas de partie serveur.
 
-## Nouveautés de la 1.132.9
+## Nouveautés de la 1.135.7
 
-**Polonais – étape 10**
+**Ukrainien – étape 8**
 
-- **Polonais.** La seconde moitié de la section Logement (plan d’entretien, plantes et pelouse, rénovation, location, conseils fiscaux) est traduite (4285 textes sur 6989 au total). La langue est encore masquée et ne peut pas encore être choisie ; rien ne change dans l’appli pour toi.
-- Modifié : `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`) et tous les README. Pas de partie serveur.
+- **Ukrainien.** L’ukrainien est traduit plus loin : contrats et portefeuilles titres (3640 textes sur 6994). La langue est encore masquée – rien ne change dans l’appli.
+- Modifié : `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Pas de partie serveur.
 
 ## Comment ça marche
 
@@ -233,7 +232,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.134.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.135.17` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

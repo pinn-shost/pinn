@@ -12,7 +12,7 @@
    (pb_hooks/export.pb.js + pinn-export.js). Files are taken over uncompressed (PDFs and photos
    are already compressed), the JSON data is compressed – where the browser can do it.
    Own texts in German, English, French, Spanish, Italian, Portuguese, Chinese,
-   Japanese, Korean, Russian, Dutch, Turkish and Polish (data-no-i18n / data-no-term).
+   Japanese, Korean, Russian, Dutch, Turkish, Polish and Ukrainian (data-no-i18n / data-no-term).
 
    Structure of the ZIP:
      pinn-export.json                 description: format, version, family, content, file list
@@ -24,7 +24,7 @@
   'use strict';
   if (window.PinnExport) return;
 
-  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl', 'tr', 'pl'];
+  var LANGS = ['de', 'en', 'fr', 'es', 'it', 'pt', 'zh', 'ja', 'ko', 'ru', 'nl', 'tr', 'pl', 'uk'];
   var T = {};
   T.de = {
     F: 'Familie', FW: 'WG', Fd: 'der Familie', FWd: 'der WG',
@@ -843,6 +843,58 @@
       "Przechowuj go bezpiecznie.",
     ],
   };
+  T.uk = {
+    F: "сім’я", FW: "спільна квартира", Fd: "сім’ї", FWd: "спільної квартири",
+    titel: "Експорт: {F}",
+    intro: "Усі дані {Fd} як файл ZIP – разом із документами, чеками та зображеннями. Наприклад, щоб перенести на інший NAS або як власну резервну копію.",
+    lade: "Перевірка вмісту …", fehler: "Не вийшло.",
+    fehlerNetz: "Немає зв’язку з pinn. – переконайся, що ти в домашній мережі або через VPN.",
+    serverFehlt: "На сервері ще немає export.pb.js і pinn-export.js (pb_hooks).",
+    familieWaehlen: "Обери зі списку ({F})", inhalt: "Що потрапить до ZIP", eintraege: "Записи: {0}", dateienN: "Файли: {0}",
+    dokumente: "Файлів загалом", groesse: "Розмір (прибл.)",
+    nichtDrin: "Не включено",
+    nichtDrinText: "Паролі, PIN-коди, дані доступу до iCloud, Google і Home Assistant, виконані входи на пристроях і підписки на push-сповіщення. На іншому NAS ти просто увійдеш знову. Історія місцезнаходження з Traccar також не включена.",
+    privat: "Не включено, бо приватне: каси, учасником яких ти не є (кількість: {0}), та календарі «Лише для мене» інших профілів (кількість: {1}). Повний експорт – наприклад, для переїзду – створює головний адміністратор.",
+    voll: "Повний експорт – разом із приватними касами та календарями «Лише для мене» всіх профілів.",
+    sicherheit: "ZIP містить фінанси, документи та екстрені картки без шифрування. Зберігай його надійно й не надсилай е-поштою.",
+    gross: "Це приблизно {0}. На телефоні це може тривати доволі довго – краще експортувати на комп’ютері й тримати pinn. відкритим.",
+    starten: "Створити ZIP", abbrechen: "Скасувати", schliessen: "Закрити", nochmal: "Спробувати ще раз",
+    schrittDaten: "Дані: {0}", schrittDatei: "Файл {0} з {1}", packe: "Збирання ZIP …",
+    offenLassen: "Тримай pinn. відкритим, доки експорт не завершиться.",
+    fertig: "Експорт завершено ✓", fertigText: "Записи: {0} · файли: {1} · {2}",
+    speichern: "Зберегти ZIP", teilen: "Поділитися або зберегти у «Файли»",
+    speichernTipp: "iPhone/iPad: «Поділитися» → «Зберегти у «Файли»». Комп’ютер: «Зберегти ZIP» кладе файл у теку завантажень.",
+    fehlende: "Не вдалося прочитати файли (кількість: {0}) – вони перелічені у файлі export-fehler.txt усередині ZIP.",
+    abgebrochen: "Експорт скасовано.", zuGross: "Експорт більший за 4 ГБ – звичайний ZIP стільки не вмістить.",
+    keinAdmin: "Створювати експорт можуть лише адміністратори.",
+    S: {
+      familien: "{F}", benutzer: "Профілі", familien_daten: "Календар, списки, рецепти, учасники й налаштування",
+      rezept_bilder: "Зображення рецептів", oeffentliche_rezepte: "Спільні рецепти", aufgaben: "Завдання",
+      haushalt_verlauf: "Історія домашніх справ", kassen: "Каси, портфелі та договори", ausgaben: "Операції",
+      finanz_dokumente: "Документи договорів", dokumente: "Документи", pinnwand_bilder: "Зображення з дошки",
+      kalender_eigene: "Власні календарі", kalender_termine: "Події", muellkalender: "Календар вивезення сміття",
+      ortung: "Місця й місцезнаходження", zuhause: "Дім", smarthome_zugaenge: "Розумний дім",
+      dashboard_hintergruende: "Панель", apple_zugaenge: "iCloud", google_zugaenge: "Google",
+    },
+    liesmich: "README.txt",
+    readme: [
+      "pinn. – експорт даних",
+      "",
+      "{F}: {0}",
+      "Створено: {1}, ким: {2} (pinn. {3})",
+      "",
+      "Вміст:",
+      "  pinn-export.json  опис експорту (формат, вміст, список файлів)",
+      "  daten/            усі записи кожної колекції як JSON (так, як у PocketBase)",
+      "  dateien/          документи, чеки та зображення: dateien/<колекція>/<ідентифікатор запису>/<файл>",
+      "",
+      "Не включено: паролі, PIN-коди, дані доступу (iCloud, Google, Home Assistant),",
+      "виконані входи на пристроях, підписки на push-сповіщення та історію місцезнаходження з Traccar.",
+      "",
+      "Увага: цей файл містить фінанси, документи та екстрені картки без шифрування.",
+      "Зберігай його надійно.",
+    ],
+  };
 
   var S = { opts: {}, lang: 'en', wg: false, info: null, familie: '', laeuft: false, abbruch: false, ergebnis: null, url: '' };
 
@@ -871,7 +923,7 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
-  function locale() { return { de: 'de-DE', en: 'en-GB', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', pt: 'pt-BR', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR', ru: 'ru-RU', nl: 'nl-NL', tr: 'tr-TR', pl: 'pl-PL' }[S.lang] || 'en-GB'; }
+  function locale() { return { de: 'de-DE', en: 'en-GB', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', pt: 'pt-BR', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR', ru: 'ru-RU', nl: 'nl-NL', tr: 'tr-TR', pl: 'pl-PL', uk: 'uk-UA' }[S.lang] || 'en-GB'; }
   function zahl(n) { try { return Number(n || 0).toLocaleString(locale()); } catch (e) { return String(n || 0); } }
   function groesse(b) {
     b = Number(b) || 0;

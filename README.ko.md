@@ -24,6 +24,7 @@
   <a href="README.nl.md">🇳🇱 Nederlands</a> ·
   <a href="README.tr.md">🇹🇷 Türkçe</a> ·
   <a href="README.pl.md">🇵🇱 Polski</a> ·
+  <a href="README.uk.md">🇺🇦 Українська</a> ·
   <b>🇰🇷 한국어</b>
 </p>
 
@@ -132,56 +133,54 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
-## 1.134.0의 새 소식
+## 1.135.17의 새 소식
 
-**대시보드: 프로필 사진, 어른 또는 아이**
+**우크라이나어 – 18단계**
 
-- **어른 또는 아이.** 설정 → 가족 구성원에서 구성원마다 ‘어른’ 또는 ‘아이’를 고를 수 있어요. 아이는 아이 보호 잠금이 켜지고, 대시보드는 지금처럼 비밀번호와 PIN으로 열어요. ‘아이 페이지만’을 켜면 아이는 자기 아이 페이지만 봐요. 대시보드에서는 한 번 탭하면 열리고 비밀번호도 PIN도 필요 없어요. 닫으면 프로필 선택으로 돌아가요.
-- **대시보드.** 프로필 사진이 다시 원 안에 보이고, 둘레의 타일은 살짝 비쳐 보여요.
-- **참고:** 아이 페이지가 이미 켜져 있던 구성원은 이제 ‘아이 – 아이 페이지만’이에요. 앱 전체를 계속 써야 한다면 ‘아이’나 ‘어른’으로 바꿔 주세요.
-- 변경(서버): `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js` – 업데이트하면 PocketBase가 다시 시작돼요. 앱: `js/dashboard.js`, `js/dashboardsitzung.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `js/kinderseite.js`, `js/mitglied.js`, `js/hilfe.js`, `js/sprachen.js`, `js/versionslog.js`, `css/dashboard.css`, `css/mobil.css`, `i18n/*.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`).
+- **우크라이나어.** 설정 마법사와 데이터 내보내기가 이제 우크라이나어를 지원합니다: 모든 단계별 안내(홈 네트워크, DuckDNS, VPN, Google, AI, 위치, Home Assistant, 앱)와 내보내기의 모든 텍스트. 우크라이나 긴급 전화번호(102, 103, 101, 112)를 확인했습니다. 짧은 `README.uk.md`가 새로 추가되었습니다. 언어는 아직 숨겨져 있어 앱에서는 바뀌는 것이 없습니다.
+- 변경: `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `README.uk.md`. 서버 부분은 없습니다.
 
-## 1.133.0의 새 소식
+## 1.135.16의 새 소식
 
-**폴란드어 공개**
+**우크라이나어 – 17단계**
 
-- **폴란드어.** 이제 폴란드어를 누구나 쓸 수 있어요. 설정 → 언어 및 지역에서 Polski를 고르면 돼요. 브라우저 언어가 폴란드어이면 pinn.이 자동으로 골라요. 앱의 6989개 문구 전체, 서버의 푸시 알림, 설정 도우미, 데이터 내보내기가 폴란드어로 제공돼요. 폴란드의 긴급 번호는 112, 997, 998, 999예요. 이제 pinn.은 13개 언어를 지원해요.
-- 변경: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), 모든 README(언어 목록, “13개 언어”). 주석만: `pb_public/einrichtung.js`, `pb_public/datenexport.js`, `js/einrichten.js`, `js/exportieren.js`. 서버 쪽 변경은 없어요.
+- **우크라이나어.** 6994개 텍스트가 모두 번역됐어요. 푸시 알림도 포함돼요(서버 텍스트, 셰어하우스 용어, 알림 훅의 우크라이나 국가 설정). 이 언어는 아직 숨겨져 있어요. 앱에서 달라지는 것은 없어요.
+- 변경: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`. 서버(훅 교체, PocketBase 재시작): `pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
 
-## 1.132.17의 새 소식
+## 1.135.15의 새 소식
 
-**폴란드어 – 18단계**
+**우크라이나어 – 16단계**
 
-- **폴란드어.** 설정 도우미, 데이터 내보내기, 로그인 화면의 설정 안내를 번역했어요. 짧은 폴란드어 README(`README.pl.md`)도 추가했고, 모든 README에서 링크해요. 이 언어는 아직 숨겨져 있어 선택할 수 없고, 앱에서 달라지는 점은 없어요.
-- 변경: `pb_public/einrichtung.js`, `pb_public/datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), 모든 README, 새 파일 `README.pl.md`. 서버 쪽 변경은 없어요.
+- **우크라이나어.** 우크라이나어 번역이 더 진행됐어요: 전망, 도움말과 튜토리얼, 가족 타일, 구성원, 서버 메시지, SOS, 음성 제어 및 나머지 작은 영역(6994개 중 6847개). 이 언어는 아직 숨겨져 있어요. 앱에서 달라지는 것은 없어요.
+- 변경: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). 서버 변경 없음.
 
-## 1.132.16의 새 소식
+## 1.135.14의 새 소식
 
-**폴란드어 – 17단계**
+**우크라이나어 – 15단계**
 
-- **폴란드어.** 푸시 알림 문구를 번역했어요(이로써 6989개가 모두 끝났어요). 서버 훅도 이제 폴란드어를 알아요(언어 목록, 국가 PL, 문구, 복수형과 셰어하우스 규칙). 이 언어는 아직 숨겨져 있어 선택할 수 없고, 앱에서 달라지는 점은 없어요.
-- 변경: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, 모든 README. 서버 쪽(훅 교체): `pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js` – `pinn-setup.sh`가 평소처럼 설치하고 PocketBase를 다시 시작해요.
+- **우크라이나어.** 우크라이나어 번역이 더 진행됐어요: 학교·어린이집, 가족(응급 카드, 위치), 게시판(6994개 중 6404개). 이 언어는 아직 숨겨져 있어요. 앱에서 달라지는 것은 없어요.
+- 변경: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). 서버 변경 없음.
 
-## 1.132.15의 새 소식
+## 1.135.13의 새 소식
 
-**폴란드어 – 16단계**
+**우크라이나어 – 14단계**
 
-- **폴란드어.** 남은 작은 영역(서버 메시지, 주, 순번, 반복, 아바타, 오프라인 안내)을 번역했어요(누적 6989개 중 6842개). 이 언어는 아직 숨겨져 있어 선택할 수 없고, 앱에서 달라지는 점은 없어요.
-- 변경: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`(`index.html`), 모든 README. 서버 쪽 변경은 없어요.
+- **우크라이나어.** 우크라이나어 번역이 더 진행됐어요: 채팅(나머지), 반려동물과 장소(위치 공유, GPS 트래커)(6994개 중 5958개). 이 언어는 아직 숨겨져 있어요. 앱에서 달라지는 것은 없어요.
+- 변경: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). 서버 변경 없음.
 
-## 1.132.14의 새 소식
+## 1.135.12의 새 소식
 
-**폴란드어 – 15단계**
+**우크라이나어 – 13단계**
 
-- **폴란드어.** 스마트홈, 전망, 도움말과 튜토리얼, 음성 제어를 번역했어요(누적 6989개 중 6727개). 이 언어는 아직 숨겨져 있어 선택할 수 없고, 앱에서 달라지는 점은 없어요.
-- 변경: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`(`index.html`), 모든 README. 서버 쪽 변경은 없어요.
+- **우크라이나어.** 우크라이나어 번역이 더 진행됐어요: 알림(활동, 귀가 중, SOS)과 채팅 1부(6994개 중 5508개). 이 언어는 아직 숨겨져 있어요. 앱에서 달라지는 것은 없어요.
+- 변경: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). 서버 변경 없음.
 
-## 1.132.13의 새 소식
+## 1.135.11의 새 소식
 
-**폴란드어 – 14단계**
+**우크라이나어 – 12단계**
 
-- **폴란드어.** 게시판, 채팅, 알림 종을 번역했어요(누적 6989개 중 6283개). 이 언어는 아직 숨겨져 있어 선택할 수 없고, 앱에서 달라지는 점은 없어요.
-- 변경: `i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`(`index.html`), 모든 README. 서버 쪽 변경은 없어요.
+- **우크라이나어.** 우크라이나어 번역이 더 진행됐어요: 스마트홈, 문서 및 PDF 읽기(6994개 중 5208개). 이 언어는 아직 숨겨져 있어요. 앱에서 달라지는 것은 없어요.
+- 변경: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). 서버 변경 없음.
 
 ## 작동 방식
 
@@ -211,7 +210,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.134.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.135.17` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

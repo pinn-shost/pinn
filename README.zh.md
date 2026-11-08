@@ -24,7 +24,8 @@
   <a href="README.ru.md">🇷🇺 Русский</a> ·
   <a href="README.nl.md">🇳🇱 Nederlands</a> ·
   <a href="README.tr.md">🇹🇷 Türkçe</a> ·
-  <a href="README.pl.md">🇵🇱 Polski</a>
+  <a href="README.pl.md">🇵🇱 Polski</a> ·
+  <a href="README.uk.md">🇺🇦 Українська</a>
 </p>
 
 <p align="center">
@@ -132,56 +133,54 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe和 🇵🇱 Polski**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
-## 1.134.0 新功能
+## 1.135.17 新功能
 
-**家庭面板：头像、成人或儿童**
+**乌克兰语——第 18 阶段**
 
-- **成人或儿童。** 在“设置 → 家庭成员”中，可以为每位成员选择“成人”或“儿童”。儿童启用儿童锁，在家庭面板上照旧使用密码和 PIN。选择“仅儿童页面”后，孩子只能看到自己的儿童页面：在家庭面板上轻点即可打开，无需密码和 PIN；关闭后返回账户选择。
-- **家庭面板。** 头像重新显示在圆圈中，周围的卡片略微透明。
-- **注意：** 已开启儿童页面的成员现在算作“儿童 – 仅儿童页面”；如需继续使用完整应用，请改为“儿童”或“成人”。
-- 更改（服务器）：`pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js` —— 更新会重启 PocketBase。应用：`js/dashboard.js`, `js/dashboardsitzung.js`, `js/profilauswahl.js`, `js/einstellungen.js`, `js/kinderseite.js`, `js/mitglied.js`, `js/hilfe.js`, `js/sprachen.js`, `js/versionslog.js`, `css/dashboard.css`, `css/mobil.css`, `i18n/*.i18n.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。
+- **乌克兰语。** 设置向导和数据导出现已支持乌克兰语：所有分步指南（家庭网络、DuckDNS、VPN、Google、AI、位置、Home Assistant、应用）以及全部导出文本。已核对乌克兰紧急电话号码（102、103、101 和 112）。新增简短的 `README.uk.md`。该语言仍处于隐藏状态——应用中不会有任何变化。
+- 更改：`einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `README.uk.md`. 无服务器部分。
 
-## 1.133.0 新功能
+## 1.135.16 新功能
 
-**波兰语已开放**
+**乌克兰语——第 17 阶段**
 
-- **波兰语。** 波兰语现已向所有人开放：在“设置 → 语言和地区”中选择 Polski；如果浏览器语言是波兰语，pinn. 会自动选用。应用的全部 6989 条文本、服务器的推送消息、设置向导和数据导出均已提供波兰语。波兰的紧急号码为 112、997、998 和 999。pinn. 现在支持十三种语言。
-- 更改：`js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)、所有 README（语言列表、“十三种语言”）；仅注释：`pb_public/einrichtung.js`、`pb_public/datenexport.js`、`js/einrichten.js`、`js/exportieren.js`。无服务器部分。
+- **乌克兰语。** 全部 6994 条文本现已翻译完成，包括推送通知（服务器文本、合租术语以及通知挂钩中的乌克兰国家设置）。该语言仍处于隐藏状态——应用中不会有任何变化。
+- 更改：`i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`。服务器（替换挂钩，PocketBase 会重启）：`pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`。
 
-## 1.132.17 新功能
+## 1.135.15 新功能
 
-**波兰语——第 18 阶段**
+**乌克兰语——第 16 阶段**
 
-- **波兰语。** 设置向导、数据导出以及登录页面上的设置提示已翻译；另有一份简短的波兰语 README（`README.pl.md`），所有 README 中都有指向它的链接。该语言仍处于隐藏状态，暂时无法选择；应用对你来说没有任何变化。
-- 更改：`pb_public/einrichtung.js`, `pb_public/datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)、所有 README，新增 `README.pl.md`。无服务器部分。
+- **乌克兰语。** 乌克兰语又翻译了一部分：展望、帮助与教程、家庭卡片、成员、服务器消息、SOS、语音控制及其余小板块（6994 条文本中的 6847 条）。该语言仍处于隐藏状态——应用中不会有任何变化。
+- 更改：`i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。无服务器部分。
 
-## 1.132.16 新功能
+## 1.135.14 新功能
 
-**波兰语——第 17 阶段**
+**乌克兰语——第 15 阶段**
 
-- **波兰语。** 推送通知文本已翻译（至此全部 6989 条文本完成），服务器钩子现在也支持波兰语（语言列表、国家 PL、文本、复数与合租规则）。该语言仍处于隐藏状态，暂时无法选择；应用对你来说没有任何变化。
-- 更改：`i18n/pl.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`、所有 README。服务器部分（替换钩子）：`pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`——`pinn-setup.sh` 会照常安装它们并重启 PocketBase。
+- **乌克兰语。** 乌克兰语又翻译了一部分：学校与托儿所、家庭（急救卡、位置）和公告板（6994 条文本中的 6404 条）。该语言仍处于隐藏状态——应用中不会有任何变化。
+- 更改：`i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。无服务器部分。
 
-## 1.132.15 新功能
+## 1.135.13 新功能
 
-**波兰语——第 16 阶段**
+**乌克兰语——第 14 阶段**
 
-- **波兰语。** 其余小板块（服务器消息、联邦州、轮流、重复、头像、离线提示）已翻译（累计 6842 条，共 6989 条）。该语言仍处于隐藏状态，暂时无法选择；应用对你来说没有任何变化。
-- 更改：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）和所有 README。无服务器部分。
+- **乌克兰语。** 乌克兰语又翻译了一部分：聊天（其余部分）、宠物和地点（位置共享、GPS 追踪器）（6994 条文本中的 5958 条）。该语言仍处于隐藏状态——应用中不会有任何变化。
+- 更改：`i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。无服务器部分。
 
-## 1.132.14 新功能
+## 1.135.12 新功能
 
-**波兰语——第 15 阶段**
+**乌克兰语——第 13 阶段**
 
-- **波兰语。** 智能家居、展望、帮助与教程以及语音控制已翻译（累计 6727 条，共 6989 条）。该语言仍处于隐藏状态，暂时无法选择；应用对你来说没有任何变化。
-- 更改：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）和所有 README。无服务器部分。
+- **乌克兰语。** 乌克兰语又翻译了一部分：通知（动态、回家路上、SOS）和聊天第一部分（6994 条文本中的 5508 条）。该语言仍处于隐藏状态——应用中不会有任何变化。
+- 更改：`i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。无服务器部分。
 
-## 1.132.13 新功能
+## 1.135.11 新功能
 
-**波兰语——第 14 阶段**
+**乌克兰语——第 12 阶段**
 
-- **波兰语。** 公告板、聊天和通知铃已翻译（累计 6283 条，共 6989 条）。该语言仍处于隐藏状态，暂时无法选择；应用对你来说没有任何变化。
-- 更改：`i18n/pl.i18n.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/versionslog.en.js`、`src/`（`index.html`）和所有 README。无服务器部分。
+- **乌克兰语。** 乌克兰语又翻译了一部分：智能家居、文档和 PDF 识别（6994 条文本中的 5208 条）。该语言仍处于隐藏状态——应用中不会有任何变化。
+- 更改：`i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。无服务器部分。
 
 ## 工作原理
 
@@ -211,7 +210,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.134.0` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.135.17` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

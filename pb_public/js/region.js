@@ -121,7 +121,7 @@
       var m = /^[a-z]{2,3}[-_]([A-Za-z]{2})\b/.exec(String(list[i] || ''));
       if (m && findCountry(m[1].toUpperCase())) return m[1].toUpperCase();
     }
-    var byLang = { de: 'DE', fr: 'FR', es: 'ES', it: 'IT', nl: 'NL', pt: 'PT', pl: 'PL', da: 'DK', sv: 'SE', nb: 'NO', fi: 'FI', cs: 'CZ', hu: 'HU', el: 'GR', tr: 'TR', ja: 'JP', zh: 'CN', ko: 'KR', ru: 'RU' };
+    var byLang = { de: 'DE', fr: 'FR', es: 'ES', it: 'IT', nl: 'NL', pt: 'PT', pl: 'PL', da: 'DK', sv: 'SE', nb: 'NO', fi: 'FI', cs: 'CZ', hu: 'HU', el: 'GR', tr: 'TR', ja: 'JP', zh: 'CN', ko: 'KR', ru: 'RU', uk: 'UA' };
     for (var j = 0; j < list.length; j++) { var l = String(list[j] || '').slice(0, 2).toLowerCase(); if (byLang[l]) return byLang[l]; }
     return 'DE';
   }

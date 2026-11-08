@@ -22,6 +22,29 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.135', datum: '07.11.2026', titel: 'Ukrainisch in Vorbereitung',
+    punkte: [
+      ['info', '1.135.0: Ukrainisch wird als weitere App-Sprache vorbereitet und Schritt für Schritt übersetzt. Zuerst sind Rahmen, Anmeldung, Navigation und alle Einstellungen dran (507 von 6994 Texten). Die Sprache ist noch versteckt und kann noch nicht gewählt werden – in der App ändert sich für dich nichts.'],
+      ['info', '1.135.1: Ukrainisch Etappe 2 – Konto, Geräte, Fehlerprotokoll sowie Sicherungen & Updates (insgesamt 879 von 6994 Texten).'],
+      ['info', '1.135.2: Ukrainisch Etappe 3 – Kalender, Aufgaben, Haushalt, Übersicht, Wetter, Suche und Feiertage (insgesamt 1369 von 6994 Texten).'],
+      ['info', '1.135.3: Ukrainisch Etappe 4 – Einkauf, Vorrat, Essensplan, Kategorien und Einheiten (insgesamt 1816 von 6994 Texten).'],
+      ['info', '1.135.4: Ukrainisch Etappe 5 – Rezepte und die Standardnamen (insgesamt 2109 von 6994 Texten).'],
+      ['info', '1.135.5: Ukrainisch Etappe 6 – Listen mit allen Vorlagen (insgesamt 2670 von 6994 Texten).'],
+      ['info', '1.135.6: Ukrainisch Etappe 7 – Finanzen, Kassen, Taschengeld, Sterne und Kinderseite (insgesamt 3123 von 6994 Texten).'],
+      ['info', '1.135.7: Ukrainisch Etappe 8 – Verträge und Depots (insgesamt 3640 von 6994 Texten).'],
+      ['info', '1.135.8: Ukrainisch Etappe 9 – Zuhause, erster Teil (Adressen, Zähler, Miete, Mängel, Schlüssel, Fixkosten, Gartenpflanzen) (insgesamt 3965 von 6994 Texten).'],
+      ['info', '1.135.9: Ukrainisch Etappe 10 – Zuhause, zweiter Teil (Wartungsplan, Zähler, Pflanzen, Miete, Kauf und Finanzierung, Wetterhinweise) (insgesamt 4290 von 6994 Texten).'],
+      ['info', '1.135.10: Ukrainisch Etappe 11 – Fahrzeuge (Tanken & Laden, Verbrauch, Werkstatt, Reifen, HU/Service, Versicherungskennzeichen, Rechner) (insgesamt 4760 von 6994 Texten).'],
+      ['info', '1.135.11: Ukrainisch Etappe 12 – Smart Home, Dokumente und PDF-Auslesen (insgesamt 5208 von 6994 Texten).'],
+      ['info', '1.135.12: Ukrainisch Etappe 13 – Meldungen (Aktivitäten, Weg nach Hause, SOS) und Chat, erster Teil (insgesamt 5508 von 6994 Texten).'],
+      ['info', '1.135.13: Ukrainisch Etappe 14 – Chat (Rest), Haustiere und Orte (Standortfreigabe, GPS-Tracker) (insgesamt 5958 von 6994 Texten).'],
+      ['info', '1.135.14: Ukrainisch Etappe 15 – Schule & Kita, Familie (Notfallkarten, Standorte) und Pinnwand (insgesamt 6404 von 6994 Texten).'],
+      ['info', '1.135.15: Ukrainisch Etappe 16 – Ausblick, Hilfe & Tutorial, Familienkachel, Mitglieder, Meldungen des Servers, SOS, Sprachsteuerung und die restlichen kleinen Bereiche (insgesamt 6847 von 6994 Texten).'],
+      ['info', '1.135.16: Ukrainisch Etappe 17 – Push-Texte der Benachrichtigungen und Server-Hooks – damit sind alle 6994 Texte übersetzt (insgesamt 6994 von 6994 Texten).'],
+      ['info', '1.135.17: Ukrainisch Etappe 18 – Einrichtungs-Assistent und Datenexport auf Ukrainisch, kurze README.uk.md, ukrainische Notrufnummern geprüft. Die Sprache bleibt bis zur Freischaltung versteckt.'],
+    ],
+  },
+  {
     v: '1.134', datum: '07.11.2026', titel: 'Dashboard: Profilbilder, Erwachsen oder Kind',
     punkte: [
       ['neu', 'Familienmitglieder: Unter Einstellungen → Familienmitglieder wählst du für jedes Mitglied „Erwachsen“ oder „Kind“. Ein Kind hat die Kindersicherung (wie bisher mit Passwort und PIN). Mit „Nur Kinderseite“ sieht das Kind nur noch seine Kinderseite – am Dashboard öffnet sie sich mit einem Tipp, ohne Passwort und ohne PIN; schließen führt zurück zur Profilauswahl, auf dem eigenen Gerät zum Abmelden.'],
