@@ -110,6 +110,15 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.140.0
+
+**Widżety i Apple Watch**
+
+- **Widżety.** W Ustawieniach → Sterowanie głosem jest teraz „Widżety i Apple Watch”. Dzięki bezpłatnej aplikacji Scriptable widżet na ekranie głównym lub blokady pokazuje dzisiejsze terminy, otwarte zadania i liczbę pozycji na liście zakupów; gotowy skrypt kopiujesz jednym dotknięciem.
+- **Apple Watch.** Za pomocą skrótu („Pobierz zawartość URL” → „Pokaż wynik”, „Pokaż na Apple Watch”) widzisz na zegarku dziś, jutro, listę zakupów lub wszystko, albo słuchasz odczytu. Kroki są w aplikacji.
+- To ten sam tajny link co dla Siri, tylko do odczytu; goście go nie mają. Teksty są w języku profilu.
+- Zmienione: `js/sprachsteuerung.js`, `js/versionslog.js`, `i18n/` (16 nowych tekstów i zmieniony podtytuł we wszystkich czternastu językach), `src/` (`index.html`, ustawienia), `.github/scripts/check-hooks.js`, wszystkie README. Serwer (wymienić hooki, PocketBase uruchomi się ponownie): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
+
 ## Nowości w 1.139.0
 
 **Planer prezentów: kto co daje – bez wiedzy obdarowanego**
@@ -135,13 +144,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Sterowanie głosem.** „Hej Siri, pinn” (na Androidzie HTTP Shortcuts) rozumie teraz także turecki, polski i ukraiński i odpowiada w języku Twojego profilu: dodawanie do listy zakupów (z ilością i sklepem), odczytywanie listy, tworzenie zadań i sprawdzanie, co jest dziś lub jutro w planie. Siri nie odpowiada już po angielsku w ukraińskim. Konfiguracja skrótu pozostaje taka sama.
 - Zmienione: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, wszystkie README. Serwer (wymień hook, PocketBase uruchomi się ponownie): `pb_hooks/pinn-sprache.js`.
 
-## Nowości w 1.136.0
-
-**Ukraiński odblokowany**
-
-- **Ukraiński.** Ukraiński jest teraz dostępny dla wszystkich: wybierz Українська w Ustawienia → Język i region; jeśli przeglądarka jest ustawiona na ukraiński, pinn. wybierze go automatycznie. Wszystkie 6994 teksty, powiadomienia push, kreator konfiguracji i eksport danych są po ukraińsku; ukraińskie numery alarmowe to 102, 103, 101 i 112. pinn. mówi teraz w 14 językach. Siri przy ukraińskim nadal odpowiada po angielsku.
-- Zmienione: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), wszystkie README (lista języków, „14 językach”). Od 1.134.0 dodatkowo: `i18n/uk.i18n.js`, `js/textkern.js`, `js/region.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `.github/scripts/`. Serwer (wymień hooki, PocketBase uruchomi się ponownie): `pb_hooks/pinn-textkern.js`, `pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -151,7 +153,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.139.0` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.140.0` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

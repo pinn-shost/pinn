@@ -133,6 +133,15 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.140.0の新機能
+
+**ウィジェットと Apple Watch**
+
+- **ウィジェット。** 設定 → 音声操作に「ウィジェットと Apple Watch」が加わりました。無料アプリ Scriptable を使うと、ホーム画面やロック画面のウィジェットに、今日の予定、未完了のタスク、買い物リストの件数が表示されます。用意済みのスクリプトはワンタップでコピーできます。
+- **Apple Watch。** ショートカット（「URL の内容を取得」→「結果を表示」、「Apple Watch で表示」）を使うと、今日、明日、買い物リスト、またはすべてをウォッチで見られ、読み上げもできます。手順はアプリ内にあります。
+- Siri と同じ秘密のリンクで、閲覧のみです。ゲストは使えません。文言はプロフィールの言語で表示されます。
+- 変更：`js/sprachsteuerung.js`、`js/versionslog.js`、`i18n/`（14言語すべてに新しい文言16件とサブタイトルの変更）、`src/`（`index.html`、設定）、`.github/scripts/check-hooks.js`、すべてのREADME。サーバー（hookを置き換え、PocketBaseが再起動します）：`pb_hooks/pinn-sprache.js`、`pb_hooks/sprache.pb.js`。
+
 ## 1.139.0の新機能
 
 **ギフトプランナー：誰が何を贈るかを、贈られる本人に見せずに計画**
@@ -186,13 +195,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **ウクライナ語。** ウクライナ語の翻訳が進みました：見通し、ヘルプとチュートリアル、家族タイル、メンバー、サーバーのメッセージ、SOS、音声操作、その他の小さな項目（6994件中6847件）。この言語はまだ非表示です。アプリの動作は変わりません。
 - 変更：`i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。サーバー側の変更はありません。
 
-## 1.135.14の新機能
-
-**ウクライナ語——ステージ15**
-
-- **ウクライナ語。** ウクライナ語の翻訳が進みました：学校・保育園、家族（緊急カード、位置情報）、掲示板（6994件中6404件）。この言語はまだ非表示です。アプリの動作は変わりません。
-- 変更：`i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。サーバー側の変更はありません。
-
 ## しくみ
 
 ```mermaid
@@ -221,7 +223,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.139.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.140.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

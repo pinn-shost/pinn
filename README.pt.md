@@ -133,6 +133,15 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.140.0
+
+**Widgets e Apple Watch**
+
+- **Widgets.** Em Definições → Controlo por voz existe agora «Widgets e Apple Watch». Com a app gratuita Scriptable, um widget no ecrã principal ou de bloqueio mostra os compromissos de hoje, as tarefas abertas e o número de itens de compras; o script pronto copia-se com um toque.
+- **Apple Watch.** Com um atalho («Obter Conteúdo do URL» → «Mostrar Resultado», «Mostrar no Apple Watch») vê hoje, amanhã, a lista de compras ou tudo no relógio, ou pede que seja lido em voz alta. Os passos estão na app.
+- É o mesmo link secreto da Siri, só de leitura, e os convidados não o têm. Os textos vêm no idioma do perfil.
+- Alterado: `js/sprachsteuerung.js`, `js/versionslog.js`, `i18n/` (16 textos novos e um subtítulo alterado em todos os catorze idiomas), `src/` (`index.html`, definições), `.github/scripts/check-hooks.js`, todos os README. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
+
 ## Novidades da 1.139.0
 
 **Planejador de presentes: quem dá o quê, sem que quem recebe veja**
@@ -186,13 +195,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Ucraniano.** O ucraniano foi traduzido mais um pouco: previsão, ajuda e tutorial, cartão da família, membros, mensagens do servidor, SOS, controle por voz e as demais áreas pequenas (6847 de 6994 textos). O idioma ainda está oculto – no app nada muda.
 - Alterado: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Sem parte de servidor.
 
-## Novidades da 1.135.14
-
-**Ucraniano – etapa 15**
-
-- **Ucraniano.** O ucraniano foi traduzido mais um pouco: escola e creche, família (cartões de emergência, localizações) e mural (6404 de 6994 textos). O idioma ainda está oculto – no app nada muda.
-- Alterado: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Sem parte de servidor.
-
 ## Como funciona
 
 ```mermaid
@@ -221,7 +223,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.139.0` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.140.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

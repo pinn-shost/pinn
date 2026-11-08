@@ -4,6 +4,8 @@
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
    Contents: Settings → Voice control – load and show the personal secret link (loadVoiceSettings,
    renderVoiceSettings), create or renew it, switch it off and try a sentence (voiceSetup, voiceOff, voiceTest).
+   Since 1.140.0: widgets and Apple Watch – read-only links on the same secret link (widgetLink), the ready-made
+   Scriptable widget script (widgetScript) and the set-up steps. Server: GET /api/pinn/widget in pb_hooks/sprache.pb.js.
    The settings load when the section is opened. The server side is pb_hooks/sprache.pb.js + pinn-sprache.js. */
 
 /* ==========================================================
@@ -21,6 +23,50 @@
    ========================================================== */
 let voiceState = null;
 function voiceLink(token) { return location.origin + '/api/pinn/sprache?token=' + encodeURIComponent(token); }
+// Widget link: the same secret token, read-only data. view = the view key of the server (today, tomorrow, shopping, everything); text = plain text for shortcuts
+function widgetLink(token, view, text) {
+  return location.origin + '/api/pinn/widget?token=' + encodeURIComponent(token) + '&ansicht=' + (view || 'heute') + (text ? '&format=text' : '');
+}
+// Ready-made script for the free iOS app Scriptable (home screen and lock screen widget)
+function widgetScript(token) {
+  const link = widgetLink(token, 'heute', false);
+  return [
+    '// pinn. widget for Scriptable: events and open tasks of today plus the number of shopping items',
+    'const LINK = ' + JSON.stringify(link) + ';',
+    'let d = null;',
+    'try { d = await new Request(LINK).loadJSON(); } catch (e) { d = null; }',
+    'const w = new ListWidget();',
+    'w.backgroundColor = new Color("#00374A");',
+    'w.setPadding(12, 14, 12, 14);',
+    'const small = (config.widgetFamily || "").indexOf("accessory") === 0;',
+    'function line(text, size, color, bold) {',
+    '  const t = w.addText(String(text));',
+    '  t.font = bold ? Font.boldSystemFont(size) : Font.systemFont(size);',
+    '  t.textColor = new Color(color || "#ffffff");',
+    '  t.lineLimit = 1;',
+    '  return t;',
+    '}',
+    'if (!d || !d.ok) {',
+    '  line("pinn.", 14, "#ffffff", true);',
+    '  line((d && d.error) || "No connection", 11, "#ffb4a8");',
+    '} else {',
+    '  const day = d.days[0];',
+    '  line("pinn. · " + day.label, small ? 11 : 13, "#9ee6c9", true);',
+    '  w.addSpacer(4);',
+    '  const rows = [];',
+    '  day.events.forEach(e => rows.push((e.time ? e.time + " " : "") + e.title));',
+    '  day.tasks.forEach(t => rows.push("\u2610 " + t));',
+    '  const fam = config.widgetFamily;',
+    '  const max = small ? 3 : (fam === "large" ? 12 : (fam === "medium" ? 5 : 4));',
+    '  if (!rows.length) line(d.texts.none, 12, "#ffffff");',
+    '  rows.slice(0, max).forEach(r => line(r, small ? 11 : 12));',
+    '  if (!small && d.shopping.count) { w.addSpacer(4); line("\uD83D\uDED2 " + d.texts.shop + ": " + d.shopping.count, 11, "#9ee6c9"); }',
+    '}',
+    'w.refreshAfterDate = new Date(Date.now() + 15 * 60 * 1000);',
+    'if (config.runsInWidget) Script.setWidget(w); else await w.presentMedium();',
+    'Script.complete();',
+  ].join('\n');
+}
 async function loadVoiceSettings() {
   const box = document.getElementById('voiceSettingsBody');
   if (!box) return;
@@ -75,6 +121,27 @@ function renderVoiceSettings() {
         <li>${tk('voice.and3')}</li>
       </ol>
     </details>
+    <details class="rounded-xl border border-ink/10 bg-white p-3">
+      <summary class="text-sm font-medium cursor-pointer">${escapeHtml(tk('voice.widgetTitle'))}</summary>
+      <p class="text-[12px] text-ink/70 mt-2">${tk('voice.widgetIntro')}</p>
+      <p class="text-[12px] font-medium mt-3">${escapeHtml(tk('voice.widgetIosTitle'))}</p>
+      <ol class="text-[12px] text-ink/70 leading-relaxed mt-1 list-decimal pl-5 flex flex-col gap-1">
+        <li>${tk('voice.widgetIos1')}</li>
+        <li>${tk('voice.widgetIos2')}</li>
+        <li>${tk('voice.widgetIos3')}</li>
+      </ol>
+      <button type="button" id="widgetScriptBtn" class="mt-2 px-3 py-1.5 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">${tk('voice.widgetCopyScript')}</button>
+      <p class="text-[12px] font-medium mt-4">${escapeHtml(tk('voice.widgetWatchTitle'))}</p>
+      <ol class="text-[12px] text-ink/70 leading-relaxed mt-1 list-decimal pl-5 flex flex-col gap-1">
+        <li>${tk('voice.widgetWatch1')}</li>
+        <li>${tk('voice.widgetWatch2')}</li>
+        <li>${tk('voice.widgetWatch3')}</li>
+        <li>${tk('voice.widgetWatch4')}</li>
+      </ol>
+      <button type="button" id="widgetLinkBtn" class="mt-2 px-3 py-1.5 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">${tk('voice.widgetCopyLink')}</button>
+      <p class="text-[11px] text-ink/50 mt-2">${tk('voice.widgetViews')}</p>
+      <p class="text-[11px] text-ink/45 mt-1">${escapeHtml(tk('voice.widgetNote'))}</p>
+    </details>
     ${exHtml}
     <p class="text-[11px] text-ink/45">${escapeHtml(tk('voice.onTheGo'))}${st.kind ? ' ' + escapeHtml(tk('voice.childLockListDaily')) : ''}</p>
     <div class="flex flex-wrap gap-2">
@@ -85,6 +152,14 @@ function renderVoiceSettings() {
     <p id="voiceTestOut" class="hidden text-xs rounded-lg bg-pine/10 text-pine px-3 py-2"></p>`;
   document.getElementById('voiceCopyBtn').addEventListener('click', async () => {
     const ok = await copyTextRobust(link);
+    finShowToast(ok === false ? tk('voice.copyingNotPossiblePlease') : tk('voice.linkCopied'));
+  });
+  document.getElementById('widgetScriptBtn').addEventListener('click', async () => {
+    const ok = await copyTextRobust(widgetScript(st.token));
+    finShowToast(ok === false ? tk('voice.copyingNotPossiblePlease') : tk('voice.widgetScriptCopied'));
+  });
+  document.getElementById('widgetLinkBtn').addEventListener('click', async () => {
+    const ok = await copyTextRobust(widgetLink(st.token, 'heute', true));
     finShowToast(ok === false ? tk('voice.copyingNotPossiblePlease') : tk('voice.linkCopied'));
   });
   document.getElementById('voiceRenewBtn').addEventListener('click', () => {

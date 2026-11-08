@@ -129,6 +129,15 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.140.0
+
+**Widgets et Apple Watch**
+
+- **Widgets.** Dans Réglages → Commande vocale, il y a maintenant « Widgets et Apple Watch ». Avec l’app gratuite Scriptable, un widget sur l’écran d’accueil ou de verrouillage affiche les rendez-vous du jour, les tâches ouvertes et le nombre d’articles de courses ; le script prêt à l’emploi se copie d’un geste.
+- **Apple Watch.** Avec un raccourci (« Obtenir le contenu de l’URL » → « Afficher le résultat », « Afficher sur l’Apple Watch »), vous voyez aujourd’hui, demain, la liste de courses ou tout sur la montre, ou vous vous le faites lire. Les étapes sont dans l’app.
+- C’est le même lien secret que pour Siri, en lecture seule, et les invités ne l’ont pas. Les textes sont dans la langue du profil.
+- Modifié : `js/sprachsteuerung.js`, `js/versionslog.js`, `i18n/` (16 nouveaux textes et un sous-titre modifié dans les quatorze langues), `src/` (`index.html`, réglages), `.github/scripts/check-hooks.js`, tous les README. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
+
 ## Nouveautés de la 1.139.0
 
 **Planificateur de cadeaux : qui offre quoi, sans que le destinataire le voie**
@@ -210,13 +219,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Ukrainien.** L’ukrainien est traduit plus loin : maison connectée, documents et lecture de PDF (5208 textes sur 6994). La langue est encore masquée – rien ne change dans l’appli.
 - Modifié : `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Pas de partie serveur.
 
-## Nouveautés de la 1.135.10
-
-**Ukrainien – étape 11**
-
-- **Ukrainien.** L’ukrainien est traduit plus loin : véhicules (plein et recharge, consommation, garage, pneus, contrôle technique/entretien, plaque d’assurance, calculateurs) (4760 textes sur 6994). La langue est encore masquée – rien ne change dans l’appli.
-- Modifié : `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Pas de partie serveur.
-
 ## Comment ça marche
 
 ```mermaid
@@ -243,7 +245,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.139.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.140.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

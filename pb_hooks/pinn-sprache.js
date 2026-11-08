@@ -12,6 +12,7 @@
 //   - read the shopping list:    "Was steht auf der Einkaufsliste?"
 //   - create a task:             "Erinnere mich morgen an den Müll" - "Aufgabe: Fenster putzen am Samstag"
 //   - daily overview:            "Was steht heute an?" - "Was steht morgen an?" (events + open tasks)
+//   - widget data (since 1.140.0): read-only overview for iPhone widgets and the Apple Watch (widgetData)
 //
 // Collection "sprache_zugaenge" (locked, only via the routes): { benutzer, familie, token }
 // Guests have no voice control; profiles with child lock can only ask what is on.
@@ -1170,6 +1171,100 @@ function dayOverview(familyId, auth, intent, L) {
 }
 
 // ---------------------------------------------------------------------------------------------
+// Widget data (since 1.140.0): the same secret link, read only. For iPhone widgets (Scriptable), the
+// Shortcuts widget and the Apple Watch (a shortcut). Texts in the language of the profile.
+// ---------------------------------------------------------------------------------------------
+const WIDGET_T = {
+    de: { shop: "Einkauf", events: "Termine", tasks: "Aufgaben", none: "Nichts geplant", empty: "Liste leer", more: "+{n} weitere" },
+    en: { shop: "Shopping", events: "Events", tasks: "Tasks", none: "Nothing planned", empty: "List empty", more: "+{n} more" },
+    fr: { shop: "Courses", events: "Rendez-vous", tasks: "Tâches", none: "Rien de prévu", empty: "Liste vide", more: "+{n} autres" },
+    es: { shop: "Compra", events: "Citas", tasks: "Tareas", none: "Nada previsto", empty: "Lista vacía", more: "+{n} más" },
+    ru: { shop: "Покупки", events: "События", tasks: "Задачи", none: "Ничего не запланировано", empty: "Список пуст", more: "+ещё {n}" },
+    nl: { shop: "Boodschappen", events: "Afspraken", tasks: "Taken", none: "Niets gepland", empty: "Lijst leeg", more: "+{n} meer" },
+    it: { shop: "Spesa", events: "Appuntamenti", tasks: "Attività", none: "Niente in programma", empty: "Lista vuota", more: "+{n} altri" },
+    pt: { shop: "Compras", events: "Compromissos", tasks: "Tarefas", none: "Nada planeado", empty: "Lista vazia", more: "+{n} mais" },
+    zh: { shop: "购物", events: "日程", tasks: "任务", none: "暂无安排", empty: "清单为空", more: "另有 {n} 项" },
+    ja: { shop: "買い物", events: "予定", tasks: "タスク", none: "予定なし", empty: "リストは空です", more: "ほか {n} 件" },
+    ko: { shop: "장보기", events: "일정", tasks: "할 일", none: "예정된 일 없음", empty: "목록이 비었습니다", more: "외 {n}개" },
+    tr: { shop: "Alışveriş", events: "Randevular", tasks: "Görevler", none: "Planlanmış bir şey yok", empty: "Liste boş", more: "+{n} tane daha" },
+    pl: { shop: "Zakupy", events: "Terminy", tasks: "Zadania", none: "Nic nie zaplanowano", empty: "Lista pusta", more: "+{n} więcej" },
+    uk: { shop: "Покупки", events: "Події", tasks: "Завдання", none: "Нічого не заплановано", empty: "Список порожній", more: "+ще {n}" },
+};
+function widgetDay(familyId, user, offset, W, L) {
+    const day = addDays(todayIso(), offset);
+    const events = eventsOn(familyId, user.id, day).filter(e => e.title).slice(0, 10)
+        .map(e => ({ time: e.time || "", title: e.title }));
+    let tasks = [];
+    try {
+        tasks = (require(`${__hooks}/pinn-aufgaben.js`).listAll(familyId) || [])
+            .filter(t => t && !t.done && (t.title || t.titel) && t.dueDate && (offset ? t.dueDate === day : t.dueDate <= day))
+            .slice(0, 10)
+            .map(t => String(t.title || t.titel).replace(/^\S+\s(?=\S)/u, m => (/\p{Extended_Pictographic}/u.test(m) ? "" : m)));
+    } catch (e) { tasks = []; }
+    return { date: day, label: L.dayLead[offset ? 1 : 0], events: events, tasks: tasks };
+}
+function widgetData(token, view, format) {
+    const rec = recOfToken(token);
+    if (!rec) return { ok: false, status: 403, error: "Dieser Link ist nicht (mehr) gültig – bitte in pinn. unter Einstellungen → Sprachsteuerung neu einrichten." };
+    let user = null;
+    try { user = $app.findRecordById(USERS, rec.getString("benutzer")); } catch (e) { user = null; }
+    if (!user || user.getString("rolle") === "gast" || !user.getString("familie")) return { ok: false, status: 403, error: "Dieses Profil hat keine Sprachsteuerung." };
+    const familyId = user.getString("familie");
+    const lang = langOf(user);
+    const L = T[lang] || T.en;
+    const W = WIDGET_T[lang] || WIDGET_T.en;
+    try {
+        const k = "pinnSprache:" + rec.id + ":" + Math.floor(Date.now() / 60000);
+        const n = Number($app.store().get(k) || 0) + 1;
+        $app.store().set(k, n);
+        if (n > LIMIT_PER_MIN) return { ok: false, status: 429, error: "429" };
+    } catch (e) { /* ignore */ }
+    try {
+        const days = [widgetDay(familyId, user, 0, W, L), widgetDay(familyId, user, 1, W, L)];
+        const data = require(`${__hooks}/pinn-benutzer.js`).loadFamilyDataFor(familyId) || {};
+        const open = (Array.isArray(data.shoppingItems) ? data.shoppingItems : []).filter(x => x && !x.done && x.name);
+        const shop = open.slice(0, 12).map(itemText);
+        const out = {
+            ok: true, language: lang, updated: new Date().toISOString(),
+            texts: { shop: W.shop, events: W.events, tasks: W.tasks, none: W.none, empty: W.empty, allday: L.allday },
+            days: days,
+            shopping: { count: open.length, items: shop, more: open.length > shop.length ? fill(W.more, { n: open.length - shop.length }) : "" },
+        };
+        if (format === "text") {
+            const lines = [];
+            const dayLines = d => {
+                lines.push(d.label + " (" + d.date.slice(8, 10) + "." + d.date.slice(5, 7) + ".)");
+                if (!d.events.length && !d.tasks.length) lines.push("  " + W.none);
+                d.events.forEach(e => lines.push("  " + (e.time ? e.time + " " : "") + e.title));
+                d.tasks.forEach(t => lines.push("  ☐ " + t));
+            };
+            if (view === "einkauf") {
+                lines.push(W.shop + " (" + open.length + ")");
+                if (!shop.length) lines.push("  " + W.empty);
+                shop.forEach(x => lines.push("  • " + x));
+                if (out.shopping.more) lines.push("  " + out.shopping.more);
+            } else if (view === "morgen") dayLines(days[1]);
+            else if (view === "alles") {
+                dayLines(days[0]);
+                lines.push("");
+                dayLines(days[1]);
+                lines.push("");
+                lines.push(W.shop + " (" + open.length + ")");
+                if (!shop.length) lines.push("  " + W.empty);
+                shop.forEach(x => lines.push("  • " + x));
+                if (out.shopping.more) lines.push("  " + out.shopping.more);
+            } else dayLines(days[0]);
+            out.text = lines.join("\n");
+        }
+        return out;
+    } catch (err) {
+        console.log("[Sprache] Widget: " + err.message);
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("Sprachsteuerung", err.message, {}); } catch (e) { /* log not available */ }
+        return { ok: false, status: 200, error: fill(L.error, { m: err.message }) };
+    }
+}
+
+// ---------------------------------------------------------------------------------------------
 // Entry point: command via the secret link
 // ---------------------------------------------------------------------------------------------
 function befehl(token, text) {
@@ -1215,4 +1310,4 @@ function befehl(token, text) {
     }
 }
 
-module.exports = { texts: T, cleanSentence, ensureSchema, statusFor, einrichten, ausschalten, cleanupUser, befehl, intentOf, parseItems, parseDate, parseEvents, occursOn };
+module.exports = { texts: T, cleanSentence, ensureSchema, statusFor, einrichten, ausschalten, cleanupUser, befehl, widgetData, widgetTexts: WIDGET_T, intentOf, parseItems, parseDate, parseEvents, occursOn };

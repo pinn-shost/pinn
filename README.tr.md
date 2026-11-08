@@ -110,6 +110,15 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.140.0 sürümündeki yenilikler
+
+**Widget’lar ve Apple Watch**
+
+- **Widget’lar.** Ayarlar → Sesli kontrol bölümünde artık “Widget’lar ve Apple Watch” var. Ücretsiz Scriptable uygulamasıyla ana ekrandaki veya kilit ekranındaki bir widget bugünün randevularını, açık görevleri ve alışveriş öğelerinin sayısını gösterir; hazır betik tek dokunuşla kopyalanır.
+- **Apple Watch.** Bir kısayolla (“URL İçeriğini Al” → “Sonucu Göster”, “Apple Watch’ta Göster”) bugünü, yarını, alışveriş listesini veya hepsini saatte görür ya da sesli okutursun. Adımlar uygulamada.
+- Siri ile aynı gizli bağlantıdır, yalnızca okuma içindir; misafirlerde yoktur. Metinler profilin dilinde gelir.
+- Değişenler: `js/sprachsteuerung.js`, `js/versionslog.js`, `i18n/` (on dört dilin hepsinde 16 yeni metin ve değişen bir alt başlık), `src/` (`index.html`, ayarlar), `.github/scripts/check-hooks.js`, tüm README’ler. Sunucu (hook’ları değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
+
 ## 1.139.0 sürümündeki yenilikler
 
 **Hediye planlayıcı: kim ne hediye ediyor – hediyeyi alan görmeden**
@@ -135,13 +144,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Sesli komut.** “Hey Siri, pinn” (Android’de HTTP Shortcuts) artık Türkçe, Lehçe ve Ukraynacayı da anlıyor ve profilinin dilinde yanıt veriyor: alışveriş listesine ekleme (miktar ve mağazayla), listeyi okuma, görev oluşturma ve bugün ya da yarın neler olduğunu duyma. Siri Ukraynacada artık İngilizce yanıt vermiyor. Kısayolun kurulumu aynı kalıyor.
 - Değişenler: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, tüm README dosyaları. Sunucu (kancayı değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-sprache.js`.
 
-## 1.136.0 sürümündeki yenilikler
-
-**Ukraynaca kullanıma açıldı**
-
-- **Ukraynaca.** Ukraynaca artık herkes için hazır: Ayarlar → Dil ve bölge altından Українська'yı seç; tarayıcı Ukraynaca ise pinn. otomatik olarak seçer. 6994 metnin tamamı, push bildirimleri, kurulum sihirbazı ve veri dışa aktarma Ukraynaca. Ukrayna'nın acil numaraları 102, 103, 101 ve 112. pinn. artık 14 dil konuşuyor. Siri Ukraynacada şimdilik İngilizce yanıt veriyor.
-- Değişenler: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), tüm README dosyaları (dil listesi, “14 dil”). 1.134.0'dan beri ayrıca: `i18n/uk.i18n.js`, `js/textkern.js`, `js/region.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `.github/scripts/`. Sunucu (kancaları değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-textkern.js`, `pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -151,7 +153,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.139.0` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.140.0` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

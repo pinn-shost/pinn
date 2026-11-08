@@ -7,6 +7,9 @@
 //   POST /api/pinn/sprache?token=...        { text }  -> answer as plain text to be read aloud
 //   GET  /api/pinn/sprache?token=...&text=...          (e.g. for Home Assistant)
 //   with &json=1: { ok, antwort, art, geaendert }
+//   GET  /api/pinn/widget?token=...[&ansicht=heute|morgen|einkauf|alles][&format=text]
+//        read-only data for iPhone widgets (Scriptable), the Shortcuts widget and the Apple Watch: JSON, or with
+//        &format=text a ready-made plain text (since 1.140.0)
 // Signed in (no guests):
 //   GET  /api/pinn/sprache/status           -> { aktiv, token, kind }
 //   POST /api/pinn/sprache/einrichten       { neu? }  create or renew the personal link
@@ -37,6 +40,26 @@
         e.response.header().set("Content-Type", "text/plain; charset=utf-8");
         return e.string(status, String(r.antwort || ""));
     });
+});
+
+routerAdd("GET", "/api/pinn/widget", (e) => {
+    e.response.header().set("Cache-Control", "no-store");
+    const q = e.request.url.query();
+    const view = String(q.get("ansicht") || "heute");
+    const format = q.get("format") === "text" ? "text" : "json";
+    let r;
+    try {
+        r = require(`${__hooks}/pinn-sprache.js`).widgetData(q.get("token") || "", view, format);
+    } catch (err) {
+        r = { ok: false, status: 500, error: err.message };
+    }
+    const status = r.status || 200;
+    delete r.status;
+    if (format === "text") {
+        e.response.header().set("Content-Type", "text/plain; charset=utf-8");
+        return e.string(status, String(r.ok ? r.text : (r.error || "")));
+    }
+    return e.json(status, r);
 });
 
 routerAdd("GET", "/api/pinn/sprache/status", (e) => {

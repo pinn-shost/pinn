@@ -110,6 +110,15 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.140.0
+
+**Widgets en Apple Watch**
+
+- **Widgets.** Bij Instellingen → Spraakbesturing staat nu “Widgets en Apple Watch”. Met de gratis app Scriptable toont een widget op het beginscherm of toegangsscherm de afspraken van vandaag, open taken en het aantal boodschappen; het kant-en-klare script kopieer je met één tik.
+- **Apple Watch.** Met een opdracht (“Haal inhoud van URL op” → “Toon resultaat”, “Toon op Apple Watch”) zie je vandaag, morgen, het boodschappenlijstje of alles op het horloge, of laat je het voorlezen. De stappen staan in de app.
+- Het is dezelfde geheime link als voor Siri, alleen lezen, en gasten hebben hem niet. De teksten komen in de taal van het profiel.
+- Gewijzigd: `js/sprachsteuerung.js`, `js/versionslog.js`, `i18n/` (16 nieuwe teksten en een gewijzigde ondertitel in alle veertien talen), `src/` (`index.html`, instellingen), `.github/scripts/check-hooks.js`, alle README’s. Server (hooks vervangen, PocketBase start opnieuw op): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
+
 ## Nieuw in 1.139.0
 
 **Cadeauplanner: wie geeft wat, zonder dat de ontvanger het ziet**
@@ -135,13 +144,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Spraakbesturing.** “Hey Siri, pinn” (op Android HTTP Shortcuts) begrijpt nu ook Turks, Pools en Oekraïens en antwoordt in de taal van je profiel: op het boodschappenlijstje zetten (met hoeveelheid en winkel), het lijstje voorlezen, een taak aanmaken en horen wat er vandaag of morgen op het programma staat. Siri antwoordt bij Oekraïens niet meer in het Engels. Het instellen van de opdracht blijft hetzelfde.
 - Gewijzigd: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, alle README’s. Server (hook vervangen, PocketBase herstart): `pb_hooks/pinn-sprache.js`.
 
-## Nieuw in 1.136.0
-
-**Oekraïens beschikbaar**
-
-- **Oekraïens.** Oekraïens is nu voor iedereen beschikbaar: kies Українська onder Instellingen → Taal en regio; staat de browser op Oekraïens, dan kiest pinn. het automatisch. Alle 6994 teksten, de pushmeldingen, de installatiewizard en de data-export zijn in het Oekraïens; de Oekraïense alarmnummers zijn 102, 103, 101 en 112. pinn. spreekt nu veertien talen. Siri antwoordt bij Oekraïens nog in het Engels.
-- Gewijzigd: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), alle README’s (talenlijst, “veertien talen”). Sinds 1.134.0 ook: `i18n/uk.i18n.js`, `js/textkern.js`, `js/region.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `.github/scripts/`. Server (hooks vervangen, PocketBase herstart): `pb_hooks/pinn-textkern.js`, `pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -151,7 +153,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.139.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.140.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

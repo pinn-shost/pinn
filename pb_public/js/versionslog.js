@@ -22,6 +22,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.140', datum: '08.11.2026', titel: 'Widgets & Apple Watch: Termine, Aufgaben und Einkauf auf dem Home-Bildschirm und an der Uhr',
+    punkte: [
+      ['neu', 'Widgets auf dem iPhone: In den Einstellungen unter „Sprachsteuerung“ gibt es jetzt „Widgets & Apple Watch“. Mit der kostenlosen App Scriptable zeigt ein Widget auf dem Home- oder Sperrbildschirm die heutigen Termine, offene Aufgaben und die Zahl der Einkaufs-Einträge. Das fertige Skript kopierst du mit einem Tippen.'],
+      ['neu', 'Apple Watch: Mit einem Kurzbefehl („Inhalte von URL abrufen“ → „Ergebnis anzeigen“, „Auf Apple Watch anzeigen“) siehst du heute, morgen, die Einkaufsliste oder alles auf der Uhr – oder lässt es dir vorlesen. Die Anleitung steht Schritt für Schritt in der App.'],
+      ['info', 'Es ist derselbe geheime Link wie bei Siri und nur zum Lesen; Gäste haben ihn nicht. Texte kommen in der Sprache des Profils (alle vierzehn Sprachen).'],
+      ['info', 'Geändert: pb_hooks/pinn-sprache.js und sprache.pb.js (neue Abfrage /api/pinn/widget), js/sprachsteuerung.js, i18n/ (16 neue Texte, Untertitel geändert, in allen vierzehn Sprachen), i18n/versionslog.en.js, src/ (index.html, Einstellungen), js/versionslog.js, alle READMEs. Server-Teil: Hooks einspielen, PocketBase startet neu.'],
+    ],
+  },
+  {
     v: '1.139', datum: '08.11.2026', titel: 'Geschenkplaner: wer schenkt was – ohne dass der Beschenkte es sieht',
     punkte: [
       ['neu', 'Übersicht „Wer schenkt was“: Auf dem Reiter „Geschenke“ zeigt pinn. jetzt alles Geplante pro Person – Geschenkideen aus deinen Listen und die reservierten Wünsche der anderen – mit Termin, Stand, Schenkendem und Summe. Tippst du auf eine Zeile, öffnet sich die Liste. Wer etwas bekommen soll, sieht es dort nie.'],

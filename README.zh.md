@@ -133,6 +133,15 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.140.0 新功能
+
+**小组件与 Apple Watch**
+
+- **小组件。** 在“设置 → 语音控制”中新增了“小组件与 Apple Watch”。借助免费的 Scriptable App，主屏幕或锁屏上的小组件会显示今天的日程、未完成的任务和购物项目数量；现成的脚本点一下即可复制。
+- **Apple Watch。** 通过快捷指令（“获取 URL 内容” → “显示结果”，“在 Apple Watch 上显示”），可以在手表上查看今天、明天、购物清单或全部内容，也可以让它读出来。具体步骤在 App 中。
+- 使用的是与 Siri 相同的私密链接，仅供查看，访客没有该链接。文本使用个人资料的语言。
+- 更改：`js/sprachsteuerung.js`、`js/versionslog.js`、`i18n/`（十四种语言各 16 条新文本和一个更改的副标题）、`src/`（`index.html`、设置）、`.github/scripts/check-hooks.js`、所有 README。服务器（替换 hook，PocketBase 会重启）：`pb_hooks/pinn-sprache.js`、`pb_hooks/sprache.pb.js`。
+
 ## 1.139.0 新功能
 
 **礼物策划：谁送什么，收礼的人看不到**
@@ -186,13 +195,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **乌克兰语。** 乌克兰语又翻译了一部分：展望、帮助与教程、家庭卡片、成员、服务器消息、SOS、语音控制及其余小板块（6994 条文本中的 6847 条）。该语言仍处于隐藏状态——应用中不会有任何变化。
 - 更改：`i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。无服务器部分。
 
-## 1.135.14 新功能
-
-**乌克兰语——第 15 阶段**
-
-- **乌克兰语。** 乌克兰语又翻译了一部分：学校与托儿所、家庭（急救卡、位置）和公告板（6994 条文本中的 6404 条）。该语言仍处于隐藏状态——应用中不会有任何变化。
-- 更改：`i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。无服务器部分。
-
 ## 工作原理
 
 ```mermaid
@@ -221,7 +223,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.139.0` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.140.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
