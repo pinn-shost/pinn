@@ -22,6 +22,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.136', datum: '08.11.2026', titel: 'Ukrainisch freigeschaltet',
+    punkte: [
+      ['neu', 'Ukrainisch ist jetzt für alle da: In Einstellungen → Sprache & Region lässt sich Українська wählen; bei ukrainischer Browsersprache stellt pinn. es automatisch ein. Alle 6994 Texte der App, die Push-Nachrichten des Servers, der Einrichtungs-Assistent und der Datenexport sind auf Ukrainisch. Für die Ukraine gelten die Notrufnummern 102, 103, 101 und 112. pinn. spricht damit vierzehn Sprachen.'],
+      ['info', 'Geändert: js/sprachen.js (Ukrainisch nicht mehr versteckt), js/versionslog.js, i18n/versionslog.en.js, alle READMEs (Sprachliste, „vierzehn Sprachen“, Hinweis in README.uk.md entfernt). Server-Teil der Gesamtversion seit 1.134.0: pinn-textkern.js und zehn weitere Hooks (Hooks ersetzen, PocketBase startet neu). Siri antwortet bei Ukrainisch zunächst auf Englisch.'],
+    ],
+  },
+  {
     v: '1.135', datum: '07.11.2026', titel: 'Ukrainisch in Vorbereitung',
     punkte: [
       ['info', '1.135.0: Ukrainisch wird als weitere App-Sprache vorbereitet und Schritt für Schritt übersetzt. Zuerst sind Rahmen, Anmeldung, Navigation und alle Einstellungen dran (507 von 6994 Texten). Die Sprache ist noch versteckt und kann noch nicht gewählt werden – in der App ändert sich für dich nichts.'],

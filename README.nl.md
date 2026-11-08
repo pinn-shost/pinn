@@ -108,7 +108,14 @@ Tik op een plaatje om het op volledige grootte te openen.
 - 💬 **Chat** – gezins- en privéchat, end-to-end versleuteld, met push en leesvinkjes
 - 🔔 **Meldingen** – persoonlijke pushberichten op iPhone, iPad en Android en een meldingenbel met alle wijzigingen in het gezin
 
-pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe en 🇵🇱 Polski**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
+pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
+
+## Nieuw in 1.136.0
+
+**Oekraïens beschikbaar**
+
+- **Oekraïens.** Oekraïens is nu voor iedereen beschikbaar: kies Українська onder Instellingen → Taal en regio; staat de browser op Oekraïens, dan kiest pinn. het automatisch. Alle 6994 teksten, de pushmeldingen, de installatiewizard en de data-export zijn in het Oekraïens; de Oekraïense alarmnummers zijn 102, 103, 101 en 112. pinn. spreekt nu veertien talen. Siri antwoordt bij Oekraïens nog in het Engels.
+- Gewijzigd: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), alle README’s (talenlijst, “veertien talen”). Sinds 1.134.0 ook: `i18n/uk.i18n.js`, `js/textkern.js`, `js/region.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `.github/scripts/`. Server (hooks vervangen, PocketBase herstart): `pb_hooks/pinn-textkern.js`, `pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
 
 ## Nieuw in 1.135.17
 
@@ -124,13 +131,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Oekraïens.** Alle 6994 teksten zijn nu vertaald, ook de pushmeldingen (servertekst, woongroepbegrippen en land Oekraïne in de meldingshooks). De taal is nog verborgen – in de app verandert er niets.
 - Gewijzigd: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`. Server (hooks vervangen, PocketBase herstart): `pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
 
-## Nieuw in 1.135.15
-
-**Oekraïens – fase 16**
-
-- **Oekraïens.** Oekraïens is verder vertaald: vooruitblik, help en tutorial, gezinstegel, leden, servermeldingen, SOS, spraakbesturing en de overige kleine onderdelen (6847 van 6994 teksten). De taal is nog verborgen – in de app verandert er niets.
-- Gewijzigd: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Geen serverdeel.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -140,13 +140,13 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.135.17` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.136.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
    ```
 4. Open `http://<IP-adres van de NAS>:8090` → **Inloggen als hoofdbeheerder** → wachtwoord `Admin` → stel je eigen wachtwoord in.
-5. De **installatiewizard** leidt je door de rest – HTTPS, toegang op afstand, Google, AI, locatie en Home Assistant – stap voor stap, in twaalf talen.
+5. De **installatiewizard** leidt je door de rest – HTTPS, toegang op afstand, Google, AI, locatie en Home Assistant – stap voor stap, in veertien talen.
 6. Open pinn. op elke telefoon via het HTTPS-adres en voeg het toe aan het beginscherm:
    - **iPhone/iPad (Safari):** “Deel” → *Zet op beginscherm* (voor meldingen is iOS 16.4 of nieuwer nodig)
    - **Android (Chrome):** Instellingen → Meldingen → *pinn. als app installeren* of Chrome-menu ⋮ → *App installeren*
