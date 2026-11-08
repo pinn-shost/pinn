@@ -568,6 +568,20 @@ if (exists(path.join(HOOKS, 'pinn-sprache.js'))) {
       if (!vs.texts.pl.listNameN || !vs.texts.pl.listNameP || !vs.texts.uk.listNameN || !vs.texts.uk.listNameP) bad.push('case forms');
       return bad.length ? 'wrong: ' + bad.join(', ') : '';
     });
+    // Widget data (since 1.140.0): every answer language has its widget texts, a wrong link is refused, the route exists
+    test('widget data: texts in every language, wrong link refused (403), route GET /api/pinn/widget', () => {
+      const bad = [];
+      Object.keys(vs.texts).forEach(l => {
+        const W = vs.widgetTexts[l];
+        if (!W) { bad.push('texts ' + l); return; }
+        ['shop', 'events', 'tasks', 'none', 'empty', 'more'].forEach(k => { if (!W[k]) bad.push(l + '.' + k); });
+        if (!/\{n\}/.test(W.more)) bad.push(l + ' more');
+      });
+      const r = vs.widgetData('zu-kurz', 'heute', 'json');
+      if (r.ok !== false || r.status !== 403) bad.push('wrong link');
+      if (!routes.has('GET /api/pinn/widget')) bad.push('route');
+      return bad.length ? 'wrong: ' + bad.join(', ') : '';
+    });
   }
 }
 
