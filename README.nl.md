@@ -110,6 +110,15 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.139.0
+
+**Cadeauplanner: wie geeft wat, zonder dat de ontvanger het ziet**
+
+- **Wie geeft wat.** Op het tabblad “Cadeaus” toont pinn. nu alles wat gepland is per persoon (cadeau-ideeën uit je lijsten en de gereserveerde wensen van de anderen) met datum, status, gever en totaal. Wie iets krijgt, ziet het hier nooit.
+- **Verbergen voor de ontvangers.** In een cadeaulijst (niet privé) kies je “Verbergen voor”; die mensen zien de lijst niet, zodat meerdere mensen samen kunnen plannen (bijv. de ouders voor de kinderen). Een cadeau dat voor jezelf is ingevoerd zie je nooit. Net als bij privélijsten geldt dit voor de weergave in de app; het is geen versleuteling.
+- **Wie geeft het? / Samen geven.** Bij elk cadeau kies je wie het geeft. Bij een wens die al door iemand anders is gereserveerd tik je op “Doe mee”; de anderen zien wie meedoet, degene die het wenste niet.
+- Gewijzigd: `js/listen.js`, `css/listen.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (12 nieuwe teksten en een gewijzigde inleiding in alle veertien talen), `src/` (`index.html`, lijstenpop-up), alle README’s. Geen serverdeel – PocketBase hoeft niet opnieuw te starten.
+
 ## Nieuw in 1.138.0
 
 **Automatische donkere modus en automatische updates**
@@ -142,7 +151,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.138.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.139.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

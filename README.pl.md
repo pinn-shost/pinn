@@ -110,6 +110,15 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.139.0
+
+**Planer prezentów: kto co daje – bez wiedzy obdarowanego**
+
+- **Kto co daje.** Na karcie „Prezenty” pinn. pokazuje teraz wszystko, co zaplanowano, według osób (pomysły z twoich list i zarezerwowane życzenia innych) wraz z terminem, stanem, osobą dającą i sumą. Kto ma coś dostać, nigdy tego tu nie widzi.
+- **Ukrywanie przed obdarowanymi.** Na liście prezentów (nie prywatnej) wybierasz „Ukryj przed”; te osoby nie widzą listy, więc kilka osób może planować razem (np. rodzice dla dzieci). Prezent wpisany dla ciebie nigdy nie jest ci pokazywany. Tak jak przy listach prywatnych dotyczy to widoku w aplikacji; to nie jest szyfrowanie.
+- **Kto to daje? / Wspólne prezenty.** Przy każdym prezencie wybierasz, kto go daje. Przy życzeniu zarezerwowanym już przez kogoś innego dotknij „Dołączam”; inni widzą, kto uczestniczy, ale osoba, która o to prosiła – nie.
+- Zmienione: `js/listen.js`, `css/listen.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (12 nowych tekstów i zmieniony opis we wszystkich czternastu językach), `src/` (`index.html`, okno list), wszystkie README. Bez części serwerowej – PocketBase nie musi się restartować.
+
 ## Nowości w 1.138.0
 
 **Automatyczny tryb ciemny i automatyczne aktualizacje**
@@ -142,7 +151,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.138.0` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.139.0` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -22,6 +22,16 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.139', datum: '08.11.2026', titel: 'Geschenkplaner: wer schenkt was – ohne dass der Beschenkte es sieht',
+    punkte: [
+      ['neu', 'Übersicht „Wer schenkt was“: Auf dem Reiter „Geschenke“ zeigt pinn. jetzt alles Geplante pro Person – Geschenkideen aus deinen Listen und die reservierten Wünsche der anderen – mit Termin, Stand, Schenkendem und Summe. Tippst du auf eine Zeile, öffnet sich die Liste. Wer etwas bekommen soll, sieht es dort nie.'],
+      ['neu', 'Vor den Beschenkten verstecken: In einer Geschenkliste (nicht privat) wählst du „Verstecken vor“ – diese Personen sehen die Liste nicht. So können mehrere gemeinsam planen, z. B. die Eltern für die Kinder. Ein Geschenk, das für dich selbst eingetragen ist, siehst du ebenfalls nie. Wie bei privaten Listen gilt das für die Ansicht in der App; es ist keine Verschlüsselung.'],
+      ['neu', 'Wer schenkt es? Bei jedem Geschenk wählst du, wer es schenkt („Noch offen“ ist möglich). Das steht am Geschenk und in der Übersicht.'],
+      ['neu', 'Sammelgeschenke: Bei einem schon reservierten Wunsch auf der Wunschliste eines anderen tippst du auf „Ich mache mit“. Alle, die mitmachen, werden angezeigt (nicht dem Wünschenden); gibt der erste die Reservierung auf, übernimmt der Nächste.'],
+      ['info', 'Geändert: js/listen.js, css/listen.css, js/sprachen.js, js/versionslog.js, i18n/ (12 neue Texte, Einleitung der Geschenklisten geändert, in allen vierzehn Sprachen), i18n/versionslog.en.js, src/ (index.html, Popup Listen), alle READMEs. Kein Server-Teil, PocketBase muss nicht neu starten.'],
+    ],
+  },
+  {
     v: '1.138', datum: '08.11.2026', titel: 'Dunkelmodus nach Uhrzeit oder Sonnenuntergang, automatische Updates, mehrere Fütterungszeiten, Tiere-Banner',
     punkte: [
       ['neu', 'Automatischer Dunkelmodus: Unter Einstellungen → Darstellung stellst du ein, dass pinn. nach Uhrzeit (z. B. 20:00 bis 07:00) oder von Sonnenuntergang bis Sonnenaufgang auf Dunkel umschaltet. Die Sonnenzeiten werden auf dem Gerät für die Wohnadresse der Familie (sonst den Wetterort) berechnet – ohne Standortfreigabe. Schaltest du den Dunkelmodus von Hand um, gilt das bis zum nächsten automatischen Wechsel. Die Einstellung gehört zu deinem Profil und gilt auf allen Geräten.'],

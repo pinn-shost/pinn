@@ -118,3 +118,20 @@ html.dark #lsListModal > div, html.dark #lsItemModal > div, html.dark #lsShopMod
 .shop-paste-tags span { font-size: 11px; line-height: 1.2; padding: .2rem .5rem; border-radius: 999px; background: rgba(47,125,79,.12); color: #2F7D4F; }
 html.dark .shop-paste-row { border-color: rgba(255,255,255,.1); }
 html.dark .shop-paste-tags span { background: rgba(110,190,140,.18); color: #8fd1a8; }
+
+/* Gift planner: who gives what (1.139.0) */
+.ls-plan { border-radius: 14px; border: 1px solid rgba(37,35,31,0.12); background: #fff; padding: 0.6rem 0.8rem; }
+.ls-plan > summary { cursor: pointer; font-weight: 600; font-size: 0.9rem; list-style: none; -webkit-tap-highlight-color: transparent; }
+.ls-plan > summary::-webkit-details-marker { display: none; }
+.ls-plan > summary small { font-weight: 400; color: rgba(37,35,31,0.5); margin-left: 0.4rem; }
+.ls-plan-hint { font-size: 0.7rem; color: rgba(37,35,31,0.5); margin: 0.2rem 0 0.5rem; }
+.ls-plan-grp { margin-top: 0.55rem; }
+.ls-plan-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.2rem 0.8rem; font-size: 0.78rem; color: rgba(37,35,31,0.6); padding-bottom: 0.2rem; border-bottom: 1px solid rgba(37,35,31,0.08); }
+.ls-plan-head b { color: inherit; font-size: 0.85rem; }
+.ls-plan-row { display: flex; width: 100%; justify-content: space-between; align-items: baseline; gap: 0.6rem; text-align: left; padding: 0.35rem 0; font-size: 0.82rem; -webkit-tap-highlight-color: transparent; }
+.ls-plan-row:hover .ls-plan-text { color: var(--c-pine); }
+.ls-plan-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ls-plan-meta { flex-shrink: 0; font-size: 0.7rem; color: rgba(37,35,31,0.55); text-align: right; }
+html.dark .ls-plan { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.12); }
+html.dark .ls-plan > summary small, html.dark .ls-plan-hint, html.dark .ls-plan-meta, html.dark .ls-plan-head { color: rgba(237,234,226,0.6); }
+html.dark .ls-plan-head { border-bottom-color: rgba(255,255,255,0.1); }

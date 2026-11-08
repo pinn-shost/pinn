@@ -57,6 +57,12 @@
         <span data-tk="lists.modal.private">🔒 Only visible to me</span>
       </label>
 
+      <div id="lsListHiddenWrap" class="hidden mb-3">
+        <label data-tk="lists.hidden.label" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Hide from</label>
+        <div id="lsListHidden" class="flex flex-wrap gap-1.5"></div>
+        <p data-tk="lists.hidden.hint" class="text-[11px] text-ink/40 mt-1">These people do not see this list or its gifts – handy for planning together.</p>
+      </div>
+
       <p id="lsListError" class="hidden text-xs text-red-500 mb-3"></p>
       <div class="flex items-center gap-2 mt-1 flex-wrap">
         <button data-tk="common.delete" id="lsListDeleteBtn" type="button" class="hidden px-3 py-2 rounded-lg border border-red-300 text-sm text-red-500 hover:bg-red-50 transition">Delete</button>
@@ -93,6 +99,11 @@
       <label data-tk="lists.item.giftFor" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Gift for</label>
       <div id="lsItemFor" class="flex flex-wrap gap-1.5 mb-2"></div>
       <input data-tk-attr="placeholder:lists.item.giftForPlaceholder" id="lsItemForName" type="text" autocomplete="off" maxlength="40" placeholder="or enter a name, e.g. Grandma Helga" class="w-full rounded-lg border border-ink/15 px-3 py-2 text-base" />
+    </div>
+
+    <div id="lsItemGiverWrap" class="hidden mb-3">
+      <label data-tk="lists.giver.label" class="block text-xs uppercase tracking-wide text-ink/40 mb-2">Who gives it?</label>
+      <div id="lsItemGiver" class="flex flex-wrap gap-1.5"></div>
     </div>
 
     <div id="lsItemStatusWrap" class="hidden mb-3">

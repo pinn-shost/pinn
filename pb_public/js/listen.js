@@ -36,9 +36,13 @@ let gsRenderTimer = null;
    (unchanged). All other kinds live in familyLists in the family record – so they also work
    offline and can be merged without overwriting each other (lists with IDs).
    List:    { id, type, name, icon, date, memberId (wish list: whose), forName (gifts: for whom),
-              privateTo (profile ID, only visible there), createdAt, createdBy, items: [...] }
-   Item:    { id, text, done, section, memberId, forName, note, price, link, status (gifts),
-              reservedBy / reservedName (wishes), shopListId (put on a shopping list), createdAt }
+              privateTo (profile ID, only visible there), hiddenFrom (gifts: member IDs who never see the list),
+              createdAt, createdBy, items: [...] }
+   Item:    { id, text, done, section, memberId (gifts: recipient), forName, note, price, link, status (gifts),
+              giverId (gifts: member who gives it), reservedBy / reservedName (wishes), coBy (wishes: [{ id, name }]
+              who join in on a shared gift), shopListId (put on a shopping list), createdAt }
+   Secrecy (gifts): the recipient of an item never sees it (lsItemHidden) and members in hiddenFrom never see the
+   list (lsVisible). Like private lists this is a rule of the app screens, not encryption.
    Own templates (listTemplates): { id, type, icon, name, sections: [[section, [{ text, personal }]]] }
    In templates: '@' at the start = once for each person, '{t}' = number of days.
    ========================================================== */
@@ -232,7 +236,32 @@ function lsMyName() {
   const u = currentUser();
   return (u && (u.name || u.benutzername || u.username)) || tk('lists.someone');
 }
-function lsVisible(l) { return !!l && (!l.privateTo || l.privateTo === lsMyUserId()); }
+function lsMyMemberId() { const me = currentMember(); return me ? me.id : ''; }
+function lsHiddenFromMe(l) {
+  const me = lsMyMemberId();
+  return !!(me && l && Array.isArray(l.hiddenFrom) && l.hiddenFrom.includes(me));
+}
+// A gift is never shown to the person it is meant for
+function lsItemHidden(l, it) {
+  const me = lsMyMemberId();
+  return !!(me && l && l.type === 'gift' && it && it.memberId === me);
+}
+function lsVisible(l) { return !!l && (!l.privateTo || l.privateTo === lsMyUserId()) && !lsHiddenFromMe(l); }
+// What this person sees of a list: gift lists without the gifts meant for them (the stored list stays untouched)
+function lsView(l) {
+  if (!l || l.type !== 'gift' || !Array.isArray(l.items) || !l.items.some(i => lsItemHidden(l, i))) return l;
+  return { ...l, items: l.items.filter(i => !lsItemHidden(l, i)) };
+}
+function lsHiddenNames(l) {
+  return (Array.isArray(l && l.hiddenFrom) ? l.hiddenFrom : []).map(id => memberById(id)).filter(Boolean).map(m => memberLabel(m)).join(', ');
+}
+function lsGiverNames(it) {
+  const names = [];
+  if (it.reservedBy) names.push(it.reservedName || tk('lists.someoneDat'));
+  (Array.isArray(it.coBy) ? it.coBy : []).forEach(c => { if (c && c.id) names.push(c.name || tk('lists.someone')); });
+  return names;
+}
+function lsJoined(it, me) { return (Array.isArray(it.coBy) ? it.coBy : []).some(c => c && c.id === me); }
 function lsIsPet(m) { return !!(m && m.avatar && AVATARS.pet.some(([e]) => e === m.avatar)); }
 function lsIsOwner(l) { const me = currentMember(); return !!(me && l && l.memberId && me.id === l.memberId); }
 function lsColor(l) {
@@ -240,7 +269,7 @@ function lsColor(l) {
   String(l.id || '').split('').forEach(c => { h = (h * 31 + c.charCodeAt(0)) >>> 0; });
   return LS_PALETTE[h % LS_PALETTE.length];
 }
-function lsGetList(id) { const l = familyLists.find(x => x.id === id); return lsVisible(l) ? l : null; }
+function lsGetList(id) { const l = familyLists.find(x => x.id === id); return lsVisible(l) ? lsView(l) : null; }
 function normalizeFamilyLists(raw) {
   if (!Array.isArray(raw)) return [];
   return raw.filter(l => l && l.id && l.type && LIST_TYPES.some(t => t.id === l.type && t.id !== 'einkauf'))
@@ -285,7 +314,7 @@ function lsListsOfType(type) {
     const d = lsDaysUntil(l.date);
     return d === null ? 1 : d >= 0 ? 0 : 2;
   };
-  return familyLists.filter(l => l.type === type && lsVisible(l)).sort((a, b) => {
+  return familyLists.filter(l => l.type === type && lsVisible(l)).map(lsView).sort((a, b) => {
     const ra = rank(a), rb = rank(b);
     if (ra !== rb) return ra - rb;
     if (ra === 0) return lsDaysUntil(a.date) - lsDaysUntil(b.date);
@@ -411,6 +440,7 @@ function lsRenderOverview() {
     if (t.wish && l.memberId && memberById(l.memberId)) sub.push(tk('lists.ofPerson', { name: memberLabel(memberById(l.memberId)) }));
     if (t.gift && l.forName) sub.push(tk('lists.forPerson', { name: l.forName }));
     if (l.privateTo) sub.push(tk('lists.onlyYouSmall'));
+    else if (t.gift && lsHiddenNames(l)) sub.push(tk('lists.hidden.small', { names: lsHiddenNames(l) }));
     let extra = '';
     if (t.progress && l.items.length) {
       const done = l.items.filter(i => i.done).length;
@@ -450,20 +480,71 @@ function lsRenderOverview() {
   // Gifts: own reservations on the others' wish lists
   const extraEl = document.getElementById('listsExtra');
   extraEl.innerHTML = '';
+  if (t.gift) lsRenderPlanner(extraEl);
   if (t.gift) {
     const me = lsMyUserId();
     const res = [];
     familyLists.filter(l => l.type === 'wish' && lsVisible(l) && !lsIsOwner(l)).forEach(l => {
-      l.items.filter(i => i.reservedBy && i.reservedBy === me).forEach(i => res.push({ l, i }));
+      l.items.filter(i => (i.reservedBy && i.reservedBy === me) || lsJoined(i, me)).forEach(i => res.push({ l, i }));
     });
     if (res.length) {
-      extraEl.innerHTML = `<div class="ls-note mb-4"><div class="font-medium mb-1">${escapeHtml(tk('lists.reservedByYou'))}</div>${res.map(({ l, i }) => {
+      extraEl.insertAdjacentHTML('beforeend', `<div class="ls-note mb-4"><div class="font-medium mb-1">${escapeHtml(tk('lists.reservedByYou'))}</div>${res.map(({ l, i }) => {
         const owner = l.memberId && memberById(l.memberId) ? memberLabel(memberById(l.memberId)) : (l.name || '');
         return `<button type="button" class="block text-left w-full py-0.5 hover:text-pine" data-wl="${escapeHtml(l.id)}">• ${escapeHtml(i.text)} <span class="text-ink/45">(${escapeHtml(owner)}${lsPrice(i.price) !== null ? ' · ' + lsMoney(lsPrice(i.price)) : ''})</span></button>`;
-      }).join('')}</div>`;
+      }).join('')}</div>`);
       extraEl.querySelectorAll('[data-wl]').forEach(b => b.addEventListener('click', () => lsOpenList(b.dataset.wl)));
     }
   }
+}
+
+/* ---------- Gift planner: who gives what ---------- */
+// Everything planned per person: gift ideas (from the gift lists) and reserved wishes of the others.
+// The person a gift is meant for never gets it here (lsView hides it, own wish lists are left out).
+function lsPlannerGroups() {
+  const meM = currentMember();
+  const meKey = meM ? normalizeForGrouping(memberLabel(meM)) : '';
+  const groups = new Map();
+  const grp = name => {
+    const key = normalizeForGrouping(name);
+    if (!groups.has(key)) groups.set(key, { key, name, rows: [], sum: 0, days: null, date: '' });
+    return groups.get(key);
+  };
+  const addRow = (g, l, row, price) => {
+    g.rows.push({ lid: l.id, ...row });
+    g.sum += price || 0;
+    const d = lsDaysUntil(l.date);
+    if (d !== null && d >= 0 && (g.days === null || d < g.days)) { g.days = d; g.date = l.date; }
+  };
+  familyLists.filter(l => l.type === 'gift' && lsVisible(l)).map(lsView).forEach(l => {
+    l.items.forEach(it => {
+      if ((it.status || 'idee') === 'verschenkt' || !it.text) return;
+      const name = lsRecipient(it) || String(l.forName || '').trim();
+      if (!name || normalizeForGrouping(name) === meKey) return;
+      const st = LS_GIFT_STATUS.find(x => x.id === (it.status || 'idee')) || LS_GIFT_STATUS[0];
+      const gm = it.giverId ? memberById(it.giverId) : null;
+      addRow(grp(name), l, { text: it.text, giver: gm ? memberLabel(gm) : '', status: st.icon + ' ' + st.label }, lsPrice(it.price));
+    });
+  });
+  familyLists.filter(l => l.type === 'wish' && lsVisible(l) && !lsIsOwner(l) && l.memberId && memberById(l.memberId)).forEach(l => {
+    l.items.forEach(it => {
+      if (!it.reservedBy || !it.text) return;
+      addRow(grp(memberLabel(memberById(l.memberId))), l, { text: it.text, giver: lsGiverNames(it).join(', '), status: '⭐ ' + tk('lists.reserved') }, lsPrice(it.price));
+    });
+  });
+  return [...groups.values()].filter(g => g.rows.length)
+    .sort((a, b) => ((a.days === null) - (b.days === null)) || (a.days - b.days) || a.name.localeCompare(b.name));
+}
+function lsRenderPlanner(el) {
+  const groups = lsPlannerGroups();
+  if (!groups.length) return;
+  const total = groups.reduce((n, g) => n + g.rows.length, 0);
+  const body = groups.map(g => {
+    const head = `<div class="ls-plan-head"><b>${escapeHtml(g.name)}</b>${g.days !== null ? `<span>🗓️ ${escapeHtml(lsDateText(g.date))}</span>` : ''}${g.sum ? `<span>💶 ${escapeHtml(lsMoney(g.sum))}</span>` : ''}</div>`;
+    const rows = g.rows.map(r => `<button type="button" class="ls-plan-row" data-pl="${escapeHtml(r.lid)}"><span class="ls-plan-text">${escapeHtml(r.text)}</span><span class="ls-plan-meta">${escapeHtml(r.giver ? tk('lists.giver.by', { name: r.giver }) : tk('lists.planner.open'))} · ${escapeHtml(r.status)}</span></button>`).join('');
+    return `<div class="ls-plan-grp">${head}${rows}</div>`;
+  }).join('');
+  el.insertAdjacentHTML('beforeend', `<details class="ls-plan mb-4" open><summary>${escapeHtml(tk('lists.planner.title'))} <small>${escapeHtml(tk('lists.planner.count', { n: total }))}</small></summary><p class="ls-plan-hint">${escapeHtml(tk('lists.planner.hint'))}</p>${body}</details>`);
+  el.querySelectorAll('[data-pl]').forEach(b => b.addEventListener('click', () => lsOpenList(b.dataset.pl)));
 }
 
 /* ---------- Single list ---------- */
@@ -509,12 +590,13 @@ function lsRowHtml(l, it) {
     const st = LS_GIFT_STATUS.find(s => s.id === (it.status || 'idee')) || LS_GIFT_STATUS[0];
     sub.push(escapeHtml(st.label));
   }
+  if (t.gift && it.giverId && memberById(it.giverId)) sub.push(escapeHtml(tk('lists.giver.by', { name: memberLabel(memberById(it.giverId)) })));
   if (it.note) sub.push(escapeHtml(it.note));
   if (it.shopListId && !it.done) {
     const sl = getShoppingList(it.shopListId);
     sub.push('🛒 ' + escapeHtml(sl ? sl.name : tk('lists.onShoppingList')));
   }
-  if (t.wish && !owner && it.reservedBy && it.reservedBy !== lsMyUserId()) sub.push(escapeHtml(tk('lists.reservedBy', { name: it.reservedName || tk('lists.someoneDat') })));
+  if (t.wish && !owner && it.reservedBy && (it.reservedBy !== lsMyUserId() || (it.coBy && it.coBy.length))) sub.push(escapeHtml(tk('lists.reservedBy', { name: lsGiverNames(it).join(', ') })));
   let right = '';
   const price = lsPrice(it.price);
   if (price !== null) right += `<span class="ls-price">${lsMoney(price)}</span>`;
@@ -522,6 +604,8 @@ function lsRowHtml(l, it) {
   if (t.wish && !owner) {
     if (it.reservedBy === lsMyUserId()) right += `<button type="button" class="ls-reserve mine" data-act="reserve" data-iid="${escapeHtml(it.id)}">${escapeHtml(tk('lists.youGetIt'))}</button>`;
     else if (!it.reservedBy) right += `<button type="button" class="ls-reserve" data-act="reserve" data-iid="${escapeHtml(it.id)}">${escapeHtml(tk('lists.reserve'))}</button>`;
+    else if (lsJoined(it, lsMyUserId())) right += `<button type="button" class="ls-reserve mine" data-act="join" data-iid="${escapeHtml(it.id)}">${escapeHtml(tk('lists.joined'))}</button>`;
+    else right += `<button type="button" class="ls-reserve" data-act="join" data-iid="${escapeHtml(it.id)}">${escapeHtml(tk('lists.join'))}</button>`;
   }
   return `
     <div class="ls-row${done ? ' done' : ''}">
@@ -773,10 +857,31 @@ function lsRowAction(act, itemId) {
     if (it.reservedBy && it.reservedBy !== me) return;
     if (it.reservedBy === me) {
       if (!confirm(tk('lists.confirmUnreserve', { name: it.text }))) return;
-      lsUpdateItem(l.id, itemId, i => { const c = { ...i }; delete c.reservedBy; delete c.reservedName; return c; });
+      lsUpdateItem(l.id, itemId, i => {
+        const c = { ...i };
+        delete c.reservedBy; delete c.reservedName;
+        // Someone who joined in takes over the reservation
+        const rest = (Array.isArray(i.coBy) ? i.coBy : []).filter(x => x && x.id);
+        if (rest.length) { c.reservedBy = rest[0].id; c.reservedName = rest[0].name; c.coBy = rest.slice(1); }
+        if (!c.coBy || !c.coBy.length) delete c.coBy;
+        return c;
+      });
     } else {
       lsUpdateItem(l.id, itemId, i => ({ ...i, reservedBy: me, reservedName: lsMyName() }));
     }
+    lsCommit();
+  } else if (act === 'join') {
+    // Shared gift: join in on a wish somebody else reserved (or leave again)
+    if (!t.wish || lsIsOwner(l) || !it.reservedBy) return;
+    const me = lsMyUserId();
+    if (it.reservedBy === me) return;
+    lsUpdateItem(l.id, itemId, i => {
+      const c = { ...i };
+      const have = (Array.isArray(i.coBy) ? i.coBy : []).filter(x => x && x.id);
+      const next = have.some(x => x.id === me) ? have.filter(x => x.id !== me) : [...have, { id: me, name: lsMyName() }];
+      if (next.length) c.coBy = next; else delete c.coBy;
+      return c;
+    });
     lsCommit();
   } else if (act === 'edit') {
     lsOpenItemModal(l.id, itemId);
@@ -822,7 +927,7 @@ function lsOpenListModal(listId) {
   const type = l ? l.type : listsTab;
   const t = lsType(type);
   if (t.id === 'einkauf') return;
-  lsListCtx = { mode: l ? 'edit' : 'new', type, tpl: null, listId: l ? l.id : null, icon: l ? (l.icon || t.icon) : t.icon, owner: l ? (l.memberId || '') : '', persons: [], nameAuto: !l,
+  lsListCtx = { mode: l ? 'edit' : 'new', type, tpl: null, listId: l ? l.id : null, icon: l ? (l.icon || t.icon) : t.icon, owner: l ? (l.memberId || '') : '', persons: [], nameAuto: !l, hidden: l && Array.isArray(l.hiddenFrom) ? l.hiddenFrom.slice() : [],
     prefill: !l && type === 'pack' ? lsPackPrefill : null };
   lsPackPrefill = null;
   document.getElementById('lsListError').classList.add('hidden');
@@ -968,7 +1073,22 @@ function lsShowListForm(l) {
   const privWrap = document.getElementById('lsListPrivateWrap');
   privWrap.classList.toggle('hidden', !!t.wish);
   privWrap.classList.toggle('flex', !t.wish);
-  document.getElementById('lsListPrivate').checked = l ? !!l.privateTo : !!t.privateDefault;
+  const privEl = document.getElementById('lsListPrivate');
+  privEl.checked = l ? !!l.privateTo : !!t.privateDefault;
+  // Gifts that are not private: choose who must never see the list (the recipients)
+  const hidWrap = document.getElementById('lsListHiddenWrap');
+  const hidEl = document.getElementById('lsListHidden');
+  const drawHidden = () => {
+    hidWrap.classList.toggle('hidden', !t.gift || privEl.checked);
+    hidEl.innerHTML = members.filter(m => !lsIsPet(m)).map(m => `<button type="button" class="ls-pick${ctx.hidden.includes(m.id) ? ' active' : ''}" data-hid="${escapeHtml(m.id)}">${m.avatar ? escapeHtml(m.avatar) + ' ' : ''}${escapeHtml(memberLabel(m))}</button>`).join('');
+    hidEl.querySelectorAll('[data-hid]').forEach(b => b.addEventListener('click', () => {
+      const id = b.dataset.hid;
+      ctx.hidden = ctx.hidden.includes(id) ? ctx.hidden.filter(x => x !== id) : [...ctx.hidden, id];
+      drawHidden();
+    }));
+  };
+  privEl.onchange = drawHidden;
+  drawHidden();
 
   document.getElementById('lsListDeleteBtn').classList.toggle('hidden', isNew);
   document.getElementById('lsListBackBtn').classList.toggle('hidden', !isNew);
@@ -1031,6 +1151,7 @@ function lsSaveListFromModal() {
       if (!date) delete c.date;
       if (t.id === 'pack') { if (trip && !trip.dateOnly) c.trip = trip; else delete c.trip; }
       if (priv) c.privateTo = lsMyUserId(); else delete c.privateTo;
+      if (t.gift && !priv && ctx.hidden.length) c.hiddenFrom = ctx.hidden.slice(); else delete c.hiddenFrom;
       return c;
     });
     lsCloseListModal();
@@ -1044,6 +1165,7 @@ function lsSaveListFromModal() {
   const l = { id: lsId('fl'), type: ctx.type, ...data, createdAt: Date.now(), createdBy: lsMyUserId(), items: lsBuildItems(tpl, persons, days) };
   if (tpl.forName) l.forName = tpl.forName;
   if (priv) l.privateTo = lsMyUserId();
+  if (t.gift && !priv && ctx.hidden.length) l.hiddenFrom = ctx.hidden.slice();
   if (trip && !trip.dateOnly) l.trip = trip;
   if (ctx.prefill && ctx.prefill.schluessel) l.eventKey = String(ctx.prefill.schluessel).slice(0, 140);
   if (tripTips.length) {
@@ -1118,7 +1240,7 @@ function lsOpenItemModal(listId, itemId) {
   const it = l && l.items.find(i => i.id === itemId);
   if (!it) return;
   const t = lsType(l.type);
-  lsItemCtx = { listId, itemId, memberId: it.memberId || '', forMember: (t.gift && it.memberId) ? it.memberId : '', status: it.status || 'idee' };
+  lsItemCtx = { listId, itemId, memberId: it.memberId || '', forMember: (t.gift && it.memberId) ? it.memberId : '', giver: (t.gift && it.giverId) ? it.giverId : '', status: it.status || 'idee' };
   document.getElementById('lsItemTitle').textContent = t.gift ? tk('lists.item.editGift') : t.wish ? tk('lists.item.editWish') : tk('lists.item.editTitle');
   document.getElementById('lsItemText').value = it.text || '';
   document.getElementById('lsItemNote').value = it.note || '';
@@ -1167,6 +1289,17 @@ function lsOpenItemModal(listId, itemId) {
     };
     drawSt();
   }
+  // Gift: who gives it (shown in the overview "Who gives what")
+  document.getElementById('lsItemGiverWrap').classList.toggle('hidden', !t.gift);
+  if (t.gift) {
+    const gvEl = document.getElementById('lsItemGiver');
+    const drawGv = () => {
+      gvEl.innerHTML = `<button type="button" class="ls-pick${!lsItemCtx.giver ? ' active' : ''}" data-gv="">${escapeHtml(tk('lists.giver.open'))}</button>`
+        + members.filter(m => !lsIsPet(m)).map(m => `<button type="button" class="ls-pick${lsItemCtx.giver === m.id ? ' active' : ''}" data-gv="${escapeHtml(m.id)}">${m.avatar ? escapeHtml(m.avatar) + ' ' : ''}${escapeHtml(memberLabel(m))}</button>`).join('');
+      gvEl.querySelectorAll('[data-gv]').forEach(b => b.addEventListener('click', () => { lsItemCtx.giver = b.dataset.gv; drawGv(); }));
+    };
+    drawGv();
+  }
   const showPL = t.gift || t.wish;
   const plWrap = document.getElementById('lsItemPriceLinkWrap');
   plWrap.classList.toggle('hidden', !showPL);
@@ -1204,6 +1337,7 @@ function lsSaveItemFromModal() {
       set('memberId', ctx.forMember);
       set('forName', ctx.forMember ? '' : document.getElementById('lsItemForName').value.trim());
       c.status = ctx.status || 'idee';
+      set('giverId', ctx.giver);
     }
     if (t.gift || t.wish) {
       const pr = lsPrice(priceRaw);
@@ -1588,7 +1722,7 @@ function gsCollect(q) {
       }, it.name, it.note || '');
     });
     // Packing lists, gifts, wish lists, checklists, ideas
-    familyLists.filter(lsVisible).forEach(l => {
+    familyLists.filter(lsVisible).map(lsView).forEach(l => {
       const t = lsType(l.type);
       const open = lsOpenItems(l).length;
       add('list', {

@@ -112,7 +112,7 @@ Pulsa cualquier imagen para verla en tamaño completo.
 |---|---|
 | 📅 **Calendario** | Calendarios de iCloud y Google por persona, privados o compartidos con la familia. Festivos, vacaciones escolares, días de recogida de basura y cumpleaños de tus contactos aparecen automáticamente. |
 | 🍝 **Comidas y recetas** | Planifica la semana y manda los ingredientes directamente a la lista de la compra. Importa recetas desde texto, PDF, fotos o un enlace – opcionalmente con IA. Comparte tus recetas favoritas con otras familias de tu servidor. |
-| 🛒 **Listas** | Listas de la compra por tienda, una despensa que rellena la lista cuando algo se acaba, listas de equipaje a partir de plantillas (vacaciones, bolsa del hospital, fiesta), listas de regalos y de deseos. |
+| 🛒 **Listas** | Listas de la compra por tienda, una despensa que rellena la lista cuando algo se acaba, listas de equipaje a partir de plantillas (vacaciones, bolsa del hospital, fiesta), listas de regalos y de deseos con un planificador «quién regala qué» que quien recibe nunca ve. |
 | ✅ **Tareas y hogar** | Tareas con recordatorios push, planes de limpieza y cubos de basura – y una página infantil con rutinas animadas que solo muestra lo que toca a esa hora del día. |
 | 💶 **Finanzas** | Cajas compartidas o privadas, presupuesto del hogar, ahorro y depósitos con ETF y acciones, paga, pagos periódicos y contratos con recordatorio de cancelación. Los pisos compartidos reparten gastos y ven quién debe a quién. |
 | 📄 **Documentos y vehículos** | Tiques y garantías, documentos de identidad con aviso de caducidad. Coches y bicis con fechas de ITV, cambio de neumáticos, consumo y coste total. |
@@ -128,6 +128,15 @@ Pulsa cualquier imagen para verla en tamaño completo.
 | 🧩 **Todo lo demás** | Tablón familiar con notas movibles, búsqueda global, modo sin conexión con sincronización automática, modo oscuro, panel para iPad con PIN por perfil, cuenta de invitado, control parental. |
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski y 🇺🇦 Українська**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
+
+## Novedades de la 1.139.0
+
+**Planificador de regalos: quién regala qué, sin que lo vea quien lo recibe**
+
+- **Quién regala qué.** En la pestaña «Regalos», pinn. muestra ahora todo lo planeado por persona (ideas de regalo de tus listas y los deseos reservados de los demás) con fecha, estado, quién regala y el total. Quien va a recibir algo nunca lo ve ahí.
+- **Ocultar a quien recibe.** En una lista de regalos (no privada) eliges «Ocultar a»; esas personas no ven la lista, así que varias pueden planear juntas (p. ej. los padres para los hijos). Un regalo anotado para ti nunca se te muestra. Como en las listas privadas, esto vale para la vista en la app; no es cifrado.
+- **¿Quién lo regala? / Regalos conjuntos.** En cada regalo eliges quién lo regala. En un deseo que otra persona ya reservó, toca «Me apunto»; los demás ven quién participa, quien lo deseó no.
+- Cambiado: `js/listen.js`, `css/listen.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (12 textos nuevos y una introducción modificada en los catorce idiomas), `src/` (`index.html`, ventana de listas), todos los README. Sin parte de servidor: PocketBase no necesita reiniciarse.
 
 ## Novedades de la 1.138.0
 
@@ -234,7 +243,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.138.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.139.0` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
