@@ -263,6 +263,30 @@ if (!exists(path.join(HOOKS, 'pinn-system.js'))) {
       .map(([a, b, want]) => { const got = sys.vergleiche(a, b); return got === want ? '' : a + ' vs ' + b + ': expected ' + want + ', got ' + got; })
       .filter(Boolean).join('; '));
 
+    // Automatic updates (since 1.138.0): when is a run due, next planned run, clean-up of a stored setting
+    const mon = (h, m) => new Date(2026, 10, 9, h, m);   // Monday 9 Nov 2026
+    const plan = (o) => Object.assign({ an: true, rhythmus: 'taeglich', tag: 1, zeit: '04:30', letzter: null }, o || {});
+    test('autoFaellig() – due from the chosen time for three hours, once a day', () => [
+      ['before the time', sys.autoFaellig(plan(), mon(4, 29)), false],
+      ['at the time', sys.autoFaellig(plan(), mon(4, 30)), true],
+      ['end of the window', sys.autoFaellig(plan(), mon(7, 29)), true],
+      ['after the window', sys.autoFaellig(plan(), mon(7, 30)), false],
+      ['already done today', sys.autoFaellig(plan({ letzter: { datum: '2026-11-09', ergebnis: 'keine' } }), mon(5, 0)), false],
+      ['done yesterday', sys.autoFaellig(plan({ letzter: { datum: '2026-11-08', ergebnis: 'keine' } }), mon(5, 0)), true],
+      ['switched off', sys.autoFaellig(plan({ an: false }), mon(5, 0)), false],
+      ['weekly, right day', sys.autoFaellig(plan({ rhythmus: 'woechentlich', tag: 1 }), mon(5, 0)), true],
+      ['weekly, other day', sys.autoFaellig(plan({ rhythmus: 'woechentlich', tag: 3 }), mon(5, 0)), false],
+      ['window ends at midnight', sys.autoFaellig(plan({ zeit: '23:30' }), mon(23, 59)), true],
+    ].map(([label, got, want]) => (got === want ? '' : label + ': expected ' + want + ', got ' + got)).filter(Boolean).join('; '));
+    test('autoNaechste() – next planned run', () => {
+      const d = sys.autoNaechste(plan(), mon(5, 0));
+      const w = sys.autoNaechste(plan({ rhythmus: 'woechentlich', tag: 3 }), mon(5, 0));
+      return eq([d && d.getDate(), d && d.getHours(), d && d.getMinutes(), w && w.getDate(), sys.autoNaechste(plan({ an: false }), mon(5, 0))], [10, 4, 30, 11, null]);
+    });
+    test('autoBereinigen() – broken values fall back to the defaults', () => eq(
+      sys.autoBereinigen({ an: 'yes', rhythmus: 'x', tag: 9, zeit: '25:99', letzter: { ergebnis: 'boom' } }),
+      { an: false, rhythmus: 'taeglich', tag: 1, zeit: '04:30', letzter: null }));
+
     // installierteVersion() reads APP_VERSION from the built pb_public/index.html
     const indexFile = path.join(ROOT, 'pb_public', 'index.html');
     const versionFile = path.join(ROOT, 'src', 'version.txt');
@@ -462,7 +486,7 @@ if (exists(path.join(HOOKS, 'pinn-pushtext.js'))) {
   }
 }
 
-// Voice control (pinn-sprache.js): Russian sentences (since 1.121.0), nl/it/pt/zh/ja/ko (since 1.128.0), the other languages keep working
+// Voice control (pinn-sprache.js): Russian sentences (since 1.121.0), nl/it/pt/zh/ja/ko (since 1.128.0), tr/pl/uk (since 1.137.0), the other languages keep working
 if (exists(path.join(HOOKS, 'pinn-sprache.js'))) {
   let vs = null;
   test('pinn-sprache.js loads and still understands German and English', () => {
@@ -505,6 +529,43 @@ if (exists(path.join(HOOKS, 'pinn-sprache.js'))) {
       if (vs.intentOf('Zwei Decken auf die Einkaufsliste').items[0].name !== 'Decken') bad.push('Decken');
       const en = vs.texts.en;
       Object.keys(vs.texts).forEach(l => { const miss = Object.keys(en).filter(k => !(k in vs.texts[l])); if (miss.length) bad.push(l + ' lacks ' + miss.join('/')); });
+      return bad.length ? 'wrong: ' + bad.join(', ') : '';
+    });
+    // Turkish, Polish, Ukrainian (since 1.137.0)
+    test('voice control in tr, pl, uk: add, quantities, list name, read the list, task, day overview, texts', () => {
+      const bad = [];
+      const cs = vs.cleanSentence;
+      const items = r => (r.items || []).map(x => (x.qty ? x.qty + ' ' : '') + x.name).join('|');
+      // [sentence, language of the profile, expected items, expected list name]
+      const addCases = [
+        ['Süt ve yumurtayı alışveriş listesine ekle', 'tr', 'Süt|Yumurta', ''], ['Migros listesine iki paket makarna ekle', 'tr', '2 paket Makarna', 'Migros'],
+        ['Listeye 2 litre süt ekle', 'tr', '2 l Süt', ''], ['Bize ekmek almamız lazım', 'tr', 'Ekmek', ''], ['İki kilo elma satın al', 'tr', '2 kg Elma', ''],
+        ['Dodaj mleko i jajka do listy zakupów', 'pl', 'Mleko|Jajka', ''], ['Dodaj dwie butelki mleka do listy zakupów w Biedronce', 'pl', '2 butelki Mleko', 'Biedronce'],
+        ['Dodaj do listy zakupów chleb', 'pl', 'Chleb', ''], ['Wpisz 2 kg jabłek na listę Lidl', 'pl', '2 kg Jabłka', 'Lidl'], ['Potrzebujemy mleka i jajek', 'pl', 'Mleko|Jajka', ''],
+        ['Додай молоко і яйця до списку покупок', 'uk', 'Молоко|Яйця', ''], ['Додай два пакети макаронів до списку Сільпо', 'uk', '2 пакети Макарони', 'Сільпо'],
+        ['Запиши 2 літри молока у список покупок', 'uk', '2 л Молоко', ''], ['Купи хліб і молоко', 'uk', 'Хліб|Молоко', ''], ['Нам потрібно молоко та яйця', 'uk', 'Молоко|Яйця', ''],
+        ['Hey Siri, pinn: Dodaj masło do listy zakupów', 'pl', 'Masło', ''],
+      ];
+      addCases.forEach(c => { const r = vs.intentOf(cs(c[0]), c[1]); if (r.art !== 'kaufen' || items(r) !== c[2] || (r.laden || '') !== c[3]) bad.push('add ' + c[0] + ' -> ' + JSON.stringify(r)); });
+      ['Alışveriş listesinde ne var?', 'Listeyi oku', 'Ne almam lazım?', 'Co jest na liście zakupów?', 'Przeczytaj listę zakupów', 'Co muszę kupić?', 'Що в списку покупок?', 'Що треба купити?']
+        .forEach(t => { if (vs.intentOf(cs(t)).art !== 'liste') bad.push('list ' + t); });
+      if (vs.intentOf(cs('Migros listesinde neler var?')).laden !== 'migros' || vs.intentOf(cs('Co jest na liście Lidl?')).laden !== 'lidl' || vs.intentOf(cs('Що в списку Сільпо?')).laden !== 'сільпо') bad.push('list name');
+      [['Yarın çöpü çıkarmamı hatırlat', 'Çöpü çıkarmamı'], ['Yeni görev: Salı günü faturayı öde', 'Faturayı öde'], ['Przypomnij mi, żeby w piątek wynieść śmieci', 'Wynieść śmieci'],
+        ['Nowe zadanie: umyć okna w sobotę', 'Umyć okna'], ['Нагадай мені завтра про сміття', 'Сміття'], ['Нове завдання: помити вікна в суботу', 'Помити вікна']]
+        .forEach(c => { const r = vs.intentOf(cs(c[0])); if (r.art !== 'aufgabe' || !r.iso || r.rest !== c[1]) bad.push('task ' + c[0] + ' -> ' + JSON.stringify(r)); });
+      [['Bugün ne var?', 0], ['Yarın neler var', 1], ['Co mam dzisiaj w planie?', 0], ['Co jest jutro w kalendarzu?', 1], ['Що на сьогодні?', 0], ['Які плани на завтра', 1]]
+        .forEach(c => { const r = vs.intentOf(cs(c[0])); if (r.art !== 'tag' || r.offset !== c[1]) bad.push('day ' + c[0]); });
+      // the day after tomorrow is no \"tomorrow\"
+      if (!vs.intentOf(cs('Przypomnij mi pojutrze o wizycie')).iso || vs.intentOf(cs('Нагадай мені післязавтра зателефонувати')).iso === vs.intentOf(cs('Нагадай мені завтра зателефонувати')).iso) bad.push('day after tomorrow');
+      // unknown sentences give the help text, the older languages keep working
+      ['Ładna piosenka', 'Güzel şarkı', 'Гарна пісня'].forEach(t => { if (vs.intentOf(cs(t)).art !== 'hilfe') bad.push('help ' + t); });
+      if (vs.intentOf('Купи молоко і яйця', 'uk').items.length !== 2 || vs.intentOf('Купи молоко и яйца').items.length !== 2) bad.push('uk before ru');
+      // answer texts: every placeholder used by a text exists, the case forms exist for pl / uk
+      ['tr', 'pl', 'uk'].forEach(l => {
+        const L = vs.texts[l];
+        Object.keys(L).forEach(k => { if (typeof L[k] === 'string') { const m = L[k].match(/\{(\w)\}/g) || []; m.forEach(p => { if (!/^\{[lNPidnteowm]\}$/.test(p)) bad.push(l + ' ' + k + ' placeholder ' + p); }); } });
+      });
+      if (!vs.texts.pl.listNameN || !vs.texts.pl.listNameP || !vs.texts.uk.listNameN || !vs.texts.uk.listNameP) bad.push('case forms');
       return bad.length ? 'wrong: ' + bad.join(', ') : '';
     });
   }
