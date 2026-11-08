@@ -129,6 +129,15 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.138.0
+
+**Mode sombre automatique et mises à jour automatiques**
+
+- **Mode sombre.** Sous Réglages → Affichage, pinn. peut désormais passer en mode sombre selon l’heure (p. ex. de 20 h à 7 h) ou du coucher au lever du soleil. Les heures du soleil sont calculées sur l’appareil pour l’adresse du domicile de la famille (sinon le lieu météo), sans accès à la position. Si vous changez à la main, cela vaut jusqu’au prochain changement automatique. Le réglage appartient à votre profil et s’applique sur tous vos appareils.
+- **Mises à jour automatiques.** Sous Réglages → Système → Sauvegardes & mises à jour, pinn. peut rechercher une nouvelle version à une heure fixe, chaque jour ou une fois par semaine, créer d’abord une sauvegarde puis installer la mise à jour. Les versions préliminaires ne sont jamais installées automatiquement, et si la sauvegarde échoue, rien n’est installé. Le résultat et la prochaine exécution s’affichent dans la même fenêtre, les erreurs dans le journal des erreurs. Réservé aux administrateurs autorisés à installer les mises à jour.
+- **Animaux.** Plusieurs heures de repas par animal : dans l’éditeur, vous ajoutez autant d’heures que vous voulez (jusqu’à 12) avec un sélecteur d’heure et une note facultative sur la quantité ou la nourriture (p. ex. « 1 tasse de croquettes »). La note apparaît sur le bouton du repas et dans la carte nourriture. Nouvelle bannière sur la page des animaux : une prairie avec une clôture où passent les animaux de la famille, la nuit avec des étoiles.
+- Modifié : `js/dunkelzeit.js` (nouveau), `js/design.js`, `js/familie.js`, `css/haustierewetter.css`, `js/einstellungen.js`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (19 nouveaux textes dans les quatorze langues), `src/` (`index.html`), `pinn-setup.sh`, `.github/scripts/check-hooks.js`, tous les README. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`.
+
 ## Nouveautés de la 1.137.0
 
 **Commande vocale en turc, polonais et ukrainien**
@@ -199,13 +208,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Ukrainien.** L’ukrainien est traduit plus loin : véhicules (plein et recharge, consommation, garage, pneus, contrôle technique/entretien, plaque d’assurance, calculateurs) (4760 textes sur 6994). La langue est encore masquée – rien ne change dans l’appli.
 - Modifié : `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Pas de partie serveur.
 
-## Nouveautés de la 1.135.9
-
-**Ukrainien – étape 10**
-
-- **Ukrainien.** L’ukrainien est traduit plus loin : maison, deuxième partie (plan d’entretien, compteurs, plantes, loyer, achat et financement, conseils météo) (4290 textes sur 6994). La langue est encore masquée – rien ne change dans l’appli.
-- Modifié : `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Pas de partie serveur.
-
 ## Comment ça marche
 
 ```mermaid
@@ -232,7 +234,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.137.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.138.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

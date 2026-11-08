@@ -61,6 +61,8 @@ function applyPersonalDesign() {
   defaultViewModeMobile = pick('defaultViewModeMobile', DESIGN_VIEW_MODES, fd.defaultViewModeMobile);
   defaultViewScopeMobile = pick('defaultViewScopeMobile', DESIGN_VIEW_SCOPES, fd.defaultViewScopeMobile);
   document.documentElement.classList.toggle('dark', typeof w.darkMode === 'boolean' ? w.darkMode : fd.darkMode);
+  // Automatic dark mode (js/dunkelzeit.js) overrides the fixed state while it is switched on
+  if (typeof darkAutoLoad === 'function') darkAutoLoad(w);
   applyOverviewPrefs(w);
   finDepotsOut = Array.isArray(w.finDepotsOut) ? w.finDepotsOut.filter(x => typeof x === 'string' && x).slice(0, 30) : [];
   try { if (currentView === 'finanzen' && finTab === 'sparen' && finance) renderSavings(); } catch (e) { /* finance not ready yet */ }
@@ -89,6 +91,7 @@ function syncDesignSettingsInputs() {
   const dm = document.getElementById('darkModeToggle');
   if (!dm) return;
   dm.checked = document.documentElement.classList.contains('dark');
+  if (typeof darkAutoSyncInputs === 'function') darkAutoSyncInputs();
   document.getElementById('colorPaper').value = themeColors.paper;
   document.getElementById('colorPine').value = themeColors.pine;
   document.getElementById('colorMustard').value = themeColors.mustard;
@@ -100,6 +103,10 @@ function syncDesignSettingsInputs() {
 function currentDesignValues() {
   return {
     darkMode: document.documentElement.classList.contains('dark'),
+    // Automatic dark mode: 'aus' | 'zeit' | 'sonne', fixed times (js/dunkelzeit.js)
+    darkAuto: typeof darkAuto === 'string' ? darkAuto : 'aus',
+    darkFrom: typeof darkFrom === 'string' ? darkFrom : '20:00',
+    darkTo: typeof darkTo === 'string' ? darkTo : '07:00',
     colorPaper: themeColors.paper, colorPine: themeColors.pine, colorMustard: themeColors.mustard,
     defaultViewModeDesktop, defaultViewScopeDesktop, defaultViewModeMobile, defaultViewScopeMobile,
     // Overview (tiles)

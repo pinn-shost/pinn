@@ -110,6 +110,15 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.138.0
+
+**Automatyczny tryb ciemny i automatyczne aktualizacje**
+
+- **Tryb ciemny.** Ustawienia → Wygląd: pinn. potrafi teraz przełączać się na tryb ciemny według godziny (np. od 20:00 do 07:00) albo od zachodu do wschodu słońca. Godziny słońca są obliczane na urządzeniu dla adresu domowego rodziny (w razie braku – dla lokalizacji pogody), bez dostępu do lokalizacji. Jeśli przełączysz ręcznie, obowiązuje to do następnej automatycznej zmiany. Ustawienie należy do Twojego profilu i działa na wszystkich Twoich urządzeniach.
+- **Automatyczne aktualizacje.** Ustawienia → System → Kopie zapasowe i aktualizacje: pinn. może o ustawionej porze, codziennie lub raz w tygodniu, sprawdzać, czy jest nowa wersja, najpierw tworzyć kopię zapasową, a potem instalować aktualizację. Wersje wstępne nigdy nie są instalowane automatycznie, a jeśli kopia zapasowa się nie uda, nic nie zostanie zainstalowane. Wynik i następny termin widać w tym samym oknie, błędy – w dzienniku błędów. Tylko dla adminów, którzy mogą instalować aktualizacje.
+- **Zwierzęta.** Kilka pór karmienia dla każdego zwierzęcia: w edytorze dodajesz ich tyle, ile chcesz (do 12), z wyborem godziny i opcjonalną notatką o ilości lub karmie (np. „1 kubek suchej karmy”). Notatka pojawia się na przycisku karmienia i w karcie karmy. Nowy baner na stronie zwierząt: łąka z płotem, po której spacerują zwierzęta Twojej rodziny, nocą z gwiazdami.
+- Zmienione: `js/dunkelzeit.js` (nowy), `js/design.js`, `js/familie.js`, `css/haustierewetter.css`, `js/einstellungen.js`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (19 nowych tekstów we wszystkich czternastu językach), `src/` (`index.html`), `pinn-setup.sh`, `.github/scripts/check-hooks.js`, wszystkie README. Serwer (wymienić hooki, PocketBase uruchomi się ponownie): `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`.
+
 ## Nowości w 1.137.0
 
 **Sterowanie głosem po turecku, polsku i ukraińsku**
@@ -124,13 +133,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Ukraiński.** Ukraiński jest teraz dostępny dla wszystkich: wybierz Українська w Ustawienia → Język i region; jeśli przeglądarka jest ustawiona na ukraiński, pinn. wybierze go automatycznie. Wszystkie 6994 teksty, powiadomienia push, kreator konfiguracji i eksport danych są po ukraińsku; ukraińskie numery alarmowe to 102, 103, 101 i 112. pinn. mówi teraz w 14 językach. Siri przy ukraińskim nadal odpowiada po angielsku.
 - Zmienione: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), wszystkie README (lista języków, „14 językach”). Od 1.134.0 dodatkowo: `i18n/uk.i18n.js`, `js/textkern.js`, `js/region.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `.github/scripts/`. Serwer (wymień hooki, PocketBase uruchomi się ponownie): `pb_hooks/pinn-textkern.js`, `pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
 
-## Nowości w 1.135.17
-
-**Ukraiński – etap 18**
-
-- **Ukraiński.** Kreator konfiguracji i eksport danych mówią teraz po ukraińsku: wszystkie instrukcje krok po kroku (sieć domowa, DuckDNS, VPN, Google, AI, lokalizacja, Home Assistant, aplikacje) i wszystkie teksty eksportu. Ukraińskie numery alarmowe (102, 103, 101 i 112) sprawdzone. Nowy krótki `README.uk.md`. Język jest jeszcze ukryty – w aplikacji nic się nie zmienia.
-- Zmienione: `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `README.uk.md`. Bez części serwerowej.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -140,7 +142,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.137.0` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.138.0` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

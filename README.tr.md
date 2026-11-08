@@ -110,6 +110,15 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.138.0 sürümündeki yenilikler
+
+**Otomatik karanlık mod ve otomatik güncellemeler**
+
+- **Karanlık mod.** Ayarlar → Görünüm bölümünde pinn. artık saate göre (örneğin 20:00 ile 07:00 arası) ya da gün batımından gün doğumuna kadar karanlık moda geçebiliyor. Güneş saatleri, ailenin ev adresi (yoksa hava durumu konumu) için cihazda hesaplanır; konum izni gerekmez. Elle değiştirirsen bu bir sonraki otomatik değişime kadar geçerli olur. Ayar profiline aittir ve tüm cihazlarında geçerlidir.
+- **Otomatik güncellemeler.** Ayarlar → Sistem → Yedekler ve güncellemeler bölümünde pinn. belirlenen saatte, her gün ya da haftada bir, yeni sürümü kontrol edebiliyor, önce yedek oluşturup ardından güncellemeyi yükleyebiliyor. Ön sürümler asla otomatik yüklenmez; yedek başarısız olursa hiçbir şey yüklenmez. Sonuç ve bir sonraki çalışma aynı pencerede görünür, hatalar hata günlüğüne yazılır. Yalnızca güncelleme yükleme yetkisi olan yöneticiler için.
+- **Evcil hayvanlar.** Her hayvan için birden fazla besleme saati: düzenleyicide saat seçiciyle istediğin kadar (en fazla 12) saat ekleyebilir, miktar veya mama için isteğe bağlı not yazabilirsin (örneğin “1 kase kuru mama”). Not, besleme düğmesinde ve mama kartında görünür. Evcil hayvanlar sayfasında yeni bir banner var: ailenin hayvanlarının yürüdüğü çitli bir çayır, geceleri yıldızlarla.
+- Değişenler: `js/dunkelzeit.js` (yeni), `js/design.js`, `js/familie.js`, `css/haustierewetter.css`, `js/einstellungen.js`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (on dört dilin hepsinde 19 yeni metin), `src/` (`index.html`), `pinn-setup.sh`, `.github/scripts/check-hooks.js`, tüm README’ler. Sunucu (hook’ları değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`.
+
 ## 1.137.0 sürümündeki yenilikler
 
 **Türkçe, Lehçe ve Ukraynaca sesli komut**
@@ -124,13 +133,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Ukraynaca.** Ukraynaca artık herkes için hazır: Ayarlar → Dil ve bölge altından Українська'yı seç; tarayıcı Ukraynaca ise pinn. otomatik olarak seçer. 6994 metnin tamamı, push bildirimleri, kurulum sihirbazı ve veri dışa aktarma Ukraynaca. Ukrayna'nın acil numaraları 102, 103, 101 ve 112. pinn. artık 14 dil konuşuyor. Siri Ukraynacada şimdilik İngilizce yanıt veriyor.
 - Değişenler: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), tüm README dosyaları (dil listesi, “14 dil”). 1.134.0'dan beri ayrıca: `i18n/uk.i18n.js`, `js/textkern.js`, `js/region.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `.github/scripts/`. Sunucu (kancaları değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-textkern.js`, `pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
 
-## 1.135.17 sürümündeki yenilikler
-
-**Ukraynaca – 18. aşama**
-
-- **Ukraynaca.** Kurulum sihirbazı ve veri dışa aktarımı artık Ukraynaca konuşuyor: tüm adım adım kılavuzlar (ev ağı, DuckDNS, VPN, Google, yapay zekâ, konum, Home Assistant, uygulamalar) ve dışa aktarımın tüm metinleri. Ukrayna acil durum numaraları (102, 103, 101 ve 112) kontrol edildi. Yeni, kısa bir `README.uk.md` eklendi. Dil henüz gizli – uygulamada hiçbir şey değişmiyor.
-- Değişenler: `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `README.uk.md`. Sunucu bölümü yok.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -140,7 +142,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.137.0` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.138.0` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

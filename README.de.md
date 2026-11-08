@@ -133,6 +133,15 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.138.0
+
+**Automatischer Dunkelmodus und automatische Updates**
+
+- **Dunkelmodus.** Unter Einstellungen → Darstellung kann pinn. jetzt nach Uhrzeit (z. B. 20:00 bis 07:00) oder von Sonnenuntergang bis Sonnenaufgang auf Dunkel umschalten. Die Sonnenzeiten werden auf dem Gerät für die Wohnadresse der Familie (sonst den Wetterort) berechnet – ohne Standortfreigabe. Schaltest du von Hand um, gilt das bis zum nächsten automatischen Wechsel. Die Einstellung gehört zu deinem Profil und gilt auf all deinen Geräten.
+- **Automatische Updates.** Unter Einstellungen → System → Sicherungen & Updates kann pinn. zu einer festen Uhrzeit, täglich oder einmal pro Woche, nach einer neuen Version suchen, zuerst eine Sicherung anlegen und dann das Update installieren. Vorabversionen werden nie automatisch installiert, und schlägt die Sicherung fehl, wird nichts installiert. Ergebnis und nächster Termin stehen im selben Fenster, Fehler im Fehlerprotokoll. Nur für Admins, die Updates installieren dürfen.
+- **Tiere.** Mehrere Fütterungszeiten pro Tier: Im Tier-Editor fügst du beliebig viele Zeiten (bis zu 12) mit Zeitwähler und optionaler Notiz zu Menge oder Futter hinzu (z. B. „1 Tasse Trockenfutter“). Die Notiz erscheint am Fütterungs-Knopf und in der Futter-Karte. Neues Banner auf der Tiere-Seite: eine Wiese mit Zaun, an der die Tiere deiner Familie vorbeilaufen – nachts mit Sternen.
+- Geändert: `js/dunkelzeit.js` (neu), `js/design.js`, `js/familie.js`, `css/haustierewetter.css`, `js/einstellungen.js`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (19 neue Texte in allen vierzehn Sprachen), `src/` (`index.html`), `pinn-setup.sh`, `.github/scripts/check-hooks.js`, alle READMEs. Server (Hooks ersetzen, PocketBase startet neu): `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`.
+
 ## Neu in 1.137.0
 
 **Sprachsteuerung auf Türkisch, Polnisch und Ukrainisch**
@@ -175,13 +184,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Ukrainisch.** Ukrainisch ist weiter übersetzt: Schule & Kita, Familie (Notfallkarten, Standorte) und Pinnwand (6404 von 6994 Texten). Die Sprache ist noch versteckt – in der App ändert sich nichts.
 - Geändert: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Kein Server-Teil.
 
-## Neu in 1.135.13
-
-**Ukrainisch – Etappe 14**
-
-- **Ukrainisch.** Ukrainisch ist weiter übersetzt: Chat (Rest), Haustiere und Orte (Standortfreigabe, GPS-Tracker) (5958 von 6994 Texten). Die Sprache ist noch versteckt – in der App ändert sich nichts.
-- Geändert: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Kein Server-Teil.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -210,7 +212,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.137.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.138.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -210,6 +210,7 @@ function sysRender() {
     document.getElementById('sysVorabActiveIssue').href = sysIssueUrl(info, vs.version);
   }
   sysRenderDev();
+  sysRenderAuto(info, kannAktion);
 
   // Backups
   document.getElementById('sysBackupNowBtn').disabled = !w.aktiv;
@@ -235,6 +236,78 @@ function sysRender() {
   more.classList.toggle('hidden', list.length <= SYS_ROWS);
   more.textContent = sysShowAll ? tk('maint.showLess') : tk('maint.showAll', { n: list.length });
 }
+
+/* ---------- Automatic updates (since 1.138.0) ----------
+   The plan is kept on the server (pb_data/pinn_autoupdate.json) and shown here; the cron job on the server starts the update. */
+let sysAutoBusy = false;
+function sysAutoDays() {
+  // 0 = Sunday … 6 = Saturday, names in the language of the app
+  const sel = document.getElementById('sysAutoDay');
+  if (sel.options.length) return;
+  const fmt = new Intl.DateTimeFormat(sysLocale(), { weekday: 'long' });
+  [1, 2, 3, 4, 5, 6, 0].forEach(d => {
+    const o = document.createElement('option');
+    o.value = String(d);
+    o.textContent = fmt.format(new Date(2024, 0, 7 + d)); // 7 Jan 2024 was a Sunday
+    sel.appendChild(o);
+  });
+}
+function sysAutoFailText(code) {
+  if (code === 'github') return tk('maint.githubDown');
+  if (code === 'ordner' || code === 'wartung') return tk('maint.notRunningShort');
+  if (code === 'docker') return tk('maint.noDocker');
+  return tk('common.failed');
+}
+function sysRenderAuto(info, kannAktion) {
+  const a = (info && info.auto) || { an: false, rhythmus: 'taeglich', tag: 1, zeit: '04:30', letzter: null, naechste: 0 };
+  sysAutoDays();
+  const on = document.getElementById('sysAutoOn');
+  on.checked = !!a.an;
+  on.disabled = !kannAktion;
+  document.getElementById('sysAutoBody').classList.toggle('hidden', !a.an);
+  const rh = document.getElementById('sysAutoRhythm'), day = document.getElementById('sysAutoDay'), tm = document.getElementById('sysAutoTime');
+  rh.value = a.rhythmus; day.value = String(a.tag); tm.value = a.zeit;
+  day.classList.toggle('hidden', a.rhythmus !== 'woechentlich');
+  [rh, day, tm].forEach(el => { el.disabled = !kannAktion; });
+  document.getElementById('sysAutoNext').textContent = a.an && a.naechste ? tk('maint.auto.next', { when: sysFmtWhen(a.naechste) }) : '';
+  const l = a.letzter;
+  let text = '';
+  if (a.an && l) {
+    const when = sysFmtWhen(Math.floor((l.zeit || 0) / 1000));
+    if (l.ergebnis === 'ok' || l.ergebnis === 'gestartet') text = tk('maint.auto.lastOk', { version: l.version || '', when });
+    else if (l.ergebnis === 'keine') text = tk('maint.auto.lastNone', { when });
+    else if (l.ergebnis === 'fehler') text = tk('maint.auto.lastFail', { when, message: sysAutoFailText(l.code) });
+  }
+  document.getElementById('sysAutoLast').textContent = text;
+}
+async function sysSaveAuto() {
+  if (sysAutoBusy) return;
+  const time = document.getElementById('sysAutoTime').value;
+  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) return;
+  sysAutoBusy = true;
+  try {
+    const res = await apiFetch('/api/pinn/system/auto', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        an: document.getElementById('sysAutoOn').checked,
+        rhythmus: document.getElementById('sysAutoRhythm').value,
+        tag: Number(document.getElementById('sysAutoDay').value),
+        zeit: time,
+      }),
+    });
+    const body = await res.json().catch(() => ({}));
+    if (res.status === 404) throw new Error(tk('maint.serverMissing'));
+    if (!res.ok || body.error) throw new Error(body.error || tk('maint.auto.saveFailed'));
+    if (sysInfo) sysInfo.auto = body.auto;
+    sysNotice('');
+  } catch (e) {
+    sysNotice(e.message || tk('maint.auto.saveFailed'));
+  } finally {
+    sysAutoBusy = false;
+    if (sysInfo) sysRenderAuto(sysInfo, !!(sysInfo.darf && sysInfo.wartung && sysInfo.wartung.aktiv && sysInfo.wartung.docker));
+  }
+}
+['sysAutoOn', 'sysAutoRhythm', 'sysAutoDay', 'sysAutoTime'].forEach(id => document.getElementById(id).addEventListener('change', sysSaveAuto));
 
 /* ---------- Developer area: pre-releases ----------
    Normal updates only ever show finished versions (GitHub releases/latest). Here an admin can search

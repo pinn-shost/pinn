@@ -22,6 +22,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.138', datum: '08.11.2026', titel: 'Dunkelmodus nach Uhrzeit oder Sonnenuntergang, automatische Updates, mehrere Fütterungszeiten, Tiere-Banner',
+    punkte: [
+      ['neu', 'Automatischer Dunkelmodus: Unter Einstellungen → Darstellung stellst du ein, dass pinn. nach Uhrzeit (z. B. 20:00 bis 07:00) oder von Sonnenuntergang bis Sonnenaufgang auf Dunkel umschaltet. Die Sonnenzeiten werden auf dem Gerät für die Wohnadresse der Familie (sonst den Wetterort) berechnet – ohne Standortfreigabe. Schaltest du den Dunkelmodus von Hand um, gilt das bis zum nächsten automatischen Wechsel. Die Einstellung gehört zu deinem Profil und gilt auf allen Geräten.'],
+      ['neu', 'Automatische Updates: Unter Einstellungen → System → Sicherungen & Updates schaltest du ein, dass pinn. zu einer festen Uhrzeit, täglich oder einmal pro Woche (Wochentag wählbar), nach einer neuen Version sucht, zuerst eine Sicherung anlegt und dann das Update installiert. Vorabversionen werden nie automatisch installiert; schlägt die Sicherung fehl, wird nichts installiert. Ergebnis und nächster Termin stehen im selben Fenster, Fehler im Fehlerprotokoll. Nur für Admins, die Updates installieren dürfen.'],
+      ['neu', 'Tiere: Mehrere Fütterungszeiten pro Tier: Im Tier-Editor fügst du beliebig viele Zeiten (bis zu 12) mit Zeitwähler und optionaler Notiz zu Menge oder Futter hinzu (z. B. „1 Tasse Trockenfutter“). Die Notiz erscheint am Fütterungs-Knopf und in der Futter-Karte. Neues Banner auf der Tiere-Seite: eine Wiese mit Zaun, an der die Tiere deiner Familie vorbeilaufen – nachts mit Sternen.'],
+      ['info', 'Geändert: js/dunkelzeit.js (neu), js/design.js, js/familie.js, css/haustierewetter.css, js/einstellungen.js, js/sicherungen.js, js/sprachen.js, js/versionslog.js, i18n/ (19 neue Texte in allen vierzehn Sprachen), i18n/versionslog.en.js, src/ (index.html), pinn-setup.sh, pb_hooks/pinn-system.js und pb_hooks/system.pb.js (Server-Teil: Hooks ersetzen, PocketBase startet neu), .github/scripts/check-hooks.js, alle READMEs.'],
+    ],
+  },
+  {
     v: '1.137', datum: '08.11.2026', titel: 'Sprachsteuerung auf Türkisch, Polnisch und Ukrainisch',
     punkte: [
       ['neu', 'Die Sprachsteuerung („Hey Siri, pinn“, auf Android HTTP Shortcuts) versteht jetzt auch Türkisch, Polnisch und Ukrainisch und antwortet in der Sprache deines Profils: auf die Einkaufsliste setzen (mit Menge und Geschäft), Liste vorlesen, Aufgabe anlegen („Erinnere mich morgen an den Müll“) und sagen, was heute oder morgen ansteht. Damit antwortet Siri bei Ukrainisch nicht mehr auf Englisch. Alle vierzehn App-Sprachen sind jetzt auch für die Sprachsteuerung da.'],

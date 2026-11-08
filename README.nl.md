@@ -110,6 +110,15 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.138.0
+
+**Automatische donkere modus en automatische updates**
+
+- **Donkere modus.** Onder Instellingen → Weergave pinn. kan nu op tijdstip (bijvoorbeeld 20:00 tot 07:00) of van zonsondergang tot zonsopgang naar de donkere modus schakelen. De zonnetijden worden op het apparaat berekend voor het thuisadres van het gezin (anders de weerlocatie), zonder toegang tot je locatie. Als je handmatig schakelt, geldt dat tot de volgende automatische wisseling. De instelling hoort bij je profiel en geldt op al je apparaten.
+- **Automatische updates.** Onder Instellingen → Systeem → Back-ups & updates pinn. kan op een vast tijdstip, elke dag of één keer per week, naar een nieuwe versie zoeken, eerst een back-up maken en daarna de update installeren. Voorlopige versies worden nooit automatisch geïnstalleerd en als de back-up mislukt, wordt er niets geïnstalleerd. Resultaat en volgende keer staan in hetzelfde venster, fouten in het foutenlogboek. Alleen voor beheerders die updates mogen installeren.
+- **Huisdieren.** Meerdere voedertijden per dier: in de editor voeg je zoveel tijden toe als je wilt (tot 12) met een tijdkiezer en een optionele notitie over hoeveelheid of voer (bijvoorbeeld “1 kopje droogvoer”). De notitie staat op de voederknop en in de voerkaart. Nieuwe banner op de huisdierenpagina: een weide met hek waar de huisdieren van je gezin langslopen, ’s nachts met sterren.
+- Gewijzigd: `js/dunkelzeit.js` (nieuw), `js/design.js`, `js/familie.js`, `css/haustierewetter.css`, `js/einstellungen.js`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (19 nieuwe teksten in alle veertien talen), `src/` (`index.html`), `pinn-setup.sh`, `.github/scripts/check-hooks.js`, alle README’s. Server (hooks vervangen, PocketBase start opnieuw op): `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`.
+
 ## Nieuw in 1.137.0
 
 **Spraakbesturing in het Turks, Pools en Oekraïens**
@@ -124,13 +133,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Oekraïens.** Oekraïens is nu voor iedereen beschikbaar: kies Українська onder Instellingen → Taal en regio; staat de browser op Oekraïens, dan kiest pinn. het automatisch. Alle 6994 teksten, de pushmeldingen, de installatiewizard en de data-export zijn in het Oekraïens; de Oekraïense alarmnummers zijn 102, 103, 101 en 112. pinn. spreekt nu veertien talen. Siri antwoordt bij Oekraïens nog in het Engels.
 - Gewijzigd: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), alle README’s (talenlijst, “veertien talen”). Sinds 1.134.0 ook: `i18n/uk.i18n.js`, `js/textkern.js`, `js/region.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `.github/scripts/`. Server (hooks vervangen, PocketBase herstart): `pb_hooks/pinn-textkern.js`, `pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
 
-## Nieuw in 1.135.17
-
-**Oekraïens – fase 18**
-
-- **Oekraïens.** De installatie-assistent en de data-export spreken nu Oekraïens: alle stapsgewijze handleidingen (thuisnetwerk, DuckDNS, VPN, Google, AI, locatie, Home Assistant, apps) en alle exportteksten. De Oekraïense alarmnummers (102, 103, 101 en 112) zijn gecontroleerd. Nieuw is een korte `README.uk.md`. De taal is nog verborgen – in de app verandert er niets.
-- Gewijzigd: `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `README.uk.md`. Geen serverdeel.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -140,7 +142,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.137.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.138.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -25,6 +25,24 @@
           </span>
         </label>
 
+        <!-- Automatic dark mode (js/dunkelzeit.js) -->
+        <div class="mb-5">
+          <p data-tk="settings.display.darkAuto" class="text-xs uppercase tracking-wide text-ink/40 mb-2">Automatic dark mode</p>
+          <select id="darkAutoSelect" class="w-full max-w-xs rounded-lg border border-ink/15 px-3 py-2 text-sm">
+            <option data-tk="settings.display.darkAutoOff" value="aus">Off – switch manually</option>
+            <option data-tk="settings.display.darkAutoTime" value="zeit">By time of day</option>
+            <option data-tk="settings.display.darkAutoSun" value="sonne">Sunset to sunrise</option>
+          </select>
+          <div id="darkAutoTimes" class="hidden flex flex-wrap items-center gap-2 mt-2 text-sm">
+            <span data-tk="settings.display.darkFrom">Dark from</span>
+            <input id="darkFromInput" type="time" class="rounded-lg border border-ink/15 px-2 py-1.5 text-sm" />
+            <span data-tk="settings.display.darkTo">until</span>
+            <input id="darkToInput" type="time" class="rounded-lg border border-ink/15 px-2 py-1.5 text-sm" />
+          </div>
+          <p id="darkAutoHint" class="hidden text-[11px] text-ink/50 mt-2 leading-snug"></p>
+          <p id="darkAutoNote" data-tk="settings.display.darkAutoNote" class="hidden text-[11px] text-ink/45 mt-1 leading-snug">If you switch dark mode by hand, that applies until the next automatic change.</p>
+        </div>
+
         <p data-tk="settings.display.customColors" class="text-xs uppercase tracking-wide text-ink/40 mb-2">Custom colours</p>
         <div class="flex flex-wrap items-center gap-5 mb-6">
           <label class="flex items-center gap-2 text-sm">

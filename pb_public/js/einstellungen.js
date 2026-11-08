@@ -83,6 +83,7 @@ function renderSettings() {
   renderSettingsMemberList();
 
   document.getElementById('darkModeToggle').checked = document.documentElement.classList.contains('dark');
+  if (typeof darkAutoSyncInputs === 'function') darkAutoSyncInputs();
   document.getElementById('colorPaper').value = themeColors.paper;
   document.getElementById('colorPine').value = themeColors.pine;
   document.getElementById('colorMustard').value = themeColors.mustard;

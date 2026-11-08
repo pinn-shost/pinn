@@ -30,6 +30,25 @@
               <button data-tk="maint.installNow" id="sysUpdInstallBtn" type="button" class="sm-btn sm-primary hidden">Install now</button>
             </div>
             <p data-tk="maint.updateHint" class="text-[11px] text-ink/45 mt-2 leading-snug">pinn. automatically creates a backup before every update. pinn. is unavailable for a few minutes during the update.</p>
+
+            <!-- Automatic updates (since 1.138.0) -->
+            <div id="sysAutoBox" class="sm-auto mt-4 pt-3 border-t border-ink/10">
+              <label class="sm-check"><input type="checkbox" id="sysAutoOn"><span data-tk="maint.auto.enable">Install new versions automatically</span></label>
+              <div id="sysAutoBody" class="hidden mt-2">
+                <div class="flex flex-wrap items-center gap-2 text-sm">
+                  <select id="sysAutoRhythm" class="rounded-lg border border-ink/15 px-2 py-1.5 text-sm">
+                    <option data-tk="maint.auto.daily" value="taeglich">Every day</option>
+                    <option data-tk="maint.auto.weekly" value="woechentlich">Once a week</option>
+                  </select>
+                  <select id="sysAutoDay" class="hidden rounded-lg border border-ink/15 px-2 py-1.5 text-sm" data-no-i18n></select>
+                  <span data-tk="maint.auto.at">at</span>
+                  <input id="sysAutoTime" type="time" class="rounded-lg border border-ink/15 px-2 py-1.5 text-sm" />
+                </div>
+                <p id="sysAutoNext" class="text-xs text-ink/60 mt-2 leading-snug" data-no-i18n></p>
+                <p id="sysAutoLast" class="text-xs text-ink/60 mt-1 leading-snug" data-no-i18n></p>
+                <p data-tk="maint.auto.hint" class="text-[11px] text-ink/45 mt-2 leading-snug">At that time pinn. checks for a new version, creates a backup first and then installs the update. pinn. is unavailable for a few minutes meanwhile. Pre-releases are never installed automatically.</p>
+              </div>
+            </div>
           </section>
 
           <details id="sysDevBox" class="sm-sec sm-dev">

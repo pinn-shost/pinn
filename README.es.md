@@ -129,6 +129,15 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski y 🇺🇦 Українська**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.138.0
+
+**Modo oscuro automático y actualizaciones automáticas**
+
+- **Modo oscuro.** En Ajustes → Apariencia, pinn. puede pasar ahora al modo oscuro según la hora (p. ej. de 20:00 a 07:00) o de la puesta a la salida del sol. Las horas del sol se calculan en el dispositivo para la dirección de casa de la familia (si no, el lugar del tiempo), sin pedir la ubicación. Si cambias a mano, vale hasta el siguiente cambio automático. El ajuste pertenece a tu perfil y se aplica en todos tus dispositivos.
+- **Actualizaciones automáticas.** En Ajustes → Sistema → Copias de seguridad y actualizaciones, pinn. puede buscar una versión nueva a una hora fija, a diario o una vez por semana, crear primero una copia de seguridad y luego instalar la actualización. Las versiones preliminares nunca se instalan automáticamente, y si falla la copia de seguridad no se instala nada. El resultado y la próxima ejecución aparecen en la misma ventana, los errores en el registro de errores. Solo para administradores que pueden instalar actualizaciones.
+- **Mascotas.** Varias horas de comida por mascota: en el editor añades tantas horas como quieras (hasta 12) con selector de hora y una nota opcional sobre la cantidad o la comida (p. ej. «1 taza de pienso»). La nota aparece en el botón de alimentación y en la tarjeta de comida. Nuevo banner en la página de mascotas: un prado con valla por el que pasean las mascotas de tu familia, de noche con estrellas.
+- Cambiado: `js/dunkelzeit.js` (nuevo), `js/design.js`, `js/familie.js`, `css/haustierewetter.css`, `js/einstellungen.js`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (19 textos nuevos en los catorce idiomas), `src/` (`index.html`), `pinn-setup.sh`, `.github/scripts/check-hooks.js`, todos los README. Servidor (sustituir los hooks, PocketBase se reinicia): `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`.
+
 ## Novedades de la 1.137.0
 
 **Control por voz en turco, polaco y ucraniano**
@@ -199,13 +208,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Ucraniano.** El ucraniano se ha traducido un poco más: vehículos (repostaje y carga, consumo, taller, neumáticos, ITV/servicio, matrícula del seguro, calculadoras) (4760 de 6994 textos). El idioma sigue oculto: en la app no cambia nada.
 - Cambiado: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Sin parte de servidor.
 
-## Novedades de la 1.135.9
-
-**Ucraniano – etapa 10**
-
-- **Ucraniano.** El ucraniano se ha traducido un poco más: hogar, segunda parte (plan de mantenimiento, contadores, plantas, alquiler, compra y financiación, avisos meteorológicos) (4290 de 6994 textos). El idioma sigue oculto: en la app no cambia nada.
-- Cambiado: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Sin parte de servidor.
-
 ## Cómo funciona
 
 ```mermaid
@@ -232,7 +234,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.137.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.138.0` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

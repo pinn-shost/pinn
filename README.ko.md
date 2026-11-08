@@ -133,6 +133,15 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.138.0의 새 소식
+
+**다크 모드 자동 전환과 자동 업데이트**
+
+- **다크 모드.** 설정 → 화면 모양에서 이제 pinn.이 시간대(예: 20:00~07:00) 또는 일몰부터 일출까지 자동으로 다크 모드로 바꿀 수 있어요. 일출·일몰 시각은 가족의 집 주소(없으면 날씨 위치)를 기준으로 기기에서 계산하므로 위치 권한이 필요 없어요. 직접 전환하면 다음 자동 전환 때까지 유지돼요. 이 설정은 프로필에 저장되어 모든 기기에 적용돼요.
+- **자동 업데이트.** 설정 → 시스템 → 백업 및 업데이트에서 pinn.이 정한 시간(매일 또는 주 1회)에 새 버전을 확인하고, 먼저 백업을 만든 뒤 업데이트를 설치할 수 있어요. 사전 릴리스는 자동으로 설치되지 않고, 백업에 실패하면 아무것도 설치하지 않아요. 결과와 다음 실행 시각은 같은 창에 표시되고, 오류는 오류 로그에 남아요. 업데이트를 설치할 수 있는 관리자만 쓸 수 있어요.
+- **반려동물.** 반려동물마다 급여 시간을 여러 개 설정할 수 있어요. 편집 화면에서 시간 선택기로 원하는 만큼(최대 12개) 추가하고, 양이나 사료 메모(예: “건사료 1컵”)도 남길 수 있어요. 메모는 급여 버튼과 사료 카드에 보여요. 반려동물 페이지에 새 배너가 생겼어요. 울타리가 있는 초원 위를 가족의 반려동물이 지나가고, 밤에는 별이 떠요.
+- 변경: `js/dunkelzeit.js` (신규), `js/design.js`, `js/familie.js`, `css/haustierewetter.css`, `js/einstellungen.js`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`(14개 언어 모두에 새 문구 19개), `src/`(`index.html`), `pinn-setup.sh`, `.github/scripts/check-hooks.js`, 모든 README. 서버(hook 교체, PocketBase가 다시 시작돼요): `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`.
+
 ## 1.137.0의 새 소식
 
 **튀르키예어·폴란드어·우크라이나어 음성 제어**
@@ -175,13 +184,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **우크라이나어.** 우크라이나어 번역이 더 진행됐어요: 학교·어린이집, 가족(응급 카드, 위치), 게시판(6994개 중 6404개). 이 언어는 아직 숨겨져 있어요. 앱에서 달라지는 것은 없어요.
 - 변경: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). 서버 변경 없음.
 
-## 1.135.13의 새 소식
-
-**우크라이나어 – 14단계**
-
-- **우크라이나어.** 우크라이나어 번역이 더 진행됐어요: 채팅(나머지), 반려동물과 장소(위치 공유, GPS 트래커)(6994개 중 5958개). 이 언어는 아직 숨겨져 있어요. 앱에서 달라지는 것은 없어요.
-- 변경: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). 서버 변경 없음.
-
 ## 작동 방식
 
 ```mermaid
@@ -210,7 +212,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.137.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.138.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

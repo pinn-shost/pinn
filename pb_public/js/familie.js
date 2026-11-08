@@ -3735,13 +3735,46 @@ function ptLegacyMembers() {
   const taken = new Set(ptList().map(p => p.fromMember).filter(Boolean));
   return members.filter(m => famIsPet(m) && !taken.has(m.id));
 }
+/* ---------- Banner of the pets page (since 1.138.0): meadow with fence, the pets of the family walk by ---------- */
+function ptSceneHtml(list) {
+  const night = typeof fzSceneIsNight === 'function' ? fzSceneIsNight() : (new Date().getHours() >= 20 || new Date().getHours() < 6);
+  const sky = night
+    ? [[8, 12], [22, 30], [35, 8], [48, 22], [62, 14], [74, 36], [86, 10], [93, 26], [15, 40], [55, 38]].map(([x, y], i) => `<span class="hs-star${i % 3 === 0 ? ' tw hs-anim' : ''}" style="left:${x}%;top:${y}px;animation-delay:-${i * 0.7}s"></span>`).join('')
+    : '<span class="hs-sun"></span><div class="hs-cloud hs-anim"><i></i></div><div class="hs-cloud c2 hs-anim"><i></i></div>';
+  const animals = [...new Set((list || []).map(p => ptSpecies(p.species).emoji))].slice(0, 5);
+  ['🐕', '🐈', '🐇'].forEach(e => { if (animals.length < 3 && !animals.includes(e)) animals.push(e); });
+  const flyers = night ? [['🦉', 17, 4]] : [['🦋', 15, 3], ['🐦', 21, 11]];
+  const fly = ([emoji, dur, delay], i) => `<div class="hs-mover pt-fly ${i % 2 ? '' : 'ltr '}hs-anim" style="top:${14 + i * 18}px;animation-duration:${dur}s;animation-delay:-${delay}s"><span>${emoji}</span></div>`;
+  // far lane walks to the right, near lane to the left
+  const walk = (emoji, i) => `<div class="hs-mover pt-walk ${i % 2 ? 'near' : 'far ltr'} hs-anim" style="animation-duration:${9 + i * 3}s;animation-delay:-${i * 4}s"><span>${emoji}</span></div>`;
+  return `<div class="fz-hero-band hs-scene pt-scene${night ? ' is-night' : ''}" aria-hidden="true">
+      ${sky}
+      <svg class="pt-hills" viewBox="0 0 400 34" preserveAspectRatio="none" aria-hidden="true"><path d="M0 34 V18 Q50 4 110 14 T230 10 T400 14 V34Z" class="pt-hill-far"/><path d="M0 34 V26 Q70 14 150 24 T300 20 T400 24 V34Z" class="pt-hill-near"/></svg>
+      <div class="pt-fence"></div><div class="pt-grass"></div>
+      ${flyers.map(fly).join('')}${animals.map(walk).join('')}
+    </div>`;
+}
+function ptListHeroHtml(act) {
+  const feedAll = act.reduce((n, p) => n + ptFeedTimes(p).length, 0);
+  const fedAll = act.reduce((n, p) => n + ptFeedTimes(p).filter(t => ptFedSlot(p, t)).length, 0);
+  const walkAll = act.reduce((n, p) => n + (Number(p.walks) || 0), 0);
+  const walkDone = act.reduce((n, p) => n + ((Number(p.walks) || 0) ? Math.min(ptWalksToday(p).length, Number(p.walks) || 0) : 0), 0);
+  const chips = [];
+  if (act.length) chips.push(`<span class="vt-chip">🐾 ${act.length}</span>`);
+  if (feedAll) chips.push(`<span class="vt-chip${fedAll >= feedAll ? '' : ' muted'}">🍖 ${fedAll}/${feedAll}</span>`);
+  if (walkAll) chips.push(`<span class="vt-chip${walkDone >= walkAll ? '' : ' muted'}">🦮 ${walkDone}/${walkAll}</span>`);
+  return `<div class="fz-hero pt-listhero" style="--fz:var(--c-pine)">
+    ${ptSceneHtml(act)}
+    <div class="pt-listhero-body"><h3 class="font-serif text-xl leading-tight">${tk('pet.pets')}</h3>${chips.length ? `<div class="flex items-center gap-1.5 flex-wrap">${chips.join('')}</div>` : ''}</div>
+  </div>`;
+}
 function ptPaneHtml() {
   if (ptDetailId && ptById(ptDetailId)) return ptProfileHtml(ptById(ptDetailId));
   ptDetailId = null;
   const act = ptActive();
   const gone = ptList().filter(p => p.gone);
   const can = ptCanEdit();
-  const out = [];
+  const out = [ptListHeroHtml(act)];
   if (!act.length && !gone.length) {
     out.push(`<div class="fam-card pt-empty">
       <div class="pt-empty-paws" aria-hidden="true"><span>🐾</span><span>🐶</span><span>🐱</span><span>🐰</span><span>🐾</span></div>
@@ -3882,7 +3915,7 @@ function ptProfileHtml(p) {
     if (f.brand || f.amount || times.length || pi) {
       const low = pi && Number(pi.minQty) > 0 && Number(pi.qty) <= Number(pi.minQty);
       out.push(`<div class="fam-card"><div class="fz-h">${tk('pet.food')}</div>
-        ${famRow(tk('pet.food2'), f.brand)}${famRow(tk('pet.amountPerMeal'), f.amount)}${famRow(tk('pet.feedingTimes'), times.join(' · '))}
+        ${famRow(tk('pet.food2'), f.brand)}${famRow(tk('pet.amountPerMeal'), f.amount)}${famRow(tk('pet.feedingTimes'), times.map(t => (ptMealNote(p, t) ? t + ' (' + ptMealNote(p, t) + ')' : t)).join(' · '))}
         ${pi ? `<div class="fam-row"><div class="fam-k">${tk('pet.pantry')}</div><div class="fam-v"><b>${escapeHtml(String(pi.qty != null ? pi.qty : '–'))}</b> ${escapeHtml(pi.unit || '')} <span class="text-ink/50">· ${escapeHtml(pi.name)}</span>${low ? ' <span class="pt-pill warn">knapp</span>' : ''}</div></div>` : ''}
         ${can ? `<div class="flex gap-2 mt-2 flex-wrap"><button type="button" class="fz-mini-btn" data-pt="foodshop" data-id="${famAttr(p.id)}">🛒 <span>${tk('pet.addShoppingList')}</span></button>${pi && isViewAllowed('vorrat') ? ('<button type="button" class="fz-mini-btn" data-pt="pantry">🥫 <span>' + tk('nav.pantry') + '</span></button>') : ''}</div>` : ''}
       </div>`);
@@ -3947,7 +3980,7 @@ function ptTodayHtml(p) {
     const x = ptFedSlot(p, t);
     const late = !x && t < hm;
     return `<button type="button" class="pt-slot${x ? ' done' : ''}${late ? ' late' : ''}" data-pt="feed" data-id="${famAttr(p.id)}" data-slot="${famAttr(t)}"${can ? '' : ' disabled'}>
-      <span class="pt-slot-ic">${x ? '✓' : '🍖'}</span><span class="pt-slot-t">${escapeHtml(t)}</span><small>${x ? escapeHtml(ptWhoName(x.by) || ptTimeOf(x.at)) : ''}</small></button>`;
+      <span class="pt-slot-ic">${x ? '✓' : '🍖'}</span><span class="pt-slot-t">${escapeHtml(t)}</span><small>${x ? escapeHtml(ptWhoName(x.by) || ptTimeOf(x.at)) : escapeHtml(ptMealNote(p, t))}</small></button>`;
   }).join('');
   const done = ptWalksToday(p);
   const dots = walks ? [...Array(Math.max(walks, done.length))].map((_, i) => `<span class="pt-dot${i < done.length ? ' on' : ''}">${i < done.length ? '🐾' : ''}</span>`).join('') : '';
@@ -4066,6 +4099,7 @@ function ptOpenEdit(id) {
     color: p ? ptColor(p) : PT_COLORS[ptList().length % PT_COLORS.length], sex: p ? (p.sex || '') : '',
     owners: p && Array.isArray(p.owners) ? p.owners.slice() : [],
     meds: p && Array.isArray(p.meds) ? p.meds.map(x => ({ ...x })) : [],
+    meals: ptInitMeals(p, sp),
   };
   const f = (p && p.feed) || {};
   const fd = (p && p.feeder) || {};
@@ -4097,7 +4131,10 @@ function ptOpenEdit(id) {
 
     <div class="fz-h mt-2">${tk('pet.feedingWalks')}</div>
     <div class="fz-grid2">${famIn('ptF_food', tk('pet.food2'), f.brand, ('maxlength="80" autocomplete="off" placeholder="' + escapeHtml(tk('pet.eGAdultDry')) + '"'))}${famIn('ptF_amount', tk('pet.amountPerMeal'), f.amount, 'maxlength="40" autocomplete="off" placeholder="z. B. 150 g"')}</div>
-    <div class="fz-grid2">${famIn('ptF_times', tk('pet.feedingTimes'), (f.times || (p ? [] : sp.feed)).join(', '), 'autocomplete="off" inputmode="numeric" placeholder="07:00, 18:00"')}${famIn('ptF_walks', tk('pet.walksPerDay'), p ? (p.walks || '') : (sp.walks || ''), 'inputmode="numeric" maxlength="2" placeholder="0"')}</div>
+    <label class="fz-lbl">${tk('pet.feedingTimes')}</label>
+    <div id="ptF_meals" class="flex flex-col gap-2 mb-2"></div>
+    <button type="button" class="fz-mini-btn mb-3" data-ptm="addmeal">+ <span>${tk('pet.addFeedingTime')}</span></button>
+    <div class="fz-grid2">${famIn('ptF_walks', tk('pet.walksPerDay'), p ? (p.walks || '') : (sp.walks || ''), 'inputmode="numeric" maxlength="2" placeholder="0"')}</div>
     ${pantry.length ? `<div class="fz-field"><label class="fz-lbl" for="ptF_pantry">${tk('pet.foodPantry')}</label><select id="ptF_pantry" class="fz-in"><option value="">${tk('pet.notLinked')}</option>${pantry.map(x => `<option value="${famAttr(x.id)}"${f.pantryId === x.id ? ' selected' : ''}>${escapeHtml(x.name)}</option>`).join('')}</select></div>` : ''}
     <label class="fz-check"><input id="ptF_feederOn" type="checkbox"${fd.on ? ' checked' : ''} /><span>🍽️ <span>${tk('smart.type.feeder')}</span></span></label>
     <div id="ptF_feederWrap" class="${fd.on ? '' : 'hidden'}">
@@ -4236,6 +4273,8 @@ function ptDrawEditBits() {
   const em = document.getElementById('ptF_emojis');
   if (em) em.innerHTML = [...new Set([st.emoji, ...ptSpecies(st.species).emojis])].map(e => `<button type="button" class="ls-pick emoji${!st.photo && e === st.emoji ? ' active' : ''}" data-ptm="emoji" data-v="${famAttr(e)}">${escapeHtml(e)}</button>`).join('');
   ptDrawMeds();
+  ptSyncMeals();
+  ptDrawMeals();
 }
 function ptSyncMeds() {
   const st = ptModalState;
@@ -4258,6 +4297,42 @@ function ptDrawMeds() {
         <input class="fz-in" data-ptmedtimes="${i}" value="${famAttr(x.times || '')}" placeholder="${escapeHtml(tk('pet.eGMorningEvening'))}" maxlength="40" /></div>
     </div>`).join('') : ('<p class="text-xs text-ink/40">' + tk('family.noMedicationEntered') + '</p>');
 }
+// Feeding times of a pet (since 1.138.0): feed.meals = [{ time: 'HH:MM', note }] – note = amount / food of this meal (optional).
+// feed.times (sorted times only) is kept in sync, because slots, cards and older data use it.
+function ptInitMeals(p, sp) {
+  const f = (p && p.feed) || {};
+  if (Array.isArray(f.meals) && f.meals.length) return f.meals.map(m => ({ time: String(m.time || ''), note: String(m.note || '') }));
+  return (p ? (Array.isArray(f.times) ? f.times : []) : sp.feed).map(time => ({ time, note: '' }));
+}
+function ptMealNote(p, t) {
+  const m = p && p.feed && Array.isArray(p.feed.meals) ? p.feed.meals.find(x => x && x.time === t) : null;
+  return m && m.note ? String(m.note) : '';
+}
+function ptSyncMeals() {
+  const st = ptModalState;
+  if (!st || !st.meals || !document.getElementById('ptF_meals') || !document.querySelector('[data-ptmealtime]')) return;
+  st.meals = st.meals.map((x, i) => ({
+    time: (document.querySelector(`[data-ptmealtime="${i}"]`) || {}).value || '',
+    note: (document.querySelector(`[data-ptmealnote="${i}"]`) || {}).value || '',
+  }));
+}
+function ptDrawMeals() {
+  const st = ptModalState;
+  const box = document.getElementById('ptF_meals');
+  if (!box || !st || !st.meals) return;
+  box.innerHTML = st.meals.length ? st.meals.map((x, i) => `<div class="fam-list-row">
+      <input class="fz-in" type="time" style="max-width:7.5rem" data-ptmealtime="${i}" value="${famAttr(x.time || '')}" />
+      <input class="fz-in" data-ptmealnote="${i}" value="${famAttr(x.note || '')}" placeholder="${escapeHtml(tk('pet.mealNote'))}" maxlength="40" autocomplete="off" />
+      <button type="button" class="fam-x" data-ptm="rmmeal" data-i="${i}" aria-label="${escapeHtml(tk('common.remove'))}">×</button></div>`).join('')
+    : ('<p class="text-xs text-ink/40">' + tk('pet.noFeedingTime') + '</p>');
+}
+// Meals for saving: valid times only, one entry per time, sorted, at most 12
+function ptCleanMeals(list) {
+  const seen = new Set();
+  return (list || []).map(m => ({ time: String(m.time || '').trim(), note: String(m.note || '').trim().slice(0, 40) }))
+    .filter(m => /^([01]\d|2[0-3]):[0-5]\d$/.test(m.time) && !seen.has(m.time) && seen.add(m.time))
+    .sort((a, b) => a.time.localeCompare(b.time)).slice(0, 12);
+}
 function ptParseTimes(v) {
   return [...new Set(String(v || '').split(/[,;\s]+/).map(t => {
     const m = /^(\d{1,2})(?:[:.](\d{2}))?$/.exec(t.trim());
@@ -4274,18 +4349,20 @@ function ptSavePet() {
   const st = ptModalState;
   if (!st || st.kind !== 'pet') return;
   ptSyncMeds();
+  ptSyncMeals();
   const name = ptVal('ptF_name');
   const err = document.getElementById('ptF_err');
   if (!name) { err.textContent = tk('common.needName'); return; }
   const old = st.id ? ptById(st.id) : null;
   const walks = Math.max(0, Math.min(12, parseInt(ptVal('ptF_walks'), 10) || 0));
+  const meals = ptCleanMeals(st.meals);
   const p = {
     ...(old || {}),
     id: old ? old.id : ptId('pt'),
     name, species: st.species, emoji: st.emoji, photo: st.photo || '', color: st.color, breed: ptVal('ptF_breed'),
     sex: st.sex, neutered: ptChecked('ptF_neutered'), birth: ptVal('ptF_birth'), since: ptVal('ptF_since'),
     owners: st.owners.filter(id => memberById(id)),
-    feed: { brand: ptVal('ptF_food'), amount: ptVal('ptF_amount'), times: ptParseTimes(ptVal('ptF_times')), pantryId: ptVal('ptF_pantry') },
+    feed: { brand: ptVal('ptF_food'), amount: ptVal('ptF_amount'), times: meals.map(m => m.time), meals, pantryId: ptVal('ptF_pantry') },
     feeder: ptFeederValue(old),
     walks,
     allergies: ptVal('ptF_allergies'), conditions: ptVal('ptF_conditions'),
@@ -4755,7 +4832,8 @@ function ptPaneClick(e) {
         body.querySelectorAll('[data-ptm="species"]').forEach(x => x.classList.toggle('active', x === b));
         if (!st.id) {
           const w = document.getElementById('ptF_walks'); if (w && (!w.value || w.value === String(old.walks))) w.value = sp.walks ? String(sp.walks) : '';
-          const t = document.getElementById('ptF_times'); if (t && (!t.value || t.value === old.feed.join(', '))) t.value = sp.feed.join(', ');
+          ptSyncMeals();
+          if (!st.meals.length || (st.meals.every(m => !m.note) && st.meals.map(m => m.time).join(',') === old.feed.join(','))) { st.meals = sp.feed.map(time => ({ time, note: '' })); ptDrawMeals(); }
         }
         ptDrawEditBits();
         break;
@@ -4765,6 +4843,8 @@ function ptPaneClick(e) {
       case 'color': st.color = v; body.querySelectorAll('[data-ptm="color"]').forEach(x => x.classList.toggle('active', x === b)); ptDrawEditBits(); break;
       case 'sex': st.sex = v; body.querySelectorAll('[data-ptm="sex"]').forEach(x => x.classList.toggle('active', x === b)); break;
       case 'addmed': ptSyncMeds(); st.meds.push({ id: ptId('pm'), name: '', dose: '', times: '' }); ptDrawMeds(); break;
+      case 'addmeal': ptSyncMeals(); if (st.meals.length < 12) st.meals.push({ time: '', note: '' }); ptDrawMeals(); break;
+      case 'rmmeal': ptSyncMeals(); st.meals.splice(Number(b.dataset.i), 1); ptDrawMeals(); break;
       case 'rmmed': ptSyncMeds(); st.meds.splice(Number(b.dataset.i), 1); ptDrawMeds(); break;
       case 'savepet': ptSavePet(); break;
       case 'delete': ptDeletePet(); break;

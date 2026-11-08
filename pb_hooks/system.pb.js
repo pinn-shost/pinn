@@ -15,6 +15,9 @@
 //                                           { vorab: true } installs the newest pre-release instead
 //  POST /api/pinn/system/rechte             { id, an } main admin only: a family admin may do updates and
 //                                           restores (also with several families)
+//  POST /api/pinn/system/auto               { an, rhythmus: "taeglich" | "woechentlich", tag: 0-6, zeit: "HH:MM" } – automatic
+//                                           updates (as for update; since 1.138.0)
+//  Cron „pinnAutoUpdate“ (every 5 minutes): starts the automatic update at the chosen time (pinn-system.js#autoPruefen)
 //  Cron „pinnUpdateHinweis“ (daily 10:05): push + bell card for the admins who may install updates while a
 //                                           newer version is waiting (pinn-system.js#updateHinweise, since 1.118.1)
 
@@ -100,6 +103,29 @@ routerAdd("POST", "/api/pinn/system/rechte", (e) => {
         return e.json(400, { error: err.message });
     }
 }, $apis.requireAuth("benutzer"));
+
+routerAdd("POST", "/api/pinn/system/auto", (e) => {
+    e.response.header().set("Cache-Control", "no-store");
+    const lib = require(`${__hooks}/pinn-system.js`);
+    if (!lib.rechte(e).darf) return e.json(403, { error: "Automatische Updates betreffen alle Familien auf diesem Server – das kann nur der Hauptadmin oder ein von ihm berechtigter Admin." });
+    const body = e.requestInfo().body || {};
+    try {
+        const out = lib.autoSetzen(body);
+        console.log("[System] Automatische Updates " + (out.an ? "eingeschaltet (" + out.rhythmus + " " + out.zeit + ")" : "ausgeschaltet") + " von " + e.auth.getString("username"));
+        return e.json(200, { success: true, auto: out });
+    } catch (err) {
+        return e.json(400, { error: err.message, code: err.pinnCode || "fehler" });
+    }
+}, $apis.requireAuth("benutzer"));
+
+cronAdd("pinnAutoUpdate", "*/5 * * * *", () => {
+    try {
+        const r = require(`${__hooks}/pinn-system.js`).autoPruefen();
+        if (r.aktion === "gestartet") console.log("[System] Automatisches Update auf " + r.version + " gestartet.");
+    } catch (err) {
+        console.log("[System] Automatisches Update fehlgeschlagen: " + err.message);
+    }
+});
 
 cronAdd("pinnUpdateHinweis", "5 10 * * *", () => {
     try {

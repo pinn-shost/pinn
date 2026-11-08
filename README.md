@@ -129,6 +129,15 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.138.0
+
+**Automatic dark mode and automatic updates**
+
+- **Dark mode.** Under Settings → Appearance, pinn. can now switch to dark mode by time of day (e.g. 8 pm to 7 am) or from sunset to sunrise. The sun times are calculated on the device for the home address of the family (otherwise the weather location) – no location access needed. Switching by hand applies until the next automatic change. The setting belongs to your profile and applies on all your devices.
+- **Automatic updates.** Under Settings → System → Backups & updates, pinn. can check for a new version at a set time, daily or once a week, create a backup first and then install the update. Pre-releases are never installed automatically, and if the backup fails nothing is installed. Result and next run are shown in the same window, errors in the error log. Only for admins who may install updates.
+- **Pets.** Several feeding times per pet: in the pet editor you add as many times as you like (up to 12) with a time picker and an optional note for amount or food (e.g. “1 cup dry food”). The note shows on the feeding button and in the food card. New banner on the Pets page: a meadow with a fence where the pets of your family walk by – at night with stars.
+- Changed: `js/dunkelzeit.js` (new), `js/design.js`, `js/familie.js`, `css/haustierewetter.css`, `js/einstellungen.js`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (19 new texts in all fourteen languages), `src/` (`index.html`), `pinn-setup.sh`, `.github/scripts/check-hooks.js`, all READMEs. Server (replace the hooks, PocketBase restarts): `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`.
+
 ## What's new in 1.137.0
 
 **Voice control in Turkish, Polish and Ukrainian**
@@ -199,13 +208,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Ukrainian.** Ukrainian is translated further: vehicles (fuelling & charging, consumption, workshop, tyres, MOT/service, insurance plate, calculators) (4760 of 6994 texts). The language is still hidden – nothing changes in the app.
 - Changed: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). No server part.
 
-## What's new in 1.135.9
-
-**Ukrainian – stage 10**
-
-- **Ukrainian.** Ukrainian is translated further: home, part 2 (maintenance plan, meters, plants, rent, purchase and financing, weather hints) (4290 of 6994 texts). The language is still hidden – nothing changes in the app.
-- Changed: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). No server part.
-
 ## How it works
 
 ```mermaid
@@ -232,7 +234,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.137.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.138.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -23,6 +23,9 @@
 // New versions: GitHub API (releases/latest) of the repository pinn-shost/pinn, at most every 6 hours
 // (or on request), result kept in PocketBase's memory – no schedule, no load. releases/latest never
 // returns pre-releases, so normal updates only ever offer finished versions.
+// Automatic updates (since 1.138.0): optional, set in the app (Settings → System → Backups & updates). At a chosen time,
+// daily or weekly, a cron job (system.pb.js, every 5 minutes) checks for a finished version and starts the normal update
+// job – the container „wartung“ makes the backup before the update as always and stops if that backup fails.
 // Pre-releases (since 1.66.0): only on explicit request (developer area in the app) via the list
 // /releases – the newest pre-release that is newer than the installed version and not yet superseded
 // by a finished version. Convention: pre-release tags like v1.67.0-beta.1 with the same APP_VERSION.
@@ -377,6 +380,7 @@ function status(e, pruefen, vorab) {
         repo: repo(),
         vorabStand: vorabStand(),
         schema: schemaStatus(),
+        auto: autoAnsicht(),
     };
     // Pre-release search only when the developer area asks for it
     if (vorab) out.vorab = vorabInfo(true);
@@ -449,6 +453,162 @@ function update(vorab) {
     try { if (exists(F_VORAB)) $os.remove(F_VORAB); } catch (err) { /* ignore */ }
     r.version = u.version;
     return r;
+}
+
+
+// ---------------------------------------------------------------------------------------------
+// Automatic updates (since 1.138.0)
+// ---------------------------------------------------------------------------------------------
+// Setting and last result are kept in pb_data/pinn_autoupdate.json:
+//   { an, rhythmus: "taeglich" | "woechentlich", tag: 0-6 (0 = Sunday), zeit: "HH:MM", letzter: {...} | null }
+//   letzter: { datum: "YYYY-MM-DD" (day finished, "" = still trying), zeit: ms, ergebnis: keine | gestartet | ok | fehler,
+//              version, code, jobId }
+// The cron job runs every 5 minutes. A run is due from the chosen time on for 3 hours (but not past midnight) and
+// only once per day; if the container „wartung“ is busy the next 5-minute tick tries again.
+const F_AUTO = "/pb_data/pinn_autoupdate.json";
+const AUTO_FENSTER_MIN = 180;
+const AUTO_ZEIT_RE = /^([01]\d|2[0-3]):([0-5]\d)$/;
+function autoStandard() {
+    return { an: false, rhythmus: "taeglich", tag: 1, zeit: "04:30", letzter: null };
+}
+function autoBereinigen(raw) {
+    const c = autoStandard();
+    const r = (raw && typeof raw === "object") ? raw : {};
+    c.an = r.an === true;
+    c.rhythmus = r.rhythmus === "woechentlich" ? "woechentlich" : "taeglich";
+    const tag = parseInt(r.tag, 10);
+    c.tag = (tag >= 0 && tag <= 6) ? tag : 1;
+    c.zeit = AUTO_ZEIT_RE.test(String(r.zeit || "")) ? String(r.zeit) : "04:30";
+    const l = r.letzter;
+    if (l && typeof l === "object") {
+        const erg = ["keine", "gestartet", "ok", "fehler"].indexOf(l.ergebnis) >= 0 ? l.ergebnis : "";
+        if (erg) {
+            c.letzter = {
+                datum: /^\d{4}-\d{2}-\d{2}$/.test(String(l.datum || "")) ? String(l.datum) : "",
+                zeit: Number(l.zeit) || 0, ergebnis: erg,
+                version: String(l.version || "").slice(0, 40), code: String(l.code || "").slice(0, 30), jobId: String(l.jobId || "").slice(0, 40),
+            };
+        }
+    }
+    return c;
+}
+function autoLesen() {
+    return autoBereinigen(readJson(F_AUTO));
+}
+function autoSchreiben(cfg) {
+    try {
+        const tmp = F_AUTO + ".neu";
+        $os.writeFile(tmp, JSON.stringify(cfg), 0o644);
+        $os.rename(tmp, F_AUTO);
+        return true;
+    } catch (e) {
+        console.log("[System] " + F_AUTO + " nicht schreibbar: " + e.message);
+        return false;
+    }
+}
+function zweiStellig(n) { return (n < 10 ? "0" : "") + n; }
+function datumKey(d) { return d.getFullYear() + "-" + zweiStellig(d.getMonth() + 1) + "-" + zweiStellig(d.getDate()); }
+function minutenVon(zeit) {
+    const m = AUTO_ZEIT_RE.exec(String(zeit || ""));
+    return m ? parseInt(m[1], 10) * 60 + parseInt(m[2], 10) : 270;
+}
+// Is a run due at this moment? (pure function, tested in check-hooks.js)
+function autoFaellig(cfg, jetzt) {
+    if (!cfg || !cfg.an) return false;
+    if (cfg.letzter && cfg.letzter.datum === datumKey(jetzt)) return false;
+    if (cfg.rhythmus === "woechentlich" && jetzt.getDay() !== cfg.tag) return false;
+    const soll = minutenVon(cfg.zeit);
+    const ist = jetzt.getHours() * 60 + jetzt.getMinutes();
+    const fenster = Math.min(AUTO_FENSTER_MIN, 1440 - soll);
+    return ist >= soll && ist < soll + fenster;
+}
+// Next planned run (Date) – for the display in the app
+function autoNaechste(cfg, jetzt) {
+    if (!cfg || !cfg.an) return null;
+    const soll = minutenVon(cfg.zeit);
+    for (let i = 0; i < 8; i++) {
+        const d = new Date(jetzt.getFullYear(), jetzt.getMonth(), jetzt.getDate() + i, Math.floor(soll / 60), soll % 60, 0, 0);
+        if (cfg.rhythmus === "woechentlich" && d.getDay() !== cfg.tag) continue;
+        if (d.getTime() <= jetzt.getTime()) continue;
+        return d;
+    }
+    return null;
+}
+function autoSetzen(daten) {
+    const d = (daten && typeof daten === "object") ? daten : {};
+    const alt = autoLesen();
+    const neu = autoBereinigen(Object.assign({}, alt, {
+        an: d.an === true,
+        rhythmus: d.rhythmus !== undefined ? d.rhythmus : alt.rhythmus,
+        tag: d.tag !== undefined ? d.tag : alt.tag,
+        zeit: d.zeit !== undefined ? d.zeit : alt.zeit,
+    }));
+    if (d.zeit !== undefined && !AUTO_ZEIT_RE.test(String(d.zeit))) throw fehler("zeit", "Bitte eine Uhrzeit wie 04:30 angeben.");
+    if (d.rhythmus !== undefined && d.rhythmus !== "taeglich" && d.rhythmus !== "woechentlich") throw fehler("rhythmus", "Unbekannter Rhythmus.");
+    // A changed plan may run again today
+    const geaendert = neu.an !== alt.an || neu.rhythmus !== alt.rhythmus || neu.tag !== alt.tag || neu.zeit !== alt.zeit;
+    if (geaendert && neu.letzter && neu.letzter.ergebnis !== "gestartet") neu.letzter.datum = "";
+    if (!exists("/pb_data")) throw fehler("ordner", "Der Datenordner ist nicht erreichbar.");
+    if (!autoSchreiben(neu)) throw fehler("speichern", "Die Einstellung konnte nicht gespeichert werden.");
+    return autoAnsicht(neu);
+}
+function autoAnsicht(cfg) {
+    const c = cfg || autoLesen();
+    const n = autoNaechste(c, new Date());
+    return Object.assign({}, c, { naechste: n ? Math.floor(n.getTime() / 1000) : 0 });
+}
+// A started automatic update: once the job is over, remember the result (the cron job also runs in the new
+// PocketBase after the restart of the update)
+function autoAbschliessen(cfg) {
+    const l = cfg.letzter;
+    if (!l || l.ergebnis !== "gestartet") return false;
+    const j = job();
+    if (!j || !l.jobId || j.id !== l.jobId) {
+        // Status overwritten by a later job (or deleted): decide by the installed version
+        const v = installierteVersion();
+        if (v && l.version && vergleiche(v, l.version) >= 0) { l.ergebnis = "ok"; autoSchreiben(cfg); return true; }
+        return false;
+    }
+    if (j.zustand === "fertig") { l.ergebnis = "ok"; autoSchreiben(cfg); return true; }
+    if (j.zustand === "fehler") {
+        l.ergebnis = "fehler"; l.code = j.fehler || "installieren"; autoSchreiben(cfg);
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("system", "Automatisches Update auf " + l.version + " fehlgeschlagen (" + (j.schritt || "?") + ": " + (j.fehler || "?") + ")" + (j.meldung ? " – " + j.meldung : "")); } catch (e) { /* ignore */ }
+        return true;
+    }
+    return false;
+}
+// Called every 5 minutes by the cron job in system.pb.js. Returns what happened (for the log / tests).
+function autoPruefen(jetzt) {
+    jetzt = jetzt || new Date();
+    const cfg = autoLesen();
+    autoAbschliessen(cfg);
+    if (!autoFaellig(cfg, jetzt)) return { aktion: "nichts" };
+    const heute = datumKey(jetzt);
+    const merke = (ergebnis, extra, endgueltig) => {
+        const neu = Object.assign({ datum: endgueltig ? heute : "", zeit: Date.now(), ergebnis, version: "", code: "", jobId: "" }, extra || {});
+        const alt = cfg.letzter;
+        // Retrying: write only when something changed, so the file is not rewritten every 5 minutes
+        if (!endgueltig && alt && alt.ergebnis === neu.ergebnis && alt.code === neu.code && alt.datum === neu.datum) return neu;
+        cfg.letzter = neu;
+        autoSchreiben(cfg);
+        return neu;
+    };
+    if (beschaeftigt()) return { aktion: "beschaeftigt" };
+    let u = null;
+    try { u = updateInfo(true); } catch (e) { u = null; }
+    if (!u || (u.fehler && !u.tag)) { merke("fehler", { code: "github" }, false); return { aktion: "github" }; }
+    if (!u.tag || !u.neuer) { merke("keine", {}, true); return { aktion: "keine" }; }
+    try {
+        const r = update(false);
+        merke("gestartet", { version: r.version || u.version, jobId: r.id }, true);
+        return { aktion: "gestartet", version: r.version || u.version };
+    } catch (err) {
+        const code = err.pinnCode || "fehler";
+        if (code === "beschaeftigt") return { aktion: "beschaeftigt" };
+        merke("fehler", { code }, true);
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("system", "Automatisches Update nicht gestartet: " + err.message); } catch (e) { /* ignore */ }
+        return { aktion: "fehler", code };
+    }
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -539,6 +699,7 @@ function updateHinweise() {
 
 module.exports = {
     updateHinweise,
+    autoLesen, autoSetzen, autoFaellig, autoNaechste, autoPruefen, autoBereinigen, autoAnsicht,
     ensureSchema, setzeRechte,
     status, kurzStatus, rechte, sichern, wiederherstellen, update, installierteVersion, vergleiche, releasePruefen,
     vorabPruefen, vorabInfo, vorabStand,
