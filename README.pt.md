@@ -133,6 +133,14 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.142.2
+
+**Resumo do ano: receitas, compromissos, tarefas, aniversários e fotos de viagens**
+
+- **Mais no resumo do ano.** Por baixo das despesas vês agora também as receitas e o saldo. Novos cartões mostram os compromissos (com o mês mais cheio), as tarefas concluídas (com a parte da casa) e os aniversários celebrados (incluindo os especiais, como 18, 30, 40 …). Cada viagem mostra as fotos do quadro publicadas durante a viagem.
+- **O servidor conta as tarefas concluídas,** porque são apagadas ao fim de um ou dois dias. Neste ano a contagem começa no dia da atualização.
+- Alterado: `js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14 textos novos e um alterado nas catorze línguas), `src/` (versão), `index.html`, todos os README. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`.
+
 ## Novidades da 1.142.1
 
 **Aviso ao apagar a lista de bagagem de uma viagem**
@@ -206,13 +214,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Controle por voz.** “E aí, Siri, pinn” (no Android, HTTP Shortcuts) agora também entende turco, polonês e ucraniano e responde no idioma do seu perfil: adicionar à lista de compras (com quantidade e loja), ler a lista, criar uma tarefa e ouvir o que há para hoje ou amanhã. A Siri não responde mais em inglês para o ucraniano. A configuração do atalho continua igual.
 - Alterado: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, todos os README. Servidor (substituir o hook, o PocketBase reinicia): `pb_hooks/pinn-sprache.js`.
 
-## Novidades da 1.136.0
-
-**Ucraniano ativado**
-
-- **Ucraniano.** O ucraniano já está disponível para todos: escolha Українська em Configurações → Idioma e região; se o navegador estiver em ucraniano, o pinn. o seleciona automaticamente. Todos os 6994 textos, as notificações push, o assistente de configuração e a exportação de dados estão em ucraniano; os números de emergência da Ucrânia são 102, 103, 101 e 112. O pinn. agora fala catorze idiomas. A Siri continua respondendo em inglês no ucraniano.
-- Alterado: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), todos os README (lista de idiomas, “catorze idiomas”). Desde a 1.134.0 também: `i18n/uk.i18n.js`, `js/textkern.js`, `js/region.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `.github/scripts/`. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-textkern.js`, `pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
-
 ## Como funciona
 
 ```mermaid
@@ -241,7 +242,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.142.1` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.142.2` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

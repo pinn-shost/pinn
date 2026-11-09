@@ -14,6 +14,9 @@
 //   - No collection of its own, no family data when sending (only for the monthly outlook once per
 //     family, to exclude children with parental controls).
 //
+// Since 1.142.2 the server also keeps a small counter of completed tasks per family and year (completed tasks are
+// deleted after a few days, so they cannot be counted afterwards): zaehler[familyId][YYYY] = { a: all, h: household }.
+//
 // Time: like the other reminders in Europe/Berlin (summer/winter time is calculated itself).
 
 const STATUS_FILE = "/pb_data/pinn_ausblick.json";
@@ -74,10 +77,11 @@ function readStatus() {
         if (o && typeof o === "object") {
             if (!o.gesendet || typeof o.gesendet !== "object") o.gesendet = {};
             if (!o.nutzer || typeof o.nutzer !== "object") o.nutzer = {};
+            if (!o.zaehler || typeof o.zaehler !== "object") o.zaehler = {};
             return o;
         }
     } catch (e) { /* no file yet */ }
-    return { gesendet: { woche: "", monat: "", jahr: "" }, nutzer: {} };
+    return { gesendet: { woche: "", monat: "", jahr: "" }, nutzer: {}, zaehler: {} };
 }
 function writeStatus(s) {
     try { $os.writeFile(STATUS_FILE, JSON.stringify(s), 420); } catch (e) { console.log("[Ausblick] " + STATUS_FILE + " nicht speicherbar: " + e.message); }
@@ -340,17 +344,50 @@ function runCron() {
 }
 
 // ---------------------------------------------------------------------------------------------
+// Counter of completed tasks (since 1.142.2) – for the year in review
+// ---------------------------------------------------------------------------------------------
+// delta = +1 when a task is ticked off, -1 when the tick is removed again; the year is the one of the ticking-off time
+// (ISO string, e.g. "2026-11-09T10:00:00.000Z"). Household tasks are counted in "h" as well.
+function countDone(familyId, delta, household, whenIso) {
+    familyId = String(familyId || "");
+    const year = String(whenIso || "").slice(0, 4);
+    if (!familyId || !/^\d{4}$/.test(year) || (delta !== 1 && delta !== -1)) return;
+    const s = readStatus();
+    if (!s.zaehlerSeit) s.zaehlerSeit = wallNow().iso;
+    const fam = s.zaehler[familyId] && typeof s.zaehler[familyId] === "object" ? s.zaehler[familyId] : {};
+    const cur = fam[year] && typeof fam[year] === "object" ? fam[year] : { a: 0, h: 0 };
+    cur.a = Math.max(0, (Number(cur.a) || 0) + delta);
+    if (household) cur.h = Math.max(0, (Number(cur.h) || 0) + delta);
+    fam[year] = cur;
+    s.zaehler[familyId] = fam;
+    writeStatus(s);
+}
+function countsFor(s, familyId) {
+    const fam = s.zaehler && s.zaehler[String(familyId || "")];
+    const out = {};
+    if (fam && typeof fam === "object") {
+        Object.keys(fam).forEach(y => {
+            if (/^\d{4}$/.test(y) && fam[y]) out[y] = { a: Number(fam[y].a) || 0, h: Number(fam[y].h) || 0 };
+        });
+    }
+    return out;
+}
+
+// ---------------------------------------------------------------------------------------------
 // For the app
 // ---------------------------------------------------------------------------------------------
 function stateFor(user) {
     const w = wallNow();
-    const st = userState(readStatus(), user.id);
+    const status = readStatus();
+    const st = userState(status, user.id);
     return {
         woche: weekKey(w),
         monat: monthKey(w),
         jahr: yearKey(w),
         gesehen: { woche: st.woche, monat: st.monat, jahr: st.jahr },
         push: { woche: st.pushWoche, monat: st.pushMonat, jahr: st.pushJahr },
+        zaehler: countsFor(status, user.getString("familie")),
+        zaehlerSeit: String(status.zaehlerSeit || ""),
     };
 }
 function markSeen(user, art, key) {
@@ -380,13 +417,14 @@ function savePush(user, body) {
 // Remove deleted profiles from the marker (once on start)
 function pruneUsers() {
     const s = readStatus();
-    const ids = Object.keys(s.nutzer);
-    if (!ids.length) return;
     let changed = false;
+    // Day from which completed tasks are counted (since 1.142.2) – set once on the first start with this version
+    if (!s.zaehlerSeit) { s.zaehlerSeit = wallNow().iso; changed = true; }
+    const ids = Object.keys(s.nutzer);
     ids.forEach(id => {
         try { $app.findRecordById("benutzer", id); } catch (e) { delete s.nutzer[id]; changed = true; }
     });
     if (changed) writeStatus(s);
 }
 
-module.exports = { runCron, stateFor, markSeen, savePush, pruneUsers, weekKey, monthKey, yearKey, wallNow };
+module.exports = { runCron, stateFor, markSeen, savePush, pruneUsers, weekKey, monthKey, yearKey, wallNow, countDone };

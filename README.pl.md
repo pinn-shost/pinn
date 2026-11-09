@@ -110,6 +110,14 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.142.2
+
+**Podsumowanie roku: przychody, terminy, zadania, urodziny i zdjęcia z podróży**
+
+- **Więcej w podsumowaniu roku.** Pod wydatkami widać teraz także przychody i saldo. Nowe karty pokazują terminy (z najbardziej zajętym miesiącem), wykonane zadania (z udziałem zadań domowych) i świętowane urodziny (także wyjątkowe, jak 18, 30, 40 …). Każda podróż pokazuje zdjęcia z tablicy opublikowane w trakcie podróży.
+- **Wykonane zadania liczy serwer,** ponieważ są usuwane po jednym lub dwóch dniach. W tym roku liczenie zaczyna się w dniu aktualizacji.
+- Zmienione: `js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14 nowych tekstów i jeden zmieniony we wszystkich czternastu językach), `src/` (wersja), `index.html`, wszystkie pliki README. Serwer (wymienić hooki, PocketBase uruchomi się ponownie): `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`.
+
 ## Nowości w 1.142.1
 
 **Ostrzeżenie przy usuwaniu listy pakowania wyjazdu**
@@ -149,15 +157,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Odhaczanie w widżecie.** W średnim i dużym widżecie dotknij zadania lub produktu, a zostanie odhaczony także w pinn. (iOS na chwilę otwiera Scriptable). Odhaczone pozycje zostają na liście, przekreślone; „Zakończ zakupy” robisz jak zwykle w pinn. (przycisk na dole widżetu otwiera aplikację). Profile z blokadą dziecięcą nic nie odhaczą. Jeśli używasz już skryptu z 1.140.0, skopiuj go ponownie i zastąp w Scriptable.
 - Zmienione: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (7 nowych tekstów we wszystkich czternastu językach), `src/` (wersja), `index.html`, `.github/scripts/check-hooks.js`, wszystkie README. Serwer (wymienić hooki, PocketBase uruchomi się ponownie): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
 
-## Nowości w 1.140.0
-
-**Widżety i Apple Watch**
-
-- **Widżety.** W Ustawieniach → Sterowanie głosem jest teraz „Widżety i Apple Watch”. Dzięki bezpłatnej aplikacji Scriptable widżet na ekranie głównym lub blokady pokazuje dzisiejsze terminy, otwarte zadania i liczbę pozycji na liście zakupów; gotowy skrypt kopiujesz jednym dotknięciem.
-- **Apple Watch.** Za pomocą skrótu („Pobierz zawartość URL” → „Pokaż wynik”, „Pokaż na Apple Watch”) widzisz na zegarku dziś, jutro, listę zakupów lub wszystko, albo słuchasz odczytu. Kroki są w aplikacji.
-- To ten sam tajny link co dla Siri, tylko do odczytu; goście go nie mają. Teksty są w języku profilu.
-- Zmienione: `js/sprachsteuerung.js`, `js/versionslog.js`, `i18n/` (16 nowych tekstów i zmieniony podtytuł we wszystkich czternastu językach), `src/` (`index.html`, ustawienia), `.github/scripts/check-hooks.js`, wszystkie README. Serwer (wymienić hooki, PocketBase uruchomi się ponownie): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -167,7 +166,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.142.1` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.142.2` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

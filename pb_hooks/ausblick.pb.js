@@ -3,7 +3,7 @@
 // calculated by the app itself (index.html, section "Outlook").
 //
 // Routes (signed in only):
-//   GET  /api/pinn/ausblick              current week/month, "already seen" and push switches of the profile
+//   GET  /api/pinn/ausblick              current week/month/year, "already seen", push switches of the profile and (since 1.142.2) the counter of completed tasks per year
 //   POST /api/pinn/ausblick/gesehen      {art: 'woche'|'monat'|'jahr', key}  hide the banner on all devices
 //   POST /api/pinn/ausblick/push         {woche?: bool, monat?: bool, jahr?: bool} personal push switches
 //

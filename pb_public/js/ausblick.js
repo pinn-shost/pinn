@@ -61,6 +61,12 @@ const AB_KEYS = {
   y_meals_no: 'outlook.yMealsNo',
   y_trips: 'outlook.yTrips', y_trips_n: 'outlook.yTripsN', y_trips_d: 'outlook.yTripsD', y_trips_long: 'outlook.yTripsLong',
   y_trips_no: 'outlook.yTripsNo',
+  // Year in review, part 2 (since 1.142.2)
+  y_bal_note: 'outlook.yBalNote',
+  y_act: 'outlook.yAct', y_act_busy: 'outlook.yActBusy', y_act_tasks: 'outlook.yActTasks', y_act_house: 'outlook.yActHouse',
+  y_act_since: 'outlook.yActSince', y_act_evpart: 'outlook.yActEvPart',
+  y_bday: 'outlook.yBday', y_bday_n: 'outlook.yBdayN', y_bday_top: 'outlook.yBdayTop', y_bday_age: 'outlook.yBdayAge',
+  y_bday_no: 'outlook.yBdayNo', y_photos: 'outlook.yPhotos', y_photos_note: 'outlook.yPhotosNote',
 };
 function abLocale() { return sysLocale(); }
 // Own text in the selected language (flat share wording comes from the #wg variants of the keys)
@@ -732,7 +738,7 @@ async function abRenderMonth(body, key) {
 }
 
 /* ---------- Settings → Outlook ---------- */
-/* ---------- Year in review (since 1.142.0) ---------- */
+/* ---------- Year in review (since 1.142.0; income, appointments, tasks, birthdays and trip photos since 1.142.2) ---------- */
 // Expenses of a year over all own cash boxes: total without savings, savings, per month, per category, biggest single expense
 function abYearFin(year) {
   const range = { startIso: year + '-01-01', endIso: year + '-12-31' };
@@ -806,6 +812,73 @@ function abYearTrips(year, todayIso) {
   const longest = out.reduce((m, t) => (!m || t.days > m.days ? t : m), null);
   return { list: out, days, longest };
 }
+// Income and balance of a year over all own cash boxes (income = negative amounts, see finStats)
+function abYearIncome(year) {
+  const range = { startIso: year + '-01-01', endIso: year + '-12-31' };
+  let income = 0;
+  abForEachKasse(() => { income += finStats(range).income; });
+  return finRound(income);
+}
+// Appointments of a year: same filter as the weekly review (no holidays, no all-day fillers), per month
+function abYearEvents(year) {
+  const from = year + '-01-01', to = year + '-12-31';
+  const months = new Array(12).fill(0);
+  let n = 0;
+  events.forEach(e => {
+    if (e.pinnHoliday || !e.date || e.date < from || e.date > to || !isEventVisibleAsCalendarEntry(e) || e.fullDayFiller) return;
+    n++;
+    months[Math.max(0, Math.min(11, Number(String(e.date).slice(5, 7)) - 1))]++;
+  });
+  const peak = months.reduce((m, v, i) => (v > months[m] ? i : m), 0);
+  // recurring appointments are only expanded from one year before today on (js/icsparser.js)
+  const start = new Date(); start.setFullYear(start.getFullYear() - 1);
+  return { n, months, peak, partial: from < isoDate(start) };
+}
+// Completed tasks of a year: counted by the server since 1.142.2 (completed tasks are deleted after a few days)
+function abYearTasks(year) {
+  const z = abServer && abServer.zaehler;
+  if (!z || typeof z !== 'object') return null;
+  const since = String((abServer && abServer.zaehlerSeit) || '');
+  const own = z[String(year)] || null;
+  if (!own && !(since && since.slice(0, 4) === String(year))) return null;
+  return { all: own ? own.a : 0, house: own ? own.h : 0, since: since && since.slice(0, 4) === String(year) && since > year + '-01-01' ? since : '' };
+}
+// Birthdays (contacts) that already took place in a year; special ones = 18 and every full ten
+function abYearBirthdays(year, todayIso) {
+  const list = (birthdayData && birthdayData.eingerichtet && Array.isArray(birthdayData.liste)) ? birthdayData.liste : [];
+  const out = [];
+  list.forEach(b => {
+    if (isBirthdayHidden(b)) return;
+    const iso = isoDate(birthdayInYear(year, b.m, b.d));
+    if (iso > todayIso) return;
+    out.push({ n: b.n, iso, age: b.y ? year - b.y : null });
+  });
+  out.sort((a, b) => a.iso.localeCompare(b.iso) || a.n.localeCompare(b.n, abLocale()));
+  const special = out.filter(b => b.age && (b.age === 18 || (b.age >= 10 && b.age % 10 === 0)));
+  return { list: out, special };
+}
+// Pinboard photos posted while a trip was on (by creation day), newest last
+function abTripPhotos(trip) {
+  let notes = [];
+  try { notes = Array.isArray(pinboard) ? pinboard : []; } catch (e) { notes = []; }
+  return notes.filter(n => {
+    if (!n || n.type !== 'photo' || !n.photo || !n.createdAt) return false;
+    const d = isoDate(new Date(Number(n.createdAt)));
+    return d >= trip.from && d <= trip.to;
+  }).sort((a, b) => (Number(a.createdAt) || 0) - (Number(b.createdAt) || 0));
+}
+// Fill the photo thumbnails of the trips (the photos load one by one, a missing one stays an empty frame)
+function abFillTripPhotos(root) {
+  root.querySelectorAll('[data-abph]').forEach(el => {
+    const n = Array.isArray(pinboard) ? pinboard.find(x => x && x.id === el.dataset.abph) : null;
+    if (!n || !n.photo || typeof pwPhotoObjectUrl !== 'function') return;
+    pwPhotoObjectUrl(n.photo).then(url => {
+      if (!url || !el.isConnected) return;
+      el.innerHTML = `<img src="${abEsc(url)}" alt="" />`;
+      el.classList.add('on');
+    }).catch(() => { /* stays an empty frame */ });
+  });
+}
 async function abRenderYear(body, key) {
   const year = /^\d{4}$/.test(key) ? Number(key) : new Date().getFullYear();
   const now = new Date();
@@ -814,10 +887,20 @@ async function abRenderYear(body, key) {
   const partial = year === thisYear && !abYearKey();
   const canFin = abFinanceOk();
   const canMeals = isViewAllowed('rezepte');
+  const canCal = !(typeof isCalendarHiddenForGuest === 'function' && isCalendarHiddenForGuest()) && isViewAllowed('termine');
+  const canTasks = isViewAllowed('aufgaben');
+  const canBoard = isViewAllowed('pinnwand');
+  const guest = isCurrentUserGuest();
   if (canFin) await abEnsureFinance();
+  if (!abServer && canTasks) await abLoadServer();
+  if (!guest && typeof birthdayData !== 'undefined' && !birthdayData.geladen) { try { await loadBirthdays(); } catch (e) { /* no contacts */ } }
   const fin = canFin ? abYearFin(year) : null;
+  const income = canFin ? abYearIncome(year) : 0;
   const meals = canMeals ? abYearMeals(year) : null;
   const trips = abYearTrips(year, todayIso);
+  const evs = canCal ? abYearEvents(year) : null;
+  const taskCount = canTasks ? abYearTasks(year) : null;
+  const bdays = guest ? null : abYearBirthdays(year, todayIso);
   const mName = i => new Date(year, i, 1).toLocaleDateString(abLocale(), { month: 'long' });
   const num = n => new Intl.NumberFormat(abLocale()).format(n);
   const chips = [];
@@ -839,7 +922,7 @@ async function abRenderYear(body, key) {
   // Expenses
   if (!canFin) {
     html += `<div class="ab-card ab-empty"><span class="i">🔒</span>${abEsc(abT('y_exp_lock'))}</div>`;
-  } else if (!fin.total) {
+  } else if (!fin.total && !income) {
     html += `<div class="ab-card"><div class="ab-h2">💶 ${abEsc(abT('y_exp'))}</div><p class="ab-note">${abEsc(abT('y_exp_no'))}</p></div>`;
   } else {
     const monthsElapsed = year < thisYear ? 12 : now.getMonth() + 1;
@@ -851,6 +934,11 @@ async function abRenderYear(body, key) {
       `<div class="ab-tile"><small>${abEsc(abT('y_exp_peak'))}</small><b>${abEsc(mName(peak))} · ${abEsc(fmtEur0(fin.months[peak]))}</b></div>`,
     ];
     if (fin.saved > 0) tiles.push(`<div class="ab-tile good"><small>${abEsc(abT('y_exp_saved'))}</small><b>${abEsc(fmtEur0(fin.saved))}</b></div>`);
+    if (income > 0) {
+      const bal = finRound(income - fin.total);
+      tiles.push(`<div class="ab-tile good"><small>${abEsc(abT('m_ein'))}</small><b>${abEsc(fmtEur0(income))}</b></div>`);
+      tiles.push(`<div class="ab-tile ${bal >= 0 ? 'good' : 'bad'}"><small>${abEsc(abT('m_saldo'))}</small><b>${bal < 0 ? '−' : ''}${abEsc(fmtEur0(Math.abs(bal)))}</b></div>`);
+    }
     const bars = fin.months.map((v, i) => `<div class="ab-ybar${i === peak ? ' peak' : ''}" title="${abEsc(mName(i) + ': ' + fmtEur0(v))}"><div class="t"><i style="height:${Math.max(2, Math.round(v / maxM * 100))}%"></i></div><span>${abEsc(mName(i).charAt(0).toUpperCase())}</span></div>`).join('');
     const topMax = Math.max(1, fin.byCat[0] ? fin.byCat[0].total : 1);
     const cats = fin.byCat.slice(0, 5).map(c => `<div class="ab-ycat"><div class="h"><span>${abEsc(c.icon)} ${abEsc(c.label)}</span><b>${abEsc(fmtEur0(c.total))}</b></div><div class="ab-bar"><span style="width:${Math.max(3, Math.round(c.total / topMax * 100))}%;background:${abEsc(c.color)}"></span></div></div>`).join('');
@@ -860,6 +948,7 @@ async function abRenderYear(body, key) {
       <div class="ab-ysub">${abEsc(abT('y_exp_cat'))}</div>${cats}
       ${fin.big ? `<div class="ab-ysub">${abEsc(abT('y_exp_big'))}</div><div class="ab-row"><span class="d">${abEsc(abShort(fin.big.date))}</span><span class="n">${abEsc(fin.big.icon)} ${abEsc(fin.big.title)}</span><span class="a">${abEsc(fmtEur0(fin.big.amount))}</span></div>` : ''}
       ${fin.kassen.length > 1 ? fin.kassen.map(k => `<div class="ab-row"><span class="n">${abEsc(k.name)}</span><span class="a">${abEsc(fmtEur0(k.total))}</span></div>`).join('') : ''}
+      ${income > 0 ? `<p class="ab-note">${abEsc(abT('y_bal_note'))}</p>` : ''}
     </div>`;
   }
 
@@ -877,22 +966,60 @@ async function abRenderYear(body, key) {
     }
   }
 
+  // Appointments and tasks
+  if (canCal || canTasks) {
+    const tiles = [];
+    if (evs) {
+      tiles.push(`<div class="ab-tile hero"><small>${abEsc(abT('r_termine'))}</small><b>${num(evs.n)}</b></div>`);
+      if (evs.n) tiles.push(`<div class="ab-tile"><small>${abEsc(abT('y_act_busy'))}</small><b>${abEsc(mName(evs.peak))} · ${num(evs.months[evs.peak])}</b></div>`);
+    }
+    if (taskCount) {
+      tiles.push(`<div class="ab-tile${evs ? '' : ' hero'}"><small>${abEsc(abT('y_act_tasks'))}</small><b>${num(taskCount.all)}</b></div>`);
+      if (taskCount.house > 0) tiles.push(`<div class="ab-tile"><small>${abEsc(abT('y_act_house'))}</small><b>${num(taskCount.house)}</b></div>`);
+    }
+    if (tiles.length) {
+      const notes = [];
+      if (taskCount && taskCount.since) notes.push(abT('y_act_since', { date: abFmt(taskCount.since, { day: 'numeric', month: 'long', year: 'numeric' }) }));
+      if (evs && evs.partial && evs.n) notes.push(abT('y_act_evpart'));
+      html += `<div class="ab-card"><div class="ab-h2">📅 ${abEsc(abT('y_act'))}<small>${year}</small></div>
+        <div class="ab-tiles">${tiles.join('')}</div>${notes.map(t => `<p class="ab-note">${abEsc(t)}</p>`).join('')}
+      </div>`;
+    }
+  }
+
+  // Birthdays
+  if (bdays) {
+    if (!bdays.list.length) {
+      html += `<div class="ab-card"><div class="ab-h2">🎂 ${abEsc(abT('y_bday'))}</div><p class="ab-note">${abEsc(abT('y_bday_no'))}</p></div>`;
+    } else {
+      html += `<div class="ab-card"><div class="ab-h2">🎂 ${abEsc(abT('y_bday'))}<small>${year}</small></div>
+        <div class="ab-tiles"><div class="ab-tile hero"><small>${abEsc(abT('y_bday_n'))}</small><b>${num(bdays.list.length)}</b></div></div>
+        ${bdays.special.length ? `<div class="ab-ysub">${abEsc(abT('y_bday_top'))}</div>` + bdays.special.slice(0, 8).map(b => `<div class="ab-row"><span class="d">${abEsc(abShort(b.iso))}</span><span class="n">${abEsc(abT('y_bday_age', { name: b.n, age: b.age }))}</span></div>`).join('') : ''}
+      </div>`;
+    }
+  }
+
   // Trips
   if (!trips.list.length) {
     html += `<div class="ab-card"><div class="ab-h2">🧳 ${abEsc(abT('y_trips'))}</div><p class="ab-note">${abEsc(abT('y_trips_no'))}</p></div>`;
   } else {
+    let anyPhotos = false;
     const rows = trips.list.map(t => {
       const range = abShort(t.from) + (t.to !== t.from ? ' – ' + abShort(t.to) : '');
-      return `<div class="ab-row"><span class="i">${abEsc(t.icon)}</span><span class="n"><b>${abEsc(t.name)}</b>${t.where && t.where !== t.name ? `<small class="ab-ysmall">${abEsc(t.where)}</small>` : ''}</span><span class="a ab-ydates">${abEsc(range)}</span></div>`;
+      const photos = canBoard ? abTripPhotos(t) : [];
+      if (photos.length) anyPhotos = true;
+      const strip = photos.length ? `<div class="ab-phs" aria-label="${abEsc(abT('y_photos'))}">${photos.slice(0, 4).map(n => `<span class="ab-ph" data-abph="${abEsc(n.id)}"></span>`).join('')}<span class="ab-phn">📷 ${num(photos.length)}</span></div>` : '';
+      return `<div class="ab-row ab-trip"><span class="i">${abEsc(t.icon)}</span><span class="n"><b>${abEsc(t.name)}</b>${t.where && t.where !== t.name ? `<small class="ab-ysmall">${abEsc(t.where)}</small>` : ''}${strip}</span><span class="a ab-ydates">${abEsc(range)}</span></div>`;
     }).join('');
     html += `<div class="ab-card"><div class="ab-h2">🧳 ${abEsc(abT('y_trips'))}<small>${year}</small></div>
       <div class="ab-tiles"><div class="ab-tile hero"><small>${abEsc(abT('y_trips_n'))}</small><b>${num(trips.list.length)}</b></div>
       <div class="ab-tile"><small>${abEsc(abT('y_trips_d'))}</small><b>${num(trips.days)}</b></div>
       ${trips.longest && trips.list.length > 1 ? `<div class="ab-tile"><small>${abEsc(abT('y_trips_long'))}</small><b>${abEsc(trips.longest.name)}</b></div>` : ''}</div>
-      <div class="ab-ysub"></div>${rows}
+      <div class="ab-ysub"></div>${rows}${anyPhotos ? `<p class="ab-note">${abEsc(abT('y_photos_note'))}</p>` : ''}
     </div>`;
   }
   body.innerHTML = html + '</div>';
+  abFillTripPhotos(body);
 }
 
 function abRenderSettings() {

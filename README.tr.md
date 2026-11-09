@@ -110,6 +110,14 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.142.2 sürümündeki yenilikler
+
+**Yıl özeti: gelirler, randevular, görevler, doğum günleri ve gezi fotoğrafları**
+
+- **Yıl özetinde daha fazlası.** Giderlerin altında artık gelirleri ve bakiyeyi de görürsün. Yeni kartlar randevuları (en yoğun ayla), tamamlanan görevleri (ev işi payıyla) ve kutlanan doğum günlerini (18, 30, 40 gibi özel olanlar dahil) gösterir. Her gezide, gezi sırasında panoya eklenen fotoğraflar görünür.
+- **Tamamlanan görevleri sunucu sayar,** çünkü bir iki gün sonra silinirler. Bu yıl için sayım güncelleme gününde başlar.
+- Değişenler: `js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (on dört dilde 14 yeni ve 1 değişen metin), `src/` (sürüm), `index.html`, tüm README dosyaları. Sunucu (hook’ları değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`.
+
 ## 1.142.1 sürümündeki yenilikler
 
 **Bir gezinin bavul listesi silinirken uyarı**
@@ -149,15 +157,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Widget’ta işaretleme.** Orta ve büyük widget’ta bir göreve veya alışveriş öğesine dokun; pinn.’de de işaretlenir (iOS bunun için Scriptable’ı kısaca açar). İşaretlenenler listede üstü çizili kalır; “Alışverişi bitir” her zamanki gibi pinn.’de yapılır (widget’ın altındaki düğme uygulamayı açar). Çocuk kilidi olan profiller hiçbir şeyi işaretleyemez. 1.140.0’daki betiği zaten kullanıyorsan yeniden kopyala ve Scriptable’da değiştir.
 - Değişenler: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (on dört dilin hepsinde 7 yeni metin), `src/` (sürüm), `index.html`, `.github/scripts/check-hooks.js`, tüm README’ler. Sunucu (hook’ları değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
 
-## 1.140.0 sürümündeki yenilikler
-
-**Widget’lar ve Apple Watch**
-
-- **Widget’lar.** Ayarlar → Sesli kontrol bölümünde artık “Widget’lar ve Apple Watch” var. Ücretsiz Scriptable uygulamasıyla ana ekrandaki veya kilit ekranındaki bir widget bugünün randevularını, açık görevleri ve alışveriş öğelerinin sayısını gösterir; hazır betik tek dokunuşla kopyalanır.
-- **Apple Watch.** Bir kısayolla (“URL İçeriğini Al” → “Sonucu Göster”, “Apple Watch’ta Göster”) bugünü, yarını, alışveriş listesini veya hepsini saatte görür ya da sesli okutursun. Adımlar uygulamada.
-- Siri ile aynı gizli bağlantıdır, yalnızca okuma içindir; misafirlerde yoktur. Metinler profilin dilinde gelir.
-- Değişenler: `js/sprachsteuerung.js`, `js/versionslog.js`, `i18n/` (on dört dilin hepsinde 16 yeni metin ve değişen bir alt başlık), `src/` (`index.html`, ayarlar), `.github/scripts/check-hooks.js`, tüm README’ler. Sunucu (hook’ları değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -167,7 +166,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.142.1` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.142.2` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

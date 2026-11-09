@@ -129,6 +129,14 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.142.2
+
+**Bilan de l’année : revenus, rendez-vous, tâches, anniversaires et photos de voyage**
+
+- **Plus dans le bilan de l’année.** Sous les dépenses, tu vois maintenant aussi les revenus et le solde. De nouvelles cartes montrent les rendez-vous (avec le mois le plus chargé), les tâches terminées (avec la part du ménage) et les anniversaires fêtés (dont les spéciaux, comme 18, 30, 40 …). Chaque voyage affiche les photos du panneau publiées pendant le voyage.
+- **Le serveur compte les tâches terminées,** car elles sont supprimées après un ou deux jours. Pour cette année, le décompte commence le jour de la mise à jour.
+- Modifié : `js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14 textes nouveaux et un texte modifié dans les quatorze langues), `src/` (version), `index.html`, tous les README. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`.
+
 ## Nouveautés de la 1.142.1
 
 **Avertissement en supprimant la liste de bagages d’un voyage**
@@ -230,13 +238,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Ukrainien.** L’ukrainien est traduit plus loin : aperçu, aide et tutoriel, tuile famille, membres, messages du serveur, SOS, commande vocale et les derniers petits domaines (6847 textes sur 6994). La langue est encore masquée – rien ne change dans l’appli.
 - Modifié : `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Pas de partie serveur.
 
-## Nouveautés de la 1.135.14
-
-**Ukrainien – étape 15**
-
-- **Ukrainien.** L’ukrainien est traduit plus loin : école et crèche, famille (cartes d’urgence, positions) et tableau d’affichage (6404 textes sur 6994). La langue est encore masquée – rien ne change dans l’appli.
-- Modifié : `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Pas de partie serveur.
-
 ## Comment ça marche
 
 ```mermaid
@@ -263,7 +264,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.142.1` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.142.2` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

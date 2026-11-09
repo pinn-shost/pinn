@@ -129,6 +129,14 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.142.2
+
+**Year in review: income, appointments, tasks, birthdays and trip photos**
+
+- **More in the year in review.** Under expenses you now also see income and the balance. New cards show appointments (with the busiest month), completed tasks (with the household share) and birthdays celebrated (with special ones such as 18, 30, 40 …). Each trip shows the pinboard photos posted while it was on.
+- **Completed tasks are counted by the server,** because they are deleted after one or two days. For this year the count starts on the day of the update.
+- Changed: `js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14 new texts and one changed text in all fourteen languages), `src/` (version), `index.html`, all READMEs. Server (replace the hooks, PocketBase restarts): `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`.
+
 ## What's new in 1.142.1
 
 **Note when deleting a trip’s packing list**
@@ -230,13 +238,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Ukrainian.** Ukrainian is translated further: outlook, help & tutorial, family tile, members, server messages, SOS, voice control and the remaining small areas (6847 of 6994 texts). The language is still hidden – nothing changes in the app.
 - Changed: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). No server part.
 
-## What's new in 1.135.14
-
-**Ukrainian – stage 15**
-
-- **Ukrainian.** Ukrainian is translated further: school & daycare, family (emergency cards, locations) and pin board (6404 of 6994 texts). The language is still hidden – nothing changes in the app.
-- Changed: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). No server part.
-
 ## How it works
 
 ```mermaid
@@ -263,7 +264,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.142.1` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.142.2` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

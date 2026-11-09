@@ -224,6 +224,13 @@ html.dark .ab-day-tag { color: #F4A79E; background: rgba(240,138,133,0.15); }
 .ab-ysmall { display: block; font-size: 11.5px; font-weight: 400; color: rgba(37,35,31,0.5); }
 .ab-ydates { font-size: 12px; font-weight: 500; color: rgba(37,35,31,0.6); }
 html.dark .ab-ysub, html.dark .ab-ybar span, html.dark .ab-ysmall, html.dark .ab-ydates { color: rgba(237,234,226,0.55); }
+/* Trip photos in the year in review (since 1.142.2) */
+.ab-phs { display: flex; align-items: center; gap: 4px; margin-top: 6px; font-weight: 400; }
+.ab-ph { flex: none; width: 36px; height: 36px; border-radius: 8px; overflow: hidden; background: rgba(37,35,31,0.08); }
+.ab-ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ab-phn { margin-left: 2px; font-size: 11.5px; color: rgba(37,35,31,0.55); }
+html.dark .ab-ph { background: rgba(237,234,226,0.12); }
+html.dark .ab-phn { color: rgba(237,234,226,0.55); }
 .ab-set-btns { display: flex; flex-wrap: wrap; gap: 8px; }
 .fam-band { position: relative; height: 92px; overflow: hidden; background: linear-gradient(135deg, var(--fz, var(--c-pine)) 0%, color-mix(in srgb, var(--fz, var(--c-pine)) 55%, #fff) 100%); }
 .fam-ecg { position: absolute; left: 0; right: 0; bottom: 22px; width: 100%; height: 40px; }

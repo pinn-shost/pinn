@@ -325,9 +325,17 @@ function saveTask(body, actorUserId, familyId) {
 // (the lock against duplicate messages hangs on the ticking-off time "erledigt_am").
 function setDone(familyId, id, done, actorUserId) {
     const rec = findOwn(familyId, id);
+    const wasDone = rec.getBool("erledigt");
+    const wasAt = rec.getString("erledigt_am");
     rec.set("erledigt", !!done);
     rec.set("erledigt_am", done ? new Date().toISOString() : "");
     $app.save(rec);
+    // Year-in-review counter (since 1.142.2): +1 when newly ticked off, -1 when a tick of the same year is removed
+    try {
+        const ausblick = require(`${__hooks}/pinn-ausblick.js`);
+        if (done && !wasDone) ausblick.countDone(familyId, 1, !!rec.getString("haushalt"), rec.getString("erledigt_am"));
+        else if (!done && wasDone && wasAt) ausblick.countDone(familyId, -1, !!rec.getString("haushalt"), wasAt);
+    } catch (err) { /* counting is optional */ }
     if (rec.getString("haushalt")) {
         try { verlaufDone(familyId, rec, !!done, actorUserId); } catch (err) { console.log("[Haushalt-Verlauf] " + err.message); }
     }
@@ -790,6 +798,7 @@ function closePassedBinTasks(familyId, data, byKey, nowWall, dueKeys) {
             rec.set("erledigt", true);
             rec.set("erledigt_am", new Date().toISOString());
             $app.save(rec);
+            try { require(`${__hooks}/pinn-ausblick.js`).countDone(familyId, 1, !!rec.getString("haushalt"), rec.getString("erledigt_am")); } catch (err) { /* counting is optional */ }
             const v = verlaufFor(familyId, rec.id);
             if (v) {
                 try { v.set("status", "erledigt"); v.set("erledigt_von", v.getString("zustaendig")); $app.save(v); } catch (e) { /* ignore */ }

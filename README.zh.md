@@ -133,6 +133,14 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.142.2 新功能
+
+**年度回顾：收入、日程、任务、生日和旅行照片**
+
+- **年度回顾更丰富了。** 支出下方现在还能看到收入和结余。新增卡片显示日程（含日程最多的月份）、已完成的任务（含家务占比）和已庆祝的生日（包括 18、30、40 岁等特别的生日）。每次旅行还会显示旅行期间发布到留言板的照片。
+- **已完成的任务由服务器统计，** 因为它们在一两天后就会被删除。今年的统计从更新当天开始。
+- 更改：`js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`、`i18n/`（十四种语言中的 14 条新文本和 1 条更改文本）、`src/`（版本）、`index.html`、所有 README。服务器（替换 hooks，PocketBase 会重启）：`pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`。
+
 ## 1.142.1 新功能
 
 **删除旅行行李清单时的提示**
@@ -206,13 +214,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **语音控制。** “嘿 Siri，pinn”（Android 上为 HTTP Shortcuts）现在也能听懂土耳其语、波兰语和乌克兰语，并用你个人资料的语言回答：添加到购物清单（含数量和商店）、朗读清单、创建任务，以及听取今天或明天的安排。乌克兰语时 Siri 不再用英语回答。快捷指令的设置保持不变。
 - 更改：`js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`，所有 README。服务器（替换挂钩，PocketBase 会重启）：`pb_hooks/pinn-sprache.js`。
 
-## 1.136.0 新功能
-
-**乌克兰语正式开放**
-
-- **乌克兰语。** 乌克兰语现已向所有人开放：在「设置 → 语言与地区」中选择 Українська；如果浏览器语言是乌克兰语，pinn. 会自动切换。全部 6994 条文本、推送通知、设置向导和数据导出均已支持乌克兰语；乌克兰的紧急号码是 102、103、101 和 112。pinn. 现在支持十四种语言。乌克兰语下 Siri 暂时仍用英语回答。
-- 更改：`js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)，所有 README（语言列表、“十四种语言”）。自 1.134.0 起另有：`i18n/uk.i18n.js`, `js/textkern.js`, `js/region.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `.github/scripts/`。服务器（替换挂钩，PocketBase 会重启）：`pb_hooks/pinn-textkern.js`, `pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`。
-
 ## 工作原理
 
 ```mermaid
@@ -241,7 +242,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.142.1` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.142.2` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

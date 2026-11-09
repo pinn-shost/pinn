@@ -110,6 +110,14 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.142.2
+
+**Jaaroverzicht: inkomsten, afspraken, taken, verjaardagen en reisfoto’s**
+
+- **Meer in het jaaroverzicht.** Onder de uitgaven zie je nu ook de inkomsten en het saldo. Nieuwe kaarten tonen afspraken (met de drukste maand), afgeronde taken (met het aandeel huishouden) en gevierde verjaardagen (ook bijzondere, zoals 18, 30, 40 …). Bij elke reis staan de prikbordfoto’s die tijdens de reis zijn geplaatst.
+- **De server telt afgeronde taken,** omdat ze na een of twee dagen worden verwijderd. Voor dit jaar begint het tellen op de dag van de update.
+- Gewijzigd: `js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14 nieuwe teksten en één gewijzigde tekst in alle veertien talen), `src/` (versie), `index.html`, alle README’s. Server (hooks vervangen, PocketBase start opnieuw): `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`.
+
 ## Nieuw in 1.142.1
 
 **Melding bij het verwijderen van de paklijst van een reis**
@@ -149,15 +157,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Afvinken in de widget.** Tik in de middelgrote en grote widget op een taak of artikel en het is ook in pinn. afgevinkt (iOS opent hiervoor even Scriptable). Afgevinkte items blijven doorgestreept op de lijst; “Boodschappen afronden” doe je zoals gewoonlijk in pinn. (een knop onderaan de widget opent de app). Profielen met kindersloot kunnen niets afvinken. Gebruik je al het script uit 1.140.0, kopieer het dan opnieuw en vervang het in Scriptable.
 - Gewijzigd: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (7 nieuwe teksten in alle veertien talen), `src/` (versie), `index.html`, `.github/scripts/check-hooks.js`, alle README’s. Server (hooks vervangen, PocketBase start opnieuw op): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
 
-## Nieuw in 1.140.0
-
-**Widgets en Apple Watch**
-
-- **Widgets.** Bij Instellingen → Spraakbesturing staat nu “Widgets en Apple Watch”. Met de gratis app Scriptable toont een widget op het beginscherm of toegangsscherm de afspraken van vandaag, open taken en het aantal boodschappen; het kant-en-klare script kopieer je met één tik.
-- **Apple Watch.** Met een opdracht (“Haal inhoud van URL op” → “Toon resultaat”, “Toon op Apple Watch”) zie je vandaag, morgen, het boodschappenlijstje of alles op het horloge, of laat je het voorlezen. De stappen staan in de app.
-- Het is dezelfde geheime link als voor Siri, alleen lezen, en gasten hebben hem niet. De teksten komen in de taal van het profiel.
-- Gewijzigd: `js/sprachsteuerung.js`, `js/versionslog.js`, `i18n/` (16 nieuwe teksten en een gewijzigde ondertitel in alle veertien talen), `src/` (`index.html`, instellingen), `.github/scripts/check-hooks.js`, alle README’s. Server (hooks vervangen, PocketBase start opnieuw op): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -167,7 +166,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.142.1` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.142.2` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

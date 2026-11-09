@@ -133,6 +133,14 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.142.2の新機能
+
+**1年のふりかえり：収入、予定、タスク、誕生日、旅行の写真**
+
+- **ふりかえりがさらに充実。** 支出の下に収入と収支も表示されます。新しいカードには、予定（最も多かった月つき）、完了したタスク（うち家事）、お祝いした誕生日（18歳や30歳、40歳などの特別な誕生日つき）が並びます。各旅行には、旅行中に掲示板へ投稿された写真も表示されます。
+- **完了したタスクはサーバーが数えます。** 完了後1〜2日で削除されるためです。今年の分は、アップデートした日から数えます。
+- 変更：`js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`、`i18n/`（14言語すべての新規文言14件と変更文言1件）、`src/`（バージョン）、`index.html`、すべての README。サーバー（hooks を置き換え、PocketBase が再起動）：`pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`。
+
 ## 1.142.1の新機能
 
 **旅行の持ち物リストを削除するときの注意表示**
@@ -206,13 +214,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **音声操作。** 「Hey Siri、pinn」（AndroidではHTTP Shortcuts）が、トルコ語・ポーランド語・ウクライナ語も理解し、プロフィールの言語で答えるようになりました。買い物リストへの追加（数量・店舗つき）、リストの読み上げ、タスクの作成、今日・明日の予定の確認ができます。ウクライナ語でもSiriが英語で答えることはなくなりました。ショートカットの設定は変わりません。
 - 変更：`js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`、すべてのREADME。サーバー（フックを置き換え、PocketBaseが再起動します）：`pb_hooks/pinn-sprache.js`。
 
-## 1.136.0の新機能
-
-**ウクライナ語を公開**
-
-- **ウクライナ語。** ウクライナ語が全員に公開されました。「設定 → 言語と地域」でУкраїнськаを選べます。ブラウザがウクライナ語に設定されている場合は、pinn.が自動的に切り替えます。全6994件のテキスト、プッシュ通知、セットアップアシスタント、データのエクスポートがウクライナ語に対応しています。ウクライナの緊急番号は102、103、101、112です。pinn.は14の言語に対応しました。Siriはウクライナ語でもこれまでどおり英語で応答します。
-- 変更：`js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)、すべてのREADME（言語一覧、「14の言語」）。1.134.0以降はさらに：`i18n/uk.i18n.js`, `js/textkern.js`, `js/region.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `.github/scripts/`。サーバー（フックを置き換え、PocketBaseが再起動します）：`pb_hooks/pinn-textkern.js`, `pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`。
-
 ## しくみ
 
 ```mermaid
@@ -241,7 +242,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.142.1`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.142.2`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
