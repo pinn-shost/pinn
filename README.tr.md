@@ -110,6 +110,14 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.141.2 sürümündeki yenilikler
+
+**Widget’lar: yeşil yerine altın, onay işaretleri, daha modern karolar**
+
+- **Altın ve onay işaretleri.** Widget’lar artık yeşil yerine uygulamanın altın rengini kullanıyor ve açık görevlerde daire yerine onay işareti görünüyor. İşaretlenen görevler gri bir onay işaretiyle açık görevlerin altında kalır.
+- **Hızlı erişim widget’ı.** Karolar biraz küçüldü, böylece her şey widget’ın içinde kalıyor ve daha modern görünüyor: simgeli yuvarlak altın rozet, ince bir kenarlık ve koyu bir geçiş. Dokunmak pinn.’i yine Safari’de açar, çünkü iOS yüklü uygulamayı bir bağlantıdan açmaz.
+- Değişenler: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (sürüm), `index.html`, tüm README dosyaları. Sunucu kısmı yok. Betikleri yeniden kopyalayıp Scriptable’da değiştirin.
+
 ## 1.141.1 sürümündeki yenilikler
 
 **Widget’lar: Apple tarzı ve bir hızlı erişim widget’ı**
@@ -153,13 +161,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Evcil hayvanlar.** Her hayvan için birden fazla besleme saati: düzenleyicide saat seçiciyle istediğin kadar (en fazla 12) saat ekleyebilir, miktar veya mama için isteğe bağlı not yazabilirsin (örneğin “1 kase kuru mama”). Not, besleme düğmesinde ve mama kartında görünür. Evcil hayvanlar sayfasında yeni bir banner var: ailenin hayvanlarının yürüdüğü çitli bir çayır, geceleri yıldızlarla.
 - Değişenler: `js/dunkelzeit.js` (yeni), `js/design.js`, `js/familie.js`, `css/haustierewetter.css`, `js/einstellungen.js`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (on dört dilin hepsinde 19 yeni metin), `src/` (`index.html`), `pinn-setup.sh`, `.github/scripts/check-hooks.js`, tüm README’ler. Sunucu (hook’ları değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`.
 
-## 1.137.0 sürümündeki yenilikler
-
-**Türkçe, Lehçe ve Ukraynaca sesli komut**
-
-- **Sesli komut.** “Hey Siri, pinn” (Android’de HTTP Shortcuts) artık Türkçe, Lehçe ve Ukraynacayı da anlıyor ve profilinin dilinde yanıt veriyor: alışveriş listesine ekleme (miktar ve mağazayla), listeyi okuma, görev oluşturma ve bugün ya da yarın neler olduğunu duyma. Siri Ukraynacada artık İngilizce yanıt vermiyor. Kısayolun kurulumu aynı kalıyor.
-- Değişenler: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, tüm README dosyaları. Sunucu (kancayı değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-sprache.js`.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -169,7 +170,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.141.1` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.141.2` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

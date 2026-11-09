@@ -133,6 +133,14 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.141.2の新機能
+
+**ウィジェット：緑の代わりにゴールド、チェックマーク、より現代的なタイル**
+
+- **ゴールドとチェックマーク。** ウィジェットは緑の代わりにアプリのゴールドを使うようになり、未完了のタスクは丸ではなくチェックマークで表示されます。完了したタスクはグレーのチェックマークのまま、未完了の下に並びます。
+- **クイックアクセスウィジェット。** タイルを少し小さくして、すべてがウィジェットに収まるようにし、見た目もより現代的にしました。シンボル付きの丸いゴールドのバッジ、細い縁、暗いグラデーションです。タップすると、これまでどおり Safari で pinn. が開きます（iOS はリンクからインストール済みのアプリを開けないため）。
+- 変更：`js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`、`src/`（バージョン）、`index.html`、すべての README。サーバー側の変更はありません。スクリプトをもう一度コピーして、Scriptable で置き換えてください。
+
 ## 1.141.1の新機能
 
 **ウィジェット：Appleスタイルとクイックアクセスウィジェット**
@@ -204,13 +212,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **ウクライナ語。** 全6994件のテキストの翻訳が完了しました（プッシュ通知を含む：サーバーのテキスト、シェアハウス用語、通知フックのウクライナ国設定）。この言語はまだ非表示です。アプリの動作は変わりません。
 - 変更：`i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`。サーバー（フックを置き換え、PocketBaseが再起動します）：`pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`。
 
-## 1.135.15の新機能
-
-**ウクライナ語——ステージ16**
-
-- **ウクライナ語。** ウクライナ語の翻訳が進みました：見通し、ヘルプとチュートリアル、家族タイル、メンバー、サーバーのメッセージ、SOS、音声操作、その他の小さな項目（6994件中6847件）。この言語はまだ非表示です。アプリの動作は変わりません。
-- 変更：`i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`)。サーバー側の変更はありません。
-
 ## しくみ
 
 ```mermaid
@@ -239,7 +240,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.141.1`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.141.2`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

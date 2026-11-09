@@ -110,6 +110,14 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.141.2
+
+**Widżety: złoto zamiast zieleni, znaczniki wyboru, nowocześniejsze kafelki**
+
+- **Złoto i znaczniki.** Widżety używają teraz złota aplikacji zamiast zieleni, a otwarte zadania pokazują znacznik wyboru zamiast kółka. Odhaczone zadania zachowują szary znacznik i zostają pod otwartymi.
+- **Widżet szybkiego dostępu.** Kafelki są trochę mniejsze, więc wszystko mieści się w widżecie, i wyglądają nowocześniej: okrągła złota plakietka z symbolem, cienka krawędź i ciemny gradient. Dotknięcie nadal otwiera pinn. w Safari, bo iOS nie otwiera zainstalowanej aplikacji z linku.
+- Zmienione: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (wersja), `index.html`, wszystkie pliki README. Bez części serwerowej. Skopiuj skrypty ponownie i zastąp je w Scriptable.
+
 ## Nowości w 1.141.1
 
 **Widżety: styl Apple i widżet szybkiego dostępu**
@@ -153,13 +161,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Zwierzęta.** Kilka pór karmienia dla każdego zwierzęcia: w edytorze dodajesz ich tyle, ile chcesz (do 12), z wyborem godziny i opcjonalną notatką o ilości lub karmie (np. „1 kubek suchej karmy”). Notatka pojawia się na przycisku karmienia i w karcie karmy. Nowy baner na stronie zwierząt: łąka z płotem, po której spacerują zwierzęta Twojej rodziny, nocą z gwiazdami.
 - Zmienione: `js/dunkelzeit.js` (nowy), `js/design.js`, `js/familie.js`, `css/haustierewetter.css`, `js/einstellungen.js`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (19 nowych tekstów we wszystkich czternastu językach), `src/` (`index.html`), `pinn-setup.sh`, `.github/scripts/check-hooks.js`, wszystkie README. Serwer (wymienić hooki, PocketBase uruchomi się ponownie): `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`.
 
-## Nowości w 1.137.0
-
-**Sterowanie głosem po turecku, polsku i ukraińsku**
-
-- **Sterowanie głosem.** „Hej Siri, pinn” (na Androidzie HTTP Shortcuts) rozumie teraz także turecki, polski i ukraiński i odpowiada w języku Twojego profilu: dodawanie do listy zakupów (z ilością i sklepem), odczytywanie listy, tworzenie zadań i sprawdzanie, co jest dziś lub jutro w planie. Siri nie odpowiada już po angielsku w ukraińskim. Konfiguracja skrótu pozostaje taka sama.
-- Zmienione: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, wszystkie README. Serwer (wymień hook, PocketBase uruchomi się ponownie): `pb_hooks/pinn-sprache.js`.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -169,7 +170,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.141.1` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.141.2` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

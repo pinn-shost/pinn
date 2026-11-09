@@ -129,6 +129,14 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski y 🇺🇦 Українська**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.141.2
+
+**Widgets: dorado en lugar de verde, marcas de verificación, teselas más modernas**
+
+- **Dorado y marcas.** Los widgets usan ahora el dorado de la app en lugar del verde, y las tareas abiertas muestran una marca de verificación en vez de un círculo. Las tareas marcadas conservan una marca gris y quedan debajo de las abiertas.
+- **Widget de acceso rápido.** Las teselas son algo más pequeñas, así todo queda dentro del widget, y se ven más modernas: una insignia dorada redonda con el símbolo, un borde fino y un degradado oscuro. Un toque sigue abriendo pinn. en Safari, porque iOS no abre la app instalada desde un enlace.
+- Cambiado: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (versión), `index.html`, todos los README. Sin parte de servidor. Copia los scripts de nuevo y sustitúyelos en Scriptable.
+
 ## Novedades de la 1.141.1
 
 **Widgets: estilo Apple y un widget de acceso rápido**
@@ -228,13 +236,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Ucraniano.** El ucraniano se ha traducido un poco más: avisos (actividad, camino a casa, SOS) y chat, primera parte (5508 de 6994 textos). El idioma sigue oculto: en la app no cambia nada.
 - Cambiado: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Sin parte de servidor.
 
-## Novedades de la 1.135.11
-
-**Ucraniano – etapa 12**
-
-- **Ucraniano.** El ucraniano se ha traducido un poco más: hogar inteligente, documentos y lectura de PDF (5208 de 6994 textos). El idioma sigue oculto: en la app no cambia nada.
-- Cambiado: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Sin parte de servidor.
-
 ## Cómo funciona
 
 ```mermaid
@@ -261,7 +262,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.141.1` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.141.2` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

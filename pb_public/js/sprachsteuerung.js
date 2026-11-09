@@ -5,7 +5,8 @@
    Contents: Settings → Voice control – load and show the personal secret link (loadVoiceSettings,
    renderVoiceSettings), create or renew it, switch it off and try a sentence (voiceSetup, voiceOff, voiceTest).
    Since 1.141.0 the widget script is modular: tick boxes for events, tasks and household tasks; tapping a task in the widget
-   ticks it off in pinn. as well (server: POST /api/pinn/widget/abhaken). Since 1.141.1 in the style of Apple Reminders, without
+   ticks it off in pinn. as well (server: POST /api/pinn/widget/abhaken). Since 1.141.2 gold of the app instead of green, ticks instead of circles, new look of the quick access tiles.
+   Since 1.141.1 in the style of Apple Reminders, without
    shopping lists, plus a second script with three quick access tiles (widgetQuickScript).
    Since 1.140.0: widgets and Apple Watch – read-only links on the same secret link (widgetLink), the ready-made
    Scriptable widget script (widgetScript) and the set-up steps. Server: GET /api/pinn/widget in pb_hooks/sprache.pb.js.
@@ -44,7 +45,7 @@ const TOKEN = __TOKEN__;
 const CFG = __CFG__;
 const API = BASE + "/api/pinn/widget?token=" + TOKEN + "&ansicht=alles";
 const TICK = BASE + "/api/pinn/widget/abhaken?token=" + TOKEN;
-const BG = "#1C1C1E", WHITE = "#FFFFFF", GRAY = "#8E8E93", DONE = "#636366", ACCENT = "#6FD9B0";
+const BG = "#1C1C1E", WHITE = "#FFFFFF", GRAY = "#8E8E93", DONE = "#636366", ACCENT = __ACCENT__;
 const q = (args && args.queryParameters) || {};
 let note = "";
 // 1. Tap on a task: tick it off in pinn. (k = t, i = id of the task, d = 1 ticked / 0 open again)
@@ -104,7 +105,7 @@ function line(r) {
   row.layoutHorizontally();
   row.centerAlignContent();
   if (r.url) row.url = r.url;
-  const icon = r.kind === "task" ? symbol("circle", ACCENT, SIZE + 6) : (r.kind === "done" ? symbol("checkmark.circle.fill", DONE, SIZE + 6) : (r.kind === "event" ? symbol("calendar", GRAY, SIZE + 2) : null));
+  const icon = r.kind === "task" ? symbol("checkmark", ACCENT, SIZE + 2) : (r.kind === "done" ? symbol("checkmark", DONE, SIZE + 2) : (r.kind === "event" ? symbol("calendar", GRAY, SIZE + 2) : null));
   if (icon) {
     const img = row.addImage(icon.image);
     img.imageSize = new Size(icon.size, icon.size);
@@ -123,7 +124,7 @@ if (!d || !d.ok) {
 } else if (lock) {
   const body = rows.filter(r => r.kind === "task" || r.kind === "event");
   const max = fam === "accessoryRectangular" ? 3 : 1;
-  (body.length ? body : rows).slice(0, max).forEach(r => { const t = w.addText((r.kind === "task" ? "\u25CB " : "") + r.t); t.lineLimit = 1; });
+  (body.length ? body : rows).slice(0, max).forEach(r => { const t = w.addText((r.kind === "task" ? "\u2713 " : "") + r.t); t.lineLimit = 1; });
 } else {
   const max = fam === "large" ? 11 : (small ? 4 : (fam === "medium" ? 5 : 8));
   rows.slice(0, max).forEach((r, i) => { if (i) w.addSpacer(r.kind === "head" ? 8 : 5); line(r); });
@@ -139,28 +140,60 @@ Script.complete();
   return tpl
     .replace('__BASE__', () => JSON.stringify(location.origin))
     .replace('__TOKEN__', () => JSON.stringify(token))
+    .replace('__ACCENT__', () => JSON.stringify(widgetAccent()))
     .replace('__CFG__', () => JSON.stringify(conf));
 }
-// Quick access widget (since 1.141.1): three tiles – lists/shopping, finances (currency sign of the region), tasks.
-// A tile opens pinn. on that page (link ?seite=…, see openPageFromUrl in js/appstart.js). iOS opens such a link in
-// Safari, not in the installed app, so the profile has to be signed in once in Safari.
+// Gold of the app (theme colour "mustard", customisable in the settings) for the widget scripts; fallback = the default
+function widgetAccent() {
+  let c = '';
+  try { c = getComputedStyle(document.documentElement).getPropertyValue('--c-mustard').trim(); } catch (e) { c = ''; }
+  return /^#[0-9a-fA-F]{6}$/.test(c) ? c : '#A67B01';
+}
+// Quick access widget (since 1.141.1, new look in 1.141.2): three tiles – lists/shopping, finances (currency sign of the
+// region), tasks. A tile opens pinn. on that page (link ?seite=…, see openPageFromUrl in js/appstart.js). iOS opens such a
+// link in Safari, not in the installed app (no way around it), so the profile has to be signed in once in Safari.
 function widgetQuickScript() {
   const conf = {
     sym: (typeof curSym === 'function' ? curSym() : '') || '€',
     tiles: [
       { page: 'einkauf', icon: 'cart.fill', label: tk('nav.lists') },
       { page: 'finanzen', icon: '', label: tk('nav.finance') },
-      { page: 'aufgaben', icon: 'checkmark.circle.fill', label: tk('nav.tasks') },
+      { page: 'aufgaben', icon: 'checkmark', label: tk('nav.tasks') },
     ],
   };
   const tpl = String.raw`// pinn. quick access for Scriptable (made in pinn.: Settings > Voice control > Widgets). Medium widget with three tiles.
 const BASE = __BASE__;
 const CFG = __CFG__;
-const BG = "#1C1C1E", TILE = "#2C2C2E", WHITE = "#FFFFFF", ACCENT = "#6FD9B0";
+const TILE = "#2C2C2E", EDGE = "#3A3A3C", WHITE = "#FFFFFF", ACCENT = __ACCENT__;
 const fam = config.widgetFamily || "";
 const w = new ListWidget();
-w.backgroundColor = new Color(BG);
+const grad = new LinearGradient();
+grad.colors = [new Color("#2A2A2E"), new Color("#141416")];
+grad.locations = [0, 1];
+w.backgroundGradient = grad;
 w.url = BASE;
+// Round badge with the symbol (or the currency sign) in the gold of the app
+function badge(parent, tile, size) {
+  const c = parent.addStack();
+  c.layoutHorizontally();
+  c.centerAlignContent();
+  c.size = new Size(size, size);
+  c.cornerRadius = size / 2;
+  c.backgroundColor = new Color(ACCENT, 0.22);
+  c.addSpacer();
+  if (tile.icon && SFSymbol.named(tile.icon)) {
+    const img = c.addImage(SFSymbol.named(tile.icon).image);
+    img.imageSize = new Size(size * 0.5, size * 0.5);
+    img.tintColor = new Color(ACCENT);
+  } else {
+    const s = c.addText(CFG.sym);
+    s.font = Font.boldSystemFont(CFG.sym.length > 2 ? size * 0.32 : size * 0.5);
+    s.textColor = new Color(ACCENT);
+    s.minimumScaleFactor = 0.5;
+    s.lineLimit = 1;
+  }
+  c.addSpacer();
+}
 if (fam.indexOf("accessory") === 0) {
   const t = w.addText("pinn.");
   t.font = Font.boldSystemFont(14);
@@ -172,66 +205,54 @@ if (fam.indexOf("accessory") === 0) {
     row.layoutHorizontally();
     row.centerAlignContent();
     row.url = BASE + "/?seite=" + tile.page;
-    if (tile.icon && SFSymbol.named(tile.icon)) {
-      const img = row.addImage(SFSymbol.named(tile.icon).image);
-      img.imageSize = new Size(20, 20);
-      img.tintColor = new Color(ACCENT);
-    } else {
-      const s = row.addText(CFG.sym);
-      s.font = Font.boldSystemFont(18);
-      s.textColor = new Color(ACCENT);
-    }
+    badge(row, tile, 28);
     row.addSpacer(8);
     const t = row.addText(tile.label);
-    t.font = Font.systemFont(15);
+    t.font = Font.semiboldSystemFont(15);
     t.textColor = new Color(WHITE);
     t.lineLimit = 1;
     row.addSpacer();
   });
 } else {
-  w.setPadding(12, 12, 12, 12);
-  // Tile width from the screen width (a medium widget is about 26 points narrower than the screen)
+  w.setPadding(12, 14, 12, 14);
+  // Tile width from the screen width (a medium widget is about 87 percent of the screen width); small safety margin
   let screen = 390;
   try { screen = Device.screenSize().width; } catch (e) { screen = 390; }
-  const tileW = Math.floor((screen - 26 - 24 - 16) / 3);
-  const tileH = fam === "large" ? 120 : 100;
+  const gap = 10;
+  const tileW = Math.floor((screen * 0.84 - 28 - 2 * gap) / 3);
+  const tileH = fam === "large" ? 108 : 84;
   if (fam === "large") w.addSpacer();
-  const row = w.addStack();
-  row.layoutHorizontally();
+  const outer = w.addStack();
+  outer.layoutHorizontally();
+  outer.addSpacer();
   CFG.tiles.forEach((tile, i) => {
-    if (i) row.addSpacer(8);
-    const box = row.addStack();
+    if (i) outer.addSpacer(gap);
+    const box = outer.addStack();
     box.layoutVertically();
     box.centerAlignContent();
     box.backgroundColor = new Color(TILE);
-    box.cornerRadius = 20;
+    box.cornerRadius = 22;
+    box.borderWidth = 1;
+    box.borderColor = new Color(EDGE);
     box.size = new Size(tileW, tileH);
     box.url = BASE + "/?seite=" + tile.page;
     box.addSpacer();
     const top = box.addStack();
     top.addSpacer();
-    if (tile.icon && SFSymbol.named(tile.icon)) {
-      const img = top.addImage(SFSymbol.named(tile.icon).image);
-      img.imageSize = new Size(34, 34);
-      img.tintColor = new Color(ACCENT);
-    } else {
-      const s = top.addText(CFG.sym);
-      s.font = Font.boldSystemFont(CFG.sym.length > 2 ? 22 : 34);
-      s.textColor = new Color(ACCENT);
-      s.minimumScaleFactor = 0.5;
-    }
+    badge(top, tile, 38);
     top.addSpacer();
-    box.addSpacer(6);
+    box.addSpacer(7);
     const lab = box.addStack();
     lab.addSpacer();
     const t = lab.addText(tile.label);
-    t.font = Font.mediumSystemFont(14);
+    t.font = Font.semiboldSystemFont(13);
     t.textColor = new Color(WHITE);
     t.lineLimit = 1;
     t.minimumScaleFactor = 0.7;
     lab.addSpacer();
     box.addSpacer();
   });
+  outer.addSpacer();
   if (fam === "large") w.addSpacer();
 }
 if (config.runsInWidget) Script.setWidget(w);
@@ -240,6 +261,7 @@ Script.complete();
 `;
   return tpl
     .replace('__BASE__', () => JSON.stringify(location.origin))
+    .replace('__ACCENT__', () => JSON.stringify(widgetAccent()))
     .replace('__CFG__', () => JSON.stringify(conf));
 }
 // What the widget should show: stored on this device, so every profile / phone keeps its own choice

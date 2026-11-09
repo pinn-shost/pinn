@@ -110,6 +110,14 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.141.2
+
+**Widgets: goud in plaats van groen, vinkjes, modernere tegels**
+
+- **Goud en vinkjes.** De widgets gebruiken nu het goud van de app in plaats van groen, en open taken tonen een vinkje in plaats van een cirkel. Afgevinkte taken houden een grijs vinkje en blijven onder de open taken staan.
+- **Widget voor snelle toegang.** De tegels zijn iets kleiner, zodat alles binnen de widget blijft, en zien er moderner uit: een rond gouden label met het symbool, een dunne rand en een donkere kleurverloop. Een tik opent pinn. nog steeds in Safari, omdat iOS de geïnstalleerde app niet via een link opent.
+- Gewijzigd: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (versie), `index.html`, alle README’s. Geen serverdeel. Kopieer de scripts opnieuw en vervang ze in Scriptable.
+
 ## Nieuw in 1.141.1
 
 **Widgets: Apple-stijl en een widget voor snelle toegang**
@@ -153,13 +161,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Huisdieren.** Meerdere voedertijden per dier: in de editor voeg je zoveel tijden toe als je wilt (tot 12) met een tijdkiezer en een optionele notitie over hoeveelheid of voer (bijvoorbeeld “1 kopje droogvoer”). De notitie staat op de voederknop en in de voerkaart. Nieuwe banner op de huisdierenpagina: een weide met hek waar de huisdieren van je gezin langslopen, ’s nachts met sterren.
 - Gewijzigd: `js/dunkelzeit.js` (nieuw), `js/design.js`, `js/familie.js`, `css/haustierewetter.css`, `js/einstellungen.js`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (19 nieuwe teksten in alle veertien talen), `src/` (`index.html`), `pinn-setup.sh`, `.github/scripts/check-hooks.js`, alle README’s. Server (hooks vervangen, PocketBase start opnieuw op): `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`.
 
-## Nieuw in 1.137.0
-
-**Spraakbesturing in het Turks, Pools en Oekraïens**
-
-- **Spraakbesturing.** “Hey Siri, pinn” (op Android HTTP Shortcuts) begrijpt nu ook Turks, Pools en Oekraïens en antwoordt in de taal van je profiel: op het boodschappenlijstje zetten (met hoeveelheid en winkel), het lijstje voorlezen, een taak aanmaken en horen wat er vandaag of morgen op het programma staat. Siri antwoordt bij Oekraïens niet meer in het Engels. Het instellen van de opdracht blijft hetzelfde.
-- Gewijzigd: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, alle README’s. Server (hook vervangen, PocketBase herstart): `pb_hooks/pinn-sprache.js`.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -169,7 +170,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.141.1` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.141.2` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
