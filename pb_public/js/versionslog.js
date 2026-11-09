@@ -22,12 +22,13 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
-    v: '1.141', datum: '09.11.2026', titel: 'Widgets: getrennt wählbar und direkt abhakbar',
+    v: '1.141', datum: '09.11.2026', titel: 'Widgets: Aufgaben im Apple-Stil, abhakbar, und ein Schnellzugriff-Widget',
     punkte: [
-      ['neu', 'Widgets getrennt wählbar: In den Einstellungen unter „Sprachsteuerung“ → „Widgets & Apple Watch“ hakst du an, was ein Widget zeigen soll: Termine von heute, Aufgaben (ohne Haushalt), Haushaltsaufgaben und jede Einkaufsliste einzeln. Aufgaben und Haushaltsaufgaben zusammen angehakt ergeben „Aufgaben mit Haushalt“. Dann „Widget-Skript kopieren“ und in Scriptable einfügen – für jedes Widget ein eigenes Skript.'],
-      ['neu', 'Abhaken im Widget: Im mittleren und großen Widget tippst du eine Aufgabe oder einen Einkaufs-Eintrag an – er ist dann auch in pinn. abgehakt (iOS öffnet dafür kurz Scriptable). Abgehakte Einkaufs-Einträge bleiben durchgestrichen auf der Liste. „Einkauf abschließen“ machst du wie gewohnt in pinn.; der Knopf unten im Widget öffnet die App. Profile mit Kindersperre können nichts abhaken.'],
-      ['info', 'Der Kurzbefehl für die Apple Watch kennt zusätzlich die Ansichten „aufgaben“ und „haushalt“ sowie eine einzelne Einkaufsliste.'],
-      ['info', 'Geändert: pb_hooks/pinn-sprache.js und sprache.pb.js (neue Abfrage POST /api/pinn/widget/abhaken), js/sprachsteuerung.js, js/sprachen.js, i18n/ (7 neue Texte in allen vierzehn Sprachen), i18n/versionslog.en.js, js/versionslog.js, src/ (Version), index.html, .github/scripts/check-hooks.js, alle READMEs. Server-Teil: Hooks einspielen, PocketBase startet neu. Wer schon ein Widget-Skript aus 1.140 nutzt: neu kopieren und in Scriptable ersetzen.'],
+      ['neu', 'Widget im Stil von Apple Aufgaben: dunkelgrauer Hintergrund, große weiße Schrift, runde Kreise. Abgehakte Aufgaben rutschen nach unten, werden grau und der Kreis füllt sich. Tippen auf eine Aufgabe im mittleren oder großen Widget hakt sie auch in pinn. ab (iOS öffnet dafür kurz Scriptable).'],
+      ['neu', 'Widget getrennt wählbar: In den Einstellungen unter „Sprachsteuerung“ → „Widgets & Apple Watch“ hakst du Termine von heute, Aufgaben (ohne Haushalt) und Haushaltsaufgaben an. Beides zusammen ergibt „Aufgaben mit Haushalt“. Dann „Widget-Skript kopieren“ und in Scriptable einfügen – für jedes Widget ein eigenes Skript.'],
+      ['neu', 'Schnellzugriff-Widget: drei Kacheln nebeneinander – Listen (Einkaufswagen), Finanzen (mit dem Währungszeichen deiner Region) und Aufgaben. Ein Tipp öffnet die Seite in pinn. Das geschieht in Safari, nicht in der installierten App (iOS erlaubt keinen Sprung in die App); melde dich dort einmal an.'],
+      ['info', 'Die Einkaufslisten sind nicht mehr im Widget (Einkauf abschließen geht ohnehin nur in der App). Der Kurzbefehl für die Apple Watch kennt weiter „einkauf“ und zusätzlich „aufgaben“ und „haushalt“.'],
+      ['info', 'Geändert: pb_hooks/pinn-sprache.js und sprache.pb.js (neue Abfrage POST /api/pinn/widget/abhaken, heute abgehakte Aufgaben bleiben in der Liste), js/sprachsteuerung.js, js/appstart.js (Link ?seite=einkauf|finanzen|aufgaben), js/sprachen.js, i18n/ (neue und geänderte Texte in allen vierzehn Sprachen), i18n/versionslog.en.js, js/versionslog.js, src/ (Version), index.html, .github/scripts/check-hooks.js, alle READMEs. Server-Teil: Hooks einspielen, PocketBase startet neu. Wer schon ein Widget-Skript nutzt: neu kopieren und in Scriptable ersetzen.'],
     ],
   },
   {

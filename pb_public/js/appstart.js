@@ -14,6 +14,15 @@
 /* ==========================================================
    App start (after login: data of the own family)
    ========================================================== */
+// From a widget tile (Scriptable quick access, since 1.141.1): ?seite=einkauf | finanzen | aufgaben opens that page
+function openPageFromUrl() {
+  try {
+    const page = new URLSearchParams(location.search).get('seite');
+    if (!page) return;
+    history.replaceState(null, '', location.pathname + location.hash);
+    if (['einkauf', 'finanzen', 'aufgaben'].indexOf(page) >= 0) setView(page);
+  } catch (e) { /* no address parameters */ }
+}
 async function bootApp() {
   registerOfflineWorker(); // keep the app on the device so that it also starts offline
   await ensureAuthenticated();
@@ -72,6 +81,7 @@ async function bootApp() {
   famOpenFromUrl(); // from a location message: open Family with the person on the map
   sosStart(); // SOS from Traccar Client: check running alarms, open ?sos=<ID> from the push message
   googleReturnFromUrl(); // return from the Google login (Android calendar): open the calendar settings
+  openPageFromUrl(); // from a widget tile: open lists, finances or tasks
   hideDashboardScreen();
   if (dashSession) startDashboardIdleWatch();
 

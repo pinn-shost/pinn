@@ -133,6 +133,14 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.141.1의 새 소식
+
+**위젯: Apple 스타일과 빠른 실행 위젯**
+
+- **Apple 미리 알림 같은 모습.** 할 일 위젯이 짙은 회색 배경에 큰 흰색 글자와 둥근 원으로 바뀌었어요. 체크한 할 일은 아래로 내려가 회색이 되고 원이 채워져요. 장보기 목록은 더 이상 위젯에 없고, 일정·할 일·집안일 중에서 고를 수 있어요.
+- **빠른 실행 위젯.** 두 번째 스크립트(“빠른 실행 스크립트 복사”)로 목록, 금융(지역 통화 기호 포함), 할 일 세 칸이 있는 위젯을 만들어요. 탭하면 iOS가 링크로 설치한 앱을 열 수 없어서 Safari에서 pinn.의 해당 페이지가 열려요. Safari에서 한 번 로그인해 주세요.
+- 변경: `js/sprachsteuerung.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (14개 언어의 새 문구와 바뀐 문구), `src/` (버전), `index.html`, `.github/scripts/check-hooks.js`, 모든 README. 서버(hook 교체, PocketBase가 다시 시작돼요): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
+
 ## 1.141.0의 새 소식
 
 **위젯: 보여줄 내용을 고르고 위젯에서 바로 체크해요**
@@ -231,7 +239,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.141.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.141.1` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

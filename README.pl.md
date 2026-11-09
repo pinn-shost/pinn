@@ -110,6 +110,14 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.141.1
+
+**Widżety: styl Apple i widżet szybkiego dostępu**
+
+- **Wygląd jak Przypomnienia Apple.** Widżet zadań jest teraz ciemnoszary, z dużym białym tekstem i okrągłymi kółkami. Odhaczone zadania przesuwają się na dół, szarzeją, a kółko się wypełnia. Listy zakupów nie są już częścią widżetu; wybierasz między terminami, zadaniami i obowiązkami domowymi.
+- **Widżet szybkiego dostępu.** Drugi skrypt („Kopiuj skrypt szybkiego dostępu”) tworzy widżet z trzema kafelkami: listy, finanse (z symbolem waluty Twojego regionu) i zadania. Dotknięcie otwiera tę stronę pinn. w Safari, bo iOS nie otwiera zainstalowanej aplikacji z linku; zaloguj się tam raz.
+- Zmienione: `js/sprachsteuerung.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (nowe i zmienione teksty we wszystkich czternastu językach), `src/` (wersja), `index.html`, `.github/scripts/check-hooks.js`, wszystkie README. Serwer (wymienić hooki, PocketBase uruchomi się ponownie): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
+
 ## Nowości w 1.141.0
 
 **Widżety: wybierz, co pokazuje każdy, i odhaczaj prosto w widżecie**
@@ -161,7 +169,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.141.0` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.141.1` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

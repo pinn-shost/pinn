@@ -133,6 +133,14 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.141.1の新機能
+
+**ウィジェット：Appleスタイルとクイックアクセスウィジェット**
+
+- **Appleのリマインダー風の見た目。** タスクのウィジェットは濃いグレーの背景、大きな白い文字、丸いサークルになりました。チェックしたタスクは下に移動してグレーになり、サークルが塗りつぶされます。買い物リストはウィジェットから外れ、予定、タスク、家事タスクから選びます。
+- **クイックアクセスウィジェット。** 2つ目のスクリプト（「クイックアクセス用スクリプトをコピー」）で、リスト、お金（地域の通貨記号付き）、タスクの3つのタイルを持つウィジェットを作れます。タップすると、iOS がリンクからインストール済みアプリを開けないため、Safari で pinn. のそのページが開きます。Safari で一度ログインしてください。
+- 変更：`js/sprachsteuerung.js`、`js/appstart.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/`（14言語すべての新規・変更文言）、`src/`（バージョン）、`index.html`、`.github/scripts/check-hooks.js`、すべてのREADME。サーバー（hookを置き換え、PocketBaseが再起動します）：`pb_hooks/pinn-sprache.js`、`pb_hooks/sprache.pb.js`。
+
 ## 1.141.0の新機能
 
 **ウィジェット：表示内容を選べて、ウィジェットから直接チェックできます**
@@ -231,7 +239,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.141.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.141.1`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

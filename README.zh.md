@@ -133,6 +133,14 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.141.1 新功能
+
+**小组件：Apple 风格与快捷入口小组件**
+
+- **像 Apple 提醒事项一样。** 任务小组件现在是深灰色背景、白色大字和圆形圆圈。已勾选的任务会移到下方、变灰，圆圈被填满。购物清单不再属于小组件；可在日程、任务和家务任务之间选择。
+- **快捷入口小组件。** 第二个脚本（“复制快捷入口脚本”）会生成带三个图块的小组件：清单、财务（显示你所在地区的货币符号）和任务。点按会在 Safari 中打开 pinn. 的对应页面，因为 iOS 不会通过链接打开已安装的应用；请在 Safari 中登录一次。
+- 更改：`js/sprachsteuerung.js`、`js/appstart.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/`（十四种语言中的新增和更改文本）、`src/`（版本）、`index.html`、`.github/scripts/check-hooks.js`、所有 README。服务器（替换 hook，PocketBase 会重启）：`pb_hooks/pinn-sprache.js`、`pb_hooks/sprache.pb.js`。
+
 ## 1.141.0 新功能
 
 **小组件：自由选择显示内容，直接在小组件中勾选**
@@ -231,7 +239,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.141.0` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.141.1` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

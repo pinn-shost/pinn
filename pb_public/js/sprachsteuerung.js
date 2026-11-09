@@ -4,8 +4,9 @@
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
    Contents: Settings → Voice control – load and show the personal secret link (loadVoiceSettings,
    renderVoiceSettings), create or renew it, switch it off and try a sentence (voiceSetup, voiceOff, voiceTest).
-   Since 1.141.0 the widget script is modular: tick boxes for events, tasks, household tasks and every shopping list; tapping a task or
-   item in the widget ticks it off in pinn. as well (server: POST /api/pinn/widget/abhaken).
+   Since 1.141.0 the widget script is modular: tick boxes for events, tasks and household tasks; tapping a task in the widget
+   ticks it off in pinn. as well (server: POST /api/pinn/widget/abhaken). Since 1.141.1 in the style of Apple Reminders, without
+   shopping lists, plus a second script with three quick access tiles (widgetQuickScript).
    Since 1.140.0: widgets and Apple Watch – read-only links on the same secret link (widgetLink), the ready-made
    Scriptable widget script (widgetScript) and the set-up steps. Server: GET /api/pinn/widget in pb_hooks/sprache.pb.js.
    The settings load when the section is opened. The server side is pb_hooks/sprache.pb.js + pinn-sprache.js. */
@@ -30,27 +31,26 @@ function widgetLink(token, view, text) {
   return location.origin + '/api/pinn/widget?token=' + encodeURIComponent(token) + '&ansicht=' + (view || 'heute') + (text ? '&format=text' : '');
 }
 // Ready-made script for the free iOS app Scriptable (home screen and lock screen widget).
-// Since 1.141.0 modular: cfg = { events, tasks, household, lists: [{ id, name }] } decides what the widget shows
-// (one script per widget). Tapping a task or shopping item in a medium or large widget ticks it off in pinn. as well:
+// Modular since 1.141.0: cfg = { events, tasks, household } decides what the widget shows (one script per widget).
+// Since 1.141.1 in the style of Apple Reminders: dark grey, white text, round circles (SF Symbols); ticked tasks stay
+// below the open ones, grey with a filled circle. Tapping a task in a medium or large widget ticks it off in pinn. as well:
 // iOS opens Scriptable for a moment, the script sends the tick (POST /api/pinn/widget/abhaken) and shows the result.
 function widgetScript(token, cfg) {
   const c = cfg || {};
-  const conf = {
-    events: !!c.events, tasks: !!c.tasks, household: !!c.household,
-    lists: (Array.isArray(c.lists) ? c.lists : []).map(l => ({ id: String(l.id), name: String(l.name || '') })),
-  };
+  const conf = { events: !!c.events, tasks: !!c.tasks, household: !!c.household };
   const tpl = String.raw`// pinn. widget for Scriptable (made in pinn.: Settings > Voice control > Widgets). One script = one widget.
 const BASE = __BASE__;
 const TOKEN = __TOKEN__;
 const CFG = __CFG__;
 const API = BASE + "/api/pinn/widget?token=" + TOKEN + "&ansicht=alles";
 const TICK = BASE + "/api/pinn/widget/abhaken?token=" + TOKEN;
+const BG = "#1C1C1E", WHITE = "#FFFFFF", GRAY = "#8E8E93", DONE = "#636366", ACCENT = "#6FD9B0";
 const q = (args && args.queryParameters) || {};
 let note = "";
-// 1. Tap on a task or item: tick it off in pinn. (k = t task / s shopping item, i = id, d = 1 ticked / 0 open)
-if (q.k && q.i) {
+// 1. Tap on a task: tick it off in pinn. (k = t, i = id of the task, d = 1 ticked / 0 open again)
+if (q.k === "t" && q.i) {
   try {
-    const r = new Request(TICK + "&art=" + (q.k === "t" ? "task" : "shop") + "&id=" + encodeURIComponent(q.i) + "&erledigt=" + (q.d === "0" ? "0" : "1"));
+    const r = new Request(TICK + "&art=task&id=" + encodeURIComponent(q.i) + "&erledigt=" + (q.d === "0" ? "0" : "1"));
     r.method = "POST";
     const res = await r.loadJSON();
     if (!res || !res.ok) note = (res && res.error) || "Error";
@@ -64,63 +64,72 @@ const lock = fam.indexOf("accessory") === 0;
 const small = fam === "small";
 const tappable = !!(d && d.ok && d.canTick) && (fam === "medium" || fam === "large" || !fam);
 const base = URLScheme.forRunningScript();
-const tapUrl = (k, id, done) => base + (base.indexOf("?") >= 0 ? "&" : "?") + "k=" + k + "&i=" + encodeURIComponent(id) + "&d=" + (done ? 1 : 0);
-// 3. Build the rows: { t: text, kind: head | row | done | more | foot, url }
+const tapUrl = (id, done) => base + (base.indexOf("?") >= 0 ? "&" : "?") + "k=t&i=" + encodeURIComponent(id) + "&d=" + (done ? 1 : 0);
+// 3. Build the rows: { t: text, kind: head | event | task | done | more, url }
 const rows = [];
 if (d && d.ok) {
   const day = d.days[0];
   if (CFG.events) {
-    rows.push({ t: d.texts.events + " · " + day.label, kind: "head" });
+    rows.push({ t: d.texts.events, kind: "head" });
     if (!day.events.length) rows.push({ t: d.texts.none, kind: "more" });
-    day.events.forEach(e => rows.push({ t: (e.time ? e.time + " " : "") + e.title, kind: "row" }));
+    day.events.forEach(e => rows.push({ t: (e.time ? e.time + "  " : "") + e.title, kind: "event" }));
   }
   if (CFG.tasks || CFG.household) {
     const list = (d.tasks || []).filter(t => (t.household ? CFG.household : CFG.tasks));
-    rows.push({ t: (CFG.tasks ? d.texts.tasks : d.texts.household) + " (" + list.length + ")", kind: "head" });
+    const open = list.filter(t => !t.done), done = list.filter(t => t.done);
+    rows.push({ t: (CFG.tasks ? d.texts.tasks : d.texts.household) + (open.length ? "  " + open.length : ""), kind: "head" });
     if (!list.length) rows.push({ t: d.texts.none, kind: "more" });
-    list.forEach(t => rows.push({ t: "\u2610 " + t.title, kind: "row", url: tappable ? tapUrl("t", t.id, true) : "" }));
+    open.forEach(t => rows.push({ t: t.title, kind: "task", url: tappable ? tapUrl(t.id, true) : "" }));
+    done.forEach(t => rows.push({ t: t.title, kind: "done", url: tappable ? tapUrl(t.id, false) : "" }));
   }
-  CFG.lists.forEach(cl => {
-    const l = (d.lists || []).find(x => x.id === cl.id);
-    rows.push({ t: "\uD83D\uDED2 " + (cl.name || (l && l.name) || d.texts.shop) + " (" + (l ? l.count : 0) + ")", kind: "head" });
-    if (!l || !l.items.length) rows.push({ t: d.texts.empty, kind: "more" });
-    else {
-      l.items.forEach(x => rows.push(x.done
-        ? { t: "\u2611 " + x.text, kind: "done", url: tappable ? tapUrl("s", x.id, false) : "" }
-        : { t: "\u2610 " + x.text, kind: "row", url: tappable ? tapUrl("s", x.id, true) : "" }));
-      if (l.more) rows.push({ t: l.more, kind: "more" });
-      // Finishing the shopping (booking the amount) is done in pinn. itself
-      if (l.doneCount && !lock && !small) rows.push({ t: "\u2714 " + d.texts.finish, kind: "foot", url: BASE });
-    }
-  });
 }
-// 4. Draw the widget
+// 4. Draw the widget (dark grey, white text, round circles)
 const w = new ListWidget();
-w.backgroundColor = new Color("#00374A");
-w.setPadding(10, 12, 10, 12);
-w.url = BASE;
+w.backgroundColor = new Color(BG);
+w.setPadding(14, 14, 12, 14);
+const SIZE = small ? 14 : 16;
+function symbol(name, color, size) {
+  const sym = SFSymbol.named(name);
+  return sym ? { image: sym.image, color: color, size: size } : null;
+}
 function line(r) {
-  const t = w.addText(String(r.t));
-  const head = r.kind === "head" || r.kind === "foot";
-  t.font = head ? Font.boldSystemFont(small || lock ? 11 : 12) : Font.systemFont(small || lock ? 11 : 12);
-  t.textColor = new Color(head ? "#9ee6c9" : (r.kind === "done" ? "#7fa3ad" : (r.kind === "more" ? "#b6cdd3" : "#ffffff")));
+  if (r.kind === "head") {
+    const t = w.addText(String(r.t));
+    t.font = Font.boldSystemFont(small ? 15 : 18);
+    t.textColor = new Color(ACCENT);
+    t.lineLimit = 1;
+    return;
+  }
+  const row = w.addStack();
+  row.layoutHorizontally();
+  row.centerAlignContent();
+  if (r.url) row.url = r.url;
+  const icon = r.kind === "task" ? symbol("circle", ACCENT, SIZE + 6) : (r.kind === "done" ? symbol("checkmark.circle.fill", DONE, SIZE + 6) : (r.kind === "event" ? symbol("calendar", GRAY, SIZE + 2) : null));
+  if (icon) {
+    const img = row.addImage(icon.image);
+    img.imageSize = new Size(icon.size, icon.size);
+    img.tintColor = new Color(icon.color);
+    row.addSpacer(8);
+  }
+  const t = row.addText(String(r.t));
+  t.font = Font.systemFont(SIZE);
+  t.textColor = new Color(r.kind === "done" ? DONE : (r.kind === "more" ? GRAY : WHITE));
   t.lineLimit = 1;
-  if (r.url) t.url = r.url;
-  return t;
+  row.addSpacer();
 }
 if (!d || !d.ok) {
   line({ t: "pinn.", kind: "head" });
   line({ t: (d && d.error) || "No connection", kind: "more" });
 } else if (lock) {
-  const body = rows.filter(r => r.kind === "row" || r.kind === "done");
+  const body = rows.filter(r => r.kind === "task" || r.kind === "event");
   const max = fam === "accessoryRectangular" ? 3 : 1;
-  (body.length ? body : rows).slice(0, max).forEach(line);
+  (body.length ? body : rows).slice(0, max).forEach(r => { const t = w.addText((r.kind === "task" ? "\u25CB " : "") + r.t); t.lineLimit = 1; });
 } else {
-  const max = fam === "large" ? 14 : (small ? 6 : (fam === "medium" ? 6 : 12));
-  rows.slice(0, max).forEach((r, i) => { if (i && r.kind === "head") w.addSpacer(3); line(r); });
-  if (rows.length > max) line({ t: "…", kind: "more" });
+  const max = fam === "large" ? 11 : (small ? 4 : (fam === "medium" ? 5 : 8));
+  rows.slice(0, max).forEach((r, i) => { if (i) w.addSpacer(r.kind === "head" ? 8 : 5); line(r); });
+  if (rows.length > max) { w.addSpacer(4); line({ t: "…", kind: "more" }); }
 }
-if (note) { w.addSpacer(2); line({ t: "⚠ " + note, kind: "more" }); }
+if (note) { w.addSpacer(4); line({ t: "\u26A0 " + note, kind: "more" }); }
 w.refreshAfterDate = new Date(Date.now() + 15 * 60 * 1000);
 if (config.runsInWidget) Script.setWidget(w);
 else if (q.k) await w.presentLarge();
@@ -132,30 +141,124 @@ Script.complete();
     .replace('__TOKEN__', () => JSON.stringify(token))
     .replace('__CFG__', () => JSON.stringify(conf));
 }
+// Quick access widget (since 1.141.1): three tiles – lists/shopping, finances (currency sign of the region), tasks.
+// A tile opens pinn. on that page (link ?seite=…, see openPageFromUrl in js/appstart.js). iOS opens such a link in
+// Safari, not in the installed app, so the profile has to be signed in once in Safari.
+function widgetQuickScript() {
+  const conf = {
+    sym: (typeof curSym === 'function' ? curSym() : '') || '€',
+    tiles: [
+      { page: 'einkauf', icon: 'cart.fill', label: tk('nav.lists') },
+      { page: 'finanzen', icon: '', label: tk('nav.finance') },
+      { page: 'aufgaben', icon: 'checkmark.circle.fill', label: tk('nav.tasks') },
+    ],
+  };
+  const tpl = String.raw`// pinn. quick access for Scriptable (made in pinn.: Settings > Voice control > Widgets). Medium widget with three tiles.
+const BASE = __BASE__;
+const CFG = __CFG__;
+const BG = "#1C1C1E", TILE = "#2C2C2E", WHITE = "#FFFFFF", ACCENT = "#6FD9B0";
+const fam = config.widgetFamily || "";
+const w = new ListWidget();
+w.backgroundColor = new Color(BG);
+w.url = BASE;
+if (fam.indexOf("accessory") === 0) {
+  const t = w.addText("pinn.");
+  t.font = Font.boldSystemFont(14);
+} else if (fam === "small") {
+  w.setPadding(10, 12, 10, 12);
+  CFG.tiles.forEach((tile, i) => {
+    if (i) w.addSpacer(6);
+    const row = w.addStack();
+    row.layoutHorizontally();
+    row.centerAlignContent();
+    row.url = BASE + "/?seite=" + tile.page;
+    if (tile.icon && SFSymbol.named(tile.icon)) {
+      const img = row.addImage(SFSymbol.named(tile.icon).image);
+      img.imageSize = new Size(20, 20);
+      img.tintColor = new Color(ACCENT);
+    } else {
+      const s = row.addText(CFG.sym);
+      s.font = Font.boldSystemFont(18);
+      s.textColor = new Color(ACCENT);
+    }
+    row.addSpacer(8);
+    const t = row.addText(tile.label);
+    t.font = Font.systemFont(15);
+    t.textColor = new Color(WHITE);
+    t.lineLimit = 1;
+    row.addSpacer();
+  });
+} else {
+  w.setPadding(12, 12, 12, 12);
+  // Tile width from the screen width (a medium widget is about 26 points narrower than the screen)
+  let screen = 390;
+  try { screen = Device.screenSize().width; } catch (e) { screen = 390; }
+  const tileW = Math.floor((screen - 26 - 24 - 16) / 3);
+  const tileH = fam === "large" ? 120 : 100;
+  if (fam === "large") w.addSpacer();
+  const row = w.addStack();
+  row.layoutHorizontally();
+  CFG.tiles.forEach((tile, i) => {
+    if (i) row.addSpacer(8);
+    const box = row.addStack();
+    box.layoutVertically();
+    box.centerAlignContent();
+    box.backgroundColor = new Color(TILE);
+    box.cornerRadius = 20;
+    box.size = new Size(tileW, tileH);
+    box.url = BASE + "/?seite=" + tile.page;
+    box.addSpacer();
+    const top = box.addStack();
+    top.addSpacer();
+    if (tile.icon && SFSymbol.named(tile.icon)) {
+      const img = top.addImage(SFSymbol.named(tile.icon).image);
+      img.imageSize = new Size(34, 34);
+      img.tintColor = new Color(ACCENT);
+    } else {
+      const s = top.addText(CFG.sym);
+      s.font = Font.boldSystemFont(CFG.sym.length > 2 ? 22 : 34);
+      s.textColor = new Color(ACCENT);
+      s.minimumScaleFactor = 0.5;
+    }
+    top.addSpacer();
+    box.addSpacer(6);
+    const lab = box.addStack();
+    lab.addSpacer();
+    const t = lab.addText(tile.label);
+    t.font = Font.mediumSystemFont(14);
+    t.textColor = new Color(WHITE);
+    t.lineLimit = 1;
+    t.minimumScaleFactor = 0.7;
+    lab.addSpacer();
+    box.addSpacer();
+  });
+  if (fam === "large") w.addSpacer();
+}
+if (config.runsInWidget) Script.setWidget(w);
+else await w.presentMedium();
+Script.complete();
+`;
+  return tpl
+    .replace('__BASE__', () => JSON.stringify(location.origin))
+    .replace('__CFG__', () => JSON.stringify(conf));
+}
 // What the widget should show: stored on this device, so every profile / phone keeps its own choice
 const WIDGET_PICK_KEY = 'pinnWidgetPick';
 function widgetPick() {
   let p = null;
   try { p = JSON.parse(localStorage.getItem(WIDGET_PICK_KEY) || 'null'); } catch (e) { p = null; }
-  if (!p || typeof p !== 'object') p = { events: true, tasks: true, household: false, lists: [] };
-  p.lists = Array.isArray(p.lists) ? p.lists : [];
+  if (!p || typeof p !== 'object') p = { events: true, tasks: true, household: false };
   return p;
 }
 function widgetPickSave(p) { try { localStorage.setItem(WIDGET_PICK_KEY, JSON.stringify(p)); } catch (e) { /* storage not available */ } }
-// Shopping lists of the family (id + name) for the tick boxes
-function widgetShoppingLists() {
-  try { return (typeof allShoppingLists === 'function' ? allShoppingLists() : []).filter(l => l && l.id).map(l => ({ id: String(l.id), name: String(l.name || '') })); } catch (e) { return []; }
-}
 function widgetPickHtml() {
   const p = widgetPick();
-  const box = (id, on, label, cls, data) => `<label class="flex items-center gap-2 text-[12px] text-ink/80"><input type="checkbox"${id ? ' id="' + id + '"' : ''} class="accent-pine ${cls || ''}"${data || ''}${on ? ' checked' : ''} /><span>${label}</span></label>`;
-  const lists = widgetShoppingLists().map(l => box('', p.lists.indexOf(l.id) >= 0, '🛒 ' + escapeHtml(tk('voice.widgetList', { name: l.name })), 'wgList', ' data-id="' + escapeHtml(l.id) + '" data-name="' + escapeHtml(l.name) + '"')).join('');
+  const box = (id, on, label) => `<label class="flex items-center gap-2 text-[12px] text-ink/80"><input type="checkbox" id="${id}" class="accent-pine"${on ? ' checked' : ''} /><span>${label}</span></label>`;
   return `<div class="rounded-lg bg-ink/5 p-3 mt-3 flex flex-col gap-1.5">
         <p class="text-[12px] font-medium">${escapeHtml(tk('voice.widgetPick'))}</p>
         ${box('wgEvents', p.events, escapeHtml(tk('voice.widgetEvents')))}
         ${box('wgTasks', p.tasks, escapeHtml(tk('voice.widgetTasks')))}
         ${box('wgHousehold', p.household, escapeHtml(tk('voice.widgetHousehold')))}
-        ${lists}
       </div>`;
 }
 function widgetPickRead() {
@@ -163,11 +266,8 @@ function widgetPickRead() {
     events: !!(document.getElementById('wgEvents') || {}).checked,
     tasks: !!(document.getElementById('wgTasks') || {}).checked,
     household: !!(document.getElementById('wgHousehold') || {}).checked,
-    lists: [],
   };
-  const chosen = [];
-  document.querySelectorAll('.wgList').forEach(el => { if (el.checked) { p.lists.push(el.dataset.id); chosen.push({ id: el.dataset.id, name: el.dataset.name || '' }); } });
-  return { pick: p, cfg: { events: p.events, tasks: p.tasks, household: p.household, lists: chosen } };
+  return { pick: p, cfg: p };
 }
 async function loadVoiceSettings() {
   const box = document.getElementById('voiceSettingsBody');
@@ -234,6 +334,8 @@ function renderVoiceSettings() {
       </ol>
       ${widgetPickHtml()}
       <button type="button" id="widgetScriptBtn" class="mt-2 px-3 py-1.5 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">${tk('voice.widgetCopyScript')}</button>
+      <p class="text-[11px] text-ink/50 mt-3">${escapeHtml(tk('voice.widgetQuickHint'))}</p>
+      <button type="button" id="widgetQuickBtn" class="mt-2 px-3 py-1.5 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">${tk('voice.widgetQuickCopy')}</button>
       <p class="text-[11px] text-ink/50 mt-2">${escapeHtml(tk('voice.widgetTick'))}</p>
       <p class="text-[12px] font-medium mt-4">${escapeHtml(tk('voice.widgetWatchTitle'))}</p>
       <ol class="text-[12px] text-ink/70 leading-relaxed mt-1 list-decimal pl-5 flex flex-col gap-1">
@@ -260,9 +362,13 @@ function renderVoiceSettings() {
   });
   document.getElementById('widgetScriptBtn').addEventListener('click', async () => {
     const sel = widgetPickRead();
-    if (!sel.cfg.events && !sel.cfg.tasks && !sel.cfg.household && !sel.cfg.lists.length) { finShowToast(tk('voice.widgetNeedOne')); return; }
+    if (!sel.cfg.events && !sel.cfg.tasks && !sel.cfg.household) { finShowToast(tk('voice.widgetNeedOne')); return; }
     widgetPickSave(sel.pick);
     const ok = await copyTextRobust(widgetScript(st.token, sel.cfg));
+    finShowToast(ok === false ? tk('voice.copyingNotPossiblePlease') : tk('voice.widgetScriptCopied'));
+  });
+  document.getElementById('widgetQuickBtn').addEventListener('click', async () => {
+    const ok = await copyTextRobust(widgetQuickScript());
     finShowToast(ok === false ? tk('voice.copyingNotPossiblePlease') : tk('voice.widgetScriptCopied'));
   });
   document.getElementById('widgetLinkBtn').addEventListener('click', async () => {

@@ -129,6 +129,14 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski y 🇺🇦 Українська**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.141.1
+
+**Widgets: estilo Apple y un widget de acceso rápido**
+
+- **Aspecto de Recordatorios de Apple.** El widget de tareas es ahora gris oscuro, con texto blanco grande y círculos redondos. Las tareas marcadas bajan, se ponen grises y el círculo se rellena. Las listas de la compra ya no forman parte del widget; eliges entre citas, tareas y tareas del hogar.
+- **Widget de acceso rápido.** Un segundo script («Copiar script de acceso rápido») crea un widget con tres teselas: listas, finanzas (con el símbolo de la moneda de tu región) y tareas. Un toque abre esa página de pinn. en Safari, porque iOS no abre la app instalada desde un enlace; inicia sesión allí una vez.
+- Cambiado: `js/sprachsteuerung.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (textos nuevos y cambiados en los catorce idiomas), `src/` (versión), `index.html`, `.github/scripts/check-hooks.js`, todos los README. Servidor (sustituir los hooks, PocketBase se reinicia): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
+
 ## Novedades de la 1.141.0
 
 **Widgets: elige qué muestra cada uno y marca directamente en el widget**
@@ -253,7 +261,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.141.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.141.1` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

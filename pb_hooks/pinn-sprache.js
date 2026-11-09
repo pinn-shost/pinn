@@ -1226,16 +1226,18 @@ function widgetAccess(token) {
 function plainTitle(t) {
     return String(t.title || t.titel).replace(/^\S+\s(?=\S)/u, m => (/\p{Extended_Pictographic}/u.test(m) ? "" : m));
 }
-// Open tasks that are due today or earlier (since 1.141.0 with id and household flag, so the widget can tick them off)
+// Tasks that are due today or earlier (since 1.141.0 with id and household flag, so the widget can tick them off).
+// Since 1.141.1 the ones ticked off today stay in the list (done: true) so the widget can show them grey below the open ones.
 function widgetTasks(familyId) {
     const today = todayIso();
+    const doneToday = t => !!(t.done && t.doneAt && !isNaN(Date.parse(t.doneAt)) && wallIso(Date.parse(t.doneAt)) === today);
     let list = [];
     try {
         list = (require(`${__hooks}/pinn-aufgaben.js`).listAll(familyId) || [])
-            .filter(t => t && !t.done && (t.title || t.titel) && t.dueDate && t.dueDate <= today)
-            .sort((a, b) => String(a.dueDate).localeCompare(String(b.dueDate)) || String(a.title || "").localeCompare(String(b.title || "")))
+            .filter(t => t && (t.title || t.titel) && t.dueDate && t.dueDate <= today && (!t.done || doneToday(t)))
+            .sort((a, b) => (a.done ? 1 : 0) - (b.done ? 1 : 0) || String(a.dueDate).localeCompare(String(b.dueDate)) || String(a.title || "").localeCompare(String(b.title || "")))
             .slice(0, 30)
-            .map(t => ({ id: t.id || "", title: plainTitle(t), household: !!t.household, due: t.dueDate }));
+            .map(t => ({ id: t.id || "", title: plainTitle(t), household: !!t.household, due: t.dueDate, done: !!t.done }));
     } catch (e) { list = []; }
     return list;
 }
@@ -1305,8 +1307,8 @@ function widgetData(token, view, format, listId) {
                     if (l.more) lines.push("  " + l.more);
                 }
             } else if (view === "einkauf") shopLines();
-            else if (view === "aufgaben") taskLines(W.tasks, tasks.filter(t => !t.household));
-            else if (view === "haushalt") taskLines(W.household, tasks.filter(t => t.household));
+            else if (view === "aufgaben") taskLines(W.tasks, tasks.filter(t => !t.household && !t.done));
+            else if (view === "haushalt") taskLines(W.household, tasks.filter(t => t.household && !t.done));
             else if (view === "morgen") dayLines(days[1]);
             else if (view === "alles") {
                 dayLines(days[0]);
