@@ -110,6 +110,14 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.142.0
+
+**Podsumowanie roku: wydatki, ugotowane dania i wyjazdy**
+
+- **Podsumowanie roku.** 28 grudnia od 18:00 (i w dowolnej chwili w Ustawienia → Zapowiedź) pinn. pokazuje wasz rok w skrócie: wydatki ze słupkami miesięcznymi, kategorie i największy pojedynczy wydatek, ugotowane dania z ulubionymi oraz wszystkie wyjazdy z liczbą dni w podróży. Strzałkami u góry przeglądasz wcześniejsze lata.
+- **Powiadomienie i push jak przy innych zapowiedziach.** Powiadomienie u góry do 10 stycznia i wiadomość push, którą możesz wyłączyć w ustawieniach. Wydatki widać tylko z dostępem do finansów; goście nie dostają wiadomości push.
+- Zmienione: `js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (32 nowe i zmienione teksty we wszystkich czternastu językach), `src/` (wersja, ustawienia), `index.html`, wszystkie pliki README. Serwer (wymienić hooki, PocketBase uruchomi się ponownie): `pb_hooks/pinn-ausblick.js`, `pb_hooks/ausblick.pb.js`.
+
 ## Nowości w 1.141.2
 
 **Widżety: złoto zamiast zieleni, znaczniki wyboru, nowocześniejsze kafelki**
@@ -152,15 +160,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Kto to daje? / Wspólne prezenty.** Przy każdym prezencie wybierasz, kto go daje. Przy życzeniu zarezerwowanym już przez kogoś innego dotknij „Dołączam”; inni widzą, kto uczestniczy, ale osoba, która o to prosiła – nie.
 - Zmienione: `js/listen.js`, `css/listen.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (12 nowych tekstów i zmieniony opis we wszystkich czternastu językach), `src/` (`index.html`, okno list), wszystkie README. Bez części serwerowej – PocketBase nie musi się restartować.
 
-## Nowości w 1.138.0
-
-**Automatyczny tryb ciemny i automatyczne aktualizacje**
-
-- **Tryb ciemny.** Ustawienia → Wygląd: pinn. potrafi teraz przełączać się na tryb ciemny według godziny (np. od 20:00 do 07:00) albo od zachodu do wschodu słońca. Godziny słońca są obliczane na urządzeniu dla adresu domowego rodziny (w razie braku – dla lokalizacji pogody), bez dostępu do lokalizacji. Jeśli przełączysz ręcznie, obowiązuje to do następnej automatycznej zmiany. Ustawienie należy do Twojego profilu i działa na wszystkich Twoich urządzeniach.
-- **Automatyczne aktualizacje.** Ustawienia → System → Kopie zapasowe i aktualizacje: pinn. może o ustawionej porze, codziennie lub raz w tygodniu, sprawdzać, czy jest nowa wersja, najpierw tworzyć kopię zapasową, a potem instalować aktualizację. Wersje wstępne nigdy nie są instalowane automatycznie, a jeśli kopia zapasowa się nie uda, nic nie zostanie zainstalowane. Wynik i następny termin widać w tym samym oknie, błędy – w dzienniku błędów. Tylko dla adminów, którzy mogą instalować aktualizacje.
-- **Zwierzęta.** Kilka pór karmienia dla każdego zwierzęcia: w edytorze dodajesz ich tyle, ile chcesz (do 12), z wyborem godziny i opcjonalną notatką o ilości lub karmie (np. „1 kubek suchej karmy”). Notatka pojawia się na przycisku karmienia i w karcie karmy. Nowy baner na stronie zwierząt: łąka z płotem, po której spacerują zwierzęta Twojej rodziny, nocą z gwiazdami.
-- Zmienione: `js/dunkelzeit.js` (nowy), `js/design.js`, `js/familie.js`, `css/haustierewetter.css`, `js/einstellungen.js`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (19 nowych tekstów we wszystkich czternastu językach), `src/` (`index.html`), `pinn-setup.sh`, `.github/scripts/check-hooks.js`, wszystkie README. Serwer (wymienić hooki, PocketBase uruchomi się ponownie): `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -170,7 +169,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.141.2` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.142.0` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

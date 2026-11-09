@@ -1,13 +1,13 @@
 // pb_hooks/ausblick.pb.js
-// Weekly preview and monthly finance outlook. The logic lives in pinn-ausblick.js, the contents are
+// Weekly preview, monthly finance outlook and (since 1.142.0) the year in review. The logic lives in pinn-ausblick.js, the contents are
 // calculated by the app itself (index.html, section "Outlook").
 //
 // Routes (signed in only):
 //   GET  /api/pinn/ausblick              current week/month, "already seen" and push switches of the profile
-//   POST /api/pinn/ausblick/gesehen      {art: 'woche'|'monat', key}  hide the banner on all devices
-//   POST /api/pinn/ausblick/push         {woche?: bool, monat?: bool} personal push switches
+//   POST /api/pinn/ausblick/gesehen      {art: 'woche'|'monat'|'jahr', key}  hide the banner on all devices
+//   POST /api/pinn/ausblick/push         {woche?: bool, monat?: bool, jahr?: bool} personal push switches
 //
-// Schedule: every 10 minutes - but only works on Sundays or on the last day of the month between 6 and 10 p.m.,
+// Schedule: every 10 minutes - but only works on Sundays, on the last day of the month or on 28 December between 6 and 10 p.m.,
 // and then only once (marker in pb_data/pinn_ausblick.json).
 
 onBootstrap((e) => {

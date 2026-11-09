@@ -110,6 +110,14 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.142.0 sürümündeki yenilikler
+
+**Yıl özeti: harcamalar, pişirilen yemekler ve geziler**
+
+- **Yıl özeti.** 28 Aralık’ta saat 18.00’den itibaren (ve istediğin zaman Ayarlar → Ön bakış altında) pinn. yılınızı tek bakışta gösterir: aylık çubuklarla harcamalar, kategoriler ve en büyük tek harcama, favorilerle birlikte pişirilen yemekler ve tüm geziler ile seyahat günleri. Üstteki oklarla önceki yıllara geçebilirsin.
+- **Bildirim ve push, diğer ön bakışlar gibi.** 10 Ocak’a kadar üstte bir bildirim ve ayarlardan kapatabileceğin bir push mesajı. Harcamalar yalnızca finans erişimiyle görünür; misafirler push mesajı almaz.
+- Değişenler: `js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (on dört dilde 32 yeni ve değişen metin), `src/` (sürüm, ayarlar), `index.html`, tüm README dosyaları. Sunucu (hook’ları değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-ausblick.js`, `pb_hooks/ausblick.pb.js`.
+
 ## 1.141.2 sürümündeki yenilikler
 
 **Widget’lar: yeşil yerine altın, onay işaretleri, daha modern karolar**
@@ -152,15 +160,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Kim hediye ediyor? / Ortak hediyeler.** Her hediyede kimin vereceğini seçersin. Başkasının zaten ayırdığı bir dilekte “Ben de katılıyorum”a dokun; diğerleri kimin katıldığını görür, dileği yazan kişi görmez.
 - Değişenler: `js/listen.js`, `css/listen.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (12 yeni metin ve değiştirilmiş bir giriş, on dört dilin hepsinde), `src/` (`index.html`, liste penceresi), tüm README dosyaları. Sunucu tarafı yok – PocketBase'in yeniden başlaması gerekmez.
 
-## 1.138.0 sürümündeki yenilikler
-
-**Otomatik karanlık mod ve otomatik güncellemeler**
-
-- **Karanlık mod.** Ayarlar → Görünüm bölümünde pinn. artık saate göre (örneğin 20:00 ile 07:00 arası) ya da gün batımından gün doğumuna kadar karanlık moda geçebiliyor. Güneş saatleri, ailenin ev adresi (yoksa hava durumu konumu) için cihazda hesaplanır; konum izni gerekmez. Elle değiştirirsen bu bir sonraki otomatik değişime kadar geçerli olur. Ayar profiline aittir ve tüm cihazlarında geçerlidir.
-- **Otomatik güncellemeler.** Ayarlar → Sistem → Yedekler ve güncellemeler bölümünde pinn. belirlenen saatte, her gün ya da haftada bir, yeni sürümü kontrol edebiliyor, önce yedek oluşturup ardından güncellemeyi yükleyebiliyor. Ön sürümler asla otomatik yüklenmez; yedek başarısız olursa hiçbir şey yüklenmez. Sonuç ve bir sonraki çalışma aynı pencerede görünür, hatalar hata günlüğüne yazılır. Yalnızca güncelleme yükleme yetkisi olan yöneticiler için.
-- **Evcil hayvanlar.** Her hayvan için birden fazla besleme saati: düzenleyicide saat seçiciyle istediğin kadar (en fazla 12) saat ekleyebilir, miktar veya mama için isteğe bağlı not yazabilirsin (örneğin “1 kase kuru mama”). Not, besleme düğmesinde ve mama kartında görünür. Evcil hayvanlar sayfasında yeni bir banner var: ailenin hayvanlarının yürüdüğü çitli bir çayır, geceleri yıldızlarla.
-- Değişenler: `js/dunkelzeit.js` (yeni), `js/design.js`, `js/familie.js`, `css/haustierewetter.css`, `js/einstellungen.js`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (on dört dilin hepsinde 19 yeni metin), `src/` (`index.html`), `pinn-setup.sh`, `.github/scripts/check-hooks.js`, tüm README’ler. Sunucu (hook’ları değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -170,7 +169,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.141.2` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.142.0` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

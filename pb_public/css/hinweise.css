@@ -205,6 +205,25 @@ html.dark .ab-tile.good b { color: #8BD3A6; }
 html.dark .ab-tile.bad b { color: #F08A85; }
 html.dark .ab-row .a.in { color: #8BD3A6; }
 html.dark .ab-day-tag { color: #F4A79E; background: rgba(240,138,133,0.15); }
+/* Year in review (since 1.142.0) */
+.ab-ynav { display: flex; align-items: center; gap: 10px; margin-top: 12px; position: relative; z-index: 1; font-variant-numeric: tabular-nums; }
+.ab-ynav b { min-width: 3.2em; text-align: center; font-size: 14px; }
+.ab-ynav-b { width: 32px; height: 32px; border-radius: 9999px; background: rgba(255,255,255,0.18); color: #fff; font-size: 20px; line-height: 1; display: grid; place-items: center; }
+.ab-ynav-b:disabled { opacity: .35; }
+.ab-ysub { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: rgba(37,35,31,0.45); margin: 14px 0 6px; }
+.ab-ybars { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 4px; height: 110px; }
+.ab-ybar { display: flex; flex-direction: column; align-items: center; height: 100%; min-width: 0; }
+.ab-ybar .t { flex: 1 1 auto; width: 100%; display: flex; align-items: flex-end; }
+.ab-ybar i { display: block; width: 100%; border-radius: 4px 4px 0 0; background: color-mix(in srgb, var(--ab, var(--c-pine)) 45%, transparent); }
+.ab-ybar.peak i { background: var(--ab, var(--c-pine)); }
+.ab-ybar span { font-size: 10px; margin-top: 3px; color: rgba(37,35,31,0.5); }
+.ab-ycat { padding: 5px 0; }
+.ab-ycat .h { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-size: 13px; }
+.ab-ycat .h span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ab-ycat .h b { flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.ab-ysmall { display: block; font-size: 11.5px; font-weight: 400; color: rgba(37,35,31,0.5); }
+.ab-ydates { font-size: 12px; font-weight: 500; color: rgba(37,35,31,0.6); }
+html.dark .ab-ysub, html.dark .ab-ybar span, html.dark .ab-ysmall, html.dark .ab-ydates { color: rgba(237,234,226,0.55); }
 .ab-set-btns { display: flex; flex-wrap: wrap; gap: 8px; }
 .fam-band { position: relative; height: 92px; overflow: hidden; background: linear-gradient(135deg, var(--fz, var(--c-pine)) 0%, color-mix(in srgb, var(--fz, var(--c-pine)) 55%, #fff) 100%); }
 .fam-ecg { position: absolute; left: 0; right: 0; bottom: 22px; width: 100%; height: 40px; }

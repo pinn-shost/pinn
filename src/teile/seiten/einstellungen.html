@@ -152,14 +152,16 @@
     <details class="settings-accordion set-card" id="settingsAusblickAccordion">
       <summary class="set-sum">
         <span class="set-ico">🔭</span>
-        <span class="set-head"><span data-tk="settings.outlook.title" class="sa-title">Outlook</span><small data-tk="settings.outlook.subtitle">Weekly preview and monthly finance outlook</small></span>
+        <span class="set-head"><span data-tk="settings.outlook.title" class="sa-title">Outlook</span><small data-tk="settings.outlook.subtitle">Weekly preview, monthly finance outlook and year in review</small></span>
         <svg class="accordion-chevron w-3.5 h-3.5 text-ink/30 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </summary>
       <div class="set-body">
         <p data-tk="settings.outlook.intro" class="text-xs text-ink/50 mb-4">Every Sunday from 6 pm there's the weekly preview with everything important for the family in the coming week, and on the last day of the month from 6 pm the outlook on next month's finances. Both appear once as a notice at the top and as a push notification – you can open them again here at any time.</p>
+        <p data-tk="settings.outlook.introYear" class="text-xs text-ink/50 mb-4">On 28 December from 6 pm the year in review follows: expenses, meals cooked and trips of the year. It stays visible until 10 January and can be opened here at any time.</p>
         <div class="ab-set-btns mb-5">
           <button data-tk="settings.outlook.openWeek" type="button" id="abSetWeekBtn" class="px-3 py-2 rounded-lg bg-pine text-white text-sm hover:bg-pine/90">🗓️ Open weekly preview</button>
           <button data-tk="settings.outlook.openMonth" type="button" id="abSetMonthBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm hover:border-pine hover:text-pine transition">💶 Open monthly outlook</button>
+          <button data-tk="settings.outlook.openYear" type="button" id="abSetYearBtn" class="px-3 py-2 rounded-lg border border-ink/15 text-sm hover:border-pine hover:text-pine transition">🎁 Open year in review</button>
         </div>
         <h4 data-tk="settings.outlook.pushNotifications" class="text-xs uppercase tracking-wide text-ink/40 mb-2">Push notifications</h4>
         <div id="abSetPushRows" class="flex flex-col gap-3">
@@ -178,6 +180,14 @@
               <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
             </span>
             <span data-tk="settings.outlook.pushMonth" class="text-sm">Monthly outlook at the end of the month at 6 pm</span>
+          </label>
+          <label class="flex items-center gap-3 cursor-pointer w-fit">
+            <span class="relative inline-block w-11 h-6 shrink-0">
+              <input id="abSetPushYear" type="checkbox" class="peer sr-only" checked />
+              <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
+              <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+            </span>
+            <span data-tk="settings.outlook.pushYear" class="text-sm">Year in review on 28 December at 6 pm</span>
           </label>
         </div>
         <p data-tk="settings.outlook.pushHint" class="text-[11px] text-ink/40 mt-3">Applies only to your profile. For the push notification to arrive, notifications must be activated on the device (Settings → Notifications).</p>

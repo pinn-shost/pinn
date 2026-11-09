@@ -129,6 +129,14 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski y 🇺🇦 Українська**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.142.0
+
+**Resumen del año: gastos, comidas cocinadas y viajes**
+
+- **Resumen del año.** El 28 de diciembre a partir de las 18:00 (y en cualquier momento en Ajustes → Previsión) pinn. muestra vuestro año de un vistazo: gastos con barras mensuales, categorías y el mayor gasto individual, comidas cocinadas con las favoritas y todos los viajes con los días fuera. Con las flechas de arriba pasas a años anteriores.
+- **Aviso y push como en las otras previsiones.** Un aviso arriba hasta el 10 de enero y una notificación push que puedes desactivar en los ajustes. Los gastos solo se ven con acceso a las finanzas; los invitados no reciben la notificación push.
+- Cambiado: `js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (32 textos nuevos y cambiados en los catorce idiomas), `src/` (versión, ajustes), `index.html`, todos los README. Servidor (sustituir los hooks, PocketBase se reinicia): `pb_hooks/pinn-ausblick.js`, `pb_hooks/ausblick.pb.js`.
+
 ## Novedades de la 1.141.2
 
 **Widgets: dorado en lugar de verde, marcas de verificación, teselas más modernas**
@@ -229,13 +237,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Ucraniano.** El ucraniano se ha traducido un poco más: chat (resto), mascotas y lugares (ubicación compartida, rastreadores GPS) (5958 de 6994 textos). El idioma sigue oculto: en la app no cambia nada.
 - Cambiado: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Sin parte de servidor.
 
-## Novedades de la 1.135.12
-
-**Ucraniano – etapa 13**
-
-- **Ucraniano.** El ucraniano se ha traducido un poco más: avisos (actividad, camino a casa, SOS) y chat, primera parte (5508 de 6994 textos). El idioma sigue oculto: en la app no cambia nada.
-- Cambiado: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Sin parte de servidor.
-
 ## Cómo funciona
 
 ```mermaid
@@ -262,7 +263,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.141.2` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.142.0` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

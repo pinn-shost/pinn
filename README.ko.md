@@ -133,6 +133,14 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.142.0의 새 소식
+
+**올해 돌아보기: 지출, 만든 요리, 여행**
+
+- **올해 돌아보기.** 12월 28일 오후 6시부터(그리고 '설정 → 전망'에서 언제든) pinn.이 한 해를 한눈에 보여 줘요. 월별 막대가 있는 지출, 카테고리와 가장 큰 지출, 만든 요리와 즐겨 만든 요리, 모든 여행과 여행한 날수예요. 위쪽 화살표로 이전 해로 넘겨 볼 수 있어요.
+- **알림과 푸시는 다른 전망과 같아요.** 위쪽 알림은 1월 10일까지 보이고, 푸시 알림은 설정에서 끌 수 있어요. 지출은 재정 접근 권한이 있을 때만 보이고, 게스트에게는 푸시 알림이 가지 않아요.
+- 변경: `js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14개 언어의 새 문구와 바뀐 문구 32개), `src/` (버전, 설정), `index.html`, 모든 README. 서버(hooks 교체, PocketBase가 다시 시작돼요): `pb_hooks/pinn-ausblick.js`, `pb_hooks/ausblick.pb.js`.
+
 ## 1.141.2의 새 소식
 
 **위젯: 초록 대신 골드, 체크 표시, 더 현대적인 타일**
@@ -205,13 +213,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **우크라이나어.** 설정 마법사와 데이터 내보내기가 이제 우크라이나어를 지원합니다: 모든 단계별 안내(홈 네트워크, DuckDNS, VPN, Google, AI, 위치, Home Assistant, 앱)와 내보내기의 모든 텍스트. 우크라이나 긴급 전화번호(102, 103, 101, 112)를 확인했습니다. 짧은 `README.uk.md`가 새로 추가되었습니다. 언어는 아직 숨겨져 있어 앱에서는 바뀌는 것이 없습니다.
 - 변경: `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `README.uk.md`. 서버 부분은 없습니다.
 
-## 1.135.16의 새 소식
-
-**우크라이나어 – 17단계**
-
-- **우크라이나어.** 6994개 텍스트가 모두 번역됐어요. 푸시 알림도 포함돼요(서버 텍스트, 셰어하우스 용어, 알림 훅의 우크라이나 국가 설정). 이 언어는 아직 숨겨져 있어요. 앱에서 달라지는 것은 없어요.
-- 변경: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`. 서버(훅 교체, PocketBase 재시작): `pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
-
 ## 작동 방식
 
 ```mermaid
@@ -240,7 +241,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.141.2` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.142.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

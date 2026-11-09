@@ -1,16 +1,16 @@
 // pb_hooks/pinn-ausblick.js
 // Not a *.pb.js file -> it is NOT loaded automatically as a hook, only pulled in via require().
 //
-// Outlook: weekly preview (every Sunday from 6 p.m.) and monthly finance outlook (on the last day of the
-// month from 6 p.m.). What is in it is calculated by the app itself from the data it has anyway - the
+// Outlook: weekly preview (every Sunday from 6 p.m.), monthly finance outlook (on the last day of the
+// month from 6 p.m.) and, since 1.142.0, the year in review (28 December from 6 p.m.). What is in it is calculated by the app itself from the data it has anyway - the
 // server only takes care of
-//   - the push message (once per week or month and profile, in the profile's language),
+//   - the push message (once per week, month or year and profile, in the profile's language),
 //   - the "already seen" marker per profile, so that the banner only appears once on all devices,
-//   - the personal switches "Weekly preview by push" / "Monthly outlook by push".
+//   - the personal switches "Weekly preview by push" / "Monthly outlook by push" / "Year in review by push".
 //
 // Gentle on CPU and memory:
-//   - The schedule runs every 10 minutes, but only does something on Sundays or on the last day of the month between 6 and
-//     10 p.m. - and then exactly once (marker in pb_data/pinn_ausblick.json).
+//   - The schedule runs every 10 minutes, but only does something on Sundays, on the last day of the month or on 28 December
+//     between 6 and 10 p.m. - and then exactly once (marker in pb_data/pinn_ausblick.json).
 //   - No collection of its own, no family data when sending (only for the monthly outlook once per
 //     family, to exclude children with parental controls).
 //
@@ -58,6 +58,11 @@ function monthKey(w) {
     }
     return w.y + "-" + pad2(w.m);
 }
+// Year in review (since 1.142.0): from 28 December 6 p.m. until 10 January the year that just ended, otherwise the current one (YYYY)
+function yearKey(w) {
+    if (w.m === 1 && w.d <= 10) return String(w.y - 1);
+    return String(w.y);
+}
 
 // ---------------------------------------------------------------------------------------------
 // Markers in pb_data
@@ -72,19 +77,21 @@ function readStatus() {
             return o;
         }
     } catch (e) { /* no file yet */ }
-    return { gesendet: { woche: "", monat: "" }, nutzer: {} };
+    return { gesendet: { woche: "", monat: "", jahr: "" }, nutzer: {} };
 }
 function writeStatus(s) {
     try { $os.writeFile(STATUS_FILE, JSON.stringify(s), 420); } catch (e) { console.log("[Ausblick] " + STATUS_FILE + " nicht speicherbar: " + e.message); }
 }
 function userState(s, userId) {
     const u = s.nutzer[userId];
-    const out = { woche: "", monat: "", pushWoche: true, pushMonat: true };
+    const out = { woche: "", monat: "", jahr: "", pushWoche: true, pushMonat: true, pushJahr: true };
     if (u && typeof u === "object") {
         if (typeof u.woche === "string") out.woche = u.woche;
         if (typeof u.monat === "string") out.monat = u.monat;
+        if (typeof u.jahr === "string") out.jahr = u.jahr;
         if (u.pushWoche === false) out.pushWoche = false;
         if (u.pushMonat === false) out.pushMonat = false;
+        if (u.pushJahr === false) out.pushJahr = false;
     }
     return out;
 }
@@ -224,6 +231,23 @@ function monthMessage(lang, key) {
     return { titel: "💶 Finance outlook: " + next.charAt(0).toUpperCase() + next.slice(1), text: "What's coming up in " + next + " – and how " + prev + " went." };
 }
 
+function yearMessage(lang, year) {
+    if (lang === "de") return { titel: "🎁 Euer Jahresrückblick " + year, text: "Ausgaben, gekochte Gerichte und Urlaube – so war euer Jahr." };
+    if (lang === "fr") return { titel: "🎁 Votre bilan de l’année " + year, text: "Dépenses, repas cuisinés et voyages – voici votre année." };
+    if (lang === "es") return { titel: "🎁 Vuestro resumen del año " + year, text: "Gastos, comidas cocinadas y viajes: así fue vuestro año." };
+    if (lang === "it") return { titel: "🎁 Il riepilogo del vostro " + year, text: "Spese, piatti cucinati e viaggi: ecco com’è andato il vostro anno." };
+    if (lang === "pt") return { titel: "🎁 O resumo do vosso ano " + year, text: "Despesas, refeições cozinhadas e viagens – assim foi o vosso ano." };
+    if (lang === "zh") return { titel: "🎁 你们的 " + year + " 年度回顾", text: "支出、做过的菜和旅行——这就是你们的一年。" };
+    if (lang === "ja") return { titel: "🎁 " + year + "年のふりかえり", text: "支出、作った料理、旅行 – 今年のまとめです。" };
+    if (lang === "ko") return { titel: "🎁 " + year + "년 돌아보기", text: "지출, 만든 요리, 여행 – 올해를 한눈에 돌아보세요." };
+    if (lang === "ru") return { titel: "🎁 Итоги вашего " + year + " года", text: "Расходы, приготовленные блюда и поездки – таким был ваш год." };
+    if (lang === "nl") return { titel: "🎁 Jullie jaaroverzicht " + year, text: "Uitgaven, gekookte gerechten en reizen – zo was jullie jaar." };
+    if (lang === "tr") return { titel: "🎁 " + year + " yıl özetiniz hazır", text: "Harcamalar, pişirilen yemekler ve geziler – işte yılınız." };
+    if (lang === "pl") return { titel: "🎁 Wasze podsumowanie roku " + year, text: "Wydatki, ugotowane dania i wyjazdy – tak wyglądał wasz rok." };
+    if (lang === "uk") return { titel: "🎁 Підсумки вашого " + year + " року", text: "Витрати, приготовані страви та подорожі – таким був ваш рік." };
+    return { titel: "🎁 Your year in review " + year, text: "Expenses, meals cooked and trips – this was your year." };
+}
+
 // ---------------------------------------------------------------------------------------------
 // Sending
 // ---------------------------------------------------------------------------------------------
@@ -260,13 +284,28 @@ function sendMonth(key, status) {
     });
     return n;
 }
+function sendYear(key, status) {
+    const push = require(`${__hooks}/pinn-push.js`);
+    let n = 0;
+    allUsers().forEach(u => {
+        if (role(u) === "hauptadmin" || role(u) === "gast") return;
+        const st = userState(status, u.id);
+        if (!st.pushJahr || st.jahr === key) return;
+        const msg = yearMessage(langOf(u), key);
+        try {
+            n += push.notifyUser(u.id, { titel: msg.titel, text: msg.text, url: "/?ausblick=jahr", tag: "ausblick-jahr-" + key, urgency: "normal" }) || 0;
+        } catch (e) { console.log("[Ausblick] Push Jahresrückblick: " + e.message); }
+    });
+    return n;
+}
 
 function runCron() {
     const w = wallNow();
     if (w.hour < SEND_FROM_HOUR || w.hour >= SEND_UNTIL_HOUR) return { skipped: "Uhrzeit" };
     const isSunday = w.wd === 0;
     const isMonthEnd = w.d === daysInMonth(w.y, w.m);
-    if (!isSunday && !isMonthEnd) return { skipped: "kein Ausblick-Tag" };
+    const isYearDay = w.m === 12 && w.d === 28;
+    if (!isSunday && !isMonthEnd && !isYearDay) return { skipped: "kein Ausblick-Tag" };
     const status = readStatus();
     const out = {};
     if (isSunday) {
@@ -288,6 +327,15 @@ function runCron() {
             console.log("[Ausblick] Monatsausblick " + key + ": " + out.monat + " Push-Nachricht(en).");
         }
     }
+    if (isYearDay) {
+        const key = String(w.y);
+        if (status.gesendet.jahr !== key) {
+            status.gesendet.jahr = key;
+            writeStatus(status);
+            out.jahr = sendYear(key, status);
+            console.log("[Ausblick] Jahresrückblick " + key + ": " + out.jahr + " Push-Nachricht(en).");
+        }
+    }
     return out;
 }
 
@@ -300,15 +348,17 @@ function stateFor(user) {
     return {
         woche: weekKey(w),
         monat: monthKey(w),
-        gesehen: { woche: st.woche, monat: st.monat },
-        push: { woche: st.pushWoche, monat: st.pushMonat },
+        jahr: yearKey(w),
+        gesehen: { woche: st.woche, monat: st.monat, jahr: st.jahr },
+        push: { woche: st.pushWoche, monat: st.pushMonat, jahr: st.pushJahr },
     };
 }
 function markSeen(user, art, key) {
-    if (art !== "woche" && art !== "monat") throw new Error("Unbekannter Ausblick.");
+    if (art !== "woche" && art !== "monat" && art !== "jahr") throw new Error("Unbekannter Ausblick.");
     key = String(key || "");
     if (art === "woche" && !/^\d{4}-\d{2}-\d{2}$/.test(key)) throw new Error("Ungültige Woche.");
     if (art === "monat" && !/^\d{4}-\d{2}$/.test(key)) throw new Error("Ungültiger Monat.");
+    if (art === "jahr" && !/^\d{4}$/.test(key)) throw new Error("Ungültiges Jahr.");
     const s = readStatus();
     const cur = s.nutzer[user.id] && typeof s.nutzer[user.id] === "object" ? s.nutzer[user.id] : {};
     // never back to an older week or month
@@ -322,6 +372,7 @@ function savePush(user, body) {
     const cur = s.nutzer[user.id] && typeof s.nutzer[user.id] === "object" ? s.nutzer[user.id] : {};
     if (typeof body.woche === "boolean") cur.pushWoche = body.woche;
     if (typeof body.monat === "boolean") cur.pushMonat = body.monat;
+    if (typeof body.jahr === "boolean") cur.pushJahr = body.jahr;
     s.nutzer[user.id] = cur;
     writeStatus(s);
     return stateFor(user);
@@ -338,4 +389,4 @@ function pruneUsers() {
     if (changed) writeStatus(s);
 }
 
-module.exports = { runCron, stateFor, markSeen, savePush, pruneUsers, weekKey, monthKey, wallNow };
+module.exports = { runCron, stateFor, markSeen, savePush, pruneUsers, weekKey, monthKey, yearKey, wallNow };

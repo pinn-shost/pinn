@@ -22,6 +22,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.142', datum: '09.11.2026', titel: 'Jahresrückblick: Ausgaben, gekochte Gerichte und Urlaube',
+    punkte: [
+      ['neu', 'Jahresrückblick: Am 28. Dezember ab 18 Uhr (und jederzeit unter Einstellungen → Ausblick) zeigt pinn. dein Jahr auf einen Blick – Ausgaben mit Monatsbalken, Kategorien und größter Einzelausgabe, gekochte Gerichte mit den Lieblingsgerichten und alle Urlaube mit den Reisetagen. Mit den Pfeilen oben blätterst du zu früheren Jahren.'],
+      ['neu', 'Wie bei Wochenvorschau und Monatsausblick: ein Hinweis oben (bis 10. Januar) und eine Push-Nachricht, die du in den Einstellungen abschalten kannst. Ausgaben siehst du nur mit Zugriff auf die Finanzen; Gäste bekommen keine Push-Nachricht.'],
+      ['info', 'Was zählt: Ausgaben ohne Sparen (das steht extra), „gekocht“ = im Essensplan abgehakt, Urlaube = Packlisten mit Ziel und Zeitraum, nur bereits begonnene und nur die Tage im jeweiligen Jahr.'],
+      ['info', 'Geändert: pb_hooks/pinn-ausblick.js und ausblick.pb.js (Push am 28. Dezember, „gesehen“ und Schalter für das Jahr), js/ausblick.js, js/hinweise.js (Link ?ausblick=jahr), css/hinweise.css, js/sprachen.js, i18n/ (32 neue und geänderte Texte in allen vierzehn Sprachen), i18n/versionslog.en.js, js/versionslog.js, src/ (Version, Einstellungen), index.html, alle READMEs. Server-Teil: Hooks einspielen, PocketBase startet neu.'],
+    ],
+  },
+  {
     v: '1.141', datum: '09.11.2026', titel: 'Widgets: Aufgaben im Apple-Stil, abhakbar, und ein Schnellzugriff-Widget',
     punkte: [
       ['neu', 'Widget im Stil von Apple Aufgaben: dunkelgrauer Hintergrund, große weiße Schrift, runde Kreise. Abgehakte Aufgaben rutschen nach unten, werden grau und der Kreis füllt sich. Tippen auf eine Aufgabe im mittleren oder großen Widget hakt sie auch in pinn. ab (iOS öffnet dafür kurz Scriptable).'],

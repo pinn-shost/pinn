@@ -129,6 +129,14 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.142.0
+
+**Year in review: expenses, meals cooked and trips**
+
+- **Year in review.** On 28 December from 6 pm (and at any time under Settings → Outlook) pinn. shows your year at a glance: expenses with monthly bars, categories and the biggest single expense, meals cooked with your favourites, and all trips with the days away. The arrows at the top page back to earlier years.
+- **Notice and push like the other outlooks.** A notice at the top until 10 January and a push message that you can switch off in the settings. Expenses are only shown with access to finances; guests get no push message.
+- Changed: `js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (32 new and changed texts in all fourteen languages), `src/` (version, settings), `index.html`, all READMEs. Server (replace the hooks, PocketBase restarts): `pb_hooks/pinn-ausblick.js`, `pb_hooks/ausblick.pb.js`.
+
 ## What's new in 1.141.2
 
 **Widgets: gold instead of green, ticks, more modern tiles**
@@ -229,13 +237,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Ukrainian.** Ukrainian is translated further: chat (rest), pets and places (location sharing, GPS trackers) (5958 of 6994 texts). The language is still hidden – nothing changes in the app.
 - Changed: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). No server part.
 
-## What's new in 1.135.12
-
-**Ukrainian – stage 13**
-
-- **Ukrainian.** Ukrainian is translated further: notifications (activity, way home, SOS) and chat, part 1 (5508 of 6994 texts). The language is still hidden – nothing changes in the app.
-- Changed: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). No server part.
-
 ## How it works
 
 ```mermaid
@@ -262,7 +263,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.141.2` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.142.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

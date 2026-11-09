@@ -110,6 +110,14 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.142.0
+
+**Jaaroverzicht: uitgaven, gekookte gerechten en reizen**
+
+- **Jaaroverzicht.** Op 28 december vanaf 18.00 uur (en altijd via Instellingen → Vooruitblik) toont pinn. jullie jaar in één oogopslag: uitgaven met maandbalken, categorieën en de grootste afzonderlijke uitgave, gekookte gerechten met de favorieten en alle reizen met de dagen onderweg. Met de pijlen bovenaan blader je naar eerdere jaren.
+- **Melding en push zoals bij de andere vooruitblikken.** Een melding bovenaan tot 10 januari en een pushbericht dat je in de instellingen kunt uitzetten. Uitgaven zie je alleen met toegang tot de financiën; gasten krijgen geen pushbericht.
+- Gewijzigd: `js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (32 nieuwe en gewijzigde teksten in alle veertien talen), `src/` (versie, instellingen), `index.html`, alle README’s. Server (hooks vervangen, PocketBase start opnieuw): `pb_hooks/pinn-ausblick.js`, `pb_hooks/ausblick.pb.js`.
+
 ## Nieuw in 1.141.2
 
 **Widgets: goud in plaats van groen, vinkjes, modernere tegels**
@@ -152,15 +160,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Wie geeft het? / Samen geven.** Bij elk cadeau kies je wie het geeft. Bij een wens die al door iemand anders is gereserveerd tik je op “Doe mee”; de anderen zien wie meedoet, degene die het wenste niet.
 - Gewijzigd: `js/listen.js`, `css/listen.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (12 nieuwe teksten en een gewijzigde inleiding in alle veertien talen), `src/` (`index.html`, lijstenpop-up), alle README’s. Geen serverdeel – PocketBase hoeft niet opnieuw te starten.
 
-## Nieuw in 1.138.0
-
-**Automatische donkere modus en automatische updates**
-
-- **Donkere modus.** Onder Instellingen → Weergave pinn. kan nu op tijdstip (bijvoorbeeld 20:00 tot 07:00) of van zonsondergang tot zonsopgang naar de donkere modus schakelen. De zonnetijden worden op het apparaat berekend voor het thuisadres van het gezin (anders de weerlocatie), zonder toegang tot je locatie. Als je handmatig schakelt, geldt dat tot de volgende automatische wisseling. De instelling hoort bij je profiel en geldt op al je apparaten.
-- **Automatische updates.** Onder Instellingen → Systeem → Back-ups & updates pinn. kan op een vast tijdstip, elke dag of één keer per week, naar een nieuwe versie zoeken, eerst een back-up maken en daarna de update installeren. Voorlopige versies worden nooit automatisch geïnstalleerd en als de back-up mislukt, wordt er niets geïnstalleerd. Resultaat en volgende keer staan in hetzelfde venster, fouten in het foutenlogboek. Alleen voor beheerders die updates mogen installeren.
-- **Huisdieren.** Meerdere voedertijden per dier: in de editor voeg je zoveel tijden toe als je wilt (tot 12) met een tijdkiezer en een optionele notitie over hoeveelheid of voer (bijvoorbeeld “1 kopje droogvoer”). De notitie staat op de voederknop en in de voerkaart. Nieuwe banner op de huisdierenpagina: een weide met hek waar de huisdieren van je gezin langslopen, ’s nachts met sterren.
-- Gewijzigd: `js/dunkelzeit.js` (nieuw), `js/design.js`, `js/familie.js`, `css/haustierewetter.css`, `js/einstellungen.js`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (19 nieuwe teksten in alle veertien talen), `src/` (`index.html`), `pinn-setup.sh`, `.github/scripts/check-hooks.js`, alle README’s. Server (hooks vervangen, PocketBase start opnieuw op): `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -170,7 +169,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.141.2` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.142.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

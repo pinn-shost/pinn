@@ -133,6 +133,14 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.142.0
+
+**Resumo do ano: despesas, refeições cozinhadas e viagens**
+
+- **Resumo do ano.** A 28 de dezembro, a partir das 18:00 (e a qualquer momento em Definições → Previsão), o pinn. mostra o vosso ano num relance: despesas com barras mensais, categorias e a maior despesa individual, refeições cozinhadas com as favoritas e todas as viagens com os dias fora. Com as setas no topo volta a anos anteriores.
+- **Aviso e push como nas outras previsões.** Um aviso no topo até 10 de janeiro e uma notificação push que pode desativar nas definições. As despesas só são visíveis com acesso às finanças; os convidados não recebem a notificação push.
+- Alterado: `js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (32 textos novos e alterados nas catorze línguas), `src/` (versão, definições), `index.html`, todos os README. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-ausblick.js`, `pb_hooks/ausblick.pb.js`.
+
 ## Novidades da 1.141.2
 
 **Widgets: dourado em vez de verde, visto, mosaicos mais modernos**
@@ -205,13 +213,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Ucraniano.** O assistente de configuração e a exportação de dados já falam ucraniano: todos os guias passo a passo (rede doméstica, DuckDNS, VPN, Google, IA, localização, Home Assistant, apps) e todos os textos da exportação. Os números de emergência da Ucrânia (102, 103, 101 e 112) foram verificados. Há um novo `README.uk.md` curto. O idioma ainda está oculto – no app nada muda.
 - Alterado: `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `README.uk.md`. Sem parte de servidor.
 
-## Novidades da 1.135.16
-
-**Ucraniano – etapa 17**
-
-- **Ucraniano.** Todos os 6994 textos já estão traduzidos, incluindo as notificações push (textos do servidor, termos de república e o país Ucrânia nos hooks de notificação). O idioma ainda está oculto – no app nada muda.
-- Alterado: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
-
 ## Como funciona
 
 ```mermaid
@@ -240,7 +241,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.141.2` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.142.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

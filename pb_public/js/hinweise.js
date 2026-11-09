@@ -1685,7 +1685,7 @@ function ntOpenLink(url) {
   const g = k => p.get(k) || '';
   const real = v => v && v !== '1';
   try {
-    if (g('ausblick')) { abOpen(g('ausblick') === 'monat' ? 'monat' : 'woche'); return true; }
+    if (g('ausblick')) { abOpen(['monat', 'jahr'].indexOf(g('ausblick')) >= 0 ? g('ausblick') : 'woche'); return true; }
     if (g('chat')) {
       if (!isCurrentUserGuest()) setTimeout(() => chatOpenRoom(g('chat')), 100);
       return true;

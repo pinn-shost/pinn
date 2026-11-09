@@ -13,10 +13,12 @@
    - Monthly outlook: on the last day of the month from 6 pm – per cash box a short look at the ending
      month and a more detailed one at the next (income, fixed costs, savings plans, what is left, rare
      items, notice periods). Only with access to finances (no guests, no child lock).
+   - Year in review (since 1.142.0): on 28 December from 6 pm – expenses, meals cooked and trips of the year; the arrows on the page
+     switch to earlier years, and Settings → Outlook opens it at any time. Banner and push are visible until 10 January.
    - Banner at the top (like the way-home notice): once per profile – tapping opens the page, × removes
      it. The server remembers "seen" (pinn-ausblick.js) so it does not show up again on another device.
      Visible from Sunday 6 pm until Tuesday, or from 6 pm on the last day of the month until the 3rd.
-   - The push message comes from the server (ausblick.pb.js), link: /?ausblick=woche or /?ausblick=monat.
+   - The push message comes from the server (ausblick.pb.js), link: /?ausblick=woche, /?ausblick=monat or /?ausblick=jahr.
    - Settings → Outlook: open both pages at any time, push on/off per profile.
    Everything is calculated from data pinn. has already loaded – works offline as well.
    Texts come from the text keys outlook.* (pb_public/i18n); categories and the like go through abTx (= i18nT, js/standardnamen.js).
@@ -49,6 +51,16 @@ const AB_KEYS = {
   u_wasser: 'outlook.uWasser', u_sonne: 'outlook.uSonne', u_klima: 'outlook.uKlima', u_keine: 'outlook.uKeine',
   u_mehr: 'outlook.uMehr', tier_faellig: 'outlook.tierFaellig', tier_ueber: 'outlook.tierUeber',
   tier_geb: 'outlook.tierGeb',
+  // Year in review (since 1.142.0)
+  y_kicker: 'outlook.yKicker', y_title: 'outlook.yTitle', y_sub: 'outlook.ySub', b_y: 'outlook.bY', b_y_s: 'outlook.bYS',
+  y_prev: 'outlook.yPrev', y_next: 'outlook.yNext', y_partial: 'outlook.yPartial',
+  y_exp: 'outlook.yExp', y_exp_spent: 'outlook.yExpSpent', y_exp_avg: 'outlook.yExpAvg', y_exp_peak: 'outlook.yExpPeak',
+  y_exp_saved: 'outlook.yExpSaved', y_exp_months: 'outlook.yExpMonths', y_exp_cat: 'outlook.yExpCat', y_exp_big: 'outlook.yExpBig',
+  y_exp_no: 'outlook.yExpNo', y_exp_lock: 'outlook.yExpLock',
+  y_meals: 'outlook.yMeals', y_meals_n: 'outlook.yMealsN', y_meals_r: 'outlook.yMealsR', y_meals_top: 'outlook.yMealsTop',
+  y_meals_no: 'outlook.yMealsNo',
+  y_trips: 'outlook.yTrips', y_trips_n: 'outlook.yTripsN', y_trips_d: 'outlook.yTripsD', y_trips_long: 'outlook.yTripsLong',
+  y_trips_no: 'outlook.yTripsNo',
 };
 function abLocale() { return sysLocale(); }
 // Own text in the selected language (flat share wording comes from the #wg variants of the keys)
@@ -82,9 +94,20 @@ function abMonthKey(now) {
   if (abIsMonthEnd(d) && d.getHours() >= 18) return finMonthKey(new Date(d.getFullYear(), d.getMonth() + 1, 1));
   return finMonthKey(d);
 }
+// Year in review: from 28 December 6 pm until 10 January the year that just ended (YYYY), otherwise ''
+function abYearKey(now) {
+  const d = new Date(now || Date.now());
+  const m = d.getMonth() + 1, day = d.getDate();
+  if (m === 12 && (day > 28 || (day === 28 && d.getHours() >= 18))) return String(d.getFullYear());
+  if (m === 1 && day <= 10) return String(d.getFullYear() - 1);
+  return '';
+}
+// Which year the settings button opens: the year in review if it is due, otherwise the current year (so far)
+function abYearDefault() { return abYearKey() || String(new Date().getFullYear()); }
 // Is a banner due right now? -> key or ''
 function abDueKey(art) {
   const d = new Date();
+  if (art === 'jahr') return abYearKey(d);
   if (art === 'woche') {
     const wd = d.getDay();
     return ((wd === 0 && d.getHours() >= 18) || wd === 1 || wd === 2) ? abWeekKey(d) : '';
@@ -161,6 +184,8 @@ function abBannerItem() {
   if (w && !abSeen('woche', w)) return { art: 'woche', key: w };
   const m = abDueKey('monat');
   if (m && abFinanceOk() && !abSeen('monat', m)) return { art: 'monat', key: m };
+  const y = abDueKey('jahr');
+  if (y && !abSeen('jahr', y)) return { art: 'jahr', key: y };
   return null;
 }
 function abRenderBanner() {
@@ -174,13 +199,15 @@ function abRenderBanner() {
   let title, sub, icon;
   if (it.art === 'woche') {
     title = abT('b_w'); sub = abT('b_w_s', { range: abRange(it.key) }); icon = '🗓️';
+  } else if (it.art === 'jahr') {
+    title = abT('b_y', { year: it.key }); sub = abT('b_y_s'); icon = '🎁';
   } else {
     const prevKey = finMonthKey(new Date(Number(it.key.slice(0, 4)), Number(it.key.slice(5, 7)) - 2, 1));
     title = abT('b_m', { monat: abMonthName(it.key) }); sub = abT('b_m_s', { prev: abMonthName(prevKey) }); icon = '💶';
   }
   b.dataset.art = it.art;
   b.dataset.key = it.key;
-  b.style.setProperty('--ab', it.art === 'woche' ? 'var(--c-pine)' : '#2F7D4F');
+  b.style.setProperty('--ab', abColor(it.art));
   b.innerHTML = `<span class="ab-b-ic" aria-hidden="true">${icon}</span>
     <span class="ab-b-txt"><span class="ab-b-t">${abEsc(title)}</span><span class="ab-b-s">${abEsc(sub)}</span></span>
     <span class="hw-chev" aria-hidden="true">›</span>
@@ -219,20 +246,23 @@ document.addEventListener('visibilitychange', () => {
 });
 
 /* ---------- Open / close the page ---------- */
+// Accent colour of a page: pine = week, green = month, gold of the app = year
+function abColor(art) { return art === 'woche' ? 'var(--c-pine)' : (art === 'jahr' ? 'var(--c-mustard)' : '#2F7D4F'); }
 async function abOpen(art, key) {
-  art = art === 'monat' ? 'monat' : 'woche';
-  key = key || (art === 'woche' ? abWeekKey() : abMonthKey());
+  art = art === 'monat' || art === 'jahr' ? art : 'woche';
+  key = key || (art === 'woche' ? abWeekKey() : (art === 'jahr' ? abYearDefault() : abMonthKey()));
   abOpenArt = art;
   const ov = document.getElementById('abOverlay');
   const body = document.getElementById('abBody');
   if (!ov || !body) return;
   ov.classList.remove('hidden');
-  ov.style.setProperty('--ab', art === 'woche' ? 'var(--c-pine)' : '#2F7D4F');
+  ov.style.setProperty('--ab', abColor(art));
   document.getElementById('abClose').setAttribute('aria-label', abT('schliessen'));
   body.innerHTML = `<div class="ab-empty ab-load">${abEsc(abT('laden'))}</div>`;
   abRenderBanner();
   try {
     if (art === 'woche') await abRenderWeek(body, key);
+    else if (art === 'jahr') await abRenderYear(body, key);
     else await abRenderMonth(body, key);
   } catch (e) {
     console.warn('Ausblick', e);
@@ -241,7 +271,8 @@ async function abOpen(art, key) {
   const sheet = ov.querySelector('.ab-sheet');
   if (sheet) sheet.scrollTop = 0;
   // Seen: the current outlook no longer appears as a banner
-  if (art === 'woche' || abFinanceOk()) abMarkSeen(art, key);
+  // (a year opened by hand, not the one in review, must not hide the banner)
+  if (art === 'jahr' ? key === abDueKey('jahr') : (art === 'woche' || abFinanceOk())) abMarkSeen(art, key);
 }
 function abClose() {
   const ov = document.getElementById('abOverlay');
@@ -258,6 +289,8 @@ function abClose() {
   ov.addEventListener('click', (e) => { if (e.target === ov) abClose(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && abOpenArt) abClose(); });
   ov.addEventListener('click', (e) => {
+    const y = e.target.closest('[data-abyear]');
+    if (y && !y.disabled) { abOpen('jahr', y.dataset.abyear); return; }
     const a = e.target.closest('[data-abgo]');
     if (!a) return;
     const go = a.dataset.abgo;
@@ -699,22 +732,186 @@ async function abRenderMonth(body, key) {
 }
 
 /* ---------- Settings → Outlook ---------- */
+/* ---------- Year in review (since 1.142.0) ---------- */
+// Expenses of a year over all own cash boxes: total without savings, savings, per month, per category, biggest single expense
+function abYearFin(year) {
+  const range = { startIso: year + '-01-01', endIso: year + '-12-31' };
+  const months = new Array(12).fill(0);
+  const cats = new Map();
+  const kassen = [];
+  let total = 0, saved = 0, count = 0, big = null;
+  abForEachKasse(k => {
+    const st = finStats(range);
+    let kTotal = 0;
+    st.entries.forEach(e => {
+      const amt = Number(e.amount) || 0;
+      if (amt <= 0) return;
+      const cat = finCategory(e.category);
+      if (cat.id === FIN_SAVINGS_CATEGORY) { saved += amt; return; }
+      kTotal += amt;
+      count++;
+      months[Math.max(0, Math.min(11, Number(String(e.date).slice(5, 7)) - 1))] += amt;
+      const c = cats.get(cat.id) || { id: cat.id, label: abTx(cat.label), icon: cat.icon || '', color: cat.color || '#7A6F5A', total: 0 };
+      c.total += amt;
+      cats.set(cat.id, c);
+      if (!big || amt > big.amount) big = { amount: amt, date: e.date, title: e.title || e.store || abTx(cat.label), icon: cat.icon || '' };
+    });
+    total += kTotal;
+    if (k) kassen.push({ name: kasseDisplayName(k), total: finRound(kTotal) });
+  });
+  return {
+    total: finRound(total), saved: finRound(saved), count, big,
+    months: months.map(finRound),
+    byCat: [...cats.values()].map(c => ({ ...c, total: finRound(c.total) })).sort((a, b) => b.total - a.total),
+    kassen,
+  };
+}
+// Meals marked as cooked in a year: number, number of different dishes and the most cooked ones
+function abYearMeals(year) {
+  const from = year + '-01-01', to = year + '-12-31';
+  const per = new Map();
+  let cooked = 0;
+  mealPlan.filter(p => p.cooked && p.date >= from && p.date <= to).forEach(p => {
+    cooked++;
+    const r = p.recipeId ? recipes.find(x => x.id === p.recipeId) : null;
+    const title = String((r && r.title) || p.title || '').trim();
+    if (!title) return;
+    const key = p.recipeId ? 'r' + p.recipeId : 't' + title.toLowerCase();
+    const e = per.get(key) || { title, n: 0 };
+    e.n++;
+    per.set(key, e);
+  });
+  const top = [...per.values()].sort((a, b) => b.n - a.n || a.title.localeCompare(b.title)).slice(0, 5);
+  return { cooked, different: per.size, top };
+}
+// Trips (packing lists with destination and period) of a year; only what has started, days counted inside the year and up to today
+function abYearTrips(year, todayIso) {
+  const yFrom = year + '-01-01', yTo = year + '-12-31';
+  let lists = [];
+  try { lists = (familyLists || []).filter(l => l && l.type === 'pack' && lsVisible(l) && tripValid(l)); } catch (e) { lists = []; }
+  const out = [];
+  lists.forEach(l => {
+    const from = l.trip.from > yFrom ? l.trip.from : yFrom;
+    let to = tripTo(l);
+    if (to > yTo) to = yTo;
+    if (to > todayIso) to = todayIso;
+    if (l.trip.from > todayIso || to < from) return;
+    out.push({
+      id: l.id, icon: l.icon || '🧳', name: l.name || tripName(l), where: [l.trip.place.titel, l.trip.place.zusatz].filter(Boolean).join(', '),
+      from: l.trip.from, to: tripTo(l), days: daysBetweenDateStrs(from, to) + 1,
+    });
+  });
+  out.sort((a, b) => a.from.localeCompare(b.from));
+  const days = out.reduce((s, t) => s + t.days, 0);
+  const longest = out.reduce((m, t) => (!m || t.days > m.days ? t : m), null);
+  return { list: out, days, longest };
+}
+async function abRenderYear(body, key) {
+  const year = /^\d{4}$/.test(key) ? Number(key) : new Date().getFullYear();
+  const now = new Date();
+  const todayIso = isoDate(now);
+  const thisYear = now.getFullYear();
+  const partial = year === thisYear && !abYearKey();
+  const canFin = abFinanceOk();
+  const canMeals = isViewAllowed('rezepte');
+  if (canFin) await abEnsureFinance();
+  const fin = canFin ? abYearFin(year) : null;
+  const meals = canMeals ? abYearMeals(year) : null;
+  const trips = abYearTrips(year, todayIso);
+  const mName = i => new Date(year, i, 1).toLocaleDateString(abLocale(), { month: 'long' });
+  const num = n => new Intl.NumberFormat(abLocale()).format(n);
+  const chips = [];
+  if (fin && fin.total) chips.push(`<span class="ab-chip">💶 <b>${abEsc(fmtEur0(fin.total))}</b> ${abEsc(abT('y_exp_spent'))}</span>`);
+  if (meals && meals.cooked) chips.push(`<span class="ab-chip">🍽️ <b>${num(meals.cooked)}</b> ${abEsc(abT('y_meals_n'))}</span>`);
+  if (trips.list.length) chips.push(`<span class="ab-chip">🧳 <b>${num(trips.list.length)}</b> ${abEsc(abT('y_trips_n'))}</span>`);
+  let html = `<div class="ab-hero">
+    <div class="ab-kicker">${abEsc(abT('y_kicker'))}</div>
+    <div class="ab-h1">${abEsc(abT('y_title', { year }))}</div>
+    <div class="ab-hsub">${abEsc(abT(partial ? 'y_partial' : 'y_sub'))}</div>
+    <div class="ab-chips">${chips.join('')}</div>
+    <div class="ab-ynav">
+      <button type="button" class="ab-ynav-b" data-abyear="${year - 1}" aria-label="${abEsc(abT('y_prev'))}"${year <= 2020 ? ' disabled' : ''}>‹</button>
+      <b>${year}</b>
+      <button type="button" class="ab-ynav-b" data-abyear="${year + 1}" aria-label="${abEsc(abT('y_next'))}"${year >= thisYear ? ' disabled' : ''}>›</button>
+    </div>
+  </div><div class="ab-wrap">`;
+
+  // Expenses
+  if (!canFin) {
+    html += `<div class="ab-card ab-empty"><span class="i">🔒</span>${abEsc(abT('y_exp_lock'))}</div>`;
+  } else if (!fin.total) {
+    html += `<div class="ab-card"><div class="ab-h2">💶 ${abEsc(abT('y_exp'))}</div><p class="ab-note">${abEsc(abT('y_exp_no'))}</p></div>`;
+  } else {
+    const monthsElapsed = year < thisYear ? 12 : now.getMonth() + 1;
+    const peak = fin.months.reduce((m, v, i) => (v > fin.months[m] ? i : m), 0);
+    const maxM = Math.max(1, ...fin.months);
+    const tiles = [
+      `<div class="ab-tile hero"><small>${abEsc(abT('y_exp_spent'))}</small><b>${abEsc(fmtEur0(fin.total))}</b></div>`,
+      `<div class="ab-tile"><small>${abEsc(abT('y_exp_avg'))}</small><b>${abEsc(fmtEur0(fin.total / monthsElapsed))}</b></div>`,
+      `<div class="ab-tile"><small>${abEsc(abT('y_exp_peak'))}</small><b>${abEsc(mName(peak))} · ${abEsc(fmtEur0(fin.months[peak]))}</b></div>`,
+    ];
+    if (fin.saved > 0) tiles.push(`<div class="ab-tile good"><small>${abEsc(abT('y_exp_saved'))}</small><b>${abEsc(fmtEur0(fin.saved))}</b></div>`);
+    const bars = fin.months.map((v, i) => `<div class="ab-ybar${i === peak ? ' peak' : ''}" title="${abEsc(mName(i) + ': ' + fmtEur0(v))}"><div class="t"><i style="height:${Math.max(2, Math.round(v / maxM * 100))}%"></i></div><span>${abEsc(mName(i).charAt(0).toUpperCase())}</span></div>`).join('');
+    const topMax = Math.max(1, fin.byCat[0] ? fin.byCat[0].total : 1);
+    const cats = fin.byCat.slice(0, 5).map(c => `<div class="ab-ycat"><div class="h"><span>${abEsc(c.icon)} ${abEsc(c.label)}</span><b>${abEsc(fmtEur0(c.total))}</b></div><div class="ab-bar"><span style="width:${Math.max(3, Math.round(c.total / topMax * 100))}%;background:${abEsc(c.color)}"></span></div></div>`).join('');
+    html += `<div class="ab-card"><div class="ab-h2">💶 ${abEsc(abT('y_exp'))}<small>${year}</small></div>
+      <div class="ab-tiles">${tiles.join('')}</div>
+      <div class="ab-ysub">${abEsc(abT('y_exp_months'))}</div><div class="ab-ybars">${bars}</div>
+      <div class="ab-ysub">${abEsc(abT('y_exp_cat'))}</div>${cats}
+      ${fin.big ? `<div class="ab-ysub">${abEsc(abT('y_exp_big'))}</div><div class="ab-row"><span class="d">${abEsc(abShort(fin.big.date))}</span><span class="n">${abEsc(fin.big.icon)} ${abEsc(fin.big.title)}</span><span class="a">${abEsc(fmtEur0(fin.big.amount))}</span></div>` : ''}
+      ${fin.kassen.length > 1 ? fin.kassen.map(k => `<div class="ab-row"><span class="n">${abEsc(k.name)}</span><span class="a">${abEsc(fmtEur0(k.total))}</span></div>`).join('') : ''}
+    </div>`;
+  }
+
+  // Meals cooked
+  if (canMeals) {
+    if (!meals.cooked) {
+      html += `<div class="ab-card"><div class="ab-h2">🍽️ ${abEsc(abT('y_meals'))}</div><p class="ab-note">${abEsc(abT('y_meals_no'))}</p></div>`;
+    } else {
+      const topMax = Math.max(1, meals.top[0] ? meals.top[0].n : 1);
+      html += `<div class="ab-card"><div class="ab-h2">🍽️ ${abEsc(abT('y_meals'))}<small>${year}</small></div>
+        <div class="ab-tiles"><div class="ab-tile hero"><small>${abEsc(abT('y_meals_n'))}</small><b>${num(meals.cooked)}</b></div>
+        <div class="ab-tile"><small>${abEsc(abT('y_meals_r'))}</small><b>${num(meals.different)}</b></div></div>
+        ${meals.top.length ? `<div class="ab-ysub">${abEsc(abT('y_meals_top'))}</div>` + meals.top.map(t => `<div class="ab-ycat"><div class="h"><span>${abEsc(t.title)}</span><b>${t.n}×</b></div><div class="ab-bar"><span style="width:${Math.max(6, Math.round(t.n / topMax * 100))}%;background:#C2703D"></span></div></div>`).join('') : ''}
+      </div>`;
+    }
+  }
+
+  // Trips
+  if (!trips.list.length) {
+    html += `<div class="ab-card"><div class="ab-h2">🧳 ${abEsc(abT('y_trips'))}</div><p class="ab-note">${abEsc(abT('y_trips_no'))}</p></div>`;
+  } else {
+    const rows = trips.list.map(t => {
+      const range = abShort(t.from) + (t.to !== t.from ? ' – ' + abShort(t.to) : '');
+      return `<div class="ab-row"><span class="i">${abEsc(t.icon)}</span><span class="n"><b>${abEsc(t.name)}</b>${t.where && t.where !== t.name ? `<small class="ab-ysmall">${abEsc(t.where)}</small>` : ''}</span><span class="a ab-ydates">${abEsc(range)}</span></div>`;
+    }).join('');
+    html += `<div class="ab-card"><div class="ab-h2">🧳 ${abEsc(abT('y_trips'))}<small>${year}</small></div>
+      <div class="ab-tiles"><div class="ab-tile hero"><small>${abEsc(abT('y_trips_n'))}</small><b>${num(trips.list.length)}</b></div>
+      <div class="ab-tile"><small>${abEsc(abT('y_trips_d'))}</small><b>${num(trips.days)}</b></div>
+      ${trips.longest && trips.list.length > 1 ? `<div class="ab-tile"><small>${abEsc(abT('y_trips_long'))}</small><b>${abEsc(trips.longest.name)}</b></div>` : ''}</div>
+      <div class="ab-ysub"></div>${rows}
+    </div>`;
+  }
+  body.innerHTML = html + '</div>';
+}
+
 function abRenderSettings() {
   const acc = document.getElementById('settingsAusblickAccordion');
   if (!acc) return;
   const fin = abFinanceOk();
   document.getElementById('abSetMonthBtn').classList.toggle('hidden', !fin);
   document.getElementById('abSetPushMonthRow').classList.toggle('hidden', !fin);
-  const pw = document.getElementById('abSetPushWeek'), pm = document.getElementById('abSetPushMonth');
-  const push = (abServer && abServer.push) || { woche: true, monat: true };
+  const pw = document.getElementById('abSetPushWeek'), pm = document.getElementById('abSetPushMonth'), py = document.getElementById('abSetPushYear');
+  const push = (abServer && abServer.push) || { woche: true, monat: true, jahr: true };
   pw.checked = push.woche !== false;
   pm.checked = push.monat !== false;
-  pw.disabled = pm.disabled = abServerMissing;
+  py.checked = push.jahr !== false;
+  pw.disabled = pm.disabled = py.disabled = abServerMissing;
   document.getElementById('abSetPushRows').classList.toggle('opacity-50', abServerMissing);
 }
 async function abSavePush() {
   const st = document.getElementById('abSetStatus');
-  const body = { woche: document.getElementById('abSetPushWeek').checked, monat: document.getElementById('abSetPushMonth').checked };
+  const body = { woche: document.getElementById('abSetPushWeek').checked, monat: document.getElementById('abSetPushMonth').checked, jahr: document.getElementById('abSetPushYear').checked };
   try {
     const res = await apiFetch('/api/pinn/ausblick/push', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     const r = await res.json().catch(() => ({}));
@@ -732,8 +929,10 @@ async function abSavePush() {
   if (!acc) return;
   document.getElementById('abSetWeekBtn').addEventListener('click', () => abOpen('woche'));
   document.getElementById('abSetMonthBtn').addEventListener('click', () => abOpen('monat'));
+  document.getElementById('abSetYearBtn').addEventListener('click', () => abOpen('jahr'));
   document.getElementById('abSetPushWeek').addEventListener('change', abSavePush);
   document.getElementById('abSetPushMonth').addEventListener('change', abSavePush);
+  document.getElementById('abSetPushYear').addEventListener('change', abSavePush);
   acc.addEventListener('toggle', () => { if (acc.open) { abRenderSettings(); abLoadServer().then(abRenderSettings); } });
 })();
 
