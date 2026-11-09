@@ -133,6 +133,14 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.141.0の新機能
+
+**ウィジェット：表示内容を選べて、ウィジェットから直接チェックできます**
+
+- **ウィジェットの表示内容を選ぶ。** 設定 → 音声操作 →「ウィジェットと Apple Watch」で、今日の予定、タスク（家事を除く）、家事タスク、各買い物リストを個別にチェックし、スクリプトを Scriptable にコピーします（ウィジェットごとに1つのスクリプト）。タスクと家事タスクを一緒にチェックすると「家事を含むタスク」になります。
+- **ウィジェットでチェック。** 中・大サイズのウィジェットでタスクや買い物の項目をタップすると、pinn. でもチェックされます（その間 iOS が Scriptable を一瞬開きます）。チェックした項目は取り消し線付きでリストに残り、「買い物を完了」はこれまでどおり pinn. で行います（ウィジェット下部のボタンでアプリが開きます）。お子様ロックのプロフィールではチェックできません。1.140.0 のスクリプトをすでに使っている場合は、もう一度コピーして Scriptable で置き換えてください。
+- 変更：`js/sprachsteuerung.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/`（14言語すべてに新しい文言7件）、`src/`（バージョン）、`index.html`、`.github/scripts/check-hooks.js`、すべてのREADME。サーバー（hookを置き換え、PocketBaseが再起動します）：`pb_hooks/pinn-sprache.js`、`pb_hooks/sprache.pb.js`。
+
 ## 1.140.0の新機能
 
 **ウィジェットと Apple Watch**
@@ -223,7 +231,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.140.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.141.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

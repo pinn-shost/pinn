@@ -12,7 +12,8 @@
 //   - read the shopping list:    "Was steht auf der Einkaufsliste?"
 //   - create a task:             "Erinnere mich morgen an den Müll" - "Aufgabe: Fenster putzen am Samstag"
 //   - daily overview:            "Was steht heute an?" - "Was steht morgen an?" (events + open tasks)
-//   - widget data (since 1.140.0): read-only overview for iPhone widgets and the Apple Watch (widgetData)
+//   - widget data (since 1.140.0): overview for iPhone widgets and the Apple Watch (widgetData); since 1.141.0 with
+//     separate tasks / household tasks / shopping lists and ticking off from the widget (widgetTick)
 //
 // Collection "sprache_zugaenge" (locked, only via the routes): { benutzer, familie, token }
 // Guests have no voice control; profiles with child lock can only ask what is on.
@@ -1171,24 +1172,24 @@ function dayOverview(familyId, auth, intent, L) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Widget data (since 1.140.0): the same secret link, read only. For iPhone widgets (Scriptable), the
+// Widget data (since 1.140.0): the same secret link, reading; since 1.141.0 also ticking off tasks and shopping items. For iPhone widgets (Scriptable), the
 // Shortcuts widget and the Apple Watch (a shortcut). Texts in the language of the profile.
 // ---------------------------------------------------------------------------------------------
 const WIDGET_T = {
-    de: { shop: "Einkauf", events: "Termine", tasks: "Aufgaben", none: "Nichts geplant", empty: "Liste leer", more: "+{n} weitere" },
-    en: { shop: "Shopping", events: "Events", tasks: "Tasks", none: "Nothing planned", empty: "List empty", more: "+{n} more" },
-    fr: { shop: "Courses", events: "Rendez-vous", tasks: "Tâches", none: "Rien de prévu", empty: "Liste vide", more: "+{n} autres" },
-    es: { shop: "Compra", events: "Citas", tasks: "Tareas", none: "Nada previsto", empty: "Lista vacía", more: "+{n} más" },
-    ru: { shop: "Покупки", events: "События", tasks: "Задачи", none: "Ничего не запланировано", empty: "Список пуст", more: "+ещё {n}" },
-    nl: { shop: "Boodschappen", events: "Afspraken", tasks: "Taken", none: "Niets gepland", empty: "Lijst leeg", more: "+{n} meer" },
-    it: { shop: "Spesa", events: "Appuntamenti", tasks: "Attività", none: "Niente in programma", empty: "Lista vuota", more: "+{n} altri" },
-    pt: { shop: "Compras", events: "Compromissos", tasks: "Tarefas", none: "Nada planeado", empty: "Lista vazia", more: "+{n} mais" },
-    zh: { shop: "购物", events: "日程", tasks: "任务", none: "暂无安排", empty: "清单为空", more: "另有 {n} 项" },
-    ja: { shop: "買い物", events: "予定", tasks: "タスク", none: "予定なし", empty: "リストは空です", more: "ほか {n} 件" },
-    ko: { shop: "장보기", events: "일정", tasks: "할 일", none: "예정된 일 없음", empty: "목록이 비었습니다", more: "외 {n}개" },
-    tr: { shop: "Alışveriş", events: "Randevular", tasks: "Görevler", none: "Planlanmış bir şey yok", empty: "Liste boş", more: "+{n} tane daha" },
-    pl: { shop: "Zakupy", events: "Terminy", tasks: "Zadania", none: "Nic nie zaplanowano", empty: "Lista pusta", more: "+{n} więcej" },
-    uk: { shop: "Покупки", events: "Події", tasks: "Завдання", none: "Нічого не заплановано", empty: "Список порожній", more: "+ще {n}" },
+    de: { shop: "Einkauf", events: "Termine", tasks: "Aufgaben", none: "Nichts geplant", empty: "Liste leer", more: "+{n} weitere", household: "Haushalt", finish: "Einkauf abschließen" },
+    en: { shop: "Shopping", events: "Events", tasks: "Tasks", none: "Nothing planned", empty: "List empty", more: "+{n} more", household: "Household", finish: "Finish shopping" },
+    fr: { shop: "Courses", events: "Rendez-vous", tasks: "Tâches", none: "Rien de prévu", empty: "Liste vide", more: "+{n} autres", household: "Ménage", finish: "Terminer les courses" },
+    es: { shop: "Compra", events: "Citas", tasks: "Tareas", none: "Nada previsto", empty: "Lista vacía", more: "+{n} más", household: "Hogar", finish: "Terminar la compra" },
+    ru: { shop: "Покупки", events: "События", tasks: "Задачи", none: "Ничего не запланировано", empty: "Список пуст", more: "+ещё {n}", household: "Дом", finish: "Завершить покупки" },
+    nl: { shop: "Boodschappen", events: "Afspraken", tasks: "Taken", none: "Niets gepland", empty: "Lijst leeg", more: "+{n} meer", household: "Huishouden", finish: "Boodschappen afronden" },
+    it: { shop: "Spesa", events: "Appuntamenti", tasks: "Attività", none: "Niente in programma", empty: "Lista vuota", more: "+{n} altri", household: "Casa", finish: "Concludi la spesa" },
+    pt: { shop: "Compras", events: "Compromissos", tasks: "Tarefas", none: "Nada planeado", empty: "Lista vazia", more: "+{n} mais", household: "Casa", finish: "Concluir as compras" },
+    zh: { shop: "购物", events: "日程", tasks: "任务", none: "暂无安排", empty: "清单为空", more: "另有 {n} 项", household: "家务", finish: "完成购物" },
+    ja: { shop: "買い物", events: "予定", tasks: "タスク", none: "予定なし", empty: "リストは空です", more: "ほか {n} 件", household: "家事", finish: "買い物を完了" },
+    ko: { shop: "장보기", events: "일정", tasks: "할 일", none: "예정된 일 없음", empty: "목록이 비었습니다", more: "외 {n}개", household: "집안일", finish: "장보기 완료" },
+    tr: { shop: "Alışveriş", events: "Randevular", tasks: "Görevler", none: "Planlanmış bir şey yok", empty: "Liste boş", more: "+{n} tane daha", household: "Ev işleri", finish: "Alışverişi bitir" },
+    pl: { shop: "Zakupy", events: "Terminy", tasks: "Zadania", none: "Nic nie zaplanowano", empty: "Lista pusta", more: "+{n} więcej", household: "Dom", finish: "Zakończ zakupy" },
+    uk: { shop: "Покупки", events: "Події", tasks: "Завдання", none: "Нічого не заплановано", empty: "Список порожній", more: "+ще {n}", household: "Дім", finish: "Завершити покупки" },
 };
 function widgetDay(familyId, user, offset, W, L) {
     const day = addDays(todayIso(), offset);
@@ -1203,13 +1204,14 @@ function widgetDay(familyId, user, offset, W, L) {
     } catch (e) { tasks = []; }
     return { date: day, label: L.dayLead[offset ? 1 : 0], events: events, tasks: tasks };
 }
-function widgetData(token, view, format) {
+// Link check shared by the widget reading and ticking: the profile behind the secret link, its family and language,
+// and the common flood protection (30 requests per minute and link, shared with the voice commands)
+function widgetAccess(token) {
     const rec = recOfToken(token);
-    if (!rec) return { ok: false, status: 403, error: "Dieser Link ist nicht (mehr) gültig – bitte in pinn. unter Einstellungen → Sprachsteuerung neu einrichten." };
+    if (!rec) return { fail: { ok: false, status: 403, error: "Dieser Link ist nicht (mehr) gültig – bitte in pinn. unter Einstellungen → Sprachsteuerung neu einrichten." } };
     let user = null;
     try { user = $app.findRecordById(USERS, rec.getString("benutzer")); } catch (e) { user = null; }
-    if (!user || user.getString("rolle") === "gast" || !user.getString("familie")) return { ok: false, status: 403, error: "Dieses Profil hat keine Sprachsteuerung." };
-    const familyId = user.getString("familie");
+    if (!user || user.getString("rolle") === "gast" || !user.getString("familie")) return { fail: { ok: false, status: 403, error: "Dieses Profil hat keine Sprachsteuerung." } };
     const lang = langOf(user);
     const L = T[lang] || T.en;
     const W = WIDGET_T[lang] || WIDGET_T.en;
@@ -1217,17 +1219,61 @@ function widgetData(token, view, format) {
         const k = "pinnSprache:" + rec.id + ":" + Math.floor(Date.now() / 60000);
         const n = Number($app.store().get(k) || 0) + 1;
         $app.store().set(k, n);
-        if (n > LIMIT_PER_MIN) return { ok: false, status: 429, error: "429" };
+        if (n > LIMIT_PER_MIN) return { fail: { ok: false, status: 429, error: "429" } };
     } catch (e) { /* ignore */ }
+    return { rec: rec, user: user, familyId: user.getString("familie"), lang: lang, L: L, W: W };
+}
+function plainTitle(t) {
+    return String(t.title || t.titel).replace(/^\S+\s(?=\S)/u, m => (/\p{Extended_Pictographic}/u.test(m) ? "" : m));
+}
+// Open tasks that are due today or earlier (since 1.141.0 with id and household flag, so the widget can tick them off)
+function widgetTasks(familyId) {
+    const today = todayIso();
+    let list = [];
+    try {
+        list = (require(`${__hooks}/pinn-aufgaben.js`).listAll(familyId) || [])
+            .filter(t => t && !t.done && (t.title || t.titel) && t.dueDate && t.dueDate <= today)
+            .sort((a, b) => String(a.dueDate).localeCompare(String(b.dueDate)) || String(a.title || "").localeCompare(String(b.title || "")))
+            .slice(0, 30)
+            .map(t => ({ id: t.id || "", title: plainTitle(t), household: !!t.household, due: t.dueDate }));
+    } catch (e) { list = []; }
+    return list;
+}
+// Shopping lists with their items (open ones first, then the ticked ones that are waiting for "finish shopping" in the app)
+function widgetLists(data, W) {
+    const lists = [{ id: "essensplanung", name: W.shop }];
+    (Array.isArray(data.shoppingLists) ? data.shoppingLists : []).forEach(l => { if (l && l.id && l.id !== "essensplanung") lists.push({ id: String(l.id), name: String(l.name || W.shop) }); });
+    const items = (Array.isArray(data.shoppingItems) ? data.shoppingItems : []).filter(x => x && x.id && x.name);
+    return lists.map(l => {
+        const mine = items.filter(x => String(x.listId || "essensplanung") === l.id);
+        const open = mine.filter(x => !x.done);
+        const done = mine.filter(x => x.done);
+        const shown = open.concat(done).slice(0, 20);
+        return {
+            id: l.id, name: l.name, count: open.length, doneCount: done.length,
+            items: shown.map(x => ({ id: String(x.id), text: itemText(x), done: !!x.done })),
+            more: mine.length > shown.length ? fill(W.more, { n: mine.length - shown.length }) : "",
+        };
+    });
+}
+function widgetData(token, view, format, listId) {
+    const acc = widgetAccess(token);
+    if (acc.fail) return acc.fail;
+    const familyId = acc.familyId, user = acc.user, lang = acc.lang, L = acc.L, W = acc.W;
     try {
         const days = [widgetDay(familyId, user, 0, W, L), widgetDay(familyId, user, 1, W, L)];
         const data = require(`${__hooks}/pinn-benutzer.js`).loadFamilyDataFor(familyId) || {};
         const open = (Array.isArray(data.shoppingItems) ? data.shoppingItems : []).filter(x => x && !x.done && x.name);
         const shop = open.slice(0, 12).map(itemText);
+        const tasks = widgetTasks(familyId);
+        const lists = widgetLists(data, W);
         const out = {
             ok: true, language: lang, updated: new Date().toISOString(),
-            texts: { shop: W.shop, events: W.events, tasks: W.tasks, none: W.none, empty: W.empty, allday: L.allday },
+            texts: { shop: W.shop, events: W.events, tasks: W.tasks, none: W.none, empty: W.empty, allday: L.allday, household: W.household, finish: W.finish },
+            canTick: !isChildLocked(user, data),
             days: days,
+            tasks: tasks,
+            lists: lists,
             shopping: { count: open.length, items: shop, more: open.length > shop.length ? fill(W.more, { n: open.length - shop.length }) : "" },
         };
         if (format === "text") {
@@ -1238,27 +1284,93 @@ function widgetData(token, view, format) {
                 d.events.forEach(e => lines.push("  " + (e.time ? e.time + " " : "") + e.title));
                 d.tasks.forEach(t => lines.push("  ☐ " + t));
             };
-            if (view === "einkauf") {
+            const taskLines = (head, rows) => {
+                lines.push(head + " (" + rows.length + ")");
+                if (!rows.length) lines.push("  " + W.none);
+                rows.forEach(t => lines.push("  ☐ " + t.title));
+            };
+            const shopLines = () => {
                 lines.push(W.shop + " (" + open.length + ")");
                 if (!shop.length) lines.push("  " + W.empty);
                 shop.forEach(x => lines.push("  • " + x));
                 if (out.shopping.more) lines.push("  " + out.shopping.more);
-            } else if (view === "morgen") dayLines(days[1]);
+            };
+            if (view === "einkauf" && listId) {
+                const l = lists.find(x => x.id === listId);
+                if (!l) lines.push(W.empty);
+                else {
+                    lines.push(l.name + " (" + l.count + ")");
+                    if (!l.items.length) lines.push("  " + W.empty);
+                    l.items.forEach(x => lines.push("  " + (x.done ? "☑ " : "• ") + x.text));
+                    if (l.more) lines.push("  " + l.more);
+                }
+            } else if (view === "einkauf") shopLines();
+            else if (view === "aufgaben") taskLines(W.tasks, tasks.filter(t => !t.household));
+            else if (view === "haushalt") taskLines(W.household, tasks.filter(t => t.household));
+            else if (view === "morgen") dayLines(days[1]);
             else if (view === "alles") {
                 dayLines(days[0]);
                 lines.push("");
                 dayLines(days[1]);
                 lines.push("");
-                lines.push(W.shop + " (" + open.length + ")");
-                if (!shop.length) lines.push("  " + W.empty);
-                shop.forEach(x => lines.push("  • " + x));
-                if (out.shopping.more) lines.push("  " + out.shopping.more);
+                shopLines();
             } else dayLines(days[0]);
             out.text = lines.join("\n");
         }
         return out;
     } catch (err) {
         console.log("[Sprache] Widget: " + err.message);
+        try { require(`${__hooks}/pinn-protokoll.js`).fehler("Sprachsteuerung", err.message, {}); } catch (e) { /* log not available */ }
+        return { ok: false, status: 200, error: fill(L.error, { m: err.message }) };
+    }
+}
+
+// Tick a shopping item off (or back on) the same way the app does: ticked items stay on the list until
+// "finish shopping" is done in the app (that step books the amount, so it is not part of the widget).
+// A pantry item ticked off also disappears from the other lists (like removePantrySiblings in the app).
+function setShoppingDone(familyId, itemId, done) {
+    let found = false;
+    const change = (data) => {
+        const items = Array.isArray(data.shoppingItems) ? data.shoppingItems : [];
+        const it = items.find(x => x && x.id === itemId);
+        if (!it) return false;
+        found = true;
+        if (!!it.done === done) return false;
+        it.done = done;
+        data.shoppingItems = (done && it.pantryId) ? items.filter(x => !(x && x.pantryId === it.pantryId && x.id !== it.id && !x.done)) : items;
+        return true;
+    };
+    let bereiche = null;
+    try { bereiche = require(`${__hooks}/pinn-bereiche.js`); } catch (e) { bereiche = null; }
+    if (bereiche && bereiche.isMoved(familyId, "einkauf")) {
+        bereiche.updateArea(familyId, "einkauf", change);
+    } else {
+        $app.runInTransaction((tx) => {
+            const rec = tx.findFirstRecordByFilter("familien_daten", "familie = {:f}", { f: String(familyId) });
+            const data = require(`${__hooks}/calendar-sync.js`).parseRecordData(rec.get("data")) || {};
+            if (!change(data)) return;
+            rec.set("data", data);
+            tx.save(rec);
+        });
+    }
+    return found;
+}
+// Widget tap (since 1.141.0): kind "task" or "shop", id of the task or item, done true / false
+function widgetTick(token, kind, id, done) {
+    const acc = widgetAccess(token);
+    if (acc.fail) return acc.fail;
+    const L = acc.L;
+    const key = String(id || "");
+    if ((kind !== "task" && kind !== "shop") || !/^[A-Za-z0-9_-]{1,40}$/.test(key)) return { ok: false, status: 400, error: "400" };
+    try {
+        const data = require(`${__hooks}/pinn-benutzer.js`).loadFamilyDataFor(acc.familyId) || {};
+        if (isChildLocked(acc.user, data)) return { ok: false, status: 403, error: L.childLock };
+        if (kind === "task") {
+            try { require(`${__hooks}/pinn-aufgaben.js`).setDone(acc.familyId, key, !!done, acc.user.id); } catch (e) { return { ok: false, status: 404, error: "404" }; }
+        } else if (!setShoppingDone(acc.familyId, key, !!done)) return { ok: false, status: 404, error: "404" };
+        return { ok: true, kind: kind, id: key, done: !!done };
+    } catch (err) {
+        console.log("[Sprache] Widget tick: " + err.message);
         try { require(`${__hooks}/pinn-protokoll.js`).fehler("Sprachsteuerung", err.message, {}); } catch (e) { /* log not available */ }
         return { ok: false, status: 200, error: fill(L.error, { m: err.message }) };
     }
@@ -1310,4 +1422,4 @@ function befehl(token, text) {
     }
 }
 
-module.exports = { texts: T, cleanSentence, ensureSchema, statusFor, einrichten, ausschalten, cleanupUser, befehl, widgetData, widgetTexts: WIDGET_T, intentOf, parseItems, parseDate, parseEvents, occursOn };
+module.exports = { texts: T, cleanSentence, ensureSchema, statusFor, einrichten, ausschalten, cleanupUser, befehl, widgetData, widgetTick, widgetTexts: WIDGET_T, intentOf, parseItems, parseDate, parseEvents, occursOn };

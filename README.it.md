@@ -133,6 +133,14 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.141.0
+
+**Widget: scegli cosa mostra ciascuno e spunta direttamente nel widget**
+
+- **Scegliere cosa mostra il widget.** In Impostazioni → Controllo vocale → «Widget e Apple Watch» spunti separatamente gli appuntamenti di oggi, le attività (senza casa), le faccende di casa e ogni lista della spesa, poi copi lo script in Scriptable – uno script per ogni widget. Attività e faccende di casa spuntate insieme danno «attività con casa».
+- **Spuntare nel widget.** Nel widget medio o grande tocca un’attività o un articolo: risulta spuntato anche in pinn. (iOS apre Scriptable per un attimo). Quello che è spuntato resta nella lista, barrato; «Concludere la spesa» si fa come sempre in pinn. (un pulsante in fondo al widget apre l’app). I profili con blocco bambini non possono spuntare nulla. Se usi già lo script della 1.140.0, copialo di nuovo e sostituiscilo in Scriptable.
+- Modificati: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (7 nuovi testi in tutte le quattordici lingue), `src/` (versione), `index.html`, `.github/scripts/check-hooks.js`, tutti i README. Server (sostituire gli hook, PocketBase si riavvia): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
+
 ## Novità della 1.140.0
 
 **Widget e Apple Watch**
@@ -223,7 +231,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.140.0` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.141.0` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

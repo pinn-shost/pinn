@@ -110,6 +110,14 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.141.0
+
+**Widżety: wybierz, co pokazuje każdy, i odhaczaj prosto w widżecie**
+
+- **Wybór tego, co pokazuje widżet.** W Ustawieniach → Sterowanie głosem → „Widżety i Apple Watch” zaznaczasz osobno dzisiejsze terminy, zadania (bez domowych), obowiązki domowe i każdą listę zakupów, a potem kopiujesz skrypt do Scriptable – osobny skrypt dla każdego widżetu. Zadania i obowiązki domowe zaznaczone razem dają „zadania z domowymi”.
+- **Odhaczanie w widżecie.** W średnim i dużym widżecie dotknij zadania lub produktu, a zostanie odhaczony także w pinn. (iOS na chwilę otwiera Scriptable). Odhaczone pozycje zostają na liście, przekreślone; „Zakończ zakupy” robisz jak zwykle w pinn. (przycisk na dole widżetu otwiera aplikację). Profile z blokadą dziecięcą nic nie odhaczą. Jeśli używasz już skryptu z 1.140.0, skopiuj go ponownie i zastąp w Scriptable.
+- Zmienione: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (7 nowych tekstów we wszystkich czternastu językach), `src/` (wersja), `index.html`, `.github/scripts/check-hooks.js`, wszystkie README. Serwer (wymienić hooki, PocketBase uruchomi się ponownie): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
+
 ## Nowości w 1.140.0
 
 **Widżety i Apple Watch**
@@ -153,7 +161,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.140.0` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.141.0` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

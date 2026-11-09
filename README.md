@@ -129,6 +129,14 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.141.0
+
+**Widgets: choose what each one shows, tick things off right in the widget**
+
+- **Pick what a widget shows.** Under Settings → Voice control → “Widgets & Apple Watch” you tick today’s events, tasks (without household), household tasks and each shopping list on its own, then copy the script into Scriptable – one script per widget. Tasks and household tasks ticked together make “tasks with household”.
+- **Tick off in the widget.** In the medium and large widget, tap a task or shopping item and it is ticked off in pinn. as well (iOS briefly opens Scriptable). Ticked items stay on the list, struck through; “Finish shopping” works as usual in pinn. (a button at the bottom of the widget opens the app). Profiles with child lock cannot tick anything off. If you already use the script from 1.140.0, copy it again and replace it in Scriptable.
+- Changed: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (7 new texts in all fourteen languages), `src/` (version), `index.html`, `.github/scripts/check-hooks.js`, all READMEs. Server (replace the hooks, PocketBase restarts): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
+
 ## What's new in 1.140.0
 
 **Widgets & Apple Watch**
@@ -245,7 +253,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.140.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.141.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

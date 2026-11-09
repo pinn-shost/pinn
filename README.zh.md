@@ -133,6 +133,14 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.141.0 新功能
+
+**小组件：自由选择显示内容，直接在小组件中勾选**
+
+- **选择小组件显示的内容。** 在“设置 → 语音控制 → 小组件与 Apple Watch”中，分别勾选今天的日程、任务（不含家务）、家务任务和每个购物清单，然后把脚本复制到 Scriptable——每个小组件一个脚本。同时勾选任务和家务任务即为“含家务的任务”。
+- **在小组件中勾选。** 在中号和大号小组件中点按任务或购物项目，pinn. 中也会同步勾选（此时 iOS 会短暂打开 Scriptable）。已勾选的项目会带删除线保留在清单中；“完成购物”仍像往常一样在 pinn. 中进行（小组件底部的按钮会打开应用）。开启儿童锁的资料无法勾选。如果你已在使用 1.140.0 的脚本，请重新复制并在 Scriptable 中替换。
+- 更改：`js/sprachsteuerung.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/`（十四种语言各 7 条新文本）、`src/`（版本）、`index.html`、`.github/scripts/check-hooks.js`、所有 README。服务器（替换 hook，PocketBase 会重启）：`pb_hooks/pinn-sprache.js`、`pb_hooks/sprache.pb.js`。
+
 ## 1.140.0 新功能
 
 **小组件与 Apple Watch**
@@ -223,7 +231,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.140.0` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.141.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

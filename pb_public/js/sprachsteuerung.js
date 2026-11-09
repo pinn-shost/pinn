@@ -4,6 +4,8 @@
    (the load order is listed at the bottom of index.html and in pinn-setup.sh).
    Contents: Settings → Voice control – load and show the personal secret link (loadVoiceSettings,
    renderVoiceSettings), create or renew it, switch it off and try a sentence (voiceSetup, voiceOff, voiceTest).
+   Since 1.141.0 the widget script is modular: tick boxes for events, tasks, household tasks and every shopping list; tapping a task or
+   item in the widget ticks it off in pinn. as well (server: POST /api/pinn/widget/abhaken).
    Since 1.140.0: widgets and Apple Watch – read-only links on the same secret link (widgetLink), the ready-made
    Scriptable widget script (widgetScript) and the set-up steps. Server: GET /api/pinn/widget in pb_hooks/sprache.pb.js.
    The settings load when the section is opened. The server side is pb_hooks/sprache.pb.js + pinn-sprache.js. */
@@ -27,45 +29,145 @@ function voiceLink(token) { return location.origin + '/api/pinn/sprache?token=' 
 function widgetLink(token, view, text) {
   return location.origin + '/api/pinn/widget?token=' + encodeURIComponent(token) + '&ansicht=' + (view || 'heute') + (text ? '&format=text' : '');
 }
-// Ready-made script for the free iOS app Scriptable (home screen and lock screen widget)
-function widgetScript(token) {
-  const link = widgetLink(token, 'heute', false);
-  return [
-    '// pinn. widget for Scriptable: events and open tasks of today plus the number of shopping items',
-    'const LINK = ' + JSON.stringify(link) + ';',
-    'let d = null;',
-    'try { d = await new Request(LINK).loadJSON(); } catch (e) { d = null; }',
-    'const w = new ListWidget();',
-    'w.backgroundColor = new Color("#00374A");',
-    'w.setPadding(12, 14, 12, 14);',
-    'const small = (config.widgetFamily || "").indexOf("accessory") === 0;',
-    'function line(text, size, color, bold) {',
-    '  const t = w.addText(String(text));',
-    '  t.font = bold ? Font.boldSystemFont(size) : Font.systemFont(size);',
-    '  t.textColor = new Color(color || "#ffffff");',
-    '  t.lineLimit = 1;',
-    '  return t;',
-    '}',
-    'if (!d || !d.ok) {',
-    '  line("pinn.", 14, "#ffffff", true);',
-    '  line((d && d.error) || "No connection", 11, "#ffb4a8");',
-    '} else {',
-    '  const day = d.days[0];',
-    '  line("pinn. · " + day.label, small ? 11 : 13, "#9ee6c9", true);',
-    '  w.addSpacer(4);',
-    '  const rows = [];',
-    '  day.events.forEach(e => rows.push((e.time ? e.time + " " : "") + e.title));',
-    '  day.tasks.forEach(t => rows.push("\u2610 " + t));',
-    '  const fam = config.widgetFamily;',
-    '  const max = small ? 3 : (fam === "large" ? 12 : (fam === "medium" ? 5 : 4));',
-    '  if (!rows.length) line(d.texts.none, 12, "#ffffff");',
-    '  rows.slice(0, max).forEach(r => line(r, small ? 11 : 12));',
-    '  if (!small && d.shopping.count) { w.addSpacer(4); line("\uD83D\uDED2 " + d.texts.shop + ": " + d.shopping.count, 11, "#9ee6c9"); }',
-    '}',
-    'w.refreshAfterDate = new Date(Date.now() + 15 * 60 * 1000);',
-    'if (config.runsInWidget) Script.setWidget(w); else await w.presentMedium();',
-    'Script.complete();',
-  ].join('\n');
+// Ready-made script for the free iOS app Scriptable (home screen and lock screen widget).
+// Since 1.141.0 modular: cfg = { events, tasks, household, lists: [{ id, name }] } decides what the widget shows
+// (one script per widget). Tapping a task or shopping item in a medium or large widget ticks it off in pinn. as well:
+// iOS opens Scriptable for a moment, the script sends the tick (POST /api/pinn/widget/abhaken) and shows the result.
+function widgetScript(token, cfg) {
+  const c = cfg || {};
+  const conf = {
+    events: !!c.events, tasks: !!c.tasks, household: !!c.household,
+    lists: (Array.isArray(c.lists) ? c.lists : []).map(l => ({ id: String(l.id), name: String(l.name || '') })),
+  };
+  const tpl = String.raw`// pinn. widget for Scriptable (made in pinn.: Settings > Voice control > Widgets). One script = one widget.
+const BASE = __BASE__;
+const TOKEN = __TOKEN__;
+const CFG = __CFG__;
+const API = BASE + "/api/pinn/widget?token=" + TOKEN + "&ansicht=alles";
+const TICK = BASE + "/api/pinn/widget/abhaken?token=" + TOKEN;
+const q = (args && args.queryParameters) || {};
+let note = "";
+// 1. Tap on a task or item: tick it off in pinn. (k = t task / s shopping item, i = id, d = 1 ticked / 0 open)
+if (q.k && q.i) {
+  try {
+    const r = new Request(TICK + "&art=" + (q.k === "t" ? "task" : "shop") + "&id=" + encodeURIComponent(q.i) + "&erledigt=" + (q.d === "0" ? "0" : "1"));
+    r.method = "POST";
+    const res = await r.loadJSON();
+    if (!res || !res.ok) note = (res && res.error) || "Error";
+  } catch (e) { note = "No connection"; }
+}
+// 2. Load the data
+let d = null;
+try { d = await new Request(API).loadJSON(); } catch (e) { d = null; }
+const fam = config.widgetFamily || "";
+const lock = fam.indexOf("accessory") === 0;
+const small = fam === "small";
+const tappable = !!(d && d.ok && d.canTick) && (fam === "medium" || fam === "large" || !fam);
+const base = URLScheme.forRunningScript();
+const tapUrl = (k, id, done) => base + (base.indexOf("?") >= 0 ? "&" : "?") + "k=" + k + "&i=" + encodeURIComponent(id) + "&d=" + (done ? 1 : 0);
+// 3. Build the rows: { t: text, kind: head | row | done | more | foot, url }
+const rows = [];
+if (d && d.ok) {
+  const day = d.days[0];
+  if (CFG.events) {
+    rows.push({ t: d.texts.events + " · " + day.label, kind: "head" });
+    if (!day.events.length) rows.push({ t: d.texts.none, kind: "more" });
+    day.events.forEach(e => rows.push({ t: (e.time ? e.time + " " : "") + e.title, kind: "row" }));
+  }
+  if (CFG.tasks || CFG.household) {
+    const list = (d.tasks || []).filter(t => (t.household ? CFG.household : CFG.tasks));
+    rows.push({ t: (CFG.tasks ? d.texts.tasks : d.texts.household) + " (" + list.length + ")", kind: "head" });
+    if (!list.length) rows.push({ t: d.texts.none, kind: "more" });
+    list.forEach(t => rows.push({ t: "\u2610 " + t.title, kind: "row", url: tappable ? tapUrl("t", t.id, true) : "" }));
+  }
+  CFG.lists.forEach(cl => {
+    const l = (d.lists || []).find(x => x.id === cl.id);
+    rows.push({ t: "\uD83D\uDED2 " + (cl.name || (l && l.name) || d.texts.shop) + " (" + (l ? l.count : 0) + ")", kind: "head" });
+    if (!l || !l.items.length) rows.push({ t: d.texts.empty, kind: "more" });
+    else {
+      l.items.forEach(x => rows.push(x.done
+        ? { t: "\u2611 " + x.text, kind: "done", url: tappable ? tapUrl("s", x.id, false) : "" }
+        : { t: "\u2610 " + x.text, kind: "row", url: tappable ? tapUrl("s", x.id, true) : "" }));
+      if (l.more) rows.push({ t: l.more, kind: "more" });
+      // Finishing the shopping (booking the amount) is done in pinn. itself
+      if (l.doneCount && !lock && !small) rows.push({ t: "\u2714 " + d.texts.finish, kind: "foot", url: BASE });
+    }
+  });
+}
+// 4. Draw the widget
+const w = new ListWidget();
+w.backgroundColor = new Color("#00374A");
+w.setPadding(10, 12, 10, 12);
+w.url = BASE;
+function line(r) {
+  const t = w.addText(String(r.t));
+  const head = r.kind === "head" || r.kind === "foot";
+  t.font = head ? Font.boldSystemFont(small || lock ? 11 : 12) : Font.systemFont(small || lock ? 11 : 12);
+  t.textColor = new Color(head ? "#9ee6c9" : (r.kind === "done" ? "#7fa3ad" : (r.kind === "more" ? "#b6cdd3" : "#ffffff")));
+  t.lineLimit = 1;
+  if (r.url) t.url = r.url;
+  return t;
+}
+if (!d || !d.ok) {
+  line({ t: "pinn.", kind: "head" });
+  line({ t: (d && d.error) || "No connection", kind: "more" });
+} else if (lock) {
+  const body = rows.filter(r => r.kind === "row" || r.kind === "done");
+  const max = fam === "accessoryRectangular" ? 3 : 1;
+  (body.length ? body : rows).slice(0, max).forEach(line);
+} else {
+  const max = fam === "large" ? 14 : (small ? 6 : (fam === "medium" ? 6 : 12));
+  rows.slice(0, max).forEach((r, i) => { if (i && r.kind === "head") w.addSpacer(3); line(r); });
+  if (rows.length > max) line({ t: "…", kind: "more" });
+}
+if (note) { w.addSpacer(2); line({ t: "⚠ " + note, kind: "more" }); }
+w.refreshAfterDate = new Date(Date.now() + 15 * 60 * 1000);
+if (config.runsInWidget) Script.setWidget(w);
+else if (q.k) await w.presentLarge();
+else await w.presentMedium();
+Script.complete();
+`;
+  return tpl
+    .replace('__BASE__', () => JSON.stringify(location.origin))
+    .replace('__TOKEN__', () => JSON.stringify(token))
+    .replace('__CFG__', () => JSON.stringify(conf));
+}
+// What the widget should show: stored on this device, so every profile / phone keeps its own choice
+const WIDGET_PICK_KEY = 'pinnWidgetPick';
+function widgetPick() {
+  let p = null;
+  try { p = JSON.parse(localStorage.getItem(WIDGET_PICK_KEY) || 'null'); } catch (e) { p = null; }
+  if (!p || typeof p !== 'object') p = { events: true, tasks: true, household: false, lists: [] };
+  p.lists = Array.isArray(p.lists) ? p.lists : [];
+  return p;
+}
+function widgetPickSave(p) { try { localStorage.setItem(WIDGET_PICK_KEY, JSON.stringify(p)); } catch (e) { /* storage not available */ } }
+// Shopping lists of the family (id + name) for the tick boxes
+function widgetShoppingLists() {
+  try { return (typeof allShoppingLists === 'function' ? allShoppingLists() : []).filter(l => l && l.id).map(l => ({ id: String(l.id), name: String(l.name || '') })); } catch (e) { return []; }
+}
+function widgetPickHtml() {
+  const p = widgetPick();
+  const box = (id, on, label, cls, data) => `<label class="flex items-center gap-2 text-[12px] text-ink/80"><input type="checkbox"${id ? ' id="' + id + '"' : ''} class="accent-pine ${cls || ''}"${data || ''}${on ? ' checked' : ''} /><span>${label}</span></label>`;
+  const lists = widgetShoppingLists().map(l => box('', p.lists.indexOf(l.id) >= 0, '🛒 ' + escapeHtml(tk('voice.widgetList', { name: l.name })), 'wgList', ' data-id="' + escapeHtml(l.id) + '" data-name="' + escapeHtml(l.name) + '"')).join('');
+  return `<div class="rounded-lg bg-ink/5 p-3 mt-3 flex flex-col gap-1.5">
+        <p class="text-[12px] font-medium">${escapeHtml(tk('voice.widgetPick'))}</p>
+        ${box('wgEvents', p.events, escapeHtml(tk('voice.widgetEvents')))}
+        ${box('wgTasks', p.tasks, escapeHtml(tk('voice.widgetTasks')))}
+        ${box('wgHousehold', p.household, escapeHtml(tk('voice.widgetHousehold')))}
+        ${lists}
+      </div>`;
+}
+function widgetPickRead() {
+  const p = {
+    events: !!(document.getElementById('wgEvents') || {}).checked,
+    tasks: !!(document.getElementById('wgTasks') || {}).checked,
+    household: !!(document.getElementById('wgHousehold') || {}).checked,
+    lists: [],
+  };
+  const chosen = [];
+  document.querySelectorAll('.wgList').forEach(el => { if (el.checked) { p.lists.push(el.dataset.id); chosen.push({ id: el.dataset.id, name: el.dataset.name || '' }); } });
+  return { pick: p, cfg: { events: p.events, tasks: p.tasks, household: p.household, lists: chosen } };
 }
 async function loadVoiceSettings() {
   const box = document.getElementById('voiceSettingsBody');
@@ -130,7 +232,9 @@ function renderVoiceSettings() {
         <li>${tk('voice.widgetIos2')}</li>
         <li>${tk('voice.widgetIos3')}</li>
       </ol>
+      ${widgetPickHtml()}
       <button type="button" id="widgetScriptBtn" class="mt-2 px-3 py-1.5 rounded-lg border border-ink/15 text-xs hover:border-pine hover:text-pine transition">${tk('voice.widgetCopyScript')}</button>
+      <p class="text-[11px] text-ink/50 mt-2">${escapeHtml(tk('voice.widgetTick'))}</p>
       <p class="text-[12px] font-medium mt-4">${escapeHtml(tk('voice.widgetWatchTitle'))}</p>
       <ol class="text-[12px] text-ink/70 leading-relaxed mt-1 list-decimal pl-5 flex flex-col gap-1">
         <li>${tk('voice.widgetWatch1')}</li>
@@ -155,7 +259,10 @@ function renderVoiceSettings() {
     finShowToast(ok === false ? tk('voice.copyingNotPossiblePlease') : tk('voice.linkCopied'));
   });
   document.getElementById('widgetScriptBtn').addEventListener('click', async () => {
-    const ok = await copyTextRobust(widgetScript(st.token));
+    const sel = widgetPickRead();
+    if (!sel.cfg.events && !sel.cfg.tasks && !sel.cfg.household && !sel.cfg.lists.length) { finShowToast(tk('voice.widgetNeedOne')); return; }
+    widgetPickSave(sel.pick);
+    const ok = await copyTextRobust(widgetScript(st.token, sel.cfg));
     finShowToast(ok === false ? tk('voice.copyingNotPossiblePlease') : tk('voice.widgetScriptCopied'));
   });
   document.getElementById('widgetLinkBtn').addEventListener('click', async () => {

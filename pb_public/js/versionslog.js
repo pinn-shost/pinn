@@ -22,6 +22,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.141', datum: '09.11.2026', titel: 'Widgets: getrennt wählbar und direkt abhakbar',
+    punkte: [
+      ['neu', 'Widgets getrennt wählbar: In den Einstellungen unter „Sprachsteuerung“ → „Widgets & Apple Watch“ hakst du an, was ein Widget zeigen soll: Termine von heute, Aufgaben (ohne Haushalt), Haushaltsaufgaben und jede Einkaufsliste einzeln. Aufgaben und Haushaltsaufgaben zusammen angehakt ergeben „Aufgaben mit Haushalt“. Dann „Widget-Skript kopieren“ und in Scriptable einfügen – für jedes Widget ein eigenes Skript.'],
+      ['neu', 'Abhaken im Widget: Im mittleren und großen Widget tippst du eine Aufgabe oder einen Einkaufs-Eintrag an – er ist dann auch in pinn. abgehakt (iOS öffnet dafür kurz Scriptable). Abgehakte Einkaufs-Einträge bleiben durchgestrichen auf der Liste. „Einkauf abschließen“ machst du wie gewohnt in pinn.; der Knopf unten im Widget öffnet die App. Profile mit Kindersperre können nichts abhaken.'],
+      ['info', 'Der Kurzbefehl für die Apple Watch kennt zusätzlich die Ansichten „aufgaben“ und „haushalt“ sowie eine einzelne Einkaufsliste.'],
+      ['info', 'Geändert: pb_hooks/pinn-sprache.js und sprache.pb.js (neue Abfrage POST /api/pinn/widget/abhaken), js/sprachsteuerung.js, js/sprachen.js, i18n/ (7 neue Texte in allen vierzehn Sprachen), i18n/versionslog.en.js, js/versionslog.js, src/ (Version), index.html, .github/scripts/check-hooks.js, alle READMEs. Server-Teil: Hooks einspielen, PocketBase startet neu. Wer schon ein Widget-Skript aus 1.140 nutzt: neu kopieren und in Scriptable ersetzen.'],
+    ],
+  },
+  {
     v: '1.140', datum: '08.11.2026', titel: 'Widgets & Apple Watch: Termine, Aufgaben und Einkauf auf dem Home-Bildschirm und an der Uhr',
     punkte: [
       ['neu', 'Widgets auf dem iPhone: In den Einstellungen unter „Sprachsteuerung“ gibt es jetzt „Widgets & Apple Watch“. Mit der kostenlosen App Scriptable zeigt ein Widget auf dem Home- oder Sperrbildschirm die heutigen Termine, offene Aufgaben und die Zahl der Einkaufs-Einträge. Das fertige Skript kopierst du mit einem Tippen.'],

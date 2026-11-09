@@ -133,6 +133,14 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.141.0의 새 소식
+
+**위젯: 보여줄 내용을 고르고 위젯에서 바로 체크해요**
+
+- **위젯에 보여줄 내용 고르기.** 설정 → 음성 제어 → “위젯 및 Apple Watch”에서 오늘 일정, 할 일(집안일 제외), 집안일, 장보기 목록을 각각 체크한 뒤 스크립트를 Scriptable에 복사해요 – 위젯마다 스크립트가 하나씩 필요해요. 할 일과 집안일을 함께 체크하면 “집안일 포함 할 일”이 돼요.
+- **위젯에서 체크하기.** 중간·큰 위젯에서 할 일이나 장보기 항목을 탭하면 pinn.에서도 체크돼요(이때 iOS가 Scriptable을 잠시 열어요). 체크한 항목은 취소선과 함께 목록에 남고, “장보기 완료”는 평소처럼 pinn.에서 해요(위젯 아래 버튼이 앱을 열어요). 아이 잠금이 켜진 프로필은 체크할 수 없어요. 1.140.0의 스크립트를 이미 쓰고 있다면 다시 복사해서 Scriptable에서 바꿔 주세요.
+- 변경: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (14개 언어 모두에 새 문구 7개), `src/` (버전), `index.html`, `.github/scripts/check-hooks.js`, 모든 README. 서버(hook 교체, PocketBase가 다시 시작돼요): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
+
 ## 1.140.0의 새 소식
 
 **위젯 및 Apple Watch**
@@ -223,7 +231,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.140.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.141.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
