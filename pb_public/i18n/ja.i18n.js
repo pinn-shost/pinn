@@ -3300,6 +3300,7 @@ window.PINN_I18N && window.PINN_I18N.keys("ja", {
   "lists.confirmClearGiven": "贈り済みのギフトをすべてリストから削除しますか？",
   "lists.confirmDelete": {"other":"「{name}」と {n} 件の項目を削除しますか？"},
   "lists.confirmDeleteTpl": "テンプレート「{name}」を削除しますか？",
+  "lists.confirmDeleteTrip": "この旅行（{range}）はカレンダーと1年のふりかえりからも消えます。",
   "lists.confirmReset": "このリストのチェックをすべて外しますか？次の旅行でリストを再利用するときに便利です。",
   "lists.confirmUnreserve": "「{name}」の予約を取り消しますか？",
   "lists.deleteTpl": "テンプレートを削除",

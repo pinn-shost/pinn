@@ -3306,6 +3306,7 @@ window.PINN_I18N && window.PINN_I18N.keys("fr", {
   "lists.confirmClearGiven": "Retirer de la liste tous les cadeaux offerts ?",
   "lists.confirmDelete": {"one":"Supprimer « {name} » avec {n} entrée ?","other":"Supprimer « {name} » avec {n} entrées ?"},
   "lists.confirmDeleteTpl": "Supprimer le modèle « {name} » ?",
+  "lists.confirmDeleteTrip": "Le voyage ({range}) disparaîtra aussi du calendrier et du bilan de l’année.",
   "lists.confirmReset": "Retirer toutes les coches de cette liste ? Pratique pour réutiliser la liste au prochain voyage.",
   "lists.confirmUnreserve": "Annuler la réservation de « {name} » ?",
   "lists.deleteTpl": "Supprimer le modèle",

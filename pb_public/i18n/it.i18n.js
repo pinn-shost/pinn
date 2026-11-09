@@ -3310,6 +3310,7 @@ window.PINN_I18N && window.PINN_I18N.keys("it", {
   "lists.confirmClearGiven": "Vuoi rimuovere dalla lista tutti i regali già donati?",
   "lists.confirmDelete": {"one":"Eliminare «{name}» con {n} voce?","other":"Eliminare «{name}» con {n} voci?"},
   "lists.confirmDeleteTpl": "Eliminare il modello «{name}»?",
+  "lists.confirmDeleteTrip": "Anche il viaggio ({range}) scomparirà dal calendario e dal riepilogo dell’anno.",
   "lists.confirmReset": "Vuoi deselezionare tutti gli elementi di questa lista? È utile per riutilizzarla per il prossimo viaggio.",
   "lists.confirmUnreserve": "Annullare la prenotazione per «{name}»?",
   "lists.deleteTpl": "Elimina modello",

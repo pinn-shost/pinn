@@ -3323,6 +3323,7 @@ window.PINN_I18N && window.PINN_I18N.keys("ru", {
   "lists.confirmClearGiven": "Убрать из списка все подаренные подарки?",
   "lists.confirmDelete": {"one":"Удалить «{name}» с {n} записью?","few":"Удалить «{name}» с {n} записями?","many":"Удалить «{name}» с {n} записями?","other":"Удалить «{name}» с {n} записи?"},
   "lists.confirmDeleteTpl": "Удалить шаблон «{name}»?",
+  "lists.confirmDeleteTrip": "Поездка ({range}) также исчезнет из календаря и из итогов года.",
   "lists.confirmReset": "Снять все отметки в этом списке? Удобно, чтобы снова использовать список для следующей поездки.",
   "lists.confirmUnreserve": "Отменить бронь на «{name}»?",
   "lists.deleteTpl": "Удалить шаблон",

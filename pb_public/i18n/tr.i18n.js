@@ -3309,6 +3309,7 @@ window.PINN_I18N && window.PINN_I18N.keys("tr", {
   "lists.confirmClearGiven": "Verilen tüm hediyeler listeden kaldırılsın mı?",
   "lists.confirmDelete": {"one":"“{name}” {n} kaydıyla birlikte silinsin mi?","other":"“{name}” {n} kaydıyla birlikte silinsin mi?"},
   "lists.confirmDeleteTpl": "“{name}” şablonu silinsin mi?",
+  "lists.confirmDeleteTrip": "Gezi ({range}) takvimden ve yıl özetinden de kaybolur.",
   "lists.confirmReset": "Bu listedeki tüm işaretler kaldırılsın mı? Listeyi bir sonraki gezi için yeniden kullanmak için kullanışlıdır.",
   "lists.confirmUnreserve": "“{name}” için ayırma iptal edilsin mi?",
   "lists.deleteTpl": "Şablonu sil",

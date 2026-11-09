@@ -28,6 +28,7 @@ const PINN_CHANGELOG = [
       ['neu', 'Wie bei Wochenvorschau und Monatsausblick: ein Hinweis oben (bis 10. Januar) und eine Push-Nachricht, die du in den Einstellungen abschalten kannst. Ausgaben siehst du nur mit Zugriff auf die Finanzen; Gäste bekommen keine Push-Nachricht.'],
       ['info', 'Was zählt: Ausgaben ohne Sparen (das steht extra), „gekocht“ = im Essensplan abgehakt, Urlaube = Packlisten mit Ziel und Zeitraum, nur bereits begonnene und nur die Tage im jeweiligen Jahr.'],
       ['info', 'Geändert: pb_hooks/pinn-ausblick.js und ausblick.pb.js (Push am 28. Dezember, „gesehen“ und Schalter für das Jahr), js/ausblick.js, js/hinweise.js (Link ?ausblick=jahr), css/hinweise.css, js/sprachen.js, i18n/ (32 neue und geänderte Texte in allen vierzehn Sprachen), i18n/versionslog.en.js, js/versionslog.js, src/ (Version, Einstellungen), index.html, alle READMEs. Server-Teil: Hooks einspielen, PocketBase startet neu.'],
+      ['info', '1.142.1: Wer eine Packliste mit Ziel und Zeitraum löscht, bekommt jetzt einen Hinweis: Die Reise verschwindet damit auch aus dem Kalender und aus dem Jahresrückblick. Geändert: js/listen.js, js/sprachen.js, js/versionslog.js, i18n/ (ein neuer Text in allen vierzehn Sprachen), i18n/versionslog.en.js, src/ (Version), index.html, alle READMEs. Kein Server-Teil.'],
     ],
   },
   {

@@ -3309,6 +3309,7 @@ window.PINN_I18N && window.PINN_I18N.keys("ko", {
   "lists.confirmClearGiven": "준 선물을 모두 목록에서 삭제할까요?",
   "lists.confirmDelete": {"other":"\"{name}\"과(와) 항목 {n}개를 삭제할까요?"},
   "lists.confirmDeleteTpl": "템플릿 ‘{name}’을(를) 삭제할까요?",
+  "lists.confirmDeleteTrip": "이 여행({range})도 캘린더와 올해 돌아보기에서 사라져요.",
   "lists.confirmReset": "이 목록의 체크를 모두 지울까요? 다음 여행에 목록을 다시 쓸 때 편해요.",
   "lists.confirmUnreserve": "‘{name}’의 예약을 취소할까요?",
   "lists.deleteTpl": "템플릿 삭제",

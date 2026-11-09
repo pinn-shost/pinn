@@ -110,6 +110,13 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.142.1 sürümündeki yenilikler
+
+**Bir gezinin bavul listesi silinirken uyarı**
+
+- **Silerken uyarı.** Hedefi ve tarihleri olan bir bavul listesini silersen pinn. artık uyarır: gezi takvimden ve yıl özetinden de kaybolur.
+- Değişenler: `js/listen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (on dört dilde 1 yeni metin), `src/` (sürüm), `index.html`, tüm README dosyaları. Sunucu kısmı yok.
+
 ## 1.142.0 sürümündeki yenilikler
 
 **Yıl özeti: harcamalar, pişirilen yemekler ve geziler**
@@ -151,15 +158,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - Siri ile aynı gizli bağlantıdır, yalnızca okuma içindir; misafirlerde yoktur. Metinler profilin dilinde gelir.
 - Değişenler: `js/sprachsteuerung.js`, `js/versionslog.js`, `i18n/` (on dört dilin hepsinde 16 yeni metin ve değişen bir alt başlık), `src/` (`index.html`, ayarlar), `.github/scripts/check-hooks.js`, tüm README’ler. Sunucu (hook’ları değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
 
-## 1.139.0 sürümündeki yenilikler
-
-**Hediye planlayıcı: kim ne hediye ediyor – hediyeyi alan görmeden**
-
-- **Kim ne hediye ediyor.** “Hediyeler” sekmesinde pinn. artık planlanan her şeyi kişi bazında gösterir (listelerindeki hediye fikirleri ve başkalarının ayırdığı dilekler) – tarih, durum, hediye eden ve toplamla birlikte. Bir şey alacak kişi bunu orada asla görmez.
-- **Hediyeyi alandan gizleme.** (Özel olmayan) bir hediye listesinde “Şunlardan gizle”yi seçersin; bu kişiler listeyi görmez, böylece birkaç kişi birlikte planlayabilir (örn. ebeveynler çocuklar için). Kendin için girilen hediyeyi sen de asla görmezsin. Özel listelerde olduğu gibi bu, uygulamadaki görünüm için geçerlidir; şifreleme değildir.
-- **Kim hediye ediyor? / Ortak hediyeler.** Her hediyede kimin vereceğini seçersin. Başkasının zaten ayırdığı bir dilekte “Ben de katılıyorum”a dokun; diğerleri kimin katıldığını görür, dileği yazan kişi görmez.
-- Değişenler: `js/listen.js`, `css/listen.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (12 yeni metin ve değiştirilmiş bir giriş, on dört dilin hepsinde), `src/` (`index.html`, liste penceresi), tüm README dosyaları. Sunucu tarafı yok – PocketBase'in yeniden başlaması gerekmez.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -169,7 +167,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.142.0` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.142.1` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

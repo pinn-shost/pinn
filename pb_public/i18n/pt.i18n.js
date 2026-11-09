@@ -3311,6 +3311,7 @@ window.PINN_I18N && window.PINN_I18N.keys("pt", {
   "lists.confirmClearGiven": "Remover da lista todos os presentes já dados?",
   "lists.confirmDelete": {"one":"Eliminar «{name}» com {n} entrada?","other":"Eliminar «{name}» com {n} entradas?"},
   "lists.confirmDeleteTpl": "Excluir o modelo “{name}”?",
+  "lists.confirmDeleteTrip": "A viagem ({range}) também vai desaparecer do calendário e do resumo do ano.",
   "lists.confirmReset": "Remover todas as marcas desta lista? Útil para reaproveitar a lista na próxima viagem.",
   "lists.confirmUnreserve": "Cancelar a reserva para “{name}”?",
   "lists.deleteTpl": "Excluir modelo",

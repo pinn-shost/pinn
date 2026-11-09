@@ -1183,7 +1183,9 @@ function lsDeleteListFromModal() {
   const ctx = lsListCtx;
   const l = ctx && lsGetList(ctx.listId);
   if (!l) return;
-  if (!confirm(tk('lists.confirmDelete', { name: l.name || lsType(l.type).one, n: l.items.length }))) return;
+  // A packing list with destination and dates is a trip: it also disappears from the calendar and from the year in review
+  const tripNote = l.type === 'pack' && tripValid(l) ? '\n\n' + tk('lists.confirmDeleteTrip', { range: tripRangeText(l) }) : '';
+  if (!confirm(tk('lists.confirmDelete', { name: l.name || lsType(l.type).one, n: l.items.length }) + tripNote)) return;
   familyLists = familyLists.filter(x => x.id !== l.id);
   lsCloseListModal();
   listsDetailId = null;

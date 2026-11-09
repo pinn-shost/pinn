@@ -129,6 +129,13 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.142.1
+
+**Avertissement en supprimant la liste de bagages d’un voyage**
+
+- **Avertissement à la suppression.** Si vous supprimez une liste de bagages avec destination et dates, pinn. prévient désormais que le voyage disparaît aussi du calendrier et du bilan de l’année.
+- Modifié : `js/listen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (un nouveau texte dans les quatorze langues), `src/` (version), `index.html`, tous les README. Pas de partie serveur.
+
 ## Nouveautés de la 1.142.0
 
 **Bilan de l’année : dépenses, repas cuisinés et voyages**
@@ -230,13 +237,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Ukrainien.** L’ukrainien est traduit plus loin : école et crèche, famille (cartes d’urgence, positions) et tableau d’affichage (6404 textes sur 6994). La langue est encore masquée – rien ne change dans l’appli.
 - Modifié : `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Pas de partie serveur.
 
-## Nouveautés de la 1.135.13
-
-**Ukrainien – étape 14**
-
-- **Ukrainien.** L’ukrainien est traduit plus loin : chat (suite), animaux et lieux (partage de position, traceurs GPS) (5958 textes sur 6994). La langue est encore masquée – rien ne change dans l’appli.
-- Modifié : `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). Pas de partie serveur.
-
 ## Comment ça marche
 
 ```mermaid
@@ -263,7 +263,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.142.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.142.1` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

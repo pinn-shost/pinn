@@ -129,6 +129,13 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.142.1
+
+**Note when deleting a trip’s packing list**
+
+- **Note when deleting.** If you delete a packing list with destination and dates, pinn. now warns you that the trip also disappears from the calendar and from the year in review.
+- Changed: `js/listen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (one new text in all fourteen languages), `src/` (version), `index.html`, all READMEs. No server part.
+
 ## What's new in 1.142.0
 
 **Year in review: expenses, meals cooked and trips**
@@ -230,13 +237,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Ukrainian.** Ukrainian is translated further: school & daycare, family (emergency cards, locations) and pin board (6404 of 6994 texts). The language is still hidden – nothing changes in the app.
 - Changed: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). No server part.
 
-## What's new in 1.135.13
-
-**Ukrainian – stage 14**
-
-- **Ukrainian.** Ukrainian is translated further: chat (rest), pets and places (location sharing, GPS trackers) (5958 of 6994 texts). The language is still hidden – nothing changes in the app.
-- Changed: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`). No server part.
-
 ## How it works
 
 ```mermaid
@@ -263,7 +263,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.142.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.142.1` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

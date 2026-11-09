@@ -3309,6 +3309,7 @@ window.PINN_I18N && window.PINN_I18N.keys("en", {
   "lists.confirmClearGiven": "Remove all given gifts from the list?",
   "lists.confirmDelete": {"one":"Delete “{name}” with {n} entry?","other":"Delete “{name}” with {n} entries?"},
   "lists.confirmDeleteTpl": "Delete template “{name}”?",
+  "lists.confirmDeleteTrip": "The trip ({range}) will also disappear from the calendar and from the year in review.",
   "lists.confirmReset": "Remove all ticks from this list? Handy for reusing the list for the next trip.",
   "lists.confirmUnreserve": "Cancel reservation for “{name}”?",
   "lists.deleteTpl": "Delete template",

@@ -133,6 +133,13 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.142.1
+
+**Aviso ao apagar a lista de bagagem de uma viagem**
+
+- **Aviso ao apagar.** Se apagar uma lista de bagagem com destino e datas, o pinn. avisa agora que a viagem também desaparece do calendário e do resumo do ano.
+- Alterado: `js/listen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (um texto novo nas catorze línguas), `src/` (versão), `index.html`, todos os README. Sem parte de servidor.
+
 ## Novidades da 1.142.0
 
 **Resumo do ano: despesas, refeições cozinhadas e viagens**
@@ -206,13 +213,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Ucraniano.** O ucraniano já está disponível para todos: escolha Українська em Configurações → Idioma e região; se o navegador estiver em ucraniano, o pinn. o seleciona automaticamente. Todos os 6994 textos, as notificações push, o assistente de configuração e a exportação de dados estão em ucraniano; os números de emergência da Ucrânia são 102, 103, 101 e 112. O pinn. agora fala catorze idiomas. A Siri continua respondendo em inglês no ucraniano.
 - Alterado: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), todos os README (lista de idiomas, “catorze idiomas”). Desde a 1.134.0 também: `i18n/uk.i18n.js`, `js/textkern.js`, `js/region.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `.github/scripts/`. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-textkern.js`, `pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
 
-## Novidades da 1.135.17
-
-**Ucraniano – etapa 18**
-
-- **Ucraniano.** O assistente de configuração e a exportação de dados já falam ucraniano: todos os guias passo a passo (rede doméstica, DuckDNS, VPN, Google, IA, localização, Home Assistant, apps) e todos os textos da exportação. Os números de emergência da Ucrânia (102, 103, 101 e 112) foram verificados. Há um novo `README.uk.md` curto. O idioma ainda está oculto – no app nada muda.
-- Alterado: `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `README.uk.md`. Sem parte de servidor.
-
 ## Como funciona
 
 ```mermaid
@@ -241,7 +241,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.142.0` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.142.1` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

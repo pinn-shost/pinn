@@ -3309,6 +3309,7 @@ window.PINN_I18N && window.PINN_I18N.keys("nl", {
   "lists.confirmClearGiven": "Alle gegeven cadeaus van de lijst verwijderen?",
   "lists.confirmDelete": {"one":"“{name}” met {n} item verwijderen?","other":"“{name}” met {n} items verwijderen?"},
   "lists.confirmDeleteTpl": "Sjabloon “{name}” verwijderen?",
+  "lists.confirmDeleteTrip": "De reis ({range}) verdwijnt dan ook uit de agenda en uit het jaaroverzicht.",
   "lists.confirmReset": "Alle vinkjes van deze lijst wissen? Handig om de lijst voor de volgende reis opnieuw te gebruiken.",
   "lists.confirmUnreserve": "Reservering van “{name}” annuleren?",
   "lists.deleteTpl": "Sjabloon verwijderen",

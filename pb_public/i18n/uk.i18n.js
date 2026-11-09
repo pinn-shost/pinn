@@ -3302,6 +3302,7 @@ window.PINN_I18N && window.PINN_I18N.keys("uk", {
   "lists.confirmClearGiven": "Вилучити зі списку всі подаровані подарунки?",
   "lists.confirmDelete": {"one":"Видалити «{name}» з {n} записом?","few":"Видалити «{name}» з {n} записами?","many":"Видалити «{name}» з {n} записами?"},
   "lists.confirmDeleteTpl": "Видалити шаблон «{name}»?",
+  "lists.confirmDeleteTrip": "Подорож ({range}) також зникне з календаря та з підсумків року.",
   "lists.confirmReset": "Зняти всі позначки в цьому списку? Зручно, щоб використати список для наступної поїздки.",
   "lists.confirmUnreserve": "Скасувати резервування «{name}»?",
   "lists.deleteTpl": "Видалити шаблон",

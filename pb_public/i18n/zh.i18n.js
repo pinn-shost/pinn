@@ -3300,6 +3300,7 @@ window.PINN_I18N && window.PINN_I18N.keys("zh", {
   "lists.confirmClearGiven": "要从清单中移除所有已送出的礼物吗？",
   "lists.confirmDelete": {"other":"删除“{name}”及其 {n} 个条目？"},
   "lists.confirmDeleteTpl": "要删除模板“{name}”吗？",
+  "lists.confirmDeleteTrip": "这次旅行（{range}）也会从日历和年度回顾中消失。",
   "lists.confirmReset": "要取消此清单中的所有勾选吗？便于下次旅行时重复使用该清单。",
   "lists.confirmUnreserve": "要取消“{name}”的预订吗？",
   "lists.deleteTpl": "删除模板",

@@ -3309,6 +3309,7 @@ window.PINN_I18N && window.PINN_I18N.keys("de", {
   "lists.confirmClearGiven": "Alle verschenkten Geschenke aus der Liste entfernen?",
   "lists.confirmDelete": {"one":"„{name}“ mit {n} Eintrag löschen?","other":"„{name}“ mit {n} Einträgen löschen?"},
   "lists.confirmDeleteTpl": "Vorlage „{name}“ löschen?",
+  "lists.confirmDeleteTrip": "Die Reise ({range}) verschwindet damit auch aus dem Kalender und aus dem Jahresrückblick.",
   "lists.confirmReset": "Alle Haken dieser Liste entfernen? Praktisch, um die Liste für die nächste Reise wiederzuverwenden.",
   "lists.confirmUnreserve": "Reservierung für „{name}“ aufheben?",
   "lists.deleteTpl": "Vorlage löschen",

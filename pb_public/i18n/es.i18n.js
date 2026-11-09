@@ -3307,6 +3307,7 @@ window.PINN_I18N && window.PINN_I18N.keys("es", {
   "lists.confirmClearGiven": "¿Quitar de la lista todos los regalos entregados?",
   "lists.confirmDelete": {"one":"¿Eliminar «{name}» con {n} entrada?","other":"¿Eliminar «{name}» con {n} entradas?"},
   "lists.confirmDeleteTpl": "¿Borrar la plantilla «{name}»?",
+  "lists.confirmDeleteTrip": "El viaje ({range}) también desaparecerá del calendario y del resumen del año.",
   "lists.confirmReset": "¿Quitar todas las marcas de esta lista? Práctico para reutilizarla en el próximo viaje.",
   "lists.confirmUnreserve": "¿Anular la reserva de «{name}»?",
   "lists.deleteTpl": "Eliminar plantilla",
