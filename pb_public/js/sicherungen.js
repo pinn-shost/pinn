@@ -277,8 +277,71 @@ function sysRenderAuto(info, kannAktion) {
     if (l.ergebnis === 'ok' || l.ergebnis === 'gestartet') text = tk('maint.auto.lastOk', { version: l.version || '', when });
     else if (l.ergebnis === 'keine') text = tk('maint.auto.lastNone', { when });
     else if (l.ergebnis === 'fehler') text = tk('maint.auto.lastFail', { when, message: sysAutoFailText(l.code) });
+    else if (l.ergebnis === 'wartet') text = tk('maint.auto.lastBusy', { when });
   }
   document.getElementById('sysAutoLast').textContent = text;
+  // Which clock the time belongs to (the region of the admin who saved the plan; Europe/Berlin for older plans)
+  const zone = a.zone || 'Europe/Berlin';
+  document.getElementById('sysAutoZone').textContent = a.an ? tk('maint.auto.zone', { zone: sysZoneLabel(zone) }) : '';
+  sysRenewZone(a, kannAktion);
+}
+// Time zone of this device and a table of its UTC offsets for the next three years (since 1.146.0).
+// The server has no time zone database, so the app tells it when summer and winter time change in this region:
+// [[utc seconds, offset minutes], …] – first row = offset from now on, then one row per change.
+function sysDeviceZone() {
+  try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { return ''; }
+}
+function sysZoneTable(zone) {
+  if (!zone) return null;
+  let fmt;
+  try {
+    fmt = new Intl.DateTimeFormat('en-US', { timeZone: zone, hourCycle: 'h23', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' });
+  } catch (e) { return null; }
+  const offset = (ms) => {
+    const p = {};
+    fmt.formatToParts(new Date(ms)).forEach(x => { p[x.type] = Number(x.value); });
+    const wall = Date.UTC(p.year, p.month - 1, p.day, p.hour === 24 ? 0 : p.hour, p.minute);
+    return Math.round((wall - Math.floor(ms / 60000) * 60000) / 60000);
+  };
+  const DAY = 864e5;
+  const start = Date.now() - 2 * DAY, end = start + 3 * 366 * DAY;
+  const rows = [[Math.floor(start / 1000), offset(start)]];
+  let prevT = start, prev = rows[0][1];
+  for (let t = start + DAY; t <= end; t += DAY) {
+    const o = offset(t);
+    if (o !== prev) {
+      // find the minute of the change
+      let lo = prevT, hi = t;
+      while (hi - lo > 60000) { const mid = Math.floor((lo + hi) / 2 / 60000) * 60000; if (offset(mid) === prev) lo = mid; else hi = mid; }
+      rows.push([Math.floor(hi / 1000), o]);
+      prev = o;
+      if (rows.length >= 60) break;
+    }
+    prevT = t;
+  }
+  return { zone, wechsel: rows, bis: Math.floor(end / 1000) };
+}
+function sysZoneLabel(zone) { return String(zone || '').replace(/_/g, ' '); }
+// The table on the server runs short (or the plan is from before 1.146.0): renew it quietly – only for the same zone
+let sysZoneRenewing = false;
+async function sysRenewZone(a, kannAktion) {
+  if (sysZoneRenewing || !a || !a.an || !kannAktion) return;
+  const zone = sysDeviceZone();
+  if (!zone || (a.zone && a.zone !== zone)) return;
+  if (a.zone && (a.bis || 0) - Date.now() / 1000 > 400 * 86400) return;
+  const table = sysZoneTable(zone);
+  if (!table) return;
+  sysZoneRenewing = true;
+  try {
+    const res = await apiFetch('/api/pinn/system/auto', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      // the plan is sent along unchanged, so a server from before 1.146.0 keeps it as it is
+      body: JSON.stringify(Object.assign({ nurZone: true, an: !!a.an, rhythmus: a.rhythmus, tag: a.tag, zeit: a.zeit }, table)),
+    });
+    const body = await res.json().catch(() => ({}));
+    if (res.ok && body.auto && sysInfo) { sysInfo.auto = body.auto; sysRenderAuto(sysInfo, kannAktion); }
+  } catch (e) { /* tried again the next time the settings open */ }
+  finally { sysZoneRenewing = false; }
 }
 async function sysSaveAuto() {
   if (sysAutoBusy) return;
@@ -286,14 +349,15 @@ async function sysSaveAuto() {
   if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) return;
   sysAutoBusy = true;
   try {
+    // The chosen time is the time of this device's region
     const res = await apiFetch('/api/pinn/system/auto', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+      body: JSON.stringify(Object.assign({
         an: document.getElementById('sysAutoOn').checked,
         rhythmus: document.getElementById('sysAutoRhythm').value,
         tag: Number(document.getElementById('sysAutoDay').value),
         zeit: time,
-      }),
+      }, sysZoneTable(sysDeviceZone()) || {})),
     });
     const body = await res.json().catch(() => ({}));
     if (res.status === 404) throw new Error(tk('maint.serverMissing'));

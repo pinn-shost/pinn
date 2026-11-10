@@ -133,6 +133,15 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.146.0
+
+**Neve à medida de cada título, hora das atualizações conforme a região**
+
+- **Neve à medida.** O pinn. mede cada letra de um título com a fonte real e coloca a neve mesmo por cima – mais alta nas letras altas, mais baixa nas pequenas, com montinhos e uma ou outra gota. Os espaços entre palavras ficam livres, os emoji não têm neve, nada é esticado e funciona em todas as línguas e escritas.
+- **Atualizações automáticas conforme a região.** A hora escolhida aplica-se agora no fuso horário do dispositivo onde é guardada (horário de verão e inverno incluídos), e já não sempre na hora alemã. As definições mostram que fuso horário se aplica.
+- **O painel bloqueado carrega sozinho as novas versões.** Um iPad com o painel da família bloqueado (ou o ecrã de início de sessão) recarrega cerca de um minuto após uma atualização se ninguém estiver a escrever. A app mostra «a aguardar» se a essa hora estiver a decorrer uma cópia de segurança.
+- Alterado: `js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`, todos os README. Parte do servidor: copiar os hooks, o PocketBase reinicia.
+
 ## Novidades da 1.145.0
 
 **Visual de inverno e Natal**
@@ -219,15 +228,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Marcar no widget.** No widget médio ou grande, toque numa tarefa ou item e fica marcado também no pinn. (o iOS abre o Scriptable por instantes). O que está marcado fica na lista, riscado; «Concluir as compras» faz-se como sempre no pinn. (um botão no fundo do widget abre a app). Os perfis com bloqueio infantil não podem marcar nada. Se já usa o script da 1.140.0, copie-o de novo e substitua-o no Scriptable.
 - Alterado: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (7 textos novos em todos os catorze idiomas), `src/` (versão), `index.html`, `.github/scripts/check-hooks.js`, todos os README. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
 
-## Novidades da 1.140.0
-
-**Widgets e Apple Watch**
-
-- **Widgets.** Em Definições → Controlo por voz existe agora «Widgets e Apple Watch». Com a app gratuita Scriptable, um widget no ecrã principal ou de bloqueio mostra os compromissos de hoje, as tarefas abertas e o número de itens de compras; o script pronto copia-se com um toque.
-- **Apple Watch.** Com um atalho («Obter Conteúdo do URL» → «Mostrar Resultado», «Mostrar no Apple Watch») vê hoje, amanhã, a lista de compras ou tudo no relógio, ou pede que seja lido em voz alta. Os passos estão na app.
-- É o mesmo link secreto da Siri, só de leitura, e os convidados não o têm. Os textos vêm no idioma do perfil.
-- Alterado: `js/sprachsteuerung.js`, `js/versionslog.js`, `i18n/` (16 textos novos e um subtítulo alterado em todos os catorze idiomas), `src/` (`index.html`, definições), `.github/scripts/check-hooks.js`, todos os README. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
-
 ## Como funciona
 
 ```mermaid
@@ -256,7 +256,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.145.0` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.146.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

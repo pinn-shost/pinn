@@ -133,6 +133,15 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.146.0의 새 소식
+
+**제목마다 꼭 맞는 눈, 지역에 맞춘 업데이트 시간**
+
+- **맞춤형 눈.** pinn.은 제목의 모든 글자를 실제 글꼴로 측정해 그 위에 눈을 올립니다. 키가 큰 글자에는 높게, 작은 글자에는 낮게, 눈덩이와 가끔 물방울도 있습니다. 단어 사이는 비워 두고, 이모지에는 눈이 없으며, 늘리지 않고, 모든 언어와 문자에서 작동합니다.
+- **지역에 맞춘 자동 업데이트.** 설정한 시간은 이제 항상 독일 시간이 아니라 저장한 기기의 시간대(서머타임 포함)로 적용됩니다. 설정에 어떤 시간대가 적용되는지 표시됩니다.
+- **잠긴 대시보드가 새 버전을 스스로 불러옵니다.** 가족 대시보드가 잠긴 iPad(또는 로그인 화면)는 아무도 입력하지 않으면 업데이트 약 1분 후 다시 불러옵니다. 업데이트 시간에 백업이 진행 중이면 앱에 '대기 중'이 표시됩니다.
+- 변경: `js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`, 모든 README. 서버 부분: hooks를 복사하면 PocketBase가 다시 시작됩니다.
+
 ## 1.145.0의 새 소식
 
 **겨울 & 크리스마스 테마**
@@ -219,15 +228,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **위젯에서 체크하기.** 중간·큰 위젯에서 할 일이나 장보기 항목을 탭하면 pinn.에서도 체크돼요(이때 iOS가 Scriptable을 잠시 열어요). 체크한 항목은 취소선과 함께 목록에 남고, “장보기 완료”는 평소처럼 pinn.에서 해요(위젯 아래 버튼이 앱을 열어요). 아이 잠금이 켜진 프로필은 체크할 수 없어요. 1.140.0의 스크립트를 이미 쓰고 있다면 다시 복사해서 Scriptable에서 바꿔 주세요.
 - 변경: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (14개 언어 모두에 새 문구 7개), `src/` (버전), `index.html`, `.github/scripts/check-hooks.js`, 모든 README. 서버(hook 교체, PocketBase가 다시 시작돼요): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
 
-## 1.140.0의 새 소식
-
-**위젯 및 Apple Watch**
-
-- **위젯.** 설정 → 음성 제어에 이제 “위젯 및 Apple Watch”가 있어요. 무료 앱 Scriptable을 쓰면 홈 화면이나 잠금 화면의 위젯에 오늘의 일정, 남은 할 일, 장보기 항목 수가 표시돼요. 준비된 스크립트는 한 번 탭하면 복사돼요.
-- **Apple Watch.** 단축어(“URL 콘텐츠 가져오기” → “결과 보기”, “Apple Watch에서 보기”)로 오늘, 내일, 장보기 목록 또는 전체를 워치에서 보거나 소리로 들을 수 있어요. 단계는 앱 안에 있어요.
-- Siri와 같은 비밀 링크이고 읽기 전용이며, 게스트는 쓸 수 없어요. 문구는 프로필의 언어로 나와요.
-- 변경: `js/sprachsteuerung.js`, `js/versionslog.js`, `i18n/`(14개 언어 모두에 새 문구 16개와 바뀐 부제), `src/`(`index.html`, 설정), `.github/scripts/check-hooks.js`, 모든 README. 서버(hook 교체, PocketBase가 다시 시작돼요): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
-
 ## 작동 방식
 
 ```mermaid
@@ -256,7 +256,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.145.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.146.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

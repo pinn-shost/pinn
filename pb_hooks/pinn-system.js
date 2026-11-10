@@ -469,13 +469,39 @@ function update(vorab) {
 // The cron job runs every 5 minutes. A run is due from the chosen time on for 3 hours (but not past midnight) and
 // only once per day; if the container „wartung“ is busy the next 5-minute tick tries again.
 // Time zone (fixed in 1.144.1): the PocketBase container has no TZ and runs in UTC, so the local Date methods
-// (getHours, getDay …) were one to two hours off and the chosen time did not match the clock in the app. Like the
-// other reminders on the server, the plan now uses the wall clock of Europe/Berlin (summer/winter time calculated here).
+// (getHours, getDay …) were one to two hours off and the chosen time did not match the clock in the app.
+// Since 1.146.0 the time is the wall clock of the region of the admin who saved the plan: the app sends the time zone
+// of the device (e.g. America/New_York) together with a small table of its UTC offsets for the next years
+//   zone: "America/New_York", wechsel: [[utc seconds, offset minutes], …] (first row = offset from then on, then every
+//   change between summer and winter time), bis: utc seconds (end of the table)
+// because the JavaScript engine of PocketBase has no time zone database. Past the end of the table the same date one
+// year earlier is used (the app renews the table whenever an admin opens the settings). Plans without a table (saved
+// before 1.146.0) keep Europe/Berlin.
+//   letzter.ergebnis "wartet" (since 1.146.0): due, but a backup or another update was running – tried again every 5 minutes.
 const F_AUTO = "/pb_data/pinn_autoupdate.json";
 const AUTO_FENSTER_MIN = 180;
 const AUTO_ZEIT_RE = /^([01]\d|2[0-3]):([0-5]\d)$/;
 function autoStandard() {
     return { an: false, rhythmus: "taeglich", tag: 1, zeit: "04:30", gespeichert: 0, letzter: null };
+}
+const AUTO_ZONE_RE = /^[A-Za-z][A-Za-z0-9_+\-]*(\/[A-Za-z0-9_+\-]+){0,3}$/;
+// Time zone table from the app – checked strictly; anything odd is dropped (then Europe/Berlin applies)
+function autoZone(r) {
+    const zone = String(r.zone || "");
+    const t = r.wechsel;
+    if (!AUTO_ZONE_RE.test(zone) || zone.length > 64 || !Array.isArray(t) || !t.length || t.length > 60) return null;
+    const out = [];
+    for (let i = 0; i < t.length; i++) {
+        const row = t[i];
+        if (!Array.isArray(row) || row.length !== 2) return null;
+        const sec = Math.floor(Number(row[0])), min = Math.round(Number(row[1]));
+        if (!isFinite(sec) || !isFinite(min) || Math.abs(min) > 18 * 60) return null;
+        if (out.length && sec <= out[out.length - 1][0]) return null;
+        out.push([sec, min]);
+    }
+    let bis = Math.floor(Number(r.bis) || 0);
+    if (bis < out[out.length - 1][0]) bis = out[out.length - 1][0];
+    return { zone, wechsel: out, bis };
 }
 function autoBereinigen(raw) {
     const c = autoStandard();
@@ -486,9 +512,11 @@ function autoBereinigen(raw) {
     c.tag = (tag >= 0 && tag <= 6) ? tag : 1;
     c.zeit = AUTO_ZEIT_RE.test(String(r.zeit || "")) ? String(r.zeit) : "04:30";
     c.gespeichert = Math.max(0, Number(r.gespeichert) || 0);
+    const z = autoZone(r);
+    if (z) { c.zone = z.zone; c.wechsel = z.wechsel; c.bis = z.bis; }
     const l = r.letzter;
     if (l && typeof l === "object") {
-        const erg = ["keine", "gestartet", "ok", "fehler"].indexOf(l.ergebnis) >= 0 ? l.ergebnis : "";
+        const erg = ["keine", "gestartet", "ok", "fehler", "wartet"].indexOf(l.ergebnis) >= 0 ? l.ergebnis : "";
         if (erg) {
             c.letzter = {
                 datum: /^\d{4}-\d{2}-\d{2}$/.test(String(l.datum || "")) ? String(l.datum) : "",
@@ -514,7 +542,7 @@ function autoSchreiben(cfg) {
     }
 }
 function zweiStellig(n) { return (n < 10 ? "0" : "") + n; }
-// Wall clock of Europe/Berlin, independent of the time zone of the container
+// Wall clock of Europe/Berlin, independent of the time zone of the container (plans without a time zone table)
 function letzterSonntagUtc(jahr, monat) {
     const last = new Date(Date.UTC(jahr, monat + 1, 0));
     return Date.UTC(jahr, monat, last.getUTCDate() - last.getUTCDay(), 1, 0, 0);
@@ -523,19 +551,31 @@ function berlinOffsetMs(utcMs) {
     const y = new Date(utcMs).getUTCFullYear();
     return (utcMs >= letzterSonntagUtc(y, 2) && utcMs < letzterSonntagUtc(y, 9)) ? 7200000 : 3600000;
 }
+// Offset of the plan's time zone at this moment (ms); table from the app, otherwise Berlin
+const JAHR_S = 31556952;   // average year in seconds (365.2425 days)
+function offsetMs(cfg, utcMs) {
+    const t = cfg && cfg.wechsel;
+    if (!Array.isArray(t) || !t.length) return berlinOffsetMs(utcMs);
+    let s = Math.floor(utcMs / 1000);
+    const bis = Math.max(Number(cfg.bis) || 0, t[t.length - 1][0]);
+    if (s > bis) s -= Math.ceil((s - bis) / JAHR_S) * JAHR_S;
+    let off = t[0][1];
+    for (let i = 0; i < t.length && t[i][0] <= s; i++) off = t[i][1];
+    return off * 60000;
+}
 // { y, m (0-11), d, wd (0 = Sunday), min (minutes since midnight), iso }
-function wand(jetzt) {
+function wand(jetzt, cfg) {
     const ms = jetzt && typeof jetzt.getTime === "function" ? jetzt.getTime() : Number(jetzt) || Date.now();
-    const w = new Date(ms + berlinOffsetMs(ms));
+    const w = new Date(ms + offsetMs(cfg, ms));
     const y = w.getUTCFullYear(), m = w.getUTCMonth(), d = w.getUTCDate();
     return { y, m, d, wd: w.getUTCDay(), min: w.getUTCHours() * 60 + w.getUTCMinutes(), iso: y + "-" + zweiStellig(m + 1) + "-" + zweiStellig(d) };
 }
-// Wall clock of Europe/Berlin → moment (ms since 1970)
-function wandZuMs(y, m, d, minuten) {
+// Wall clock of the plan's time zone → moment (ms since 1970)
+function wandZuMs(y, m, d, minuten, cfg) {
     const lokal = Date.UTC(y, m, d, 0, minuten, 0, 0);
-    return lokal - berlinOffsetMs(lokal - berlinOffsetMs(lokal));
+    return lokal - offsetMs(cfg, lokal - offsetMs(cfg, lokal));
 }
-function datumKey(jetzt) { return wand(jetzt).iso; }
+function datumKey(jetzt, cfg) { return wand(jetzt, cfg).iso; }
 function minutenVon(zeit) {
     const m = AUTO_ZEIT_RE.exec(String(zeit || ""));
     return m ? parseInt(m[1], 10) * 60 + parseInt(m[2], 10) : 270;
@@ -543,26 +583,26 @@ function minutenVon(zeit) {
 // Is a run due at this moment? (pure function, tested in check-hooks.js)
 function autoFaellig(cfg, jetzt) {
     if (!cfg || !cfg.an) return false;
-    const w = wand(jetzt);
+    const w = wand(jetzt, cfg);
     if (cfg.letzter && cfg.letzter.datum === w.iso) return false;
     if (cfg.rhythmus === "woechentlich" && w.wd !== cfg.tag) return false;
     const soll = minutenVon(cfg.zeit);
     const fenster = Math.min(AUTO_FENSTER_MIN, 1440 - soll);
     if (!(w.min >= soll && w.min < soll + fenster)) return false;
     // Time already over when the plan was saved: not today, only from the next day on
-    if (cfg.gespeichert && wandZuMs(w.y, w.m, w.d, soll) < cfg.gespeichert) return false;
+    if (cfg.gespeichert && wandZuMs(w.y, w.m, w.d, soll, cfg) < cfg.gespeichert) return false;
     return true;
 }
 // Next planned run (Date) – for the display in the app
 function autoNaechste(cfg, jetzt) {
     if (!cfg || !cfg.an) return null;
     const soll = minutenVon(cfg.zeit);
-    const w = wand(jetzt);
+    const w = wand(jetzt, cfg);
     const ms = jetzt && typeof jetzt.getTime === "function" ? jetzt.getTime() : Date.now();
     for (let i = 0; i < 8; i++) {
         const tag = new Date(Date.UTC(w.y, w.m, w.d + i));
         if (cfg.rhythmus === "woechentlich" && tag.getUTCDay() !== cfg.tag) continue;
-        const t = wandZuMs(tag.getUTCFullYear(), tag.getUTCMonth(), tag.getUTCDate(), soll);
+        const t = wandZuMs(tag.getUTCFullYear(), tag.getUTCMonth(), tag.getUTCDate(), soll, cfg);
         if (t <= ms) continue;
         // Already checked today: the next run is on another day
         if (i === 0 && cfg.letzter && cfg.letzter.datum === w.iso) continue;
@@ -573,12 +613,21 @@ function autoNaechste(cfg, jetzt) {
 function autoSetzen(daten) {
     const d = (daten && typeof daten === "object") ? daten : {};
     const alt = autoLesen();
+    const z = autoZone(d);
+    // Only renew the time zone table (the app does this quietly when it runs short) – the plan itself stays as it is
+    if (d.nurZone === true) {
+        if (!z) throw fehler("zone", "Unbekannte Zeitzone.");
+        if (alt.zone && alt.zone !== z.zone) return autoAnsicht(alt);
+        const neu = autoBereinigen(Object.assign({}, alt, z));
+        if (!autoSchreiben(neu)) throw fehler("speichern", "Die Einstellung konnte nicht gespeichert werden.");
+        return autoAnsicht(neu);
+    }
     const neu = autoBereinigen(Object.assign({}, alt, {
         an: d.an === true,
         rhythmus: d.rhythmus !== undefined ? d.rhythmus : alt.rhythmus,
         tag: d.tag !== undefined ? d.tag : alt.tag,
         zeit: d.zeit !== undefined ? d.zeit : alt.zeit,
-    }));
+    }, z || {}));
     if (d.zeit !== undefined && !AUTO_ZEIT_RE.test(String(d.zeit))) throw fehler("zeit", "Bitte eine Uhrzeit wie 04:30 angeben.");
     if (d.rhythmus !== undefined && d.rhythmus !== "taeglich" && d.rhythmus !== "woechentlich") throw fehler("rhythmus", "Unbekannter Rhythmus.");
     // Every save may run again today, as long as the chosen time is still ahead (see autoFaellig) – unless an update
@@ -595,7 +644,9 @@ function autoSetzen(daten) {
 function autoAnsicht(cfg) {
     const c = cfg || autoLesen();
     const n = autoNaechste(c, new Date());
-    return Object.assign({}, c, { naechste: n ? Math.floor(n.getTime() / 1000) : 0 });
+    const out = Object.assign({}, c, { naechste: n ? Math.floor(n.getTime() / 1000) : 0, zone: c.zone || "", bis: c.bis || 0 });
+    delete out.wechsel;   // the app only needs the name and the end of the table
+    return out;
 }
 // A started automatic update: once the job is over, remember the result (the cron job also runs in the new
 // PocketBase after the restart of the update)
@@ -623,7 +674,7 @@ function autoPruefen(jetzt) {
     const cfg = autoLesen();
     autoAbschliessen(cfg);
     if (!autoFaellig(cfg, jetzt)) return { aktion: "nichts" };
-    const heute = datumKey(jetzt);
+    const heute = datumKey(jetzt, cfg);
     const merke = (ergebnis, extra, endgueltig) => {
         const neu = Object.assign({ datum: endgueltig ? heute : "", zeit: Date.now(), ergebnis, version: "", code: "", jobId: "" }, extra || {});
         const alt = cfg.letzter;
@@ -633,7 +684,8 @@ function autoPruefen(jetzt) {
         autoSchreiben(cfg);
         return neu;
     };
-    if (beschaeftigt()) return { aktion: "beschaeftigt" };
+    // A backup or another update is running: note it (the app shows "waiting") and try again in 5 minutes
+    if (beschaeftigt()) { merke("wartet", { code: "beschaeftigt" }, false); return { aktion: "beschaeftigt" }; }
     let u = null;
     try { u = updateInfo(true); } catch (e) { u = null; }
     if (!u || (u.fehler && !u.tag)) { merke("fehler", { code: "github" }, false); return { aktion: "github" }; }
@@ -644,7 +696,7 @@ function autoPruefen(jetzt) {
         return { aktion: "gestartet", version: r.version || u.version };
     } catch (err) {
         const code = err.pinnCode || "fehler";
-        if (code === "beschaeftigt") return { aktion: "beschaeftigt" };
+        if (code === "beschaeftigt") { merke("wartet", { code: "beschaeftigt" }, false); return { aktion: "beschaeftigt" }; }
         merke("fehler", { code }, true);
         try { require(`${__hooks}/pinn-protokoll.js`).fehler("system", "Automatisches Update nicht gestartet: " + err.message); } catch (e) { /* ignore */ }
         return { aktion: "fehler", code };

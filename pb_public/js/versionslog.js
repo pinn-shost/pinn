@@ -22,6 +22,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.146', datum: '10.11.2026', titel: 'Schnee passend zu jeder Überschrift, Update-Uhrzeit nach Region',
+    punkte: [
+      ['neu', 'Schnee nach Maß: Der Schnee auf den Überschriften wird jetzt für jede Überschrift einzeln gezeichnet. pinn. misst jeden Buchstaben der ersten Zeile in der echten Schrift – der Schnee liegt direkt auf den Buchstaben (auf hohen höher, auf kleinen tiefer), hat Klumpen und hier und da einen Tropfen, lässt die Lücken zwischen Wörtern frei und spart Emoji aus. Nichts wird in die Länge gezogen, und es klappt in jeder Sprache und Schrift. Die Stechpalme sitzt jetzt auf dem Schnee am Ende des ersten Wortes.'],
+      ['neu', 'Automatische Updates nach Region: Die eingestellte Uhrzeit gilt jetzt in der Zeitzone des Geräts, auf dem sie gespeichert wird (Sommer- und Winterzeit inklusive), nicht mehr fest in deutscher Zeit. Unter der Uhrzeit steht, welche Zeitzone gilt. Bestehende Einstellungen übernehmen die Zeitzone beim nächsten Öffnen der Einstellungen.'],
+      ['fix', 'Gesperrtes Dashboard und Anmeldung laden eine neue Version von selbst: Bisher lief auf einem iPad mit gesperrtem Dashboard nach einem (automatischen) Update die alte Version weiter, weil der Update-Hinweis hinter dem Dashboard lag. Jetzt lädt pinn. etwa eine Minute nach dem Update neu, wenn gerade niemand tippt; in der geöffneten App erscheint wie bisher nur der Hinweis. Außerdem zeigt die App „wartet“, wenn zur Update-Zeit gerade eine Sicherung läuft, und der Server schreibt jedes Ergebnis ins Protokoll.'],
+      ['info', 'Geändert: js/winterzeit.js, css/winterzeit.css, js/versionspruefung.js, js/sicherungen.js, js/sprachen.js, js/versionslog.js, pb_hooks/pinn-system.js, pb_hooks/system.pb.js, src/ (System-Fenster, Version), index.html, i18n/ (2 neue Texte in allen vierzehn Sprachen), i18n/versionslog.en.js, alle READMEs. Server-Teil: Hooks einspielen, PocketBase startet neu.'],
+    ],
+  },
+  {
     v: '1.145', datum: '10.11.2026', titel: 'Winter- und Weihnachtsdesign',
     punkte: [
       ['neu', 'Winterdesign vom 1. Dezember bis 6. Januar: Schnee auf dem pinn.-Logo, auf den Überschriften und unten in der Seitenleiste, dazu ein kurzer Schneeschauer beim Öffnen der App und nach einer längeren Pause. Tippe aufs Logo, dann schneit es noch einmal.'],

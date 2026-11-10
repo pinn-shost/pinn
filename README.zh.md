@@ -133,6 +133,15 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.146.0 新功能
+
+**雪花贴合每个标题，更新时间按地区**
+
+- **量身定制的雪。** pinn. 用真实字体测量标题的每个字符，把雪正好铺在上面——高的字母上更高，矮的字母上更低，还有小雪团和偶尔的雪滴。词与词之间留空，表情符号上没有雪，不做拉伸，适用于所有语言和文字。
+- **按地区的自动更新。** 所选时间现在按保存它的设备所在时区计算（含夏令时和冬令时），不再固定为德国时间。设置中会显示所用时区。
+- **锁定的仪表板会自行加载新版本。** 锁定家庭仪表板（或登录界面）的 iPad 在更新后约一分钟、无人输入时自动重新加载。若更新时间正在进行备份，应用会显示“等待中”。
+- 更改：`js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`，所有 README。服务器部分：复制 hooks，PocketBase 会重启。
+
 ## 1.145.0 新功能
 
 **冬季与圣诞主题**
@@ -219,15 +228,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **在小组件中勾选。** 在中号和大号小组件中点按任务或购物项目，pinn. 中也会同步勾选（此时 iOS 会短暂打开 Scriptable）。已勾选的项目会带删除线保留在清单中；“完成购物”仍像往常一样在 pinn. 中进行（小组件底部的按钮会打开应用）。开启儿童锁的资料无法勾选。如果你已在使用 1.140.0 的脚本，请重新复制并在 Scriptable 中替换。
 - 更改：`js/sprachsteuerung.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/`（十四种语言各 7 条新文本）、`src/`（版本）、`index.html`、`.github/scripts/check-hooks.js`、所有 README。服务器（替换 hook，PocketBase 会重启）：`pb_hooks/pinn-sprache.js`、`pb_hooks/sprache.pb.js`。
 
-## 1.140.0 新功能
-
-**小组件与 Apple Watch**
-
-- **小组件。** 在“设置 → 语音控制”中新增了“小组件与 Apple Watch”。借助免费的 Scriptable App，主屏幕或锁屏上的小组件会显示今天的日程、未完成的任务和购物项目数量；现成的脚本点一下即可复制。
-- **Apple Watch。** 通过快捷指令（“获取 URL 内容” → “显示结果”，“在 Apple Watch 上显示”），可以在手表上查看今天、明天、购物清单或全部内容，也可以让它读出来。具体步骤在 App 中。
-- 使用的是与 Siri 相同的私密链接，仅供查看，访客没有该链接。文本使用个人资料的语言。
-- 更改：`js/sprachsteuerung.js`、`js/versionslog.js`、`i18n/`（十四种语言各 16 条新文本和一个更改的副标题）、`src/`（`index.html`、设置）、`.github/scripts/check-hooks.js`、所有 README。服务器（替换 hook，PocketBase 会重启）：`pb_hooks/pinn-sprache.js`、`pb_hooks/sprache.pb.js`。
-
 ## 工作原理
 
 ```mermaid
@@ -256,7 +256,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.145.0` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.146.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

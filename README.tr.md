@@ -110,6 +110,15 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.146.0 sürümündeki yenilikler
+
+**Her başlığa uyan kar, bölgeye göre güncelleme saati**
+
+- **Ölçüye göre kar.** pinn. bir başlığın her harfini gerçek yazı tipiyle ölçer ve karı tam üstüne koyar – uzun harflerde daha yukarıda, küçüklerde daha aşağıda, topaklar ve arada bir damla ile. Kelimeler arasındaki boşluklar boş kalır, emojilere kar yağmaz, hiçbir şey uzatılmaz ve her dilde ve yazıda çalışır.
+- **Bölgeye göre otomatik güncellemeler.** Seçilen saat artık her zaman Almanya saatine göre değil, kaydedildiği cihazın saat dilimine göre geçerlidir (yaz ve kış saati dahil). Ayarlar hangi saat diliminin geçerli olduğunu gösterir.
+- **Kilitli pano yeni sürümleri kendisi yükler.** Kilitli aile panosu (veya giriş ekranı) açık bir iPad, kimse yazmıyorsa bir güncellemeden yaklaşık bir dakika sonra yeniden yüklenir. O saatte bir yedekleme çalışıyorsa uygulama „bekliyor” gösterir.
+- Değiştirildi: `js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`, tüm README dosyaları. Sunucu kısmı: hook'ları kopyalayın, PocketBase yeniden başlar.
+
 ## 1.145.0 sürümündeki yenilikler
 
 **Kış ve Noel görünümü**
@@ -164,14 +173,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Silerken uyarı.** Hedefi ve tarihleri olan bir bavul listesini silersen pinn. artık uyarır: gezi takvimden ve yıl özetinden de kaybolur.
 - Değişenler: `js/listen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (on dört dilde 1 yeni metin), `src/` (sürüm), `index.html`, tüm README dosyaları. Sunucu kısmı yok.
 
-## 1.142.0 sürümündeki yenilikler
-
-**Yıl özeti: harcamalar, pişirilen yemekler ve geziler**
-
-- **Yıl özeti.** 28 Aralık’ta saat 18.00’den itibaren (ve istediğin zaman Ayarlar → Ön bakış altında) pinn. yılınızı tek bakışta gösterir: aylık çubuklarla harcamalar, kategoriler ve en büyük tek harcama, favorilerle birlikte pişirilen yemekler ve tüm geziler ile seyahat günleri. Üstteki oklarla önceki yıllara geçebilirsin.
-- **Bildirim ve push, diğer ön bakışlar gibi.** 10 Ocak’a kadar üstte bir bildirim ve ayarlardan kapatabileceğin bir push mesajı. Harcamalar yalnızca finans erişimiyle görünür; misafirler push mesajı almaz.
-- Değişenler: `js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (on dört dilde 32 yeni ve değişen metin), `src/` (sürüm, ayarlar), `index.html`, tüm README dosyaları. Sunucu (hook’ları değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-ausblick.js`, `pb_hooks/ausblick.pb.js`.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -181,7 +182,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.145.0` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.146.0` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

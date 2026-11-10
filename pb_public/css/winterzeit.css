@@ -23,7 +23,11 @@ html.pinn-xmas .pinn-logo-wrap::after {
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 28'%3E%3Cpath d='M5 21C6 12 12 4 21 3C26 2.5 29 5.5 28.5 10C26.5 8 23.5 8 21.5 10C19.5 12.5 20 17 21.5 21Z' fill='%23c8102e'/%3E%3Cpath d='M9 19C11 12 15 7 20 5.5' fill='none' stroke='%23e5384f' stroke-width='1.4' stroke-linecap='round' opacity='.7'/%3E%3Crect x='2' y='19' width='22.5' height='6.5' rx='3.2' fill='%23fff' stroke='%23d5dde4' stroke-width='.6'/%3E%3Ccircle cx='28.3' cy='10.5' r='3.3' fill='%23fff' stroke='%23d5dde4' stroke-width='.6'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
 }
 
-/* ---------- Snow on headings (and on the family name in the header) ---------- */
+/* ---------- Snow on headings (and on the family name in the header) ----------
+   Since 1.146.0 the snow is drawn per heading by js/winterzeit.js (seasonSnowDraw): it measures every letter of the
+   first line and builds an SVG in exactly that pixel size – it lies on the tops of the letters, leaves the gaps
+   between words free and skips emoji, in every language. Here it is only placed; without the measurement (variables
+   missing) nothing is shown. */
 html.pinn-winter #mainGrid h2.font-serif:not(.truncate),
 html.pinn-winter #mainGrid h3.font-serif:not(.truncate),
 html.pinn-winter .nt-famname h1,
@@ -32,17 +36,17 @@ html.pinn-winter #mainGrid h2.font-serif:not(.truncate)::before,
 html.pinn-winter #mainGrid h3.font-serif:not(.truncate)::before,
 html.pinn-winter .nt-famname h1::before,
 html.pinn-winter #dashboardScreen h1.font-serif::before {
-  content: ""; position: absolute; pointer-events: none;
-  left: -0.06em; top: 0.08em; top: calc((1lh - 1em) / 2 - 0.1em); width: 2em; max-width: 100%; height: 0.44em;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 12' preserveAspectRatio='none'%3E%3Cpath d='M1 8C1 4 4 2 8 3C11 0.5 16 1 19 2.5C23 0.5 28 1 31 3C35 1 41 1 44 3C48 1.5 54 2 57 4C59.5 5 59.5 9 57 9C55 11 53 11 52 9C47 9.6 42 9.6 38 9C36.5 11.4 33.5 11.4 32.5 9C26 9.8 19 9.6 13 9C11.5 11.2 8.5 11.2 7.5 9C4.5 9.6 1 10 1 8Z' fill='%23dfe9f2' stroke='%238eaac2' stroke-width='.7'/%3E%3Cpath d='M2 6.5C2 4 5 3 8 4C11 1.8 16 2 19 3.5C23 1.6 28 2 31 4C35 2 41 2 44 4C48 2.6 54 3 57 5C58 6 57.5 7 56 7C44 7.6 20 7.6 4 7.4C2.8 7.4 2 7.2 2 6.5Z' fill='%23fff'/%3E%3C/svg%3E") left top / 100% 100% no-repeat;
+  content: ""; position: absolute; pointer-events: none; z-index: 1;
+  left: var(--pinn-snow-x, 0); top: var(--pinn-snow-y, 0);
+  width: var(--pinn-snow-w, 0); height: var(--pinn-snow-h, 0);
+  background: var(--pinn-snow, none) left top / 100% 100% no-repeat;
 }
-/* The family name in the header is inline: its box starts at the top of the letters, not of the line */
-html.pinn-winter .nt-famname h1::before { top: 0.2em; }
 html.pinn-xmas #mainGrid h2.font-serif:not(.truncate)::after,
 html.pinn-xmas #mainGrid h3.font-serif:not(.truncate)::after,
 html.pinn-xmas #dashboardScreen h1.font-serif::after {
-  content: ""; position: absolute; pointer-events: none;
-  left: 1.55em; top: -0.04em; top: calc((1lh - 1em) / 2 - 0.22em); width: 0.62em; height: 0.48em;
+  content: ""; position: absolute; pointer-events: none; z-index: 2;
+  left: var(--pinn-holly-x, 0); top: var(--pinn-holly-y, 0); width: 0.62em; height: 0.48em;
+  opacity: var(--pinn-snow-on, 0);
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 18'%3E%3Cpath d='M12 11C9 7 4 6 1 8C3 9 3 11 2 13C5 12 6 14 7 15C9 13 11 13 12 11Z' fill='%232f7a43'/%3E%3Cpath d='M12 11C15 7 20 6 23 8C21 9 21 11 22 13C19 12 18 14 17 15C15 13 13 13 12 11Z' fill='%23276b39'/%3E%3Ccircle cx='10' cy='7' r='2.6' fill='%23d1263b'/%3E%3Ccircle cx='14.2' cy='6.4' r='2.6' fill='%23e23447'/%3E%3Ccircle cx='12.2' cy='3.4' r='2.4' fill='%23c41d33'/%3E%3Ccircle cx='13' cy='2.7' r='.7' fill='%23fff' opacity='.7'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
 }
 

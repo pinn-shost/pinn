@@ -133,6 +133,15 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.146.0の新機能
+
+**見出しごとにぴったりの雪、地域に合わせた更新時刻**
+
+- **ぴったりの雪。** pinn. は見出しの各文字を実際のフォントで測り、その上に雪を載せます。背の高い文字では高く、小さな文字では低く、雪のかたまりやしずくも付きます。単語の間は空けたまま、絵文字には雪を載せず、引き伸ばしもなく、どの言語・文字でも動作します。
+- **地域に合わせた自動更新。** 設定した時刻は、常にドイツ時間ではなく、保存した端末のタイムゾーンで適用されます（夏時間・冬時間を含む）。設定画面にどのタイムゾーンかが表示されます。
+- **ロック中のダッシュボードが新しいバージョンを自動で読み込みます。** 家族ダッシュボードがロックされた iPad（またはログイン画面）は、誰も入力していなければ更新の約1分後に再読み込みします。更新時刻にバックアップ中の場合、アプリは「待機中」と表示します。
+- 変更：`js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`、すべての README。サーバー側：フックをコピーすると PocketBase が再起動します。
+
 ## 1.145.0の新機能
 
 **冬とクリスマスのデザイン**
@@ -219,15 +228,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **ウィジェットでチェック。** 中・大サイズのウィジェットでタスクや買い物の項目をタップすると、pinn. でもチェックされます（その間 iOS が Scriptable を一瞬開きます）。チェックした項目は取り消し線付きでリストに残り、「買い物を完了」はこれまでどおり pinn. で行います（ウィジェット下部のボタンでアプリが開きます）。お子様ロックのプロフィールではチェックできません。1.140.0 のスクリプトをすでに使っている場合は、もう一度コピーして Scriptable で置き換えてください。
 - 変更：`js/sprachsteuerung.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/`（14言語すべてに新しい文言7件）、`src/`（バージョン）、`index.html`、`.github/scripts/check-hooks.js`、すべてのREADME。サーバー（hookを置き換え、PocketBaseが再起動します）：`pb_hooks/pinn-sprache.js`、`pb_hooks/sprache.pb.js`。
 
-## 1.140.0の新機能
-
-**ウィジェットと Apple Watch**
-
-- **ウィジェット。** 設定 → 音声操作に「ウィジェットと Apple Watch」が加わりました。無料アプリ Scriptable を使うと、ホーム画面やロック画面のウィジェットに、今日の予定、未完了のタスク、買い物リストの件数が表示されます。用意済みのスクリプトはワンタップでコピーできます。
-- **Apple Watch。** ショートカット（「URL の内容を取得」→「結果を表示」、「Apple Watch で表示」）を使うと、今日、明日、買い物リスト、またはすべてをウォッチで見られ、読み上げもできます。手順はアプリ内にあります。
-- Siri と同じ秘密のリンクで、閲覧のみです。ゲストは使えません。文言はプロフィールの言語で表示されます。
-- 変更：`js/sprachsteuerung.js`、`js/versionslog.js`、`i18n/`（14言語すべてに新しい文言16件とサブタイトルの変更）、`src/`（`index.html`、設定）、`.github/scripts/check-hooks.js`、すべてのREADME。サーバー（hookを置き換え、PocketBaseが再起動します）：`pb_hooks/pinn-sprache.js`、`pb_hooks/sprache.pb.js`。
-
 ## しくみ
 
 ```mermaid
@@ -256,7 +256,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.145.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.146.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

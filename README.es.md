@@ -129,6 +129,15 @@ Pulsa cualquier imagen para verla en tamaño completo.
 
 pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski y 🇺🇦 Українська**, adapta la moneda y los números de emergencia a tu región y cambia entre los términos **familia** y **piso compartido**. Un servidor puede alojar varias familias, cada una con sus propios administradores.
 
+## Novedades de la 1.146.0
+
+**Nieve a la medida de cada título, hora de actualización según la región**
+
+- **Nieve a medida.** pinn. mide cada letra de un título con la fuente real y coloca la nieve justo encima: más alta sobre las letras altas, más baja sobre las pequeñas, con montoncitos y alguna gota. Los espacios entre palabras quedan libres, los emoji no llevan nieve, nada se estira y funciona en todos los idiomas y escrituras.
+- **Actualizaciones automáticas según la región.** La hora elegida se aplica ahora en la zona horaria del dispositivo en el que se guarda (incluido el horario de verano e invierno), ya no siempre en hora alemana. Los ajustes muestran qué zona horaria se aplica.
+- **El panel bloqueado carga solo las nuevas versiones.** Un iPad con el panel familiar bloqueado (o la pantalla de inicio de sesión) se recarga aproximadamente un minuto después de una actualización si nadie está escribiendo. La app muestra «en espera» si a esa hora se está haciendo una copia de seguridad.
+- Cambiado: `js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`, todos los README. Parte del servidor: copiar los hooks, PocketBase se reinicia.
+
 ## Novedades de la 1.145.0
 
 **Diseño de invierno y Navidad**
@@ -249,13 +258,6 @@ pinn. habla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Control por voz.** «Oye Siri, pinn» (en Android, HTTP Shortcuts) ahora también entiende turco, polaco y ucraniano y responde en el idioma de tu perfil: añadir a la lista de la compra (con cantidad y tienda), leer la lista, crear una tarea y oír qué hay hoy o mañana. Siri ya no responde en inglés en ucraniano. La configuración del atajo no cambia.
 - Cambiado: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, todos los README. Servidor (sustituir el hook, PocketBase se reinicia): `pb_hooks/pinn-sprache.js`.
 
-## Novedades de la 1.136.0
-
-**Ucraniano activado**
-
-- **Ucraniano.** El ucraniano ya está disponible para todos: elige Українська en Ajustes → Idioma y región; si el navegador está en ucraniano, pinn. lo selecciona automáticamente. Los 6994 textos, las notificaciones push, el asistente de configuración y la exportación de datos están en ucraniano; los números de emergencia de Ucrania son 102, 103, 101 y 112. pinn. habla ahora catorce idiomas. Siri sigue respondiendo en inglés con el ucraniano.
-- Cambiado: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), todos los README (lista de idiomas, «catorce idiomas»). Desde la 1.134.0 además: `i18n/uk.i18n.js`, `js/textkern.js`, `js/region.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `.github/scripts/`. Servidor (sustituir los hooks, PocketBase se reinicia): `pb_hooks/pinn-textkern.js`, `pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
-
 ## Cómo funciona
 
 ```mermaid
@@ -282,7 +284,7 @@ Todo funciona como contenedores Docker en una sola máquina. HTTPS funciona **si
 ## Instalación
 
 1. Descarga el ZIP de la [última versión](https://github.com/pinn-shost/pinn/releases/latest) y descomprímelo.
-2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.145.0` o `pinn-main`) tal cual.
+2. Crea una carpeta en el NAS, p. ej. `/volume1/docker/Pocketbase`, y coloca dentro la carpeta descomprimida (p. ej. `pinn-1.146.0` o `pinn-main`) tal cual.
 3. Inicia sesión por SSH y ejecuta:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

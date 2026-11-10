@@ -110,6 +110,15 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.146.0
+
+**Sneeuw op maat van elke kop, updatetijd per regio**
+
+- **Sneeuw op maat.** pinn. meet elke letter van een kop in het echte lettertype en legt de sneeuw er precies bovenop – hoger op hoge letters, lager op kleine, met bultjes en hier en daar een druppel. Ruimtes tussen woorden blijven vrij, emoji krijgen geen sneeuw, niets wordt uitgerekt en het werkt in elke taal en elk schrift.
+- **Automatische updates per regio.** De gekozen tijd geldt nu in de tijdzone van het apparaat waarop hij wordt opgeslagen (zomer- en wintertijd inbegrepen), niet meer altijd in Duitse tijd. De instellingen tonen welke tijdzone geldt.
+- **Vergrendeld dashboard laadt nieuwe versies zelf.** Een iPad met vergrendeld gezinsdashboard (of het inlogscherm) laadt ongeveer een minuut na een update opnieuw als niemand aan het typen is. De app toont „wacht” als er op dat moment een back-up loopt.
+- Gewijzigd: `js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`, alle README’s. Serverdeel: hooks kopiëren, PocketBase start opnieuw.
+
 ## Nieuw in 1.145.0
 
 **Winter- en kerstlook**
@@ -164,14 +173,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Melding bij verwijderen.** Wie een paklijst met bestemming en periode verwijdert, krijgt nu een waarschuwing: de reis verdwijnt dan ook uit de agenda en uit het jaaroverzicht.
 - Gewijzigd: `js/listen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (één nieuwe tekst in alle veertien talen), `src/` (versie), `index.html`, alle README’s. Geen serverdeel.
 
-## Nieuw in 1.142.0
-
-**Jaaroverzicht: uitgaven, gekookte gerechten en reizen**
-
-- **Jaaroverzicht.** Op 28 december vanaf 18.00 uur (en altijd via Instellingen → Vooruitblik) toont pinn. jullie jaar in één oogopslag: uitgaven met maandbalken, categorieën en de grootste afzonderlijke uitgave, gekookte gerechten met de favorieten en alle reizen met de dagen onderweg. Met de pijlen bovenaan blader je naar eerdere jaren.
-- **Melding en push zoals bij de andere vooruitblikken.** Een melding bovenaan tot 10 januari en een pushbericht dat je in de instellingen kunt uitzetten. Uitgaven zie je alleen met toegang tot de financiën; gasten krijgen geen pushbericht.
-- Gewijzigd: `js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (32 nieuwe en gewijzigde teksten in alle veertien talen), `src/` (versie, instellingen), `index.html`, alle README’s. Server (hooks vervangen, PocketBase start opnieuw): `pb_hooks/pinn-ausblick.js`, `pb_hooks/ausblick.pb.js`.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -181,7 +182,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.145.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.146.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

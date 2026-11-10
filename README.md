@@ -129,6 +129,15 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.146.0
+
+**Snow that fits every heading, update time by region**
+
+- **Made-to-measure snow.** pinn. measures every letter of a heading in the real font and lays the snow right on top – higher on tall letters, lower on small ones, with lumps and the odd drip. Gaps between words stay free, emoji get no snow, nothing is stretched, and it works in every language and script.
+- **Automatic updates by region.** The chosen time now applies in the time zone of the device it is saved on (summer and winter time included), no longer always German time. The settings show which time zone applies.
+- **Locked dashboard loads new versions by itself.** An iPad with a locked family dashboard (or the sign-in screen) now reloads about a minute after an update when nobody is typing. The app also shows “waiting” when a backup is running at the update time.
+- Changed: `js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`, all READMEs. Server part: copy the hooks, PocketBase restarts.
+
 ## What's new in 1.145.0
 
 **Winter and Christmas look**
@@ -249,13 +258,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Voice control.** “Hey Siri, pinn” (on Android HTTP Shortcuts) now also understands Turkish, Polish and Ukrainian and answers in the language of your profile: add things to the shopping list (with quantity and shop), read the list, create a task and hear what is on today or tomorrow. Siri no longer answers in English for Ukrainian. Setting up the shortcut stays the same.
 - Changed: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, all READMEs. Server (replace the hook, PocketBase restarts): `pb_hooks/pinn-sprache.js`.
 
-## What's new in 1.136.0
-
-**Ukrainian enabled**
-
-- **Ukrainian.** Ukrainian is now available for everyone: choose Українська under Settings → Language & region; if your browser is set to Ukrainian, pinn. selects it automatically. All 6994 texts, the push notifications, the setup wizard and the data export are in Ukrainian; Ukrainian emergency numbers are 102, 103, 101 and 112. pinn. now speaks fourteen languages. Siri still answers in English for Ukrainian.
-- Changed: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), all READMEs (language list, “fourteen languages”). Since 1.134.0 also: `i18n/uk.i18n.js`, `js/textkern.js`, `js/region.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `.github/scripts/`. Server (replace the hooks, PocketBase restarts): `pb_hooks/pinn-textkern.js`, `pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
-
 ## How it works
 
 ```mermaid
@@ -282,7 +284,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.145.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.146.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

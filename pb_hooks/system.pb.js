@@ -122,6 +122,8 @@ cronAdd("pinnAutoUpdate", "*/5 * * * *", () => {
     try {
         const r = require(`${__hooks}/pinn-system.js`).autoPruefen();
         if (r.aktion === "gestartet") console.log("[System] Automatisches Update auf " + r.version + " gestartet.");
+        else if (r.aktion === "keine") console.log("[System] Automatisches Update: pinn. ist aktuell.");
+        else if (r.aktion !== "nichts" && r.aktion !== "beschaeftigt") console.log("[System] Automatisches Update: " + r.aktion + (r.code ? " (" + r.code + ")" : ""));
     } catch (err) {
         console.log("[System] Automatisches Update fehlgeschlagen: " + err.message);
     }

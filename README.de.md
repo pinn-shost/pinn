@@ -133,6 +133,15 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.146.0
+
+**Schnee passend zu jeder Überschrift, Update-Uhrzeit nach Region**
+
+- **Schnee nach Maß.** pinn. misst jeden Buchstaben einer Überschrift in der echten Schrift und legt den Schnee genau darauf – auf hohen Buchstaben höher, auf kleinen tiefer, mit Klumpen und hier und da einem Tropfen. Lücken zwischen Wörtern bleiben frei, Emoji bekommen keinen Schnee, nichts wird gestreckt, und es klappt in jeder Sprache und Schrift.
+- **Automatische Updates nach Region.** Die eingestellte Uhrzeit gilt jetzt in der Zeitzone des Geräts, auf dem sie gespeichert wird (Sommer- und Winterzeit inklusive), nicht mehr fest in deutscher Zeit. Die Einstellungen zeigen, welche Zeitzone gilt.
+- **Gesperrtes Dashboard lädt neue Versionen selbst.** Ein iPad mit gesperrtem Familien-Dashboard (oder die Anmeldung) lädt etwa eine Minute nach einem Update neu, wenn gerade niemand tippt. Läuft zur Update-Zeit eine Sicherung, zeigt die App „wartet“.
+- Geändert: `js/winterzeit.js`, `css/winterzeit.css`, `js/versionspruefung.js`, `js/sicherungen.js`, `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`, `i18n/`, `src/`, `index.html`, alle READMEs. Server-Teil: Hooks einspielen, PocketBase startet neu.
+
 ## Neu in 1.145.0
 
 **Winter- und Weihnachtsdesign**
@@ -228,15 +237,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - Es ist derselbe geheime Link wie bei Siri, nur zum Lesen, und Gäste haben ihn nicht. Die Texte kommen in der Sprache des Profils.
 - Geändert: `js/sprachsteuerung.js`, `js/versionslog.js`, `i18n/` (16 neue Texte und ein geänderter Untertitel in allen vierzehn Sprachen), `src/` (`index.html`, Einstellungen), `.github/scripts/check-hooks.js`, alle READMEs. Server (Hooks ersetzen, PocketBase startet neu): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
 
-## Neu in 1.139.0
-
-**Geschenkplaner: wer schenkt was – ohne dass der Beschenkte es sieht**
-
-- **Wer schenkt was.** Auf dem Reiter „Geschenke“ zeigt pinn. jetzt alles Geplante pro Person – Geschenkideen aus deinen Listen und die reservierten Wünsche der anderen – mit Termin, Stand, Schenkendem und Summe. Wer etwas bekommen soll, sieht es dort nie.
-- **Vor den Beschenkten verstecken.** In einer Geschenkliste (nicht privat) wählst du „Verstecken vor“; diese Personen sehen die Liste nicht, so können mehrere gemeinsam planen (z. B. die Eltern für die Kinder). Ein Geschenk, das für dich selbst eingetragen ist, siehst du nie. Wie bei privaten Listen gilt das für die Ansicht in der App; es ist keine Verschlüsselung.
-- **Wer schenkt es? / Sammelgeschenke.** Bei jedem Geschenk wählst du, wer es schenkt. Bei einem schon reservierten Wunsch eines anderen tippst du auf „Ich mache mit“; die anderen sehen, wer mitmacht, der Wünschende nicht.
-- Geändert: `js/listen.js`, `css/listen.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (12 neue Texte und eine geänderte Einleitung in allen vierzehn Sprachen), `src/` (`index.html`, Popup Listen), alle READMEs. Kein Server-Teil – PocketBase muss nicht neu starten.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -265,7 +265,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.145.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.146.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
