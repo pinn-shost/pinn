@@ -273,6 +273,20 @@ function renderDashBgControls() {
   document.getElementById('dashBgSaveBtn').disabled = !dashBgEdit.geladen;
   renderDashBgPreview();
 }
+// admins: number of open tasks under the profile pictures on the dashboard (family-wide, since 1.143.0)
+function renderDashCountSetting() {
+  const wrap = document.getElementById('dashCountWrap');
+  const check = document.getElementById('dashCountCheck');
+  if (!wrap || !check) return;
+  wrap.classList.toggle('hidden', !isCurrentUserAdmin());
+  if (!isCurrentUserAdmin()) return;
+  check.checked = dashboardOpenTaskCount === true;
+  check.onchange = () => {
+    dashboardOpenTaskCount = check.checked;
+    persistState();
+    document.getElementById('dashCountStatus').textContent = tk('common.saved');
+  };
+}
 async function renderDashBgSettings() {
   const wrap = document.getElementById('dashBgWrap');
   if (!wrap) return;

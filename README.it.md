@@ -133,6 +133,14 @@ Tocca un’immagine per aprirla a dimensione intera.
 
 pinn. parla **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adatta valuta e numeri di emergenza alla tua regione e passa dai termini **famiglia** a quelli di **casa condivisa**. Un server può ospitare più famiglie, ciascuna con i propri amministratori.
 
+## Novità della 1.143.0
+
+**Dashboard: attività aperte sotto la foto profilo e chat sull’iPad**
+
+- **Attività aperte sotto la foto.** Nella selezione dei profili della dashboard di famiglia, pinn. può mostrare sotto la foto di ogni persona il numero delle sue attività aperte e in scadenza – come il numero sull’icona dell’app su iPhone. Un admin lo attiva in Account → «Attività aperte sulla dashboard»; vale per tutte le dashboard della famiglia.
+- **Chat sulla dashboard.** Chi ha aperto il proprio profilo sulla dashboard con il PIN può ora usare anche la chat. Gli ospiti e i bambini con «solo pagina dei bambini» no. La prima volta sul dispositivo, la chat chiede come sempre il codice di recupero.
+- Modificati: `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (5 testi nuovi in tutte le quattordici lingue), `src/` (versione, pagina dell’account), `index.html`, tutti i README. Server (sostituire gli hook, PocketBase si riavvia): `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
+
 ## Novità della 1.142.2
 
 **Riepilogo dell’anno: entrate, appuntamenti, attività, compleanni e foto dei viaggi**
@@ -242,7 +250,7 @@ Tutto gira come container Docker su un’unica macchina. HTTPS funziona **senza 
 ## Installazione
 
 1. Scarica lo ZIP dell’[ultima release](https://github.com/pinn-shost/pinn/releases/latest) e decomprimilo.
-2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.142.2` o `pinn-main`) così com’è.
+2. Crea una cartella sul NAS, ad es. `/volume1/docker/Pocketbase`, e copiaci dentro la cartella decompressa (ad es. `pinn-1.143.0` o `pinn-main`) così com’è.
 3. Accedi via SSH ed esegui:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

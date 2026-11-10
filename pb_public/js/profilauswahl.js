@@ -86,6 +86,7 @@ function buildDashboardTiles(profiles, members) {
 
 let dashClockTimer = null;
 let dashWeatherTimer = null;
+let dashCountTimer = null;
 function tickDashboardClock() {
   const now = new Date();
   let clockText = now.toLocaleTimeString(PINN_I18N.language.locale, { hour: '2-digit', minute: '2-digit' });
@@ -102,6 +103,8 @@ function hideDashboardScreen() {
   dashClockTimer = null;
   clearInterval(dashWeatherTimer);
   dashWeatherTimer = null;
+  clearInterval(dashCountTimer);
+  dashCountTimer = null;
 }
 
 // Shows the profile selection. Result: 'ok' (profile opened), 'password' (normal login wanted)
@@ -188,11 +191,26 @@ function showDashboardScreen(dash) {
         if (saved) writeDashboardConfig({ ...saved, familyName: famName });
         document.getElementById('dashFamilyName').textContent = famName;
       }
-      render(Array.isArray(r.body.profile) ? r.body.profile : []);
+      render(Array.isArray(r.body.profile) ? r.body.profile : [], r.body.offenAnzeigen === true);
       syncDashBackground(dash, r.body.hintergrund);
+      // the numbers change while the screen stays open: ask again quietly every minute
+      clearInterval(dashCountTimer);
+      dashCountTimer = r.body.offenAnzeigen === true ? setInterval(refreshCounts, 60 * 1000) : null;
+    }
+    // Quiet refresh of the numbers (no loading text, no flicker); stops when the screen is hidden
+    async function refreshCounts() {
+      if (finished || document.visibilityState !== 'visible') return;
+      if (!document.getElementById('dashPwOverlay').classList.contains('hidden')) return;
+      try {
+        const r = await postDashboard('/api/pinn/dashboard/profile', { key: dash.key });
+        if (!r.res.ok) return;
+        if (!document.getElementById('pinPadOverlay') || document.getElementById('pinPadOverlay').classList.contains('hidden')) {
+          render(Array.isArray(r.body.profile) ? r.body.profile : [], r.body.offenAnzeigen === true);
+        }
+      } catch (e) { /* offline: keep the numbers shown */ }
     }
 
-    function render(profiles) {
+    function render(profiles, showOpen) {
       const tiles = buildDashboardTiles(profiles, members);
       if (!tiles.length) {
         tilesEl.innerHTML = '<p class="text-sm text-ink/50">' + escapeHtml(tk('dashboard.noProfiles')) + '</p>';
@@ -206,7 +224,10 @@ function showDashboardScreen(dash) {
           : (needsPassword(t) ? '<span class="dash-key" aria-label="' + escapeHtml(tk('dashboard.passwordFirst')) + '">🔑</span>' : '');
         return `<button type="button" class="dash-tile${t.kid ? ' kid' : ''}${guest ? ' guest' : ''}" data-tile="${i}">
           ${icon}
-          ${dashAvatarHtml(t.member, t.profile)}
+          <span class="dash-avatar-wrap">
+            ${dashAvatarHtml(t.member, t.profile)}
+            ${showOpen && t.profile.offen > 0 ? `<span class="dash-count" aria-label="${escapeHtml(tk('dashboard.openTasksCount', { n: t.profile.offen }))}">${t.profile.offen > 99 ? '99+' : t.profile.offen}</span>` : ''}
+          </span>
           <span class="dash-name">${escapeHtml(t.name)}</span>
           ${badge ? `<span class="dash-badge">${badge}</span>` : ''}
         </button>`;

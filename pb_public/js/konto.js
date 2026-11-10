@@ -73,6 +73,7 @@ async function renderAccountSettings() {
   list.querySelectorAll('.profile-manage-btn').forEach(b => b.addEventListener('click', () => openProfileManageModal(b.dataset.id)));
   renderProfileDeviceInfo();
   renderGuestMenuSettings();
+  renderDashCountSetting();
   renderDashBgSettings();
   renderDashDeviceList();
 }

@@ -22,6 +22,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.143', datum: '09.11.2026', titel: 'Dashboard: offene Aufgaben unter dem Profilbild und Chat am iPad',
+    punkte: [
+      ['neu', 'Zahl der offenen Aufgaben unter dem Profilbild: Auf der Profilauswahl des Familien-Dashboards (iPad) zeigt pinn. unter dem Bild jeder Person die Zahl ihrer offenen, fälligen Aufgaben – wie die Zahl am App-Symbol auf dem iPhone (rot, verschwindet bei 0, wird jede Minute aufgefrischt). Ein Admin schaltet das unter Konto → „Offene Aufgaben auf dem Dashboard“ ein; es gilt für alle Dashboards der Familie. Gäste zeigen keine Zahl.'],
+      ['neu', 'Chat auf dem Dashboard: Wer sein Profil auf dem Familien-Dashboard mit der PIN geöffnet hat, kann jetzt auch den Chat nutzen (Gäste und Kinder mit „nur Kinderseite“ weiterhin nicht). Beim ersten Mal auf dem Gerät fragt der Chat wie überall nach dem Wiederherstellungscode, danach bleibt der Schlüssel auf dem Gerät; beim Zurückgehen zur Profilauswahl wird der Chat geschlossen.'],
+      ['info', 'Server: Die Zahl rechnet der Server mit derselben Regel wie für das App-Symbol (pb_hooks/pinn-push.js, neu openTaskCountsForFamily).'],
+      ['info', 'Geändert: pb_hooks/pinn-push.js, pinn-dashboard.js, dashboard.pb.js, pinn-bereiche.js, js/profilauswahl.js, js/dashboard.js, js/dashboardkonto.js, js/konto.js, js/zustand.js, js/speichern.js, js/familiensync.js, css/dashboard.css, js/sprachen.js, js/versionslog.js, i18n/ (5 neue Texte in allen vierzehn Sprachen), i18n/versionslog.en.js, src/ (Version, Konto-Seite), index.html, alle READMEs. Server-Teil: Hooks einspielen, PocketBase startet neu.'],
+    ],
+  },
+  {
     v: '1.142', datum: '09.11.2026', titel: 'Jahresrückblick: Ausgaben, gekochte Gerichte und Urlaube',
     punkte: [
       ['neu', 'Jahresrückblick: Am 28. Dezember ab 18 Uhr (und jederzeit unter Einstellungen → Ausblick) zeigt pinn. dein Jahr auf einen Blick – Ausgaben mit Monatsbalken, Kategorien und größter Einzelausgabe, gekochte Gerichte mit den Lieblingsgerichten und alle Urlaube mit den Reisetagen. Mit den Pfeilen oben blätterst du zu früheren Jahren.'],

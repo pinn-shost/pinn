@@ -133,6 +133,22 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.143.0
+
+**Dashboard: offene Aufgaben unter dem Profilbild und Chat am iPad**
+
+- **Offene Aufgaben unter dem Bild.** Auf der Profilauswahl des Familien-Dashboards kann pinn. unter dem Bild jeder Person die Zahl ihrer offenen, fälligen Aufgaben zeigen – wie die Zahl am App-Symbol auf dem iPhone. Ein Admin schaltet das unter Konto → „Offene Aufgaben auf dem Dashboard“ ein; es gilt für alle Dashboards der Familie.
+- **Chat auf dem Dashboard.** Wer sein Profil auf dem Dashboard mit der PIN geöffnet hat, kann jetzt auch den Chat nutzen. Gäste und Kinder mit „nur Kinderseite“ nicht. Beim ersten Mal auf dem Gerät fragt der Chat wie gewohnt nach dem Wiederherstellungscode.
+- Geändert: `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (5 neue Texte in allen vierzehn Sprachen), `src/` (Version, Konto-Seite), `index.html`, alle READMEs. Server (Hooks austauschen, PocketBase startet neu): `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
+
+## Neu in 1.142.2
+
+**Jahresrückblick: Einnahmen, Termine, Aufgaben, Geburtstage und Urlaubsfotos**
+
+- **Mehr im Jahresrückblick.** Unter den Ausgaben siehst du jetzt auch die Einnahmen und den Saldo. Neue Karten zeigen die Termine (mit dem terminreichsten Monat), die erledigten Aufgaben (mit dem Haushaltsanteil) und die gefeierten Geburtstage (mit besonderen wie 18, 30, 40 …). Jeder Urlaub zeigt die Pinnwand-Fotos, die während der Reise eingestellt wurden.
+- **Erledigte Aufgaben zählt der Server,** weil sie nach ein bis zwei Tagen gelöscht werden. Für dieses Jahr beginnt die Zählung am Tag des Updates.
+- Geändert: `js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14 neue Texte und ein geänderter Text in allen vierzehn Sprachen), `src/` (Version), `index.html`, alle READMEs. Server (Hooks austauschen, PocketBase startet neu): `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`.
+
 ## Neu in 1.142.1
 
 **Hinweis beim Löschen der Packliste einer Reise**
@@ -241,7 +257,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.142.1` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.143.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

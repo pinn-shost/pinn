@@ -99,7 +99,7 @@ let childLockTasksState = null; // most recently applied state (to rebuild on a 
 function isViewAllowed(view) {
   if (view === 'haushalt') view = 'aufgaben'; // household is part of "Aufgaben"
   if (view === 'konto') return true;
-  if (view === 'chat' && (isDashboardDevice() || (typeof dashSession !== 'undefined' && dashSession))) return false; // no chat on a shared dashboard
+  // Chat on the dashboard: allowed since 1.143.0 once a profile is opened with its PIN (guests stay locked out via GUEST_BLOCKED_VIEWS, kids' page only has no menu)
   if (CHILD_BLOCKED_VIEWS.includes(view) && childLockActive()) return false;
   if (!isCurrentUserGuest()) return true;
   return !GUEST_BLOCKED_VIEWS.includes(view) && !guestHiddenViews.includes(view);

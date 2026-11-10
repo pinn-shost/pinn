@@ -133,6 +133,14 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.143.0の新機能
+
+**ダッシュボード：プロフィール写真の下に未完了タスク、iPadでチャット**
+
+- **写真の下の未完了タスク。** ファミリーダッシュボードのプロフィール選択画面で、各人の写真の下に未完了で期限が来ているタスクの数を表示できます。iPhoneのアプリアイコンの数字と同じです。管理者が「アカウント → ダッシュボードの未完了タスク」でオンにします。この家族のすべてのダッシュボードに適用されます。
+- **ダッシュボードでチャット。** ダッシュボードでPINを使ってプロフィールを開いた人は、チャットも使えるようになりました。ゲストと「子どもページのみ」の子どもは使えません。端末で初めて使うときは、いつもどおり回復コードを尋ねます。
+- 変更：`pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`（14言語すべての新規文言5件）, `src/`（バージョン、アカウントページ）, `index.html`, すべての README. サーバー（hooks を置き換え、PocketBase が再起動）：`pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
+
 ## 1.142.2の新機能
 
 **1年のふりかえり：収入、予定、タスク、誕生日、旅行の写真**
@@ -242,7 +250,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.142.2`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.143.0`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

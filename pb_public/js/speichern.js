@@ -135,6 +135,7 @@ function applyFamilyData(data) {
   guestHiddenViews = Array.isArray(data.guestHiddenViews)
     ? data.guestHiddenViews.filter(id => GUEST_SELECTABLE_VIEWS.includes(id))
     : [];
+  dashboardOpenTaskCount = data.dashboardOpenTaskCount === true;
   kassenOnFamilyData(data); // Finance data comes from the fund shown (section „Kassen“)
   // The old device-independent keys (defaultViewMode / defaultViewScope) were moved into these keys by the server (1.122.0)
   defaultViewModeDesktop = data.defaultViewModeDesktop || 'timeline';

@@ -133,6 +133,14 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.143.0 新功能
+
+**仪表板：头像下方显示待办任务数，iPad 上可使用聊天**
+
+- **头像下方的待办任务数。** 在家庭仪表板的个人资料选择页面上，pinn. 可以在每个人的头像下方显示其未完成且已到期的任务数量，就像 iPhone 上应用图标上的数字。管理员在“账户 → 仪表板上的待办任务”中开启；对这个家庭的所有仪表板生效。
+- **仪表板上的聊天。** 在仪表板上用 PIN 打开自己个人资料的人，现在也可以使用聊天。访客和“仅儿童页面”的孩子不可以。首次在该设备上使用时，聊天会像往常一样询问恢复码。
+- 更改：`pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`（十四种语言中的 5 条新文本）, `src/`（版本、账户页面）, `index.html`, 所有 README. 服务器（替换 hooks，PocketBase 会重启）：`pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
+
 ## 1.142.2 新功能
 
 **年度回顾：收入、日程、任务、生日和旅行照片**
@@ -242,7 +250,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.142.2` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.143.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

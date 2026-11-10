@@ -460,6 +460,39 @@ function profilesFor(familyId) {
 }
 
 // ---------------------------------------------------------------------------------------------
+// Number of open tasks under the picture on the profile selection (since 1.143.0)
+// ---------------------------------------------------------------------------------------------
+// true = an admin switched the number on (settings area, key dashboardOpenTaskCount)
+function openCountEnabled(familyId) {
+    const fid = String(familyId || "");
+    if (!fid) return false;
+    try {
+        const area = require(`${__hooks}/pinn-bereiche.js`).readMany(fid, ["einstellungen"]);
+        if (area && area.dashboardOpenTaskCount === true) return true;
+    } catch (e) { /* not moved yet - read the family data */ }
+    try {
+        const data = base().loadFamilyDataFor(fid) || {};
+        return data.dashboardOpenTaskCount === true;
+    } catch (e) {
+        return false;
+    }
+}
+// Adds "offen" (open, due tasks - same rule as the app icon) to every profile that has a member;
+// guests get none. Without the switch the profiles stay as they are.
+function attachOpenCounts(familyId, profiles) {
+    if (!openCountEnabled(familyId)) return false;
+    let counts = {};
+    try {
+        counts = require(`${__hooks}/pinn-push.js`).openTaskCountsForFamily(String(familyId), membersOf(familyId));
+    } catch (e) { counts = {}; }
+    profiles.forEach(p => {
+        if (p.rolle === "gast" || !p.mitglied) return;
+        p.offen = counts[p.mitglied] || 0;
+    });
+    return true;
+}
+
+// ---------------------------------------------------------------------------------------------
 // PIN required (since 1.118.4)
 // ---------------------------------------------------------------------------------------------
 // true = the family has at least one dashboard device -> every profile needs a PIN
@@ -564,7 +597,7 @@ function waitText(seconds) {
 module.exports = {
     GERAETE, PIN_FIELD, HINTERGRUND,
     ensureSchema, newDevice, findDevice, doppelteZusammenfuehren, touchDevice, listDevices, removeDevice, cleanDeviceName,
-    profilesFor, pinLength, setPin, checkPin, validPinFormat, pinRequired, needsPin, membersOf, memberKidsOnly, kidsOnlyProfile,
+    profilesFor, openCountEnabled, attachOpenCounts, pinLength, setPin, checkPin, validPinFormat, pinRequired, needsPin, membersOf, memberKidsOnly, kidsOnlyProfile,
     lockedFor, registerFail, clearFails, waitText,
     backgroundMeta, backgroundFull, saveBackground,
 };

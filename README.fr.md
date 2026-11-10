@@ -129,6 +129,14 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.143.0
+
+**Tableau de bord : tâches ouvertes sous la photo de profil et chat sur l’iPad**
+
+- **Tâches ouvertes sous la photo.** Dans la sélection des profils du tableau de bord familial, pinn. peut afficher sous la photo de chaque personne le nombre de ses tâches ouvertes et échues – comme le chiffre sur l’icône de l’app sur l’iPhone. Un admin l’active sous Compte → « Tâches ouvertes sur le tableau de bord » ; cela vaut pour tous les tableaux de bord de la famille.
+- **Chat sur le tableau de bord.** Celui qui a ouvert son profil avec son code PIN peut désormais aussi utiliser le chat. Pas les invités ni les enfants avec « page enfant uniquement ». La première fois sur l’appareil, le chat demande comme d’habitude le code de récupération.
+- Modifié : `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`, `js/profilauswahl.js`, `js/dashboard.js`, `js/dashboardkonto.js`, `js/konto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (5 textes nouveaux dans les quatorze langues), `src/` (version, page du compte), `index.html`, tous les README. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-push.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
+
 ## Nouveautés de la 1.142.2
 
 **Bilan de l’année : revenus, rendez-vous, tâches, anniversaires et photos de voyage**
@@ -264,7 +272,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.142.2` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.143.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

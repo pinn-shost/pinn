@@ -709,6 +709,29 @@ function takeMessage(endpoint) {
 // earlier days + today, with a time window only from its start, only assigned ones or "All").
 // The service worker receives the number when fetching a message and sets it on the app icon.
 // =============================================================================================
+// Open, due tasks per member of ONE family in a single pass: { <memberId>: number } for every
+// member in "members" (since 1.143.0, also used for the number under the picture on the dashboard)
+function openTaskCountsForFamily(familyId, members) {
+    const out = {};
+    const list = Array.isArray(members) ? members : [];
+    list.forEach(m => { if (m && m.id) out[m.id] = 0; });
+    if (!familyId || !list.length) return out;
+    const nowWall = utcToWall(Date.now());
+    const today = wallIsoDate(nowWall), hm = wallHHMM(nowWall);
+    let recs = [];
+    try {
+        recs = $app.findRecordsByFilter("aufgaben", "familie = {:f} && erledigt = false && faellig != '' && faellig <= {:d}", "", 0, 0, { f: familyId, d: today });
+    } catch (e) { return out; }
+    recs.forEach(r => {
+        const due = r.getString("faellig").slice(0, 10);
+        if (!due || due > today) return;
+        const von = r.getString("von");
+        if (due === today && von && von > hm) return;
+        const assign = assigneesFromText(r.getString("notizen"), list);
+        assign.memberIds.forEach(id => { if (Object.prototype.hasOwnProperty.call(out, id)) out[id]++; });
+    });
+    return out;
+}
 function openTaskCountForUser(userRec) {
     if (!userRec) return 0;
     const familyId = userRec.getString("familie");
@@ -720,22 +743,7 @@ function openTaskCountForUser(userRec) {
         members = data.members || [];
     } catch (e) { members = []; }
     if (!members.length) return 0;
-    const nowWall = utcToWall(Date.now());
-    const today = wallIsoDate(nowWall), hm = wallHHMM(nowWall);
-    let recs = [];
-    try {
-        recs = $app.findRecordsByFilter("aufgaben", "familie = {:f} && erledigt = false && faellig != '' && faellig <= {:d}", "", 0, 0, { f: familyId, d: today });
-    } catch (e) { return 0; }
-    let n = 0;
-    recs.forEach(r => {
-        const due = r.getString("faellig").slice(0, 10);
-        if (!due || due > today) return;
-        const von = r.getString("von");
-        if (due === today && von && von > hm) return;
-        const assign = assigneesFromText(r.getString("notizen"), members);
-        if (assign.all || assign.memberIds.indexOf(memberId) !== -1) n++;
-    });
-    return n;
+    return openTaskCountsForFamily(familyId, members)[memberId] || 0;
 }
 // Number for the device with this push address; null if unknown (then the worker leaves it as it is)
 function badgeForEndpoint(endpoint) {
@@ -1550,7 +1558,7 @@ module.exports = {
     queueDelayed, cancelDelayed, runDelayed, queueKidPage,
     restorePersisted, renewSubscription, countSubscriptions,
     engineSupportsPush, selfTest, ensurePushCollections, loadPushStatus, savePushStatus, loadVapid, saveVapidSubject, rememberSubjectFromRequest, subjectFromOrigin,
-    notifyUser, notifyUserDetailed, takeMessage, badgeForEndpoint, openTaskCountForUser,
+    notifyUser, notifyUserDetailed, takeMessage, badgeForEndpoint, openTaskCountForUser, openTaskCountsForFamily,
     normalizeSettings, readSettings, runPushCron, assigneesForHref, notifyAssignment,
     assigneesFromText, isChildMember, notifyTaskDone, notifyKidPage,
     subscribedPeople,

@@ -3,7 +3,8 @@
 // The logic lives in pinn-dashboard.js, the collection is created by pinn-benutzer.js at startup.
 //
 // Without login (only with the key of the dashboard device):
-//   POST /api/pinn/dashboard/profile          {key}                        -> family + profiles (with PIN length)
+//   POST /api/pinn/dashboard/profile          {key}                        -> family + profiles (with PIN length;
+//        since 1.143.0 with "offen" = open tasks per profile and offenAnzeigen: true, if an admin switched it on)
 //   POST /api/pinn/dashboard/login            {key, id, pin?, passwort?}  -> login as this profile
 //        Since 1.118.4: a profile without a PIN (not a guest) needs its password ("passwort") -
 //        without it the answer is 401 { passwort: true }. The app then asks for a new PIN.
@@ -54,10 +55,14 @@ routerAdd("POST", "/api/pinn/dashboard/profile", (e) => {
     try { fam = $app.findRecordById(lib.FAMILIEN, dev.getString("familie")); } catch (err) { fam = null; }
     if (!fam) return e.json(404, { error: "Die Familie dieses Dashboards gibt es nicht mehr.", ungueltig: true });
     dash.touchDevice(dev);
+    const profiles = dash.profilesFor(fam.id);
+    // since 1.143.0: "offen" per profile if an admin switched the number under the picture on
+    const showOpen = dash.attachOpenCounts(fam.id, profiles);
     return e.json(200, {
         geraet: { id: dev.id, name: dev.getString("name") },
         familie: { id: fam.id, name: fam.getString("name") },
-        profile: dash.profilesFor(fam.id),
+        profile: profiles,
+        offenAnzeigen: showOpen,
         hintergrund: dash.backgroundMeta(fam.id),
     });
 });
