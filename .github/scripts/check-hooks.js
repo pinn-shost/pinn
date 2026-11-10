@@ -282,17 +282,23 @@ if (!exists(path.join(HOOKS, 'pinn-system.js'))) {
       ['summer time, at the time', sys.autoFaellig(plan(), berlin(2026, 6, 6, 4, 30)), true],
       ['summer time, before the time', sys.autoFaellig(plan(), berlin(2026, 6, 6, 4, 29)), false],
       ['UTC 03:40 is 04:40 in Berlin', sys.autoFaellig(plan(), new Date(Date.UTC(2026, 10, 9, 3, 40))), true],
+      ['saved before the time, same day', sys.autoFaellig(plan({ zeit: '14:00', gespeichert: mon(13, 50).getTime() }), mon(14, 0)), true],
+      ['saved after the time, same day', sys.autoFaellig(plan({ zeit: '14:00', gespeichert: mon(14, 10).getTime() }), mon(14, 15)), false],
+      ['saved after the time, next day', sys.autoFaellig(plan({ zeit: '14:00', gespeichert: mon(14, 10).getTime() }), berlin(2026, 10, 10, 14, 0)), true],
     ].map(([label, got, want]) => (got === want ? '' : label + ': expected ' + want + ', got ' + got)).filter(Boolean).join('; '));
     test('autoNaechste() – next planned run', () => {
       const d = sys.autoNaechste(plan(), mon(5, 0));
       const w = sys.autoNaechste(plan({ rhythmus: 'woechentlich', tag: 3 }), mon(5, 0));
       const s = sys.autoNaechste(plan(), berlin(2026, 6, 6, 5, 0));
-      return eq([d && d.getTime(), w && w.getTime(), s && s.getTime(), sys.autoNaechste(plan({ an: false }), mon(5, 0))],
-        [berlin(2026, 10, 10, 4, 30).getTime(), berlin(2026, 10, 11, 4, 30).getTime(), berlin(2026, 6, 7, 4, 30).getTime(), null]);
+      const t = sys.autoNaechste(plan({ zeit: '14:00' }), mon(13, 0));
+      const u = sys.autoNaechste(plan({ zeit: '14:00', letzter: { datum: '2026-11-09', ergebnis: 'keine' } }), mon(13, 0));
+      return eq([d && d.getTime(), w && w.getTime(), s && s.getTime(), t && t.getTime(), u && u.getTime(), sys.autoNaechste(plan({ an: false }), mon(5, 0))],
+        [berlin(2026, 10, 10, 4, 30).getTime(), berlin(2026, 10, 11, 4, 30).getTime(), berlin(2026, 6, 7, 4, 30).getTime(),
+          berlin(2026, 10, 9, 14, 0).getTime(), berlin(2026, 10, 10, 14, 0).getTime(), null]);
     });
     test('autoBereinigen() – broken values fall back to the defaults', () => eq(
       sys.autoBereinigen({ an: 'yes', rhythmus: 'x', tag: 9, zeit: '25:99', letzter: { ergebnis: 'boom' } }),
-      { an: false, rhythmus: 'taeglich', tag: 1, zeit: '04:30', letzter: null }));
+      { an: false, rhythmus: 'taeglich', tag: 1, zeit: '04:30', gespeichert: 0, letzter: null }));
 
     // installierteVersion() reads APP_VERSION from the built pb_public/index.html
     const indexFile = path.join(ROOT, 'pb_public', 'index.html');
