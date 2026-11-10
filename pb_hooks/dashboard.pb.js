@@ -4,7 +4,8 @@
 //
 // Without login (only with the key of the dashboard device):
 //   POST /api/pinn/dashboard/profile          {key}                        -> family + profiles (with PIN length;
-//        since 1.143.0 with "offen" = open tasks per profile and offenAnzeigen: true, if an admin switched it on)
+//        since 1.143.0 with "offen" = open tasks per profile, since 1.144.0 also "chats" = unread chat messages;
+//        zahlenAnzeigen: true unless an admin switched the numbers off - offenAnzeigen is the same for apps of 1.143.0)
 //   POST /api/pinn/dashboard/login            {key, id, pin?, passwort?}  -> login as this profile
 //        Since 1.118.4: a profile without a PIN (not a guest) needs its password ("passwort") -
 //        without it the answer is 401 { passwort: true }. The app then asks for a new PIN.
@@ -56,13 +57,14 @@ routerAdd("POST", "/api/pinn/dashboard/profile", (e) => {
     if (!fam) return e.json(404, { error: "Die Familie dieses Dashboards gibt es nicht mehr.", ungueltig: true });
     dash.touchDevice(dev);
     const profiles = dash.profilesFor(fam.id);
-    // since 1.143.0: "offen" per profile if an admin switched the number under the picture on
-    const showOpen = dash.attachOpenCounts(fam.id, profiles);
+    // since 1.144.0: "offen" (open tasks) and "chats" (unread chats) per profile, unless an admin switched them off
+    const showCounts = dash.attachCounts(fam.id, profiles);
     return e.json(200, {
         geraet: { id: dev.id, name: dev.getString("name") },
         familie: { id: fam.id, name: fam.getString("name") },
         profile: profiles,
-        offenAnzeigen: showOpen,
+        zahlenAnzeigen: showCounts,
+        offenAnzeigen: showCounts,
         hintergrund: dash.backgroundMeta(fam.id),
     });
 });

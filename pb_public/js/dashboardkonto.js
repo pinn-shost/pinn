@@ -273,16 +273,16 @@ function renderDashBgControls() {
   document.getElementById('dashBgSaveBtn').disabled = !dashBgEdit.geladen;
   renderDashBgPreview();
 }
-// admins: number of open tasks under the profile pictures on the dashboard (family-wide, since 1.143.0)
+// admins: open tasks and unread chats under the profile pictures on the dashboard (family-wide, since 1.143.0; chats and on by default since 1.144.0)
 function renderDashCountSetting() {
   const wrap = document.getElementById('dashCountWrap');
   const check = document.getElementById('dashCountCheck');
   if (!wrap || !check) return;
   wrap.classList.toggle('hidden', !isCurrentUserAdmin());
   if (!isCurrentUserAdmin()) return;
-  check.checked = dashboardOpenTaskCount === true;
+  check.checked = dashboardCounts !== false;
   check.onchange = () => {
-    dashboardOpenTaskCount = check.checked;
+    dashboardCounts = check.checked;
     persistState();
     document.getElementById('dashCountStatus').textContent = tk('common.saved');
   };

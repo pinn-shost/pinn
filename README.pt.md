@@ -133,6 +133,14 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.144.0
+
+**Painel: conversas não lidas e tarefas em aberto sob cada pessoa**
+
+- **Dois números sob cada pessoa.** Na seleção de perfis do painel da família (iPad), um balão mostra as mensagens de chat não lidas e um visto as tarefas em aberto e vencidas – visíveis sem iniciar sessão. Com 0 desaparece, acima de 9 mostra 9⁺. Os números são atualizados a cada minuto.
+- **Ativado por padrão.** A opção da 1.143.0 estava desligada e mostrava só tarefas; agora os dois números estão ativos em todas as famílias. Um admin pode desligá-los em Conta → “Tarefas e conversas no painel”. Conversas silenciadas não contam; as marcadas como não lidas contam uma – como o número ao lado de “Chat” no menu.
+- Alterado: `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (1 texto novo e 4 alterados nas catorze línguas), `src/` (versão, página da conta), `index.html`, todos os README. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-chat.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
+
 ## Novidades da 1.143.0
 
 **Painel: tarefas em aberto sob a foto de perfil e chat no iPad**
@@ -250,7 +258,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.143.0` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.144.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

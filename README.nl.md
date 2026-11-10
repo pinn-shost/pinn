@@ -110,6 +110,14 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.144.0
+
+**Dashboard: ongelezen chats en openstaande taken onder iedere persoon**
+
+- **Twee getallen onder iedere persoon.** Op de profielkeuze van het gezinsdashboard (iPad) toont een tekstballon de ongelezen chatberichten en een vinkje de openstaande taken die aan de beurt zijn – zichtbaar zonder in te loggen. Bij 0 verdwijnt het, boven de 9 staat er 9⁺. De getallen worden elke minuut bijgewerkt.
+- **Standaard aan.** De instelling uit 1.143.0 stond uit en toonde alleen taken; nu staan beide getallen voor elk gezin aan. Een beheerder kan ze uitzetten onder Account → ‘Taken en chats op het dashboard’. Gedempte chats tellen niet mee, als ongelezen gemarkeerde chats tellen als één – net als het getal achter ‘Chat’ in het menu.
+- Gewijzigd: `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (1 nieuwe en 4 gewijzigde teksten in alle veertien talen), `src/` (versie, accountpagina), `index.html`, alle README’s. Server (hooks vervangen, PocketBase start opnieuw): `pb_hooks/pinn-chat.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
+
 ## Nieuw in 1.143.0
 
 **Dashboard: openstaande taken onder de profielfoto en chat op de iPad**
@@ -174,7 +182,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.143.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.144.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

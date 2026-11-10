@@ -6,7 +6,9 @@
    Since 1.118.4 every profile needs a PIN at the dashboard: a profile without one (not a guest) opens once with its password
    (#dashPwOverlay); right after the login bootApp asks for the new PIN (enforceDashboardPin in js/dashboardkonto.js).
    Since 1.134.0 kids with "kids' page only" open with a tap (no PIN, no password) and only see their kids' page; the
-   pictures come from the members area on the device (the members moved out of the family record with 1.108). */
+   pictures come from the members area on the device (the members moved out of the family record with 1.108).
+   Since 1.144.0 every tile shows unread chats (speech bubble) and open tasks (check mark) under the name (dashCountsHtml) -
+   on by default, an admin can switch them off under Account; the numbers are refreshed quietly every minute. */
 
 /* ---------- Look of the profile selection (colours/dark mode from the most recently loaded state) ---------- */
 // Current value of an area from the device storage (js/bereiche.js): own pending change first, then
@@ -82,6 +84,25 @@ function buildDashboardTiles(profiles, members) {
     .sort((a, b) => ((a.rolle === 'gast') - (b.rolle === 'gast')) || a.username.localeCompare(b.username))
     .forEach(p => tiles.push({ profile: p, member: null, kid: p.kinderseite === true, name: p.username }));
   return tiles;
+}
+
+/* ---------- Numbers under the name: unread chats and open tasks (since 1.144.0) ---------- */
+// Speech bubble (like a messenger icon, without the phone receiver) and check mark, drawn with the text colour
+const DASH_ICON_CHAT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.4a8.6 8.6 0 0 0-7.45 12.9L3.4 20.6l4.4-1.15A8.6 8.6 0 1 0 12 3.4z"/></svg>';
+const DASH_ICON_TASK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.2 12.6l4.3 4.3L18.8 7.4"/></svg>';
+// 0 = nothing, 1-9 as they are, more than 9 = "9" with a raised "+"
+function dashCountNumber(n) {
+  return n > 9 ? '9<sup>+</sup>' : String(n);
+}
+// One chip per kind; a kind with 0 (or without a number from the server) is left out completely
+function dashCountsHtml(profile) {
+  const chats = Math.max(0, Math.floor(Number(profile.chats) || 0));
+  const tasks = Math.max(0, Math.floor(Number(profile.offen) || 0));
+  if (!chats && !tasks) return '';
+  let html = '<span class="dash-counts">';
+  if (chats) html += '<span class="dash-cnt chat" role="img" aria-label="' + escapeHtml(tk('dashboard.unreadChatsCount', { n: chats })) + '">' + DASH_ICON_CHAT + '<b>' + dashCountNumber(chats) + '</b></span>';
+  if (tasks) html += '<span class="dash-cnt task" role="img" aria-label="' + escapeHtml(tk('dashboard.openTasksCount', { n: tasks })) + '">' + DASH_ICON_TASK + '<b>' + dashCountNumber(tasks) + '</b></span>';
+  return html + '</span>';
 }
 
 let dashClockTimer = null;
@@ -191,11 +212,15 @@ function showDashboardScreen(dash) {
         if (saved) writeDashboardConfig({ ...saved, familyName: famName });
         document.getElementById('dashFamilyName').textContent = famName;
       }
-      render(Array.isArray(r.body.profile) ? r.body.profile : [], r.body.offenAnzeigen === true);
+      render(Array.isArray(r.body.profile) ? r.body.profile : [], countsShown(r.body));
       syncDashBackground(dash, r.body.hintergrund);
       // the numbers change while the screen stays open: ask again quietly every minute
       clearInterval(dashCountTimer);
-      dashCountTimer = r.body.offenAnzeigen === true ? setInterval(refreshCounts, 60 * 1000) : null;
+      dashCountTimer = countsShown(r.body) ? setInterval(refreshCounts, 60 * 1000) : null;
+    }
+    // true = the server sends the numbers (zahlenAnzeigen since 1.144.0, offenAnzeigen for servers of 1.143.0)
+    function countsShown(body) {
+      return body.zahlenAnzeigen === true || (body.zahlenAnzeigen === undefined && body.offenAnzeigen === true);
     }
     // Quiet refresh of the numbers (no loading text, no flicker); stops when the screen is hidden
     async function refreshCounts() {
@@ -205,12 +230,12 @@ function showDashboardScreen(dash) {
         const r = await postDashboard('/api/pinn/dashboard/profile', { key: dash.key });
         if (!r.res.ok) return;
         if (!document.getElementById('pinPadOverlay') || document.getElementById('pinPadOverlay').classList.contains('hidden')) {
-          render(Array.isArray(r.body.profile) ? r.body.profile : [], r.body.offenAnzeigen === true);
+          render(Array.isArray(r.body.profile) ? r.body.profile : [], countsShown(r.body));
         }
       } catch (e) { /* offline: keep the numbers shown */ }
     }
 
-    function render(profiles, showOpen) {
+    function render(profiles, showCounts) {
       const tiles = buildDashboardTiles(profiles, members);
       if (!tiles.length) {
         tilesEl.innerHTML = '<p class="text-sm text-ink/50">' + escapeHtml(tk('dashboard.noProfiles')) + '</p>';
@@ -226,9 +251,9 @@ function showDashboardScreen(dash) {
           ${icon}
           <span class="dash-avatar-wrap">
             ${dashAvatarHtml(t.member, t.profile)}
-            ${showOpen && t.profile.offen > 0 ? `<span class="dash-count" aria-label="${escapeHtml(tk('dashboard.openTasksCount', { n: t.profile.offen }))}">${t.profile.offen > 99 ? '99+' : t.profile.offen}</span>` : ''}
           </span>
           <span class="dash-name">${escapeHtml(t.name)}</span>
+          ${showCounts ? dashCountsHtml(t.profile) : ''}
           ${badge ? `<span class="dash-badge">${badge}</span>` : ''}
         </button>`;
       }).join('');

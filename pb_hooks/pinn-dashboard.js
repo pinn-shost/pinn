@@ -460,34 +460,44 @@ function profilesFor(familyId) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Number of open tasks under the picture on the profile selection (since 1.143.0)
+// Numbers under the picture on the profile selection: open tasks (since 1.143.0) and unread chats
+// (since 1.144.0) - visible without signing in, so everybody sees at a glance what is waiting
 // ---------------------------------------------------------------------------------------------
-// true = an admin switched the number on (settings area, key dashboardOpenTaskCount)
-function openCountEnabled(familyId) {
+// true = the numbers are shown. On by default since 1.144.0; an admin can switch them off
+// (settings area, key dashboardCounts = false). The 1.143.0 key dashboardOpenTaskCount is no longer read.
+function countsEnabled(familyId) {
     const fid = String(familyId || "");
     if (!fid) return false;
     try {
         const area = require(`${__hooks}/pinn-bereiche.js`).readMany(fid, ["einstellungen"]);
-        if (area && area.dashboardOpenTaskCount === true) return true;
+        if (area && typeof area === "object") return area.dashboardCounts !== false;
     } catch (e) { /* not moved yet - read the family data */ }
     try {
         const data = base().loadFamilyDataFor(fid) || {};
-        return data.dashboardOpenTaskCount === true;
+        return data.dashboardCounts !== false;
     } catch (e) {
-        return false;
+        return true;
     }
 }
-// Adds "offen" (open, due tasks - same rule as the app icon) to every profile that has a member;
-// guests get none. Without the switch the profiles stay as they are.
-function attachOpenCounts(familyId, profiles) {
-    if (!openCountEnabled(familyId)) return false;
-    let counts = {};
+// Adds "offen" (open, due tasks - same rule as the app icon) to every profile that has a member and
+// "chats" (unread chat messages - same rule as the number behind "Chat" in the menu) to every profile
+// that can use the chat (not guests, not kids with "kids' page only"). Without the switch the profiles stay as they are.
+function attachCounts(familyId, profiles) {
+    if (!countsEnabled(familyId)) return false;
+    const fid = String(familyId);
+    let tasks = {};
     try {
-        counts = require(`${__hooks}/pinn-push.js`).openTaskCountsForFamily(String(familyId), membersOf(familyId));
-    } catch (e) { counts = {}; }
+        tasks = require(`${__hooks}/pinn-push.js`).openTaskCountsForFamily(fid, membersOf(fid));
+    } catch (e) { tasks = {}; }
+    const chatIds = profiles.filter(p => p.rolle !== "gast" && !p.kinderseite).map(p => p.id);
+    let chats = {};
+    try {
+        chats = require(`${__hooks}/pinn-chat.js`).unreadCountsForFamily(fid, chatIds);
+    } catch (e) { chats = {}; }
     profiles.forEach(p => {
-        if (p.rolle === "gast" || !p.mitglied) return;
-        p.offen = counts[p.mitglied] || 0;
+        if (p.rolle === "gast") return;
+        if (p.mitglied) p.offen = tasks[p.mitglied] || 0;
+        if (chatIds.indexOf(p.id) >= 0) p.chats = chats[p.id] || 0;
     });
     return true;
 }
@@ -597,7 +607,7 @@ function waitText(seconds) {
 module.exports = {
     GERAETE, PIN_FIELD, HINTERGRUND,
     ensureSchema, newDevice, findDevice, doppelteZusammenfuehren, touchDevice, listDevices, removeDevice, cleanDeviceName,
-    profilesFor, openCountEnabled, attachOpenCounts, pinLength, setPin, checkPin, validPinFormat, pinRequired, needsPin, membersOf, memberKidsOnly, kidsOnlyProfile,
+    profilesFor, countsEnabled, attachCounts, pinLength, setPin, checkPin, validPinFormat, pinRequired, needsPin, membersOf, memberKidsOnly, kidsOnlyProfile,
     lockedFor, registerFail, clearFails, waitText,
     backgroundMeta, backgroundFull, saveBackground,
 };

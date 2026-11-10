@@ -22,6 +22,14 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.144', datum: '10.11.2026', titel: 'Dashboard: ungelesene Chats und offene Aufgaben unter jeder Person',
+    punkte: [
+      ['neu', 'Zwei Zahlen unter jeder Person: Auf der Profilauswahl des Familien-Dashboards (iPad) steht unter dem Namen eine Sprechblase mit der Zahl der ungelesenen Chat-Nachrichten und ein Haken mit der Zahl der offenen, fälligen Aufgaben – sichtbar ohne Anmeldung. Bei 0 verschwindet das Feld, über 9 steht 9⁺; die Zahlen werden jede Minute aufgefrischt.'],
+      ['neu', 'Standardmäßig an (in 1.143.0 war es aus und zeigte nur Aufgaben); ein Admin kann es unter Konto → „Aufgaben und Chats auf dem Dashboard“ ausschalten. Gezählt wird wie hinter „Chat“ im Menü: stummgeschaltete Chats nicht, als ungelesen markierte Chats als eins. Gäste und Kinder mit „nur Kinderseite“ zeigen keine Chat-Zahl.'],
+      ['info', 'Geändert: pb_hooks/pinn-chat.js (neu unreadCountsForFamily), pinn-dashboard.js, dashboard.pb.js, pinn-bereiche.js, js/profilauswahl.js, js/dashboardkonto.js, js/zustand.js, js/speichern.js, js/familiensync.js, css/dashboard.css, js/sprachen.js, js/versionslog.js, i18n/ (1 neuer und 4 geänderte Texte in allen vierzehn Sprachen), i18n/versionslog.en.js, src/ (Version, Konto-Seite), index.html, alle READMEs. Server-Teil: Hooks einspielen, PocketBase startet neu.'],
+    ],
+  },
+  {
     v: '1.143', datum: '09.11.2026', titel: 'Dashboard: offene Aufgaben unter dem Profilbild und Chat am iPad',
     punkte: [
       ['neu', 'Zahl der offenen Aufgaben unter dem Profilbild: Auf der Profilauswahl des Familien-Dashboards (iPad) zeigt pinn. unter dem Bild jeder Person die Zahl ihrer offenen, fälligen Aufgaben – wie die Zahl am App-Symbol auf dem iPhone (rot, verschwindet bei 0, wird jede Minute aufgefrischt). Ein Admin schaltet das unter Konto → „Offene Aufgaben auf dem Dashboard“ ein; es gilt für alle Dashboards der Familie. Gäste zeigen keine Zahl.'],

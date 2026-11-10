@@ -41,15 +41,25 @@
 .dash-avatar .dash-initial { width: 100%; height: 100%; display: grid; place-items: center; color: #fff; font-weight: 600; font-size: 46px; }
 .dash-avatar.small { width: 84px; height: 84px; font-size: 44px; }
 .dash-avatar.small .dash-initial { font-size: 34px; }
-/* Number of open tasks on the corner of the picture, like the number on an app icon (since 1.143.0) */
+/* Wrapper of the picture (since 1.143.0) */
 .dash-avatar-wrap { position: relative; display: block; flex-shrink: 0; }
-.dash-count {
-  position: absolute; top: -4px; right: -6px; min-width: 28px; height: 28px; padding: 0 8px; box-sizing: border-box;
-  display: grid; place-items: center; border-radius: 999px; background: #FF3B30; color: #fff;
-  font: 600 15px/1 -apple-system, 'Helvetica Neue', Arial, sans-serif; border: 2px solid #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,.25);
+/* Unread chats (speech bubble) and open tasks (check mark) under the name (since 1.144.0): one chip per kind,
+   colours of the app - chat like the chat number in the menu (mustard), tasks in the main colour (pine) */
+.dash-counts { display: flex; flex-wrap: wrap; justify-content: center; gap: .45rem; margin-top: -.15rem; }
+.dash-cnt {
+  display: inline-flex; align-items: center; gap: .32rem; height: 32px; padding: 0 .75rem 0 .6rem; box-sizing: border-box;
+  border-radius: 999px; color: #fff; box-shadow: 0 2px 8px rgba(37,35,31,.16);
+  font: 700 16px/1 -apple-system, 'Helvetica Neue', Arial, sans-serif; font-variant-numeric: tabular-nums;
 }
-html.dark .dash-count { border-color: #34312C; }
+.dash-cnt.chat { background: var(--c-mustard); }
+.dash-cnt.task { background: var(--c-pine); }
+.dash-cnt svg { width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.dash-cnt.task svg { stroke-width: 2.8; }
+.dash-cnt b { font-weight: 700; display: inline-flex; align-items: flex-start; }
+.dash-cnt sup { font-size: .68em; line-height: 1; margin-left: 1px; position: relative; top: -.32em; vertical-align: baseline; }
+html.dark .dash-cnt { box-shadow: 0 2px 8px rgba(0,0,0,.35); }
+/* the main colour is very dark - a lighter shade keeps the task chip visible on dark tiles */
+html.dark .dash-cnt.task { background: color-mix(in srgb, var(--c-pine) 72%, white); }
 .dash-name { font-family: 'Fraunces', Georgia, serif; font-size: 1.3rem; line-height: 1.2; text-align: center; word-break: break-word; }
 .dash-badge { font-size: 11px; font-weight: 600; letter-spacing: .02em; padding: .2rem .6rem; border-radius: 999px; background: rgba(37,35,31,.07); color: rgba(37,35,31,.6); }
 .dash-tile.kid .dash-badge { background: rgba(255,255,255,.75); color: #8A5A00; }

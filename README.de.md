@@ -133,6 +133,14 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.144.0
+
+**Dashboard: ungelesene Chats und offene Aufgaben unter jeder Person**
+
+- **Zwei Zahlen unter jeder Person.** Auf der Profilauswahl des Familien-Dashboards (iPad) zeigt eine Sprechblase die ungelesenen Chat-Nachrichten und ein Haken die offenen, fälligen Aufgaben – sichtbar ohne Anmeldung. Bei 0 verschwindet das Feld, über 9 steht 9⁺. Die Zahlen werden jede Minute aufgefrischt.
+- **Standardmäßig an.** Die Einstellung aus 1.143.0 war aus und zeigte nur Aufgaben; jetzt sind beide Zahlen für jede Familie an. Ein Admin kann sie unter Konto → „Aufgaben und Chats auf dem Dashboard“ ausschalten. Stummgeschaltete Chats zählen nicht, als ungelesen markierte Chats zählen eins – genau wie die Zahl hinter „Chat“ im Menü.
+- Geändert: `js/profilauswahl.js`, `js/dashboardkonto.js`, `js/zustand.js`, `js/speichern.js`, `js/familiensync.js`, `css/dashboard.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (1 neuer und 4 geänderte Texte in allen vierzehn Sprachen), `src/` (Version, Konto-Seite), `index.html`, alle READMEs. Server (Hooks austauschen, PocketBase startet neu): `pb_hooks/pinn-chat.js`, `pb_hooks/pinn-dashboard.js`, `pb_hooks/dashboard.pb.js`, `pb_hooks/pinn-bereiche.js`.
+
 ## Neu in 1.143.0
 
 **Dashboard: offene Aufgaben unter dem Profilbild und Chat am iPad**
@@ -257,7 +265,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.143.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.144.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

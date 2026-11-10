@@ -80,7 +80,7 @@ const PUSH_TEXT = {
     uk: { group: "Нове повідомлення в груповому чаті", dm: "Нове повідомлення", photo: "Фото", video: "Відео", voice: "Голосове повідомлення", file: "Файл", loc: "Місцезнаходження", poll: "Опитування" },
 };
 
-module.exports = { ensureSchema, roster, saveKey, saveBackup, saveSettings, overview, list, send, markRead, remove, upload, download, saveRetention, cleanup,
+module.exports = { ensureSchema, unreadCountsForFamily, roster, saveKey, saveBackup, saveSettings, overview, list, send, markRead, remove, upload, download, saveRetention, cleanup,
     saveGroup, leaveGroup, setRoomMark, getPicture, savePicture, saveMode, dissolveGroup, preview };
 
 function findCol(name) {
@@ -506,6 +506,62 @@ function overview(e) {
     });
     const list = Object.keys(rooms).map(k => rooms[k]);
     return { raeume: list, gesamt: list.reduce((n, x) => n + x.ungelesen, 0), jetzt: Date.now(), markierungen: marksOf(u) };
+}
+// Unread chats per profile of ONE family for the dashboard profile selection (since 1.144.0): { <profile ID>: number }.
+// Same rule as the number behind "Chat" in the menu of the app (js/chat.js → chatUpdateBadge): unread messages of all
+// chats that are not muted, plus chats marked as unread by hand that have no unread message. Only counts - nothing is
+// decrypted, the server never sees the text anyway. One pass over the messages, one look-up of groups and marks.
+function unreadCountsForFamily(familyId, userIds) {
+    const fam = String(familyId || "");
+    const out = {};
+    const ids = (Array.isArray(userIds) ? userIds : []).map(String).filter(Boolean);
+    ids.forEach(id => { out[id] = 0; });
+    if (!fam || !ids.length) return out;
+    const now = Date.now();
+    const groups = {};
+    try {
+        $app.findRecordsByFilter(GROUPS, "familie = {:f}", "", 0, 0, { f: fam }).forEach(g => { groups["gr:" + g.id] = groupIds(g); });
+    } catch (err) { /* no groups yet */ }
+    const sees = (id, room) => {
+        if (room === "familie") return true;
+        const m = DM_RE.exec(room);
+        if (m) return m[1] === id || m[2] === id;
+        return !!groups[room] && groups[room].indexOf(id) >= 0;
+    };
+    const perRoom = {}; // { <profile ID>: { <room>: unread messages } }
+    ids.forEach(id => { perRoom[id] = {}; });
+    let recs = [];
+    try {
+        recs = $app.findRecordsByFilter(MSGS, "familie = {:f} && zeit > {:z}", "-zeit", 1500, 0, { f: fam, z: now - UNREAD_WINDOW_MS });
+    } catch (err) { recs = []; }
+    recs.forEach(r => {
+        if (r.getBool("leise") || r.getBool("geloescht")) return;
+        const room = r.getString("raum");
+        const from = r.getString("von");
+        const to = r.getString("empf");
+        let read = null;
+        ids.forEach(id => {
+            if (id === from || !hasId(to, id) || !sees(id, room)) return;
+            if (read === null) read = parseObj(r.getString("gelesen"));
+            if (read[id]) return;
+            perRoom[id][room] = (perRoom[id][room] || 0) + 1;
+        });
+    });
+    ids.forEach(id => {
+        const rec = marksRec(id);
+        const marks = rec ? parseObj(rec.getString("daten")) : {};
+        const muted = room => {
+            const v = marks[room] && marks[room].m ? Number(marks[room].m) : 0;
+            return v === 1 || v > now;
+        };
+        let n = 0;
+        Object.keys(perRoom[id]).forEach(room => { if (!muted(room)) n += perRoom[id][room]; });
+        Object.keys(marks).forEach(room => {
+            if (marks[room] && marks[room].u && !muted(room) && !perRoom[id][room] && sees(id, room)) n++;
+        });
+        out[id] = n;
+    });
+    return out;
 }
 // Messages of a room. seit = only what changed since that time (new, read, deleted; ">=" because several changes can share
 // one millisecond - the app ignores what it already has);

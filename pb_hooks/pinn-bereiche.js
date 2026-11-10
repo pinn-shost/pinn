@@ -22,7 +22,7 @@
 //   mitglieder  members                                            (since 1.108.0)
 //   notfall     emergencyPasses                                    (since 1.108.0)
 //   einstellungen  lastName, wohnform, themeColors, darkMode, default views, categoryActive,
-//               weatherLocation, kitchenTools, favoriteTabs, guestHiddenViews, dashboardOpenTaskCount,
+//               weatherLocation, kitchenTools, favoriteTabs, guestHiddenViews, dashboardCounts,
 //               documentCategories                                 (since 1.108.0)
 //   aufgaben    tasks, doneTaskCleanupDays                         (since 1.109.0)
 //   haushalt    rooms, roomSchedules, trashBins, cleaningCategories, smartDevices (since 1.109.0)
@@ -76,7 +76,7 @@ const AREAS = {
     notfall: ["emergencyPasses"],
     einstellungen: ["lastName", "wohnform", "themeColors", "darkMode", "defaultViewModeDesktop", "defaultViewScopeDesktop",
         "defaultViewModeMobile", "defaultViewScopeMobile", "categoryActive", "weatherLocation", "kitchenTools", "favoriteTabs",
-        "guestHiddenViews", "documentCategories", "dashboardOpenTaskCount"],
+        "guestHiddenViews", "documentCategories", "dashboardCounts"],
     aufgaben: ["tasks", "doneTaskCleanupDays"],
     haushalt: ["rooms", "roomSchedules", "trashBins", "cleaningCategories", "smartDevices"],
     kalender: ["appleCalendar"],
@@ -86,7 +86,7 @@ const AREAS_1104 = ["rezepte", "essensplan"];
 // Other areas the bell needs to describe a change (a new meal gets the title of its recipe)
 const CONTEXT = { essensplan: ["rezepte"], notfall: ["mitglieder"] };
 // Keys of an area a guest account cannot change (the stored value is kept)
-const GUEST_LOCKED = { einstellungen: ["guestHiddenViews", "dashboardOpenTaskCount"] };
+const GUEST_LOCKED = { einstellungen: ["guestHiddenViews", "dashboardCounts"] };
 const DATA_MAX = 50 * 1024 * 1024;   // same limit as familien_daten (recipe photos of old versions are embedded)
 const COPY_DAYS = 30;
 // Old default-view keys (before the desktop/mobile split) -> the keys of the settings area that replace them

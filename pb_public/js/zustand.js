@@ -198,7 +198,7 @@ function defaultFamilyData() {
       { id: 'grill', label: 'Grill', active: true },
     ],
     guestHiddenViews: [],
-    dashboardOpenTaskCount: false, // admin switch: number of open tasks under the picture on the dashboard profile selection (since 1.143.0)
+    dashboardCounts: true, // admin switch: open tasks and unread chats under the picture on the dashboard profile selection (since 1.144.0, on by default)
     finance: defaultFinance(), // budget, categories, recurring expenses (the expenses themselves live in the "ausgaben" collection)
     doneTaskCleanupDays: 2, // 2 | 1 | 0 (immediately) - how long completed tasks stay visible
     defaultViewModeDesktop: 'timeline', // 'timeline' | 'list' - default view for events on iPad/desktop
@@ -269,7 +269,7 @@ let smartDevices = []; // smart home devices with actions (Apple Shortcuts)
 let cleaningCategories = [];
 let kitchenTools = [];
 let guestHiddenViews = []; // menus an admin has additionally hidden for guest accounts
-let dashboardOpenTaskCount = false; // number of open tasks under the picture on the dashboard (since 1.143.0)
+let dashboardCounts = true; // open tasks and unread chats under the picture on the dashboard (since 1.144.0)
 let finance = null; // set in applyFamilyData() (normalizeFinance)
 let doneTaskCleanupDays = 2;
 // Tasks live on the NAS (PocketBase collection "aufgaben"), loaded via /api/pinn/aufgaben.
