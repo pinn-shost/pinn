@@ -133,6 +133,15 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.146.1의 새 소식
+
+**모든 글자 위의 눈, 대시보드의 겨울**
+
+- **진짜 눈처럼.** 이제 눈이 글자마다 따로, 맨 위에만 쌓입니다. 평평한 가장자리에는 한 겹(B나 L의 윗막대, K의 위쪽 두 끝), 둥근 부분 가운데에는 눈 덩이(O), 가파른 옆면, L의 발, 틈에는 쌓이지 않습니다. 이모지는 비워 둡니다. 헤더의 가족 이름에도 눈이 쌓이고 이름을 바꾸면 맞춰 바뀝니다.
+- **가족 대시보드의 겨울.** 가족 이름, 시계, 기온 위에 눈, 각 타일 위에 눈 모자(조금씩 다름), 아래에는 작은 겨울 풍경.
+- **산타**가 절반만 날아갑니다(10~18분마다, 크리스마스 이브에는 4~6분마다).
+- 변경: `js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`, 모든 README. 서버 부분 없음.
+
 ## 1.146.0의 새 소식
 
 **제목마다 꼭 맞는 눈, 지역에 맞춘 업데이트 시간**
@@ -220,14 +229,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **빠른 실행 위젯.** 두 번째 스크립트(“빠른 실행 스크립트 복사”)로 목록, 금융(지역 통화 기호 포함), 할 일 세 칸이 있는 위젯을 만들어요. 탭하면 iOS가 링크로 설치한 앱을 열 수 없어서 Safari에서 pinn.의 해당 페이지가 열려요. Safari에서 한 번 로그인해 주세요.
 - 변경: `js/sprachsteuerung.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (14개 언어의 새 문구와 바뀐 문구), `src/` (버전), `index.html`, `.github/scripts/check-hooks.js`, 모든 README. 서버(hook 교체, PocketBase가 다시 시작돼요): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
 
-## 1.141.0의 새 소식
-
-**위젯: 보여줄 내용을 고르고 위젯에서 바로 체크해요**
-
-- **위젯에 보여줄 내용 고르기.** 설정 → 음성 제어 → “위젯 및 Apple Watch”에서 오늘 일정, 할 일(집안일 제외), 집안일, 장보기 목록을 각각 체크한 뒤 스크립트를 Scriptable에 복사해요 – 위젯마다 스크립트가 하나씩 필요해요. 할 일과 집안일을 함께 체크하면 “집안일 포함 할 일”이 돼요.
-- **위젯에서 체크하기.** 중간·큰 위젯에서 할 일이나 장보기 항목을 탭하면 pinn.에서도 체크돼요(이때 iOS가 Scriptable을 잠시 열어요). 체크한 항목은 취소선과 함께 목록에 남고, “장보기 완료”는 평소처럼 pinn.에서 해요(위젯 아래 버튼이 앱을 열어요). 아이 잠금이 켜진 프로필은 체크할 수 없어요. 1.140.0의 스크립트를 이미 쓰고 있다면 다시 복사해서 Scriptable에서 바꿔 주세요.
-- 변경: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (14개 언어 모두에 새 문구 7개), `src/` (버전), `index.html`, `.github/scripts/check-hooks.js`, 모든 README. 서버(hook 교체, PocketBase가 다시 시작돼요): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
-
 ## 작동 방식
 
 ```mermaid
@@ -256,7 +257,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.146.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.146.1` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

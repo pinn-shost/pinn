@@ -133,6 +133,15 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.146.1
+
+**Schnee auf jedem Buchstaben, Winter auf dem Dashboard**
+
+- **Schnee wie echter Schnee.** Der Schnee liegt jetzt auf jedem einzelnen Buchstaben, nur ganz oben: eine Schicht auf flachen Kanten (oberer Balken von B oder L, die beiden oberen Enden vom K), ein Klecks in der Mitte von Rundungen (O), nichts an steilen Seiten, am Fuß des L oder in den Lücken. Emoji bleiben frei. Auch der Familienname in der Kopfzeile bekommt Schnee und passt sich an, wenn er geändert wird.
+- **Winter auf dem Familien-Dashboard.** Schnee auf Familienname, Uhrzeit und Temperatur, eine Schneehaube auf jeder Kachel (jede etwas anders) und unten eine kleine Winterlandschaft.
+- **Der Weihnachtsmann** fliegt nur noch halb so oft (alle 10–18 Minuten, an Heiligabend alle 4–6).
+- Geändert: `js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`, alle READMEs. Kein Server-Teil.
+
 ## Neu in 1.146.0
 
 **Schnee passend zu jeder Überschrift, Update-Uhrzeit nach Region**
@@ -228,15 +237,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Abhaken im Widget.** Im mittleren und großen Widget tippst du eine Aufgabe oder einen Einkaufs-Eintrag an, und er ist auch in pinn. abgehakt (iOS öffnet dafür kurz Scriptable). Abgehakte Einträge bleiben durchgestrichen auf der Liste; „Einkauf abschließen“ machst du wie gewohnt in pinn. (ein Knopf unten im Widget öffnet die App). Profile mit Kindersperre können nichts abhaken. Wer das Skript aus 1.140.0 nutzt, kopiert es neu und ersetzt es in Scriptable.
 - Geändert: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (7 neue Texte in allen vierzehn Sprachen), `src/` (Version), `index.html`, `.github/scripts/check-hooks.js`, alle READMEs. Server (Hooks ersetzen, PocketBase startet neu): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
 
-## Neu in 1.140.0
-
-**Widgets & Apple Watch**
-
-- **Widgets.** In den Einstellungen unter „Sprachsteuerung“ gibt es jetzt „Widgets & Apple Watch“. Mit der kostenlosen App Scriptable zeigt ein Widget auf dem Home- oder Sperrbildschirm die heutigen Termine, offene Aufgaben und die Zahl der Einkaufs-Einträge; das fertige Skript kopierst du mit einem Tippen.
-- **Apple Watch.** Mit einem Kurzbefehl („Inhalte von URL abrufen“ → „Ergebnis anzeigen“, „Auf Apple Watch anzeigen“) siehst du heute, morgen, die Einkaufsliste oder alles auf der Uhr – oder lässt es dir vorlesen. Die Schritte stehen in der App.
-- Es ist derselbe geheime Link wie bei Siri, nur zum Lesen, und Gäste haben ihn nicht. Die Texte kommen in der Sprache des Profils.
-- Geändert: `js/sprachsteuerung.js`, `js/versionslog.js`, `i18n/` (16 neue Texte und ein geänderter Untertitel in allen vierzehn Sprachen), `src/` (`index.html`, Einstellungen), `.github/scripts/check-hooks.js`, alle READMEs. Server (Hooks ersetzen, PocketBase startet neu): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -265,7 +265,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.146.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.146.1` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

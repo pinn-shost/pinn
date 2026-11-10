@@ -129,6 +129,15 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.146.1
+
+**De la neige sur chaque lettre, l’hiver sur le tableau de bord**
+
+- **De la neige comme la vraie.** La neige se pose désormais sur chaque lettre, tout en haut seulement : une couche sur les bords plats (barre du haut du B ou du L, les deux extrémités hautes du K), un petit tas au milieu des arrondis (O), rien sur les flancs raides, au pied du L ou dans les espaces. Les emoji restent libres. Le nom de famille dans l’en-tête reçoit aussi de la neige, qui s’adapte quand il change.
+- **L’hiver sur le tableau de bord familial.** De la neige sur le nom de famille, l’heure et la température, un chapeau de neige sur chaque tuile (chacun un peu différent) et un petit paysage d’hiver en bas.
+- **Le père Noël** passe deux fois moins souvent (toutes les 10–18 minutes, toutes les 4–6 la veille de Noël).
+- Modifié : `js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`, tous les README. Pas de partie serveur.
+
 ## Nouveautés de la 1.146.0
 
 **De la neige à la taille de chaque titre, heure de mise à jour selon la région**
@@ -251,13 +260,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Animaux.** Plusieurs heures de repas par animal : dans l’éditeur, vous ajoutez autant d’heures que vous voulez (jusqu’à 12) avec un sélecteur d’heure et une note facultative sur la quantité ou la nourriture (p. ex. « 1 tasse de croquettes »). La note apparaît sur le bouton du repas et dans la carte nourriture. Nouvelle bannière sur la page des animaux : une prairie avec une clôture où passent les animaux de la famille, la nuit avec des étoiles.
 - Modifié : `js/dunkelzeit.js` (nouveau), `js/design.js`, `js/familie.js`, `css/haustierewetter.css`, `js/einstellungen.js`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (19 nouveaux textes dans les quatorze langues), `src/` (`index.html`), `pinn-setup.sh`, `.github/scripts/check-hooks.js`, tous les README. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`.
 
-## Nouveautés de la 1.137.0
-
-**Commande vocale en turc, polonais et ukrainien**
-
-- **Commande vocale.** « Dis Siri, pinn » (sur Android, HTTP Shortcuts) comprend désormais aussi le turc, le polonais et l’ukrainien et répond dans la langue de ton profil : ajouter à la liste de courses (avec quantité et magasin), lire la liste, créer une tâche et entendre ce qui est prévu aujourd’hui ou demain. Siri ne répond plus en anglais pour l’ukrainien. La configuration du raccourci reste la même.
-- Modifié : `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, tous les README. Serveur (remplacer le hook, PocketBase redémarre) : `pb_hooks/pinn-sprache.js`.
-
 ## Comment ça marche
 
 ```mermaid
@@ -284,7 +286,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.146.0` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.146.1` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -110,6 +110,15 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.146.1
+
+**Śnieg na każdej literze, zima na panelu**
+
+- **Śnieg jak prawdziwy.** Śnieg leży teraz na każdej literze osobno i tylko na samej górze: warstwa na płaskich krawędziach (górna belka B lub L, oba górne końce K), czapa na środku zaokrągleń (O), nic na stromych bokach, na stopce L ani w przerwach. Emoji zostają wolne. Nazwisko rodziny w nagłówku też dostaje śnieg, który dopasowuje się po zmianie.
+- **Zima na panelu rodzinnym.** Śnieg na nazwisku, zegarze i temperaturze, śniegowa czapa na każdym kafelku (każda trochę inna) i na dole mały zimowy krajobraz.
+- **Mikołaj** przelatuje o połowę rzadziej (co 10–18 minut, w Wigilię co 4–6).
+- Zmieniono: `js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`, wszystkie pliki README. Bez części serwerowej.
+
 ## Nowości w 1.146.0
 
 **Śnieg dopasowany do każdego nagłówka, godzina aktualizacji według regionu**
@@ -166,13 +175,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Wykonane zadania liczy serwer,** ponieważ są usuwane po jednym lub dwóch dniach. W tym roku liczenie zaczyna się w dniu aktualizacji.
 - Zmienione: `js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14 nowych tekstów i jeden zmieniony we wszystkich czternastu językach), `src/` (wersja), `index.html`, wszystkie pliki README. Serwer (wymienić hooki, PocketBase uruchomi się ponownie): `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`.
 
-## Nowości w 1.142.1
-
-**Ostrzeżenie przy usuwaniu listy pakowania wyjazdu**
-
-- **Ostrzeżenie przy usuwaniu.** Kto usuwa listę pakowania z celem i terminem, dostaje teraz ostrzeżenie: wyjazd zniknie też z kalendarza i z podsumowania roku.
-- Zmienione: `js/listen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (jeden nowy tekst we wszystkich czternastu językach), `src/` (wersja), `index.html`, wszystkie pliki README. Bez części serwerowej.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -182,7 +184,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.146.0` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.146.1` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

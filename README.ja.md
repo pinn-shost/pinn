@@ -133,6 +133,15 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.146.1の新機能
+
+**すべての文字に雪、ダッシュボードに冬**
+
+- **本物の雪のように。** 雪は文字ごとに、いちばん上にだけ積もります。平らな縁には一層（B や L の上の横棒、K の上の両端）、丸みの中央には雪のかたまり（O）、急な側面や L の足、すき間には積もりません。絵文字には雪を載せません。ヘッダーの家族名にも雪が載り、名前を変えると合わせて変わります。
+- **家族ダッシュボードに冬。** 家族名・時計・気温に雪、各タイルの上に雪帽子（それぞれ少しずつ違う）、下には小さな冬景色。
+- **サンタ**の飛ぶ回数を半分に（10〜18分ごと、クリスマスイブは4〜6分ごと）。
+- 変更：`js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`、すべての README。サーバー側の変更なし。
+
 ## 1.146.0の新機能
 
 **見出しごとにぴったりの雪、地域に合わせた更新時刻**
@@ -220,14 +229,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **クイックアクセスウィジェット。** 2つ目のスクリプト（「クイックアクセス用スクリプトをコピー」）で、リスト、お金（地域の通貨記号付き）、タスクの3つのタイルを持つウィジェットを作れます。タップすると、iOS がリンクからインストール済みアプリを開けないため、Safari で pinn. のそのページが開きます。Safari で一度ログインしてください。
 - 変更：`js/sprachsteuerung.js`、`js/appstart.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/`（14言語すべての新規・変更文言）、`src/`（バージョン）、`index.html`、`.github/scripts/check-hooks.js`、すべてのREADME。サーバー（hookを置き換え、PocketBaseが再起動します）：`pb_hooks/pinn-sprache.js`、`pb_hooks/sprache.pb.js`。
 
-## 1.141.0の新機能
-
-**ウィジェット：表示内容を選べて、ウィジェットから直接チェックできます**
-
-- **ウィジェットの表示内容を選ぶ。** 設定 → 音声操作 →「ウィジェットと Apple Watch」で、今日の予定、タスク（家事を除く）、家事タスク、各買い物リストを個別にチェックし、スクリプトを Scriptable にコピーします（ウィジェットごとに1つのスクリプト）。タスクと家事タスクを一緒にチェックすると「家事を含むタスク」になります。
-- **ウィジェットでチェック。** 中・大サイズのウィジェットでタスクや買い物の項目をタップすると、pinn. でもチェックされます（その間 iOS が Scriptable を一瞬開きます）。チェックした項目は取り消し線付きでリストに残り、「買い物を完了」はこれまでどおり pinn. で行います（ウィジェット下部のボタンでアプリが開きます）。お子様ロックのプロフィールではチェックできません。1.140.0 のスクリプトをすでに使っている場合は、もう一度コピーして Scriptable で置き換えてください。
-- 変更：`js/sprachsteuerung.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/`（14言語すべてに新しい文言7件）、`src/`（バージョン）、`index.html`、`.github/scripts/check-hooks.js`、すべてのREADME。サーバー（hookを置き換え、PocketBaseが再起動します）：`pb_hooks/pinn-sprache.js`、`pb_hooks/sprache.pb.js`。
-
 ## しくみ
 
 ```mermaid
@@ -256,7 +257,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.146.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.146.1`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

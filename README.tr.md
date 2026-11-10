@@ -110,6 +110,15 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.146.1 sürümündeki yenilikler
+
+**Her harfte kar, panoda kış**
+
+- **Gerçek kar gibi.** Kar artık her harfin üstüne ayrı ayrı ve yalnızca en tepeye yağar: düz kenarlarda bir katman (B veya L'nin üst çizgisi, K'nin iki üst ucu), yuvarlakların ortasında bir topak (O); dik yanlarda, L'nin ayağında ve boşluklarda kar yok. Emojiler boş kalır. Üst çubuktaki aile adı da kar alır ve ad değişince uyum sağlar.
+- **Aile panosunda kış.** Aile adında, saatte ve sıcaklıkta kar, her kutucukta bir kar şapkası (her biri biraz farklı) ve altta küçük bir kış manzarası.
+- **Noel Baba** artık yarı sıklıkta uçar (10–18 dakikada bir, Noel arifesinde 4–6 dakikada bir).
+- Değiştirildi: `js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`, tüm README dosyaları. Sunucu kısmı yok.
+
 ## 1.146.0 sürümündeki yenilikler
 
 **Her başlığa uyan kar, bölgeye göre güncelleme saati**
@@ -166,13 +175,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Tamamlanan görevleri sunucu sayar,** çünkü bir iki gün sonra silinirler. Bu yıl için sayım güncelleme gününde başlar.
 - Değişenler: `js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (on dört dilde 14 yeni ve 1 değişen metin), `src/` (sürüm), `index.html`, tüm README dosyaları. Sunucu (hook’ları değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`.
 
-## 1.142.1 sürümündeki yenilikler
-
-**Bir gezinin bavul listesi silinirken uyarı**
-
-- **Silerken uyarı.** Hedefi ve tarihleri olan bir bavul listesini silersen pinn. artık uyarır: gezi takvimden ve yıl özetinden de kaybolur.
-- Değişenler: `js/listen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (on dört dilde 1 yeni metin), `src/` (sürüm), `index.html`, tüm README dosyaları. Sunucu kısmı yok.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -182,7 +184,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.146.0` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.146.1` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

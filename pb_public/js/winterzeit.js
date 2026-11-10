@@ -6,12 +6,13 @@
    - Switch: personal design value seasonFx (on by default, see currentDesignValues in js/design.js) – applies on every
      device of the profile. Before sign-in (and on the family dashboard) the last state of the device is used.
    - Movement only now and then, to save battery: a short snow shower when pinn. is opened, after a longer break and
-     when the logo is tapped; at Christmas Santa flies across the top every few minutes (more often on 24 December).
+     when the logo is tapped; at Christmas Santa flies across the top every 10–18 minutes (every 4–6 on 24 December).
      Nothing moves in idle mode (class pinn-ruhe), in the background or with "reduce motion".
    - Preview button in the settings: shows the Christmas look for one minute at any time of the year.
-   - Snow on headings (since 1.146.0): measured per heading and per letter, so it fits every length and every script.
-   The look only adds classes on <html>, CSS variables on the decorated headings and one fixed layer – it never changes
-   the layout (see css/winterzeit.css). */
+   - Snow on text: every letter of the headings, the family name and the dashboard clock is measured; snow lies only on its
+     upward-facing parts (flat tops get a layer, round tops a blob in the middle, steep sides stay free). Recalculated when
+     a text, the size or the font changes. Dashboard tiles get a snow cap of their own, each one a little different.
+   The look only adds classes on <html> and one fixed layer – it never changes the layout (see css/winterzeit.css). */
 
 var seasonFx = true;                 // personal switch
 var seasonPreviewUntil = 0;          // ms timestamp – preview of the Christmas look runs until then
@@ -59,10 +60,11 @@ function seasonApply() {
   var root = document.documentElement;
   root.classList.toggle('pinn-winter', p.winter);
   root.classList.toggle('pinn-xmas', p.xmas);
-  seasonSnowWatch(p.winter);
   if (!p.winter) {
     seasonStopMotion();
+    seasonSnowStop();
   } else {
+    seasonSnowStart();
     if (!seasonStarted) {
       seasonStarted = true;
       setTimeout(function () { seasonFlurry(); }, 1200);
@@ -198,7 +200,7 @@ function seasonScheduleSanta() {
   if (!p.xmas || seasonReduceMotion()) return;
   var last = 0;
   try { last = Number(localStorage.getItem(SEASON_SANTA_KEY)) || 0; } catch (e) { last = 0; }
-  var gap = p.eve ? (2 + Math.random()) * 60000 : (5 + Math.random() * 4) * 60000;
+  var gap = p.eve ? (4 + Math.random() * 2) * 60000 : (10 + Math.random() * 8) * 60000;
   var wait = Math.max(9000, last + gap - Date.now());
   seasonSantaTimer = setTimeout(function () {
     seasonSantaTimer = null;
@@ -207,264 +209,325 @@ function seasonScheduleSanta() {
   }, wait);
 }
 
-// ---------- Snow that fits each heading (since 1.146.0) ----------
-// Instead of one fixed strip, the snow is drawn for every heading separately: pinn. measures every letter of the first
-// line (position from the browser, height of the glyph from the real font via canvas metrics) and lays a soft blanket
-// of snow on the tops of the letters – thicker in some places, with small lumps, never across the gaps between words
-// and never on emoji or symbols. Because only real glyph metrics are used it works the same in every language and
-// script (Latin, Cyrillic, Chinese, Japanese, Korean …). The drawing is an SVG in exactly the measured pixel size, so
-// nothing is stretched. It is stored in CSS variables on the heading (style only – no layout change, see
-// css/winterzeit.css) and drawn again only when text, font or width change.
-var SEASON_SNOW_SEL = '#mainGrid h2.font-serif:not(.truncate), #mainGrid h3.font-serif:not(.truncate), '
-  + '.nt-famname h1, #dashboardScreen h1.font-serif';
-var seasonSnowKeys = (typeof WeakMap === 'function') ? new WeakMap() : null;
-var seasonSnowObserver = null;
+// ---------- Snow lying on text and tiles ----------
+var SEASON_TEXT_SNOW = '#mainGrid h2.font-serif:not(.truncate), #mainGrid h3.font-serif:not(.truncate), .nt-famname, '
+  + '#dashboardScreen .dash-head h1, #dashClock';
+var SEASON_TILE_SNOW = '#dashTiles .dash-tile';
+var SEASON_NO_HOLLY = '.nt-famname, #dashClock';   // small or changing every minute: snow only
+var seasonSnowKeys = new WeakMap();                    // element -> state the current snow was made for
+var seasonSnowMO = null;
+var seasonSnowIO = null;
 var seasonSnowTimer = null;
 var seasonSnowCanvas = null;
-var SEASON_SNOW_WORD_RE = (function () {
-  // letters and digits of every script; very old browsers without Unicode classes get a simpler rule
+// Letters and digits of every script get snow; emoji and symbols do not (old browsers without Unicode classes: simpler rule)
+var SEASON_SNOW_LETTER = (function () {
   try { return new RegExp('[\\p{L}\\p{N}]', 'u'); } catch (e) { return /[0-9A-Za-z\u00C0-\u024F\u0370-\u052F\u0590-\u06FF\u3040-\u30FF\u3400-\u9FFF\uAC00-\uD7AF]/; }
 })();
 
-// Small random generator with a seed – the same heading always gets the same lumps
-function seasonSnowRandom(text) {
-  var h = 2166136261;
-  for (var i = 0; i < text.length; i++) { h ^= text.charCodeAt(i); h = Math.imul(h, 16777619); }
-  return function () {
-    h = (h + 0x6D2B79F5) | 0;
-    var t = Math.imul(h ^ (h >>> 15), 1 | h);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-// Height of one character above the baseline and the ascent of the font (both in px), measured with the real font
-function seasonSnowMetrics(ctx, ch, fs) {
-  var m = ctx.measureText(ch);
-  var asc = typeof m.actualBoundingBoxAscent === 'number' ? m.actualBoundingBoxAscent : fs * 0.7;
-  var font = typeof m.fontBoundingBoxAscent === 'number' && m.fontBoundingBoxAscent > 0 ? m.fontBoundingBoxAscent : fs * 0.92;
-  return { glyph: asc, font: font };
-}
-
-// All words of the first line: [{ glyphs: [{ l, r, top }] }] in px relative to the padding box of the heading
-function seasonSnowWords(el, fs) {
-  var box = el.getBoundingClientRect();
-  var ox = box.left + (el.clientLeft || 0), oy = box.top + (el.clientTop || 0);
-  if (!seasonSnowCanvas) seasonSnowCanvas = document.createElement('canvas');
-  var ctx = seasonSnowCanvas.getContext('2d');
-  if (!ctx) return [];
-  var cs = getComputedStyle(el);
-  ctx.font = cs.fontStyle + ' ' + cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
-  var words = [], cur = null, firstTop = null, lineH = 0;
-  var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
-  var range = document.createRange();
-  var node, count = 0;
-  while ((node = walker.nextNode())) {
-    var s = node.nodeValue || '';
-    var i = 0;
-    while (i < s.length && count < 160) {
-      var cp = s.codePointAt(i);
-      var ch = String.fromCodePoint(cp);
-      var len = ch.length;
-      if (/\s/.test(ch)) { cur = null; i += len; continue; }
-      range.setStart(node, i);
-      range.setEnd(node, i + len);
-      var rects = range.getClientRects();
-      var r = rects.length ? rects[0] : null;
-      i += len; count++;
-      if (!r || r.width <= 0 || r.height <= 0) continue;
-      if (firstTop === null) { firstTop = r.top; lineH = r.height; }
-      if (r.top > firstTop + lineH * 0.6) return words.filter(seasonSnowWordOk); // second line reached
-      if (!cur) { cur = { glyphs: [], text: '' }; words.push(cur); }
-      cur.text += ch;
-      var m = seasonSnowMetrics(ctx, ch, fs);
-      // baseline of this character = top of its box + ascent of the font; the glyph starts that far above it
-      var top = r.top + m.font - m.glyph - oy;
-      top = Math.max(r.top - oy, Math.min(r.bottom - oy - fs * 0.2, top));
-      cur.glyphs.push({ l: r.left - ox, r: r.right - ox, top: top, letter: SEASON_SNOW_WORD_RE.test(ch) });
+function seasonSnowStart() {
+  if (seasonSnowMO || typeof MutationObserver !== 'function') { seasonSnowScanSoon(); return; }
+  seasonSnowMO = new MutationObserver(function (records) {
+    for (var i = 0; i < records.length; i++) {
+      var rec = records[i], t = rec.target;
+      if (rec.type === 'attributes') { seasonSnowScanSoon(); return; }
+      // Flakes and Santa come and go in their own layer – that is no reason to measure again
+      if (seasonLayer && (t === seasonLayer || seasonLayer.contains(t))) continue;
+      var changed = Array.prototype.slice.call(rec.addedNodes).concat(Array.prototype.slice.call(rec.removedNodes));
+      if (t === document.body && changed.length && changed.every(function (nd) {
+        return nd.classList && nd.classList.contains('pinn-season-layer');
+      })) continue;
+      seasonSnowScanSoon();
+      return;
     }
-  }
-  return words.filter(seasonSnowWordOk);
-}
-// Snow only on words with letters or digits (no emoji, no symbols); emoji at the start or end of a word are left out
-function seasonSnowWordOk(w) {
-  if (!SEASON_SNOW_WORD_RE.test(w.text)) return false;
-  while (w.glyphs.length && !w.glyphs[0].letter) w.glyphs.shift();
-  while (w.glyphs.length && !w.glyphs[w.glyphs.length - 1].letter) w.glyphs.pop();
-  w.glyphs.sort(function (a, b) { return a.l - b.l; });
-  return w.glyphs.length > 0;
-}
-
-function seasonSnowSmooth(arr, radius) {
-  if (radius < 1) return arr.slice();
-  var out = new Array(arr.length);
-  for (var i = 0; i < arr.length; i++) {
-    var sum = 0, n = 0;
-    for (var k = Math.max(0, i - radius); k <= Math.min(arr.length - 1, i + radius); k++) { sum += arr[k]; n++; }
-    out[i] = sum / n;
-  }
-  return out;
-}
-
-// Outline of the snow on one word: { top: [[x, y]], bottom: [[x, y]] } – both from left to right
-function seasonSnowShape(word, fs, rnd) {
-  var g = word.glyphs;
-  var x0 = g[0].l, x1 = g[g.length - 1].r;
-  var width = x1 - x0;
-  if (width < fs * 0.22) return null;
-  // overhang at both ends: the snow reaches a little over the first and the last letter
-  var ovL = fs * (0.03 + rnd() * 0.06), ovR = fs * (0.03 + rnd() * 0.06);
-  var a = x0 - ovL, b = x1 + ovR;
-  var step = Math.max(0.75, fs / 22);
-  var n = Math.max(4, Math.ceil((b - a) / step));
-  var xs = [], ground = [];
-  for (var i = 0; i <= n; i++) {
-    var x = a + (b - a) * i / n;
-    xs.push(x);
-    // ground under the snow: top of the letter at this x; in gaps between letters the lower neighbour counts
-    var y = null;
-    for (var j = 0; j < g.length; j++) {
-      if (x >= g[j].l && x <= g[j].r) { y = y === null ? g[j].top : Math.min(y, g[j].top); }
-    }
-    if (y === null) {
-      var left = null, right = null;
-      for (var k = 0; k < g.length; k++) {
-        if (g[k].r <= x && (!left || g[k].r > left.r)) left = g[k];
-        if (g[k].l >= x && (!right || g[k].l < right.l)) right = g[k];
-      }
-      y = Math.max(left ? left.top : right.top, right ? right.top : left.top);
-    }
-    ground.push(y);
-  }
-  // lower edge follows the letters closely (a little into them, so no light shines through)
-  var bottom = seasonSnowSmooth(ground, Math.round(fs * 0.05 / step)).map(function (v, i) { return Math.min(v, ground[i]) + fs * 0.045; });
-  // upper edge: a softer version of the letter tops, plus lumps of different size
-  var soft = seasonSnowSmooth(bottom, Math.round(fs * 0.12 / step));
-  var p1 = rnd() * 6.28, p2 = rnd() * 6.28;
-  var w1 = fs * (0.45 + rnd() * 0.35), w2 = fs * (0.9 + rnd() * 0.6);
-  var base = fs * (0.1 + rnd() * 0.035);
-  var top = xs.map(function (x, i) {
-    var lump = 0.5 + 0.3 * Math.sin(x / w1 * 6.28 + p1) + 0.2 * Math.sin(x / w2 * 6.28 + p2);
-    var thick = base + fs * 0.085 * lump;
-    // round ends: the blanket thins out over the last bit of the word
-    var edge = Math.min(x - a, b - x) / (fs * 0.16);
-    var taper = edge >= 1 ? 1 : Math.sqrt(Math.max(0, 1 - (1 - edge) * (1 - edge)));
-    return Math.min(soft[i], bottom[i]) - thick * taper;
   });
-  // a few drops hanging over the edge (one at the end of longer words, more on long words)
-  var drops = (width > fs * 1.2 && rnd() < 0.6 ? 1 : 0) + Math.floor(width / (fs * 3.5));
-  for (var d = 0; d < drops; d++) {
-    var c = d === 0 ? b - fs * (0.12 + rnd() * 0.2) : a + (b - a) * (0.2 + rnd() * 0.6);
-    var rad = fs * (0.05 + rnd() * 0.04), depth = fs * (0.05 + rnd() * 0.06);
-    for (var q = 0; q < xs.length; q++) {
-      var dx = Math.abs(xs[q] - c);
-      if (dx < rad) bottom[q] += depth * Math.sqrt(1 - (dx / rad) * (dx / rad));
-    }
-  }
-  // the ends meet the lower edge, so the outline is closed and round
-  top[0] = bottom[0] - fs * 0.01; top[top.length - 1] = bottom[bottom.length - 1] - fs * 0.01;
-  return {
-    top: xs.map(function (x, i) { return [x, top[i]]; }),
-    bottom: xs.map(function (x, i) { return [x, bottom[i]]; }),
-  };
-}
-
-function seasonSnowPath(pts, dx, dy) {
-  return pts.map(function (p, i) { return (i ? 'L' : 'M') + (p[0] - dx).toFixed(1) + ' ' + (p[1] - dy).toFixed(1); }).join('');
-}
-
-// Draws (or clears) the snow of one heading. Returns false if it is not visible right now (try again later).
-function seasonSnowDraw(el) {
-  var rects = el.getClientRects();
-  if (!rects.length || !el.isConnected) return false;
-  var cs = getComputedStyle(el);
-  var fs = parseFloat(cs.fontSize) || 16;
-  var text = (el.textContent || '').replace(/\s+/g, ' ').trim();
-  var key = text + '|' + cs.fontFamily + '|' + fs + '|' + Math.round(rects[0].width) + '|' + (document.fonts ? document.fonts.status : '');
-  if (seasonSnowKeys && seasonSnowKeys.get(el) === key) return true;
-  var words = seasonSnowWords(el, fs);
-  var rnd = seasonSnowRandom(text);
-  var shapes = words.map(function (w) { return seasonSnowShape(w, fs, rnd); }).filter(Boolean);
-  if (!shapes.length) {
-    ['--pinn-snow', '--pinn-snow-on'].forEach(function (v) { el.style.removeProperty(v); });
-    if (seasonSnowKeys) seasonSnowKeys.set(el, key);
-    return true;
-  }
-  var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-  shapes.forEach(function (s) {
-    s.top.concat(s.bottom).forEach(function (p) {
-      minX = Math.min(minX, p[0]); maxX = Math.max(maxX, p[0]); minY = Math.min(minY, p[1]); maxY = Math.max(maxY, p[1]);
+  seasonSnowMO.observe(document.body, { childList: true, subtree: true, characterData: true });
+  // Dark mode changes the colour of the snow outline
+  seasonSnowMO.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  if (typeof IntersectionObserver === 'function') {
+    seasonSnowIO = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) seasonSnowUpdate(e.target); });
     });
+  }
+  window.addEventListener('resize', seasonSnowScanSoon);
+  if (document.fonts) {
+    if (document.fonts.ready) document.fonts.ready.then(seasonSnowRedoAll);
+    if (document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', seasonSnowRedoAll);
+  }
+  seasonSnowScanSoon();
+}
+
+function seasonSnowStop() {
+  if (seasonSnowMO) { seasonSnowMO.disconnect(); seasonSnowMO = null; }
+  if (seasonSnowIO) { seasonSnowIO.disconnect(); seasonSnowIO = null; }
+  if (seasonSnowTimer) { clearTimeout(seasonSnowTimer); seasonSnowTimer = null; }
+  window.removeEventListener('resize', seasonSnowScanSoon);
+  if (document.fonts && document.fonts.removeEventListener) document.fonts.removeEventListener('loadingdone', seasonSnowRedoAll);
+  document.querySelectorAll('.pinn-snowy').forEach(function (el) {
+    el.classList.remove('pinn-snowy');
+    ['--pinn-snow', '--pinn-snow-pad', '--pinn-snow-w', '--pinn-snow-h'].forEach(function (v) { el.style.removeProperty(v); });
   });
-  var pad = 1.5;
-  minX -= pad; minY -= pad; maxX += pad; maxY += pad;
-  var W = Math.ceil(maxX - minX), H = Math.ceil(maxY - minY);
-  var outline = '', light = '';
-  shapes.forEach(function (s) {
-    outline += seasonSnowPath(s.top, minX, minY) + seasonSnowPath(s.bottom.slice().reverse(), minX, minY).replace(/^M/, 'L') + 'Z';
-    // white snow; a thin shaded strip stays visible along the lower edge
-    var mid = s.bottom.map(function (p, i) { return [p[0], Math.max(s.top[i][1] + (p[1] - s.top[i][1]) * 0.45, p[1] - fs * 0.045)]; });
-    light += seasonSnowPath(s.top, minX, minY) + seasonSnowPath(mid.reverse(), minX, minY).replace(/^M/, 'L') + 'Z';
-  });
-  var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='" + W + "' height='" + H + "' viewBox='0 0 " + W + ' ' + H + "'>"
-    + "<path d='" + outline + "' fill='#dfe9f2' stroke='#8eaac2' stroke-width='.7' stroke-linejoin='round'/>"
-    + "<path d='" + light + "' fill='#fff'/></svg>";
-  el.style.setProperty('--pinn-snow', 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")');
-  el.style.setProperty('--pinn-snow-x', minX.toFixed(1) + 'px');
-  el.style.setProperty('--pinn-snow-y', minY.toFixed(1) + 'px');
-  el.style.setProperty('--pinn-snow-w', W + 'px');
-  el.style.setProperty('--pinn-snow-h', H + 'px');
-  el.style.setProperty('--pinn-snow-on', '1');
-  // holly (Christmas) on the snow at the end of the first word that is long enough
-  var hs = shapes.filter(function (s) { return s.top[s.top.length - 1][0] - s.top[0][0] > fs * 0.9; })[0] || shapes[0];
-  var at = Math.max(0, hs.top.length - 1 - Math.round(hs.top.length * 0.18));
-  el.style.setProperty('--pinn-holly-x', (hs.top[at][0] - fs * 0.31).toFixed(1) + 'px');
-  el.style.setProperty('--pinn-holly-y', (hs.top[at][1] - fs * 0.3).toFixed(1) + 'px');
-  if (seasonSnowKeys) seasonSnowKeys.set(el, key);
-  return true;
+  seasonSnowKeys = new WeakMap();
+}
+
+function seasonSnowRedoAll() {
+  seasonSnowKeys = new WeakMap();
+  seasonSnowScanSoon();
+}
+
+function seasonSnowScanSoon() {
+  if (seasonSnowTimer) clearTimeout(seasonSnowTimer);
+  seasonSnowTimer = setTimeout(seasonSnowScan, 250);
 }
 
 function seasonSnowScan() {
   seasonSnowTimer = null;
-  if (!document.documentElement.classList.contains('pinn-winter')) return;
-  document.querySelectorAll(SEASON_SNOW_SEL).forEach(function (el) {
-    try { seasonSnowDraw(el); } catch (e) { /* one odd heading must not stop the others */ }
+  if (!seasonCurrent().winter) return;
+  document.querySelectorAll(SEASON_TEXT_SNOW + ', ' + SEASON_TILE_SNOW).forEach(function (el) {
+    if (seasonSnowIO) seasonSnowIO.observe(el);   // observing twice is harmless
+    seasonSnowUpdate(el);
   });
 }
-function seasonSnowSoon(ms) {
-  if (seasonSnowTimer) clearTimeout(seasonSnowTimer);
-  seasonSnowTimer = setTimeout(seasonSnowScan, ms == null ? 250 : ms);
+
+// Small seeded random generator: the same text or tile always gets the same snow
+function seasonRandom(text) {
+  var h = 2166136261;
+  for (var i = 0; i < text.length; i++) { h ^= text.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return function () {
+    h += 0x6D2B79F5;
+    var t = h;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
 }
-// Changes made by the snow layer itself (flakes, Santa) do not need a new measurement
-function seasonSnowRelevant(records) {
-  for (var i = 0; i < records.length; i++) {
-    var r = records[i], t = r.target;
-    if (t === seasonLayer || (t.closest && t.closest('.pinn-season-layer'))) continue;
-    if (r.type === 'childList' && t === document.body) {
-      var own = true;
-      [].forEach.call(r.addedNodes, function (n) { if (!(n.classList && n.classList.contains('pinn-season-layer'))) own = false; });
-      [].forEach.call(r.removedNodes, function (n) { if (!(n.classList && n.classList.contains('pinn-season-layer'))) own = false; });
-      if (own) continue;
+
+function seasonSnowUpdate(el) {
+  if (!seasonCurrent().winter || !el.isConnected) return;
+  var box = el.getBoundingClientRect();
+  if (box.width < 2 || box.height < 2) return;   // not shown right now – done when it appears
+  var dark = document.documentElement.classList.contains('dark');
+  var xmas = seasonCurrent().xmas;
+  var tile = el.matches(SEASON_TILE_SNOW);
+  var key = [tile ? 'tile' : el.textContent, Math.round(box.width), Math.round(box.height), dark, xmas,
+    tile ? '' : getComputedStyle(el).font].join('|');
+  if (seasonSnowKeys.get(el) === key && el.classList.contains('pinn-snowy')) return;
+  seasonSnowKeys.set(el, key);
+  var res = tile ? seasonTileSnow(el, box, dark) : seasonTextSnow(el, box, dark, xmas && !el.matches(SEASON_NO_HOLLY));
+  if (!res) {
+    el.classList.remove('pinn-snowy');
+    return;
+  }
+  el.style.setProperty('--pinn-snow', 'url("data:image/svg+xml,' + encodeURIComponent(res.svg) + '")');
+  el.style.setProperty('--pinn-snow-pad', res.pad + 'px');
+  el.style.setProperty('--pinn-snow-w', res.w + 'px');
+  el.style.setProperty('--pinn-snow-h', res.h + 'px');
+  el.classList.add('pinn-snowy');
+}
+
+// Snow on the upward-facing parts of a contour.
+// tops: y of the topmost ink for every column (null = no ink), step: column width in px, hMax: thickest snow in px.
+// Returns the outline as SVG path data.
+function seasonSnowPath(tops, step, hMax, rnd, sink) {
+  var n = tops.length, h = new Array(n).fill(0), i, j;
+  var ph1 = rnd() * 6.28, ph2 = rnd() * 6.28, f1 = 0.55 + rnd() * 0.5, f2 = 1.6 + rnd() * 0.9;
+  var k = Math.max(1, Math.round(1.2 / step));
+  for (i = 0; i < n; i++) {
+    if (tops[i] === null) continue;
+    var l = i, r = i;
+    for (j = 1; j <= k; j++) { if (i - j >= 0 && tops[i - j] !== null) l = i - j; else break; }
+    for (j = 1; j <= k; j++) { if (i + j < n && tops[i + j] !== null) r = i + j; else break; }
+    var slope = r > l ? Math.abs(tops[r] - tops[l]) / ((r - l) * step) : 1;
+    var flat = Math.max(0, 1 - slope / 0.9);
+    flat = flat * flat * (3 - 2 * flat);
+    var x = i * step / Math.max(hMax, 1);
+    var bump = 0.8 + 0.2 * Math.sin(x * f1 + ph1) + 0.12 * Math.sin(x * f2 + ph2);
+    h[i] = hMax * flat * bump;
+  }
+  // Soften the snow into lumps (only along ink, gaps stay free)
+  var rad = Math.max(1, Math.round(hMax * 0.7 / step)), soft = h.slice();
+  for (i = 0; i < n; i++) {
+    if (tops[i] === null) continue;
+    var sum = 0, cnt = 0;
+    for (j = -rad; j <= rad; j++) {
+      var q = i + j;
+      if (q < 0 || q >= n || tops[q] === null) continue;
+      sum += h[q]; cnt++;
     }
-    return true;
+    soft[i] = Math.min(h[i] * 1.15 + 0.2, sum / cnt);
   }
-  return false;
-}
-// Watch for new or changed headings only while the winter look is on
-function seasonSnowWatch(on) {
-  if (on && !seasonSnowObserver && typeof MutationObserver === 'function') {
-    seasonSnowObserver = new MutationObserver(function (records) { if (seasonSnowRelevant(records)) seasonSnowSoon(); });
-    seasonSnowObserver.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['class', 'hidden'] });
-    seasonSnowSoon(0);
-  } else if (!on && seasonSnowObserver) {
-    seasonSnowObserver.disconnect();
-    seasonSnowObserver = null;
+  // Runs of snow; at a letter edge it hangs over a little
+  var minH = Math.max(0.35, hMax * 0.12), d = '', edge = '';
+  i = 0;
+  while (i < n) {
+    if (tops[i] === null || soft[i] < minH) { i++; continue; }
+    var a = i;
+    while (i < n && tops[i] !== null && soft[i] >= minH * 0.6) i++;
+    var b = i - 1;
+    var pts = [];
+    var over = function (from, dir) {
+      var m = Math.round(Math.min(soft[from] * 0.5, 1.6) / step);
+      var res = [];
+      for (var s2 = 1; s2 <= m; s2++) {
+        var q2 = from + dir * s2;
+        if (q2 < 0 || q2 >= n || tops[q2] !== null) break;
+        res.push({ x: q2, t: tops[from] + s2 * step * 0.6, h: soft[from] * (1 - s2 / (m + 1)) });
+      }
+      return res;
+    };
+    var left = over(a, -1).reverse(), right = over(b, 1);
+    left.forEach(function (p) { pts.push(p); });
+    for (j = a; j <= b; j++) pts.push({ x: j, t: tops[j], h: soft[j] });
+    right.forEach(function (p) { pts.push(p); });
+    if (pts.length < 2) continue;
+    var every = Math.max(1, Math.round(1 / step)), top = [], bottom = [];
+    for (j = 0; j < pts.length; j++) {
+      if (j % every && j !== pts.length - 1) continue;
+      var px = (pts[j].x * step + step / 2).toFixed(1);
+      top.push(px + ' ' + (pts[j].t - pts[j].h).toFixed(1));
+      bottom.push(px + ' ' + (pts[j].t + sink).toFixed(1));
+    }
+    d += 'M' + top.join('L') + 'L' + bottom.reverse().join('L') + 'Z';
+    edge += 'M' + top.join('L');
   }
+  return { d: d, edge: edge, h: soft };
 }
-window.addEventListener('resize', function () { if (seasonSnowObserver) seasonSnowSoon(200); });
-if (document.fonts && document.fonts.ready) {
-  document.fonts.ready.then(function () { if (seasonSnowObserver) seasonSnowSoon(0); });
-  if (document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', function () { if (seasonSnowObserver) seasonSnowSoon(50); });
+
+var SEASON_HOLLY = '<path d="M12 11C9 7 4 6 1 8C3 9 3 11 2 13C5 12 6 14 7 15C9 13 11 13 12 11Z" fill="#2f7a43"/>'
+  + '<path d="M12 11C15 7 20 6 23 8C21 9 21 11 22 13C19 12 18 14 17 15C15 13 13 13 12 11Z" fill="#276b39"/>'
+  + '<circle cx="10" cy="7" r="2.6" fill="#d1263b"/><circle cx="14.2" cy="6.4" r="2.6" fill="#e23447"/>'
+  + '<circle cx="12.2" cy="3.4" r="2.4" fill="#c41d33"/><circle cx="13" cy="2.7" r=".7" fill="#fff" opacity=".7"/>';
+
+// The snow is white with a fine blue-grey line all around (since 1.146.1 also in light mode – with a line only along the
+// upper edge the white snow melted into the light background and seemed to float above the letters) and a light
+// blue shade along its lower edge, so it reads as a soft layer lying on the letter.
+function seasonSnowSvg(w, h, paths, edge, extra, dark, fill) {
+  var line = '<path d="' + paths + '" fill="none" stroke="' + (dark ? '#9fb6ca' : '#8aa6bf') + '" stroke-width=".75" stroke-linejoin="round"/>';
+  var shade = fill ? '' : '<path d="' + paths + '" fill="url(#ps)"/>';
+  var defs = fill ? '' : '<defs><linearGradient id="ps" x1="0" y1="0" x2="0" y2="1"><stop offset=".45" stop-color="#ffffff" stop-opacity="0"/>'
+    + '<stop offset="1" stop-color="#c9dae9"/></linearGradient></defs>';
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + w + ' ' + h + '" width="' + w + '" height="' + h + '">' + defs
+    + '<path d="' + paths + '" fill="' + (fill || '#ffffff') + '"/>' + shade + line + (extra || '') + '</svg>';
+}
+
+// Text: draw every letter where it really is (wrapped lines included) and read its top edge from the canvas
+function seasonTextSnow(el, box, dark, holly) {
+  var cs = getComputedStyle(el);
+  var size = parseFloat(cs.fontSize) || 16;
+  var pad = Math.ceil(size * 0.45);
+  var w = Math.ceil(box.width) + 2, h = Math.ceil(box.height) + pad;
+  if (w > 2400 || h > 600) return null;
+  var S = 2;
+  if (!seasonSnowCanvas) seasonSnowCanvas = document.createElement('canvas');
+  var cv = seasonSnowCanvas;
+  cv.width = w * S; cv.height = h * S;
+  var ctx = cv.getContext('2d', { willReadFrequently: true });
+  if (!ctx) return null;
+  ctx.setTransform(S, 0, 0, S, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = '#000';
+  ctx.textBaseline = 'alphabetic';
+  var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  var range = document.createRange();
+  var lines = [], node, count = 0;
+  while ((node = walker.nextNode()) && count < 120) {
+    var pcs = getComputedStyle(node.parentElement);
+    if (pcs.visibility === 'hidden') continue;
+    ctx.font = pcs.fontStyle + ' ' + pcs.fontWeight + ' ' + pcs.fontSize + ' ' + pcs.fontFamily;
+    var upper = pcs.textTransform === 'uppercase';
+    var text = node.data;
+    for (var i = 0; i < text.length && count < 120; i++) {
+      var code = text.charCodeAt(i);
+      var len = (code >= 0xD800 && code <= 0xDBFF) ? 2 : 1;
+      var ch = text.substr(i, len);
+      i += len - 1;
+      if (/\s/.test(ch) || !SEASON_SNOW_LETTER.test(ch)) continue;
+      range.setStart(node, i - len + 1); range.setEnd(node, i + 1);
+      var rects = range.getClientRects();
+      if (!rects.length || rects[0].width < 0.5) continue;
+      var rc = rects[0];
+      var m = ctx.measureText(upper ? ch.toUpperCase() : ch);
+      var asc = m.fontBoundingBoxAscent, desc = m.fontBoundingBoxDescent;
+      var base = (asc && desc) ? rc.top + rc.height * asc / (asc + desc) : rc.top + rc.height * 0.8;
+      var x = rc.left - box.left, y = base - box.top + pad;
+      ctx.fillText(upper ? ch.toUpperCase() : ch, x, y);
+      count++;
+      // Group letters into lines by their baseline
+      var line = null;
+      for (var L = 0; L < lines.length; L++) if (Math.abs(lines[L].base - y) < size * 0.4) { line = lines[L]; break; }
+      if (!line) { line = { base: y, top: rc.top - box.top + pad, x0: x, x1: x + rc.width, glyphs: [] }; lines.push(line); }
+      line.glyphs.push([x, x + rc.width]);
+      line.top = Math.min(line.top, rc.top - box.top + pad);
+      line.x0 = Math.min(line.x0, x); line.x1 = Math.max(line.x1, x + rc.width);
+    }
+  }
+  if (!count) return null;
+  var img = ctx.getImageData(0, 0, cv.width, cv.height).data;
+  var cols = w * S, step = 1 / S, rnd = seasonRandom(el.textContent);
+  var hMax = size * 0.2, d = '', edge = '', extra = '';
+  lines.forEach(function (line, li) {
+    var tops = new Array(cols).fill(null);
+    var y0 = Math.max(0, Math.floor(line.top * S)), y1 = Math.min(cv.height, Math.ceil((line.base + size * 0.35) * S));
+    var c0 = Math.max(0, Math.floor(line.x0 * S) - 2), c1 = Math.min(cols, Math.ceil(line.x1 * S) + 2);
+    for (var c = c0; c < c1; c++) {
+      for (var y = y0; y < y1; y++) {
+        if (img[(y * cols + c) * 4 + 3] > 110) { tops[c] = y / S; break; }
+      }
+    }
+    // Only the top of each letter: parts lying much lower than the letter's highest point (the foot of an L, the
+    // middle of a K) stay free – snow would not reach them past the upper part
+    line.glyphs.forEach(function (g) {
+      var a = Math.max(c0, Math.floor(g[0] * S)), b = Math.min(c1, Math.ceil(g[1] * S));
+      var hi = Infinity, q;
+      for (q = a; q < b; q++) if (tops[q] !== null && tops[q] < hi) hi = tops[q];
+      if (hi === Infinity) return;
+      for (q = a; q < b; q++) if (tops[q] !== null && tops[q] > hi + size * 0.3) tops[q] = null;
+    });
+    var res = seasonSnowPath(tops, step, hMax, rnd, 0.6);
+    d += res.d;
+    edge += res.edge;
+    if (holly && li === 0) {
+      // Holly on the thickest spot of the first line, in its front part
+      var best = -1, bh = 0, lim = c0 + (c1 - c0) * 0.6;
+      for (var q = c0; q < lim; q++) if (tops[q] !== null && res.h[q] > bh) { bh = res.h[q]; best = q; }
+      if (best >= 0 && bh > hMax * 0.4) {
+        var hs = size * 0.55 / 24;
+        var hx = best * step - 12 * hs, hy = tops[best] - res.h[best] - 12 * hs;
+        extra = '<g transform="translate(' + hx.toFixed(1) + ' ' + hy.toFixed(1) + ') scale(' + hs.toFixed(3) + ')">' + SEASON_HOLLY + '</g>';
+      }
+    }
+  });
+  if (!d) return null;
+  return { svg: seasonSnowSvg(w, h, d, edge, extra, dark), pad: pad, w: w, h: h };
+}
+
+// Dashboard tile: snow cap along the rounded top edge, a few drops hanging over – every tile a little different
+function seasonTileSnow(el, box, dark) {
+  var w = Math.round(box.width), radius = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0;
+  var pad = 22, h = pad + Math.min(radius, 30) + 12, step = 0.5;
+  var idx = Array.prototype.indexOf.call(el.parentNode ? el.parentNode.children : [], el);
+  var rnd = seasonRandom('tile' + idx + (el.textContent || '').trim().slice(0, 20));
+  var n = Math.round(w / step), tops = new Array(n);
+  for (var i = 0; i < n; i++) {
+    var x = i * step + step / 2, t = 0;
+    if (x < radius) t = radius - Math.sqrt(Math.max(0, radius * radius - (radius - x) * (radius - x)));
+    else if (x > w - radius) t = radius - Math.sqrt(Math.max(0, radius * radius - (x - (w - radius)) * (x - (w - radius))));
+    tops[i] = t + pad;
+  }
+  var res = seasonSnowPath(tops, step, 10 + rnd() * 7, rnd, 1.5);
+  if (!res.d) return null;
+  // A few drops hanging over the edge, and a soft shade so the cap stands out on the light tiles
+  var drops = '', count = 1 + Math.floor(rnd() * 3);
+  for (var k = 0; k < count; k++) {
+    var dx = radius + rnd() * Math.max(10, w - 2 * radius);
+    var len = 3 + rnd() * 6, y = pad + 1;
+    drops += 'M' + (dx - 2.6).toFixed(1) + ' ' + y + 'Q' + (dx - 2.4).toFixed(1) + ' ' + (y + len).toFixed(1) + ' ' + dx.toFixed(1)
+      + ' ' + (y + len + 1.8).toFixed(1) + 'Q' + (dx + 2.4).toFixed(1) + ' ' + (y + len).toFixed(1) + ' ' + (dx + 2.6).toFixed(1) + ' ' + y + 'Z';
+  }
+  var defs = '<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + (dark ? '#ffffff' : '#f2f7fb') + '"/>'
+    + '<stop offset=".55" stop-color="' + (dark ? '#ffffff' : '#eaf1f7') + '"/><stop offset="1" stop-color="#d5e2ee"/></linearGradient></defs>';
+  var dropsSvg = '<path d="' + drops + '" fill="#ffffff" stroke="#a9bfd1" stroke-width=".7"/>';
+  var svg = seasonSnowSvg(w, h, res.d, res.edge, dropsSvg, dark, 'url(#g)').replace('<path', defs + '<path');
+  return { svg: svg, pad: pad, w: w, h: h };
 }
 
 // Takes the switch from the personal design (called by applyPersonalDesign in js/design.js)

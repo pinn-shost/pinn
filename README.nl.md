@@ -110,6 +110,15 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.146.1
+
+**Sneeuw op elke letter, winter op het dashboard**
+
+- **Sneeuw zoals echte sneeuw.** De sneeuw ligt nu op elke letter afzonderlijk, alleen helemaal bovenop: een laagje op vlakke randen (bovenste balk van B of L, beide bovenste uiteinden van de K), een klodder in het midden van rondingen (O), niets op steile zijkanten, op de voet van de L of in de tussenruimtes. Emoji blijven vrij. Ook de familienaam in de kopregel krijgt sneeuw, die zich aanpast als de naam verandert.
+- **Winter op het gezinsdashboard.** Sneeuw op de familienaam, de klok en de temperatuur, een sneeuwkapje op elke tegel (elk een beetje anders) en onderaan een klein winterlandschap.
+- **De Kerstman** vliegt nog maar half zo vaak (elke 10–18 minuten, op kerstavond elke 4–6).
+- Gewijzigd: `js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`, alle README’s. Geen serverdeel.
+
 ## Nieuw in 1.146.0
 
 **Sneeuw op maat van elke kop, updatetijd per regio**
@@ -166,13 +175,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **De server telt afgeronde taken,** omdat ze na een of twee dagen worden verwijderd. Voor dit jaar begint het tellen op de dag van de update.
 - Gewijzigd: `js/ausblick.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (14 nieuwe teksten en één gewijzigde tekst in alle veertien talen), `src/` (versie), `index.html`, alle README’s. Server (hooks vervangen, PocketBase start opnieuw): `pb_hooks/pinn-ausblick.js`, `pb_hooks/pinn-aufgaben.js`, `pb_hooks/ausblick.pb.js`.
 
-## Nieuw in 1.142.1
-
-**Melding bij het verwijderen van de paklijst van een reis**
-
-- **Melding bij verwijderen.** Wie een paklijst met bestemming en periode verwijdert, krijgt nu een waarschuwing: de reis verdwijnt dan ook uit de agenda en uit het jaaroverzicht.
-- Gewijzigd: `js/listen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (één nieuwe tekst in alle veertien talen), `src/` (versie), `index.html`, alle README’s. Geen serverdeel.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -182,7 +184,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.146.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.146.1` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -129,6 +129,15 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.146.1
+
+**Snow on every letter, winter on the dashboard**
+
+- **Snow like real snow.** The snow now lies on every single letter, only at the very top: a layer on flat edges (the top bar of B or L, both upper ends of K), a blob in the middle of round tops (O), nothing on steep sides, on the foot of the L or in the gaps. Emoji stay free. The family name in the header gets snow too and adapts when it changes.
+- **Winter on the family dashboard.** Snow on the family name, clock and temperature, a snow cap on every tile (each one different) and a small winter landscape at the bottom.
+- **Santa** flies only half as often (every 10–18 minutes, every 4–6 on Christmas Eve).
+- Changed: `js/winterzeit.js`, `css/winterzeit.css`, `src/`, `index.html`, all READMEs. No server part.
+
 ## What's new in 1.146.0
 
 **Snow that fits every heading, update time by region**
@@ -251,13 +260,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Pets.** Several feeding times per pet: in the pet editor you add as many times as you like (up to 12) with a time picker and an optional note for amount or food (e.g. “1 cup dry food”). The note shows on the feeding button and in the food card. New banner on the Pets page: a meadow with a fence where the pets of your family walk by – at night with stars.
 - Changed: `js/dunkelzeit.js` (new), `js/design.js`, `js/familie.js`, `css/haustierewetter.css`, `js/einstellungen.js`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (19 new texts in all fourteen languages), `src/` (`index.html`), `pinn-setup.sh`, `.github/scripts/check-hooks.js`, all READMEs. Server (replace the hooks, PocketBase restarts): `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`.
 
-## What's new in 1.137.0
-
-**Voice control in Turkish, Polish and Ukrainian**
-
-- **Voice control.** “Hey Siri, pinn” (on Android HTTP Shortcuts) now also understands Turkish, Polish and Ukrainian and answers in the language of your profile: add things to the shopping list (with quantity and shop), read the list, create a task and hear what is on today or tomorrow. Siri no longer answers in English for Ukrainian. Setting up the shortcut stays the same.
-- Changed: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, all READMEs. Server (replace the hook, PocketBase restarts): `pb_hooks/pinn-sprache.js`.
-
 ## How it works
 
 ```mermaid
@@ -284,7 +286,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.146.0` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.146.1` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
