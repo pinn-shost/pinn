@@ -264,7 +264,9 @@ if (!exists(path.join(HOOKS, 'pinn-system.js'))) {
       .filter(Boolean).join('; '));
 
     // Automatic updates (since 1.138.0): when is a run due, next planned run, clean-up of a stored setting
-    const mon = (h, m) => new Date(2026, 10, 9, h, m);   // Monday 9 Nov 2026
+    // Times are wall clock in Europe/Berlin (since 1.144.1 – the container runs in UTC): November = UTC+1, July = UTC+2
+    const berlin = (y, mo, d, h, m) => new Date(Date.UTC(y, mo, d, h, m) - (mo >= 3 && mo <= 9 ? 7200000 : 3600000));
+    const mon = (h, m) => berlin(2026, 10, 9, h, m);   // Monday 9 Nov 2026
     const plan = (o) => Object.assign({ an: true, rhythmus: 'taeglich', tag: 1, zeit: '04:30', letzter: null }, o || {});
     test('autoFaellig() – due from the chosen time for three hours, once a day', () => [
       ['before the time', sys.autoFaellig(plan(), mon(4, 29)), false],
@@ -277,11 +279,16 @@ if (!exists(path.join(HOOKS, 'pinn-system.js'))) {
       ['weekly, right day', sys.autoFaellig(plan({ rhythmus: 'woechentlich', tag: 1 }), mon(5, 0)), true],
       ['weekly, other day', sys.autoFaellig(plan({ rhythmus: 'woechentlich', tag: 3 }), mon(5, 0)), false],
       ['window ends at midnight', sys.autoFaellig(plan({ zeit: '23:30' }), mon(23, 59)), true],
+      ['summer time, at the time', sys.autoFaellig(plan(), berlin(2026, 6, 6, 4, 30)), true],
+      ['summer time, before the time', sys.autoFaellig(plan(), berlin(2026, 6, 6, 4, 29)), false],
+      ['UTC 03:40 is 04:40 in Berlin', sys.autoFaellig(plan(), new Date(Date.UTC(2026, 10, 9, 3, 40))), true],
     ].map(([label, got, want]) => (got === want ? '' : label + ': expected ' + want + ', got ' + got)).filter(Boolean).join('; '));
     test('autoNaechste() – next planned run', () => {
       const d = sys.autoNaechste(plan(), mon(5, 0));
       const w = sys.autoNaechste(plan({ rhythmus: 'woechentlich', tag: 3 }), mon(5, 0));
-      return eq([d && d.getDate(), d && d.getHours(), d && d.getMinutes(), w && w.getDate(), sys.autoNaechste(plan({ an: false }), mon(5, 0))], [10, 4, 30, 11, null]);
+      const s = sys.autoNaechste(plan(), berlin(2026, 6, 6, 5, 0));
+      return eq([d && d.getTime(), w && w.getTime(), s && s.getTime(), sys.autoNaechste(plan({ an: false }), mon(5, 0))],
+        [berlin(2026, 10, 10, 4, 30).getTime(), berlin(2026, 10, 11, 4, 30).getTime(), berlin(2026, 6, 7, 4, 30).getTime(), null]);
     });
     test('autoBereinigen() – broken values fall back to the defaults', () => eq(
       sys.autoBereinigen({ an: 'yes', rhythmus: 'x', tag: 9, zeit: '25:99', letzter: { ergebnis: 'boom' } }),
