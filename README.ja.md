@@ -133,6 +133,13 @@ pinn.は、家庭を回すためのすべてをまとめたアプリです。共
 
 pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski、🇺🇦 Українська** に対応し、通貨と緊急番号をお住まいの地域に合わせ、**家族**と**ルームシェア**の表現を切り替えます。1台のサーバーで複数の家族を運用でき、それぞれに管理者を置けます。
 
+## 1.144.1の新機能
+
+**不具合修正：自動アップデートが設定した時刻に実行されるように**
+
+- **自動アップデート**が設定した時刻に実行されていませんでした。サーバーがEurope/Berlin の時刻ではなくUTCで計算していたため、1〜2時間ずれており、「次回の確認」の時刻も誤っていました。今後は他のすべてのリマインダーと同じく、設定した時刻どおりに動作します（夏時間・冬時間にも対応）。
+- 変更：`pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, すべての README. サーバー（hooks を置き換え、PocketBase が再起動）：`pb_hooks/pinn-system.js`.
+
 ## 1.144.0の新機能
 
 **ダッシュボード：各メンバーの下に未読チャットと未完了タスク**
@@ -223,13 +230,6 @@ pinn.は **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Fr
 - **ペット。** ペットごとに複数の給餌時間を設定できます。ペットの編集画面で、時刻ピッカーを使って好きなだけ（最大12件）追加でき、量やフードのメモ（例：「ドライフード1カップ」）も任意で付けられます。メモは給餌ボタンとフードのカードに表示されます。ペットのページに新しいバナーが加わりました。柵のある草原を家族のペットが歩いていき、夜は星が出ます。
 - 変更：`js/dunkelzeit.js`（新規）、`js/design.js`、`js/familie.js`、`css/haustierewetter.css`、`js/einstellungen.js`、`js/sicherungen.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/`（14言語すべてに新しい文言19件）、`src/`（`index.html`）、`pinn-setup.sh`、`.github/scripts/check-hooks.js`、すべてのREADME。サーバー（hookを置き換え、PocketBaseが再起動します）：`pb_hooks/pinn-system.js`、`pb_hooks/system.pb.js`。
 
-## 1.137.0の新機能
-
-**音声操作がトルコ語・ポーランド語・ウクライナ語に対応**
-
-- **音声操作。** 「Hey Siri、pinn」（AndroidではHTTP Shortcuts）が、トルコ語・ポーランド語・ウクライナ語も理解し、プロフィールの言語で答えるようになりました。買い物リストへの追加（数量・店舗つき）、リストの読み上げ、タスクの作成、今日・明日の予定の確認ができます。ウクライナ語でもSiriが英語で答えることはなくなりました。ショートカットの設定は変わりません。
-- 変更：`js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`、すべてのREADME。サーバー（フックを置き換え、PocketBaseが再起動します）：`pb_hooks/pinn-sprache.js`。
-
 ## しくみ
 
 ```mermaid
@@ -258,7 +258,7 @@ flowchart LR
 ## インストール
 
 1. [最新リリース](https://github.com/pinn-shost/pinn/releases/latest)のZIPをダウンロードして展開します。
-2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.144.0`または`pinn-main`）をそのまま入れます。
+2. NASにフォルダを作成し（例：`/volume1/docker/Pocketbase`）、展開したフォルダ（例：`pinn-1.144.1`または`pinn-main`）をそのまま入れます。
 3. SSHでログインして次を実行します：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

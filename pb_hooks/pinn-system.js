@@ -465,6 +465,9 @@ function update(vorab) {
 //              version, code, jobId }
 // The cron job runs every 5 minutes. A run is due from the chosen time on for 3 hours (but not past midnight) and
 // only once per day; if the container „wartung“ is busy the next 5-minute tick tries again.
+// Time zone (fixed in 1.144.1): the PocketBase container has no TZ and runs in UTC, so the local Date methods
+// (getHours, getDay …) were one to two hours off and the chosen time did not match the clock in the app. Like the
+// other reminders on the server, the plan now uses the wall clock of Europe/Berlin (summer/winter time calculated here).
 const F_AUTO = "/pb_data/pinn_autoupdate.json";
 const AUTO_FENSTER_MIN = 180;
 const AUTO_ZEIT_RE = /^([01]\d|2[0-3]):([0-5]\d)$/;
@@ -507,7 +510,28 @@ function autoSchreiben(cfg) {
     }
 }
 function zweiStellig(n) { return (n < 10 ? "0" : "") + n; }
-function datumKey(d) { return d.getFullYear() + "-" + zweiStellig(d.getMonth() + 1) + "-" + zweiStellig(d.getDate()); }
+// Wall clock of Europe/Berlin, independent of the time zone of the container
+function letzterSonntagUtc(jahr, monat) {
+    const last = new Date(Date.UTC(jahr, monat + 1, 0));
+    return Date.UTC(jahr, monat, last.getUTCDate() - last.getUTCDay(), 1, 0, 0);
+}
+function berlinOffsetMs(utcMs) {
+    const y = new Date(utcMs).getUTCFullYear();
+    return (utcMs >= letzterSonntagUtc(y, 2) && utcMs < letzterSonntagUtc(y, 9)) ? 7200000 : 3600000;
+}
+// { y, m (0-11), d, wd (0 = Sunday), min (minutes since midnight), iso }
+function wand(jetzt) {
+    const ms = jetzt && typeof jetzt.getTime === "function" ? jetzt.getTime() : Number(jetzt) || Date.now();
+    const w = new Date(ms + berlinOffsetMs(ms));
+    const y = w.getUTCFullYear(), m = w.getUTCMonth(), d = w.getUTCDate();
+    return { y, m, d, wd: w.getUTCDay(), min: w.getUTCHours() * 60 + w.getUTCMinutes(), iso: y + "-" + zweiStellig(m + 1) + "-" + zweiStellig(d) };
+}
+// Wall clock of Europe/Berlin → moment (ms since 1970)
+function wandZuMs(y, m, d, minuten) {
+    const lokal = Date.UTC(y, m, d, 0, minuten, 0, 0);
+    return lokal - berlinOffsetMs(lokal - berlinOffsetMs(lokal));
+}
+function datumKey(jetzt) { return wand(jetzt).iso; }
 function minutenVon(zeit) {
     const m = AUTO_ZEIT_RE.exec(String(zeit || ""));
     return m ? parseInt(m[1], 10) * 60 + parseInt(m[2], 10) : 270;
@@ -515,22 +539,25 @@ function minutenVon(zeit) {
 // Is a run due at this moment? (pure function, tested in check-hooks.js)
 function autoFaellig(cfg, jetzt) {
     if (!cfg || !cfg.an) return false;
-    if (cfg.letzter && cfg.letzter.datum === datumKey(jetzt)) return false;
-    if (cfg.rhythmus === "woechentlich" && jetzt.getDay() !== cfg.tag) return false;
+    const w = wand(jetzt);
+    if (cfg.letzter && cfg.letzter.datum === w.iso) return false;
+    if (cfg.rhythmus === "woechentlich" && w.wd !== cfg.tag) return false;
     const soll = minutenVon(cfg.zeit);
-    const ist = jetzt.getHours() * 60 + jetzt.getMinutes();
     const fenster = Math.min(AUTO_FENSTER_MIN, 1440 - soll);
-    return ist >= soll && ist < soll + fenster;
+    return w.min >= soll && w.min < soll + fenster;
 }
 // Next planned run (Date) – for the display in the app
 function autoNaechste(cfg, jetzt) {
     if (!cfg || !cfg.an) return null;
     const soll = minutenVon(cfg.zeit);
+    const w = wand(jetzt);
+    const ms = jetzt && typeof jetzt.getTime === "function" ? jetzt.getTime() : Date.now();
     for (let i = 0; i < 8; i++) {
-        const d = new Date(jetzt.getFullYear(), jetzt.getMonth(), jetzt.getDate() + i, Math.floor(soll / 60), soll % 60, 0, 0);
-        if (cfg.rhythmus === "woechentlich" && d.getDay() !== cfg.tag) continue;
-        if (d.getTime() <= jetzt.getTime()) continue;
-        return d;
+        const tag = new Date(Date.UTC(w.y, w.m, w.d + i));
+        if (cfg.rhythmus === "woechentlich" && tag.getUTCDay() !== cfg.tag) continue;
+        const t = wandZuMs(tag.getUTCFullYear(), tag.getUTCMonth(), tag.getUTCDate(), soll);
+        if (t <= ms) continue;
+        return new Date(t);
     }
     return null;
 }

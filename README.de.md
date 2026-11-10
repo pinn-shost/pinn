@@ -133,6 +133,13 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.144.1
+
+**Fehlerbehebung: automatische Updates zur richtigen Uhrzeit**
+
+- **Automatische Updates** liefen nicht zur eingestellten Uhrzeit: Der Server rechnete in UTC statt in deutscher Zeit und lag ein bis zwei Stunden daneben; auch „Nächste Prüfung“ zeigte eine falsche Uhrzeit. Jetzt gilt die Uhrzeit wie bei allen anderen Erinnerungen (Sommer- und Winterzeit inklusive).
+- Geändert: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, alle READMEs. Server (Hooks ersetzen, PocketBase startet neu): `pb_hooks/pinn-system.js`.
+
 ## Neu in 1.144.0
 
 **Dashboard: ungelesene Chats und offene Aufgaben unter jeder Person**
@@ -230,13 +237,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Sprachsteuerung.** „Hey Siri, pinn“ (auf Android HTTP Shortcuts) versteht jetzt auch Türkisch, Polnisch und Ukrainisch und antwortet in der Sprache deines Profils: auf die Einkaufsliste setzen (mit Menge und Geschäft), Liste vorlesen, Aufgabe anlegen und hören, was heute oder morgen ansteht. Siri antwortet bei Ukrainisch nicht mehr auf Englisch. Die Einrichtung des Kurzbefehls bleibt gleich.
 - Geändert: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, alle READMEs. Server (Hook ersetzen, PocketBase startet neu): `pb_hooks/pinn-sprache.js`.
 
-## Neu in 1.136.0
-
-**Ukrainisch freigeschaltet**
-
-- **Ukrainisch.** Ukrainisch ist jetzt für alle da: In Einstellungen → Sprache & Region lässt sich Українська wählen; bei ukrainischer Browsersprache stellt pinn. es automatisch ein. Alle 6994 Texte, die Push-Benachrichtigungen, der Einrichtungsassistent und der Datenexport sind auf Ukrainisch; für die Ukraine gelten die Notrufnummern 102, 103, 101 und 112. pinn. spricht damit vierzehn Sprachen. Siri antwortet bei Ukrainisch weiter auf Englisch.
-- Geändert: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), alle READMEs (Sprachliste, „vierzehn Sprachen“). Seit 1.134.0 außerdem: `i18n/uk.i18n.js`, `js/textkern.js`, `js/region.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `.github/scripts/`. Server (Hooks ersetzen, PocketBase startet neu): `pb_hooks/pinn-textkern.js`, `pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -265,7 +265,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.144.0` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.144.1` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

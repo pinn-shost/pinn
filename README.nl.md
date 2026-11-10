@@ -110,6 +110,13 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.144.1
+
+**Bugfix: automatische updates op het juiste tijdstip**
+
+- **Automatische updates** liepen niet op het gekozen tijdstip: de server rekende in UTC in plaats van Europe/Berlin-tijd en zat er één tot twee uur naast; ook „Volgende controle” toonde een verkeerde tijd. Nu werkt de tijd zoals bij alle andere herinneringen (zomer- en wintertijd inbegrepen).
+- Gewijzigd: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, alle README’s. Server (hooks vervangen, PocketBase herstart): `pb_hooks/pinn-system.js`.
+
 ## Nieuw in 1.144.0
 
 **Dashboard: ongelezen chats en openstaande taken onder iedere persoon**
@@ -165,14 +172,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Widget voor snelle toegang.** Een tweede script (“Snelkoppelingsscript kopiëren”) maakt een widget met drie tegels: lijsten, financiën (met het valutateken van je regio) en taken. Een tik opent die pagina van pinn. in Safari, omdat iOS de geïnstalleerde app niet via een link opent; meld je daar één keer aan.
 - Gewijzigd: `js/sprachsteuerung.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (nieuwe en gewijzigde teksten in alle veertien talen), `src/` (versie), `index.html`, `.github/scripts/check-hooks.js`, alle README’s. Server (hooks vervangen, PocketBase start opnieuw op): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
 
-## Nieuw in 1.141.0
-
-**Widgets: kies wat elke widget toont en vink direct in de widget af**
-
-- **Kiezen wat de widget toont.** Bij Instellingen → Spraakbesturing → “Widgets en Apple Watch” vink je afspraken van vandaag, taken (zonder huishouden), huishoudelijke taken en elke boodschappenlijst apart aan en kopieer je daarna het script naar Scriptable – één script per widget. Taken en huishoudelijke taken samen aangevinkt geven “taken met huishouden”.
-- **Afvinken in de widget.** Tik in de middelgrote en grote widget op een taak of artikel en het is ook in pinn. afgevinkt (iOS opent hiervoor even Scriptable). Afgevinkte items blijven doorgestreept op de lijst; “Boodschappen afronden” doe je zoals gewoonlijk in pinn. (een knop onderaan de widget opent de app). Profielen met kindersloot kunnen niets afvinken. Gebruik je al het script uit 1.140.0, kopieer het dan opnieuw en vervang het in Scriptable.
-- Gewijzigd: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (7 nieuwe teksten in alle veertien talen), `src/` (versie), `index.html`, `.github/scripts/check-hooks.js`, alle README’s. Server (hooks vervangen, PocketBase start opnieuw op): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -182,7 +181,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.144.0` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.144.1` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

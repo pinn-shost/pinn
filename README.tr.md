@@ -110,6 +110,13 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.144.1 sürümündeki yenilikler
+
+**Hata düzeltmesi: otomatik güncellemeler doğru saatte**
+
+- **Otomatik güncellemeler** seçilen saatte çalışmıyordu: sunucu Europe/Berlin saati yerine UTC ile hesaplıyor ve bir iki saat kayıyordu; „Sonraki kontrol” da yanlış saati gösteriyordu. Artık saat, diğer tüm hatırlatıcılarda olduğu gibi çalışıyor (yaz ve kış saati dahil).
+- Değişenler: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, tüm README’ler. Sunucu (hook’ları değiştirin, PocketBase yeniden başlar): `pb_hooks/pinn-system.js`.
+
 ## 1.144.0 sürümündeki yenilikler
 
 **Pano: her kişinin altında okunmamış sohbetler ve açık görevler**
@@ -165,14 +172,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Hızlı erişim widget’ı.** İkinci bir betik (“Hızlı erişim betiğini kopyala”) üç karolu bir widget oluşturur: listeler, finans (bölgenin para birimi simgesiyle) ve görevler. Dokunmak pinn.’in ilgili sayfasını Safari’de açar, çünkü iOS yüklü uygulamayı bir bağlantıdan açmaz; orada bir kez oturum açın.
 - Değişenler: `js/sprachsteuerung.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (on dört dilin hepsinde yeni ve değişen metinler), `src/` (sürüm), `index.html`, `.github/scripts/check-hooks.js`, tüm README’ler. Sunucu (hook’ları değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
 
-## 1.141.0 sürümündeki yenilikler
-
-**Widget’lar: her birinin ne göstereceğini seçin, doğrudan widget’ta işaretleyin**
-
-- **Widget’ın ne göstereceğini seçin.** Ayarlar → Sesli kontrol → “Widget’lar ve Apple Watch” bölümünde bugünün randevularını, görevleri (ev işleri hariç), ev işlerini ve her alışveriş listesini ayrı ayrı işaretler, ardından betiği Scriptable’a kopyalarsın – her widget için ayrı bir betik. Görevler ve ev işleri birlikte işaretlenirse “ev işleri dahil görevler” olur.
-- **Widget’ta işaretleme.** Orta ve büyük widget’ta bir göreve veya alışveriş öğesine dokun; pinn.’de de işaretlenir (iOS bunun için Scriptable’ı kısaca açar). İşaretlenenler listede üstü çizili kalır; “Alışverişi bitir” her zamanki gibi pinn.’de yapılır (widget’ın altındaki düğme uygulamayı açar). Çocuk kilidi olan profiller hiçbir şeyi işaretleyemez. 1.140.0’daki betiği zaten kullanıyorsan yeniden kopyala ve Scriptable’da değiştir.
-- Değişenler: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (on dört dilin hepsinde 7 yeni metin), `src/` (sürüm), `index.html`, `.github/scripts/check-hooks.js`, tüm README’ler. Sunucu (hook’ları değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -182,7 +181,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.144.0` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.144.1` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

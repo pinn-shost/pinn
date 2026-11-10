@@ -133,6 +133,13 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.144.1의 새 소식
+
+**버그 수정: 자동 업데이트가 정한 시간에 실행돼요**
+
+- **자동 업데이트**가 설정한 시간에 실행되지 않았어요. 서버가 Europe/Berlin 시간이 아닌 UTC로 계산해서 한두 시간 어긋났고, „다음 확인“ 시간도 잘못 표시됐어요. 이제 다른 모든 알림처럼 설정한 시간에 맞게 작동해요(서머타임 포함).
+- 변경: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, 모든 README. 서버(hooks 교체, PocketBase 재시작): `pb_hooks/pinn-system.js`.
+
 ## 1.144.0의 새 소식
 
 **대시보드: 각 사람 아래에 읽지 않은 채팅과 미완료 할 일**
@@ -223,13 +230,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - **반려동물.** 반려동물마다 급여 시간을 여러 개 설정할 수 있어요. 편집 화면에서 시간 선택기로 원하는 만큼(최대 12개) 추가하고, 양이나 사료 메모(예: “건사료 1컵”)도 남길 수 있어요. 메모는 급여 버튼과 사료 카드에 보여요. 반려동물 페이지에 새 배너가 생겼어요. 울타리가 있는 초원 위를 가족의 반려동물이 지나가고, 밤에는 별이 떠요.
 - 변경: `js/dunkelzeit.js` (신규), `js/design.js`, `js/familie.js`, `css/haustierewetter.css`, `js/einstellungen.js`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/`(14개 언어 모두에 새 문구 19개), `src/`(`index.html`), `pinn-setup.sh`, `.github/scripts/check-hooks.js`, 모든 README. 서버(hook 교체, PocketBase가 다시 시작돼요): `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`.
 
-## 1.137.0의 새 소식
-
-**튀르키예어·폴란드어·우크라이나어 음성 제어**
-
-- **음성 제어.** “헤이 Siri, pinn”(Android에서는 HTTP Shortcuts)이 이제 튀르키예어, 폴란드어, 우크라이나어도 알아듣고 프로필 언어로 답해요. 장보기 목록에 추가(수량·가게 포함), 목록 읽어 주기, 할 일 만들기, 오늘·내일 일정 듣기를 할 수 있어요. 우크라이나어에서도 Siri가 더 이상 영어로 답하지 않아요. 단축어 설정은 그대로예요.
-- 변경: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, 모든 README. 서버(훅 교체, PocketBase 재시작): `pb_hooks/pinn-sprache.js`.
-
 ## 작동 방식
 
 ```mermaid
@@ -258,7 +258,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.144.0` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.144.1` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
