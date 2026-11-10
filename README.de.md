@@ -133,6 +133,15 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.145.0
+
+**Winter- und Weihnachtsdesign**
+
+- **Winterdesign vom 1. Dezember bis 6. Januar.** Schnee auf dem pinn.-Logo, auf den Überschriften und unten in der Seitenleiste, dazu ein kurzer Schneeschauer beim Öffnen der App. Tippe aufs Logo für mehr Schnee.
+- **Weihnachtsextras bis zum 26. Dezember.** Lichterkette unter der Kopfzeile, Weihnachtsmütze auf dem Logo, Stechpalme an Überschriften und Glocke, ein kleiner Tannenbaum in der Seitenleiste – und ab und zu fliegt der Weihnachtsmann mit Schlitten und Rentieren oben durchs Bild.
+- **Standardmäßig an, pro Profil abschaltbar** unter Einstellungen → Darstellung; „Vorschau“ zeigt es jederzeit eine Minute lang. Akkuschonend und eine eigene Schicht: Im Ruhemodus bewegt sich nichts, und am Aufbau der App verschiebt sich nichts.
+- Geändert: `js/winterzeit.js` (neu), `css/winterzeit.css` (neu), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, alle READMEs. Kein Server-Teil.
+
 ## Neu in 1.144.2
 
 **Automatische Updates: auch für heute einplanbar**
@@ -228,15 +237,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Wer schenkt es? / Sammelgeschenke.** Bei jedem Geschenk wählst du, wer es schenkt. Bei einem schon reservierten Wunsch eines anderen tippst du auf „Ich mache mit“; die anderen sehen, wer mitmacht, der Wünschende nicht.
 - Geändert: `js/listen.js`, `css/listen.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (12 neue Texte und eine geänderte Einleitung in allen vierzehn Sprachen), `src/` (`index.html`, Popup Listen), alle READMEs. Kein Server-Teil – PocketBase muss nicht neu starten.
 
-## Neu in 1.138.0
-
-**Automatischer Dunkelmodus und automatische Updates**
-
-- **Dunkelmodus.** Unter Einstellungen → Darstellung kann pinn. jetzt nach Uhrzeit (z. B. 20:00 bis 07:00) oder von Sonnenuntergang bis Sonnenaufgang auf Dunkel umschalten. Die Sonnenzeiten werden auf dem Gerät für die Wohnadresse der Familie (sonst den Wetterort) berechnet – ohne Standortfreigabe. Schaltest du von Hand um, gilt das bis zum nächsten automatischen Wechsel. Die Einstellung gehört zu deinem Profil und gilt auf all deinen Geräten.
-- **Automatische Updates.** Unter Einstellungen → System → Sicherungen & Updates kann pinn. zu einer festen Uhrzeit, täglich oder einmal pro Woche, nach einer neuen Version suchen, zuerst eine Sicherung anlegen und dann das Update installieren. Vorabversionen werden nie automatisch installiert, und schlägt die Sicherung fehl, wird nichts installiert. Ergebnis und nächster Termin stehen im selben Fenster, Fehler im Fehlerprotokoll. Nur für Admins, die Updates installieren dürfen.
-- **Tiere.** Mehrere Fütterungszeiten pro Tier: Im Tier-Editor fügst du beliebig viele Zeiten (bis zu 12) mit Zeitwähler und optionaler Notiz zu Menge oder Futter hinzu (z. B. „1 Tasse Trockenfutter“). Die Notiz erscheint am Fütterungs-Knopf und in der Futter-Karte. Neues Banner auf der Tiere-Seite: eine Wiese mit Zaun, an der die Tiere deiner Familie vorbeilaufen – nachts mit Sternen.
-- Geändert: `js/dunkelzeit.js` (neu), `js/design.js`, `js/familie.js`, `css/haustierewetter.css`, `js/einstellungen.js`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (19 neue Texte in allen vierzehn Sprachen), `src/` (`index.html`), `pinn-setup.sh`, `.github/scripts/check-hooks.js`, alle READMEs. Server (Hooks ersetzen, PocketBase startet neu): `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -265,7 +265,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.144.2` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.145.0` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

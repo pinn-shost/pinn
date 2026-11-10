@@ -22,6 +22,15 @@
    ========================================================== */
 const PINN_CHANGELOG = [
   {
+    v: '1.145', datum: '10.11.2026', titel: 'Winter- und Weihnachtsdesign',
+    punkte: [
+      ['neu', 'Winterdesign vom 1. Dezember bis 6. Januar: Schnee auf dem pinn.-Logo, auf den Überschriften und unten in der Seitenleiste, dazu ein kurzer Schneeschauer beim Öffnen der App und nach einer längeren Pause. Tippe aufs Logo, dann schneit es noch einmal.'],
+      ['neu', 'Weihnachtsextras bis zum 26. Dezember: Lichterkette unter der Kopfzeile, Weihnachtsmütze auf dem Logo, Stechpalme an den Überschriften und an der Glocke, ein kleiner Tannenbaum in der Seitenleiste – und ab und zu fliegt der Weihnachtsmann mit Schlitten und Rentieren oben durchs Bild (an Heiligabend öfter).'],
+      ['info', 'Kommt und geht von selbst, ist standardmäßig an und lässt sich unter Einstellungen → Darstellung pro Profil ausschalten; „Vorschau“ zeigt es jederzeit eine Minute lang. Akkuschonend: Bewegung nur für kurze Zeit, nichts im Ruhemodus, im Hintergrund oder bei „Bewegung reduzieren“. Das Design ist eine eigene Schicht und verschiebt nichts – neue Funktionen bleiben unberührt.'],
+      ['info', 'Neu: js/winterzeit.js, css/winterzeit.css. Geändert: js/design.js, js/sprachen.js, js/versionslog.js, src/ (Logo, Einstellungen, Version), pinn-setup.sh, index.html, i18n/ (3 neue Texte in allen vierzehn Sprachen), i18n/versionslog.en.js, alle READMEs. Kein Server-Teil.'],
+    ],
+  },
+  {
     v: '1.144', datum: '10.11.2026', titel: 'Dashboard: ungelesene Chats und offene Aufgaben unter jeder Person',
     punkte: [
       ['neu', 'Zwei Zahlen unter jeder Person: Auf der Profilauswahl des Familien-Dashboards (iPad) steht unter dem Namen eine Sprechblase mit der Zahl der ungelesenen Chat-Nachrichten und ein Haken mit der Zahl der offenen, fälligen Aufgaben – sichtbar ohne Anmeldung. Bei 0 verschwindet das Feld, über 9 steht 9⁺; die Zahlen werden jede Minute aufgefrischt.'],

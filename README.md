@@ -129,6 +129,15 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.145.0
+
+**Winter and Christmas look**
+
+- **Winter look from 1 December to 6 January.** Snow on the pinn. logo, on the headings and at the bottom of the sidebar, plus a short snow shower when you open the app. Tap the logo for more snow.
+- **Christmas extras until 26 December.** Fairy lights under the header, a Santa hat on the logo, holly at the headings and the bell, a little tree in the sidebar – and now and then Santa flies across the top with sleigh and reindeer.
+- **On by default, switch it off per profile** under Settings → Appearance; “Preview” shows it for a minute at any time. Easy on the battery and a layer of its own: nothing moves in idle mode, and nothing in the layout shifts.
+- Changed: `js/winterzeit.js` (new), `css/winterzeit.css` (new), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, all READMEs. No server part.
+
 ## What's new in 1.144.2
 
 **Automatic updates: plan for today as well**
@@ -247,13 +256,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Ukrainian.** Ukrainian is now available for everyone: choose Українська under Settings → Language & region; if your browser is set to Ukrainian, pinn. selects it automatically. All 6994 texts, the push notifications, the setup wizard and the data export are in Ukrainian; Ukrainian emergency numbers are 102, 103, 101 and 112. pinn. now speaks fourteen languages. Siri still answers in English for Ukrainian.
 - Changed: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), all READMEs (language list, “fourteen languages”). Since 1.134.0 also: `i18n/uk.i18n.js`, `js/textkern.js`, `js/region.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `.github/scripts/`. Server (replace the hooks, PocketBase restarts): `pb_hooks/pinn-textkern.js`, `pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
 
-## What's new in 1.135.17
-
-**Ukrainian – stage 18**
-
-- **Ukrainian.** The set-up wizard and the data export now speak Ukrainian: all step-by-step guides (home network, DuckDNS, VPN, Google, AI, location, Home Assistant, apps) and every export text. Ukrainian emergency numbers (102, 103, 101 and 112) double-checked. A short `README.uk.md` is new. The language is still hidden – nothing changes in the app.
-- Changed: `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `README.uk.md`. No server part.
-
 ## How it works
 
 ```mermaid
@@ -280,7 +282,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.144.2` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.145.0` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

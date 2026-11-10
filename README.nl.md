@@ -110,6 +110,15 @@ Tik op een plaatje om het op volledige grootte te openen.
 
 pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski en 🇺🇦 Українська**, past valuta en alarmnummers aan je regio aan en schakelt tussen de termen **gezin** en **woongroep**. Eén server kan meerdere gezinnen bedienen, elk met eigen beheerders.
 
+## Nieuw in 1.145.0
+
+**Winter- en kerstlook**
+
+- **Winterlook van 1 december tot 6 januari.** Sneeuw op het pinn.-logo, op de koppen en onderaan de zijbalk, plus een korte sneeuwbui als je de app opent. Tik op het logo voor meer sneeuw.
+- **Kerstextra’s tot 26 december.** Lichtjes onder de kopregel, een kerstmuts op het logo, hulst bij de koppen en de bel, een boompje in de zijbalk – en af en toe vliegt de kerstman met slee en rendieren voorbij.
+- **Standaard aan, per profiel uit te zetten** onder Instellingen → Weergave; „Voorbeeld” toont het altijd een minuut lang. Zuinig met de batterij en een eigen laag: in rustmodus beweegt niets en er verschuift niets in de opmaak.
+- Gewijzigd: `js/winterzeit.js` (nieuw), `css/winterzeit.css` (nieuw), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, alle README’s. Geen serverdeel.
+
 ## Nieuw in 1.144.2
 
 **Automatische updates: ook voor vandaag**
@@ -163,14 +172,6 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Melding en push zoals bij de andere vooruitblikken.** Een melding bovenaan tot 10 januari en een pushbericht dat je in de instellingen kunt uitzetten. Uitgaven zie je alleen met toegang tot de financiën; gasten krijgen geen pushbericht.
 - Gewijzigd: `js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (32 nieuwe en gewijzigde teksten in alle veertien talen), `src/` (versie, instellingen), `index.html`, alle README’s. Server (hooks vervangen, PocketBase start opnieuw): `pb_hooks/pinn-ausblick.js`, `pb_hooks/ausblick.pb.js`.
 
-## Nieuw in 1.141.2
-
-**Widgets: goud in plaats van groen, vinkjes, modernere tegels**
-
-- **Goud en vinkjes.** De widgets gebruiken nu het goud van de app in plaats van groen, en open taken tonen een vinkje in plaats van een cirkel. Afgevinkte taken houden een grijs vinkje en blijven onder de open taken staan.
-- **Widget voor snelle toegang.** De tegels zijn iets kleiner, zodat alles binnen de widget blijft, en zien er moderner uit: een rond gouden label met het symbool, een dunne rand en een donkere kleurverloop. Een tik opent pinn. nog steeds in Safari, omdat iOS de geïnstalleerde app niet via een link opent.
-- Gewijzigd: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (versie), `index.html`, alle README’s. Geen serverdeel. Kopieer de scripts opnieuw en vervang ze in Scriptable.
-
 ## Vereisten
 
 - NAS of mini-pc met **Docker** en **Docker Compose** (bijvoorbeeld Synology, UGREEN, QNAP of een gewone Linux-server)
@@ -180,7 +181,7 @@ pinn. spreekt **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 ## Installatie
 
 1. Download de ZIP van de [nieuwste release](https://github.com/pinn-shost/pinn/releases/latest) en pak hem uit.
-2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.144.2` of `pinn-main`) er ongewijzigd in.
+2. Maak op de NAS een map, bijvoorbeeld `/volume1/docker/Pocketbase`, en zet de uitgepakte map (bijvoorbeeld `pinn-1.145.0` of `pinn-main`) er ongewijzigd in.
 3. Maak verbinding via SSH en voer uit:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -110,6 +110,15 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.145.0
+
+**Wygląd zimowy i świąteczny**
+
+- **Wygląd zimowy od 1 grudnia do 6 stycznia.** Śnieg na logo pinn., na nagłówkach i na dole paska bocznego oraz krótki opad śniegu po otwarciu aplikacji. Stuknij logo, aby spadło więcej śniegu.
+- **Dodatki świąteczne do 26 grudnia.** Lampki pod nagłówkiem, czapka Mikołaja na logo, ostrokrzew przy nagłówkach i dzwonku, choinka w pasku bocznym – a od czasu do czasu u góry przelatuje Mikołaj z saniami i reniferami.
+- **Domyślnie włączone, do wyłączenia dla każdego profilu** w Ustawienia → Wygląd; „Podgląd” pokazuje je przez minutę w dowolnym momencie. Oszczędza baterię i działa na osobnej warstwie: w trybie spoczynku nic się nie rusza i nic się nie przesuwa.
+- Zmieniono: `js/winterzeit.js` (nowy), `css/winterzeit.css` (nowy), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, wszystkie README. Bez części serwerowej.
+
 ## Nowości w 1.144.2
 
 **Automatyczne aktualizacje: także na dziś**
@@ -163,14 +172,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Powiadomienie i push jak przy innych zapowiedziach.** Powiadomienie u góry do 10 stycznia i wiadomość push, którą możesz wyłączyć w ustawieniach. Wydatki widać tylko z dostępem do finansów; goście nie dostają wiadomości push.
 - Zmienione: `js/ausblick.js`, `js/hinweise.js`, `css/hinweise.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/` (32 nowe i zmienione teksty we wszystkich czternastu językach), `src/` (wersja, ustawienia), `index.html`, wszystkie pliki README. Serwer (wymienić hooki, PocketBase uruchomi się ponownie): `pb_hooks/pinn-ausblick.js`, `pb_hooks/ausblick.pb.js`.
 
-## Nowości w 1.141.2
-
-**Widżety: złoto zamiast zieleni, znaczniki wyboru, nowocześniejsze kafelki**
-
-- **Złoto i znaczniki.** Widżety używają teraz złota aplikacji zamiast zieleni, a otwarte zadania pokazują znacznik wyboru zamiast kółka. Odhaczone zadania zachowują szary znacznik i zostają pod otwartymi.
-- **Widżet szybkiego dostępu.** Kafelki są trochę mniejsze, więc wszystko mieści się w widżecie, i wyglądają nowocześniej: okrągła złota plakietka z symbolem, cienka krawędź i ciemny gradient. Dotknięcie nadal otwiera pinn. w Safari, bo iOS nie otwiera zainstalowanej aplikacji z linku.
-- Zmienione: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (wersja), `index.html`, wszystkie pliki README. Bez części serwerowej. Skopiuj skrypty ponownie i zastąp je w Scriptable.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -180,7 +181,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.144.2` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.145.0` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

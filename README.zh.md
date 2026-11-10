@@ -133,6 +133,15 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.145.0 新功能
+
+**冬季与圣诞主题**
+
+- **12 月 1 日至 1 月 6 日的冬季主题。** pinn. 标志、标题和侧边栏底部都有积雪，打开应用时会下一阵小雪。点按标志可以下更多雪。
+- **圣诞装饰持续到 12 月 26 日。** 页眉下方的彩灯、标志上的圣诞帽、标题和铃铛上的冬青、侧边栏里的小圣诞树——圣诞老人还会不时驾着雪橇和驯鹿从上方飞过。
+- **默认开启，可按个人资料关闭**：设置 → 外观；“预览”随时展示一分钟。省电且是独立的一层：待机时不会动，布局也不会移动。
+- 已更改：`js/winterzeit.js` （新）, `css/winterzeit.css` （新）, `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`，所有 README。无服务器部分。
+
 ## 1.144.2 新功能
 
 **自动更新：也可安排在今天**
@@ -219,15 +228,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - 使用的是与 Siri 相同的私密链接，仅供查看，访客没有该链接。文本使用个人资料的语言。
 - 更改：`js/sprachsteuerung.js`、`js/versionslog.js`、`i18n/`（十四种语言各 16 条新文本和一个更改的副标题）、`src/`（`index.html`、设置）、`.github/scripts/check-hooks.js`、所有 README。服务器（替换 hook，PocketBase 会重启）：`pb_hooks/pinn-sprache.js`、`pb_hooks/sprache.pb.js`。
 
-## 1.139.0 新功能
-
-**礼物策划：谁送什么，收礼的人看不到**
-
-- **谁送什么。** 在“礼物”标签页，pinn. 现在按人汇总所有计划（清单中的礼物创意和其他人预订的心愿），并显示日期、进度、送礼人和合计。收礼的人在这里永远看不到。
-- **对收礼的人隐藏。** 在（非私密的）礼物清单中选择“对以下人员隐藏”，这些人就看不到清单，几个人可以一起策划（例如父母为孩子准备）。为你自己登记的礼物，你也永远看不到。与私密清单一样，这只是应用内显示的规则，并非加密。
-- **谁来送？／一起送。** 每件礼物都可以选择谁来送。对别人已预订的心愿，点“我也参与”；其他人能看到谁参与，提出心愿的人看不到。
-- 更改：`js/listen.js`、`css/listen.css`、`js/sprachen.js`、`js/versionslog.js`、`i18n/`（12 条新文本和一处修改的介绍，涵盖全部十四种语言）、`src/`（`index.html`、清单弹窗）、所有 README。无服务器部分——无需重启 PocketBase。
-
 ## 工作原理
 
 ```mermaid
@@ -256,7 +256,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.144.2` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.145.0` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

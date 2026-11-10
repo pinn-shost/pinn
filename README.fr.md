@@ -129,6 +129,15 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.145.0
+
+**Thème hiver et Noël**
+
+- **Thème hiver du 1er décembre au 6 janvier.** De la neige sur le logo pinn., sur les titres et en bas de la barre latérale, et une courte averse de neige à l’ouverture de l’app. Touchez le logo pour plus de neige.
+- **Extras de Noël jusqu’au 26 décembre.** Guirlande lumineuse sous l’en-tête, bonnet de Père Noël sur le logo, houx sur les titres et la cloche, un petit sapin dans la barre latérale – et de temps en temps, le Père Noël passe avec son traîneau et ses rennes.
+- **Activé par défaut, désactivable par profil** dans Réglages → Apparence ; « Aperçu » l’affiche une minute à tout moment. Économe en batterie et sur une couche à part : rien ne bouge en veille et rien ne se décale dans la mise en page.
+- Modifié : `js/winterzeit.js` (nouveau), `css/winterzeit.css` (nouveau), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, tous les README. Pas de partie serveur.
+
 ## Nouveautés de la 1.144.2
 
 **Mises à jour automatiques : aussi pour aujourd’hui**
@@ -247,13 +256,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Ukrainien.** L’ukrainien est désormais disponible pour tous : choisis Українська dans Réglages → Langue et région ; si le navigateur est en ukrainien, pinn. le sélectionne automatiquement. Les 6994 textes, les notifications push, l’assistant de configuration et l’export de données sont en ukrainien ; les numéros d’urgence de l’Ukraine sont 102, 103, 101 et 112. pinn. parle maintenant quatorze langues. Siri répond encore en anglais pour l’ukrainien.
 - Modifié : `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), tous les README (liste des langues, « quatorze langues »). Depuis la 1.134.0 aussi : `i18n/uk.i18n.js`, `js/textkern.js`, `js/region.js`, `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `.github/scripts/`. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-textkern.js`, `pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
 
-## Nouveautés de la 1.135.17
-
-**Ukrainien – étape 18**
-
-- **Ukrainien.** L’assistant de configuration et l’export des données parlent désormais ukrainien : tous les guides pas à pas (réseau domestique, DuckDNS, VPN, Google, IA, localisation, Home Assistant, applis) et tous les textes de l’export. Les numéros d’urgence ukrainiens (102, 103, 101 et 112) ont été vérifiés. Un court `README.uk.md` est nouveau. La langue est encore masquée – rien ne change dans l’appli.
-- Modifié : `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `README.uk.md`. Pas de partie serveur.
-
 ## Comment ça marche
 
 ```mermaid
@@ -280,7 +282,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.144.2` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.145.0` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

@@ -1,0 +1,113 @@
+/* pinn. – Winter & Christmas look (css/winterzeit.css, since 1.145.0)
+   Switched on by js/winterzeit.js with two classes on <html>:
+     pinn-winter  1 December – 6 January: snow on the logo, on headings and on the sidebar
+     pinn-xmas    1 – 26 December: in addition fairy lights, a Santa hat on the logo, holly at headings and the bell
+   pinn-season-live is set only while a snow shower runs (the lights twinkle only then – saves battery).
+   RULE: every decoration is an absolutely positioned pseudo element or lives in the fixed layer .pinn-season-layer,
+   never takes space and never catches taps (pointer-events: none). Nothing here may change sizes, margins or the
+   layout – new features therefore never get gaps or shifted parts because of the season look. */
+
+/* ---------- Logo (header, sign-in) ---------- */
+.pinn-logo-wrap { position: relative; display: inline-block; line-height: 0; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+.pinn-logo-wrap > img { display: block; }
+html.pinn-winter .pinn-logo-wrap { cursor: pointer; }
+html.pinn-winter .pinn-logo-wrap::before {
+  content: ""; position: absolute; pointer-events: none; z-index: 1;
+  left: -10%; top: -17%; width: 120%; height: 44%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 14'%3E%3Cpath d='M2 9C2 4 6 2 10 3C13 0 18 1 21 3C24 0 30 1 32 4C36 3 39 5 38 9C38 11 36 11.5 35 10.5C34.5 13 31 13.5 30.5 10.5C27 11.5 24 10.5 22 10.5C21 13.5 17 13.5 16.8 10.5C13 11.5 9 11 6.5 10.5C5.5 12.5 2 12.5 2 9Z' fill='%23fff' stroke='%23a9bfd1' stroke-width='.7'/%3E%3Cpath d='M7 5.5C10 4.5 13 4.8 15 5.6M24 4.6C27 4 30 4.4 32 5.4' fill='none' stroke='%23d9e6f0' stroke-width='.9' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+}
+html.pinn-xmas .pinn-logo-wrap::after {
+  content: ""; position: absolute; pointer-events: none; z-index: 2;
+  left: -30%; top: -50%; width: 78%; height: 70%;
+  transform: rotate(-16deg); transform-origin: 70% 90%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 28'%3E%3Cpath d='M5 21C6 12 12 4 21 3C26 2.5 29 5.5 28.5 10C26.5 8 23.5 8 21.5 10C19.5 12.5 20 17 21.5 21Z' fill='%23c8102e'/%3E%3Cpath d='M9 19C11 12 15 7 20 5.5' fill='none' stroke='%23e5384f' stroke-width='1.4' stroke-linecap='round' opacity='.7'/%3E%3Crect x='2' y='19' width='22.5' height='6.5' rx='3.2' fill='%23fff' stroke='%23d5dde4' stroke-width='.6'/%3E%3Ccircle cx='28.3' cy='10.5' r='3.3' fill='%23fff' stroke='%23d5dde4' stroke-width='.6'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+}
+
+/* ---------- Snow on headings (and on the family name in the header) ---------- */
+html.pinn-winter #mainGrid h2.font-serif:not(.truncate),
+html.pinn-winter #mainGrid h3.font-serif:not(.truncate),
+html.pinn-winter .nt-famname h1,
+html.pinn-winter #dashboardScreen h1.font-serif { position: relative; }
+html.pinn-winter #mainGrid h2.font-serif:not(.truncate)::before,
+html.pinn-winter #mainGrid h3.font-serif:not(.truncate)::before,
+html.pinn-winter .nt-famname h1::before,
+html.pinn-winter #dashboardScreen h1.font-serif::before {
+  content: ""; position: absolute; pointer-events: none;
+  left: -0.06em; top: 0.08em; top: calc((1lh - 1em) / 2 - 0.1em); width: 2em; max-width: 100%; height: 0.44em;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 12' preserveAspectRatio='none'%3E%3Cpath d='M1 8C1 4 4 2 8 3C11 0.5 16 1 19 2.5C23 0.5 28 1 31 3C35 1 41 1 44 3C48 1.5 54 2 57 4C59.5 5 59.5 9 57 9C55 11 53 11 52 9C47 9.6 42 9.6 38 9C36.5 11.4 33.5 11.4 32.5 9C26 9.8 19 9.6 13 9C11.5 11.2 8.5 11.2 7.5 9C4.5 9.6 1 10 1 8Z' fill='%23dfe9f2' stroke='%238eaac2' stroke-width='.7'/%3E%3Cpath d='M2 6.5C2 4 5 3 8 4C11 1.8 16 2 19 3.5C23 1.6 28 2 31 4C35 2 41 2 44 4C48 2.6 54 3 57 5C58 6 57.5 7 56 7C44 7.6 20 7.6 4 7.4C2.8 7.4 2 7.2 2 6.5Z' fill='%23fff'/%3E%3C/svg%3E") left top / 100% 100% no-repeat;
+}
+/* The family name in the header is inline: its box starts at the top of the letters, not of the line */
+html.pinn-winter .nt-famname h1::before { top: 0.2em; }
+html.pinn-xmas #mainGrid h2.font-serif:not(.truncate)::after,
+html.pinn-xmas #mainGrid h3.font-serif:not(.truncate)::after,
+html.pinn-xmas #dashboardScreen h1.font-serif::after {
+  content: ""; position: absolute; pointer-events: none;
+  left: 1.55em; top: -0.04em; top: calc((1lh - 1em) / 2 - 0.22em); width: 0.62em; height: 0.48em;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 18'%3E%3Cpath d='M12 11C9 7 4 6 1 8C3 9 3 11 2 13C5 12 6 14 7 15C9 13 11 13 12 11Z' fill='%232f7a43'/%3E%3Cpath d='M12 11C15 7 20 6 23 8C21 9 21 11 22 13C19 12 18 14 17 15C15 13 13 13 12 11Z' fill='%23276b39'/%3E%3Ccircle cx='10' cy='7' r='2.6' fill='%23d1263b'/%3E%3Ccircle cx='14.2' cy='6.4' r='2.6' fill='%23e23447'/%3E%3Ccircle cx='12.2' cy='3.4' r='2.4' fill='%23c41d33'/%3E%3Ccircle cx='13' cy='2.7' r='.7' fill='%23fff' opacity='.7'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+}
+
+/* ---------- Bell: a sprig of holly ---------- */
+html.pinn-xmas .nt-bell::before {
+  content: ""; position: absolute; pointer-events: none; left: 1px; top: 0; width: 13px; height: 10px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 18'%3E%3Cpath d='M12 11C9 7 4 6 1 8C3 9 3 11 2 13C5 12 6 14 7 15C9 13 11 13 12 11Z' fill='%232f7a43'/%3E%3Cpath d='M12 11C15 7 20 6 23 8C21 9 21 11 22 13C19 12 18 14 17 15C15 13 13 13 12 11Z' fill='%23276b39'/%3E%3Ccircle cx='10' cy='7' r='2.6' fill='%23d1263b'/%3E%3Ccircle cx='14.2' cy='6.4' r='2.6' fill='%23e23447'/%3E%3Ccircle cx='12.2' cy='3.4' r='2.4' fill='%23c41d33'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+}
+
+/* ---------- Fairy lights along the bottom of the header (inside its padding, nothing is covered) ---------- */
+html.pinn-xmas #appShell > header { position: relative; }
+html.pinn-xmas #appShell > header::after,
+html.pinn-xmas #appShell > header::before {
+  content: ""; position: absolute; pointer-events: none; left: 0; right: 0; bottom: 0; height: 11px;
+  background-repeat: repeat-x; background-size: 64px 11px; background-position: 6px 0;
+}
+html.pinn-xmas #appShell > header::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 11'%3E%3Cpath d='M0 2Q16 6 32 2T64 2' fill='none' stroke='%23565048' stroke-width='.8'/%3E%3Cg stroke='%23565048' stroke-width='.6'%3E%3Crect x='7' y='3' width='2' height='2' fill='%23565048'/%3E%3Crect x='23' y='3.6' width='2' height='2' fill='%23565048'/%3E%3Crect x='39' y='3' width='2' height='2' fill='%23565048'/%3E%3Crect x='55' y='3.6' width='2' height='2' fill='%23565048'/%3E%3C/g%3E%3Cellipse cx='8' cy='7.6' rx='2.2' ry='3' fill='%23e23b3b'/%3E%3Cellipse cx='24' cy='8.2' rx='2.2' ry='2.8' fill='%23f2b632'/%3E%3Cellipse cx='40' cy='7.6' rx='2.2' ry='3' fill='%233aa35b'/%3E%3Cellipse cx='56' cy='8.2' rx='2.2' ry='2.8' fill='%233b8fe2'/%3E%3Ccircle cx='7.3' cy='6.6' r='.7' fill='%23fff' opacity='.6'/%3E%3Ccircle cx='23.3' cy='7.3' r='.7' fill='%23fff' opacity='.6'/%3E%3Ccircle cx='39.3' cy='6.6' r='.7' fill='%23fff' opacity='.6'/%3E%3Ccircle cx='55.3' cy='7.3' r='.7' fill='%23fff' opacity='.6'/%3E%3C/svg%3E");
+}
+/* Glow of every second bulb – only visible (and only animated) while snow is falling */
+html.pinn-xmas #appShell > header::before {
+  opacity: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 11'%3E%3Ccircle cx='8' cy='7.6' r='3.6' fill='%23ff6b6b' opacity='.55'/%3E%3Ccircle cx='40' cy='7.6' r='3.6' fill='%236fe08f' opacity='.55'/%3E%3C/svg%3E");
+}
+html.pinn-xmas.pinn-season-live #appShell > header::before { animation: pinnLightsTwinkle 1.6s steps(2, jump-none) infinite; }
+@keyframes pinnLightsTwinkle { from { opacity: 0; } to { opacity: 1; } }
+html.dark.pinn-xmas #appShell > header::after { filter: brightness(1.15); }
+
+/* ---------- Sidebar: snowy ground above the footer, a small tree at Christmas ---------- */
+html.pinn-winter #sidebar .sidebar-foot:not(#sidebarVersionBtn) { position: relative; }
+html.pinn-winter #sidebar .sidebar-foot:not(#sidebarVersionBtn)::before {
+  content: ""; position: absolute; pointer-events: none; left: 0; right: 0; top: -8px; height: 10px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 10' preserveAspectRatio='none'%3E%3Cpath d='M0 10V6C10 3 18 5 26 4C36 2 44 5 54 5C64 5 70 2 80 3C90 4 98 6 108 4C113 3 117 4 120 5V10Z' fill='%23ffffff' opacity='.92'/%3E%3C/svg%3E") left top / 100% 100% no-repeat;
+}
+html.pinn-xmas #sidebar .sidebar-foot:not(#sidebarVersionBtn)::after {
+  content: ""; position: absolute; pointer-events: none; right: 22px; top: -31px; width: 22px; height: 27px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 27'%3E%3Cpath d='M11 3L4 12H7.5L2.5 18H6.5L1 25H21L15.5 18H19.5L14.5 12H18Z' fill='%23e8f1ea'/%3E%3Cpath d='M11 3L4 12H7.5L2.5 18H6.5L1 25H11Z' fill='%23d3e3d7'/%3E%3Cpath d='M11 0.3L11.9 2.3L14 2.5L12.4 3.8L12.9 5.9L11 4.8L9.1 5.9L9.6 3.8L8 2.5L10.1 2.3Z' fill='%23f2c94c'/%3E%3Ccircle cx='9' cy='11' r='1.1' fill='%23e23b3b'/%3E%3Ccircle cx='13.5' cy='15.5' r='1.1' fill='%23f2b632'/%3E%3Ccircle cx='7.5' cy='19.5' r='1.1' fill='%233b8fe2'/%3E%3Ccircle cx='15' cy='21.5' r='1.1' fill='%23e23b3b'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+}
+
+/* ---------- Layer for snow and Santa (fixed, above the app, below pop-ups) ---------- */
+.pinn-season-layer { position: fixed; inset: 0; z-index: 150; pointer-events: none; overflow: hidden; contain: strict; }
+.pinn-season-flake {
+  position: absolute; top: -12px; left: var(--x); width: var(--s); height: var(--s); border-radius: 50%;
+  background: #fff; box-shadow: 0 0 2px rgba(70, 105, 135, 0.45); opacity: var(--o);
+  will-change: transform;
+  animation: pinnSnowFall var(--d) linear var(--w) var(--n) both;
+}
+html.dark .pinn-season-flake { box-shadow: 0 0 3px rgba(255, 255, 255, 0.35); }
+@keyframes pinnSnowFall {
+  0%   { transform: translate3d(0, -2vh, 0); }
+  50%  { transform: translate3d(var(--dx), 52vh, 0); }
+  100% { transform: translate3d(calc(var(--dx) * -0.4), 106vh, 0); }
+}
+
+.pinn-santa { position: absolute; left: 0; top: var(--y); width: 210px; height: 62px; will-change: transform; animation: pinnSantaFly var(--d) linear 0s 1 both; }
+.pinn-santa.rtl { animation-name: pinnSantaFlyBack; }
+.pinn-santa svg { display: block; width: 100%; height: 100%; animation: pinnSantaBob 1.4s ease-in-out infinite alternate; }
+.pinn-santa.rtl svg { transform: scaleX(-1); }
+@keyframes pinnSantaFly { from { transform: translate3d(-230px, 0, 0); } to { transform: translate3d(calc(100vw + 20px), -26px, 0); } }
+@keyframes pinnSantaFlyBack { from { transform: translate3d(calc(100vw + 20px), 0, 0); } to { transform: translate3d(-230px, -26px, 0); } }
+@keyframes pinnSantaBob { from { translate: 0 -3px; } to { translate: 0 4px; } }
+
+/* Power saving: in idle mode everything stands still (js/winterzeit.js also starts nothing new there) */
+html.pinn-ruhe .pinn-season-layer *, html.pinn-ruhe #appShell > header::before { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) {
+  .pinn-season-layer { display: none; }
+  html.pinn-xmas.pinn-season-live #appShell > header::before { animation: none; }
+}

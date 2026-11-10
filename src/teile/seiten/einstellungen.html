@@ -43,6 +43,22 @@
           <p id="darkAutoNote" data-tk="settings.display.darkAutoNote" class="hidden text-[11px] text-ink/45 mt-1 leading-snug">If you switch dark mode by hand, that applies until the next automatic change.</p>
         </div>
 
+        <!-- Winter & Christmas look (js/winterzeit.js) -->
+        <div class="mb-5">
+          <div class="flex flex-wrap items-center gap-3">
+            <label class="flex items-center gap-3 cursor-pointer w-fit">
+              <span data-tk="settings.display.season" class="text-sm">❄️ Winter &amp; Christmas look</span>
+              <span class="relative inline-block w-11 h-6">
+                <input id="seasonFxToggle" type="checkbox" class="peer sr-only" checked />
+                <span class="absolute inset-0 rounded-full bg-ink/20 peer-checked:bg-pine transition"></span>
+                <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white transition peer-checked:translate-x-5"></span>
+              </span>
+            </label>
+            <button data-tk="settings.display.seasonPreview" type="button" id="seasonPreviewBtn" class="px-3 py-1.5 rounded-full border border-ink/15 text-xs text-ink/60 hover:border-pine hover:text-pine transition">Preview</button>
+          </div>
+          <p data-tk="settings.display.seasonHint" class="text-[11px] text-ink/45 mt-2 leading-snug">Turns on by itself from 1 December to 6 January: snow on the logo and the headings and a short snow shower when you open pinn. Until 26 December there are also fairy lights, holly, a Santa hat – and now and then Santa flies by. Tap the logo for more snow.</p>
+        </div>
+
         <p data-tk="settings.display.customColors" class="text-xs uppercase tracking-wide text-ink/40 mb-2">Custom colours</p>
         <div class="flex flex-wrap items-center gap-5 mb-6">
           <label class="flex items-center gap-2 text-sm">

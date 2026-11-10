@@ -133,6 +133,15 @@ pinn.은 집안을 굴러가게 하는 모든 것을 한곳에 모은 앱이에�
 
 pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski, 🇺🇦 Українська**를 지원하고, 통화와 긴급 번호를 사는 지역에 맞추며, **가족**과 **셰어하우스** 용어를 오갈 수 있어요. 서버 한 대에 여러 가족을 둘 수 있고, 가족마다 관리자가 따로 있어요.
 
+## 1.145.0의 새 소식
+
+**겨울 & 크리스마스 테마**
+
+- **12월 1일부터 1월 6일까지 겨울 테마.** pinn. 로고, 제목, 사이드바 아래에 눈이 쌓이고 앱을 열면 잠깐 눈이 내립니다. 로고를 탭하면 눈이 더 내립니다.
+- **12월 26일까지 크리스마스 장식.** 헤더 아래 꼬마전구, 로고의 산타 모자, 제목과 종의 호랑가시나무, 사이드바의 작은 트리 – 가끔 산타가 썰매와 순록을 타고 위로 날아갑니다.
+- **기본으로 켜져 있고 프로필별로 끌 수 있습니다**: 설정 → 화면 표시. '미리 보기'로 언제든 1분간 볼 수 있습니다. 배터리를 아끼는 별도 레이어로, 대기 모드에서는 움직이지 않고 레이아웃도 밀리지 않습니다.
+- 변경: `js/winterzeit.js` (신규), `css/winterzeit.css` (신규), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, 모든 README. 서버 부분 없음.
+
 ## 1.144.2의 새 소식
 
 **자동 업데이트: 오늘로도 예약 가능**
@@ -219,15 +228,6 @@ pinn.은 **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fran�
 - Siri와 같은 비밀 링크이고 읽기 전용이며, 게스트는 쓸 수 없어요. 문구는 프로필의 언어로 나와요.
 - 변경: `js/sprachsteuerung.js`, `js/versionslog.js`, `i18n/`(14개 언어 모두에 새 문구 16개와 바뀐 부제), `src/`(`index.html`, 설정), `.github/scripts/check-hooks.js`, 모든 README. 서버(hook 교체, PocketBase가 다시 시작돼요): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
 
-## 1.139.0의 새 소식
-
-**선물 플래너: 받는 사람 몰래 누가 무엇을 선물할지 계획**
-
-- **누가 무엇을 선물할까.** '선물' 탭에서 사람별로 계획한 내용(목록의 선물 아이디어와 다른 사람이 예약한 위시)을 날짜, 상태, 선물하는 사람, 합계와 함께 보여 줘요. 선물을 받는 사람에게는 여기에 보이지 않아요.
-- **받는 사람에게 숨기기.** (비공개가 아닌) 선물 목록에서 '숨길 사람'을 고르면 그 사람들에게는 목록이 보이지 않아, 여러 명이 함께 준비할 수 있어요(예: 부모가 아이들을 위해). 나 자신을 위해 적힌 선물도 나에게는 보이지 않아요. 비공개 목록과 마찬가지로 앱 화면에서의 규칙이며 암호화는 아니에요.
-- **누가 선물할까요? / 함께 선물하기.** 선물마다 누가 줄지 고를 수 있어요. 다른 사람이 이미 예약한 위시에는 '함께할게요'를 눌러 참여해요. 참여자는 다른 사람에게 보이지만 위시를 적은 본인에게는 보이지 않아요.
-- 변경: `js/listen.js`, `css/listen.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (새 텍스트 12개와 변경된 소개문, 14개 언어 모두), `src/` (`index.html`, 목록 팝업), 모든 README. 서버 쪽 변경은 없어서 PocketBase를 다시 시작할 필요가 없어요.
-
 ## 작동 방식
 
 ```mermaid
@@ -256,7 +256,7 @@ flowchart LR
 ## 설치
 
 1. [최신 릴리스](https://github.com/pinn-shost/pinn/releases/latest)의 ZIP을 내려받아 압축을 풀어요.
-2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.144.2` 또는 `pinn-main`)를 그대로 넣어요.
+2. NAS에 폴더를 만들고(예: `/volume1/docker/Pocketbase`), 압축을 푼 폴더(예: `pinn-1.145.0` 또는 `pinn-main`)를 그대로 넣어요.
 3. SSH로 로그인해서 다음을 실행해요:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

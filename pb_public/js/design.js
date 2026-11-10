@@ -63,6 +63,8 @@ function applyPersonalDesign() {
   document.documentElement.classList.toggle('dark', typeof w.darkMode === 'boolean' ? w.darkMode : fd.darkMode);
   // Automatic dark mode (js/dunkelzeit.js) overrides the fixed state while it is switched on
   if (typeof darkAutoLoad === 'function') darkAutoLoad(w);
+  // Winter & Christmas look (js/winterzeit.js), on unless switched off in the profile
+  if (typeof seasonLoad === 'function') seasonLoad(w);
   applyOverviewPrefs(w);
   finDepotsOut = Array.isArray(w.finDepotsOut) ? w.finDepotsOut.filter(x => typeof x === 'string' && x).slice(0, 30) : [];
   try { if (currentView === 'finanzen' && finTab === 'sparen' && finance) renderSavings(); } catch (e) { /* finance not ready yet */ }
@@ -92,6 +94,7 @@ function syncDesignSettingsInputs() {
   if (!dm) return;
   dm.checked = document.documentElement.classList.contains('dark');
   if (typeof darkAutoSyncInputs === 'function') darkAutoSyncInputs();
+  if (typeof seasonSyncInputs === 'function') seasonSyncInputs();
   document.getElementById('colorPaper').value = themeColors.paper;
   document.getElementById('colorPine').value = themeColors.pine;
   document.getElementById('colorMustard').value = themeColors.mustard;
@@ -107,6 +110,8 @@ function currentDesignValues() {
     darkAuto: typeof darkAuto === 'string' ? darkAuto : 'aus',
     darkFrom: typeof darkFrom === 'string' ? darkFrom : '20:00',
     darkTo: typeof darkTo === 'string' ? darkTo : '07:00',
+    // Winter & Christmas look in December/January (js/winterzeit.js)
+    seasonFx: typeof seasonFx === 'boolean' ? seasonFx : true,
     colorPaper: themeColors.paper, colorPine: themeColors.pine, colorMustard: themeColors.mustard,
     defaultViewModeDesktop, defaultViewScopeDesktop, defaultViewModeMobile, defaultViewScopeMobile,
     // Overview (tiles)

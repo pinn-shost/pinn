@@ -133,6 +133,15 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.145.0
+
+**Visual de inverno e Natal**
+
+- **Visual de inverno de 1 de dezembro a 6 de janeiro.** Neve no logótipo do pinn., nos títulos e no fundo da barra lateral, e um breve nevão ao abrir a app. Toca no logótipo para mais neve.
+- **Extras de Natal até 26 de dezembro.** Luzes por baixo do cabeçalho, gorro do Pai Natal no logótipo, azevinho nos títulos e no sino, uma pequena árvore na barra lateral – e de vez em quando o Pai Natal passa a voar com o trenó e as renas.
+- **Ligado por defeito, desligável por perfil** em Definições → Aparência; «Pré-visualizar» mostra-o durante um minuto a qualquer altura. Poupa bateria e é uma camada própria: em repouso nada se move e nada muda de lugar.
+- Alterado: `js/winterzeit.js` (novo), `css/winterzeit.css` (novo), `js/design.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `i18n/`, `src/`, `pinn-setup.sh`, `index.html`, todos os README. Sem parte de servidor.
+
 ## Novidades da 1.144.2
 
 **Atualizações automáticas: também para hoje**
@@ -219,15 +228,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - É o mesmo link secreto da Siri, só de leitura, e os convidados não o têm. Os textos vêm no idioma do perfil.
 - Alterado: `js/sprachsteuerung.js`, `js/versionslog.js`, `i18n/` (16 textos novos e um subtítulo alterado em todos os catorze idiomas), `src/` (`index.html`, definições), `.github/scripts/check-hooks.js`, todos os README. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
 
-## Novidades da 1.139.0
-
-**Planejador de presentes: quem dá o quê, sem que quem recebe veja**
-
-- **Quem dá o quê.** Na aba “Presentes”, o pinn. mostra agora tudo o que está planejado por pessoa (ideias de presentes das suas listas e os desejos reservados pelos outros) com data, andamento, quem dá e o total. Quem vai receber algo nunca vê isso ali.
-- **Esconder de quem recebe.** Em uma lista de presentes (não privada) você escolhe “Esconder de”; essas pessoas não veem a lista, então várias podem planejar juntas (por exemplo, os pais para os filhos). Um presente cadastrado para você nunca é mostrado a você. Como nas listas privadas, isso vale para a exibição no app; não é criptografia.
-- **Quem dá? / Presente em grupo.** Em cada presente você escolhe quem o dá. Em um desejo já reservado por outra pessoa, toque em “Participar”; os outros veem quem participa, quem fez o desejo não.
-- Alterado: `js/listen.js`, `css/listen.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (12 textos novos e uma introdução alterada nos catorze idiomas), `src/` (`index.html`, janela das listas), todos os README. Sem parte de servidor – o PocketBase não precisa reiniciar.
-
 ## Como funciona
 
 ```mermaid
@@ -256,7 +256,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.144.2` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.145.0` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
