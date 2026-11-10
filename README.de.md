@@ -133,6 +133,13 @@ Ein Klick auf ein Bild öffnet es in voller Größe.
 
 pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski und 🇺🇦 Українська**, passt Währung und Notrufnummern an deine Region an und wechselt zwischen den Begriffen **Familie** und **WG**. Ein Server kann mehrere Familien beherbergen, jede mit eigenen Admins.
 
+## Neu in 1.144.2
+
+**Automatische Updates: auch für heute einplanbar**
+
+- **Gleicher Tag möglich.** Liegt die gewählte Uhrzeit noch in der Zukunft, prüft pinn. noch am selben Tag – auch wenn heute schon geprüft wurde. So lässt sich eine neue Einstellung gleich ausprobieren. Eine Uhrzeit, die beim Speichern schon vorbei ist, gilt erst ab morgen; „Nächste Prüfung“ zeigt das richtig an.
+- Geändert: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, alle READMEs. Server (Hooks ersetzen, PocketBase startet neu): `pb_hooks/pinn-system.js`.
+
 ## Neu in 1.144.1
 
 **Fehlerbehebung: automatische Updates zur richtigen Uhrzeit**
@@ -230,13 +237,6 @@ pinn. spricht **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 
 - **Tiere.** Mehrere Fütterungszeiten pro Tier: Im Tier-Editor fügst du beliebig viele Zeiten (bis zu 12) mit Zeitwähler und optionaler Notiz zu Menge oder Futter hinzu (z. B. „1 Tasse Trockenfutter“). Die Notiz erscheint am Fütterungs-Knopf und in der Futter-Karte. Neues Banner auf der Tiere-Seite: eine Wiese mit Zaun, an der die Tiere deiner Familie vorbeilaufen – nachts mit Sternen.
 - Geändert: `js/dunkelzeit.js` (neu), `js/design.js`, `js/familie.js`, `css/haustierewetter.css`, `js/einstellungen.js`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (19 neue Texte in allen vierzehn Sprachen), `src/` (`index.html`), `pinn-setup.sh`, `.github/scripts/check-hooks.js`, alle READMEs. Server (Hooks ersetzen, PocketBase startet neu): `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`.
 
-## Neu in 1.137.0
-
-**Sprachsteuerung auf Türkisch, Polnisch und Ukrainisch**
-
-- **Sprachsteuerung.** „Hey Siri, pinn“ (auf Android HTTP Shortcuts) versteht jetzt auch Türkisch, Polnisch und Ukrainisch und antwortet in der Sprache deines Profils: auf die Einkaufsliste setzen (mit Menge und Geschäft), Liste vorlesen, Aufgabe anlegen und hören, was heute oder morgen ansteht. Siri antwortet bei Ukrainisch nicht mehr auf Englisch. Die Einrichtung des Kurzbefehls bleibt gleich.
-- Geändert: `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`, alle READMEs. Server (Hook ersetzen, PocketBase startet neu): `pb_hooks/pinn-sprache.js`.
-
 ## So funktioniert’s
 
 ```mermaid
@@ -265,7 +265,7 @@ Alles läuft als Docker-Container auf einem Gerät. HTTPS funktioniert **ohne Po
 ## Installation
 
 1. Lade das ZIP des [neuesten Releases](https://github.com/pinn-shost/pinn/releases/latest) herunter und entpacke es.
-2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.144.1` oder `pinn-main`) unverändert hinein.
+2. Lege auf dem NAS einen Ordner an, z. B. `/volume1/docker/Pocketbase`, und kopiere den entpackten Ordner (z. B. `pinn-1.144.2` oder `pinn-main`) unverändert hinein.
 3. Melde dich per SSH an und führe aus:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

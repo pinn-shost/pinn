@@ -110,6 +110,13 @@ Dotknij obrazu, aby otworzyć go w pełnym rozmiarze.
 
 pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski i 🇺🇦 Українська**; dostosowuje walutę i numery alarmowe do twojego regionu i przełącza się między określeniami **rodzina** i **wspólne mieszkanie**. Jeden serwer może obsługiwać wiele rodzin, każdą z własnymi administratorami.
 
+## Nowości w 1.144.2
+
+**Automatyczne aktualizacje: także na dziś**
+
+- **Ten sam dzień możliwy.** Jeśli wybrana godzina jeszcze nie minęła, pinn. sprawdza tego samego dnia – nawet jeśli dziś już sprawdzał. Nowe ustawienie można więc od razu wypróbować. Godzina, która przy zapisie już minęła, obowiązuje od jutra; „Następne sprawdzenie” pokazuje to poprawnie.
+- Zmieniono: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, wszystkie README. Serwer (podmień hooki, PocketBase uruchamia się ponownie): `pb_hooks/pinn-system.js`.
+
 ## Nowości w 1.144.1
 
 **Poprawka: automatyczne aktualizacje o właściwej godzinie**
@@ -164,14 +171,6 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 - **Widżet szybkiego dostępu.** Kafelki są trochę mniejsze, więc wszystko mieści się w widżecie, i wyglądają nowocześniej: okrągła złota plakietka z symbolem, cienka krawędź i ciemny gradient. Dotknięcie nadal otwiera pinn. w Safari, bo iOS nie otwiera zainstalowanej aplikacji z linku.
 - Zmienione: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (wersja), `index.html`, wszystkie pliki README. Bez części serwerowej. Skopiuj skrypty ponownie i zastąp je w Scriptable.
 
-## Nowości w 1.141.1
-
-**Widżety: styl Apple i widżet szybkiego dostępu**
-
-- **Wygląd jak Przypomnienia Apple.** Widżet zadań jest teraz ciemnoszary, z dużym białym tekstem i okrągłymi kółkami. Odhaczone zadania przesuwają się na dół, szarzeją, a kółko się wypełnia. Listy zakupów nie są już częścią widżetu; wybierasz między terminami, zadaniami i obowiązkami domowymi.
-- **Widżet szybkiego dostępu.** Drugi skrypt („Kopiuj skrypt szybkiego dostępu”) tworzy widżet z trzema kafelkami: listy, finanse (z symbolem waluty Twojego regionu) i zadania. Dotknięcie otwiera tę stronę pinn. w Safari, bo iOS nie otwiera zainstalowanej aplikacji z linku; zaloguj się tam raz.
-- Zmienione: `js/sprachsteuerung.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (nowe i zmienione teksty we wszystkich czternastu językach), `src/` (wersja), `index.html`, `.github/scripts/check-hooks.js`, wszystkie README. Serwer (wymienić hooki, PocketBase uruchomi się ponownie): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
-
 ## Wymagania
 
 - NAS lub mini PC z zainstalowanym **Dockerem** i **Docker Compose** (np. Synology, UGREEN, QNAP albo zwykły serwer z Linuksem)
@@ -181,7 +180,7 @@ pinn. mówi w językach: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español
 ## Instalacja
 
 1. Pobierz i rozpakuj plik ZIP [najnowszej wersji](https://github.com/pinn-shost/pinn/releases/latest).
-2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.144.1` lub `pinn-main`) bez zmian.
+2. Utwórz na NAS-ie folder, np. `/volume1/docker/Pocketbase`, i umieść w nim rozpakowany folder (np. `pinn-1.144.2` lub `pinn-main`) bez zmian.
 3. Połącz się przez SSH i uruchom:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

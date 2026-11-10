@@ -133,6 +133,13 @@ Toque em qualquer imagem para abri-la em tamanho real.
 
 O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski e 🇺🇦 Українська**, adapta moeda e números de emergência à sua região e alterna entre os termos **família** e **casa compartilhada**. Um servidor pode hospedar várias famílias, cada uma com seus próprios administradores.
 
+## Novidades da 1.144.2
+
+**Atualizações automáticas: também para hoje**
+
+- **Mesmo dia possível.** Se a hora escolhida ainda não chegou, o pinn. verifica no mesmo dia – mesmo que já tenha verificado hoje. Assim uma nova definição pode ser testada logo. Uma hora já passada ao guardar vale a partir de amanhã; «Próxima verificação» mostra-o corretamente.
+- Alterado: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, todos os README. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-system.js`.
+
 ## Novidades da 1.144.1
 
 **Correção: atualizações automáticas na hora certa**
@@ -221,15 +228,6 @@ O pinn. fala **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Quem dá? / Presente em grupo.** Em cada presente você escolhe quem o dá. Em um desejo já reservado por outra pessoa, toque em “Participar”; os outros veem quem participa, quem fez o desejo não.
 - Alterado: `js/listen.js`, `css/listen.css`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (12 textos novos e uma introdução alterada nos catorze idiomas), `src/` (`index.html`, janela das listas), todos os README. Sem parte de servidor – o PocketBase não precisa reiniciar.
 
-## Novidades da 1.138.0
-
-**Modo escuro automático e atualizações automáticas**
-
-- **Modo escuro.** Em Ajustes → Aparência, o pinn. agora pode mudar para o modo escuro por horário (por ex., das 20:00 às 07:00) ou do pôr do sol ao nascer do sol. Os horários do sol são calculados no dispositivo para o endereço de casa da família (senão, o local do clima), sem acesso à localização. Se você alternar manualmente, vale até a próxima mudança automática. A configuração pertence ao seu perfil e vale em todos os seus dispositivos.
-- **Atualizações automáticas.** Em Ajustes → Sistema → Backups e atualizações, o pinn. pode procurar uma nova versão num horário fixo, todos os dias ou uma vez por semana, criar primeiro um backup e depois instalar a atualização. Pré-lançamentos nunca são instalados automaticamente e, se o backup falhar, nada é instalado. O resultado e a próxima execução aparecem na mesma janela, os erros no registro de erros. Só para admins que podem instalar atualizações.
-- **Animais.** Vários horários de refeição por animal: no editor você adiciona quantos horários quiser (até 12) com seletor de hora e uma nota opcional sobre quantidade ou ração (por ex., “1 xícara de ração”). A nota aparece no botão de alimentação e no cartão de comida. Novo banner na página de animais: um gramado com cerca onde os animais da família passeiam, à noite com estrelas.
-- Alterado: `js/dunkelzeit.js` (novo), `js/design.js`, `js/familie.js`, `css/haustierewetter.css`, `js/einstellungen.js`, `js/sicherungen.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (19 textos novos em todos os catorze idiomas), `src/` (`index.html`), `pinn-setup.sh`, `.github/scripts/check-hooks.js`, todos os README. Servidor (substituir os hooks, o PocketBase reinicia): `pb_hooks/pinn-system.js`, `pb_hooks/system.pb.js`.
-
 ## Como funciona
 
 ```mermaid
@@ -258,7 +256,7 @@ Tudo roda como contêineres Docker em uma única máquina. O HTTPS funciona **se
 ## Instalação
 
 1. Baixe o ZIP da [última versão](https://github.com/pinn-shost/pinn/releases/latest) e descompacte.
-2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.144.1` ou `pinn-main`) do jeito que está.
+2. Crie uma pasta no NAS, por exemplo `/volume1/docker/Pocketbase`, e coloque nela a pasta descompactada (por exemplo `pinn-1.144.2` ou `pinn-main`) do jeito que está.
 3. Entre via SSH e execute:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

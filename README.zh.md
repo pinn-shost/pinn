@@ -133,6 +133,13 @@ pinn. 是一个管理家庭日常的应用：共享日历、本周餐食、购�
 
 pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫🇷 Français、🇮🇹 Italiano、🇧🇷 Português、🇨🇳 中文、🇯🇵 日本語、🇰🇷 한국어、🇷🇺 Русский、🇳🇱 Nederlands、🇹🇷 Türkçe、🇵🇱 Polski和 🇺🇦 Українська**，会根据你所在的地区调整货币和紧急号码，并可在**家庭**和**合租**两种用语之间切换。一台服务器可以托管多个家庭，每个家庭有各自的管理员。
 
+## 1.144.2 新功能
+
+**自动更新：也可安排在今天**
+
+- **当天即可。** 如果所选时间还没到，即使今天已经检查过，pinn. 也会在当天检查。这样新设置可以立即试用。保存时已过去的时间从明天起生效；“下次检查”会正确显示。
+- 已更改：`pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`，所有 README。服务器（替换 hooks，PocketBase 会重启）：`pb_hooks/pinn-system.js`。
+
 ## 1.144.1 新功能
 
 **问题修复：自动更新按设定时间运行**
@@ -221,15 +228,6 @@ pinn. 支持 **🇬🇧 English、🇩🇪 Deutsch、🇪🇸 Español、🇫�
 - **谁来送？／一起送。** 每件礼物都可以选择谁来送。对别人已预订的心愿，点“我也参与”；其他人能看到谁参与，提出心愿的人看不到。
 - 更改：`js/listen.js`、`css/listen.css`、`js/sprachen.js`、`js/versionslog.js`、`i18n/`（12 条新文本和一处修改的介绍，涵盖全部十四种语言）、`src/`（`index.html`、清单弹窗）、所有 README。无服务器部分——无需重启 PocketBase。
 
-## 1.138.0 新功能
-
-**自动深色模式和自动更新**
-
-- **深色模式。** 在“设置 → 外观”中，现在 pinn. 可以按时间段（例如 20:00 到 07:00）或从日落到日出自动切换到深色模式。日出日落时间在设备上根据家庭的住址（没有则用天气地点）计算，无需定位权限。手动切换后会保持到下一次自动切换。该设置属于你的个人资料，在你的所有设备上都生效。
-- **自动更新。** 在“设置 → 系统 → 备份与更新”中，pinn. 可以在设定的时间（每天或每周一次）检查新版本，先创建备份，再安装更新。预发布版绝不会自动安装，备份失败时也不会安装任何内容。结果和下次运行时间显示在同一窗口，错误记录在错误日志中。仅限有权安装更新的管理员。
-- **宠物。** 每只宠物可设置多个喂食时间：在宠物编辑器中用时间选择器添加任意多个（最多 12 个），还可为每次添加分量或食物备注（如“1 杯干粮”）。备注会显示在喂食按钮和食物卡片上。宠物页面新增横幅：带栅栏的草地，家里的宠物在上面走过，夜里还有星星。
-- 更改：`js/dunkelzeit.js`（新）、`js/design.js`、`js/familie.js`、`css/haustierewetter.css`、`js/einstellungen.js`、`js/sicherungen.js`、`js/sprachen.js`、`js/versionslog.js`、`i18n/`（十四种语言各 19 条新文本）、`src/`（`index.html`）、`pinn-setup.sh`、`.github/scripts/check-hooks.js`、所有 README。服务器（替换 hook，PocketBase 会重启）：`pb_hooks/pinn-system.js`、`pb_hooks/system.pb.js`。
-
 ## 工作原理
 
 ```mermaid
@@ -258,7 +256,7 @@ flowchart LR
 ## 安装
 
 1. 下载[最新版本](https://github.com/pinn-shost/pinn/releases/latest)的 ZIP 并解压。
-2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.144.1` 或 `pinn-main`）原样放进去。
+2. 在 NAS 上创建一个文件夹，例如 `/volume1/docker/Pocketbase`，把解压后的文件夹（例如 `pinn-1.144.2` 或 `pinn-main`）原样放进去。
 3. 通过 SSH 登录并运行：
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

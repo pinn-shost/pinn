@@ -110,6 +110,13 @@ Tam boyutta açmak için bir resme dokun.
 
 pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski ve 🇺🇦 Українська**; para birimini ve acil durum numaralarını bölgene göre ayarlar ve **aile** ile **ortak ev** ifadeleri arasında geçiş yapar. Tek bir sunucu, her biri kendi yöneticilerine sahip birden fazla aileye hizmet verebilir.
 
+## 1.144.2 sürümündeki yenilikler
+
+**Otomatik güncellemeler: bugün için de planlanabilir**
+
+- **Aynı gün mümkün.** Seçilen saat henüz gelmediyse pinn. aynı gün kontrol eder – bugün zaten kontrol etmiş olsa bile. Böylece yeni bir ayar hemen denenebilir. Kaydederken geçmiş olan bir saat yarından itibaren geçerlidir; „Sonraki kontrol” bunu doğru gösterir.
+- Değişenler: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, tüm README’ler. Sunucu (hook’ları değiştirin, PocketBase yeniden başlar): `pb_hooks/pinn-system.js`.
+
 ## 1.144.1 sürümündeki yenilikler
 
 **Hata düzeltmesi: otomatik güncellemeler doğru saatte**
@@ -164,14 +171,6 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 - **Hızlı erişim widget’ı.** Karolar biraz küçüldü, böylece her şey widget’ın içinde kalıyor ve daha modern görünüyor: simgeli yuvarlak altın rozet, ince bir kenarlık ve koyu bir geçiş. Dokunmak pinn.’i yine Safari’de açar, çünkü iOS yüklü uygulamayı bir bağlantıdan açmaz.
 - Değişenler: `js/sprachsteuerung.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (sürüm), `index.html`, tüm README dosyaları. Sunucu kısmı yok. Betikleri yeniden kopyalayıp Scriptable’da değiştirin.
 
-## 1.141.1 sürümündeki yenilikler
-
-**Widget’lar: Apple tarzı ve bir hızlı erişim widget’ı**
-
-- **Apple Anımsatıcılar görünümü.** Görev widget’ı artık koyu gri, büyük beyaz yazılı ve yuvarlak daireli. İşaretlenen görevler aşağı kayar, griye döner ve daire dolar. Alışveriş listeleri artık widget’ın parçası değil; randevular, görevler ve ev işleri arasında seçim yaparsın.
-- **Hızlı erişim widget’ı.** İkinci bir betik (“Hızlı erişim betiğini kopyala”) üç karolu bir widget oluşturur: listeler, finans (bölgenin para birimi simgesiyle) ve görevler. Dokunmak pinn.’in ilgili sayfasını Safari’de açar, çünkü iOS yüklü uygulamayı bir bağlantıdan açmaz; orada bir kez oturum açın.
-- Değişenler: `js/sprachsteuerung.js`, `js/appstart.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/` (on dört dilin hepsinde yeni ve değişen metinler), `src/` (sürüm), `index.html`, `.github/scripts/check-hooks.js`, tüm README’ler. Sunucu (hook’ları değiştir, PocketBase yeniden başlar): `pb_hooks/pinn-sprache.js`, `pb_hooks/sprache.pb.js`.
-
 ## Gereksinimler
 
 - **Docker** ve **Docker Compose** kurulu bir NAS veya mini PC (örneğin Synology, UGREEN, QNAP ya da sıradan bir Linux sunucusu)
@@ -181,7 +180,7 @@ pinn. şu dilleri konuşur: **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Espa�
 ## Kurulum
 
 1. [En son sürümün](https://github.com/pinn-shost/pinn/releases/latest) ZIP dosyasını indir ve çıkar.
-2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.144.1` veya `pinn-main`) olduğu gibi içine koy.
+2. NAS'ta bir klasör oluştur, örneğin `/volume1/docker/Pocketbase`, ve çıkardığın klasörü (örneğin `pinn-1.144.2` veya `pinn-main`) olduğu gibi içine koy.
 3. SSH ile bağlan ve şunu çalıştır:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

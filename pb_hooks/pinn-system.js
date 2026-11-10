@@ -460,7 +460,10 @@ function update(vorab) {
 // Automatic updates (since 1.138.0)
 // ---------------------------------------------------------------------------------------------
 // Setting and last result are kept in pb_data/pinn_autoupdate.json:
-//   { an, rhythmus: "taeglich" | "woechentlich", tag: 0-6 (0 = Sunday), zeit: "HH:MM", letzter: {...} | null }
+//   { an, rhythmus: "taeglich" | "woechentlich", tag: 0-6 (0 = Sunday), zeit: "HH:MM", gespeichert: ms, letzter: {...} | null }
+//   gespeichert (since 1.144.2): moment of the last save. A planned time that was already over at that moment does not run
+//   on that day any more – but a time later the same day does, even if a check already ran today (so a new plan can be tested
+//   right away).
 //   letzter: { datum: "YYYY-MM-DD" (day finished, "" = still trying), zeit: ms, ergebnis: keine | gestartet | ok | fehler,
 //              version, code, jobId }
 // The cron job runs every 5 minutes. A run is due from the chosen time on for 3 hours (but not past midnight) and
@@ -472,7 +475,7 @@ const F_AUTO = "/pb_data/pinn_autoupdate.json";
 const AUTO_FENSTER_MIN = 180;
 const AUTO_ZEIT_RE = /^([01]\d|2[0-3]):([0-5]\d)$/;
 function autoStandard() {
-    return { an: false, rhythmus: "taeglich", tag: 1, zeit: "04:30", letzter: null };
+    return { an: false, rhythmus: "taeglich", tag: 1, zeit: "04:30", gespeichert: 0, letzter: null };
 }
 function autoBereinigen(raw) {
     const c = autoStandard();
@@ -482,6 +485,7 @@ function autoBereinigen(raw) {
     const tag = parseInt(r.tag, 10);
     c.tag = (tag >= 0 && tag <= 6) ? tag : 1;
     c.zeit = AUTO_ZEIT_RE.test(String(r.zeit || "")) ? String(r.zeit) : "04:30";
+    c.gespeichert = Math.max(0, Number(r.gespeichert) || 0);
     const l = r.letzter;
     if (l && typeof l === "object") {
         const erg = ["keine", "gestartet", "ok", "fehler"].indexOf(l.ergebnis) >= 0 ? l.ergebnis : "";
@@ -544,7 +548,10 @@ function autoFaellig(cfg, jetzt) {
     if (cfg.rhythmus === "woechentlich" && w.wd !== cfg.tag) return false;
     const soll = minutenVon(cfg.zeit);
     const fenster = Math.min(AUTO_FENSTER_MIN, 1440 - soll);
-    return w.min >= soll && w.min < soll + fenster;
+    if (!(w.min >= soll && w.min < soll + fenster)) return false;
+    // Time already over when the plan was saved: not today, only from the next day on
+    if (cfg.gespeichert && wandZuMs(w.y, w.m, w.d, soll) < cfg.gespeichert) return false;
+    return true;
 }
 // Next planned run (Date) – for the display in the app
 function autoNaechste(cfg, jetzt) {
@@ -557,6 +564,8 @@ function autoNaechste(cfg, jetzt) {
         if (cfg.rhythmus === "woechentlich" && tag.getUTCDay() !== cfg.tag) continue;
         const t = wandZuMs(tag.getUTCFullYear(), tag.getUTCMonth(), tag.getUTCDate(), soll);
         if (t <= ms) continue;
+        // Already checked today: the next run is on another day
+        if (i === 0 && cfg.letzter && cfg.letzter.datum === w.iso) continue;
         return new Date(t);
     }
     return null;
@@ -572,9 +581,13 @@ function autoSetzen(daten) {
     }));
     if (d.zeit !== undefined && !AUTO_ZEIT_RE.test(String(d.zeit))) throw fehler("zeit", "Bitte eine Uhrzeit wie 04:30 angeben.");
     if (d.rhythmus !== undefined && d.rhythmus !== "taeglich" && d.rhythmus !== "woechentlich") throw fehler("rhythmus", "Unbekannter Rhythmus.");
-    // A changed plan may run again today
-    const geaendert = neu.an !== alt.an || neu.rhythmus !== alt.rhythmus || neu.tag !== alt.tag || neu.zeit !== alt.zeit;
-    if (geaendert && neu.letzter && neu.letzter.ergebnis !== "gestartet") neu.letzter.datum = "";
+    // Every save may run again today, as long as the chosen time is still ahead (see autoFaellig) – unless an update
+    // is running right now. A "gestartet" that never finished (job gone) does not block the day any more either.
+    neu.gespeichert = Date.now();
+    if (neu.letzter && !beschaeftigt()) {
+        if (neu.letzter.ergebnis === "gestartet") autoAbschliessen(neu);
+        neu.letzter.datum = "";
+    }
     if (!exists("/pb_data")) throw fehler("ordner", "Der Datenordner ist nicht erreichbar.");
     if (!autoSchreiben(neu)) throw fehler("speichern", "Die Einstellung konnte nicht gespeichert werden.");
     return autoAnsicht(neu);

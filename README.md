@@ -129,6 +129,13 @@ Tap any picture to open it in full size.
 
 pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski and 🇺🇦 Українська**, adapts currency and emergency numbers to your region, and switches between **family** and **flatshare** wording. One server can host several families, each with its own admins.
 
+## What's new in 1.144.2
+
+**Automatic updates: plan for today as well**
+
+- **Same day possible.** If the chosen time is still ahead, pinn. checks on the same day – even if it already checked today. So a new setting can be tried out right away. A time that is already over when saving applies from tomorrow; “Next check” shows this correctly.
+- Changed: `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, all READMEs. Server (replace the hooks, PocketBase restarts): `pb_hooks/pinn-system.js`.
+
 ## What's new in 1.144.1
 
 **Bug fix: automatic updates at the right time**
@@ -247,13 +254,6 @@ pinn. speaks **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 F
 - **Ukrainian.** The set-up wizard and the data export now speak Ukrainian: all step-by-step guides (home network, DuckDNS, VPN, Google, AI, location, Home Assistant, apps) and every export text. Ukrainian emergency numbers (102, 103, 101 and 112) double-checked. A short `README.uk.md` is new. The language is still hidden – nothing changes in the app.
 - Changed: `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `README.uk.md`. No server part.
 
-## What's new in 1.135.16
-
-**Ukrainian – stage 17**
-
-- **Ukrainian.** All 6994 texts are now translated, including the push notifications (server texts, flat-share terms and country Ukraine in the notification hooks). The language is still hidden – nothing changes in the app.
-- Changed: `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`. Server (replace the hooks, PocketBase restarts): `pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
-
 ## How it works
 
 ```mermaid
@@ -280,7 +280,7 @@ Everything runs as Docker containers on one machine. HTTPS works **without port 
 ## Installation
 
 1. Download the ZIP of the [latest release](https://github.com/pinn-shost/pinn/releases/latest) and unzip it.
-2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.144.1` or `pinn-main`) into it as it is.
+2. Create a folder on the NAS, e.g. `/volume1/docker/Pocketbase`, and put the unzipped folder (e.g. `pinn-1.144.2` or `pinn-main`) into it as it is.
 3. Log in via SSH and run:
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh

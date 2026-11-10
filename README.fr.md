@@ -129,6 +129,13 @@ Touche une image pour l’ouvrir en taille réelle.
 
 pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Français, 🇮🇹 Italiano, 🇧🇷 Português, 🇨🇳 中文, 🇯🇵 日本語, 🇰🇷 한국어, 🇷🇺 Русский, 🇳🇱 Nederlands, 🇹🇷 Türkçe, 🇵🇱 Polski et 🇺🇦 Українська**, adapte la devise et les numéros d’urgence à ta région, et bascule entre les termes **famille** et **colocation**. Un serveur peut héberger plusieurs familles, chacune avec ses propres admins.
 
+## Nouveautés de la 1.144.2
+
+**Mises à jour automatiques : aussi pour aujourd’hui**
+
+- **Le jour même.** Si l’heure choisie est encore à venir, pinn. vérifie le jour même – même s’il a déjà vérifié aujourd’hui. On peut ainsi tester tout de suite un nouveau réglage. Une heure déjà passée à l’enregistrement vaut à partir de demain ; « Prochaine vérification » l’affiche correctement.
+- Modifié : `pb_hooks/pinn-system.js`, `.github/scripts/check-hooks.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/`, `index.html`, tous les README. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-system.js`.
+
 ## Nouveautés de la 1.144.1
 
 **Correctif : mises à jour automatiques à la bonne heure**
@@ -247,13 +254,6 @@ pinn. parle **🇬🇧 English, 🇩🇪 Deutsch, 🇪🇸 Español, 🇫🇷 Fr
 - **Ukrainien.** L’assistant de configuration et l’export des données parlent désormais ukrainien : tous les guides pas à pas (réseau domestique, DuckDNS, VPN, Google, IA, localisation, Home Assistant, applis) et tous les textes de l’export. Les numéros d’urgence ukrainiens (102, 103, 101 et 112) ont été vérifiés. Un court `README.uk.md` est nouveau. La langue est encore masquée – rien ne change dans l’appli.
 - Modifié : `einrichtung.js`, `datenexport.js`, `js/einrichten.js`, `js/exportieren.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `README.uk.md`. Pas de partie serveur.
 
-## Nouveautés de la 1.135.16
-
-**Ukrainien – étape 17**
-
-- **Ukrainien.** Les 6994 textes sont désormais traduits, y compris les notifications push (textes du serveur, termes de colocation et pays Ukraine dans les hooks de notification). La langue est encore masquée – rien ne change dans l’appli.
-- Modifié : `i18n/uk.i18n.js`, `js/sprachen.js`, `js/versionslog.js`, `i18n/versionslog.en.js`, `src/` (`index.html`), `.github/scripts/check-hooks.js`. Serveur (remplacer les hooks, PocketBase redémarre) : `pb_hooks/pinn-pushtext.js`, `pinn-aufgaben.js`, `pinn-ausblick.js`, `pinn-chat.js`, `pinn-einrichtung.js`, `pinn-familie-geburtstag.js`, `pinn-haustiere.js`, `pinn-ortung.js`, `pinn-packliste.js`, `pinn-wobistdu.js`.
-
 ## Comment ça marche
 
 ```mermaid
@@ -280,7 +280,7 @@ Tout tourne en conteneurs Docker sur une seule machine. HTTPS fonctionne **sans 
 ## Installation
 
 1. Télécharge le ZIP de la [dernière version](https://github.com/pinn-shost/pinn/releases/latest) et décompresse-le.
-2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.144.1` ou `pinn-main`) tel quel.
+2. Crée un dossier sur le NAS, p. ex. `/volume1/docker/Pocketbase`, et mets-y le dossier décompressé (p. ex. `pinn-1.144.2` ou `pinn-main`) tel quel.
 3. Connecte-toi en SSH et exécute :
    ```sh
    cd /volume1/docker/Pocketbase && sudo sh pinn-*/pinn-setup.sh
