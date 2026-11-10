@@ -296,6 +296,14 @@ if (!exists(path.join(HOOKS, 'pinn-system.js'))) {
         [berlin(2026, 10, 10, 4, 30).getTime(), berlin(2026, 10, 11, 4, 30).getTime(), berlin(2026, 6, 7, 4, 30).getTime(),
           berlin(2026, 10, 9, 14, 0).getTime(), berlin(2026, 10, 10, 14, 0).getTime(), null]);
     });
+    // Since 1.146.0: time zone table from the app (here New York: EST -300 until 14 Mar 2027 07:00 UTC, then EDT -240)
+    const nyZone = { zone: 'America/New_York', wechsel: [[Math.floor(Date.UTC(2026, 10, 1, 6) / 1000), -300], [Math.floor(Date.UTC(2027, 2, 14, 7) / 1000), -240]], bis: Math.floor(Date.UTC(2029, 10, 1) / 1000) };
+    test('autoFaellig() – time zone of the region (New York)', () => [
+      ['04:30 New York in winter = 09:30 UTC', sys.autoFaellig(sys.autoBereinigen(plan(nyZone)), new Date(Date.UTC(2026, 10, 9, 9, 30))), true],
+      ['04:30 Berlin is not due', sys.autoFaellig(sys.autoBereinigen(plan(nyZone)), new Date(Date.UTC(2026, 10, 9, 3, 30))), false],
+      ['04:30 New York in summer = 08:30 UTC', sys.autoFaellig(sys.autoBereinigen(plan(nyZone)), new Date(Date.UTC(2027, 5, 1, 8, 30))), true],
+      ['broken table is dropped', !!sys.autoBereinigen(plan({ zone: 'a b', wechsel: [[1, 5000]] })).zone, false],
+    ].map(([label, got, want]) => (got === want ? '' : label + ': expected ' + want + ', got ' + got)).filter(Boolean).join('; '));
     test('autoBereinigen() – broken values fall back to the defaults', () => eq(
       sys.autoBereinigen({ an: 'yes', rhythmus: 'x', tag: 9, zeit: '25:99', letzter: { ergebnis: 'boom' } }),
       { an: false, rhythmus: 'taeglich', tag: 1, zeit: '04:30', gespeichert: 0, letzter: null }));
